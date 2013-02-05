@@ -18,13 +18,12 @@ static aPorezi:={}
 
 
 function get_nivel_p()
-*{
 local aProd // matrica sa prodavnicama
 local cProd // prodavnica
 local cPKonto
 local dDatDok
 local cGlStanje:="D"
-
+local _h_dokument := hb_hash()
 
 O_KONTO
 
@@ -75,8 +74,16 @@ O_KALK_DOKS
 nUvecaj := 1
 for nCnt:=1 to LEN(aProd)
 	// daj broj kalkulacije
-	cBrKalk:=GetNextKalkDoc(gFirma, "19", nUvecaj)
 	cPKonto:=aProd[nCnt, 1]
+
+    _h_dokument["idfirma"] := gFirma
+    _h_dokument["idvd"] := "19"
+    _h_dokument["brdok"] := ""
+    _h_dokument["datdok"] := DATE() 
+    cBrKalk := kalk_novi_broj_dokumenta(_h_dokument, cPKonto)
+
+
+
 	
 	@ 2+m_x, 2+m_y SAY STR(nCnt, 3) + " Prodavnica: " + ALLTRIM(cPKonto) + "   dokument: "+ gFirma + "-19-" + ALLTRIM(cBrKalk)
 	
@@ -98,6 +105,7 @@ local aProd // matrica sa prodavnicama
 local cProd // prodavnica
 local cPKonto
 local dDatDok
+local _h_dokument := hb_hash()
 
 O_KONTO
 
@@ -140,9 +148,14 @@ O_KALK_DOKS
 
 nUvecaj := 1
 for nCnt:=1 to LEN(aProd)
-	// daj broj kalkulacije
-	cBrKalk:=GetNextKalkDoc(gFirma, "19", nUvecaj)
+
 	cPKonto:=aProd[nCnt, 1]
+    _h_dokument["idfirma"] := gFirma
+    _h_dokument["idvd"] := "19"
+    _h_dokument["brdok"] := ""
+    _h_dokument["datdok"] := DATE() 
+    cBrKalk := kalk_novi_broj_dokumenta(_h_dokument, cPKonto)
+
 	
 	@ 2+m_x, 2+m_y SAY STR(nCnt, 3) + " Prodavnica: " + ALLTRIM(cPKonto) + "   dokument: "+ gFirma + "-19-" + ALLTRIM(cBrKalk)
 	

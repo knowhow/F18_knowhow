@@ -210,7 +210,6 @@ return lastkey()
 // koristi se stkalk14   za stampu kalkulacije
 // stkalk 95 za stampu 16-ke
 function KM94()
-*{
 local nR1,nR2,nR3
 private GetList:={}
 select  roba

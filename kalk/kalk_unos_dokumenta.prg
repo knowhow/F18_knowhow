@@ -1374,11 +1374,11 @@ if fNovi .and. ( _idfirma <> idfirma .or. _idvd <> idvd )
                 _konto = _idKonto2
             endif
         BoxC()
-        _brDok := kalk_novi_broj_dokumenta(_h_dok, _konto)
-
-    else
-        _brDok := kalk_novi_broj_dokumenta(_h_dok)
+    //    _brDok := kalk_novi_broj_dokumenta(_h_dok, _konto)
+    //else
+    //    _brDok := kalk_novi_broj_dokumenta(_h_dok)
     endif
+    _brdok := kalk_brdok_0h(_h_dok)
 
     select kalk_pripr
 
@@ -2107,6 +2107,8 @@ select kalk_pripr
 set order to tag "1"
 go top
 
+kalk_set_broj_dokumenta()
+
 fTopsD:=.f.
 fFaktD:=.f.
 
@@ -2180,7 +2182,7 @@ do while .t.
     
         if (cidvd=="10".and.!((gVarEv=="2").or.(gmagacin=="1")).or.(cidvd $ "11#12#13")).and.(c10Var=="3")
             gPSOld := gPStranica
-            gPStranica := VAL(IzFmkIni("KALK","A3_GPSTRANICA","-20",EXEPATH))
+            gPStranica := "-20"
             P_PO_L
         endif
     
@@ -2240,11 +2242,7 @@ do while .t.
             if (c10Var=="3")
                 Stkalk14_3()
             else
-                if IsPDV()
-                    StKalk14PDV()
-                else
-                    Stkalk14()
-                endif
+                StKalk14PDV()
             endif
         elseif (cidvd $ "16#95#96#97") .and. IsPDV()
             if gPDVMagNab == "D"

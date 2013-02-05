@@ -18,6 +18,9 @@ CLASS KalkCounter  INHERIT  DocCounter
      METHOD set_sql_get 
      METHOD set_konto(konto)
      DATA   brojac_po_kontima  INIT .f.
+
+  protected:
+     DATA   p_konto
 ENDCLASS
 
 METHOD KalkCounter:New(idfirma, idvd, datdok, new_number, konto)	
@@ -36,6 +39,8 @@ endif
 
 if glBrojacPoKontima
      ::brojac_po_kontima := .t.
+else
+     ::brojac_po_kontima := .f.
 endif
 
 
@@ -43,34 +48,32 @@ if konto <> NIL
     ::set_konto(konto)
 endif
 
-if ::a_server_param[2] == "16" .and. glEvidOtpis
-    ::suffix0 += "-X"
-endif
- 
 return SELF
 
 //-----------------------------------------
 //-----------------------------------------
 METHOD KalkCounter:set_konto(konto)
 
-// a_s_param := { "kalk", "10", "14" }
+// ::a_s_param := { "kalk", "10", "14" }
 ::p_konto := konto
 
-//  000100/15/13 - suffix0 ='/15', suffix='/13'
-::suffix0 := SufBrKalk(konto)
+if ::brojac_po_kontima
+   //  000100/15/13 - suffix0 ='/15', suffix='/13'
+  ::suffix0 := SufBrKalk(konto)
 
-if EMPTY(::suffix0)
-   _msg := "ERR:  Kalk brojac po kontima podesen ali za konto " + konto + " suffix nije podesen"
-   log_write(_msg, 2)
-   MsgBeep(_msg)
-   QUIT_1
+	if EMPTY(::suffix0)
+	   _msg := "ERR:  Kalk brojac po kontima podesen ali za konto " + konto + " suffix nije podesen"
+	   log_write(_msg, 2)
+	   MsgBeep(_msg)
+	   QUIT_1
+	endif
 endif
 
-IF LEN(a_s_param) == 4
+IF LEN(::a_s_param) == 4
   // vec postoji konto parametar
   // a_s_param := { "kalk", "10", "14", "1321" }
-::p_konto := konto
-  a_s_param[4] := TRIM(konto)
+  ::p_konto := konto
+  ::a_s_param[4] := TRIM(konto)
 else
   AADD(::a_s_param, TRIM(konto))
 endif
@@ -116,9 +119,20 @@ return .t.
 // brdok nula
 // --------------------------------------------------------
 function kalk_brdok_0(idfirma, idvd, datdok, konto)
+
 local _counter := KalkCounter():New(idfirma, idvd, datdok, .f., konto)
 
 return _counter:to_str()
+
+// --------------------------------------------------------
+// brdok nula hash params
+// --------------------------------------------------------
+function kalk_brdok_0h(dok, konto)
+
+local _counter := KalkCounter():New(dok["idfirma"], dok["idvd"], dok["datdok"], .f., konto)
+
+return _counter:to_str()
+
 
 // --------------------------------------------------------
 // generisi nov broj naloga uzevsi serverski brojac
@@ -142,7 +156,7 @@ return .t.
 // setuj broj dokumenta
 // ------------------------------------------------------------
 function kalk_set_broj_dokumenta(h_dokument, konto)
-local _broj_naloga
+local _broj_dokumenta
 local _t_rec
 local _firma, _td, _datdok, _cnt, _null_brdok
 
@@ -151,16 +165,17 @@ PushWa()
 if h_dokument == NIL
    select kalk_pripr
    go top
-  _firma  := field->idfirma
-  _td     := field->idvd
-  _datdok := field->datdok
-  _brdok  := field->brdok
-else
-  _firma := h_dokument["idfirma"]
-  _td    := h_dokument["idvd"]
-  _brdok := h_dokument["brdok"]
-  _datdok := h_dokument["datdok"]
+   h_dokument := hb_hash()
+   h_dokument["idfirma"] := field->idfirma
+   h_dokument["idvd"] := field->idvd
+   h_dokument["datdok"] := field->datdok
+   h_dokument["brdok"] := field->brdok
 endif
+
+_firma := h_dokument["idfirma"]
+_td    := h_dokument["idvd"]
+_brdok := h_dokument["brdok"]
+_datdok := h_dokument["datdok"]
 
 _cnt := KalkCounter():New(_firma, _td, _datdok, .f., konto)
 _cnt:decode(_brdok)
@@ -174,7 +189,7 @@ endif
 _null_brdok := _cnt:to_str()
 
 // daj mi novi broj dokumenta
-_broj_dokumenta := kalk_novi_broj_dokumenta( _firma, _td, _datdok, konto)
+_broj_dokumenta := kalk_novi_broj_dokumenta( h_dokument, konto)
 
 select kalk_pripr
 set order to tag "1"
@@ -517,7 +532,7 @@ return cReturn
 // --------------------------------------------------------
 // uvecava broj kalkulacije sa stepenom uvecanja nUvecaj
 // --------------------------------------------------------
-function GetNextKalkDoc(cIdFirma, cIdTipDok, nUvecaj)
+function GetNextKalkDoc_old(cIdFirma, cIdTipDok, nUvecaj)
 local xx
 local i
 local lIdiDalje

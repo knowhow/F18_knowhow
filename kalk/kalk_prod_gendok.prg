@@ -1097,8 +1097,9 @@ local cTipDok := "IP"
 local cIpBrDok := SPACE(8)
 local dDat80 := DATE()
 local nCnt:=0
-local cNxt80:=SPACE(8)
-
+local cNxt80
+local _h_dokument := hb_hash()
+ 
 Box(,5,65)
     @ 1+m_x, 2+m_y SAY "Postojeci dokument IP -> " + cIdFirma + "-" + cTipDok + "-" GET cIpBrDok VALID !Empty(cIpBrDok)
     @ 2+m_x, 2+m_y SAY "Datum dokumenta" GET dDat80 VALID !Empty(dDat80)
@@ -1123,7 +1124,13 @@ O_KALK
 O_PRIPT
 O_KALK_PRIPR
 
-cNxt80 := GetNextKalkDoc( gFirma, "80" )
+_h_dokument["idfirma"] := gFirma
+_h_dokument["idvd"] := "80"
+_h_dokument["brdok"] := ""
+_h_dokument["datdok"] := DATE() 
+cNxt80 := kalk_novi_broj_dokumenta(_h_dokument)
+
+
 
 // obradi dokument u kalk_pripremu -> konvertuj u 80
 select pript

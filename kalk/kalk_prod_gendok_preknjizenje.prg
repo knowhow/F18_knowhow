@@ -18,7 +18,6 @@ static aPorezi:={}
 
 
 function GetPreknj()
-*{
 local aProd // matrica sa prodavnicama
 local cProdKto // prodavnicki konto
 local nUvecaj // uvecaj broj kalkulacije za
@@ -27,6 +26,8 @@ local cPKonto
 local nCnt
 local cAkciznaRoba := "N"
 local cZasticeneCijene := "N"
+local _h_dokument := hb_hash()
+
 Box(,7, 65)
 	O_KONTO
 	O_TARIFA
@@ -79,8 +80,14 @@ O_KALK_DOKS
 nUvecaj := 1
 for nCnt:=1 to LEN(aProd)
 	// daj broj kalkulacije
-	cBrKalk:=GetNextKalkDoc(gFirma, "80", nUvecaj)
 	cPKonto:=aProd[nCnt, 1]
+    _h_dokument["idfirma"] := gFirma
+    _h_dokument["idvd"] := "80"
+    _h_dokument["brdok"] := ""
+    _h_dokument["datdok"] := DATE() 
+    cBrKalk := kalk_novi_broj_dokumenta(_h_dokument, cPKonto)
+
+
 	
 	@ 2+m_x, 2+m_y SAY "Prodavnica: " + ALLTRIM(cPKonto) + "   dokument: "+ gFirma + "-80-" + ALLTRIM(cBrKalk)
 	
@@ -111,6 +118,7 @@ local nCnt
 local cPTarifa := "PDV17 "
 local cAkciznaRoba := "N"
 local cZasticeneCijene := "N"
+local _h_dokument := hb_hash()
 
 if !IsPDV()
 	MsgBeep("Opcija raspoloziva samo za PDV rezim rada !!!")
@@ -171,9 +179,14 @@ O_KALK_DOKS
 
 nUvecaj := 1
 for nCnt:=1 to LEN(aProd)
-	// daj broj kalkulacije
-	cBrKalk:=GetNextKalkDoc(gFirma, "80", nUvecaj)
 	cPKonto:=aProd[nCnt, 1]
+
+     _h_dokument["idfirma"] := gFirma
+    _h_dokument["idvd"] := "80"
+    _h_dokument["brdok"] := ""
+    _h_dokument["datdok"] := DATE() 
+    cBrKalk := kalk_novi_broj_dokumenta(_h_dokument, cPKonto)
+
 	
 	@ 2+m_x, 2+m_y SAY "Prodavnica: " + ALLTRIM(cPKonto) + "   dokument: "+ gFirma + "-80-" + ALLTRIM(cBrKalk)
 	// gen poc.st

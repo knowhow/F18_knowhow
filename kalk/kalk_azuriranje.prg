@@ -1102,7 +1102,7 @@ set order to tag "1"
 
 _id_firma := gfirma
 _id_vd := space(2)
-_br_dok := space(8)
+_br_dok := space(12)
 
 Box("",1,35)
     @ m_x+1,m_y+2 SAY "Dokument:"
@@ -1112,7 +1112,7 @@ Box("",1,35)
         @ m_x+1,col()+1 GET _id_firma
     endif
     @ m_x+1,col()+1 SAY "-" GET _id_vd pict "@!"
-    @ m_x+1,col()+1 SAY "-" GET _br_dok
+    @ m_x+1,col()+1 SAY "-" GET _br_dok  valid kalk_fix_brdok(@_br_dok)
     read
     ESC_BCR
 BoxC()
@@ -1220,11 +1220,6 @@ if _brisi_kum
         return
     endif
 
-
-    if Logirati(goModul:oDataBase:cName,"DOK","POVRAT")
-        _descr := _id_firma + "-" + _id_vd + "-" + ALLTRIM(_br_dok)
-        EventLog(nUser, goModul:oDataBase:cName,"DOK","POVRAT",nil,nil,nil,nil,_descr,"","",Date(),Date(),"","KALK - Povrat dokumenta u pripremu")
-    endif
 
     // vrati i dokument iz kalk_doksRC
     povrat_doksrc( _id_firma, _id_vd, _br_dok )

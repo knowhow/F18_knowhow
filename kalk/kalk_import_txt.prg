@@ -1120,6 +1120,7 @@ local cIdKonto
 local cIdKonto2
 local cIdPJ
 local aArr_ctrl := {}
+local _h_dokument := hb_hash()
 
 O_KALK_PRIPR
 O_KALK_DOKS
@@ -1217,7 +1218,12 @@ do while !EOF()
 	
 	if cFakt <> cPFakt
 		++ nUvecaj
-		cBrojKalk := GetNextKalkDoc(gFirma, cTDok, nUvecaj)
+         _h_dokument["idfirma"] := gFirma
+         _h_dokument["idvd"] := cTDok
+         _h_dokument["brdok"] := ""
+         _h_dokument["datdok"] := DATE() 
+         cBrojKalk := kalk_novi_broj_dokumenta(_h_dokument)
+
 		nRbr := 0
 		AADD(aPom, { cTDok, cBrojKalk, cFakt })
 	else
@@ -1225,7 +1231,14 @@ do while !EOF()
 		if cTDok == "11"
 			if cPm <> cPPm
 				++ nUvecaj
-				cBrojKalk := GetNextKalkDoc(gFirma, cTDok, nUvecaj)
+                _h_dokument["idfirma"] := gFirma
+                _h_dokument["idvd"] := cTDok
+                _h_dokument["brdok"] := ""
+                _h_dokument["datdok"] := DATE() 
+                cBrojKalk := kalk_novi_broj_dokumenta(_h_dokument)
+
+                Generisi11ku_iz10ke( cNext11 )
+           
 				nRbr := 0
 				AADD(aPom, { cTDok, cBrojKalk, cFakt })
 			endif
@@ -1574,16 +1587,25 @@ return 1
  *  \param cRazd - razdvajati dokumente po broju fakture (D ili N)
  */
 static function GetKVars(dDatDok, cBrKalk, cTipDok, cIdKonto, cIdKonto2, cRazd)
+local _h_dokument := hb_hash()
 
 dDatDok:=DATE()
 cTipDok:="14"
 cIdFirma:=gFirma
 cIdKonto:=PADR("1200",7)
 cIdKonto2:=PADR("1310",7)
+
 cRazd:="D"
 O_KONTO
 O_KALK_DOKS
-cBrKalk:=GetNextKalkDoc(cIdFirma, cTipDok)
+
+_h_dokument["idfirma"] := cIdFirma
+_h_dokument["idvd"] := cTipdok
+_h_dokument["brdok"] := ""
+_h_dokument["datdok"] := dDatDok
+cBrKalk := kalk_novi_broj_dokumenta(_h_dokument)
+
+
 
 Box(,15,60)
 	@ m_x+1,m_y+2   SAY "Broj kalkulacije 14-" GET cBrKalk pict "@!"
@@ -1608,7 +1630,7 @@ return 1
 function ObradiImport(nPocniOd, lAsPokreni, lStampaj)
 local cN_kalk_dok := ""
 local nUvecaj := 0
-
+local _h_dokument := hb_hash()
 O_KALK_PRIPR
 O_PRIPT
 
@@ -1672,7 +1694,14 @@ do while !EOF()
 	
 	// daj novi broj dokumenta kalk
 	nT_area := SELECT()
-	cN_kalk_dok := GetNextKalkDoc(cFirma, cIdVd, 1)
+
+
+    _h_dokument["idfirma"] := cFirma
+    _h_dokument["idvd"] := cIdVd
+    _h_dokument["brdok"] := ""
+    _h_dokument["datdok"] := DATE() 
+    cN_kalk_dok := kalk_novi_broj_dokumenta(_h_dokument)
+
 	select (nT_area)
 	
 	@ 3+m_x, 2+m_y SAY "Prebacujem: " + cFirma + "-" + cIdVd + "-" + cBrDok

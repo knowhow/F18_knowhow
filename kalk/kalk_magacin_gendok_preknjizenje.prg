@@ -18,7 +18,6 @@ static aPorezi:={}
 
 
 function GetPreknM()
-*{
 local aMag // matrica sa magacinima
 local cMagKto // magacinski konto
 local nUvecaj // uvecaj broj kalkulacije za
@@ -26,6 +25,8 @@ local cBrKalk // broj kalkulacije
 local cMKonto
 local nCnt
 local cAkciznaRoba := "D"
+local _h_dokument := hb_hash()
+
 Box(,6, 65)
 	O_KONTO
 	O_TARIFA
@@ -77,7 +78,12 @@ O_KALK_DOKS
 nUvecaj := 1
 for nCnt:=1 to LEN(aMag)
 	// daj broj kalkulacije
-	cBrKalk:=GetNextKalkDoc(gFirma, "16", nUvecaj)
+    _h_dokument["idfirma"] := gFirma
+    _h_dokument["idvd"] := "16"
+    _h_dokument["brdok"] := ""
+    _h_dokument["datdok"] := DATE() 
+    cBrKalk := kalk_novi_broj_dokumenta(_h_dokument, cMKonto)
+
 	cMKonto:=aMag[nCnt, 1]
 	
 	@ 2+m_x, 2+m_y SAY "Magacin: " + ALLTRIM(cMKonto) + "   dokument: "+ gFirma + "-16-" + ALLTRIM(cBrKalk)
@@ -99,7 +105,6 @@ return
 
 
 function GetPstPreknj()
-*{
 local aMag // matrica sa prodavnicama
 local cMagKto // prodavnicki konto
 local nUvecaj // uvecaj broj kalkulacije za
@@ -108,6 +113,7 @@ local cMKonto
 local nCnt
 local cMTarifa := "PDV17 "
 local cAkciznaRoba := "N"
+local _h_dokument := hb_hash()
 
 if !IsPDV()
 	MsgBeep("Opcija raspoloziva samo za PDV rezim rada !!!")
@@ -167,8 +173,14 @@ O_KALK_DOKS
 
 nUvecaj := 1
 for nCnt:=1 to LEN(aMag)
-	// daj broj kalkulacije
-	cBrKalk:=GetNextKalkDoc(gFirma, "16", nUvecaj)
+    _h_dokument["idfirma"] := gFirma
+    _h_dokument["idvd"] := "16"
+    _h_dokument["brdok"] := ""
+    _h_dokument["datdok"] := DATE() 
+    cBrKalk := kalk_novi_broj_dokumenta(_h_dokument, cMKonto)
+
+
+
 	cMKonto:=aMag[nCnt, 1]
 	
 	@ 2+m_x, 2+m_y SAY "Magacin: " + ALLTRIM(cMKonto) + "   dokument: "+ gFirma + "-16-" + ALLTRIM(cBrKalk)
@@ -185,7 +197,6 @@ MsgBeep("Zavrseno filovanje pomocne tabele pokrecem obradu!")
 ObradiImport(0, .f., .f.)
 
 return
-*}
 
 
 

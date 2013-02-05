@@ -298,7 +298,6 @@ return
  */
  
 function StKalk14_3()
-*{
 LOCAL i:=0,aNiz
 Private nPrevoz:=0,nCarDaz:=0,nZavTr:=0,nBankTr:=0,nSpedTr:=0,nMarza:=0,nMarza2:=0
 // iznosi troskova i marzi koji se izracunavaju u KTroskovi()
@@ -420,7 +419,6 @@ ENDIF
               ,;
               ,.f.)                  // ne centrirati tabelu
 return
-*}
 
 
 

@@ -4,6 +4,8 @@
 #10.8 macosc/darvin ne treba ovo
 {mingw|mingwce|(gcc&(linux))}libs=supc++
 
+-w2
+
 #{mingw|mingwce|(gcc&(linux|darwin))}libs=supc++
 
 #{allwin&!HB_QT_STATIC}libs=QtCore4 QtGui4 QtNetwork4 QtWebKit4

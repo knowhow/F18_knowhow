@@ -284,6 +284,7 @@ return lastkey()
 // ------------------------------------------
 function valid_mag_konto_14(idkonto, brdok)
 local _h_brdok
+
 _h_brdok := hb_hash()
 _h_brdok["idfirma"] := gFirma
 _h_brdok["idvd"] := "14"
@@ -295,7 +296,8 @@ if !empty(idkonto)
    P_Konto(@IdKonto, 24)
 endif
 
-brdok := kalk_novi_broj_dokumenta(_h_brdok, IdKonto)
+//nema potrebe, broj je vec dodijeljen
+//brdok := kalk_novi_broj_dokumenta(_h_brdok, IdKonto)
 
 @  m_x+2, m_y + 46  SAY BrDok COLOR INVERT
 

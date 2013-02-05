@@ -539,6 +539,7 @@ local _sufix, _r_br, _razduzuje
 local _fakt_dobavljac := SPACE(10)
 local _artikli := SPACE(150)
 local _usl_roba
+local _h_dokument := hb_hash()
 
 _o_prenos_tbls()
 
@@ -548,8 +549,16 @@ _id_konto_2 := PADR( "1010", 7 )
 _razduzuje := SPACE(6)
 _dat_fakt_od := DATE()
 _dat_fakt_do := DATE()
-_br_kalk_dok := GetNextKalkDoc( _id_firma, _tip_kalk )
-    
+   
+
+_h_dokument["idfirma"] := _id_firma
+_h_dokument["idvd"] := _tip_kalk
+_h_dokument["brdok"] := ""
+_h_dokument["datdok"] := DATE() 
+_br_kalk_dok := kalk_novi_broj_dokumenta(_h_dokument)
+
+
+ 
 _id_konto := fetch_metric("kalk_fakt_prenos_otpr_konto_1", my_user(), _id_konto )
 _id_konto_2 := fetch_metric("kalk_fakt_prenos_otpr_konto_2", my_user(), _id_konto_2 )
 

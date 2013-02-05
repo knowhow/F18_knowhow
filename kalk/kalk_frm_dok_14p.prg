@@ -25,8 +25,7 @@ endif
 if nRbr==1 .or. !fnovi
     @ m_x+6,m_y+2   SAY "KUPAC:" get _IdPartner pict "@!" valid empty(_IdPartner) .or. P_Firma(@_IdPartner,6,18)
     @ m_x+7,m_y+2   SAY "Faktura Broj:" get _BrFaktP
-    @ m_x+7,col()+2 SAY "Datum:" get _DatFaktP   ;
-            valid {|| .t.}
+    @ m_x+7,col()+2 SAY "Datum:" get _DatFaktP valid {|| .t.}
     _IdZaduz:=""
     _Idkonto:="1200"
     private cNBrDok:=_brdok
@@ -56,15 +55,10 @@ else
     @ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!" valid  {|| P_Roba(@_IdRoba), Reci(11,23,trim(LEFT(roba->naz, 40))+" ("+ROBA->jmj+")",40), _IdTarifa:=iif(fnovi,ROBA->idtarifa, _IdTarifa),.t.}
 endif
 
-@ m_x+11,m_y+70 GET _IdTarifa when gPromTar=="N" valid P_Tarifa(@_IdTarifa)
+@ m_x+11,m_y+70 GET _IdTarifa when gPromTar == "N" valid P_Tarifa(@_IdTarifa)
 
-IF !lPoNarudzbi
-    @ m_x+12+IF(lPoNarudzbi,1,0),m_y+2   SAY "Kolicina " GET _Kolicina PICTURE PicKol valid _Kolicina<>0
-ENDIF
+@ m_x+12, m_y+2   SAY "Kolicina " GET _Kolicina PICTURE PicKol valid _Kolicina<>0
 
-IF IsDomZdr()
-    @ m_x+13+IF(lPoNarudzbi,1,0),m_y+2   SAY "Tip sredstva (prazno-svi) " GET _Tip PICT "@!"
-ENDIF
 
 read
 ESC_RETURN K_ESC
@@ -135,13 +129,11 @@ if _TBankTr<>"X"   // ako je X onda su stavke vec izgenerisane
     endif
         // Vindija trazi da se uvijek nudi srednja nabavna cijena
         // kada malo razmislim najbolje da se ona uvijek nudi
-    //if _kolicina >= 0
-            if gMetodaNC $ "13"
+        if gMetodaNC $ "13"
             _nc := nc1
         elseif gMetodaNC=="2"
             _nc := nc2
         endif
-    //endif
 endif
 select kalk_pripr
 
@@ -249,7 +241,6 @@ return lastkey()
  */
 
 function pPDV14(fRet)
-*{
 devpos(m_x+16+IF(lPoNarudzbi,1,0),m_y+41)
 if roba->tip $ "VKX"
     // nista ppp
@@ -259,6 +250,5 @@ endif
 
 _VPCSaP:=iif(_VPC<>0, _VPC*(1-_RABATV/100) + iif(nMarza<0,0,nMarza) * TARIFA->VPP/100,0)
 return fret
-*}
 
 

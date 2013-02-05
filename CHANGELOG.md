@@ -1,3 +1,7 @@
+1.5.13 2013-02-05, hernad
+
+   - kalk 14 brojac, kalk povrat
+
 1.5.12 2013-01-31, hernad
 
    - merge sa 1.4.116

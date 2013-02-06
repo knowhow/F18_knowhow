@@ -1,8 +1,8 @@
-1.4.119 2013-02-05, vsasa
+1.4.119 2013-02-06, vsasa
 
   - fin, subanalitička specifikacija sql [#29508](http://redmine.bring.out.ba/issues/29508)
   - fin, subanalitička kartica - bugfix 
-  - 
+  - kalk, stanje magacina sql - bugfix 
 
 1.4.118 2013-02-04, hernad
 

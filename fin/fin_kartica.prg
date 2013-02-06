@@ -1013,7 +1013,8 @@ END PRINT
 
 // export podataka, dbf
 if cExpDbf == "D"
-	tbl_export( cLaunch )
+    close all
+  	tbl_export( cLaunch )
 endif
 
 closeret

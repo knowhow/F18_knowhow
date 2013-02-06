@@ -28,7 +28,14 @@ if datum_do == NIL
     datum_do := DATE()
 endif
 
-_qry := "SELECT SUM( CASE WHEN mu_i = '1' AND kolicina > 0 THEN kolicina WHEN mu_i = '5' AND kolicina < 0 THEN kolicina WHEN mu_i = '5' and kolicina >= 0 THEN -kolicina ELSE 0 END ) as stanje_m " + ;
+_qry := "SELECT " + ;
+        " SUM( " + ;
+            " CASE " + ;
+                " WHEN mu_i = '1' AND idvd NOT IN ('12', '22', '94') THEN kolicina " + ;
+                " WHEN mu_i = '1' AND idvd IN ('12', '22', '94') THEN -kolicina " + ;
+                " WHEN mu_i = '5' THEN -kolicina " + ;
+                " WHEN mu_i = '8' THEN -kolicina " + ;
+            " END ) as stanje_m " + ;
         " FROM fmk.kalk_kalk " + ;
         " WHERE " + ;
         " idfirma = " + _sql_quote( gFirma ) + ;

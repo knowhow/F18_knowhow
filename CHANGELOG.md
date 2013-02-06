@@ -1,3 +1,7 @@
+1.4.120 2013-02-06, vsasa
+
+  - fakt, realizacija mp, razvrstavanje po tipu partnera
+
 1.4.119 2013-02-06, vsasa
 
   - fin, subanalitička specifikacija sql [#29508](http://redmine.bring.out.ba/issues/29508)

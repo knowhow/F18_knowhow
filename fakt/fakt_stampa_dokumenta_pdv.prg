@@ -307,7 +307,7 @@ do while !EOF() .and. idfirma==dok["idfirma"]  .and. idtipdok==dok["idtipdok"] .
 	endif
 
 	// ako je roba grupa:
-	if glRGrPrn == "D" .and. isrobagroup()
+	if glRGrPrn == "D"
 		
 		cPom := _op_gr(roba->id, "GR1") + ": " + _val_gr(roba->id, "GR1") + ;
 			", " + _op_gr(roba->id, "GR2") + ": " + _val_gr(roba->id, "GR2")

@@ -1,3 +1,7 @@
+1.4.122 2013-02-07, vsasa
+
+  - kalk/fakt, ispis grupacije robe na fakturi, pregled na lager listi
+
 1.4.121 2013-02-07, vsasa
 
   - ld, olp/mip/gip parametri naziva firme - bugfix

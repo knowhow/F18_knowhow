@@ -1,3 +1,7 @@
+1.4.121 2013-02-07, vsasa
+
+  - ld, olp/mip/gip parametri naziva firme - bugfix
+
 1.4.120 2013-02-06, vsasa
 
   - fakt, realizacija mp, razvrstavanje po tipu partnera

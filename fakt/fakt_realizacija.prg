@@ -115,6 +115,7 @@ static function g_vars( params )
 local _ret := 1
 local _x := 1
 local _tip_partnera, _id_firma, _d_from, _d_to, _dok_tip, _operater, _varijanta
+local _partner
 
 _id_firma := PADR( fetch_metric( "fakt_real_mp_firma", my_user(), "" ), 100 )
 _d_from := fetch_metric( "fakt_real_mp_datum_od", my_user(), DATE() )
@@ -123,6 +124,7 @@ _dok_tip := PADR( fetch_metric( "fakt_real_mp_tip_dok", my_user(), "11;" ), 100 
 _operater := fetch_metric( "fakt_real_mp_operater", my_user(), 0 )
 _varijanta := fetch_metric( "fakt_real_mp_varijanta", my_user(), 1 )
 _tip_partnera := fetch_metric( "fakt_real_mp_tip_partnera", my_user(), "D" )
+_partner := PADR( fetch_metric( "fakt_real_mp_partner", my_user(), "" ), 200 )
 
 Box( , 12, 66)
 
@@ -131,8 +133,7 @@ Box( , 12, 66)
 	++ _x
 	++ _x
 	
-	@ m_x + _x, m_y + 2 SAY "Firma (prazno-sve):" GET _id_firma ;
-		PICT "@S20"
+	@ m_x + _x, m_y + 2 SAY "Firma (prazno-sve):" GET _id_firma PICT "@S20"
 	
 	++ _x
 
@@ -141,8 +142,11 @@ Box( , 12, 66)
 
 	++ _x
 
-	@ m_x + _x, m_y + 2 SAY "Vrste dokumenata:" GET _dok_tip ;
-		PICT "@S30"
+	@ m_x + _x, m_y + 2 SAY "Vrste dokumenata:" GET _dok_tip PICT "@S30"
+
+	++ _x
+
+	@ m_x + _x, m_y + 2 SAY "Partner (prazno-svi):" GET _partner PICT "@S40"
 
 	++ _x
 
@@ -163,8 +167,7 @@ Box( , 12, 66)
 	
 	++ _x
 
-	@ m_x + _x, m_y + 2 SAY "                  3-samo total" GET _varijanta ;
-		PICT "9"
+	@ m_x + _x, m_y + 2 SAY "                  3-samo total" GET _varijanta PICT "9"
 
 	read
 BoxC()
@@ -180,6 +183,7 @@ set_metric( "fakt_real_mp_tip_dok", my_user(), ALLTRIM( _dok_tip ) )
 set_metric( "fakt_real_mp_operater", my_user(), _operater )
 set_metric( "fakt_real_mp_varijanta", my_user(), _varijanta )
 set_metric( "fakt_real_mp_tip_partnera", my_user(), _tip_partnera )
+set_metric( "fakt_real_mp_partner", my_user(), ALLTRIM( _partner ) )
 
 // snimi parametre i matricu
 params := hb_hash()
@@ -190,6 +194,7 @@ params["tip_dok"] := ALLTRIM( _dok_tip )
 params["operater"] := _operater
 params["firma"] := ALLTRIM( _id_firma )
 params["tip_partnera"] := _tip_partnera
+params["partner"] := _partner
 
 _ret := 1
 
@@ -226,6 +231,7 @@ _tip_dok := params["tip_dok"]
 _operater := params["operater"]
 _id_firma := params["firma"]
 _rasclaniti := params["tip_partnera"] == "D"
+_partner := params["partner"]
 
 _filter := ""
 
@@ -233,41 +239,42 @@ if !EMPTY( _id_firma )
 	_filter += Parsiraj( ALLTRIM( _id_firma ), "idfirma" )
 endif
 
+// operater
 if _operater <> 0
-	
 	if !EMPTY( _filter )
 		_filter += ".and."
 	endif
-	
 	_filter += "oper_id = " + _filter_quote( _operater )
-
 endif
 
+// tipovi dokumenata
 if !EMPTY( _tip_dok )
-	
 	if !EMPTY( _filter )
 		_filter += ".and."
 	endif
-
 	_filter += Parsiraj( ALLTRIM( _tip_dok ), "idtipdok" )
-
 endif
 
-if !EMPTY( DTOS(_d_od) )
-	
+// partner
+if !EMPTY( _partner )
 	if !EMPTY( _filter )
 		_filter += ".and."
 	endif
+	_filter += Parsiraj( ALLTRIM( _partner ), "idpartner" )
+endif
 
+// datumi od-do
+if !EMPTY( DTOS(_d_od) )
+	if !EMPTY( _filter )
+		_filter += ".and."
+	endif
 	_filter += "datdok >=" + _filter_quote( _d_od )
 endif
 
 if !EMPTY( DTOS(_d_do) )
-	
 	if !EMPTY( _filter )
 		_filter += ".and."
 	endif
-
 	_filter += "datdok <=" + _filter_quote( _d_do )
 endif
 
@@ -297,6 +304,7 @@ do while !EOF()
 		cRoba_id := field->idroba
 		cPart_id := field->idpartner
 	
+        // fizicka lica
         _tip_partnera := "1"
         
         if _rasclaniti
@@ -305,12 +313,9 @@ do while !EOF()
             _id_broj := IzSifK( "PARTN", "REGB", cPart_id )
             _pdv_clan := IzSifK( "PARTN", "REG0", cPart_id )
 
-            if LEN( ALLTRIM( _id_broj ) ) == 12 
-                // pdv
+            if !EMPTY( _id_broj ) 
+                // pravna lica
                 _tip_partnera := "2"
-            elseif !EMPTY( _id_broj ) .and. LEN( ALLTRIM( _id_broj ) ) < 12
-                // ino
-                _tip_partnera := "3"
             endif
 
         endif
@@ -658,12 +663,10 @@ do while !EOF()
 	// rbr
 	? PADL( ALLTRIM( STR( ++nRbr ) ), 4 ) + "."
 
-    _opis := "NE-PDV obveznici"
+    _opis := "Fizicka lica"
 
     if _tip_partnera == "2"
-        _opis := "PDV obveznici"
-    elseif _tip_partnera == "3"
-        _opis := "INO partneri"
+        _opis := "Pravna lica"
     endif
 
 	// tip partnera

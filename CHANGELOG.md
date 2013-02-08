@@ -1,3 +1,7 @@
+1.4.123 2013-02-08, vsasa
+
+  - kalk, unos po težinskom barkod-u unutar dokumenata MP i VP
+
 1.4.122 2013-02-07, vsasa
 
   - kalk/fakt, ispis grupacije robe na fakturi, pregled na lager listi

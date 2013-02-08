@@ -237,21 +237,29 @@ return
  */
 
 function VRoba_lv( fNovi, aPorezi )
+local _tezina := 0
+local _ocitani_barkod := _idroba
 
-P_Roba(@_IdRoba)
+P_Roba( @_IdRoba )
 
 if fNovi .or. IsJerry()
     // nadji odgovarajucu tarifu regiona
-    cTarifa:=Tarifa(_IdKonto,_IdRoba, @aPorezi)
+    cTarifa := Tarifa(_IdKonto,_IdRoba, @aPorezi)
 else
     // za postojece dokumente uzmi u obzir unesenu tarifu
     SELECT TARIFA
     seek _IdTarifa
-    SetAPorezi(@aPorezi)
+    SetAPorezi( @aPorezi )
 endif
 
-if fNovi .or. (gVodiSamoTarife=="D") .or. IsJerry()
-   _IdTarifa:=cTarifa
+if fNovi .or. ( gVodiSamoTarife == "D" ) .or. IsJerry()
+   _IdTarifa := cTarifa
+endif
+
+// momenat kada mozemo ocitati tezinu iz barkod-a ako se koristi...
+if tezinski_barkod_get_tezina( _ocitani_barkod, @_tezina ) .and. _tezina <> 0
+    // ako je ocitan tezinski barkod...
+    _kolicina := _tezina
 endif
 
 return .t.

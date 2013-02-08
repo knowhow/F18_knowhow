@@ -432,10 +432,53 @@ return _barkod
 
 
 
+// -------------------------------------------------------------------------------------
+// ova funkcija vraca tezinu na osnovu tezinskog barkod-a
+// znaci samo je izracuna
+// -------------------------------------------------------------------------------------
+function tezinski_barkod_get_tezina( barkod, tezina )
+local _tb := param_tezinski_barkod()
+local _tb_prefix := ALLTRIM( fetch_metric( "barkod_prefiks_tezinskog_barkoda", nil, "" ) )
+local _tb_barkod, _tb_tezina
+local _bk_len := fetch_metric( "barkod_tezinski_duzina_barkoda", nil, 0 )
+local _tez_len := fetch_metric( "barkod_tezinski_duzina_tezina", nil, 0 )
+local _tez_div := fetch_metric( "barkod_tezinski_djelitelj", nil, 10000 )
+local _val_tezina := 0
+local _a_prefix
+local _i
+
+if _tb == "N"
+    return .f.
+endif
+
+// matrica sa prefiksima...
+// "55"
+// "21"
+// itd...
+_a_prefix := TokToNiz( _tb_prefix, ";" )
+
+if ASCAN( _a_prefix, { |var| var == PADR( barkod, LEN( var ) ) } ) == 0
+    return .f. 
+endif
+
+// odrezi ocitano na 7, tu je barkod koji trebam pretraziti
+_tb_barkod := LEFT( barkod, _bk_len )
+_tb_tezina := PADR( RIGHT( barkod, _tez_len ), _tez_len - 1 )
+
+// sredi mi i tezinu...
+if !EMPTY( _tb_tezina )
+    _val_tezina := VAL( _tb_tezina )
+	tezina := ROUND( ( _val_tezina / _tez_div ), 4 )
+    return .t.
+endif
+
+return .f.
+
+
 // --------------------------------------------------------------------------------------
 // provjerava tezinski barod
 // --------------------------------------------------------------------------------------
-function tezinski_barkod( id, tezina )
+function tezinski_barkod( id, tezina, pop_push )
 local _ocitao := .f.
 local _tb := param_tezinski_barkod()
 local _tb_prefix := ALLTRIM( fetch_metric( "barkod_prefiks_tezinskog_barkoda", nil, "" ) )
@@ -446,6 +489,10 @@ local _tez_div := fetch_metric( "barkod_tezinski_djelitelj", nil, 10000 )
 local _val_tezina := 0
 local _a_prefix
 local _i
+
+if pop_push == NIL
+    pop_push := .t.
+endif
 
 gOcitBarCod := _ocitao
 
@@ -473,7 +520,9 @@ endif
 _tb_barkod := LEFT( id, _bk_len )
 _tb_tezina := PADR( RIGHT( id, _tez_len ), _tez_len - 1 )
 
-PushWa()
+if pop_push
+    PushWa()
+endif
 
 select roba
 set order to tag "BARKOD"
@@ -501,7 +550,9 @@ id := PADR( id, 10 )
 select roba
 set order to tag "ID"
 
-PopWa()
+if pop_push
+    PopWa()
+endif
 
 return _ocitao
 

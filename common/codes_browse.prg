@@ -207,6 +207,7 @@ return .t.
 static function sif_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j, nOrdId )
 local _bk := ""
 local _order := indexord() 
+local _tezina := 0
 
 if cId == NIL
     return
@@ -240,9 +241,15 @@ endif
             
 // po barkod-u
 if LEN( cId ) > 10
-    barkod( @cId )
+
+    if !tezinski_barkod( @cId, @_tezina, .f. )
+        barkod( @cId )
+    endif
+
     ordsetfocus( _order )
+
     return
+
 endif
 
 return

@@ -2,6 +2,7 @@
 
   - kalk, unos po težinskom barkod-u unutar dokumenata MP i VP
   - rnal/fakt, valuta uvijek kao UPPER()
+  - rnal export lisec, nakon eksporta fajla, zatvori ga 
 
 1.4.122 2013-02-07, vsasa
 

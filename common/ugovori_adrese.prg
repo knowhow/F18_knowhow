@@ -20,6 +20,7 @@ function kreiraj_adrese_iz_ugovora()
 local _id_roba, _partner, _ptt, _mjesto
 local _n_sort, _dat_do, _g_dat
 local _filter := ""
+local _index_sort := "LAB"
 local _rec, _usl_partner, _usl_mjesto, _usl_ptt
 local _ima_destinacija
 local _count := 0
@@ -82,6 +83,9 @@ set_metric( "ugovori_naljepnice_partner", my_user(), ALLTRIM( _partner ) )
 set_metric( "ugovori_naljepnice_ptt", my_user(), ALLTRIM( _ptt ) )
 set_metric( "ugovori_naljepnice_mjesto", my_user(), ALLTRIM( _mjesto ) )
 set_metric( "ugovori_naljepnice_sort", my_user(), _n_sort )
+
+// sredi index
+_index_sort := _index_sort + ALLTRIM( _n_sort )
 
 // kreiraj "labelu.dbf"
 _create_labelu_dbf()
@@ -276,11 +280,11 @@ MsgBeep( "Ukupno generisano " + ALLTRIM( STR( _count ) ) + ;
         " naljepnica, kolicina: " + ALLTRIM( STR( _total_kolicina, 12, 0 ) ) )
 
 // stampaj pregled naljepnica...
-stampa_pregleda_naljepnica( _n_sort )
+stampa_pregleda_naljepnica( _index_sort )
 
 // stampaj labelu...
 // pozovi funkciju stampanja rtm fajla kroz labeliranje.exe
-f18_rtm_print( "labelu", "labelu", _n_sort, NIL, "labeliranje" )
+f18_rtm_print( "labelu", "labelu", _index_sort, NIL, "labeliranje" )
 
 // otvori ponovo tabele ugovora
 _open_tables()
@@ -316,13 +320,12 @@ endif
 AADD( aKol, { "Partner"      , {|| IdPartner    }, .f., "C",  6, 0, 1, 2} )
 AADD( aKol, { "Dest."        , {|| Destin       }, .f., "C",  6, 0, 1, 3} )
 AADD( aKol, { "Kolicina"     , {|| Kolicina     }, .t., "N", 12, 0, 1, 4} )
-AADD( aKol, { "PTT"          , {|| PTT          }, .f., "C",  5, 0, 1, 7} )
-AADD( aKol, { "Mjesto"       , {|| MJESTO       }, .f., "C", 16, 0, 1, 8} )
-AADD( aKol, { "Naziv"        , {|| Naz          }, .f., "C", 60, 0, 1, 5} )
-AADD( aKol, { "Naziv2"       , {|| Naz2         }, .f., "C", 60, 0, 1, 6} )
-AADD( aKol, { "Adresa"       , {|| ADRESA       }, .f., "C", 40, 0, 1, 9} )
-AADD( aKol, { "Telefon"      , {|| TELEFON      }, .f., "C", 12, 0, 1,10} )
-AADD( aKol, { "Fax"          , {|| FAX          }, .f., "C", 12, 0, 1,11} )
+AADD( aKol, { "PTT"          , {|| PTT          }, .f., "C",  5, 0, 1, 5} )
+AADD( aKol, { "Mjesto"       , {|| MJESTO       }, .f., "C", 16, 0, 1, 6} )
+AADD( aKol, { "Naziv"        , {|| PADR( ALLTRIM( naz ) + ", " + ALLTRIM( naz2 ), 60 ) }, .f., "C", 60, 0, 1, 7} )
+AADD( aKol, { "Adresa"       , {|| ADRESA       }, .f., "C", 40, 0, 1, 8} )
+AADD( aKol, { "Telefon"      , {|| TELEFON      }, .f., "C", 12, 0, 1, 9} )
+AADD( aKol, { "Fax"          , {|| FAX          }, .f., "C", 12, 0, 1,10} )
 
 StartPrint()
 
@@ -411,11 +414,11 @@ use
 my_use_temp( "labelu", my_home() + _table + ".dbf", .f., .f. )
 
 // indeksiraj tabelu
-index on ( kol_c + mjesto + naz ) tag "1"
-index on ( mjesto + naz + kol_c ) tag "2"
-index on ( ptt + mjesto + naz + kol_c ) tag "3"
-index on ( kol_c + ptt + mjesto + naz ) tag "4"
-index on ( idpartner ) tag "5"
+index on ( kol_c + mjesto + naz ) tag "LAB1"
+index on ( mjesto + naz + kol_c ) tag "LAB2"
+index on ( ptt + mjesto + naz + kol_c ) tag "LAB3"
+index on ( kol_c + ptt + mjesto + naz ) tag "LAB4"
+index on ( idpartner ) tag "LAB5"
 
 return
 

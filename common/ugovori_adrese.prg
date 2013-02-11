@@ -198,6 +198,12 @@ do while !EOF()
     _rec["kolicina"] := rugov->kolicina
     _rec["idroba"] := rugov->idroba
 
+    // karakterno polje za kolicinu
+    // 0000001
+    // 0000100
+    // itd...
+    _rec["kol_c"] := PADL( ALLTRIM( STR( rugov->kolicina, 12, 0 ) ), 10, "0" )
+
     _total_kolicina += rugov->kolicina
 
     @ m_x + 2, m_y + 2 SAY "Partner: " + ugov->idpartner
@@ -226,8 +232,8 @@ do while !EOF()
         _rec["destin"] := dest->id
         _rec["naz"] := dest->naziv
         _rec["naz2"] := dest->naziv2
-        _rec["ptt"] := dest->ptt
-        _rec["mjesto"] := dest->mjesto
+        _rec["ptt"] := UPPER( dest->ptt )
+        _rec["mjesto"] := UPPER( dest->mjesto )
         _rec["telefon"] := dest->telefon
         _rec["fax"] := dest->fax
         _rec["adresa"] := dest->adresa
@@ -240,8 +246,8 @@ do while !EOF()
         _rec["destin"] := ""
         _rec["naz"] := partn->naz
         _rec["naz2"] := partn->naz2
-        _rec["ptt"] := partn->ptt
-        _rec["mjesto"] := partn->mjesto
+        _rec["ptt"] := UPPER( partn->ptt )
+        _rec["mjesto"] := UPPER( partn->mjesto )
         _rec["telefon"] := partn->telefon
         _rec["fax"] := partn->fax
         _rec["adresa"] := partn->adresa
@@ -284,13 +290,19 @@ PopWA()
 return
 
 
+
+
+
 // -----------------------------------------------------------------------
 // stampa pregleda naljepnica
 // -----------------------------------------------------------------------
 static function stampa_pregleda_naljepnica( index_sort )
+local _table_type := 1
+private _index := index_sort
 
 select labelu
-set order to tag index_sort
+// (ovako ce indeks profercerati kako treba ...)
+set order to tag &_index
 go top
 
 aKol := {}
@@ -304,21 +316,21 @@ endif
 AADD( aKol, { "Partner"      , {|| IdPartner    }, .f., "C",  6, 0, 1, 2} )
 AADD( aKol, { "Dest."        , {|| Destin       }, .f., "C",  6, 0, 1, 3} )
 AADD( aKol, { "Kolicina"     , {|| Kolicina     }, .t., "N", 12, 0, 1, 4} )
-AADD( aKol, { "Naziv"        , {|| Naz          }, .f., "C", 60, 0, 1, 5} )
-AADD( aKol, { "Naziv2"       , {|| Naz2         }, .f., "C", 60, 0, 1, 6} )
 AADD( aKol, { "PTT"          , {|| PTT          }, .f., "C",  5, 0, 1, 7} )
 AADD( aKol, { "Mjesto"       , {|| MJESTO       }, .f., "C", 16, 0, 1, 8} )
+AADD( aKol, { "Naziv"        , {|| Naz          }, .f., "C", 60, 0, 1, 5} )
+AADD( aKol, { "Naziv2"       , {|| Naz2         }, .f., "C", 60, 0, 1, 6} )
 AADD( aKol, { "Adresa"       , {|| ADRESA       }, .f., "C", 40, 0, 1, 9} )
 AADD( aKol, { "Telefon"      , {|| TELEFON      }, .f., "C", 12, 0, 1,10} )
 AADD( aKol, { "Fax"          , {|| FAX          }, .f., "C", 12, 0, 1,11} )
 
 StartPrint()
 
-StampaTabele( aKol, {|| BlokSLU() }, , gTabela, , , "PREGLED BAZE PRIPREMLJENIH LABELA", , , , , )
-
-close all
+StampaTabele( aKol, NIL, NIL, _table_type, NIL, NIL, "PREGLED BAZE PRIPREMLJENIH NALJEPNICA", , , , , )
 
 EndPrint()
+
+close all
 
 return
 
@@ -371,36 +383,42 @@ static function _create_labelu_dbf()
 local _dbf := {}
 local _table := "labelu"
 
-AADD ( _dbf, {"IDROBA", "C",  10, 0 })
-AADD ( _dbf, {"IdPartner", "C",  6, 0 })
-AADD ( _dbf, {"Destin"  , "C", 6, 0 })
-AADD ( _dbf, {"Kolicina", "N",  12, 0 })
-AADD ( _dbf, {"Naz" , "C", 60, 0 })
-AADD ( _dbf, {"Naz2", "C", 60, 0 })
-AADD ( _dbf, {"PTT" , 'C' ,   5 ,  0 })
-AADD ( _dbf, {"MJESTO" , 'C' ,  16 ,  0 })
-AADD ( _dbf, {"ADRESA" , 'C' ,  40 ,  0 })
-AADD ( _dbf, {"TELEFON", 'C' ,  12 ,  0 })
-AADD ( _dbf, {"FAX"    , 'C' ,  12 ,  0 })
+AADD ( _dbf, { "idroba",    "C",     10, 0 })
+AADD ( _dbf, { "idpartner", "C",      6, 0 })
+AADD ( _dbf, { "destin"  ,  "C",      6, 0 })
+AADD ( _dbf, { "kolicina",  "N",     12, 0 })
+AADD ( _dbf, { "kol_c",     "C",     10, 0 })
+AADD ( _dbf, { "naz" ,      "C",    200, 0 })
+AADD ( _dbf, { "naz2",      "C",    200, 0 })
+AADD ( _dbf, { "ptt" ,      "C" ,    10, 0 })
+AADD ( _dbf, { "mjesto" ,   "C" ,    50, 0 })
+AADD ( _dbf, { "adresa" ,   "C" ,    50, 0 })
+AADD ( _dbf, { "telefon",   "C" ,    20, 0 })
+AADD ( _dbf, { "fax"    ,   "C" ,    20, 0 })
+
+select ( F_LABELU )
+use
+
+// brisi tabelu i indeks
+// napravi ponovo
+FERASE( my_home() + _table + ".dbf" )
+FERASE( my_home() + _table + ".cdx" )
 
 Dbcreate( my_home() + _table + ".dbf", _dbf )
 
-select (F_LABELU)
+select ( F_LABELU )
 use
-
 my_use_temp( "labelu", my_home() + _table + ".dbf", .f., .f. )
 
-index on ( STR( kolicina, 12, 0 ) + mjesto + naz ) tag "1"
-index on ( mjesto + naz + STR( kolicina, 12, 0 ) ) tag "2"
-index on ( ptt + mjesto + naz + STR( kolicina, 12, 0 ) ) tag "3"
-index on ( STR( kolicina, 12, 0 ) + ptt + mjesto + naz ) tag "4"
+// indeksiraj tabelu
+index on ( kol_c + mjesto + naz ) tag "1"
+index on ( mjesto + naz + kol_c ) tag "2"
+index on ( ptt + mjesto + naz + kol_c ) tag "3"
+index on ( kol_c + ptt + mjesto + naz ) tag "4"
 index on ( idpartner ) tag "5"
 
 return
 
-
-static function BlokSLU()
-return
 
 
 

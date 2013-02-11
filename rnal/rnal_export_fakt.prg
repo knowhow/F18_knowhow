@@ -46,7 +46,7 @@ Box(, 8, 65 )
 
     ++ _x    
 
-    @ m_x + _x, m_y + 2 SAY "Valuta u koju mjenjamo otpremnicu (KM/EUR)" GET _valuta 
+    @ m_x + _x, m_y + 2 SAY "Valuta u koju mjenjamo otpremnicu (KM/EUR)" GET _valuta PICT "@!"
  
     ++ _x    
 
@@ -64,7 +64,7 @@ endif
 params := hb_hash()
 params["exp_tip"] := _tip
 params["exp_suma"] := _suma
-params["exp_valuta"] := _valuta
+params["exp_valuta"] := UPPER( _valuta )
 params["exp_isporuka"] := _pr_isp
 
 return _ok

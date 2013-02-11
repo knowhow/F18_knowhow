@@ -1,6 +1,7 @@
-1.4.123 2013-02-08, vsasa
+1.4.123 2013-02-11, vsasa
 
   - kalk, unos po težinskom barkod-u unutar dokumenata MP i VP
+  - rnal/fakt, valuta uvijek kao UPPER()
 
 1.4.122 2013-02-07, vsasa
 

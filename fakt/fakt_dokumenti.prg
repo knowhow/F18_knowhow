@@ -188,7 +188,7 @@ Box(, 6, 65 )
                     VALID ( _tip_rn > 0 .and. _tip_rn < 3 ) ;
                     PICT "9"
 
-    @ m_x + 6, m_y + 2 SAY "Valuta (KM/EUR):" GET _valuta VALID !EMPTY( _valuta )
+    @ m_x + 6, m_y + 2 SAY "Valuta (KM/EUR):" GET _valuta VALID !EMPTY( _valuta ) PICT "@!"
     
     read
 
@@ -202,7 +202,7 @@ endif
 // snimi mi u matricu parametre
 params["tip_racuna"] := _tip_rn
 params["sumiraj"] := _sumiraj
-params["valuta"] := _valuta
+params["valuta"] := UPPER( _valuta )
 
 return _ok
 

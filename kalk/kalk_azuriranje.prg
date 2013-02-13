@@ -1132,6 +1132,8 @@ endif
 _brisi_kum := Pitanje(,"Izbrisati dokument iz kumulativne tabele ?", "D" ) == "D"
 
 select kalk
+set order to tag "1"
+go top
 hseek _id_firma + _id_vd + _br_dok
 
 EOF CRET
@@ -1141,7 +1143,9 @@ MsgO("Prebacujem u pripremu...")
 do while !EOF() .and. _id_firma == field->IdFirma .and. _id_vd == field->IdVD .and. _br_dok == field->BrDok
     
     select kalk
+
     _rec := dbf_get_rec()
+
     select kalk_pripr
 
     IF ! ( _rec["idvd"] $ "97" .and. _rec["tbanktr"] == "X" )
@@ -1171,7 +1175,9 @@ if _brisi_kum
     sql_table_update( nil, "BEGIN" )
 
     select kalk
-    hseek _id_firma + _id_vd + _br_dok
+	set order to tag "1"
+	go top
+    seek _id_firma + _id_vd + _br_dok
 
     if FOUND()
 

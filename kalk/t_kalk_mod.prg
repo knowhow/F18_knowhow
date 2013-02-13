@@ -433,6 +433,9 @@ gRobaBlock:={|Ch| RobaBlock(Ch)}
 // u svim modulima je "D"
 gNW := "X"
 
+// procitaj i parametre modula fin
+fin_read_params()
+
 return
 
 

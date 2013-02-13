@@ -375,42 +375,29 @@ do case
 
         return DE_CONT
 
+	// azuriranje dokumenta
     case Ch == K_ALT_A
-
-        if IsJerry()
-            JerryMP()
-        endif
 
         close all
 
+		// azuriraj kalkulaciju
         azur_kalk()
+
+		// otvori potrebne tabele
         o_kalk_edit()
 
-        if kalk_pripr->(RECCOUNT())==0 
-            O__KALK
+		// vrati stavke iz _kalk tabele ako postoje !
+		// f-ja vraca .t. ili .f. ako nije nista vratila
+		vrati_stavke_iz_kalk_tmp()
 
-            select _kalk
-            do while !EOF()
-                _rec := dbf_get_rec()
-                select kalk_pripr
-                append blank
-                dbf_update_rec( _rec )
-                select _kalk
-                skip            
-            enddo
-            
-            SELECT kalk_pripr
-            
-            UzmiIzINI(PRIVPATH+"FMK.INI","Indikatori","ImaU_KALK","N","WRITE")
-            close all
+		close all
 
-            o_kalk_edit()
-            MsgBeep("Stavke koje su bile privremeno sklonjene sada su vracene! Obradite ih!")
-
-        endif
+		// otvori potrebne tabele
+		o_kalk_edit()
 
         return DE_REFRESH
 
+	// stampa dokumenta
     case Ch == K_CTRL_P
 
         close all
@@ -421,6 +408,7 @@ do case
 
         return DE_REFRESH
 
+	// brisanje stavke
     case Ch == K_CTRL_T
         
         if Pitanje(, "Zelite izbrisati ovu stavku ?", "D" ) == "D"
@@ -451,6 +439,7 @@ do case
     case IsDigit(Chr(Ch))
         Msg("Ako zelite zapoceti unos novog dokumenta: <Ctrl-N>")
         return DE_CONT
+
     case Ch==K_ENTER
         return EditStavka()
     case Ch==K_CTRL_A .or. lAsistRadi

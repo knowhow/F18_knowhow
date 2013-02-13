@@ -91,3 +91,52 @@ return _stanje
 
 
 
+// --------------------------------------------------------------
+// vracaju se stavke iz _kalk tabele u _kalk_pripr
+// --------------------------------------------------------------
+function vrati_stavke_iz_kalk_tmp()
+local _rec
+local _tmp_count := 0
+local _ret := .f.
+
+close all
+
+select ( F_KALK_PRIPR )
+if !Used()
+	O_KALK_PRIPR
+endif
+
+if kalk_pripr->( RECCOUNT() ) == 0 
+
+	O__KALK
+	select _kalk
+    
+	do while !EOF()
+
+    	_rec := dbf_get_rec()
+
+        select kalk_pripr
+        append blank
+
+		++ _tmp_count
+		
+        dbf_update_rec( _rec )
+
+        select _kalk
+        skip            
+
+  	enddo
+            
+endif
+    
+close all
+
+if _tmp_count > 0
+	_ret := .t.
+	MsgBeep( "Stavke koje su bile privremeno sklonjene sada su vracene! Obradite ih!" )
+endif
+
+return _ret
+
+
+

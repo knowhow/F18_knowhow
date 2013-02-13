@@ -28,7 +28,7 @@ ENDIF
 IF ( PCOUNT() == 0 )
     _vars["idfirma"]  := gFirma
     _vars["idtipdok"] := SPACE(2)
-    _vars["brdok"]    := SPACE(8)
+    _vars["brdok"]    := SPACE(12)
 ELSE
     _vars["idfirma"]  := id_firma
     _vars["idtipdok"] := id_tip_dok
@@ -463,7 +463,7 @@ Box("", 1, 35)
     @ m_x+1,col()+1 SAY "-"
     @ m_x+1,col()+1 GET _tip_dok
 
-    @ m_x+1,col()+1 SAY "-" GET _br_dok
+    @ m_x+1,col()+1 SAY "-" GET _br_dok VALID fakt_fix_brdok( @_br_dok ) 
 
     read
 

@@ -19,7 +19,7 @@ return stampa_fin_document( lAuto )
 
 
 function stampa_fin_document( lAuto )
-private dDatNal := date()
+private dDatNal := DATE()
 
 StAnalNal( lAuto )
 SintStav( lAuto )

@@ -38,10 +38,10 @@ O_ANAL
 O_SINT
 O_NALOG
 
-if fin_pripr->(RECCOUNT() ) <> 0
-    MsgBeep("Priprema nije prazna !!!#Povrat naloga onemogucen!")
-    return
-endif
+//if fin_pripr->(RECCOUNT() ) <> 0
+  //  MsgBeep("Priprema nije prazna !!!#Povrat naloga onemogucen!")
+  //  return
+//endif
 
 SELECT SUBAN
 set order to tag "4"

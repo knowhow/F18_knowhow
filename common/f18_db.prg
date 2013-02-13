@@ -228,7 +228,7 @@ if sql_table_update(table, "del", nil, _where_str)
     SET ORDER TO TAG (_alg["dbf_tag"])
 
     if FLOCK()
-        
+       
         _count := 0
 
         SEEK _full_id

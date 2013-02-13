@@ -1156,7 +1156,9 @@ enddo
 MsgC()
 
 if _brisi_kum
-    
+
+	_ok := .t.   
+ 
     if !f18_lock_tables( { "kalk_doks", "kalk_kalk", "kalk_doks2" } )
          MsgBeep("ne mogu lockovati kalk tabele ?!")
          return .f.

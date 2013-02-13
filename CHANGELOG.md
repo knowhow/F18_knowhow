@@ -1,3 +1,7 @@
+1.5.15 2013-02-13, vsasa
+
+   - kalk, azuriranje/povrat dokumenta - korekcije
+
 1.5.14 2013-02-05, vsasa
 
    - fakt/kalk/fin, semafor tabele korekcija dužine brdok

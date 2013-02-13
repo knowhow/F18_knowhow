@@ -367,124 +367,102 @@ return
 // ----------------------------------------------------------------------------
 // azuriranje podataka u dbf
 // ----------------------------------------------------------------------------
-static function kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim, lBrStDoks )
-local cIdFirma, _rec
-local cIdVd
-local cBrDok
-local cNPodBr
-local nNv := 0
-local nVpv := 0
-local nMpv := 0
-local nRabat := 0
-local cOpis
-local nBrStavki
+static function kalk_azur_dbf( lAuto, vise_dokumenata, aOstaju, aRezim, lBrStDoks )
+local _id_firma, _rec
+local _id_vd
+local _br_dok
+local _pod_broj
+local _nv := 0
+local _vpv := 0
+local _mpv := 0
+local _rabat := 0
+local _desc, _rec_doks
+local _br_stavki
 
 Tone(360,2)
 
 MsgO( "Azuriram pripremu u DBF tabele...")
 
 select kalk_pripr
+set order to tag "1"
 go top
 
-cIdFirma := field->idfirma
+_id_firma := field->idfirma
 
 select kalk_doks
 set order to tag "3"
-seek cIdfirma + dtos( kalk_pripr->datdok ) + chr(255)
+seek _id_firma + DTOS( kalk_pripr->datdok ) + CHR(255)
 skip -1
 
 if field->datdok == kalk_pripr->datdok
-    if  kalk_pripr->idvd $ "18#19" .and. kalk_pripr->TBankTr=="X"    
+    if kalk_pripr->idvd $ "18#19" .and. kalk_pripr->TBankTr=="X"    
         // rijec je o izgenerisanom dokumentu
         if len(field->podbr) > 1
-            cNPodbr:=chr256(asc256(field->podbr)-3)
+            _pod_broj := CHR256( ASC256( field->podbr ) - 3 )
         else
-            cNPodbr:=chr(asc(field->podbr)-3)
+            _pod_broj := CHR( ASC( field->podbr ) - 3 )
         endif
     else    
-        if len(field->podbr) > 1
-            cNPodbr:=chr256(asc256(field->podbr)+6)
+        if LEN( field->podbr ) > 1
+            _pod_broj := CHR256( ASC256( field->podbr ) + 6 )
         else
-            cNPodbr:=chr(asc(field->podbr)+6)
+            _pod_broj := CHR( ASC( field->podbr ) + 6 )
         endif
     endif
 else    
-    if len(field->podbr) > 1
-        cNPodbr:=chr256(30*256+30)
+    if LEN( field->podbr ) > 1
+        _pod_broj := CHR256(30*256+30)
     else
-        cNPodbr:=chr(30)
+        _pod_broj := CHR(30)
     endif
 endif
 
 select kalk_pripr
+set order to tag "1"
 go top
 
-do while !eof()
+do while !EOF()
 
-    cIdFirma := field->idfirma
-    cBrDok := field->brdok
-    cIdvd := field->idvd
+    _id_firma := field->idfirma
+    _br_dok := field->brdok
+    _id_vd := field->idvd
   
-    if lViseDok .and. ASCAN( aOstaju, cIdFirma + cIdVd + cBrDok ) <> 0  
-        // preskoci postojece
+    // preskoci postojece ako je dozvoljeno vise od jednom azurirati
+    if vise_dokumenata .and. ASCAN( aOstaju, _id_firma + _id_vd + _br_dok ) <> 0  
         skip 1
         loop
     endif
-    
-    // azuriranje tabele KALK_DOKS.DBF
-
-    select kalk_doks
-    append blank
-    
-    _rec := dbf_get_rec()
-    _rec["idfirma"] := cIdFirma
-    _rec["idvd"] := cIdVd
-    _rec["brdok"] := cBrDok
-    _rec["datdok"] := kalk_pripr->datdok
-    _rec["idpartner"] := kalk_pripr->idpartner
-    _rec["mkonto"] := kalk_pripr->mkonto
-    _rec["pkonto"] := kalk_pripr->pkonto
-    _rec["idzaduz"] := kalk_pripr->idzaduz
-    _rec["idzaduz2"] := kalk_pripr->idzaduz2
-    _rec["brfaktp"] := kalk_pripr->brfaktp
-
-    dbf_update_rec( _rec, .t. )
+   
+	// uzmi podatke potrebne za tabelu doks
+	_rec_doks := dbf_get_rec()
  
-    if Logirati(goModul:oDataBase:cName,"DOK","AZUR")
-        
-        cOpis := cIDFirma + "-" + cIdVd + "-" + ALLTRIM(cBrDok)
+    // azuriranje tabele KALK_KALK
 
-        EventLog(nUser,goModul:oDataBase:cName,"DOK","AZUR",nil,nil,nil,nil,cOpis, "", "", kalk_pripr->datdok, Date(),"","Azuriranje dokumenta")
+    _br_stavki := 0
     
-    endif
-
-    // azuriranje tabele KALK_KALK.DBF
-
-    select kalk_pripr
-    go top
-
-    nBrStavki := 0
-    
-    do while !eof() .and. cIdfirma == field->idfirma .and. cBrdok == field->brdok .and. cIdvd == field->idvd
+    do while !EOF() .and. _id_firma == field->idfirma .and. _br_dok == field->brdok .and. _id_vd == field->idvd
             
-        ++ nBrStavki
+        ++ _br_stavki
+
         _rec := dbf_get_rec()
-        _rec["podbr"] := cNPodbr
+
+        _rec["podbr"] := _pod_broj
         
         select kalk
         append blank
 
         dbf_update_rec( _rec, .t. )
 
-        if cIdVd == "97"
+        if _id_vd == "97"
 
             _rec := dbf_get_rec()
+
             append blank
 
             _rec["tbanktr"] := "X"
-            _rec["mkonto"] := _idkonto
+            _rec["mkonto"] := _rec["idkonto"]
             _rec["mu_i"] := "1"
-            _rec["rbr"] := PADL( STR( 900 + VAL( ALLTRIM( _rbr ) ), 3 ), 3 )
+            _rec["rbr"] := PADL( STR( 900 + VAL( ALLTRIM( _rec["rbr"] ) ), 3 ), 3 )
 
             dbf_update_rec( _rec, .t. )
 
@@ -492,28 +470,44 @@ do while !eof()
    
         select kalk_pripr
         
-        if !( cIdVd $ "97" )
+        if !( _id_vd $ "97" )
             // setuj nnv, nmpv ....
-            kalk_set_doks_total_fields( @nNv, @nVpv, @nMpv, @nRabat ) 
+			// totali potrebni za tabelu KALK_DOKS
+            kalk_set_doks_total_fields( @_nv, @_vpv, @_mpv, @_rabat ) 
         endif
 
         skip
     
     enddo
 
+	// azuriranje tabele KALK_DOKS
+
     select kalk_doks
+	append blank
 
     _rec := dbf_get_rec()
 
-    _rec["nv"] := nNv
-    _rec["vpv"] := nVpv
-    _rec["rabat"] := nRabat
-    _rec["mpv"] := nMpv
-    _rec["podbr"] := cNPodBr
+    _rec["idfirma"] := _id_firma
+    _rec["idvd"] := _id_vd
+    _rec["brdok"] := _br_dok
+    _rec["nv"] := _nv
+    _rec["vpv"] := _vpv
+    _rec["rabat"] := _rabat
+    _rec["mpv"] := _mpv
+    _rec["podbr"] := _pod_broj
 
     if lBrStDoks
-        _rec["ukstavki"] := nBrStavki
+        _rec["ukstavki"] := _br_stavki
     endif
+
+	// ovi su podaci u matrici za_doks (_rec_doks)
+    _rec["datdok"] := _rec_doks["datdok"] 
+    _rec["idpartner"] := _rec_doks["idpartner"]
+    _rec["mkonto"] := _rec_doks["mkonto"]
+    _rec["pkonto"] := _rec_doks["pkonto"]
+    _rec["idzaduz"] := _rec_doks["idzaduz"]
+    _rec["idzaduz2"] := _rec_doks["idzaduz2"]
+    _rec["brfaktp"] := _rec_doks["brfaktp"]
 
     dbf_update_rec( _rec, .t. )
 
@@ -1134,7 +1128,7 @@ _brisi_kum := Pitanje(,"Izbrisati dokument iz kumulativne tabele ?", "D" ) == "D
 select kalk
 set order to tag "1"
 go top
-hseek _id_firma + _id_vd + _br_dok
+seek _id_firma + _id_vd + _br_dok
 
 EOF CRET
 
@@ -1163,7 +1157,7 @@ MsgC()
 
 if _brisi_kum
     
-    if !f18_lock_tables({"kalk_doks", "kalk_kalk", "kalk_doks2" })
+    if !f18_lock_tables( { "kalk_doks", "kalk_kalk", "kalk_doks2" } )
          MsgBeep("ne mogu lockovati kalk tabele ?!")
          return .f.
     else
@@ -1184,31 +1178,36 @@ if _brisi_kum
         log_write( "kalk povrat dokumenta: " + _id_firma + _id_vd + _br_dok, 2 )
 
         _del_rec := dbf_get_rec()
+
         _ok := .t.
         _ok := delete_rec_server_and_dbf( "kalk_kalk", _del_rec, 2, "CONT" )
     
-        select kalk_doks
-        hseek _id_firma + _id_vd + _br_dok
+	endif
 
-        if FOUND()
+    select kalk_doks
+	set order to tag "1"
+	go top
+    seek _id_firma + _id_vd + _br_dok
+
+    if FOUND()
             
-            _del_rec := dbf_get_rec()
-            _ok := .t.
-            _ok := delete_rec_server_and_dbf( "kalk_doks", _del_rec, 1, "CONT" )
+    	_del_rec := dbf_get_rec()
+        _ok := .t.
+        _ok := delete_rec_server_and_dbf( "kalk_doks", _del_rec, 1, "CONT" )
         
-        endif
+    endif
 
-        select kalk_doks2
-        hseek _id_firma + _id_vd + _br_dok
+    select kalk_doks2
+	set order to tag "1"
+	go top
+    seek _id_firma + _id_vd + _br_dok
 
-        if FOUND()
+    if FOUND()
             
-            _del_rec := dbf_get_rec()
-            _ok := .t.
-            _ok := delete_rec_server_and_dbf( "kalk_doks2", _del_rec, 1, "CONT" )
+    	_del_rec := dbf_get_rec()
+        _ok := .t.
+        _ok := delete_rec_server_and_dbf( "kalk_doks2", _del_rec, 1, "CONT" )
         
-        endif
-
     endif
 
     MsgC()
@@ -1222,15 +1221,19 @@ if _brisi_kum
         f18_free_tables({"kalk_doks", "kalk_kalk", "kalk_doks2" })
 
         msgbeep("Brisanje KALK dokumenta neuspjesno !?")
+
         close all
         return
-    endif
 
+    endif
 
     // vrati i dokument iz kalk_doksRC
     povrat_doksrc( _id_firma, _id_vd, _br_dok )
 
 endif
+
+select kalk_doks2
+use
 
 select kalk_doks
 use
@@ -1239,6 +1242,7 @@ select kalk
 use
 
 close all
+
 return
 
 

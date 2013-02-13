@@ -1,6 +1,8 @@
 1.5.15 2013-02-13, vsasa
 
    - kalk, azuriranje/povrat dokumenta - korekcije
+   - fakt, povrat dokumenta - korekcije
+   - merge iz mastera (1.4.123)
 
 1.5.14 2013-02-05, vsasa
 

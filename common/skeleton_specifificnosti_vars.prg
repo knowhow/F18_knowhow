@@ -106,11 +106,6 @@ static lRabati := .f.
 
 
 
-function IsRobaGroup()
-*{
-return lRobaGroup
-*}
-
 function SetRobaGroup(lValue)
 *{
 lRobaGroup:=lValue

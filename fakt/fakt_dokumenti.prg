@@ -173,6 +173,7 @@ METHOD FaktDokumenti:generisi_fakt_pripr_vars(params)
 local _ok := .t.
 local _sumiraj := "N"
 local _tip_rn := 1
+local _valuta := PADR( ValDomaca(), 3 )
 
 params := hb_hash()
 
@@ -183,10 +184,12 @@ Box(, 6, 65 )
                     PICT "@!"
 
     @ m_x + 3, m_y + 2 SAY "Formirati tip racuna: 1 (veleprodaja)" 
-    @ m_x + 4, m_y + 2 SAY "                      2 (veleprodaja)" GET _tip_rn ;
+    @ m_x + 4, m_y + 2 SAY "                      2 (maloprodaja)" GET _tip_rn ;
                     VALID ( _tip_rn > 0 .and. _tip_rn < 3 ) ;
                     PICT "9"
 
+    @ m_x + 6, m_y + 2 SAY "Valuta (KM/EUR):" GET _valuta VALID !EMPTY( _valuta ) PICT "@!"
+    
     read
 
 BoxC()
@@ -199,6 +202,7 @@ endif
 // snimi mi u matricu parametre
 params["tip_racuna"] := _tip_rn
 params["sumiraj"] := _sumiraj
+params["valuta"] := UPPER( _valuta )
 
 return _ok
 
@@ -259,7 +263,7 @@ local _veza_otpremnice, _broj_dokumenta
 local _id_partner, _rec
 local _ok := .t.
 local _item, _msg
-local _gen_params 
+local _gen_params, _valuta
 local _first
 local _qry
 local _datum_max
@@ -272,6 +276,7 @@ endif
 // uzmi parametre matrice...
 _sumirati := _gen_params["sumiraj"] == "D"
 _vp_mp := _gen_params["tip_racuna"]
+_valuta := _gen_params["valuta"]
 
 if _vp_mp == 1
     _n_tip_dok := "10"
@@ -327,10 +332,11 @@ _fakt_rec["brdok"]     := fakt_brdok_0(::p_idfirma, _n_tip_dok,  DATE())
 
 _fakt_rec["datdok"]    := DATE()
 _fakt_rec["idtipdok"]  := _n_tip_dok
-_fakt_rec["dindem"]    := LEFT(ValBazna(), 3)
+_fakt_rec["dindem"]    := LEFT( _valuta, 3)
 _datum_max := DATE()
 
 do while !_qry:eof()
+
     _fakt_rec["idroba"]   :=  _to_str(_qry:FieldGet(1))
     _fakt_rec["cijena"]   := _qry:FieldGet(2)
     // ovo polje ipak ne trebamo 
@@ -347,9 +353,12 @@ do while !_qry:eof()
          // radi se o mp racunu, izracunaj cijenu sa pdv
         _fakt_rec["cijena"] := ROUND( _uk_sa_pdv( ::p_idtipdok, ::p_idpartner, _fakt_rec["cijena"]), 2 )
     endif
+
     APPEND BLANK
     dbf_update_rec(_fakt_rec)
+
     _qry:skip()
+
 enddo
  
 _veza_otpremnice := "Racun formiran na osnovu otpremnica: " + _veza_otpremnice
@@ -357,4 +366,5 @@ _veza_otpremnice := "Racun formiran na osnovu otpremnica: " + _veza_otpremnice
 renumeracija_fakt_pripr( _veza_otpremnice, _datum_max )
 
 return _ok
+
 

@@ -250,9 +250,9 @@ nBrZahtjeva := 1
 ol_o_tbl()
 
 // upisi parametre...
-cPredNaz := HB_UTF8TOSTR( fetch_metric( "obracun_plata_preduzece_naziv", NIL, cPredNaz ) )
-cPredAdr := HB_UTF8TOSTR( fetch_metric( "obracun_plata_preduzece_adresa", NIL, cPredAdr ) )
-cPredJMB := HB_UTF8TOSTR( fetch_metric( "obracun_plata_preduzece_id_broj", NIL, cPredJMB ) )
+cPredNaz := PADR( hb_utf8tostr( fetch_metric( "obracun_plata_preduzece_naziv", NIL, cPredNaz ) ), 100 )
+cPredAdr := PADR( hb_utf8tostr( fetch_metric( "obracun_plata_preduzece_adresa", NIL, cPredAdr ) ), 100 )
+cPredJMB := PADR( hb_utf8tostr( fetch_metric( "obracun_plata_preduzece_id_broj", NIL, cPredJMB ) ), 13 )
 
 Box("#OBRACUNSKI LISTOVI RADNIKA", 17, 75)
 
@@ -337,8 +337,8 @@ else
 endif
 
 // upisi parametre...
-set_metric( "obracun_plata_preduzece_naziv", NIL, cPredNaz )
-set_metric( "obracun_plata_preduzece_adresa", NIL, cPredAdr )
+set_metric( "obracun_plata_preduzece_naziv", NIL, ALLTRIM( cPredNaz ) )
+set_metric( "obracun_plata_preduzece_adresa", NIL, ALLTRIM( cPredAdr ) )
 set_metric( "obracun_plata_preduzece_id_broj", NIL, cPredJMB )
 
 select ld
@@ -545,19 +545,15 @@ DirChange(_lokacija)
 // napuni xml fajl
 _fill_e_xml( _id_br + ".xml" )
 
-// setuj za zip kompresiju...
-_a_files := {}
-AADD( _a_files, _lokacija + _id_br + ".xml" )
-
-// kompresuj fajl...
-_error := zip_files( _lokacija, _id_br + ".zip", _a_files )
-
 cMsg := "Generacija obrasca završena.#"
 cMsg +=  _lokacija + _id_br + ".xml#"
 
 MsgBeep(cMsg)
 
 DirChange(my_home())
+
+close all
+
 open_folder(_lokacija)
 
 return
@@ -833,6 +829,9 @@ enddo
 
 // zatvori <PaketniUvoz...>
 xml_subnode("PaketniUvozObrazaca", .t.)
+
+// zatvori xml fajl
+close_xml()
 
 select (nTArea)
 return

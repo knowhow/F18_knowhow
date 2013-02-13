@@ -37,6 +37,10 @@ local _error
 	_f18_label_exe := "labeliranje"
 #endif
 
+#ifdef __PLATFORM__LINUX
+   close all
+#endif
+
 // provjera uslova
 
 if ( rtm_file == NIL )

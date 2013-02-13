@@ -478,7 +478,8 @@ BoxC()
 select (nADOC_IT)
 go top
 
-close_exp_file( cFile )
+// zatvori fajl
+close_exp_file( nHnd )
 
 select (nTArea)
 

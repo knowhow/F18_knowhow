@@ -92,9 +92,11 @@ if lKoristitiBK
 		WHEN {|| _idroba:=padr(_idroba,VAL(gDuzSifIni)),.t. } ;
 		VALID {|| ;
 			_idroba := iif(len(trim(_idroba))<10,left(_idroba,10),_idroba), ;
-			P_Roba(@_IdRoba), ;
+            _ocitani_barkod := _idroba, ;
+			P_Roba( @_IdRoba ), ;
+            if ( !tezinski_barkod_get_tezina( @_ocitani_barkod, @_kolicina ), .t., .t. ), ;
 			ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 25, 40 ), ;
-			_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa), zadnji_ulazi_info( _idpartner, _idroba, "M" ),  ;
+			_IdTarifa := iif(fnovi,ROBA->idtarifa,_IdTarifa), zadnji_ulazi_info( _idpartner, _idroba, "M" ),  ;
 		.t. }
 else
 	@ m_x + _x, m_y + 2  SAY "Artikal  " GET _IdRoba ;
@@ -102,9 +104,9 @@ else
 		VALID {|| ;
 			_idroba := iif(len(trim(_idroba))<10, left(_idroba,10), _idroba), ;
 			fix_sifradob(@_idroba,5,"0"), ;
-			P_Roba(@_IdRoba, nil, nil, gArtCDX ), ;
+			P_Roba( @_IdRoba, nil, nil, gArtCDX ), ;
 			ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 25, 40 ), ;
-			_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa), zadnji_ulazi_info( _idpartner, _idroba, "M" ), ;
+			_IdTarifa := iif(fnovi,ROBA->idtarifa,_IdTarifa), zadnji_ulazi_info( _idpartner, _idroba, "M" ), ;
 		.t. }
 
 endif

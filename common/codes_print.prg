@@ -520,12 +520,13 @@ if nStr==nil; nStr:=1; endif
 if nCrtice==nil; nCrtice:=1; endif
 if nOdvoji==nil; nOdvoji:=0; endif
  
- if bUslov==nil
- 	bUslov:={|| INKEY(),IF(LASTKEY()==27,PrekSaEsc(),.t.)}
- endif
- if bZaRed==nil
+if bUslov == nil
+ 	bUslov := {|| INKEY(), IF( LASTKEY() == 27, PrekSaEsc(), .t. ) }
+endif
+ 
+if bZaRed==nil
  	bZaRed:={|| .t.}
- endif
+endif
  
  if bFor==nil; bFor:={|| .t.}; endif
  if lCTab==nil; lCTab:=.t.; endif

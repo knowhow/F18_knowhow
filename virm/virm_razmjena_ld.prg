@@ -241,6 +241,7 @@ do while !EOF() .and. field->id = _oznaka
     if _bez_nula == "N" .or. _total > 0
             
         append blank
+
         replace field->rbr with ++ r_br
         replace field->mjesto with gmjesto
         replace field->svrha_pl with "IS"

@@ -144,6 +144,7 @@ local _kl_dug := param["klasa_duguje"]
 local _kl_pot := param["klasa_potrazuje"]
 local _ret := .f.
 local _row, _duguje, _potrazuje, _id_konto, _id_partner
+local _dat_dok, _dat_val, _otv_st, _br_veze
 local _rec, _i_saldo
 local _rbr := 0
 
@@ -165,8 +166,17 @@ do while !data:EOF()
 
     _row := data:GetRow()
 
+    // karakterna polja...
     _id_konto := PADR( _row:FieldGet( _row:FieldPos( "idkonto" ) ), 7 )
     _id_partner := PADR( hb_utf8tostr( _row:FieldGet( _row:FieldPos( "idpartner" ) ) ), 6 )
+    _br_veze := PADR( hb_utf8tostr( _row:FieldGet( _row:FieldPos( "brdok" ) ) ), 20 )
+    
+    // datumi
+    _dat_dok := _row:FieldGet( _row:FieldPos( "datdok" ) )
+    _dat_val := _row:FieldGet( _row:FieldPos( "datval" ) )
+
+    // marker otvorenih stavki
+    _otv_st := _row:FieldGet( _row:FieldPos( "otvst" ) )
 
     // vidi ima li ove stavke u semama prenosa...
     select pkonto
@@ -180,15 +190,33 @@ do while !data:EOF()
     endif
 
     _i_saldo := 0
+    _i_br_veze := ""
+    _i_dat_val := NIL
 
     // provrti razlicite nacine prenosa...
     do while !data:EOF() .and. PADR( data:FieldGet( data:FieldPos( "idkonto" ) ), 7 ) == _id_konto ;
-                        .and. IF( _tip_prenosa == "2", ;
+                        .and. IF( _tip_prenosa $ "1#2", ;
                             PADR( hb_utf8tostr( data:FieldGet( data:FieldPos("idpartner") ) ), 6 ) == _id_partner, .t. ) ;
-    
+                        .and. IF( _tip_prenosa $ "1", ;
+                            PADR( hb_utf8tostr( data:FieldGet( data:FieldPos("brdok") ) ), 20 ) == _br_veze, .t. )
+   
         _row2 := data:GetRow()
 
+        // saldo
         _i_saldo += _row2:FieldGet( _row2:FieldPos("saldo") )
+
+        if _tip_prenosa == "1"
+            
+            // broj veze
+            _i_br_veze := PADR( hb_utf8tostr( _row2:FieldGet( _row2:FieldPos( "brdok" ) ) ), 20 )
+        
+            // datum valute ili datum naloga
+            _i_dat_val := _row2:FieldGet( _row2:FieldPos( "datval" ) )
+            if _i_dat_val == CTOD("")
+                _i_dat_val := _row2:FieldGet( _row2:FieldPos( "datdok" ) )
+            endif
+
+        endif
 
         data:Skip()
         
@@ -217,14 +245,37 @@ do while !data:EOF()
     _rec["idkonto"] := _id_konto
     _rec["idpartner"] := _id_partner
     _rec["opis"] := "POCETNO STANJE"
-    _rec["brdok"] := "PS"
 
-    if ROUND( _i_saldo, 2 ) > 0
-        _rec["d_p"] := "1"
-        _rec["iznosbhd"] := ABS( _i_saldo )
+    if _tip_prenosa $ "0#2"
+        _rec["brdok"] := "PS"
     else
-        _rec["d_p"] := "2"
-        _rec["iznosbhd"] := ABS( _i_saldo )
+        _rec["brdok"] := _i_br_veze
+        _rec["datval"] := _i_dat_val
+    endif
+  
+    // po otvorenim stavkama...
+    if _tip_prenosa == "1"
+
+        if LEFT( _id_konto, 1 ) == _kl_pot
+            _rec["d_p"] := "2"
+            _rec["iznosbhd"] := -( _i_saldo )
+        else
+            _rec["d_p"] := "1"
+            _rec["iznosbhd"] := _i_saldo
+        endif
+
+    else
+
+    // ostale varijante prenosa...
+
+        if ROUND( _i_saldo, 2 ) > 0
+            _rec["d_p"] := "1"
+            _rec["iznosbhd"] := ABS( _i_saldo )
+        else
+            _rec["d_p"] := "2"
+            _rec["iznosbhd"] := ABS( _i_saldo )
+        endif
+
     endif
 
     dbf_update_rec( _rec )
@@ -288,13 +339,17 @@ _where += " AND " + _sql_cond_parse( "sub.idfirma", gFirma )
 _qry := " SELECT " + ;
             "sub.idkonto, " + ;
             "sub.idpartner, " + ;
+            "sub.datdok, " + ;
+            "sub.datval, " + ;
+            "sub.brdok, " + ;
+            "sub.otvst, " + ;
             "SUM( CASE WHEN sub.d_p = '1' THEN sub.iznosbhd ELSE -sub.iznosbhd END ) AS saldo " + ; 
         " FROM fmk.fin_suban sub "
 
 _qry += _where
 
-_qry += " GROUP BY sub.idkonto, sub.idpartner "
-_qry += " ORDER BY sub.idkonto, sub.idpartner "
+_qry += " GROUP BY sub.idkonto, sub.idpartner, sub.brdok, sub.datdok, sub.datval, sub.otvst "
+_qry += " ORDER BY sub.idkonto, sub.idpartner, sub.brdok, sub.datdok, sub.datval, sub.otvst "
 
 
 // 1) predji u sezonsko podrucje

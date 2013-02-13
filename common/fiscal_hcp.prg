@@ -200,7 +200,7 @@ for _i := 1 to LEN( items )
 	// cijena artikla
 	_tmp += _razmak1 + 'PRC="' + ALLTRIM( STR( _cijena, 12, 2 )) + '"'
 	//  kolicina artikla
-	_tmp += _razmak1 + 'AMN="' + ALLTRIM( STR( _kolicina, 12, 2)) + '"'
+	_tmp += _razmak1 + 'AMN="' + ALLTRIM( STR( _kolicina, 12, 3)) + '"'
 	
 	if _rabat > 0
 

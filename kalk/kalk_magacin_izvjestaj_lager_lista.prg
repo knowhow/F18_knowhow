@@ -95,11 +95,8 @@ endif
 
 // signalne zalihe
 private lSignZal:=.f.
-
-if IsRobaGroup()
-	private qqRGr:=SPACE(40)
-	private qqRGr2:=SPACE(40)
-endif
+private qqRGr:=SPACE(40)
+private qqRGr2:=SPACE(40)
 
 if IsVindija()
 	cOpcine:=SPACE(50)
@@ -220,11 +217,8 @@ Box(,21+IF(lPoNarudzbi,2,0),60)
  			
 		endif
 		// ako je roba - grupacija
-		if IsRobaGroup()
-				
- 				@ m_x+17,m_y+2 SAY "Grupa artikla:" GET qqRGr PICT "@S10"
- 				@ m_x+17,m_y+30 SAY "Podgrupa artikla:" GET qqRGr2 PICT "@S10"
-		endif
+ 		@ m_x+17,m_y+2 SAY "Grupa artikla:" GET qqRGr PICT "@S10"
+ 		@ m_x+17,m_y+30 SAY "Podgrupa artikla:" GET qqRGr2 PICT "@S10"
 
  		@ m_x+18,m_y+2 SAY "Naziv artikla sadrzi"  GET cArtikalNaz
  		
@@ -245,10 +239,8 @@ Box(,21+IF(lPoNarudzbi,2,0),60)
  		private aUsl4:=Parsiraj(qqIDPartner,"idpartner")
 		private aUsl5:=Parsiraj(cFaBrDok, "brfaktp" )
 		
-		if IsRobaGroup()
-			qqRGr := ALLTRIM(qqRGr)	
- 			qqRGr2 := ALLTRIM(qqRGr2)	
-		endif
+		qqRGr := ALLTRIM(qqRGr)	
+ 		qqRGr2 := ALLTRIM(qqRGr2)	
 		
 		if lPoNarudzbi
    			aUslN:=Parsiraj(qqIdNar,"idnar")
@@ -513,13 +505,14 @@ do while !eof() .and. IIF(fSint .and. lSabKon, idfirma, idfirma+mkonto ) = ;
 	endif
 
 	// uslov za roba - grupacija
-	if IsRobaGroup()
-	 if !IsInGroup(qqRGr, qqRGr2, roba->id)
-		select kalk
-		skip
-		loop
-	 endif
+	if !EMPTY( qqRGr ) .or. !EMPTY( qqRGr2 )
+	    if !IsInGroup(qqRGr, qqRGr2, roba->id)
+		    select kalk
+		    skip
+		    loop
+	    endif
 	endif
+
 	// Vindija - uslov po opcinama
 	if (IsVindija() .and. !EMPTY(cOpcine))
 	 select partn

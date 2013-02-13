@@ -13,105 +13,130 @@
 #include "kalk.ch"
 
 
+static __PIC_KOL := "999999999.999"
+static __PIC_DEM := "999999999.99"
+
+
+// -----------------------------------------------
+// otvaranje potrebnih tabela
+// -----------------------------------------------
+static function _o_tables()
+O_SIFK
+O_SIFV
+O_ROBA
+O_KONCIJ
+O_KONTO
+O_PARTN
+return
+
+
+
+// ------------------------------------------------
 // izvjestaj - promet grupe partnera
+// ------------------------------------------------
 function PrometGP()
-*{
-  cgPicKol := IzFMKIni("PrometGrupePartnera","PicKolicina","999999999.999",KUMPATH)
-  cgPicDem := IzFMKIni("PrometGrupePartnera","PicIznosa"  ,"999999999.99",KUMPATH)
+  
+nlPK := LEN( __PIC_KOL )
+nlPI := LEN( __PIC_DEM )
 
-  nlPK:=LEN(cgPicKol)
-  nlPI:=LEN(cgPicDem)
+cIdFirma := gFirma
+cIdKonto := PADR( "1310", gDuzKonto )
+  
+private nVPVU:=nVPVI:=nNVU:=nNVI:=0
 
-  cIdFirma:=gFirma
-  cidKonto:=padr("1310",gDuzKonto)
-  private nVPVU:=nVPVI:=nNVU:=nNVI:=0
+_o_tables()
+private dDatOd:=ctod("")
+private dDatDo:=date()
 
-  O_SIFK
-  O_SIFV
+qqRoba:=space(60)
+qqIdPartner:=space(60)
+  
+cGP:=" "
 
-  O_ROBA
-  O_KONCIJ
-  O_KONTO
-  O_PARTN
+Box("#PROMET GRUPE PARTNERA",10,75)
 
-  private dDatOd:=ctod("")
-  private dDatDo:=date()
-  qqRoba:=space(60)
-  qqIdPartner:=space(60)
-  cGP:=" "
+    do while .t.
 
-  Box("#PROMET GRUPE PARTNERA",10,75)
-   do while .t.
-     if gNW $ "DX"
-       @ m_x+2,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
-     else
-       @ m_x+2,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
-     endif
-     @ m_x+ 3, m_y+2 SAY "Konto " GET cIdKonto valid "." $ cidkonto .or. P_Konto(@cIdKonto)
-     @ m_x+ 4, m_y+2 SAY "Artikal (prazno-svi)" GET qqRoba pict "@!S40"
-     @ m_x+ 6, m_y+2 SAY "Partner (prazno-svi)" GET qqIdPartner pict "@!S40"
-     @ m_x+ 7, m_y+2 SAY "Grupa partnera (prazno-sve)" GET cGP PICT "@!"
-     @ m_x+ 9, m_y+2 SAY "Datum od " GET dDatOd
-     @ m_x+ 9,col()+2 SAY "do" GET dDatDo
-     read; ESC_BCR
-     private aUsl1:=Parsiraj(qqRoba,"IdRoba")
-     private aUsl4:=Parsiraj(qqIDPartner,"idpartner")
-     if aUsl1<>NIL .and. aUsl4<>NIL
-       exit
-     endif
-   enddo
-  BoxC()
+        if gNW $ "DX"
+            @ m_x+2,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
+        else
+            @ m_x+2,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
+        endif
 
-  fSint:=.f.
-  cSintK:=cIdKonto
+        @ m_x+ 3, m_y+2 SAY "Konto " GET cIdKonto valid "." $ cidkonto .or. P_Konto(@cIdKonto)
+        @ m_x+ 4, m_y+2 SAY "Artikal (prazno-svi)" GET qqRoba pict "@!S40"
+        @ m_x+ 6, m_y+2 SAY "Partner (prazno-svi)" GET qqIdPartner pict "@!S40"
+        @ m_x+ 7, m_y+2 SAY "Grupa partnera (prazno-sve)" GET cGP PICT "@!"
+        @ m_x+ 9, m_y+2 SAY "Datum od " GET dDatOd
+        @ m_x+ 9,col()+2 SAY "do" GET dDatDo
 
-  if "." $ cidkonto
+        read
+
+        ESC_BCR
+
+        private aUsl1:=Parsiraj(qqRoba,"IdRoba")
+        private aUsl4:=Parsiraj(qqIDPartner,"idpartner")
+
+        if aUsl1<>NIL .and. aUsl4<>NIL
+            exit
+        endif
+
+    enddo
+
+BoxC()
+
+fSint := .f.
+cSintK := cIdKonto
+
+if "." $ cidkonto
     cidkonto:=strtran(cidkonto,".","")
     cIdkonto:=trim(cidkonto)
     cSintK:=cIdkonto
     fSint:=.t.
     lSabKon:=(Pitanje(,"Racunati stanje robe kao zbir stanja na svim obuhvacenim kontima? (D/N)","N")=="D")
-  endif
+endif
 
-  O_KALKREP
+O_KALKREP
 
-  private cFilt:=".t."
+private cFilt:=".t."
 
-  if aUsl1<>".t."
+if aUsl1<>".t."
     cFilt+=".and."+aUsl1
-  endif
+endif
 
-  if aUsl4<>".t."
+if aUsl4<>".t."
     cFilt+=".and."+aUsl4
-  endif
+endif
 
-  if !empty(dDatOd) .or. !empty(dDatDo)
-   cFilt+=".and. DatDok>="+cm2str(dDatOd)+".and. DatDok<="+cm2str(dDatDo)
-  endif
+if !empty(dDatOd) .or. !empty(dDatDo)
+    cFilt+=".and. DatDok>="+cm2str(dDatOd)+".and. DatDok<="+cm2str(dDatDo)
+endif
 
-  if fSint .and. lSabKon
+if fSint .and. lSabKon
     cFilt+=".and. MKonto="+cm2str( cSintK )
     cSintK:=""
-  endif
+endif
 
-  if cFilt==".t."
-   set filter to
-  else
-   set filter to &cFilt
-  endif
+if cFilt==".t."
+    set filter to
+else
+    set filter to &cFilt
+endif
 
-  select kalk
+select kalk
 
-  if fSint .and. lSabKon
+if fSint .and. lSabKon
     set order to tag "6"
     //"6","idFirma+IdTarifa+idroba",KUMPATH+"KALK"
     hseek cidfirma
-  else
+else
     set order to tag "3"
     hseek cidfirma+cidkonto
-  endif
+endif
 
-select koncij; seek trim(cidkonto); select kalk
+select koncij
+seek trim(cidkonto)
+select kalk
 
 EOF CRET
 
@@ -134,7 +159,9 @@ nTRabat:=0
 nCol1:=nCol0:=50
 private nRbr:=0
 
-cLastPar:=""; cSKGrup:=""
+cLastPar:=""
+cSKGrup:=""
+
 DO WHILE !EOF() .and.;
          IF(fSint.and.lSabKon,idfirma,idfirma+mkonto)=cidfirma+cSintK .and.;
          IspitajPrekid()
@@ -143,9 +170,11 @@ cIdRoba:=Idroba
 nUlaz:=nIzlaz:=0
 nVPVU:=nVPVI:=nNVU:=nNVI:=0
 nRabat:=0
-SELECT ROBA; HSEEK cidroba
 
+SELECT ROBA
+HSEEK cidroba
 SELECT KALK
+
 IF ROBA->tip $ "TUY"; SKIP 1; LOOP; ENDIF
 
 cIdkonto:=mkonto

@@ -70,6 +70,7 @@ if _cre_xml( _rpt_data, _rpt_vars )
 endif
 
 if _exported 
+    close all
     // otvori mi eksport dokument
     f18_open_mime_document( my_home() + "r_export.dbf" )
 endif
@@ -125,9 +126,10 @@ Box( "#" + _box_name, _box_x, _box_y )
         _konto := PADR( _konto, 7 )
    		_partner := PADR( _partner, LEN( partn->id ) )
 
-  		@ m_x + _x, m_y + 2 SAY "Konto   " GET _konto VALID P_KontoFin( @_konto )
+  		@ m_x + _x, m_y + 2 SAY "Konto   " GET _konto VALID !EMPTY( _konto ) .and. P_KontoFin( @_konto )
    		++ _x
-        @ m_x + _x, m_y + 2 SAY "Partner " GET _partner VALID EMPTY(_partner) .or. RTRIM( _partner ) == ";" .or. P_Firma( @_partner) PICT "@!"
+        @ m_x + _x, m_y + 2 SAY "Partner " GET _partner VALID EMPTY(_partner) .or. ;
+                RTRIM( _partner ) == ";" .or. P_Firma( @_partner) PICT "@!"
  	
     else
 
@@ -248,7 +250,10 @@ if _brza == "D"
 
     // konto
     _qry += " AND " + _sql_cond_parse( "s.idkonto", _konto )
-    _qry += " AND " + _sql_cond_parse( "s.idpartner", _partner )
+
+    if !EMPTY( _partner )
+        _qry += " AND " + _sql_cond_parse( "s.idpartner", _partner )
+    endif
  
 else
 

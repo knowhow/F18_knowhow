@@ -211,12 +211,12 @@ cIdRj := gRj
 cMj := gMjesec
 cGod := gGodina
 
-cPredNaz := fetch_metric( "obracun_plata_preduzece_naziv", NIL, SPACE(50) )
-cPredJMB := fetch_metric( "obracun_plata_preduzece_id_broj", NIL, SPACE(13) )
-cPredSDJ := fetch_metric( "obracun_plata_sifra_djelatnosti", NIL, SPACE(20) )
-cTp_bol := fetch_metric( "obracun_plata_mip_tip_pr_bolovanje", NIL, cTp_bol )
-cBolPreko := fetch_metric( "obracun_plata_mip_tip_pr_bolovanje_42_dana", NIL, cBolPreko )
-cDoprDod := fetch_metric( "obracun_plata_mip_dodatni_dopr_ut", NIL, cDoprDod )
+cPredNaz := PADR( fetch_metric( "obracun_plata_preduzece_naziv", NIL, "" ), 100 )
+cPredJMB := PADR( fetch_metric( "obracun_plata_preduzece_id_broj", NIL, "" ), 13 )
+cPredSDJ := PADR( fetch_metric( "obracun_plata_sifra_djelatnosti", NIL, "" ), 20 )
+cTp_bol := PADR( fetch_metric( "obracun_plata_mip_tip_pr_bolovanje", NIL, cTp_bol ), 100 )
+cBolPreko := PADR( fetch_metric( "obracun_plata_mip_tip_pr_bolovanje_42_dana", NIL, cBolPreko ), 100 )
+cDoprDod := PADR( fetch_metric( "obracun_plata_mip_dodatni_dopr_ut", NIL, cDoprDod ), 100 )
 dDatPodn := DATE()
 
 nPorGodina := 2011
@@ -308,12 +308,12 @@ if cIsplSaberi == "D"
 endif
 
 // upisi parametre...
-set_metric( "obracun_plata_preduzece_naziv", NIL, cPredNaz )
+set_metric( "obracun_plata_preduzece_naziv", NIL, ALLTRIM( cPredNaz ) )
 set_metric( "obracun_plata_preduzece_id_broj", NIL, cPredJMB )
 set_metric( "obracun_plata_sifra_djelatnosti", NIL, cPredSDJ )
-set_metric( "obracun_plata_mip_tip_pr_bolovanje", NIL, cTp_bol )
-set_metric( "obracun_plata_mip_tip_pr_bolovanje_42_dana", NIL, cBolPreko )
-set_metric( "obracun_plata_mip_dodatni_dopr_ut", NIL, cDoprDod )
+set_metric( "obracun_plata_mip_tip_pr_bolovanje", NIL, ALLTRIM( cTp_bol ) )
+set_metric( "obracun_plata_mip_tip_pr_bolovanje_42_dana", NIL, ALLTRIM( cBolPreko ) )
+set_metric( "obracun_plata_mip_dodatni_dopr_ut", NIL, ALLTRIM( cDoprDod ) )
 
 // ako je zadat radnik onda se stampa pojedinacni obrazac
 if !EMPTY( cRadnik )
@@ -442,19 +442,15 @@ DirChange(_lokacija)
 // napuni xml fajl
 _fill_e_xml(_id_br + ".xml")
 
-// dodaj fajlove za zip fajl
-_a_files := {}
-AADD( _a_files, _lokacija + _id_br + ".xml" )
-
-// kompresuj zip fajl
-_error := zip_files( _lokacija, _id_br + ".zip", _a_files )
-
 cMsg := "Generacija obrasca završena.#"
 cMsg +=  _lokacija + _id_br + ".xml#"
 
 MsgBeep(cMsg)
 
 DirChange(my_home())
+
+close all
+
 open_folder(_lokacija)
 
 return

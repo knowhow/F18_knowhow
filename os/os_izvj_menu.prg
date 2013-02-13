@@ -38,10 +38,6 @@ AADD(_opc, "7. amortizacija po kontima i po grupama amort.stopa")
 AADD(_opcexe, {|| os_amortizacija_po_kontima()})
 AADD(_opc, "8. kartica sredstva")
 AADD(_opcexe, {|| os_kartica_sredstva()})
-AADD(_opc, "9. lista sredstava uvedenih u tekucoj godini")
-AADD(_opcexe, {|| NovaSredstva()})
-AADD(_opc, "A. lista sredstava izbrisanih u tekucoj godini")
-AADD(_opcexe, {|| IzbrisanaSredstva()})
 
 f18_menu( "izv", .f., _izbor, _opc, _opcexe )
 

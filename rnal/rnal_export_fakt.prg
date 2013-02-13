@@ -13,38 +13,61 @@
 #include "rnal.ch"
 
 
-// -----------------------------------------
-// box za upit sumiranja
-// -----------------------------------------
-static function _g_sumbox( lReturn )
-lReturn := Pitanje( , "Sumirati stavke sa naloga (D/N)","D") = "D"
-return
-
 // ------------------------------------------
 // sta generisati, uslovi generacije
 // ------------------------------------------
-static function _vp_mp( cVpMp )
-local nX := 1
-local nRet := 1
+static function _export_cond( params )
+local _x := 1
+local _ok := .t.
+local _tip := "V"
+local _suma := "N"
+local _valuta := PADR( ALLTRIM( ValDomaca() ), 3 )
+local _pr_isp := "N"
 private GetList := {}
 
-Box(, 3, 65 )
 
-    @ m_x + nX, m_y + 2 SAY "Generisati:"
-    ++ nX
-    @ m_x + nX, m_y + 2 SAY " [V] opremnicu vp (dok 12)"
-    ++ nX
-    @ m_x + nX, m_y + 2 SAY " [M] otprenicu mp (dok 13)" GET cVpMp ;
-        VALID cVpMp $ "VM" PICT "@!" 
+Box(, 8, 65 )
+
+    @ m_x + _x, m_y + 2 SAY "Uslovi prenosa naloga u otpremnicu:"
+
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY " Tip otpremnice: [V] vp (dok 12)"
+
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "                 [M] mp (dok 13)" GET _tip VALID _tip $ "VM" PICT "@!" 
+
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Sumirati stavke naloga (D/N)" GET _suma VALID _suma $ "DN" PICT "@!"
+
+    ++ _x    
+
+    @ m_x + _x, m_y + 2 SAY "Valuta u koju mjenjamo otpremnicu (KM/EUR)" GET _valuta PICT "@!"
+ 
+    ++ _x    
+
+    @ m_x + _x, m_y + 2 SAY "Promjeniti podatke isporuke naloga (D/N)" GET _pr_isp VALID _pr_isp $ "DN" PICT "@!" 
+       
     read
 
 BoxC()
 
 if LastKey() == K_ESC
-    nRet := 0
+    _ok := .f.
+    return _ok
 endif
 
-return nRet
+params := hb_hash()
+params["exp_tip"] := _tip
+params["exp_suma"] := _suma
+params["exp_valuta"] := UPPER( _valuta )
+params["exp_isporuka"] := _pr_isp
+
+return _ok
 
 
 
@@ -71,6 +94,7 @@ local lSumirati
 local cVpMp := "V"
 local _rec
 local _redni_broj
+local _exp_params, _isporuka, _valuta
 
 MsgBeep("Novi brojaci - ovo ne radi !")
 QUIT_1
@@ -84,19 +108,26 @@ if lNoGen == .f.
     st_pripr( lTemp, nDoc_no, aDocList )
 endif
 
-// generisati sta ?
-if _vp_mp( @cVpMp ) == 0
-    select (nTarea)
+// uslovi ekporta - raznorazni...
+if !_export_cond( @_exp_params )
+    select ( nTArea )
     return
 endif
 
-if Pitanje( ,"Promjeniti podatke isporuke ?", "N") == "D"
+// parametri...
+lSumirati := _exp_params["exp_suma"] == "D"
+cVpMp := _exp_params["exp_tip"]
+_isporuka := _exp_params["exp_isporuka"] == "D"
+_valuta := _exp_params["exp_valuta"]
+
+if EMPTY( _valuta )
+    _valuta := PADR( ValDomaca(), 3 )
+endif
+
+if _isporuka
     // selektuj stavke
     sel_items()
 endif
-
-// sumirati stavke da ili ne
-_g_sumbox( @lSumirati )
 
 // provjeri da li je priprema faktura prazna
 if !fakt_priprema_prazna()
@@ -198,10 +229,9 @@ if cVpMp == "M"
     cCtrlNo := "23"
 endif
 
+cBrDok := fakt_brdok_0( cFirma, cIdVd, DATE() )
+cFmkDoc := cIdVd + "-" + ALLTRIM( cBrdok )
 
-cBrDok := fakt_brdok_0(cfirma, cIdVd, DATE())
-
-cFmkDoc := cIdVd + "-" + ALLTRIM(cBrdok)
 _redni_broj := 0
 
 select (nADOC_IT2)
@@ -239,13 +269,6 @@ do while !EOF()
     endif
 
     select fakt_pripr    
-    //go bottom
-    //skip -1
-
-    //if !EMPTY( fakt_pripr->rbr )
-      //  nRbr := VAL( fakt_pripr->rbr )
-    //endif
-    
     append blank
     
     scatter()
@@ -260,12 +283,8 @@ do while !EOF()
     _idroba := cArt_id
     _cijena := nPrice
     _kolicina := nQtty
-    _dindem := "KM "
+    _dindem := _valuta
     _zaokr := 2
- 
-    //if fakt_pripr->(FIELDPOS("OPIS")) <> 0
-      //  _opis := cDesc
-    //endif
 
     _txt := ""
 
@@ -381,7 +400,6 @@ do while !EOF()
             add_to_relation( "ARTICLES", "ROBA", ;
                 ALLTRIM(STR(nArt_id)), cIdRoba )
         
-        
         else
             msgbeep("Neki artikli nemaju definisani u tabeli relacija#Prekidam operaciju !")    
             select (F_FAKT_PRIPR)
@@ -413,14 +431,6 @@ do while !EOF()
     endif   
     
     select fakt_pripr
-    
-    //go bottom
-    //skip -1
-
-    //if !EMPTY( fakt_pripr->rbr )
-      //  nRbr := VAL( fakt_pripr->rbr )
-    //endif
-    
     append blank
     
     scatter()
@@ -435,13 +445,9 @@ do while !EOF()
     _idroba := cIdRoba
     _cijena := nPrice
     _kolicina := nM2
-    _dindem := "KM "
+    _dindem := _valuta
     _zaokr := 2
         
-    //if fakt_pripr->(FIELDPOS("OPIS")) <> 0
-      //  _opis := cArt_sh
-    //endif
-
     _txt := ""
 
     // roba tip U - nista

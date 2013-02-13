@@ -83,8 +83,8 @@ return 1
 // ----------------------------------------------------
 // zatvori fajl
 // ----------------------------------------------------
-function close_exp_file( cFileName )
-FCLOSE( cFileName )
+function close_exp_file( nH )
+FCLOSE( nH )
 return
 
 

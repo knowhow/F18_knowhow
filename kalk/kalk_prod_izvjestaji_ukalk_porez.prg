@@ -63,8 +63,13 @@ Box(,5,75)
 BoxC()
 
 set softseek off
+
+O_PARTN
+O_SIFV
+O_SIFK
 O_KONTO
 O_TARIFA
+
 O_KALKREP
 set order to tag "6"
 

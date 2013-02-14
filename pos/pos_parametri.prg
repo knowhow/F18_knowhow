@@ -206,7 +206,7 @@ aNiz:={}
 AADD (aNiz, {"Racun se zakljucuje dikretno bez upita (D/N)" , "gDirZaklj", "gDirZaklj$'DN'", "@!", })
 AADD (aNiz, {"Dopustiti dupli unos artikala na racunu (D/N)" , "gDupliArt", "gDupliArt$'DN'", "@!", })
 AADD (aNiz, {"Ako se dopusta dupli unos, da li se radnik upozorava(D/N)" , "gDupliUpoz", "gDupliUpoz$'DN'", "@!", })
-AADD (aNiz, {"Da li se prati pocetno stanje smjene (D/N/!)" , "gPocStaSmjene", "gPocStaSmjene$'DN!'", "@!", })
+AADD (aNiz, {"Da li se prati stanje artikla na unosu (D/N/!)" , "gPratiStanje", "gPratiStanje$'DN!'", "@!", })
 
 if KLevel=="0"
     AADD (aNiz, {"Upravnik moze ispravljati cijene" , "gSifUpravn", "gSifUpravn$'DN'", "@!", })

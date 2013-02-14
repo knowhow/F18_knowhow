@@ -201,8 +201,6 @@ public gBrojSto         // da li je broj stola obavezan
                         // D-da, N-ne, 0-uopce se ne vodi
 public gPoreziRaster    // da li se porezi stampaju pojedinacno ili
                         // zbirno
-public gPratiStanje     // da li se prati stanje zaliha robe na
-                        // prodajnim mjestima
 public gPocStaSmjene    // da li se uvodi pocetno stanje smjene
                         // (da li se radnicima dodjeljuju pocetna sredstva)
 public gIdPos           // id prodajnog mjesta

@@ -13,6 +13,8 @@
 #include "getexit.ch"
 
 static __max_kolicina := NIL
+static __kalk_konto := NIL
+
 
 // ----------------------------------------------------------
 // maksimalna kolicina na unosu racuna
@@ -24,6 +26,18 @@ if read_par != NIL
 endif
 
 return __max_kolicina
+
+
+// ----------------------------------------------------------
+// kalk konto za stanje artikla
+// ----------------------------------------------------------
+function kalk_konto_za_stanje_pos( read_par )
+
+if read_par != NIL
+	__kalk_konto := fetch_metric( "pos_stanje_sa_kalk_konta", NIL, "" )
+endif
+
+return __kalk_konto
 
 
 
@@ -219,7 +233,13 @@ do while .t.
     // _pos_pripr
     Gather()
 
-    _stanje_robe := pos_stanje_artikla( field->idpos, field->idroba )
+	// gledati iz KALK ili iz POS ?
+	if !EMPTY( ALLTRIM( __kalk_konto ) )
+    	_stanje_robe := kalk_kol_stanje_artikla_prodavnica( PADR( __kalk_konto, 7 ), field->idroba, DATE() )
+	else
+   		_stanje_robe := pos_stanje_artikla( field->idpos, field->idroba )
+	endif
+
     _stanje_art_id := field->idroba
     _stanje_art_jmj := field->jmj
 

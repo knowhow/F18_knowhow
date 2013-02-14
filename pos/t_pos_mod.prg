@@ -494,10 +494,16 @@ SetBoje( gVrstaRS )
 
 // setuj parametar tezinski_barkod
 param_tezinski_barkod(.t.)
+
 // maksimalna kolicina kod unosa racuna
 max_kolicina_kod_unosa(.t.)
+
+// kalk konto za stanje pos artikla
+kalk_konto_za_stanje_pos( .t. )
 
 // koristenje fiskalnih opcija
 fiscal_opt_active()
 
 return
+
+

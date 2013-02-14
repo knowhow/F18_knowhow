@@ -1,3 +1,8 @@
+1.4.124 2013-02-14, vsasa
+
+  - kalk, izvještaj poreza prodavnice - bugfix
+  - fin, ažuriranje i povrat grupe naloga
+ 
 1.4.123 2013-02-11, vsasa
 
   - kalk, unos po težinskom barkod-u unutar dokumenata MP i VP

@@ -3,6 +3,7 @@
   - kalk, izvještaj poreza prodavnice - bugfix
   - fin, ažuriranje i povrat grupe naloga
   - pos, stanje artikla moguće gledati i iz kalk-a
+  - pos, prenos dokumenta inventure KALK->POS, korekcije
  
 1.4.123 2013-02-11, vsasa
 

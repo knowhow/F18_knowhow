@@ -97,21 +97,4 @@ return
 
 
 
-// --------------------------------------------------
-// specifikacije po godinama
-// --------------------------------------------------
-function MnuSpecGod()
-private opc:={}
-private opcexe:={}
-private Izbor:=1
-
-AADD(opc, "1. po analitickim kontima                   ")
-AADD(opcexe, {|| spec_an()})
-AADD(opc, "2. po subanalitickim kontima")
-AADD(opcexe, {|| spec_sub()})
-
-Menu_SC("spg")
-return
-
-
 

@@ -406,7 +406,7 @@ if !_vise_naloga .and. fin_p_nalog_bez_provjere( auto )
 endif
 
 // 1) provjera pomocnih tabela
-if !fin_p_tabele_provjera()
+if !fin_p_tabele_provjera( lista_naloga )
 	
 	// u slucaju da je samo jedan nalog u pitanju
 	// to je moguci uzrok !

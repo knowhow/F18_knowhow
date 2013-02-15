@@ -1,3 +1,7 @@
+1.4.125 2013-02-15, vsasa
+
+  - kalk, izvještaj poreza prodavnice ukalkulisani/realizovani- bugfix partn alias
+ 
 1.4.124 2013-02-14, vsasa
 
   - kalk, izvještaj poreza prodavnice - bugfix

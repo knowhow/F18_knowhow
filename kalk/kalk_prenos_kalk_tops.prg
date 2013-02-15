@@ -73,6 +73,7 @@ AADD( _dbf,{"IDPARTNER","C",6,0})
 AADD( _dbf,{"IDPOS","C",2,0})
 AADD( _dbf,{"IDROBA","C",10,0})
 AADD( _dbf,{"kolicina","N",13,4})
+AADD( _dbf,{"kol2","N",13,4})
 AADD( _dbf,{"MPC","N",13,4})
 AADD( _dbf,{"MPC2","N",13,4})
 AADD( _dbf,{"NAZIV","C",250,0})
@@ -194,6 +195,7 @@ do while !eof() .and. field->idfirma == id_firma .and. field->idvd == id_tip_dok
     endif
         
     _dat_dok := kalk_pripr->datdok
+
     replace field->idfirma with gFirma
     replace field->idvd with kalk_pripr->idvd
     replace field->idpos with koncij->idprodmjes
@@ -202,7 +204,14 @@ do while !eof() .and. field->idfirma == id_firma .and. field->idvd == id_tip_dok
     replace field->idkonto2 with kalk_pripr->idkonto2
     replace field->idpartner with kalk_pripr->idpartner
     replace field->idroba with kalk_pripr->idroba
+
     replace field->kolicina with kalk_pripr->kolicina
+
+    // kod inventure
+    if field->idvd == "IP"
+        replace field->kol2 with kalk_pripr->gkolicina
+    endif
+
     replace field->mpc with kalk_pripr->mpcsapp
     replace field->naziv with roba->naz
     replace field->idtarifa with kalk_pripr->idtarifa

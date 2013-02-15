@@ -40,7 +40,7 @@ local PrevDn
 local PrevUp
 local nSign
 
-if gSamoProdaja=="D" .and. (cIdVd<>VD_REK)
+if gSamoProdaja == "D" .and. ( cIdVd <> VD_REK )
     MsgBeep("Ne mozete vrsiti zaduzenja !")
     return
 endif
@@ -61,7 +61,7 @@ private bPrevUp
 private bPrevDn
 
 // dodatni podaci o reklamaciji
-if (IsPlanika() .and. cIdVd == VD_REK)
+if ( IsPlanika() .and. cIdVd == VD_REK )
     private cRekOp1
     private cRekOp2
     private cRekOp3
@@ -84,7 +84,7 @@ ImeKol := { { "Sifra",    {|| idroba},      "idroba" }, ;
             { "Kolicina", {|| kolicina   }, "Kolicina"  },;
             { "Cijena",   {|| Cijena},      "Cijena"    } ;
           }
-Kol:={1, 2, 3, 4, 5}
+Kol := { 1, 2, 3, 4, 5 }
 
 OpenZad()
 
@@ -98,11 +98,11 @@ Box(, 6, 60)
 
     SET CURSOR ON
 
-    if gVrstaRS=="S"
+    if gVrstaRS == "S"
         @ m_x+1, m_y+3 SAY "Prodajno mjesto:" GET cIdPos pict "@!" valid cIdPos<="X ".and. !EMPTY(cIdPos)
     endif
 
-    if gvodiodj=="D"
+    if gvodiodj == "D"
         @ m_x+3, m_y + 3 SAY   " Odjeljenje:" GET cIdOdj VALID P_Odj (@cIdOdj, 3, 28)
         if cIdVD=="PD"
             @ m_x+4, m_y + 3 SAY " Prenos na :" GET cIdOdj2 VALID P_Odj (@cIdOdj2, 4, 28)
@@ -116,30 +116,17 @@ Box(, 6, 60)
 
 BoxC()
 
-SELECT ODJ
-
-cRSDbf := "ROBA"
-
-if ODJ->Zaduzuje == "S" .or. cRobSir == "S"
-    cRSdbf:="SIROV"
-    //bRSblok:={ |x,y| P_Roba( @_IdRoba, x, y ) }
-    bRSblok := { |x,y| pos_postoji_roba( @_idroba, x, y ), setspeczad() }
-    cUI_I:=S_I 
-    cUI_U:=S_U
-else
-    cRSdbf := "ROBA"
-    //bRSblok := { |x,y| Barkod(@_IdRoba), P_Roba(@_IdRoba, x, y) }
-    bRSblok := { |x,y| pos_postoji_roba( @_idroba, x, y ), setspeczad() }
-    cUI_I := R_I
-    cUI_U := R_U
-endif
+cRSdbf := "ROBA"
+bRSblok := { |x,y| pos_postoji_roba( @_idroba, x, y ), setspeczad() }
+cUI_I := R_I
+cUI_U := R_U
 
 SELECT PRIPRZ
 
 if RecCount2() > 0
     //ako je sta bilo ostalo, spasi i oslobodi pripremu
     SELECT _POS
-    AppFrom("PRIPRZ",.f.)
+    AppFrom( "PRIPRZ", .f. )
 endif
 
 SELECT priprz
@@ -159,18 +146,22 @@ if ( cIdVd <> VD_REK ) .and. pos_preuzmi_iz_kalk( @cIdVd, @cBrDok, @cRsDBF )
     _from_kalk := .t.
 
     if priprz->( RecCount2() ) > 0
+
         if cBrDok <> NIL .and. Pitanje(,"Odstampati prenesni dokument na stampac ?", "N" ) == "D"
+
             if cIdVd $ "16#96#95#98"
                 StampZaduz( cIdVd, cBrDok )
             elseif cIdVd $ "IN#NI"
                 StampaInv()
             endif
+
             // otvori ponovo tabele
             openzad()
 
             if Pitanje(,"Ako je sve u redu, zelite li staviti na stanje dokument ?"," ")=="D"
                 fSadAz := .t.
             endif
+
         endif
     endif
 
@@ -178,20 +169,14 @@ endif
 
 if cIdVD == "NI"
     
-    // cidodj, ciddio - prosljedjujem ove priv varijable u InventNivel
     close all
-
     InventNivel( .f., .t., fSadaz, dDatRada )   
-
-    // drugi parametar - poziv iz zaduzenja
-    // treci odmah podatke azurirati
     return
 
-elseif cIdVD == "IN"
+elseif cIdVd == "IN"
 
     close all
     InventNivel( .t., .t., fSadAz, dDatRada )
-
     return
 
 endif

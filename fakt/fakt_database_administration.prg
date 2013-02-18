@@ -713,11 +713,11 @@ return
 // -------------------------------------------------
 // ispravka podataka dokumenta
 // -------------------------------------------------
-function fakt_edit_data( cFirma, cTipDok, cBrDok )
-local nTArea := SELECT()
-local lRet := .f.
-local nX := 1
-local nCnt
+function fakt_edit_data( id_firma, tip_dok, br_dok )
+local _t_area := SELECT()
+local _ret := .f.
+local _x := 1
+local _cnt
 local __idpartn
 local __br_otpr
 local __br_nar
@@ -725,72 +725,95 @@ local __dat_otpr
 local __dat_pl
 local __txt
 local __p_tmp
-local aTxt
+local _t_txt
 
 __idpartn := field->idpartner
 
-O_FAKT
-O_PARTN
+select ( F_FAKT )
+if !Used()
+    O_FAKT
+endif
+
+select ( F_PARTN )
+if !Used()
+    O_PARTN
+endif
 
 select fakt
+set order to tag "1"
 go top
-seek cFirma + cTipDok + cBrDok
+seek id_firma + tip_dok + br_dok
 
-aTxt := parsmemo( field->txt )
+if !FOUND()
+    select ( _t_area )
+    return _ret
+endif
 
-__br_otpr := aTxt[6]
-__br_nar := aTxt[8]
-__dat_otpr := CTOD( aTxt[7] )
-__dat_pl := CTOD( aTxt[9] )
+_t_txt := parsmemo( field->txt )
+
+__br_otpr := _t_txt[6]
+__br_nar := _t_txt[8]
+__dat_otpr := CTOD( _t_txt[7] )
+__dat_pl := CTOD( _t_txt[9] )
 
 Box(, 10, 65 )
     
-    @ m_x + nX, m_y + 2 SAY "*** korekcija podataka dokumenta"
+    @ m_x + _x, m_y + 2 SAY "*** korekcija podataka dokumenta"
 
-    ++ nX
-    ++ nX
+    ++ _x
+    ++ _x
 
-    @ m_x + nX, m_y + 2 SAY "Partner:" GET __idpartn ;
-        VALID p_firma(@__idpartn)
+    @ m_x + _x, m_y + 2 SAY "Partner:" GET __idpartn ;
+        VALID p_firma( @__idpartn )
 
-    ++ nX
-    @ m_x + nX, m_y + 2 SAY "Datum otpremnice:" GET __dat_otpr 
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "Datum otpremnice:" GET __dat_otpr 
 
-    ++ nX
-    @ m_x + nX, m_y + 2 SAY " Broj otpremnice:" GET __br_otpr 
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY " Broj otpremnice:" GET __br_otpr 
     
-    ++ nX
-    @ m_x + nX, m_y + 2 SAY "  Datum placanja:" GET __dat_pl
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "  Datum placanja:" GET __dat_pl
     
-    ++ nX
-    @ m_x + nX, m_y + 2 SAY "        Narudzba:" GET __br_nar 
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "        Narudzba:" GET __br_nar 
 
     read
+
 BoxC()
 
 if LastKey() == K_ESC
-    select (nTArea)
-    return lRet
+    select ( _t_area )
+    return _ret
 endif
 
-if Pitanje(,"Izvrsiti zamjenu podataka ? (D/N)", "D") == "N"
-    select (nTArea)
-    return lRet
+if Pitanje(, "Izvrsiti zamjenu podataka ? (D/N)", "D" ) == "N"
+    select ( _t_area )
+    return _ret
 endif
+
+if !f18_lock_tables( { "fakt_fakt", "fakt_doks" } )
+    MsgBeep("Problem sa lokovanjem tabela !!!")
+    select ( _t_area )
+    return _ret
+endif
+
+sql_table_update( nil, "BEGIN" )
 
 // mjenjamo podatke
-lRet := .t.
+_ret := .t.
 
 // pronadji nam partnera
 select partn
 seek __idpartn
+
 __p_tmp := ALLTRIM( field->naz ) + ;
     "," + ALLTRIM( field->ptt ) + ;
     " " + ALLTRIM( field->mjesto )
 
 // vrati se na doks
 select fakt_doks
-seek cFirma + cTipDok + cBrDok
+seek id_firma + tip_dok + br_dok
 
 if !FOUND()
     msgbeep("Nisam nista promjenio !!!")
@@ -798,30 +821,33 @@ if !FOUND()
 endif
 
 // napravi zamjenu u doks tabeli 
-replace field->idpartner with __idpartn
-replace field->partner with __p_tmp
+_rec := dbf_get_rec()
+_rec["idpartner"] := __idpartn
+_rec["partner"] := __p_tmp
+update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
 
 // prodji kroz fakt stavke
 select fakt
 go top
-seek cFirma + cTipDok + cBrDok
+seek id_firma + tip_dok + br_dok
 
-nCnt := 1
+_cnt := 1
 
-do while !EOF() .and. field->idfirma == cFirma ;
-        .and. field->idtipdok == cTipDok ;
-        .and. field->brdok == cBrDok
+do while !EOF() .and. field->idfirma == id_firma ;
+        .and. field->idtipdok == tip_dok ;
+        .and. field->brdok == br_dok
 
-    replace field->idpartner with __idpartn 
+    _rec := dbf_get_rec()
+    _rec["idpartner"] := __idpartn
 
-    if nCnt = 1
+    if _cnt == 1
         
         // roba tip U
-        __txt := Chr(16) + aTxt[1] + Chr(17)
+        __txt := Chr(16) + _t_txt[1] + Chr(17)
             // dodatni tekst fakture
-        __txt += Chr(16) + aTxt[2] + Chr(17)
+        __txt += Chr(16) + _t_txt[2] + Chr(17)
         // naziv partnera
-        __txt += Chr(16) + ALLTRIM(partn->naz) + Chr(17)
+        __txt += Chr(16) + ALLTRIM( partn->naz ) + Chr(17)
         // partner 2 podaci
         __txt += Chr(16) + ALLTRIM(partn->adresa) + ", Tel:" + ALLTRIM(partn->telefon) + Chr(17) 
         // partner 3 podaci
@@ -835,23 +861,29 @@ do while !EOF() .and. field->idfirma == cFirma ;
         // datum placanja
         __txt += Chr(16) + DToC(__dat_pl) + Chr(17)
         
-        if LEN( aTxt ) > 9
-            for i := 10 to LEN( aTxt )
-                __txt += Chr(16) + aTxt[i] + Chr(17)
+        if LEN( _t_txt ) > 9
+            for _i := 10 to LEN( _t_txt )
+                __txt += Chr(16) + _t_txt[ _i ] + Chr(17)
             next
         endif
 
-        replace field->txt with __txt
+        _rec["txt"] := __txt
 
     endif
 
-    ++ nCnt
+    update_rec_server_and_dbf( "fakt_fakt", _rec, 1, "CONT" )
+
+    ++ _cnt
 
     skip
+
 enddo
 
-select (nTArea)
-return lRet
+sql_table_update( nil, "END" ) 
+f18_free_tables( { "fakt_fakt", "fakt_doks" } )
+
+select ( _t_area )
+return _ret
 
 
 

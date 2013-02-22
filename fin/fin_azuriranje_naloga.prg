@@ -727,6 +727,7 @@ hseek psuban->idpartner
 if !FOUND()
 	MsgBeep( "Stavka br." + psuban->rbr + " : Nepostojeca sifra partnera!#Partner id: " + psuban->idpartner )
 	fin_brisi_p_tabele( .t. )
+    o_fin_za_azuriranje()
 	_ok := .f.
 endif
 

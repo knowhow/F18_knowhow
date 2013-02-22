@@ -1,3 +1,9 @@
+1.4.127 2013-02-22, vsasa
+
+  - fin, korekcija kod ažuriranja i provjere konta
+  - ld, export gip obrasca, greška sa karakterima
+  - fakt, štampa ugovora i naljepnica korekcije
+
 1.4.126 2013-02-18, vsasa
 
   - fakt, ispravka partnera na postojećim dokumentima - bugfix

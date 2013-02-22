@@ -20,7 +20,7 @@ function kreiraj_adrese_iz_ugovora()
 local _id_roba, _partner, _ptt, _mjesto
 local _n_sort, _dat_do, _g_dat
 local _filter := ""
-local _index_sort := "LAB"
+local _index_sort := ""
 local _rec, _usl_partner, _usl_mjesto, _usl_ptt
 local _ima_destinacija
 local _count := 0
@@ -41,23 +41,25 @@ _n_sort := fetch_metric( "ugovori_naljepnice_sort", my_user(), "4" )
 _dat_do := DATE()
 _g_dat := "N"
 
-Box(,11,77)
+Box(, 15, 77 )
 
     do while .t.
 
-        @ m_x+0, m_y+5 SAY "POSTAVLJENJE USLOVA ZA PRAVLJENJE LABELA"
-        @ m_x+2, m_y+2 SAY "Artikal  :" GET _id_roba VALID P_Roba( @_id_roba ) PICT "@!"
-        @ m_x+3, m_y+2 SAY "Partner  :" GET _partner PICT "@S50!"
-        @ m_x+4, m_y+2 SAY "Mjesto   :" GET _mjesto PICT "@S50!"
-        @ m_x+5, m_y+2 SAY "PTT      :" GET _ptt PICT "@S50!"
-        @ m_x+6, m_y+2 SAY "Gledati tekuci datum (D/N):" GET _g_dat ;
+        @ m_x + 0, m_y + 5 SAY "POSTAVLJENJE USLOVA ZA PRAVLJENJE LABELA"
+        @ m_x + 2, m_y + 2 SAY "Artikal  :" GET _id_roba VALID P_Roba( @_id_roba ) PICT "@!"
+        @ m_x + 3, m_y + 2 SAY "Partner  :" GET _partner PICT "@S50!"
+        @ m_x + 4, m_y + 2 SAY "Mjesto   :" GET _mjesto PICT "@S50!"
+        @ m_x + 5, m_y + 2 SAY "PTT      :" GET _ptt PICT "@S50!"
+        @ m_x + 6, m_y + 2 SAY "Gledati tekuci datum (D/N):" GET _g_dat ;
             VALID _g_dat $ "DN" PICT "@!"
-        @ m_x+7, m_y+2 SAY "Nacin sortiranja (1-kolicina+mjesto+naziv ,"
-        @ m_x+8, m_y+2 SAY "                  2-mjesto+naziv+kolicina ,"
-        @ m_x+9, m_y+2 SAY "                  3-PTT+mjesto+naziv+kolicina),"
-        @ m_x+10, m_y+2 SAY "                  4-kolicina+PTT+mjesto+naziv)," 
-        @ m_x+11, m_y+2 SAY "                  5-idpartner)," ;
-            GET _n_sort VALID _n_sort $ "12345" PICT "9"
+        @ m_x + 7, m_y + 2 SAY "**** Nacin sortiranja podataka u pregledu: "
+        @ m_x + 8, m_y + 2 SAY " 1 - kolicina + mjesto + naziv"
+        @ m_x + 9, m_y + 2 SAY " 2 - mjesto + naziv + kolicina"
+        @ m_x + 10, m_y + 2 SAY " 3 - PTT + mjesto + naziv + kolicina"
+        @ m_x + 11, m_y + 2 SAY " 4 - kolicina + PTT + mjesto + naziv" 
+        @ m_x + 12, m_y + 2 SAY " 5 - idpartner" 
+        @ m_x + 13, m_y + 2 SAY " 6 - kolicina"
+        @ m_x + 14, m_y + 2 SAY "odabrana vrijednost:" GET _n_sort VALID _n_sort $ "123456" PICT "9"
         READ
 
         IF LASTKEY()==K_ESC
@@ -414,11 +416,12 @@ use
 my_use_temp( "labelu", my_home() + _table + ".dbf", .f., .f. )
 
 // indeksiraj tabelu
-index on ( kol_c + mjesto + naz ) tag "LAB1"
-index on ( mjesto + naz + kol_c ) tag "LAB2"
-index on ( ptt + mjesto + naz + kol_c ) tag "LAB3"
-index on ( kol_c + ptt + mjesto + naz ) tag "LAB4"
-index on ( idpartner ) tag "LAB5"
+index on ( kol_c + mjesto + naz ) tag "1"
+index on ( mjesto + naz + kol_c ) tag "2"
+index on ( ptt + mjesto + naz + kol_c ) tag "3"
+index on ( kol_c + ptt + mjesto + naz ) tag "4"
+index on ( idpartner ) tag "5"
+index on ( kol_c ) tag "6"
 
 return
 

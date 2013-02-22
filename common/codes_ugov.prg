@@ -140,6 +140,7 @@ local nRec := 0
 local _t_area := SELECT()
 
 do case
+
     case ( Ch == K_CTRL_T )
         // brisi ugovor
         if br_ugovor() == 1
@@ -304,25 +305,51 @@ return DE_CONT
 // brisanje ugovora 
 // ------------------------------------
 function br_ugovor()
-local cId
-local nTRec
-if Pitanje(,"Izbrisati ugovor sa pripadajucim stavkama ?","N")=="D"
-    cId:=id
-        select rugov
-        seek cid
-        do while !eof() .and. cId==id
-            skip
-        nTrec := RecNo()
-        skip -1
-            delete
-            go nTrec
-        enddo
-        select ugov
-        delete
-    return 1
+local _id_ugov
+local _t_rec
+local _rec
+local _ret := 0
+
+if Pitanje(, "Izbrisati ugovor sa pripadajucim stavkama ?", "N" ) == "N"
+    return _ret
 endif
 
-return 0
+if !f18_lock_tables({"fakt_ugov", "fakt_rugov"})
+    MsgBeep("Problem sa lokovanjem tabela !!!")
+    return _ret
+endif
+
+sql_table_update( nil, "BEGIN" )
+
+_id_ugov := field->id
+
+_rec := dbf_get_rec()
+delete_rec_server_and_dbf( "fakt_ugov", _rec, 1, "CONT" )
+   
+select rugov
+seek _id_ugov
+
+do while !EOF() .and. _id_ugov == field->id
+
+    skip
+    _t_rec := RecNo()
+    skip -1
+
+    _rec := dbf_get_rec()
+    delete_rec_server_and_dbf( "fakt_rugov", _rec, 1, "CONT" )
+
+    go (_t_rec)
+
+enddo
+        
+_ret := 1
+
+f18_free_tables({"fakt_ugov", "fakt_rugov"})
+sql_table_update( nil, "END" )
+
+select ugov
+
+return _ret
 
 
 

@@ -1,3 +1,7 @@
+1.4.129 2013-02-22, vsasa
+
+  - fakt, brisanje ugovora - bugfix
+
 1.4.128 2013-02-22, vsasa
 
   - fin, prikaz kartica sa saldom nula u odt varijanti 

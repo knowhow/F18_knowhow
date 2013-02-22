@@ -556,16 +556,15 @@ private lIzSifPArtn
 
 private cFilter := ""
 
-if alias()="PARTN"
-  lIzSifPartn:=.t.
+if ALIAS() = "PARTN"
+  lIzSifPartn := .t.
 else
-  lIzSifPartn:=.f.
+  lIzSifPartn := .f.
 endif
-
 
 SELECT (F_UGOV)
 
-PRIVATE cIdUg:=ID
+PRIVATE cIdUg := ID
 
 SELECT (F_RUGOV)
 SET ORDER TO TAG "ID"
@@ -580,12 +579,6 @@ ImeKol:={}; Kol:={}
 AADD(ImeKol,{ "IDRoba",   {|| IdRoba}  , "IDROBA"  , {|| .t.}, {|| glDistrib.and.RIGHT(TRIM(widroba),1)==";".or.P_Roba(@widroba)}, ">" })
 
 AADD(ImeKol,{ PADC("Kol.", LEN(pickol)), {|| TRANSFORM(kolicina, pickol)}, "KOLICINA", {|| .t.}, {|| .t.}, ">" })
-
-
-if IzFMkIni("Fakt_Ugovori","Rabat_Porez","N")=="D"
-  AADD(ImeKol,{ "Rabat",    {|| Rabat}   , "RABAT"   , {|| .t.}, {|| .t.}, ">" })
-  AADD(ImeKol,{ "Porez",    {|| Porez}   , "POREZ"   , {|| .t.}, {|| .t.}, ">" })
-endif
 
 if rugov->(fieldpos("K1"))<>0
   if IzFMkIni('Fakt_Ugovori',"K2",'D')=="D"
@@ -657,180 +650,194 @@ RETURN
 // --------------------------------------------------
 // --------------------------------------------------
 function EdUgov2()
-
-local nRet:=-77
-local GetList:={}
-local nRec:=RECNO()
-local nArr:=SELECT()
+local _ret := -77
+local GetList := {}
+local _t_rec := RECNO()
+local _t_arr := SELECT()
+local _rec
 
 do case
-  case Ch==K_TAB
-    OsvjeziPrikUg(.t.)
 
-  case Ch==K_CTRL_L
+    case Ch == K_TAB
+        
+        OsvjeziPrikUg( .t. )
 
-    nRet:=OsvjeziPrikUg(.t.,.t.)
-    IF nRet==DE_REFRESH
-      cIdUg:=UGOV->ID
-      SELECT (nArr)
-      SET FILTER TO
-      IF !EMPTY(DFTidroba)
-        APPEND BLANK
-        Scatter()
-         _id:=cIdUg
-     _idroba:=DFTidroba
-     _kolicina:=DFTkolicina
-        Gather()
-      ENDIF
-      SET FILTER TO ID==cIdUg; GO TOP
-    ENDIF
+    case Ch == K_CTRL_L
+        
+        _ret := OsvjeziPrikUg( .t., .t. )
+        
+        IF _ret == DE_REFRESH
+            cIdUg := ugov->id
+            SELECT (_t_arr)
+            SET FILTER TO
+            IF !EMPTY( DFTidroba )
+                APPEND BLANK
+                _rec := dbf_get_rec()
+                _rec["id"] := cIdUg
+                _rec["idroba"] := DFTidroba
+                _rec["kolicina"] := DFTkolicina
+                update_rec_server_and_dbf( "fakt_ugov", _rec, 1, "FULL" )
+            ENDIF
+            SET FILTER TO ID==cIdUg; GO TOP
+        ENDIF
 
-  case Ch==K_PGDN
-    if lIzSifPArtn
-      do while .t.  .and. !eof()
-       select partn; skip
-       select ugov; set order to tag "PARTNER"; set filter to; seek partn->id
-       if !found()
-          select partn; loop
-          // skaci do prvog sljedeceg ugovora
-       else
-          exit
-       endif
-       select partn
-      enddo
-      if eof()
-        skip -1
-      endif
+    case Ch == K_PGDN
+        if lIzSifPArtn
+            do while .t.  .and. !eof()
+                select partn
+                skip
+                select ugov
+                set order to tag "PARTNER"
+                set filter to
+                seek partn->id
+                if !found()
+                    select partn
+                    loop
+                    // skaci do prvog sljedeceg ugovora
+                else
+                    exit
+                endif
+                select partn
+            enddo
+            if eof()
+                skip -1
+            endif
 
-
-    else  // vrti se iz liste ugovora
-     SELECT UGOV; SKIP 1
-     IF EOF(); SKIP -1; SELECT (nArr); RETURN (nRet); ENDIF
-    endif
-
-    cIdUg:=ID
-    SELECT (nArr)
-    SET FILTER TO
-    SET FILTER TO ID==cIdUg
-    GO TOP
-
-    OsvjeziPrikUg(.f.)
-    nRet:=DE_REFRESH
-
-  case Ch==K_PGUP
-    if lIzSifPArtn
-      do while .t.  .and. !bof()
-       select partn; skip -1
-       select ugov; set order to tag "PARTNER"; set filter to; seek partn->id
-       if !found()
-          select partn; loop
-          // skaci do prvog sljedeceg ugovora
-       else
-          exit
-       endif
-       select partn
-      enddo
-      if bof()
-        skip
-      endif
-
-
-    else  
-     // vrti se iz liste ugovora
-     SELECT UGOV
-     SKIP -1
-     IF BOF()
-        SELECT (nArr)
-    RETURN (nRet)
-     ENDIF
-
-    endif
-    cIdUg:=ID
-    SELECT (nArr)
-    
-    private cFilt:="ID=="+cm2str(cIdUg)
-    SET FILTER TO
-    SET FILTER TO &cFilt
-    GO TOP
-
-    OsvjeziPrikUg(.f.)
-    nRet:=DE_REFRESH
-
-  case Ch==K_CTRL_N
-    IF EMPTY(cIdUg)
-      Msg("Prvo morate izabrati opciju <c-L> za novi ugovor!")
-      RETURN DE_CONT
-    ENDIF
-    GO BOTTOM; SKIP 1
-    Scatter()
-    _id := cIdUg
-    
-    Box(,8,77)
-     @ m_x+2, m_y+2 SAY "SIFRA ARTIKLA:" GET _idroba ;
-        VALID (glDistrib .and. RIGHT(TRIM(_idroba),1)==";") .or. P_Roba(@_idroba) ;
-    PICT "@!"
-     @ m_x+3, m_y+2 SAY "Kolicina      " GET _Kolicina  ;
-        pict "99999999.999"
-    
-     if IzFMkIni('Fakt_Ugovori',"Rabat_Porez",'N')=="D"
-       @ m_x+4, m_y+2 SAY "Rabat         " GET _Rabat ;
-             pict "99.999"
-       @ m_x+5, m_y+2 SAY "Porez         " GET _Porez ;
-             pict "99.99"
-     endif
-
-     IF FIELDPOS("K1")<>0
-       if IzFMkIni('Fakt_Ugovori',"K1",'D')=="D"
-          @ m_x+6, m_y+2 SAY "K1            " GET _K1 PICT "@!"
-       endif
-       if IzFMkIni('Fakt_Ugovori',"K2",'D')=="D"
-         @ m_x+7, m_y+2 SAY "K2            " GET _K2 PICT "@!"
-       endif
-     ENDIF
-     @ m_x+8, m_y+2 SAY "Destinacija   " GET _destin ;
-          PICT "@!" VALID EMPTY(_destin) .or. P_Destin(@_destin)
-     READ
-    BoxC()
-
-    IF LASTKEY() != K_ESC
-
-        APPEND BLANK
-        _vars := get_dbf_global_memvars()
-        if !update_rec_server_and_dbf(ALIAS(), _vars, 1, "FULL")
-                delete_with_rlock()
+        else  
+            // vrti se iz liste ugovora
+            SELECT UGOV
+            SKIP 1
+            IF EOF()
+                SKIP -1
+                SELECT (_t_arr)
+                RETURN (_ret)
+            ENDIF
         endif
 
-        lTrebaOsvUg:=.t.
-    ELSE
-      GO (nRec)
+        cIdUg:=ID
+        SELECT (_t_arr)
+        SET FILTER TO
+        SET FILTER TO ID==cIdUg
+        GO TOP
+
+        OsvjeziPrikUg(.f.)
+        _ret := DE_REFRESH
+
+    case Ch == K_PGUP
+        if lIzSifPArtn
+            do while .t.  .and. !bof()
+                select partn
+                skip -1
+                select ugov
+                set order to tag "PARTNER"
+                set filter to
+                seek partn->id
+                if !found()
+                    select partn
+                    loop
+                    // skaci do prvog sljedeceg ugovora
+                else
+                    exit
+                endif
+                select partn
+            enddo
+            if bof()
+                skip
+            endif
+
+        else  
+            // vrti se iz liste ugovora
+            SELECT UGOV
+            SKIP -1
+            IF BOF()
+                SELECT (_t_arr)
+                RETURN (_ret)
+            ENDIF
+
+        endif
+        cIdUg:=ID
+        SELECT (_t_arr)
+    
+        private cFilt:="ID=="+cm2str(cIdUg)
+        SET FILTER TO
+        SET FILTER TO &cFilt
+        GO TOP
+
+        OsvjeziPrikUg(.f.)
+        _ret := DE_REFRESH
+
+    case Ch==K_CTRL_N
+        IF EMPTY(cIdUg)
+            Msg("Prvo morate izabrati opciju <c-L> za novi ugovor!")
+            RETURN DE_CONT
+        ENDIF
+        GO BOTTOM
+        SKIP 1
+        Scatter()
+        _id := cIdUg
+    
+        Box(,8,77)
+            @ m_x+2, m_y+2 SAY "SIFRA ARTIKLA:" GET _idroba ;
+                VALID (glDistrib .and. RIGHT(TRIM(_idroba),1)==";") .or. P_Roba(@_idroba) ;
+                PICT "@!"
+            @ m_x+3, m_y+2 SAY "Kolicina      " GET _Kolicina  ;
+                pict "99999999.999"
+    
+      
+            IF FIELDPOS("K1")<>0
+            if IzFMkIni('Fakt_Ugovori',"K1",'D')=="D"
+                @ m_x+6, m_y+2 SAY "K1            " GET _K1 PICT "@!"
+            endif
+            if IzFMkIni('Fakt_Ugovori',"K2",'D')=="D"
+                @ m_x+7, m_y+2 SAY "K2            " GET _K2 PICT "@!"
+            endif
+            ENDIF
+            @ m_x+8, m_y+2 SAY "Destinacija   " GET _destin ;
+                PICT "@!" VALID EMPTY(_destin) .or. P_Destin(@_destin)
+            READ
+        BoxC()
+
+        IF LASTKEY() != K_ESC
+
+            APPEND BLANK
+            _vars := get_dbf_global_memvars()
+            if !update_rec_server_and_dbf(ALIAS(), _vars, 1, "FULL")
+                delete_with_rlock()
+            endif
+
+            lTrebaOsvUg:=.t.
+        ELSE
+            GO (_t_rec)
       RETURN DE_CONT
     ENDIF
 
-    nRet:=DE_REFRESH
+    _ret := DE_REFRESH
 
-  case Ch==K_CTRL_T
+  case Ch == K_CTRL_T
 
-     if Pitanje( , "Izbrisati stavku ?","N") == "D"      
-       delete_rec_server_and_dbf(ALIAS(), nil, 1, "FULL") 
-       lTrebaOsvUg:=.t.
-       nRet:=DE_REFRESH
+     if Pitanje( , "Izbrisati stavku ?", "N" ) == "D"
+        _rec := dbf_get_rec()      
+        delete_rec_server_and_dbf( "fakt_ugov", _rec, 1, "FULL") 
+        lTrebaOsvUg:=.t.
+        _ret := DE_REFRESH
      else
-       RETURN DE_CONT
+        RETURN DE_CONT
      endif
 
 endcase
 
 IF lTrebaOsvUg
-  OsvjeziPrikUg(.f.)
-  lTrebaOsvUg:=.f.
-ENDIF
-IF nRet!=-77
-  Ch:=0
-ELSE
-  nRet:=DE_CONT
+    OsvjeziPrikUg(.f.)
+    lTrebaOsvUg:=.f.
 ENDIF
 
-return nRet
+IF _ret != -77
+    Ch := 0
+ELSE
+    _ret := DE_CONT
+ENDIF
+
+return _ret
 
 
 // ----------------------------------------

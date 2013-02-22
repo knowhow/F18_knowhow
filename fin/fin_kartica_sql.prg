@@ -93,6 +93,7 @@ local _datum_do := fetch_metric( "fin_kart_datum_do", my_user(), CTOD("") )
 local _opcina := fetch_metric( "fin_kart_opcina", my_user(), PADR("", 200) )
 local _tip_val := fetch_metric( "fin_kart_tip_valute", my_user(), 1 )
 local _export_dbf := fetch_metric( "fin_kart_export_dbf", my_user(), "N" )
+local _nula := fetch_metric( "fin_kart_saldo_nula", my_user(), "D" )
 local _box_name := "SUBANALITICKA KARTICA"
 local _box_x := 21
 local _box_y := 65
@@ -165,6 +166,11 @@ Box( "#" + _box_name, _box_x, _box_y )
 	
     ++ _x
     ++ _x
+    
+    @ m_x + _x, m_y + 2 SAY "Prikaz kartica sa saldom nula (D/N)?" GET _nula VALID _nula $ "DN" PICT "@!"
+
+    ++ _x   
+    ++ _x
     @ m_x + _x, m_y + 2 SAY "Eksport kartice u dbf (D/N)?" GET _export_dbf PICT "@!" VALID _export_dbf $ "DN"
 	
 	read
@@ -185,6 +191,7 @@ set_metric( "fin_kart_datum_od", my_user(), _datum_od )
 set_metric( "fin_kart_datum_do", my_user(), _datum_do )
 set_metric( "fin_kart_tip_valute", my_user(), _tip_val )
 set_metric( "fin_kart_export_dbf", my_user(), _export_dbf )
+set_metric( "fin_kart_saldo_nula", my_user(), _nula )
 
 // setuj hash matricu koju cu poslije koristiti u izvjestaju
 rpt_vars["brza"] := _brza
@@ -197,6 +204,7 @@ rpt_vars["datum_do"] := _datum_do
 rpt_vars["opcina"] := _opcina
 rpt_vars["valuta"] := _tip_val
 rpt_vars["export_dbf"] := _export_dbf
+rpt_vars["saldo_nula"] := _nula
 
 return .t.
 
@@ -206,10 +214,11 @@ return .t.
 // -----------------------------------------------------------------
 static function _cre_rpt( rpt_vars, otv_stavke )
 local _brza, _konto, _partner, _brdok, _idvn
-local _datum_od, _datum_do, _tip_valute
+local _datum_od, _datum_do, _tip_valute, _saldo_nula
 local _qry, _table
 local _server := pg_server()
 local _fld_iznos 
+local _nula_cond := ""
 
 if otv_stavke == NIL
     otv_stavke := .f.
@@ -225,12 +234,18 @@ _datum_od := rpt_vars["datum_od"]
 _datum_do := rpt_vars["datum_do"]
 _opcina := rpt_vars["opcina"]
 _tip_valute := rpt_vars["valuta"]
+_saldo_nula := rpt_vars["saldo_nula"]
 
 _fld_iznos := "s.iznosbhd"
 
 if _tip_valute == 2
     // strana valuta
     _fld_iznos := "s.iznosdem"
+endif
+
+if _saldo_nula == "D"
+    // ako je saldo nula, preskoci
+    _nula_cond := ""
 endif
 
 _qry := "SELECT s.idkonto, k.naz as konto_naz, s.idpartner, p.naz as partn_naz, s.idvn, s.brnal, s.rbr, s.brdok, s.datdok, s.datval, s.opis, " + ;
@@ -282,6 +297,7 @@ endif
 if !EMPTY( _opcina )
     _qry += " AND " + _sql_cond_parse( "p.idops", _opcina )
 endif
+
 
 _qry += " ORDER BY s.idkonto, s.idpartner, s.datdok, s.brnal"
 
@@ -388,6 +404,8 @@ local _u_saldo1 := 0
 local _u_saldo2 := 0
 local _val
 local _id_konto, _id_partner
+local _t_rec
+local _saldo_nula := rpt_vars["saldo_nula"]
 
 if table:LastRec() == 0
     return .f.
@@ -418,10 +436,20 @@ endif
 do while !table:EOF()
 
     oItem := table:GetRow()
-
+    _t_rec := table:RecNo()
+    
     // provjeri mi konto + partner
     _id_konto := oItem:Fieldget( oItem:Fieldpos("idkonto") )
     _id_partner := oItem:Fieldget( oItem:Fieldpos("idpartner") )
+
+    // provjera da li je kartica na nuli ?
+    if _saldo_nula == "N" 
+        if _fin_kartica_saldo_nula( table, _id_konto, _id_partner ) 
+            loop
+        else
+            table:GoTo( _t_rec )
+        endif
+    endif
 
     // dodaj novi subnode....
     xml_subnode( "kartica_item", .f. )
@@ -528,5 +556,33 @@ close_xml()
 return .t.
 
 
+// ------------------------------------------------------------------
+// provjerava se da li je kartica u saldu = 0
+// ------------------------------------------------------------------
+static function _fin_kartica_saldo_nula( table, _konto, _partner )
+local _ret := .f.
+local _u_saldo := 0
+local oRow
 
+do while !table:EOF() .and. table:FieldGet( table:FieldPos( "idkonto" ) ) == _konto ;
+                .and. table:FieldGet( table:FieldPos( "idpartner" ) ) == _partner
+
+    oRow := table:GetRow()
+
+    // duguje
+    _dug := oRow:Fieldget( oRow:Fieldpos("duguje") )
+    // potrazuje
+    _pot := oRow:Fieldget( oRow:Fieldpos("potrazuje") )
+
+    _u_saldo += ( _dug - _pot )
+
+    table:Skip()
+
+enddo
+
+if ROUND( _u_saldo, 2 ) == 0
+    _ret := .t.
+endif 
+
+return _ret
 

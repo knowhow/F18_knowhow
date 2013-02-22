@@ -416,10 +416,10 @@ use
 my_use_temp( "labelu", my_home() + _table + ".dbf", .f., .f. )
 
 // indeksiraj tabelu
-index on ( kol_c + mjesto + naz ) tag "1"
-index on ( mjesto + naz + kol_c ) tag "2"
-index on ( ptt + mjesto + naz + kol_c ) tag "3"
-index on ( kol_c + ptt + mjesto + naz ) tag "4"
+index on ( kol_c + mjesto + PADR( naz, 50 ) ) tag "1"
+index on ( mjesto + PADR( naz, 50 ) + kol_c ) tag "2"
+index on ( ptt + mjesto + PADR( naz, 50 ) + kol_c ) tag "3"
+index on ( kol_c + ptt + mjesto + PADR( naz, 50 ) ) tag "4"
 index on ( idpartner ) tag "5"
 index on ( kol_c ) tag "6"
 

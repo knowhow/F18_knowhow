@@ -1,3 +1,7 @@
+1.4.128 2013-02-22, vsasa
+
+  - fin, prikaz kartica sa saldom nula u odt varijanti 
+
 1.4.127 2013-02-22, vsasa
 
   - fin, korekcija kod ažuriranja i provjere konta

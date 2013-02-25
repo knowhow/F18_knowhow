@@ -728,6 +728,7 @@ local _s_kolicina, _tmp
 local _u_fv, _t_fv, _u_fv_r, _t_fv_r, _u_tr_prevoz, _u_tr_bank, _u_tr_carina, _u_tr_zavisni, _u_tr_sped, _u_tr_svi
 local _t_tr_prevoz, _t_tr_bank, _t_tr_carina, _t_tr_zavisni, _t_tr_sped, _t_tr_svi, _u_nv, _t_nv, _u_marza, _t_marza
 local _u_porez, _t_porez, _u_pv, _t_pv, _u_pv_porez, _t_pv_porez, _t_kol, _u_rabat, _t_rabat
+local _ima_mpcsapp := .f.
 
 private nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
 
@@ -796,7 +797,18 @@ do while !EOF() .and. _firma == field->idfirma .and. _tip_dok == field->idvd .an
     KTroskovi()
     
     _porezna_stopa := tarifa->opp
-    _porez := field->mpcsapp / ( 1 + ( _porezna_stopa / 100 ) ) * ( _porezna_stopa / 100 )
+
+    _ima_mpcsapp := .f.
+
+    // sta ako ima poreza, sta ako nema poreza
+    if ROUND( field->mpcsapp, 2 ) == 0
+        // ako ga nema, koristi na osnovu VPC
+        _porez := field->vpc * ( _porezna_stopa / 100 )
+    else
+        // ako ima, koristi polje MPCSAPP
+        _porez := field->mpcsapp / ( 1 + ( _porezna_stopa / 100 ) ) * ( _porezna_stopa / 100 )
+        _ima_mpcsapp := .t.
+    endif
 
     _s_kolicina := field->kolicina - field->gkolicina - field->gkolicin2
     _t_kol += _s_kolicina
@@ -846,7 +858,13 @@ do while !EOF() .and. _firma == field->idfirma .and. _tip_dok == field->idvd .an
     _t_porez += _u_porez
 
     // prodajna vrijednost sa porezom
-    _u_pv_porez := ( field->mpcsapp * field->kolicina )
+    if _ima_mpcsapp
+        // ako postoji u bazi mpcsapp koristi nju
+        _u_pv_porez := ( field->mpcsapp * field->kolicina )
+    else
+        // koristi racunicu na osnovu vpc i poreza
+        _u_pv_porez := _u_pv + _u_porez
+    endif
     _t_pv_porez += _u_pv_porez
 
     xml_subnode("stavka", .f. )
@@ -875,7 +893,12 @@ do while !EOF() .and. _firma == field->idfirma .and. _tip_dok == field->idvd .an
     xml_node( "pc", STR( field->vpc, 12, 2 ) )
     xml_node( "por_st", STR( _porezna_stopa, 12, 2 ) )
     xml_node( "porez", STR( _porez, 12, 2 ) )
-    xml_node( "pcsap", STR( field->mpcsapp, 12, 2 ) )
+
+    if _ima_mpcsapp
+        xml_node( "pcsap", STR( field->mpcsapp, 12, 2 ) )
+    else
+        xml_node( "pcsap", STR( field->vpc + _porez, 12, 2 ) )
+    endif
 
     // troskovi
     _pr_tr_prev := nPrevoz / field->fcj2 * 100

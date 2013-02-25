@@ -1,3 +1,8 @@
+1.4.130 2013-02-25, vsasa
+
+  - kalk, kalkulacija cijena vp (prikaz PV sa PDV) u ODT varijanti
+  - kalk, početna stanja, korekcija sa brojem dokumenta
+
 1.4.129 2013-02-22, vsasa
 
   - fakt, brisanje ugovora - bugfix

@@ -251,3 +251,75 @@ return
 
 
 
+// ------------------------------------------------------------
+// brisanje log-a
+// ------------------------------------------------------------
+function f18_log_delete()
+local _params := hb_hash()
+local _curr_log_date := DATE()
+local _last_log_date := fetch_metric( "log_last_delete_date", NIL, CTOD( "" ) )
+local _delete_log_level := fetch_metric( "log_delete_level", NIL, 30 )
+
+if _delete_log_level == 0
+    // ne radi nista
+    return
+endif
+
+// DATE() - 30 > zadnji put brisano !
+if ( _curr_log_date - _delete_log_level ) > _last_log_date   
+
+    // brisi sve starije od n dana
+    _params["delete_level"] := _delete_log_level
+    _params["current_date"] := _curr_log_date
+
+    // brisi log
+    if _sql_log_delete( _params )
+        // zabiljezi operaciju
+        set_metric( "log_last_delete_date", NIL,  _curr_log_date )
+    endif
+
+endif
+
+return
+
+
+// -------------------------------------------------------------
+// brisanje log-a za odredjeni datumski period
+// -------------------------------------------------------------
+static function _sql_log_delete( params )
+local _ok := .t.
+local _qry, _where
+local _server := pg_server()
+local _result
+local _delete_level := params["delete_level"]
+local _curr_date := params["current_date"]
+local _delete_date := ( _curr_date - _delete_level )
+
+// WHERE uslov
+// ==========================
+
+// datumski uslov
+_where := "l_time::char(8) <= " + _sql_quote( _delete_date )
+
+// GLAVNI UPIT
+// ==========================
+// glavni dio upita...
+_qry := "DELETE FROM fmk.log "
+// dodaj WHERE
+_qry += "WHERE " + _where 
+
+MsgO( "Brisanje log-a u toku... sacekajte trenutak !" )
+
+_result := _sql_query( _server, _qry )
+
+MsgC()
+
+if VALTYPE( _result ) == "L"
+    _ok := .f.
+endif
+
+return _ok
+
+
+
+

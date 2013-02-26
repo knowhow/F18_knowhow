@@ -140,6 +140,9 @@ _write_server_params_to_config()
 
 post_login()
 
+// brisanje loga nakon logiranja...
+f18_log_delete()
+
 return .t.
 
 // -------------------------------

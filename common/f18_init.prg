@@ -22,6 +22,7 @@ static __server_log := .f.
 
 static __f18_home := NIL
 static __f18_home_root := NIL
+static __f18_home_backup := NIL
 
 thread static __log_handle := NIL
 
@@ -859,6 +860,37 @@ f18_create_dir(home)
 
 my_home_root(home)
 return .t.
+
+
+// -----------------------------
+// ------------------------------
+function my_home_backup(home_backup)
+
+if home_backup != NIL
+  __f18_home_backup := home_backup
+endif
+
+return __f18_home_backup
+
+
+
+// ----------------------------
+// ----------------------------
+function set_f18_home_backup( database )
+local _home := hb_DirSepAdd( my_home_root() + "backup" )
+
+f18_create_dir( _home )
+
+if database <> NIL
+    _home := hb_DirSepAdd( _home + database )
+    f18_create_dir( _home )
+endif
+
+my_home_backup( _home )
+
+return .t.
+
+
 
 
 // ---------------------------

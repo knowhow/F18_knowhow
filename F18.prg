@@ -155,11 +155,11 @@ if f18_use_module( "virm" )
 endif
 
 AADD( menuop, "---------------------------------------------" )
-AADD( menuexec, {|| nil } )
+AADD( menuexec, {|| NIL } )
 
 // ostale opcije...
 AADD( menuop, " B. Backup podataka" )
-AADD( menuexec, {|| NIL } )
+AADD( menuexec, {|| f18_backup_data() } )
 AADD( menuop, " P. Parametri aplikacije" )
 AADD( menuexec, {|| f18_app_parameters() } )
 AADD( menuop, " R. ReLogin" )
@@ -172,3 +172,5 @@ AADD( menuop, " V. VPN podrska" )
 AADD( menuexec, {|| vpn_support() } )
 
 return
+
+

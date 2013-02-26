@@ -173,8 +173,6 @@ endif
 // izvrsi upit
 MsgO( "Vrsim upit prema serveru..." )
 
-msgbeep( _qry )
-
 _data := _sql_query( _server, _qry )
 
 if VALTYPE( _data ) == "L"

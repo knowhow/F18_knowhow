@@ -1,3 +1,8 @@
+1.4.131 2013-02-27, vsasa
+
+  - f18 backup funkcije, init...
+  - brisanje loga pri startu aplikacije, parametri logova/backup-a
+ 
 1.4.130 2013-02-25, vsasa
 
   - kalk, kalkulacija cijena vp (prikaz PV sa PDV) u ODT varijanti

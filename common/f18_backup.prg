@@ -10,7 +10,7 @@
  */
 
 #include "fmk.ch"
-
+#include "hbthread.ch"
 #include "hbclass.ch"
 #include "common.ch"
 
@@ -89,6 +89,7 @@ local _host := _server_params["host"]
 local _port := _server_params["port"]
 local _database := _server_params["database"]
 local _admin_user := "admin"
+local _backup_file := ::backup_path + ::get_backup_filename()
 
 // imamo dostupne podatke
 //
@@ -103,12 +104,14 @@ _cmd += " -U " + ALLTRIM( _admin_user )
 _cmd += " -w "
 _cmd += " -F t "
 _cmd += " -b "
-_cmd += ' -f "' + ::backup_path + ::get_backup_filename() + '"'
+_cmd += ' -f "' + _backup_file + '"'
 _cmd += ' "' + _database + '"'
 
-MsgBeep( _cmd )
-
-//hb_run( _cmd )
+? "Backup podataka:"
+? "=============================="
+? "fajl:", _backup_file
+?
+? "komanda:", _cmd
 
 return _ok
 
@@ -195,31 +198,6 @@ return .t.
 
 
 
-
-// ------------------------------------------------
-// poziv backupa podataka sa menija...
-// ------------------------------------------------
-function f18_backup_data()
-local oBackup
-
-oBackup := F18Backup():New()
-
-if oBackup:get_backup_type()
-
-    oBackup:get_backup_path()
-    oBackup:get_backup_interval()
-
-    oBackup:Backup_data()
-
-endif
-
-return
-
-
-
-
-
-
 METHOD F18Backup:lock()
 set_metric("f18_backup_user", NIL, my_user() )
 return .t.
@@ -250,6 +228,49 @@ if !EMPTY( _user )
 endif
 
 return _ret
+
+
+
+
+
+// ------------------------------------------------
+// poziv backupa podataka sa menija...
+// ------------------------------------------------
+function f18_backup_data()
+hb_threadStart( @f18_backup_data_thread() )
+return
+
+
+
+function f18_backup_data_thread()
+local oBackup
+
+#ifdef  __PLATFORM__WINDOWS 
+    _w := hb_gtCreate("WVT")
+#else
+    _w := hb_gtCreate("XWC")
+#endif
+
+hb_gtSelect( _w )
+hb_gtReload( _w )
+
+set_global_vars_0()
+
+oBackup := F18Backup():New()
+
+if oBackup:get_backup_type()
+
+    oBackup:get_backup_path()
+    oBackup:get_backup_interval()
+
+    oBackup:Backup_data()
+
+    QUIT
+
+endif
+
+return
+
 
 
 

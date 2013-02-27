@@ -10,6 +10,7 @@
  */
 
 #include "inkey.ch"
+#include "hbthread.ch"
 
 #ifndef TEST
 

@@ -113,6 +113,8 @@ _cmd += ' "' + _database + '"'
 ?
 ? "komanda:", _cmd
 
+sleep(10)
+
 return _ok
 
 
@@ -174,22 +176,28 @@ return .t.
 
 
 
-METHOD F18Backup:get_backup_type()
+METHOD F18Backup:get_backup_type( backup_type )
 local _type := 1
 
-Box(, 6, 60 )
+if backup_type == NIL
 
-    @ m_x + 1, m_y + 2 SAY "Kreirati backup podataka ***"
-    @ m_x + 3, m_y + 2 SAY "   1 - backup tekuce firme"
-    @ m_x + 4, m_y + 2 SAY "   0 - backup kompletnog servera"
-    @ m_x + 6, m_y + 2 SAY "odabir:" GET _type VALID _type >= 0 PICT "9"
+    Box(, 6, 60 )
 
-    read
+        @ m_x + 1, m_y + 2 SAY "Kreirati backup podataka ***"
+        @ m_x + 3, m_y + 2 SAY "   1 - backup tekuce firme"
+        @ m_x + 4, m_y + 2 SAY "   0 - backup kompletnog servera"
+        @ m_x + 6, m_y + 2 SAY "odabir:" GET _type VALID _type >= 0 PICT "9"
 
-BoxC()
+        read
 
-if LastKey() == K_ESC
-    return .f.
+    BoxC()
+
+    if LastKey() == K_ESC
+        return .f.
+    endif
+
+else
+    _type := backup_type 
 endif
 
 ::backup_type := _type

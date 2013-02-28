@@ -12,6 +12,8 @@
 #include "inkey.ch"
 #include "hbthread.ch"
 
+static __relogin_opt := .f.
+
 #ifndef TEST
 
 function Main(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11)
@@ -44,8 +46,12 @@ local mnu_bottom := 23
 local mnu_right := 65
 local _x := 1
 local _db_params
+local _count := 0
+local oBackup := F18Backup():New()
 
 do while .t.
+
+    ++ _count
 
 	clear screen
 
@@ -63,6 +69,16 @@ do while .t.
 
     @ _x, mnu_left + 1 SAY REPLICATE( "-", 50 )
 
+    // backup okidamo samo na prvom ulasku
+    // ili na opciji relogina
+    if _count == 1 .or. __relogin_opt
+        
+        // automatski backup podataka preduzeca
+        f18_auto_backup_data(1)
+        __relogin_opt := .f.
+
+    endif
+
 	// resetuj...
 	menuop := {}
 	menuexec := {}
@@ -75,9 +91,14 @@ do while .t.
  	mnu_choice := ACHOICE2( mnu_top, mnu_left, mnu_bottom, mnu_right, menuop, .t., "MenuFunc", 1 )
 
  	do case
-
 		case mnu_choice == 0
-    		exit
+
+            if !oBackup:locked
+    		    exit
+            else
+                MsgBeep( oBackup:backup_in_progress_info() )
+            endif
+
 		case mnu_choice > 0 
 			eval( menuexec[ mnu_choice ] )
 	endcase
@@ -164,7 +185,7 @@ AADD( menuexec, {|| f18_backup_data() } )
 AADD( menuop, " P. Parametri aplikacije" )
 AADD( menuexec, {|| f18_app_parameters() } )
 AADD( menuop, " R. ReLogin" )
-AADD( menuexec, {|| relogin() } )
+AADD( menuexec, {|| __relogin_opt := relogin(), .t. } )
 AADD( menuop, " W. Pregled log-a" )
 AADD( menuexec, {|| f18_view_log() } )
 AADD( menuop, " X. Erase / full synchro tabela" )

@@ -399,14 +399,10 @@ f18_init_semaphores()
 
 set_init_fiscal_params()
 
-// automatski backup podataka preduzeca
-// 1 - preduzece, 0 - server
-//f18_auto_backup_data(1)
+run_on_startup()
 
 // brisanje loga nakon logiranja...
 f18_log_delete()
-
-run_on_startup()
 
 return .t.
 
@@ -959,18 +955,28 @@ return
 // ---------------
 // ---------------
 function relogin()
+local oBackup := F18Backup():New()
+local _ret := .f.
+
+if oBackup:locked()
+    MsgBeep( oBackup:backup_in_progress_info() )
+    return _ret
+endif
 
 __server_log := .f.
 
 my_server_logout()
 
 _get_server_params_from_config()
+
 if f18_form_login()
    post_login()
 endif
-_write_server_params_to_config()
 
-return .t.
+_write_server_params_to_config()
+_ret := .t.
+
+return _ret
 
 
 // -------------------------------

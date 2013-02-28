@@ -45,9 +45,9 @@ local _w, _cnt
 local p1 := p2 := p3 := p4 := p5 := NIL
 
 #ifdef  __PLATFORM__WINDOWS 
-_w := hb_gtCreate("WVT")
+    _w := hb_gtCreate("WVT")
 #else
-_w := hb_gtCreate("XWC")
+    _w := hb_gtCreate("XWC")
 #endif
 
 _cnt := f18_session_count(1)

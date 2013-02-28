@@ -399,10 +399,10 @@ f18_init_semaphores()
 
 set_init_fiscal_params()
 
-run_on_startup()
-
 // brisanje loga nakon logiranja...
 f18_log_delete()
+
+run_on_startup()
 
 return .t.
 

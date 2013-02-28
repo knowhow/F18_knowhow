@@ -25,6 +25,17 @@ function os_generacija_pocetnog_stanja()
 local _info := {} 
 local _ok
 local _pos_x, _pos_y
+local _dat_ps := DATE()
+local _db_params := my_server_params()
+local _tek_database := my_server_params()["database"]
+local _year_tek := YEAR( _dat_ps )
+local _year_sez := _year_tek - 1
+
+if ALLTRIM(STR( _year_sez )) $ _tek_database
+    // ne moze se raditi razdvajanje u 2012
+    MsgBeep( "Ne mogu vrsti prenos u sezonskim podacima..." )
+    return _ok
+endif
 
 if Pitanje(, "Generisati pocetno stanje (D/N) ?", "N" ) == "N"
     return
@@ -233,12 +244,6 @@ local _year_tek := YEAR( _dat_ps )
 local _year_sez := _year_tek - 1
 local _table, _table_promj
 local _pos_x, _pos_y
-
-if ALLTRIM(STR( _year_sez )) $ _tek_database
-    // ne moze se raditi razdvajanje u 2012
-    MsgBeep( "Ne mogu vrsti prenos u sezonskim podacima..." )
-    return _ok
-endif
 
 // query za OS/PROMJ
 _qry_os := " SELECT * FROM fmk." + __table_os

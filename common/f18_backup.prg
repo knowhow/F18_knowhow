@@ -407,7 +407,6 @@ if backup_type == NIL
     @ _x, _y SAY _d_line
 
     ++ _x
-
     @ _x, _y SAY "Obavjestenje: nakon pokretanja procedure backup-a slobodno se prebacite"
     
     ++_x

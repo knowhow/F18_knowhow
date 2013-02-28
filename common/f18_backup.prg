@@ -100,16 +100,18 @@ local _host := _server_params["host"]
 local _port := _server_params["port"]
 local _database := _server_params["database"]
 local _admin_user := "admin"
-local _backup_file := ::backup_path + ::get_backup_filename()
 local _x := 10
 local _y := 2
 local _i
 local _color_ok := "W+/B+"
 local _color_err := "W+/R+"
 
+// daj naziv fajla backup-a
+::get_backup_filename()
+
 // pobrisi mi backup file prije svega...
 // mozda vec postoji jedan
-FERASE( _backup_file )
+FERASE( ::backup_path + ::backup_filename )
 sleep(1)
 
 // setuj env.varijable
@@ -128,7 +130,7 @@ _cmd += " -U " + ALLTRIM( _admin_user )
 _cmd += " -w "
 _cmd += " -F t "
 _cmd += " -b "
-_cmd += ' -f "' + _backup_file + '"'
+_cmd += ' -f "' + ::backup_path + ::backup_filename + '"'
 _cmd += ' "' + _database + '"'
 
 @ _x, _y SAY "Backup podataka u toku...."
@@ -137,7 +139,9 @@ _cmd += ' "' + _database + '"'
 @ _x, _y SAY REPLICATE( "=", 70 )
 
 ++ _x
-@ _x, _y SAY "Naziv fajla backupa: " + _backup_file
+@ _x, _y SAY "  Lokacija backup-a: " + ::backup_path
+++ _x
+@ _x, _y SAY "Naziv fajla backupa: " + ::backup_filename
 
 ++ _x
 ++ _x
@@ -146,7 +150,7 @@ _cmd += ' "' + _database + '"'
 // pokreni komandu
 hb_run( _cmd )
 
-if FILE( _backup_file )
+if FILE( ::backup_path + ::backup_filename )
     @ _x, col() + 1 SAY "OK" COLOR _color_ok
     _ok := .t.
 else
@@ -154,9 +158,14 @@ else
 endif
 
 if _ok
+
     ++ _x
-    @ _x, _y SAY "Prebacujem backup na removable drive ..."
-    ::backup_to_removable()
+    @ _x, _y SAY "Prebacujem backup na removable drive... "
+
+    if ::backup_to_removable()
+        @ _x, col() SAY "OK" COLOR _color_ok
+    endif
+
 endif
 
 ++ _x
@@ -181,16 +190,18 @@ local _host := _server_params["host"]
 local _port := _server_params["port"]
 local _database := _server_params["database"]
 local _admin_user := "admin"
-local _backup_file := ::backup_path + ::get_backup_filename()
 local _x := 10
 local _y := 2
 local _i
 local _color_ok := "W+/B+"
 local _color_err := "W+/R+"
 
+// daj mi naziv fajla backup-a
+::get_backup_filename()
+
 // pobrisi mi backup file prije svega...
 // mozda vec postoji jedan
-FERASE( _backup_file )
+FERASE( ::backup_path + ::backup_filename )
 sleep(1)
 
 // setuj env.varijable
@@ -207,7 +218,7 @@ _cmd += " -h " + ALLTRIM( _host )
 _cmd += " -p " + ALLTRIM( STR( _port ) )
 _cmd += " -U " + ALLTRIM( _admin_user )
 _cmd += " -w "
-_cmd += ' -f "' + _backup_file + '"'
+_cmd += ' -f "' + ::backup_path + ::backup_filename + '"'
 
 @ _x, _y SAY "Backup podataka u toku...."
 
@@ -215,7 +226,10 @@ _cmd += ' -f "' + _backup_file + '"'
 @ _x, _y SAY REPLICATE( "=", 70 )
 
 ++ _x
-@ _x, _y SAY "Naziv fajla backupa: " + _backup_file
+@ _x, _y SAY "   Lokacija backupa: " + ::backup_path
+++ _x
+@ _x, _y SAY "Naziv fajla backupa: " + ::backup_filename
+
 
 ++ _x
 ++ _x
@@ -224,22 +238,22 @@ _cmd += ' -f "' + _backup_file + '"'
 // pokreni komandu
 hb_run( _cmd )
 
-if FILE( _backup_file )
-    
+if FILE( ::backup_path + ::backup_filename )
     @ _x, col() + 1 SAY "OK" COLOR _color_ok
     _ok := .t.
-
 else
-
     @ _x, col() + 1 SAY "ERROR !!!" COLOR _color_err
-
 endif
 
 if _ok
     // prebaci i na removable ako treba...
     ++ _x
-    @ _x, _y SAY "Prebacujem backup na removable drive ..."
-    ::backup_to_removable()
+    @ _x, _y SAY "Prebacujem backup na removable drive... "
+
+    if ::backup_to_removable()
+        @ _x, col() SAY "OK" COLOR _color_ok
+    endif
+
 endif
 
 ++ _x
@@ -258,7 +272,6 @@ return _ok
 
 METHOD F18Backup:backup_to_removable()
 local _ok := .f.
-local _cmd
 
 ::get_removable_drive()
 
@@ -267,13 +280,8 @@ if EMPTY( ::removable_drive )
     return _ok
 endif
 
-#ifdef __PLATFORM__UNIX
-    _cmd := "cp " + ::backup_path + ::backup_filename + " " + ::removable_drive 
-#else
-    _cmd := "copy /y " + ::backup_path + ::backup_filename + " " + ::removable_drive 
-#endif
-
-hb_run( _cmd )
+FILECOPY( ::backup_path + ::backup_filename, ::removable_drive + ::backup_filename )
+sleep(1)
 
 if !FILE( ::removable_drive + ::backup_filename )
     MsgBeep( "Nisam uspio prebaciti backup na lokaciju " + ::removable_drive + ::backup_filename )
@@ -311,9 +319,22 @@ return .t.
 
 
 METHOD F18Backup:get_backup_filename()
-local _name := "backup_" + DTOC( DATE() ) + ".backup"
+local _name
+local _tmp
+local _server_params := my_server_params() 
+
+_tmp := "server"
+
+if ::backup_type == 1
+    _tmp := ALLTRIM( _server_params["database"] )
+endif
+
+_name := _tmp + "_" + DTOC( DATE() ) + ".backup"
+
 ::backup_filename := _name
+
 return _name
+
 
 
 

@@ -3,6 +3,7 @@
   - f18 backup funkcije, init...
   - brisanje loga pri startu aplikacije, parametri logova/backup-a
   - fakt, fiskalni dnevni izvještaji - kontrola (parametar u fiskalnim parametrima za user-a)
+  - os, pokretanje početnog stanja u sezoni
  
 1.4.130 2013-02-25, vsasa
 

@@ -141,9 +141,6 @@ _write_server_params_to_config()
 
 post_login()
 
-// brisanje loga nakon logiranja...
-f18_log_delete()
-
 return .t.
 
 // -------------------------------
@@ -402,7 +399,15 @@ f18_init_semaphores()
 
 set_init_fiscal_params()
 
+// automatski backup podataka preduzeca
+// 1 - preduzece, 0 - server
+//f18_auto_backup_data(1)
+
+// brisanje loga nakon logiranja...
+f18_log_delete()
+
 run_on_startup()
+
 return .t.
 
 

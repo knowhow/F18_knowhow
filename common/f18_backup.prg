@@ -24,24 +24,26 @@ CLASS F18Backup
     METHOD Backup_company()
     METHOD Backup_server()
 
+    METHOD backup_to_removable()
+    
     METHOD get_backup_path()
     METHOD get_backup_interval()
     METHOD get_backup_type()
     METHOD get_backup_filename()
     METHOD get_last_backup_date()
     METHOD set_last_backup_date()
+    METHOD get_removable_drive()
 
     METHOD lock()
     METHOD unlock()
     METHOD locked()
 
-    PROTECTED:
-
-        DATA backup_path
-        DATA backup_filename
-        DATA backup_interval
-        DATA backup_type
-        DATA last_backup
+    DATA backup_path
+    DATA backup_filename
+    DATA backup_interval
+    DATA backup_type
+    DATA last_backup
+    DATA removable_drive
 
 ENDCLASS
 
@@ -49,6 +51,11 @@ ENDCLASS
 
 
 METHOD F18Backup:New()
+
+::backup_interval := 0
+::last_backup := CTOD("")
+::removable_drive := ""
+
 return SELF
 
 
@@ -57,16 +64,16 @@ return SELF
 METHOD F18Backup:Backup_data()
 
 // da li vec neko koristi opciju backup-a
-if ::locked( .t. )
-    if Pitanje(, "Napravi unlock operacije (D/N)?", "N" ) == "D"
-        ::unlock()
-    else
-        return .f.
-    endif
-else
+//if ::locked( .t. )
+  //  if Pitanje(, "Napravi unlock operacije (D/N)?", "N" ) == "D"
+    //    ::unlock()
+  //  else
+    //    return .f.
+  //  endif
+//else
     // zakljucaj opciju backup-a da je samo jedan korisnik radi
-    ::lock()
-endif
+  //  ::lock()
+//endif
 
 if ::backup_type == 1
     ::Backup_company()
@@ -76,8 +83,9 @@ endif
 
 // setuj datum kreiranja backup-a
 ::set_last_backup_date()
+
 // otkljucaj nakon sto je backup napravljen
-::unlock()
+//::unlock()
 
 return .t.
 
@@ -102,8 +110,7 @@ local _color_err := "W+/R+"
 // pobrisi mi backup file prije svega...
 // mozda vec postoji jedan
 FERASE( _backup_file )
-
-sleep(2)
+sleep(1)
 
 // setuj env.varijable
 #ifdef __PLATFORM__UNIX
@@ -140,14 +147,16 @@ _cmd += ' "' + _database + '"'
 hb_run( _cmd )
 
 if FILE( _backup_file )
-    
     @ _x, col() + 1 SAY "OK" COLOR _color_ok
     _ok := .t.
-
 else
-
     @ _x, col() + 1 SAY "ERROR !!!" COLOR _color_err
+endif
 
+if _ok
+    ++ _x
+    @ _x, _y SAY "Prebacujem backup na removable drive ..."
+    ::backup_to_removable()
 endif
 
 ++ _x
@@ -182,8 +191,7 @@ local _color_err := "W+/R+"
 // pobrisi mi backup file prije svega...
 // mozda vec postoji jedan
 FERASE( _backup_file )
-
-sleep(2)
+sleep(1)
 
 // setuj env.varijable
 #ifdef __PLATFORM__UNIX
@@ -227,6 +235,13 @@ else
 
 endif
 
+if _ok
+    // prebaci i na removable ako treba...
+    ++ _x
+    @ _x, _y SAY "Prebacujem backup na removable drive ..."
+    ::backup_to_removable()
+endif
+
 ++ _x
 
 for _i := 10 to 1 STEP -1
@@ -235,6 +250,43 @@ for _i := 10 to 1 STEP -1
 next
 
 return _ok
+
+
+// -----------------------------------------------------------
+// kreiranje backup fajla na removeble drive
+// -----------------------------------------------------------
+
+METHOD F18Backup:backup_to_removable()
+local _ok := .f.
+local _cmd
+
+::get_removable_drive()
+
+// nema se sta raditi
+if EMPTY( ::removable_drive )
+    return _ok
+endif
+
+#ifdef __PLATFORM__UNIX
+    _cmd := "cp " + ::backup_path + ::backup_filename + " " + ::removable_drive 
+#else
+    _cmd := "copy /y " + ::backup_path + ::backup_filename + " " + ::removable_drive 
+#endif
+
+hb_run( _cmd )
+
+if !FILE( ::removable_drive + ::backup_filename )
+    MsgBeep( "Nisam uspio prebaciti backup na lokaciju " + ::removable_drive + ::backup_filename )
+else
+    _ok := .t.
+endif
+
+return _ok
+
+
+METHOD F18Backup:get_removable_drive()
+::removable_drive := fetch_metric( "backup_removable_drive", my_user(), "" )
+return .t.
 
 
 
@@ -260,12 +312,15 @@ return .t.
 
 METHOD F18Backup:get_backup_filename()
 local _name := "backup_" + DTOC( DATE() ) + ".backup"
+::backup_filename := _name
 return _name
 
 
 
 
-
+// ---------------------------------------------------------
+// get backup interval
+// ---------------------------------------------------------
 METHOD F18Backup:get_backup_interval()
 local _param := "backup_company_interval"
 
@@ -280,6 +335,9 @@ return .t.
 
 
 
+// ---------------------------------------------------------
+// backup type
+// ---------------------------------------------------------
 METHOD F18Backup:get_backup_type( backup_type )
 local _type := 1
 local _x := 1
@@ -289,7 +347,7 @@ local _d_line := REPLICATE( "=", 60 )
 
 if backup_type == NIL
 
-    @ _x, _y SAY "*** BACKUP procedura ***"
+    @ _x, _y SAY "*** BACKUP procedura *** " + DTOC( DATE() )
 
     ++ _x
     @ _x, _y SAY _d_line
@@ -302,8 +360,6 @@ if backup_type == NIL
     @ _x, _y SAY "              na prozor aplikacije i nastavite raditi."
 
     ++ _x
-    ++ _x
-
     @ _x, _y SAY _s_line
     
     ++ _x
@@ -315,7 +371,6 @@ if backup_type == NIL
     ++ _x
     @ _x, _y SAY "   0 - backup kompletnog servera"
 
-    ++ _x
     ++ _x
     @ _x, _y SAY "Vas odabir:" GET _type VALID _type >= 0 PICT "9"
 
@@ -334,7 +389,9 @@ endif
 return .t.
 
 
-
+// ---------------------------------------------------------
+// backup locking system
+// ---------------------------------------------------------
 METHOD F18Backup:lock()
 set_metric("f18_backup_user", NIL, my_user() )
 return .t.
@@ -343,7 +400,6 @@ return .t.
 METHOD F18Backup:unlock()
 set_metric("f18_backup_user", NIL, "" )
 return .t.
-
 
 
 METHOD F18Backup:locked( info )
@@ -369,7 +425,9 @@ return _ret
 
 
 
-
+// ---------------------------------------------------------
+// set/get backup date
+// ---------------------------------------------------------
 METHOD F18Backup:set_last_backup_date()
 local _type := "company"
 
@@ -377,10 +435,8 @@ if ::backup_type == 0
     _type := "server"
 endif
 
-set_metric( "f18_backup_date" + _type, NIL, DATE() )
+set_metric( "f18_backup_date_" + _type, my_user(), DATE() )
 return .t.
-
-
 
 
 METHOD F18Backup:get_last_backup_date()
@@ -390,7 +446,7 @@ if ::backup_type == 0
     _type := "server"
 endif
 
-::last_backup := fetch_metric( "f18_backup_date" + _type, NIL, CTOD("") )
+::last_backup := fetch_metric( "f18_backup_date_" + _type, my_user(), CTOD("") )
 return 
 
 
@@ -431,16 +487,14 @@ oBackup:get_backup_interval()
 oBackup:get_last_backup_date()
 
 // nemam sta raditi ako ovaj interval ne postoji !
-if ::backup_interval == 0
+if oBackup:backup_interval == 0
     return
 endif
 
 // uslov za backup nije zadovoljen...
-if ( _curr_date - ::backup_interval ) <= ::last_backup
-    return
+if ( _curr_date - oBackup:backup_interval ) > oBackup:last_backup
+    hb_threadStart( @f18_backup_data_thread(), backup_type_def )
 endif
-
-hb_threadStart( @f18_backup_data_thread(), backup_type_def )
 
 return
 
@@ -489,4 +543,6 @@ local _color := "N/W"
 SETCOLOR( _color )
 CLEAR SCREEN
 return
+
+
 

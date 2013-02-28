@@ -25,7 +25,7 @@ local _create
 
 _loc := location + "*.*"
 
-_loc := _path_quote(location + "*.*")
+_loc := _path_quote( location + "*.*" )
 
 _len := ADIR( _loc )
 

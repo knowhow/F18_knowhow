@@ -28,7 +28,7 @@ CLASS F18Backup
 
     METHOD backup_to_removable()
 
-    METHOD backup_progress_info()
+    METHOD backup_in_progress_info()
     
     METHOD get_backup_path()
     METHOD get_backup_interval()

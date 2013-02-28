@@ -634,9 +634,26 @@ return _ret
 // -----------------------------------------------------
 function hcp_z_rpt( dev_params )
 local _cmd, _err_level
+local _param_date, _param_time
+local _rpt_type := "Z"
+
+_param_date := "zadnji_" + _rpt_type + "_izvjestaj_datum"
+_param_time := "zadnji_" + _rpt_type + "_izvjestaj_vrijeme"
+
+// iscitaj zadnje formirane izvjestaje...
+_last_date := fetch_metric( _param_date, NIL, CTOD("") )
+_last_time := PADR( fetch_metric( _param_time, NIL, "" ), 5 )
+
+if DATE() == _last_date
+    MsgBeep( "Zadnji dnevni izvjestaj radjen " + DTOC( _last_date) + " u " + _last_time )
+endif
 
 _cmd := 'CMD="Z_REPORT"'
 _err_level := hcp_cmd( dev_params, _cmd, _tr_cmd )
+
+// upisi zadnji dnevni izvjestaj
+set_metric( _param_date, NIL, DATE() )
+set_metric( _param_time, NIL, TIME() )
 
 // ako se koriste dinamicki plu kodovi resetuj prodaju
 // pobrisi artikle

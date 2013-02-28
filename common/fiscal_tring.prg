@@ -581,9 +581,22 @@ local cXml
 local cBr_zahtjeva := "0"
 local cVr_zahtjeva := "4"
 local nTrigg := 3
+local _param_date, _param_time
+local _rpt_type := "Z"
 
 if Pitanje(,"Stampati dnevni izvjestaj", "D") == "N"
 	return
+endif
+
+_param_date := "zadnji_" + _rpt_type + "_izvjestaj_datum"
+_param_time := "zadnji_" + _rpt_type + "_izvjestaj_vrijeme"
+
+// iscitaj zadnje formirane izvjestaje...
+_last_date := fetch_metric( _param_date, NIL, CTOD("") )
+_last_time := PADR( fetch_metric( _param_time, NIL, "" ), 5 )
+
+if DATE() == _last_date
+    MsgBeep( "Zadnji dnevni izvjestaj radjen " + DTOC( _last_date) + " u " + _last_time )
 endif
 
 cF_out := fiscal_out_filename( dev_param["out_file"], __zahtjev_nula, _tr_drep )
@@ -610,6 +623,9 @@ xml_subnode("Zahtjev", .t.)
 // zatvori fajl...
 close_xml()
 
+// upisi zadnji dnevni izvjestaj
+set_metric( _param_date, NIL, DATE() )
+set_metric( _param_time, NIL, TIME() )
 
 // nakon ovoga provjeri
 return

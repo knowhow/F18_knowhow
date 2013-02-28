@@ -114,8 +114,9 @@ local _x := 1
 local _fiscal := fetch_metric( "fiscal_opt_active", my_user(), "N" )
 local _fiscal_devices := PADR( fetch_metric( "fiscal_opt_usr_devices", my_user(), "" ), 50 )
 local _pos_def := fetch_metric( "fiscal_opt_usr_pos_default_device", my_user(), 0 )
+local _rpt_warrning := fetch_metric( "fiscal_opt_usr_daily_warrning", my_user(), "N" )
 
-Box(, 5, 60 )
+Box(, 6, 60 )
 
     @ m_x + _x, m_y + 2 SAY "Koristiti fiskalne opcije (D/N) ?" GET _fiscal ;
         PICT "@!" ;
@@ -133,6 +134,12 @@ Box(, 5, 60 )
 
     @ m_x + _x, m_y + 2 SAY "Default POS uredjaj:" GET _pos_def PICT "99"
 
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Upozorenje za dnevne izvjestaje (D/N)?" GET _rpt_warrning PICT "@!" ;
+                        VALID _rpt_warrning $ "DN"
+
+
     read
 
 BoxC()
@@ -145,6 +152,7 @@ endif
 set_metric( "fiscal_opt_active", my_user(), _fiscal )
 set_metric( "fiscal_opt_usr_devices", my_user(), ALLTRIM( _fiscal_devices ) )
 set_metric( "fiscal_opt_usr_pos_default_device", my_user(), _pos_def )
+set_metric( "fiscal_opt_usr_daily_warrning", my_user(), _rpt_warrning )
 
 // setuj glavni parametar
 fiscal_opt_active()

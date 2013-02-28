@@ -19,7 +19,7 @@ CLASS F18Backup
 
     METHOD New()
 
-    METHOD Backup_data()
+    METHOD Backup_now()
     
     METHOD Backup_company()
     METHOD Backup_server()
@@ -61,7 +61,7 @@ return SELF
 
 
 
-METHOD F18Backup:Backup_data()
+METHOD F18Backup:Backup_now()
 
 // da li vec neko koristi opciju backup-a
 //if ::locked( .t. )
@@ -159,6 +159,8 @@ endif
 
 if _ok
 
+    log_write( "backup company kreiran uspjesno: " + ::backup_path + ::backup_filename, 6 )
+
     ++ _x
     @ _x, _y SAY "Prebacujem backup na removable drive... "
 
@@ -246,6 +248,9 @@ else
 endif
 
 if _ok
+    
+    log_write( "backup kreiran uspjesno: " + ::backup_path + ::backup_filename , 6 )
+
     // prebaci i na removable ako treba...
     ++ _x
     @ _x, _y SAY "Prebacujem backup na removable drive... "
@@ -272,6 +277,7 @@ return _ok
 
 METHOD F18Backup:backup_to_removable()
 local _ok := .f.
+local _res
 
 ::get_removable_drive()
 
@@ -280,12 +286,13 @@ if EMPTY( ::removable_drive )
     return _ok
 endif
 
-FILECOPY( ::backup_path + ::backup_filename, ::removable_drive + ::backup_filename )
+_res := FILECOPY( ::backup_path + ::backup_filename, ::removable_drive + ::backup_filename )
 sleep(1)
 
 if !FILE( ::removable_drive + ::backup_filename )
     MsgBeep( "Nisam uspio prebaciti backup na lokaciju " + ::removable_drive + ::backup_filename )
 else
+    log_write( "backup to removable drive ok", 6 )
     _ok := .t.
 endif
 
@@ -547,8 +554,8 @@ if oBackup:get_backup_type( type_def )
 
     oBackup:get_backup_path()
     oBackup:get_backup_interval()
-
-    oBackup:Backup_data()
+    // pokreni backup
+    oBackup:Backup_now()
 
     QUIT
 

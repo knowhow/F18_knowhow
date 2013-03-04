@@ -111,7 +111,7 @@ local _database := _server_params["database"]
 local _admin_user := "admin"
 local _x := 7
 local _y := 2
-local _i
+local _i, _backup_file
 local _color_ok := "W+/B+"
 local _color_err := "W+/R+"
 local _line := REPLICATE( "-", 70 )
@@ -133,6 +133,12 @@ sleep(1)
     _cmd += "set pgusername=admin & set PGPASSWORD=boutpgmin & "
 #endif
 
+_backup_file := ::backup_path + ::backup_filename
+
+#ifdef __PLATFORM__WINDOWS
+    _backup_file := STRTRAN( _backup_file, "\", "//" )
+#endif
+
 _cmd += "pg_dump"
 _cmd += " -h " + ALLTRIM( _host )
 _cmd += " -p " + ALLTRIM( STR( _port ) )
@@ -140,7 +146,7 @@ _cmd += " -U " + ALLTRIM( _admin_user )
 _cmd += " -w "
 _cmd += " -F t "
 _cmd += " -b "
-_cmd += ' -f "' + ::backup_path + ::backup_filename + '"'
+_cmd += ' -f "' + _backup_file + '"'
 _cmd += ' "' + _database + '"'
 
 @ _x, _y SAY "Obavjestenje: nakon pokretanja procedure backup-a slobodno se prebacite"
@@ -216,7 +222,7 @@ local _database := _server_params["database"]
 local _admin_user := "admin"
 local _x := 7
 local _y := 2
-local _i
+local _i, _backup_file
 local _line := REPLICATE( "-", 70 )
 local _color_ok := "W+/B+"
 local _color_err := "W+/R+"
@@ -238,12 +244,18 @@ sleep(1)
     _cmd += "set pgusername=admin & set PGPASSWORD=boutpgmin & "
 #endif
 
+_backup_file := ::backup_path + ::backup_filename
+
+#ifdef __PLATFORM__WINDOWS
+    _backup_file := STRTRAN( _backup_file, "\", "//" )
+#endif
+
 _cmd += "pg_dumpall"
 _cmd += " -h " + ALLTRIM( _host )
 _cmd += " -p " + ALLTRIM( STR( _port ) )
 _cmd += " -U " + ALLTRIM( _admin_user )
 _cmd += " -w "
-_cmd += ' -f "' + ::backup_path + ::backup_filename + '"'
+_cmd += ' -f "' + _backup_file + '"'
 
 @ _x, _y SAY "Obavjestenje: nakon pokretanja procedure backup-a slobodno se prebacite"
     
@@ -577,7 +589,7 @@ return
 function f18_backup_data_thread( type_def )
 local oBackup
 
-#ifdef  __PLATFORM__WINDOWS 
+#ifdef  __PLATFORM__WINDOWS
     _w := hb_gtCreate("WVT")
 #else
     _w := hb_gtCreate("XWC")
@@ -592,7 +604,7 @@ set_global_vars_0()
 // podesi boje...
 _set_color()
 
-log_create()
+//log_create()
 
 oBackup := F18Backup():New()
 

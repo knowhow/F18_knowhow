@@ -131,6 +131,7 @@ sleep(1)
 
 #ifdef __PLATFORM__WINDOWS
     _cmd += "set pgusername=admin & set PGPASSWORD=boutpgmin & "
+    _cmd += "ping -n 2 8.8.8.8 & "
 #endif
 
 _backup_file := ::backup_path + ::backup_filename
@@ -148,6 +149,8 @@ _cmd += " -F t "
 _cmd += " -b "
 _cmd += ' -f "' + _backup_file + '"'
 _cmd += ' "' + _database + '"'
+// windows igrarije...
+//_cmd += " & set pgusername & set PGPASSWORD & pause"
 
 @ _x, _y SAY "Obavjestenje: nakon pokretanja procedure backup-a slobodno se prebacite"
     
@@ -174,7 +177,11 @@ _cmd += ' "' + _database + '"'
 @ _x, _y SAY "ocekujem rezulat operacije... "
 
 // pokreni komandu
-hb_run( _cmd )
+#ifdef __PLATFORM__WINDOWS
+    f18_run( _cmd )
+#else
+    hb_run( _cmd )
+#endif
 
 if FILE( ::backup_path + ::backup_filename )
     @ _x, col() + 1 SAY "OK" COLOR _color_ok
@@ -242,6 +249,7 @@ sleep(1)
 
 #ifdef __PLATFORM__WINDOWS
     _cmd += "set pgusername=admin & set PGPASSWORD=boutpgmin & "
+    _cmd += "ping -n 2 8.8.8.8 & "
 #endif
 
 _backup_file := ::backup_path + ::backup_filename
@@ -282,7 +290,11 @@ _cmd += ' -f "' + _backup_file + '"'
 @ _x, _y SAY "ocekujem rezulat operacije... "
 
 // pokreni komandu
-hb_run( _cmd )
+#ifdef __PLATFORM__WINDOWS
+    f18_run( _cmd )
+#else
+    hb_run( _cmd )
+#endif
 
 if FILE( ::backup_path + ::backup_filename )
     @ _x, col() + 1 SAY "OK" COLOR _color_ok

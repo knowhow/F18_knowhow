@@ -282,7 +282,7 @@ _cmd += ' -f "' + _backup_file + '"'
 @ _x, _y SAY "ocekujem rezulat operacije... "
 
 // pokreni komandu
-hb_run( _cmd )
+f18_run( _cmd )
 
 if FILE( ::backup_path + ::backup_filename )
     @ _x, col() + 1 SAY "OK" COLOR _color_ok

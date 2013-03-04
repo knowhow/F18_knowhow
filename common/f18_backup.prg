@@ -174,7 +174,7 @@ _cmd += ' "' + _database + '"'
 @ _x, _y SAY "ocekujem rezulat operacije... "
 
 // pokreni komandu
-hb_run( _cmd )
+f18_run( _cmd )
 
 if FILE( ::backup_path + ::backup_filename )
     @ _x, col() + 1 SAY "OK" COLOR _color_ok
@@ -615,7 +615,7 @@ if oBackup:get_backup_type( type_def )
     // pokreni backup
     oBackup:Backup_now()
 
-    log_close()
+    //log_close()
 
     QUIT
 

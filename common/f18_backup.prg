@@ -73,7 +73,7 @@ return _txt
 
 METHOD F18Backup:Backup_now()
 
-// da li vec neko koristi opciju backup-a
+// da li je backup vec pokrenut ? 
 if ::locked( .t. )
     if Pitanje(, "Napravi unlock backup operacije (D/N)?", "N" ) == "D"
     else
@@ -109,11 +109,12 @@ local _host := _server_params["host"]
 local _port := _server_params["port"]
 local _database := _server_params["database"]
 local _admin_user := "admin"
-local _x := 10
+local _x := 7
 local _y := 2
 local _i
 local _color_ok := "W+/B+"
 local _color_err := "W+/R+"
+local _line := REPLICATE( "-", 70 )
 
 // daj naziv fajla backup-a
 ::get_backup_filename()
@@ -142,13 +143,23 @@ _cmd += " -b "
 _cmd += ' -f "' + ::backup_path + ::backup_filename + '"'
 _cmd += ' "' + _database + '"'
 
+@ _x, _y SAY "Obavjestenje: nakon pokretanja procedure backup-a slobodno se prebacite"
+    
+++_x
+@ _x, _y SAY "              na prozor aplikacije i nastavite raditi."
+
+++ _x
+@ _x, _y SAY _line
+
+++ _x
 @ _x, _y SAY "Backup podataka u toku...."
 
 ++ _x
-@ _x, _y SAY REPLICATE( "=", 70 )
+@ _x, _y SAY _line
 
 ++ _x
 @ _x, _y SAY "  Lokacija backup-a: " + ::backup_path
+
 ++ _x
 @ _x, _y SAY "Naziv fajla backupa: " + ::backup_filename
 
@@ -203,9 +214,10 @@ local _host := _server_params["host"]
 local _port := _server_params["port"]
 local _database := _server_params["database"]
 local _admin_user := "admin"
-local _x := 10
+local _x := 7
 local _y := 2
 local _i
+local _line := REPLICATE( "-", 70 )
 local _color_ok := "W+/B+"
 local _color_err := "W+/R+"
 
@@ -233,6 +245,15 @@ _cmd += " -U " + ALLTRIM( _admin_user )
 _cmd += " -w "
 _cmd += ' -f "' + ::backup_path + ::backup_filename + '"'
 
+@ _x, _y SAY "Obavjestenje: nakon pokretanja procedure backup-a slobodno se prebacite"
+    
+++_x
+@ _x, _y SAY "              na prozor aplikacije i nastavite raditi."
+
+++ _x
+@ _x, _y SAY _line
+
+++ _x
 @ _x, _y SAY "Backup podataka u toku...."
 
 ++ _x
@@ -407,15 +428,6 @@ if backup_type == NIL
     @ _x, _y SAY _d_line
 
     ++ _x
-    @ _x, _y SAY "Obavjestenje: nakon pokretanja procedure backup-a slobodno se prebacite"
-    
-    ++_x
-    @ _x, _y SAY "              na prozor aplikacije i nastavite raditi."
-
-    ++ _x
-    @ _x, _y SAY _s_line
-    
-    ++ _x
     @ _x, _y SAY "Dostupne opcije:"
     
     ++ _x
@@ -426,6 +438,9 @@ if backup_type == NIL
 
     ++ _x
     @ _x, _y SAY "Vas odabir:" GET _type VALID _type >= 0 PICT "9"
+
+    ++ _x
+    @ _x, _y SAY _s_line
 
     read
 

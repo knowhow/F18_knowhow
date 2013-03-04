@@ -174,7 +174,7 @@ _cmd += ' "' + _database + '"'
 @ _x, _y SAY "ocekujem rezulat operacije... "
 
 // pokreni komandu
-f18_run( _cmd )
+hb_run( _cmd )
 
 if FILE( ::backup_path + ::backup_filename )
     @ _x, col() + 1 SAY "OK" COLOR _color_ok
@@ -282,7 +282,7 @@ _cmd += ' -f "' + _backup_file + '"'
 @ _x, _y SAY "ocekujem rezulat operacije... "
 
 // pokreni komandu
-f18_run( _cmd )
+hb_run( _cmd )
 
 if FILE( ::backup_path + ::backup_filename )
     @ _x, col() + 1 SAY "OK" COLOR _color_ok

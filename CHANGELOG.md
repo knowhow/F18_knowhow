@@ -1,9 +1,10 @@
-1.4.131 2013-02-27, vsasa
+1.4.131 2013-03-04, vsasa
 
   - f18 backup funkcije, init...
   - brisanje loga pri startu aplikacije, parametri logova/backup-a
   - fakt, fiskalni dnevni izvještaji - kontrola (parametar u fiskalnim parametrima za user-a)
   - os, pokretanje početnog stanja u sezoni
+  - ld, prenos virmana, partija kredita
  
 1.4.130 2013-02-25, vsasa
 

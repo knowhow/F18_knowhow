@@ -1650,63 +1650,69 @@ return
 
 
 function IspisKred(lSvi)
+
 if "SUMKREDITA" $ tippr->formula
     if gReKrOs=="X"
-            ? cLinija
-            ? "  ",Lokal("Od toga pojedinacni krediti:")
-            SELECT RADKR
+        ? cLinija
+        ? "  ",Lokal("Od toga pojedinacni krediti:")
+        SELECT RADKR
         SET ORDER TO TAG "3"
-            SET FILTER TO STR(cGodina,4)+STR(cMjesec,2)<=STR(godina,4)+STR(mjesec,2) .and. STR(cGodina,4)+STR(cMjesecDo,2)>=STR(godina,4)+STR(mjesec,2)
-            GO TOP
-            DO WHILE !EOF()
-                cIdKred:=IDKRED
-                SELECT KRED; HSEEK cIdKred; SELECT RADKR
-                nUkKred := 0
-                DO WHILE !EOF() .and. IDKRED==cIdKred
-                        cNaOsnovu:=NAOSNOVU; cIdRadnKR:=IDRADN
-                        SELECT RADN; HSEEK cIdRadnKR; SELECT RADKR
-                        cOpis2   := RADNIK
-                        nUkKrRad := 0
-                        DO WHILE !EOF() .and. IDKRED==cIdKred .and. cNaOsnovu==NAOSNOVU .and. cIdRadnKR==IDRADN
-                            mj:=mjesec
-                            if lSvi
-                                select ld
+        SET FILTER TO STR(cGodina,4)+STR(cMjesec,2)<=STR(godina,4)+STR(mjesec,2) .and. STR(cGodina,4)+STR(cMjesecDo,2)>=STR(godina,4)+STR(mjesec,2)
+        GO TOP
+        DO WHILE !EOF()
+            cIdKred:=IDKRED
+            SELECT KRED
+            HSEEK cIdKred
+            SELECT RADKR
+            nUkKred := 0
+            DO WHILE !EOF() .and. IDKRED==cIdKred
+                cNaOsnovu:=NAOSNOVU; cIdRadnKR:=IDRADN
+                SELECT RADN
+                HSEEK cIdRadnKR
+                SELECT RADKR
+                cOpis2   := RADNIK
+                nUkKrRad := 0
+                DO WHILE !EOF() .and. IDKRED==cIdKred .and. cNaOsnovu==NAOSNOVU .and. cIdRadnKR==IDRADN
+                    mj:=mjesec
+                    if lSvi
+                        select ld
                         set order to tag (TagVO("2"))
                         hseek  str(cGodina,4)+str(mj,2)+if(lViseObr.and.!EMPTY(cObracun),cObracun,"")+radkr->idradn
                                 //"LDi2","str(godina)+str(mjesec)+idradn"
-                            else
-                                select ld
+                    else
+                        select ld
                         hseek  str(cGodina,4)+cidrj+str(mj,2)+if(lViseObr.and.!EMPTY(cObracun),cObracun,"")+radkr->idradn
-                            endif // lSvi
-                            select radkr
-                            if ld->(found())
-                                nUkKred  += iznos
-                                nUkKrRad += iznos
-                            endif
-                            SKIP 1
-                        ENDDO
-                        if nUkKrRad<>0
-                            Rekapld("KRED"+cidkred+cnaosnovu,cgodina,cmjesecDo,nUkKrRad,0,cidkred,cnaosnovu,cOpis2,.t.)
-                        endif
+                    endif // lSvi
+                    select radkr
+                    if ld->(found())
+                        nUkKred  += iznos
+                        nUkKrRad += iznos
+                    endif
+                    SKIP 1
                 ENDDO
-                IF nUkKred<>0    // ispisati kreditora
-                        if prow()>55+gPStranica
-                            FF
-                        endif
-                        ? "  ",cidkred,left(kred->naz,22)
-                        @ prow(),58 SAY nUkKred  pict "("+gpici+")"
-                ENDIF
+                if nUkKrRad<>0
+                    Rekapld( "KRED" + cIdKred + cNaOsnovu, cGodina, cMjesecDo, nUkKrRad, 0, ;
+                            cIdkred, cNaosnovu, cOpis2, .t. )
+                endif
             ENDDO
-        else
-            ? cLinija
-            ? "  ",Lokal("Od toga pojedinacni krediti:")
-            cOpis2:=""
-            select radkr
+            IF nUkKred<>0    // ispisati kreditora
+                if prow()>55+gPStranica
+                    FF
+                endif
+                ? "  ",cidkred,left(kred->naz,22)
+                @ prow(),58 SAY nUkKred  pict "("+gpici+")"
+            ENDIF
+        ENDDO
+    else
+        ? cLinija
+        ? "  ",Lokal("Od toga pojedinacni krediti:")
+        cOpis2:=""
+        select radkr
         set order to 3 
         go top
             //"RADKRi3","idkred+naosnovu+idradn+str(godina)+str(mjesec)","RADKR")
-            do while !eof()
-                select kred
+        do while !eof()
+            select kred
             hseek radkr->idkred 
             select radkr
                 private cidkred:=idkred, cNaOsnovu:=naosnovu
@@ -1754,9 +1760,11 @@ if "SUMKREDITA" $ tippr->formula
                     ? "  ",cidkred,left(kred->naz,22),IF(gReKrOs=="N","",cnaosnovu)
                     @ prow(),58 SAY nUkKred  pict "("+gpici+")"
                     if cMjesec==cMjesecDo
-                            Rekapld("KRED"+cidkred+cnaosnovu,cgodina,cmjesec,nukkred,0,cidkred,cnaosnovu, cOpis2)
+                            Rekapld( "KRED" + cIdkred + cNaOsnovu, cGodina, cMjesec, nUkKred, 0, ;
+                                    cIdKred, cNaosnovu, cOpis2 )
                     ELSE
-                            Rekapld("KRED"+cidkred+cnaosnovu,cgodina,cMjesecDo,nukkred,0,cidkred,cnaosnovu, cOpis2)
+                            Rekapld( "KRED" + cIdKred + cNaosnovu, cGodina, cMjesecDo, nUkkred, 0, ;
+                                    cIdKred, cNaosnovu, cOpis2 )
                     ENDIF
                 endif
             enddo

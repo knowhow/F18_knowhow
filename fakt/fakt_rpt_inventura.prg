@@ -119,6 +119,7 @@ DokNovaStrana(125,@nStr,3)
 
 END PRINT
 
+O_FAKT_PRIPR
 select fakt_pripr
 GO nRecNo
 

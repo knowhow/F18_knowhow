@@ -15,58 +15,22 @@
 #include "f18_separator.ch"
 
  
-*string tbl_fakt_serBr
-/*! \var tbl_fakt_serBr
- *  \brief predvidjeno za evidenciju serijskog broja artikla
- *
- * \note koliko mi je poznato NIKO ovu mogucnost ne koristi
- *  
- *  Za dokument inventure cemo ga koristiti na SPECIFICAN nacin:
- *  "serBr"    -> pohranicemo vijednost Knjizne kolicine
- *
- *  \code
- *  nKKolicina:=VAL(field->serBr)
- *  ..
- *  REPLACE serBr WITH STR(nKKolicina,15,4)
- *  \endcode
- *
- *  "kolicina" -> pohranicemo vrijednost Popisane kolicine
- *  Razlog: promjena strukture fakt-a bi jos uvecala (a time i usporila bazu)
- *  Vrijednost knjizne kolicine nije nesto po cemu trebamo ptretrazivati pa
- *  stoga nema nikakve potrebe za otvaranjem novog polja
- *
- * \todo takodje se koristi kod reklamacije za ... ali ne znam za sta
- * \sa tbl_fakt
- */
- 
+
 function TFrmInvNew()
-*{
 local oObj
-
-#ifdef CLIP
-
-#else
-	oObj:=TFrmInv():new()
-#endif
-
+oObj:=TFrmInv():new()
 oObj:self:=oObj
 oObj:lTerminate:=.f.
 return oObj
-*}
 
-/*! \fn FaUnosInv()
- *  \brief Poziva se unos dokumenta inventure
- */
- 
+
+
 function FaUnosInv()
-*{
 local oMainFrm
 oMainFrm:=TFrmInvNew()
 oMainFrm:open()
 oMainFrm:close()
 return
-*}
-
 
 
 CREATE CLASS TFrmInv 
@@ -83,6 +47,7 @@ CREATE CLASS TFrmInv
 	var aImeKol
 	var aKol
 	var nStatus
+
 	method open
 	method close
 	method print
@@ -102,174 +67,173 @@ CREATE CLASS TFrmInv
 	method genDokManjak
 	method genDokVisak
 
+    method open_tables
+
 END CLASS
 
-/*! \fn TFrmInv::open()
- */
 
-*void TFrmInv::open()
+method open_tables()
+O_FAKT_DOKS
+O_FAKT
+O_SIFK
+O_SIFV
+O_PARTN
+O_ROBA
+O_TARIFA
+O_FAKT_PRIPR
+return .t.
+
+
 method open()
-private ImeKol
-private Kol
+private imekol
+private kol
 
 o_fakt_edit()
-SELECT pripr
-SET ORDER TO TAG "1"
+
+select fakt_pripr
+set order to tag "1"
 
 if ::lTerminate
-	return
+    return
 endif
 
 ::setColumns()
 
 Box(,21,77)
-TekDokument()
-::sayKomande()
-ObjDbedit("FInv", 21, 77, {|| ::onKeyBoard() }, "", "Priprema inventure", , , , ,4)
+    TekDokument()
+    ::sayKomande()
+    ObjDbedit( "FInv", 21, 77, {|| ::onKeyBoard() }, "", "Priprema inventure", , , , ,4)
 
 return
-*}
 
 
-*void TFrmInv::onKeyboard()
-*{
+
 method onKeyboard()
 local nRet
 local oFrmItem
 
-::nCh:=Ch
+::nCh := Ch
 
 if ::lTerminate
-	return DE_ABORT
+    return DE_ABORT
 endif
 
-SELECT pripr
-if (::nCh==K_ENTER  .and. EMPTY(field->brDok) .and. EMPTY(field->rbr))
-  return DE_CONT
+select fakt_pripr
+
+if ( ::nCh == K_ENTER  .and. EMPTY( field->brdok ) .and. EMPTY( field->rbr ) )
+    return DE_CONT
 endif
 
 do case
-	case ::nCh==K_CTRL_T
-     		if ::deleteItem()==1
-     			return DE_REFRESH
+
+    case ::nCh == K_CTRL_T
+     	if ::deleteItem() == 1
+     		return DE_REFRESH
 		else
 			return DE_CONT
 		endif
 
-   	case ::nCh==K_ENTER
-		oFrmItem:=TFrmInvItNew(self)
-		nRet:=oFrmItem:open()
+   	case ::nCh == K_ENTER
+	    oFrmItem := TFrmInvItNew( self )
+		nRet := oFrmItem:open()
 		oFrmItem:close()
-		if nRet==1
+
+		if nRet == 1
 			return DE_REFRESH
 		else
 			return DE_CONT   
 		endif
 
-	case ::nCh==K_CTRL_A
+	case ::nCh == K_CTRL_A
 		::walk()
 		return DE_REFRESH
 
-	case ::nCh==K_CTRL_N
+	case ::nCh == K_CTRL_N
 		::noveStavke()
 		return DE_REFRESH
 
-	case ::nCh==K_CTRL_P
-        	::print()
-        	return DE_REFRESH
+	case ::nCh == K_CTRL_P
+        ::print()
+        return DE_REFRESH
 	
-	case ::nCh==K_ALT_P
-        	::printOPop()
-        	return DE_REFRESH
+	case ::nCh == K_ALT_P
+        ::printOPop()
+        return DE_REFRESH
 
-	case ::nCh==K_ALT_A
-		CLOSE ALL
+	case ::nCh == K_ALT_A
+		close all
 		azur_fakt()
 		o_fakt_edit()
 		return DE_REFRESH
 
-   	case ::nCh==K_CTRL_F9
+   	case ::nCh == K_CTRL_F9
 		::deleteAll()
-        	return DE_REFRESH
+        return DE_REFRESH
 
-   	case ::nCh==K_F10
-       		::popup()
+   	case ::nCh == K_F10
+       	::popup()
 		if ::lTerminate
 			return DE_ABORT
 		endif
-       		return DE_REFRESH
+       	return DE_REFRESH
 
-	case ::nCh==K_ALT_F10
-		//FaAsistent()
-      	//	return DE_REFRESH
+	case ::nCh == K_ALT_F10
 	
-	case ::nCh==K_ESC
-		return DE_ABORT
+	case ::nCh == K_ESC
+	    return DE_ABORT
 endcase
-
 	
 return DE_CONT
-*}
 
-/*! \fn TFrmInv::walk()
- *  \brief Prodji kroz sve stavke dokumenta
- */
- 
+
+
 method walk()
 local oFrmItem
 
-oFrmItem:=TFrmInvItNew(self)
+oFrmItem := TFrmInvItNew( self )
 
 do while .t.
 
-	oFrmItem:lNovaStavka:=.f.
+	oFrmItem:lNovaStavka := .f.
 	oFrmItem:open()
 	oFrmItem:close()
-	if LASTKEY()==K_ESC
+
+	if LASTKEY() == K_ESC
 		exit
 	endif
-	if oFrmItem:nextItem()==0
-		//nema vise stavki
+
+	if oFrmItem:nextItem() == 0
 		exit
 	endif
+
 enddo
 
-oFrmItem:=nil
+oFrmItem := nil
 
 return
-*}
 
-/*! \fn TFrmInv::noveStavke()
- *  \brief Unos novih stavki
- */
+
  
 method noveStavke()
 local oFrmItem
 
-oFrmItem:=TFrmInvItNew(self)
+oFrmItem := TFrmInvItNew( self )
 
 do while .t.
-	oFrmItem:lNovaStavka:=.t.
+	oFrmItem:lNovaStavka := .t.
 	oFrmItem:open()
 	oFrmItem:close()
-	if LASTKEY()==K_ESC
+	if LASTKEY() == K_ESC
 		oFrmItem:deleteItem()
 		exit
 	endif
 enddo
-oFrmItem:=nil
+oFrmItem := NIL
 
 return
-*}
 
 
-/*! \fn TFrmInv::sayKomande()
- *  \brief Stampa Liste komandi na dnu ekrana
- *
- */
 
-*void TFrmInv::sayKomande()
-*{
 method sayKomande()
 
 @ m_x + 18, m_y+2 SAY " <c-N> Nove Stavke       " + BROWSE_COL_SEP + "<ENT> Ispravi stavku      " + BROWSE_COL_SEP + "<c-T> Brisi Stavku "
@@ -278,16 +242,8 @@ method sayKomande()
 @ m_x + 21, m_y+2 SAY " <F10>  Ostale opcije    " + BROWSE_COL_SEP + "<a-F10> Asistent  "
 
 return
-*}
 
 
-/*! \fn TFrmInv::setColuns()
- *  \brief Postavi vrijednost aImeKol, aKol matrica
- *  \note takodje se na kraju postavljaju priv var: ImeKol:=aImeKol, Kol:=aKol
- */
- 
-*void TFrmInv::setColuns()
-*{
 method setColumns()
 local i
 
@@ -319,74 +275,36 @@ next
 ImeKol:=::aImeKol
 Kol:=::aKol
 return
-*}
 
-/*! \fn TFrmInv::print()
- *  \brief Stampa obrasca uporednog prikaza knjiznih i popisanih kolicina
- *
- *  \code
- *  Izvjestaj sadrzi sljedece kolone
- *  Rbr; Artikal (id, naz); Knj.kol; Pop.kol; Razlika kol; <<nastavak dole>> 
- *  Vpc; Vpv Visak; Vpv Manjak  
- *
- *  (izvjestaj je ostranicen)
- *  \endcode
- *
- *  \sa DokNovaStrana
- */
-*void TFrmInv::print()
-*{
+
+
 method print()
 
+PushWA()
 RptInv()
+::open_tables()
+PopWA()
 
 return
-*}
 
-/*! \fn TFrmInv::printOPop()
- *  \brief Stampa obrasca Popisa
- *
- *  \code
- *  Izvjestaj sadrzi sljedece kolone
- *  Rbr; Artikal (id, naz); Pop.kol; Vpc  
- *  
- *  Kolona Pop.kol: sadrzi prostor "____________" za unos kolicine
- *
- *  Na kraju sadrzi potpis clanova komisije
- *
- *  (izvjestaj je ostranicen)
- *  \endcode
- *  
- *  \sa PrnClanoviKomisije, DokNovaStrana
- */
-*void TFrmInv::printOPop()
-*{
+
 method printOPop()
-
+PushWA()
 RptInvObrPopisa()
-
+::open_tables()
+PopWA()
 return
-*}
 
-*void TFrmInv::close()
-*{
 method close
 BoxC()
 CLOSERET
 return
-*}
 
-/*! \fn TFrmInv::itemsCount()
- *  \brief Prodji kroz sve stavke dokumenta
- */
-
-*{ TFrmInv::itemsCount()
-*{
 method itemsCount()
 local nCnt
 
 PushWa()
-SELECT pripr
+SELECT fakt_pripr
 nCnt:=0
 do while !EOF()
 	nCnt++
@@ -394,33 +312,22 @@ do while !EOF()
 enddo
 PopWa()
 return nCnt
-*}
 
 
-*void TFrmInv::deleteAll()
-*{
 method deleteAll()
-
 if Pitanje(,"Zelite li zaista izbrisati cijeli dokument?","N")=="D"
 	ZAP
 endif
 return
-*}
 
-*void TFrmInv::deleteItem()
-*{
+
+
 method deleteItem()
 DELETE
 return 1
-*}
 
-/*! \fn *void TFrmInv::popup()
- *  \brief PopupMeni forme Inventure
- *
- */
- 
-*void TFrmInv::popup()
-*{
+
+
 method popup
 private opc
 private opcexe
@@ -440,13 +347,8 @@ AADD(opcexe, {|| ::genDokVisak() })
 Menu_SC("ppin")
 
 return nil
-*}
 
-/*! \fn TFrmInv::genDok()
- */
 
-*void TFrmInv::genDok()
-*{
 method genDok()
 local cIdRj
 
@@ -463,13 +365,9 @@ if Pitanje(,"Generisati dokument inventure za RJ "+cIdRj,"N")=="D"
 endif
 
 return
-*}
 
-/*! \fn TFrmInv::genDokManjak()
- */
 
-*void TFrmInv::genDokManjak()
-*{
+
 method genDokManjak()
 local cIdRj
 local cBrDok
@@ -508,14 +406,9 @@ fakt_unos_dokumenta()
 ::lTerminate:=.t.
 
 return
-*}
 
 
-/*! \fn TFrmInv::genDokVisak()
- */
 
-*void TFrmInv::genDokVisak()
-*{
 method genDokVisak 
 local cIdRj
 local cBrDok

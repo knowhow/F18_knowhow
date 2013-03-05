@@ -5,6 +5,7 @@
   - fakt, fiskalni dnevni izvještaji - kontrola (parametar u fiskalnim parametrima za user-a)
   - os, pokretanje početnog stanja u sezoni
   - ld, prenos virmana, partija kredita
+  - kalk, opis asistenta a+F10 izbačen, postavljeno samo A
  
 1.4.130 2013-02-25, vsasa
 

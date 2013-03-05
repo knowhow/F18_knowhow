@@ -13,6 +13,9 @@
 #include "pos.ch"
 
 
+// ------------------------------------------------------
+// parametri aplikacije
+// ------------------------------------------------------
 function pos_parametri()
 local _opc := {}
 local _opcexe := {}
@@ -122,7 +125,10 @@ endif
 return
 
 
+
+// -------------------------------------------------------------
 // principi rada kase
+// -------------------------------------------------------------
 function pos_param_principi_rada()
 private opc:={}
 private opcexe:={}
@@ -142,6 +148,8 @@ return .f.
 
 
 
+// -------------------------------------------------------------
+// -------------------------------------------------------------
 function ParPrUgost()
 local aNiz:={}
 local cPrevPSS
@@ -185,7 +193,8 @@ local cPrevPSS
 local cPom:=""
 
 private _konstantni_unos := fetch_metric( "pos_konstantni_unos_racuna", my_user(), "N" )
-private _max_qtty := fetch_metric( "pos_maksimalna_kolicina_na_unosu", nil, 0 )
+private _kalk_konto := fetch_metric( "pos_stanje_sa_kalk_konta", NIL, SPACE(7) )
+private _max_qtty := fetch_metric( "pos_maksimalna_kolicina_na_unosu", NIL, 0 )
 private cIdPosOld := gIdPos
 
 cPrevPSS := gPocStaSmjene
@@ -197,7 +206,7 @@ aNiz:={}
 AADD (aNiz, {"Racun se zakljucuje dikretno bez upita (D/N)" , "gDirZaklj", "gDirZaklj$'DN'", "@!", })
 AADD (aNiz, {"Dopustiti dupli unos artikala na racunu (D/N)" , "gDupliArt", "gDupliArt$'DN'", "@!", })
 AADD (aNiz, {"Ako se dopusta dupli unos, da li se radnik upozorava(D/N)" , "gDupliUpoz", "gDupliUpoz$'DN'", "@!", })
-AADD (aNiz, {"Da li se prati pocetno stanje smjene (D/N/!)" , "gPocStaSmjene", "gPocStaSmjene$'DN!'", "@!", })
+AADD (aNiz, {"Da li se prati stanje artikla na unosu (D/N/!)" , "gPratiStanje", "gPratiStanje$'DN!'", "@!", })
 
 if KLevel=="0"
     AADD (aNiz, {"Upravnik moze ispravljati cijene" , "gSifUpravn", "gSifUpravn$'DN'", "@!", })
@@ -218,6 +227,7 @@ AADD (aNiz, {"Voditi po stolovima (D/N)? " , "gStolovi", "gStolovi$'DN'", "@!", 
 AADD (aNiz, {"Kod unosa racuna uvijek pretraga art.po nazivu (D/N)? " , "gSifUvPoNaz", "gSifUvPoNaz$'DN'", "@!", })
 AADD (aNiz, {"Maksimalna kolicina pri unosu racuna (0 - bez provjere) " , "_max_qtty", "_max_qtty >= 0", "999999", })
 AADD (aNiz, {"Unos racuna bez izlaska iz pripreme (D/N) " , "_konstantni_unos", "_konstantni_unos$'DN'", "@!", })
+AADD (aNiz, {"Za stanje artikla gledaj KALK konto" , "_kalk_konto",, "@S7", })
 
 VarEdit( aNiz, 2, 2, MAXROWS() - 10, MAXCOLS() - 5,"PARAMETRI RADA PROGRAMA - PRINCIPI RADA", "B1" )
 
@@ -249,6 +259,9 @@ if LASTKEY() <> K_ESC
     set_metric("UpitZaNacinPlacanja", nil, gUpitNP )
     set_metric("EvidentiranjeVrstaPlacanja", nil, gEvidPl )
     set_metric("PretragaArtiklaPoNazivu", nil, gSifUvPoNaz )
+
+	set_metric( "pos_stanje_sa_kalk_konta", NIL, _kalk_konto )
+	kalk_konto_za_stanje_pos( .t. )
 
     set_metric( "pos_maksimalna_kolicina_na_unosu", nil, _max_qtty )
 	max_kolicina_kod_unosa(.t.)

@@ -669,9 +669,9 @@ do case
 
   case chr(Ch) $ "kK"
     
-    refresh_fakt_tbl_dbfs(_filter)
     // korekcija podataka na dokumentu
-    if fakt_edit_data( field->idfirma, field->idtipdok, field->brdok ) = .t.
+    if fakt_edit_data( field->idfirma, field->idtipdok, field->brdok )
+        refresh_fakt_tbl_dbfs( _filter )
         return DE_REFRESH
     endif
 

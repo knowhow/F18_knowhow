@@ -13,6 +13,8 @@
 #include "getexit.ch"
 
 static __max_kolicina := NIL
+static __kalk_konto := NIL
+
 
 // ----------------------------------------------------------
 // maksimalna kolicina na unosu racuna
@@ -24,6 +26,18 @@ if read_par != NIL
 endif
 
 return __max_kolicina
+
+
+// ----------------------------------------------------------
+// kalk konto za stanje artikla
+// ----------------------------------------------------------
+function kalk_konto_za_stanje_pos( read_par )
+
+if read_par != NIL
+	__kalk_konto := fetch_metric( "pos_stanje_sa_kalk_konta", NIL, "" )
+endif
+
+return __kalk_konto
 
 
 
@@ -219,7 +233,13 @@ do while .t.
     // _pos_pripr
     Gather()
 
-    _stanje_robe := pos_stanje_artikla( field->idpos, field->idroba )
+	// gledati iz KALK ili iz POS ?
+	if !EMPTY( ALLTRIM( __kalk_konto ) )
+    	_stanje_robe := kalk_kol_stanje_artikla_prodavnica( PADR( __kalk_konto, 7 ), field->idroba, DATE() )
+	else
+   		_stanje_robe := pos_stanje_artikla( field->idpos, field->idroba )
+	endif
+
     _stanje_art_id := field->idroba
     _stanje_art_jmj := field->jmj
 
@@ -452,70 +472,45 @@ return _ret
 // --------------------------------------------------------
 // provjerava trenutnu kolicinu artikla u kasi...
 // --------------------------------------------------------
-static function KolicinaOK(nKol)
-local nSelect := SELECT()
-local nStanje
-local lFlag := .t.
+static function KolicinaOK( kolicina )
+local _ok := .f.
 local _msg
+local _stanje_robe 
 
 if LASTKEY() == K_UP
-    return .t.
+	_ok := .t.
+    return _ok
 endif
 
-if ( nKol == 0 )
+if ( kolicina == 0 )
     MsgBeep( "Nepravilan unos kolicine robe! Ponovite unos!", 15 )
-    return .f.
+    return _ok
 endif
 
 if gPratiStanje == "N" .or. roba->tip $ "TU"
-    return .t.
+	_ok := .t.
+    return _ok
 endif
 
-select pos
-set order to tag "5"  
-//"5", "IdPos+idroba+DTOS(Datum)", KUMPATH+"POS")
-            
-seek _IdPos+_idroba
-nStanje := 0
+// izvuci stanje robe
+_stanje_robe := pos_stanje_artikla( _idpos, _idroba )
 
-do while !eof() .and. POS->(IdPos+IdRoba)==(_IdPos+_IdRoba)
-    // uzmi samo stavke do tekuceg datuma
-    if (pos->datum > gDatum )
-        skip
-        loop
-    endif
-            
-    if pos->idvd $ "16#00"
-        nStanje += POS->Kolicina
-    elseif Pos->idvd $ "IN"
-        nStanje += POS->Kol2 - POS->Kolicina
-    elseif POS->idvd $ "42#01#96"
-        nStanje -= POS->Kolicina
-    endif
-                
-    skip
+_ok := .t.
 
-enddo
-            
-select pos
-set order to tag "1"
-            
-select (nSelect)
-            
-if ( nKol > nStanje )
+if ( kolicina > _stanje_robe )
     
-    _msg := "Artikal: " + _idroba + " Trenutno na stanju: " + STR( nStanje, 12, 2 )
+    _msg := "Artikal: " + _idroba + " Trenutno na stanju: " + STR( _stanje_robe, 12, 2 )
 
     if gPratiStanje = "!"
         _msg += "#Unos artikla onemogucen !!!"
-        lFlag := .f.
+		_ok := .f.
     endif
 
     MsgBeep( _msg )
 
 endif
 
-return lFlag
+return _ok
 
 
 

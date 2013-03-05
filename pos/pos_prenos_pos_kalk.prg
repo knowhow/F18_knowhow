@@ -21,10 +21,12 @@ static function _get_vd( tip_dokumenta )
 local _ret := "16"
 
 do case
-    case tip_dokumenta $ "11#80#81#IP"
+    case tip_dokumenta $ "11#80#81"
         _ret := "16"
     case tip_dokumenta $ "19"
         _ret := "NI"
+    case tip_dokumenta $ "IP"
+        _ret := "IN"
 endcase
 
 return _ret
@@ -138,13 +140,21 @@ append blank
 replace idroba with katops->idroba
 replace cijena with katops->mpc
 
+replace kolicina with katops->kolicina
+
+// nivelacija...
 if id_vd == "NI"
-    // nova cijena
     replace ncijena with katops->mpc2
 endif
 
+// inventura...
+if id_vd == "IN"
+    // kod inventure su ove stvari obrnute
+    replace kolicina with katops->kol2 
+    replace kol2 with katops->kolicina
+endif
+
 replace idtarifa with katops->idtarifa
-replace kolicina with katops->kolicina
 replace jmj with katops->jmj
 replace robanaz with katops->naziv
 replace k1 with katops->k1
@@ -164,7 +174,7 @@ replace Smjena WITH gSmjena
 replace BrDok with br_dok
 replace DATUM with gDatum
 
-select (_t_area)
+select ( _t_area )
 
 return 1
 

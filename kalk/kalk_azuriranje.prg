@@ -600,7 +600,7 @@ do while !eof()
         if !(IsJerry() .and. cIdVd = "4")
             if gMetodaNC <> " " .and. field->error == " "
                 Beep(2)
-                MSG("Dokument je izgenerisan, sa <a-F10> izvrsiti njegovu obradu",6)
+                MSG("Dokument je izgenerisan, pokrenuti opciju <A> za obradu",6)
                 close all
                 return .f.
             endif
@@ -617,7 +617,7 @@ do while !eof()
     
         if field->idvd <> "24" .and. empty(field->mu_i) .and. empty(field->pu_i)
             Beep(2)
-            Msg("Stavka broj " + field->rbr + ". neobradjena , sa <a-F10> pokrenite obradu")
+            Msg("Stavka broj " + field->rbr + ". neobradjena , sa <A> pokrenite obradu")
             close all
             return .f.
         endif

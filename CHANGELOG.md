@@ -1,3 +1,7 @@
+1.5.16 2013-03-05, vsasa
+
+   - git merge master 1.4.131
+
 1.5.15 2013-02-13, vsasa
 
    - kalk, azuriranje/povrat dokumenta - korekcije

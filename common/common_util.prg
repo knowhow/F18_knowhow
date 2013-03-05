@@ -210,7 +210,11 @@ B_ON
 if gNW == "D"
     ?? gFirma, "-", ALLTRIM( gNFirma )
 else
-    SELECT PARTN
+    select ( F_PARTN )
+    if !Used()
+        O_PARTN
+    endif
+    select partn
     HSEEK cIdFirma
     ?? cIdFirma, ALLTRIM( partn->naz ), ALLTRIM( partn->naz2 )
 endif

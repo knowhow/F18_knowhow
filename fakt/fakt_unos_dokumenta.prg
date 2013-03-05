@@ -32,6 +32,8 @@ local _i, _x_pos, _y_pos, _x, _y
 local _sep := BROWSE_COL_SEP
 private ImeKol, Kol
 
+// kada je radjen zadnji fiskalni izvjestaj info...
+zadnji_fiscal_z_report_info()
 
 o_fakt_edit()
 

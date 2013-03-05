@@ -23,6 +23,9 @@ local _pos
 local _email_server, _email_port, _email_username, _email_userpass, _email_from
 local _email_to, _email_cc
 local _proper_name, _params
+local _log_delete_interval
+local _backup_company, _backup_server
+local _backup_removable
 
 // parametri modula koristenih na glavnom meniju...
 _fin := fetch_metric( "main_menu_fin", my_user(), "D" )
@@ -48,6 +51,14 @@ _email_cc := PADR( fetch_metric( "email_cc_default", my_user(), "" ), 500 )
 
 // maticni podaci
 _proper_name := PADR( fetch_metric( "my_proper_name", my_user(), "" ), 50 )
+
+// log podaci
+_log_delete_interval := fetch_metric( "log_delete_level", NIL, 30 )
+
+// backup podaci
+_backup_company := fetch_metric( "backup_company_interval", my_user(), 0 )
+_backup_server := fetch_metric( "backup_server_interval", my_user(), 0 )
+_backup_removable := PADR( fetch_metric( "backup_removable_drive", my_user(), "" ), 300 )
 
 if just_set == nil
 	just_set := .f.
@@ -103,6 +114,32 @@ if !just_set
 	++ _x
 	@ _pos_x + _x, _pos_y SAY PADL( "cc adrese:", _left ) GET _email_cc PICT "@S70"
 
+    ++ _x
+    ++ _x
+
+	@ _pos_x + _x, _pos_y SAY "Parametri log-a ***" COLOR "I"
+
+	++ _x
+
+	@ _pos_x + _x, _pos_y SAY "Brisi stavke log tabele starije od broja dana (def. 30):" GET _log_delete_interval PICT "9999"
+	
+    ++ _x
+    ++ _x
+
+	@ _pos_x + _x, _pos_y SAY "Backup parametri ***" COLOR "I"
+
+	++ _x
+
+	@ _pos_x + _x, _pos_y SAY "Automatski backup podataka preduzeca (interval dana 0 - ne radi nista):" GET _backup_company PICT "999"
+	
+	++ _x
+
+	@ _pos_x + _x, _pos_y SAY "Automatski backup podataka servera (interval 0 - ne radi nista):" GET _backup_server PICT "999"
+
+	++ _x
+
+	@ _pos_x + _x, _pos_y SAY "Remote backup lokacija:" GET _backup_removable PICT "@S60"
+
 	read
 
 	if LastKey() == K_ESC
@@ -135,6 +172,13 @@ set_metric( "email_cc_default", my_user(), ALLTRIM( _email_cc ) )
 // maticni podaci
 set_metric( "my_proper_name", my_user(), ALLTRIM( _proper_name ) )
 
+// log podaci
+set_metric( "log_delete_level", NIL, _log_delete_interval )
+
+// backup podaci
+set_metric( "backup_company_interval", my_user(), _backup_company )
+set_metric( "backup_server_interval", my_user(), _backup_server )
+set_metric( "backup_removable_drive", my_user(), ALLTRIM( _backup_removable ) )
 
 return
 

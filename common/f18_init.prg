@@ -22,6 +22,7 @@ static __server_log := .f.
 
 static __f18_home := NIL
 static __f18_home_root := NIL
+static __f18_home_backup := NIL
 
 thread static __log_handle := NIL
 
@@ -398,7 +399,11 @@ f18_init_semaphores()
 
 set_init_fiscal_params()
 
+// brisanje loga nakon logiranja...
+f18_log_delete()
+
 run_on_startup()
+
 return .t.
 
 
@@ -858,6 +863,37 @@ my_home_root(home)
 return .t.
 
 
+// -----------------------------
+// ------------------------------
+function my_home_backup(home_backup)
+
+if home_backup != NIL
+  __f18_home_backup := home_backup
+endif
+
+return __f18_home_backup
+
+
+
+// ----------------------------
+// ----------------------------
+function set_f18_home_backup( database )
+local _home := hb_DirSepAdd( my_home_root() + "backup" )
+
+f18_create_dir( _home )
+
+if database <> NIL
+    _home := hb_DirSepAdd( _home + database )
+    f18_create_dir( _home )
+endif
+
+my_home_backup( _home )
+
+return .t.
+
+
+
+
 // ---------------------------
 // ~/.F18/bringout1
 // ~/.F18/rg1
@@ -919,18 +955,28 @@ return
 // ---------------
 // ---------------
 function relogin()
+local oBackup := F18Backup():New()
+local _ret := .f.
+
+if oBackup:locked()
+    MsgBeep( oBackup:backup_in_progress_info() )
+    return _ret
+endif
 
 __server_log := .f.
 
 my_server_logout()
 
 _get_server_params_from_config()
+
 if f18_form_login()
    post_login()
 endif
-_write_server_params_to_config()
 
-return .t.
+_write_server_params_to_config()
+_ret := .t.
+
+return _ret
 
 
 // -------------------------------

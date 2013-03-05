@@ -88,7 +88,11 @@ if ps
     _server := pg_server()
 endif
 
-MsgO( "pocetno stanje - sql query u toku..." )
+if ps
+    MsgO( "pocetno stanje - sql query u toku..." )
+else
+    MsgO( "formiranje podataka u toku..." )
+endif
 
 // podaci pocetnog stanja su ovdje....
 _data := _sql_query( _server, _qry )
@@ -283,6 +287,10 @@ if glBrojacPoKontima
      _kalk_broj := kalk_novi_broj_dokumenta(_h_dok, _p_konto)
 else
      _kalk_broj := kalk_novi_broj_dokumenta(_h_dok)
+endif
+
+if EMPTY( _kalk_broj )
+    _kalk_broj := PADR( "00001", 8 )
 endif
 
 // pronadji konto u konta tipovi cijena...

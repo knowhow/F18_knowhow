@@ -561,3 +561,50 @@ cName := LEFT( ALLTRIM( cName ), 5 ) + " x100"
 return
 
 
+// ------------------------------------------------------------
+// zadnji fiskalni report datum...
+// ------------------------------------------------------------
+function zadnji_fiscal_z_report_info( cre_rpt )
+local _param_date := "zadnji_Z_izvjestaj_datum"
+local _param_time := "zadnji_Z_izvjestaj_vrijeme"
+local _z_date := fetch_metric( _param_date, NIL, CTOD("") )
+local _z_time := fetch_metric( _param_time, NIL, "" )
+local _warr := fetch_metric( "fiscal_opt_usr_daily_warrning", my_user(), "N" )
+local _fiscal_use := fiscal_opt_active()
+
+if cre_rpt == NIL
+    cre_rpt := .f.
+endif
+
+if !_fiscal_use
+    return
+endif
+
+// ne koristi se opcija upozorenja
+if _warr == "N"
+    return
+endif
+
+// provjeri po datumu i satu, ne moze samo po datumu
+// prakticno radimo izvjestaj na 20.02.2013 u 14:00 i onda
+// ga trebamo uraditi na 21.02.2013 u 14:00 takodjer...
+// sve do 21.02.2013 : 14:00 je vrijeme koje je dozvoljeno bez izvjestaja
+
+if DTOC( DATE() ) + ALLTRIM( TIME() ) > DTOC( _z_date ) + ALLTRIM( _z_time ) 
+
+    MsgBeep( "Zadnji dnevni izvjestaj radjen " + DTOC( _z_date ) + " u " + _z_time + "#" + ;
+            "Potrebno napraviti dnevni izvjestaj#" + ;
+            "prije izdavanja novih racuna !" )
+
+    if cre_rpt
+        if Pitanje(, "Napraviti dnevni izvjestaj (D/N) ?", "N" ) == "D"
+            // pokrenuti proceduru kreiranja fiskalnog izvjestaja...
+        endif
+    endif
+
+endif
+
+return
+
+
+

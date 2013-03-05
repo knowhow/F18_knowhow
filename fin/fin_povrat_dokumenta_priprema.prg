@@ -14,22 +14,17 @@
 
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
-function povrat_fin_naloga(lStorno)
+function povrat_fin_naloga( storno )
 local _rec
 local nRec
 local _del_rec, _ok := .t.
 local _field_ids, _where_block
 local _t_rec
 local _tbl
+local _brisi_nalog
 
-if lStorno==NIL 
-    lStorno:=.f.
-endif
-
-if Logirati(goModul:oDataBase:cName, "DOK", "POVRAT" )
-    lLogPovrat:=.t.
-else
-    lLogPovrat:=.f.
+if storno == NIL 
+    storno := .f.
 endif
 
 O_SUBAN
@@ -37,11 +32,6 @@ O_FIN_PRIPR
 O_ANAL
 O_SINT
 O_NALOG
-
-if fin_pripr->(RECCOUNT() ) <> 0
-    MsgBeep("Priprema nije prazna !!!#Povrat naloga onemogucen!")
-    return
-endif
 
 SELECT SUBAN
 set order to tag "4"
@@ -51,7 +41,7 @@ cIdFirma2        :=gFirma
 cIdVN := cIdVN2  := space(2)
 cBrNal:= cBrNal2 := space(12)
 
-Box("", IIF(lStorno, 3, 1), IIF(lStorno, 65, 35))
+Box("", IIF( storno, 3, 1 ), IIF( storno, 65, 35))
 
     @ m_x + 1, m_y + 2 SAY "Nalog:"
 
@@ -64,7 +54,7 @@ Box("", IIF(lStorno, 3, 1), IIF(lStorno, 65, 35))
     @ m_x + 1, col() + 1 SAY "-" GET cIdVN PICT "@!"
     @ m_x + 1, col() + 1 SAY "-" GET cBrNal VALID fix_brnal(@cBrNal)
 
-    IF lStorno
+    IF storno
 
         @ m_x+3,m_y+2 SAY "Broj novog naloga (naloga storna):"
 
@@ -84,15 +74,16 @@ Box("", IIF(lStorno, 3, 1), IIF(lStorno, 65, 35))
 
 BoxC()
 
-if Pitanje(,"Nalog " + cIdFirma + "-" + cIdVN + "-" + cBrNal + IIF(lStorno," stornirati"," povuci u pripremu") + " (D/N) ?","D") == "N"
+if Pitanje(, "Nalog " + cIdFirma + "-" + cIdVN + "-" + cBrNal + ;
+        IIF( storno ," stornirati", " povuci u pripremu" ) + " (D/N) ?", "D" ) == "N"
     close all
     return
 endif
 
-lBrisi:=.t.
+_brisi_nalog := .t.
 
-if !lStorno
-    lBrisi := ( Pitanje(,"Nalog "+cIdFirma+"-"+cIdVN+"-"+cBrNal + " izbrisati iz baze azuriranih dokumenata (D/N) ?","D") == "D" )
+if !storno
+    _brisi_nalog := ( Pitanje(, "Nalog "+cIdFirma+"-"+cIdVN+"-"+cBrNal + " izbrisati iz baze azuriranih dokumenata (D/N) ?","D") == "D" )
 endif
 
 
@@ -107,7 +98,7 @@ do while !EOF() .and. cIdFirma == field->IdFirma .and. cIdVN == field->IdVN .and
 
     select fin_pripr
     
-    if lStorno
+    if storno
         _rec["idfirma"]  := cIdFirma2
         _rec["idvn"]     := cIdVn2
         _rec["brnal"]    := cBrNal2
@@ -126,12 +117,12 @@ enddo
 
 MsgC()
 
-if !lBrisi
+if !_brisi_nalog
     close all
     return
 endif
 
-if !lStorno
+if !storno
 
     _del_rec := hb_hash()
     _del_rec["idfirma"] := cIdFirma
@@ -191,12 +182,9 @@ if !_ok
     MsgBeep("Ajoooooooj del suban/anal/sint/nalog nije ok ?! " + cIdFirma + "-" + cIdVn + "-" + cBrNal )
 endif
 
-if lLogPovrat
-    EventLog(nUser, goModul:oDataBase:cName, "DOK", "POVRAT", nil, nil, nil, nil, "", "", cIdFirma + "-" + cIdVn + "-" + cBrNal, Date(), Date(), "", "Povrat naloga u pripremu")
-endif
-
 close all
 return
+
 
 
 // ----------------------------------------------------------

@@ -297,6 +297,23 @@ endif
 return
 
 
+// ------------------------------------------------------------
+// rekapitulacija kalkulacije tip-a 24
+// ------------------------------------------------------------
+static function kalk_24_rekapitulacija()
+
+close all
+
+RekapK()
+        
+if Pitanje(, "Zelite li izvrsiti kontiranje dokumenta (D/N) ?", "D" ) == "D"
+    kalk_kontiranje_naloga()
+endif
+        
+o_kalk_edit()
+ 
+return DE_REFRESH
+
 
 // -------------------------------------------------------------
 // obrada dogadjaja tastature u pripremi kalkulacija
@@ -324,13 +341,7 @@ do case
         Savjetnik()
 
     case Ch == K_ALT_K
-        close all
-        RekapK()
-        if Pitanje(,"Zelite li izvrsiti kontiranje ?","D")=="D"
-            kalk_kontiranje_naloga()
-        endif
-        o_kalk_edit()
-        return DE_REFRESH
+        return kalk_24_rekapitulacija()
 
     case Ch == K_SH_F9
 
@@ -2123,6 +2134,12 @@ select kalk_pripr
 set order to tag "1"
 go top
 
+// kalk dokument tip-a 24
+// on ce koristiti rekapitulaciju kao izvjestaj
+if ( field->idvd == "24" )
+    return kalk_24_rekapitulacija()
+endif
+
 fTopsD:=.f.
 fFaktD:=.f.
 
@@ -2173,12 +2190,6 @@ do while .t.
     // provjeri da li kalkulacija ima sve cijene ?
     if !kalkulacija_ima_sve_cijene( cIdFirma, cIdVd, cBrDok )
         MsgBeep( "Unutar kalkulacije nedostaju pojedine cijene bitne za obracun!#Stampanje onemoguceno." )
-        close all
-        return
-    endif
-
-    if (cIdvd == "24")
-        Msg("Kalkulacija 24 ima samo izvjestaj rekapitulacije !")
         close all
         return
     endif

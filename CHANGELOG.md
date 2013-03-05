@@ -1,3 +1,7 @@
+1.4.132 2013-03-05, vsasa
+
+  - os, unos promjena na isti datum - bugfix
+
 1.4.131 2013-03-04, vsasa
 
   - f18 backup funkcije, init...

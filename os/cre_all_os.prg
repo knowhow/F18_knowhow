@@ -100,7 +100,7 @@ IF !FILE( f18_ime_dbf( _alias ) )
     my_use( _alias )
 ENDIF
 
-CREATE_INDEX("1","id+tip+dtos(datum)", _alias )
+CREATE_INDEX("1","id+tip+dtos(datum)+opis", _alias )
 
 
 // kreiraj sii promjene
@@ -114,7 +114,7 @@ IF !FILE( f18_ime_dbf( _alias ) )
     my_use( _alias )
 ENDIF
 
-CREATE_INDEX("1","id+tip+dtos(datum)", _alias )
+CREATE_INDEX("1","id+tip+dtos(datum)+opis", _alias )
 
 
 aDbf:={}

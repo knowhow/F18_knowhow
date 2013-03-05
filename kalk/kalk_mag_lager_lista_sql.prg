@@ -299,20 +299,12 @@ _h_dok["idfirma"] := gFirma
 _h_dok["idvd"] := _kalk_tip
 _h_dok["brdok"] := ""
 _h_dok["datdok"] := DATE()
+
 if glBrojacPoKontima
-     _kalk_broj := kalk_novi_broj_dokumenta(_h_dok, _m_konto)
+     _kalk_broj := kalk_novi_broj_dokumenta( _h_dok, _m_konto )
 else
-     _kalk_broj := kalk_novi_broj_dokumenta(_h_dok)
+     _kalk_broj := kalk_novi_broj_dokumenta( _h_dok )
 endif
-
-<<<<<<< HEAD
-
-
-=======
-if EMPTY( _kalk_broj )
-    _kalk_broj := PADR( "00001", 8 )
-endif
->>>>>>> master
 
 // pronadji konto u konta tipovi cijena...
 select koncij

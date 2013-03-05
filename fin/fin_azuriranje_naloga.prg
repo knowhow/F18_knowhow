@@ -37,14 +37,11 @@ if fin_pripr->( RECCOUNT() == 0 ) .or. ( !automatic .and. Pitanje("pAz", "Izvrsi
     return _ok
 endif
 
-<<<<<<< HEAD
-o_fin_za_azuriranje()
 fin_set_broj_naloga()
-=======
+
 // daj mi sve naloge iz pripreme u matricu...
 // za azuriranje vise naloga od jednom...
 _nalozi := get_fin_nalozi()
->>>>>>> master
 
 // ima li vise razlicitih naloga u pripremi ?
 if LEN( _nalozi ) > 1
@@ -467,15 +464,6 @@ next
 _ok := .t.
 
 return _ok
-
-<<<<<<< HEAD
-    // prodji kroz PSUBAN i vidi da li je nalog zatvoren
-    // samo u tom slucaju proknjizi nalog u odgovarajuce datoteke
-    cNal := IDFirma+IdVn+BrNal
-    nSaldo := 0
-    do while !eof() .and. cNal == IdFirma + IdVn + BrNal
-=======
->>>>>>> master
 
 
 

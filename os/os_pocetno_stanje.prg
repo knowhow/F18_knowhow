@@ -31,6 +31,8 @@ local _tek_database := my_server_params()["database"]
 local _year_tek := YEAR( _dat_ps )
 local _year_sez := _year_tek - 1
 
+ps_info()
+
 if ALLTRIM(STR( _year_sez )) $ _tek_database
     // ne moze se raditi razdvajanje u 2012
     MsgBeep( "Ne mogu vrsti prenos u sezonskim podacima..." )
@@ -97,6 +99,11 @@ endif
 
 return
 
+
+
+static function ps_info()
+local _msg := "Opcija vrsi prebacivanje pocetnog stanja iz prethodne godine.#1. opcija se vrsi iz nove sezone 2. brisu se podaci tekuce godine#3. prebacuju se podaci iz prethodne godine"
+return MsgBeep( _msg )
 
 
 

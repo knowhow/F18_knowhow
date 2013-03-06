@@ -1,8 +1,13 @@
+1.4.133 2013-03-06, vsasa
+
+  - ld, radne jedinice, validacija polja tip rada
+
 1.4.132 2013-03-05, vsasa
 
   - os, unos promjena na isti datum - bugfix
   - kalk, unos dokumenta "24"
   - kalk, štampa dokumenta "24" iz pripreme, štampa se rekapitulacija
+  - fakt, invetura unos i štampa - bugfix
 
 1.4.131 2013-03-04, vsasa
 

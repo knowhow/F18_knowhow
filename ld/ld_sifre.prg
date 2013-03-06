@@ -556,7 +556,7 @@ AADD(ImeKol, { padr("Id", 2),      {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} } 
 AADD(ImeKol, { padr("Naziv", 35), {||  naz}, "naz" } )
 
 if ld_rj->(FieldPos("TIPRADA")) <> 0
-    AADD(ImeKol, { "tip rada" , {||  tiprada }, "tiprada"  } )
+    AADD(ImeKol, { "tip rada" , {||  tiprada }, "tiprada", {|| .t. }, {|| wtiprada $ " #I#A#S#N#P#U#R#" .or. MsgtipRada() }  } )
 endif
 if ld_rj->(FieldPos("OPOR")) <> 0
     AADD(ImeKol, { "oporeziv" , {||  opor }, "opor"  } )
@@ -567,6 +567,8 @@ for i := 1 to LEN(ImeKol)
 next
 
 return PostojiSifra( F_LD_RJ, 1, MAXROWS()-15, 60, Lokal("Lista radnih jedinica"), @cId, dx, dy)
+
+
 
 
 // vraca PU code opstine

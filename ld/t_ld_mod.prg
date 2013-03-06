@@ -259,7 +259,7 @@ public gZastitaObracuna := IzFmkIni( "LD", "ZastitaObr", "N", KUMPATH )
 
 // bazni parametri obracuna...
 // globalni parametri
-gVarObracun := fetch_metric("ld_varijanta_obracuna", NIL, "2")
+gVarObracun := fetch_metric( "ld_varijanta_obracuna", NIL, "2" )
 lViseObr := fetch_metric( "ld_vise_obracuna", NIL, lViseObr )
 // parametri po korisinicima
 gGodina := fetch_metric( "ld_godina", my_user(), gGodina )

@@ -945,6 +945,8 @@ ImeKol:={ { padr("Id",4), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
 Kol:={1,2,3,4}
 return PostojiSifra(F_NORSIHT,1,10,55,"Lista: Norme u sihtarici",@cId,dx,dy)
 
+
+
 // -----------------------
 // -----------------------
 function TotBrisRadn()

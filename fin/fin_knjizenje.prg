@@ -223,14 +223,15 @@ set cursor on
 
 if gNW=="D"
     @  m_x+1,m_y+2 SAY "Firma: "
-        ?? gFirma,"-",gNFirma
-        @  m_x+3,m_y+2 SAY "NALOG: "
-        @  m_x+3,m_y+14 SAY "Vrsta:" GET _idvn VALID P_VN(@_IdVN,3,26) PICT "@!"
+    ?? gFirma,"-",gNFirma
+    @  m_x+3,m_y+2 SAY "NALOG: "
+    @  m_x+3,m_y+14 SAY "Vrsta:" GET _idvn VALID P_VN(@_IdVN,3,26) PICT "@!"
 else
     @  m_x+1,m_y+2 SAY "Firma:" GET _idfirma VALID {|| P_Firma(@_IdFirma,1,20), _idfirma:=left(_idfirma,2),.t.}
-        @  m_x+3,m_y+2 SAY "NALOG: "
-        @  m_x+3,m_y+14 SAY "Vrsta:" GET _idvn VALID P_VN(@_IdVN,3,26)
+    @  m_x+3,m_y+2 SAY "NALOG: "
+    @  m_x+3,m_y+14 SAY "Vrsta:" GET _idvn VALID P_VN(@_IdVN,3,26)
 endif
+
 read
 
 ESC_RETURN 0
@@ -607,6 +608,14 @@ do case
 
         SrediRbrFin()
         return DE_REFRESH
+
+    case Ch == K_ALT_T
+
+        if _brisi_pripr_po_uslovu()
+            return DE_REFRESH
+        else
+            return DE_CONT
+        endif
 
     case Ch == K_CTRL_T
 
@@ -1292,6 +1301,197 @@ if !lUsed
 endif
 select (nArr)
 return ( PADR( cRJ, nLen ) )
+
+
+
+
+// --------------------------------------------------------
+// brisanje podataka pripreme po uslovu
+// --------------------------------------------------------
+static function _brisi_pripr_po_uslovu()
+local _params
+local _od_broj, _do_broj, _partn, _konto, _opis, _br_veze, _br_nal, _tip_nal
+local _deleted := .f.
+local _delete_rec := .f.
+local _ok := .f.
+
+if !_brisi_pripr_uslovi( @_params )
+    return _ok
+endif
+
+if Pitanje(, "Sigurno zelite izvrsiti brisanje podataka (D/N)?", "N" ) == "N"
+    return _ok
+endif
+
+// ovo su dati parametri...
+_od_broj := _params["rbr_od"]
+_do_broj := _params["rbr_do"]
+_partn := _params["partn"]
+_konto := _params["konto"]
+_opis := _params["opis"]
+_br_veze := _params["veza"]
+_br_nal := _params["broj"]
+_tip_nal := _params["vn"]
+
+select fin_pripr
+// skini order
+set order to
+go top
+
+do while !EOF()
+   
+    _delete_rec := .f.
+ 
+    // idemo sada na uslove i brisanje podataka...
+    if !EMPTY( _br_nal )
+        _tmp := Parsiraj( _br_nal, "brnal" )
+        if &_tmp
+            _delete_rec := .t.
+        endif
+    endif
+
+    if !EMPTY( _tip_nal )
+        _tmp := Parsiraj( _tip_nal, "idvn" )
+        if &_tmp
+            _delete_rec := .t.
+        endif
+    endif
+
+    if !EMPTY( _partn )
+        _tmp := Parsiraj( _partn, "idpartner" )
+        if &_tmp
+            _delete_rec := .t.
+        endif
+    endif
+
+    if !EMPTY( _konto )
+        _tmp := Parsiraj( _konto, "idkonto" )
+        if &_tmp
+            _delete_rec := .t.
+        endif
+    endif
+
+    if !EMPTY( _opis )
+        _tmp := Parsiraj( _opis, "opis" )
+        if &_tmp
+            _delete_rec := .t.
+        endif
+    endif
+
+    if !EMPTY( _br_veze )
+        _tmp := Parsiraj( _br_veze, "brdok" )
+        if &_tmp
+            _delete_rec := .t.
+        endif
+    endif
+
+    // redni brojevi...
+    if ( _od_broj + _do_broj ) > 0
+        if VAL( field->rbr ) >= _od_broj .and. VAL( field->rbr ) <= _do_broj
+            _delete_rec := .t.
+        endif
+    endif
+
+    // brisi ako treba ?
+    if _delete_rec
+        _deleted := .t.
+        delete
+    endif
+
+    skip
+
+enddo
+
+select fin_pripr
+set order to tag "1"
+go top
+
+if _deleted
+
+    _ok := .t.
+
+    // pakuj
+    __dbPack()
+
+    // renumerisi fin pripremu...
+    sredirbrfin( .t. )
+
+else
+    MsgBeep( "Nema stavki za brisanje po zadanom kriteriju !" )
+endif
+
+return _ok
+
+
+// -------------------------------------------------------
+// uslovi brisanja pripreme po zadatom uslovu
+// -------------------------------------------------------
+static function _brisi_pripr_uslovi( param )
+local _ok := .f.
+local _x := 1
+local _od_broja := 0
+local _do_broja := 0
+local _partn := SPACE(500)
+local _konto := SPACE(500)
+local _opis := SPACE(500)
+local _br_veze := SPACE(500)
+local _vn := SPACE(200)
+local _br_nal := SPACE(500)
+
+Box(, 13, 70 )
+
+    @ m_x + _x, m_y + 2 SAY "Brisanje pripreme po zadatom uslovu ***"
+
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "brisi od rednog broja:" GET _od_broja PICT "9999999"
+    @ m_x + _x, col() + 1 SAY "do:" GET _do_broja PICT "9999999"
+ 
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "               vrste naloga:" GET _vn PICT "@S30"
+    
+    ++ _x
+    
+    @ m_x + _x, m_y + 2 SAY "             brojeve naloga:" GET _br_nal PICT "@S30"
+
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "stavke koje sadrze partnere:" GET _partn PICT "@S30"
+ 
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "   stavke koje sadrze konta:" GET _konto PICT "@S30"
+ 
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "    stavke koje sadrze opis:" GET _opis PICT "@S30"
+ 
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY " stavke koje sadrze br.veze:" GET _br_veze PICT "@S30"
+    
+    read
+
+BoxC()
+
+if LastKey() == K_ESC
+    return _ok
+endif
+
+// dodaj u matricu sa parametrima
+param := hb_hash()
+param["rbr_od"] := _od_broja
+param["rbr_do"] := _do_broja
+param["partn"] := _partn
+param["konto"] := _konto
+param["opis"] := _opis
+param["veza"] := _br_veze
+param["broj"] := _br_nal
+param["vn"] := _vn
+
+_ok := .t.
+return _ok
 
 
 

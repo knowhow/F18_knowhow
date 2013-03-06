@@ -1,6 +1,7 @@
 1.4.133 2013-03-06, vsasa
 
   - ld, radne jedinice, validacija polja tip rada
+  - fin, brisanje pripreme po zadatim uslovima (nova opcija)
 
 1.4.132 2013-03-05, vsasa
 

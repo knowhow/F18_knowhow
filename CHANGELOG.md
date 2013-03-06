@@ -2,6 +2,7 @@
 
   - ld, radne jedinice, validacija polja tip rada
   - fin, brisanje pripreme po zadatim uslovima (nova opcija)
+  - kalk, težinski barkod kod dokumenta "80" (predispozicija) bugfix
 
 1.4.132 2013-03-05, vsasa
 

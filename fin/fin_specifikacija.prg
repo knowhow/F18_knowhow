@@ -985,12 +985,15 @@ Box("",20,65)
  		ELSE
   			cTip:="1"
  		ENDIF
+
  		@ m_x+ 8,m_y+2 SAY "Prikaz sintetickih konta (D/N) ?" GET cSK  pict "@!" valid csk $ "DN"
  		@ m_x+ 9,m_y+2 SAY "Prikaz stavki sa saldom 0 D/N" GET cNula pict "@!" valid cNula  $ "DN"
  		@ m_x+10,m_y+2 SAY "Skracena varijanta (D/N) ?" GET cSkVar pict "@!" valid cSkVar $ "DN"
  		@ m_x+11,m_y+2 SAY "Uslov za broj veze (prazno-svi) " GET qqBrDok PICT "@!S20"
  		@ m_x+12,m_y+2 SAY "Uslov za vrstu naloga (prazno-svi) " GET cVN PICT "@!S20"
+
  		cRasclaniti:="N"
+
  		if gRJ=="D"
   			@ m_x+13,m_y+2 SAY "Rasclaniti po RJ (D/N) "  GET cRasclaniti pict "@!" valid cRasclaniti $ "DN"
  			@ m_x+14,m_y+2 SAY "Rasclaniti po RJ/FUNK/FOND? (D/N) "  GET cRascFunkFond pict "@!" valid cRascFunkFond $ "DN"
@@ -998,8 +1001,10 @@ Box("",20,65)
 		endif
 
 		@ m_x + 15, m_y + 2 SAY "Opcina (prazno-sve):" GET cOpcine
-		UpitK1k4(15)
- 		@ m_x+16,m_y+2 SAY "Export izvjestaja u dbf (D/N) ?" GET cExpRptDN pict "@!" valid cExpRptDN $ "DN"
+
+		UpitK1k4(16)
+
+ 		@ m_x + 18, m_y + 2 SAY "Export izvjestaja u dbf (D/N) ?" GET cExpRptDN pict "@!" valid cExpRptDN $ "DN"
 		
 		READ
 		ESC_BCR
@@ -2769,7 +2774,6 @@ return
  */
  
 function CistiK1K4(lK)
-*
 IF lK==NIL; lK:=.t.; ENDIF
 IF lK
   if ck1=="9"; ck1:=""; endif

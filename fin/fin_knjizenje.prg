@@ -57,7 +57,11 @@ function KnjNal()
 local _sep := BROWSE_COL_SEP
 local _w := 25
 local _d := MAXCOLS() - 6
+local _x_row := MAXROWS() - 5
+local _y_row := _d
 local _opt_row
+local _help_columns := 4
+local _opts := {}
 
 o_fin_edit()
 
@@ -92,32 +96,39 @@ if gRj == "D" .and. fin_pripr->( FIELDPOS("IDRJ") ) <> 0
     AADD( Kol, 17 )
 endif
 
-Box( , MAXROWS() - 4, MAXCOLS() - 6 )
+Box( , _x_row, _y_row )
 
-	_opt_d := ( _d / 4 )
+    _opt_d := ( _d / 4 )
 
-	_opt_row := PADR( "<c+N> Nova stavka", _opt_d ) + _sep
-	_opt_row += PADR( " <ENT> Ispravka", _opt_d ) + _sep
-	_opt_row += PADR( hb_utf8tostr( " <c+T> Briši stavku" ), _opt_d ) + _sep
-	_opt_row += " <P> Povrat naloga"
+    _opt_row := PADR( "<c+N> Nova stavka", _opt_d ) + _sep
+    _opt_row += PADR( " <ENT> Ispravka", _opt_d ) + _sep
+    _opt_row += PADR( hb_utf8tostr( " <c+T> Briši stavku" ), _opt_d ) + _sep
+    _opt_row += " <P> Povrat naloga"
 
-	@ m_x + MAXROWS() - 6, m_y + 2 SAY _opt_row
+    @ m_x + _x_row - 3, m_y + 2 SAY _opt_row
 
-	_opt_row := PADR( "<c+A> Ispravka stavki", _opt_d ) + _sep
-	_opt_row += PADR( hb_utf8tostr(" <c+P> Štampa naloga"), _opt_d ) + _sep
-	_opt_row += PADR( hb_utf8tostr(" <a+A> Ažuriranje"), _opt_d ) + _sep
-	_opt_row += hb_utf8tostr(" <x> Ažur.bez stampe")
+    _opt_row := PADR( "<c+A> Ispravka stavki", _opt_d ) + _sep
+    _opt_row += PADR( hb_utf8tostr(" <c+P> Štampa naloga"), _opt_d ) + _sep
+    _opt_row += PADR( hb_utf8tostr(" <a+A> Ažuriranje"), _opt_d ) + _sep
+    _opt_row += hb_utf8tostr(" <x> Ažur.bez stampe")
 
-	@ m_x + MAXROWS() - 5, m_y + 2 SAY _opt_row
+    @ m_x + _x_row - 2, m_y + 2 SAY _opt_row
 
-	_opt_row := PADR( hb_utf8tostr("<c+F9> Briši sve"), _opt_d ) + _sep
-	_opt_row += PADR( " <F5> Kontrola zbira", _opt_d ) + _sep
-	_opt_row += PADR( " <a+F5> Pr.dat", _opt_d ) + _sep
-	_opt_row += "<a+B> Blag. <F10> Ost."
+    _opt_row := PADR( hb_utf8tostr("<c+F9> Briši sve"), _opt_d ) + _sep
+    _opt_row += PADR( " <F5> Kontrola zbira", _opt_d ) + _sep
+    _opt_row += PADR( " <a+F5> Pr.dat", _opt_d ) + _sep
+    _opt_row += "<a+B> Blag. <F10> Ost."
 
-	@ m_x + MAXROWS() - 4, m_y + 2 SAY _opt_row
+    @ m_x + _x_row - 1, m_y + 2 SAY _opt_row
 
-	ObjDbedit( "PN2", MaxRows() - 4, MaxCols() - 6, {|| edit_fin_pripr() }, "", "Priprema...", , , , , 3 )
+    _opt_row := PADR( hb_utf8tostr("<a+T> Briši po uslovu"), _opt_d ) + _sep
+    _opt_row += PADR( " <F9> sredi rbr.", _opt_d ) + _sep
+    _opt_row += PADR( "", _opt_d ) + _sep
+    _opt_row += ""
+
+    @ m_x + _x_row, m_y + 2 SAY _opt_row
+
+    ObjDbedit( "PN2", _x_row, _y_row, {|| edit_fin_pripr() }, "", "Priprema...", , , , , _help_columns )
 
 BoxC()
 
@@ -172,7 +183,7 @@ endif
 O_RJ
 
 if gTroskovi == "D"
-	O_FOND
+    O_FOND
     O_FUNK
 endif
 
@@ -281,7 +292,7 @@ endif
 
 if _fin_params["fin_k3"]
     if IzFMKIni("FIN","LimitiPoUgovoru_PoljeK3", "N", SIFPATH)=="D"
-    	_k3 := K3Iz256(_k3)
+        _k3 := K3Iz256(_k3)
         @ m_x + 11, col() + 2 SAY "K3" GET _k3 VALID EMPTY(_k3).or.P_ULIMIT(@_k3) pict "999"
     else
         @ m_x + 11, col() + 2 SAY "K3" GET _k3 pict "@!"
@@ -290,7 +301,7 @@ endif
 
 if _fin_params["fin_k4"]
     if _fakt_params["fakt_vrste_placanja"]
-    	@ m_x + 11, col() + 2 SAY "K4" GET _k4 VALID EMPTY(_k4).or.P_VRSTEP(@_k4) pict "@!"
+        @ m_x + 11, col() + 2 SAY "K4" GET _k4 VALID EMPTY(_k4).or.P_VRSTEP(@_k4) pict "@!"
     else
         @ m_x + 11, col() + 2 SAY "K4" GET _k4 pict "@!"
     endif
@@ -306,9 +317,9 @@ if gTroskovi == "D"
 endif
 
 @ m_x + 13, m_y + 2 SAY "Konto  :" GET _IdKonto ;
-		PICT "@!" ;
-		VALID Partija(@_IdKonto) .and. P_Konto(@_IdKonto, 13, 20) ;
-				.and. BrDokOK() .and. MinKtoLen(_IdKonto) .and. _rule_kto_()
+        PICT "@!" ;
+        VALID Partija(@_IdKonto) .and. P_Konto(@_IdKonto, 13, 20) ;
+                .and. BrDokOK() .and. MinKtoLen(_IdKonto) .and. _rule_kto_()
 
 
 @ m_x + 14, m_y + 2 SAY "Partner:" get _IdPartner pict "@!" valid ;
@@ -819,13 +830,13 @@ do case
     case Ch == K_CTRL_P
 
 
-		// setuj mi broj dokumenta
+        // setuj mi broj dokumenta
         fin_set_broj_dokumenta()
 
         close all
-		// stampaj stavke
+        // stampaj stavke
         StNal()
-		// otvori ponovo tabele
+        // otvori ponovo tabele
         o_fin_edit()
 
         return DE_REFRESH
@@ -833,12 +844,12 @@ do case
 
     case UPPER(Chr(Ch)) == "X" 
 
-		// setuj fin broj dokumenta ako ima potrebe za tim
+        // setuj fin broj dokumenta ako ima potrebe za tim
         fin_set_broj_dokumenta()
         
-		close all
-		
-		// stampaj dokument
+        close all
+        
+        // stampaj dokument
         stampa_fin_document(.t.)
         close all
         fin_azur(.t.)
@@ -848,20 +859,20 @@ do case
 
     case Ch == K_ALT_A
         
-		// setuj fin broj dokumenta ako je potrebno
+        // setuj fin broj dokumenta ako je potrebno
         fin_set_broj_dokumenta()
-		// azuriraj dokument
+        // azuriraj dokument
         fin_azur()
         o_fin_edit()
         return DE_REFRESH
 
     case Ch == K_ALT_B
         
-		// setuj fin broj dokumenta ako je potrebno
+        // setuj fin broj dokumenta ako je potrebno
         fin_set_broj_dokumenta()
 
         close all
-		// blagajnicki izvjestaj	
+        // blagajnicki izvjestaj    
         Blagajna()
 
         o_fin_edit()
@@ -873,7 +884,7 @@ do case
         fin_set_broj_dokumenta()
         OiNIsplate()
         
-		return DE_CONT
+        return DE_CONT
  
 #ifdef __PLATFORM__DARWIN 
     case Ch == ASC("0")
@@ -1058,7 +1069,7 @@ local cPomKTO := "9999999"
 local cIdFirma, cIdVN, cBrNal
 
 if !SigmaSif("PVNAPVN")
-	return
+    return
 endif
 
 O_FIN_PRIPR
@@ -1086,7 +1097,7 @@ Box( , 10, 60)
 Boxc()
 
 if lastkey() == K_ESC
-	close all
+    close all
     return DE_CONT
 endif
 

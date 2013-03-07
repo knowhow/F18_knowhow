@@ -1,3 +1,8 @@
+1.4.134 2013-03-07, vsasa
+
+  - windows backup funkcija stavljena u pogon
+  - windwos ping time parametar ubačen, samo se pojavljuje kod windows instalacije
+
 1.4.133 2013-03-06, vsasa
 
   - ld, radne jedinice, validacija polja tip rada

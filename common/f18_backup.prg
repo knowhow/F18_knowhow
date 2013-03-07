@@ -74,7 +74,11 @@ return _txt
 
 
 
-METHOD F18Backup:Backup_now()
+METHOD F18Backup:Backup_now( auto )
+
+if auto == NIL
+    auto := .t.
+endif
 
 // da li je backup vec pokrenut ? 
 if ::locked( .t. )
@@ -93,8 +97,10 @@ else
     ::Backup_server()
 endif
 
-// setuj datum kreiranja backup-a
-::set_last_backup_date()
+if auto
+    // setuj datum kreiranja backup-a
+    ::set_last_backup_date()
+endif
 
 // otkljucaj nakon sto je backup napravljen
 ::unlock()
@@ -620,12 +626,17 @@ return
 
 function f18_backup_data_thread( type_def )
 local oBackup
+local auto_backup := .t.
 
 #ifdef  __PLATFORM__WINDOWS
     _w := hb_gtCreate("WVT")
 #else
     _w := hb_gtCreate("XWC")
 #endif
+
+if type_def == NIL
+    auto_backup := .f.
+endif
 
 hb_gtSelect( _w )
 hb_gtReload( _w )
@@ -636,8 +647,6 @@ set_global_vars_0()
 // podesi boje...
 _set_color()
 
-//log_create()
-
 oBackup := F18Backup():New()
 
 if oBackup:get_backup_type( type_def )
@@ -645,9 +654,7 @@ if oBackup:get_backup_type( type_def )
     oBackup:get_backup_path()
     oBackup:get_backup_interval()
     // pokreni backup
-    oBackup:Backup_now()
-
-    //log_close()
+    oBackup:Backup_now( auto_backup )
 
     QUIT
 

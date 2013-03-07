@@ -2,6 +2,7 @@
 
   - windows backup funkcija stavljena u pogon
   - windwos ping time parametar ubačen, samo se pojavljuje kod windows instalacije
+  - f18 backup, set last backup date samo kod automatskog backup-a
 
 1.4.133 2013-03-06, vsasa
 

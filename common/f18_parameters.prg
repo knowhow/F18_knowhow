@@ -25,7 +25,7 @@ local _email_to, _email_cc
 local _proper_name, _params
 local _log_delete_interval
 local _backup_company, _backup_server
-local _backup_removable
+local _backup_removable, _backup_ping_time
 
 // parametri modula koristenih na glavnom meniju...
 _fin := fetch_metric( "main_menu_fin", my_user(), "D" )
@@ -59,6 +59,13 @@ _log_delete_interval := fetch_metric( "log_delete_level", NIL, 30 )
 _backup_company := fetch_metric( "backup_company_interval", my_user(), 0 )
 _backup_server := fetch_metric( "backup_server_interval", my_user(), 0 )
 _backup_removable := PADR( fetch_metric( "backup_removable_drive", my_user(), "" ), 300 )
+
+#ifdef __PLATFORM__WINDOWS
+    // samo za windows interesantno
+    _backup_ping_time := fetch_metric( "backup_windows_ping_time", my_user(), 0 )
+#else
+    _backup_ping_time := 0
+#endif
 
 if just_set == nil
 	just_set := .f.
@@ -143,6 +150,14 @@ if !just_set
 
 	@ _pos_x + _x, _pos_y SAY "Remote backup lokacija:" GET _backup_removable PICT "@S60"
 
+    #ifdef __PLATFORM__WINDOWS
+	    
+        ++ _x
+	    @ _pos_x + _x, _pos_y SAY "Ping time kod backup komande:" GET _backup_ping_time PICT "99"
+
+    #endif
+
+
 	read
 
 	if LastKey() == K_ESC
@@ -182,6 +197,10 @@ set_metric( "log_delete_level", NIL, _log_delete_interval )
 set_metric( "backup_company_interval", my_user(), _backup_company )
 set_metric( "backup_server_interval", my_user(), _backup_server )
 set_metric( "backup_removable_drive", my_user(), ALLTRIM( _backup_removable ) )
+
+#ifdef __PLATFORM__WINDOWS
+    set_metric( "backup_windows_ping_time", my_user(), _backup_ping_time )
+#endif
 
 return
 

@@ -69,7 +69,6 @@ do while .t.
 
     @ _x, mnu_left + 1 SAY REPLICATE( "-", 50 )
 
-    #ifdef __PLATFORM__UNIX
     // backup okidamo samo na prvom ulasku
     // ili na opciji relogina
     if _count == 1 .or. __relogin_opt
@@ -79,7 +78,6 @@ do while .t.
         __relogin_opt := .f.
 
     endif
-    #endif
 
 	// resetuj...
 	menuop := {}

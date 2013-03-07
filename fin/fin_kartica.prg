@@ -212,16 +212,23 @@ Box("#"+ cBoxName, 23, 65 )
  		else
   			cDinDem:="1"
 	 	endif
+
  		@ m_x+12,m_y+2 SAY "Prikaz  K1-K4 (1); Dat.Valute (2); oboje (3)"+IF(gNW=="N".and.cSazeta=="N","; nista (4)","")  GET cK14 valid cK14 $ "123"+IF(gNW=="N".and.cSazeta=="N","4","")
+
  		cRasclaniti:="N"
+
  		if gRJ=="D"
   			@ m_x+13,m_y+2 SAY "Rasclaniti po RJ/FUNK/FOND; "  GET cRasclaniti pict "@!" valid cRasclaniti $ "DN"
 	 	endif
+
 	 	UpitK1K4(14)
+
  		@ row()+1,m_y+2 SAY "Uslov za broj veze (prazno-svi) " GET qqBrDok PICT "@!S20"
+
  		if cBrza<>"D"
    			@ row()+1,m_y+2 SAY "Uslov za naziv konta (prazno-svi) " GET qqNazKonta PICT "@!S20"
  		endif
+
 	 	@ row()+1,m_y+2 SAY "Opcina (prazno-sve):" GET cOpcine
 		@ row()+1,m_y+2 SAY "Svaka kartica treba da ima zaglavlje kolona ? (D/N)"  GET c1k1z pict "@!" valid c1k1z $ "DN"
 		@ row()+1,m_y+2 SAY "Export kartice u dbf ? (D/N)"  GET cExpDbf pict "@!" valid cExpDbf $ "DN"

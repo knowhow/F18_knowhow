@@ -37,6 +37,7 @@ CLASS F18Backup
     METHOD get_last_backup_date()
     METHOD set_last_backup_date()
     METHOD get_removable_drive()
+    METHOD get_windows_ping_time()
 
     METHOD lock()
     METHOD unlock()
@@ -48,6 +49,7 @@ CLASS F18Backup
     DATA backup_type
     DATA last_backup
     DATA removable_drive
+    DATA ping_time
 
 ENDCLASS
 
@@ -59,6 +61,7 @@ METHOD F18Backup:New()
 ::backup_interval := 0
 ::last_backup := CTOD("")
 ::removable_drive := ""
+::ping_time := 0
 
 return SELF
 
@@ -118,6 +121,7 @@ local _line := REPLICATE( "-", 70 )
 
 // daj naziv fajla backup-a
 ::get_backup_filename()
+::get_windows_ping_time()
 
 // pobrisi mi backup file prije svega...
 // mozda vec postoji jedan
@@ -130,8 +134,13 @@ sleep(1)
 #endif
 
 #ifdef __PLATFORM__WINDOWS
-    _cmd += "set pgusername=admin & set PGPASSWORD=boutpgmin & "
-    _cmd += "ping -n 2 8.8.8.8 & "
+    _cmd += "set pgusername=admin&set PGPASSWORD=boutpgmin&"
+
+    if ::ping_time > 0
+        // dodaj ping na komandu za backup radi ENV varijabli
+        _cmd += "ping -n " + ALLTRIM(STR( ::ping_time )) + " 8.8.8.8&"
+    endif
+
 #endif
 
 _backup_file := ::backup_path + ::backup_filename
@@ -149,8 +158,6 @@ _cmd += " -F t "
 _cmd += " -b "
 _cmd += ' -f "' + _backup_file + '"'
 _cmd += ' "' + _database + '"'
-// windows igrarije...
-//_cmd += " & set pgusername & set PGPASSWORD & pause"
 
 @ _x, _y SAY "Obavjestenje: nakon pokretanja procedure backup-a slobodno se prebacite"
     
@@ -236,6 +243,7 @@ local _color_err := "W+/R+"
 
 // daj mi naziv fajla backup-a
 ::get_backup_filename()
+::get_windows_ping_time()
 
 // pobrisi mi backup file prije svega...
 // mozda vec postoji jedan
@@ -248,8 +256,13 @@ sleep(1)
 #endif
 
 #ifdef __PLATFORM__WINDOWS
-    _cmd += "set pgusername=admin & set PGPASSWORD=boutpgmin & "
-    _cmd += "ping -n 2 8.8.8.8 & "
+    _cmd += "set pgusername=admin&set PGPASSWORD=boutpgmin&"
+
+    if ::ping_time > 0
+        // dodaj ping na komandu za backup radi ENV varijabli
+        _cmd += "ping -n " + ALLTRIM(STR( ::ping_time )) + " 8.8.8.8&"
+    endif
+
 #endif
 
 _backup_file := ::backup_path + ::backup_filename
@@ -355,6 +368,13 @@ else
 endif
 
 return _ok
+
+
+METHOD F18Backup:get_windows_ping_time()
+::ping_time := fetch_metric( "backup_windows_ping_time", my_user(), 0 )
+return .t.
+
+
 
 
 METHOD F18Backup:get_removable_drive()

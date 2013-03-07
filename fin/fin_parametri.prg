@@ -177,10 +177,6 @@ Box(, 15,70)
 	
 	@ m_x + nX, m_y + 2 SAY "Dugi uslov za firmu i RJ u suban.specif.? (D/N)" GET gDUFRJ valid gDUFRJ $ "DN" pict "@!"
  	
-	++ nX
-	
- 	@ m_x + nX, m_y + 2 SAY "Lijeva marg.za obrazac 'Odobr. i nalog za isplatu' (br.znakova)" GET gnLMONI PICTURE "999"
-	
 	read
 BoxC()
 
@@ -265,6 +261,7 @@ set_metric( "fin_potpis_na_kraju_naloga", my_user(), gPotpis )
 set_metric( "fin_kosuljice_lijeva_margina", my_user(), gnLMONI )
 
 return
+
 
 // ---------------------------------------
 // ---------------------------------------

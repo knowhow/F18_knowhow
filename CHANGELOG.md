@@ -1,3 +1,7 @@
+1.4.135 2013-03-08, vsasa
+
+  - f18 tezinski barkod, provjera dužine formiranog barkod-a na osnovu težinskog barkod-a
+
 1.4.134 2013-03-07, vsasa
 
   - windows backup funkcija stavljena u pogon

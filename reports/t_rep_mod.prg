@@ -55,12 +55,15 @@ return nil
 // -----------------------------------------------
 // -----------------------------------------------
 method mMenuStandard()
-private Izbor:=1
-private opc:={}
-private opcexe:={}
+private izbor := 1
+private opc := {}
+private opcexe := {}
 
-AADD( opc, "1. Finansijsko poslovanje           ")
+AADD( opc, "1. finansijski izvjestaji                                  ")
+AADD( opcexe, {|| mod_rep_fin() })
+AADD( opc, "2. robni izvjestaji      ")
 AADD( opcexe, {|| NIL })
+
 
 Menu_SC( "grep", .t., .f. )
 

@@ -301,7 +301,11 @@ endif
 
 _qry += " ORDER BY s.idkonto, s.idpartner, s.datdok, s.brnal"
 
+MsgO( "formiranje sql upita u toku ..." )
+
 _table := _sql_query( _server, _qry )
+
+MsgC()
 
 if _table == NIL
     return NIL

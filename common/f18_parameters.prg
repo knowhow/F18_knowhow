@@ -18,7 +18,7 @@ local _x := 1
 local _pos_x
 local _pos_y
 local _left := 20
-local _fin, _kalk, _fakt, _epdv, _virm, _ld, _os, _rnal, _mat
+local _fin, _kalk, _fakt, _epdv, _virm, _ld, _os, _rnal, _mat, _reports
 local _pos
 local _email_server, _email_port, _email_username, _email_userpass, _email_from
 local _email_to, _email_cc
@@ -38,7 +38,7 @@ _os := fetch_metric( "main_menu_os", my_user(), "D" )
 _rnal := fetch_metric( "main_menu_rnal", my_user(), "N" )
 _mat := fetch_metric( "main_menu_mat", my_user(), "N" )
 _pos := fetch_metric( "main_menu_pos", my_user(), "N" )
-
+_reports := fetch_metric( "main_menu_reports", my_user(), "N" )
 
 // email parametri
 _email_server := PADR( fetch_metric( "email_server", my_user(), "" ), 100 )
@@ -94,6 +94,7 @@ if !just_set
 	@ _pos_x + _x, col() + 1 SAY "POS:" GET _pos PICT "@!"
 	@ _pos_x + _x, col() + 1 SAY "MAT:" GET _mat PICT "@!"
 	@ _pos_x + _x, col() + 1 SAY "RNAL:" GET _rnal PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "REPORTS:" GET _reports PICT "@!"
 
 	++ _x
 	++ _x
@@ -177,6 +178,7 @@ set_metric( "main_menu_epdv", my_user(), _epdv )
 set_metric( "main_menu_rnal", my_user(), _rnal )
 set_metric( "main_menu_mat", my_user(), _mat )
 set_metric( "main_menu_pos", my_user(), _pos )
+set_metric( "main_menu_reports", my_user(), _reports )
 
 // email parametri
 set_metric( "email_server", my_user(), ALLTRIM( _email_server ) )

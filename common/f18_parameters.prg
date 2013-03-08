@@ -28,17 +28,17 @@ local _backup_company, _backup_server
 local _backup_removable, _backup_ping_time
 
 // parametri modula koristenih na glavnom meniju...
-_fin := fetch_metric( "main_menu_fin", my_user(), "D" )
-_kalk := fetch_metric( "main_menu_kalk", my_user(), "D" )
-_fakt := fetch_metric( "main_menu_fakt", my_user(), "D" )
-_ld := fetch_metric( "main_menu_ld", my_user(), "D" )
-_epdv := fetch_metric( "main_menu_epdv", my_user(), "D" )
-_virm := fetch_metric( "main_menu_virm", my_user(), "D" )
-_os := fetch_metric( "main_menu_os", my_user(), "D" )
+_fin := fetch_metric( "main_menu_fin", my_user(), "N" )
+_kalk := fetch_metric( "main_menu_kalk", my_user(), "N" )
+_fakt := fetch_metric( "main_menu_fakt", my_user(), "N" )
+_ld := fetch_metric( "main_menu_ld", my_user(), "N" )
+_epdv := fetch_metric( "main_menu_epdv", my_user(), "N" )
+_virm := fetch_metric( "main_menu_virm", my_user(), "N" )
+_os := fetch_metric( "main_menu_os", my_user(), "N" )
 _rnal := fetch_metric( "main_menu_rnal", my_user(), "N" )
 _mat := fetch_metric( "main_menu_mat", my_user(), "N" )
 _pos := fetch_metric( "main_menu_pos", my_user(), "N" )
-_reports := fetch_metric( "main_menu_reports", my_user(), "N" )
+_reports := fetch_metric( "main_menu_reports", my_user(), "D" )
 
 // email parametri
 _email_server := PADR( fetch_metric( "email_server", my_user(), "" ), 100 )

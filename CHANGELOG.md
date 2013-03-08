@@ -1,6 +1,7 @@
 1.4.135 2013-03-08, vsasa
 
   - f18 tezinski barkod, provjera dužine formiranog barkod-a na osnovu težinskog barkod-a
+  - f18 reports modul
 
 1.4.134 2013-03-07, vsasa
 

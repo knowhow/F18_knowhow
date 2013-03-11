@@ -1,0 +1,33 @@
+/* 
+ * This file is part of the bring.out FMK, a free and open source 
+ * accounting software suite,
+ * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * It is licensed to you under the Common Public Attribution License
+ * version 1.0, the full text of which (including FMK specific Exhibits)
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * root directory of this source code archive.
+ * By using this software, you agree to be bound by its terms.
+ */
+
+#include "fin.ch"
+
+
+// ----------------------------------------------------------
+// meni sa finansijskim izvjestajima
+// ----------------------------------------------------------
+function mod_rep_fin()
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
+
+AADD( _opc, "1. subanaliticka kartica                           ")
+AADD( _opcexe, { || fin_suban_kartica_sql(NIL) } )
+AADD( _opc, "2. subanaliticka specifikacija  ")
+AADD( _opcexe, { || fin_suban_specifikacija_sql() } )
+
+f18_menu( "fr", .f., _izbor, _opc, _opcexe )
+
+return
+
+
+

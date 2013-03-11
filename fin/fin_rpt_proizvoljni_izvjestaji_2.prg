@@ -25,7 +25,7 @@ PRIVATE cDPnaz8 := "", cDPx8 :="", cDPf8 :="D"
 PRIVATE cDPnaz9 := "", cDPx9 :="", cDPf9 :="D"
 PRIVATE cDPnaz10:= "", cDPx10:="", cDPf10:="D"
 
-PrIz()
+proizvoljni_izvjestaji()
 
 return
 
@@ -158,82 +158,46 @@ function GenProIzvFin()
 local nPr := 1
 local lKumSuma := .f.
 local GetList := {}
+local _my_user := my_user()
+local _i
 private lDvaKonta := .f.
 private lKljuc := .f.
 private cTag := "1"
 
-// privatne var. koje bi trebalo inicijalizovati iz aplikacije
-// -----------------------------------------------------------
-  
-cGlava := SPACE(6)
-cFunkc := SPACE(5)
+cGlava := fetch_metric( "proiz_fin_glava", _my_user, SPACE(6) )
+cFunkc := fetch_metric( "proiz_fin_funkcija", _my_user, SPACE(5) )
+dOd := fetch_metric( "proiz_fin_datum_od", _my_user, CTOD("") )
+dDo := fetch_metric( "proiz_fin_datum_do", _my_user, DATE() )
+gTabela := fetch_metric( "proiz_fin_tabela", _my_user, 1 )
+cPrikBezDec := fetch_metric( "proiz_fin_prikaz_bez_decimala", _my_user, "D" )
+cSaNulama := fetch_metric( "proiz_fin_prikaz_sa_nulama", _my_user, "D" )
+nKorZaLands := fetch_metric( "proiz_fin_kor_landscape", _my_user, -18 )
+lFunkcija := fetch_metric( "proiz_fin_is_funkcija", _my_user, .f. )
+lIzrazi := fetch_metric( "proiz_fin_is_izrazi", _my_user, .f. )
+cUIdKonto := fetch_metric( "proiz_fin_konto", _my_user, SPACE(7) )
 
-// neophodne privatne varijable (pogodno za ELIB-a)
-// -------------------------------------------------
-dOd := CTOD("")
-dDo := DATE()
-gTabela := 1
-cPrikBezDec := "D"
-cSaNulama := "D"
-nKorZaLands := -18
-lFunkcija:=.f.
-lIzrazi:=.f.
+aUPredzn  := PARSIRAJ( cPotrazKon, "KONTO", "C" )
+aUPredzn2 := PARSIRAJ( cPotrazKon, "KONTO2", "C" )
 
-aUPredzn  := PARSIRAJ(cPotrazKon,"KONTO","C")
-aUPredzn2 := PARSIRAJ(cPotrazKon,"KONTO2","C")
+for _i := 1 to 10
 
-// --------------------------
-// POCETAK izvjestajnog upita
-// --------------------------
-O_PARAMS
-private cSection:="I", cHistory:=" ", aHistory:={}
-RPar("01",@cGlava)
-RPar("02",@cFunkc)
-RPar("03",@dOd)
-RPar("04",@dDo)
-RPar("05",@gTabela)
-RPar("06",@cPrikBezDec)
-RPar("07",@cSaNulama)
-RPar("08",@nKorZaLands)
+    // cDPNaz1 ... 10
+    _tmp := "cDPnaz" + ALLTRIM( STR( _i ) )
+    &_tmp := fetch_metric( "proiz_fin_dpnaz" + ALLTRIM(STR( _i )), _my_user, "" )
 
-RPar("09",@cDPnaz1 )
-RPar("10",@cDPnaz2 )
-RPar("11",@cDPnaz3 )
-RPar("12",@cDPnaz4 )
-RPar("13",@cDPnaz5 )
-RPar("14",@cDPnaz6 )
-RPar("15",@cDPnaz7 )
-RPar("16",@cDPnaz8 )
-RPar("17",@cDPnaz9 )
-RPar("18",@cDPnaz10)
-RPar("19",@cDPx1 )
-RPar("20",@cDPx2 )
-RPar("21",@cDPx3 )
-RPar("22",@cDPx4 )
-RPar("23",@cDPx5 )
-RPar("24",@cDPx6 )
-RPar("25",@cDPx7 )
-RPar("26",@cDPx8 )
-RPar("27",@cDPx9 )
-RPar("28",@cDPx10)
-RPar("29",@cDPf1 )
-RPar("30",@cDPf2 )
-RPar("31",@cDPf3 )
-RPar("32",@cDPf4 )
-RPar("33",@cDPf5 )
-RPar("34",@cDPf6 )
-RPar("35",@cDPf7 )
-RPar("36",@cDPf8 )
-RPar("37",@cDPf9 )
-RPar("38",@cDPf10)
-  
-SELECT PARAMS
-USE
-
-cUIdKonto:=space(7)
+    // cDPx1 ... 10
+    _tmp := "cDPx" + ALLTRIM(STR( _i ))
+    &_tmp := fetch_metric( "proiz_fin_dpx" + ALLTRIM(STR( _i )), _my_user, "" )
+    
+    // cDPf1 ... 10
+    _tmp := "cDPf" + ALLTRIM(STR( _i ))
+    &_tmp := fetch_metric( "proiz_fin_dpf" + ALLTRIM(STR( _i )), _my_user, "N" )
+ 
+next
 
 
 Box(, 20, 70 )
+
     @ m_x+2,m_y+2 SAY "Glava/RJ (prazno-sve)  " GET cGlava
     @ m_x+3,m_y+2 SAY "Funkcija (prazno-sve)  " GET cFunkc
     @ m_x+4,m_y+2 SAY "Period izvjestavanja od" GET dOd
@@ -308,598 +272,645 @@ if LASTKEY() == K_ESC
     return
 endif
 
-O_PARAMS
-private cSection:="I",cHistory:=" ",aHistory:={}
-WPar("01",cGlava)
-WPar("02",cFunkc)
-WPar("03",dOd)
-WPar("04",dDo)
-SELECT PARAMS
-USE
+
+set_metric( "proiz_fin_glava", _my_user, cGlava )
+set_metric( "proiz_fin_funkcija", _my_user, cFunkc )
+set_metric( "proiz_fin_datum_od", _my_user, dOd )
+set_metric( "proiz_fin_datum_do", _my_user, dDo )
+set_metric( "proiz_fin_tabela", _my_user, gTabela )
+set_metric( "proiz_fin_prikaz_bez_decimala", _my_user, cPrikBezDec )
+set_metric( "proiz_fin_prikaz_sa_nulama", _my_user, cSaNulama )
+set_metric( "proiz_fin_kor_landscape", _my_user, nKorZaLands )
+set_metric( "proiz_fin_is_funkcija", _my_user, lFunkcija )
+set_metric( "proiz_fin_is_izrazi", _my_user, lIzrazi )
+set_metric( "proiz_fin_konto", _my_user, cUIdKonto )
 
 
 // dobro je odmah znati koriste li se uslovi za konta u kolonama
 // jer ce to omoguciti brzi rad na jednostavnijim izvjestajima 
 // -------------------------------------------------------------
-  SELECT KONIZ
-  SET ORDER TO TAG "1"
-  SET FILTER TO
-  SET FILTER TO izv==cBrI
-  GO TOP
-  DO WHILE !EOF()
-    IF UPPER(LEFT(KONIZ->K,1))=="F"; lFunkcija:=.t.; ENDIF
-    IF LEFT(KONIZ->fi,1)=="="; lIzrazi:=.t.; ENDIF
-    IF !EMPTY(K2) .or. !EMPTY(ID2) .or. !EMPTY(FI2); lDvaKonta:=.t.; ENDIF
-    IF ri<>0 .and. UPPER(LEFT(k,1))=="K"; lKljuc:=.t.; ENDIF
+SELECT KONIZ
+SET ORDER TO TAG "1"
+SET FILTER TO
+SET FILTER TO izv == cBrI
+GO TOP
+  
+DO WHILE !EOF()
+    IF UPPER(LEFT(KONIZ->K,1)) == "F"
+        lFunkcija := .t.
+    ENDIF
+    IF LEFT(KONIZ->fi,1) == "="
+        lIzrazi := .t.
+    ENDIF
+    IF !EMPTY(K2) .or. !EMPTY(ID2) .or. !EMPTY(FI2)
+        lDvaKonta := .t.
+    ENDIF
+    IF ri <> 0 .and. UPPER(LEFT(k,1)) == "K"
+        lKljuc := .t.
+    ENDIF
     SKIP 1
-  ENDDO
+ENDDO
 
-  aKolS:={}
-  i:=0
-  SELECT KOLIZ
-  SET FILTER TO
-  SET FILTER TO id==cBrI
-  SET ORDER TO TAG "1"
-  GO TOP
+aKolS:={}
+i:=0
+  
+SELECT KOLIZ
+SET FILTER TO
+SET FILTER TO id==cBrI
+SET ORDER TO TAG "1"
+GO TOP
 
-  PRIVATE cSIzraz:=""
+PRIVATE cSIzraz:=""
 
-  DO WHILE !EOF()
+DO WHILE !EOF()
     IF !EMPTY(KUSLOV)
-      ++i
-      AADD(aKolS,{"KOL"+ALLTRIM(STR(i)),TRIM(kuslov)+IF(UPPER(k1)=="K","",".and.DATDOK>="+cm2str(dOd)),0,TRIM(sizraz)})
+        ++i
+        AADD(aKolS,{"KOL"+ALLTRIM(STR(i)),TRIM(kuslov)+IF(UPPER(k1)=="K","",".and.DATDOK>="+cm2str(dOd)),0,TRIM(sizraz)})
     ENDIF
     IF "KUMSUMA" $ FORMULA
-      lKumSuma:=.t.
+        lKumSuma:=.t.
     ENDIF
     IF !EMPTY(SIZRAZ).and.EMPTY(cSIzraz)
-      cSIzraz:=TRIM(sizraz)
+        cSIzraz:=TRIM(sizraz)
     ENDIF
     SKIP 1
-  ENDDO
+ENDDO
+
+// kreiraj pom tabelu POM.DBF
+_kreiraj_pom_tabelu( @cTag, lKljuc, lDvaKonta, aKolS, lFunkcija )
+
+// dio za aplikaciju
+// ------------------
+O_RJ
+O_FUNK
+select funk
+
+cFilter := "DATDOK<="+cm2str(dDo)
+
+IF gNW=="N" .and. !EMPTY(cIdFirma)
+    cFilter += (".and.IDFIRMA=="+cm2str(cIdFirma))
+ENDIF
+
+IF !lKumSuma .and. !lKljuc
+    cFilter += (".and.DATDOK>="+cm2str(dOd))
+ENDIF
+IF !EMPTY(cGlava)
+    cFilter += (".and.IDRJ=="+cm2str(cGlava))
+    cNazRJ := Ocitaj( F_RJ , cGlava , "naz" )
+ELSE
+    cNazRJ := "SVE"
+ENDIF
+IF !EMPTY(cFunkc)
+    cFilter += (".and.FUNK=="+cm2str(cFunkc))
+    cNazFK := Ocitaj( F_FUNK , cFunkc , "naz" )
+ELSE
+    cNazFK := "SVI"
+ENDIF
+    
+O_BUDZET
+    
+IF !EMPTY(cGlava) .or. !EMPTY(cFunkc)
+    SET FILTER TO
+    SET FILTER TO IF( EMPTY(cGlava) , .t. , IDRJ==cGlava ) .and. IF( EMPTY(cFunkc) , .t. , FUNK==cFunkc )
+ENDIF
+
+// priprema kljucnih baza za izvjestaj (indeksi, filteri)
+PripKBPI()
+
+nStavki:=0
+GO TOP
+COUNT TO nStavki
 
 
-    // kreiraj pom tabelu POM.DBF
-    _kreiraj_pom_tabelu( @cTag, lKljuc, lDvaKonta, aKolS, lFunkcija )
-
-    // dio za aplikaciju
-    // ------------------
-    O_RJ
-    O_FUNK
-
-    SELECT FUNK
-
-    cFilter := "DATDOK<="+cm2str(dDo)
-
-    IF gNW=="N" .and. !EMPTY(cIdFirma)
-        cFilter += (".and.IDFIRMA=="+cm2str(cIdFirma))
+// -----------------------------------------
+// POCETAK pripreme baze POM.DBF (stavljanje
+// opisnih podataka, uslova i formula)
+// -----------------------------------------
+SELECT KONIZ
+GO TOP
+COUNT TO i
+    
+Postotak(1,nStavki+i,"Priprema izvjestaja")
+    
+nStavki:=0
+nPomRbr:=0
+    
+GO TOP
+DO WHILE !EOF() .and. izv==cBrI                   
+    Postotak(2,++nStavki)
+    IF KONIZ->ri == 0
+        SKIP 1
+        LOOP
     ENDIF
 
-    IF !lKumSuma .and. !lKljuc
-        cFilter += (".and.DATDOK>="+cm2str(dOd))
+    // na osnovu tipa stavke u KONIZ-u odreÐujemo dalje akcije
+    cTK11  := UPPER(LEFT(KONIZ->k,1))
+    cTK12  := VAL(RIGHT(KONIZ->k,1))
+
+    IF cTK11=="K"    
+        // idi po kljucu
+        lKljuc:=.t.
+        EXIT
     ENDIF
-    IF !EMPTY(cGlava)
-        cFilter += (".and.IDRJ=="+cm2str(cGlava))
-        cNazRJ := Ocitaj( F_RJ , cGlava , "naz" )
-    ELSE
-        cNazRJ := "SVE"
-    ENDIF
-    IF !EMPTY(cFunkc)
-        cFilter += (".and.FUNK=="+cm2str(cFunkc))
-        cNazFK := Ocitaj( F_FUNK , cFunkc , "naz" )
-    ELSE
-        cNazFK := "SVI"
-    ENDIF
-    
-    O_BUDZET
-    
-    IF !EMPTY(cGlava) .or. !EMPTY(cFunkc)
-        SET FILTER TO
-        SET FILTER TO IF( EMPTY(cGlava) , .t. , IDRJ==cGlava ) .and. IF( EMPTY(cFunkc) , .t. , FUNK==cFunkc )
-    ENDIF
-
-    // priprema kljucnih baza za izvjestaj (indeksi, filteri)
-    // ------------------------------------------------------
-    PripKBPI()
-
-    nStavki:=0
-    GO TOP
-    COUNT TO nStavki
-
-
-    // -----------------------------------------
-    // POCETAK pripreme baze POM.DBF (stavljanje
-    // opisnih podataka, uslova i formula)
-    // -----------------------------------------
-    SELECT KONIZ
-    GO TOP
-    COUNT TO i
-    
-    Postotak(1,nStavki+i,"Priprema izvjestaja")
-    
-    nStavki:=0
-
-    nPomRbr:=0
-    
-    GO TOP
-    DO WHILE !EOF() .and. izv==cBrI                   // listam KONIZ.DBF
-        Postotak(2,++nStavki)
-        IF KONIZ->ri == 0
-            SKIP 1; LOOP
-        ENDIF
-
-        // na osnovu tipa stavke u KONIZ-u odreÐujemo dalje akcije
-        cTK11  := UPPER(LEFT(KONIZ->k,1))
-        cTK12  := VAL(RIGHT(KONIZ->k,1))
-
-        IF cTK11=="K"     // idi po kljucu
-            lKljuc:=.t.
-            EXIT
-        ENDIF
 
     lDrugiKonto:=.f.
     IF cTK11=="A"
-      cUslovA := LEFT( KONIZ->id , cTK12 )
-      Sel_KSif()
-      SEEK cUslovA
-      IF LEFT( id , cTK12 ) != cUslovA .and. EMPTY(KONIZ->id2)
-        SELECT KONIZ; SKIP 1; LOOP
-      ELSEIF !EMPTY(KONIZ->id2)
-        lDrugiKonto:=.t.
-      ENDIF
+        cUslovA := LEFT( KONIZ->id , cTK12 )
+        Sel_KSif()
+        SEEK cUslovA
+        IF LEFT( id , cTK12 ) != cUslovA .and. EMPTY(KONIZ->id2)
+            SELECT KONIZ
+            SKIP 1
+            LOOP
+        ELSEIF !EMPTY(KONIZ->id2)
+            lDrugiKonto:=.t.
+        ENDIF
     ENDIF
 
+    DO WHILE !lDrugiKonto            
 
+        cIdKonto:=KONIZ->id
 
-    DO WHILE !lDrugiKonto            // ova petlja sluzi samo ako je cTK11="A"
+        IF cTK11 == "F"                              
+            // po funkciji
+            cTipK:="P"
+            IF EMPTY(KONIZ->opis)
+                cNazKonta:=Ocitaj(F_FUNK,PADR(cIdKonto,5),"naz")
+            ELSE
+                cNazKonta:=KONIZ->opis
+            ENDIF
+            cUslov := IF( cTK12>0 , LEFT( cIdKonto , cTK12 ) , TRIM(cIdKonto) )
+        ELSEIF !EMPTY(KONIZ->fi)                                
+            // po formuli
+            IF LEFT(KONIZ->fi,1)!="="
+                aUslov:=Parsiraj(KONIZ->fi,cPIKPolje,"C")
+            ELSE
+                aUslov:=".f."
+            ENDIF
+            cTipK:="F"
+            cNazKonta:=KONIZ->opis
+        ELSEIF cTK11=="A"
+            cNazKonta:=IzKSif("naz")
+            cIdKonto:=IzKSif("id")
+            IF RIGHT(ALLTRIM(cIdKonto),1)=="0"       
+                // sintetika
+                cTipK:="S"
+                cUslov:=ALLTRIM(cIdKonto)
+                DO WHILE RIGHT(cUslov,1)=="0"
+                    cUslov:=LEFT(cUslov,LEN(cUslov)-1)
+                ENDDO
+            ELSE                                      
+                // analitika
+                cTipK:="A"
+            ENDIF
+        ELSEIF cTK11=="S"
+            IF EMPTY( KONIZ->opis )
+                cNazKonta:=Ocitaj( F_KSif(), cIdKonto,"naz")
+            ELSE
+                cNazKonta:=KONIZ->opis
+            ENDIF
+            cTipK:="S"
+            cUslov := LEFT( cIdKonto , cTK12 )
+        ELSEIF RIGHT(ALLTRIM(cIdKonto),1)=="0"       
+            // sintetika
+            IF EMPTY(KONIZ->opis)
+                cNazKonta:=Ocitaj(F_KSif(),cIdKonto,"naz")
+            ELSE
+                cNazKonta:=KONIZ->opis
+            ENDIF
+            cTipK:="S"
+            cUslov:=ALLTRIM(cIdKonto)
+            DO WHILE RIGHT(cUslov,1)=="0"
+                cUslov:=LEFT(cUslov,LEN(cUslov)-1)
+            ENDDO
+        ELSE                                          
+            // analitika
+            cNazKonta:=Ocitaj(F_KSif(),cIdKonto,"naz")
+            cTipK:="A"
+        ENDIF
 
-      cIdKonto:=KONIZ->id
-
-      IF cTK11=="F"                              // po funkciji
-        cTipK:="P"
-        IF EMPTY(KONIZ->opis)
-          cNazKonta:=Ocitaj(F_FUNK,PADR(cIdKonto,5),"naz")
-        ELSE
-          cNazKonta:=KONIZ->opis
-        ENDIF
-        cUslov := IF( cTK12>0 , LEFT( cIdKonto , cTK12 ) , TRIM(cIdKonto) )
-      ELSEIF !EMPTY(KONIZ->fi)                                // po formuli
-        IF LEFT(KONIZ->fi,1)!="="
-          aUslov:=Parsiraj(KONIZ->fi,cPIKPolje,"C")
-        ELSE
-          aUslov:=".f."
-        ENDIF
-        cTipK:="F"
-        cNazKonta:=KONIZ->opis
-      ELSEIF cTK11=="A"
-        cNazKonta:=IzKSif("naz")
-        cIdKonto:=IzKSif("id")
-        IF RIGHT(ALLTRIM(cIdKonto),1)=="0"       // sintetika
-          cTipK:="S"
-          cUslov:=ALLTRIM(cIdKonto)
-          DO WHILE RIGHT(cUslov,1)=="0"
-            cUslov:=LEFT(cUslov,LEN(cUslov)-1)
-          ENDDO
-        ELSE                                      // analitika
-          cTipK:="A"
-        ENDIF
-      ELSEIF cTK11=="S"
-        IF EMPTY( KONIZ->opis )
-          cNazKonta:=Ocitaj( F_KSif(), cIdKonto,"naz")
-        ELSE
-          cNazKonta:=KONIZ->opis
-        ENDIF
-        cTipK:="S"
-        cUslov := LEFT( cIdKonto , cTK12 )
-      ELSEIF RIGHT(ALLTRIM(cIdKonto),1)=="0"       // sintetika
-        IF EMPTY(KONIZ->opis)
-          cNazKonta:=Ocitaj(F_KSif(),cIdKonto,"naz")
-        ELSE
-          cNazKonta:=KONIZ->opis
-        ENDIF
-        cTipK:="S"
-        cUslov:=ALLTRIM(cIdKonto)
-        DO WHILE RIGHT(cUslov,1)=="0"
-          cUslov:=LEFT(cUslov,LEN(cUslov)-1)
-        ENDDO
-      ELSE                                          // analitika
-        cNazKonta:=Ocitaj(F_KSif(),cIdKonto,"naz")
-        cTipK:="A"
-      ENDIF
-
-      SELECT POM
-      APPEND BLANK
-      REPLACE NRBR       WITH ++nPomRbr                        ,;
+        SELECT POM
+        APPEND BLANK
+        REPLACE NRBR       WITH ++nPomRbr                        ,;
               KONTO      WITH cIdKonto                         ,;
               IMEKONTA   WITH cNazKonta                        ,;
               PODVUCI    WITH KONIZ->podvuci                   ,;
               K1         WITH KONIZ->k1                        ,;
               U1         WITH KONIZ->u1                        ,;
               AOP        WITH STR(KONIZ->RI,5)
-      IF cTipK!="P"
-        REPLACE PLBUDZET   WITH PlBudzeta(cTipK,IF(cTipK=="A",cIdKonto,IF(cTipK=="S",cUslov,aUslov))) ,;
+        IF cTipK!="P"
+            REPLACE PLBUDZET   WITH PlBudzeta(cTipK,IF(cTipK=="A",cIdKonto,IF(cTipK=="S",cUslov,aUslov))) ,;
                 REBALANS   WITH RebBudzeta(cTipK,IF(cTipK=="A",cIdKonto,IF(cTipK=="S",cUslov,aUslov)))
-        REPLACE PREDZNAK   WITH IF( EMPTY(KONTO) .or. KONIZ->predzn<>0 , KONIZ->predzn , IF(&aUPredzn,-1,1) )
-      ELSE
-        REPLACE PREDZNAK   WITH 1
-        RazvijUslove(KONIZ->fi)
-      ENDIF
-      IF cTipK=="F"
-        REPLACE uslov WITH KONIZ->fi
-      ELSEIF cTipK=="S"
-        REPLACE sint WITH "S"+ALLTRIM(STR(LEN(cUslov)))
-      ELSEIF cTipK=="P"
-        REPLACE sint WITH "F"+ALLTRIM(STR(LEN(cUslov)))
-      ENDIF
-
-      IF cTK11!="A"
-        EXIT
-      ELSE
-        Sel_KSif()
-        SKIP 1
-        IF LEFT( id , cTK12 ) != cUslovA
-          EXIT
+            REPLACE PREDZNAK   WITH IF( EMPTY(KONTO) .or. KONIZ->predzn<>0 , KONIZ->predzn , IF(&aUPredzn,-1,1) )
+        ELSE
+            REPLACE PREDZNAK   WITH 1
+            RazvijUslove(KONIZ->fi)
         ENDIF
-      ENDIF
+        IF cTipK=="F"
+            REPLACE uslov WITH KONIZ->fi
+        ELSEIF cTipK=="S"
+            REPLACE sint WITH "S"+ALLTRIM(STR(LEN(cUslov)))
+        ELSEIF cTipK=="P"
+            REPLACE sint WITH "F"+ALLTRIM(STR(LEN(cUslov)))
+        ENDIF
 
-    ENDDO                          // ova petlja sluzi samo ako je cTK11="A"
+        IF cTK11!="A"
+            EXIT
+        ELSE
+            Sel_KSif()
+            SKIP 1
+            IF LEFT( id , cTK12 ) != cUslovA
+                EXIT
+            ENDIF
+        ENDIF
+
+    ENDDO                          
+    // ova petlja sluzi samo ako je cTK11="A"
 
     SELECT KONIZ
 
-    IF !lDvaKonta; SKIP 1; LOOP; ENDIF
+    IF !lDvaKonta
+        SKIP 1
+        LOOP
+    ENDIF
 
     cTK21  := UPPER(LEFT(KONIZ->k2,1))
     cTK22  := VAL(RIGHT(KONIZ->k2,1))
 
     IF cTK21=="A"
-      cUslovA2 := LEFT( KONIZ->id2 , cTK22 )
-      Sel_KSif()
-      SEEK cUslovA2
-      IF LEFT( id , cTK22 ) != cUslovA2
-        SELECT KONIZ; SKIP 1; LOOP
-      ENDIF
+        cUslovA2 := LEFT( KONIZ->id2 , cTK22 )
+        Sel_KSif()
+        SEEK cUslovA2
+        IF LEFT( id , cTK22 ) != cUslovA2
+            SELECT KONIZ
+            SKIP 1
+            LOOP
+        ENDIF
     ENDIF
 
-    DO WHILE !EMPTY(KONIZ->id2+KONIZ->fi2)  // ova petlja se vrti samo ako je
-                                            // cTK21="A"
-      cIdKonto2:=KONIZ->id2
+    DO WHILE !EMPTY(KONIZ->id2+KONIZ->fi2)  
+        // ova petlja se vrti samo ako je
+        // cTK21="A"
+        cIdKonto2:=KONIZ->id2
 
-      IF !EMPTY(KONIZ->fi2)                                // po formuli
-        aUslov2:=Parsiraj(KONIZ->fi2,cPIKPolje,"C")
-        cTipK2:="F"
-        cNazKonta:=KONIZ->opis
-      ELSEIF cTK21=="A"
-        cNazKonta:=IzKSif("naz")
-        cIdKonto2:=IzKSif("id")
-        IF RIGHT(ALLTRIM(cIdKonto2),1)=="0"       // sintetika
-          cTipK2:="S"
-          cUslov2:=ALLTRIM(cIdKonto2)
-          DO WHILE RIGHT(cUslov2,1)=="0"
-            cUslov2:=LEFT(cUslov2,LEN(cUslov2)-1)
-          ENDDO
-        ELSE                                      // analitika
-          cTipK2:="A"
+        IF !EMPTY(KONIZ->fi2)                                // po formuli
+            aUslov2:=Parsiraj(KONIZ->fi2,cPIKPolje,"C")
+            cTipK2:="F"
+            cNazKonta:=KONIZ->opis
+        ELSEIF cTK21=="A"
+            cNazKonta:=IzKSif("naz")
+            cIdKonto2:=IzKSif("id")
+            IF RIGHT(ALLTRIM(cIdKonto2),1)=="0"       // sintetika
+                cTipK2:="S"
+                cUslov2:=ALLTRIM(cIdKonto2)
+                DO WHILE RIGHT(cUslov2,1)=="0"
+                    cUslov2:=LEFT(cUslov2,LEN(cUslov2)-1)
+                ENDDO
+            ELSE                                      // analitika
+                cTipK2:="A"
+            ENDIF
+        ELSEIF cTK21=="S"
+            cNazKonta:=Ocitaj(F_KSif(),cIdKonto2,"naz")
+            cTipK2:="S"
+            cUslov2 := LEFT( cIdKonto2 , cTK22 )
+        ELSEIF RIGHT(ALLTRIM(cIdKonto2),1)=="0"       // sintetika
+            cNazKonta:=Ocitaj(F_KSif(),cIdKonto2,"naz")
+            cTipK2:="S"
+            cUslov2:=ALLTRIM(cIdKonto2)
+            DO WHILE RIGHT(cUslov2,1)=="0"
+                cUslov2:=LEFT(cUslov2,LEN(cUslov2)-1)
+            ENDDO
+        ELSE                                          // analitika
+            cNazKonta:=Ocitaj(F_KSif(),cIdKonto2,"naz")
+            cTipK2:="A"
         ENDIF
-      ELSEIF cTK21=="S"
-        cNazKonta:=Ocitaj(F_KSif(),cIdKonto2,"naz")
-        cTipK2:="S"
-        cUslov2 := LEFT( cIdKonto2 , cTK22 )
-      ELSEIF RIGHT(ALLTRIM(cIdKonto2),1)=="0"       // sintetika
-        cNazKonta:=Ocitaj(F_KSif(),cIdKonto2,"naz")
-        cTipK2:="S"
-        cUslov2:=ALLTRIM(cIdKonto2)
-        DO WHILE RIGHT(cUslov2,1)=="0"
-          cUslov2:=LEFT(cUslov2,LEN(cUslov2)-1)
-        ENDDO
-      ELSE                                          // analitika
-        cNazKonta:=Ocitaj(F_KSif(),cIdKonto2,"naz")
-        cTipK2:="A"
-      ENDIF
 
-      SELECT POM
-      IF lDrugiKonto
-        APPEND BLANK
-        REPLACE NRBR       WITH ++nPomRbr                        ,;
+        SELECT POM
+        IF lDrugiKonto
+            APPEND BLANK
+            REPLACE NRBR       WITH ++nPomRbr                        ,;
                 KONTO      WITH KONIZ->id                        ,;
                 IMEKONTA   WITH cNazKonta                        ,;
                 PODVUCI    WITH KONIZ->podvuci                   ,;
                 K1         WITH KONIZ->k1                        ,;
                 U1         WITH KONIZ->u1                        ,;
                 AOP        WITH STR(KONIZ->RI,5)
-        REPLACE PREDZNAK   WITH IF( EMPTY(KONTO) .or. KONIZ->predzn<>0 , KONIZ->predzn , IF(&aUPredzn,-1,1) )
-      ENDIF
-      REPLACE KONTO2     WITH cIdKonto2                          ,;
+            REPLACE PREDZNAK   WITH IF( EMPTY(KONTO) .or. KONIZ->predzn<>0 , KONIZ->predzn , IF(&aUPredzn,-1,1) )
+        ENDIF
+        REPLACE KONTO2     WITH cIdKonto2                          ,;
               PLBUDZET2  WITH PlBudzeta(cTipK2,IF(cTipK2=="A",cIdKonto2,IF(cTipK2=="S",cUslov2,aUslov2))) ,;
               REBALANS2  WITH RebBudzeta(cTipK2,IF(cTipK2=="A",cIdKonto2,IF(cTipK2=="S",cUslov2,aUslov2)))
-      REPLACE PREDZNAK2  WITH IF( EMPTY(KONTO2) .or. KONIZ->predzn2<>0 , KONIZ->predzn2 , IF(&aUPredzn2,-1,1) )
-      IF cTipK2=="F"
-        REPLACE uslov2 WITH KONIZ->fi2
-      ELSEIF cTipK2=="S"
-        REPLACE sint2 WITH "S"+ALLTRIM(STR(LEN(cUslov2)))
-      ENDIF
-
-      IF cTK21!="A"
-        EXIT
-      ELSE
-        Sel_KSif()
-        SKIP 1
-        IF LEFT( id , cTK22 ) != cUslovA2
-          EXIT
+        REPLACE PREDZNAK2  WITH IF( EMPTY(KONTO2) .or. KONIZ->predzn2<>0 , KONIZ->predzn2 , IF(&aUPredzn2,-1,1) )
+        IF cTipK2=="F"
+            REPLACE uslov2 WITH KONIZ->fi2
+        ELSEIF cTipK2=="S"
+            REPLACE sint2 WITH "S"+ALLTRIM(STR(LEN(cUslov2)))
         ENDIF
-      ENDIF
 
-    ENDDO                          // ova petlja sluzi samo ako je cTK21="A"
+        IF cTK21!="A"
+            EXIT
+        ELSE
+            Sel_KSif()
+            SKIP 1
+            IF LEFT( id , cTK22 ) != cUslovA2
+                EXIT
+            ENDIF
+        ENDIF
 
-    SELECT KONIZ; SKIP 1
-  ENDDO                                       // listam KONIZ.DBF
-  // --------------------------
-  // KRAJ pripreme baze POM.DBF
-  // --------------------------
+    ENDDO                          
+    // ova petlja sluzi samo ako je cTK21="A"
 
+    SELECT KONIZ
+    SKIP 1
+  
+ENDDO                                       
 
+// proizvoljni izvjestaji
+cIniName := my_home() + "proizvj.ini"
 
-   // proizvoljni izvjestaji
-   cIniName:=EXEPATH+'ProIzvj.ini'
-   select rj; hseek cGlava
-   select FUNK; hseek cFunkc
-   UzmiIzIni(cIniName,'Varijable','RJ',cGlava,'WRITE')
-   UzmiIzIni(cIniName,'Varijable','RJNaz',rj->naz,'WRITE')
-   UzmiIzIni(cIniName,'Varijable','Funkcija',cFunkc,'WRITE')
-   UzmiIzIni(cIniName,'Varijable','FunkcijaNaz',funk->naz,'WRITE')
+select rj
+hseek cGlava
+   
+select funk
+hseek cFunkc
+   
+UzmiIzIni(cIniName,'Varijable','RJ',cGlava,'WRITE')
+UzmiIzIni(cIniName,'Varijable','RJNaz',rj->naz,'WRITE')
+UzmiIzIni(cIniName,'Varijable','Funkcija',cFunkc,'WRITE')
+UzmiIzIni(cIniName,'Varijable','FunkcijaNaz',funk->naz,'WRITE')
+UzmiIzIni(cIniName,'Varijable','DatumOd',dtoc(dOd),'WRITE')
+UzmiIzIni(cIniName,'Varijable','DatumDo',dtoc(dDo),'WRITE')
+UzmiIzIni(cIniName,'Varijable','Firma',gNFirma,'WRITE')
 
-   UzmiIzIni(cIniName,'Varijable','DatumOd',dtoc(dOd),'WRITE')
-   UzmiIzIni(cIniName,'Varijable','DatumDo',dtoc(dDo),'WRITE')
-   UzmiIzIni(cIniName,'Varijable','Firma',gNFirma,'WRITE')
+if !empty(cUIdKonto)
+    UzmiIzIni(cIniName,'Varijable','Konto',cUIdKonto,"WRITE")
+    select (F_KONTO)
+    if !used()
+        O_KONTO
+    endif
+    select konto
+    hseek cUIdKonto
+    UzmiIzIni(cIniName,'Varijable','KontoNaz',konto->naz, "WRITE")
+    use
+else
+    UzmiIzIni(cIniName,'Varijable','Konto',"","WRITE")
+    UzmiIzIni(cIniName,'Varijable','KontoNaz',"", "WRITE")
+endif
 
-   if !empty(cUIdKonto)
-     UzmiIzIni(cIniName,'Varijable','Konto',cUIdKonto,"WRITE")
-     select (F_KONTO)
-     if !used(); O_KONTO; endif
-     select konto; hseek cUIdKonto
-     UzmiIzIni(cIniName,'Varijable','KontoNaz',konto->naz, "WRITE")
-     use
-   else
-     UzmiIzIni(cIniName,'Varijable','Konto',"","WRITE")
-     UzmiIzIni(cIniName,'Varijable','KontoNaz',"", "WRITE")
-   endif
-
-
-
-  // ---------------------------------------------------------------
-  // konacno, uzimam podatke iz osnovnog izvora podataka (SUBAN.DBF)
-  // i smjestam ih u POM.DBF prema postojecim formulama i uslovima
-  // ---------------------------------------------------------------
-  IF lKljuc                               // varijanta KONIZ->K="K"
+// ---------------------------------------------------------------
+// konacno, uzimam podatke iz osnovnog izvora podataka (SUBAN.DBF)
+// i smjestam ih u POM.DBF prema postojecim formulama i uslovima
+// ---------------------------------------------------------------
+IF lKljuc                               // varijanta KONIZ->K="K"
 
     nPomRbr:=0
-    nPr:=KONIZ->predzn
+    nPr := KONIZ->predzn
     Sel_KBaza()
     if !empty(cUIdKonto)
-      cUIdKonto:="Idkonto=='"+cUIDKonto+"'"
-      set filter to &cUIdKonto
-
+        cUIdKonto:="Idkonto=='"+cUIDKonto+"'"
+        set filter to &cUIdKonto
     endif
 
     GO TOP
 
     DO WHILE !EOF()
-      cIdKonto:=&cPIKPolje
-      nDug:=nPot:=0
-      FOR i:=1 TO LEN(aKolS)
-        aKolS[i,3]:=0
-      NEXT
-      DO WHILE !EOF() .and. cIdKonto==&cPIKPolje
-        Postotak(2,++nStavki)
+        cIdKonto:=&cPIKPolje
+        nDug:=nPot:=0
         FOR i:=1 TO LEN(aKolS)
-          cPom   := aKolS[i,2]
-          cPomIS := aKolS[i,4]
-          IF EMPTY(cPomIS); cPomIS:="iznosbhd"; ENDIF
-          IF &cPom
-            IF D_P=="1"
-              aKolS[i,3] += (&cPomIS*nPr)
-            ELSE
-              aKolS[i,3] -= (&cPomIS*nPr)
-            ENDIF
-          ENDIF
+            aKolS[i,3]:=0
         NEXT
-        SKIP 1
-      ENDDO
-      SELECT POM
-      APPEND BLANK
-      FOR i:=1 TO LEN(aKolS)
-        cPom:=aKolS[i,1]
-        REPLACE &cPom WITH aKolS[i,3]
-      NEXT
-      REPLACE KONTO WITH cIdKonto
-      IF cPIKSif!="BEZ"
-        REPLACE IMEKONTA WITH Ocitaj( F_KSif(),;
+        DO WHILE !EOF() .and. cIdKonto==&cPIKPolje
+            Postotak(2,++nStavki)
+            FOR i:=1 TO LEN(aKolS)
+                cPom   := aKolS[i,2]
+                cPomIS := aKolS[i,4]
+                IF EMPTY(cPomIS); cPomIS:="iznosbhd"; ENDIF
+                    IF &cPom
+                        IF D_P=="1"
+                            aKolS[i,3] += (&cPomIS*nPr)
+                        ELSE
+                            aKolS[i,3] -= (&cPomIS*nPr)
+                    ENDIF
+                ENDIF
+            NEXT
+            SKIP 1
+        ENDDO
+        SELECT POM
+        APPEND BLANK
+        FOR i:=1 TO LEN(aKolS)
+            cPom:=aKolS[i,1]
+            REPLACE &cPom WITH aKolS[i,3]
+        NEXT
+        REPLACE KONTO WITH cIdKonto
+        IF cPIKSif!="BEZ"
+            REPLACE IMEKONTA WITH Ocitaj( F_KSif(),;
                                       PADR(cIdKonto,LEN(IzKSif("ID"))),;
                                       "naz")
-      ENDIF
-      REPLACE NRBR WITH ++nPomRbr
+        ENDIF
+        REPLACE NRBR WITH ++nPomRbr
 
-      Sel_KBaza()
+        Sel_KBaza()
     ENDDO
 
-  ELSEIF !lFunkcija                       // varijanta KONIZ->K!="F"
+ELSEIF !lFunkcija                       
+    
+    // varijanta KONIZ->K!="F"
 
     Sel_KBaza()
     GO TOP
 
-    IF EMPTY(cSIzraz); cSIzraz:="IZNOSBHD"; ENDIF
+    IF EMPTY(cSIzraz)
+        cSIzraz:="IZNOSBHD"
+    ENDIF
 
     DO WHILE !EOF()
-      cIdKonto:=&cPIKPolje
-      nDug:=nPot:=nPrDug:=nPrPot:=0
-      DO WHILE !EOF() .and. cIdKonto==&cPIKPolje
+        cIdKonto:=&cPIKPolje
+        nDug:=nPot:=nPrDug:=nPrPot:=0
+        DO WHILE !EOF() .and. cIdKonto==&cPIKPolje
+            Postotak(2,++nStavki)
+            // sta sa DATDOK, IZNOSBHD i D_P ?!  VA¦NO!
+            // ---------------
+
+            IF !lKumSuma .or. datdok>=dOd   // tekuci period (od datuma dOd)
+                IF D_P=="1"           // dug.
+                    nDug += (&cSIzraz)
+                ELSE                  // pot.
+                    nPot += (&cSIzraz)
+                ENDIF
+            ELSE             // bitno samo za kumul.period (od datuma "  .  .  ")
+                IF D_P=="1"           // dug.
+                    nPrDug += (&cSIzraz)
+                ELSE                  // pot.
+                    nPrPot += (&cSIzraz)
+                ENDIF
+            ENDIF
+            SKIP 1
+        ENDDO
+
+        nTekSuma := nDug - nPot
+        nKumSuma := nTekSuma + nPrDug - nPrPot
+
+        SELECT POM
+        SET ORDER TO TAG "1"
+        GO TOP
+        DO WHILE !EOF() // .and. EMPTY(konto)
+            IF LEFT(sint,1)=="S".or.EMPTY(uslov).or.LEFT(uslov,1)=="="
+                SKIP 1
+                LOOP
+            ENDIF
+            aUslov:=PARSIRAJ(uslov,"cIdKonto","C")
+            IF &aUslov
+                REPLACE kumsuma    WITH predznak * nKumSuma + kumsuma     ,;
+                   teksuma    WITH predznak * nTekSuma + teksuma     ,;
+                   duguje     WITH nDug + duguje                     ,;
+                   potrazuje  WITH nPot + potrazuje
+            ENDIF
+            SKIP 1
+        ENDDO
+
+        SEEK LEFT(cIdKonto,1)
+        DO WHILE !EOF() .and. cIdKonto>=konto
+            IF LEFT(sint,1)=="S" .and. LEFT(cIdKonto,VAL(RIGHT(sint,1))) == LEFT(konto,VAL(RIGHT(sint,1))) .or. cIdKonto==konto .and. EMPTY(uslov)
+                REPLACE kumsuma    WITH predznak * nKumSuma + kumsuma     ,;
+                   teksuma    WITH predznak * nTekSuma + teksuma     ,;
+                   duguje     WITH nDug + duguje                     ,;
+                   potrazuje  WITH nPot + potrazuje
+            ENDIF
+            SKIP 1
+        ENDDO
+
+        IF !lDvaKonta
+            Sel_KBaza()
+            LOOP
+        ENDIF
+
+        SELECT POM
+        SET ORDER TO TAG "2"
+        GO TOP
+        
+        DO WHILE !EOF() // .and. EMPTY(konto2)
+            IF LEFT(sint2,1)=="S".or.EMPTY(uslov2).or.LEFT(uslov2,1)=="="
+                SKIP 1
+                LOOP
+            ENDIF
+            aUslov:=PARSIRAJ(uslov2,"cIdKonto","C")
+            IF &aUslov
+                REPLACE kumsuma2    WITH predznak2 * nKumSuma + kumsuma2     ,;
+                   teksuma2    WITH predznak2 * nTekSuma + teksuma2     ,;
+                   duguje2     WITH nDug + duguje2                      ,;
+                   potrazuje2  WITH nPot + potrazuje2
+            ENDIF
+            SKIP 1
+        ENDDO
+
+        SEEK LEFT(cIdKonto,1)
+        DO WHILE !EOF() .and. cIdKonto>=konto2
+            IF LEFT(sint2,1)=="S" .and. LEFT(cIdKonto,VAL(RIGHT(sint2,1))) == LEFT(konto2,VAL(RIGHT(sint2,1))) .or. cIdKonto==konto2 .and. EMPTY(uslov2)
+                REPLACE kumsuma2    WITH predznak2 * nKumSuma + kumsuma2     ,;
+                   teksuma2    WITH predznak2 * nTekSuma + teksuma2     ,;
+                   duguje2     WITH nDug + duguje2                      ,;
+                   potrazuje2  WITH nPot + potrazuje2
+            ENDIF
+            SKIP 1
+        ENDDO
+
+        Sel_KBaza()
+    ENDDO                                      // uzimam podatke iz SUBAN.DBF
+
+ELSE                // ako jeste lFunkcija   tj.   KONIZ->K="F"
+
+    Sel_KBaza()
+    GO TOP
+
+    DO WHILE !EOF()
+        nDug:=nPot:=nPrDug:=nPrPot:=0
         Postotak(2,++nStavki)
-        // çta sa DATDOK, IZNOSBHD i D_P ?!  VA¦NO!
-        // ---------------
-
+        IF EMPTY(funk)
+            SKIP 1
+            LOOP
+        ENDIF
         IF !lKumSuma .or. datdok>=dOd   // tekuci period (od datuma dOd)
-          IF D_P=="1"           // dug.
-            nDug += (&cSIzraz)
-          ELSE                  // pot.
-            nPot += (&cSIzraz)
-          ENDIF
+            IF D_P=="1"           // dug.
+                nDug += iznosbhd
+            ELSE                  // pot.
+                nPot += iznosbhd
+            ENDIF
         ELSE             // bitno samo za kumul.period (od datuma "  .  .  ")
-          IF D_P=="1"           // dug.
-            nPrDug += (&cSIzraz)
-          ELSE                  // pot.
-            nPrPot += (&cSIzraz)
-          ENDIF
+            IF D_P=="1"           // dug.
+                nPrDug += iznosbhd
+            ELSE                  // pot.
+                nPrPot += iznosbhd
+            ENDIF
         ENDIF
+
+        nTekSuma := nDug - nPot
+        nKumSuma := nTekSuma + nPrDug - nPrPot
+
+        SELECT POM
+        GO TOP
+        DO WHILE !EOF()
+            IF EMPTY(KONTO)
+                aUslov1 := ".t."
+            ELSEIF VAL(RIGHT(sint,1))>0
+                aUslov1 := "LEFT(SUBAN->FUNK,"+RIGHT(sint,1)+")==LEFT(KONTO,"+RIGHT(sint,1)+")"
+            ELSE
+                aUslov1 := "LEFT(SUBAN->FUNK,"+STR(LEN(TRIM(KONTO)),1)+")==LEFT(KONTO,"+STR(LEN(TRIM(KONTO)),1)+")"
+            ENDIF
+            FOR i:=1 TO 12
+                cPom:="USL"+ALLTRIM(STR(i))
+                cPom2:="KOL"+ALLTRIM(STR(i))
+                aUslov2:=PARSIRAJ(&cPom,"SUBAN->IDKONTO","C")
+                IF &aUslov1 .and. &aUslov2
+                    REPLACE &cPom2     WITH &cPom2 + PREDZNAK * nTekSuma     ,;
+                        kumsuma    WITH predznak * nKumSuma + kumsuma    ,;
+                        duguje     WITH nDug + duguje                    ,;
+                        potrazuje  WITH nPot + potrazuje
+                ENDIF
+            NEXT
+            SKIP 1
+        ENDDO
+
+        Sel_KBaza()
         SKIP 1
-      ENDDO
-
-      nTekSuma := nDug - nPot
-      nKumSuma := nTekSuma + nPrDug - nPrPot
-
-      SELECT POM; SET ORDER TO TAG "1"; GO TOP
-      DO WHILE !EOF() // .and. EMPTY(konto)
-        IF LEFT(sint,1)=="S".or.EMPTY(uslov).or.LEFT(uslov,1)=="="; SKIP 1; LOOP; ENDIF
-        aUslov:=PARSIRAJ(uslov,"cIdKonto","C")
-        IF &aUslov
-           REPLACE kumsuma    WITH predznak * nKumSuma + kumsuma     ,;
-                   teksuma    WITH predznak * nTekSuma + teksuma     ,;
-                   duguje     WITH nDug + duguje                     ,;
-                   potrazuje  WITH nPot + potrazuje
-        ENDIF
-        SKIP 1
-      ENDDO
-
-      SEEK LEFT(cIdKonto,1)
-      DO WHILE !EOF() .and. cIdKonto>=konto
-        IF LEFT(sint,1)=="S" .and. LEFT(cIdKonto,VAL(RIGHT(sint,1))) == LEFT(konto,VAL(RIGHT(sint,1))) .or. cIdKonto==konto .and. EMPTY(uslov)
-           REPLACE kumsuma    WITH predznak * nKumSuma + kumsuma     ,;
-                   teksuma    WITH predznak * nTekSuma + teksuma     ,;
-                   duguje     WITH nDug + duguje                     ,;
-                   potrazuje  WITH nPot + potrazuje
-        ENDIF
-        SKIP 1
-      ENDDO
-
-      IF !lDvaKonta; Sel_KBaza(); LOOP; ENDIF
-
-      SELECT POM; SET ORDER TO TAG "2"; GO TOP
-      DO WHILE !EOF() // .and. EMPTY(konto2)
-        IF LEFT(sint2,1)=="S".or.EMPTY(uslov2).or.LEFT(uslov2,1)=="="; SKIP 1; LOOP; ENDIF
-        aUslov:=PARSIRAJ(uslov2,"cIdKonto","C")
-        IF &aUslov
-           REPLACE kumsuma2    WITH predznak2 * nKumSuma + kumsuma2     ,;
-                   teksuma2    WITH predznak2 * nTekSuma + teksuma2     ,;
-                   duguje2     WITH nDug + duguje2                      ,;
-                   potrazuje2  WITH nPot + potrazuje2
-        ENDIF
-        SKIP 1
-      ENDDO
-
-      SEEK LEFT(cIdKonto,1)
-      DO WHILE !EOF() .and. cIdKonto>=konto2
-        IF LEFT(sint2,1)=="S" .and. LEFT(cIdKonto,VAL(RIGHT(sint2,1))) == LEFT(konto2,VAL(RIGHT(sint2,1))) .or. cIdKonto==konto2 .and. EMPTY(uslov2)
-           REPLACE kumsuma2    WITH predznak2 * nKumSuma + kumsuma2     ,;
-                   teksuma2    WITH predznak2 * nTekSuma + teksuma2     ,;
-                   duguje2     WITH nDug + duguje2                      ,;
-                   potrazuje2  WITH nPot + potrazuje2
-        ENDIF
-        SKIP 1
-      ENDDO
-
-      Sel_KBaza()
     ENDDO                                      // uzimam podatke iz SUBAN.DBF
 
-  ELSE                // ako jeste lFunkcija   tj.   KONIZ->K="F"
-
-    Sel_KBaza()
-    GO TOP
-
-    DO WHILE !EOF()
-      nDug:=nPot:=nPrDug:=nPrPot:=0
-      Postotak(2,++nStavki)
-      IF EMPTY(funk); SKIP 1; LOOP; ENDIF
-      IF !lKumSuma .or. datdok>=dOd   // tekuci period (od datuma dOd)
-        IF D_P=="1"           // dug.
-          nDug += iznosbhd
-        ELSE                  // pot.
-          nPot += iznosbhd
-        ENDIF
-      ELSE             // bitno samo za kumul.period (od datuma "  .  .  ")
-        IF D_P=="1"           // dug.
-          nPrDug += iznosbhd
-        ELSE                  // pot.
-          nPrPot += iznosbhd
-        ENDIF
-      ENDIF
-
-      nTekSuma := nDug - nPot
-      nKumSuma := nTekSuma + nPrDug - nPrPot
-
-      SELECT POM; GO TOP
-      DO WHILE !EOF()
-        IF EMPTY(KONTO)
-          aUslov1 := ".t."
-        ELSEIF VAL(RIGHT(sint,1))>0
-          aUslov1 := "LEFT(SUBAN->FUNK,"+RIGHT(sint,1)+")==LEFT(KONTO,"+RIGHT(sint,1)+")"
-        ELSE
-          aUslov1 := "LEFT(SUBAN->FUNK,"+STR(LEN(TRIM(KONTO)),1)+")==LEFT(KONTO,"+STR(LEN(TRIM(KONTO)),1)+")"
-        ENDIF
-        FOR i:=1 TO 12
-          cPom:="USL"+ALLTRIM(STR(i))
-          cPom2:="KOL"+ALLTRIM(STR(i))
-          aUslov2:=PARSIRAJ(&cPom,"SUBAN->IDKONTO","C")
-          IF &aUslov1 .and. &aUslov2
-            REPLACE &cPom2     WITH &cPom2 + PREDZNAK * nTekSuma     ,;
-                    kumsuma    WITH predznak * nKumSuma + kumsuma    ,;
-                    duguje     WITH nDug + duguje                    ,;
-                    potrazuje  WITH nPot + potrazuje
-          ENDIF
-        NEXT
-        SKIP 1
-      ENDDO
-
-      Sel_KBaza()
-      SKIP 1
-    ENDDO                                      // uzimam podatke iz SUBAN.DBF
-
-  ENDIF                  // lFunkcija
-  Postotak(-1)
-  // -----------------------------------------
-  // KRAJ uzimanja podataka iz osnovnog izvora
-  // -----------------------------------------
-
-
-  // -----------------------------------------------------
-  // odstampajmo zaglavlje i izvjestajnu tabelu iz POM.DBF
-  // -----------------------------------------------------
-  nBrRedStr := -99
-  StZagPI()
-  gnLMarg:=0; gOstr:="D"
+ENDIF                  // lFunkcija
   
-  StTabPI()
+Postotak(-1)
+  
+// -----------------------------------------
+// KRAJ uzimanja podataka iz osnovnog izvora
+// -----------------------------------------
 
 
+// -----------------------------------------------------
+// odstampajmo zaglavlje i izvjestajnu tabelu iz POM.DBF
+// -----------------------------------------------------
+nBrRedStr := -99
+  
+// stampaj zaglavlje izvjestaja
+StZagPI()
+gnLMarg := 0
+gOstr := "D"
+  
+// stampaj tabelu
+StTabPI()
 
 // postoji RTM fajl za delhpi
 cNazRTM := trim(gmodul)+UzmiIzIni(EXEPATH+"proizvj.ini",'Varijable','OznakaIzvj',"XY",'READ')
 
 if file( EXEPATH+cNazRTM+".RTM")
+    if Pitanje(,"Aktivirati Win report ?","D")=="D"
+        close all
+        KZNbazaWin(PRIVPATH+"pom")
+        private cKomLin:="DelphiRB "+cNazRTM+" "+PRIVPATH+"  pom  "+cTag
+        f18_run(cKomLin)
 
-if Pitanje(,"Aktivirati Win report ?","D")=="D"
-
+    endif
+endif
 
 close all
-
-KZNbazaWin(PRIVPATH+"pom")
-
-private cKomLin:="DelphiRB "+cNazRTM+" "+PRIVPATH+"  pom  "+cTag
-f18_run(cKomLin)
-
-endif
-
-endif
-
-CLOSERET
-
+return
 
 
 
@@ -1047,24 +1058,36 @@ RETURN nVrati
 
  
 function RebBudzeta(cTipK,cKonto)
+local nVrati := 0
+local nArr := SELECT()
 
-LOCAL nVrati:=0, nArr:=SELECT()
- IF cKonto==".f."; RETURN 0; ENDIF
- SELECT BUDZET
- SET ORDER TO TAG "2"
- GO TOP
- IF cTipK=="A" .or. cTipK=="S"
-   SEEK cKonto
- ENDIF
- DO WHILE !EOF() .and.;
+IF cKonto==".f."
+    RETURN 0
+ENDIF
+    
+O_BUDZET
+SELECT BUDZET
+SET ORDER TO TAG "2"
+GO TOP
+    
+IF cTipK=="A" .or. cTipK=="S"
+    SEEK cKonto
+ENDIF
+ 
+DO WHILE !EOF() .and.;
           ( cTipK=="A" .and. idkonto==cKonto .or.;
             cTipK=="S" .and. LEFT(idkonto,LEN(cKonto))==cKonto .or.;
             cTipK=="F" )
-   IF cTipK=="F" .and. !(&cKonto); SKIP 1; LOOP; ENDIF
-   nVrati += rebiznos
-   SKIP 1
- ENDDO
- SELECT (nArr)
+    IF cTipK=="F" .and. !(&cKonto)
+        SKIP 1
+        LOOP
+    ENDIF
+    nVrati += rebiznos
+    SKIP 1
+ENDDO
+ 
+SELECT (nArr)
+
 RETURN nVrati
 
 
@@ -1076,49 +1099,30 @@ RETURN nVrati
  */
  
 function ParSviIzvjFin()
+local GetList := {}
 
-LOCAL GetList:={}
-cPotrazKon:=PADR(cPotrazKon,120)
+cPotrazKon := PADR( fetch_metric( "proiz_fin_potrazni_konto", my_user(), cPotrazKon ), 120 )
+gTabela := fetch_metric( "proiz_fin_tabela", _my_user, 1 )
+cPrikBezDec := fetch_metric( "proiz_fin_prikaz_bez_decimala", _my_user, "D" )
+cSaNulama := fetch_metric( "proiz_fin_prikaz_sa_nulama", _my_user, "D" )
+nKorZaLands := fetch_metric( "proiz_fin_kor_landscape", _my_user, -18 )
 
-gTabela:=1; cPrikBezDec:="D"; cSaNulama:="D"; nKorZaLands:=-18
+for _i := 1 to 10
 
-O_PARAMS
-Private cSection:="I", cHistory:=" ", aHistory:={}
-RPar("05",@gTabela)
-RPar("06",@cPrikBezDec)
-RPar("07",@cSaNulama)
-RPar("08",@nKorZaLands)
+    // cDPNaz1 ... 10
+    _tmp := "cDPnaz" + ALLTRIM( STR( _i ) )
+    &_tmp := fetch_metric( "proiz_fin_dpnaz" + ALLTRIM(STR( _i )), _my_user, "" )
 
-RPar("09",@cDPnaz1 )
-RPar("10",@cDPnaz2 )
-RPar("11",@cDPnaz3 )
-RPar("12",@cDPnaz4 )
-RPar("13",@cDPnaz5 )
-RPar("14",@cDPnaz6 )
-RPar("15",@cDPnaz7 )
-RPar("16",@cDPnaz8 )
-RPar("17",@cDPnaz9 )
-RPar("18",@cDPnaz10)
-RPar("19",@cDPx1 )
-RPar("20",@cDPx2 )
-RPar("21",@cDPx3 )
-RPar("22",@cDPx4 )
-RPar("23",@cDPx5 )
-RPar("24",@cDPx6 )
-RPar("25",@cDPx7 )
-RPar("26",@cDPx8 )
-RPar("27",@cDPx9 )
-RPar("28",@cDPx10)
-RPar("29",@cDPf1 )
-RPar("30",@cDPf2 )
-RPar("31",@cDPf3 )
-RPar("32",@cDPf4 )
-RPar("33",@cDPf5 )
-RPar("34",@cDPf6 )
-RPar("35",@cDPf7 )
-RPar("36",@cDPf8 )
-RPar("37",@cDPf9 )
-RPar("38",@cDPf10)
+    // cDPx1 ... 10
+    _tmp := "cDPx" + ALLTRIM(STR( _i ))
+    &_tmp := fetch_metric( "proiz_fin_dpx" + ALLTRIM(STR( _i )), _my_user, "" )
+    
+    // cDPf1 ... 10
+    _tmp := "cDPf" + ALLTRIM(STR( _i ))
+    &_tmp := fetch_metric( "proiz_fin_dpf" + ALLTRIM(STR( _i )), _my_user, "N" )
+ 
+next
+
 
 cDPnaz1 :=PADR(cDPnaz1 , 40); cDPx1 :=PADR(cDPx1 , 40)
 cDPnaz2 :=PADR(cDPnaz2 , 40); cDPx2 :=PADR(cDPx2 , 40)
@@ -1187,10 +1191,9 @@ Box(,22,75)
 
  READ
 
-
 BoxC()
-cPotrazKon:=TRIM(cPotrazKon)
 
+cPotrazKon := TRIM(cPotrazKon)
 cDPnaz1 :=TRIM(cDPnaz1 ) ; cDPx1 :=TRIM(cDPx1 )
 cDPnaz2 :=TRIM(cDPnaz2 ) ; cDPx2 :=TRIM(cDPx2 )
 cDPnaz3 :=TRIM(cDPnaz3 ) ; cDPx3 :=TRIM(cDPx3 )
@@ -1202,49 +1205,33 @@ cDPnaz8 :=TRIM(cDPnaz8 ) ; cDPx8 :=TRIM(cDPx8 )
 cDPnaz9 :=TRIM(cDPnaz9 ) ; cDPx9 :=TRIM(cDPx9 )
 cDPnaz10:=TRIM(cDPnaz10) ; cDPx10:=TRIM(cDPx10)
 
-IF LASTKEY()!=K_ESC
-  O_PARAMS
-  Private cSection:="I",cHistory:=" ",aHistory:={}
-  WPar("pk",cPotrazKon)
-  WPar("pd",gnPorDob)
-  WPar("05",gTabela)
-  WPar("06",cPrikBezDec)
-  WPar("07",cSaNulama)
-  WPar("08",nKorZaLands)
-
-  WPar("09",cDPnaz1 )
-  WPar("10",cDPnaz2 )
-  WPar("11",cDPnaz3 )
-  WPar("12",cDPnaz4 )
-  WPar("13",cDPnaz5 )
-  WPar("14",cDPnaz6 )
-  WPar("15",cDPnaz7 )
-  WPar("16",cDPnaz8 )
-  WPar("17",cDPnaz9 )
-  WPar("18",cDPnaz10)
-  WPar("19",cDPx1 )
-  WPar("20",cDPx2 )
-  WPar("21",cDPx3 )
-  WPar("22",cDPx4 )
-  WPar("23",cDPx5 )
-  WPar("24",cDPx6 )
-  WPar("25",cDPx7 )
-  WPar("26",cDPx8 )
-  WPar("27",cDPx9 )
-  WPar("28",cDPx10)
-  WPar("29",cDPf1 )
-  WPar("30",cDPf2 )
-  WPar("31",cDPf3 )
-  WPar("32",cDPf4 )
-  WPar("33",cDPf5 )
-  WPar("34",cDPf6 )
-  WPar("35",cDPf7 )
-  WPar("36",cDPf8 )
-  WPar("37",cDPf9 )
-  WPar("38",cDPf10)
-
-  SELECT PARAMS; USE
+IF LASTKEY() == K_ESC
+    return
 ENDIF
+
+set_metric( "proiz_fin_potrazni_konto", my_user(), cPotrazKon )
+set_metric( "proiz_fin_tabela", _my_user, gTabela )
+set_metric( "proiz_fin_prikaz_bez_decimala", _my_user, cPrikBezDec )
+set_metric( "proiz_fin_prikaz_sa_nulama", _my_user, cSaNulama )
+set_metric( "proiz_fin_kor_landscape", _my_user, nKorZaLands )
+
+for _i := 1 to 10
+
+    // cDPNaz1 ... 10
+    _tmp := "cDPnaz" + ALLTRIM( STR( _i ) )
+    set_metric( "proiz_fin_dpnaz" + ALLTRIM(STR( _i )), _my_user, &_tmp )
+
+    // cDPx1 ... 10
+    _tmp := "cDPx" + ALLTRIM(STR( _i ))
+    set_metric( "proiz_fin_dpx" + ALLTRIM(STR( _i )), _my_user, &_tmp )
+    
+    // cDPf1 ... 10
+    _tmp := "cDPf" + ALLTRIM(STR( _i ))
+    set_metric( "proiz_fin_dpf" + ALLTRIM(STR( _i )), _my_user, &_tmp )
+ 
+next
+
+return
 
 
 

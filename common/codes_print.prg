@@ -449,6 +449,8 @@ local lVrati:=.f., i:=0
 return lVrati
 *}
 
+
+
 /*! \fn StampaTabele(aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslov, bFor, nStr, lOstr, lLinija, bSubTot, nSlogova, cTabBr, lCTab, bZagl)
  *
  *   \brief Stampa tabele
@@ -599,20 +601,26 @@ endif
    ++nStr
  endif
 
- if nCrtice==0
-     cOk:={"-", "-", " ", "-", " ", "-", " ", "-", "-", " ", "-", " ", "-", "-", "-", " "}
- elseif nCrtice==1
-     cOk:={"Ú", "Ä", "Â", "¿", "³", "Ã", "Å", "´", "À", "Á", "Ù", "³", "Ä", "Ã", "´", "Å"}
- elseif nCrtice==9    // rtf-fajlovi
-     cOk:={" ", " ", " ", " ", "#", " ", " ", " ", " ", " ", " ", "#", " ", " ", " ", " "}
- else
-     cOk:={"É", "Í", "Ñ", "»", "³", "Ì", "Ø", "¹", "È", "Ï", "¼", "º", "Ä", "Ç", "¶", "Å"}
- endif   // 1    2    3    4    5    6    7    8    9    10   11   12   13   14   15   16
-         ////////////////////////////////////////////////////////////////////////////////
+if nCrtice == 0
+    cOk := {"-", "-", " ", "-", " ", "-", " ", "-", "-", " ", "-", " ", "-", "-", "-", " "}
+elseif nCrtice == 1
+    cOk := {"Ú", "Ä", "Â", "¿", "³", "Ã", "Å", "´", "À", "Á", "Ù", "³", "Ä", "Ã", "´", "Å"}
+elseif nCrtice == 9    
+    // rtf-fajlovi
+    cOk := {" ", " ", " ", " ", "#", " ", " ", " ", " ", " ", " ", "#", " ", " ", " ", " "}
+else
+    cOk := {"É", "Í", "Ñ", "»", "³", "Ì", "Ø", "¹", "È", "Ï", "¼", "º", "Ä", "Ç", "¶", "Å"}
+endif     
+          // 1    2    3    4    5    6    7    8    9    10   11   12   13   14   15   16
 
- nSuma:=ARRAY(nKol); AFILL(nSuma,0); nSuma:=AMFILL(nSuma,nRed)
- nSubTot:=ARRAY(nKol); AFILL(nSubTot,0); nSubTot:=AMFILL(nSubTot,nRed)
- if cNaslov!=nil
+nSuma := ARRAY(nKol)
+AFILL(nSuma,0)
+nSuma:=AMFILL(nSuma,nRed)
+nSubTot := ARRAY(nKol)
+AFILL(nSubTot,0)
+nSubTot:=AMFILL(nSubTot,nRed)
+ 
+if cNaslov!=nil
    QOUT(cLM2+cOk[1]+REPLICATE(cOk[2],nDReda-nOdvoji-2)+cOk[4])
    QOUT(cLM2+cOk[12]+SPACE(nDReda-nOdvoji-2)+cOk[12])
    QOUT(cLM2+cOk[12]+PADC(ALLTRIM(cNaslov),nDReda-nOdvoji-2)+cOk[12])

@@ -14,19 +14,9 @@
 
 static aWaStack:={}
 static aBoxStack:={}
-
- 
-*static integer
 static nPos:=0
-*;
-
-*static string
 static cPokPonovo:="Pokusati ponovo (D/N) ?"
-*;
-
-*string
 static nPreuseLevel:=0
-*;
 
 
 /*! \fn Scatter(cZn)
@@ -106,7 +96,6 @@ return nil
 */
 
 function Gather2(zn)
-*{
 local _i, _struct
 local _field_b, _var
  
@@ -129,7 +118,6 @@ return
 
 
 function delete2()
-*{
 local nRec
 
 do while .t.
@@ -204,7 +192,6 @@ return nil
 */
 
 function AppFrom(cFDbf,fOtvori)
-*{
 local nArr
 nArr:=SELECT()
 
@@ -244,13 +231,10 @@ if fOtvori
   use // zatvori from DBF
 endif
 
-
-//dbcommit()
 dbunlock()
 select (nArr)
 
 return
-*}
 
 
 
@@ -330,7 +314,6 @@ break oe
  */
  
 function EofFndRet(ef, close)
-*{
 local fRet:=.f., cStr:="Ne postoje trazeni podaci.."
 if ef // eof()
   if eof()
@@ -353,7 +336,6 @@ if close .and. fRet
   close all
 endif
 return fRet
-*}
 
 
 /*! \fn SigmaSif(cSif)
@@ -368,32 +350,34 @@ return fRet
  * \return .t. kada je lozinka ispravna
 */
 
-function SigmaSif(cSif)
+function SigmaSif( cSif )
 local lGw_Status
 
-lGw_Status:=IF("U"$TYPE("GW_STATUS"),"-",gw_status)
+lGw_Status := IF( "U" $ TYPE( "GW_STATUS" ) , "-", gw_status )
 
-GW_STATUS:="-"
+GW_STATUS := "-"
 
-if csif==nil
-  cSif:="SIGMAXXX"
+if cSif == NIL
+    cSif := "SIGMAXXX"
 else
- cSif:=padr(cSif,8)
+    cSif := PADR( cSif, 8 )
 endif
-Box(,2,60)
-  cSifra:=space(8)
-  @ m_x+1,m_y+2 SAY "Sifra za koristenje specijalnih fja:"
-  cSifra:=upper(GETSECRET( cSifra))
+
+Box(, 2, 70 )
+    cSifra := SPACE(8)
+    @ m_x + 1, m_y + 2 SAY "Sifra za koristenje specijalnih funkcija:"
+    cSifra := UPPER( GETSECRET( cSifra ) )
 BoxC()
 
-GW_STATUS:=lGW_Status
-if cSifra==csif
-  return .t.
+GW_STATUS := lGW_Status
+
+if ALLTRIM( cSifra ) == ALLTRIM( cSif )
+    return .t.
 else
- return .f.
+    return .f.
 endif
 
-return
+
 
 /*! \fn O_POMDB(nArea,cImeDBF)
  *  \brief otvori pomocnu tabelu, koja ako se nalazi na CDU npr se kopira u lokalni
@@ -586,15 +570,18 @@ return nil
  *
  */
  
-function DbfName(nArea, lFull)
+
+
+function DbfName( nArea, lFull )
 local nPos
 local cPrefix
 
 if lFull==nil
 	lFull:=.f.
 endif
+
 cPrefix:=""
-nPos:=ASCAN(gaDbfs,{|x| x[1]==nArea})
+nPos := ASCAN( gaDbfs, {|x| x[1] == nArea } )
 
 if nPos<1
  nPos:=ASCAN(gaSDbfs,{|x| x[1]==nArea})
@@ -613,6 +600,8 @@ else
  return cPrefix+gaDbfs[nPos,2]
 endif
 return
+
+
 
 function DbfPath(nPath)
 do case
@@ -636,7 +625,6 @@ do case
 		return goModul:oDatabase:cSigmaBD+SLASH+"SECURITY"+SLASH
 end case
 return 
-
 
 
 
@@ -703,22 +691,8 @@ endif
 return
 
 
-function gaDBFDir(nPos)
-nPom:=gaDBFs[nPos,3]
-do case
-  case nPom=P_KUMPATH
-   return KUMPATH
-  case nPom=P_PRIVPATH
-   return  PRIVPATH
-  case nPom=P_SIFPATH
-   return SIFPATH
-  case nPom=P_MODPATH
-   return "."+SLASH
-  case nPom=P_EXEPATH
-   return EXEPATH
-  otherwise
-   return ""
-endcase
+function gaDBFDir( nPos )
+return my_home()
 
 
 
@@ -727,12 +701,6 @@ my_use( LOWER( tbl ) )
 return
 
 
-/*! \fn ExportBaze(cBaza)
-
-   Vidljive slogove tekuce baze kopira u bazu cBaza. Prije toga izbrise
-   bazu cBaza i pripadajuce indekse ukoliko postoje. cBaza ostaje zatvorena
-   a tekuca baza i dalje ostaje ista
-*/
 
 function ExportBaze(cBaza)
 LOCAL nArr:=SELECT()
@@ -765,7 +733,6 @@ if fieldpos("BRISANO")=0 // ne postoji polje "brisano"
   use (cImeDBf)
 endif
 return nil
-*}
 
 
 /*! \fn SmReplace(cField, xValue, lReplAlways)
@@ -774,7 +741,6 @@ return nil
  */
  
 function SmReplace(cField, xValue, lReplAlways)
-*{
 private cPom
 
 if (lReplAlways == nil)
@@ -791,7 +757,6 @@ if ((&cPom<>xValue) .or. (lReplAlways == .t.))
 endif
 
 return
-*}
 
 /*! \fn  PreUseEvent(cImeDbf, fShared)
  *  \brief Poziva se prije svako otvaranje DBF-a komanom USE

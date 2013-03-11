@@ -14,7 +14,7 @@
 
  
 function ProizvKalk()
-PrIz()
+proizvoljni_izvjestaji()
 return
 
 

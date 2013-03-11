@@ -1,3 +1,7 @@
+1.4.136 2013-03-11, vsasa
+
+  - fin, proizvoljni izvještaji
+ 
 1.4.135 2013-03-08, vsasa
 
   - f18 tezinski barkod, provjera dužine formiranog barkod-a na osnovu težinskog barkod-a

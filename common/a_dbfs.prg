@@ -140,7 +140,7 @@ return .t.
 //
 // _only_basic_params - samo table, alias, wa
 // -------------------------------------------------------
-function get_a_dbf_rec(tbl, _only_basic_params)
+function get_a_dbf_rec( tbl, _only_basic_params )
 local _msg, _rec, _keys, _dbf_tbl, _key
 
 _dbf_tbl := "x"

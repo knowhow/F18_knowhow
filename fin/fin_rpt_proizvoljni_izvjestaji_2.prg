@@ -11,14 +11,7 @@
 
 #include "fin.ch"
 
-/*! \file fmk/fin/rpt/1g/proizv.prg
- *  \brief Proizvoljni izvjestaji
- */
 
-/*! \fn ProIzv()
- *  \brief Proizvoljni izvjestaji
- */
- 
 function ProIzvFin()
 
 PRIVATE cDPnaz1 := "", cDPx1 :="", cDPf1 :="D"
@@ -32,20 +25,16 @@ PRIVATE cDPnaz8 := "", cDPx8 :="", cDPf8 :="D"
 PRIVATE cDPnaz9 := "", cDPx9 :="", cDPf9 :="D"
 PRIVATE cDPnaz10:= "", cDPx10:="", cDPf10:="D"
 
-
 PrIz()
 
-RETURN
+return
 
 
 
-
-/*! \fn OtBazPI()
- *  \brief Otvara baze proizvoljnih izvjestaja
- */
-
+// ---------------------------------------------------------
+// otvaranje tabela proizvoljnih izvjestaja
+// ---------------------------------------------------------
 function OtBazPIFin()
-
 O_IZVJE
 O_KONIZ
 O_KOLIZ
@@ -55,106 +44,218 @@ return
 
 
 
-/*! \fn GenProIzv()
- *  \brief Generisanje proizvoljnih izvjestaja
- */
+
+static function _kreiraj_pom_tabelu( index_tag, kljuc, dva_konta, kol_s, funkcija )
+local _table_name := "pom"
+local aDbf := {}
+
+index_tag := "1"
+
+select ( F_POM )
+use
+  
+FERASE( my_home() + _table_name + ".dbf" )
+FERASE( my_home() + _table_name + ".cdx" )
+  
+if FILE( my_home() + _table_name + ".dbf" )
+    MsgBeep( "Problem sa brisanjem pom.dbf tabele !!!!"  )
+endif
+
+AADD (aDbf, {"NRBR"      , "N",  5, 0})
+AADD (aDbf, {"KONTO"     , "C",  7, 0})
+AADD (aDbf, {"IMEKONTA"  , "C", 57, 0})
+
+if !kljuc
+    AADD (aDbf, {"PLBUDZET"  , "N", 15, 2})
+    AADD (aDbf, {"REBALANS"  , "N", 15, 2})
+    AADD (aDbf, {"KUMSUMA"   , "N", 15, 2})
+    AADD (aDbf, {"TEKSUMA"   , "N", 15, 2})
+    AADD (aDbf, {"KPGSUMA"   , "N", 15, 2})
+    AADD (aDbf, {"DUGUJE"    , "N", 15, 2})
+    AADD (aDbf, {"POTRAZUJE" , "N", 15, 2})
+    AADD (aDbf, {"USLOV"     , "C", 80, 0})
+    AADD (aDbf, {"SINT"      , "C",  2, 0})          // "Sn" ili "  "
+endif
+
+AADD (aDbf, {"PREDZNAK"  , "N",  2, 0})          // "-1" ili " 1"
+AADD (aDbf, {"PODVUCI"   , "C",  1, 0})
+AADD (aDbf, {"K1"        , "C",  1, 0})          //
+AADD (aDbf, {"U1"        , "C",  3, 0})          // npr. >0 ili <0
+AADD (aDbf, {"AOP"       , "C",  5, 0})
+
+// polja koja se koriste u situaciji kada je neophodno postavljanje
+// dva razlicita uslova(filtera) na jednoj izvjestajnoj stavci
+// ----------------------------------------------------------------
+  
+if dva_konta
+    AADD (aDbf, {"KONTO2"    , "C",  7, 0})
+    AADD (aDbf, {"PLBUDZET2" , "N", 15, 2})
+    AADD (aDbf, {"REBALANS2" , "N", 15, 2})
+    AADD (aDbf, {"KUMSUMA2"  , "N", 15, 2})
+    AADD (aDbf, {"TEKSUMA2"  , "N", 15, 2})
+    AADD (aDbf, {"DUGUJE2"   , "N", 15, 2})
+    AADD (aDbf, {"POTRAZUJE2", "N", 15, 2})
+    AADD (aDbf, {"USLOV2"    , "C", 80, 0})
+    AADD (aDbf, {"SINT2"     , "C",  2, 0})          // "Sn" ili "  "
+    AADD (aDbf, {"PREDZNAK2" , "N",  2, 0})          // "-1" ili " 1"
+endif
+
+// polja koja su neophodna za slucaj razlicitih uslova(filtera) na
+// izvjestajnim kolonama
+// ---------------------------------------------------------------
+
+if !EMPTY( kol_s )
+    FOR i:=1 TO LEN( kol_s )
+        AADD (aDbf, {kol_s[i,1]     , "N", 15, 2})
+    NEXT
+ELSEIF funkcija
+    AADD (aDbf, {"KOL1"      , "N", 15, 2})
+    AADD (aDbf, {"KOL2"      , "N", 15, 2})
+    AADD (aDbf, {"KOL3"      , "N", 15, 2})
+    AADD (aDbf, {"KOL4"      , "N", 15, 2})
+    AADD (aDbf, {"KOL5"      , "N", 15, 2})
+    AADD (aDbf, {"KOL6"      , "N", 15, 2})
+    AADD (aDbf, {"KOL7"      , "N", 15, 2})
+    AADD (aDbf, {"KOL8"      , "N", 15, 2})
+    AADD (aDbf, {"KOL9"      , "N", 15, 2})
+    AADD (aDbf, {"KOL10"     , "N", 15, 2})
+    AADD (aDbf, {"KOL11"     , "N", 15, 2})
+    AADD (aDbf, {"KOL12"     , "N", 15, 2})
+    AADD (aDbf, {"USL1"      , "C", 25, 0})
+    AADD (aDbf, {"USL2"      , "C", 25, 0})
+    AADD (aDbf, {"USL3"      , "C", 25, 0})
+    AADD (aDbf, {"USL4"      , "C", 25, 0})
+    AADD (aDbf, {"USL5"      , "C", 25, 0})
+    AADD (aDbf, {"USL6"      , "C", 25, 0})
+    AADD (aDbf, {"USL7"      , "C", 25, 0})
+    AADD (aDbf, {"USL8"      , "C", 25, 0})
+    AADD (aDbf, {"USL9"      , "C", 25, 0})
+    AADD (aDbf, {"USL10"     , "C", 25, 0})
+    AADD (aDbf, {"USL11"     , "C", 25, 0})
+    AADD (aDbf, {"USL12"     , "C", 25, 0})
+ENDIF
+
+DBCREATE( my_home() + _table_name + ".dbf", aDbf )
+select ( F_POM )
+use
+my_use_temp( UPPER( _table_name ), my_home() + _table_name + ".dbf", .f., .t. )
+
+index on konto tag "1"
+
+if dva_konta
+    index_tag := "2"
+    index on konto2 tag "2"
+ENDIF
+  
+index on aop tag "3"
+go top
+  
+return
+
+
 
 function GenProIzvFin()
+local nPr := 1
+local lKumSuma := .f.
+local GetList := {}
+private lDvaKonta := .f.
+private lKljuc := .f.
+private cTag := "1"
 
-LOCAL nPr:=1, lKumSuma:=.f., GetList:={}
- PRIVATE lDvaKonta:=.f.
- PRIVATE lKljuc:=.f.
+// privatne var. koje bi trebalo inicijalizovati iz aplikacije
+// -----------------------------------------------------------
+  
+cGlava := SPACE(6)
+cFunkc := SPACE(5)
 
+// neophodne privatne varijable (pogodno za ELIB-a)
+// -------------------------------------------------
+dOd := CTOD("")
+dDo := DATE()
+gTabela := 1
+cPrikBezDec := "D"
+cSaNulama := "D"
+nKorZaLands := -18
+lFunkcija:=.f.
+lIzrazi:=.f.
 
- // privatne var. koje bi trebalo inicijalizovati iz aplikacije
- // -----------------------------------------------------------
-  cGlava:=SPACE(6)
-  cFunkc:=SPACE(5)
+aUPredzn  := PARSIRAJ(cPotrazKon,"KONTO","C")
+aUPredzn2 := PARSIRAJ(cPotrazKon,"KONTO2","C")
 
- // neophodne privatne varijable (pogodno za ELIB-a)
- // -------------------------------------------------
-  dOd:=CTOD(""); dDo:=DATE()
-  gTabela:=1; cPrikBezDec:="D"; cSaNulama:="D"; nKorZaLands:=-18
+// --------------------------
+// POCETAK izvjestajnog upita
+// --------------------------
+O_PARAMS
+private cSection:="I", cHistory:=" ", aHistory:={}
+RPar("01",@cGlava)
+RPar("02",@cFunkc)
+RPar("03",@dOd)
+RPar("04",@dDo)
+RPar("05",@gTabela)
+RPar("06",@cPrikBezDec)
+RPar("07",@cSaNulama)
+RPar("08",@nKorZaLands)
 
-  lFunkcija:=.f.
-  lIzrazi:=.f.
+RPar("09",@cDPnaz1 )
+RPar("10",@cDPnaz2 )
+RPar("11",@cDPnaz3 )
+RPar("12",@cDPnaz4 )
+RPar("13",@cDPnaz5 )
+RPar("14",@cDPnaz6 )
+RPar("15",@cDPnaz7 )
+RPar("16",@cDPnaz8 )
+RPar("17",@cDPnaz9 )
+RPar("18",@cDPnaz10)
+RPar("19",@cDPx1 )
+RPar("20",@cDPx2 )
+RPar("21",@cDPx3 )
+RPar("22",@cDPx4 )
+RPar("23",@cDPx5 )
+RPar("24",@cDPx6 )
+RPar("25",@cDPx7 )
+RPar("26",@cDPx8 )
+RPar("27",@cDPx9 )
+RPar("28",@cDPx10)
+RPar("29",@cDPf1 )
+RPar("30",@cDPf2 )
+RPar("31",@cDPf3 )
+RPar("32",@cDPf4 )
+RPar("33",@cDPf5 )
+RPar("34",@cDPf6 )
+RPar("35",@cDPf7 )
+RPar("36",@cDPf8 )
+RPar("37",@cDPf9 )
+RPar("38",@cDPf10)
+  
+SELECT PARAMS
+USE
 
-  aUPredzn  := PARSIRAJ(cPotrazKon,"KONTO","C")
-  aUPredzn2 := PARSIRAJ(cPotrazKon,"KONTO2","C")
-
-  // --------------------------
-  // POCETAK izvjestajnog upita
-  // --------------------------
-  O_PARAMS
-  Private cSection:="I", cHistory:=" ", aHistory:={}
-  RPar("01",@cGlava)
-  RPar("02",@cFunkc)
-  RPar("03",@dOd)
-  RPar("04",@dDo)
-  RPar("05",@gTabela)
-  RPar("06",@cPrikBezDec)
-  RPar("07",@cSaNulama)
-  RPar("08",@nKorZaLands)
-
-  RPar("09",@cDPnaz1 )
-  RPar("10",@cDPnaz2 )
-  RPar("11",@cDPnaz3 )
-  RPar("12",@cDPnaz4 )
-  RPar("13",@cDPnaz5 )
-  RPar("14",@cDPnaz6 )
-  RPar("15",@cDPnaz7 )
-  RPar("16",@cDPnaz8 )
-  RPar("17",@cDPnaz9 )
-  RPar("18",@cDPnaz10)
-  RPar("19",@cDPx1 )
-  RPar("20",@cDPx2 )
-  RPar("21",@cDPx3 )
-  RPar("22",@cDPx4 )
-  RPar("23",@cDPx5 )
-  RPar("24",@cDPx6 )
-  RPar("25",@cDPx7 )
-  RPar("26",@cDPx8 )
-  RPar("27",@cDPx9 )
-  RPar("28",@cDPx10)
-  RPar("29",@cDPf1 )
-  RPar("30",@cDPf2 )
-  RPar("31",@cDPf3 )
-  RPar("32",@cDPf4 )
-  RPar("33",@cDPf5 )
-  RPar("34",@cDPf6 )
-  RPar("35",@cDPf7 )
-  RPar("36",@cDPf8 )
-  RPar("37",@cDPf9 )
-  RPar("38",@cDPf10)
-  SELECT PARAMS; USE
-
-  cUIdKonto:=space(7)
-
-
-  Box(,20,70)
-   @ m_x+2,m_y+2 SAY "Glava/RJ (prazno-sve)  " GET cGlava
-   @ m_x+3,m_y+2 SAY "Funkcija (prazno-sve)  " GET cFunkc
-
-   @ m_x+4,m_y+2 SAY "Period izvjestavanja od" GET dOd
-   @ m_x+5,m_y+2 SAY "                     do" GET dDo
-
-   @ m_x+7,m_y+2 SAY "Konto (prazno svi)     " GET cUIdKonto
+cUIdKonto:=space(7)
 
 
-   if gNW=="N"
+Box(, 20, 70 )
+    @ m_x+2,m_y+2 SAY "Glava/RJ (prazno-sve)  " GET cGlava
+    @ m_x+3,m_y+2 SAY "Funkcija (prazno-sve)  " GET cFunkc
+    @ m_x+4,m_y+2 SAY "Period izvjestavanja od" GET dOd
+    @ m_x+5,m_y+2 SAY "                     do" GET dDo
+
+    @ m_x+7,m_y+2 SAY "Konto (prazno svi)     " GET cUIdKonto
+
+
+    if gNW=="N"
        cIdFirma:=gFirma
        @ m_x+7,m_y+2 SAY "Firma (prazno-sve) " GET cIDFirma
-   endif
+    endif
 
-   if cDPf1=="N" .and. !EMPTY(cDPnaz1)
+    if cDPf1=="N" .and. !EMPTY(cDPnaz1)
        cDPx1 :=PADR(cDPx1 , 40)
        @ m_x+ 9,m_y+2 SAY PADR(cDPnaz1,40) GET cDPx1 PICT "@S20"
-   endif
-   if cDPf2=="N" .and. !EMPTY(cDPnaz2)
+    endif
+    if cDPf2=="N" .and. !EMPTY(cDPnaz2)
        cDPx2 :=PADR(cDPx2 , 40)
        @ m_x+10,m_y+2 SAY PADR(cDPnaz2,40) GET cDPx2 PICT "@S20"
-   endif
-   if cDPf3=="N" .and. !EMPTY(cDPnaz3)
+    endif
+    if cDPf3=="N" .and. !EMPTY(cDPnaz3)
        cDPx3 :=PADR(cDPx3 , 40)
        @ m_x+11,m_y+2 SAY PADR(cDPnaz3,40) GET cDPx3 PICT "@S20"
    endif
@@ -189,8 +290,6 @@ LOCAL nPr:=1, lKumSuma:=.f., GetList:={}
 
    read
 
-
-
    cDPx1 :=TRIM(cDPx1 )
    cDPx2 :=TRIM(cDPx2 )
    cDPx3 :=TRIM(cDPx3 )
@@ -202,27 +301,26 @@ LOCAL nPr:=1, lKumSuma:=.f., GetList:={}
    cDPx9 :=TRIM(cDPx9 )
    cDPx10:=TRIM(cDPx10)
 
-  BoxC()
+BoxC()
 
-  IF LASTKEY()==K_ESC
-    CLOSERET
-  ENDIF
+if LASTKEY() == K_ESC
+    close all
+    return
+endif
 
-  O_PARAMS
-  Private cSection:="I",cHistory:=" ",aHistory:={}
-  WPar("01",cGlava)
-  WPar("02",cFunkc)
-  WPar("03",dOd)
-  WPar("04",dDo)
-  SELECT PARAMS; USE
-  // -----------------------
-  // KRAJ izvjestajnog upita
-  // -----------------------
+O_PARAMS
+private cSection:="I",cHistory:=" ",aHistory:={}
+WPar("01",cGlava)
+WPar("02",cFunkc)
+WPar("03",dOd)
+WPar("04",dDo)
+SELECT PARAMS
+USE
 
 
-  // dobro je odmah znati koriste li se uslovi za konta u kolonama
-  // jer ce to omoguciti brzi rad na jednostavnijim izvjestajima
-  // -------------------------------------------------------------
+// dobro je odmah znati koriste li se uslovi za konta u kolonama
+// jer ce to omoguciti brzi rad na jednostavnijim izvjestajima 
+// -------------------------------------------------------------
   SELECT KONIZ
   SET ORDER TO TAG "1"
   SET FILTER TO
@@ -261,192 +359,83 @@ LOCAL nPr:=1, lKumSuma:=.f., GetList:={}
   ENDDO
 
 
-  // --------------------------------------
-  // POCETAK kreiranja pomocne baze POM.DBF
-  // --------------------------------------
-  SELECT (F_POM); USE
-  IF ferase(PRIVPATH+"POM.DBF")==-1
-    MsgBeep("Ne mogu izbrisati POM.DBF!")
-    ShowFError()
-  ENDIF
-  IF ferase(PRIVPATH+"POM.CDX")==-1
-    MsgBeep("Ne mogu izbrisati POM.CDX!")
-    ShowFError()
-  ENDIF
-  aDbf := {}
-  AADD (aDbf, {"NRBR"      , "N",  5, 0})
-  AADD (aDbf, {"KONTO"     , "C",  7, 0})
-  AADD (aDbf, {"IMEKONTA"  , "C", 57, 0})
-  IF !lKljuc
-    AADD (aDbf, {"PLBUDZET"  , "N", 15, 2})
-    AADD (aDbf, {"REBALANS"  , "N", 15, 2})
-    AADD (aDbf, {"KUMSUMA"   , "N", 15, 2})
-    AADD (aDbf, {"TEKSUMA"   , "N", 15, 2})
-    AADD (aDbf, {"KPGSUMA"   , "N", 15, 2})
-    AADD (aDbf, {"DUGUJE"    , "N", 15, 2})
-    AADD (aDbf, {"POTRAZUJE" , "N", 15, 2})
-    AADD (aDbf, {"USLOV"     , "C", 80, 0})
-    AADD (aDbf, {"SINT"      , "C",  2, 0})          // "Sn" ili "  "
-  ENDIF
-  AADD (aDbf, {"PREDZNAK"  , "N",  2, 0})          // "-1" ili " 1"
-  AADD (aDbf, {"PODVUCI"   , "C",  1, 0})
-  AADD (aDbf, {"K1"        , "C",  1, 0})          //
-  AADD (aDbf, {"U1"        , "C",  3, 0})          // npr. >0 ili <0
-  AADD (aDbf, {"AOP"       , "C",  5, 0})
+    // kreiraj pom tabelu POM.DBF
+    _kreiraj_pom_tabelu( @cTag, lKljuc, lDvaKonta, aKolS, lFunkcija )
 
-  // polja koja se koriste u situaciji kada je neophodno postavljanje
-  // dva razlicita uslova(filtera) na jednoj izvjestajnoj stavci
-  // ----------------------------------------------------------------
-  IF lDvaKonta
-    AADD (aDbf, {"KONTO2"    , "C",  7, 0})
-    AADD (aDbf, {"PLBUDZET2" , "N", 15, 2})
-    AADD (aDbf, {"REBALANS2" , "N", 15, 2})
-    AADD (aDbf, {"KUMSUMA2"  , "N", 15, 2})
-    AADD (aDbf, {"TEKSUMA2"  , "N", 15, 2})
-    AADD (aDbf, {"DUGUJE2"   , "N", 15, 2})
-    AADD (aDbf, {"POTRAZUJE2", "N", 15, 2})
-    AADD (aDbf, {"USLOV2"    , "C", 80, 0})
-    AADD (aDbf, {"SINT2"     , "C",  2, 0})          // "Sn" ili "  "
-    AADD (aDbf, {"PREDZNAK2" , "N",  2, 0})          // "-1" ili " 1"
-  ENDIF
+    // dio za aplikaciju
+    // ------------------
+    O_RJ
+    O_FUNK
 
-  // polja koja su neophodna za slucaj razlicitih uslova(filtera) na
-  // izvjestajnim kolonama
-  // ---------------------------------------------------------------
-  IF !EMPTY(aKolS)
-    FOR i:=1 TO LEN(aKolS)
-      AADD (aDbf, {aKolS[i,1]     , "N", 15, 2})
-    NEXT
-  ELSEIF lFunkcija
-    AADD (aDbf, {"KOL1"      , "N", 15, 2})
-    AADD (aDbf, {"KOL2"      , "N", 15, 2})
-    AADD (aDbf, {"KOL3"      , "N", 15, 2})
-    AADD (aDbf, {"KOL4"      , "N", 15, 2})
-    AADD (aDbf, {"KOL5"      , "N", 15, 2})
-    AADD (aDbf, {"KOL6"      , "N", 15, 2})
-    AADD (aDbf, {"KOL7"      , "N", 15, 2})
-    AADD (aDbf, {"KOL8"      , "N", 15, 2})
-    AADD (aDbf, {"KOL9"      , "N", 15, 2})
-    AADD (aDbf, {"KOL10"     , "N", 15, 2})
-    AADD (aDbf, {"KOL11"     , "N", 15, 2})
-    AADD (aDbf, {"KOL12"     , "N", 15, 2})
-    AADD (aDbf, {"USL1"      , "C", 25, 0})
-    AADD (aDbf, {"USL2"      , "C", 25, 0})
-    AADD (aDbf, {"USL3"      , "C", 25, 0})
-    AADD (aDbf, {"USL4"      , "C", 25, 0})
-    AADD (aDbf, {"USL5"      , "C", 25, 0})
-    AADD (aDbf, {"USL6"      , "C", 25, 0})
-    AADD (aDbf, {"USL7"      , "C", 25, 0})
-    AADD (aDbf, {"USL8"      , "C", 25, 0})
-    AADD (aDbf, {"USL9"      , "C", 25, 0})
-    AADD (aDbf, {"USL10"     , "C", 25, 0})
-    AADD (aDbf, {"USL11"     , "C", 25, 0})
-    AADD (aDbf, {"USL12"     , "C", 25, 0})
-  ENDIF
+    SELECT FUNK
 
+    cFilter := "DATDOK<="+cm2str(dDo)
 
-  DBCREATE2 (PRIVPATH+"POM", aDbf)
-  SELECT (F_POM)
-  usex (PRIVPATH+"pom")
-
-  private cTag:="1"
-  INDEX ON KONTO  TAG "1"
-  IF lDvaKonta
-    private cTag:="2"
-    INDEX ON KONTO2 TAG "2"
-  ENDIF
-  private cTag:="3"
-  INDEX ON AOP    TAG "3"
-  GO TOP
-  // -----------------------------------
-  // KRAJ kreiranja pomocne baze POM.DBF
-  // -----------------------------------
-
-
-  // otvorimo neophodne baze, filterisimo osnovni
-  // izvor (bazu) podataka i zadajmo odgovarajuci sort
-  // -------------------------------------------------
-
-  // dio za aplikaciju
-  // ------------------
-   O_RJ
-   O_FUNK
-
-
-  SELECT FUNK
-
-  cFilter := "DATDOK<="+cm2str(dDo)
-
-  IF gNW=="N" .and. !EMPTY(cIdFirma)
-    cFilter += (".and.IDFIRMA=="+cm2str(cIdFirma))
-  ENDIF
-
-  IF !lKumSuma .and. !lKljuc
-    cFilter += (".and.DATDOK>="+cm2str(dOd))
-  ENDIF
-  IF !EMPTY(cGlava)
-    cFilter += (".and.IDRJ=="+cm2str(cGlava))
-    cNazRJ := Ocitaj( F_RJ , cGlava , "naz" )
-  ELSE
-    cNazRJ := "SVE"
-  ENDIF
-  IF !EMPTY(cFunkc)
-    cFilter += (".and.FUNK=="+cm2str(cFunkc))
-    cNazFK := Ocitaj( F_FUNK , cFunkc , "naz" )
-  ELSE
-    cNazFK := "SVI"
-  ENDIF
-  O_BUDZET
-  IF !EMPTY(cGlava) .or. !EMPTY(cFunkc)
-    SET FILTER TO
-    SET FILTER TO IF( EMPTY(cGlava) , .t. , IDRJ==cGlava ) .and. IF( EMPTY(cFunkc) , .t. , FUNK==cFunkc )
-  ENDIF
-
-  // priprema kljucnih baza za izvjestaj (indeksi, filteri)
-  // ------------------------------------------------------
-  PripKBPI()
-
-  nStavki:=0
-#ifdef CAX
-  GO BOTTOM
-  nStavki:=AX_KeyNo()
-#else
-  GO TOP
-  COUNT TO nStavki
-#endif
-
-
-  // -----------------------------------------
-  // POCETAK pripreme baze POM.DBF (stavljanje
-  // opisnih podataka, uslova i formula)
-  // -----------------------------------------
-  SELECT KONIZ
-#ifdef CAX
-  GO BOTTOM
-  i:=AX_KeyNo()
-#else
-  GO TOP
-  COUNT TO i
-#endif
-  Postotak(1,nStavki+i,"Priprema izvjestaja")
-  nStavki:=0
-
-  nPomRbr:=0
-  GO TOP
-  DO WHILE !EOF() .and. izv==cBrI                   // listam KONIZ.DBF
-    Postotak(2,++nStavki)
-    IF KONIZ->ri == 0
-      SKIP 1; LOOP
+    IF gNW=="N" .and. !EMPTY(cIdFirma)
+        cFilter += (".and.IDFIRMA=="+cm2str(cIdFirma))
     ENDIF
 
-    // na osnovu tipa stavke u KONIZ-u odreÐujemo dalje akcije
-    cTK11  := UPPER(LEFT(KONIZ->k,1))
-    cTK12  := VAL(RIGHT(KONIZ->k,1))
-
-    IF cTK11=="K"     // idi po kljucu
-      lKljuc:=.t.
-      EXIT
+    IF !lKumSuma .and. !lKljuc
+        cFilter += (".and.DATDOK>="+cm2str(dOd))
     ENDIF
+    IF !EMPTY(cGlava)
+        cFilter += (".and.IDRJ=="+cm2str(cGlava))
+        cNazRJ := Ocitaj( F_RJ , cGlava , "naz" )
+    ELSE
+        cNazRJ := "SVE"
+    ENDIF
+    IF !EMPTY(cFunkc)
+        cFilter += (".and.FUNK=="+cm2str(cFunkc))
+        cNazFK := Ocitaj( F_FUNK , cFunkc , "naz" )
+    ELSE
+        cNazFK := "SVI"
+    ENDIF
+    
+    O_BUDZET
+    
+    IF !EMPTY(cGlava) .or. !EMPTY(cFunkc)
+        SET FILTER TO
+        SET FILTER TO IF( EMPTY(cGlava) , .t. , IDRJ==cGlava ) .and. IF( EMPTY(cFunkc) , .t. , FUNK==cFunkc )
+    ENDIF
+
+    // priprema kljucnih baza za izvjestaj (indeksi, filteri)
+    // ------------------------------------------------------
+    PripKBPI()
+
+    nStavki:=0
+    GO TOP
+    COUNT TO nStavki
+
+
+    // -----------------------------------------
+    // POCETAK pripreme baze POM.DBF (stavljanje
+    // opisnih podataka, uslova i formula)
+    // -----------------------------------------
+    SELECT KONIZ
+    GO TOP
+    COUNT TO i
+    
+    Postotak(1,nStavki+i,"Priprema izvjestaja")
+    
+    nStavki:=0
+
+    nPomRbr:=0
+    
+    GO TOP
+    DO WHILE !EOF() .and. izv==cBrI                   // listam KONIZ.DBF
+        Postotak(2,++nStavki)
+        IF KONIZ->ri == 0
+            SKIP 1; LOOP
+        ENDIF
+
+        // na osnovu tipa stavke u KONIZ-u odreÐujemo dalje akcije
+        cTK11  := UPPER(LEFT(KONIZ->k,1))
+        cTK12  := VAL(RIGHT(KONIZ->k,1))
+
+        IF cTK11=="K"     // idi po kljucu
+            lKljuc:=.t.
+            EXIT
+        ENDIF
 
     lDrugiKonto:=.f.
     IF cTK11=="A"
@@ -495,8 +484,8 @@ LOCAL nPr:=1, lKumSuma:=.f., GetList:={}
           cTipK:="A"
         ENDIF
       ELSEIF cTK11=="S"
-        IF EMPTY(KONIZ->opis)
-          cNazKonta:=Ocitaj(F_KSif(),cIdKonto,"naz")
+        IF EMPTY( KONIZ->opis )
+          cNazKonta:=Ocitaj( F_KSif(), cIdKonto,"naz")
         ELSE
           cNazKonta:=KONIZ->opis
         ENDIF
@@ -885,21 +874,20 @@ LOCAL nPr:=1, lKumSuma:=.f., GetList:={}
   nBrRedStr := -99
   StZagPI()
   gnLMarg:=0; gOstr:="D"
+  
   StTabPI()
 
 
 
 // postoji RTM fajl za delhpi
-cNazRTM:=trim(gmodul)+UzmiIzIni(EXEPATH+"proizvj.ini",'Varijable','OznakaIzvj',"XY",'READ')
+cNazRTM := trim(gmodul)+UzmiIzIni(EXEPATH+"proizvj.ini",'Varijable','OznakaIzvj',"XY",'READ')
 
-if file(EXEPATH+cNazRTM+".RTM")
+if file( EXEPATH+cNazRTM+".RTM")
 
 if Pitanje(,"Aktivirati Win report ?","D")=="D"
 
 
 close all
-
-
 
 KZNbazaWin(PRIVPATH+"pom")
 
@@ -991,9 +979,6 @@ RETURN lVrati
 
 
 
-/*! \fn FSvakiPI()
- *  \brief
- */
 
 function FSvakiPI()
 
@@ -1020,25 +1005,36 @@ RETURN IF(!EMPTY(PODVUCI),"PODVUCI"+PODVUCI,NIL)
  *  \param cKonto
  */
 
-function PlBudzeta(cTipK,cKonto)
+function PlBudzeta( cTipK, cKonto )
+local nVrati := 0
+local nArr := SELECT()
+ 
+IF cKonto == ".f."
+    RETURN 0
+ENDIF
 
- LOCAL nVrati:=0, nArr:=SELECT()
- IF cKonto==".f."; RETURN 0; ENDIF
- SELECT BUDZET
- SET ORDER TO TAG "2"
- GO TOP
- IF cTipK=="A" .or. cTipK=="S"
-   SEEK cKonto
- ENDIF
- DO WHILE !EOF() .and.;
-          ( cTipK=="A" .and. idkonto==cKonto .or.;
-            cTipK=="S" .and. LEFT(idkonto,LEN(cKonto))==cKonto .or.;
+O_BUDZET
+SET ORDER TO TAG "2"
+GO TOP
+ 
+IF cTipK=="A" .or. cTipK=="S"
+    SEEK cKonto
+ENDIF
+ 
+DO WHILE !EOF() .and.;
+          ( cTipK=="A" .and. idkonto == cKonto .or.;
+            cTipK=="S" .and. LEFT( idkonto, LEN(cKonto) ) == cKonto .or.;
             cTipK=="F" )
-   IF cTipK=="F" .and. !(&cKonto); SKIP 1; LOOP; ENDIF
-   nVrati += iznos
-   SKIP 1
- ENDDO
- SELECT (nArr)
+    IF cTipK == "F" .and. !(&cKonto)
+        SKIP 1
+        LOOP
+    ENDIF
+    nVrati += iznos
+    SKIP 1
+ENDDO
+    
+SELECT (nArr)
+
 RETURN nVrati
 
 

@@ -637,70 +637,71 @@ do case
 end case
 return 
 
-function DbfArea(cImeDBF, nVarijanta)
-local nPos
 
-cImeDBF:=ToUnix(cImeDBF)
 
-if (nVarijanta==nil)
-  // vrati oznaku Working area-e
-  nVarijanta:=0
+
+
+function DbfArea( tbl, var )
+local _rec
+local _only_basic_params := .t.
+
+if ( var == NIL )
+    var := 0
 endif
 
-nPos:=ASCAN(gaDBFS,{|x| x[2]==cImeDBF})
+_rec := get_a_dbf_rec( LOWER( tbl ), _only_basic_params )
 
-if nPos<1
- nPos:=ASCAN(gaSDBFS,{|x| x[2]==cImeDBF})
- if nPos<1
-   ? "Ne postoji "+cImeDBF+" u gaDBFs ili gaSDBFs ?"
-   ErrorLevel(1)
-   goModul:quit()
- endif
- nArray:=2
- if nVarijanta==0 
-  return gaSDBFS[nPos,1]
- else
-  return nPos
- endif 
-else
- nArray:=1
- if nVarijanta==0  
-   return gaDBFS[nPos,1]
- else
-   return nPos
- endif
+return _rec["wa"]
+
+
+
+
+function NDBF( tbl )
+return DbfArea( tbl ) 
+
+
+
+function NDBFPos( tbl )
+return DbfArea( tbl, 1 )
+
+
+
+function F_Baze( tbl )
+local _dbf_tbl 
+local _area := 0
+local _rec
+local _only_basic_params := .t.
+
+_rec := get_a_dbf_rec( LOWER( tbl ), _only_basic_params )
+
+// ovo je work area
+if _rec <> NIL
+    _area := _rec["wa"]
 endif
-return
 
-function nDBF(cBaza)
-return DbfArea(cBaza)
+if _area <= 0
+    close all
+    quit
+endif
 
-function nDBFPos(cBaza)
-// pozicija u agDBFs
-return DbfArea(cBaza,1)
+return _area
 
-function F_Baze(cBaza)
-local nPos
-nPos:=nDBF(cBaza)
 
-IF nPos<=0
-	CLOSE ALL
-	QUIT
-ENDIF
 
-return nPos
-
-function Sel_Bazu(cBaza)
-local nPos
+function Sel_Bazu( tbl )
+local _area
  
- nPos:=nDBFPos(cBaza)
- IF nPos>0
-   SELECT (gaDBFs[nPos,1])
- ELSE
-   CLOSE ALL
-   QUIT
- ENDIF
+_area := F_baze( tbl )
+ 
+if _area > 0
+    select ( _area )
+else
+    close all
+    quit
+endif
+
 return
+
 
 function gaDBFDir(nPos)
 nPom:=gaDBFs[nPos,3]
@@ -719,16 +720,10 @@ do case
    return ""
 endcase
 
-function O_Bazu(cBaza)
 
-LOCAL nPos:=nDBFPos(cBaza)
-IF nPos>0
-   SELECT (gaDBFs[nPos,1])
-   USE ( gaDBFDir(nPos) +  gaDBFs[nPos,2])
-ELSE
-   CLOSE ALL
-   QUIT
-ENDIF
+
+function O_Bazu( tbl )
+my_use( LOWER( tbl ) )
 return
 
 

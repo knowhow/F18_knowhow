@@ -98,7 +98,7 @@
 #xcommand O_RSUBAN    => select (F_SUBAN);    my_usex("suban")    ; set order to tag "1"
 #xcommand O_RANAL     => select (F_ANAL);     my_usex("anal")     ; set order to tag "1"
 #xcommand O_SINTSUB   => select (F_SUBAN);    my_use("suban")     ; set order to tag "1"
-#xcommand O_BUDZET    => select (F_BUDZET);   my_use("budzet")    ; set order to tag "1"
+#xcommand O_BUDZET    => select (F_BUDZET);   my_usex("budzet")    ; set order to tag "1"
 #xcommand O_PAREK     => select (F_PAREK);    my_use("parek")     ; set order to tag "1"
 #xcommand O_BBKLAS    => select (F_BBKLAS);   my_usex("bbklas")    ; set order to tag "1"
 #xcommand O_IOS       => select (F_IOS);      my_usex("ios")      ; set order to tag "1"
@@ -348,10 +348,10 @@
 #xcommand O_SQLPAR    => select (F_SQLPAR)    ; my_use ( "SQLPAR" )
 
 // proizvoljni izvjestaji
-#xcommand O_KONIZ  => select (F_KONIZ) ; my_use("koniz") ; set order to tag "ID"
-#xcommand O_IZVJE  => select (F_IZVJE) ; my_use("izvje") ; set order to tag "ID"
-#xcommand O_ZAGLI  => select (F_ZAGLI) ; my_use("zagli") ; set order to tag "ID"
-#xcommand O_KOLIZ  => select (F_KOLIZ) ; my_use("koliz") ; set order to tag "ID"
+#xcommand O_KONIZ  => select (F_KONIZ) ; my_usex("koniz") ; set order to tag "ID"
+#xcommand O_IZVJE  => select (F_IZVJE) ; my_usex("izvje") ; set order to tag "ID"
+#xcommand O_ZAGLI  => select (F_ZAGLI) ; my_usex("zagli") ; set order to tag "ID"
+#xcommand O_KOLIZ  => select (F_KOLIZ) ; my_usex("koliz") ; set order to tag "ID"
 
 // parametri
 #xcommand O_PARAMS    => select (F_PARAMS)    ;  my_use ( "params")   ; set order to tag  "ID"

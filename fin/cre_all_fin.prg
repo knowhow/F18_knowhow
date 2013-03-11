@@ -273,7 +273,7 @@ CREATE_INDEX("ID","id", _alias )
 CREATE_INDEX("NAZ","NAZ", _alias )
 
 
-aDBf:={}
+aDBf := {}
 AADD(aDBf,{ "IDRJ"                , "C" ,   6 ,  0 })
 AADD(aDBf,{ "IDKONTO"             , "C" ,   7 ,  0 })
 AADD(aDBf,{ "IZNOS"               , "N" ,  20 ,  2 })
@@ -287,10 +287,17 @@ _table_name := "fin_budzet"
 
 if !FILE(f18_ime_dbf( _alias ))
     DBcreate2( _alias, aDbf)
+    _created := .t.
+endif
+ 
+if _created
+    reset_semaphore_version(_table_name)
+    my_usex(_alias)
+    USE
 endif
     
-CREATE_INDEX("1", "IdRj+Idkonto", _alias )
-CREATE_INDEX("2", "Idkonto",      _alias )
+CREATE_INDEX( "1", "IdRj+Idkonto", _alias )
+CREATE_INDEX( "2", "Idkonto",      _alias )
 
 
 

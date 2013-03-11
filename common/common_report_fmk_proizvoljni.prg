@@ -12,37 +12,27 @@
 
 #include "fmk.ch"
 
-/****h SC_CLIB/FMK_PI ***
-* 
-* AUTOR
-  Mirsad Subasic, mirsad@sigma-com.net
 
-* OPIS
-  SigmaCom FMK Proizvoljni Izvjestaji
-  Bazni sistem za formiranje proizvoljnih izvjestaja u FMK
 
-* DATUM:  04.2002
 
-****/
 
-procedure PrIz()
-
-local cScr:=SAVESCREEN(1,0,1,79), GetList:={}
+function PrIz()
+local cScr := SAVESCREEN(1,0,1,79)
+local GetList := {}
 private cV1, cv2, cv3, cv4, cv5, cv6
+private opc[10], Izbor, nTekIzv:=1, cBrI:="01", cPotrazKon := "7;811;812;", gnPorDob := 30
+private cPIKPolje:="", cPIKBaza:="", cPIKIndeks:="", cPITipTab:="", cPIKSif:=""
+private cPIImeKP:=""
 
-private opc[10], Izbor, nTekIzv:=1, cBrI:="01", cPotrazKon:="7;811;812;", gnPorDob:=30
-                                               // ispitati koja su potr.konta
-
-PRIVATE cPIKPolje:="", cPIKBaza:="", cPIKIndeks:="", cPITipTab:="", cPIKSif:=""
-PRIVATE cPIImeKP:=""
-
+// parametri....
+// =====================================================
 O_PARAMS
 Private cSection:="I",cHistory:=" ",aHistory:={}
 RPar("pk",@cPotrazKon)
 RPar("pd",@gnPorDob)
 RPar("ti",@cBrI)
 SELECT PARAMS; USE
-
+// =====================================================
 
 if goModul:oDatabase:cName == "KALK"
 	OtBazPIKalk()
@@ -51,55 +41,54 @@ else
 endif
 
 // # hash na pocetku kaze - obavezno browsaj !
-P_Proizv(@cBrI,NIL,NIL,"#Odaberi izvjestaj :") 
+P_Proizv( @cBrI, NIL, NIL, "#Odaberi izvjestaj :" ) 
 
-nTokens:=numtoken(izvje->naz,"#")
+nTokens := NumToken( izvje->naz, "#" )
 
-if nTokens>1
+if nTokens > 1
 
- Box(,nTokens+1,75)
-  @ m_x+0,m_y+3 SAY "Unesi varijable0 izvjestaja:"
+    Box(, nTokens + 1, 75 )
+
+        @ m_x+0,m_y+3 SAY "Unesi varijable0 izvjestaja:"
+
+        // popuni ini fajl vrijednostima
+        // formira varijable cV1, cV2 redom !!!!1
+
+        for i:=2 to nTokens
+            cPom:="cV"+alltrim(str(i-1))
+            &cPom:=padr(UzmiIzIni(EXEPATH+'ProIzvj.ini','Varijable0',alltrim(token(izvje->naz,"#",i)),"",'READ'),45)
+        next
 
 
-   // popuni ini fajl vrijednostima
-   // formira varijable cV1, cV2 redom !!!!1
+        for i:=2 to nTokens
+            cPom:="cV"+alltrim(str(i-1))
+            @ m_X+i, m_y+2 SAY padr(token(izvje->naz,"#",i),20)
+            @ m_x+i, col()+2 GET &cPom
+        next
 
-   for i:=2 to nTokens
-      cPom:="cV"+alltrim(str(i-1))
-      &cPom:=padr(UzmiIzIni(EXEPATH+'ProIzvj.ini','Varijable0',alltrim(token(izvje->naz,"#",i)),"",'READ'),45)
-   next
+        read
+  
+    BoxC()
 
-
-  for i:=2 to nTokens
-      cPom:="cV"+alltrim(str(i-1))
-      @ m_X+i, m_y+2 SAY padr(token(izvje->naz,"#",i),20)
-      @ m_x+i, col()+2 GET &cPom
-  next
-
-  read
- BoxC()
-
- // popuni ini fajl vrijednostima
- for i:=2 to nTokens
-      cPom:="cV"+alltrim(str(i-1))
-      UzmiIzIni(EXEPATH+'ProIzvj.ini','Varijable0',alltrim(token(izvje->naz,"#",i)),&cPom,'WRITE')
- next
+    // popuni ini fajl vrijednostima
+    for i:=2 to nTokens
+        cPom:="cV"+alltrim(str(i-1))
+        UzmiIzIni(EXEPATH+'ProIzvj.ini','Varijable0',alltrim(token(izvje->naz,"#",i)),&cPom,'WRITE')
+    next
 
 endif
 
-
 O_PARAMS
 Private cSection:="I",cHistory:=" ",aHistory:={}
-
 
 UzmiIzIni(EXEPATH+'ProIzvj.ini','Varijable','Modul',gModul,'WRITE')
 UzmiIzIni(EXEPATH+'ProIzvj.ini','Varijable','OznakaIzvj',cBrI,'WRITE')
 
 WPar("ti",cBrI)
-select params; use
+select params
+use
 
-
-nTekIzv:=VAL(cBrI)
+nTekIzv := VAL( cBrI )
 
 opc[1]:="1. generisanje izvjestaja                       "      //
 opc[2]:="2. sifrarnik izvjestaja"               //
@@ -114,14 +103,14 @@ opc[10]:="A. ispravka proizvj.ini"  //
 
 Izbor:=1
 
-IF KOLIZ->(FIELDPOS("SIZRAZ"))==0
-  MsgBeep("Potrebna modifikacija struktura pomocu fajla FIN.CHS !")
-  RESTSCREEN(1,0,1,79,cScr)
-  CLOSERET
-ENDIF
+if KOLIZ->(FIELDPOS("SIZRAZ"))==0
+    MsgBeep("Potrebna modifikacija struktura pomocu fajla FIN.CHS !")
+    RESTSCREEN(1,0,1,79,cScr)
+    close all
+    return
+endif
 
 PrikaziTI(cBrI)
-
 
 if goModul:oDataBase:cName == "KALK"
 	GenProIzvKalk()
@@ -130,7 +119,6 @@ elseif goModul:oDataBase:cName == "FIN"
 	GenProIzvFin()
 	OtBazPIFin()
 endif
-
 
 DO WHILE .T.
    h[1]:=""; h[2]:=""; h[3]:=""; h[4]:=""; h[5]:=""; h[6]:=""; h[7]:=""
@@ -193,16 +181,18 @@ DO WHILE .T.
 ENDDO
 
 RESTSCREEN(1,0,1,79,cScr)
-CLOSERET
+
+close all
+return
 
 
 
 
-
-STATIC FUNCTION P_ProIzv(cId,dx,dy,cNaslov)
- LOCAL i:=0
- private imekol:={},kol:={}
- ImeKol:={ { "Sifra"           , {|| id     }, "ID"     ,, {|| vpsifra (wId)}},;
+static function P_ProIzv(cId,dx,dy,cNaslov)
+local i := 0
+private imekol:={},kol:={}
+ 
+ImeKol:={ { "Sifra"           , {|| id     }, "ID"     ,, {|| vpsifra (wId)}},;
            { "Naziv"           , {|| naz    }, "NAZ"     },;
            { "Filter klj.baze" , {|| uslov  }, "USLOV"   },;
            { "Kljucno polje"   , {|| kpolje }, "KPOLJE"  },;
@@ -212,41 +202,53 @@ STATIC FUNCTION P_ProIzv(cId,dx,dy,cNaslov)
            { "Kljucni indeks"  , {|| kindeks}, "KINDEKS" },;
            { "Tip tabele"      , {|| tiptab }, "TIPTAB"  };
         }
- FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
- aDefSpremBaz:={ { F_Baze("KONIZ"), "ID", "IZV", ""},;
-                 { F_Baze("KOLIZ"), "ID", "ID", ""},;
-                 { F_Baze("ZAGLI"), "ID", "ID", ""} }
-if cNaslov=NIL
- cNaslov:="Izvjestaji"
+
+for i := 1 to LEN(ImeKol)
+    AADD( Kol, i )
+next
+
+aDefSpremBaz := { { f_baze( "KONIZ" ), "ID", "IZV", ""},;
+                 { F_KOLIZ, "ID", "ID", ""},;
+                 { F_ZAGLI, "ID", "ID", ""} }
+if cNaslov = NIL
+    cNaslov := "Izvjestaji"
 endif
-return PostojiSifra(F_Baze("IZVJE"), 1, 10, 77, cNaslov, @cId, dx, dy)
+
+return PostojiSifra( F_IZVJE, 1, 10, 77, cNaslov, @cId, dx, dy )
 
 
-STATIC FUNCTION P_ZagProIzv(cId,dx,dy,lSamoStampaj)
- LOCAL i:=0
- IF lSamoStampaj==NIL; lSamoStampaj:=.f.; ENDIF
- private imekol:={},kol:={}
- SELECT ZAGLI
- SET FILTER TO
- SET FILTER TO ID==cBrI
- dbGoTop()
- ImeKol:={ { "Sifra"  , {|| Id}, "id", {|| wId:=cBrI,.t.}, {|| .t.} },;
+
+
+static function P_ZagProIzv( cId, dx, dy,lSamoStampaj )
+LOCAL i:=0
+ 
+IF lSamoStampaj == NIL
+    lSamoStampaj := .f.
+ENDIF
+
+private imekol:={},kol:={}
+    SELECT ZAGLI
+    SET FILTER TO
+    SET FILTER TO ID==cBrI
+    dbGoTop()
+    ImeKol:={ { "Sifra"  , {|| Id}, "id", {|| wId:=cBrI,.t.}, {|| .t.} },;
            { "Koord.x", {|| x1 }  , "x1"     },;
            { "Koord.y", {|| y1 }  , "y1"     },;
            { "IZRAZ"  , {|| izraz}, "izraz"  };
         }
- FOR i:=1 TO LEN(ImeKol)
-     AADD(Kol,i)
- NEXT
- IF lSamoStampaj
-   dbGoTop()
-   P_12CPI
-   QOPodv("Izvjestaj "+cBrI+"("+TRIM(DoHasha(IZVJE->naz))+") - definicija zaglavlja izvjestaja")
-   QOPodv("ZAGLI.DBF, (KUMPATH='"+TRIM(KUMPATH)+"')")
-   ?
-   Izlaz(,,,.f.,.t.)
-   RETURN
- ENDIF
+    FOR i:=1 TO LEN(ImeKol)
+        AADD(Kol,i)
+    NEXT
+    IF lSamoStampaj
+        dbGoTop()
+        P_12CPI
+        QOPodv("Izvjestaj "+cBrI+"("+TRIM(DoHasha(IZVJE->naz))+") - definicija zaglavlja izvjestaja")
+        QOPodv("ZAGLI.DBF, (KUMPATH='"+TRIM(KUMPATH)+"')")
+        ? 
+        Izlaz(,,,.f.,.t.)
+        RETURN
+    ENDIF
+
 return PostojiSifra(F_Baze("ZAGLI"),"1",10,77,"ZAGLAVLJE IZVJESTAJA BR."+ALLTRIM(STR(nTekIzv)) ,@cId,dx,dy,{|Ch| APBlok(Ch)})
 
 
@@ -843,71 +845,107 @@ RETURN nVrati
 
 
 
-PROCEDURE O_KSif()
- O_Bazu(cPIKSif)
- SET ORDER TO TAG "ID"
-RETURN
 
-FUNCTION F_KSif()
-RETURN F_Baze(cPIKSif)
+function O_KSif()
+local _area := F_KSif()
 
-PROCEDURE Sel_KSif()
- Sel_Bazu(cPIKSif)
-RETURN
+select ( _area )
 
-FUNCTION IzKSif(cPolje)
- PRIVATE cPom:=cPIKSif+"->"+cPolje
+my_use( LOWER( cPIKSif ) )
+set order to tag "ID"
+
+return
+
+
+
+function F_KSif()
+return F_Baze( cPIKSif )
+
+
+
+
+
+function Sel_KSif()
+Sel_Bazu( cPIKSif )
+return
+
+
+
+
+function IzKSif(cPolje)
+PRIVATE cPom:=cPIKSif+"->"+cPolje
 RETURN (&cPom)
 
-PROCEDURE O_KBaza()
- O_Bazu(cPIKBaza)
-RETURN
-
-FUNCTION F_KBaza()
-RETURN F_Baze(cPIKBaza)
-
-PROCEDURE Sel_KBaza()
- Sel_Bazu(cPIKBaza)
-RETURN
-
-FUNCTION IzKBaza(cPolje)
- PRIVATE cPom:=cPIKBaza+"->"+cPolje
-RETURN (&cPom)
 
 
-PROCEDURE PripKBPI()
+function O_KBaza()
+local _area := F_KBAZA()
 
-  IF cPIKSif!="BEZ"
+select ( _area )
+my_use( LOWER( cPIKBaza ) )
+
+return
+
+
+function F_KBaza()
+return F_Baze( cPIKBaza )
+
+
+function Sel_KBaza()
+Sel_Bazu(cPIKBaza)
+return
+
+
+function IzKBaza(cPolje)
+private cPom := cPIKBaza + "->" + cPolje
+return (&cPom)
+
+
+
+
+function PripKBPI()
+
+IF cPIKSif != "BEZ"
     O_KSif()
-  ENDIF
-  SELECT IZVJE                    // u sifrarniku pozicioniramo se
-  SET ORDER TO TAG "ID"
-  SEEK cBrI                       // na trazeni izvjestaj
-  IF !EMPTY(IZVJE->uslov)
+ENDIF
+  
+SELECT IZVJE                    // u sifrarniku pozicioniramo se
+SET ORDER TO TAG "ID"
+  
+SEEK cBrI                       // na trazeni izvjestaj
+IF !EMPTY(IZVJE->uslov)
     cFilter+=".and.("+ALLTRIM(IZVJE->uslov)+")"
-  ENDIF
-  cFilter:=CistiTacno(cFilter)
-  O_KBaza()
-  IF cPIKIndeks=="BEZ"
+ENDIF
+
+cFilter:=CistiTacno(cFilter)
+  
+O_KBaza()
+  
+IF cPIKIndeks=="BEZ"
     SET ORDER TO
     SET FILTER TO
     SET FILTER TO &cFilter
-  ELSEIF UPPER(LEFT(cPIKIndeks,3))=="TAG"
+ELSEIF UPPER(LEFT(cPIKIndeks,3))=="TAG"
     SET ORDER TO TAG (SUBSTR(cPIKIndeks,4))     // idkonto
     SET FILTER TO
     SET FILTER TO &cFilter
-  ELSE
+ELSE
     INDEX ON &cPIKIndeks TO "KBTEMP" FOR &cFilter
-  ENDIF
+ENDIF
 
 RETURN
 
 
-PROCEDURE StTabPI()
- LOCAL nRed:=1, aKol:={}
-  SELECT KOLIZ
-  dbGoTop()
-  DO WHILE !EOF()
+
+
+function StTabPI()
+local nRed := 1
+local aKol := {}
+  
+SELECT KOLIZ
+dbGoTop()
+  
+DO WHILE !EOF()
     IF ALLTRIM(KOLIZ->formula)=='"#"'
       ++nRed
     ELSE
@@ -918,100 +956,104 @@ PROCEDURE StTabPI()
                    ALLTRIM(KOLIZ->tip) , KOLIZ->sirina , KOLIZ->decimale ,;
                    nRed , KOLIZ->rbr  } )
     SKIP 1
-  ENDDO
+ENDDO
 
-  IF lIzrazi
+IF lIzrazi
     // potrebna dorada ka univerzalnosti (polje TEKSUMA ?)
     // ---------------------------------------------------
-    SELECT POM; SET ORDER TO TAG "3"
+    SELECT POM
+    SET ORDER TO TAG "3"
 
     nProlaz:=0
     DO WHILE .t.
 
-      lJos:=.f.
+        lJos:=.f.
 
-      ++nProlaz
+        ++nProlaz
 
-      if nProlaz>10
-        MsgBeep("Greska! Rekurzija(samopozivanje) u formulama tipa '=STXXX+STYYY...'!")
-        EXIT
-      endif
+        if nProlaz>10
+            MsgBeep("Greska! Rekurzija(samopozivanje) u formulama tipa '=STXXX+STYYY...'!")
+            EXIT
+        endif
 
-      dbGoTop()
-      DO WHILE !EOF()
-        IF LEFT(uslov,1)=="="
-          PRIVATE lObradjen:=.t.
-          REPLACE POM->TEKSUMA WITH RacForm(uslov,"TEKSUMA")
-          IF lObradjen
-            REPLACE uslov WITH SUBSTR(uslov,2)
-          ELSE
-            lJos:=.t.
-            SKIP 1; LOOP
-          ENDIF
-        ENDIF
+        dbGoTop()
+        DO WHILE !EOF()
+            IF LEFT(uslov,1)=="="
+                PRIVATE lObradjen:=.t.
+                REPLACE POM->TEKSUMA WITH RacForm(uslov,"TEKSUMA")
+                IF lObradjen
+                    REPLACE uslov WITH SUBSTR(uslov,2)
+                ELSE
+                    lJos:=.t.
+                    SKIP 1
+                    LOOP
+                ENDIF
+            ENDIF
 
-        IF !EMPTY(U1)
-           PRIVATE cPUTS
-           cPUTS:="TEKSUMA"+TRIM(U1)  // U1 JE USLOV
-           IF &cPUTS
-             uTekSuma:=ABS(TEKSUMA)
-           ELSE
-             uTekSuma:=0
-           ENDIF
-           REPLACE TEKSUMA WITH uTekSuma,;
+            IF !EMPTY(U1)
+                PRIVATE cPUTS
+                cPUTS:="TEKSUMA"+TRIM(U1)  // U1 JE USLOV
+                IF &cPUTS
+                    uTekSuma:=ABS(TEKSUMA)
+                ELSE
+                    uTekSuma:=0
+                ENDIF
+                REPLACE TEKSUMA WITH uTekSuma,;
                    U1      WITH SPACE(LEN(U1))
+            ENDIF
+
+            SKIP 1
+        ENDDO
+
+        IF !lJos
+            EXIT
         ENDIF
-
-        SKIP 1
-      ENDDO
-
-      IF !lJos; EXIT; ENDIF
 
     ENDDO
 
-  ENDIF
+ENDIF
 
-  SELECT POM; SET ORDER TO; dbGoTop()
-  cPodvuci:=" "
-  IF cPrikBezDec=="D"
+SELECT POM
+SET ORDER TO
+dbGoTop()
+  
+cPodvuci:=" "
+IF cPrikBezDec=="D"
     gbFIznos:={|x,y,z| PreformIznos(x,y,z)}
-  ELSE
+ELSE
     gbFIznos:=NIL
-  ENDIF
+ENDIF
 
-  PRIVATE uTekSuma:=0
+PRIVATE uTekSuma:=0
 
-  StampaTabele(aKol,{|| FSvakiPI()},,gTabela,,;
-       ,,;
-                               {|| FForPI()},IF(gOstr=="D",,-1),,,,,)
+//StartPrint()
 
-  IF nBrRedStr>-99
+StampaTabele( aKol, {|| FSvakiPI() },, gTabela,,,,{|| FForPI() }, IF( gOstr == "D",, -1 ),,,,,)
+
+IF nBrRedStr>-99
     gPO_Port()
     gPStranica := nBrRedStr
-  ENDIF
+ENDIF
 
-//  FF
-  END PRINT
-  // -------------------------
-  // KRAJ STAMPANJA IZVJESTAJA
-  // -------------------------
+EndPrint()
+
+return
 
 
+function StZagPI()
+LOCAL xKOT:=0
 
-RETURN
-
-
-
-PROCEDURE StZagPI()
- LOCAL xKOT:=0
-  START PRINT CRET
-  SELECT ZAGLI
-  SET FILTER TO
-  SET FILTER TO id==cBrI
-  SET ORDER TO TAG "1"
-  dbGoTop()
-  xKOT:=PROW()
-  DO WHILE !EOF()
+StartPrint()  
+//START PRINT CRET
+  
+SELECT ZAGLI
+SET FILTER TO
+SET FILTER TO id==cBrI
+SET ORDER TO TAG "1"
+  
+dbGoTop()
+xKOT:=PROW()
+DO WHILE !EOF()
     IF "GPO_LAND()" $ UPPER(ZAGLI->izraz)
        nBrRedStr  := gPStranica
        gPStranica := nKorZaLands
@@ -1020,7 +1062,8 @@ PROCEDURE StZagPI()
     @ xKOT+ZAGLI->x1, ZAGLI->y1 SAY ""
     @ xKOT+ZAGLI->x1, ZAGLI->y1 SAY &cPom77
     SKIP 1
-  ENDDO
+ENDDO
+
 RETURN
 
 
@@ -1114,29 +1157,8 @@ RETURN cFilter
 
 
 
-/****f SC_FMKPI/Cre_PI_DBF ***
 
-*AUTOR
- Ernad Husremovic ernad@sigma-com.net
-
-*IME
-   Cre_PI_DBF
-   
-*SYNOPSIS
-   Cre_PI_DBF()
-*OPIS
-  Kreiraj DBF tabele za proizvoljne izvjestaje:
-     - IZVJE.DBF
-     - KOLIZ.DBF
-     - KONIZ.DBF
-     - ZAGLI.DBF
-     
-*BILJESKE
-
-****/
-
-
-PROCEDURE OProizv()
+function OProizv()
 O_KOLIZ
 O_KONIZ
 O_ZAGLI

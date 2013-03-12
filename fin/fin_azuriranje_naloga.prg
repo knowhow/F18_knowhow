@@ -189,7 +189,11 @@ close all
 // kumulativne...
 O_KONTO
 O_PARTN
+O_SIFK
+O_SIFV
+
 O_FIN_PRIPR
+
 O_SUBAN
 O_ANAL
 O_SINT
@@ -419,6 +423,12 @@ if !fin_p_tabele_provjera( lista_naloga )
 
 endif
 
+// fin, provjeri konto/partner
+if !fin_provjeri_konto_partn( lista_naloga )
+    MsgBeep("Ispravite greske sa nepostojecim siframa pa pokusajte ponovo !!!")
+    return _ok
+endif
+
 // prodji seriju testova
 for _i := 1 to LEN( lista_naloga )
 
@@ -462,6 +472,101 @@ next
 _ok := .t.
 
 return _ok
+
+
+// ---------------------------------------------------------------
+// provjerava zapise konto/partn i pretrazuje po sifrniku
+// ---------------------------------------------------------------
+static function fin_provjeri_konto_partn( lista_naloga )
+local _ok := .f.
+local _err := {}
+    
+select psuban
+set order to tag "1"
+go top
+
+do while !EOF()
+
+    // ima li partnera ?
+	psuban_partner_check( @_err, .t. )
+	// ima li konto ??
+    psuban_konto_check( @_err, .t. )
+
+    skip
+
+enddo
+
+if LEN( _err ) > 0
+
+    // imamo gresaka !!!
+	fin_brisi_p_tabele( .t. )
+
+    // prikazi na ekranu
+    _rpt_error( _err )
+
+    o_fin_za_azuriranje()
+    select fin_pripr
+    go top
+
+	return _ok
+
+endif
+
+_ok := .t.
+
+return _ok
+
+
+// ------------------------------------------------------------
+// prikazi listu nedostajecih konta, partnera
+// ------------------------------------------------------------
+static function _rpt_error( err )
+local _i
+local _cnt := 0
+local _head, _line
+
+_head := PADR( "R.br", 5 )
+_head += SPACE(1)
+_head += PADR( "Vrsta", 10 )
+_head += SPACE(1)
+_head += PADR( "Sifra", 10 )
+_head += SPACE(1)
+_head += PADR( "Na rednom broju", 30 )
+
+_line := REPLICATE("-", 5)
+_line += SPACE(1)
+_line += REPLICATE("-", 10)
+_line += SPACE(1)
+_line += REPLICATE("-", 10)
+_line += SPACE(1)
+_line += REPLICATE("-", 30)
+
+START PRINT CRET
+?
+
+? "Lista nepostojecih sifara na dokumentu:"
+? "===================================================="
+?
+? _line
+? _head
+? _line
+
+for _i := 1 to LEN( err )
+    ? PADL( ALLTRIM( STR( ++_cnt ) ), 4 ) + "."
+    @ prow(), pcol() + 1 SAY PADR( err[ _i, 1 ], 10 )
+    @ prow(), pcol() + 1 SAY PADR( err[ _i, 2 ], 10 )
+    @ prow(), pcol() + 1 SAY ALLTRIM( err[ _i, 3 ])
+
+next
+
+? _line
+? "Prije azuriranja naloga, u sifrarnike potrebno ubaciti nabrojane sifre !"
+
+FF
+END PRINT
+
+return
+
 
 
 
@@ -540,18 +645,6 @@ _saldo := 0
 
 do while !EOF() .and. field->idfirma == id_firma .and. field->idvn == id_vn .and. field->brnal == br_nal
 	
-	// ima li partnera ?
-	if !psuban_partner_check()
-        return _ok
-    endif
-
-	// ima li konto ??
-    if !psuban_konto_check()
-        return _ok
-  	endif
-
-    select psuban
-        
 	if field->d_p == "1"
     	_saldo += field->iznosbhd
     else
@@ -714,21 +807,36 @@ return
 
 // -------------------------------------------------------------
 // -------------------------------------------------------------
-function psuban_partner_check()
+function psuban_partner_check( arr, silent )
 local _ok := .t.
+local _scan
 
 if EMPTY( psuban->idpartner )
 	return _ok
 endif
-      
+ 
+if silent == NIL
+    silent := .f.
+endif
+     
 select partn
 hseek psuban->idpartner
 
 if !FOUND()
-	MsgBeep( "Stavka br." + psuban->rbr + " : Nepostojeca sifra partnera!#Partner id: " + psuban->idpartner )
-	fin_brisi_p_tabele( .t. )
-    o_fin_za_azuriranje()
-	_ok := .f.
+
+    _ok := .f.
+
+    _scan := ASCAN( arr, {|val| val[1] + val[2] == "PARTN" + psuban->idpartner } )
+
+    if _scan == 0
+        // dodaj u kontrolnu matricu
+        AADD( arr, { "PARTN", psuban->idpartner, psuban->rbr } )
+    endif
+
+    if !silent
+	    MsgBeep( "Stavka br." + psuban->rbr + " : Nepostojeca sifra partnera!#Partner id: " + psuban->idpartner )
+    endif
+
 endif
 
 select psuban 
@@ -739,24 +847,39 @@ return _ok
 
 // --------------------------------------------------------------
 // --------------------------------------------------------------
-function psuban_konto_check()
+function psuban_konto_check( arr, silent )
 local _ok := .t.
+local _scan
 
 if EMPTY( psuban->idkonto )
 	return _ok
 endif
     
+if silent == NIL
+    silent := .f.
+endif
+
 select konto
 hseek psuban->idkonto
     
 if !FOUND()
-	MsgBeep( "Stavka br." + psuban->rbr + " : Nepostojeca sifra konta!#Konto id: " + psuban->idkonto )
-	fin_brisi_p_tabele( .t. )
+
     _ok := .f.      
+
+    _scan := ASCAN( arr, { |val| val[1] + val[2] == "KONTO" + psuban->idkonto } )
+
+    if _scan == 0
+        // dodaj u kontrolnu matricu
+        AADD( arr, { "KONTO", psuban->idkonto, psuban->rbr } )
+    endif
+
+    if !silent
+	    MsgBeep( "Stavka br." + psuban->rbr + " : Nepostojeca sifra konta!#Konto id: " + psuban->idkonto )
+    endif
+
 endif
 
 select psuban
-
 return _ok 
 
 

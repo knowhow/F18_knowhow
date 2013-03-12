@@ -168,7 +168,7 @@ cGlava := fetch_metric( "proiz_fin_glava", _my_user, SPACE(6) )
 cFunkc := fetch_metric( "proiz_fin_funkcija", _my_user, SPACE(5) )
 dOd := fetch_metric( "proiz_fin_datum_od", _my_user, CTOD("") )
 dDo := fetch_metric( "proiz_fin_datum_do", _my_user, DATE() )
-gTabela := fetch_metric( "proiz_fin_tabela", _my_user, 1 )
+gTabela := fetch_metric( "proiz_fin_tabela", _my_user, 0 )
 cPrikBezDec := fetch_metric( "proiz_fin_prikaz_bez_decimala", _my_user, "D" )
 cSaNulama := fetch_metric( "proiz_fin_prikaz_sa_nulama", _my_user, "D" )
 nKorZaLands := fetch_metric( "proiz_fin_kor_landscape", _my_user, -18 )
@@ -1101,9 +1101,11 @@ RETURN nVrati
 function ParSviIzvjFin()
 local GetList := {}
 local _my_user := my_user()
+local _konverzija
 
 cPotrazKon := PADR( fetch_metric( "proiz_fin_potrazni_konto", _my_user, cPotrazKon ), 120 )
-gTabela := fetch_metric( "proiz_fin_tabela", _my_user, 1 )
+gTabela := fetch_metric( "proiz_fin_tabela", _my_user, 0 )
+_konverzija := fetch_metric("proiz_fin_konverzija", _my_user, "N" )
 cPrikBezDec := fetch_metric( "proiz_fin_prikaz_bez_decimala", _my_user, "D" )
 cSaNulama := fetch_metric( "proiz_fin_prikaz_sa_nulama", _my_user, "D" )
 nKorZaLands := fetch_metric( "proiz_fin_kor_landscape", _my_user, -18 )
@@ -1143,6 +1145,7 @@ Box(,22,75)
  @ m_x+4, m_y+2 SAY "Porez na dobit (gnPorDob) u % :" GET gnPorDob PICT "999.99"
 
  @ m_x+6,m_y+2 SAY "TABELA(0/1/2)          " GET gTabela VALID gTabela>=0.and.gTabela<=2 PICT "9"
+ @ m_x+6,col()+1 SAY "Konverzija u win ?" GET _konverzija VALID _konverzija $ "DN" PICT "@!"
  @ m_x+7,m_y+2 SAY "Gdje moze, prikaz bez decimala? (D/N)" GET cPrikBezDec VALID cPrikBezDec $ "DN" PICT "@!"
  @ m_x+8,m_y+2 SAY "Prikazivati stavke bez prometa? (D/N)" GET cSaNulama VALID cSaNulama $ "DN" PICT "@!"
  @ m_x+9,m_y+2 SAY "Korekcija broja redova (za lendskejp)" GET nKorZaLands PICT "999"
@@ -1212,6 +1215,7 @@ ENDIF
 
 set_metric( "proiz_fin_potrazni_konto", _my_user, cPotrazKon )
 set_metric( "proiz_fin_tabela", _my_user, gTabela )
+set_metric( "proiz_fin_konverzija", _my_user, _konverzija )
 set_metric( "proiz_fin_prikaz_bez_decimala", _my_user, cPrikBezDec )
 set_metric( "proiz_fin_prikaz_sa_nulama", _my_user, cSaNulama )
 set_metric( "proiz_fin_kor_landscape", _my_user, nKorZaLands )

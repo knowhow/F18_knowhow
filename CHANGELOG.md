@@ -1,3 +1,8 @@
+1.4.137 2013-03-12, vsasa
+
+  - fin, parametri proizvoljnih izvještaja
+  - ld, izlazak iz pripreme, brisanje zapisa - bugfix
+
 1.4.136 2013-03-11, vsasa
 
   - fin, proizvoljni izvještaji

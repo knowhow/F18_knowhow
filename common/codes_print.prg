@@ -604,7 +604,13 @@ endif
 if nCrtice == 0
     cOk := {"-", "-", " ", "-", " ", "-", " ", "-", "-", " ", "-", " ", "-", "-", "-", " "}
 elseif nCrtice == 1
-    cOk := {"Ú", "Ä", "Â", "¿", "³", "Ã", "Å", "´", "À", "Á", "Ù", "³", "Ä", "Ã", "´", "Å"}
+
+    #ifdef __PLATFORM__WINDOWS
+        cOk := {"+", "-", "+", "+", ":", "+", "+", "+", "+", "+", "+", ":", "-", "+", "+", "+"}
+    #else
+        cOk := {"Ú", "Ä", "Â", "¿", "³", "Ã", "Å", "´", "À", "Á", "Ù", "³", "Ä", "Ã", "´", "Å"}
+    #endif
+
 elseif nCrtice == 9    
     // rtf-fajlovi
     cOk := {" ", " ", " ", " ", "#", " ", " ", " ", " ", " ", " ", "#", " ", " ", " ", " "}
@@ -943,6 +949,27 @@ local nVrati:=0,nPod:=LEN(cPod)
   if SUBSTR(cStr,i,nPod)==cPod; nVrati++; endif
  next
 return nVrati
+
+
+// ---------------------------------------------------
+// sredi kodove u matrici za prikaz na izvjestajim
+// ---------------------------------------------------
+static function sredi_crtice( arr, tip )
+local _i
+local _konv := fetch_metric( "proiz_fin_konverzija", my_user(), "N" )
+
+#ifdef __PLATFORM__WINDOWS
+
+for _i := 1 to LEN( arr )
+    if _konv == "D"
+        arr[ _i ] := to_win1250_encoding( arr[ _i ] )
+    endif
+next
+
+#endif
+
+return
+
 
 
 function PrekSaEsc()

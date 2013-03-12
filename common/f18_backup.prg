@@ -367,7 +367,7 @@ _res := FILECOPY( ::backup_path + ::backup_filename, ::removable_drive + ::backu
 sleep(1)
 
 if !FILE( ::removable_drive + ::backup_filename )
-    MsgBeep( "Nisam uspio prebaciti backup na lokaciju " + ::removable_drive + ::backup_filename )
+    //MsgBeep( "Nisam uspio prebaciti backup na lokaciju " + ::removable_drive + ::backup_filename )
 else
     log_write( "backup to removable drive ok", 6 )
     _ok := .t.

@@ -214,6 +214,11 @@ function f18_use_module( module_name )
 local _ret := .f.
 local _default := "N"
 
+// reports modul treba biti po defaultu dozvoljen
+if module_name == "reports"
+    _default := "D"
+endif
+
 // default odgovor za sve module je "N"
 if fetch_metric( "main_menu_" + module_name, my_user(), _default ) == "D"
 	_ret := .t.

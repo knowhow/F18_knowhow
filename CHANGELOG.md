@@ -2,6 +2,8 @@
 
   - fin, parametri proizvoljnih izvještaja
   - ld, izlazak iz pripreme, brisanje zapisa - bugfix
+  - fin, proizvoljni izvještaji, setpxlat() korekcije
+  - f18 modules, reports po defaultu jedini na meniju
 
 1.4.136 2013-03-11, vsasa
 

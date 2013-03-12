@@ -212,8 +212,10 @@ return
 // ---------------------------------------------------------------------
 function f18_use_module( module_name )
 local _ret := .f.
+local _default := "N"
 
-if fetch_metric( "main_menu_" + module_name, my_user(), "D" ) == "D"
+// default odgovor za sve module je "N"
+if fetch_metric( "main_menu_" + module_name, my_user(), _default ) == "D"
 	_ret := .t.
 endif
 

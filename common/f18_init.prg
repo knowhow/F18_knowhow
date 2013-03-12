@@ -376,9 +376,11 @@ hb_gtInfo( HB_GTI_WINTITLE, "[ "+ my_server_params()["user"] + " ][ "+ my_server
 _ver := read_dbf_version_from_config()
 #endif
 
+// setuje u matricu sve tabele svih modula
 set_a_dbfs()
 
 #ifndef NODE
+// kreiranje tabela...
 cre_all_dbfs(_ver)
 #endif
 

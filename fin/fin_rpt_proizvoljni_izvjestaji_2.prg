@@ -1100,8 +1100,9 @@ RETURN nVrati
  
 function ParSviIzvjFin()
 local GetList := {}
+local _my_user := my_user()
 
-cPotrazKon := PADR( fetch_metric( "proiz_fin_potrazni_konto", my_user(), cPotrazKon ), 120 )
+cPotrazKon := PADR( fetch_metric( "proiz_fin_potrazni_konto", _my_user, cPotrazKon ), 120 )
 gTabela := fetch_metric( "proiz_fin_tabela", _my_user, 1 )
 cPrikBezDec := fetch_metric( "proiz_fin_prikaz_bez_decimala", _my_user, "D" )
 cSaNulama := fetch_metric( "proiz_fin_prikaz_sa_nulama", _my_user, "D" )
@@ -1209,7 +1210,7 @@ IF LASTKEY() == K_ESC
     return
 ENDIF
 
-set_metric( "proiz_fin_potrazni_konto", my_user(), cPotrazKon )
+set_metric( "proiz_fin_potrazni_konto", _my_user, cPotrazKon )
 set_metric( "proiz_fin_tabela", _my_user, gTabela )
 set_metric( "proiz_fin_prikaz_bez_decimala", _my_user, cPrikBezDec )
 set_metric( "proiz_fin_prikaz_sa_nulama", _my_user, cSaNulama )

@@ -12,6 +12,22 @@
 #include "fmk.ch"
 
 function cre_all_dbfs(ver)
+local _first_start := fetch_metric( "f18_first_start", my_user(), 0 )
+local _local_files, _local_files_count
+
+// first_start, ako je 0 onda je to prvi ulazak u bazu...
+if _first_start = 0
+
+    // napravi dodatnu provjeru radi postojecih instalacija...
+    _local_files := DIRECTORY( my_home() + "*.dbf" )    
+    _local_files_count := LEN( _local_files )
+
+    // ovdje mozemo poduzeti neka pitanja...
+    if _local_files_count = 0
+        // recimo mozemo birati module za glavni meni itd...
+    endif
+
+endif
 
 log_write("START cre_all_dbfs", 5)
 
@@ -85,7 +101,13 @@ if f18_use_module( "mat" )
    _db:kreiraj()
 endif
 
+if _first_start = 0
+    // setuj da je modul vec aktiviran...
+    set_metric( "f18_first_start", my_user(), 1 )
+endif
+
 log_write("END crea_all_dbfs", 5)
+
 return
 
 

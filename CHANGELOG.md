@@ -4,6 +4,7 @@
   - ld, izlazak iz pripreme, brisanje zapisa - bugfix
   - fin, proizvoljni izvještaji, setpxlat() korekcije
   - f18 modules, reports po defaultu jedini na meniju
+  - fin, početno stanje, kopiraj i ubaci šifre u novoj sezoni
 
 1.4.136 2013-03-11, vsasa
 

@@ -84,12 +84,12 @@ IF_C_RESET_SEMAPHORE
 CREATE_INDEX( "ID", "ID", _alias )  
 index_mcode( my_home(), _alias )
 CREATE_INDEX("NAZ","LEFT(naz,40)", _alias)
-CREATE_INDEX("ID","id", "_roba") 
 CREATE_INDEX("BARKOD","BARKOD", _alias) 
 CREATE_INDEX("SIFRADOB","SIFRADOB",_alias) 
 CREATE_INDEX("ID_VSD","SIFRADOB",  _alias) 
 CREATE_INDEX("PLU","str(fisc_plu, 10)",  _alias)
 CREATE_INDEX("IDP", {"id+tip", 'tip=="P"'},  _alias)
+
 // ovog polja nema u dbf tabeli ?????
 //CREATE_INDEX("KATBR","KATBR", _alias ) 
 
@@ -99,10 +99,11 @@ CREATE_INDEX("IDP", {"id+tip", 'tip=="P"'},  _alias)
 // -------------------------------------------------
 
 _alias := "_ROBA"
-_table_name := "_roba"
+_table_name := "_fakt_roba"
 
 IF_NOT_FILE_DBF_CREATE
 
+CREATE_INDEX( "ID", "ID", _alias )  
 
 // -------------------------------------------------
 // TARIFA

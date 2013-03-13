@@ -30,7 +30,7 @@
 #xcommand O_REFER    => select (F_REFER)   ;  my_use  ("refer")     ; set order to tag "ID"
 #xcommand O_OPS      => select (F_OPS)     ;  my_use  ( "ops")      ; set order to tag "ID"
 #xcommand O_FAKT_OBJEKTI  => select (F_FAKT_OBJEKTI) ;  my_use  ( "fakt_objekti") ; set order to tag "ID"
-#xcommand O__ROBA    => select (F__ROBA)   ;  my_use  ("_roba")
+#xcommand O__ROBA    => select (F__ROBA)   ;  my_usex("_roba")
 #xcommand O__PARTN   => select (F__PARTN)  ;  my_use  ("_partn")
 #xcommand O_BANKE    => select (F_BANKE)   ;  my_use  ("banke")     ; set order to tag "ID"
 #xcommand O_BARKOD   => select (F_BARKOD)  ;  my_usex ("barkod")    ; set order to tag "1"
@@ -167,7 +167,6 @@
 #xcommand O_FAKT_PRIPR9    => select (F_PRIPR9)    ; my_usex ("fakt_pripr9") ; set order to tag  "1"
 #xcommand O_FAKT_ATRIB     => select (F_FAKT_ATRIB) ; my_usex ("fakt_atrib") ; set order to tag  "1"
 
-#xcommand O__ROBA          => select(F__ROBA)      ; my_usex ("_roba")
 #xcommand O__SDIM          => select(F__SDIM)      ; my_use ("_sdim"); set order to tag "1"
 
 #xcommand O_PFAKT          => select (F_FAKT)      ; my_use  ("fakt_pripr", "fakt_fakt", .f.); set order to tag "1"

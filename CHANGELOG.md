@@ -3,6 +3,7 @@
   - fprint, answer file u log levelu 3 umjesto 5
   - fakt, povrat dokumenta, zabrana ako je fiskalni
   - ld, unos obracuna, izlazak sa ESC hendliranje
+  - fakt, zbirni fiskalni račun, skraćen opis
  
 1.4.138 2013-03-13, vsasa
 

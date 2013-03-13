@@ -779,7 +779,7 @@ if __device_params["vp_sum"] < 1 .or. ;
     return
 endif
 
-_art_naz := "Stavke rn."
+_art_naz := "St.rn."
 
 if __DRV_CURRENT  $ "#FPRINT#HCP#TRING#"
     _art_naz += " " + ALLTRIM( data[1, 1] )

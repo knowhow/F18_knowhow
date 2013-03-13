@@ -4,6 +4,8 @@
   - fakt, povrat dokumenta, zabrana ako je fiskalni
   - ld, unos obracuna, izlazak sa ESC hendliranje
   - fakt, zbirni fiskalni račun, skraćen opis
+  - dbf_update_rec bez alerta, sporni događaj se logira
+  - kalk, lager lista sa VPC iz šifrarnika ili VPC iz tabele KALK (sa dokumenata)
  
 1.4.138 2013-03-13, vsasa
 

@@ -1,3 +1,7 @@
+1.5.17 2013-03-13, vsasa
+
+   - fakt, vp zbirni fiskalni račun, skraćen opis
+
 1.5.16 2013-03-05, vsasa
 
    - git merge master 1.4.131

@@ -642,15 +642,12 @@ do while !eof() .and. IIF(fSint .and. lSabKon, idfirma, idfirma+mkonto ) = ;
 			    nVPVI+=round( roba->vpc*kolicina , gZaokr)
 			    nVPVRI+=round( field->vpc * kolicina , gZaokr)
     		endif
-    		nRabat+=round(  rabatv/100*vpc*kolicina , gZaokr)
+    		nRabat+=round(  rabatv/100 * vpc * kolicina , gZaokr)
     		nNVI+=ROUND(nc*kolicina, gZaokr)
   		
 		// datum zadnjeg izlaza
 		dL_izlaz := field->datdok
 
-	elseif mu_i=="3"    
-    		// nivelacija
-    		//nVPVU+=round( vpc * kolicina , gZaokr)
   	elseif mu_i=="8"
      		nKolicina:=-field->kolicina
      		nIzlaz+=nKolicina
@@ -662,7 +659,7 @@ do while !eof() .and. IIF(fSint .and. lSabKon, idfirma, idfirma+mkonto ) = ;
        			nVPVI+=round( roba->vpc*(-kolicina) , gZaokr)
        			nVPVRI+=round( field->vpc * (-kolicina) , gZaokr)
      		endif
-     		nRabat+=round(  rabatv/100*vpc*(-kolicina) , gZaokr)
+     		nRabat+=round(  rabatv/100 * vpc * (-kolicina) , gZaokr)
      		nNVI+=ROUND(nc*(-kolicina), gZaokr)
    		nKolicina:=-field->kolicina
      		nUlaz+=nKolicina

@@ -51,9 +51,10 @@ local _d_od := fetch_metric( "kalk_tkv_datum_od", my_user(), DATE()-30 )
 local _d_do := fetch_metric( "kalk_tkv_datum_do", my_user(), DATE() )
 local _vr_dok := fetch_metric( "kalk_tkv_vrste_dok", my_user(), SPACE(200) )
 local _usluge := fetch_metric( "kalk_tkv_gledati_usluge", my_user(), "N" )
+local _tip := fetch_metric( "kalk_tkv_tip_obrasca", my_user(), "P" )
 local _vise_konta := "D"
 
-Box(, 10, 70)
+Box(, 12, 70)
 
     @ m_x + _x, m_y + 2 SAY "*** magacin - izvjestaj TKV"
 
@@ -75,6 +76,11 @@ Box(, 10, 70)
     ++ _x
     ++ _x
 
+    @ m_x + _x, m_y + 2 SAY "Gledati [N] nabavne cijene [P] prodajne cijene ?" GET _tip PICT "@!" ;
+            VALID _tip $ "PN"
+
+    ++ _x
+
     @ m_x + _x, m_y + 2 SAY "Gledati usluge (D/N) ?" GET _usluge PICT "@!" VALID _usluge $ "DN"
 
     read
@@ -94,6 +100,7 @@ vars["datum_do"] := _d_do
 vars["konto"] := _konta
 vars["vrste_dok"] := _vr_dok
 vars["gledati_usluge"] := _usluge
+vars["tip_obrasca"] := _tip
 // ako postoji tacka u kontu onda gledaj 
 if RIGHT( ALLTRIM( _konta ), 1 ) == "."
     _vise_konta := "N"
@@ -106,6 +113,7 @@ set_metric( "kalk_tkv_datum_od", my_user(), _d_od )
 set_metric( "kalk_tkv_datum_do", my_user(), _d_do )
 set_metric( "kalk_tkv_vrste_dok", my_user(), _vr_dok )
 set_metric( "kalk_tkv_gledati_usluge", my_user(), _usluge )
+set_metric( "kalk_tkv_tip_obrasca", my_user(), _tip )
 
 return _ret
 
@@ -121,6 +129,7 @@ local _n_opis, _n_iznosi
 local _t_dug, _t_pot, _t_rabat
 local _a_opis := {}
 local _i
+local _tip_obrasca := vars["tip_obrasca"]
 
 // daj mi liniju za report...
 _line := _get_line()
@@ -180,19 +189,36 @@ do while !EOF()
     // opis knjizenja
     @ prow(), _n_opis := pcol() + 1 SAY _a_opis[ 1 ]
 
-    // zaduzenje bez PDV
-    @ prow(), _n_iznosi := pcol() + 1 SAY STR( field->nv_dug, 12, 2 )
+    if _tip_obrasca == "N"
 
-    // razduzenje bez PDV
-    @ prow(), pcol() + 1 SAY STR( field->vp_pot, 12, 2 )
+        // zaduzenje bez PDV
+        @ prow(), _n_iznosi := pcol() + 1 SAY STR( field->nv_dug, 12, 2 )
+
+        // razduzenje bez PDV
+        @ prow(), pcol() + 1 SAY STR( field->vp_pot, 12, 2 )
+
+    elseif _tip_obrasca == "P"
+
+        // zaduzenje bez PDV
+        @ prow(), _n_iznosi := pcol() + 1 SAY STR( field->vp_dug, 12, 2 )
+
+        // razduzenje bez PDV
+        @ prow(), pcol() + 1 SAY STR( field->vp_pot, 12, 2 )
+
+    endif
 
     // odobreni rabat
     @ prow(), pcol() + 1 SAY STR( field->vp_rabat, 12, 2 )
 
-    _t_dug += field->nv_dug
+    if _tip_obrasca == "N"
+        _t_dug += field->nv_dug
+    elseif _tip_obrasca == "P"
+        _t_dug += field->vp_dug
+    endif
+    
     _t_pot += field->vp_pot
-    _t_rabat += field->vp_rabat
 
+    _t_rabat += field->vp_rabat
 
     // 2, 3... red izvjestaja...
     // radi opisnog polja...

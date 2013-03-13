@@ -1,3 +1,7 @@
+1.4.140 2013-03-14, vsasa
+
+  - kalk, TKV, po NC ili po PC, parametar kod povlačenja izvještaja
+ 
 1.4.139 2013-03-13, vsasa
 
   - fprint, answer file u log levelu 3 umjesto 5

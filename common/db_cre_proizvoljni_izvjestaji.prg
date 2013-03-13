@@ -11,18 +11,19 @@
 
 
 #include "fmk.ch"
-
+#include "cre_all.ch"
 
 
 // -----------------------------------------------------------
 // kreiranje tabela za proizvoljne izvjestaje
 // -----------------------------------------------------------
-function CreFmkPi()
+function proizvoljni_izvjestaji_db_cre()
 local aDbf
 local _alias, _table_name
 local _created
 
 // IZVJE.DBF ( fin_izvje.dbf )
+
 aDBf := {}
 AADD( aDBf, { 'ID'      , 'C' ,   2 ,  0 } )
 AADD( aDBf, { 'NAZ'     , 'C' ,  50 ,  0 } )
@@ -34,20 +35,11 @@ AADD( aDBf, { 'KBAZA'   , 'C' ,  50 ,  0 } )
 AADD( aDBf, { 'KINDEKS' , 'C' ,  80 ,  0 } )
 AADD( aDBf, { 'TIPTAB'  , 'C' ,   1 ,  0 } )
  
-_created := .f.
 _alias := "IZVJE"
 _table_name := "fin_izvje"
 
-if !FILE( f18_ime_dbf( _alias ) )
-    DBCREATE2( _alias, aDbf )
-    _created := .t.
-endif
-
-if _created
-  reset_semaphore_version(_table_name)
-  my_usex(_alias)
-  USE
-endif
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
  
 CREATE_INDEX( "ID", "id", _alias )
 
@@ -70,23 +62,16 @@ AADD(aDBf,{ 'N2'      , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'KUSLOV'  , 'C' , 100 ,  0 })
 AADD(aDBf,{ 'SIZRAZ'  , 'C' , 100 ,  0 })
  
-_created := .f.
 _alias := "KOLIZ"
 _table_name := "fin_koliz"
 
-if !FILE( f18_ime_dbf( _alias ) )
-    DBCREATE2( _alias, aDbf )
-    _created := .t.
-endif
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
  
-if _created
-  reset_semaphore_version(_table_name)
-  my_usex(_alias)
-  USE
-endif
-  
 CREATE_INDEX("ID","id"         , _alias )
 CREATE_INDEX("1" ,"STR(rbr,2)" , _alias )
+
+
 
 // ZAGLI.DBF (fin_zagli.dbf)
 
@@ -96,20 +81,11 @@ AADD(aDBf,{ 'x1'      , 'N' ,   3 ,  0 })
 AADD(aDBf,{ 'y1'      , 'N' ,   3 ,  0 })
 AADD(aDBf,{ 'IZRAZ'   , 'C' , 100 ,  0 })
 
-_created := .f.
 _alias := "ZAGLI"
 _table_name := "fin_zagli"
 
-if !FILE( f18_ime_dbf( _alias ) )
-    DBCREATE2( _alias, aDbf )
-    _created := .t.
-endif
-
-if _created
-  reset_semaphore_version(_table_name)
-  my_usex(_alias)
-  USE
-endif
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
  
 CREATE_INDEX( "ID", "id"                  , _alias ) 
 CREATE_INDEX( "1" , "STR(x1,3)+STR(y1,3)" , _alias )
@@ -133,21 +109,12 @@ AADD(aDBf,{ 'PODVUCI' , 'C' ,   1 ,  0 })
 AADD(aDbf,{ "K1"      , "C" ,   1 ,  0 })          
 AADD(aDbf,{ "U1"      , "C" ,   3 ,  0 })          
  
-_created := .f.
 _alias := "KONIZ"
 _table_name := "fin_koniz"
 
-if !FILE( f18_ime_dbf( _alias ) )
-    DBCREATE2( _alias, aDbf )
-    _created := .t.
-endif
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
 
-if _created
-  reset_semaphore_version(_table_name)
-  my_usex(_alias)
-  USE
-endif
- 
 CREATE_INDEX( "ID", "id", _alias )
 CREATE_INDEX( "1", "izv+STR(ri,4)", _alias )
 

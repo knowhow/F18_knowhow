@@ -49,8 +49,6 @@ cDirRad := my_home()
 cDirSif := my_home()
 cDirPriv := my_home()
 
-CreFMKPI()
-
 if (nArea==nil)
 	nArea:=-1
 endif
@@ -60,7 +58,6 @@ Beep(1)
 if (nArea<>-1)
 	CreSystemDb(nArea)
 endif
-
 
 /* 
 if glDistrib

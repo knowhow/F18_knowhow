@@ -10,14 +10,20 @@
  */
 
 #include "fmk.ch"
+#include "cre_all.ch"
 
-//---------------------------------------------------
-//---------------------------------------------------
+
+
 function cre_roba(ver)
 local _table_name, _alias
 local _created
 
-aDbf:={}
+
+// -------------------------------------------------
+// ROBA
+// -------------------------------------------------
+
+aDbf := {}
 AADD(aDBf,{ 'ID'                  , 'C' ,  10 ,  0 })
 AADD(aDBf,{ 'SIFRADOB'            , 'C' ,  20 ,  0 })
 add_f_mcode(@aDbf)
@@ -53,14 +59,10 @@ AADD(aDBf,{ 'TROSK4'              , 'N' ,  15 ,  5 })
 AADD(aDBf,{ 'TROSK5'              , 'N' ,  15 ,  5 })
 AADD(aDBf,{ 'IDKONTO'             , 'C' ,   7 ,  5 })
 
-_created := .f.
 _alias := "ROBA"
 _table_name := "roba"
 
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2(_alias, aDbf)
-    _created := .t.
-endif
+IF_NOT_FILE_DBF_CREATE
 
 // 0.2.1
 if ver["current"] < 00201
@@ -77,19 +79,10 @@ if ver["current"] < 00809
    modstru( {"*" + _table_name, "C OPIS C 250 0 OPIS C 500 0"})
 endif
 
+IF_C_RESET_SEMAPHORE
 
-if _created 
-  reset_semaphore_version(_table_name)
-  my_usex(_alias)
-  use
-endif
-
-if !file(f18_ime_dbf("_roba"))
-	dbcreate2('_roba.dbf',aDbf)
-endif
-
-CREATE_INDEX("ID", "ID", _alias) 
-index_mcode(SIFPATH, _alias)
+CREATE_INDEX( "ID", "ID", _alias )  
+index_mcode( my_home(), _alias )
 CREATE_INDEX("NAZ","LEFT(naz,40)", _alias)
 CREATE_INDEX("ID","id", "_roba") 
 CREATE_INDEX("BARKOD","BARKOD", _alias) 
@@ -97,93 +90,152 @@ CREATE_INDEX("SIFRADOB","SIFRADOB",_alias)
 CREATE_INDEX("ID_VSD","SIFRADOB",  _alias) 
 CREATE_INDEX("PLU","str(fisc_plu, 10)",  _alias)
 CREATE_INDEX("IDP", {"id+tip", 'tip=="P"'},  _alias)
+// ovog polja nema u dbf tabeli ?????
+//CREATE_INDEX("KATBR","KATBR", _alias ) 
 
-close all
-O_ROBA
 
-if used()
-    if fieldpos("KATBR")<>0
-    select (F_ROBA)
-    use
-    CREATE_INDEX("KATBR","KATBR","roba") // roba, artikli
-    endif
-endif
+// -------------------------------------------------
+// _ROBA
+// -------------------------------------------------
 
+_alias := "_ROBA"
+_table_name := "_roba"
+
+IF_NOT_FILE_DBF_CREATE
+
+
+// -------------------------------------------------
 // TARIFA
-if !file(f18_ime_dbf("tarifa"))
-        aDbf:={}
-        AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
-        add_f_mcode(@aDbf)
-	    AADD(aDBf,{ 'NAZ'                 , 'C' ,  50 ,  0 })
-        AADD(aDBf,{ 'OPP'                 , 'N' ,   6 ,  2 })  // ppp
-        AADD(aDBf,{ 'PPP'                 , 'N' ,   6 ,  2 })  // ppu
-        AADD(aDBf,{ 'ZPP'                 , 'N' ,   6 ,  2 })  //nista
-        AADD(aDBf,{ 'VPP'                 , 'N' ,   6 ,  2 })  // pnamar
-        AADD(aDBf,{ 'MPP'                 , 'N' ,   6 ,  2 })  // pnamar MP
-        AADD(aDBf,{ 'DLRUC'               , 'N' ,   6 ,  2 })  // donji limit RUC-a(%)
-        dbcreate2( "TARIFA", aDbf)
-		reset_semaphore_version("tarifa")
-		my_use("tarifa")
-		close all
-endif
-CREATE_INDEX("ID","id",  "TARIFA")
-CREATE_INDEX("naz","naz", "TARIFA")
-index_mcode(SIFPATH, "TARIFA")
+// -------------------------------------------------
 
+_alias := "TARIFA"
+_table_name := "tarifa"
+        
+aDbf:={}
+AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
+add_f_mcode(@aDbf)
+AADD(aDBf,{ 'NAZ'                 , 'C' ,  50 ,  0 })
+AADD(aDBf,{ 'OPP'                 , 'N' ,   6 ,  2 })  // ppp
+AADD(aDBf,{ 'PPP'                 , 'N' ,   6 ,  2 })  // ppu
+AADD(aDBf,{ 'ZPP'                 , 'N' ,   6 ,  2 })  //nista
+AADD(aDBf,{ 'VPP'                 , 'N' ,   6 ,  2 })  // pnamar
+AADD(aDBf,{ 'MPP'                 , 'N' ,   6 ,  2 })  // pnamar MP
+AADD(aDBf,{ 'DLRUC'               , 'N' ,   6 ,  2 })  // donji limit RUC-a(%)
+
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
+        
+CREATE_INDEX("ID","id",  _alias )
+CREATE_INDEX("naz","naz", _alias )
+index_mcode( my_home(), _alias )
+
+
+// -------------------------------------------------
 // SAST
-if !file(f18_ime_dbf("sast"))
-   aDBf:={}
-   AADD(aDBf,{ 'ID'                  , 'C' ,   10 ,  0 })
-   AADD(aDBf,{ 'R_BR'                , 'N' ,    4 ,  0 })
-   AADD(aDBf,{ 'ID2'                 , 'C' ,   10 ,  0 })
-   AADD(aDBf,{ 'KOLICINA'            , 'N' ,   20 ,  5 })
-   AADD(aDBf,{ 'K1'                  , 'C' ,    1 ,  0 })
-   AADD(aDBf,{ 'K2'                  , 'C' ,    1 ,  0 })
-   AADD(aDBf,{ 'N1'                  , 'N' ,   20 ,  5 })
-   AADD(aDBf,{ 'N2'                  , 'N' ,   20 ,  5 })
-   dbcreate2('SAST', aDbf)
-   reset_semaphore_version("sast")
-   my_use("sast")
-   close all
-endif
+// -------------------------------------------------
 
-CREATE_INDEX("ID", "ID+ID2", "SAST")
+_alias := "SAST"
+_table_name := "sast"
 
-close all
-O_SAST
-if used()
-    if sast->(fieldpos("R_BR"))<>0
-        use
-        CREATE_INDEX("IDRBR", "ID+STR(R_BR,4,0)+ID2",  "SAST")
-    endif
-    use
-endif
+aDBf := {}
+AADD(aDBf,{ 'ID'                  , 'C' ,   10 ,  0 })
+AADD(aDBf,{ 'R_BR'                , 'N' ,    4 ,  0 })
+AADD(aDBf,{ 'ID2'                 , 'C' ,   10 ,  0 })
+AADD(aDBf,{ 'KOLICINA'            , 'N' ,   20 ,  5 })
+AADD(aDBf,{ 'K1'                  , 'C' ,    1 ,  0 })
+AADD(aDBf,{ 'K2'                  , 'C' ,    1 ,  0 })
+AADD(aDBf,{ 'N1'                  , 'N' ,   20 ,  5 })
+AADD(aDBf,{ 'N2'                  , 'N' ,   20 ,  5 })
+   
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
 
-CREATE_INDEX("NAZ", "ID2+ID",  "SAST")
+CREATE_INDEX( "ID", "ID+ID2", _alias )
+CREATE_INDEX( "IDRBR", "ID+STR(R_BR,4,0)+ID2", _alias )
+CREATE_INDEX( "NAZ", "ID2+ID", _alias )
 
 
+// -------------------------------------------------
+// BARKOD
+// -------------------------------------------------
+
+_alias := "BARKOD"
 _table_name := "barkod"
 
-if !file(f18_ime_dbf(_table_name))
-   aDBf:={}
-   AADD(aDBf,{ 'ID'                  , 'C' ,   10 ,  0 })
-   AADD(aDBf,{ 'BARKOD'              , 'C' ,   13 ,  0 })
-   AADD(aDBf,{ 'NAZIV'               , 'C' ,  250 ,  0 })
-   AADD(aDBf,{ 'L1'                  , 'C' ,   40,   0 })
-   AADD(aDBf,{ 'L2'                  , 'C' ,   40,   0 })
-   AADD(aDBf,{ 'L3'                  , 'C' ,   40 ,  0})
-   AADD(aDBf,{ 'VPC'                 , 'N' ,   12 ,  2 })
-   AADD(aDBf,{ 'MPC'                 , 'N' ,   12 ,  2 })
-   dbcreate2( _table_name, aDbf)
-endif
+aDBf := {}
+AADD(aDBf,{ 'ID'                  , 'C' ,   10 ,  0 })
+AADD(aDBf,{ 'BARKOD'              , 'C' ,   13 ,  0 })
+AADD(aDBf,{ 'NAZIV'               , 'C' ,  250 ,  0 })
+AADD(aDBf,{ 'L1'                  , 'C' ,   40,   0 })
+AADD(aDBf,{ 'L2'                  , 'C' ,   40,   0 })
+AADD(aDBf,{ 'L3'                  , 'C' ,   40 ,  0})
+AADD(aDBf,{ 'VPC'                 , 'N' ,   12 ,  2 })
+AADD(aDBf,{ 'MPC'                 , 'N' ,   12 ,  2 })
+   
+IF_NOT_FILE_DBF_CREATE
 
-CREATE_INDEX("1","barkod+id", _table_name)
-CREATE_INDEX("ID","id+LEFT(naziv,40)", _table_name)
-CREATE_INDEX("Naziv","LEFT(Naziv,40)+id", _table_name)
+CREATE_INDEX("1","barkod+id", _alias )
+CREATE_INDEX("ID","id+LEFT(naziv,40)", _alias )
+CREATE_INDEX("Naziv","LEFT(Naziv,40)+id", _alias )
 
-// kreiranje tabele strings
-cre_strings()
 
-cre_fin_mat()
+// --------------------------------------------------------
+// STRINGS
+// --------------------------------------------------------
+
+_alias := "STRINGS"
+_table_name := "strings"
+
+aDBf := g_str_fields()
+
+IF_NOT_FILE_DBF_CREATE
+
+CREATE_INDEX("1", "STR(ID,10,0)", _alias )
+CREATE_INDEX("2", "OZNAKA+STR(ID,10,0)", _alias )
+CREATE_INDEX("3", "OZNAKA+STR(VEZA_1,10,0)+STR(ID,10,0)", _alias )
+CREATE_INDEX("4", "OZNAKA+STR(VEZA_1,10,0)+NAZ", _alias )
+CREATE_INDEX("5", "OZNAKA+STR(VEZA_1,10,0)+STR(VEZA_2,10,0)", _alias )
 
 return
+
+
+
+// vraca matricu sa definicijom polja
+static function g_str_fields()
+// aDbf => 
+//    id   veza_1   veza_2   oznaka   aktivan   naz
+// -------------------------------------------------------------
+//  (grupe)
+//     1                     R_GRUPE     D      obuca
+//     2                     R_GRUPE     D      kreme
+//  (atributi)
+//     3                     R_D_ATRIB   D      proizvodjac
+//     4                     R_D_ATRIB   D      lice
+//     5                     R_D_ATRIB   D      sastav
+//  (grupe - atributi)
+//     6       1         3   R_G_ATRIB   D      obuca / proizvodjac
+//     7       1         4   R_G_ATRIB   D      obuca / lice
+//     8       2         5   R_G_ATRIB   D      kreme / sastav
+//  (dodatni atributi - dozvoljene vrijednosti)
+//     9       6             ATRIB_DOZ   D      proizvodjac 1
+//    10       6             ATRIB_DOZ   D      proizvodjac 2
+//    11       6             ATRIB_DOZ   D      proizvodjac 3
+//    12       6             ATRIB_DOZ   D      proizvodjac n...
+//    13       7             ATRIB_DOZ   D      lice 1
+//    14       7             ATRIB_DOZ   D      lice 2 ...
+//  (vrijednosti za artikle)
+//    15      -1             01MCJ12002  D      9#13 
+//    16      -1             01MCJ13221  D      10#14
+// itd....
+
+aDbf := {}
+AADD(aDBf,{ "ID"       , "N", 10, 0 })
+AADD(aDBf,{ "VEZA_1"   , "N", 10, 0 })
+AADD(aDBf,{ "VEZA_2"   , "N", 10, 0 })
+AADD(aDBf,{ "OZNAKA"   , "C", 10, 0 })
+AADD(aDBf,{ "AKTIVAN"  , "C",  1, 0 })
+AADD(aDBf,{ "NAZ"      , "C",200, 0 })
+return aDbf
+
+
+

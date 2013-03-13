@@ -38,38 +38,39 @@ cre_partn(ver)
 cre_adres(ver)
 cre_all_ld_sif(ver)
 cre_all_virm_sif(ver)
+proizvoljni_izvjestaji_db_cre(ver)
+cre_fin_mat(ver)
 
 if f18_use_module( "fin" )
-  cre_all_fin(ver)
-  _db := TDbFin():new()
-  _db:kreiraj()
+    // glavni fin tabele
+    cre_all_fin(ver)
+    _db := TDbFin():new()
+    _db:kreiraj()
 endif
 
 if f18_use_module( "kalk" )
-  cre_all_kalk(ver)
-  _db := TDbKalk():new()
- _db:kreiraj()
-
+    cre_all_kalk(ver)
+    _db := TDbKalk():new()
+    _db:kreiraj()
 endif
 
-if f18_use_module( "fakt" )
-   cre_all_fakt(ver)
-  _db := TDbFakt():new()
-  _db:kreiraj()
+if f18_use_module( "fakt" ) 
+    cre_all_fakt(ver)
+    _db := TDbFakt():new()
+    _db:kreiraj()
 endif
 
 if f18_use_module( "ld" )
-   cre_all_ld(ver)
-   _db := TDbLd():new()
-   _db:kreiraj()
+    cre_all_ld(ver)
+    _db := TDbLd():new()
+    _db:kreiraj()
 endif
 
 
 if f18_use_module( "os" )
-  cre_all_os(ver)
-  _db := TDbOs():new()
-  _db:kreiraj()
-
+    cre_all_os(ver)
+    _db := TDbOs():new()
+    _db:kreiraj()
 endif
 
 
@@ -109,6 +110,8 @@ endif
 log_write("END crea_all_dbfs", 5)
 
 return
+
+
 
 
 function CreSystemDb(nArea)

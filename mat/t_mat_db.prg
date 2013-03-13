@@ -65,8 +65,6 @@ if (nArea<>-1)
 	CreSystemDb(nArea)
 endif
 
-CreFmkPi()
-
 return
 
 

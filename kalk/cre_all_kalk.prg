@@ -10,6 +10,8 @@
  */
 
 #include "fmk.ch"
+#include "cre_all.ch"
+
 
 function cre_all_kalk(ver)
 local aDbf
@@ -17,8 +19,10 @@ local _alias, _table_name
 local _created
 local _tbl
 
+
+
 // -----------------------------------------------
-// kalk_doks
+// KALK_DOKS
 // -----------------------------------------------
 	
 aDbf:={}
@@ -40,25 +44,17 @@ AADD(aDBf,{ 'RABAT'               , 'N' ,  12 ,  2 })
 AADD(aDBf,{ 'MPV'                 , 'N' ,  12 ,  2 })
 AADD(aDBf,{ 'PODBR'               , 'C' ,   2 ,  0 })
 
-_created := .f.
 _alias := "KALK_DOKS"
 _table_name := "kalk_doks"
 
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2(_alias, aDbf)
-    _created := .t.
-endif
+IF_NOT_FILE_DBF_CREATE
 
 // 0.4.0
 if ver["current"] < 0400
    modstru({"*" + _table_name, "A SIFRA C 6 0"})
 endif
 
-if _created
-  reset_semaphore_version(_table_name)
-  my_usex(_alias)
-  USE
-endif
+IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX("1"      , "IdFirma+idvd+brdok", _alias)
 CREATE_INDEX("2"      , "IdFirma+MKONTO+idzaduz2+idvd+brdok", _alias)
@@ -68,6 +64,10 @@ CREATE_INDEX("1S"     , "IdFirma+idvd+SUBSTR(brdok,6)+LEFT(brdok,5)", _alias)
 CREATE_INDEX("V_BRF"  , "brfaktp+idvd", _alias)
 CREATE_INDEX("V_BRF2" , "idvd+brfaktp", _alias)
 
+
+// -----------------------------------------------
+// KALK_KALK
+// -----------------------------------------------
 
 aDbf:={}
 AADD(aDBf,{ 'IDFIRMA'             , 'C' ,   2 ,  0 })
@@ -137,13 +137,10 @@ AADD(aDBf,{ 'RABATV'              , 'B' ,  8 ,  8 })
 AADD(aDBf,{ 'VPCSAP'              , 'B' ,  8 ,  8 })
 
 
-_created := .f.
 _alias := "KALK"
 _table_name := "kalk_kalk"
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2(_alias, aDbf)
-    _created := .t.
-endif
+
+IF_NOT_FILE_DBF_CREATE
 
 // 0.8.4
 if ver["current"] < 00804
@@ -187,73 +184,89 @@ if ver["current"] < 00805
  next
 endif
 
+IF_C_RESET_SEMAPHORE
 
-if _created
-  reset_semaphore_version(_table_name)
-  my_usex(_alias)
-  USE
-endif
+CREATE_INDEX("1","idFirma+IdVD+BrDok+RBr", _alias )
+CREATE_INDEX("2","idFirma+idvd+brdok+IDTarifa", _alias )
+CREATE_INDEX("3","idFirma+mkonto+idroba+dtos(datdok)+podbr+MU_I+IdVD", _alias )
+CREATE_INDEX("4","idFirma+Pkonto+idroba+dtos(datdok)+podbr+PU_I+IdVD" , _alias )
+CREATE_INDEX("5","idFirma+dtos(datdok)+podbr+idvd+brdok", _alias )
+CREATE_INDEX("6","idFirma+IdTarifa+idroba", _alias )
+CREATE_INDEX("7","idroba+idvd", _alias )
+CREATE_INDEX("8","mkonto", _alias )
+CREATE_INDEX("9","pkonto", _alias )
+CREATE_INDEX("DAT","datdok", _alias )
+CREATE_INDEX("MU_I", "mu_i+mkonto+idfirma+idvd+brdok", _alias )
+CREATE_INDEX("MU_I2","mu_i+idfirma+idvd+brdok", _alias )
+CREATE_INDEX("PU_I", "pu_i+pkonto+idfirma+idvd+brdok", _alias )
+CREATE_INDEX("PU_I2","pu_i+idfirma+idvd+brdok", _alias )
+CREATE_INDEX("PMAG", "idfirma+mkonto+idpartner+idvd+dtos(datdok)", _alias )
 
-CREATE_INDEX("1","idFirma+IdVD+BrDok+RBr", "KALK")
-CREATE_INDEX("2","idFirma+idvd+brdok+IDTarifa","KALK")
-CREATE_INDEX("3","idFirma+mkonto+idroba+dtos(datdok)+podbr+MU_I+IdVD", "KALK")
-CREATE_INDEX("4","idFirma+Pkonto+idroba+dtos(datdok)+podbr+PU_I+IdVD" ,"KALK")
-CREATE_INDEX("5","idFirma+dtos(datdok)+podbr+idvd+brdok","KALK")
-CREATE_INDEX("6","idFirma+IdTarifa+idroba","KALK")
-CREATE_INDEX("7","idroba+idvd", "KALK")
-CREATE_INDEX("8","mkonto", "KALK")
-CREATE_INDEX("9","pkonto","KALK")
-CREATE_INDEX("DAT","datdok", "KALK")
-CREATE_INDEX("MU_I", "mu_i+mkonto+idfirma+idvd+brdok","KALK")
-CREATE_INDEX("MU_I2","mu_i+idfirma+idvd+brdok","KALK")
-CREATE_INDEX("PU_I", "pu_i+pkonto+idfirma+idvd+brdok","KALK")
-CREATE_INDEX("PU_I2","pu_i+idfirma+idvd+brdok","KALK")
-CREATE_INDEX("PMAG", "idfirma+mkonto+idpartner+idvd+dtos(datdok)","KALK")
 
-// priprema itd...
+// -----------------------------------------------
+// TABELE PRIPREME
+// -----------------------------------------------
 
-// kalk_pripr
+// -----------------------------------------------
+// KALK_PRIPR
+// -----------------------------------------------
+
 _alias := "KALK_PRIPR"
 _table_name := "kalk_pripr"
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2( _alias, aDbf )
-endif
+
+IF_NOT_FILE_DBF_CREATE
+
 CREATE_INDEX("1","idFirma+IdVD+BrDok+RBr", _alias )
 CREATE_INDEX("2","idFirma+idvd+brdok+IDTarifa", _alias )
 CREATE_INDEX("3","idFirma+idvd+brdok+idroba+rbr", _alias )
 CREATE_INDEX("4","idFirma+idvd+idroba", _alias )
 CREATE_INDEX("5","idFirma+idvd+idroba+STR(mpcsapp,12,2)", _alias )
 
-// kalk_pripr2
+
+// -----------------------------------------------
+// KALK_PRIPR2
+// -----------------------------------------------
+
 _alias := "KALK_PRIPR2"
 _table_name := "kalk_pripr2"
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2( _alias, aDbf )
-endif
-CREATE_INDEX("1","idFirma+IdVD+BrDok+RBr","kalk_pripr2")
-CREATE_INDEX("2","idFirma+idvd+brdok+IDTarifa","kalk_pripr2")
 
-// kalk_pripr9
+IF_NOT_FILE_DBF_CREATE
+
+CREATE_INDEX("1","idFirma+IdVD+BrDok+RBr", _alias )
+CREATE_INDEX("2","idFirma+idvd+brdok+IDTarifa", _alias )
+
+// -----------------------------------------------
+// KALK_PRIPR2
+// -----------------------------------------------
+
 _alias := "KALK_PRIPR9"
 _table_name := "kalk_pripr9"
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2( _alias, aDbf )
-endif
-CREATE_INDEX("1","idFirma+IdVD+BrDok+RBr","kalk_pripr9")
-CREATE_INDEX("2","idFirma+idvd+brdok+IDTarifa","kalk_pripr9")
-CREATE_INDEX("3","dtos(datdok)+mu_i+pu_i","kalk_pripr9")
 
-// _kalk
+IF_NOT_FILE_DBF_CREATE
+
+CREATE_INDEX( "1","idFirma+IdVD+BrDok+RBr", _alias )
+CREATE_INDEX( "2","idFirma+idvd+brdok+IDTarifa", _alias )
+CREATE_INDEX( "3","dtos(datdok)+mu_i+pu_i", _alias )
+
+
+// -----------------------------------------------
+// _KALK
+// -----------------------------------------------
+
 _alias := "_KALK"
 _table_name := "_kalk"
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2( _alias, aDbf )
-endif
-CREATE_INDEX("1","idFirma+IdVD+BrDok+RBr","_KALK")
+
+IF_NOT_FILE_DBF_CREATE
+
+CREATE_INDEX("1","idFirma+IdVD+BrDok+RBr", _alias )
 
 
-// kalk_doks2
-aDbf:={}
+
+// -----------------------------------------------
+// KALK_DOKS2
+// -----------------------------------------------
+
+aDbf := {}
 AADD(aDBf,{ 'IDFIRMA'             , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'IDvd'                , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'BRDOK'               , 'C' ,   8 ,  0 })
@@ -262,13 +275,17 @@ AADD(aDBf,{ 'Opis'                , 'C' ,  20 ,  0 })
 AADD(aDBf,{ 'K1'                , 'C' ,  1 ,  0 })
 AADD(aDBf,{ 'K2'                , 'C' ,  2 ,  0 })
 AADD(aDBf,{ 'K3'                , 'C' ,  3 ,  0 })
-if !FILE(f18_ime_dbf( "kalk_doks2" ))
-    DBcreate2( "kalk_doks2", aDbf )
-    reset_semaphore_version( "kalk_doks2" )
-	my_use( "kalk_doks2" )
-    close all
-endif
-CREATE_INDEX( "1", "IdFirma+idvd+brdok", "kalk_doks2" )
+
+_alias := "KALK_DOKS2"
+_table_name := "kalk_doks2"
+
+IF_NOT_FILE_DBF_CREATE
+
+IF_C_RESET_SEMAPHORE
+
+CREATE_INDEX( "1", "IdFirma+idvd+brdok", _alias )
 
 
 return .t.
+
+

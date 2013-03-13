@@ -62,8 +62,6 @@ if (nArea<>-1)
 	CreSystemDb(nArea)
 endif
 
-CreFMKPI()
-
 if IsPlanika() 
 
     aDbf:={}

@@ -1,3 +1,7 @@
+1.4.138 2013-03-13, vsasa
+
+  - f18, kreiranje dbf tabela, korekcije [#30524](http://redmine.bring.out.ba/issues/30524)
+ 
 1.4.137 2013-03-12, vsasa
 
   - fin, parametri proizvoljnih izvještaja

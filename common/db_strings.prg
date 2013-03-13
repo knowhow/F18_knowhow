@@ -11,6 +11,9 @@
 
 
 #include "fmk.ch"
+#include "cre_all.ch"
+
+
 
 // otvaranje sifrarnika strings
 function p_strings(cId, dx, dy)
@@ -959,62 +962,7 @@ Gather()
 
 return
 
-// kreiranje tabele strings
-function cre_strings()
-local aDbf
 
-// STRINGS.DBF
-cIme := "strings.dbf"
-if !File( f18_ime_dbf("strings"))
-	aDBf := g_str_fields()
-   	DbCreate2( SIFPATH + cIme, aDbf)
-endif
-
-CREATE_INDEX("1", "STR(ID,10,0)", SIFPATH + cIme )
-CREATE_INDEX("2", "OZNAKA+STR(ID,10,0)", SIFPATH + cIme )
-CREATE_INDEX("3", "OZNAKA+STR(VEZA_1,10,0)+STR(ID,10,0)", SIFPATH + cIme )
-CREATE_INDEX("4", "OZNAKA+STR(VEZA_1,10,0)+NAZ", SIFPATH + cIme )
-CREATE_INDEX("5", "OZNAKA+STR(VEZA_1,10,0)+STR(VEZA_2,10,0)", SIFPATH + cIme )
-
-return
-
-
-// vraca matricu sa definicijom polja
-static function g_str_fields()
-// aDbf => 
-//    id   veza_1   veza_2   oznaka   aktivan   naz
-// -------------------------------------------------------------
-//  (grupe)
-//     1                     R_GRUPE     D      obuca
-//     2                     R_GRUPE     D      kreme
-//  (atributi)
-//     3                     R_D_ATRIB   D      proizvodjac
-//     4                     R_D_ATRIB   D      lice
-//     5                     R_D_ATRIB   D      sastav
-//  (grupe - atributi)
-//     6       1         3   R_G_ATRIB   D      obuca / proizvodjac
-//     7       1         4   R_G_ATRIB   D      obuca / lice
-//     8       2         5   R_G_ATRIB   D      kreme / sastav
-//  (dodatni atributi - dozvoljene vrijednosti)
-//     9       6             ATRIB_DOZ   D      proizvodjac 1
-//    10       6             ATRIB_DOZ   D      proizvodjac 2
-//    11       6             ATRIB_DOZ   D      proizvodjac 3
-//    12       6             ATRIB_DOZ   D      proizvodjac n...
-//    13       7             ATRIB_DOZ   D      lice 1
-//    14       7             ATRIB_DOZ   D      lice 2 ...
-//  (vrijednosti za artikle)
-//    15      -1             01MCJ12002  D      9#13 
-//    16      -1             01MCJ13221  D      10#14
-// itd....
-
-aDbf := {}
-AADD(aDBf,{ "ID"       , "N", 10, 0 })
-AADD(aDBf,{ "VEZA_1"   , "N", 10, 0 })
-AADD(aDBf,{ "VEZA_2"   , "N", 10, 0 })
-AADD(aDBf,{ "OZNAKA"   , "C", 10, 0 })
-AADD(aDBf,{ "AKTIVAN"  , "C",  1, 0 })
-AADD(aDBf,{ "NAZ"      , "C",200, 0 })
-return aDbf
 
 
 

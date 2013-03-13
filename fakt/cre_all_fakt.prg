@@ -20,6 +20,7 @@ local _created
 local _tbl
 
 
+// ---------------------------------------------------
 // FAKT_FAKT
 // ---------------------------------------------------
 
@@ -82,7 +83,7 @@ CREATE_INDEX("8", "datdok", _alias)
 CREATE_INDEX("IDPARTN","idpartner", _alias)
 
 // ----------------------------------------------------------------------------
-// fakt_pripr
+// FAKT_PRIPR
 // ----------------------------------------------------------------------------
 
 _alias := "FAKT_PRIPR"
@@ -95,9 +96,10 @@ CREATE_INDEX("2", "IdFirma+dtos(datdok)", _alias)
 CREATE_INDEX("3", "IdFirma+idroba+rbr", _alias)
 
 // ----------------------------------------------------------------------------
-// fakt_pripr9
+// FAKT_PRIPR9
 // opcija smece
 // ----------------------------------------------------------------------------
+
 _alias := "FAKT_PRIPR9"
 _table_name := "fakt_pripr9"
 
@@ -107,8 +109,9 @@ CREATE_INDEX("1","IdFirma+idtipdok+brdok+rbr+podbr", _alias)
 CREATE_INDEX("2","IdFirma+dtos(datdok)", _alias)
 CREATE_INDEX("3","IdFirma+idroba+rbr", _alias)
 
+
 // ----------------------------------------------------------------------------
-// _fakt
+// FAKT__FAKT ( _FAKT )
 // ----------------------------------------------------------------------------
 _alias := "_FAKT"
 _table_name := "fakt__fakt"
@@ -122,7 +125,7 @@ CREATE_INDEX("1", "IdFirma+idtipdok+brdok+rbr+podbr", _alias)
 // FAKT_DOKS
 // ----------------------------------------------------------------------------
     
-aDbf:={}
+aDbf := {}
 AADD(aDBf, { 'IDFIRMA'             , 'C' ,   2 ,  0 })
 AADD(aDBf, { 'IdTIPDok'            , 'C' ,   2 ,  0 })
 AADD(aDBf, { 'BRDOK'               , 'C' ,   8 ,  0 })
@@ -194,8 +197,11 @@ IF_C_RESET_SEMAPHORE
 CREATE_INDEX("1","IdFirma+idtipdok+brdok", _alias )
 
 
-// fakt atributi
-aDbf:={}
+// ---------------------------------------------------
+// FAKT_ATRIBUTI
+// ---------------------------------------------------
+
+aDbf := {}
 AADD(aDBf,{ 'IDFIRMA'   , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'IDTIPDOK'  , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'BRDOK'     , 'C' ,   8 ,  0 })
@@ -212,8 +218,12 @@ IF_NOT_FILE_DBF_CREATE
 CREATE_INDEX("1", {"idfirma+idtipdok+brdok+rbr+atribut", ".t.", .t.}, _alias )
 
 
-// UPL.DBF
-aDBf:={}
+
+// ---------------------------------------------------
+// FAKT_UPL
+// ---------------------------------------------------
+
+aDBf := {}
 AADD(aDBf,{'DATUPL'     ,'D', 8,0})
 AADD(aDBf,{'IDPARTNER'  ,'C', 6,0})
 AADD(aDBf,{'OPIS'       ,'C',30,0})
@@ -229,10 +239,11 @@ CREATE_INDEX("1","IDPARTNER+DTOS(DATUPL)", _alias )
 CREATE_INDEX("2","IDPARTNER", _alias )
 
 
-if (nArea==-1 .or. nArea==(F_FTXT))
-        
-// FTXT.DBF
-aDbf:={}
+// ---------------------------------------------------
+// FAKT_FTXT
+// ---------------------------------------------------
+
+aDbf := {}
 AADD(aDBf,{'ID'  ,'C',  2 ,0})
 AADD(aDBf,{'NAZ' ,'C',340 ,0})
 
@@ -244,10 +255,7 @@ IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX("ID","ID", _alias )
 
-
 return .t.
-
-
 
 
 

@@ -61,68 +61,6 @@ if (nArea<>-1)
 	CreSystemDb(nArea)
 endif
 
-if (nArea==-1 .or. nArea==(F_UPL))
-	
-	//UPL.DBF
-	aDBf:={}
-   	AADD(aDBf,{'DATUPL'     ,'D', 8,0})
-   	AADD(aDBf,{'IDPARTNER'  ,'C', 6,0})
-   	AADD(aDBf,{'OPIS'       ,'C',30,0})
-   	AADD(aDBf,{'IZNOS'      ,'N',12,2})
-   	if !FILE(f18_ime_dbf("UPL"))
-		DBcreate2( "UPL", aDbf )
-		reset_semaphore_version("fakt_upl")
-		my_use("upl")
-		close all
-	endif
-
-	CREATE_INDEX("1","IDPARTNER+DTOS(DATUPL)",KUMPATH+"UPL")
-	CREATE_INDEX("2","IDPARTNER",KUMPATH+"UPL")
-endif
-
-
-if (nArea==-1 .or. nArea==(F_FTXT))
-        
-	//FTXT.DBF
-	aDbf:={}
-        AADD(aDBf,{'ID'  ,'C',  2 ,0})
-        AADD(aDBf,{'NAZ' ,'C',340 ,0})
-	if !FILE(f18_ime_dbf("FTXT"))
-        	DBcreate2("FTXT",aDbf)
-			reset_semaphore_version("fakt_ftxt")
-			my_use("ftxt")
-			close all
-	endif
-	
-	CREATE_INDEX("ID","ID",SIFPATH+"FTXT")
-endif
-
-
-if (nArea==-1 .or. nArea==(F_FAKT_DOKS2))
-
-    	aDbf:={}
-	AADD(aDBf,{ "IDFIRMA"      , "C" ,   2 ,  0 })
-	AADD(aDBf,{ "IDTIPDOK"     , "C" ,   2 ,  0 })
-	AADD(aDBf,{ "BRDOK"        , "C" ,   8 ,  0 })
-	AADD(aDBf,{ "K1"           , "C" ,  15 ,  0 })
-	AADD(aDBf,{ "K2"           , "C" ,  15 ,  0 })
-	AADD(aDBf,{ "K3"           , "C" ,  15 ,  0 })
-	AADD(aDBf,{ "K4"           , "C" ,  20 ,  0 })
-	AADD(aDBf,{ "K5"           , "C" ,  20 ,  0 })
-	AADD(aDBf,{ "N1"           , "N" ,  15 ,  2 })
-	AADD(aDBf,{ "N2"           , "N" ,  15 ,  2 })
-	
-	if !FILE(f18_ime_dbf("fakt_doks2"))
-        	DBcreate2("FAKT_DOKS2",aDbf)
-			reset_semaphore_version("fakt_doks2")
-			my_use("fakt_doks2")
-			close all
-	endif
-	
-	CREATE_INDEX("1","IdFirma+idtipdok+brdok", "FAKT_DOKS2")
-
-endif
-
 
 /* 
 if glDistrib

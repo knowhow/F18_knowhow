@@ -10,12 +10,18 @@
  */
 
 #include "fmk.ch"
+#include "cre_all.ch"
+
 
 function cre_all_fakt( ver )
 local aDbf
 local _alias, _table_name
 local _created
 local _tbl
+
+
+// FAKT_FAKT
+// ---------------------------------------------------
 
 aDbf:={}
 AADD(aDBf,{ 'IDFIRMA'   , 'C' ,   2 ,  0 })
@@ -39,8 +45,6 @@ AADD(aDBf,{ 'K2'        , 'C' ,   4 ,  0 })
 AADD(aDBf,{ 'M1'        , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'TXT'       , 'M' ,  10 ,  0 })
 AADD(aDBf,{ 'IDVRSTEP'  , 'C' ,   2 ,  0 })
-
-// hernad??
 AADD(aDBf,{ 'IDPM'      , 'C' ,  15 ,  0 })
 AADD(aDBf,{ 'FISC_RN'   , 'I' ,   4 ,  0 })
 AADD(aDBf,{ 'C1'        , 'C' ,  20 ,  0 })
@@ -49,14 +53,10 @@ AADD(aDBf,{ 'C3'        , 'C' ,  20 ,  0 })
 AADD(aDBf,{ 'N1'        , 'N' ,  10 ,  3 })
 AADD(aDBf,{ 'N2'        , 'N' ,  10 ,  3 })
 
-_created := .f.
 _alias := "FAKT"
 _table_name := "fakt_fakt"
 
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2(_alias, aDbf)
-    _created := .t.
-endif
+IF_NOT_FILE_DBF_CREATE
 
 // 0.8.3
 if ver["current"] < 00803
@@ -71,12 +71,8 @@ if ver["current"] < 00803
 
 endif
 
-if _created
-    reset_semaphore_version(_table_name)
-    my_use(_alias)
-    use
-endif
- 
+IF_C_RESET_SEMAPHORE
+
 CREATE_INDEX("1", "IdFirma+idtipdok+brdok+rbr+podbr", _alias)
 CREATE_INDEX("2", "IdFirma+dtos(datDok)+idtipdok+brdok+rbr", _alias)
 CREATE_INDEX("3","idroba+dtos(datDok)", _alias)
@@ -89,13 +85,10 @@ CREATE_INDEX("IDPARTN","idpartner", _alias)
 // fakt_pripr
 // ----------------------------------------------------------------------------
 
-_created := .f.
 _alias := "FAKT_PRIPR"
 _table_name := "fakt_pripr"
-if !FILE(f18_ime_dbf(_alias))
-    DBcreate2(_alias, aDbf)
-    _created := .t.
-endif
+
+IF_NOT_FILE_DBF_CREATE
 
 CREATE_INDEX("1", "IdFirma+idtipdok+brdok+rbr+podbr", _alias)
 CREATE_INDEX("2", "IdFirma+dtos(datdok)", _alias)
@@ -107,10 +100,9 @@ CREATE_INDEX("3", "IdFirma+idroba+rbr", _alias)
 // ----------------------------------------------------------------------------
 _alias := "FAKT_PRIPR9"
 _table_name := "fakt_pripr9"
-if !FILE(f18_ime_dbf(_alias))
-    DBcreate2(_alias, aDbf)
-endif
- 
+
+IF_NOT_FILE_DBF_CREATE
+
 CREATE_INDEX("1","IdFirma+idtipdok+brdok+rbr+podbr", _alias)
 CREATE_INDEX("2","IdFirma+dtos(datdok)", _alias)
 CREATE_INDEX("3","IdFirma+idroba+rbr", _alias)
@@ -120,17 +112,16 @@ CREATE_INDEX("3","IdFirma+idroba+rbr", _alias)
 // ----------------------------------------------------------------------------
 _alias := "_FAKT"
 _table_name := "fakt__fakt"
-if !FILE(f18_ime_dbf(_alias))
-    DBcreate2(_alias, aDbf)
-endif
+
+IF_NOT_FILE_DBF_CREATE
+
 CREATE_INDEX("1", "IdFirma+idtipdok+brdok+rbr+podbr", _alias)
 
 
 // ----------------------------------------------------------------------------
-// fakt_doks
+// FAKT_DOKS
 // ----------------------------------------------------------------------------
     
-
 aDbf:={}
 AADD(aDBf, { 'IDFIRMA'             , 'C' ,   2 ,  0 })
 AADD(aDBf, { 'IdTIPDok'            , 'C' ,   2 ,  0 })
@@ -146,24 +137,17 @@ AADD(aDBf, { 'IDPARTNER'           , 'C' ,   6 ,  0 })
 AADD(aDBf, { 'IDVRSTEP'            , 'C' ,   2 ,  0 })
 AADD(aDBf, { 'DATPL'               , 'D' ,   8 ,  0 })
 AADD(aDBf, { 'IDPM'                , 'C' ,  15 ,  0 })
-
-// hernad: nisam nasao da se igdje koristi ?!
 AADD(aDBf, { 'DOK_VEZA'            , 'C' , 150 ,  0 })
-
 AADD(aDBf, { 'OPER_ID'             , 'N' ,   3 ,  0 })
 AADD(aDBf, { 'FISC_RN'             , 'N' ,  10 ,  0 })
 AADD(aDBf, { 'DAT_ISP'             , 'D' ,   8 ,  0 })
 AADD(aDBf, { 'DAT_VAL'             , 'D' ,   8 ,  0 })
 AADD(aDBf, { 'DAT_OTPR'            , 'D' ,   8 ,  0 })
 
-_created := .f.
 _alias := "FAKT_DOKS"
 _table_name := "fakt_doks"
 
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2(_alias, aDbf)
-    _created := .t.
-endif
+IF_NOT_FILE_DBF_CREATE
 
 // 0.4.3
 if ver["current"] < 0403
@@ -176,11 +160,7 @@ if ver["current"] < 0500
     modstru({"*" + _table_name, "C OPER_ID N 3 0 OPER_ID N 10 0"})
 endif
 
-if _created 
-    reset_semaphore_version(_table_name)
-    my_use(_alias)
-    use
-endif
+IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX("1", "IdFirma+idtipdok+brdok", _alias)
 CREATE_INDEX("2", "IdFirma+idtipdok+partner", _alias)
@@ -189,6 +169,29 @@ CREATE_INDEX("4", "idtipdok", _alias)
 CREATE_INDEX("5", "datdok", _alias)
 CREATE_INDEX("6", "IdFirma+idpartner+idtipdok", _alias)
 
+// ---------------------------------
+// FAKT_DOKS2
+// ---------------------------------
+
+aDbf:={}
+AADD(aDBf,{ "IDFIRMA"      , "C" ,   2 ,  0 })
+AADD(aDBf,{ "IDTIPDOK"     , "C" ,   2 ,  0 })
+AADD(aDBf,{ "BRDOK"        , "C" ,   8 ,  0 })
+AADD(aDBf,{ "K1"           , "C" ,  15 ,  0 })
+AADD(aDBf,{ "K2"           , "C" ,  15 ,  0 })
+AADD(aDBf,{ "K3"           , "C" ,  15 ,  0 })
+AADD(aDBf,{ "K4"           , "C" ,  20 ,  0 })
+AADD(aDBf,{ "K5"           , "C" ,  20 ,  0 })
+AADD(aDBf,{ "N1"           , "N" ,  15 ,  2 })
+AADD(aDBf,{ "N2"           , "N" ,  15 ,  2 })
+
+_alias := "FAKT_DOKS2"
+_table_name := "fakt_doks2"
+	
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
+
+CREATE_INDEX("1","IdFirma+idtipdok+brdok", _alias )
 
 
 // fakt atributi
@@ -200,17 +203,47 @@ AADD(aDBf,{ 'RBR'       , 'C' ,   3 ,  0 })
 AADD(aDBf,{ 'ATRIBUT'   , 'C' ,  50 ,  0 })
 AADD(aDBf,{ 'VALUE'     , 'C' , 250 ,  0 })
 
-_created := .f.
 _alias := "FAKT_ATRIB"
 _table_name := "fakt_pripr_atributi"
 
-if !FILE( f18_ime_dbf( _alias) )
-    DBCREATE2( _alias, aDbf )
-    _created := .t.
-endif
+IF_NOT_FILE_DBF_CREATE
 
 // unique index
 CREATE_INDEX("1", {"idfirma+idtipdok+brdok+rbr+atribut", ".t.", .t.}, _alias )
+
+
+// UPL.DBF
+aDBf:={}
+AADD(aDBf,{'DATUPL'     ,'D', 8,0})
+AADD(aDBf,{'IDPARTNER'  ,'C', 6,0})
+AADD(aDBf,{'OPIS'       ,'C',30,0})
+AADD(aDBf,{'IZNOS'      ,'N',12,2})
+
+_alias := "UPL"
+_table_name := "fakt_upl"
+
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
+
+CREATE_INDEX("1","IDPARTNER+DTOS(DATUPL)", _alias )
+CREATE_INDEX("2","IDPARTNER", _alias )
+
+
+if (nArea==-1 .or. nArea==(F_FTXT))
+        
+// FTXT.DBF
+aDbf:={}
+AADD(aDBf,{'ID'  ,'C',  2 ,0})
+AADD(aDBf,{'NAZ' ,'C',340 ,0})
+
+_alias := "FTXT"
+_table_name := "fakt_ftxt"
+
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
+
+CREATE_INDEX("ID","ID", _alias )
+
 
 return .t.
 

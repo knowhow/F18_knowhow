@@ -388,35 +388,6 @@ static function _chk_povrat_zabrana( vars )
 local _area
 local _ret := .t.
 
-// provjeri pravila
-if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","POVRATDOK" + vars["idtipdok"] ))
-    
-    if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","POVRATDOKDATUM" + vars["idtipdok"] )) == .f.
-    
-    _area := SELECT()
-
-    select fakt
-    HSEEK vars["idfirma"] + vars["idtipdok"] + vars["brdok"]
-    if FOUND()
-        if fakt->datdok <> DATE()
-            msgbeep("Datum dokumenta <> tekuci datum#Opcija onemogucena !")
-            close all
-            _ret := .f.
-            return .f.
-        endif
-    endif
-    
-    SELECT ( _area )
-   
-   endif
-
-else        
-    msgbeep( cZabrana ) 
-    close all
-    _ret := .f.
-    return _ret
-endif
-
 // fiscal zabrana
 // ako je fiskalni racun u vezi, ovo nema potrebe vracati
 // samo uz lozinku
@@ -431,10 +402,14 @@ if fiscal_opt_active() .and. vars["idtipdok"] $ "10#11"
     if FOUND()
         if ( fakt_doks->fisc_rn <> 0 .and. fakt_doks->iznos > 0 ) .or. ;
             ( fakt_doks->fisc_rn <> 0 .and. fakt_doks->fisc_st = 0 .and. fakt_doks->iznos < 0 )
+
             // veza sa fisc_rn postoji
             msgbeep("Za ovaj dokument je izdat fiskalni racun.#Opcija povrata je onemogucena !!!")
             _ret := .f.
+
+            select ( _area )
             return _ret
+
         endif
     endif
     

@@ -38,24 +38,29 @@ elseif GetObrStatus( cRj, nGodina, nMjesec )=="N"
     return
 endif
 
+select ( F_LD )
+if !USED()
+    O_LD
+endif
+
 do while .t.
     
-    lSaveObracun:=.f.
+    lSaveObracun := .f.
     
-    PrikaziBox(@lSaveObracun)
+    PrikaziBox( @lSaveObracun )
 
-    if (lSaveObracun)
+    if ( lSaveObracun )
 
         select ld
 
-        cIdRadn:=field->idRadn
+        cIdRadn := field->idRadn
 
-        if (_UIznos<0)
+        if ( _UIznos < 0 )
             Beep(2)
             Msg(Lokal("Radnik ne moze imati platu u negativnom iznosu!!!"))
         endif
 
-        nPom:=0
+        nPom := 0
 
         for i := 1 to cLDPolja
             cPom:=PADL(ALLTRIM(STR(i)),2,"0")
@@ -88,10 +93,15 @@ do while .t.
         endif
 
     else 
+
+        select ( F_LD )
+        // nije se zapravo ni uslo u LD tabelu...
+        if !USED()
+            return
+        endif
    
-        altd() 
         select ld
-    
+
         if lNovi  
             // ako je novi zapis  .and. ESCAPE
             delete_with_rlock()

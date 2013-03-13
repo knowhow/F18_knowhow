@@ -1,3 +1,9 @@
+1.4.139 2013-03-13, vsasa
+
+  - fprint, answer file u log levelu 3 umjesto 5
+  - fakt, povrat dokumenta, zabrana ako je fiskalni
+  - ld, unos obracuna, izlazak sa ESC hendliranje
+ 
 1.4.138 2013-03-13, vsasa
 
   - f18, kreiranje dbf tabela, korekcije [#30524](http://redmine.bring.out.ba/issues/30524)

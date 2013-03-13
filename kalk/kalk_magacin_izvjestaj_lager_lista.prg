@@ -45,6 +45,7 @@ local _curr_user := "<>"
 local lExpDbf := .f.
 local cExpDbf := "N"
 local cMoreInfo := "N"
+local _vpc_iz_sif := "D"
 
 // ulaz, izlaz parovno
 local nTUlazP
@@ -79,6 +80,10 @@ cIdKonto:=padr("1310", gDuzKonto)
 
 private nVPVU:=0
 private nVPVI:=0
+
+private nVPVRU:=0
+private nVPVRI:=0
+
 private nNVU:=0
 private nNVI:=0
 
@@ -148,12 +153,12 @@ if !fPocStanje
  dDatDo := fetch_metric("kalk_lager_lista_datum_do", _curr_user, dDatDo )
  cMinK := fetch_metric("kalk_lager_lista_minimalne_kolicine", _curr_user, cMinK )
  cDoNab := fetch_metric("kalk_lager_Lista_prikaz_do_nabavne", _curr_user, cDoNab )
-
+ _vpc_iz_sif := fetch_metric("kalk_lager_Lista_vpc_iz_sif", _curr_user, _vpc_iz_sif )
 endif
 
 cArtikalNaz:=SPACE(30)
 
-Box(,21+IF(lPoNarudzbi,2,0),60)
+Box(,21+IF(lPoNarudzbi,2,0),70)
 	
 	do while .t.
  		if gNW $ "DX"
@@ -171,13 +176,16 @@ Box(,21+IF(lPoNarudzbi,2,0),60)
  		@ m_x+7,m_y+2 SAY "Prikaz Nab.vrijednosti D/N" GET cPNab  valid cpnab $ "DN" pict "@!"
  		
  		@ m_x+7,col()+1 SAY "Prikaz samo do nab.vr. D/N" GET cDoNab  valid cDoNab $ "DN" pict "@!"
-		if (IsPDV() .and. (IsMagPNab() .or. IsMagSNab()))
+
+		if ( IsPDV() .and. ( IsMagPNab() .or. IsMagSNab() ) )
 			@ m_x+8,m_y+2 SAY "Pr.stavki kojima je NV 0 D/N" GET cNula  valid cNula $ "DN" pict "@!"
  			@ m_x+9,m_y+2 SAY "Prikaz 'ERR' ako je NV/Kolicina<>NC " GET cErr pict "@!" valid cErr $ "DN"
+            @ m_x+9,col()+1 SAY "VPC iz sifrarnika robe (D/N)?" GET _vpc_iz_sif PICT "@!" VALID _vpc_iz_sif $ "DN"
 		else
 			@ m_x+8,m_y+2 SAY "Prikaz stavki kojima je VPV 0 D/N" GET cNula  valid cNula $ "DN" pict "@!"
  			@ m_x+9,m_y+2 SAY "Prikaz 'ERR' ako je VPV/Kolicina<>VPC " GET cErr pict "@!" valid cErr $ "DN"
  		endif
+
 		@ m_x+10,m_y+2 SAY "Datum od " GET dDatOd
  		@ m_x+10,col()+2 SAY "do" GET dDatDo
  		@ m_x+12,m_y+2 SAY "Postaviti srednju NC u sifrarnik" GET cNCSif pict "@!" valid ((cpnab=="D" .and. cncsif=="D") .or. cNCSif=="N")
@@ -189,6 +197,7 @@ Box(,21+IF(lPoNarudzbi,2,0),60)
 		endif
 
 		@ m_x+14,m_y+2 SAY "Prikaz samo kriticnih zaliha (D/N/O) ?" GET cMinK pict "@!" valid cMink$"DNO"
+
  		if IsVindija()
 			cGr:=SPACE(10)
 			cPSPDN := "N"
@@ -265,6 +274,7 @@ if !fPocStanje
  set_metric("kalk_lager_lista_datum_do", f18_user(), dDatDo )
  set_metric("kalk_lager_lista_minimalne_kolicine", f18_user(), cMinK )
  set_metric("kalk_lager_lista_prikaz_do_nabavne", f18_user(), cDoNab )
+ set_metric("kalk_lager_Lista_vpc_iz_sif", _curr_user, _vpc_iz_sif )
 
 endif
 
@@ -437,6 +447,8 @@ nTUlazP:=0
 nTIzlazP:=0
 nTVPVU:=0
 nTVPVI:=0
+nTVPVRU:=0
+nTVPVRI:=0
 nTNVU:=0
 nTNVI:=0
 nRazlika := 0
@@ -460,10 +472,16 @@ do while !eof() .and. IIF(fSint .and. lSabKon, idfirma, idfirma+mkonto ) = ;
 
 	nUlaz:=0
 	nIzlaz:=0
+
 	nVPVU:=0
 	nVPVI:=0
+
+	nVPVRU:=0
+	nVPVRI:=0
+	
 	nNVU:=0
 	nNVI:=0
+
 	nRabat:=0
 
 	cMIFakt := ""
@@ -587,20 +605,25 @@ do while !eof() .and. IIF(fSint .and. lSabKon, idfirma, idfirma+mkonto ) = ;
      			nUlaz+=nKolicina
      			SumirajKolicinu(nKolicina, 0, @nTUlazP, @nTIzlazP)
      			nCol1:=pcol()+1
-     			if koncij->naz=="P2"
-      				nVPVU+=round(roba->plc*(kolicina-gkolicina-gkolicin2), gZaokr)
+     			if koncij->naz == "P2"
+      				nVPVU += round( roba->plc * ( kolicina-gkolicina-gkolicin2 ), gZaokr )
+      				nVPVRU += round( roba->plc * ( kolicina-gkolicina-gkolicin2 ), gZaokr )
      			else
-      				nVPVU+=round(roba->vpc*(kolicina-gkolicina-gkolicin2) , gZaokr)
+      				nVPVU += round( roba->vpc * ( kolicina - gkolicina - gkolicin2 ) , gZaokr )
+      				nVPVRU += round( field->vpc * ( kolicina - gkolicina - gkolicin2 ) , gZaokr )
      			endif
+
      			nNVU+=round( nc*(kolicina-gkolicina-gkolicin2) , gZaokr)
    		else
      			nKolicina:=-field->kolicina
      			nIzlaz+=nKolicina
      			SumirajKolicinu(0, nKolicina, @nTUlazP, @nTIzlazP)
      			if koncij->naz=="P2"
-        			nVPVI-=round( roba->plc*kolicina , gZaokr)
+        			nVPVI-=round( roba->plc * kolicina , gZaokr)
+        			nVPVRI-=round( roba->plc * kolicina , gZaokr)
      			else
-        			nVPVI-=round( roba->vpc*kolicina , gZaokr)
+        			nVPVI-=round( roba->vpc * kolicina , gZaokr )
+        			nVPVRI-=round( field->vpc * kolicina , gZaokr )
      			endif
      			nNVI-=round( nc*kolicina , gZaokr)
     		endif
@@ -614,8 +637,10 @@ do while !eof() .and. IIF(fSint .and. lSabKon, idfirma, idfirma+mkonto ) = ;
     		SumirajKolicinu(0, nKolicina, @nTUlazP, @nTIzlazP)
     		if koncij->naz=="P2"
       			nVPVI+=round( roba->plc*kolicina , gZaokr)
+      			nVPVRI+=round( roba->plc*kolicina , gZaokr)
     		else
-			nVPVI+=round( roba->vpc*kolicina , gZaokr)
+			    nVPVI+=round( roba->vpc*kolicina , gZaokr)
+			    nVPVRI+=round( field->vpc * kolicina , gZaokr)
     		endif
     		nRabat+=round(  rabatv/100*vpc*kolicina , gZaokr)
     		nNVI+=ROUND(nc*kolicina, gZaokr)
@@ -632,8 +657,10 @@ do while !eof() .and. IIF(fSint .and. lSabKon, idfirma, idfirma+mkonto ) = ;
      		SumirajKolicinu(0, nKolicina , @nTUlazP, @nTIzlazP)
      		if koncij->naz=="P2"
        			nVPVI+=round( roba->plc*(-kolicina) , gZaokr)
+       			nVPVRI+=round( roba->plc*(-kolicina) , gZaokr)
      		else
        			nVPVI+=round( roba->vpc*(-kolicina) , gZaokr)
+       			nVPVRI+=round( field->vpc * (-kolicina) , gZaokr)
      		endif
      		nRabat+=round(  rabatv/100*vpc*(-kolicina) , gZaokr)
      		nNVI+=ROUND(nc*(-kolicina), gZaokr)
@@ -643,8 +670,10 @@ do while !eof() .and. IIF(fSint .and. lSabKon, idfirma, idfirma+mkonto ) = ;
      		
 		if koncij->naz=="P2"
       			nVPVU+=round(-roba->plc*(kolicina-gkolicina-gkolicin2), gZaokr)
+      			nVPVRU+=round(-roba->plc*(kolicina-gkolicina-gkolicin2), gZaokr)
      		else
       			nVPVU+=round(-roba->vpc*(kolicina-gkolicina-gkolicin2) , gZaokr)
+      			nVPVRU+=round(-field->vpc*(kolicina-gkolicina-gkolicin2) , gZaokr)
      		endif
      		
 		nNVU+=round(-nc*(kolicina-gkolicina-gkolicin2) , gZaokr)
@@ -805,6 +834,7 @@ do while !eof() .and. IIF(fSint .and. lSabKon, idfirma, idfirma+mkonto ) = ;
 
 	// varijanta evidencije sa cijenama
 	if gVarEv == "1"
+
 		if IsMagSNab() .or. IsMagPNab()
  			
 			// NV
@@ -813,12 +843,24 @@ do while !eof() .and. IIF(fSint .and. lSabKon, idfirma, idfirma+mkonto ) = ;
  			@ prow(),pcol()+1 SAY nNVU-nNVI pict gpicdem
  			
 			if IsPDV() .and. cDoNab == "N" 
-			  // PV - samo u pdv rezimu
-			  @ prow(),pcol()+1 SAY nVPVU pict gpicdem
-             		  @ prow(),pcol()+1 SAY nRabat pict gpicdem
-             		  @ prow(),pcol()+1 SAY nVPVI pict gpicdem
-             		  @ prow(),pcol()+1 SAY nVPVU-nVPVI pict gpicdem
-             	        endif
+
+			    // PV - samo u pdv rezimu
+
+                if _vpc_iz_sif == "D"
+                    // sa vpc iz sifrarnika robe
+			        @ prow(),pcol()+1 SAY nVPVU pict gpicdem
+                    @ prow(),pcol()+1 SAY nRabat pict gpicdem
+             	    @ prow(),pcol()+1 SAY nVPVI pict gpicdem
+                    @ prow(),pcol()+1 SAY nVPVU-nVPVI pict gpicdem
+                else
+ 			        // sa vpc iz tabele kalk
+			        @ prow(),pcol()+1 SAY nVPVRU pict gpicdem
+                    @ prow(),pcol()+1 SAY nRabat pict gpicdem
+             	    @ prow(),pcol()+1 SAY nVPVRI pict gpicdem
+                    @ prow(),pcol()+1 SAY nVPVRU-nVPVRI pict gpicdem
+                endif
+
+            endif
 			
 			// provjeri greske sa NC
 			if !(koncij->naz = "P")
@@ -956,6 +998,8 @@ do while !eof() .and. IIF(fSint .and. lSabKon, idfirma, idfirma+mkonto ) = ;
 	nTIzlaz+=nKJMJ*nIzlaz
 	nTVPVU+=nVPVU
 	nTVPVI+=nVPVI
+	nTVPVRU+=nVPVRU
+	nTVPVRI+=nVPVRI	
 	nTNVU+=nNVU
 	nTNVI+=nNVI
 	nTNV+=(nNVU-nNVI)
@@ -982,6 +1026,7 @@ do while !eof() .and. IIF(fSint .and. lSabKon, idfirma, idfirma+mkonto ) = ;
 				nUlaz, nIzlaz, (nUlaz-nIzlaz), ;
 				nNVU, nNVI, ( nNVU - nNVI ), 0, ;
 				nVPVU, nVPVI, (nVPVU - nVPVI), 0, ;
+                nVPVRU, nVPVRI, ;
 				dL_ulaz, dL_izlaz )
 
 		else
@@ -991,7 +1036,9 @@ do while !eof() .and. IIF(fSint .and. lSabKon, idfirma, idfirma+mkonto ) = ;
 				nNVU, nNVI, ( nNVU - nNVI ), ;
 				(nNVU - nNVI)/(nUlaz - nIzlaz), ;
 				nVPVU, nVPVI, ( nVPVU - nVPVI), ;
-				nVPCIzSif, dL_ulaz, dL_izlaz )
+				nVPCIzSif, ;
+                nVPVRU, nVPVRI, ;
+                dL_ulaz, dL_izlaz )
 		endif
 	    endif
 	endif
@@ -1031,11 +1078,19 @@ if gVarEv=="1"
  	    @ prow(),pcol()+1 SAY ntNV pict pic_format( gpicdem, ntNV )
  	    
 	    if IsPDV() .and. cDoNab == "N" 
-	        // PV - samo u pdv rezimu 
-		    @ prow(),pcol()+1 SAY ntVPVU pict pic_format( gpicdem, ntVPVU )
- 		    @ prow(),pcol()+1 SAY ntRabat pict pic_format( gpicdem, ntRabat )
- 		    @ prow(),pcol()+1 SAY ntVPVI pict pic_format( gpicdem, ntVPVI )
- 		    @ prow(),pcol()+1 SAY ntVPVU-NtVPVI pict pic_format( gpicdem, ( ntVPVU - ntVPVI ) )
+            if _vpc_iz_sif == "D"
+	            // PV - samo u pdv rezimu 
+		        @ prow(),pcol()+1 SAY ntVPVU pict pic_format( gpicdem, ntVPVU )
+ 		        @ prow(),pcol()+1 SAY ntRabat pict pic_format( gpicdem, ntRabat )
+ 		        @ prow(),pcol()+1 SAY ntVPVI pict pic_format( gpicdem, ntVPVI )
+ 		        @ prow(),pcol()+1 SAY ntVPVU-NtVPVI pict pic_format( gpicdem, ( ntVPVU - ntVPVI ) )
+            else
+ 	            // PV - samo u pdv rezimu 
+		        @ prow(),pcol()+1 SAY ntVPVRU pict pic_format( gpicdem, ntVPVU )
+ 		        @ prow(),pcol()+1 SAY ntRabat pict pic_format( gpicdem, ntRabat )
+ 		        @ prow(),pcol()+1 SAY ntVPVRI pict pic_format( gpicdem, ntVPVI )
+ 		        @ prow(),pcol()+1 SAY ntVPVRU-NtVPVRI pict pic_format( gpicdem, ( ntVPVRU - ntVPVRI ) )
+            endif
 	    endif
 	    
 	else
@@ -1126,6 +1181,8 @@ AADD( aDbf, { "NV", "N", 15, 5 })
 AADD( aDbf, { "NC", "N", 15, 5 })
 AADD( aDbf, { "PVDUG", "N", 20, 10 })
 AADD( aDbf, { "PVPOT", "N", 20, 10 })
+AADD( aDbf, { "PVRDUG", "N", 20, 10 })
+AADD( aDbf, { "PVRPOT", "N", 20, 10 })
 AADD( aDbf, { "PV", "N", 15, 5 })
 AADD( aDbf, { "PC", "N", 15, 5 })
 AADD( aDbf, { "D_ULAZ", "D", 8, 0 })
@@ -1139,7 +1196,7 @@ return aDbf
 // ------------------------------------------------------------
 static function fill_exp_tbl( nVar, cIdRoba, cSifDob, cNazRoba, cTarifa, ;
 		cJmj, nUlaz, nIzlaz, nSaldo, nNVDug, nNVPot, nNV, nNC, ;
-		nPVDug, nPVPot, nPV, nPC, dL_ulaz, dL_izlaz )
+		nPVDug, nPVPot, nPV, nPC, nPVrdug, nPVrpot, dL_ulaz, dL_izlaz )
 
 local nTArea := SELECT()
 
@@ -1174,6 +1231,10 @@ endif
 
 replace field->pvdug with nPVDug
 replace field->pvpot with nPVPot
+
+replace field->pvrdug with nPVrDug
+replace field->pvrpot with nPVrPot
+
 replace field->pv with nPV
 replace field->pc with nPC
 

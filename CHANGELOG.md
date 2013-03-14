@@ -1,3 +1,7 @@
+1.4.141 2013-03-14, vsasa
+
+  - fakt, ugovori naljepnice, problem sa indeksima
+
 1.4.140 2013-03-14, vsasa
 
   - kalk, TKV, po NC ili po PC, parametar kod povlačenja izvještaja

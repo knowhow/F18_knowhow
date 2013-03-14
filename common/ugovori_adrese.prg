@@ -59,7 +59,7 @@ Box(, 15, 77 )
         @ m_x + 11, m_y + 2 SAY " 4 - kolicina + PTT + mjesto + naziv" 
         @ m_x + 12, m_y + 2 SAY " 5 - idpartner" 
         @ m_x + 13, m_y + 2 SAY " 6 - kolicina"
-        @ m_x + 14, m_y + 2 SAY "odabrana vrijednost:" GET _n_sort VALID _n_sort $ "123456" PICT "9"
+        @ m_x + 14, m_y + 2 SAY "odabrana vrijednost:" GET _n_sort VALID _n_sort $ "1234567" PICT "9"
         READ
 
         IF LASTKEY()==K_ESC
@@ -203,12 +203,7 @@ do while !EOF()
     _rec["idpartner"] := ugov->idpartner
     _rec["kolicina"] := rugov->kolicina
     _rec["idroba"] := rugov->idroba
-
-    // karakterno polje za kolicinu
-    // 0000001
-    // 0000100
-    // itd...
-    _rec["kol_c"] := PADL( ALLTRIM( STR( rugov->kolicina, 12, 0 ) ), 10, "0" )
+    _rec["kol_c"] := PADL( ALLTRIM( STR( rugov->kolicina, 12, 0 ) ), 5, "0" )
 
     _total_kolicina += rugov->kolicina
 
@@ -278,6 +273,10 @@ if _count == 0
     return
 endif
 
+// prebaci naljenpnice za tabelu lab2
+label_to_lab2( _index_sort )
+
+
 MsgBeep( "Ukupno generisano " + ALLTRIM( STR( _count ) ) + ;
         " naljepnica, kolicina: " + ALLTRIM( STR( _total_kolicina, 12, 0 ) ) )
 
@@ -286,7 +285,7 @@ stampa_pregleda_naljepnica( _index_sort )
 
 // stampaj labelu...
 // pozovi funkciju stampanja rtm fajla kroz labeliranje.exe
-f18_rtm_print( "labelu", "labelu", _index_sort, NIL, "labeliranje" )
+f18_rtm_print( "labelu", "lab2", "1", NIL, "labeliranje" )
 
 // otvori ponovo tabele ugovora
 _open_tables()
@@ -296,6 +295,38 @@ PopWA()
 return
 
 
+// -------------------------------------------------------------
+// prebacuje sve iz labelu u lab2 
+// ali tu ima index samo po polju IDX (numerickom)
+// -------------------------------------------------------------
+static function label_to_lab2( index_sort )
+local _rec
+local _count := 0
+
+select labelu
+set order to tag &index_sort
+go top
+
+do while !EOF()
+    
+    _rec := dbf_get_rec()
+    
+    select lab2
+    append blank
+
+    _rec["idx"] := ++_count
+
+    dbf_update_rec( _rec )
+
+    select labelu
+    skip
+
+enddo
+
+select lab2
+use
+
+return .t.
 
 
 
@@ -386,42 +417,62 @@ return
 
 static function _create_labelu_dbf()
 local _dbf := {}
-local _table := "labelu"
+local _table_label := "labelu"
+local _table_label_2 := "lab2"
 
 AADD ( _dbf, { "idroba",    "C",     10, 0 })
 AADD ( _dbf, { "idpartner", "C",      6, 0 })
 AADD ( _dbf, { "destin"  ,  "C",      6, 0 })
-AADD ( _dbf, { "kolicina",  "N",     12, 0 })
-AADD ( _dbf, { "kol_c",     "C",     10, 0 })
+AADD ( _dbf, { "kol_c",     "C",      5, 0 })
 AADD ( _dbf, { "naz" ,      "C",     40, 0 })
 AADD ( _dbf, { "naz2",      "C",     40, 0 })
 AADD ( _dbf, { "ptt" ,      "C" ,    10, 0 })
-AADD ( _dbf, { "mjesto" ,   "C" ,    50, 0 })
-AADD ( _dbf, { "adresa" ,   "C" ,    50, 0 })
+AADD ( _dbf, { "mjesto" ,   "C" ,    20, 0 })
+AADD ( _dbf, { "adresa" ,   "C" ,    40, 0 })
 AADD ( _dbf, { "telefon",   "C" ,    20, 0 })
 AADD ( _dbf, { "fax"    ,   "C" ,    20, 0 })
+AADD ( _dbf, { "kolicina",  "N",     12, 0 })
+AADD ( _dbf, { "idx",       "N",     12, 0 })
 
 select ( F_LABELU )
 use
 
 // brisi tabelu i indeks
 // napravi ponovo
-FERASE( my_home() + _table + ".dbf" )
-FERASE( my_home() + _table + ".cdx" )
+FERASE( my_home() + _table_label + ".dbf" )
+FERASE( my_home() + _table_label + ".cdx" )
 
-Dbcreate( my_home() + _table + ".dbf", _dbf )
+Dbcreate( my_home() + _table_label + ".dbf", _dbf )
 
 select ( F_LABELU )
 use
-my_use_temp( "labelu", my_home() + _table + ".dbf", .f., .f. )
+my_use_temp( "labelu", my_home() + _table_label + ".dbf", .f., .f. )
 
 // indeksiraj tabelu
-index on ( kol_c + mjesto + naz ) tag "1"
+index on ( kol_c + PADR( mjesto, 20, " " ) + PADR( naz, 40, " " ) ) tag "1"
 index on ( mjesto + naz + kol_c ) tag "2"
 index on ( ptt + mjesto + naz + kol_c ) tag "3"
 index on ( kol_c + ptt + mjesto + naz ) tag "4"
 index on ( idpartner ) tag "5"
 index on ( kol_c ) tag "6"
+
+// sada mi kreiraj tabelu "lab2"
+
+FERASE( my_home() + _table_label_2 + ".dbf" )
+FERASE( my_home() + _table_label_2 + ".cdx" )
+
+SELECT ( F_TMP_1 )
+USE
+
+Dbcreate( my_home() + _table_label_2 + ".dbf", _dbf )
+
+select ( F_TMP_1 )
+use
+my_use_temp( "lab2", my_home() + _table_label_2 + ".dbf", .f., .f. )
+
+// indeksiraj tabelu
+index on ( STR( idx, 12, 0 ) ) tag "1"
+
 
 return
 

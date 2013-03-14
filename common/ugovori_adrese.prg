@@ -424,11 +424,11 @@ AADD ( _dbf, { "idroba",    "C",     10, 0 })
 AADD ( _dbf, { "idpartner", "C",      6, 0 })
 AADD ( _dbf, { "destin"  ,  "C",      6, 0 })
 AADD ( _dbf, { "kol_c",     "C",      5, 0 })
-AADD ( _dbf, { "naz" ,      "C",     40, 0 })
-AADD ( _dbf, { "naz2",      "C",     40, 0 })
+AADD ( _dbf, { "naz" ,      "C",     50, 0 })
+AADD ( _dbf, { "naz2",      "C",     50, 0 })
 AADD ( _dbf, { "ptt" ,      "C" ,    10, 0 })
 AADD ( _dbf, { "mjesto" ,   "C" ,    20, 0 })
-AADD ( _dbf, { "adresa" ,   "C" ,    40, 0 })
+AADD ( _dbf, { "adresa" ,   "C" ,    50, 0 })
 AADD ( _dbf, { "telefon",   "C" ,    20, 0 })
 AADD ( _dbf, { "fax"    ,   "C" ,    20, 0 })
 AADD ( _dbf, { "kolicina",  "N",     12, 0 })
@@ -449,7 +449,7 @@ use
 my_use_temp( "labelu", my_home() + _table_label + ".dbf", .f., .f. )
 
 // indeksiraj tabelu
-index on ( kol_c + PADR( mjesto, 20, " " ) + PADR( naz, 40, " " ) ) tag "1"
+index on ( kol_c + mjesto + naz ) tag "1"
 index on ( mjesto + naz + kol_c ) tag "2"
 index on ( ptt + mjesto + naz + kol_c ) tag "3"
 index on ( kol_c + ptt + mjesto + naz ) tag "4"

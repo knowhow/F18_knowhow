@@ -1,3 +1,8 @@
+1.4.142 2013-03-15, vsasa
+
+  - fin, informacije o stanju konta kod knjiženja naloga (samo za konto/partner)
+  - ld, proširen pregled šifrarnika 
+
 1.4.141 2013-03-14, vsasa
 
   - fakt, ugovori naljepnice, problem sa indeksima

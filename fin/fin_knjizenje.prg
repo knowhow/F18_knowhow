@@ -322,10 +322,13 @@ endif
                 .and. BrDokOK() .and. MinKtoLen(_IdKonto) .and. _rule_kto_()
 
 
-@ m_x + 14, m_y + 2 SAY "Partner:" get _IdPartner pict "@!" valid ;
-    {|| if( empty(_idpartner), Reci(14, 20, SPACE(25)), ), ;
-    ( EMPTY(_IdPartner) .or. P_Firma(@_IdPartner, 14, 20) ) .and. _rule_partn_() } when ;
-    {|| iif(ChkKtoMark(_idkonto), .t., .f.)}
+@ m_x + 14, m_y + 2 SAY "Partner:" get _IdPartner PICT "@!" ;
+    VALID ;
+        {|| if( empty(_idpartner), Reci(14, 20, SPACE(25)), ), ;
+            ( EMPTY(_IdPartner) .or. P_Firma(@_IdPartner, 14, 20) ) .and. _rule_partn_() .and. ;
+            if( g_knjiz_help == "D" .and. !EMPTY( _idpartner ), g_box_stanje( _idpartner, _idkonto, NIL ), .t. ) } ;
+    WHEN ;
+        {|| iif(ChkKtoMark(_idkonto), .t., .f.)}
 
 
 @ m_x + 16, m_y + 2  SAY "Duguje/Potrazuje (1/2):" get _D_P valid V_DP() .and. _rule_d_p_() .and. _rule_veza_()

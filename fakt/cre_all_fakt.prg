@@ -62,13 +62,13 @@ IF_NOT_FILE_DBF_CREATE
 // 0.8.3
 if ver["current"] > 0 .and. ver["current"] < 00803
   
-  for each _tbl in { _table_name, "fakt_pripr" }
-   modstru( {"*" + _tbl, ;
-   "C FISC_RN N 10 0 FISC_RN I 4 0",  ;
-   "D OPIS C 120 0", ;
-   "D DOK_VEZA C 150 0" ;
-    })
-  next
+    for each _tbl in { _table_name, "fakt_pripr" }
+        modstru( {"*" + _tbl, ;
+                    "C FISC_RN N 10 0 FISC_RN I 4 0",  ;
+                    "D OPIS C 120 0", ;
+                    "D DOK_VEZA C 150 0" ;
+                })
+    next
 
 endif
 
@@ -129,7 +129,7 @@ aDbf := {}
 AADD(aDBf, { 'IDFIRMA'             , 'C' ,   2 ,  0 })
 AADD(aDBf, { 'IdTIPDok'            , 'C' ,   2 ,  0 })
 AADD(aDBf, { 'BRDOK'               , 'C' ,   8 ,  0 })
-AADD(aDBf, { 'PARTNER'             , 'C' ,  30 ,  0 })
+AADD(aDBf, { 'PARTNER'             , 'C' , 100 ,  0 })
 AADD(aDBf, { 'DATDOK'              , 'D' ,   8 ,  0 })
 AADD(aDBf, { 'DINDEM'              , 'C' ,   3 ,  0 })
 AADD(aDBf, { 'Iznos'               , 'N' ,  12 ,  3 })
@@ -141,8 +141,9 @@ AADD(aDBf, { 'IDVRSTEP'            , 'C' ,   2 ,  0 })
 AADD(aDBf, { 'DATPL'               , 'D' ,   8 ,  0 })
 AADD(aDBf, { 'IDPM'                , 'C' ,  15 ,  0 })
 AADD(aDBf, { 'DOK_VEZA'            , 'C' , 150 ,  0 })
-AADD(aDBf, { 'OPER_ID'             , 'N' ,   3 ,  0 })
+AADD(aDBf, { 'OPER_ID'             , 'N' ,  10 ,  0 })
 AADD(aDBf, { 'FISC_RN'             , 'N' ,  10 ,  0 })
+AADD(aDBf, { 'FISC_ST'             , 'N' ,  10 ,  0 })
 AADD(aDBf, { 'DAT_ISP'             , 'D' ,   8 ,  0 })
 AADD(aDBf, { 'DAT_VAL'             , 'D' ,   8 ,  0 })
 AADD(aDBf, { 'DAT_OTPR'            , 'D' ,   8 ,  0 })

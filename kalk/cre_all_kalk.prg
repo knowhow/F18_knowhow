@@ -30,9 +30,7 @@ AADD(aDBf,{ 'IDFIRMA'             , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'IDVD'                , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'BRDOK'               , 'C' ,   8 ,  0 })
 AADD(aDBf,{ 'DATDOK'              , 'D' ,   8 ,  0 })
-
 AADD(aDBf,{ 'BRFAKTP'             , 'C' ,  10 ,  0 })
-
 AADD(aDBf,{ 'IDPARTNER'           , 'C' ,   6 ,  0 })
 AADD(aDBf,{ 'IdZADUZ'             , 'C' ,   6 ,  0 })
 AADD(aDBf,{ 'IdZADUZ2'            , 'C' ,   6 ,  0 })
@@ -43,6 +41,7 @@ AADD(aDBf,{ 'VPV'                 , 'N' ,  12 ,  2 })
 AADD(aDBf,{ 'RABAT'               , 'N' ,  12 ,  2 })
 AADD(aDBf,{ 'MPV'                 , 'N' ,  12 ,  2 })
 AADD(aDBf,{ 'PODBR'               , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'SIFRA'               , 'C' ,   6 ,  0 })
 
 _alias := "KALK_DOKS"
 _table_name := "kalk_doks"
@@ -51,7 +50,7 @@ IF_NOT_FILE_DBF_CREATE
 
 // 0.4.0
 if ver["current"] > 0 .and. ver["current"] < 0400
-   modstru({"*" + _table_name, "A SIFRA C 6 0"})
+    modstru({"*" + _table_name, "A SIFRA C 6 0"})
 endif
 
 IF_C_RESET_SEMAPHORE
@@ -100,14 +99,13 @@ AADD(aDBf,{ 'TZAVTR'              , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'TRABAT'              , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'TMARZA'              , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'TMARZA2'             , 'C' ,   1 ,  0 })
-
+ 
 AADD(aDBf,{ 'NC'                  , 'B' ,  8 ,  8 })
 AADD(aDBf,{ 'MPC'                 , 'B' ,  8 ,  8 })
 
 // currency tip
 AADD(aDBf,{ 'VPC'                 , 'B' ,  8 ,  8 })
 AADD(aDBf,{ 'MPCSAPP'             , 'B' ,  8 ,  8 })
-
 
 AADD(aDBf,{ 'IDTARIFA'            , 'C' ,   6 ,  0 })
 AADD(aDBf,{ 'MKONTO'              , 'C' ,   7 ,  0 })
@@ -135,6 +133,8 @@ AADD(aDBf,{ 'MARZA'               , 'B' ,  8 ,  8 })
 AADD(aDBf,{ 'MARZA2'              , 'B' ,  8 ,  8 })
 AADD(aDBf,{ 'RABATV'              , 'B' ,  8 ,  8 })
 AADD(aDBf,{ 'VPCSAP'              , 'B' ,  8 ,  8 })
+
+
 
 
 _alias := "KALK"
@@ -176,12 +176,12 @@ endif
 
 // 0.8.5
 if ver["current"] > 0 .and. ver["current"] < 00805
-  for each _tbl in { _table_name, "_kalk_kalk", "kalk_pripr", "kalk_pripr2", "kalk_pripr9" }
-    modstru( {"*" + _tbl, ;
-        "C VPC Y 8 4 VPC B 8 8",;
-        "C MPCSAPP Y 8 4 MPCSAPP B 8 8" ;
-    })
- next
+    for each _tbl in { _table_name, "_kalk_kalk", "kalk_pripr", "kalk_pripr2", "kalk_pripr9" }
+        modstru( {"*" + _tbl, ;
+                "C VPC Y 8 4 VPC B 8 8",;
+                "C MPCSAPP Y 8 4 MPCSAPP B 8 8" ;
+                })
+    next
 endif
 
 IF_C_RESET_SEMAPHORE

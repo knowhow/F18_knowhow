@@ -1,3 +1,7 @@
+1.4.143 2013-03-19, vsasa
+
+  - f18, kreiranje tabela i modifikacije struktura
+
 1.4.142 2013-03-15, vsasa
 
   - fin, informacije o stanju konta kod knjiženja naloga (samo za konto/partner)

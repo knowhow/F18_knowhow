@@ -11,31 +11,25 @@
 
 
 #include "fmk.ch"
-
+#include "cre_all.ch"
 
 // ----------------------------------
 // kreiranje tabela "rules"
 // ----------------------------------
 function cre_fmkrules( ver )
-
-local cTbl := "fmkrules"
-
-// uzmi def.polja
 local aDbf := g_rule_tbl()
+local _table_name, _alias, _created
 
-if !FILE( f18_ime_dbf( cTbl ) )
-	DBCREATE2( cTbl, aDbf )
-	reset_semaphore_version("f18_rules")
-	my_use( cTbl )
-endif
+_alias := "FMKRULES"
+_table_name := "f18_rules"
 
-CREATE_INDEX( "1", "STR(RULE_ID,10)", cTbl, .t. )
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
 
-CREATE_INDEX( "2", "MODUL_NAME+RULE_OBJ+STR(RULE_NO,10)", cTbl, .t. )
-
-CREATE_INDEX( "3", "MODUL_NAME+RULE_OBJ+STR(RULE_LEVEL,2)+STR(RULE_NO,10)", cTbl, .t. )
-
-CREATE_INDEX( "4", "MODUL_NAME+RULE_OBJ+RULE_C1+RULE_C2", cTbl, .t. )
+CREATE_INDEX( "1", "STR(RULE_ID,10)", _alias, .t. )
+CREATE_INDEX( "2", "MODUL_NAME+RULE_OBJ+STR(RULE_NO,10)", _alias, .t. )
+CREATE_INDEX( "3", "MODUL_NAME+RULE_OBJ+STR(RULE_LEVEL,2)+STR(RULE_NO,10)", _alias, .t. )
+CREATE_INDEX( "4", "MODUL_NAME+RULE_OBJ+RULE_C1+RULE_C2", _alias, .t. )
 
 return
 

@@ -10,6 +10,8 @@
  */
 
 #include "epdv.ch"
+#include "cre_all.ch"
+
 
 // --------------------------------------------------------
 // kreiranje epdv tabela
@@ -26,19 +28,11 @@ local _created
 // daj mi polja za kuf
 aDbf := get_kuf_fields()
 
-_created := .f.
 _alias := "KUF"
 _table_name := "epdv_kuf"
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2( _alias, aDbf )
-    _created := .t.
-endif
 
-if _created
-  reset_semaphore_version(_table_name)
-  my_usex(_alias)
-  USE
-endif
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX("datum","dtos(datum)+src_br_2", _alias)
 CREATE_INDEX("l_datum","lock+dtos(datum)+src_br_2", _alias)
@@ -50,19 +44,11 @@ CREATE_INDEX("BR_DOK2","STR(BR_DOK,6,0)+dtos(datum)", _alias)
 // daj mi polja za kif
 aDbf := get_kif_fields()
 
-_created := .f.
 _alias := "KIF"
 _table_name := "epdv_kif"
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2( _alias, aDbf )
-    _created := .t.
-endif
 
-if _created
-  reset_semaphore_version(_table_name)
-  my_usex(_alias)
-  USE
-endif
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX("datum","dtos(datum)+src_br_2", _alias)
 CREATE_INDEX("l_datum","lock+dtos(datum)+src_br_2", _alias)
@@ -74,19 +60,11 @@ CREATE_INDEX("BR_DOK2","STR(BR_DOK,6,0)+dtos(datum)", _alias)
 // daj mi polja za pdv
 aDbf := get_pdv_fields()
 
-_created := .f.
 _alias := "PDV"
 _table_name := "epdv_pdv"
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2( _alias, aDbf )
-    _created := .t.
-endif
 
-if _created
-  reset_semaphore_version(_table_name)
-  my_usex(_alias)
-  USE
-endif
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX("period","DTOS(per_od)+DTOS(per_do)", _alias )
 
@@ -96,13 +74,10 @@ CREATE_INDEX("period","DTOS(per_od)+DTOS(per_do)", _alias )
 // daj mi polja za p_kuf
 aDbf := get_kuf_fields()
 
-_created := .f.
 _alias := "P_KUF"
 _table_name := "epdv_p_kuf"
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2( _alias, aDbf )
-    _created := .t.
-endif
+
+IF_NOT_FILE_DBF_CREATE
 
 CREATE_INDEX("datum","dtos(datum)+src_br_2", _alias)
 CREATE_INDEX("l_datum","lock+dtos(datum)+src_br_2", _alias)
@@ -112,13 +87,10 @@ CREATE_INDEX("br_dok", "STR(br_dok,6,0)+STR(r_br,6,0)", _alias)
 // daj mi polja za p_kif
 aDbf := get_kif_fields()
 
-_created := .f.
 _alias := "P_KIF"
 _table_name := "epdv_p_kif"
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2( _alias, aDbf )
-    _created := .t.
-endif
+
+IF_NOT_FILE_DBF_CREATE
 
 CREATE_INDEX("datum","dtos(datum)+src_br_2", _alias)
 CREATE_INDEX("l_datum","lock+dtos(datum)+src_br_2", _alias)
@@ -131,46 +103,28 @@ CREATE_INDEX("br_dok", "STR(br_dok,6,0)+STR(r_br,6,0)", _alias)
 // daj mi polja za sg_kuf
 aDbf := get_sg_fields()
 
-_created := .f.
 _alias := "SG_KUF"
 _table_name := "epdv_sg_kuf"
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2( _alias, aDbf )
-    _created := .t.
-endif
 
-if _created
-  reset_semaphore_version(_table_name)
-  my_usex(_alias)
-  USE
-endif
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX("id","id", _alias)
 CREATE_INDEX("naz","id", _alias)
-
 
 // daj mi polja za sg_kif
 aDbf := get_sg_fields()
 
-_created := .f.
 _alias := "SG_KIF"
 _table_name := "epdv_sg_kif"
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2( _alias, aDbf )
-    _created := .t.
-endif
 
-if _created
-  reset_semaphore_version(_table_name)
-  my_usex(_alias)
-  USE
-endif
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX("id","id", _alias)
 CREATE_INDEX("naz","id", _alias)
 
-
-return 
+return .t.
 
 
 // ----------------------------------------------

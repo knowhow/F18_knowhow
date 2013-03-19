@@ -33,6 +33,8 @@ AADD(aDBf, { 'DZIROR'              , 'C' ,  22 ,  0 })
 AADD(aDBf, { 'TELEFON'             , 'C' ,  12 ,  0 })
 AADD(aDBf, { 'FAX'                 , 'C' ,  12 ,  0 })
 AADD(aDBf, { 'MOBTEL'              , 'C' ,  20 ,  0 })
+AADD(aDBf, { 'IDREFER'             , 'C' ,  10 ,  0 })
+AADD(aDBf, { 'IDOPS'               , 'C' ,   4 ,  0 })
 
 _alias := "PARTN"
 _table_name := "partn"

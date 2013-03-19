@@ -55,7 +55,7 @@ IF_NOT_FILE_DBF_CREATE
 
 // 0.3.0
 if ver["current"] > 0 .and. ver["current"] < 00300
-   modstru({"*" + _table_name, "A IDRJ C 6 0", "A FUNK C 5 0", "A FOND C 4 0" })
+    modstru({"*" + _table_name, "A IDRJ C 6 0", "A FUNK C 5 0", "A FOND C 4 0" })
 endif
 
 IF_C_RESET_SEMAPHORE
@@ -84,7 +84,7 @@ IF_NOT_FILE_DBF_CREATE
 
 // 0.4.1
 if ver["current"] > 0 .and. ver["current"] < 00401
-   modstru({"*" + _table_name, "A IDRJ C 6 0", "A FUNK C 5 0", "A FOND C 4 0" })
+    modstru({"*" + _table_name, "A IDRJ C 6 0", "A FUNK C 5 0", "A FOND C 4 0" })
 endif
 
 CREATE_INDEX("1", "IdFirma+IdVn+BrNal", _alias)

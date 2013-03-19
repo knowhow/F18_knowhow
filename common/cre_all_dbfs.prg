@@ -10,6 +10,9 @@
  */
 
 #include "fmk.ch"
+#include "cre_all.ch"
+
+
 
 function cre_all_dbfs(ver)
 local _first_start := fetch_metric( "f18_first_start", my_user(), 0 )
@@ -35,7 +38,7 @@ cre_sifk_sifv(ver)
 cre_sifrarnici_1(ver)
 cre_roba(ver)
 cre_partn(ver)
-cre_adres(ver)
+_kreiraj_adrese(ver)
 cre_all_ld_sif(ver)
 cre_all_virm_sif(ver)
 proizvoljni_izvjestaji_db_cre(ver)
@@ -114,44 +117,20 @@ return
 
 
 
-function CreSystemDb(nArea)
-local lShowMsg
-
-lShowMsg:=.f.
-
-if (nArea==nil)
-    nArea:=-1
-
-    if goModul:oDatabase:lAdmin
-        lShowMsg:=.t.
-    endif
-
-endif
-
-if lShowMsg
-    MsgO("Kreiram systemske tabele")
-endif
-
-CreGParam(nArea)
-
-CreParams(nArea)
-
-cre_adres()
-
-if lShowMsg
-    MsgC()
-endif
-
+function CreSystemDb( ver )
+_kreiraj_params_tabele(ver)
+_kreiraj_adrese(ver)
 return
 
-function CreParams()
+
+
+
+function _kreiraj_params_tabele()
+local _table_name, _alias, aDBF
+
 close all
 
-if gReadOnly
-    return
-endif
-
-aDbf:={}
+aDbf := {}
 AADD(aDbf, {"FH","C",1,0} )  // istorija
 AADD(aDbf, {"FSec","C",1,0} )
 AADD(aDbf, {"FVar","C",2,0} )
@@ -159,79 +138,72 @@ AADD(aDbf, {"Rbr","C",1,0} )
 AADD(aDbf, {"Tip","C",1,0} ) // tip varijable
 AADD(aDbf, {"Fv","C",15,0}  ) // sadrzaj
 
+_alias := "PARAMS"
+_table_name := "params"
 
-if !file(f18_ime_dbf("params"))
-    DBCREATE2(PRIVPATH+"params.dbf",aDbf)
-endif
-CREATE_INDEX("ID","fsec+fh+fvar+rbr",PRIVPATH+"params.dbf",.t.)
+IF_NOT_FILE_DBF_CREATE
+
+CREATE_INDEX("ID","fsec+fh+fvar+rbr", _alias, .t. )
     
-if !file(f18_ime_dbf("gparams"))
-    DBCREATE2(PRIVPATH+"gparams.dbf",aDbf)
-endif
-CREATE_INDEX("ID","fsec+fh+fvar+rbr", PRIVPATH + "gparams.dbf",.t.)
+_alias := "GPARAMS"
+_table_name := "gparams"
 
-if !file(f18_ime_dbf("kparams"))
-    DBCREATE2(KUMPATH+"KPARAMS.dbf",aDbf)
-endif
-CREATE_INDEX("ID", "fsec+fh+fvar+rbr", KUMPATH+"kparams.dbf", .t.)
+IF_NOT_FILE_DBF_CREATE
 
-aDbf:={}
-AADD(aDbf, {"FH","C",1,0} )  // istorija
-AADD(aDbf, {"FSec","C",1,0} )
-AADD(aDbf, {"FVar","C",15,0} )
-AADD(aDbf, {"Rbr","C",1,0} )
-AADD(aDbf, {"Tip","C",1,0} ) // tip varijable
-AADD(aDbf, {"Fv","C",15,0}  ) // sadrzaj
+CREATE_INDEX("ID","fsec+fh+fvar+rbr", _alias, .t. )
 
-cImeDBf:=ToUnix(KUMPATH+"secur.dbf")
-if !file(f18_ime_dbf(cImeDbF))
-    DBCREATE2(cImeDBF,aDbf)
-endif
-CREATE_INDEX("ID","fsec+fh+fvar+rbr", cImeDBF, .t.)
+_alias := "KPARAMS"
+_table_name := "kparams"
+
+IF_NOT_FILE_DBF_CREATE
+
+CREATE_INDEX("ID", "fsec+fh+fvar+rbr", _alias, .t. )
 
 return nil
 
 
 
-function cre_adres( ver )
-local _alias
 
-_alias := "adres"
+function _kreiraj_adrese( ver )
+local _table_name, _alias, _created
 
-if !file(f18_ime_dbf( _alias ))
-    aDBF:={}
-    AADD(aDBf,{ 'ID'    , 'C' ,  50 ,   0 })
-    AADD(aDBf,{ 'RJ'    , 'C' ,  30 ,   0 })
-    AADD(aDBf,{ 'KONTAKT'    , 'C' ,  30 ,   0 })
-    AADD(aDBf,{ 'NAZ'        , 'C' ,  15 ,   0 })
-    AADD(aDBf,{ 'TEL2'       , 'C' ,  15 ,   0 })
-    AADD(aDBf,{ 'TEL3'       , 'C' ,  15 ,   0 })
-    AADD(aDBf,{ 'MJESTO'     , 'C' ,  15 ,   0 })
-    AADD(aDBf,{ 'PTT'        , 'C' ,  6 ,   0 })
-    AADD(aDBf,{ 'ADRESA'     , 'C' ,  50 ,   0 })
-    AADD(aDBf,{ 'DRZAVA'     , 'C' ,  22 ,   0 })
-    AADD(aDBf,{ 'ziror'     , 'C' ,  30 ,   0 })
-    AADD(aDBf,{ 'zirod'     , 'C' ,  30 ,   0 })
-    AADD(aDBf,{ 'K7'     , 'C' ,  1 ,   0 })
-    AADD(aDBf,{ 'K8'     , 'C' ,  2 ,   0 })
-    AADD(aDBf,{ 'K9'     , 'C' ,  3 ,   0 })
-    DBCREATE2( _alias, aDBf )
-    reset_semaphore_version( _alias )
-    my_use( _alias )
- 
-endif
+_alias := "ADRES"
+_table_name := "adres"
+
+aDBF:={}
+AADD(aDBf,{ 'ID'    , 'C' ,  50 ,   0 })
+AADD(aDBf,{ 'RJ'    , 'C' ,  30 ,   0 })
+AADD(aDBf,{ 'KONTAKT'    , 'C' ,  30 ,   0 })
+AADD(aDBf,{ 'NAZ'        , 'C' ,  15 ,   0 })
+AADD(aDBf,{ 'TEL2'       , 'C' ,  15 ,   0 })
+AADD(aDBf,{ 'TEL3'       , 'C' ,  15 ,   0 })
+AADD(aDBf,{ 'MJESTO'     , 'C' ,  15 ,   0 })
+AADD(aDBf,{ 'PTT'        , 'C' ,  6 ,   0 })
+AADD(aDBf,{ 'ADRESA'     , 'C' ,  50 ,   0 })
+AADD(aDBf,{ 'DRZAVA'     , 'C' ,  22 ,   0 })
+AADD(aDBf,{ 'ziror'     , 'C' ,  30 ,   0 })
+AADD(aDBf,{ 'zirod'     , 'C' ,  30 ,   0 })
+AADD(aDBf,{ 'K7'     , 'C' ,  1 ,   0 })
+AADD(aDBf,{ 'K8'     , 'C' ,  2 ,   0 })
+AADD(aDBf,{ 'K9'     , 'C' ,  3 ,   0 })
+
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX("ID","id+naz", _alias )
 
 return
 
 
-* kreiraj gparams u glavnom modulu
+
+
 function CreGparam(nArea)
 local aDbf
+
 if (nArea==nil)
     nArea:=-1
 endif
+
 close all
 
 if gReadonly

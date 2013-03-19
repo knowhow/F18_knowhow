@@ -11,76 +11,74 @@
 
 
 #include "fmk.ch"
+#include "cre_all.ch"
 
 
 // -------------------------------
 // kreiranje tabela ugovora
 // -------------------------------
-function db_cre_ugov()
+function db_cre_ugov( ver )
 
-cre_tbl("UGOV")
-cre_tbl("RUGOV")
-cre_tbl("GEN_UG")
-cre_tbl("GEN_UG_P")
-cre_tbl("DEST")
+cre_tbl( "UGOV", ver )
+cre_tbl( "RUGOV", ver )
+cre_tbl( "GEN_UG", ver )
+cre_tbl( "GEN_UG_P", ver )
+cre_tbl( "DEST", ver )
 
 return
+
+
 
 // ------------------------------------------
 // interna funkcija za kreiranje tabela
 // ------------------------------------------
-static function cre_tbl(cTbl)
+static function cre_tbl( table_name, ver )
 local aDbf
-local cPath := KUMPATH
+local _alias, _table_name 
 
 // struktura
 do case
-	case cTbl == "UGOV"
+	case table_name == "UGOV"
 		aDbf := a_ugov()		
-	case cTbl == "RUGOV"
+	case table_name == "RUGOV"
 		aDbf := a_rugov()
-	case cTbl == "GEN_UG"
+	case table_name == "GEN_UG"
 		aDbf := a_genug()
-	case cTbl == "GEN_UG_P"
+	case table_name == "GEN_UG_P"
 		aDbf := a_gug_p()
-	case cTbl == "DEST"
-		cPath := SIFPATH
+	case table_name == "DEST"
 		aDbf := a_dest()
 endcase
 
-// kreiraj dbf
-if !File( f18_ime_dbf(cTbl) )
-	DBcreate2( cTbl, aDBF )
-	if !( cTbl == "DEST" )
-		reset_semaphore_version( "fakt_" + LOWER(cTbl) )
-	else
-		reset_semaphore_version( LOWER(cTbl) )
-	endif
-	my_use( LOWER(cTbl) )
+_alias := table_name
+_table_name := LOWER( table_name )
+
+if !( table_name == "DEST" ) 
+    _table_name := "fakt_" + LOWER( table_name )
 endif
+
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
 
 // indexi
 do case
-	case cTbl == "UGOV"
-		CREATE_INDEX("ID"      ,"Id+idpartner" , "UGOV")
-		CREATE_INDEX("NAZ"     ,"idpartner+Id" , "UGOV")
-		CREATE_INDEX("NAZ2"    ,"naz"          , "UGOV")
-		CREATE_INDEX("PARTNER" ,"IDPARTNER"    , "UGOV")
-		CREATE_INDEX("AKTIVAN" ,"AKTIVAN"      ,  "UGOV")
-
-	case cTbl == "RUGOV"
+	case table_name == "UGOV"
+		CREATE_INDEX("ID"      ,"Id+idpartner" , "UGOV" )
+		CREATE_INDEX("NAZ"     ,"idpartner+Id" , "UGOV" )
+		CREATE_INDEX("NAZ2"    ,"naz"          , "UGOV" )
+		CREATE_INDEX("PARTNER" ,"IDPARTNER"    , "UGOV" ) 
+		CREATE_INDEX("AKTIVAN" ,"AKTIVAN"      ,  "UGOV" )
+	case table_name == "RUGOV"
 		CREATE_INDEX("ID","id+idroba+dest", "RUGOV")
 		CREATE_INDEX("IDROBA","IdRoba", "RUGOV")
-
-	case cTbl == "GEN_UG"
-		CREATE_INDEX("DAT_OBR","DTOS(DAT_OBR)", cPath+"GEN_UG")
-		CREATE_INDEX("DAT_GEN","DTOS(DAT_GEN)", cPath+"GEN_UG")
-
-	case cTbl == "GEN_UG_P"
-		CREATE_INDEX("DAT_OBR","DTOS(DAT_OBR)+ID_UGOV+IDPARTNER", cPath+"GEN_UG_P")
-	case cTbl == "DEST"
-		CREATE_INDEX("ID", "IDPARTNER + ID", cPath+"DEST")
-		CREATE_INDEX("IDDEST", "ID", cPath+"DEST")
+	case table_name == "GEN_UG"
+		CREATE_INDEX("DAT_OBR","DTOS(DAT_OBR)", "GEN_UG")
+		CREATE_INDEX("DAT_GEN","DTOS(DAT_GEN)", "GEN_UG")
+	case table_name == "GEN_UG_P"
+		CREATE_INDEX("DAT_OBR","DTOS(DAT_OBR)+ID_UGOV+IDPARTNER", "GEN_UG_P")
+	case table_name == "DEST"
+		CREATE_INDEX("ID", "IDPARTNER + ID", "DEST")
+		CREATE_INDEX("IDDEST", "ID", "DEST")
 endcase 
 
 return

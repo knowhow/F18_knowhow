@@ -11,26 +11,22 @@
 
 
 #include "fmk.ch"
-
+#include "cre_all.ch"
 
 // -----------------------------------------
 // kreiranje tabele relacija
 // -----------------------------------------
 function cre_relation( ver )
 local aDbf
-local _table, _alias 
+local _table_name, _alias, _created 
 
 aDbf := g_rel_tbl()
 
-_table := "relation"
+_table_name := "relation"
 _alias := "RELATION"
 
-if !FILE( f18_ime_dbf( _table ) )
-    DBCREATE2( _alias, aDbf)
-    reset_semaphore_version( _table )
-    my_use( _alias )
-    USE
-endif
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX( "1", "TFROM+TTO+TFROMID", _alias )
 CREATE_INDEX( "2", "TTO+TFROM+TTOID", _alias )

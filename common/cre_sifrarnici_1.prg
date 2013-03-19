@@ -81,9 +81,9 @@ add_f_mcode(@aDbf)
 AADD(aDBf,{ 'NAZ'                 , 'C' ,  30 ,  0 })
 AADD(aDBf,{ 'NAZ2'                , 'C' ,   4 ,  0 })
 AADD(aDBf,{ 'DATUM'               , 'D' ,   8 ,  0 })
-AADD(aDBf,{ 'KURS1'               , 'N' ,  10 ,  5 })
-AADD(aDBf,{ 'KURS2'               , 'N' ,  10 ,  5 })
-AADD(aDBf,{ 'KURS3'               , 'N' ,  10 ,  5 })
+AADD(aDBf,{ 'KURS1'               , 'N' ,  10 ,  6 })
+AADD(aDBf,{ 'KURS2'               , 'N' ,  10 ,  6 })
+AADD(aDBf,{ 'KURS3'               , 'N' ,  10 ,  6 })
 AADD(aDBf,{ 'TIP'                 , 'C' ,   1 ,  0 })
 
 IF_NOT_FILE_DBF_CREATE
@@ -236,6 +236,7 @@ AADD(aDBf,{ 'SHEMA'               , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'NAZ'                 , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'IDPRODMJES'          , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'REGION'              , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'SUFIKS'              , 'C' ,   3 ,  0 })
 
 IF_NOT_FILE_DBF_CREATE
 
@@ -390,19 +391,19 @@ CREATE_INDEX( "NAZ", "NAZ", _alias )
 
 
 // kreiraj lokal tabelu : LOKAL
-cre_lokal(F_LOKAL)
+cre_lokal( ver )
 
 // kreiraj tabele dok_src : DOK_SRC
-cre_doksrc()
+cre_doksrc( ver )
 
 // kreiraj relacije : RELATION
-cre_relation()
+cre_relation( ver )
 
 // kreiraj pravila : RULES
-cre_fmkrules()
+cre_fmkrules( ver )
 
 // kreiranje tabela ugovora
-db_cre_ugov()
+db_cre_ugov( ver )
 
 
 return .t.

@@ -16,8 +16,7 @@
 // ------------------------------------------------------
 // kreiranje tabela DOKSRC i P_DOKSRC
 // ------------------------------------------------------
-function cre_doksrc()
-
+function cre_doksrc(ver)
 local aDbf := {}
 local cDokSrcName := "DOKSRC"
 local cPDokSrcName := "P_" + cDokSrcName
@@ -53,7 +52,6 @@ endif
 
 // indexi....
 CREATE_INDEX("1","idfirma+idvd+brdok+DTOS(datdok)+src_modul+src_idfirm+src_idvd+src_brdok+DTOS(src_datdok)", cDokSrcName)
-
 CREATE_INDEX("2","src_modul+src_idfirm+src_idvd+src_brdok+DTOS(src_datdok)", cDokSrcName)
 
 // kreiraj u PRIVPATH

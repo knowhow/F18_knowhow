@@ -50,7 +50,7 @@ _table_name := "kalk_doks"
 IF_NOT_FILE_DBF_CREATE
 
 // 0.4.0
-if ver["current"] < 0400
+if ver["current"] > 0 .and. ver["current"] < 0400
    modstru({"*" + _table_name, "A SIFRA C 6 0"})
 endif
 
@@ -143,7 +143,7 @@ _table_name := "kalk_kalk"
 IF_NOT_FILE_DBF_CREATE
 
 // 0.8.4
-if ver["current"] < 00804
+if ver["current"] > 0 .and. ver["current"] < 00804
   for each _tbl in { _table_name, "_kalk_kalk", "kalk_pripr", "kalk_pripr2", "kalk_pripr9" }
     modstru( {"*" + _tbl, ;
         "C KOLICINA N 12 3  KOLICINA B 8 8",;
@@ -175,7 +175,7 @@ endif
 
 
 // 0.8.5
-if ver["current"] < 00805
+if ver["current"] > 0 .and. ver["current"] < 00805
   for each _tbl in { _table_name, "_kalk_kalk", "kalk_pripr", "kalk_pripr2", "kalk_pripr9" }
     modstru( {"*" + _tbl, ;
         "C VPC Y 8 4 VPC B 8 8",;

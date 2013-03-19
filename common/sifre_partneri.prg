@@ -10,6 +10,8 @@
  */
 
 #include "fmk.ch"
+#include "cre_all.ch"
+
 
 function cre_partn( ver )
 local aDbf := {}
@@ -32,36 +34,28 @@ AADD(aDBf, { 'TELEFON'             , 'C' ,  12 ,  0 })
 AADD(aDBf, { 'FAX'                 , 'C' ,  12 ,  0 })
 AADD(aDBf, { 'MOBTEL'              , 'C' ,  20 ,  0 })
 
-_created := .f.
 _alias := "PARTN"
 _table_name := "partn"
 
-IF !FILE(f18_ime_dbf("partn"))
-    dbcreate2( _table_name, aDbf )
-    _created := .t.
-ENDIF
+IF_NOT_FILE_DBF_CREATE
 
 // 0.4.2
-if ver["current"] < 00402
+if ver["current"] > 0 .and. ver["current"] < 00402
    modstru( {"*" + _table_name, "A IDREFER C 10 0", "A IDOPS C 4 0" })
 endif
 
-IF _created
-    reset_semaphore_version( _table_name )
-    my_use( _alias )
-	close all 
-ENDIF
+IF_C_RESET_SEMAPHORE
 
-IF !FILE(f18_ime_dbf("_partn"))
-        dbcreate2('_partn', aDbf)
-ENDIF
+CREATE_INDEX("ID", "id", _alias )
+CREATE_INDEX("NAZ", "NAZ", _alias )
+index_mcode( "", _alias )
 
-CREATE_INDEX("ID", "id", "partn")
-CREATE_INDEX("NAZ", "NAZ", "partn")
+_alias := "_PARTN"
+_table_name := "_partn"
 
-CREATE_INDEX("ID", "id", "_partn")
+IF_NOT_FILE_DBF_CREATE
 
-index_mcode("", "partn")
+CREATE_INDEX( "ID", "id", _alias )
 
 return .t.
 

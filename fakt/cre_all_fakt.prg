@@ -60,7 +60,7 @@ _table_name := "fakt_fakt"
 IF_NOT_FILE_DBF_CREATE
 
 // 0.8.3
-if ver["current"] < 00803
+if ver["current"] > 0 .and. ver["current"] < 00803
   
   for each _tbl in { _table_name, "fakt_pripr" }
    modstru( {"*" + _tbl, ;
@@ -153,12 +153,12 @@ _table_name := "fakt_doks"
 IF_NOT_FILE_DBF_CREATE
 
 // 0.4.3
-if ver["current"] < 0403
+if ver["current"] > 0 .and. ver["current"] < 0403
     modstru({"*" + _table_name, "A FISC_ST N 10 0"})
 endif
 
 // 0.5.0
-if ver["current"] < 0500
+if ver["current"] > 0 .and. ver["current"] < 0500
     modstru({"*" + _table_name, "C PARTNER C 30 0 PARTNER C 100 0"})
     modstru({"*" + _table_name, "C OPER_ID N 3 0 OPER_ID N 10 0"})
 endif

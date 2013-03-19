@@ -65,17 +65,17 @@ _table_name := "roba"
 IF_NOT_FILE_DBF_CREATE
 
 // 0.2.1
-if ver["current"] < 00201
+if ver["current"] > 0 .and. ver["current"] < 00201
    modstru( {"*" + _table_name, "A IDKONTO C 7 0"})
 endif
 
 // 0.4.8
-if ver["current"] < 00408
+if ver["current"] > 0 .and. ver["current"] < 00408
    modstru( {"*" + _table_name, "A MPC4 N 18 8", "A MPC5 N 18 8", "A MPC6 N 18 8", "A MPC7 N 18 8", "A MPC8 N 18 8", "A MPC9 N 18 8"})
 endif
 
 // 0.8.9
-if ver["current"] < 00809
+if ver["current"] > 0 .and. ver["current"] < 00809
    modstru( {"*" + _table_name, "C OPIS C 250 0 OPIS C 500 0"})
 endif
 

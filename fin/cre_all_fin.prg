@@ -54,7 +54,7 @@ _table_name := "fin_suban"
 IF_NOT_FILE_DBF_CREATE
 
 // 0.3.0
-if ver["current"] < 00300
+if ver["current"] > 0 .and. ver["current"] < 00300
    modstru({"*" + _table_name, "A IDRJ C 6 0", "A FUNK C 5 0", "A FOND C 4 0" })
 endif
 
@@ -83,7 +83,7 @@ _table_name := "fin_psuban"
 IF_NOT_FILE_DBF_CREATE
 
 // 0.4.1
-if ver["current"] < 00401
+if ver["current"] > 0 .and. ver["current"] < 00401
    modstru({"*" + _table_name, "A IDRJ C 6 0", "A FUNK C 5 0", "A FOND C 4 0" })
 endif
 
@@ -100,7 +100,7 @@ _table_name := "fin_pripr"
 IF_NOT_FILE_DBF_CREATE
 
 // 0.4.1
-if ver["current"] < 00401
+if ver["current"] > 0 .and. ver["current"] < 00401
    modstru({"*" + _table_name, "A IDRJ C 6 0", "A FUNK C 5 0", "A FOND C 4 0" })
 endif
 

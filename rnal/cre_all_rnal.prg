@@ -32,7 +32,7 @@ if !FILE(f18_ime_dbf(_alias))
 endif
 
 // 0.8.6
-if ver["current"] < 00806
+if ver["current"] > 0 .and. ver["current"] < 00806
 	for each _tbl in { _table_name, "rnal__docs", "doc_log" }
    		modstru({"*" + _tbl, "C OPERATER_I N 3 0 OPERATER_I N 10 0" })
 	next

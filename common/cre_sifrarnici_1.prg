@@ -38,7 +38,7 @@ AADD(aDBf,{ 'KONTO'               , 'C' ,   7 ,  0 })
 IF_NOT_FILE_DBF_CREATE
 
 // 0.8.7
-if ver["current"] < 0807
+if ver["current"] > 0 .and. ver["current"] < 0807
     modstru( { "*" + _table_name, "A TIP C 2 0", "A KONTO C 7 0" } )
 endif
 
@@ -89,7 +89,7 @@ AADD(aDBf,{ 'TIP'                 , 'C' ,   1 ,  0 })
 IF_NOT_FILE_DBF_CREATE
     
 // 0.8.8
-if ver["current"] < 0808
+if ver["current"] > 0 .and. ver["current"] < 0808
     modstru( { "*" + _table_name, ;
         "C KURS1 N 10 5 KURS1 N 10 6", ;
         "C KURS2 N 10 5 KURS2 N 10 6", ;
@@ -240,7 +240,7 @@ AADD(aDBf,{ 'REGION'              , 'C' ,   2 ,  0 })
 IF_NOT_FILE_DBF_CREATE
 
 // 0.4.7
-if ver["current"] < 0407
+if ver["current"] > 0 .and. ver["current"] < 0407
     modstru( { "*" + _table_name, "A SUFIKS C 3 0" } )
 endif
 

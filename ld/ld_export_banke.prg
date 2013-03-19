@@ -21,7 +21,12 @@ CLASS LDExportTxt
     METHOD params()
     METHOD export()
 
+    METHOD export_formula_setup()
+    METHOD export_formula_read_params()
+    METHOD export_formula_write_params()
+
     DATA export_params
+    DATA formula_params
 
     PROTECTED:
 
@@ -29,6 +34,8 @@ CLASS LDExportTxt
         METHOD create_export_dbf()
         METHOD fill_data_from_ld()
         METHOD get_export_struct()
+        METHOD get_export_params()
+        METHOD get_export_list()
 
         DATA export_formula
  
@@ -38,6 +45,7 @@ ENDCLASS
 
 METHOD LDExportTxt:New()
 ::export_params := hb_hash()
+::formula_params := hb_hash()
 return SELF
 
 
@@ -109,12 +117,16 @@ Box(, 8, 65 )
     ++ _x
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Naziv izlaznog fajla:" GET _file_name PICT "@S20"
-    
+    @ m_x + _x, m_y + 2 SAY "Tekuca formula eksporta (1 ... n):" GET _id_formula PICT "999" VALID ::get_export_params( @_id_formula )
+   
+    read
+ 
+    _file_name := PADR( ::formula_params["file"], 50 )
+
     ++ _x
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Tekuca formula eksporta (1 ... n):" GET _id_formula PICT "999" 
+    @ m_x + _x, m_y + 2 SAY "Naziv izlaznog fajla:" GET _file_name PICT "@S20"
     
     read
 
@@ -237,11 +249,7 @@ return _ok
 
 METHOD LDExportTxt:get_export_struct()
 local _struct
-
-if ::export_params["formula"] == 1
-    _struct := "PADR(tekrn, 13);ALLTRIM(STR( iznos_1, 15, 2 ));ALLTRIM(ime);SPACE(1);ALLTRIM(prezime);ALLTRIM(jmbg)"
-endif
-
+_struct := ALLTRIM( ::formula_params["formula"] )
 return _struct
 
 
@@ -250,7 +258,7 @@ METHOD LDExportTxt:create_txt_from_dbf()
 local _ok := .f.
 local _output_filename 
 local _curr_struct
-local _separator := ";"
+local _separator
 local _line, _i, _a_struct
 
 _output_filename := my_home() + ALLTRIM( ::export_params["fajl"] )
@@ -261,6 +269,7 @@ set CONSOLE OFF
 
 // kreriraj makro liniju 
 _curr_struct := ::get_export_struct()
+_separator := ::formula_params["separator"]
 _a_struct := TokToNiz( _curr_struct, ";" )
 _line := ""
 
@@ -350,6 +359,185 @@ return _ok
 
 
 
+
+METHOD LDExportTxt:export_formula_setup()
+local _ok := .f.
+local _x := 1
+local _id_formula := fetch_metric( "ld_export_banke_tek", my_user(), 1 )
+local _active, _formula, _filename, _name, _sep
+local _write_params
+
+Box(, 10, 70 )
+
+    @ m_x + _x, m_y + 2 SAY "Varijanta eksporta:" GET _id_formula PICT "999"
+
+    read
+
+    ::export_formula_read_params( _id_formula )
+
+    _formula := ::formula_params["formula"]
+    _filename := ::formula_params["file"]
+    _name := ::formula_params["name"]
+    _sep := ::formula_params["separator"]
+
+    if _formula == NIL
+        // tek se podesavaju parametri za ovu formulu
+        _formula := SPACE(500)
+        _name := PADR( "XXXXX Banka", 100 )
+        _filename := PADR( "", 50 )
+        _sep := ";"
+    else
+        _formula := PADR( ALLTRIM( _formula ), 500 )
+        _name := PADR( ALLTRIM( _name ), 100 )
+        _filename := PADR( ALLTRIM( _filename ), 50 )
+        _sep := PADR( _sep, 1 )
+    endif
+
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Naziv:" GET _name PICT "@S40" VALID !EMPTY( _name )
+
+    ++ _x
+    
+    @ m_x + _x, m_y + 2 SAY "Formula:" GET _formula PICT "@S40" VALID !EMPTY( _formula )
+
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Naziv izlaznog fajla:" GET _filename PICT "@S20"
+
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Koristi se separator [ ; , . ]:" GET _sep 
+
+    read
+
+BoxC()
+
+if LastKey() == K_ESC
+    return _ok
+endif
+
+// write params
+
+set_metric( "ld_export_banke_tek", my_user(), _id_formula )
+
+::formula_params["separator"] := _sep
+::formula_params["formula"] := _formula
+::formula_params["file"] := _filename
+::formula_params["name"] := _name
+
+::export_formula_write_params( _id_formula )
+
+return _ok
+
+
+
+
+
+
+METHOD LDExportTxt:export_formula_read_params( id )
+local _param_name := "ld_export_" + PADL( ALLTRIM(STR(id)), 2, "0" ) + "_"
+local _ok := .t.
+
+::formula_params := hb_hash()
+::formula_params["name"] := fetch_metric( _param_name + "name", NIL, NIL )
+::formula_params["file"] := fetch_metric( _param_name + "file", NIL, NIL )
+::formula_params["formula"] := fetch_metric( _param_name + "formula", NIL, NIL )
+::formula_params["separator"] := fetch_metric( _param_name + "sep", NIL, NIL )
+
+return _ok
+
+
+
+
+
+
+
+METHOD LDExportTxt:export_formula_write_params( id )
+local _param_name := "ld_export_" + PADL( ALLTRIM(STR(id)), 2, "0" ) + "_"
+
+set_metric( _param_name + "name", NIL, ALLTRIM( ::formula_params["name"] ) )
+set_metric( _param_name + "file", NIL, ALLTRIM( ::formula_params["file"] ) )
+set_metric( _param_name + "formula", NIL, ALLTRIM( ::formula_params["formula"] ) )
+set_metric( _param_name + "sep", NIL, ALLTRIM( ::formula_params["separator"] ) )
+
+return .t.
+
+
+
+
+
+
+
+METHOD LDExportTxt:get_export_params( id )
+local _ok := .f.
+
+if id == 0
+    id := ::get_export_list()
+endif
+
+if id == 0
+    MsgBeep( "Potrebno izabrati neku od varijanti !" )
+    return _ok
+endif
+
+::export_formula_read_params( id )
+
+if ::formula_params["name"] == NIL  
+    MsgBeep( "Za ovu varijantu ne postoji podesenje !!!" )        
+else
+    _ok := .t.
+endif
+
+return _ok
+
+
+
+
+
+
+METHOD LDExportTxt:get_export_list()
+local _id := 0
+local _i
+local _param_name := "ld_export_"
+local _opc, _opcexe, _izbor := 1
+
+_opc := {}
+_opcexe := {}
+
+for _i := 1 to 10
+
+    ::export_formula_read_params( _i )
+
+    if ::formula_params["name"] <> NIL .and. !EMPTY( ::formula_params["name"] )
+       
+        _tmp := ""
+        _tmp += PADL( ALLTRIM(STR( _i )) + ".", 4 )
+        _tmp += PADR( ::formula_params["name"], 40 )
+
+        AADD( _opc, _tmp )
+        AADD( _opcexe, {|| "" } )
+
+    endif
+
+next
+
+do while .t. .and. LastKey() != K_ESC
+    _izbor := Menu( "choice", _opc, _izbor, .f. )
+	if _izbor == 0
+        exit
+    else
+        _id := VAL( LEFT ( _opc[ _izbor ], 3 ) )
+        _izbor := 0
+    endif
+enddo
+
+return _id
+
+
+
+
 function ld_export_banke()
 local _opc := {}
 local _opcexe := {}
@@ -358,11 +546,12 @@ local _izbor := 1
 AADD( _opc, "1. export podataka za banku                " )
 AADD( _opcexe, {|| ld_export_txt_banka()  } )
 AADD( _opc, "2. postavke formula exporta   " )
-AADD( _opcexe, {|| NIL  } )
+AADD( _opcexe, {|| ld_export_txt_setup()  } )
 
 f18_menu( "el", .f., _izbor, _opc, _opcexe )
 
 return
+
 
 
 
@@ -383,6 +572,17 @@ else
 endif
 
 oExp:export()
+
+return
+
+
+
+
+function ld_export_txt_setup()
+local oExp
+
+oExp := LDExportTxt():New()
+oExp:export_formula_setup()
 
 return
 

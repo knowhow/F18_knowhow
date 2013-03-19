@@ -117,6 +117,9 @@ AADD(opcexe, {|| ld_izvjestaji()})
 AADD(opc,   Lokal("5. krediti"))
 AADD(opcexe, {|| ld_krediti()})
 
+AADD(opc,   Lokal("6. export podataka za banke "))
+AADD(opcexe, {|| ld_export_banke() })
+
 AADD(opc,"------------------------------------")
 AADD(opcexe, nil)
 

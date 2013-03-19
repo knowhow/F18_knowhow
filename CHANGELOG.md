@@ -1,3 +1,7 @@
+1.4.144 2013-03-19, vsasa
+
+  - ld, exporti za banke [#30450](http://redmine.bring.out.ba/issues/30450)
+
 1.4.143 2013-03-19, vsasa
 
   - f18, kreiranje tabela i modifikacije struktura

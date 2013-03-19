@@ -21,9 +21,9 @@ CLASS LDExportTxt
     METHOD params()
     METHOD export()
 
-    METHOD export_formula_setup()
-    METHOD export_formula_read_params()
-    METHOD export_formula_write_params()
+    METHOD export_setup()
+    METHOD export_setup_read_params()
+    METHOD export_setup_write_params()
 
     DATA export_params
     DATA formula_params
@@ -31,14 +31,13 @@ CLASS LDExportTxt
     PROTECTED:
 
         METHOD create_txt_from_dbf()
+        METHOD _dbf_struct()
         METHOD create_export_dbf()
         METHOD fill_data_from_ld()
-        METHOD get_export_struct()
+        METHOD get_export_line_macro()
         METHOD get_export_params()
         METHOD get_export_list()
 
-        DATA export_formula
- 
 ENDCLASS
 
 
@@ -50,10 +49,11 @@ return SELF
 
 
 
-
-METHOD LDExportTxt:create_export_dbf()
+// -----------------------------------------------------------
+// struktura pomocne tabele
+// -----------------------------------------------------------
+METHOD LDExportTxt:_dbf_struct()
 local _dbf := {}
-local _table_name := "export"
 
 // struktura...
 AADD( _dbf, { "IDRJ"    , "C", 2, 0 } )
@@ -71,6 +71,19 @@ AADD( _dbf, { "IZNOS_1" , "N", 15, 2 } )
 AADD( _dbf, { "IZNOS_2" , "N", 15, 2 } )
 AADD( _dbf, { "UNETO"   , "N", 15, 2 } )
 AADD( _dbf, { "USATI"   , "N", 15, 2 } )
+
+return _dbf
+
+
+// -----------------------------------------------------------
+// kreiranje pomocne tabele
+// -----------------------------------------------------------
+METHOD LDExportTxt:create_export_dbf()
+local _dbf
+local _table_name := "export"
+
+// struktura dbf-a
+_dbf := ::_dbf_struct()
 
 select ( F_TMP_1 )
 use
@@ -93,19 +106,24 @@ return .t.
 
 
 
+// -----------------------------------------------------------
+// parametri tekuceg exporta
+// -----------------------------------------------------------
 
 METHOD LDExportTxt:params()
 local _ok := .f.
 local _mjesec := gMjesec
 local _godina := gGodina
 local _rj := SPACE(200)
+local _name
+local _export := "D"
 local _file_name := PADR( "export_ld.txt", 50 )
-local _id_formula := 1
+local _id_formula := fetch_metric( "ld_export_banke_tek", my_user(), 1 )
 local _x := 1
 
 // citaj parametre
 
-Box(, 8, 65 )
+Box(, 10, 65 )
 
     @ m_x + _x, m_y + 2 SAY "Datumski period / mjesec:" GET _mjesec PICT "99"
     @ m_x + _x, col() + 1 SAY "godina:" GET _godina PICT "9999"
@@ -121,23 +139,39 @@ Box(, 8, 65 )
    
     read
  
-    _file_name := PADR( ::formula_params["file"], 50 )
+    _file_name := ::formula_params["file"]
+    _name := ::formula_params["name"]
 
     ++ _x
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Naziv izlaznog fajla:" GET _file_name PICT "@S20"
+    @ m_x + _x, m_y + 2 SAY REPLICATE( "-", 60 )
+   
+    ++ _x
+ 
+    @ m_x + _x, m_y + 2 SAY "  Odabrana varijanta: " + PADR( _name, 30 ) 
+   
+    ++ _x
+    
+    @ m_x + _x, m_y + 2 SAY "Naziv izlaznog fajla: " + PADR( _file_name, 20 ) 
+
+    ++ _x 
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Eksportuj podatke (D/N)?" GET _export VALID _export $ "DN" PICT "@!"
     
     read
 
 BoxC()
 
-if LastKey() == K_ESC
+if LastKey() == K_ESC .or. _export == "N" 
     ::export_params := NIL
     return _ok
 endif
 
 // snimi parametre
+
+set_metric( "ld_export_banke_tek", my_user(), _id_formula )
 
 ::export_params := hb_hash()
 ::export_params["mjesec"] := _mjesec
@@ -145,6 +179,7 @@ endif
 ::export_params["rj"] := _rj
 ::export_params["fajl"] := _file_name
 ::export_params["formula"] := _id_formula
+::export_params["separator"] := ::formula_params["separator"]
 
 _ok := .t.
 
@@ -152,7 +187,9 @@ return _ok
 
 
 
-
+// -----------------------------------------------------------
+// generisanje podataka u pomocnu tabelu iz sql-a
+// -----------------------------------------------------------
 
 METHOD LDExportTxt:fill_data_from_ld()
 local _ok := .f.
@@ -244,15 +281,21 @@ return _ok
 
 
 
+// -----------------------------------------------------------
+// vraca liniju koja ce sluziti kao makro za odsjecanje i prikaz
+// teksta 
+// -----------------------------------------------------------
 
-
-
-METHOD LDExportTxt:get_export_struct()
+METHOD LDExportTxt:get_export_line_macro()
 local _struct
 _struct := ALLTRIM( ::formula_params["formula"] )
 return _struct
 
 
+
+// -----------------------------------------------------------
+// pravi txt fajl na osnovu dbf tabele i makro linije
+// -----------------------------------------------------------
 
 METHOD LDExportTxt:create_txt_from_dbf()
 local _ok := .f.
@@ -268,8 +311,8 @@ SET PRINTER ON
 set CONSOLE OFF
 
 // kreriraj makro liniju 
-_curr_struct := ::get_export_struct()
-_separator := ::formula_params["separator"]
+_curr_struct := ::get_export_line_macro()
+_separator := ::export_params["separator"]
 _a_struct := TokToNiz( _curr_struct, ";" )
 _line := ""
 
@@ -330,6 +373,9 @@ return _ok
 
 
 
+// -----------------------------------------------------------
+// glavna metoda exporta
+// -----------------------------------------------------------
 
 METHOD LDExportTxt:export()
 local _ok := .f.
@@ -358,9 +404,11 @@ return _ok
 
 
 
+// -----------------------------------------------------------
+// podesenje varijanti exporta
+// -----------------------------------------------------------
 
-
-METHOD LDExportTxt:export_formula_setup()
+METHOD LDExportTxt:export_setup()
 local _ok := .f.
 local _x := 1
 local _id_formula := fetch_metric( "ld_export_banke_tek", my_user(), 1 )
@@ -373,7 +421,7 @@ Box(, 10, 70 )
 
     read
 
-    ::export_formula_read_params( _id_formula )
+    ::export_setup_read_params( _id_formula )
 
     _formula := ::formula_params["formula"]
     _filename := ::formula_params["file"]
@@ -396,11 +444,11 @@ Box(, 10, 70 )
     ++ _x
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Naziv:" GET _name PICT "@S40" VALID !EMPTY( _name )
+    @ m_x + _x, m_y + 2 SAY "Naziv:" GET _name PICT "@S50" VALID !EMPTY( _name )
 
     ++ _x
     
-    @ m_x + _x, m_y + 2 SAY "Formula:" GET _formula PICT "@S40" VALID !EMPTY( _formula )
+    @ m_x + _x, m_y + 2 SAY "Formula:" GET _formula PICT "@S50" VALID !EMPTY( _formula )
 
     ++ _x
 
@@ -427,7 +475,7 @@ set_metric( "ld_export_banke_tek", my_user(), _id_formula )
 ::formula_params["file"] := _filename
 ::formula_params["name"] := _name
 
-::export_formula_write_params( _id_formula )
+::export_setup_write_params( _id_formula )
 
 return _ok
 
@@ -435,8 +483,12 @@ return _ok
 
 
 
+// -----------------------------------------------------------
+// citanje podesenja varijanti
+// -----------------------------------------------------------
 
-METHOD LDExportTxt:export_formula_read_params( id )
+
+METHOD LDExportTxt:export_setup_read_params( id )
 local _param_name := "ld_export_" + PADL( ALLTRIM(STR(id)), 2, "0" ) + "_"
 local _ok := .t.
 
@@ -452,9 +504,11 @@ return _ok
 
 
 
+// -----------------------------------------------------------
+// snimanje podesenja varijanti
+// -----------------------------------------------------------
 
-
-METHOD LDExportTxt:export_formula_write_params( id )
+METHOD LDExportTxt:export_setup_write_params( id )
 local _param_name := "ld_export_" + PADL( ALLTRIM(STR(id)), 2, "0" ) + "_"
 
 set_metric( _param_name + "name", NIL, ALLTRIM( ::formula_params["name"] ) )
@@ -482,10 +536,10 @@ if id == 0
     return _ok
 endif
 
-::export_formula_read_params( id )
+::export_setup_read_params( id )
 
-if ::formula_params["name"] == NIL  
-    MsgBeep( "Za ovu varijantu ne postoji podesenje !!!" )        
+if ::formula_params["name"] == NIL .or. EMPTY( ::formula_params["name"]  )
+    MsgBeep( "Za ovu varijantu ne postoji podesenje !!!#Ukucajte 0 da bi odabrali iz liste." )        
 else
     _ok := .t.
 endif
@@ -502,13 +556,15 @@ local _id := 0
 local _i
 local _param_name := "ld_export_"
 local _opc, _opcexe, _izbor := 1
+local _m_x := m_x
+local _m_y := m_y
 
 _opc := {}
 _opcexe := {}
 
 for _i := 1 to 10
 
-    ::export_formula_read_params( _i )
+    ::export_setup_read_params( _i )
 
     if ::formula_params["name"] <> NIL .and. !EMPTY( ::formula_params["name"] )
        
@@ -532,6 +588,9 @@ do while .t. .and. LastKey() != K_ESC
         _izbor := 0
     endif
 enddo
+
+m_x := _m_x
+m_y := _m_y
 
 return _id
 
@@ -582,7 +641,7 @@ function ld_export_txt_setup()
 local oExp
 
 oExp := LDExportTxt():New()
-oExp:export_formula_setup()
+oExp:export_setup()
 
 return
 

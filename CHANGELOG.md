@@ -1,6 +1,7 @@
 1.4.144 2013-03-19, vsasa
 
   - ld, exporti za banke [#30450](http://redmine.bring.out.ba/issues/30450)
+  - roba, sastavnice, ispravka opisa proizvoda u sastavnicama
 
 1.4.143 2013-03-19, vsasa
 

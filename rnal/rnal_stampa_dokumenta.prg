@@ -52,8 +52,12 @@ endif
 // upisi za rekapitulaciju u t_pars
 add_tpars("N20", cFlag )
 
-// printaj nalog
-nalpr_print( .t. )
+if Pitanje(, "Stampati odt verziju ?", "N" ) == "D"
+    rnal_nalog_za_proizvodnju_odt()
+else
+    // printaj nalog
+    nalpr_print( .t. )
+endif
 
 close all
 

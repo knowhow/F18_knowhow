@@ -543,7 +543,8 @@ do while !EOF() .and. field->doc_no == nDoc_no .and. field->doc_gr_no == nDoc_gr
 enddo
 
 // provjeri za novu stranicu
-if prow() > LEN_PAGE - DSTR_KOREKCIJA()
+// treba mi 4 prazna mjesta
+if prow() + 4 > LEN_PAGE - DSTR_KOREKCIJA()
 	++nPage
 	Nstr_a4(nPage, .t.)
 endif	
@@ -551,9 +552,7 @@ endif
 ? cLine
 ? RAZMAK + PADR( "UKUPNA KOLICINA:", 90 ), show_number( _qtty_total, nil, -10 )
 ? cLine
-
 B_OFF
-
 ?
 
 s_nal_izdao()
@@ -819,6 +818,12 @@ cPayAddDesc := g_t_pars_opis("N11")
 // placeno D/N
 if !EMPTY(cPayed) .and. ALLTRIM(cPayed) <> "-"
 
+	// provjeri za novu stranicu
+	if prow() > LEN_PAGE - DSTR_KOREKCIJA()
+		++ nPage
+		Nstr_a4(nPage, .t.)
+	endif	
+
 	cPom := "Placeno: "
 	
 	if cPayed == "D"
@@ -833,7 +838,13 @@ endif
 
 // dodatne napomene placanje
 if !EMPTY(cPayAddDesc) .and. ALLTRIM(cPayAddDesc) <> "-"
-		
+	
+	// provjeri za novu stranicu
+	if prow() > LEN_PAGE - DSTR_KOREKCIJA()
+		++ nPage
+		Nstr_a4(nPage, .t.)
+	endif	
+
 	cPom := "Napomene za placanje: "
 	cPom += cPayAddDesc
 
@@ -842,7 +853,8 @@ if !EMPTY(cPayAddDesc) .and. ALLTRIM(cPayAddDesc) <> "-"
 endif
 
 // provjeri za novu stranicu
-if prow() > LEN_PAGE - DSTR_KOREKCIJA()
+// treba mi 4 reda za ovaj ispis !
+if prow() + 4 > LEN_PAGE - DSTR_KOREKCIJA()
 	++ nPage
 	Nstr_a4(nPage, .t.)
 endif	
@@ -1093,7 +1105,7 @@ function NStr_a4(nPage, lShZagl)
 local cLine
 
 // idemo bez ostranicavanja
-return
+//return
 
 cLine := g_line(1)
 

@@ -1092,6 +1092,9 @@ return
 function NStr_a4(nPage, lShZagl)
 local cLine
 
+// idemo bez ostranicavanja
+return
+
 cLine := g_line(1)
 
 // korekcija duzine je na svako strani razlicita

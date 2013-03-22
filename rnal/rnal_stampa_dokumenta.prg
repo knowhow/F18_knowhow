@@ -52,7 +52,7 @@ endif
 // upisi za rekapitulaciju u t_pars
 add_tpars("N20", cFlag )
 
-if Pitanje(, "Stampati odt verziju ?", "N" ) == "D"
+if gRnalOdt == "D"
     rnal_nalog_za_proizvodnju_odt()
 else
     // printaj nalog

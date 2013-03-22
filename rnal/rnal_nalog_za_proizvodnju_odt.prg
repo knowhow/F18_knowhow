@@ -24,6 +24,8 @@ local _params
 local _cnt := 0
 local _doc_no, _doc_gr
 local _ok := .f.
+local _template := "nalprg.odt"
+local _po_grupama := .t.
 
 t_rpt_open()
 
@@ -62,6 +64,23 @@ if !_cre_xml( _groups, _params )
     return _ok
 endif
 
+// zatvori nepotrebne tabele
+select t_docit
+use
+select t_docop
+use
+select t_pars
+use
+
+if LEN( _groups ) == 1 .and. _groups[ 1, 1 ] == 0
+    _po_grupama := .f.
+endif
+
+// lansiraj odt
+if f18_odt_generate( _template )
+    f18_odt_print()
+endif
+
 _ok := .t.
 return _ok
 
@@ -80,6 +99,17 @@ _tmp := VAL( g_t_pars_opis("N10") )
 params["ttotal"] := _tmp
 // rekapitulacija materijala
 params["rekap_materijala"] := ( ALLTRIM( g_t_pars_opis("N20") ) == "D" )
+
+
+// operater
+_tmp := g_t_pars_opis("N13")
+params["nalog_operater"] := _tmp
+// operater koji printa
+_tmp := getfullusername( getUserid( f18_user() ) )
+params["nalog_print_operater"] := _tmp
+// vrijeme printanja
+_tmp := PADR( TIME(), 5 )
+params["nalog_print_vrijeme"] := _tmp
 
 // podaci header-a
 // ==============================================
@@ -109,9 +139,18 @@ params["nalog_dod_opis"] := g_t_pars_opis("N08")
 params["nalog_objekat_id"] := g_t_pars_opis("P20")
 // naziv objekta
 params["nalog_objekat_naziv"] := g_t_pars_opis("P21")
+// vrsta placanja
+params["nalog_vrsta_placanja"] := g_t_pars_opis("N06")
+// placeno
+params["nalog_placeno"] := g_t_pars_opis("N10")
+// placanje dodatni opis
+params["nalog_placanje_opis"] := g_t_pars_opis("N11")
+
 
 // podaci kupca
 // ===============================================
+// firma
+params["firma_naziv"] := ALLTRIM( gFNaziv )
 // kupac
 params["kupac_id"] := g_t_pars_opis("P01")
 params["kupac_naziv"] := g_t_pars_opis("P02")
@@ -153,6 +192,7 @@ open_xml( _xml )
 xml_subnode( "nalozi", .f. )
 
 // upisi osvnovne podatke naloga
+xml_node( "fdesc", to_xml_encoding( params["firma_naziv"] ) )
 xml_node( "no", params["nalog_broj"] )
 xml_node( "desc", to_xml_encoding( params["nalog_naziv"] ) )
 xml_node( "gr_total", params["nalog_grupa_total"] )
@@ -165,6 +205,10 @@ xml_node( "prior", to_xml_encoding( params["nalog_prioritet"] ) )
 xml_node( "desc_2", to_xml_encoding( params["nalog_dod_opis"] ) )
 xml_node( "ob_id", to_xml_encoding( params["nalog_objekat_id"] ) )
 xml_node( "ob_desc", to_xml_encoding( params["nalog_objekat_naziv"] ) )
+xml_node( "oper", to_xml_encoding( params["nalog_operater"] ) )
+xml_node( "oper_print", to_xml_encoding( params["nalog_print_operater"] ) )
+xml_node( "pr_time", params["nalog_print_vrijeme"] )
+xml_node( "vrpl", params["nalog_vrsta_placanja"] )
 
 // kupac/kontakt podaci...
 xml_node( "cust_id", to_xml_encoding( params["kupac_id"] ) )
@@ -185,17 +229,22 @@ for _i := 1 to LEN( groups )
     // uzmi broj grupe
     _group_id := groups[ _i, 1 ]
 
+    // grupa naloga, naziv grupe
     params["nalog_grupa"] := ALLTRIM( STR( _group_id ) )
     params["nalog_grupa_naziv"] := get_art_docgr( _group_id )
-
     xml_node( "gr_no", params["nalog_grupa"] )
     xml_node( "gr_desc", to_xml_encoding( params["nalog_grupa_naziv"] ) )
 
+    // broj stranice, ukupni broj stranica
+    xml_node( "pg_no", ALLTRIM(STR( _i )) )
+    xml_node( "pg_total", ALLTRIM(STR( LEN( groups ) )) )
+    
     select t_docit
     set order to tag "2"
     go top
     
     _doc_no := field->doc_no
+
     seek docno_str( _doc_no ) + STR( _group_id, 2 )
 
     _art_id := 0
@@ -241,16 +290,18 @@ for _i := 1 to LEN( groups )
 	        _el_no := field->doc_el_no
 	        _el_desc := 1
 	        _el_count := 0
-
+        
+            xml_subnode( "element", .f. )		
+	
+            xml_node( "no", ALLTRIM( STR( field->doc_el_no ) ) )
+	    	xml_node( "desc", to_xml_encoding( ALLTRIM(field->doc_el_des) ) )
+			
 	        do while !EOF() .and. field->doc_no == t_docit->doc_no ;
 	    		            .and. field->doc_it_no == t_docit->doc_it_no ;
 			                .and. field->doc_el_no == _el_no
 		
-                xml_subnode( "element", .f. )		
-	
-                xml_node( "no", ALLTRIM( STR( field->doc_el_no ) ) )
-	    		xml_node( "desc", to_xml_encoding( ALLTRIM(field->doc_el_des) ) )
-			
+                xml_subnode( "oper", .f. )
+           
 			    // iskljuci ga do daljnjeg
 			    _el_desc := 0
 	
@@ -274,12 +325,14 @@ for _i := 1 to LEN( groups )
 			        xml_node( "notes", to_xml_encoding( ALLTRIM( field->doc_op_des ) ) )
 		        endif
 	
-                xml_subnode( "element", .t. )		
-		        
+		        xml_subnode( "oper", .t. )
+
                 select t_docop		
 		        skip
 	   
 	        enddo
+
+            xml_subnode( "element", .t. )
 
 	    enddo
 
@@ -363,18 +416,18 @@ for _i := 1 to LEN( groups )
 	
 		    _opis_stavke := _tmp
             _tmp := ""
-		
-		    if ( ALLTRIM( _opis_stavke_tmp ) <> ALLTRIM( _opis_stavke ) ) .or. ( _art_tmp <> _art_id )
+		    
+            if ( ALLTRIM( _opis_stavke_tmp ) <> ALLTRIM( _opis_stavke ) ) .or. ( _art_tmp <> _art_id )
 			    _l_opis_stavke := .t.
 		    endif
 
-            if !_l_opis_stavke
-                _opis_stavke := ""
-            endif
-            		    
         endif
 
-        xml_node( "desc", to_xml_encoding( _opis_stavke )  )	
+        if _l_opis_stavke
+            xml_node( "note", to_xml_encoding( _opis_stavke )  )	
+        else
+            xml_node( "note", "" )	
+        endif
 
         xml_subnode( "item", .t. )
 
@@ -397,6 +450,59 @@ next
 
 // rekapitulacija materijala treba
 xml_subnode( "rekap", .f. )
+
+select t_docit2
+go top
+
+if RECCOUNT2() <> 0 .and. params["rekap_materijala"]
+	
+    seek docno_str( _doc_no )
+
+    do while !EOF() 
+
+	    if _doc_no > 0
+		    if field->doc_no <> _doc_no
+			    skip
+			    loop
+		    endif
+	    endif
+
+	    _r_doc := field->doc_no
+	    _r_doc_it_no := field->doc_it_no
+
+	    // da li se treba stampati ?
+	    select t_docit
+	    seek docno_str( _r_doc ) + docit_str( _r_doc_it_no )
+	
+	    if field->print == "N"
+		    select t_docit2
+		    skip
+		    loop
+	    endif
+	
+	    // vrati se
+	    select t_docit2
+
+	    do while !EOF() .and. field->doc_no == _r_doc ;
+		                .and. field->doc_it_no == _r_doc_it_no
+		
+            xml_subnode( "item", .f. )
+
+            xml_node( "no", ALLTRIM(STR( field->it_no )) )
+            xml_node( "id", to_xml_encoding( ALLTRIM( field->art_id ) ) )
+            xml_node( "desc", to_xml_encoding( ALLTRIM( field->art_desc ) ) )
+            xml_node( "notes", to_xml_encoding( ALLTRIM( field->descr ) ) )
+            xml_node( "qtty", ALLTRIM( STR( field->doc_it_qtt, 12, 2 ) ) )
+
+            xml_subnode( "item", .t. )
+
+		    skip
+	    enddo
+
+    enddo
+
+endif
+
 xml_subnode( "rekap", .t. )
 
 xml_subnode( "nalozi", .t. )

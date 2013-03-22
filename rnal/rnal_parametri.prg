@@ -202,6 +202,10 @@ nX ++
 
 @ m_x + nX, m_y+2 SAY PADL("Gornja margina:",35) GET gDg_margina PICT "99"
 
+nX ++
+
+@ m_x + nX, m_y+2 SAY PADL("Varijanta stampe ODT (D/N):",35) GET gRnalOdt PICT "@!" VALID gRnalOdt $ "DN"
+
 read
 
 BoxC()
@@ -405,6 +409,7 @@ function read_doc_params()
 gDg_margina := fetch_metric( "rnal_stampa_desna_margina", nil, gDg_margina )
 gDl_margina := fetch_metric( "rnal_stampa_lijeva_margina", nil, gDl_margina )
 gDd_redovi := fetch_metric( "rnal_stampa_dodatni_redovi", nil, gDd_redovi )
+gRnalOdt := fetch_metric( "rnal_stampa_odt", NIL, gRnalOdt )
 return
 
 
@@ -415,6 +420,7 @@ function write_doc_params()
 set_metric( "rnal_stampa_desna_margina", nil, gDg_margina )
 set_metric( "rnal_stampa_lijeva_margina", nil, gDl_margina )
 set_metric( "rnal_stampa_dodatni_redovi", nil, gDd_redovi )
+set_metric( "rnal_stampa_odt", NIL, gRnalOdt )
 return
 
 
@@ -517,6 +523,7 @@ gGnUse := fetch_metric( "rnal_gn_tabela", nil, gGnUse )
 gGnMin := fetch_metric( "rnal_gn_min", nil, gGnMin )
 gGnMax := fetch_metric( "rnal_gn_max", nil, gGnMax )
 gGnStep := fetch_metric("rnal_gn_step", nil, gGnStep )
+
 
 return
 

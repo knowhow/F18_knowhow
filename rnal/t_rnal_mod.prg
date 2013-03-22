@@ -248,6 +248,7 @@ public gGnMin := 20
 public gGnMax := 6000
 public gGnStep := 30
 public gGnUse := "D"
+public gRnalOdt := "N"
 
 public g3mmZaokUse := "D"
 public gProfZaokUse := "D"

@@ -136,6 +136,8 @@ else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
 
+AADD( opc, "T. unos/obrada statusa naloga  " )
+AADD( opcexe, {|| rnal_pregled_statusa_operacija() } )
 
 AADD(opc, "------------------------------------")
 AADD(opcexe, {|| nil})

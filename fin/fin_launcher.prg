@@ -18,17 +18,16 @@ EXTERNAL RIGHT
 
 function MainFin(cKorisn, cSifra, p3, p4, p5, p6, p7)
 local oFin
-local cModul
-
-PUBLIC gKonvertPath:="D"
-
-cModul:="FIN"
-PUBLIC goModul
+local cModul := "FIN"
+public gKonvertPath := "D"
+public goModul
 
 oFin := TFinMod():new(NIL, cModul, F18_VER, F18_VER_DATE , cKorisn, cSifra, p3,p4,p5,p6,p7)
-goModul:=oFin
+goModul := oFin
 
 oFin:run()
 
 return
+
+
 

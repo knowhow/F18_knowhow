@@ -111,6 +111,7 @@ set_f18_home_root()
 log_create()
 
 log_write("== F18 start: " + hb_ValToStr(DATE()) + " / " + hb_ValToStr(TIME()) + " ==")
+
 SetgaSDbfs()
 set_global_vars_0()
 PtxtSekvence()
@@ -136,13 +137,13 @@ endif
 _get_server_params_from_config()
 
 oLogin := F18Login():New()
-oLogin:MainDbLogin( @__server_params )
+oLogin:main_db_login( @__server_params )
 
 if oLogin:_main_db_connected
 
     do while .t.
         
-        if !oLogin:CompanyDbLogin( @__server_params )
+        if !oLogin:company_db_login( @__server_params )
             quit
         endif
 
@@ -174,6 +175,21 @@ _write_server_params_to_config()
 post_login()
 
 return .t.
+
+
+
+
+// prelazak iz sezone u sezonu
+function f18_old_session()
+local oLogin := F18Login():New()
+
+oLogin:company_db_relogin( @__server_params )
+
+return .t.
+
+
+
+
 
 // -------------------------------
 // init harbour postavke
@@ -400,8 +416,12 @@ endif
 
 // -------------------------------
 // -------------------------------
-function post_login()
+function post_login( gvars )
 local _ver
+
+if gvars == NIL
+    gvars := .t.
+endif
 
 // ~/.F18/empty38/
 set_f18_home( my_server_params()["database"] )
@@ -432,7 +452,9 @@ check_server_db_version()
 
 __server_log := .t.
 
-set_all_gvars()
+if gvars
+    set_all_gvars()
+endif
 
 f18_init_semaphores()
 
@@ -1150,9 +1172,11 @@ return .t.
 // ------------------------------------------------
 function set_hot_keys()
 
-SETKEY(K_SH_F1,{|| Calc()})
-SETKEY(K_F3, {|| new_f18_session_thread()})
+SETKEY( K_SH_F1,{|| Calc() })
+SETKEY( K_F3, {|| new_f18_session_thread() })
+SETKEY( K_SH_F6, {|| f18_old_session() } )
 
+return
 
 
 // ---------------------------------------------

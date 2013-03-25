@@ -141,11 +141,11 @@ return
 
 
 *void showMainScreen(bool lClear)
-method showMainScreen(lClear)
+method showMainScreen( lClear )
 local _ver_pos := 3
 
-if lClear==NIL
-	lClear:=.f.
+if lClear == NIL
+	lClear := .f.
 endif
 
 if lClear

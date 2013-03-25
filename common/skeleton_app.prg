@@ -128,24 +128,28 @@ return
 
 method run()
 
-if ::oDesktop==nil
-  ::oDesktop:=TDesktopNew()
-endif
-if ::lStarted==nil
-  ::lStarted:=.f.
+if ::oDesktop == NIL
+    ::oDesktop := TDesktopNew()
 endif
 
-SC_START(self, .t.)
+if ::lStarted == NIL
+    ::lStarted := .f.
+endif
+
+SC_START( self, .t. )
+
 // da se zna da je objekat jednom vec startovan
 ::lStarted:=.t.
 
 if ::lTerminate
-   ::quit()
-   return
+    ::quit()
+    return
 endif
+
 ::MMenu()
 
 return
+
 
 
 // -----------------------------------------
@@ -158,29 +162,32 @@ local i
 
 do case
 
-  case (Ch==K_SH_F1)
-    Calc()
+    case (Ch==K_SH_F1)
+        Calc()
  
-  case (Ch==K_F3)
-    new_f18_session_thread()
-     
-  case (Ch==K_SH_F2 .or. Ch==K_CTRL_F2)
-    PPrint()
+    case (Ch==K_F3)
+        new_f18_session_thread()
     
-  case Ch==K_SH_F10
-    ::gParams()
+    case (Ch == K_SH_F6 )
+        f18_old_session()
+ 
+    case (Ch==K_SH_F2 .or. Ch==K_CTRL_F2)
+        PPrint()
     
-  case Ch==K_SH_F9
-    Adresar()
+    case Ch==K_SH_F10
+        ::gParams()
     
-  otherwise
-    if !("U" $ TYPE("gaKeys"))
-      for i:=1 to LEN(gaKeys)
-        if (Ch==gaKeys[i,1])
-          EVAL(gaKeys[i,2])
+    case Ch==K_SH_F9
+        Adresar()
+    
+    otherwise
+        if !("U" $ TYPE("gaKeys"))
+            for i:=1 to LEN(gaKeys)
+                if (Ch==gaKeys[i,1])
+                    EVAL(gaKeys[i,2])
+                endif
+            next
         endif
-      next
-    endif
 endcase
 
 return

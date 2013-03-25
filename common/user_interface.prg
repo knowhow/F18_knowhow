@@ -19,7 +19,7 @@ static aPrStek:={}
 static aMenuStack:={}    
 static aMsgStack:={}
 
-function init_gui()
+function init_gui( clear )
 
 public m_x := 0
 public m_y := 0
@@ -32,7 +32,11 @@ public gVerzija := F18_VER
 public Invert   := .t.
 public Normal   :="GR+/B,R/N+,,,N/W"
 
-NaslEkran(.t.)
+if clear == NIL
+    clear := .t.
+endif
+
+NaslEkran( clear )
 
 return
 

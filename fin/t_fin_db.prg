@@ -10,8 +10,8 @@
  */
 
 #include "fin.ch"
-
 #include "hbclass.ch"
+
 CLASS TDbFin INHERIT TDB 
     method New
     method install  

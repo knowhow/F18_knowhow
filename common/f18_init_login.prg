@@ -17,20 +17,21 @@
 CLASS F18Login
 
     METHOD New()
-    METHOD MainDbLogin()
-    METHOD CompanyDbLogin()
-    METHOD BrowseCompany()
-    METHOD CompanyArray()
+    METHOD main_db_login()
+    METHOD company_db_login()
+    METHOD company_db_relogin()
+    METHOD browse_database_array()
+    METHOD database_array()
 
     DATA _company_db_connected
+    DATA _company_db_curr_choice 
     DATA _main_db_connected
-    DATA _browse_choice 
 
     PROTECTED:
         
-        METHOD MainDbLoginForm()
-        METHOD CompanyDbLoginForm()
-        METHOD Connect()
+        METHOD main_db_login_form()
+        METHOD company_db_login_form()
+        METHOD connect()
         
         METHOD _read_params()
         METHOD _write_params()
@@ -55,22 +56,32 @@ ENDCLASS
 METHOD F18Login:New()
 ::main_db_params := hb_hash()
 ::company_db_params := hb_hash()
-::_browse_choice := ""
+::_company_db_curr_choice := ""
 return SELF
 
 
 
 
 
-METHOD F18Login:Connect( params, conn_type )
-local _connected 
+METHOD F18Login:connect( params, conn_type, silent )
+local _connected
+
+if silent == NIL
+    silent := .f.
+endif
+ 
 _connected := my_server_login( params, conn_type )
+
+if !silent .and. !_connected
+    MsgBeep( "Neuspjesna prijava na server !" )
+endif
+
 return _connected
 
 
 
 
-METHOD F18Login:Disconnect()
+METHOD F18Login:disconnect()
 local _disconn 
 _disconn := my_server_logout()
 return _disconn
@@ -111,7 +122,7 @@ return .t.
 
 
 
-METHOD F18Login:MainDbLogin( server_param )
+METHOD F18Login:main_db_login( server_param )
 local _max_login := 4
 local _i
 local _logged_in := .f.
@@ -121,7 +132,7 @@ local _logged_in := .f.
 
 // try to connect
 // if not, open login form
-if ::Connect( server_param, 0 )
+if ::connect( server_param, 0 )
     _logged_in := .t.
 endif
 
@@ -131,7 +142,7 @@ if !_logged_in
     for _i := 1 to _max_login
         
         // login forma...
-        if ! ::MainDbLoginForm()
+        if ! ::main_db_login_form()
             // ovdje naprosto izlazimo, vjerovatno je ESC u pitanju
             return _logged_in
         endif
@@ -139,7 +150,7 @@ if !_logged_in
         ::_write_params( @server_param )
 
         // zakaci se !
-        if ::Connect( server_param, 0 )
+        if ::connect( server_param, 0 )
             _logged_in := .t.
             exit
         endif
@@ -156,7 +167,7 @@ return _logged_in
 
 
 
-METHOD F18Login:CompanyDbLogin( server_param )
+METHOD F18Login:company_db_login( server_param )
 local _logged_in := .f.
 local _i
 local _max_login := 4
@@ -169,17 +180,15 @@ if !_logged_in
     for _i := 1 to _max_login
         
         // login forma...
-        if ! ::CompanyDbLoginForm()
+        if ! ::company_db_login_form()
             // ovdje naprosto izlazimo, vjerovatno je ESC u pitanju
             return _logged_in
         endif
  
-        MsgBeep( "odabrano " + ::_browse_choice )
- 
         ::_write_params( @server_param )
       
         // zakaci se !
-        if ::Connect( server_param, 1 )
+        if ::connect( server_param, 1 )
             _logged_in := .t.
             exit
         endif
@@ -195,7 +204,58 @@ return
 
 
 
-METHOD F18Login:MainDbLoginForm()
+
+
+// --------------------------------------------------------------------
+// relogin metoda...
+// --------------------------------------------------------------------
+METHOD F18Login:company_db_relogin( server_param )
+local _ok := .f.
+local _new_session := ALLTRIM( STR( YEAR( DATE() ) - 1 ) )
+local _curr_database := server_param["database"]
+local _curr_year := RIGHT( _curr_database, 4 )
+
+Box(, 1, 55 )
+    @ m_x + 1, m_y + 2 SAY "Pristup podacima sezone:" GET _new_session VALID !EMPTY( _new_session )
+    read
+BoxC()
+
+if LastKey() == K_ESC
+    return _ok
+endif
+
+// promjeni mi podatke... database - bringout_2013 > bringout_2012
+server_param["database"] := STRTRAN( _curr_database, _curr_year, _new_session )
+
+// imamo sezonu... sada samo da se prebacimo
+if ::connect( server_param, 1 )
+    _ok := .t.
+endif
+
+if _ok
+   
+    SetgaSDbfs()
+    set_global_vars_0()
+
+    init_gui( .f. )
+
+    set_global_vars()
+
+    post_login( .f. )
+    f18_app_parameters( .t. )
+
+    set_hot_keys()
+
+endif
+
+return _ok
+
+
+
+
+
+
+METHOD F18Login:main_db_login_form()
 local _ok := .f.
 local _user, _pwd, _port, _host
 local _server
@@ -295,7 +355,7 @@ return _ok
 
 
 
-METHOD F18Login:CompanyDbLoginForm()
+METHOD F18Login:company_db_login_form()
 local _ok := .f.
 local _db, _session
 local _x := 5
@@ -315,12 +375,12 @@ CLEAR SCREEN
 @ 2, 2, MAXROWS()-15, MAXCOLS() - 2 BOX B_DOUBLE_SINGLE
 
 // daj matricu sa firmama dostupnim...
-_arr := ::companyarray()
+_arr := ::database_array()
 // browsaj listu firmi
-_ok := ::browsecompany( _arr )
+_ok := ::browse_database_array( _arr )
 
 if _ok
-    ::main_db_params["database"] := ALLTRIM( ::_browse_choice ) + "_" + ALLTRIM( _session )
+    ::main_db_params["database"] := ALLTRIM( ::_company_db_curr_choice ) + "_" + ALLTRIM( _session )
     ::main_db_params["session"] := ALLTRIM( _session )
 endif
 
@@ -330,7 +390,7 @@ return _ok
 
 
 
-METHOD F18Login:CompanyArray()
+METHOD F18Login:database_array()
 local _arr := {}
 local _server := pg_server()
 local _table, oRow, _db, _qry
@@ -383,7 +443,7 @@ return _arr
 
 
 
-METHOD F18Login:BrowseCompany( arr, table_type ) 
+METHOD F18Login:browse_database_array( arr, table_type ) 
 local _i
 local _key
 local _br
@@ -454,8 +514,10 @@ return .f.
 
 
 
+
 static function _browse_block( arr, x )
 return ( {|p| if( PCount() == 0, arr[ _row, x], arr[ _row, x] := p ) } )
+
 
 
 static function _skip_it( arr, curr, skiped )
@@ -468,7 +530,7 @@ elseif ( curr + skiped > LEN( arr ) )
     return ( LEN( arr ) - curr )
 endif
 
-Return( skiped )
+return( skiped )
 
 
 

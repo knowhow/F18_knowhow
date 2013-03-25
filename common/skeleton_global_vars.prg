@@ -146,7 +146,7 @@ return
 function SetPDVBoje()
 
 if VALTYPE(goModul:oDesktop) != "O"
-  return .f.
+    return .f.
 endif
 
 if IsPDV()

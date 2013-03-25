@@ -209,19 +209,44 @@ return
 // --------------------------------------------------------------------
 // relogin metoda...
 // --------------------------------------------------------------------
-METHOD F18Login:company_db_relogin( server_param )
+METHOD F18Login:company_db_relogin( server_param, database, session )
 local _ok := .f.
 local _new_session := ALLTRIM( STR( YEAR( DATE() ) - 1 ) )
 local _curr_database := server_param["database"]
 local _curr_year := RIGHT( _curr_database, 4 )
+local _show_box := .t.
 
-Box(, 1, 55 )
-    @ m_x + 1, m_y + 2 SAY "Pristup podacima sezone:" GET _new_session VALID !EMPTY( _new_session )
-    read
-BoxC()
+// uzmi iz proslijedjenih parametara
+// ovo omogucava automatski switch na bazu...
 
-if LastKey() == K_ESC
+if database <> NIL
+    _curr_database := database    
+    _show_box := .f.
+endif
+
+if session <> NIL
+    _new_session := session
+    _show_box := .f.
+endif
+
+// relogin radi samo kod baza "ime_godina"
+if ! ( "_" $ _curr_database )
     return _ok
+endif
+
+// ovdje se sada moze ubaciti i parametar firme... tako da mozemo skociti i u drugu firmu...
+
+if _show_box
+
+    Box(, 1, 55 )
+        @ m_x + 1, m_y + 2 SAY "Pristup podacima sezone:" GET _new_session VALID !EMPTY( _new_session )
+        read
+    BoxC()
+
+    if LastKey() == K_ESC
+        return _ok
+    endif
+
 endif
 
 // promjeni mi podatke... database - bringout_2013 > bringout_2012
@@ -232,9 +257,14 @@ if ::connect( server_param, 1 )
     _ok := .t.
 endif
 
-if _ok
+// samo ako su uslovi zadovoljeni i ako je prelazak u sezonu sa pitanjem
+// ako se koristi direktni prelaz u sezonu onda mi ovo nista nije potrebno
+// sve sto treba je konekcija na sql server !
+
+if _ok .and. _show_box
    
     SetgaSDbfs()
+
     set_global_vars_0()
 
     init_gui( .f. )
@@ -242,6 +272,7 @@ if _ok
     set_global_vars()
 
     post_login( .f. )
+    
     f18_app_parameters( .t. )
 
     set_hot_keys()

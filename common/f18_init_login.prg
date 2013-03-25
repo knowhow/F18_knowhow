@@ -19,9 +19,12 @@ CLASS F18Login
     METHOD New()
     METHOD MainDbLogin()
     METHOD CompanyDbLogin()
+    METHOD BrowseCompany()
+    METHOD CompanyArray()
 
     DATA _company_db_connected
     DATA _main_db_connected
+    DATA _browse_choice 
 
     PROTECTED:
         
@@ -52,6 +55,7 @@ ENDCLASS
 METHOD F18Login:New()
 ::main_db_params := hb_hash()
 ::company_db_params := hb_hash()
+::_browse_choice := ""
 return SELF
 
 
@@ -87,7 +91,6 @@ METHOD F18Login:_read_params( server_param )
 ::main_db_params["session"] := server_param["session"]
 ::main_db_params["postgres"] := server_param["postgres"]
 
-
 return .t.
 
 
@@ -95,6 +98,13 @@ return .t.
 
 
 METHOD F18Login:_write_params( server_params )
+server_params["database"] := ::main_db_params["database"]
+server_params["session"] := ::main_db_params["session"]
+server_params["user"] := ::main_db_params["username"]
+server_params["password"] := ::main_db_params["password"]
+server_params["host"] := ::main_db_params["host"]
+server_params["port"] := ::main_db_params["port"]
+server_params["schema"] := ::main_db_params["schema"]
 return .t.
 
 
@@ -163,7 +173,9 @@ if !_logged_in
             // ovdje naprosto izlazimo, vjerovatno je ESC u pitanju
             return _logged_in
         endif
-  
+ 
+        MsgBeep( "odabrano " + ::_browse_choice )
+ 
         ::_write_params( @server_param )
       
         // zakaci se !
@@ -289,43 +301,174 @@ local _db, _session
 local _x := 5
 local _left := 7
 local _srv_config := "N"
+local _arr
 
 _db := ::main_db_params["database"]
-_session := ::main_db_params["session"]
+_session := ALLTRIM( STR( YEAR( DATE() ) ) )
 
 _db := PADR( _db, 30 )
 _session := PADR( _session, 4 )
 
 CLEAR SCREEN
 
-@ 5, 5, 15, 70 BOX B_DOUBLE_SINGLE
+@ 1, 2 SAY "Strelicama gore/dole/lijevo/desno odaberite zeljenu firmu: "
+@ 2, 2, MAXROWS()-15, MAXCOLS() - 2 BOX B_DOUBLE_SINGLE
 
-++ _x
+// daj matricu sa firmama dostupnim...
+_arr := ::companyarray()
+// browsaj listu firmi
+_ok := ::browsecompany( _arr )
 
-@ _x, _left SAY PADC( "***** Unestite podatke za pristup firmi *****", 60 )
-
-++ _x
-++ _x
-
-@ _x, _left SAY PADL( "Firma:", 15 ) GET _db PICT "@S30"
-
-++ _x
-++ _x
-
-@ _x, _left SAY PADL( "Sezona:", 15 ) GET _session PICT "@S4"
-
-read
-
-if Lastkey() == K_ESC
-    return _ok
+if _ok
+    ::main_db_params["database"] := ALLTRIM( ::_browse_choice ) + "_" + ALLTRIM( _session )
+    ::main_db_params["session"] := ALLTRIM( _session )
 endif
 
-::main_db_params["database"] := ALLTRIM( _db )
-::main_db_params["session"] := ALLTRIM( _session )
-
-_ok := .t.
-
 return _ok
+
+
+
+
+
+METHOD F18Login:CompanyArray()
+local _arr := {}
+local _server := pg_server()
+local _table, oRow, _db, _qry
+local _tmp := {}
+local _len := 15
+local _filter_db := "empty#empty_sezona"
+
+_qry := "SELECT DISTINCT substring( datname, '(.*)_[0-9]+') AS datab " + ;
+        " FROM pg_database " + ;
+        " ORDER BY datab"
+
+_table := _sql_query( _server, _qry )
+_table:Refresh()
+
+if _table == NIL
+    return NIL
+endif
+
+_table:GoTo(1)
+
+do while !_table:EOF()
+    
+    oRow := _table:GetRow()
+    _db := oRow:FieldGet( oRow:FieldPos( "datab ") )
+    
+    // filter za tabele
+    if !EMPTY( _db ) .and. ! ( ALLTRIM( _db ) $ _filter_db )
+        AADD( _tmp, { _db } )    
+    endif
+
+    _table:Skip()
+
+enddo
+
+_count := 0
+// punimo sada matricu _arr
+for _n := 1 to 40
+
+    AADD( _arr, { "", "", "", "" } )
+
+    for _x := 1 to 4
+        ++ _count
+        _arr[ _n, _x ] := IF( _count > LEN( _tmp ), PADR( "", _len ), PADR( _tmp[ _count, 1 ], _len ) )
+    next
+
+next
+
+return _arr
+
+
+
+
+METHOD F18Login:BrowseCompany( arr, table_type ) 
+local _i
+local _key
+local _br
+
+if table_type == NIL
+    table_type := 0
+endif
+
+_row := 1
+
+if arr == NIL
+    MsgBeep( "Nema podataka za prikaz..." )
+    return NIL
+endif
+
+// TBrowse object for values
+_br := TBrowseNew( 3, 3, MAXROWS() - 16, MAXCOLS() - 3 )
+
+if table_type == 0
+    _br:HeadSep := ""
+    _br:FootSep := ""
+    _br:ColSep := ""
+elseif table_type == 1
+    _br:headSep := "-"
+    _br:footSep := "-"
+    _br:colSep := "|"
+elseif table_type == 2
+    _br:HeadSep := hb_UTF8ToStr( "╤═" )
+    _br:FootSep := hb_UTF8ToStr( "╧═" )
+    _br:ColSep := hb_UTF8ToStr( "│" )
+endif
+
+_br:skipBlock := { | _skip | _skip := _skip_it( arr, _row, _skip ), _row += _skip, _skip }
+_br:goTopBlock := { || _row := 1 }
+_br:goBottomBlock := { || _row := LEN( arr ) }
+
+for _l := 1 TO LEN( arr[1] )
+    _br:addColumn( TBColumnNew( "", _browse_block( arr, _l )) )
+next
+
+// vrijednost uzimamo kao:
+// EVAL( _br:GetColumn( _br:colpos ):block ) => "cago      "
+
+// main key handler loop
+do while ( _key <> K_ESC ) .and. ( _key <> K_RETURN )
+    // stabilize the browse and wait for a keystroke
+    _br:forcestable()
+    _key := inkey( 0 )
+    // process the directional keys
+    if _br:stable
+        do case
+            case ( _key == K_DOWN )
+                _br:down()
+            case ( _key == K_UP )
+                _br:up()
+            case ( _key == K_RIGHT )
+                _br:right()
+            case ( _key == K_LEFT )
+                _br:left()
+            case ( _key == K_ENTER )
+                ::_browse_choice := ALLTRIM( EVAL( _br:GetColumn( _br:colpos ):block ) )
+                return .t.
+        endcase
+    endif
+enddo
+
+return .f.
+
+
+
+static function _browse_block( arr, x )
+return ( {|p| if( PCount() == 0, arr[ _row, x], arr[ _row, x] := p ) } )
+
+
+static function _skip_it( arr, curr, skiped )
+
+if ( curr + skiped < 1 )
+    // Would skip past the top...
+    return( -curr + 1 )
+elseif ( curr + skiped > LEN( arr ) )
+    // Would skip past the bottom...
+    return ( LEN( arr ) - curr )
+endif
+
+Return( skiped )
 
 
 

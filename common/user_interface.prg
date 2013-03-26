@@ -681,9 +681,8 @@ do while .t.
         exit
     endif
 
-    nChar:=WaitScrSav()
-    nOldItemNo:=nItemNo
-
+    nChar := WaitScrSav()
+    nOldItemNo := nItemNo
     do case
             case nChar==K_ESC
                 nItemNo:=0
@@ -729,7 +728,11 @@ do while .t.
             nCtrlKeyVal := 30000
             exit
         otherwise
-                goModul:GProc(nChar)
+            
+            if VALTYPE( goModul ) == "O"
+                goModul:GProc( nChar )
+            endif
+
     endcase
     
     if nItemNo > nLen

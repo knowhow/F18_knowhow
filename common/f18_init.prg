@@ -951,7 +951,7 @@ endif
 function my_server_logout()
 
 if VALTYPE(__server) == "O"
- __server:Close()
+    __server:Close()
 endif
 
 return __server

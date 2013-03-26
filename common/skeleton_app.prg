@@ -45,7 +45,7 @@ CLASS TAppMod
   DATA lTerminate
   
   method new
-        method hasParent
+  method hasParent
   method setParent
   method getParent
   method setName

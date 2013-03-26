@@ -43,7 +43,7 @@ static function par_obrada()
 local nX := 1
 local _k1 := fin_k1(), _k2 := fin_k2(), _k3 := fin_k3(), _k4 := fin_k4()
 
-Box(,23,70)
+Box(, 24, 70 )
 
 	set cursor on
  	

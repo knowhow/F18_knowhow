@@ -25,6 +25,14 @@ CLASS F18Login
     METHOD database_array()
     METHOD get_database_browse_array()
     METHOD get_database_top_session()
+    METHOD get_database_sessions()
+    METHOD show_info_bar()
+    METHOD main_db_login_form()
+    METHOD company_db_login_form()
+    METHOD connect()
+    METHOD disconnect()        
+    METHOD _read_params()
+    METHOD _write_params()
 
     DATA _company_db_connected
     DATA _company_db_curr_choice 
@@ -32,14 +40,6 @@ CLASS F18Login
     DATA main_db_params
     DATA company_db_params
     DATA _login_count
-
-    METHOD main_db_login_form()
-    METHOD company_db_login_form()
-    METHOD connect()
-    METHOD disconnect()
-        
-    METHOD _read_params()
-    METHOD _write_params()
 
 ENDCLASS
 
@@ -462,6 +462,47 @@ return _ret
 
 
 
+METHOD F18Login:get_database_sessions( database )
+local _session := ""
+local _server := pg_server()
+local _table, oRow, _db, _qry
+local _arr := {}
+
+if EMPTY( database )
+    return NIL
+endif
+
+_qry := "SELECT DISTINCT substring( datname, '" + ALLTRIM( database ) +  "_([0-9]+)') AS godina " + ;
+        "FROM pg_database " + ;
+        "ORDER BY godina"
+
+_table := _sql_query( _server, _qry )
+_table:Refresh()
+
+if _table == NIL
+    return NIL
+endif
+
+_table:GoTo(1)
+
+do while !_table:EOF()
+
+    oRow := _table:GetRow()
+    _session := oRow:FieldGet( oRow:FieldPos( "godina" ) )
+
+    if !EMPTY( _session )
+        AADD( _arr, { _session } )
+    endif
+
+    _table:skip()
+
+enddo
+
+return _arr
+
+
+
+
 METHOD F18Login:get_database_top_session( database )
 local _session := ""
 local _server := pg_server()
@@ -611,6 +652,7 @@ _x := x_pos
 ++ _x
 ++ _x
 
+@ _x, _y + 3 SAY SPACE( 30 )
 @ _x, _y + 3 SAY "  Baza:" GET _db VALID !EMPTY( _db )
 
 ++ _x
@@ -670,11 +712,11 @@ CLEAR SCREEN
 // opcija 1
 // =========================
 
-@ 1, 3 SAY "1. ODABIR BAZE ***" COLOR "I"
+@ 1, 3 SAY hb_utf8tostr( "[1] Odabir baze" ) COLOR "I"
 
-@ 2, 2 SAY hb_utf8tostr( " - Strelicama gore/dole/lijevo/desno odaberite željenu bazu " )
+@ 2, 2 SAY hb_utf8tostr( " - Strelicama odaberite željenu bazu " )
 
-@ 3, 2 SAY hb_utf8tostr( " - <TAB> ručno zadavanje konekcije  <F10> ostale opcije" )
+@ 3, 2 SAY hb_utf8tostr( " - <TAB> ručno zadavanje konekcije  <F10> admin. opcije  <ESC> izlaz" )
 
 // top, left, bottom, right
 
@@ -684,18 +726,20 @@ CLEAR SCREEN
 // opcija 2
 // =========================
 // ispis opisa
-@ _pos_bottom + 2, 3 SAY hb_utf8tostr( "3. Ručna konekcija na bazu ***" ) COLOR "I"
+@ _pos_bottom + 2, 3 SAY hb_utf8tostr( "[2] Ručna konekcija na bazu" ) COLOR "I"
 
 // box za rucni odabir firme
 @ _pos_bottom + 3, 2, _pos_bottom + 10, ( _pos_right / 2 ) - 3 BOX B_DOUBLE_SINGLE
+@ _pos_bottom + 6, 11 SAY hb_utf8tostr( "<<< pritisni TAB >>>" )
 
 // opcija 3
 // =========================
 // ispis opisa
-@ _pos_bottom + 2, ( _pos_right / 2 ) + 1 SAY hb_utf8tostr( "3. Ostale opcije (F10) ***" ) COLOR "I"
+@ _pos_bottom + 2, ( _pos_right / 2 ) + 1 SAY hb_utf8tostr( "[3] Administrativne opcije" ) COLOR "I"
 
 // box za administrativne opcije
 @ _pos_bottom + 3,  ( _pos_right / 2 ) , _pos_bottom + 10, _pos_right + 2 BOX B_DOUBLE_SINGLE
+@ _pos_bottom + 6, ( _pos_right / 2 ) + 12 SAY hb_utf8tostr( "<<< pritisni F10 >>>" )
 
 _br := TBrowseNew( _pos_top, _pos_left, _pos_bottom, _pos_right )
 
@@ -729,12 +773,17 @@ do while ( _key <> K_ESC ) .and. ( _key <> K_RETURN )
 
     // stabilize the browse and wait for a keystroke
     _br:forcestable()
+    
+    ::show_info_bar( ALLTRIM( EVAL( _br:GetColumn( _br:colpos ):block ) ), _pos_bottom + 4 )
+    
     _key := inkey( 0 )
 
     // process the directional keys
-
     if _br:stable
+
+
         do case
+                
             case ( _key == K_DOWN )
                 _br:down()
             case ( _key == K_UP )
@@ -756,11 +805,35 @@ do while ( _key <> K_ESC ) .and. ( _key <> K_RETURN )
                 ::_company_db_curr_choice := ALLTRIM( EVAL( _br:GetColumn( _br:colpos ):block ) )
                 return 1
         endcase
+    
     endif
+
 enddo
 
 return 0
 
+
+
+METHOD F18Login:show_info_bar( database, x_pos )
+local _x := x_pos + 7
+local _y := 3
+local _info := "..."
+local _arr := ::get_database_sessions( database )
+local _max_len := MAXCOLS() - 2
+
+_info := database
+
+if !_arr == NIL .and. LEN( _arr ) > 0
+    if LEN( _arr ) > 1
+        _info += ", dostupne sezone: " + _arr[ 1, 1 ] + " ... " + _arr[ LEN( _arr ), 1 ]
+    else
+        _info += ", sezona: " + _arr[ 1, 1 ]
+    endif
+endif
+
+@ _x, _y SAY PADR( "Info: " + _info, _max_len )
+
+return .t.
 
 
 

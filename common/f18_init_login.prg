@@ -13,7 +13,6 @@
 #include "hbclass.ch"
 #include "common.ch"
 
-
 CLASS F18Login
 
     METHOD New()
@@ -22,7 +21,9 @@ CLASS F18Login
     METHOD company_db_relogin()
     METHOD browse_database_array()
     METHOD manual_enter_company_data()
+    METHOD administrative_options()
     METHOD database_array()
+    METHOD get_database_browse_array()
     METHOD get_database_top_session()
 
     DATA _company_db_connected
@@ -183,20 +184,30 @@ METHOD F18Login:company_db_login( server_param )
 local _logged_in := .f.
 local _i
 local _max_login := 4
+local _ret_comp
 
 // procitaj mi parametre za preduzece
 ::_read_params( @server_param )
 
 if !_logged_in
+
     // imamo pravo na 4 pokusaja !
     for _i := 1 to _max_login
         
         // login forma...
-        if ! ::company_db_login_form()
+        _ret_comp := ::company_db_login_form()
+
+        if _ret_comp == 0
             // ovdje naprosto izlazimo, vjerovatno je ESC u pitanju
             return _logged_in
         endif
- 
+
+        // neka opcija se koristi...
+        if _ret_comp < 0
+            loop
+        endif
+        
+        // _rec_comp je > 1 
         ::_write_params( @server_param )
       
         // zakaci se !
@@ -411,12 +422,12 @@ return _ok
 
 
 METHOD F18Login:company_db_login_form()
-local _ok := .f.
 local _db, _session
 local _x := 5
 local _left := 7
 local _srv_config := "N"
-local _arr
+local _arr, _tmp
+local _ret := 0
 
 _db := ::main_db_params["database"]
 _session := ALLTRIM( STR( YEAR( DATE() ) ) )
@@ -425,21 +436,19 @@ _db := PADR( _db, 30 )
 _session := PADR( _session, 4 )
 
 // daj matricu sa firmama dostupnim...
-_arr := ::database_array()
+_tmp := ::database_array()
+// daj mi formiranu matricu za prikaz
+_arr := ::get_database_browse_array( _tmp )
 
 // treba napraviti da ako je jedna baza samo da odmah udje
 
-CLEAR SCREEN
-
-@ 1, 2 SAY "*** ODABIR BAZE " COLOR "I"
-@ 2, 2 SAY hb_utf8tostr( " - Strelicama gore/dole/lijevo/desno odaberite željenu bazu " )
-@ 3, 2 SAY hb_utf8tostr( " - TAB - ostale opcije / ručno zadavanje konekcije" )
-
 // browsaj listu firmi
-_ok := ::browse_database_array( _arr )
+_ret := ::browse_database_array( _arr )
 
-if _ok
+if _ret > 0
     
+    _ok := .t.
+
     _session := ::get_database_top_session( ::_company_db_curr_choice )
     
     ::main_db_params["database"] := ALLTRIM( ::_company_db_curr_choice ) + ;
@@ -448,7 +457,7 @@ if _ok
 
 endif
 
-return _ok
+return _ret
 
 
 
@@ -477,12 +486,35 @@ return _session
 
 
 
-METHOD F18Login:database_array()
+
+
+METHOD F18Login:get_database_browse_array( arr )
 local _arr := {}
+local _count, _n, _x
+local _len := 20
+
+_count := 0
+// punimo sada matricu _arr
+for _n := 1 to 30
+
+    AADD( _arr, { "", "", "", "" } )
+
+    for _x := 1 to 4
+        ++ _count
+        _arr[ _n, _x ] := IF( _count > LEN( arr ), PADR( "", _len ), PADR( arr[ _count, 1 ], _len ) )
+    next
+
+next
+
+return _arr
+
+
+
+
+METHOD F18Login:database_array()
 local _server := pg_server()
 local _table, oRow, _db, _qry
 local _tmp := {}
-local _len := 15
 local _filter_db := "empty#empty_sezona"
 
 _qry := "SELECT DISTINCT substring( datname, '(.*)_[0-9]+') AS datab " + ;
@@ -512,76 +544,99 @@ do while !_table:EOF()
 
 enddo
 
-_count := 0
-// punimo sada matricu _arr
-for _n := 1 to 30
-
-    AADD( _arr, { "", "", "", "" } )
-
-    for _x := 1 to 4
-        ++ _count
-        _arr[ _n, _x ] := IF( _count > LEN( _tmp ), PADR( "", _len ), PADR( _tmp[ _count, 1 ], _len ) )
-    next
-
-next
-
-return _arr
+return _tmp
 
 
 
-METHOD F18Login:manual_enter_company_data( x_pos )
-local _x := 21
-local _y := 3
-local _db := SPACE(20)
-local _session := ALLTRIM( STR( YEAR(DATE()) ) )
+
+METHOD F18Login:administrative_options( x_pos, y_pos )
 local _ok := .f.
-local _reconf := "N"
+local _x, _y
+local _menuop, _menuexec
 
 _x := x_pos
+_y := ( MAXCOLS() / 2 ) - 5
 
-@ _x, _y SAY "**** Opcije:"
-++ _x
-@ _x, _y SAY hb_utf8tostr( "Rekonfiguriši server (D/N)?" ) GET _reconf VALID _reconf $ "DN" PICT "@!"
+// resetuj...
+_menuop := {}
+_menuexec := {}
 
-read
+// setuj odabir
+_set_menu_choices( @_menuop, @_menuexec )
 
-if LastKey() == K_ESC
-    return _ok    
-endif
+do while .t.
 
-if _reconf == "D"
-    f18_init_app_login( .f. )
-    return _ok
-endif
+    _mnu_choice := ACHOICE2( _x, _y + 1, _x + 5, _y + 40, _menuop, .t., "MenuFunc", 1 )
 
-++ _x
-++ _x
+ 	do case
+	    case _mnu_choice == 0
+            exit
+		case _mnu_choice > 0 
+			EVAL( _menuexec[ _mnu_choice ] )
+	endcase
 
-@ _x, _y SAY hb_utf8tostr( "**** Ručni unos podataka za pristup:" )
+ 	loop
 
-++ _x
-
-@ _x, _y SAY "  Baza:" GET _db VALID !EMPTY( _db )
-
-++ _x
-
-@ _x, _y SAY "Sezona:" GET _session VALID !EMPTY( _session )
-
-read
-
-if LastKey() == K_ESC
-    return _ok    
-endif
-
-_ok := .t.
-
-::_company_db_curr_choice := ALLTRIM( _db )
+enddo
 
 return _ok
 
 
 
 
+static function _set_menu_choices( menuop, menuexec )
+
+AADD( menuop, hb_utf8tostr( "1. rekonfiguracija servera " ) )
+AADD( menuexec, {|| f18_init_app_login( .f. ), .t. } )
+AADD( menuop, hb_utf8tostr( "2. ---" ) )
+AADD( menuexec, {|| MsgBeep("test opcija"), .t. } )
+
+return
+
+
+
+
+
+METHOD F18Login:manual_enter_company_data( x_pos, y_pos )
+local _x
+local _y := 3
+local _db := SPACE(20)
+local _session := ALLTRIM( STR( YEAR(DATE()) ) )
+local _ok := .f.
+
+_x := x_pos
+
+@ _x, _y + 1 SAY hb_utf8tostr( "Pristupiti sljedećoj bazi:" )
+
+++ _x
+++ _x
+
+@ _x, _y + 3 SAY "  Baza:" GET _db VALID !EMPTY( _db )
+
+++ _x
+
+@ _x, _y  + 3 SAY "Sezona:" GET _session VALID !EMPTY( _session )
+
+read
+
+if LastKey() == K_ESC
+    return _ok    
+endif
+
+if LastKey() == K_ENTER
+    _ok := .t.
+    ::_company_db_curr_choice := ALLTRIM( _db )
+endif
+
+return _ok
+
+
+
+// -------------------------------------------------------
+// vraca 0 - ESC
+// -1 - loop
+// 1 - ENTER
+// -------------------------------------------------------
 
 METHOD F18Login:browse_database_array( arr, table_type ) 
 local _i
@@ -590,8 +645,8 @@ local _br
 local _opt := 0
 local _pos_left := 3
 local _pos_top := 5
-local _pos_bottom := _pos_top + 10
-local _pos_right := MAXCOLS() - 22
+local _pos_bottom := _pos_top + 12
+local _pos_right := MAXCOLS() - 12
 local _company_count 
 
 if table_type == NIL
@@ -605,44 +660,64 @@ if arr == NIL
     return NIL
 endif
 
-// ispitivanje matrice... 
-// radi smanjenja forme za odabir firme
+// stvarni broj aktuelenih firmi 
 _company_count := _get_company_count( arr )
-if _company_count <= 4
-    _pos_bottom := _pos_top + 1
-elseif _company_count <= 20 
-    _pos_bottom := _pos_top + 4
-elseif _company_count <= 40
-    _pos_bottom := _pos_top + 10
-endif
-// itd... ovo treba vidjeti kako dalje...
+
+CLEAR SCREEN
 
 @ 0,0 SAY ""
+
+// opcija 1
+// =========================
+
+@ 1, 3 SAY "1. ODABIR BAZE ***" COLOR "I"
+
+@ 2, 2 SAY hb_utf8tostr( " - Strelicama gore/dole/lijevo/desno odaberite željenu bazu " )
+
+@ 3, 2 SAY hb_utf8tostr( " - <TAB> ručno zadavanje konekcije  <F10> ostale opcije" )
+
+// top, left, bottom, right
+
+// box za selekciju firme....
 @ 4, 2, _pos_bottom + 1, _pos_right + 2 BOX B_DOUBLE_SINGLE
 
-// TBrowse object for values
-// top, left,  bottom, right
+// opcija 2
+// =========================
+// ispis opisa
+@ _pos_bottom + 2, 3 SAY hb_utf8tostr( "3. Ručna konekcija na bazu ***" ) COLOR "I"
+
+// box za rucni odabir firme
+@ _pos_bottom + 3, 2, _pos_bottom + 10, ( _pos_right / 2 ) - 3 BOX B_DOUBLE_SINGLE
+
+// opcija 3
+// =========================
+// ispis opisa
+@ _pos_bottom + 2, ( _pos_right / 2 ) + 1 SAY hb_utf8tostr( "3. Ostale opcije (F10) ***" ) COLOR "I"
+
+// box za administrativne opcije
+@ _pos_bottom + 3,  ( _pos_right / 2 ) , _pos_bottom + 10, _pos_right + 2 BOX B_DOUBLE_SINGLE
+
 _br := TBrowseNew( _pos_top, _pos_left, _pos_bottom, _pos_right )
 
 if table_type == 0
     _br:HeadSep := ""
     _br:FootSep := ""
-    _br:ColSep := "   "
+    _br:ColSep := " "
 elseif table_type == 1
     _br:headSep := "-"
     _br:footSep := "-"
-    _br:colSep := " | "
+    _br:colSep := "|"
 elseif table_type == 2
     _br:HeadSep := hb_UTF8ToStr( "╤═" )
     _br:FootSep := hb_UTF8ToStr( "╧═" )
-    _br:ColSep := hb_UTF8ToStr( " │ " )
+    _br:ColSep := hb_UTF8ToStr( "│" )
 endif
 
 _br:skipBlock := { | _skip | _skip := _skip_it( arr, _row, _skip ), _row += _skip, _skip }
 _br:goTopBlock := { || _row := 1 }
 _br:goBottomBlock := { || _row := LEN( arr ) }
 
-for _l := 1 TO LEN( arr[1] )
+for _l := 1 TO LEN( arr[ 1 ] )
     _br:addColumn( TBColumnNew( "", _browse_block( arr, _l )) )
 next
 
@@ -668,17 +743,23 @@ do while ( _key <> K_ESC ) .and. ( _key <> K_RETURN )
                 _br:right()
             case ( _key == K_LEFT )
                 _br:left()
+            case ( _key == K_F10 )
+                ::administrative_options( _pos_bottom + 4, _pos_left )
+                return -1
             case ( _key == K_TAB )
-                ::manual_enter_company_data( _pos_bottom + 2 )
-                return .t.
+                if ::manual_enter_company_data( _pos_bottom + 4, _pos_left )
+                    return 1
+                else
+                    return -1
+                endif
             case ( _key == K_ENTER )
                 ::_company_db_curr_choice := ALLTRIM( EVAL( _br:GetColumn( _br:colpos ):block ) )
-                return .t.
+                return 1
         endcase
     endif
 enddo
 
-return .f.
+return 0
 
 
 

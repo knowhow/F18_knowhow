@@ -26,6 +26,7 @@ CLASS F18Login
     METHOD get_database_browse_array()
     METHOD get_database_top_session()
     METHOD get_database_sessions()
+    METHOD get_database_description()
     METHOD show_info_bar()
     METHOD main_db_login_form()
     METHOD company_db_login_form()
@@ -526,6 +527,42 @@ return _session
 
 
 
+METHOD F18Login:get_database_description( database, session )
+local _descr := ""
+local _server := pg_server()
+local _table, oRow, _qry
+local _database_name := ""
+
+if EMPTY( database )
+    return _descr
+endif
+
+_database_name := database + IF( !EMPTY( session ), "_" + session, "" )
+
+_qry := "SELECT description AS opis " + ;
+        "FROM pg_shdescription " + ;
+        "JOIN pg_database on objoid = pg_database.oid " + ;
+        "WHERE datname = " + _sql_quote( _database_name )
+
+_table := _sql_query( _server, _qry )
+_table:Refresh()
+
+if _table == NIL
+    return NIL
+endif
+
+oRow := _table:GetRow()
+
+if oRow <> NIL
+    _descr := oRow:FieldGet( oRow:FieldPos( "opis" ) )
+else
+    _descr := "< naziv nije setovan >"
+endif
+
+return _descr
+
+
+
 
 
 
@@ -781,7 +818,6 @@ do while ( _key <> K_ESC ) .and. ( _key <> K_RETURN )
     // process the directional keys
     if _br:stable
 
-
         do case
                 
             case ( _key == K_DOWN )
@@ -817,18 +853,23 @@ return 0
 METHOD F18Login:show_info_bar( database, x_pos )
 local _x := x_pos + 7
 local _y := 3
-local _info := "..."
+local _info := ""
 local _arr := ::get_database_sessions( database )
 local _max_len := MAXCOLS() - 2
-
-_info := database
+local _descr := ""
 
 if !_arr == NIL .and. LEN( _arr ) > 0
+
+    _descr := ::get_database_description( database, _arr[ LEN( _arr ), 1 ] )
+
+    _info += ALLTRIM( _descr )
+
     if LEN( _arr ) > 1
         _info += ", dostupne sezone: " + _arr[ 1, 1 ] + " ... " + _arr[ LEN( _arr ), 1 ]
     else
         _info += ", sezona: " + _arr[ 1, 1 ]
     endif
+
 endif
 
 @ _x, _y SAY PADR( "Info: " + _info, _max_len )

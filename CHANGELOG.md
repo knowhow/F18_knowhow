@@ -1,6 +1,8 @@
 1.4.145 2013-03-22, vsasa
 
   - rnal, štampa naloga ODT varijanta  [#30150](http://redmine.bring.out.ba/issues/30150)
+  - f18, sh+F6 vraćeno u funkciju
+  - f18, radovi na novom login-u
 
 1.4.144 2013-03-19, vsasa
 

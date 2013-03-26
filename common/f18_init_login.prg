@@ -213,7 +213,7 @@ METHOD F18Login:company_db_relogin( server_param, database, session )
 local _ok := .f.
 local _new_session := ALLTRIM( STR( YEAR( DATE() ) - 1 ) )
 local _curr_database := server_param["database"]
-local _curr_year := RIGHT( _curr_database, 4 )
+local _curr_session := RIGHT( _curr_database, 4 )
 local _show_box := .t.
 
 // uzmi iz proslijedjenih parametara
@@ -249,8 +249,14 @@ if _show_box
 
 endif
 
+// ako sam u istoj sezoni
+if _curr_session == _new_session
+    MsgBeep( "Vec se nalazimo u sezoni " + _curr_session  )
+    return _ok
+endif
+
 // promjeni mi podatke... database - bringout_2013 > bringout_2012
-server_param["database"] := STRTRAN( _curr_database, _curr_year, _new_session )
+server_param["database"] := STRTRAN( _curr_database, _curr_session, _new_session )
 
 // imamo sezonu... sada samo da se prebacimo
 if ::connect( server_param, 1 )
@@ -535,7 +541,7 @@ do while ( _key <> K_ESC ) .and. ( _key <> K_RETURN )
             case ( _key == K_LEFT )
                 _br:left()
             case ( _key == K_ENTER )
-                ::_browse_choice := ALLTRIM( EVAL( _br:GetColumn( _br:colpos ):block ) )
+                ::_company_db_curr_choice := ALLTRIM( EVAL( _br:GetColumn( _br:colpos ):block ) )
                 return .t.
         endcase
     endif

@@ -131,6 +131,7 @@ if no_sql_mode()
    return .t.
 endif
 
+
 /*
 // nova login metoda - u izradi !!!!
 
@@ -159,8 +160,8 @@ if oLogin:_main_db_connected
     enddo
 
 endif
-
 */
+
 
 _get_server_params_from_config()
 
@@ -173,6 +174,7 @@ endif
 _write_server_params_to_config() 
 
 post_login()
+
 
 return .t.
 

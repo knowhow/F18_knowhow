@@ -21,23 +21,22 @@ CLASS F18Login
     METHOD company_db_login()
     METHOD company_db_relogin()
     METHOD browse_database_array()
+    METHOD manual_enter_company_data()
     METHOD database_array()
+    METHOD get_database_top_session()
 
     DATA _company_db_connected
     DATA _company_db_curr_choice 
     DATA _main_db_connected
+    DATA main_db_params
+    DATA company_db_params
 
-    PROTECTED:
+    METHOD main_db_login_form()
+    METHOD company_db_login_form()
+    METHOD connect()
         
-        METHOD main_db_login_form()
-        METHOD company_db_login_form()
-        METHOD connect()
-        
-        METHOD _read_params()
-        METHOD _write_params()
-
-        DATA main_db_params
-        DATA company_db_params
+    METHOD _read_params()
+    METHOD _write_params()
 
 ENDCLASS
 
@@ -122,18 +121,25 @@ return .t.
 
 
 
-METHOD F18Login:main_db_login( server_param )
+METHOD F18Login:main_db_login( server_param, force_connect )
 local _max_login := 4
 local _i
 local _logged_in := .f.
 
+if force_connect == NIL
+    force_connect := .t.
+endif
+
 // ucitaj parametre iz ini fajla i setuj ::main_db_params
 ::_read_params( @server_param )
 
-// try to connect
-// if not, open login form
-if ::connect( server_param, 0 )
-    _logged_in := .t.
+if force_connect .and. ::_main_db_params["username"] <> NIL
+    // try to connect
+    // if not, open login form
+    if ::connect( server_param, 0 )
+        _logged_in := .t.
+    endif
+
 endif
 
 if !_logged_in
@@ -144,9 +150,10 @@ if !_logged_in
         // login forma...
         if ! ::main_db_login_form()
             // ovdje naprosto izlazimo, vjerovatno je ESC u pitanju
+            ::_main_db_connected := _logged_in
             return _logged_in
         endif
-        
+       
         ::_write_params( @server_param )
 
         // zakaci se !
@@ -271,6 +278,9 @@ if _ok .and. _show_box
    
     SetgaSDbfs()
 
+    // zatvori mi sve baze aktuelne ako su otvorene
+    close all
+
     set_global_vars_0()
 
     init_gui( .f. )
@@ -375,7 +385,10 @@ endif
 ::main_db_params["username"] := ALLTRIM( _user )
 ::main_db_params["host"] := ALLTRIM( _host )
 ::main_db_params["port"] := _port
+::main_db_params["schema"] := _schema
 ::main_db_params["postgres"] := "postgres"
+::main_db_params["session"] := ""
+::main_db_params["database"] := "postgres"
 
 // omogucice da se korisnici user=password jednostavno logiraju
 if EMPTY( _pwd )
@@ -406,23 +419,56 @@ _session := ALLTRIM( STR( YEAR( DATE() ) ) )
 _db := PADR( _db, 30 )
 _session := PADR( _session, 4 )
 
-CLEAR SCREEN
-
-@ 1, 2 SAY "Strelicama gore/dole/lijevo/desno odaberite zeljenu firmu: "
-@ 2, 2, MAXROWS()-15, MAXCOLS() - 2 BOX B_DOUBLE_SINGLE
-
 // daj matricu sa firmama dostupnim...
 _arr := ::database_array()
+
+// treba napraviti da ako je jedna baza samo da odmah udje
+
+CLEAR SCREEN
+
+@ 1, 2 SAY "*** ODABIR BAZE " COLOR "I"
+@ 2, 2 SAY " - Strelicama gore/dole/lijevo/desno odaberite zeljenu bazu "
+@ 3, 2 SAY " - TAB - ostale opcije / rucno zadavanje konekcije"
+@ 4, 2, MAXROWS() - 15, MAXCOLS() - 20 BOX B_DOUBLE_SINGLE
+
 // browsaj listu firmi
 _ok := ::browse_database_array( _arr )
 
 if _ok
-    ::main_db_params["database"] := ALLTRIM( ::_company_db_curr_choice ) + "_" + ALLTRIM( _session )
+    
+    _session := ::get_database_top_session( ::_company_db_curr_choice )
+    
+    ::main_db_params["database"] := ALLTRIM( ::_company_db_curr_choice ) + ;
+            if( !EMPTY( _session ), "_" + ALLTRIM( _session ), "" )
     ::main_db_params["session"] := ALLTRIM( _session )
+
 endif
 
 return _ok
 
+
+
+
+METHOD F18Login:get_database_top_session( database )
+local _session := ""
+local _server := pg_server()
+local _table, oRow, _db, _qry
+
+_qry := "SELECT MAX( DISTINCT substring( datname, '" + ALLTRIM( database ) +  "_([0-9]+)') ) AS godina " + ;
+        "FROM pg_database " + ;
+        "ORDER BY godina"
+
+_table := _sql_query( _server, _qry )
+_table:Refresh()
+
+if _table == NIL
+    return NIL
+endif
+
+oRow := _table:GetRow()
+_session := oRow:FieldGet( oRow:FieldPos( "godina") )
+
+return _session
 
 
 
@@ -451,7 +497,7 @@ _table:GoTo(1)
 do while !_table:EOF()
     
     oRow := _table:GetRow()
-    _db := oRow:FieldGet( oRow:FieldPos( "datab ") )
+    _db := oRow:FieldGet( oRow:FieldPos( "datab" ) )
     
     // filter za tabele
     if !EMPTY( _db ) .and. ! ( ALLTRIM( _db ) $ _filter_db )
@@ -479,11 +525,67 @@ return _arr
 
 
 
+METHOD F18Login:manual_enter_company_data()
+local _x := 21
+local _y := 3
+local _db := SPACE(20)
+local _session := ALLTRIM( STR( YEAR(DATE()) ) )
+local _ok := .f.
+local _reconf := "N"
+
+@ _x, _y SAY "**** Opcije:"
+++ _x
+@ _x, _y SAY "Rekonfigurisi server (D/N)?" GET _reconf VALID _reconf $ "DN" PICT "@!"
+
+read
+
+if LastKey() == K_ESC
+    return _ok    
+endif
+
+if _reconf == "D"
+    f18_init_app_login( .f. )
+    return _ok
+endif
+
+++ _x
+++ _x
+
+@ _x, _y SAY "**** Rucni unos podataka za pristup:"
+
+++ _x
+
+@ _x, _y SAY "  Baza:" GET _db VALID !EMPTY( _db )
+
+++ _x
+
+@ _x, _y SAY "Sezona:" GET _session VALID !EMPTY( _session )
+
+read
+
+if LastKey() == K_ESC
+    return _ok    
+endif
+
+_ok := .t.
+
+::_company_db_curr_choice := ALLTRIM( _db )
+
+return _ok
+
+
+
+
 
 METHOD F18Login:browse_database_array( arr, table_type ) 
 local _i
 local _key
 local _br
+local _opt := 0
+local _pos_left := 3
+local _pos_top := 5
+local _pos_bottom := MAXROWS() - 16
+local _pos_right := MAXCOLS() - 22
 
 if table_type == NIL
     table_type := 0
@@ -496,8 +598,11 @@ if arr == NIL
     return NIL
 endif
 
+@ 0,0 SAY ""
+
 // TBrowse object for values
-_br := TBrowseNew( 3, 3, MAXROWS() - 16, MAXCOLS() - 3 )
+// top, left,  bottom, right
+_br := TBrowseNew( _pos_top, _pos_left, _pos_bottom, _pos_right )
 
 if table_type == 0
     _br:HeadSep := ""
@@ -526,10 +631,13 @@ next
 
 // main key handler loop
 do while ( _key <> K_ESC ) .and. ( _key <> K_RETURN )
+
     // stabilize the browse and wait for a keystroke
     _br:forcestable()
     _key := inkey( 0 )
+
     // process the directional keys
+
     if _br:stable
         do case
             case ( _key == K_DOWN )
@@ -540,6 +648,9 @@ do while ( _key <> K_ESC ) .and. ( _key <> K_RETURN )
                 _br:right()
             case ( _key == K_LEFT )
                 _br:left()
+            case ( _key == K_TAB )
+                ::manual_enter_company_data()
+                return .t.
             case ( _key == K_ENTER )
                 ::_company_db_curr_choice := ALLTRIM( EVAL( _br:GetColumn( _br:colpos ):block ) )
                 return .t.
@@ -553,7 +664,7 @@ return .f.
 
 
 static function _browse_block( arr, x )
-return ( {|p| if( PCount() == 0, arr[ _row, x], arr[ _row, x] := p ) } )
+return ( {|p| if( PCount() == 0, arr[ _row, x ], arr[ _row, x ] := p ) } )
 
 
 

@@ -131,38 +131,9 @@ if no_sql_mode()
    return .t.
 endif
 
+f18_init_app_login()
 
 /*
-// nova login metoda - u izradi !!!!
-
-_get_server_params_from_config()
-
-oLogin := F18Login():New()
-oLogin:main_db_login( @__server_params )
-
-if oLogin:_main_db_connected
-
-    do while .t.
-        
-        if !oLogin:company_db_login( @__server_params )
-            quit
-        endif
-
-        _write_server_params_to_config()
-
-        if oLogin:_company_db_connected 
-            post_login()
-            f18_app_parameters( .t. )
-            set_hot_keys()
-            module_menu()
-        endif
-
-    enddo
-
-endif
-*/
-
-
 _get_server_params_from_config()
 
 // pokusaj se logirati kao user/user
@@ -174,11 +145,80 @@ endif
 _write_server_params_to_config() 
 
 post_login()
-
+*/
 
 return .t.
 
 
+
+
+function f18_init_app_login( force_connect )
+local oLogin
+
+if force_connect == NIL
+    force_connect := .t.
+endif
+
+// nova login metoda - u izradi !!!!
+
+_get_server_params_from_config()
+
+oLogin := F18Login():New()
+oLogin:main_db_login( @__server_params, force_connect )
+__main_db_params := __server_params
+
+if oLogin:_main_db_connected
+   
+    // upisi parametre za sljedeci put... 
+    _write_server_params_to_config()
+    
+    do while .t.
+    
+        if !oLogin:company_db_login( @__server_params )
+            quit
+        endif
+
+        // upisi parametre tekuce firme... treba li nam ovo ??????
+        _write_server_params_to_config()
+
+        if oLogin:_company_db_connected 
+
+            _show_info()
+            post_login()
+            f18_app_parameters( .t. )
+            set_hot_keys()
+
+            module_menu()
+
+        endif
+
+    enddo
+
+else
+    // neko je rekao ESC
+    quit
+endif
+
+return
+
+
+static function _show_info()
+local _x, _y
+local _txt := ""
+
+_x := ( MAXROWS() / 2 ) - 7
+_y := MAXCOLS()
+            
+// ocisti ekran...            
+CLEAR SCREEN
+    
+_txt := PADC( ". . .  S A C E K A J T E    T R E N U T A K  . . ." , _y )
+@ _x , 2 SAY _txt
+
+_txt := PADC( "k o n e k c i j a    n a    b a z u   u   t o k u ", _y )
+@ _x + 1 , 2 SAY _txt
+
+return 
 
 
 // prelazak iz sezone u sezonu
@@ -814,6 +854,8 @@ if params <> nil
 endif
 return __server_params 
 
+
+
 // --------------------------
 // --------------------------
 function my_server_login( params, conn_type )
@@ -829,8 +871,12 @@ endif
 
 for each _key in params:Keys
    if params[_key] == NIL
-       log_write("error server params key: " + _key )
-       return .f.
+        if conn_type == 1
+            log_write( "error server params key: " + _key )
+        else
+            msgbeep( _key )
+        endif
+        return .f.
    endif
 next
 

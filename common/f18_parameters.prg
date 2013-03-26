@@ -237,6 +237,7 @@ local _fin, _kalk, _fakt, _ld, _epdv, _virm, _os, _rnal, _pos, _mat, _reports
 local _pos_x, _pos_y
 local _x := 1
 local _len := 8
+local _corr := "D"
 private GetList := {}
 
 // parametri modula koristenih na glavnom meniju...
@@ -252,13 +253,26 @@ _mat := fetch_metric( "main_menu_mat", my_user(), "N" )
 _pos := fetch_metric( "main_menu_pos", my_user(), "N" )
 _reports := fetch_metric( "main_menu_reports", my_user(), "D" )
 
-Box(, 6, 68 )
+Box(, 10, 70 )
 
-	@ m_x + _x, m_y + 2 SAY "Odabir modula za glavni meni ***" COLOR "I"
+    // 1
+	@ m_x + _x, m_y + 2 SAY "*** Odabir modula za glavni meni ***" COLOR "I"
 
     ++ _x
     ++ _x
 
+    // 3
+    @ m_x + _x, m_y + 2 SAY hb_utf8tostr( "Prvi put pokrećete aplikaciju, potrebno odabrati module" )
+
+    ++ _x
+
+    // 4
+    @ m_x + _x, m_y + 2 SAY hb_utf8tostr( "koji će se nakon sinhronizacije pojaviti na meniju" )
+
+    ++ _x
+    ++ _x
+
+    // 6
 	@ m_x + _x, m_y + 2 SAY PADL( "FIN:", _len ) GET _fin PICT "@!"
 	@ m_x + _x, col() + 1 SAY PADL( "KALK:", _len ) GET _kalk PICT "@!"
 	@ m_x + _x, col() + 1 SAY PADL( "FAKT:", _len ) GET _fakt PICT "@!"
@@ -269,17 +283,24 @@ Box(, 6, 68 )
 	++ _x
     ++ _x
 
+    // 8
 	@ m_x + _x, m_y + 2 SAY PADL( "OS/SII:", _len ) GET _os PICT "@!"
 	@ m_x + _x, col() + 1 SAY PADL( "POS:", _len ) GET _pos PICT "@!"
 	@ m_x + _x, col() + 1 SAY PADL( "MAT:", _len ) GET _mat PICT "@!"
 	@ m_x + _x, col() + 1 SAY PADL( "RNAL:", _len ) GET _rnal PICT "@!"
 	@ m_x + _x, col() + 1 SAY PADL( "REPORTS:", _len ) GET _reports PICT "@!"
 
+    // 10
+
+    ++ _x
+    ++ _x
+	@ m_x + _x, m_y + 2 SAY "Odabir korektan (D/N) ?" GET _corr VALID _corr $ "DN" PICT "@!"
+
     read
 
 BoxC()
 
-if LastKey() == K_ESC
+if LastKey() == K_ESC .or. _corr == "N"
     return _ok
 endif
 
@@ -295,7 +316,6 @@ set_metric( "main_menu_rnal", my_user(), _rnal )
 set_metric( "main_menu_mat", my_user(), _mat )
 set_metric( "main_menu_pos", my_user(), _pos )
 set_metric( "main_menu_reports", my_user(), _reports )
-
 
 return _ok
 

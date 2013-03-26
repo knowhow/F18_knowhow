@@ -30,10 +30,12 @@ CLASS F18Login
     DATA _main_db_connected
     DATA main_db_params
     DATA company_db_params
+    DATA _login_count
 
     METHOD main_db_login_form()
     METHOD company_db_login_form()
     METHOD connect()
+    METHOD disconnect()
         
     METHOD _read_params()
     METHOD _write_params()
@@ -56,6 +58,7 @@ METHOD F18Login:New()
 ::main_db_params := hb_hash()
 ::company_db_params := hb_hash()
 ::_company_db_curr_choice := ""
+::_login_count := 0
 return SELF
 
 
@@ -72,7 +75,9 @@ endif
 _connected := my_server_login( params, conn_type )
 
 if !silent .and. !_connected
-    MsgBeep( "Neuspjesna prijava na server !" )
+    MsgBeep( hb_utf8tostr( "Neuspješna prijava na server !" ) )
+else
+    ++ ::_login_count 
 endif
 
 return _connected
@@ -245,7 +250,7 @@ endif
 
 if _show_box
 
-    Box(, 1, 55 )
+    Box(, 1, 50 )
         @ m_x + 1, m_y + 2 SAY "Pristup podacima sezone:" GET _new_session VALID !EMPTY( _new_session )
         read
     BoxC()
@@ -258,7 +263,7 @@ endif
 
 // ako sam u istoj sezoni
 if _curr_session == _new_session
-    MsgBeep( "Vec se nalazimo u sezoni " + _curr_session  )
+    MsgBeep( hb_utf8tostr( "Već se nalazimo u sezoni " ) + _curr_session  )
     return _ok
 endif
 
@@ -427,8 +432,8 @@ _arr := ::database_array()
 CLEAR SCREEN
 
 @ 1, 2 SAY "*** ODABIR BAZE " COLOR "I"
-@ 2, 2 SAY " - Strelicama gore/dole/lijevo/desno odaberite zeljenu bazu "
-@ 3, 2 SAY " - TAB - ostale opcije / rucno zadavanje konekcije"
+@ 2, 2 SAY hb_utf8tostr( " - Strelicama gore/dole/lijevo/desno odaberite željenu bazu " )
+@ 3, 2 SAY hb_utf8tostr( " - TAB - ostale opcije / ručno zadavanje konekcije" )
 
 // browsaj listu firmi
 _ok := ::browse_database_array( _arr )
@@ -536,7 +541,7 @@ _x := x_pos
 
 @ _x, _y SAY "**** Opcije:"
 ++ _x
-@ _x, _y SAY "Rekonfigurisi server (D/N)?" GET _reconf VALID _reconf $ "DN" PICT "@!"
+@ _x, _y SAY hb_utf8tostr( "Rekonfiguriši server (D/N)?" ) GET _reconf VALID _reconf $ "DN" PICT "@!"
 
 read
 
@@ -552,7 +557,7 @@ endif
 ++ _x
 ++ _x
 
-@ _x, _y SAY "**** Rucni unos podataka za pristup:"
+@ _x, _y SAY hb_utf8tostr( "**** Ručni unos podataka za pristup:" )
 
 ++ _x
 
@@ -622,15 +627,15 @@ _br := TBrowseNew( _pos_top, _pos_left, _pos_bottom, _pos_right )
 if table_type == 0
     _br:HeadSep := ""
     _br:FootSep := ""
-    _br:ColSep := ""
+    _br:ColSep := "   "
 elseif table_type == 1
     _br:headSep := "-"
     _br:footSep := "-"
-    _br:colSep := "|"
+    _br:colSep := " | "
 elseif table_type == 2
     _br:HeadSep := hb_UTF8ToStr( "╤═" )
     _br:FootSep := hb_UTF8ToStr( "╧═" )
-    _br:ColSep := hb_UTF8ToStr( "│" )
+    _br:ColSep := hb_UTF8ToStr( " │ " )
 endif
 
 _br:skipBlock := { | _skip | _skip := _skip_it( arr, _row, _skip ), _row += _skip, _skip }

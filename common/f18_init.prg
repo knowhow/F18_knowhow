@@ -110,8 +110,6 @@ set_f18_home_root()
 
 log_create()
 
-log_write("== F18 start: " + hb_ValToStr(DATE()) + " / " + hb_ValToStr(TIME()) + " ==")
-
 SetgaSDbfs()
 set_global_vars_0()
 PtxtSekvence()
@@ -131,6 +129,7 @@ if no_sql_mode()
    return .t.
 endif
 
+// iniciraj logiranje
 f18_init_app_login()
 
 /*
@@ -152,6 +151,36 @@ return .t.
 
 
 
+// -----------------------------------------------------
+// inicijalne opcije kod pokretanja firme
+// -----------------------------------------------------
+function f18_init_app_opts()
+// ovdje treba napraviti meni listu sa opcijama
+// vpn, rekonfiguracija, itd... neke administraitvne opcije
+// otvaranje nove firme...
+local _opt := {}
+local _optexe := {}
+local _izbor := 1
+
+AADD( _opc, hb_utf8tostr( "1. vpn konekcija                         " ))
+AADD( _opcexe, { || NIL } )
+AADD( _opc, hb_utf8tostr( "2. rekonfiguriši server  " ))
+AADD( _opcexe, { || NIL } )
+AADD( _opc, hb_utf8tostr( "3. otvaranje nove firme  " ))
+AADD( _opcexe, { || NIL } )
+// itd...
+
+f18_menu( "mn", .f., _izbor, _opc, _opcexe  )
+
+return .t.
+
+
+
+
+
+// -----------------------------------------------------
+// inicijalna login opcija
+// -----------------------------------------------------
 function f18_init_app_login( force_connect )
 local oLogin
 
@@ -168,7 +197,15 @@ oLogin:main_db_login( @__server_params, force_connect )
 __main_db_params := __server_params
 
 if oLogin:_main_db_connected
-   
+  
+    // 1 konekcija je na postgres i to je ok
+    // ako je vec neka druga...
+    if oLogin:_login_count > 1
+        // ostvari opet konekciju na main_db postgres
+        oLogin:disconnect()
+        oLogin:main_db_login( @__server_params, .t. )
+    endif
+ 
     // upisi parametre za sljedeci put... 
     _write_server_params_to_config()
     
@@ -206,16 +243,16 @@ static function _show_info()
 local _x, _y
 local _txt := ""
 
-_x := ( MAXROWS() / 2 ) - 10
+_x := ( MAXROWS() / 2 ) - 12
 _y := MAXCOLS()
             
 // ocisti ekran...            
 CLEAR SCREEN
     
-_txt := PADC( ". . .  S A C E K A J T E    T R E N U T A K  . . ." , _y )
+_txt := PADC( hb_utf8tostr( ". . .  S A Č E K A J T E    T R E N U T A K  . . ." ) , _y )
 @ _x , 2 SAY _txt
 
-_txt := PADC( "k o n e k c i j a    n a    b a z u   u   t o k u ", _y )
+_txt := PADC( ". . . . . . k o n e k c i j a    n a    b a z u   u   t o k u . . . . . . .", _y )
 @ _x + 1 , 2 SAY _txt
 
 return 

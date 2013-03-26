@@ -1,3 +1,7 @@
+1.4.148 2013-03-26, vsasa
+
+  - f18, radovi na novom login-u
+
 1.4.147 2013-03-26, vsasa
 
   - f18, radovi na novom login-u

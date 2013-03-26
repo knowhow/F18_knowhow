@@ -236,6 +236,8 @@ local _ok := .f.
 local _fin, _kalk, _fakt, _ld, _epdv, _virm, _os, _rnal, _pos, _mat, _reports
 local _pos_x, _pos_y
 local _x := 1
+local _len := 8
+private GetList := {}
 
 // parametri modula koristenih na glavnom meniju...
 _fin := fetch_metric( "main_menu_fin", my_user(), "N" )
@@ -250,27 +252,28 @@ _mat := fetch_metric( "main_menu_mat", my_user(), "N" )
 _pos := fetch_metric( "main_menu_pos", my_user(), "N" )
 _reports := fetch_metric( "main_menu_reports", my_user(), "D" )
 
-_pos_x := 1
-_pos_y := 2
+Box(, 6, 68 )
 
-Box(, 6, 66 )
+	@ m_x + _x, m_y + 2 SAY "Odabir modula za glavni meni ***" COLOR "I"
 
-	@ _pos_x, _pos_y SAY "Odabir modula za glavni meni ***" COLOR "I"
+    ++ _x
+    ++ _x
 
-	@ _pos_x + _x, _pos_y SAY SPACE(2) + "FIN:" GET _fin PICT "@!"
-	@ _pos_x + _x, col() + 1 SAY "KALK:" GET _kalk PICT "@!"
-	@ _pos_x + _x, col() + 1 SAY "FAKT:" GET _fakt PICT "@!"
-	@ _pos_x + _x, col() + 1 SAY "ePDV:" GET _epdv PICT "@!"
-	@ _pos_x + _x, col() + 1 SAY "LD:" GET _ld PICT "@!"
-	@ _pos_x + _x, col() + 1 SAY "VIRM:" GET _virm PICT "@!"
+	@ m_x + _x, m_y + 2 SAY PADL( "FIN:", _len ) GET _fin PICT "@!"
+	@ m_x + _x, col() + 1 SAY PADL( "KALK:", _len ) GET _kalk PICT "@!"
+	@ m_x + _x, col() + 1 SAY PADL( "FAKT:", _len ) GET _fakt PICT "@!"
+	@ m_x + _x, col() + 1 SAY PADL( "ePDV:", _len ) GET _epdv PICT "@!"
+	@ m_x + _x, col() + 1 SAY PADL( "LD:", _len ) GET _ld PICT "@!"
+	@ m_x + _x, col() + 1 SAY PADL( "VIRM:", _len ) GET _virm PICT "@!"
 	
 	++ _x
+    ++ _x
 
-	@ _pos_x + _x, _pos_y SAY SPACE(2) + "OS/SII:" GET _os PICT "@!"
-	@ _pos_x + _x, col() + 1 SAY "POS:" GET _pos PICT "@!"
-	@ _pos_x + _x, col() + 1 SAY "MAT:" GET _mat PICT "@!"
-	@ _pos_x + _x, col() + 1 SAY "RNAL:" GET _rnal PICT "@!"
-	@ _pos_x + _x, col() + 1 SAY "REPORTS:" GET _reports PICT "@!"
+	@ m_x + _x, m_y + 2 SAY PADL( "OS/SII:", _len ) GET _os PICT "@!"
+	@ m_x + _x, col() + 1 SAY PADL( "POS:", _len ) GET _pos PICT "@!"
+	@ m_x + _x, col() + 1 SAY PADL( "MAT:", _len ) GET _mat PICT "@!"
+	@ m_x + _x, col() + 1 SAY PADL( "RNAL:", _len ) GET _rnal PICT "@!"
+	@ m_x + _x, col() + 1 SAY PADL( "REPORTS:", _len ) GET _reports PICT "@!"
 
     read
 

@@ -429,7 +429,6 @@ CLEAR SCREEN
 @ 1, 2 SAY "*** ODABIR BAZE " COLOR "I"
 @ 2, 2 SAY " - Strelicama gore/dole/lijevo/desno odaberite zeljenu bazu "
 @ 3, 2 SAY " - TAB - ostale opcije / rucno zadavanje konekcije"
-@ 4, 2, MAXROWS() - 15, MAXCOLS() - 20 BOX B_DOUBLE_SINGLE
 
 // browsaj listu firmi
 _ok := ::browse_database_array( _arr )
@@ -510,7 +509,7 @@ enddo
 
 _count := 0
 // punimo sada matricu _arr
-for _n := 1 to 40
+for _n := 1 to 30
 
     AADD( _arr, { "", "", "", "" } )
 
@@ -525,13 +524,15 @@ return _arr
 
 
 
-METHOD F18Login:manual_enter_company_data()
+METHOD F18Login:manual_enter_company_data( x_pos )
 local _x := 21
 local _y := 3
 local _db := SPACE(20)
 local _session := ALLTRIM( STR( YEAR(DATE()) ) )
 local _ok := .f.
 local _reconf := "N"
+
+_x := x_pos
 
 @ _x, _y SAY "**** Opcije:"
 ++ _x
@@ -584,8 +585,9 @@ local _br
 local _opt := 0
 local _pos_left := 3
 local _pos_top := 5
-local _pos_bottom := MAXROWS() - 16
+local _pos_bottom := _pos_top + 10
 local _pos_right := MAXCOLS() - 22
+local _company_count 
 
 if table_type == NIL
     table_type := 0
@@ -598,7 +600,20 @@ if arr == NIL
     return NIL
 endif
 
+// ispitivanje matrice... 
+// radi smanjenja forme za odabir firme
+_company_count := _get_company_count( arr )
+if _company_count <= 4
+    _pos_bottom := _pos_top + 1
+elseif _company_count <= 20 
+    _pos_bottom := _pos_top + 4
+elseif _company_count <= 40
+    _pos_bottom := _pos_top + 10
+endif
+// itd... ovo treba vidjeti kako dalje...
+
 @ 0,0 SAY ""
+@ 4, 2, _pos_bottom + 1, _pos_right + 2 BOX B_DOUBLE_SINGLE
 
 // TBrowse object for values
 // top, left,  bottom, right
@@ -649,7 +664,7 @@ do while ( _key <> K_ESC ) .and. ( _key <> K_RETURN )
             case ( _key == K_LEFT )
                 _br:left()
             case ( _key == K_TAB )
-                ::manual_enter_company_data()
+                ::manual_enter_company_data( _pos_bottom + 2 )
                 return .t.
             case ( _key == K_ENTER )
                 ::_company_db_curr_choice := ALLTRIM( EVAL( _br:GetColumn( _br:colpos ):block ) )
@@ -659,6 +674,22 @@ do while ( _key <> K_ESC ) .and. ( _key <> K_RETURN )
 enddo
 
 return .f.
+
+
+
+
+static function _get_company_count( arr )
+local _count := 0
+
+for _i := 1 to LEN( arr )
+    for _n := 1 to 4
+        if !EMPTY( arr[ _i, _n ] )
+            ++ _count
+        endif
+    next
+next
+
+return _count
 
 
 

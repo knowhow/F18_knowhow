@@ -206,7 +206,7 @@ static function _show_info()
 local _x, _y
 local _txt := ""
 
-_x := ( MAXROWS() / 2 ) - 7
+_x := ( MAXROWS() / 2 ) - 10
 _y := MAXCOLS()
             
 // ocisti ekran...            
@@ -221,12 +221,11 @@ _txt := PADC( "k o n e k c i j a    n a    b a z u   u   t o k u ", _y )
 return 
 
 
+
 // prelazak iz sezone u sezonu
 function f18_old_session()
 local oLogin := F18Login():New()
-
 oLogin:company_db_relogin( @__server_params )
-
 return .t.
 
 

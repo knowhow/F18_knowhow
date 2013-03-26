@@ -228,3 +228,76 @@ return _ret
 
 
 
+// ------------------------------------------------------------------------
+// podesenje aktivnih modula kod startanja aplikacije po prvi put
+// ------------------------------------------------------------------------
+function f18_set_active_modules()
+local _ok := .f.
+local _fin, _kalk, _fakt, _ld, _epdv, _virm, _os, _rnal, _pos, _mat, _reports
+local _pos_x, _pos_y
+local _x := 1
+
+// parametri modula koristenih na glavnom meniju...
+_fin := fetch_metric( "main_menu_fin", my_user(), "N" )
+_kalk := fetch_metric( "main_menu_kalk", my_user(), "N" )
+_fakt := fetch_metric( "main_menu_fakt", my_user(), "N" )
+_ld := fetch_metric( "main_menu_ld", my_user(), "N" )
+_epdv := fetch_metric( "main_menu_epdv", my_user(), "N" )
+_virm := fetch_metric( "main_menu_virm", my_user(), "N" )
+_os := fetch_metric( "main_menu_os", my_user(), "N" )
+_rnal := fetch_metric( "main_menu_rnal", my_user(), "N" )
+_mat := fetch_metric( "main_menu_mat", my_user(), "N" )
+_pos := fetch_metric( "main_menu_pos", my_user(), "N" )
+_reports := fetch_metric( "main_menu_reports", my_user(), "D" )
+
+_pos_x := 1
+_pos_y := 2
+
+Box(, 6, 66 )
+
+	@ _pos_x, _pos_y SAY "Odabir modula za glavni meni ***" COLOR "I"
+
+	@ _pos_x + _x, _pos_y SAY SPACE(2) + "FIN:" GET _fin PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "KALK:" GET _kalk PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "FAKT:" GET _fakt PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "ePDV:" GET _epdv PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "LD:" GET _ld PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "VIRM:" GET _virm PICT "@!"
+	
+	++ _x
+
+	@ _pos_x + _x, _pos_y SAY SPACE(2) + "OS/SII:" GET _os PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "POS:" GET _pos PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "MAT:" GET _mat PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "RNAL:" GET _rnal PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "REPORTS:" GET _reports PICT "@!"
+
+    read
+
+BoxC()
+
+if LastKey() == K_ESC
+    return _ok
+endif
+
+// snimi parametre...
+set_metric( "main_menu_fin", my_user(), _fin )
+set_metric( "main_menu_kalk", my_user(), _kalk )
+set_metric( "main_menu_fakt", my_user(), _fakt )
+set_metric( "main_menu_ld", my_user(), _ld )
+set_metric( "main_menu_virm", my_user(), _virm )
+set_metric( "main_menu_os", my_user(), _os )
+set_metric( "main_menu_epdv", my_user(), _epdv )
+set_metric( "main_menu_rnal", my_user(), _rnal )
+set_metric( "main_menu_mat", my_user(), _mat )
+set_metric( "main_menu_pos", my_user(), _pos )
+set_metric( "main_menu_reports", my_user(), _reports )
+
+
+return _ok
+
+
+
+
+
+

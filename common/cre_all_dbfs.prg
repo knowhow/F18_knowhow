@@ -28,6 +28,7 @@ if _first_start = 0
     // ovdje mozemo poduzeti neka pitanja...
     if _local_files_count = 0
         // recimo mozemo birati module za glavni meni itd...
+        f18_set_active_modules()
     endif
 
 endif

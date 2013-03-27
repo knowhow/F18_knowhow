@@ -570,7 +570,7 @@ endif
 oRow := _table:GetRow()
 
 if oRow <> NIL
-    _descr := oRow:FieldGet( oRow:FieldPos( "opis" ) )
+    _descr := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "opis" ) ) )
 else
     _descr := "< naziv nije setovan >"
 endif

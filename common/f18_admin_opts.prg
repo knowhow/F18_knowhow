@@ -248,10 +248,14 @@ if ! ( "_" $ company )
     // nema sezone, uzmi sa servera...
     _sess_list := F18Login():New():get_database_sessions( company )
 else
-    // vec postoji zadana sezona...
+    
+	// vec postoji zadana sezona...
     // samo je dodaj u matricu...
-    company := PADR( ALLTRIM( company ), LEN( ALLTRIM( company ) ) - 5  )
-    AADD( _sess_list, { RIGHT( company , 4) } )
+    
+	AADD( _sess_list, { RIGHT( ALLTRIM( company ) , 4 ) } )
+    
+	company := PADR( ALLTRIM( company ), LEN( ALLTRIM( company ) ) - 5  )
+
 endif
 
 for _i := 1 to LEN( _sess_list )
@@ -268,6 +272,7 @@ for _i := 1 to LEN( _sess_list )
     
     _ok := hb_run( _cmd )
 
+	
     // ubaci u matricu rezultat...
     AADD( ::update_db_result, { company, _database, _cmd, _ok } )
 

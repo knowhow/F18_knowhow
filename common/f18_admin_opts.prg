@@ -19,6 +19,8 @@ CLASS F18AdminOpts
     METHOD new()
     METHOD update_db()
 
+    DATA update_db_result
+
     PROTECTED:
         
         METHOD update_db_download()
@@ -33,18 +35,22 @@ ENDCLASS
 
 
 METHOD F18AdminOpts:New()
+::update_db_result := {}
 return self
 
 
 
 
-METHOD F18AdminOpts:update_db( database )
+METHOD F18AdminOpts:update_db()
 local _ok := .f.
 local _x := 1
 local _version := SPACE(50)
 local _db_list := {}
 local _server := my_server_params()
+local _database := ""
 private GetList := {}
+
+_database := SPACE(50)
 
 Box(, 5, 60 )
 
@@ -54,6 +60,11 @@ Box(, 5, 60 )
     ++ _x
     
     @ m_x + _x, m_y + 2 SAY "verzija db-a:" GET _version PICT "@S20" VALID !EMPTY( _version )
+
+    ++ _x
+    ++ _x
+    
+    @ m_x + _x, m_y + 2 SAY "baza / prazno sve:" GET _database PICT "@S20"
 
     read
 
@@ -66,13 +77,13 @@ endif
 // snimi parametre...
 ::_update_params := hb_hash()
 ::_update_params["version"] := ALLTRIM( _version )
-::_update_params["database"] := database
+::_update_params["database"] := ALLTRIM( _database )
 ::_update_params["host"] := _server["host"]
 ::_update_params["port"] := _server["port"]
 ::_update_params["file"] := "?"
 
-if !EMPTY( database )
-    AADD( _db_list, { ALLTRIM( database ) } )
+if !EMPTY( _database )
+    AADD( _db_list, { ALLTRIM( _database ) } )
 else
     _db_list := F18Login():New():database_array()
 endif
@@ -86,9 +97,17 @@ if ! ::update_db_all( _db_list )
     return _ok
 endif
 
+if LEN( ::update_db_result ) > 0
+    // imamo i rezultate...
+    
+endif
+
 _ok := .t.
 
 return _ok
+
+
+
 
 
 METHOD F18AdminOpts:update_db_download()
@@ -98,8 +117,17 @@ local _cmd := ""
 local _path := my_home_root()
 local _file := "f18_db_migrate_package_" + ALLTRIM( _ver ) + ".gz"
 
-FERASE( ALLTRIM( _path ) + ALLTRIM( _file ) )
-sleep(1)
+if FILE( ALLTRIM( _path ) + ALLTRIM( _file ) )
+
+    if Pitanje(, "Izbrisati postojeci download file ?", "N" ) == "D"
+        FERASE( ALLTRIM( _path ) + ALLTRIM( _file ) )
+        sleep(1)
+    else
+        return .t.
+    endif
+
+endif
+
 
 _cmd := "wget " 
 #ifdef __PLATFORM__WINDOWS
@@ -119,12 +147,14 @@ _cmd += " -O "
 MsgO( "vrsim download db paketa ... sacekajte !" )
 
 hb_run( _cmd )
+
 sleep(1)
 
 MsgC()
 
 if !FILE( _path + _file )
     // nema fajle
+    MsgBeep( "Fajl " + _path + _file + " nije download-ovan !!!" )
     return _ok
 endif
 
@@ -228,6 +258,9 @@ for _i := 1 to LEN( _sess_list )
     MsgO( "Vrsim update baze " + _database ) 
     
     _ok := hb_run( _cmd )
+
+    // ubaci u matricu rezultat...
+    AADD( ::update_db_result, { company, _database, _cmd, _ok } )
 
     MsgC()
 

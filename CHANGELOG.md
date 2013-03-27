@@ -1,3 +1,7 @@
+1.4.151 2013-03-27, vsasa
+
+  - f18, db update, korekcije
+
 1.4.150 2013-03-27, vsasa
 
   - f18, db update, korekcije

@@ -244,7 +244,14 @@ local _database
 local _cmd 
 local _ok := .f.
 
-_sess_list := F18Login():New():get_database_sessions( company )
+if ! ( "_" $ company )
+    // nema sezone, uzmi sa servera...
+    _sess_list := F18Login():New():get_database_sessions( company )
+else
+    // vec postoji zadana sezona...
+    // samo je dodaj u matricu...
+    AADD( _sess_list, { RIGHT( company , 4) } )
+endif
 
 for _i := 1 to LEN( _sess_list )
 

@@ -101,8 +101,20 @@ local _file := "f18_db_migrate_package_" + ALLTRIM( _ver ) + ".gz"
 FERASE( ALLTRIM( _path ) + ALLTRIM( _file ) )
 sleep(1)
 
-_cmd := "wget http://knowhow-erp-f18.googlecode.com/files/" + _file ;
-        + " -O " + _path + _file
+_cmd := "wget " 
+#ifdef __PLATFORM__WINDOWS
+    _cmd += '"' +  "http://knowhow-erp-f18.googlecode.com/files/" + _file + '"'
+#else
+    _cmd += "http://knowhow-erp-f18.googlecode.com/files/" + _file
+#endif
+
+_cmd += " -O "
+
+#ifdef __PLATFORM__WINDOWS
+    _cmd += '"' + _path + _file + '"'
+#else
+    _cmd += _path + _file
+#endif
 
 MsgO( "vrsim download db paketa ... sacekajte !" )
 
@@ -181,7 +193,11 @@ _cmd += " -username=admin"
 
 _cmd += " -passwd=boutpgmin"
 
-_cmd += " -file=" + ::_update_params["file"]
+#ifdef __PLATFORM__WINDOWS
+    _cmd += " -file=" + '"' + ::_update_params["file"] + '"'
+#else
+    _cmd += " -file=" + ::_update_params["file"]
+#endif
 
 _cmd += " -autorun"
 

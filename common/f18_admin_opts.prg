@@ -250,6 +250,7 @@ if ! ( "_" $ company )
 else
     // vec postoji zadana sezona...
     // samo je dodaj u matricu...
+    company := PADR( ALLTRIM( company ), LEN( ALLTRIM( company ) ) - 5  )
     AADD( _sess_list, { RIGHT( company , 4) } )
 endif
 

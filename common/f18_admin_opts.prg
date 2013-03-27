@@ -52,19 +52,19 @@ private GetList := {}
 
 _database := SPACE(50)
 
-Box(, 5, 60 )
+Box(, 8, 70 )
 
-    @ m_x + _x, m_y + 2 SAY "**** upgrade db-a....."
+    @ m_x + _x, m_y + 2 SAY "**** upgrade db-a / unesite verziju ..."
     
     ++ _x
     ++ _x
     
-    @ m_x + _x, m_y + 2 SAY "verzija db-a:" GET _version PICT "@S20" VALID !EMPTY( _version )
+    @ m_x + _x, m_y + 2 SAY "     verzija db-a (npr. 4.6.1):" GET _version PICT "@S30" VALID !EMPTY( _version )
 
     ++ _x
     ++ _x
     
-    @ m_x + _x, m_y + 2 SAY "baza / prazno sve:" GET _database PICT "@S20"
+    @ m_x + _x, m_y + 2 SAY "naziv baze / prazno update-sve:" GET _database PICT "@S30"
 
     read
 
@@ -123,6 +123,7 @@ if FILE( ALLTRIM( _path ) + ALLTRIM( _file ) )
         FERASE( ALLTRIM( _path ) + ALLTRIM( _file ) )
         sleep(1)
     else
+        ::_update_params["file"] := ALLTRIM( _path ) + ALLTRIM( _file )
         return .t.
     endif
 

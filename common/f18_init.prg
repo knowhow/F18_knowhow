@@ -909,8 +909,6 @@ for each _key in params:Keys
    if params[_key] == NIL
         if conn_type == 1
             log_write( "error server params key: " + _key )
-        else
-            msgbeep( _key )
         endif
         return .f.
    endif

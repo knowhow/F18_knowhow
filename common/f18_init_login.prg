@@ -36,7 +36,8 @@ CLASS F18Login
     METHOD _write_params()
 
     DATA _company_db_connected
-    DATA _company_db_curr_choice 
+    DATA _company_db_curr_choice
+    DATA _company_db_curr_session 
     DATA _main_db_connected
     DATA main_db_params
     DATA company_db_params
@@ -60,6 +61,7 @@ METHOD F18Login:New()
 ::main_db_params := hb_hash()
 ::company_db_params := hb_hash()
 ::_company_db_curr_choice := ""
+::_company_db_curr_session := ""
 ::_login_count := 0
 return SELF
 
@@ -77,7 +79,7 @@ endif
 _connected := my_server_login( params, conn_type )
 
 if !silent .and. !_connected
-    MsgBeep( hb_utf8tostr( "Neuspješna prijava na server !" ) )
+    //MsgBeep( hb_utf8tostr( "Neuspješna prijava na server !" ) )
 else
     ++ ::_login_count 
 endif
@@ -153,7 +155,7 @@ if !_logged_in
     
     // imamo pravo na 4 pokusaja !
     for _i := 1 to _max_login
-        
+       
         // login forma...
         if ! ::main_db_login_form()
             // ovdje naprosto izlazimo, vjerovatno je ESC u pitanju
@@ -326,13 +328,16 @@ local _server
 local _x := 5
 local _left := 7
 local _srv_config := "N"
+local _session 
 
 _user := ::main_db_params["username"]
-_pwd := ::main_db_params["username"]
+_pwd := ""
+//::main_db_params["username"]
 _host := ::main_db_params["host"]
 _port := ::main_db_params["port"]
 _db := ::main_db_params["postgres"]
 _schema := ::main_db_params["schema"]
+_session := ::main_db_params["session"]
 
 if ( _host == NIL ) .or. ( _port == NIL )
     _srv_config := "D"
@@ -353,6 +358,10 @@ endif
 
 if _user == NIL
     _user := "test1"
+endif
+
+if _session == NIL
+    _session := ALLTRIM( STR( YEAR( DATE() ) ) ) 
 endif
 
 _host := PADR( _host, 100 )
@@ -391,7 +400,7 @@ endif
 ++ _x
 ++ _x
 
-@ _x, _left SAY PADL( "LOZINKA:", 15 ) GET _pwd PICT "@S30" COLOR "BG/BG"
+@ _x, _left SAY PADL( "LOZINKA:", 15 ) GET _pwd PICT "@S30" //COLOR "BG/BG"
 
 read
 
@@ -450,10 +459,17 @@ if _ret > 0
     
     _ok := .t.
 
-    _session := ::get_database_top_session( ::_company_db_curr_choice )
+    if ::_company_db_curr_session == NIL
+        // ako nije zadata sezona... odaberi top sezonu
+        // NIL je ako nije zadata...
+        _session := ::get_database_top_session( ::_company_db_curr_choice )
+    else    
+        // ako je zadata... uzmi nju !
+        _session := ALLTRIM( ::_company_db_curr_session )
+    endif
     
     ::main_db_params["database"] := ALLTRIM( ::_company_db_curr_choice ) + ;
-            if( !EMPTY( _session ), "_" + ALLTRIM( _session ), "" )
+            IF( !EMPTY( _session ), "_" + ALLTRIM( _session ), "" )
     ::main_db_params["session"] := ALLTRIM( _session )
 
 endif
@@ -666,8 +682,8 @@ static function _set_menu_choices( menuop, menuexec )
 
 AADD( menuop, hb_utf8tostr( "1. rekonfiguracija servera " ) )
 AADD( menuexec, {|| f18_init_app_login( .f. ), .t. } )
-AADD( menuop, hb_utf8tostr( "2. ---" ) )
-AADD( menuexec, {|| MsgBeep("test opcija"), .t. } )
+AADD( menuop, hb_utf8tostr( "2. update db" ) )
+AADD( menuexec, {|| F18AdminOpts():New():update_db(), .t. } )
 
 return
 
@@ -694,7 +710,7 @@ _x := x_pos
 
 ++ _x
 
-@ _x, _y  + 3 SAY "Sezona:" GET _session VALID !EMPTY( _session )
+@ _x, _y  + 3 SAY "Sezona:" GET _session 
 
 read
 
@@ -705,6 +721,7 @@ endif
 if LastKey() == K_ENTER
     _ok := .t.
     ::_company_db_curr_choice := ALLTRIM( _db )
+    ::_company_db_curr_session := ALLTRIM( _session )
 endif
 
 return _ok
@@ -838,7 +855,10 @@ do while ( _key <> K_ESC ) .and. ( _key <> K_RETURN )
                     return -1
                 endif
             case ( _key == K_ENTER )
+                // ovo je firma koju smo odabrali...
                 ::_company_db_curr_choice := ALLTRIM( EVAL( _br:GetColumn( _br:colpos ):block ) )
+                // sezona treba da bude uzeta kao TOP sezona
+                ::_company_db_curr_session := NIL
                 return 1
         endcase
     

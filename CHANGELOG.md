@@ -1,6 +1,6 @@
 1.4.152 2013-03-28, vsasa
 
-  - f18, login, ako je samo jedna baza definisana odmah se logiraj
+  - f18, login, matrica za odabir firmi je uvijek aktuelna radi mogućeg upgrade-a baze
 
 1.4.151 2013-03-27, vsasa
 

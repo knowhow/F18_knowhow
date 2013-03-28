@@ -456,7 +456,7 @@ if LEN( _tmp ) == 0
 endif
 
 // broj firmi je veci od 1
-if LEN( _tmp ) > 1
+//if LEN( _tmp ) > 1
 
     // daj mi formiranu matricu za prikaz
     _arr := ::get_database_browse_array( _tmp )
@@ -466,16 +466,16 @@ if LEN( _tmp ) > 1
     // browsaj listu firmi
     _ret := ::browse_database_array( _arr )
 
-else
+//else
     
     // samo jednu firmu imamo u matrici, odmah se logiraj...
 
-    ::_company_db_curr_session := NIL
-    ::_company_db_curr_choice := ALLTRIM( _tmp[ 1, 1 ] )
+//    ::_company_db_curr_session := NIL
+//    ::_company_db_curr_choice := ALLTRIM( _tmp[ 1, 1 ] )
 
-    _ret := 1
+//    _ret := 1
 
-endif
+//endif
 
 if _ret > 0
     

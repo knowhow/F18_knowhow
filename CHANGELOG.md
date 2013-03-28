@@ -1,3 +1,7 @@
+1.4.152 2013-03-28, vsasa
+
+  - f18, login, ako je samo jedna baza definisana odmah se logiraj
+
 1.4.151 2013-03-27, vsasa
 
   - f18, db update, korekcije

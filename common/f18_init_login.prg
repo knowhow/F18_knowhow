@@ -79,7 +79,7 @@ endif
 _connected := my_server_login( params, conn_type )
 
 if !silent .and. !_connected
-    //MsgBeep( hb_utf8tostr( "Neuspješna prijava na server !" ) )
+    //MsgBeep( "Neuspjesna prijava na server !" )
 else
     ++ ::_login_count 
 endif
@@ -447,13 +447,35 @@ _session := PADR( _session, 4 )
 
 // daj matricu sa firmama dostupnim...
 _tmp := ::database_array()
-// daj mi formiranu matricu za prikaz
-_arr := ::get_database_browse_array( _tmp )
 
-// treba napraviti da ako je jedna baza samo da odmah udje
+// nema firmi ??!???
+if LEN( _tmp ) == 0
+    MsgBeep( "Na serveru ne postoji definisana niti jedna baza !" )
+    // izlazimo
+    return 0
+endif
 
-// browsaj listu firmi
-_ret := ::browse_database_array( _arr )
+// broj firmi je veci od 1
+if LEN( _tmp ) > 1
+
+    // daj mi formiranu matricu za prikaz
+    _arr := ::get_database_browse_array( _tmp )
+
+    // treba napraviti da ako je jedna baza samo da odmah udje
+
+    // browsaj listu firmi
+    _ret := ::browse_database_array( _arr )
+
+else
+    
+    // samo jednu firmu imamo u matrici, odmah se logiraj...
+
+    ::_company_db_curr_session := NIL
+    ::_company_db_curr_choice := ALLTRIM( _tmp[ 1, 1 ] )
+
+    _ret := 1
+
+endif
 
 if _ret > 0
     

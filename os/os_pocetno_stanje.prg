@@ -223,7 +223,7 @@ enddo
 f18_free_tables( { __table_os, __table_promj } )
 sql_table_update( nil, "END" )
 
-@ _pos_x, 55 SAY "OK"
+@ _pos_x, _pos_y + 55 SAY "OK"
 
 AADD( info, { "1) izbrisano sredstava:", _count, ""  } )
 AADD( info, { "2) izbrisano promjena:", _count_promj, ""  } )
@@ -270,7 +270,7 @@ _server := pg_server()
 _data_os := _sql_query( _server, _qry_os )
 _data_promj := _sql_query( _server, _qry_promj )
 
-@ _pos_x, 55 SAY "OK"
+@ _pos_x, _pos_y + 55 SAY "OK"
 
 // 3) vrati se u tekucu bazu...
 // ------------------------------------------------------------
@@ -299,7 +299,7 @@ _insert_into_promj( _data_promj )
 f18_free_tables( { __table_os, __table_promj } )
 sql_table_update( nil, "END" )
 
-@ _pos_x, 55 SAY "OK"
+@ _pos_x, _pos_y + 55 SAY "OK"
 
 AADD( info, { "3) prebacio iz prethodne godine sredstva", _data_os:LastRec() , "" } )
 AADD( info, { "4) prebacio iz prethodne godine promjene", _data_promj:LastRec(), "" } )
@@ -498,7 +498,7 @@ do while !eof()
 
 enddo 
 
-@ _pos_x, 55 SAY "OK"
+@ _pos_x, _pos_y + 55 SAY "OK"
  
 AADD( info, { "5) broj otpisanih sredstava u novoj godini", _otpis_count, "" } )
 
@@ -522,7 +522,7 @@ do while !EOF()
 
 enddo
 
-@ _pos_x, 55 SAY "OK"
+@ _pos_x, _pos_y + 55 SAY "OK"
 
 f18_free_tables( { __table_os, __table_promj } )
 sql_table_update( nil, "END" )        

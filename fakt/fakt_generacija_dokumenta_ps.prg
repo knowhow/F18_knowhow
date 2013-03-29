@@ -53,8 +53,10 @@ if fakt_lager_lista_vars( @_param, _ps ) == 0
 endif
 
 MsgO( "Formiranje lager liste sql query u toku..." )
+
 // napuni mi podatke...
 _data := fakt_lager_lista_sql( _param, _ps )
+
 MsgC()
 
 // dobio sam data... sada mogu provrtiti u tekucoj bazi i azurirati tekuci dokument

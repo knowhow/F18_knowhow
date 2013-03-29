@@ -193,6 +193,7 @@ public gPotpis:="N"
 public gnKZBDana:=0
 public gOAsDuPartn:="N"
 public gAzurTimeOut := 120
+public g_knjiz_help := "N"
 public gMjRj := "N"
 public aRuleCols := g_rule_cols_fin()
 public bRuleBlock := g_rule_block_fin()
@@ -206,9 +207,9 @@ public gModul
 public gTema
 public gGlBaza
 
-gModul:="FIN"
-gTema:="OSN_MENI"
-gGlBaza:="SUBAN.DBF"
+gModul := "FIN"
+gTema := "OSN_MENI"
+gGlBaza := "SUBAN.DBF"
 
 public cZabrana := "Opcija nedostupna za ovaj nivo !!!"
 

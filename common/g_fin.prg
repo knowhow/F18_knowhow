@@ -118,14 +118,19 @@ local nSaldo := 0
 local nX
 private GetList:={}
 
-nSKup := get_fin_partner_saldo( cPartner, cKKup, gFirma )
-nSDob := get_fin_partner_saldo( cPartner, cKDob, gFirma )
-dDate := g_dpupl_part( cPartner, cKKup, gFirma )
+if cKKUP <> NIL
+    nSKup := get_fin_partner_saldo( cPartner, cKKup, gFirma )
+    dDate := g_dpupl_part( cPartner, cKKup, gFirma )
+endif
+
+if cKDOB <> NIL
+    nSDob := get_fin_partner_saldo( cPartner, cKDob, gFirma )
+endif
 
 nSaldo := nSKup + nSDob
 
 if nSaldo = 0
-	return
+	return .t.
 endif
 
 nX := 1
@@ -134,19 +139,23 @@ Box(, 9, 50)
 
 	@ m_x + nX, m_y + 2 SAY "Trenutno stanje partnera:"
 
-    	++nX
+    ++ nX
 
-    	@ m_x + nX, m_y + 2 SAY "-----------------------------------------------"
+    @ m_x + nX, m_y + 2 SAY "-----------------------------------------------"
     		
-	++nX
+	++ nX
 
-	@ m_x + nX, m_y + 2 SAY PADR( "(1) stanje na kontu " + cKKup + ": " + ALLTRIM(STR(nSKup, 12, 2)) + " KM", 45 ) COLOR IF(nSKup > 100, "W/R+", "W/G+")
-    	
-    	++nX
+    if cKKUP <> NIL
+	    @ m_x + nX, m_y + 2 SAY PADR( "(1) stanje na kontu " + cKKup + ": " + ALLTRIM(STR(nSKup, 12, 2)) + " KM", 45 ) COLOR IF(nSKup > 100, "W/R+", "W/G+")
+    endif
 
-	@ m_x + nX, m_y + 2 SAY PADR( "(2) stanje na kontu " + cKDob + ": " + ALLTRIM(STR(nSDob,12,2)) + " KM", 45 ) COLOR "W/GB+"
+    ++ nX
+    
+    if cKDOB <> NIL
+	    @ m_x + nX, m_y + 2 SAY PADR( "(2) stanje na kontu " + cKDob + ": " + ALLTRIM(STR(nSDob,12,2)) + " KM", 45 ) COLOR "W/GB+"
+    endif
 
-	++nX
+	++ nX
 
 	@ m_x + nX, m_y + 2 SAY "-----------------------------------------------"
     	++nX
@@ -155,13 +164,13 @@ Box(, 9, 50)
 	
 	nX += 2
 
-    	@ m_x + nX, m_y + 2 SAY "Datum zadnje uplate: " + DToC(dDate)
+    @ m_x + nX, m_y + 2 SAY "Datum zadnje uplate: " + DToC(dDate)
 		
-    	inkey(0)
+    inkey(0)
 
 BoxC()
 
-return
+return .t.
 
 
 

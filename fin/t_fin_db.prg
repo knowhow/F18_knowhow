@@ -10,8 +10,8 @@
  */
 
 #include "fin.ch"
-
 #include "hbclass.ch"
+
 CLASS TDbFin INHERIT TDB 
     method New
     method install  
@@ -57,7 +57,6 @@ cDirRad := my_home()
 cDirSif := my_home()
 cDirPriv := my_home()
 
-CreFmkPi()
 
 return
 

@@ -68,13 +68,13 @@ _item["algoritam"] := {}
 // algoritam 1 - default
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
-_alg["dbf_key_block"]  := {|| field->id + field->tip + DTOS(field->datum) }
-_alg["dbf_key_fields"] := { "id", "tip", "datum"}
-_alg["sql_in"]         := " rpad(id, 10) || rpad(tip, 2) || to_char(datum, 'YYYYMMDD') " 
+_alg["dbf_key_block"]  := {|| field->id + field->tip + DTOS(field->datum) + field->opis }
+_alg["dbf_key_fields"] := { "id", "tip", "datum", "opis" }
+_alg["sql_in"]         := " rpad(id, 10) || rpad(tip, 2) || to_char(datum, 'YYYYMMDD') || rpad(opis, 30)" 
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
-_item["sql_order"] := "id, tip, datum"
+_item["sql_order"] := "id, tip, datum, opis"
 
 f18_dbfs_add(_tbl, @_item)
 

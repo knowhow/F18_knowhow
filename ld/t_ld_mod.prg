@@ -117,6 +117,9 @@ AADD(opcexe, {|| ld_izvjestaji()})
 AADD(opc,   Lokal("5. krediti"))
 AADD(opcexe, {|| ld_krediti()})
 
+AADD(opc,   Lokal("6. export podataka za banke "))
+AADD(opcexe, {|| ld_export_banke() })
+
 AADD(opc,"------------------------------------")
 AADD(opcexe, nil)
 
@@ -216,11 +219,11 @@ public gAhTrosk := 30
 
 public gIzdanje := SPACE(10)
 public gGodina := YEAR( DATE() )
-public gZaok:=2
-public gZaok2:=2
-public gValuta:="KM "
-public gPicI:="99999999.99"
-public gPicS:="99999999"
+public gZaok := 2
+public gZaok2 := 2
+public gValuta := "KM "
+public gPicI := "99999999.99"
+public gPicS := "99999999"
 public gTipObr:="1"
 public gVarSpec:="1"
 public cVarPorOl:="1"
@@ -259,7 +262,7 @@ public gZastitaObracuna := IzFmkIni( "LD", "ZastitaObr", "N", KUMPATH )
 
 // bazni parametri obracuna...
 // globalni parametri
-gVarObracun := fetch_metric("ld_varijanta_obracuna", NIL, "2")
+gVarObracun := fetch_metric( "ld_varijanta_obracuna", NIL, "2" )
 lViseObr := fetch_metric( "ld_vise_obracuna", NIL, lViseObr )
 // parametri po korisinicima
 gGodina := fetch_metric( "ld_godina", my_user(), gGodina )
@@ -277,6 +280,13 @@ if gSihtGroup == "D"
 	gSihtarica := "N"
 endif
 
+gPicI := fetch_metric( "ld_pic_iznos", NIL, gPicI )
+gPicS := fetch_metric( "ld_pic_sati", NIL, gPicS )
+gValuta := fetch_metric( "ld_valuta", NIL, gValuta )
+gZaok2 := fetch_metric( "ld_zaok_por_dopr", NIL, gZaok2 )
+gZaok := fetch_metric( "ld_zaok_prim", NIL, gZaok )
+gFURsati := fetch_metric( "ld_formula_ukupni_sati", nil, gFURsati )
+
 
 O_PARAMS
 select (F_PARAMS)
@@ -293,22 +303,16 @@ RPar("mr",@gMinR)      // min rad %, Bodovi
 RPar("os",@gFSpec)     // fajl-obrazac specifikacije
 RPar("p9",@gDaPorOl)   // praviti poresku olaksicu D/N
 RPar("pb",@gPrBruto)   // set formula
-RPar("pi",@gPicI)
 RPar("po",@gPotp)      // potpis na listicu
-RPar("ps",@gPicS)
 RPar("rk",@gReKrOs)
 Rpar("to",@gTipObr)
 Rpar("vo",@cVarPorOl)
-gFURsati := fetch_metric( "ld_formula_ukupni_sati", nil, gFURsati )
 Rpar("uS",@gFUSati)
 Rpar("uB",@gBFForm)
 RPar("um",@gUNMjesec)
 Rpar("up",@gFUPrim)
 Rpar("ur",@gFURaz)
-Rpar("va",@gValuta)
 Rpar("vs",@gVarSpec)
-Rpar("z2",@gZaok2)
-Rpar("zo",@gZaok)
 Rpar("lo",@gOsnLOdb)
 Rpar("pr",@gPotpRpt)
 Rpar("P1",@gPotp1)
@@ -324,7 +328,7 @@ use
 LDPoljaINI()
 
 //definisano u SC_CLIB-u
-gGlBaza:="LD.DBF"
+gGlBaza := "LD.DBF"
 
 return
 

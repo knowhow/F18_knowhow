@@ -38,20 +38,30 @@ elseif GetObrStatus( cRj, nGodina, nMjesec )=="N"
     return
 endif
 
+select ( F_LD )
+if !USED()
+    O_LD
+endif
+
 do while .t.
     
-    lSaveObracun:=.f.
+    lSaveObracun := .f.
     
-    PrikaziBox(@lSaveObracun)
+    PrikaziBox( @lSaveObracun )
 
-    if (lSaveObracun)
+    if ( lSaveObracun )
+
         select ld
-        cIdRadn:=field->idRadn
-        if (_UIznos<0)
+
+        cIdRadn := field->idRadn
+
+        if ( _UIznos < 0 )
             Beep(2)
             Msg(Lokal("Radnik ne moze imati platu u negativnom iznosu!!!"))
         endif
-        nPom:=0
+
+        nPom := 0
+
         for i := 1 to cLDPolja
             cPom:=PADL(ALLTRIM(STR(i)),2,"0")
             // ako su sve nule
@@ -83,7 +93,15 @@ do while .t.
         endif
 
     else 
-        
+
+        select ( F_LD )
+        // nije se zapravo ni uslo u LD tabelu...
+        if !USED()
+            return
+        endif
+   
+        select ld
+
         if lNovi  
             // ako je novi zapis  .and. ESCAPE
             delete_with_rlock()
@@ -224,8 +242,11 @@ OObracun()
 lNovi:=.f.
 
 Box( , MAXROWS()-10, MAXCOLS()-10)
+
     @ m_x+1, m_y+2 SAY Lokal("Radna jedinica: ")
+
     QQOutC(cIdRJ, "GR+/N")
+
     if gUNMjesec=="D"
         @ m_x+1, col()+2 SAY Lokal("Mjesec: ")  GET cMjesec pict "99"
     else
@@ -243,6 +264,7 @@ Box( , MAXROWS()-10, MAXCOLS()-10)
     endif
 
     @ m_x+1,COL()+2 SAY Lokal("Godina: ")
+
     QQOutC(str(cGodina,4), "GR+/N")
     
     @ m_x+2,m_y+2 SAY Lokal("Radnik:") GET cIdRadn ;
@@ -252,6 +274,7 @@ Box( , MAXROWS()-10, MAXCOLS()-10)
     read
     
     clvbox()
+
     ESC_BCR
 
     // da li postoje uneseni parametri obracuna ?
@@ -264,6 +287,7 @@ Box( , MAXROWS()-10, MAXCOLS()-10)
             STR(cMjesec,2) + "/" + STR(cGodina,4) + " !!")
         
         boxc()
+
         return
 
     elseif nO_ret = 2
@@ -295,19 +319,26 @@ Box( , MAXROWS()-10, MAXCOLS()-10)
     select ld
     
     seek STR(cGodina,4) + cIdRj + str(cMjesec,2) + IIF(lViseObr,cObracun,"") + cIdRadn
-    
+   
+    altd()
+ 
     if found()
-        lNovi:=.f.
+
+        lNovi := .f.
         set_global_vars_from_dbf()
+
     else
-        lNovi:=.t.
+
+        lNovi := .t.
         append blank
+
         set_global_vars_from_dbf()
 
         _Godina := cGodina
         _idrj   := cIdRj
         _idradn := cIdRadn
         _mjesec := cMjesec
+
         if gVarObracun == "2"
             _ulicodb := nULicOdb
             if LD->(FIELDPOS("TROSK")) <> 0
@@ -315,16 +346,20 @@ Box( , MAXROWS()-10, MAXCOLS()-10)
                 _opor := cOpor
             endif
         endif
+
         if lViseObr
             _obr := cObracun
         endif
+
     endif
 
     if lNovi
+
         _brbod:=radn->brbod
         _kminrad:=radn->kminrad
         _idvposla:=radn->idvposla
         _idstrspr:=radn->idstrspr
+
     endif
 
     ParObr(cMjesec, cGodina, IIF(lViseObr,cObracun,), cIdRj)  
@@ -335,19 +370,23 @@ Box( , MAXROWS()-10, MAXCOLS()-10)
     else
         @ m_x+3, m_y+2   SAY Lokal("Plan.osnov ld") GET _brbod pict "99999.99" valid FillBrBod(_brbod)
     endif
+
     select ld
+
     @ m_x+3, col()+2 SAY IF(gBodK=="1", Lokal("Vrijednost boda"), Lokal("Vr.koeficijenta")); @ row(),col()+1 SAY parobr->vrbod  pict "99999.99999"
     if gMinR=="B"
         @ m_x + 3, col() + 2 SAY Lokal("Minuli rad (bod)") GET _kminrad pict "9999.99" valid FillKMinRad(_kminrad)
     else
         @ m_x + 3, col() + 2 SAY Lokal("Koef.minulog rada") GET _kminrad pict "99.99%" valid FillKMinRad(_kminrad)
     endif
+
     if gVarObracun == "2"
         @ m_x + 4, m_y + 2 SAY "Lic.odb:" GET _ulicodb PICT "9999.99"
         @ m_x + 4, col()+1 SAY Lokal("Vrsta posla koji radnik obavlja") GET _IdVPosla valid (empty(_idvposla) .or. P_VPosla(@_IdVPosla,4,55)) .and. FillVPosla()
     else
         @ m_x+4,m_y+2 SAY Lokal("Vrsta posla koji radnik obavlja") GET _IdVPosla valid (empty(_idvposla) .or. P_VPosla(@_IdVPosla,4,55)) .and. FillVPosla()
     endif
+
     read
 
     if (IsRamaGlas() .and. RadnikJeProizvodni())
@@ -359,8 +398,9 @@ Box( , MAXROWS()-10, MAXCOLS()-10)
     endif
     
     read
-    
+
     if _radni_sati == "D"
+
         nTArea := SELECT()
         nSatiPreth := 0
         nSatiPreth := FillRadSati( cIdRadn, _radSat )
@@ -373,22 +413,15 @@ Box( , MAXROWS()-10, MAXCOLS()-10)
 
     PrikUnos()
     
-    PrikUkupno(@lSaveObracun)
+    PrikUkupno( @lSaveObracun )
     
     if _radni_sati == "D" .and. lSaveObracun == .f.
         // ako nije sacuvan obracun ponisti i radne sate
         delRadSati( cIdRadn, nSatiPreth )
     endif
     
-    if lLogUnos
-        if lNovi
-            EventLog(nUser,goModul:oDataBase:cName,"DOK","UNOS",ld->uiznos,nil,nil,nil,STR(cMjesec,2),ALLTRIM(cIdRadn),STR(cGodina,4),Date(),Date(),"", Lokal("Obracunata plata za radnika"))
-        else
-            EventLog(nUser,goModul:oDataBase:cName,"DOK","UNOS",ld->uiznos,nil,nil,nil,STR(cMjesec,2),ALLTRIM(cIdRadn),STR(cGodina,4),Date(),Date(),"", Lokal("Korekcija obracuna za radnika"))
-        endif
-    endif
-
 BoxC()
+
 return
 
 
@@ -407,6 +440,7 @@ UkRadnik()
 
 _UIznos := _UNeto + _UOdbici
 
+altd()
 if gVarObracun == "2"
 
     nKLO := radn->klo

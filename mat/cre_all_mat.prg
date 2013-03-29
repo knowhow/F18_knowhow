@@ -11,6 +11,7 @@
 
 
 #include "mat.ch"
+#include "cre_all.ch"
 
 
 function cre_all_mat( ver )
@@ -18,7 +19,10 @@ local aDbf
 local _alias, _table_name
 local _created
 
-aDbf:={}
+// --------------------------------------------------------
+// MAT_NALOG, MAT_PNALOG
+// --------------------------------------------------------
+aDbf := {}
 AADD(aDBf,{ 'IDFIRMA'             , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'IDVN'                , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'BRNAL'               , 'C' ,   4 ,  0 })
@@ -28,32 +32,28 @@ AADD(aDBf,{ 'POT'                 , 'N' ,  15 ,  2 })
 AADD(aDBf,{ 'DUG2'                , 'N' ,  15 ,  2 })
 AADD(aDBf,{ 'POT2'                , 'N' ,  15 ,  2 })
 
-_created := .f.
 _alias := "MAT_NALOG"
 _table_name := "mat_nalog"
 
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2(_alias, aDbf)
-    _created := .t.
-endif
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
 
-if _created
-    reset_semaphore_version(_table_name)
-    my_use(_alias)
-    use
-endif
+CREATE_INDEX( "1", "IdFirma+IdVn+BrNal", _alias )
+CREATE_INDEX( "2", "datnal", _alias )
 
-if !file( f18_ime_dbf( "mat_pnalog" ))
-        DBCREATE2( "mat_pnalog", aDbf )
-endif
+_alias := "MAT_PNALOG"
+_table_name := "mat_pnalog"
 
-CREATE_INDEX("1","IdFirma+IdVn+BrNal", "mat_nalog")
-CREATE_INDEX("2","datnal", "mat_nalog")
-CREATE_INDEX("1","IdFirma", "mat_pnalog")
+IF_NOT_FILE_DBF_CREATE
+
+CREATE_INDEX( "1", "IdFirma", _alias )
 
 
+// --------------------------------------------------------
+// MAT_SUBAN, MAT_PSUBAN
+// --------------------------------------------------------
 
-aDbf:={}
+aDbf := {}
 AADD(aDBf,{ 'IDFIRMA'             , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'IDROBA'              , 'C' ,  10 ,  0 })
 AADD(aDBf,{ 'IDKONTO'             , 'C' ,   7 ,  0 })
@@ -76,132 +76,121 @@ AADD(aDBf,{ 'K2'                  , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'K3'                  , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'K4'                  , 'C' ,   2 ,  0 })
 
-_created := .f.
 _alias := "MAT_SUBAN"
 _table_name := "mat_suban"
 
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2(_alias, aDbf)
-    _created := .t.
-endif
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
 
-if _created
-    reset_semaphore_version(_table_name)
-    my_use(_alias)
-    use
-endif
+CREATE_INDEX("1","IdFirma+IdRoba+dtos(DatDok)", _alias )
+CREATE_INDEX("2","IdFirma+IdPartner+IdRoba", _alias )
+CREATE_INDEX("3","IdFirma+IdKonto+IdRoba+dtos(DatDok)", _alias)
+CREATE_INDEX("4","idFirma+IdVN+BrNal+rbr", _alias )
+CREATE_INDEX("5","IdFirma+IdKonto+IdPartner+IdRoba+dtos(DatDok)", _alias )
+CREATE_INDEX("8","datdok", _alias )
+CREATE_INDEX("9","DESCEND(DTOS(datdok))+idpartner", _alias )
+CREATE_INDEX("IDROBA","idroba", _alias )
+CREATE_INDEX("IDPARTN","idpartner", _alias )
 
-if !file( f18_ime_dbf( "mat_psuban" ))
-        DBCREATE2( 'mat_psuban', aDbf )
-endif
+_alias := "MAT_PSUBAN"
+_table_name := "mat_psuban"
 
-CREATE_INDEX("1","IdFirma+IdRoba+dtos(DatDok)"        , KUMPATH+"mat_suban")
-CREATE_INDEX("2","IdFirma+IdPartner+IdRoba"           , KUMPATH+"mat_suban")
-CREATE_INDEX("3","IdFirma+IdKonto+IdRoba+dtos(DatDok)", KUMPATH+"mat_suban")
-CREATE_INDEX("4","idFirma+IdVN+BrNal+rbr"             , KUMPATH+"mat_suban")
-CREATE_INDEX("5","IdFirma+IdKonto+IdPartner+IdRoba+dtos(DatDok)", KUMPATH+"mat_suban")
-CREATE_INDEX("8","datdok"             , KUMPATH+"mat_suban")
-CREATE_INDEX("9","DESCEND(DTOS(datdok))+idpartner", KUMPATH+"mat_suban")
-CREATE_INDEX("IDROBA","idroba", KUMPATH+"mat_suban")
-CREATE_INDEX("IDPARTN","idpartner", KUMPATH+"mat_suban")
+IF_NOT_FILE_DBF_CREATE
 
-CREATE_INDEX("1","idFirma+idvn+brnal"        , PRIVPATH+"mat_psuban")
-CREATE_INDEX("2","idFirma+IdVN+Brnal+IdKonto", PRIVPATH+"mat_psuban")
+CREATE_INDEX("1","idFirma+idvn+brnal"        , _alias )
+CREATE_INDEX("2","idFirma+IdVN+Brnal+IdKonto", _alias )
 
 
-aDbf:={}
+// ----------------------------------------------------------------
+// MAT_ANAL, MAT_PANAL
+// ----------------------------------------------------------------
+
+aDbf := {}
 AADD(aDBf,{ 'IDFIRMA'             , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'IDKONTO'             , 'C' ,   7 ,  0 })
 AADD(aDBf,{ 'IDVN'                , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'BRNAL'               , 'C' ,   4 ,  0 })
 AADD(aDBf,{ 'DATNAL'              , 'D' ,   8 ,  0 })
-AADD(aDBf,{ 'RBR'                 , 'C' ,   3 ,  0 })
+AADD(aDBf,{ 'RBR'                 , 'C' ,   4 ,  0 })
 AADD(aDBf,{ 'DUG'                 , 'N' ,  15 ,  2 })
 AADD(aDBf,{ 'POT'                 , 'N' ,  15 ,  2 })
 AADD(aDBf,{ 'DUG2'                , 'N' ,  15 ,  2 })
 AADD(aDBf,{ 'POT2'                , 'N' ,  15 ,  2 })
 
-_created := .f.
 _alias := "MAT_ANAL"
 _table_name := "mat_anal"
 
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2(_alias, aDbf)
-    _created := .t.
-endif
+IF_NOT_FILE_DBF_CREATE
 
 // 0.4.4
-if ver["current"] < 0404
+if ver["current"] > 0 .and. ver["current"] < 0404
     modstru({"*" + _table_name, "C RBR C 3 0 RBR C 4 0"})
 endif
 
-if _created
-    reset_semaphore_version(_table_name)
-    my_use(_alias)
-    use
-endif
+IF_C_RESET_SEMAPHORE
 
-// pomocna tabela
-if !file( f18_ime_dbf( 'mat_panal' ))
-        DBCREATE2( 'mat_panal', aDbf)
-endif
+CREATE_INDEX( "1", "IdFirma+IdKonto+dtos(DatNal)", _alias )  
+CREATE_INDEX( "2", "idFirma+IdVN+BrNal+IdKonto", _alias )
+CREATE_INDEX( "3", "datnal", _alias )
+
+_alias := "MAT_PANAL"
+_table_name := "mat_panal"
+
+IF_NOT_FILE_DBF_CREATE
 
 if ver["current"] < 0404
     modstru({"*mat_panal", "C RBR C 3 0 RBR C 4 0"})
 endif
 
-CREATE_INDEX("1","IdFirma+IdKonto+dtos(DatNal)",KUMPATH+"mat_anal")  //mat_analiti
-CREATE_INDEX("2","idFirma+IdVN+BrNal+IdKonto",KUMPATH+"mat_anal")
-CREATE_INDEX("3","datnal",KUMPATH+"mat_anal")
-CREATE_INDEX("1","IdFirma+idvn+brnal+idkonto",PRIVPATH+"mat_panal")
+CREATE_INDEX("1","IdFirma+idvn+brnal+idkonto", _alias )
 
 
-aDbf:={}
+// -----------------------------------------------------------
+// MAT_SINT, MAT_PSINT
+// -----------------------------------------------------------
+aDbf := {}
 AADD(aDBf,{ 'IDFIRMA'             , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'IDKONTO'             , 'C' ,   3 ,  0 })
 AADD(aDBf,{ 'IDVN'                , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'BRNAL'               , 'C' ,   4 ,  0 })
 AADD(aDBf,{ 'DATNAL'              , 'D' ,   8 ,  0 })
-AADD(aDBf,{ 'RBR'                 , 'C' ,   3 ,  0 })
+AADD(aDBf,{ 'RBR'                 , 'C' ,   4 ,  0 })
 AADD(aDBf,{ 'DUG'                 , 'N' ,  15 ,  2 })
 AADD(aDBf,{ 'POT'                 , 'N' ,  15 ,  2 })
 AADD(aDBf,{ 'DUG2'                , 'N' ,  15 ,  2 })
 AADD(aDBf,{ 'POT2'                , 'N' ,  15 ,  2 })
 
-_created := .f.
 _alias := "MAT_SINT"
 _table_name := "mat_sint"
 
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2(_alias, aDbf)
-    _created := .t.
-endif
+IF_NOT_FILE_DBF_CREATE
 
-if ver["current"] < 0404
+if ver["current"] > 0 .and. ver["current"] < 0404
     modstru({"*" + _table_name, "C RBR C 3 0 RBR C 4 0"})
 endif
 
-if _created
-    reset_semaphore_version(_table_name)
-    my_use(_alias)
-    use
-endif
+IF_C_RESET_SEMAPHORE
 
-if !file( f18_ime_dbf( 'mat_psint' ))
-        DBCREATE2( 'mat_psint', aDbf )
-endif
+CREATE_INDEX( "1", "IdFirma+IdKonto+dtos(DatNal)", _alias )  
+CREATE_INDEX( "2", "idFirma+IdVN+BrNal+IdKonto", _alias )
+CREATE_INDEX( "3", "datnal", _alias )
 
-if ver["current"] < 0404
+_alias := "MAT_PSINT"
+_table_name := "mat_psint"
+
+IF_NOT_FILE_DBF_CREATE
+
+if ver["current"] > 0 .and. ver["current"] < 0404
     modstru({"*mat_psint", "C RBR C 3 0 RBR C 4 0"})
 endif
 
-CREATE_INDEX("1","IdFirma+IdKonto+dtos(DatNal)",KUMPATH+"mat_sint")  // mat_sinteti
-CREATE_INDEX("2","idFirma+IdVN+BrNal+IdKonto",KUMPATH+"mat_sint")
-CREATE_INDEX("3","datnal",KUMPATH+"mat_sint")
-CREATE_INDEX("1","IdFirma",PRIVPATH+"mat_psint")
+CREATE_INDEX( "1", "IdFirma", _alias )
 
 
-aDbf:={}
+// ---------------------------------------------------------
+// MAT_PRIPR
+// ---------------------------------------------------------
+aDbf := {}
 AADD(aDBf,{ 'IDFIRMA'             , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'IDROBA'              , 'C' ,  10 ,  0 })
 AADD(aDBf,{ 'IDKONTO'             , 'C' ,   7 ,  0 })
@@ -225,23 +214,21 @@ AADD(aDBf,{ 'K2'                  , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'K3'                  , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'K4'                  , 'C' ,   2 ,  0 })
  
-_created := .f.
 _alias := "MAT_PRIPR"
 _table_name := "mat_pripr"
 
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2(_alias, aDbf)
-    _created := .t.
-endif
+IF_NOT_FILE_DBF_CREATE
 
-
-CREATE_INDEX("1","idFirma+IdVN+BrNal+rbr",PRIVPATH+"mat_pripr")
-CREATE_INDEX("2","idFirma+IdVN+BrNal+BrDok+Rbr",PRIVPATH+"mat_pripr")
-CREATE_INDEX("3","idFirma+IdVN+IdKonto",PRIVPATH+"mat_pripr")
-CREATE_INDEX("4","idFirma+idkonto+idpartner+idroba",PRIVPATH+"mat_pripr")
+CREATE_INDEX("1","idFirma+IdVN+BrNal+rbr", _alias )
+CREATE_INDEX("2","idFirma+IdVN+BrNal+BrDok+Rbr", _alias )
+CREATE_INDEX("3","idFirma+IdVN+IdKonto", _alias )
+CREATE_INDEX("4","idFirma+idkonto+idpartner+idroba", _alias )
         
 
-aDbf:={}
+// ------------------------------------------------------------
+// MAT_INVENT
+// ------------------------------------------------------------
+aDbf := {}
 AADD(aDBf,{ 'IDROBA'              , 'C' ,  10 ,  0 })
 AADD(aDBf,{ 'RBR'                 , 'C' ,   4 ,  0 })
 AADD(aDBf,{ 'BROJXX'              , 'N' ,   8 ,  2 })
@@ -251,40 +238,30 @@ AADD(aDBf,{ 'IZNOS'               , 'N' ,  14 ,  2 })
 AADD(aDBf,{ 'IZNOS2'              , 'N' ,  14 ,  2 })
 AADD(aDBf,{ 'IDPARTNER'           , 'C' ,   6 ,  0 })
 
-_created := .f.
 _alias := "MAT_INVENT"
 _table_name := "mat_invent"
 
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2(_alias, aDbf)
-    _created := .t.
-endif
+IF_NOT_FILE_DBF_CREATE
 
-CREATE_INDEX("1","IdRoba", "mat_invent") // Inventura
+CREATE_INDEX("1","IdRoba", _alias ) 
 
 
-aDbf:={}
+// -------------------------------------------------------
+// KARKON
+// -------------------------------------------------------
+aDbf := {}
 AADD(aDBf,{ 'ID'                  , 'C' ,  7  ,  0 })
 AADD(aDBf,{ 'TIP_NC'              , 'C' ,  1 ,   0 })
 AADD(aDBf,{ 'TIP_PC'              , 'C' ,  1 ,   0 })
  
-_created := .f.
 _alias := "KARKON"
 _table_name := "mat_karkon"
 
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2( _alias, aDbf )
-    _created := .t.
-endif
-
-if _created
-    reset_semaphore_version(_table_name)
-    my_use(_alias)
-    use
-endif
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX( "ID","ID", _alias )
  
-return
+return .t.
 
 

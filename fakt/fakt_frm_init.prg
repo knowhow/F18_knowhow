@@ -13,20 +13,10 @@
 #include "fakt.ch"
 #include "hbclass.ch"
 
-/*! \ingroup ini
-  * \var *string FmkIni_ExePath_FAKT_NaslovPartnTelefon
-  * \brief Da li se uz naziv kupca upisuje i telefon?
-  * \param D - da, default vrijednost
-  * \param N - ne
-  */
-*string FmkIni_ExePath_FAKT_NaslovPartnTelefon;
-
-
 function TFrmInvItNew(oOwner)
 local oObj
 
 oObj:=TFrmInvIt():new()
-
 oObj:oOwner:=oOwner
 oObj:self:=oObj
 oObj:lSilent:=.f.
@@ -34,8 +24,6 @@ oObj:lNovaStavka:=.f.
 
 oObj:oOwner:lPartnerLoaded:=.f.
 return oObj
-
-
 
 
 CREATE CLASS TFrmInvIt
@@ -98,11 +86,6 @@ END CLASS
 
 
 
-/*! \fn TFrmInvIt::runAction()
- *
- */
-
-*void TFrmInvIt::open()
 method open()
 
 Box(,20,77)
@@ -155,19 +138,15 @@ endif
 return 1
 
  
-*void TFrmInvIt::close()
 method close
 BoxC()
 return
 
 
-/*! \fn TFrmInvIt::newItem()
- /*  \brief Dodaj novu stavku u dokument inventure
- */
 method newItem()
 
 SET ORDER TO TAG "1"
-SELECT pripr
+SELECT fakt_pripr
 
 GO BOTTOM
 ::loadFromTbl()
@@ -192,22 +171,14 @@ endif
 return
 
 
-/*! \fn TFrmInvIt::deleteItem()
- /*  \brief izbrisi stavku
- */
 method deleteItem()
 DELETE
 return
 
 
-/*! \fn TFrmInvIt::nextItem()
- *  \brief Sljedeca stavka
- */
-
-*int TFrmInvIt::nextItem()
 method nextItem()
 
-SELECT pripr
+SELECT fakt_pripr
 SKIP
 
 if EOF()
@@ -219,11 +190,10 @@ endif
 return 1
 
 
-*void TFrmInvIt::loadFromTbl()
 method loadFromTbl()
 local aMemo
 
-SELECT pripr
+SELECT fakt_pripr
 
 ::cIdRj:=field->idFirma
 ::cIdVd:=field->idTipDok
@@ -259,13 +229,11 @@ endif
 return
 
 
-/*! \fn TFrmInvIt::saveToTbl()
- *  \brief
- */
+
 method saveToTbl()
 local cTxt
 
-SELECT pripr
+SELECT fakt_pripr
 
 REPLACE idFirma WITH ::cIdRj
 REPLACE idTipDok WITH ::cIdVd
@@ -284,13 +252,10 @@ REPLACE txt WITH cTxt
 REPLACE serBr WITH STR(::nKKolicina,15,4) 
 REPLACE datDok WITH ::dDatDok
 return
-*}
 
 static function AddTxt(cTxt, cStr)
-*{
 cTxt:=cTxt+Chr(16)+cStr+Chr(17)
 return nil
-*}
 
 /*! \fn TFrmInvIt::vIdRj()
  *  \brief Validacija radne jedinice
@@ -310,41 +275,21 @@ P_RJ(@cPom)
 ::cIdRj:=cPom
 
 return .t.
-*}
 
-/*! \fn TFrmInvIt::wheBrDok()
- *  \brief Prije ulaska u BrDok
- */
- 
-*bool TFrmInvIt::wheBrDok()
-*{
 method wheBrDok()
 return .t.
-*}
 
 
-/*! \fn TFrmInvIt::vldRbr()
- *  \brief Validacija Redni broj
- */
-*bool TFrmInvIt::vldRbr()
-*{
 method vldRbr()
 return .f.
-*}
 
 
-/*! \fn TFrmInvIt::vldBrDok()
- *  \brief Validacija BrDok
- */
-*bool TFrmInvIt::vldBrDok()
-*{
 method vldBrDok()
 if !EMPTY(::cBrDok)
 	return .t.
 else
 	return .f.
 endif
-*}
 
 /*! \fn TFrmInvIt::vldIdRoba()
  *  \brief validacija IdRoba
@@ -366,7 +311,7 @@ if ::lSilent
 	?? roba->idtarifa, "PPP", str(tarifa->opp,7,2)+"%", "PPU", str(tarifa->ppp,7,2)
 endif
 
-SELECT pripr
+SELECT fakt_pripr
 return .t.
 *}
 
@@ -375,39 +320,19 @@ return .t.
  *  \brief When (pred ulazak u) IdRoba
  */
 method wheIdRoba()
-*{
 private GetList
-
 ::cIdRoba:=PADR(::cIdroba, goModul:nDuzinaSifre)
-
-/*
-if ::cPodbr==" ."
-	GetList:={}
-	@  m_x+13,m_y+2  SAY "Roba     " get _txt1 pict "@!"
-    	READ
-	return .f.
-else
-	return .t.
-endif
-*/
-
 return .t.
-*}
 
 
 /*! \fn TFrmInvIt::getPartner(int nRow)
  *  \brief Uzmi Podatke partnera
  */
 method getPartner(nRow)
-*{
-
 @  m_x+nRow, m_y+2  SAY "Partner " get ::cPartner  picture "@S30" WHEN ::whePartner() VALID ::vldPartner()
-
 @  m_x+nRow+1,m_y+2  SAY "        " get ::cAdresa  picture "@"
 @  m_x+nRow+2,m_y+2  SAY "Mjesto  " get ::cMjesto  picture "@"
-
 return
-*}
 
 /*! \fn TFrmInvIt::sayPartner(int nRow)
  *  \brief Odstampaj podatke o partneru
@@ -479,8 +404,6 @@ local nUl
 local nIzl
 local nRezerv
 local nRevers
-
-
 return .t.
 
 

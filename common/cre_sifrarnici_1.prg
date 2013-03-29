@@ -10,400 +10,405 @@
  */
 
 #include "fmk.ch"
+#include "cre_all.ch"
+
 
 // -----------------------------------
 // kreiranje tabela - svi moduli 
 // -----------------------------------
 function cre_sifrarnici_1(ver)
-local _created, _table_name, _alias
+local _created
+local _table_name
+local _alias
+local aDbf
 
-_table_name := "rj"
+
+// RJ
+
 _alias := "RJ"
-_created := .f.
+_table_name := "rj"
 
-if !FILE(f18_ime_dbf( _table_name ))
-    aDBf:={}
-    AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
-    add_f_mcode(@aDbf)
-    AADD(aDBf,{ 'NAZ'                 , 'C' ,  35 ,  0 })
-    AADD(aDBf,{ 'TIP'                 , 'C' ,   2 ,  0 })
-    AADD(aDBf,{ 'KONTO'               , 'C' ,   7 ,  0 })
+aDBf:={}
+AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
+add_f_mcode(@aDbf)
+AADD(aDBf,{ 'NAZ'                 , 'C' ,  35 ,  0 })
+AADD(aDBf,{ 'TIP'                 , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'KONTO'               , 'C' ,   7 ,  0 })
 
-    DBCREATE2( "rj", aDbf )
-	_created := .t.
-
-endif
+IF_NOT_FILE_DBF_CREATE
 
 // 0.8.7
-if ver["current"] < 0807
+if ver["current"] > 0 .and. ver["current"] < 0807
     modstru( { "*" + _table_name, "A TIP C 2 0", "A KONTO C 7 0" } )
 endif
 
-if _created
-    reset_semaphore_version( _table_name )
-    my_use( _table_name )
-    close all 
-endif
+IF_C_RESET_SEMAPHORE
 
-CREATE_INDEX( "ID", "id", _table_name )
-CREATE_INDEX( "NAZ", "NAZ", _table_name )
-index_mcode( KUMPATH, _table_name )
+CREATE_INDEX( "ID", "id", _alias )
+CREATE_INDEX( "NAZ", "NAZ", _alias )
+index_mcode( my_home(), _alias )
 
 
+// KONTO
 
-if !file(f18_ime_dbf("konto"))
-   aDbf:={}
-   AADD(aDBf,{ 'ID'                  , 'C' ,   7 ,  0 })
-   add_f_mcode(@aDbf)
-   AADD(aDBf,{ 'NAZ'                 , 'C' ,  57 ,  0 })
-   AADD(aDBf,{ "POZBILU"             , "C" ,   3 ,  0 })
-   AADD(aDBf,{ "POZBILS"             , "C" ,   3 ,  0 })
+_alias := "KONTO"
+_table_name := "konto"
+   
+aDbf:={}
+AADD(aDBf,{ 'ID'                  , 'C' ,   7 ,  0 })
+add_f_mcode(@aDbf)
+AADD(aDBf,{ 'NAZ'                 , 'C' ,  57 ,  0 })
+AADD(aDBf,{ "POZBILU"             , "C" ,   3 ,  0 })
+AADD(aDBf,{ "POZBILS"             , "C" ,   3 ,  0 })
 
-   dbcreate2('konto', aDbf)
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
 
-   reset_semaphore_version("konto")
-   my_use("konto")
-   close all
-endif
-
-CREATE_INDEX("ID","id", "konto")
-CREATE_INDEX("NAZ","naz", "konto")
-index_mcode(SIFPATH, "KONTO")
+CREATE_INDEX("ID","id", _alias )
+CREATE_INDEX("NAZ","naz", _alias )
+index_mcode( my_home(), _alias )
 
 
-_created := .f.
-_table_name := "valute"
+
+// VALUTE
+
 _alias := "VALUTE"
+_table_name := "valute"
 
-if !FILE( f18_ime_dbf( _table_name ) )
-    aDbf:={}
-    AADD(aDBf,{ 'ID'                  , 'C' ,   4 ,  0 })
-    add_f_mcode(@aDbf)
-    AADD(aDBf,{ 'NAZ'                 , 'C' ,  30 ,  0 })
-    AADD(aDBf,{ 'NAZ2'                , 'C' ,   4 ,  0 })
-    AADD(aDBf,{ 'DATUM'               , 'D' ,   8 ,  0 })
-    AADD(aDBf,{ 'KURS1'               , 'N' ,  10 ,  5 })
-    AADD(aDBf,{ 'KURS2'               , 'N' ,  10 ,  5 })
-    AADD(aDBf,{ 'KURS3'               , 'N' ,  10 ,  5 })
-    AADD(aDBf,{ 'TIP'                 , 'C' ,   1 ,  0 })
-    dbcreate2( _table_name , aDbf)
+aDbf:={}
+AADD(aDBf,{ 'ID'                  , 'C' ,   4 ,  0 })
+add_f_mcode(@aDbf)
+AADD(aDBf,{ 'NAZ'                 , 'C' ,  30 ,  0 })
+AADD(aDBf,{ 'NAZ2'                , 'C' ,   4 ,  0 })
+AADD(aDBf,{ 'DATUM'               , 'D' ,   8 ,  0 })
+AADD(aDBf,{ 'KURS1'               , 'N' ,  10 ,  6 })
+AADD(aDBf,{ 'KURS2'               , 'N' ,  10 ,  6 })
+AADD(aDBf,{ 'KURS3'               , 'N' ,  10 ,  6 })
+AADD(aDBf,{ 'TIP'                 , 'C' ,   1 ,  0 })
 
-    _created := .t.
-
-endif
-
+IF_NOT_FILE_DBF_CREATE
+    
 // 0.8.8
-if ver["current"] < 0808
+if ver["current"] > 0 .and. ver["current"] < 0808
     modstru( { "*" + _table_name, ;
         "C KURS1 N 10 5 KURS1 N 10 6", ;
         "C KURS2 N 10 5 KURS2 N 10 6", ;
         "C KURS3 N 10 5 KURS3 N 10 6" } )
 endif
 
-if _created
-    reset_semaphore_version( _table_name )
-    my_use( _table_name )
-    close all 
-endif
+IF_C_RESET_SEMAPHORE
 
-CREATE_INDEX( "ID", "id", _table_name )
-CREATE_INDEX( "NAZ", "tip+id+dtos(datum)", _table_name )
-CREATE_INDEX( "ID2", "id+dtos(datum)", _table_name )
-index_mcode( f18_ime_dbf( _table_name ) )
+CREATE_INDEX( "ID", "id", _alias )
+CREATE_INDEX( "NAZ", "tip+id+dtos(datum)", _alias )
+CREATE_INDEX( "ID2", "id+dtos(datum)", _alias )
+index_mcode( my_home(), _alias  )
 
 // upisi default valute ako ne postoje
 fill_tbl_valute()
 
+
 // TNAL
-if !file(f18_ime_dbf("tnal"))
-        aDbf:={}
-        AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
-        add_f_mcode(@aDbf)
-        AADD(aDBf,{ 'NAZ'                 , 'C' ,  29 ,  0 })
-        dbcreate2('tnal',aDbf)
-        reset_semaphore_version("tnal")
-        my_use("tnal")
-        close all
-endif
-CREATE_INDEX("ID","id", "tnal")  
-CREATE_INDEX("NAZ","naz", "tnal")
-index_mcode(SIFPATH, "TNAL")
 
-if !file(f18_ime_dbf("tdok"))
-        aDbf:={}
-        AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
-        add_f_mcode(@aDbf)
-        AADD(aDBf,{ 'NAZ'                 , 'C' ,  13 ,  0 })
-        dbcreate2(f18_ime_dbf('tdok'), aDbf)
-        reset_semaphore_version("tdok")
-        my_use("tdok")
-        close all
-endif
-CREATE_INDEX("ID","id", "TDOK") 
-CREATE_INDEX("NAZ","naz", "TDOK")
-index_mcode(SIFPATH, "TDOK")
+_alias := "TNAL"
+_table_name := "tnal"
 
-if !file(f18_ime_dbf("ops"))
-   aDBf:={}
-   AADD(aDBf,{ 'ID'                  , 'C' ,   4 ,  0 })
-   AADD(aDBf,{ 'IDJ'                 , 'C' ,   3 ,  0 })
-   add_f_mcode(@aDbf)
-   AADD(aDBf,{ 'IdN0'                , 'C' ,   1 ,  0 })
-   AADD(aDBf,{ 'IdKan'               , 'C' ,   2 ,  0 })
-   AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
-   AADD(aDBf,{ 'ZIPCODE'             , 'C' ,   5 ,  0 })
-   AADD(aDBf,{ 'PUCCANTON'           , 'C' ,   2 ,  0 })
-   AADD(aDBf,{ 'PUCCITY'             , 'C' ,   5 ,  0 })
-   AADD(aDBf,{ 'REG'              , 'C' ,   1 ,  0 })
-   DBCREATE2('ops', aDbf)
-   reset_semaphore_version("ops")
-   my_use("ops")
-   close all
-endif
+aDbf:={}
+AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
+add_f_mcode(@aDbf)
+AADD(aDBf,{ 'NAZ'                 , 'C' ,  29 ,  0 })
 
-CREATE_INDEX("ID","id", "ops")
-CREATE_INDEX("IDJ","idj", "ops")
-CREATE_INDEX("IDKAN","idKAN", "ops")
-CREATE_INDEX("IDN0","IDN0", "ops")
-CREATE_INDEX("NAZ","naz", "ops")
-index_mcode(SIFPATH, "ops")
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
 
-cIme:="banke"
-if !file(f18_ime_dbf(cIme) )
-        aDbf:={}
-        AADD(aDBf,{ 'ID'                  , 'C' ,   3 ,  0 })
-        add_f_mcode(@aDbf)
-        AADD(aDBf,{ 'NAZ'                 , 'C' ,  45 ,  0 })
-        AADD(aDBf,{ 'Mjesto'              , 'C' ,  20 ,  0 })
-        AADD(aDBf,{ 'Adresa'              , 'C' ,  30 ,  0 })
-        DBCREATE2("BANKE" , aDbf)
-        reset_semaphore_version("banke")
-        my_usex("banke")
-        close all
-endif
-CREATE_INDEX("ID","id", cIme)
-CREATE_INDEX("NAZ","naz", cIme)
-index_mcode(SIFPATH, cIme)
+CREATE_INDEX("ID","id", _alias )  
+CREATE_INDEX("NAZ","naz", _alias )
+index_mcode( my_home(), _alias )
 
-// referenti
-if !file( f18_ime_dbf("refer"))
-   aDBf:={}
-   AADD(aDBf,{ 'ID'                  , 'C' ,  10 ,  0 })
-   AADD(aDBf,{ 'IDOPS'               , 'C' ,   4 ,  0 })
-   AADD(aDBf,{ 'NAZ'                 , 'C' ,  40 ,  0 })
-   DBCREATE2( 'REFER', aDbf )
-   reset_semaphore_version("refer")
-   my_use("refer")
-   close all
-endif
-CREATE_INDEX("ID","id", "refer") 
-CREATE_INDEX("NAZ","naz", "refer")
 
-if !FILE(f18_ime_dbf("vrstep"))
-    aDbf:={}
-	AADD(aDbf,{"ID" ,"C", 2,0})
-	AADD(aDbf,{"NAZ","C",20,0})
-	DBcreate2( "VRSTEP", aDbf )
-    reset_semaphore_version("vrstep")
-    my_use("vrstep")
-    close all
-endif	
-CREATE_INDEX("ID", "Id", "VRSTEP")
+// TDOK
+
+_alias := "TDOK"
+_table_name := "tdok"
+
+aDbf:={}
+AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
+add_f_mcode(@aDbf)
+AADD(aDBf,{ 'NAZ'                 , 'C' ,  13 ,  0 })
+
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
+        
+CREATE_INDEX("ID","id", _alias ) 
+CREATE_INDEX("NAZ","naz", _alias )
+index_mcode( my_home(), _alias )
+
+
+// OPS
+
+_alias := "OPS"
+_table_name := "ops"
+
+aDBf:={}
+AADD(aDBf,{ 'ID'                  , 'C' ,   4 ,  0 })
+AADD(aDBf,{ 'IDJ'                 , 'C' ,   3 ,  0 })
+add_f_mcode(@aDbf)
+AADD(aDBf,{ 'IdN0'                , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'IdKan'               , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
+AADD(aDBf,{ 'ZIPCODE'             , 'C' ,   5 ,  0 })
+AADD(aDBf,{ 'PUCCANTON'           , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'PUCCITY'             , 'C' ,   5 ,  0 })
+AADD(aDBf,{ 'REG'              , 'C' ,   1 ,  0 })
+
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
+
+CREATE_INDEX("ID","id", _alias )
+CREATE_INDEX("IDJ","idj", _alias )
+CREATE_INDEX("IDKAN","idKAN", _alias )
+CREATE_INDEX("IDN0","IDN0", _alias )
+CREATE_INDEX("NAZ","naz", _alias )
+index_mcode( my_home(), _alias )
+
+// BANKE
+
+_alias := "BANKE"
+_table_name := "banke"
+
+aDbf:={}
+AADD(aDBf,{ 'ID'                  , 'C' ,   3 ,  0 })
+add_f_mcode(@aDbf)
+AADD(aDBf,{ 'NAZ'                 , 'C' ,  45 ,  0 })
+AADD(aDBf,{ 'Mjesto'              , 'C' ,  20 ,  0 })
+AADD(aDBf,{ 'Adresa'              , 'C' ,  30 ,  0 })
+
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
+
+CREATE_INDEX("ID","id", _alias )
+CREATE_INDEX("NAZ","naz", _alias )
+index_mcode( my_home(),  _alias )
+
+
+// REFER
+
+_alias := "REFER"
+_table_name := "refer"
+
+aDBf:={}
+AADD(aDBf,{ 'ID'                  , 'C' ,  10 ,  0 })
+AADD(aDBf,{ 'IDOPS'               , 'C' ,   4 ,  0 })
+AADD(aDBf,{ 'NAZ'                 , 'C' ,  40 ,  0 })
+
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
+
+CREATE_INDEX("ID","id", _alias ) 
+CREATE_INDEX("NAZ","naz", _alias )
+
+// VRSTEP
+
+_alias := "VRSTEP"
+_table_name := "vrstep"
+
+aDbf:={}
+AADD(aDbf,{"ID" ,"C", 2,0})
+AADD(aDbf,{"NAZ","C",20,0})
+	
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
+
+CREATE_INDEX("ID", "Id", _alias )
+
 
 
 // ------------------------------------------------
 // KONCIJ
 // ------------------------------------------------
-_created := .f.
-_table_name := "koncij"
 _alias := "KONCIJ"
+_table_name := "koncij"
 
-if !FILE(f18_ime_dbf( _table_name ))
+aDbf:={}
 
-    aDbf:={}
+AADD(aDBf,{ 'ID'                  , 'C' ,   7 ,  0 })
+add_f_mcode(@aDbf)
+AADD(aDBf,{ 'SHEMA'               , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'NAZ'                 , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'IDPRODMJES'          , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'REGION'              , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'SUFIKS'              , 'C' ,   3 ,  0 })
 
-    AADD(aDBf,{ 'ID'                  , 'C' ,   7 ,  0 })
-    add_f_mcode(@aDbf)
-    AADD(aDBf,{ 'SHEMA'               , 'C' ,   1 ,  0 })
-    AADD(aDBf,{ 'NAZ'                 , 'C' ,   2 ,  0 })
-    AADD(aDBf,{ 'IDPRODMJES'          , 'C' ,   2 ,  0 })
-    AADD(aDBf,{ 'REGION'              , 'C' ,   2 ,  0 })
-
-    DBcreate2( _alias, aDbf )
-    _created := .t.
-
-endif
+IF_NOT_FILE_DBF_CREATE
 
 // 0.4.7
-if ver["current"] < 0407
+if ver["current"] > 0 .and. ver["current"] < 0407
     modstru( { "*" + _table_name, "A SUFIKS C 3 0" } )
 endif
 
-if _created
-    reset_semaphore_version( _table_name )
-    my_use( _table_name )
-    close all
-endif
+IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX("ID","id", _alias )
 index_mcode( NIL, _alias )
 
 
 //PKONTO
-if !FILE(f18_ime_dbf("pkonto"))
-    aDbf:={}
-    AADD(aDBf,{ "ID"                  , "C" ,  7  ,  0 })
-    AADD(aDBf,{ "TIP"                 , "C" ,  1 ,   0 })
-    DBcreate2( "PKONTO", aDbf )
-    reset_semaphore_version("pkonto")
-    my_use("pkonto")    
-    close all
-endif
-CREATE_INDEX("ID","ID", "PKONTO" )
-CREATE_INDEX("NAZ","TIP", "PKONTO" )
+
+_alias := "PKONTO"
+_table_name := "pkonto"
+
+aDbf:={}
+AADD(aDBf,{ "ID"                  , "C" ,  7  ,  0 })
+AADD(aDBf,{ "TIP"                 , "C" ,  1 ,   0 })
+    
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
+
+CREATE_INDEX("ID","ID", _alias )
+CREATE_INDEX("NAZ","TIP", _alias )
 
 
 // TRFP
-if !FILE(f18_ime_dbf("trfp"))
-    aDbf:={}
-    AADD(aDBf,{ 'ID'                  , 'C' ,  60 ,  0 })
-    add_f_mcode(@aDbf)
-    AADD(aDBf,{ 'SHEMA'               , 'C' ,   1 ,  0 })
-    AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
-    AADD(aDBf,{ 'IDKONTO'             , 'C' ,   7 ,  0 })
-    AADD(aDBf,{ 'DOKUMENT'            , 'C' ,   1 ,  0 })
-    AADD(aDBf,{ 'PARTNER'             , 'C' ,   1 ,  0 })
-    AADD(aDBf,{ 'D_P'                 , 'C' ,   1 ,  0 })
-    AADD(aDBf,{ 'ZNAK'                , 'C' ,   1 ,  0 })
-    AADD(aDBf,{ 'IDVD'                , 'C' ,   2 ,  0 })
-    AADD(aDBf,{ 'IDVN'                , 'C' ,   2 ,  0 })
-    AADD(aDBf,{ 'IDTARIFA'            , 'C' ,   6 ,  0 })
-    DBCREATE2("TRFP", aDbf)
-    reset_semaphore_version("trfp")
-    my_use("trfp")
-    close all
-endif
-CREATE_INDEX("ID", "idvd+shema+Idkonto+id+idtarifa+idvn+naz", "TRFP")
-index_mcode(NIL, "TRFP")
+
+_alias := "TRFP"
+_table_name := "trfp"
+
+aDbf:={}
+AADD(aDBf,{ 'ID'                  , 'C' ,  60 ,  0 })
+add_f_mcode(@aDbf)
+AADD(aDBf,{ 'SHEMA'               , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
+AADD(aDBf,{ 'IDKONTO'             , 'C' ,   7 ,  0 })
+AADD(aDBf,{ 'DOKUMENT'            , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'PARTNER'             , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'D_P'                 , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'ZNAK'                , 'C' ,   1 ,  0 })
+AADD(aDBf,{ 'IDVD'                , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'IDVN'                , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'IDTARIFA'            , 'C' ,   6 ,  0 })
+
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
+
+CREATE_INDEX("ID", "idvd+shema+Idkonto+id+idtarifa+idvn+naz", _alias )
+index_mcode(NIL, _alias )
 
 
 //TRFP2
-if !FILE(f18_ime_dbf("trfp2"))
-    aDbf:={}
-    AADD(aDBf,{ "ID"                  , "C" ,  60 ,  0 })
-    AADD(aDBf,{ "SHEMA"               , "C" ,   1 ,  0 })
-    AADD(aDBf,{ "NAZ"                 , "C" ,  20 ,  0 })
-    AADD(aDBf,{ "IDKONTO"             , "C" ,   7 ,  0 })
-    AADD(aDBf,{ "DOKUMENT"            , "C" ,   1 ,  0 })
-    AADD(aDBf,{ "PARTNER"             , "C" ,   1 ,  0 })
-    AADD(aDBf,{ "D_P"                 , "C" ,   1 ,  0 })
-    AADD(aDBf,{ "ZNAK"                , "C" ,   1 ,  0 })
-    AADD(aDBf,{ "IDVD"                , "C" ,   2 ,  0 })
-    AADD(aDBf,{ "IDVN"                , "C" ,   2 ,  0 })
-    AADD(aDBf,{ "IDTARIFA"            , "C" ,   6 ,  0 })
-    DBcreate2( "TRFP2", aDbf ) 
-    reset_semaphore_version("trfp2")
-    my_use("trfp2")
-    close all
-endif
-CREATE_INDEX("ID","idvd+shema+Idkonto+id+idtarifa+idvn+naz", "TRFP2")
+
+_alias := "TRFP2"
+_table_name := "trfp2"
+
+aDbf:={}
+AADD(aDBf,{ "ID"                  , "C" ,  60 ,  0 })
+AADD(aDBf,{ "SHEMA"               , "C" ,   1 ,  0 })
+AADD(aDBf,{ "NAZ"                 , "C" ,  20 ,  0 })
+AADD(aDBf,{ "IDKONTO"             , "C" ,   7 ,  0 })
+AADD(aDBf,{ "DOKUMENT"            , "C" ,   1 ,  0 })
+AADD(aDBf,{ "PARTNER"             , "C" ,   1 ,  0 })
+AADD(aDBf,{ "D_P"                 , "C" ,   1 ,  0 })
+AADD(aDBf,{ "ZNAK"                , "C" ,   1 ,  0 })
+AADD(aDBf,{ "IDVD"                , "C" ,   2 ,  0 })
+AADD(aDBf,{ "IDVN"                , "C" ,   2 ,  0 })
+AADD(aDBf,{ "IDTARIFA"            , "C" ,   6 ,  0 })
+
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
+
+CREATE_INDEX("ID","idvd+shema+Idkonto+id+idtarifa+idvn+naz", _alias )
 
 //TRFP3    
-if !FILE(f18_ime_dbf("trfp3"))
-    aDbf:={}
-    AADD(aDBf,{ "ID"                  , "C" ,  60 ,  0 })
-    AADD(aDBf,{ "SHEMA"               , "C" ,   1 ,  0 })
-    AADD(aDBf,{ "NAZ"                 , "C" ,  20 ,  0 })
-    AADD(aDBf,{ "IDKONTO"             , "C" ,   7 ,  0 })
-    AADD(aDBf,{ "D_P"                 , "C" ,   1 ,  0 })
-    AADD(aDBf,{ "ZNAK"                , "C" ,   1 ,  0 })
-    AADD(aDBf,{ "IDVN"                , "C" ,   2 ,  0 })
-    DBcreate2("TRFP3",aDbf)
-    reset_semaphore_version("trfp3")
-    my_use("trfp3")
-    close all
-endif
-CREATE_INDEX("ID","shema+Idkonto","TRFP3")
+_alias := "TRFP3"
+_table_name := "trfp3"
+
+aDbf:={}
+AADD(aDBf,{ "ID"                  , "C" ,  60 ,  0 })
+AADD(aDBf,{ "SHEMA"               , "C" ,   1 ,  0 })
+AADD(aDBf,{ "NAZ"                 , "C" ,  20 ,  0 })
+AADD(aDBf,{ "IDKONTO"             , "C" ,   7 ,  0 })
+AADD(aDBf,{ "D_P"                 , "C" ,   1 ,  0 })
+AADD(aDBf,{ "ZNAK"                , "C" ,   1 ,  0 })
+AADD(aDBf,{ "IDVN"                , "C" ,   2 ,  0 })
+
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
+
+CREATE_INDEX("ID","shema+Idkonto", _alias )
 
 
 // kamate - sifrarnik kamata
-if !FILE( f18_ime_dbf("ks") )
-    aDbf:={}
-    AADD(aDBf,{ "ID"        , "C" ,   3 ,  0 })
-    AADD(aDBf,{ "NAZ"       , "C" ,   2 ,  0 })
-    AADD(aDBf,{ "DATOD"     , "D" ,   8 ,  0 })
-    AADD(aDBf,{ "DATDO"     , "D" ,   8 ,  0 })
-    AADD(aDBf,{ "STREV"     , "N" ,   8 ,  4 })
-    AADD(aDBf,{ "STKAM"     , "N" ,   8 ,  4 })
-    AADD(aDBf,{ "DEN"       , "N" ,  15 ,  6 })
-    AADD(aDBf,{ "TIP"       , "C" ,   1 ,  0 })
-    AADD(aDBf,{ "DUZ"       , "N" ,   4 ,  0 })
 
-    DBCREATE2( "KS", aDbf)
-    reset_semaphore_version("ks")
-    my_use("ks")
-    close all
-endif
-CREATE_INDEX("ID", "Id", "ks") 
-CREATE_INDEX("2", "dtos(datod)", "ks") 
+_alias := "KS"
+_table_name := "KS"
+
+aDbf:={}
+AADD(aDBf,{ "ID"        , "C" ,   3 ,  0 })
+AADD(aDBf,{ "NAZ"       , "C" ,   2 ,  0 })
+AADD(aDBf,{ "DATOD"     , "D" ,   8 ,  0 })
+AADD(aDBf,{ "DATDO"     , "D" ,   8 ,  0 })
+AADD(aDBf,{ "STREV"     , "N" ,   8 ,  4 })
+AADD(aDBf,{ "STKAM"     , "N" ,   8 ,  4 })
+AADD(aDBf,{ "DEN"       , "N" ,  15 ,  6 })
+AADD(aDBf,{ "TIP"       , "C" ,   1 ,  0 })
+AADD(aDBf,{ "DUZ"       , "N" ,   4 ,  0 })
+
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
+
+CREATE_INDEX("ID", "Id", _alias ) 
+CREATE_INDEX("2", "dtos(datod)", _alias ) 
 
 
 // objekti
-if !FILE(f18_ime_dbf("objekti"))
-    aDbf:={}
-    AADD(aDbf, {"id","C",2,0})
-    AADD(aDbf, {"naz","C",10,0}) 
-    AADD(aDbf, {"IdObj","C", 7,0})
-	DBCREATE2("OBJEKTI", aDbf)
-    reset_semaphore_version( "objekti" )
-    my_use( "objekti" )
-    close all
-endif
-CREATE_INDEX("ID", "ID", "OBJEKTI")
-CREATE_INDEX("NAZ", "NAZ", "OBJEKTI")
-CREATE_INDEX("IdObj", "IdObj", "OBJEKTI")
+_alias := "OBJEKTI"
+_table_name := "objekti"
+
+aDbf:={}
+AADD(aDbf, {"id","C",2,0})
+AADD(aDbf, {"naz","C",10,0}) 
+AADD(aDbf, {"IdObj","C", 7,0})
+
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
+
+CREATE_INDEX("ID", "ID", _alias )
+CREATE_INDEX("NAZ", "NAZ", _alias )
+CREATE_INDEX("IdObj", "IdObj", _alias )
+
 
 // fakt objekti
+_alias := "FAKT_OBJEKTI"
+_table_name := "fakt_objekti"
+
 aDbf := {}
 AADD( aDBf,{ 'ID'   , 'C' ,   10 ,  0 } )
 AADD( aDBf,{ 'NAZ'  , 'C' ,  100 ,  0 } )
 
-_created := .f.
-_alias := "FAKT_OBJEKTI"
-_table_name := "fakt_objekti"
-
-if !FILE( f18_ime_dbf( _alias) )
-    DBCREATE2( _alias, aDbf )
-    _created := .t.
-endif
-
-if _created 
-    reset_semaphore_version(_table_name)
-    my_use(_alias)
-    use
-endif
+IF_NOT_FILE_DBF_CREATE
+IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX( "ID", "ID", _alias )
 CREATE_INDEX( "NAZ", "NAZ", _alias )
 
-nArea := nil
 
 // kreiraj lokal tabelu : LOKAL
-cre_lokal(F_LOKAL)
+cre_lokal( ver )
 
 // kreiraj tabele dok_src : DOK_SRC
-cre_doksrc()
+cre_doksrc( ver )
 
 // kreiraj relacije : RELATION
-cre_relation()
+cre_relation( ver )
 
 // kreiraj pravila : RULES
-cre_fmkrules()
+cre_fmkrules( ver )
 
 // kreiranje tabela ugovora
-db_cre_ugov()
+db_cre_ugov( ver )
+
 
 return .t.
+
+
 
 
 

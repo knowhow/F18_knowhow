@@ -463,6 +463,12 @@ endif
 
 // odrezi ocitano na 7, tu je barkod koji trebam pretraziti
 _tb_barkod := LEFT( barkod, _bk_len )
+
+if LEN( ALLTRIM( _tb_barkod ) ) <> _bk_len
+    // ne slaze se sa tezinskim barkodom... ovo je laznjak..
+    return .f.
+endif
+
 _tb_tezina := PADR( RIGHT( barkod, _tez_len ), _tez_len - 1 )
 
 // sredi mi i tezinu...

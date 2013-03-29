@@ -55,7 +55,7 @@ if no_lock .or. rlock()
         // replace polja
         if FIELDPOS(_key) == 0
            _msg := RECI_GDJE_SAM + "dbf field " + _key + " ne postoji u " + ALIAS()
-           Alert(_msg)
+           //Alert(_msg)
            log_write( _msg, 1 )
         else
            _field_b := FIELDBLOCK(_key)

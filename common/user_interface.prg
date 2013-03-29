@@ -19,7 +19,7 @@ static aPrStek:={}
 static aMenuStack:={}    
 static aMsgStack:={}
 
-function init_gui()
+function init_gui( clear )
 
 public m_x := 0
 public m_y := 0
@@ -32,7 +32,11 @@ public gVerzija := F18_VER
 public Invert   := .t.
 public Normal   :="GR+/B,R/N+,,,N/W"
 
-NaslEkran(.t.)
+if clear == NIL
+    clear := .t.
+endif
+
+NaslEkran( clear )
 
 return
 
@@ -692,9 +696,8 @@ do while .t.
         exit
     endif
 
-    nChar:=WaitScrSav()
-    nOldItemNo:=nItemNo
-
+    nChar := WaitScrSav()
+    nOldItemNo := nItemNo
     do case
             case nChar==K_ESC
                 nItemNo:=0
@@ -740,7 +743,11 @@ do while .t.
             nCtrlKeyVal := 30000
             exit
         otherwise
-                goModul:GProc(nChar)
+            
+            if VALTYPE( goModul ) == "O"
+                goModul:GProc( nChar )
+            endif
+
     endcase
     
     if nItemNo > nLen

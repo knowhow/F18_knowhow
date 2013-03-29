@@ -43,7 +43,7 @@ static function par_obrada()
 local nX := 1
 local _k1 := fin_k1(), _k2 := fin_k2(), _k3 := fin_k3(), _k4 := fin_k4()
 
-Box(,23,70)
+Box(, 24, 70 )
 
 	set cursor on
  	
@@ -120,7 +120,13 @@ Box(,23,70)
 
 	@ m_x + nX, col() + 1 SAY "dana"
 
+    ++ nX
+
+ 	@ m_x + nX, m_y + 2 SAY "Prikaz stanja konta kod knjizenja naloga" GET g_knjiz_help PICT "@!" ;
+            VALID g_knjiz_help $ "DN"
+
 	read
+
 BoxC()
 
 if LastKey() <> K_ESC
@@ -177,10 +183,6 @@ Box(, 15,70)
 	
 	@ m_x + nX, m_y + 2 SAY "Dugi uslov za firmu i RJ u suban.specif.? (D/N)" GET gDUFRJ valid gDUFRJ $ "DN" pict "@!"
  	
-	++ nX
-	
- 	@ m_x + nX, m_y + 2 SAY "Lijeva marg.za obrazac 'Odobr. i nalog za isplatu' (br.znakova)" GET gnLMONI PICTURE "999"
-	
 	read
 BoxC()
 
@@ -224,6 +226,7 @@ gnKZBDana := fetch_metric("fin_automatska_kontrola_zbira", my_user(), gnKZBDana 
 gnLMONI := fetch_metric( "fin_kosuljice_lijeva_margina", my_user(), gnLMONI )
 gKtoLimit := fetch_metric("fin_unos_limit_konto", my_user(), gKtoLimit )
 gnKtoLimit := fetch_metric("fin_unos_limit_konto_iznos", my_user(), gnKtoLimit )
+g_knjiz_help := fetch_metric("fin_pomoc_sa_unosom", my_user(), g_knjiz_help )
 
 fin_params(.t.)
 
@@ -263,8 +266,10 @@ set_metric( "fin_unos_limit_konto_iznos", my_user(), gnKtoLimit )
 set_metric( "fin_automatska_kontrola_zbira", my_user(), gnKZBDana )
 set_metric( "fin_potpis_na_kraju_naloga", my_user(), gPotpis )
 set_metric( "fin_kosuljice_lijeva_margina", my_user(), gnLMONI )
+set_metric( "fin_pomoc_sa_unosom", my_user(), g_knjiz_help )
 
 return
+
 
 // ---------------------------------------
 // ---------------------------------------

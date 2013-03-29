@@ -110,7 +110,7 @@ return .t.
 // -----------------------
 function set_global_vars()
 
-CreParams()
+_kreiraj_params_tabele()
 
 SetSpecifVars()
 SetValuta()
@@ -146,7 +146,7 @@ return
 function SetPDVBoje()
 
 if VALTYPE(goModul:oDesktop) != "O"
-  return .f.
+    return .f.
 endif
 
 if IsPDV()

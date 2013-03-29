@@ -12,6 +12,8 @@
 #include "fakt.ch"
 #include "f18_separator.ch"
 
+
+
 // -----------------------------------------------
 // pregled / stampa azuriranih dokumenata 
 // -----------------------------------------------
@@ -582,11 +584,12 @@ return
 
 // -------------------------------------------------------- 
 // -------------------------------------------------------- 
-function fakt_tabela_komande(lOpcine, fakt_doks_filt)
-local nRet:=DE_CONT
+function fakt_tabela_komande( lOpcine, fakt_doks_filt )
+local nRet := DE_CONT
 local _rec
 local _filter
 local _dev_id, _dev_params
+local _refresh
 
 _filter := fakt_doks_filt
 
@@ -595,211 +598,212 @@ cFilter := DBFilter()
 // ispis informacije o fiskalnom racunu
 _veza_fc_rn()
 
+_refresh := .f.
+
 do case
  
-  case Ch == K_ENTER 
-     refresh_fakt_tbl_dbfs( _filter )
-     nRet := pr_pf(lOpcine)
+    // stampa dokumenta
+    case Ch == K_ENTER 
 
-  case Ch == K_ALT_P
-     // print odt
-     refresh_fakt_tbl_dbfs( _filter )
-     nRet := pr_odt(lOpcine)
+        nRet := pr_pf( lOpcine )
+        _refresh := .t.
 
-  case Ch == K_F5
-    refresh_fakt_tbl_dbfs(_filter)
-    // zatvori tabelu, pa otvori  
-    select fakt_doks
-    use
-
-    O_FAKT_DOKS
-    set filter to &cFilter
-    go top
-
+    // odt stampa dokumenta
+    case Ch == K_ALT_P
+        
+        nRet := pr_odt( lOpcine )
+        _refresh := .t.
+ 
     // refresh tabele
-    nRet := DE_REFRESH
+    case Ch == K_F5
+    
+        // zatvori tabelu, pa otvori  
+        select fakt_doks
+        use
+        O_FAKT_DOKS
 
-  case CH == K_CTRL_V
+        // refresh tabele
+        nRet := DE_REFRESH
+        _refresh := .t.
+
+
+    // setovanje broja veze fiskalnog racuna
+    case CH == K_CTRL_V
     
-    refresh_fakt_tbl_dbfs(_filter)
-    // setovanje broj fiskalnog isjecka
-    select fakt_doks
+        // setovanje broj fiskalnog isjecka
+        select fakt_doks
     
-    if field->fisc_rn <> 0
-        msgbeep("veza: fiskalni racun vec setovana !")
-        if Pitanje("FAKT_PROM_VEZU", "Promjeniti postojecu vezu (D/N)?", "N") == "N"
-            return DE_REFRESH
+        if field->fisc_rn <> 0
+
+            msgbeep("veza: fiskalni racun vec setovana !")
+
+            if Pitanje( "FAKT_PROM_VEZU", "Promjeniti postojecu vezu (D/N)?", "N" ) == "N"
+                return DE_CONT
+            endif
+
         endif
-    endif
     
-    if Pitanje("FISC_NVEZA_SET", "Setovati novu vezu sa fiskalnim racunom (D/N)?") == "N"
-        return DE_REFRESH
-    endif
+        if Pitanje( "FISC_NVEZA_SET", "Setovati novu vezu sa fiskalnim racunom (D/N)?", "D" ) == "N"
+            return DE_CONT
+        endif
     
-    nFiscal := field->fisc_rn
-    nRekl := field->fisc_st
+        nFiscal := field->fisc_rn
+        nRekl := field->fisc_st
 
-    Box(, 2, 40)
-        @ m_x + 1, m_y + 2 SAY "fiskalni racun:" GET nFiscal ;
-            PICT "9999999999"
-        @ m_x + 2, m_y + 2 SAY "reklamni racun:" GET nRekl ;
-            PICT "9999999999"
-        read
-    BoxC()
+        Box(, 2, 40)
+            @ m_x + 1, m_y + 2 SAY "fiskalni racun:" GET nFiscal PICT "9999999999"
+            @ m_x + 2, m_y + 2 SAY "reklamni racun:" GET nRekl PICT "9999999999"
+            read
+        BoxC()
     
-    if nFiscal <> field->fisc_rn .or. nRekl <> field->fisc_st
+        if nFiscal <> field->fisc_rn .or. nRekl <> field->fisc_st
 
-        _rec := dbf_get_rec()
-        _rec["fisc_rn"] := nFiscal
-        _rec["fisc_st"] := nRekl
+            _rec := dbf_get_rec()
+            _rec["fisc_rn"] := nFiscal
+            _rec["fisc_st"] := nRekl
 
-        update_rec_server_and_dbf( "fakt_doks", _rec, 1, "FULL" )
+            update_rec_server_and_dbf( "fakt_doks", _rec, 1, "FULL" )
 
-
-        return DE_REFRESH
-    endif
-  
-  case chr(Ch) $ "iI"
-    
-    refresh_fakt_tbl_dbfs(_filter)
-    // info dokument
-    msgbeep( getfullusername( field->oper_id ) )
-    return DE_REFRESH
-
-
-  case chr(Ch) $ "kK"
-    
-    // korekcija podataka na dokumentu
-    if fakt_edit_data( field->idfirma, field->idtipdok, field->brdok )
-        refresh_fakt_tbl_dbfs( _filter )
-        return DE_REFRESH
-    endif
-
-  case UPPER(chr(Ch)) == "R"
-
-    if !fiscal_opt_active()
-        return DE_REFRESH
-    endif
-
-    refresh_fakt_tbl_dbfs(_filter)
-    select fakt_doks
-
-    // stampa fiskalnog racuna
-    if field->idtipdok $ "10#11"
-        
-        if field->fisc_rn > 0
-            
-            msgbeep("Fiskalni racun vec stampan za ovaj dokument !!!#Ako je potrebna ponovna stampa resetujte broj veze.")
-            
-            return DE_REFRESH
+            nRet := DE_REFRESH
+            _refresh := .t.
         
         endif
+   
+    // informacije o dokumentu 
+    case chr(Ch) $ "iI"
+    
+        // info dokument
+        msgbeep( getfullusername( field->oper_id ) )
+
+    // korekcija podataka dokumenta
+    case chr(Ch) $ "kK"
+    
+        // korekcija podataka na dokumentu
+        if fakt_edit_data( field->idfirma, field->idtipdok, field->brdok )
+            nRet := DE_REFRESH
+            _refresh := .t.
+        endif
+
+    // stampanje fiskalnog racuna
+    case UPPER( chr( Ch ) ) == "R"
+
+        if !fiscal_opt_active()
+            return DE_CONT
+        endif
+
+        // stampa fiskalnog racuna
+        if field->idtipdok $ "10#11"
         
-        if Pitanje( "ST FISK RN5","Stampati fiskalni racun ?", "D") == "D"
+            if field->fisc_rn > 0
+                msgbeep("Fiskalni racun vec stampan za ovaj dokument !!!#Ako je potrebna ponovna stampa resetujte broj veze.")
+                return DE_CONT
+            endif
+        
+            if Pitanje( "ST FISK RN5","Stampati fiskalni racun za dokument " + ;
+                ALLTRIM( field->idfirma ) + "-" + ;
+                ALLTRIM( field->idtipdok ) + "-" + ;
+                ALLTRIM( field->brdok ) + " (D/N) ?", "D") == "D"
 
-            _dev_id := get_fiscal_device( my_user(), field->idtipdok )
+                _dev_id := get_fiscal_device( my_user(), field->idtipdok )
 
-            if _dev_id > 0
+                if _dev_id > 0
 
-                _dev_params := get_fiscal_device_params( _dev_id, my_user() )
+                    _dev_params := get_fiscal_device_params( _dev_id, my_user() )
 
-                if _dev_params == NIL
+                    if _dev_params == NIL
+                        return DE_CONT
+                    endif
+
+                else
+                    MsgBeep("Problem sa fiskalnim parametrima !!!")
                     return DE_CONT
                 endif
 
-            else
-                MsgBeep("Problem sa fiskalnim parametrima !!!")
-                return DE_CONT
-            endif
-
-            // da li je korisniku dozvoljeno da stampa racune ?
-            if _dev_params["print_fiscal"] == "N"
-                MsgBeep( "Nije Vam dozvoljena opcija za stampu fiskalnih racuna !" )
-                return DE_CONT
-            endif
+                // da li je korisniku dozvoljeno da stampa racune ?
+                if _dev_params["print_fiscal"] == "N"
+                    MsgBeep( "Nije Vam dozvoljena opcija za stampu fiskalnih racuna !" )
+                    return DE_CONT
+                endif
  
-            fakt_fisc_rn( field->idfirma, field->idtipdok, field->brdok, .f., _dev_params )
-        
-            select fakt_doks
-            set filter to &cFilter
-            
-            return DE_REFRESH
+                fakt_fisc_rn( field->idfirma, field->idtipdok, field->brdok, .f., _dev_params )
+       
+                nRet := DE_REFRESH
+                _refresh := .t.
+
+            endif
 
         endif
 
-    endif
+    // duplikat dokumenta
+    case chr(ch) $ "wW"
+        
+        fakt_napravi_duplikat( field->idfirma, field->idtipdok, field->brdok )
+        select fakt_doks
 
-  case chr(Ch) $ "sS"
+    // generisanje storno dokumenta
+    case chr(Ch) $ "sS"
 
-     refresh_fakt_tbl_dbfs(_filter)
-     // generisi storno dokument
-     storno_dok( field->idfirma, field->idtipdok, field->brdok )
+        // generisi storno dokument
+        storno_dok( field->idfirma, field->idtipdok, field->brdok )
      
-     if Pitanje(,"Preci u tabelu pripreme ?","D")=="D"
-          fUPripremu:=.t.
-          nRet:=DE_ABORT
-     else
-          nRet := DE_REFRESH
-     endif
+        if Pitanje(, "Preci u tabelu pripreme ?", "D" ) == "D"
+            fUPripremu := .t.
+            nRet := DE_ABORT
+        else
+            nRet := DE_REFRESH
+            _refresh := .t.
+        endif
   
-  case UPPER(chr(Ch)) == "B"
-     refresh_fakt_tbl_dbfs(_filter)
-     nRet:=pr_rn()  
+    // printanje radnog naloga
+    case UPPER(chr(Ch)) == "B"
+
+        nRet := pr_rn() 
+        _refresh := .t. 
      
-  case chr(Ch) $ "nN"
-     refresh_fakt_tbl_dbfs(_filter)
-     nRet:=pr_nar(lOpcine)
+    // printanje narudzbenice
+    case chr(Ch) $ "nN"
+        
+        nRet := pr_nar(lOpcine)
+        _refresh := .t.
   
-  case chr(Ch) $ "fF"
-     refresh_fakt_tbl_dbfs(_filter)
-     if idtipdok $ "20"
-       nRet:=generisi_fakturu(lOpcine)
-     endif
+    // generisanje fakture na osnovu ponude
+    case chr(Ch) $ "fF"
+        
+        if idtipdok $ "20"
+            nRet := generisi_fakturu(lOpcine)
+            _refresh := .t.
+        endif
      
-  case chr(Ch) $ "pP"
+    // povrat dokumenta u pripremu
+    case chr(Ch) $ "pP"
      
-     refresh_fakt_tbl_dbfs(_filter)
-     if !(ImaPravoPristupa(goModul:oDataBase:cName,"DOK","POVRATDOK"))
-         msgbeep( cZabrana )
-         nRet := DE_REFRESH
-         return nRet
-     endif
-     
-     select fakt_doks
-     nTrec:=recno()
-     _cIdFirma:=idfirma
-     _cIdTipDok:=idtipdok
-     _cBrDok:=brdok
-     close all
-     nR_tmp := Povrat_fakt_dokumenta(.f., _cidfirma, _cIdTipdok, _cbrdok)
-     select (F_FAKT_DOKS)
-     use
-     O_FAKT_DOKS
-     if lOpcine
-       O_PARTN
-       select fakt_doks
-       set relation to idpartner into PARTN
-     endif
-     if cFilter==".t."
-       set Filter to
-     else
-       set Filter to &cFilter
-     endif
-     go nTrec
-     if nR_tmp <> 0 .and. Pitanje(,"Preci u tabelu pripreme ?","D")=="D"
-      fUPripremu:=.t.
-        nRet:=DE_ABORT
-     else
-        nRet:=DE_REFRESH
-     endif
+        _tmp := povrat_fakt_dokumenta( .f., field->idfirma, field->idtipdok, field->brdok )
+
+        if _tmp <> 0 .and. Pitanje(, "Preci u tabelu pripreme ?", "D" ) == "D"
+            fUPripremu := .t.
+            nRet := DE_ABORT
+        else
+            nRet := DE_REFRESH
+            _refresh := .t.
+        endif
 
 endcase
+
+// refresh ako ima potrebe za tim...
+if _refresh 
+    refresh_fakt_tbl_dbfs( _filter )
+    select fakt_doks
+endif
+
 return nRet
 
 
-function refresh_fakt_tbl_dbfs(filter)
+
+
+function refresh_fakt_tbl_dbfs( tbl_filter )
 
 PushWa()
+
 close all
 
 O_VRSTEP
@@ -813,7 +817,7 @@ select fakt_doks
 set order to tag "1"
 go top
 
-SET FILTER TO &filter
+SET FILTER TO &(tbl_filter)
 
 SET RELATION TO idvrstep INTO VRSTEP
 
@@ -826,6 +830,8 @@ O_RJ
 PopWa()
 
 return .t.
+
+
 
 
 function fakt_vt_porezi()

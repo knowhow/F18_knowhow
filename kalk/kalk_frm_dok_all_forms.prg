@@ -258,8 +258,15 @@ endif
 
 // momenat kada mozemo ocitati tezinu iz barkod-a ako se koristi...
 if tezinski_barkod_get_tezina( _ocitani_barkod, @_tezina ) .and. _tezina <> 0
+    
     // ako je ocitan tezinski barkod...
     _kolicina := _tezina
+    
+    // kod predispozicije kolicina treba biti negativna kod prvog ocitanja
+    if _idvd == "80" .and. ( !EMPTY( _idkonto2 ) .and. _idkonto2 <> "XXX" )
+        _kolicina := -_kolicina
+    endif
+
 endif
 
 return .t.

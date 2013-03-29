@@ -70,21 +70,24 @@ return
 function ld_set_forma()
 private GetList:={}
 
+gPicI := PADR( gPicI, 15 )
+gPicS := PADR( gPicS, 15 )
+
 Box(,5,60)
     @ m_x+1,m_y+2 SAY "Zaokruzenje primanja          :" GET gZaok pict "99"
-        @ m_x+2,m_y+2 SAY "Zaokruzenje poreza i doprinosa:" GET gZaok2 pict "99"
-        @ m_x+3,m_y+2 SAY "Valuta                        :" GET gValuta pict "XXX"
-        @ m_x+4,m_y+2 SAY "Prikaz iznosa                 :" GET gPicI
-        @ m_x+5,m_y+2 SAY "Prikaz sati                   :" GET gPicS
+    @ m_x+2,m_y+2 SAY "Zaokruzenje poreza i doprinosa:" GET gZaok2 pict "99"
+    @ m_x+3,m_y+2 SAY "Valuta                        :" GET gValuta pict "XXX"
+    @ m_x+4,m_y+2 SAY "Prikaz iznosa                 :" GET gPicI
+    @ m_x+5,m_y+2 SAY "Prikaz sati                   :" GET gPicS
     read
 BoxC()
 
-if (LastKey()<>K_ESC)
-    Wpar("pi",gPicI)
-        Wpar("ps",gPicS)
-        Wpar("va",gValuta)
-        Wpar("z2",gZaok2)
-        Wpar("zo",gZaok)
+if ( LastKey() <> K_ESC )
+    set_metric( "ld_pic_iznos", NIL, ALLTRIM( gPicI ) )
+    set_metric( "ld_pic_sati", NIL, ALLTRIM( gPicS ) )
+    set_metric( "ld_valuta", NIL, gValuta )
+    set_metric( "ld_zaok_por_dopr", NIL, gZaok2 )
+    set_metric( "ld_zaok_prim", NIL, gZaok )
 endif
 
 return
@@ -153,7 +156,7 @@ cVarPorol := PADR( cVarPorol, 2 )
 
 Box(, 20, 77)
     
-    @ m_x+nX,m_y+2 SAY "Varijanta obracuna" GET gVarObracun
+    @ m_x + nX, m_y + 2 SAY "Varijanta obracuna (1/2):" GET gVarObracun
         
     ++nX
     
@@ -169,7 +172,7 @@ Box(, 20, 77)
     @ m_x+nX, col()+1 SAY "Mogucnost unosa mjeseca pri obradi D/N:" GET gUnMjesec  pict "@!" valid gUnMjesec $ "DN"
     ++nX
         
-    @ m_x+nX,m_y+2 SAY "Koristiti set formula (sifrarnik Tipovi primanja):" GET gSetForm pict "9" valid ld_v_set_form()
+    @ m_x+nX,m_y+2 SAY "Koristiti set formula (sifrarnik Tipovi primanja):" GET gSetForm pict "9" 
     ++nX
         
     @ m_x+nX,m_y+2 SAY "Minuli rad  %/B:" GET gMinR  valid gMinR $ "%B"   pict "@!"
@@ -290,236 +293,10 @@ return
 
 
 // -----------------------------------------
-// parametri - razno
-// -----------------------------------------
-function ld_set_razno()
-private GetList:={}
-
-Box(, 3,60)
-    @ m_x+ 2,m_y+2 SAY "Fajl obrasca specifikacije" GET gFSpec VALID V_FSpec()
-        read
-BoxC()
-
-if (LastKey()<>K_ESC)
-    WPar("os", @gFSpec)   
-    // fajl-obrazac specifikacije
-endif
-
-return
-
-
-
-function ld_v_set_form()
-local cScr
-local nArr:=SELECT()
-
-if (File(SIFPATH+"TIPPR.DB"+gSetForm) .and. Pitanje(,"Sifrarnik tipova primanja uzeti iz arhive br. "+gSetForm+" ?","N")=="D")
-    save screen to cScr
-    select (F_TIPPR)
-    use
-    cls
-    #ifdef C52
-        ? FileCopy(SIFPATH+"TIPPR.DB"+gSetForm  ,SIFPATH+"TIPPR.DBF")
-        ? FileCopy(SIFPATH+"TIPPR.CD"+gSetForm,SIFPATH+"TIPPR.CDX")
-    #else
-        ? FileCopy(SIFPATH+"TIPPR.DB"+gSetForm  ,SIFPATH+"TIPPR.DBF"  )
-        ? FileCopy(SIFPATH+"TIPPRI1.NT"+gSetForm,SIFPATH+"TIPPRi1.NTX")
-    #endif
-    
-    inkey(20)
-    restore screen from cScr
-    select (F_TIPPR)
-    if !Used()
-        O_TIPPR
-    endif
-    P_Tippr()
-    select params
-elseif Pitanje(,"Tekuci sifrarnik tipova primanja staviti u arhivu br. "+gSetForm+" ?","N")=="D"
-    save screen to cScr
-    select (F_TIPPR)
-    use
-    cls
-    #ifdef C52
-        ? FileCopy(SIFPATH+"TIPPR.DBF",SIFPATH+"TIPPR.DB"+gSetForm)
-        ? FileCopy(SIFPATH+"TIPPR.CDX",SIFPATH+"TIPPR.CD"+gSetForm)
-    #else
-        ? FileCopy(SIFPATH+"TIPPR.DBF", SIFPATH+"TIPPR.DB"+gSetForm)
-        ? FileCopy(SIFPATH+"TIPPRi1.NTX",SIFPATH+"TIPPRI1.NT"+gSetForm)
-    #endif
-    inkey(20)
-    restore screen from cScr
-endif
-
-select (nArr)
-return .t.
-
-
-
-function PrenosLD()
-Beep(4)
-MsgBeep("Da bi se rasteretili od podataka koji nam nisu potrebni,#"+;
-        "vrsimo brisanje nepotrebnih podataka u tekucoj godini.##"+;
-        " ?")
-if Pitanje(,"Brisanje dijela podataka iz protekle sezone ?","N")="N"
-    closeret
-endif
-
-if !SigmaSif("LDSTARO")
-    closeret
-endif
-
-nGodina:=YEAR(Date())-1
-nMjOd:=1
-nMjDo:=9
-Box(,4,60)
-    do while .t.
-        cIspravno:="N"
-        @ m_x+1,m_y+2 SAy"Izbrisati mjesece za godinu :"  GET nGodina pict "9999"
-        @ m_x+2,m_y+2 SAY "Brisanje izvrsiti od mjeseca:" GET nMjOd pict "99"
-        @ row(),col()+2 SAY "do mjeseca" GET nMjDO pict "99"
-        @ m_x+4,m_y+2 SAY "Ispravno D/N ?" GET cispravno valid cispravno $ "DN" pict "@!"
-        read
-        if cIspravno=="D"
-            exit
-        endif
-    enddo
-Boxc()
-
-O_LDX
-set order to 0
-
-start print cret
-
-? "Datoteka LD..."
-?
-
-select ld
-go top
-
-do while !eof()
-    if nGodina==godina .and. (mjesec>=nMjOd .and. mjesec<=nMjDo) .or. EMPTY(idradn)
-        DbDelete2()
-            ? "Brisem:",idrj,godina,mjesec,idradn
-    endif
-    skip
-enddo
-
-select ld
-use
-
-? "Datoteka LDSM..."
-?
-
-O_LDSMX
-select ldsm
-go top
-
-do while !eof()
-    if nGodina==godina .and. (mjesec>=nMjOd .and. mjesec<=nMjDo) .or. EMPTY(idradn)
-        DbDelete2()
-            ? "Brisem:",idrj,godina,mjesec,idradn
-    endif
-    skip
-enddo
-
-select ldsm
-use
-
-? "Datoteka RADKR..."
-?
-
-O_RADKRX
-select radkr
-go top
-
-do while !eof()
-    // ako je godina 1998, onda brisi 1997 i starije
-    if (nGodina>godina .or. EMPTY(idradn))
-            DbDelete2()
-            ? "Brisem: radkr",godina,mjesec,idradn
-    endif
-    skip
-enddo
-
-select radkr
-use
-
-end print
-
-closeret
-return
-
-
-function IspraviSpec(cKomLin)
-if !EMPTY(gFSpec)
-    Box(,25,80)
-        f18_run(cKomLin)
-    BoxC()
-endif
-
-
-function V_FSpec()
-
-private cKom:="q "+PRIVPATH+gFSpec
-
-if Pitanje(,"Zelite li izvrsiti ispravku fajla obrasca specifikacije ?","N")=="D"
-    IspraviSpec(cKom)
-endif
-return .t.
-
-
-function V_FRjes(cVarijanta)
-
-private cKom:="q "+PRIVPATH
-
-if (cVarijanta>"4")
-    cKom+="dokaz"
-else
-    cKom+="rjes"
-endif
-
-if cVarijanta=="5"
-    cKom+="1"
-elseif cVarijanta=="6"
-    cKom+="2"
-else
-    cKom+=cVarijanta
-endif
-
-cKom+=".txt"
-
-if Pitanje(,"Zelite li izvrsiti ispravku fajla obrasca rjesenja ?","N")=="D"
-    IspraviSpec(cKom)
-endif
-
-return .t.
-
-
-// -----------------------------------------
 // koliko polja ima ld
 // -----------------------------------------
 function LDPoljaINI()
-
-if !FILE(f18_ime_dbf("LD"))
-    public cLdPolja := 40
-    return
-endif
-
-O_LD
-
-if ld->(fieldpos("S60"))<>0
-    public cLDPolja:=60
-elseif ld->(fieldpos("S50"))<>0
-    public cLDPolja:=50
-elseif ld->(fieldpos("S40"))<>0
-    public cLDPolja:=40
-elseif ld->(fieldpos("S30"))<>0
-    public cLDPolja:=30
-else
-    public cLDPolja:=14
-endif
-
-use
+public cLDPolja := 60
 return
 
 
@@ -547,7 +324,6 @@ return .t.
 
 
 function ValObr(lIzv,cObracun)
-*{
 local lVrati:=.t.
 
 if lIzv==nil
@@ -566,12 +342,9 @@ if gnHelpObr>0 .and. lVrati
 endif
 
 return lVrati
-*}
 
 
 function ClVBox()
-*{
-
 local i:=0
 for i:=1 to gnHelpObr
     BoxC()
@@ -579,7 +352,6 @@ next
 gnHelpObr:=0
 
 return
-*}
 
 
 

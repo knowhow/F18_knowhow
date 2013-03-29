@@ -449,6 +449,8 @@ local lVrati:=.f., i:=0
 return lVrati
 *}
 
+
+
 /*! \fn StampaTabele(aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslov, bFor, nStr, lOstr, lLinija, bSubTot, nSlogova, cTabBr, lCTab, bZagl)
  *
  *   \brief Stampa tabele
@@ -599,20 +601,32 @@ endif
    ++nStr
  endif
 
- if nCrtice==0
-     cOk:={"-", "-", " ", "-", " ", "-", " ", "-", "-", " ", "-", " ", "-", "-", "-", " "}
- elseif nCrtice==1
-     cOk:={"Ú", "Ä", "Â", "¿", "³", "Ã", "Å", "´", "À", "Á", "Ù", "³", "Ä", "Ã", "´", "Å"}
- elseif nCrtice==9    // rtf-fajlovi
-     cOk:={" ", " ", " ", " ", "#", " ", " ", " ", " ", " ", " ", "#", " ", " ", " ", " "}
- else
-     cOk:={"É", "Í", "Ñ", "»", "³", "Ì", "Ø", "¹", "È", "Ï", "¼", "º", "Ä", "Ç", "¶", "Å"}
- endif   // 1    2    3    4    5    6    7    8    9    10   11   12   13   14   15   16
-         ////////////////////////////////////////////////////////////////////////////////
+if nCrtice == 0
+    cOk := {"-", "-", " ", "-", " ", "-", " ", "-", "-", " ", "-", " ", "-", "-", "-", " "}
+elseif nCrtice == 1
 
- nSuma:=ARRAY(nKol); AFILL(nSuma,0); nSuma:=AMFILL(nSuma,nRed)
- nSubTot:=ARRAY(nKol); AFILL(nSubTot,0); nSubTot:=AMFILL(nSubTot,nRed)
- if cNaslov!=nil
+    #ifdef __PLATFORM__WINDOWS
+        cOk := {"+", "-", "+", "+", ":", "+", "+", "+", "+", "+", "+", ":", "-", "+", "+", "+"}
+    #else
+        cOk := {"Ú", "Ä", "Â", "¿", "³", "Ã", "Å", "´", "À", "Á", "Ù", "³", "Ä", "Ã", "´", "Å"}
+    #endif
+
+elseif nCrtice == 9    
+    // rtf-fajlovi
+    cOk := {" ", " ", " ", " ", "#", " ", " ", " ", " ", " ", " ", "#", " ", " ", " ", " "}
+else
+    cOk := {"É", "Í", "Ñ", "»", "³", "Ì", "Ø", "¹", "È", "Ï", "¼", "º", "Ä", "Ç", "¶", "Å"}
+endif     
+          // 1    2    3    4    5    6    7    8    9    10   11   12   13   14   15   16
+
+nSuma := ARRAY(nKol)
+AFILL(nSuma,0)
+nSuma:=AMFILL(nSuma,nRed)
+nSubTot := ARRAY(nKol)
+AFILL(nSubTot,0)
+nSubTot:=AMFILL(nSubTot,nRed)
+ 
+if cNaslov!=nil
    QOUT(cLM2+cOk[1]+REPLICATE(cOk[2],nDReda-nOdvoji-2)+cOk[4])
    QOUT(cLM2+cOk[12]+SPACE(nDReda-nOdvoji-2)+cOk[12])
    QOUT(cLM2+cOk[12]+PADC(ALLTRIM(cNaslov),nDReda-nOdvoji-2)+cOk[12])
@@ -935,6 +949,27 @@ local nVrati:=0,nPod:=LEN(cPod)
   if SUBSTR(cStr,i,nPod)==cPod; nVrati++; endif
  next
 return nVrati
+
+
+// ---------------------------------------------------
+// sredi kodove u matrici za prikaz na izvjestajim
+// ---------------------------------------------------
+static function sredi_crtice( arr, tip )
+local _i
+local _konv := fetch_metric( "proiz_fin_konverzija", my_user(), "N" )
+
+#ifdef __PLATFORM__WINDOWS
+
+for _i := 1 to LEN( arr )
+    if _konv == "D"
+        arr[ _i ] := to_win1250_encoding( arr[ _i ] )
+    endif
+next
+
+#endif
+
+return
+
 
 
 function PrekSaEsc()

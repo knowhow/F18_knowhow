@@ -12,12 +12,19 @@
 #include "fmk.ch"
 #include "cre_all.ch"
 
+
+
 function cre_all_kalk(ver)
 local aDbf
 local _alias, _table_name
 local _created
 local _tbl
 
+
+
+// -----------------------------------------------
+// KALK_KALK
+// -----------------------------------------------
 
 aDbf:={}
 AADD(aDBf,{ 'IDFIRMA'             , 'C' ,   2 ,  0 })
@@ -50,14 +57,13 @@ AADD(aDBf,{ 'TZAVTR'              , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'TRABAT'              , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'TMARZA'              , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'TMARZA2'             , 'C' ,   1 ,  0 })
-
+ 
 AADD(aDBf,{ 'NC'                  , 'B' ,  8 ,  8 })
 AADD(aDBf,{ 'MPC'                 , 'B' ,  8 ,  8 })
 
 // currency tip
 AADD(aDBf,{ 'VPC'                 , 'B' ,  8 ,  8 })
 AADD(aDBf,{ 'MPCSAPP'             , 'B' ,  8 ,  8 })
-
 
 AADD(aDBf,{ 'IDTARIFA'            , 'C' ,   6 ,  0 })
 AADD(aDBf,{ 'MKONTO'              , 'C' ,   7 ,  0 })
@@ -87,7 +93,6 @@ AADD(aDBf,{ 'RABATV'              , 'B' ,  8 ,  8 })
 AADD(aDBf,{ 'VPCSAP'              , 'B' ,  8 ,  8 })
 
 
-_created := .f.
 _alias := "KALK"
 _table_name := "kalk_kalk"
 
@@ -125,13 +130,13 @@ if ver["current"] > 0 .and. ver["current"] < 00804
 endif
 
 // 0.8.5
-if ver["current"] < 00805
-  for each _tbl in { _table_name, "_kalk_kalk", "kalk_pripr", "kalk_pripr2", "kalk_pripr9" }
-    modstru( {"*" + _tbl, ;
-        "C VPC Y 8 4 VPC B 8 8",;
-        "C MPCSAPP Y 8 4 MPCSAPP B 8 8" ;
-    })
- next
+if ver["current"] > 0 .and. ver["current"] < 00805
+    for each _tbl in { _table_name, "_kalk_kalk", "kalk_pripr", "kalk_pripr2", "kalk_pripr9" }
+        modstru( {"*" + _tbl, ;
+                "C VPC Y 8 4 VPC B 8 8",;
+                "C MPCSAPP Y 8 4 MPCSAPP B 8 8" ;
+                })
+    next
 endif
 
 // 0.10.00
@@ -161,44 +166,62 @@ CREATE_INDEX("PU_I", "pu_i+pkonto+idfirma+idvd+brdok",_alias)
 CREATE_INDEX("PU_I2","pu_i+idfirma+idvd+brdok",_alias)
 CREATE_INDEX("PMAG", "idfirma+mkonto+idpartner+idvd+dtos(datdok)",_alias)
 
-// kalk_pripr
+
+
+// -----------------------------------------------
+// TABELE PRIPREME
+// -----------------------------------------------
+
+// -----------------------------------------------
+// KALK_PRIPR
+// -----------------------------------------------
+
 _alias := "KALK_PRIPR"
 _table_name := "kalk_pripr"
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2( _alias, aDbf )
-endif
+
+IF_NOT_FILE_DBF_CREATE
+
 CREATE_INDEX("1","idFirma+IdVD+BrDok+RBr", _alias )
 CREATE_INDEX("2","idFirma+idvd+brdok+IDTarifa", _alias )
 CREATE_INDEX("3","idFirma+idvd+brdok+idroba+rbr", _alias )
 CREATE_INDEX("4","idFirma+idvd+idroba", _alias )
 CREATE_INDEX("5","idFirma+idvd+idroba+STR(mpcsapp,12,2)", _alias )
 
-// kalk_pripr2
+
+// -----------------------------------------------
+// KALK_PRIPR2
+// -----------------------------------------------
+
 _alias := "KALK_PRIPR2"
 _table_name := "kalk_pripr2"
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2( _alias, aDbf )
-endif
-CREATE_INDEX("1","idFirma+IdVD+BrDok+RBr","kalk_pripr2")
-CREATE_INDEX("2","idFirma+idvd+brdok+IDTarifa","kalk_pripr2")
 
-// kalk_pripr9
+IF_NOT_FILE_DBF_CREATE
+
+CREATE_INDEX("1","idFirma+IdVD+BrDok+RBr", _alias )
+CREATE_INDEX("2","idFirma+idvd+brdok+IDTarifa", _alias )
+
+// -----------------------------------------------
+// KALK_PRIPR2
+// -----------------------------------------------
+
 _alias := "KALK_PRIPR9"
 _table_name := "kalk_pripr9"
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2( _alias, aDbf )
-endif
-CREATE_INDEX("1","idFirma+IdVD+BrDok+RBr","kalk_pripr9")
-CREATE_INDEX("2","idFirma+idvd+brdok+IDTarifa","kalk_pripr9")
-CREATE_INDEX("3","dtos(datdok)+mu_i+pu_i","kalk_pripr9")
 
-// _kalk
+IF_NOT_FILE_DBF_CREATE
+
+CREATE_INDEX( "1","idFirma+IdVD+BrDok+RBr", _alias )
+CREATE_INDEX( "2","idFirma+idvd+brdok+IDTarifa", _alias )
+CREATE_INDEX( "3","dtos(datdok)+mu_i+pu_i", _alias )
+
+
+// -----------------------------------------------
+// _KALK
+// -----------------------------------------------
 _alias := "_KALK"
 _table_name := "_kalk"
-if !FILE(f18_ime_dbf(_alias))
-    DBCREATE2( _alias, aDbf )
-endif
-CREATE_INDEX("1","idFirma+IdVD+BrDok+RBr","_KALK")
+
+IF_NOT_FILE_DBF_CREATE
+
 
 
 // -----------------------------------------------
@@ -243,10 +266,12 @@ CREATE_INDEX("1S"     , "IdFirma+idvd+SUBSTR(brdok,6)+LEFT(brdok,5)", _alias)
 CREATE_INDEX("V_BRF"  , "brfaktp+idvd", _alias)
 CREATE_INDEX("V_BRF2" , "idvd+brfaktp", _alias)
 
+
 // -----------------------------------------------
-// kalk_doks2
+// KALK_DOKS2
 // -----------------------------------------------
-aDbf:={}
+
+aDbf := {}
 AADD(aDBf,{ 'IDFIRMA'             , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'IDVD'                , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'BRDOK'               , 'C' ,  12 ,  0 })
@@ -258,9 +283,13 @@ AADD(aDBf,{ 'K3'                , 'C' ,  3 ,  0 })
 
 _alias := "KALK_DOKS2"
 _table_name := "kalk_doks2"
+
 IF_NOT_FILE_DBF_CREATE
+
 IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX( "1", "IdFirma+idvd+brdok", _alias )
 
 return .t.
+
+

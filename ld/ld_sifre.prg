@@ -462,7 +462,7 @@ for i:=1 to LEN(ImeKol)
     AADD(Kol, i)
 next
 
-return PostojiSifra(F_TIPPR, 1, 10, 55, Lokal("Tipovi primanja"), @cId, dx, dy, {|Ch| TprBl(Ch)},,,,,{"ID"})
+return PostojiSifra(F_TIPPR, 1, MAXROWS()-15, MAXCOLS()-20, Lokal("Tipovi primanja"), @cId, dx, dy, {|Ch| TprBl(Ch)},,,,,{"ID"})
 
 
 // -----------------------------------------
@@ -522,7 +522,7 @@ ImeKol:={ { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
        }
 Kol:={1,2,3,4,5,6,7,8}
 
-return PostojiSifra( F_TIPPR2, 1, 10, 55, Lokal("Tipovi primanja za obracun 2"),  @cId, dx, dy, {|Ch| Tpr2Bl(Ch)},,,,,{"ID"})
+return PostojiSifra( F_TIPPR2, 1, MAXROWS()-15, MAXCOLS()-20, Lokal("Tipovi primanja za obracun 2"),  @cId, dx, dy, {|Ch| Tpr2Bl(Ch)},,,,,{"ID"})
 
 
 
@@ -556,7 +556,7 @@ AADD(ImeKol, { padr("Id", 2),      {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} } 
 AADD(ImeKol, { padr("Naziv", 35), {||  naz}, "naz" } )
 
 if ld_rj->(FieldPos("TIPRADA")) <> 0
-    AADD(ImeKol, { "tip rada" , {||  tiprada }, "tiprada"  } )
+    AADD(ImeKol, { "tip rada" , {||  tiprada }, "tiprada", {|| .t. }, {|| wtiprada $ " #I#A#S#N#P#U#R#" .or. MsgtipRada() }  } )
 endif
 if ld_rj->(FieldPos("OPOR")) <> 0
     AADD(ImeKol, { "oporeziv" , {||  opor }, "opor"  } )
@@ -567,6 +567,8 @@ for i := 1 to LEN(ImeKol)
 next
 
 return PostojiSifra( F_LD_RJ, 1, MAXROWS()-15, 60, Lokal("Lista radnih jedinica"), @cId, dx, dy)
+
+
 
 
 // vraca PU code opstine
@@ -602,7 +604,7 @@ ImeKol:={ { padr("Id",6), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
 // Dorade 2001
 Kol:={1,2,3,4,5,6,7,8}
 
-return PostojiSifra(F_KRED, 1, 10, 55, Lokal("Lista kreditora"), @cId, dx, dy)
+return PostojiSifra( F_KRED, 1, MAXROWS()-15, MAXCOLS()-20, Lokal("Lista kreditora"), @cId, dx, dy)
 
 
 // -----------------------------
@@ -788,7 +790,7 @@ enddo
 
 PopWa()
 
-return PostojiSifra(F_POR, 1, 10, 75, ;
+return PostojiSifra(F_POR, 1, MAXROWS()-15, MAXCOLS()-20, ;
         Lokal("Lista poreza na platu.....<F5> arhiviranje poreza, <F6> pregled"), ;
     @cId,dx,dy,{|Ch| PorBl(Ch)})
 
@@ -877,7 +879,7 @@ PopWa()
 
 select dopr
 
-return PostojiSifra(F_DOPR, 1, 10, 75, ;
+return PostojiSifra(F_DOPR, 1, MAXROWS()-15, MAXCOLS()-20, ;
     Lokal("Lista doprinosa na platu......<F5> arhiviranje doprinosa, <F6> pregled"), ;
     @cId,dx,dy,{|Ch| DoprBl(Ch)})
 
@@ -896,7 +898,7 @@ ImeKol:={ { padr("Id",3), {|| padc(id,3)}, "id", {|| .t.}, {|| vpsifra(wid)} },;
 
 Kol:={1,2,3}
 
-return PostojiSifra(F_KBENEF, 1, 10, 55, ;
+return PostojiSifra(F_KBENEF, 1, MAXROWS()-15, MAXCOLS()-20, ;
     Lokal("Lista koef.beneficiranog radnog staza"), ;
     @cId,dx,dy)
 
@@ -912,7 +914,7 @@ ImeKol:={ { padr("Id",3), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
        }
 Kol:={1,2,3}
 
-return PostojiSifra( F_STRSPR, 1, 10, 55, ;
+return PostojiSifra( F_STRSPR, 1, MAXROWS()-15, MAXCOLS()-15, ;
     Lokal("Lista: strucne spreme"), ;
     @cId,dx,dy)
 
@@ -941,7 +943,10 @@ ImeKol:={ { padr("Id",4), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
           { padr("Iznos",8), {|| Iznos}, "Iznos"  }  ;
        }
 Kol:={1,2,3,4}
-return PostojiSifra(F_NORSIHT,1,10,55,"Lista: Norme u sihtarici",@cId,dx,dy)
+
+return PostojiSifra( F_NORSIHT,1,MAXROWS()-15,MAXCOLS()-20,"Lista: Norme u sihtarici",@cId,dx,dy)
+
+
 
 // -----------------------
 // -----------------------

@@ -59,7 +59,7 @@ hb_gtReload(_w)
 
 setup_session_params()
 
-module_menu(nil, nil, nil, nil, nil)
+module_menu( NIL )
 
 log_close()
 QUIT

@@ -61,7 +61,8 @@ static __log_level := 3
 // ---------------------------------
 // 
 // ---------------------------------
-function f18_init_app()
+function f18_init_app( arg_v )
+local oLogin
 
 #ifdef NTX_INDICES
    REQUEST DBFNTX
@@ -109,7 +110,6 @@ set_f18_home_root()
 
 log_create()
 
-log_write("== F18 start: " + hb_ValToStr(DATE()) + " / " + hb_ValToStr(TIME()) + " ==")
 SetgaSDbfs()
 set_global_vars_0()
 PtxtSekvence()
@@ -129,19 +129,131 @@ if no_sql_mode()
    return .t.
 endif
 
-_get_server_params_from_config()
-
-// pokusaj se logirati kao user/user
-if !my_server_login()
-    // ako ne prikazi formu za unos
-    f18_form_login()
-endif
-
-_write_server_params_to_config() 
-
-post_login()
+// iniciraj logiranje
+f18_init_app_login( NIL, arg_v )
 
 return .t.
+
+
+
+
+// -----------------------------------------------------
+// inicijalne opcije kod pokretanja firme
+// -----------------------------------------------------
+function f18_init_app_opts()
+// ovdje treba napraviti meni listu sa opcijama
+// vpn, rekonfiguracija, itd... neke administraitvne opcije
+// otvaranje nove firme...
+local _opt := {}
+local _optexe := {}
+local _izbor := 1
+
+AADD( _opc, hb_utf8tostr( "1. vpn konekcija                         " ))
+AADD( _opcexe, { || NIL } )
+AADD( _opc, hb_utf8tostr( "2. rekonfiguriši server  " ))
+AADD( _opcexe, { || NIL } )
+AADD( _opc, hb_utf8tostr( "3. otvaranje nove firme  " ))
+AADD( _opcexe, { || NIL } )
+// itd...
+
+f18_menu( "mn", .f., _izbor, _opc, _opcexe  )
+
+return .t.
+
+
+
+
+
+// -----------------------------------------------------
+// inicijalna login opcija
+// -----------------------------------------------------
+function f18_init_app_login( force_connect, arg_v )
+local oLogin
+
+if force_connect == NIL
+    force_connect := .t.
+endif
+
+// nova login metoda - u izradi !!!!
+
+_get_server_params_from_config()
+
+oLogin := F18Login():New()
+oLogin:main_db_login( @__server_params, force_connect )
+__main_db_params := __server_params
+
+if oLogin:_main_db_connected
+  
+    // 1 konekcija je na postgres i to je ok
+    // ako je vec neka druga...
+    if oLogin:_login_count > 1
+        // ostvari opet konekciju na main_db postgres
+        oLogin:disconnect()
+        oLogin:main_db_login( @__server_params, .t. )
+    endif
+ 
+    // upisi parametre za sljedeci put... 
+    _write_server_params_to_config()
+    
+    do while .t.
+    
+        if !oLogin:company_db_login( @__server_params )
+            quit
+        endif
+
+        // upisi parametre tekuce firme... treba li nam ovo ??????
+        _write_server_params_to_config()
+
+        if oLogin:_company_db_connected 
+
+            _show_info()
+            post_login()
+            f18_app_parameters( .t. )
+            set_hot_keys()
+
+            module_menu( arg_v )
+
+        endif
+
+    enddo
+
+else
+    // neko je rekao ESC
+    quit
+endif
+
+return
+
+
+static function _show_info()
+local _x, _y
+local _txt := ""
+
+_x := ( MAXROWS() / 2 ) - 12
+_y := MAXCOLS()
+            
+// ocisti ekran...            
+CLEAR SCREEN
+    
+_txt := PADC( hb_utf8tostr( ". . .  S A Č E K A J T E    T R E N U T A K  . . ." ) , _y )
+@ _x , 2 SAY _txt
+
+_txt := PADC( ". . . . . . k o n e k c i j a    n a    b a z u   u   t o k u . . . . . . .", _y )
+@ _x + 1 , 2 SAY _txt
+
+return 
+
+
+
+// prelazak iz sezone u sezonu
+function f18_old_session()
+local oLogin := F18Login():New()
+oLogin:company_db_relogin( @__server_params )
+return .t.
+
+
+
+
 
 // -------------------------------
 // init harbour postavke
@@ -309,10 +421,12 @@ __server_params["host"] := "localhost"
 __server_params["user"] := "test1"
 __server_params["schema"] := "fmk"
 __server_params["password"] := __server_params["user"]
+__server_params["postgres"] := "postgres"
 
 return
 
 #else
+
 // -------------------------------------
 // -------------------------------------
 function _get_server_params_from_config()
@@ -325,9 +439,10 @@ _ini_params["database"] := nil
 _ini_params["user"] := nil
 _ini_params["schema"] := nil
 _ini_params["port"] := nil
+_ini_params["session"] := nil
 
-if !f18_ini_read(F18_SERVER_INI_SECTION + IIF(test_mode(), "_test", ""), @_ini_params, .t.)
-   MsgBeep("problem ini read")
+if !f18_ini_read( F18_SERVER_INI_SECTION + IIF( test_mode(), "_test", ""), @_ini_params, .t. )
+    MsgBeep("problem ini read")
 endif
 
 // definisi parametre servera
@@ -340,9 +455,10 @@ next
 
 // port je numeric
 if VALTYPE(__server_params["port"]) == "C"
-  __server_params["port"] := VAL(__server_params["port"])
+    __server_params["port"] := VAL(__server_params["port"])
 endif
 __server_params["password"] := __server_params["user"]
+__server_params["postgres"] := "postgres"
 
 return 
 #endif
@@ -350,21 +466,26 @@ return
 #endif
 // --------------------------------------------------------
 // --------------------------------------------------------
-static function _write_server_params_to_config()
+function _write_server_params_to_config()
 local _key, _ini_params := hb_hash()
 
-for each _key in {"host", "database", "user", "schema", "port"}
+for each _key in { "host", "database", "user", "schema", "port", "session" }
     _ini_params[_key] := __server_params[_key] 
 next
 
-if !f18_ini_write(F18_SERVER_INI_SECTION + IIF(test_mode(), "_test", ""), _ini_params, .t.)
+if !f18_ini_write( F18_SERVER_INI_SECTION + IIF( test_mode(), "_test", "" ), _ini_params, .t. )
     MsgBeep("problem ini write")
 endif
 
+
 // -------------------------------
 // -------------------------------
-function post_login()
+function post_login( gvars )
 local _ver
+
+if gvars == NIL
+    gvars := .t.
+endif
 
 // ~/.F18/empty38/
 set_f18_home( my_server_params()["database"] )
@@ -376,9 +497,11 @@ hb_gtInfo( HB_GTI_WINTITLE, "[ "+ my_server_params()["user"] + " ][ "+ my_server
 _ver := read_dbf_version_from_config()
 #endif
 
+// setuje u matricu sve tabele svih modula
 set_a_dbfs()
 
 #ifndef NODE
+// kreiranje tabela...
 cre_all_dbfs(_ver)
 #endif
 
@@ -393,7 +516,9 @@ check_server_db_version()
 
 __server_log := .t.
 
-set_all_gvars()
+if gvars
+    set_all_gvars()
+endif
 
 f18_init_semaphores()
 
@@ -577,12 +702,12 @@ endif
 
 // ------------------------------------------
 // ------------------------------------------
-static function f18_form_login(server_params)
+static function f18_form_login( server_params )
 local _ret
 local _server
 
 if server_params == NIL
-   server_params := __server_params
+    server_params := __server_params
 endif
 
 do while .t.
@@ -608,7 +733,7 @@ return .t.
 // ------------------------------------------
 static function _login_screen(server_params)
 
-local cHostname, cDatabase, cUser, cPassword, nPort, cSchema
+local cHostname, cDatabase, cUser, cPassword, nPort, cSchema, cSession
 local lSuccess := .t.   
 local nX := 5
 local nLeft := 7
@@ -619,11 +744,16 @@ cDatabase := server_params["database"]
 cUser := server_params["user"]
 cSchema := server_params["schema"]
 nPort := server_params["port"]
+cSession := server_params["session"]
 cPassword := ""
 
 if (cHostName == nil) .or. (nPort == nil)
     cConfigureServer := "D"
 endif 
+
+if cSession == NIL
+    cSession := ALLTRIM( STR( YEAR( DATE() ) ) )
+endif
 
 if cHostName == nil
    cHostName := "localhost"
@@ -679,6 +809,7 @@ endif
 ++ nX
 
 @ nX, nLeft SAY PADL( "Baza:", 15 ) GET cDatabase PICT "@S30"
+@ nX, 55 SAY "Sezona:" GET cSession
 
 ++ nX
 ++ nX
@@ -714,6 +845,7 @@ server_params["user"]      := cUser
 server_params["schema"]    := cSchema 
 server_params["port"]      := nPort
 server_params["password"]  := cPassword
+server_params["session"]  := cSession
 
 return lSuccess
 
@@ -744,40 +876,66 @@ if params <> nil
 endif
 return __server_params 
 
+
+
 // --------------------------
 // --------------------------
-function my_server_login(params)
+function my_server_login( params, conn_type )
 local _key, _server
 
 if params == NIL
-   params := __server_params
+    params := __server_params
+endif
+
+if conn_type == NIL
+    conn_type := 1
 endif
 
 for each _key in params:Keys
    if params[_key] == NIL
-       log_write("error server params key: " + _key)
-       return .f.
+        if conn_type == 1
+            log_write( "error server params key: " + _key )
+        endif
+        return .f.
    endif
 next
 
-_server :=  TPQServer():New( params["host"], params["database"], params["user"], params["password"], params["port"], params["schema"] )
+_server := TPQServer():New( params["host"], ;
+                        if( conn_type == 1, params["database"], "postgres" ), ;
+                        params["user"], ;
+                        params["password"], ;
+                        params["port"], ;
+                        if( conn_type == 1, params["schema"], "public" ) )
 
 if !_server:NetErr()
-    my_server(_server)
-    set_sql_search_path()
-    log_write("server connection ok: " + params["user"] + " / " + params["database"])
+
+    my_server( _server )
+
+    if conn_type == 1
+        set_sql_search_path()
+        log_write( "server connection ok: " + params["user"] + " / " + if ( conn_type == 1, params["database"], "postgres" ) )
+    endif
+
     return .t.
+
 else
-    log_write("error server connection: " + _server:ErrorMsg())
+
+    if conn_type == 1
+        log_write( "error server connection: " + _server:ErrorMsg() )
+    endif
+
     return .f.
+
 endif
+
+
 
 // --------------------------
 // --------------------------
 function my_server_logout()
 
 if VALTYPE(__server) == "O"
- __server:Close()
+    __server:Close()
 endif
 
 return __server
@@ -788,11 +946,11 @@ function my_server_search_path( path )
 local _key := "search_path"
 
 if path == nil
-   if !hb_hhaskey(__server_params, _key)
-     __server_params[_key] := "fmk, public, u2"
-   endif
+    if !hb_hhaskey(__server_params, _key)
+        __server_params[_key] := "fmk, public, u2"
+    endif
 else
-   __server_params[_key] := path
+    __server_params[_key] := path
 endif
 
 return __server_params[_key]
@@ -808,27 +966,33 @@ function f18_database()
 return __server_params["database"]
 
 
+function f18_curr_session()
+return __server_params["session"]
+
+
 function my_user()
 return f18_user()
+
 
 // --------------------
 // --------------------
 function my_home(home)
 
 if home != NIL
-  __f18_home := home
+    __f18_home := home
 endif
 
 return __f18_home
+
 
 // ----------------------------
 // ----------------------------
 function _path_quote(path)
 
 if (AT(path, " ") != 0) .and. (AT(PATH, '"') == 0)
-  return  '"' + path + '"'
+    return  '"' + path + '"'
 else
-  return path
+    return path
 endif
 
 
@@ -919,12 +1083,14 @@ return  __global_error_handler
 function dummy_error_handler()
 return {|err| BREAK(err) }
 
+
 function test_mode(tm)
 if tm != nil
   __test_mode := tm
 endif
 
 return __test_mode
+
 
 function no_sql_mode(val)
 if val != nil
@@ -1074,9 +1240,11 @@ return .t.
 // ------------------------------------------------
 function set_hot_keys()
 
-SETKEY(K_SH_F1,{|| Calc()})
-SETKEY(K_F3, {|| new_f18_session_thread()})
+SETKEY( K_SH_F1,{|| Calc() })
+SETKEY( K_F3, {|| new_f18_session_thread() })
+SETKEY( K_SH_F6, {|| f18_old_session() } )
 
+return
 
 
 // ---------------------------------------------

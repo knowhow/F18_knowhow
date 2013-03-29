@@ -284,7 +284,11 @@ _qry += _group_cond
 // order
 _qry += _order_cond
 
+MsgO( "formiranje sql upita u toku ..." )
+
 _table := _sql_query( _server, _qry )
+
+MsgC()
 
 if _table == NIL
     return NIL

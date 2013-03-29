@@ -19,7 +19,7 @@
 // -------------------------------------------------------------------------
 function fakt_lista_dokumenata_tabelarni_pregled(lVrsteP, lOpcine, cFilter)
 local i
-local _w1 := 45
+local _w1 := 30
 local _x, _y
 local _params := fakt_params()
 
@@ -59,10 +59,18 @@ _y := MAXCOLS() - 3
 
 Box( , _x, _y)
 
-@ m_x + _x - 4, m_y + 2 SAY PADR(" <ENTER> Stampa dokumenta", _w1) + BROWSE_COL_SEP + PADR(" <P> Povrat dokumenta u pripremu", _w1) + BROWSE_COL_SEP
-@ m_x + _x - 3, m_y + 2 SAY PADR(" <N>     Stampa narudzbenice", _w1) + BROWSE_COL_SEP + PADR(" <B> Stampa radnog naloga", _w1) + BROWSE_COL_SEP
-@ m_x + _x - 2, m_y + 2 SAY PADR(" <S>     Storno dokument", _w1) + BROWSE_COL_SEP + PADR(" -",_w1) + BROWSE_COL_SEP
-@ m_x + _x - 1, m_y + 2 SAY PADR(" <R>  Stampa fiskalnog racuna", _w1) + BROWSE_COL_SEP + PADR(" <F> otpremnica -> faktura", _w1) + BROWSE_COL_SEP
+@ m_x + _x - 4, m_y + 2 SAY PADR(" <ENTER> Stampa TXT", _w1 ) + ;
+                            BROWSE_COL_SEP + PADR( " < P > Povrat dokumenta", _w1 ) + ;
+                            BROWSE_COL_SEP + PADR( " < I > Informacije", _w1 )
+@ m_x + _x - 3, m_y + 2 SAY PADR(" < a+P > Stampa ODT", _w1 ) + ;
+                            BROWSE_COL_SEP + PADR( " < S > Storno dokument", _w1) + ;
+                            BROWSE_COL_SEP + PADR( " < c+V > Setuj vezu fisk.", _w1 )
+@ m_x + _x - 2, m_y + 2 SAY PADR(" < R > Stampa fisk.racuna", _w1) + ;
+                            BROWSE_COL_SEP + PADR( " < F > otpr.->racun",_w1 ) + ;
+                            BROWSE_COL_SEP + PADR( " < F5 > Refresh ", _w1 )
+@ m_x + _x - 1, m_y + 2 SAY PADR(" < W > Duplikat", _w1) + ;
+                            BROWSE_COL_SEP + PADR( " < K > Ispravka podataka", _w1 ) + ;
+                            BROWSE_COL_SEP + PADR( " -", _w1 )
 
 fUPripremu:=.f.
 

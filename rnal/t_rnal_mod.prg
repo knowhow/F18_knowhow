@@ -136,6 +136,8 @@ else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
 
+AADD( opc, "T. unos/obrada statusa naloga  " )
+AADD( opcexe, {|| rnal_pregled_statusa_operacija() } )
 
 AADD(opc, "------------------------------------")
 AADD(opcexe, {|| nil})
@@ -248,6 +250,7 @@ public gGnMin := 20
 public gGnMax := 6000
 public gGnStep := 30
 public gGnUse := "D"
+public gRnalOdt := "N"
 
 public g3mmZaokUse := "D"
 public gProfZaokUse := "D"

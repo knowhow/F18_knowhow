@@ -10,12 +10,17 @@
  */
 
 #include "fmk.ch"
+#include "cre_all.ch"
+
 
 // --------------------------------------------------------
 // kreiranje tabele fin_mat
 // --------------------------------------------------------
-function cre_fin_mat()
+function cre_fin_mat(ver)
 local aDbf
+local _table_name
+local _alias 
+local _created
 
 aDbf:={}
 AADD(aDBf,{ "IDFIRMA"          , "C" ,   2 ,  0 })
@@ -67,11 +72,12 @@ AADD(aDBf,{ "GKol2"            , "N" ,  19 ,  7 })
 AADD(aDBf,{ "PORVT"            , "N" ,  20 ,  8 })
 AADD(aDBf,{ "UPOREZV"          , "N" ,  20 ,  8 })
 
-if !FILE(f18_ime_dbf("finmat"))
-    	DBcreate2( "FINMAT", aDbf )
-endif
+_alias := "FINMAT"
+_table_name := "finmat"
+
+IF_NOT_FILE_DBF_CREATE
 	
-CREATE_INDEX("1","idFirma+IdVD+BRDok", "FINMAT")
+CREATE_INDEX("1","idFirma+IdVD+BRDok", _alias )
 
 return
 

@@ -9,37 +9,10 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-/*
- * $Source: c:/cvsroot/cl/sigma/fmk/fin/budzet/1g/budzet.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.6 $
- * $Log: budzet.prg,v $
- * Revision 1.6  2004/01/13 19:07:54  sasavranic
- * appsrv konverzija
- *
- * Revision 1.5  2003/03/24 10:28:49  mirsad
- * uvedeni parametri za podesavanje broja redova po stranici u pregledu rashoda
- *
- * Revision 1.4  2003/03/22 13:49:46  mirsad
- * podeseno ostranicavanje na pregledu rashoda za min.fin. zdk
- *
- * Revision 1.3  2003/02/21 09:45:59  mirsad
- * ispravka lomljenja stranica na izvj. "pregled rashoda"
- *
- * Revision 1.2  2002/06/19 12:04:08  sasa
- * no message
- *
- *
- */
  
 #include "fin.ch"
-/*! \file fmk/fin/budzet/1g/budzet.prg
- *  \brief Budzet
- */
 
-/*! \fn IzvrsBudz()
- *  \brief Izvrsenje budzeta
- */
+
 
 function IzvrsBudz()
 

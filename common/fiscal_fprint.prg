@@ -1529,7 +1529,7 @@ enddo
 
 _o_file:Close()
 
-log_write("FISC ANSWER fajl sadrzaj: " + _tmp, 5)
+log_write( "FISC ANSWER fajl sadrzaj: " + _tmp, 3 )
 
 if EMPTY( _fiscal_txt )
     log_write( "ERR FISC nema komande 56,1," + _serial + " - broj fiskalnog racuna, mozda vam nije dobar serijski broj !", 1)

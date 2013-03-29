@@ -9,25 +9,25 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "fin.ch"
 #include "f18_ver.ch"
 
 EXTERNAL DESCEND
 EXTERNAL RIGHT
 
 
-function MainFin(cKorisn, cSifra, p3, p4, p5, p6, p7)
-local oFin
-local cModul := "FIN"
+function MainReports( cKorisn, cSifra, p3, p4, p5, p6, p7 )
+local oReports
+local cModul
+
 public gKonvertPath := "D"
+
+cModul := "REPORTS"
 public goModul
 
-oFin := TFinMod():new(NIL, cModul, F18_VER, F18_VER_DATE , cKorisn, cSifra, p3,p4,p5,p6,p7)
-goModul := oFin
+oReports := TReportsMod():new( NIL, cModul, F18_VER, F18_VER_DATE, cKorisn, cSifra, p3, p4, p5, p6, p7)
+goModul := oReports
 
-oFin:run()
+oReports:run()
 
 return
-
-
 

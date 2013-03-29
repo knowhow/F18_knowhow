@@ -194,44 +194,52 @@ return
 
 
 function unos_os_key_handler(Ch)
-local cDn:="N"
-local nRet:=DE_CONT
-local nRec0:=RECNO()
+local cDn := "N"
+local nRet := DE_CONT
+local nRec0 := RECNO()
 local _rec
 local _t_rec
 local _novi
+local _prom_dat, _prom_opis, _prom_nv, _prom_ov
 
 do case
 
-    case (Ch==K_ENTER .and. !(EOF() .or. BOF())) .or. Ch==K_CTRL_N
+    case ( Ch == K_ENTER .and. !(EOF() .or. BOF())) .or. Ch == K_CTRL_N
 
-        IF Ch==K_CTRL_N
-            GO BOTTOM
-            SKIP 1
-        ENDIF
+        if Ch == K_CTRL_N
+            go bottom
+            skip 1
+        endif
 
-        set_global_memvars_from_dbf()
+        _rec := dbf_get_rec()
+
+        _prom_dat := _rec["datum"]
+        _prom_opis := _rec["opis"]
+        _prom_nv := _rec["nabvr"]
+        _prom_ov := _rec["otpvr"]
 
         Box(,5,50)
-            @ m_x + 1, m_y + 2 SAY "Datum:" GET _datum valid os_validate_date()
-            @ m_x + 2, m_y + 2 SAY "Opis:"  GET _opis
-            @ m_x + 4, m_y + 2 SAY "nab vr" GET _nabvr PICT "9999999.99"
-            @ m_x + 5, m_y + 2 SAY "OTP vr" GET _otpvr PICT "9999999.99"
+            @ m_x + 1, m_y + 2 SAY "Datum:" GET _prom_dat valid os_validate_date( @_prom_dat )
+            @ m_x + 2, m_y + 2 SAY "Opis:"  GET _prom_opis
+            @ m_x + 4, m_y + 2 SAY "nab vr" GET _prom_nv PICT "9999999.99"
+            @ m_x + 5, m_y + 2 SAY "OTP vr" GET _prom_ov PICT "9999999.99"
             read
         BoxC()
 
-        IF LASTKEY()==K_ESC
+        if LASTKEY() == K_ESC
             GO (nRec0)
-            nRet:=DE_CONT
-        ELSE
+            nRet := DE_CONT
+        else
 
-            IF CH==K_CTRL_N
-                APPEND BLANK
-            ENDIF
+            if CH == K_CTRL_N
+                append blank
+            endif
 
-            _id := cId
-            // sinhronizuj podatke sql/server
-            _rec := get_dbf_global_memvars()
+            _rec["id"] := cId
+            _rec["opis"] := _prom_opis
+            _rec["datum"] := _prom_dat
+            _rec["nabvr"] := _prom_nv
+            _rec["otpvr"] := _prom_ov
 
             update_rec_server_and_dbf( get_promj_table_name( ALIAS() ), _rec, 1, "FULL" )
     
@@ -239,9 +247,9 @@ do case
 
             nRet:=DE_REFRESH
 
-        ENDIF
+        endif
 
-    case Ch==K_CTRL_T
+    case Ch == K_CTRL_T
         
         IF pitanje(,"Sigurno zelite izbrisati promjenu ?","N")=="D"
             _rec := dbf_get_rec()
@@ -338,7 +346,7 @@ do case
             RETURN DE_REFRESH
         endif
 
-    case Ch==K_CTRL_I
+    case Ch == K_CTRL_I
 
         Box(,4,50)
             _novi := SPACE(10)
@@ -482,16 +490,16 @@ return _n
 
 
 
-function os_validate_date()
+function os_validate_date( os_date )
 local _ret := .t.
 
-if _datum <= dDatNab
+if os_date <= dDatNab
     Beep(1)
     Msg("Datum promjene mora biti veci od datuma nabavke !")
     _ret := .f.
 endif
 
-if !empty(dDatOtp) .and. _Datum >= dDatOtp
+if !empty( dDatOtp ) .and. os_date >= dDatOtp
     Beep(1)
     Msg("Datum promjene mora biti manji od datuma otpisa !")
     _ret := .f.

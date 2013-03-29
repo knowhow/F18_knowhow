@@ -813,14 +813,18 @@ local _stavke_nula, _tip_prikaza
 local _date_ps 
 
 if ps == NIL
+    // nije pocetno stanje
     _date_ps := NIL
     ps := .f.
+    _date_from := fetch_metric( "fakt_lager_lista_datum_od", my_user(), DATE() )
+    _date_to := fetch_metric( "fakt_lager_lista_datum_do", my_user(), DATE() )
 else
+    // pocetno stanje je u pitanju
     _date_ps := CTOD( "01.01." + ALLTRIM( STR( YEAR( DATE() ) ) ) )
+    _date_from := CTOD( "01.01." + ALLTRIM( STR( YEAR( DATE() ) -1 ) ) )
+    _date_to := CTOD( "31.12." + ALLTRIM( STR( YEAR( DATE() ) -1 ) ) )
 endif
 
-_date_from := fetch_metric( "fakt_lager_lista_datum_od", my_user(), DATE() )
-_date_to := fetch_metric( "fakt_lager_lista_datum_do", my_user(), DATE() )
 _stavke_nula := "N"
 _tip_prikaza := "S"
 _usl_roba := SPACE(300)
@@ -866,8 +870,11 @@ if LastKey() == K_ESC
 endif
 
 // snimi db parametre
-set_metric( "fakt_lager_lista_datum_od", my_user(), _date_from )
-set_metric( "fakt_lager_lista_datum_do", my_user(), _date_to )
+// nemoj ako je pocetno stanje u pitanju...
+if !ps
+    set_metric( "fakt_lager_lista_datum_od", my_user(), _date_from )
+    set_metric( "fakt_lager_lista_datum_do", my_user(), _date_to )
+endif
 
 // snimi parametre
 param["datum_od"] := _date_from

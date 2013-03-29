@@ -43,8 +43,6 @@ AADD(_opc, "5. postavka formula (uk.prim.,uk.sati,godisnji) i koeficijenata ")
 AADD(_opcexe, {|| ld_set_formule()})
 AADD(_opc, "6. postavka parametara izgleda dokumenata ")
 AADD(_opcexe, {|| ld_set_prikaz()})
-AADD(_opc, "7. parametri - razno ")
-AADD(_opcexe, {|| ld_set_razno()})
 
 f18_menu( "par", .f., _izbor, _opc, _opcexe )
 

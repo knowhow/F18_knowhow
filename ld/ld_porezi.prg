@@ -339,7 +339,7 @@ nPom:=0
 nPor:=0
 nPorOl:=0
 
-do while !eof()
+do while !EOF()
 	
 	// vrati algoritam poreza
 	cAlgoritam := get_algoritam()
@@ -369,7 +369,11 @@ do while !eof()
 	nPor += nTmp
 	
 	skip 1
+
 enddo
+
+select por
+go top
 
 return nPor
 

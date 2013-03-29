@@ -22,6 +22,11 @@ set_a_dbf_fin_anal()
 set_a_dbf_fin_sint()
 set_a_dbf_fin_nalog()
 set_a_dbf_fin_parek()
+set_a_dbf_fin_koliz()
+set_a_dbf_fin_koniz()
+set_a_dbf_fin_izvje()
+set_a_dbf_fin_zagli()
+set_a_dbf_fin_budzet()
 
 // sifrarnici
 set_a_dbf_sifarnik("fin_funk"      , "FUNK"     ,       F_FUNK       )
@@ -29,6 +34,7 @@ set_a_dbf_sifarnik("fin_fond"      , "FOND"     ,       F_FOND       )
 set_a_dbf_sifarnik("fin_buiz"      , "BUIZ"     ,       F_BUIZ       )
 set_a_dbf_sifarnik("fin_ulimit"    , "ULIMIT"   ,       F_ULIMIT     )
 set_a_dbf_sifarnik("ks"            , "KS"       ,       F_KS         )
+
 
 // temporary
 set_a_dbf_temp("fin_konto"        , "_KONTO"   ,       F__KONTO   )
@@ -38,11 +44,13 @@ set_a_dbf_temp("fin_psuban"    , "PSUBAN"   ,       F_PSUBAN     )
 set_a_dbf_temp("fin_panal"     , "PANAL"    ,       F_PANAL      )
 set_a_dbf_temp("fin_psint"     , "PSINT"    ,       F_PSINT      )
 set_a_dbf_temp("fin_pnalog"    , "PNALOG"   ,       F_PNALOG     )
-set_a_dbf_temp("fin_budzet"    , "BUDZET"   ,       F_BUDZET     )
-set_a_dbf_temp("fin_koniz"     , "KONIZ"    ,       F_KONIZ      )
-set_a_dbf_temp("fin_izvje"     , "IZVJE"    ,       F_IZVJE      )
-set_a_dbf_temp("fin_zagli"     , "ZAGLI"    ,       F_ZAGLI      )
-set_a_dbf_temp("fin_koliz"     , "KOLIZ"    ,       F_KOLIZ      )
+
+//set_a_dbf_temp("fin_budzet"    , "BUDZET"   ,       F_BUDZET     )
+//set_a_dbf_temp("fin_koniz"     , "KONIZ"    ,       F_KONIZ      )
+//set_a_dbf_temp("fin_koliz"     , "KOLIZ"    ,       F_KOLIZ      )
+//set_a_dbf_temp("fin_izvje"     , "IZVJE"    ,       F_IZVJE      )
+//set_a_dbf_temp("fin_zagli"     , "ZAGLI"    ,       F_ZAGLI      )
+
 set_a_dbf_temp("fin_bbklas"      , "BBKLAS"     ,       F_IOS       )
 set_a_dbf_temp("fin_ios"         , "IOS"        ,       F_BBKLAS    )
 set_a_dbf_temp("fin_ostav"       , "OSTAV"      ,       F_OSTAV     )
@@ -253,6 +261,186 @@ AADD(_item["algoritam"], _alg)
 _item["sql_order"] := "idpartija"
 
 f18_dbfs_add(_tbl, @_item)
+return .t.
+
+
+
+// ------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
+function set_a_dbf_fin_koliz()
+local _alg, _tbl
+local _itm
+
+_tbl := "fin_koliz"
+
+_item := hb_hash()
+
+_item["alias"] := "KOLIZ"
+_item["wa"]    := F_KOLIZ
+_item["table"] := _tbl
+
+// temporary tabela - nema semafora
+_item["temp"]  := .f.
+
+_item["algoritam"] := {}
+
+// algoritam 1 - default
+// -------------------------------------------------------------------------------
+_alg := hb_hash()
+_alg["dbf_key_block" ] := {|| field->id } 
+_alg["dbf_key_fields"] := { "id" } 
+_alg["sql_in"]         := "rpad(id,2)"
+_alg["dbf_tag"]        := "ID"
+AADD(_item["algoritam"], _alg)
+
+_item["sql_order"] := "id"
+
+f18_dbfs_add( _tbl, @_item )
+
+return .t.
+
+
+
+// ------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
+function set_a_dbf_fin_koniz()
+local _alg, _tbl
+local _itm
+
+_tbl := "fin_koniz"
+
+_item := hb_hash()
+
+_item["alias"] := "KONIZ"
+_item["wa"]    := F_KONIZ
+_item["table"] := _tbl
+
+// temporary tabela - nema semafora
+_item["temp"]  := .f.
+
+_item["algoritam"] := {}
+
+// algoritam 1 - default
+// -------------------------------------------------------------------------------
+_alg := hb_hash()
+_alg["dbf_key_block" ] := {|| field->id } 
+_alg["dbf_key_fields"] := { "id" } 
+_alg["sql_in"]         := "rpad(id,20)"
+_alg["dbf_tag"]        := "ID"
+AADD(_item["algoritam"], _alg)
+
+_item["sql_order"] := "id"
+
+f18_dbfs_add( _tbl, @_item )
+
+return .t.
+
+
+
+// ------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
+function set_a_dbf_fin_zagli()
+local _alg, _tbl
+local _itm
+
+_tbl := "fin_zagli"
+
+_item := hb_hash()
+
+_item["alias"] := "ZAGLI"
+_item["wa"]    := F_ZAGLI
+_item["table"] := _tbl
+
+// temporary tabela - nema semafora
+_item["temp"]  := .f.
+
+_item["algoritam"] := {}
+
+// algoritam 1 - default
+// -------------------------------------------------------------------------------
+_alg := hb_hash()
+_alg["dbf_key_block" ] := {|| field->id } 
+_alg["dbf_key_fields"] := { "id" } 
+_alg["sql_in"]         := "rpad(id,2)"
+_alg["dbf_tag"]        := "ID"
+AADD(_item["algoritam"], _alg)
+
+_item["sql_order"] := "id"
+
+f18_dbfs_add( _tbl, @_item )
+
+return .t.
+
+
+
+// ------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
+function set_a_dbf_fin_izvje()
+local _alg, _tbl
+local _itm
+
+_tbl := "fin_izvje"
+
+_item := hb_hash()
+
+_item["alias"] := "IZVJE"
+_item["wa"]    := F_IZVJE
+_item["table"] := _tbl
+
+// temporary tabela - nema semafora
+_item["temp"]  := .f.
+
+_item["algoritam"] := {}
+
+// algoritam 1 - default
+// -------------------------------------------------------------------------------
+_alg := hb_hash()
+_alg["dbf_key_block" ] := {|| field->id } 
+_alg["dbf_key_fields"] := { "id" } 
+_alg["sql_in"]         := "rpad(id,2)"
+_alg["dbf_tag"]        := "ID"
+AADD(_item["algoritam"], _alg)
+
+_item["sql_order"] := "id"
+
+f18_dbfs_add( _tbl, @_item )
+
+return .t.
+
+
+
+// ------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
+function set_a_dbf_fin_budzet()
+local _alg, _tbl
+local _itm
+
+_tbl := "fin_budzet"
+
+_item := hb_hash()
+
+_item["alias"] := "BUDZET"
+_item["wa"]    := F_BUDZET
+_item["table"] := _tbl
+
+// temporary tabela - nema semafora
+_item["temp"]  := .f.
+
+_item["algoritam"] := {}
+
+// algoritam 1 - default
+// -------------------------------------------------------------------------------
+_alg := hb_hash()
+_alg["dbf_key_block" ] := {|| field->idrj + field->idkonto } 
+_alg["dbf_key_fields"] := { "idrj", "idkonto" } 
+_alg["sql_in"]         := "rpad( idrj, 6 ) || rpad( idkonto, 7 )"
+_alg["dbf_tag"]        := "1"
+AADD(_item["algoritam"], _alg)
+
+_item["sql_order"] := "idrj, idkonto"
+
+f18_dbfs_add( _tbl, @_item )
+
 return .t.
 
 

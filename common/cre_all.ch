@@ -25,20 +25,4 @@
 
 #command IF_C_RESET_SEMAPHORE  => if _created ; reset_semaphore_version(_table_name) ;  my_use(_alias);  use ; end
 
-/* 
-
-_table_name := "fakt_alll"
-_alias := "ALLL"
-
-aDbf := { ... definisi polja ...}
-
-IF_NOT_FILE_DBF_CREATE
-
-... sekvence migracije
-
-IF_C_RESET_SEMAPHORE
-
-... kreiraj indekse
-*/
-
 

@@ -64,16 +64,16 @@ _y := MAXCOLS() - 3
 Box( , _x, _y)
 
 @ m_x + _x - 4, m_y + 2 SAY PADR(" <ENTER> Stampa TXT", _w1 ) + ;
-                            BROWSE_COL_SEP + PADR( " < P > Povrat dok.", _w1 ) + ;
+                            BROWSE_COL_SEP + PADR( " < P > Povrat dokumenta", _w1 ) + ;
                             BROWSE_COL_SEP + PADR( " < I > Informacije", _w1 )
 @ m_x + _x - 3, m_y + 2 SAY PADR(" < a+P > Stampa ODT", _w1 ) + ;
-                            BROWSE_COL_SEP + PADR( " < S > Storno dok.", _w1) + ;
+                            BROWSE_COL_SEP + PADR( " < S > Storno dokument", _w1) + ;
                             BROWSE_COL_SEP + PADR( " < c+V > Setuj vezu fisk.", _w1 )
 @ m_x + _x - 2, m_y + 2 SAY PADR(" < R > Stampa fisk.racuna", _w1) + ;
                             BROWSE_COL_SEP + PADR( " < F > otpr.->racun",_w1 ) + ;
-                            BROWSE_COL_SEP + PADR( " -", _w1 )
+                            BROWSE_COL_SEP + PADR( " < F5 > Refresh ", _w1 )
 @ m_x + _x - 1, m_y + 2 SAY PADR(" < W > Duplikat", _w1) + ;
-                            BROWSE_COL_SEP + PADR( " < K > ispravka podataka", _w1 ) + ;
+                            BROWSE_COL_SEP + PADR( " < K > Ispravka podataka", _w1 ) + ;
                             BROWSE_COL_SEP + PADR( " -", _w1 )
 
 fUPripremu:=.f.

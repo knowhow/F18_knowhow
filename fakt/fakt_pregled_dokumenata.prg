@@ -740,6 +740,7 @@ do case
     case chr(ch) $ "wW"
         
         fakt_napravi_duplikat( field->idfirma, field->idtipdok, field->brdok )
+        select fakt_doks
 
     // generisanje storno dokumenta
     case chr(Ch) $ "sS"

@@ -70,21 +70,24 @@ return
 function ld_set_forma()
 private GetList:={}
 
+gPicI := PADR( gPicI, 15 )
+gPicS := PADR( gPicS, 15 )
+
 Box(,5,60)
     @ m_x+1,m_y+2 SAY "Zaokruzenje primanja          :" GET gZaok pict "99"
-        @ m_x+2,m_y+2 SAY "Zaokruzenje poreza i doprinosa:" GET gZaok2 pict "99"
-        @ m_x+3,m_y+2 SAY "Valuta                        :" GET gValuta pict "XXX"
-        @ m_x+4,m_y+2 SAY "Prikaz iznosa                 :" GET gPicI
-        @ m_x+5,m_y+2 SAY "Prikaz sati                   :" GET gPicS
+    @ m_x+2,m_y+2 SAY "Zaokruzenje poreza i doprinosa:" GET gZaok2 pict "99"
+    @ m_x+3,m_y+2 SAY "Valuta                        :" GET gValuta pict "XXX"
+    @ m_x+4,m_y+2 SAY "Prikaz iznosa                 :" GET gPicI
+    @ m_x+5,m_y+2 SAY "Prikaz sati                   :" GET gPicS
     read
 BoxC()
 
-if (LastKey()<>K_ESC)
-    Wpar("pi",gPicI)
-        Wpar("ps",gPicS)
-        Wpar("va",gValuta)
-        Wpar("z2",gZaok2)
-        Wpar("zo",gZaok)
+if ( LastKey() <> K_ESC )
+    set_metric( "ld_pic_iznos", NIL, ALLTRIM( gPicI ) )
+    set_metric( "ld_pic_sati", NIL, ALLTRIM( gPicS ) )
+    set_metric( "ld_valuta", NIL, gValuta )
+    set_metric( "ld_zaok_por_dopr", NIL, gZaok2 )
+    set_metric( "ld_zaok_prim", NIL, gZaok )
 endif
 
 return
@@ -293,27 +296,7 @@ return
 // koliko polja ima ld
 // -----------------------------------------
 function LDPoljaINI()
-
-if !FILE(f18_ime_dbf("LD"))
-    public cLdPolja := 40
-    return
-endif
-
-O_LD
-
-if ld->(fieldpos("S60"))<>0
-    public cLDPolja:=60
-elseif ld->(fieldpos("S50"))<>0
-    public cLDPolja:=50
-elseif ld->(fieldpos("S40"))<>0
-    public cLDPolja:=40
-elseif ld->(fieldpos("S30"))<>0
-    public cLDPolja:=30
-else
-    public cLDPolja:=14
-endif
-
-use
+public cLDPolja := 60
 return
 
 
@@ -341,7 +324,6 @@ return .t.
 
 
 function ValObr(lIzv,cObracun)
-*{
 local lVrati:=.t.
 
 if lIzv==nil
@@ -360,12 +342,9 @@ if gnHelpObr>0 .and. lVrati
 endif
 
 return lVrati
-*}
 
 
 function ClVBox()
-*{
-
 local i:=0
 for i:=1 to gnHelpObr
     BoxC()
@@ -373,7 +352,6 @@ next
 gnHelpObr:=0
 
 return
-*}
 
 
 

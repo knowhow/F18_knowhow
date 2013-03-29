@@ -1,3 +1,7 @@
+1.4.153 2013-03-29, vsasa
+
+  - ld, parametri sati/iznosa
+
 1.4.152 2013-03-28, vsasa
 
   - f18, login, matrica za odabir firmi je uvijek aktuelna radi mogućeg upgrade-a baze

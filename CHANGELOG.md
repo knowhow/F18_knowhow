@@ -1,3 +1,7 @@
+1.4.154 2013-03-29, vsasa
+
+  - fakt, pregled podataka, refresh bugfix
+
 1.4.153 2013-03-29, vsasa
 
   - ld, parametri sati/iznosa

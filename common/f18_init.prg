@@ -61,7 +61,7 @@ static __log_level := 3
 // ---------------------------------
 // 
 // ---------------------------------
-function f18_init_app()
+function f18_init_app( arg_v )
 local oLogin
 
 #ifdef NTX_INDICES
@@ -130,21 +130,7 @@ if no_sql_mode()
 endif
 
 // iniciraj logiranje
-f18_init_app_login()
-
-/*
-_get_server_params_from_config()
-
-// pokusaj se logirati kao user/user
-if !my_server_login()
-    // ako ne prikazi formu za unos
-    f18_form_login()
-endif
-
-_write_server_params_to_config() 
-
-post_login()
-*/
+f18_init_app_login( NIL, arg_v )
 
 return .t.
 
@@ -181,7 +167,7 @@ return .t.
 // -----------------------------------------------------
 // inicijalna login opcija
 // -----------------------------------------------------
-function f18_init_app_login( force_connect )
+function f18_init_app_login( force_connect, arg_v )
 local oLogin
 
 if force_connect == NIL
@@ -225,7 +211,7 @@ if oLogin:_main_db_connected
             f18_app_parameters( .t. )
             set_hot_keys()
 
-            module_menu()
+            module_menu( arg_v )
 
         endif
 

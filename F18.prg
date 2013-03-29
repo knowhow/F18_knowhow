@@ -17,26 +17,60 @@ static __relogin_opt := .f.
 #ifndef TEST
 
 function Main(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11)
+local _arg_v := hb_hash()
+public gDebug := 9
+
+cre_arg_v_hash( @_arg_v, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
 set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
-public gDebug := 9
+f18_init_app( _arg_v )
 
-f18_init_app()
-f18_app_parameters( .t. )
-
-set_hot_keys()
-
-module_menu(p3, p4, p5, p6, p7)
-log_close()
+//f18_app_parameters( .t. )
+//set_hot_keys()
+//module_menu(p3, p4, p5, p6, p7)
+//log_close()
 
 return
 
 #endif
 
+
+// vraca hash matricu sa parametrima
+static function cre_arg_v_hash( hash )
+local _i := 2
+local _param
+local _count := 0
+
+hash["p1"] := NIL
+hash["p2"] := NIL
+hash["p3"] := NIL
+hash["p4"] := NIL
+hash["p5"] := NIL
+hash["p6"] := NIL
+hash["p7"] := NIL
+hash["p8"] := NIL
+hash["p9"] := NIL
+hash["p10"] := NIL
+hash["p11"] := NIL
+
+do while _i <= PCount()
+
+    // ucitaj parametar
+    _param := hb_PValue( _i++ )
+
+    // p1, p2, p3...
+    hash[ "p" + ALLTRIM(STR( ++_count )) ] := _param 
+
+enddo
+
+return
+
+
+
 // ----------------------------
 // ----------------------------
-function module_menu(p3, p4, p5, p6, p7)
+function module_menu( arg_v )
 local menuop := {}
 local menuexec := {}
 local mnu_choice
@@ -48,6 +82,11 @@ local _x := 1
 local _db_params
 local _count := 0
 local oBackup := F18Backup():New()
+
+if arg_v == NIL
+    // napravi NIL parametre
+    cre_arg_v_hash( @arg_v )
+endif
 
 do while .t.
 
@@ -84,7 +123,7 @@ do while .t.
 	menuexec := {}
 
 	// setuj odabir
-	set_menu_choices( @menuop, @menuexec, p3, p4, p5, p6, p7 )
+	set_menu_choices( @menuop, @menuexec, arg_v["p3"], arg_v["p4"], arg_v["p5"], arg_v["p6"], arg_v["p7"] )
 
 	// daj mi odabir
     // ubacio sam ACHOICE2 radi meni funkcija stadnardnih...

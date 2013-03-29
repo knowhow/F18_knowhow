@@ -174,6 +174,8 @@ ENDIF
 
 close all
 return 1
+
+
 // -----------------------------------------------------
 // box - uslovi za povrat dokumenta prema kriteriju
 // -----------------------------------------------------
@@ -424,7 +426,6 @@ return _ret
 // vraca box sa uslovima povrata dokumenta
 // -----------------------------------------------------
 static function _get_povrat_vars( vars )
-
 local _firma   := vars["idfirma"]
 local _tip_dok := vars["idtipdok"]
 local _br_dok  := vars["brdok"]
@@ -455,6 +456,74 @@ vars["idtipdok"] := _tip_dok
 vars["brdok"]    := _br_dok
 
 return _ret
+
+
+
+
+// ---------------------------------------------------------
+// pravi duplikat dokumenta u pripremi...
+// ---------------------------------------------------------
+function fakt_napravi_duplikat( id_firma, id_tip_dok, br_dok )
+local _server := pg_server()
+local _qry, _field
+local _table, oRow
+local _count := 0
+
+if Pitanje(, "Napraviti duplikat dokumenta u pripremi (D/N) ? ", "D" ) == "N"
+    return .t.
+endif
+
+select ( F_FAKT_PRIPR )
+if !Used()
+    O_FAKT_PRIPR
+endif
+
+_qry := "SELECT * FROM fmk.fakt_fakt " + ;
+        " WHERE idfirma = " + _sql_quote( id_firma ) + ;
+        " AND idtipdok = " + _sql_quote( id_tip_dok ) + ;
+        " AND brdok = " + _sql_quote( br_dok ) + ;
+        " ORDER BY idfirma, idtipdok, brdok, rbr " 
+
+_table := _sql_query( _server, _qry )
+_table:Refresh()
+
+if _table:LastRec() == 0
+    MsgBeep( "Trazeni dokument nisam pronasao !" ) 
+    return .t.
+endif
+
+do while !_table:EOF()
+
+    oRow := _table:GetRow()
+
+    select fakt_pripr
+    append blank
+    _rec := dbf_get_rec()
+    
+    for each _field in _rec:keys
+        _rec[ _field ] := oRow:FieldGet( oRow:FieldPos( _field ) )
+    next
+
+    // ako ima koje pride polje obradi ga !!!
+    _rec["brdok"] := fakt_prazan_broj_dokumenta()
+
+    dbf_update_rec( _rec )
+
+    _table:skip()
+
+    ++ _count
+
+enddo
+
+select fakt_pripr
+use
+
+if _count > 0
+    MsgBeep( "Novoformirani dokument se nalazi u pripremi !" )
+endif
+
+return .t.
+
 
 
 

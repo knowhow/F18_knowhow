@@ -604,30 +604,32 @@ _refresh := .f.
 
 do case
  
+    // stampa dokumenta
     case Ch == K_ENTER 
 
         nRet := pr_pf( lOpcine )
         _refresh := .t.
 
+    // odt stampa dokumenta
     case Ch == K_ALT_P
         
         nRet := pr_odt( lOpcine )
         _refresh := .t.
  
+    // refresh tabele
     case Ch == K_F5
     
         // zatvori tabelu, pa otvori  
         select fakt_doks
         use
-
         O_FAKT_DOKS
-        set filter to &( _filter )
-        go top
 
         // refresh tabele
         nRet := DE_REFRESH
         _refresh := .t.
 
+
+    // setovanje broja veze fiskalnog racuna
     case CH == K_CTRL_V
     
         // setovanje broj fiskalnog isjecka
@@ -668,12 +670,14 @@ do case
             _refresh := .t.
         
         endif
-    
+   
+    // informacije o dokumentu 
     case chr(Ch) $ "iI"
     
         // info dokument
         msgbeep( getfullusername( field->oper_id ) )
 
+    // korekcija podataka dokumenta
     case chr(Ch) $ "kK"
     
         // korekcija podataka na dokumentu
@@ -682,6 +686,7 @@ do case
             _refresh := .t.
         endif
 
+    // stampanje fiskalnog racuna
     case UPPER( chr( Ch ) ) == "R"
 
         if !fiscal_opt_active()
@@ -696,7 +701,10 @@ do case
                 return DE_CONT
             endif
         
-            if Pitanje( "ST FISK RN5","Stampati fiskalni racun ?", "D") == "D"
+            if Pitanje( "ST FISK RN5","Stampati fiskalni racun za dokument " + ;
+                ALLTRIM( field->idfirma ) + "-" + ;
+                ALLTRIM( field->idtipdok ) + "-" + ;
+                ALLTRIM( field->brdok ) + " (D/N) ?", "D") == "D"
 
                 _dev_id := get_fiscal_device( my_user(), field->idtipdok )
 
@@ -728,34 +736,38 @@ do case
 
         endif
 
+    // duplikat dokumenta
     case chr(ch) $ "wW"
         
-        // duplikat dokumenta
         fakt_napravi_duplikat( field->idfirma, field->idtipdok, field->brdok )
 
+    // generisanje storno dokumenta
     case chr(Ch) $ "sS"
 
         // generisi storno dokument
         storno_dok( field->idfirma, field->idtipdok, field->brdok )
      
         if Pitanje(, "Preci u tabelu pripreme ?", "D" ) == "D"
-            fUPripremu:=.t.
-            nRet:=DE_ABORT
+            fUPripremu := .t.
+            nRet := DE_ABORT
         else
             nRet := DE_REFRESH
-            //_refresh := .t.
+            _refresh := .t.
         endif
   
+    // printanje radnog naloga
     case UPPER(chr(Ch)) == "B"
 
-        nRet:=pr_rn() 
+        nRet := pr_rn() 
         _refresh := .t. 
      
+    // printanje narudzbenice
     case chr(Ch) $ "nN"
         
-        nRet:=pr_nar(lOpcine)
+        nRet := pr_nar(lOpcine)
         _refresh := .t.
   
+    // generisanje fakture na osnovu ponude
     case chr(Ch) $ "fF"
         
         if idtipdok $ "20"
@@ -763,6 +775,7 @@ do case
             _refresh := .t.
         endif
      
+    // povrat dokumenta u pripremu
     case chr(Ch) $ "pP"
      
         _tmp := povrat_fakt_dokumenta( .f., field->idfirma, field->idtipdok, field->brdok )

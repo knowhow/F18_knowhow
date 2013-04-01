@@ -26,6 +26,7 @@ local dD_From := DATE() - 1
 local dD_to := DATE()
 local nGroup := 0
 local nOper := 0
+local _statusi := "N"
 
 if nVar == nil
 	nVar := 0
@@ -37,12 +38,12 @@ __nVar := nVar
 __temp := .f.
 
 // daj uslove izvjestaja
-if _g_vars( @dD_From, @dD_To, @nGroup, @nOper ) == 0
+if _g_vars( @dD_From, @dD_To, @nGroup, @nOper, @_statusi ) == 0
 	return 
 endif
 
 // kreiraj specifikaciju po uslovima
-_cre_spec( dD_from, dD_to, nGroup, nOper )
+_cre_spec( dD_from, dD_to, nGroup, nOper, _statusi )
 
 // printaj specifikaciju
 _p_rpt_spec( nGroup )
@@ -54,13 +55,15 @@ return
 // ----------------------------------------
 // uslovi izvjestaja specifikacije
 // ----------------------------------------
-static function _g_vars( dDatFrom, dDatTo, nGroup, nOperater )
+static function _g_vars( dDatFrom, dDatTo, nGroup, nOperater, statusi )
 local nRet := 1
 local nBoxX := 15
 local nBoxY := 65
 local nX := 1
 
 private GetList := {}
+
+statusi := fetch_metric("rnal_spec_posl_status", NIL, "N" )
 
 Box(, nBoxX, nBoxY)
 
@@ -94,13 +97,21 @@ Box(, nBoxX, nBoxY)
 	nX += 2
 
 	@ m_x + nX, m_y + 2 SAY "Grupa artikala (0 - sve grupe):" GET nGroup VALID nGroup >= 0 .and. nGroup < 7 PICT "9"
+
+    nX += 2
+
+	@ m_x + nX, m_y + 2 SAY "Gledati statuse 'realizovano' (D/N) ?" GET statusi VALID statusi $ "DN" PICT "@!"
 	
 	read
+
 BoxC()
 
 if LastKey() == K_ESC
 	nRet := 0
 endif
+
+// snimi parametre
+set_metric("rnal_spec_posl_status", NIL, statusi )
 
 return nRet
 
@@ -110,7 +121,7 @@ return nRet
 // kreiraj specifikaciju
 // izvjestaj se primarno puni u _tmp0 tabelu
 // ----------------------------------------------
-static function _cre_spec( dD_from, dD_to, nGroup, nOper )
+static function _cre_spec( dD_from, dD_to, nGroup, nOper, statusi )
 local nDoc_no
 local nArt_id
 local aArtArr := {}
@@ -135,7 +146,7 @@ o_tmp1()
 // otvori potrebne tabele
 o_tables( .f. )
 
-_main_filter( dD_from, dD_to, nOper )
+_main_filter( dD_from, dD_to, nOper, statusi )
 
 Box(, 1, 50 )
 
@@ -336,15 +347,22 @@ BoxC()
 return
 
 
-static function _main_filter( dDFrom, dDTo, nOper )
+static function _main_filter( dDFrom, dDTo, nOper, statusi )
 local cFilter := ""
 
-cFilter += "(doc_status == 0 .or. doc_status > 2)"
+if statusi == "N"
+    // necemo gledati statuse, prikazi sve naloge
+    cFilter += "( doc_status == 0 .or. doc_status > 2 )"
+else
+    // gledaju se prakticno stamo otvoreni
+    cFilter += "( doc_status == 0 .or. doc_status == 4 ) "
+endif
+
 cFilter += " .and. DTOS(doc_date) >= " + _filter_quote( DTOS( dDFrom ) )
 cFilter += " .and. DTOS(doc_date) <= " + _filter_quote( DTOS( dDTo ) )
 
 if nOper <> 0
-	cFilter += " .and. ALLTRIM(STR(operater_i)) == " + cm2str( ALLTRIM( STR( nOper ) ) )
+	cFilter += " .and. ALLTRIM( STR( operater_i ) ) == " + cm2str( ALLTRIM( STR( nOper ) ) )
 endif
 
 select docs

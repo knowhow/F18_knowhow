@@ -347,8 +347,20 @@ BoxC()
 return
 
 
-static function _main_filter( dDFrom, dDTo, nOper, statusi )
+static function _main_filter( dDFrom, dDTo, nOper, statusi, date_type )
 local cFilter := ""
+local _date := "doc_date"
+
+// doc date = 1
+// delivery date = 2
+
+if date_type == NIL
+    date_type := 2
+endif
+
+if date_type == 2
+    _date := "doc_dvr_da"
+endif
 
 if statusi == "N"
     // necemo gledati statuse, prikazi sve naloge
@@ -358,8 +370,8 @@ else
     cFilter += "( doc_status == 0 .or. doc_status == 4 ) "
 endif
 
-cFilter += " .and. DTOS(doc_date) >= " + _filter_quote( DTOS( dDFrom ) )
-cFilter += " .and. DTOS(doc_date) <= " + _filter_quote( DTOS( dDTo ) )
+cFilter += " .and. DTOS( " + _date + " ) >= " + _filter_quote( DTOS( dDFrom ) )
+cFilter += " .and. DTOS( " + _date + " ) <= " + _filter_quote( DTOS( dDTo ) )
 
 if nOper <> 0
 	cFilter += " .and. ALLTRIM( STR( operater_i ) ) == " + cm2str( ALLTRIM( STR( nOper ) ) )

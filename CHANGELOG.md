@@ -1,3 +1,7 @@
+1.4.157 2013-04-01, vsasa
+
+  - rnal, specifikacija za poslovođe, gledati datum isporuke umjesto datuma naloga
+ 
 1.4.156 2013-04-01, vsasa
 
   - rnal, specifikacija za poslovođe, korekcije

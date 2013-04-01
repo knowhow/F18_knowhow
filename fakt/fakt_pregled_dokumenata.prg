@@ -796,9 +796,10 @@ if _refresh
 
 	select fakt_doks
 	set order to tag "1D"
-	go ( _t_rec )
 
     refresh_fakt_tbl_dbfs( _filter )
+
+	go ( _t_rec )
 
 endif
 
@@ -809,7 +810,7 @@ return nRet
 
 function refresh_fakt_tbl_dbfs( tbl_filter )
 
-PushWa()
+//PushWa()
 
 close all
 
@@ -835,7 +836,7 @@ go top
 
 SET FILTER TO &(tbl_filter)
 
-PopWa()
+//PopWa()
 
 return .t.
 

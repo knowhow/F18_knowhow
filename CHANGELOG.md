@@ -1,3 +1,7 @@
+1.4.156 2013-04-01, vsasa
+
+  - rnal, specifikacija za poslovođe, korekcije
+ 
 1.4.155 2013-04-01, vsasa
 
   - fakt, fiskalni računi - bugfix

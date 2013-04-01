@@ -172,7 +172,7 @@ local _i
 local _ok := .f.
 
 for _i := 1 to LEN( arr )
-    if ! ::update_db_company( arr[ _i, 1 ] )
+    if ! ::update_db_company( ALLTRIM( arr[ _i, 1 ] ) )
         return _ok
     endif
 next
@@ -248,13 +248,15 @@ if ! ( "_" $ company )
     // nema sezone, uzmi sa servera...
     _sess_list := F18Login():New():get_database_sessions( company )
 else
-    
-	// vec postoji zadana sezona...
-    // samo je dodaj u matricu...
-    
-	AADD( _sess_list, { RIGHT( ALLTRIM( company ) , 4 ) } )
-    
-	company := PADR( ALLTRIM( company ), LEN( ALLTRIM( company ) ) - 5  )
+   
+	if SUBSTR( company, LEN( company ) - 4, 1 ) $ "1#2" 
+		// vec postoji zadana sezona...
+    	// samo je dodaj u matricu...
+		AADD( _sess_list, { RIGHT( ALLTRIM( company ) , 4 ) } )
+		company := PADR( ALLTRIM( company ), LEN( ALLTRIM( company ) ) - 5  )
+	else
+    	_sess_list := F18Login():New():get_database_sessions( company )
+	endif
 
 endif
 

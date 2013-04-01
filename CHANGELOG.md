@@ -1,3 +1,8 @@
+1.4.155 2013-04-01, vsasa
+
+  - fakt, fiskalni računi - bugfix
+  - f18 db update - bugfix
+ 
 1.4.154 2013-03-29, vsasa
 
   - fakt, pregled podataka, refresh bugfix

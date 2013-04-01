@@ -76,9 +76,27 @@ _dev_drv := ALLTRIM( dev_param["drv"] )
 __DRV_CURRENT := _dev_drv
 
 // priprema podatak za racun....
+select fakt_doks
+set filter to
+set relation to
+
+select fakt
+set filter to
+set relation to
+
+select partn
+set filter to
+set relation to
+
+select fakt_doks
 
 // da li je racun storno ????
 _storno := fakt_dok_is_storno( id_firma, tip_dok, br_dok )
+
+if VALTYPE( _storno ) == "N" .and. _storno == -1
+	return _err_level
+endif
+
 // pripremi matricu sa podacima partnera itd....
 _partn_data := fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, _storno )
 
@@ -169,8 +187,14 @@ local _storno := .t.
 local _t_rec
 
 select fakt
+set order to tag "1"
 go top
 seek ( id_firma + tip_dok + br_dok )
+
+if !FOUND()
+	MsgBeep( "Ne mogu locirati dokument - is storno !" )
+	return -1
+endif
 
 _t_rec := RECNO()
 
@@ -462,6 +486,7 @@ local _partn_ino := .f.
 local _partn_pdv := .t.
 
 select fakt_doks
+set order to tag "1"
 go top
 seek ( id_firma + tip_dok + br_dok )
 
@@ -546,7 +571,12 @@ endif
 select partn
 go top
 seek _partn_id
-       
+      
+if !FOUND()
+	MsgBeep( "Partnera nisam pronasao u sifrarniku - head prepare !" )
+	return .f.
+endif
+ 
 // ako je pdv obveznik
 // dodaj "4" ispred id broja
 if LEN( ALLTRIM( _partn_jib ) ) == 12        

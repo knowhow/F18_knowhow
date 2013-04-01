@@ -1,3 +1,7 @@
+1.5.19 2013-04-01, vsasa
+
+   - git merge master 1.4.155
+
 1.5.18 2013-03-30, vsasa
 
    - git merge master 1.4.154

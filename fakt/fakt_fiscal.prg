@@ -50,6 +50,7 @@ local _dev_drv
 local _storno := .f.
 local _items_data, _partn_data
 local _cont := "1"
+local _t_area := SELECT()
 
 // koriste li se fiskalne opcije uopste ?
 if !fiscal_opt_active()

@@ -590,10 +590,10 @@ local _rec
 local _filter
 local _dev_id, _dev_params
 local _refresh
+local _t_rec := RECNO()
+local _t_area := SELECT()
 
-_filter := fakt_doks_filt
-
-cFilter := DBFilter()
+_filter := DBFilter()
 
 // ispis informacije o fiskalnom racunu
 _veza_fc_rn()
@@ -726,7 +726,9 @@ do case
                 endif
  
                 fakt_fisc_rn( field->idfirma, field->idtipdok, field->brdok, .f., _dev_params )
-       
+
+       			select ( _t_area )
+
                 nRet := DE_REFRESH
                 _refresh := .t.
 
@@ -791,8 +793,13 @@ endcase
 
 // refresh ako ima potrebe za tim...
 if _refresh 
+
+	select fakt_doks
+	set order to tag "1D"
+	go ( _t_rec )
+
     refresh_fakt_tbl_dbfs( _filter )
-    select fakt_doks
+
 endif
 
 return nRet
@@ -808,24 +815,25 @@ close all
 
 O_VRSTEP
 O_OPS
+O_FAKT_DOKS2
+O_VALUTE
+O_RJ
 O_FAKT_OBJEKTI
 O_FAKT
 O_PARTN
 O_FAKT_DOKS
 
+// setuj relacije 
+SET RELATION TO fakt_doks->idfirma + fakt_doks->idtipdok + fakt_doks->brdok INTO fakt, ;
+            TO fakt_doks->idvrstep INTO vrstep, ;
+            TO fakt_doks->idpartner INTO partn
+
+
 select fakt_doks
-set order to tag "1"
+set order to tag "1D"
 go top
 
 SET FILTER TO &(tbl_filter)
-
-SET RELATION TO idvrstep INTO VRSTEP
-
-SET RELATION TO idpartner INTO PARTN
-
-O_FAKT_DOKS2
-O_VALUTE
-O_RJ
 
 PopWa()
 

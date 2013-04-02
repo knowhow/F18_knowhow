@@ -274,7 +274,7 @@ endif
 bErr := ERRORBLOCK({|o| MyErrH(o)})
 begin sequence
 
-       log_write("ZAP exclusive: " + ALIAS(), 2)
+       log_write( "ZAP exclusive: " + ALIAS(), 5 )
        __dbzap()
        if pack
           __dbpack()
@@ -282,7 +282,7 @@ begin sequence
 
 recover
 
-       log_write("ZAP shared: " + ALIAS(), 2)
+       log_write( "ZAP shared: " + ALIAS(), 5 )
        PushWa()
        do while .t.
 

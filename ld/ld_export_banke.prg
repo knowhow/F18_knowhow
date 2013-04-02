@@ -428,7 +428,7 @@ do while !EOF()
         
     // upisi u fajl...
 
-	?? to_win1250_encoding( hb_utf8tostr( &(_line) ), .t. )
+	?? to_win1250_encoding( hb_strtoutf8( &(_line) ), .t. )
 	? 
 	
     skip

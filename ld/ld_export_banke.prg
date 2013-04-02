@@ -69,6 +69,7 @@ AADD( _dbf, { "IMEROD"  , "C", 30, 0 } )
 AADD( _dbf, { "PREZIME" , "C", 40, 0 } )
 AADD( _dbf, { "JMBG"    , "C", 13, 0 } )
 AADD( _dbf, { "TEKRN"   , "C", 50, 0 } )
+AADD( _dbf, { "KNJIZ"   , "C", 50, 0 } )
 AADD( _dbf, { "IZNOS_1" , "N", 15, 2 } )
 AADD( _dbf, { "IZNOS_2" , "N", 15, 2 } )
 AADD( _dbf, { "UNETO"   , "N", 15, 2 } )
@@ -260,6 +261,8 @@ _qry := "SELECT " + ;
         " rd.imerod, " + ;
         " rd.naz, " + ;
         " rd.matbr AS jmbg, " + ;
+        " rd.brtekr AS tekrn, " + ;
+        " rd.brknjiz AS knjiz, " + ;
         _pro_polja + ;
         " ld.uneto, " + ;
         " ld.usati, " + ;
@@ -311,6 +314,8 @@ do while !_table:EOF()
     _rec["obr"] := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos("obr") ) )
     _rec["idradn"] := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos("idradn") ) )
     _rec["jmbg"] := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos("jmbg") ) )
+    _rec["tekrn"] := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos("tekrn") ) )
+    _rec["knjiz"] := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos("knjiz") ) )
 
     _rec["punoime"] := ;
         ALLTRIM( hb_utf8tostr( oRow:FieldGet( oRow:FieldPos("ime") ) ) ) + " (" + ;
@@ -423,7 +428,7 @@ do while !EOF()
         
     // upisi u fajl...
 
-	?? to_win1250_encoding( &(_line) )
+	?? to_win1250_encoding( hb_utf8tostr( &(_line) ), .t. )
 	? 
 	
     skip

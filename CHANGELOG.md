@@ -1,3 +1,7 @@
+1.4.158 2013-04-02, vsasa
+
+  - ld, export izvještaja za banku, korekcije
+ 
 1.4.157 2013-04-01, vsasa
 
   - rnal, specifikacija za poslovođe, gledati datum isporuke umjesto datuma naloga

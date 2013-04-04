@@ -330,7 +330,7 @@ do while !EOF()
 
 		++ nCount
 		
-		@ m_x + 1, m_y + 2 SAY "nalog broj: " + ALLTRIM( STR(nDoc_no) )
+		@ m_x + 1, m_y + 2 SAY "datum isp./nalog broj: " + DTOC(docs->doc_dvr_da) + " / " + ALLTRIM( STR(nDoc_no) )
 	
 		skip
 		
@@ -347,7 +347,7 @@ BoxC()
 return
 
 
-static function _main_filter( dDFrom, dDTo, nOper, statusi, date_type )
+static function _main_filter( dDFrom, dDTo, nOper, statusi, date_type, tbl_tag )
 local cFilter := ""
 local _date := "doc_date"
 
@@ -356,6 +356,10 @@ local _date := "doc_date"
 
 if date_type == NIL
     date_type := 2
+endif
+
+if tbl_tag == NIL
+    tbl_tag := "D2"
 endif
 
 if date_type == 2
@@ -378,6 +382,7 @@ if nOper <> 0
 endif
 
 select docs
+set order to tag &tbl_tag
 set filter to &cFilter
 go top
 	

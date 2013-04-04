@@ -1,3 +1,8 @@
+1.4.159 2013-04-04, vsasa
+
+  - rnal, izvještaj za poslovođe, sortiranje po datumu isporuke
+  - fakt, w - duplikat > dupliciraj
+ 
 1.4.158 2013-04-02, vsasa
 
   - ld, export izvještaja za banku, korekcije

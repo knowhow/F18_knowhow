@@ -1,3 +1,7 @@
+1.5.21 2013-04-05, vsasa
+
+   - git merge master, 1.4.159
+
 1.5.20 2013-04-01, vsasa
 
    - fakt, pregled liste dokumenata, refresh - bugfix

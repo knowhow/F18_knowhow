@@ -727,8 +727,6 @@ do case
  
                 fakt_fisc_rn( field->idfirma, field->idtipdok, field->brdok, .f., _dev_params )
 
-       			select ( _t_area )
-
                 nRet := DE_REFRESH
                 _refresh := .t.
 
@@ -810,8 +808,6 @@ return nRet
 
 function refresh_fakt_tbl_dbfs( tbl_filter )
 
-//PushWa()
-
 close all
 
 O_VRSTEP
@@ -835,8 +831,6 @@ set order to tag "1D"
 go top
 
 SET FILTER TO &(tbl_filter)
-
-//PopWa()
 
 return .t.
 

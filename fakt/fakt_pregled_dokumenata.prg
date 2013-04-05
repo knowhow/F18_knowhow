@@ -797,9 +797,11 @@ endcase
 if _refresh 
 
 	select ( _t_area )
-	go ( _t_rec )
+	set order to tag "1"
 
     refresh_fakt_tbl_dbfs( _filter )
+
+	go ( _t_rec )
 
 endif
 
@@ -810,7 +812,7 @@ return nRet
 
 function refresh_fakt_tbl_dbfs( tbl_filter )
 
-PushWa()
+//PushWa()
 
 close all
 
@@ -836,7 +838,7 @@ go top
 
 SET FILTER TO &(tbl_filter)
 
-PopWa()
+//PopWa()
 
 return .t.
 

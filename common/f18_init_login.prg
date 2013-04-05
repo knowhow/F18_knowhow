@@ -312,6 +312,12 @@ if _ok .and. _show_box
 
     set_hot_keys()
 
+    // init parametara sezonskog podrucja...
+    goModul:setGVars()
+
+    // prikazi info baza/user na vrhu u skladu sa tekucom bazom
+    say_database_info()
+
 endif
 
 return _ok
@@ -706,6 +712,9 @@ AADD( menuop, hb_utf8tostr( "1. rekonfiguracija servera " ) )
 AADD( menuexec, {|| f18_init_app_login( .f. ), .t. } )
 AADD( menuop, hb_utf8tostr( "2. update db" ) )
 AADD( menuexec, {|| F18AdminOpts():New():update_db(), .t. } )
+AADD( menuop, hb_utf8tostr( "3. vpn podrska" ) )
+AADD( menuexec, {|| vpn_support( .f. ), .t. } )
+
 
 return
 

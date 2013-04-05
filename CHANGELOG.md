@@ -1,3 +1,8 @@
+1.4.160 2013-04-05, vsasa
+
+  - vpn podrška na glavnom meniju (F10)
+  - promjena sezone, init globalnih parametara modula, refresh info screen
+ 
 1.4.159 2013-04-04, vsasa
 
   - rnal, izvještaj za poslovođe, sortiranje po datumu isporuke

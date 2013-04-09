@@ -1,3 +1,8 @@
+1.4.161 2013-04-09, vsasa
+
+  - status modula na glavnom ekranu modula
+  - ostale korekcije
+ 
 1.4.160 2013-04-05, vsasa
 
   - vpn podrška na glavnom meniju (F10)

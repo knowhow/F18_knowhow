@@ -16,7 +16,7 @@ static __relogin_opt := .f.
 
 #ifndef TEST
 
-function Main(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11)
+function Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 local _arg_v := hb_hash()
 public gDebug := 9
 
@@ -50,13 +50,10 @@ hash["p10"] := NIL
 hash["p11"] := NIL
 
 do while _i <= PCount()
-
     // ucitaj parametar
     _param := hb_PValue( _i++ )
-
     // p1, p2, p3...
     hash[ "p" + ALLTRIM(STR( ++_count )) ] := _param 
-
 enddo
 
 return

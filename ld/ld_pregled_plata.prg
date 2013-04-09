@@ -105,7 +105,7 @@ if empty(cidrj)
      IF lViseObr .and. !EMPTY(cObracun)
        cFilt += ".and.OBR=" + _filter_quote( cObracun )
      ENDIF
-     INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
+     INDEX ON &cSort1 TO "tmpld" FOR &cFilt
     BoxC()
     GO TOP
   ENDIF
@@ -123,7 +123,7 @@ else
      IF lViseObr .and. !EMPTY(cObracun)
        cFilt += ".and.OBR=" + _filter_quote( cObracun )
      ENDIF
-     INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
+     INDEX ON &cSort1 TO "tmpld" FOR &cFilt
     BoxC()
     GO TOP
   ENDIF

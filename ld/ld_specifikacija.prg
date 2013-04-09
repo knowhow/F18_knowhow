@@ -769,7 +769,7 @@ Box(,2,30)
   if lViseObr .and. !EMPTY(cObracun)
     cFilt += ( ".and. OBR==" + cm2str(cObracun) )
   endif
-  INDEX ON &cSort1 TO "TMPLD" FOR &cFilt EVAL(TekRec2()) EVERY 1
+  INDEX ON &cSort1 TO "tmpld" FOR &cFilt EVAL(TekRec2()) EVERY 1
 BoxC()
 
 GO TOP
@@ -1284,7 +1284,7 @@ Box(,2,30)
   if lViseObr .and. !empty(cObracun)
     cFilt += ( ".and. OBR==" + cm2str(cObracun) )
   endif
-  INDEX ON &cSort1 TO "TMPLD" FOR &cFilt EVAL(TekRec2()) EVERY 1
+  INDEX ON &cSort1 TO "ldtmp" FOR &cFilt EVAL(TekRec2()) EVERY 1
 BoxC()
 
 GO TOP

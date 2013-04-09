@@ -123,19 +123,19 @@ cIdRadn:=trim(cidradn)
 IF EMPTY(cIdRadn) .and. cVarSort=="2"
 	IF EMPTY(cIdRj)
 		IF lViseObr .and. !EMPTY(cObracun)
-			INDEX ON str(godina)+str(mjesec)+obr+SortPrez(idradn)+idrj TO "TMPLD"
+			INDEX ON str(godina)+str(mjesec)+obr+SortPrez(idradn)+idrj TO "tmpld"
 			seek str(cGodina,4)+str(cmjesec,2)+cObracun+cIdRadn
 		ELSE
-			INDEX ON str(godina)+str(mjesec)+SortPrez(idradn)+idrj TO "TMPLD"
+			INDEX ON str(godina)+str(mjesec)+SortPrez(idradn)+idrj TO "tmpld"
 			seek str(cGodina,4)+str(cmjesec,2)+cIdRadn
 		ENDIF
 		cIdrj:=""
 	ELSE
 		IF lViseObr .and. !EMPTY(cObracun)
-			INDEX ON str(godina)+idrj+str(mjesec)+obr+SortPrez(idradn) TO "TMPLD"
+			INDEX ON str(godina)+idrj+str(mjesec)+obr+SortPrez(idradn) TO "tmpld"
 			seek str(cGodina,4)+cidrj+str(cmjesec,2)+cObracun+cIdRadn
 		ELSE
-			INDEX ON str(godina)+idrj+str(mjesec)+SortPrez(idradn) TO "TMPLD"
+			INDEX ON str(godina)+idrj+str(mjesec)+SortPrez(idradn) TO "tmpld"
 			seek str(cGodina,4)+cidrj+str(cmjesec,2)+cIdRadn
 		ENDIF
 	ENDIF

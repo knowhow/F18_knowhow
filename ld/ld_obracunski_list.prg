@@ -65,10 +65,10 @@ endif
 
 if EMPTY(cRadnik) 
 	if cTipRpt $ "1#2"
-		INDEX ON SortPrez(idradn) + STR(godina) + STR(mjesec) + idrj TO "TMPLD"
+		INDEX ON SortPrez(idradn) + STR(godina) + STR(mjesec) + idrj TO "tmpld"
 	   	go top
 	else
-		INDEX ON STR(godina) + STR(mjesec) + SortPrez(idradn) + idrj TO "TMPLD"
+		INDEX ON STR(godina) + STR(mjesec) + SortPrez(idradn) + idrj TO "tmpld"
 		go top
 		seek STR( cGod_od, 4 ) + STR( cMj_od, 2 ) + cRadnik
 	endif

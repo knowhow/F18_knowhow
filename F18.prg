@@ -37,6 +37,7 @@ local _i := 2
 local _param
 local _count := 0
 
+hash := hb_hash()
 hash["p1"] := NIL
 hash["p2"] := NIL
 hash["p3"] := NIL

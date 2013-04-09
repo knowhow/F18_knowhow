@@ -172,6 +172,8 @@ f18_ispisi_status_log_levela()
 f18_ispisi_status_semafora()
 // podrucje
 f18_ispisi_status_podrucja( _ver_pos )
+// ispisi status modula
+f18_ispisi_status_modula()
 
 return
 
@@ -204,6 +206,24 @@ if _show
 endif
 
 return
+
+
+
+
+function f18_ispisi_status_modula()
+local _in_use := f18_use_module( LOWER( goModul:cName ) )
+local _color := "GR+/B" 
+
+if !_in_use
+    _color := "W/R+"
+	@ MAXROWS()-1, 25 SAY "!" COLOR _color
+else
+	@ MAXROWS()-1, 25 SAY " " COLOR _color
+endif
+
+
+return
+
 
 
 

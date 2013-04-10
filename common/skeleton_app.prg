@@ -377,12 +377,6 @@ use
 
 SETCOLOR(cOldBoje)
 
-// upisi i u params parametre za PDV / PRIVPATH+params.dbf
-O_PARAMS
-select params
-WPar("PD", gPDV)
-use
-
 if lPushWa
   PopWa()
 endif

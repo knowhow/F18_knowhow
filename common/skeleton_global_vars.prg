@@ -25,9 +25,6 @@ if ( set_params == nil )
     set_params := .t.
 endif
 
-// setuj pdv parametre
-set_pdv_params()
-
 gZaokr := fetch_metric( "zaokruzenje", nil, gZaokr )
 gFirma := fetch_metric( "org_id", nil, gFirma)
 gNFirma := PADR( fetch_metric( "org_naziv", nil, gNFirma ), 50 )
@@ -35,6 +32,7 @@ gMjStr := fetch_metric( "org_mjesto", nil, gMjStr )
 gTS := fetch_metric( "tip_subjekta", nil, gTS )
 gTabela := fetch_metric( "tip_tabele", nil, gTabela )
 gBaznaV := fetch_metric( "bazna_valuta", nil, gBaznaV )
+gPDV := fetch_metric( "pdv_global", nil, gPDV )
 
 if EMPTY( ALLTRIM( gNFirma ) )
     gNFirma := PADR( "", 50 )
@@ -92,18 +90,6 @@ endif
 return .t.
 
 
-// ----------------------------------------------------
-// setuje pdv parmetre
-// ----------------------------------------------------
-function set_pdv_params()
-
-gPDV := fetch_metric( "pdv_global", nil, gPDV )
-ParPDV()
-set_metric( "pdv_global", nil, gPDV )
-
-return .t.
-
-
 
 
 // -----------------------
@@ -121,7 +107,7 @@ public gNFirma := PADR( "", 50 )
 public gBaznaV := "D"
 public gZaokr := 2
 public gTabela := 0
-public gPDV := ""
+public gPDV := "D"
 public gMjStr := PADR( "Sarajevo", 30 )
 public gModemVeza := "N"
 public gNW := "D"
@@ -164,42 +150,14 @@ return .t.
 
 
 function SetValuta()
-
-// ako se radi o planici Novi Sad onda je naziv valute DIN
-public gOznVal
-gOznVal:="KM"
-
+public gOznVal := "KM"
 return
 
 
-
-/*! \fn ParPDV()
- *  \brief Provjeri parametar pdv
- */
-function ParPDV()
-
-if (gPDV == "") .or. (gPDV $ "ND" .and. gModul=="TOPS")
-    // ako je tekuci datum >= 01.01.2006
-    if DATE() >= CToD("01.01.2006")
-        gPDV := "D"
-    else
-        gPDV := "N"
-    endif
-endif
-return
-
-
-
-/*! \fn IsPDV()
- *  \brief Da li je pdv rezim rada ili ne
- *  \ret .t. or .f.
- */
 function IsPDV()
-
 if gPDV == "D"
     return .t.
 endif
-
 return .f.
 
 

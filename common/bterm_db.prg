@@ -50,13 +50,17 @@ _sTblTerm( @aDbf )
 // kreiraj tabelu
 _creTemp( aDbf, .t. )
 
-O_ROBA
-O_TEMP
-
-if !File(f18_ime_dbf("TEMP"))
+if !FILE( my_home() + "temp.dbf" )
 	MsgBeep("Ne mogu kreirati fajl TEMP.DBF!")
 	return
 endif
+
+// otvori tabele
+O_ROBA
+
+select ( F_TMP_1 )
+use
+my_use_temp( "temp", my_home() + "temp.dbf" )
 
 // zatim iscitaj fajl i ubaci podatke u tabelu
 
@@ -118,7 +122,7 @@ _o_file:Close()
 
 select temp
 
-MsgBeep("Import txt => temp - OK")
+MsgBeep( "Import txt => temp - OK" )
 
 return
 
@@ -127,24 +131,30 @@ return
 // Kreira tabelu PRIVPATH\TEMP.DBF prema definiciji polja iz aDbf
 // ----------------------------------------------------------------
 static function _creTemp( aDbf, lIndex )
+local _table := "temp"
 
-cTmpTbl := "TEMP"
-
-if lIndex == nil
+if lIndex == NIL
 	lIndex := .t.
 endif
 
-if File( f18_ime_dbf( cTmpTbl ) ) .and. ( FErase( f18_ime_dbf( cTmpTbl ) ) == -1 )
-		MsgBeep("Ne mogu izbrisati TEMP.DBF!")
-    	ShowFError()
-endif
+FERASE( my_home() + "temp.dbf" )
 
-DbCreate2(cTmpTbl, aDbf)
+DbCreate( my_home() + _table, aDbf )
 
-if lIndex 
-	create_index("1","barkod", cTmpTbl )
-	create_index("2","idroba", cTmpTbl )
-	create_index("3","STR(status)", cTmpTbl )
+if lIndex
+
+    select ( F_TMP_1 )
+    use
+    
+    my_use_temp( "temp", my_home() + "temp.dbf" )
+
+    index on barkod tag "1"
+    index on idroba tag "2"
+    index on STR(status) tag "3"
+
+    select ( F_TMP_1 )
+    use
+
 endif
 
 return

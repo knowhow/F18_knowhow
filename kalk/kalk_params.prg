@@ -398,28 +398,32 @@ return nil
 
 
 function kalk_par_zavisni_dokumenti()
+local _auto_razduzenje := fetch_metric( "kalk_tops_prenos_auto_razduzenje", my_user(), "N" )
 private  GetList:={}
 
 Box(, 12, 76, .f., "NACINI FORMIRANJA ZAVISNIH DOKUMENATA" )
 
-    @ m_x+1,m_y+2 SAY "Automatika formiranja FIN naloga D/N/0" GET gAFin pict "@!" valid gAFin $ "DN0"
-    @ m_x+2,m_y+2 SAY "Automatika formiranja MAT naloga D/N/0" GET gAMAT pict "@!" valid gAMat $ "DN0"
-    @ m_x+3,m_y+2 SAY "Automatika formiranja FAKT dokum D/N" GET gAFakt pict "@!" valid gAFakt $ "DN"
-    @ m_x+4,m_y+2 SAY "Generisati 16-ku nakon 96  D/N (1/2) ?" GET gGen16  valid gGen16 $ "12"
-    @ m_x+5,m_y+2 SAY "Nakon stampe zaduzenja prodavnice prenos u TOPS 0-ne/1 /2 " GET gTops  valid gTops $ "0 /1 /2 /3 /99" pict "@!"
-    @ m_x+6,m_y+2 SAY "Nakon stampe zaduzenja prenos u FAKT 0-ne/1 /2 " GET gFakt  valid gFakt $ "0 /1 /2 /3 /99" pict "@!"
+    @ m_x + 1, m_y + 2 SAY "Automatika formiranja FIN naloga D/N/0" GET gAFin pict "@!" valid gAFin $ "DN0"
+    @ m_x + 2, m_y + 2 SAY "Automatika formiranja MAT naloga D/N/0" GET gAMAT pict "@!" valid gAMat $ "DN0"
+    @ m_x + 3, m_y + 2 SAY "Automatika formiranja FAKT dokum D/N" GET gAFakt pict "@!" valid gAFakt $ "DN"
+    @ m_x + 4, m_y + 2 SAY "Generisati 16-ku nakon 96  D/N (1/2) ?" GET gGen16  valid gGen16 $ "12"
+    @ m_x + 5, m_y + 2 SAY "Nakon stampe zaduzenja prodavnice prenos u TOPS 0-ne/1 /2 " GET gTops  valid gTops $ "0 /1 /2 /3 /99" pict "@!"
+    @ m_x + 6, m_y + 2 SAY "Nakon stampe zaduzenja prenos u FAKT 0-ne/1 /2 " GET gFakt  valid gFakt $ "0 /1 /2 /3 /99" pict "@!"
 
     read
 
     if gTops <> "0 " .or. gFakt <> "0 "
-        @ m_x+8,m_y+2 SAY "Destinacija fajla za razmjenu:" GET gTopsDest PICT "@S40"
-        @ m_x+9,m_y+2 SAY "Koristi se vise prodajnih mjesta (D/N) ?" GET gMultiPM PICT "@!" VALID gMultiPM $ "DN"
+        @ m_x + 8, m_y + 2 SAY "Destinacija fajla za razmjenu:" GET gTopsDest PICT "@S40"
+        @ m_x + 9, m_y + 2 SAY "Koristi se vise prodajnih mjesta (D/N) ?" GET gMultiPM PICT "@!" VALID gMultiPM $ "DN"
+        @ m_x + 10, m_y + 2 SAY "Auto.zaduzenje prod.konta (KALK 11) (D/N) ?" GET _auto_razduzenje ;
+                PICT "@!" VALID _auto_razduzenje $ "DN"
         read
     endif
 
 BoxC()
 
 if lastkey() <> K_ESC
+
 	set_metric("kalk_kontiranje_fin", f18_user(), gAFin)
   	set_metric("kalk_kontiranje_mat", f18_user(), gAMat)
   	set_metric("kalk_kontiranje_fakt", f18_user(), gAFakt)
@@ -428,6 +432,8 @@ if lastkey() <> K_ESC
   	set_metric("kalk_prenos_fakt", f18_user(), gFakt)
   	set_metric("kalk_destinacija_topska", f18_user(), gTopsDest )
   	set_metric("kalk_tops_prenos_vise_prodajnih_mjesta", f18_user(), gMultiPM )
+    set_metric( "kalk_tops_prenos_auto_razduzenje", my_user(), _auto_razduzenje )
+
 endif
 
 return nil

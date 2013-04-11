@@ -19,10 +19,10 @@ local _opc := {}
 local _opcexe := {}
 local _izbor := 1
 
-AADD(_opc, "1. pocetno stanje - LEGACY                               ")
-AADD(_opcexe, {|| PocStProd() } )
-AADD(_opc, "2. pocetno stanje SQL ")
+AADD(_opc, "1. pocetno stanje                                        ")
 AADD(_opcexe, {|| kalk_prod_pocetno_stanje() } )
+AADD(_opc, "2. pocetno stanje (stara opcija/legacy)")
+AADD(_opcexe, {|| PocStProd() } )
 AADD(_opc, "3. inventure    ")
 AADD(_opcexe, {|| MnuPInv()})
 AADD(_opc, "4. nivelacije")

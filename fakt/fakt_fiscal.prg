@@ -138,6 +138,13 @@ do case
 
 endcase
 
+// logiraj operaciju...
+log_write( "fiskalni racun " + _dev_drv + " za dokument: " + ;
+            ALLTRIM( id_firma ) + "-" + ALLTRIM( tip_dok ) + "-" + ALLTRIM( br_dok ) + ;
+            " err level: " + ALLTRIM(STR( _err_level )) + ;
+            " partner: " + IF( _partn_data <> NIL, ALLTRIM( _partn_data[ 1, 1 ] ) + ;
+                            " - " + ALLTRIM( _partn_data[ 1, 2 ] ), "NIL" ), 3 )
+
 // drugi pokusaj u slucaju greske !
 if _err_level > 0
     

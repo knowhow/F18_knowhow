@@ -1,3 +1,8 @@
+1.4.162 2013-04-12, vsasa
+
+  - pos, stanje prodavnice ili magacina sa konta
+  - pos, nepravilna cijena K_UP
+ 
 1.4.161 2013-04-09, vsasa
 
   - status modula na glavnom ekranu modula

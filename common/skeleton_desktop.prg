@@ -211,7 +211,8 @@ return
 
 
 function f18_ispisi_status_modula()
-local _in_use := f18_use_module( LOWER( goModul:cName ) )
+local _module := LOWER( goModul:cName )
+local _in_use := f18_use_module( IF( _module == "tops", "pos", _module ) )
 local _color := "GR+/B" 
 
 if !_in_use

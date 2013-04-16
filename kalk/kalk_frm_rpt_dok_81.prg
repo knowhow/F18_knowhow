@@ -13,11 +13,6 @@
 #include "kalk.ch"
 
 
-/*! \fn StKalk81(fzatops)
- *  \brief Stampa kalkulacije 81 - direktno zaduzenje prodavnice
- *  \param fzatops -
- */
-
 function StKalk81(fzatops)
 local nCol1:=nCol2:=0,npom:=0
 
@@ -324,10 +319,12 @@ P_COND
 @ prow(),125 SAY "Str:"+str(++nStr,3)
 select PARTN; HSEEK cIdPartner
 
-?  "DOBAVLJAC:",cIdPartner,"-",naz,SPACE(5),"DOKUMENT Broj:",cBrFaktP,"Datum:",dDatFaktP
+?  "DOBAVLJAC:",cIdPartner,"-",PADR( naz, 20 ),SPACE(5),"DOKUMENT Broj:",cBrFaktP,"Datum:",dDatFaktP
 
-select KONTO; HSEEK cIdKonto
-?  "KONTO zaduzuje :",cIdKonto,"-",naz
+select KONTO
+HSEEK cIdKonto
+
+?  "KONTO zaduzuje :", cIdKonto, "-", ALLTRIM( naz )
 
  m:="---- ---------- ---------- ---------- ---------- ---------- ---------- ----------"+;
     IF(lPrikPRUC," ----------","")+" ---------- -----------" 
@@ -540,6 +537,6 @@ RekTarife()
 ? "RUC:";  @ prow(),pcol()+1 SAY nTot6 pict picdem
 ? m
 return
-*}
+
 
 

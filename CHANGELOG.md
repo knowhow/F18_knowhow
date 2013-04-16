@@ -1,3 +1,7 @@
+1.4.164 2013-04-16, vsasa
+
+  - kalk, dokument 81, ispis broja dokumenta
+ 
 1.4.163 2013-04-16, vsasa
 
   - rnal, izvještaj za poslovođe, odabir datuma za izvještaj

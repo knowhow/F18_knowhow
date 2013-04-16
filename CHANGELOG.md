@@ -1,3 +1,7 @@
+1.4.166 2013-04-16, vsasa
+
+  - rnal, štampa naloga za proizvodnju, korekcije
+ 
 1.4.165 2013-04-16, vsasa
 
   - ld, štampa kartice plate nakon unosa obračuna - bugfix

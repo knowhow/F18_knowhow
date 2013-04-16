@@ -323,7 +323,9 @@ for _i := 1 to LEN( groups )
 		
 		        if !EMPTY( field->doc_op_des )  
 			        xml_node( "notes", to_xml_encoding( ALLTRIM( field->doc_op_des ) ) )
-		        endif
+		        else
+                    xml_node( "notes", "" )
+                endif
 	
 		        xml_subnode( "oper", .t. )
 

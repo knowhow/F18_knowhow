@@ -1,3 +1,7 @@
+1.4.165 2013-04-16, vsasa
+
+  - ld, štampa kartice plate nakon unosa obračuna - bugfix
+ 
 1.4.164 2013-04-16, vsasa
 
   - kalk, dokument 81, ispis broja dokumenta

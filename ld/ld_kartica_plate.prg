@@ -46,12 +46,13 @@ cVarSort:="1"
 private cNKNS
 cNKNS:="N"
 
-if (PCount()<4)
-	cIdRadn:=SPACE(_LR_)
-	cIdRj:=gRj
-	cMjesec:=gMjesec
-	cGodina:=gGodina
-	cObracun:=gObracun
+if ( PCount() < 4 )
+	cIdRadn := SPACE(_LR_)
+	cIdRj := gRj
+	cMjesec := gMjesec
+	cGodina := gGodina
+	cObracun := gObracun
+
 	O_PAROBR
 	O_LD_RJ
 	O_RADN
@@ -59,6 +60,7 @@ if (PCount()<4)
 	O_RADKR
 	O_KRED
 	O_LD
+
 else
 	cObracun:=cObrac
 endif
@@ -112,7 +114,7 @@ endif
 
 PoDoIzSez(cGodina,cMjesec)
 
-if cVarijanta=="5"
+if cVarijanta == "5"
 	O_LDSM
 endif
 
@@ -267,10 +269,24 @@ endif
 
 END PRINT
 
-if pcount()<4
-	closeret
+if pcount() < 4
+	close all
 else // pcount >= "4"
-	set order to tag (TagVO("1"))
+
+    if __radni_sati == "D"
+	    O_RADSAT
+    endif
+
+	O_PAROBR
+	O_LD_RJ
+	O_RADN
+	O_VPOSLA
+	O_RADKR
+	O_KRED
+	O_LD
+
+	set order to tag ( TagVO("1") ) 
+
 endif
 
 return

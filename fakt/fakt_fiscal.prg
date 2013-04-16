@@ -613,6 +613,12 @@ if !_ok
     return .f.
 endif
 
+if !EMPTY( ALLTRIM( _partn_jib ) ) .and. LEN( ALLTRIM( _partn_jib ) ) < 12 .and. !EMPTY( _partn_clan )
+    _ok := .f.
+    MsgBeep( "INO partner sadrzi clan o oslobodjenju od PDV-a, to je nedozvoljeno !!!" )
+    return _ok
+endif
+
 // ubaci u matricu podatke o partneru
 AADD( _head, { _partn_jib, partn->naz, partn->adresa, ;
          partn->ptt, partn->mjesto, _v_plac, _partn_ino, _partn_pdv } )

@@ -1,3 +1,10 @@
+1.4.163 2013-04-16, vsasa
+
+  - rnal, izvještaj za poslovođe, odabir datuma za izvještaj
+  - os, početno stanje, prenos promjena - korekcije
+  - rnal, izvještaj za poslovođe, nova forma parametara sa hash matricom
+  - fakt, fiskalne funkcije, zabrana ZPDV + INO u kombinaciji, provjera i upozorenje
+ 
 1.4.162 2013-04-12, vsasa
 
   - pos, stanje prodavnice ili magacina sa konta

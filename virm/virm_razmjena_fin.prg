@@ -43,7 +43,7 @@ Box(,5,70)
  read
  cKo_zr:=cIdBanka
  select partn
- seek gFirma
+ seek gVirmFirma
  select fin_pripr
  cKo_txt := trim(partn->naz) + ", " + trim(partn->mjesto)+", "+trim(partn->adresa) + ", " + trim(partn->telefon)
  @ m_x+3,m_y+2 SAY "Konta za koja se prave virmani ?"  GET qqKonto pict "@!S30"
@@ -125,7 +125,7 @@ do while !eof()
 
      // firma nalogdbodavac
      select partn
-     hseek  gFirma
+     hseek  gVirmFirma
 
 
      select virm_pripr
@@ -134,7 +134,7 @@ do while !eof()
              mjesto with gmjesto,;
              svrha_pl with csvrha_pl,;
              iznos with fin_pripr->iznosbhd,;
-             na_teret  with gFirma,;
+             na_teret  with gVirmFirma,;
              Ko_Txt with cKo_txt,;
              Ko_ZR with  cKo_zr ,;
              kome_txt with VRPRIM->naz,;

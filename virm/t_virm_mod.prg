@@ -95,6 +95,7 @@ return
 
 
 
+
 function virm_set_global_vars()
 
 set_global_vars()
@@ -105,6 +106,7 @@ public gOrgJed := SPACE(17)
 public gINulu:="N"
 public gPici:="9,999,999,999,999,999.99"
 public gIDU:="D"
+public gVirmFirma
 
 gMjesto := fetch_metric("virm_mjesto_uplate", nil, PADR( "Sarajevo", 100 ) )
 gOrgJed := fetch_metric("virm_org_jedinica", nil, PADR( "--", 17 ) )
@@ -112,6 +114,7 @@ gPici := fetch_metric("virm_iznos_pict", nil, gPici )
 gINulu := fetch_metric("virm_stampati_nule", nil, gINulu )
 gIDU := fetch_metric("virm_sys_datum_uplate", nil, gIDU )
 gDatum := fetch_metric("virm_init_datum_uplate", nil, gDatum )
+gVirmFirma := PADR( fetch_metric("virm_org_id", nil, "" ), 6 )
 
 return
 

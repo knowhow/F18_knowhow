@@ -138,6 +138,10 @@ do case
 
 endcase
 
+// vrati se na my_home()
+// da ne bi ostao tekuci direktorij na lokaciji izlaznog racuna
+DirChange( my_home() )
+
 // logiraj operaciju...
 log_write( "fiskalni racun " + _dev_drv + " za dokument: " + ;
             ALLTRIM( id_firma ) + "-" + ALLTRIM( tip_dok ) + "-" + ALLTRIM( br_dok ) + ;

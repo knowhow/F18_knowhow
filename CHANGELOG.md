@@ -1,3 +1,10 @@
+1.4.167 2013-04-17, vsasa
+
+  - virm, parametar firme nalogodavca
+  - virm, proširenje pripreme naloga (ispis više informacija)
+  - šifrarnik općina, polje region ubačeno 
+  - nakon fiskalne štampe vrati tekući direktorij u my_home()
+ 
 1.4.166 2013-04-16, vsasa
 
   - rnal, štampa naloga za proizvodnju, korekcije

@@ -46,6 +46,8 @@ AADD(ImeKol, { "Hitno" , {|| Hitno}, "Hitno" } )
 AADD(ImeKol, { "IdJPrih" , {|| IdJprih}, "IdJPrih" } )
 AADD(ImeKol, { "VUPl" , {|| VUPl}, "VUPl" } )
 AADD(ImeKol, { "IdOps" , {|| IdOps}, "IdOps" } )
+AADD(ImeKol, { PADR( "Pos.opis", 30 ) , {|| ko_txt }, "ko_txt" } )
+AADD(ImeKol, { PADR( "Prim.opis", 30 ) , {|| kome_txt }, "kome_txt" } )
 
 FOR i := 1 TO LEN( ImeKol )
     AADD( Kol, i )
@@ -232,7 +234,7 @@ _ko_zr:=_IdBanka
 
 _IdBanka2:=left(_kome_zr,3)
 select partn
-seek gFirma
+seek gVirmFirma
 
 select virm_pripr
 _ko_txt := trim(partn->naz) + ", " + trim(partn->mjesto)+", "+trim(partn->adresa) + ", " + trim(partn->telefon)

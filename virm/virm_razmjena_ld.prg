@@ -97,6 +97,8 @@ _mjesec := fetch_metric( "virm_mjesec", my_user(), MONTH( DATE() ) )
 _poziv_na_broj := fetch_metric( "virm_poziv_na_broj", my_user(), PADR( "", 10 ) ) 
 _racun_upl := fetch_metric( "virm_zr_uplatioca", my_user(), SPACE(16) ) 
 _firma := PADR( fetch_metric("virm_org_id", nil, "" ), 6 )
+// setuj globalnu
+gVirmFirma := _firma
 
 // period od-do
 _per_od := CTOD("")
@@ -207,7 +209,7 @@ do while !EOF() .and. field->id = _oznaka
     _ko_zr := field->ko_zr
 
     select partn
-    hseek gFirma
+    hseek gVirmFirma
 
     _total := 0
     _kredit := 0
@@ -246,7 +248,7 @@ do while !EOF() .and. field->id = _oznaka
         replace field->mjesto with gmjesto
         replace field->svrha_pl with "IS"
         replace field->iznos with _total
-        replace field->na_teret with gFirma
+        replace field->na_teret with gVirmFirma
         replace field->kome_txt with _kome_txt 
         replace field->ko_txt with _ko_txt
         replace field->ko_zr with _ko_zr
@@ -290,7 +292,7 @@ private _budzorg := ""
 private _idjprih := ""
  
 select partn 
-seek gFirma
+seek gVirmFirma
 
 _ko_txt := TRIM( partn->naz ) + ", " + ;
            TRIM( partn->mjesto ) + ", " + ;
@@ -318,7 +320,7 @@ do while !EOF()
     hseek ldvirm->id
 
     select partn
-    hseek gFirma
+    hseek gVirmFirma
 
     select virm_pripr
     
@@ -339,7 +341,7 @@ do while !EOF()
         replace field->vupl with "0"
 
         // posaljioc
-        replace field->na_teret with gFirma
+        replace field->na_teret with gVirmFirma
         replace field->ko_txt with _ko_txt
         replace field->ko_zr with _racun_upl
         replace field->kome_txt with vrprim->naz
@@ -535,7 +537,7 @@ do while !EOF() .and. field->id = _oznaka
     _ko_zr := field->ko_zr
 
     select partn
-    hseek gFirma
+    hseek gVirmFirma
 
     _total := 0
     _kredit := 0
@@ -562,7 +564,7 @@ do while !EOF() .and. field->id = _oznaka
         replace field->mjesto with gMjesto
         replace field->svrha_pl with "KR"
         replace field->iznos with _total
-        replace field->na_teret with gFirma
+        replace field->na_teret with gVirmFirma
         replace field->kome_txt with _kome_txt
         replace field->ko_txt with _ko_txt
         replace field->ko_zr with _ko_zr

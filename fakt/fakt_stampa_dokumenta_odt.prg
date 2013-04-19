@@ -373,17 +373,18 @@ do case
             _gen_jedan := {}
             AADD( _gen_jedan, { _racuni[ _i, 1 ], _racuni[ _i, 2 ], _racuni[ _i, 3 ] } )
 
-            _ctrl_data := {}
-
             _gen_xml( _xml_file, _gen_jedan, @_ctrl_data )
 
             if !EMPTY( _jod_templates_path )
                 _t_path := ALLTRIM( _jod_templates_path )
             endif
 
-            // uzmi template koji ces koristiti
-            if get_file_list_array( _t_path, _filter, @_template, .t. ) == 0
-                return
+            // ako je template prazan, pronadji ga !
+            if EMPTY( _template )
+                // uzmi template koji ces koristiti
+                if get_file_list_array( _t_path, _filter, @_template, .t. ) == 0
+                    return
+                endif
             endif
 
             close all
@@ -403,11 +404,9 @@ do case
                     f18_convert_odt_to_pdf( NIL, ALLTRIM( _ext_pdf ) + _file_out + ".pdf" )
                 endif
 
-
             endif
 
         next
-
 
 endcase
 

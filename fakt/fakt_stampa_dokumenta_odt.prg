@@ -218,6 +218,7 @@ local _ok := .f.
 local _qry, _table, _where
 local _server := pg_server()
 local oRow
+local _scan
 
 // idfirma
 _where := "WHERE f.idfirma = " + _sql_quote( params["id_firma"] )
@@ -267,9 +268,17 @@ _table:GoTo(1)
 racuni := {}
 
 do while !_table:EOF()
+    
     oRow := _table:GetRow()
-    AADD( racuni, { oRow:FieldGet(1), oRow:FieldGet(2), oRow:FieldGet(3) } )
+    
+    _scan := ASCAN( racuni, { |val| val[1] + val[2] + val[3] == oRow:FieldGet(1) + oRow:FieldGet(2) + oRow:FieldGet(3) } )
+    
+    if _scan == 0
+        AADD( racuni, { oRow:FieldGet(1), oRow:FieldGet(2), oRow:FieldGet(3) } )
+    endif
+    
     _table:Skip()
+
 enddo
 
 _ok := .t.

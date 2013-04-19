@@ -1176,9 +1176,9 @@ add_drntext("I02", gFAdresa)
 add_drntext("I03", gFIdBroj)
 // 4. se koristi za id prod.mjesto u pos
 // telefon pos = I05
-add_drntext("I05", ALLTRIM(gFTelefon))
-add_drntext("I10", ALLTRIM(gFTelefon))
-add_drntext("I11", ALLTRIM(gFEmailWeb))
+add_drntext("I05", ALLTRIM( gFTelefon ) )
+add_drntext("I10", ALLTRIM( gFTelefon ) )
+add_drntext("I11", ALLTRIM( gFEmailWeb ) )
 
 // banke
 cBanke:=""

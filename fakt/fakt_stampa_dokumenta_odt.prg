@@ -34,7 +34,7 @@ return
 // ------------------------------------------------
 // stampa dokumenta u odt formatu
 // ------------------------------------------------
-function StDokOdt( cIdf, cIdVd, cBrDok )
+function stdokodt( cIdf, cIdVd, cBrDok )
 local _t_path := my_home()
 local _filter := "f-*.odt"
 local _template := ""
@@ -451,9 +451,9 @@ else
     xml_node("fidp", _id_broj )
 endif 
 
-xml_node("ftel", to_xml_encoding( ALLTRIM(get_dtxt_opis("I10")) ) )
-xml_node("feml", to_xml_encoding( ALLTRIM(get_dtxt_opis("I11")) ) )
-xml_node("fbnk", to_xml_encoding( ALLTRIM(get_dtxt_opis("I09")) ) )
+xml_node("ftel", to_xml_encoding( ALLTRIM( get_dtxt_opis("I10") ) ) )
+xml_node("feml", to_xml_encoding( ALLTRIM( get_dtxt_opis("I11") ) ) )
+xml_node("fbnk", to_xml_encoding( ALLTRIM( get_dtxt_opis("I09") ) ) )
 
 cTmp := ALLTRIM( get_dtxt_opis("I12") )
 xml_node("fdt1", to_xml_encoding(cTmp) )
@@ -476,6 +476,7 @@ local i
 local cTmpTxt := ""
 local _id_broj 
 local _n
+local _din_dem
 
 if ctrl_data == NIL
     ctrl_data := {}
@@ -508,21 +509,59 @@ for _n := 1 to LEN( a_racuni )
     endif
 
     // invoice_no
-    xml_subnode("invoice_no", .f.)
+    xml_subnode( "invoice_no", .f. )
  
+    _din_dem := ALLTRIM( get_dtxt_opis( "D07" ) )
+    
     select drn
     go top
 
-    // totali
-    xml_node("u_bpdv", show_number( field->ukbezpdv, PIC_VRIJEDNOST ) )
-    xml_node("u_pop", show_number( field->ukpopust, PIC_VRIJEDNOST ) )
-    xml_node("u_poptp", show_number( field->ukpoptp, PIC_VRIJEDNOST ) )
-    xml_node("u_bpdvpop", show_number( field->ukbpdvpop, PIC_VRIJEDNOST ) )
-    xml_node("u_pdv", show_number( field->ukpdv, PIC_VRIJEDNOST ) )
-    xml_node("u_kol", show_number( field->ukkol, PIC_KOLICINA ) )
-    xml_node("u_total", show_number( field->ukupno, PIC_VRIJEDNOST ) )
+    // neki totali...
     xml_node("u_zaokr", show_number( field->zaokr, PIC_VRIJEDNOST ) )
     xml_node("u_tottp", show_number( field->ukupno - field->ukpoptp, PIC_VRIJEDNOST ) )
+    xml_node("u_kol", show_number( field->ukkol, PIC_KOLICINA ) )
+    xml_node("u_poptp", show_number( field->ukpoptp, PIC_VRIJEDNOST ) )
+ 
+    // TOTALI:
+    // ------------------------------------
+    xml_subnode( "total", .f. )
+
+    // ukupno bez pdv
+    xml_subnode( "item", .f. )
+        xml_node( "bold", "0" )
+        xml_node( "naz", to_xml_encoding( "Ukupno bez PDV" ) )
+        xml_node( "iznos", show_number( field->ukbezpdv, PIC_VRIJEDNOST ) )
+    xml_subnode( "item", .t. )
+ 
+    // ukupno popust
+    xml_subnode( "item", .f. )
+        xml_node( "bold", "0" )
+        xml_node( "naz", to_xml_encoding( "Ukupno popust" ) )
+        xml_node( "iznos", show_number( field->ukpopust, PIC_VRIJEDNOST ) )
+    xml_subnode( "item", .t. )
+       
+    // ukupno bez pdv - popust
+    xml_subnode( "item", .f. )
+        xml_node( "bold", "0" )
+        xml_node( "naz", to_xml_encoding( "Ukupno bez PDV - popust" ) )
+        xml_node( "iznos", show_number( field->ukbpdvpop, PIC_VRIJEDNOST ) )
+    xml_subnode( "item", .t. )
+ 
+    // pdv
+    xml_subnode( "item", .f. )
+        xml_node( "bold", "0" )
+        xml_node( "naz", to_xml_encoding( "PDV" ) )
+        xml_node( "iznos", show_number( field->ukpdv, PIC_VRIJEDNOST ) )
+    xml_subnode( "item", .t. )
+   
+    // ukupno sa pdv
+    xml_subnode( "item", .f. )
+        xml_node( "bold", "1" )
+        xml_node( "naz", to_xml_encoding( "Ukupno sa PDV (" + ALLTRIM( _din_dem ) + ")" ) )
+        xml_node( "iznos", show_number( field->ukupno, PIC_VRIJEDNOST ) )
+    xml_subnode( "item", .t. )
+    
+    xml_subnode( "total", .t. )
 
     // dodaj u kontrolnu matricu podatke
     ctrl_data[ 1, 1 ] := ctrl_data[ 1, 1 ] + field->ukbezpdv
@@ -554,7 +593,7 @@ for _n := 1 to LEN( a_racuni )
 
     xml_node("dotpr", to_xml_encoding( ALLTRIM(get_dtxt_opis("D05")) ) )
     xml_node("dnar", to_xml_encoding( ALLTRIM(get_dtxt_opis("D06")) ) )
-    xml_node("ddin", to_xml_encoding( ALLTRIM(get_dtxt_opis("D07")) ) )
+    xml_node("ddin", to_xml_encoding( _din_dem ) )
 
     // destinacija na fakturi
     cTmp := ALLTRIM(get_dtxt_opis("D08"))

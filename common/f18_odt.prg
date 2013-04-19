@@ -239,6 +239,25 @@ _ret := .t.
 return _ret 
 
 
+// ------------------------------------------------------------
+// kopiraj fajl na lokaciju
+// ------------------------------------------------------------
+function f18_odt_copy( output_file, destination_file )
+local _ok := .f.
+
+if ( output_file == NIL )
+    __output_odt := __current_odt
+else
+    __output_odt := output_file
+endif
+
+// kopiranje...
+FileCopy( __output_odt, destination_file )
+
+return
+
+
+
 
 // -------------------------------------------------------------------
 // stampanje odt fajla

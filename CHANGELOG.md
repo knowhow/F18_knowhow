@@ -1,3 +1,7 @@
+1.4.168 2013-04-19, vsasa
+
+  - fakt, grupna stampa faktura po zadatom uslovu / eksport na lokaciju 
+ 
 1.4.167 2013-04-17, vsasa
 
   - virm, parametar firme nalogodavca

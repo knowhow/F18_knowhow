@@ -108,84 +108,314 @@ endif
 return
 
 
-// ------------------------------------------------
-// stampa dokumenta u odt formatu, grupne fakture
-// ------------------------------------------------
-function stdokodt_grupno()
-local _t_path := my_home()
-local _filter := "f*.odt"
-local _template := ""
-local _jod_templates_path := F18_TEMPLATE_LOCATION
-local _xml_file := my_home() + "data.xml"
-local _ext_path
-local _racuni := {}
-local _id_firma := gFirma
-local _id_tip_dok := "10"
-local _broj_od := PADR( "", 8 )
-local _broj_do := _broj_od
+
+
+static function _grupno_params( params )
+local _ok := .f.
+local _box_x := 15
+local _box_y := 70
+local _x := 1
+local _id_firma, _id_tip_dok, _brojevi
+local _datum_od, _datum_do
+local _partneri, _roba, _na_lokaciju
+local _tip_gen := "1"
+local _gen_pdf := "N"
+
+_id_firma := fetch_metric( "export_odt_grupno_firma", my_user(), gFirma )
+_id_tip_dok := fetch_metric( "export_odt_grupno_tip_dok", my_user(), "10" )
+_datum_od := fetch_metric( "export_odt_grupno_datum_od", my_user(), DATE() )
+_datum_do := fetch_metric( "export_odt_grupno_datum_do", my_user(), DATE() )
+_brojevi := PADR( fetch_metric( "export_odt_grupno_brojevi", my_user(), "" ) , 500 )
+_partneri := PADR( fetch_metric( "export_odt_grupno_partneri", my_user(), "" ) , 500 )
+_roba := PADR( fetch_metric( "export_odt_grupno_roba", my_user(), "" ) , 500 )
+_na_lokaciju := PADR( fetch_metric( "export_odt_grupno_exp_lokacija", my_user(), "" ) , 500 )
 
 // uslov za stampanje 
-Box(, 5, 60 )
+Box(, _box_x, _box_y )
     
-    @ m_x + 1, m_y + 2 SAY "Grupa stampa ODT faktura..."
-    @ m_x + 3, m_y + 2 SAY "Dokument:" GET _id_firma  
-    @ m_x + 3, col() + 1 SAY "-" GET _id_tip_dok  
-    @ m_x + 4, m_y + 2 SAY "broj od:" GET _broj_od
-    @ m_x + 4, col() + 1 SAY "do:" GET _broj_do
+    @ m_x + _x, m_y + 2 SAY "*** Stampa ODT dokumenata po zadanom uslovu:"
+
+    ++ _x
+    ++ _x
+    
+    @ m_x + _x, m_y + 2 SAY "Radna jedinica / vrsta:" GET _id_firma VALID !EMPTY( _id_firma ) 
+    @ m_x + _x, col() + 1 SAY "-" GET _id_tip_dok VALID !EMPTY( _id_tip_dok )  
+    
+    ++ _x
+ 
+    @ m_x + _x, m_y + 2 SAY "Za datum od:" GET _datum_od
+    @ m_x + _x, col() + 1 SAY "do:" GET _datum_do
+  
+    ++ _x
+    ++ _x
+  
+    @ m_x + _x, m_y + 2 SAY "Brojevi dokumenata:" GET _brojevi PICT "@S45"
+    
+    ++ _x
+    
+    @ m_x + _x, m_y + 2 SAY "Obuhvati artikle:" GET _roba PICT "@S45"
+    
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Obuhvati partnere:" GET _partneri PICT "@S45"
+
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Generisati grupno/jedan po jedan (1/2) ?" GET _tip_gen VALID _tip_gen $ "12"
+
+    ++ _x 
+
+    @ m_x + _x, m_y + 2 SAY "Formirati PDF dokument (D/N) ?" GET _gen_pdf VALID _gen_pdf $ "DN" 
+   
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Prebaci na lokaciju:" GET _na_lokaciju PICT "@S40"
     
     read
 
 BoxC()
 
 if LastKey() == K_ESC
-    return
+    return _ok
 endif
 
-IF !EMPTY( _jod_templates_path )
-    _t_path := ALLTRIM( _jod_templates_path )
-ENDIF
+// sql params
+set_metric( "export_odt_grupno_firma", my_user(), _id_firma )
+set_metric( "export_odt_grupno_tip_dok", my_user(), _id_tip_dok )
+set_metric( "export_odt_grupno_datum_od", my_user(), _datum_od )
+set_metric( "export_odt_grupno_datum_do", my_user(), _datum_do )
+set_metric( "export_odt_grupno_brojevi", my_user(), ALLTRIM( _brojevi ) )
+set_metric( "export_odt_grupno_partneri", my_user(), ALLTRIM( _partneri ) )
+set_metric( "export_odt_grupno_roba", my_user(), ALLTRIM( _roba ) ) 
+set_metric( "export_odt_grupno_exp_lokacija", my_user(), ALLTRIM( _na_lokaciju ) ) 
 
-MsgO( "formiram stavke racuna..." )
+// params
+params := hb_hash()
+params["datum_od"] := _datum_od
+params["datum_do"] := _datum_do
+params["id_firma"] := _id_firma
+params["id_tip_dok"] := _id_tip_dok
+params["brojevi"] := _brojevi
+params["roba"] := _roba
+params["partneri"] := _partneri
+params["tip_gen"] := _tip_gen
+params["gen_pdf"] := _gen_pdf
+params["na_lokaciju"] := _na_lokaciju
 
-O_FAKT_DOKS
-select fakt_doks
-set order to tag "1"
-go top
-seek _id_firma + _id_tip_dok + _broj_od
+_ok := .t.
+return _ok
 
-do while !EOF() .and. field->idfirma == _id_firma .and. field->idtipdok == _id_tip_dok
-    
-    if field->brdok > _broj_do
-        exit
-    endif
 
-    AADD( _racuni, { field->idfirma, field->idtipdok, field->brdok  } )
-    
-    skip
 
-enddo
 
-if LEN( _racuni ) == 0
-    MsgBeep( "Nema odabranih racuna za stampu !" )
-    return 
+// ----------------------------------------------------------
+// generisanje upita za matricu racuna za export
+// ----------------------------------------------------------
+static function _grupno_sql_gen( racuni, params )
+local _ok := .f.
+local _qry, _table, _where
+local _server := pg_server()
+local oRow
+
+// idfirma
+_where := "WHERE f.idfirma = " + _sql_quote( params["id_firma"] )
+// idtipdok
+_where += " AND f.idtipdok = " + _sql_quote( params["id_tip_dok"] )
+// datdok
+if params["datum_od"] <> CTOD("")
+    _where += " AND " + _sql_date_parse( "f.datdok", params["datum_od"], params["datum_do"] )
+endif
+// roba
+if !EMPTY( params["roba"] )
+    _where += " AND " + _sql_cond_parse( "f.idroba", ALLTRIM( params["roba"] ) + " " )
+endif
+// brojevi
+if !EMPTY( params["brojevi"] )
+    _where += " AND " + _sql_cond_parse( "f.brdok", ALLTRIM( params["brojevi"] ) )
+endif
+// partneri
+if !EMPTY( params["partneri"] )
+    _where += " AND " + _sql_cond_parse( "f.idpartner", ALLTRIM( params["partneri"] ) + " " )
 endif
 
-// generisi xml fajl
-_gen_xml( _xml_file, _racuni )
+// glavni upit !
+_qry := "SELECT f.idfirma, f.idtipdok, f.brdok, MAX( f.rbr ) " + ;
+        "FROM fmk.fakt_fakt f "
+
+_qry += _where
+
+_qry += " GROUP BY f.idfirma, f.idtipdok, f.brdok "
+_qry += " ORDER BY f.idfirma, f.idtipdok, f.brdok "
+
+MsgO( "formiranje sql upita u toku ..." )
+
+_table := _sql_query( _server, _qry )
 
 MsgC()
 
-// uzmi template koji ces koristiti
-if get_file_list_array( _t_path, _filter, @_template, .t. ) == 0
+if _table == NIL
+    return NIL
+endif
+
+_table:Refresh()
+
+// sada mi formiraj matricu na osnovu ovoga...
+_table:GoTo(1)
+
+racuni := {}
+
+do while !_table:EOF()
+    oRow := _table:GetRow()
+    AADD( racuni, { oRow:FieldGet(1), oRow:FieldGet(2), oRow:FieldGet(3) } )
+    _table:Skip()
+enddo
+
+_ok := .t.
+return _ok 
+
+
+
+
+// ------------------------------------------------
+// stampa dokumenta u odt formatu, grupne fakture
+// ------------------------------------------------
+function stdokodt_grupno()
+local _t_path := my_home()
+local _filter := "f-*.odt"
+local _template := ""
+local _ext_pdf := fetch_metric( "fakt_dokument_pdf_lokacija", my_user(), "" )
+local _file_out := ""
+local _jod_templates_path := F18_TEMPLATE_LOCATION
+local _xml_file := my_home() + "data.xml"
+local _ext_path
+local _racuni := {}
+local _params := hb_hash()
+local _ctrl_data := {}
+local _tip_gen
+local _gen_pdf, _i
+local _gen_jedan := {}
+local _na_lokaciju
+
+// init ctrl
+AADD( _ctrl_data, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } )
+
+// parametri generisanja...
+if !_grupno_params( @_params )
     return
 endif
 
-close all
-
-if f18_odt_generate( _template, _xml_file )
-	// printaj odt
-    f18_odt_print()
+// generisi mi listu racuna za eksport
+if !_grupno_sql_gen( @_racuni, _params )
+    return 
 endif
+
+if LEN( _racuni ) == 0
+    MsgBeep( "Nema podataka za export !!!" )
+    return 
+endif
+
+// tip generisanja i pdf varijanta !
+// 1 - grupno
+// 2 - jedna po jedna...
+_tip_gen := _params["tip_gen"]
+// generisi PDF dokument ?
+_gen_pdf := _params["gen_pdf"]
+// prebaci na lokaciju
+_na_lokaciju := _params["na_lokaciju"]
+
+do case
+    
+    case _tip_gen == "1"
+
+        // generise se zbirno...
+        // ===================================================================
+        _gen_xml( _xml_file, _racuni, @_ctrl_data )
+
+        if !EMPTY( _jod_templates_path )
+            _t_path := ALLTRIM( _jod_templates_path )
+        endif
+
+        // uzmi template koji ces koristiti
+        if get_file_list_array( _t_path, _filter, @_template, .t. ) == 0
+            return
+        endif
+
+        close all
+
+        // generisi i printaj dokument...
+        if f18_odt_generate( _template, _xml_file )
+
+            _file_out := "fakt_" + DTOS( _params["datum_od"] ) + "_" + DTOS( _params["datum_do"] )
+            
+            if !EMPTY( _na_lokaciju )
+                f18_odt_copy( NIL, ALLTRIM( _na_lokaciju ) + _file_out + ".odt" )
+            endif
+
+            if _params["gen_pdf"] == "D"
+                f18_convert_odt_to_pdf( NIL, ALLTRIM( _ext_pdf ) + _file_out + ".pdf" )
+            endif
+
+            f18_odt_print()
+
+        endif
+
+    case _tip_gen == "2"
+
+        // generise se jedan po jedan dokument...
+        // ====================================================================
+
+        for _i := 1 to LEN( _racuni )
+
+            // napravi mi samo jedan zapis...
+
+            _gen_jedan := {}
+            AADD( _gen_jedan, { _racuni[ _i, 1 ], _racuni[ _i, 2 ], _racuni[ _i, 3 ] } )
+
+            _ctrl_data := {}
+
+            _gen_xml( _xml_file, _gen_jedan, @_ctrl_data )
+
+            if !EMPTY( _jod_templates_path )
+                _t_path := ALLTRIM( _jod_templates_path )
+            endif
+
+            // uzmi template koji ces koristiti
+            if get_file_list_array( _t_path, _filter, @_template, .t. ) == 0
+                return
+            endif
+
+            close all
+
+            // u ovoj varijanti mi ne printarj dokument samo generisi
+            if f18_odt_generate( _template, _xml_file )
+                    
+                _file_out := "fakt_" + _racuni[ _i, 1 ] + "_" + _racuni[ _i, 2 ] + "_" + ;
+                                ALLTRIM( _racuni[ _i, 3 ] )
+ 
+                // mozes nesto raditi sa njim...
+                if !EMPTY( _na_lokaciju )
+                    f18_odt_copy( NIL, ALLTRIM( _na_lokaciju ) + _file_out + ".odt" )
+                endif
+
+                if _params["gen_pdf"] == "D"
+                    f18_convert_odt_to_pdf( NIL, ALLTRIM( _ext_pdf ) + _file_out + ".pdf" )
+                endif
+
+
+            endif
+
+        next
+
+
+endcase
+
+// kontrolni podaci....
+//ctrl_data, { field->ukbezpdv, field->ukpopust, field->ukpoptp, field->ukbpdvpop, ;
+//                    field->ukpdv, field->ukkol, field->ukupno, field->zaokr, ;
+//                    ( field->ukupno - field->ukpoptp ) } )
+
 
 return
 
@@ -233,11 +463,16 @@ return
 // generisi xml sa podacima
 // a_racuni - lista racuna koji treba da se generisu
 // -------------------------------------------------------
-static function _gen_xml( xml_file, a_racuni )
+static function _gen_xml( xml_file, a_racuni, ctrl_data )
 local i
 local cTmpTxt := ""
 local _id_broj 
 local _n
+
+if ctrl_data == NIL
+    ctrl_data := {}
+    AADD( ctrl_data, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } )
+endif
 
 PIC_KOLICINA := PADL(ALLTRIM(RIGHT(PicKol, LEN_KOLICINA)), LEN_KOLICINA, "9")
 PIC_VRIJEDNOST := PADL(ALLTRIM(RIGHT(PicDem, LEN_VRIJEDNOST)), LEN_VRIJEDNOST, "9")
@@ -281,6 +516,17 @@ for _n := 1 to LEN( a_racuni )
     xml_node("u_zaokr", show_number( field->zaokr, PIC_VRIJEDNOST ) )
     xml_node("u_tottp", show_number( field->ukupno - field->ukpoptp, PIC_VRIJEDNOST ) )
 
+    // dodaj u kontrolnu matricu podatke
+    ctrl_data[ 1, 1 ] := ctrl_data[ 1, 1 ] + field->ukbezpdv
+    ctrl_data[ 1, 2 ] := ctrl_data[ 1, 2 ] + field->ukpopust
+    ctrl_data[ 1, 3 ] := ctrl_data[ 1, 3 ] + field->ukpoptp
+    ctrl_data[ 1, 4 ] := ctrl_data[ 1, 4 ] + field->ukbpdvpop
+    ctrl_data[ 1, 5 ] := ctrl_data[ 1, 5 ] + field->ukpdv
+    ctrl_data[ 1, 6 ] := ctrl_data[ 1, 6 ] + field->ukkol
+    ctrl_data[ 1, 7 ] := ctrl_data[ 1, 7 ] + field->ukupno
+    ctrl_data[ 1, 8 ] := ctrl_data[ 1, 8 ] + field->zaokr
+    ctrl_data[ 1, 9 ] := ctrl_data[ 1, 9 ] + ( field->ukupno - field->ukpoptp ) 
+    
     // dokument iz tabele
     xml_node("dbr", to_xml_encoding( ALLTRIM( field->brdok ) ) )
     xml_node("ddat", if( DTOC( field->datdok ) != DTOC( CTOD( "" ) ), DTOC( field->datdok ), "" ) )

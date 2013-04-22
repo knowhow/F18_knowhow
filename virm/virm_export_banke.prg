@@ -209,6 +209,11 @@ local _ok := .f.
 local _count, _rec
 local _total := 0
 
+select ( F_VIPRIPR )
+if !USED()
+    O_VIRM_PRIPR
+endif
+
 select virm_pripr
 set order to tag "1"
 go top
@@ -419,6 +424,7 @@ local _output_dir
 local _line
 local _head_1, _head_2
 local _footer_1, _footer_2
+local _force_eol
 
 _output_dir := my_home() + "export" + SLASH
 
@@ -428,6 +434,8 @@ endif
  
 // fajl ide u my_home/export/
 _output_filename := _output_dir + ALLTRIM( ::export_params["fajl"] )
+
+_force_eol := ::formula_params["forsiraj_eol"] == "D"
 
 SET PRINTER TO ( _output_filename )
 SET PRINTER ON
@@ -443,7 +451,9 @@ _head_1 := ::get_macro_line( "h1" )
 
 if !EMPTY( _head_1 )    
 	?? to_win1250_encoding( hb_strtoutf8( &(_head_1 ) ), .t. )
-    ?
+    if _force_eol
+        ?
+    endif
 endif
 
 // header 2
@@ -451,7 +461,9 @@ _head_2 := ::get_macro_line( "h2" )
 
 if !EMPTY( _head_2 )    
 	?? to_win1250_encoding( hb_strtoutf8( &(_head_2) ), .t. )
-    ?
+    if _force_eol
+        ?
+    endif
 endif
 
 // sada stavke...
@@ -465,7 +477,9 @@ go top
 do while !EOF()
     // upisi u fajl...
 	?? to_win1250_encoding( hb_strtoutf8( &(_line) ), .t. )
-	? 
+    if _force_eol
+        ?
+    endif
     skip
 enddo
 
@@ -477,7 +491,9 @@ _footer_1 := ::get_macro_line( "f1" )
 
 if !EMPTY( _footer_1 )    
 	?? to_win1250_encoding( hb_strtoutf8( &(_footer_1 ) ), .t. )
-    ?
+    if _force_eol
+        ?
+    endif
 endif
 
 // footer 2
@@ -485,7 +501,9 @@ _footer_2 := ::get_macro_line( "f2" )
 
 if !EMPTY( _footer_2 )    
 	?? to_win1250_encoding( hb_strtoutf8( &(_footer_2) ), .t. )
-    ?
+    if _force_eol
+        ?
+    endif
 endif
 
 
@@ -552,7 +570,7 @@ local _ok := .f.
 local _x := 1
 local _id_formula := fetch_metric( "virm_export_banke_tek", my_user(), 1 )
 local _active, _formula, _filename, _name, _sep, _sep_formula
-local _head_1, _head_2, _footer_1, _footer_2
+local _head_1, _head_2, _footer_1, _footer_2, _force_eol
 local _write_params
 
 Box(, 15, 70 )
@@ -577,10 +595,11 @@ Box(, 15, 70 )
     _name := ::formula_params["name"]
     _sep := ::formula_params["separator"]
     _sep_formula := ::formula_params["separator_formula"]
+    _force_eol := ::formula_params["forsiraj_eol"]
 
     if _formula == NIL
         // tek se podesavaju parametri za ovu formulu
-        _formula := SPACE(500)
+        _formula := SPACE(1000)
         _head_1 := _formula
         _head_2 := _formula
         _footer_1 := _formula
@@ -589,16 +608,18 @@ Box(, 15, 70 )
         _filename := PADR( "", 50 )
         _sep := ";"
         _sep_formula := ";"
+        _force_eol := "D"
     else
-        _formula := PADR( ALLTRIM( _formula ), 500 )
-        _head_1 := PADR( ALLTRIM( _head_1 ), 500 )
-        _head_2 := PADR( ALLTRIM( _head_2 ), 500 )
-        _footer_1 := PADR( ALLTRIM( _footer_1 ), 500 )
-        _footer_2 := PADR( ALLTRIM( _footer_2 ), 500 )
-        _name := PADR( ALLTRIM( _name ), 100 )
-        _filename := PADR( ALLTRIM( _filename ), 50 )
+        _formula := PADR( ALLTRIM( _formula ), 1000 )
+        _head_1 := PADR( ALLTRIM( _head_1 ), 1000 )
+        _head_2 := PADR( ALLTRIM( _head_2 ), 1000 )
+        _footer_1 := PADR( ALLTRIM( _footer_1 ), 1000 )
+        _footer_2 := PADR( ALLTRIM( _footer_2 ), 1000 )
+        _name := PADR( ALLTRIM( _name ), 500 )
+        _filename := PADR( ALLTRIM( _filename ), 500 )
         _sep := PADR( _sep, 1 )
         _sep_formula := PADR( _sep_formula, 1 )
+        _force_eol := PADR( _force_eol, 1 )
     endif
 
     ++ _x
@@ -640,6 +661,10 @@ Box(, 15, 70 )
  
     @ m_x + _x, m_y + 2 SAY "    Separator formule [ ; , . ]:" GET _sep_formula 
 
+    ++ _x
+    
+    @ m_x + _x, m_y + 2 SAY "     Forsiraj kraj linije (D/N):" GET _force_eol VALID _force_eol $ "DN" PICT "!@" 
+
     read
 
 BoxC()
@@ -661,6 +686,7 @@ set_metric( "virm_export_banke_tek", my_user(), _id_formula )
 ::formula_params["footer_2"] := _footer_2
 ::formula_params["file"] := _filename
 ::formula_params["name"] := _name
+::formula_params["forsiraj_eol"] := _force_eol
 
 ::export_setup_write_params( _id_formula )
 
@@ -688,6 +714,7 @@ local _ok := .t.
 ::formula_params["footer_2"] := fetch_metric( _param_name + "footer_2", NIL, NIL )
 ::formula_params["separator"] := fetch_metric( _param_name + "sep", NIL, NIL )
 ::formula_params["separator_formula"] := fetch_metric( _param_name + "sep_formula", NIL, ";" )
+::formula_params["forsiraj_eol"] := fetch_metric( _param_name + "force_eol", NIL, NIL )
 
 return _ok
 
@@ -711,6 +738,7 @@ set_metric( _param_name + "footer_1", NIL, ALLTRIM( ::formula_params["footer_1"]
 set_metric( _param_name + "footer_2", NIL, ALLTRIM( ::formula_params["footer_2"] ) )
 set_metric( _param_name + "sep", NIL, ALLTRIM( ::formula_params["separator"] ) )
 set_metric( _param_name + "sep_formula", NIL, ALLTRIM( ::formula_params["separator_formula"] ) )
+set_metric( _param_name + "force_eol", NIL, ALLTRIM( ::formula_params["forsiraj_eol"] ) )
 
 return .t.
 

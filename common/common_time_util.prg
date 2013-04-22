@@ -10,24 +10,6 @@
  */
 
 
-/****h SC_CLIB/TIME_UT ***
-* 
-*AUTOR
-  Ernad Husremovic, ernad@sigma-com.net
-
-*IME 
-  TIME_UT
-
-*OPIS
-  Fukcije za rad za operacije nad VRIJEME, DATUM varijabama
-
-
-*DATUM
-  04.2002
-
-****/
-
-
 function InRange(xVar,xPoc,xKraj)
 if VALTYPE(xVar)=="D"
   xPoc=CTOD(xPoc);xKraj:=CTOD(xKraj)
@@ -40,7 +22,6 @@ return  ( dDat>=d1 .and. dDat<=d2 )
 
 
 
-* opseg
 function GMJD(nBrdana)
 local ostatak, godina,mjeseci,dana
 godina= (nBrDana/365.125)
@@ -54,8 +35,6 @@ if dana==30; dana:=0; mjeseci++; endif
 if mjeseci==13; mjeseci:=0; godina++; endif
 return {godina,mjeseci,dana}
 
-
-* god,mj,dana ->
 
 function GMJD2N(god,mj,dana)
 return god*365.125+mj*30.41+dana
@@ -88,3 +67,26 @@ endif
 aRU[1]+=aRE[1]+aRB[1]
 
 return aRU
+
+
+
+// konverzija datuma u string
+function date_to_str( date, format )
+
+if format == NIL
+    return DTOC( date )    
+endif
+
+format := STRTRAN( format, "GGGG", ALLTRIM( STR( YEAR( date ) ) ) )
+format := STRTRAN( format, "GG", RIGHT( ALLTRIM( STR( YEAR( date ) ) ), 2 ) )
+format := STRTRAN( format, "MM", PADL( ALLTRIM( STR( MONTH( date ) ) ), 2, "0" ) )
+format := STRTRAN( format, "DD", PADL( ALLTRIM( STR( DAY( date ) ) ), 2, "0" ) )
+
+return format
+
+
+
+
+
+
+

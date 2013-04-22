@@ -555,7 +555,7 @@ local nSw5 := 1
 local nSw6 := 1
 local nSw7 := 0
 local _params := fakt_params()
-
+local _auto_odt := fetch_metric( "fakt_odt_template_auto", NIL, "D" )
 private GetList:={}
 private cIzvj:="1"
 
@@ -652,15 +652,20 @@ Box( ,22, 76, .f., "Izgled dokumenata")
     endif
 
     if IsPdv()
-        @ m_x+ nX, m_y+2 SAY "PDV Delphi RB prikaz (D/N)" GET gPDVDrb PICT "@!" VALID gPDVDrb $ "DN"
-        nX++
-        @ m_x+ nX, m_y+2 SAY "PDV TXT dokument varijanta " GET gPDVDokVar PICT "@!" VALID gPDVDokVar $ "123"
-        nX++
-    endif
+        
+        @ m_x + nX, m_y + 2 SAY "Koristi ODT template automatski (D/N) ?" GET _auto_odt VALID _auto_odt $ "DN" PICT "!@"
 
-    if IsPdv()
+        nX ++
+
+        @ m_x+ nX, m_y+2 SAY "PDV Delphi RB prikaz (D/N)" GET gPDVDrb PICT "@!" VALID gPDVDrb $ "DN"
+        nX ++
+            
+        @ m_x+ nX, m_y+2 SAY "PDV TXT dokument varijanta " GET gPDVDokVar PICT "@!" VALID gPDVDokVar $ "123"
+        nX ++
+
         nX += 2
         @ m_x+nX, m_y+2 SAY "Koordinate iznad kupac/ispod kupac/nar_otp-tabela"
+        
         nX ++
         @ m_x+nX, m_y+2 SAY "DX-1 :" GET nDx1 ;
              PICT "99" 
@@ -753,6 +758,7 @@ if ( LASTKEY() <> K_ESC )
 
     cSection := "1"
     
+    set_metric( "fakt_odt_template_auto", NIL, _auto_odt )
 
     set_metric( "fakt_ispis_grupacije_na_dokumentu", nil, glRGrPrn )
     set_metric( "fakt_ispis_salda_kupca_dobavljaca", nil, gShSld )

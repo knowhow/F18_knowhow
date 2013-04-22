@@ -68,7 +68,7 @@ if PCount() == 0 .or. ( cIdTipDok == nil .and. lJFill == .t. )
 	cBrDok:=BrDok
 endif
 
-seek cIdFirma+cIdTipDok+cBrDok
+seek cIdFirma + cIdTipDok + cBrDok
 NFOUND CRET
 
 if PCount() <= 1 .or. ( cIdTipDok == nil .and. lJFill == .t.)

@@ -1,6 +1,7 @@
 1.4.168 2013-04-19, vsasa
 
-  - fakt, grupna stampa faktura po zadatom uslovu / eksport na lokaciju 
+  - fakt, grupna stampa faktura po zadatom uslovu / eksport na lokaciju
+  - fakt, novi template fakture (f-std.odt, f-stdk.odt) / automatska selekcija template-a 
  
 1.4.167 2013-04-17, vsasa
 

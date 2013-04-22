@@ -65,15 +65,17 @@ method mMenuStandard
 private opc:={}
 private opcexe:={}
 
-AADD(opc,   "1. priprema virmana                 ")
+AADD(opc,   "1. priprema virmana                         ")
 AADD(opcexe, {|| unos_virmana()} )
 AADD(opc,   "2. izvjestaji")
 AADD(opcexe, {|| nil})
-AADD(opc,   "3. moduli - razmjena podataka")
-AADD(opcexe, {|| virm_razmjena_podataka()})
+AADD(opc,   "3. moduli - razmjena podataka ")
+AADD(opcexe, {|| virm_razmjena_podataka() })
+AADD(opc,   "4. export podataka za banku" )
+AADD(opcexe, {|| virm_export_banke() })
 AADD(opc,"------------------------------------")
 AADD(opcexe, nil)
-AADD(opc,   "4. sifrarnici")
+AADD(opc,   "S. sifrarnici")
 AADD(opcexe, {|| virm_sifrarnici()})
 AADD(opc,"------------------------------------")
 AADD(opcexe, nil)

@@ -76,13 +76,13 @@ select virm_pripr
 
 do case
 
-    case Ch==K_ALT_P      
+    case Ch == K_ALT_P      
         // rekapitulacija uplata
         _rekapitulacija_uplata()
         go (nRec)
         return DE_CONT
 
-    case Ch==K_ALT_M
+    case Ch == K_ALT_M
         cDN:=" "
         Box(,2,70)
             @ m_x+1,m_y+2 SAY "Zelite sve stavke oznaciti odstampane/neodstampane ( /*) ?" ;
@@ -98,7 +98,13 @@ do case
         go top
         return DE_REFRESH
 
-    case Ch==ASC(" ")
+    case CHR(Ch) $ "eE"
+    
+        virm_export_banke()
+
+        return DE_CONT
+
+    case Ch == ASC(" ")
         // ako je _ST_ = " " onda stavku treba odstampati
         //        _ST_ = "*" onda stavku ne treba stampati
 
@@ -109,7 +115,7 @@ do case
         endif
         return DE_REFRESH
 
-    case Ch==K_CTRL_T
+    case Ch == K_CTRL_T
 
         if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
             delete
@@ -118,11 +124,11 @@ do case
         endif
         return DE_CONT
 
-    case Ch==K_CTRL_P
+    case Ch == K_CTRL_P
         stampa_virmana_drb()
         return DE_REFRESH
   
-    case Ch==K_CTRL_A
+    case Ch == K_CTRL_A
         PushWA()
         select virm_pripr
         //go top

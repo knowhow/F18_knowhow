@@ -20,7 +20,7 @@ static PIC_VRIJEDNOST := ""
 static PIC_CIJENA := ""
 static __default_odt_template := ""
 static _temporary := .f.
-
+static __auto_odt := ""
 
 
 // ------------------------------------------------------
@@ -28,6 +28,11 @@ static _temporary := .f.
 // ------------------------------------------------------
 function __default_odt_template()
 __default_odt_template := fetch_metric( "fakt_default_odt_template", my_user(), "" )
+return
+
+
+function __auto_odt_template()
+__auto_odt := fetch_metric( "fakt_odt_template_auto", NIL, "D" )
 return
 
 
@@ -45,11 +50,25 @@ local _ext_pdf := fetch_metric( "fakt_dokument_pdf_lokacija", my_user(), "" )
 local _ext_path
 local _gen_pdf := .f.
 local _racuni := {}
+local __tip_dok
 
-if ( cIdF <> nil )
+// setuj static var...
+__auto_odt_template()
+
+if ( cIdF <> NIL )
     _file_pdf := "fakt_" + cIdF + "_" + cIdVd + "_" + ALLTRIM(cBrDok) + ".pdf"
+    __tip_dok := cIdVd
 else
+
     _file_pdf := "fakt_priprema.pdf"
+
+    // ali moramo znati koji je dokument u pitanju !
+    select fakt_pripr 
+    set order to tag "1"
+    go top
+
+    __tip_dok := field->idtipdok
+
 endif
 
 IF !EMPTY( _jod_templates_path )
@@ -74,7 +93,18 @@ MsgC()
 
 // ako postoji setovan default template, koristi njega !
 if !EMPTY( __default_odt_template )
+
     _template := __default_odt_template
+
+elseif __auto_odt == "D"
+
+    // template baziran na vrsti dokumenta...
+    if __tip_dok $ "12#13"
+        _template := "f-stdk.odt"
+    else
+        _template := "f-std.odt"
+    endif
+
 else
     // uzmi template koji ces koristiti
     if get_file_list_array( _t_path, _filter, @_template, .t. ) == 0
@@ -307,6 +337,9 @@ local _gen_pdf, _i
 local _gen_jedan := {}
 local _na_lokaciju
 
+// setuj static var...
+__auto_odt_template()
+
 // init ctrl
 AADD( _ctrl_data, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } )
 
@@ -345,7 +378,7 @@ do case
         if !EMPTY( _jod_templates_path )
             _t_path := ALLTRIM( _jod_templates_path )
         endif
-
+        
         // uzmi template koji ces koristiti
         if get_file_list_array( _t_path, _filter, @_template, .t. ) == 0
             return
@@ -387,12 +420,20 @@ do case
             if !EMPTY( _jod_templates_path )
                 _t_path := ALLTRIM( _jod_templates_path )
             endif
-
-            // ako je template prazan, pronadji ga !
-            if EMPTY( _template )
-                // uzmi template koji ces koristiti
-                if get_file_list_array( _t_path, _filter, @_template, .t. ) == 0
-                    return
+            
+            if __auto_odt == "D"
+                if _racuni[ _i, 2 ] $ "12#13"
+                    _template := "f-stdk.odt"
+                else
+                    _template := "f-std.odt"
+                endif
+            else
+                // ako je template prazan, pronadji ga !
+                if EMPTY( _template )
+                    // uzmi template koji ces koristiti
+                    if get_file_list_array( _t_path, _filter, @_template, .t. ) == 0
+                        return
+                    endif
                 endif
             endif
 
@@ -424,6 +465,7 @@ endcase
 //                    field->ukpdv, field->ukkol, field->ukupno, field->zaokr, ;
 //                    ( field->ukupno - field->ukpoptp ) } )
 
+// ovdje bi trebalo izbaciti na kraju rekapitulaciju podataka...
 
 return
 
@@ -518,9 +560,7 @@ for _n := 1 to LEN( a_racuni )
 
     // neki totali...
     xml_node("u_zaokr", show_number( field->zaokr, PIC_VRIJEDNOST ) )
-    xml_node("u_tottp", show_number( field->ukupno - field->ukpoptp, PIC_VRIJEDNOST ) )
     xml_node("u_kol", show_number( field->ukkol, PIC_KOLICINA ) )
-    xml_node("u_poptp", show_number( field->ukpoptp, PIC_VRIJEDNOST ) )
  
     // TOTALI:
     // ------------------------------------
@@ -532,21 +572,23 @@ for _n := 1 to LEN( a_racuni )
         xml_node( "naz", to_xml_encoding( "Ukupno bez PDV" ) )
         xml_node( "iznos", show_number( field->ukbezpdv, PIC_VRIJEDNOST ) )
     xml_subnode( "item", .t. )
- 
-    // ukupno popust
-    xml_subnode( "item", .f. )
-        xml_node( "bold", "0" )
-        xml_node( "naz", to_xml_encoding( "Ukupno popust" ) )
-        xml_node( "iznos", show_number( field->ukpopust, PIC_VRIJEDNOST ) )
-    xml_subnode( "item", .t. )
+
+    if ROUND( field->ukpopust, 2 ) <> 0 
+        // ukupno popust
+        xml_subnode( "item", .f. )
+            xml_node( "bold", "0" )
+            xml_node( "naz", to_xml_encoding( "Ukupno popust" ) )
+            xml_node( "iznos", show_number( field->ukpopust, PIC_VRIJEDNOST ) )
+        xml_subnode( "item", .t. )
        
-    // ukupno bez pdv - popust
-    xml_subnode( "item", .f. )
-        xml_node( "bold", "0" )
-        xml_node( "naz", to_xml_encoding( "Ukupno bez PDV - popust" ) )
-        xml_node( "iznos", show_number( field->ukbpdvpop, PIC_VRIJEDNOST ) )
-    xml_subnode( "item", .t. )
- 
+        // ukupno bez pdv - popust
+        xml_subnode( "item", .f. )
+            xml_node( "bold", "0" )
+            xml_node( "naz", to_xml_encoding( "Ukupno bez PDV - popust" ) )
+            xml_node( "iznos", show_number( field->ukbpdvpop, PIC_VRIJEDNOST ) )
+        xml_subnode( "item", .t. )
+    endif
+    
     // pdv
     xml_subnode( "item", .f. )
         xml_node( "bold", "0" )
@@ -561,7 +603,34 @@ for _n := 1 to LEN( a_racuni )
         xml_node( "iznos", show_number( field->ukupno, PIC_VRIJEDNOST ) )
     xml_subnode( "item", .t. )
     
+    // popust na teret prodavca, ako ga ima !
+
+    if ROUND( field->ukpoptp, 2 ) <> 0
+
+        // Popust na teret prodavca
+        xml_subnode( "item", .f. )
+            xml_node( "bold", "0" )
+            xml_node( "naz", to_xml_encoding( "Popust na t.p." ) )
+            xml_node( "iznos", show_number( field->ukpoptp, PIC_VRIJEDNOST ) )
+        xml_subnode( "item", .t. )
+ 
+        // Ukupno - pop.na teret prodavca
+        xml_subnode( "item", .f. )
+            xml_node( "bold", "1" )
+            xml_node( "naz", to_xml_encoding( "UKUPNO - popust na t.p." ) )
+            xml_node( "iznos", show_number( field->ukupno - field->ukpoptp, PIC_VRIJEDNOST ) )
+        xml_subnode( "item", .t. )
+
+    endif
+
     xml_subnode( "total", .t. )
+
+    // da li je faktura sa popustom na teret prodavaca ili nije !
+    if ROUND( field->ukpoptp, 2 ) <> 0
+        xml_node( "poptp", "1" )
+    else
+        xml_node( "poptp", "0" )
+    endif
 
     // dodaj u kontrolnu matricu podatke
     ctrl_data[ 1, 1 ] := ctrl_data[ 1, 1 ] + field->ukbezpdv

@@ -98,7 +98,12 @@ if !gAppSrv
   standardboje()
 endif
 
-SET KEY K_INS  TO ToggleINS()
+SET KEY K_INS TO ToggleINS()
+
+#ifdef __PLATFORM__DARWIN
+    SET KEY K_F12 TO ToggleIns()
+#endif
+
 SET MESSAGE TO 24 CENTER
 SET DATE GERMAN
 SET SCOREBOARD OFF

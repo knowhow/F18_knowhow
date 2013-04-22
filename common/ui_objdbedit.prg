@@ -334,7 +334,7 @@ DO CASE
 	CASE Ch == K_SH_F1
 		calc()
 
-    case (Ch==K_F3)
+    CASE (Ch==K_F3)
          new_f18_session_thread()
 
 	CASE Ch == K_CTRL_F

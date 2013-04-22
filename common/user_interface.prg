@@ -1685,21 +1685,23 @@ return
 
 
 function ToggleINS()
-
 local nx
 local ny
 
-nx:=row()
-ny:=col()
+nx := row()
+ny := col()
+
 if ReadInsert(!ReadInsert())
-   setcursor(1)
-   @ 0, MAXCOLS()-20 SAY  '< OVER >' COLOR Invert
+    setcursor(1)
+    @ 0, MAXCOLS() - 20 SAY '< OVER >' COLOR Invert
 else
-   setcursor(2)
-   @ 0, MAXCOLS()-20 SAY  '< INS  >' COLOR Invert
+    setcursor(2)
+    @ 0, MAXCOLS() - 20 SAY  '< INS  >' COLOR Invert
 endif
-@ 0, MAXCOLS()-11 SAY "bring.out" COLOR "GR+/B"
-setpos(nx,ny)
+
+@ 0, MAXCOLS() - 11 SAY "bring.out" COLOR "GR+/B"
+
+setpos( nx, ny )
 
 return .t.
 

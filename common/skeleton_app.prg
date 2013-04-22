@@ -11,9 +11,7 @@
 
 #include "fmk.ch"
 
-/*! \file sclib/base/2g/app.prg
- *  \brief Bazni aplikacijski objekat - TAppMod
- */
+
 function TAppModNew(oParent, cVerzija, cPeriod, cKorisn, cSifra, p3,p4,p5,p6,p7)
 
 local oObj
@@ -170,7 +168,7 @@ do case
     
     case (Ch == K_SH_F6 )
         f18_old_session()
- 
+
     case (Ch==K_SH_F2 .or. Ch==K_CTRL_F2)
         PPrint()
     

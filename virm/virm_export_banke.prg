@@ -85,7 +85,7 @@ AADD( _dbf, { "TIP_ST"     , "C",   1, 0 } )
 AADD( _dbf, { "TIP_DOK"    , "C",   1, 0 } )
 AADD( _dbf, { "V_UPL"      , "C",   1, 0 } )
 AADD( _dbf, { "OPCINA"     , "C",   3, 0 } )
-AADD( _dbf, { "BPO"        , "C",  12, 0 } )
+AADD( _dbf, { "BPO"        , "C",  13, 0 } )
 
 AADD( _dbf, { "V_PRIH"     , "C",   6, 0 } )
 AADD( _dbf, { "BUDZET"     , "C",   7, 0 } )
@@ -94,7 +94,7 @@ AADD( _dbf, { "PNABR"      , "C",  10, 0 } )
 AADD( _dbf, { "IZNOS"      , "N",  15, 2 } )
 
 AADD( _dbf, { "TOT_IZN"    , "N",  15, 2 } )
-AADD( _dbf, { "TOT_STA"    , "N",  15, 2 } )
+AADD( _dbf, { "TOT_ST"     , "N",  15, 2 } )
 
 return _dbf
 
@@ -219,6 +219,7 @@ set order to tag "1"
 go top
 
 if RECCOUNT() == 0
+    MsgBeep( "U pripremi nema virmana !!!" )
     return _ok
 endif
 
@@ -238,18 +239,27 @@ do while !EOF()
     _rec["rbr"] := virm_pripr->rbr
     
     // mjesto
-    _rec["mjesto"] := virm_pripr->mjesto
+    _rec["mjesto"] := UPPER( virm_pripr->mjesto )
 
     // podaci posiljaoca i primaoca
     _rec["prim_rn"] := virm_pripr->kome_zr
-    _rec["prim_naz"] := virm_pripr->kome_txt
-    _rec["prim_mj"] := virm_pripr->kome_sj
+    _rec["prim_naz"] := UPPER( virm_pripr->kome_txt )
+    _rec["prim_mj"] := UPPER( virm_pripr->kome_sj )
+
+    if EMPTY( _rec["prim_mj"] )
+        _rec["prim_mj"] := _rec["mjesto"]
+    endif
+
     _rec["pos_rn"] := virm_pripr->ko_zr
-    _rec["pos_naz"] := virm_pripr->ko_txt
-    _rec["pos_mj"] := virm_pripr->ko_sj
+    _rec["pos_naz"] := UPPER( virm_pripr->ko_txt )
+    _rec["pos_mj"] := UPPER( virm_pripr->ko_sj )
+
+    if EMPTY( _rec["pos_mj"] )
+        _rec["pos_mj"] := _rec["mjesto"]
+    endif
 
     // svrha uplate
-    _rec["svrha"] := virm_pripr->svrha_doz
+    _rec["svrha"] := UPPER( virm_pripr->svrha_doz )
 
     // sifra placanja po sifraniku TRN.DAT
     // ako je sifra duzine 4 za sifru se popuni sa 2 karaktera prazna
@@ -268,14 +278,11 @@ do while !EOF()
     // tip dokumenta:
     // 0 - nalog za prenos
     // 1 - nalog za placanje JP
-    _rec["tip_dok"] := "0"
-    if !EMPTY( virm_pripr->budzorg )
-        _rec["tip_dok"] := "1"
-    endif
+    _rec["tip_dok"] := "1"
 
     // vrsta uplate:
     // 0, 1 ili 2
-    _rec["v_upl"] := virm_pripr->vupl
+    _rec["v_upl"] := "0"
 
     // broj poreznog obveznika
     _rec["bpo"] := virm_pripr->bpo
@@ -354,7 +361,7 @@ do case
         _struct := ALLTRIM( ::formula_params["head_1"] )
     case var == "h2"
         // header 2
-        _struct := ALLTRIM( ::formula_params["head_1"] )
+        _struct := ALLTRIM( ::formula_params["head_2"] )
     case var == "f1"
          // footer 1
         _struct := ALLTRIM( ::formula_params["footer_1"] )
@@ -574,6 +581,10 @@ local _head_1, _head_2, _footer_1, _footer_2, _force_eol
 local _write_params
 
 Box(, 15, 70 )
+
+    #ifdef __PLATWORM__DARWIN
+        readinsert(.t.)
+    #endif
 
     @ m_x + _x, m_y + 2 SAY "Varijanta eksporta:" GET _id_formula PICT "999"
 

@@ -1,3 +1,7 @@
+1.4.169 2013-04-22, vsasa
+
+  - virm, export podataka virmana u txt fajl (eksport za banke) 
+ 
 1.4.168 2013-04-19, vsasa
 
   - fakt, grupna stampa faktura po zadatom uslovu / eksport na lokaciju

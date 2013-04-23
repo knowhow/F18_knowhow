@@ -1,3 +1,7 @@
+1.4.170 2013-04-23, vsasa
+ 
+  - kalk, import txt (varaždin), setovanje mpc iz šifranika na osnovu tabele koncij
+
 1.4.169 2013-04-22, vsasa
 
   - virm, export podataka virmana u txt fajl (eksport za banke) 

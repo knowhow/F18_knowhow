@@ -1120,8 +1120,10 @@ local cIdKonto
 local cIdKonto2
 local cIdPJ
 local aArr_ctrl := {}
+local _id_konto, _id_konto2
 
 O_KALK_PRIPR
+O_KONCIJ
 O_KALK_DOKS
 O_KALK_DOKS2
 O_ROBA
@@ -1141,9 +1143,9 @@ endif
 
 go top
 
-nRbr:=0
-nUvecaj:=0
-nCnt:=0
+nRbr := 0
+nUvecaj := 0
+nCnt := 0
 
 cPFakt := "XXXXXX"
 cPTDok := "XX"
@@ -1259,6 +1261,16 @@ do while !EOF()
 	
 	endif
 
+    // konta...
+	_id_konto := GetKtKalk( cTDok, temp->idpm, "Z", cIdPJ )
+	_id_konto2 := GetKtKalk( cTDok, temp->idpm, "R", cIdPJ )
+	
+    // pozicioniraj se na konto zaduzuje
+    select koncij
+    set order to tag "ID"
+    go top
+    seek _id_konto
+
 	// dodaj zapis u kalk_pripr
 	select pript
 	append blank
@@ -1279,21 +1291,25 @@ do while !EOF()
 	// konta:
 	// =====================
 	// zaduzuje
-	replace idkonto with GetKtKalk(cTDok, temp->idpm, "Z", cIdPJ)
+	replace idkonto with _id_konto
 	// razduzuje
-	replace idkonto2 with GetKtKalk(cTDok, temp->idpm, "R", cIdPJ)
+	replace idkonto2 with _id_konto2 
 	
 	replace idzaduz2 with ""
 	
 	// spec.za tip dok 11
 	if cTDok $ "11#41"
-		replace tmarza2 with "A"
+		
+        replace tmarza2 with "A"
 		replace tprevoz with "A"
-		if cTDok == "11"
-			replace mpcsapp with roba->mpc2
+		
+        if cTDok == "11"
+            // uzmi mpc iz sifrarnika roba prema podesenju u konciju...
+			replace mpcsapp with UzmiMpcSif()
 		else
 			replace mpcsapp with temp->cijena
 		endif
+
 	endif
 	
 	replace kolicina with temp->kolicina

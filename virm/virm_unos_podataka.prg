@@ -686,7 +686,7 @@ return aSifv
 // jprih.dbf-a treba biti pozicioniran
 // na trazeni javni prihod
 // ----------------------------------------------------
-function JPrih(cIdJPrih, cIdOps, cIdKan, cIdEnt)
+function JPrih( cIdJPrih, cIdOps, cIdKan, cIdEnt )
 local fOk := .f.
 
 if cIdOps == NIL

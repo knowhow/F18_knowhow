@@ -554,8 +554,8 @@ function CreRekLD()
 aDbf:={{"GODINA"     ,  "C" ,  4, 0} ,;
        {"MJESEC"     ,  "C" ,  2, 0} ,;
        {"ID"         ,  "C" , 40, 0} ,;
-       {"opis"       ,  "C" , 40, 0} ,;
-       {"opis2"      ,  "C" , 35, 0} ,;
+       {"opis"       ,  "C" , 100, 0} ,;
+       {"opis2"      ,  "C" , 100, 0} ,;
        {"iznos1"     ,  "N" , 25, 4} ,;
        {"iznos2"     ,  "N" , 25, 4} ,;
        {"idpartner"  ,  "C" ,  6, 0}}
@@ -1650,30 +1650,46 @@ return
 
 
 function IspisKred(lSvi)
+local _kr_partija 
 
 if "SUMKREDITA" $ tippr->formula
-    if gReKrOs=="X"
+
+    if gReKrOs == "X"
+
         ? cLinija
         ? "  ",Lokal("Od toga pojedinacni krediti:")
+
         SELECT RADKR
         SET ORDER TO TAG "3"
         SET FILTER TO STR(cGodina,4)+STR(cMjesec,2)<=STR(godina,4)+STR(mjesec,2) .and. STR(cGodina,4)+STR(cMjesecDo,2)>=STR(godina,4)+STR(mjesec,2)
         GO TOP
+
         DO WHILE !EOF()
+
             cIdKred:=IDKRED
+
             SELECT KRED
             HSEEK cIdKred
+
             SELECT RADKR
             nUkKred := 0
+
             DO WHILE !EOF() .and. IDKRED==cIdKred
-                cNaOsnovu:=NAOSNOVU; cIdRadnKR:=IDRADN
+
+                cNaOsnovu := NAOSNOVU
+                cIdRadnKR := IDRADN
+
                 SELECT RADN
                 HSEEK cIdRadnKR
+
                 SELECT RADKR
-                cOpis2   := RADNIK
+                cOpis2 := RADNIK
                 nUkKrRad := 0
-                DO WHILE !EOF() .and. IDKRED==cIdKred .and. cNaOsnovu==NAOSNOVU .and. cIdRadnKR==IDRADN
+
+                DO WHILE !EOF() .and. IDKRED == cIdKred .and. cNaOsnovu == NAOSNOVU .and. cIdRadnKR == IDRADN
+
                     mj:=mjesec
+
                     if lSvi
                         select ld
                         set order to tag (TagVO("2"))
@@ -1683,18 +1699,29 @@ if "SUMKREDITA" $ tippr->formula
                         select ld
                         hseek  str(cGodina,4)+cidrj+str(mj,2)+if(lViseObr.and.!EMPTY(cObracun),cObracun,"")+radkr->idradn
                     endif // lSvi
+
                     select radkr
+
                     if ld->(found())
                         nUkKred  += iznos
                         nUkKrRad += iznos
                     endif
+
                     SKIP 1
+
                 ENDDO
-                if nUkKrRad<>0
+
+                if nUkKrRad <> 0
+
+                    _kr_partija := IF( !EMPTY( radn->brtekr ), "rn: ", "" ) + ALLTRIM( radn->brtekr )
+
                     Rekapld( "KRED" + cIdKred + cNaOsnovu, cGodina, cMjesecDo, nUkKrRad, 0, ;
-                            cIdkred, cNaosnovu, cOpis2, .t. )
+                            cIdkred, cNaosnovu, ALLTRIM( cOpis2 ) + " " + _kr_partija , .t. )
+ 
                 endif
+
             ENDDO
+
             IF nUkKred<>0    // ispisati kreditora
                 if prow()>55+gPStranica
                     FF
@@ -1753,21 +1780,30 @@ if "SUMKREDITA" $ tippr->formula
                     ENDIF
                     skip
                 enddo
+
                 if nukkred<>0
+
                     if prow()>55+gPStranica
                             FF
                     endif
+
                     ? "  ",cidkred,left(kred->naz,22),IF(gReKrOs=="N","",cnaosnovu)
+
                     @ prow(),58 SAY nUkKred  pict "("+gpici+")"
-                    if cMjesec==cMjesecDo
-                            Rekapld( "KRED" + cIdkred + cNaOsnovu, cGodina, cMjesec, nUkKred, 0, ;
-                                    cIdKred, cNaosnovu, cOpis2 )
+
+                    _kr_partija := IF( !EMPTY( radn->brtekr ), "rn: ", "" ) + ALLTRIM( radn->brtekr )
+
+                    if cMjesec == cMjesecDo
+                            Rekapld( "KRED" + cIdkred + cNaOsnovu , cGodina, cMjesec, nUkKred, 0, ;
+                                    cIdKred, cNaosnovu, ALLTRIM( cOpis2 ) + " " + _kr_partija )
                     ELSE
                             Rekapld( "KRED" + cIdKred + cNaosnovu, cGodina, cMjesecDo, nUkkred, 0, ;
-                                    cIdKred, cNaosnovu, cOpis2 )
+                                    cIdKred, cNaosnovu, ALLTRIM( cOpis2 ) + " " + _kr_partija )
                     ENDIF
+
                 endif
             enddo
+
             select ld
     endif
 endif

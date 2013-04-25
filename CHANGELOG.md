@@ -1,6 +1,7 @@
-1.4.170 2013-04-23, vsasa
+1.4.170 2013-04-25, vsasa
  
   - kalk, import txt (varaždin), setovanje mpc iz šifranika na osnovu tabele koncij
+  - virm, generisanje virmana za plate - broj računa radnika za kredit
 
 1.4.169 2013-04-22, vsasa
 

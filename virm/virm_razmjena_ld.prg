@@ -571,7 +571,7 @@ do while !EOF() .and. field->id = _oznaka
         replace field->kome_sj with _kome_sjed
         replace field->kome_zr with _kome_zr
         replace field->dat_upl with dat_virm
-        replace field->svrha_doz with ALLTRIM( vrprim->pom_txt ) + " " + ALLTRIM( dod_opis ) + " " + _kred_opis
+        replace field->svrha_doz with ALLTRIM( vrprim->pom_txt ) + IF( !EMPTY( vrprim->pom_txt), " ", "" ) + ALLTRIM( dod_opis ) + IF( !EMPTY( dod_opis), " ", "" ) + ALLTRIM( _kred_opis )
         replace field->u_korist with _id_kred
 
     endif

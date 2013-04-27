@@ -45,6 +45,8 @@ AADD(ImeKol,{ "Datum placanja", {|| datpl} })
 AADD(ImeKol,{ "Dat.otpr", {|| dat_otpr} })
 AADD(ImeKol,{ "Dat.val.", {|| dat_val} })
 
+AADD(ImeKol,{ "Fisk.rn", {|| PADR( sh_fiscal_rn( fisc_rn, fisc_st ), 20 ) } })
+
 // prikaz operatera
 AADD(ImeKol,{ "Operater", {|| GetUserName( oper_id ) } })
 
@@ -138,4 +140,16 @@ return cInfo
 
 
 
+// prikaz fiskalnog racuna i reklamnog racuna
+static function sh_fiscal_rn( _f_rn, _s_rn )
+local _txt := ""
+
+_txt += ALLTRIM( STR( _f_rn ) ) 
+
+if _s_rn > 0
+    _txt += " / "
+    _txt += ALLTRIM( STR( _s_rn ) )
+endif
+
+return _txt
 

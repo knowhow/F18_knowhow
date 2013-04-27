@@ -1713,10 +1713,10 @@ if "SUMKREDITA" $ tippr->formula
 
                 if nUkKrRad <> 0
 
-                    _kr_partija := IF( !EMPTY( radn->brtekr ), "rn: ", "" ) + ALLTRIM( radn->brtekr )
+                    _kr_partija := ALLTRIM( kred->zirod )
 
                     Rekapld( "KRED" + cIdKred + cNaOsnovu, cGodina, cMjesecDo, nUkKrRad, 0, ;
-                            cIdkred, cNaosnovu, ALLTRIM( cOpis2 ) + " " + _kr_partija , .t. )
+                            cIdkred, cNaosnovu, ALLTRIM( cOpis2 ) + ", " + _kr_partija , .t. )
  
                 endif
 
@@ -1791,14 +1791,14 @@ if "SUMKREDITA" $ tippr->formula
 
                     @ prow(),58 SAY nUkKred  pict "("+gpici+")"
 
-                    _kr_partija := IF( !EMPTY( radn->brtekr ), "rn: ", "" ) + ALLTRIM( radn->brtekr )
+                    _kr_partija := ALLTRIM( kred->zirod )
 
                     if cMjesec == cMjesecDo
                             Rekapld( "KRED" + cIdkred + cNaOsnovu , cGodina, cMjesec, nUkKred, 0, ;
-                                    cIdKred, cNaosnovu, ALLTRIM( cOpis2 ) + " " + _kr_partija )
+                                    cIdKred, cNaosnovu, ALLTRIM( cOpis2 ) + ", " + _kr_partija )
                     ELSE
                             Rekapld( "KRED" + cIdKred + cNaosnovu, cGodina, cMjesecDo, nUkkred, 0, ;
-                                    cIdKred, cNaosnovu, ALLTRIM( cOpis2 ) + " " + _kr_partija )
+                                    cIdKred, cNaosnovu, ALLTRIM( cOpis2 ) + ", " + _kr_partija )
                     ENDIF
 
                 endif

@@ -36,57 +36,19 @@ O_RJ
 set order to tag "ID"
 select kalk_pripr
 
-Box(,3,60)
+Box(, 3, 60 )
 
 do while .t.
     
-    cIdFirma:=kalk_pripr->idfirma
+    cIdFirma := kalk_pripr->idfirma
 
     SELECT RJ
     GO TOP
 
     IF kalk_pripr->idvd $ "97"
-
-	    //LOCATE FOR konto == kalk_PRIPR->idkonto2
-
-	    //if found()
-		  //  lRJKon97_2 := .t.
-		  //  cFF97_2 := id
-	    //endif
-
-	    //GO TOP
-	    //LOCATE FOR konto == kalk_PRIPR->idkonto
-
-	    //if found()
-		  //  lRJKon97 := .t.
-		  //  cFF97 := id
-	    //endif
-
-  	    //if !(lRJKon97.or.lRJKon97_2)
-		    // ako nijedan konto ne postoji u RJ.DBF u FAKT-u, nece se
-		    // formirati FAKT dokument za KALK 97-icu
-		    exit
-	    //endif
-
+        exit
     ELSE
-
-	    IF kalk_pripr->idvd $ "11#12#13#95#96"
-	        //LOCATE FOR konto==kalk_PRIPR->idkonto2
-	    ELSE
-	        //LOCATE FOR konto==kalk_PRIPR->idkonto
-	    ENDIF
-
-	    //IF FOUND()
-	    //  lRJKonto:=.t.     
-        // ovo znaci da se oznaka firme u FAKT-dokumentu
-	    //  cFaktFirma:=id    
-        // uzima iz sifrarnika RJ koji se nalazi u FAKT-u
-	    //ELSE
-
-	    cFaktFirma := cIdFirma
-
-	    //ENDIF
-
+        cFaktFirma := cIdFirma
     ENDIF
 
     select kalk_pripr
@@ -99,12 +61,12 @@ do while .t.
         cFaktFirma := gKomFakt
     ENDIF
 
-    cIdTipDok:=kalk_pripr->idvd
-    cBrDok:=kalk_pripr->brdok
+    cIdTipDok := kalk_pripr->idvd
+    cBrDok := kalk_pripr->brdok
 
     read
 
-    select FAKT
+    select fakt
     private gNumDio := 5
     private cIdFakt := ""
 
@@ -113,29 +75,33 @@ do while .t.
         cBrFakt := cIdTipDok + "-" + right( alltrim(cBrDok), 5 )
 
         if lRJKon97
-    	    seek cFF97+cIdFakt97+cBrFakt
-    	    @ m_x+2,m_y+2 SAY "Broj dokumenta u modulu FAKT: "+cFF97+" - "+cIdFakt97+" - " + cBrFakt
-    	    if found()
-    		    Beep(4)
-    		    Box(,1,50)
-    		        @ m_x+1,m_y+2 SAY "U FAKT vec postoji ovaj dokument !!"
-    		        inkey(0)
-    		    BoxC()
-    		    exit
-    	    endif
+
+            seek cFF97+cIdFakt97+cBrFakt
+
+            @ m_x+2,m_y+2 SAY "Broj dokumenta u modulu FAKT: "+cFF97+" - "+cIdFakt97+" - " + cBrFakt
+
+            if found()
+                Beep(4)
+                Box(,1,50)
+                    @ m_x+1,m_y+2 SAY "U FAKT vec postoji ovaj dokument !!"
+                    inkey(0)
+                BoxC()
+                exit
+            endif
+
         endif
 
         if lRJKon97_2
-    	    seek cFF97_2+cIdFakt97_2+cBrFakt
-    	    @ m_x+3,m_y+2 SAY "Broj dokumenta u modulu FAKT: "+cFF97_2+" - "+cIdFakt97_2+" - " + cBrFakt
-    	    if found()
-    		    Beep(4)
-    		    Box(,1,50)
-    		        @ m_x+1,m_y+2 SAY "U FAKT vec postoji ovaj dokument !!"
-    		        inkey(0)
-    		    BoxC()
-    		    exit
-    	    endif
+            seek cFF97_2+cIdFakt97_2+cBrFakt
+            @ m_x+3,m_y+2 SAY "Broj dokumenta u modulu FAKT: "+cFF97_2+" - "+cIdFakt97_2+" - " + cBrFakt
+            if found()
+                Beep(4)
+                Box(,1,50)
+                    @ m_x+1,m_y+2 SAY "U FAKT vec postoji ovaj dokument !!"
+                    inkey(0)
+                BoxC()
+                exit
+            endif
         endif
 
     elseif kalk_pripr->idvd $ "10#16#PR#RN"
@@ -161,191 +127,210 @@ do while .t.
 
     if kalk_pripr->idvd <> "97"
 
-  	    @ m_x+2,m_y+2 SAY "Broj dokumenta u modulu FAKT: " + cFaktFirma + " - " + cIdFakt + " - " + cBrFakt
+        @ m_x+2,m_y+2 SAY "Broj dokumenta u modulu FAKT: " + cFaktFirma + " - " + cIdFakt + " - " + cBrFakt
 
-  	    if found()
-     	    Beep(4)
-     	    Box(,1,50)
-      	        @ m_x + 1, m_y + 2 SAY "U FAKT vec postoji ovaj dokument !!"
-      	        inkey(0)
-        	BoxC()
-     	    exit
-  	    endif
+        if found()
+            Beep(4)
+            Box(,1,50)
+                @ m_x + 1, m_y + 2 SAY "U FAKT vec postoji ovaj dokument !!"
+                inkey(0)
+            BoxC()
+            exit
+        endif
 
     endif
 
     select kalk_pripr
-    fFirst:=.t.
+
+    fFirst := .t.
     
     do while !eof() .and. cIdFirma+cIdTipDok+cBrDok==IdFirma+IdVD+BrDok
 
         private nKolicina:=kalk_pripr->(kolicina-gkolicina-gkolicin2)
-        if kalk_pripr->idvd $ "12#13"  // ove transakcije su storno otpreme
+
+        if kalk_pripr->idvd $ "12#13"  
+            // ove transakcije su storno otpreme
             nKolicina:=-nKolicina
         endif
 
         if kalk_pripr->idvd $ "PR#RN"
             if val(kalk_pripr->rbr)>899
-		        skip
-		        loop
-	        endif
-        endif
-
-        select fakt_pripr
-        if kalk_pripr->idvd=="97"
-		    if lRJKon97
-		       	hseek cFF97+kalk_pripr->(cIdFakt97+cBrFakt+rbr)
-		       	if found()
-		        	replace kolicina with kolicina+nkolicina
-		       	else
-		        	APPEND BLANK
-					replace idfirma with cFF97
-					replace idtipdok with cIdFakt97
-					replace brdok with cBrFakt
-					replace rbr with kalk_pripr->rbr
-		        	replace kolicina with nkolicina
-		       	endif
-		    endif
-		    if lRJKon97_2
-		       	hseek cFF97_2+kalk_pripr->(cIdFakt97_2+cBrFakt+rbr)
-		       	if found()
-		        	replace kolicina with kolicina+nkolicina
-		       	else
-		        	APPEND BLANK
-					replace idfirma with cFF97_2
-					replace idtipdok with cIdFakt97_2
-					replace brdok with cBrFakt
-					replace rbr with kalk_pripr->rbr
-		        	replace kolicina with nkolicina
-		       	endif
-		    endif
-        elseif (kalk_pripr->idvd=="16" .and. IsVindija())
-       		APPEND BLANK
-       		replace kolicina with nkolicina
-        else
-       	    hseek cFaktFirma+kalk_pripr->(cIdFakt+cBrFakt+rbr)
-       	    if found()
-        	    replace kolicina with kolicina+nkolicina
-       	    else
-        	    APPEND BLANK
-        	    replace kolicina with nkolicina
-       	    endif
-        endif
-
-        if ffirst
-	        if kalk_pripr->idvd=="97"
-		        if lRJKon97
-          		    select fakt_pripr
-		       	    hseek cFF97+pripr->(cIdFakt97+cBrFakt+rbr)
-           		    select konto
-                    hseek kalk_pripr->idkonto
-           		    cTxta:=padr(kalk_pripr->idkonto,30)
-           		    cTxtb:=padr(konto->naz,30)
-           		    cTxtc:=padr("",30)
-           		    ctxt:=Chr(16)+" " +Chr(17)+;
-           		      Chr(16)+" "+Chr(17)+;
-           		      Chr(16)+cTxta+ Chr(17)+ Chr(16)+cTxtb+Chr(17)+;
-           		      Chr(16)+cTxtc+Chr(17)
-          		    select fakt_pripr
-          		    replace txt with ctxt
-		        endif
- 		        if lRJKon97_2
-          		    select fakt_pripr
-		       	    hseek cFF97_2+pripr->(cIdFakt97_2+cBrFakt+rbr)
-           		    select konto
-                    hseek kalk_pripr->idkonto2
-           		    cTxta:=padr(kalk_pripr->idkonto2,30)
-           		    cTxtb:=padr(konto->naz,30)
-           		    cTxtc:=padr("",30)
-           		    cTxt:=Chr(16)+" " +Chr(17)+;
-           		      Chr(16)+" "+Chr(17)+;
-           		      Chr(16)+cTxta+ Chr(17)+ Chr(16)+cTxtb+Chr(17)+;
-           		      Chr(16)+cTxtc+Chr(17)
-          		    select fakt_pripr
-          		    replace txt with ctxt
-		        endif
-         	    fFirst:=.f.
-	        else
-           	    select PARTN
-                hseek kalk_pripr->idpartner
-           	    if kalk_pripr->idvd $ "11#12#13#95#PR#RN"
-           	        select konto
-                    hseek kalk_pripr->idkonto
-           	        cTxta:=padr(kalk_pripr->idkonto,30)
-           	        cTxtb:=padr(konto->naz,30)
-           	        cTxtc:=padr("",30)
-           	    else
-           	        cTxta:=padr(naz,30)
-           	        cTxtb:=padr(naz2,30)
-           	        cTxtc:=padr(mjesto,30)
-           	    endif
-           	    inkey(0)
-           	    cTxt:=Chr(16)+" " +Chr(17)+;
-           	      Chr(16)+" "+Chr(17)+;
-           	      Chr(16)+cTxta+ Chr(17)+ Chr(16)+cTxtb+Chr(17)+;
-           	      Chr(16)+cTxtc+Chr(17)
-           	    fFirst:=.f.
-
-          	    select fakt_pripr
-          	    replace txt with ctxt
+                skip
+                loop
             endif
         endif
 
-        for i:=1 to 2
+        select fakt_pripr
 
-	        if kalk_pripr->idvd=="97"
-		        if i==1
-				    if !lRJKon97
-					    loop
-				    endif
-		        	hseek cFF97+kalk_pripr->(cIdFakt97+cBrFakt+rbr)
-		        else
-				    if !lRJKon97_2
-					    loop
-				    endif
-		    	   	hseek cFF97_2+kalk_pripr->(cIdFakt97_2+cBrFakt+rbr)
-		        endif
-	        else
-		        replace idfirma  with IF(cFaktFirma!=cIdFirma.or.lRJKonto,cFaktFirma,kalk_pripr->idfirma)
-		        replace rbr      with kalk_pripr->Rbr
-		        replace idtipdok with cIdFakt   // izlazna faktura
-		        replace brdok    with cBrFakt
-	        endif
+        if kalk_pripr->idvd == "97"
+            if lRJKon97
+                hseek cFF97+kalk_pripr->(cIdFakt97+cBrFakt+rbr)
+                if found()
+                    replace kolicina with kolicina+nkolicina
+                else
+                    APPEND BLANK
+                    replace idfirma with cFF97
+                    replace idtipdok with cIdFakt97
+                    replace brdok with cBrFakt
+                    replace rbr with kalk_pripr->rbr
+                    replace kolicina with nkolicina
+                endif
+            endif
+            if lRJKon97_2
+                hseek cFF97_2+kalk_pripr->(cIdFakt97_2+cBrFakt+rbr)
+                if found()
+                    replace kolicina with kolicina+nkolicina
+                else
+                    APPEND BLANK
+                    replace idfirma with cFF97_2
+                    replace idtipdok with cIdFakt97_2
+                    replace brdok with cBrFakt
+                    replace rbr with kalk_pripr->rbr
+                    replace kolicina with nkolicina
+                endif
+            endif
 
+        elseif (kalk_pripr->idvd == "16" .and. IsVindija() )
+            APPEND BLANK
+            replace kolicina with nKolicina
 
-	        replace datdok   with kalk_pripr->datdok
-	        replace idroba   with kalk_pripr->idroba
-	        replace cijena   with kalk_pripr->vpc      // bilo je fcj sto je pravo bezveze
-	        replace rabat    with 0               // kakav crni rabat
-	        replace dindem   with "KM "
+        else
 
-	        if kalk_pripr->idvd == "10" .and. cOldVar10<>"-"
-	            replace cijena with kalk_pripr->(&cOldVar10)
-	        elseif kalk_pripr->idvd == "16" .and. cOldVar16<>"-"
-	            replace cijena with kalk_pripr->(&cOldVar16)
-	        elseif kalk_pripr->idvd $ "11#12#13"
-	            replace cijena with kalk_pripr->mpcsapp   // ove dokumente najvise interesuje mpc!
-	        elseif kalk_pripr->idvd $ "PR#RN"
-	            replace cijena with kalk_pripr->vpc
-	        elseif kalk_pripr->idvd $ "95"
-	            replace cijena with kalk_pripr->VPC
-	        elseif kalk_pripr->idvd $ "16"
-	            replace cijena with kalk_pripr->vpc       // i ovdje je bila nc pa sam stavio vpc
-	        endif
+            hseek cFaktFirma + kalk_pripr->(cIdFakt+cBrFakt+rbr)
 
-	        IF lPoNarudzbi .and. FIELDPOS("IDNAR")<>0
-		        REPLACE idnar WITH kalk_pripr->idnar, brojnar WITH kalk_pripr->brojnar
-	        ENDIF
+            if found()
+                replace kolicina with kolicina+nkolicina
+            else
+                APPEND BLANK
+                replace kolicina with nkolicina
+            endif
 
-	        if kalk_pripr->idvd<>"97"
-	       		exit
-	        endif       
+        endif
+
+        if fFirst
+
+            if kalk_pripr->idvd == "97"
+                if lRJKon97
+                    select fakt_pripr
+                    hseek cFF97+pripr->(cIdFakt97+cBrFakt+rbr)
+                    select konto
+                    hseek kalk_pripr->idkonto
+                    cTxta:=padr(kalk_pripr->idkonto,30)
+                    cTxtb:=padr(konto->naz,30)
+                    cTxtc:=padr("",30)
+                    ctxt:=Chr(16)+" " +Chr(17)+;
+                      Chr(16)+" "+Chr(17)+;
+                      Chr(16)+cTxta+ Chr(17)+ Chr(16)+cTxtb+Chr(17)+;
+                      Chr(16)+cTxtc+Chr(17)
+                    select fakt_pripr
+                    replace txt with ctxt
+                endif
+                if lRJKon97_2
+                    select fakt_pripr
+                    hseek cFF97_2+pripr->(cIdFakt97_2+cBrFakt+rbr)
+                    select konto
+                    hseek kalk_pripr->idkonto2
+                    cTxta:=padr(kalk_pripr->idkonto2,30)
+                    cTxtb:=padr(konto->naz,30)
+                    cTxtc:=padr("",30)
+                    cTxt:=Chr(16)+" " +Chr(17)+;
+                      Chr(16)+" "+Chr(17)+;
+                      Chr(16)+cTxta+ Chr(17)+ Chr(16)+cTxtb+Chr(17)+;
+                      Chr(16)+cTxtc+Chr(17)
+                    select fakt_pripr
+                    replace txt with ctxt
+                endif
+                fFirst := .f.
+
+            else
+
+                select PARTN
+                hseek kalk_pripr->idpartner
+             
+                if kalk_pripr->idvd $ "11#12#13#95#PR#RN"
+                    select konto
+                    hseek kalk_pripr->idkonto
+                    cTxta:=padr(kalk_pripr->idkonto,30)
+                    cTxtb:=padr(konto->naz,30)
+                    cTxtc:=padr("",30)
+                else
+                    cTxta:=padr(naz,30)
+                    cTxtb:=padr(naz2,30)
+                    cTxtc:=padr(mjesto,30)
+                endif
+
+                inkey(0)
+
+                cTxt:=Chr(16)+" " +Chr(17)+;
+                    Chr(16)+" "+Chr(17)+;
+                    Chr(16)+cTxta+ Chr(17)+ Chr(16)+cTxtb+Chr(17)+;
+                    Chr(16)+cTxtc+Chr(17)
+                
+                fFirst:=.f.
+
+                select fakt_pripr
+                replace txt with cTxt
+
+            endif
+        endif
+
+        for i := 1 to 2
+
+            if kalk_pripr->idvd == "97"
+                if i==1
+                    if !lRJKon97
+                        loop
+                    endif
+                    hseek cFF97+kalk_pripr->(cIdFakt97+cBrFakt+rbr)
+                else
+                    if !lRJKon97_2
+                        loop
+                    endif
+                    hseek cFF97_2+kalk_pripr->(cIdFakt97_2+cBrFakt+rbr)
+                endif
+            else
+                replace idfirma with IF(cFaktFirma!=cIdFirma.or.lRJKonto,cFaktFirma, kalk_pripr->idfirma )
+                replace rbr with kalk_pripr->Rbr
+                replace idtipdok with cIdFakt   
+                replace brdok with cBrFakt
+            endif
+
+            replace idpartner with kalk_pripr->idpartner
+            replace datdok with kalk_pripr->datdok
+            replace idroba with kalk_pripr->idroba
+            replace cijena with kalk_pripr->vpc      // bilo je fcj sto je pravo bezveze
+            replace rabat with 0               // kakav crni rabat
+            replace dindem with "KM "
+
+            if kalk_pripr->idvd == "10" .and. cOldVar10<>"-"
+                replace cijena with kalk_pripr->(&cOldVar10)
+            elseif kalk_pripr->idvd == "16" .and. cOldVar16<>"-"
+                replace cijena with kalk_pripr->(&cOldVar16)
+            elseif kalk_pripr->idvd $ "11#12#13"
+                replace cijena with kalk_pripr->mpcsapp   // ove dokumente najvise interesuje mpc!
+            elseif kalk_pripr->idvd $ "PR#RN"
+                replace cijena with kalk_pripr->vpc
+            elseif kalk_pripr->idvd $ "95"
+                replace cijena with kalk_pripr->VPC
+            elseif kalk_pripr->idvd $ "16"
+                replace cijena with kalk_pripr->vpc       // i ovdje je bila nc pa sam stavio vpc
+            endif
+
+            IF lPoNarudzbi .and. FIELDPOS("IDNAR")<>0
+                REPLACE idnar WITH kalk_pripr->idnar, brojnar WITH kalk_pripr->brojnar
+            ENDIF
+
+            if kalk_pripr->idvd<>"97"
+                exit
+            endif       
         next
 
         select kalk_pripr
         skip
     enddo
+
     Beep(1)
+
     exit
 enddo
 Boxc()

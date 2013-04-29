@@ -1,6 +1,7 @@
 1.4.174 2013-04-29, vsasa
  
   - export izvještaja i podataka na user-friendly lokaciju
+  - kalk/fakt, prenos podataka, setovanje idpartner polja
  
 1.4.173 2013-04-29, vsasa
  

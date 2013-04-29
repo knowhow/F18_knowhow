@@ -255,4 +255,38 @@ return _err
 
 
 
+// --------------------------------------------------
+// kopiraj fajl na desktop
+// --------------------------------------------------
+function f18_copy_to_desktop( file_path, file_name, output_file )
+local _desktop_path := ""
+local _desktop_folder := "F18_dokumenti"
+local _cre
+
+if output_file == NIL
+    output_file := ""
+endif
+
+#ifdef __PLATFORM__WINDOWS
+    _desktop_path := hb_DirSepAdd( GetEnv( "USERPROFILE" ) ) + "Desktop" + SLASH
+#else
+    _desktop_path := hb_DirSepAdd( GetEnv( "HOME" ) ) + "Desktop" + SLASH
+#endif
+
+if DirChange( _desktop_path + _desktop_folder + SLASH ) != 0
+    _cre := MakeDir( _desktop_path + _desktop_folder + SLASH )
+endif
+
+DirChange( my_home() )
+
+if EMPTY( output_file )
+    output_file := file_name
+endif
+
+FileCopy( file_path + file_name, _desktop_path + _desktop_folder + SLASH + output_file )
+
+return
+
+
+
 

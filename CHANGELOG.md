@@ -1,3 +1,7 @@
+1.4.174 2013-04-29, vsasa
+ 
+  - export izvještaja i podataka na user-friendly lokaciju
+ 
 1.4.173 2013-04-29, vsasa
  
   - fakt, povrat dokumenta u pripremu, provjera fiskalnih opcija

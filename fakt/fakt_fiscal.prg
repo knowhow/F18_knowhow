@@ -139,6 +139,17 @@ do case
 
 endcase
 
+// vrati se na my_home()
+// da ne bi ostao tekuci direktorij na lokaciji izlaznog racuna
+DirChange( my_home() )
+
+// logiraj operaciju...
+log_write( "fiskalni racun " + _dev_drv + " za dokument: " + ;
+            ALLTRIM( id_firma ) + "-" + ALLTRIM( tip_dok ) + "-" + ALLTRIM( br_dok ) + ;
+            " err level: " + ALLTRIM(STR( _err_level )) + ;
+            " partner: " + IF( _partn_data <> NIL, ALLTRIM( _partn_data[ 1, 1 ] ) + ;
+                            " - " + ALLTRIM( _partn_data[ 1, 2 ] ), "NIL" ), 3 )
+
 // drugi pokusaj u slucaju greske !
 if _err_level > 0
     
@@ -605,6 +616,12 @@ endif
 if !_ok
     MsgBeep("!!! Podaci partnera nisu kompletirani !!!#(id, naziv, adresa, ptt, mjesto)#Prekidam operaciju")
     return .f.
+endif
+
+if !EMPTY( ALLTRIM( _partn_jib ) ) .and. LEN( ALLTRIM( _partn_jib ) ) < 12 .and. !EMPTY( _partn_clan )
+    _ok := .f.
+    MsgBeep( "INO partner sadrzi clan o oslobodjenju od PDV-a, to je nedozvoljeno !!!" )
+    return _ok
 endif
 
 // ubaci u matricu podatke o partneru

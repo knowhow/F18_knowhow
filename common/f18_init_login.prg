@@ -10,6 +10,7 @@
  */
 
 #include "fmk.ch"
+#include "f18_ver.ch"
 #include "hbclass.ch"
 #include "common.ch"
 
@@ -311,6 +312,12 @@ if _ok .and. _show_box
     f18_app_parameters( .t. )
 
     set_hot_keys()
+
+    // init parametara sezonskog podrucja...
+    goModul:setGVars()
+
+    // prikazi info baza/user na vrhu u skladu sa tekucom bazom
+    say_database_info()
 
 endif
 
@@ -706,6 +713,9 @@ AADD( menuop, hb_utf8tostr( "1. rekonfiguracija servera " ) )
 AADD( menuexec, {|| f18_init_app_login( .f. ), .t. } )
 AADD( menuop, hb_utf8tostr( "2. update db" ) )
 AADD( menuexec, {|| F18AdminOpts():New():update_db(), .t. } )
+AADD( menuop, hb_utf8tostr( "3. vpn podrska" ) )
+AADD( menuexec, {|| vpn_support( .f. ), .t. } )
+
 
 return
 
@@ -915,6 +925,8 @@ if !_arr == NIL .and. LEN( _arr ) > 0
 endif
 
 @ _x, _y SAY PADR( "Info: " + _info, _max_len )
+++ _x
+@ _x, _y SAY PADR( "F18 version: " + F18_VER, _max_len )
 
 return .t.
 

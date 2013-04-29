@@ -59,7 +59,7 @@ if !EMPTY( cFilter )
 endif
 
 if EMPTY( cRadnik ) 
-	INDEX ON STR(godina) + SortPrez(idradn) + STR(mjesec) + idrj TO "TMPLD"
+	INDEX ON STR(godina) + SortPrez(idradn) + STR(mjesec) + idrj TO "tmpld"
 	go top
 	seek STR( cGodina, 4 )
 else

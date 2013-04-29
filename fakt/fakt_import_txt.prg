@@ -62,7 +62,11 @@ O_FAKT
 O_ROBA
 O_RJ
 O_PARTN
-O_TEMP
+
+select ( F_TMP_1 )
+use
+
+my_use_temp( "temp", my_home() + "temp" )
 
 if _gForm( @aParams ) = 0
 	return 0
@@ -136,6 +140,7 @@ do while !EOF()
 	gather()
 
 	select temp
+
 enddo
 
 // vrati parametar cijene

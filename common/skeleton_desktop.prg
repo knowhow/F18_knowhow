@@ -155,12 +155,12 @@ endif
 @ 0, 2 SAY '<ESC> Izlaz' COLOR INVERT
 @ 0, COL() + 2 SAY DATE()  COLOR INVERT
 
-@ MAXROWS() - 1, MAXCOLS() - 16  SAY fmklibver()
+@ MAXROWS() - 1, MAXCOLS() - 16 SAY fmklibver()
 
-DispBox( 2, 0, 4, MAXCOLS()-1, B_DOUBLE+' ',NORMAL)
+DispBox( 2, 0, 4, MAXCOLS() - 1, B_DOUBLE + ' ', NORMAL )
 
 if lClear
-	DispBox( 5, 0, MAXROWS()-1, MAXCOLS()-1, B_DOUBLE+"±", INVERT)
+	DispBox( 5, 0, MAXROWS() - 1, MAXCOLS() - 1, B_DOUBLE + "±", INVERT )
 endif
 
 @ _ver_pos, 1 SAY PADC( gNaslov + ' Ver.' + gVerzija, MAXCOLS() - 8 ) COLOR NORMAL
@@ -172,6 +172,8 @@ f18_ispisi_status_log_levela()
 f18_ispisi_status_semafora()
 // podrucje
 f18_ispisi_status_podrucja( _ver_pos )
+// ispisi status modula
+f18_ispisi_status_modula()
 
 return
 
@@ -204,6 +206,25 @@ if _show
 endif
 
 return
+
+
+
+
+function f18_ispisi_status_modula()
+local _module := LOWER( goModul:cName )
+local _in_use := f18_use_module( IF( _module == "tops", "pos", _module ) )
+local _color := "GR+/B" 
+
+if !_in_use
+    _color := "W/R+"
+	@ MAXROWS()-1, 25 SAY "!" COLOR _color
+else
+	@ MAXROWS()-1, 25 SAY " " COLOR _color
+endif
+
+
+return
+
 
 
 

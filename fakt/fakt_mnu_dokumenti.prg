@@ -19,13 +19,13 @@ local _opc:={}
 local _opcexe:={}
 local _izbor:=1
 
-AADD(_opc,"1. stampa azuriranog dokumenta                     ")
+AADD(_opc,"1. stampa azuriranog dokumenta                               ")
 AADD(_opcexe, {|| fakt_stampa_azuriranog()})
 AADD(_opc,"2. pregled liste dokumenata")
 AADD(_opcexe, {|| fakt_pregled_liste_dokumenata()})
 AADD(_opc,"3. stampa txt dokumenata od broja do broja      ")
 AADD(_opcexe, {|| fakt_stampa_azuriranog_period()})
-AADD(_opc,"4. stampa odt dokumenata od broja do broja      ")
+AADD(_opc,"4. stampa/export odt dokumenata po zadanom uslovu")
 AADD(_opcexe, {|| stdokodt_grupno() })
 AADD(_opc,"5. stampa narudzbenice")
 AADD(_opcexe,{|| Mnu_Narudzba()})

@@ -17,9 +17,9 @@ local _opc := {}
 local _opcexe := {}
 local _izbor := 1
 
-AADD( _opc, "1. generacija dokumenta pocetnog stanja                    ")
+AADD( _opc, "1. generacija dokumenta pocetnog stanja                          ")
 AADD( _opcexe, {|| fin_pocetno_stanje_sql() })
-AADD( _opc, "2. generacija dokumenta pocetnog stanja - LEGACY" )
+AADD( _opc, "2. generacija dokumenta pocetnog stanja (stara opcija/legacy)" )
 AADD( _opcexe, {|| GenPocStanja() })
 AADD( _opc, "3. generisanje storna naloga " )
 AADD( _opcexe, {|| StornoNaloga() })

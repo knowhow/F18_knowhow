@@ -29,7 +29,7 @@ P_COND
 select PARTN; HSEEK cIdPartner
 
 select KONTO; HSEEK cIdKonto
-?  "Magacin razduzuje:",cIdKonto,"-",naz
+?  "Magacin razduzuje:",cIdKonto,"-",ALLTRIM(naz)
 
 select kalk_pripr
 

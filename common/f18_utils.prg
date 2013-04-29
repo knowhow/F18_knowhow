@@ -167,10 +167,11 @@ endif
 return "?" + _type + "?"
 
 
+
 // --------------------------------------
 // aktiviranje vpn podrske 
 // --------------------------------------
-function vpn_support()
+function vpn_support( set_params )
 local _conn_name := PADR( "bringout podrska", 50 )
 local _status := 0
 local _ok
@@ -180,32 +181,46 @@ local _ok
     return
 #endif
 
-_conn_name := fetch_metric( "vpn_support_conn_name", my_user(), _conn_name )
-_status := fetch_metric( "vpn_support_last_status", my_user(), _status )
+if set_params == NIL
+    set_params := .t.
+endif
 
-if _status == 0
-	_status := 1
+if set_params
+    _conn_name := fetch_metric( "vpn_support_conn_name", my_user(), _conn_name )
+    _status := fetch_metric( "vpn_support_last_status", my_user(), _status )
 else
-	_status := 0
+    _status := 1
 endif
 
-Box(, 2, 65 )
-    @ m_x + 1, m_y + 2 SAY "Konekcija:" GET _conn_name PICT "@S50" VALID !EMPTY( _conn_name )
-    @ m_x + 2, m_y + 2 SAY "[1] aktivirati [0] prekinuti" GET _status PICT "9"
-    read
-BoxC()
+if set_params
 
-if LastKey() == K_ESC
-    return
+    if _status == 0
+	    _status := 1
+    else
+	    _status := 0
+    endif
+
+    Box(, 2, 65 )
+        @ m_x + 1, m_y + 2 SAY "Konekcija:" GET _conn_name PICT "@S50" VALID !EMPTY( _conn_name )
+        @ m_x + 2, m_y + 2 SAY "[1] aktivirati [0] prekinuti" GET _status PICT "9"
+        read
+    BoxC()
+
+    if LastKey() == K_ESC
+        return
+    endif
+
 endif
 
-set_metric( "vpn_support_conn_name", my_user(), _conn_name )
+if set_params
+    set_metric( "vpn_support_conn_name", my_user(), _conn_name )
+endif
 
 // startaj vpn konekciju
 _ok := _vpn_start_stop( _status, _conn_name )
 
 // ako je sve ok snimi parametar u bazu
-if _ok == 0
+if _ok == 0 .and. set_params
 	set_metric( "vpn_support_last_status", my_user(), _status )
 endif
 

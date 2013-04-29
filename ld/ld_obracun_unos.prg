@@ -86,9 +86,9 @@ do while .t.
 
         if _pr_kart_pl == "D"
             if lViseObr
-                KartPl(cRj, nMjesec, nGodina, cIdRadn, gObracun)
+                KartPl( cRj, nMjesec, nGodina, cIdRadn, gObracun )
             else
-                KartPl(cRj, nMjesec, nGodina, cIdRadn)
+                KartPl( cRj, nMjesec, nGodina, cIdRadn )
             endif
         endif
 

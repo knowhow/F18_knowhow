@@ -20,9 +20,10 @@ static __dbf_pack_v2 := 10
 
 
 
-// -------------------------------
-// -------------------------------
+// -----------------------------------------------------
+// -----------------------------------------------------
 function f18_init_semaphores()
+local _synchro := .f.
 
 #ifdef TEST
    if _TEST_NO_DATABASE
@@ -31,10 +32,15 @@ function f18_init_semaphores()
 #endif
 
 if f18_session()['id'] > 1
-   // child sesije ne osvjezavaju bazu
-   return .t.
+    // child sesije ne osvjezavaju bazu
+    return .t.
 endif
 
+// provjeri da li treba raditi sinhro podataka ?
+// _synchro := is_readonly()
+if _synchro
+    // radi ovaj sinchro samo ako treba !
+endif
 
 // prodji kroz aktivne dbf tabele
 iterate_through_active_tables({|dbf_rec| refresh_me(dbf_rec)})

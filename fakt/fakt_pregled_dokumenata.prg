@@ -779,8 +779,11 @@ do case
      
         _tmp := povrat_fakt_dokumenta( .f., field->idfirma, field->idtipdok, field->brdok )
 
+        O_FAKT_DOKS
+
         if _tmp <> 0 .and. Pitanje(, "Preci u tabelu pripreme ?", "D" ) == "D"
             fUPripremu := .t.
+            _refresh := .f.
             nRet := DE_ABORT
         else
             nRet := DE_REFRESH

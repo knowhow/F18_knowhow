@@ -46,6 +46,8 @@ AADD(ImeKol, { "Hitno" , {|| Hitno}, "Hitno" } )
 AADD(ImeKol, { "IdJPrih" , {|| IdJprih}, "IdJPrih" } )
 AADD(ImeKol, { "VUPl" , {|| VUPl}, "VUPl" } )
 AADD(ImeKol, { "IdOps" , {|| IdOps}, "IdOps" } )
+AADD(ImeKol, { PADR( "Pos.opis", 30 ) , {|| ko_txt }, "ko_txt" } )
+AADD(ImeKol, { PADR( "Prim.opis", 30 ) , {|| kome_txt }, "kome_txt" } )
 
 FOR i := 1 TO LEN( ImeKol )
     AADD( Kol, i )
@@ -74,13 +76,13 @@ select virm_pripr
 
 do case
 
-    case Ch==K_ALT_P      
+    case Ch == K_ALT_P      
         // rekapitulacija uplata
         _rekapitulacija_uplata()
         go (nRec)
         return DE_CONT
 
-    case Ch==K_ALT_M
+    case Ch == K_ALT_M
         cDN:=" "
         Box(,2,70)
             @ m_x+1,m_y+2 SAY "Zelite sve stavke oznaciti odstampane/neodstampane ( /*) ?" ;
@@ -96,7 +98,13 @@ do case
         go top
         return DE_REFRESH
 
-    case Ch==ASC(" ")
+    case CHR(Ch) $ "eE"
+    
+        virm_export_banke()
+
+        return DE_CONT
+
+    case Ch == ASC(" ")
         // ako je _ST_ = " " onda stavku treba odstampati
         //        _ST_ = "*" onda stavku ne treba stampati
 
@@ -107,7 +115,7 @@ do case
         endif
         return DE_REFRESH
 
-    case Ch==K_CTRL_T
+    case Ch == K_CTRL_T
 
         if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
             delete
@@ -116,11 +124,11 @@ do case
         endif
         return DE_CONT
 
-    case Ch==K_CTRL_P
+    case Ch == K_CTRL_P
         stampa_virmana_drb()
         return DE_REFRESH
   
-    case Ch==K_CTRL_A
+    case Ch == K_CTRL_A
         PushWA()
         select virm_pripr
         //go top
@@ -232,7 +240,7 @@ _ko_zr:=_IdBanka
 
 _IdBanka2:=left(_kome_zr,3)
 select partn
-seek gFirma
+seek gVirmFirma
 
 select virm_pripr
 _ko_txt := trim(partn->naz) + ", " + trim(partn->mjesto)+", "+trim(partn->adresa) + ", " + trim(partn->telefon)
@@ -678,7 +686,7 @@ return aSifv
 // jprih.dbf-a treba biti pozicioniran
 // na trazeni javni prihod
 // ----------------------------------------------------
-function JPrih(cIdJPrih, cIdOps, cIdKan, cIdEnt)
+function JPrih( cIdJPrih, cIdOps, cIdKan, cIdEnt )
 local fOk := .f.
 
 if cIdOps == NIL

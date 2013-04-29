@@ -476,7 +476,9 @@ do while !eof()
     endif
 
     select_promj()
-    hseek _sr_id
+    set order to tag "1"
+    go top
+    seek _sr_id
 
     do while !EOF() .and. field->id == _sr_id
         _rec["nabvr"] += field->nabvr + field->revd

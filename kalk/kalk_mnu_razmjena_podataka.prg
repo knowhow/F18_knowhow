@@ -24,21 +24,16 @@ AADD(_opc,"2. iz FAKT generisi KALK dokumente")
 AADD(_opcexe, {|| Faktkalk()})
 AADD(_opc,"3. iz TOPS generisi KALK dokumente")
 AADD(_opcexe, {|| mnu_prenos_tops_u_kalk()})
-AADD(_opc,"6. iz KALK generisi TOPS dokumente")
+AADD(_opc,"4. iz KALK generisi TOPS dokumente")
 AADD(_opcexe, {|| mnu_prenos_kalk_u_tops()} )
-
-AADD(_opc,"7. import txt")
+AADD(_opc,"5. import txt")
 AADD(_opcexe, {|| MnuImpTxt()} )
-
-AADD(_opc,"8. import csv fajl ")
+AADD(_opc,"6. import csv fajl ")
 AADD(_opcexe, {|| MnuImpCSV()} )
-
 AADD(_opc,"-----------------------------------")
 AADD(_opcexe, nil )
-
 AADD(_opc,"A. kontiraj dokumente za period - u pripremu")
 AADD(_opcexe, {|| KontVise()} )
-
 AADD(_opc,"B. kontiraj automatski kalkulacije za period")
 AADD(_opcexe, {|| kont_v_kalk()} )
 
@@ -55,10 +50,12 @@ local _opc := {}
 local _opcexe := {}
 local _izbor := 1
 
-AADD(_opc,"1. prenos podataka pos->kalk                 ")
-AADD(_opcexe, {|| kalk_preuzmi_tops_dokumente()})
-AADD(_opc,"2. pos->kalk 96 po normativima za period ")
-AADD(_opcexe, {|| tops_nor_96() })
+AADD( _opc, "1. prenos podataka pos->kalk                        ")
+AADD( _opcexe, {|| kalk_preuzmi_tops_dokumente() } )
+AADD( _opc, "1. prenos podataka pos->kalk (razduzi automatski)")
+AADD( _opcexe, {|| kalk_preuzmi_tops_dokumente_auto() } )
+AADD( _opc, "3. pos->kalk 96 po normativima za period ")
+AADD( _opcexe, {|| tops_nor_96() } )
 
 f18_menu( "rpka", .f., _izbor, _opc, _opcexe )
 

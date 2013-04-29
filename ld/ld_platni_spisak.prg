@@ -120,7 +120,7 @@ if EMPTY( cIdRj )
             cFilt := IF(EMPTY(cMjesec),".t.","MJESEC==" + _filter_quote( cMjesec ) )+".and."+;
                 IF(EMPTY(cGodina),".t.","GODINA==" + _filter_quote( cGodina ) )
             cFilt+=".and. obr=" + _filter_quote( cObracun )
-            INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
+            INDEX ON &cSort1 TO "tmpld" FOR &cFilt
         BoxC()
         GO TOP
     ENDIF
@@ -137,7 +137,7 @@ else
                 IF(EMPTY(cMjesec),".t.","MJESEC==" + _filter_quote( cMjesec ) )+".and."+;
                 IF(EMPTY(cGodina),".t.","GODINA==" + _filter_quote( cGodina) )
             cFilt+=".and. obr=" + _filter_quote( cObracun )
-            INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
+            INDEX ON &cSort1 TO "tmpld" FOR &cFilt
         BoxC()
         GO TOP
     ENDIF
@@ -409,7 +409,7 @@ if empty(cIdRj)
             if lViseObr
                 cFilt+=".and. obr=" + _filter_quote( cObracun ) 
             endif
-            INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
+            INDEX ON &cSort1 TO "tmpld" FOR &cFilt
             BoxC()
             go top
     endif
@@ -427,7 +427,7 @@ else
             if lViseObr
                 cFilt+=".and. obr=" + _filter_quote( cObracun )
             endif
-            INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
+            INDEX ON &cSort1 TO "tmpld" FOR &cFilt
             BoxC()
             go top
     endif
@@ -763,7 +763,7 @@ if empty(cIdRj)
         if lViseObr
             cFilt+=".and. obr=" + _filter_quote( cObracun ) 
         endif
-        INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
+        INDEX ON &cSort1 TO "tmpld" FOR &cFilt
         BoxC()
         go top
 else
@@ -784,7 +784,7 @@ else
         if lViseObr
             cFilt+=".and. obr=" + _filter_quote( cObracun )
         endif
-        INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
+        INDEX ON &cSort1 TO "tmpld" FOR &cFilt
         BoxC()
         go top
 endif

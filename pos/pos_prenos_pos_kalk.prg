@@ -502,7 +502,7 @@ return
 // --------------------------------------------------------------------
 // prenos podataka za modul kalk
 // --------------------------------------------------------------------
-function pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd )
+function pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, id_pm )
 local _usl_roba := SPACE(150)
 local _usl_mark := "U"
 local aPom := {}
@@ -511,13 +511,18 @@ local _r_br
 local cIdPos := gIdPos
 local _dat_od, _dat_do, _file
 local _tmp
+local _auto_prenos := .f.
+
+if id_pm <> NIL
+    _auto_prenos := .t.
+endif
 
 // ako je nil onda se radi o realizaciji
-if (cIdVd == nil)
+if ( cIdVd == NIL )
     cIdVd := "42"
 endif
 
-if ((dDateOd == nil) .and. (dDateDo == nil))
+if (( dDateOd == NIL ) .and. ( dDateDo == NIL ))
     _dat_od := DATE()
     _dat_do := DATE()
 else
@@ -528,8 +533,10 @@ endif
 _o_real_table()
 
 SET CURSOR ON
+
+if !_auto_prenos
     
-Box(, 4, 70, .f., " PRENOS REALIZACIJE POS->KALK   " )
+    Box(, 4, 70, .f., " PRENOS REALIZACIJE POS->KALK   " )
         
 	@ m_x+1,m_y+2 SAY "Prodajno mjesto " GET cIdPos pict "@!" Valid !EMPTY(cIdPos) .or. P_Kase(@cIdPos,5,20)
     @ m_x+2,m_y+2 SAY "Prenos za period" GET _dat_od
@@ -540,7 +547,11 @@ Box(, 4, 70, .f., " PRENOS REALIZACIJE POS->KALK   " )
 	read
    	ESC_BCR
 
-BoxC()
+    BoxC()
+
+else
+    cIdPos := id_pm
+endif
 
 gIdPos := cIdPos
 
@@ -656,16 +667,20 @@ use
 
 close all
 
-// printaj report o prenosu
-_print_report( _dat_od, _dat_do, _kol, _iznos, _r_br )
+if !_auto_prenos
 
-if gMultiPM == "D"
-	_file := _cre_topska_multi( cIdPos, _dat_od, _dat_do, cIdVd )
-else
-	_file := _cre_topska()
+    // printaj report o prenosu
+    _print_report( _dat_od, _dat_do, _kol, _iznos, _r_br )
+
+    if gMultiPM == "D"
+	    _file := _cre_topska_multi( cIdPos, _dat_od, _dat_do, cIdVd )
+    else
+	    _file := _cre_topska()
+    endif
+
+    MsgBeep( "Kreiran fajl " + _file + "#broj stavki: " + ALLTRIM(STR( _r_br )) )
+
 endif
-
-MsgBeep( "Kreiran fajl " + _file + "#broj stavki: " + ALLTRIM(STR( _r_br )) )	
 
 return
 

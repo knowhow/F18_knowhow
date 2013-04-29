@@ -199,7 +199,7 @@ do while .t.
     @ m_x + 3, m_y + 5 SAY "  Cijena:" GET _Cijena PICT "99999.999"  ;
         WHEN ( roba->tip == "T" .or. gPopZcj == "D" )
 
-    @ m_x + 4, m_y + 5 SAY "Kolicina:" GET _Kolicina ;
+    @ m_x + 4, m_y + 5 SAY "Kolicina:" GET _kolicina ;
       	PICT "999999.999" ;
         WHEN when_pos_kolicina( @_kolicina ) ;
      	VALID valid_pos_kolicina( @_kolicina, _cijena )
@@ -235,7 +235,11 @@ do while .t.
 
 	// gledati iz KALK ili iz POS ?
 	if !EMPTY( ALLTRIM( __kalk_konto ) )
-    	_stanje_robe := kalk_kol_stanje_artikla_prodavnica( PADR( __kalk_konto, 7 ), field->idroba, DATE() )
+        if PADR( __kalk_konto, 3 ) == "132"
+    	    _stanje_robe := kalk_kol_stanje_artikla_magacin( PADR( __kalk_konto, 7 ), field->idroba, DATE() )
+        else
+    	    _stanje_robe := kalk_kol_stanje_artikla_prodavnica( PADR( __kalk_konto, 7 ), field->idroba, DATE() )
+        endif
 	else
    		_stanje_robe := pos_stanje_artikla( field->idpos, field->idroba )
 	endif
@@ -304,7 +308,7 @@ return _ok
 
 // ---------------------------------------------
 // ---------------------------------------------
-static function when_pos_kolicina(kolicina)
+static function when_pos_kolicina( kolicina )
 
 Popust( m_x + 4, m_y + 28 )
 
@@ -319,10 +323,14 @@ endif
 
 return .t.
 
+
+
 // ----------------------------------------------------------------
 // ----------------------------------------------------------------
 static function valid_pos_kolicina( kolicina, cijena )
-return KolicinaOK( kolicina ) .and. pos_check_qtty( @kolicina ) .and. cijena_ok( cijena ) 
+return KolicinaOK( kolicina ) .and. pos_check_qtty( @kolicina ) .and. cijena_ok( cijena )
+
+
 
  
 // ----------------------------------------------
@@ -460,6 +468,10 @@ return .f.
 // --------------------------------------------
 static function cijena_ok( cijena )
 local _ret := .t.
+
+if LastKey() == K_UP
+    return _ret
+endif
 
 if cijena == 0
     MsgBeep( "Nepravilan unos cijene, cijena mora biti <> 0 !!!" )

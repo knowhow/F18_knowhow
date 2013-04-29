@@ -17,18 +17,24 @@
 CLASS F18AdminOpts
 
     METHOD new()
-    METHOD update_db()
 
+    METHOD update_db()
     DATA update_db_result
 
+    METHOD create_new_db()
+    METHOD delete_db()
+    DATA create_db_result
+    
     PROTECTED:
         
         METHOD update_db_download()
         METHOD update_db_all()
         METHOD update_db_company()
         METHOD update_db_command()
-
         DATA _update_params
+
+        METHOD create_new_db_params()
+        DATA _new_db_params
 
 ENDCLASS
 
@@ -36,6 +42,7 @@ ENDCLASS
 
 METHOD F18AdminOpts:New()
 ::update_db_result := {}
+::create_db_result := {}
 return self
 
 
@@ -287,6 +294,16 @@ _ok := .t.
 return _ok
 
 
+METHOD F18AdminOpts:create_new_db()
+return
 
+
+METHOD F18AdminOpts:delete_db()
+return
+ 
+
+
+METHOD F18AdminOpts:create_new_db_params()
+return
 
 

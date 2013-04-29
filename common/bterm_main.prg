@@ -50,12 +50,34 @@ return 1
 // -----------------------------------------------------
 // Vraca podesenje putanje do exportovanih fajlova
 // -----------------------------------------------------
-static function _gExpPath( cPath )
-cPath:=IzFmkIni("FMK", "ImportPath", "c:\import\", PRIVPATH)
-if Empty(cPath) .or. cPath == nil
-	cPath := "c:\import\"
+static function _gExpPath( path )
+local _path 
+
+#ifdef __PLATFORM__WINDOWS
+    _path := "c:" + SLASH + "import" + SLASH
+#else
+    _path := SLASH + "home" + SLASH + my_user() + SLASH + "import" + SLASH
+#endif
+
+_path := PADR( fetch_metric( "bterm_imp_exp_path", my_user(), ALLTRIM( _path ) ), 500 )
+
+Box(, 2, 70 )
+    @ m_x + 1, m_y + 2 SAY "Import / export lokacija:"
+    @ m_x + 2, m_y + 2 SAY "lokacija:" GET _path PICT "@S50"
+    read
+BoxC()
+
+if LastKey() == K_ESC
+    path := NIL
+    return
 endif
+
+path := ALLTRIM( _path )
+set_metric( "bterm_imp_exp_path", my_user(), path )
+
 return
+
+
 
 
 // ---------------------------------------
@@ -135,8 +157,7 @@ local nCnt := 0
 // kreiraj pomocnu tabelu
 cre_tmp()
 
-select (249)
-use (PRIVPATH + "R_EXPORT") alias "exp"
+O_R_EXP
 index on barkod TAG "ID" 
 
 O_ROBA
@@ -152,7 +173,7 @@ do while !EOF()
 		loop
 	endif
 	
-	select exp
+	select r_export
 	go top
 	seek cBK
 	
@@ -174,8 +195,11 @@ enddo
 _gExpPath( @cFilePath )
 cFileName := "ARTIKLI.TXT"
 
+select r_export
+use
+
 // dodaj u fajl
-_dbf_to_file( cFilePath, cFileName, aStruct, "R_EXPORT", ;
+_dbf_to_file( cFilePath, cFileName, aStruct, "r_export.dbf", ;
 	cSeparator, lTrimData, lLastSeparator )
 
 msgbeep("Exportovao " + ALLTRIM(STR(nCnt)) + " zapisa robe !")
@@ -203,7 +227,7 @@ AADD( aRet, { "N", 8, 2 } )
 // TRENUTNA CIJENA
 AADD( aRet, { "N", 8, 2 } )
 
-return
+return aRet
 
 
 // -------------------------------------------
@@ -212,10 +236,10 @@ return
 static function cre_tmp()
 local aFields := {}
 
-AADD( aFields, {"barkod", "C", 20, 0} )
-AADD( aFields, {"naz", "C", 40, 0} )
-AADD( aFields, {"tk", "N", 8, 2} )
-AADD( aFields, {"tc", "N", 8, 2} )
+AADD( aFields, { "barkod", "C", 20, 0 } )
+AADD( aFields, { "naz", "C", 40, 0 } )
+AADD( aFields, { "tk", "N", 8, 2 } )
+AADD( aFields, { "tc", "N", 8, 2 } )
 
 t_exp_create( aFields )
 

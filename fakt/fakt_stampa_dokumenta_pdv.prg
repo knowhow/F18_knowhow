@@ -66,7 +66,7 @@ if PCount() == 0 .or. ( cIdTipDok == nil .and. lJFill == .t. )
 	cBrDok:=BrDok
 endif
 
-seek cIdFirma+cIdTipDok+cBrDok
+seek cIdFirma + cIdTipDok + cBrDok
 NFOUND CRET
 
 if PCount() <= 1 .or. ( cIdTipDok == nil .and. lJFill == .t.)
@@ -1174,9 +1174,9 @@ add_drntext("I02", gFAdresa)
 add_drntext("I03", gFIdBroj)
 // 4. se koristi za id prod.mjesto u pos
 // telefon pos = I05
-add_drntext("I05", ALLTRIM(gFTelefon))
-add_drntext("I10", ALLTRIM(gFTelefon))
-add_drntext("I11", ALLTRIM(gFEmailWeb))
+add_drntext("I05", ALLTRIM( gFTelefon ) )
+add_drntext("I10", ALLTRIM( gFTelefon ) )
+add_drntext("I11", ALLTRIM( gFEmailWeb ) )
 
 // banke
 cBanke:=""

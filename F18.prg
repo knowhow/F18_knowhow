@@ -16,7 +16,7 @@ static __relogin_opt := .f.
 
 #ifndef TEST
 
-function Main(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11)
+function Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 local _arg_v := hb_hash()
 public gDebug := 9
 
@@ -25,11 +25,6 @@ cre_arg_v_hash( @_arg_v, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
 f18_init_app( _arg_v )
-
-//f18_app_parameters( .t. )
-//set_hot_keys()
-//module_menu(p3, p4, p5, p6, p7)
-//log_close()
 
 return
 
@@ -42,6 +37,7 @@ local _i := 2
 local _param
 local _count := 0
 
+hash := hb_hash()
 hash["p1"] := NIL
 hash["p2"] := NIL
 hash["p3"] := NIL
@@ -55,13 +51,10 @@ hash["p10"] := NIL
 hash["p11"] := NIL
 
 do while _i <= PCount()
-
     // ucitaj parametar
     _param := hb_PValue( _i++ )
-
     // p1, p2, p3...
     hash[ "p" + ALLTRIM(STR( ++_count )) ] := _param 
-
 enddo
 
 return
@@ -230,12 +223,8 @@ AADD( menuop, " B. Backup podataka" )
 AADD( menuexec, {|| f18_backup_data() } )
 AADD( menuop, " P. Parametri aplikacije" )
 AADD( menuexec, {|| f18_app_parameters() } )
-AADD( menuop, " R. ReLogin" )
-AADD( menuexec, {|| __relogin_opt := relogin(), .t. } )
 AADD( menuop, " W. Pregled log-a" )
 AADD( menuexec, {|| f18_view_log() } )
-AADD( menuop, " X. Erase / full synchro tabela" )
-AADD( menuexec, {|| full_table_synchro() } )
 AADD( menuop, " V. VPN podrska" )
 AADD( menuexec, {|| vpn_support() } )
 

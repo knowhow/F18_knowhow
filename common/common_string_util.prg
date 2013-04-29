@@ -718,3 +718,16 @@ return hb_StrToUtf8(str)
 function _to_str(str)
 return hb_Utf8ToStr(str)
 
+
+// -------------------------------------------
+// -------------------------------------------
+function num_to_str( num, len, dec )
+local _txt := STR( num, len, dec )
+
+_txt := ALLTRIM( _txt )
+_txt := STRTRAN( _txt, ".", "" )
+_txt := PADL( _txt, len, "0" )
+
+return _txt
+
+

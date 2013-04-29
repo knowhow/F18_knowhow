@@ -65,15 +65,17 @@ method mMenuStandard
 private opc:={}
 private opcexe:={}
 
-AADD(opc,   "1. priprema virmana                 ")
+AADD(opc,   "1. priprema virmana                         ")
 AADD(opcexe, {|| unos_virmana()} )
 AADD(opc,   "2. izvjestaji")
 AADD(opcexe, {|| nil})
-AADD(opc,   "3. moduli - razmjena podataka")
-AADD(opcexe, {|| virm_razmjena_podataka()})
+AADD(opc,   "3. moduli - razmjena podataka ")
+AADD(opcexe, {|| virm_razmjena_podataka() })
+AADD(opc,   "4. export podataka za banku" )
+AADD(opcexe, {|| virm_export_banke() })
 AADD(opc,"------------------------------------")
 AADD(opcexe, nil)
-AADD(opc,   "4. sifrarnici")
+AADD(opc,   "S. sifrarnici")
 AADD(opcexe, {|| virm_sifrarnici()})
 AADD(opc,"------------------------------------")
 AADD(opcexe, nil)
@@ -95,6 +97,7 @@ return
 
 
 
+
 function virm_set_global_vars()
 
 set_global_vars()
@@ -105,6 +108,7 @@ public gOrgJed := SPACE(17)
 public gINulu:="N"
 public gPici:="9,999,999,999,999,999.99"
 public gIDU:="D"
+public gVirmFirma
 
 gMjesto := fetch_metric("virm_mjesto_uplate", nil, PADR( "Sarajevo", 100 ) )
 gOrgJed := fetch_metric("virm_org_jedinica", nil, PADR( "--", 17 ) )
@@ -112,6 +116,7 @@ gPici := fetch_metric("virm_iznos_pict", nil, gPici )
 gINulu := fetch_metric("virm_stampati_nule", nil, gINulu )
 gIDU := fetch_metric("virm_sys_datum_uplate", nil, gIDU )
 gDatum := fetch_metric("virm_init_datum_uplate", nil, gDatum )
+gVirmFirma := PADR( fetch_metric("virm_org_id", nil, "" ), 6 )
 
 return
 

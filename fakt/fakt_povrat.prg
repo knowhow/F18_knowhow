@@ -505,7 +505,7 @@ do while !_table:EOF()
     next
 
     // ako ima koje pride polje obradi ga !!!
-    _rec["brdok"] := fakt_brdok_0()
+    _rec["brdok"] := fakt_brdok_0( id_firma, id_tip_dok, DATE() )
 
     dbf_update_rec( _rec )
 

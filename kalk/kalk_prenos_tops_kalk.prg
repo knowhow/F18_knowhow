@@ -59,7 +59,8 @@ return
 static function _box_konto()
 local _konto := PADR( "1320", 7 )
 local _t_area := SELECT()
-	
+
+O_KONTO	
 select konto
 
 Box(, 3, 60 )
@@ -69,6 +70,26 @@ BoxC()
 
 select ( _t_area )
 return _konto
+
+
+
+// --------------------------------------------------------
+// upit za tip prenosa
+// --------------------------------------------------------
+static function _get_razd_type()
+local _type := "1"
+private GetList := {}
+
+Box(, 5, 60 )
+	@ m_x + 1, m_y + 2 SAY "Tip razduzenja ***"
+	@ m_x + 3, m_y + 2 SAY "  [1] dok. 42"
+	@ m_x + 4, m_y + 2 SAY "  [2] dok. 11"
+    @ m_x + 6, m_y + 2 SAY "          odabir:" GET _type VALID _type $ "12"
+  	read
+BoxC()
+
+return _type
+
 
 
 // ----------------------------------------------------------------
@@ -107,11 +128,129 @@ BoxC()
 return _ret
 
 
+// parametri auto prenosa
+static function _get_prenos_params( params )
+local _ok := .f.
+local _d_od := DATE()
+local _d_do := DATE()
+local _x := 1
+local _id_pm := PADR( fetch_metric( "IDPos", NIL, "1 " ), 2 )
+local _mag_konto := PADR( "1320", 7 )
+local _type := "1"
+private GetList := {}
+
+Box(, 8, 70 )
+
+    @ m_x + _x, m_y + 2 SAY "*** Automatsko razduzenje prodavnice ***" COLOR "I"
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Za datum od:" GET _d_od
+    @ m_x + _x, col() + 1 SAY "do:" GET _d_do
+
+    ++ _x
+    
+    @ m_x + _x, m_y + 2 SAY "Prodajno mjesto:" GET _id_pm VALID !EMPTY( _id_pm )
+
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Formiraj: [1] kalk.42, [2] kalk.11" GET _type VALID _type $ "12"
+    
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "Kod 11-ke konto magacina:" GET _mag_konto
+
+    read
+
+BoxC()
+
+if LastKey() == K_ESC
+    return _ok
+endif
+
+_ok := .t.
+params := hb_hash()
+params["datum_od"] := _d_od
+params["datum_do"] := _d_do
+params["id_pm"] := _id_pm
+params["tip_prenosa"] := _type
+params["barkod_zamjena"] := 0
+params["konto_magacin"] := _mag_konto
+
+gIdPos := _id_pm
+
+return _ok
+
+
+
+// -----------------------------------------------------------
+// automatsko preuzimanje fajla iz modula TOPS
+// -----------------------------------------------------------
+function kalk_preuzmi_tops_dokumente_auto()
+local _file := my_home() + "tk_auto.dbf"
+local _tip_prenosa 
+local _datum_od, _datum_do
+local _id_vd_pos := "42"
+local _id_pm
+local _barkod_zamjena 
+local _params
+local _mag_konto
+
+// incijalizacija radi TOPS funkcija
+private gIdPos
+
+// parametri prenosa...
+_get_prenos_params( @_params )
+
+_datum_od := _params["datum_od"]
+_datum_do := _params["datum_do"]
+_id_pm := _params["id_pm"]
+_tip_prenosa := _params["tip_prenosa"]
+_barkod_zamjena := _params["barkod_zamjena"]
+_mag_konto := _params["konto_magacin"]
+
+MsgO( "Formiranje fajla prenosa u toku... " )
+
+// obrisi neki postojeci...
+FileDelete( _file )
+FileDelete( STRTRAN( _file, ".dbf", ".txt" ) )
+
+// 1)  napraviti prenos u POS-u...
+pos_prenos_pos_kalk( _datum_od, _datum_do, _id_vd_pos, _id_pm )
+
+// 2) kopiraj fajl u potrebni...
+FileCopy( my_home() + "pom.dbf", _file )
+
+if !FILE( _file )
+    MsgC()
+    MsgBeep( "Neki problem !!?????" )
+    return
+endif
+
+// 3) pa zatim isti preuzmi iz POS-a
+kalk_preuzmi_tops_dokumente( _file, _tip_prenosa, _barkod_zamjena, _mag_konto )
+
+MsgC()
+
+// 4) nakon preuzimanja pobrisi fajl razmjene
+FileDelete( _file )
+FileDelete( STRTRAN( _file, ".dbf", ".txt" ) )
+
+O_KALK_PRIPR
+if RECCOUNT() <> 0
+    MsgBeep( "Prenos dokumenata uspjesan, nalazi se u pripremi !" )
+endif
+
+close all
+
+return
+
+
 
 // ------------------------------------------------------------
 // preuzimanje podataka iz POS-a
 // ------------------------------------------------------------
-function kalk_preuzmi_tops_dokumente()
+function kalk_preuzmi_tops_dokumente( sync_file, auto_razd, ch_barkod, mag_konto )
 local _auto_razduzenje := "N"
 local _br_kalk, _idvd_pos
 local _id_konto2 := ""
@@ -123,20 +262,30 @@ local _imp_file := ""
 local _roba_data := {}
 local _count := 0
 local _h_brdok
+local _razd_type := "1"
 
 // opcija za automatko svodjeje prodavnice na 0
 // ---------------------------------------------
 // prenese se tops promet u dokument 11
 // pa se prenese tops promet u dokument 42
-_auto_razduzenje := fetch_metric( "kalk_tops_prenos_auto_razduzenje", my_user(), _auto_razduzenje )
+if auto_razd <> NIL
+    _auto_razduzenje := "D"
+else
+    _auto_razduzenje := fetch_metric( "kalk_tops_prenos_auto_razduzenje", my_user(), _auto_razduzenje )
+endif
 
 // otvori tabele bitne za import podataka
 _o_imp_tables()
 
-// daj mi fajl za import
-if !get_import_file( @_imp_file )
-	close all
-	return
+if sync_file <> NIL
+    // zadano je parametrom
+    _imp_file := sync_file
+else
+    // daj mi fajl za import
+    if !get_import_file( @_imp_file )
+	    close all
+	    return
+    endif
 endif
 
 // otvori temp tabelu
@@ -190,14 +339,27 @@ go top
 // 1 - ubaci samo nove
 // 2 - zamjeni sve
 
-_bk_replace := _bk_replace()
+if ch_barkod <> NIL
+    _bk_replace := ch_barkod
+else
+    _bk_replace := _bk_replace()
+endif
 
 // konto magacina za razduzenje
 if ( _idvd_pos == "42" .and. _auto_razduzenje == "D" ) .or. ( _idvd_pos == "12" )
-	_id_konto2 := _box_konto()
+    if mag_konto <> NIL
+        _id_konto2 := mag_konto
+    else
+	    _id_konto2 := _box_konto()
+    endif
 endif
 
 // konacno idemo na import
+
+if _auto_razduzenje == "D"
+    // razduziti kao 11 ili kao 42
+    _razd_type := auto_razd
+endif
 
 _r_br := "0"
 
@@ -219,7 +381,7 @@ do while !EOF()
     	
 	if ( _idvd_pos == "42" .or. _idvd_pos == "12" )
 
-		if _auto_razduzenje == "D"
+		if _auto_razduzenje == "D" .and. _razd_type == "2"
             // formiraj stavku 11	
 		    import_row_11( _br_dok, _id_konto, _id_konto2, _r_br )
         else
@@ -489,7 +651,7 @@ replace field->rbr with r_br
 replace field->tmarza2 with "%"            
 replace field->idtarifa with topska->idtarifa
 replace field->mpcsapp with topska->( mpc - stmpc )
-replace field->prevoz with "R"
+replace field->tprevoz with "R"
 
 select ( _t_area )
 return

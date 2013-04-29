@@ -65,9 +65,8 @@ return _counter:to_str()
 // --------------------------------------------------------
 // brdok nula
 // --------------------------------------------------------
-function fakt_brdok_0(idfirma, idtipdok, datdok)
+function fakt_brdok_0( idfirma, idtipdok, datdok )
 local _counter := FaktCounter():New(idfirma, idtipdok, datdok)
-
 return _counter:to_str()
 
 

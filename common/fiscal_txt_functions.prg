@@ -313,8 +313,10 @@ set printer on
 set console off
 
 // zakaci se na dbf
-select (249)
-use (PRIVPATH + cDBF) alias "exp"
+select ( F_TMP_1 )
+use
+
+my_use_temp( "exp", my_home() + cDBF )
 go top
 
 do while !EOF()
@@ -325,9 +327,9 @@ do while !EOF()
 	// i napuni liniju...
 	for ii := 1 to LEN( aStruct )
 		
-		cType := aStruct[ii, 1]
-		nLen := aStruct[ii, 2]
-		nDec := aStruct[ii, 3]
+		cType := aStruct[ ii, 1 ]
+		nLen := aStruct[ ii, 2 ]
+		nDec := aStruct[ ii, 3 ]
 
 		if cType == "C"
 			xVal := PADR( &(exp->(fieldname(ii))), nLen )
@@ -362,7 +364,7 @@ do while !EOF()
 
 	next
 
-	?? cLine
+	?? to_win1250_encoding( hb_strtoutf8( cLine ), .t. )
 	? 
 	
 	++ nCount
@@ -375,8 +377,9 @@ set printer to
 set printer off
 set console on
 
-select (249)
+select ( F_TMP_1 )
 use
 
 return
+
 

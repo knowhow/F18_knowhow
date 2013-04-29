@@ -107,7 +107,7 @@ IF cVarijanta!="3"
                 IF(EMPTY(cMjesec),".t.","MJESEC==" + _filter_quote(cMjesec)) + ".and." + ;
                 IF(EMPTY(cGodina),".t.","GODINA==" + _filter_quote(cGodina))
         cFilt += ".and. OBR==" + _filter_quote( cObracun )
-        INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
+        INDEX ON &cSort1 TO "tmpld" FOR &cFilt
     BoxC()
 
     EOF CRET

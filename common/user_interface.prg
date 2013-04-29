@@ -1454,23 +1454,26 @@ return fret
 
 // -------------------------------------------
 // -------------------------------------------
-function NaslEkran(fBox)
+function NaslEkran( fBox )
+local _max_cols := MAXCOLS()
+local _max_rows := MAXROWS()
 
 if fBox
     clear
 endif
 
 @ 0,2 SAY '<ESC> Izlaz' COLOR INVERT
-@ 0,COL()+2 SAY DATE()  COLOR INVERT
-@ MAXROWS()-1, MAXCOLS()-16  SAY fmklibver()
+@ 0, COL() + 2 SAY DATE() COLOR INVERT
+@ _max_rows - 1, _max_cols - 16  SAY fmklibver()
 
-DISPBox(2, 0, 4, MAXCOLS()-1, B_DOUBLE + ' ' , NORMAL)
+DISPBox( 2, 0, 4, _max_cols - 1, B_DOUBLE + ' ' , NORMAL )
 
 if fBox
-    DISPBox(5 ,0, MAXROWS()-1, MAXCOLS()-1, B_DOUBLE + "±", INVERT)
+    DISPBox( 5 ,0, _max_rows - 1, _max_cols - 1, B_DOUBLE + "±", INVERT )
 endif
 
-@ 3,1 SAY PADC(gNaslov, MAXCOLS()-8) COLOR NORMAL
+@ 3, 1 SAY PADC( gNaslov, _max_cols - 8 ) COLOR NORMAL
+
 return
 
 
@@ -1707,31 +1710,33 @@ return
 
 
 function ToggleINS()
-
 local nx
 local ny
 
-nx:=row()
-ny:=col()
+nx := row()
+ny := col()
+
 if ReadInsert(!ReadInsert())
-   setcursor(1)
-   @ 0, MAXCOLS()-20 SAY  '< OVER >' COLOR Invert
+    setcursor(1)
+    @ 0, MAXCOLS() - 20 SAY '< OVER >' COLOR Invert
 else
-   setcursor(2)
-   @ 0, MAXCOLS()-20 SAY  '< INS  >' COLOR Invert
+    setcursor(2)
+    @ 0, MAXCOLS() - 20 SAY  '< INS  >' COLOR Invert
 endif
-@ 0, MAXCOLS()-11 SAY "bring.out" COLOR "GR+/B"
-setpos(nx,ny)
+
+@ 0, MAXCOLS() - 11 SAY "bring.out" COLOR "GR+/B"
+
+setpos( nx, ny )
 
 return .t.
 
 
+
 function say_database_info()
-
 @ 0, MAXROWS() - 1 SAY PADR( f18_database() + " / " + f18_user(), MAXROWS() + 20 ) COLOR INVERT
-@ 4,4 SAY ""
-
+@ 4, 4 SAY ""
 return
+
 
 
 

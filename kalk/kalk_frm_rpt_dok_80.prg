@@ -43,7 +43,7 @@ HSEEK cIdPartner
 select KONTO
 HSEEK cIdKonto
 
-?  "KONTO zaduzuje :",cIdKonto,"-",naz
+?  "KONTO zaduzuje :",cIdKonto,"-",ALLTRIM( naz )
 
 
 m:="--- -------------------------------------------- ----------"+;

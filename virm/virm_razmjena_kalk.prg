@@ -59,7 +59,7 @@ do while .t.
             read
             cKo_zr:=cIdBanka
             select partn
-        seek gFirma
+            seek gVirmFirma
             cKo_txt:=trim(partn->naz) + ", " + trim(partn->mjesto)+", "+trim(partn->adresa) + ", " + trim(partn->telefon)
         @ m_x+ 3, m_y+ 2 SAY "Poziv na broj " GET cPNABR
             @ m_x+ 3, col()+4 SAY "Vrsta uplate " GET cVUPL
@@ -169,7 +169,7 @@ DO WHILE !EOF()
   cSvrha_pl := idvrprim
   nFormula  := ROUND( iznos , 2 )
   select VRPRIM; hseek cSvrha_pl
-  select PARTN ; hseek gFirma
+  select PARTN ; hseek gVirmFirma
 
   select virm_pripr
   GO BOTTOM
@@ -187,7 +187,7 @@ DO WHILE !EOF()
 
             //orgjed with gorgjed,;
 
-    replace na_teret  with gFirma,;
+    replace na_teret  with gVirmFirma,;
             Ko_Txt with cko_txt,;
             Ko_ZR with cKo_zr ,;
             kome_txt with VRPRIM->naz

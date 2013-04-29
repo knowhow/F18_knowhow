@@ -504,7 +504,7 @@ Box(,2,30)
   if lViseObr .and. !EMPTY(cObracun)
     cFilt += (".and. OBR=="+cm2str(cObracun))
   endif
-  INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
+  INDEX ON &cSort1 TO "tmpld" FOR &cFilt
 BoxC()
 
 EOF CRET
@@ -740,7 +740,7 @@ if empty(cidrj)
      if lViseObr .and. !EMPTY(cObracun)
        cFilt += (".and. OBR=="+cm2str(cObracun))
      endif
-     INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
+     INDEX ON &cSort1 TO "tmpld" FOR &cFilt
     BoxC()
     GO TOP
   ELSE
@@ -752,7 +752,7 @@ if empty(cidrj)
      if lViseObr .and. !EMPTY(cObracun)
        cFilt += (".and. OBR=="+cm2str(cObracun))
      endif
-     INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
+     INDEX ON &cSort1 TO "tmpld" FOR &cFilt
     BoxC()
     GO TOP
   ENDIF
@@ -767,7 +767,7 @@ else
      if lViseObr .and. !EMPTY(cObracun)
        cFilt += (".and. OBR=="+cm2str(cObracun))
      endif
-     INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
+     INDEX ON &cSort1 TO "tmpld" FOR &cFilt
     BoxC()
     GO TOP
   ELSE
@@ -780,7 +780,7 @@ else
      if lViseObr .and. !EMPTY(cObracun)
        cFilt += (".and. OBR=="+cm2str(cObracun))
      endif
-     INDEX ON &cSort1 TO "TMPLD" FOR &cFilt
+     INDEX ON &cSort1 TO "tmpld" FOR &cFilt
     BoxC()
     GO TOP
   ENDIF
@@ -1037,7 +1037,7 @@ local cTipRada := " "
    cFilt += " .and. idrj=cIdRJ"
  ENDIF
 
- INDEX ON &cSort TO "TMPLD" FOR &cFilt
+ INDEX ON &cSort TO "tmpld" FOR &cFilt
 
  GO TOP
  IF EOF()

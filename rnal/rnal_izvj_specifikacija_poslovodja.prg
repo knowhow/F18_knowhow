@@ -22,11 +22,7 @@ static __temp
 // osnovni poziv specifikacije
 // ------------------------------------------
 function m_get_spec( nVar )
-local dD_From := DATE() - 1
-local dD_to := DATE()
-local nGroup := 0
-local nOper := 0
-local _statusi := "N"
+local _params
 
 if nVar == nil
 	nVar := 0
@@ -38,15 +34,15 @@ __nVar := nVar
 __temp := .f.
 
 // daj uslove izvjestaja
-if _g_vars( @dD_From, @dD_To, @nGroup, @nOper, @_statusi ) == 0
+if _g_vars( @_params ) == 0
 	return 
 endif
 
 // kreiraj specifikaciju po uslovima
-_cre_spec( dD_from, dD_to, nGroup, nOper, _statusi )
+_cre_spec( _params )
 
 // printaj specifikaciju
-_p_rpt_spec( nGroup )
+_p_rpt_spec( _params )
 
 return
 
@@ -55,65 +51,97 @@ return
 // ----------------------------------------
 // uslovi izvjestaja specifikacije
 // ----------------------------------------
-static function _g_vars( dDatFrom, dDatTo, nGroup, nOperater, statusi )
-local nRet := 1
-local nBoxX := 15
-local nBoxY := 65
-local nX := 1
+static function _g_vars( params )
+local _ret := 1
+local _box_x := 18
+local _box_y := 70
+local _x := 1
+local _statusi, _tip_datuma
+local _dat_od, _dat_do, _group, _operater
 
 private GetList := {}
 
-statusi := fetch_metric("rnal_spec_posl_status", NIL, "N" )
+_statusi := fetch_metric("rnal_spec_posl_status", NIL, "N" )
+_tip_datuma := fetch_metric("rnal_spec_posl_tip_datuma", my_user(), 2 )
 
-Box(, nBoxX, nBoxY)
+_dat_od := DATE()
+_dat_do := DATE()
+_group := 0
+_operater := 0
 
-	@ m_x + nX, m_y + 2 SAY "*** Specifikacija radnih naloga za poslovodje"
-	
-	nX += 2
-	
-	@ m_x + nX, m_y + 2 SAY "Datum naloga od:" GET dDatFrom
-	@ m_x + nX, col() + 1 SAY "do:" GET dDatTo
+Box(, _box_x, _box_y )
 
-	nX += 2
+	@ m_x + _x, m_y + 2 SAY "*** Specifikacija radnih naloga za poslovodje"
 	
-	@ m_x + nX, m_y + 2 SAY "Operater (0 - svi op.):" GET nOperater VALID {|| nOperater == 0  } PICT "9999999999"
+    ++ _x
+    ++ _x
 	
-	nX += 2
-	
-	@ m_x + nX, m_y + 2 SAY "*** Selekcija grupe artikala "
+	@ m_x + _x, m_y + 2 SAY "Datum od:" GET _dat_od
+	@ m_x + _x, col() + 1 SAY "do:" GET _dat_do
 
-	nX += 1
+	++ _x
+    ++ _x
+	
+	@ m_x + _x, m_y + 2 SAY "Operater (0 - svi op.):" GET _operater VALID {|| _operater == 0  } PICT "9999999999"
+	
+	++ _x
+    ++ _x
+	
+	@ m_x + _x, m_y + 2 SAY "*** Selekcija grupe artikala "
 
-	@ m_x + nX, m_y + 2 SAY "(1) - rezano          (4) - IZO"
-	
-	nX += 1
-	
-	@ m_x + nX, m_y + 2 SAY "(2) - kaljeno         (5) - LAMI"
-	
-	nX += 1
-	
-	@ m_x + nX, m_y + 2 SAY "(3) - bruseno         (6) - emajlirano"
-	
-	nX += 2
+	++ _x
 
-	@ m_x + nX, m_y + 2 SAY "Grupa artikala (0 - sve grupe):" GET nGroup VALID nGroup >= 0 .and. nGroup < 7 PICT "9"
+	@ m_x + _x, m_y + 2 SAY "(1) - rezano          (4) - IZO"
+	
+	++ _x
+	
+	@ m_x + _x, m_y + 2 SAY "(2) - kaljeno         (5) - LAMI"
+	
+	++ _x
+	
+	@ m_x + _x, m_y + 2 SAY "(3) - bruseno         (6) - emajlirano"
+	
+	++ _x
 
-    nX += 2
+	@ m_x + _x, m_y + 2 SAY "Grupa artikala (0 - sve grupe):" GET _group VALID _group >= 0 .and. _group < 7 PICT "9"
 
-	@ m_x + nX, m_y + 2 SAY "Gledati statuse 'realizovano' (D/N) ?" GET statusi VALID statusi $ "DN" PICT "@!"
+    ++ _x
+    ++ _x
+
+	@ m_x + _x, m_y + 2 SAY "Gledati statuse 'realizovano' (D/N) ?" GET _statusi VALID _statusi $ "DN" PICT "@!"
+
+    ++ _x
+
+	@ m_x + _x, m_y + 2 SAY "Gledati datum naloga ili datum isporuke (1/2) ?" GET _tip_datuma PICT "9"
 	
 	read
 
 BoxC()
 
 if LastKey() == K_ESC
-	nRet := 0
+	_ret := 0
+    return _ret
 endif
 
 // snimi parametre
-set_metric("rnal_spec_posl_status", NIL, statusi )
+set_metric("rnal_spec_posl_status", NIL, _statusi )
+set_metric("rnal_spec_posl_tip_datuma", my_user(), _tip_datuma )
 
-return nRet
+params := hb_hash()
+params["datum_od"] := _dat_od
+params["datum_do"] := _dat_do
+params["tip_datuma"] := _tip_datuma
+params["group"] := _group
+params["operater"] := _operater
+params["gledaj_statuse"] := _statusi
+
+params["idx"] := "D1"
+
+if _tip_datuma == 2
+    params["idx"] := "D2"
+endif
+
+return _ret
 
 
 
@@ -121,7 +149,7 @@ return nRet
 // kreiraj specifikaciju
 // izvjestaj se primarno puni u _tmp0 tabelu
 // ----------------------------------------------
-static function _cre_spec( dD_from, dD_to, nGroup, nOper, statusi )
+static function _cre_spec( params )
 local nDoc_no
 local nArt_id
 local aArtArr := {}
@@ -136,7 +164,6 @@ local aGrCount := {}
 local nGr1 
 local nGr2
 
-
 // kreiraj tmp tabelu
 aField := _spec_fields()
 
@@ -146,7 +173,7 @@ o_tmp1()
 // otvori potrebne tabele
 o_tables( .f. )
 
-_main_filter( dD_from, dD_to, nOper, statusi )
+_main_filter( params )
 
 Box(, 1, 50 )
 
@@ -347,43 +374,41 @@ BoxC()
 return
 
 
-static function _main_filter( dDFrom, dDTo, nOper, statusi, date_type, tbl_tag )
-local cFilter := ""
+static function _main_filter( params )
+local _filter := ""
 local _date := "doc_date"
+local _dat_od := params["datum_od"]
+local _dat_do := params["datum_do"]
+local _tip_datuma := params["tip_datuma"]
+local _group := params["group"]
+local _oper := params["operater"]
+local _idx := params["idx"]
+local _statusi := params["gledaj_statuse"]
 
-// doc date = 1
-// delivery date = 2
-
-if date_type == NIL
-    date_type := 2
-endif
-
-if tbl_tag == NIL
-    tbl_tag := "D2"
-endif
-
-if date_type == 2
+if _tip_datuma == 2
     _date := "doc_dvr_da"
+else
+    _date := "doc_date"
 endif
 
-if statusi == "N"
+if _statusi == "N"
     // necemo gledati statuse, prikazi sve naloge
-    cFilter += "( doc_status == 0 .or. doc_status > 2 )"
+    _filter += "( doc_status == 0 .or. doc_status > 2 )"
 else
     // gledaju se prakticno stamo otvoreni
-    cFilter += "( doc_status == 0 .or. doc_status == 4 ) "
+    _filter += "( doc_status == 0 .or. doc_status == 4 ) "
 endif
 
-cFilter += " .and. DTOS( " + _date + " ) >= " + _filter_quote( DTOS( dDFrom ) )
-cFilter += " .and. DTOS( " + _date + " ) <= " + _filter_quote( DTOS( dDTo ) )
+_filter += " .and. DTOS( " + _date + " ) >= " + _filter_quote( DTOS( _dat_od ) )
+_filter += " .and. DTOS( " + _date + " ) <= " + _filter_quote( DTOS( _dat_do ) )
 
-if nOper <> 0
-	cFilter += " .and. ALLTRIM( STR( operater_i ) ) == " + cm2str( ALLTRIM( STR( nOper ) ) )
+if _oper <> 0
+	_filter += " .and. ALLTRIM( STR( operater_i ) ) == " + cm2str( ALLTRIM( STR( _oper ) ) )
 endif
 
 select docs
-set order to tag &tbl_tag
-set filter to &cFilter
+set order to tag &_idx
+set filter to &_filter
 go top
 	
 return
@@ -396,12 +421,13 @@ return
 // stampa specifikacije
 // stampa se iz _tmp0 tabele
 // ------------------------------------------
-static function _p_rpt_spec( nGroup )
+static function _p_rpt_spec( params )
 local i
 local ii
 local nScan
 local aItemAop
 local cPom
+local _group := params["group"]
 
 START PRINT CRET
 
@@ -420,10 +446,10 @@ go top
 
 do while !EOF()
 	
-	if nGroup <> 0
+	if _group <> 0
 	
 		// preskoci ako filterises po grupi
-		if field->it_group <> nGroup
+		if field->it_group <> _group
 			
 			skip
 			loop

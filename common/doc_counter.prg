@@ -165,16 +165,16 @@ return ::count
 
 // -----------------------------------
 // -----------------------------------
-METHOD DocCounter:rewind(dok_str)
+METHOD DocCounter:rewind( dok_str )
 local _doc_cnt, _s_cnt, _msg
 
-if ::decode(dok_str, .t.)
+if ::decode( dok_str, .t. )
    _doc_cnt := ::document_counter
    _s_cnt   := ::server_counter
 else
     _msg := "DOC_CNT decode ERR: " + dok_str 
-    log_write(_msg, 2)
-    MsgBeep(_msg)
+    log_write( _msg, 2 )
+    MsgBeep( _msg )
     return .f.
 endif
 
@@ -405,7 +405,7 @@ return PADR(_tmp, ::width)
 
 // -------------------------------------------
 // -------------------------------------------
-METHOD DocCounter:decode(str, change_counter)
+METHOD DocCounter:decode( str, change_counter )
 local _a
 //local _sep := "[#\/\\-]*"
 local _re_str := str_regex(::prefix) + "(.*?)([" + ::fill + "]*)" +  "([0-9]{4," + ALLTRIM(STR(::width)) +"})(.*)" + str_regex(::suffix) + "\s*"

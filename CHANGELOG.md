@@ -1,3 +1,7 @@
+1.4.173 2013-04-29, vsasa
+ 
+  - fakt, povrat dokumenta u pripremu, provjera fiskalnih opcija
+ 
 1.4.172 2013-04-29, vsasa
  
   - ld, pregled plata, razdojeno prikaz primanja i odbitaka

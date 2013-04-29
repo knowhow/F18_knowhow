@@ -1,67 +1,20 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 
+
 #include "fakt.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/fakt/dok/2g/rpt_invp.prg,v $
- * $Author: sasa $ 
- * $Revision: 1.10 $
- * $Log: rpt_invp.prg,v $
- * Revision 1.10  2002/07/01 12:50:22  sasa
- * Zavrsena ispravka stampe inventure i popisne liste
- *
- * Revision 1.9  2002/07/01 09:19:50  sasa
- * korekcije u stilu pisanja koda i ispravka gresaka
- *
- * Revision 1.8  2002/07/01 08:52:04  sasa
- * korekcije u stilu pisanja koda i ispravka gresaka
- *
- * Revision 1.7  2002/07/01 08:28:06  sasa
- * korekcije u stilu pisanja koda i ispravka gresaka
- *
- * Revision 1.6  2002/06/29 09:32:19  sasa
- * no message
- *
- * Revision 1.5  2002/06/28 14:05:43  sasa
- * implementacija stampe obrasca
- *
- * Revision 1.4  2002/06/28 13:50:56  sasa
- * implementacija stampe obrasca
- *
- * Revision 1.3  2002/06/28 13:16:45  sasa
- * implementacija stampe obrasca
- *
- * Revision 1.2  2002/06/28 12:58:30  sasa
- * implementacija stampe obrasca
- *
- * Revision 1.1  2002/06/28 07:16:44  ernad
- *
- *
- * skeleton funkcija RptInv, RptObrPopisa
- *
- *
- */
-
-
-/*! \fn RptInvObrPopisa()
- *  \brief Stampa inventurnog obrasca popisa
- */
  
 function RptInvObrPopisa()
-*{
 local nRecNo
 private nStr:=0
 

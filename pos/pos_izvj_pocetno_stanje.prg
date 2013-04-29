@@ -1,36 +1,20 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning suite,
+ * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
- * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 
+
 #include "pos.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/dok/1g/rpt_pocs.prg,v $
- * $Author: sasa $ 
- * $Revision: 1.2 $
- * $Log: rpt_pocs.prg,v $
- * Revision 1.2  2002/06/15 08:17:46  sasa
- * no message
- *
- *
- */
- 
-/*! \fn PrepisPCS()
- */
- 
+
 function PrepisPCS()
-*{
 LOCAL nSir := 80, nRobaSir := 30, cLm := SPACE (5), cPicKol := "999999.999"
   START PRINT CRET
   IF gVrstaRS == "S"

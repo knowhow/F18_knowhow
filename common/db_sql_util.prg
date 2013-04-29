@@ -1,45 +1,18 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning suite,
+ * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
- * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 
+
 #include "fmk.ch"
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/sclib/sql/1g/sql_ut.prg,v $
- * $Author: ernad $ 
- * $Revision: 1.5 $
- * $Log: sql_ut.prg,v $
- * Revision 1.5  2002/06/24 16:11:53  ernad
- *
- *
- * planika - uvodjenje izvjestaja 98-reklamacija, izvjestaj planika/promet po vrstama placanja, debug
- *
- * Revision 1.4  2002/06/24 07:00:37  ernad
- *
- *
- * GwDiskFree, ciscenja gateway
- *
- * Revision 1.3  2002/06/23 11:57:24  ernad
- * ciscenja sql - planika
- *
- * Revision 1.2  2002/06/19 19:51:00  ernad
- *
- *
- * rad u sezonama, gateway
- *
- *
- */
- 
+
 function Log_Tabela(cTn)
 *{
 local cSQL

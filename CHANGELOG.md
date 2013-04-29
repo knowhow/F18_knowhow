@@ -2,6 +2,7 @@
  
   - export izvještaja i podataka na user-friendly lokaciju
   - kalk/fakt, prenos podataka, setovanje idpartner polja
+  - čišćenje header-a FMK => F18 knowhowERP
  
 1.4.173 2013-04-29, vsasa
  

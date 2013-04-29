@@ -1,3 +1,9 @@
+1.4.172 2013-04-29, vsasa
+ 
+  - ld, pregled plata, razdojeno prikaz primanja i odbitaka
+  - prikaz verzije na glavnom meniju F18
+  - virm, krediti za istog partnera sumirano 
+
 1.4.171 2013-04-27, vsasa
  
   - virm, prenos kredita iz ld-a, partija kreditora na virmanu

@@ -155,12 +155,12 @@ endif
 @ 0, 2 SAY '<ESC> Izlaz' COLOR INVERT
 @ 0, COL() + 2 SAY DATE()  COLOR INVERT
 
-@ MAXROWS() - 1, MAXCOLS() - 16  SAY fmklibver()
+@ MAXROWS() - 1, MAXCOLS() - 16 SAY fmklibver()
 
-DispBox( 2, 0, 4, MAXCOLS()-1, B_DOUBLE+' ',NORMAL)
+DispBox( 2, 0, 4, MAXCOLS() - 1, B_DOUBLE + ' ', NORMAL )
 
 if lClear
-	DispBox( 5, 0, MAXROWS()-1, MAXCOLS()-1, B_DOUBLE+"±", INVERT)
+	DispBox( 5, 0, MAXROWS() - 1, MAXCOLS() - 1, B_DOUBLE + "±", INVERT )
 endif
 
 @ _ver_pos, 1 SAY PADC( gNaslov + ' Ver.' + gVerzija, MAXCOLS() - 8 ) COLOR NORMAL

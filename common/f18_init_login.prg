@@ -10,6 +10,7 @@
  */
 
 #include "fmk.ch"
+#include "f18_ver.ch"
 #include "hbclass.ch"
 #include "common.ch"
 
@@ -924,6 +925,8 @@ if !_arr == NIL .and. LEN( _arr ) > 0
 endif
 
 @ _x, _y SAY PADR( "Info: " + _info, _max_len )
+++ _x
+@ _x, _y SAY PADR( "F18 version: " + F18_VER, _max_len )
 
 return .t.
 

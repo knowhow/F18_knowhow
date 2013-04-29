@@ -544,7 +544,7 @@ do while !EOF() .and. field->id = _oznaka
 
     select rekld
     _sk_sifra := field->idpartner 
-    // SK=sifra kreditora
+    // SK = sifra kreditora
 
     do while !EOF() .and. field->id = "KRED" .and. field->idpartner = _sk_sifra
         ++ _kredit
@@ -552,6 +552,12 @@ do while !EOF() .and. field->id = _oznaka
         _kred_opis := ALLTRIM( field->opis ) + ", " + ALLTRIM( field->opis2 )
         skip 1
     enddo
+
+    // ako je vise kredita... opis treba promjeniti
+    if _kredit > 1
+        _kredit_opis := "Krediti za " + PADL( STR( mjesec, 2 ), "0" ) + "/" + STR( godina, 4 ) + ", partija: " + ALLTRIM( kred->zirod )
+    endif
+
     skip -1
 
     select virm_pripr

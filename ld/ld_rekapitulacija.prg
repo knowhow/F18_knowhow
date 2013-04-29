@@ -474,7 +474,7 @@ return
 function BoxRekSvi()
 local nArr
 
-nArr:=SELECT()
+nArr := SELECT()
 
 Box(,10+IF(IsRamaGlas(),1,0),75)
     do while .t.

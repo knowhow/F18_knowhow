@@ -555,7 +555,7 @@ DirChange(my_home())
 
 close all
 
-_output_file := "gip_org_" + ALLTRIM( gFirma ) + "_" + ALLTRIM( mjesec ) + "_" + ALLTRIM( godina ) + ".xml" 
+_output_file := "gip_" + ALLTRIM( my_server_params()["database"] ) + "_" + ALLTRIM( mjesec ) + "_" + ALLTRIM( godina ) + ".xml" 
 
 // kopiraj fajl na desktop
 f18_copy_to_desktop( _lokacija, _id_br + ".xml", _output_file )

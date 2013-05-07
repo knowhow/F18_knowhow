@@ -1,36 +1,19 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning suite,
+ * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
- * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 
+
 #include "kalk.ch"
 
-
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
-
-/*! \file fmk/kalk/mag/dok/1g/rpt_95sk.prg
- *  \brief Stampa kalkulacije tipa 95, varijanta samo kolicine (bez cijena)
- */
-
-
-/*! \fn StKalk95_sk()
- *  \brief Stampa kalkulacije tipa 95, varijanta samo kolicine (bez cijena)
- */
-
 function StKalk95_sk()
-*{
 local nCol1:=nCol2:=0,npom:=0
 
 Private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2

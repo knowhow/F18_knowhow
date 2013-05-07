@@ -357,7 +357,7 @@ if __xml == 1
 	_xml_print( cTipRpt )
 else
 	nBrZahtjeva := g_br_zaht()
-	_xml_export( cTipRpt )
+	_xml_export( cTipRpt, cMj_od, cGod_od )
 	msgbeep("Obradjeno " + ALLTRIM(STR(nBrZahtjeva)) + " zahtjeva.")
 endif
 
@@ -489,10 +489,11 @@ return nRet
 // ----------------------------------------
 // export xml-a
 // ----------------------------------------
-static function _xml_export( cTip )
+static function _xml_export( cTip, mjesec, godina )
 local cMsg
 local _id_br, _naziv, _adresa, _mjesto
 local _lokacija, _cre, _error, _a_files
+local _output_file := ""
 
 if __xml == 1
 	return
@@ -546,7 +547,7 @@ DirChange(_lokacija)
 _fill_e_xml( _id_br + ".xml" )
 
 cMsg := "Generacija obrasca završena.#"
-cMsg +=  _lokacija + _id_br + ".xml#"
+cMsg += "Fajl se nalazi na desktopu u folderu F18_dokumenti"
 
 MsgBeep(cMsg)
 
@@ -554,7 +555,10 @@ DirChange(my_home())
 
 close all
 
-open_folder(_lokacija)
+_output_file := "gip_" + ALLTRIM( my_server_params()["database"] ) + "_" + ALLTRIM( mjesec ) + "_" + ALLTRIM( godina ) + ".xml" 
+
+// kopiraj fajl na desktop
+f18_copy_to_desktop( _lokacija, _id_br + ".xml", _output_file )
 
 return
 

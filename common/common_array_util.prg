@@ -1,13 +1,14 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning suite,
+ * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
- * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
+
 
 
 #include "inkey.ch"
@@ -21,62 +22,6 @@ static nRow
 function ABrowRow()
 return nRow
 
-
-/****f SC_CLIB/ABrowse ***
-
-*AUTOR
-   Ernad Husremovic ernad@sigma-com.net
-
-*IME
-   Abrowse
-
-*SYNOPSIS
-   ABrowse( <aArray>, <nWidthX>, <nWidthY>, <bUserFunction> ) --> value
-
-*ULAZI
-   aArray  - 
-   nWidthX - sirina X
-   nWidthY - sirina Y
-   bUserFunction - code block 
-
-*OPIS
- browse a 2-dim array using tbrowse object and return the value of
- the higlighted array element
-
-*PRIMJER
-
-	History:={"1","2","3"}
-   	ABrowse(aHistory,10,1,{|ch|  HistUser(ch)}))[1]
-
-	function histuser(ch)
-	local nrec,chi
-
-	do case
-	 case ch==k_enter
-	  return de_abort
-	 case ch=k_ctrl_t
-	  if len(ahistory)>1
-	   chi:=ahistory[abrowrow(),1]
-	   adel(ahistory,abrowrow())
-	   asize(ahistory,len(ahistory)-1)
-	   seek csection+chi
-	   do while !eof() .and. csection+chi==fsec+fh
-	      skip; nrec:=recno(); skip -1
-	      delete
-	      go nrec
-	   enddo
-	  else
-	    beep(2)
-	  endif
-	  return de_refresh
-	  // izbrisi tekuci element
-	 otherwise
-	  return de_cont
-	endcase
-
-	return nil
-
-****/
 
 FUNCTION ABrowse( aArray, xw, yw, bUserF)
 
@@ -606,31 +551,5 @@ FUNCTION StackTop( aStack )
 //
 // Return the value of the last element in the stack array
 RETURN ATAIL( aStack )
-
-
-/****f STACK/PushWA ***
-
-*AUTHOR
-  Ernad Husremovic ernad@sigma-com.net
-
-*NAME
- PushWA
- 
-*SYNOPSIS
-   PushWA()
-
-*EXPLANATION
-   Na stack prebacije trenutne podatke o radnom podrucju:
-   broj radnog podrucja, broj indexa, filter, broj sloga
-*INPUTS
-
-*EXAMPLE
-   select ROBA
-   PushWA()
-     select TARIFA
-     ... operacije na tabeli TARIFA
-   PopWA() // vracamo se na ROBA, na trenutni zapis
-
-****/
 
 

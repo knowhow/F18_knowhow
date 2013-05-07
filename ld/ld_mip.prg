@@ -343,7 +343,7 @@ if __xml == 1
     _xml_print( _pojed )
 else
     nBrZahtjeva := g_br_zaht()
-    _xml_export()
+    _xml_export( cMj, cGod )
     msgbeep("Obradjeno " + ALLTRIM(STR(nBrZahtjeva)) + " radnika.")
 endif
 
@@ -389,9 +389,10 @@ return
 // ----------------------------------------
 // export xml-a
 // ----------------------------------------
-static function _xml_export()
+static function _xml_export( mjesec, godina )
 local _cre, cMsg, _id_br, _naziv, _adresa, _mjesto, _lokacija
 local _a_files, _error
+local _output_file := ""
 
 if __xml == 1
     return
@@ -403,12 +404,12 @@ _adresa := fetch_metric( "org_adresa", NIL, PADR( "<POPUNI adresu>", 100 ))
 _mjesto   := fetch_metric( "org_mjesto", NIL, PADR( "<POPUNI mjesto>", 100 ))
 
 Box(, 6, 70)
-  @ m_x + 1, m_y + 2 SAY " - Firma/Organizacija - "
-  @ m_x + 3, m_y + 2 SAY " Id broj: " GET _id_br
-  @ m_x + 4, m_y + 2 SAY "   Naziv: " GET _naziv PICT "@S50"
-  @ m_x + 5, m_y + 2 SAY "  Adresa: " GET _adresa PICT "@S50"
-  @ m_x + 6, m_y + 2 SAY "  Mjesto: " GET _mjesto PICT "@S50"
-  READ 
+    @ m_x + 1, m_y + 2 SAY " - Firma/Organizacija - "
+    @ m_x + 3, m_y + 2 SAY " Id broj: " GET _id_br
+    @ m_x + 4, m_y + 2 SAY "   Naziv: " GET _naziv PICT "@S50"
+    @ m_x + 5, m_y + 2 SAY "  Adresa: " GET _adresa PICT "@S50"
+    @ m_x + 6, m_y + 2 SAY "  Mjesto: " GET _mjesto PICT "@S50"
+    read
 BoxC()
 
 set_metric( "org_id_broj", NIL, _id_br)
@@ -418,40 +419,40 @@ set_metric( "org_mjesto", NIL, _mjesto)
 
 
 if LASTKEY() == K_ESC
-   return .f.
+    return .f.
 endif
 
-_id_br := ALLTRIM(_id_br)
+_id_br := ALLTRIM( _id_br )
 
-_lokacija := _path_quote(my_home() + "export" + SLASH)
+_lokacija := _path_quote( my_home() + "export" + SLASH )
 
-
-if DirChange(_lokacija) != 0
-
+if DirChange( _lokacija ) != 0
    _cre := MakeDir (_lokacija)
    if _cre != 0
        MsgBeep("kreiranje " + _lokacija + " neuspjesno ?!")
        log_write("dircreate err:" + _lokacija, 6 )
        return .f.
    endif
-
 endif
 
-DirChange(_lokacija)
+DirChange( _lokacija )
 
 // napuni xml fajl
-_fill_e_xml(_id_br + ".xml")
+_fill_e_xml( _id_br + ".xml" )
 
 cMsg := "Generacija obrasca završena.#"
-cMsg +=  _lokacija + _id_br + ".xml#"
+cMsg += "Fajl se nalazi na desktopu u folderu F18_dokumenti."
 
-MsgBeep(cMsg)
+MsgBeep( cMsg )
 
-DirChange(my_home())
+DirChange( my_home() )
 
 close all
 
-open_folder(_lokacija)
+_output_file := "mip_" + ALLTRIM( my_server_params()["database"] ) + "_" + ALLTRIM( mjesec ) + "_" + ALLTRIM( godina ) + ".xml" 
+
+// kopiraj fajl na desktop
+f18_copy_to_desktop( _lokacija, _id_br + ".xml", _output_file )
 
 return
 

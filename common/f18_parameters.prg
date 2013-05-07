@@ -77,7 +77,7 @@ if !just_set
 	_pos_x := 2
 	_pos_y := 3
 
-	@ _pos_x, _pos_y SAY "Odabir modula za glavni menij ***" COLOR "I"
+	@ _pos_x, _pos_y SAY "Odabir modula za glavni meni ***" COLOR "I"
 
 	@ _pos_x + _x, _pos_y SAY SPACE(2) + "FIN:" GET _fin PICT "@!"
 	@ _pos_x + _x, col() + 1 SAY "KALK:" GET _kalk PICT "@!"

@@ -1,3 +1,7 @@
+1.4.176 2013-05-07, vsasa
+ 
+  - virm, export podataka za banke, datum prazan zamjeni sa 0
+ 
 1.4.175 2013-05-07, vsasa
  
   - pos/kalk, prenos podataka, kreiranje i provjera postojanja fajla

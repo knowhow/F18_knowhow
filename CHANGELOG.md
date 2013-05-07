@@ -1,3 +1,7 @@
+1.4.175 2013-05-07, vsasa
+ 
+  - pos/kalk, prenos podataka, kreiranje i provjera postojanja fajla
+ 
 1.4.174 2013-04-29, vsasa
  
   - export izvještaja i podataka na user-friendly lokaciju

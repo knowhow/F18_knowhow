@@ -283,6 +283,10 @@ do while !data:EOF()
 
     endif
 
+    // konverovanje valute u stranu
+    fin_konvert_valute( @_rec, "D" )
+    
+    // update
     dbf_update_rec( _rec )
 
 enddo

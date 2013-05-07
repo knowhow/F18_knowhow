@@ -117,7 +117,8 @@ _param["datum_od"] := _dat_od
 _param["datum_do"] := _dat_do
 _param["datum_ps"] := _dat_ps
 _param["sintetika"] := _sint
-_param["copy_sif"] := _copy_sif
+_param["copy_sif"] := "N"
+_param["change_db"] := "N"
 
 // izvuci mi podatke u matricu iz sql-a...
 get_data( _param, @_data, @_konto_data, @_partn_data )
@@ -285,6 +286,9 @@ do while !data:EOF()
 
     endif
 
+	// konvertovanje valute za dvovalutni sistem
+	fin_konvert_valute( @_rec, "D" )
+
     dbf_update_rec( _rec )
 
 enddo
@@ -335,6 +339,8 @@ if _rbr > 0
 endif
 
 return _ret
+
+
 
 
 // -----------------------------------------------------------------
@@ -491,6 +497,7 @@ local _qry, _qry_2, _qry_3, _where
 local _dat_od := param["datum_od"]
 local _dat_do := param["datum_do"]
 local _dat_ps := param["datum_ps"]
+local _change_db := param["change_db"] == "D"
 local _copy_sif := param["copy_sif"]
 local _db_params := my_server_params()
 local _tek_database := my_server_params()["database"]
@@ -522,7 +529,11 @@ _qry += " ORDER BY sub.idkonto, sub.idpartner, sub.brdok, sub.datdok, sub.datval
 // 1) predji u sezonsko podrucje
 // ------------------------------------------------------------
 // prebaci se u sezonu
-switch_to_database( _db_params, _tek_database, _year_sez )
+// samo ako je potrebno !
+if _change_db
+	switch_to_database( _db_params, _tek_database, _year_sez )
+endif
+
 // setuj server
 _server := pg_server()
 
@@ -562,8 +573,10 @@ MsgC()
 
 // 3) vrati se u tekucu bazu...
 // ------------------------------------------------------------
-switch_to_database( _db_params, _tek_database, _year_tek )
-_server := pg_server()
+if _change_db
+	switch_to_database( _db_params, _tek_database, _year_tek )
+	_server := pg_server()
+endif
 
 return
 

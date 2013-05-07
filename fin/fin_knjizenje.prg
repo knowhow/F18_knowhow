@@ -493,6 +493,30 @@ return _d_p $ "12"
 
 
 
+
+// -------------------------------------------------
+// konvertovanje valute
+// -------------------------------------------------
+function fin_konvert_valute( rec, tip )
+local _kurs := Kurs( rec["datdok"] )
+local _ok := .t.
+
+if tip == "P"
+	rec["iznosbhd"] := rec["iznosdem"] * _kurs
+elseif tip == "D"
+	if ROUND( _kurs, 4 ) == 0
+		rec["iznosdem"] := 0
+	else
+		rec["iznosdem"] := rec["iznosbhd"] / _kurs
+	endif
+endif
+
+return _ok
+
+
+
+
+
 /*! \fn DinDem(p1,p2,cVar)
  *  \brief
  *  \param p1

@@ -156,7 +156,7 @@ local _dat_dok, _dat_val, _otv_st, _br_veze
 local _rec, _i_saldo
 local _rbr := 0
 
-_fin_broj := fin_brnal_0(gFirma, _fin_vn, DATE())
+_fin_broj := fin_brnal_0( gFirma, _fin_vn, DATE() )
 
 // otvori potrebne tabele
 _o_tables()

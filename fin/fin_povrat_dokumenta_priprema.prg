@@ -36,19 +36,20 @@ O_NALOG
 SELECT SUBAN
 set order to tag "4"
 
-cIdFirma         :=gFirma
-cIdFirma2        :=gFirma
-cIdVN := cIdVN2  := space(2)
+cIdFirma := gFirma
+cIdFirma2 := gFirma
+cIdVN := cIdVN2 := space(2)
 cBrNal:= cBrNal2 := space(12)
+dDatNal2 := CTOD("")
 
-Box("", IIF( storno, 3, 1 ), IIF( storno, 65, 35))
+Box("", IIF( storno, 4, 1 ), IIF( storno, 65, 35))
 
     @ m_x + 1, m_y + 2 SAY "Nalog:"
 
-    if gNW=="D"
-        @ m_x+1,col()+1 SAY cIdFirma PICT "@!"
+    if gNW == "D"
+        @ m_x + 1, col() + 1 SAY cIdFirma PICT "@!"
     else
-        @ m_x+1,col()+1 GET cIdFirma PICT "@!"
+        @ m_x + 1, col() + 1 GET cIdFirma PICT "@!"
     endif
 
     @ m_x + 1, col() + 1 SAY "-" GET cIdVN PICT "@!"
@@ -56,16 +57,18 @@ Box("", IIF( storno, 3, 1 ), IIF( storno, 65, 35))
 
     IF storno
 
-        @ m_x+3,m_y+2 SAY "Broj novog naloga (naloga storna):"
+        @ m_x + 3, m_y + 2 SAY "Broj novog naloga (naloga storna):"
 
-        if gNW=="D"
-            @ m_x+3, col()+1 SAY cIdFirma2
+        if gNW == "D"
+            @ m_x + 3, col() + 1 SAY cIdFirma2
         else
-            @ m_x+3, col()+1 GET cIdFirma2
+            @ m_x + 3, col() + 1 GET cIdFirma2
         endif
 
         @ m_x + 3, col() + 1 SAY "-" GET cIdVN2 PICT "@!"
         @ m_x + 3, col() + 1 SAY "-" GET cBrNal2
+
+		@ m_x + 4, m_y + 2 SAY "Datum storno naloga:" GET dDatNal2
 
     ENDIF
 
@@ -99,9 +102,10 @@ do while !EOF() .and. cIdFirma == field->IdFirma .and. cIdVN == field->IdVN .and
     select fin_pripr
     
     if storno
-        _rec["idfirma"]  := cIdFirma2
-        _rec["idvn"]     := cIdVn2
-        _rec["brnal"]    := cBrNal2
+        _rec["idfirma"] := cIdFirma2
+        _rec["idvn"] := cIdVn2
+        _rec["brnal"] := cBrNal2
+		_rec["datdok"] := dDatNal2
         _rec["iznosbhd"] := -_rec["iznosbhd"]
         _rec["iznosdem"] := -_rec["iznosdem"]
     endif

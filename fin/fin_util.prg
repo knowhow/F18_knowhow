@@ -29,11 +29,6 @@ fin_prekart()
 return
 
 
-function GenPocStanja()
-PrenosFin()
-return
-
-
 
 
 // ------------------------------------------------------

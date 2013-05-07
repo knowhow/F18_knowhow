@@ -2,6 +2,7 @@
 
    - git merge master, 1.4.174
    - fin, početno stanje bez svičanja u sezonsko područje
+   - fin, storno naloga, datum storno naloga
 
 1.5.22 2013-04-29, vsasa
 

@@ -277,7 +277,7 @@ if _count > 0
     renumeracija_kalk_pripr( nil, nil, .t. )
 	close all
 	// azuriraj kalkulaciju
-	azur_kalk()
+	azur_kalk( .t. )
 
 	if _param["storno_dok"] == "D"
 
@@ -287,7 +287,7 @@ if _count > 0
 		kalk_mag_insert_ps_into_pripr( _data, _param, .t. )
 		renumeracija_kalk_pripr( nil, nil, .t. )
 		close all
-		azur_kalk()
+		azur_kalk( .t. )
 	endif
 		
     MsgBeep( "Formiran dokument pocetnog stanja i automatski azuriran !" )

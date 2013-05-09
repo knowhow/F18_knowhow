@@ -51,6 +51,7 @@ local _copy_sif
 local _param := hb_hash()
 local _sint
 local _data, _partn_data, _konto_data 
+local _storno_dok
 
 // ucitavanje parametara
 _k_1 := fetch_metric( "fin_prenos_pocetno_stanje_k1", NIL, "9" )
@@ -68,12 +69,13 @@ _dug_kto := fetch_metric( "fin_klasa_duguje", NIL, "2" )
 _pot_kto := fetch_metric( "fin_klasa_potrazuje", NIL, "4" )
 _sint := fetch_metric( "fin_prenos_pocetno_stanje_sint", NIL, 3 )
 _copy_sif := fetch_metric("fin_prenos_pocetno_stanje_sif", NIL, "N" )
+_storno_dok := fetch_metric("fin_prenos_pocetno_stanje_storno_dok", NIL, "D" )
 
 _dat_od := CTOD( "01.01." + ALLTRIM( STR( YEAR( DATE() ) -1 ) ) )
 _dat_do := CTOD( "31.12." + ALLTRIM( STR( YEAR( DATE() ) -1 ) ) )
 _dat_ps := CTOD( "01.01." + ALLTRIM( STR( YEAR( DATE() ) ) ) )
 
-Box(, 9, 60 )
+Box(, 11, 60 )
 
   	@ m_x + 1, m_y + 2 SAY "Za datumski period od:" GET _dat_od
   	@ m_x + 1, col() + 1 SAY "do:" GET _dat_do
@@ -85,7 +87,9 @@ Box(, 9, 60 )
   
   	@ m_x + 8, m_y + 2 SAY "Grupisem konta na broj mjesta ?" GET _sint PICT "9"
   	@ m_x + 9, m_y + 2 SAY "Kopiraj nepostojece sifre (konto/partn) (D/N)?" GET _copy_sif VALID _copy_sif $ "DN" PICT "@!"
-  	
+
+  	@ m_x + 11, m_y + 2 SAY "Formirati storno dokument na 31.12 (D/N)?" GET _storno_dok VALID _storno_dok $ "DN" PICT "@!"
+
     read
 
  	ESC_BCR
@@ -102,6 +106,7 @@ set_metric( "fin_klasa_duguje", NIL, _dug_kto )
 set_metric( "fin_klasa_potrazuje", NIL, _pot_kto )
 set_metric( "fin_prenos_pocetno_stanje_sint", NIL, _sint )
 set_metric( "fin_prenos_pocetno_stanje_sif", NIL, _copy_sif )
+set_metric( "fin_prenos_pocetno_stanje_storno_dok", NIL, _storno_dok )
 set_metric( "fin_prenos_pocetno_stanje_k1", NIL, _k_1 )
 set_metric( "fin_prenos_pocetno_stanje_k2", NIL, _k_2 )
 set_metric( "fin_prenos_pocetno_stanje_k3", NIL, _k_3 )
@@ -119,6 +124,7 @@ _param["datum_ps"] := _dat_ps
 _param["sintetika"] := _sint
 _param["copy_sif"] := "N"
 _param["change_db"] := "N"
+_param["storno_dok"] := _storno_dok
 
 // izvuci mi podatke u matricu iz sql-a...
 get_data( _param, @_data, @_konto_data, @_partn_data )
@@ -133,7 +139,25 @@ if !_insert_into_fin_priprema( _data, _konto_data, _partn_data, _param )
     return
 endif
 
-MsgBeep( "Dokument formiran i nalazi se u pripremi..." )
+// azuriraj pocetno stanje
+fin_set_broj_naloga()
+close all
+stampa_fin_document( .t. )
+close all
+fin_azur( .t. )
+ 
+// sada formiraj storno na osnovu ovog dokumenta
+_param["datum_ps"] := ( _param["datum_ps"] - 1 )
+_insert_into_fin_priprema( _data, _konto_data, _partn_data, _param, .t. )
+
+// azuriraj storno dokument
+fin_set_broj_naloga()
+close all
+stampa_fin_document( .t. )
+close all
+fin_azur( .t. )
+ 
+MsgBeep( "Dokument formiran i automatski azuriran !" )
 
 return
 
@@ -142,7 +166,7 @@ return
 // --------------------------------------------------------------------
 // napravi dokument u pripremi
 // --------------------------------------------------------------------
-static function _insert_into_fin_priprema( data, konto_data, partn_data, param )
+static function _insert_into_fin_priprema( data, konto_data, partn_data, param, storno )
 local _fin_vn := "00"
 local _fin_broj
 local _dat_ps := param["datum_ps"]
@@ -155,6 +179,10 @@ local _row, _duguje, _potrazuje, _id_konto, _id_partner
 local _dat_dok, _dat_val, _otv_st, _br_veze
 local _rec, _i_saldo
 local _rbr := 0
+
+if storno == NIL
+	storno := .f.
+endif
 
 _fin_broj := fin_brnal_0( gFirma, _fin_vn, DATE() )
 
@@ -288,6 +316,12 @@ do while !data:EOF()
 
 	// konvertovanje valute za dvovalutni sistem
 	fin_konvert_valute( @_rec, "D" )
+
+	// ako je storno, storniraj stavku
+	if storno
+		_rec["iznosbhd"] := -( _rec["iznosbhd"] )
+		_rec["iznosdem"] := -( _rec["iznosdem"] )
+	endif
 
     dbf_update_rec( _rec )
 

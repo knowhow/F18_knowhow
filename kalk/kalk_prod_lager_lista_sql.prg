@@ -248,7 +248,12 @@ _count := kalk_prod_insert_ps_into_pripr( _data, _param )
 if _count > 0
     // renumerisi pripremu...
     renumeracija_kalk_pripr( nil, nil, .t. )
-    MsgBeep( "Formiran dokument pocetnog stanja, nalazi se u pripremi !" )
+
+    close all
+    azur_kalk( .t. )
+
+    MsgBeep( "Formiran dokument pocetnog stanj i automatski azuriran !" )
+
 endif
 
 return

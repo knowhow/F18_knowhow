@@ -262,7 +262,11 @@ if _count > 0
     // renumerisi brojeve u pripremi...
     renumeracija_kalk_pripr( nil, nil, .t. )
 
-    MsgBeep( "Formiran dokument pocetnog stanja, nalazi se u pripremi !" )
+    close all
+
+    azur_kalk( .t. )
+
+    MsgBeep( "Formiran dokument pocetnog stanja i automatski azuriran !" )
 
 endif
 

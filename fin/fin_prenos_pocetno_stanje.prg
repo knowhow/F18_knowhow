@@ -132,7 +132,16 @@ if !_insert_into_fin_priprema( _data, _konto_data, _partn_data, _param )
     return
 endif
 
-MsgBeep( "Dokument formiran i nalazi se u pripremi..." )
+// azuriraj dokument automatski
+fin_set_broj_dokumenta()
+
+close all
+stampa_fin_document( .t. )
+
+close all
+fin_azur( .t. ) 
+
+MsgBeep( "Dokument formiran i automatski azuriran..." )
 
 return
 

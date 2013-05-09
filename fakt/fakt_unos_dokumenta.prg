@@ -53,7 +53,6 @@ private ImeKol := { ;
           {"Kolicina"    ,  {|| kolicina                } }, ;
           {"Cijena"      ,  {|| Cijena                  } , "cijena"    }, ;
           {"Rabat"       ,  {|| Rabat                   } , "Rabat"     }, ;
-          {"Porez"       ,  {|| Porez                   } , "porez"     }, ;
           {"RJ"          ,  {|| idfirma                 } , "idfirma"   }, ;
           {"Serbr",         {|| SerBr                   } , "serbr"     }, ;
           {"Partn",         {|| IdPartner               } , "IdPartner" }, ;

@@ -1,3 +1,9 @@
+1.4.177 2013-05-09, vsasa
+ 
+  - fakt, unos dokumenta, polje poreza izbačeno
+  - kalk, početna stanja mag/prod, automatsko ažuriranje dokumenata
+  - fin, početno stanje, automatsko ažuriranje dokumenata 
+ 
 1.4.176 2013-05-07, vsasa
  
   - virm, export podataka za banke, datum prazan zamjeni sa 0

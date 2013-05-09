@@ -2,6 +2,7 @@
 
    - fin, početno stanje + storno dokument na 31.12, automatsko ažuriranje
    - kalk, početno stanje + storno dokument na 31.12, automatsko ažuriranje
+   - fakt, porez polje izbačeno iz unosa dokumenta
  
 1.5.23 2013-05-07, vsasa
 

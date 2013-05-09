@@ -239,6 +239,7 @@ return _ret
 
 
 
+
 // ------------------------------------------------------------
 // prodavnicko pocetno stanje...
 // ------------------------------------------------------------
@@ -247,6 +248,13 @@ local _ps := .t.
 local _param := NIL
 local _data
 local _count := 0
+local __fakt_ps := gAFakt
+local __fin_ps := gAFin
+
+// iskljuci parametre za prenos fakt/fin/mat
+gAFakt := "N"
+gAFin := "0"
+gAMat := "N"
 
 // pozovi lager listu ali kao pocetno stanje...
 _data := kalk_prod_lager_lista_sql( @_param, _ps )
@@ -268,6 +276,8 @@ if _count > 0
 	azur_kalk( .t. )
 
 	if _param["storno_dok"] == "D"
+		
+		o_kalk_edit()
 
 		// podesi datum na 31.12
 		_param["datum_ps"] := ( _param["datum_ps"] - 1 )
@@ -284,6 +294,10 @@ if _count > 0
     MsgBeep( "Formiran dokument pocetnog stanja i automatski azuriran !" )
 
 endif
+
+// ukljuci prenose ponovo
+gAFin := __fin_ps
+gAFakt := __fakt_ps
 
 return
 
@@ -319,7 +333,7 @@ _h_dok := hb_hash()
 _h_dok["idfirma"] := gFirma
 _h_dok["idvd"] := _kalk_tip
 _h_dok["brdok"] := ""
-_h_dok["datdok"] := DATE() 
+_h_dok["datdok"] := params["datum_ps"] 
 
 if glBrojacPoKontima
      _kalk_broj := kalk_novi_broj_dokumenta(_h_dok, _p_konto)
@@ -338,6 +352,8 @@ seek _p_konto
 
 MsgO( "Punjenje pripreme podacima pocetnog stanja u toku, dok: " + _kalk_tip + "-" + ALLTRIM( _kalk_broj ) )
 
+data:GoTo(1)
+
 do while !data:EOF()
 
     _row := data:GetRow()
@@ -351,6 +367,11 @@ do while !data:EOF()
     _mpvu := _row:FieldGet( _row:FieldPos("mpvu") )
     _mpvi := _row:FieldGet( _row:FieldPos("mpvi") )
 
+    // pronadji artikal
+    select roba
+    go top
+    seek _id_roba
+
     // roba tip T ili U
     if _roba_tip_tu == "N" .and. roba->tip $ "TU"
         data:Skip()
@@ -362,11 +383,6 @@ do while !data:EOF()
         loop
     endif
         
-    // pronadji artikal
-    select roba
-    go top
-    seek _id_roba
-
     // dodaj u pripremu...
     select kalk_pripr
     append blank

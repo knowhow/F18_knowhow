@@ -327,6 +327,11 @@ do while !data:EOF()
     _vpvu := _row:FieldGet( _row:FieldPos("vpvu") )
     _vpvi := _row:FieldGet( _row:FieldPos("vpvi") )
 
+    // pronadji artikal
+    select roba
+    go top
+    seek _id_roba
+
     // roba tip T ili U
     if _roba_tip_tu == "N" .and. roba->tip $ "TU"
         data:Skip()
@@ -338,11 +343,6 @@ do while !data:EOF()
         loop
     endif
         
-    // pronadji artikal
-    select roba
-    go top
-    seek _id_roba
-
     // dodaj u pripremu...
     select kalk_pripr
     append blank

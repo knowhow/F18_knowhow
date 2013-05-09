@@ -20,6 +20,7 @@ function kalk_mag_lager_lista_sql( params, ps )
 local _data, _server
 local _qry, _where
 local _dat_od, _dat_do, _dat_ps, _m_konto
+local _change_db
 local _art_filter, _dok_filter, _tar_filter, _part_filter
 local _db_params := my_server_params()
 local _tek_database := my_server_params()["database"]
@@ -38,6 +39,7 @@ _dat_od := params["datum_od"]
 _dat_do := params["datum_do"]
 _dat_ps := params["datum_ps"]
 _m_konto := params["m_konto"]
+_change_db := params["change_db"] == "D"
 _year_sez := YEAR( _dat_do )
 _year_tek := YEAR( _dat_ps )
 
@@ -81,10 +83,11 @@ _qry += " GROUP BY k.idroba "
 _qry += " ORDER BY k.idroba "
 
 // prebaci se u sezonu
-if ps 
+if ps .and. _change_db
     switch_to_database( _db_params, _tek_database, _year_sez )
-    _server := pg_server()
 endif
+
+_server := pg_server()
 
 if ps
     MsgO( "pocetno stanje - sql query u toku..." )
@@ -108,7 +111,7 @@ endif
 MsgC()
 
 // vrati se u tekucu bazu
-if ps
+if ps .and. _change_db
     switch_to_database( _db_params, _tek_database, _year_tek )
     _server := pg_server()
 endif
@@ -131,6 +134,7 @@ local _part_filter := SPACE(300)
 local _dok_filter := SPACE(300)
 local _brfakt_filter := SPACE(300)
 local _curr_user := my_user()
+local _storno_dok
 
 // pocetno stanje parametar
 if ps == NIL
@@ -144,6 +148,7 @@ _pr_nab := fetch_metric("kalk_lager_lista_mag_po_nabavnoj", _curr_user, "D" )
 _nule := fetch_metric("kalk_lager_lista_mag_prikaz_nula", _curr_user, "N" )
 _dat_od := fetch_metric("kalk_lager_lista_mag_datum_od", _curr_user, DATE() - 30 )
 _dat_do := fetch_metric("kalk_lager_lista_mag_datum_do", _curr_user, DATE() )
+_storno_dok := fetch_metric("kalk_lager_lista_ps_storno", _curr_user, "D" )
 _dat_ps := NIL
 _roba_tip_tu := "N"
 
@@ -199,6 +204,11 @@ Box( "# LAGER LISTA MAGACINA" + if( ps, " / POCETNO STANJE", "" ), 15, MAXCOLS()
     ++ _x
 	@ m_x + _x, m_y + 2 SAY "Prikaz robe tipa T/U (D/N)" GET _roba_tip_tu VALID _roba_tip_tu $ "DN" PICT "@!"
  
+	if ps
+	    ++ _x
+		@ m_x + _x, m_y + 2 SAY "Formirati storno dokument na 31.12 (D/N)?" GET _storno_dok VALID _storno_dok $ "DN" PICT "@!"
+	endif
+
     read
 
 BoxC()
@@ -216,17 +226,21 @@ set_metric("kalk_lager_lista_mag_prikaz_nula", _curr_user, _nule )
 set_metric("kalk_lager_lista_mag_datum_od", _curr_user, _dat_od )
 set_metric("kalk_lager_lista_mag_datum_do", _curr_user, _dat_do )
 set_metric("kalk_lager_lista_mag_minimalne_kolicine", _curr_user, _min_kol )
+set_metric("kalk_lager_lista_ps_storno", _curr_user, _storno_dok )
 
 // setuj matricu parametara
 params["datum_od"] := _dat_od
 params["datum_do"] := _dat_do
 params["datum_ps"] := _dat_ps
 params["m_konto"] := _m_konto
+// kod verzije 1.5.x ne treba se svichati na baze
+params["change_db"] := "N"
 params["nule"] := _nule
 params["roba_tip_tu"] := _roba_tip_tu
 params["pr_nab"] := _pr_nab
 params["do_nab"] := _do_nab
 params["min_kol"] := _min_kol
+params["storno_dok"] := _storno_dok
 params["filter_dok"] := _dok_filter
 params["filter_roba"] := _art_filter
 params["filter_partner"] := _part_filter
@@ -261,8 +275,22 @@ if _count > 0
     
     // renumerisi brojeve u pripremi...
     renumeracija_kalk_pripr( nil, nil, .t. )
+	close all
+	// azuriraj kalkulaciju
+	azur_kalk()
 
-    MsgBeep( "Formiran dokument pocetnog stanja, nalazi se u pripremi !" )
+	if _param["storno_dok"] == "D"
+
+		// .t. - storno dokument
+		// datum mi setuj na 31.12
+		_param["datum_ps"] := ( _param["datum_ps"] - 1 )	
+		kalk_mag_insert_ps_into_pripr( _data, _param, .t. )
+		renumeracija_kalk_pripr( nil, nil, .t. )
+		close all
+		azur_kalk()
+	endif
+		
+    MsgBeep( "Formiran dokument pocetnog stanja i automatski azuriran !" )
 
 endif
 
@@ -274,7 +302,7 @@ return
 // ----------------------------------------------------------------
 // ubacuje podatke pocetnog stanja u pripremu...
 // ----------------------------------------------------------------
-static function kalk_mag_insert_ps_into_pripr( data, params )
+static function kalk_mag_insert_ps_into_pripr( data, params, storno )
 local _count := 0
 local _kalk_broj := ""
 local _kalk_tip := "16"
@@ -285,6 +313,10 @@ local _row, _sufix
 local _ulaz, _izlaz, _nvu, _nvi, _id_roba, _vpvu, _vpvi
 local _magacin_po_nabavnoj := IsMagPNab()
 local _h_dok
+
+if storno == NIL
+	storno := .f.
+endif
 
 O_KALK_PRIPR
 O_KALK_DOKS
@@ -368,6 +400,12 @@ do while !data:EOF()
     if _magacin_po_nabavnoj
         _rec["vpc"] := _rec["nc"]
     endif
+
+	// ako je storno, kolicina je suprotna u odnosu na prvobitnu
+	// prakticno storniramo lager
+	if storno
+		_rec["kolicina"] := -( _rec["kolicina"] )
+	endif
 
     dbf_update_rec( _rec )
 

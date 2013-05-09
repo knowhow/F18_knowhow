@@ -172,3 +172,53 @@ _cnt := FaktCounter():New("99", "99", DATE())
 _cnt:fix(@brdok)
 
 return .t.
+
+
+
+// ------------------------------------------------------------
+// setovanje parametra brojaca na admin meniju
+// ------------------------------------------------------------
+function fakt_set_param_broj_dokumenta()
+local _param
+local _broj := 0
+local _broj_old
+local _firma := gFirma
+local _tip_dok := "10"
+local _god := year_2str(YEAR(DATE()))
+
+Box(, 2, 60 )
+
+    @ m_x + 1, m_y + 2 SAY "Godina:" GET _god
+    @ m_x + 1, col() + 2 SAY "/ id rj:" GET _firma
+    @ m_x + 1, col() + 1 SAY "vrsta:" GET _tip_dok
+
+    read
+
+    if LastKey() == K_ESC
+        BoxC()
+        return
+    endif
+
+    // param: fin/10/10
+    _param := "fakt" + "/" + _firma + "/" + _tip_dok + "/" + _god
+    _broj := fetch_metric( _param, nil, _broj )
+    _broj_old := _broj
+
+    @ m_x + 2, m_y + 2 SAY "Zadnji broj dokumenta:" GET _broj PICT "99999999"
+
+    read
+
+BoxC()
+
+if LastKey() != K_ESC
+    // snimi broj u globalni brojac
+    if _broj <> _broj_old
+        set_metric( _param, nil, _broj )
+    endif
+endif
+
+return
+
+
+
+

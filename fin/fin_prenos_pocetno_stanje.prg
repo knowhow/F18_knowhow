@@ -145,6 +145,8 @@ close all
 stampa_fin_document( .t. )
 close all
 fin_azur( .t. )
+
+o_fin_edit()
  
 // sada formiraj storno na osnovu ovog dokumenta
 _param["datum_ps"] := ( _param["datum_ps"] - 1 )
@@ -156,6 +158,8 @@ close all
 stampa_fin_document( .t. )
 close all
 fin_azur( .t. )
+
+o_fin_edit()
  
 MsgBeep( "Dokument formiran i automatski azuriran !" )
 
@@ -197,6 +201,8 @@ endif
 MsgO( "Formiram dokument pocetnog stanja u pripremi ..." )
 
 _i_saldo := 0
+
+data:GoTo(1)
 
 do while !data:EOF()
 

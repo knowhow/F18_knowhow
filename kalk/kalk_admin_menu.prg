@@ -36,6 +36,9 @@ AADD( _opc,"8. kontrola maloprodajnih cijena ")
 AADD( _opcexe, {|| sifre_artikli_provjera_mp_cijena() })
 AADD( _opc,"9. kontrola duplih barkodova ")
 AADD( _opcexe, {|| rpt_dupli_barkod() })
+AADD( _opc,"D. podesenje brojaca dokumenta ")
+AADD( _opcexe, {|| kalk_set_param_broj_dokumenta() })
+
 
 
 f18_menu("admk", .f., _izbor, _opc, _opcexe )

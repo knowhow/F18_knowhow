@@ -141,9 +141,9 @@ local _god := year_2str(YEAR(DATE()))
 
 Box(, 2, 60 )
 
-    @ m_x + 1, m_y + 2 SAY "Firma:" GET _firma
-    @ m_x + 1, col() + 1 SAY "Tip" GET _tip_dok
-    @ m_x + 1, col() + 1 SAY "Godina" GET _godina
+    @ m_x + 1, m_y + 2 SAY "Godina:" GET _god
+    @ m_x + 1, col() + 2 SAY "/ Firma:" GET _firma
+    @ m_x + 1, col() + 1 SAY "Vrsta:" GET _tip_dok
 
     read
 
@@ -153,7 +153,7 @@ Box(, 2, 60 )
     endif
 
     // param: fin/10/10
-    _param := "fin" + "/" + _firma + "/" + _tip_dok + "/" + _godina
+    _param := "fin" + "/" + _firma + "/" + _tip_dok + "/" + _god
     _broj := fetch_metric( _param, nil, _broj )
     _broj_old := _broj
 

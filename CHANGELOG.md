@@ -3,6 +3,7 @@
   - fakt, unos dokumenta, polje poreza izbačeno
   - kalk, početna stanja mag/prod, automatsko ažuriranje dokumenata
   - fin, početno stanje, automatsko ažuriranje dokumenata 
+  - fin, parametar potpisa na nalogu
  
 1.4.176 2013-05-07, vsasa
  

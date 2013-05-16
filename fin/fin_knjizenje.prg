@@ -24,20 +24,11 @@ static __par_len
 // ---------------------------------------------
 function fin_unos_naloga()
 local _params := fin_params()
-
 private KursLis := "1"
+private gnLOst := 0
+private gPotpis := "N"
 
-private gnLOst:=0
-private gPotpis:="N"
-
-O_PARAMS
-Private cSection:="1",cHistory:=" ",aHistory:={}
-Params1()
-
-RPar("li",@gnLOSt)
-RPar("po",@gPotpis)
-select params
-use
+fin_read_params()
 
 cTekucaRj := GetTekucaRJ()
 lBlagAsis := .f.

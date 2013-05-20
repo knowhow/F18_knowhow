@@ -1,6 +1,7 @@
 1.4.178 2013-05-20, vsasa
  
   - ld, import podataka iz FMK/LD (spajanje više obračunskih jedinica u jednu)
+  - ld, specifikacija kredita po kreditorima (sql varijanta)
  
 1.4.177 2013-05-09, vsasa
  

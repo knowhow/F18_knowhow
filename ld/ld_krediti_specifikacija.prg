@@ -61,13 +61,8 @@ if !EMPTY( params["radnik"] )
     _where += " AND lk.idradn = " + _sql_quote( params["radnik"] )
 endif
 
-
 // order condition
-if params["tip_sorta"] == 1
-    _order := " lk.idradn, lk.idkred, lk.naosnovu "
-else
-    _order := " lk.idkred, lk.idradn, lk.naosnovu "
-endif
+_order := " lk.idkred, lk.idradn, lk.naosnovu "
 
 _qry := "SELECT " + ;
         " lk.idradn, " + ;
@@ -119,7 +114,7 @@ _id_radn := fetch_metric( "ld_kred_spec_radnik", my_user(), SPACE(6) )
 _id_kred := fetch_metric( "ld_kred_spec_kreditor", my_user(), SPACE(6) )
 _sort := fetch_metric( "ld_kred_spec_sort", my_user(), 2 )
 
-Box(, 15, 60 )
+Box(, 8, 60 )
 
     @ m_x + _x, m_y + 2 SAY "Godina" GET _godina PICT "9999"
     @ m_x + _x, col() + 1 SAY "Godina" GET _mjesec PICT "99"
@@ -132,11 +127,6 @@ Box(, 15, 60 )
     ++ _x
 
     @ m_x + _x, m_y + 2 SAY "Kreditor (prazno-svi):" GET _id_kred VALID EMPTY( _id_kred ) .or. P_Kred( @_id_kred )
-
-    ++ _x
-    ++ _x
-
-    @ m_x + _x, m_y + 2 SAY "Sortiranje: 1 (radnik) 2 (kreditor):" GET _sort PICT "9" 
 
     read
 

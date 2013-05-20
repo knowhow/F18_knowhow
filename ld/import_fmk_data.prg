@@ -149,8 +149,6 @@ return _ok
 
 
 
-
-
 // ----------------------------------------------
 // kreira se pomocna tabela za radnika
 // ----------------------------------------------
@@ -201,8 +199,9 @@ return
 static function __import_data( params )
 local _ok := .f.
 
-// import sifrarnika
-__import_general_data( params )
+// import sifrarnika, parametara
+// ovo mi u biti i ne treba, to se importuje sa 
+//__import_general_data( params )
 
 if params["import_obracun"] == "D"
     // importuj zapise ld tabele
@@ -244,7 +243,7 @@ do while !EOF()
     _mat_br := field->matbr
     
     if LEN( ALLTRIM( _mat_br ) ) < 13
-        dodaj_u_err( @_err, field->id, "maticni broj kratak ili ga nema! " + field->matbr )
+        dodaj_u_err( @_err, field->id, "maticni broj kratak ili ga nema! mat br: " + field->matbr )
     endif
 
     skip
@@ -288,6 +287,11 @@ if !Used()
     O_RADN
 endif
 
+select ( F_RADKR )
+if !Used()
+    O_RADKR
+endif
+
 select ( F_PK_RADN )
 if !Used()
     O_PK_RADN
@@ -325,6 +329,14 @@ my_use_temp( "FMK_PKDATA", _kumpath + "PK_DATA.DBF", .f., .t. )
 index on ( idradn ) TAG "1" TO ( _kumpath + "ld_pkd_tag")
 set order to tag "1"
 
+// zakaci mi se na radkr iz FMK
+// to ce biti alias FMK_RADKR
+select ( F_TMP_6 )
+use
+my_use_temp( "FMK_RADKR", _kumpath + "RADKR.DBF", .f., .t. )
+index on ( idradn ) TAG "1" TO ( _kumpath + "ld_radkr_tag")
+set order to tag "1"
+
 
 // otvori pomocnu tabelu za upis radnika...
 _use_tmp_table()
@@ -345,6 +357,10 @@ _ok := .t.
 Box(, 2, 66 )
 
 @ m_x + 1, m_y + 2 SAY "import radnika u toku..."
+
+// lokuj tabele i zapocni transakciju !
+f18_lock_tables( { "ld_radn", "ld_radkr", "ld_pk_data", "ld_pk_radn" } )
+sql_table_update( nil, "BEGIN" )
 
 // glavna petlja...
 do while !EOF()
@@ -423,12 +439,13 @@ do while !EOF()
 
             select radn
             APPEND BLANK
+
             update_rec_server_and_dbf( "radn", _rec2, 1, "FULL" )
 
-        endif
+            // podaci poreznih kartica...
+            prebaci_pk_data( _fmk_id_radn, _nova_f18_sifra )
 
-        // podaci poreznih kartica...
-        prebaci_pk_data( _fmk_id_radn, _nova_f18_sifra )
+        endif
 
     endif
 
@@ -455,9 +472,16 @@ use
 select ( F_TMP_5 )
 use
 
+select ( F_TMP_6 )
+use
+
 select radn
 _f18_count := RECCOUNT()
 use
+
+// otkljucaj tabele !
+f18_free_tables( { "ld_radn", "ld_radkr", "ld_pk_data", "ld_pk_radn" } )
+sql_table_update( nil, "END" )
 
 if _f18_count <> _fmk_count
     MsgBeep( "FMK radnici: " + ALLTRIM(STR( _fmk_count )) + ", F18 radnici: " + ALLTRIM( STR( _f18_count) ) )
@@ -466,6 +490,8 @@ else
 endif
 
 return _ok
+
+
 
 
 // ------------------------------------------------------------
@@ -1093,10 +1119,13 @@ local _ok := .f.
 local _sifpath := params["sif_path"]
 local _kumpath := params["kum_path"]
 local _rec
+local _fmk_kred
 
 // porezi
 O_POR
+
 if RECCOUNT() == 0
+
     // porezi...
     select ( F_TMP_4 )
     use
@@ -1115,14 +1144,17 @@ if RECCOUNT() == 0
         skip
 
     enddo
+
 endif
+
 select ( F_POR )
 use
 
 // doprinosi
 O_DOPR
+
 if RECCOUNT() == 0
-    // porezi...
+
     select ( F_TMP_4 )
     use
     my_use_temp( "FMK_DOPR", _sifpath + "DOPR.DBF", .f., .t. )
@@ -1144,14 +1176,16 @@ endif
 select ( F_DOPR )
 use
 
-// porezi
+// tipovi primanja
 O_TIPPR
+
 if RECCOUNT() == 0
-    // porezi...
+    
     select ( F_TMP_4 )
     use
     my_use_temp( "FMK_TIPPR", _sifpath + "TIPPR.DBF", .f., .t. )
     go top
+    
     do while !EOF()
 
         _rec := dbf_get_rec()
@@ -1164,18 +1198,22 @@ if RECCOUNT() == 0
         skip
 
     enddo
+
 endif
+
 select ( F_TIPPR )
 use
 
 // parametri obracuna
 O_PAROBR
+
 if RECCOUNT() == 0
-    // porezi...
+    
     select ( F_TMP_4 )
     use
     my_use_temp( "FMK_PAROBR", _sifpath + "PAROBR.DBF", .f., .t. )
     go top
+    
     do while !EOF()
 
         _rec := dbf_get_rec()
@@ -1193,15 +1231,25 @@ endif
 select ( F_PAROBR )
 use
 
-// krediti
+// kreditori
 O_KRED
-if RECCOUNT() == 0
-    // porezi...
-    select ( F_TMP_4 )
-    use
-    my_use_temp( "FMK_KRED", _sifpath + "KRED.DBF", .f., .t. )
+
+// fmk kreditori...
+select ( F_TMP_4 )
+use
+my_use_temp( "FMK_KRED", _sifpath + "KRED.DBF", .f., .t. )
+go top
+    
+do while !EOF()
+
+    _fmk_kred := field->id
+
+    select kred
+    set order to tag "ID"
     go top
-    do while !EOF()
+    seek _fmk_kred
+
+    if !FOUND()
 
         _rec := dbf_get_rec()
         _rec["match_code"] := ""
@@ -1209,18 +1257,20 @@ if RECCOUNT() == 0
 
         select kred
         append blank
+
         update_rec_server_and_dbf( "kred", _rec, 1, "FULL" )
 
-        select fmk_kred
-        skip
+    endif
 
-    enddo
-endif
+    select fmk_kred
+    skip
+
+enddo
+
 select ( F_KRED )
 use
-
-
-
+select ( F_TMP_4 )
+use
 
 return _ok
 

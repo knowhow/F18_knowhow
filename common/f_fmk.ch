@@ -337,6 +337,9 @@
 #define F_TMP_3         327
 #define F_TMP_4         328
 #define F_TMP_5         329
+#define F_TMP_6         330
+#define F_TMP_7         331
+#define F_TMP_8         332
 #define D_S_TABELE 
 
 

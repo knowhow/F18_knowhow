@@ -52,7 +52,7 @@ endif
 
 AADD( _opc, "5. specifikacija kredita po kreditorima")
 if _priv_pr
-    AADD( _opcexe, {|| sp_kredita() })
+    AADD( _opcexe, {|| ld_kred_specifikacija() } )
 else
 	AADD( _opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) })
 endif

@@ -861,7 +861,7 @@ else
 endif
 
 if lRjRadn .and. !empty(cIdRj)
-    ? "RJ:", cIdRj, "-", Ocitaj(F_RJ,cIdRj,"naz")
+    ? "RJ:", cIdRj, "-", Ocitaj( F_LD_RJ, cIdRj, "naz" )
 endif
 
 if cRateDN=="R"

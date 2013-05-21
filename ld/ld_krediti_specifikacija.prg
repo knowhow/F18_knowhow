@@ -61,6 +61,15 @@ if !EMPTY( params["radnik"] )
     _where += " AND lk.idradn = " + _sql_quote( params["radnik"] )
 endif
 
+if !EMPTY( params[ "osnova" ] )
+    _where += " AND " + _sql_cond_parse( "lk.naosnovu", params["osnova"] )
+endif
+
+if !EMPTY( params[ "rj" ] )
+    _where += " AND " + _sql_cond_parse( "ld.idrj", params["rj"] )
+endif
+
+
 // order condition
 _order := " lk.idkred, lk.idradn, lk.naosnovu "
 
@@ -73,11 +82,13 @@ _qry := "SELECT " + ;
         " kr.naz AS kred_naz, " + ;
         " lk.naosnovu, " + ;
         " lk.placeno AS iznos_rate, " + ;
+        " ld.idrj AS rj, " + ;
         " ( SELECT COUNT(iznos) FROM fmk.ld_radkr WHERE idradn = lk.idradn AND idkred = lk.idkred AND naosnovu = lk.naosnovu) AS kredit_rate_ukupno, " + ; 
         " ( SELECT COUNT(placeno) FROM fmk.ld_radkr WHERE idradn = lk.idradn AND idkred = lk.idkred AND naosnovu = lk.naosnovu AND placeno <> 0 ) AS kredit_rate_uplaceno, " + ;
         " ( SELECT SUM(iznos) FROM fmk.ld_radkr WHERE idradn = lk.idradn AND idkred = lk.idkred AND naosnovu = lk.naosnovu) AS kredit_ukupno, " + ;
         " ( SELECT SUM(iznos) FROM fmk.ld_radkr WHERE idradn = lk.idradn AND idkred = lk.idkred AND naosnovu = lk.naosnovu AND placeno <> 0) AS kredit_uplaceno " + ;
         " FROM fmk.ld_radkr lk " + ;
+        " LEFT JOIN fmk.ld_ld ld ON lk.idradn = ld.idradn AND ld.mjesec = " + ALLTRIM( STR( params["mjesec"]) ) + " AND ld.godina = " + ALLTRIM(STR( params["godina"])) + ;
         " LEFT JOIN fmk.ld_radn rd ON lk.idradn = rd.id " + ;
         " LEFT JOIN fmk.kred kr ON lk.idkred = kr.id " + ;
         " WHERE " + _where + ;
@@ -104,7 +115,8 @@ static function _get_vars( params )
 local _ok := .f.
 local _x := 1
 local _godina, _mjesec
-local _id_radn, _id_kred, _sort
+local _id_radn, _id_kred, _sort, _rj
+local _osnova := SPACE(200)
 
 // ucitaj parametre
 // fetch_metric()...
@@ -113,8 +125,9 @@ _mjesec := fetch_metric( "ld_kred_spec_mjesec", my_user(), 1 )
 _id_radn := fetch_metric( "ld_kred_spec_radnik", my_user(), SPACE(6) )
 _id_kred := fetch_metric( "ld_kred_spec_kreditor", my_user(), SPACE(6) )
 _sort := fetch_metric( "ld_kred_spec_sort", my_user(), 2 )
+_rj := fetch_metric( "ld_kred_spec_rj", my_user(), SPACE(200) )
 
-Box(, 8, 60 )
+Box(, 15, 60 )
 
     @ m_x + _x, m_y + 2 SAY "Godina" GET _godina PICT "9999"
     @ m_x + _x, col() + 1 SAY "Godina" GET _mjesec PICT "99"
@@ -127,6 +140,15 @@ Box(, 8, 60 )
     ++ _x
 
     @ m_x + _x, m_y + 2 SAY "Kreditor (prazno-svi):" GET _id_kred VALID EMPTY( _id_kred ) .or. P_Kred( @_id_kred )
+
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "   Filter po osnovi kredita:" GET _osnova PICT "@S30" 
+    
+    ++ _x
+    
+    @ m_x + _x, m_y + 2 SAY "Filter po radnim jedinicama:" GET _rj PICT "@S30" 
 
     read
 
@@ -143,6 +165,15 @@ set_metric( "ld_kred_spec_mjesec", my_user(), _mjesec )
 set_metric( "ld_kred_spec_radnik", my_user(), _id_radn )
 set_metric( "ld_kred_spec_kreditor", my_user(), _id_kred )
 set_metric( "ld_kred_spec_sort", my_user(), _sort )
+set_metric( "ld_kred_spec_rj", my_user(), _rj )
+
+if !EMPTY( _osnova )
+    _osnova := ALLTRIM( _osnova ) + " "
+endif
+
+if !EMPTY( _rj )
+    _rj := ALLTRIM( _rj ) + " "
+endif
 
 // save hash
 params["godina"] := _godina
@@ -150,6 +181,8 @@ params["mjesec"] := _mjesec
 params["kreditor"] := _id_kred
 params["radnik"] := _id_radn
 params["tip_sorta"] := _sort
+params["osnova"] := _osnova
+params["rj"] := _rj
 
 _ok := .t.
 
@@ -212,7 +245,7 @@ do while !data:EOF()
     xml_subnode( "kred", .f. )
 
     xml_node( "k_naz", to_xml_encoding( hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "kred_naz" ) ) ) ) )
-    xml_node( "k_id", to_xml_encoding( hb_utf8tostr( _id_kred ) ) )
+    xml_node( "k_id", to_xml_encoding( _id_kred ) )
 
     _t_rata_iznos := 0
     _t_rata_ukupno := 0

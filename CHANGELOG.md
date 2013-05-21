@@ -1,3 +1,7 @@
+1.4.181 2013-05-21, vsasa
+ 
+  - ld, specifikacija kredita, dodatni uslovi kod pregleda izvještaja 
+ 
 1.4.180 2013-05-21, vsasa
  
   - F18, logiranje bitnih dokument operacija modula FIN/KALK/FAKT/LD

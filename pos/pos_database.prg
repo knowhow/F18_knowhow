@@ -674,7 +674,7 @@ SET ORDER TO TAG "ID"
 
 _dok_count := priprz->(RECCOUNT())
 
-log_write( "azuriranje stavki iz priprz u pos/doks, br.zapisa: " + ALLTRIM( STR( _dok_count ) ) , 2 )
+log_write( "F18_DOK_OPER: azuriranje stavki iz priprz u pos/doks, br.zapisa: " + ALLTRIM( STR( _dok_count ) ) , 2 )
 
 Box(, 3, 60 )
 
@@ -771,8 +771,6 @@ BoxC()
 
 f18_free_tables({"pos_pos", "pos_doks"})
 sql_table_update( nil, "END" )
-
-log_write( "azuriranje stavki iz priprz u pos/doks, zavrsio", 5 )
 
 MsgO("brisem pripremu....")
 
@@ -1114,7 +1112,7 @@ if !FOUND()
 
 endif 
 
-log_write( "pos, brisanje racuna broj: " + br_dok + " od " + DTOC(dat_dok), 2 )
+log_write( "F18_DOK_OPER: pos, brisanje racuna broj: " + br_dok + " od " + DTOC(dat_dok), 2 )
 	           	
 if !f18_lock_tables({"pos_pos", "pos_doks"})
     select ( _t_area )
@@ -1149,8 +1147,6 @@ f18_free_tables({"pos_pos", "pos_doks"})
 sql_table_update( nil, "END" )
 
 MsgC()
-
-log_write( "pos, brisanje racuna broj: " + br_dok + " od " + DTOC(dat_dok) + " zavrsio", 5 )
 
 select (_t_area)
 

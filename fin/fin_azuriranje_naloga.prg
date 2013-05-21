@@ -129,6 +129,9 @@ for _i := 1 to LEN( _nalozi )
 
    	endif
 
+    // upisi i u log operaciju azuriranja...
+    log_write( "F18_DOK_OPER: azuriranje fin naloga: " + _id_firma + "-" + _id_vn + "-" + _br_nal, 2 )
+
 next
 
 MsgC()

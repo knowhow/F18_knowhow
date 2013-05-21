@@ -152,6 +152,9 @@ IF ( _brisi_kum == "D" )
         f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
         sql_table_update( nil, "END" )
 
+        // logiraj operaciju
+        log_write( "F18_DOK_OPER: fakt povrat dokumenta u pripremu: " + id_firma + "-" + id_tip_dok + "-" + br_dok, 2 )
+
     BoxC()
 
 ENDIF 
@@ -366,6 +369,8 @@ DO WHILE !EOF()
             _del_rec := dbf_get_rec()
             delete_rec_server_and_dbf( "fakt_doks2", _del_rec, 1, "CONT" )
         endif
+
+        log_write( "F18_DOK_OPER: fakt povrat dokumenta prema kriteriju: " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok, 2 )
 
     endif
     

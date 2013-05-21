@@ -323,6 +323,7 @@ local nTr2
 local cSekv
 local nKekk
 local iSekv
+local _log_info
 
 if ( Ch == K_CTRL_T .or. Ch == K_ENTER ) .and. EOF()
     return DE_CONT
@@ -438,6 +439,7 @@ do case
         
         if Pitanje(, "Zelite izbrisati ovu stavku ?", "D" ) == "D"
                 
+            _log_info := kalk_pripr->idfirma + "-" + kalk_pripr->idvd + "-" + kalk_pripr->brdok
             cStavka := kalk_pripr->rbr
             cArtikal := kalk_pripr->idroba
             nKolicina := kalk_pripr->kolicina
@@ -445,32 +447,12 @@ do case
             nVpc := kalk_pripr->vpc
 
             delete
+            
+            log_write( "F18_DOK_OPER: kalk, brisanje stavke u pripremi: " + _log_info + " stavka br: " + cStavka , 2 )
 
             _t_rec := RECNO()
             __dbPack()
             go ( _t_rec )
-
-            if Logirati(goModul:oDataBase:cName,"DOK","BRISANJE")
-                    
-                cOpis := kalk_pripr->idfirma + "-" + ;
-                    kalk_pripr->idvd + "-" + ;
-                    kalk_pripr->brdok
-
-                EventLog(nUser,goModul:oDataBase:cName,;
-                    "DOK","BRISANJE",;
-                    nKolicina,;
-                    nNc,;
-                    nVpc,;
-                    nil,;
-                    cOpis,;
-                    "artikal: " + cArtikal,;
-                    "",;
-                    kalk_pripr->datdok,;
-                    Date(),;
-                    "",;
-                    "Brisanje stavke " + cStavka + " iz kalk_pripreme")
-                
-            endif
 
             return DE_REFRESH
 
@@ -497,21 +479,14 @@ do case
                 kalk_pripr->idvd + "-" + ;
                 kalk_pripr->brdok 
 
-            if Logirati(goModul:oDataBase:cName,"DOK","BRISIDOK")
-                    EventLog(nUser,goModul:oDataBase:cName,;
-                "DOK","BRISIDOK",;
-                nil,nil,nil,nil,;
-                cOpis,"","", ;
-                kalk_pripr->datdok,;
-                Date(),;
-                "",;
-                "Brisanje kompletne kalk_pripreme")
-            endif
-            
+           
             zapp()
             select p_doksrc
             zapp()
             select kalk_pripr
+
+            log_write( "F18_DOK_OPER: kalk, brisanje pripreme: " + cOpis , 2 )
+
             return DE_REFRESH
 
         endif

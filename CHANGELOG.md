@@ -1,3 +1,7 @@
+1.4.180 2013-05-21, vsasa
+ 
+  - F18, logiranje bitnih dokument operacija modula FIN/KALK/FAKT/LD
+ 
 1.4.179 2013-05-21, vsasa
  
   - F18, filter za baze u .f18_config.ini

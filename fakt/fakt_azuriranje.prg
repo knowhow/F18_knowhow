@@ -87,6 +87,8 @@ for _i := 1 to LEN( _a_fakt_doks )
             log_write(_msg, 1)
             MsgBeep(_msg)
             _ok := .f.
+        else
+            log_write( "F18_DOK_OPER: azuriranje fakt dokumenta: " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok, 2 )
         endif
 
     else
@@ -196,8 +198,6 @@ o_fakt_edit()
 // opet se vrati na ovaj slog koji mi treba
 _seek_pripr_dok( id_firma, id_tip_dok, br_dok )
 
-log_write( "FAKT, sql azuriranje dokumenta: " + id_firma + "-" + id_tip_dok + "-" + br_dok + " - start", 3 )
-
 // -----------------------------------------------------------------------------------------------------
 sql_table_update(nil, "BEGIN")
 
@@ -266,8 +266,6 @@ else
 
     f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
     sql_table_update(nil, "END")
-
-    log_write( "FAKT, azuriranje dokumenta - END", 3 )
 
 endif
 
@@ -1017,6 +1015,8 @@ if Pitanje("FAKT_BRISI_PRIPR", "Zelite li izbrisati pripremu !!????","N")=="D"
         // azuriraj dokument u smece 
         azuriraj_smece( .t. )    
 
+        log_write( "F18_DOK_OPER: fakt, prenosa dokumenta iz pripreme u smece: " + _id_firma + "-" + _tip_dok + "-" + _br_dok, 2 )
+
         select fakt_pripr
 
     else
@@ -1024,22 +1024,13 @@ if Pitanje("FAKT_BRISI_PRIPR", "Zelite li izbrisati pripremu !!????","N")=="D"
         // ponisti pripremu...
         zapp()
         zapp_fakt_atributi()
- 
+        
+        log_write( "F18_DOK_OPER: fakt, brisanje dokumenta iz pripreme: " + _id_firma + "-" + _tip_dok + "-" + _br_dok, 2 )
+
         // potreba za resetom brojaca ?
         fakt_reset_broj_dokumenta( _id_firma, _tip_dok, _br_dok )
 
    endif
-
-
-    // logiraj ako je potrebno brisanje dokumenta iz pripreme !
-    if Logirati(goModul:oDataBase:cName,"DOK","BRISANJE")
-    
-    	cOpis := "dokument: " + _id_firma + "-" + _tip_dok + "-" + ALLTRIM( _br_dok )
-
-    	EventLog(nUser, goModul:oDataBase:cName, "DOK", "BRISANJE", nil, nil, nil, nil, ;
-        	"","", cOpis, DATE(), DATE(), "", ;
-       	 	"Brisanje kompletnog dokumenta iz pripreme")
-    endif
 
 endif
 

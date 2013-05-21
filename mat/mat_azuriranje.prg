@@ -176,7 +176,7 @@ static function _mat_azur_sql()
 local _ok := .t.
 local _ids := {}
 local _record
-local _tmp_id
+local _tmp_id, _log_info
 local _tbl_suban
 local _tbl_anal
 local _tbl_sint
@@ -187,12 +187,10 @@ local _ids_sint := {}
 local _ids_anal := {}
 local _ids_nalog := {}
 
-
 _tbl_suban := "mat_suban"
 _tbl_anal  := "mat_anal"
 _tbl_nalog := "mat_nalog"
 _tbl_sint  := "mat_sint"
-
 
 if !f18_lock_tables({ _tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog})
     MsgBeep("ERROR lock tabele")
@@ -210,6 +208,7 @@ MsgO("sql mat_suban")
  
   _record := dbf_get_rec()
   _tmp_id := _record["idfirma"] + _record["idvn"] + _record["brnal"]
+  _log_info := _record["idfirma"] + "-" + _record["idvn"] + "-" + _record["brnal"]
   AADD( _ids_suban, "#2" + _tmp_id )
 
   @ m_x+1, m_y+2 SAY "mat_suban -> server: " + _tmp_id 
@@ -323,6 +322,8 @@ else
     push_ids_to_semaphore( _tbl_nalog, _ids_nalog )
 
     sql_table_update(nil, "END")
+
+    log_write( "F18_DOK_OPER: mat, azuriranje dokumenta: " + _log_info, 2 )
 
 endif
 

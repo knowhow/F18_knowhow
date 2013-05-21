@@ -788,6 +788,7 @@ local _tmp_id
 local _ids := {}
 local _ids_kalk := {}
 local _ids_doks := {}
+local _log_dok
 
 _tbl_kalk := "kalk_kalk"
 _tbl_doks := "kalk_doks"
@@ -815,6 +816,8 @@ _record := dbf_get_rec()
 // algoritam 2 - dokument nivo
 _tmp_id := _record["idfirma"] + _record["idvd"] + _record["brdok"]
 AADD( _ids_kalk, "#2" + _tmp_id )
+
+_log_dok := _record["idfirma"] + "-" + _record["idvd"] + "-" + _record["brdok"]
 
 @ m_x + 1, m_y + 2 SAY "kalk_kalk -> server: " + _tmp_id 
 
@@ -908,6 +911,9 @@ else
 
     f18_free_tables({_tbl_kalk, _tbl_doks})
     sql_table_update(nil, "END")
+
+    // logiraj operaciju
+    log_write( "F18_DOK_OPER: azuriranje kalk dokumenta: " + _log_dok, 2 )
 
 endif
 
@@ -1037,24 +1043,14 @@ do while !EOF()
 
         enddo
 
+        log_write( "F18_DOK_OPER: kalk, prenos dokumenta iz pripreme u smece: " + _id_firma + "-" + _id_vd + "-" + _br_dok, 2 )
+
     endif
 
 enddo
 
 select kalk_pripr
 go top
-
-if Logirati(goModul:oDataBase:cName, "DOK", "SMECE")
-    cOpis := cIdFirma + "-" + ;
-        cIdvd + "-" + ;
-        cBrdok
-
-    EventLog(nUser, goModul:oDataBase:cName,"DOK","SMECE", ;
-    nil,nil,nil,nil,;
-    cOpis, "", "", ;
-    kalk_pripr->datdok, DATE(), ;
-    "", "prebacivanje dokumenta u smece")
-endif
 
 select kalk_pripr
 zapp()
@@ -1170,7 +1166,7 @@ if _brisi_kum
 
     if FOUND()
 
-        log_write( "kalk povrat dokumenta: " + _id_firma + _id_vd + _br_dok, 2 )
+        log_write( "F18_DOK_OPER: kalk povrat dokumenta: " + _id_firma + "-" + _id_vd + "-" + _br_dok, 2 )
 
         _del_rec := dbf_get_rec()
         _ok := .t.
@@ -1213,12 +1209,6 @@ if _brisi_kum
         msgbeep("Brisanje KALK dokumenta neuspjesno !?")
         close all
         return
-    endif
-
-
-    if Logirati(goModul:oDataBase:cName,"DOK","POVRAT")
-        _descr := _id_firma + "-" + _id_vd + "-" + ALLTRIM(_br_dok)
-        EventLog(nUser, goModul:oDataBase:cName,"DOK","POVRAT",nil,nil,nil,nil,_descr,"","",Date(),Date(),"","KALK - Povrat dokumenta u pripremu")
     endif
 
     // vrati i dokument iz kalk_doksRC
@@ -1357,12 +1347,13 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
 
             if found()
 
-                log_write( "kalk, brisanje vise dokumenata: " + _id_firma + _id_vd + _br_dok , 2 )
+                log_write( "F18_DOK_OPER: kalk brisanje vise dokumenata: " + _id_firma + _id_vd + _br_dok , 2 )
 
                 _del_rec := dbf_get_rec()
                 // brisi prvo tabelu kalk_doks            
                 _ok := .t.
                 _ok :=  delete_rec_server_and_dbf( "kalk_doks", _del_rec, 1, "CONT" )
+
             endif
 
         endif
@@ -1524,6 +1515,8 @@ do while !eof() .and. cIdFirma==IdFirma .and. cIdVD==IdVD .and. cBrDok==BrDok
 enddo
 use
 MsgC()
+
+log_write( "F18_DOK_OPER: kalk, povrat dokumenta iz smeca: " + cIdFirma + "-" + cIdVd + "-" + cBrDok, 2 )
 
 if !lSilent
     close all

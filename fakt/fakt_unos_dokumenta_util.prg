@@ -2107,6 +2107,8 @@ _id_tip_dok := field->idtipdok
 _br_dok := field->brdok
 _r_br := field->rbr
 
+log_write( "F18_DOK_OPER: fakt, brisanje stavke iz pripreme: " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok + " stavka br: " + _r_br, 2 )
+
 if ( RecCount2() == 1 ) .or. JedinaStavka()
     // potreba za resetom brojaca na prethodnu vrijednost ?
     fakt_reset_broj_dokumenta( _id_firma, _id_tip_dok, _br_dok )

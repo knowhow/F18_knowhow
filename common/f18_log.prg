@@ -47,8 +47,9 @@ local _user := PADR( f18_user(), 200 )
 local _x := 1
 local _conds_true := SPACE(600)
 local _conds_false := SPACE(600)
+local _f18_doc_oper := "N"
 
-Box(, 10, 70 )
+Box(, 12, 70 )
 
     @ m_x + _x, m_y + 2 SAY "Uslovi za pregled log-a..."
 
@@ -76,6 +77,10 @@ Box(, 10, 70 )
     @ m_x + _x, m_y + 2 SAY "nesadrzi:" GET _conds_false PICT "@S40"
 
     ++ _x
+    ++ _x
+    
+    @ m_x + _x, m_y + 2 SAY "Pregledaj samo operacije nad dokumentima (D/N)?" GET _f18_doc_oper VALID _f18_doc_oper $ "DN" PICT "@!"
+
     ++ _x
 
     @ m_x + _x, m_y + 2 SAY "Limit na broj zapisa (0-bez limita)" GET _limit PICT "999999"
@@ -110,6 +115,7 @@ params["user"] := ALLTRIM( _user )
 params["limit"] := _limit
 params["conds_true"] := _conds_true
 params["conds_false"] := _conds_false
+params["doc_oper"] := _f18_doc_oper
 
 return _ok
 
@@ -127,6 +133,7 @@ local _dat_to := params["date_to"]
 local _limit := params["limit"]
 local _conds_true := params["conds_true"]
 local _conds_false := params["conds_false"]
+local _is_doc_oper := params["doc_oper"] == "D"
 local _qry, _where
 local _server := pg_server()
 local _data
@@ -150,6 +157,11 @@ endif
 // dodatni uslovi, ne-sadrzi
 if !EMPTY( _conds_false )
     _where += " AND (" + _sql_cond_parse( "msg", _conds_false, .t. ) + ")"
+endif
+
+// samo pregledaj dokument operacije F18
+if _is_doc_oper
+    _where += " AND ( msg LIKE '%F18_DOK_OPER%' ) " 
 endif
 
 

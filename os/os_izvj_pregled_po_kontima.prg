@@ -245,7 +245,7 @@ do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj))
                 loop
             endif
 
-            if prow()>63
+            if prow()>60
                 FF
                 os_zagl_konta()
             endif
@@ -477,7 +477,7 @@ do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj))
             skip
         enddo
         
-        if prow()>62
+        if prow()>60
             FF
             os_zagl_konta()
         endif
@@ -512,7 +512,7 @@ do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj))
         exit
     endif
     
-    if prow()>62
+    if prow()>60
         FF
         os_zagl_konta()
     endif

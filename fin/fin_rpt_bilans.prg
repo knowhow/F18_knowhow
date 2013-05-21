@@ -386,7 +386,7 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma   // idfirma
               SKIP
             ENDDO // partner
 
-            IF prow()>61+gpStranica
+            IF prow()>60+gpStranica
 	    	FF
 		ZaglSan(cFormat)
 	    ENDIF
@@ -446,7 +446,7 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma   // idfirma
 	     
          ENDDO // konto
 
-	  IF prow() > 59 + gpStranica
+	  IF prow() > 60 + gpStranica
 	 	FF
 		ZaglSan(cFormat)
 	  ENDIF
@@ -507,7 +507,7 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma   // idfirma
       
       ENDDO  // sin konto
 
-      IF prow() > 61 + gpStranica
+      IF prow() > 60 + gpStranica
       	FF 
 	ZaglSan(cFormat)
       ENDIF
@@ -589,7 +589,7 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma   // idfirma
 	
 ENDDO
 
-IF prow()>59+gpStranica
+IF prow()>60+gpStranica
   FF
   ZaglSan(cFormat)
 ENDIF
@@ -616,7 +616,7 @@ if lExpRpt
  endif
 endif
 
-if prow()>55+gpStranica; FF; ELSE; ?;?; endif
+if prow()>60+gpStranica; FF; ELSE; ?;?; endif
 
 ?? "REKAPITULACIJA PO KLASAMA NA DAN:"; @ PROW(),PCOL()+2 SAY DATE()
 ? M6
@@ -630,7 +630,7 @@ GO TOP
 nPocDug:=nPocPot:=nTekPDug:=nTekPPot:=nKumPDug:=nKumPPot:=nSalPDug:=nSalPPot:=0
 
 DO WHILESC !EOF()
-   if prow()>63+gpStranica; FF; endif
+   if prow()>60+gpStranica; FF; endif
    @ prow()+1,4      SAY IdKlasa
    @ prow(),10       SAY PocDug               PICTURE PicD
    @ prow(),PCOL()+1 SAY PocPot               PICTURE PicD
@@ -652,7 +652,7 @@ DO WHILESC !EOF()
    SKIP
 ENDDO
 
-if prow()>59+gpStranica; FF; endif
+if prow()>60+gpStranica; FF; endif
 ? M10
 ? "UKUPNO:"
 @ prow(),10 SAY  nPocDug    PICTURE PicD
@@ -914,10 +914,10 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma
         P2TP=P2TP+P1TP
         D2KP=D2KP+D1KP
         P2KP=P2KP+P1KP
-        IF prow()>65+gpStranica; FF;BrBil_21(); ENDIF
+        IF prow()>60+gpStranica; FF;BrBil_21(); ENDIF
 
       ENDDO  // sinteticki konto
-      IF prow()>61+gpStranica; FF; BrBil_21(); ENDIF
+      IF prow()>60+gpStranica; FF; BrBil_21(); ENDIF
 
       ? M5
       @ prow()+1,10 SAY cSinKonto
@@ -972,7 +972,7 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma
 
 ENDDO
 
-IF prow()>61+gpStranica; FF ; BrBil_21(); ENDIF
+IF prow()>60+gpStranica; FF ; BrBil_21(); ENDIF
 ? M5
 ? "UKUPNO:"
 @ prow(),nCol1    SAY D4PS PICTURE PicD
@@ -987,7 +987,7 @@ ENDIF
 @ PROW(),pcol()+1 SAY P4S PICTURE PicD
 ? M5
 
-if prow()>55+gpStranica; FF; else; ?;?; endif
+if prow()>60+gpStranica; FF; else; ?;?; endif
 
 ?? "REKAPITULACIJA PO KLASAMA NA DAN: ";?? DATE()
 ?  M6
@@ -1224,7 +1224,7 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma
          SKIP
       ENDDO // konto
 
-      IF prow()>63+gpStranica; FF ; BrBil_31(); endif
+      IF prow()>60+gpStranica; FF ; BrBil_31(); endif
 
       if cFormat=="1"
        @ prow()+1,1 SAY B PICTURE '9999'; ?? "."
@@ -1319,7 +1319,7 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma
 
 ENDDO
 
-IF prow()>58+gpStranica; FF ; BrBil_31(); endif
+IF prow()>60+gpStranica; FF ; BrBil_31(); endif
 ? M5
 ? "UKUPNO:"
 @ prow(),nCol1    SAY D4PS PICTURE PicD
@@ -1582,7 +1582,7 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma
          SKIP
       ENDDO // konto
 
-      IF prow()>63+gpStranica; FF ; BrBil_41(); endif
+      IF prow()>60+gpStranica; FF ; BrBil_41(); endif
 
        @ prow()+1,1 SAY B PICTURE '9999'; ?? "."
        @ prow(),10 SAY PADC(cIdKonto,8)
@@ -1643,7 +1643,7 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma
 
 ENDDO
 
-IF prow()>58+gpStranica; FF ; BrBil_41(); endif
+IF prow()>60+gpStranica; FF ; BrBil_41(); endif
 ? M5
 ? "UKUPNO:"
 @ prow(),nCol1    SAY D4PS PICTURE PicD

@@ -123,8 +123,9 @@ DO WHILE !EOF()
           skip
 	  loop
       endif
-
-      IF prow()>63; FF; ENDIF
+    
+      NovaStrana()
+      
       @ prow()+1,0 SAY ++nRBr PICTURE "9999"
       @ prow(),pcol()+2 SAY IdFirma
       @ prow(),pcol()+2 SAY IdVN
@@ -194,15 +195,19 @@ DO WHILE !EOF()
       nPotDEM+=PotDEM
       SKIP
 ENDDO
-IF prow()>63; FF; ENDIF
+NovaStrana()
+
 ? m
 ? "UKUPNO:"
+
 @ prow(),nPos SAY nDugBHD picture picBHD
 @ prow(),pcol()+1 SAY nPotBHD picture picBHD
+
 IF gVar1=="0"
- @ prow(),pcol()+1 SAY nDugDEM picture picDEM
- @ prow(),pcol()+1 SAY nPotDEM picture picDEM
+    @ prow(),pcol()+1 SAY nDugDEM picture picDEM
+    @ prow(),pcol()+1 SAY nPotDEM picture picDEM
 ENDIF
+
 ? m
 
 FF

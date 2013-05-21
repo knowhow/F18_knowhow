@@ -47,7 +47,7 @@ if ( nOdstampatiStrana == NIL )
     nOdstampatiStrana := 1
 endif
 
-if PROW() > ( RPT_PAGE_LEN + gPStranica - nOdstampatiStrana )
+if PROW() > ( ( RPT_PAGE_LEN + gPStranica ) - nOdstampatiStrana )
     FF
     if ( bZagl <> NIL )
         EVAL( bZagl )

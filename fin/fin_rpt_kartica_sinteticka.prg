@@ -168,7 +168,7 @@ do whilesc !eof() .and. idfirma==cIdFirma .and. cIdKonto==IdKonto
    endif
   endif
 
-  IF prow()>63 + gPStranica
+  IF prow()>60 + gPStranica
        FF
        SinKZagl()
   ENDIF
@@ -190,7 +190,7 @@ do whilesc !eof() .and. idfirma==cIdFirma .and. cIdKonto==IdKonto
   SKIP
 ENDDO
 
-IF prow()>62+gPStranica
+IF prow()>60+gPStranica
      FF
      SinKZagl()
 ENDIF
@@ -220,7 +220,7 @@ endif
 enddo // eof()
 
 if cBrza=="N"
-IF prow()>62+gPStranica; FF; SinKZagl(); ENDIF
+IF prow()>60+gPStranica; FF; SinKZagl(); ENDIF
 ? M
 ? "UKUPNO ZA SVA KONTA:"
 @ prow(),31             SAY nSviD           PICTURE PicBHD
@@ -396,7 +396,7 @@ select SINT
 
 nDugBHD:=nPotBHD:=nDugDEM:=nPotDEM:=0
 do whilesc !eof() .and. idfirma==cidfirma .and. cIdKonto==IdKonto
-  IF prow()>63+gPStranica; FF; ZaglSink2();ENDIF
+  IF prow()>60+gPStranica; FF; ZaglSink2();ENDIF
   nMonth:=month(DatNal)
   nDBHD:=nPBHD:=nDDEM:=nPDEM:=0
   nPSDBHD:=nPSPBHD:=nPSDDEM:=nPSPDEM:=0
@@ -438,7 +438,7 @@ do whilesc !eof() .and. idfirma==cidfirma .and. cIdKonto==IdKonto
   ENDIF
 ENDDO
 
-IF prow()>62+gPStranica; FF; ZaglSink2(); ENDIF
+IF prow()>60+gPStranica; FF; ZaglSink2(); ENDIF
 ? M
 ? "UKUPNO ZA:"+cIdKonto
 @ prow(),nC1            SAY nDugBHD     PICTURE PicBHD
@@ -465,7 +465,7 @@ endif
 
 enddo // eof()
 
-IF prow()>62+gPStranica; FF; ZaglSink2(); ENDIF
+IF prow()>60+gPStranica; FF; ZaglSink2(); ENDIF
 ? M
 ? "ZA SVA KONTA:"
 @ prow(),nC1            SAY nSviD           PICTURE PicBHD
@@ -711,7 +711,7 @@ do whilesc !eof() .and. IdFirma=cIdFirma .and. (cIdKonto==IdKonto .or. cBrza=="S
    endif
   endif
 
-  IF prow()>63+gPStranica; FF; AnalKZagl();ENDIF
+  IF prow()>60+gPStranica; FF; AnalKZagl();ENDIF
   IF cBrza=="S"
     @ prow()+1,3 SAY IdKonto
     @ prow(),11 SAY IdVN
@@ -756,7 +756,7 @@ do whilesc !eof() .and. IdFirma=cIdFirma .and. (cIdKonto==IdKonto .or. cBrza=="S
   SKIP
 ENDDO    //  konto
 
-IF prow()>61+gPStranica; FF; AnalKZagl(); ENDIF
+IF prow()>60+gPStranica; FF; AnalKZagl(); ENDIF
 ? M
 IF cBrza=="S"
   ? "UKUPNO ZA KONTA:"+qqKonto
@@ -789,7 +789,7 @@ endif
 enddo // eof()
 
 if cBrza=="N"
- IF prow()>61+gPStranica; FF; AnalKZagl(); ENDIF
+ IF prow()>60+gPStranica; FF; AnalKZagl(); ENDIF
  ? M
  ? "UKUPNO ZA SVA KONTA:"
  @ prow(),IF(gNW=="N".and.cPTD=="D",30+49,31) SAY nSviD  PICTURE PicBHD
@@ -808,9 +808,7 @@ FF
 
 END PRINT
 
-#ifndef CAX
 closeret
-#endif
 return
 
 

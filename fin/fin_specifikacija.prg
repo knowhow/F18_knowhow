@@ -123,7 +123,7 @@ do whileSC !eof()
 	      		ZaglDPK()
 		ENDIF
               
-	      	IF prow()>63 + gPStranica
+	      	IF prow()>60 + gPStranica
 			FF
 			ZaglDPK()
 		ENDIF
@@ -190,7 +190,7 @@ do whileSC !eof()
 
       ENDDO // konto
 
-      IF prow()>63+gPStranica; FF; ZaglDPK(); ENDIF
+      IF prow()>60+gPStranica; FF; ZaglDPK(); ENDIF
       ?  M
       ? "UKUPNO ZA KONTO:"
      @ prow(),nCol1 SAY ""
@@ -494,7 +494,7 @@ do whileSC !eof() .and. cIdKonto==IdKonto
 	    IF prow()==0
 	    	ZaglSpBrDana()
 	    ENDIF
-            IF prow()>62+gPStranica
+            IF prow()>60+gPStranica
 	    	FF
 		ZaglSpBrDana()
 	    ENDIF
@@ -531,7 +531,7 @@ do whileSC !eof() .and. cIdKonto==IdKonto
      endif
 
      IF prow()==0; ZaglSpBrDana(); ENDIF
-     IF prow()>63+gPStranica; FF; ZaglSpBrDana(); ENDIF
+     IF prow()>60+gPStranica; FF; ZaglSpBrDana(); ENDIF
 
      if cPojed=="N"
        @ prow()+1,1 SAY ++B PICTURE '9999'
@@ -562,7 +562,7 @@ do whileSC !eof() .and. cIdKonto==IdKonto
   endif
 
 ENDDO  // konto
-IF prow()>61+gPStranica; FF; ZaglSpBrDana(); ENDIF
+IF prow()>60+gPStranica; FF; ZaglSpBrDana(); ENDIF
 ? M
 ? "UKUPNO ZA KONTO:"
 @ prow(),nCol1    SAY KDIN PICTURE picBHD
@@ -764,7 +764,7 @@ do whileSC !eof()
        endif
        skip
      enddo
-   if prow()>63+gPStranica; FF; zagl5(); endif
+   if prow()>60+gPStranica; FF; zagl5(); endif
    select KONTO; hseek cidkonto; select ANAL
    if cNula=="D" .or. round(nd-np,3)<>0
     ? cidkonto,KONTO->naz
@@ -775,7 +775,7 @@ do whileSC !eof()
     nkd+=nd; nkp+=np  // ukupno  za klasu
    endif  // cnula
  enddo  // sintetika
- if prow()>61+gPStranica; FF; zagl5(); endif
+ if prow()>60+gPStranica; FF; zagl5(); endif
  if cSK=="D".and.(nkd!=0.or.nkp!=0)
   ? m
   ?  "SINT.K.",cSin,":"
@@ -786,7 +786,7 @@ do whileSC !eof()
  endif
  nUd+=nKd; nUp+=nKp   // ukupno za sve
 enddo
-if prow()>61+gPStranica; FF; zagl5(); endif
+if prow()>60+gPStranica; FF; zagl5(); endif
 ? m
 ? " UKUPNO:"
 @ prow(),nC       SAY nUd pict pic
@@ -1255,7 +1255,7 @@ do whileSC !eof()
 				nPotrazujeBHD:=0
 			endif
    		enddo
-   		if prow()>63+gPStranica
+   		if prow()>60+gPStranica
 			FF
 			zagl6(cSkVar)
 		endif
@@ -1365,7 +1365,7 @@ do whileSC !eof()
 		endif
 		
  	enddo  // sintetika
- 	if prow()>61+gPStranica
+ 	if prow()>60+gPStranica
 		FF
 		zagl6(cSkVar)
 	endif
@@ -1392,7 +1392,7 @@ do whileSC !eof()
 	nUp2+=nKp2   // ukupno za sve
 enddo
 
-if prow()>61+gPStranica
+if prow()>60+gPStranica
 	FF
 	zagl6(cSkVar)
 endif
@@ -1614,7 +1614,7 @@ do whileSC !eof()
        select suban
        SKIP
      enddo
-   if prow()>63+gPStranica; FF; zagl6(cSkVar); endif
+   if prow()>60+gPStranica; FF; zagl6(cSkVar); endif
    ? cidkonto,cIdPartner,""
    if !empty(cIdPartner)
      //select PARTN; hseek cidpartner; select SUBAN
@@ -1639,7 +1639,7 @@ do whileSC !eof()
    nkd+=nd; nkp+=np  // ukupno  za klasu
    nkd2+=nd2; nkp2+=np2  // ukupno  za klasu
  enddo  // csort
- if prow()>61+gPStranica; FF; zagl6(cSkVar); endif
+ if prow()>60+gPStranica; FF; zagl6(cSkVar); endif
   ? m
   if cSort=="1"
    ?  "Ukupno za:",cNaslov,":"
@@ -1660,7 +1660,7 @@ do whileSC !eof()
  nUd+=nKd; nUp+=nKp   // ukupno za sve
  nUd2+=nKd2; nUp2+=nKp2   // ukupno za sve
 enddo
-if prow()>61+gPStranica; FF; zagl6(cSkVar); endif
+if prow()>60+gPStranica; FF; zagl6(cSkVar); endif
 ? m
 ? " UKUPNO:"
 if cTip=="1"
@@ -2154,7 +2154,7 @@ do while cIdFirma==IdFirma .and. !eof()
       SELECT SUBAN
       nDugBHD:=nPotBHD:=0; nDugDEM:=nPotDEM:=0
 
-      IF prow()>63+gPStranica; FF; ENDIF
+      IF prow()>60+gPStranica; FF; ENDIF
    ENDDO   // partner
 
    ? M
@@ -2324,7 +2324,7 @@ do while cIdFirma==IdFirma .and. !eof()
       SELECT SUBAN
       nDugBHD:=nPotBHD:=0; nDugDEM:=nPotDEM:=0
 
-      IF prow()>63+gPStranica; FF; ENDIF
+      IF prow()>60+gPStranica; FF; ENDIF
    ENDDO   // partner
 
    ? M
@@ -2578,7 +2578,7 @@ do while cidfirma==idfirma .and. !eof() .and. cidkonto==idkonto
 			select suban
 		endif
 
-		if prow()>62+gPStranica
+		if prow()>60+gPStranica
 			FF
 			zagl9()
 		endif

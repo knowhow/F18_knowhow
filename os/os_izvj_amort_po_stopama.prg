@@ -148,7 +148,7 @@ do while !eof() .and. (idrj=cidrj .or. empty(cidrj))
         cIdAmort:=idam
         nDug3:=nPot31:=nPot32:=0
         do while !eof() .and. (idrj=cidrj .or. empty(cidrj))  .and. idam==cidamort
-            if prow()>63; FF; os_zagl_amort(); endif
+            if prow()>60; FF; os_zagl_amort(); endif
                 if !( (cON=="N" .and. empty(datotp)) .or.;
                     (con=="O" .and. !empty(datotp)) .or.;
                     (con=="B" .and. year(datum)=year(gdatobr)) .or.;
@@ -264,7 +264,7 @@ do while !eof() .and. (idrj=cidrj .or. empty(cidrj))
 
             enddo
             
-            if prow()>62
+            if prow()>60
                 FF
                 os_zagl_amort()
             endif

@@ -116,7 +116,7 @@ do while !eof() .and. (idrj=cidrj .or. empty(cidrj))
       
         do while !eof() .and. ( field->idrj = cIdrj .or. empty(cIdrj)) .and. field->idkonto == cIdkonto
          
-            if prow()>63
+            if prow()>60
                 FF
                 os_zagl_reval()
             endif
@@ -200,7 +200,7 @@ do while !eof() .and. (idrj=cidrj .or. empty(cidrj))
             skip
         enddo
         
-        if prow()>62
+        if prow()>60
             FF
             os_zagl_reval()
         endif
@@ -226,7 +226,7 @@ do while !eof() .and. (idrj=cidrj .or. empty(cidrj))
         exit
     endif
     
-    if prow()>62
+    if prow()>60
         FF
         os_zagl_reval()
     endif

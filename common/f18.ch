@@ -57,6 +57,8 @@
 #define SIFK_LEN_OZNAKA  4
 #define SIFK_LEN_IDSIF   15
 
+#define RPT_PAGE_LEN 60
+
 #define F18_CLIENT_ID_INI_SECTION "client_id"
 #define F18_SCREEN_INI_SECTION "F18_screen"
 #define F18_DBF_INI_SECTION "F18_dbf"

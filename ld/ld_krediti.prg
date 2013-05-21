@@ -141,10 +141,8 @@ do while .t.
 
     f18_free_tables({"ld_radkr"})
     sql_table_update( nil, "END" )
-    
-    if lLogNoviKredit
-        EventLog(nUser,goModul:oDataBase:cName,"KREDIT","NOVIKREDIT",nIznKred,nil,nil,nil,"","",ALLTRIM(cIdRadn)+" rata:"+STR(i,3),Date(),Date(),"","Definisan novi kredit")
-    endif
+   
+    log_write( "F18_DOK_OPER: ld unos novog kredita - radnik: " + cIdRadn + " iznos: " + ALLTRIM(STR( nIznKred)) , 2) 
     
     private cDn:="N"
 
@@ -301,10 +299,8 @@ do case
         _vals["iznos"] := _iznos
 
         update_rec_server_and_dbf( "ld_radkr", _vals, 1, "FULL" )
-            
-        if lLogEditKredit
-            EventLog(nUser,goModul:oDataBase:cName,"KREDIT","EDITKREDIT",radkr->placeno,radkr->iznos,nil,nil,"","","Rad:"+ALLTRIM(cIdRadn),Date(),Date(),"","Rucna ispravka rate kredita za radnika")
-        endif
+        
+        log_write( "F18_DOK_OPER: ld korekcija kredita, rucna ispravka rate - radnik: " + cIdRadn + ", iznos: " + ALLTRIM(STR( radkr->placeno, 12, 2)) + "/" + ALLTRIM(STR(radkr->iznos, 12, 2)) , 2 )    
 
         select radkr
 
@@ -444,6 +440,8 @@ if nNRata <> nTRata
 
     f18_free_tables({"ld_radkr"})
     sql_table_update( nil, "END" )
+
+    log_write( "F18_DOK_OPER: ld, redefinisanje kredita za radnika: " + cIdRadn, 2 )
 
 endif
 

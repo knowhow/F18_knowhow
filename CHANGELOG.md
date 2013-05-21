@@ -1,6 +1,7 @@
 1.4.179 2013-05-21, vsasa
  
   - F18, filter za baze u .f18_config.ini
+  - paginacije izvještaja
  
 1.4.178 2013-05-20, vsasa
  

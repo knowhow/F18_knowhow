@@ -114,7 +114,8 @@ _qry := "SELECT " + ;
         "FROM pg_user " + ;
         "JOIN pg_auth_members ON pg_user.usesysid = pg_auth_members.member " + ;
         "JOIN pg_roles ON pg_roles.oid = pg_auth_members.roleid " + ;
-        "WHERE pg_user.usename = " + _user + " ;"
+        "WHERE pg_user.usename = " + _user + " " + ;
+        "ORDER BY rolname ;" 
     
 _roles := _sql_query( _server, _qry )
 

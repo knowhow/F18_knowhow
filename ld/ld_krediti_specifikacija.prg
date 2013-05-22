@@ -130,7 +130,7 @@ _rj := fetch_metric( "ld_kred_spec_rj", my_user(), SPACE(200) )
 Box(, 15, 60 )
 
     @ m_x + _x, m_y + 2 SAY "Godina" GET _godina PICT "9999"
-    @ m_x + _x, col() + 1 SAY "Godina" GET _mjesec PICT "99"
+    @ m_x + _x, col() + 1 SAY "mjesec" GET _mjesec PICT "99"
 
     ++ _x
     ++ _x

@@ -664,8 +664,10 @@ local _tmp := {}
 local _filter_db := "empty#empty_sezona"
 local _where := ""
 
+_where := " WHERE has_database_privilege( CURRENT_USER, datname, 'connect' ) "
+
 if !EMPTY( ::_include_db_filter )
-    _where := " WHERE " + _sql_cond_parse( "datname", ::_include_db_filter + " " )
+    _where += " AND " + _sql_cond_parse( "datname", ::_include_db_filter + " " )
 endif
 
 _qry := "SELECT DISTINCT substring( datname, '(.*)_[0-9]+') AS datab " + ;

@@ -1,3 +1,7 @@
+1.4.182 2013-05-22, vsasa
+ 
+  - F18, group/user role - login funkcije korekcije
+ 
 1.4.181 2013-05-21, vsasa
  
   - ld, specifikacija kredita, dodatni uslovi kod pregleda izvještaja 

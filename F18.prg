@@ -75,6 +75,7 @@ local _x := 1
 local _db_params
 local _count := 0
 local oBackup := F18Backup():New()
+local _user_roles := f18_user_roles_info()
 
 if arg_v == NIL
     // napravi NIL parametre
@@ -95,7 +96,7 @@ do while .t.
     
     ++ _x
 
-    @ _x, mnu_left + 1 SAY "   Korisnik: " + ALLTRIM( _db_params["user"] )
+    @ _x, mnu_left + 1 SAY "   Korisnik: " + ALLTRIM( _db_params["user"] ) + "   u grupama " + _user_roles
 
     ++ _x
 

@@ -100,6 +100,60 @@ return
 
 
 
+function GetUserRoles( user_name )
+local _roles
+local _qry
+local _server := pg_server()
+
+if user_name == NIL
+    _user := "CURRENT_USER"
+endif
+
+_qry := "SELECT " + ;
+        " rolname " + ;
+        "FROM pg_user " + ;
+        "JOIN pg_auth_members ON pg_user.usesysid = pg_auth_members.member " + ;
+        "JOIN pg_roles ON pg_roles.oid = pg_auth_members.roleid " + ;
+        "WHERE pg_user.usename = " + _user + " ;"
+    
+_roles := _sql_query( _server, _qry )
+
+if _roles == NIL
+    return NIL
+endif
+
+return _roles
+
+
+// ------------------------------------------------------------
+// vraca informacije o trenutnim grupama za user-a
+// ------------------------------------------------------------
+function f18_user_roles_info()
+local oRow
+local _info := ""
+local _roles := GetUserRoles()
+
+if _roles == NIL
+    return _info
+endif
+
+_roles:GoTo(1)
+
+do while !_roles:EOF()
+
+    oRow := _roles:GetRow()
+    _info += hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "rolname" ) ) ) + ", "
+
+    _roles:Skip()
+
+enddo
+
+// skini na kraju ,
+_info := PADR( _info, LEN( _info ) - 2 )
+_info := "[" + _info + "]"
+
+return _info
+
 
 
 // ------------------------------------------------------

@@ -1,3 +1,7 @@
+1.4.183 2013-05-22, vsasa
+ 
+  - F18, informacije o tekućim grupama za korisnika
+ 
 1.4.182 2013-05-22, vsasa
  
   - F18, group/user role - login funkcije korekcije

@@ -322,8 +322,6 @@ Box( , MAXROWS()-10, MAXCOLS()-10)
     
     seek STR(cGodina,4) + cIdRj + str(cMjesec,2) + IIF(lViseObr,cObracun,"") + cIdRadn
    
-    altd()
- 
     if found()
 
         lNovi := .f.

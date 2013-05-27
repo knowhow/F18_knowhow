@@ -1,3 +1,7 @@
+1.4.184 2013-05-27, vsasa
+ 
+  - LD, šifranik radnika, filter šifranika po pojedinim uslovima, opcija "Q"
+ 
 1.4.183 2013-05-22, vsasa
  
   - F18, informacije o tekućim grupama za korisnika

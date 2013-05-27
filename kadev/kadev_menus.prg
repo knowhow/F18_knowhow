@@ -66,12 +66,13 @@ local _opc := {}
 local _opcexe := {}
 local _izbor := 2
 
-AADD( _opc, STRKZN("1. pregled godiçnjih odmora             ", "8", gKodnaS ) )
+AADD( _opc, "1. pregled godisnjih odmora             " )
 AADD( _opcexe, {|| gododmori() })
-AADD( _opc, STRKZN("2. pregled sta§a u firmi", "8", gKodnaS ) )
+AADD( _opc, "2. pregled staza u firmi" )
 AADD( _opcexe, {|| stazufirmi() })
 
 f18_menu( "izvjestaji", .f., _izbor, _opc, _opcexe )
+
 return
 
 

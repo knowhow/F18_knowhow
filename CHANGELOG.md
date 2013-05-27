@@ -1,6 +1,7 @@
 1.4.184 2013-05-27, vsasa
  
   - LD, šifranik radnika, filter šifranika po pojedinim uslovima, opcija "Q"
+  - KADEV, init verzija modula (stavljanje u funkciju iz FMK/KADEV reposa)
  
 1.4.183 2013-05-22, vsasa
  

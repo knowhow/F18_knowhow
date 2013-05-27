@@ -23,11 +23,12 @@ set_a_dbf_kadev_1()
 set_a_dbf_kadev_globusl()
 set_a_dbf_kadev_obrazdef()
 set_a_dbf_kadev_uslovi()
+set_a_dbf_kadev_rjrmj()
+set_a_dbf_kadev_defrjes()
 
 set_a_dbf_sifarnik( "kadev_promj", "KADEV_PROMJ" , F_KADEV_PROMJ )
 set_a_dbf_sifarnik( "kadev_rj", "KDV_RJ" , F_KDV_RJ )
 set_a_dbf_sifarnik( "kadev_rmj", "KDV_RMJ" , F_KDV_RMJ )
-set_a_dbf_sifarnik( "kadev_rjrmj", "KDV_RJRMJ" , F_KDV_RJRMJ )
 set_a_dbf_sifarnik( "kadev_mz", "KDV_MZ" , F_KDV_MZ )
 set_a_dbf_sifarnik( "kadev_nerdan", "KDV_NERDAN" , F_KDV_NERDAN )
 set_a_dbf_sifarnik( "kadev_k1", "KDV_K1" , F_KDV_K1 )
@@ -38,9 +39,41 @@ set_a_dbf_sifarnik( "kadev_cin", "KDV_CIN" , F_KDV_CIN )
 set_a_dbf_sifarnik( "kadev_ves", "KDV_VES" , F_KDV_VES )
 set_a_dbf_sifarnik( "kadev_nac", "KDV_NAC" , F_KDV_NAC )
 set_a_dbf_sifarnik( "kadev_rjes", "KDV_RJES" , F_KDV_RJES )
-set_a_dbf_sifarnik( "kadev_defrjes", "KDV_DEFRJES" , F_KDV_DEFRJES )
 
 return
+
+
+// ------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
+static function set_a_dbf_kadev_rjrmj()
+local _item, _alg, _tbl 
+
+_tbl := "kadev_rjrmj"
+_item := hb_hash()
+
+_item["alias"] := "KDV_RJRMJ"
+_item["table"] := _tbl
+_item["wa"]    := F_KDV_RJRMJ
+
+// temporary tabela - nema semafora
+_item["temp"]  := .f.
+
+_item["algoritam"] := {}
+	
+// algoritam 1 - default
+// -------------------------------------------------------------------------------
+_alg := hb_hash()
+_alg["dbf_key_block"]  := {|| field->idrj + field->idrmj }
+_alg["dbf_key_fields"] := { "idrj", "idrmj" }
+_alg["sql_in"]         := " rpad( idrj, 6 ) || rpad( idrmj, 4 ) " 
+_alg["dbf_tag"]        := "1"
+AADD(_item["algoritam"], _alg )
+
+_item["sql_order"] := "idrj, idrmj"
+
+f18_dbfs_add(_tbl, @_item)
+
+return .t.
 
 
 
@@ -219,5 +252,47 @@ f18_dbfs_add(_tbl, @_item)
 
 return .t.
 
+
+// ------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
+static function set_a_dbf_kadev_defrjes()
+local _item, _alg, _tbl 
+
+_tbl := "kadev_defrjes"
+_item := hb_hash()
+
+_item["alias"] := "KDV_DEFRJES"
+_item["table"] := _tbl
+_item["wa"]    := F_KDV_DEFRJES
+
+// temporary tabela - nema semafora
+_item["temp"]  := .f.
+
+_item["algoritam"] := {}
+	
+// algoritam 1 - default
+// -------------------------------------------------------------------------------
+_alg := hb_hash()
+_alg["dbf_key_block"]  := {|| field->idrjes + field->id }
+_alg["dbf_key_fields"] := { "idrjes", "id" }
+_alg["sql_in"]         := " rpad( idrjes, 2 ) || rpad( id, 2 ) " 
+_alg["dbf_tag"]        := "1"
+AADD(_item["algoritam"], _alg )
+
+// algoritam 2 - po id-u
+// -------------------------------------------------------------------------------
+_alg := hb_hash()
+_alg["dbf_key_block"]  := {|| field->idrjes }
+_alg["dbf_key_fields"] := { "idrjes" }
+_alg["sql_in"]         := " rpad( idrjes, 2 ) " 
+_alg["dbf_tag"]        := "1"
+AADD(_item["algoritam"], _alg )
+
+
+_item["sql_order"] := "idrjes, id"
+
+f18_dbfs_add(_tbl, @_item)
+
+return .t.
 
 

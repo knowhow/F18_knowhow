@@ -86,7 +86,7 @@ AADD( _opcexe, {|| nil })
 AADD( _opc, "X. parametri" )
 AADD( _opcexe, {|| kadev_params_menu() } )
 
-f18_menu( "kadev", .t., _izbor, _opc, _opc_exe )
+f18_menu( "kadev", .t., _izbor, _opc, _opcexe )
 
 return
 

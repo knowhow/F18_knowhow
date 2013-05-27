@@ -325,7 +325,7 @@ function RekalkRst(dDoDat,lPom)
     if kadev_promj->Tip==" " .and. kadev_promj->URadSt $ "12" //postavljenja,....
       dOdDat:=DatumOd          // otpocinje proces kalkulacije
       if kadev_promj->URadSt=="1"
-       KBfR := kbenef->vrijednost
+       KBfR := kbenef->iznos
       else   // za URadSt = 2 ne obracunava se beneficirani r.st.
        KBfR:=0
       endif
@@ -340,13 +340,13 @@ function RekalkRst(dDoDat,lPom)
         fOtvoreno:=.t.
         dOdDat:=iif(DatumDo>dDoDat,dDoDat,DatumDo) // ako je DatumDo unutar
         // promjene veci od Datuma kalkulacije onda koristi dDoDat
-        KBfR:=kbenef->vrijednost
+        KBfR:=kbenef->iznos
       endif
     endif
     if kadev_promj->Tip=="I" .and. kadev_promj->URadSt $ "12"
       nPom:=iif(empty(DatumDo),dDoDat,if(DatumDo>dDoDat,dDoDat,DatumDo))-DatumOd
       if kadev_promj->URadSt=="1"
-        nPom2:=nPom*kbenef->vrijednost/100
+        nPom2:=nPom*kbenef->iznos/100
       else   // za URadSt = 2 ne obracunava se beneficirani r.st.
         nPom2:=0
       endif
@@ -361,7 +361,7 @@ function RekalkRst(dDoDat,lPom)
         nRstB+=nPom2
         fOtvoreno:=.t.
         dOdDat:=iif(empty(DatumDo),dDoDat,iif(DatumDo>dDoDat,dDoDat,DatumDo))
-        KBfR:=kbenef->vrijednost
+        KBfR:=kbenef->iznos
       endif
     endif
     skip

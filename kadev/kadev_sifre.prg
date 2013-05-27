@@ -78,7 +78,7 @@ for i:=1 to LEN(ImeKol)
 	AADD( Kol, i )
 next
 
-return PostojiSifra(F_KADEV_RJ,"ID",10,70,"Lista Radnih jedinica",@cId,dx,dy)
+return PostojiSifra(F_KDV_RJ,"ID",10,70,"Lista Radnih jedinica",@cId,dx,dy)
 
 
 
@@ -320,15 +320,15 @@ return
 
 
 function P_Rjes(cId,dx,dy)
-LOCAL nArr:=SELECT()
-PRIVATE ImeKol,Kol:={}
+LOCAL nArr := SELECT()
+PRIVATE ImeKol, Kol := {}
 
-SELECT KDV_DEFRJES
-SELECT (nArr)
+select KDV_DEFRJES
+select (nArr)
 
 ImeKol:={ { "ID/SIFRA"      , {|| id      } , "id"       } ,;
           { "Naziv"         , {|| naz     } , "naz"      } ,;
-          { "Fajl obrasca"  , {|| fajl    } , "fajl"     , , {|| V_FRjes()} } ,;
+          { "Fajl obrasca"  , {|| fajl    } , "fajl"     , , {|| V_FRjes() } } ,;
           { "Poslj.broj"    , {|| zadbrdok} , "zadbrdok" , {|| .f.} } ,;
           { "ID promjene"   , {|| idpromj } , "idpromj"   } ;
         }
@@ -336,82 +336,147 @@ ImeKol:={ { "ID/SIFRA"      , {|| id      } , "id"       } ,;
 for i:=1 to LEN(ImeKol)
 	AADD(Kol, i)
 next
+
 return PostojiSifra(F_KDV_RJES,1,10,60,"Lista rjesenja ออออ <F5> - definisi rjesenje",@cId,dx,dy,{|Ch| RjesBlok(Ch)})
 
 
 
-function V_FRjes()
+
+static function v_frjes()
 private cKom := "gvim "+PRIVPATH + ALLTRIM(wfajl)
+
 if EMPTY(wfajl)
 	return .t.
 endif
 
 if Pitanje(,"Zelite li izvrsiti ispravku fajla obrasca rjesenja ?","N")=="D"
-   Box(,25,80)
+    Box(,25,80)
    	hb_run( cKom )
-   BoxC()
+    BoxC()
 endif
+
 return .t.
 
 
 
-function RjesBlok(Ch)
-if Ch==K_CTRL_T
- if Pitanje(,"Izbrisati rjesenje sa pripadajucim stavkama ?","N")=="D"
-    cId:=id
-    SELECT KDV_DEFRJES
-    seek cid
-    do while !eof() .and. cid==idrjes
-       skip; nTrec:=recno(); skip -1
-       delete
-       go nTrec
-    enddo
-    SELECT KDV_RJES
-    delete
-    return 7  // prekini zavrsi i refresh
- endif
 
-elseif Ch==K_F2
- if Pitanje(,"Promjena sifre rjesenja ?","N")=="D"
-     cIdOld:=id
-     cId:=Id
-     Box(,2,50)
-      @ m_x+1, m_y+2 SAY "Sifra rjesenja" GET cID  valid !empty(cid) .and. cid<>cidold
-      read
-     BoxC()
-     if lastkey()==K_ESC; return DE_CONT; endif
-     SELECT KDV_DEFRJES
-     seek cidOld
-     do while !eof() .and. cidold==idrjes
-       skip; nTrec:=recno(); skip -1
-       replace idrjes with cid
-       go nTrec
-     enddo
-     SELECT KDV_RJES
-     replace id with cid
- endif
- return DE_CONT
 
-elseif Ch==K_F5
- V_DefRjes(rjes->id)
- return 6 // DE_CONT2
+
+static function RjesBlok(Ch)
+local _id, _old_id, _rec
+
+if Ch == K_CTRL_T
+ 
+    if Pitanje(, "Izbrisati rjesenje sa pripadajucim stavkama ?", "N" ) == "D"
+    
+        _id := field->id
+    
+        select kdv_defrjes
+        seek _id
+   
+        if FOUND()
+            _rec := dbf_get_rec()
+            delete_rec_server_and_dbf( "kadev_defrjes", _rec, 2, "FULL" )
+        endif
+       
+        select kdv_rjes
+        seek _id
+
+        if FOUND() 
+            _rec := dbf_get_rec()
+            delete_rec_server_and_dbf( "kadev_rjes", _rec, 1, "FULL" )
+        endif
+    
+        return 7  
+    
+    endif
+
+elseif Ch == K_F2
+
+    if Pitanje(, "Promjena sifre rjesenja ?", "N" ) == "D"
+        
+        _old_id := field->id
+        _id := field->Id
+
+        Box(,2,50)
+            @ m_x + 1, m_y + 2 SAY "Sifra rjesenja" GET _id VALID ( !EMPTY( _id ) .and. _id <> _old_id )
+            read
+        BoxC()
+
+        if LastKey() == K_ESC
+            return DE_CONT
+        endif
+     
+        select kdv_defrjes
+        seek _old_id
+
+        if !f18_lock_tables( { "kadev_defrjes", "kadev_rjes" } )
+            MsgBeep( "Problem sa lokovanjem tabele kadev_defrjes !!!" )
+            return DE_CONT
+        endif 
+
+        sql_table_update( nil, "BEGIN" )
+ 
+        do while !EOF() .and. _old_id == field->idrjes
+
+            skip
+            _t_rec := RecNo()
+            skip -1
+
+            _rec := dbf_get_rec()
+            _rec["idrjes"] := _id
+
+            update_rec_server_and_dbf( "kadev_defrjes", _rec, 1, "CONT" )
+            
+            go ( _t_rec )
+
+        enddo
+ 
+       
+        select kdv_rjes
+        _rec := dbf_get_rec()
+        _rec["id"] := _id
+        update_rec_server_and_dbf( "kadev_rjes", _rec, 1, "CONT" )
+
+        f18_free_tables( { "kadev_defrjes", "kadev_rjes" } )
+        sql_table_update( nil, "END" )
+ 
+    endif
+    
+    return DE_CONT
+
+elseif Ch == K_F5
+
+    // pregledaj rjesenje...    
+    pregledaj_defrjes( kdv_rjes->id )
+
+    return 6
+
 else
-  return DE_CONT
+
+    return DE_CONT
+
 endif
 
 return DE_CONT
 
 
 
-function V_DefRjes
-parameters cID
-private GetList:={}, ImeKol:={}, Kol:={}
+
+
+
+static function pregledaj_defrjes()
+parameters cId
+local _i
+private GetList := {}
+private ImeKol := {}
+private Kol := {}
 
 Box(,15,77)
 
- SELECT DEFRJES
+    select kdv_defrjes
 
- ImeKol:={ { "ID/SIFRA"       , {|| id      } , "id"       } ,;
+    ImeKol:={ { "ID/SIFRA"       , {|| id      } , "id"       } ,;
            { "Obrada(D/N)"    , {|| obrada  } , "obrada"   } ,;
            { "Upit/opis"      , {|| upit    } , "upit"     } ,;
            { "Izraz"          , {|| izraz   } , "izraz"    } ,;
@@ -424,24 +489,31 @@ Box(,15,77)
            { "Prior.unosa"    , {|| priun   } , "priun"    } ;
          }
 
- for i:=1 to len(ImeKol); AADD(Kol,i); next
+    for _i := 1 to LEN( ImeKol )
+        AADD( Kol, _i )
+    next
 
- set cursor on
+    set cursor on
 
- @ m_x+1,m_y+1 SAY ""; ?? "Rjesenje:",KDV_RJES->id,KDV_RJES->naz
- BrowseKey(m_x+3,m_y+1,m_x+14,m_y+77,ImeKol,{|Ch| EdDefRjes(Ch)},"idrjes+brisano==cid+' '",cid,2,,,{|| .f.})
+    @ m_x + 1, m_y + 1 SAY ""
+    ?? "Rjesenje:", KDV_RJES->id, ALLTRIM( KDV_RJES->naz )
+    BrowseKey( m_x + 3, m_y + 1, m_x + 14, m_y + 77, ImeKol, ;
+                {|Ch| EdDefRjes(Ch)}, " idrjes == cId ", cId, 2,,,{|| .f.})
 
- SELECT KDV_RJES
+    select kdv_rjes
 
 BoxC()
+
 return .t.
 
 
-function EdDefRjes(Ch)
-local nRet:=DE_CONT, cVPP:=""
+
+static function EdDefRjes(Ch)
+local _ret := DE_CONT
+local _vpp := ""
 private GetList:={}
 
-cVPP:=SPACE(10)+"#"+PADR("ID",10)+"#"+PADR("DATUMOD",10)+"#"+;
+_vpp := SPACE(10)+"#"+PADR("ID",10)+"#"+PADR("DATUMOD",10)+"#"+;
       PADR("DATUMDO",10)+"#"+PADR("NATR1",10)+"#"+PADR("NATR2",10)+"#"+;
       PADR("NATR3",10)+"#"+PADR("NATR4",10)+"#"+;
       PADR("NATR5",10)+"#"+PADR("NATR6",10)+"#"+;
@@ -453,66 +525,80 @@ cVPP:=SPACE(10)+"#"+PADR("ID",10)+"#"+PADR("DATUMOD",10)+"#"+;
 
 do case
 
-  case Ch==K_F2 .or. Ch==K_CTRL_N
-     scID       := ID
-     scIZRAZ    := IZRAZ
-     scOBRADA   := OBRADA
-     scUPIT     := UPIT
-     scUVALID   := UVALID
-     scUPICT    := UPICT
-     scIIZRAZ   := IIZRAZ
-     scTIPSLOVA := TIPSLOVA
-     scPPROMJ   := PPROMJ
-     scIPROMJ   := IPROMJ
-     scPRIUN    := PRIUN
+    case Ch == K_F2 .or. Ch == K_CTRL_N
 
-     Box(,11,75,.f.)
-       //USTipke()
-       @ m_x+ 1,m_y+2 SAY "ID/SIFRA      " GET scID     PICT "@!"
-       @ m_x+ 2,m_y+2 SAY "Obrada(D/N)   " GET scOBRADA PICT "@!" VALID scOBRADA $ "DN"
-       @ m_x+ 3,m_y+2 SAY "Upit/opis     " GET scUPIT
-       @ m_x+ 4,m_y+2 SAY "Izraz         " GET scIZRAZ  PICT "@S60"
-       @ m_x+ 5,m_y+2 SAY "Validacija    " GET scUVALID PICT "@S60"
-       @ m_x+ 6,m_y+2 SAY "Format        " GET scUPICT  PICT "@!"
-       @ m_x+ 7,m_y+2 SAY "Tip slova(BUI)" GET scTIPSLOVA PICT "@!"
-       @ m_x+ 8,m_y+2 SAY "Izraz izlaza  " GET scIIZRAZ PICT "@S60"
-       @ m_x+ 9,m_y+2 SAY "Polje promjene" GET scPPROMJ PICT "@!" valid scPPROMJ $ cVPP .or. MsgPPromj()
-       @ m_x+10,m_y+2 SAY "Index promjene" GET scIPROMJ PICT "@!"
-       @ m_x+11,m_y+2 SAY "Priorit. unosa" GET scPRIUN  PICT "9"
-       READ
-       //BosTipke()
-     BoxC()
+        scID       := ID
+        scIZRAZ    := IZRAZ
+        scOBRADA   := OBRADA
+        scUPIT     := UPIT
+        scUVALID   := UVALID
+        scUPICT    := UPICT
+        scIIZRAZ   := IIZRAZ
+        scTIPSLOVA := TIPSLOVA
+        scPPROMJ   := PPROMJ
+        scIPROMJ   := IPROMJ
+        scPRIUN    := PRIUN
 
-     if Ch==K_CTRL_N .and. lastkey()<>K_ESC
-        append blank
-        replace idrjes with cid
-     endif
+        Box(,11,75,.f.)
 
-     if lastkey()<>K_ESC
-       replace ID       with scID      ,;
-               IZRAZ    with scIZRAZ   ,;
-               OBRADA   with scOBRADA  ,;
-               UPIT     with scUPIT    ,;
-               UVALID   with scUVALID  ,;
-               UPICT    with scUPICT   ,;
-               TIPSLOVA with scTIPSLOVA,;
-               IIZRAZ   with scIIZRAZ  ,;
-               PPROMJ   with scPPROMJ  ,;
-               IPROMJ   with scIPROMJ  ,;
-               PRIUN    with scPRIUN
-     endif
+            @ m_x+ 1,m_y+2 SAY "ID/SIFRA      " GET scID     PICT "@!"
+            @ m_x+ 2,m_y+2 SAY "Obrada(D/N)   " GET scOBRADA PICT "@!" VALID scOBRADA $ "DN"
+            @ m_x+ 3,m_y+2 SAY "Upit/opis     " GET scUPIT
+            @ m_x+ 4,m_y+2 SAY "Izraz         " GET scIZRAZ  PICT "@S60"
+            @ m_x+ 5,m_y+2 SAY "Validacija    " GET scUVALID PICT "@S60"
+            @ m_x+ 6,m_y+2 SAY "Format        " GET scUPICT  PICT "@!"
+            @ m_x+ 7,m_y+2 SAY "Tip slova(BUI)" GET scTIPSLOVA PICT "@!"
+            @ m_x+ 8,m_y+2 SAY "Izraz izlaza  " GET scIIZRAZ PICT "@S60"
+            @ m_x+ 9,m_y+2 SAY "Polje promjene" GET scPPROMJ PICT "@!" valid scPPROMJ $ _vpp .or. MsgPPromj()
+            @ m_x+10,m_y+2 SAY "Index promjene" GET scIPROMJ PICT "@!"
+            @ m_x+11,m_y+2 SAY "Priorit. unosa" GET scPRIUN  PICT "9"
+            READ
+        
+        BoxC()
 
-     nRet:=DE_REFRESH
+        // izadji...
+        if LastKey() == K_ESC
+            return _ret
+        endif
 
-  case Ch==K_CTRL_T
-     if Pitanje(,"Izbrisati stavku ?","N")=="D"
-        delete
-     endif
-     nRet:=DE_DEL
+        if Ch == K_CTRL_N
+            append blank
+        endif
+
+        _rec := dbf_get_rec()
+
+        if Ch == K_CTRL_N
+            _rec["idrjes"] := cId
+        endif
+            
+        _rec["id"] := scID
+        _rec["izraz"] := scIZRAZ
+        _rec["obrada"] := scOBRADA
+        _rec["upit"] := scUPIT
+        _rec["uvalid"] := scUVALID
+        _rec["upict"] := scUPICT
+        _rec["tipslova"] := scTIPSLOVA
+        _rec["iizraz"] := scIIZRAZ
+        _rec["ppromj"] := scPPROMJ
+        _rec["ipromj"] := scIPROMJ
+        _rec["priun"] := scPRIUN
+
+        update_rec_server_and_dbf( "kadev_defrjes", _rec, 1, "FULL" )
+
+        _ret := DE_REFRESH
+
+    case Ch == K_CTRL_T
+
+        if Pitanje(, "Izbrisati stavku ?", "N" ) == "D"
+            _rec := dbf_get_rec()
+            delete_rec_server_and_dbf( "kadev_defrjes", _rec, 1, "FULL" )
+        endif
+        
+        _ret := DE_DEL
 
 endcase
 
-return nRet
+return _ret
 
 
 

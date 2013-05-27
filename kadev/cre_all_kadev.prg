@@ -28,9 +28,9 @@ local _created
 aDbf:={} 
 AADD(aDbf, {"id", "C", 13, 0} )
 AADD(aDbf, {"id2","C",11,0} )
-AADD(aDbf, {"Prezime","C",20,0} )
-AADD(aDbf, {"ImeRod","C",15,0} )
-AADD(aDbf, {"Ime",    "C",15,0} )
+AADD(aDbf, {"Prezime","C",30,0} )
+AADD(aDbf, {"ImeRod","C",20,0} )
+AADD(aDbf, {"Ime",    "C",20,0} )
 AADD(aDbf, {"Pol",    "C",1,0} )
 AADD(aDbf, {"IdNac",  "C",2,0} )
 AADD(aDbf, {"DatRodj","D",8,0} )
@@ -45,12 +45,12 @@ AADD(aDbf, {"DatVRMJ","D",8,0} )
 AADD(aDbf, {"RadStE","N",11,2} )
 AADD(aDbf, {"RadStB","N",11,2} )
 AADD(aDbf, {"BrLK","C",12,0} )
-AADD(aDbf, {"MjSt","C",25,0} )
+AADD(aDbf, {"MjSt","C",30,0} )
 AADD(aDbf, {"Ulst","C",30,0} )
 AADD(aDbf, {"IdMZSt","C",4,0} )
-AADD(aDbf, {"BrTel1","C",10,0} )
-AADD(aDbf, {"BrTel2","C",10,0} )
-AADD(aDbf, {"BrTel3","C",10,0} )
+AADD(aDbf, {"BrTel1","C",15,0} )
+AADD(aDbf, {"BrTel2","C",15,0} )
+AADD(aDbf, {"BrTel3","C",15,0} )
 AADD(aDbf, {"Status","C",1,0} )
 AADD(aDbf, {"BracSt","C",1,0} )
 AADD(aDbf, {"BrDjece","N",2,0} )
@@ -71,10 +71,10 @@ AADD(aDbf, {"IDVes","C",7,0} )
 // ID VES-a
 AADD(aDbf, {"IDCin","C",2,0} )
 // ID Cin-a
-AADD(aDbf, {"NazSekr", "C",50,0} )
-AADD(aDbf, {"Operater","C",10,0} )
-AADD(aDbf, {"Date","D",8,0}  )
-AADD(aDbf, {"Time","C",8,0} )
+AADD(aDbf, {"NazSekr", "C",100,0} )
+AADD(aDbf, {"Operater","C",50,0} )
+AADD(aDbf, {"k_date","D",8,0}  )
+AADD(aDbf, {"k_time","C",8,0} )
 
 _alias := "KADEV_0"
 _table_name := "kadev_0"
@@ -100,8 +100,8 @@ AADD( aDbf, {"DatumDo","D",8,0} )
 AADD( aDbf, {"IdPromj","C",2,0} )
 AADD( aDbf, {"IdK","C",4,0}  )
 AADD( aDbf, {"Dokument","C",15,0} )
-AADD( aDbf, {"Opis","C",30,0} )
-AADD( aDbf, {"Nadlezan","C",20,0} )
+AADD( aDbf, {"Opis","C",50,0} )
+AADD( aDbf, {"Nadlezan","C",50,0} )
 AADD( aDbf, {"IdRJ","C",6,0} )
 AADD( aDbf, {"IdRMJ","C",4,0} )
 AADD( aDbf, {"nAtr1","N",11,2} )
@@ -133,8 +133,8 @@ CREATE_INDEX("3" , "id+idpromj"       , _alias )
 
 aDbf := {}	
 AADD( aDbf, { "ID", "C", 2,0 } )
-AADD( aDbf, {"Naz","C",20,0} )
-AADD( aDbf, {"Naz2","C",6,0} )
+AADD( aDbf, {"Naz","C",50,0} )
+AADD( aDbf, {"Naz2","C",50,0} )
 AADD( aDbf, {"Tip","C",1,0} )
 AADD( aDbf, {"Status","C",1,0} )
 AADD( aDbf, {"URadst","C",1,0} ) 
@@ -244,7 +244,7 @@ AADD( aDbf, {"IdZanim1","C",4,0} )
 AADD( aDbf, {"IdZanim2","C",4,0} )
 AADD( aDbf, {"IdZanim3","C",4,0} )
 AADD( aDbf, {"IdZanim4","C",4,0} )
-AADD( aDbf, {"Bodova","N",7,2} )
+AADD( aDbf, {"Bodova","N",10,2} )
 AADD( aDbf, {"SBenefRSt","C",1,0} )
 AADD( aDbf, {"IdK1","C",1,0} )
 AADD( aDbf, {"IdK2","C",1,0} ) 
@@ -403,8 +403,8 @@ AADD(aDbf,{"Tip","C",1,0})
 AADD(aDbf,{"Grupa","C",1,0})
 AADD(aDbf,{"Red_Br","C",1,0})
 AADD(aDbf,{"id_uslova","C",8,0})
-AADD(aDbf,{"Komentar","C",25,0})
-AADD(aDbf,{"Uslov","C",200,0})
+AADD(aDbf,{"Komentar","C",50,0})
+AADD(aDbf,{"Uslov","C",300,0})
 
 _alias := "KDV_OBRAZDEF"
 _table_name := "kadev_obrazdef"
@@ -419,8 +419,8 @@ CREATE_INDEX( "1" , "tip+grupa+red_br", _alias )
 // KDV_GLOBUSL
 // --------------------------------------------------------
 aDBF:={}
-AADD(aDbf,{"KOMENTAR","C",25,0})
-AADD(aDbf,{"USLOV","C",200,0})
+AADD(aDbf,{"KOMENTAR","C",50,0})
+AADD(aDbf,{"USLOV","C",300,0})
 AADD(aDbf,{"IME_BAZE","C",10,0})
 
 _alias := "KDV_GLOBUSL"
@@ -437,8 +437,8 @@ CREATE_INDEX( "1" , "Komentar", _alias )
 // ------------------------------------------------------
 aDBF:={}
 AADD(aDbf,{"ID"        , "C",   8, 0})
-AADD(aDbf,{"NAZ"       , "C",  25, 0})
-AADD(aDbf,{"USLOV"     , "C", 200, 0})
+AADD(aDbf,{"NAZ"       , "C",  50, 0})
+AADD(aDbf,{"USLOV"     , "C", 300, 0})
 
 _alias := "KDV_USLOVI"
 _table_name := "kadev_uslovi"
@@ -456,8 +456,8 @@ CREATE_INDEX( "2" , "naz", _alias )
 
 aDbf := {} 
 AADD( aDbf, { "id"       , "C" ,  2 , 0 } )
-AADD( aDbf, { "naz"      , "C" , 40 , 0 } )
-AADD( aDbf, { "fajl"     , "C" , 12 , 0 } )
+AADD( aDbf, { "naz"      , "C" , 50 , 0 } )
+AADD( aDbf, { "fajl"     , "C" , 20 , 0 } )
 AADD( aDbf, { "zadbrdok" , "C" , 20 , 0 } )
 AADD( aDbf, { "idpromj"  , "C" ,  2 , 0 } )
 
@@ -467,8 +467,8 @@ _table_name := "kadev_rjes"
 IF_NOT_FILE_DBF_CREATE
 IF_C_RESET_SEMAPHORE
 
-CREATE_INDEX("id" , "id" , SIFPATH+"RJES")
-CREATE_INDEX("naz" , "naz" , SIFPATH+"RJES")
+CREATE_INDEX("id" , "id" , _alias )
+CREATE_INDEX("naz" , "naz" , _alias )
 
 
 // ---------------------------------------------------------------
@@ -498,6 +498,7 @@ IF_C_RESET_SEMAPHORE
 CREATE_INDEX("1"  , "idrjes+id"           , _alias )
 CREATE_INDEX("2"  , "idrjes+ipromj+id"    , _alias )
 CREATE_INDEX("3"  , "idrjes+priun+id"     , _alias )
+CREATE_INDEX("4"  , "id"     , _alias )
 
 
 return

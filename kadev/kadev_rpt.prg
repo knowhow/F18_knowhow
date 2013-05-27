@@ -131,7 +131,7 @@ return
 
 
 
-FUNCTION FFor1()
+static function FFor1()
   nImaDana:=0; nIskorDana:=0
   cDio1:=cDio2:=""
   cImeRadnika:=TRIM(prezime)+" ("+TRIM(imerod)+") "+TRIM(ime)
@@ -155,7 +155,7 @@ FUNCTION FFor1()
 RETURN .t.
 
 
-PROCEDURE FSvaki1()
+static function FSvaki1()
 RETURN
 
 
@@ -184,7 +184,7 @@ PROCEDURE StazUFirmi()
 
   CrePom()
   O_KADEV_0
-  RekRstAll(.t.)
+  kadev_RekRstAll(.t.)
   O_KADEV_0
   cPom := my_home() + "pom.dbf"
   SELECT (F_POM); my_use_temp( "POM", cPom, .f. , .t. )
@@ -244,7 +244,7 @@ CLOSERET
 
 
 
-FUNCTION FFor2()
+static function FFor2()
   LOCAL nArr:=SELECT()
   SELECT KADEV_0
   SEEK (F_POM)->ID
@@ -255,7 +255,7 @@ FUNCTION FFor2()
 RETURN .t.
 
 
-PROCEDURE FSvaki2()
+static function FSvaki2()
 RETURN
 
 

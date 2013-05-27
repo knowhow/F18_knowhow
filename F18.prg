@@ -209,6 +209,12 @@ if f18_use_module( "virm" )
 	AADD( menuexec, {|| MainVirm( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
 endif
 
+if f18_use_module( "kadev" )
+	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
+	AADD( menuop, _brojac + ". KADEV  # kadrovska evidencija" )
+	AADD( menuexec, {|| MainKadev( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+endif
+
 if f18_use_module( "reports" )
 	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
 	AADD( menuop, _brojac + ". REPORTS  # izvjestajni modul" )

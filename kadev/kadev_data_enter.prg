@@ -10,9 +10,8 @@
  */
 
 
-
-
 #include "kadev.ch"
+
 
 // ----------------------------------------------
 // unos podataka
@@ -456,36 +455,6 @@ ENDIF
 return cVrati
 
 
-function PRNKod_ON(cKod)
- LOCAL i:=0
-  FOR i:=1 TO LEN(cKod)
-    DO CASE
-      CASE SUBSTR(cKod,i,1)=="U"
-         gPU_ON()
-      CASE SUBSTR(cKod,i,1)=="I"
-         gPI_ON()
-      CASE SUBSTR(cKod,i,1)=="B"
-         gPB_ON()
-    ENDCASE
-  NEXT
-RETURN (NIL)
-
-
-FUNCTION PRNKod_OFF(cKod)
- LOCAL i:=0
-  FOR i:=1 TO LEN(cKod)
-    DO CASE
-      CASE SUBSTR(cKod,i,1)=="U"
-         gPU_OFF()
-      CASE SUBSTR(cKod,i,1)=="I"
-         gPI_OFF()
-      CASE SUBSTR(cKod,i,1)=="B"
-         gPB_OFF()
-    ENDCASE
-  NEXT
-RETURN (NIL)
-
-
 function ERUP(aNezelim)
   LOCAL nArr:=SELECT(),cDokument:=""
   PRIVATE cPP:="", cPR:=""
@@ -648,8 +617,8 @@ aVr:=GMJD(_VrSlVr)
 @  m_x+ 4,m_y+2 SAY "  b) Broj djece             "  GET _BrDjece PICTURE "@!"
 @  m_x+ 5,m_y+2 SAY "  c) Stambene prilike       "  GET _Stan    PICTURE "@!"
 @  m_x+ 6,m_y+2 SAY "  d) Krvna grupa            "  GET _Krv     Valid _Krv $ "   #A+ #A- #B+ #B- #AB+#AB-#0+ #0- #A  #B  #AB #0  "  PICTURE "@!"
-@  m_x+ 7,m_y+2 SAY "  e) "+gDodKar1+"       "  GET _idK1    Valid P_K1(@_idK1,7,40)  PICTURE "@!"
-@  m_x+ 8,m_y+2 SAY "  f) "+gDodKar2+"       "  GET _idK2    Valid P_K2(@_idK2,8,40)  PICTURE "@!"
+@  m_x+ 7,m_y+2 SAY "  e) "+gDodKar1+"       "  GET _idK1    Valid P_Kadev_K1(@_idK1,7,40)  PICTURE "@!"
+@  m_x+ 8,m_y+2 SAY "  f) "+gDodKar2+"       "  GET _idK2    Valid P_Kadev_K2(@_idK2,8,40)  PICTURE "@!"
 @  m_x+ 9,m_y+2 SAY "  g) Karakt. (opisno)..... 1"  GET _KOp1    PICTURE "@!"
 @  m_x+10,m_y+2 SAY "  h) Karakt. (opisno)..... 2"  GET _KOp2    PICTURE "@!"
 

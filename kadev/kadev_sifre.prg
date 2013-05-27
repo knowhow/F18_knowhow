@@ -125,7 +125,7 @@ return PostojiSifra(F_KADEV_PROMJ,I_ID,10,70,"Lista promjena",@cId,dx,dy)
 
 
 
-function P_K1(cId,dx,dy)
+function P_Kadev_K1(cId,dx,dy)
 PRIVATE ImeKol,Kol
 ImeKol:={ { "ID",              {|| id},   "id"       },;
           { PADR("Naziv:",20), {|| naz},  "naz"      },;
@@ -136,7 +136,7 @@ return PostojiSifra(F_KDV_K1,I_ID,10,50,"Lista: "+gDodKar1,@cId,dx,dy)
 
 
 
-function P_K2(cId,dx,dy)
+function P_Kadev_K2(cId,dx,dy)
 PRIVATE ImeKol,Kol
 ImeKol:={ { "ID",  {|| id},               "id"       },;
           { PADR("Naziv:",30), {|| naz},  "naz"      },;
@@ -275,12 +275,12 @@ do case
     		@ m_x+8, m_y+2 SAY "              /4  " GET sIdZanim4   valid empty(sIDZanim4) .or. P_Zanim(@sIdZanim4, 8 ,30) PICTURE "@!"
     		@ m_x+9, m_y+2 SAY "Broj izvrsilaca   " GET sBrIzvrs valid sBrIzvrs>=0
     		@ m_x+9,COL()+2 SAY "Br.bodova " GET sBodova valid sBodova>=0
-    		@ m_x+9,COL()+2 SAY  "Stopa.benef.R.St " GET sSBenefRSt  VALID P_KBENRST(@sSBenefRSt)
+    		@ m_x+9,COL()+2 SAY  "Stopa.benef.R.St " GET sSBenefRSt  VALID P_KBENEF(@sSBenefRSt)
     		@ m_x+10,m_y+2 SAY "Karakteristika /1 " GET sIdK1 PICTURE "@!"
     		@ m_x+10,COL()+2 SAY "K./2 " GET sIdK2 PICTURE "@!"
     		@ m_x+10,COL()+2 SAY "K./3 " GET sIdK3 PICTURE "@!"
     		@ m_x+10,COL()+2 SAY "K./4 " GET sIdK4 PICTURE "@!"
-    		@ m_x+11,m_y+2 SAY "Opis              " GET sOpis   WHEN {|| UsTipke(),.t.}  VALID {|| BosTipke(),.t.}
+    		@ m_x+11,m_y+2 SAY "Opis              " GET sOpis   
     		read
     		BoxC()
     		if lastkey()==K_ESC
@@ -467,7 +467,7 @@ do case
      scPRIUN    := PRIUN
 
      Box(,11,75,.f.)
-       USTipke()
+       //USTipke()
        @ m_x+ 1,m_y+2 SAY "ID/SIFRA      " GET scID     PICT "@!"
        @ m_x+ 2,m_y+2 SAY "Obrada(D/N)   " GET scOBRADA PICT "@!" VALID scOBRADA $ "DN"
        @ m_x+ 3,m_y+2 SAY "Upit/opis     " GET scUPIT
@@ -480,7 +480,7 @@ do case
        @ m_x+10,m_y+2 SAY "Index promjene" GET scIPROMJ PICT "@!"
        @ m_x+11,m_y+2 SAY "Priorit. unosa" GET scPRIUN  PICT "9"
        READ
-       BosTipke()
+       //BosTipke()
      BoxC()
 
      if Ch==K_CTRL_N .and. lastkey()<>K_ESC

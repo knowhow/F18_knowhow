@@ -65,8 +65,6 @@ local _opc := {}
 local _opcexe := {}
 local _izbor := 1
 
-say_fmk_ver()
-
 AADD( _opc, "1. podaci                                 ")
 AADD( _opcexe, {|| kadev_data() })
 AADD( _opc, "2. pretrazivanje" )

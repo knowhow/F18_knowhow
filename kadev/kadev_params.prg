@@ -39,7 +39,7 @@ Rpar("fi", @gNFirma)
 Rpar("co", @gCentOn)
 Rpar("ve", @gVojEvid)
 
-UsTipke()
+//UsTipke()
 
 set cursor on
 
@@ -70,7 +70,7 @@ AADD(aPars, {"Vojna evidencija (D/N) ?", ;
 
 VarEdit(aPars, 6, 1, 22, 78, "***** Parametri rada programa", "B1" )
 
-BosTipke()
+//BosTipke()
 
 if LastKey() <> K_ESC
 	WPar("tp",gTrPromjena)

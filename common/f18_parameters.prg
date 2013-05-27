@@ -18,7 +18,7 @@ local _x := 1
 local _pos_x
 local _pos_y
 local _left := 20
-local _fin, _kalk, _fakt, _epdv, _virm, _ld, _os, _rnal, _mat, _reports
+local _fin, _kalk, _fakt, _epdv, _virm, _ld, _os, _rnal, _mat, _reports, _kadev
 local _pos
 local _email_server, _email_port, _email_username, _email_userpass, _email_from
 local _email_to, _email_cc
@@ -28,9 +28,9 @@ local _backup_company, _backup_server
 local _backup_removable, _backup_ping_time
 
 // parametri modula koristenih na glavnom meniju...
-_fin := fetch_metric( "main_menu_fin", my_user(), "N" )
-_kalk := fetch_metric( "main_menu_kalk", my_user(), "N" )
-_fakt := fetch_metric( "main_menu_fakt", my_user(), "N" )
+_fin := fetch_metric( "main_menu_fin", my_user(), "D" )
+_kalk := fetch_metric( "main_menu_kalk", my_user(), "D" )
+_fakt := fetch_metric( "main_menu_fakt", my_user(), "D" )
 _ld := fetch_metric( "main_menu_ld", my_user(), "N" )
 _epdv := fetch_metric( "main_menu_epdv", my_user(), "N" )
 _virm := fetch_metric( "main_menu_virm", my_user(), "N" )
@@ -38,7 +38,8 @@ _os := fetch_metric( "main_menu_os", my_user(), "N" )
 _rnal := fetch_metric( "main_menu_rnal", my_user(), "N" )
 _mat := fetch_metric( "main_menu_mat", my_user(), "N" )
 _pos := fetch_metric( "main_menu_pos", my_user(), "N" )
-_reports := fetch_metric( "main_menu_reports", my_user(), "D" )
+_reports := fetch_metric( "main_menu_reports", my_user(), "N" )
+_kadev := fetch_metric( "main_menu_kadev", my_user(), "N" )
 
 // email parametri
 _email_server := PADR( fetch_metric( "email_server", my_user(), "" ), 100 )
@@ -94,6 +95,7 @@ if !just_set
 	@ _pos_x + _x, col() + 1 SAY "POS:" GET _pos PICT "@!"
 	@ _pos_x + _x, col() + 1 SAY "MAT:" GET _mat PICT "@!"
 	@ _pos_x + _x, col() + 1 SAY "RNAL:" GET _rnal PICT "@!"
+	@ _pos_x + _x, col() + 1 SAY "KADEV:" GET _kadev PICT "@!"
 	@ _pos_x + _x, col() + 1 SAY "REPORTS:" GET _reports PICT "@!"
 
 	++ _x
@@ -178,6 +180,7 @@ set_metric( "main_menu_epdv", my_user(), _epdv )
 set_metric( "main_menu_rnal", my_user(), _rnal )
 set_metric( "main_menu_mat", my_user(), _mat )
 set_metric( "main_menu_pos", my_user(), _pos )
+set_metric( "main_menu_kadev", my_user(), _kadev )
 set_metric( "main_menu_reports", my_user(), _reports )
 
 // email parametri
@@ -215,7 +218,7 @@ local _ret := .f.
 local _default := "N"
 
 // reports modul treba biti po defaultu dozvoljen
-if module_name == "reports"
+if module_name $ "fin#kalk#fakt"
     _default := "D"
 endif
 
@@ -233,7 +236,7 @@ return _ret
 // ------------------------------------------------------------------------
 function f18_set_active_modules()
 local _ok := .f.
-local _fin, _kalk, _fakt, _ld, _epdv, _virm, _os, _rnal, _pos, _mat, _reports
+local _fin, _kalk, _fakt, _ld, _epdv, _virm, _os, _rnal, _pos, _mat, _reports, _kadev
 local _pos_x, _pos_y
 local _x := 1
 local _len := 8
@@ -241,9 +244,9 @@ local _corr := "D"
 private GetList := {}
 
 // parametri modula koristenih na glavnom meniju...
-_fin := fetch_metric( "main_menu_fin", my_user(), "N" )
-_kalk := fetch_metric( "main_menu_kalk", my_user(), "N" )
-_fakt := fetch_metric( "main_menu_fakt", my_user(), "N" )
+_fin := fetch_metric( "main_menu_fin", my_user(), "D" )
+_kalk := fetch_metric( "main_menu_kalk", my_user(), "D" )
+_fakt := fetch_metric( "main_menu_fakt", my_user(), "D" )
 _ld := fetch_metric( "main_menu_ld", my_user(), "N" )
 _epdv := fetch_metric( "main_menu_epdv", my_user(), "N" )
 _virm := fetch_metric( "main_menu_virm", my_user(), "N" )
@@ -251,7 +254,8 @@ _os := fetch_metric( "main_menu_os", my_user(), "N" )
 _rnal := fetch_metric( "main_menu_rnal", my_user(), "N" )
 _mat := fetch_metric( "main_menu_mat", my_user(), "N" )
 _pos := fetch_metric( "main_menu_pos", my_user(), "N" )
-_reports := fetch_metric( "main_menu_reports", my_user(), "D" )
+_kadev := fetch_metric( "main_menu_kadev", my_user(), "N" )
+_reports := fetch_metric( "main_menu_reports", my_user(), "N" )
 
 Box(, 10, 70 )
 
@@ -288,6 +292,7 @@ Box(, 10, 70 )
 	@ m_x + _x, col() + 1 SAY PADL( "POS:", _len ) GET _pos PICT "@!"
 	@ m_x + _x, col() + 1 SAY PADL( "MAT:", _len ) GET _mat PICT "@!"
 	@ m_x + _x, col() + 1 SAY PADL( "RNAL:", _len ) GET _rnal PICT "@!"
+	@ m_x + _x, col() + 1 SAY PADL( "KADEV:", _len ) GET _kadev PICT "@!"
 	@ m_x + _x, col() + 1 SAY PADL( "REPORTS:", _len ) GET _reports PICT "@!"
 
     // 10
@@ -315,6 +320,7 @@ set_metric( "main_menu_epdv", my_user(), _epdv )
 set_metric( "main_menu_rnal", my_user(), _rnal )
 set_metric( "main_menu_mat", my_user(), _mat )
 set_metric( "main_menu_pos", my_user(), _pos )
+set_metric( "main_menu_kadev", my_user(), _kadev )
 set_metric( "main_menu_reports", my_user(), _reports )
 
 return _ok

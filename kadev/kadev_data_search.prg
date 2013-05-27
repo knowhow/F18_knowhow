@@ -149,9 +149,9 @@ cPic:="@!S30"
 
  qqsort1:="A"
 
-if file(my_home() + "upit1.mem")
-  restore from upit1.mem additive
-endif
+//if file(my_home() + "upit1.mem")
+//  restore from upit1.mem additive
+//endif
 
 
 Box(,22,75)
@@ -195,11 +195,11 @@ enddo
 
 
 if lastkey()==K_ESC
-  BoxC()
-  exit
+    BoxC()
+    exit
 endif
 
-SAVE ALL like qq* to my_home() + upit1.mem
+//SAVE ALL like qq* to my_home() + upit1.mem
 
 aUsl1:=Parsiraj(  qqPrezime       ,  "Prezime"      ,  "C"  )
 aUsl2:=Parsiraj(  qqImeRod        ,  "ImeRod"       ,  "C"  )
@@ -957,12 +957,6 @@ function Blokovi(cIndik)
       bVrati:={|| IF(ImaPromjenu("S2",(nArr)->id,.t.),"DA","NE") }
  ENDCASE
 RETURN bVrati
-
-
-FUNCTION TekRec()
- nSlog++
- @ m_x+1, m_y+2 SAY PADC(ALLTRIM(STR(nSlog))+"/"+ALLTRIM(STR(nUkupno)),20)
-RETURN (NIL)
 
 
 function TacnoNO(cIzraz,bIni,bWhile,bSkip,bEnd)

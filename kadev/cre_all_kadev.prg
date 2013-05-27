@@ -158,7 +158,7 @@ CREATE_INDEX( "naz", "naz", _alias )
 
 	
 aDbf := {}
-AADD( aDbf, { "ID", "C", 4, 0 } 
+AADD( aDbf, { "ID", "C", 4, 0 } ) 
 AADD( aDbf, { "Naz", "C", 50, 0 } )
 AADD( aDbf, { "Naz2", "C", 50, 0 } )
  
@@ -176,7 +176,7 @@ CREATE_INDEX( "naz", "naz", _alias )
 // -------------------------------------------------------
 
 aDbf := {}
-AADD( aDbf, { "ID", "C", 4, 0 } 
+AADD( aDbf, { "ID", "C", 4, 0 } ) 
 AADD( aDbf, { "Naz", "C", 20, 0 } )
 AADD( aDbf, { "Datum", "D", 8, 0 } )
  
@@ -196,7 +196,7 @@ CREATE_INDEX( "dat", "datum", _alias )
 // ------------------------------------------------
 
 aDbf := {}
-AADD( aDbf, { "ID", "C", 4, 0 } 
+AADD( aDbf, { "ID", "C", 4, 0 }  )
 AADD( aDbf, { "Naz", "C", 50, 0 } )
 AADD( aDbf, { "Naz2", "C", 50, 0 } )
 
@@ -215,7 +215,7 @@ CREATE_INDEX( "naz", "naz", _alias )
 // ------------------------------------------------
 
 aDbf := {}
-AADD( aDbf, { "ID", "C", 6, 0 } 
+AADD( aDbf, { "ID", "C", 6, 0 }  )
 AADD( aDbf, { "Naz", "C", 50, 0 } )
 AADD( aDbf, { "Naz2", "C", 50, 0 } )
 
@@ -266,7 +266,7 @@ CREATE_INDEX( "id", "IDRJ+IDRMJ", _alias )
 // ------------------------------------------------
 
 aDbf := {}
-AADD( aDbf, { "ID", "C", 2, 0 } 
+AADD( aDbf, { "ID", "C", 2, 0 } )
 AADD( aDbf, { "Naz", "C", 50, 0 } )
 AADD( aDbf, { "Naz2", "C", 50, 0 } )
 
@@ -285,7 +285,7 @@ CREATE_INDEX( "naz", "naz", _alias )
 // ------------------------------------------------
 
 aDbf := {}
-AADD( aDbf, { "ID", "C", 2, 0 } 
+AADD( aDbf, { "ID", "C", 2, 0 } )
 AADD( aDbf, { "Naz", "C", 50, 0 } )
 AADD( aDbf, { "Naz2", "C", 50, 0 } )
 
@@ -304,7 +304,7 @@ CREATE_INDEX( "naz", "naz", _alias )
 // ------------------------------------------------
 
 aDbf := {}
-AADD( aDbf, { "ID", "C", 4, 0 } 
+AADD( aDbf, { "ID", "C", 4, 0 } )
 AADD( aDbf, { "Naz", "C", 50, 0 } )
 AADD( aDbf, { "Naz2", "C", 50, 0 } )
 
@@ -323,7 +323,7 @@ CREATE_INDEX( "naz", "naz", _alias )
 // ------------------------------------------------
 
 aDbf := {}
-AADD( aDbf, { "ID", "C", 4, 0 } 
+AADD( aDbf, { "ID", "C", 4, 0 } )
 AADD( aDbf, { "Naz", "C", 50, 0 } )
 AADD( aDbf, { "Naz2", "C", 50, 0 } )
 AADD( aDbf, { "catr", "C", 1, 0 } )
@@ -343,7 +343,7 @@ CREATE_INDEX( "naz", "naz", _alias )
 // ------------------------------------------------
 
 aDbf := {}
-AADD( aDbf, { "ID", "C", 7, 0 } 
+AADD( aDbf, { "ID", "C", 7, 0 } )
 AADD( aDbf, { "Naz", "C", 50, 0 } )
 AADD( aDbf, { "Naz2", "C", 50, 0 } )
 
@@ -362,7 +362,7 @@ CREATE_INDEX( "naz", "naz", _alias )
 // ------------------------------------------------
 
 aDbf := {}
-AADD( aDbf, { "ID", "C", 2, 0 } 
+AADD( aDbf, { "ID", "C", 2, 0 } )
 AADD( aDbf, { "Naz", "C", 50, 0 } )
 AADD( aDbf, { "Naz2", "C", 50, 0 } )
 
@@ -381,7 +381,7 @@ CREATE_INDEX( "naz", "naz", _alias )
 // ------------------------------------------------
 
 aDbf := {}
-AADD( aDbf, { "ID", "C", 2, 0 } 
+AADD( aDbf, { "ID", "C", 2, 0 } )
 AADD( aDbf, { "Naz", "C", 50, 0 } )
 AADD( aDbf, { "Naz2", "C", 50, 0 } )
 

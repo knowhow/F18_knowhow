@@ -1,3 +1,7 @@
+#ifndef F18_DEFINED
+  #include "fmk.ch"
+#endif
+
 #define I_ID         1
 #define I_PREZIME    2
 #define I_ID2        3

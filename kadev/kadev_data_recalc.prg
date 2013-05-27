@@ -41,12 +41,14 @@ nOldArr:=SELECT()
 
 O_KADEV_1
 O_KADEV_PROMJ
+O_KBENEF
 O_KDV_RJRMJ
 O_KDV_RRASP
 
 
 select kadev_1    ; set order to tag "1"
 select kadev_promj  ; set order to tag "ID"
+select kbenef ; set order to tag "ID"
 select kdv_rjrmj  ; set order to tag "ID"
 select kdv_rrasp  ; set order to tag "ID"
 
@@ -194,19 +196,20 @@ O_KADEV_1
 O_KADEV_PROMJ
 O_KDV_RJRMJ
 O_KDV_RRASP
-// O_KBENRST
+O_KBENEF
 
 select kadev_1    ; set order to tag "1"
 select kadev_promj  ; set order to tag "ID"
 select kdv_rjrmj  ; set order to tag "ID"
 select kdv_rrasp  ; set order to tag "ID"
+select kbenef ; set order to tag "ID"
 
 select kadev_1
 set relation to IdPromj into kdv_promj
 set relation to IdRj+IdRmj into kdv_rjrmj addi
 
 select kdv_rjrmj
-set relation to sbenefrst into kbenrst
+set relation to sbenefrst into kbenef
 
 select kadev_0
 set relation to idRrasp into kdv_rrasp
@@ -322,7 +325,7 @@ function RekalkRst(dDoDat,lPom)
     if kadev_promj->Tip==" " .and. kadev_promj->URadSt $ "12" //postavljenja,....
       dOdDat:=DatumOd          // otpocinje proces kalkulacije
       if kadev_promj->URadSt=="1"
-       KBfR := kbenrst->vrijednost
+       KBfR := kbenef->vrijednost
       else   // za URadSt = 2 ne obracunava se beneficirani r.st.
        KBfR:=0
       endif
@@ -337,13 +340,13 @@ function RekalkRst(dDoDat,lPom)
         fOtvoreno:=.t.
         dOdDat:=iif(DatumDo>dDoDat,dDoDat,DatumDo) // ako je DatumDo unutar
         // promjene veci od Datuma kalkulacije onda koristi dDoDat
-        KBfR:=kbenrst->vrijednost
+        KBfR:=kbenef->vrijednost
       endif
     endif
     if kadev_promj->Tip=="I" .and. kadev_promj->URadSt $ "12"
       nPom:=iif(empty(DatumDo),dDoDat,if(DatumDo>dDoDat,dDoDat,DatumDo))-DatumOd
       if kadev_promj->URadSt=="1"
-        nPom2:=nPom*kbenrst->vrijednost/100
+        nPom2:=nPom*kbenef->vrijednost/100
       else   // za URadSt = 2 ne obracunava se beneficirani r.st.
         nPom2:=0
       endif
@@ -358,7 +361,7 @@ function RekalkRst(dDoDat,lPom)
         nRstB+=nPom2
         fOtvoreno:=.t.
         dOdDat:=iif(empty(DatumDo),dDoDat,iif(DatumDo>dDoDat,dDoDat,DatumDo))
-        KBfR:=kbenrst->vrijednost
+        KBfR:=kbenef->vrijednost
       endif
     endif
     skip

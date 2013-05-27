@@ -407,7 +407,7 @@ cFilt:=STRTRAN(cFilt,".t..and.","")
   GO TOP
   Box(,2,30)
   nSlog:=0; nUkupno:=RECCOUNT2()
-  INDEX ON &cSort1 TO "TMPK_0" FOR &cFilt 
+  INDEX ON &cSort1 TO "TMPKADEV_0" FOR &cFilt 
   GO TOP
   INKEY(0)
   BoxC()
@@ -497,7 +497,7 @@ local cBr
    PushWa()
    TekRec:=kadev_0->(RECNO())
    PRIVATE aRB,aRE,aRU,aVrSlVr
-   Karton({|| aVrSlVr:=GMJD((nArr)->VrSlVr),aRE:=GMJD((nArr)->RadStE), aRB:=GMJD((nArr)->RadStB), aRU:=ADDGMJD(aRB,aRE),k_0->(recno())==TekRec})
+   Karton({|| aVrSlVr:=GMJD((nArr)->VrSlVr),aRE:=GMJD((nArr)->RadStE), aRB:=GMJD((nArr)->RadStB), aRU:=ADDGMJD(aRB,aRE),kadev_0->(recno())==TekRec})
    PopWa()
    return DE_CONT
  elseif Ch==K_CTRL_A
@@ -548,7 +548,7 @@ local cBr
    private cDodKol:="N"
    if Pitanje(,"Prikazati dodatnu kolonu ?","N")=="D"
     c77DP1:=PADR("POL.STR.ISPIT",30)
-    c77DP2:=PADR('IF(ImaPromjenu("S2",K_0->id),"DA","")',100)
+    c77DP2:=PADR('IF(ImaPromjenu("S2",KADEV_0->id),"DA","")',100)
     c77DP3:="C"; c77DP4:=15; c77DP5:=0
     nObl:=SELECT()
     O_PARAMS

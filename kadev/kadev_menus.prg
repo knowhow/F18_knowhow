@@ -21,7 +21,7 @@ local _opcexe := {}
 kadev_o_tables()
 
 AADD( _opc, "1. radna jedinica                       ")
-AADD( _opcexe, {|| p_rj() })
+AADD( _opcexe, {|| p_kadev_rj() })
 AADD( _opc, "2. radno mjesto ")
 AADD( _opcexe, {|| p_rmj() })
 AADD( _opc, "3. zanimanje")

@@ -196,7 +196,7 @@ function P_RJRMJ(cIdRj,cIdRMJ,dx,dy)
 local cRet
 PRIVATE ImeKol,Kol
 
-ImeKol:={ { PADR("RJ",57),  {|| IdRJ+"-"+P_RJ(idrj,-2)}       },;
+ImeKol:={ { PADR("RJ",57),  {|| IdRJ+"-"+P_KADEV_RJ(idrj,-2)}       },;
           { PADR("RMJ",45), {|| IdRMJ+"-"+P_RMJ(idrmj,-2)}    },;
           { "Br.Izvr.",{|| SPACE(3)+str(brizvrs,2)+SPACE(3)}  },;
           { "Str.Spr.Od",{|| PADC(IdStrSprOd,10)}            },;

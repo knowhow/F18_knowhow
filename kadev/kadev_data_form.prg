@@ -179,12 +179,9 @@ do while .t.
     exit
     return
   case Izb3<LEN(opc)
-    select obrazdef
-    usex ( my_home() +opc[Izb3] ) alias obrazdef
-    index on brisano tag "BRISAN"
+    select kdv_obrazdef
+    my_use_temp ( "OBRAZDEF", my_home() +opc[Izb3], .f., .t. )
     index on tip+grupa+red_br tag "1"
-    // CREATE_INDEX("1" , "tip+grupa+red_br", KUMPATH+"obrazdef")
-    REINDEX
     set order to tag "1"
     @ 1,39 SAY PADR('Tekuci obrazac: '+opc[Izb3],40) COLOR "GR+/N"
   otherwise
@@ -237,7 +234,7 @@ if ASCAN(aUslovi, {|aElem| aElem[2]='*'})==0
 endif
 
 
-IF ASCAN(aUslovi,{|x| ALLTRIM(x[4])!="K_0".and.x[2]=='*'})!=0
+IF ASCAN(aUslovi,{|x| ALLTRIM(x[4])!="KADEV_0".and.x[2]=='*'})!=0
   SELECT KADEV_0
   SET RELATION TO
   SELECT KDV_RJRMJ
@@ -628,7 +625,7 @@ function validuslov(cUslov)
  BEGIN SEQUENCE
 
  nOldArr:=SELECT()
- select k_0
+ select kadev_0
  xRez:=&cUslov .and. .t.
  select(nOldArr)
 

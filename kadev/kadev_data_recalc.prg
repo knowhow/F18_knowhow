@@ -80,7 +80,7 @@ n1:=0
 go top
 do while !eof()
   IF gPostotak!="D"
-    @ m_x+1,m_y+2 SAY k_0->(id+": "+prezime+" "+ime)
+    @ m_x+1,m_y+2 SAY kadev_0->(id+": "+prezime+" "+ime)
   ELSE
     Postotak(2,++n1)
   ENDIF
@@ -180,7 +180,7 @@ RETURN (NIL)
 
 
 ***********************************************************************
-// lPom=.t. -> radni staz u firmi zapisuj u POM.DBF, a ne diraj K_0.DBF
+// lPom=.t. -> radni staz u firmi zapisuj u POM.DBF, a ne diraj KADEV_0.DBF
 ***********************************************************************
 function kadev_rekrstall(lPom)
 local nOldArr
@@ -265,7 +265,7 @@ return
 
 
 ***********************************************************************
-// lPom=.t. -> radni staz u firmi zapisuj u POM.DBF, a ne diraj K_0.DBF
+// lPom=.t. -> radni staz u firmi zapisuj u POM.DBF, a ne diraj KADEV_0.DBF
 ***********************************************************************
 function RekalkRst(dDoDat,lPom)
  LOCAL nArr:=0, nRStUFe:=0, nRStUFb:=0

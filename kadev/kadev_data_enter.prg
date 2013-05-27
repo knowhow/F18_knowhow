@@ -151,7 +151,7 @@ elseif Ch==ASC("P") .or. Ch==ASC("p")
   	
 	Box("uk0_1", 20, 75, .f.)
   	
-	@ m_x+21,m_y+2 SAY "RADNIK: "+TRIM(K_0->prezime)+" "+TRIM(K_0->ime)+", ID: "+TRIM(K_0->id)
+	@ m_x+21,m_y+2 SAY "RADNIK: "+TRIM(KADEV_0->prezime)+" "+TRIM(KADEV_0->ime)+", ID: "+TRIM(KADEV_0->id)
   	
 	set cursor on
   	
@@ -223,7 +223,7 @@ elseif Ch==ASC("R") .or. Ch==ASC("r")
           				AADD( aPom , aNiz0[i+(nGetTekStrana-1)*20] )
         			ENDIF
       			NEXT
-      			VarEdit(aPom,1,1,4+LEN(aPom),79,ALLTRIM(KDV_RJES->naz)+","+K_0->(TRIM(prezime)+" "+TRIM(ime))+", STR."+ALLTRIM(STR(nGetTekStrana))+"/"+ALLTRIM(STR(nGetStrana)),"B1")
+      			VarEdit(aPom,1,1,4+LEN(aPom),79,ALLTRIM(KDV_RJES->naz)+","+KADEV_0->(TRIM(prezime)+" "+TRIM(ime))+", STR."+ALLTRIM(STR(nGetTekStrana))+"/"+ALLTRIM(STR(nGetStrana)),"B1")
       			
 			IF LASTKEY()==K_PGUP
         			--nGetTekStrana
@@ -331,7 +331,7 @@ elseif Ch==ASC("R") .or. Ch==ASC("r")
           				AADD( aPom , aNiz[i+(nGetTekStrana-1)*20] )
         			ENDIF
       			NEXT
-      			VarEdit(aPom,1,1,4+LEN(aPom),79,ALLTRIM(KDV_RJES->naz)+","+K_0->(TRIM(prezime)+" "+TRIM(ime))+", STR."+ALLTRIM(STR(nGetTekStrana))+"/"+ALLTRIM(STR(nGetStrana)),"B1")
+      			VarEdit(aPom,1,1,4+LEN(aPom),79,ALLTRIM(KDV_RJES->naz)+","+KADEV_0->(TRIM(prezime)+" "+TRIM(ime))+", STR."+ALLTRIM(STR(nGetTekStrana))+"/"+ALLTRIM(STR(nGetStrana)),"B1")
       			IF LASTKEY()==K_PGUP
         			--nGetTekStrana
       			ELSE
@@ -504,7 +504,7 @@ function ERUP(aNezelim)
        SKIP 1; LOOP
      ENDIF
      IF ipromj<>cIPromj .and. LEN(aNezelim)==0
-       cIPromj:=ipromj; SELECT K_1; Gather(); Scatter()
+       cIPromj:=ipromj; SELECT KADEV_1; Gather(); Scatter()
        IF !lImaPodataka; DELETE; ENDIF
        lImaPodataka:=.f.; APPEND BLANK
        SELECT KDV_DEFRJES
@@ -814,7 +814,7 @@ do case
 			// srj = "1" ako se mijenja promjenom radno mjesto
       			
 			@ m_x+6, m_y+2 SAY "RJ" GET qIdRj PICT "@!"
-			@ m_x+6, col()+2 SAY "RMJ" GET qIdRmj VALID EVAL({|| lPom := P_RJRMJ(@qIdRj,@qIdRmj), SETPOS(m_x+7,m_y+3), QQOUT(Ocitaj(F_RJ,qIdRj,1)),SETPOS(m_x+8,m_y+3),QQOUT(Ocitaj(F_RMJ,qIdRmj,1)),lPom}) PICTURE "@!"
+			@ m_x+6, col()+2 SAY "RMJ" GET qIdRmj VALID EVAL({|| lPom := P_RJRMJ(@qIdRj,@qIdRmj), SETPOS(m_x+7,m_y+3), QQOUT(Ocitaj(F_KDV_RJ,qIdRj,1)),SETPOS(m_x+8,m_y+3),QQOUT(Ocitaj(F_KDV_RMJ,qIdRmj,1)),lPom}) PICTURE "@!"
      		endif
 
      		if (cTipPromj := P_PROMJ(qIdPromj, -4)) == "X" ;
@@ -990,7 +990,7 @@ if noviId<>kadev_0->id
 
   if !empty(kadev_0->id) .and. !(KLevel $ "01")
      Msg("Vi ne mozete mijenjati postojece podatke !",15)
-     noviId:=k_0->id
+     noviId:=kadev_0->id
      return .t.
   endif
 

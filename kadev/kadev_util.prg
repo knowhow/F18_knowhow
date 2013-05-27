@@ -158,8 +158,8 @@ RETURN &cIzraz77
 
 function GS()
  LOCAL aRstE,aRstB,aRStU
-  aRstE:=GMJD(K_0->RadStE)
-  aRstB:=GMJD(K_0->RadStB)
+  aRstE:=GMJD(KADEV_0->RadStE)
+  aRstB:=GMJD(KADEV_0->RadStB)
   aRStU:=ADDGMJD(aRStE,aRStB)
 RETURN aRStU[1]
 

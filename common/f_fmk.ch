@@ -340,6 +340,31 @@
 #define F_TMP_6         330
 #define F_TMP_7         331
 #define F_TMP_8         332
+
+// kadrovska evidencija
+#define F_KADEV_0       333
+#define F_KADEV_1       334
+#define F_KADEV_PROMJ     335
+#define F_KDV_RJ        336
+#define F_KDV_RMJ       337
+#define F_KDV_RJRMJ     338
+#define F_KDV_STRSPR    339
+#define F_KDV_MZ        340
+#define F_KDV_K1        341
+#define F_KDV_K2        342
+#define F_KDV_ZANIM     343
+#define F_KDV_RRASP     344
+#define F_KDV_CIN       345
+#define F_KDV_VES       346
+#define F_KDV_NAC       347
+#define F_KDV_GLOBUSL   349
+#define F_KDV_OBRAZDEF  350
+#define F_KDV_USLOVI    351
+#define F_KDV_RJES      352
+#define F_KDV_DEFRJES   353
+#define F_KDV_NERDAN    354
+
+
 #define D_S_TABELE 
 
 

@@ -99,8 +99,14 @@ if !EMPTY( __default_odt_template )
 elseif __auto_odt == "D"
 
     // template baziran na vrsti dokumenta...
+
+    // otpremnice, tamo gdje nam ne trebaju cijene itd...
     if __tip_dok $ "12#13"
         _template := "f-stdk.odt"
+    // maloprodajni racun
+    elseif __tip_dok $ "11#"
+        _template := "f-stdm.odt"
+    // veleprodajni racun i ostalo...
     else
         _template := "f-std.odt"
     endif

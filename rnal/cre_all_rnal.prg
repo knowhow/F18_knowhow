@@ -121,7 +121,7 @@ IF_NOT_FILE_DBF_CREATE
 // 0.9.0
 if ver["current"] > 0 .and. ver["current"] < 00900
 	for each _tbl in { _table_name }
-   		modstru({"*" + _tbl, "A OP_STATUS C 1 0 A OP_NOTES C 250 0" })
+   		modstru({"*" + _tbl, "A OP_STATUS C 1 0", "A OP_NOTES C 250 0" })
 	next
 endif
 
@@ -138,7 +138,7 @@ IF_NOT_FILE_DBF_CREATE
 // 0.9.0
 if ver["current"] > 0 .and. ver["current"] < 00900
 	for each _tbl in { _table_name }
-   		modstru({"*" + _tbl, "A OP_STATUS C 1 0 A OP_NOTES C 250 0" })
+   		modstru({"*" + _tbl, "A OP_STATUS C 1 0", "A OP_NOTES C 250 0" })
 	next
 endif
 

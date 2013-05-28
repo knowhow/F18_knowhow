@@ -480,6 +480,8 @@ _fakt_data["dat_val"]  := iif( LEN( _memo ) >= 9, CToD( _memo[9] ), CToD("") )
 
 _fakt_data["fisc_rn"] := field->fisc_rn
 _fakt_data["fisc_st"] := 0
+_fakt_data["fisc_date"] := CTOD("")
+_fakt_data["fisc_time"] := PADR( "", 10 )
 
 // izracunaj totale za fakturu
 _fakt_totals := calculate_fakt_total( id_firma, id_tip_dok, br_dok )

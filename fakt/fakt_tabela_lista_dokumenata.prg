@@ -46,6 +46,7 @@ AADD(ImeKol,{ "Dat.otpr", {|| dat_otpr} })
 AADD(ImeKol,{ "Dat.val.", {|| dat_val} })
 
 AADD(ImeKol,{ "Fisk.rn", {|| PADR( sh_fiscal_rn( fisc_rn, fisc_st ), 20 ) } })
+AADD(ImeKol,{ "Fisk.vr", {|| PADR( DTOC( fisc_date ) + " " + ALLTRIM( fisc_time ), 20 ) } })
 
 // prikaz operatera
 AADD(ImeKol,{ "Operater", {|| GetUserName( oper_id ) } })

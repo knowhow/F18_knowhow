@@ -168,7 +168,7 @@ endif
 
 // 0.9.0
 if ver["current"] > 0 .and. ver["current"] < 0900
-    modstru({"*" + _table_name, "A FISC_TIME C 10 0 A FISC_DATE D 8 0"})
+    modstru({"*" + _table_name, "A FISC_TIME C 10 0", "A FISC_DATE D 8 0" })
 endif
 
 IF_C_RESET_SEMAPHORE

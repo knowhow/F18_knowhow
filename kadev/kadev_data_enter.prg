@@ -17,46 +17,64 @@
 // unos podataka
 // ----------------------------------------------
 function kadev_data()
+local _i, _header, _footer
 private ImeKol := {}
 private Kol := {}
 private fNovi
 
 //SET EPOCH TO 1910
 
+// otvori tabele
 kadev_o_tables()
 
-ImeKol:={ { 'Prezime', {|| Prezime}     },;
-          { 'Ime oca', {|| ImeRod}     },;
-          { 'Ime',     {|| Ime}         },;
-          { 'RJ',      {|| IdRJ }      },;
-          { 'RMJ',     {|| IdRMJ }      },;
-          { 'ID-Mat.br', {|| Id}        },;
-          { 'Status',    {|| status}     },;
-          { 'StrSpr',    {|| idstrspr  }     },;
-          { 'RRASP',    {|| idrrasp }     };
-          }
-
-for i:=1 to LEN(ImeKol)
-	AADD( Kol, i )
-next
+// setuj kolone pregleda
+set_kols( @ImeKol, @Kol )
 
 select kadev_0
 set order to tag "2"
 
 go top
 
+_header := "<Ctrl-N> Novi, <ENTER> Edit, <Ctrl-T> Brisanje, <R> Rjesenje"
+_footer := "<T> Trazi(prezime+ime), <S> Trazi(ID), <P> Pregled promjene" 
+
 cTrPrezime := kadev_0->prezime
 cTrIme     := kadev_0->ime          
 cTrID      := kadev_0->id        
 
-ObjDbEdit( 'bpod', MAXROWS()-12, MAXCOLS()-5, ;
+ObjDbEdit( 'bpod', MAXROWS() - 10, MAXCOLS() - 5, ;
             {|| data_handler() }, ;
-            '<Ctrl-N> Novi, <ENTER> Edit, <Ctrl-T> Brisanje, <R> Rjesenje', ;
-            '<T> Trazi(prezime+ime), <S> Trazi(ID), <P> Pregled promjene' )
+            _header, ;
+            _footer )
 
 close all
 
 return
+
+
+// -----------------------------------------------------------
+// setovanje kolone za tabelu pregleda
+// -----------------------------------------------------------
+static function set_kols( _imekol, _kol )
+local _i
+
+AADD( _imekol, { 'Prezime', {|| Prezime } } )
+AADD( _imekol, { 'Ime oca', {|| ImeRod } } )
+AADD( _imekol, { 'Ime', {|| Ime } } )
+AADD( _imekol, { 'RJ', {|| IdRJ } } )
+AADD( _imekol, { 'RMJ', {|| IdRMJ } } )
+AADD( _imekol, { 'ID-Mat.br', {|| Id } } )
+AADD( _imekol, { 'Status', {|| status } } )
+AADD( _imekol, { 'StrSpr', {|| idstrspr } } )
+AADD( _imekol, { 'RRASP', {|| idrrasp } } )
+         
+for _i := 1 to LEN( _imekol )
+	AADD( _kol, _i )
+next
+
+return
+
+
 
 
 // ---------------------------------------------
@@ -78,35 +96,33 @@ if Ch == K_CTRL_N .or. Ch == K_ENTER
     endif
 
     if Ch == K_CTRL_N
-        append blank
-       	fNovi:=.t.
+       	fNovi := .t.
     endif
 	
+    if fNovi
+        append blank
+    endif
+
     // scatter
     set_global_vars_from_dbf()
     
 	if ent_K_0()
-              
-        //gather
         _rec := get_dbf_global_memvars()
         update_rec_server_and_dbf( "kadev_0", _rec, 1, "FULL" )
 		fNovi := .f.
         return DE_REFRESH
-		
     else
-       		
 	    if fNovi
-          	BrisiKarton( .t. )
+          	brisi_kadrovski_karton( .t. )
        	endif	
-		fnovi:=.f.
+		fnovi := .f.
        	return DE_REFRESH
-		
      endif
 
 elseif Ch == K_CTRL_T
 	
     if !( deleted() .or. EOF() .or. BOF() )
-	    BrisiKarton()
+	    brisi_kadrovski_karton()
     	return DE_REFRESH
  	endif
 
@@ -150,17 +166,18 @@ elseif Ch == ASC("P") .or. Ch == ASC("p")
 
 	_t_area := SELECT()
   	
-	Box( "uk0_1", 20, 75, .f.)
+	Box( "uk0_1", MAXROWS() - 12, MAXCOLS() - 5, .f.)
   	
-	@ m_x + 21, m_y + 2 SAY "RADNIK: " + TRIM( kadev_0->prezime ) + " " + ;
-                                        TRIM( kadev_0->ime ) + ", ID: " + ;
-                                        TRIM( kadev_0->id )
+	@ m_x + ( MAXROWS() - 13 ), m_y + 2 SAY "RADNIK: " + ALLTRIM( kadev_0->prezime ) + " " + ;
+                                        ALLTRIM( kadev_0->ime ) + ", ID: " + ;
+                                        ALLTRIM( kadev_0->id )
   	
 	set cursor on
   	
     set_global_vars_from_dbf()
   	
-	get_4(.t.)
+    // daj mi promjene...
+	get_4( NIL, .t. )
  
     _rec := get_dbf_global_memvars()
     update_rec_server_and_dbf( "kadev_0", _rec, 1, "FULL" ) 
@@ -171,209 +188,269 @@ elseif Ch == ASC("P") .or. Ch == ASC("p")
 
 elseif Ch == ASC("R") .or. Ch == ASC("r")
 
-	_t_area := SELECT()
+    // rjesenje...
+    if !rjesenje_za_radnika()
+        return DE_CONT
+    else
+        return DE_REFRESH
+    endif
+
+endif
+
+return DE_CONT
+
+
+
+// -------------------------------------------------------
+// rjesenje za radnika...
+// -------------------------------------------------------
+static function rjesenje_za_radnika()
+local _t_area
+local _ret := .f.
+local _niz_0, _niz, _tmp, _izbaceni, _strana, _tek_strana, _i, _n, _y
+local _postoji
+
+private cTempVar := ""
+private cTempIzraz := ""
+private nGetP0 := 0
+private nGetP1 := 0
+
+_t_area := SELECT()
+
+// otvori rjesenja...  	
+P_Rjes()
   	
-	P_Rjes()
-  	
-	if LASTKEY() == K_ESC
-		select ( _t_area )
-		return DE_CONT
-  	endif
+if LastKey() == K_ESC
+	select ( _t_area )
+	return _ret
+endif
   
-	_niz0 := {}
-	_niz := {}
-	_tmp := {}
-	_strana := 0
-	_tek_strana := 1
+_niz_0 := {}
+_niz := {}
+_tmp := {}
+_strana := 0
+_tek_strana := 1
 
-  	private cTempVar := ""
-	private cTempIzraz := ""
-	private nGetP0 := 0
-	private nGetP1 := 0
+select kdv_defrjes
+set order to tag "3"
+seek kdv_rjes->id
 
-  	select kdv_defrjes
-  	set order to tag "3"
-  	seek kdv_rjes->id
+do while !EOF() .and. field->idrjes == kdv_rjes->id
 
-  	do while !EOF() .and. field->idrjes == kdv_rjes->id
-    	if EMPTY( field->id )
-			skip 1
-			loop
-		endif
+    if EMPTY( field->id )
+	    skip 1
+		loop
+	endif
     		
-		cTempVar := ALLTRIM( field->id )
-    	cTempIzraz := ALLTRIM( field->izraz )
+	cTempVar := ALLTRIM( field->id )
+    cTempIzraz := ALLTRIM( field->izraz )
     	
-        ID&cTempVar := &cTempIzraz
+    ID&cTempVar := &cTempIzraz
     	
-        IF field->priun == "0"
-     		AADD( _niz0 , { RTRIM( field->upit ), "ID" + cTempVar, RTRIM( field->uvalid ), ;
-                        RTRIM( field->upict ), IF( field->obrada == "D", ".t.", ".f." )} )
-     		++ nGetP0
-    	ELSE
-     		AADD( _niz , { RTRIM( field->upit), "ID" + cTempVar, RTRIM( field->uvalid), ;
-                        RTRIM( field->upict ), IF( field->obrada == "D", ".t.", ".f." )} )
-     		++ nGetP1
-    	ENDIF
+    if field->priun == "0"
+        AADD( _niz_0 , { RTRIM( field->upit ), "ID" + cTempVar, RTRIM( field->uvalid ), ;
+                        RTRIM( field->upict ), IF( field->obrada == "D", ".t.", ".f." ) } )
+        ++ nGetP0
+    else
+     	AADD( _niz , { RTRIM( field->upit), "ID" + cTempVar, RTRIM( field->uvalid ), ;
+                        RTRIM( field->upict ), IF( field->obrada == "D", ".t.", ".f." ) } )
+     	++ nGetP1
+    endif
 
-    	SKIP 1	
+    skip 1	
 
-  	ENDDO
+enddo
   	
-	SET ORDER TO TAG "1"
+set order to tag "1"
 
-  	// unos prioritetnih podataka
-  	IF nGetP0 > 0
-        _strana := INT(nGetP0/20)+IF(nGetP0%20>0,1,0)
-    	DO WHILE .t.
-      		_tmp := {}
-      		FOR _i:=1 TO 20
-        		IF _i+(_tek_strana-1)*20 > LEN(_niz0)
-          			EXIT
-        		ELSE
-          			AADD( _tmp , _niz0[_i+(_tek_strana-1)*20] )
-        		ENDIF
-      		NEXT
-      		VarEdit( _tmp, 1, 1, 4 + LEN(_tmp), 79, ;
-                    ALLTRIM( KDV_RJES->naz ) +"," + KADEV_0->( TRIM(prezime) + " " + TRIM( ime ) ) + ;
-                    ", STR." + ALLTRIM(STR(_tek_strana))+"/"+ALLTRIM(STR(_strana)),"B1")
+// unos prioritetnih podataka
+if nGetP0 > 0
+
+    _strana := INT(nGetP0/20)+IF(nGetP0%20>0,1,0)
+
+    do while .t.
+
+        _tmp := {}
+
+      	for _i := 1 to 20
+        	if _i + ( _tek_strana - 1 ) * 20 > LEN( _niz_0 ) 
+                exit
+        	else
+          		AADD( _tmp , _niz_0[ _i + ( _tek_strana - 1 ) * 20 ] )
+        	endif
+      	next
+      	
+        VarEdit( _tmp, 1, 1, 4 + LEN( _tmp ), 79, ;
+                ALLTRIM( kdv_rjes->naz ) + "," + ;
+                        kadev_0->( TRIM( prezime ) + " " + TRIM( ime ) ) + ;
+                        ", STR." + ALLTRIM( STR( _tek_strana ) ) + "/" + ALLTRIM( STR( _strana ) ), "B1" )
       			
-			IF LASTKEY()==K_PGUP
-        		--_tek_strana
-      		ELSE
-        		++_tek_strana
-      		ENDIF
-      		IF _tek_strana<1
-			    _tek_strana:=1
-			ENDIF
-      		IF _tek_strana > _strana
-				EXIT
-			ENDIF
-    	ENDDO
+		if LastKey() == K_PGUP
+            -- _tek_strana
+        else
+        	++ _tek_strana
+      	endif
+      		
+        if _tek_strana < 1
+	        _tek_strana := 1
+		endif
 
-    	IF LASTKEY()==K_ESC
-      		SELECT (_t_area)
-		    RETURN DE_CONT
-        ENDIF
-    ENDIF
+        if _tek_strana > _strana
+			exit
+		endif
 
-  	// ispitivanje unosa i eventualne modifikacije unosa preostalih podataka
-  	nVecPostoji:=0
+    enddo
+
+    if LastKey() == K_ESC
+      	select ( _t_area )
+		return _ret
+    endif
+
+endif
+
+// ispitivanje unosa i eventualne modifikacije unosa preostalih podataka
+_postoji := 0
   	
-    IF KDV_RJES->idpromj=="G1"      
-		// godisnji odmor
-    	SELECT (F_KADEV_1)
-    	PushWA()
-    	SET ORDER TO TAG "3"
-    	SEEK KADEV_0->id+"G1"
-    	PRIVATE nImaDana:=0, nIskorDana:=0
-    	DO WHILE !EOF() .and. id==KADEV_0->id .and. idpromj=="G1"
-      		IF nAtr1 == ID06
-			// ID06 je sad za sad godina prava, kao i nAtr1
-        		IF nAtr2>0
-         			nImaDana:=nAtr2
-          			IF FIELDPOS("NATR3")>0
-            					nGOKrit1:=nAtr3
-            					nGOKrit2:=nAtr4
-            					nGOKrit3:=nAtr5
-            					nGOKrit4:=nAtr6
-            					nGOKrit5:=nAtr7
-            					nGOKrit6:=nAtr8
-            					nGOKrit7:=nAtr9
-          			ENDIF
-        		ENDIF
-        		nIskorDana += ImaRDana(DatumOd,DatumDo)
-        		nVecPostoji++
-      		ENDIF
-      		SKIP 1
-    	ENDDO
-    	PRIVATE PREOSTD:=ALLTRIM(STR(nImaDana-nIskorDana))
-    	PopWA()
-  	ENDIF
+if kdv_rjes->idpromj == "G1"      
 
-  	IF nVecPostoji>1
-    	MsgBeep("Vec postoje "+STR(nVecPostoji,2)+" rjesenja!#Za istu godinu moguce je napraviti max.2 rjesenja!#Provjeriti promjene tipa G1!")
-    	SELECT (_t_area)
-		RETURN DE_CONT
-  	ELSEIF nVecPostoji>0
-    	MsgBeep("Vec postoji jedno rjesenje koje definise pravo na godisnji odmor!#Mozete napraviti rjesenje samo za drugi dio godisnjeg odmora.#Ako zelite ponovo definisati pravo, provjerite promjene tipa G1!")
-  	ENDIF
+    // godisnji odmor
+    select ( F_KADEV_1 )
+    PushWA()
+    set order to tag "3"
+    seek kadev_0->id + "G1"
 
-  	IF nVecPostoji>0
-    	// izbacimo ne§eljene stavke iz aNiz-a
-    	_tmp0 := { "ID07","ID08","ID09","ID10","ID11","ID12","ID13","ID14","ID15","ID16","ID17","ID18" }
-    	FOR _i := 1 TO LEN( _tmp0 )
-      		cPom:=_tmp0[i]       
-			// ispraznimo nezeljene
-      		&cPom:=BLANK(&cPom)     
-			// varijable
-      		nPom := ASCAN(_tmp,{|x| x[2]==_tmp0[i]})
-      		IF nPom>0
-         		ADEL(_tmp,nPom)
-         		ASIZE(_tmp,LEN( _tmp )-1)
-         		nGetP1--
-      		ENDIF
-    	NEXT
-    	PRIVATE SAMO2:=".t."
-    	// kad vec znam da je ID20 br.dana za 2.dio god.odmora
-    	IF !("U" $ TYPE("nGOKrit1"))
-      			ID07:=INT(nGOKrit1)
-      			ID08:=INT(nGOKrit2)
-      			ID09:=INT(nGOKrit3)
-      			ID10:=INT(nGOKrit4)
-      			ID11:=INT(nGOKrit5)
-      			ID12:=INT(nGOKrit6)
-      			ID13:=INT(nGOKrit7)
-      			ID14:=INT(nImaDana)
-    	ENDIF
+    private nImaDana := 0
+    private nIskorDana := 0
+
+    do while !EOF() .and. field->id == kadev_0->id .and. field->idpromj == "G1"
+      	if field->natr1 == ID06
+		    // ID06 je sad za sad godina prava, kao i nAtr1
+        	if field->natr2 > 0
+         		nImaDana := field->natr2
+          		if FIELDPOS("natr3") > 0
+            	    nGOKrit1:=nAtr3
+            	    nGOKrit2:=nAtr4
+            		nGOKrit3:=nAtr5
+            		nGOKrit4:=nAtr6
+            		nGOKrit5:=nAtr7
+            		nGOKrit6:=nAtr8
+            		nGOKrit7:=nAtr9
+          		endif
+        	endif
+        	nIskorDana += ImaRDana( field->DatumOd, field->DatumDo )
+        	_postoji ++
+      	endif
+
+      	skip 1
+
+    enddo
+    	
+    private preostd := ALLTRIM( STR( nImaDana - nIskorDana ) )
+    	
+    PopWA()
+
+endif
+
+if _postoji > 1
+    MsgBeep( "Vec postoje " + STR( _postoji, 2 ) + " rjesenja!#Za istu godinu moguce je napraviti max.2 rjesenja!#Provjeriti promjene tipa G1!")
+    select ( _t_area )
+    return _ret
+elseif _postoji > 0
+    MsgBeep( "Vec postoji jedno rjesenje koje definise pravo na godisnji odmor!#Mozete napraviti rjesenje samo za drugi dio godisnjeg odmora.#Ako zelite ponovo definisati pravo, provjerite promjene tipa G1!")
+endif
+
+if _postoji > 0
+
+    // izbacimo nezeljene stavke iz niza
+    _izbaceni := { "ID07","ID08","ID09","ID10","ID11","ID12","ID13","ID14","ID15","ID16","ID17","ID18" }
+
+    for _n := 1 TO LEN( _izbaceni )
+        _tmp := _izbaceni[ _n ]       
+		// ispraznimo nezeljene
+      	&_tmp := BLANK( &_tmp )     
+		// varijable
+      	_scan := ASCAN( _niz,{|x| x[2] == _izbaceni[ _n ] } )
+      	if _scan > 0
+         	ADEL( _niz, _scan )
+         	ASIZE( _niz, LEN( _niz ) - 1 )
+         	nGetP1 --
+      	endif
+    next
+    	
+    private samo2 := ".t."
+
+    // kad vec znam da je ID20 br.dana za 2.dio god.odmora
+    if !("U" $ TYPE( "nGOKrit1" ) )
+        ID07 := INT(nGOKrit1)
+        ID08 := INT(nGOKrit2)
+        ID09 := INT(nGOKrit3)
+        ID10 := INT(nGOKrit4)
+        ID11 := INT(nGOKrit5)
+      	ID12 := INT(nGOKrit6)
+        ID13 := INT(nGOKrit7)
+      	ID14 := INT(nImaDana)
+    endif
     		
-		ID20:=INT(nImaDana-nIskorDana)
-  	ELSE
-    	PRIVATE SAMO2:=".f."
-  	ENDIF
+	ID20 := INT( nImaDana - nIskorDana )
 
-  	// unos ostalih podataka
-  	IF nGetP1>0
-    	_strana := INT(nGetP1/20)+IF(nGetP1%20>0,1,0)
-    	_tek_strana:=1
-    	DO WHILE .t.
-      		_tmp3 := {}
-      		FOR _i:=1 TO 20
-        		IF i+(_tek_strana-1)*20 > LEN(_tmp)
-          			EXIT
-        		ELSE
-          			AADD( _tmp3 , _tmp[_i+(_tek_strana-1)*20] )
-        		ENDIF
-      		NEXT
-      		VarEdit(_tmp3,1,1,4+LEN(_tmp3),79,ALLTRIM(KDV_RJES->naz)+","+KADEV_0->(TRIM(prezime)+" "+TRIM(ime))+", STR."+ALLTRIM(STR(_tek_strana))+"/"+ALLTRIM(STR(_strana)),"B1")
-      		IF LASTKEY()==K_PGUP
-        		--_tek_strana
-      		ELSE
-        		++_tek_strana
-      		ENDIF
-      		IF _tek_strana < 1
-			    _tek_strana := 1
-			ENDIF
-      		IF _tek_strana > _strana
-				EXIT
-			ENDIF
-    	ENDDO
-    	IF LASTKEY()==K_ESC
-      		SELECT (_t_area)
-		RETURN DE_CONT
-    ENDIF
-ENDIF
+else
+    private samo2 := ".f."
+endif
+
+// unos ostalih podataka
+if nGetP1 > 0
+    _strana := INT( nGetP1 / 20 ) + IF( nGetP1%20 > 0, 1, 0 )
+    _tek_strana := 1
+    do while .t.
+        _tmp_3 := {}
+      	for _y := 1 to 20
+            if _y + ( _tek_strana - 1 ) * 20 > LEN( _niz )
+          	    exit
+            else
+          		AADD( _tmp_3, _niz[ _y + ( _tek_strana - 1 ) * 20 ] )
+        	endif
+      	next
+      	
+        VarEdit( _tmp_3, 1, 1, 4 + LEN( _tmp_3 ), 79, ;
+                ALLTRIM( kdv_rjes->naz ) + "," + kadev_0->( TRIM( prezime ) + " " + TRIM( ime ) ) + ;
+                ", STR." + ALLTRIM( STR( _tek_strana ) ) + "/" + ALLTRIM( STR( _strana ) ), "B1" )
+      		
+        if LastKey() == K_PGUP
+            -- _tek_strana
+      	else
+        	++ _tek_strana
+      	endif
+      	
+        if _tek_strana < 1
+		    _tek_strana := 1
+		endif
+      	
+        if _tek_strana > _strana
+			exit
+		endif
+
+    enddo
+    	
+    if LastKey() == K_ESC
+      	select ( _t_area ) 
+		return _ret 
+    endif
+
+endif
 
 rpt_rjes()
 
-IF !EMPTY(KDV_RJES->idpromj) .and. Pitanje(,"Zelite li da se efekat ovog rjesenja evidentira u promjenama? (D/N)","D")=="D"
-    ERUP( _tmp0 )
-ENDIF
-
-SELECT ( _t_area )
-
+if !EMPTY( kdv_rjes->idpromj ) .and. ;
+    Pitanje(, "Zelite li da se efekat ovog rjesenja evidentira u promjenama? (D/N)", "D" ) == "D"
+    
+    ERUP( _izbaceni )
 endif
-RETURN DE_CONT
+
+select ( _t_area )
+_ret := .t.
+
+return _ret
+
 
 
 
@@ -382,7 +459,7 @@ RETURN DE_CONT
 // stampa rjesenja
 // -----------------------------------------
 function rpt_rjes()
-local aPom:={}
+local aPom := {}
 local i
 local nLin
 local nPocetak
@@ -391,14 +468,13 @@ local cLin
 local cPom
 
 START PRINT CRET
-gp10cpi()
 
-if EMPTY(KDV_RJES->fajl)
-	for i:=1 to gnTMarg
+if EMPTY( kdv_rjes->fajl )
+	for i := 1 to gnTMarg
 		QOUT()
 	next
 else
-	
+
 	nLin:=BrLinFajla(my_home()+ALLTRIM(KDV_RJES->fajl))
 	nPocetak:=0
 	nPreskociRedova:=0
@@ -458,16 +534,10 @@ return
 
 function UzmiVar(cVar)
 local cVrati:={"","''"}
-
 SELECT KDV_DEFRJES
 SEEK KDV_RJES->id+cVar
 IF FOUND()                           
 	cVrati := { tipslova , iizraz }    
-	
-	// tip slova je string sacinjen od
-	// slova U,I i B
-	// (U-underline,I-italic,B-bold)
-	
 ENDIF
 return cVrati
 
@@ -476,10 +546,12 @@ return cVrati
 
 
 
-function ERUP(aNezelim)
-LOCAL nArr:=SELECT(),cDokument:=""
-local _rec
-PRIVATE cPP:="", cPR:=""
+static function erup( arr )
+local _t_area := SELECT()
+local _dok := ""
+local _rec, _ima_podataka, _t_id_promj
+private cPP := ""
+private cPR := ""
   
 select kadev_1
 append blank
@@ -493,34 +565,37 @@ select kdv_defrjes
 set order to tag "2"
 seek kdv_rjes->id
 
-cIPromj := field->ipromj
+_t_id_promj := field->ipromj
    
-lImaPodataka := .f.
+_ima_podataka := .f.
    
 do while !EOF() .and. field->idrjes == kdv_rjes->id
 
-    if ASCAN( aNezelim, {|x| RIGHT(x,2) == kdv_defrjes->id }) > 0
+    if ASCAN( arr, {|x| RIGHT( x, 2 ) == kdv_defrjes->id }) > 0
         skip
         loop
     endif
      
-    if field->ipromj <> cIPromj .and. LEN( aNezelim ) == 0
+    if field->ipromj <> _t_id_promj .and. LEN( arr ) == 0
         
-        cIPromj := field->ipromj
+        _t_id_promj := field->ipromj
         
         select kadev_1
-        
+
+        // gather()
         _rec := get_dbf_global_memvars()
         update_rec_server_and_dbf( "kadev_1", _rec, 1, "FULL" )
         
+        // scatter
         set_global_vars_from_dbf()
         
-        IF !lImaPodataka
+        IF !_ima_podataka
             _rec := dbf_get_rec()
             delete_rec_server_and_dbf( "kadev_1", _rec, 1, "FULL" )
         ENDIF
         
-        lImaPodataka := .f.
+        _ima_podataka := .f.
+       
         append blank
 
         select kdv_defrjes
@@ -534,171 +609,346 @@ do while !EOF() .and. field->idrjes == kdv_rjes->id
         _&cPP := &cPR
        
         if !EMPTY( &cPR )
-            lImaPodataka := .t.
+            _ima_podataka := .t.
             if ALLTRIM( field->ppromj ) == "DOKUMENT"
-                cDokument := _dokument
+                _dok := _dokument
             endif
         endif
+    
     endif
+    
     skip 1
 
 enddo
    
-SET ORDER TO TAG "1"
-SELECT KADEV_1
+set order to tag "1"
+select kadev_1
   
 _rec := get_dbf_global_memvars()
 update_rec_server_and_dbf( "kadev_1", _rec, 1, "FULL" )
   
-if !lImaPodataka
+if !_ima_podataka
     _rec := dbf_get_rec()
     delete_rec_server_and_dbf( "kadev_1", _rec, 1, "FULL" )
 endif
 
-if !EMPTY( cDokument )
+if !EMPTY( _dok )
     select kdv_rjes
     _rec := dbf_get_rec()
-    _rec["zadbrdok"] := cDokument
+    _rec["zadbrdok"] := _dok
     update_rec_server_and_dbf( "kadev_rjes", _rec, 1, "FULL" )
 endif
 
-select (nArr)
+select ( _t_area )
 
 return
 
 
 
+// ----------------------------------------------------------
+// unos "kadev_0" podataka
+// ----------------------------------------------------------
 function ent_K_0()
+local _max_x := MAXROWS() - 10
+local _max_y := MAXCOLS() - 5
+local _strana
+local _ret 
 
-Box("uk0_1",20,75,.f.)
-set cursor on
+Box( "uk0_1", _max_x, _max_y , .f. )
 
-nStrana:=1
+    set cursor on
 
-do while .t.
+    _strana := 1
 
-@ m_x+21,m_y+2 SAY "RADNIK: "+TRIM(KADEV_0->prezime)+" "+TRIM(KADEV_0->ime)+", ID: "+TRIM(KADEV_0->id)
+    do while .t.
 
-@ m_x+1,m_y+1 CLEAR TO m_x+20,m_y+76
+        @ m_x + ( _max_x + 1 ), m_y + 2 SAY "RADNIK: " + ;
+                    TRIM( kadev_0->prezime ) + " " + TRIM( kadev_0->ime ) + ", ID: " + TRIM( kadev_0->id )
 
-if nStrana==1
-  nR:=GET_1()
-elseif nStrana==2
-  nR:=GET_2()
-elseif nStrana==3
-  nR:=GET_3()
-elseif nStrana==4
-  nR:=GET_4()
-endif
+        @ m_x + 1, m_y + 1 CLEAR TO m_x + _max_x, m_y + ( _max_y + 1 )
 
-if nR==K_ESC
-  exit
-elseif nR==K_PGUP
-  --nStrana
-elseif nR==K_PGDN .or. nR==K_ENTER
-  ++nStrana
-endif
+        if _strana == 1
+            _ret := GET_1( _strana )
+        elseif _strana == 2
+            _ret := GET_2( _strana )
+        elseif _strana == 3
+            _ret := GET_3( _strana )
+        elseif _strana == 4
+            _ret := GET_4( _strana, NIL )
+        endif
 
-if nStrana==0
-     nStrana++
-elseif nStrana==5
-     exit
-endif
+        if _ret == K_ESC
+            exit
+        elseif _ret == K_PGUP
+            -- _strana
+        elseif _ret == K_PGDN .or. _ret == K_ENTER
+            ++ _strana
+        endif
 
-enddo
+        if _strana == 0
+            _strana ++
+        elseif _strana == 5
+            exit
+        endif
+
+    enddo
 
 BoxC()
 
-if lastkey()<>K_ESC
-  return .t.
+if LastKey() <> K_ESC
+    return .t.
 else
-  return .f.
+    return .f.
 endif
+
+return
 
 
 // --------------------------------------
 // unos prve stranice
 // --------------------------------------
-function get_1()
-@  m_x+1, m_y+2 SAY " 1. Prezime                "  GET _Prezime PICTURE "@!"
-@  m_x+3, m_y+2 SAY " 2. Ime jednog roditelja   "  GET _ImeRod PICTURE "@!"
-@  m_x+5, m_y+2 SAY " 3. Ime                    "  GET _Ime  PICTURE "@!"
-@  m_x+5, COL()+2  SAY " Pol "  GET _Pol  VALID _Pol $ "MZ"  PICTURE "@!"
-@  m_x+7 ,m_y+2 SAY " 4. Nacija                 "  GET _idNac  VALID P_Nac(@_idNac,7,40) PICTURE "@!"
-@  m_x+9 ,m_y+2 SAY " 5. Jedinstveni mat.broj   "  GET _id  VALID DobarId(@_id) PICTURE "@!"
-@  m_x+9 ,COL()+2 SAY " b) ID broj/2  "  GET _id2  VALID DobarId2(@_id2) PICTURE "@!"
-@  m_x+11,m_y+2 SAY " 7. Mjesto rodjenja        "  GET _MjRodj  PICTURE "@!"
-@  m_x+13,m_y+2 SAY " 8. Datum. rodj "  GET _DatRodj
-@  m_x+13,COL()+2 SAY "  9. Broj LK "  GET _BrLK    PICTURE "@!"
-@  m_x+15,m_y+2 SAY "10. Adresa stanovanja      "
-@  m_x+16,m_y+2 SAY "  a) mjesto                "  GET _MjSt             PICTURE "@!"
-@  m_x+17,m_y+2 SAY "  b) mjesna zajednica      "  GET _IdMZSt  Valid P_MZ(@_idMzSt,17,40) PICTURE "@!"
-@  m_x+18,m_y+2 SAY "  c) ulica                 "  GET _UlSt   PICTURE "@!"
-@  m_x+19,m_y+2 SAY "  d) broj kucnog telefona  "  GET _BrTel1 PICTURE "@!"
+static function get_1( strana )
+local _x := 1
+local _left := 30
+local _x_pos
+
+@ m_x + _x, m_y + 2 SAY PADR( " 1. Prezime", _left ) GET _prezime PICT "@!"
+
+++ _x
+++ _x
+
+@ m_x + _x, m_y + 2 SAY PADR( " 2. Ime jednog roditelja", _left ) GET _imerod PICT "@!"
+
+++ _x
+++ _x
+
+@ m_x + _x, m_y + 2 SAY PADR( " 3. Ime", _left ) GET _ime PICT "@!"
+@ m_x + _x, col() + 2 SAY " Pol (M/Z) " GET _pol VALID _pol $ "MZ" PICT "@!"
+
+++ _x
+++ _x
+
+@ _x_pos := m_x + _x, m_y + 2 SAY PADR( " 4. Nacija", _left ) GET _idnac ;
+            VALID P_Nac( @_idnac, _x_pos, 40 ) PICT "@!"
+
+++ _x
+++ _x
+
+@ m_x + _x, m_y + 2 SAY PADR( " 5. Jedinstveni mat.broj", _left ) GET _id ;
+            VALID _dobar_id( @_id ) PICT "@!"
+@ m_x + _x, col() + 2 SAY " b) ID broj/2  " GET _id2 VALID _dobar_id2( @_id2 ) PICT "@!"
+
+++ _x
+++ _x
+
+@ m_x + _x, m_y + 2 SAY PADR( " 7. Mjesto rodjenja", _left ) GET _mjrodj PICT "@!"
+
+++ _x
+++ _x
+
+@ m_x + _x, m_y + 2 SAY PADR( " 8. Datum. rodj ", _left ) GET _datrodj
+@ m_x + _x, col() + 2 SAY "  9. Broj LK " GET _brlk PICT "@!"
+
+++ _x
+++ _x
+
+@ m_x + _x, m_y + 2 SAY " 10. Adresa stanovanja *****"
+
+++ _x
+
+@ m_x + _x, m_y + 2 SAY PADR( "  a) mjesto", _left ) GET _mjst PICT "@!"
+
+++ _x
+
+@ _x_pos := m_x + _x, m_y + 2 SAY PADR( "  b) mjesna zajednica", _left ) GET _idmzst ;
+                VALID P_MZ( @_idmzst, _x_pos, 40 ) PICT "@!"
+
+++ _x
+
+@ m_x + _x, m_y + 2 SAY PADR( "  c) ulica", _left ) GET _ulst PICT "@!"
+
+++ _x
+
+@ m_x + _x, m_y + 2 SAY PADR( "  d) broj kucnog telefona", _left ) GET _brtel1 PICT "@!"
+
 read
 
-if !DobarId(_id)
-	--nStrana
+if !_dobar_id( _id )
+	-- strana
 endif
 
 return LastKey()
+
+
 
 
 // --------------------------------------------
 // unos druge stranice
 // --------------------------------------------
-function get_2()
+static function get_2( strana )
 local aRstE
 local aRstB
 local aRstU
+local _x := 1
+local _x_pos
+local _left := 30
 
-@  m_x+1, m_y+2 SAY "11. Strucna sprema          " + _IdStrSpr+"-"+P_STRSPR(@_IdStrSpr,-2)
-@  m_x+3, m_y+2 SAY "12. Vrsta str.spr.          " + _IdZanim+"-"+P_Zanim(@_Idzanim,-2)
-@  m_x+5, m_y+2 SAY "13. R.jedinica RJ " + _IdRj+"-"+P_Kadev_Rj(_IdRj,-2)
-@  m_x+7, m_y+2 SAY "14. R.mjesto RMJ  " + _idRMJ+"-"+P_RMJ(_IdRMj,-2)
-@  m_x+8, m_y+2 SAY "    Broj bodova   "+STR(Ocitaj(F_KDV_RJRMJ,_IdRj+_IdRMJ,"BODOVA",.t.),7,2)
-@  m_x+9, m_y+2 SAY "15. Na radnom mjestu od     " + DTOC(_DatURMJ)
-@  m_x+9, m_y+40 SAY "U Firmi od   " + DTOC(_DatUF)
-@  m_x+11,m_y+2 SAY "16. Van firme od            " + DTOC(_DatVRMJ)
-aRstE:=GMJD(_RadStE); aRstB:=GMJD(_RadStB); aRStU:=ADDGMJD(aRStE,aRStB)
-@  m_x+13,m_y+2 SAY "17. Radni staz:      Efekt  " + STR(aRstE[1],2)+"g."+STR(aRstE[2],2)+"m."+STR(aRstE[3],2)+"d."
-@  m_x+14,m_y+2 SAY "                     Benef  " + STR(aRstB[1],2)+"g."+STR(aRstB[2],2)+"m."+STR(aRstB[3],2)+"d."
-@  m_x+15,m_y+2 SAY "                         ä  " + STR(aRstU[1],2)+"g."+STR(aRstU[2],2)+"m."+STR(aRstU[3],2)+"d."
-@  m_x+17,m_y+2 SAY "18. Status ...............  " + _Status
-@  m_x+19,m_y+2 SAY "19. broj telefona /2       "  GET _BrTel2 PICTURE "@!"
-@  m_x+20,m_y+2 SAY "20. broj telefona /3       "  GET _BrTel3 PICTURE "@!"
+@ _x_pos := m_x + _x, m_y + 2 SAY " 11. Strucna sprema " + _idstrspr + "-" + P_STRSPR( @_idstrspr, -2 )
+
+++ _x
+++ _x
+
+@ _x_pos := m_x + _x, m_y + 2 SAY " 12. Vrsta str.spr. " + _idzanim + "-" + P_Zanim( @_idzanim, -2 )
+
+++ _x
+++ _x
+
+@ _x_pos := m_x + _x, m_y + 2 SAY " 13. R.jedinica RJ " + _idrj + "-" + P_Kadev_Rj( _idrj, -2 )
+
+++ _x
+++ _x
+
+@ m_x + _x, m_y + 2 SAY " 14. R.mjesto RMJ " + _idrmj + "-" + P_RMJ( _idrmj, -2 )
+
+++ _x
+
+@ m_x + _x, m_y + 2 SAY "    Broj bodova   " + STR( Ocitaj( F_KDV_RJRMJ, _idrj + _idrmj, "BODOVA", .t. ), 7, 2 )
+
+++ _x
+
+@ m_x + _x, m_y + 2 SAY " 15. Na radnom mjestu od: " + DTOC( _daturmj )
+@ m_x + _x, m_y + 40 SAY "U Firmi od: " + DTOC( _datuf )
+
+++ _x
+++ _x
+
+@ m_x + _x, m_y + 2 SAY " 16. Van firme od: " + DTOC( _datvrmj )
+
+aRstE := GMJD( _radste )
+aRstB := GMJD( _radstb )
+
+aRStU := ADDGMJD( aRStE, aRStB )
+
+++ _x
+++ _x
+
+@ m_x + _x, m_y + 2 SAY " 17. Radni staz:      Efekt  " + ;
+            STR( aRstE[1], 2 ) + "g." + STR( aRstE[2], 2 ) + ;
+            "m." + STR( aRstE[3], 2 ) + "d."
+
+++ _x
+
+@ m_x + _x, m_y + 2 SAY "                     Benef  " + ;
+            STR( aRstB[1], 2 ) + "g." + STR( aRstB[2], 2 ) + "m." + STR( aRstB[3], 2 ) + "d."
+
+++ _x
+
+@ m_x + _x, m_y + 2 SAY "                         ä  " + ;
+            STR( aRstU[1], 2 ) + "g." + STR( aRstU[2], 2 ) + "m." + STR( aRstU[3], 2 ) + "d."
+
+++ _x
+
+@ m_x + _x, m_y + 2 SAY PADR( " 18. Status ...............", _left ) + _status
+
+++ _x
+++ _x
+
+@ m_x + _x, m_y + 2 SAY PADR( " 19. broj telefona /2", _left ) GET _brtel2 PICT "@!"
+
+++ _x
+
+@ m_x + _x, m_y + 2 SAY PADR( " 20. broj telefona /3", _left ) GET _brtel3 PICT "@!"
+
 read
+
 return LastKey()
+
+
+
 
 // --------------------------------------------
 // unos treæe stranice
 // --------------------------------------------
-function get_3()
+static function get_3( strana )
+local _x := 1
+local _left := 30
+local _pos_x
 
 aVr := GMJD( _vrslvr )
 
-@  m_x+ 1,m_y+2 SAY "21.PORODICA, OPSTI PODACI"
-@  m_x+ 3,m_y+2 SAY "  a) Bracno stanje          "  GET _BracSt  PICTURE "@!"
-@  m_x+ 4,m_y+2 SAY "  b) Broj djece             "  GET _BrDjece PICTURE "@!"
-@  m_x+ 5,m_y+2 SAY "  c) Stambene prilike       "  GET _Stan    PICTURE "@!"
-@  m_x+ 6,m_y+2 SAY "  d) Krvna grupa            "  GET _Krv     Valid _Krv $ "   #A+ #A- #B+ #B- #AB+#AB-#0+ #0- #A  #B  #AB #0  "  PICTURE "@!"
-@  m_x+ 7,m_y+2 SAY "  e) "+gDodKar1+"       "  GET _idK1    Valid P_Kadev_K1(@_idK1,7,40)  PICTURE "@!"
-@  m_x+ 8,m_y+2 SAY "  f) "+gDodKar2+"       "  GET _idK2    Valid P_Kadev_K2(@_idK2,8,40)  PICTURE "@!"
-@  m_x+ 9,m_y+2 SAY "  g) Karakt. (opisno)..... 1"  GET _KOp1    PICTURE "@!"
-@  m_x+10,m_y+2 SAY "  h) Karakt. (opisno)..... 2"  GET _KOp2    PICTURE "@!"
+@ m_x + _x, m_y + 2 SAY " 21.PORODICA, OPSTI PODACI"
 
-@  m_x+12,m_y+2 SAY "22. ODBRANA"
-@  m_x+14,m_y+2 SAY "  a) Ratni raspored        "+_IdRRasp+"-"+P_RRASP(_IdRRasp,-2)
-@  m_x+15,m_y+2 SAY "  b) Sluzio vojni rok      "+_SlVR
+++ _x
+++ _x
 
-if _SlVr=="D"
-	@  m_x+15,COL()+2 SAY ", u trajanju: "+STR(aVr[1],2)+"g."+STR(aVr[2],2)+"m."+STR(aVr[3],2)+"d."
+@ m_x + _x, m_y + 2 SAY PADR( "  a) Bracno stanje ", _left ) GET _bracst PICT "@!"
+
+++ _x
+
+@ m_x + _x, m_y + 2 SAY PADR( "  b) Broj djece ", _left ) GET _brdjece PICT "@!"
+
+++ _x
+
+@ m_x + _x, m_y + 2 SAY PADR( "  c) Stambene prilike ", _left ) GET _stan PICT "@!"
+
+++ _x
+
+@ m_x + _x, m_y + 2 SAY PADR( "  d) Krvna grupa ", _left ) GET _krv VALID _krv $ "   #A+ #A- #B+ #B- #AB+#AB-#0+ #0- #A  #B  #AB #0  "  PICT "@!"
+
+++ _x
+
+@ _x_pos := m_x + _x, m_y + 2 SAY PADR( "  e) " + gDodKar1, _left ) GET _idk1 ;
+                VALID P_Kadev_K1( @_idk1, _x_pos, 40 ) PICT "@!"
+
+++ _x
+
+@ _x_pos := m_x + _x, m_y + 2 SAY PADR( "  f) " + gDodKar2, _left ) GET _idk2 ;
+                VALID P_Kadev_K2( @_idk2, _x_pos, 40 ) PICT "@!"
+
+++ _x
+
+@ m_x + _x, m_y + 2 SAY PADR( "  g) Karakt. (opisno)..... 1", _left ) GET _kop1 PICT "@!"
+
+++ _x
+
+@ m_x + _x, m_y + 2 SAY PADR( "  h) Karakt. (opisno)..... 2", _left ) GET _kop2 PICT "@!"
+
+++ _x
+++ _x
+
+@ m_x + _x, m_y + 2 SAY " 22. ODBRANA"
+
+++ _x
+++ _x
+
+@ _x_pos := m_x + _x, m_y + 2 SAY "  a) Ratni raspored        " + _idrrasp + "-" + P_RRASP( _idrrasp, -2 )
+
+++ _x
+
+@ m_x + _x, m_y + 2 SAY "  b) Sluzio vojni rok      " + _slvr
+
+if _slvr == "D"
+    @ m_x + _x, col() + 2 SAY ", u trajanju: " + STR( aVr[1], 2 ) + "g." + ;
+                            STR( aVr[2], 2 ) + "m." + STR( aVr[3], 2 ) +"d."
 endif
 
-@  m_x+16,m_y+2 SAY "  c) "+IF(glBezVoj,"Pozn.rada na racunaru","Sposobnost za voj.sl.") GET _SposVSl PICTURE "@!"
-@  m_x+17,m_y+2 SAY "  d) Cin       " GET _IdCin VALID P_Cin(@_IdCin,17,30) PICTURE "@!"
-@  m_x+18,m_y+2 SAY "  e) "+IF(glBezVoj,"Str.jezici ","VES       ") GET _IdVES VALID P_VES(@_IdVES,18,30) PICTURE "@!"
-@  m_x+19,m_y+2 SAY "  f) "+IF(glBezVoj,"Otisli bi iz firme?  ","Sekretarijat odbrane ") GET _NazSekr PICTURE "@!S40"
+++ _x
+
+@ m_x + _x, m_y + 2 SAY "  c) " + IF( glBezVoj, "Pozn.rada na racunaru", "Sposobnost za voj.sl." ) GET _sposvsl PICT "@!"
+
+++ _x
+
+@ _x_pos := m_x + _x, m_y + 2 SAY "  d) Cin       " GET _idcin VALID P_Cin( @_idcin, _x_pos, 30 ) PICT "@!"
+
+++ _x
+
+@ _x_pos := m_x + _x, m_y + 2 SAY "  e) " + IF( glBezVoj, "Str.jezici ", "VES       " ) GET _idves ;
+            VALID P_Ves( @_idves, _x_pos, 30 ) PICT "@!"
+
+++ _x
+
+@ m_x + _x, m_y + 2 SAY "  f) " + IF( glBezVoj, "Otisli bi iz firme?  ", "Sekretarijat odbrane " ) GET _nazsekr PICT "@!S40"
+
 read
 
 return LastKey()
@@ -706,17 +956,18 @@ return LastKey()
 
 
 // ---------------------------------------
-// unos èetvrte stranice
+// unos cetvrte stranice
 // ---------------------------------------
-function get_4( lBrzi )
+static function get_4( strana, brzi_unos )
 private ImeKol
 
-if lBrzi == NIL
-	lBrzi := .f.
+if brzi_unos == NIL
+	brzi_unos := .f.
 endif
 
-if lBrzi
-	ImeKol:={ {"Datum ", {|| datumOd} }, ;
+if brzi_unos
+	
+    ImeKol:={ {"Datum ", {|| datumOd} }, ;
           {"Do    ", {|| datumDo} }, ;
           {"Kar.",  {|| IdK}      }, ;
           {"Opis", {|| opis}    } ,;
@@ -724,29 +975,30 @@ if lBrzi
           {"Nadlezan",  {|| Nadlezan}      }, ;
           {"RJ", {|| IdRJ}    } ,;
           {"RMj",{|| IdRMJ}    } ,;
-          {"nAtr1",{|| nAtr1}    }, ;
-          {"nAtr2",{|| nAtr2}    }, ;
-          {"cAtr1",{|| cAtr1}    }, ;
-          {"cAtr2",{|| cAtr2}    } ;
+          {"nAtr1",{|| natr1}    }, ;
+          {"nAtr2",{|| natr2}    }, ;
+          {"cAtr1",{|| catr1}    }, ;
+          {"cAtr2",{|| catr2}    } ;
         }
   	
-	@ m_x,m_y+2  SAY PADC(" TIP PROMJENE: "+gTrPromjena+"-"+TRIM(Ocitaj(F_KADEV_PROMJ, gTrPromjena, "naz")) + " ", 70, "Í")
+	@ m_x, m_y + 2 SAY PADC( " TIP PROMJENE: " + gTrPromjena + "-" + ;
+                TRIM( Ocitaj( F_KADEV_PROMJ, gTrPromjena, "naz" ) ) + " ", 70, "Í" )
 
 else
 
 	ImeKol:={ {"Datum ", {|| datumOd} }, ;
           {"Do    ", {|| datumDo} }, ;
-          {"Promjena", {|| IdPromj+"-"+P_Promj(IdPromj,-2)}      }, ;
+          {"Promjena", {|| IdPromj + "-" + P_Promj( IdPromj, -2 ) }      }, ;
           {"Kar.",  {|| IdK}      }, ;
           {"Dokument",  {|| Dokument}      }, ;
           {"Nadlezan",  {|| Nadlezan}      }, ;
           {"Opis", {|| opis}    } ,;
           {"RJ", {|| IdRJ}    } ,;
           {"RMj",{|| IdRMJ}    } ,;
-          {"nAtr1",{|| nAtr1}    }, ;
-          {"nAtr2",{|| nAtr2}    }, ;
-          {"cAtr1",{|| cAtr1}    }, ;
-          {"cAtr2",{|| cAtr2}    } ;
+          {"nAtr1",{|| natr1}    }, ;
+          {"nAtr2",{|| natr2}    }, ;
+          {"cAtr1",{|| catr1}    }, ;
+          {"cAtr2",{|| catr2}    } ;
         }
 endif
 
@@ -754,7 +1006,7 @@ cID := kadev_0->id
 
 select kadev_1
  
-if lBrzi
+if brzi_unos
 	set order to tag "3"
 else
    	set order to tag "1"
@@ -764,22 +1016,23 @@ cOldH := h[1]
 
 h[1] := "Lista promjena "
 
-CentrTxt( h[1], 24 )
+// bilo 24
+//CentrTxt( h[1], MAXROWS()-10 )
 
-@ m_x+1,m_y+2  SAY "23. Promjene - <Ctrl-End> Kraj pregleda, <Strelice> setanje kroz listu"
-@ m_x+2,m_y+2  SAY "               <Ctrl-N> Novi zapis, <Ctrl-T> brisanje, <ENTER> edit"
-@ m_x+3,m_y+2  SAY "               <Alt-K> Zatvaranje intervalne promjene"
+@ m_x + 1, m_y + 2 SAY " 23. Promjene - <Ctrl-End> Kraj pregleda, <Strelice> setanje kroz listu"
+@ m_x + 2, m_y + 2 SAY "                <Ctrl-N> Novi zapis, <Ctrl-T> brisanje, <ENTER> edit"
+@ m_x + 3, m_y + 2 SAY "                <Alt-K> Zatvaranje intervalne promjene"
 
-BrowseKey( m_x + 5, m_y + 2, m_x + 16, m_y + 68, ImeKol, {|Ch| EdPromj(Ch)}, IF(lBrzi, "id+idpromj == cID+gTrPromjena" , "id==cID" ), cId, 2, 4, 60)
+BrowseKey( m_x + 5, m_y + 2, m_x + ( MAXROWS() - 22 ), m_y + ( MAXCOLS() - 5 ), ImeKol, {|Ch| EdPromj(Ch)}, IF( brzi_unos, "id+idpromj == cID+gTrPromjena" , "id==cID" ), cId, 2, 4, 60 )
 
 h[1] := cOldH
 
-@ m_x+17,m_y+2 SAY "24. Operater " GET _operater PICTURE "@!"
+@ m_x + 19, m_y + 2 SAY "24. Operater " GET _operater PICT "@!"
 
 read
 
-if !lBrzi
-	@ m_x+19,m_y+2 SAY "  ----  <PgUp> Prethodna strana, <PgDn> snimi, <ESC> otkazi promjene --- "
+if !brzi_unos
+	@ m_x + 20, m_y + 2 SAY "  ----  <PgUp> Prethodna strana, <PgDn> snimi, <ESC> otkazi promjene --- "
   	Inkey(0)
 endif
 
@@ -817,23 +1070,23 @@ do case
             qId := cId
         endif     		
 
-     	Box( "btxt", 12 + IF( ! ("U" $ TYPE("qnAtr3")), 7 , 0 ), 60, .f., "<Esc> otkazi operaciju" )
+     	Box( "btxt", 12 + IF( ! ("U" $ TYPE("qnAtr3") ), 7 , 0 ), 60, .f., "<ESC> otkazi operaciju" )
 
      		set cursor on
 
      		@ m_x + 1, m_y + 2 SAY "Datum         " GET qdatumod
      		@ m_x + 3, m_y + 2 SAY "Tip promjene  " GET qidpromj;
-			            VALID P_Promj(@qidpromj,3,40) PICTURE "@!"
+			            VALID P_Promj( @qidpromj, 3, 40 ) PICTURE "@!"
      		@ m_x + 4, m_y + 2 SAY "Karakteristika" GET qidk PICT "@!"
      		
 		    read
 
      		if qIdPromj == "G1"     
-			// godisnji odmor
+			    // godisnji odmor
        			@ m_x+6, m_y+2 SAY "Koristi pravo na godisnji odmor za godinu   :"  GET qnAtr1 PICT "9999"
        			@ m_x+7, m_y+2 SAY "Broj dana godisnjeg odmora na koji ima pravo:"  GET qnAtr2  PICT "9999"
        			
-			IF !("U" $ TYPE("qnAtr3"))
+			    if !("U" $ TYPE("qnAtr3"))
           			@ m_x+ 8,m_y+2 SAY "Zakonski minimum                         :"  GET qnAtr3  PICTURE "999"
           			@ m_x+ 9,m_y+2 SAY "Po osnovu vrste poslova i zadataka       :"  GET qnAtr4  PICTURE "999"
           			@ m_x+10,m_y+2 SAY "Po osnovu slozenosti poslova i zadataka  :"  GET qnAtr5  PICTURE "999"
@@ -841,7 +1094,7 @@ do case
           			@ m_x+12,m_y+2 SAY "Po osnovu uslova pod kojim radnik zivi   :"  GET qnAtr7  PICTURE "999"
           			@ m_x+13,m_y+2 SAY "Po osnovu zdravstvenog stanja radnika    :"  GET qnAtr8  PICTURE "999"
           			@ m_x+14,m_y+2 SAY "Umanjenje preko 30 dana                  :"  GET qnAtr9  PICTURE "999"
-       			ENDIF
+       			endif
      		endif
 
      		if qdatumod >= _daturmj 
@@ -957,7 +1210,7 @@ do case
      		
         else
         		
-            if Ch==K_CTRL_N
+            if Ch == K_CTRL_N
                 _rec := dbf_get_rec()
                 delete_rec_server_and_dbf( "kadev_1", _rec, 1, "FULL" )
             	skip -1
@@ -967,7 +1220,7 @@ do case
      		
         endif
 	    
-    case Ch=K_CTRL_T
+    case Ch == K_CTRL_T
      	if Pitanje("p08","Sigurno zelite izbrisati ovu promjenu ???","N")=="D"
             _rec := dbf_get_rec()
             delete_rec_server_and_dbf( "kadev_1", _rec, 1, "FULL" ) 
@@ -977,21 +1230,25 @@ do case
       		return DE_CONT
      	endif
 
-  	case Ch==K_CTRL_END
+  	case Ch == K_CTRL_END
      		return DE_ABORT
-	case Ch==K_ALT_K
-     	if P_PROMJ(IdPromj,-4)="I" .and. empty(DatumDo) 
-		// intervalna promjena
+	case Ch == K_ALT_K
+     	
+        if P_PROMJ(IdPromj,-4)="I" .and. empty(DatumDo) 
+		    
+            // intervalna promjena
             dPom:=DATE()
-        	Box("bzatv",3,40,.f.)
+        	
+            Box("bzatv",3,40,.f.)
         		set cursor on
         		@ m_x+1,m_y+1 SAY "Datum zatvaranja:" GET dPom VALID dPom>=DatumOd
         		read
         	BoxC()
-        	if lastkey()<>K_ESC
-          		_Status:="A" 
+        	
+            if lastkey()<>K_ESC
+          		_status:="A" 
 			    // zatvaranje promjene
-          		_DatVRMJ:=CTOD("")
+          		_datVRMJ:=CTOD("")
                 _rec := dbf_get_rec()
                 _rec["datumdo"] := dPom
                 update_rec_server_and_dbf( "kadev_1", _rec, 1, "FULL" ) 
@@ -1012,50 +1269,55 @@ do case
         	Msg("Promjena mora biti nezatvorena, intervalnog tipa",5)
       	endif
       	return DE_REFRESH
+
   	otherwise
      	return DE_CONT
+
 endcase
 
 return
 
 
 
-function DobarId(noviId)
+function _dobar_id( noviId )
+local _t_rec
+local _t_order
 
-if empty(noviId)
-   MsgO("ID broj ne moze biti prazan!")
-   Inkey(0)
-   MsgC()
-   return .f.
+if EMPTY( noviId )
+    MsgO( "ID broj ne moze biti prazan!" )
+    Inkey(0)
+    MsgC()
+    return .f.
 endif
 
-nRec:=RECNO()
-nOrd:=INDEXORD()
+_t_rec := RECNO()
+_t_order := INDEXORD()
+
 set order to tag "1"
-seek noviId
+seek ( noviId )
 
-if found() .and. recno()<>nRec
-  MsgO("Vec postoji zapis sa ovim ID brojem. Ispravite to !")
-  Inkey(0)
-  MsgC()
-  dbsetorder(nOrd)
-  go nRec
-  noviId=kadev_0->id
-  return .f.
+if FOUND() .and. RECNO() <> _t_rec
+    MsgO("Vec postoji zapis sa ovim ID brojem. Ispravite to !")
+    Inkey(0)
+    MsgC()
+    dbsetorder( _t_order )
+    go ( _t_rec )
+    noviId := kadev_0->id
+    return .f.
 endif
 
-dbsetorder(nOrd)
-go nRec
+dbsetorder( _t_order )
+go ( _t_rec )
 
 if noviId <> kadev_0->id
 
-  if !empty(kadev_0->id) .and. !(KLevel $ "01")
-     Msg("Vi ne mozete mijenjati postojece podatke !",15)
-     noviId := kadev_0->id
-     return .t.
-  endif
+    if !EMPTY( kadev_0->id ) .and. !( KLevel $ "01" )
+        Msg("Vi ne mozete mijenjati postojece podatke !",15)
+        noviId := kadev_0->id
+        return .t.
+    endif
 
-  if empty(kadev_0->id) .or. Pitanje("p01","Promijenili ste ID broj. Zelite li ovo snimiti (D/N) ?"," ")=="D"
+    if EMPTY( kadev_0->id ) .or. Pitanje( "p01", "Promijenili ste ID broj. Zelite li ovo snimiti (D/N) ?"," ")=="D"
 
         if !f18_lock_tables( { "kadev_1", "kadev_0" } )
             return .t.
@@ -1067,10 +1329,10 @@ if noviId <> kadev_0->id
         set order to tag "1"
         seek kadev_0->id
 
-        do while kadev_0->id==id .and. !eof()
+        do while kadev_0->id == field->id .and. !eof()
 
             skip
-            nSRec:=RECNO()
+            nSRec := RECNO()
             skip -1
 
             _rec := dbf_get_rec()
@@ -1092,7 +1354,7 @@ if noviId <> kadev_0->id
         sql_table_update( nil, "END" )
 
    else
-        noviId=kadev_0->id
+        noviId := kadev_0->id
    endif
 
 endif
@@ -1101,26 +1363,29 @@ return .t.
 
 
 
-function DobarId2(noviId2)
+function _dobar_id2( noviId2 )
+local _t_rec, _t_order 
 
-if !empty(noviId2)  
+if !EMPTY( noviId2 )  
+
     // dozvoljeno je da je noviId2 prazan
-    nRec:=RECNO()
-    nOrd:=INDEXORD()
+    _t_rec := RECNO()
+    _t_order := INDEXORD()
     set order to tag "3"
-    seek noviId2
-    if found() .and. recno()<>nRec
+    seek ( noviId2 )
+
+    if FOUND() .and. RECNO() <> _t_rec
         MsgO("Vec postoji zapis sa ovim ID2 brojem. Ispravite to !")
         Inkey(0)
         MsgC()
-        dbsetorder(nOrd)
-        go nRec
-        noviId2=kadev_0->id2
+        dbsetorder( _t_order )
+        go ( _t_rec )
+        noviId2 := kadev_0->id2
         return .f.
     endif
 
-    dbsetorder(nOrd)
-    go nRec
+    dbsetorder( _t_order )
+    go ( _t_rec )
 
 endif 
 
@@ -1131,7 +1396,7 @@ return .t.
 // ---------------------------------------------------------
 // brisanje osnovnog i njemu pridruzenih slogova
 // ---------------------------------------------------------
-function BrisiKarton( erase )
+function brisi_kadrovski_karton( erase )
 
 if erase == NIL
     erase := .f.

@@ -262,7 +262,7 @@ do case
       			fNovi:=.t.
       			append blank
     		endif
-    		Scatter("s")
+    		set_global_vars_from_dbf("s")
     		Box("bd09s",11,77,.f.)
     		Private Getlist:={}
     		@ m_x+1, m_y+2 SAY "R.jedinica " GET sIDRJ valid P_KADEV_RJ(@sIdRJ,1,25) PICTURE "@!"
@@ -285,14 +285,16 @@ do case
     		BoxC()
     		if lastkey()==K_ESC
       			if fNovi
-         			delete
+                    _rec := dbf_get_rec()
+                    delete_rec_server_and_dbf( "kadev_rjrmj", _rec, 1, "FULL" )
 				skip -1
          			RETURN DE_REFRESH
       			else
          			return DE_CONT
       			endif
     		else
-      			Gather("s")
+      			_rec := get_dbf_global_memvars("s")
+                update_rec_server_and_dbf( "kadev_rjrmj", _rec, 1, "FULL" )
       			return DE_REFRESH
     		endif
 
@@ -306,8 +308,9 @@ do case
 
   	case Ch=K_CTRL_T
     		if Pitanje("psist","Zelite li izbrisati ovu stavku ??","D")=="D"
-      			delete
-      			return DE_REFRESH
+      			_rec := dbf_get_rec()
+                delete_rec_server_and_dbf( "kadev_rjrmj", _rec, 1, "FULL" )
+                return DE_REFRESH
     		else
       			return DE_CONT
     		endif

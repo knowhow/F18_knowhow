@@ -508,19 +508,28 @@ local cBr
    PopWa()
    return DE_CONT
  elseif Ch=K_ENTER
-   PushWa()
-   select kadev_0
-    Scatter()
+   
+    PushWa()
+    select kadev_0
+    
+    set_global_vars_from_dbf()
+    
     if ent_K_0()
-      Gather()
+        _rec := get_dbf_global_memvars()
+        update_rec_server_and_dbf( "kadev_0", _rec, 1, "FULL" )
     endif
-   PopWa()
-   return DE_REFRESH
+    
+    PopWa()
+
+    return DE_REFRESH
+
  elseif Ch=K_CTRL_T
+
   if Pitanje("p1",(nArr)->("Izbrisati karton: "+trim(prezime)+" "+trim(ime)+" ?"),"N")=="D"
-   cBr:=broj
-   BrisiKarton()
-   delete
+   cBr := broj
+   brisi_kadrovski_karton()
+   _rec := dbf_get_rec()
+   delete_rec_server_and_dbf( "kadev_0", _rec, 1, "FULL" )
    skip -1
    return DE_REFRESH
   else

@@ -17,222 +17,171 @@
 
 
 function kadev_form()
+local _izbor := 1
+local _opc := {}
+local _opcexe := {}
 
+// otvori tabele
 kadev_o_tables()
 
-select kdv_rmj
-set order to tag "ID"
-select kadev_0
-set relation to idrmj into kdv_rmj
-
-select kdv_rj
-set order to tag "ID"
-select kadev_0
-set relation to idrj into kdv_rj additive
-
-select kdv_rjrmj
-set order to tag "ID"
-select kadev_0
-set relation to idrj+idrmj into kdv_rjrmj additive
-
-select strspr
-set order to tag "ID"
-select kadev_0
-set relation to idstrspr into strspr additive
-
-select kdv_mz
-set order to tag "ID"
-select kadev_0
-set relation to idmzst into kdv_mz additive
-
-select kdv_k1
-set order to tag "ID"
-select kadev_0
-set relation to idk1 into kdv_k1 additive
-
-select kdv_k2
-set order to tag "ID"
-select kadev_0
-set relation to idk2 into kdv_k2 additive
-
-select kdv_zanim
-set order to tag "ID"
-select kadev_0
-set relation to idzanim into kdv_zanim additive
-
-select kdv_nac
-set order to tag "ID"
-select kadev_0
-set relation to idnac into kdv_nac additive
-
-select kdv_rrasp
-set order to tag "ID"
-select kadev_0
-set relation to idrrasp into kdv_rrasp additive
-
-select kdv_cin
-set order to tag "ID"
-select kadev_0
-set relation to idcin into kdv_cin additive
-
-select kdv_ves
-set order to tag "ID"
-select kadev_0
-set relation to idves into kdv_ves additive
-
-select kdv_rjrmj
-set order to tag "ID"
-select kadev_0
-set relation to idrj+idrmj into kdv_rjrmj additive
+// setuj sve relacije tabela
+kadev_set_relations()
 
 select kadev_0
 
-PUBLIC aRez,aGrupa,aKatUsl,aKatVal,aZagl
+public aRez
+public aGrupa
+public aKatUsl
+public aKatVal
+public aZagl
 
-IzborObrasca()
+// izbor obrasca
+izbor_obrasca()
 
-PRIVATE Izb2:=1
-DO WHILE .T.
-  PRIVATE opc[4]
-//  @ 4,5 SAY ""
-  opc[1]="1. ispravka definicije       "
-  opc[2]="2. generisanje kalkulacije"
-  opc[3]="3. izbor obrasca"
-  opc[4]="4. brisanje obrasca"
-  h[1]=" Prepravka baza koje definisu parametre obrasca "
-  h[2]=" Generacija  izvjestaja "
-  h[3]=" Izbor baze za definiciju obrasca "
-  h[4]=" Nepovratno uklanjanje obrasca "
-  Izb2:=Menu("omain",opc,Izb2,.F.)
+AADD( _opc, "1. ispravka definicije                      " )
+AADD( _opcexe, {|| ispravka_obrasca() } )
+AADD( _opc, "2. generisanje kalkulacije" )
+AADD( _opcexe, {|| generisanje_obrasca() } )
+AADD( _opc, "3. izbor obrasca" )
+AADD( _opcexe, {|| izbor_obrasca() } )
+AADD( _opc, "4. brisanje obrasca" )
+AADD( _opcexe, {|| brisi_obrazac() } )
 
-  DO CASE
-    CASE Izb2==0
-     EXIT
-   CASE Izb2==1
-     Edit()
-   CASE Izb2==2
-     Generisi()
-   CASE Izb2==3
-     IzborObrasca()
-   CASE Izb2==4
-     BrisiObrazac()
- END CASE
-ENDDO
+f18_menu( "obr", .f., _izbor, _opc, _opcexe )
 
 @ 1,39 SAY SPACE(40) COLOR "N/N"
 
 close all
+
 return
 
 
-
-
-function BrisiObrazac()
-  LOCAL lInsert:=READINSERT(.t.)
-  private cImeFOB:=".DBF        "
-  if VarEdit( { { "Puni naziv obrasca koji zelite izbrisati" ,;
+// -----------------------------------------------------------
+// brisanje obrasca
+// -----------------------------------------------------------
+static function brisi_obrazac()
+local lInsert := READINSERT(.t.)
+private cImeFOB := ".dbf        "
+  
+if VarEdit( { { "Puni naziv obrasca koji zelite izbrisati" ,;
                  "cImeFOB",;
                  "PostojiFajl(cImeFOB)",;
                  "@!", } },;
               11, 1, 15, 78, "BRISANJE OBRASCA", "B1" )
-    IF FERASE(KUMPATH+ALLTRIM(cImeFOB))!=0
-      Msg("Brisanje nije uspjelo. Navedeni obrazac se vjerovatno koristi kao tekuci!",3)
-    ENDIF
-  endif
-  READINSERT(lInsert)
-return (nil)
+    if FERASE( my_home() + ALLTRIM( cImeFOB ) ) != 0
+        Msg("Brisanje nije uspjelo. Navedeni obrazac se vjerovatno koristi kao tekuci!",3)
+    endif
+endif
+  
+READINSERT( lInsert )
+
+return NIL
 
 
-**************************
-**************************
-function PostojiFajl(cF)
- local lVrati := FILE(KUMPATH+ALLTRIM(cF))
- if !lVrati
-   Msg("Navedeni fajl ne postoji!",3)
- endif
+
+function PostojiFajl( file )
+local lVrati := FILE( my_home() + ALLTRIM( file ) )
+if !lVrati
+    Msg("Navedeni fajl ne postoji!",3)
+endif
 return lVrati
 
 
-**************************
-**************************
-function IzborObrasca()
+// ----------------------------------------------------------
+// izbor obrasca
+// ----------------------------------------------------------
+static function izbor_obrasca()
 local nRed
-
 private opc
 private h
 
- opc:={}
- aFiles:=DIRECTORY( my_home() + "kadev_obraz*.dbf")
- h:=ARRAY(LEN(aFiles)+1)
- i:=0
- AEVAL(aFiles,{|elem| h[++i]:="",AADD(opc,PADR(elem[1],15))})
- AADD(opc,PADR("Novi obrazac",15))
- h[i+1]:="Kreiranje novog obrasca"
+opc := {}
+aFiles := DIRECTORY( my_home() + "kdv_obr_*.dbf" )
+h := ARRAY( LEN( aFiles ) + 1 )
+i := 0
+AEVAL( aFiles, {|elem| h[++i]:="",AADD(opc,PADR(elem[1],15))})
+AADD(opc,PADR("Novi obrazac",15))
+h[i+1]:="Kreiranje novog obrasca"
 
- Izb3:=1
+Izb3:=1
 
 do while .t.
 
- Izb3:=Menu("izobr",opc,Izb3,.f.)
- do case
-  case Izb3==0
-    exit
-    return
-  case Izb3<LEN(opc)
-    select kdv_obrazdef
-    my_use_temp ( "OBRAZDEF", my_home() +opc[Izb3], .f., .t. )
-    index on tip+grupa+red_br tag "1"
-    set order to tag "1"
-    @ 1,39 SAY PADR('Tekuci obrazac: '+opc[Izb3],40) COLOR "GR+/N"
-  otherwise
-   set cursor on
-   Box("nobr",1,46,.f.)
-   cIdObr=SPACE(3)
-   @ m_x+1,m_y+2 SAY "Unesi tri slova za identifikaciju obrasca:" GET cIdObr
-   READ
-   BoxC()
-   set cursor off
+    Izb3 := Menu( "izobr", opc, izb3, .f. )
 
-   if FILE( my_home() + "kadev_obraz " + cIdObr + ".dbf")
-     Msg("Fajl vec postoji !!!",10)
-   else
-         aDbf:={}
-         AADD(aDbf,{"Tip","C",1,0})
-         AADD(aDbf,{"Grupa","C",1,0})
-         AADD(aDbf,{"Red_Br","C",1,0})
-         AADD(aDbf,{"Komentar","C",25,0})
-         AADD(aDbf,{"Uslov","C",200,0})
-         AADD(aDbf,{"brisano","C",1,0})
-         DBCREATE2( my_home() + "kadev_obraz" + cIdObr, aDbf )
-   endif
- endcase
+    do case
+
+        case Izb3 == 0
+            exit
+            return
+
+        case Izb3 < LEN(opc)
+
+            select ( F_KDV_OBRAZDEF )
+            use
+
+            my_use_temp( "KDV_OBRAZDEF", my_home() + opc[ izb3 ], .f., .t. )
+            index on tip + grupa + red_br tag "1"
+            set order to tag "1"
+
+            @ 1,39 SAY PADR( "Tekuci obrazac: " + opc[ izb3 ], 40 ) COLOR "GR+/N"
+
+        otherwise
+
+            set cursor on
+            
+            Box("nobr", 1, 46, .f. )
+                cIdObr := SPACE(3)
+                @ m_x + 1, m_y + 2 SAY "Unesi tri slova za identifikaciju obrasca:" GET cIdObr VALID !EMPTY( cIdObr )
+                read
+            BoxC()
+            set cursor off
+
+            if FILE( my_home() + "kdv_obr_" + cIdObr + ".dbf")
+                Msg( "Fajl vec postoji !!!",10)
+            else
+                aDbf := {}
+                AADD(aDbf,{"Tip","C",1,0})
+                AADD(aDbf,{"Grupa","C",1,0})
+                AADD(aDbf,{"Red_Br","C",1,0})
+                AADD(aDbf,{"Komentar","C",25,0})
+                AADD(aDbf,{"Uslov","C",200,0})
+                AADD(aDbf,{"brisano","C",1,0})
+                DBCREATE( my_home() + "kdv_obr_" + cIdObr, aDbf )
+            endif
+    endcase
 
 enddo
 
+return
 
 
-function Generisi()
-aUslovi:={}
+
+function generisanje_obrasca()
+aUslovi := {}
+
 select kdv_globusl
-DBEVAL( {|| AADD(aUslovi, {Komentar,' ', trim(Uslov), trim(ime_baze) } ) };
-      )
+
+DBEVAL( {|| AADD(aUslovi, {Komentar,' ', trim(Uslov), trim(ime_baze) } ) })
 
 if len(aUslovi)==0
-  MsgO("Prekidam generisanje izvjestaja. Nije kreiran nijedan globalni uslov!")
-  Inkey(0)
-  MsgC()
-  return
+    MsgO("Prekidam generisanje izvjestaja. Nije kreiran nijedan globalni uslov!")
+    Inkey(0)
+    MsgC()
+    return
 endif
 
 Box("musl",10,30,.f.)
+
 @ m_x,m_y+2 SAY "<SPACE> markiranje"
+
 MABROWSE(aUslovi,m_x+1,m_y+1,m_x+10,m_y+30)
+
 BoxC()
 
 if ASCAN(aUslovi, {|aElem| aElem[2]='*'})==0
   return
 endif
-
 
 IF ASCAN(aUslovi,{|x| ALLTRIM(x[4])!="KADEV_0".and.x[2]=='*'})!=0
   SELECT KADEV_0
@@ -240,10 +189,6 @@ IF ASCAN(aUslovi,{|x| ALLTRIM(x[4])!="KADEV_0".and.x[2]=='*'})!=0
   SELECT KDV_RJRMJ
   SET RELATION TO
 ENDIF
-
-// set alternate to obrazac            // bilo
-// ima li potrebe za upitima?
-// --------------------------
 
 lTDatumOd := .f.
 lTDatumDo := .f.
@@ -393,18 +338,9 @@ next   // kraj petlje " gi=1 to LEN(aUslovi) "
 IF gPrinter=="L"
   gPO_Port()
 ENDIF
+
 FF
-
-END PRINT             // sada
-
-// set alternate to   // bilo
-
-
-// cKomLin:="q "+SET(_SET_DEFAULT)+"\obrazac.txt"
-
-// set cursor on
-// run &cKomLin
-// set cursor off
+END PRINT             
 
 return
 
@@ -474,144 +410,173 @@ return
 
 
 
-function Edit()
+static function ispravka_obrasca()
+
 Izb11:=1
+
 PRIVATE opc[2]
+
 opc[1]:="Globalni uslovi    "
 opc[2]:="Definicija obrasca"
 h[1]:="Globalni uslovi odredjuju jedinicu,duznosti,prisutnost"
 h[2]:="Definicija redova i zaglavlja (po grupama), kolona obrasca"
+
 do while .t.
- Izb11:=Menu("edmeni",opc,Izb11,.F.)
+    
+    Izb11:=Menu("edmeni",opc,Izb11,.F.)
 
- DO CASE
-   CASE Izb11==0
-       EXIT
+    DO CASE
 
-   CASE Izb11==1
-      select kdv_globusl
-      go top
-       ImeKol:={ {'Komentar',{|| komentar}}    ,;
+        CASE Izb11 == 0
+            EXIT
+
+        CASE Izb11 == 1
+
+            select kdv_globusl
+            go top
+            ImeKol:={ {'Komentar',{|| komentar}}    ,;
                  {'Uslov'   ,{|| LEFT(Uslov,60)+".."}}, ;
                  {'DBF-baza',{|| ime_baze}}   ;
                }
-       Kol:={1,2,3}
-       ObjDbEdit('usl',10,77,{|| EdGlobUsl()},"<Ctrl-N> Dodaj, <Ctrl-T> Brisi, <F2> Edit, <F4> Dupliciraj ","",.f.)
+            Kol:={1,2,3}
+            ObjDbEdit('usl',10,77,{|| EdGlobUsl()},"<Ctrl-N> Dodaj, <Ctrl-T> Brisi, <F2> Edit, <F4> Dupliciraj ","",.f.)
 
-   CASE Izb11==2
-      select kdv_obrazdef
-      go top
-      ImeKol:={{'Tip',{|| tip}},;
+        CASE Izb11==2
+            select kdv_obrazdef
+            go top
+            ImeKol:={{'Tip',{|| tip}},;
                {'Grupa',{|| grupa}}, ;
                {'R.Br.'   ,{|| red_br}}, ;
                {'Komentar'   ,{|| Komentar}}, ;
                {'Uslov'   ,{|| LEFT(Uslov,70)+".."}} ;
-        }
-       Kol:={1,2,3,4,5}
-       ObjDbEdit('usl',10,77,{|| EdObrazDef()},"<Ctrl-N> Dodaj, <Ctrl-T> Brisi, <F2> Edit, <F4> Dupliciraj","",.f.)
+                }
+            Kol:={1,2,3,4,5}
+            ObjDbEdit('usl',10,77,{|| EdObrazDef()},"<Ctrl-N> Dodaj, <Ctrl-T> Brisi, <F2> Edit, <F4> Dupliciraj","",.f.)
 
- ENDCASE
+    ENDCASE
 enddo
 
 return
 
-************************
-************************
+
+
+
 function EdGlobUsl()
 local Ch,c1,c2
 
-Ch:=LastKey()
+Ch := LastKey()
+
 do case
-  case Ch==K_CTRL_N .or. Ch==K_F4 .or. Ch==K_F2
+  
+    case Ch==K_CTRL_N .or. Ch==K_F4 .or. Ch==K_F2
 
 
-    if Ch==K_CTRL_N
-      APPEND BLANK
-    endif
+        if Ch==K_CTRL_N
+            APPEND BLANK
+        endif
 
-     Scatter()
-     Box('EdIstIsp',3,70,.f.)
-      set cursor on
-      @ m_x+1,m_y+2 SAY "Komentar:" GET _Komentar PICTURE "@!"
-      @ m_x+2,m_y+2 SAY "Uslov:" GET _Uslov PICTURE "@S60"
-      @ m_x+3,m_y+2 SAY "Ime baze:" GET _ime_baze PICTURE "@!"
-      READ
-      set cursor off
-     BoxC()
-     if Ch==K_F4
-       append blank
-     endif
-     Gather()
-    return DE_REFRESH
+        set_global_vars_from_dbf()
+        Box('EdIstIsp',3,70,.f.)
+        set cursor on
+        @ m_x+1,m_y+2 SAY "Komentar:" GET _Komentar PICTURE "@!"
+        @ m_x+2,m_y+2 SAY "Uslov:" GET _Uslov PICTURE "@S60"
+        @ m_x+3,m_y+2 SAY "Ime baze:" GET _ime_baze PICTURE "@!"
+        READ
+        set cursor off
+        BoxC()
+        if Ch==K_F4
+            append blank
+        endif
+        _rec := get_dbf_global_memvars()
+        update_rec_server_and_dbf( "kadev_globusl", _rec, 1, "FULL" )
 
-  case Ch==K_CTRL_T
+        return DE_REFRESH
 
-     if Pitanje("p94","Izbrisati kriterij: "+trim(komentar)+" ?","N")="D"
-       DELETE
-       return DE_REFRESH
-     else
-       return DE_CONT
-     endif
+    case Ch==K_CTRL_T
 
-  case Ch==K_ENTER
-     RETURN DE_ABORT
-  case Ch==K_ESC
-     RETURN DE_ABORT
-  otherwise
-    return DE_CONT
+        if Pitanje("p94","Izbrisati kriterij: "+trim(komentar)+" ?","N")="D"
+            _rec := dbf_get_rec()
+            delete_rec_server_and_dbf( "kadev_globusl", _rec, 1, "FULL" )
+            return DE_REFRESH
+        else
+            return DE_CONT
+        endif
+
+    case Ch==K_ENTER
+        RETURN DE_ABORT
+    case Ch==K_ESC
+        RETURN DE_ABORT
+    otherwise
+        return DE_CONT
 endcase
 
-************************
-************************
+return
+
+
+
+
 function EdObrazDef()
- local Ch
+local Ch
 
-Ch:=LastKey()
+Ch := LastKey()
+
 do case
-  case Ch==K_CTRL_N .or. Ch==K_F4 .OR. Ch==K_F2
+  
+    case Ch==K_CTRL_N .or. Ch==K_F4 .OR. Ch==K_F2
 
-    if Ch==K_CTRL_N
-      APPEND BLANK
-    endif
+        if Ch==K_CTRL_N
+            APPEND BLANK
+        endif
 
-     Scatter()
-     Box('EdIstIsp',6,77,.f.)
-      set cursor on
-      @ m_x+1,m_y+2 SAY "Tip:" GET _Tip PICTURE "@!"  VALID _Tip $ "KRZ"
-      @ m_x+1,m_y+12 SAY "Grupa:" GET _Grupa  PICTURE "@!"
-      @ m_x+1,m_y+22 SAY "R.br.:" GEt _red_Br PICTURE "@!"
-      @ m_x+3,m_y+2 SAY "Komentar:" GET _Komentar
-      @ m_x+5,m_y+2 SAY "Uslov:" GET _Uslov VALID validuslov(_Uslov) PICTURE "@S60"
-      READ
-     BoxC()
-     if Ch==K_F4
-       append blank
-     endif
-     Gather()
-    return DE_REFRESH
+        set_global_vars_from_dbf()
+        
+        Box('EdIstIsp',6,77,.f.)
+            set cursor on
+            @ m_x+1,m_y+2 SAY "Tip:" GET _Tip PICTURE "@!"  VALID _Tip $ "KRZ"
+            @ m_x+1,m_y+12 SAY "Grupa:" GET _Grupa  PICTURE "@!"
+            @ m_x+1,m_y+22 SAY "R.br.:" GEt _red_Br PICTURE "@!"
+            @ m_x+3,m_y+2 SAY "Komentar:" GET _Komentar
+            @ m_x+5,m_y+2 SAY "Uslov:" GET _Uslov VALID validuslov(_Uslov) PICTURE "@S60"
+            READ
+        BoxC()
+     
+        if Ch == K_F4
+            append blank
+        endif
 
-  case Ch==K_CTRL_T
+        _rec := get_dbf_global_memvars()
+        update_rec_server_and_dbf( "kadev_defobraz", _rec, 1, "FULL" )
 
-     if Pitanje("p95","Izbrisati stavku: "+tip+"-"+grupa+"-"+red_Br+"-"+trim(komentar)+" ?","N")="D"
-       DELETE
-       skip
-       if eof(); skip -1; endif
-       return DE_REFRESH
-     else
-       return DE_CONT
-     endif
+        
+        return DE_REFRESH
 
-  case Ch==K_ENTER
-     RETURN DE_ABORT
-  case Ch==K_ESC
-     RETURN DE_ABORT
-  otherwise
-    return DE_CONT
+    case Ch == K_CTRL_T
+
+        if Pitanje("p95","Izbrisati stavku: "+tip+"-"+grupa+"-"+red_Br+"-"+trim(komentar)+" ?","N") == "D"
+            
+            _rec := dbf_get_rec()
+            delete_rec_server_and_dbf( "kadev_defobraz", _rec, 1, "FULL" )
+
+            skip
+            if eof()
+                skip -1
+            endif
+            return DE_REFRESH
+        else
+            return DE_CONT
+        endif
+
+    case Ch==K_ENTER
+        RETURN DE_ABORT
+    case Ch==K_ESC
+        RETURN DE_ABORT
+    otherwise
+        return DE_CONT
 endcase
 
+return
 
-******************************
-******************************
+
 function validuslov(cUslov)
  D0:=D1:=CTOD("")
 

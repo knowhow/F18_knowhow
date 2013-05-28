@@ -45,6 +45,78 @@ return
 
 
 
+function kadev_set_relations()
+
+select kdv_rmj
+set order to tag "ID"
+select kadev_0
+set relation to idrmj into kdv_rmj
+
+select kdv_rj
+set order to tag "ID"
+select kadev_0
+set relation to idrj into kdv_rj additive
+
+select kdv_rjrmj
+set order to tag "ID"
+select kadev_0
+set relation to idrj+idrmj into kdv_rjrmj additive
+
+select strspr
+set order to tag "ID"
+select kadev_0
+set relation to idstrspr into strspr additive
+
+select kdv_mz
+set order to tag "ID"
+select kadev_0
+set relation to idmzst into kdv_mz additive
+
+select kdv_k1
+set order to tag "ID"
+select kadev_0
+set relation to idk1 into kdv_k1 additive
+
+select kdv_k2
+set order to tag "ID"
+select kadev_0
+set relation to idk2 into kdv_k2 additive
+
+select kdv_zanim
+set order to tag "ID"
+select kadev_0
+set relation to idzanim into kdv_zanim additive
+
+select kdv_nac
+set order to tag "ID"
+select kadev_0
+set relation to idnac into kdv_nac additive
+
+select kdv_rrasp
+set order to tag "ID"
+select kadev_0
+set relation to idrrasp into kdv_rrasp additive
+
+select kdv_cin
+set order to tag "ID"
+select kadev_0
+set relation to idcin into kdv_cin additive
+
+select kdv_ves
+set order to tag "ID"
+select kadev_0
+set relation to idves into kdv_ves additive
+
+select kdv_rjrmj
+set order to tag "ID"
+select kadev_0
+set relation to idrj+idrmj into kdv_rjrmj additive
+
+return
+
+
+
+
 function MUPPER(cInput)
  IF gKodnaS=="7"
    cInput:=STRTRAN(cInput,"{","[")
@@ -203,20 +275,20 @@ DO WHILE YEAR(dDatum)==VAL(cGodina)
    IF DOW(dDatum)==1        // nedjelja
      IF cNedjelje=="0" .or. cNedjelje=="1".and.aDani[1] > 0
        APPEND BLANK
-       Scatter()
-         _id    := cGodina
-         _naz   := "NEDJELJA"
-         _datum := dDatum
-       Gather()
+       _rec := dbf_get_rec()
+       _rec["id"]    := cGodina
+       _rec["naz"]   := "NEDJELJA"
+       _rec["datum"] := dDatum
+       update_rec_server_and_dbf( "kadev_nerdan", _rec, 1, "FULL" )
      ENDIF
    ELSEIF DOW(dDatum)==7    // subota
      IF cSubote=="0" .or. cSubote=="1".and.aDani[7] > 0
        APPEND BLANK
-       Scatter()
-         _id    := cGodina
-         _naz   := "NERADNA SUBOTA"
-         _datum := dDatum
-       Gather()
+       _rec := dbf_get_rec()
+       _rec["id"]    := cGodina
+       _rec["naz"]   := "NERADNA SUBOTA"
+       _rec["datum"] := dDatum
+       update_rec_server_and_dbf( "kadev_nerdan", _rec, 1, "FULL" )
      ENDIF
    ENDIF
    ++aDani[DOW(dDatum)]

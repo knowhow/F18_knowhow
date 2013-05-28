@@ -122,6 +122,11 @@ do while !EOF()
 
     // samo ako postoje promjene...
     if _promjena
+        log_write( "F18_DOK_OPER: rnal, setovanje statusa operacije - dokument: " + ;
+                    ALLTRIM( STR( _rec["doc_no"] ) ) + ;
+                    ", stavka: " + ALLTRIM( STR( _rec["doc_op_no"] ) ) + ;
+                    ", status: " + ALLTRIM( _rec["op_status"] ) + ;
+                    ", opis: " + ALLTRIM( _rec["op_notes"] ) , 2 )
         update_rec_server_and_dbf( "rnal_doc_ops", _rec, 1, "CONT" )
         ++ _promj_count 
     endif

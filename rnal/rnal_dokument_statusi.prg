@@ -257,22 +257,22 @@ local _op_notes := _rec["op_notes"]
 
 Box(, 10, 70 )
 
-    @ m_x + _x, m_y + 2 SAY "Postavi status tekuce stavke na: " GET _op_status VALID _op_status $ " #1#2"
+    @ m_x + _x, m_y + 2 SAY "Postavi status tekuce stavke na "
 
     ++ _x
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "  prazno - u izradi"
+    @ m_x + _x, m_y + 2 SAY "  - '1' - zavrseno "
 
     ++ _x
-
-    @ m_x + _x, m_y + 2 SAY "  '1' - zavrseno"
-
-    ++ _x
-
-    @ m_x + _x, m_y + 2 SAY "  '2' - u toku" 
+    
+    @ m_x + _x, m_y + 2 SAY "  - prazno - u izradi"
 
     ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "           -> odabrani status: " GET _op_status VALID _op_status $ " #1#2"
+    
     ++ _x
 
     @ m_x + _x, m_y + 2 SAY "Napomena:" GET _op_notes PICT "@S50"

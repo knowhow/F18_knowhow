@@ -35,6 +35,13 @@ if ver["current"] > 0 .and. ver["current"] < 00806
 	next
 endif
 
+// 0.9.0
+if ver["current"] > 0 .and. ver["current"] < 00900
+	for each _tbl in { _table_name }
+   		modstru({"*" + _tbl, "A DOC_TYPE C 2 0" })
+	next
+endif
+
 IF_C_RESET_SEMAPHORE
 	
 CREATE_INDEX("1", "STR(doc_no,10)", _alias )
@@ -48,6 +55,13 @@ _alias := "_DOCS"
 _table_name := "rnal__docs"
 
 IF_NOT_FILE_DBF_CREATE
+
+// 0.9.0
+if ver["current"] > 0 .and. ver["current"] < 00900
+	for each _tbl in { _table_name }
+   		modstru({"*" + _tbl, "A DOC_TYPE C 2 0" })
+	next
+endif
 
 CREATE_INDEX("1", "STR(doc_no,10)", _alias )
 CREATE_INDEX("A", "STR(doc_status,2)+STR(doc_no,10)", _alias )
@@ -103,6 +117,14 @@ _alias := "DOC_OPS"
 _table_name := "rnal_doc_ops"
 
 IF_NOT_FILE_DBF_CREATE
+
+// 0.9.0
+if ver["current"] > 0 .and. ver["current"] < 00900
+	for each _tbl in { _table_name }
+   		modstru({"*" + _tbl, "A OP_STATUS C 1 0 A OP_NOTES C 250 0" })
+	next
+endif
+
 IF_C_RESET_SEMAPHORE
 		
 CREATE_INDEX("1", "STR(doc_no,10)+STR(doc_it_no,4)+STR(doc_op_no,4)", _alias )
@@ -112,6 +134,13 @@ _alias := "_DOC_OPS"
 _table_name := "rnal__doc_ops"
 
 IF_NOT_FILE_DBF_CREATE
+
+// 0.9.0
+if ver["current"] > 0 .and. ver["current"] < 00900
+	for each _tbl in { _table_name }
+   		modstru({"*" + _tbl, "A OP_STATUS C 1 0 A OP_NOTES C 250 0" })
+	next
+endif
 
 CREATE_INDEX("1", "STR(doc_no,10)+STR(doc_it_no,4)+STR(doc_op_no,4)", _alias )
 CREATE_INDEX("2", "STR(doc_no,10)+STR(doc_it_no,4)+STR(doc_it_el_,10)", _alias )
@@ -356,6 +385,7 @@ AADD(aDBf,{ "doc_priori", "N", 4, 0 })
 AADD(aDBf,{ "doc_desc", "C", 200, 0 })
 AADD(aDBf,{ "doc_sh_des", "C", 100, 0 })
 AADD(aDBf,{ "doc_status", "N", 2, 0 })
+AADD(aDBf,{ "doc_type", "C", 2, 0 })
 AADD(aDBf,{ "operater_i", "N", 10, 0 })
 AADD(aDBf,{ "doc_in_fmk", "N", 1, 0 })
 AADD(aDBf,{ "fmk_doc", "C", 150, 0 })
@@ -429,6 +459,8 @@ AADD(aDBf,{ "aop_id", "N", 10,  0 })
 AADD(aDBf,{ "aop_att_id", "N", 10,  0 })
 AADD(aDBf,{ "aop_value", "C", 150,  0 })
 AADD(aDBf,{ "doc_op_des", "C", 150,  0 })
+AADD(aDBf,{ "op_status", "C", 1,  0 })
+AADD(aDBf,{ "op_notes", "C", 250,  0 })
 
 return aDbf
 

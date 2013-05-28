@@ -2,6 +2,8 @@
  
   - LD, šifranik radnika, filter šifranika po pojedinim uslovima, opcija "Q"
   - KADEV, init verzija modula (stavljanje u funkciju iz FMK/KADEV reposa)
+  - FAKT, štampa maloprodajnih faktura ODT, maloprodajne cijene
+  - RNAL, promjena strukture tabele rnal_docs, polje "doc_type"
  
 1.4.183 2013-05-22, vsasa
  

@@ -17,10 +17,10 @@
 #define FMK_LIB_VER   "4.3.4"
 
 #define F18_DBF_VER_MAJOR  0
-#define F18_DBF_VER_MINOR  8
-#define F18_DBF_VER_PATCH  9
+#define F18_DBF_VER_MINOR  9
+#define F18_DBF_VER_PATCH  0
 
 #define SERVER_DB_VER_MAJOR  4
 #define SERVER_DB_VER_MINOR  6
-#define SERVER_DB_VER_PATCH  5
+#define SERVER_DB_VER_PATCH  6
 

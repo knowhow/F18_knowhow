@@ -145,6 +145,21 @@ endif
 CREATE_INDEX("1", "STR(doc_no,10)+STR(doc_it_no,4)+STR(doc_op_no,4)", _alias )
 CREATE_INDEX("2", "STR(doc_no,10)+STR(doc_it_no,4)+STR(doc_it_el_,10)", _alias )
 	
+_alias := "_DOC_OPST"
+_table_name := "rnal__doc_opst"
+
+IF_NOT_FILE_DBF_CREATE
+
+// 0.9.0
+if ver["current"] > 0 .and. ver["current"] < 00900
+	for each _tbl in { _table_name }
+   		modstru({"*" + _tbl, "A OP_STATUS C 1 0", "A OP_NOTES C 250 0" })
+	next
+endif
+
+CREATE_INDEX("1", "STR(doc_no,10)+STR(doc_it_no,4)+STR(doc_op_no,4)", _alias )
+CREATE_INDEX("2", "STR(doc_no,10)+STR(doc_it_no,4)+STR(doc_it_el_,10)", _alias )
+	
 
 aDbf := a_doc_log()
 _alias := "DOC_LOG"

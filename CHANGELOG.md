@@ -1,3 +1,7 @@
+1.4.185 2013-05-30, vsasa
+ 
+  - F18, otvaranje nove baze, brisanje, otvaranje nove godine
+ 
 1.4.184 2013-05-27, vsasa
  
   - LD, šifranik radnika, filter šifranika po pojedinim uslovima, opcija "Q"

@@ -309,6 +309,12 @@ local _params := hb_hash()
 local _dbs := {}
 local _i
 local _pg_srv, _my_params, _t_user, _t_pwd, _t_database
+local _qry 
+local _from_sess, _to_sess
+local _db_from, _db_to
+local _count := 0
+local _res := {}
+local _ok := .t.
 
 // ovo jos ne radi 
 MsgBeep( "Funkcija nije u upotrebi !" )
@@ -322,27 +328,56 @@ _t_database := _my_params["database"]
 // napravi relogin...
 _pg_srv := ::relogin_as( "admin", "boutpgmin" )
 
+_qry := "SELECT datname FROM pg_database " 
+_qry += "WHERE datname LIKE '% + " + _from_year + "' "
+_qry += "ORDER BY datname;"
+
+// daj mi listu...
+_dbs := _sql_query( _pg_srv, _qry )
+_dbs:Refresh()
+_dbs:GoTo(1)
+
 // treba da imamo listu baza...
-// treba vidjeti na koji nacin...
-for _i := 1 to LEN( _dbs )
+// uzemomo sa select-om sve sto ima 2013 recimo 
+// i onda cemo provrtiti te baze i napraviti 2014
+
+do while !_dbs:EOF()
+
+    ++ _count
+
+    oRow := _dbs:GetRow()
+
+    // test_2013
+    _db_from := ALLTRIM( oRow:FieldGet(1) )
+    // test_2014
+    _db_to := STRTRAN( _tmp, "_" + _from_year, "_" + _to_year ) 
 
     // init parametri za razdvajanje...
     // pocetno stanje je 1
     _params["db_type"] := 1
-    _params["db_name"] := "test_2004"
-    _params["db_template"] := "test_2003"
+    _params["db_name"] := _db_to
+    _params["db_template"] := _db_from
     _params["db_drop"] := "D"
     _params["db_comment"] := ""
 
     // otvori bazu...
-    ::create_new_db( _params, _pg_srv )
+    if ! ::create_new_db( _params, _pg_srv )
+        AADD( _res, { _db_to, _db_from, "ERR" } )
+    endif
 
-next
+    _dbs:Skip()
+
+enddo
 
 // vrati se gdje si bio...
 ::relogin_as( _t_user, _t_pwd, _t_database )
 
-return
+// imamo i rezultate operacije... kako da to vidimo ?
+if LEN( _res ) > 0
+    // ?????
+endif
+
+return _ok
 
 
 
@@ -475,6 +510,8 @@ endif
 if _relogin
     ::relogin_as( _t_user, _t_pwd, _t_database )
 endif
+
+_ok := .t.
 
 return _ok
 
@@ -610,10 +647,14 @@ _qry += "DELETE FROM fmk.kalk_kalk;"
 _qry += "DELETE FROM fmk.kalk_doks;"
 _qry += "DELETE FROM fmk.kalk_doks2;"
 
+_qry += "DELETE FROM fmk.pos_doks;"
+_qry += "DELETE FROM fmk.pos_pos;"
+_qry += "DELETE FROM fmk.pos_dokspf;"
+
 _qry += "DELETE FROM fmk.fakt_fakt_atributi;"
-_qry += "DELETE FROM fmk.fakt_fakt;"
 _qry += "DELETE FROM fmk.fakt_doks;"
 _qry += "DELETE FROM fmk.fakt_doks2;"
+_qry += "DELETE FROM fmk.fakt_fakt;"
 
 _qry += "DELETE FROM fmk.fin_suban;"
 _qry += "DELETE FROM fmk.fin_anal;"
@@ -640,6 +681,7 @@ _qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'kalk/%';"
 _qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'fakt/%';"
 _qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'pos/%';"
 _qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'epdv/%';"
+_qry += "DELETE FROM fmk.metric WHERE metric_name LIKE '%auto_plu%';"
 
 // ako je potrebno brisati sve onda dodaj i sljedece...
 if data_type > 1

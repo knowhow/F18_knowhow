@@ -22,7 +22,13 @@ CLASS F18AdminOpts
     DATA update_db_result
 
     METHOD create_new_db()
-    METHOD delete_db()
+    METHOD drop_db()
+    METHOD delete_db_data_all()
+
+    METHOD new_session()
+
+    METHOD relogin_as()
+
     DATA create_db_result
     
     PROTECTED:
@@ -294,16 +300,479 @@ _ok := .t.
 return _ok
 
 
-METHOD F18AdminOpts:create_new_db()
+
+// -----------------------------------------------------------------------
+// razdvajenje sezona...
+// -----------------------------------------------------------------------
+METHOD F18AdminOpts:new_session()
+local _params := hb_hash()
+local _dbs := {}
+local _i
+local _pg_srv, _my_params, _t_user, _t_pwd, _t_database
+
+// ovo jos ne radi 
+MsgBeep( "Funkcija nije u upotrebi !" )
+return
+
+_my_params := my_server_params()
+_t_user := _my_params["user"]
+_t_pwd := _my_params["password"]
+_t_database := _my_params["database"]
+
+// napravi relogin...
+_pg_srv := ::relogin_as( "admin", "boutpgmin" )
+
+// treba da imamo listu baza...
+// treba vidjeti na koji nacin...
+for _i := 1 to LEN( _dbs )
+
+    // init parametri za razdvajanje...
+    // pocetno stanje je 1
+    _params["db_type"] := 1
+    _params["db_name"] := "test_2004"
+    _params["db_template"] := "test_2003"
+    _params["db_drop"] := "D"
+    _params["db_comment"] := ""
+
+    // otvori bazu...
+    ::create_new_db( _params, _pg_srv )
+
+next
+
+// vrati se gdje si bio...
+::relogin_as( _t_user, _t_pwd, _t_database )
+
 return
 
 
-METHOD F18AdminOpts:delete_db()
-return
+
+// ---------------------------------------------------------------
+// kreiranje nove baze 
+// ---------------------------------------------------------------
+METHOD F18AdminOpts:create_new_db( _params, _pg_srv )
+local _ok := .f.
+local _db_name, _db_template, _db_drop, _db_type, _db_comment
+local _qry
+local _ret 
+local _relogin := .f.
+local _db_params, _t_user, _t_pwd, _t_database
+
+// 1) params read
+// ===============================================================
+if _params == NIL
+
+    if !SigmaSif("ADMIN")
+        MsgBeep( "Opcija zasticena !" )
+        return _ok
+    endif
+
+    _params := hb_hash()
+
+    // CREATE DATABASE name OWNER admin TEMPLATE templ;
+    if !::create_new_db_params( @_params )
+        return _ok
+    endif
+
+endif
+
+// uzmi parametre koje ces koristiti dalje...
+_db_name := _params["db_name"]
+_db_template := _params["db_template"]
+_db_drop := _params["db_drop"] == "D"
+_db_type := _params["db_type"]
+_db_comment := _params["db_comment"]
+
+if EMPTY( _db_template ) .or. LEFT( _db_template, 5 ) == "empty"
+    // ovo ce biti prazna baza uvijek...
+    _db_type := 0
+endif
+
+// 2) relogin as admin
+// ===============================================================
+// napravi relogin na bazi... radi admin prava...
+if _pg_srv == NIL
+
+    _db_params := my_server_params()
+    _t_user := _db_params["user"]
+    _t_pwd := _db_params["password"]
+    _t_database := _db_params["database"]
+
+    _pg_srv := ::relogin_as( "admin", "boutpgmin" )
+
+    _relogin := .t.
+
+endif
+
+// 3) DROP DATABASE
+// ===============================================================
+if _db_drop
+    // napravi mi DROP baze
+    if !::drop_db( _db_name, _pg_srv )
+        return _ok
+    endif
+endif
+
+
+// 4) CREATE DATABASE
+// ===============================================================
+// query string za CREATE DATABASE sekvencu
+_qry := "CREATE DATABASE " + _db_name + " OWNER admin"
+if !EMPTY( _db_template )
+    _qry += " TEMPLATE " + _db_template
+endif
+_qry += ";"
+
+MsgO( "Kreiram novu bazu " + _db_name + " ..." )
+_ret := _sql_query( _pg_srv, _qry )
+MsgC()
+
+if VALTYPE( _ret ) == "L" .and. _ret == .f.
+    // doslo je do neke greske...
+    return _ok
+endif
+
+// 5) GRANT ALL ...
+// ===============================================================
+
+// mozemo sada da napravimo grantove
+_qry := "GRANT ALL ON DATABASE " + _db_name + " TO admin;"
+_qry += "GRANT ALL ON DATABASE " + _db_name + " TO xtrole WITH GRANT OPTION;"
+
+MsgO( "Postavljam privilegije baze..." )
+_ret := _sql_query( _pg_srv, _qry )
+MsgC()
+
+if VALTYPE( _ret ) == "L" .and. _ret == .f.
+    // doslo je do neke greske...
+    return _ok
+endif
+
+
+// 6) COMMENT ON DATABASE ...
+// ===============================================================
+
+// komentar ako postoji !
+if !EMPTY( _db_comment )
+    _qry := "COMMENT ON DATABASE " + _db_name + " IS " + _sql_quote( hb_strtoutf8( _db_comment ) ) + ";"
+    MsgO( "Postavljam opis baze..." )
+    _ret := _sql_query( _pg_srv, _qry )
+    MsgC()
+endif
+
+
+// 7) sredi podatake....
+// ===============================================================
+
+// sad se mogu pozabaviti brisanje podataka...
+if _db_type > 0
+    ::delete_db_data_all( _db_name, _db_type )
+endif
+
+// 8) vrati se na postgres bazu...
+// ===============================================================
+
+// vrati se u prvobitno stanje operacije...
+if _relogin
+    ::relogin_as( _t_user, _t_pwd, _t_database )
+endif
+
+return _ok
+
+
+//-------------------------------------------------------------------
+// drop baze podataka
+//-------------------------------------------------------------------
+METHOD F18AdminOpts:relogin_as( user, pwd, database )
+local _pg_server
+local _db_params := my_server_params()
+
+// logout
+my_server_logout()
+
+_db_params["user"] := user
+_db_params["password"] := pwd
+
+if database <> NIL
+    _db_params["database"] := database
+endif
+
+my_server_params( _db_params )
+my_server_login( _db_params )
+_pg_server := pg_server()
+
+return _pg_server
+
+
+
+//-------------------------------------------------------------------
+// drop baze podataka
+//-------------------------------------------------------------------
+METHOD F18AdminOpts:drop_db( db_name, pg_srv )
+local _ok := .t.
+local _qry, _ret
+local _my_params
+local _relogin := .f.
+
+if db_name == NIL
+
+    if !SigmaSif("ADMIN")
+        MsgBeep( "Opcija zasticena !" )
+        _ok := .f.
+        return
+    endif
+
+    // treba mi db name ?
+    db_name := SPACE( 30 )
+
+    Box(, 1, 60 )
+        @ m_x + 1, m_y + 2 SAY "Naziv baze:" GET db_name VALID !EMPTY( db_name )
+        read
+    BoxC()
+
+    if LastKey() == K_ESC
+        _ok := .f.
+        return _ok
+    endif
+
+    db_name := ALLTRIM( db_name )
+
+    if Pitanje(, "100% sigurni da zelite izbrisati bazu '" + db_name + "' ?", "N" ) == "N"
+        _ok := .f.
+        return _ok
+    endif
+
+endif
+
+if pg_srv == NIL
+
+    // treba mi relogin...
+    _relogin := .t.
+
+    _my_params := my_server_params()
+    _t_user := _my_params["user"]
+    _t_pwd := _my_params["password"]
+    _t_database := _my_params["database"]
+
+    // napravi relogin...
+    pg_srv := ::relogin_as( "admin", "boutpgmin" )
+
+endif
+
+_qry := "DROP DATABASE IF EXISTS " + db_name + ";"
+
+MsgO( "Brisanje baze u toku..." )
+_ret := _sql_query( pg_srv, _qry )
+MsgC()
+
+if VALTYPE( _ret ) == "L" .and. _ret == .f.
+    _ok := .f.
+endif
+
+// vrati me nazad ako je potrebno
+if _relogin
+    ::relogin_as( _t_user, _t_pwd, _t_database )
+endif
+
+return _ok
  
 
 
-METHOD F18AdminOpts:create_new_db_params()
-return
+
+// -------------------------------------------------------------------
+// brisanje podataka u bazi podataka
+// -------------------------------------------------------------------
+METHOD F18AdminOpts:delete_db_data_all( db_name, data_type )
+local _ok := .t.
+local _ret
+local _qry
+local _pg_srv
+
+// napravi relogin na bazu...
+_pg_srv := ::relogin_as( "admin", "boutpgmin", ALLTRIM( db_name ) )
+
+// data_type
+// 1 - pocetno stanje
+// 2 - brisi sve podatke
+
+_qry := ""
+_qry += "DELETE FROM fmk.kalk_kalk;"
+_qry += "DELETE FROM fmk.kalk_doks;"
+_qry += "DELETE FROM fmk.kalk_doks2;"
+
+_qry += "DELETE FROM fmk.fakt_fakt_atributi;"
+_qry += "DELETE FROM fmk.fakt_fakt;"
+_qry += "DELETE FROM fmk.fakt_doks;"
+_qry += "DELETE FROM fmk.fakt_doks2;"
+
+_qry += "DELETE FROM fmk.fin_suban;"
+_qry += "DELETE FROM fmk.fin_anal;"
+_qry += "DELETE FROM fmk.fin_sint;"
+_qry += "DELETE FROM fmk.fin_nalog;"
+
+_qry += "DELETE FROM fmk.mat_suban;"
+_qry += "DELETE FROM fmk.mat_anal;"
+_qry += "DELETE FROM fmk.mat_sint;"
+_qry += "DELETE FROM fmk.mat_nalog;"
+
+_qry += "DELETE FROM fmk.rnal_docs;"
+_qry += "DELETE FROM fmk.rnal_doc_it;"
+_qry += "DELETE FROM fmk.rnal_doc_it2;"
+_qry += "DELETE FROM fmk.rnal_doc_ops;"
+_qry += "DELETE FROM fmk.rnal_doc_log;"
+_qry += "DELETE FROM fmk.rnal_doc_lit;"
+
+_qry += "DELETE FROM fmk.epdv_kuf;"
+_qry += "DELETE FROM fmk.epdv_kif;"
+
+_qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'fin/%';"
+_qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'kalk/%';"
+_qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'fakt/%';"
+_qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'pos/%';"
+_qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'epdv/%';"
+
+if data_type > 1
+    
+    _qry += "DELETE FROM fmk.os_os;"
+    _qry += "DELETE FROM fmk.os_promj;"
+
+    _qry += "DELETE FROM fmk.sii_os;"
+    _qry += "DELETE FROM fmk.sii_promj;"
+
+    _qry += "DELETE FROM fmk.ld_ld;"
+    _qry += "DELETE FROM fmk.ld_radkr;"
+    _qry += "DELETE FROM fmk.ld_radn;"
+    _qry += "DELETE FROM fmk.ld_pk_data;"
+    _qry += "DELETE FROM fmk.ld_pk_radn;"
+
+    _qry += "DELETE FROM fmk.roba;"
+    _qry += "DELETE FROM fmk.partn;"
+    _qry += "DELETE FROM fmk.sifv;"
+
+endif
+
+MsgO( "Priprema podataka za novu bazu..." )
+_ret := _sql_query( _pg_srv, _qry )
+MsgC()
+
+if VALTYPE( _ret ) == "L" .and. _ret == .f.
+    _ok := .f.
+endif
+
+return _ok
+ 
+
+
+// -------------------------------------------------------------------
+// kreiranje baze, parametri
+// -------------------------------------------------------------------
+METHOD F18AdminOpts:create_new_db_params( params )
+local _ok := .f.
+local _x := 1
+local _db_name := SPACE(50)
+local _db_template := SPACE(50)
+local _db_year := ALLTRIM( STR( YEAR( DATE() ) ) )
+local _db_comment := SPACE(100)
+local _db_drop := "N"
+local _db_type := 1
+local _db_str
+
+Box(, 12, 70 )
+
+    @ m_x + _x, m_y + 2 SAY "*** KREIRANJE NOVE BAZE PODATAKA ***"
+
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Naziv nove baze:" GET _db_name VALID _new_db_valid( _db_name ) PICT "@S30"
+    @ m_x + _x, col() + 1 SAY "godina:" GET _db_year PICT "@S4" VALID !EMPTY( _db_year )
+
+    ++ _x
+    
+    @ m_x + _x, m_y + 2 SAY "Opis baze (*):" GET _db_comment PICT "@S50"
+
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Koristiti kao uzorak postojecu bazu (*):"
+    
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Naziv:" GET _db_template PICT "@S40"
+
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Brisi bazu ako vec postoji ! (D/N)" GET _db_drop VALID _db_drop $ "DN" PICT "@!"
+
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Praznjenje podataka (1) pocetno stanje (2) sve" GET _db_type PICT "9"
+    
+    ++ _x
+    ++ _x
+    
+    @ m_x + _x, m_y + 2 SAY "*** opcije markirane kao (*) nisu obavezne"
+
+    read
+
+BoxC()
+
+if LastKey() == K_ESC
+    return _ok
+endif
+
+// formiranje strina naziva baze...
+_db_str := ALLTRIM( _db_name ) + "_" + ALLTRIM( _db_year )
+
+// provjeri string ...
+// .... nesto ....
+
+// template empty
+if EMPTY( _db_template )
+    _db_template := "empty"
+endif
+
+// - zaista nema template !
+if ALLTRIM( _db_template ) == "!"
+    _db_template := ""
+endif
+
+params["db_name"] := ALLTRIM( _db_str )
+params["db_template"] := ALLTRIM( _db_template )
+params["db_drop"] := _db_drop
+params["db_type"] := _db_type
+params["db_comment"] := ALLTRIM( _db_comment )
+
+_ok := .t.
+
+return _ok
+
+
+// ----------------------------------------------------------
+// dodavanje nove baze - validator
+// ----------------------------------------------------------
+static function _new_db_valid( db_name )
+local _ok := .f.
+
+if EMPTY( db_name )
+    MsgBeep( "Naziv baze ne moze biti prazno !" )
+    return _ok
+endif
+
+if ( "-" $ db_name .or. ; 
+   "?" $ db_name .or. ;
+   ":" $ db_name .or. ;
+   "," $ db_name .or. ;
+   "." $ db_name )
+
+    MsgBeep( "Naziv baze ne moze sadrzavati znakove .:- itd... !" )
+    return _ok
+
+endif
+
+_ok := .t.
+return _ok
+
+
 
 

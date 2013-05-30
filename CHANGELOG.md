@@ -7,6 +7,7 @@
   - RNAL, setovanje statusa operacija, u toku...
   - RNAL, štampa obračunskog lista ODT varijanta
   - RNAL, logiranje baznih operacija kao F18_DOK_OPER log status
+  - F18, kreiranje nove baze podataka, brisanje podataka itd...
  
 1.4.183 2013-05-22, vsasa
  

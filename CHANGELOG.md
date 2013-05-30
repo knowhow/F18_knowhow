@@ -5,6 +5,8 @@
   - FAKT, štampa maloprodajnih faktura ODT, maloprodajne cijene
   - RNAL, promjena strukture tabele rnal_docs, polje "doc_type"
   - RNAL, setovanje statusa operacija, u toku...
+  - RNAL, štampa obračunskog lista ODT varijanta
+  - RNAL, logiranje baznih operacija kao F18_DOK_OPER log status
  
 1.4.183 2013-05-22, vsasa
  

@@ -153,9 +153,9 @@ xml_node( "pr_time", params["spec_print_vrijeme"] )
 
 _docs := ALLTRIM( params["nalozi_lista"] )
 if "," $ _docs
-    xml_node( "lst", to_xml_encoding( "prema nalozima: " + _docs ) )
+    xml_node( "lst", to_xml_encoding( "prema nalozima: " + ALLTRIM( _docs ) ) )
 else
-    xml_node( "lst", to_xml_encoding( "prema nalogu br: " + params["nalog_broj"] ) )
+    xml_node( "lst", to_xml_encoding( "prema nalogu br: " + ALLTRIM( params["nalog_broj"] ) ) )
 endif
 
 // kupac/kontakt podaci...

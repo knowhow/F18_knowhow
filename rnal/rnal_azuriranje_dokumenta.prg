@@ -136,6 +136,10 @@ endif
 f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops", "doc_log", "doc_lit" } )
 sql_table_update( nil, "END" )
 
+// logiranje
+log_write( "F18_DOK_OPER: rnal, azuriranje dokumenta broj: " + ALLTRIM( STR( __doc_no ) ) + ;
+            ", status: " + ALLTRIM( STR( __doc_stat ) ), 2 )
+
 // ------ kraj transakcije
 
 // sve je ok brisi pripremu

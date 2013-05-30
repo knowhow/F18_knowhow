@@ -493,8 +493,10 @@ do case
     case ( UPPER(CHR(Ch)) == "X" )
 	
 		select docs
+        nDoc_no := docs->doc_no
 		// promjena broja dokumenta
-		if ch_doc_no( docs->doc_no )
+		if ch_doc_no( nDoc_no )
+            log_write( "F18_DOK_OPER: rnal, promjena broja naloga, nalog broj: " + ALLTRIM( STR( nDoc_no ) ) , 2 )
 			select docs
 			RETURN DE_REFRESH
 		endif
@@ -504,11 +506,7 @@ do case
 	// ispravka veznih dokumenata
 	case ( UPPER(CHR(Ch)) == "O" )
 		
-		//select docs 
-		
 		otpr_edit( docs->fmk_doc )
-		
-		//select docs
 		
 		RETURN DE_REFRESH
 	
@@ -562,23 +560,11 @@ do case
 	// otvaranje naloga za doradu
 	case (UPPER(CHR(Ch)) == "D")
 		
-		// provjeri ima li pravo pristupa...
-		if !ImaPravoPristupa(goModul:oDataBase:cName, "DOK", "DORADA")
-			
-			MsgBeep( cZabrana )
-			
-			select docs
-			return DE_CONT
-			
-		endif
-		
 		// provjeri da li je zauzet
 		if is_doc_busy()
-			
 			msg_busy_doc()
 			select docs
 			return DE_CONT
-			
 		endif
 		
 		if Pitanje(, "Otvoriti nalog radi dorade (D/N) ?", "N") == "D"
@@ -587,9 +573,8 @@ do case
 			nDoc_no := docs->doc_no
 			
 			if doc_2__doc( nDoc_no ) == 1
-				
 				MsgBeep("Nalog otvoren!#Prelazim u pripremu##Pritisni nesto za nastavak...")
-				
+                log_write( "F18_DOK_OPER: rnal, dorada naloga broj: " + ALLTRIM( STR( nDoc_no ) ), 2 )
 			endif
 			
 			select docs
@@ -636,23 +621,11 @@ do case
 	// zatvaranje naloga
 	case (UPPER(CHR(Ch)) == "Z")
 		
-		// ima li pravo pristupa...
-		if !ImaPravoPristupa(goModul:oDataBase:cName, "DOK", "ZATVORI")
-			
-			MsgBeep( cZabrana )
-
-			select docs
-			return DE_CONT
-			
-		endif
-		
 		// provjeri da li je zauzet
 		if is_doc_busy()
-			
 			msg_busy_doc()
 			select docs
 			return DE_CONT
-			
 		endif
 			
 		if Pitanje(, "Zatvoriti nalog (D/N) ?", "N") == "D"
@@ -691,15 +664,6 @@ do case
 	// fix - procedura ispravke statusa naloga
 	case (UPPER(CHR(Ch)) == "F")
 		
-		// ima li pravo pristupa
-		if !ImaPravoPristupa(goModul:oDataBase:cName, "DOK", "FIXSTATUS")
-			
-			MsgBeep( cZabrana )
-			select docs
-			return DE_CONT
-			
-		endif
-		
 		if Pitanje(,"Resetovati status dokumenta (D/N) ?", "N") == "N"
 			return DE_CONT
 		endif
@@ -713,7 +677,9 @@ do case
 		set filter to
 		
 		set_doc_marker( nDoc_no, 0 )
-		
+	
+        log_write( "F18_DOK_OPER: rnal, reset statusa naloga broj: " + ALLTRIM( STR( nDoc_no ) ) + " na status 0", 2 )
+	
 		set_f_kol( cTmpFilter )
 		
 		go (nTRec)
@@ -757,24 +723,12 @@ do case
 	// promjene na nalogu
 	case (UPPER(CHR(Ch)) == "P" )
 		
-		// ima li pravo pristupa...
-		if !ImaPravoPristupa(goModul:oDataBase:cName, "DOK", "PROMJENE")
-			
-			MsgBeep( cZabrana )
-			
-			select docs
-			return DE_CONT
-			
-		endif
-		
 		nTRec := RECNO()
 		
 		if is_doc_busy()
-			
 			msg_busy_doc()
 			select docs
 			return DE_CONT
-			
 		endif
 		
 		nDoc_no := docs->doc_no
@@ -931,9 +885,8 @@ if Pitanje(, "Otvoriti nalog radi dorade (D/N) ?", "N") == "D"
 	nDoc_no := docs->doc_no
 			
 	if doc_2__doc( nDoc_no ) == 1
-				
 		MsgBeep("Nalog otvoren!#Prelazim u pripremu##Pritisni nesto za nastavak...")
-				
+        log_write( "F18_DOK_OPER: rnal, dorada naloga broj: " + ALLTRIM( STR( nDoc_no ) ), 2 )
 	endif
 			
 	select docs

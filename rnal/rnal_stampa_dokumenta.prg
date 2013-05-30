@@ -17,6 +17,8 @@
 static __temp
 static __doc_no
 
+
+
 // -------------------------------------
 // stampa naloga, filovanje prn tabela
 // -------------------------------------
@@ -66,36 +68,38 @@ o_tables( __temp )
 return DE_REFRESH
 
 
+
+
 // -------------------------------------
 // stampa obracunskog lista
 // filovanje prn tabela
 // -------------------------------------
-function st_obr_list( lTemporary, nDoc_no, aOlDocs )
-local lGN := .t.
-local i 
-local ii
-local cDocs := ""
-local cFlag := "N"
+function st_obr_list( temp, doc_no, a_docs )
+local _gn := .t.
+local _i 
+local _ii
+local _docs := ""
+local _flag := "N"
 
 if gGnUse == "N"
-    lGn := .f.
+    _gn := .f.
 endif
 
-if aOlDocs == nil .or. LEN( aOlDocs ) == 0
+if a_docs == NIL .or. LEN( a_docs ) == 0
     // dodaj onda ovaj nalog koji treba da se stampa
-    aOlDocs := {}
-    AADD(aOlDocs, { nDoc_no, "" })
+    a_docs := {}
+    AADD( a_docs, { doc_no, "" })
 endif
 
 // setuj opis i dokumente 
-for ii:=1 to LEN(aOlDocs)
-    if !EMPTY(cDocs)
-        cDocs += ","
+for _ii := 1 to LEN( a_docs )
+    if !EMPTY( _docs )
+        _docs += ","
     endif
-    cDocs += ALLTRIM( STR(aOlDocs[ii, 1] ))
+    _docs += ALLTRIM( STR( a_docs[ _ii, 1 ] ))
 next
 
-__temp := lTemporary
+__temp := temp
 
 // kreiraj print tabele
 t_rpt_create()
@@ -105,24 +109,24 @@ t_rpt_open()
 o_tables( __temp )
 
 // prosetaj kroz stavke za stampu !
-for i:=1 to LEN( aOlDocs ) 
+for _i := 1 to LEN( a_docs ) 
 
-    if aOlDocs[i, 1] < 0
+    if a_docs[ _i, 1 ] < 0
         // ovakve stavke preskoci, jer su to brisane stavke !
         loop
     endif
 
-    __doc_no := aOlDocs[ i, 1 ] 
+    __doc_no := a_docs[ _i, 1 ] 
 
     select docs
     go top
     seek docno_str( __doc_no )
 
     // osnovni podaci naloga
-    _fill_main( cDocs )
+    _fill_main( _docs )
     
     // stavke naloga
-    _fill_items( lGN, 2 )
+    _fill_items( _gn, 2 )
     
     // dodatne stavke naloga
     _fill_it2()
@@ -132,24 +136,26 @@ for i:=1 to LEN( aOlDocs )
 
 next
 
-nCount := t_docit->(RecCount2())
+_count := t_docit->(RecCount2())
 
-if nCount > 0 .and. pitanje(,"Odabrati stavke za stampu ? (D/N)","N") == "D"
+if _count > 0 .and. pitanje(,"Odabrati stavke za stampu ? (D/N)","N") == "D"
     sel_items()
 endif
 
 // da li se stampa rekapitulacija repromaterijala
-lFlag := _is_p_rekap()
-
-if lFlag == .t.
-    cFlag := "D"
+if _is_p_rekap()
+    _flag := "D"
 endif
 
 // upisi za rekapitulaciju u t_pars
-add_tpars("N20", cFlag )
+add_tpars( "N20", _flag )
 
 // printaj obracunski list
-obrl_print( .t. )
+if gRnalOdt == "D"
+    rnal_obracunski_list_odt()
+else
+    obrl_print( .t. )
+endif
 
 close all
 

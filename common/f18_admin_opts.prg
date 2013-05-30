@@ -587,6 +587,16 @@ local _ret
 local _qry
 local _pg_srv
 
+if db_name == NIL
+    MsgBeep( "Opcija zahtjeva naziv baze ..." )
+    _ok := .f.
+    return _ok
+endif
+
+if data_type == NIL
+    data_type := 1
+endif
+
 // napravi relogin na bazu...
 _pg_srv := ::relogin_as( "admin", "boutpgmin", ALLTRIM( db_name ) )
 
@@ -594,6 +604,7 @@ _pg_srv := ::relogin_as( "admin", "boutpgmin", ALLTRIM( db_name ) )
 // 1 - pocetno stanje
 // 2 - brisi sve podatke
 
+// bitne tabele za reset podataka baze
 _qry := ""
 _qry += "DELETE FROM fmk.kalk_kalk;"
 _qry += "DELETE FROM fmk.kalk_doks;"
@@ -630,6 +641,7 @@ _qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'fakt/%';"
 _qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'pos/%';"
 _qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'epdv/%';"
 
+// ako je potrebno brisati sve onda dodaj i sljedece...
 if data_type > 1
     
     _qry += "DELETE FROM fmk.os_os;"

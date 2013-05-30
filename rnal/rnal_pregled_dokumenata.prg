@@ -531,11 +531,13 @@ do case
 		if nScn == 0
 			
 			// dodaj u matricu
-			AADD( aDocs, { docs->doc_no, ALLTRIM(g_cust_desc(docs->cust_id)) + "/" + ALLTRIM(g_cont_desc(docs->cont_id)) })
+			AADD( aDocs, { docs->doc_no, ALLTRIM( g_cust_desc( docs->cust_id ) ) + "/" + ;
+                            ALLTRIM( g_cont_desc( docs->cont_id ) ) })
 
 			Beep(2)
 
 			s_ol_status( aDocs )
+
 		endif
 
 		return DE_CONT
@@ -851,19 +853,20 @@ endif
 
 // dodaj u matricu tekst
 cOpt := "A-dodaj Y-brisi: "
-aStr := SjeciStr( cOpt + cStr, maxcols()-20 )
+aStr := SjeciStr( cOpt + cStr, maxcols() - 20 )
 
 // prikaz idi u 2-3 reda
 
-@ maxrows() - 12, 2 SAY PADR("", maxcols()-10) COLOR "W/G+"
-@ maxrows() - 11, 2 SAY PADR("", maxcols()-10) COLOR "W/G+"
+@ maxrows() - 7, 5 SAY PADR("", maxcols()-10) COLOR "W/G+"
+@ maxrows() - 6, 5 SAY PADR("", maxcols()-10) COLOR "W/G+"
 
-for n := 1 to LEN( aStr )
-	
-	@ maxrows() - 13  + n, 2 SAY aStr[n] COLOR "W/G+"
+for n := 1 to LEN( aStr )	
+	@ maxrows() - 8  + n, 5 SAY aStr[n] COLOR "W/G+"
 next
 
 return
+
+
 
 
 

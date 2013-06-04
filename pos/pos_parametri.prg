@@ -47,6 +47,7 @@ return .f.
 function pos_param_podaci_kase()
 local aNiz:={}
 local cPom:=""
+local _user := my_user()
 private cIdPosOld:=gIdPos
 private cHistory:=" "
 private aHistory:={}
@@ -71,15 +72,15 @@ VarEdit( aNiz, 2, 2, 24, 78,"PARAMETRI RADA PROGRAMA - PODACI KASE","B1")
 // Upisujem nove parametre
 if LastKey() <> K_ESC
     
-    set_metric("IDPos", nil, gIdPos )
-    set_metric("KalkDestinacija", nil, gKalkDest )       
-    set_metric("kalk_tops_prenos_vise_prodajnih_mjesta", my_user(), gMultiPM )
-    set_metric("KoristitiDirektorijProvjere", nil, gUseChkDir ) 
-    set_metric("OznakaLokalnogPorta", nil, gLocPort )
-    set_metric("OznakaGotovinskogPlacanja", nil, gGotPlac )
-    set_metric("OznakaDugPlacanja", nil, gDugPlac )
-    set_metric("StranaValuta", nil, gStrValuta )
-    set_metric("DuzinaSifre", nil, gDuzSifre )
+    set_metric( "IDPos", _user, gIdPos )
+    set_metric( "KalkDestinacija", _user, gKalkDest )       
+    set_metric( "kalk_tops_prenos_vise_prodajnih_mjesta", _user, gMultiPM )
+    set_metric( "KoristitiDirektorijProvjere", _user, gUseChkDir ) 
+    set_metric( "OznakaLokalnogPorta", _user, gLocPort )
+    set_metric( "OznakaGotovinskogPlacanja", nil, gGotPlac )
+    set_metric( "OznakaDugPlacanja", nil, gDugPlac )
+    set_metric( "StranaValuta", nil, gStrValuta )
+    set_metric( "DuzinaSifre", _user, gDuzSifre )
 
 endif
 
@@ -255,15 +256,15 @@ if LASTKEY() <> K_ESC
     set_metric("StampanjePunktova", nil, gStamStaPun )
     set_metric("VoditiPoSmjenama", nil, gVsmjene )
     set_metric("UpravnikIspravljaCijene", nil, gSifUpravn )
-    set_metric("BarkodEnter", nil, gEntBarCod )
+    set_metric("BarkodEnter", my_user(), gEntBarCod )
     set_metric("UpitZaNacinPlacanja", nil, gUpitNP )
     set_metric("EvidentiranjeVrstaPlacanja", nil, gEvidPl )
     set_metric("PretragaArtiklaPoNazivu", nil, gSifUvPoNaz )
 
-	set_metric( "pos_stanje_sa_kalk_konta", NIL, _kalk_konto )
+	set_metric( "pos_stanje_sa_kalk_konta", my_user(), _kalk_konto )
 	kalk_konto_za_stanje_pos( .t. )
 
-    set_metric( "pos_maksimalna_kolicina_na_unosu", nil, _max_qtty )
+    set_metric( "pos_maksimalna_kolicina_na_unosu", my_user(), _max_qtty )
 	max_kolicina_kod_unosa(.t.)
 
     set_metric( "pos_konstantni_unos_racuna", my_user(), _konstantni_unos )

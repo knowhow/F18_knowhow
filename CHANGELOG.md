@@ -1,3 +1,8 @@
+1.4.186 2013-06-04, vsasa
+ 
+  - POS, storniranje računa F7, odabir pos računa
+  - POS, popust preko određenog iznosa - bugfix
+ 
 1.4.185 2013-05-30, vsasa
  
   - F18, otvaranje nove baze, brisanje, otvaranje nove godine

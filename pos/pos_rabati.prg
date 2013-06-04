@@ -119,9 +119,9 @@ function GetPopPrekoOdrIznosa(aRabat, nCijena)
 *{
 local nNovaCijena:=0
 
-if VarPopPrekoOdrIzn()
-	nNovaCijena=Round(nCijena*gPopIznP/100, gPopDec)
-	AddToArrRabat(aRabat, roba->id, nil, nil, nil, nNovaCijena)
+if VarPopPrekoOdrIzn() .and. ispopprekoodrizn( nCijena )
+	nNovaCijena := Round( nCijena * gPopIznP / 100, gPopDec )
+	AddToArrRabat( aRabat, roba->id, nil, nil, nil, nNovaCijena )
 endif
 
 return
@@ -336,15 +336,12 @@ if nPosition <> 0
 endif
 
 return nIznos
-*}
 
 
-/*! \fn IsPopPrekoOdrIzn(nTotal)
- *  \brief Provjerava da li je tacnan uslov za popust preko odredjenog iznosa
- *  \param nTotal - ukupan iznos racuna
- */
+// 
+// Provjerava da li je tacnan uslov za popust preko odredjenog iznosa
+//
 function IsPopPrekoOdrIzn(nTotal)
-*{
 local lReslut:=.f.
 
 // iznos moze biti 100 i -100, ako je storno
@@ -355,25 +352,22 @@ else
 endif
 
 return lResult
-*}
 
 
 
-/*! \fn VarPopPrekoOdrIzn()
- *  \brief Provjerava da li se uzima u obzir varijanta popusta preko odredjenog iznosa
- */
+
+// Provjerava da li se uzima u obzir varijanta popusta preko odredjenog iznosa
 function VarPopPrekoOdrIzn()
-*{
-local lResult:=.f.
+local _ok := .f.
 
-if (gPopIzn>0 .and. gPopIznP>0)
-	lResult:=.t.
+if ( gPopIzn > 0 .and. gPopIznP > 0 )
+	_ok := .t.
 else
-	lResult:=.f.
+	_ok := .f.
 endif
 
-return lResult
-*}
+return _ok
+
 
 
 /*! \fn FrmGetPopProc()
@@ -421,11 +415,12 @@ return
 *}
 
 
+
+
 /*! \fn RecalcRabat()
  *  \brief Rekalkulise vrijednost rabata prije azuriranja i stampanja racuna. Ovo je neophodno radi varijante popusta preko odredjenog iznosa.
  */
 function RecalcRabat(cIdVrsteP)
-*{
 local nNIznos:=0
 local nIznNar:=0
 local nPopust:=0
@@ -447,7 +442,7 @@ enddo
 go top
 do while !eof()
 	if VarPopPrekoOdrIzn()
-		if !IsPopPrekoOdrIzn(nIznNar-nPopust) .or. (IsPopPrekoOdrIzn(nIznNar-nPopust) .and. cIdVrsteP<>"01")
+		if !IsPopPrekoOdrIzn( nIznNar-nPopust ) .or. (IsPopPrekoOdrIzn(nIznNar-nPopust) .and. cIdVrsteP<>"01")
 			if LEN(aRabat)>0
 				nNIznos:=CalcRabatForArticle(aRabat, idroba, .t., .t., .t., .f., .t., .t.)
 			else

@@ -22,7 +22,7 @@ static __kalk_konto := NIL
 function max_kolicina_kod_unosa( read_par )
 
 if read_par != NIL
-    __max_kolicina := fetch_metric( "pos_maksimalna_kolicina_na_unosu", nil, 0 )
+    __max_kolicina := fetch_metric( "pos_maksimalna_kolicina_na_unosu", my_user(), 0 )
 endif
 
 return __max_kolicina
@@ -34,7 +34,7 @@ return __max_kolicina
 function kalk_konto_za_stanje_pos( read_par )
 
 if read_par != NIL
-	__kalk_konto := fetch_metric( "pos_stanje_sa_kalk_konta", NIL, "" )
+	__kalk_konto := fetch_metric( "pos_stanje_sa_kalk_konta", my_user(), "" )
 endif
 
 return __kalk_konto

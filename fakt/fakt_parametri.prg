@@ -132,7 +132,9 @@ local _unos_barkod := fetch_metric( "fakt_unos_artikala_po_barkodu", my_user(), 
 local _pm := fakt_prodajna_mjesta()
 local _rabat := fetch_metric( "pregled_rabata_kod_izlaza", my_user(), "N" )
 local _racun_na_email := PADR( fetch_metric( "fakt_dokument_na_email", my_user(), "" ), 300 )
-local _def_template := PADR( fetch_metric( "fakt_default_odt_template", my_user(), "" ), 20)
+local _def_vp_template := PADR( fetch_metric( "fakt_default_odt_template", my_user(), "" ), 20)
+local _def_mp_template := PADR( fetch_metric( "fakt_default_odt_mp_template", my_user(), "" ), 20)
+local _def_kol_template := PADR( fetch_metric( "fakt_default_odt_kol_template", my_user(), "" ), 20)
 local _x := 1
 local _unos_ref_lot := ref_lot()
 local _unos_opisa := fakt_opis_stavke() 
@@ -195,8 +197,15 @@ _x := 2
 
 @ m_x + _x, m_y + 2 SAY "ODT fakturu konvertuj u PDF na lokaciju:" GET _ext_pdf PICT "@S35"
 ++ _x
+++ _x
 
-@ m_x + _x, m_y + 2 SAY "Default ODT template:" GET _def_template PICT "@S35"
+@ m_x + _x, m_y + 2 SAY "    Default ODT (VP) template:" GET _def_vp_template PICT "@S35"
+++ _x
+@ m_x + _x, m_y + 2 SAY "    Default ODT (MP) template:" GET _def_mp_template PICT "@S35"
+++ _x
+@ m_x + _x, m_y + 2 SAY "Default ODT (kolic.) template:" GET _def_kol_template PICT "@S35"
+
+++ _x
 ++ _x
 
 read_dn_parametar("Pracenje po destinacijama", m_x + _x, m_y + 2, @_unos_dest)
@@ -226,9 +235,8 @@ read_dn_parametar("Brojac otpremnica po dokumentu 22 (D/N)", m_x + _x, m_y + 2, 
 read_dn_parametar("Generacija otpremnica ver.2 (D/N)", m_x + _x, m_y + 2, @_otpr_gen )
 ++ _x
 
-
-
 @ m_x + _x, m_y + 2 SAY "Ispis racuna MP na traku (D/N/X)" GET gMPPrint  PICT "@!"   VALID gMPPrint $ "DNXT"
+
 read
 
 if gMPPrint $ "DXT"
@@ -275,7 +283,9 @@ if LastKey() <> K_ESC
 	set_metric( "fakt_unos_artikala_po_barkodu", my_user(), _unos_barkod )
     set_metric( "pregled_rabata_kod_izlaza", my_user(), _rabat )
 	set_metric( "fakt_dokument_na_email", my_user(), ALLTRIM( _racun_na_email ) )
-    set_metric( "fakt_default_odt_template", my_user(), ALLTRIM( _def_template ) )
+    set_metric( "fakt_default_odt_template", my_user(), ALLTRIM( _def_vp_template ) )
+    set_metric( "fakt_default_odt_mp_template", my_user(), ALLTRIM( _def_mp_template ) )
+    set_metric( "fakt_default_odt_kol_template", my_user(), ALLTRIM( _def_kol_template ) )
 
     destinacije( _unos_dest )
     fakt_opis_stavke( _unos_opisa )

@@ -4,6 +4,7 @@
   - POS, popust preko određenog iznosa - bugfix
   - POS, import šifrarnika FMK/TOPS - polje tip dodano također u import proceduru
   - F18, admin, update baze - bugfix
+  - FAKT, odabir odt template-a na osnovu parametara
  
 1.4.185 2013-05-30, vsasa
  

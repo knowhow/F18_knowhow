@@ -261,8 +261,7 @@ if ! ( "_" $ company )
     // nema sezone, uzmi sa servera...
     _sess_list := F18Login():New():get_database_sessions( company )
 else
-   
-	if SUBSTR( company, LEN( company ) - 4, 1 ) $ "1#2" 
+	if SUBSTR( company, LEN( company ) - 3, 1 ) $ "1#2" 
 		// vec postoji zadana sezona...
     	// samo je dodaj u matricu...
 		AADD( _sess_list, { RIGHT( ALLTRIM( company ) , 4 ) } )
@@ -284,10 +283,13 @@ for _i := 1 to LEN( _sess_list )
     endif
 
     MsgO( "Vrsim update baze " + _database ) 
-    
-    _ok := hb_run( _cmd )
+   
+    #ifdef __PLATFORM__DARWIN
+        f18_run( _cmd )
+    #else 
+        _ok := hb_run( _cmd )
+    #endif
 
-	
     // ubaci u matricu rezultat...
     AADD( ::update_db_result, { company, _database, _cmd, _ok } )
 

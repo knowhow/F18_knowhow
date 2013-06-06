@@ -144,7 +144,7 @@ do case
         // tipovi dokumenata gdje trebaju samo kolicine 
 
         if !EMPTY( __default_odt_kol_template )
-            template := __default_kol_template
+            template := __default_odt_kol_template
         endif
 
         if EMPTY( template ) .and. _auto_odabir
@@ -156,7 +156,7 @@ do case
         // maloprodajni racuni i ostalo...
 
         if !EMPTY( __default_odt_mp_template )
-            template := __default_mp_template
+            template := __default_odt_mp_template
         endif
             
         if EMPTY( template ) .and. _auto_odabir
@@ -168,7 +168,7 @@ do case
         // ostalo cemo smatrati veleprodajom
 
         if !EMPTY( __default_odt_vp_template )
-            template := __default_odt_template
+            template := __default_odt_vp_template
         endif
 
         if EMPTY( template ) .and. _auto_odabir

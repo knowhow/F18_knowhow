@@ -1,3 +1,7 @@
+1.4.187 2013-06-06, vsasa
+ 
+  - FAKT, biranje template-a na osnovu parametara
+ 
 1.4.186 2013-06-06, vsasa
  
   - POS, storniranje računa F7, odabir pos računa

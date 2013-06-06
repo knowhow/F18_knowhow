@@ -2,6 +2,7 @@
  
   - POS, storniranje računa F7, odabir pos računa
   - POS, popust preko određenog iznosa - bugfix
+  - POS, import šifrarnika FMK/TOPS - polje tip dodano također u import proceduru
  
 1.4.185 2013-05-30, vsasa
  

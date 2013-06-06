@@ -42,13 +42,6 @@ aKol := {}
 AADD(aImeKol, {PADC("ID", 10), {|| id}, "id", {|| .t.}, {|| vpsifra(wId)}})
 AADD(aImeKol, {PADC("Naziv", 20), {|| PADR(naz,20)}, "naz"})
 AADD(aImeKol, {PADC("JMJ", 3), {|| jmj}, "jmj"})
-
-// DEBLJINA i TIP
-if roba->(fieldpos("DEBLJINA")) <> 0
-    AADD(aImeKol, {PADC("Debljina", 10), {|| transform(debljina, "999999.99")}, "debljina", nil, nil, "999999.99" })
-    //AADD(aImeKol, {PADC("Tip art.", 10), {|| tip_art}, "tip_art", {|| .t.}, {|| g_tip_art(@wTip_art) } })
-endif
-
 AADD(aImeKol, {PADC("VPC", 10), {|| transform(VPC, "999999.999")}, "vpc"})
 
 // VPC2
@@ -58,7 +51,7 @@ endif
 
 AADD(aImeKol, {PADC("MPC", 10), {|| transform(MPC, "999999.999")}, "mpc"})
 
-for i:=2 to 10
+for i := 2 to 10
     cPom := "MPC" + ALLTRIM(STR(i))
     cPom2 := '{|| transform(' + cPom + ',"999999.999")}'
     if roba->(fieldpos(cPom))  <>  0
@@ -68,12 +61,12 @@ for i:=2 to 10
     endif
 next
 
-AADD(aImeKol, {PADC("NC", 10), {|| transform(NC,"999999.999")}, "NC"})
+AADD(aImeKol, { PADC("NC", 10), {|| transform(NC,"999999.999")}, "NC"})
 
-AADD(aImeKol, {"Tarifa", {|| IdTarifa}, "IdTarifa", {|| .t. }, {|| P_Tarifa(@wIdTarifa), roba_opis_edit() } } )
+AADD(aImeKol, { "Tarifa", {|| IdTarifa}, "IdTarifa", {|| .t. }, {|| P_Tarifa(@wIdTarifa), roba_opis_edit() } } )
 
-AADD(aImeKol, {"K1", {|| K1 }, "K1", {|| .t.}, {|| .t.} })
-AADD(aImeKol, {"Tip", {|| " " + Tip + " "}, "Tip", {|| .t.}, {|| wTip $ "P"}})
+AADD(aImeKol, { "K1", {|| K1 }, "K1", {|| .t.}, {|| .t.} })
+AADD(aImeKol, { "Tip", {|| " " + Tip + " "}, "Tip", {|| .t.}, {|| wTip $ "P"}})
 
 for i:=1 TO LEN(aImeKol)
     AADD(aKol, i)
@@ -141,6 +134,7 @@ static function sast_repl_all()
 local cOldS
 local cNewS
 local nKolic
+local _rec
 
 cOldS:=SPACE(10)
 cNewS:=SPACE(10)
@@ -154,18 +148,34 @@ read
 BoxC()
 
 if ( LastKey() <> K_ESC )
+
+    if !f18_lock_tables( { "sast" } )
+        MsgBeep( "Greska sa lock-om tabele sast !" )
+        return
+    endif
+
+    sql_table_update( nil, "BEGIN" )
+
     select sast
     set order to
-        go top
-        do while !eof()
-            if id2 == cOldS
-                    if (nKolic = 0 .or. ROUND(nKolic - kolicina, 5) = 0)
-                            replace id2 with cNewS
-                        endif
-                endif
-                skip
-        enddo
-        set order to tag "idrbr"
+    go top
+
+    do while !eof()
+        if id2 == cOldS
+            if (nKolic = 0 .or. ROUND(nKolic - kolicina, 5) = 0)
+                _rec := dbf_get_rec()
+                _rec["id2"] := cNewS
+                update_rec_server_and_dbf( "sast", _rec, 1, "CONT" )
+            endif
+        endif
+        skip
+    enddo
+ 
+    f18_free_tables( { "sast" } )
+    sql_table_update( nil, "END" )
+    
+    set order to tag "idrbr"
+       
 endif
 
 return
@@ -195,6 +205,13 @@ BoxC()
 
 if (LastKey() <> K_ESC)
 
+    if !f18_lock_tables( { "sast" } )
+        MsgBeep( "Greska sa lock-om tabele sast !" )
+        return
+    endif
+
+    sql_table_update( nil, "BEGIN" )
+
     select sast
     set order to
     go top
@@ -205,8 +222,7 @@ if (LastKey() <> K_ESC)
             if ROUND(nKolic - field->kolicina, 5) = 0
                 _rec := dbf_get_rec()
                 _rec["kolicina"] := nKolic2
-
-                update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+                update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
             endif
         endif
 
@@ -214,6 +230,9 @@ if (LastKey() <> K_ESC)
 
     enddo
 
+    f18_free_tables( { "sast" } )
+    sql_table_update( nil, "END" )
+ 
     set order to tag "idrbr"
 endif
 

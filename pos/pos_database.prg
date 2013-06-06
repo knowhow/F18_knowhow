@@ -1354,6 +1354,7 @@ do while !EOF()
     _rec["jmj"] := tops_roba->jmj
     _rec["idtarifa"] := tops_roba->idtarifa
     _rec["barkod"] := tops_roba->barkod
+    _rec["tip"] := tops_roba->tip
 
     _rec["mpc"] := tops_roba->cijena1
     _rec["mpc2"] := tops_roba->cijena2

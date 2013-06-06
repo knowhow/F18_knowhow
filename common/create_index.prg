@@ -178,7 +178,7 @@ if !FILE(LOWER(cImeCdx)) .or. nOrder==0 .or. ALLTRIM(UPPER( cOrdKey )) <> ALLTRI
 
      	cImeCdx := strtran(cImeCdx, "." + INDEXEXT, "")
 
-        log_write("index on " + cKljucIz + " / " + cTag + " / " + cImeCdx + " FILTER: " + IIF(cFilter != NIL, cFilter, "-") + " / alias=" + alias + " / used() = " + hb_valToStr(USED()), 2 ) 
+        log_write("index on " + cKljucIz + " / " + cTag + " / " + cImeCdx + " FILTER: " + IIF(cFilter != NIL, cFilter, "-") + " / alias=" + alias + " / used() = " + hb_valToStr(USED()), 5 ) 
         if _tag == "DEL"
               INDEX ON deleted() TAG "DEL" TO (cImeCdx) FOR deleted()
         else

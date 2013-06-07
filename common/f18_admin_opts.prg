@@ -1166,9 +1166,9 @@ local _path
 local _config := my_home_root() + "f18_sync.conf"
 
 #ifdef __PLATFORM__UNIX
-    _path := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+    _path := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH + "rubyrep" + SLASH
 #else
-    _path := "c:" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+    _path := "c:" + SLASH + "knowhowERP" + SLASH + "util" + SLASH + "rubyrep" + SLASH
 #endif
 
 _cmd := _path

@@ -973,12 +973,14 @@ endif
 // komandna linija za sinhronizaciju
 _cmd := ::synchro_db_cmd_line()
 
+MsgO( "Sinhronizacija podataka u toku ..." )
 // pokreni komandu
 #ifdef __PLATFORM__WINDOWS
     f18_run( _cmd )
 #else
     hb_run( _cmd )
 #endif
+MsgC()
 
 _ok := .t.
 
@@ -1106,6 +1108,7 @@ AADD( _config_arr, { "config.include_tables /./ " } )
 // table exclude
 AADD( _config_arr, { "config.exclude_tables /log/ " } )
 AADD( _config_arr, { "config.exclude_tables /^semaphores/ " } )
+AADD( _config_arr, { "config.exclude_tables /fakt_fakt_atributi/ " } )
 AADD( _config_arr, { "config.exclude_tables /^v_fin/ " } )
 
 // ignore keys

@@ -29,6 +29,11 @@ CLASS F18AdminOpts
 
     METHOD relogin_as()
 
+    METHOD synchro_db()
+    METHOD synchro_db_all()
+    METHOD synchro_db_params()
+
+    DATA _synchro_db_params
     DATA create_db_result
     
     PROTECTED:
@@ -37,10 +42,12 @@ CLASS F18AdminOpts
         METHOD update_db_all()
         METHOD update_db_company()
         METHOD update_db_command()
-        DATA _update_params
-
         METHOD create_new_db_params()
+        METHOD synchro_db_create_config()
+        METHOD synchro_db_cmd_line()
+
         DATA _new_db_params
+        DATA _update_params
 
 ENDCLASS
 
@@ -829,6 +836,323 @@ endif
 _ok := .t.
 return _ok
 
+
+
+
+// ------------------------------------------------------------
+// sinhronizacija podataka za sve baze...
+// ------------------------------------------------------------
+METHOD F18AdminOpts:synchro_db_all()
+local _ok := .f.
+local _params, _db_list, _sess_list, _session
+local _i, _n
+local _login := F18Login():new()
+local _params_orig
+
+// parametri sinhronizacije
+if !::synchro_db_params()
+    return _ok
+endif
+
+_params_orig := ::_synchro_db_params
+
+if EMPTY( _params_orig["db"] )
+
+    // radi se synchro za sve baze...
+    _db_list := _login:database_array()
+
+    Box(, 3, 70 )
+
+    for _i := 1 to LEN( _db_list )
+
+        if _params_orig["top_sezona"] == "D"
+            _session := _login:get_database_top_session( _db_list[ _i, 1 ] )
+            _sess_list := {}
+            AADD( _sess_list, { _session } )
+        else
+            // lista sezona...
+            _sess_list := _login:get_database_sessions( _db_list[ _i, 1 ] )
+        endif
+
+        for _n := 1 to LEN( _sess_list )
+
+            // info...
+            @ m_x + 2, m_y + 2 SAY PADR( "Sinhronizacija baze '" + _db_list[ _i, 1 ] + "_" + _sess_list[ _n, 1 ] + "' u toku ...", 65 )
+
+            // formiraj parametre...
+            _params := hb_hash()
+            _params["master_host"] := _params_orig["master_host"]
+            _params["slave_host"] := _params_orig["slave_host"]
+            _params["db"] := _db_list[ _i, 1 ] + "_" + _sess_list[ _n, 1 ]
+            _params["prioritet"] := 1
+            _params["tabele_filter"] := ""
+            _params["top_sezona"] := "D"
+
+            // napravi synchro
+            ::synchro_db( _params )
+
+        next
+
+    next
+
+    BoxC()
+
+
+elseif !EMPTY( _params_orig["db"] ) .and. ! ( "_" $ _params_orig["db"] ) 
+
+    // zadata je baza, ali nije sezona !
+
+    // izvuci mi sezone...
+
+    if _params_orig["top_sezona"] == "D"
+        _session := _login:get_database_top_session( _params_orig["db"] )
+        _sess_list := {}
+        AADD( _sess_list, { _session } )
+    else
+        _sess_list := _login:get_database_sessions( _params_orig["db"] )
+    endif
+
+    Box(, 3, 70 )
+
+    for _i := 1 to LEN( _sess_list )
+
+        // info...
+        @ m_x + 2, m_y + 2 SAY PADR( "Sinhronizacija baze '" + _params_orig["db"] + "_" + _sess_list[ _i, 1 ] + "' u toku ...", 65 )
+
+        // formiraj parametre...
+        _params := hb_hash()
+        _params["master_host"] := _params_orig["master_host"]
+        _params["slave_host"] := _params_orig["slave_host"]
+        _params["db"] := _params_orig["db"] + "_" + _sess_list[ _i, 1 ]
+        _params["prioritet"] := 1
+        _params["tabele_filter"] := ""
+        _params["top_sezona"] := "D"
+
+        // napravi synchro
+        ::synchro_db( _params )
+
+    next
+
+    BoxC()
+
+else
+
+    // samo jednu bazu radimo sinhronizaciju...
+
+    _params := ::_synchro_db_params
+    ::synchro_db( _params )
+
+endif
+
+_ok := .t.
+
+return _ok
+
+
+
+
+// -------------------------------------------------------------
+// sinhro/kopiranje baze podataka na drugi racunar
+// -------------------------------------------------------------
+METHOD F18AdminOpts:synchro_db( params )
+local _ok := .f.
+local _cmd
+
+if params == NIL
+    // parametri sinhronizacije podataka
+    if !::synchro_db_params()
+        return _ok
+    endif
+else
+    ::_synchro_db_params := params
+endif
+
+// napravi config fajl u my_home_root
+::synchro_db_create_config()
+
+// komandna linija za sinhronizaciju
+_cmd := ::synchro_db_cmd_line()
+
+if f18_run( _cmd ) <> 0
+    MsgBeep( "Problem sa pokretanjem komande za sinhronizaciju..." )
+else
+    _ok := .t.
+endif
+
+return _ok
+
+
+
+// ------------------------------------------------------------
+// parametri za opciju sinhronizacije podatkaa...
+// ------------------------------------------------------------
+METHOD F18AdminOpts:synchro_db_params()
+local _ok := .t.
+local _params := hb_hash()
+local _box_x := 13
+local _box_y := 70
+local _x := 1
+local _master_srv := SPACE(100)
+local _slave_srv := SPACE(100)
+local _db := SPACE(50)
+local _tbl_filter := SPACE(200)
+local _prioritet := 1
+local _samo_tekuca := "D"
+
+Box(, _box_x, _box_y )
+
+    @ m_x + _x, m_y + 2 SAY "... [ SINHRONIZACIJA BAZE PODATAKA ] ..."
+
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "(MASTER) server:" GET _master_srv PICT "@S30" VALID !EMPTY( _master_srv )
+
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "(SLAVE)  server:" GET _slave_srv PICT "@S30" VALID !EMPTY( _slave_srv )
+
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "db:" GET _db PICT "@S40"
+
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "filter za tabele:" GET _tbl_filter PICT "@S40"
+
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Sinronizacija samo tekuce sezone (D/N) ?" GET _samo_tekuca VALID _samo_tekuca $ "DN" PICT "@!" 
+
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Prioritet: (1) master (2) slave (3) ostalo:" GET _prioritet ;
+                    VALID _prioritet > 0 .and. _prioritet <= 3 ;
+                    PICT "9"
+
+    read
+
+BoxC()
+
+if LastKey() == K_ESC
+    _ok := .f.
+    return _ok
+endif
+
+// setuj parametre
+_params["master_host"] := ALLTRIM( _master_srv )
+_params["slave_host"] := ALLTRIM( _slave_srv )
+_params["db"] := ALLTRIM( _db )
+_params["prioritet"] := _prioritet
+_params["tabele_filter"] := ALLTRIM( _tbl_filter )
+_params["top_sezona"] := _samo_tekuca
+
+::_synchro_db_params := _params
+
+return _ok
+
+
+// ---------------------------------------------------------
+// pravi konfiguracioni fajl za sinhronizaciju
+// ---------------------------------------------------------
+METHOD F18AdminOpts:synchro_db_create_config()
+local _config := my_home_root() + "f18_sync.conf"
+local _txt, _config_arr
+local _ok := .f.
+
+// brisi config fajl...
+FERASE( _config )
+
+// iskljuci printer
+SET PRINTER TO ( _config )
+SET PRINTER ON
+set CONSOLE OFF
+
+// upisi u fajl...
+_config_arr := {}
+
+AADD( _config_arr, { "RR::Intitializer::run do |config|" } )
+
+// left config
+AADD( _config_arr, { "config.left = {" } )
+AADD( _config_arr, { ":adapter => 'postgresql',  " } )
+AADD( _config_arr, { ":database => '" + ::_synchro_db_params["db"] + "', " } )
+AADD( _config_arr, { ":username => 'admin', " } )
+AADD( _config_arr, { ":password => 'boutpgmin', " } )
+AADD( _config_arr, { ":host => '" + ::_synchro_db_params["master_host"] + "', " } )
+AADD( _config_arr, { ":schema_search_path => 'fmk' " } )
+AADD( _config_arr, { "}" } )
+
+// right config
+AADD( _config_arr, { "config.right = {" } )
+AADD( _config_arr, { ":adapter => 'postgresql',  " } )
+AADD( _config_arr, { ":database => '" + ::_synchro_db_params["db"] + "', " } )
+AADD( _config_arr, { ":username => 'admin', " } )
+AADD( _config_arr, { ":password => 'boutpgmin', " } )
+AADD( _config_arr, { ":host => '" + ::_synchro_db_params["slave_host"] + "', " } )
+AADD( _config_arr, { ":schema_search_path => 'fmk' " } )
+AADD( _config_arr, { "}" } )
+
+// timeout
+AADD( _config_arr, { "config.options[:database_connection_timeout] = 600 " } )
+
+// tabele
+AADD( _config_arr, { "config.include_tables /./ " } )
+
+// left options
+AADD( _config_arr, { "config.options[:right_record_handling] = :ignore " } )
+AADD( _config_arr, { "config.options[:sync_conflict_handling] = :left_wins " } )
+
+// right options
+AADD( _config_arr, { "config.options[:right_change_handling] = :ignore " } )
+AADD( _config_arr, { "config.options[:replication_conflict_handling] = :left_wins " } )
+
+
+AADD( _config_arr, { "end" } )
+
+for _i := 1 to LEN( _config_arr )
+    ?? to_win1250_encoding( hb_strtoutf8( _config_arr[ _i, 1 ] ), .t. )
+    ? 
+next
+	
+// ukljuci printer
+SET PRINTER TO
+SET PRINTER OFF
+SET CONSOLE ON
+
+if !FILE( _config )
+    MsgBeep( "Greska sa kreiranjem config fajla !!!" )
+    return _ok
+endif
+
+_ok := .t.
+
+return _ok
+
+
+
+
+// ---------------------------------------------------------
+// komandna linija za sinhronizaciju baza
+// ---------------------------------------------------------
+METHOD F18AdminOpts:synchro_db_cmd_line()
+local _cmd
+local _path
+local _config := my_home_root() + "f18_sync.conf"
+
+#ifdef __PLATFORM__UNIX
+    _path := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+#else
+    _path := "c:" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+#endif
+
+_cmd := _path
+_cmd += "rubyrep.jar sync -c"
+_cmd += " "
+_cmd += _config
+
+return _cmd
 
 
 

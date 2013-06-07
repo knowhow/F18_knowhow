@@ -1,3 +1,7 @@
+1.4.188 2013-06-07, vsasa
+ 
+  - F18, sinhronizacija baza master/slave
+ 
 1.4.187 2013-06-06, vsasa
  
   - FAKT, biranje template-a na osnovu parametara

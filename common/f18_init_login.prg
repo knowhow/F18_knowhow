@@ -740,7 +740,7 @@ return _ok
 
 static function _set_menu_choices( menuop, menuexec )
 
-AADD( menuop, hb_utf8tostr( "1. rekonfiguracija servera " ) )
+AADD( menuop, hb_utf8tostr( "1. rekonfiguracija servera        " ) )
 AADD( menuexec, {|| f18_init_app_login( .f. ), .t. } )
 
 AADD( menuop, hb_utf8tostr( "2. update baze" ) )
@@ -755,8 +755,11 @@ AADD( menuexec, {|| F18AdminOpts():New():drop_db(), .t. } )
 AADD( menuop, hb_utf8tostr( "5. otvaranje nove godine" ) )
 AADD( menuexec, {|| F18AdminOpts():New():new_session(), .t. } )
 
-AADD( menuop, hb_utf8tostr( "6. vpn podrska" ) )
-AADD( menuexec, {|| vpn_support( .f. ), .t. } )
+AADD( menuop, hb_utf8tostr( "6. sinhronizacije baze podataka" ) )
+AADD( menuexec, {|| F18AdminOpts():New():synchro_db_all(), .t. } )
+
+//AADD( menuop, hb_utf8tostr( "7. vpn podrska" ) )
+//AADD( menuexec, {|| vpn_support( .f. ), .t. } )
 
 return
 

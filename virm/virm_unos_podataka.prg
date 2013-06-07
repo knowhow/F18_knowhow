@@ -66,7 +66,7 @@ return
 
 
 static function _k_handler()
-local nRec:=RECNO()
+local nRec := RECNO()
 
 if (Ch==K_CTRL_T .or. Ch==K_ENTER) .and. reccount2()==0
     return DE_CONT
@@ -920,6 +920,8 @@ local _arr := {}
 
 select virm_pripr
 
+PushWA()
+
 START PRINT RET
 ?
 P_COND
@@ -934,6 +936,10 @@ go top
 StampaTabele( _arr, , 2, gTabela, {|| .t. }, "4", "REKAPITULACIJA UPLATA", {|| .t. } )
  
 END PRINT
+
+O_VIRM_PRIPR
+
+PopWA()
 
 return
 

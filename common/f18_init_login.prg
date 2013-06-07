@@ -35,6 +35,7 @@ CLASS F18Login
     METHOD disconnect()        
     METHOD _read_params()
     METHOD _write_params()
+    METHOD included_databases_for_user()
 
     DATA _company_db_connected
     DATA _company_db_curr_choice
@@ -43,6 +44,7 @@ CLASS F18Login
     DATA main_db_params
     DATA company_db_params
     DATA _login_count
+    DATA _include_db_filter
 
 ENDCLASS
 
@@ -64,10 +66,28 @@ METHOD F18Login:New()
 ::_company_db_curr_choice := ""
 ::_company_db_curr_session := ""
 ::_login_count := 0
+::_include_db_filter := ""
 return SELF
 
 
 
+METHOD F18Login:included_databases_for_user()
+local _ini_sect := "login_options"
+local _ini_var := "database_filter"
+local _ini_params := hb_hash()
+local _inc_filter := ""
+
+_ini_params[ _ini_var ] := NIL
+
+f18_ini_read( _ini_sect, @_ini_params, .t. )
+
+if _ini_params[ _ini_var ] == NIL
+    ::_include_db_filter := ""
+else
+    ::_include_db_filter := _ini_params[ _ini_var ]
+endif
+
+return
 
 
 METHOD F18Login:connect( params, conn_type, silent )
@@ -452,6 +472,9 @@ _session := ALLTRIM( STR( YEAR( DATE() ) ) )
 _db := PADR( _db, 30 )
 _session := PADR( _session, 4 )
 
+// daj filter baza dostupnih useru, ako postoji !
+::included_databases_for_user()
+
 // daj matricu sa firmama dostupnim...
 _tmp := ::database_array()
 
@@ -639,10 +662,18 @@ local _server := pg_server()
 local _table, oRow, _db, _qry
 local _tmp := {}
 local _filter_db := "empty#empty_sezona"
+local _where := ""
+
+_where := " WHERE has_database_privilege( CURRENT_USER, datname, 'connect' ) "
+
+if !EMPTY( ::_include_db_filter )
+    _where += " AND " + _sql_cond_parse( "datname", ::_include_db_filter + " " )
+endif
 
 _qry := "SELECT DISTINCT substring( datname, '(.*)_[0-9]+') AS datab " + ;
         " FROM pg_database " + ;
-        " ORDER BY datab"
+        _where + ;
+        " ORDER BY datab "
 
 _table := _sql_query( _server, _qry )
 _table:Refresh()
@@ -709,13 +740,26 @@ return _ok
 
 static function _set_menu_choices( menuop, menuexec )
 
-AADD( menuop, hb_utf8tostr( "1. rekonfiguracija servera " ) )
+AADD( menuop, hb_utf8tostr( "1. rekonfiguracija servera        " ) )
 AADD( menuexec, {|| f18_init_app_login( .f. ), .t. } )
-AADD( menuop, hb_utf8tostr( "2. update db" ) )
-AADD( menuexec, {|| F18AdminOpts():New():update_db(), .t. } )
-AADD( menuop, hb_utf8tostr( "3. vpn podrska" ) )
-AADD( menuexec, {|| vpn_support( .f. ), .t. } )
 
+AADD( menuop, hb_utf8tostr( "2. update baze" ) )
+AADD( menuexec, {|| F18AdminOpts():New():update_db(), .t. } )
+
+AADD( menuop, hb_utf8tostr( "3. nova baza" ) )
+AADD( menuexec, {|| F18AdminOpts():New():create_new_db(), .t. } )
+
+AADD( menuop, hb_utf8tostr( "4. brisanje baze" ) )
+AADD( menuexec, {|| F18AdminOpts():New():drop_db(), .t. } )
+
+AADD( menuop, hb_utf8tostr( "5. otvaranje nove godine" ) )
+AADD( menuexec, {|| F18AdminOpts():New():new_session(), .t. } )
+
+AADD( menuop, hb_utf8tostr( "6. sinhronizacije baze podataka" ) )
+AADD( menuexec, {|| F18AdminOpts():New():synchro_db_all(), .t. } )
+
+//AADD( menuop, hb_utf8tostr( "7. vpn podrska" ) )
+//AADD( menuexec, {|| vpn_support( .f. ), .t. } )
 
 return
 

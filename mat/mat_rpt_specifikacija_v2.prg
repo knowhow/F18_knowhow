@@ -175,7 +175,7 @@ DO WHILE !eof()
    nUkDugI2:=nUkPotI2:=0
    do while  !eof() .and.  cIdKonto==IdKonto
 
-      IF prow()>63; FF; ENDIF
+      NovaStrana()
 
       SELECT mat_suban
       cIdRoba:=IdRoba

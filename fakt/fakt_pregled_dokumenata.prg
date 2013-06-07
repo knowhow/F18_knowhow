@@ -649,10 +649,14 @@ do case
     
         nFiscal := field->fisc_rn
         nRekl := field->fisc_st
+        dFiscal_date := field->fisc_date
+        cFiscal_time := PADR( field->fisc_time, 10 )
 
-        Box(, 2, 40)
+        Box(, 4, 40)
             @ m_x + 1, m_y + 2 SAY "fiskalni racun:" GET nFiscal PICT "9999999999"
             @ m_x + 2, m_y + 2 SAY "reklamni racun:" GET nRekl PICT "9999999999"
+            @ m_x + 3, m_y + 2 SAY "         datum:" GET dFiscal_date
+            @ m_x + 4, m_y + 2 SAY "       vrijeme:" GET cFiscal_time PICT "@S10"
             read
         BoxC()
     
@@ -661,6 +665,8 @@ do case
             _rec := dbf_get_rec()
             _rec["fisc_rn"] := nFiscal
             _rec["fisc_st"] := nRekl
+            _rec["fisc_time"] := cFiscal_time
+            _rec["fisc_date"] := dFiscal_date
 
             update_rec_server_and_dbf( "fakt_doks", _rec, 1, "FULL" )
 

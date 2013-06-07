@@ -344,11 +344,14 @@ if gMultiPM == "D"
         // kopiraj katops.dbf
         _dest_file := _export + STRTRAN( _table_name, "katops.", _dest_patt + "." )
         _ret := _dest_file
-        FileCopy( _table_path + _table_name, _dest_file )
         
-        // kopiraj txt fajl
-        _dest_file := STRTRAN( _dest_file, ".dbf", ".txt" )
-        FileCopy( my_home() + OUTF_FILE, _dest_file )
+        if FileCopy( _table_path + _table_name, _dest_file ) > 0
+            // kopiraj txt fajl
+            _dest_file := STRTRAN( _dest_file, ".dbf", ".txt" )
+            FileCopy( my_home() + OUTF_FILE, _dest_file )
+        else
+            MsgBeep( "Problem sa kopiranjem fajla na destinaciju #" + _export )
+        endif
     
     next 
 

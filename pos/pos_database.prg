@@ -273,6 +273,107 @@ select pos_doks
 return _total
 
 
+// ----------------------------------------
+// pos, stanje robe
+// ----------------------------------------
+function pos_vrati_broj_racuna_iz_fiskalnog( fisc_rn, broj_racuna, datum_racuna )
+local _qry, _qry_ret, _table
+local _server := pg_server()
+local _i, oRow
+local _id_pos := gIdPos
+local _rn_broj := ""
+local _ok := .f.
+
+_qry := " SELECT pd.datum, pd.brdok, pd.fisc_rn, " + ;
+        " SUM( pp.kolicina * pp.cijena ) as iznos, " + ;
+        " SUM( pp.kolicina * pp.ncijena ) as popust " + ;
+        " FROM fmk.pos_pos pp " + ;
+        " LEFT JOIN fmk.pos_doks pd " + ;
+            " ON pd.idpos = pp.idpos AND pd.idvd = pp.idvd AND pd.brdok = pp.brdok AND pd.datum = pp.datum " + ; 
+        " WHERE pd.idpos = " + _sql_quote( _id_pos ) + ;
+        " AND pd.idvd = '42' AND pd.fisc_rn = " + ALLTRIM( STR( fisc_rn ) ) + ;
+        " GROUP BY pd.datum, pd.brdok, pd.fisc_rn " + ;
+        " ORDER BY pd.datum, pd.brdok, pd.fisc_rn "
+
+_table := _sql_query( _server, _qry )
+_table:Refresh()
+_table:GoTo(1)
+
+if _table:LastRec() > 1
+
+    _arr := {}
+
+    do while !_table:EOF()
+        oRow := _table:GetRow()
+        AADD( _arr, { oRow:FieldGet(1), oRow:FieldGet(2), oRow:FieldGet(3), oRow:FieldGet(4), oRow:FieldGet(5) } )
+        _table:Skip()
+    enddo
+    
+    // imamo vise racuna
+    _browse_rn_choice( _arr, @broj_racuna, @datum_racuna )
+
+    _ok := .t.
+
+else
+
+    // jedan ili nijedan...
+
+    if _table:lastRec() == 0
+        return _ok
+    endif
+
+    _ok := .t.
+    oRow := _table:GetRow()
+    broj_racuna := oRow:FieldGet( oRow:FieldPos( "brdok" ) )
+    datum_racuna := oRow:FieldGet( oRow:FieldPos( "datum" ) )
+
+endif
+
+return _ok
+
+
+
+
+static function _browse_rn_choice( arr, broj_racuna, datum_racuna )
+local _ret := 0
+local _i, _n
+local _tmp
+local _izbor := 1
+local _opc := {}
+local _opcexe := {}
+local _m_x := m_x
+local _m_y := m_y
+
+for _i := 1 to LEN( arr )
+
+    _tmp := ""
+    _tmp += DTOC( arr[ _i, 1 ] )
+    _tmp += " racun: "
+    _tmp += PADR( PADL( ALLTRIM( gIdPos ), 2 ) + "-" + ALLTRIM( arr[ _i, 2 ]  ), 10 )
+    _tmp += PADL( ALLTRIM( STR( arr[ _i, 4 ] - arr[ _i, 5 ], 12, 2 ) ), 10 )
+
+    AADD( _opc, _tmp )
+    AADD( _opcexe, {|| "" })
+    
+next
+
+do while .t. .and. LastKey() != K_ESC
+    _izbor := Menu( "choice", _opc, _izbor, .f. )
+	if _izbor == 0
+        exit
+    else
+        broj_racuna := arr[ _izbor, 2 ]
+        datum_racuna := arr[ _izbor, 1 ]
+        _izbor := 0
+    endif
+enddo
+
+m_x := _m_x
+m_y := _m_y
+
+return _ret
+
+
 
 // ----------------------------------------
 // pos, stanje robe
@@ -674,7 +775,7 @@ SET ORDER TO TAG "ID"
 
 _dok_count := priprz->(RECCOUNT())
 
-log_write( "azuriranje stavki iz priprz u pos/doks, br.zapisa: " + ALLTRIM( STR( _dok_count ) ) , 2 )
+log_write( "F18_DOK_OPER: azuriranje stavki iz priprz u pos/doks, br.zapisa: " + ALLTRIM( STR( _dok_count ) ) , 2 )
 
 Box(, 3, 60 )
 
@@ -771,8 +872,6 @@ BoxC()
 
 f18_free_tables({"pos_pos", "pos_doks"})
 sql_table_update( nil, "END" )
-
-log_write( "azuriranje stavki iz priprz u pos/doks, zavrsio", 5 )
 
 MsgO("brisem pripremu....")
 
@@ -895,7 +994,9 @@ private GetList := {}
 private aVezani:={}
 
 Box(, 1, 55 )
-    @ m_x + 1, m_y + 2 SAY "broj fiskalnog isjecka:" GET _fisc_broj PICT "9999999999"
+    @ m_x + 1, m_y + 2 SAY "broj fiskalnog isjecka:" GET _fisc_broj ;
+                VALID pos_vrati_broj_racuna_iz_fiskalnog( _fisc_broj, @_broj_rn, @_datum ) ;
+                PICT "9999999999"
     read
 BoxC()
 
@@ -903,30 +1004,6 @@ if LastKey() == K_ESC
     select ( nTArea )
     return
 endif
-
-if _fisc_broj <= 0
-    select ( nTArea )
-    return
-endif
-
-select ( nTArea )
-
-select pos_doks
-set order to tag "FISC"
-go top
-seek STR( _fisc_broj, 10 )
-
-if !FOUND()
-    MsgBeep( "Ne postoji racun sa zeljenom vezom fiskalnog racuna !!!" )
-    select (nTArea )
-    return
-endif
-
-_datum := pos_doks->datum
-_broj_rn := pos_doks->brdok
-
-select pos_doks
-set order to tag "1"
 
 // filuj stavke storno racuna
 __fill_storno( _datum, _broj_rn, STR( _fisc_broj, 10 ) )
@@ -1114,7 +1191,7 @@ if !FOUND()
 
 endif 
 
-log_write( "pos, brisanje racuna broj: " + br_dok + " od " + DTOC(dat_dok), 2 )
+log_write( "F18_DOK_OPER: pos, brisanje racuna broj: " + br_dok + " od " + DTOC(dat_dok), 2 )
 	           	
 if !f18_lock_tables({"pos_pos", "pos_doks"})
     select ( _t_area )
@@ -1149,8 +1226,6 @@ f18_free_tables({"pos_pos", "pos_doks"})
 sql_table_update( nil, "END" )
 
 MsgC()
-
-log_write( "pos, brisanje racuna broj: " + br_dok + " od " + DTOC(dat_dok) + " zavrsio", 5 )
 
 select (_t_area)
 
@@ -1279,6 +1354,7 @@ do while !EOF()
     _rec["jmj"] := tops_roba->jmj
     _rec["idtarifa"] := tops_roba->idtarifa
     _rec["barkod"] := tops_roba->barkod
+    _rec["tip"] := tops_roba->tip
 
     _rec["mpc"] := tops_roba->cijena1
     _rec["mpc2"] := tops_roba->cijena2

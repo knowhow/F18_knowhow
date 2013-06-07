@@ -25,20 +25,11 @@ static __datnal    := NIL
 // ---------------------------------------------
 function fin_unos_naloga()
 local _params := fin_params()
-
 private KursLis := "1"
+private gnLOst := 0
+private gPotpis := "N"
 
-private gnLOst:=0
-private gPotpis:="N"
-
-O_PARAMS
-Private cSection:="1",cHistory:=" ",aHistory:={}
-Params1()
-
-RPar("li",@gnLOSt)
-RPar("po",@gPotpis)
-select params
-use
+fin_read_params()
 
 cTekucaRj := GetTekucaRJ()
 lBlagAsis := .f.
@@ -493,27 +484,24 @@ return _d_p $ "12"
 
 
 
-
-// -------------------------------------------------
-// konvertovanje valute
-// -------------------------------------------------
+// -----------------------------------------------------
+// konvertovanje valute u pripremi...
+// -----------------------------------------------------
 function fin_konvert_valute( rec, tip )
-local _kurs := Kurs( rec["datdok"] )
 local _ok := .t.
+local _kurs := Kurs( rec["datdok"] )
 
 if tip == "P"
-	rec["iznosbhd"] := rec["iznosdem"] * _kurs
+    rec["iznosbhd"] := rec["iznosdem"] * _kurs
 elseif tip == "D"
-	if ROUND( _kurs, 4 ) == 0
-		rec["iznosdem"] := 0
-	else
-		rec["iznosdem"] := rec["iznosbhd"] / _kurs
-	endif
+    if ROUND( _kurs, 4 ) == 0
+        rec["iznosdem"] := 0
+    else
+        rec["iznosdem"] := rec["iznosbhd"] / _kurs
+    endif
 endif
 
 return _ok
-
-
 
 
 
@@ -613,6 +601,7 @@ function edit_fin_pripr()
 local nTr2
 local lLogUnos := .f.
 local lLogBrisanje := .f.
+local _log_info
 
 if Logirati(goModul:oDataBase:cName,"DOK","UNOS")
     lLogUnos := .t.
@@ -678,16 +667,9 @@ do case
             go ( _t_rec )
  
             BrisiPBaze()
-      
-            if lLogBrisanje
-                EventLog(nUser, goModul:oDataBase:cName, "DOK", "BRISANJE",;
-                nil,nil,nil,nil,;
-                cBDok, "konto: " + cBKonto + " dp=" + cBDP +;
-                " iznos=" + cBIznos + " KM", "",;
-                dBDatNal,;
-                Date(),;
-                "", "Obrisana stavka broj " + cStavka + " naloga!")     
-            endif
+     
+            log_write( "F18_DOK_OPER: fin, brisanje stavke u pripremi: " + ALLTRIM( cBDok ) + " stavka br: " + cStavka , 2 )
+ 
             return DE_REFRESH
         endif
         
@@ -835,18 +817,8 @@ do case
     case Ch == K_CTRL_F9
 
         if Pitanje(,"Zelite li izbrisati pripremu !!????","N")=="D"
-             if lLogBrisanje
-
-                cOpis := fin_pripr->idfirma + "-" + ;
-                    fin_pripr->idvn + "-" + ;
-                    fin_pripr->brnal
-
-                EventLog(nUser, goModul:oDataBase:cName, ;
-                    "DOK", "BRISANJE", ;
-                    nil, nil, nil, nil, ;
-                    cOpis, "", "", fin_pripr->datdok, Date(), ;
-                    "", "Brisanje kompletne pripreme !")
-            endif
+                         
+            _log_info := fin_pripr->idfirma + "-" + fin_pripr->idvn + "-" + fin_pripr->brnal
 
             fin_rewind(fin_pripr->idfirma, fin_pripr->idvn, fin_pripr->datdok, fin_pripr->brnal)
  
@@ -856,7 +828,10 @@ do case
             // brisi i pomocne tabele psuban, panal....
             BrisiPBaze()
 
+            log_write( "F18_DOK_OPER: fin, brisanje pripreme: " + _log_info , 2  )
+
         endif
+
         return DE_REFRESH
 
     case Ch == K_CTRL_P

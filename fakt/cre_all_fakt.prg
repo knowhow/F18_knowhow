@@ -222,6 +222,8 @@ AADD(aDBf, { 'FISC_ST'             , 'N' ,  10 ,  0 })
 AADD(aDBf, { 'DAT_ISP'             , 'D' ,   8 ,  0 })
 AADD(aDBf, { 'DAT_VAL'             , 'D' ,   8 ,  0 })
 AADD(aDBf, { 'DAT_OTPR'            , 'D' ,   8 ,  0 })
+AADD(aDBf, { 'FISC_TIME'           , 'C' ,  10 ,  0 })
+AADD(aDBf, { 'FISC_DATE'           , 'D' ,   8 ,  0 })
 
 _alias := "FAKT_DOKS"
 _table_name := "fakt_doks"
@@ -239,13 +241,9 @@ if ver["current"] > 0 .and. ver["current"] < 0500
     modstru({"*" + _table_name, "C OPER_ID N 3 0 OPER_ID N 10 0"})
 endif
 
-// 0.09.01
-if ver["current"] > 00000 .and. ver["current"] < 00901
-  for each _tbl in { "fakt_doks" }
-   modstru( {"*" + _tbl, ;
-       "D DOK_VEZA C 150 0"  ;
-  })
-  next
+// 0.9.0
+if ver["current"] > 0 .and. ver["current"] < 0900
+    modstru({"*" + _table_name, "A FISC_TIME C 10 0", "A FISC_DATE D 8 0", "D DOK_VEZA C 150 0" })
 endif
 
 IF_C_RESET_SEMAPHORE

@@ -891,6 +891,10 @@ else
     _rec["fisc_rn"] := nFiscal
 endif
 
+// datum i vrijeme...
+_rec["fisc_date"] := DATE()
+_rec["fisc_time"] := PADR( TIME(), 10 )
+
 update_rec_server_and_dbf( "fakt_doks", _rec, 1, "FULL" )
 
 select (nTArea)

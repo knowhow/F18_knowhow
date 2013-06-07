@@ -22,7 +22,18 @@ CLASS F18AdminOpts
     DATA update_db_result
 
     METHOD create_new_db()
-    METHOD delete_db()
+    METHOD drop_db()
+    METHOD delete_db_data_all()
+
+    METHOD new_session()
+
+    METHOD relogin_as()
+
+    METHOD synchro_db()
+    METHOD synchro_db_all()
+    METHOD synchro_db_params()
+
+    DATA _synchro_db_params
     DATA create_db_result
     
     PROTECTED:
@@ -31,10 +42,12 @@ CLASS F18AdminOpts
         METHOD update_db_all()
         METHOD update_db_company()
         METHOD update_db_command()
-        DATA _update_params
-
         METHOD create_new_db_params()
+        METHOD synchro_db_create_config()
+        METHOD synchro_db_cmd_line()
+
         DATA _new_db_params
+        DATA _update_params
 
 ENDCLASS
 
@@ -255,8 +268,7 @@ if ! ( "_" $ company )
     // nema sezone, uzmi sa servera...
     _sess_list := F18Login():New():get_database_sessions( company )
 else
-   
-	if SUBSTR( company, LEN( company ) - 4, 1 ) $ "1#2" 
+	if SUBSTR( company, LEN( company ) - 3, 1 ) $ "1#2" 
 		// vec postoji zadana sezona...
     	// samo je dodaj u matricu...
 		AADD( _sess_list, { RIGHT( ALLTRIM( company ) , 4 ) } )
@@ -278,10 +290,13 @@ for _i := 1 to LEN( _sess_list )
     endif
 
     MsgO( "Vrsim update baze " + _database ) 
-    
-    _ok := hb_run( _cmd )
+   
+    #ifdef __PLATFORM__DARWIN
+        f18_run( _cmd )
+    #else 
+        _ok := hb_run( _cmd )
+    #endif
 
-	
     // ubaci u matricu rezultat...
     AADD( ::update_db_result, { company, _database, _cmd, _ok } )
 
@@ -294,16 +309,850 @@ _ok := .t.
 return _ok
 
 
-METHOD F18AdminOpts:create_new_db()
+
+// -----------------------------------------------------------------------
+// razdvajenje sezona...
+// -----------------------------------------------------------------------
+METHOD F18AdminOpts:new_session()
+local _params := hb_hash()
+local _dbs := {}
+local _i
+local _pg_srv, _my_params, _t_user, _t_pwd, _t_database
+local _qry 
+local _from_sess, _to_sess
+local _db_from, _db_to
+local _count := 0
+local _res := {}
+local _ok := .t.
+
+// ovo jos ne radi 
+MsgBeep( "Funkcija nije u upotrebi !" )
 return
 
+_my_params := my_server_params()
+_t_user := _my_params["user"]
+_t_pwd := _my_params["password"]
+_t_database := _my_params["database"]
 
-METHOD F18AdminOpts:delete_db()
-return
+// napravi relogin...
+_pg_srv := ::relogin_as( "admin", "boutpgmin" )
+
+_qry := "SELECT datname FROM pg_database " 
+_qry += "WHERE datname LIKE '% + " + _from_year + "' "
+_qry += "ORDER BY datname;"
+
+// daj mi listu...
+_dbs := _sql_query( _pg_srv, _qry )
+_dbs:Refresh()
+_dbs:GoTo(1)
+
+// treba da imamo listu baza...
+// uzemomo sa select-om sve sto ima 2013 recimo 
+// i onda cemo provrtiti te baze i napraviti 2014
+
+do while !_dbs:EOF()
+
+    ++ _count
+
+    oRow := _dbs:GetRow()
+
+    // test_2013
+    _db_from := ALLTRIM( oRow:FieldGet(1) )
+    // test_2014
+    _db_to := STRTRAN( _tmp, "_" + _from_year, "_" + _to_year ) 
+
+    // init parametri za razdvajanje...
+    // pocetno stanje je 1
+    _params["db_type"] := 1
+    _params["db_name"] := _db_to
+    _params["db_template"] := _db_from
+    _params["db_drop"] := "D"
+    _params["db_comment"] := ""
+
+    // otvori bazu...
+    if ! ::create_new_db( _params, _pg_srv )
+        AADD( _res, { _db_to, _db_from, "ERR" } )
+    endif
+
+    _dbs:Skip()
+
+enddo
+
+// vrati se gdje si bio...
+::relogin_as( _t_user, _t_pwd, _t_database )
+
+// imamo i rezultate operacije... kako da to vidimo ?
+if LEN( _res ) > 0
+    // ?????
+endif
+
+return _ok
+
+
+
+// ---------------------------------------------------------------
+// kreiranje nove baze 
+// ---------------------------------------------------------------
+METHOD F18AdminOpts:create_new_db( _params, _pg_srv )
+local _ok := .f.
+local _db_name, _db_template, _db_drop, _db_type, _db_comment
+local _qry
+local _ret 
+local _relogin := .f.
+local _db_params, _t_user, _t_pwd, _t_database
+
+// 1) params read
+// ===============================================================
+if _params == NIL
+
+    if !SigmaSif("ADMIN")
+        MsgBeep( "Opcija zasticena !" )
+        return _ok
+    endif
+
+    _params := hb_hash()
+
+    // CREATE DATABASE name OWNER admin TEMPLATE templ;
+    if !::create_new_db_params( @_params )
+        return _ok
+    endif
+
+endif
+
+// uzmi parametre koje ces koristiti dalje...
+_db_name := _params["db_name"]
+_db_template := _params["db_template"]
+_db_drop := _params["db_drop"] == "D"
+_db_type := _params["db_type"]
+_db_comment := _params["db_comment"]
+
+if EMPTY( _db_template ) .or. LEFT( _db_template, 5 ) == "empty"
+    // ovo ce biti prazna baza uvijek...
+    _db_type := 0
+endif
+
+// 2) relogin as admin
+// ===============================================================
+// napravi relogin na bazi... radi admin prava...
+if _pg_srv == NIL
+
+    _db_params := my_server_params()
+    _t_user := _db_params["user"]
+    _t_pwd := _db_params["password"]
+    _t_database := _db_params["database"]
+
+    _pg_srv := ::relogin_as( "admin", "boutpgmin" )
+
+    _relogin := .t.
+
+endif
+
+// 3) DROP DATABASE
+// ===============================================================
+if _db_drop
+    // napravi mi DROP baze
+    if !::drop_db( _db_name, _pg_srv )
+        return _ok
+    endif
+endif
+
+
+// 4) CREATE DATABASE
+// ===============================================================
+// query string za CREATE DATABASE sekvencu
+_qry := "CREATE DATABASE " + _db_name + " OWNER admin"
+if !EMPTY( _db_template )
+    _qry += " TEMPLATE " + _db_template
+endif
+_qry += ";"
+
+MsgO( "Kreiram novu bazu " + _db_name + " ..." )
+_ret := _sql_query( _pg_srv, _qry )
+MsgC()
+
+if VALTYPE( _ret ) == "L" .and. _ret == .f.
+    // doslo je do neke greske...
+    return _ok
+endif
+
+// 5) GRANT ALL ...
+// ===============================================================
+
+// mozemo sada da napravimo grantove
+_qry := "GRANT ALL ON DATABASE " + _db_name + " TO admin;"
+_qry += "GRANT ALL ON DATABASE " + _db_name + " TO xtrole WITH GRANT OPTION;"
+
+MsgO( "Postavljam privilegije baze..." )
+_ret := _sql_query( _pg_srv, _qry )
+MsgC()
+
+if VALTYPE( _ret ) == "L" .and. _ret == .f.
+    // doslo je do neke greske...
+    return _ok
+endif
+
+
+// 6) COMMENT ON DATABASE ...
+// ===============================================================
+
+// komentar ako postoji !
+if !EMPTY( _db_comment )
+    _qry := "COMMENT ON DATABASE " + _db_name + " IS " + _sql_quote( hb_strtoutf8( _db_comment ) ) + ";"
+    MsgO( "Postavljam opis baze..." )
+    _ret := _sql_query( _pg_srv, _qry )
+    MsgC()
+endif
+
+
+// 7) sredi podatake....
+// ===============================================================
+
+// sad se mogu pozabaviti brisanje podataka...
+if _db_type > 0
+    ::delete_db_data_all( _db_name, _db_type )
+endif
+
+// 8) vrati se na postgres bazu...
+// ===============================================================
+
+// vrati se u prvobitno stanje operacije...
+if _relogin
+    ::relogin_as( _t_user, _t_pwd, _t_database )
+endif
+
+_ok := .t.
+
+return _ok
+
+
+//-------------------------------------------------------------------
+// drop baze podataka
+//-------------------------------------------------------------------
+METHOD F18AdminOpts:relogin_as( user, pwd, database )
+local _pg_server
+local _db_params := my_server_params()
+
+// logout
+my_server_logout()
+
+_db_params["user"] := user
+_db_params["password"] := pwd
+
+if database <> NIL
+    _db_params["database"] := database
+endif
+
+my_server_params( _db_params )
+my_server_login( _db_params )
+_pg_server := pg_server()
+
+return _pg_server
+
+
+
+//-------------------------------------------------------------------
+// drop baze podataka
+//-------------------------------------------------------------------
+METHOD F18AdminOpts:drop_db( db_name, pg_srv )
+local _ok := .t.
+local _qry, _ret
+local _my_params
+local _relogin := .f.
+
+if db_name == NIL
+
+    if !SigmaSif("ADMIN")
+        MsgBeep( "Opcija zasticena !" )
+        _ok := .f.
+        return
+    endif
+
+    // treba mi db name ?
+    db_name := SPACE( 30 )
+
+    Box(, 1, 60 )
+        @ m_x + 1, m_y + 2 SAY "Naziv baze:" GET db_name VALID !EMPTY( db_name )
+        read
+    BoxC()
+
+    if LastKey() == K_ESC
+        _ok := .f.
+        return _ok
+    endif
+
+    db_name := ALLTRIM( db_name )
+
+    if Pitanje(, "100% sigurni da zelite izbrisati bazu '" + db_name + "' ?", "N" ) == "N"
+        _ok := .f.
+        return _ok
+    endif
+
+endif
+
+if pg_srv == NIL
+
+    // treba mi relogin...
+    _relogin := .t.
+
+    _my_params := my_server_params()
+    _t_user := _my_params["user"]
+    _t_pwd := _my_params["password"]
+    _t_database := _my_params["database"]
+
+    // napravi relogin...
+    pg_srv := ::relogin_as( "admin", "boutpgmin" )
+
+endif
+
+_qry := "DROP DATABASE IF EXISTS " + db_name + ";"
+
+MsgO( "Brisanje baze u toku..." )
+_ret := _sql_query( pg_srv, _qry )
+MsgC()
+
+if VALTYPE( _ret ) == "L" .and. _ret == .f.
+    _ok := .f.
+endif
+
+// vrati me nazad ako je potrebno
+if _relogin
+    ::relogin_as( _t_user, _t_pwd, _t_database )
+endif
+
+return _ok
  
 
 
-METHOD F18AdminOpts:create_new_db_params()
-return
+
+// -------------------------------------------------------------------
+// brisanje podataka u bazi podataka
+// -------------------------------------------------------------------
+METHOD F18AdminOpts:delete_db_data_all( db_name, data_type )
+local _ok := .t.
+local _ret
+local _qry
+local _pg_srv
+
+if db_name == NIL
+    MsgBeep( "Opcija zahtjeva naziv baze ..." )
+    _ok := .f.
+    return _ok
+endif
+
+if data_type == NIL
+    data_type := 1
+endif
+
+// napravi relogin na bazu...
+_pg_srv := ::relogin_as( "admin", "boutpgmin", ALLTRIM( db_name ) )
+
+// data_type
+// 1 - pocetno stanje
+// 2 - brisi sve podatke
+
+// bitne tabele za reset podataka baze
+_qry := ""
+_qry += "DELETE FROM fmk.kalk_kalk;"
+_qry += "DELETE FROM fmk.kalk_doks;"
+_qry += "DELETE FROM fmk.kalk_doks2;"
+
+_qry += "DELETE FROM fmk.pos_doks;"
+_qry += "DELETE FROM fmk.pos_pos;"
+_qry += "DELETE FROM fmk.pos_dokspf;"
+
+_qry += "DELETE FROM fmk.fakt_fakt_atributi;"
+_qry += "DELETE FROM fmk.fakt_doks;"
+_qry += "DELETE FROM fmk.fakt_doks2;"
+_qry += "DELETE FROM fmk.fakt_fakt;"
+
+_qry += "DELETE FROM fmk.fin_suban;"
+_qry += "DELETE FROM fmk.fin_anal;"
+_qry += "DELETE FROM fmk.fin_sint;"
+_qry += "DELETE FROM fmk.fin_nalog;"
+
+_qry += "DELETE FROM fmk.mat_suban;"
+_qry += "DELETE FROM fmk.mat_anal;"
+_qry += "DELETE FROM fmk.mat_sint;"
+_qry += "DELETE FROM fmk.mat_nalog;"
+
+_qry += "DELETE FROM fmk.rnal_docs;"
+_qry += "DELETE FROM fmk.rnal_doc_it;"
+_qry += "DELETE FROM fmk.rnal_doc_it2;"
+_qry += "DELETE FROM fmk.rnal_doc_ops;"
+_qry += "DELETE FROM fmk.rnal_doc_log;"
+_qry += "DELETE FROM fmk.rnal_doc_lit;"
+
+_qry += "DELETE FROM fmk.epdv_kuf;"
+_qry += "DELETE FROM fmk.epdv_kif;"
+
+_qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'fin/%';"
+_qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'kalk/%';"
+_qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'fakt/%';"
+_qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'pos/%';"
+_qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'epdv/%';"
+_qry += "DELETE FROM fmk.metric WHERE metric_name LIKE '%auto_plu%';"
+
+// ako je potrebno brisati sve onda dodaj i sljedece...
+if data_type > 1
+    
+    _qry += "DELETE FROM fmk.os_os;"
+    _qry += "DELETE FROM fmk.os_promj;"
+
+    _qry += "DELETE FROM fmk.sii_os;"
+    _qry += "DELETE FROM fmk.sii_promj;"
+
+    _qry += "DELETE FROM fmk.ld_ld;"
+    _qry += "DELETE FROM fmk.ld_radkr;"
+    _qry += "DELETE FROM fmk.ld_radn;"
+    _qry += "DELETE FROM fmk.ld_pk_data;"
+    _qry += "DELETE FROM fmk.ld_pk_radn;"
+
+    _qry += "DELETE FROM fmk.roba;"
+    _qry += "DELETE FROM fmk.partn;"
+    _qry += "DELETE FROM fmk.sifv;"
+
+endif
+
+MsgO( "Priprema podataka za novu bazu..." )
+_ret := _sql_query( _pg_srv, _qry )
+MsgC()
+
+if VALTYPE( _ret ) == "L" .and. _ret == .f.
+    _ok := .f.
+endif
+
+return _ok
+ 
+
+
+// -------------------------------------------------------------------
+// kreiranje baze, parametri
+// -------------------------------------------------------------------
+METHOD F18AdminOpts:create_new_db_params( params )
+local _ok := .f.
+local _x := 1
+local _db_name := SPACE(50)
+local _db_template := SPACE(50)
+local _db_year := ALLTRIM( STR( YEAR( DATE() ) ) )
+local _db_comment := SPACE(100)
+local _db_drop := "N"
+local _db_type := 1
+local _db_str
+
+Box(, 12, 70 )
+
+    @ m_x + _x, m_y + 2 SAY "*** KREIRANJE NOVE BAZE PODATAKA ***"
+
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Naziv nove baze:" GET _db_name VALID _new_db_valid( _db_name ) PICT "@S30"
+    @ m_x + _x, col() + 1 SAY "godina:" GET _db_year PICT "@S4" VALID !EMPTY( _db_year )
+
+    ++ _x
+    
+    @ m_x + _x, m_y + 2 SAY "Opis baze (*):" GET _db_comment PICT "@S50"
+
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Koristiti kao uzorak postojecu bazu (*):"
+    
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Naziv:" GET _db_template PICT "@S40"
+
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Brisi bazu ako vec postoji ! (D/N)" GET _db_drop VALID _db_drop $ "DN" PICT "@!"
+
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Praznjenje podataka (1) pocetno stanje (2) sve" GET _db_type PICT "9"
+    
+    ++ _x
+    ++ _x
+    
+    @ m_x + _x, m_y + 2 SAY "*** opcije markirane kao (*) nisu obavezne"
+
+    read
+
+BoxC()
+
+if LastKey() == K_ESC
+    return _ok
+endif
+
+// formiranje strina naziva baze...
+_db_str := ALLTRIM( _db_name ) + "_" + ALLTRIM( _db_year )
+
+// provjeri string ...
+// .... nesto ....
+
+// template empty
+if EMPTY( _db_template )
+    _db_template := "empty"
+endif
+
+// - zaista nema template !
+if ALLTRIM( _db_template ) == "!"
+    _db_template := ""
+endif
+
+params["db_name"] := ALLTRIM( _db_str )
+params["db_template"] := ALLTRIM( _db_template )
+params["db_drop"] := _db_drop
+params["db_type"] := _db_type
+params["db_comment"] := ALLTRIM( _db_comment )
+
+_ok := .t.
+
+return _ok
+
+
+// ----------------------------------------------------------
+// dodavanje nove baze - validator
+// ----------------------------------------------------------
+static function _new_db_valid( db_name )
+local _ok := .f.
+
+if EMPTY( db_name )
+    MsgBeep( "Naziv baze ne moze biti prazno !" )
+    return _ok
+endif
+
+if ( "-" $ db_name .or. ; 
+   "?" $ db_name .or. ;
+   ":" $ db_name .or. ;
+   "," $ db_name .or. ;
+   "." $ db_name )
+
+    MsgBeep( "Naziv baze ne moze sadrzavati znakove .:- itd... !" )
+    return _ok
+
+endif
+
+_ok := .t.
+return _ok
+
+
+
+
+// ------------------------------------------------------------
+// sinhronizacija podataka za sve baze...
+// ------------------------------------------------------------
+METHOD F18AdminOpts:synchro_db_all()
+local _ok := .f.
+local _params, _db_list, _sess_list, _session
+local _i, _n
+local _login := F18Login():new()
+local _params_orig
+
+// parametri sinhronizacije
+if !::synchro_db_params()
+    return _ok
+endif
+
+_params_orig := ::_synchro_db_params
+
+if EMPTY( _params_orig["db"] )
+
+    // radi se synchro za sve baze...
+    _db_list := _login:database_array()
+
+    Box(, 3, 70 )
+
+    for _i := 1 to LEN( _db_list )
+
+        if _params_orig["top_sezona"] == "D"
+            _session := _login:get_database_top_session( _db_list[ _i, 1 ] )
+            _sess_list := {}
+            AADD( _sess_list, { _session } )
+        else
+            // lista sezona...
+            _sess_list := _login:get_database_sessions( _db_list[ _i, 1 ] )
+        endif
+
+        for _n := 1 to LEN( _sess_list )
+
+            // info...
+            @ m_x + 2, m_y + 2 SAY PADR( "Sinhronizacija baze '" + _db_list[ _i, 1 ] + "_" + _sess_list[ _n, 1 ] + "' u toku ...", 65 )
+
+            // formiraj parametre...
+            _params := hb_hash()
+            _params["master_host"] := _params_orig["master_host"]
+            _params["slave_host"] := _params_orig["slave_host"]
+            _params["db"] := _db_list[ _i, 1 ] + "_" + _sess_list[ _n, 1 ]
+            _params["prioritet"] := 1
+            _params["tabele_filter"] := ""
+            _params["top_sezona"] := "D"
+
+            // napravi synchro
+            ::synchro_db( _params )
+
+        next
+
+    next
+
+    BoxC()
+
+
+elseif !EMPTY( _params_orig["db"] ) .and. ! ( "_" $ _params_orig["db"] ) 
+
+    // zadata je baza, ali nije sezona !
+
+    // izvuci mi sezone...
+
+    if _params_orig["top_sezona"] == "D"
+        _session := _login:get_database_top_session( _params_orig["db"] )
+        _sess_list := {}
+        AADD( _sess_list, { _session } )
+    else
+        _sess_list := _login:get_database_sessions( _params_orig["db"] )
+    endif
+
+    Box(, 3, 70 )
+
+    for _i := 1 to LEN( _sess_list )
+
+        // info...
+        @ m_x + 2, m_y + 2 SAY PADR( "Sinhronizacija baze '" + _params_orig["db"] + "_" + _sess_list[ _i, 1 ] + "' u toku ...", 65 )
+
+        // formiraj parametre...
+        _params := hb_hash()
+        _params["master_host"] := _params_orig["master_host"]
+        _params["slave_host"] := _params_orig["slave_host"]
+        _params["db"] := _params_orig["db"] + "_" + _sess_list[ _i, 1 ]
+        _params["prioritet"] := 1
+        _params["tabele_filter"] := ""
+        _params["top_sezona"] := "D"
+
+        // napravi synchro
+        ::synchro_db( _params )
+
+    next
+
+    BoxC()
+
+else
+
+    // samo jednu bazu radimo sinhronizaciju...
+
+    _params := ::_synchro_db_params
+    ::synchro_db( _params )
+
+endif
+
+_ok := .t.
+
+return _ok
+
+
+
+
+// -------------------------------------------------------------
+// sinhro/kopiranje baze podataka na drugi racunar
+// -------------------------------------------------------------
+METHOD F18AdminOpts:synchro_db( params )
+local _ok := .f.
+local _cmd
+
+if params == NIL
+    // parametri sinhronizacije podataka
+    if !::synchro_db_params()
+        return _ok
+    endif
+else
+    ::_synchro_db_params := params
+endif
+
+// napravi config fajl u my_home_root
+::synchro_db_create_config()
+
+// komandna linija za sinhronizaciju
+_cmd := ::synchro_db_cmd_line()
+
+if f18_run( _cmd ) <> 0
+    MsgBeep( "Problem sa pokretanjem komande za sinhronizaciju..." )
+else
+    _ok := .t.
+endif
+
+return _ok
+
+
+
+// ------------------------------------------------------------
+// parametri za opciju sinhronizacije podatkaa...
+// ------------------------------------------------------------
+METHOD F18AdminOpts:synchro_db_params()
+local _ok := .t.
+local _params := hb_hash()
+local _box_x := 13
+local _box_y := 70
+local _x := 1
+local _master_srv := SPACE(100)
+local _slave_srv := SPACE(100)
+local _db := SPACE(50)
+local _tbl_filter := SPACE(200)
+local _prioritet := 1
+local _samo_tekuca := "D"
+
+Box(, _box_x, _box_y )
+
+    @ m_x + _x, m_y + 2 SAY "... [ SINHRONIZACIJA BAZE PODATAKA ] ..."
+
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "(MASTER) server:" GET _master_srv PICT "@S30" VALID !EMPTY( _master_srv )
+
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "(SLAVE)  server:" GET _slave_srv PICT "@S30" VALID !EMPTY( _slave_srv )
+
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "db:" GET _db PICT "@S40"
+
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "filter za tabele:" GET _tbl_filter PICT "@S40"
+
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Sinronizacija samo tekuce sezone (D/N) ?" GET _samo_tekuca VALID _samo_tekuca $ "DN" PICT "@!" 
+
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Prioritet: (1) master (2) slave (3) ostalo:" GET _prioritet ;
+                    VALID _prioritet > 0 .and. _prioritet <= 3 ;
+                    PICT "9"
+
+    read
+
+BoxC()
+
+if LastKey() == K_ESC
+    _ok := .f.
+    return _ok
+endif
+
+// setuj parametre
+_params["master_host"] := ALLTRIM( _master_srv )
+_params["slave_host"] := ALLTRIM( _slave_srv )
+_params["db"] := ALLTRIM( _db )
+_params["prioritet"] := _prioritet
+_params["tabele_filter"] := ALLTRIM( _tbl_filter )
+_params["top_sezona"] := _samo_tekuca
+
+::_synchro_db_params := _params
+
+return _ok
+
+
+// ---------------------------------------------------------
+// pravi konfiguracioni fajl za sinhronizaciju
+// ---------------------------------------------------------
+METHOD F18AdminOpts:synchro_db_create_config()
+local _config := my_home_root() + "f18_sync.conf"
+local _txt, _config_arr
+local _ok := .f.
+
+// brisi config fajl...
+FERASE( _config )
+
+// iskljuci printer
+SET PRINTER TO ( _config )
+SET PRINTER ON
+set CONSOLE OFF
+
+// upisi u fajl...
+_config_arr := {}
+
+AADD( _config_arr, { "RR::Intitializer::run do |config|" } )
+
+// left config
+AADD( _config_arr, { "config.left = {" } )
+AADD( _config_arr, { ":adapter => 'postgresql',  " } )
+AADD( _config_arr, { ":database => '" + ::_synchro_db_params["db"] + "', " } )
+AADD( _config_arr, { ":username => 'admin', " } )
+AADD( _config_arr, { ":password => 'boutpgmin', " } )
+AADD( _config_arr, { ":host => '" + ::_synchro_db_params["master_host"] + "', " } )
+AADD( _config_arr, { ":schema_search_path => 'fmk' " } )
+AADD( _config_arr, { "}" } )
+
+// right config
+AADD( _config_arr, { "config.right = {" } )
+AADD( _config_arr, { ":adapter => 'postgresql',  " } )
+AADD( _config_arr, { ":database => '" + ::_synchro_db_params["db"] + "', " } )
+AADD( _config_arr, { ":username => 'admin', " } )
+AADD( _config_arr, { ":password => 'boutpgmin', " } )
+AADD( _config_arr, { ":host => '" + ::_synchro_db_params["slave_host"] + "', " } )
+AADD( _config_arr, { ":schema_search_path => 'fmk' " } )
+AADD( _config_arr, { "}" } )
+
+// timeout
+AADD( _config_arr, { "config.options[:database_connection_timeout] = 600 " } )
+
+// tabele
+AADD( _config_arr, { "config.include_tables /./ " } )
+
+// left options
+AADD( _config_arr, { "config.options[:right_record_handling] = :ignore " } )
+AADD( _config_arr, { "config.options[:sync_conflict_handling] = :left_wins " } )
+
+// right options
+AADD( _config_arr, { "config.options[:right_change_handling] = :ignore " } )
+AADD( _config_arr, { "config.options[:replication_conflict_handling] = :left_wins " } )
+
+
+AADD( _config_arr, { "end" } )
+
+for _i := 1 to LEN( _config_arr )
+    ?? to_win1250_encoding( hb_strtoutf8( _config_arr[ _i, 1 ] ), .t. )
+    ? 
+next
+	
+// ukljuci printer
+SET PRINTER TO
+SET PRINTER OFF
+SET CONSOLE ON
+
+if !FILE( _config )
+    MsgBeep( "Greska sa kreiranjem config fajla !!!" )
+    return _ok
+endif
+
+_ok := .t.
+
+return _ok
+
+
+
+
+// ---------------------------------------------------------
+// komandna linija za sinhronizaciju baza
+// ---------------------------------------------------------
+METHOD F18AdminOpts:synchro_db_cmd_line()
+local _cmd
+local _path
+local _config := my_home_root() + "f18_sync.conf"
+
+#ifdef __PLATFORM__UNIX
+    _path := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+#else
+    _path := "c:" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+#endif
+
+_cmd := _path
+_cmd += "rubyrep.jar sync -c"
+_cmd += " "
+_cmd += _config
+
+return _cmd
+
 
 

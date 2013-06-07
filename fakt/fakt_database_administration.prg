@@ -33,6 +33,9 @@ AADD( _opc, "E. fakt export (r_exp) ")
 AADD( _opcexe, {|| fkt_export() } )
 AADD( _opc, "U. pretvaranje otpremnica - unlock ")
 AADD( _opcexe, {|| fakt_otpremnice_pretvaranje_unlock() } )
+AADD( _opc, "Z. test sql browse ")
+AADD( _opcexe, {|| test_sql_table_browse() } )
+
 
 f18_menu("fain", .f., _izbor, _opc, _opcexe )
 

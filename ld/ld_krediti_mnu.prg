@@ -22,7 +22,7 @@ local _opcexe:={}
 local _priv := f18_privgranted( "ld_obrada_kredita" )
 local _priv_pr := f18_privgranted( "ld_pregled_podataka" )
 
-AADD( _opc, "1. novi kredit                        ")
+AADD( _opc, "1. novi kredit                                  ")
 if _priv
 	AADD( _opcexe, {|| NoviKredit()})
 else
@@ -36,7 +36,7 @@ else
 	AADD( _opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) })
 endif
 
-AADD( _opc, "3. lista kredita za jednog kreditora")
+AADD( _opc, "3. lista kredita za jednog kreditora ")
 if _priv_pr
     AADD( _opcexe, {|| ListaKredita()})
 else
@@ -52,7 +52,7 @@ endif
 
 AADD( _opc, "5. specifikacija kredita po kreditorima")
 if _priv_pr
-    AADD( _opcexe, {|| sp_kredita() })
+    AADD( _opcexe, {|| ld_kred_specifikacija() } )
 else
 	AADD( _opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) })
 endif

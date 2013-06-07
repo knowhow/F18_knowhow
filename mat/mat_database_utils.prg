@@ -136,6 +136,8 @@ endif
 if !lStorno
     if !brisi_mat_nalog( cIdFirma, cIdVn, cBrNal )
         MsgBeep( "Problem sa brisanjem naloga ..." )
+    else
+        log_write( "F18_DOK_OPER: mat, povrat naloga u pripremu: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
     endif
 endif
 

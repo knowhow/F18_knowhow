@@ -9,4 +9,19 @@
  * By using this software, you agree to be bound by its terms.
  */
 
+#include "fmk.ch"
+
+
+function test_sql_table_browse()
+local _srv := pg_server()
+local _c_qry, _o_qry
+local _brw
+
+_c_qry := "SELECT * FROM fmk.roba ORDER BY id;"
+_o_qry := _sql_query( _srv, _c_qry )
+
+_brw := TBrowseSQL():new( 2, 2, 20, 70, _srv, _o_qry, "fmk.roba" )
+_brw:BrowseTable( .f., NIL )
+
+return
 

@@ -77,6 +77,10 @@ if format == NIL
     return DTOC( date )    
 endif
 
+if DTOC( date ) == DTOC( CTOD( "" ) )
+    return PADR( "0", LEN( format ), "0" )
+endif
+
 format := STRTRAN( format, "GGGG", ALLTRIM( STR( YEAR( date ) ) ) )
 format := STRTRAN( format, "GG", RIGHT( ALLTRIM( STR( YEAR( date ) ) ), 2 ) )
 format := STRTRAN( format, "MM", PADL( ALLTRIM( STR( MONTH( date ) ) ), 2, "0" ) )

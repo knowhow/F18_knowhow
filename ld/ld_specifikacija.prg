@@ -951,7 +951,7 @@ cPrikKolUk:="D"
 
 Box(,7,77)
 
-    @ m_x+1,m_y+2 SAY "Radna jedinica (prazno sve): "  GET cIdRJ
+    @ m_x+1,m_y+2 SAY "Radna jedinica (prazno sve): "  GET cIdRJ VALID EMPTY( cIdRj ) .or. P_LD_RJ( @cIdRj )
     @ m_x+2,m_y+2 SAY "Godina: "  GET  cGodina  pict "9999"
     @ m_x+3,m_y+2 SAY "Radnik (prazno-svi radnici): "  GET  cIdRadn  valid empty(cIdRadn) .or. P_Radn(@cIdRadn)
     @ m_x+4,m_y+2 SAY "Prikazati primanja (N-neto,V-van neta,S-sva primanja,0-nista)" GET cSvaPrim PICT "@!" VALID cSvaPrim$"NVS0"

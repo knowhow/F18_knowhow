@@ -68,7 +68,7 @@ do while .t.
             nPom+=ABS(_i&cPom) + ABS(_s&cPom)  
         next
         
-        if (nPom <> 0)
+        if ( nPom <> 0 )
             
             // upisi tekucu varijantu obracuna
             _vals := get_dbf_global_memvars()
@@ -76,6 +76,8 @@ do while .t.
 
             if !update_rec_server_and_dbf( "ld_ld",  _vals, 1, "FULL" ) 
                 delete_with_rlock()
+            else
+                log_write( "F18_DOK_OPER: ld, " + IF( lNovi, "unos novog", "korekcija" ) + " obracuna plate - radnik: " + ld->idradn + ", mjesec: " + ALLTRIM(STR( ld->mjesec)) + ", godina: " + ALLTRIM( STR( ld->godina ) ) , 2 )
             endif
 
         else
@@ -320,8 +322,6 @@ Box( , MAXROWS()-10, MAXCOLS()-10)
     
     seek STR(cGodina,4) + cIdRj + str(cMjesec,2) + IIF(lViseObr,cObracun,"") + cIdRadn
    
-    altd()
- 
     if found()
 
         lNovi := .f.

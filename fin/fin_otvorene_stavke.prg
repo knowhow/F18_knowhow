@@ -52,6 +52,7 @@ return
 // ----------------------------------------------------
 static function SpecOtSt()
 local nKolTot := 85
+private bZagl := {|| ZaglSPK() }
 
 cIdFirma:=gFirma
 nRok := 0
@@ -160,8 +161,11 @@ DO WHILESC !EOF() .and. cIDFirma==idfirma .AND. cIdKonto=IdKonto
    DO WHILESC  !EOF() .and. cIDFirma==idfirma .AND. cIdKonto=IdKonto .and. cIdPartner=IdPartner
 
 
-         if prow()==0; ZaglSpK(); endif
-         if prow()>63+gPStranica; FF; ZaglSpK(); endif
+         if prow() == 0
+            EVAL( bZagl )
+         endif
+
+         NovaStrana( bZagl ) 
 
          cBrDok:=BrDok
          nIznD:=0; nIznP:=0
@@ -209,7 +213,7 @@ DO WHILESC !EOF() .and. cIDFirma==idfirma .AND. cIdKonto=IdKonto
    ENDDO // partner
 ENDDO  //  konto
 
-if prow()>63+gPStranica; FF; ZaglSpK(); endif
+NovaStrana( bZagl )
 
 ? M
 ? "UKUPNO za KONTO:"
@@ -1400,8 +1404,9 @@ RETURN
  */
  
 function StBrVeze()
-
 local nCol1:=35
+private bZagl := {|| ZagBrVeze() }
+
 cDokument:=SPACE(8)
 picBHD:=FormPicL(gPicBHD,13)
 picDEM:=FormPicL(gPicDEM,10)
@@ -1434,11 +1439,13 @@ seek cidfirma+cidkonto+cidpartner+cBrDok
 
 nDug2:=nPot2:=0
 nDug:=nPot:=0
-ZagBRVeze()
+
+EVAL( bZagl )
+
 DO WHILESC !EOF() .and. idfirma==cidfirma .AND. cIdKonto==IdKonto .and. cIdPartner==IdPartner ;
         .and. brdok==cBrDok
 
-         IF prow()>63+gPStranica; FF; ZagBRVeze(); ENDIF
+         NovaStrana( bZagl )
          ? datdok,datval,idvn,brnal,rbr,idtipdok
          nCol1:=pcol()+1
          IF D_P=="1"
@@ -1468,10 +1475,7 @@ DO WHILESC !EOF() .and. idfirma==cidfirma .AND. cIdKonto==IdKonto .and. cIdPartn
          skip
 enddo // partner
 
-IF prow() > 62+gPStranica
-  FF
-  ZagBRVeze()
-ENDIF
+NovaStrana( bZagl )
 
 ? m
 ? "UKUPNO:"

@@ -75,6 +75,7 @@ local _x := 1
 local _db_params
 local _count := 0
 local oBackup := F18Backup():New()
+local _user_roles := f18_user_roles_info()
 
 if arg_v == NIL
     // napravi NIL parametre
@@ -95,7 +96,7 @@ do while .t.
     
     ++ _x
 
-    @ _x, mnu_left + 1 SAY "   Korisnik: " + ALLTRIM( _db_params["user"] )
+    @ _x, mnu_left + 1 SAY "   Korisnik: " + ALLTRIM( _db_params["user"] ) + "   u grupama " + _user_roles
 
     ++ _x
 
@@ -206,6 +207,12 @@ if f18_use_module( "virm" )
 	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
 	AADD( menuop, _brojac + ". VIRM  # virmani" )
 	AADD( menuexec, {|| MainVirm( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+endif
+
+if f18_use_module( "kadev" )
+	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
+	AADD( menuop, _brojac + ". KADEV  # kadrovska evidencija" )
+	AADD( menuexec, {|| MainKadev( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
 endif
 
 if f18_use_module( "reports" )

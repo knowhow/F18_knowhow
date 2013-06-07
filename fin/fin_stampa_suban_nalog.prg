@@ -272,7 +272,7 @@ DO WHILE !eof() .and. eval(b2)
      ?? M
      nUkDugBHD:=nUKPotBHD:=nUkDugDEM:=nUKPotDEM:=0
 
-     if gPotpis=="D"
+     if gPotpis == "D"
        IF prow()>58+gPStranica; FF; fin_zagl_11();  endif
        P_NRED
        P_NRED

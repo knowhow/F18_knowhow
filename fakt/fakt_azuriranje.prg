@@ -100,6 +100,8 @@ for _i := 1 to LEN( _a_fakt_doks )
             log_write(_msg, 1)
             __error_msg += "##" + _msg
             _ok := .f.
+        else
+            log_write( "F18_DOK_OPER: azuriranje fakt dokumenta: " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok, 2 )
         endif
 
     else
@@ -210,8 +212,6 @@ o_fakt_edit()
 // opet se vrati na ovaj slog koji mi treba
 _seek_pripr_dok( id_firma, id_tip_dok, br_dok )
 
-log_write( "FAKT, sql azuriranje dokumenta: " + id_firma + "-" + id_tip_dok + "-" + br_dok + " - start", 3 )
-
 // -----------------------------------------------------------------------------------------------------
 sql_table_update(nil, "BEGIN")
 
@@ -280,8 +280,6 @@ else
 
     f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
     sql_table_update(nil, "END")
-
-    log_write( "FAKT, azuriranje dokumenta - END", 3 )
 
 endif
 
@@ -494,6 +492,8 @@ _fakt_data["dat_val"]  := iif( LEN( _memo ) >= 9, CToD( _memo[9] ), CToD("") )
 
 _fakt_data["fisc_rn"] := field->fisc_rn
 _fakt_data["fisc_st"] := 0
+_fakt_data["fisc_date"] := CTOD("")
+_fakt_data["fisc_time"] := PADR( "", 10 )
 
 // izracunaj totale za fakturu
 _fakt_totals := calculate_fakt_total( id_firma, id_tip_dok, br_dok )
@@ -1030,6 +1030,8 @@ if Pitanje("FAKT_BRISI_PRIPR", "Zelite li izbrisati pripremu !!????","N")=="D"
         // azuriraj dokument u smece 
         azuriraj_smece( .t. )    
 
+        log_write( "F18_DOK_OPER: fakt, prenosa dokumenta iz pripreme u smece: " + _id_firma + "-" + _tip_dok + "-" + _br_dok, 2 )
+
         select fakt_pripr
     else
         // ponisti pripremu...
@@ -1037,6 +1039,9 @@ if Pitanje("FAKT_BRISI_PRIPR", "Zelite li izbrisati pripremu !!????","N")=="D"
         zapp_fakt_atributi()
  
         fakt_rewind( _id_firma, _tip_dok, _datdok, _br_dok )
+        
+        log_write( "F18_DOK_OPER: fakt, brisanje dokumenta iz pripreme: " + _id_firma + "-" + _tip_dok + "-" + _br_dok, 2 )
+
    endif
 
 endif

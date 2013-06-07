@@ -760,6 +760,7 @@ local _export_location
 local _table_name
 local _table_path
 local _dest_file := ""
+local _bytes := 0
 
 if prefix != NIL
     _prefix := prefix
@@ -778,7 +779,7 @@ _id_pm := GetPm( id_pos )
 _export_location := ALLTRIM( gKalkDest) + _id_pm + SLASH 
 
 // napravi i ovaj direktorij ako ne postoji
-_dir_create( ALLTRIM( gKalkDest ) )
+_dir_create( ALLTRIM( _export_location ) )
 
 // "tk1203"
 _table_name := get_topskalk_export_file( "1", _export_location, datum_do, prefix ) 
@@ -786,12 +787,16 @@ _table_name := get_topskalk_export_file( "1", _export_location, datum_do, prefix
 _dest_file := _export_location + _table_name + ".dbf"
 
 // kopiraj pom u fajl koji treba    
-if FileCopy( my_home() + "pom.dbf", _dest_file )
-endif
-
-if FileCopy( my_home() + OUTF_FILE, STRTRAN( _dest_file, ".dbf", ".txt" ) )
+if FileCopy( my_home() + "pom.dbf", _dest_file ) > 0
+    FileCopy( my_home() + OUTF_FILE, STRTRAN( _dest_file, ".dbf", ".txt" ) )
+else
+    MsgBeep( "Problem sa kopiranjem fajla na lokaciju #" + _export_location )
 endif
  
+//if !FILE( _dest_file )
+//    MsgBeep("Eksport fajl ne postoji na lokaciji !!!")
+//endif
+
 return _dest_file
 
 

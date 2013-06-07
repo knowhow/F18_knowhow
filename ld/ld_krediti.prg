@@ -141,10 +141,8 @@ do while .t.
 
     f18_free_tables({"ld_radkr"})
     sql_table_update( nil, "END" )
-    
-    if lLogNoviKredit
-        EventLog(nUser,goModul:oDataBase:cName,"KREDIT","NOVIKREDIT",nIznKred,nil,nil,nil,"","",ALLTRIM(cIdRadn)+" rata:"+STR(i,3),Date(),Date(),"","Definisan novi kredit")
-    endif
+   
+    log_write( "F18_DOK_OPER: ld unos novog kredita - radnik: " + cIdRadn + " iznos: " + ALLTRIM(STR( nIznKred)) , 2) 
     
     private cDn:="N"
 
@@ -301,10 +299,8 @@ do case
         _vals["iznos"] := _iznos
 
         update_rec_server_and_dbf( "ld_radkr", _vals, 1, "FULL" )
-            
-        if lLogEditKredit
-            EventLog(nUser,goModul:oDataBase:cName,"KREDIT","EDITKREDIT",radkr->placeno,radkr->iznos,nil,nil,"","","Rad:"+ALLTRIM(cIdRadn),Date(),Date(),"","Rucna ispravka rate kredita za radnika")
-        endif
+        
+        log_write( "F18_DOK_OPER: ld korekcija kredita, rucna ispravka rate - radnik: " + cIdRadn + ", iznos: " + ALLTRIM(STR( radkr->placeno, 12, 2)) + "/" + ALLTRIM(STR(radkr->iznos, 12, 2)) , 2 )    
 
         select radkr
 
@@ -445,6 +441,8 @@ if nNRata <> nTRata
     f18_free_tables({"ld_radkr"})
     sql_table_update( nil, "END" )
 
+    log_write( "F18_DOK_OPER: ld, redefinisanje kredita za radnika: " + cIdRadn, 2 )
+
 endif
 
 return nNRata
@@ -565,9 +563,9 @@ return {nUkupno,nPlaceno}
 
 
 
-
-function ListaKredita() //lista kredita
-private fSvi  // izlistaj sva preduzeca
+// lista kredita
+function ListaKredita() 
+private fSvi  
 private nR:=nIzn:=nIznP:=0
 private nUkIzn:=nUkIznP:=nUkIRR:=0
 private nCol1:=10
@@ -577,14 +575,15 @@ private cIdRj
 O_KRED
 O_RADN
 
-if FIELDPOS("IDRJ")<>0
-    lRjRadn:=.t.
+if FIELDPOS("IDRJ") <> 0
+    lRjRadn := .t.
     O_LD_RJ
-    cIdRj:="  "
+    cIdRj := "  "
 endif
 
 O_RADKR
-private m:="----- "+replicate("-",_LR_)+" ------------------------------- "+replicate("-",39)
+
+private m := "----- " + replicate( "-", _LR_ ) + " ------------------------------- "+replicate("-",39)
 
 cIdKred:=space(_LK_)
 
@@ -592,39 +591,45 @@ cNaOsnovu:=padr(".",20)
 cIdRadnaJedinica:=SPACE(2)
 cGodina:=gGodina; cMjesec:=gmjesec
 private cRateDN:="D", cAktivni:="D"
+
 Box(,13,60)
- if lRjRadn
-  @ m_x+1,m_y+2 SAY "RJ (prazno=sve): " GET cIdRj  valid {|| EMPTY(cIdRj) .or. P_LD_Rj(@cIdRj)} pict "@!"
- endif
- @ m_x+2,m_y+2 SAY "Kreditor ('.' svi): " GET cIdKred  valid {|| cidkred='.' .or. P_Kred(@cIdKred)} pict "@!"
- @ m_x+3,m_y+2 SAY "Na osnovu ('.' po svim osnovama):" GET cNaOsnovu pict "@!"
- @ m_x+4,m_y+2 SAY "Prikazati rate kredita D/N/J/R/T:"
- @ m_x+5,m_y+2 SAY "D - prikazati sve rate"
- @ m_x+6,m_y+2 SAY "N - prikazati samo broj rata i ukupan iznos"
- @ m_x+7,m_y+2 SAY "J - samo jedna rata"
- @ m_x+8,m_y+2 SAY "R - partija,br.rata,iznos,rata,ostalo"
- @ m_x+9,m_y+2 SAY "T - trenutno stanje" GET cRateDN pict "@!" valid cRateDN $ "DNJRT"
- @ m_x+10,m_y+2 SAY "Prikazi samo aktivne-neotplacene kredite D/N" GET cAktivni pict "@!" valid cAktivni$"DN"
- read
- ESC_BCR
- if cRateDN $ "JR"
-   @ m_x+12,m_y+2 SAY "Prikazati ratu od godina/mjesec:" GET cGodina pict "9999"
-   @ m_x+12,col()+1 SAY "/" GET cMjesec pict "99"
-   read; ESC_BCR
- endif
- if lRjRadn .and. EMPTY(cIdRj)
-    lRazdvojiPoRj:=(Pitanje(,"Razdvojiti spiskove po radnim jedinicama? (D/N)","N")=="D")
- else
-    lRazdvojiPoRj:=.f.
- endif
+    if lRjRadn
+        @ m_x+1,m_y+2 SAY "RJ (prazno=sve): " GET cIdRj  valid {|| EMPTY(cIdRj) .or. P_LD_Rj(@cIdRj)} pict "@!"
+    endif
+    @ m_x+2,m_y+2 SAY "Kreditor ('.' svi): " GET cIdKred  valid {|| cidkred='.' .or. P_Kred(@cIdKred)} pict "@!"
+    @ m_x+3,m_y+2 SAY "Na osnovu ('.' po svim osnovama):" GET cNaOsnovu pict "@!"
+    @ m_x+4,m_y+2 SAY "Prikazati rate kredita D/N/J/R/T:"
+    @ m_x+5,m_y+2 SAY "D - prikazati sve rate"
+    @ m_x+6,m_y+2 SAY "N - prikazati samo broj rata i ukupan iznos"
+    @ m_x+7,m_y+2 SAY "J - samo jedna rata"
+    @ m_x+8,m_y+2 SAY "R - partija,br.rata,iznos,rata,ostalo"
+    @ m_x+9,m_y+2 SAY "T - trenutno stanje" GET cRateDN pict "@!" valid cRateDN $ "DNJRT"
+    @ m_x+10,m_y+2 SAY "Prikazi samo aktivne-neotplacene kredite D/N" GET cAktivni pict "@!" valid cAktivni$"DN"
+    read
+    ESC_BCR
+    if cRateDN $ "JR"
+        @ m_x+12,m_y+2 SAY "Prikazati ratu od godina/mjesec:" GET cGodina pict "9999"
+        @ m_x+12,col()+1 SAY "/" GET cMjesec pict "99"
+        read
+        ESC_BCR
+    endif
+    if lRjRadn .and. EMPTY(cIdRj)
+        lRazdvojiPoRj:=(Pitanje(,"Razdvojiti spiskove po radnim jedinicama? (D/N)","N")=="D")
+    else
+        lRazdvojiPoRj:=.f.
+    endif
 BoxC()
+
 if trim(cNaOsnovu)=="."
    cNaOsnovu:=""
 endif
 
 select radkr
+
 if lRazdvojiPoRj
+
     set relation to idradn into radn
+
     Box(,2,30)
         nSlog:=0
         cSort1:="radn->idRj+idKred+naOsnovu+idRadn"
@@ -634,8 +639,11 @@ if lRazdvojiPoRj
         endif
         INDEX ON &cSort1 TO "TMPRK" FOR &cFilt
     BoxC()
+
     go top
-else // zadana je radna jedinica ili je prikaz svih rj na jednom spisku
+
+else 
+    // zadana je radna jedinica ili je prikaz svih rj na jednom spisku
     if lRjRadn .and. !empty(cIdRj)
         set relation to idradn into radn
         set filter to radn->idRj==cIdRj
@@ -665,29 +673,38 @@ endif
 START PRINT CRET
 
 ZaglKred()
+
 do while !eof()  // vrti ako je fsvi=.t. ili ako je lRazdvojiPoRj=.t.
+
     if lRazdvojiPoRj
         cIdTekRj:=radn->idRj
         ? 
         ? "RJ:", radn->idRj, "-", Ocitaj(F_RJ,cIdTekRj,"naz")
         ? 
     endif
+
     cIdKred:=IdKred
+
     select kred
     hseek cIdKred
+
     select radkr    
+
     if fsvi
         ?
         ? StrTran(m,"-","*")
         ? gTS+":",cIdKred,kred->naz
         ? StrTran(m,"-","*")
     endif
-    cOsn:=""
-    nCol1:=20
+    cOsn := ""
+    nCol1 := 20
+
     do while !eof() .and. idkred=cIdKred .and. naosnovu=cNaOsnovu .and. if(lRazdvojiPoRj,radn->idRj==cIdTekRj,.t.)
+
         private cOsn:=naosnovu
         cIdRadn:=idradn
         nIzn:=nIznP:=0
+
         if cAktivni=="D"
                 nTekRec := RECNO()
                 RKgod := RADKR->Godina
@@ -716,19 +733,18 @@ do while !eof()  // vrti ako je fsvi=.t. ili ako je lRazdvojiPoRj=.t.
         select radn
         hseek cidradn
         select radkr
-        //if prow()>60
-          //  FF
-          //  ZaglKred()
-        //endif
+        
         ?
-        ? str(++nRbr,4)+".",cIdRadn,RADNIK
+        ? str(++nRbr,4) + ".", cIdRadn, RADNIK
 
         if cRateDN == "D"
-                ?? " Osnov:",cOsn,replicate("_",11)
+            ?? " Osnov:", cOsn, replicate( "_", 11 )
         endif
+        
         nR:=nIzn:=nIznP:=0
         nCol1:=64
         nIRR:=0
+        
         do while !eof() .and. idkred=cidkred .and. cosn==naosnovu .and. idradn==cidradn
             nKoef:=1
      
@@ -788,36 +804,34 @@ do while !eof()  // vrti ako je fsvi=.t. ili ako je lRazdvojiPoRj=.t.
         nUkIRR+=nIRR
     enddo
 
-    //if prow()>62
-      //  FF
-      //  ZaglKred()
-    //endif
-
     ? m
     ? "UKUPNO:"
+
     @ prow(),nCol1 SAY nUkIzn pict gpici
 
-    if cratedn=="T"
+    if cRatedn=="T"
         @ prow(),pcol()+1 SAY nUkIznP  pict gpici
         @ prow(),pcol()+1 SAY nUkizn-nUkIznP  pict gpici
     endif
 
-    if cratedn=="R"
+    if cRatedn=="R"
         @ prow(),pcol()+1 SAY nUkIRR          pict gpici
         @ prow(),pcol()+1 SAY nUkizn-nUkIznP  pict gpici
     endif
+
     ? m
 
     if !fsvi .and. !lRazdvojiPoRj
         exit
     endif
 
-enddo  // eof()
+enddo  
 
 FF
 END PRINT
 
 close all
+
 return
 
 
@@ -847,7 +861,7 @@ else
 endif
 
 if lRjRadn .and. !empty(cIdRj)
-    ? "RJ:", cIdRj, "-", Ocitaj(F_RJ,cIdRj,"naz")
+    ? "RJ:", cIdRj, "-", Ocitaj( F_LD_RJ, cIdRj, "naz" )
 endif
 
 if cRateDN=="R"

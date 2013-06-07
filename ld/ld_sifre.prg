@@ -12,6 +12,9 @@
 
 #include "ld.ch"
 
+static __filter_radn := .f.
+
+
 // -------------------------
 // -------------------------
 function P_Radn(cId, dx, dy)
@@ -132,6 +135,8 @@ return PostojiSifra(F_RADN, 1, MAXROWS()-15, MAXCOLS()-15, Lokal("Lista radnika"
       {|Ch| RadBl(Ch)},,,,,{"ID"})
 
 
+
+
 // ------------------------------------------
 // filterisanje tabele radnika
 // ------------------------------------------
@@ -226,8 +231,9 @@ if lPInfo == .t.
     p_pkartica( field->id )
 endif
 
+__filter_radn := .f.
 
-if (Ch==K_ALT_M)
+if ( Ch==K_ALT_M )
     
     Box(, 4, 60)
         @ m_x+1,m_y+2 SAY "Postavljenje koef. minulog rada:"
@@ -274,9 +280,8 @@ if (Ch==K_ALT_M)
    
     f18_free_tables({"ld_radn"}) 
     sql_table_update( nil, "END" )
-
-   
     MsgC()
+
     go top
     return DE_REFRESH
 
@@ -329,6 +334,14 @@ elseif Ch == K_CTRL_G
     
     endif
 
+elseif ( UPPER(CHR(Ch)) == "Q" )
+
+    // filter po ime, prezime itd...
+    _filter_radn()
+    __filter_radn := .t.
+    return DE_REFRESH
+
+
 elseif ( UPPER(CHR(Ch))=="S" )
     
     // filter po radnicima
@@ -347,6 +360,100 @@ elseif ( UPPER(CHR(Ch))=="S" )
 endif
 
 return DE_CONT
+
+
+
+// ---------------------------------------------------------------
+// filter tabele radnika po pojedinim poljima
+// ---------------------------------------------------------------
+static function _filter_radn()
+local _ok := .f.
+local _filter := ""
+local _ime, _prezime, _imerod
+local _x := 1
+local _sort := 2
+
+_ime := SPACE( 200 )
+_prezime := _ime
+_imerod := _ime
+
+Box(, 6, 70 )
+
+    @ m_x + _x, m_y + 2 SAY "*** FILTER SIFRARNIKA RADNIKA"
+    
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "     IME:" GET _ime PICT "@S40"
+    
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY " PREZIME:" GET _prezime PICT "@S40"
+    
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "RODITELJ:" GET _imerod PICT "@S40"
+    
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Sortiranje: 1 - sifra, 2 - prezime:" GET _sort PICT "9" VALID _sort >= 1 .and. _sort <= 2
+
+    read
+
+BoxC()
+
+if LastKey() == K_ESC
+    return _ok
+endif
+
+if !EMPTY( _prezime )
+    if !EMPTY( _filter )
+        _filter += " .AND. "
+    endif
+    _filter += parsiraj( UPPER(_prezime), "UPPER(naz)" )
+endif
+
+if !EMPTY( _ime )
+    if !EMPTY( _filter )
+        _filter += " .AND. "
+    endif
+    _filter += parsiraj( UPPER(_ime), "UPPER(ime)" )
+endif
+
+if !EMPTY( _imerod )
+    if !EMPTY( _filter )
+        _filter += " .AND. "
+    endif
+    _filter += parsiraj( UPPER(_imerod), "UPPER(imerod)" )
+endif
+
+if EMPTY( _filter )
+
+    // ukidam filter, setujem pravi sort...
+    set filter to
+    set order to tag "1"
+    go top
+
+    return _ok
+
+endif
+
+// postavi filter
+set filter to &(_filter)
+
+// kako da slozim podatke ?
+if _sort == 2
+    set order to tag "2"
+else
+    set order to tag "1"
+endif
+
+go top
+_ok := .t.
+
+return _ok
+
+
+
+
+
 
 
 function MsgIspl()

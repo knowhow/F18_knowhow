@@ -1,3 +1,7 @@
+1.5.25 2013-06-07, vsasa
+
+   - git merge master, 1.4.187
+ 
 1.5.24 2013-05-09, vsasa
 
    - fin, početno stanje + storno dokument na 31.12, automatsko ažuriranje

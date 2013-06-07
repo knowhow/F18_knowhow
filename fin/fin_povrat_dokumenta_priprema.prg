@@ -149,7 +149,6 @@ if !storno
     // algoritam 2  - nivo dokumenta
     select suban
     _ok := _ok .and. delete_rec_server_and_dbf(_tbl, _del_rec, 2, "CONT")
-    log_write("povrat u pripremu fin"  + " : " + cIdFirma + cIdVN + cBrNal, 2 )
 
     _tbl := "fin_anal"
     @ m_x + 2, m_y + 2 SAY "delete " + _tbl
@@ -184,6 +183,8 @@ if !_ok
     f18_free_tables({"fin_suban", "fin_nalog", "fin_sint", "fin_anal", "fin_suban"})
 
     MsgBeep("Ajoooooooj del suban/anal/sint/nalog nije ok ?! " + cIdFirma + "-" + cIdVn + "-" + cBrNal )
+else
+    log_write( "F18_DOK_OPER: povrat finansijskog naloga u pripremu: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
 endif
 
 close all

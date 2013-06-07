@@ -13,5 +13,6 @@ os/*.prg
 pos/*.prg 
 mat/*.prg 
 virm/*.prg
+kadev/*.prg
 reports/*.prg 
 common/*.prg

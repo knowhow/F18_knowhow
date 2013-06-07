@@ -41,22 +41,10 @@ return
  */
  
 function StOANal()
-
-private fK1:=fk2:=fk3:=fk4:="N",gnLOst:=0, gPotpis:="N"
-O_PARAMS
-
-Private cSection:="1",cHistory:=" ",aHistory:={}
-Params1()
-RPar("k1",@fk1)
-RPar("k2",@fk2)
-RPar("k3",@fk3)
-RPar("k4",@fk4)
-RPar("li",@gnLOSt)
-RPar("po",@gPotpis)
-select params
-use
-
+private fK1:=fk2:=fk3:=fk4:="N",gnLOst:=0,gPotpis:="N"
 private dDatNal:=date()
+
+fin_read_params()
 
 IF IzFMKIni("FAKT","VrstePlacanja","N",SIFPATH)=="D"
   O_VRSTEP

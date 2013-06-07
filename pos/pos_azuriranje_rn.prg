@@ -32,7 +32,7 @@ private nIznRn := 0
 
 _ok := .t.
 
-log_write( "pos azuriranje racuna, racun: " + cStalRac + " - poceo", 5 )
+log_write( "F18_DOK_OPER: pos azuriranje racuna: " + cStalRac, 2 )
 
 my_use_semaphore_off()
 o_stazur()
@@ -128,8 +128,6 @@ enddo
 
 f18_free_tables({"pos_pos", "pos_doks"})
 sql_table_update( nil, "END" )
-
-log_write( "pos azuriranje racuna, racun: " + cStalRac + " - zavrsio", 5 )
 
 // pobrisi _pos
 select _pos

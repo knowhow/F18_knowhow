@@ -53,6 +53,7 @@ local nTRec := RecNo()
 local nCustId
 local nDoc_priority
 local cDesc
+local nDoc_no
 local aArr
 local _rec
 
@@ -64,6 +65,7 @@ select docs
 
 nCustId := field->cust_id
 nDoc_priority := field->doc_priori
+nDoc_no := field->doc_no
 
 // box sa unosom podataka
 if _box_main(@nCustId, @nDoc_priority, @cDesc) == 0
@@ -84,6 +86,8 @@ if _rec["doc_priori"] <> nDoc_priority
 endif
 
 update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+
+log_write( "F18_DOK_OPER: rnal, promjena osnovnih podataka naloga broj: " + ALLTRIM( STR( nDoc_no ) ), 2 )
 
 skip
 
@@ -123,6 +127,7 @@ local cShipPlace
 local cDvrTime
 local dDvrDate
 local nObj_id
+local nDoc_no
 local cObj_id
 local cDesc
 local aArr
@@ -139,6 +144,7 @@ dDvrDate := field->doc_dvr_da
 cDvrTime := field->doc_dvr_ti
 nObj_id := field->obj_id
 nCust_id := field->cust_id
+nDoc_no := field->doc_no
 
 // box sa unosom podataka
 if _box_ship(@nObj_id, @cShipPlace, @cDvrTime, @dDvrDate, @cDesc, nCust_id) == 0
@@ -171,6 +177,8 @@ endif
 
 _rec := get_dbf_global_memvars()    
 update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+
+log_write( "F18_DOK_OPER: rnal, promjena podataka isporuke naloga broj: " + ALLTRIM( STR( nDoc_no ) ), 2 )
 
 select docs
 go (nTRec)
@@ -211,6 +219,7 @@ local nDoc_pay_id
 local cDoc_pay_desc
 local cDesc
 local aArr
+local nDoc_no
 
 if Pitanje(,"Zelite izmjeniti podatke o placanju naloga (D/N)?", "D") == "N"
 	return
@@ -221,6 +230,7 @@ select docs
 cDoc_paid := field->doc_paid
 nDoc_pay_id := field->doc_pay_id
 cDoc_pay_desc := field->doc_pay_de
+nDoc_no := field->doc_no
 
 // box sa unosom podataka
 if _box_pay(@nDoc_pay_id, @cDoc_paid, @cDoc_pay_desc, @cDesc) == 0
@@ -249,6 +259,8 @@ endif
 
 _rec := get_dbf_global_memvars()    
 update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+
+log_write( "F18_DOK_OPER: rnal, promjena podataka placanja naloga broj: " + ALLTRIM( STR( nDoc_no ) ), 2 )
 
 select docs
 
@@ -286,6 +298,7 @@ local cType := "E"
 local nCont_id := VAL(STR(0, 10))
 local cCont_desc := SPACE( 150 )
 local nCust_id := VAL(STR(0, 10))
+local nDoc_no 
 
 if lNew == nil
 	lNew := .f.
@@ -300,6 +313,8 @@ if !lNew
 	cCont_desc := field->cont_add_d
 	
 endif
+
+nDoc_no := field->doc_no
 
 if _box_cont(@nCust_id, @nCont_id, @cCont_desc, @cDesc) == 0
 	return 
@@ -327,6 +342,8 @@ endif
 
 _rec := get_dbf_global_memvars()    
 update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+
+log_write( "F18_DOK_OPER: rnal, promjena podataka kontakta naloga broj: " + ALLTRIM( STR( nDoc_no ) ), 2 )
 
 select docs
 go (nTRec)

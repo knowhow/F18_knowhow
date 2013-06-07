@@ -322,6 +322,7 @@ local cSekv
 local nKekk
 local iSekv
 local _rec
+local _log_info
 
 if ( Ch == K_CTRL_T .or. Ch == K_ENTER ) .and. EOF()
     return DE_CONT
@@ -424,6 +425,7 @@ do case
         
         if Pitanje(, "Zelite izbrisati ovu stavku ?", "D" ) == "D"
                 
+            _log_info := kalk_pripr->idfirma + "-" + kalk_pripr->idvd + "-" + kalk_pripr->brdok
             cStavka := kalk_pripr->rbr
             cArtikal := kalk_pripr->idroba
             nKolicina := kalk_pripr->kolicina
@@ -432,6 +434,8 @@ do case
 
             _rec := dbf_get_rec()
             delete
+            
+            log_write( "F18_DOK_OPER: kalk, brisanje stavke u pripremi: " + _log_info + " stavka br: " + cStavka , 2 )
 
             _t_rec := RECNO()
             __dbPack()
@@ -472,6 +476,9 @@ do case
             select p_doksrc
             zapp()
             select kalk_pripr
+
+            log_write( "F18_DOK_OPER: kalk, brisanje pripreme: " + cOpis , 2 )
+
             return DE_REFRESH
         endif
         return DE_CONT

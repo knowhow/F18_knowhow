@@ -91,6 +91,12 @@ if f18_use_module( "virm" )
    _db:kreiraj()
 endif
 
+if f18_use_module( "kadev" )
+   cre_all_kadev(ver)
+   _db := TDbKadev():new()
+   _db:kreiraj()
+endif
+
 if f18_use_module( "epdv" )
    cre_all_epdv(ver)
 endif

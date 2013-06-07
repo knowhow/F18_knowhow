@@ -2162,3 +2162,6 @@ AADD( _arr, "26 - Narudzbenica ")
 AADD( _arr, "27 - Ponuda/Avansna faktura gotovina") 
 
 return _arr
+
+
+

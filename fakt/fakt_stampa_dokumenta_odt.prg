@@ -18,7 +18,9 @@ static LEN_VRIJEDNOST := 12
 static PIC_KOLICINA := ""
 static PIC_VRIJEDNOST := ""
 static PIC_CIJENA := ""
-static __default_odt_template := ""
+static __default_odt_vp_template := ""
+static __default_odt_mp_template := ""
+static __default_odt_kol_template := ""
 static _temporary := .f.
 static __auto_odt := ""
 
@@ -27,7 +29,9 @@ static __auto_odt := ""
 // setuje defaultni odt template
 // ------------------------------------------------------
 function __default_odt_template()
-__default_odt_template := fetch_metric( "fakt_default_odt_template", my_user(), "" )
+__default_odt_vp_template := fetch_metric( "fakt_default_odt_template", my_user(), "" )
+__default_odt_mp_template := fetch_metric( "fakt_default_odt_mp_template", my_user(), "" )
+__default_odt_kol_template := fetch_metric( "fakt_default_odt_kol_template", my_user(), "" )
 return
 
 
@@ -40,8 +44,6 @@ return
 // stampa dokumenta u odt formatu
 // ------------------------------------------------
 function stdokodt( cIdf, cIdVd, cBrDok )
-local _t_path := my_home()
-local _filter := "f-*.odt"
 local _template := ""
 local _jod_templates_path := F18_TEMPLATE_LOCATION
 local _xml_file := my_home() + "data.xml"
@@ -91,26 +93,8 @@ _gen_xml( _xml_file, _racuni )
 
 MsgC()
 
-// ako postoji setovan default template, koristi njega !
-if !EMPTY( __default_odt_template )
-
-    _template := __default_odt_template
-
-elseif __auto_odt == "D"
-
-    // template baziran na vrsti dokumenta...
-    if __tip_dok $ "12#13"
-        _template := "f-stdk.odt"
-    else
-        _template := "f-std.odt"
-    endif
-
-else
-    // uzmi template koji ces koristiti
-    if get_file_list_array( _t_path, _filter, @_template, .t. ) == 0
-        return
-    endif
-endif
+// odaberi template za stampu...
+fakt_odaberi_template( @_template, __tip_dok )
 
 close all
 
@@ -136,6 +120,69 @@ if f18_odt_generate( _template, _xml_file )
 endif
 
 return
+
+
+
+static function fakt_odaberi_template( template, tip_dok )
+local _ok := .t.
+local _mp_template := "f-stdm.odt"
+local _vp_template := "f-std.odt"
+local _kol_template := "f-stdk.odt"
+local _auto_odabir := __auto_odt == "D"
+local _f_path := my_home()
+local _f_filter := "f-*.odt"
+
+// imamo i gpsamokol parametar koji je bitan... valjda !
+
+template := ""
+
+// odabir template fajla na osnovu tipa dokumenta
+do case
+
+    case tip_dok $ "12#13#22#23"
+
+        // tipovi dokumenata gdje trebaju samo kolicine 
+
+        if !EMPTY( __default_odt_kol_template )
+            template := __default_odt_kol_template
+        endif
+
+        if EMPTY( template ) .and. _auto_odabir
+            template := _kol_template
+        endif
+                
+    case  tip_dok $ "11#"
+
+        // maloprodajni racuni i ostalo...
+
+        if !EMPTY( __default_odt_mp_template )
+            template := __default_odt_mp_template
+        endif
+            
+        if EMPTY( template ) .and. _auto_odabir
+            template := _mp_template
+        endif
+
+    otherwise
+
+        // ostalo cemo smatrati veleprodajom
+
+        if !EMPTY( __default_odt_vp_template )
+            template := __default_odt_vp_template
+        endif
+
+        if EMPTY( template ) .and. _auto_odabir
+            template := _vp_template
+        endif
+
+endcase
+
+if EMPTY( template ) 
+    _ok := get_file_list_array( _f_path, _f_filter, @template, .t. ) == 1
+endif
+
+return _ok
+
 
 
 

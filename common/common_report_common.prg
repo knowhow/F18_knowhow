@@ -43,23 +43,23 @@ return
 
 function NovaStrana( bZagl, nOdstampatiStrana )
 
-
-if (nOdstampatiStrana==nil)
-    nOdstampatiStrana:=1
+if ( nOdstampatiStrana == NIL )
+    nOdstampatiStrana := 1
 endif
 
-if PROW()>(62+gPStranica-nOdstampatiStrana)
+if PROW() > ( ( RPT_PAGE_LEN + gPStranica ) - nOdstampatiStrana )
     FF
-    if (bZagl<>nil)
-        EVAL(bZagl)
+    if ( bZagl <> NIL )
+        EVAL( bZagl )
     endif
 endif
+
 return
 
 
 
-function PrnClanoviKomisije()
 
+function PrnClanoviKomisije()
 
 ?
 P_10CPI

@@ -35,8 +35,8 @@ if ver["current"] > 0 .and. ver["current"] < 00806
 	next
 endif
 
-// 0.9.0
-if ver["current"] > 0 .and. ver["current"] < 00900
+// 0.10.1
+if ver["current"] > 0 .and. ver["current"] < 00101
 	for each _tbl in { _table_name }
    		modstru({"*" + _tbl, "A DOC_TYPE C 2 0" })
 	next
@@ -56,8 +56,8 @@ _table_name := "rnal__docs"
 
 IF_NOT_FILE_DBF_CREATE
 
-// 0.9.0
-if ver["current"] > 0 .and. ver["current"] < 00900
+// 0.10.1
+if ver["current"] > 0 .and. ver["current"] < 00101
 	for each _tbl in { _table_name }
    		modstru({"*" + _tbl, "A DOC_TYPE C 2 0" })
 	next
@@ -118,8 +118,8 @@ _table_name := "rnal_doc_ops"
 
 IF_NOT_FILE_DBF_CREATE
 
-// 0.9.0
-if ver["current"] > 0 .and. ver["current"] < 00900
+// 0.10.1
+if ver["current"] > 0 .and. ver["current"] < 00101
 	for each _tbl in { _table_name }
    		modstru({"*" + _tbl, "A OP_STATUS C 1 0", "A OP_NOTES C 250 0" })
 	next
@@ -135,8 +135,8 @@ _table_name := "rnal__doc_ops"
 
 IF_NOT_FILE_DBF_CREATE
 
-// 0.9.0
-if ver["current"] > 0 .and. ver["current"] < 00900
+// 0.10.1
+if ver["current"] > 0 .and. ver["current"] < 00101
 	for each _tbl in { _table_name }
    		modstru({"*" + _tbl, "A OP_STATUS C 1 0", "A OP_NOTES C 250 0" })
 	next
@@ -150,8 +150,8 @@ _table_name := "rnal__doc_opst"
 
 IF_NOT_FILE_DBF_CREATE
 
-// 0.9.0
-if ver["current"] > 0 .and. ver["current"] < 00900
+// 0.10.1
+if ver["current"] > 0 .and. ver["current"] < 00101
 	for each _tbl in { _table_name }
    		modstru({"*" + _tbl, "A OP_STATUS C 1 0", "A OP_NOTES C 250 0" })
 	next

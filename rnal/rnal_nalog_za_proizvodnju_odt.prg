@@ -447,7 +447,6 @@ for _i := 1 to LEN( groups )
 
     xml_subnode( "nalog", .t. )
 
-// --------------------------- vsasa, stampa
 next
 
 // rekapitulacija materijala treba

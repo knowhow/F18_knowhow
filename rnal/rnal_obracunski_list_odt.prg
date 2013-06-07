@@ -297,6 +297,54 @@ xml_node( "nt",  show_number( _t_u_neto, PIC_VRIJEDNOST ) )
 xml_node( "tot",  show_number( _t_u_total, PIC_VRIJEDNOST ) )
 xml_node( "tm",  show_number( _t_u_total_m, PIC_VRIJEDNOST ) )
 
+// rekapitulacija materijala treba
+xml_subnode( "rekap", .f. )
+
+select t_docit2
+go top
+
+if RECCOUNT2() <> 0 .and. params["rekap_materijala"]
+	
+    do while !EOF() 
+
+	    _r_doc := field->doc_no
+	    _r_doc_it_no := field->doc_it_no
+
+	    // da li se treba stampati ?
+	    select t_docit
+	    seek docno_str( _r_doc ) + docit_str( _r_doc_it_no )
+	
+	    if field->print == "N"
+		    select t_docit2
+		    skip
+		    loop
+	    endif
+	
+	    // vrati se
+	    select t_docit2
+
+	    do while !EOF() .and. field->doc_no == _r_doc ;
+		                .and. field->doc_it_no == _r_doc_it_no
+		
+            xml_subnode( "item", .f. )
+
+            xml_node( "no", ALLTRIM(STR( field->it_no )) )
+            xml_node( "id", to_xml_encoding( ALLTRIM( field->art_id ) ) )
+            xml_node( "desc", to_xml_encoding( ALLTRIM( field->art_desc ) ) )
+            xml_node( "notes", to_xml_encoding( ALLTRIM( field->descr ) ) )
+            xml_node( "qtty", ALLTRIM( STR( field->doc_it_qtt, 12, 2 ) ) )
+
+            xml_subnode( "item", .t. )
+
+		    skip
+	    enddo
+
+    enddo
+
+endif
+
+xml_subnode( "rekap", .t. )
+
 xml_subnode( "spec", .t. )
 
 xml_subnode( "specifikacija", .t. )

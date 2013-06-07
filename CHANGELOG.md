@@ -1,6 +1,7 @@
 1.4.188 2013-06-07, vsasa
  
   - F18, sinhronizacija baza master/slave
+  - RNAL, štampa specifikacije materijala na specifikaciji ODT
  
 1.4.187 2013-06-06, vsasa
  

@@ -1075,7 +1075,7 @@ set CONSOLE OFF
 // upisi u fajl...
 _config_arr := {}
 
-AADD( _config_arr, { "RR::Intitializer::run do |config|" } )
+AADD( _config_arr, { "RR::Initializer::run do |config|" } )
 
 // left config: server
 AADD( _config_arr, { "config.left = {" } )

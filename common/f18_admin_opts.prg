@@ -884,7 +884,7 @@ if EMPTY( _params_orig["db"] )
             _params["master_host"] := _params_orig["master_host"]
             _params["slave_host"] := _params_orig["slave_host"]
             _params["db"] := _db_list[ _i, 1 ] + "_" + _sess_list[ _n, 1 ]
-            _params["prioritet"] := 1
+            _params["tip"] := 1
             _params["tabele_filter"] := ""
             _params["top_sezona"] := "D"
 
@@ -924,7 +924,7 @@ elseif !EMPTY( _params_orig["db"] ) .and. ! ( "_" $ _params_orig["db"] )
         _params["master_host"] := _params_orig["master_host"]
         _params["slave_host"] := _params_orig["slave_host"]
         _params["db"] := _params_orig["db"] + "_" + _sess_list[ _i, 1 ]
-        _params["prioritet"] := 1
+        _params["tip"] := 1
         _params["tabele_filter"] := ""
         _params["top_sezona"] := "D"
 
@@ -973,11 +973,14 @@ endif
 // komandna linija za sinhronizaciju
 _cmd := ::synchro_db_cmd_line()
 
-if f18_run( _cmd ) <> 0
-    MsgBeep( "Problem sa pokretanjem komande za sinhronizaciju..." )
-else
-    _ok := .t.
-endif
+// pokreni komandu
+#ifdef __PLATFORM__WINDOWS
+    f18_run( _cmd )
+#else
+    hb_run( _cmd )
+#endif
+
+_ok := .t.
 
 return _ok
 
@@ -996,7 +999,7 @@ local _master_srv := SPACE(100)
 local _slave_srv := SPACE(100)
 local _db := SPACE(50)
 local _tbl_filter := SPACE(200)
-local _prioritet := 1
+local _tip := 1
 local _samo_tekuca := "D"
 
 Box(, _box_x, _box_y )
@@ -1027,8 +1030,8 @@ Box(, _box_x, _box_y )
 
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Prioritet: (1) master (2) slave (3) ostalo:" GET _prioritet ;
-                    VALID _prioritet > 0 .and. _prioritet <= 3 ;
+    @ m_x + _x, m_y + 2 SAY "Tip: (1) master->slave (2) slave->master:" GET _tip ;
+                    VALID _tip > 0 .and. _tip <= 3 ;
                     PICT "9"
 
     read
@@ -1044,7 +1047,7 @@ endif
 _params["master_host"] := ALLTRIM( _master_srv )
 _params["slave_host"] := ALLTRIM( _slave_srv )
 _params["db"] := ALLTRIM( _db )
-_params["prioritet"] := _prioritet
+_params["tip"] := _tip
 _params["tabele_filter"] := ALLTRIM( _tbl_filter )
 _params["top_sezona"] := _samo_tekuca
 
@@ -1074,7 +1077,7 @@ _config_arr := {}
 
 AADD( _config_arr, { "RR::Intitializer::run do |config|" } )
 
-// left config
+// left config: server
 AADD( _config_arr, { "config.left = {" } )
 AADD( _config_arr, { ":adapter => 'postgresql',  " } )
 AADD( _config_arr, { ":database => '" + ::_synchro_db_params["db"] + "', " } )
@@ -1084,7 +1087,7 @@ AADD( _config_arr, { ":host => '" + ::_synchro_db_params["master_host"] + "', " 
 AADD( _config_arr, { ":schema_search_path => 'fmk' " } )
 AADD( _config_arr, { "}" } )
 
-// right config
+// right config: slave
 AADD( _config_arr, { "config.right = {" } )
 AADD( _config_arr, { ":adapter => 'postgresql',  " } )
 AADD( _config_arr, { ":database => '" + ::_synchro_db_params["db"] + "', " } )
@@ -1097,17 +1100,37 @@ AADD( _config_arr, { "}" } )
 // timeout
 AADD( _config_arr, { "config.options[:database_connection_timeout] = 600 " } )
 
-// tabele
+// tabele include
 AADD( _config_arr, { "config.include_tables /./ " } )
 
-// left options
-AADD( _config_arr, { "config.options[:right_record_handling] = :ignore " } )
-AADD( _config_arr, { "config.options[:sync_conflict_handling] = :left_wins " } )
+// table exclude
+AADD( _config_arr, { "config.exclude_tables /log/ " } )
+AADD( _config_arr, { "config.exclude_tables /^semaphores/ " } )
 
-// right options
-AADD( _config_arr, { "config.options[:right_change_handling] = :ignore " } )
-AADD( _config_arr, { "config.options[:replication_conflict_handling] = :left_wins " } )
+// ignore keys
+AADD( _config_arr, { "config.options[:auto_key_limit] = 100 " } )
 
+if ::_synchro_db_params["tip"] == 1
+
+    // left options
+    AADD( _config_arr, { "config.options[:right_record_handling] = :ignore " } )
+    AADD( _config_arr, { "config.options[:sync_conflict_handling] = :left_wins " } )
+
+    // right options
+    AADD( _config_arr, { "config.options[:right_change_handling] = :ignore " } )
+    AADD( _config_arr, { "config.options[:replication_conflict_handling] = :left_wins " } )
+
+else
+
+    // left options
+    AADD( _config_arr, { "config.options[:right_record_handling] = :ignore " } )
+    AADD( _config_arr, { "config.options[:sync_conflict_handling] = :right_wins " } )
+
+    // right options
+    AADD( _config_arr, { "config.options[:left_change_handling] = :ignore " } )
+    AADD( _config_arr, { "config.options[:replication_conflict_handling] = :left_wins " } )
+
+endif
 
 AADD( _config_arr, { "end" } )
 
@@ -1148,7 +1171,7 @@ local _config := my_home_root() + "f18_sync.conf"
 #endif
 
 _cmd := _path
-_cmd += "rubyrep.jar sync -c"
+_cmd += "rubyrep sync -c"
 _cmd += " "
 _cmd += _config
 

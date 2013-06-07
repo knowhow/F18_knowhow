@@ -1106,6 +1106,7 @@ AADD( _config_arr, { "config.include_tables /./ " } )
 // table exclude
 AADD( _config_arr, { "config.exclude_tables /log/ " } )
 AADD( _config_arr, { "config.exclude_tables /^semaphores/ " } )
+AADD( _config_arr, { "config.exclude_tables /^v_fin/ " } )
 
 // ignore keys
 AADD( _config_arr, { "config.options[:auto_key_limit] = 100 " } )

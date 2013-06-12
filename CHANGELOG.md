@@ -1,3 +1,7 @@
+1.4.189 2013-06-12, vsasa
+ 
+  - ld, rekapitulacija plate, provjera kredita
+ 
 1.4.188 2013-06-07, vsasa
  
   - F18, sinhronizacija baza master/slave

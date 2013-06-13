@@ -1,3 +1,7 @@
+1.4.190 2013-06-13, vsasa
+ 
+  - ld, rekapitulacija plate za sve rj, provjera kredita
+ 
 1.4.189 2013-06-12, vsasa
  
   - ld, rekapitulacija plate, provjera kredita

@@ -1698,19 +1698,29 @@ if "SUMKREDITA" $ tippr->formula
                         // rekap za sve rj
                         select ld
                         set order to tag ( TagVO("2") )
-                        hseek STR( cGodina, 4 ) + STR( mj, 2 ) + ;
-                                IF( !EMPTY(cObracun), cObracun, "" ) + radkr->idradn
+                        hseek STR( cGodina, 4 ) + STR( mj, 2 ) + cObracun + radkr->idradn
+                           
+                        _t_rec := RECNO() 
+                        do while !EOF() .and. godina == cGodina .and. mjesec == cMjesec .and. ;
+                            obr == cObracun .and. idradn == radkr->idradn
+                            if ld->i30 <> 0
+                                _found := .t.
+                                exit
+                            endif
+                            skip
+                        enddo
+                        go ( _t_rec )
+
                     else
                         // rekap za jednu rj
                         select ld
                         hseek  STR( cGodina, 4 ) + cIdrj + STR( mj, 2 ) + IF( !EMPTY( cObracun ), cObracun, "" ) + radkr->idradn
+                        // ako ima radnika i ako mu je podatak kredita unesen na obracunu
+                        if FOUND() .and. ld->i30 <> 0
+                            _found := .t.
+                        endif
                     endif 
                     
-                    // ako ima radnika i ako mu je podatak kredita unesen na obracunu
-                    if FOUND() .and. ld->i30 <> 0
-                        _found := .t.
-                    endif
-
                     select radkr
 
                     if _found

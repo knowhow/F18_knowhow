@@ -15,7 +15,7 @@
 
 static PicDEM := "99999999.99"
 static PicBHD := "9999999999.99"
-static PicKol := "9999999.99"
+static PicKol := "999999.999"
 
 
 function mat_specifikacija()
@@ -122,148 +122,177 @@ P_COND
 nCDI:=0
 DO WHILE !eof()
 
-   cIdKonto:=IdKonto
-   IF prow()==1
-      P_COND
+    cIdKonto:=IdKonto
+    IF prow()==1
+        P_COND
       
-      ?? "MAT.P: SPECIFIKACIJA STANJA (U "
-      if cFmt=="1"
-       ?? ValDomaca()+"/"+ValPomocna()+") "
-      elseif cFmt=="2"
-       ?? ValDomaca()+") "
-      else
-       ?? ValDomaca()+") "
-      endif
-      if !empty(dDatOd) .or. !empty(dDatDo)
-        ?? "ZA PERIOD OD",dDatOd,"-",dDatDo
-      endif
-      ?? "      NA DAN:"
-      @ prow(),pcol()+1 SAY DATE()
-      if !empty(qqPartn)
-        @ prow()+1,0 SAY "Kriterij za partnera:"; ?? trim(qqPartn)
-      endif
-      if !empty(cidtarifa)
-        @ prow()+1,0 SAY "Tarifa: "; ?? cidtarifa
-      endif
-      @ prow()+1,0 SAY "FIRMA:"
-      @ prow(),pcol()+1 SAY cIdFirma
-      SELECT PARTN; HSEEK cIdFirma
-      @ prow(),pcol()+1 SAY naz; @ prow(),pcol()+1 SAY naz2
-      @ prow()+1,0 SAY KonSeks("KONTO")+":"
-      @ prow(),pcol()+1 SAY cIdKonto
-      select konto; hseek cidkonto
-      @ prow(),pcol()+1 SAY naz
-      select mat_suban
-      ?  m
-      if cFmt=="1"
-       ? "*R. *  SIFRA   *       N A Z I V                        *J. *   ZADNJA *  ZADNJA  *  ZADNJA  *       K O L I C I N A          *     V R I J E D N O S T    "+ValDomaca()+"   *        V R I J E D N O S T   "+ValPomocna()+"   *"
-       ? " Br.                                                    *   *    NC    *    VPC   *   MPC     ------------------------------- ------------------------------------ --------------------------------------"
-       ? "*   *          *                                        *MJ.*          *          *          *   ULAZ   *  IZLAZ   *  STANJE  *  DUGUJE   * POTRAZUJE *   SALDO   *  DUGUJE    *  POTRAZUJE *  SALDO    *"
-     elseif cFmt=="2"
-       ? "*R. *  SIFRA   *       N A Z I V                        *J. *       K O L I C I N A          *     V R I J E D N O S T          *"
-       ? "*Br.*                                                       -------------------------------- ------------------------------------"
-       ? "*   *          *                                        *MJ.*   ULAZ   *  IZLAZ   *  STANJE  *  DUGUJE   * POTRAZUJE *  SALDO   *"
-      elseif cFmt=="3"
-       ? "*R. *  SIFRA   *       N A Z I V                        *J. *       K O L I C I N A          *        V R I J E D N O S T          *"
-       ? "*Br.*                                                       -------------------------------- ---------------------------------------"
-       ? "*   *          *                                        *MJ.*   ULAZ   *  IZLAZ   *  STANJE  *  DUGUJE    *  POTRAZUJE *  SALDO    *"
-      endif
-       ?  m
-   ENDIF
-   B:=0
-   nUkDugI:=nUkPotI:=0
-   nUkDugI2:=nUkPotI2:=0
-   do while  !eof() .and.  cIdKonto==IdKonto
+        ?? "MAT.P: SPECIFIKACIJA STANJA (U "
+        if cFmt=="1"
+            ?? ValDomaca()+"/"+ValPomocna()+") "
+        elseif cFmt=="2"
+            ?? ValDomaca()+") "
+        else
+            ?? ValDomaca()+") "
+        endif
+        if !empty(dDatOd) .or. !empty(dDatDo)
+            ?? "ZA PERIOD OD",dDatOd,"-",dDatDo
+        endif
+        ?? "      NA DAN:"
+        @ prow(),pcol()+1 SAY DATE()
+        if !empty(qqPartn)
+            @ prow()+1,0 SAY "Kriterij za partnera:"; ?? trim(qqPartn)
+        endif
+        if !empty(cidtarifa)
+            @ prow()+1,0 SAY "Tarifa: "; ?? cidtarifa
+        endif
+        @ prow()+1,0 SAY "FIRMA:"
+        @ prow(),pcol()+1 SAY cIdFirma
+        SELECT PARTN
+        HSEEK cIdFirma
+        @ prow(),pcol()+1 SAY ALLTRIM( naz )
+        @ prow(),pcol()+1 SAY ALLTRIM( naz2 )
+        @ prow()+1,0 SAY KonSeks("KONTO")+":"
+        @ prow(),pcol()+1 SAY cIdKonto
+        select konto
+        hseek cidkonto
+        @ prow(),pcol()+1 SAY ALLTRIM( naz )
+        select mat_suban
+        ?  m
+        if cFmt == "1"
+            ? "*R. *  SIFRA   *       N A Z I V                        *J. *   ZADNJA *  ZADNJA  *  ZADNJA  *       K O L I C I N A          *     V R I J E D N O S T    "+ValDomaca()+"   *        V R I J E D N O S T   "+ValPomocna()+"   *"
+            ? " Br.                                                    *   *    NC    *    VPC   *   MPC     ------------------------------- ------------------------------------ --------------------------------------"
+            ? "*   *          *                                        *MJ.*          *          *          *   ULAZ   *  IZLAZ   *  STANJE  *  DUGUJE   * POTRAZUJE *   SALDO   *  DUGUJE    *  POTRAZUJE *  SALDO    *"
+        elseif cFmt == "2"
+            ? "*R. *  SIFRA   *       N A Z I V                        *J. *       K O L I C I N A          *     V R I J E D N O S T          *"
+            ? "*Br.*                                                       -------------------------------- ------------------------------------"
+            ? "*   *          *                                        *MJ.*   ULAZ   *  IZLAZ   *  STANJE  *  DUGUJE   * POTRAZUJE *  SALDO   *"
+        elseif cFmt == "3"
+            ? "*R. *  SIFRA   *       N A Z I V                        *J. *       K O L I C I N A          *        V R I J E D N O S T          *"
+            ? "*Br.*                                                       -------------------------------- ---------------------------------------"
+            ? "*   *          *                                        *MJ.*   ULAZ   *  IZLAZ   *  STANJE  *  DUGUJE    *  POTRAZUJE *  SALDO    *"
+        endif
+        ?  m
+    ENDIF
+    
+    B:=0
+    
+    nUkDugI := 0
+    nUkPotI := 0
+    nUkDugI2 := 0
+    nUkPotI2 := 0
+    nUKolUlaz := 0
+    nUKolIzlaz := 0
+    nUKolStanje := 0
+   
+    do while  !eof() .and.  cIdKonto==IdKonto
 
-      NovaStrana()
+        NovaStrana()
 
-      SELECT mat_suban
-      cIdRoba:=IdRoba
-      select roba; hseek cidroba; select mat_suban
-      if !empty(cIdTarifa)
-          if roba->idtarifa<>cIdtarifa
-             skip
-             loop
-          endif
-      endif
-      nDugI:=nPotI:=nUlazK:=nIzlazK:=0
-      nDugI2:=nPotI2:=nUlazK2:=nIzlazK2:=0
-      DO WHILE !eof() .AND. cIdkonto==IdKonto .AND. cIdRoba=IdRoba
-          IF U_I="1"
-             nUlazK+=Kolicina
-          ELSE
-             nIzlazK+=Kolicina
-          ENDIF
-          IF D_P="1"
-             nDugI+=Iznos
-             nDugI2+=Iznos2
-          ELSE
-             nPotI+=Iznos
-             nPotI2+=Iznos2
-          ENDIF
-       SKIP
-      ENDDO // IdRoba
+        SELECT mat_suban
+        cIdRoba:=IdRoba
+        select roba
+        hseek cidroba
+        select mat_suban
+        if !empty(cIdTarifa)
+            if roba->idtarifa<>cIdtarifa
+                skip
+                loop
+            endif
+        endif
+        nDugI:=nPotI:=nUlazK:=nIzlazK:=0
+        nDugI2:=nPotI2:=nUlazK2:=nIzlazK2:=0
+        DO WHILE !eof() .AND. cIdkonto==IdKonto .AND. cIdRoba=IdRoba
+            IF U_I="1"
+                nUlazK+=Kolicina
+            ELSE
+                nIzlazK+=Kolicina
+            ENDIF
+            IF D_P="1"
+                nDugI+=Iznos
+                nDugI2+=Iznos2
+            ELSE
+                nPotI+=Iznos
+                nPotI2+=Iznos2
+            ENDIF
+            SKIP
+        ENDDO // IdRoba
       
-      select roba
-      cRoba := PADR( field->naz, 40 ) 
-      cJmj := field->jmj
+        select roba
+        cRoba := PADR( field->naz, 40 ) 
+        cJmj := field->jmj
+    
+    
+        nSaldoK:=nUlazK-nIzlazK
+        nSaldoI:=nDugI-nPotI
+        nSaldoK2:=nUlazK2-nIzlazK2
+        nSaldoI2:=nDugI2-nPotI2
+    
+        @ prow()+1,0 SAY ++B PICTURE '9999'
+        @ prow(),pcol()+1 SAY cIdRoba
+        @ prow(),pcol()+1 SAY cRoba
+        @ prow(),pcol()+1 SAY cjmj
 
-      nSaldoK:=nUlazK-nIzlazK
-      nSaldoI:=nDugI-nPotI
-      nSaldoK2:=nUlazK2-nIzlazK2
-      nSaldoI2:=nDugI2-nPotI2
+        if cFmt == "1"
+            @ prow(),pcol()+1 SAY NC   picture "999999.999"
+            @ prow(),pcol()+1 SAY VPC  picture "999999.999"
+            @ prow(),pcol()+1 SAY MPC  picture "999999.999"
+        endif
+      
+        nCDI := pcol()
+      
+        @ prow(),pcol()+1 SAY nUlazK PICTURE picKol
+        @ prow(),pcol()+1 SAY nIzlazK PICTURE picKol
+        @ prow(),pcol()+1 SAY nSaldoK PICTURE picKol
+     
+        if cFmt $ "12"
+            @ prow(),pcol()+1 SAY nDugI PICTURE PicDEM
+            @ prow(),pcol()+1 SAY nPotI PICTURE PicDEM
+            @ prow(),pcol()+1 SAY nSaldoI PICTURE PicDEM
+        endif
+        if cFmt $ "13"
+            @ prow(),pcol()+1 SAY nDugI2 PICTURE PicBHD
+            @ prow(),pcol()+1 SAY nPotI2 PICTURE PicBHD
+            @ prow(),pcol()+1 SAY nSaldoI2 PICTURE PicBHD
+        endif
+    
+        nUKolUlaz += nUlazK
+        nUKolIzlaz += nIzlazK
+        nUKolStanje += nSaldoK
 
-      @ prow()+1,0 SAY ++B PICTURE '9999'
-      @ prow(),pcol()+1 SAY cIdRoba
-      @ prow(),pcol()+1 SAY cRoba
-      @ prow(),pcol()+1 SAY cjmj
-      if cFmt=="1"
-        @ prow(),pcol()+1 SAY NC   picture "999999.999"
-        @ prow(),pcol()+1 SAY VPC  picture "999999.999"
-        @ prow(),pcol()+1 SAY MPC  picture "999999.999"
-      endif
-      @ prow(),pcol()+1 SAY nUlazK PICTURE picKol
-      @ prow(),pcol()+1 SAY nIzlazK PICTURE picKol
-      @ prow(),pcol()+1 SAY nSaldoK PICTURE picKol
-      nCDI:=pcol()
-     if cFmt $ "12"
-      @ prow(),pcol()+1 SAY nDugI PICTURE PicDEM
-      @ prow(),pcol()+1 SAY nPotI PICTURE PicDEM
-      @ prow(),pcol()+1 SAY nSaldoI PICTURE PicDEM
-     endif
-     if cFmt $ "13"
-      @ prow(),pcol()+1 SAY nDugI2 PICTURE PicBHD
-      @ prow(),pcol()+1 SAY nPotI2 PICTURE PicBHD
-      @ prow(),pcol()+1 SAY nSaldoI2 PICTURE PicBHD
-     endif
+        nUkDugI += nDugI
+        nUkPotI += nPotI
+        nUkDugI2 += nDugI2
+        nUkPotI2 += nPotI2
 
+        nDugI:=nPotI:=nUlazK:=nIzlazK:=0
+        nDugI2:=nPotI2:=nUlazK2:=nIzlazK2:=0
 
-      nUkDugI+=nDugI
-      nUkPotI+=nPotI
-      nUkDugI2+=nDugI2
-      nUkPotI2+=nPotI2
-      nDugI:=nPotI:=nUlazK:=nIzlazK:=0
-      nDugI2:=nPotI2:=nUlazK2:=nIzlazK2:=0
+        select mat_suban
+    enddo // konto
 
-      select mat_suban
-  enddo // konto
+    ? m
+    ? "UKUPNO ZA:" + cIdKonto
 
-?  m
-?  "UKUPNO ZA:"+cIdKonto
-@  prow(),nCDI SAY ""
-if cFmt $ "12"
- @ prow(),pcol()+1 SAY nUkDugI PICTURE PicDEM
- @ prow(),pcol()+1 SAY nUkPotI PICTURE PicDEM
- @ prow(),pcol()+1 SAY nUkDugI-nUkPotI PICTURE PicDEM
-endif
-if cFmt $ "13"
- @ prow(),pcol()+1 SAY nUkDugI2          PICTURE PicBHD
- @ prow(),pcol()+1 SAY nUkPotI2          PICTURE PicBHD
- @ prow(),pcol()+1 SAY nUkDugI2-nUkPotI2 PICTURE PicBHD
-endif
-? m
+    @ prow(), nCDI SAY ""
 
-FF
+    @ prow(), pcol() + 1 SAY nUKolUlaz PICTURE PicKol
+    @ prow(), pcol() + 1 SAY nUKolIzlaz PICTURE PicKol
+    @ prow(), pcol() + 1 SAY nUKolStanje PICTURE PicKol
+
+    if cFmt $ "12"
+        @ prow(),pcol()+1 SAY nUkDugI PICTURE PicDEM
+        @ prow(),pcol()+1 SAY nUkPotI PICTURE PicDEM
+        @ prow(),pcol()+1 SAY nUkDugI-nUkPotI PICTURE PicDEM
+    endif
+
+    if cFmt $ "13"
+        @ prow(),pcol()+1 SAY nUkDugI2          PICTURE PicBHD
+        @ prow(),pcol()+1 SAY nUkPotI2          PICTURE PicBHD
+        @ prow(),pcol()+1 SAY nUkDugI2-nUkPotI2 PICTURE PicBHD
+    endif
+    ? m
+
+    FF
 
 ENDDO 
 // firma

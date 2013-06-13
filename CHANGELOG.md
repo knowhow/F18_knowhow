@@ -1,3 +1,7 @@
+1.4.191 2013-06-13, vsasa
+ 
+  - mat, korekcije na izvještajima i parametrima
+ 
 1.4.190 2013-06-13, vsasa
  
   - ld, rekapitulacija plate za sve rj, provjera kredita

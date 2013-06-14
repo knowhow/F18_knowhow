@@ -1,3 +1,7 @@
+1.4.193 2013-06-14, vsasa
+ 
+  - F18, ispis verzije db servera na glavnom meniju preduzeća
+ 
 1.4.192 2013-06-14, vsasa
  
   - fakt, štampa fakture ODT, ispis stope PDV-a u totalu

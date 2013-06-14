@@ -1,3 +1,7 @@
+1.4.192 2013-06-14, vsasa
+ 
+  - fakt, štampa fakture ODT, ispis stope PDV-a u totalu
+ 
 1.4.191 2013-06-13, vsasa
  
   - mat, korekcije na izvještajima i parametrima

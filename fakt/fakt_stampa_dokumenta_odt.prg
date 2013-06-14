@@ -601,7 +601,11 @@ for _n := 1 to LEN( a_racuni )
     xml_subnode( "invoice_no", .f. )
  
     _din_dem := ALLTRIM( get_dtxt_opis( "D07" ) )
-    
+   
+    select rn
+    go top
+    _pdv_stopa := field->ppdv
+     
     select drn
     go top
 
@@ -639,7 +643,7 @@ for _n := 1 to LEN( a_racuni )
     // pdv
     xml_subnode( "item", .f. )
         xml_node( "bold", "0" )
-        xml_node( "naz", to_xml_encoding( "PDV" ) )
+        xml_node( "naz", to_xml_encoding( "PDV " + ALLTRIM( STR( _pdv_stopa, 12, 0 ) ) + "%" ) )
         xml_node( "iznos", show_number( field->ukpdv, PIC_VRIJEDNOST ) )
     xml_subnode( "item", .t. )
    

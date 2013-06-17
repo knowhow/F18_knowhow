@@ -1,6 +1,8 @@
-1.4.193 2013-06-14, vsasa
+1.4.193 2013-06-17, vsasa
  
   - F18, ispis verzije db servera na glavnom meniju preduzeća
+  - LD, izvještaj topli obrok - bugfix
+
  
 1.4.192 2013-06-14, vsasa
  

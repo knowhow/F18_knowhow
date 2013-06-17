@@ -155,8 +155,9 @@ return
  */
  
 function fin_zagl_11()
-
 local nArr, lDnevnik:=.f.
+local _fin_params := fin_params()
+
 if "DNEVNIKN"==PADR(UPPER(PROCNAME(1)),8) .or.;
    "DNEVNIKN"==PADR(UPPER(PROCNAME(2)),8)
    lDnevnik:=.t.
@@ -165,19 +166,25 @@ endif
 __par_len := LEN(partn->id)
 
 ?
-if gNW=="N" .and. gVar1=="0"
- P_COND2
+if _fin_params["fin_tip_dokumenta"] .and. gVar1 == "0"
+    P_COND2
 else
- P_COND
+    P_COND
 endif
+
 B_ON
-?? UPPER(gTS)+":",gNFirma
+
+?? UPPER(gTS) + ":", gNFirma
 ?
-nArr:=select()
-if gNW=="N"
-   select partn; hseek cidfirma; select (nArr)
-   ? cidfirma,"-",partn->naz
+nArr := select()
+
+if _fin_params["fin_tip_dokumenta"] 
+    select partn
+    hseek cIdfirma
+    select (nArr)
+    ? cidfirma,"-", ALLTRIM( partn->naz )
 endif
+
 ?
 IF lDnevnik
   ? "FIN.P:      D N E V N I K    K NJ I Z E NJ A    Z A    "+;
@@ -202,8 +209,10 @@ ENDIF
 lJerry := ( IzFMKIni("FIN","JednovalutniNalogJerry","N",KUMPATH) == "D" )
 
 P_NRED
+
 ?? M
-if gNW=="D"
+
+if !_fin_params["fin_tip_dokumenta"]
  P_NRED
  ?? IF(lDnevnik,"R.BR. *   BROJ   *DAN*","")+"*R. * KONTO *" + PADC("PART", __par_len) + "*"+IF(gVar1=="1".and.lJerry,"       NAZIV PARTNERA         *                    ","    NAZIV PARTNERA ILI      ")+"*   D  O  K  U  M  E  N  T    *         IZNOS U  "+ValDomaca()+"         *"+IF(gVar1=="1","","    IZNOS U "+ValPomocna()+"    *")
  P_NRED

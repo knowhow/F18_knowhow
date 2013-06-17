@@ -19,6 +19,7 @@ local nArr:=SELECT()
 local aRez:={}
 local aOpis:={}
 local _vrste_placanja, lJerry
+local _fin_params := fin_params()
 
 IF lAuto = NIL
 	lAuto := .f.
@@ -35,7 +36,7 @@ lJerry := .f.
 PicBHD := "@Z "+FormPicL(gPicBHD,15)
 PicDEM := "@Z "+FormPicL(gPicDEM,10)
 
-IF gNW == "N"
+IF _fin_params["fin_tip_dokumenta"]
      M := IIF(cInd=="3","------ -------------- --- ","")+"---- ------- " + REPL("-", __par_len) + " ----------------------------" + IIF(gVar1=="1" .and. lJerry, "-- " + REPL("-",20),"")+" -- ------------- ----------- -------- -------- --------------- ---------------"+IF(gVar1=="1","-"," ---------- ----------")
 ELSE
      M := IIF(cInd=="3","------ -------------- --- ","")+"---- ------- " + REPL("-", __par_len) + " ----------------------------"+IF(gVar1=="1".and.lJerry,"-- "+REPL("-",20),"")+" ----------- -------- -------- --------------- ---------------"+IF(gVar1=="1","-"," ---------- ----------")
@@ -151,12 +152,13 @@ DO WHILE !eof() .and. eval(b2)
             @ prow(),pcol()+1 SAY aOpis[1]
         ENDIF
 
-       if gNW=="N"
-         @ prow(),pcol()+1 SAY IdTipDok
-         select TDOK;  hseek (nArr)->idtipdok
-         @ prow(),pcol()+1 SAY naz
-         select (nArr)
-         @ prow(),pcol()+1 SAY padr(BrDok,11)
+       if _fin_params["fin_tip_dokumenta"]
+            @ prow(),pcol()+1 SAY IdTipDok
+            select TDOK
+            hseek (nArr)->idtipdok
+            @ prow(),pcol()+1 SAY PADR( naz, 13 )
+            select (nArr)
+            @ prow(),pcol()+1 SAY padr(BrDok,11)
        else
          @ prow(),pcol()+1 SAY padr(BrDok,11)
        endif

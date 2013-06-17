@@ -2,7 +2,7 @@
  
   - F18, ispis verzije db servera na glavnom meniju preduzeća
   - LD, izvještaj topli obrok - bugfix
-
+  - LD, zaštita obračuna, otključavanje/zaključavanje
  
 1.4.192 2013-06-14, vsasa
  

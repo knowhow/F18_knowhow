@@ -715,9 +715,7 @@ do while !EOF() .and. _id_firma == field->idfirma ;
 enddo
 
 if _print_tip == "2"
-
     END PRINT
-
 else
 
     // zatvori mi xml node...

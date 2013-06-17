@@ -760,7 +760,7 @@ select partn
 go top
 seek id_partner
 
-if !FOUND()
+if !FOUND() .and. !EMPTY( id_partner )
     _ret := .f.
     return _ret
 endif
@@ -768,18 +768,32 @@ endif
 // upisi u xml
 xml_subnode( subnode, .f. )
 
-    xml_node( "id", to_xml_encoding( id_partner) )
-    xml_node( "naz", to_xml_encoding( partn->naz ) )
-    xml_node( "naz2", to_xml_encoding( partn->naz2 ) )
-    xml_node( "mjesto", to_xml_encoding( partn->mjesto ) )
-    xml_node( "adresa", to_xml_encoding( partn->adresa ) )
-    xml_node( "ptt", to_xml_encoding( partn->ptt ) )
-    xml_node( "ziror", to_xml_encoding( partn->ziror ) )
-    xml_node( "tel", to_xml_encoding( partn->telefon ) )
+    if EMPTY( id_partner )
+        // nema partnera...
+        xml_node( "id", to_xml_encoding("-") )
+        xml_node( "naz", to_xml_encoding( "-" ) )
+        xml_node( "naz2", to_xml_encoding( "-" ) )
+        xml_node( "mjesto", to_xml_encoding( "-" ) )
+        xml_node( "adresa", to_xml_encoding( "-" ) )
+        xml_node( "ptt", to_xml_encoding( "-" ) )
+        xml_node( "ziror", to_xml_encoding( "-" ) )
+        xml_node( "tel", to_xml_encoding( "-" ) )
+        xml_node( "jib", "-" )
+    else
+        // ima partnera
+        xml_node( "id", to_xml_encoding( id_partner) )
+        xml_node( "naz", to_xml_encoding( partn->naz ) )
+        xml_node( "naz2", to_xml_encoding( partn->naz2 ) )
+        xml_node( "mjesto", to_xml_encoding( partn->mjesto ) )
+        xml_node( "adresa", to_xml_encoding( partn->adresa ) )
+        xml_node( "ptt", to_xml_encoding( partn->ptt ) )
+        xml_node( "ziror", to_xml_encoding( partn->ziror ) )
+        xml_node( "tel", to_xml_encoding( partn->telefon ) )
 
-    _jib := IzSifK( "PARTN", "REGB", id_partner, .f. )
+        _jib := IzSifK( "PARTN", "REGB", id_partner, .f. )
 
-    xml_node( "jib", _jib )
+        xml_node( "jib", _jib )
+    endif
 
 xml_subnode( subnode, .t. )
 

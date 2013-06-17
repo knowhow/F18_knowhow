@@ -4,7 +4,8 @@
   - LD, izvještaj topli obrok - bugfix
   - LD, zaštita obračuna, otključavanje/zaključavanje
   - FIN, štampa IOS-a bez praznog partnera u šifrarniku
- 
+  - FIN, brojač naloga - varijanta "2" ( firma + brnal ) 
+
 1.4.192 2013-06-14, vsasa
  
   - fakt, štampa fakture ODT, ispis stope PDV-a u totalu

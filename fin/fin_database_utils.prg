@@ -99,21 +99,33 @@ local _tmp, _rest
 local _ret := ""
 local _t_area := SELECT()
 
+// obratiti paznju na gBrojac... 1 ili 2
+// 1 - idfirma + idvn + brnal
+// 2 - idfirma + brnal
+
 // param: fin/10/10
 _param := "fin" + "/" + firma + "/" + tip_dokumenta 
+
+if gBrojac == "2"
+    _param := "fin" + "/" + firma
+endif
 
 _broj := fetch_metric( _param, nil, _broj )
 
 // konsultuj i doks uporedo
 O_NALOG
-set order to tag "1"
-go top
 
-seek firma + tip_dokumenta + "Ž"
+if gBrojac == "2"
+    set order to tag "2"
+    go bottom
+else
+    set order to tag "1"
+    go top
+    seek firma + tip_dokumenta + "Ž"
+    skip -1
+endif
 
-skip -1
-
-if field->idfirma == firma .and. field->idvn == tip_dokumenta
+if field->idfirma == firma .and. IF( gBrojac == "1", field->idvn == tip_dokumenta, .t. )
     _broj_nalog := VAL( field->brnal )
 else
     _broj_nalog := 0
@@ -207,7 +219,10 @@ local _tip_dok := "10"
 Box(, 2, 60 )
 
     @ m_x + 1, m_y + 2 SAY "Nalog:" GET _firma
-    @ m_x + 1, col() + 1 SAY "-" GET _tip_dok
+
+    if gBrojac == "1"
+        @ m_x + 1, col() + 1 SAY "-" GET _tip_dok
+    endif
 
     read
 
@@ -217,7 +232,12 @@ Box(, 2, 60 )
     endif
 
     // param: fin/10/10
-    _param := "fin" + "/" + _firma + "/" + _tip_dok
+    if gBrojac == "1"
+        _param := "fin" + "/" + _firma + "/" + _tip_dok
+    else
+        _param := "fin" + "/" + _firma
+    endif
+
     _broj := fetch_metric( _param, nil, _broj )
     _broj_old := _broj
 

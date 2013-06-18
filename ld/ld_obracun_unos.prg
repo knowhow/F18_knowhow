@@ -440,7 +440,6 @@ UkRadnik()
 
 _UIznos := _UNeto + _UOdbici
 
-altd()
 if gVarObracun == "2"
 
     nKLO := radn->klo

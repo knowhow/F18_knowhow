@@ -12,18 +12,9 @@
 
 #include "ld.ch"
 
-// -----------------------------------------------------------
-// Menij ostale operacije nad obracunom
-// -----------------------------------------------------------
-function ld_ostale_opcije_menu()
-private opc:={}
-private opcexe:={}
 
-AADD(opc,   "1. razlike LD-a po novim prosj.satnicama i vrbod-a ")
-AADD(opcexe, {|| RazlikaLd()} )
-private Izbor:=1
 
-Menu_SC("oop")
-
-return
+function ld_obracun_edit()
+local _ok := .f.
+return _ok
 

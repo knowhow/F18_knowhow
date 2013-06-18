@@ -372,6 +372,7 @@ local _filter := ""
 local _ime, _prezime, _imerod
 local _x := 1
 local _sort := 2
+private GetList := {}
 
 _ime := SPACE( 200 )
 _prezime := _ime
@@ -407,6 +408,9 @@ if !EMPTY( _prezime )
     if !EMPTY( _filter )
         _filter += " .AND. "
     endif
+    if RIGHT( ALLTRIM( _prezime ), 1 ) <> ";"
+        _prezime := ALLTRIM( _prezime ) + ";"
+    endif
     _filter += parsiraj( UPPER(_prezime), "UPPER(naz)" )
 endif
 
@@ -414,12 +418,18 @@ if !EMPTY( _ime )
     if !EMPTY( _filter )
         _filter += " .AND. "
     endif
+    if RIGHT( ALLTRIM( _ime ), 1 ) <> ";"
+        _ime := ALLTRIM( _ime ) + ";"
+    endif
     _filter += parsiraj( UPPER(_ime), "UPPER(ime)" )
 endif
 
 if !EMPTY( _imerod )
     if !EMPTY( _filter )
         _filter += " .AND. "
+    endif
+    if RIGHT( ALLTRIM( _imerod ), 1 ) <> ";"
+        _imerod := ALLTRIM( _imerod ) + ";"
     endif
     _filter += parsiraj( UPPER(_imerod), "UPPER(imerod)" )
 endif

@@ -251,8 +251,9 @@ set key K_ALT_O to KonsultOS()
 @ m_x + 5, m_y + 2 SAY "Redni broj stavke naloga:" GET nRbr picture "9999"
 @ m_x + 7, m_y + 2 SAY "DOKUMENT: "
 
-if gNW <> "D"
-    @ m_x+7, m_y + 14  SAY "Tip:" get _IdTipDok valid P_TipDok(@_IdTipDok,7,26)
+//if gNW <> "D"
+if _fin_params["fin_tip_dokumenta"]
+    @ m_x+7,m_y+14  SAY "Tip:" get _IdTipDok valid P_TipDok(@_IdTipDok,7,26)
 endif
 
 if (IsRamaGlas())
@@ -330,8 +331,6 @@ endif
 
 
 read
-
-
 
 // ako su radne jedinice setuj var cTekucaRJ na novu vrijednost
 if (gRJ=="D" .and. cTekucaRJ<>_idrj)

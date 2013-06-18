@@ -201,6 +201,8 @@ Box(, 20, 77)
     ++ nX
 
     @ m_x + nX, m_y + 2 SAY "Unos i obrada radnih sati (D/N)" GET _radni_sati VALID _radni_sati $ "DN" PICT "@!"
+
+    @ m_x + nX, col() + 2 SAY "Zastita obracuna (D/N) ?" GET gZastitaObracuna VALID gZastitaObracuna $ "DN" PICT "@!"
     ++ nX
 
     @ m_x + nX, m_y + 2 SAY "Porezi - stepenaste stope ? (D/N)" GET _st_stopa VALID _st_stopa $ "DN" PICT "@!"
@@ -230,6 +232,7 @@ if (LastKey() <> K_ESC)
     set_metric( "ld_obrada_sihtarica_po_grupama", NIL, gSihtGroup ) 
     set_metric( "ld_radni_sati", NIL, _radni_sati ) 
     set_metric( "ld_porezi_stepenasta_stopa", NIL, _st_stopa )
+    set_metric( "ld_zastita_obracuna", NIL, gZastitaObracuna )
 
 endif
 

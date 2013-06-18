@@ -507,10 +507,14 @@ do while !_table:EOF()
     
     for each _field in _rec:keys
         _rec[ _field ] := oRow:FieldGet( oRow:FieldPos( _field ) )
+        if VALTYPE( _rec[ _field ] ) == "C"
+            _rec[ _field ] := hb_utf8tostr( _rec[ _field ] )
+        endif
     next
 
     // ako ima koje pride polje obradi ga !!!
     _rec["brdok"] := fakt_brdok_0( id_firma, id_tip_dok, DATE() )
+    _rec["datdok"] := DATE()
 
     dbf_update_rec( _rec )
 

@@ -1139,6 +1139,8 @@ do while !EOF() .and. field->idpos == gIdPos ;
     _rec["kolicina"] := ( _rec["kolicina"] * -1 )
     _rec["robanaz"] := roba->naz
     _rec["datum"] := gDatum
+    // placanje uvijek resetovati kod storna na gotovinu
+    _rec["idvrstep"] := "01"
 
     if EMPTY( broj_fiscal )
         _rec["c_1"] := ALLTRIM( storno_rn )

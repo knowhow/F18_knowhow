@@ -35,7 +35,7 @@ local nDays := 7.5
 local cKred := SPACE(6)
 local cExport
 
-O_KRED
+o_tables()
 
 __PAGE_LEN := 60
 
@@ -71,6 +71,7 @@ return
 // ---------------------------------------
 static function _export_data( nVar1, nVar2 )
 local cTxt
+local _output_file := "to.txt"
 private cLokacija
 private cConstBrojTR
 private nH
@@ -111,14 +112,17 @@ do while !EOF()
 	endif
 
 	// konverzija znakova...
-	KonvZnWin( @cTxt, cParKonv )
+	//KonvZnWin( @cTxt, cParKonv )
 
-	write2file( nH, cTxt, .t.)
+	write2file( nH, to_win1250_encoding( cTxt ), .t. )
 	
 	skip
 enddo
 
 closefilebanka(nH)
+
+// kopiraj fajl na desktop
+f18_copy_to_desktop( my_home(), "to.txt", _output_file )
 
 return
 
@@ -131,31 +135,24 @@ static function _get_vars( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
 				cHours, nHourLimit, nMinHrLimit, ;
 				nKoef, nAcontAmount, ;
 				nRptVar1, nRptVar2, cKred, cExport )
-local nTArea := SELECT()
 local nBoxX := 22
 local nBoxY := 70
 local nX := 1
 local cColor := "BG+/B"
 
-// procitaj parametre
-O_PARAMS
-private cHistory := "1"
-private aHistory := {}
-private cSection := "L"
-
-RPar( "rj", @cRj )
-RPar( "m1", @cMonthFrom )
-RPar( "m2", @cMonthTo )
-RPar( "d1", @nDays )
-RPar( "y1", @cYear )
-RPar( "s1", @cHours )
-RPar( "s2", @nHourLimit )
-RPar( "s3", @nMinHrLimit )
-RPar( "k1", @nKoef )
-RPar( "a1", @nAcontAmount )
-RPar( "v1", @nRptVar1 )
-RPar( "v2", @nRptVar2 )
-RPar( "kr", @cKred )
+cRj := fetch_metric( "ld_rptto_rj", my_user(), cRj )
+cMonthFrom := fetch_metric( "ld_rptto_month_from", my_user(), cMonthFrom )
+cMonthto := fetch_metric( "ld_rptto_month_to", my_user(), cMonthto )
+nDays := fetch_metric( "ld_rptto_days", my_user(), nDays )
+cYear := fetch_metric( "ld_rptto_year", my_user(), cYear )
+cHours := fetch_metric( "ld_rptto_hours", my_user(), cHours )
+nHourLimit := fetch_metric( "ld_rptto_hours_limit", my_user(), nHourLimit )
+nMinHrLimit := fetch_metric( "ld_rptto_min_limit", my_user(), nMinHrLimit )
+nKoef := fetch_metric( "ld_rptto_koef", my_user(), nKoef )
+nAcontAmount := fetch_metric( "ld_rptto_acc_amount", my_user(), nAcontAmount )
+nRptVar1 := fetch_metric( "ld_rptto_var_1", my_user(), nRptVar1 )
+nRptVar2 := fetch_metric( "ld_rptto_var_2", my_user(), nRptVar2 )
+cKred := fetch_metric( "ld_rptto_kred", my_user(), cKred )
 
 cExport := "N"
 
@@ -233,38 +230,40 @@ Box(, nBoxX, nBoxY )
 	@ m_x + nX, m_y + 2 SAY SPACE(3) + "Export izvjestaja ?" ;
 		GET cExport VALID cExport $ "DN" PICT "@!"
 
-
 	read
 
 BoxC()
 
 if LastKey() == K_ESC
-
-	select (nTArea)
 	return 0
 endif
 
-
-// snimi parametre...
-select params
-WPar( "rj", cRj )
-WPar( "m1", cMonthFrom )
-WPar( "m2", cMonthTo )
-WPar( "d1", nDays )
-WPar( "y1", cYear )
-WPar( "s1", cHours )
-WPar( "s2", nHourLimit )
-WPar( "s3", nMinHrLimit )
-WPar( "k1", nKoef )
-WPar( "a1", nAcontAmount )
-WPar( "v1", nRptVar1 )
-WPar( "v2", nRptVar2 )
-WPar( "kr", cKred )
-
-select (nTArea)
+set_metric( "ld_rptto_rj", my_user(), cRj )
+set_metric( "ld_rptto_month_from", my_user(), cMonthFrom )
+set_metric( "ld_rptto_month_to", my_user(), cMonthto )
+set_metric( "ld_rptto_days", my_user(), nDays )
+set_metric( "ld_rptto_year", my_user(), cYear )
+set_metric( "ld_rptto_hours", my_user(), cHours )
+set_metric( "ld_rptto_hours_limit", my_user(), nHourLimit )
+set_metric( "ld_rptto_min_limit", my_user(), nMinHrLimit )
+set_metric( "ld_rptto_koef", my_user(), nKoef )
+set_metric( "ld_rptto_acc_amount", my_user(), nAcontAmount )
+set_metric( "ld_rptto_var_1", my_user(), nRptVar1 )
+set_metric( "ld_rptto_var_2", my_user(), nRptVar2 )
+set_metric( "ld_rptto_kred", my_user(), cKred )
 
 return 1
 
+
+// ----------------------------------------------
+// otvori tabele za izvjestaj
+// ----------------------------------------------
+static function o_tables()
+O_LD_RJ
+O_KRED
+O_RADN
+O_LD
+return
 
 
 // ----------------------------------------------------
@@ -281,11 +280,6 @@ local nCount := 0
 
 // napuni matricu aHours sa vrijednostima sati...
 aHours := TokToNiz( ALLTRIM(cHours), ";" )
-
-O_LD_RJ
-O_KRED
-O_RADN
-O_LD
 
 // kreiraj _tmp tabelu
 _cre_tmp()
@@ -742,17 +736,14 @@ AADD(aDbf, { "r_to", "N", 12, 2 })
 AADD(aDbf, { "r_acont", "N", 12, 2 })
 AADD(aDbf, { "r_total", "N", 12, 2 })
 
-if FILE( PRIVPATH + "_TMP.DBF")
-	FERASE( PRIVPATH + "_TMP.DBF")
+if FILE( my_home() + "_tmp.dbf")
+	FERASE( my_home() + "_tmp.dbf")
 endif
 
-if !FILE( PRIVPATH + "_TMP.DBF" )
-	DbCreate2( PRIVPATH + "_TMP.DBF", aDbf )
-endif
+DbCreate( my_home() + "_tmp.dbf", aDbf )
 
-select (240)
-use ( PRIVPATH + "_TMP.DBF" ) alias _tmp
-
+select ( F_TMP_1 )
+my_use_temp( "_TMP", my_home() + "_tmp.dbf", .f., .t. )
 
 return
 

@@ -258,7 +258,7 @@ public _LK_:=6
 public lViseObr := .t.
 public lVOBrisiCDX := .f.
 public cLdPolja := 40
-public gZastitaObracuna := IzFmkIni( "LD", "ZastitaObr", "N", KUMPATH )
+public gZastitaObracuna := "N"
 
 // bazni parametri obracuna...
 // globalni parametri
@@ -269,6 +269,9 @@ gGodina := fetch_metric( "ld_godina", my_user(), gGodina )
 gRJ := fetch_metric( "ld_rj", my_user(), gRj )
 gMjesec := fetch_metric( "ld_mjesec", my_user(), gMjesec )
 gObracun := fetch_metric( "ld_obracun", my_user(), gObracun )
+
+// zastita obracuna / otkljucavanje zakljucavanje
+gZastitaObracuna := fetch_metric( "ld_zastita_obracuna", NIL, gZastitaObracuna )
 
 // ostali parametri...
 

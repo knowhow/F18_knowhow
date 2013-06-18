@@ -213,7 +213,7 @@ Box("#"+ cBoxName, 23, 65 )
   			cDinDem:="1"
 	 	endif
 
- 		@ m_x+12,m_y+2 SAY "Prikaz  K1-K4 (1); Dat.Valute (2); oboje (3)"+IF(gNW=="N".and.cSazeta=="N","; nista (4)","")  GET cK14 valid cK14 $ "123"+IF(gNW=="N".and.cSazeta=="N","4","")
+ 		@ m_x+12,m_y+2 SAY "Prikaz  K1-K4 (1); Dat.Valute (2); oboje (3)"+IF( _fin_params["fin_tip_dokumenta"].and.cSazeta=="N","; nista (4)","")  GET cK14 valid cK14 $ "123"+IF( _fin_params["fin_tip_dokumenta"].and.cSazeta=="N","4","")
 
  		cRasclaniti:="N"
 
@@ -241,9 +241,9 @@ Box("#"+ cBoxName, 23, 65 )
  		endif
 		if cSazeta=="N"
   			if cDinDem=="3"
-   				nC1:=59+IF(gNW=="N",17,0)
+   				nC1:=59+IF(_fin_params["fin_tip_dokumenta"],17,0)
   			else
-   				nC1:=63+IF(gNW=="N",17,0)
+   				nC1:=63+IF(_fin_params["fin_tip_dokumenta"],17,0)
   			endif
 	 	endif
 	
@@ -308,9 +308,9 @@ if cDinDem=="3"
 	if cSazeta=="D"
    		m:="-- -------- ---------- -------- -------- -------------- -------------- -------------- ------------ ------------ ------------"
 	else
-   		if gNW=="N".and.cK14=="4"
+   		if _fin_params["fin_tip_dokumenta"].and.cK14=="4"
      			m:="-- -------- ---- ---------------- ---------- -------- ---------------- ---------------- ---------------- --------------- ------------- ------------ ------------"
-   		elseif gNW=="N"
+   		elseif _fin_params["fin_tip_dokumenta"]
      			m:="-- -------- ---- ---------------- ---------- -------- -------- ---------------- ---------------- ---------------- --------------- ------------- ------------ ------------"
    		else
      			m:="-- -------- ---- ---------- -------- -------- ---------------- ---------------- ---------------- --------------- ------------- ------------ ------------"
@@ -320,7 +320,7 @@ elseif cKumul=="1"
 	if cSazeta=="D"
    		m:="-- -------- ---------- -------- -------- -------------- -------------- --------------"
  	else
-   		if gNW=="N"
+   		if _fin_params["fin_tip_dokumenta"]
      			m:="-- -------- ---- ---------------- ---------- -------- -------- -------------------- ---------------- ----------------- ---------------"
    		else
      			m:="-- -------- ---- ---------- -------- -------- -------------------- ---------------- ----------------- ---------------"
@@ -330,9 +330,9 @@ else
 	if cSazeta=="D"
    		m:="-- -------- ---------- -------- -------- -------------- ------------- --------------- -------------- --------------"
  	else
-  		if gNW=="N".and.cK14=="4"
+  		if _fin_params["fin_tip_dokumenta"].and.cK14=="4"
     			m:="-- -------- ---- ---------------- ---------- -------- -------------------- ---------------- ----------------- ---------------- ----------------- ---------------"
-  		elseif gNW=="N"
+  		elseif _fin_params["fin_tip_dokumenta"]
     			m:="-- -------- ---- ---------------- ---------- -------- -------- -------------------- ---------------- ----------------- ---------------- ----------------- ---------------"
   		else
     			m:="-- -------- ---- ---------- -------- -------- -------------------- ---------------- ----------------- ---------------- ----------------- ---------------"
@@ -601,16 +601,16 @@ do whilesc !eof() .and. IF(gDUFRJ!="D",IdFirma=cIdFirma,.t.) // firma
                 	endif
              	else
                 	if cDinDem=="3"
-                 		if gNW=="D"
-                   			@ prow(),58 SAY ""
-                 		else
+                 		if _fin_params["fin_tip_dokumenta"]
                    			@ prow(),58+IF(cK14=="4",8,17) SAY ""
+                 		else
+                   			@ prow(),58 SAY ""
                  		endif
                 	else
-                 		if gNW=="D"
-                   			@ prow(),62 SAY ""
-                 		else
+                 		if _fin_params["fin_tip_dokumenta"]
                    			@ prow(),62+IF(cK14=="4",8,17) SAY ""
+                 		else
+                   			@ prow(),62 SAY ""
                  		endif
                 	endif
              	endif
@@ -678,11 +678,11 @@ do whilesc !eof() .and. IF(gDUFRJ!="D",IdFirma=cIdFirma,.t.) // firma
 				@ prow(),pcol()+1 SAY BrNal
               	if cSazeta=="N"
                		@ prow(),pcol()+1 SAY RBr
-               		if gNW=="N"
+               		if _fin_params["fin_tip_dokumenta"]
                 		@ prow(),pcol()+1 SAY IdTipDok
                 		SELECT TDOK
 						HSEEK SUBAN->IdTipDok
-                		@ prow(),pcol()+1 SAY naz
+                		@ prow(),pcol()+1 SAY PADR( naz, 13 )
                		endif
               	endif
               			
@@ -1100,7 +1100,10 @@ return partn->telefon=cTel
  */
  
 function ZaglSif(lPocStr)
+local _fin_params := fin_params()
+
 ?
+
 if lPocStr==NIL
 	lPocStr:=.f.
 ENDIF
@@ -1142,13 +1145,13 @@ if c1k1z<>"D" .or. !lPocStr
     			?  "*V.* BR    *   BROJ   * DATUM  *"+iif(cK14=="1"," K1-K4 "," VALUTA")+"*     DUG     *      POT     *              *      DUG    *   POT      *           *"
     			?  "*N.*       *          *        *       *                            *              *             *            *           *"
    		else
-    			if gNW=="N".and.cK14=="4"
+    			if _fin_params["fin_tip_dokumenta"].and.cK14=="4"
      				? "---------------- ----------------------------------------------------- --------------------------------- -------------- -------------------------- -------------"
      				? "*  NALOG        *               D  O  K  U  M  E  N  T                *          PROMET  "+ValDomaca()+"           *    SALDO     *       PROMET  "+ValPomocna()+"       *   SALDO    *"
      				? "---------------- ------------------------------------ ---------------- ----------------------------------      "+ValDomaca()+"    * --------------------------    "+ValPomocna()+"    *"
      				? "*V.*BR     * R. *     TIP I      *   BROJ   *  DATUM *    OPIS        *     DUG       *       POT       *              *      DUG    *   POT      *            *"
      				? "*N.*       * Br.*     NAZIV      *          *        *                *               *                 *              *             *            *            *"
-    			elseif gNW=="N"
+    			elseif _fin_params["fin_tip_dokumenta"]
      				? "---------------- -------------------------------------------------------------- --------------------------------- -------------- -------------------------- -------------"
      				? "*  NALOG        *                       D  O  K  U  M  E  N  T                 *          PROMET  "+ValDomaca()+"           *    SALDO     *       PROMET  "+ValPomocna()+"       *   SALDO    *"
      				? "---------------- ------------------------------------ -------- ---------------- ----------------------------------      "+ValDomaca()+"    * --------------------------    "+ValPomocna()+"    *"
@@ -1170,7 +1173,7 @@ if c1k1z<>"D" .or. !lPocStr
     			? "*V.*BR  *   BROJ   *  DATUM *"+iif(cK14=="1"," K1-K4  "," VALUTA ")+"*    DUGUJE   *   POTRA¦UJE  *             *"
     			? "*N.*    *          *        *        *            *              *              *"
    		else
-    if gNW=="N"
+    if _fin_params["fin_tip_dokumenta"]
      ?  "---------------- ------------------------------------------------------------------ ---------------------------------- ---------------"
      ?  "*  NALOG        *                       D  O  K  U  M  E  N  T                     *           P R O M E T            *    SALDO     *"
      ?  "---------------- ------------------------------------ -------- -------------------- ----------------------------------               *"
@@ -1192,13 +1195,13 @@ if c1k1z<>"D" .or. !lPocStr
     ?  "*V.*BR      *   BROJ   *  DATUM *"+iif(cK14=="1"," K1-K4  "," VALUTA ")+"*   DUGUJE   *  POTRAZUJE   *    DUGUJE    *  POTRA¦UJE   *              *"
     ?  "*N.*        *          *        *        *            *              *              *              *              *"
    else
-    if gNW=="N".and.cK14=="4"
+    if _fin_params["fin_tip_dokumenta"].and.cK14=="4"
      ?  "---------------- --------------------------------------------------------- ---------------------------------- ---------------------------------- ---------------"
      ?  "*  NALOG        *               D  O  K  U  M  E  N  T                    *           P R O M E T            *           K U M U L A T I V      *    SALDO     *"
      ?  "---------------- ------------------------------------ -------------------- ---------------------------------- ----------------------------------               *"
      ?  "*V.*BR     * R. *     TIP I      *   BROJ   *  DATUM *    OPIS            *    DUGUJE     *    POTRAZUJE     *    DUGUJE     *    POTRA¦UJE     *              *"
      ?  "*N.*       * Br.*     NAZIV      *          *        *                    *               *                  *               *                  *              *"
-    elseif gNW=="N"
+    elseif _fin_params["fin_tip_dokumenta"]
      ?  "---------------- ------------------------------------------------------------------ ---------------------------------- ---------------------------------- ---------------"
      ?  "*  NALOG        *                       D  O  K  U  M  E  N  T                     *           P R O M E T            *           K U M U L A T I V      *    SALDO     *"
      ?  "---------------- ------------------------------------ -------- -------------------- ---------------------------------- ----------------------------------               *"

@@ -76,6 +76,7 @@ local _db_params
 local _count := 0
 local oBackup := F18Backup():New()
 local _user_roles := f18_user_roles_info()
+local _server_db_version := get_version_str( server_db_version() )
 
 if arg_v == NIL
     // napravi NIL parametre
@@ -92,7 +93,7 @@ do while .t.
 
     _x := 1
 
-    @ _x, mnu_left + 1 SAY "Tekuca baza: " + ALLTRIM( _db_params["database"] )
+    @ _x, mnu_left + 1 SAY "Tekuca baza: " + ALLTRIM( _db_params["database"] ) + " / db ver: " + _server_db_version
     
     ++ _x
 
@@ -100,7 +101,7 @@ do while .t.
 
     ++ _x
 
-    @ _x, mnu_left + 1 SAY REPLICATE( "-", 50 )
+    @ _x, mnu_left SAY REPLICATE( "-", 55 )
 
     // backup okidamo samo na prvom ulasku
     // ili na opciji relogina

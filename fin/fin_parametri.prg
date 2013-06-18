@@ -42,6 +42,7 @@ return
 static function par_obrada()
 local nX := 1
 local _k1 := fin_k1(), _k2 := fin_k2(), _k3 := fin_k3(), _k4 := fin_k4()
+local _tip_dok := fin_tip_dokumenta()
 
 Box(, 24, 70 )
 
@@ -56,7 +57,8 @@ Box(, 24, 70 )
 	@ m_x + nX, col() + 2 SAY "Unos datuma valute? (D/N):" GET gDatVal valid gDatVal $ "DN" pict "@!"
 	++ nX
 
-	@ m_x + nX, m_y + 2 SAY "Unos radnih jedinica? (D/N)" GET gRJ valid gRj $ "DN" pict "@!"
+	@ m_x + nX, m_y + 2 SAY "Unos radnih jedinica ? (D/N)" GET gRJ valid gRj $ "DN" pict "@!"
+	@ m_x + nX, col() + 1 SAY "Unos tipa dokumenta ? (D/N)" GET _tip_dok valid _tip_dok $ "DN" pict "@!"
 	++ nX
 	
  	@ m_x + nX, m_y + 2 SAY "Unos ekonomskih kategorija? (D/N)" GET gTroskovi valid gTroskovi $ "DN" pict "@!"
@@ -130,14 +132,20 @@ Box(, 24, 70 )
 BoxC()
 
 if LastKey() <> K_ESC
+
 	fin_write_params()
     fin_k1(_k1)
     fin_k2(_k2)
     fin_k3(_k3)
     fin_k4(_k4)
+    fin_tip_dokumenta( _tip_dok )
+
 endif
 
 return
+
+
+
 
 // ---------------------------------------
 // parametri izgleda dokumenata itd...
@@ -282,15 +290,17 @@ endif
 
 if read .or. __fin_params == NIL
 
-__fin_params := hb_hash()
-__fin_params["fin_k1"] := IIF(fin_k1() == "D", .t., .f.)
-__fin_params["fin_k2"] := IIF(fin_k2() == "D", .t., .f.)
-__fin_params["fin_k3"] := IIF(fin_k3() == "D", .t., .f.)
-__fin_params["fin_k4"] := IIF(fin_k4() == "D", .t., .f.)
+    __fin_params := hb_hash()
+    __fin_params["fin_k1"] := IIF(fin_k1() == "D", .t., .f.)
+    __fin_params["fin_k2"] := IIF(fin_k2() == "D", .t., .f.)
+    __fin_params["fin_k3"] := IIF(fin_k3() == "D", .t., .f.)
+    __fin_params["fin_k4"] := IIF(fin_k4() == "D", .t., .f.)
+    __fin_params["fin_tip_dokumenta"] := IIF(fin_tip_dokumenta() == "D", .t., .f. )
 
 endif
 
 return __fin_params
+
 
 
 // ----------------------------------------------
@@ -307,4 +317,7 @@ get_set_global_param("fin_unos_k3", value, "N")
 
 function fin_k4(value)
 get_set_global_param("fin_unos_k4", value, "N")
+
+function fin_tip_dokumenta(value)
+get_set_global_param("fin_unos_naloga_tip_dokumenta", value, "N" )
 

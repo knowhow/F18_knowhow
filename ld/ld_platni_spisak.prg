@@ -981,40 +981,36 @@ return cRet
 function CreateFileBanka()
 
 Box(,5,70)
-    cLokacija:="C:\" + DToS(Date()) + ".txt" + SPACE(30)
-    cConstBrojTR:="56480 "
+
+    cLokacija := my_home() + "to.txt"
+    cConstBrojTR := "56480 "
     cParKonv := "5"
+
     @ 1+m_x, 2+m_y SAY "Parametri:"
     @ 3+m_x, 2+m_y SAY "Sifra isplatioca tek.rac:" GET cConstBrojTR 
     @ 4+m_x, 2+m_y SAY "Naziv fajla prenosa:" GET cLokacija
     @ 5+m_x, 2+m_y SAY "Konverzija znakova:" GET cParKonv
     
     read
+
 BoxC()
 
-if Pitanje(,"Izvrsiti prenos fajla","D")=="N"
-    return
-endif
+cConstBrojTR := FormatSTR(ALLTRIM( cConstBrojTR ), 6 )
+cLokacija := ALLTRIM( cLokacija )
 
-if (AT("a:", cLokacija)<>0 .or. AT("A:", cLokacija)<>0)
-    MsgBeep("Spremite praznu disketu...")
-endif
-
-cConstBrojTR:=FormatSTR(ALLTRIM(cConstBrojTR), 6)
-cLokacija:=ALLTRIM(cLokacija)
-nH:=FCreate(cLokacija)
+nH := FCreate( cLokacija )
 
 if nH==-1
     MsgBeep("Greska pri kreiranju fajla !!!")
     return
 endif
+
 return
 
 
 
 function CloseFileBanka(nHnd)
 FClose(nHnd)
-MsgBeep("Fajl pohranjen u " + cLokacija)
 return
 
 

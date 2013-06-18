@@ -13,7 +13,6 @@
 #include "ld.ch"
 
 
-
 function DlgZakljucenje()
 
 O_OBRACUNI
@@ -70,22 +69,12 @@ return
  */
  
 function OtvoriObr(cRj,nGodina,nMjesec,cStatus)
-*{
-
-if Logirati("LD","DOK","OTVORIOBR")
-	lLogOtvoriObracun:=.t.
-else
-	lLogOtvoriObracun:=.f.
-endif
 
 select obracuni
-hseek cRj+ALLTRIM(STR(nGodina))+FmtMjesec(nMjesec)
+hseek cRj + ALLTRIM( STR( nGodina ) ) + FmtMjesec( nMjesec )
 
 if !Found()
-	AddStatusObr(cRj,nGodina,nMjesec,"U")
-	if lLogOtvoriObracun
-		EventLog(nUser,goModul:oDataBase:cName,"DOK","OTVORIOBR",0,0,0,0,cRJ,STR(nMjesec,2),STR(nGodina,4),Date(),Date(),"","Otvoren novi obracun")
-	endif
+	AddStatusObr( cRj, nGodina, nMjesec, "U" )
 	MsgBeep("Obracun otvoren !!!")
 	IspisiStatusObracuna(cRj,nGodina,nMjesec)
 	return
@@ -99,9 +88,6 @@ if JelZakljucen(cRj,nGodina,nMjesec)
 	if Pitanje(,"Obracun zakljucen, otvoriti ponovo","N")=="D"
 		hseek cRj+ALLTRIM(STR(nGodina))+FmtMjesec(nMjesec)
 		ChStatusObr(cRJ,nGodina,nMjesec,"P")
-		if lLogOtvoriObracun
-			EventLog(nUser,goModul:oDataBase:cName,"DOK","OTVORIOBR",0,0,0,0,cRJ,STR(nMjesec,2),STR(nGodina,4),Date(),Date(),"","Ponovo otvoren obracun")
-		endif
 		MsgBeep("Obracun ponovo otvoren !!!")
 		IspisiStatusObracuna(cRJ,nGodina,nMjesec)
 		return
@@ -125,12 +111,6 @@ return
 
 function ZakljuciObr(cRJ,nGodina,nMjesec,cStatus)
 
-if Logirati("LD","DOK","ZAKLJUCIOBR")
-	lLogZakljObracun:=.t.
-else
-	lLogZakljObracun:=.f.
-endif
-
 select obracuni
 hseek cRj+ALLTRIM(STR(nGodina))+FmtMjesec(nMjesec)
 
@@ -141,9 +121,6 @@ endif
 
 if field->status=="U"
 	ChStatusObr(cRj,nGodina,nMjesec,"Z")
-	if lLogZakljObracun
-		EventLog(nUser,goModul:oDataBase:cName,"DOK","ZAKLJUCIOBR",0,0,0,0,cRj,STR(nMjesec,2),STR(nGodina,4),Date(),Date(),"","Obracun zakljucen")
-	endif
 	MsgBeep("Obracun zakljucen !!!")
 	IspisiStatusObracuna(cRj,nGodina,nMjesec)
 	return
@@ -151,9 +128,6 @@ endif
 
 if JelOtvoren(cRj,nGodina,nMjesec)
 	ChStatusObr(cRJ,nGodina,nMjesec,"X")
-	if lLogZakljObracun
-		EventLog(nUser,goModul:oDataBase:cName,"DOK","ZAKLJUCIOBR",0,0,0,0,cRJ,STR(nMjesec,2),STR(nGodina,4),Date(),Date(),"","Ponovo zakljucen obracun")
-	endif
 	MsgBeep("Obracun ponovo zakljucen !!!")
 	IspisiStatusObracuna(cRj,nGodina,nMjesec)
 	return
@@ -218,7 +192,7 @@ _rec["godina"] := nGodina
 _rec["mjesec"] := nMjesec
 _rec["status"] := cStatus
 
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+update_rec_server_and_dbf( "ld_obracuni", _rec, 1, "FULL" )
 
 return
 
@@ -240,7 +214,7 @@ _rec["godina"] := nGodina
 _rec["mjesec"] := nMjesec
 _rec["status"] := cStatus
 
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+update_rec_server_and_dbf( "ld_obracuni", _rec, 1, "FULL" )
 
 return
 
@@ -270,7 +244,7 @@ local nArr
 
 nArr:=SELECT()
 
-if gZastitaObracuna<>"D"
+if gZastitaObracuna <> "D"
 	return ""
 endif
 
@@ -304,5 +278,7 @@ else
 	lOtvoren:=JelOtvoren(cRJ,nGodObr,nMjObr-1)
 endif
 return (lOtvoren)
+
+
 
 

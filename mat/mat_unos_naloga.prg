@@ -12,9 +12,9 @@
 
 #include "mat.ch"
 
-static PicDEM:="9999999.99"
-static PicBHD:="999999999.99"
-static PicKol:="999999.999"
+static PicDEM := "9999999.99"
+static PicBHD := "999999999.99"
+static PicKol := "999999.999"
 static PicUN := "999999999.99"
 static __unos_x
 static __unos_y
@@ -24,21 +24,13 @@ static __unos_y
 // -----------------------------------------------------
 function mat_knjizenje_naloga()
 public gPotpis := "N"
-private fK1:=fk2:=fk3:=fk4:="N"
+private fK1 := fk2 := fk3 := fk4 := "N"
 
-O_PARAMS
-
-Private cSection:="1",cHistory:=" ",aHistory:={}
-
-Params1()
-RPar("k1",@fk1)
-RPar("k2",@fk2)
-RPar("k3",@fk3)
-RPar("k4",@fk4)
-RPar("po",@gPotpis)
-
-select params
-use
+fK1 := fetch_metric( "mat_rpt_k1", my_user(), fK1 )
+fK2 := fetch_metric( "mat_rpt_k2", my_user(), fK2 )
+fK3 := fetch_metric( "mat_rpt_k3", my_user(), fK3 )
+fK4 := fetch_metric( "mat_rpt_k4", my_user(), fK4 )
+gPotpis := fetch_metric( "mat_rpt_potpis", my_user(), gPotpis )
 
 // unos naloga
 mat_unos_naloga()

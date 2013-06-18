@@ -151,59 +151,44 @@ method setGVars()
 set_global_vars()
 set_roba_global_vars()
 
-private cSection:="1"
-private cHistory:=" "
-private aHistory:={}
-
-public gDirPor:=""
-public gNalPr:="41#42"
-public gCijena:=" "
-public gKonto:="N"
-public KursLis:="1"
-public gpicdem:="9999999.99"
-public gpicdin:="999999999999"
-public gPicKol:="999999.999"
-public g2Valute:="D"
-public gPotpis:="N"
-
-O_PARAMS
-private cSection:="1"
-private cHistory:=" "
-private aHistory:={}
-
-public gDatNal:="N"
-public gKupZad:="N"
-public gSekS:="N"
-
-RPar("dp",@gDirPor)
-Rpar("2v",@g2Valute)
-RPar("np",@gNalPr)
-RPar("ci",@gCijena)
-RPar("pe",@gpicdem)
-RPar("pd",@gpicdin)
-RPar("pk",@gpickol)
-Rpar("dn",@gDatNal)
-Rpar("ss",@gSekS)
-RPar("kd",@gKupZad)
-RPar("ko",@gKonto)
-
-if empty(gDirPor)
-    gDirPor:=strtran(cDirPriv,"MAT","KALK")+"\"
-    WPar("dp",gDirPor)
-endif
-
-select params
-use
-
 public gModul
 public gTema
 public gGlBaza
 
-gModul:="MAT"
-gTema:="OSN_MENI"
-gGlBaza:="SUBAN.DBF"
+public gDirPor := ""
+public gNalPr := "41#42"
+public gCijena := "2"
+public gKonto := "D"
+public KursLis := "1"
+public gpicdem := "9999999.99"
+public gpicdin := "999999999.99"
+public gPicKol := "999999.999"
+public g2Valute := "N"
+public gPotpis := "N"
+public gDatNal := "D"
+public gKupZad := "D"
+public gSekS := "N"
 
-public cZabrana:="Opcija nedostupna za ovaj nivo !!!"
+public cZabrana := "Opcija nedostupna za ovaj nivo !!!"
+
+// read server params...
+gDirPor := fetch_metric( "mat_dir_kalk", my_user(), gDirPor  )
+g2Valute := fetch_metric( "mat_dvovalutni_rpt", NIL, g2Valute )
+gNalPr := fetch_metric( "mat_real_prod", NIL, gNalPr )
+gCijena := fetch_metric( "mat_tip_cijene", NIL, gCijena )
+gPicDem := fetch_metric( "mat_pict_dem", NIL, gPicDem )
+gPicDin := fetch_metric( "mat_pict_din", NIL, gPicDin )
+gPicKol := fetch_metric( "mat_pict_kol", NIL, gPicKol )
+gDatNal := fetch_metric( "mat_datum_naloga", NIL, gDatNal )
+gSekS := fetch_metric( "mat_sekretarski_sistem", NIL, gSekS )
+gKupZad := fetch_metric( "mat_polje_partner", NIL, gKupZad )
+gKonto := fetch_metric( "mat_vezni_konto", NIL, gKonto )
+gPotpis := fetch_metric( "mat_rpt_potpis", my_user(), gPotpis )
+
+gModul := "MAT"
+gTema := "OSN_MENI"
+gGlBaza := "SUBAN.DBF"
+
 
 return
 

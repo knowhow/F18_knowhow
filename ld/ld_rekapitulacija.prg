@@ -1651,6 +1651,7 @@ return
 
 function IspisKred(lSvi)
 local _kr_partija 
+local _found := .f.
 
 if "SUMKREDITA" $ tippr->formula
 
@@ -1661,12 +1662,13 @@ if "SUMKREDITA" $ tippr->formula
 
         SELECT RADKR
         SET ORDER TO TAG "3"
-        SET FILTER TO STR(cGodina,4)+STR(cMjesec,2)<=STR(godina,4)+STR(mjesec,2) .and. STR(cGodina,4)+STR(cMjesecDo,2)>=STR(godina,4)+STR(mjesec,2)
+        SET FILTER TO STR( cGodina, 4 ) + STR( cMjesec, 2 ) <= STR( godina, 4 ) + STR( mjesec, 2 ) .and. ;
+                    STR( cGodina, 4 ) + STR( cMjesecDo, 2 ) >= STR( godina, 4 ) + STR( mjesec, 2 )
         GO TOP
 
         DO WHILE !EOF()
 
-            cIdKred:=IDKRED
+            cIdKred := IDKRED
 
             SELECT KRED
             HSEEK cIdKred
@@ -1674,7 +1676,7 @@ if "SUMKREDITA" $ tippr->formula
             SELECT RADKR
             nUkKred := 0
 
-            DO WHILE !EOF() .and. IDKRED==cIdKred
+            DO WHILE !EOF() .and. IDKRED == cIdKred
 
                 cNaOsnovu := NAOSNOVU
                 cIdRadnKR := IDRADN
@@ -1688,21 +1690,40 @@ if "SUMKREDITA" $ tippr->formula
 
                 DO WHILE !EOF() .and. IDKRED == cIdKred .and. cNaOsnovu == NAOSNOVU .and. cIdRadnKR == IDRADN
 
-                    mj:=mjesec
+                    mj := mjesec
+                    
+                    _found := .f.
 
                     if lSvi
+                        // rekap za sve rj
                         select ld
-                        set order to tag (TagVO("2"))
-                        hseek  str(cGodina,4)+str(mj,2)+if(lViseObr.and.!EMPTY(cObracun),cObracun,"")+radkr->idradn
-                                //"LDi2","str(godina)+str(mjesec)+idradn"
-                    else
-                        select ld
-                        hseek  str(cGodina,4)+cidrj+str(mj,2)+if(lViseObr.and.!EMPTY(cObracun),cObracun,"")+radkr->idradn
-                    endif // lSvi
+                        set order to tag ( TagVO("2") )
+                        hseek STR( cGodina, 4 ) + STR( mj, 2 ) + cObracun + radkr->idradn
+                           
+                        _t_rec := RECNO() 
+                        do while !EOF() .and. godina == cGodina .and. mjesec == cMjesec .and. ;
+                            obr == cObracun .and. idradn == radkr->idradn
+                            if ld->i30 <> 0
+                                _found := .t.
+                                exit
+                            endif
+                            skip
+                        enddo
+                        go ( _t_rec )
 
+                    else
+                        // rekap za jednu rj
+                        select ld
+                        hseek  STR( cGodina, 4 ) + cIdrj + STR( mj, 2 ) + IF( !EMPTY( cObracun ), cObracun, "" ) + radkr->idradn
+                        // ako ima radnika i ako mu je podatak kredita unesen na obracunu
+                        if FOUND() .and. ld->i30 <> 0
+                            _found := .t.
+                        endif
+                    endif 
+                    
                     select radkr
 
-                    if ld->(found())
+                    if _found
                         nUkKred  += iznos
                         nUkKrRad += iznos
                     endif
@@ -1715,71 +1736,91 @@ if "SUMKREDITA" $ tippr->formula
 
                     _kr_partija := ALLTRIM( kred->zirod )
 
-                    Rekapld( "KRED" + cIdKred + cNaOsnovu, cGodina, cMjesecDo, nUkKrRad, 0, ;
+                    RekapLD( "KRED" + cIdKred + cNaOsnovu, cGodina, cMjesecDo, nUkKrRad, 0, ;
                             cIdkred, cNaosnovu, ALLTRIM( cOpis2 ) + ", " + _kr_partija , .t. )
  
                 endif
 
             ENDDO
 
-            IF nUkKred<>0    // ispisati kreditora
-                if prow()>55+gPStranica
+            IF nUkKred <> 0    
+                // ispisati kreditora
+                if prow() > 55 + gPStranica
                     FF
                 endif
+
                 ? "  ",cidkred,left(kred->naz,22)
                 @ prow(),58 SAY nUkKred  pict "("+gpici+")"
             ENDIF
         ENDDO
+
     else
+
         ? cLinija
-        ? "  ",Lokal("Od toga pojedinacni krediti:")
-        cOpis2:=""
+        ? "  ", Lokal("Od toga pojedinacni krediti:")
+        cOpis2 := ""
         select radkr
-        set order to 3 
+        set order to tag "3" 
         go top
-            //"RADKRi3","idkred+naosnovu+idradn+str(godina)+str(mjesec)","RADKR")
+        
         do while !eof()
+
             select kred
             hseek radkr->idkred 
             select radkr
-                private cidkred:=idkred, cNaOsnovu:=naosnovu
-                select radn; hseek radkr->idradn; select radkr
-                cOpis2:= RADNIK
-                seek cidkred+cnaosnovu
-                private nUkKred:=0
-                do while !eof() .and. idkred==cidkred .and. ( cnaosnovu==naosnovu .or. gReKrOs=="N" )
-                    if lSvi
-                        select ld
+            private cidkred:=idkred, cNaOsnovu:=naosnovu
+            select radn
+            hseek radkr->idradn
+            select radkr
+            cOpis2:= RADNIK
+            seek cidkred+cnaosnovu
+            private nUkKred:=0
+
+            do while !eof() .and. idkred==cidkred .and. ( cnaosnovu==naosnovu .or. gReKrOs=="N" )
+                    
+                _found := .f.
+                
+                if lSvi
+                    select ld
                     set order to tag (TagVO("2"))
                     hseek  str(cGodina,4)+str(cmjesec,2)+if(lViseObr.and.!EMPTY(cObracun),cObracun,"")+radkr->idradn
-                        //"LDi2","str(godina)+str(mjesec)+idradn"
-                    else
-                            select ld
+                else
+                    select ld
                     hseek  str(cGodina,4)+cidrj+str(cmjesec,2)+if(lViseObr.and.!EMPTY(cObracun),cObracun,"")+radkr->idradn
-                    endif // lSvi
-                    select radkr
-                    if ld->(found()) .and. godina==cgodina .and. mjesec=cmjesec
-                            nUkKred+=iznos
-                    endif
-                    IF cMjesecDo>cMjesec
-                            FOR mj:=cMjesec+1 TO cMjesecDo
-                                if lSvi
-                                    select ld
+                endif 
+      
+                if FOUND()
+                    _found := .t.
+                endif
+          
+                select radkr
+                
+                if _found .and. godina == cGodina .and. mjesec == cMjesec
+                    nUkKred += iznos
+                endif
+                    
+                IF cMjesecDo>cMjesec
+                    FOR mj:=cMjesec+1 TO cMjesecDo
+                        if lSvi
+                            select ld
                             set order to tag (TagVO("2"))
                             hseek  str(cGodina,4)+str(mj,2)+if(lViseObr.and.!EMPTY(cObracun),cObracun,"")+radkr->idradn
                                     //"LDi2","str(godina)+str(mjesec)+idradn"
-                                else
-                                    select ld
+                        else
+                            select ld
                             hseek  str(cGodina,4)+cidrj+str(mj,2)+if(lViseObr.and.!EMPTY(cObracun),cObracun,"")+radkr->idradn
-                                endif // lSvi
-                                select radkr
-                                if ld->(found()) .and. godina==cgodina .and. mjesec=mj
-                                    nUkKred+=iznos
-                                endif
-                            NEXT
-                    ENDIF
-                    skip
-                enddo
+                        endif // lSvi
+                                
+                        select radkr
+                                
+                        if ld->(found()) .and. godina==cgodina .and. mjesec=mj
+                            nUkKred+=iznos
+                        endif
+                    NEXT
+                ENDIF
+                
+                skip
+            enddo
 
                 if nukkred<>0
 

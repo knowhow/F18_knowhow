@@ -41,48 +41,33 @@ local _opc := {}
 local _opcexe := {}
 local _izbor := 1
 
-AADD(_opc, "1. otvori / zakljuci obracun                     ")
+AADD( _opc, "1. otvori / zakljuci obracun                     ")
 
 if gZastitaObracuna == "D"
-    AADD(_opcexe, {|| DlgZakljucenje()})
+    AADD( _opcexe, {|| DlgZakljucenje()})
 else
-    AADD(_opcexe, {|| MsgBeep("Opcija nije dostupna !")})
+    AADD( _opcexe, {|| MsgBeep("Opcija nije dostupna !")})
 endif
 
-AADD(_opc, "2. preuzmi podatke iz obracuna       ")
-AADD(_opcexe, {|| ld_preuzmi_obracun()})
+AADD( _opc, "2. radnici obradjeni vise puta za isti mjesec")
+AADD( _opcexe, {|| ld_obracun_napravljen_vise_puta()})
 
-AADD(_opc, "3. prenos obracuna u smece           ")
-AADD(_opcexe, {|| ld_prenos_u_smece()})
-
-AADD(_opc, "4. povrat obracuna iz smeca          ")
-AADD(_opcexe, {|| ld_prenos_iz_smeca()})
-
-AADD(_opc, "5. uklanjanje obracuna iz smeca      ")
-AADD(_opcexe, {|| ld_brisi_smece()})
-
-AADD(_opc, "6. uzmi obracun iz ClipBoarda (sif0) ")
-AADD(_opcexe, {|| ld_obracun_iz_clipboarda()})
-
-AADD(_opc, "7. radnici obradjeni vise puta za isti mjesec")
-AADD(_opcexe, {|| ld_obracun_napravljen_vise_puta()})
-
-AADD(_opc, "8. promjeni varijantu obracuna za obracun")
-AADD(_opcexe, {|| ld_promjeni_varijantu_obracuna()})
+AADD( _opc, "3. promjeni varijantu obracuna za obracun")
+AADD( _opcexe, {|| ld_promjeni_varijantu_obracuna()})
 
 if gVarObracun == "2"
-    AADD(_opc, "9. unos datuma isplate placa")
-    AADD(_opcexe, {|| unos_datuma_isplate_place()})
+    AADD( _opc, "I. unos datuma isplate placa")
+    AADD( _opcexe, {|| unos_datuma_isplate_place()})
 endif
 
 if gSihtGroup == "D"
-    AADD(_opc, "S. obrada sihtarica")
-    AADD(_opcexe, {|| siht_obr()})
+    AADD( _opc, "S. obrada sihtarica")
+    AADD( _opcexe, {|| siht_obr()})
 endif
 
 if _radni_sati == "D"
-    AADD(_opc, "R. pregled/ispravka radnih sati radnika")
-    AADD(_opcexe, {|| edRadniSati()})
+    AADD( _opc, "R. pregled/ispravka radnih sati radnika")
+    AADD( _opcexe, {|| edRadniSati()})
 endif
 
 f18_menu( "ao", .f., _izbor, _opc, _opcexe )

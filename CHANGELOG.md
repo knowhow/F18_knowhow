@@ -6,6 +6,7 @@
   - FIN, štampa IOS-a bez praznog partnera u šifrarniku
   - FIN, brojač naloga - varijanta "2" ( firma + brnal ) 
   - LD, pretraga radnika, opcija "q" ispravka
+  - POS, izdavanje storno računa plaćenog karticom - bugfix
 
 1.4.192 2013-06-14, vsasa
  

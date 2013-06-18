@@ -1,4 +1,4 @@
-1.4.193 2013-06-17, vsasa
+1.4.193 2013-06-18, vsasa
  
   - F18, ispis verzije db servera na glavnom meniju preduzeća
   - LD, izvještaj topli obrok - bugfix
@@ -7,6 +7,7 @@
   - FIN, brojač naloga - varijanta "2" ( firma + brnal ) 
   - LD, pretraga radnika, opcija "q" ispravka
   - POS, izdavanje storno računa plaćenog karticom - bugfix
+  - FAKT, dupliciranje dokumenta, naša slova, današnji datum
 
 1.4.192 2013-06-14, vsasa
  

@@ -241,8 +241,8 @@ if ver["current"] > 0 .and. ver["current"] < 0500
     modstru({"*" + _table_name, "C OPER_ID N 3 0 OPER_ID N 10 0"})
 endif
 
-// 0.10.1
-if ver["current"] > 0 .and. ver["current"] < 00101
+// 0.10.2
+if ver["current"] > 0 .and. ver["current"] < 01002
     modstru({"*" + _table_name, "A FISC_TIME C 10 0", "A FISC_DATE D 8 0", "D DOK_VEZA C 150 0" })
 endif
 

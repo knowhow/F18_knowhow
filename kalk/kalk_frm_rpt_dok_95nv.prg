@@ -118,7 +118,7 @@ endif
 select kalk_pripr
 
 P_10CPI
-P_COND2
+P_COND
 
 m := _get_line()
 

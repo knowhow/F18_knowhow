@@ -105,7 +105,10 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
     KTroskovi()
 
-    if prow()>62+gPStranica; FF; @ prow(),125 SAY "Str:"+str(++nStr,3); endif
+    if prow() > ( RPT_PAGE_LEN + gPStranica )
+        FF
+        @ prow(),125 SAY "Str:"+str(++nStr,3)
+    endif
 
     if kalk_pripr->idvd="15"
       SKol:= - Kolicina
@@ -257,7 +260,10 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
 enddo
 
-if prow()>61+gPStranica; FF; @ prow(),125 SAY "Str:"+str(++nStr,3); endif
+if prow() > ( RPT_PAGE_LEN + gPStranica )
+    FF
+    @ prow(),125 SAY "Str:"+str(++nStr,3)
+endif
 ? m
 @ prow()+1,0        SAY "Ukupno:"
 @ prow(),nc1      SAY nTot4  pict picdem

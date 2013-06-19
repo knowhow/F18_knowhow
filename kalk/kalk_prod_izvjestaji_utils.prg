@@ -30,7 +30,7 @@ local aPKonta
 local nIznPRuc
 private aPorezi
 
-IF prow()> 55 + gPStranica
+IF prow() > ( RPT_PAGE_LEN  + gPStranica )
 	FF
 	@ prow(),123 SAY "Str:"+str(++nStr,3)
 endif
@@ -193,7 +193,7 @@ for i := 1 to nCntKonto
 
 	enddo
 
-	if prow()>56+gPStranica
+	if prow() > ( RPT_PAGE_LEN + gPStranica )
 		FF
 		@ prow(),123 SAY "Str:"+str(++nStr,3)
 	endif

@@ -1,3 +1,7 @@
+1.4.194 2013-06-19, vsasa
+ 
+  - KALK, dužina stranice za izvještaje i dokumente
+ 
 1.4.193 2013-06-18, vsasa
  
   - F18, ispis verzije db servera na glavnom meniju preduzeća

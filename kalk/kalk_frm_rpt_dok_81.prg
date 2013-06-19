@@ -126,7 +126,10 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
       nMarza2:=nMarza2-nPRUC
     ENDIF
 
-    if prow()>62+gPStranica; FF; @ prow(),125 SAY "Str:"+str(++nStr,3); endif
+    if prow() > ( RPT_PAGE_LEN + gPStranica ) 
+        FF  
+        @ prow(), 125 SAY "Str:"+str(++nStr,3)
+    endif
 
     if gKalo=="1"
         SKol:=Kolicina-GKolicina-GKolicin2
@@ -238,7 +241,7 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
   skip
 enddo
 
-if prow()>61+gPStranica
+if prow() > ( RPT_PAGE_LEN + gPStranica )
 	FF
 	@ prow(),125 SAY "Str:"+str(++nStr,3)
 endif
@@ -395,9 +398,9 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
       	nMarza2:=nMarza2-nPRUC
     ENDIF
 
-    if prow()>62+gPStranica
+    if prow() > ( RPT_PAGE_LEN + gPStranica )
     	FF
-	@ prow(),125 SAY "Str:"+str(++nStr,3)
+	    @ prow(),125 SAY "Str:"+str(++nStr,3)
     endif
 
     if gKalo=="1"
@@ -486,10 +489,12 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
   skip
 enddo
 
-if prow()>61+gPStranica; FF; @ prow(),125 SAY "Str:"+str(++nStr,3); endif
+if prow() > ( RPT_PAGE_LEN + gPStranica )
+    FF
+    @ prow(),125 SAY "Str:"+str(++nStr,3)
+endif
 ? m
 @ prow()+1,0        SAY "Ukupno:"
-*************************** magacin *****************************
   @ prow(),nCol1     SAY nTot          picture         PICDEM
   @ prow(),pcol()+1  SAY nTot2         picture         PICDEM
   @ prow(),pcol()+1  SAY nTot+nTot2         picture         PICDEM
@@ -509,7 +514,10 @@ if prow()>61+gPStranica; FF; @ prow(),125 SAY "Str:"+str(++nStr,3); endif
 
 ? m
 
-if prow()>55+gPStranica; FF; @ prow(),125 SAY "Str:"+str(++nStr,3); endif
+if prow() > ( RPT_PAGE_LEN + gPStranica )
+    FF
+    @ prow(),125 SAY "Str:"+str(++nStr,3)
+endif
 ?
 if  round(ntot3+ntot4+ntot5+ntot6+ntot7,2) <>0
 ?  m

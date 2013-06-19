@@ -325,7 +325,7 @@ do while !eof() .and. cidfirma==idfirma .and.  IspitajPrekid()
         loop
     endif
 
-    if prow()>61+gPStranica
+    if prow() > ( RPT_PAGE_LEN + gPStranica )
         FF
         eval(bZagl)
     endif

@@ -263,7 +263,7 @@ do while !eof() .and. cIdFirma==idfirma .and. IspitajPrekid()
   		loop
 	endif
 
-	if prow()>61+gPStranica
+	if prow() > ( RPT_PAGE_LEN + gPStranica )
 		FF
 		eval(bZagl)
 	endif
@@ -335,7 +335,7 @@ ASORT(aRTar,,,{|x,y| x[1]<y[1] })
 nT1:=nT4:=nT5:=nT6:=nT7:=nT5a:=0
 
 for i:=1 TO LEN(aRTar)
-	if prow()>62+gPStranica
+	if prow() > ( RPT_PAGE_LEN + gPStranica )
   		FF
   	endif
   	@ prow()+1,0        SAY space(6)+aRTar[i,1]
@@ -357,7 +357,7 @@ for i:=1 TO LEN(aRTar)
   	nT7+=aRTar[i,10]
 next
 
-if prow()>60+gPStranica
+if prow() > ( RPT_PAGE_LEN + gPStranica )
 	FF
 endif
 ? cRTLine
@@ -374,7 +374,7 @@ endif
 ? cRTLine
 
 if IsPlanika()
-	if (prow()>55+gPStranica)
+	if (prow() > ( RPT_PAGE_LEN + gPStranica ) )
 		FF
 	endif
 	PrintParovno(nKolUlaz, nKolIzlaz)

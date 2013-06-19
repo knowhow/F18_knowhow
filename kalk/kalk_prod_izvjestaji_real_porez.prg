@@ -310,7 +310,7 @@ do while !EOF() .and. IspitajPrekid()
 
         IF !lVoSaTa
      
-	        if prow()>61+gPStranica
+	        if prow() > ( RPT_PAGE_LEN + gPStranica )
 		        FF
 	        endif
 
@@ -353,7 +353,7 @@ do while !EOF() .and. IspitajPrekid()
     IF !lVoSaTa
         // obracun po artiklima
     
-        if prow()>60+gPStranica
+        if prow() > ( RPT_PAGE_LEN + gPStranica )
     	    FF
         endif
     

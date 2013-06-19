@@ -64,8 +64,10 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     select kalk_pripr
     KTroskovi()
 
-    if prow()>62+gPStranica; FF; @ prow(),125 SAY "Str:"+str(++nStr,3); endif
-
+    if prow() > ( RPT_PAGE_LEN + gPStranica )
+        FF
+        @ prow(),125 SAY "Str:"+str(++nStr,3)
+    endif
 
     if gKalo=="1"
         SKol:=Kolicina-GKolicina-GKolicin2
@@ -158,7 +160,10 @@ nTotA+=nTA
 
 enddo
 
-if prow()>61+gPStranica; FF; @ prow(),125 SAY "Str:"+str(++nStr,3); endif
+if prow() > ( RPT_PAGE_LEN + gPStranica )
+    FF
+    @ prow(),125 SAY "Str:"+str(++nStr,3)
+endif
 ? m
 @ prow()+1,0        SAY "Ukupno:"
 @ prow(),nCol1     SAY nTot          picture         PICDEM

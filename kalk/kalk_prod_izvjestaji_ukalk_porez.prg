@@ -196,7 +196,7 @@ DO WHILE !EOF() .and. IspitajPrekid()
      if cStope=="D"
       AADD(aTarife,{cIdTarifa,nMPVSAPP})
      endif
-     if prow()>62+gPStranica
+     if prow() > ( RPT_PAGE_LEN + gPStranica )
      	FF
      endif
      
@@ -238,7 +238,7 @@ DO WHILE !EOF() .and. IspitajPrekid()
      nT7+=n7
   ENDDO 
 
-  if prow()>60+gPStranica
+  if prow() > ( RPT_PAGE_LEN + gPStranica )
   	FF
   endif
   ? cLine
@@ -420,7 +420,7 @@ DO WHILE !EOF() .and. IspitajPrekid()
      if cStope=="D"
       AADD(aTarife,{cIdTarifa,nMPVSAPP})
      endif
-     if prow()>62+gPStranica
+     if prow() > ( RPT_PAGE_LEN + gPStranica )
      	FF
      endif
      
@@ -472,7 +472,7 @@ DO WHILE !EOF() .and. IspitajPrekid()
      nT1+=n1;  nT4+=n4;  nT5+=n5;  nT5a+=n5a;  nT6+=n6
      nT7+=n7
   ENDDO 
-  if prow()>60+gPStranica
+  if prow() > ( RPT_PAGE_LEN + gPStranica )
 	  FF
   endif
   ? m

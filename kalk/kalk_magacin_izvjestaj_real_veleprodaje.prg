@@ -218,7 +218,7 @@ DO WHILE !EOF() .and. idfirma==cidfirma .and. cidkonto=mkonto .and. IspitajPreki
     		loop
   	endif
 
-  	if prow()>61
+  	if prow() > RPT_PAGE_LEN
   		FF
  		kalk_zagl_real_partnera()
   	endif
@@ -253,7 +253,7 @@ DO WHILE !EOF() .and. idfirma==cidfirma .and. cidkonto=mkonto .and. IspitajPreki
 
 enddo
 
-if prow()>59
+if prow() > RPT_PAGE_LEN
 	FF
 	kalk_zagl_real_partnera()
 endif

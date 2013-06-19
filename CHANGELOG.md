@@ -1,3 +1,7 @@
+1.4.195 2013-06-19, vsasa
+ 
+  - KALK, dužina stranice za izvještaje i dokumente / 2
+ 
 1.4.194 2013-06-19, vsasa
  
   - KALK, dužina stranice za izvještaje i dokumente

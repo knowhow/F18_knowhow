@@ -433,8 +433,8 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
 	
 	// ne prikazuj stavke 0
 	if cNula == "D" .or. ROUND( nMPVU - nMPVI + nPMPV, 2 ) <> 0 
-		
-        if PROW() > 61 + gPStranica
+	
+        if PROW() > ( RPT_PAGE_LEN + gPStranica )
 			FF
 			EVAL(bZagl)
 		endif

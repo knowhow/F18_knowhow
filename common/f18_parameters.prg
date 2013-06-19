@@ -26,6 +26,7 @@ local _proper_name, _params
 local _log_delete_interval
 local _backup_company, _backup_server
 local _backup_removable, _backup_ping_time
+local _rpt_page_len
 
 // parametri modula koristenih na glavnom meniju...
 _fin := fetch_metric( "main_menu_fin", my_user(), "D" )
@@ -67,6 +68,9 @@ _backup_removable := PADR( fetch_metric( "backup_removable_drive", my_user(), ""
 #else
     _backup_ping_time := 0
 #endif
+
+// duzina stranice
+_rpt_page_len := fetch_metric( "rpt_duzina_stranice", my_user(), RPT_PAGE_LEN )
 
 if just_set == nil
 	just_set := .f.
@@ -160,7 +164,15 @@ if !just_set
 
     #endif
 
+    ++ _x
+    ++ _x
 
+	@ _pos_x + _x, _pos_y SAY "Ostali parametri ***" COLOR "I"
+
+	++ _x
+
+	@ _pos_x + _x, _pos_y SAY "Duzina stranice za izvjestaje ( def: 60 ):" GET _rpt_page_len PICT "999"
+	
 	read
 
 	if LastKey() == K_ESC
@@ -202,6 +214,10 @@ set_metric( "log_delete_level", NIL, _log_delete_interval )
 set_metric( "backup_company_interval", my_user(), _backup_company )
 set_metric( "backup_server_interval", my_user(), _backup_server )
 set_metric( "backup_removable_drive", my_user(), ALLTRIM( _backup_removable ) )
+
+// duzina stranice
+set_metric( "rpt_duzina_stranice", my_user(), _rpt_page_len )
+//#define RPT_PAGE_LEN _rpt_page_len
 
 #ifdef __PLATFORM__WINDOWS
     set_metric( "backup_windows_ping_time", my_user(), _backup_ping_time )

@@ -245,7 +245,7 @@ do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj))
                 loop
             endif
 
-            if prow()>60
+            if prow() > RPT_PAGE_LEN 
                 FF
                 os_zagl_konta()
             endif
@@ -477,7 +477,7 @@ do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj))
             skip
         enddo
         
-        if prow()>60
+        if prow() > RPT_PAGE_LEN
             FF
             os_zagl_konta()
         endif
@@ -512,7 +512,7 @@ do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj))
         exit
     endif
     
-    if prow()>60
+    if prow() > RPT_PAGE_LEN
         FF
         os_zagl_konta()
     endif
@@ -538,7 +538,7 @@ enddo
 
 if empty(qidkonto)
 
-    if prow()>60
+    if prow() > RPT_PAGE_LEN
         FF
         os_zagl_konta()
     endif
@@ -556,7 +556,9 @@ if empty(qidkonto)
     @ prow(),pcol()+1 SAY ndug*nBBK-npot*nBBK pict gpici
     ? m
 endif
+
 FF
+
 end print
 
 close all

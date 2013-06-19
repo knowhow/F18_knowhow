@@ -168,64 +168,47 @@ return aFields
 // Subanaliticki bruto bilans
 // -----------------------------------------------
 function SubAnBB()
-cIdFirma:=gFirma
+local _params 
+
+cIdFirma := gFirma
 
 O_KONTO
 O_PARTN
 
-__par_len := LEN(partn->id)
+__par_len := LEN( partn->id )
 
-qqKonto:=space(100)
-dDatOd:=dDatDo:=ctod("")
-private cFormat:="2"
-private cPodKlas:="N"
-private cNule:="D"
-private cExpRptDN:="N"
-private cBBSkrDN:="N"
-private cPrikaz := "1"
+// uslovi izvjestaja bruto bilans...
+if !fin_bruto_bilans_get_vars( @_params )
+    return 
+endif
 
-Box("sanb",13,60)
-set cursor on
+// open office stampa...
+if _params["varijanta"] == 2
+    fin_bruto_bilans_sql( _params )
+    return
+endif
 
-do while .t.
-	@ m_x+1,m_y+2 SAY "SUBANALITICKI BRUTO BILANS"
- 	if gNW=="D"
-   		@ m_x+2,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
- 	else
-  		@ m_x+2,m_y+2 SAY "Firma: " GET cIdFirma valid {|| EMPTY(cIdFirma).or.P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
- 	endif
- 	@ m_x+3,m_y+2 SAY "Konto " GET qqKonto    pict "@!S50"
- 	@ m_x+4,m_y+2 SAY "Od datuma :" get dDatOD
- 	@ m_x+4,col()+2 SAY "do" GET dDatDo
- 	@ m_x+6,m_y+2 SAY "Format izvjestaja A3/A4/A4L (1/2/3)" GET cFormat
- 	@ m_x+7,m_y+2 SAY "Klase unutar glavnog izvjestaja (D/N)" GET cPodKlas VALID cPodKlas$"DN" PICT "@!"
- 	@ m_x+8,m_y+2 SAY "Prikaz stavki sa saldom 0 D/N " GET cNule valid cnule $"DN" pict "@!"
- 	cIdRJ:=""
- 	IF gRJ=="D"
-   		cIdRJ:="999999"
-   		@ m_x+9,m_y+2 SAY "Radna jedinica (999999-sve): " GET cIdRj
- 	ENDIF
- 	
- 	@ m_x+10,m_y+2 SAY "Export izvjestaja u dbf (D/N)? " GET cExpRptDN valid cExpRptDN $"DN" pict "@!"
- 	@ m_x+11,m_y+2 SAY "Export skraceni bruto bilans (D/N)? " GET cBBSkrDN valid cBBSkrDN $"DN" pict "@!"
-	
- 	@ m_x+12,m_y+2 SAY "Prikaz suban (1) / suban+anal (2) / anal (3)" GET cPrikaz valid cPrikaz $ "123" pict "@!"
-	
-	READ
-	ESC_BCR
- 	
-	aUsl1:=Parsiraj(qqKonto,"IdKonto")
- 	if aUsl1<>NIL
-		exit
-	endif
-enddo
+qqKonto := _params["konto"]
+dDatOd := _params["datum_od"]
+dDatDo := _params["datum_do"]
+cFormat := _params["format"]
+cPodKlas := _params["klase"]
+cNule := _params["saldo_nula"]
+cExpRptDN := _params["export_dbf"]
+cBBSkrDN := _params["export_sk"]
+cPrikaz := _params["prikaz"]
 
-BoxC()
+cIdRJ := ""
 
-cIdFirma:=trim(cIdFirma)
+if gRj == "D"
+    cIdRj := _params["id_rj"]
+endif
 
-if cIdRj=="999999"
-	cIdRj:=""
+aUsl1 := Parsiraj(qqKonto,"IdKonto")
+cIdFirma := trim(cIdFirma)
+
+if cIdRj == "999999"
+	cIdRj := ""
 endif
 
 if gRJ=="D" .and. "." $ cIdRj

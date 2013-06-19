@@ -57,6 +57,8 @@ cUneto := "D"
 nRRsati := 0 
 nOsnNeto := 0
 nOsnOstalo := 0
+nOstPoz := 0
+nOstNeg := 0
 //nLicOdbitak := g_licni_odb( radn->id )
 nLicOdbitak := ld->ulicodb
 nKoefOdbitka := g_klo( nLicOdbitak )
@@ -168,18 +170,16 @@ for i:=1 to cLDPolja
 				//endif
 			
 			elseif tippr->fiksan=="P"
-				
 				nPom := _calc_tpr( _i&cPom )
 				@ prow(),pcol()+8 SAY _s&cPom  pict "999.99%"
 				@ prow(),60+LEN(cLMSK) say nPom  pict gpici
 
-			elseif tippr->fiksan=="B"
-				
+			elseif tippr->fiksan=="B"				
 				nPom := _calc_tpr( _i&cPom )
 				@ prow(),pcol()+8 SAY _s&cPom  pict "999999"; ?? " b"
 				@ prow(),60+LEN(cLMSK) say nPom pict gpici
+
 			elseif tippr->fiksan=="C"
-				
 				nPom := _calc_tpr( _i&cPom )
 				@ prow(),60+LEN(cLMSK) say nPom pict gpici
 			endif
@@ -208,26 +208,44 @@ for i:=1 to cLDPolja
         			? cLPom
   			endif
 		
-			if tippr->(FIELDPOS("TPR_TIP")) <> 0
+			if tippr->( FIELDPOS( "TPR_TIP" ) ) <> 0
 			  // uzmi osnovice
 			  if tippr->tpr_tip == "N"
 				nOsnNeto += _i&cPom
 			  elseif tippr->tpr_tip == "2"
 				nOsnOstalo += _i&cPom
+                if _i&cPom > 0
+                    nOstPoz += _i&cPom
+                else
+                     nOstNeg += _i&cPom
+                endif
 			  elseif tippr->tpr_tip == " "
 				// standardni tekuci sistem
 				if tippr->uneto == "D"
 					nOsnNeto += _i&cPom
 				else
 					nOsnOstalo += _i&cPom
+                    if _i&cPom > 0
+                        nOstPoz += _i&cPom
+                    else
+                        nOstNeg += _i&cPom
+                    endif
+
 				endif
+
 			  endif
+
 			else
 				// standardni tekuci sistem
 				if tippr->uneto == "D"
 					nOsnNeto += _i&cPom
 				else
 					nOsnOstalo += _i&cPom
+                    if _i&cPom > 0
+                        nOstPoz += _i&cPom
+                    else
+                        nOstNeg += _i&cPom
+                    endif
 				endif
 			endif
 			
@@ -309,7 +327,7 @@ for i:=1 to cLDPolja
 	endif
 next
 
-if cVarijanta=="5"
+if cVarijanta == "5"
 
 	// select ldsm
 	
@@ -622,21 +640,25 @@ if gPrBruto $ "D#X"
 	else
 		? cLMSK + Lokal("7. NETO PLATA (1-2-6)")
 	endif
-	@ prow(),60+LEN(cLMSK) SAY nMUkIspl pict gpici
+
+	@ prow(), 60 + LEN(cLMSK) SAY nMUkIspl pict gpici
 
 
 	// ostala primanja 
 	? cMainLine
-	? cLMSK + Lokal("8. NEOPOREZIVE NAKNADE I ODBICI")
+	? cLMSK + Lokal("8. NEOPOREZIVE NAKNADE I ODBICI (preb.stanje)")
 
-	@ prow(),60+LEN(cLMSK) SAY nOsnOstalo pict gpici
+	@ prow(), 60 + LEN(cLMSK) SAY nOsnOstalo pict gpici
 
+    ? cLMSK + Lokal( "  - naknade (+ primanja): " )
+    @ prow(), 60 + LEN( cLMSK ) SAY nOstPoz PICT gPICI
+
+    ? cLMSK + Lokal( "  -  odbici (- primanja): " )
+    @ prow(), 60 + LEN( cLMSK ) SAY nOstNeg PICT gPICI
 
 	// ukupno za isplatu ....
 	nZaIsplatu := ROUND2( nMUkIspl + nOsnOstalo, gZaok2 )
 	
-	?
-
 	? cMainLine
 	?  cLMSK + Lokal("UKUPNO ZA ISPLATU SA NAKNADAMA I ODBICIMA (7+8)")
 	@ prow(),60+LEN(cLMSK) SAY nZaIsplatu pict gpici

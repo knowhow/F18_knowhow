@@ -1,6 +1,7 @@
 1.4.194 2013-06-19, vsasa
  
   - KALK, dužina stranice za izvještaje i dokumente
+  - RNAL, specifikacija poslovođa, broj stakala
  
 1.4.193 2013-06-18, vsasa
  

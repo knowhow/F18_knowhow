@@ -51,3 +51,36 @@ return
 
 
 
+// --------------------------------------------------
+// vraca broj stakala za artikal...
+// --------------------------------------------------
+function broj_stakala( arr, qtty )
+local _count := 0
+local _i
+local _gr_name 
+
+if arr == NIL .or. LEN( arr ) == 0
+    return _count
+endif
+
+// arr
+// { nElNo, cGrValCode, cGrVal, cAttJoker, cAttValCode, cAttVal }
+
+for _i := 1 to LEN( arr )
+
+    _gr_name := ALLTRIM( arr[ _i, 4 ] )
+    
+    if _gr_name == "<GL_TYPE>"
+        ++ _count
+    endif
+
+next
+
+if _count > 0 .and. qtty <> 0
+    _count := _count * qtty
+endif
+
+return _count
+
+
+

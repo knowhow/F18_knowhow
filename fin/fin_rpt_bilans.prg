@@ -406,13 +406,13 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma   // idfirma
                @ prow(),PCOL()+1 SAY P0KP PICTURE PicD
                D0S:=D0KP-P0KP
                IF D0S>=0
-	       	P0S:=0
-	       else
-	        P0S:=-D0S
-		D0S:=0
-	       endif
-               @ prow(),PCOL()+1 SAY D0S PICTURE PicD
-               @ prow(),PCOL()+1 SAY P0S PICTURE PicD
+	       	        P0S:=0
+	            else
+	                P0S:=-D0S
+		            D0S:=0
+	            endif
+                @ prow(),PCOL()+1 SAY D0S PICTURE PicD
+                @ prow(),PCOL()+1 SAY P0S PICTURE PicD
 	     
 	     //endif
 	     

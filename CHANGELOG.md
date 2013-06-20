@@ -1,3 +1,7 @@
+1.4.196 2013-06-20, vsasa
+ 
+  - FIN, bruto bilans subanalitika ODT...
+ 
 1.4.195 2013-06-19, vsasa
  
   - KALK, dužina stranice za izvještaje i dokumente / 2

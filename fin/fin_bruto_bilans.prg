@@ -18,6 +18,7 @@
 // -------------------------------------------------------
 function fin_bruto_bilans_sql( params )
 local _data
+local _template := "fin_bbl.odt"
 
 if params == NIL
     // uslovi izvjestaja
@@ -37,10 +38,19 @@ endif
 // napuni tmp tabelu
 _fill_local_tmp( _data, params )
 
-// generisi xml report
-_gen_xml( params )
+if params["export_dbf"] == "D"
+    f18_open_mime_document( my_home() + "r_export.dbf" )
+    return
+endif
 
-// otvori dbf ako treba itd...
+// generisi xml report
+if _gen_xml( params )
+    // printaj odt report
+    if f18_odt_generate( _template )
+	    // printaj odt
+        f18_odt_print()
+    endif
+endif
 
 return
 
@@ -52,31 +62,232 @@ return
 static function _gen_xml( params )
 local _xml := "data.xml"
 local _sint_len := 3
+local _a_klase := {}
+local _klasa, _i
+local _u_ps_dug := 0
+local _u_ps_pot := 0
+local _u_tek_dug := 0
+local _u_tek_pot := 0
+local _u_sld_dug := 0
+local _u_sld_pot := 0
+local _t_ps_dug := 0
+local _t_ps_pot := 0
+local _t_tek_dug := 0
+local _t_tek_pot := 0
+local _t_sld_dug := 0
+local _t_sld_pot := 0
+local _tt_ps_dug := 0
+local _tt_ps_pot := 0
+local _tt_tek_dug := 0
+local _tt_tek_pot := 0
+local _tt_sld_dug := 0
+local _tt_sld_pot := 0
+local _ok := .f.
+local _count
 
+O_KONTO
 O_R_EXP
 
 open_xml( my_home() + _xml )
 
-xml_subnode( "bb", .f. )
+xml_subnode( "rpt", .f. )
+
+xml_subnode( "bilans", .f. )
+
+// header podaci
+xml_node( "firma", to_xml_encoding( gFirma ) )
+xml_node( "naz", to_xml_encoding( gNFirma ) )
+xml_node( "datum", DTOC( DATE() ) )
+xml_node( "datum_od", DTOC( params["datum_od"] ) )
+xml_node( "datum_do", DTOC( params["datum_do"] ) )
+
+if !EMPTY( params["konto"] )
+    xml_node( "konto", to_xml_encoding( params["konto"] ) ) 
+else
+    xml_node( "konto", to_xml_encoding( "- sva konta -" ) ) 
+endif
 
 select r_export
 set order to tag "1"
 go top
 
+_count := 0
+
 do while !EOF()
 
-    // ....
+    _klasa := LEFT( field->idkonto, 1 )
 
-    skip
+    xml_subnode( "klasa", .f. )
+
+    xml_node( "id", to_xml_encoding( _klasa ) )
+    
+    select konto
+    hseek _klasa
+    xml_node( "naz", to_xml_encoding( ALLTRIM( field->naz ) ) )
+
+    select r_export
+
+    _t_ps_dug := _t_ps_pot := _t_tek_dug := _t_tek_pot := _t_sld_dug := _t_sld_pot := 0
+    
+    do while !EOF() .and. LEFT( field->idkonto, 1 ) == _klasa
+
+        _sint := LEFT( field->idkonto, 3 )
+
+        xml_subnode( "sint", .f. )
+
+        xml_node( "id", to_xml_encoding( _sint ) )
+        
+        select konto
+        hseek _sint
+        xml_node( "naz", to_xml_encoding( ALLTRIM( field->naz ) ) )
+
+        select r_export
+
+        _u_ps_dug := _u_ps_pot := _u_tek_dug := _u_tek_pot := _u_sld_dug := _u_sld_pot := 0
+
+        do while !EOF() .and. LEFT( field->idkonto, 3 ) == _sint 
+        
+            xml_subnode( "item", .f. )
+        
+            xml_node( "rb", ALLTRIM( STR( ++ _count ) ) )
+            xml_node( "kto", to_xml_encoding( field->idkonto ) )
+            xml_node( "part", to_xml_encoding( field->idpartner ) )
+           
+            if !EMPTY( field->partner ) 
+                xml_node( "naz", to_xml_encoding( field->partner ) )
+            else
+                xml_node( "naz", to_xml_encoding( field->konto ) )
+            endif
+
+            // iznosi ...
+            xml_node( "ps_dug", ALLTRIM( STR( field->ps_dug, 12, 2 ) ) )
+            xml_node( "ps_pot", ALLTRIM( STR( field->ps_pot, 12, 2 ) ) )
+
+            xml_node( "tek_dug", ALLTRIM( STR( field->tek_dug, 12, 2 ) ) )
+            xml_node( "tek_pot", ALLTRIM( STR( field->tek_pot, 12, 2 ) ) )
+
+            xml_node( "sld_dug", ALLTRIM( STR( field->sld_dug, 12, 2 ) ) )
+            xml_node( "sld_pot", ALLTRIM( STR( field->sld_pot, 12, 2 ) ) )
+
+            // totali sintetički...
+            _u_ps_dug += field->ps_dug
+            _u_ps_pot += field->ps_pot
+            _u_tek_dug += field->tek_dug
+            _u_tek_pot += field->tek_pot
+            _u_sld_dug += field->sld_dug
+            _u_sld_pot += field->sld_pot
+
+            // totali po klasama
+            _t_ps_dug += field->ps_dug
+            _t_ps_pot += field->ps_pot
+            _t_tek_dug += field->tek_dug
+            _t_tek_pot += field->tek_pot
+            _t_sld_dug += field->sld_dug
+            _t_sld_pot += field->sld_pot
+
+            // total ukupno
+            _tt_ps_dug += field->ps_dug
+            _tt_ps_pot += field->ps_pot
+            _tt_tek_dug += field->tek_dug
+            _tt_tek_pot += field->tek_pot
+            _tt_sld_dug += field->sld_dug
+            _tt_sld_pot += field->sld_pot
+
+            // dodaj u matricu sa klasama, takodjer totale...
+            _scan := ASCAN( _a_klase, { |var| var[1] == LEFT( _sint, 1 ) } )
+
+            if _scan == 0
+                // dodaj novu stavku u matricu...
+                AADD( _a_klase, { LEFT( _sint, 1 ), ;
+                                    field->ps_dug, ;
+                                    field->ps_pot, ;
+                                    field->tek_dug, ;
+                                    field->tek_pot, ;
+                                    field->sld_dug, ;
+                                    field->sld_pot } )
+            else
+
+                // dodaj na postojeci iznos...
+
+                _a_klase[ _scan, 2 ] := _a_klase[ _scan, 2 ] + field->ps_dug
+                _a_klase[ _scan, 3 ] := _a_klase[ _scan, 3 ] + field->ps_pot
+                _a_klase[ _scan, 4 ] := _a_klase[ _scan, 4 ] + field->tek_dug
+                _a_klase[ _scan, 5 ] := _a_klase[ _scan, 5 ] + field->tek_pot
+                _a_klase[ _scan, 6 ] := _a_klase[ _scan, 6 ] + field->sld_dug
+                _a_klase[ _scan, 7 ] := _a_klase[ _scan, 7 ] + field->sld_pot
+
+            endif
+
+            xml_subnode( "item", .t. )
+            
+            skip
+
+        enddo
+   
+        // upisi totale sintetike 
+        // ....
+        xml_node( "ps_dug", ALLTRIM( STR( _u_ps_dug, 12, 2 ) ) ) 
+        xml_node( "ps_pot", ALLTRIM( STR( _u_ps_pot, 12, 2 ) ) ) 
+        xml_node( "tek_dug", ALLTRIM( STR( _u_tek_dug, 12, 2 ) ) ) 
+        xml_node( "tek_pot", ALLTRIM( STR( _u_tek_pot, 12, 2 ) ) ) 
+        xml_node( "sld_dug", ALLTRIM( STR( _u_sld_dug, 12, 2 ) ) ) 
+        xml_node( "sld_pot", ALLTRIM( STR( _u_sld_pot, 12, 2 ) ) ) 
+
+        xml_subnode( "sint", .t. )
+
+    enddo
+
+    // uspisi totale klase
+    xml_node( "ps_dug", ALLTRIM( STR( _t_ps_dug, 12, 2 ) ) ) 
+    xml_node( "ps_pot", ALLTRIM( STR( _t_ps_pot, 12, 2 ) ) ) 
+    xml_node( "tek_dug", ALLTRIM( STR( _t_tek_dug, 12, 2 ) ) ) 
+    xml_node( "tek_pot", ALLTRIM( STR( _t_tek_pot, 12, 2 ) ) ) 
+    xml_node( "sld_dug", ALLTRIM( STR( _t_sld_dug, 12, 2 ) ) ) 
+    xml_node( "sld_pot", ALLTRIM( STR( _t_sld_pot, 12, 2 ) ) ) 
+
+    xml_subnode( "klasa", .t. )
 
 enddo
 
+// ukupni total
+xml_node( "ps_dug", ALLTRIM( STR( _tt_ps_dug, 12, 2 ) ) ) 
+xml_node( "ps_pot", ALLTRIM( STR( _tt_ps_pot, 12, 2 ) ) ) 
+xml_node( "tek_dug", ALLTRIM( STR( _tt_tek_dug, 12, 2 ) ) ) 
+xml_node( "tek_pot", ALLTRIM( STR( _tt_tek_pot, 12, 2 ) ) ) 
+xml_node( "sld_dug", ALLTRIM( STR( _tt_sld_dug, 12, 2 ) ) ) 
+xml_node( "sld_pot", ALLTRIM( STR( _tt_sld_pot, 12, 2 ) ) ) 
 
-xml_subnode( "bb", .t. )
+// totali po klasama...
+xml_subnode( "total", .f. )
+
+for _i := 1 to LEN( _a_klase )
+
+    xml_subnode( "item", .f. )
+
+    xml_node( "klasa", to_xml_encoding( _a_klase[ _i, 1 ] ) )
+    xml_node( "ps_dug", ALLTRIM( STR( _a_klase[ _i, 2 ], 12, 2 ) ) )
+    xml_node( "ps_pot", ALLTRIM( STR( _a_klase[ _i, 3 ], 12, 2 ) ) )
+    xml_node( "tek_dug", ALLTRIM( STR( _a_klase[ _i, 4 ], 12, 2 ) ) )
+    xml_node( "tek_pot", ALLTRIM( STR( _a_klase[ _i, 5 ], 12, 2 ) ) )
+    xml_node( "sld_dug", ALLTRIM( STR( _a_klase[ _i, 6 ], 12, 2 ) ) )
+    xml_node( "sld_pot", ALLTRIM( STR( _a_klase[ _i, 7 ], 12, 2 ) ) )
+
+    xml_subnode( "item", .t. )
+
+next
+
+xml_subnode( "total", .t. )
+
+xml_subnode( "bilans", .t. )
+
+xml_subnode( "rpt", .t. )
 
 close_xml()
 
-return
+close all
+
+_ok := .t.
+return _ok
 
 
 
@@ -84,6 +295,7 @@ return
 static function _fill_local_tmp( data, params )
 local oRow 
 local _id_konto, _id_partner, _k_naz, _p_naz
+local _rec
 
 // napravi tmp 
 _cre_tmp()
@@ -113,7 +325,7 @@ do while !data:EOF()
     _p_naz := ""
     if !EMPTY( _id_partner )
         select partn
-        hseek _id_partn
+        hseek _id_partner
         _p_naz := field->naz
     endif
 
@@ -130,8 +342,19 @@ do while !data:EOF()
     _rec["ps_pot"] := oRow:FieldGet( oRow:FieldPos("ps_pot") )
     _rec["tek_dug"] := oRow:FieldGet( oRow:FieldPos("tek_dug") )
     _rec["tek_pot"] := oRow:FieldGet( oRow:FieldPos("tek_pot") )
-    _rec["sld_dug"] := _rec["tek_dug"]
-    _rec["sld_pot"] := _rec["tek_pot"]
+
+    // sredi kolonu saldo...
+    _rec["sld_dug"] := _rec["tek_dug"] - _rec["tek_pot"]
+
+    if _rec["sld_dug"] >= 0
+        _rec["sld_pot"] := 0
+    else
+        _rec["sld_pot"] := - _rec["sld_dug"]
+        _rec["sld_dug"] := 0
+    endif
+
+    // update na kraju...
+    dbf_update_rec( _rec )
 
     data:skip()
 
@@ -161,6 +384,8 @@ AADD( _dbf, { "sld_pot", "N", 18, 2 } )
 
 // napravi dbf
 t_exp_create( _dbf )
+
+O_R_EXP
 
 // indeksi po potrebi ...
 //
@@ -290,6 +515,7 @@ local _table
 local _konto := param["konto"]
 local _dat_od := param["datum_od"]
 local _dat_do := param["datum_do"]
+local _id_rj := param["id_rj"]
 
 // valuta 1 = domaca
 if param["valuta"] == 2
@@ -300,7 +526,11 @@ _where := "WHERE sub.idfirma = " + _filter_quote( gFirma )
 _where += " AND " + _sql_date_parse( "sub.datdok", _dat_od, _dat_do )
 
 if !EMPTY( _konto )
-    _where += " AND " + _sql_cond_parse( "sub.idkonto", _konto )
+    _where += " AND " + _sql_cond_parse( "sub.idkonto", _konto + " " )
+endif
+
+if !EMPTY( _id_rj )
+    _where += " AND sub.idrj = " + _sql_quote( _id_rj ) 
 endif
 
 _qry := "SELECT " + ;

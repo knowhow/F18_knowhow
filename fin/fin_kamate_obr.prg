@@ -33,10 +33,10 @@ endif
 if !fVise
 
 	Box( "#OBRACUN KAMATE ZA JEDNU GLAVNICU", 3, 77 )
- 		@ m_x+1, m_y+2 SAY "Glavnica:" GET nGlavn PICT "9999999999999.99"
- 		@ m_x+2, m_y+2 SAY "Od datuma:" GET dDatOd
- 		@ m_x+2, col()+2 SAY "do:" GET dDatDo
- 		@ m_x+3, m_y+2 SAY "Varijanta obracuna kamate (Z-zatezna kamata,P-prosti kamatni racun)" GET cVarObracuna VALID cVarObracuna$"ZP" PICT "@!"
+ 		@ m_x + 1, m_y + 2 SAY "Glavnica:" GET nGlavn PICT "9999999999999.99"
+ 		@ m_x + 2, m_y + 2 SAY "Od datuma:" GET dDatOd
+ 		@ m_x + 2, col() + 2 SAY "do:" GET dDatDo
+ 		@ m_x + 3, m_y + 2 SAY "Varijanta obracuna kamate (Z-zatezna kamata,P-prosti kamatni racun)" GET cVarObracuna VALID cVarObracuna$"ZP" PICT "@!"
  		read
 		ESC_BCR
 	BoxC()
@@ -145,15 +145,18 @@ do while .t.
 	nIznKam:=round(nIznKam,2)
 
 	? dDatOd, ddDatDo
-	@ prow(),pcol()+1 SAY nPeriod pict "999"
-	@ prow(),pcol()+1 SAY nGlavn pict picdem
-	if (cVarObracuna=="Z")
+
+	@ prow(), pcol() + 1 SAY nPeriod pict "999"
+	@ prow(), pcol() + 1 SAY nGlavn pict picdem
+
+	if ( cVarObracuna == "Z" )
 		@ prow(),pcol()+1 SAY ks->tip
 		@ prow(),pcol()+1 SAY ks->stkam
 		@ prow(),pcol()+1 SAY nKKam*100 pict "9999.99"
 	else
 		@ prow(),pcol()+1 SAY ks->stkam
 	endif
+
 	@ prow(),pcol()+1 SAY nIznKam pict picdem
 
 	nKumKam+=nIznKam

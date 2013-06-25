@@ -68,7 +68,7 @@ local _version := SPACE(50)
 local _db_list := {}
 local _server := my_server_params()
 local _database := ""
-local _upd_empty := "D"
+local _upd_empty := "N"
 private GetList := {}
 
 _database := SPACE(50)
@@ -113,11 +113,12 @@ if !EMPTY( _database )
     AADD( _db_list, { ALLTRIM( _database ) } )
 else
     _db_list := F18Login():New():database_array()
-    if _upd_empty == "D"
-        // dodaj i empty template tabele u update shemu...
-        AADD( _db_list, { "empty" } )
-        AADD( _db_list, { "empty_sezona" } )
-    endif
+endif
+
+if _upd_empty == "D"	
+	// dodaj i empty template tabele u update shemu...
+    AADD( _db_list, { "empty" } )
+    AADD( _db_list, { "empty_sezona" } )
 endif
 
 // download fajla sa interneta...
@@ -283,6 +284,7 @@ else
 
     if LEFT( company, 1 ) == "!"
 
+		company := RIGHT( ALLTRIM( company ), LEN( ALLTRIM( company ) ) - 1 )
         // rucno zadat naziv baze, ne gledaj sezone...
         AADD( _sess_list, { "empty" } )        
 

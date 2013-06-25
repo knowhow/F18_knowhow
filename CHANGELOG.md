@@ -3,6 +3,7 @@
   - FIN, bruto bilans subanalitika ODT...
   - KALK, štampa labela, parametar dužine naziva artikla
   - F18, otvaranje nove baze, bugfix
+  - F18, update db, update baze sa zadatim nazivom, update empty tabela
  
 1.4.195 2013-06-19, vsasa
  

@@ -698,7 +698,7 @@ if data_type > 1
     _qry += "DELETE FROM fmk.os_os;"
     _qry += "DELETE FROM fmk.os_promj;"
 
-    _qry += "DELETE FROM fmk.sii_os;"
+    _qry += "DELETE FROM fmk.sii_sii;"
     _qry += "DELETE FROM fmk.sii_promj;"
 
     _qry += "DELETE FROM fmk.ld_ld;"

@@ -1,6 +1,8 @@
-1.4.196 2013-06-20, vsasa
+1.4.196 2013-06-25, vsasa
  
   - FIN, bruto bilans subanalitika ODT...
+  - KALK, štampa labela, parametar dužine naziva artikla
+  - F18, otvaranje nove baze, bugfix
  
 1.4.195 2013-06-19, vsasa
  

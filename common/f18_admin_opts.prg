@@ -68,11 +68,12 @@ local _version := SPACE(50)
 local _db_list := {}
 local _server := my_server_params()
 local _database := ""
+local _upd_empty := "D"
 private GetList := {}
 
 _database := SPACE(50)
 
-Box(, 8, 70 )
+Box(, 10, 70 )
 
     @ m_x + _x, m_y + 2 SAY "**** upgrade db-a / unesite verziju ..."
     
@@ -85,6 +86,11 @@ Box(, 8, 70 )
     ++ _x
     
     @ m_x + _x, m_y + 2 SAY "naziv baze / prazno update-sve:" GET _database PICT "@S30"
+
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Update template [empty] baza (D/N) ?" GET _upd_empty VALID _upd_empty $ "DN" PICT "@!"
 
     read
 
@@ -101,11 +107,17 @@ endif
 ::_update_params["host"] := _server["host"]
 ::_update_params["port"] := _server["port"]
 ::_update_params["file"] := "?"
+::_update_params["updade_empty"] := _upd_empty
 
 if !EMPTY( _database )
     AADD( _db_list, { ALLTRIM( _database ) } )
 else
     _db_list := F18Login():New():database_array()
+    if _upd_empty == "D"
+        // dodaj i empty template tabele u update shemu...
+        AADD( _db_list, { "empty" } )
+        AADD( _db_list, { "empty_sezona" } )
+    endif
 endif
 
 // download fajla sa interneta...
@@ -264,24 +276,45 @@ local _database
 local _cmd 
 local _ok := .f.
 
-if ! ( "_" $ company )
-    // nema sezone, uzmi sa servera...
-    _sess_list := F18Login():New():get_database_sessions( company )
+if ALLTRIM( company ) $ "#empty#empty_sezona#"
+    // ovo su template tabele...
+    AADD( _sess_list, { "empty" } )    
 else
-	if SUBSTR( company, LEN( company ) - 3, 1 ) $ "1#2" 
-		// vec postoji zadana sezona...
-    	// samo je dodaj u matricu...
-		AADD( _sess_list, { RIGHT( ALLTRIM( company ) , 4 ) } )
-		company := PADR( ALLTRIM( company ), LEN( ALLTRIM( company ) ) - 5  )
-	else
-    	_sess_list := F18Login():New():get_database_sessions( company )
-	endif
+
+    if LEFT( company, 1 ) == "!"
+
+        // rucno zadat naziv baze, ne gledaj sezone...
+        AADD( _sess_list, { "empty" } )        
+
+    elseif ! ( "_" $ company )
+
+        // nema sezone, uzmi sa servera...
+        _sess_list := F18Login():New():get_database_sessions( company )
+
+    else
+
+	    if SUBSTR( company, LEN( company ) - 3, 1 ) $ "1#2" 
+		    // vec postoji zadana sezona...
+    	    // samo je dodaj u matricu...
+		    AADD( _sess_list, { RIGHT( ALLTRIM( company ) , 4 ) } )
+		    company := PADR( ALLTRIM( company ), LEN( ALLTRIM( company ) ) - 5  )
+	    else
+    	    _sess_list := F18Login():New():get_database_sessions( company )
+	    endif
+
+    endif
 
 endif
 
 for _i := 1 to LEN( _sess_list )
 
-    _database := ALLTRIM( company ) + "_" + ALLTRIM( _sess_list[ _i, 1 ] )
+    // ako je ovaj marker uzmi cisto ono sto je navedeno...
+    if _sess_list[ _i, 1 ] == "empty"
+        // ovo je za empty template tabele..
+        _database := ALLTRIM( company )
+    else 
+        _database := ALLTRIM( company ) + "_" + ALLTRIM( _sess_list[ _i, 1 ] )
+    endif
 
     _cmd := ::update_db_command( _database )
 
@@ -290,12 +323,9 @@ for _i := 1 to LEN( _sess_list )
     endif
 
     MsgO( "Vrsim update baze " + _database ) 
-   
-    #ifdef __PLATFORM__DARWIN
-        f18_run( _cmd )
-    #else 
-        _ok := hb_run( _cmd )
-    #endif
+  
+    altd() 
+    _ok := hb_run( _cmd )
 
     // ubaci u matricu rezultat...
     AADD( ::update_db_result, { company, _database, _cmd, _ok } )

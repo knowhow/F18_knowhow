@@ -1,3 +1,7 @@
+1.4.197 2013-06-26, vsasa
+ 
+  - LD, radni sati unos, korekcije
+ 
 1.4.196 2013-06-25, vsasa
  
   - FIN, bruto bilans subanalitika ODT...

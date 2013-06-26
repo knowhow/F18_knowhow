@@ -16,33 +16,33 @@
 // ---------------------------------------------------------
 // unos radnih sati kod obracuna plate
 // ---------------------------------------------------------
-function FillRadSati(cIdRadnik,nRadniSati)
+function FillRadSati( cIdRadnik, nRadniSati )
 
 // uzmi prethodne sate...
-cSatiPredhodni := GetStatusRSati(cIdRadnik)   
+cSatiPredhodni := GetStatusRSati( cIdRadnik )   
 
-if Pitanje(, Lokal("Unos placenih sati (D/N)?"),"D")=="N"
-    return VAL(cSatiPredhodni)
+if Pitanje(, Lokal( "Unos placenih sati (D/N)?"), "D" ) == "N"
+    return VAL( cSatiPredhodni )
 endif
 
-nPlacenoRSati:=0
-cOdgovor:="D"
+nPlacenoRSati := 0
+cOdgovor := "D"
 
-Box(,9,48)
-    @ m_x+1,m_y+2 SAY Lokal("Radnik:   ") + ALLTRIM(cIdRadnik)
-    @ m_x+2,m_y+2 SAY Lokal("Ostalo iz predhodnih obracuna: ") + ALLTRIM(cSatiPredhodni) + " sati"
-    @ m_x+3,m_y+2 SAY "-----------------------------------------------"
-    @ m_x+4,m_y+2 SAY Lokal("Uplaceno sati: ") GET nPlacenoRSati PICT "99999999" 
+Box(, 9, 48 )
+    @ m_x + 1, m_y + 2 SAY Lokal("Radnik:   ") + ALLTRIM(cIdRadnik)
+    @ m_x + 2, m_y + 2 SAY Lokal("Ostalo iz predhodnih obracuna: ") + ALLTRIM(cSatiPredhodni) + " sati"
+    @ m_x + 3, m_y + 2 SAY "-----------------------------------------------"
+    @ m_x + 4, m_y + 2 SAY Lokal("Uplaceno sati: ") GET nPlacenoRSati PICT "99999999" 
     read
-    @ m_x+5,m_y+2 SAY "-----------------------------------------------"
-    @ m_x+6,m_y+2 SAY Lokal("Radni sati ovaj mjesec  : ") + ALLTRIM(STR(nRadniSati))
-    @ m_x+7,m_y+2 SAY Lokal("Placeni sati ovaj mjesec: ") + ALLTRIM(STR(nPlacenoRSati))
-    @ m_x+8,m_y+2 SAY Lokal("Ostalo ") + ALLTRIM(STR(nRadniSati-nPlacenoRSati+VAL(cSatiPredhodni))) + Lokal(" sati za sljedeci mjesec !")
-    @ m_x+9,m_y+2 SAY Lokal("Sacuvati promjene (D/N)? ") GET cOdgovor VALID cOdgovor$"DN" PICT "@!"
+    @ m_x + 5, m_y + 2 SAY "-----------------------------------------------"
+    @ m_x + 6, m_y + 2 SAY Lokal("Radni sati ovaj mjesec  : ") + ALLTRIM(STR(nRadniSati))
+    @ m_x + 7, m_y + 2 SAY Lokal("Placeni sati ovaj mjesec: ") + ALLTRIM(STR(nPlacenoRSati))
+    @ m_x + 8, m_y + 2 SAY Lokal("Ostalo ") + ALLTRIM(STR(nRadniSati-nPlacenoRSati+VAL(cSatiPredhodni))) + Lokal(" sati za sljedeci mjesec !")
+    @ m_x + 9, m_y + 2 SAY Lokal("Sacuvati promjene (D/N)? ") GET cOdgovor VALID cOdgovor$"DN" PICT "@!"
     read
     
     if cOdgovor=="D"    
-        UbaciURadneSate(cIdRadnik,nRadniSati-nPlacenoRSati)
+        UbaciURadneSate( cIdRadnik, nRadniSati-nPlacenoRSati )
     else
         MsgBeep(Lokal("Promjene nisu sacuvane !!!"))
     endif
@@ -57,7 +57,7 @@ return VAL(cSatiPredhodni)
 function GetUplaceniRSati(cIdRadn)
 local nArr
 local nSati := 0
-nArr:=SELECT()
+nArr := SELECT()
 
 select radsat
 hseek cIdRadn
@@ -97,20 +97,16 @@ return STR(nSati)
 // ----------------------------------------------------
 function UbaciURadneSate( id_radnik, iznos_sati )
 local _t_area := SELECT()
-local _rec, _predh_sati
+local _rec
 
 select radsat
-hseek id_radnik
+set order to tag "IDRADN"
+go top
+seek id_radnik
 
-f18_lock_tables({"ld_radsat"})
-sql_table_update( nil, "BEGIN" )
-
-if Found()
-    _predh_sati := field->sati
+if FOUND()
     _rec := dbf_get_rec()
-    _rec["sati"] := iznos_sati + _predh_sati
-    update_rec_server_and_dbf( "ld_radsat", _rec, 1, "CONT" )
-
+    _rec["sati"] := _rec["sati"] + iznos_sati
 else
     append blank
     _rec := dbf_get_rec()
@@ -118,10 +114,7 @@ else
     _rec["sati"] := iznos_sati
 endif
 
-update_rec_server_and_dbf( "ld_radsat", _rec, 1, "CONT" )
-
-f18_free_tables({"ld_radsat"})
-sql_table_update( nil, "END" )
+update_rec_server_and_dbf( "ld_radsat", _rec, 1, "FULL" )
 
 select ( _t_area )
 
@@ -136,14 +129,14 @@ local _t_arr := SELECT()
 local _rec
 
 select radsat
-hseek id_radnik
+set order to tag "IDRADN"
+go top
+seek id_radnik
 
-if Found()
-    
+if Found()    
     _rec := dbf_get_rec()
     _rec["sati"] := iznos_sati
     update_rec_server_and_dbf( "ld_radsat", _rec, 1, "FULL" )  
-
 endif
 
 select ( _t_arr )

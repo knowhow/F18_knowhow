@@ -1,3 +1,7 @@
+1.4.198 2013-06-28, vsasa
+ 
+  - šifranik artikala, setovanje mpc iz vpc / ubačeno u KALK admin opcije
+ 
 1.4.197 2013-06-26, vsasa
  
   - LD, radni sati unos, korekcije

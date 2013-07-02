@@ -1,6 +1,7 @@
-1.4.198 2013-06-28, vsasa
+1.4.198 2013-07-02, vsasa
  
   - šifranik artikala, setovanje mpc iz vpc / ubačeno u KALK admin opcije
+  - ld, eksport fajla topli obrok, konverzija znakova
  
 1.4.197 2013-06-26, vsasa
  

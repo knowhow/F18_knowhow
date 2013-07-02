@@ -80,6 +80,7 @@ private cParKonv
 createfilebanka()
 
 select _tmp
+index on r_bank + r_ime + r_prezime tag "bank"
 go top
 
 do while !EOF()
@@ -112,11 +113,11 @@ do while !EOF()
 	endif
 
 	// konverzija znakova...
-	//KonvZnWin( @cTxt, cParKonv )
 
-	write2file( nH, to_win1250_encoding( cTxt ), .t. )
+	write2file( nH, to_win1250_encoding( hb_strtoutf8( cTxt ) ), .t. )
 	
 	skip
+
 enddo
 
 closefilebanka(nH)

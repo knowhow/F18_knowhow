@@ -980,7 +980,7 @@ return cRet
 // -----------------------------------------
 function CreateFileBanka()
 
-Box(,5,70)
+Box(, 5, 70)
 
     cLokacija := my_home() + "to.txt"
     cConstBrojTR := "56480 "

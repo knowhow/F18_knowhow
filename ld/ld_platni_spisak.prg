@@ -978,18 +978,25 @@ return cRet
 // -----------------------------------------
 // kreiranje fajla za eksport
 // -----------------------------------------
-function CreateFileBanka()
+function CreateFileBanka( banka )
+local _file_name := ""
 
-Box(, 5, 70)
+if banka == NIL .or. EMPTY( banka )
+    _file_name := "to.txt"
+else
+    _file_name := "to_" + ALLTRIM( banka ) + ".txt"
+endif
 
-    cLokacija := my_home() + "to.txt"
+Box(, 5, 70 )
+
+    cLokacija := PADR( my_home() + _file_name, 300 )
     cConstBrojTR := "56480 "
     cParKonv := "5"
 
-    @ 1+m_x, 2+m_y SAY "Parametri:"
-    @ 3+m_x, 2+m_y SAY "Sifra isplatioca tek.rac:" GET cConstBrojTR 
-    @ 4+m_x, 2+m_y SAY "Naziv fajla prenosa:" GET cLokacija
-    @ 5+m_x, 2+m_y SAY "Konverzija znakova:" GET cParKonv
+    @ 1 + m_x, 2 + m_y SAY "PARAMETRI ***"
+    @ 3 + m_x, 2 + m_y SAY "Sifra isplatioca tek.rac:" GET cConstBrojTR 
+    @ 4 + m_x, 2 + m_y SAY "Naziv fajla prenosa:" GET cLokacija PICT "@S30"
+    @ 5 + m_x, 2 + m_y SAY "Konverzija znakova:" GET cParKonv
     
     read
 

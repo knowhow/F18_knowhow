@@ -54,7 +54,7 @@ endif
 
 if cExport == "D"
 	// export podataka 
-	_export_data( nRptVar1, nRptVar2 )
+	_export_data( nRptVar1, nRptVar2, cKred )
 else
 	// printaj izvjestaj....
 	_print_list( cMonthFrom, cMonthTo, cYear, nRptVar1, nRptVar2, cKred )
@@ -69,7 +69,7 @@ return
 // ---------------------------------------
 // export podataka u txt fajl
 // ---------------------------------------
-static function _export_data( nVar1, nVar2 )
+static function _export_data( nVar1, nVar2, banka )
 local cTxt
 local _output_file := "to.txt"
 private cLokacija
@@ -77,7 +77,13 @@ private cConstBrojTR
 private nH
 private cParKonv
 
-createfilebanka()
+createfilebanka( banka )
+
+if banka == NIL .or. EMPTY( banka )
+    _output_file := "to.txt"
+else
+    _output_file := "to_" + ALLTRIM( banka ) + ".txt"
+endif
 
 select _tmp
 index on r_bank + r_ime + r_prezime tag "bank"
@@ -123,7 +129,7 @@ enddo
 closefilebanka(nH)
 
 // kopiraj fajl na desktop
-f18_copy_to_desktop( my_home(), "to.txt", _output_file )
+f18_copy_to_desktop( my_home(), _output_file, _output_file )
 
 return
 

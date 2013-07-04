@@ -1,3 +1,7 @@
+1.4.200 2013-07-04, vsasa
+ 
+  - ld, izvještaj topli obrok, korekcije na formi uslova itd..
+
 1.4.199 2013-07-02, vsasa
  
   - ld, eksport fajla topli obrok, konverzija znakova

@@ -554,12 +554,14 @@ do case
 
             // insertuj nalog u kumulativ
             if doc_insert( cDesc ) == 1
-                
                 select _docs
                 l_auto_tab := .t.
                 KEYBOARD CHR(K_TAB)
                 nRet := DE_REFRESH
-                        
+            else
+                select _docs
+                l_auto_tab := .t.
+                KEYBOARD CHR(K_TAB)            
             endif
         
         elseif ALIAS() <> "_DOCS"

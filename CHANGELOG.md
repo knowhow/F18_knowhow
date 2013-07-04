@@ -1,6 +1,7 @@
 1.4.200 2013-07-04, vsasa
  
   - ld, izvještaj topli obrok, korekcije na formi uslova itd..
+  - rnal, ažuriranje naloga, provjera ispravnosti rednih brojeva naloga
 
 1.4.199 2013-07-02, vsasa
  

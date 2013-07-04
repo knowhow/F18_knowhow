@@ -43,6 +43,12 @@ set filter to
 select _doc_ops
 set filter to
 
+// provjeri sve prije azuriranja
+if !_provjeri_prije_azuriranja()
+    MsgBeep( "Redni brojevi u nalogu nisu ispravni, provjeriti !" )
+    return 0
+endif
+
 select _docs
 go top
 
@@ -164,6 +170,44 @@ o_tables(.t.)
 MsgC()
 
 return 1
+
+
+// --------------------------------------------------
+// provjera prije azuriranja dokumenta...
+// --------------------------------------------------
+static function _provjeri_prije_azuriranja()
+local _ok := .t.
+local _t_area := SELECT()
+local _tmp
+
+// stavke naloga ....
+select _doc_it
+go top
+
+do while !EOF()
+
+    _tmp := field->doc_it_no
+
+    skip 1
+
+    if _tmp == field->doc_it_no
+        go top
+        select ( _t_area )
+        _ok := .f.
+        return _ok        
+    endif
+
+enddo
+
+go top
+
+// dodatne stavke naloga....
+
+// operacije naloga ....
+
+select ( _t_area )
+
+return _ok
 
 
 

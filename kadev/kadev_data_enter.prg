@@ -109,7 +109,7 @@ local _tmp_2 := {}
 private fNovi := .f.
 
 // broj podataka
-@ m_x + 1, m_y + 2 SAY "Broj podataka:" COLOR "GR+/B"
+@ m_x + 1, m_y + 2 SAY "Broj promjena:" COLOR "GR+/B"
 @ m_x + 1, col() + 2 SAY PADL( ALLTRIM( STR( kadev_broj_podataka( field->id ), 5, 0 ) ), 8 ) COLOR "W/R+"
 
 do case

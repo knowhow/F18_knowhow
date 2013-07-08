@@ -11,6 +11,7 @@
 
 
 #include "kadev.ch"
+#include "f18_separator.ch"
 
 
 // ----------------------------------------------
@@ -18,9 +19,14 @@
 // ----------------------------------------------
 function kadev_data()
 local _i, _header, _footer
+local _x, _y
+local _w1 := 30
 private ImeKol := {}
 private Kol := {}
 private fNovi
+
+_x := MAXROWS() - 4
+_y := MAXCOLS() - 3
 
 //SET EPOCH TO 1910
 
@@ -32,20 +38,33 @@ set_kols( @ImeKol, @Kol )
 
 select kadev_0
 set order to tag "2"
-
 go top
 
-_header := "<Ctrl-N> Novi, <ENTER> Edit, <Ctrl-T> Brisanje, <R> Rjesenje"
-_footer := "<T> Trazi(prezime+ime), <S> Trazi(ID), <P> Pregled promjene" 
+_header := ""
+_footer := ""
 
 cTrPrezime := kadev_0->prezime
 cTrIme     := kadev_0->ime          
 cTrID      := kadev_0->id        
 
-ObjDbEdit( 'bpod', MAXROWS() - 10, MAXCOLS() - 5, ;
-            {|| data_handler() }, ;
-            _header, ;
-            _footer )
+Box(, _x, _y )
+
+@ m_x + _x - 4, m_y + 2 SAY PADR(" < c+N > Novi", _w1 ) + ;
+                            BROWSE_COL_SEP + PADR( " < T > Trazi (pr+ime)", _w1 ) + ;
+                            BROWSE_COL_SEP + PADR( " < ctrl+T > brisanje", _w1 )
+@ m_x + _x - 3, m_y + 2 SAY PADR(" < ENT > Ispravka", _w1 ) + ;
+                            BROWSE_COL_SEP + PADR( " < S > Trazi (id)", _w1) + ;
+                            BROWSE_COL_SEP + PADR( " -", _w1 )
+@ m_x + _x - 2, m_y + 2 SAY PADR(" < R > Rjesenje", _w1) + ;
+                            BROWSE_COL_SEP + PADR( " -",_w1 ) + ;
+                            BROWSE_COL_SEP + PADR( " -", _w1 )
+@ m_x + _x - 1, m_y + 2 SAY PADR(" < P > Pregl.promjene", _w1) + ;
+                            BROWSE_COL_SEP + PADR( " -", _w1 ) + ;
+                            BROWSE_COL_SEP + PADR( " -", _w1 )
+
+ObjDbEdit( 'bpod', _x - 3, _y, {|| data_handler() }, _header, _footer, , , , , 2 )
+
+BoxC()
 
 close all
 
@@ -89,113 +108,119 @@ local _tek_strana := 1
 local _tmp_2 := {}
 private fNovi := .f.
 
-if Ch == K_CTRL_N .or. Ch == K_ENTER
+// broj podataka
+@ m_x + 1, m_y + 2 SAY "Broj podataka:" COLOR "GR+/B"
+@ m_x + 1, col() + 2 SAY PADL( ALLTRIM( STR( kadev_broj_podataka( field->id ), 5, 0 ) ), 8 ) COLOR "W/R+"
 
-    if ( deleted() .or. EOF() .or. BOF() ) .and. Ch == K_ENTER
-        return DE_CONT
-    endif
+do case
 
-    if Ch == K_CTRL_N
-       	fNovi := .t.
-    endif
+    case Ch == K_CTRL_N .or. Ch == K_ENTER
+
+        if ( deleted() .or. EOF() .or. BOF() ) .and. Ch == K_ENTER
+            return DE_CONT
+        endif
+
+        if Ch == K_CTRL_N
+       	    fNovi := .t.
+        endif
 	
-    if fNovi
-        append blank
-    endif
+        if fNovi
+            append blank
+        endif
 
-    // scatter
-    set_global_vars_from_dbf()
+        // scatter
+        set_global_vars_from_dbf()
     
-	if ent_K_0()
-        _rec := get_dbf_global_memvars()
-        update_rec_server_and_dbf( "kadev_0", _rec, 1, "FULL" )
-		fNovi := .f.
-        return DE_REFRESH
-    else
-	    if fNovi
-          	brisi_kadrovski_karton( .t. )
-       	endif	
-		fnovi := .f.
-       	return DE_REFRESH
-     endif
+	    if ent_K_0()
+            _rec := get_dbf_global_memvars()
+            update_rec_server_and_dbf( "kadev_0", _rec, 1, "FULL" )
+		    fNovi := .f.
+            return DE_REFRESH
+        else
+	        if fNovi
+            	brisi_kadrovski_karton( .t. )
+       	    endif	
+		    fnovi := .f.
+       	    return DE_REFRESH
+        endif
 
-elseif Ch == K_CTRL_T
+    case Ch == K_CTRL_T
 	
-    if !( deleted() .or. EOF() .or. BOF() )
-	    brisi_kadrovski_karton()
-    	return DE_REFRESH
- 	endif
+        if !( deleted() .or. EOF() .or. BOF() )
+	        brisi_kadrovski_karton()
+    	    return DE_REFRESH
+ 	    endif
 
-elseif Ch == ASC("T") .or. Ch == ASC("t")
+    case Ch == ASC("T") .or. Ch == ASC("t")
 
-    if VarEdit({ {"Prezime","cTrPrezime","","",""},;
+        if VarEdit({ {"Prezime","cTrPrezime","","",""},;
                  {"Ime","cTrIme","","",""} },;
                  11,1,16,78,"TRAZENJE RADNIKA","B1")
       
-        DO WHILE TB:rowPos>1
-      	    TB:up()
-            DO WHILE !TB:stable
-                Tb:stabilize()
+            DO WHILE TB:rowPos>1
+      	        TB:up()
+                DO WHILE !TB:stable
+                    Tb:stabilize()
+                ENDDO
             ENDDO
-        ENDDO
-        _order := INDEXORD()
-        SET ORDER TO TAG "2"
-        SEEK BToE( cTrPrezime + cTrIme )
-        DBSETORDER( _order )
-        return DE_REFRESH
-    endif
+            _order := INDEXORD()
+            SET ORDER TO TAG "2"
+            SEEK BToE( cTrPrezime + cTrIme )
+            DBSETORDER( _order )
+            return DE_REFRESH
+        endif
 
-elseif Ch == ASC("S") .or. Ch == ASC("s")
+    case Ch == ASC("S") .or. Ch == ASC("s")
 
-    if VarEdit({ {"ID","cTrID","","",""} },;
+        if VarEdit({ {"ID","cTrID","","",""} },;
                  11,1,15,78,"TRAZENJE RADNIKA","B1")
-        DO WHILE TB:rowPos>1
-            TB:up()
-            DO WHILE !TB:stable
-                Tb:stabilize()
+            DO WHILE TB:rowPos>1
+                TB:up()
+                DO WHILE !TB:stable
+                    Tb:stabilize()
+                ENDDO
             ENDDO
-        ENDDO
-        _order := INDEXORD()
-        SET ORDER TO TAG "1"
-        SEEK cTrID
-        DBSETORDER( _order )
-        return DE_REFRESH
-    endif
+            _order := INDEXORD()
+            SET ORDER TO TAG "1"
+            SEEK cTrID
+            DBSETORDER( _order )
+            return DE_REFRESH
+        endif
 
-elseif Ch == ASC("P") .or. Ch == ASC("p")
+    case Ch == ASC("P") .or. Ch == ASC("p")
 
-	_t_area := SELECT()
+	    _t_area := SELECT()
   	
-	Box( "uk0_1", MAXROWS() - 12, MAXCOLS() - 5, .f.)
+	    Box( "uk0_1", MAXROWS() - 12, MAXCOLS() - 5, .f.)
   	
-	@ m_x + ( MAXROWS() - 13 ), m_y + 2 SAY "RADNIK: " + ALLTRIM( kadev_0->prezime ) + " " + ;
+	        @ m_x + ( MAXROWS() - 13 ), m_y + 2 SAY "RADNIK: " + ALLTRIM( kadev_0->prezime ) + " " + ;
                                         ALLTRIM( kadev_0->ime ) + ", ID: " + ;
                                         ALLTRIM( kadev_0->id )
   	
-	set cursor on
+	        set cursor on
   	
-    set_global_vars_from_dbf()
+            set_global_vars_from_dbf()
   	
-    // daj mi promjene...
-	get_4( NIL, .t. )
+            // daj mi promjene...
+	        get_4( NIL, .f. )
  
-    _rec := get_dbf_global_memvars()
-    update_rec_server_and_dbf( "kadev_0", _rec, 1, "FULL" ) 
+            _rec := get_dbf_global_memvars()
+            update_rec_server_and_dbf( "kadev_0", _rec, 1, "FULL" ) 
   	
-	BoxC()
+	    BoxC()
   	
-	select ( _t_area )
+	    select ( _t_area )
 
-elseif Ch == ASC("R") .or. Ch == ASC("r")
+    case Ch == ASC("R") .or. Ch == ASC("r")
 
-    // rjesenje...
-    if !rjesenje_za_radnika()
-        return DE_CONT
-    else
-        return DE_REFRESH
-    endif
+        // rjesenje...
+        if !rjesenje_za_radnika()
+            return DE_CONT
+        else
+            return DE_REFRESH
+        endif
 
-endif
+endcase
 
 return DE_CONT
 
@@ -1023,7 +1048,14 @@ h[1] := "Lista promjena "
 @ m_x + 2, m_y + 2 SAY "                <Ctrl-N> Novi zapis, <Ctrl-T> brisanje, <ENTER> edit"
 @ m_x + 3, m_y + 2 SAY "                <Alt-K> Zatvaranje intervalne promjene"
 
-BrowseKey( m_x + 5, m_y + 2, m_x + ( MAXROWS() - 22 ), m_y + ( MAXCOLS() - 5 ), ImeKol, {|Ch| EdPromj(Ch)}, IF( brzi_unos, "id+idpromj == cID+gTrPromjena" , "id==cID" ), cId, 2, 4, 60 )
+BrowseKey( m_x + 5, ;
+            m_y + 2, ;
+            m_x + ( MAXROWS() - 22 ), ;
+            m_y + ( MAXCOLS() - 5 ), ;
+            ImeKol, ;
+            {|Ch| EdPromj(Ch)}, ;
+            IF( brzi_unos, "id + idpromj == cID + gTrPromjena", "id == cID" ), ;
+            cId, 2, 4, 60 )
 
 h[1] := cOldH
 

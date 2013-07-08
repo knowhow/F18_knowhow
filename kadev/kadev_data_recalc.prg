@@ -15,6 +15,9 @@
 #include "kadev.ch"
 
 
+// -------------------------------------------------
+// rekalkulacija statusa
+// -------------------------------------------------
 function kadev_recalc()
 local _opc := {}
 local _opcexe := {}
@@ -35,22 +38,28 @@ return
 
 function kadev_rekstatall()
 local nOldArr
+local _postotak := ( gPostotak == "D" )
 
 PushWa()
-nOldArr:=SELECT()
+nOldArr := SELECT()
 
 O_KADEV_1
+O_KADEV_0
 O_KADEV_PROMJ
 O_KBENEF
 O_KDV_RJRMJ
 O_KDV_RRASP
 
-
-select kadev_1    ; set order to tag "1"
-select kadev_promj  ; set order to tag "ID"
-select kbenef ; set order to tag "ID"
-select kdv_rjrmj  ; set order to tag "ID"
-select kdv_rrasp  ; set order to tag "ID"
+select kadev_1
+set order to tag "1"
+select kadev_promj
+set order to tag "ID"
+select kbenef
+set order to tag "ID"
+select kdv_rjrmj
+set order to tag "ID"
+select kdv_rrasp
+set order to tag "ID"
 
 select kadev_1
 set relation to idpromj into kadev_promj
@@ -60,43 +69,67 @@ select kadev_0
 set relation to idrrasp into kdv_rrasp
 
 
-dDoDat:=DATE()
-Box("b0XX", 1, 65,.f.)
- set cursor on
- @ m_x+1,m_y+2 SAY "Kalkulacija do datuma:" GET dDoDat
- read
+dDoDat := DATE()
+
+Box("b0XX", 1, 65,.f.)  
+    set cursor on
+    @ m_x + 1, m_y + 2 SAY "Kalkulacija do datuma:" GET dDoDat
+    read
 BoxC()
-if lastkey()==K_ESC
+
+if LastKey() == K_ESC
     close all
     return
 endif
 
-select(nOldArr)
+select ( nOldArr )
 
-IF gPostotak=="D"
-  Postotak(1,RECCOUNT2(),"Rekalkulisanje statusa")
-ELSE
-  Box("b0XY",1,55,.f.)
-ENDIF
-n1:=0
+if _postotak
+    Postotak( 1, RECCOUNT2(), "Rekalkulisanje statusa" )
+else
+    Box("b0XY",1,55,.f.)
+endif
+
+n1 := 0
 go top
+
+if !f18_lock_tables( { "kadev_0", "kadev_1" } )
+    return
+endif
+sql_table_update( NIL, "BEGIN" )
+
 do while !eof()
-  IF gPostotak!="D"
-    @ m_x+1,m_y+2 SAY kadev_0->(id+": "+prezime+" "+ime)
-  ELSE
-    Postotak(2,++n1)
-  ENDIF
-  select kadev_1
-  seek kadev_0->id
-  RekalkStatus(dDoDat)
-  select(nOldArr)
-  skip
+    
+    if !_postotak
+        @ m_x + 1, m_y + 2 SAY kadev_0->( id + ": " + prezime + " " + ime )
+    else
+        Postotak( 2, ++n1 )
+    endif
+    
+    select kadev_1
+    seek kadev_0->id
+    
+    if !RekalkStatus( dDoDat )
+        f18_free_tables( { "kadev_0","kadev_1" } )
+        sql_table_update( NIL, "ROLLBACK" )
+        PopWa()
+        close all
+        return
+    endif
+
+    select ( nOldArr )
+    skip
+
 enddo
-IF gPostotak=="D"
- Postotak(0)
-ELSE
- BoxC()
-ENDIF
+
+f18_free_tables( { "kadev_0","kadev_1" } )
+sql_table_update( NIL, "END" )
+
+if _postotak
+    Postotak(0)
+else
+    BoxC()
+endif
 
 PopWa()
 
@@ -104,81 +137,127 @@ close all
 return
 
 
-function RekalkStatus(dDoDat)
-local cIntStat:=" "     // intervalni status (kod nezavrsenih interv.promjena)
-replace kadev_0->status with ""          ,;
-        kadev_0->IdRJ    with ""         ,;
-        kadev_0->IdRMJ   with ""         ,;
-        kadev_0->DatURmj with CTOD("")   ,;
-        kadev_0->DatVRmj with CTOD("")   ,;
-        kadev_0->IdRRASP with ""         ,;
-        kadev_0->SlVr    with ""         ,;
-        kadev_0->VrSlVr with 0           ,;
-        kadev_0->IdStrSpr with ""        ,;
-        kadev_0->DatUF with CTOD("")     ,;
-        kadev_0->IdZanim with ""
 
-do while id=kadev_0->id .and. (DatumOd<dDoDat)
 
-   if kdv_promj->tip<>"X"
-     IF EMPTY(cIntStat)                           // MS 18.9.00.
-       replace kadev_0->status with kdv_promj->status
-     ELSE                                         // MS 18.9.00.
-       replace kadev_0->status with cIntStat          // MS 18.9.00.
-     ENDIF                                        // MS 18.9.00.
-   endif
+function RekalkStatus( dDoDat )
+local _int_status := " "     
+// intervalni status (kod nezavrsenih interv.promjena)
+local _ok := .f.
+local _rec_0, _rec_1
 
-   if kadev_promj->srmj=="1"  // SRMJ=="1" - promjena radnog mjesta
-       replace kadev_0->idRj with IdRj
-       replace kadev_0->idRMJ with IdRMJ
-       replace kadev_0->DatURMJ with DatumOd
-       replace kadev_0->DatURMJ with DatumOd
-       if empty(kadev_0->DatUF)
-         replace kadev_0->DatUF with DatumOd
-       endif
-       replace kadev_0->DatVRmj with CTOD("")
-   else
-       replace kadev_1->idRj with kadev_0->IdRj
-       replace kadev_1->idRMJ with kadev_0->IdRMJ
-   endif
+// kadev_1 tabela
+select kadev_0
 
-   if kdv_promj->urrasp=="1" // setovanje ratnog rasporeda
-      replace kadev_0->IdRRasp with cAtr1
-   endif
+_rec_0 := dbf_get_rec()
+_rec_0["status"] := ""
+_rec_0["idrj"] := ""
+_rec_0["idrmj"] := ""
+_rec_0["daturmj"] := CTOD("")
+_rec_0["datvrmj"] := CTOD("")
+_rec_0["idrrasp"] := ""
+_rec_0["slvr"] := ""
+_rec_0["vrslvr"] := 0
+_rec_0["idstrspr"] := ""
+_rec_0["datuf"] := CTOD("")
+_rec_0["idzanim"] := ""
 
-   if kdv_promj->ustrspr=="1" // setovanje ratnog rasporeda
-      replace kadev_0->IdStrSpr with cAtr1
-      replace kadev_0->IdZanim  with cAtr2
-   endif
+select kadev_1
 
-   if kdv_promj->uradst=" " .and. promj->tip=" " // fiksna promjena koja
-      replace kadev_1->IdRMJ with ""            //  - ne ulazi u rst -
-      replace kadev_1->IdRJ with ""
-      replace kadev_0->DatVRMJ with DatumOd
-   endif
+do while id = kadev_0->id .and. ( datumod < dDoDat )
 
-   if kdv_promj->tip=="I"  // intervalna promjena
+    // kadev_1 tabela
+    _rec_1 := dbf_get_rec()
+    
+    if kdv_promj->tip <> "X"
+        if EMPTY( _int_status )                           
+            _rec_0["status"] := kdv_promj->status
+        else                                       
+            _rec_0["status"] := _int_status
+        endif  
+    endif
 
-     if !(empty(DatumDo) .or. (DatumDo>dDoDat)) // zatvorena
-       if kdv_promj->status="M" .and. kdv_rrasp->catr="V" // catr="V" -> sluzenje vojnog roka
-         replace kadev_0->SlVr with "D"
-         replace kadev_0->VrSlVr with kadev_0->VrSlVr + (DatumDo-DatumOd)
-       endif
-     endif
+    if kadev_promj->srmj == "1"  
 
-     if empty(DatumDo) .or. (DatumDo>dDoDat)
-       replace kadev_0->DatVRMJ with DatumOd
-       cIntStat := kdv_promj->status                  // MS 18.9.00.
-     else   // vrsi se zatvaranje promjene
-       if kdv_promj->uRrasp="1"  // ako je intervalna promjena setovala RRasp
-          replace kadev_0->IdRRasp with ""
-       endif
-       replace kadev_0->status with "A" // promjena je zatvorena
-     endif
-   endif
-   skip
+        // SRMJ=="1" - promjena radnog mjesta
+
+        _rec_0["idrj"] := kadev_1->idrj
+        _rec_0["idrmj"] := kadev_1->idrmj
+        _rec_0["daturmj"] := kadev_1->datumod
+
+        if empty(kadev_0->DatUF)
+            _rec_0["datuf"] := kadev_1->datumod
+        endif
+        
+        _rec_0["datvrmj"] := CTOD("")
+   
+    else
+        
+        _rec_1["idrj"] := kadev_0->idrj
+        _rec_1["idrmj"] := kadev_0->idrmj
+    
+    endif
+
+    if kdv_promj->urrasp == "1" 
+        // setovanje ratnog rasporeda
+        _rec_0["idrrasp"] := cAtr1
+    endif
+
+    if kdv_promj->ustrspr == "1" 
+        // setovanje strucne spreme
+        _rec_0["idstrspr"] := cAtr1
+        _rec_0["idzanim"] := cAtr2
+    endif
+
+    if kdv_promj->uradst = " " .and. promj->tip = " " 
+        // fiksna promjena koja
+        _rec_1["idrmj"] := ""
+        _rec_1["idrj"] := ""
+        _rec_0["datvrmj"] := kadev_1->datumod
+    endif
+
+    if kdv_promj->tip == "I"  
+        // intervalna promjena
+
+        if !(EMPTY(kadev_1->DatumDo) .or. ( kadev_1->DatumDo > dDoDat )) // zatvorena
+            if kdv_promj->status = "M" .and. kdv_rrasp->catr = "V" 
+                // catr="V" -> sluzenje vojnog roka
+                _rec_0["slvr"] := "D"
+                _rec_0["vrslvr"] := kadev_0->vrslvr + ( kadev_1->datumdo - kadev_1->datumod )
+            endif
+        endif
+
+        if EMPTY( kadev_1->datumdo) .or. ( kadev_1->datumdo > dDoDat )
+            _rec_0["datvrmj"] := kadev_1->datumod
+            _int_status := kdv_promj->status                  
+        else   
+            // vrsi se zatvaranje promjene
+            if kdv_promj->uRrasp = "1"  
+                // ako je intervalna promjena setovala RRasp
+                _rec_0["idrrasp"] := ""
+            endif
+            _rec_0["status"] := "A"
+        endif
+    endif
+
+    // zatvori kadev_1 tabelu - azuriraj promjene
+    if !update_rec_server_and_dbf( "kadev_1", _rec_1, 1, "CONT" )
+        return _ok        
+    endif
+
+    skip
+
 enddo
-RETURN (NIL)
+
+select kadev_0
+// zatvori tabelu kadev_0 - azuriraj promjene
+if !update_rec_server_and_dbf( "kadev_0", _rec_0, 1, "CONT" )
+    return _ok        
+endif
+
+select kadev_1
+
+_ok := .t.
+return _ok
 
 
 ***********************************************************************
@@ -237,7 +316,15 @@ ELSE
   Box("b0XY",1,55,.f.)
 ENDIF
 n1:=0
+
+// lock tables...
+if !f18_lock_tables( { "kadev_0", "kadev_1" } )
+    return
+endif
+sql_table_update( NIL, "BEGIN" )
+
 go top
+
 do while !eof() 
 
   IF gPostotak!="D"
@@ -247,11 +334,21 @@ do while !eof()
   ENDIF
   select kadev_1
   seek kadev_0->id
-  RekalkRSt(dDoDat,lPom)
+
+  if !RekalkRSt(dDoDat,lPom)
+        // otkljucaj tabele...
+        f18_free_tables( { "kadev_0", "kadev_1" } )
+        sql_table_update( NIL, "ROLLBACK" )
+  endif
+
   select(nOldArr)
   skip
 enddo
 
+// otkljucaj tabele...
+f18_free_tables( { "kadev_0", "kadev_1" } )
+sql_table_update( NIL, "END" )
+ 
 IF gPostotak=="D"
   IF lPom
     Postotak(-1)
@@ -263,33 +360,43 @@ ELSE
 ENDIF
 
 PopWa()
+
 close all
+
 return
 
 
-***********************************************************************
+
 // lPom=.t. -> radni staz u firmi zapisuj u POM.DBF, a ne diraj KADEV_0.DBF
-***********************************************************************
-function RekalkRst(dDoDat,lPom)
- LOCAL nArr:=0, nRStUFe:=0, nRStUFb:=0
-  IF lPom==NIL; lPom:=.f.; ENDIF
-  nRstE:=0
-  nRstB:=0
-  KBfR:=0
-  dOdDat:=CTOD("")
-  fOtvoreno:=.f.
-  do while id=kadev_0->id .and. (DatumOd<dDoDat)
+
+function RekalkRst( dDoDat, lPom )
+local nArr := 0
+local nRStUFe := 0
+local nRStUFb := 0
+local _ok := .f.
+  
+if lPom == NIL 
+    lPom := .f.
+endif
+  
+nRstE:=0
+nRstB:=0
+KBfR:=0
+dOdDat:=CTOD("")
+fOtvoreno:=.f.
+  
+do while id=kadev_0->id .and. (DatumOd<dDoDat)
     if kadev_promj->Tip="X" .and. kadev_promj->URadSt = "="
-      nRstE   := nAtr1
-      nRstB   := nAtr2
-      nRstUFe := nAtr1
-      nRstUFb := nAtr2
+        nRstE   := nAtr1
+        nRstB   := nAtr2
+        nRstUFe := nAtr1
+        nRstUFb := nAtr2
     endif
     if kadev_promj->Tip="X" .and. kadev_promj->URadSt = "+"
-      nRstE   += nAtr1
-      nRstB   += nAtr2
-      nRstUFe += nAtr1
-      nRstUFb += nAtr2
+        nRstE   += nAtr1
+        nRstB   += nAtr2
+        nRstUFe += nAtr1
+        nRstUFb += nAtr2
     endif
     if kadev_promj->Tip="X" .and. kadev_promj->URadSt = "-"
         nRstE-=nAtr1
@@ -308,91 +415,110 @@ function RekalkRst(dDoDat,lPom)
        loop
     endif
     if fOtvoreno
-          nPom:=(DatumOd-dOdDat)
-          nPom2:=nPom*kBfR/100
-          if nPom<0 .and. kadev_promj->tip=="I"      // .and. ... dodao MS 18.9.00.
+        nPom:=(DatumOd-dOdDat)
+        nPom2:=nPom*kBfR/100
+        if nPom<0 .and. kadev_promj->tip=="I"      // .and. ... dodao MS 18.9.00.
             MsgO("Neispravne promjene kod "+kadev_0->prezime+" "+kadev_0->ime)
             Inkey(0)
             MsgC()
-//            MsgBeep( "nPom="+STR(nPom)+", DatumOd="+;
-//                     DTOC(DatumOd)+", dOdDat="+DTOC(dOdDat) )
-            return
-          else
+            return _ok
+        else
             nRstE+=nPom
             nRstB+=nPom2
-          endif
+        endif
     endif
     if kadev_promj->Tip==" " .and. kadev_promj->URadSt $ "12" //postavljenja,....
-      dOdDat:=DatumOd          // otpocinje proces kalkulacije
-      if kadev_promj->URadSt=="1"
-       KBfR := kbenef->iznos
-      else   // za URadSt = 2 ne obracunava se beneficirani r.st.
-       KBfR:=0
-      endif
-      fOtvoreno:=.t.     // Otvaram pocetak trajanja promjene ....
+        dOdDat:=DatumOd          // otpocinje proces kalkulacije
+        if kadev_promj->URadSt=="1"
+            KBfR := kbenef->iznos
+        else   // za URadSt = 2 ne obracunava se beneficirani r.st.
+            KBfR:=0
+        endif
+        fOtvoreno:=.t.     // Otvaram pocetak trajanja promjene ....
     else
-      fOtvoreno:=.f.
+        fOtvoreno:=.f.
     endif
     if kadev_promj->Tip=="I" .and. kadev_promj->URadSt==" "
-      if empty(DatumDo)  // otvorena intervalna promjena koja se ne uracunava
-        fOtvoreno:=.f.   // u radni staz - znaci nema vise
-      else
-        fOtvoreno:=.t.
-        dOdDat:=iif(DatumDo>dDoDat,dDoDat,DatumDo) // ako je DatumDo unutar
-        // promjene veci od Datuma kalkulacije onda koristi dDoDat
-        KBfR:=kbenef->iznos
-      endif
+        if empty(DatumDo)  // otvorena intervalna promjena koja se ne uracunava
+            fOtvoreno:=.f.   // u radni staz - znaci nema vise
+        else
+            fOtvoreno:=.t.
+            dOdDat:=iif(DatumDo>dDoDat,dDoDat,DatumDo) // ako je DatumDo unutar
+            // promjene veci od Datuma kalkulacije onda koristi dDoDat
+            KBfR:=kbenef->iznos
+        endif
     endif
     if kadev_promj->Tip=="I" .and. kadev_promj->URadSt $ "12"
-      nPom:=iif(empty(DatumDo),dDoDat,if(DatumDo>dDoDat,dDoDat,DatumDo))-DatumOd
-      if kadev_promj->URadSt=="1"
-        nPom2:=nPom*kbenef->iznos/100
-      else   // za URadSt = 2 ne obracunava se beneficirani r.st.
-        nPom2:=0
-      endif
-      if nPom<0
-        MsgO("Neispravne intervalne promjene kod "+kadev_0->prezime+" "+kadev_0->ime)
-        Inkey(0)
-        MsgC()
-        BoxC()
-        return
-      else
-        nRstE+=nPom
-        nRstB+=nPom2
-        fOtvoreno:=.t.
-        dOdDat:=iif(empty(DatumDo),dDoDat,iif(DatumDo>dDoDat,dDoDat,DatumDo))
-        KBfR:=kbenef->iznos
-      endif
+        nPom:=iif(empty(DatumDo),dDoDat,if(DatumDo>dDoDat,dDoDat,DatumDo))-DatumOd
+        if kadev_promj->URadSt=="1"
+            nPom2:=nPom*kbenef->iznos/100
+        else   // za URadSt = 2 ne obracunava se beneficirani r.st.
+            nPom2:=0
+        endif
+        if nPom<0
+            MsgO("Neispravne intervalne promjene kod "+kadev_0->prezime+" "+kadev_0->ime)
+            Inkey(0)
+            MsgC()
+            BoxC()
+            return
+        else
+            nRstE+=nPom
+            nRstB+=nPom2
+            fOtvoreno:=.t.
+            dOdDat:=iif(empty(DatumDo),dDoDat,iif(DatumDo>dDoDat,dDoDat,DatumDo))
+            KBfR:=kbenef->iznos
+        endif
     endif
     skip
-  enddo
-  if fOtvoreno
+enddo
+  
+if fOtvoreno
     nPom:=(dDoDat-dOdDat)
     nPom2:=nPom*kBfR/100
     if nPom<0
-      MsgO("Neispravne promjene ili dat. kalkul. za "+kadev_0->prezime+" "+kadev_0->ime)
-      Inkey(0)
-      MsgC()
-      BoxC()
-      return
+        MsgO("Neispravne promjene ili dat. kalkul. za "+kadev_0->prezime+" "+kadev_0->ime)
+        Inkey(0)
+        MsgC()
+        BoxC()
+        return _ok
     else
-      nRstE+=nPom
-      nRstB+=nPom2
+        nRstE+=nPom
+        nRstB+=nPom2
     endif
-  endif
+endif
 
-  if lPom
-    nArr:=SELECT()
+_t_area := SELECT()
+
+if lPom
+    
     SELECT (F_POM)
-     APPEND BLANK
-       REPLACE ID     WITH KADEV_0->ID        ,;
+    APPEND BLANK
+    REPLACE ID     WITH KADEV_0->ID        ,;
                RADSTE WITH nRstE-nRStUFe  ,;
                RADSTB WITH nRstB-nRStUFb  ,;
                STATUS WITH KADEV_0->STATUS
-    SELECT (nArr)
-  else
-    replace kadev_0->RadStE with nRStE
-    replace kadev_0->RadStB with nRStB
-  endif
-RETURN (NIL)
+
+    select ( _t_area )
+
+else
+
+    select kadev_0
+
+    _rec_0 := dbf_get_rec()
+    _rec_0["radste"] := nRstE
+    _rec_0["radstb"] := nRstB
+
+    if !update_rec_server_and_dbf( "kadev_0", _rec_0, 1, "CONT" )
+        return _ok
+    endif
+    
+    select ( _t_area )
+  
+endif
+
+_ok := .t.
+
+return _ok
+
+
 

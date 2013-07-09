@@ -1,3 +1,8 @@
+1.4.201 2013-07-09, vsasa
+ 
+  - kadev, korekcije na unosu podataka i pretrazi
+  - fin, bruto bilans txt varijanta, dužina stranice potret/lendskejp
+
 1.4.200 2013-07-04, vsasa
  
   - ld, izvještaj topli obrok, korekcije na formi uslova itd..

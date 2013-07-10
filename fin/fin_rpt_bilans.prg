@@ -396,7 +396,7 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma
  			        IF cFormat=="2"
                         @ prow(),pcol()+1 SAY PADR(naz,48-LEN (cidpartner))   // difidp
                     ELSE
-                        @ prow(),pcol()+1 SAY PADR(naz,20)
+                        @ prow(),pcol()+1 SAY PADR(naz,32)
                         @ prow(),pcol()+1 SAY PADR(naz2,20)
                         @ prow(),pcol()+1 SAY Mjesto
                         @ prow(),pcol()+1 SAY Adresa PICTURE 'XXXXXXXXXXXXXXXXX'
@@ -405,7 +405,7 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma
                     nCol1:=pcol()+1
                     @ prow(),pcol()+1 SAY D0PS PICTURE PicD
                     @ prow(),PCOL()+1 SAY P0PS PICTURE PicD
-                    IF cFormat=="1"
+                    IF cFormat $ "13"
                         @ prow(),PCOL()+1 SAY D0TP PICTURE PicD
                         @ prow(),PCOL()+1 SAY P0TP PICTURE PicD
                     ENDIF
@@ -452,7 +452,7 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma
 
             @ prow(),nCol1     SAY D1PS PICTURE PicD
             @ prow(),PCOL()+1  SAY P1PS PICTURE PicD
-            IF cFormat=="1"
+            IF cFormat $ "13"
                 @ prow(),PCOL()+1  SAY D1TP PICTURE PicD
                 @ prow(),PCOL()+1  SAY P1TP PICTURE PicD
             ENDIF
@@ -494,7 +494,7 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma
         @ prow(),pcol()+1 SAY cSinKonto
 
         select KONTO; hseek cSinKonto
-        IF cFormat=="1"
+        IF cFormat $ "13"
             @ prow(),pcol()+1 SAY left(naz,50)
         ELSE
             @ prow(),pcol()+1 SAY left(naz,44)       // 45
@@ -502,7 +502,7 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma
         select SUBAN
         @ prow(),nCol1    SAY D2PS PICTURE PicD
         @ prow(),PCOL()+1 SAY P2PS PICTURE PicD
-        IF cFormat=="1"
+        IF cFormat $ "13"
             @ prow(),PCOL()+1 SAY D2TP PICTURE PicD
             @ prow(),PCOL()+1 SAY P2TP PICTURE PicD
         ENDIF
@@ -545,7 +545,7 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma
         ? "UKUPNO KLASA "+cklkonto
         @ prow(),nCol1    SAY D3PS PICTURE PicD
         @ PROW(),pcol()+1 SAY P3PS PICTURE PicD
-        if cFormat=="1"
+        if cFormat $ "13"
             @ PROW(),pcol()+1 SAY D3TP PICTURE PicD
             @ PROW(),pcol()+1 SAY P3TP PICTURE PicD
         endif
@@ -574,7 +574,7 @@ __bb_nova_stranica( cFormat, 3 )
 @ prow()+1,6 SAY "UKUPNO:"
 @ prow(),nCol1 SAY D4PS PICTURE PicD
 @ prow(),PCOL()+1 SAY P4PS PICTURE PicD
-IF cFormat=="1"
+IF cFormat $ "13"
     @ prow(),PCOL()+1 SAY D4TP PICTURE PicD
     @ prow(),PCOL()+1 SAY P4TP PICTURE PicD
 ENDIF
@@ -757,7 +757,7 @@ do while .t.
  @ m_x+3,m_y+2 SAY "Konto " GET qqKonto PICT "@!S50"
  @ m_x+4,m_y+2 SAY "Od datuma :" get dDatOD
  @ m_x+4,col()+2 SAY "do" GET dDatDo
- @ m_x+6,m_y+2 SAY "Format izvjestaja A3/A4 (1/2)" GET cFormat
+ @ m_x+6,m_y+2 SAY "Format izvjestaja A3/A4/A4L (1/2/3)" GET cFormat
  @ m_x+7,m_y+2 SAY "Klase unutar glavnog izvjestaja (D/N)" GET cPodKlas VALID cPodKlas$"DN" PICT "@!"
  cIdRJ:=""
  IF gRJ=="D" .and. gSAKrIz=="D"
@@ -799,7 +799,8 @@ ELSE
   O_ANAL
 ENDIF
 
-select BBKLAS; zap
+select BBKLAS
+zap
 
 select ANAL
 
@@ -837,6 +838,12 @@ nStr:=0
 
 BBMnoziSaK()
 
+__BB_LEN := RPT_PAGE_LEN
+
+if cFormat == "3"
+    __BB_LEN := 43
+endif
+
 START PRINT CRET
 
 B:=0
@@ -849,7 +856,9 @@ nCol1:=50
 
 DO WHILESC !EOF() .AND. IdFirma=cIdFirma
 
-   IF prow()==0; BrBil_21(); ENDIF
+   IF prow()==0
+    BrBil_21( cFormat )
+   ENDIF
 
    cKlKonto:=left(IdKonto,1)
    D3PS:=P3PS:=D3TP:=P3TP:=D3KP:=P3KP:=D3S:=P3S:=0
@@ -915,10 +924,12 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma
         P2TP=P2TP+P1TP
         D2KP=D2KP+D1KP
         P2KP=P2KP+P1KP
-        IF prow()>60+gpStranica; FF;BrBil_21(); ENDIF
+   
+        __anal_bb_nova_strana( cFormat )     
 
       ENDDO  // sinteticki konto
-      IF prow()>60+gpStranica; FF; BrBil_21(); ENDIF
+
+      __anal_bb_nova_strana( cFormat )      
 
       ? M5
       @ prow()+1,10 SAY cSinKonto
@@ -973,7 +984,8 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma
 
 ENDDO
 
-IF prow()>60+gpStranica; FF ; BrBil_21(); ENDIF
+__anal_bb_nova_strana( cFormat, 3 )
+
 ? M5
 ? "UKUPNO:"
 @ prow(),nCol1    SAY D4PS PICTURE PicD
@@ -988,7 +1000,13 @@ ENDIF
 @ PROW(),pcol()+1 SAY P4S PICTURE PicD
 ? M5
 
-if prow()>60+gpStranica; FF; else; ?;?; endif
+if ( prow() + 16 ) > __BB_LEN + gpStranica
+    FF  
+    ?
+else
+    ?
+    ?
+endif
 
 ?? "REKAPITULACIJA PO KLASAMA NA DAN: ";?? DATE()
 ?  M6
@@ -1044,12 +1062,31 @@ closeret
 return
 
 
+
+static function __anal_bb_nova_strana( format, dodaj )
+
+if dodaj == NIL
+    dodaj := 0
+endif
+
+if ( prow() + dodaj ) > ( __BB_LEN + gpStranica )
+    FF
+    BrBil_21( format )
+endif
+
+return
+
+
+
 /*! \fn BrBil_21()
  *  \brief Zaglavlje analitickog bruto bilansa
  */
  
-function BrBil_21()
+function BrBil_21( format )
 ?
+if format == "3"
+    ? "#%LANDS#"
+endif
 P_COND2
 ?? "FIN: ANALITI¬KI BRUTO BILANS U VALUTI '"+TRIM(cBBV)+"'"
 if !(empty(dDatod) .and. empty(dDatDo))
@@ -1081,6 +1118,21 @@ RETURN
 
 
 
+static function __sint_bb_nova_strana( format, dodaj )
+
+if dodaj == NIL
+    dodaj := 0
+endif
+
+if ( prow() + dodaj ) > ( __BB_LEN + gpStranica )
+    FF
+    BrBil_31( format )
+endif
+
+return
+
+
+
 /*! \fn SintBB()
  *  \brief Sinteticki bruto bilans
  */
@@ -1108,7 +1160,7 @@ do while .t.
  @ m_x+3,m_y+2 SAY "Konto " GET qqKonto    pict "@!S50"
  @ m_x+4,m_y+2 SAY "Od datuma :" get dDatOD
  @ m_x+4,col()+2 SAY "do" GET dDatDo
- @ m_x+6,m_y+2 SAY "Format izvjestaja A3/A4 (1/2)" GET cFormat
+ @ m_x+6,m_y+2 SAY "Format izvjestaja A3/A4/A4L (1/2/3)" GET cFormat VALID cFormat $ "123"
  @ m_x+7,m_y+2 SAY "Klase unutar glavnog izvjestaja (D/N)" GET cPodKlas VALID cPodKlas$"DN" PICT "@!"
  cIdRJ:=""
  IF gRJ=="D" .and. gSAKrIz=="D"
@@ -1185,6 +1237,11 @@ endif
 
 EOF CRET
 
+__BB_LEN := RPT_PAGE_LEN
+
+if cFormat == "3"
+    __BB_LEN := 42
+endif
 
 nStr:=0
 
@@ -1204,7 +1261,7 @@ nCol1:=50
 
 DO WHILESC !EOF() .AND. IdFirma=cIdFirma
 
-   IF prow()==0; BrBil_31(); ENDIF
+   IF prow()==0; BrBil_31( cFormat ); ENDIF
 
    cKlKonto:=left(IdKonto,1)
 
@@ -1225,7 +1282,7 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma
          SKIP
       ENDDO // konto
 
-      IF prow()>60+gpStranica; FF ; BrBil_31(); endif
+      __sint_bb_nova_strana( cFormat )
 
       if cFormat=="1"
        @ prow()+1,1 SAY B PICTURE '9999'; ?? "."
@@ -1320,7 +1377,8 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma
 
 ENDDO
 
-IF prow()>60+gpStranica; FF ; BrBil_31(); endif
+__sint_bb_nova_strana( cFormat, 3 )
+
 ? M5
 ? "UKUPNO:"
 @ prow(),nCol1    SAY D4PS PICTURE PicD
@@ -1354,7 +1412,7 @@ nPom:=d4s-p4s
 
 FF
 
-?? "REKAPITULACIJA PO KLASAMA NA DAN: "; ?? DATE()
+? "REKAPITULACIJA PO KLASAMA NA DAN: "; ?? DATE()
 ? IF(cFormat=="1", M6, "--------- --------------- --------------- --------------- --------------- --------------- ---------------")
 ? IF(cFormat=="1", M7, "*        *          PO¬ETNO STANJE       *        KUMULATIVNI PROMET     *            SALDO             *")
 ? IF(cFormat=="1", M8, "  KLASA   ------------------------------- ------------------------------- -------------------------------")
@@ -1417,9 +1475,15 @@ return
  *  \brief Zaglavlje sintetickog bruto bilansa
  */
 
-function BrBil_31()
+function BrBil_31( format )
 ?
+
+if format == "3"
+	? "#%LANDS#"
+endif
+
 P_COND2
+
 ?? "FIN: SINTETICKI BRUTO BILANS U VALUTI '"+TRIM(cBBV)+"'"
 if !(empty(dDatod) .and. empty(dDatDo))
     ?? " ZA PERIOD OD",dDatOd,"-",dDatDo
@@ -1447,18 +1511,34 @@ select SINT
 RETURN
 
 
+
+static function __grupa_bb_nova_strana( format, dodaj )
+
+if dodaj == NIL
+    dodaj := 0
+endif
+
+if ( prow() + dodaj ) > __BB_LEN + gpStranica
+    FF
+    BrBil_41( format )
+endif
+
+return
+
+
+
 /*! \fn GrupBB()
  *  \brief Bruto bilans po grupama konta
  */
 
 function GrupBB()
-
 local nPom
+local cFormat := "2"
 
 cIdFirma:=gFirma
 
 O_PARTN
-Box("",6,60)
+Box("",8,60)
 set cursor on
 qqKonto:=space(100)
 dDatOd:=dDatDo:=ctod("")
@@ -1481,6 +1561,7 @@ do while .t.
    cIdRJ:="999999"
    @ m_x+6,m_y+2 SAY "Radna jedinica (999999-sve): " GET cIdRj
  ENDIF
+ @ m_x + 7, m_y + 2 SAY "Format izvjestaja A4/A4L (2/3)" GET cFormat VALID cFormat $ "123"
  READ; ESC_BCR
  aUsl1:=Parsiraj(qqKonto,"IdKonto")
  if aUsl1<>NIL; exit; endif
@@ -1548,21 +1629,24 @@ nStr:=0
 
 BBMnoziSaK()
 
+__BB_LEN := RPT_PAGE_LEN
+
+if cFormat == "3"
+    __BB_LEN := 43
+endif
+
 START PRINT CRET
 
 B:=1
 
 D1S:=D2S:=D3S:=D4S:=P1S:=P2S:=P3S:=P4S:=0
-
-
 D4PS:=P4PS:=D4TP:=P4TP:=D4KP:=P4KP:=D4S:=P4S:=0
 nStr:=0
-
 nCol1:=50
 
 DO WHILESC !EOF() .AND. IdFirma=cIdFirma
 
-   IF prow()==0; BrBil_41(); ENDIF
+   IF prow()==0; BrBil_41( cFormat ); ENDIF
 
    cKlKonto:=left(IdKonto,1)
 
@@ -1582,8 +1666,8 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma
          ENDIF
          SKIP
       ENDDO // konto
-
-      IF prow()>60+gpStranica; FF ; BrBil_41(); endif
+      
+      __grupa_bb_nova_strana( cFormat )
 
        @ prow()+1,1 SAY B PICTURE '9999'; ?? "."
        @ prow(),10 SAY PADC(cIdKonto,8)
@@ -1644,7 +1728,7 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma
 
 ENDDO
 
-IF prow()>60+gpStranica; FF ; BrBil_41(); endif
+__grupa_bb_nova_strana( cFormat, 3 )
 ? M5
 ? "UKUPNO:"
 @ prow(),nCol1    SAY D4PS PICTURE PicD
@@ -1674,6 +1758,7 @@ nPom:=d4s-p4s
 
 FF
 
+?
 ?? "REKAPITULACIJA PO KLASAMA NA DAN: "; ?? DATE()
 ?  M6
 ?  M7
@@ -1681,8 +1766,8 @@ FF
 ?  M9
 ?  M10
 
-select BBKLAS; go top
-
+select BBKLAS
+go top
 
 nPocDug:=nPocPot:=nTekPDug:=nTekPPot:=nKumPDug:=nKumPPot:=nSalPDug:=nSalPPot:=0
 
@@ -1732,8 +1817,14 @@ return
  *  \brief Zaglavlje bruto bilansa po grupama 
  */
 
-function BrBil_41()
+function BrBil_41( format )
+
 ?
+
+if format == "3"
+    ? "#%LANDS#"
+endif
+
 P_COND2
 ?? "FIN.P:BRUTO BILANS PO GRUPAMA KONTA U VALUTI '"+TRIM(cBBV)+"'"
 if !(empty(dDatod) .and. empty(dDatDo))

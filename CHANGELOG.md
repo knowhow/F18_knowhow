@@ -1,3 +1,7 @@
+1.4.202 2013-07-10, vsasa
+ 
+  - fin, bruto bilansi txt varijanta, dužina stranice potret/lendskejp
+
 1.4.201 2013-07-09, vsasa
  
   - kadev, korekcije na unosu podataka i pretrazi

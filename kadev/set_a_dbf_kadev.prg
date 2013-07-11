@@ -21,7 +21,8 @@ local _alg
 set_a_dbf_kadev_0()
 set_a_dbf_kadev_1()
 set_a_dbf_kadev_globusl()
-set_a_dbf_kadev_obrazdef()
+// ova ne treba na server za sada !
+//set_a_dbf_kadev_obrazdef()
 set_a_dbf_kadev_uslovi()
 set_a_dbf_kadev_rjrmj()
 set_a_dbf_kadev_defrjes()
@@ -39,6 +40,8 @@ set_a_dbf_sifarnik( "kadev_cin", "KDV_CIN" , F_KDV_CIN )
 set_a_dbf_sifarnik( "kadev_ves", "KDV_VES" , F_KDV_VES )
 set_a_dbf_sifarnik( "kadev_nac", "KDV_NAC" , F_KDV_NAC )
 set_a_dbf_sifarnik( "kadev_rjes", "KDV_RJES" , F_KDV_RJES )
+
+set_a_dbf_temp( "kadev_obrazdef", "KDV_OBRAZDEF", F_KDV_OBRAZDEF   )
 
 return
 

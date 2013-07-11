@@ -410,7 +410,7 @@ _alias := "KDV_OBRAZDEF"
 _table_name := "kadev_obrazdef"
 
 IF_NOT_FILE_DBF_CREATE
-IF_C_RESET_SEMAPHORE
+//IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX( "1" , "tip+grupa+red_br", _alias )
 

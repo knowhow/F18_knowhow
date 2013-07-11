@@ -15,7 +15,9 @@
 
 function GodOdmori()
 
-gnLMarg:=0; gTabela:=1; gOstr:="D"
+gnLMarg := 0
+gTabela := 1
+gOstr := "D"
 
 O_KDV_RJ
 O_KADEV_0
@@ -55,7 +57,8 @@ WPar("p1",cGodina)
 WPar("p2",cStatus)
 WPar("p3",cPrikInt)
 WPar("p4",qqIdRj)
-select params; use
+select params
+use
 
 
 // indeksi i filteri

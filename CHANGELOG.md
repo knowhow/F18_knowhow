@@ -1,3 +1,7 @@
+1.4.205 2013-07-11, vsasa
+ 
+  - kadev, korekcije na obrascima 
+
 1.4.204 2013-07-11, vsasa
  
   - kalk, prenos podataka pos->kalk 42, razrada popusta

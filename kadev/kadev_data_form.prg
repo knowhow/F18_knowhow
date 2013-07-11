@@ -61,14 +61,14 @@ return
 // -----------------------------------------------------------
 static function brisi_obrazac()
 local lInsert := READINSERT(.t.)
-private cImeFOB := ".dbf        "
+private cImeFOB := PADR( "kdv_obr_100.dbf        ", 30 ) 
   
 if VarEdit( { { "Puni naziv obrasca koji zelite izbrisati" ,;
                  "cImeFOB",;
                  "PostojiFajl(cImeFOB)",;
                  "@!", } },;
               11, 1, 15, 78, "BRISANJE OBRASCA", "B1" )
-    if FERASE( my_home() + ALLTRIM( cImeFOB ) ) != 0
+    if FERASE( my_home() + LOWER( ALLTRIM( cImeFOB ) ) ) != 0
         Msg("Brisanje nije uspjelo. Navedeni obrazac se vjerovatno koristi kao tekuci!",3)
     endif
 endif
@@ -101,7 +101,7 @@ h := ARRAY( LEN( aFiles ) + 1 )
 i := 0
 AEVAL( aFiles, {|elem| h[++i]:="",AADD(opc,PADR(elem[1],15))})
 AADD(opc,PADR("Novi obrazac",15))
-h[i+1]:="Kreiranje novog obrasca"
+h[i+1] := "Kreiranje novog obrasca"
 
 Izb3:=1
 
@@ -124,7 +124,7 @@ do while .t.
             index on tip + grupa + red_br tag "1"
             set order to tag "1"
 
-            @ 1,39 SAY PADR( "Tekuci obrazac: " + opc[ izb3 ], 40 ) COLOR "GR+/N"
+            @ 1, 39 SAY PADR( "Tekuci obrazac: " + opc[ izb3 ], 40 ) COLOR "GR+/N"
 
         otherwise
 
@@ -146,6 +146,7 @@ do while .t.
                 AADD(aDbf,{"Red_Br","C",1,0})
                 AADD(aDbf,{"Komentar","C",25,0})
                 AADD(aDbf,{"Uslov","C",200,0})
+                AADD(aDbf,{"id_uslova","C",8,0})
                 AADD(aDbf,{"brisano","C",1,0})
                 DBCREATE( my_home() + "kdv_obr_" + cIdObr, aDbf )
             endif
@@ -172,22 +173,19 @@ if len(aUslovi)==0
 endif
 
 Box("musl",10,30,.f.)
-
-@ m_x,m_y+2 SAY "<SPACE> markiranje"
-
-MABROWSE(aUslovi,m_x+1,m_y+1,m_x+10,m_y+30)
-
+    @ m_x,m_y+2 SAY "<SPACE> markiranje"
+    MABROWSE( aUslovi, m_x+1, m_y+1, m_x+10, m_y+30 )
 BoxC()
 
-if ASCAN(aUslovi, {|aElem| aElem[2]='*'})==0
-  return
+if ASCAN(aUslovi, {|aElem| aElem[2]='*'}) == 0
+    return
 endif
 
 IF ASCAN(aUslovi,{|x| ALLTRIM(x[4])!="KADEV_0".and.x[2]=='*'})!=0
-  SELECT KADEV_0
-  SET RELATION TO
-  SELECT KDV_RJRMJ
-  SET RELATION TO
+    SELECT KADEV_0
+    SET RELATION TO
+    SELECT KDV_RJRMJ
+    SET RELATION TO
 ENDIF
 
 lTDatumOd := .f.
@@ -196,147 +194,151 @@ d0 := CTOD("")
 d1 := CTOD("")
 
 nRed := 0
+nArr := SELECT()
 
-nArr:=SELECT()
 SELECT KDV_OBRAZDEF
 GO TOP
+
 DO WHILE !EOF()
-  cStr := komentar + uslov
-  IF "&D0" $ cStr
-    ++ nRed
-    lTDatumOd:=.t.
-  ENDIF
-  IF "&D1" $ cStr
-    ++ nRed
-    lTDatumDo:=.t.
-  ENDIF
-  SKIP 1
+    cStr := komentar + uslov
+    IF "&D0" $ cStr
+        ++ nRed
+        lTDatumOd:=.t.
+    ENDIF
+    IF "&D1" $ cStr
+        ++ nRed
+        lTDatumDo:=.t.
+    ENDIF
+    SKIP 1
 ENDDO
+
 SELECT (nArr)
 
 IF nRed>0
-  Box("#DODATNI USLOVI ZA GENERACIJU IZVJESTAJA",2+nRed,77)
-   nRed:=0
-   IF lTDatumOd
-     @ m_x+1+(++nRed), m_y+2 SAY "Od datuma" GET D0
-   ENDIF
-   IF lTDatumDo
-     @ m_x+1+(++nRed), m_y+2 SAY "Do datuma" GET D1
-   ENDIF
-   READ
-   IF LASTKEY()==K_ESC
-     BoxC(); RETURN
-   ENDIF
-  BoxC()
+    Box("#DODATNI USLOVI ZA GENERACIJU IZVJESTAJA",2+nRed,77)
+        nRed:=0
+        IF lTDatumOd
+            @ m_x+1+(++nRed), m_y+2 SAY "Od datuma" GET D0
+        ENDIF
+        IF lTDatumDo
+            @ m_x+1+(++nRed), m_y+2 SAY "Do datuma" GET D1
+        ENDIF
+        READ
+        IF LASTKEY()==K_ESC
+            BoxC()
+            RETURN
+        ENDIF
+    BoxC()
 ENDIF
 
-START PRINT RET        // sada
+START PRINT CRET        
 
-                          // *****************************************
-FOR gi:=1 to Len(aUslovi) // odradi kalkulaciju za sve globalne uslove
-                          // *****************************************
+FOR gi:=1 to Len(aUslovi) 
+    
+    // odradi kalkulaciju za sve globalne uslove
 
-  InitGlobMatr()   // inicijalizuje matricu prora~una
+    InitGlobMatr()   
+    // inicijalizuje matricu prora~una
 
-  IF gi==1
-    IF gPrinter=="L"
-      gPO_Land()
-      GuSt2(25+LEN(aKatVal)*10,"L4")
-    ELSE
-      GuSt2(25+LEN(aKatVal)*10,"4")
+    IF gi==1
+        IF gPrinter=="L"
+            gPO_Land()
+            GuSt2(25+LEN(aKatVal)*10,"L4")
+        ELSE
+            GuSt2(25+LEN(aKatVal)*10,"4")
+        ENDIF
     ENDIF
-  ENDIF
 
-  select (aUslovi[gi][4]); go top
+    // otvaranje tabele !!!!
+    select ( aUslovi[gi][4] )
+    go top
 
-  if aUslovi[gi][2]=='*'
-    cPomDev:=SET(_SET_DEVICE)         //  izlaz na
-    SET DEVICE TO SCREEN              //  ekran
-    GlobalUsl:=  {|| &(aUslovi[gi][3])}
-    nCount:=0
-    Box("count",1,30,.f.)
-    @ m_x,m_y+2 SAY aUslovi[gi][1]
+    if aUslovi[gi][2]=='*'
+        cPomDev:=SET(_SET_DEVICE)         //  izlaz na
+        SET DEVICE TO SCREEN              //  ekran
+        GlobalUsl:=  {|| &(aUslovi[gi][3])}
+        nCount:=0
+        Box("count",1,30,.f.)
+            @ m_x,m_y+2 SAY aUslovi[gi][1]
 
-    do while !eof()
-      select (aUslovi[gi][4])
-      if EVAL(GlobalUsl)
+            do while !eof()
+                select (aUslovi[gi][4])
+                if EVAL(GlobalUsl)
+                    for i:=1 to LEN(aRez)
+                        for j:=1 to len(aRez[i])   // aRez[i] tipa je aGrupa
+                            // aRez[i][j] je tipa {bUslov,{0,0...,0}}
+                            IF (lUslR:=EVAL(aRez[i][j][2]))
+                                for x:=1 to LEN(aKatVal)  // ovo je broj kategorija
+                                    lUslK:=EVAL(aKatUsl[x][2])
+                                    if lUslK
+                                        IF ALLTRIM(aUslovi[gi][4])=="RJRMJ"
+                                            (aRez[i][j][3][x])+=brizvrs
+                                        ELSE
+                                            (aRez[i][j][3][x])++
+                                        ENDIF
+                                    endif
+                                    // aRez[i][j][2] - tipa aKatVal
+                                next
+                            ENDIF
+                        next
+                    next
+                    ++nCount
+                    @ m_x+1,m_y+10 SAY nCount
+                endif  // if eval(globusl)
+                skip
+            enddo
+
+        BoxC()
+
         for i:=1 to LEN(aRez)
-           for j:=1 to len(aRez[i])   // aRez[i] tipa je aGrupa
-              // aRez[i][j] je tipa {bUslov,{0,0...,0}}
-              IF (lUslR:=EVAL(aRez[i][j][2]))
-               for x:=1 to LEN(aKatVal)  // ovo je broj kategorija
-                   lUslK:=EVAL(aKatUsl[x][2])
-                   if lUslK
-                     IF ALLTRIM(aUslovi[gi][4])=="RJRMJ"
-                       (aRez[i][j][3][x])+=brizvrs
-                     ELSE
-                       (aRez[i][j][3][x])++
-                     ENDIF
-                   endif
-                 // aRez[i][j][2] - tipa aKatVal
-               next
-              ENDIF
-           next
+            AFILL(aKatVal,0)
+            for j:=1 to len(aRez[i])   // aRez[i] tipa je aGrupa
+                // aRez[i][j] je tipa {bUslov,{0,0...,0}}
+                for x:=1 to LEN(aKatVal)  // ovo je broj kategorija
+                    aKatVal[x]+=aRez[i][j][3][x]
+                next
+            next
+            aKatvv:=ACLONE(aKatVal)
+            AADD(aRez[i],{PADR("UKUPNO:",25),NIL,aKatvv})
         next
-        ++nCount
-        @ m_x+1,m_y+10 SAY nCount
-      endif  // if eval(globusl)
-      skip
-    enddo
 
-    BoxC()
+        // set console off     // bilo
+        // set alternate on    // bilo
 
-    for i:=1 to LEN(aRez)
-       AFILL(aKatVal,0)
-       for j:=1 to len(aRez[i])   // aRez[i] tipa je aGrupa
-          // aRez[i][j] je tipa {bUslov,{0,0...,0}}
-          for x:=1 to LEN(aKatVal)  // ovo je broj kategorija
-            aKatVal[x]+=aRez[i][j][3][x]
-          next
-       next
-       aKatvv:=ACLONE(aKatVal)
-       AADD(aRez[i],{PADR("UKUPNO:",25),NIL,aKatvv})
-    next
+        SET(_SET_DEVICE,cPomDev)  // nije vise izlaz na ekran
 
-    // set console off     // bilo
-    // set alternate on    // bilo
+        ?
+        ? PADC(' '+alltrim(aUslovi[gi][1])+' ',70,"*")
+        ?
 
-    SET(_SET_DEVICE,cPomDev)  // nije vise izlaz na ekran
+        ? SPACE(25)
+        for i:=1 to LEN(aKatVal)
+            ?? padl(alltrim(aKatUsl[i][1]),10)
+        next
+        ? SPACE(25)+REPLICATE("=",len(aKatVal)*10)
+        for i:=1 to LEN(aRez)
+            ?
+            ? aZagl[i]
+            ? replicate("-",25+10*len(aKatVaL))
+            for j:=1 to len(aRez[i])   // aRez[i] tipa je aGrupa
+                // aRez[i][j] je tipa {bUslov,{0,0...,0}}
+                ? aRez[i][j][1]
+                for x:=1 to LEN(aKatVal)  // ovo je broj kategorija
+                    ?? (aRez[i][j][3])[x]
+                next
+            next
+            ? replicate("-",25+10*len(aKatVaL))
+        next
 
-    ?
-    ? PADC(' '+alltrim(aUslovi[gi][1])+' ',70,"*")
-    ?
+        // set alternate off  // bilo
+        // set console on     // bilo
 
-    ? SPACE(25)
-    for i:=1 to LEN(aKatVal)
-       ?? padl(alltrim(aKatUsl[i][1]),10)
-    next
-    ? SPACE(25)+REPLICATE("=",len(aKatVal)*10)
-    for i:=1 to LEN(aRez)
-      ?
-      ? aZagl[i]
-      ? replicate("-",25+10*len(aKatVaL))
-      for j:=1 to len(aRez[i])   // aRez[i] tipa je aGrupa
-         // aRez[i][j] je tipa {bUslov,{0,0...,0}}
-         ? aRez[i][j][1]
-         for x:=1 to LEN(aKatVal)  // ovo je broj kategorija
-           ?? (aRez[i][j][3])[x]
-         next
-      next
-     ? replicate("-",25+10*len(aKatVaL))
-    next
+    endif // if .... '*'
 
-    // set alternate off  // bilo
-    // set console on     // bilo
-
-  endif // if .... '*'
-
-       // ************************************
 next   // kraj petlje " gi=1 to LEN(aUslovi) "
-       // ************************************
 
 IF gPrinter=="L"
-  gPO_Port()
+    gPO_Port()
 ENDIF
 
 FF
@@ -345,8 +347,7 @@ END PRINT
 return
 
 
-************************
-************************
+
 function InitGlobMatr()
 select kdv_obrazdef
 aRez:={}
@@ -545,8 +546,14 @@ do case
         endif
 
         _rec := get_dbf_global_memvars()
-        update_rec_server_and_dbf( "kadev_defobraz", _rec, 1, "FULL" )
 
+        if !hb_hhaskey( _rec, "id_uslova" )
+            _rec["id_uslova"] := ""
+        endif
+
+        dbf_update_rec( _rec )
+        // ne ide na server za sada...
+        //update_rec_server_and_dbf( "kadev_obrazdef", _rec, 1, "FULL" )
         
         return DE_REFRESH
 
@@ -554,13 +561,17 @@ do case
 
         if Pitanje("p95","Izbrisati stavku: "+tip+"-"+grupa+"-"+red_Br+"-"+trim(komentar)+" ?","N") == "D"
             
-            _rec := dbf_get_rec()
-            delete_rec_server_and_dbf( "kadev_defobraz", _rec, 1, "FULL" )
-
+            //_rec := dbf_get_rec()
+            delete
+            // ne ide na server
+            // delete_rec_server_and_dbf( "kadev_obrazdef", _rec, 1, "FULL" )
             skip
             if eof()
                 skip -1
             endif
+
+            __dbPack()
+
             return DE_REFRESH
         else
             return DE_CONT

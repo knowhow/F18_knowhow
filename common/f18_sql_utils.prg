@@ -249,7 +249,7 @@ IF oResult:NetErr()
 
     cMsg := oResult:ErrorMsg()
 
-    log_write("ERROR: _sql_query: " + cQuery + "err msg:" + cMsg, 3, silent )
+    log_write("ERROR: _sql_query: " + cQuery + "err msg:" + cMsg, 1, silent )
 
     if !silent 
         MsgBeep( cMsg )

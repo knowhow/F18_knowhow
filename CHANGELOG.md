@@ -1,3 +1,7 @@
+1.4.204 2013-07-11, vsasa
+ 
+  - kalk, prenos podataka pos->kalk 42, razrada popusta
+
 1.4.203 2013-07-11, vsasa
  
   - fin, bruto bilansi A3 i A4L su identični, samo orjentacija papira različita

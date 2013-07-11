@@ -665,10 +665,15 @@ return
 // ---------------------------------------------------------
 static function import_row_42( broj_dok, id_konto, id_konto2, r_br )
 local _t_area := SELECT()
+local _opp
 
 if ( topska->kolicina == 0 )
 	return
 endif
+
+select tarifa
+hseek topska->idtarifa
+_opp := tarifa->opp
 
 select kalk_pripr
 append blank
@@ -685,8 +690,17 @@ replace field->rbr with r_br
 replace field->tmarza2 with "%"            
 replace field->idtarifa with topska->idtarifa
 replace field->mpcsapp with topska->mpc
-replace field->rabatv with topska->stmpc
-	
+
+if ROUND( topska->stmpc, 2 ) <> 0
+    if _opp > 0 
+        // izbijamo PDV iz ove stavke ako je tarifa PDV17
+        replace field->rabatv with ( topska->stmpc / ( 1 + ( _opp / 100 ) ) )
+    else
+        // tarifa nije PDV17
+        replace field->rabatv with topska->stmpc
+    endif
+endif
+
 select ( _t_area )
 return
 

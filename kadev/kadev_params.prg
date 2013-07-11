@@ -13,33 +13,49 @@
 #include "kadev.ch"
 
 
+
+function kadev_read_params()
+
+gTrPromjena := fetch_metric("kadev_tekuca_promjena", nil, gTrPromjena )
+gnLMarg := fetch_metric( "kadev_rpt_lmarg", nil, gnLMarg )
+gnTMarg := fetch_metric( "kadev_rpt_tmarg", nil, gnTMarg )
+gTabela := fetch_metric( "kadev_tabela_tip", nil, gTabela )
+gA43 := fetch_metric( "kadev_rpt_a4a3", nil, gA43 )
+gnRedova := fetch_metric( "kadev_rpt_broj_redova", nil, gnRedova )
+gOstr := fetch_metric( "kadev_rpt_ostranicavanje", nil, gOstr )
+gPostotak := fetch_metric( "kadev_rpt_postotak", nil, gPostotak )
+gDodKar1 := fetch_metric( "kadev_k1", nil, gDodKar1 )
+gDodKar2 := fetch_metric( "kadev_k2", nil, gDodKar2 )
+gCentOn := fetch_metric( "kadev_rpt_cent_on", nil, gCentOn )
+gVojEvid := fetch_metric( "kadev_vojna_evidencija", nil, gVojEvid )
+return
+
+
+function kadev_write_params()
+set_metric("kadev_tekuca_promjena", nil, gTrPromjena )
+set_metric( "kadev_rpt_lmarg", nil, gnLMarg )
+set_metric( "kadev_rpt_tmarg", nil, gnTMarg )
+set_metric( "kadev_tabela_tip", nil, gTabela )
+set_metric( "kadev_rpt_a4a3", nil, gA43 )
+set_metric( "kadev_rpt_broj_redova", nil, gnRedova )
+set_metric( "kadev_rpt_ostranicavanje", nil, gOstr )
+set_metric( "kadev_rpt_postotak", nil, gPostotak )
+set_metric( "kadev_k1", nil, gDodKar1 )
+set_metric( "kadev_k2", nil, gDodKar2 )
+set_metric( "kadev_rpt_cent_on", nil, gCentOn )
+set_metric( "kadev_vojna_evidencija", nil, gVojEvid )
+return
+
+
+
 // ------------------------------------------
 // menij parametara
 // ------------------------------------------
 function kadev_params_menu()
 
-O_PARAMS
-private cSection := "1"
-private cHistory := " "
-private aHistory := {}
+kadev_read_params()
+
 private aPars := {}
-
-// citaj parametre
-RPar("tp", @gTrPromjena)
-RPar("pr", @gnLMarg)
-RPar("p1", @gnTMarg)
-RPar("tb", @gTabela)
-Rpar("a4", @gA43)
-Rpar("rs", @gnRedova)
-Rpar("os", @gOstr)
-Rpar("po", @gPostotak)
-Rpar("k1", @gDodKar1)
-Rpar("k2", @gDodKar2)
-Rpar("fi", @gNFirma)
-Rpar("co", @gCentOn)
-Rpar("ve", @gVojEvid)
-
-//UsTipke()
 
 set cursor on
 
@@ -70,27 +86,13 @@ AADD(aPars, {"Vojna evidencija (D/N) ?", ;
 
 VarEdit(aPars, 6, 1, 22, 78, "***** Parametri rada programa", "B1" )
 
-//BosTipke()
-
 if LastKey() <> K_ESC
-	WPar("tp",gTrPromjena)
-  	WPar("pr",gnLMarg)
-  	WPar("p2",gnTMarg)
-  	WPar("tb",gTabela)
-  	Wpar("a4",gA43)
-  	Wpar("rs",gnRedova)
-  	Wpar("os",gOstr)
-  	Wpar("po",gPostotak)
-  	Wpar("k1",gDodKar1)
-  	Wpar("k2",gDodKar2)
-  	Wpar("fi",gNFirma)
-  	Wpar("co",gCentOn)
-  	Wpar("ve",gVojEvid)
-  	select params
-	use
+
+    kadev_write_params()
+
 endif
 
-if gCentOn=="D"
+if gCentOn == "D"
 	SET CENTURY ON
 else
   	SET CENTURY OFF

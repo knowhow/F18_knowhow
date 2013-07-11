@@ -168,9 +168,9 @@ do while id = kadev_0->id .and. ( datumod < dDoDat )
     // kadev_1 tabela
     _rec_1 := dbf_get_rec()
     
-    if kdv_promj->tip <> "X"
+    if kadev_promj->tip <> "X"
         if EMPTY( _int_status )                           
-            _rec_0["status"] := kdv_promj->status
+            _rec_0["status"] := kadev_promj->status
         else                                       
             _rec_0["status"] := _int_status
         endif  
@@ -197,29 +197,29 @@ do while id = kadev_0->id .and. ( datumod < dDoDat )
     
     endif
 
-    if kdv_promj->urrasp == "1" 
+    if kadev_promj->urrasp == "1" 
         // setovanje ratnog rasporeda
         _rec_0["idrrasp"] := cAtr1
     endif
 
-    if kdv_promj->ustrspr == "1" 
+    if kadev_promj->ustrspr == "1" 
         // setovanje strucne spreme
         _rec_0["idstrspr"] := cAtr1
         _rec_0["idzanim"] := cAtr2
     endif
 
-    if kdv_promj->uradst = " " .and. promj->tip = " " 
+    if kadev_promj->uradst = " " .and. promj->tip = " " 
         // fiksna promjena koja
         _rec_1["idrmj"] := ""
         _rec_1["idrj"] := ""
         _rec_0["datvrmj"] := kadev_1->datumod
     endif
 
-    if kdv_promj->tip == "I"  
+    if kadev_promj->tip == "I"  
         // intervalna promjena
 
         if !(EMPTY(kadev_1->DatumDo) .or. ( kadev_1->DatumDo > dDoDat )) // zatvorena
-            if kdv_promj->status = "M" .and. kdv_rrasp->catr = "V" 
+            if kadev_promj->status = "M" .and. kdv_rrasp->catr = "V" 
                 // catr="V" -> sluzenje vojnog roka
                 _rec_0["slvr"] := "D"
                 _rec_0["vrslvr"] := kadev_0->vrslvr + ( kadev_1->datumdo - kadev_1->datumod )
@@ -228,10 +228,10 @@ do while id = kadev_0->id .and. ( datumod < dDoDat )
 
         if EMPTY( kadev_1->datumdo) .or. ( kadev_1->datumdo > dDoDat )
             _rec_0["datvrmj"] := kadev_1->datumod
-            _int_status := kdv_promj->status                  
+            _int_status := kadev_promj->status                  
         else   
             // vrsi se zatvaranje promjene
-            if kdv_promj->uRrasp = "1"  
+            if kadev_promj->uRrasp = "1"  
                 // ako je intervalna promjena setovala RRasp
                 _rec_0["idrrasp"] := ""
             endif
@@ -284,7 +284,7 @@ select kdv_rrasp  ; set order to tag "ID"
 select kbenef ; set order to tag "ID"
 
 select kadev_1
-set relation to IdPromj into kdv_promj
+set relation to IdPromj into kadev_promj
 set relation to IdRj+IdRmj into kdv_rjrmj addi
 
 select kdv_rjrmj

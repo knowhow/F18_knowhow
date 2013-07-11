@@ -127,6 +127,8 @@ public gDodKar2 := "Karakteristika 2"
 public gTrPromjena := "KP"
 public gCentOn := "N"
 
+kadev_read_params()
+
 if gVojEvid == "D"
 	glBezVoj := .f.
 endif

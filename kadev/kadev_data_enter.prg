@@ -733,68 +733,33 @@ return
 // unos prve stranice
 // --------------------------------------
 static function get_1( strana )
-local _x := 1
 local _left := 30
-local _x_pos
 
-@ m_x + _x, m_y + 2 SAY PADR( " 1. Prezime", _left ) GET _prezime PICT "@!"
+@ m_x + 1, m_y + 2 SAY PADR( " 1. Prezime", _left ) GET _prezime PICT "@!"
 
-++ _x
-++ _x
+@ m_x + 3, m_y + 2 SAY PADR( " 2. Ime jednog roditelja", _left ) GET _imerod PICT "@!"
 
-@ m_x + _x, m_y + 2 SAY PADR( " 2. Ime jednog roditelja", _left ) GET _imerod PICT "@!"
+@ m_x + 5, m_y + 2 SAY PADR( " 3. Ime", _left ) GET _ime PICT "@!"
+@ m_x + 5, col() + 2 SAY " Pol (M/Z) " GET _pol VALID _pol $ "MZ" PICT "@!"
 
-++ _x
-++ _x
+@ m_x + 7, m_y + 2 SAY PADR( " 4. Nacija", _left ) GET _idnac ;
+            VALID { || P_Nac( @_idnac, 7, 40 ) } PICT "@!"
 
-@ m_x + _x, m_y + 2 SAY PADR( " 3. Ime", _left ) GET _ime PICT "@!"
-@ m_x + _x, col() + 2 SAY " Pol (M/Z) " GET _pol VALID _pol $ "MZ" PICT "@!"
-
-++ _x
-++ _x
-
-@ _x_pos := m_x + _x, m_y + 2 SAY PADR( " 4. Nacija", _left ) GET _idnac ;
-            VALID P_Nac( @_idnac, _x_pos, 40 ) PICT "@!"
-
-++ _x
-++ _x
-
-@ m_x + _x, m_y + 2 SAY PADR( " 5. Jedinstveni mat.broj", _left ) GET _id ;
+@ m_x + 9, m_y + 2 SAY PADR( " 5. Jedinstveni mat.broj", _left ) GET _id ;
             VALID _dobar_id( @_id ) PICT "@!"
-@ m_x + _x, col() + 2 SAY " b) ID broj/2  " GET _id2 VALID _dobar_id2( @_id2 ) PICT "@!"
+@ m_x + 9, col() + 2 SAY " b) ID broj/2  " GET _id2 VALID _dobar_id2( @_id2 ) PICT "@!"
 
-++ _x
-++ _x
+@ m_x + 11, m_y + 2 SAY PADR( " 7. Mjesto rodjenja", _left ) GET _mjrodj PICT "@!"
 
-@ m_x + _x, m_y + 2 SAY PADR( " 7. Mjesto rodjenja", _left ) GET _mjrodj PICT "@!"
+@ m_x + 13, m_y + 2 SAY PADR( " 8. Datum. rodj ", _left ) GET _datrodj
+@ m_x + 13, col() + 2 SAY "  9. Broj LK " GET _brlk PICT "@!"
 
-++ _x
-++ _x
-
-@ m_x + _x, m_y + 2 SAY PADR( " 8. Datum. rodj ", _left ) GET _datrodj
-@ m_x + _x, col() + 2 SAY "  9. Broj LK " GET _brlk PICT "@!"
-
-++ _x
-++ _x
-
-@ m_x + _x, m_y + 2 SAY " 10. Adresa stanovanja *****"
-
-++ _x
-
-@ m_x + _x, m_y + 2 SAY PADR( "  a) mjesto", _left ) GET _mjst PICT "@!"
-
-++ _x
-
-@ _x_pos := m_x + _x, m_y + 2 SAY PADR( "  b) mjesna zajednica", _left ) GET _idmzst ;
-                VALID P_MZ( @_idmzst, _x_pos, 40 ) PICT "@!"
-
-++ _x
-
-@ m_x + _x, m_y + 2 SAY PADR( "  c) ulica", _left ) GET _ulst PICT "@!"
-
-++ _x
-
-@ m_x + _x, m_y + 2 SAY PADR( "  d) broj kucnog telefona", _left ) GET _brtel1 PICT "@!"
+@ m_x + 15, m_y + 2 SAY " 10. Adresa stanovanja *****"
+@ m_x + 16, m_y + 2 SAY PADR( "  a) mjesto", _left ) GET _mjst PICT "@!"
+@ m_x + 17, m_y + 2 SAY PADR( "  b) mjesna zajednica", _left ) GET _idmzst ;
+                VALID P_MZ( @_idmzst, 17, 40 ) PICT "@!"
+@ m_x + 18, m_y + 2 SAY PADR( "  c) ulica", _left ) GET _ulst PICT "@!"
+@ m_x + 19, m_y + 2 SAY PADR( "  d) broj kucnog telefona", _left ) GET _brtel1 PICT "@!"
 
 read
 
@@ -814,75 +779,40 @@ static function get_2( strana )
 local aRstE
 local aRstB
 local aRstU
-local _x := 1
-local _x_pos
 local _left := 30
 
-@ _x_pos := m_x + _x, m_y + 2 SAY " 11. Strucna sprema " + _idstrspr + "-" + P_STRSPR( @_idstrspr, -2 )
+@ m_x + 1, m_y + 2 SAY " 11. Strucna sprema " + _idstrspr + "-" + P_STRSPR( @_idstrspr, -2 )
 
-++ _x
-++ _x
+@ m_x + 3, m_y + 2 SAY " 12. Vrsta str.spr. " + _idzanim + "-" + P_Zanim( @_idzanim, -2 )
 
-@ _x_pos := m_x + _x, m_y + 2 SAY " 12. Vrsta str.spr. " + _idzanim + "-" + P_Zanim( @_idzanim, -2 )
+@ m_x + 5, m_y + 2 SAY " 13. R.jedinica RJ " + _idrj + "-" + P_Kadev_Rj( _idrj, -2 )
 
-++ _x
-++ _x
+@ m_x + 7, m_y + 2 SAY " 14. R.mjesto RMJ " + _idrmj + "-" + P_RMJ( _idrmj, -2 )
+@ m_x + 8, m_y + 2 SAY "    Broj bodova   " + STR( Ocitaj( F_KDV_RJRMJ, _idrj + _idrmj, "BODOVA", .t. ), 7, 2 )
+@ m_x + 9, m_y + 2 SAY " 15. Na radnom mjestu od: " + DTOC( _daturmj )
+@ m_x + 9, m_y + 40 SAY "U Firmi od: " + DTOC( _datuf )
 
-@ _x_pos := m_x + _x, m_y + 2 SAY " 13. R.jedinica RJ " + _idrj + "-" + P_Kadev_Rj( _idrj, -2 )
-
-++ _x
-++ _x
-
-@ m_x + _x, m_y + 2 SAY " 14. R.mjesto RMJ " + _idrmj + "-" + P_RMJ( _idrmj, -2 )
-
-++ _x
-
-@ m_x + _x, m_y + 2 SAY "    Broj bodova   " + STR( Ocitaj( F_KDV_RJRMJ, _idrj + _idrmj, "BODOVA", .t. ), 7, 2 )
-
-++ _x
-
-@ m_x + _x, m_y + 2 SAY " 15. Na radnom mjestu od: " + DTOC( _daturmj )
-@ m_x + _x, m_y + 40 SAY "U Firmi od: " + DTOC( _datuf )
-
-++ _x
-++ _x
-
-@ m_x + _x, m_y + 2 SAY " 16. Van firme od: " + DTOC( _datvrmj )
+@ m_x + 11, m_y + 2 SAY " 16. Van firme od: " + DTOC( _datvrmj )
 
 aRstE := GMJD( _radste )
 aRstB := GMJD( _radstb )
 
 aRStU := ADDGMJD( aRStE, aRStB )
 
-++ _x
-++ _x
-
-@ m_x + _x, m_y + 2 SAY " 17. Radni staz:      Efekt  " + ;
+@ m_x + 13, m_y + 2 SAY " 17. Radni staz:      Efekt  " + ;
             STR( aRstE[1], 2 ) + "g." + STR( aRstE[2], 2 ) + ;
             "m." + STR( aRstE[3], 2 ) + "d."
 
-++ _x
-
-@ m_x + _x, m_y + 2 SAY "                     Benef  " + ;
+@ m_x + 14, m_y + 2 SAY "                     Benef  " + ;
             STR( aRstB[1], 2 ) + "g." + STR( aRstB[2], 2 ) + "m." + STR( aRstB[3], 2 ) + "d."
 
-++ _x
-
-@ m_x + _x, m_y + 2 SAY "                         ä  " + ;
+@ m_x + 15, m_y + 2 SAY "                         ä  " + ;
             STR( aRstU[1], 2 ) + "g." + STR( aRstU[2], 2 ) + "m." + STR( aRstU[3], 2 ) + "d."
 
-++ _x
+@ m_x + 16, m_y + 2 SAY PADR( " 18. Status ...............", _left ) + _status
 
-@ m_x + _x, m_y + 2 SAY PADR( " 18. Status ...............", _left ) + _status
-
-++ _x
-++ _x
-
-@ m_x + _x, m_y + 2 SAY PADR( " 19. broj telefona /2", _left ) GET _brtel2 PICT "@!"
-
-++ _x
-
-@ m_x + _x, m_y + 2 SAY PADR( " 20. broj telefona /3", _left ) GET _brtel3 PICT "@!"
+@ m_x + 18, m_y + 2 SAY PADR( " 19. broj telefona /2", _left ) GET _brtel2 PICT "@!"
+@ m_x + 19, m_y + 2 SAY PADR( " 20. broj telefona /3", _left ) GET _brtel3 PICT "@!"
 
 read
 
@@ -895,84 +825,41 @@ return LastKey()
 // unos treæe stranice
 // --------------------------------------------
 static function get_3( strana )
-local _x := 1
 local _left := 30
-local _pos_x
 
 aVr := GMJD( _vrslvr )
 
-@ m_x + _x, m_y + 2 SAY " 21.PORODICA, OPSTI PODACI"
+@ m_x + 1, m_y + 2 SAY " 21.PORODICA, OPSTI PODACI"
 
-++ _x
-++ _x
+@ m_x + 3, m_y + 2 SAY PADR( "  a) Bracno stanje ", _left ) GET _bracst PICT "@!"
+@ m_x + 4, m_y + 2 SAY PADR( "  b) Broj djece ", _left ) GET _brdjece PICT "@!"
+@ m_x + 5, m_y + 2 SAY PADR( "  c) Stambene prilike ", _left ) GET _stan PICT "@!"
+@ m_x + 6, m_y + 2 SAY PADR( "  d) Krvna grupa ", _left ) GET _krv VALID _krv $ "   #A+ #A- #B+ #B- #AB+#AB-#0+ #0- #A  #B  #AB #0  "  PICT "@!"
+@ m_x + 7, m_y + 2 SAY PADR( "  e) " + gDodKar1, _left ) GET _idk1 ;
+                VALID P_Kadev_K1( @_idk1, 7, 40 ) PICT "@!"
+@ m_x + 8, m_y + 2 SAY PADR( "  f) " + gDodKar2, _left ) GET _idk2 ;
+                VALID P_Kadev_K2( @_idk2, 8, 40 ) PICT "@!"
 
-@ m_x + _x, m_y + 2 SAY PADR( "  a) Bracno stanje ", _left ) GET _bracst PICT "@!"
+@ m_x + 9, m_y + 2 SAY PADR( "  g) Karakt. (opisno)..... 1", _left ) GET _kop1 PICT "@!"
+@ m_x + 10, m_y + 2 SAY PADR( "  h) Karakt. (opisno)..... 2", _left ) GET _kop2 PICT "@!"
 
-++ _x
+@ m_x + 12, m_y + 2 SAY " 22. ODBRANA"
 
-@ m_x + _x, m_y + 2 SAY PADR( "  b) Broj djece ", _left ) GET _brdjece PICT "@!"
-
-++ _x
-
-@ m_x + _x, m_y + 2 SAY PADR( "  c) Stambene prilike ", _left ) GET _stan PICT "@!"
-
-++ _x
-
-@ m_x + _x, m_y + 2 SAY PADR( "  d) Krvna grupa ", _left ) GET _krv VALID _krv $ "   #A+ #A- #B+ #B- #AB+#AB-#0+ #0- #A  #B  #AB #0  "  PICT "@!"
-
-++ _x
-
-@ _x_pos := m_x + _x, m_y + 2 SAY PADR( "  e) " + gDodKar1, _left ) GET _idk1 ;
-                VALID P_Kadev_K1( @_idk1, _x_pos, 40 ) PICT "@!"
-
-++ _x
-
-@ _x_pos := m_x + _x, m_y + 2 SAY PADR( "  f) " + gDodKar2, _left ) GET _idk2 ;
-                VALID P_Kadev_K2( @_idk2, _x_pos, 40 ) PICT "@!"
-
-++ _x
-
-@ m_x + _x, m_y + 2 SAY PADR( "  g) Karakt. (opisno)..... 1", _left ) GET _kop1 PICT "@!"
-
-++ _x
-
-@ m_x + _x, m_y + 2 SAY PADR( "  h) Karakt. (opisno)..... 2", _left ) GET _kop2 PICT "@!"
-
-++ _x
-++ _x
-
-@ m_x + _x, m_y + 2 SAY " 22. ODBRANA"
-
-++ _x
-++ _x
-
-@ _x_pos := m_x + _x, m_y + 2 SAY "  a) Ratni raspored        " + _idrrasp + "-" + P_RRASP( _idrrasp, -2 )
-
-++ _x
-
-@ m_x + _x, m_y + 2 SAY "  b) Sluzio vojni rok      " + _slvr
+@ m_x + 14, m_y + 2 SAY "  a) Ratni raspored        " + _idrrasp + "-" + P_RRASP( _idrrasp, -2 )
+@ m_x + 15, m_y + 2 SAY "  b) Sluzio vojni rok      " + _slvr
 
 if _slvr == "D"
-    @ m_x + _x, col() + 2 SAY ", u trajanju: " + STR( aVr[1], 2 ) + "g." + ;
+    @ m_x + 15, col() + 2 SAY ", u trajanju: " + STR( aVr[1], 2 ) + "g." + ;
                             STR( aVr[2], 2 ) + "m." + STR( aVr[3], 2 ) +"d."
 endif
 
-++ _x
+@ m_x + 16, m_y + 2 SAY "  c) " + IF( glBezVoj, "Pozn.rada na racunaru", "Sposobnost za voj.sl." ) GET _sposvsl PICT "@!"
+@ m_x + 17, m_y + 2 SAY "  d) Cin       " GET _idcin VALID P_Cin( @_idcin, 17, 30 ) PICT "@!"
 
-@ m_x + _x, m_y + 2 SAY "  c) " + IF( glBezVoj, "Pozn.rada na racunaru", "Sposobnost za voj.sl." ) GET _sposvsl PICT "@!"
+@ m_x + 18, m_y + 2 SAY "  e) " + IF( glBezVoj, "Str.jezici ", "VES       " ) GET _idves ;
+            VALID P_Ves( @_idves, 18, 30 ) PICT "@!"
 
-++ _x
-
-@ _x_pos := m_x + _x, m_y + 2 SAY "  d) Cin       " GET _idcin VALID P_Cin( @_idcin, _x_pos, 30 ) PICT "@!"
-
-++ _x
-
-@ _x_pos := m_x + _x, m_y + 2 SAY "  e) " + IF( glBezVoj, "Str.jezici ", "VES       " ) GET _idves ;
-            VALID P_Ves( @_idves, _x_pos, 30 ) PICT "@!"
-
-++ _x
-
-@ m_x + _x, m_y + 2 SAY "  f) " + IF( glBezVoj, "Otisli bi iz firme?  ", "Sekretarijat odbrane " ) GET _nazsekr PICT "@!S40"
+@ m_x + 19, m_y + 2 SAY "  f) " + IF( glBezVoj, "Otisli bi iz firme?  ", "Sekretarijat odbrane " ) GET _nazsekr PICT "@!S40"
 
 read
 

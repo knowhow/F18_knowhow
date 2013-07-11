@@ -15,12 +15,7 @@
 
 
 
-function kadev_search()
-
-//set epoch to 1910
-
-kadev_o_tables()
-
+static function kadev_search_data_relation()
 select kdv_rmj
 set order to tag "ID"
 select kadev_0
@@ -74,7 +69,18 @@ set order to tag "ID"
 select kadev_0
 set relation to IdRJ+IDRMJ into kdv_rjrmj additive
 select kadev_0
+return
 
+
+
+function kadev_search()
+
+//set epoch to 1910
+
+kadev_o_tables()
+kadev_search_data_relation()
+
+select kadev_0
 
 cPic:="@!S30"
 
@@ -198,8 +204,6 @@ if lastkey()==K_ESC
     BoxC()
     exit
 endif
-
-//SAVE ALL like qq* to my_home() + upit1.mem
 
 aUsl1:=Parsiraj(  qqPrezime       ,  "Prezime"      ,  "C"  )
 aUsl2:=Parsiraj(  qqImeRod        ,  "ImeRod"       ,  "C"  )
@@ -343,7 +347,8 @@ endif
 enddo
 
 if lastkey()==K_ESC
-   closeret
+    close all
+    return
 endif
 
 
@@ -600,7 +605,11 @@ local cBr
     ASIZE(Kol,len(kol)-1)
    endif
 
-   PopWa()
+    kadev_o_tables()
+    kadev_search_data_relation()
+
+    PopWa()
+
    return DE_CONT
  else
    return DE_CONT

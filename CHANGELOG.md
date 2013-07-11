@@ -1,3 +1,7 @@
+1.4.203 2013-07-11, vsasa
+ 
+  - fin, bruto bilansi A3 i A4L su identični, samo orjentacija papira različita
+
 1.4.202 2013-07-10, vsasa
  
   - fin, bruto bilansi txt varijanta, dužina stranice potret/lendskejp

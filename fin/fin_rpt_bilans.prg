@@ -920,11 +920,13 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma
 
             SELECT KONTO
             HSEEK cIdKonto
-            IF cFormat=="1"
-                @ prow(),19 SAY naz
+
+            IF cFormat $ "13"
+                @ prow(),19 SAY PADR( naz, 57 )
             ELSE
-                @ prow(),19 SAY PADR(naz,40)
+                @ prow(),19 SAY PADR( naz, 40 )
             ENDIF
+
             select ANAL
 
             nCol1:=pcol()+1

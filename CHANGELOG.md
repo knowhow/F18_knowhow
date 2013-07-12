@@ -1,3 +1,8 @@
+1.4.206 2013-07-12, vsasa
+ 
+  - kadev, korekcije na rekalkulaciji podataka
+  - ld, kartica plate prikaz broja obračuna
+
 1.4.205 2013-07-11, vsasa
  
   - kadev, korekcije na obrascima 

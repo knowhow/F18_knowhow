@@ -35,13 +35,7 @@ close all
 return
 
 
-
-function kadev_rekstatall()
-local nOldArr
-local _postotak := ( gPostotak == "D" )
-
-PushWa()
-nOldArr := SELECT()
+static function _o_tables()
 
 O_KADEV_1
 O_KADEV_0
@@ -68,6 +62,21 @@ set relation to idrj+idrmj into kdv_rjrmj addi
 select kadev_0
 set relation to idrrasp into kdv_rrasp
 
+return
+
+
+
+
+function kadev_rekstatall()
+local nOldArr
+local _postotak := ( gPostotak == "D" )
+
+O_KADEV_0
+
+PushWa()
+nOldArr := SELECT()
+
+_o_tables()
 
 dDoDat := DATE()
 
@@ -83,19 +92,20 @@ if LastKey() == K_ESC
 endif
 
 select ( nOldArr )
+go top
 
 if _postotak
     Postotak( 1, RECCOUNT2(), "Rekalkulisanje statusa" )
 else
-    Box("b0XY",1,55,.f.)
+    Box( "b0XY", 1, 55, .f. )
 endif
 
 n1 := 0
-go top
 
 if !f18_lock_tables( { "kadev_0", "kadev_1" } )
     return
 endif
+
 sql_table_update( NIL, "BEGIN" )
 
 do while !eof()
@@ -163,7 +173,7 @@ _rec_0["idzanim"] := ""
 
 select kadev_1
 
-do while id = kadev_0->id .and. ( datumod < dDoDat )
+do while field->id = kadev_0->id .and. ( field->datumod < dDoDat )
 
     // kadev_1 tabela
     _rec_1 := dbf_get_rec()
@@ -184,7 +194,7 @@ do while id = kadev_0->id .and. ( datumod < dDoDat )
         _rec_0["idrmj"] := kadev_1->idrmj
         _rec_0["daturmj"] := kadev_1->datumod
 
-        if empty(kadev_0->DatUF)
+        if empty( kadev_0->datUF )
             _rec_0["datuf"] := kadev_1->datumod
         endif
         
@@ -208,7 +218,7 @@ do while id = kadev_0->id .and. ( datumod < dDoDat )
         _rec_0["idzanim"] := cAtr2
     endif
 
-    if kadev_promj->uradst = " " .and. promj->tip = " " 
+    if kadev_promj->uradst = " " .and. kadev_promj->tip = " " 
         // fiksna promjena koja
         _rec_1["idrmj"] := ""
         _rec_1["idrj"] := ""
@@ -268,6 +278,8 @@ local nOldArr
 
 IF lPom==NIL; lPom:=.f.; ENDIF
 
+O_KADEV_0
+
 PushWa()
 nOldArr:=SELECT()
 
@@ -309,6 +321,7 @@ ELSE
 endif
 
 select(nOldArr)
+go top
 
 IF gPostotak=="D"
   Postotak(1,RECCOUNT2(),"Rekalkulisanje radnog staza")
@@ -323,7 +336,6 @@ if !f18_lock_tables( { "kadev_0", "kadev_1" } )
 endif
 sql_table_update( NIL, "BEGIN" )
 
-go top
 
 do while !eof() 
 
@@ -366,8 +378,6 @@ close all
 return
 
 
-
-// lPom=.t. -> radni staz u firmi zapisuj u POM.DBF, a ne diraj KADEV_0.DBF
 
 function RekalkRst( dDoDat, lPom )
 local nArr := 0

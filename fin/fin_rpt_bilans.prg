@@ -915,7 +915,8 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma
                 SKIP
             ENDDO   // konto
 
-            @ prow()+1,1 SAY ++B PICTURE '9999';?? "."
+            @ prow()+1,1 SAY ++B PICTURE '9999'
+            ?? "."
             @ prow(),10 SAY cIdKonto
 
             SELECT KONTO
@@ -963,7 +964,7 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma
 
         ENDDO  // sinteticki konto
 
-        __anal_bb_nova_strana( cFormat )      
+        __anal_bb_nova_strana( cFormat, 3 )      
 
         ? M5
         @ prow()+1,10 SAY cSinKonto
@@ -1000,6 +1001,7 @@ DO WHILESC !EOF() .AND. IdFirma=cIdFirma
     SELECT ANAL
 
     IF cPodKlas=="D"
+        __anal_bb_nova_strana( cFormat, 3 )      
         ? M5
         ? "UKUPNO KLASA "+cklkonto
         @ prow(),nCol1    SAY D3PS PICTURE PicD

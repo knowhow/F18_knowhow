@@ -1159,7 +1159,7 @@ do while !eof()
          nPOLjudi += ljudi
          nPorOps+=nPom
          skip
-         if prow()>62+gPStranica; FF; endif
+         if prow()>RPT_PAGE_LEN+gPStranica; FF; endif
      enddo
      select por
      ? m
@@ -1224,7 +1224,7 @@ if round2(nUPorOl,2)<>0 .and. gDaPorOl=="D" .and. !Obr2_9()
          @ prow(), pcol()+1 SAY round2(iznos2,gZaok2)    picture gpici
          Rekapld("POROL"+por->id+opsld->idops,cgodina,cmjesec,round2(iznos2,gZaok2),0,opsld->idops,NLjudi())
          skip
-         if prow()>62+gPStranica; FF; endif
+         if prow()>RPT_PAGE_LEN+gPStranica; FF; endif
       enddo
       select por
       ? m
@@ -1339,7 +1339,7 @@ do while !eof()
         nOOD += nBOOps
         nPOLjudi += ljudi
         skip
-        if prow()>62+gPStranica; FF; endif
+        if prow()>RPT_PAGE_LEN+gPStranica; FF; endif
       enddo // opsld
       select dopr
       ? m
@@ -1508,8 +1508,8 @@ ENDIF
 
 ?
 P_10CPI
-if prow()<62+gPStranica
- nPom:=62+gPStranica-prow()
+if prow()<RPT_PAGE_LEN+gPStranica
+ nPom:=RPT_PAGE_LEN+gPStranica-prow()
  for i:=1 to nPom
    ?
  next

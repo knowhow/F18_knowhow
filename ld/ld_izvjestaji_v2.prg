@@ -153,7 +153,7 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec
  enddo  // bodSort
 
 
- if prow()>62; FF; endif
+ if prow()>RPT_PAGE_LEN; FF; endif
  if cBodSort>"99999.00"
   ? m
   ? "CEKANJE "
@@ -307,7 +307,7 @@ nT1:=nT2:=nT3:=nT4:=0
 nC1:=10
 
 do while !eof() .and.  cgodina==godina
-  if prow()>62; FF; Eval(bZagl); endif
+  if prow()>RPT_PAGE_LEN; FF; Eval(bZagl); endif
 
 
   cIdRadn:=idradn
@@ -861,7 +861,7 @@ do while !eof()
     endif
    next
 
-   if prow()>62+gPStranica; FF; Eval(bZagl); endif
+   if prow()>RPT_PAGE_LEN+gPStranica; FF; Eval(bZagl); endif
    ? str(++nRbr,4)+".",idradn, RADNIK
    nC1:=pcol()+1
    @ prow(),pcol()+1 SAY _usati  pict gpics

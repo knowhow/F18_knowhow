@@ -210,7 +210,11 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .an
  select radn; hseek _idradn; select ld
 
  DO WHILE .t.
-   if prow()>62+gPStranica; FF; Eval(bZagl); endif
+
+    if prow() > RPT_PAGE_LEN + gPStranica
+        FF
+        Eval(bZagl)
+    endif
 
    if _i&cTip<>0 .or. _s&cTip<>0
      ? str(++nRbr,4)+".",idradn, RADNIK
@@ -256,7 +260,10 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .an
 
 enddo
 
-if prow()>60+gPStranica; FF; Eval(bZagl); endif
+if prow() > RPT_PAGE_LEN + gPStranica
+    FF
+    Eval(bZagl)
+endif
 ? m
 ? SPACE(1) + Lokal("UKUPNO:")
 IF lKredit .and. !EMPTY(cSifKred)
@@ -270,9 +277,10 @@ ENDIF
 p_potpis()
 FF
 END PRINT
-CLOSERET
+close all
 return
-*}
+
+
 
 function ZPregPrim()
 

@@ -23,6 +23,7 @@ static __doc_desc
 // cDesc - opis kod azuriranja
 // -------------------------------------------
 function doc_insert( cDesc )
+local _ok := .t.
 
 if cDesc == nil
     cDesc := ""
@@ -106,6 +107,7 @@ if __doc_stat == 3
     
     // napravi deltu dokumenta
     doc_delta( __doc_no, __doc_desc ) 
+
     // brisi dokument iz kumulativa
     doc_erase( __doc_no )
     
@@ -120,35 +122,60 @@ if __doc_stat == 3
 endif
 
 // azuriranje tabele _DOCS
-if !_docs_insert( __doc_no  )
-endif
+_ok := _docs_insert( __doc_no  )
 
 // azuriranje tabele _DOC_IT
-if !_doc_it_insert( __doc_no )
+if _ok 
+    _ok := _doc_it_insert( __doc_no )
 endif
 
 // azuriranje tabele _DOC_IT2
-if !_doc_it2_insert( __doc_no )
+if _ok 
+    _ok := _doc_it2_insert( __doc_no )
 endif
 
 // azuriranje tabele _DOC_OPS
-if !_doc_op_insert( __doc_no )
+if _ok
+    _ok := _doc_op_insert( __doc_no )
 endif
 
-// setuj marker dokumenta
-set_doc_marker( __doc_no, 0, "CONT" )
+if _ok
+    // setuj marker dokumenta
+    set_doc_marker( __doc_no, 0, "CONT" )
+    if __doc_stat <> 3
+        // logiraj promjene na dokumentu
+        doc_logit( __doc_no )
+    endif
 
-if __doc_stat <> 3
-    // logiraj promjene na dokumentu
-    doc_logit( __doc_no )
-endif
+    f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops", "doc_log", "doc_lit" } )
+    sql_table_update( nil, "END" )
 
-f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops", "doc_log", "doc_lit" } )
-sql_table_update( nil, "END" )
-
-// logiranje
-log_write( "F18_DOK_OPER: rnal, azuriranje dokumenta broj: " + ALLTRIM( STR( __doc_no ) ) + ;
+    // logiranje
+    log_write( "F18_DOK_OPER: rnal, azuriranje dokumenta broj: " + ALLTRIM( STR( __doc_no ) ) + ;
             ", status: " + ALLTRIM( STR( __doc_stat ) ), 2 )
+
+else
+
+    f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops", "doc_log", "doc_lit" } )
+    sql_table_update( nil, "ROLLBACK" )
+
+    MsgC()
+
+    // nesto se nije azuriralo ok !
+    // ostavljam dokument u pripremi...
+    
+    // ako je sta ostalo na serveru ili u dbf-u brisi !
+    doc_erase( __doc_no )
+
+    beep(3)
+
+    o_tables( .t. )
+    
+    MsgBeep( "Azuriranje naloga nije uspjesno !" )
+    
+    return 0
+
+endif
 
 // ------ kraj transakcije
 
@@ -254,7 +281,7 @@ local _ok := .t.
 select _doc_it
 
 if RECCOUNT2() == 0
-    return
+    return _ok
 endif
 
 set order to tag "1"
@@ -293,7 +320,7 @@ local _ok := .t.
 select _doc_it2
 
 if RECCOUNT2() == 0
-    return
+    return _ok
 endif
 
 set order to tag "1"
@@ -336,7 +363,7 @@ local _ok := .t.
 select _doc_ops
 
 if RECCOUNT2() == 0
-    return
+    return _ok
 endif
 
 set order to tag "1"

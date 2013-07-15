@@ -120,16 +120,20 @@ if __doc_stat == 3
 endif
 
 // azuriranje tabele _DOCS
-_docs_insert( __doc_no  )
+if !_docs_insert( __doc_no  )
+endif
 
 // azuriranje tabele _DOC_IT
-_doc_it_insert( __doc_no )
+if !_doc_it_insert( __doc_no )
+endif
 
 // azuriranje tabele _DOC_IT2
-_doc_it2_insert( __doc_no )
+if !_doc_it2_insert( __doc_no )
+endif
 
 // azuriranje tabele _DOC_OPS
-_doc_op_insert( __doc_no )
+if !_doc_op_insert( __doc_no )
+endif
 
 // setuj marker dokumenta
 set_doc_marker( __doc_no, 0, "CONT" )
@@ -216,6 +220,7 @@ return _ok
 // --------------------------------------------------
 static function _docs_insert( nDoc_no )
 local _rec
+local _ok := .t.
 
 select _docs
 set order to tag "1"
@@ -232,11 +237,11 @@ if !FOUND()
     append blank
 endif
 
-update_rec_server_and_dbf( "docs", _rec, 1, "CONT" )
+_ok := update_rec_server_and_dbf( "docs", _rec, 1, "CONT" )
         
 set order to tag "1"
 
-return
+return _ok
 
 
 // ------------------------------------------
@@ -244,6 +249,7 @@ return
 // ------------------------------------------
 static function _doc_it_insert( nDoc_no )
 local _rec, _id_fields, _where_bl
+local _ok := .t.
 
 select _doc_it
 
@@ -263,21 +269,26 @@ do while !EOF() .and. ( field->doc_no == nDoc_no )
     
     append blank
     
-    update_rec_server_and_dbf( "doc_it", _rec, 1, "CONT" )
+    _ok := update_rec_server_and_dbf( "doc_it", _rec, 1, "CONT" )
     
     select _doc_it
     
+    if !_ok
+        return _ok
+    endif
+
     skip
     
 enddo
 
-return
+return _ok
 
 // ------------------------------------------
 // azuriranje tabele _DOC_IT2
 // ------------------------------------------
 static function _doc_it2_insert( nDoc_no )
 local _rec, _id_fields, _where_bl
+local _ok := .t.
 
 select _doc_it2
 
@@ -297,15 +308,19 @@ do while !EOF() .and. ( field->doc_no == nDoc_no )
     
     append blank
        
-    update_rec_server_and_dbf( "doc_it2", _rec, 1, "CONT" )
+    _ok := update_rec_server_and_dbf( "doc_it2", _rec, 1, "CONT" )
     
     select _doc_it2
     
+    if !_ok 
+        return _ok
+    endif
+
     skip    
 
 enddo
 
-return
+return _ok
 
 
 
@@ -316,6 +331,7 @@ return
 // ------------------------------------------
 static function _doc_op_insert( nDoc_no )
 local _rec, _id_fields, _where_bl
+local _ok := .t.
 
 select _doc_ops
 
@@ -337,16 +353,21 @@ do while !EOF() .and. ( field->doc_no == nDoc_no )
         select doc_ops
         append blank
  
-        update_rec_server_and_dbf( "doc_ops", _rec, 1, "CONT" )
+        _ok := update_rec_server_and_dbf( "doc_ops", _rec, 1, "CONT" )
         
     endif
     
     select _doc_ops
+    
+    if !_ok
+        return _ok
+    endif
+
     skip
 
 enddo
 
-return
+return _ok
 
 
 

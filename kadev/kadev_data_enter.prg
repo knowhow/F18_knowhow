@@ -28,7 +28,7 @@ private fNovi
 _x := MAXROWS() - 4
 _y := MAXCOLS() - 3
 
-//SET EPOCH TO 1910
+SET EPOCH TO 1910
 
 // otvori tabele
 kadev_o_tables()

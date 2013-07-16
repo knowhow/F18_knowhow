@@ -1,3 +1,7 @@
+1.4.207 2013-07-16, vsasa
+ 
+  - kadev, korekcije na rekalkulaciji podataka / radni staž
+ 
 1.4.206 2013-07-15, vsasa
  
   - kadev, korekcije na rekalkulaciji podataka

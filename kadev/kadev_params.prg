@@ -87,9 +87,7 @@ AADD(aPars, {"Vojna evidencija (D/N) ?", ;
 VarEdit(aPars, 6, 1, 22, 78, "***** Parametri rada programa", "B1" )
 
 if LastKey() <> K_ESC
-
     kadev_write_params()
-
 endif
 
 if gCentOn == "D"

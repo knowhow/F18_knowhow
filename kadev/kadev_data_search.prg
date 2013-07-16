@@ -75,7 +75,7 @@ return
 
 function kadev_search()
 
-//set epoch to 1910
+set epoch to 1910
 
 kadev_o_tables()
 kadev_search_data_relation()

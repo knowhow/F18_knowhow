@@ -133,6 +133,12 @@ if gVojEvid == "D"
 	glBezVoj := .f.
 endif
 
+if gCentOn == "D"
+	SET CENTURY ON
+else
+  	SET CENTURY OFF
+endif
+
 return
 
 

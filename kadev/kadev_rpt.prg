@@ -162,99 +162,111 @@ static function FSvaki1()
 RETURN
 
 
+// ------------------------------------------------------
+// rpt staz u firmi
+// ------------------------------------------------------
+function StazUFirmi()
+  
+gnLMarg := 0
+gTabela := 1
+gOstr := "D"
 
+cStatus := PADR( fetch_metric( "kadev_rpt_staz_status", my_user(), "A;" ), 200 )
 
-PROCEDURE StazUFirmi()
-  gnLMarg:=0; gTabela:=1; gOstr:="D"
+Box(,6,77)
+    DO WHILE .t.
+        @ m_x+2,m_y+2 SAY "Obuhvaceni radnici sa statusom    :" get cStatus PICT "@S20" 
+        read
+        ESC_BCR
+        aUsl1:=Parsiraj(cStatus,"STATUS")
+        if aUsl1 <> NIL
+            exit
+        endif
+    ENDDO
+BoxC()
 
-  cStatus:=PADR("A;",20)
+set_metric( "kadev_rpt_staz_status", my_user(), ALLTRIM( cStatus ) )
 
-  O_PARAMS
-  Private cSection:="4",cHistory:=" ",aHistory:={}
-  RPar("p2",@cStatus)
+// napravi pom
+CrePom()
 
-  Box(,6,77)
-  DO WHILE .t.
-   @ m_x+2,m_y+2 SAY "Obuhvaceni radnici sa statusom    :" get cStatus PICT "@!"
-   read; ESC_BCR
-   aUsl1:=Parsiraj(cStatus,"STATUS")
-   if aUsl1<>NIL ; exit; endif
-  ENDDO
-  BoxC()
+O_KADEV_0
 
-  WPar("p2",cStatus)
-  select params; use
+kadev_rekrstall( .t. )
 
-  CrePom()
-  O_KADEV_0
-  kadev_RekRstAll(.t.)
-  O_KADEV_0
-  cPom := my_home() + "pom.dbf"
-  SELECT (F_POM); my_use_temp( "POM", cPom, .f. , .t. )
-  SET ORDER TO TAG "1" 
-  GO TOP
+O_KADEV_0
+  
+cPom := my_home() + "pom.dbf"
+SELECT (F_POM); my_use_temp( "POM", cPom, .f. , .t. )
+SET ORDER TO TAG "1" 
+GO TOP
 
+// indeksi i filteri
+// -----------------
+SELECT (F_POM)
+SET FILTER TO &aUsl1
 
-  // indeksi i filteri
-  // -----------------
-  SELECT (F_POM)
-  SET FILTER TO &aUsl1
+// priprema matrice aKol za f-ju StampaTabele()
+// --------------------------------------------
+aKol:={}
+nKol:=0
+AADD(aKol, { "R.BR."     , {|| STR(nRBr,4)+"."}, .f., "C",  5, 0, 1, ++nKol } )
+AADD(aKol, { "RADNIK"    , {|| cImeRadnika    }, .f., "C", 50, 0, 1, ++nKol } )
+AADD(aKol, { "JMB"       , {|| ID             }, .f., "C", 13, 0, 1, ++nKol } )
+AADD(aKol, { "R.STAZ EF.", {|| RSTuSTR(aRStE) }, .f., "C", 14, 0, 1, ++nKol } )
+AADD(aKol, { "R.STAZ B." , {|| RSTuSTR(aRStB) }, .f., "C", 14, 0, 1, ++nKol } )
+AADD(aKol, { "R.STAZ UK.", {|| RSTuSTR(aRStU) }, .f., "C", 14, 0, 1, ++nKol } )
+AADD(aKol, { "STATUS"    , {|| PADC(status,6) }, .f., "C",  6, 0, 1, ++nKol } )
 
+// stampanje izvjestaja
+// --------------------
+SELECT (F_POM)
+GO TOP
 
-  // priprema matrice aKol za f-ju StampaTabele()
-  // --------------------------------------------
-  aKol:={}
-  nKol:=0
-  AADD(aKol, { "R.BR."     , {|| STR(nRBr,4)+"."}, .f., "C",  5, 0, 1, ++nKol } )
-  AADD(aKol, { "RADNIK"    , {|| cImeRadnika    }, .f., "C", 50, 0, 1, ++nKol } )
-  AADD(aKol, { "JMB"       , {|| ID             }, .f., "C", 13, 0, 1, ++nKol } )
-  AADD(aKol, { "R.STAZ EF.", {|| RSTuSTR(aRStE) }, .f., "C", 14, 0, 1, ++nKol } )
-  AADD(aKol, { "R.STAZ B." , {|| RSTuSTR(aRStB) }, .f., "C", 14, 0, 1, ++nKol } )
-  AADD(aKol, { "R.STAZ UK.", {|| RSTuSTR(aRStU) }, .f., "C", 14, 0, 1, ++nKol } )
-  AADD(aKol, { "STATUS"    , {|| PADC(status,6) }, .f., "C",  6, 0, 1, ++nKol } )
+START PRINT CRET
 
+PRIVATE cImeRadnika:="", nRBr:=0
+aRStE := aRStB := aRStU := {0,0,0}
 
-  // çtampanje izvjeçtaja
-  // --------------------
-  SELECT (F_POM); GO TOP
-
-  START PRINT CRET
-
-  PRIVATE cImeRadnika:="", nRBr:=0
-  aRStE := aRStB := aRStU := {0,0,0}
-
-  IF gPrinter=="L"
+IF gPrinter=="L"
     gPO_Land()
-  ENDIF
+ENDIF
 
-  ?? space(gnLMarg); ?? "KADEV: Izvjestaj na dan",date()
-  ? space(gnLMarg); IspisFirme("")
-  ?
+?? space(gnLMarg)
+?? "KADEV: Izvjestaj na dan",date()
+? space(gnLMarg)
+IspisFirme("")
+?
 
-  StampaTabele(aKol,{|| FSvaki2()},,gTabela,,;
+StampaTabele( aKol,{|| FSvaki2()},,gTabela,,;
        IF(gPrinter=="L","L4",),"Pregled radnog staza u firmi",;
                                {|| FFor2()},IF(gOstr=="D",,-1),,,,,)
 
-  IF gPrinter=="L"
+IF gPrinter=="L"
     gPO_Port()
-  ENDIF
+ENDIF
 
-  // FF
+// FF
 
-  END PRINT
+END PRINT
 
-CLOSERET
+close all
+return
 
 
 
 static function FFor2()
-  LOCAL nArr:=SELECT()
-  SELECT KADEV_0
-  SEEK (F_POM)->ID
-  cImeRadnika:=TRIM(prezime)+" ("+TRIM(imerod)+") "+TRIM(ime)
-  SELECT (nArr)
-  aRstE:=GMJD(RadStE); aRstB:=GMJD(RadStB); aRStU:=ADDGMJD(aRStE,aRStB)
-  ++nRBr
+LOCAL nArr:=SELECT()
+
+SELECT KADEV_0
+SEEK (F_POM)->ID
+cImeRadnika:=TRIM(prezime)+" ("+TRIM(imerod)+") "+TRIM(ime)
+SELECT (nArr)
+aRstE := GMJD(RadStE)
+aRstB := GMJD(RadStB)
+aRStU := ADDGMJD( aRStE, aRStB )
+++nRBr
+
 RETURN .t.
 
 
@@ -273,14 +285,8 @@ USE
 // ------------------------------
 cPom := my_home() + "pom.dbf"
 
-IF ferase( cPom )==-1
-  MsgBeep("Ne mogu izbrisati POM.DBF!")
-  ShowFError()
-ENDIF
-IF ferase( STRTRAN( cPom, ".dbf", ".cdx" ))==-1
-  MsgBeep("Ne mogu izbrisati POM.CDX!")
-  ShowFError()
-ENDIF
+ferase( cPom )
+ferase( STRTRAN( cPom, ".dbf", ".cdx" ) )
 
 aDbf := {}
 AADD(aDBf,{ 'ID'     , 'C' ,  13 ,  0 })
@@ -288,7 +294,7 @@ AADD(aDBf,{ 'RADSTE' , 'N' ,  11 ,  2 })
 AADD(aDBf,{ 'RADSTB' , 'N' ,  11 ,  2 })
 AADD(aDBf,{ 'STATUS' , 'C' ,   1 ,  0 })
 
-DBCREATE(cPom, aDbf)
+DBCREATE( cPom, aDbf )
 
 my_use_temp( "POM", cPom, .f., .t. )
 

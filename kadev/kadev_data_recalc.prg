@@ -175,6 +175,11 @@ select kadev_1
 
 do while field->id = kadev_0->id .and. ( field->datumod < dDoDat )
 
+    select kadev_promj
+    hseek kadev_1->idpromj
+
+    select kadev_1
+
     // kadev_1 tabela
     _rec_1 := dbf_get_rec()
     
@@ -270,13 +275,13 @@ _ok := .t.
 return _ok
 
 
-***********************************************************************
 // lPom=.t. -> radni staz u firmi zapisuj u POM.DBF, a ne diraj KADEV_0.DBF
-***********************************************************************
-function kadev_rekrstall(lPom)
+function kadev_rekrstall( lPom )
 local nOldArr
 
-IF lPom==NIL; lPom:=.f.; ENDIF
+IF lPom == NIL
+    lPom :=.f.
+ENDIF
 
 O_KADEV_0
 
@@ -289,15 +294,20 @@ O_KDV_RJRMJ
 O_KDV_RRASP
 O_KBENEF
 
-select kadev_1    ; set order to tag "1"
-select kadev_promj  ; set order to tag "ID"
-select kdv_rjrmj  ; set order to tag "ID"
-select kdv_rrasp  ; set order to tag "ID"
-select kbenef ; set order to tag "ID"
-
 select kadev_1
-set relation to IdPromj into kadev_promj
-set relation to IdRj+IdRmj into kdv_rjrmj addi
+set order to tag "1"
+select kadev_promj
+set order to tag "ID"
+select kdv_rjrmj
+set order to tag "ID"
+select kdv_rrasp
+set order to tag "ID"
+select kbenef 
+set order to tag "ID"
+
+// ovo je sumnjivo ??????? nesto ne radi kako treba
+select kadev_1
+set relation to idpromj into kadev_promj, to ( IdRj + IdRmj ) into kdv_rjrmj
 
 select kdv_rjrmj
 set relation to sbenefrst into kbenef
@@ -306,18 +316,19 @@ select kadev_0
 set relation to idRrasp into kdv_rrasp
 
 IF lPom
-  dDoDat:=DATE()      // ?
+    dDoDat := DATE()      
+    // ?
 ELSE
-  dDoDat:=DATE()
-  Box("b0XX",1,65,.f.)
-   set cursor on
-   @ m_x+1,m_y+2 SAY "Kalkulacija do datuma:" GET dDoDat
-   read
-  BoxC()
-  if lastkey()==K_ESC
-    close all
-    return
-  endif
+    dDoDat:=DATE()
+    Box("b0XX",1,65,.f.)
+        set cursor on
+        @ m_x+1,m_y+2 SAY "Kalkulacija do datuma:" GET dDoDat
+        read
+    BoxC()
+    if lastkey()==K_ESC
+        close all
+        return
+    endif
 endif
 
 select(nOldArr)
@@ -336,25 +347,27 @@ if !f18_lock_tables( { "kadev_0", "kadev_1" } )
 endif
 sql_table_update( NIL, "BEGIN" )
 
-
 do while !eof() 
 
-  IF gPostotak!="D"
-    @ m_x+1,m_y+2 SAY kadev_0->(id+": "+prezime+" "+ime)
-  ELSE
-    Postotak(2,++n1)
-  ENDIF
-  select kadev_1
-  seek kadev_0->id
+    IF gPostotak!="D"
+        @ m_x+1,m_y+2 SAY kadev_0->(id+": "+prezime+" "+ime)
+    ELSE
+        Postotak(2,++n1)
+    ENDIF
+    
+    select kadev_1
+    seek kadev_0->id
 
-  if !RekalkRSt(dDoDat,lPom)
+    if !RekalkRSt(dDoDat,lPom)
         // otkljucaj tabele...
         f18_free_tables( { "kadev_0", "kadev_1" } )
         sql_table_update( NIL, "ROLLBACK" )
-  endif
+        close all
+        return
+    endif
 
-  select(nOldArr)
-  skip
+    select(nOldArr)
+    skip
 enddo
 
 // otkljucaj tabele...
@@ -389,66 +402,87 @@ if lPom == NIL
     lPom := .f.
 endif
   
-nRstE:=0
-nRstB:=0
-KBfR:=0
-dOdDat:=CTOD("")
-fOtvoreno:=.f.
+nRstE := 0
+nRstB := 0
+KBfR := 0
+dOdDat := CTOD("")
+fOtvoreno := .f.
   
-do while id=kadev_0->id .and. (DatumOd<dDoDat)
-    if kadev_promj->Tip="X" .and. kadev_promj->URadSt = "="
+do while id == kadev_0->id .and. ( DatumOd < dDoDat )
+
+    select kadev_promj
+    hseek kadev_1->idpromj
+
+    select kadev_1
+
+    if kadev_promj->Tip = "X" .and. kadev_promj->URadSt = "="
         nRstE   := nAtr1
         nRstB   := nAtr2
         nRstUFe := nAtr1
         nRstUFb := nAtr2
     endif
-    if kadev_promj->Tip="X" .and. kadev_promj->URadSt = "+"
+
+    if kadev_promj->Tip = "X" .and. kadev_promj->URadSt = "+"
         nRstE   += nAtr1
         nRstB   += nAtr2
         nRstUFe += nAtr1
         nRstUFb += nAtr2
     endif
-    if kadev_promj->Tip="X" .and. kadev_promj->URadSt = "-"
+
+    if kadev_promj->Tip = "X" .and. kadev_promj->URadSt = "-"
         nRstE-=nAtr1
         nRstB-=nAtr2
     endif
-    if kadev_promj->Tip="X" .and. kadev_promj->URadSt = "A"
-        nRstE:=(nRstE+nAtr1)/2
-        nRstB:=(nRstB+nAtr2)/2
+
+    if kadev_promj->Tip = "X" .and. kadev_promj->URadSt = "A"
+        nRstE := ( nRstE + nAtr1 ) / 2
+        nRstB := ( nRstB+nAtr2 ) / 2
     endif
-    if kadev_promj->Tip="X" .and. kadev_promj->URadSt = "*"
-        nRstE:=nRstE*nAtr1
-        nRstB:=nRstB*nAtr2
+
+    if kadev_promj->Tip = "X" .and. kadev_promj->URadSt = "*"
+        nRstE := nRstE * nAtr1
+        nRstB := nRstB * nAtr2
     endif
-    if kadev_promj->Tip=="X" // ignorisi ovu promjenu
-       skip
-       loop
+
+    if kadev_promj->Tip == "X" 
+        // ignorisi ovu promjenu
+        skip
+        loop
     endif
+
     if fOtvoreno
-        nPom:=(DatumOd-dOdDat)
-        nPom2:=nPom*kBfR/100
-        if nPom<0 .and. kadev_promj->tip=="I"      // .and. ... dodao MS 18.9.00.
+
+        nPom := ( DatumOd - dOdDat )
+        nPom2 := nPom * kBfR / 100
+        
+        if nPom < 0 .and. kadev_promj->tip=="I"      
+            // .and. ... dodao MS 18.9.00.
             MsgO("Neispravne promjene kod "+kadev_0->prezime+" "+kadev_0->ime)
             Inkey(0)
             MsgC()
             return _ok
         else
-            nRstE+=nPom
-            nRstB+=nPom2
+            nRstE += nPom
+            nRstB += nPom2
         endif
+
     endif
-    if kadev_promj->Tip==" " .and. kadev_promj->URadSt $ "12" //postavljenja,....
-        dOdDat:=DatumOd          // otpocinje proces kalkulacije
-        if kadev_promj->URadSt=="1"
+
+    if kadev_promj->Tip == " " .and. kadev_promj->URadSt $ "12" 
+        //postavljenja,....
+        dOdDat := DatumOd          
+        // otpocinje proces kalkulacije
+        if kadev_promj->URadSt == "1"
             KBfR := kbenef->iznos
         else   // za URadSt = 2 ne obracunava se beneficirani r.st.
-            KBfR:=0
+            KBfR := 0
         endif
-        fOtvoreno:=.t.     // Otvaram pocetak trajanja promjene ....
+        fOtvoreno := .t.     // Otvaram pocetak trajanja promjene ....
     else
-        fOtvoreno:=.f.
+        fOtvoreno := .f.
     endif
-    if kadev_promj->Tip=="I" .and. kadev_promj->URadSt==" "
+
+    if kadev_promj->Tip == "I" .and. kadev_promj->URadSt==" "
         if empty(DatumDo)  // otvorena intervalna promjena koja se ne uracunava
             fOtvoreno:=.f.   // u radni staz - znaci nema vise
         else
@@ -458,6 +492,7 @@ do while id=kadev_0->id .and. (DatumOd<dDoDat)
             KBfR:=kbenef->iznos
         endif
     endif
+
     if kadev_promj->Tip=="I" .and. kadev_promj->URadSt $ "12"
         nPom:=iif(empty(DatumDo),dDoDat,if(DatumDo>dDoDat,dDoDat,DatumDo))-DatumOd
         if kadev_promj->URadSt=="1"
@@ -503,7 +538,7 @@ if lPom
     
     SELECT (F_POM)
     APPEND BLANK
-    REPLACE ID     WITH KADEV_0->ID        ,;
+    REPLACE ID WITH KADEV_0->ID        ,;
                RADSTE WITH nRstE-nRStUFe  ,;
                RADSTB WITH nRstB-nRStUFb  ,;
                STATUS WITH KADEV_0->STATUS

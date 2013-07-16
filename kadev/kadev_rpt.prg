@@ -178,7 +178,7 @@ Box(,6,77)
         @ m_x+2,m_y+2 SAY "Obuhvaceni radnici sa statusom    :" get cStatus PICT "@S20" 
         read
         ESC_BCR
-        aUsl1:=Parsiraj(cStatus,"STATUS")
+        aUsl1 := Parsiraj( ALLTRIM( cStatus ), "STATUS" )
         if aUsl1 <> NIL
             exit
         endif
@@ -208,8 +208,8 @@ SET FILTER TO &aUsl1
 
 // priprema matrice aKol za f-ju StampaTabele()
 // --------------------------------------------
-aKol:={}
-nKol:=0
+aKol := {}
+nKol := 0
 AADD(aKol, { "R.BR."     , {|| STR(nRBr,4)+"."}, .f., "C",  5, 0, 1, ++nKol } )
 AADD(aKol, { "RADNIK"    , {|| cImeRadnika    }, .f., "C", 50, 0, 1, ++nKol } )
 AADD(aKol, { "JMB"       , {|| ID             }, .f., "C", 13, 0, 1, ++nKol } )

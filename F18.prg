@@ -77,6 +77,8 @@ local _count := 0
 local oBackup := F18Backup():New()
 local _user_roles := f18_user_roles_info()
 local _server_db_version := get_version_str( server_db_version() )
+local _lock_db 
+local _tmp
 
 if arg_v == NIL
     // napravi NIL parametre
@@ -91,9 +93,19 @@ do while .t.
 
     _db_params := my_server_params()
 
+    _lock_db := F18_DB_LOCK():New():is_locked()
+    
     _x := 1
 
     @ _x, mnu_left + 1 SAY "Tekuca baza: " + ALLTRIM( _db_params["database"] ) + " / db ver: " + _server_db_version
+
+    if _lock_db
+        _tmp := "(locked)"
+    else
+        _tmp := "(free)"
+    endif
+    
+    @ _x, col() + 1 SAY _tmp 
     
     ++ _x
 

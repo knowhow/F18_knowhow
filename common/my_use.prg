@@ -182,7 +182,8 @@ if !(_a_dbf_rec["temp"])
 
     // tabela je pokrivena semaforom
     if (_rdd != "SEMAPHORE") .and. my_use_semaphore() .and. ;
-        ( !F18_DB_LOCK():New():is_locked() .or. ( F18_DB_LOCK():New():is_locked() .and. F18_DB_LOCK():New():run_synchro() ) )
+        ( !F18_DB_LOCK():New():is_locked() .or. ;
+            ( F18_DB_LOCK():New():is_locked() .and. F18_DB_LOCK():New():run_synchro() ) )
         dbf_semaphore_synchro(table)
     else
         // rdd = "SEMAPHORE" poziv is update from sql server procedure

@@ -483,7 +483,7 @@ endif
 function post_login( gvars )
 local _ver
 local oDB_lock := F18_DB_LOCK():New()
-local _need_synchro := .t.
+local _need_lock_synchro := .f.
 
 if gvars == NIL
     gvars := .t.
@@ -493,10 +493,12 @@ endif
 // ako je zakljucana na serveru
 if oDB_lock:is_locked()
 
-    oDB_lock:set_my_lock_params()
+    // setuj parametar ako ga uopste nema !
+    //oDB_lock:set_my_lock_params()
 
-    if !oDB_lock:run_synchro()
-        _need_synchro := .f.
+    if oDB_lock:run_synchro()
+        MsgBeep( "Baza je zakljucana ali postoji mogucnost da je neko mjenjao podatake#Pokrecem sinhro." )
+        _need_lock_synchro := .t.
     endif
 
 endif 
@@ -534,8 +536,13 @@ if gvars
     set_all_gvars()
 endif
 
-if _need_synchro
+if !oDB_lock:is_locked() .or. _need_lock_synchro
     f18_init_semaphores()
+endif
+
+if _need_lock_synchro
+    // setuj tekuci klijentski lock parametar
+    oDB_lock:set_my_lock_params( .t. )
 endif
 
 set_init_fiscal_params()

@@ -138,8 +138,6 @@ endif
 
 if ::lock_params[ CLI_LOCK_PARAM ] < ::lock_params[ SRV_LOCK_PARAM ]
     // setuj mi moj lock parametar na osnovu serverskog
-    MsgBeep( "Baza je zakljucana ali postoji mogucnost da je neko mjenjao podatake#Pokrecem sinhro." )
-    ::set_my_lock_params( .t. )
     _ok := .t.
 endif
 

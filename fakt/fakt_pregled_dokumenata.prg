@@ -594,6 +594,8 @@ local _dev_id, _dev_params
 local _refresh
 local _t_rec := RECNO()
 local _t_area := SELECT()
+local oDB_lock := F18_DB_LOCK():New()
+local _db_locked := oDb_lock:is_locked()
 
 _filter := DBFilter()
 
@@ -631,6 +633,11 @@ do case
 
     // setovanje broja veze fiskalnog racuna
     case CH == K_CTRL_V
+
+        if _db_locked
+            oDb_lock:warrning()
+            return DE_CONT
+        endif
     
         // setovanje broj fiskalnog isjecka
         select fakt_doks
@@ -685,6 +692,11 @@ do case
 
     // korekcija podataka dokumenta
     case chr(Ch) $ "kK"
+
+        if _db_locked
+            oDb_lock:warrning()
+            return DE_CONT
+        endif
     
         // korekcija podataka na dokumentu
         if fakt_edit_data( field->idfirma, field->idtipdok, field->brdok )
@@ -696,6 +708,11 @@ do case
     case UPPER( chr( Ch ) ) == "R"
 
         if !fiscal_opt_active()
+            return DE_CONT
+        endif
+
+        if _db_locked
+            oDb_lock:warrning()
             return DE_CONT
         endif
 
@@ -747,11 +764,21 @@ do case
     // duplikat dokumenta
     case chr(ch) $ "wW"
         
+        if _db_locked
+            oDb_lock:warrning()
+            return DE_CONT
+        endif
+
         fakt_napravi_duplikat( field->idfirma, field->idtipdok, field->brdok )
         select fakt_doks
 
     // generisanje storno dokumenta
     case chr(Ch) $ "sS"
+
+        if _db_locked
+            oDb_lock:warrning()
+            return DE_CONT
+        endif
 
         // generisi storno dokument
         storno_dok( field->idfirma, field->idtipdok, field->brdok )
@@ -779,6 +806,11 @@ do case
     // generisanje fakture na osnovu ponude
     case chr(Ch) $ "fF"
         
+        if _db_locked
+            oDb_lock:warrning()
+            return DE_CONT
+        endif
+
         if idtipdok $ "20"
             nRet := generisi_fakturu(lOpcine)
             _refresh := .t.
@@ -786,7 +818,12 @@ do case
      
     // povrat dokumenta u pripremu
     case chr(Ch) $ "pP"
-     
+ 
+        if _db_locked
+            oDb_lock:warrning()
+            return DE_CONT
+        endif
+
         _tmp := povrat_fakt_dokumenta( .f., field->idfirma, field->idtipdok, field->brdok )
 
         O_FAKT_DOKS
@@ -821,8 +858,6 @@ return nRet
 
 function refresh_fakt_tbl_dbfs( tbl_filter )
 
-//PushWa()
-
 close all
 
 O_VRSTEP
@@ -846,8 +881,6 @@ set order to tag "1"
 go top
 
 SET FILTER TO &(tbl_filter)
-
-//PopWa()
 
 return .t.
 

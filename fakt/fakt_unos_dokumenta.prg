@@ -143,7 +143,6 @@ if ( Ch == K_ENTER .and. EMPTY( field->brdok ) .and. EMPTY( field->rbr ) )
     return DE_CONT
 endif
 
-
 select fakt_pripr
 
 do case

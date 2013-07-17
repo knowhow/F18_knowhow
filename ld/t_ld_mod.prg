@@ -99,17 +99,31 @@ return nil
 // -----------------------------------------------
 method mMenuStandard
 local _priv_pr := f18_privgranted( "ld_pregled_podataka" )
+local oDb_lock := F18_DB_LOCK():New()
+local _db_locked := oDb_lock:is_locked()
 private opc:={}
 private opcexe:={}
 
 AADD(opc,   Lokal("1. obracun (unos, ispravka...)              "))
-AADD(opcexe, {|| ld_obracun()} )
+if !_db_locked
+    AADD(opcexe, {|| ld_obracun()} )
+else
+    AADD(opcexe, {|| oDb_lock:warrning() } )
+endif
 
 AADD(opc,   Lokal("2. brisanje"))
-AADD(opcexe, {|| ld_brisanje_obr()})
+if !_db_locked
+    AADD(opcexe, {|| ld_brisanje_obr()})
+else
+    AADD(opcexe, {|| oDb_lock:warrning() } )
+endif
 
 AADD(opc,   Lokal("3. rekalkulacija"))
-AADD(opcexe, {|| ld_rekalkulacija()})
+if !_db_locked
+    AADD(opcexe, {|| ld_rekalkulacija()})
+else
+    AADD(opcexe, {|| oDb_lock:warrning() } )
+endif
 
 AADD(opc,   Lokal("4. izvjestaji"))
 AADD(opcexe, {|| ld_izvjestaji()})

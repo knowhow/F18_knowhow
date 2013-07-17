@@ -30,6 +30,7 @@ CLASS F18_DB_LOCK
     METHOD set_lock_params() 
     METHOD set_my_lock_params() 
     METHOD run_synchro()
+    METHOD warrning()
 
     DATA lock_params
 
@@ -142,6 +143,13 @@ if ::lock_params[ CLI_LOCK_PARAM ] < ::lock_params[ SRV_LOCK_PARAM ]
 endif
 
 return _ok 
+
+
+// -----------------------------------------------------
+METHOD F18_DB_LOCK:warrning()
+// -----------------------------------------------------
+MsgBeep( "Baza je zakljucana ili nemate pravo pristupa ovoj opciji !" )
+return .f.
 
 
 

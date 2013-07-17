@@ -1,3 +1,7 @@
+1.4.208 2013-07-17, vsasa
+ 
+  - F18 lock database, init
+ 
 1.4.207 2013-07-16, vsasa
  
   - kadev, korekcije na rekalkulaciji podataka / radni staž

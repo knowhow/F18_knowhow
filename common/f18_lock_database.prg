@@ -85,10 +85,19 @@ return
 
 // ----------------------------------------------------
 // ----------------------------------------------------
-METHOD F18_DB_LOCK:set_lock_params()
+METHOD F18_DB_LOCK:set_lock_params( lock )
 
-set_metric( DB_LOCK_PARAM, NIL, DATE() )
-set_metric( DB_LOCK_PARAM, my_user(), DATE() )
+if lock == NIL
+    lock := .t.
+endif
+
+if lock
+    set_metric( DB_LOCK_PARAM, NIL, DATE() )
+    set_metric( DB_LOCK_PARAM, my_user(), DATE() )
+else
+    set_metric( DB_LOCK_PARAM, NIL, CTOD("") )
+    set_metric( DB_LOCK_PARAM, my_user(), CTOD("") )
+endif
 
 ::get_lock_params()
 
@@ -97,9 +106,18 @@ return
 
 // ----------------------------------------------------
 // ----------------------------------------------------
-METHOD F18_DB_LOCK:set_my_lock_params()
+METHOD F18_DB_LOCK:set_my_lock_params( force_set )
 
-if ::lock_params[ SRV_LOCK_PARAM ] <> CTOD("") .and. ::lock_params[ CLI_LOCK_PARAM ] == CTOD("")
+if force_set == NIL
+    force_set := .f.
+endif
+
+// nemam setovan parametar, setuj ga !
+if ::lock_params[ CLI_LOCK_PARAM ] == CTOD("")
+    force_set := .t.
+endif
+
+if force_set    
     // setuj moj parametar lock-a na osnovu 
     set_metric( DB_LOCK_PARAM, my_user(), ::lock_params[ SRV_LOCK_PARAM ] )
     ::get_lock_params()
@@ -119,6 +137,9 @@ if !::is_locked()
 endif
 
 if ::lock_params[ CLI_LOCK_PARAM ] < ::lock_params[ SRV_LOCK_PARAM ]
+    // setuj mi moj lock parametar na osnovu serverskog
+    MsgBeep( "Baza je zakljucana ali postoji mogucnost da je neko mjenjao podatake#Pokrecem sinhro." )
+    ::set_my_lock_params( .t. )
     _ok := .t.
 endif
 

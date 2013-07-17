@@ -27,6 +27,8 @@ local _log_delete_interval
 local _backup_company, _backup_server
 local _backup_removable, _backup_ping_time
 local _rpt_page_len
+local _db_lock := "N"
+local oDB_lock
 
 // parametri modula koristenih na glavnom meniju...
 _fin := fetch_metric( "main_menu_fin", my_user(), "D" )
@@ -71,6 +73,14 @@ _backup_removable := PADR( fetch_metric( "backup_removable_drive", my_user(), ""
 
 // duzina stranice
 _rpt_page_len := fetch_metric( "rpt_duzina_stranice", my_user(), RPT_PAGE_LEN )
+
+// da li je baza zakljucana ili ne ?
+oDB_lock := F18_DB_LOCK():New()
+if oDB_lock:is_locked()
+    _db_lock := "D"
+else
+    _db_lock := "N"
+endif
 
 if just_set == nil
 	just_set := .f.
@@ -167,6 +177,15 @@ if !just_set
     ++ _x
     ++ _x
 
+	@ _pos_x + _x, _pos_y SAY "Zakljucavanje baze ***" COLOR "I"
+
+	++ _x
+
+	@ _pos_x + _x, _pos_y SAY "Zakljucati tekucu bazu za koristenje (D/N):" GET _db_lock PICT "!@" VALID _db_lock $ "DN"
+
+    ++ _x
+    ++ _x
+	
 	@ _pos_x + _x, _pos_y SAY "Ostali parametri ***" COLOR "I"
 
 	++ _x
@@ -222,6 +241,15 @@ set_metric( "rpt_duzina_stranice", my_user(), _rpt_page_len )
 #ifdef __PLATFORM__WINDOWS
     set_metric( "backup_windows_ping_time", my_user(), _backup_ping_time )
 #endif
+
+// db lock
+if !just_set 
+    if _db_lock == "D"
+        oDB_lock:set_lock_params()
+    else
+        oDB_lock:set_lock_params(.f.) 
+    endif
+endif
 
 return
 

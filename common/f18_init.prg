@@ -482,10 +482,24 @@ endif
 // -------------------------------
 function post_login( gvars )
 local _ver
+local oDB_lock := F18_DB_LOCK():New()
+local _need_synchro := .t.
 
 if gvars == NIL
     gvars := .t.
 endif
+
+// provjeri moj db_lock parametar
+// ako je zakljucana na serveru
+if oDB_lock:is_locked()
+
+    oDB_lock:set_my_lock_params()
+
+    if !oDB_lock:run_synchro()
+        _need_synchro := .f.
+    endif
+
+endif 
 
 // ~/.F18/empty38/
 set_f18_home( my_server_params()["database"] )
@@ -501,8 +515,8 @@ _ver := read_dbf_version_from_config()
 set_a_dbfs()
 
 #ifndef NODE
-// kreiranje tabela...
-cre_all_dbfs(_ver)
+    // kreiranje tabela...
+    cre_all_dbfs(_ver)
 #endif
 
 // inicijaliziraj "dbf_key_fields" u __f18_dbf hash matrici
@@ -520,7 +534,9 @@ if gvars
     set_all_gvars()
 endif
 
-f18_init_semaphores()
+if _need_synchro
+    f18_init_semaphores()
+endif
 
 set_init_fiscal_params()
 

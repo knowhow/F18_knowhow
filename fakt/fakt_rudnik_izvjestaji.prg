@@ -322,7 +322,7 @@ do while .t.
  @ m_X+7,m_Y+ 2 SAY "Asortiman 6" GET cRoba6
  @ m_X+7,m_Y+26 GET qqRoba6    pict "@!S30"
 
- @ m_X+ 8,m_Y+2 SAY "KUPAC (prazno-svi)" GET cIdFirma VALID P_Firma(@cIdFirma) pict "@!S30"
+ @ m_X+ 8,m_Y+2 SAY "KUPAC (prazno-svi)" GET cIdFirma VALID {|| EMPTY(cIdFirma) .or. P_Firma(@cIdFirma) } pict "@!S30"
 
  @ m_X+ 9,m_Y+2 SAY "Za period od" GET dDatOD
  @ m_X+ 9,col()+2 SAY "do" GET dDatDo
@@ -481,7 +481,7 @@ do while .t.
  @ m_X+7,m_Y+ 2 SAY "Asortiman 6" GET cRoba6
  @ m_X+7,m_Y+26 GET qqRoba6    pict "@!S30"
 
- @ m_X+ 8,m_Y+2 SAY "KUPAC (prazno-svi)" GET cIdFirma VALID P_Firma(@cIdFirma) pict "@!S30"
+ @ m_X+ 8,m_Y+2 SAY "KUPAC (prazno-svi)" GET cIdFirma VALID {|| EMPTY(cIdFirma) .or. P_Firma(@cIdFirma) } pict "@!S30"
 
  @ m_X+ 9,m_Y+2 SAY "Za period od" GET dDatOD
  @ m_X+ 9,col()+2 SAY "do" GET dDatDo
@@ -684,7 +684,7 @@ do while .t.
 
  @ m_X+ 2,m_Y+ 2 SAY "Uslov za usluge (po sifri)" GET qqUsluge PICT "@!S30"
 
- @ m_X+ 4,m_Y+2 SAY "KUPAC (prazno-svi)" GET cIdFirma VALID P_Firma(@cIdFirma) pict "@!S30"
+ @ m_X+ 4,m_Y+2 SAY "KUPAC (prazno-svi)" GET cIdFirma VALID {|| EMPTY(cIdFirma) .or. P_Firma(@cIdFirma) } pict "@!S30"
 
  @ m_X+ 6,m_Y+2 SAY "Za period od" GET dDatOD
  @ m_X+ 6,col()+2 SAY "do" GET dDatDo
@@ -819,7 +819,7 @@ do while .t.
  @ m_X+5,m_Y+ 2 SAY "Iznos poreza 4" GET qqPorez4  PICT "999.99"
  @ m_X+6,m_Y+ 2 SAY "Iznos poreza 5" GET qqPorez5  PICT "999.99"
 
- @ m_X+ 8,m_Y+2 SAY "KUPAC (prazno-svi)" GET cIdFirma VALID P_Firma(@cIdFirma) pict "@!S30"
+ @ m_X+ 8,m_Y+2 SAY "KUPAC (prazno-svi)" GET cIdFirma VALID {|| EMPTY(cIdFirma) .or. P_Firma(@cIdFirma) } pict "@!S30"
 
  @ m_X+ 9,m_Y+2 SAY "Za period od" GET dDatOD
  @ m_X+ 9,col()+2 SAY "do" GET dDatDo

@@ -96,9 +96,11 @@ endif
 if lock
     set_metric( DB_LOCK_PARAM, NIL, DATE() )
     set_metric( DB_LOCK_PARAM, my_user(), DATE() )
+    log_write( "F18_DOK_OPER, DATABASE LOCK " + DTOC( DATE() ), 2 )
 else
     set_metric( DB_LOCK_PARAM, NIL, CTOD("") )
     set_metric( DB_LOCK_PARAM, my_user(), CTOD("") )
+    log_write( "F18_DOK_OPER, DATABASE UNLOCK " + DTOC( DATE() ), 2 )
 endif
 
 ::get_lock_params()

@@ -83,7 +83,7 @@ local oDb_lock := F18_DB_LOCK():New()
 local _locked := oDb_lock:is_locked()
 
 AADD(_opc, "1. unos/ispravka dokumenta                   ")
-if (ImaPravoPristupa(goModul:oDataBase:cName, "DOK", "KNJIZNALOGA")) .or. !_locked
+if (ImaPravoPristupa(goModul:oDataBase:cName, "DOK", "KNJIZNALOGA")) .and. !_locked
 	AADD(_opcexe, {|| fin_unos_naloga() })
 else
 	AADD(_opcexe, {|| oDb_lock:warrning() })
@@ -96,14 +96,14 @@ AADD(_opc, "3. pregled dokumenata")
 AADD(_opcexe, {|| MnuPregledDokumenata()})
 
 AADD(_opc, "4. generacija dokumenata")
-if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","GENDOK")) .or. !_locked
+if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","GENDOK")) .and. !_locked
 	AADD(_opcexe, {|| MnuGenDok()})
 else
 	AADD(_opcexe, {|| oDb_lock:warrning() })
 endif
 
 AADD(_opc, "5. moduli - razmjena podataka")
-if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","MODULIRAZMJENA")) .or. !_locked
+if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","MODULIRAZMJENA")) .and. !_locked
 	AADD(_opcexe, {|| MnuRazmjenaPodataka()})
 else
 	AADD(_opcexe, {|| oDb_lock:warrning() })
@@ -113,7 +113,7 @@ AADD(_opc, "6. ostale operacije nad dokumentima")
 AADD(_opcexe, {|| MnuOstOperacije()})
 
 AADD(_opc, "7. udaljene lokacije - razmjena podataka ")
-if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","UDLOKRAZMJENA")) .or. !_locked
+if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","UDLOKRAZMJENA")) .and. !_locked
 	AADD(_opcexe, {|| fin_udaljena_razmjena_podataka()})
 else
 	AADD(_opcexe, {|| oDb_lock:warrning() })
@@ -127,7 +127,7 @@ AADD(_opcexe, {|| MnuSifrarnik()})
 
 AADD(_opc, "9. administracija baze podataka")
 
-if (ImaPravoPristupa(goModul:oDataBase:cName,"MAIN","DBADMIN")) .or. !_locked
+if (ImaPravoPristupa(goModul:oDataBase:cName,"MAIN","DBADMIN")) .and. !_locked
 	AADD(_opcexe, {|| MnuAdminDB()})
 else
 	AADD(_opcexe, {|| oDb_lock:warrning() })
@@ -140,7 +140,7 @@ AADD(_opc, "K. kontrola zbira datoteka")
 AADD(_opcexe, {|| KontrZb()})
 
 AADD(_opc, "P. povrat dokumenta u pripremu")
-if (ImaPravoPristupa(goModul:oDatabase:cName, "UT", "POVRATNALOGA")) .or. !_locked
+if (ImaPravoPristupa(goModul:oDatabase:cName, "UT", "POVRATNALOGA")) .and. !_locked
 	AADD(_opcexe, {|| povrat_fin_naloga()})
 else
 	AADD(_opcexe, {|| oDb_lock:warrning() })

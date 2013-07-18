@@ -74,7 +74,7 @@ private opc:={}
 private opcexe:={}
 
 AADD(opc,   "1. unos/ispravka dokumenata                ")
-if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","UNOSDOK")) .or. !_db_locked
+if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","UNOSDOK")) .and. !_db_locked
 	AADD(opcexe,{|| kalk_unos_dokumenta()} )
 else
 	AADD(opcexe, {|| oDb_lock:warrning() })
@@ -87,28 +87,32 @@ AADD(opc,   "3. pregled dokumenata")
 AADD(opcexe, {|| kalk_pregled_dokumenata()})
 
 AADD(opc,   "4. generacija dokumenata")
-if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","GENDOK")) .or. !_db_locked
+if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","GENDOK")) .and. !_db_locked
 	AADD(opcexe,{|| kalk_mnu_generacija_dokumenta()})
 else
 	AADD(opcexe, {|| oDb_lock:warrning() })
 endif
 
 AADD(opc,   "5. moduli - razmjena podataka ")
-if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","MODULIRAZMJENA")) .or. !_db_locked
+if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","MODULIRAZMJENA")) .and. !_db_locked
 	AADD(opcexe, {|| kalk_razmjena_podataka()})
 else
 	AADD(opcexe, {|| oDb_lock:warrning() })
 endif
 
 AADD(opc,   "6. udaljene lokacije  - razmjena podataka") 
-if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","PRENOSDISKETE")) .or. !_db_locked
+if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","PRENOSDISKETE")) .and. !_db_locked
 	AADD(opcexe, {|| kalk_udaljena_razmjena_podataka()})
 else
 	AADD(opcexe, {|| oDb_lock:warrning() })
 endif
 
 AADD(opc,   "7. ostale operacije nad dokumentima")
-AADD(opcexe, {|| kalk_ostale_operacije_doks()})
+if !_db_locked
+    AADD(opcexe, {|| kalk_ostale_operacije_doks()})
+else
+	AADD(opcexe, {|| oDb_lock:warrning() })
+endif
 
 AADD(opc,"------------------------------------")
 AADD(opcexe, nil)
@@ -117,8 +121,8 @@ AADD(opc,   "8. sifrarnici")
 AADD(opcexe,{|| kalk_sifrarnik()})
 
 AADD(opc,   "9. administriranje baze podataka") 
-if (ImaPravoPristupa(goModul:oDataBase:cName,"MAIN","DBADMIN"))
-	AADD(opcexe, {|| MAdminKalk()})
+if (ImaPravoPristupa(goModul:oDataBase:cName,"MAIN","DBADMIN")) .and. !_db_locked
+	AADD(opcexe, {|| MAdminKalk() } )
 else
 	AADD(opcexe, {|| oDb_lock:warrning() })
 endif
@@ -131,7 +135,7 @@ AADD(opc,   "A. stampa azuriranog dokumenta")
 AADD(opcexe, {|| kalk_centr_stampa_dokumenta(.t.)})
 
 AADD(opc,   "P. povrat dokumenta u pripremu") 
-if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","POVRATDOK")) .or. !_db_locked
+if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","POVRATDOK")) .and. !_db_locked
 	AADD(opcexe, {|| Povrat_kalk_dokumenta()})
 else
 	AADD(opcexe, {|| oDb_lock:warrning() })

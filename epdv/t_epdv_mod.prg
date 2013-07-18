@@ -70,14 +70,14 @@ private opcexe:={}
 
 AADD(opc, "1. KUF unos/ispravka           ")
 
-if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","EDIT")) .or. !_db_locked
+if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","EDIT")) .and. !_db_locked
 	AADD(opcexe, {|| ed_kuf()})
 else
 	AADD(opcexe, {|| oDb_lock:warrning() } )
 endif
 
 AADD(opc, "2. KIF unos/ispravka")
-if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","EDIT")) .or. !_db_locked
+if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","EDIT")) .and. !_db_locked
 	AADD(opcexe, {|| ed_kif()})
 else
 	AADD(opcexe, {|| oDb_lock:warrning() } )
@@ -85,7 +85,7 @@ endif
 
 
 AADD(opc, "3. generacija dokumenata")
-if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","GENDOK")) .or. !_db_locked
+if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","GENDOK")) .and. !_db_locked
 	AADD(opcexe, {|| epdv_generisanje()})
 else
 	AADD(opcexe, {|| oDb_lock:warrning() } )
@@ -105,7 +105,7 @@ AADD(opc, "------------------------------------")
 AADD(opcexe, {|| nil})
 
 AADD(opc, "9. administracija baze podataka")
-if (ImaPravoPristupa(goModul:oDataBase:cName, "DB", "ADMIN"))
+if (ImaPravoPristupa(goModul:oDataBase:cName, "DB", "ADMIN")) .and. !_db_locked
 	AADD(opcexe, {|| epdv_admin_menu()})
 else
 	AADD(opcexe, {|| oDb_lock:warrning() } )

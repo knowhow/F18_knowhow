@@ -43,6 +43,8 @@ return nil
 method mMenu()
 local Fx
 local Fy
+local oDB_lock := F18_DB_LOCK():new()
+local _db_locked := oDB_lock:is_locked()
 
 gPrevPos:=gIdPos
 
@@ -65,7 +67,7 @@ do while (.t.)
     m_x:=Fx
     m_y:=Fy
 
-    KLevel:=PosPrijava(Fx, Fy)
+    KLevel := PosPrijava( Fx, Fy )
 
     if (self:lTerminate)
         return
@@ -91,8 +93,8 @@ fPrviPut:=.t.
 
 do while (.t.)
 
-    m_x:=Fx
-    m_y:=Fy
+    m_x := Fx
+    m_y := Fy
     
     // unesi prijavu korisnika
     if fPRviPut .and. gVSmjene=="N" // ne vodi vise smjena
@@ -102,9 +104,9 @@ do while (.t.)
         pos_status_traka()
     endif
 
-    SETPOS (Fx, Fy)
+    SETPOS( Fx, Fy )
 
-    pos_main_menu_level(KLevel,Fx,Fy)
+    pos_main_menu_level( KLevel, Fx, Fy, oDb_lock )
 
     if self:lTerminate
         // zavrsi run!
@@ -118,24 +120,29 @@ close all
 return
 
 
-function pos_main_menu_level(KLevel,Fx,Fy)
+function pos_main_menu_level( KLevel, Fx, Fy, db_lock )
 
 do case
-    case ((KLevel==L_ADMIN).or.(KLevel==L_SYSTEM))
+
+    case ( ( KLevel == L_ADMIN ) .or. ( KLevel == L_SYSTEM ) )
+        // nivo administrator
         pos_main_menu_admin()
-    case (KLevel==L_UPRAVN)
-        if !CRinitDone
-            Msg("NIJE UNIJETO POCETNO STANJE SMJENE!!!", 10)
-        endif
-        SETPOS(Fx, Fy)
+
+    case ( KLevel == L_UPRAVN )
+        // nivo upravnik
+        SETPOS( Fx, Fy )
         pos_main_menu_upravnik()
-    case (KLevel==L_PRODAVAC)
-        if gVrstaRS<>"S"
-            SETPOS(Fx,Fy)
-            pos_main_menu_prodavac()
+
+    case ( KLevel == L_PRODAVAC )
+
+        if db_lock:is_locked()
+            db_lock:warrning()
         else
-            MsgBeep("Na serveru ne mozete izdavati racune")
+            // nivo prodavac
+            SETPOS( Fx, Fy )
+            pos_main_menu_prodavac()
         endif
+
 endcase
 
 return

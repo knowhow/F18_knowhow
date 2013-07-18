@@ -304,22 +304,18 @@ local _rec
 if lAuto == nil
     lAuto := .f.
 endif
+
 if cPtn == nil
     cPtn := ""
 endif
+
 if cKto == nil
     cKto := ""
 endif
 
-if Logirati(goModul:oDataBase:cName,"DOK","ASISTENT")
-    lLogAZat:=.t.
-else
-    lLogAZat:=.f.
-endif
-
-cIdFirma:=gFirma
-cIdKonto:=space(7)
-cIdPart:=SPACE(6)
+cIdFirma := gFirma
+cIdKonto := SPACE(7)
+cIdPart := SPACE(6)
 
 if lAuto
     cIdKonto:=cKto
@@ -328,49 +324,53 @@ if lAuto
 endif
 
 qqPartner:=SPACE(60)
-picD:="@Z "+FormPicL("9 "+gPicBHD,18)
-picDEM:="@Z "+FormPicL("9 "+gPicDEM,9)
+picD := "@Z "+FormPicL("9 "+gPicBHD,18)
+picDEM := "@Z "+FormPicL("9 "+gPicDEM,9)
 
 O_PARTN
 O_KONTO
 
 if !lAuto
 
-Box("AZST",6,65,.f.)
-set cursor on
+    Box( "AZST", 6, 65, .f. )
 
- cPobST:="N"  // pobrisati stavke koje su se uzimale zatvorenim
+        set cursor on
 
- @ m_x+1,m_y+2 SAY "AUTOMATSKO ZATVARANJE STAVKI"
- if gNW=="D"
-   @ m_x+3,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
- else
-  @ m_x+3,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
- endif
- @ m_x+4,m_y+2 SAY "Konto: " GET cIdKonto  valid P_KontoFin(@cIdKonto)
- @ m_x+5,m_y+2 SAY "Partner (prazno-svi): " GET cIdPart  valid P_Firma(@cIdPart)
- @ m_x+6,m_y+2 SAY "Pobrisati stare markere zatv.stavki: " GET cPobSt pict "@!" valid cPobSt $ "DN"
+        cPobST := "N"  
+        // pobrisati stavke koje su se uzimale zatvorenim
 
+        @ m_x + 1, m_y + 2 SAY "AUTOMATSKO ZATVARANJE STAVKI"
+        if gNW == "D"
+            @ m_x + 3, m_y + 2 SAY "Firma "
+            ?? gFirma, "-", ALLTRIM( gNFirma )
+        else
+            @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma ;
+                    VALID {|| P_Firma( @cIdFirma ), cIdfirma := LEFT( cIdfirma, 2 ), .t. }
+        endif
+        @ m_x + 4, m_y + 2 SAY "Konto: " GET cIdKonto VALID P_KontoFin( @cIdKonto )
+        @ m_x + 5, m_y + 2 SAY "Partner (prazno-svi): " GET cIdPart ;
+                VALID {|| EMPTY( cIdPart ) .or. P_Firma( @cIdPart ) }
+        @ m_x + 6, m_y + 2 SAY "Pobrisati stare markere zatv.stavki: " GET cPobSt PICT "@!" VALID cPobSt $ "DN"
 
- read; ESC_BCR
+        read
+        ESC_BCR
 
-
-BoxC()
+    BoxC()
 
 endif
-cIdFirma:=left(cIdFirma,2)
+
+cIdFirma := LEFT( cIdFirma, 2 )
 
 O_SUBAN
 
 select SUBAN
 set order to tag "3"
 // ORDER 3: SUBANi3: IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)
-seek cidfirma+cidkonto
+seek cIdFirma + cIdKonto
+
 EOF CRET
 
-log_write( "otvorene stavke, automatsko zatvaranje", 5 )
-
-if cPobSt=="D" .and. Pitanje(,"Zelite li zaista pobrisati markere ??","N")=="D"
+if cPobSt == "D" .and. Pitanje(,"Zelite li zaista pobrisati markere ??","N") == "D"
 
     MsgO("Brisem markere ...")
 
@@ -401,59 +401,58 @@ if cPobSt=="D" .and. Pitanje(,"Zelite li zaista pobrisati markere ??","N")=="D"
 endif
 
 Box("count",1,30,.f.)
-nC:=0
-@ m_x+1,m_y+2 SAY "Zatvoreno:"
-@ m_x+1,m_y+12 SAY nC  // brojac zatvaranja
+    nC:=0
+    @ m_x+1,m_y+2 SAY "Zatvoreno:"
+    @ m_x+1,m_y+12 SAY nC  // brojac zatvaranja
 
-seek cidfirma+cidkonto
-EOF CRET
+    seek cidfirma+cidkonto
+    EOF CRET
 
-f18_lock_tables({"fin_suban"})
-sql_table_update( nil, "BEGIN" )
+    f18_lock_tables({"fin_suban"})
+    sql_table_update( nil, "BEGIN" )
 
-DO WHILESC !eof() .AND. idfirma==cidfirma .and. cIdKonto=IdKonto // konto
+    DO WHILESC !eof() .AND. idfirma==cidfirma .and. cIdKonto=IdKonto // konto
 
-   if !Empty(cIdPart)
-    if (cIdPart <> idpartner)
-        skip
-        loop
-    endif
-   endif
-   cIdPartner=IdPartner
-   cBrDok=BrDok
-   cOtvSt:=" "
-   nDugBHD:=nPotBHD:=0
-   DO WHILESC !eof() .AND. idfirma==cidfirma .AND. cIdKonto=IdKonto .AND. cIdPartner=IdPartner .AND. cBrDok==BrDok
-   // partner, brdok
-      IF D_P="1"
-         nDugBHD+=IznosBHD
-         cOtvSt:="1"
-      ELSE
-         nPotBHD+=IznosBHD
-         cOtvSt:="1"
-      ENDIF
-      SKIP
-   ENDDO // partner, brdok
-
-    IF ABS(round(nDugBHD-nPotBHD,3)) <= gnLOSt .AND. cOtvSt=="1"
-        SEEK cIdFirma+cIdKonto+cIdPartner+cBrDok
-        @ m_x+1,m_y+12 SAY ++nC  // brojac zatvaranja
-        DO WHILESC !eof() .AND. cIdKonto=IdKonto .and. cIdPartner == IdPartner .and. cBrDok=BrDok
-            _rec := dbf_get_rec()
-            _rec["otvst"] := "9"
-            update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )   
+        if !Empty(cIdPart)
+            if (cIdPart <> idpartner)
+                skip
+                loop
+            endif
+        endif
+        cIdPartner=IdPartner
+        cBrDok=BrDok
+        cOtvSt:=" "
+        nDugBHD:=nPotBHD:=0
+        DO WHILESC !eof() .AND. idfirma==cidfirma .AND. cIdKonto=IdKonto .AND. cIdPartner=IdPartner .AND. cBrDok==BrDok
+            // partner, brdok
+            IF D_P="1"
+                nDugBHD+=IznosBHD
+                cOtvSt:="1"
+            ELSE
+                nPotBHD+=IznosBHD
+                cOtvSt:="1"
+            ENDIF
             SKIP
-        ENDDO
-    ENDIF
+        ENDDO 
+        // partner, brdok
 
-ENDDO
+        IF ABS(round(nDugBHD-nPotBHD,3)) <= gnLOSt .AND. cOtvSt=="1"
+            SEEK cIdFirma+cIdKonto+cIdPartner+cBrDok
+            @ m_x+1,m_y+12 SAY ++nC  // brojac zatvaranja
+            DO WHILESC !eof() .AND. cIdKonto=IdKonto .and. cIdPartner == IdPartner .and. cBrDok=BrDok
+                _rec := dbf_get_rec()
+                _rec["otvst"] := "9"
+                update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )   
+                SKIP
+            ENDDO
+        ENDIF
+    ENDDO
 
-f18_free_tables({"fin_suban"})
-sql_table_update( nil, "END" )
+    f18_free_tables({"fin_suban"})
+    sql_table_update( nil, "END" )
 
-if lLogAZat
-    EventLog(nUser,goModul:oDataBase:cName,"DOK","ASISTENT",nDugBHD,nPotBHD,nC,nil,"","","F:"+cIdFirma+"- K:"+cIdKonto,Date(),Date(),"","Automatsko zatvaranje otvorenih stavki")
-endif
+    log_write( "F18_DOK_OPER, automatsko zatvaranje stavki, OASIST, duguje: " + ALLTRIM(STR(nDugBHD,12,2)) + ;
+        ", potrazuje: " + ALLTRIM( STR( nPotBHD, 12, 2 ) ) + " firma: " + cIdFirma + " konto: " + cIdKonto, 2 )
 
 BoxC() 
 // counter zatvaranja

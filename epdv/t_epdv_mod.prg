@@ -61,6 +61,8 @@ return nil
 // -----------------------------------------------
 // -----------------------------------------------
 method mMenuStandard()
+local oDb_lock := F18_DB_LOCK():New()
+local _db_locked := oDb_lock:is_locked()
 
 private Izbor:=1
 private opc:={}
@@ -68,25 +70,25 @@ private opcexe:={}
 
 AADD(opc, "1. KUF unos/ispravka           ")
 
-if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","EDIT"))
+if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","EDIT")) .or. !_db_locked
 	AADD(opcexe, {|| ed_kuf()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(opcexe, {|| oDb_lock:warrning() } )
 endif
 
 AADD(opc, "2. KIF unos/ispravka")
-if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","EDIT"))
+if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","EDIT")) .or. !_db_locked
 	AADD(opcexe, {|| ed_kif()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(opcexe, {|| oDb_lock:warrning() } )
 endif
 
 
 AADD(opc, "3. generacija dokumenata")
-if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","GENDOK"))
+if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","GENDOK")) .or. !_db_locked
 	AADD(opcexe, {|| epdv_generisanje()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(opcexe, {|| oDb_lock:warrning() } )
 endif
 
 AADD(opc, "4. izvjestaji")
@@ -106,7 +108,7 @@ AADD(opc, "9. administracija baze podataka")
 if (ImaPravoPristupa(goModul:oDataBase:cName, "DB", "ADMIN"))
 	AADD(opcexe, {|| epdv_admin_menu()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(opcexe, {|| oDb_lock:warrning() } )
 endif
 
 AADD(opc, "------------------------------------")
@@ -118,7 +120,7 @@ AADD(opc, "X. parametri")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"PARAM","ALL"))
 	AADD(opcexe, {|| epdv_parametri()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(opcexe, {|| oDb_lock:warrning() } )
 endif
 
 Menu_SC("gpdv",.t., .f.)

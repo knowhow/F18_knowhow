@@ -57,24 +57,26 @@ return nil
 // -----------------------------------------------
 // -----------------------------------------------
 method mMenuStandard()
+local oDB_lock := F18_DB_LOCK():New()
+local _db_locked := oDB_lock:is_locked()
 
 private Izbor:=1
 private opc:={}
 private opcexe:={}
 
-AADD(opc, "1. unos/ispravka dokumenata               ")
+AADD(opc, "1. unos/ispravka dokumenata                       ")
 
-if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","EDIT"))
+if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","EDIT")) .or. !_db_locked
     AADD(opcexe, {|| mat_knjizenje_naloga()})
 else
-    AADD(opcexe, {|| MsgBeep(cZabrana)})
+    AADD(opcexe, {|| oDB_lock:warrning() } )
 endif
 
 AADD(opc, "2. izvjestaji")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"RPT","MNU"))
     AADD(opcexe, {|| mat_izvjestaji()})
 else
-    AADD(opcexe, {|| MsgBeep(cZabrana)})
+    AADD(opcexe, {|| oDB_lock:warrning() } )
 endif
 
 
@@ -92,14 +94,25 @@ AADD(opc, "5. stampa proknjizenih naloga")
 AADD(opcexe, {|| mat_stampa_naloga()})
 
 AADD(opc, "6. inventura")
-AADD(opcexe, {|| mat_inventura()})
+if !_db_locked
+    AADD(opcexe, {|| mat_inventura() } )
+else
+    AADD(opcexe, {|| oDB_lock:warrning() } )
+endif
 
 AADD(opc, "F. prenos fakt->mat")
-AADD(opcexe, {|| mat_prenos_fakmat()})
+if !_db_locked
+    AADD(opcexe, {|| mat_prenos_fakmat()})
+else
+    AADD(opcexe, {|| oDB_lock:warrning() } )
+endif
 
 AADD(opc, "G. generacija dokumenta pocetnog stanja")
-AADD(opcexe, {|| mat_prenos_podataka()})
-
+if !_db_locked
+    AADD(opcexe, {|| mat_prenos_podataka()})
+else
+    AADD(opcexe, {|| oDB_lock:warrning() } )
+endif
 
 AADD(opc, "------------------------------------")
 AADD(opcexe, {|| nil})
@@ -111,10 +124,10 @@ AADD(opc, "------------------------------------")
 AADD(opcexe, {|| nil})
 
 AADD(opc, "P. povrat naloga u pripremu")
-if (ImaPravoPristupa(goModul:oDataBase:cName, "DB", "POVRAT"))
+if (ImaPravoPristupa(goModul:oDataBase:cName, "DB", "POVRAT")) .or. !_db_locked
     AADD(opcexe, {|| mat_povrat_naloga()})
 else
-    AADD(opcexe, {|| MsgBeep(cZabrana)})
+    AADD(opcexe, {|| oDB_lock:warrning() } )
 endif
 
 
@@ -122,7 +135,7 @@ AADD(opc, "9. administracija baze podataka")
 if (ImaPravoPristupa(goModul:oDataBase:cName, "DB", "ADMIN"))
     AADD(opcexe, {|| mat_admin_menu()})
 else
-    AADD(opcexe, {|| MsgBeep(cZabrana)})
+    AADD(opcexe, {|| oDB_lock:warrning() } )
 endif
 
 AADD(opc, "------------------------------------")

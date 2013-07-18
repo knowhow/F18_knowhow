@@ -609,5 +609,25 @@ return _val
 
 
 
+// -----------------------------------------------------
+// vraca serverski datum 
+// -----------------------------------------------------
+function _sql_server_date()
+local _date
+local _pg_server := my_server()
+local _qry := "SELECT CURRENT_DATE;"
+local _res
+
+_res := _sql_query( _pg_server, _qry )
+
+if VALTYPE( _res ) <> "L"
+    _date := _res:FieldGet(1)
+else
+    _date := NIL
+endif
+
+return _date
+
+
 
 

@@ -103,7 +103,7 @@ do while .t.
     @ _x, mnu_left + 1 SAY "Tekuca baza: " + ALLTRIM( _db_params["database"] ) + " / db ver: " + _server_db_version
 
     if _lock_db
-        _tmp := "[ srv lock " + DTOC( oDb_lock:lock_params["server_lock"] ) + " / cli lock " + DTOC( oDb_lock:lock_params["client_lock"] )  + " ]"
+        _tmp := "[ srv lock " + oDb_lock:lock_params["server_lock"] + " / cli lock " + oDb_lock:lock_params["client_lock"]  + " ]"
     else
         _tmp := ""
     endif

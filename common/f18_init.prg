@@ -489,6 +489,10 @@ if gvars == NIL
     gvars := .t.
 endif
 
+// da li treba zakljucati bazu
+// ovo provjeri uvijek, ako naleti da treba zakljucat ce je odmah...
+oDb_lock:db_must_be_locked()
+
 // provjeri moj db_lock parametar
 // ako je zakljucana na serveru
 if oDB_lock:is_locked()

@@ -71,6 +71,7 @@ local _server_year := YEAR( _server_date )
 local _database_year := VAL( RIGHT( _database, 4 ) )
 local _must_lock := .f.
 local _dok_last_date
+local _info := .f.
 
 // nema se tu sta raditi ili je zakljucana vec ili je 0 parametar
 if ::lock_params[ SRV_LOCK_PARAM ] == "0" .or. ::lock_params[ SRV_LOCK_PARAM ] <> DTOC( CTOD("") ) 
@@ -91,16 +92,16 @@ if _database_year <= ( _server_year - 1 )
         // provjeri za svaki slucaj i dokumente
         _dok_last_date := ::last_dok_date()
 
-        if _dok_last_date <> NIL .and. ( YEAR( _dok_last_date ) <= ( _server_year - 1 ) ) 
-
-            // provjera 3 mjeseca...
-
-            if MONTH( _server_date ) > 3
-                _must_lock := .t.
+        if _dok_last_date <> NIL 
+            if YEAR( _dok_last_date ) <= ( _server_year - 1 ) 
+                // provjera 3 mjeseca...
+                if MONTH( _server_date ) > 3
+                    _must_lock := .t.
+                    _info := .t.
+                endif
             endif
-
         else
-            MsgBeep( "Ne mogu utvrditi zadnji datum dokumenta u bazi !" )
+            MsgBeep( "Ne moze se napraviti zakljucenje baze !#Ne mogu utvrditi zadnji datum dokumenta u bazi !" )
         endif
 
     else
@@ -111,8 +112,12 @@ if _database_year <= ( _server_year - 1 )
 endif
 
 if _must_lock
+
     ::set_lock_params()
     _ok := .t.
+
+    MsgBeep( "Program je napravio automatsko zakljucavanje baze#na osnovu informacija sa servera." )
+
 endif
 
 return _ok

@@ -75,10 +75,12 @@ local _x := 1
 local _db_params
 local _count := 0
 local oBackup := F18Backup():New()
+local oDb_lock
 local _user_roles := f18_user_roles_info()
 local _server_db_version := get_version_str( server_db_version() )
 local _lock_db 
 local _tmp
+local _color := "BG+/B"
 
 if arg_v == NIL
     // napravi NIL parametre
@@ -93,19 +95,20 @@ do while .t.
 
     _db_params := my_server_params()
 
-    _lock_db := F18_DB_LOCK():New():is_locked()
+    oDb_lock := F18_DB_LOCK():New()
+    _lock_db := oDb_lock:is_locked()
     
     _x := 1
 
     @ _x, mnu_left + 1 SAY "Tekuca baza: " + ALLTRIM( _db_params["database"] ) + " / db ver: " + _server_db_version
 
     if _lock_db
-        _tmp := "(locked)"
+        _tmp := "[ srv lock " + DTOC( oDb_lock:lock_params["server_lock"] ) + " / cli lock " + DTOC( oDb_lock:lock_params["client_lock"] )  + " ]"
     else
-        _tmp := "(free)"
+        _tmp := ""
     endif
     
-    @ _x, col() + 1 SAY _tmp 
+    @ _x, col() + 1 SAY _tmp COLOR _color 
     
     ++ _x
 

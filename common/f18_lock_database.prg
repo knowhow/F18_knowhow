@@ -29,6 +29,7 @@ CLASS F18_DB_LOCK
     METHOD get_lock_params()
     METHOD set_lock_params() 
     METHOD set_my_lock_params() 
+    METHOD reset_my_lock_params()
     METHOD run_synchro()
     METHOD warrning()
 
@@ -125,6 +126,21 @@ if force_set
 endif
 
 return
+
+
+// ----------------------------------------------------
+// ----------------------------------------------------
+METHOD F18_DB_LOCK:reset_my_lock_params()
+
+// nemam setovan parametar, setuj ga !
+if ::lock_params[ CLI_LOCK_PARAM ] <> CTOD("")
+    // setuj moj parametar lock-a na osnovu 
+    set_metric( DB_LOCK_PARAM, my_user(), CTOD("") )
+    ::get_lock_params()
+endif
+
+return
+
 
 
 // ----------------------------------------------------

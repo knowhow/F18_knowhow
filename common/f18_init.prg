@@ -500,7 +500,9 @@ if oDB_lock:is_locked()
         MsgBeep( "Baza je zakljucana ali postoji mogucnost da je neko mjenjao podatake#Pokrecem sinhro." )
         _need_lock_synchro := .t.
     endif
-
+else
+    // resetuj moj lock param ako treba
+    oDb_lock:reset_my_lock_params()
 endif 
 
 // ~/.F18/empty38/

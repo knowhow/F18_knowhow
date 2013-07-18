@@ -241,6 +241,8 @@ AADD( menuexec, {|| NIL } )
 // ostale opcije...
 AADD( menuop, " B. Backup podataka" )
 AADD( menuexec, {|| f18_backup_data() } )
+AADD( menuop, " L. Zakljucavanje/otkljucavanje baze" )
+AADD( menuexec, {|| f18_database_lock_menu() } )
 AADD( menuop, " P. Parametri aplikacije" )
 AADD( menuexec, {|| f18_app_parameters() } )
 AADD( menuop, " W. Pregled log-a" )

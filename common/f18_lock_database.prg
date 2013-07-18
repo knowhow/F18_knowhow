@@ -153,3 +153,46 @@ return .f.
 
 
 
+function f18_database_lock_menu()
+local oDb_lock 
+local GetList := {}
+local _tmp
+local _answ := "D"
+local _db_locked
+
+if !SigmaSif( "ADMIN" )
+    MsgBeep( "Opcija nedostupna !" )
+    return 
+endif
+
+oDb_lock := F18_DB_LOCK():New()
+_db_locked := oDb_lock:is_locked()
+
+if _db_locked
+    _tmp := "Otkljucati bazu (D/N) ?" 
+else
+    _tmp := "Zakljucati bazu (D/N) ?" 
+endif
+
+Box(, 5, 60 )
+    @ m_x + 1, m_y + 2 SAY "*** otkljucavanje/zakljucavanje baze ***"
+    @ m_x + 2, m_y + 2 SAY "INFO:"
+    @ m_x + 3, m_y + 2 SAY "Nakon sto je baza zakljucana, nije moguce mjenjati podatke"
+    @ m_x + 5, m_y + 2 SAY _tmp GET _answ VALID _answ $ "DN" PICT "@!"
+    read
+BoxC()
+
+if LastKey() == K_ESC .or. _answ == "N"
+    return
+endif
+
+if _db_locked
+    oDb_lock:set_lock_params( .f. )
+else
+    oDb_lock:set_lock_params( .t. )
+endif
+
+return
+
+
+

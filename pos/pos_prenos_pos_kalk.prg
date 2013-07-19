@@ -781,6 +781,9 @@ _export_location := ALLTRIM( gKalkDest) + _id_pm + SLASH
 // napravi i ovaj direktorij ako ne postoji
 _dir_create( ALLTRIM( _export_location ) )
 
+// nakon kreiranja direktorija prebaci se u lokalni folder
+DirChange( my_home() )
+
 // "tk1203"
 _table_name := get_topskalk_export_file( "1", _export_location, datum_do, prefix ) 
     

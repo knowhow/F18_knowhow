@@ -338,6 +338,9 @@ if gMultiPM == "D"
         // kreiraj mi ovaj direktorij ako ne postoji 
         _dir_create( _export )
 
+        // nakon dir create prebaci se na my_local_folder
+        DirChange( my_home() )
+
         // pronadji mi naziv fajla koji je dozvoljen 
         _dest_patt := get_topskalk_export_file( "2", _export, datum )
        

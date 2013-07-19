@@ -2,6 +2,7 @@
  
   - F18 lock database, init
   - FIN, automatsko zatvaranje otvorenih stavki, može i partner prazno (za sve partnere)
+  - KALK/POS razmjena podataka, problem sa unmount-om na unix sistemu
  
 1.4.207 2013-07-16, vsasa
  

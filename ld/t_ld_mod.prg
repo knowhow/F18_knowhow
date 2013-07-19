@@ -22,7 +22,6 @@ CLASS TLdMod FROM TAppMod
 	method mMenu
 	method mMenuStandard
 	method initdb
-	method chk_db
 	method srv
 END CLASS
 
@@ -42,38 +41,6 @@ return nil
 
 // ------------------------------------------------
 // ------------------------------------------------
-method chk_db()
-local cModStru:=""
-// provjeri postojanje specificnih polja LD.DBF
-// HIREDFROM
-O_RADN
-select radn
-if radn->(FieldPOS("HIREDFROM")) == 0
-	// obavjesti za modifikaciju
-	cModStru += "DP.CHS, "
-endif
-
-// provjeri nadogradnje 2009
-if radn->(FieldPOS("KLO")) == 0
-	cModStru += "LD.CHS (zakon.promj.2009), "
-endif
-
-// provjeri KRED->FIL polje
-O_KRED
-select kred
-if kred->(FieldPos("FIL")) == 0
-	cModStru += "KRED.CHS, "
-endif
-
-if !EMPTY(cModStru)
-	MsgBeep("Upozorenje!##Odraditi modifikacije struktura:#" + cModStru)
-endif
-
-return
-
-
-// ------------------------------------------------
-// ------------------------------------------------
 method mMenu()
 
 private Izbor
@@ -82,7 +49,6 @@ set_hot_keys()
 
 Izbor:=1
 
-::chk_db()
 close all
 
 @ 1,2 SAY padc(gTS+": "+gNFirma,50,"*")

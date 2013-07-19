@@ -18,34 +18,45 @@
 // funkcija za prijavu u obracun
 // ----------------------------------------
 function ParObracun()
-local nX := 1
-local nPadL := 20
+local _x := 1
+local _pad_l := 20
+local _v_obr_unos := fetch_metric( "ld_vise_obracuna_na_unosu", my_user(), "N" ) == "D"
 
 O_LD_RJ
 
-Box(, 5, 50 )
+Box(, 6 + IF( _v_obr_unos, 1, 0 ), 50 )
 
     SET CURSOR ON
-    
-    @ m_x + nX, m_y + 2 SAY PADL( "Radna jedinica", nPadL ) GET gRJ VALID P_LD_Rj( @gRj ) pict "@!"
-    
-    ++nX
+   
+    @ m_x + _x, m_y + 2 SAY PADC( "*** PRISTUPNI PODACI ZA OBRACUN ***", 50 )
+ 
+    ++ _x
+    ++ _x
 
-    @ m_x + nX, m_y + 2 SAY PADL( "Mjesec", nPadL ) GET gMjesec pict "99"
+    @ m_x + _x, m_y + 2 SAY PADL( "Radna jedinica", _pad_l ) GET gRJ VALID P_LD_Rj( @gRj ) PICT "@!"
     
-    ++nX
-    
-    @ m_x + nX, m_y + 2 SAY PADL( "Godina", nPadL ) GET gGodina pict "9999"
-    
-    ++nX
+    ++ _x
 
-    @ m_x + nX, m_y + 2 SAY PADL( "Varijanta obracuna", nPadL ) GET gVarObracun
+    @ m_x + _x, m_y + 2 SAY PADL( "Mjesec", _pad_l ) GET gMjesec pict "99"
+    
+    ++ _x
+    
+    @ m_x + _x, m_y + 2 SAY PADL( "Godina", _pad_l ) GET gGodina pict "9999"
+    
+    // varijanta obracuna nam ne treba, imamo je u parametrima
+    //++ _x
+    //@ m_x + _x, m_y + 2 SAY PADL( "Varijanta obracuna", _pad_l ) GET gVarObracun
 
-    ++nX
+    // samo ako treba odabirati obracune u parametrima onda prikazi i ovo
+    if _v_obr_unos
+
+        ++ _x
         
-    @ m_x + nX, m_y + 2 SAY PADL( "Obracun broj", nPadL ) GET gObracun ;
-            WHEN HelpObr( .f., gObracun ) VALID ValObr( .f., gObracun )
-    
+        @ m_x + _x, m_y + 2 SAY PADL( "Obracun broj", _pad_l ) GET gObracun ;
+                WHEN HelpObr( .f., gObracun ) VALID ValObr( .f., gObracun )
+
+    endif
+
     READ
     
     ClvBox()
@@ -62,8 +73,8 @@ if LASTKEY() <> K_ESC
 
 endif
 
-if gZastitaObracuna=="D"
-    IspisiStatusObracuna(gRj, gGodina, gMjesec)
+if gZastitaObracuna == "D"
+    IspisiStatusObracuna( gRj, gGodina, gMjesec )
 endif
 
 return

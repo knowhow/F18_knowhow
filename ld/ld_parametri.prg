@@ -150,6 +150,7 @@ function ld_set_obracun()
 local nX := 1
 local _radni_sati := fetch_metric("ld_radni_sati", NIL, "N" ) 
 local _st_stopa := fetch_metric( "ld_porezi_stepenasta_stopa", NIL, "N" )
+local _v_obr_unos := fetch_metric( "ld_vise_obracuna_na_unosu", my_user(), "N" )
 private GetList:={}
 
 cVarPorol := PADR( cVarPorol, 2 )
@@ -166,8 +167,12 @@ Box(, 20, 77)
     
     @ m_x+nX,m_y+2 SAY "  '2' - nova varijanta obracuna, zak.pr.2009" 
     
-    ++nX    
+    ++ nX
+
+    @ m_x + nX, m_y + 2 SAY "Odabir broja obracuna na unosu (D/N) ?" GET _v_obr_unos VALID _v_obr_unos $ "DN" PICT "@!"    
     
+    ++ nX
+
     @ m_x+nX,m_y+2 SAY "Tip obracuna (legacy)" GET gTipObr
     @ m_x+nX, col()+1 SAY "Mogucnost unosa mjeseca pri obradi D/N:" GET gUnMjesec  pict "@!" valid gUnMjesec $ "DN"
     ++nX
@@ -233,6 +238,7 @@ if (LastKey() <> K_ESC)
     set_metric( "ld_radni_sati", NIL, _radni_sati ) 
     set_metric( "ld_porezi_stepenasta_stopa", NIL, _st_stopa )
     set_metric( "ld_zastita_obracuna", NIL, gZastitaObracuna )
+    set_metric( "ld_vise_obracuna_na_unosu", my_user(), _v_obr_unos )
 
 endif
 

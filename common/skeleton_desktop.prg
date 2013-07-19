@@ -234,9 +234,9 @@ local _db_lock := F18_DB_LOCK():New():is_locked()
 
 if _db_lock
     _color := "W/R+"
-	@ MAXROWS()-1, 30 SAY "LOCKED" COLOR _color
+	@ MAXROWS()-1, 27 SAY "DB LOCK" COLOR _color
 else
-	@ MAXROWS()-1, 30 SAY "      " COLOR _color
+	@ MAXROWS()-1, 27 SAY "       " COLOR _color
 endif
 
 

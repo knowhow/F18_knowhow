@@ -94,14 +94,20 @@ if _database_year <= ( _server_year - 1 )
 
         if _dok_last_date <> NIL 
             if YEAR( _dok_last_date ) <= ( _server_year - 1 ) 
-                // provjera 3 mjeseca...
-                if MONTH( _server_date ) > 3
+                // provjera 3 mjeseca... 15.03.tekuce godine
+                if MONTH( _server_date ) > 3 .and. DAY( _server_date ) >= 15
                     _must_lock := .t.
                     _info := .t.
                 endif
             endif
         else
-            MsgBeep( "Ne moze se napraviti zakljucenje baze !#Ne mogu utvrditi zadnji datum dokumenta u bazi !" )
+
+            MsgBeep( "Ne moze se napraviti automatsko zakljucenje baze !#Ne mogu utvrditi zadnji datum dokumenta u bazi !" )
+
+            if Pitanje(, "Treba li ovu bazu zakljucati (D/N) ?", "D" ) == "D"
+                _must_lock := .t.
+            endif
+
         endif
 
     else
@@ -131,13 +137,16 @@ local _date := NIL
 local _my_server := my_server()
 local _qry, _res
 
-_qry := "SELECT MAX(datnal) FROM fmk.fin_nalog;"
+// vidi finansije
+_qry := "SELECT MAX( datnal ) FROM fmk.fin_nalog;"
 
 _res := _sql_query( _my_server, _qry )
 
 if VALTYPE(_res) <> "L"
     _date := _res:FieldGet(1)
 endif
+
+// a sta ako nema finansija ?????
 
 return _date
 

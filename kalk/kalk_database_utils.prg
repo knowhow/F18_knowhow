@@ -708,18 +708,17 @@ return
 // -------------------------------------------------
 function kalk_pripr_brisi_od_do()
 local _ret := .f.
-local _od := 0
-local _do := 0
+local _od := SPACE(4)
+local _do := SPACE(4)
 
 select kalk_pripr
 go top
 
-_od := VAL( ALLTRIM( field->rbr ) )
-_do := 0
+_od := PADR( field->rbr, 4 )
 
 Box(, 1, 60 )
-    @ m_x + 1, m_y + 2 SAY "Brisi stavke od" GET _od PICT "9999"
-    @ m_x + 1, col() + 1 SAY "do" GET _do PICT "9999"
+    @ m_x + 1, m_y + 2 SAY "Brisi stavke od" GET _od PICT "@S4"
+    @ m_x + 1, col() + 1 SAY "do" GET _do PICT "@S4"
     read
 BoxC()
 
@@ -728,7 +727,7 @@ if LastKey() == K_ESC
 endif
 
 do while !EOF()
-    if VAL( ALLTRIM( field->rbr ) ) >= _od .and. VAL( ALLTRIM( field->rbr ) ) <= _do
+    if ALLTRIM( field->rbr ) >= ALLTRIM( _od ) .and. IF( ALLTRIM( _do ) <> "", ALLTRIM( field->rbr ) <= ALLTRIM(_do), .t. )
         delete
     endif 
     skip

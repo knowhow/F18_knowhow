@@ -22,7 +22,6 @@ CLASS TLdMod FROM TAppMod
 	method mMenu
 	method mMenuStandard
 	method initdb
-	method srv
 END CLASS
 
 // -----------------------------------------------
@@ -147,26 +146,6 @@ Menu_SC( "gld", .t. )
 return
 
 
-// -------------------------------------------------------
-// -------------------------------------------------------
-method srv()
-? "Pokrecem LD aplikacijski server"
-if (MPar37("/KONVERT", goModul))
-	if LEFT(self:cP5,3)=="/S="
-		cKonvSez:=SUBSTR(self:cP5,4)
-		? "Radim sezonu: " + cKonvSez
-		if cKonvSez<>"RADP"
-			// prebaci se u sezonu cKonvSez
-			goModul:oDataBase:cSezonDir:=SLASH+cKonvSez
- 			goModul:oDataBase:setDirKum(trim(goModul:oDataBase:cDirKum)+SLASH+cKonvSez)
- 			goModul:oDataBase:setDirSif(trim(goModul:oDataBase:cDirSif)+SLASH+cKonvSez)
- 			goModul:oDataBase:setDirPriv(trim(goModul:oDataBase:cDirPriv)+SLASH+cKonvSez)
-		endif
-	endif
-	goModul:oDataBase:KonvZN()
-	goModul:quit(.f.)
-endif
-return
 
 
 // -------------------------------------------------------
@@ -310,7 +289,6 @@ use
 
 LDPoljaINI()
 
-//definisano u SC_CLIB-u
 gGlBaza := "LD.DBF"
 
 return

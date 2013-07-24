@@ -1,4 +1,8 @@
-1.4.208 2013-07-17, vsasa
+1.4.209 2013-07-24, vsasa
+ 
+  - KALK, sh+F8, brisanje stavki dokumenta od-do
+ 
+1.4.208 2013-07-19, vsasa
  
   - F18 lock database, init
   - FIN, automatsko zatvaranje otvorenih stavki, može i partner prazno (za sve partnere)

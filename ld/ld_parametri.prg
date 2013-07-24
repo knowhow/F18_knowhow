@@ -24,15 +24,12 @@ local _obracun := fetch_metric( "ld_obracun", my_user(), gObracun )
 
 private GetList:={}
 
-Box(, 4,60)
+Box(, 4, 60 )
     
-    @ m_x+1,m_y+2 SAY "Radna jedinica:" GET _rj valid P_LD_Rj(@_rj) pict "@!"
-    @ m_x+2,m_y+2 SAY "Mjesec        :" GET _mjesec pict "99"
-    @ m_x+3,m_y+2 SAY "Godina        :" GET _godina pict "9999"
-    
-    if _v_obr == .t.
-        @ m_x+4,m_y+2 SAY "Obracun       " GET _obracun WHEN HelpObr( .f., _obracun ) VALID ValObr( .f., _obracun )
-    endif
+    @ m_x + 1, m_y + 2 SAY "Radna jedinica :" GET _rj VALID P_LD_Rj(@_rj) PICT "@!"
+    @ m_x + 2, m_y + 2 SAY "Mjesec         :" GET _mjesec PICT "99"
+    @ m_x + 3, m_y + 2 SAY "Godina         :" GET _godina PICT "9999"
+    @ m_x + 4, m_y + 2 SAY "Obracun        :" GET _obracun WHEN HelpObr( .f., _obracun ) VALID ValObr( .f., _obracun )
     
     read
 
@@ -40,7 +37,7 @@ Box(, 4,60)
 
 BoxC()
 
-if (LastKey()<>K_ESC)
+if ( LastKey() <> K_ESC )
 
     set_metric( "ld_godina", my_user(), _godina )
     gGodina := _godina
@@ -100,20 +97,22 @@ return
 function ld_set_formule()
 private GetList:={}
 
-Box(,19,77)
-    gFURaz:=PADR(gFURaz,100)
-        gFUPrim:=PADR(gFUPrim,100)
-        gFUSati:=PADR(gFUSati,100)
-        gFURSati:=PADR(gFURSati,100)
-    gBFForm:=PADR(gBFForm,100)
-        @ m_x+1,m_y+2 SAY "Formula za ukupna primanja:" GET gFUPrim  pict "@!S30"
-        @ m_x+2,m_y+2 SAY "Formula za ukupno sati    :" GET gFUSati  pict "@!S30"
-        @ m_x+3,m_y+2 SAY "Formula za godisnji       :" GET gFUGod pict "@!S30"
-        @ m_x+5,m_y+2 SAY "Formula za uk.prim.-razno :" GET gFURaz pict "@!S30"
-        @ m_x+6,m_y+2 SAY "Formula za uk.sati -razno :" GET gFURSati pict "@!S30"
-        @ m_x+8,m_y+2 SAY "God. promjena koef.min.rada - ZENE:" GET gMRZ   pict "9999.99"
-        @ m_x+9,m_y+2 SAY "God. promjena koef.min.rada - MUSK:" GET gMRM   pict "9999.99"
-        @ m_x+11,m_y+2 SAY "% prosjecne plate kao donji limit neta za obracun poreza i doprinosa" GET gPDLimit pict "999.99"
+Box(, 19, 77 )
+    
+    gFURaz := PADR( gFURaz, 100 )
+    gFUPrim := PADR( gFUPrim, 100 )
+    gFUSati := PADR( gFUSati, 100 )
+    gFURSati := PADR( gFURSati, 100 )
+    gBFForm := PADR( gBFForm, 100 )
+    
+    @ m_x+1,m_y+2 SAY "Formula za ukupna primanja:" GET gFUPrim  pict "@!S30"
+    @ m_x+2,m_y+2 SAY "Formula za ukupno sati    :" GET gFUSati  pict "@!S30"
+    @ m_x+3,m_y+2 SAY "Formula za godisnji       :" GET gFUGod pict "@!S30"
+    @ m_x+5,m_y+2 SAY "Formula za uk.prim.-razno :" GET gFURaz pict "@!S30"
+    @ m_x+6,m_y+2 SAY "Formula za uk.sati -razno :" GET gFURSati pict "@!S30"
+    @ m_x+8,m_y+2 SAY "God. promjena koef.min.rada - ZENE:" GET gMRZ   pict "9999.99"
+    @ m_x+9,m_y+2 SAY "God. promjena koef.min.rada - MUSK:" GET gMRM   pict "9999.99"
+    @ m_x+11,m_y+2 SAY "% prosjecne plate kao donji limit neta za obracun poreza i doprinosa" GET gPDLimit pict "999.99"
         
     @ m_x+13,m_y+2 SAY "Osnovni licni odbitak" GET gOsnLOdb VALID gOsnLOdb > 0 PICT "9999.99"
     
@@ -122,10 +121,12 @@ Box(,19,77)
     @ m_x+16,m_y+2 SAY "Trosak - autorski honorar (%):" GET gAhTrosk PICT "999.99"
     
     @ m_x+18,m_y+2 SAY "Kod benef.gledaj formulu:" GET gBFForm pict "@!S30"
-        read
+    
+    read
+
 BoxC()
 
-if (LastKey()<>K_ESC)
+if ( LastKey() <> K_ESC )
     Wpar("gd", gFUGod)
         WPar("m1", @gMRM)
         WPar("m2", @gMRZ)

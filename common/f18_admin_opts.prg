@@ -718,6 +718,7 @@ _qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'fakt/%';"
 _qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'pos/%';"
 _qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'epdv/%';"
 _qry += "DELETE FROM fmk.metric WHERE metric_name LIKE '%auto_plu%';"
+_qry += "DELETE FROM fmk.metric WHERE metric_name LIKE '%lock%';"
 
 // ako je potrebno brisati sve onda dodaj i sljedece...
 if data_type > 1

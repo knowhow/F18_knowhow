@@ -1,4 +1,8 @@
-1.4.209 2013-07-24, vsasa
+1.4.210 2013-07-26, vsasa
+ 
+  - F18, otvaranje nove baze, briši i lock statuse
+ 
+1.4.209 2013-07-26, vsasa
  
   - KALK, sh+F8, brisanje stavki dokumenta od-do
   - F18 db lock, napravi sinhro ako se desi zakljucavanje automatsko baze

@@ -2,6 +2,7 @@
  
   - F18, otvaranje nove baze, briši i lock statuse
   - KALK/FIN kontiranje, datum valute - korekcija
+  - LD/VIRM, export podataka za banke, dupliciranje podešenje, kopiranje formule iz postojeće
  
 1.4.209 2013-07-26, vsasa
  

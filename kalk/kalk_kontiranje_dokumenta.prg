@@ -831,68 +831,69 @@ return 0
  */
 
 function DatVal()
-local nUvecaj:=15
+local _uvecaj := 15
 local _rec
-private GetList:={}
+private GetList := {}
 
 // uzmi datval iz doks2
-if file(f18_ime_dbf( "kalk_doks2" ))
-    PushWa()
-    O_KALK_DOKS2
-    seek finmat->( idfirma + idvd + brdok )
-    dDatVal := field->DatVal
-    IF lVrsteP
-        cIdVrsteP:=k2
-    ENDIF
-    PopWa()
+PushWa()
+
+O_KALK_DOKS2
+seek finmat->( idfirma + idvd + brdok )
+    
+dDatVal := field->datval
+
+if lVrsteP
+    cIdVrsteP := k2
 endif
 
-if EMPTY(dDatVal)  // nisam nasao u datumu valuta pokupi rucno !
+if !EMPTY( dDatVal )
+    _uvecaj := ( dDatVal - finmat->datfaktp )
+endif
 
-    Box( , 3 + IIF(lVrsteP.and.EMPTY(cIdVrsteP),1,0),60)
-        set cursor on
-        @ m_x+1,m_y+2 SAY "Datum dokumenta: " 
-        ??  finmat->datfaktp
-        @ m_x+2,m_y+2 SAY "Uvecaj dana    :" GET nUvecaj pict "99"
-        @ m_x+3,m_y+2 SAY "Valuta         :" GET dDatVal when {|| dDatVal:=finmat->datfaktp+nUvecaj,.t.}
-        IF lVrsteP .and. EMPTY(cIdVrsteP)
-            @ m_x+4,m_y+2 SAY "Sifra vrste placanja:" GET cIdVrsteP PICT "@!"
-        ENDIF
-        read
-    BoxC()
+Box(, 3 + IIF( lVrsteP .and. EMPTY( cIdVrsteP ), 1, 0 ), 60 )
 
-    if file(f18_ime_dbf("kalk_doks2"))
+    set cursor on
 
-        PushWa()
+    @ m_x + 1, m_y + 2 SAY "Datum dokumenta: " 
+    ??  finmat->datfaktp
 
-        O_KALK_DOKS2
+    @ m_x + 2, m_y + 2 SAY "Uvecaj dana    :" GET _uvecaj PICT "999"
+    @ m_x + 3, m_y + 2 SAY "Valuta         :" GET dDatVal WHEN {|| dDatVal := finmat->datfaktp + _uvecaj, .t. }
 
-        seek finmat->(idfirma+idvd+brdok)
-
-        _rec := dbf_get_rec()
-
-        if !found() 
-            APPEND BLANK 
-            // ovo se moze desiti ako je neko mjenjao dokumenta u KALK
-            _rec["idfirma"] := finmat->idfirma
-            _rec["idvd"] := finmat->idvd
-            _rec["brdok"] := finmat->brdok
-        endif
-        
-        _rec["datval"] := dDatVal
-        
-        IF lVrsteP
-            _rec["k2"] := cIdVrsteP
-        ENDIF
-        
-		update_rec_server_and_dbf( "kalk_doks2", _rec, 1, "FULL" )
-    
-        PopWa()
-    
+    if lVrsteP .and. EMPTY(cIdVrsteP)
+        @ m_x + 4, m_y + 2 SAY "Sifra vrste placanja:" GET cIdVrsteP PICT "@!"
     endif
 
-endif
+    read
 
+BoxC()
+
+select kalk_doks2
+go top
+seek finmat->(idfirma+idvd+brdok)
+
+if !FOUND() 
+    APPEND BLANK 
+    // ovo se moze desiti ako je neko mjenjao dokumenta u KALK
+    _rec := dbf_get_rec()
+    _rec["idfirma"] := finmat->idfirma
+    _rec["idvd"] := finmat->idvd
+    _rec["brdok"] := finmat->brdok
+else
+    _rec := dbf_get_rec()
+endif
+        
+_rec["datval"] := dDatVal
+        
+if lVrsteP
+    _rec["k2"] := cIdVrsteP
+endif
+        
+update_rec_server_and_dbf( "kalk_doks2", _rec, 1, "FULL" )
+    
+PopWa()
+    
 return 0
 
 

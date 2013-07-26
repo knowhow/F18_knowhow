@@ -1,6 +1,7 @@
 1.4.210 2013-07-26, vsasa
  
   - F18, otvaranje nove baze, briši i lock statuse
+  - KALK/FIN kontiranje, datum valute - korekcija
  
 1.4.209 2013-07-26, vsasa
  

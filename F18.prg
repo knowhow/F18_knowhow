@@ -244,6 +244,8 @@ AADD( menuexec, {|| NIL } )
 // ostale opcije...
 AADD( menuop, " B. Backup podataka" )
 AADD( menuexec, {|| f18_backup_data() } )
+AADD( menuop, " F. Forsirana sinhronizacija podataka" )
+AADD( menuexec, {|| F18AdminOpts():New():force_synchro_db() } )
 AADD( menuop, " L. Zakljucavanje/otkljucavanje baze" )
 AADD( menuexec, {|| f18_database_lock_menu() } )
 AADD( menuop, " P. Parametri aplikacije" )

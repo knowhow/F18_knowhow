@@ -173,20 +173,26 @@ return
 
 // ----------------------------------------------------
 // ----------------------------------------------------
-METHOD F18_DB_LOCK:set_lock_params( lock )
+METHOD F18_DB_LOCK:set_lock_params( lock, lock_date_str )
+local _str := DTOC( DATE() )
 
 if lock == NIL
     lock := .t.
 endif
 
 if lock
-    set_metric( DB_LOCK_PARAM, NIL, DTOC( DATE() ) )
-    set_metric( DB_LOCK_PARAM, my_user(), DTOC( DATE() ) )
-    log_write( "F18_DOK_OPER, DATABASE LOCK " + DTOC( DATE() ), 2 )
+    
+    if lock_date_str <> NIL
+        _str := lock_date_str
+    endif
+
+    set_metric( DB_LOCK_PARAM, NIL, _str )
+    set_metric( DB_LOCK_PARAM, my_user(), _str )
+    log_write( "F18_DOK_OPER, DATABASE LOCK " + DTOC( DATE() ) + PADR( TIME(), 5 ) , 2 )
 else
     set_metric( DB_LOCK_PARAM, NIL, "0" )
     set_metric( DB_LOCK_PARAM, my_user(), "0" )
-    log_write( "F18_DOK_OPER, DATABASE UNLOCK " + DTOC( DATE() ), 2 )
+    log_write( "F18_DOK_OPER, DATABASE UNLOCK " + DTOC( DATE() ) + PADR( TIME(), 5 ) , 2 )
 endif
 
 ::get_lock_params()

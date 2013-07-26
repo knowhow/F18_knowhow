@@ -1,6 +1,7 @@
 1.4.209 2013-07-24, vsasa
  
   - KALK, sh+F8, brisanje stavki dokumenta od-do
+  - F18 db lock, napravi sinhro ako se desi zakljucavanje automatsko baze
  
 1.4.208 2013-07-19, vsasa
  

@@ -491,15 +491,15 @@ endif
 
 // da li treba zakljucati bazu
 // ovo provjeri uvijek, ako naleti da treba zakljucat ce je odmah...
-oDb_lock:db_must_be_locked()
+if oDb_lock:db_must_be_locked()
+    // i ako ja zakljucam bazu, potrebno je napraviti sinhronizaciju podataka
+    // postoji mogucnost da nikada nije napravljen...
+    _need_lock_synchro := .t.
+endif
 
 // provjeri moj db_lock parametar
 // ako je zakljucana na serveru
 if oDB_lock:is_locked()
-
-    // setuj parametar ako ga uopste nema !
-    //oDB_lock:set_my_lock_params()
-
     if oDB_lock:run_synchro()
         MsgBeep( "Baza je zakljucana ali postoji mogucnost da je neko mjenjao podatake#Pokrecem sinhro." )
         _need_lock_synchro := .t.

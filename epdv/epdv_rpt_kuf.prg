@@ -22,7 +22,7 @@ static nCurrLine:=0
 
 static cRptNaziv := "Izvjestaj KUF na dan "
 
-static cTbl := "KUF"
+static cTbl := "kuf"
 
 static cTar := ""
 static cPart := ""
@@ -40,6 +40,7 @@ local cPom12
 local cPom21
 local cPom22
 local nLenIzn
+local _export := "N"
 
 // 1 - red.br / ili br.dok
 // 2 - br.dok / ili r.br
@@ -89,37 +90,46 @@ if (nBrDok == -999)
 cTar := PADR(cTar, 6)
 cPart := PADR(cPart, 6)
 
-nX:=1
+nX := 1
+
 Box(, 11, 60)
 
-  // izvjestaj za period
-  @ m_x+nX, m_y+2 SAY "Period"
-  nX++
+    // izvjestaj za period
+    @ m_x+nX, m_y+2 SAY "Period"
+    nX++
   
-  @ m_x+nX, m_y+2 SAY "od " GET dDatOd
-  @ m_x+nX, col()+2 SAY "do " GET dDatDo
+    @ m_x+nX, m_y+2 SAY "od " GET dDatOd
+    @ m_x+nX, col()+2 SAY "do " GET dDatDo
   
-  nX += 2
+    nX += 2
   
-  @ m_x+nX, m_y+2 SAY "Tarifa (prazno svi) ?  " GET cTar ;
-  	VALID { || empty(cTar) .or. P_Tarifa(@cTar) } ;
-	PICT "@!"
-  nX += 1
+    @ m_x+nX, m_y+2 SAY "Tarifa (prazno svi) ?  " GET cTar ;
+  	    VALID { || empty(cTar) .or. P_Tarifa(@cTar) } ;
+	    PICT "@!"
+    nX += 1
   
-  @ m_x+nX, m_y+2 SAY "Partner (prazno svi) ? " GET cPart ;
-  	VALID { || empty(cPart) .or. P_Partneri(@cPart) } ;
-	PICT "@!"
+    @ m_x+nX, m_y+2 SAY "Partner (prazno svi) ? " GET cPart ;
+  	    VALID { || empty(cPart) .or. P_Partneri(@cPart) } ;
+	    PICT "@!"
 
-  nX += 2
+    nX += 2
+
+    @ m_x + nX, m_y + 2 SAY "Eksport izvjestaja u DBF (D/N) ?" GET _export ;
+        VALID _export $ "DN" PICT "@!"
   
-  @ m_x+nX, m_y+2 SAY REPLICATE("-", 30) 
-  nX++
+    nX += 2
+
+    @ m_x+nX, m_y+2 SAY REPLICATE("-", 30) 
+
+    nX++
   
-  READ
+    READ
+
 BoxC()
 
-if LastKey()==K_ESC
-	closeret
+if LastKey() == K_ESC
+    close all
+    return
 endif
 
 endif
@@ -139,8 +149,6 @@ else
 endif
 
 AADD(aHeader, "Preduzece: " + my_firma() )
-
-
 AADD(aHeader, cHeader )
 
 if !empty(cTar)
@@ -177,11 +185,17 @@ AADD(aZagl, { cPom11,  cPom21, "Datum", "Tar.",  "Dobavljac", "Broj",  "Opis",  
 AADD(aZagl, { cPom12,  cPom22,  "",     "kat.",      "(naziv, ident. broj)",      "RN",     "",    "bez PDV", "PDV", "PDV NP", "sa PDV"})
 AADD(aZagl, { "(1)",   "(2)",  "(3)",   "(4)",   "(5)",  "(6)",     "(7)", "(8)" , "(9)" ,  "(10)",  "(11) = (8+9+10)" })
 
-
+// napuni podatke izvjestaja
 fill_rpt( nBrDok )
-show_rpt(  .f.,  .f.)
+
+if _export == "D"
+    show_kuf_kif_dbf( my_home() + "epdv_r_kuf.dbf" )
+else
+    show_rpt(  .f.,  .f.)
+endif
 
 return
+
 
 // -----------------------------------
 // polja reporta
@@ -201,25 +215,27 @@ AADD(aArr, {"opis",   "C",  80, 0})
 
 AADD(aArr, {"i_b_pdv",   "N",  18, 2})
 AADD(aArr, {"i_pdv",   "N",  18, 2})
+AADD(aArr, {"i_pdv2",   "N",  18, 2})
+AADD(aArr, {"i_uk",   "N",  18, 2})
 
 return
-*}
+
 
 static function cre_r_tbl()
 local aArr:={}
 
 close all
 
-ferase ( PRIVPATH + "R_" +  cTbl + ".cdx" )
-ferase ( PRIVPATH + "R_" +  cTbl + ".dbf" )
+ferase ( my_home() + "epdv_r_" +  cTbl + ".cdx" )
+ferase ( my_home() + "epdv_r_" +  cTbl + ".dbf" )
 
 get_r_fields(@aArr)
 
 // kreiraj tabelu
-dbcreate2(PRIVPATH + "R_" + cTbl + ".dbf", aArr)
+dbcreate2( my_home() + "epdv_r_" + cTbl + ".dbf", aArr)
 
 // kreiraj indexe
-CREATE_INDEX("br_dok", "br_dok", "R_" +  cTbl, .t.)
+CREATE_INDEX( "br_dok", "br_dok", "epdv_r_" +  cTbl, .t.)
 
 return
 
@@ -238,10 +254,7 @@ local cIdTar
 local cOpis
 local cIdPart
 
-
-
 cre_r_tbl()
-
 
 O_R_KUF
 
@@ -267,10 +280,7 @@ else
 	endif
 	SET ORDER TO TAG "g_r_br"
 
-
 endif
-
-
 
 SELECT (nIzArea)
 
@@ -333,7 +343,6 @@ cOpis := opis
 SELECT r_kuf   
 APPEND BLANK
 
-
 replace id_part with cIdPart
 replace br_dok with nBrDok
 replace r_br with nRbr
@@ -344,7 +353,17 @@ replace dob_naz with cDobNaz
 replace opis with cOpis
 
 replace i_b_pdv with nBPdv
-replace i_pdv with nPdv
+//replace i_pdv with nPdv
+
+if t_u_n_poup( field->id_tar )
+    replace i_pdv with 0
+	replace i_pdv2 with nPdv
+else
+    replace i_pdv with nPdv
+	replace i_pdv2 with 0
+endif
+
+replace i_uk with ( i_b_pdv + i_pdv + i_pdv2 )
 
 SELECT (nIzArea)
 
@@ -358,9 +377,9 @@ BoxC()
 SELECT (nIzArea)
 SET FILTER TO
 
-
 return
-*}
+
+
 
 // ---------------------------------------
 // ---------------------------------------
@@ -449,7 +468,6 @@ do while !eof()
    ?? TRANSFORM( i_b_pdv,  PIC_IZN() )
    ?? " "
 
-
    if t_u_n_poup(id_tar)
   	nPdv := 0
 	nPdv2 := i_pdv
@@ -470,7 +488,6 @@ do while !eof()
    // 10. sa pdv
    ?? TRANSFORM( i_b_pdv + i_pdv,  PIC_IZN() )
    ?? " "
-
 
    nUBPdv += i_b_pdv
    nUPdv += nPdv 

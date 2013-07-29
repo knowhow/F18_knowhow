@@ -823,7 +823,6 @@ do case
             oDb_lock:warrning()
             return DE_CONT
         endif
-
         _tmp := povrat_fakt_dokumenta( .f., field->idfirma, field->idtipdok, field->brdok )
 
         O_FAKT_DOKS

@@ -179,49 +179,49 @@ if !just_set
     	return
 	endif
 
+    // parametri modula...
+    set_metric( "main_menu_fin", my_user(), _fin )
+    set_metric( "main_menu_kalk", my_user(), _kalk )
+    set_metric( "main_menu_fakt", my_user(), _fakt )
+    set_metric( "main_menu_ld", my_user(), _ld )
+    set_metric( "main_menu_virm", my_user(), _virm )
+    set_metric( "main_menu_os", my_user(), _os )
+    set_metric( "main_menu_epdv", my_user(), _epdv )
+    set_metric( "main_menu_rnal", my_user(), _rnal )
+    set_metric( "main_menu_mat", my_user(), _mat )
+    set_metric( "main_menu_pos", my_user(), _pos )
+    set_metric( "main_menu_kadev", my_user(), _kadev )
+    set_metric( "main_menu_reports", my_user(), _reports )
+
+    // email parametri
+    set_metric( "email_server", my_user(), ALLTRIM( _email_server ) )
+    set_metric( "email_port", my_user(), _email_port )
+    set_metric( "email_user_name", my_user(), ALLTRIM( _email_username ) )
+    set_metric( "email_user_pass", my_user(), ALLTRIM( _email_userpass ) ) 
+    set_metric( "email_from", my_user(), ALLTRIM( _email_from ) )
+    set_metric( "email_to_default", my_user(), ALLTRIM( _email_to ) )
+    set_metric( "email_cc_default", my_user(), ALLTRIM( _email_cc ) )
+
+    // maticni podaci
+    set_metric( "my_proper_name", my_user(), ALLTRIM( _proper_name ) )
+
+    // log podaci
+    set_metric( "log_delete_level", NIL, _log_delete_interval )
+
+    // backup podaci
+    set_metric( "backup_company_interval", my_user(), _backup_company )
+    set_metric( "backup_server_interval", my_user(), _backup_server )
+    set_metric( "backup_removable_drive", my_user(), ALLTRIM( _backup_removable ) )
+
+    // duzina stranice
+    set_metric( "rpt_duzina_stranice", my_user(), _rpt_page_len )
+    //#define RPT_PAGE_LEN _rpt_page_len
+
+    #ifdef __PLATFORM__WINDOWS
+        set_metric( "backup_windows_ping_time", my_user(), _backup_ping_time )
+    #endif
+
 endif
-
-// parametri modula...
-set_metric( "main_menu_fin", my_user(), _fin )
-set_metric( "main_menu_kalk", my_user(), _kalk )
-set_metric( "main_menu_fakt", my_user(), _fakt )
-set_metric( "main_menu_ld", my_user(), _ld )
-set_metric( "main_menu_virm", my_user(), _virm )
-set_metric( "main_menu_os", my_user(), _os )
-set_metric( "main_menu_epdv", my_user(), _epdv )
-set_metric( "main_menu_rnal", my_user(), _rnal )
-set_metric( "main_menu_mat", my_user(), _mat )
-set_metric( "main_menu_pos", my_user(), _pos )
-set_metric( "main_menu_kadev", my_user(), _kadev )
-set_metric( "main_menu_reports", my_user(), _reports )
-
-// email parametri
-set_metric( "email_server", my_user(), ALLTRIM( _email_server ) )
-set_metric( "email_port", my_user(), _email_port )
-set_metric( "email_user_name", my_user(), ALLTRIM( _email_username ) )
-set_metric( "email_user_pass", my_user(), ALLTRIM( _email_userpass ) ) 
-set_metric( "email_from", my_user(), ALLTRIM( _email_from ) )
-set_metric( "email_to_default", my_user(), ALLTRIM( _email_to ) )
-set_metric( "email_cc_default", my_user(), ALLTRIM( _email_cc ) )
-
-// maticni podaci
-set_metric( "my_proper_name", my_user(), ALLTRIM( _proper_name ) )
-
-// log podaci
-set_metric( "log_delete_level", NIL, _log_delete_interval )
-
-// backup podaci
-set_metric( "backup_company_interval", my_user(), _backup_company )
-set_metric( "backup_server_interval", my_user(), _backup_server )
-set_metric( "backup_removable_drive", my_user(), ALLTRIM( _backup_removable ) )
-
-// duzina stranice
-set_metric( "rpt_duzina_stranice", my_user(), _rpt_page_len )
-//#define RPT_PAGE_LEN _rpt_page_len
-
-#ifdef __PLATFORM__WINDOWS
-    set_metric( "backup_windows_ping_time", my_user(), _backup_ping_time )
-#endif
 
 return
 

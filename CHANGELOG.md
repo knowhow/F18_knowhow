@@ -1,3 +1,7 @@
+1.4.211 2013-07-29, vsasa
+ 
+  - LD, parametri prebačeni na set/fetch metric
+ 
 1.4.210 2013-07-26, vsasa
  
   - F18, otvaranje nove baze, briši i lock statuse

@@ -408,7 +408,7 @@ if fiscal_opt_active() .and. vars["idtipdok"] $ "10#11"
     
     if FOUND()
         if ( fakt_doks->fisc_rn <> 0 .and. fakt_doks->iznos > 0 ) .or. ;
-            ( fakt_doks->fisc_rn <> 0 .and. fakt_doks->fisc_st = 0 .and. fakt_doks->iznos < 0 )
+            ( fakt_doks->fisc_rn <> 0 .and. fakt_doks->fisc_st <> 0 .and. fakt_doks->iznos < 0 )
 
             // veza sa fisc_rn postoji
             msgbeep("Za ovaj dokument je izdat fiskalni racun.#Opcija povrata je onemogucena !!!")

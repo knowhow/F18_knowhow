@@ -189,7 +189,17 @@ AADD(aZagl, { "(1)",   "(2)",  "(3)",   "(4)",   "(5)",  "(6)",     "(7)", "(8)"
 fill_rpt( nBrDok )
 
 if _export == "D"
-    f18_open_document( my_home() + "epdv_r_kuf.dbf" )
+
+    close all
+
+    _file := my_home() + "epdv_r_kuf.dbf"
+
+    #ifdef __PLATFORM__WINDOWS
+        _file := '"' + _file + '"'
+    #endif
+
+    f18_open_document( _file )
+
 else
     show_rpt(  .f.,  .f.)
 endif

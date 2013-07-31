@@ -1,3 +1,7 @@
+1.4.212 2013-07-31, vsasa
+ 
+  - ePDV, export kuf/kif dokumenata
+ 
 1.4.211 2013-07-29, vsasa
  
   - LD, parametri prebačeni na set/fetch metric

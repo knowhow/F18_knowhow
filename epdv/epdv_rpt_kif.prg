@@ -190,29 +190,13 @@ AADD(aZagl, { "(1)",   "(2)",  "(3)",   "(4)",   "(5)",  "(6)",     "(7)", "(8)"
 fill_rpt( nBrDok )
 
 if _export == "D"
-    show_kuf_kif_dbf( my_home() + "epdv_r_kif.dbf" )
+    f18_open_document( my_home() + "epdv_r_kif.dbf" )
 else
     show_rpt(  .f.,  .f.)
 endif
 
 return
 
-
-
-function show_kuf_kif_dbf( file_open_line )
-local _line := ""
-
-close all
-
-#ifdef __PLATFORM__DARWIN
-    _line += "open "
-#endif
-
-_line += file_open_line
-
-hb_run( _line )
-
-return
 
 
 

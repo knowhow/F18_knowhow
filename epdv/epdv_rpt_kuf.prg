@@ -363,7 +363,7 @@ replace dob_naz with cDobNaz
 replace opis with cOpis
 
 replace i_b_pdv with nBPdv
-//replace i_pdv with nPdv
+replace i_pdv with nPdv
 
 if t_u_n_poup( field->id_tar )
     replace i_pdv with 0
@@ -480,7 +480,7 @@ do while !eof()
 
    if t_u_n_poup(id_tar)
   	nPdv := 0
-	nPdv2 := i_pdv
+	nPdv2 := i_pdv2
    else
 	nPdv := i_pdv
 	nPdv2 := 0
@@ -496,7 +496,7 @@ do while !eof()
    ?? " "
   
    // 10. sa pdv
-   ?? TRANSFORM( i_b_pdv + i_pdv,  PIC_IZN() )
+   ?? TRANSFORM( i_b_pdv + ( i_pdv + i_pdv2 ),  PIC_IZN() )
    ?? " "
 
    nUBPdv += i_b_pdv

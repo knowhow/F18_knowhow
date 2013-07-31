@@ -1,3 +1,7 @@
+1.4.213 2013-07-31, vsasa
+ 
+  - ePDV, štampa kuf dokumenta, polja i_pdv i i_pdv2
+ 
 1.4.212 2013-07-31, vsasa
  
   - ePDV, export kuf/kif dokumenata

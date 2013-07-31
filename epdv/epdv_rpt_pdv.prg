@@ -40,7 +40,7 @@ static nCurrLine := 0
 
 static cRptNaziv := "PDV prijava" 
 
-static cTbl := "PDV"
+static cTbl := "pdv"
 
 // source 
 // 1 - kuf kif podaci
@@ -121,13 +121,13 @@ local aArr:={}
 
 close all
 
-ferase ( PRIVPATH + "R_" +  cTbl + ".CDX" )
-ferase ( PRIVPATH + "R_" +  cTbl + ".DBF" )
+ferase ( my_home() + "epdv_r_" +  cTbl + ".cdx" )
+ferase ( my_home() + "epdv_r_" +  cTbl + ".dbf" )
 
 aArr := get_pdv_fields()
 
 // kreiraj tabelu
-dbcreate2(PRIVPATH + "R_" + cTbl + ".DBF", aArr)
+dbcreate2( my_home() + "epdv_r_" + cTbl + ".dbf", aArr)
 
 
 return

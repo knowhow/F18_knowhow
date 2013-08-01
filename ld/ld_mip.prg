@@ -816,6 +816,7 @@ do while !EOF()
     endif
 
     ++ nZaposl
+
     nU_prih += field->u_opor
     nU_dopr += field->u_d_iz
     nU_lodb += field->l_odb

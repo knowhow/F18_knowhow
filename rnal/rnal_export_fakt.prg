@@ -524,7 +524,7 @@ enddo
 _ins_x_veza( nADoc_it )
 
 // ubaci brojeve veze u tabelu docs
-_ins_veza( nADoc_it, nADocs, cBrDok )
+_ins_veza( nADoc_it, nADocs, cBrDok, lTemp )
 
 // sredi redne brojeve
 _fix_rbr()
@@ -544,9 +544,17 @@ return
 // --------------------------------------
 // ubaci vezu u tabelu docs
 // --------------------------------------
-static function _ins_veza( nA_doc_it, nA_docs, cBrfakt )
+static function _ins_veza( nA_doc_it, nA_docs, cBrfakt, lTemp )
 local nDoc_no
 local _rec
+
+if !lTemp
+    if !f18_lock_tables( { "rnal_docs" } )
+        MsgBeep( "Problem sa lokovanjem tabele rnal_docs !" )
+        return .f.
+    endif
+    sql_table_update( NIL, "BEGIN" )
+endif
 
 select ( nA_doc_it )
 set order to tag "1"
@@ -566,17 +574,36 @@ do while !EOF()
     select (nA_docs)
     seek docno_str(nDoc_no)
 
+    if !FOUND()
+        MsgBeep( "Nalog ne postoji u azuriranim dokumentima !" )
+        return .f.
+    endif
+
     _rec := dbf_get_rec()
     _rec["doc_in_fmk"] := 1
     _rec["fmk_doc"] := _add_to_field( ALLTRIM( _rec["fmk_doc"] ), ;
         ALLTRIM(cBrfakt) )
 
-    dbf_update_rec( _rec )
+    if !lTemp
+        if !update_rec_server_and_dbf( "rnal_docs", _rec, 1, "CONT" )
+            f18_free_tables( { "rnal_docs" } )
+            sql_table_update( NIL, "ROLLBACK" )
+            return .f.
+        endif
+    else
+        dbf_update_rec( _rec )
+    endif
 
-    select (nA_doc_it)
+    select ( nA_doc_it )
     skip
 
 enddo
+
+if !lTemp
+    f18_free_tables( { "rnal_docs" } )
+    sql_table_update( NIL, "END" )
+endif
+
 
 return .t.
 

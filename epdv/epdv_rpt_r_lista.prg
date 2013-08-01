@@ -47,11 +47,11 @@ aZaglLen:={8, 8, 8, 8, LEN(PIC_IZN()), LEN(PIC_IZN()), LEN(PIC_IZN()) }
 if cTName == "KUF"
 	nRArea := F_R_KUF
 	nKArea := F_KUF
-	cTbl := "R_KUF"
+	cTbl := "epdv_r_kuf"
 else
 	nRArea := F_R_KIF
 	nKArea := F_KIF
-	cTbl := "R_KIF"
+	cTbl := "epdv_r_kif"
 endif
 
 aDInt := rpt_d_interval (DATE())
@@ -79,7 +79,8 @@ Box(, 8, 60)
 BoxC()
 
 if LastKey()==K_ESC
-	closeret
+	close all
+    return
 endif
 
 

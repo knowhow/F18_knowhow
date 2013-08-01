@@ -1,3 +1,12 @@
+1.4.215 2013-08-01, vsasa
+ 
+  - RNAL, export fajla za lisec, korekcije
+  - RNAL, export naloga u FAKT, puširanje veze na server
+ 
+1.4.214 2013-07-31, vsasa
+ 
+  - ePDV, štampa pregleda dokumenata, R_KIF -> epdv_r_kif
+ 
 1.4.213 2013-07-31, vsasa
  
   - ePDV, štampa kuf dokumenta, polja i_pdv i i_pdv2

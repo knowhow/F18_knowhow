@@ -1,3 +1,7 @@
+1.4.216 2013-08-01, vsasa
+ 
+  - RNAL, export fajla za lisec, korekcije na liniji GRx
+ 
 1.4.215 2013-08-01, vsasa
  
   - RNAL, export fajla za lisec, korekcije

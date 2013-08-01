@@ -415,11 +415,11 @@ AADD( aGLx, STRTRAN( __GLX, "x", cGlassNo ) )
 AADD( aGLx, cIdCode )
 
 // dodaci na liniju
-//AADD( aGLx, 0 )
-//AADD( aGLx, 0 )
-//AADD( aGLx, 0 )
-//AADD( aGLx, "" )
-//AADD( aGLx, 0 )
+AADD( aGLx, 1 )
+AADD( aGLx, 0 )
+AADD( aGLx, 0 )
+AADD( aGLx, "" )
+AADD( aGLx, 0 )
 
 return aGLx
 

@@ -136,7 +136,6 @@ PIC_VRIJEDNOST := PADL( ALLTRIM( RIGHT( _picdem, LEN_VRIJEDNOST ) ), LEN_VRIJEDN
 // otvori xml za upis...
 open_xml( _xml )
 
-
 xml_subnode( "specifikacija", .f. )
 xml_subnode( "spec", .f. )
 

@@ -193,7 +193,7 @@ if _export == "D"
 
     close all
 
-    _file := my_home() + "epdv_r_kuf.dbf"
+    _file := my_home() + "epdv_r_kif.dbf"
 
     #ifdef __PLATFORM__WINDOWS
         _file := '"' + _file + '"'

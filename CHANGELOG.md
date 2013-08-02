@@ -1,3 +1,7 @@
+1.4.217 2013-08-02, vsasa
+ 
+  - ePDV, export kif tabele
+ 
 1.4.216 2013-08-01, vsasa
  
   - RNAL, export fajla za lisec, korekcije na liniji GRx

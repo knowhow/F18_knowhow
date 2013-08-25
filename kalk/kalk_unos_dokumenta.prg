@@ -997,13 +997,8 @@ do while .t.
                 DiskMPCSAPP()
 
             case izbor == 16
-                IF SigmaSif("SIGMAXXX")
-                  IF Pitanje(,"Koristiti dokument u kalk_pripremi (D) ili azurirani (N) ?","N")=="D"
-                    MPCSAPPuSif()
-                  ELSE
-                    MPCSAPPiz80uSif()
-                  ENDIF
-                ENDIF
+
+                kalk_dokument_prenos_cijena()
 
             case izbor == 17
                 VPCSifUDok()
@@ -1024,6 +1019,77 @@ m_x:=am_x; m_y:=am_y
 o_kalk_edit()
 return DE_REFRESH
 
+
+
+static function kalk_dokument_prenos_cijena()
+local _opt := 2
+local _update := .f.
+local _konto := SPACE(7)
+local _t_area := SELECT()
+private getList := {}
+
+Box(, 7, 65 )
+    @ m_x + 1, m_y + 2 SAY "Prenos cijena dokument/sifrarnik ****"
+    @ m_x + 3, m_y + 2 SAY "1) prenos MPCSAPP (dok) => sifrarnik"
+    @ m_x + 4, m_y + 2 SAY "2) prenos sifrarnik => MPCSAPP (dok)"
+    @ m_x + 6, m_y + 2 SAY "    odabir > " GET _opt PICT "9"
+    read
+BoxC()
+
+if LastKey() == K_ESC
+    return
+endif
+
+if _opt == 1
+    if Pitanje(,"Koristiti dokument u kalk_pripremi (D) ili azurirani (N) ?","N")=="D"
+        MPCSAPPuSif()
+    else
+        MPCSAPPiz80uSif()
+    endif
+    return
+endif
+
+if _opt == 2
+    
+    O_KALK_PRIPR
+    O_ROBA
+    O_KONCIJ
+    O_KONTO
+
+    Box(, 1, 50 )
+        @ m_x + 1, m_y + 2 SAY "Prodavnicki konto:" GET _konto VALID p_konto( @_konto )
+        read
+    BoxC()
+
+    if LastKey() == K_ESC
+        return
+    endif
+
+    // imamo konto, mozemo sada da ubacimo cijene...
+    select koncij
+    hseek _konto
+
+    select kalk_pripr   
+    go top
+
+    do while !EOF()
+        _update := .t.
+        _rec := dbf_get_rec()
+        _rec["mpcsapp"] := UzmiMpcSif() 
+        dbf_update_rec( _rec )
+        skip
+    enddo     
+
+    select kalk_pripr
+    go top
+
+endif
+
+if _update 
+    MsgBeep( "Ubacene cijene iz sifrarnika !#Odradite asistenta sa opcijom A" )
+endif
+
+return
 
 
 

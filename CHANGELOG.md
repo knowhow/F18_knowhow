@@ -1,3 +1,7 @@
+1.4.219 2013-08-25, vsasa
+ 
+  - KALK, ubaci mpcsapp iz sifrarnika u dokument prema odrednici tipa cijene i konta
+ 
 1.4.218 2013-08-25, vsasa
  
   - RNAL, izmjena kratkog i dodatnog opisa naloga, korekcija ODT template-a

@@ -34,6 +34,8 @@ AADD(opc, "promjena, podaci o placanju ")
 AADD(opcexe, {|| _ch_pay() })
 AADD(opc, "promjena, podaci kontakta")
 AADD(opcexe, {|| _ch_cont() })
+AADD(opc, "promjena, napomene i opisi")
+AADD(opcexe, {|| _ch_description() })
 AADD(opc, "promjena, novi kontakt naloga ")
 AADD(opcexe, {|| _ch_cont(.t.) })
 AADD(opc, "promjena, lom artikala ")
@@ -386,6 +388,76 @@ ESC_RETURN 0
 
 return 1
 
+
+
+// ---------------------------------
+// promjeni kontakt naloga
+// ---------------------------------
+function _ch_description()
+local _t_rec := RecNo()
+local _add_desc 
+local _ch_desc := SPACE(200)
+local _sh_desc
+local _doc_no
+local _rec
+local _update := .f.
+
+select docs
+	
+_add_desc := field->doc_desc
+_sh_desc := field->doc_sh_des
+_doc_no := field->doc_no
+
+if _box_descr( @_sh_desc, @_add_desc, @_ch_desc ) == 0
+	return 
+endif
+
+select docs
+_rec := dbf_get_rec()
+	
+if _rec["doc_desc"] <> _add_desc
+	_rec["doc_desc"] := _add_desc
+    _update := .t.
+endif
+
+if _rec["doc_sh_des"] <> _sh_desc
+	_rec["doc_sh_des"] := _sh_desc
+    _update := .t.
+endif
+
+if _update
+    update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+    log_write( "F18_DOK_OPER: rnal, promjena opisa i napomena naloga broj: " + ALLTRIM( STR( _doc_no ) ) + ;
+        ", opis: " + ALLTRIM( _ch_desc ), 2 )
+endif
+
+select docs
+go ( _t_rec )
+
+return
+
+
+// ------------------------------------
+// box sa podatkom o kontaktu
+// ------------------------------------
+static function _box_descr( sh_desc, add_desc, ch_desc )
+
+Box(, 7, 65 )
+
+	@ m_x + 1, m_y + 2 SAY "Ispravka opisa i napomena naloga:"
+	
+	@ m_x + 3, m_y + 2 SAY PADL("Kratki opis:", 20) GET sh_desc PICT "@S30"
+	@ m_x + 4, m_y + 2 SAY PADL("Dodatni opis:", 20) GET add_desc PICT "@S30"
+	
+	@ m_x + 7, m_y + 2 SAY "Opis promjene:" GET ch_desc PICT "@S40"
+	
+    read
+
+BoxC()
+
+ESC_RETURN 0
+
+return 1
 
 
 

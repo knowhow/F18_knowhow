@@ -135,6 +135,8 @@ params["nalog_prioritet"] := g_t_pars_opis("N05")
 params["nalog_isp_mjesto"] := g_t_pars_opis("N07")
 // dodatni opis naloga
 params["nalog_dod_opis"] := g_t_pars_opis("N08")
+// kratki opis naloga
+params["nalog_kratki_opis"] := g_t_pars_opis("N15")
 // objekat id
 params["nalog_objekat_id"] := g_t_pars_opis("P20")
 // naziv objekta
@@ -203,6 +205,7 @@ xml_node( "d_time", params["nalog_isp_vrijeme"] )
 xml_node( "d_place", to_xml_encoding( params["nalog_isp_mjesto"] ) )
 xml_node( "prior", to_xml_encoding( params["nalog_prioritet"] ) )
 xml_node( "desc_2", to_xml_encoding( params["nalog_dod_opis"] ) )
+xml_node( "desc_3", to_xml_encoding( params["nalog_kratki_opis"] ) )
 xml_node( "ob_id", to_xml_encoding( params["nalog_objekat_id"] ) )
 xml_node( "ob_desc", to_xml_encoding( params["nalog_objekat_naziv"] ) )
 xml_node( "oper", to_xml_encoding( params["nalog_operater"] ) )

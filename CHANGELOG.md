@@ -1,3 +1,7 @@
+1.4.218 2013-08-25, vsasa
+ 
+  - RNAL, izmjena kratkog i dodatnog opisa naloga, korekcija ODT template-a
+ 
 1.4.217 2013-08-02, vsasa
  
   - ePDV, export kif tabele

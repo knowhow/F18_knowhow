@@ -73,7 +73,7 @@ Box( , _x, _y)
                             BROWSE_COL_SEP + PADR( " < S > Storno dokument", _w1) + ;
                             BROWSE_COL_SEP + PADR( " < c+V > Setuj vezu fisk.", _w1 )
 @ m_x + _x - 2, m_y + 2 SAY PADR(" < R > Stampa fisk.racuna", _w1) + ;
-                            BROWSE_COL_SEP + PADR( " < F > otpr.->racun",_w1 ) + ;
+                            BROWSE_COL_SEP + PADR( " < F > ponuda->racun",_w1 ) + ;
                             BROWSE_COL_SEP + PADR( " < F5 > Refresh ", _w1 )
 @ m_x + _x - 1, m_y + 2 SAY PADR(" < W > Dupliciraj", _w1) + ;
                             BROWSE_COL_SEP + PADR( " < K > Ispravka podataka", _w1 ) + ;

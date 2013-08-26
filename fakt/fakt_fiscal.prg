@@ -526,6 +526,11 @@ if tip_dok $ "#10#" .or. ( tip_dok == "11" .and. _vrsta_p == "VR" )
     _v_plac := "3"
 endif
 
+if tip_dok $ "#11#" .and. _vrsta_p == "KT"
+    // karticno placanje
+    _v_plac := "1"
+endif
+
 // podaci partnera
 _partn_jib := ALLTRIM( IzSifK( "PARTN", "REGB", _partn_id, .f. ) )
 // oslobadjanje po clanu

@@ -536,18 +536,20 @@ _partn_jib := ALLTRIM( IzSifK( "PARTN", "REGB", _partn_id, .f. ) )
 // oslobadjanje po clanu
 _partn_clan := ALLTRIM( IzSifK( "PARTN" , "PDVO", _partn_id, .f. ) )
 
-if tip_dok == "11"
+//if tip_dok == "11"
  
-    _partn_ino := .f.
-    _partn_pdv := .t.
+  //  _partn_ino := .f.
+  //  _partn_pdv := .t.
 
-    if _v_plac == "3" 
-        _prikazi_partnera := .t.
-    else 
-        _prikazi_partnera := .f.
-    endif
+  //  if _v_plac == "3" 
+  //      _prikazi_partnera := .t.
+  //  else 
+  //      _prikazi_partnera := .f.
+  //  endif
 
-elseif !EMPTY( _partn_jib ) .and. ( LEN( _partn_jib ) < 12 .or. !EMPTY( _partn_clan ) )
+//endif
+
+if !EMPTY( _partn_jib ) .and. ( LEN( _partn_jib ) < 12 .or. !EMPTY( _partn_clan ) )
 
     // kod info faktura ne prikazuj partnera
     _partn_ino := .t.
@@ -571,6 +573,16 @@ elseif LEN( _partn_jib ) > 12
     _prikazi_partnera := .t.
 
 endif
+
+// kod mp racuna pogledaj na osnovu placanja treba li prikazati partnera ?
+if tip_dok == "11" 
+    if _v_plac == "3" 
+        _prikazi_partnera := .t.
+    else 
+        _prikazi_partnera := .f.
+    endif
+endif
+
 
 // setuj staticke
 __vrsta_pl := _v_plac

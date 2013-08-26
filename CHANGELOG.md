@@ -1,3 +1,8 @@
+1.4.220 2013-08-26, vsasa
+ 
+  - FAKT, MP račun za ino kupca ili kupca oslobođenog od plaćanja PDV-a
+  - FAKT, KO obrada PDV-a
+ 
 1.4.219 2013-08-25, vsasa
  
   - KALK, ubaci mpcsapp iz sifrarnika u dokument prema odrednici tipa cijene i konta

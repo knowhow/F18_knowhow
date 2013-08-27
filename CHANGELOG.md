@@ -1,3 +1,7 @@
+1.4.221 2013-08-27, vsasa
+ 
+  - POS, vrste plaćanja za fiskalni račun, pretvori u UPPER prije provjere
+ 
 1.4.220 2013-08-26, vsasa
  
   - FAKT, MP račun za ino kupca ili kupca oslobođenog od plaćanja PDV-a

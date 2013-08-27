@@ -453,7 +453,7 @@ select vrstep
 set order to tag "ID"
 seek id_vr_pl
 
-_naz := ALLTRIM( vrstep->naz )
+_naz := UPPER( ALLTRIM( vrstep->naz ) )
 
 do case 
 	case "KARTICA" $ _naz

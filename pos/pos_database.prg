@@ -1357,9 +1357,12 @@ do while !EOF()
     _rec["idtarifa"] := tops_roba->idtarifa
     _rec["barkod"] := tops_roba->barkod
     _rec["tip"] := tops_roba->tip
-
     _rec["mpc"] := tops_roba->cijena1
     _rec["mpc2"] := tops_roba->cijena2
+
+    if tops_roba->( FieldPOS("fisc_plu") )
+        _rec["fisc_plu"] := tops_roba->fisc_plu
+    endif
 
     ++ _cnt
     @ m_x + 1, m_y + 2 SAY "import roba: " + _rec["id"] + ":" + PADR( _rec["naz"], 20 ) + "..."

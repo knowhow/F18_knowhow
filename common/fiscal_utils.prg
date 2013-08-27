@@ -200,7 +200,7 @@ BoxC()
 f18_free_tables({"roba"})
 sql_table_update( nil, "END" )
 
-if nPLU > 0
+if nCnt > 0
 	if lSilent == .f.
 		msgbeep("Generisao " + ALLTRIM(STR(nCnt)) + " PLU kodova.")
 	endif

@@ -1,6 +1,7 @@
 1.4.221 2013-08-27, vsasa
  
   - POS, vrste plaćanja za fiskalni račun, pretvori u UPPER prije provjere
+  - POS, import šifrarnika FMK/ROBA, fisc_plu polje
  
 1.4.220 2013-08-26, vsasa
  

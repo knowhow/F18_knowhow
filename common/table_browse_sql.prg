@@ -67,7 +67,7 @@ _o_qry := _sql_query( _srv, _c_qry )
 @ m_x + 1, m_y + ::browse_params["form_width"] - 12 SAY "uk.: " + ALLTRIM( STR( table_count( ::browse_params["table_name"] ) ) )
 
 _brw := TBrowseSQL():new( m_x + 2, m_y + 1, m_x + ::browse_params["form_height"], m_y + ::browse_params["form_width"], _srv, _o_qry, ::browse_params["table_name"], ::browse_params["table_browse_fields"] )
-_brw:BrowseTable( .t., NIL )
+_brw:BrowseTable( .f., NIL )
 
 // nesto mi treba kao return value ....
 ::browse_return_value := _brw:oCurRow:FieldGet( _brw:oCurRow:FieldPos( ::browse_params["table_browse_return_field"] ) )

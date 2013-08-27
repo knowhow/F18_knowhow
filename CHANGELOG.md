@@ -2,6 +2,7 @@
  
   - POS, vrste plaćanja za fiskalni račun, pretvori u UPPER prije provjere
   - POS, import šifrarnika FMK/ROBA, fisc_plu polje
+  - FAKT, storno dokument, resetuj vrstu placanja na gotovina obavezno
  
 1.4.220 2013-08-26, vsasa
  

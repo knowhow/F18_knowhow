@@ -727,10 +727,12 @@ local __br_nar
 local __dat_otpr
 local __dat_pl
 local __txt
+local __id_vrsta_p
 local __p_tmp
 local _t_txt
 
 __idpartn := field->idpartner
+__id_vrsta_p := field->idvrstep
 
 select ( F_FAKT )
 if !Used()
@@ -759,7 +761,7 @@ __br_nar := _t_txt[8]
 __dat_otpr := CTOD( _t_txt[7] )
 __dat_pl := CTOD( _t_txt[9] )
 
-Box(, 10, 65 )
+Box(, 12, 65 )
     
     @ m_x + _x, m_y + 2 SAY "*** korekcija podataka dokumenta"
 
@@ -773,14 +775,18 @@ Box(, 10, 65 )
     @ m_x + _x, m_y + 2 SAY "Datum otpremnice:" GET __dat_otpr 
 
     ++ _x
-    @ m_x + _x, m_y + 2 SAY " Broj otpremnice:" GET __br_otpr 
+    @ m_x + _x, m_y + 2 SAY " Broj otpremnice:" GET __br_otpr PICT "@S40" 
     
     ++ _x
     @ m_x + _x, m_y + 2 SAY "  Datum placanja:" GET __dat_pl
     
     ++ _x
-    @ m_x + _x, m_y + 2 SAY "        Narudzba:" GET __br_nar 
+    @ m_x + _x, m_y + 2 SAY "        Narudzba:" GET __br_nar PICT "@S40"
 
+    ++ _x
+    @ m_x + _x, m_y + 2 SAY "  Vrsta placanja:" GET __id_vrsta_p VALID EMPTY( __id_vrsta_p ) .or. P_VRSTEP( @__id_vrsta_p )
+    
+    
     read
 
 BoxC()
@@ -827,6 +833,8 @@ endif
 _rec := dbf_get_rec()
 _rec["idpartner"] := __idpartn
 _rec["partner"] := __p_tmp
+_rec["idvrstep"] := __id_vrsta_p
+
 update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
 
 // prodji kroz fakt stavke
@@ -842,6 +850,7 @@ do while !EOF() .and. field->idfirma == id_firma ;
 
     _rec := dbf_get_rec()
     _rec["idpartner"] := __idpartn
+    _rec["idvrstep"] := __id_vrsta_p
 
     if _cnt == 1
         

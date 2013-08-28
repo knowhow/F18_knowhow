@@ -1,6 +1,7 @@
 1.4.222 2013-08-28, vsasa
  
   - LD, update minulog rada u šifrarniku radnika, korekcija
+  - FAKT, promjena podataka dokumenta, dodatak promjene vrste plaćanja
  
 1.4.221 2013-08-27, vsasa
  

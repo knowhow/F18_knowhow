@@ -1118,7 +1118,8 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
             if _params["fakt_vrste_placanja"]
 
                 ++ _x
-                @ m_x + _x, m_y + 2  SAY "Nacin placanja" GET _idvrstep PICT "@!" VALID P_VRSTEP( @_idvrstep, 9, 20 )
+                @ m_x + _x, m_y + 2  SAY "Nacin placanja" GET _idvrstep PICT "@!" ;
+                    VALID EMPTY( _idvrstep ) .or. P_VRSTEP( @_idvrstep, 9, 20 )
 
             endif
        

@@ -1,3 +1,7 @@
+1.4.222 2013-08-28, vsasa
+ 
+  - LD, update minulog rada u šifrarniku radnika, korekcija
+ 
 1.4.221 2013-08-27, vsasa
  
   - POS, vrste plaćanja za fiskalni račun, pretvori u UPPER prije provjere

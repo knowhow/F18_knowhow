@@ -258,9 +258,9 @@ if ( Ch==K_ALT_M )
 
         _rec := dbf_get_rec()
      
-        if Month(datOd) == cMjesec
+        if Month( _rec["datod"] ) == cMjesec
                 
-            if pol=="M"
+            if _rec["pol"] == "M"
                 _rec["kminrad"] := _rec["kminrad"] + gMRM
             elseif pol=="Z"
                 _rec["kminrad"] := _rec["kminrad"] + gMRZ
@@ -268,7 +268,7 @@ if ( Ch==K_ALT_M )
              
         endif
             
-        if kminrad > 20   
+        if _rec["kminrad"] > 20   
             // ogranicenje minulog rada
             _rec["kminrad"] := 20
         endif
@@ -285,7 +285,7 @@ if ( Ch==K_ALT_M )
     go top
     return DE_REFRESH
 
-elseif (Ch==K_CTRL_T)
+elseif ( Ch == K_CTRL_T )
 
     if ImaURadKr(radn->id,"2")
         Beep(1)

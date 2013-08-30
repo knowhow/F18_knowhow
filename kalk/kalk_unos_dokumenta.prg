@@ -1073,11 +1073,31 @@ if _opt == 2
     go top
 
     do while !EOF()
+
         _update := .t.
         _rec := dbf_get_rec()
+        
+        select roba
+        hseek _rec["idroba"]
+    
+        if !FOUND()
+            MsgBeep( "Nepostojeca sifra artikla " + _rec["idroba"] )
+            select kalk_pripr
+            skip
+            loop
+        endif
+
+        select kalk_pripr
         _rec["mpcsapp"] := UzmiMpcSif() 
+
+        if ROUND( _rec["mpcsapp"], 2 ) <= 0
+            MsgBeep( "Artikal " + _rec["idroba"] + " cijena <= 0 !"  )
+        endif
+
         dbf_update_rec( _rec )
+
         skip
+
     enddo     
 
     select kalk_pripr

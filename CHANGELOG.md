@@ -1,3 +1,7 @@
+1.4.223 2013-08-30, vsasa
+ 
+  - KALK, uzmi MPC iz šifrarnika korekcije
+ 
 1.4.222 2013-08-28, vsasa
  
   - LD, update minulog rada u šifrarniku radnika, korekcija

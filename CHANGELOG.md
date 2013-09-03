@@ -1,3 +1,7 @@
+1.4.224 2013-09-03, vsasa
+ 
+  - KALK, kontiranje PREDISP() funkcija, da li je dokument predispozicija
+ 
 1.4.223 2013-08-30, vsasa
  
   - KALK, uzmi MPC iz šifrarnika korekcije

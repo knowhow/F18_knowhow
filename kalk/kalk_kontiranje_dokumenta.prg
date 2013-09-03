@@ -1048,6 +1048,7 @@ local nCol1:=nCol2:=nCol3:=0
 local _fin_auto_broj := "N"
 // kontira se vise kalkulacija
 local lViseKalk := .f.
+local _predispozicija := .f.
 private aPorezi
 
 aPorezi := {}
@@ -1066,6 +1067,8 @@ lVoSaTa := .f.
 fprvi := .t.  
 
 do while .t.
+
+    _predispozicija := .f.
 
     O_FINMAT
     O_KONTO
@@ -1133,12 +1136,18 @@ do while .t.
             BoxC()
         endif
     
-        HSEEK cIdFirma+cIdVd+cBrDok
+        hseek cIdFirma + cIdVd + cBrDok
+
     else
         go top
-        cIdFirma:=IdFirma
-        cIdVD:=IdVD
-        cBrdok:=brdok
+        cIdFirma := IdFirma
+        cIdVD := IdVD
+        cBrdok := brdok
+    endif
+
+    // potrebno je ispitati da li je predispozicija !
+    if idvd == "80" .and. !EMPTY( idkonto2 )
+        _predispozicija := .t.
     endif
 
     EOF CRET
@@ -1348,7 +1357,7 @@ do while .t.
                 DatDok    with kalk_pripr->DatDok,;
                 GKV       with round(kalk_PRIPR->(GKolicina*FCJ2),gZaokr),;   // vrijednost transp.kala
                 GKV2      with round(kalk_PRIPR->(GKolicin2*FCJ2),gZaokr)   // vrijednost ostalog kala
-    
+                
             replace Prevoz    with round(kalk_PRIPR->(nPrevoz*SKol),gZaokr) ,;
                 CarDaz    with round(kalk_PRIPR->(nCarDaz*SKol),gZaokr) ,;
                 BankTr    with round(kalk_PRIPR->(nBankTr*SKol),gZaokr) ,;
@@ -1476,6 +1485,11 @@ do while .t.
                 endif
             endif
      
+            // napuni marker da se radi o predispoziciji...
+            if _predispozicija
+                replace k1 with "P"
+            endif
+
             select kalk_pripr
             skip
         enddo // brdok
@@ -1557,6 +1571,18 @@ if !lViseKalk
 endif
 
 return
+
+
+
+// provjerava u finmat tabeli da li se radi o predispoziciji
+function predisp()
+local _ret := .f.
+if field->k1 == "P"
+    _ret := .t.
+endif
+return _ret
+
+
 
 
 // -----------------------------------

@@ -71,13 +71,20 @@ AADD(aDBf,{ "GKol"             , "N" ,  19 ,  7 })
 AADD(aDBf,{ "GKol2"            , "N" ,  19 ,  7 })
 AADD(aDBf,{ "PORVT"            , "N" ,  20 ,  8 })
 AADD(aDBf,{ "UPOREZV"          , "N" ,  20 ,  8 })
+AADD(aDBf,{ "K1"               , "C" ,   1 ,  0 })
+AADD(aDBf,{ "K2"               , "C" ,   1 ,  0 })
 
 _alias := "FINMAT"
 _table_name := "finmat"
 
 IF_NOT_FILE_DBF_CREATE
 	
-CREATE_INDEX("1","idFirma+IdVD+BRDok", _alias )
+// 0.9.1
+if ver["current"] > 0 .and. ver["current"] < 0901
+    modstru({"*" + _table_name, "A K1 C 1 0", "A K2 C 1 0" })
+endif
+
+CREATE_INDEX( "1", "idFirma+IdVD+BRDok", _alias )
 
 return
 

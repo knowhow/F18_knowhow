@@ -40,6 +40,8 @@ AADD(opc, "promjena, novi kontakt naloga ")
 AADD(opcexe, {|| _ch_cont(.t.) })
 AADD(opc, "promjena, lom artikala ")
 AADD(opcexe, {|| _ch_damage( __oper_id ) })
+AADD(opc, "napravi neuskladjeni proizvod ")
+AADD(opcexe, {|| rnal_damage_doc_generate( __doc_no ) })
 
 Menu_sc("changes")
 

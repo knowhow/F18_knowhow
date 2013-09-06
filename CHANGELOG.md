@@ -1,6 +1,7 @@
 1.4.225 2013-09-06, vsasa
  
   - FAKT, realizacija maloprodaje po vrstama placanja
+  - RNAL, neusklađeni proizvodi, init funkcije
  
 1.4.224 2013-09-03, vsasa
  

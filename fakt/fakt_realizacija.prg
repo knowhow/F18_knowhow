@@ -71,6 +71,9 @@ _st_mp_dok( @nT_osn, @nT_pdv, @nT_uk, .t. )
 // stampaj po operateru
 _st_mp_oper()
 
+// stampaj po vrsti placanja
+_st_mp_vrstap()
+
 // rasclaniti...
 if _params["tip_partnera"] == "D"
     // stampaj po tipu partnera
@@ -115,18 +118,19 @@ static function g_vars( params )
 local _ret := 1
 local _x := 1
 local _tip_partnera, _id_firma, _d_from, _d_to, _dok_tip, _operater, _varijanta
-local _partner
+local _partner, _vrsta_p
 
 _id_firma := PADR( fetch_metric( "fakt_real_mp_firma", my_user(), "" ), 100 )
 _d_from := fetch_metric( "fakt_real_mp_datum_od", my_user(), DATE() )
 _d_to := fetch_metric( "fakt_real_mp_datum_do", my_user(), DATE() )
 _dok_tip := PADR( fetch_metric( "fakt_real_mp_tip_dok", my_user(), "11;" ), 100 )
 _operater := fetch_metric( "fakt_real_mp_operater", my_user(), 0 )
+_vrsta_p := fetch_metric( "fakt_real_mp_vrsta_p", my_user(), SPACE(2) )
 _varijanta := fetch_metric( "fakt_real_mp_varijanta", my_user(), 1 )
 _tip_partnera := fetch_metric( "fakt_real_mp_tip_partnera", my_user(), "D" )
 _partner := PADR( fetch_metric( "fakt_real_mp_partner", my_user(), "" ), 200 )
 
-Box( , 12, 66)
+Box( , 14, 66)
 
 	@ m_x + _x, m_y + 2 SAY "**** REALIZACIJA PRODAJE ****"
 
@@ -147,6 +151,10 @@ Box( , 12, 66)
 	++ _x
 
 	@ m_x + _x, m_y + 2 SAY "Partner (prazno-svi):" GET _partner PICT "@S40"
+
+	++ _x
+
+	@ m_x + _x, m_y + 2 SAY "Vrsta placanja (prazno-svi):" GET _vrsta_p VALID EMPTY( _vrsta_p ) .or. P_VRSTEP( @_vrsta_p ) 
 
 	++ _x
 
@@ -181,6 +189,7 @@ set_metric( "fakt_real_mp_datum_od", my_user(), _d_from )
 set_metric( "fakt_real_mp_datum_do", my_user(), _d_to )
 set_metric( "fakt_real_mp_tip_dok", my_user(), ALLTRIM( _dok_tip ) )
 set_metric( "fakt_real_mp_operater", my_user(), _operater )
+set_metric( "fakt_real_mp_vrsta_p", my_user(), _vrsta_p )
 set_metric( "fakt_real_mp_varijanta", my_user(), _varijanta )
 set_metric( "fakt_real_mp_tip_partnera", my_user(), _tip_partnera )
 set_metric( "fakt_real_mp_partner", my_user(), ALLTRIM( _partner ) )
@@ -195,6 +204,7 @@ params["operater"] := _operater
 params["firma"] := ALLTRIM( _id_firma )
 params["tip_partnera"] := _tip_partnera
 params["partner"] := _partner
+params["vrstap"] := _vrsta_p
 
 _ret := 1
 
@@ -214,12 +224,14 @@ local _tip_partnera := "1"
 local _id_broj := ""
 local _pdv_clan := ""
 local _d_do, _d_od, _varijanta, _tip_dok, _operater, _id_firma, _rasclaniti
+local _vrsta_p
 
 O_FAKT_DOKS
 O_FAKT
 O_ROBA
 O_SIFV
 O_SIFK
+O_VRSTEP
 O_TARIFA
 O_PARTN
 
@@ -232,11 +244,20 @@ _operater := params["operater"]
 _id_firma := params["firma"]
 _rasclaniti := params["tip_partnera"] == "D"
 _partner := params["partner"]
+_vrsta_p := params["vrstap"]
 
 _filter := ""
 
 if !EMPTY( _id_firma )
 	_filter += Parsiraj( ALLTRIM( _id_firma ), "idfirma" )
+endif
+
+// vrsta placanja...
+if !EMPTY( _vrsta_p )
+    if !EMPTY( _filter )
+        _filter += ".and."
+    endif
+    _filter += "idvrstep = " + _filter_quote( _vrsta_p )
 endif
 
 // operater
@@ -393,6 +414,7 @@ do while !EOF()
 		replace field->brdok with fakt->brdok
 		replace field->datdok with fakt->datdok
 		replace field->operater with _oper_id
+        replace field->vrstap with _g_vrsta_p( fakt->idtipdok, fakt->idvrstep )
 		replace field->part_id with fakt->idpartner
 		replace field->part_naz with ALLTRIM( partn->naz )
 		replace field->roba_id with fakt->idroba
@@ -420,6 +442,42 @@ msgc()
 return
 
 
+static function _g_vrsta_p( tip_dok, vrsta_p )
+local _ret := "MP GOTOVINA"
+
+do case 
+
+    // maloprodaja
+    case tip_dok == "11"
+
+        if !EMPTY( vrsta_p )
+            if vrsta_p == "KT"
+                _ret := "MP KARTICA"
+            elseif vrsta_p == "AV"
+                _ret := "MP AVANSNA FAKTURA"
+            elseif vrsta_p == "VR"
+                _ret := "MP VIRMANSKO PLACANJE"
+            endif
+        endif        
+
+    // vp
+    case tip_dok == "10"
+        _ret := "VP VIRMANSKO PLACANJE"
+        if !EMPTY( vrsta_p )
+            if vrsta_p == "G "
+                _ret := "VP GOTOVINA"
+            elseif vrsta_p == "KT"
+                _ret := "VP KARTICA"
+            elseif vrsta_p == "AV"
+                _ret := "VP AVANSNA FAKTURA"
+            endif
+        endif
+
+endcase
+
+return _ret
+
+
 // -------------------------------------------
 // kreiranje pomocne tabele izvjestaja
 // -------------------------------------------
@@ -432,6 +490,7 @@ AADD( aDbf, { "idtipdok", "C", 2, 0 } )
 AADD( aDbf, { "brdok", "C", 10, 0 } )
 AADD( aDbf, { "datdok", "D", 8, 0 } )
 AADD( aDbf, { "operater", "N", 10, 0 } )
+AADD( aDbf, { "vrstap", "C", 40, 0 } )
 AADD( aDbf, { "part_id", "C", 6, 0 } )
 AADD( aDbf, { "part_naz", "C", 100, 0 } )
 AADD( aDbf, { "roba_id", "C", 10, 0 } )
@@ -451,6 +510,7 @@ index on idfirma + idtipdok + brdok tag "1"
 index on roba_id tag "2"
 index on STR( operater, 10 ) + idfirma + idtipdok + brdok tag "3"
 index on tip tag "4"
+index on vrstap tag "5"
 
 return
 
@@ -702,6 +762,111 @@ enddo
 ? cLine
 
 return
+
+
+
+// ---------------------------------------------
+// stampa rekapitulacije
+// varijanta po vrsti placanja
+// ---------------------------------------------
+static function _st_mp_vrstap( nT_osnovica, nT_pdv, nT_ukupno )
+local nOsnovica
+local nPDV
+local nUkupno
+local nRbr := 0
+local nRow := 35
+local cLine := ""
+local cF_tipdok
+local cF_firma
+local cF_brdok
+local _vrsta_p, _vrsta_p_naz
+
+nT_osnovica := 0
+nT_pdv := 0
+nT_ukupno := 0
+
+// vraca liniju
+g_l_mpop( @cLine )
+
+// zaglavlje pregled po robi
+s_z_mpvrstap( cLine )
+
+select r_export
+// po operaterima
+set order to tag "5"
+go top
+
+do while !EOF()
+
+	_vrsta_p := field->vrstap
+
+	nOsnovica := 0
+	nPDV := 0
+	nUkupno := 0
+	nS_pdv := 0
+	nU_fakt := 0
+	nUU_fakt := 0
+
+	do while !EOF() .and. field->vrstap == _vrsta_p
+	
+		cF_brdok := field->brdok
+		cF_tipdok := field->idtipdok
+		cF_firma := field->idfirma
+
+		do while !EOF() .and. field->vrstap == _vrsta_p .and. ;
+			cF_firma + cF_tipdok + cF_brdok == field->idfirma + ;
+				field->idtipdok + field->brdok
+		
+			nU_fakt := field->uk_fakt
+			nS_pdv := field->s_pdv
+			nOsnovica += field->kolicina * field->c_bpdv
+			nPDV += field->kolicina * field->pdv
+
+			skip
+		enddo
+
+		nUU_fakt += nU_fakt
+
+	enddo
+
+	// zaokruzi
+	nOsnovica := ROUND( ( nUU_fakt / ( 1 + ( nS_pdv/100 )) ), ;
+		ZAO_VRIJEDNOST() )
+	nPDV := ROUND( ( nUU_fakt / ( 1 + ( nS_pdv/100 ) ) * ;
+		(nS_pdv/100)) , ZAO_VRIJEDNOST() )
+	nUkupno := ROUND( nUU_fakt , ZAO_VRIJEDNOST() )
+
+
+	// pa ispisi tu stavku
+
+	// rbr
+	? PADL( ALLTRIM( STR( ++nRbr ) ), 4 ) + "."
+
+	// operater
+	@ prow(), pcol()+1 SAY PADR( ALLTRIM( _vrsta_p ), 40 )
+	
+	// total
+	@ prow(), nRow := pcol()+1 SAY STR( nUkupno, _NUM, _DEC ) ;
+		PICT PIC_IZN 
+
+	// dodaj na total
+
+	nT_ukupno += nUkupno
+	nT_osnovica += nOsnovica
+	nT_pdv += nPDV
+
+enddo
+
+// ispisi sada total
+? cLine
+
+? "UKUPNO:"
+@ prow(), nRow SAY STR( nT_Ukupno, _NUM, _DEC ) PICT PIC_IZN
+
+? cLine
+
+return
+
 
 
 
@@ -1025,6 +1190,30 @@ cTxt += PADR("ukupno", 12)
 ? cLine
 
 return
+
+
+
+// -----------------------------------------
+// zaglavlje za pregled po vrsti placanja
+// -----------------------------------------
+static function s_z_mpvrstap( cLine )
+
+cTxt := ""
+
+cTxt += PADR("r.br", 5)
+cTxt += SPACE(1)
+cTxt += PADR("vrsta placanja (id/naziv)", 40)
+cTxt += SPACE(1)
+cTxt += PADR("ukupno", 12)
+
+?
+? "Realizacija po vrstama placanja:"
+? cLine
+? cTxt
+? cLine
+
+return
+
 
 
 

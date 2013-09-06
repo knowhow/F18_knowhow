@@ -1,3 +1,7 @@
+1.4.225 2013-09-06, vsasa
+ 
+  - FAKT, realizacija maloprodaje po vrstama placanja
+ 
 1.4.224 2013-09-03, vsasa
  
   - KALK, kontiranje PREDISP() funkcija, da li je dokument predispozicija

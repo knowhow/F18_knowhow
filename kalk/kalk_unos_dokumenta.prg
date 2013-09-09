@@ -101,6 +101,8 @@ AADD( ImeKol, { "MPC sa PP" , {|| transform(MPCSaPP,picv)  }, "mpcsapp"     } )
 AADD( ImeKol, { "RN"        , {|| idzaduz2                 }, "idzaduz2"    } )
 AADD( ImeKol, { "Br.Fakt"   , {|| brfaktp                  }, "brfaktp"     } )
 AADD( ImeKol, { "Partner"   , {|| idpartner                }, "idpartner"   } )
+AADD( ImeKol, { "Marza"     , {|| tmarza                   }, "tmarza"   } )
+AADD( ImeKol, { "Marza 2"   , {|| tmarza2                  }, "tmarza2"   } )
 AADD( ImeKol, { "E"         , {|| error                    }, "error"       } )
 
 if lPoNarudzbi
@@ -2519,11 +2521,13 @@ do while !EOF() .and. field->idfirma + field->idvd + field->brdok == firma + tip
     if field->idvd $ "11#41#42#RN"
         if field->fcj == 0
             _ok := .f.
+            MsgBeep( "Stavka broj " + ALLTRIM( field->rbr ) + " FCJ <= 0 !" )
             exit
         endif
     elseif field->idvd $ "16#96#94#95#14#80#"
         if field->nc == 0
             _ok := .f.
+            MsgBeep( "Stavka broj " + ALLTRIM( field->rbr ) + " NC <= 0 !" )
             exit
         endif
     endif

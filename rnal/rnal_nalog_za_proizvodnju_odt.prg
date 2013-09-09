@@ -147,7 +147,8 @@ params["nalog_vrsta_placanja"] := g_t_pars_opis("N06")
 params["nalog_placeno"] := g_t_pars_opis("N10")
 // placanje dodatni opis
 params["nalog_placanje_opis"] := g_t_pars_opis("N11")
-
+// tip naloga
+params["nalog_tip"] := g_t_pars_opis("N21")
 
 // podaci kupca
 // ===============================================
@@ -212,6 +213,7 @@ xml_node( "oper", to_xml_encoding( params["nalog_operater"] ) )
 xml_node( "oper_print", to_xml_encoding( params["nalog_print_operater"] ) )
 xml_node( "pr_time", params["nalog_print_vrijeme"] )
 xml_node( "vrpl", params["nalog_vrsta_placanja"] )
+xml_node( "tip", params["nalog_tip"] )
 
 // kupac/kontakt podaci...
 xml_node( "cust_id", to_xml_encoding( params["kupac_id"] ) )

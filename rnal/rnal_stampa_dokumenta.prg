@@ -876,6 +876,9 @@ if !EMPTY(cDescr)
     add_tpars("N14", cDescr )
 endif
 
+// neuskladjeni proizvod
+add_tpars( "N21", field->doc_type )
+
 // ako je kes, dodaj i podatke o placeno D i napomene
 if field->doc_pay_id == 2
     

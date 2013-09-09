@@ -1,3 +1,7 @@
+1.4.226 2013-09-09, vsasa
+ 
+  - RNAL, neusklađen proizvod, dorade
+ 
 1.4.225 2013-09-06, vsasa
  
   - FAKT, realizacija maloprodaje po vrstama placanja

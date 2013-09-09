@@ -934,6 +934,7 @@ local cSLHead
 local cINaziv
 local cRazmak := SPACE(2)
 local cDoc_no
+local _np := g_t_pars_opis( "N21" )
 
 // broj dokumenta
 cDoc_no := g_t_pars_opis("N01")
@@ -963,6 +964,11 @@ next
 
 p_line(cRazmak + cDlhead, 10, .t.)
 p_line(cRazmak + cINaziv, 10, .t.)
+
+if _np == "NP" 
+    p_line( cRazmak + hb_strtoutf8( "NEUSKLADJEN PROIZVOD" ), 10, .t. )
+endif
+
 p_line(cRazmak + cDlhead, 10, .t.)
 
 ?

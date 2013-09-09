@@ -217,19 +217,25 @@ return
 // -----------------------------------------
 // prikaz artikla u tabeli
 // -----------------------------------------
-static function sh_article( nArt_id , nQtty, nWidth, nHeight )
+function sh_article( nArt_id , nQtty, nWidth, nHeight )
 local xRet := "???"
 local cTmp 
 local nTmp
 
-// dimenzije
-xRet := "("
-xRet += ALLTRIM( STR( nWidth, 12, 0 ) ) 
-xRet += "x" 
-xRet += ALLTRIM( STR( nHeight, 12, 0 ) )
-xRet += "x"
-xRet += ALLTRIM( STR( nQtty, 12, 0 ) )
-xRet += ")"
+if nWidth == 0 .and. nHeight == 0
+    xRet := "("
+    xRet += ALLTRIM( STR( nQtty, 12, 0 ) )
+    xRet += ")"
+else
+    // dimenzije
+    xRet := "("
+    xRet += ALLTRIM( STR( nWidth, 12, 0 ) ) 
+    xRet += "x" 
+    xRet += ALLTRIM( STR( nHeight, 12, 0 ) )
+    xRet += "x"
+    xRet += ALLTRIM( STR( nQtty, 12, 0 ) )
+    xRet += ")"
+endif
 
 // naziv
 cTmp := ALLTRIM( g_art_desc( nArt_id, .t., .f. ) )

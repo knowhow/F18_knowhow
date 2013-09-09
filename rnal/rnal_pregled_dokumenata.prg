@@ -1110,6 +1110,12 @@ AADD(aImeKol, {"Plac." , ;
 	{|| .t.}, ;
 	{|| .t.} })
 
+AADD(aImeKol, {"Tip" , ;
+	{|| PADR( doc_type , 2) }, ;
+	"doc_type", ;
+	{|| .t.}, ;
+	{|| .t.} })
+
 AADD(aImeKol, {"FMK" , ;
 	{|| fmk_doc }, ;
 	"fmk_doc", ;

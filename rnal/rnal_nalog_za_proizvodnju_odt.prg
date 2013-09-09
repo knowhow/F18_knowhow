@@ -196,8 +196,15 @@ xml_subnode( "nalozi", .f. )
 
 // upisi osvnovne podatke naloga
 xml_node( "fdesc", to_xml_encoding( params["firma_naziv"] ) )
+xml_node( "tip", params["nalog_tip"] )
 xml_node( "no", params["nalog_broj"] )
-xml_node( "desc", to_xml_encoding( params["nalog_naziv"] ) )
+
+if params["nalog_tip"] == "NP"
+    xml_node( "desc", to_xml_encoding( "NEUSKLADJEN PROIZVOD br." ) )
+else
+    xml_node( "desc", to_xml_encoding( params["nalog_naziv"] ) )
+endif
+
 xml_node( "gr_total", params["nalog_grupa_total"] )
 xml_node( "date", params["nalog_datum"] )
 xml_node( "time", params["nalog_vrijeme"] )
@@ -213,7 +220,6 @@ xml_node( "oper", to_xml_encoding( params["nalog_operater"] ) )
 xml_node( "oper_print", to_xml_encoding( params["nalog_print_operater"] ) )
 xml_node( "pr_time", params["nalog_print_vrijeme"] )
 xml_node( "vrpl", params["nalog_vrsta_placanja"] )
-xml_node( "tip", params["nalog_tip"] )
 
 // kupac/kontakt podaci...
 xml_node( "cust_id", to_xml_encoding( params["kupac_id"] ) )

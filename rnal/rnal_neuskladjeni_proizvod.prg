@@ -657,7 +657,7 @@ enddo
 
 
 if _count > 0
-    MsgBeep( "Kreiran nalog tip-a NEUSKLADJENI PROIZVOD#Nalazi se u pripremi!" )
+    MsgBeep( "Kreiran nalog tip-a NEUSKLADJENI PROIZVOD#Nalazi se u pripremi!#PREGLEDATI GA PRIJE AZURIRANJA" )
 endif
 
 _ok := .t.

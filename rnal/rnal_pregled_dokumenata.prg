@@ -149,6 +149,7 @@ local nContact := VAL(STR(0, 10))
 local nOperater := VAL(STR(0, 10))
 local cOperater := PADR("", 10)
 local cShowRejected := "N"
+local nTip := 0
 local nRet := 1
 local cFilter
 // color header
@@ -166,6 +167,7 @@ cObject := fetch_metric( "rnal_preg_nalog_objekat", my_user(), cObject )
 nOperater := fetch_metric( "rnal_preg_nalog_operater", my_user(), nOperater )
 nSort := fetch_metric( "rnal_preg_nalog_sort", my_user(), nSort )
 cShowRejected := fetch_metric( "rnal_preg_nalog_odbaceni", my_user(), cShowRejected )
+nTip := fetch_metric( "rnal_preg_nalog_tip", my_user(), nTip )
 
 Box( , nBoxX, nBoxY)
 
@@ -214,6 +216,12 @@ nX += 2
     VALID {|| nOperater == 0 , IIF( nOperater == -99, choose_f18_user_from_list( @nOperater ), .t. ), ;
         show_it( getusername( nOperater ), 30 ) } ;
     WHEN set_opc_box( nBoxX, 60, "pretraga po operateru", "-99 : odaberi iz liste", nil, cHelpClr )
+
+nX += 1
+
+@ m_x + nX, m_y + 2 SAY PADL("Tip naloga:", 10 ) GET nTip ; 
+    VALID nTip >= 0 .and. nTip < 3 WHEN set_opc_box( nBoxX, 60, "0 - svi nalozi / 1 - samo regularni / 2 - samo NP", nil, nil, cHelpClr ) ;
+    PICT "9"
 
 nX += 2
 
@@ -265,6 +273,7 @@ set_metric( "rnal_preg_nalog_objekat", my_user(), cObject )
 set_metric( "rnal_preg_nalog_operater", my_user(), nOperater )
 set_metric( "rnal_preg_nalog_sort", my_user(), nSort )
 set_metric( "rnal_preg_nalog_odbaceni", my_user(), cShowRejected )
+set_metric( "rnal_preg_nalog_tip", my_user(), nTip )
 
 // generisi filter
 cFilter := gen_filter(dDateFrom, ;
@@ -275,7 +284,8 @@ cFilter := gen_filter(dDateFrom, ;
 			nContact, ;
 			nObject, ;
 			nOperater, ;
-			cShowRejected )
+			cShowRejected, ;
+            nTip )
 
 
 __filter := cFilter
@@ -303,7 +313,7 @@ return .f.
 // generise string filtera
 // ---------------------------------
 static function gen_filter( dDateFrom, dDateTo, dDvrDFrom, dDvrDTo, ;
-			nCustomer, nContact, nObject, nOper, cShReject )
+			nCustomer, nContact, nObject, nOper, cShReject, nTip )
 local nClosed := 1
 local cFilter := ""
 
@@ -319,6 +329,12 @@ else
 		cFilter := "( " + cFilter +  " .or. doc_status == 2 )"
 	endif
 	
+endif
+
+if nTip == 1
+    cFilter += ".and. doc_type = '  '"
+elseif nTip == 2
+    cFilter += ".and. doc_type = 'NP'"
 endif
 
 if !EMPTY(dDateFrom)

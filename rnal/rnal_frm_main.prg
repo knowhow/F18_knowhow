@@ -143,6 +143,7 @@ if l_new_doc
 	_doc_pay_de := SPACE( LEN(_doc_pay_de) )
 	_doc_status := 10
 	_doc_sh_des := SPACE( LEN( _doc_sh_des ) )
+    _doc_type := SPACE(2)
 	
 	cCustId := PADR("", 10)
 	cContId := PADR("", 10)
@@ -161,6 +162,9 @@ _operater_i := _oper_id
 // unos podataka...
 
 @ m_x + nX, m_y + 2 SAY "Datum naloga (*):" GET _doc_date WHEN set_opc_box( nBoxX, 50 ) 
+
+@ m_x + nX, col() + 2 SAY "Tip naloga (*):" GET _doc_type WHEN set_opc_box( nBoxX, 50, "prazno - klasicni nalog, NP - neuskladjen proizvod" ) ;
+            VALID _doc_type $ "  #NP" 
 
 nX += 2
 

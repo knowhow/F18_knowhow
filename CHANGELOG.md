@@ -1,3 +1,9 @@
+1.4.227 2013-09-12, vsasa
+ 
+  - Fiskalne funkcije FPRINT, čitanje fajla greške - dorade
+  - RNAL, unos novog naloga, nalog tip 
+  - RNAL, pregled naloga, uslov po tipu naloga
+ 
 1.4.226 2013-09-09, vsasa
  
   - RNAL, neusklađen proizvod, dorade

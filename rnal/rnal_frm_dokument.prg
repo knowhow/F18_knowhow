@@ -251,6 +251,7 @@ AADD(aImeKol, {"Kontakt", {|| PADR(g_cont_desc( cont_id ), 8) + ".." }, "cont_id
 AADD(aImeKol, {"Kont.opis", {|| PADR(cont_add_d, 18) + ".."}, "cont_add_d" })
 AADD(aImeKol, {"Vrsta p.", {|| doc_pay_id}, "doc_pay_id" })
 AADD(aImeKol, {"Prioritet", {|| doc_priori}, "doc_priori" })
+AADD(aImeKol, {"Tip", {|| doc_type}, "doc_type" })
 
 for i:=1 to LEN(aImeKol)
     AADD(aKol, i)

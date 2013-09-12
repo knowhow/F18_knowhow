@@ -1571,6 +1571,13 @@ _fisc_txt := _a_tmp[2]
 
 _a_fisc := toktoniz( _fisc_txt, "," )
 
+if LEN( _a_fisc ) < 2
+    // nesto nije ok !
+    MsgBeep( "Izlazni fajl nije kompletan !#Pozovite servis." )
+    log_write( "ERROR fiscal out, nema elemenata !", 3 )
+    return _fiscal_no
+endif
+
 _fiscal_no := VAL( _a_fisc[ _n_pos ] )
 
 log_write( "FISC RN: " + ALLTRIM( STR( _fiscal_no ) ), 3 )

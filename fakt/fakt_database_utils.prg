@@ -310,6 +310,16 @@ else
     _broj_doks := 0
 endif
 
+// recimo param 1000 a broj doks 980
+if ( _broj - _broj_doks ) > 30
+    // ovdje imamo rupu i neki problem !
+    MsgBeep( "Postoji eventualni problem sa brojacem dokumenta.#Broj na serveru: " + ALLTRIM( STR( _broj ) ) + ;
+        ", broj u fakt: " + ALLTRIM( STR( _broj_doks ) ) )
+    // sta dalje ?
+    select ( _t_area )
+    return fakt_prazan_broj_dokumenta()
+endif
+
 // uzmi sta je vece, doks broj ili globalni brojac
 _broj := MAX( _broj, _broj_doks )
 

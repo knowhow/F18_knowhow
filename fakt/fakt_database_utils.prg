@@ -295,8 +295,13 @@ endif
 
 // param: fakt/10/10
 _param := "fakt" + "/" + firma + "/" + tip_dokumenta 
-
 _broj := fetch_metric( _param, nil, _broj )
+
+// ima li kakvih rupa na server strani ?
+if fakt_postoji_li_rupa_u_brojacu( firma, tip_dokumenta, sufiks )
+    select ( _t_area )
+    return fakt_prazan_broj_dokumenta()
+endif
 
 // konsultuj i doks uporedo
 O_FAKT_DOKS
@@ -309,16 +314,6 @@ if field->idfirma == firma .and. field->idtipdok == tip_dokumenta
     _broj_doks := VAL( PADR( field->brdok, gNumDio ) )
 else
     _broj_doks := 0
-endif
-
-// recimo param 1000 a broj doks 980
-if ( _broj - _broj_doks ) > 30
-    // ovdje imamo rupu i neki problem !
-    MsgBeep( "Postoji eventualni problem sa brojacem dokumenta.#Broj na serveru: " + ALLTRIM( STR( _broj ) ) + ;
-        ", broj u fakt: " + ALLTRIM( STR( _broj_doks ) ) )
-    // sta dalje ?
-    select ( _t_area )
-    return fakt_prazan_broj_dokumenta()
 endif
 
 // uzmi sta je vece, doks broj ili globalni brojac
@@ -358,28 +353,20 @@ select fakt_pripr
 go top
 
 _null_brdok := PADR( REPLICATE( "0", gNumDio ), 8 )
-        
-if field->brdok <> _null_brdok 
-
-    // nemam sta raditi, broj je vec setovan
-    // ili ipak imam, treba provjeriti za eventualnu rupu u brojacu...
-
-    // provjeri priprema - broj server
-    // ....
-
-    PopWa()
-    return .f.
-
-endif
-
 _firma := field->idfirma
 _td := field->idtipdok
-
+       
 // brojaci otpremnica po tip-u "22"
 if _td == "12" .and. _fakt_params["fakt_otpr_22_brojac"]
     _tip_srch := "22"
 else    
     _tip_srch := _td
+endif
+
+if field->brdok <> _null_brdok 
+    // nemam sta raditi, broj je vec setovan
+    PopWa()
+    return .f.
 endif
 
 // daj mi novi broj dokumenta
@@ -436,6 +423,49 @@ PopWa()
 return .t.
 
 
+// -----------------------------------------------------------
+// provjerava postoji li rupa u brojacu dokumenata
+// -----------------------------------------------------------
+function fakt_postoji_li_rupa_u_brojacu( id_firma, id_tip_dok, sufix )
+local _ok := .f.
+local _qry, _table
+local _server := pg_server()
+local _max_dok, _par_dok, _param
+local _params := fakt_params()
+local _tip_srch
+
+// .... parametar ako treba
+if !_params["kontrola_brojaca"]
+    return _ok
+endif
+
+if sufix == NIL
+    sufix := ""
+endif
+
+_qry := " SELECT MAX( brdok ) FROM fmk.fakt_doks " + ;
+        " WHERE idfirma = " + _sql_quote( id_firma ) + ;
+        " AND idtipdok = " + _sql_quote( id_tip_dok ) + ;
+        IF( !EMPTY( sufix ), " AND '/" + ALLTRIM( sufix ) + "'IN brdok", "" )
+
+// ovo je tabela
+_table := _sql_query( _server, _qry )
+_max_dok := VAL( _table:Fieldget(1) )
+
+// ovo je iz parametara...
+// param: fakt/10/10
+_param := "fakt" + "/" + id_firma + "/" + id_tip_dok
+_par_dok := fetch_metric( _param, nil, 0 )
+
+if ( _par_dok - _max_dok ) > 30
+    // eto greske !!!!
+    MsgBeep( "Postoji greska sa brojacem dokumenta#Dokumenti: " + ALLTRIM( STR( _max_dok ) ) + ;
+                ", parametri: " + ALLTRIM( STR( _par_dok ) ) + "#" + ;
+                "Provjerite brojac." )
+    _ok := .t.
+endif
+
+return _ok
 
 
 

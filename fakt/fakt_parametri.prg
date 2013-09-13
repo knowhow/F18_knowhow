@@ -100,6 +100,7 @@ if read .or. __fakt_params == NIL
     __fakt_params["fakt_objekti"] := IIF( fakt_objekti() == "D", .t., .f.)
     __fakt_params["fakt_otpr_22_brojac"] := IIF( fakt_otpr_22_brojac() == "D", .t., .f.)
     __fakt_params["fakt_otpr_gen"] := IIF( fakt_otpr_gen() == "D", .t., .f.)
+    __fakt_params["kontrola_brojaca"] := IIF( fakt_kontrola_brojaca_par() == "D", .t., .f. )
 
 endif
 
@@ -144,6 +145,7 @@ local _unos_dest := destinacije()
 local _unos_br_veza := fakt_dok_veze()
 local _otpr_brojac_22 := fakt_otpr_22_brojac()
 local _otpr_gen := fakt_otpr_gen()
+local _kontrola_brojaca := fakt_kontrola_brojaca_par()
 private cSection:="1"
 private cHistory:=" "
 private aHistory:={}
@@ -235,6 +237,10 @@ read_dn_parametar("Brojac otpremnica po dokumentu 22 (D/N)", m_x + _x, m_y + 2, 
 read_dn_parametar("Generacija otpremnica ver.2 (D/N)", m_x + _x, m_y + 2, @_otpr_gen )
 ++ _x
 
+read_dn_parametar("Kontrola brojaca dokumenta (D/N)", m_x + _x, m_y + 2, @_kontrola_brojaca )
+++ _x
+
+
 @ m_x + _x, m_y + 2 SAY "Ispis racuna MP na traku (D/N/X)" GET gMPPrint  PICT "@!"   VALID gMPPrint $ "DNXT"
 
 read
@@ -296,6 +302,7 @@ if LastKey() <> K_ESC
     fakt_dok_veze( _unos_br_veza )
     fakt_otpr_22_brojac( _otpr_brojac_22 )
     fakt_otpr_gen( _otpr_gen )
+    fakt_kontrola_brojaca_par( _kontrola_brojaca )
 
     // setuj mi default odt template ako treba
     __default_odt_template()
@@ -1096,6 +1103,12 @@ return get_set_global_param("fakt_otpremnice_22_brojac", value, "N" )
 // ----------------------------------------------------------------
 function fakt_otpr_gen(value)
 return get_set_global_param("fakt_otpremnice_gen_v2", value, "D" )
+
+// ----------------------------------------------------------------
+// kontrolisanje brojaca...
+// ----------------------------------------------------------------
+function fakt_kontrola_brojaca_par(value)
+return get_set_global_param("fakt_kontrola_brojaca_dokumenta", value, "D" )
 
 
 

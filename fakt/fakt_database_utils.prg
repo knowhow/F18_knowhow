@@ -269,6 +269,7 @@ endif
 return
 
 
+
 // ---------------------------------------------------------------
 // vraca prazan broj dokumenta
 // ---------------------------------------------------------------
@@ -359,9 +360,16 @@ go top
 _null_brdok := PADR( REPLICATE( "0", gNumDio ), 8 )
         
 if field->brdok <> _null_brdok 
+
     // nemam sta raditi, broj je vec setovan
+    // ili ipak imam, treba provjeriti za eventualnu rupu u brojacu...
+
+    // provjeri priprema - broj server
+    // ....
+
     PopWa()
     return .f.
+
 endif
 
 _firma := field->idfirma

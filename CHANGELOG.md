@@ -1,6 +1,7 @@
 1.4.228 2013-09-13, vsasa
  
   - FAKT, provjera broja dokumenta kod promjene tip-a dokumenta
+  - KALK, ažuriranje dokumenta 11, problem sa poljima
  
 1.4.227 2013-09-12, vsasa
  

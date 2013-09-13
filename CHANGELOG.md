@@ -2,6 +2,7 @@
  
   - FAKT, provjera broja dokumenta kod promjene tip-a dokumenta
   - KALK, ažuriranje dokumenta 11, problem sa poljima
+  - KALK, stavimpcsif() koristi se gDefNiv varijabla za promjenu cijena
  
 1.4.227 2013-09-12, vsasa
  

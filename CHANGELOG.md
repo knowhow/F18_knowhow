@@ -1,3 +1,7 @@
+1.4.228 2013-09-13, vsasa
+ 
+  - FAKT, provjera broja dokumenta kod promjene tip-a dokumenta
+ 
 1.4.227 2013-09-12, vsasa
  
   - Fiskalne funkcije FPRINT, čitanje fajla greške - dorade

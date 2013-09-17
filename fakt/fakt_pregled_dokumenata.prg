@@ -704,6 +704,59 @@ do case
             _refresh := .t.
         endif
 
+    // duplikat fiskalnog racuna...
+    case UPPER( chr( Ch ) ) == "T"
+
+        if ! ( field->idtipdok $ "10#11" )
+            MsgBeep( "Opcija moguca samo za racune !" ) 
+            return DE_CONT
+        endif
+
+        if !fiscal_opt_active()
+            return DE_CONT
+        endif
+
+        if _db_locked
+            oDb_lock:warrning()
+            return DE_CONT
+        endif
+
+        _dev_id := get_fiscal_device( my_user(), field->idtipdok )
+
+        if _dev_id > 0
+
+            _dev_params := get_fiscal_device_params( _dev_id, my_user() )
+
+            if _dev_params == NIL
+                return DE_CONT
+            endif
+
+        else
+            MsgBeep("Problem sa fiskalnim parametrima !!!")
+            return DE_CONT
+        endif
+
+        if _dev_params["drv"] <> "FPRINT"
+            MsgBeep( "Opcija moguca samo za FPRINT/DATECS uredjaje !" )
+            return DE_CONT
+        endif
+
+        _rn_params := hb_hash()
+
+        // stampaj fiskalni duplikat...
+        if field->fisc_st <> 0
+            _rn_params["storno"] := .t.            
+        else
+            _rn_params["storno"] := .f.
+        endif
+
+        _rn_params["datum"] := field->fisc_date 
+        _rn_params["vrijeme"] := field->fisc_time
+
+        fprint_double( _dev_params, _rn_params ) 
+
+        MsgBeep( "Duplikat racuna za datum: " + DTOC( field->fisc_date ) + ", vrijeme: " + ALLTRIM( field->fisc_time ) )
+
     // stampanje fiskalnog racuna
     case UPPER( chr( Ch ) ) == "R"
 

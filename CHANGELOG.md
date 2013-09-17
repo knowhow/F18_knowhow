@@ -1,3 +1,7 @@
+1.4.229 2013-09-17, vsasa
+ 
+  - FAKT, FPRINT fiskalni uredjaj, duplikat računa iz pregleda računa
+ 
 1.4.228 2013-09-13, vsasa
  
   - FAKT, provjera broja dokumenta kod promjene tip-a dokumenta

@@ -130,7 +130,7 @@ return
 // ----------------------------------------------------
 // fprint: dupliciranje racuna
 // ----------------------------------------------------
-function fprint_double( dev_params )
+function fprint_double( dev_params, rn_params )
 local cSep := ";"
 local aDouble := {}
 local aStruct := {}
@@ -143,9 +143,15 @@ local cTM_to := "31"
 local cT_from
 local cT_to
 local cType := "F"
+local _box := .f.
 
+if rn_params == NIL
+    _box := .t.
+endif
 
-Box(,10,60)
+if _box
+
+   Box(,10,60)
 
     SET CURSOR ON
 	
@@ -169,15 +175,44 @@ Box(,10,60)
 		VALID cType $ "AFRZXP" PICT "@!"
 
 	read
-BoxC()
+  BoxC()
 
-if LastKey() == K_ESC
+  if LastKey() == K_ESC
 	return
-endif
+  endif
 
-// dodaj i sekunde na kraju
-cT_from := cTH_from + cTM_from + "00"
-cT_to := cTH_to + cTM_to + "00"
+  // dodaj i sekunde na kraju
+  cT_from := cTH_from + cTM_from + "00"
+  cT_to := cTH_to + cTM_to + "00"
+
+else
+
+    if EMPTY( rn_params["vrijeme"] )
+        MsgBeep( "Opcija je nemoguca bez parametra vremena !" )
+        return 
+    endif
+
+    if rn_params["datum"] == CTOD( "" )
+        MsgBeep( "Opcija je nemoguca bez parametra datuma !" )
+        return
+    endif
+
+    // imamo parametre racuna...
+    if rn_params["storno"]
+        cType := "R"
+    else
+        cType := "F"
+    endif
+    
+    // datum   
+    dD_from := rn_params["datum"]
+    dD_to := rn_params["datum"]
+
+    // vrijeme 15:34
+    cT_from := _fix_time( rn_params["vrijeme"], -.5 )
+    cT_to := _fix_time( rn_params["vrijeme"], 1 )
+
+endif
 
 // uzmi strukturu tabele za pos racun
 aStruct := _g_f_struct( F_POS_RN )
@@ -189,6 +224,21 @@ _a_to_file( dev_params["out_dir"], dev_params["out_file"], aStruct, aDouble )
 
 return
 
+
+// -----------------------------------------------
+// sredi vrijeme +/-
+// -----------------------------------------------
+static function _fix_time( time, fix )
+local _time := ""
+local _a_tmp := TokToNiz( time, ":" )
+local _hour := _a_tmp[1]
+local _minutes := _a_tmp[2]
+
+_time := hb_datetime( 0, 0, 0, VAL( _hour ), VAL( _minutes ) + fix , 0 )
+_time := RIGHT( ALLTRIM( hb_ttoc( _time ) ), 12 )
+_time := PADR( _time, 5 ) + ":00"
+
+return _time
 
 
 // ----------------------------------------------------

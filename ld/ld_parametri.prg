@@ -42,6 +42,7 @@ gMRZ := fetch_metric( "ld_minuli_rad_koef_zene", NIL, gMRZ )
 gMRM := fetch_metric( "ld_minuli_rad_koef_muskarci", NIL, gMRM )
 gPDLimit := fetch_metric( "ld_donji_limit_poreza_doprinosa", NIL, gPDLimit )
 gBFForm := fetch_metric( "ld_formula_beneficirani_staz", NIL, gBFForm )
+gBenefSati := fetch_metric( "ld_sati_beneficirani_staz_tip", NIL, gBenefSati )
 gOsnLOdb := fetch_metric( "ld_osnovni_licni_odbitak_iznos", NIL, gOsnLOdb )
 gUgTrosk := fetch_metric( "ld_trosak_ugovori", NIL, gUgTrosk )
 gAhTrosk := fetch_metric( "ld_trosak_honorari", NIL, gAhTrosk )
@@ -189,6 +190,7 @@ Box(, 19, 77 )
     @ m_x+16,m_y+2 SAY "Trosak - autorski honorar (%):" GET gAhTrosk PICT "999.99"
     
     @ m_x+18,m_y+2 SAY "Kod benef.gledaj formulu:" GET gBFForm pict "@!S30"
+    @ m_x+19,m_y+2 SAY "Sati benef. (1 - ukupni, 2 - po obracunu):" GET gBenefSati pict "9"
     
     read
 
@@ -205,6 +207,7 @@ if ( LastKey() <> K_ESC )
     set_metric( "ld_minuli_rad_koef_muskarci", NIL, gMRM )
     set_metric( "ld_donji_limit_poreza_doprinosa", NIL, gPDLimit )
     set_metric( "ld_formula_beneficirani_staz", NIL, gBFForm )
+    set_metric( "ld_sati_beneficirani_staz_tip", NIL, gBenefSati )
     set_metric( "ld_osnovni_licni_odbitak_iznos", NIL, gOsnLOdb )
     set_metric( "ld_trosak_ugovori", NIL, gUgTrosk )
     set_metric( "ld_trosak_honorari", NIL, gAhTrosk )

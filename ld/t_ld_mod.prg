@@ -186,6 +186,7 @@ public gSihtarica := "N"
 public gSihtGroup := "N"
 public gFUPrim := PADR("UNETO+I24+I25",50)
 public gBFForm := PADR("",100)
+public gBenefSati := 1
 public gFURaz := PADR("",60)
 public gFUSati := PADR("USATI",50)
 public gFURSati := PADR("",50)

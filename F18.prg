@@ -121,7 +121,12 @@ do while .t.
     // backup okidamo samo na prvom ulasku
     // ili na opciji relogina
     if _count == 1 .or. __relogin_opt
-        
+       
+        // provjera da li je backup locked ?
+        if oBackup:locked( .f. )
+            oBackup:unlock()
+        endif
+ 
         // automatski backup podataka preduzeca
         f18_auto_backup_data(1)
         __relogin_opt := .f.

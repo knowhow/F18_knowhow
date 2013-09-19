@@ -1,3 +1,7 @@
+1.4.230 2013-09-19, vsasa
+ 
+  - LD, mip-1023, beneficirani radni staž - dorade
+ 
 1.4.229 2013-09-17, vsasa
  
   - FAKT, FPRINT fiskalni uredjaj, duplikat računa iz pregleda računa

@@ -552,17 +552,31 @@ Box(,15,60)
 					
 					Tarifa(cIdKonto,fakt->idRoba,@aPorezi)
 					
-					nMPVBP:=MpcBezPor(fakt->(kolicina*cijena),aPorezi)
-       					append blank
-					replace idfirma with cIdFirma,rbr with str(++nRbr,3),idvd with "41", brdok with cBrKalk, datdok with dDatKalk, idpartner with cIdPartner, idtarifa with ROBA->idtarifa,	brfaktp with fakt->brdok, datfaktp with fakt->datdok, idkonto with cidkonto, idzaduz with cidzaduz, kolicina with fakt->kolicina, idroba with fakt->idroba, mpcsapp with fakt->cijena,	tmarza2 with "%"
+					nMPVBP := MpcBezPor(fakt->(kolicina*cijena),aPorezi)
+       				
+                    append blank
+					replace idfirma with cIdFirma, ;
+                            rbr with str(++nRbr,3),;
+                            idvd with "41", ;
+                            brdok with cBrKalk, ;
+                            datdok with dDatKalk, ;
+                            idpartner with cIdPartner, ;
+                            idtarifa with ROBA->idtarifa, ;
+                            brfaktp with fakt->brdok, ;
+                            datfaktp with fakt->datdok, ;
+                            idkonto with cidkonto, ;
+                            idzaduz with cidzaduz, ;
+                            kolicina with fakt->kolicina, ;
+                            idroba with fakt->idroba, ;
+                            mpcsapp with fakt->cijena, ;
+                            tmarza2 with "%"
 
-					
 					replace rabatv with ;
-					( nMPVBP * fakt->rabat / (fakt->kolicina*100) ) * 1.17
+					     ( nMPVBP * fakt->rabat / ( fakt->kolicina * 100 ) ) // * 1.17
 
 					select fakt
-      					skip
-     				enddo
+      				skip
+     			enddo
 			
   			endif
 		else
@@ -639,7 +653,7 @@ Box(,15,60)
 					replace mpcsapp with fakt->cijena
 					replace tmarza2 with "%"
 					replace rabatv with ;
-						( nMPVBP*fakt->rabat/(fakt->kolicina*100) ) * 1.17
+						( nMPVBP*fakt->rabat/(fakt->kolicina*100) ) //* 1.17
        					
 					select fakt
       					skip

@@ -1,6 +1,8 @@
 1.4.230 2013-09-19, vsasa
  
   - LD, mip-1023, beneficirani radni staž - dorade
+  - čišćenje statusa backup-a kod novog pokretanja aplikacije
+  - KALK, prenos FAKT 11 -> KALK 41, popust bez PDV
  
 1.4.229 2013-09-17, vsasa
  

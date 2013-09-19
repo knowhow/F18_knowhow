@@ -864,6 +864,8 @@ add_tpars("N06", s_pay_id( field->doc_pay_id ))
 add_tpars("N07", ALLTRIM(field->doc_ship_p) )
 // dokument dodatni podaci
 add_tpars("N08", ALLTRIM(field->doc_desc) )
+// dokument kratki opis
+add_tpars("N15", ALLTRIM(field->doc_sh_des) )
 // dokument, kontakt dodatni podaci...
 add_tpars("N09", ALLTRIM(field->cont_add_d) )
 // operater koji je napravio nalog
@@ -873,6 +875,9 @@ add_tpars("N13", ALLTRIM( getfullusername(field->operater_i)) )
 if !EMPTY(cDescr)
     add_tpars("N14", cDescr )
 endif
+
+// neuskladjeni proizvod
+add_tpars( "N21", field->doc_type )
 
 // ako je kes, dodaj i podatke o placeno D i napomene
 if field->doc_pay_id == 2

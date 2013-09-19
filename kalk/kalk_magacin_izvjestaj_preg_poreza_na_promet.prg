@@ -117,7 +117,9 @@ DO WHILE !EOF() .and. idfirma==cidfirma .and. IspitajPrekid()
      VtPorezi()
      nVPVBP:=nVPV/(1+_PORVT)
 
-     if prow()>60+gPStranica; FF; endif
+     if prow() > ( RPT_PAGE_LEN + gPStranica )
+        FF
+     endif
      IF ROUND(_PORVT,6)==0
         nPPProc:=mpc
      else

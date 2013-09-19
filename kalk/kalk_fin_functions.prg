@@ -196,7 +196,7 @@ DO WHILE !EOF()
    	
 	DO WHILE !eof() .and. eval(b2)
 
-    	if prow()>61+gPStranica
+    	if prow() > ( RPT_PAGE_LEN + gPStranica )
 	 		FF
 	 		kalk_zagl_11()
 	 	endif
@@ -300,7 +300,7 @@ DO WHILE !EOF()
       
 	ENDDO
 
-    IF prow()>59+gPStranica
+    IF prow() > ( RPT_PAGE_LEN + gPStranica )
 		FF
 		kalk_zagl_11()
 	endif
@@ -317,7 +317,7 @@ DO WHILE !EOF()
     nUkDugBHD:=nUKPotBHD:=nUkDugDEM:=nUKPotDEM:=0
 
     if gPotpis=="D"
-    	IF prow()>58+gPStranica
+    	IF prow() > ( RPT_PAGE_LEN + gPStranica )
 			FF
 			kalk_zagl_11()
 		endif

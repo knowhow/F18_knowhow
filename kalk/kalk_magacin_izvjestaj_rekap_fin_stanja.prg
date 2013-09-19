@@ -223,7 +223,7 @@ enddo
 ? cLine
 
 if IsPlanika()
-	if (prow()>55+gPStranica)
+	if (prow() > ( RPT_PAGE_LEN + gPStranica ) )
 		FF
 	endif
 	PrintParovno(nKolUlaz, nKolIzlaz)

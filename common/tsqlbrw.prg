@@ -54,8 +54,9 @@
 #include "fmk.ch"
 #include "hbclass.ch"
 #include "common.ch"
-#include "inkey.ch"
 #include "dbstruct.ch"
+#include "setcurs.ch"
+#include "f18_separator.ch"
 
 /* NOTE:
 
@@ -157,91 +158,97 @@ CREATE CLASS TBrowseSQL FROM TBrowse
 ENDCLASS
 
 
-METHOD New( nTop, nLeft, nBottom, nRight, oServer, oQuery, cTable ) CLASS TBrowseSQL
+METHOD New( nTop, nLeft, nBottom, nRight, oServer, oQuery, cTable, fields ) CLASS TBrowseSQL
+local i, oCol
 
-   LOCAL i, oCol
+HB_SYMBOL_UNUSED( oServer )
+HB_SYMBOL_UNUSED( cTable )
 
-   HB_SYMBOL_UNUSED( oServer )
-   HB_SYMBOL_UNUSED( cTable )
+super:New( nTop, nLeft, nBottom, nRight )
 
-   super:New( nTop, nLeft, nBottom, nRight )
+::oQuery := oQuery
 
-   ::oQuery := oQuery
+// Let's get a row to build needed columns
+::oCurRow := ::oQuery:GetRow( 1 )
 
-   // Let's get a row to build needed columns
-   ::oCurRow := ::oQuery:GetRow( 1 )
+// positioning blocks
+::SkipBlock := {| n | ::oCurRow := Skipper( @n, ::oQuery ), n }
+::GoBottomBlock := {|| ::oCurRow := ::oQuery:GetRow( ::oQuery:LastRec() ), 1 }
+::GoTopBlock := {|| ::oCurRow := ::oQuery:GetRow( 1 ), 1 }
 
-   // positioning blocks
-   ::SkipBlock := {| n | ::oCurRow := Skipper( @n, ::oQuery ), n }
-   ::GoBottomBlock := {|| ::oCurRow := ::oQuery:GetRow( ::oQuery:LastRec() ), 1 }
-   ::GoTopBlock := {|| ::oCurRow := ::oQuery:GetRow( 1 ), 1 }
+// Add a column for each field
+FOR i := 1 TO ::oQuery:FCount()
+    
+    // dodavanje kolone
+    //oCol := TBColumnSQL():New( ::oCurRow:FieldName( i ),, Self )
+    oCol := TBColumnSQL():New( fields[ i, 1 ],, Self )
 
-   // Add a column for each field
-   FOR i := 1 TO ::oQuery:FCount()
+    IF !( ::oCurRow:FieldType( i ) == "M" )
+        //oCol:Width := Max( ::oCurRow:FieldLen( i ), Len( oCol:Heading ) )
+        oCol:Width := fields[ i, 2 ]
+    ELSE
+        oCol:Width := 10
+    ENDIF
 
-      // No bBlock now since New() would use it to find column length, but column is not ready yet at this point
-      oCol := TBColumnSQL():New( ::oCurRow:FieldName( i ),, Self )
+    // which field does this column display
+    oCol:nFieldNum := i
 
-      IF !( ::oCurRow:FieldType( i ) == "M" )
-         oCol:Width := Max( ::oCurRow:FieldLen( i ), Len( oCol:Heading ) )
-      ELSE
-         oCol:Width := 10
-      ENDIF
+    // Add a picture
+    DO CASE
+        CASE ::oCurRow:FieldType( i ) == "N"
+            oCol:picture := Replicate( "9", oCol:Width )
+        CASE ::oCurRow:FieldType( i ) $ "CM"
+            oCol:picture := Replicate( "!", oCol:Width )
+    ENDCASE
 
-      // which field does this column display
-      oCol:nFieldNum := i
+    ::AddColumn( oCol )
 
-      // Add a picture
-      DO CASE
-      CASE ::oCurRow:FieldType( i ) == "N"
-         oCol:picture := Replicate( "9", oCol:Width )
+NEXT
 
-      CASE ::oCurRow:FieldType( i ) $ "CM"
-         oCol:picture := Replicate( "!", oCol:Width )
-      ENDCASE
+::headSep := BROWSE_HEAD_SEP
+::colSep := BROWSE_COL_SEP
 
-      ::AddColumn( oCol )
-   NEXT
+RETURN Self
 
-   RETURN Self
+
 
 STATIC FUNCTION Skipper( nSkip, oQuery )
+LOCAL i := 0
 
-   LOCAL i := 0
+DO CASE
+    CASE nSkip == 0 .OR. oQuery:LastRec() == 0
+        oQuery:Skip( 0 )
 
-   DO CASE
-   CASE nSkip == 0 .OR. oQuery:LastRec() == 0
-      oQuery:Skip( 0 )
+    CASE nSkip > 0
+        DO WHILE i < nSkip           // Skip Foward
 
-   CASE nSkip > 0
-      DO WHILE i < nSkip           // Skip Foward
+            //DAVID: change in TMySQLquery:eof() definition  if oQuery:eof()
+            IF oQuery:recno() == oQuery:lastrec()
+                EXIT
+            ENDIF
+            oQuery:Skip( 1 )
+            i++
 
-         //DAVID: change in TMySQLquery:eof() definition  if oQuery:eof()
-         IF oQuery:recno() == oQuery:lastrec()
-            EXIT
-         ENDIF
-         oQuery:Skip( 1 )
-         i++
+        ENDDO
 
-      ENDDO
+    CASE nSkip < 0
+        DO WHILE i > nSkip           // Skip backward
 
-   CASE nSkip < 0
-      DO WHILE i > nSkip           // Skip backward
+            //DAVID: change in TMySQLquery:bof() definition  if oQuery:bof()
+            IF oQuery:recno() == 1
+                EXIT
+            ENDIF
 
-         //DAVID: change in TMySQLquery:bof() definition  if oQuery:bof()
-         IF oQuery:recno() == 1
-            EXIT
-         ENDIF
+            oQuery:Skip( -1 )
+            i--
 
-         oQuery:Skip( -1 )
-         i--
+        ENDDO
+ENDCASE
 
-      ENDDO
-   ENDCASE
+nSkip := i
 
-   nSkip := i
+RETURN oQuery:GetRow( oQuery:RecNo() )
 
-   RETURN oQuery:GetRow( oQuery:RecNo() )
 
 
 METHOD EditField() CLASS TBrowseSQL
@@ -281,11 +288,14 @@ METHOD EditField() CLASS TBrowseSQL
       RestScreen( 10, 10, 22, 69, cMemoBuff )
 
    ELSE
+
       // Create a corresponding GET
-      // NOTE: I need to use ::oCurRow:FieldPut(...) when changing values since message redirection doesn't work at present
+      // NOTE: I need to use ::oCurRow:FieldPut(...) when changing values since message 
+      //       redirection doesn't work at present
       //       time for write access to instance variables but only for reading them
       aGetList := { GetNew( Row(), Col(),;
-                            {| xValue | iif( xValue == NIL, Eval( oCol:Block ), ::oCurRow:FieldPut( oCol:nFieldNum, xValue ) ) },;
+                            {| xValue | iif( xValue == NIL, Eval( oCol:Block ), ;
+                                ::oCurRow:FieldPut( oCol:nFieldNum, xValue ) ) },;
                             oCol:heading,;
                             oCol:picture,;
                             ::colorSpec ) }
@@ -324,14 +334,16 @@ METHOD EditField() CLASS TBrowseSQL
 METHOD BrowseTable( lCanEdit, aExitKeys ) CLASS TBrowseSQL
 
    LOCAL nKey
-   LOCAL lKeepGoing := .T.
+   LOCAL lKeepGoing := .t.
 
    IF ! ISNUMBER( nKey )
       nKey := NIL
    ENDIF
+
    IF ! ISLOGICAL( lCanEdit )
-      lCanEdit := .F.
+      lCanEdit := .f.
    ENDIF
+
    IF ! ISARRAY( aExitKeys )
       aExitKeys := { K_ESC }
    ENDIF
@@ -344,7 +356,7 @@ METHOD BrowseTable( lCanEdit, aExitKeys ) CLASS TBrowseSQL
       nKey := Inkey( 0 )
 
       IF AScan( aExitKeys, nKey ) > 0
-         lKeepGoing := .F.
+         lKeepGoing := .f.
          LOOP
       ENDIF
 
@@ -414,11 +426,23 @@ METHOD BrowseTable( lCanEdit, aExitKeys ) CLASS TBrowseSQL
       ENDCASE
    ENDDO
 
-   RETURN Self
+RETURN Self
+
 
 // Empty method to be subclassed
 METHOD KeyboardHook( nKey ) CLASS TBrowseSQL
 
-   HB_SYMBOL_UNUSED( nKey )
+//HB_SYMBOL_UNUSED( nKey )
 
-   RETURN Self
+do case
+
+    case nKey == K_CTRL_J
+        
+        MsgBeep( "Obrada komande CTRL+J !" )
+
+
+endcase
+
+RETURN Self
+
+

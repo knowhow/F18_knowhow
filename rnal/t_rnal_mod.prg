@@ -88,16 +88,18 @@ return nil
 
 
 method mMenuStandard()
+local oDb_lock := F18_DB_LOCK():new()
+local _db_locked := oDb_lock:is_locked()
 
 private Izbor:=1
 private opc:={}
 private opcexe:={}
 
 AADD(opc, "1. unos/dorada naloga za proizvodnju  ")
-if (ImaPravoPristupa(goModul:oDataBase:cName, "MAIN", "DOKEDIT"))
+if (ImaPravoPristupa(goModul:oDataBase:cName, "MAIN", "DOKEDIT")) .or. !_db_locked
 	AADD(opcexe, {|| ed_document( .t. )})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(opcexe, {|| oDb_lock:warrning() })
 endif
 
 
@@ -105,39 +107,43 @@ AADD(opc, "2. lista otvorenih naloga ")
 if (ImaPravoPristupa(goModul:oDataBase:cName, "MAIN", "DOKLSTO"))
 	AADD(opcexe, {|| frm_lst_docs(1)})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(opcexe, {|| oDb_lock:warrning() })
 endif
 
 AADD(opc, "3. lista zatorenih naloga ")
 if (ImaPravoPristupa(goModul:oDataBase:cName, "MAIN", "DOKLSTZ"))
 	AADD(opcexe, {|| frm_lst_docs(2)})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(opcexe, {|| oDb_lock:warrning() })
 endif
 
 AADD(opc, "4. izvjestaji ")
 if (ImaPravoPristupa(goModul:oDataBase:cName, "MAIN", "DOKRPT"))
 	AADD(opcexe, {|| m_rpt() })
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(opcexe, {|| oDb_lock:warrning() })
 endif
 
 AADD(opc, "D. direktna dorada naloga  ")
-if (ImaPravoPristupa(goModul:oDataBase:cName, "MAIN", "DIRDORAD"))
+if (ImaPravoPristupa(goModul:oDataBase:cName, "MAIN", "DIRDORAD")) .or. !_db_locked
 	AADD(opcexe, {|| ddor_nal()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(opcexe, {|| oDb_lock:warrning() })
 endif
 
 AADD(opc, "S. stampa azuriranog naloga  ")
 if (ImaPravoPristupa(goModul:oDataBase:cName, "MAIN", "STNAL"))
 	AADD(opcexe, {|| prn_nal()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(opcexe, {|| oDb_lock:warrning() })
 endif
 
 AADD( opc, "T. unos/obrada statusa naloga  " )
-AADD( opcexe, {|| rnal_pregled_statusa_operacija() } )
+if !_db_locked
+    AADD( opcexe, {|| rnal_pregled_statusa_operacija() } )
+else
+	AADD(opcexe, {|| oDb_lock:warrning() })
+endif
 
 AADD(opc, "------------------------------------")
 AADD(opcexe, {|| nil})
@@ -146,7 +152,7 @@ AADD(opc, "S. sifrarnici")
 if (ImaPravoPristupa(goModul:oDataBase:cName, "MAIN", "SIF"))
 	AADD(opcexe, {|| m_sif()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(opcexe, {|| oDb_lock:warrning() })
 endif
 
 
@@ -157,7 +163,7 @@ AADD(opc, "9. administracija")
 if (ImaPravoPristupa(goModul:oDataBase:cName, "MAIN", "ADMIN"))
 	AADD(opcexe, {|| rnal_mnu_admin()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(opcexe, {|| oDb_lock:warrning() })
 endif
 
 AADD(opc, "------------------------------------")
@@ -169,7 +175,7 @@ AADD(opc, "X. parametri")
 if (ImaPravoPristupa(goModul:oDataBase:cName, "MAIN", "PARAMS"))
 	AADD(opcexe, {|| m_par()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(opcexe, {|| oDb_lock:warrning() })
 endif
 
 Menu_SC("grn", .t. )

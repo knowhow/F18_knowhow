@@ -163,6 +163,7 @@ local cAopDesc
 local aGrCount := {}
 local nGr1 
 local nGr2
+local _glass_count := 0
 
 // kreiraj tmp tabelu
 aField := _spec_fields()
@@ -236,6 +237,13 @@ do while !EOF()
 
 		// napuni matricu aArtDesc radi podataka o artiklu !
 		_art_set_descr( nArt_id, nil, nil, @aArtDesc, .t. )
+      
+        //if nDoc_no == 11101
+          //  altd()
+        //endif
+ 
+        // sracunaj broj stakala
+        _glass_count := broj_stakala( aArtDesc, nQtty )
 
 		// check group of item
 		// "0156" itd...
@@ -319,6 +327,7 @@ do while !EOF()
 			docs->doc_sh_des, ;
 			cDoc_oper, ;
 			nQtty, ;
+            _glass_count, ;
 			cItem, ;
 			cItemAop, ;
 			nGr1, ;
@@ -346,6 +355,7 @@ do while !EOF()
 			docs->doc_sh_des, ;
 			cDoc_oper, ;
 			nQtty, ;
+            _glass_count, ;
 			cItem, ;
 			cItemAop, ;
 			VAL(SUBSTR(cIt_group, xx, 1)), ;
@@ -447,15 +457,11 @@ go top
 do while !EOF()
 	
 	if _group <> 0
-	
 		// preskoci ako filterises po grupi
 		if field->it_group <> _group
-			
 			skip
-			loop
-			
+			loop			
 		endif
-		
 	endif
 
 	if _nstr() == .t.
@@ -479,6 +485,7 @@ do while !EOF()
 	nCount := 0
 	
 	nTotQtty := 0
+    nTotGlQtty := 0
 	cItemAop := ""
 
 	aItemAop := {}
@@ -490,7 +497,8 @@ do while !EOF()
 		++ nCount
 		
 		nTotQtty += field->qtty
-	
+	    nTotGlQtty += field->glass_qtty
+
 		// dodatna operacija stavke
 		cItemAop := ALLTRIM( field->doc_aop )
 		
@@ -539,7 +547,8 @@ do while !EOF()
 
 	? SPACE(10)
 	
-	@ prow(), pcol() + 1 SAY "broj stakala: " + ALLTRIM(STR( nTotQtty, 12 ))
+	@ prow(), pcol() + 1 SAY "kom.na nalogu: " + ALLTRIM(STR( nTotQtty, 12 )) + ;
+                            " broj stakala: " + ALLTRIM( STR( nTotGlQtty, 12 ) )
 	
 	// dodatne operacije stavke...
 	if LEN(aItemAop) > 0
@@ -662,6 +671,7 @@ AADD( aDbf, { "doc_sdesc", "C", 100, 0 })
 AADD( aDbf, { "doc_item", "C", 250, 0 })
 AADD( aDbf, { "doc_aop", "C", 250, 0 })
 AADD( aDbf, { "qtty", "N", 15, 5 })
+AADD( aDbf, { "glass_qtty", "N", 15, 5 })
 AADD( aDbf, { "it_group", "N", 5, 0 })
 AADD( aDbf, { "doc_log", "C", 200, 0 })
 
@@ -675,7 +685,7 @@ static function _ins_tmp1( nDoc_no, cCust_desc, dDoc_date, dDoc_dvr_d, ;
 		cDoc_dvr_t, ;
 		cDoc_stat, cDoc_prior, ;
 		cDoc_div, cDoc_desc, cDoc_sDesc, cDoc_oper, ;
-		nQtty, cDoc_item, cDoc_aop ,nIt_group, cDoc_log )
+		nQtty, nGl_qtty, cDoc_item, cDoc_aop ,nIt_group, cDoc_log )
 
 local nTArea := SELECT()
 
@@ -696,6 +706,7 @@ replace field->doc_sdesc with cDoc_sdesc
 replace field->doc_item with cDoc_item
 replace field->doc_aop with cDoc_aop
 replace field->qtty with nQtty
+replace field->glass_qtty with nGl_qtty
 replace field->it_group with nIt_group
 replace field->doc_log with cDoc_log
 

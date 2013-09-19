@@ -497,6 +497,10 @@ local _prikazi_partnera := .t.
 local _partn_ino := .f.
 local _partn_pdv := .t.
 
+__partn_ino := _partn_ino
+__partn_pdv := _partn_pdv
+__vrsta_pl := _v_plac
+
 select fakt_doks
 set order to tag "1"
 go top
@@ -517,7 +521,7 @@ _vrsta_p := field->idvrstep
 // 8 - pdv obveznik
 
 if ! ( tip_dok $ "#10#11#" ) .or. EMPTY( _partn_id ) .or. _vrsta_p == "G "
-    return NIL
+   return NIL
 endif
 
 if tip_dok $ "#10#" .or. ( tip_dok == "11" .and. _vrsta_p == "VR" )
@@ -527,23 +531,30 @@ if tip_dok $ "#10#" .or. ( tip_dok == "11" .and. _vrsta_p == "VR" )
     _v_plac := "3"
 endif
 
+if tip_dok $ "#11#" .and. _vrsta_p == "KT"
+    // karticno placanje
+    _v_plac := "1"
+endif
+
 // podaci partnera
 _partn_jib := ALLTRIM( IzSifK( "PARTN", "REGB", _partn_id, .f. ) )
 // oslobadjanje po clanu
 _partn_clan := ALLTRIM( IzSifK( "PARTN" , "PDVO", _partn_id, .f. ) )
 
-if tip_dok == "11"
+//if tip_dok == "11"
  
-    _partn_ino := .f.
-    _partn_pdv := .t.
+  //  _partn_ino := .f.
+  //  _partn_pdv := .t.
 
-    if _v_plac == "3" 
-        _prikazi_partnera := .t.
-    else 
-        _prikazi_partnera := .f.
-    endif
+  //  if _v_plac == "3" 
+  //      _prikazi_partnera := .t.
+  //  else 
+  //      _prikazi_partnera := .f.
+  //  endif
 
-elseif !EMPTY( _partn_jib ) .and. ( LEN( _partn_jib ) < 12 .or. !EMPTY( _partn_clan ) )
+//endif
+
+if !EMPTY( _partn_jib ) .and. ( LEN( _partn_jib ) < 12 .or. !EMPTY( _partn_clan ) )
 
     // kod info faktura ne prikazuj partnera
     _partn_ino := .t.
@@ -567,6 +578,16 @@ elseif LEN( _partn_jib ) > 12
     _prikazi_partnera := .t.
 
 endif
+
+// kod mp racuna pogledaj na osnovu placanja treba li prikazati partnera ?
+if tip_dok == "11" 
+    if _v_plac == "3" 
+        _prikazi_partnera := .t.
+    else 
+        _prikazi_partnera := .f.
+    endif
+endif
+
 
 // setuj staticke
 __vrsta_pl := _v_plac
@@ -717,6 +738,7 @@ go top
 seek id_firma + tip_dok + br_dok
 
 _partn := field->idpartner
+_id_vrste_p := field->idvrstep
 
 select partn
 hseek _partn
@@ -725,7 +747,12 @@ if FOUND()
     _ret := ALLTRIM( field->naz )
 endif
 
+if !EMPTY( _id_vrste_p )
+    _ret += ", v.pl: " + _id_vrste_p
+endif
+
 select ( _t_area )
+
 return _ret
 
 

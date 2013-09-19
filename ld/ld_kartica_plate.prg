@@ -313,7 +313,7 @@ IF lSkrivena
 		?
 	NEXT
 	P_12CPI
-	?? cLMSK + Lokal("OBRACUN PLATE ZA") + SPACE(1) + str(mjesec,2) + IspisObr() + "/" + str(godina,4), " ZA " + UPPER(TRIM(gTS)), gNFirma
+	?? cLMSK + Lokal("OBRACUN PLATE ZA") + SPACE(1) + STR( mjesec, 2 ) + "/" + STR( godina, 4 ) + " (obr. " + IspisObr() + ")", " ZA " + UPPER(TRIM(gTS)), gNFirma
 	? cLMSK+idradn,"-",RADNIK,"  Mat.br:",radn->matbr
 	ShowHiredFromTo(radn->hiredfrom, radn->hiredto, cLMSK)
 	? cLMSK + Lokal("Radno mjesto:"), radn->rmjesto, Lokal("  STR.SPR:"), IDSTRSPR
@@ -329,7 +329,7 @@ IF lSkrivena
 	endif
 	? cLMSK+IF(gBodK=="1", Lokal("Vrijednost boda:"), Lokal("Vr.koeficijenta:")), transform(parobr->vrbod,"99999.99999")
 ELSE
-	? LOKAL("OBRACUN PLATE ZA") + SPACE(1) + str(mjesec,2) + IspisObr() + "/" + str(godina,4)," ZA "+ UPPER(TRIM(gTS)), gNFirma
+	? LOKAL("OBRACUN PLATE ZA") + SPACE(1) + STR( mjesec, 2 ) + "/" + STR( godina, 4 ) + " (obr. " + IspisObr() + ")"," ZA "+ UPPER(TRIM(gTS)), gNFirma
 	? "RJ:",idrj,ld_rj->naz
 	? idradn,"-",RADNIK,"  Mat.br:",radn->matbr
 	ShowHiredFromTo(radn->hiredfrom, radn->hiredto, "")

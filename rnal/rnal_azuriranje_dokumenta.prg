@@ -23,6 +23,7 @@ static __doc_desc
 // cDesc - opis kod azuriranja
 // -------------------------------------------
 function doc_insert( cDesc )
+local _ok := .t.
 
 if cDesc == nil
     cDesc := ""
@@ -42,6 +43,12 @@ set filter to
 
 select _doc_ops
 set filter to
+
+// provjeri sve prije azuriranja
+if !_provjeri_prije_azuriranja()
+    MsgBeep( "Redni brojevi u nalogu nisu ispravni, provjeriti !" )
+    return 0
+endif
 
 select _docs
 go top
@@ -100,6 +107,7 @@ if __doc_stat == 3
     
     // napravi deltu dokumenta
     doc_delta( __doc_no, __doc_desc ) 
+
     // brisi dokument iz kumulativa
     doc_erase( __doc_no )
     
@@ -114,31 +122,60 @@ if __doc_stat == 3
 endif
 
 // azuriranje tabele _DOCS
-_docs_insert( __doc_no  )
+_ok := _docs_insert( __doc_no  )
 
 // azuriranje tabele _DOC_IT
-_doc_it_insert( __doc_no )
-
-// azuriranje tabele _DOC_IT2
-_doc_it2_insert( __doc_no )
-
-// azuriranje tabele _DOC_OPS
-_doc_op_insert( __doc_no )
-
-// setuj marker dokumenta
-set_doc_marker( __doc_no, 0, "CONT" )
-
-if __doc_stat <> 3
-    // logiraj promjene na dokumentu
-    doc_logit( __doc_no )
+if _ok 
+    _ok := _doc_it_insert( __doc_no )
 endif
 
-f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops", "doc_log", "doc_lit" } )
-sql_table_update( nil, "END" )
+// azuriranje tabele _DOC_IT2
+if _ok 
+    _ok := _doc_it2_insert( __doc_no )
+endif
 
-// logiranje
-log_write( "F18_DOK_OPER: rnal, azuriranje dokumenta broj: " + ALLTRIM( STR( __doc_no ) ) + ;
+// azuriranje tabele _DOC_OPS
+if _ok
+    _ok := _doc_op_insert( __doc_no )
+endif
+
+if _ok
+    // setuj marker dokumenta
+    set_doc_marker( __doc_no, 0, "CONT" )
+    if __doc_stat <> 3
+        // logiraj promjene na dokumentu
+        doc_logit( __doc_no )
+    endif
+
+    f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops", "doc_log", "doc_lit" } )
+    sql_table_update( nil, "END" )
+
+    // logiranje
+    log_write( "F18_DOK_OPER: rnal, azuriranje dokumenta broj: " + ALLTRIM( STR( __doc_no ) ) + ;
             ", status: " + ALLTRIM( STR( __doc_stat ) ), 2 )
+
+else
+
+    f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops", "doc_log", "doc_lit" } )
+    sql_table_update( nil, "ROLLBACK" )
+
+    MsgC()
+
+    // nesto se nije azuriralo ok !
+    // ostavljam dokument u pripremi...
+    
+    // ako je sta ostalo na serveru ili u dbf-u brisi !
+    doc_erase( __doc_no )
+
+    beep(3)
+
+    o_tables( .t. )
+    
+    MsgBeep( "Azuriranje naloga nije uspjesno !" )
+    
+    return 0
+
+endif
 
 // ------ kraj transakcije
 
@@ -166,12 +203,51 @@ MsgC()
 return 1
 
 
+// --------------------------------------------------
+// provjera prije azuriranja dokumenta...
+// --------------------------------------------------
+static function _provjeri_prije_azuriranja()
+local _ok := .t.
+local _t_area := SELECT()
+local _tmp
+
+// stavke naloga ....
+select _doc_it
+go top
+
+do while !EOF()
+
+    _tmp := field->doc_it_no
+
+    skip 1
+
+    if _tmp == field->doc_it_no
+        go top
+        select ( _t_area )
+        _ok := .f.
+        return _ok        
+    endif
+
+enddo
+
+go top
+
+// dodatne stavke naloga....
+
+// operacije naloga ....
+
+select ( _t_area )
+
+return _ok
+
+
 
 // --------------------------------------------------
 // azuriranje DOCS
 // --------------------------------------------------
 static function _docs_insert( nDoc_no )
 local _rec
+local _ok := .t.
 
 select _docs
 set order to tag "1"
@@ -188,11 +264,11 @@ if !FOUND()
     append blank
 endif
 
-update_rec_server_and_dbf( "docs", _rec, 1, "CONT" )
+_ok := update_rec_server_and_dbf( "docs", _rec, 1, "CONT" )
         
 set order to tag "1"
 
-return
+return _ok
 
 
 // ------------------------------------------
@@ -200,11 +276,12 @@ return
 // ------------------------------------------
 static function _doc_it_insert( nDoc_no )
 local _rec, _id_fields, _where_bl
+local _ok := .t.
 
 select _doc_it
 
 if RECCOUNT2() == 0
-    return
+    return _ok
 endif
 
 set order to tag "1"
@@ -219,26 +296,31 @@ do while !EOF() .and. ( field->doc_no == nDoc_no )
     
     append blank
     
-    update_rec_server_and_dbf( "doc_it", _rec, 1, "CONT" )
+    _ok := update_rec_server_and_dbf( "doc_it", _rec, 1, "CONT" )
     
     select _doc_it
     
+    if !_ok
+        return _ok
+    endif
+
     skip
     
 enddo
 
-return
+return _ok
 
 // ------------------------------------------
 // azuriranje tabele _DOC_IT2
 // ------------------------------------------
 static function _doc_it2_insert( nDoc_no )
 local _rec, _id_fields, _where_bl
+local _ok := .t.
 
 select _doc_it2
 
 if RECCOUNT2() == 0
-    return
+    return _ok
 endif
 
 set order to tag "1"
@@ -253,15 +335,19 @@ do while !EOF() .and. ( field->doc_no == nDoc_no )
     
     append blank
        
-    update_rec_server_and_dbf( "doc_it2", _rec, 1, "CONT" )
+    _ok := update_rec_server_and_dbf( "doc_it2", _rec, 1, "CONT" )
     
     select _doc_it2
     
+    if !_ok 
+        return _ok
+    endif
+
     skip    
 
 enddo
 
-return
+return _ok
 
 
 
@@ -272,11 +358,12 @@ return
 // ------------------------------------------
 static function _doc_op_insert( nDoc_no )
 local _rec, _id_fields, _where_bl
+local _ok := .t.
 
 select _doc_ops
 
 if RECCOUNT2() == 0
-    return
+    return _ok
 endif
 
 set order to tag "1"
@@ -293,16 +380,21 @@ do while !EOF() .and. ( field->doc_no == nDoc_no )
         select doc_ops
         append blank
  
-        update_rec_server_and_dbf( "doc_ops", _rec, 1, "CONT" )
+        _ok := update_rec_server_and_dbf( "doc_ops", _rec, 1, "CONT" )
         
     endif
     
     select _doc_ops
+    
+    if !_ok
+        return _ok
+    endif
+
     skip
 
 enddo
 
-return
+return _ok
 
 
 

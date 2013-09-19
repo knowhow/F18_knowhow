@@ -433,8 +433,8 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
 	
 	// ne prikazuj stavke 0
 	if cNula == "D" .or. ROUND( nMPVU - nMPVI + nPMPV, 2 ) <> 0 
-		
-        if PROW() > 61 + gPStranica
+	
+        if PROW() > ( RPT_PAGE_LEN + gPStranica )
 			FF
 			EVAL(bZagl)
 		endif
@@ -507,6 +507,7 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
 					replace kolicina with -1
 					replace idvd with "80"
 					replace brdok with cBRPST
+                    replace brfaktp with "#KOREK"
 					replace nc with 0
 					replace mpcsapp with 0
 					replace TMarza2 with "A"
@@ -527,6 +528,7 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
 					replace kolicina with 1
 					replace idvd with "80"
 					replace brdok with cBRPST
+                    replace brfaktp with "#KOREK"
 					replace nc with 0
 					replace mpcsapp with ;
 						(nMPVU-nMPVI+nPMPV)

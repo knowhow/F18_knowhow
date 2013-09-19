@@ -714,3 +714,159 @@ return
 
 
 
+// --------------------------------------------------------
+// setovanje mpc cijene iz vpc
+// --------------------------------------------------------
+function roba_setuj_mpc_iz_vpc()
+local _params := hb_hash()
+local _rec
+local _mpc_set
+local _tarifa
+local _count := 0
+
+if !_get_params( @_params ) 
+    return
+endif
+
+if !f18_lock_tables( { "roba" } )
+    return
+endif
+sql_table_update( NIL, "BEGIN" )
+
+O_TARIFA
+O_ROBA
+go top
+
+// koji cu set mpc gledati...
+if _params["mpc_set"] == 1
+    _mpc_set := "mpc"
+else
+    _mpc_set := "mpc" + ALLTRIM( STR( _params["mpc_set"] ) )
+endif
+
+Box(, 2, 70 )
+
+do while !EOF()
+
+    _rec := dbf_get_rec()
+
+    if !EMPTY( _params["filter_id"] )
+        _filt_id := Parsiraj( _params["filter_id"], "id" )
+        if !( &_filt_id )
+            skip
+            loop
+        endif
+    endif
+
+    // vpc je 0, preskoci...
+    if ROUND( _rec["vpc"], 3 ) == 0
+        skip
+        loop
+    endif
+    
+    // konverzija samo tamo gdje je mpc = 0
+    if ROUND( _rec[ _mpc_set ], 3 ) <> 0 .and. _params["mpc_nula"] == "D"
+        skip
+        loop
+    endif
+
+    _tarifa := _rec["idtarifa"]
+
+    if EMPTY( _tarifa )
+        skip
+        loop
+    endif
+
+    select tarifa
+    hseek _tarifa
+
+    if !FOUND()
+        select roba
+        skip 
+        loop
+    endif
+
+    select roba    
+
+    if tarifa->opp > 0
+
+        // napravi kalkulaciju...
+        _rec[ _mpc_set ] := ROUND( _rec["vpc"] * ( 1 + ( tarifa->opp / 100 ) ), 2 )
+
+        // zaokruzi na 5 pf
+        if _params["zaok_5pf"] == "D"
+	        _rec[ _mpc_set ] := _rec[ _mpc_set ] - zaokr_5pf( _rec[ _mpc_set ] )
+        endif
+
+        @ m_x + 1, m_y + 2 SAY PADR( "Artikal: " + _rec["id"] + "-" + PADR( _rec["naz"], 20 ) + "...", 50 )
+        @ m_x + 2, m_y + 2 SAY PADR( " VPC: " + ALLTRIM( STR( _rec["vpc"], 12, 3 ) ) + ;
+                                " -> " + UPPER( _mpc_set ) + ": " + ALLTRIM( STR( _rec[ _mpc_set ], 12, 3 ) ), 50 )
+
+        update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
+
+        ++ _count 
+
+        endif
+    
+    skip
+
+enddo
+
+BoxC()
+
+f18_free_tables( { "roba" } )
+sql_table_update( NIL, "END" )
+
+return
+
+
+
+static function _get_params( params )
+local _ok := .f.
+local _x := 1
+local _mpc_no := 1
+local _zaok_5pf := "D"
+local _mpc_nula := "D"
+local _filter_id := SPACE(200)
+
+Box(, 10, 65 )
+
+    @ m_x + _x, m_y + 2 SAY "VPC -> MPC..."
+
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Setovati MPC (1/2/.../9)" GET _mpc_no VALID _mpc_no >= 1 .and. _mpc_no < 10 PICT "9"
+
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Zaokruženje 0.5pf (D/N) ?" GET _zaok_5pf VALID _zaok_5pf $ "DN" PICT "@!"
+
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Setovati samo gdje je MPC = 0 (D/N) ?" GET _mpc_nula VALID _mpc_nula $ "DN" PICT "@!"
+
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Filter po polju ID:" GET _filter_id PICT "@S40"
+
+    read
+
+BoxC()
+
+if LastKey() == K_ESC
+    return _ok
+endif
+
+params := hb_hash()
+params["mpc_set"] := _mpc_no
+params["zaok_5pf"] := _zaok_5pf
+params["mpc_nula"] := _mpc_nula
+params["filter_id"] := ALLTRIM( _filter_id )
+
+_ok := .t.
+
+return _ok
+
+

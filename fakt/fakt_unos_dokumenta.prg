@@ -142,7 +142,6 @@ if ( Ch == K_ENTER .and. EMPTY( field->brdok ) .and. EMPTY( field->rbr ) )
     return DE_CONT
 endif
 
-
 select fakt_pripr
 
 do case
@@ -894,7 +893,7 @@ d2n1 := SPACE(12)
 d2n2 := SPACE(12)
 
 set cursor on
- 
+
 // prva stavka
 if __nove_stavke 
 
@@ -975,6 +974,8 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
     __mx := m_x
     __my := m_y
     
+    _old_tip_dok := field->idtipdok
+
     // odaberi dokument !
     _n_menu := Menu2( 5, 30, _a_tipdok, _n_menu )
     
@@ -990,6 +991,15 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
 
     @ m_x + _x, m_y + 2 SAY PADR( _a_tipdok[ ASCAN( _a_tipdok, {|x| _idtipdok == LEFT( x, 2 ) } ) ], 40 )
     
+    // ako treba resetovati broj dokumenta !
+    if !fNovi .and. __redni_broj == 1
+        if _idtipdok <> _old_tip_dok .and. !EMPTY( field->brdok ) .and. ALLTRIM( field->brdok ) <> "00000"
+            MsgBeep( "Vrsite promjenu vrste dokumenta. Obratiti paznju na broj !" )
+            if Pitanje(, "Resetovati broj dokumenta na 00000 (D/N) ?", "D" ) == "D"
+                _brdok := PADR( REPLICATE( "0", gNumDio ), 8 )
+            endif
+        endif
+    endif
 
     // nesto oko dokumenta tipa "13"
     // koristit ce se partner ili konto ????
@@ -1086,7 +1096,9 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
                 
             if _params["fakt_vrste_placanja"]
                 ++ _x
-                @ m_x + _x, m_y + 2  SAY "Nacin placanja" GET _idvrstep PICT "@!" VALID P_VRSTEP( @_idvrstep, 9, 20 )
+                @ m_x + _x, m_y + 2  SAY "Nacin placanja" GET _idvrstep PICT "@!" ;
+                    VALID EMPTY( _idvrstep ) .or. P_VRSTEP( @_idvrstep, 9, 20 )
+
             endif
        
 

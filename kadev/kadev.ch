@@ -48,6 +48,6 @@
 #xcommand O_KDV_RJES    =>  select(F_KDV_RJES);    my_use ("kdv_rjes")   ; set order to tag "ID"
 #xcommand O_KDV_DEFRJES =>  select(F_KDV_DEFRJES); my_use ("kdv_defrjes"); set order to tag "1"
 #xcommand O_KDV_GLOBUSL  => select(F_KDV_GLOBUSL);  my_use ("kdv_globusl") ; set order to tag "1"
-#xcommand O_KDV_OBRAZDEF => select(F_KDV_OBRAZDEF); my_use ("kdv_obrazdef"); set order to tag "1"
+#xcommand O_KDV_OBRAZDEF => select(F_KDV_OBRAZDEF); my_usex ("kdv_obrazdef"); set order to tag "1"
 #xcommand O_KDV_USLOVI   => select(F_KDV_USLOVI);  my_use ("kdv_uslovi")  ; set order to tag "1"
 

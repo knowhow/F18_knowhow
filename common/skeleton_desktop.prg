@@ -174,6 +174,8 @@ f18_ispisi_status_semafora()
 f18_ispisi_status_podrucja( _ver_pos )
 // ispisi status modula
 f18_ispisi_status_modula()
+// ispisi status baze
+f18_ispisi_status_baze()
 
 return
 
@@ -220,6 +222,21 @@ if !_in_use
 	@ MAXROWS()-1, 25 SAY "!" COLOR _color
 else
 	@ MAXROWS()-1, 25 SAY " " COLOR _color
+endif
+
+
+return
+
+
+function f18_ispisi_status_baze()
+local _color := "GR+/B" 
+local _db_lock := F18_DB_LOCK():New():is_locked()
+
+if _db_lock
+    _color := "W/R+"
+	@ MAXROWS()-1, 27 SAY "DB LOCK" COLOR _color
+else
+	@ MAXROWS()-1, 27 SAY "       " COLOR _color
 endif
 
 

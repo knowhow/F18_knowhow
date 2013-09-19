@@ -755,12 +755,6 @@ AADD( menuexec, {|| F18AdminOpts():New():drop_db(), .t. } )
 AADD( menuop, hb_utf8tostr( "5. otvaranje nove godine" ) )
 AADD( menuexec, {|| F18AdminOpts():New():new_session(), .t. } )
 
-AADD( menuop, hb_utf8tostr( "6. sinhronizacije baze podataka" ) )
-AADD( menuexec, {|| F18AdminOpts():New():synchro_db_all(), .t. } )
-
-//AADD( menuop, hb_utf8tostr( "7. vpn podrska" ) )
-//AADD( menuexec, {|| vpn_support( .f. ), .t. } )
-
 return
 
 

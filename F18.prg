@@ -75,8 +75,12 @@ local _x := 1
 local _db_params
 local _count := 0
 local oBackup := F18Backup():New()
+local oDb_lock
 local _user_roles := f18_user_roles_info()
 local _server_db_version := get_version_str( server_db_version() )
+local _lock_db 
+local _tmp
+local _color := "BG+/B"
 
 if arg_v == NIL
     // napravi NIL parametre
@@ -91,9 +95,20 @@ do while .t.
 
     _db_params := my_server_params()
 
+    oDb_lock := F18_DB_LOCK():New()
+    _lock_db := oDb_lock:is_locked()
+    
     _x := 1
 
     @ _x, mnu_left + 1 SAY "Tekuca baza: " + ALLTRIM( _db_params["database"] ) + " / db ver: " + _server_db_version
+
+    if _lock_db
+        _tmp := "[ srv lock " + oDb_lock:lock_params["server_lock"] + " / cli lock " + oDb_lock:lock_params["client_lock"]  + " ]"
+    else
+        _tmp := ""
+    endif
+    
+    @ _x, col() + 1 SAY _tmp COLOR _color 
     
     ++ _x
 
@@ -106,7 +121,12 @@ do while .t.
     // backup okidamo samo na prvom ulasku
     // ili na opciji relogina
     if _count == 1 .or. __relogin_opt
-        
+       
+        // provjera da li je backup locked ?
+        if oBackup:locked( .f. )
+            oBackup:unlock()
+        endif
+ 
         // automatski backup podataka preduzeca
         f18_auto_backup_data(1)
         __relogin_opt := .f.
@@ -229,6 +249,10 @@ AADD( menuexec, {|| NIL } )
 // ostale opcije...
 AADD( menuop, " B. Backup podataka" )
 AADD( menuexec, {|| f18_backup_data() } )
+AADD( menuop, " F. Forsirana sinhronizacija podataka" )
+AADD( menuexec, {|| F18AdminOpts():New():force_synchro_db() } )
+AADD( menuop, " L. Zakljucavanje/otkljucavanje baze" )
+AADD( menuexec, {|| f18_database_lock_menu() } )
 AADD( menuop, " P. Parametri aplikacije" )
 AADD( menuexec, {|| f18_app_parameters() } )
 AADD( menuop, " W. Pregled log-a" )

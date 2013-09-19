@@ -159,7 +159,7 @@ do while !eof() .and. ( field->idrj = cIdrj .or. empty(cidrj))
         cIdKonto:=idkonto
         nDug3:=nPot31:=nPot32:=0
         do while !eof() .and. (idrj=cidrj .or. empty(cidrj))  .and. idkonto==cidkonto
-            if prow()>60
+            if prow() > RPT_PAGE_LEN
                 FF
                 os_zagl_amort()
             endif
@@ -257,7 +257,7 @@ do while !eof() .and. ( field->idrj = cIdrj .or. empty(cidrj))
 
         enddo
 
-        if prow()>60
+        if prow() > RPT_PAGE_LEN
             FF
             os_zagl_amort()
         endif
@@ -282,7 +282,7 @@ do while !eof() .and. ( field->idrj = cIdrj .or. empty(cidrj))
     if !empty(qidkonto) .and. cKPocinju=="N"
         exit
     endif
-    if prow()>60; FF; os_zagl_amort(); endif
+    if prow() > RPT_PAGE_LEN; FF; os_zagl_amort(); endif
     ? m
     nTArea := SELECT()
     select konto
@@ -300,7 +300,7 @@ do while !eof() .and. ( field->idrj = cIdrj .or. empty(cidrj))
 enddo
 
 if empty(qidkonto) .or. cKPocinju=="D"
-    if prow()>60
+    if prow() > RPT_PAGE_LEN
         FF  
         os_zagl_amort()
     endif

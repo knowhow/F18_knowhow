@@ -151,7 +151,9 @@ DO WHILE !EOF() .and. IspitajPrekid()
         skip
      ENDDO // tarifa
 
-     if prow()>61+gPStranica; FF; endif
+     if prow() > ( RPT_PAGE_LEN + gPStranica )
+        FF
+     endif
      if gVarVP=="1"
        nPorez:=(nVPV-nNV)*nVPP/100
      else
@@ -178,7 +180,9 @@ DO WHILE !EOF() .and. IspitajPrekid()
      nT6+=n6
   ENDDO // konto
 
-  if prow()>60+gPStranica; FF; endif
+    if prow() > ( RPT_PAGE_LEN + gPStranica )
+        FF
+    endif
   ? cLine
   ? "UKUPNO:"
   @ prow(),nCol1     SAY  nT1     pict picdem

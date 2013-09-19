@@ -16,6 +16,8 @@ static __god
 static __xml := 0
 static __ispl_s := 0
 
+
+
 // ---------------------------------------------------------
 // sortiranje tabele LD
 // ---------------------------------------------------------
@@ -627,7 +629,7 @@ do while !EOF()
             nR_sati := field->r_sati
             nR_satib := field->r_satib
             
-            if nR_satiT <> 0
+            if nR_satiT <> 0 .and. gBenefSati == 1
                 nR_satiT := field->r_sati
             endif
 
@@ -816,6 +818,7 @@ do while !EOF()
     endif
 
     ++ nZaposl
+
     nU_prih += field->u_opor
     nU_dopr += field->u_d_iz
     nU_lodb += field->l_odb
@@ -929,7 +932,7 @@ do while !EOF()
             nR_sati := field->r_sati
             nR_satib := field->r_satib
             
-            if nR_satiT <> 0
+            if nR_satiT <> 0 .and. gBenefSati == 1
                 nR_satiT := field->r_sati
             endif
 
@@ -1234,6 +1237,7 @@ do while !eof()
         endif
         
         nBr_benef := 0
+        nU_d_pms := 0
         cBen_stopa := ""
 
         // beneficirani staz
@@ -1241,9 +1245,13 @@ do while !eof()
 
         // beneficirani radnici
         if UBenefOsnovu()
-            
+             
             // sati beneficiranog su sati redovnog rada
-            nSatiT := nSati
+            if gBenefSati == 1
+                nSatiT := nSati
+            else
+                nSatiT := field->usati
+            endif
 
             // benef.stepen
             nStUv := benefstepen()
@@ -1258,7 +1266,7 @@ do while !eof()
             gBFForm := STRTRAN( gBFForm, "_", "" )
     
             nBr_Benef := bruto_osn( nNeto - ;
-                IF(!EMPTY(gBFForm),&gBFForm,0), ;
+                IF( !EMPTY( gBFForm ), &gBFForm, 0 ), ;
                 cTipRada, nL_odb )
             
             add_to_a_benef( @_a_benef, cBen_stopa, nStUv, nBr_Benef )

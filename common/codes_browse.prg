@@ -505,7 +505,8 @@ local nTekRed
 local nTrebaRedova
 local cUslovSrch
 local lNovi
-
+local oDb_lock := F18_DB_LOCK():New
+local _db_locked := oDb_lock:is_locked()
 
 private cPom
 private aQQ
@@ -522,7 +523,7 @@ if aZabIsp=nil
  aZabIsp:={}
 endif
 
-Ch:=LASTKEY()
+Ch := LASTKEY()
 
 // deklarisi privatne varijable sifrarnika
 // wPrivate
@@ -538,20 +539,20 @@ nOrder := indexord()
 nRet := -1
 lZabIsp := .f.
 
-if bBlok<>NIL
-  nRet:=Eval(bBlok, Ch)
-  if nret > 4
-    if nRet == 5
-      return DE_ABORT
-    elseif nRet == 6
-      return DE_CONT
-    elseif nRet == 7
-      return DE_REFRESH
-    elseif nRet == 99 .and. LEN(aZabIsp) > 0
-      lZabIsp := .t.
-      nRet := -1
+if bBlok <> NIL
+    nRet:=Eval(bBlok, Ch)
+    if nret > 4
+        if nRet == 5
+            return DE_ABORT
+        elseif nRet == 6
+            return DE_CONT
+        elseif nRet == 7
+            return DE_REFRESH
+        elseif nRet == 99 .and. LEN(aZabIsp) > 0
+            lZabIsp := .t.
+            nRet := -1
+        endif
     endif
-  endif
 endif
 
 if ASCAN( aZabrane, Ch ) <> 0  
@@ -561,23 +562,28 @@ endif
 
 #ifndef TEST
 
-if ((Ch==K_CTRL_N .or.Ch==K_CTRL_A .or. Ch==K_F2 .or. Ch==K_CTRL_T .or. Ch==K_F4 .or. Ch==K_CTRL_F9 .or. Ch==K_F10) .and. !ImaPravoPristupa(goModul:oDatabase:cName,"SIF","EDSIF")) 
-    MsgBeep("Vi nemate pravo na promjenu podataka u sifrarnicima !")
+// provjeri pristup opcijama koje mjenjaju podatke
+if ( Ch == K_CTRL_N .or. Ch == K_CTRL_A .or. Ch == K_F2 .or. ;
+        Ch == K_CTRL_T .or. Ch == K_F4 .or. Ch == K_CTRL_F9 .or. Ch == K_F10 ) .and. ;
+    ( !ImaPravoPristupa(goModul:oDatabase:cName,"SIF","EDSIF") .or. _db_locked )
+    
+    oDb_lock:warrning()
     return DE_CONT
+
 endif
 
 #endif
 
 do case
 
-  case Ch==K_ENTER
+  case Ch == K_ENTER
     // ako sam u sifrarniku a ne u unosu dokumenta 
     if gMeniSif 
-     return DE_CONT
+        return DE_CONT
     else
-     // u unosu sam dokumenta
-     lPrviPoziv:=.f.
-     return DE_ABORT
+        // u unosu sam dokumenta
+        lPrviPoziv:=.f.
+        return DE_ABORT
     endif
 
   case UPPER(CHR(Ch)) == "F"

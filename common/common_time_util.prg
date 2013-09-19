@@ -22,22 +22,36 @@ return  ( dDat>=d1 .and. dDat<=d2 )
 
 
 
-function GMJD(nBrdana)
-local ostatak, godina,mjeseci,dana
-godina= (nBrDana/365.125)
-ostatak=nBrDana % 365.125
-mjeseci=(ostatak / 30.41)
-ostatak=ostatak % 30.41
-dana=round(ostatak,0)
-godina:=int(godina)
-mjeseci:=int(mjeseci)
-if dana==30; dana:=0; mjeseci++; endif
-if mjeseci==13; mjeseci:=0; godina++; endif
-return {godina,mjeseci,dana}
+function GMJD( nBrdana )
+local ostatak
+local godina
+local mjeseci
+local dana
+
+godina := ( nBrDana / 365.125 )
+ostatak := nBrDana % 365.125
+mjeseci := ( ostatak / 30.41 )
+ostatak := ostatak % 30.41
+dana := round( ostatak, 0 )
+godina := INT( godina )
+mjeseci := INT( mjeseci )
+
+if dana == 30
+    dana := 0
+    mjeseci ++
+endif
+
+if mjeseci == 13
+    mjeseci := 0
+    godina ++
+endif
+
+return { godina, mjeseci, dana }
 
 
-function GMJD2N(god,mj,dana)
-return god*365.125+mj*30.41+dana
+
+function GMJD2N( god, mj, dana )
+return ( god * 365.125 ) + ( mj * 30.41 ) + dana
 
 
 * datum1 - manji datum, datum2 - ve}i datum
@@ -45,26 +59,27 @@ function GMJD2(dDat1,dDat2)
 return {year(dDat1)-year(dDat2), month(dDat1)-month(dDat2),  day(dDat1)-day(dDat2)}
 
 
-function ADDGMJD(aRE,aRB)
+function ADDGMJD( aRE, aRB )
 local nPom
-local aRU:={0,0,0}
+local aRU := { 0, 0, 0 }
 
-nPom:=aRE[3]+aRB[3]
-if nPom>30
-  aRU[3]:=nPom%30 // dana
-  aRU[2]+=int(nPom/30)
+nPom := aRE[3] + aRB[3]
+
+if nPom > 30
+    aRU[3] := nPom % 30 // dana
+    aRU[2] += INT( nPom / 30 )
 else
-  aRU[3]:=nPom
+    aRU[3] := nPom
 endif
 
-aRU[2]+=aRE[2]+aRB[2]
+aRU[2] += aRE[2] + aRB[2]
 
-if aRU[2]>11
-    aRU[1]+=INT(aRu[2]/12)
-    aRU[2]:=aRU[2]%12
+if aRU[2] > 11
+    aRU[1] += INT( aRu[2] / 12 )
+    aRU[2] := aRU[2] % 12
 endif
 
-aRU[1]+=aRE[1]+aRB[1]
+aRU[1] += aRE[1] + aRB[1]
 
 return aRU
 

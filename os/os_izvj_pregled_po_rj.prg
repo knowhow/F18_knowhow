@@ -209,7 +209,7 @@ do while !eof() .and. ( field->idrj = cIdrj .or. lPoKontima )
             ?
         endif
 
-        if prow()>59
+        if prow() > RPT_PAGE_LEN
             FF
             ZglPrj()
         endif
@@ -221,7 +221,7 @@ do while !eof() .and. ( field->idrj = cIdrj .or. lPoKontima )
 
     endif
 
-    if prow()>62
+    if prow() > RPT_PAGE_LEN
         FF
         ZglPrj()
     endif
@@ -258,7 +258,7 @@ enddo
 
 ? m
 
-if prow()>56
+if prow() > RPT_PAGE_LEN
     FF
     ZglPrj()
 endif

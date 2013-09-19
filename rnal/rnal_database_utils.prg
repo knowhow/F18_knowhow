@@ -307,7 +307,7 @@ return 1
 function cre_tmp1( aFields )
 local cTbName := "_tmp1"
 
-if LEN(aFields) == 0
+if LEN( aFields ) == 0
 	MsgBeep("Nema definicije polja u matrici!")
 	return
 endif

@@ -14,7 +14,7 @@
 
 
 
-function KalkNabP(cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNC, nSNC, dDatNab)
+function KalkNabP( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNC, nSNC, dDatNab )
 local npom,fproso
 local nIzlNV
 local nIzlKol
@@ -23,7 +23,7 @@ local nUlKol
 local nSkiniKol
 local nZadnjaUNC
 
-nKolicina:=0
+nKolicina := 0
 
 if lAutoObr == .t.
 	// uzmi stanje iz cache tabele
@@ -38,10 +38,11 @@ select kalk
 set order to tag "4"  //idFirma+pkonto+idroba+pu_i+IdVD
 seek cIdFirma+cIdKonto+cIdRoba+chr(254)
 skip -1
-if cIdfirma+cIdkonto+cIdroba==idfirma+pkonto+idroba .and. _datdok<datdok
-  Beep(2)
-  Msg("Postoji dokument "+idfirma+"-"+idvd+"-"+brdok+" na datum: "+dtoc(datdok),4)
-  _ERROR:="1"
+
+if cIdfirma + cIdkonto + cIdroba == idfirma + pkonto + idroba .and. _datdok < datdok
+    Beep(2)
+    Msg("Postoji dokument "+idfirma+"-"+idvd+"-"+brdok+" na datum: "+dtoc(datdok),4)
+    _ERROR:="1"
 endif
 
 nLen:=1
@@ -62,7 +63,7 @@ nZadnjaUNC := 0
 //  ovo je prvi prolaz
 hseek cIdFirma+cIdKonto+cIdRoba
 
-do while !eof() .and. cIdFirma+cIdKonto+cIdroba==idFirma+pkonto+idroba .and. _datdok>=datdok
+do while !eof() .and. cIdFirma+cIdKonto+cIdroba==idFirma+pkonto+idroba .and. _datdok >= datdok
 
   if pu_i=="1" .or. pu_i=="5"
     if (pu_i=="1" .and. kolicina>0) .or. (pu_i=="5" .and. kolicina<0)
@@ -93,7 +94,7 @@ if gMetodaNc=="3"
   hseek cIdFirma+cIdKonto+cIdRoba
   nSkiniKol:=nIzlKol+_Kolicina // skini sa stanja ukupnu izlaznu kolicinu+tekucu kolicinu
   nNabVr:=0  // stanje nabavne vrijednosti
-  do while !eof() .and. cIdFirma+cIdKonto+cIdRoba==idFirma+pkonto+idroba .and. _datdok>=datdok
+  do while !eof() .and. cIdFirma+cIdKonto+cIdRoba==idFirma+pkonto+idroba .and. _datdok >= datdok
 
     if pu_i=="1" .or. pu_i=="5"
       if (pu_i=="1" .and. kolicina>0) .or. (pu_i=="5" .and. kolicina<0)

@@ -310,6 +310,7 @@ local _delete_date := ( _curr_date - _delete_level )
 
 // datumski uslov
 _where := "l_time::char(8) <= " + _sql_quote( _delete_date )
+_where += " AND msg NOT LIKE " + _sql_quote( "%F18_DOK_OPER%" )
 
 // GLAVNI UPIT
 // ==========================

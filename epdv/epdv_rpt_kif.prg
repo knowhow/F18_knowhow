@@ -23,7 +23,7 @@ static nCurrLine:=0
 
 static cRptNaziv := "Izvjestaj KIF na dan "
 
-static cTbl := "KIF"
+static cTbl := "kif"
 
 static cTar := ""
 static cPart := ""
@@ -41,6 +41,7 @@ local cPom12
 local cPom21
 local cPom22
 local nLenIzn
+local _export := "N"
 
 // 1 - red.br / ili br.dok
 // 2 - br.dok / ili r.br
@@ -112,6 +113,12 @@ Box(, 11, 60)
 	PICT "@!"
 
   nX += 2
+
+  @ m_x + nX, m_y + 2 SAY "Eksport izvjestaja u DBF (D/N) ?" GET _export ;
+        VALID _export $ "DN" PICT "@!"
+  
+
+  nX += 2
   
   @ m_x+nX, m_y+2 SAY REPLICATE("-", 30) 
   nX++
@@ -120,7 +127,8 @@ Box(, 11, 60)
 BoxC()
 
 if LastKey()==K_ESC
-	closeret
+	close all
+    return
 endif
 
 endif
@@ -180,9 +188,27 @@ AADD(aZagl, { "(1)",   "(2)",  "(3)",   "(4)",   "(5)",  "(6)",     "(7)", "(8)"
 
 
 fill_rpt( nBrDok )
-show_rpt(  .f.,  .f.)
+
+if _export == "D"
+
+    close all
+
+    _file := my_home() + "epdv_r_kif.dbf"
+
+    #ifdef __PLATFORM__WINDOWS
+        _file := '"' + _file + '"'
+    #endif
+
+    f18_open_document( _file )
+
+else
+    show_rpt(  .f.,  .f.)
+endif
 
 return
+
+
+
 
 // -----------------------------------
 // polja reporta
@@ -202,6 +228,7 @@ AADD(aArr, {"opis",   "C",  80, 0})
 
 AADD(aArr, {"i_b_pdv",   "N",  18, 2})
 AADD(aArr, {"i_pdv",   "N",  18, 2})
+AADD(aArr, {"i_uk",   "N",  18, 2})
 
 return
 *}
@@ -211,16 +238,16 @@ local aArr:={}
 
 close all
 
-ferase ( PRIVPATH + "R_" +  cTbl + ".cdx" )
-ferase ( PRIVPATH + "R_" +  cTbl + ".dbf" )
+ferase ( my_home() + "epdv_r_" +  cTbl + ".cdx" )
+ferase ( my_home() + "epdv_r_" +  cTbl + ".dbf" )
 
 get_r_fields(@aArr)
 
 // kreiraj tabelu
-dbcreate2(PRIVPATH + "R_" + cTbl + ".dbf", aArr)
+dbcreate2( my_home() + "epdv_r_" + cTbl + ".dbf", aArr)
 
 // kreiraj indexe
-CREATE_INDEX("br_dok", "br_dok", "R_" +  cTbl, .t.)
+CREATE_INDEX("br_dok", "br_dok", "epdv_r_" +  cTbl, .t.)
 
 return
 
@@ -346,6 +373,7 @@ replace opis with cOpis
 
 replace i_b_pdv with nBPdv
 replace i_pdv with nPdv
+replace i_uk with ( i_b_pdv + i_pdv )
 
 SELECT (nIzArea)
 
@@ -361,7 +389,7 @@ SET FILTER TO
 
 
 return
-*}
+
 
 // ---------------------------------------
 // ---------------------------------------

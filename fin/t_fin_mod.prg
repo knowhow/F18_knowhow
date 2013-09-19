@@ -76,17 +76,19 @@ return nil
 
 
 method mMenuStandard()
-
 local _izbor :=1
 local _opc:={}
 local _opcexe:={}
+local oDb_lock := F18_DB_LOCK():New()
+local _locked := oDb_lock:is_locked()
 
 AADD(_opc, "1. unos/ispravka dokumenta                   ")
-if (ImaPravoPristupa(goModul:oDataBase:cName, "DOK", "KNJIZNALOGA"))
-	AADD(_opcexe, {|| fin_unos_naloga()})
+if (ImaPravoPristupa(goModul:oDataBase:cName, "DOK", "KNJIZNALOGA")) .and. !_locked
+	AADD(_opcexe, {|| fin_unos_naloga() })
 else
-	AADD(_opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| oDb_lock:warrning() })
 endif
+
 AADD(_opc, "2. izvjestaji")
 AADD(_opcexe, {|| Izvjestaji()})
 
@@ -94,27 +96,27 @@ AADD(_opc, "3. pregled dokumenata")
 AADD(_opcexe, {|| MnuPregledDokumenata()})
 
 AADD(_opc, "4. generacija dokumenata")
-if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","GENDOK"))
+if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","GENDOK")) .and. !_locked
 	AADD(_opcexe, {|| MnuGenDok()})
 else
-	AADD(_opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| oDb_lock:warrning() })
 endif
 
 AADD(_opc, "5. moduli - razmjena podataka")
-if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","MODULIRAZMJENA"))
+if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","MODULIRAZMJENA")) .and. !_locked
 	AADD(_opcexe, {|| MnuRazmjenaPodataka()})
 else
-	AADD(_opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| oDb_lock:warrning() })
 endif
 
 AADD(_opc, "6. ostale operacije nad dokumentima")
 AADD(_opcexe, {|| MnuOstOperacije()})
 
 AADD(_opc, "7. udaljene lokacije - razmjena podataka ")
-if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","UDLOKRAZMJENA"))
+if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","UDLOKRAZMJENA")) .and. !_locked
 	AADD(_opcexe, {|| fin_udaljena_razmjena_podataka()})
 else
-	AADD(_opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| oDb_lock:warrning() })
 endif
 
 AADD(_opc, "------------------------------------")
@@ -125,10 +127,10 @@ AADD(_opcexe, {|| MnuSifrarnik()})
 
 AADD(_opc, "9. administracija baze podataka")
 
-if (ImaPravoPristupa(goModul:oDataBase:cName,"MAIN","DBADMIN"))
+if (ImaPravoPristupa(goModul:oDataBase:cName,"MAIN","DBADMIN")) .and. !_locked
 	AADD(_opcexe, {|| MnuAdminDB()})
 else
-	AADD(_opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| oDb_lock:warrning() })
 endif
 
 AADD(_opc, "------------------------------------")
@@ -138,10 +140,10 @@ AADD(_opc, "K. kontrola zbira datoteka")
 AADD(_opcexe, {|| KontrZb()})
 
 AADD(_opc, "P. povrat dokumenta u pripremu")
-if (ImaPravoPristupa(goModul:oDatabase:cName, "UT", "POVRATNALOGA"))
+if (ImaPravoPristupa(goModul:oDatabase:cName, "UT", "POVRATNALOGA")) .and. !_locked
 	AADD(_opcexe, {|| povrat_fin_naloga()})
 else
-	AADD(_opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| oDb_lock:warrning() })
 endif
 
 AADD(_opc, "------------------------------------")
@@ -151,7 +153,7 @@ AADD(_opc, "X. parametri")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"PARAM","PARAMETRI"))
 	AADD(_opcexe, {|| mnu_fin_params()})
 else
-	AADD(_opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| oDb_lock:warrning() })
 endif
 
 

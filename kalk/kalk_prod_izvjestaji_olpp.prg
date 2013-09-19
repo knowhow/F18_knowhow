@@ -97,7 +97,7 @@ for ik:=1 to 2
 			nMPC1 := MpcBezPor( nMPCSaPP , aPorezi )
      			nMPC2 := nMPC1 + Izn_P_PPP( nMPC1 , aPorezi )
    		endif
-		if prow()>gnRedova-2 .and. gOstr=="D"
+		if prow() > gnRedova - 2 .and. gOstr=="D"
    			FF
 			ZOLPDV()
    		endif

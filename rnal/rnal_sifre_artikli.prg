@@ -1139,6 +1139,13 @@ return
 //  lNew - novi artikal
 //  lAuto - auto generacija naziva
 // ----------------------------------------------
+//
+//
+// aArr sadrzi:
+// { nElNo, cGrValCode, cGrVal, cAttJoker, cAttValCode, cAttVal }
+//
+//
+//
 function _art_set_descr( nArt_id, lNew, lAuto, aAttr, lOnlyArr )
 // artikal kod
 local cArt_code := ""

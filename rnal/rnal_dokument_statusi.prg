@@ -386,6 +386,7 @@ return _ret
 
 // ----------------------------------------------------------------
 // vraca oznaku elementa 
+// ----------------------------------------------------------------
 static function _get_doc_op_element( art_id, el_no )
 local _t_area := SELECT()
 local _elem := {}

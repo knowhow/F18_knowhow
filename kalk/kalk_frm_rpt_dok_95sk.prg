@@ -66,7 +66,10 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     select TARIFA; HSEEK kalk_pripr->IdTarifa
     select kalk_pripr
 
-    if prow()>62+gPStranica; FF; @ prow(),125 SAY "Str:"+str(++nStr,3); endif
+    if prow() > ( RPT_PAGE_LEN + gPStranica )
+        FF
+        @ prow(),125 SAY "Str:"+str(++nStr,3)
+    endif
 
     SKol:=Kolicina
 

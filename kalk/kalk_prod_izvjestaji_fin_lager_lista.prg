@@ -283,7 +283,7 @@ do while CMNEOF .and. cidfirma==idfirma .and.  IspitajPrekid()
         loop
     endif
 
-    if prow()>61+gPStranica
+    if prow() > ( RPT_PAGE_LEN + gPStranica )
 	    FF
 	    eval(bZagl)
     endif
@@ -340,7 +340,7 @@ endif
 ? cLine
 
 if IsPlanika()
-	if (prow()>55+gPStranica)
+	if ( prow() > ( RPT_PAGE_LEN + gPStranica ) )
 		FF
 	endif
 	PrintParovno(nKolUlaz, nKolIzlaz)

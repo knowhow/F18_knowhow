@@ -147,7 +147,9 @@ DO WHILE !EOF() .and. IspitajPrekid()
         skip
      ENDDO // tarifa
 
-     if prow()>61+gPStranica; FF; endif
+     if prow() > ( RPT_PAGE_LEN + gPStranica )
+        FF
+     endif
      @ prow()+1,0        SAY space(6)+cIdTarifa
      nCol1:=pcol()+1
      @ prow(),nCol1      SAY n1:=nNVD         PICT   PicDEM
@@ -164,7 +166,9 @@ DO WHILE !EOF() .and. IspitajPrekid()
 
   ENDDO // konto
 
-  if prow()>60+gPStranica; FF; endif
+    if prow() > ( RPT_PAGE_LEN + gPStranica )
+        FF
+    endif
   ? cLine
   ? "UKUPNO:"
   @ prow(),nCol1     SAY  nT1     pict picdem

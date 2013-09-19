@@ -72,6 +72,8 @@ do while !EOF() .and. cIdFirma == idfirma .and. cIdvd == idvd .and. cBrdok == br
 
     _rec := dbf_get_rec()
 
+    scatter()
+
   	select koncij
 	seek TRIM( _rec["idkonto"] )
 
@@ -85,7 +87,8 @@ do while !EOF() .and. cIdFirma == idfirma .and. cIdvd == idvd .and. cBrdok == br
 
   	private nMPC := 0
   	nMPC := UzmiMPCSif()
-  	
+  
+    altd()	
     if gCijene = "2"
    		faktMPC( @nMPC, _rec["idfirma"] + _rec["pkonto"] + _rec["idroba"] )
    		select kalk_pripr

@@ -829,68 +829,69 @@ return 0
  */
 
 function DatVal()
-local nUvecaj:=15
+local _uvecaj := 15
 local _rec
-private GetList:={}
+private GetList := {}
 
 // uzmi datval iz doks2
-if file(f18_ime_dbf( "kalk_doks2" ))
-    PushWa()
-    O_KALK_DOKS2
-    seek finmat->( idfirma + idvd + brdok )
-    dDatVal := field->DatVal
-    IF lVrsteP
-        cIdVrsteP:=k2
-    ENDIF
-    PopWa()
+PushWa()
+
+O_KALK_DOKS2
+seek finmat->( idfirma + idvd + brdok )
+    
+dDatVal := field->datval
+
+if lVrsteP
+    cIdVrsteP := k2
 endif
 
-if EMPTY(dDatVal)  // nisam nasao u datumu valuta pokupi rucno !
+if !EMPTY( dDatVal )
+    _uvecaj := ( dDatVal - finmat->datfaktp )
+endif
 
-    Box( , 3 + IIF(lVrsteP.and.EMPTY(cIdVrsteP),1,0),60)
-        set cursor on
-        @ m_x+1,m_y+2 SAY "Datum dokumenta: " 
-        ??  finmat->datfaktp
-        @ m_x+2,m_y+2 SAY "Uvecaj dana    :" GET nUvecaj pict "99"
-        @ m_x+3,m_y+2 SAY "Valuta         :" GET dDatVal when {|| dDatVal:=finmat->datfaktp+nUvecaj,.t.}
-        IF lVrsteP .and. EMPTY(cIdVrsteP)
-            @ m_x+4,m_y+2 SAY "Sifra vrste placanja:" GET cIdVrsteP PICT "@!"
-        ENDIF
-        read
-    BoxC()
+Box(, 3 + IIF( lVrsteP .and. EMPTY( cIdVrsteP ), 1, 0 ), 60 )
 
-    if file(f18_ime_dbf("kalk_doks2"))
+    set cursor on
 
-        PushWa()
+    @ m_x + 1, m_y + 2 SAY "Datum dokumenta: " 
+    ??  finmat->datfaktp
 
-        O_KALK_DOKS2
+    @ m_x + 2, m_y + 2 SAY "Uvecaj dana    :" GET _uvecaj PICT "999"
+    @ m_x + 3, m_y + 2 SAY "Valuta         :" GET dDatVal WHEN {|| dDatVal := finmat->datfaktp + _uvecaj, .t. }
 
-        seek finmat->(idfirma+idvd+brdok)
-
-        _rec := dbf_get_rec()
-
-        if !found() 
-            APPEND BLANK 
-            // ovo se moze desiti ako je neko mjenjao dokumenta u KALK
-            _rec["idfirma"] := finmat->idfirma
-            _rec["idvd"] := finmat->idvd
-            _rec["brdok"] := finmat->brdok
-        endif
-        
-        _rec["datval"] := dDatVal
-        
-        IF lVrsteP
-            _rec["k2"] := cIdVrsteP
-        ENDIF
-        
-		update_rec_server_and_dbf( "kalk_doks2", _rec, 1, "FULL" )
-    
-        PopWa()
-    
+    if lVrsteP .and. EMPTY(cIdVrsteP)
+        @ m_x + 4, m_y + 2 SAY "Sifra vrste placanja:" GET cIdVrsteP PICT "@!"
     endif
 
-endif
+    read
 
+BoxC()
+
+select kalk_doks2
+go top
+seek finmat->(idfirma+idvd+brdok)
+
+if !FOUND() 
+    APPEND BLANK 
+    // ovo se moze desiti ako je neko mjenjao dokumenta u KALK
+    _rec := dbf_get_rec()
+    _rec["idfirma"] := finmat->idfirma
+    _rec["idvd"] := finmat->idvd
+    _rec["brdok"] := finmat->brdok
+else
+    _rec := dbf_get_rec()
+endif
+        
+_rec["datval"] := dDatVal
+        
+if lVrsteP
+    _rec["k2"] := cIdVrsteP
+endif
+        
+update_rec_server_and_dbf( "kalk_doks2", _rec, 1, "FULL" )
+    
+PopWa()
+    
 return 0
 
 
@@ -1045,6 +1046,7 @@ local nCol1:=nCol2:=nCol3:=0
 local _fin_auto_broj := "N"
 // kontira se vise kalkulacija
 local lViseKalk := .f.
+local _predispozicija := .f.
 private aPorezi
 
 aPorezi := {}
@@ -1063,6 +1065,8 @@ lVoSaTa := .f.
 fprvi := .t.  
 
 do while .t.
+
+    _predispozicija := .f.
 
     O_FINMAT
     O_KONTO
@@ -1130,12 +1134,18 @@ do while .t.
             BoxC()
         endif
     
-        HSEEK cIdFirma+cIdVd+cBrDok
+        hseek cIdFirma + cIdVd + cBrDok
+
     else
         go top
-        cIdFirma:=IdFirma
-        cIdVD:=IdVD
-        cBrdok:=brdok
+        cIdFirma := IdFirma
+        cIdVD := IdVD
+        cBrdok := brdok
+    endif
+
+    // potrebno je ispitati da li je predispozicija !
+    if idvd == "80" .and. !EMPTY( idkonto2 )
+        _predispozicija := .t.
     endif
 
     EOF CRET
@@ -1345,7 +1355,7 @@ do while .t.
                 DatDok    with kalk_pripr->DatDok,;
                 GKV       with round(kalk_PRIPR->(GKolicina*FCJ2),gZaokr),;   // vrijednost transp.kala
                 GKV2      with round(kalk_PRIPR->(GKolicin2*FCJ2),gZaokr)   // vrijednost ostalog kala
-    
+                
             replace Prevoz    with round(kalk_PRIPR->(nPrevoz*SKol),gZaokr) ,;
                 CarDaz    with round(kalk_PRIPR->(nCarDaz*SKol),gZaokr) ,;
                 BankTr    with round(kalk_PRIPR->(nBankTr*SKol),gZaokr) ,;
@@ -1473,6 +1483,11 @@ do while .t.
                 endif
             endif
      
+            // napuni marker da se radi o predispoziciji...
+            if _predispozicija
+                replace k1 with "P"
+            endif
+
             select kalk_pripr
             skip
         enddo // brdok
@@ -1554,6 +1569,18 @@ if !lViseKalk
 endif
 
 return
+
+
+
+// provjerava u finmat tabeli da li se radi o predispoziciji
+function predisp()
+local _ret := .f.
+if field->k1 == "P"
+    _ret := .t.
+endif
+return _ret
+
+
 
 
 // -----------------------------------

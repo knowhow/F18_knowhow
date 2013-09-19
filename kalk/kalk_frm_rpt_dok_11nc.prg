@@ -80,7 +80,10 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
       nPor2:=aIPor[2]
     endif
 
-    if prow()>62+gPStranica; FF; @ prow(),123 SAY "Str:"+str(++nStr,3); endif
+    if prow() > ( RPT_PAGE_LEN + gPStranica )
+        FF
+        @ prow(),123 SAY "Str:"+str(++nStr,3)
+    endif
 
     nTot1+=  (nU1:= FCJ*Kolicina   )
     nTot2+=  (nU2:= Prevoz*Kolicina   )
@@ -158,7 +161,10 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
 enddo
 
-if prow()>61+gPStranica; FF; @ prow(),123 SAY "Str:"+str(++nStr,3); endif
+if prow() > ( RPT_PAGE_LEN + gPStranica )
+    FF
+    @ prow(),123 SAY "Str:"+str(++nStr,3)
+endif
 ? m
 @ prow()+1,0        SAY "Ukupno:"
 @ prow(),nCol0      SAY  nTot1        picture       PicDEM

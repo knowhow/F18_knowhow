@@ -61,8 +61,10 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     select kalk_pripr
     VtPorezi()
 
-    if prow()>62+gPStranica; FF; @ prow(),125 SAY "Str:"+str(++nStr,3); endif
-
+    if prow() > ( RPT_PAGE_LEN + gPStranica )
+        FF
+        @ prow(),125 SAY "Str:"+str(++nStr,3)
+    endif
 
     nTot3+=  (nU3:= NC*kolicina )
     nTot4+=  (nU4:= vpc*(1-rabatv/100)*Kolicina )
@@ -102,7 +104,10 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
 enddo
 
-if prow()>61+gPStranica; FF; @ prow(),125 SAY "Str:"+str(++nStr,3); endif
+if prow() > ( RPT_PAGE_LEN + gPStranica )
+    FF
+    @ prow(),125 SAY "Str:"+str(++nStr,3)
+endif
 ? m
 @ prow()+1,0        SAY "Ukupno:"
 @ prow(),nCol0      SAY  nTot3        picture       PicDEM
@@ -113,7 +118,10 @@ if prow()>61+gPStranica; FF; @ prow(),125 SAY "Str:"+str(++nStr,3); endif
 @ prow(),pcol()+1   SAY  nTot7        picture        PicDEM
 ? m
 
-IF prow()>55+gPStranica; FF; @ prow(),125 SAY "Str:"+str(++nStr,3);  endif
+IF prow() > ( RPT_PAGE_LEN + gPStranica )
+    FF
+    @ prow(),125 SAY "Str:"+str(++nStr,3)
+endif
 nRec:=recno()
 select kalk_pripr
 set order to tag "2"
@@ -150,7 +158,10 @@ do while !eof() .and. cidfirma+cidvd+cbrdok==idfirma+idvd+brdok
   @ prow(),pcol()+1   SAY nu3 pict picdem
   @ prow(),pcol()+1   SAY nu4 pict picdem
 enddo
-IF prow()>56+gPStranica; FF; @ prow(),125 SAY "Str:"+str(++nStr,3);  endif
+IF prow() > ( RPT_PAGE_LEN + gPStranica )
+    FF
+    @ prow(),125 SAY "Str:"+str(++nStr,3)
+endif
 ? m
 ? "UKUPNO"
 @ prow(),nCol1      SAY nTot1 pict picdem
@@ -164,4 +175,6 @@ IF prow()>56+gPStranica; FF; @ prow(),125 SAY "Str:"+str(++nStr,3);  endif
 set order to tag "1"
 go nRec
 return
-*}
+
+
+

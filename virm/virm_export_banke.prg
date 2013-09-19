@@ -25,6 +25,8 @@ CLASS VirmExportTxt
     METHOD export_setup_read_params()
     METHOD export_setup_write_params()
 
+    METHOD export_setup_duplicate()
+    
     DATA export_params
     DATA formula_params
     DATA export_total
@@ -40,7 +42,7 @@ CLASS VirmExportTxt
         METHOD get_macro_line()
         METHOD get_export_params()
         METHOD get_export_list()
-
+        METHOD copy_existing_formula()
 
 ENDCLASS
 
@@ -198,6 +200,76 @@ set_metric( "virm_export_banke_tek", my_user(), _id_formula )
 _ok := .t.
 
 return _ok
+
+
+
+
+// ----------------------------------------------------------
+// dupliciranje postavke eksporta
+// ----------------------------------------------------------
+METHOD VirmExportTxt:export_setup_duplicate()
+local _existing := 1
+local _new := 0
+local oExisting := VirmExportTxt():New()
+local oNew := VirmExportTxt():New()
+private GetList := {}
+
+Box(, 3, 60 )
+
+    @ m_x + 1, m_y + 2 SAY "*** DUPLICIRANJE POSTAVKI EKSPORTA"
+    @ m_x + 2, m_y + 2 SAY "Koristiti postojece podesenje broj:" GET _existing PICT "999"
+    @ m_x + 3, m_y + 2 SAY "      Kreirati novo podesenje broj:" GET _new PICT "999"
+
+    read
+
+BoxC()
+
+if LastKey() == K_ESC
+    return
+endif
+
+if _new > 0 .and. _new <> _existing
+
+    oExisting:export_setup_read_params( _existing )
+
+    oNew:formula_params := oExisting:formula_params
+    oNew:export_setup_write_params( _new )
+
+endif
+
+return
+
+
+
+// ----------------------------------------------------------
+// kopiranje formule iz postojece formule
+// ----------------------------------------------------------
+METHOD VirmExportTxt:copy_existing_formula( id_formula, var )
+local oExport := VirmExportTxt():New()
+local _tmp
+private GetList := {}
+
+if LEFT( id_formula, 1 ) == "#"
+    id_formula := STRTRAN( ALLTRIM( id_formula ), "#", "" )
+else
+    return .t.
+endif
+
+// uzmi postojecu formulu...
+if oExport:get_export_params( VAL( id_formula ) )
+
+    _tmp := oExport:get_export_line_macro( var )
+
+    if !EMPTY( _tmp  )
+        id_formula := PADR( _tmp, 500 )
+    else
+        MsgBeep( "Zadata formula ne postoji !!!" )
+    endif
+
+endif
+
+return .t.
+
 
 
 
@@ -641,23 +713,28 @@ Box(, 15, 70 )
     ++ _x
     ++ _x  
 
-    @ m_x + _x, m_y + 2 SAY "(*)  Zagl.1:" GET _head_1 PICT "@S50"
+    @ m_x + _x, m_y + 2 SAY "(*)  Zagl.1:" GET _head_1 PICT "@S50" ;
+            VALID {|| EMPTY( _head_1 ) .or. ::copy_existing_formula( @_head_1, "h1" ) }
     
     ++ _x  
 
-    @ m_x + _x, m_y + 2 SAY "(*)  Zagl.2:" GET _head_2 PICT "@S50"
+    @ m_x + _x, m_y + 2 SAY "(*)  Zagl.2:" GET _head_2 PICT "@S50" ;
+            VALID {|| EMPTY( _head_2 ) .or. ::copy_existing_formula( @_head_2, "h2" ) }
     
     ++ _x  
     
-    @ m_x + _x, m_y + 2 SAY "(*) Formula:" GET _formula PICT "@S50" VALID !EMPTY( _formula )
+    @ m_x + _x, m_y + 2 SAY "(*) Formula:" GET _formula PICT "@S50" ; 
+            VALID {|| !EMPTY( _formula ) .and. ::copy_existing_formula( @_formula, "i" ) }
 
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "(*)  Podn.1:" GET _footer_1 PICT "@S50"
+    @ m_x + _x, m_y + 2 SAY "(*)  Podn.1:" GET _footer_1 PICT "@S50" ;
+            VALID {|| EMPTY( _footer_1 ) .or. ::copy_existing_formula( @_footer_1, "f1" ) }
  
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "(*)  Podn.2:" GET _footer_2 PICT "@S50"
+    @ m_x + _x, m_y + 2 SAY "(*)  Podn.2:" GET _footer_2 PICT "@S50" ;
+            VALID {|| EMPTY( _footer_2 ) .or. ::copy_existing_formula( @_footer_2, "f2" ) }
     
     ++ _x
     ++ _x
@@ -838,6 +915,8 @@ AADD( _opc, "1. export podataka za banku                " )
 AADD( _opcexe, {|| virm_export_txt_banka()  } )
 AADD( _opc, "2. postavke formula exporta   " )
 AADD( _opcexe, {|| virm_export_txt_setup()  } )
+AADD( _opc, "3. dupliciranje postojecih postavaki " )
+AADD( _opcexe, {|| VirmExportTxt():New():export_setup_duplicate()  } )
 
 f18_menu( "el", .f., _izbor, _opc, _opcexe )
 

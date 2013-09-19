@@ -253,7 +253,9 @@ StampaTabele(aKol,,,gTabela,,,,IF(lPA,{|| ForPPr()},{|| ForPPr2()}),;
                IF(gOstr=="D",,-1),,,,,,.f.)
 
 ?
-IF PROW()>56+gPStranica-LEN(aGr); FF; endif
+IF PROW() > ( RPT_PAGE_LEN + gPStranica - LEN(aGr) )
+    FF
+endif
 	? "Rekapitulacija po grupama:"
    	if cSaPSiPM=="D"
 		? REPL("-",40)+" "+REPL("-",13)+" "+REPL("-",13)+" "+REPL("-",13)+" "+REPL("-",13)+" "+REPL("-",13)+" "+REPL("-",10)+" "+REPL("-",13)

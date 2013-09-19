@@ -344,19 +344,21 @@ do while !EOF() .and. idfirma==dok["idfirma"]  .and. idtipdok==dok["idtipdok"] .
     endif
 
 	// rn Veleprodaje
-	if dok["idtipdok"] $ "10#20#22"
-		// ino faktura
+	if dok["idtipdok"] $ "10#11#12#13#20#22#25"
+		
+        // ino faktura
 		if IsIno(cIdPartner)
-			nPPDV:=0
-			lIno:=.t.
+			nPPDV := 0
+			lIno := .t.
 		endif
 
 		// ako je po nekom clanu PDV-a partner oslobodjenj
 		// placanja PDV-a
-		cPdvOslobadjanje := PdvOslobadjanje(cIdPartner)
+		cPdvOslobadjanje := PdvOslobadjanje( cIdPartner )
 		if !EMPTY(cPdvOslobadjanje)
-			nPPDV:=0
+			nPPDV := 0
 		endif
+
 	endif
 
 	if dok["idtipdok"] == "12"

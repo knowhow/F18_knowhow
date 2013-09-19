@@ -1171,7 +1171,10 @@ do while !EOF() .and. field->idfirma == id_firma  .and. field->idtipdok == id_ti
     _rec["kolicina"] := ( _rec["kolicina"] * -1 )
     _rec["brdok"] := _novi_br_dok
     _rec["datdok"] := DATE()
-    
+
+    // obavezno resetuj vrstu placanja na gotovina...
+    _rec["idvrstep"] := ""
+ 
     if _fiscal_use
         _rec["fisc_rn"] := _fiscal_no
     endif

@@ -45,6 +45,7 @@ local cIdZaduz2
 local cPom
 local _naslov
 local nCol1 := nCol2 := 0, nPom := 0
+local _page_len := RPT_PAGE_LEN
 private nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
 
 nStr := 0
@@ -116,11 +117,13 @@ endif
 
 select kalk_pripr
 
-m := "----- ----------- --------------------------- ---------- ----------- -----------"
+P_10CPI
+P_COND
+
+m := _get_line()
 
 ? m
-? "*Red.* Konto     * ARTIKAL                   * Kolicina *  NABAV.  *    NV     *"
-? "*Broj*           *                           *          *  CJENA   *           *"
+? "*Rbr.* Konto * ARTIKAL  (sifra-naziv-jmj)                                 * Kolicina *   NC     *    NV     *"
 ? m
 
 nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := nTota := nTotb := nTotc := nTotd := 0
@@ -166,12 +169,12 @@ do while !EOF() .and. cIdFirma == field->IdFirma ;
         
         KTroskovi()
 
-        if prow() > 62 + gPStranica
+        if prow() > ( _page_len + gPStranica )
             FF
             @ prow(), 125 SAY "Str:" + STR( ++nStr, 5 )
         endif
 
-        SKol := field->kolicina
+        skol := field->kolicina
 
         // NV
         nT4 += ( nU4 := field->nc * field->kolicina )
@@ -186,13 +189,10 @@ do while !EOF() .and. cIdFirma == field->IdFirma ;
         
         @ prow(), 6 SAY ""
         
-        ?? PADR( cNKonto, 11 ), ALLTRIM( field->idroba ), ;
-                TRIM( LEFT( roba->naz, 40 ) ) + " (" + ALLTRIM( roba->jmj ) + ")"
+        ?? PADR( cNKonto, 7 ), PADR( ALLTRIM( field->idroba ) + "-" + ;
+                ALLTRIM( roba->naz ) + " (" + ALLTRIM( roba->jmj ) + ")", 60 )
         
-        @ prow() + 1, 46 SAY field->kolicina PICT PicKol
-    
-        nC1 := pcol() + 1
-
+        @ prow(), nC1 := pcol() + 1 SAY field->kolicina PICT PicKol
         @ prow(), pcol() + 1 SAY field->nc PICT piccdem
         @ prow(), pcol() + 1 SAY nU4 PICT picdem
 
@@ -206,11 +206,20 @@ do while !EOF() .and. cIdFirma == field->IdFirma ;
   
     ? m
   
+    if prow() > ( _page_len + gPStranica )
+        FF
+        @ prow(), 125 SAY "Str:" + STR( ++nStr, 5 )
+    endif
+
     @ prow() + 1, 0 SAY "Ukupno za: "
-    
-    ?? ALLTRIM( cIdpartner ) +  " - " + ALLTRIM( partn->naz )
+        ?? ALLTRIM( cIdpartner ) +  " - " + ALLTRIM( partn->naz )
+
+    if prow() > ( _page_len + gPStranica )
+        FF
+        @ prow(), 125 SAY "Str:" + STR( ++nStr, 5 )
+    endif
+
     ? "Broj fakture:", ALLTRIM( cBrFaktP ), "/", dDatFaktp
-  
     @ prow(), nC1 SAY 0 PICT "@Z " + picdem
     @ prow(), pcol() + 1 SAY nT4 PICT picdem
   
@@ -218,7 +227,7 @@ do while !EOF() .and. cIdFirma == field->IdFirma ;
 
 enddo
 
-if prow() > 61 + gPStranica
+if prow() > ( _page_len + gPStranica )
     FF
     @ prow(), 125 SAY "Str:" + STR( ++nStr, 5 )
 endif
@@ -234,5 +243,21 @@ endif
 return
 
 
+static function _get_line()
+local _line := ""
+
+_line += REPLICATE( "-", 5 ) 
+_line += SPACE(1)
+_line += REPLICATE( "-", 7 ) 
+_line += SPACE(1)
+_line += REPLICATE( "-", 60 ) 
+_line += SPACE(1)
+_line += REPLICATE( "-", 10 ) 
+_line += SPACE(1)
+_line += REPLICATE( "-", 10 ) 
+_line += SPACE(1)
+_line += REPLICATE( "-", 11 ) 
+
+return _line
 
 

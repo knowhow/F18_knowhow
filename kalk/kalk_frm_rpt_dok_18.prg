@@ -91,7 +91,10 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
  KTroskovi()
 
- if prow()>62+gPStranica; FF; @ prow(),122 SAY "Str:"+str(++nStr,3); endif
+if prow() > ( RPT_PAGE_LEN + gPStranica )
+    FF
+    @ prow(),122 SAY "Str:"+str(++nStr,3)
+endif
 
  VTPOREZI()
 
@@ -122,7 +125,10 @@ skip
 
 enddo
 
-if prow()>55+gPStranica; FF; @ prow(),125 SAY "Str:"+str(++nStr,3); endif
+if prow() > ( RPT_PAGE_LEN + gPStranica )
+    FF
+    @ prow(),125 SAY "Str:"+str(++nStr,3)
+endif
 ? m
 @ prow()+1,0        SAY "Ukupno:"
 

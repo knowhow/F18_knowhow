@@ -135,6 +135,8 @@ params["nalog_prioritet"] := g_t_pars_opis("N05")
 params["nalog_isp_mjesto"] := g_t_pars_opis("N07")
 // dodatni opis naloga
 params["nalog_dod_opis"] := g_t_pars_opis("N08")
+// kratki opis naloga
+params["nalog_kratki_opis"] := g_t_pars_opis("N15")
 // objekat id
 params["nalog_objekat_id"] := g_t_pars_opis("P20")
 // naziv objekta
@@ -145,7 +147,8 @@ params["nalog_vrsta_placanja"] := g_t_pars_opis("N06")
 params["nalog_placeno"] := g_t_pars_opis("N10")
 // placanje dodatni opis
 params["nalog_placanje_opis"] := g_t_pars_opis("N11")
-
+// tip naloga
+params["nalog_tip"] := g_t_pars_opis("N21")
 
 // podaci kupca
 // ===============================================
@@ -193,8 +196,15 @@ xml_subnode( "nalozi", .f. )
 
 // upisi osvnovne podatke naloga
 xml_node( "fdesc", to_xml_encoding( params["firma_naziv"] ) )
+xml_node( "tip", params["nalog_tip"] )
 xml_node( "no", params["nalog_broj"] )
-xml_node( "desc", to_xml_encoding( params["nalog_naziv"] ) )
+
+if params["nalog_tip"] == "NP"
+    xml_node( "desc", to_xml_encoding( "NEUSKLADJEN PROIZVOD br." ) )
+else
+    xml_node( "desc", to_xml_encoding( params["nalog_naziv"] ) )
+endif
+
 xml_node( "gr_total", params["nalog_grupa_total"] )
 xml_node( "date", params["nalog_datum"] )
 xml_node( "time", params["nalog_vrijeme"] )
@@ -203,6 +213,7 @@ xml_node( "d_time", params["nalog_isp_vrijeme"] )
 xml_node( "d_place", to_xml_encoding( params["nalog_isp_mjesto"] ) )
 xml_node( "prior", to_xml_encoding( params["nalog_prioritet"] ) )
 xml_node( "desc_2", to_xml_encoding( params["nalog_dod_opis"] ) )
+xml_node( "desc_3", to_xml_encoding( params["nalog_kratki_opis"] ) )
 xml_node( "ob_id", to_xml_encoding( params["nalog_objekat_id"] ) )
 xml_node( "ob_desc", to_xml_encoding( params["nalog_objekat_naziv"] ) )
 xml_node( "oper", to_xml_encoding( params["nalog_operater"] ) )

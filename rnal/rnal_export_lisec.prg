@@ -414,6 +414,13 @@ set_keywords()
 AADD( aGLx, STRTRAN( __GLX, "x", cGlassNo ) )
 AADD( aGLx, cIdCode )
 
+// dodaci na liniju
+AADD( aGLx, 1 )
+AADD( aGLx, 0 )
+AADD( aGLx, 0 )
+AADD( aGLx, "" )
+AADD( aGLx, 0 )
+
 return aGLx
 
 
@@ -451,6 +458,16 @@ set_keywords()
 
 AADD( aFRx, STRTRAN( __FRX, "x", cFrameNo ) )
 AADD( aFRx, cIdCode )
+
+// dodatna polja koja se nece citati !
+//AADD( aFRx, 0 )
+//AADD( aFRx, 0 )
+//AADD( aFRx, 0 )
+//AADD( aFRx, "" )
+//AADD( aFRx, 0 )
+//AADD( aFRx, 0 )
+//AADD( aFRx, 0 )
+//AADD( aFRx, 0 )
 
 return aFRx
 

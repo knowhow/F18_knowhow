@@ -19,7 +19,7 @@
 //
 // update_rec_server_and_dbf( table, values, 1, "FULL") - zapocni/zavrsi transakciju unutar funkcije 
 // -----------------------------------------------------------------------------------------------------------
-function update_rec_server_and_dbf(table, values, algoritam, transaction, lock)
+function update_rec_server_and_dbf( table, values, algoritam, transaction, lock )
 local _ids := {}
 local _pos
 local _full_id_dbf, _full_id_mem
@@ -33,7 +33,7 @@ local _values_dbf
 local _alg_tag := ""
 local _ret
 
-_ret :=.t.
+_ret := .t.
 
 if lock == NIL
   if transaction == "FULL" 

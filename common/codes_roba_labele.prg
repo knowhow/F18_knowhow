@@ -25,6 +25,7 @@ local cKolicina
 local _tkm_no
 local _xml_file := my_home() + "data.xml"
 local _template := "rlab1.odt"
+local _len_naz := 25
 
 cVarijanta := "1"
 cKolicina := "N"
@@ -32,7 +33,7 @@ cKolicina := "N"
 // kreiraj tabelu rLabele
 CreTblRLabele()
 
-if GetVars( @cVarijanta, @cKolicina, @_tkm_no ) == 0 
+if GetVars( @cVarijanta, @cKolicina, @_tkm_no, @_len_naz ) == 0 
 	close all
 	return
 endif
@@ -50,7 +51,7 @@ else
 endif
 
 // generisi xml fajl sa podacima labele
-_gen_xml( _xml_file, _tkm_no )
+_gen_xml( _xml_file, _tkm_no, _len_naz )
 
 CLOSE ALL
 
@@ -70,7 +71,7 @@ return
 // ------------------------------------------------------
 // uslovi generisanja labela
 // ------------------------------------------------------
-static function GetVars( cVarijanta, cKolicina, tkm_no )
+static function GetVars( cVarijanta, cKolicina, tkm_no, len_naz )
 local lOpened
 local cIdVd
 
@@ -78,7 +79,9 @@ cIdVd := "XX"
 cVarijanta := "1"
 cKolicina := "N"
 lOpened := .t.
+
 tkm_no := PADR( fetch_metric("rlabel_tkm_no", my_user(), "" ), 20 )
+len_naz := fetch_metric("rlabel_naz_len", NIL, 28 )
 
 if ( gModul == "KALK" )
 
@@ -101,7 +104,7 @@ if ( gModul == "KALK" )
 	endif
 endif
 
-Box(, 7, 65 )
+Box(, 10, 65 )
 	
 	@ m_x + 1, m_y + 2 SAY "Broj labela zavisi od kolicine artikla (D/N):" ;
 		GET cKolicina VALID cKolicina $ "DN" PICT "@!"
@@ -113,6 +116,8 @@ Box(, 7, 65 )
 		GET cVarijanta VALID cVarijanta $ "12"
     
     @ m_x + 7, m_y + 2 SAY "Broj TKM:" GET tkm_no 	
+
+    @ m_x + 8, m_y + 2 SAY "Naziv skrati na broj karaktera:" GET len_naz PICT "999"
 
 	read
 
@@ -130,6 +135,7 @@ endif
 
 // snimi parametar
 set_metric("rlabel_tkm_no", my_user(), ALLTRIM( tkm_no ) )
+set_metric("rlabel_naz_len", NIL, len_naz )
 
 return 1
 
@@ -161,7 +167,7 @@ endif
 
 aDBf := {}
 AADD(aDBf,{ 'idRoba'		, 'C', 10, 0 })
-AADD(aDBf,{ 'naz'		    , 'C', 40, 0 })
+AADD(aDBf,{ 'naz'		    , 'C', 100, 0 })
 AADD(aDBf,{ 'idTarifa'		, 'C',  6, 0 })
 AADD(aDBf,{ 'barkod'		, 'C', 20, 0 })
 AADD(aDBf,{ 'evBr'		    , 'C', 10, 0 })
@@ -313,7 +319,7 @@ return nil
 // ----------------------------------------------------------
 // generisi xml na osnovu tabele rlabele
 // ----------------------------------------------------------
-static function _gen_xml( xml_file, tkm_no )
+static function _gen_xml( xml_file, tkm_no, len_naz )
 local _t_area := SELECT()
 
 open_xml( xml_file )
@@ -336,7 +342,7 @@ do while !EOF()
 
     // filuj podatke iz tabele
     xml_node( "id", to_xml_encoding( ALLTRIM( rlabele->idroba ))  )
-    xml_node( "naz", to_xml_encoding( PADR(ALLTRIM( rlabele->naz), 28) ))
+    xml_node( "naz", to_xml_encoding( PADR(ALLTRIM( rlabele->naz), len_naz ) ))
     xml_node( "jmj", to_xml_encoding( ALLTRIM( rlabele->jmj ))  )
     xml_node( "bk", to_xml_encoding( ALLTRIM( rlabele->barkod ))  )
     xml_node( "c1", ALLTRIM( STR( rlabele->cijena, 12, 2 ) )  )

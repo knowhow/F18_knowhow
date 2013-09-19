@@ -230,6 +230,7 @@ local nUVr_poz, nIVr_poz
 local nUKol_poz, nIKol_poz
 local nZadnjaNC := 0
 local nOdstup := 0
+local _korek_dok := .f.
 
 if _g_kto( @cMKtoLst, @cPKtoLst, @dDatGen, @cAppFSif, ;
     @nT_kol, @nT_ncproc ) == 0
@@ -302,11 +303,11 @@ for i := 1 to LEN( aKto )
         seek kalk->idfirma + kalk->idvd + kalk->brdok
         select kalk
         
-        // provjera postojanja dokumenta korekcije i kolicine
-        // nc ce uzeti samo sa MINUS stavke sa dokumenta korekcije
-        if LEFT( kalk_doks->brfaktp, 6 ) == "#KOREK" .and. field->kolicina > 0
-            skip
-            loop
+        // provjera postojanja dokumenta korekcije
+        if LEFT( kalk_doks->brfaktp, 6 ) == "#KOREK"
+            _korek_dok := .t.
+        else
+            _korek_dok := .f.
         endif
 
         if field->mu_i == "1" .or. field->mu_i == "5"
@@ -325,7 +326,7 @@ for i := 1 to LEN( aKto )
                 nUlNV += ( nKolNeto * field->nc )      
                 
                 // zadnja nabavna cijena ulaza
-                if idvd $ "10#16#96"
+                if idvd $ "10#16#96" .and. !_korek_dok
                     nZadnjaNC := field->nc
                 endif
           
@@ -335,6 +336,11 @@ for i := 1 to LEN( aKto )
                 nIzlKol += nKolNeto
                 nIzlNV += ( nKolNeto * field->nc )
 
+                // zadnja nabavna cijena ulaza
+                if idvd == "16" .and. _korek_dok
+                    nZadnjaNC := field->nc
+                endif
+ 
             endif
 
             // ako je stanje pozitivno zapamti ga
@@ -452,11 +458,11 @@ for i := 1 to LEN( aKto )
       seek kalk->idfirma + kalk->idvd + kalk->brdok
       select kalk
  
-      // provjera postojanja dokumenta korekcije i kolicine
-      // nc ce uzeti samo sa MINUS stavke sa dokumenta korekcije
-      if LEFT( kalk_doks->brfaktp, 6 ) == "#KOREK" .and. field->kolicina > 0
-            skip
-            loop
+      // provjera postojanja dokumenta korekcije
+      if LEFT( kalk_doks->brfaktp, 6 ) == "#KOREK"
+            _korek_dok := .t.
+      else
+            _korek_dok := .f.
       endif
 
       if field->pu_i == "1" .or. field->pu_i == "5"

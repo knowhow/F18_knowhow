@@ -460,16 +460,18 @@ for i := 1 to LEN( aKto )
       endif
 
       if field->pu_i == "1" .or. field->pu_i == "5"
-            if ( field->pu_i == "1" .and. field->kolicina > 0 ) ;
-            .or. ( field->pu_i == "5" .and. field->kolicina < 0 )
+
+        if ( field->pu_i == "1" .and. field->kolicina > 0 ) ;
+                    .or. ( field->pu_i == "5" .and. field->kolicina < 0 )
             nKolicina += abs(field->kolicina)       
             nUlKol    += abs(field->kolicina)       
             nUlNV     += (abs(field->kolicina)*field->nc)  
-            else
+        else
             nKolicina -= abs(field->kolicina)
             nIzlKol   += abs(field->kolicina)
             nIzlNV    += (abs(field->kolicina)*field->nc)
-            endif
+        endif
+
       elseif field->pu_i=="I"
             nKolicina-=field->gkolicin2
             nIzlKol+=field->gkolicin2

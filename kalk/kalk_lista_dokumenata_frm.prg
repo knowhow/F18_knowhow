@@ -133,6 +133,7 @@ endif
 AADD(aImeKol, { "NV",       {|| TRANSFORM(nv, gPicDem)} })
 AADD(aImeKol, { "VPV",      {|| TRANSFORM(vpv,gPicDem)} })
 AADD(aImeKol, { "MPV",      {|| TRANSFORM(mpv,gPicDem)} })
+AADD(aImeKol, { "Dokument",   {|| Brfaktp }                           })
 
 for i:=1 to LEN(aImeKol)
 	AADD(aKol, i)
@@ -160,30 +161,29 @@ return cStatus
 // key handler za browse_dok 
 // ----------------------------------------
 static function brow_keyhandler(Ch)
+local _rec
+local _br_fakt
 
 do case
-	case UPPER(CHR(Ch)) == "S"
-		// stavljanje dokumenta na stanje...
-		if IsPlanika() ;
-		   .and. dok_u_procesu(kalk_doks->idfirma, kalk_doks->idvd, kalk_doks->brdok) ;
-		   .and. Pitanje(,"Dokument staviti na stanje", "N") == "D"
-			
-			select kalk
-			set order to tag "1"
-			go top
-			seek kalk_doks->(idfirma + idvd + brdok)
-			do while !EOF() .and. kalk->(idfirma + idvd + brdok) == kalk_doks->(idfirma + idvd + brdok)
-				Scatter()
-				// setuj MU_I i PU_I
-				_pu_i := get_pu_i(kalk_doks->idvd)
-				_mu_i := get_mu_i(kalk_doks->idvd)
-				Gather()
-				skip
-			enddo
-			select kalk_doks
-			return DE_REFRESH
-		endif
-		return DE_CONT
+
+    case Ch == K_F2
+
+        _rec := dbf_get_rec()
+        _br_fakt := _rec["brfaktp"]
+
+        Box(, 3, 60 )
+            @ m_x + 1, m_y + 2 SAY "Ispravka podataka dokumenta ***"
+            @ m_x + 3, m_y + 2 SAY "Broj fakture:" GET _br_fakt
+            read
+        BoxC()
+
+        if LastKey() == K_ESC
+            return DE_CONT
+        endif
+
+        _rec["brfaktp"] := _br_fakt
+        update_rec_server_and_dbf( "kalk_doks", _rec, 1, "FULL" )
+        return DE_REFRESH
 
 	case Ch == K_CTRL_P
 		// stampa dokumenta
@@ -231,7 +231,7 @@ Box(, 10, 65)
 
 	nX := nX + 2
 	
-	@ nX + m_x, 2 + m_y SAY "Partner:" GET cPartner VALID p_firma(@cPartner)
+	@ nX + m_x, 2 + m_y SAY "Partner:" GET cPartner VALID EMPTY( cPartner ) .or. p_firma(@cPartner)
 	
 	read
 BoxC()
@@ -276,6 +276,7 @@ AADD(ImeKol,{ "P.Konto",    {|| pkonto}                    })
 AADD(ImeKol,{ "Nab.Vr",     {|| transform(nv,gpicdem)}                          })
 AADD(ImeKol,{ "VPV",        {|| transform(vpv,gpicdem)}                          })
 AADD(ImeKol,{ "MPV",        {|| transform(mpv,gpicdem)}                          })
+AADD(ImeKol,{ "Dokument",   {|| Brfaktp }                           })
 Kol:={}
 for i:=1 to len(ImeKol); AADD(Kol,i); next
 

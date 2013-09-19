@@ -792,6 +792,7 @@ do while !eof() .and. IIF(fSint .and. lSabKon, idfirma, idfirma+mkonto ) = ;
                				replace kolicina with -1
                				replace idvd with "16"
 					replace brdok with cBRPST
+                    replace brfaktp with "#KOREK"
 					replace nc with 0
 					replace vpc with 0
 
@@ -811,6 +812,7 @@ do while !eof() .and. IIF(fSint .and. lSabKon, idfirma, idfirma+mkonto ) = ;
                				replace kolicina with 1
                				replace idvd with "16"
 					replace brdok with cBRPST
+                    replace brfaktp with "#KOREK"
 					replace nc with (nNVU - nNVI)
 					replace vpc with 0
 

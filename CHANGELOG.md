@@ -1,3 +1,7 @@
+1.4.231 2013-09-23, vsasa
+ 
+  - fiskalne funkcije FPRINT, štampanje duplikata, korekcije
+ 
 1.4.230 2013-09-19, vsasa
  
   - LD, mip-1023, beneficirani radni staž - dorade

@@ -22,6 +22,7 @@ CLASS F18TableBrowse
 
     DATA browse_params
     DATA browse_return_value
+    DATA browse_messages
 
     PROTECTED:
 
@@ -34,6 +35,10 @@ ENDCLASS
 METHOD F18TableBrowse:New()
 ::browse_params := hb_hash()
 ::browse_return_value := NIL
+::browse_messages := { "<c+N> Novi", "<F2>  Ispravka", "<ENT> Odabir", _to_str("<c-T> Briši"), "<c-P> Print", ;
+                   "<F4>  Dupliciraj", _to_str("<c-F9> Briši SVE"), _to_str("<F> Traži"),;
+                   "<a-R> Zamjena vrij.", "<F5> Refresh"}
+
 return SELF
 
 
@@ -64,7 +69,8 @@ endif
 _o_qry := _sql_query( _srv, _c_qry )
 
 // broj zapisa tabele...
-@ m_x + 1, m_y + ::browse_params["form_width"] - 12 SAY "uk.: " + ALLTRIM( STR( table_count( ::browse_params["table_name"] ) ) )
+@ m_x + 0, m_y + 2 SAY "SQLBrowse [" + ::browse_params["table_name"] + "]" COLOR "I" 
+@ m_x + 1, m_y + ::browse_params["form_width"] - 20 SAY "uk.zapisa: " + ALLTRIM( STR( table_count( ::browse_params["table_name"] ) ) )
 
 _brw := TBrowseSQL():new( m_x + 2, m_y + 1, m_x + ::browse_params["form_height"], m_y + ::browse_params["form_width"], _srv, _o_qry, ::browse_params["table_name"], ::browse_params["table_browse_fields"], ::browse_params["codes_type"], ::browse_params["key_fields"], ::browse_params["table_order_field"] )
 _brw:BrowseTable( .f., NIL )
@@ -125,7 +131,7 @@ AADD( _a_columns, { "TARIFA", 6, "idtarifa" } )
 AADD( _a_columns, { "NC", 12, "nc" } )
 AADD( _a_columns, { "VPC", 12, "vpc" } )
 
-Box(, _height, _width )
+Box(, _height, _width, .t., oTBr:browse_messages )
 
 oTBr:browse_params["table_name"] := "fmk.roba"
 oTBr:browse_params["table_order_field"] := "id"

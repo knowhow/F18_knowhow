@@ -726,7 +726,7 @@ else
     _sql_query( _server, "COMMIT;" )
 endif
 
-return
+return _result
 
 
 
@@ -736,7 +736,8 @@ return
 static function _create_insert_qry_from_hash( table, hash )
 local _qry, _key
 
-_qry := "INSERT INTO " + table
+_qry := "WITH tmp AS ( "
+_qry += "INSERT INTO " + table
 _qry += " ( "
 
 for each _key in hash:keys
@@ -763,6 +764,17 @@ _qry := PADR( _qry, LEN( _qry ) - 1 )
 
 _qry += " ) "
 
+_qry += " RETURNING "
+
+for each _key in hash:keys
+    _qry += _key + ","
+next
+
+_qry := PADR( _qry, LEN( _qry ) - 1 )
+
+_qry += " ) "
+_qry += " SELECT * FROM tmp;"
+
 return _qry
 
 
@@ -773,7 +785,9 @@ static function _create_update_qry_from_hash( table, hash, where_key_fields )
 local _qry, _key 
 local _i
 
-_qry := "UPDATE " + table
+_qry := "WITH tmp AS ( "
+
+_qry += "UPDATE " + table
 _qry += " SET "
 
 for each _key in hash:keys
@@ -801,7 +815,19 @@ for _i := 1 to LEN( where_key_fields )
     else
         _qry += where_key_fields[ _i ] + " = " + _sql_quote( hash[ where_key_fields[ _i ] ] )
     endif
+
 next
+
+_qry += " RETURNING "
+
+for each _key in hash:keys
+    _qry += _key + ","
+next
+
+_qry := PADR( _qry, LEN( _qry ) - 1 )
+
+_qry += " ) "
+_qry += " SELECT * FROM tmp;"
 
 return _qry
 

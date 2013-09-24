@@ -148,7 +148,10 @@ CREATE CLASS TBrowseSQL FROM TBrowse
     VAR      browse_fields
     VAR      browse_order
     VAR      browse_key_fields
+    VAR      browse_last_rec_value
     VAR      last_key
+    VAR      table_struct
+    VAR      new_record
 
     METHOD   New( nTop, nLeft, nBottom, nRight, oServer, oQuery, cTable )
 
@@ -164,21 +167,24 @@ CREATE CLASS TBrowseSQL FROM TBrowse
 
 
     // f18 methods...
-    METHOD   editRow( lNew )
+    METHOD   editRow()
     METHOD   deleteRow()
     METHOD   deleteAll()
     METHOD   findRec()
+    METHOD   replaceRec()
     METHOD   revert_table_to_original_state()
+    METHOD   browse_print()
 
     PROTECTED:
 
         METHOD browse_editrow_box()
         METHOD browse_editrow_box_getlist()
-        METHOD set_global_vars_from_table( struct )
-        METHOD get_table_global_memvars( struct )
+        METHOD set_global_vars_from_table()
+        METHOD get_table_global_memvars()
         METHOD browse_editrow_box_getlist_defaults()
         METHOD field_list_from_array()
         METHOD findRec_where_constructor()
+        METHOD rec_position()
 
 ENDCLASS
 
@@ -207,7 +213,12 @@ endif
 ::browse_fields := fields
 ::browse_order := br_order
 ::browse_key_fields := key_fields
+::browse_last_rec_value := NIL
 ::last_key := NIL
+// struktura tabele
+::table_struct := _sql_table_struct( ::browse_table ) 
+// novi zapis VAR
+::new_record := .f.
 
 // positioning blocks
 ::SkipBlock := {| n | ::oCurRow := Skipper( @n, ::oQuery ), n }
@@ -238,7 +249,7 @@ FOR i := 1 TO ::oQuery:FCount()
         CASE ::oCurRow:FieldType( i ) == "N"
             oCol:picture := Replicate( "9", oCol:Width )
         CASE ::oCurRow:FieldType( i ) $ "CM"
-            oCol:picture := "@S" + ALLTRIM( STR( oCol:width ) ) //Replicate( "!", oCol:Width )
+            oCol:picture := "@S" + ALLTRIM( STR( oCol:width ) ) 
     ENDCASE
 
     ::AddColumn( oCol )
@@ -447,24 +458,6 @@ DO WHILE lKeepGoing
         CASE nKey == K_CTRL_END
             ::panEnd()
 
-        CASE nKey == K_RETURN .AND. lCanEdit
-            ::EditField()
-
-    #if 0
-        CASE nKey == K_DEL
-            IF lCanEdit
-                IF ! ::oQuery:Delete( ::oCurRow )
-                    Alert( "not deleted " + ::oQuery:Error() )
-                ENDIF
-                IF !::oQuery:Refresh()
-                    Alert( ::oQuery:Error() )
-                ENDIF
-
-                ::inValidate()
-                ::refreshAll():forceStable()
-            ENDIF
-    #endif
-
         OTHERWISE
             ::KeyboardHook( nKey )
     ENDCASE
@@ -476,6 +469,7 @@ RETURN Self
 // Empty method to be subclassed
 METHOD KeyboardHook( nKey ) CLASS TBrowseSQL
 local _last_rec := ::oQuery:recno()
+local _data
 
 // mozda se moze koristiti !
 //HB_SYMBOL_UNUSED( nKey )
@@ -502,22 +496,46 @@ do case
 
         // dodavanje novog zapisa
         ::last_key := nKey
-        ::editRow( .t. )
+        ::new_record := .t.
+        _data := ::editRow()
+        ::rec_position( _data )
 
     case ::codes_type_table .and. nKey == K_F2
 
         // dodavanje novog zapisa
         ::last_key := nKey
-        ::editRow( .f. )
+        ::new_record := .f.
+        _data := ::editRow()
 
     case ::codes_type_table .and. nKey == K_F4
 
         // dupliciranje zapisa
         ::last_key := nKey
-        ::editRow( .f. )
+        ::new_record := .f.
+        _data := ::editRow()
+        
+        if Pitanje(, "Pozicionirati se na novi zapis (D/N) ?", "D" ) == "D"
+            ::rec_position( _data )
+        endif
+
+    case ::codes_type_table .and. nKey == K_ENTER
+
+        // odabir stavke...
+        // sta ? nista ?
+    
+    
+    case ::codes_type_table .and. nKey == K_CTRL_P
+
+        // printanje browse-a
+        ::browse_print()
 
 
     // funkcije koje vaze za svaki browse...
+
+    case nKey == K_ALT_R
+        
+        // trazi/zamjeni
+        ::replaceRec()
 
     case UPPER( CHR( nKey ) ) == "F"
 
@@ -596,26 +614,22 @@ RETURN Self
 // --------------------------------------------------------------------
 // edit row
 // --------------------------------------------------------------------
-METHOD editRow( new_rec ) CLASS TBrowseSQL
-local _struct := _sql_table_struct( ::browse_table )
+METHOD editRow() CLASS TBrowseSQL
+local _data := NIL
 
 // uzmi memorijske varijable...
-::set_global_vars_from_table( _struct, new_rec )
-
-if new_rec .and. ::browse_table == "fmk.roba"
-    _idtarifa := PADR( "PDV17", 7 )
-endif
+::set_global_vars_from_table()
 
 // prikazi box
-if ::browse_editrow_box( _struct, new_rec )
+if ::browse_editrow_box()
 
     // daj mi sve iz memvars za ovaj zapis...
-    _rec := ::get_table_global_memvars( _struct )
+    _rec := ::get_table_global_memvars()
 
-    if new_rec .or. ( !new_rec .and. ::last_key == K_F4 )
-        sql_update_table_from_hash( ::browse_table, "ins", _rec, NIL )
+    if ::new_record .or. ( !::new_record .and. ::last_key == K_F4 )
+        _data := sql_update_table_from_hash( ::browse_table, "ins", _rec, NIL )
     else
-        sql_update_table_from_hash( ::browse_table, "upd", _rec, ::browse_key_fields )
+        _data := sql_update_table_from_hash( ::browse_table, "upd", _rec, ::browse_key_fields )
     endif
 
     if !::oQuery:Refresh()
@@ -627,20 +641,21 @@ if ::browse_editrow_box( _struct, new_rec )
 
 endif
 
-RETURN Self
+RETURN _data
 
 
 // -------------------------------------------------------------------
 // vraca memorijske varijable u hash matricu
 // -------------------------------------------------------------------
-METHOD get_table_global_memvars( struct ) CLASS TBrowseSQL
+METHOD get_table_global_memvars() CLASS TBrowseSQL
 local _hash := hb_hash()
 local _i, _field
 local _scan
+local _struct := ::table_struct
 
-for _i := 1 TO LEN( struct )
+for _i := 1 TO LEN( _struct )
 
-    _field := struct[ _i, 1 ]
+    _field := _struct[ _i, 1 ]
 
     _scan := ASCAN( ::browse_fields, { | var | var[3] == _field  } )
 
@@ -661,14 +676,15 @@ return _hash
 // -------------------------------------------------------------------
 // vraca memorijske varijable na osnovu strukture
 // -------------------------------------------------------------------
-METHOD set_global_vars_from_table( struct, new_rec ) CLASS TBrowseSQL
+METHOD set_global_vars_from_table() CLASS TBrowseSQL
 local _i
 local _field, _var
 local _prefix := "x"
+local _struct := ::table_struct
 
-for _i := 1 to LEN( struct )
+for _i := 1 to LEN( _struct )
 
-    _field := struct[ _i, 1 ]
+    _field := _struct[ _i, 1 ]
 
     _scan := ASCAN( ::browse_fields, { | var | var[3] == _field  } )
 
@@ -677,23 +693,23 @@ for _i := 1 to LEN( struct )
         _var := _prefix + _field
         __MVPUBLIC( _var )
 
-        if struct[ _i, 2 ] $ "C#M"
+        if _struct[ _i, 2 ] $ "C#M"
             EVAL( MEMVARBLOCK( _var ), ;
-                if( new_rec, ;
-                    PADR( "", struct[ _i, 3 ] ), ;
-                    PADR( hb_utf8tostr( ::oCurRow:FieldGet( ::oCurRow:FieldPos( _field ) ) ), struct[ _i, 3 ] ) ; 
+                if( ::new_record, ;
+                    PADR( "", _struct[ _i, 3 ] ), ;
+                    PADR( hb_utf8tostr( ::oCurRow:FieldGet( ::oCurRow:FieldPos( _field ) ) ), _struct[ _i, 3 ] ) ; 
                 ) ; 
                 ) 
-        elseif struct[ _i, 2 ] == "D"
+        elseif _struct[ _i, 2 ] == "D"
             EVAL( MEMVARBLOCK( _var ), ;
-                if( new_rec, ;
+                if( ::new_record, ;
                     CTOD(""), ;
                     ::oCurRow:FieldGet( ::oCurRow:FieldPos( _field ) ) ; 
                 ) ; 
                 )  
         else
             EVAL( MEMVARBLOCK( _var ), ;
-                if( new_rec, ;
+                if( ::new_record, ;
                     0, ;
                     ::oCurRow:FieldGet( ::oCurRow:FieldPos( _field ) ) ;
                  ) ;
@@ -706,7 +722,7 @@ next
 
 // default vrijednosti za pojedine tabele itd...
 // obraditi
-if new_rec
+if ::new_record
     ::browse_editrow_box_getlist_defaults()
 endif
 
@@ -716,7 +732,7 @@ return .t.
 // ---------------------------------------------------------------------
 // box edit-a
 // ---------------------------------------------------------------------
-METHOD browse_editrow_box( struct, new_rec ) CLASS TBrowseSQL
+METHOD browse_editrow_box() CLASS TBrowseSQL
 local _ok := .f.
 local _x := 1
 local _i
@@ -726,7 +742,7 @@ private GetList := {}
 Box(, ::oQuery:FCount(), 70 )
     for _i := 1 to ::oQuery:FCount()
         _var := _prefix + ::browse_fields[ _i, 3 ]
-        ::browse_editrow_box_getlist( _var, @GetList, _i, struct, new_rec )
+        ::browse_editrow_box_getlist( _var, @GetList, _i )
     next
     read
 BoxC()
@@ -744,7 +760,7 @@ return _ok
 // --------------------------------------------------------------------------
 // get list....
 // --------------------------------------------------------------------------
-METHOD browse_editrow_box_getlist( var, get_list, curr_row, struct, new_rec ) CLASS TBrowseSQL
+METHOD browse_editrow_box_getlist( var, get_list, curr_row ) CLASS TBrowseSQL
 local bWhen, bValid
 local _pict
 local _when_block, _valid_block
@@ -752,6 +768,7 @@ local _m_block
 local _row, _col
 local _len_desc := 15
 local _scan
+local _struct := ::table_struct
 
 // imamo ovdje i obradu lastkey()
 // ::last_key = nKey
@@ -771,16 +788,16 @@ endif
 
 _m_block := MEMVARBLOCK( var )
 
-_scan := ASCAN( struct, {|var| var[1] == ::browse_fields[ curr_row, 3 ] } )
+_scan := ASCAN( _struct, {|var| var[1] == ::browse_fields[ curr_row, 3 ] } )
 
 do case
 
-    case struct[ _scan, 2 ] == "C"
-        _pict := "@S" + ALLTRIM( STR( struct[ _scan, 3 ] ) )
+    case _struct[ _scan, 2 ] == "C"
+        _pict := "@S" + ALLTRIM( STR( _struct[ _scan, 3 ] ) )
 
-    case struct[ _scan, 2 ] == "N"
-        _pict := REPLICATE( "9", struct[ _scan, 3 ] - struct[ _scan, 4 ] ) + "." + ;
-                 REPLICATE( "9", struct[ _scan, 4 ] )
+    case _struct[ _scan, 2 ] == "N"
+        _pict := REPLICATE( "9", _struct[ _scan, 3 ] - _struct[ _scan, 4 ] ) + ;
+                IF( _struct[ _scan, 4 ] > 0, "." + REPLICATE( "9", _struct[ _scan, 4 ] ), "" )
     otherwise
         _pict := ""
 
@@ -954,5 +971,224 @@ next
 
 return _ret
 
+
+// -----------------------------------------------------------------
+// metoda pozicioniranja kursora na trazeni zapis...
+// -----------------------------------------------------------------
+METHOD rec_position( data ) CLASS TBrowseSQL
+local _key_fields := ::browse_key_fields // { "id", "naz", itd... } 
+local _last_rec_value := data:GetRow(1):FieldGet(FieldPos( ::browse_key_fields[1] )) 
+local _search_key
+local _search_value
+local _i
+
+::goTop()
+
+::hitBottom := .f.
+::hitTop := .f.
+
+MsgO( "P O Z I C I O N I R A N J E   U   T O K U  . . ." )
+
+do while ! ( ::hitBottom .or. ::hitTop )
+
+    if ::oCurRow:FieldGet( ::oCurRow:FieldPos( ::browse_key_fields[1] ) ) == _last_rec_value
+        exit
+    endif
+
+    ::down()
+    ::stabilize()
+
+enddo
+
+MsgC()
+
+return Self
+
+
+
+// -----------------------------------------------------------------
+// metoda zamjene zapisa u tabeli...
+// -----------------------------------------------------------------
+METHOD replaceRec() CLASS TBrowseSQL
+local _server := my_server()
+local _qry, _find_value, _replace_value
+local oCol
+local _field_type, _find_type 
+local _struct := ::table_struct
+local _f_type, _f_dec, _f_len
+
+// daj tekuci zapis i kolonu
+oCol := ::getColumn( ::colPos )
+
+// uzmi podake polja, naziv, vrijednost
+_find_field := ::oCurRow:FieldName( oCol:nFieldNum )
+_find_value := ::oCurRow:FieldGet( ::oCurRow:FieldPos( _find_field ) )
+
+// pronadji mi u strukturi podatke o polju
+_scan := ASCAN( _struct, { |var| var[1] == _find_field } )
+_f_type := _struct[ _scan, 2 ]
+_f_len := _struct[ _scan, 3 ]
+_f_dec := _struct[ _scan, 4 ]
+
+// sredi mi pict i vrijednosti varijabli
+if _f_type == "C"
+
+    _find_value := hb_strtoutf8( _find_value )
+    _replace_value := SPACE( _f_len )
+    _picture := "@S" + ALLTRIM( STR( if( _f_len > 50, 50, _f_len ) ) )
+
+elseif _f_type == "N"
+
+    _replace_value := 0
+    _picture := REPLICATE( "9", _f_len - _f_dec ) + if( _f_dec > 0, "." + REPLICATE( "9", _f_dec ), "" )
+
+elseif _f_type == "D"
+    
+    _replace_value := CTOD("")
+    _picture := ""
+
+else
+
+    MsgBeep( "Ovaj tip nije podrzan !!!")
+    return Self
+
+endif
+
+Box(, 5, 65 )
+
+    @ m_x + 1, m_y + 2 SAY "ZAMJENA PODATAKA U TABELI *****"
+
+    @ m_x + 3, m_y + 2 SAY "  TRAZI ->"
+    @ m_x + 3, col() + 1 GET _find_value PICT _picture
+
+    @ m_x + 4, m_y + 2 SAY "ZAMJENI ->"
+    @ m_x + 4, col() + 1 GET _replace_value PICT _picture
+
+    @ m_x + 5, m_y + 2 SAY "  ( ... polje: " + _find_field + " )"
+
+    read
+
+BoxC()
+
+if LastKey() == K_ESC
+    return
+endif
+
+_qry := "WITH tmp AS ( "
+_qry += "UPDATE " + ::browse_table 
+_qry += " SET " + _find_field + " = " + if( _f_type $ "CD", _sql_quote( _replace_value ), STR( _replace_value ) )
+_qry += " WHERE " + _find_field + " = " + if( _f_type $ "CD", _sql_quote( _find_value ), STR( _find_value ) )
+_qry += " RETURNING * "
+_qry += " ) "
+_qry += " SELECT COUNT(*) FROM tmp;"
+
+_sql_query( _server, "BEGIN;" )
+_result := _sql_query( _server, _qry )
+
+if VALTYPE( _result ) == "L"
+    _sql_query( _server, "ROLLBACK;" )
+else
+    _sql_query( _server, "COMMIT;" )
+endif
+
+if !::oQuery:Refresh()
+    Alert( ::oQuery:Error() )
+    return
+endif
+
+::goTop()
+::inValidate()
+::refreshAll():forceStable()
+
+if VALTYPE( _result ) == "O"
+    MsgBeep( "Zamjena uradjena na " + ALLTRIM( STR( _result:GetRow(1):FieldGet(1) ) ) + " zapisa !" )
+endif
+
+return Self
+
+
+
+// -----------------------------------------------------------------
+// printanje browse-a
+// nikakav je ! :) ali kakav-takav
+// -----------------------------------------------------------------
+METHOD browse_print() CLASS TBrowseSQL
+local _i
+local oRow
+local _scan, _len, _field
+
+START PRINT CRET
+
+?
+
+P_COND2
+? gPo_land
+
+? "STAMPA TABELE " + ::browse_table
+? REPLICATE( "-", 50 )
+
+::oQuery:goTo(1)
+
+// uzmimo prvi red za header
+oRow := ::oQuery:GetRow(1)
+
+_tmp := ""
+
+for _i := 1 to oRow:FCount()
+
+    _field := oRow:FieldName( _i )
+    
+    _scan := ASCAN( ::table_struct, { |var| var[1] == _field } )
+    _len := ::table_struct[ _scan, 3 ]
+
+    _tmp += PADR( _field, if( _len > 50, 50, _len ) )
+    _tmp += " "
+
+next
+
+?
+? REPLICATE( "-", LEN( _tmp ) )
+? _tmp
+? REPLICATE( "-", LEN( _tmp ) )
+
+_i := 1
+
+do while !::oQuery:EOF()
+
+    oRow := ::oQuery:GetRow()
+
+    _tmp := ""
+
+    for _i := 1 to oRow:FCount()
+
+        _type := oRow:FieldType( _i )
+        _field := oRow:FieldName( _i )
+
+        _scan := ASCAN( ::table_struct, { |var| var[1] == _field } )
+        _len := ::table_struct[ _scan, 3 ]
+        _dec := ::table_struct[ _scan, 4 ]
+
+        if _type $ "CM"
+            _tmp += PADR( hb_utf8tostr( oRow:FieldGet( _i ) ), if( _len > 50, 50, _len ) )
+        elseif _type == "N"
+            _tmp += PADL( ALLTRIM( STR( oRow:FieldGet( _i ), _len, _dec ) ), _len )
+        elseif _type == "D"
+            _tmp += DTOC( oRow:FieldGet( _i ) )
+        endif
+
+        _tmp += " "
+
+    next 
+
+    ? _tmp
+
+    ::oQuery:Skip()
+
+enddo
+
+FF
+END PRINT
+
+return Self
 
 

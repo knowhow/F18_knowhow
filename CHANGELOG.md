@@ -1,6 +1,7 @@
-1.4.231 2013-09-23, vsasa
+1.4.231 2013-09-24, vsasa
  
   - fiskalne funkcije FPRINT, štampanje duplikata, korekcije
+  - FAKT, kontrola broja dokumenta kod ažuriranja
  
 1.4.230 2013-09-19, vsasa
  

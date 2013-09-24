@@ -1108,7 +1108,7 @@ return get_set_global_param("fakt_otpremnice_gen_v2", value, "D" )
 // kontrolisanje brojaca...
 // ----------------------------------------------------------------
 function fakt_kontrola_brojaca_par(value)
-return get_set_global_param("fakt_kontrola_brojaca_dokumenta", value, "D" )
+return get_set_global_param("fakt_kontrola_brojaca_dokumenta", value, "N" )
 
 
 

@@ -297,12 +297,6 @@ endif
 _param := "fakt" + "/" + firma + "/" + tip_dokumenta 
 _broj := fetch_metric( _param, nil, _broj )
 
-// ima li kakvih rupa na server strani ?
-if fakt_postoji_li_rupa_u_brojacu( firma, tip_dokumenta, sufiks )
-    select ( _t_area )
-    return fakt_prazan_broj_dokumenta()
-endif
-
 // konsultuj i doks uporedo
 O_FAKT_DOKS
 set order to tag "1"
@@ -426,27 +420,23 @@ return .t.
 // -----------------------------------------------------------
 // provjerava postoji li rupa u brojacu dokumenata
 // -----------------------------------------------------------
-function fakt_postoji_li_rupa_u_brojacu( id_firma, id_tip_dok, sufix )
-local _ok := .f.
+function fakt_postoji_li_rupa_u_brojacu( id_firma, id_tip_dok, priprema_broj )
+local _ret := 0
 local _qry, _table
 local _server := pg_server()
 local _max_dok, _par_dok, _param
 local _params := fakt_params()
-local _tip_srch
+local _tip_srch, _tmp
+local _inc_error
 
 // .... parametar ako treba
 if !_params["kontrola_brojaca"]
-    return _ok
-endif
-
-if sufix == NIL
-    sufix := ""
+    return _ret
 endif
 
 _qry := " SELECT MAX( brdok ) FROM fmk.fakt_doks " + ;
         " WHERE idfirma = " + _sql_quote( id_firma ) + ;
-        " AND idtipdok = " + _sql_quote( id_tip_dok ) + ;
-        IF( !EMPTY( sufix ), " AND '/" + ALLTRIM( sufix ) + "'IN brdok", "" )
+        " AND idtipdok = " + _sql_quote( id_tip_dok )
 
 // ovo je tabela
 _table := _sql_query( _server, _qry )
@@ -457,15 +447,36 @@ _max_dok := VAL( _table:Fieldget(1) )
 _param := "fakt" + "/" + id_firma + "/" + id_tip_dok
 _par_dok := fetch_metric( _param, nil, 0 )
 
-if ( _par_dok - _max_dok ) > 30
+// provjera brojaca server dokument <> server param 
+_inc_error := _par_dok - _max_dok
+
+if _inc_error > 30
+
     // eto greske !!!!
     MsgBeep( "Postoji greska sa brojacem dokumenta#Dokumenti: " + ALLTRIM( STR( _max_dok ) ) + ;
                 ", parametri: " + ALLTRIM( STR( _par_dok ) ) + "#" + ;
-                "Provjerite brojac." )
-    _ok := .t.
+                "Provjerite brojac" )
+    _ret := 1
+    return _ret
+
 endif
 
-return _ok
+// provjera priprema <> server
+_tmp := TokToNiz( priprema_broj, "/" )
+_inc_error := ABS( _max_dok - VAL( ALLTRIM( _tmp[1] ) ) )
+
+if _inc_error > 30
+
+    // eto greske !!!!
+    MsgBeep( "Postoji greska sa brojacem dokumenta#Priprema: " + ALLTRIM( priprema_broj ) + ;
+                ", server dokument: " + ALLTRIM( STR( _max_dok ) ) + "#" + ;
+                "Provjerite brojac" )
+    _ret := 1
+    return _ret
+
+endif
+
+return _ret
 
 
 

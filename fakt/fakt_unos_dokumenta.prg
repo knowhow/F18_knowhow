@@ -355,6 +355,11 @@ do case
         // setuj prvo broj dokumenta u pripremi...
         fakt_set_broj_dokumenta()
         
+        // ima li kakvih rupa na server strani ?
+        if fakt_postoji_li_rupa_u_brojacu( field->idfirma, field->idtipdok, field->brdok ) > 0
+            return DE_REFRESH
+        endif
+
         // setuj podatke za fiskalni racun
         __id_firma  := field->idfirma
         __tip_dok := field->idtipdok

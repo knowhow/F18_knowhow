@@ -66,7 +66,7 @@ _o_qry := _sql_query( _srv, _c_qry )
 // broj zapisa tabele...
 @ m_x + 1, m_y + ::browse_params["form_width"] - 12 SAY "uk.: " + ALLTRIM( STR( table_count( ::browse_params["table_name"] ) ) )
 
-_brw := TBrowseSQL():new( m_x + 2, m_y + 1, m_x + ::browse_params["form_height"], m_y + ::browse_params["form_width"], _srv, _o_qry, ::browse_params["table_name"], ::browse_params["table_browse_fields"] )
+_brw := TBrowseSQL():new( m_x + 2, m_y + 1, m_x + ::browse_params["form_height"], m_y + ::browse_params["form_width"], _srv, _o_qry, ::browse_params["table_name"], ::browse_params["table_browse_fields"], ::browse_params["codes_type"], ::browse_params["key_fields"], ::browse_params["table_order_field"] )
 _brw:BrowseTable( .f., NIL )
 
 // nesto mi treba kao return value ....
@@ -116,7 +116,9 @@ local _a_filter := NIL
 local oTBr := F18TableBrowse():New()
 
 // dodaj vidljive kolone
-AADD( _a_columns, { "ID", 10, "id" } )
+//                  ISPIS, LEN, field_name, when, valid
+//                   1    2    3       4          5          6
+AADD( _a_columns, { "ID", 10, "id", {|| id }, {|| .t. }, {|| .t. } } )
 AADD( _a_columns, { "NAZIV", 40, "naz" } )
 AADD( _a_columns, { "JMJ", 3, "jmj" } )
 AADD( _a_columns, { "TARIFA", 6, "idtarifa" } )
@@ -128,12 +130,14 @@ Box(, _height, _width )
 oTBr:browse_params["table_name"] := "fmk.roba"
 oTBr:browse_params["table_order_field"] := "id"
 oTBr:browse_params["table_browse_return_field"] := "id"
+oTBr:browse_params["key_fields"] := { "id" }
 oTBr:browse_params["table_browse_fields"] := _a_columns
 oTBr:browse_params["form_width"] := _width
 oTBr:browse_params["form_height"] := _height
 oTBr:browse_params["table_filter"] := NIL
 oTBr:browse_params["direct_sql"] := NIL
-
+oTBr:browse_params["codes_type"] := .t.
+ 
 // prikazi sifrarnik
 oTBr:show( @return_value )
 

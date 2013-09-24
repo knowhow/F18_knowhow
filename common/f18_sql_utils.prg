@@ -630,4 +630,180 @@ return _date
 
 
 
+// -----------------------------------------------------
+// vraca strukturu tabele sa servera
+// ... klasicno vraca matricu kao ASTRUCT()
+// -----------------------------------------------------
+function _sql_table_struct( table )
+local _struct := {}
+local _server := my_server()
+local _qry 
+local _i
+local _data
+local _field_name, _field_type, _field_len, _field_dec
+local _field_type_short
+
+_qry := "SELECT column_name, data_type, character_maximum_length, numeric_precision, numeric_scale " + ;
+        " FROM information_schema.columns " + ;
+        " WHERE ( table_schema || '.' || table_name ) = " + _sql_quote( table ) + ;
+        " ORDER BY ordinal_position;"
+
+_data := _sql_query( _server, _qry )
+_data:refresh()
+_data:goto(1)
+
+do while !_data:EOF()
+
+    oRow := _data:GetRow()
+
+    _field_name := oRow:FieldGet( 1 )
+    _field_type := oRow:FieldGet( 2 )
+
+    do case
+
+        case "character" $ _field_type
+
+            _field_type_short := "C"
+            _field_len := oRow:FieldGet( 3 )
+            _field_dec := 0
+
+        case _field_type == "numeric"
+
+            _field_type_short := "N"
+            _field_len := oRow:FieldGet( 4 )
+            _field_dec := oRow:FieldGet( 5 )
+
+        case _field_type == "text"
+
+            _field_type_short := "M"
+            _field_len := 1000
+            _field_dec := 0
+
+        case _field_type == "date"
+
+            _field_type_short := "D"
+            _field_len := 8
+            _field_dec := 0
+
+    endcase
+
+    AADD( _struct, { _field_name, _field_type_short, _field_len, _field_dec } )
+
+    _data:Skip()
+
+enddo
+
+return _struct
+
+
+
+
+// --------------------------------------------------------------------
+// sql update 
+// --------------------------------------------------------------------
+function sql_update_table_from_hash( table, op, hash, where_fields )
+local _qry 
+local _server := my_server()
+local _result
+
+do case
+    case op == "ins"
+        _qry := _create_insert_qry_from_hash( table, hash )
+    case op == "upd"
+        _qry := _create_update_qry_from_hash( table, hash, where_fields )
+endcase
+
+// odradi qry
+_sql_query( _server, "BEGIN;" )
+
+// odradi upit
+_result := _sql_query( _server, _qry )
+
+// obradi gresku !
+if VALTYPE( _result ) == "L"
+    _sql_query( _server, "ROLLBACK;" )
+else
+    _sql_query( _server, "COMMIT;" )
+endif
+
+return
+
+
+
+// --------------------------------------------------------------------
+// kreira insert qry iz hash tabele
+// --------------------------------------------------------------------
+static function _create_insert_qry_from_hash( table, hash )
+local _qry, _key
+
+_qry := "INSERT INTO " + table
+_qry += " ( "
+
+for each _key in hash:keys
+    _qry += _key + ","
+next
+
+_qry := PADR( _qry, LEN( _qry ) - 1 )
+
+_qry += " ) VALUES ( "
+
+for each _key in hash:keys
+
+    if VALTYPE( hash[ _key ] ) == "N"
+        _qry += STR( hash[ _key ] )
+    else
+        _qry += _sql_quote( hash[ _key ] )
+    endif
+
+    _qry += ","
+
+next
+
+_qry := PADR( _qry, LEN( _qry ) - 1 )
+
+_qry += " ) "
+
+return _qry
+
+
+// --------------------------------------------------------------------
+// kreira update qry iz hash tabele
+// --------------------------------------------------------------------
+static function _create_update_qry_from_hash( table, hash, where_key_fields )
+local _qry, _key 
+local _i
+
+_qry := "UPDATE " + table
+_qry += " SET "
+
+for each _key in hash:keys
+    if VALTYPE( hash[ _key ] ) == "N"
+        _qry += _key + " = " + STR( hash[ _key ] )
+    else
+        _qry += _key + " = " + _sql_quote( hash[ _key ] )
+    endif
+
+    _qry += ","
+next
+
+// ukini zarez
+_qry := PADR( _qry, LEN( _qry ) - 1 )
+
+_qry += " WHERE "
+
+for _i := 1 to LEN( where_key_fields )
+    if _i > 1
+        _qry += " AND "
+    endif
+    
+    if VALTYPE( hash[ where_key_fields[ _i ] ] ) == "N" 
+        _qry += where_key_fields[ _i ] + " = " + STR( hash[ where_key_fields[ _i ] ] )
+    else
+        _qry += where_key_fields[ _i ] + " = " + _sql_quote( hash[ where_key_fields[ _i ] ] )
+    endif
+next
+
+return _qry
+
+
 

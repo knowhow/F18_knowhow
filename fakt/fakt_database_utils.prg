@@ -441,7 +441,6 @@ _qry := " SELECT MAX( brdok ) FROM fmk.fakt_doks " + ;
 // ovo je tabela
 _table := _sql_query( _server, _qry )
 _dok := _table:Fieldget(1)
-altd()
 _tmp := TokToNiz( _dok, "/" )
 _max_dok := VAL( ALLTRIM( _tmp[1] ) )
 

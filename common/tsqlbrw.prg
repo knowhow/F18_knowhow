@@ -475,6 +475,7 @@ RETURN Self
 
 // Empty method to be subclassed
 METHOD KeyboardHook( nKey ) CLASS TBrowseSQL
+local _last_rec := ::oQuery:recno()
 
 // mozda se moze koristiti !
 //HB_SYMBOL_UNUSED( nKey )
@@ -509,6 +510,13 @@ do case
         ::last_key := nKey
         ::editRow( .f. )
 
+    case ::codes_type_table .and. nKey == K_F4
+
+        // dupliciranje zapisa
+        ::last_key := nKey
+        ::editRow( .f. )
+
+
     // funkcije koje vaze za svaki browse...
 
     case UPPER( CHR( nKey ) ) == "F"
@@ -525,6 +533,8 @@ do case
 
         // test funkcija - do uvodjenja...
         Msgbeep( "tabela: " + ::browse_table )
+
+        MsgBeep( "recno " + ALLTRIM( STR( ::oQuery:recno() ))  )
         
 endcase
 
@@ -586,23 +596,23 @@ RETURN Self
 // --------------------------------------------------------------------
 // edit row
 // --------------------------------------------------------------------
-METHOD editRow( lNew ) CLASS TBrowseSQL
+METHOD editRow( new_rec ) CLASS TBrowseSQL
 local _struct := _sql_table_struct( ::browse_table )
 
 // uzmi memorijske varijable...
-::set_global_vars_from_table( _struct, lNew )
+::set_global_vars_from_table( _struct, new_rec )
 
-if lNew .and. ::browse_table == "fmk.roba"
+if new_rec .and. ::browse_table == "fmk.roba"
     _idtarifa := PADR( "PDV17", 7 )
 endif
 
 // prikazi box
-if ::browse_editrow_box( _struct, lNew )
+if ::browse_editrow_box( _struct, new_rec )
 
     // daj mi sve iz memvars za ovaj zapis...
     _rec := ::get_table_global_memvars( _struct )
 
-    if lNew
+    if new_rec .or. ( !new_rec .and. ::last_key == K_F4 )
         sql_update_table_from_hash( ::browse_table, "ins", _rec, NIL )
     else
         sql_update_table_from_hash( ::browse_table, "upd", _rec, ::browse_key_fields )

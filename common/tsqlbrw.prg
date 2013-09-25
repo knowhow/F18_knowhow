@@ -155,6 +155,9 @@ CREATE CLASS TBrowseSQL FROM TBrowse
     VAR      user_functions_block
     VAR      invert_row_block
     VAR      restricted_keys   
+    VAR      sifk_rec_count
+    VAR      sifk_var_fields
+    VAR      sifk_data
 
     METHOD   New( nTop, nLeft, nBottom, nRight, oServer, oQuery, cTable )
 
@@ -188,6 +191,9 @@ CREATE CLASS TBrowseSQL FROM TBrowse
         METHOD findRec_where_constructor()
         METHOD rec_position()
         METHOD new_id_for_rec()
+        METHOD select_from_sifv()
+        METHOD insert_into_sifv()
+        METHOD get_data_from_sifv()
 
 ENDCLASS
 
@@ -238,6 +244,9 @@ endif
 ::browse_last_rec_value := NIL
 ::last_key := NIL
 ::new_record := .f.
+::sifk_rec_count := 0
+::sifk_var_fields := NIL
+::sifk_data := NIL
 
 ::table_struct := _sql_table_struct( ::browse_table ) 
 
@@ -729,6 +738,135 @@ next
 return _hash
 
 
+
+// -------------------------------------------------------------------
+// vraca podatke iz sifv tabele
+// -------------------------------------------------------------------
+METHOD get_data_from_sifv( marker, field_id ) CLASS TBrowseSQL
+local _val
+local _server := my_server()
+local _qry
+
+_qry := "SELECT naz FROM fmk.sifv "
+_qry += "WHERE lower( 'fmk.' || id ) = " + _sql_quote( ::browse_table )
+_qry += " AND oznaka = " + _sql_quote( marker )
+_qry += " AND idsif = " + _sql_quote( field_id )
+_qry += " LIMIT 1; "
+
+_val := _sql_query( _server, _qry ):GetRow(1):FieldGet(1)
+
+return _val
+
+
+
+// -------------------------------------------------------------------
+// vraca podatke iz sifv tabele
+// -------------------------------------------------------------------
+METHOD select_from_sifv() CLASS TBrowseSQL
+local _sifk_data 
+local _server := my_server()
+local _qry, _scan
+local _prefix := "sifv_"
+local _var, oRow, _field, _field_value, _field_type
+local _field_len, _field_dec
+
+_qry := "SELECT "
+_qry += " sifk.id, "
+_qry += " sifk.sort, "
+_qry += " sifk.naz, "
+_qry += " sifk.oznaka, "
+_qry += " sifk.tip, "
+_qry += " sifk.duzina, "
+_qry += " sifk.f_decimal "
+_qry += "FROM fmk.sifk sifk "
+_qry += "WHERE lower( 'fmk.' || sifk.id ) = " + _sql_quote( ::browse_table )
+_qry += " ORDER BY sifk.oznaka, sifk.sort; "
+
+_sifk_data := _sql_query( _server, _qry )
+_sifk_data:Refresh()
+
+if VALTYPE( _sifk_data ) == "L"
+    return NIL
+endif
+
+// setuj broj zapisa u sifv_tabeli
+::sifk_rec_count := _sifk_data:LastRec()
+// uzmimo i zapise, mogu zatrebati
+::sifk_data := _sifk_data
+// polja tabele sifv
+::sifk_var_fields := {}
+
+// prodji kroz tabelu i setuj varijable
+_sifk_data:GoTo(1)
+
+do while !_sifk_data:EOF()
+
+    oRow := _sifk_data:GetRow()
+
+    _field := oRow:FieldGet( oRow:FieldPos( "oznaka" ) )
+    _field_type := oRow:FieldGet( oRow:FieldPos( "tip" ) )
+    _field_len := oRow:FieldGet( oRow:FieldPos( "duzina" ) )
+    _field_dec := oRow:FieldGet( oRow:FieldPos( "f_decimal" ) )
+ 
+    _var := _prefix + _field
+    __MVPUBLIC( _var )
+
+    if _field_type $ "C#M"
+
+        EVAL( MEMVARBLOCK( _var ), ;
+                if( ::new_record, ;
+                    PADR( "", _field_len ), ;
+                    PADR( hb_utf8tostr( ::get_data_from_sifv( _field, ::oCurRow:FieldGet( ::oCurRow:FieldPos( ::browse_key_fields[1] ) ) ) ), _field_len ) ; 
+                ) ; 
+                ) 
+    elseif _field_type == "D"
+
+        EVAL( MEMVARBLOCK( _var ), ;
+                if( ::new_record, ;
+                    CTOD(""), ;
+                    ::get_data_from_sifv( _field, ::oCurRow:FieldGet( ::oCurRow:FieldPos( ::browse_key_fields[1] ) ) ) ; 
+                ) ; 
+                ) 
+ 
+    else
+
+        EVAL( MEMVARBLOCK( _var ), ;
+                if( ::new_record, ;
+                    0, ;
+                    ::get_data_from_sifv( _field, ::oCurRow:FieldGet( ::oCurRow:FieldPos( ::browse_key_fields[1] ) ) ) ; 
+                ) ; 
+                ) 
+ 
+    endif
+
+    // dodaj u matricu sifv polja...
+    AADD( ::sifk_var_fields, _field )
+
+    // dodaj na browse_fields takodjer i ove stavke iz sifk
+    _scan := ASCAN( ::browse_fields, { |var| var[1] == _field } )
+    if _scan == 0
+        AADD( ::browse_fields, { _field, _field_len, _prefix + ALLTRIM( LOWER( _field ) ) } )
+    endif
+
+    _sifk_data:Skip()
+
+enddo
+    
+return Self
+
+
+
+
+// -------------------------------------------------------------------
+// upisuje podatke za sifv
+// -------------------------------------------------------------------
+METHOD insert_into_sifv() CLASS TBrowseSQL
+local _data 
+
+return _data
+
+
+
 // -------------------------------------------------------------------
 // vraca memorijske varijable na osnovu strukture
 // -------------------------------------------------------------------
@@ -776,6 +914,11 @@ for _i := 1 to LEN( _struct )
 
 next
 
+// ovdje treba obraditi i SIFK tabelu
+if ::codes_type_table 
+    ::select_from_sifv()
+endif
+
 // default vrijednosti za pojedine tabele itd...
 // obraditi
 if ::new_record
@@ -791,16 +934,30 @@ return .t.
 METHOD browse_editrow_box() CLASS TBrowseSQL
 local _ok := .f.
 local _x := 1
-local _i
+local _i, _n
+local _row_count := 0
 local _prefix := "x"
+local _prefix_sifv := "sifv_"
 private GetList := {}
 
-Box(, ::oQuery:FCount(), 70 )
+Box(, ::oQuery:FCount() + ::sifk_rec_count, 70 )
+
     for _i := 1 to ::oQuery:FCount()
+        ++ _row_count
         _var := _prefix + ::browse_fields[ _i, 3 ]
-        ::browse_editrow_box_getlist( _var, @GetList, _i )
+        ::browse_editrow_box_getlist( _var, @GetList, _row_count )
     next
+
+    if ::sifk_var_fields <> NIL .and. ::sifk_rec_count > 0
+        for _n := 1 to LEN( ::sifk_var_fields )
+            ++ _row_count
+            _var := _prefix_sifv + LOWER( ::sifk_var_fields[ _n ] )
+            ::browse_editrow_box_getlist( _var, @GetList, _row_count )
+        next
+    endif
+
     read
+
 BoxC()
 
 if LastKeY() == K_ESC
@@ -846,7 +1003,9 @@ _m_block := MEMVARBLOCK( var )
 
 _scan := ASCAN( _struct, {|var| var[1] == ::browse_fields[ curr_row, 3 ] } )
 
-do case
+if _scan > 0
+
+  do case
 
     case _struct[ _scan, 2 ] == "C"
         _pict := "@S" + ALLTRIM( STR( _struct[ _scan, 3 ] ) )
@@ -857,7 +1016,11 @@ do case
     otherwise
         _pict := ""
 
-endcase
+  endcase
+
+else
+    _pict := ""
+endif
 
 if LEN( ToStr( EVAL( _m_block ) ) ) > 50
     _pict := "@S50"

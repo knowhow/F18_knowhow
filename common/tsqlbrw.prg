@@ -166,7 +166,7 @@ CREATE CLASS TBrowseSQL FROM TBrowse
     METHOD   EditField()                   // Editing of hilighted field, after editing does an update of
                                           // corresponding row inside table
 
-    METHOD   BrowseTable( lCanEdit, aExitKeys ) // Handles standard moving inside table and if lCanEdit == .T.
+    METHOD   BrowseTable( lCanEdit, aExitKeys, cur_row ) // Handles standard moving inside table and if lCanEdit == .T.
                                                // allows editing of field. It is the stock ApplyKey() moved inside a table
                                                // if lCanEdit K_DEL deletes current row
                                                // When a key is pressed which is present inside aExitKeys it leaves editing loop
@@ -419,10 +419,12 @@ METHOD EditField() CLASS TBrowseSQL
    RETURN Self
 
 
-METHOD BrowseTable( lCanEdit, aExitKeys ) CLASS TBrowseSQL
+METHOD BrowseTable( lCanEdit, aExitKeys, cur_row ) CLASS TBrowseSQL
 local nKey
 local lKeepGoing := .t.
 local _user_f
+
+private Ch := 0
 
 IF ! ISNUMBER( nKey )   
     nKey := NIL
@@ -446,7 +448,8 @@ DO WHILE lKeepGoing
     DO WHILE !::Stabilize() .AND. NextKey() == 0
     ENDDO
 
-    nKey := Inkey( 0 )
+    nKey := Inkey(0)
+    Ch := nKey
 
     // misa necemo obradjivati, preskoci ga !
     IF nKey >= K_MINMOUSE .and. nKey <= K_MAXMOUSE
@@ -464,20 +467,27 @@ DO WHILE lKeepGoing
         LOOP
     ENDIF
 
+    // ovo je globalna koju ce F18browsesql da koristi 
+    cur_row := ::oCurRow
+    
     // obrada korisnickih funkcija / izvan glavne petlje browse funkcija
+    _user_f := NIL
     if ::user_functions_block <> NIL
-
-        DO WHILE !::Stabilize()
-        END
-
         _user_f := EVAL( ::user_functions_block )
-
-        // treba li loop ? pojma nemam ! treba testirati
-        LOOP
-
     endif
 
+    
     DO CASE
+
+        CASE ( _user_f <> NIL .and. _user_f == DE_REFRESH )
+
+            ::refreshAll()
+
+        CASE ( _user_f <> NIL .and. _user_f == DE_ABORT )
+
+            lKeepGoing := .f.
+            LOOP
+
         CASE nKey == K_DOWN
             ::down()
 
@@ -526,6 +536,7 @@ DO WHILE lKeepGoing
             ::KeyboardHook( nKey )
 
     ENDCASE
+
 
 ENDDO
 

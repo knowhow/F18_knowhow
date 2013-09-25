@@ -24,6 +24,7 @@ CLASS F18TableBrowse
     DATA browse_params
     DATA browse_return_value
     DATA browse_codes_commands
+    DATA current_row
 
     PROTECTED:
 
@@ -120,7 +121,7 @@ endif
 @ m_x + 1, m_y + ::browse_params["form_width"] - 20 SAY "broj zapisa: " + ALLTRIM( STR( table_count( ::browse_params["table_name"] ) ) )
 
 _brw := TBrowseSQL():new( m_x + 2, m_y + 1, m_x + ::browse_params["form_height"], m_y + ::browse_params["form_width"], _srv, _o_qry, ::browse_params )
-_brw:BrowseTable( .f., NIL )
+_brw:BrowseTable( .f., NIL, @::current_row )
 
 // nesto mi treba kao return value ....
 ::browse_return_value := _brw:oCurRow:FieldGet( _brw:oCurRow:FieldPos( ::browse_params["table_browse_return_field"] ) )
@@ -190,7 +191,7 @@ oTBr:browse_params["form_height"] := _height
 oTBr:browse_params["table_filter"] := NIL
 oTBr:browse_params["direct_sql"] := NIL
 oTBr:browse_params["codes_type"] := .t.
-oTBr:browse_params["user_functions"] := NIL
+oTBr:browse_params["user_functions"] := {|| _key_handler( oTBr:current_row ) }
 oTBr:browse_params["read_sifv"] := .t.
  
 // prikazi sifrarnik
@@ -200,5 +201,19 @@ BoxC()
 
 return
 
+
+static function _key_handler( curr_row )
+
+do case
+
+    case Ch == K_CTRL_K
+
+        MsgBeep( curr_row:FieldGet(1) )
+
+        return DE_CONT
+
+endcase
+
+return DE_CONT
 
 

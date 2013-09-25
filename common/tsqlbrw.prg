@@ -152,6 +152,9 @@ CREATE CLASS TBrowseSQL FROM TBrowse
     VAR      last_key
     VAR      table_struct
     VAR      new_record
+    VAR      user_functions_block
+    VAR      invert_row_block
+    VAR      restricted_keys   
 
     METHOD   New( nTop, nLeft, nBottom, nRight, oServer, oQuery, cTable )
 
@@ -164,7 +167,6 @@ CREATE CLASS TBrowseSQL FROM TBrowse
                                                // When a key is pressed which is present inside aExitKeys it leaves editing loop
 
     METHOD   KeyboardHook( nKey )               // Where do all unknown keys go?
-
 
     // f18 methods...
     METHOD   editRow()
@@ -185,15 +187,31 @@ CREATE CLASS TBrowseSQL FROM TBrowse
         METHOD field_list_from_array()
         METHOD findRec_where_constructor()
         METHOD rec_position()
+        METHOD new_id_for_rec()
 
 ENDCLASS
 
 
-METHOD New( nTop, nLeft, nBottom, nRight, oServer, oQuery, cTable, fields, codes_type, key_fields, br_order ) CLASS TBrowseSQL
+METHOD New( nTop, nLeft, nBottom, nRight, oServer, oQuery, params ) CLASS TBrowseSQL
 local i, oCol
+local _table
+local _br_fields
+local _codes_type
+local _key_fields
+local _br_order_fields, _user_f, _restricted_keys
+local _invert_row_block
 
 HB_SYMBOL_UNUSED( oServer )
-HB_SYMBOL_UNUSED( cTable )
+
+// setuj iz hash parametara...
+_table := params["table_name"]
+_br_fields := params["table_browse_fields"]
+_codes_type := params["codes_type"]
+_key_fields := params["key_fields"]
+_br_order_fields := params["table_order_field"]
+_user_f := params["user_functions"]
+_restricted_keys := params["restricted_keys"]
+_invert_row_block := params["invert_row_block"]
 
 ::super:New( nTop, nLeft, nBottom, nRight )
 
@@ -203,22 +221,25 @@ HB_SYMBOL_UNUSED( cTable )
 // Let's get a row to build needed columns
 ::oCurRow := ::oQuery:GetRow( 1 )
 
-if codes_type == NIL
-    codes_type := .f.
+if _codes_type == NIL
+    _codes_type := .f.
 endif
 
 // da li je rijec o sifrarniku ili o obicnom browse-u
-::codes_type_table := codes_type
-::browse_table := cTable
-::browse_fields := fields
-::browse_order := br_order
-::browse_key_fields := key_fields
+::codes_type_table := _codes_type
+::browse_table := _table
+::browse_fields := _br_fields
+::browse_order := _br_order_fields
+::browse_key_fields := _key_fields
+::user_functions_block := _user_f
+::restricted_keys := _restricted_keys
+::invert_row_block := _invert_row_block
+
 ::browse_last_rec_value := NIL
 ::last_key := NIL
-// struktura tabele
-::table_struct := _sql_table_struct( ::browse_table ) 
-// novi zapis VAR
 ::new_record := .f.
+
+::table_struct := _sql_table_struct( ::browse_table ) 
 
 // positioning blocks
 ::SkipBlock := {| n | ::oCurRow := Skipper( @n, ::oQuery ), n }
@@ -229,12 +250,10 @@ endif
 FOR i := 1 TO ::oQuery:FCount()
  
     // dodavanje kolone
-    //oCol := TBColumnSQL():New( ::oCurRow:FieldName( i ),, Self )
-    oCol := TBColumnSQL():New( fields[ i, 1 ],, Self )
+    oCol := TBColumnSQL():New( ::browse_fields[ i, 1 ],, Self )
 
     IF !( ::oCurRow:FieldType( i ) == "M" )
-        //oCol:Width := Max( ::oCurRow:FieldLen( i ), Len( oCol:Heading ) )
-        oCol:Width := fields[ i, 2 ]
+        oCol:Width := ::browse_fields[ i, 2 ]
     ELSE
         oCol:Width := 10
     ENDIF
@@ -242,9 +261,12 @@ FOR i := 1 TO ::oQuery:FCount()
     // which field does this column display
     oCol:nFieldNum := i
 
-    // Add a picture ?????
-    // ovo mi nesto sumnjivo !!!!! pa iskljucio za string polja
+    // ovo treba napraviti !!!
+    IF ::invert_row_block <> NIL
+        //oCol:colorBlock := { || IF( EVAL( ::invert_row_block ), { 5, 2 }, { 1, 2 } ) }
+    ENDIF
 
+    // Add a picture
     DO CASE
         CASE ::oCurRow:FieldType( i ) == "N"
             oCol:picture := Replicate( "9", oCol:Width )
@@ -383,8 +405,9 @@ METHOD EditField() CLASS TBrowseSQL
 
 
 METHOD BrowseTable( lCanEdit, aExitKeys ) CLASS TBrowseSQL
-LOCAL nKey
-LOCAL lKeepGoing := .t.
+local nKey
+local lKeepGoing := .t.
+local _user_f
 
 IF ! ISNUMBER( nKey )   
     nKey := NIL
@@ -397,6 +420,11 @@ ENDIF
 IF ! ISARRAY( aExitKeys )
     aExitKeys := { K_ESC }
 ENDIF
+
+IF ! ISARRAY( ::restricted_keys )
+    ::restricted_keys := {}
+ENDIF
+
 
 DO WHILE lKeepGoing
 
@@ -414,6 +442,25 @@ DO WHILE lKeepGoing
         lKeepGoing := .f.
         LOOP
     ENDIF
+
+    // zabranjene opcije...
+    IF AScan( ::restricted_keys, nKey ) > 0
+        MsgBeep( "Ova opcija je zabranjena !" )
+        LOOP
+    ENDIF
+
+    // obrada korisnickih funkcija / izvan glavne petlje browse funkcija
+    if ::user_functions_block <> NIL
+
+        DO WHILE !::Stabilize()
+        END
+
+        _user_f := EVAL( ::user_functions_block )
+
+        // treba li loop ? pojma nemam ! treba testirati
+        LOOP
+
+    endif
 
     DO CASE
         CASE nKey == K_DOWN
@@ -459,8 +506,12 @@ DO WHILE lKeepGoing
             ::panEnd()
 
         OTHERWISE
+
+            // ostale tipke...
             ::KeyboardHook( nKey )
+
     ENDCASE
+
 ENDDO
 
 RETURN Self
@@ -1103,6 +1154,15 @@ endif
 if VALTYPE( _result ) == "O"
     MsgBeep( "Zamjena uradjena na " + ALLTRIM( STR( _result:GetRow(1):FieldGet(1) ) ) + " zapisa !" )
 endif
+
+return Self
+
+
+
+// ------------------------------------------------------------------
+// dodjeljivanje novog ID-a za zapis
+// ------------------------------------------------------------------
+METHOD new_id_for_rec() CLASS TBrowseSQL
 
 return Self
 

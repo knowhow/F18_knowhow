@@ -151,6 +151,7 @@ CREATE CLASS TBrowseSQL FROM TBrowse
     VAR      browse_last_rec_value
     VAR      last_key
     VAR      table_struct
+    VAR      table_sifv_struct
     VAR      new_record
     VAR      user_functions_block
     VAR      invert_row_block
@@ -158,6 +159,7 @@ CREATE CLASS TBrowseSQL FROM TBrowse
     VAR      sifk_rec_count
     VAR      sifk_var_fields
     VAR      sifk_data
+    VAR      read_sifv_data
 
     METHOD   New( nTop, nLeft, nBottom, nRight, oServer, oQuery, cTable )
 
@@ -186,6 +188,7 @@ CREATE CLASS TBrowseSQL FROM TBrowse
         METHOD browse_editrow_box_getlist()
         METHOD set_global_vars_from_table()
         METHOD get_table_global_memvars()
+        METHOD get_sifv_table_global_memvars()
         METHOD browse_editrow_box_getlist_defaults()
         METHOD field_list_from_array()
         METHOD findRec_where_constructor()
@@ -205,7 +208,7 @@ local _br_fields
 local _codes_type
 local _key_fields
 local _br_order_fields, _user_f, _restricted_keys
-local _invert_row_block
+local _invert_row_block, _read_sifv_data
 
 HB_SYMBOL_UNUSED( oServer )
 
@@ -218,6 +221,7 @@ _br_order_fields := params["table_order_field"]
 _user_f := params["user_functions"]
 _restricted_keys := params["restricted_keys"]
 _invert_row_block := params["invert_row_block"]
+_read_sifv_data := params["read_sifv"]
 
 ::super:New( nTop, nLeft, nBottom, nRight )
 
@@ -240,6 +244,7 @@ endif
 ::user_functions_block := _user_f
 ::restricted_keys := _restricted_keys
 ::invert_row_block := _invert_row_block
+::read_sifv_data := _read_sifv_data
 
 ::browse_last_rec_value := NIL
 ::last_key := NIL
@@ -249,6 +254,7 @@ endif
 ::sifk_data := NIL
 
 ::table_struct := _sql_table_struct( ::browse_table ) 
+::table_sifv_struct := _sql_table_struct( "fmk.sifv" )
 
 // positioning blocks
 ::SkipBlock := {| n | ::oCurRow := Skipper( @n, ::oQuery ), n }
@@ -681,6 +687,7 @@ RETURN Self
 // --------------------------------------------------------------------
 METHOD editRow() CLASS TBrowseSQL
 local _data := NIL
+local _rec, _rec_sifv
 
 // uzmi memorijske varijable...
 ::set_global_vars_from_table()
@@ -697,6 +704,12 @@ if ::browse_editrow_box()
         _data := sql_update_table_from_hash( ::browse_table, "upd", _rec, ::browse_key_fields )
     endif
 
+    // napravi update sifv podataka ako je potrebno
+    if VALTYPE( _data ) == "O" .and. ::codes_type_table .and. ::read_sifv_data
+        _rec_sifv := ::get_sifv_table_global_memvars()
+        ::insert_into_sifv( _rec_sifv )
+    endif
+
     if !::oQuery:Refresh()
         Alert( ::oQuery:Error() )
     endif
@@ -707,6 +720,31 @@ if ::browse_editrow_box()
 endif
 
 RETURN _data
+
+
+
+// -------------------------------------------------------------------
+// vraca memorijske varijable u hash matricu
+// -------------------------------------------------------------------
+METHOD get_sifv_table_global_memvars() CLASS TBrowseSQL
+local _hash := hb_hash()
+local _i, _field
+local _scan
+local _prefix := "sifv_"
+local _struct := ::sifk_var_fields
+
+for _i := 1 TO LEN( _struct )
+
+    _field := _struct[ _i ]
+    _hash[ LOWER( _field ) ] := EVAL( MEMVARBLOCK( _prefix + LOWER( _field ) ) )
+    
+    // ukini memvar
+    __MVXRELEASE( _prefix + LOWER( _field ) )
+
+next
+
+return _hash
+
 
 
 // -------------------------------------------------------------------
@@ -860,8 +898,50 @@ return Self
 // -------------------------------------------------------------------
 // upisuje podatke za sifv
 // -------------------------------------------------------------------
-METHOD insert_into_sifv() CLASS TBrowseSQL
+METHOD insert_into_sifv( hash_data ) CLASS TBrowseSQL
 local _data 
+local _qry, _server, _key
+
+_server := my_server()
+
+_qry := ""
+
+for each _key in hash_data:keys
+
+    _qry += "DELETE FROM fmk.sifv "
+    _qry += "WHERE lower( 'fmk.' || id ) = " + _sql_quote( ::browse_table )
+    _qry += " AND idsif = " + _sql_quote( ::oCurRow:FieldGet( ::oCurRow:FieldPos( ::browse_key_fields[1] ) ) )
+    _qry += " AND oznaka = " + _sql_quote( UPPER( _key ) )
+    _qry += "; "
+    _qry += "INSERT INTO fmk.sifv ( id, idsif, oznaka, naz ) "
+    _qry += "VALUES( " 
+    _qry += _sql_quote( UPPER( TokToNiz( ::browse_table, "." )[2] ) )
+    _qry += ", "
+    _qry += _sql_quote( ::oCurRow:FieldGet( ::oCurRow:FieldPos( ::browse_key_fields[1] ) ) )
+    _qry += ", "
+    _qry += _sql_quote( UPPER( _key ) )
+    _qry += ", "
+    _qry +=   + if( VALTYPE( hash_data[ _key ] ) == "C", _sql_quote( hash_data[ _key ] ), STR( hash_data[ _key ] ) ) 
+    _qry += " ) "
+    _qry += "; "
+
+next
+
+log_write( "F18_DOK_OPER, delete/insert SIFK " + _qry, 3 )
+
+if !EMPTY( _qry )
+
+    _sql_query( _server, "BEGIN;" )
+
+    _data := _sql_query( _server, _qry )
+
+    if VALTYPE( _data ) == "L"
+        _sql_query( _server, "ROLLBACK;" )
+    else
+        _sql_query( _server, "COMMIT;" )
+    endif
+
+endif
 
 return _data
 
@@ -915,7 +995,7 @@ for _i := 1 to LEN( _struct )
 next
 
 // ovdje treba obraditi i SIFK tabelu
-if ::codes_type_table 
+if ::codes_type_table .and. ::read_sifv_data
     ::select_from_sifv()
 endif
 

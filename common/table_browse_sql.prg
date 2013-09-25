@@ -62,6 +62,7 @@ METHOD F18TableBrowse:initialize()
 ::browse_params["table_filter"] := NIL
 ::browse_params["direct_sql"] := NIL
 ::browse_params["codes_type"] := .t.
+::browse_params["read_sifv"] := .f.
 ::browse_params["user_functions"] := NIL
 ::browse_params["header_text"] := ""
 ::browse_params["footer_text"] := ""
@@ -190,6 +191,7 @@ oTBr:browse_params["table_filter"] := NIL
 oTBr:browse_params["direct_sql"] := NIL
 oTBr:browse_params["codes_type"] := .t.
 oTBr:browse_params["user_functions"] := NIL
+oTBr:browse_params["read_sifv"] := .t.
  
 // prikazi sifrarnik
 oTBr:show( @return_value )

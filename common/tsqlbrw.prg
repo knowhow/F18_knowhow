@@ -583,6 +583,11 @@ do case
 
     // funkcije koje vaze za svaki browse...
 
+    case nKey == K_SH_F1
+    
+        // kalkulator
+        calc()
+
     case nKey == K_ALT_R
         
         // trazi/zamjeni

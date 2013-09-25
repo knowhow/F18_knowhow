@@ -196,6 +196,7 @@ CREATE CLASS TBrowseSQL FROM TBrowse
         METHOD new_id_for_rec()
         METHOD select_from_sifv()
         METHOD insert_into_sifv()
+        METHOD delete_from_sifv()
         METHOD get_data_from_sifv()
 
 ENDCLASS
@@ -254,7 +255,6 @@ endif
 ::sifk_data := NIL
 
 ::table_struct := _sql_table_struct( ::browse_table ) 
-::table_sifv_struct := _sql_table_struct( "fmk.sifv" )
 
 // positioning blocks
 ::SkipBlock := {| n | ::oCurRow := Skipper( @n, ::oQuery ), n }
@@ -277,9 +277,9 @@ FOR i := 1 TO ::oQuery:FCount()
     oCol:nFieldNum := i
 
     // ovo treba napraviti !!!
-    IF ::invert_row_block <> NIL
-        //oCol:colorBlock := { || IF( EVAL( ::invert_row_block ), { 5, 2 }, { 1, 2 } ) }
-    ENDIF
+    //IF ::invert_row_block <> NIL
+    //    oCol:colorBlock := { || IF( EVAL( ::invert_row_block ), { 5, 2 }, { 1, 2 } ) }
+    //ENDIF
 
     // Add a picture
     DO CASE
@@ -645,13 +645,19 @@ RETURN Self
 // delete row
 // --------------------------------------------------------------------
 METHOD deleteRow() CLASS TBrowseSQL
-local _field_val := ::oCurRow:FieldGet(1)
-local _field_name := ::oCurRow:FieldPos(1)
+local _field_val := ::oCurRow:FieldGet( ::oCurRow:FieldPos( ::browse_key_fields[1] ) )
+local _field_name := ::oCurRow:FieldName( ::oCurRow:FieldPos( ::browse_key_fields[1] ) )
 
 IF ! ::oQuery:Delete( ::oCurRow )
     Alert( "Greska prilikom brisanja: " + ::oQuery:Error() )
     log_write( "F18_DOK_OPER, Greska prilikom brisanja zapisa tabele " + ::browse_table + ", " + ::oQuery:Error(), 3 )
     return Self
+ENDIF
+
+// moram brisati i SIFV tabelu takodjer
+IF ::codes_type_table .and. ::read_sifv_data
+    // brisi mi i SIFK za ovaj zapis...
+    ::delete_from_sifv( _field_val )
 ENDIF
                 
 IF !::oQuery:Refresh()
@@ -674,9 +680,19 @@ local _server := my_server()
 local _qry, _result, _data
 local _table := ::browse_table
 
-_qry := "DELETE FROM " + _table
+_qry := "DELETE FROM " + _table + "; "
+_qry += "DELETE FROM fmk.sifv " 
+_qry += "WHERE lower( 'fmk.' || id ) = " + _sql_quote( ::browse_table )
+_qry += "; "
+
+_sql_query( _server, "BEGIN;" )
+
 _data := _sql_query( _server, _qry )
-_result := _table:Fieldget(1)
+if VALTYPE( _data ) == "L"
+    _sql_query( _server, "ROLLBACK;" )
+else
+    _sql_query( _server, "COMMIT;" )
+endif
 
 if !::oQuery:Refresh()
     Alert( ::oQuery:Error() )
@@ -904,6 +920,33 @@ enddo
 return Self
 
 
+// -------------------------------------------------------------------
+// brisanje zapisa iz tabele SIFV
+// -------------------------------------------------------------------
+METHOD delete_from_sifv( id_field ) CLASS TBrowseSQL
+local _data 
+local _qry, _server
+
+_server := my_server()
+
+_qry := "DELETE FROM fmk.sifv "
+_qry += "WHERE lower( 'fmk.' || id ) = " + _sql_quote( ::browse_table )
+_qry += " AND idsif = " + _sql_quote( id_field )
+_qry += "; "
+
+log_write( "F18_DOK_OPER, delete SIFK " + id_field, 3 )
+
+_sql_query( _server, "BEGIN;" )
+
+_data := _sql_query( _server, _qry )
+
+if VALTYPE( _data ) == "L"
+    _sql_query( _server, "ROLLBACK;" )
+else
+    _sql_query( _server, "COMMIT;" )
+endif
+
+return _data
 
 
 // -------------------------------------------------------------------

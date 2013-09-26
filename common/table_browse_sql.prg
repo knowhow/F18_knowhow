@@ -20,14 +20,23 @@ CLASS F18TableBrowse
     METHOD New()
     METHOD initialize()
     METHOD show()
+    METHOD findRec()
 
+    DATA pos_x
+    DATA pos_y
     DATA browse_params
     DATA browse_return_value
     DATA browse_codes_commands
     DATA current_row
+    DATA select_all_query
+    DATA select_filtered_query
 
     PROTECTED:
 
+        METHOD box_desc_text_print()
+        METHOD select_all_rec()
+        METHOD select_filtered()
+        METHOD table_order_by()
         METHOD field_list_from_array()
 
 ENDCLASS
@@ -41,6 +50,11 @@ METHOD F18TableBrowse:New()
 ::browse_params := hb_hash()
 ::initialize()
 
+// koordinate ispisa naziva
+::pos_x := NIL
+::pos_y := NIL
+
+// ostalo
 ::browse_return_value := NIL
 ::browse_codes_commands := ::browse_params["codes_commands"]
 
@@ -79,30 +93,125 @@ return
 
 
 
-// -----------------------------------------------------------
-// prikazi tabelu u box-u
-// -----------------------------------------------------------
-METHOD F18TableBrowse:show( return_value )
-local _srv := pg_server()
-local _c_qry, _o_qry
-local _where := ""
-local _brw
 
+// -----------------------------------------------------------
+// pronadji zapis u tabeli
+// -----------------------------------------------------------
+METHOD F18TableBrowse:findRec( find_value )
+return
+
+
+
+
+
+// ---------------------------------------------------------
+// vraca ORDER BY strukturu po trazenom polju
+// ---------------------------------------------------------
+METHOD F18TableBrowse:table_order_by( order_field )
+local _order
+_order := " ORDER BY " + order_field
+return _order
+
+
+
+
+// -----------------------------------------------------------
+// select svih podataka baze
+// -----------------------------------------------------------
+METHOD F18TableBrowse:select_all_rec()
+local _qry, _i
+
+_qry := "SELECT " + ::field_list_from_array() 
+_qry += " FROM " + ::browse_params["table_name"] 
+
+// ima li dodatnih where uslova ?
 if ::browse_params["table_filter"] <> NIL .and. LEN( ::browse_params["table_filter"] ) > 0
-    // imamo i where listu...
-    // _where := "...."
+    _qry += " WHERE " 
+    for _i := 1 to LEN( ::browse_params["table_filter"] )
+        _qry += " " + ::browse_params["table_filter"][ _i ] + " "
+        if _i < LEN( ::browse_params["table_filter"] )
+            _qry += " OR "
+        endif
+    next
 endif
 
-_c_qry := "SELECT " + ::field_list_from_array() + ;
-        " FROM " + ::browse_params["table_name"] + ;
-        _where + ;
-        " ORDER BY " + ::browse_params["table_order_field"] ;
+_qry += ::table_order_by( ::browse_params["table_order_field"] )
 
+// imamo li direktni upit ? ako imamo onda cemo koristiti taj !
 if ::browse_params["direct_sql"] <> NIL .and. !EMPTY( ::browse_params["direct_sql"] )
-    _c_qry := ::browse_params["direct_sql"]
+    _qry := ::browse_params["direct_sql"]
 endif
 
-_o_qry := _sql_query( _srv, _c_qry )
+::select_all_query := _qry
+
+return Self
+
+
+
+
+// -----------------------------------------------------------
+// select sa where klauzulom
+// -----------------------------------------------------------
+METHOD F18TableBrowse:select_filtered( search_value )
+local _qry 
+local _where := ""
+local _order_field := ::browse_params["table_order_field"]
+
+if !EMPTY( search_value )
+
+    if RIGHT( ALLTRIM( search_value ), 2 ) == ".."
+        // pretraga po nazivu
+        search_value := ALLTRIM( STRTRAN( search_value, "..", "" ) )
+        _where += ::browse_params["key_fields"][2] + " LIKE " + _sql_quote( search_value + "%" )        
+        _order_field := ::browse_params["key_fields"][2]
+
+    elseif RIGHT( ALLTRIM( search_value ), 1 ) == "."
+        // pretraga po sifri
+        search_value := ALLTRIM( STRTRAN( search_value, ".", "" ) )
+        _where += ::browse_params["key_fields"][1] + " LIKE " + _sql_quote( search_value + "%" )        
+    else
+        // klasicna pretraga po iskljucivoj sifri
+        _where += ::browse_params["key_fields"][1] + " = " + _sql_quote( search_value )        
+    endif
+
+endif
+
+// ima li dodatnih where uslova ?
+if ::browse_params["table_filter"] <> NIL .and. LEN( ::browse_params["table_filter"] ) > 0
+
+    if !EMPTY( _where )
+        _where += " AND "
+    endif
+
+    for _i := 1 to LEN( ::browse_params["table_filter"] )
+        _where += " " + ::browse_params["table_filter"][ _i ] + " "
+        if _i < LEN( ::browse_params["table_filter"] )
+            _where += " OR "
+        endif
+    next
+
+endif
+
+_qry := "SELECT " + ::field_list_from_array() 
+_qry += " FROM " + ::browse_params["table_name"] 
+_qry += " WHERE " + _where
+
+_qry += ::table_order_by( _order_field )
+
+// imamo li direktni upit ? ako imamo onda cemo koristiti taj !
+if ::browse_params["direct_sql"] <> NIL .and. !EMPTY( ::browse_params["direct_sql"] )
+    _qry := ::browse_params["direct_sql"]
+endif
+
+::select_filtered_query := _qry
+
+return Self
+
+
+// ----------------------------------------------------------
+// ispis pomocnog teksta na box-u
+// ----------------------------------------------------------
+METHOD F18TableBrowse:box_desc_text_print()
 
 // tip browse-a i naziv tabele
 @ m_x + 0, m_y + 2 SAY "SQLBrowse [" + ::browse_params["table_name"] + "]" COLOR "I" 
@@ -120,15 +229,106 @@ endif
 // broj zapisa
 @ m_x + 1, m_y + ::browse_params["form_width"] - 20 SAY "broj zapisa: " + ALLTRIM( STR( table_count( ::browse_params["table_name"] ) ) )
 
-_brw := TBrowseSQL():new( m_x + 2, m_y + 1, m_x + ::browse_params["form_height"], m_y + ::browse_params["form_width"], _srv, _o_qry, ::browse_params )
-_brw:BrowseTable( .f., NIL, @::current_row )
+return Self
 
-// nesto mi treba kao return value ....
-::browse_return_value := _brw:oCurRow:FieldGet( _brw:oCurRow:FieldPos( ::browse_params["table_browse_return_field"] ) )
 
-return_value := ::browse_return_value
 
-return
+
+// -----------------------------------------------------------
+// prikazi tabelu u box-u
+// -----------------------------------------------------------
+METHOD F18TableBrowse:show( return_value, pos_x, pos_y )
+local _srv := pg_server()
+local _data
+local _qry
+local _brw
+local _found
+local _value
+local _ret := 0
+local _x_pos, _y_pos
+
+// setuj koordinate ispisa...
+if pos_x <> NIL
+    ::pos_x := pos_x
+endif
+
+if pos_y <> NIL
+    ::pos_y := pos_y
+endif
+
+// postojeca pozicija
+_x_pos := m_x
+_y_pos := m_y
+
+// 1) postavi mi querije...
+
+// SELECT ( bez WHERE ) 
+::select_all_rec()
+_qry := ::select_all_query
+
+// SELECT ( sa WHERE ) 
+// ovo samo za tip - sifrarnik
+if !EMPTY( return_value ) .and. ::browse_params["codes_type"]
+    ::select_filtered( @return_value )
+    _qry := ::select_filtered_query
+endif
+
+// 2) postavi upit
+_data := _sql_query( _srv, _qry )
+
+// 3) provjeri rezultat
+if VALTYPE( _data ) == "L"
+    MsgBeep( "Postoji problem sa upitom !" )
+    _ret := -1
+    return _ret
+endif
+
+// 4) refresh podataka i pozicioniranje na prvi zapis
+_data:Refresh()
+_data:GoTo(1)
+
+// 5) ako su sifrarnici u pitanju provjeri da li treba raditi browse kompletan 
+//    ili si pronasao zapis...
+if ::browse_params["codes_type"]
+
+    // pronasao sam samo jedan zapis
+    if _data:LastRec() == 1 
+
+        oRow := _data:GetRow(1)
+        _value := oRow:FieldGet( oRow:FieldPos( ::browse_params["key_fields"][1] ) )
+
+        if _value == return_value
+            // pronasao sam taj zapis... nemam sta traziti to je to
+            // ne moram raditi browse...
+            return_value := _value
+            return _ret
+        endif
+
+    elseif _data:LastRec() == 0
+
+        // napravi upit za listu kompletnog sifrarnika....
+        _qry := ::select_all_query
+        _data := _sql_query( _srv, _qry )
+        _data:Refresh()
+        _data:GoTo(1)
+
+    endif
+
+endif
+
+// 6) ispis dodatni/pomocni tekst na sifrarniku...
+::box_desc_text_print()
+
+// 7) idemo na pregled tabele
+_brw := TBrowseSQL():new( m_x + 2, m_y + 1, m_x + ::browse_params["form_height"], m_y + ::browse_params["form_width"], _srv, _data, ::browse_params )
+_brw:BrowseTable( .f., NIL, @return_value, @::current_row )
+
+_ret := 1
+
+return _ret
+
+
+
 
 
 
@@ -159,10 +359,42 @@ return _ret
 
 
 
+// ---------------------------------------------------------
+// test funkcija sifrarnika robe u uslovima i GET listi
+// ---------------------------------------------------------
+function test_get_box_table_browse()
+local _id_roba := SPACE(10)
+local _test := SPACE(20)
+private GetList := {}
 
 
-// test funkcija...
-function test_sql_table_browse( return_value )
+Box(, 6, 70 )
+
+    @ m_x + 1, m_y + 2 SAY "TEST RADA SQL TABLE BROWSE ....."
+    @ m_x + 3, m_y + 2 SAY "IDROBA (prazno-sve):" GET _id_roba ;
+                        VALID EMPTY( _id_roba ) .or. test_sql_table_browse( @_id_roba )
+
+    @ m_x + 4, m_y + 2 SAY "TEST" GET _test 
+
+    read
+
+BoxC()
+
+if LastKey( ) == K_ESC
+    return
+endif
+
+return
+
+
+
+
+
+// ---------------------------------------------------------
+// test funkcija... kao P_ROBA()
+// ---------------------------------------------------------
+function test_sql_table_browse( return_value, kord_x, kord_y )
+local _ok := .t.
 local _height := MAXROWS() - 15
 local _width := MAXCOLS() - 15
 local _a_columns := {}
@@ -184,22 +416,22 @@ Box(, _height, _width, .t., oTBr:browse_codes_commands )
 oTBr:browse_params["table_name"] := "fmk.roba"
 oTBr:browse_params["table_order_field"] := "id"
 oTBr:browse_params["table_browse_return_field"] := "id"
-oTBr:browse_params["key_fields"] := { "id" }
+oTBr:browse_params["key_fields"] := { "id", "naz" }
 oTBr:browse_params["table_browse_fields"] := _a_columns
 oTBr:browse_params["form_width"] := _width
 oTBr:browse_params["form_height"] := _height
 oTBr:browse_params["table_filter"] := NIL
 oTBr:browse_params["direct_sql"] := NIL
 oTBr:browse_params["codes_type"] := .t.
-oTBr:browse_params["user_functions"] := {|| _key_handler( oTBr:current_row ) }
+//oTBr:browse_params["user_functions"] := {|| _key_handler( oTBr:current_row ) }
 oTBr:browse_params["read_sifv"] := .t.
  
 // prikazi sifrarnik
-oTBr:show( @return_value )
+oTBr:show( @return_value, kord_x, kord_y )
 
 BoxC()
 
-return
+return _ok
 
 
 static function _key_handler( curr_row )

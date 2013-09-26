@@ -419,7 +419,7 @@ METHOD EditField() CLASS TBrowseSQL
    RETURN Self
 
 
-METHOD BrowseTable( lCanEdit, aExitKeys, cur_row ) CLASS TBrowseSQL
+METHOD BrowseTable( lCanEdit, aExitKeys, return_val, cur_row ) CLASS TBrowseSQL
 local nKey
 local lKeepGoing := .t.
 local _user_f
@@ -480,11 +480,14 @@ DO WHILE lKeepGoing
     DO CASE
 
         CASE ( _user_f <> NIL .and. _user_f == DE_REFRESH )
-
             ::refreshAll()
 
         CASE ( _user_f <> NIL .and. _user_f == DE_ABORT )
+            lKeepGoing := .f.
+            LOOP
 
+        CASE ::codes_type_table .and. ( nKey == K_RETURN .or. nKey == K_ENTER )
+            return_val := ::oCurRow:FieldGet( ::oCurRow:FieldPos( ::browse_key_fields[1] ) )            
             lKeepGoing := .f.
             LOOP
 
@@ -1195,6 +1198,7 @@ local _qry, _find_field
 local oCol
 local _find_what := SPACE(100)
 local _field_type 
+local GetList := {}
 
 // Get the current column object from the browse
 oCol := ::getColumn( ::colPos )

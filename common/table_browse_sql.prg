@@ -69,15 +69,13 @@ return SELF
 // -----------------------------------------------------------
 METHOD F18TableBrowse:initialize()
 
-::browse_params["box_height"] := MAXROWS() - 15
-::browse_params["box_width"] := MAXCOLS() - 15
 ::browse_params["table_name"] := ""
 ::browse_params["table_order_field"] := "id"
 ::browse_params["table_browse_return_field"] := "id"
 ::browse_params["key_fields"] := { "id" }
 ::browse_params["table_browse_fields"] := NIL
-::browse_params["form_width"] := NIL
-::browse_params["form_height"] := NIL
+::browse_params["form_width"] := MAXCOLS() - 15
+::browse_params["form_height"] := MAXROWS() - 15
 ::browse_params["table_filter"] := NIL
 ::browse_params["direct_sql"] := NIL
 ::browse_params["codes_type"] := .t.
@@ -335,8 +333,8 @@ if ::browse_params["codes_type"]
 
 endif
 
-Box(, ::browse_params["box_height"], ;
-        ::browse_params["box_width"], ;
+Box(, ::browse_params["form_height"], ;
+        ::browse_params["form_width"], ;
         if( ::browse_params["codes_type"], .t., .f. ), ;
         if( ::browse_params["codes_type"], ::browse_codes_commands, NIL ) )
 
@@ -444,9 +442,6 @@ AADD( oTBr:browse_columns, { "VPC", 12, "vpc" } )
 
 
 // definisi parametre browse-a
-oTBr:browse_params["box_width"] := _width
-oTBr:browse_params["box_height"] := _height
-//oTBr:browse_params["table_browse_fields"] := oTBr:browse_columns
 oTBr:browse_params["table_name"] := "fmk.roba"
 oTBr:browse_params["table_order_field"] := "id"
 oTBr:browse_params["table_browse_return_field"] := "id"

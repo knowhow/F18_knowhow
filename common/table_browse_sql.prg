@@ -262,6 +262,10 @@ if pos_y <> NIL
     ::pos_y := pos_y
 endif
 
+if ::browse_params["table_browse_fields"] == NIL
+    ::browse_params["table_browse_fields"] := ::browse_columns
+endif
+
 // 1) postavi mi querije...
 
 // SELECT ( bez WHERE ) 
@@ -330,11 +334,6 @@ if ::browse_params["codes_type"]
     endif
 
 endif
-
-// ovo na ovaj nacin ne radi ?!?????
-//if ::browse_params["table_browse_fields"] == NIL
-  //  ::browse_params["table_browse_fields"] := ::browse_columns
-//endif
 
 Box(, ::browse_params["box_height"], ;
         ::browse_params["box_width"], ;
@@ -447,7 +446,7 @@ AADD( oTBr:browse_columns, { "VPC", 12, "vpc" } )
 // definisi parametre browse-a
 oTBr:browse_params["box_width"] := _width
 oTBr:browse_params["box_height"] := _height
-oTBr:browse_params["table_browse_fields"] := oTBr:browse_columns
+//oTBr:browse_params["table_browse_fields"] := oTBr:browse_columns
 oTBr:browse_params["table_name"] := "fmk.roba"
 oTBr:browse_params["table_order_field"] := "id"
 oTBr:browse_params["table_browse_return_field"] := "id"

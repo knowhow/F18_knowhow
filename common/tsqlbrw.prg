@@ -718,12 +718,16 @@ RETURN Self
 METHOD editRow() CLASS TBrowseSQL
 local _data := NIL
 local _rec, _rec_sifv
+local _key_field
 
 // uzmi memorijske varijable...
 ::set_global_vars_from_table()
 
 // prikazi box
 if ::browse_editrow_box()
+
+    // kljucno polje
+    _key_field := & ( "x" + ::browse_key_fields[1] )
 
     // daj mi sve iz memvars za ovaj zapis...
     _rec := ::get_table_global_memvars()
@@ -737,7 +741,7 @@ if ::browse_editrow_box()
     // napravi update sifv podataka ako je potrebno
     if VALTYPE( _data ) == "O" .and. ::codes_type_table .and. ::read_sifv_data
         _rec_sifv := ::get_sifv_table_global_memvars()
-        ::insert_into_sifv( _rec_sifv )
+        ::insert_into_sifv( _rec_sifv, _key_field )
     endif
 
     if !::oQuery:Refresh()
@@ -952,10 +956,13 @@ endif
 return _data
 
 
+
+
+
 // -------------------------------------------------------------------
 // upisuje podatke za sifv
 // -------------------------------------------------------------------
-METHOD insert_into_sifv( hash_data ) CLASS TBrowseSQL
+METHOD insert_into_sifv( hash_data, key_field ) CLASS TBrowseSQL
 local _data 
 local _qry, _server, _key
 
@@ -967,14 +974,14 @@ for each _key in hash_data:keys
 
     _qry += "DELETE FROM fmk.sifv "
     _qry += "WHERE lower( 'fmk.' || id ) = " + _sql_quote( ::browse_table )
-    _qry += " AND idsif = " + _sql_quote( ::oCurRow:FieldGet( ::oCurRow:FieldPos( ::browse_key_fields[1] ) ) )
+    _qry += " AND idsif = " + _sql_quote( key_field  )
     _qry += " AND oznaka = " + _sql_quote( UPPER( _key ) )
     _qry += "; "
     _qry += "INSERT INTO fmk.sifv ( id, idsif, oznaka, naz ) "
     _qry += "VALUES( " 
     _qry += _sql_quote( UPPER( TokToNiz( ::browse_table, "." )[2] ) )
     _qry += ", "
-    _qry += _sql_quote( ::oCurRow:FieldGet( ::oCurRow:FieldPos( ::browse_key_fields[1] ) ) )
+    _qry += _sql_quote( key_field )
     _qry += ", "
     _qry += _sql_quote( UPPER( _key ) )
     _qry += ", "

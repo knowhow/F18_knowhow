@@ -198,6 +198,9 @@ CREATE CLASS TBrowseSQL FROM TBrowse
         METHOD insert_into_sifv()
         METHOD delete_from_sifv()
         METHOD get_data_from_sifv()
+        METHOD set_special_keys()
+        METHOD unset_special_keys()
+        METHOD new_codes_id()
 
 ENDCLASS
 
@@ -1096,6 +1099,8 @@ local _prefix := "x"
 local _prefix_sifv := "sifv_"
 private GetList := {}
 
+// setuj tipku F8 za pronalazenje nove sifre automatski
+
 Box(, ::oQuery:FCount() + ::sifk_rec_count, 70 )
 
     for _i := 1 to ::oQuery:FCount()
@@ -1112,7 +1117,11 @@ Box(, ::oQuery:FCount() + ::sifk_rec_count, 70 )
         next
     endif
 
+    ::set_special_keys() 
+
     read
+
+    ::unset_special_keys()
 
 BoxC()
 
@@ -1123,6 +1132,51 @@ endif
 _ok := .t.
 
 return _ok
+
+
+
+// --------------------------------------------------------------------------
+// setovanje specijalnih tipki na unosu/ispravke sifre
+// --------------------------------------------------------------------------
+METHOD new_codes_id() CLASS TBrowseSQL
+local _var 
+local _type
+
+_var := &( "x" + ::browse_key_fields[1] )
+
+// pretrazi putem sql-a novi zapis...
+MsgBeep( "Funkcija u izradi ..." )
+
+return Self
+
+
+
+
+// --------------------------------------------------------------------------
+// setovanje specijalnih tipki na unosu/ispravke sifre
+// --------------------------------------------------------------------------
+METHOD set_special_keys() CLASS TBrowseSQL
+
+// ! ne zaboravi da sve sto setujes, ponovo iskljucis u ::unset_special_keys()
+
+if ::codes_type_table
+    SET KEY K_F8 TO ::new_codes_id()
+endif
+
+return Self
+
+
+// --------------------------------------------------------------------------
+// ponisti setovanje specijalnih tipki na unosu/ispravke sifre
+// --------------------------------------------------------------------------
+METHOD unset_special_keys() CLASS TBrowseSQL
+
+if ::codes_type_table
+    SET KEY K_F8 TO
+endif
+
+return Self
+
 
 
 

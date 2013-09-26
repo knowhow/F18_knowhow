@@ -193,7 +193,6 @@ CREATE CLASS TBrowseSQL FROM TBrowse
         METHOD field_list_from_array()
         METHOD findRec_where_constructor()
         METHOD rec_position()
-        METHOD new_id_for_rec()
         METHOD select_from_sifv()
         METHOD insert_into_sifv()
         METHOD delete_from_sifv()
@@ -221,7 +220,7 @@ _table := params["table_name"]
 _br_fields := params["table_browse_fields"]
 _codes_type := params["codes_type"]
 _key_fields := params["key_fields"]
-_br_order_fields := params["table_order_field"]
+_br_order_fields := params["table_order_fields"]
 _user_f := params["user_functions"]
 _restricted_keys := params["restricted_keys"]
 _invert_row_block := params["invert_row_block"]
@@ -1269,6 +1268,7 @@ METHOD findRec() CLASS TBrowseSQL
 local _server := my_server()
 local _qry, _find_field
 local oCol
+local _i
 local _find_what := SPACE(100)
 local _field_type 
 local GetList := {}
@@ -1297,7 +1297,18 @@ endif
 _qry := "SELECT " + ::field_list_from_array()
 _qry += " FROM " + ::browse_table
 _qry += " WHERE " + ::findRec_where_constructor( _find_field, _field_type, _find_what ) 
-_qry += " ORDER BY " + ::browse_order
+_qry += " ORDER BY "
+
+if VALTYPE( ::browse_order ) == "A" 
+    for _i := 1 to LEN( ::browse_order )
+        _qry += ::browse_order[ _i ]
+        if _i < LEN( ::browse_order )
+            _qry += ", "
+        endif
+    next
+else
+    _qry += ::browse_order
+endif
 
 ::oQuery := _sql_query( _server, _qry )
 
@@ -1335,7 +1346,6 @@ for _i := 1 to LEN( _arr )
     if _i > 1
         _qry += " OR "
     endif
-
     
     // ako je polje numericko ili datumsko
     if field_type == "N" .or. field_type == "D"
@@ -1391,6 +1401,10 @@ endif
 
 for _i := 1 to LEN( _arr )
 
+    if "sifv_" $ _arr[ _i, 3 ]
+        loop
+    endif
+
     _ret += _arr[ _i, 3 ]
 
     if _i <> LEN( _arr )
@@ -1398,6 +1412,11 @@ for _i := 1 to LEN( _arr )
     endif
 
 next
+
+// sredi ako je na kraju zarez !
+if RIGHT( _ret, 1 ) == ","
+    _ret := PADR( _ret, LEN( _ret ) - 1 )
+endif
 
 return _ret
 
@@ -1542,14 +1561,6 @@ endif
 
 return Self
 
-
-
-// ------------------------------------------------------------------
-// dodjeljivanje novog ID-a za zapis
-// ------------------------------------------------------------------
-METHOD new_id_for_rec() CLASS TBrowseSQL
-
-return Self
 
 
 

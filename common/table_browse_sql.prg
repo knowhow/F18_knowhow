@@ -70,7 +70,7 @@ return SELF
 METHOD F18TableBrowse:initialize()
 
 ::browse_params["table_name"] := ""
-::browse_params["table_order_field"] := "id"
+::browse_params["table_order_fields"] := { "id" }
 ::browse_params["table_browse_return_field"] := "id"
 ::browse_params["key_fields"] := { "id" }
 ::browse_params["table_browse_fields"] := NIL
@@ -111,7 +111,21 @@ return
 // ---------------------------------------------------------
 METHOD F18TableBrowse:table_order_by( order_field )
 local _order
-_order := " ORDER BY " + order_field
+local _i
+
+_order := " ORDER BY " 
+
+if VALTYPE( order_field ) == "A"
+    for _i := 1 to LEN( order_field )
+        _order += order_field[ _i ]
+        if _i < LEN( order_field )
+            _order += ", "
+        endif
+    next
+else
+    _order += order_field
+endif
+
 return _order
 
 
@@ -137,7 +151,7 @@ if ::browse_params["table_filter"] <> NIL .and. LEN( ::browse_params["table_filt
     next
 endif
 
-_qry += ::table_order_by( ::browse_params["table_order_field"] )
+_qry += ::table_order_by( ::browse_params["table_order_fields"] )
 
 // imamo li direktni upit ? ako imamo onda cemo koristiti taj !
 if ::browse_params["direct_sql"] <> NIL .and. !EMPTY( ::browse_params["direct_sql"] )
@@ -157,7 +171,7 @@ return Self
 METHOD F18TableBrowse:select_filtered( search_value )
 local _qry 
 local _where := ""
-local _order_field := ::browse_params["table_order_field"]
+local _order_field := ::browse_params["table_order_fields"]
 
 if !EMPTY( search_value )
 
@@ -443,7 +457,7 @@ AADD( oTBr:browse_columns, { "VPC", 12, "vpc" } )
 
 // definisi parametre browse-a
 oTBr:browse_params["table_name"] := "fmk.roba"
-oTBr:browse_params["table_order_field"] := "id"
+oTBr:browse_params["table_order_fields"] := { "id" }
 oTBr:browse_params["table_browse_return_field"] := "id"
 oTBr:browse_params["key_fields"] := { "id", "naz" }
 oTBr:browse_params["form_width"] := _width

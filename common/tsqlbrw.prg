@@ -419,7 +419,7 @@ METHOD EditField() CLASS TBrowseSQL
    RETURN Self
 
 
-METHOD BrowseTable( lCanEdit, aExitKeys, return_val, cur_row ) CLASS TBrowseSQL
+METHOD BrowseTable( lCanEdit, aExitKeys, return_val, cur_row, x_pos, y_pos ) CLASS TBrowseSQL
 local nKey
 local lKeepGoing := .t.
 local _user_f
@@ -486,8 +486,20 @@ DO WHILE lKeepGoing
             lKeepGoing := .f.
             LOOP
 
-        CASE ::codes_type_table .and. ( nKey == K_RETURN .or. nKey == K_ENTER )
-            return_val := ::oCurRow:FieldGet( ::oCurRow:FieldPos( ::browse_key_fields[1] ) )            
+        CASE ::codes_type_table .and. !return_val == NIL .and. ( nKey == K_RETURN .or. nKey == K_ENTER )
+
+            return_val := ::oCurRow:FieldGet( ::oCurRow:FieldPos( ::browse_key_fields[1] ) )
+
+            // ispis ako treba... kljuc polje 2 je uvijek "naz" ili koje vec
+            if x_pos <> NIL
+                if LEN( ::browse_key_fields ) > 1
+                    @ m_x + x_pos, m_y + y_pos SAY ;
+                        PADR( hb_utf8tostr( ;
+                            ::oCurRow:FieldGet( ::oCurRow:FieldPos( ::browse_key_fields[2] ) ) ), ;
+                        30 )
+                endif
+            endif
+            
             lKeepGoing := .f.
             LOOP
 
@@ -594,7 +606,7 @@ do case
         ::new_record := .f.
         _data := ::editRow()
         
-        if Pitanje(, "Pozicionirati se na novi zapis (D/N) ?", "D" ) == "D"
+        if _data <> NIL .and. Pitanje(, "Pozicionirati se na novi zapis (D/N) ?", "D" ) == "D"
             ::rec_position( _data )
         endif
 
@@ -1341,10 +1353,16 @@ return _ret
 // -----------------------------------------------------------------
 METHOD rec_position( data ) CLASS TBrowseSQL
 local _key_fields := ::browse_key_fields // { "id", "naz", itd... } 
-local _last_rec_value := data:GetRow(1):FieldGet(FieldPos( ::browse_key_fields[1] )) 
+local _last_rec_value 
 local _search_key
 local _search_value
 local _i
+
+if data == NIL
+    return Self
+endif
+
+_last_rec_value := data:GetRow(1):FieldGet(FieldPos( ::browse_key_fields[1] )) 
 
 ::goTop()
 

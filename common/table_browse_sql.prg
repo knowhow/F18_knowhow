@@ -25,6 +25,7 @@ CLASS F18TableBrowse
     DATA pos_x
     DATA pos_y
     DATA browse_params
+    DATA browse_columns
     DATA browse_return_value
     DATA browse_codes_commands
     DATA current_row
@@ -49,6 +50,7 @@ METHOD F18TableBrowse:New()
 // setuj default vrijednosti...
 ::browse_params := hb_hash()
 ::initialize()
+::browse_columns := {}
 
 // koordinate ispisa naziva
 ::pos_x := NIL
@@ -67,6 +69,8 @@ return SELF
 // -----------------------------------------------------------
 METHOD F18TableBrowse:initialize()
 
+::browse_params["box_height"] := MAXROWS() - 15
+::browse_params["box_width"] := MAXCOLS() - 15
 ::browse_params["table_name"] := ""
 ::browse_params["table_order_field"] := "id"
 ::browse_params["table_browse_return_field"] := "id"
@@ -247,18 +251,16 @@ local _value
 local _ret := 0
 local _x_pos, _y_pos
 
+// postojeca pozicija
+_x_pos := m_x
+_y_pos := m_y
 // setuj koordinate ispisa...
 if pos_x <> NIL
     ::pos_x := pos_x
 endif
-
 if pos_y <> NIL
     ::pos_y := pos_y
 endif
-
-// postojeca pozicija
-_x_pos := m_x
-_y_pos := m_y
 
 // 1) postavi mi querije...
 
@@ -298,10 +300,23 @@ if ::browse_params["codes_type"]
         _value := oRow:FieldGet( oRow:FieldPos( ::browse_params["key_fields"][1] ) )
 
         if _value == return_value
+
             // pronasao sam taj zapis... nemam sta traziti to je to
             // ne moram raditi browse...
             return_value := _value
+
+            // imamo li ispisati sta ?
+            if ::pos_x <> NIL
+                if LEN( ::browse_params["key_fields"] ) > 1
+                    @ m_x + ::pos_x, m_y + ::pos_y SAY ;
+                                PADR( hb_utf8tostr( ;
+                                    oRow:FieldGet( oRow:FieldPos( ::browse_params["key_fields"][2] ) ) ) , ;
+                                 30 )
+                endif
+            endif
+
             return _ret
+
         endif
 
     elseif _data:LastRec() == 0
@@ -316,12 +331,28 @@ if ::browse_params["codes_type"]
 
 endif
 
+// ovo na ovaj nacin ne radi ?!?????
+//if ::browse_params["table_browse_fields"] == NIL
+  //  ::browse_params["table_browse_fields"] := ::browse_columns
+//endif
+
+Box(, ::browse_params["box_height"], ;
+        ::browse_params["box_width"], ;
+        if( ::browse_params["codes_type"], .t., .f. ), ;
+        if( ::browse_params["codes_type"], ::browse_codes_commands, NIL ) )
+
 // 6) ispis dodatni/pomocni tekst na sifrarniku...
 ::box_desc_text_print()
 
 // 7) idemo na pregled tabele
 _brw := TBrowseSQL():new( m_x + 2, m_y + 1, m_x + ::browse_params["form_height"], m_y + ::browse_params["form_width"], _srv, _data, ::browse_params )
-_brw:BrowseTable( .f., NIL, @return_value, @::current_row )
+_brw:BrowseTable( .f., NIL, @return_value, @::current_row, ::pos_x, ::pos_y )
+
+BoxC()
+
+// vrati koordinate
+m_x := _x_pos
+m_y := _y_pos
 
 _ret := 1
 
@@ -365,6 +396,7 @@ return _ret
 function test_get_box_table_browse()
 local _id_roba := SPACE(10)
 local _test := SPACE(20)
+local _x_pos, _y_pos
 private GetList := {}
 
 
@@ -372,7 +404,7 @@ Box(, 6, 70 )
 
     @ m_x + 1, m_y + 2 SAY "TEST RADA SQL TABLE BROWSE ....."
     @ m_x + 3, m_y + 2 SAY "IDROBA (prazno-sve):" GET _id_roba ;
-                        VALID EMPTY( _id_roba ) .or. test_sql_table_browse( @_id_roba )
+                        VALID EMPTY( _id_roba ) .or. test_sql_table_browse( @_id_roba, 3, 25 )
 
     @ m_x + 4, m_y + 2 SAY "TEST" GET _test 
 
@@ -401,35 +433,34 @@ local _a_columns := {}
 local _a_filter := NIL
 local oTBr := F18TableBrowse():New()
 
-// dodaj vidljive kolone
+// definisi kolone browse-a
 //                  ISPIS, LEN, field_name, when, valid
 //                   1    2    3       4          5          6
-AADD( _a_columns, { "ID", 10, "id", {|| id }, {|| .t. }, {|| .t. } } )
-AADD( _a_columns, { "NAZIV", 40, "naz" } )
-AADD( _a_columns, { "JMJ", 3, "jmj" } )
-AADD( _a_columns, { "TARIFA", 6, "idtarifa" } )
-AADD( _a_columns, { "NC", 12, "nc" } )
-AADD( _a_columns, { "VPC", 12, "vpc" } )
+AADD( oTBr:browse_columns, { "ID", 10, "id", {|| id }, {|| .t. }, {|| .t. } } )
+AADD( oTBr:browse_columns, { "NAZIV", 40, "naz" } )
+AADD( oTBr:browse_columns, { "JMJ", 3, "jmj" } )
+AADD( oTBr:browse_columns, { "TARIFA", 6, "idtarifa" } )
+AADD( oTBr:browse_columns, { "NC", 12, "nc" } )
+AADD( oTBr:browse_columns, { "VPC", 12, "vpc" } )
 
-Box(, _height, _width, .t., oTBr:browse_codes_commands )
 
+// definisi parametre browse-a
+oTBr:browse_params["box_width"] := _width
+oTBr:browse_params["box_height"] := _height
+oTBr:browse_params["table_browse_fields"] := oTBr:browse_columns
 oTBr:browse_params["table_name"] := "fmk.roba"
 oTBr:browse_params["table_order_field"] := "id"
 oTBr:browse_params["table_browse_return_field"] := "id"
 oTBr:browse_params["key_fields"] := { "id", "naz" }
-oTBr:browse_params["table_browse_fields"] := _a_columns
 oTBr:browse_params["form_width"] := _width
 oTBr:browse_params["form_height"] := _height
 oTBr:browse_params["table_filter"] := NIL
 oTBr:browse_params["direct_sql"] := NIL
 oTBr:browse_params["codes_type"] := .t.
-//oTBr:browse_params["user_functions"] := {|| _key_handler( oTBr:current_row ) }
 oTBr:browse_params["read_sifv"] := .t.
  
 // prikazi sifrarnik
 oTBr:show( @return_value, kord_x, kord_y )
-
-BoxC()
 
 return _ok
 

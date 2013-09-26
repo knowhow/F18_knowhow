@@ -35,10 +35,12 @@ CLASS F18TableBrowse
     PROTECTED:
 
         METHOD box_desc_text_print()
+        METHOD box_desc_options_print()
         METHOD select_all_rec()
         METHOD select_filtered()
         METHOD table_order_by()
         METHOD field_list_from_array()
+        METHOD get_option_box_lines()
 
 ENDCLASS
 
@@ -81,6 +83,7 @@ METHOD F18TableBrowse:initialize()
 ::browse_params["codes_type"] := .t.
 ::browse_params["read_sifv"] := .f.
 ::browse_params["key_options"] := NIL
+::browse_params["key_options_column_count"] := NIL
 ::browse_params["user_functions"] := NIL
 ::browse_params["header_text"] := ""
 ::browse_params["footer_text"] := ""
@@ -256,7 +259,7 @@ local _found
 local _value
 local _ret := 0
 local _x_pos, _y_pos
-local _opt_keys_rows := 3
+local _opt_key_rows := 0
 
 // postojeca pozicija
 _x_pos := m_x
@@ -271,6 +274,10 @@ endif
 
 if ::browse_params["table_browse_fields"] == NIL
     ::browse_params["table_browse_fields"] := ::browse_columns
+endif
+
+if ::browse_params["key_options"] <> NIL
+    _opt_key_rows := ::get_option_box_lines()
 endif
 
 // 1) postavi mi querije...
@@ -349,11 +356,12 @@ Box(, ::browse_params["form_height"], ;
 
 // 6) linija za podvlacenje
 if ::browse_params["key_options"] <> NIL
-    @ m_x + ( ::browse_params["form_height"] - _opt_key_rows - 1 ) , m_y + 1 SAY REPLICATE( BROWSE_PODVUCI, ::browse_params["form_width"] )
+    @ m_x + ( ::browse_params["form_height"] - ( _opt_key_rows - 1 ) ) , m_y + 1 SAY REPLICATE( BROWSE_PODVUCI, ::browse_params["form_width"] )
 endif
 
 // 7) ispis dodatni/pomocni tekst na sifrarniku...
 ::box_desc_text_print()
+::box_desc_options_print( _opt_key_rows )
 
 // 8) idemo na pregled tabele
 _brw := TBrowseSQL():new( ;
@@ -377,6 +385,89 @@ _ret := 1
 
 return _ret
 
+
+
+
+// -------------------------------------------------------
+// ispis opcija na box-u
+// -------------------------------------------------------
+METHOD F18TableBrowse:box_desc_options_print( lines_count )
+local _opt_in_row
+local _opt_space 
+local _i, _n, _tmp
+local _a_opts := {}
+
+if ::browse_params["key_options"] == NIL
+    return Self
+endif
+
+// predvidjamo 3 kolone za opcije... ali moze biti i vise...
+_opt_in_row := 3
+
+if ::browse_params["key_options_column_count"] <> NIL
+    // imamo zadato parametrom
+    _opt_in_row := ::browse_params["key_options_column_count"]
+endif
+
+_opt_space := ( MAXCOLS() / _opt_in_row ) - 2
+
+_tmp := ""
+
+// napravi mi prvo pomocnu matricu po 4 opcije u redu
+for _i := 1 to LEN( ::browse_params["key_options"] )
+
+    // dodaj uspravnu crtu
+    if !EMPTY( _tmp )
+        _tmp += BROWSE_COL_SEP
+    endif
+    
+    _tmp += PADR( ::browse_params["key_options"][_i], _opt_space )
+
+    if _i%_opt_in_row = 0 .or. _i == LEN( ::browse_params["key_options"] )
+        AADD( _a_opts, _tmp )
+        _tmp := ""
+    endif   
+
+next
+
+// ispisi red po red !
+for _n := 1 to LEN( _a_opts )
+    @ m_x + ( ::browse_params["form_height"] - ( lines_count - 1 ) + _n ) , m_y + 2 SAY _a_opts[ _n ] 
+next
+
+return Self
+
+
+
+
+// -------------------------------------------------------
+// kalkulise broj linija za opcije unutar box-a
+// -------------------------------------------------------
+METHOD F18TableBrowse:get_option_box_lines()
+local _lines := 1
+local _opt_in_row := 4
+local _len
+
+_len := LEN( ::browse_params["key_options"] ) 
+
+do case
+
+    case _len <= _opt_in_row
+        _lines := 1
+    case ( _len > _opt_in_row ) .and. ( _len <= ( _opt_in_row * 2 ) )
+        _lines := 2
+    case ( _len > _opt_in_row * 2 ) .and. ( _len <= ( _opt_in_row * 3 ) )
+        _lines := 3
+    case ( _len > _opt_in_row * 3 ) .and. ( _len <= ( _opt_in_row * 4 ) )
+        _lines := 4
+    case ( _len > _opt_in_row * 4 ) .and. ( _len <= ( _opt_in_row * 5 ) )
+        _lines := 5
+
+endcase
+
+++ _lines
+
+return _lines
 
 
 
@@ -438,6 +529,7 @@ oTBr:browse_params["codes_type"] := .f.
 oTBr:browse_params["direct_sql"] := _qry
 oTBr:browse_params["user_functions"] := { || _key_handler( @oTBr:current_row ) }
 oTBr:browse_params["key_options"] := _a_keys 
+oTBr:browse_params["key_options_column_count"] := 5
 
 // prikazi box
 oTBr:show()

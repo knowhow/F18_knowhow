@@ -13,6 +13,7 @@
 #include "hbclass.ch"
 #include "hbcompat.ch"
 #include "common.ch"
+#include "f18_separator.ch"
 
 
 CLASS F18TableBrowse
@@ -20,7 +21,6 @@ CLASS F18TableBrowse
     METHOD New()
     METHOD initialize()
     METHOD show()
-    METHOD findRec()
 
     DATA pos_x
     DATA pos_y
@@ -80,6 +80,7 @@ METHOD F18TableBrowse:initialize()
 ::browse_params["direct_sql"] := NIL
 ::browse_params["codes_type"] := .t.
 ::browse_params["read_sifv"] := .f.
+::browse_params["key_options"] := NIL
 ::browse_params["user_functions"] := NIL
 ::browse_params["header_text"] := ""
 ::browse_params["footer_text"] := ""
@@ -94,13 +95,6 @@ METHOD F18TableBrowse:initialize()
 return
 
 
-
-
-// -----------------------------------------------------------
-// pronadji zapis u tabeli
-// -----------------------------------------------------------
-METHOD F18TableBrowse:findRec( find_value )
-return
 
 
 
@@ -262,6 +256,7 @@ local _found
 local _value
 local _ret := 0
 local _x_pos, _y_pos
+local _opt_keys_rows := 3
 
 // postojeca pozicija
 _x_pos := m_x
@@ -352,11 +347,24 @@ Box(, ::browse_params["form_height"], ;
         if( ::browse_params["codes_type"], .t., .f. ), ;
         if( ::browse_params["codes_type"], ::browse_codes_commands, NIL ) )
 
-// 6) ispis dodatni/pomocni tekst na sifrarniku...
+// 6) linija za podvlacenje
+if ::browse_params["key_options"] <> NIL
+    @ m_x + ( ::browse_params["form_height"] - _opt_key_rows - 1 ) , m_y + 1 SAY REPLICATE( BROWSE_PODVUCI, ::browse_params["form_width"] )
+endif
+
+// 7) ispis dodatni/pomocni tekst na sifrarniku...
 ::box_desc_text_print()
 
-// 7) idemo na pregled tabele
-_brw := TBrowseSQL():new( m_x + 2, m_y + 1, m_x + ::browse_params["form_height"], m_y + ::browse_params["form_width"], _srv, _data, ::browse_params )
+// 8) idemo na pregled tabele
+_brw := TBrowseSQL():new( ;
+        m_x + 2, ;
+        m_y + 1, ;
+        m_x + ::browse_params["form_height"] - IF( ::browse_params["key_options"] <> NIL, _opt_key_rows, 0 ), ;
+        m_y + ::browse_params["form_width"], ;
+        _srv, ;
+        _data, ;
+        ::browse_params )
+
 _brw:BrowseTable( .f., NIL, @return_value, @::current_row, ::pos_x, ::pos_y )
 
 BoxC()
@@ -398,6 +406,43 @@ for _i := 1 to LEN( _arr )
 next
 
 return _ret
+
+
+function test_fakt_doks_table_browse()
+local oTBr := F18TableBrowse():New()
+local _qry, _a_keys
+
+_qry := "SELECT idfirma, idtipdok, brdok, idpartner, idvrstep, iznos "
+_qry += "FROM fmk.fakt_doks "
+_qry += "ORDER BY idfirma, idtipdok, brdok " 
+
+_a_keys := { "<CTRL+K> test", "<CTRL+J> test", "<F0> test" }
+
+// definisi kolone
+AADD( oTbr:browse_columns, { "F", 2, "idfirma" } )
+AADD( oTbr:browse_columns, { "TD", 2, "idtipdok" } )
+AADD( oTbr:browse_columns, { "Broj", 10, "brdok" } )
+AADD( oTbr:browse_columns, { "Partner", 6, "idpartner" } )
+AADD( oTbr:browse_columns, { "VP", 2, "idvrstep" } )
+AADD( oTbr:browse_columns, { "Ukupno", 15, "iznos" } )
+
+// parametri
+oTBr:browse_params["table_name"] := "fmk.fakt_doks"
+oTBr:browse_params["table_order_fields"] := { "idfirma", "idtipdok", "brdok" }
+oTBr:browse_params["table_browse_return_field"] := NIL
+oTBr:browse_params["key_fields"] := { "idfirma", "idtipdok", "brdok" }
+oTBr:browse_params["form_width"] := MAXCOLS() - 5
+oTBr:browse_params["form_height"] := MAXROWS() - 20
+oTBr:browse_params["table_filter"] := NIL
+oTBr:browse_params["codes_type"] := .f.
+oTBr:browse_params["direct_sql"] := _qry
+oTBr:browse_params["user_functions"] := { || _key_handler( @oTBr:current_row ) }
+oTBr:browse_params["key_options"] := _a_keys 
+
+// prikazi box
+oTBr:show()
+ 
+return
 
 
 

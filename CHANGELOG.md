@@ -1,7 +1,8 @@
 1.4.232 2013-10-02, vsasa
  
   - fiskalne funkcije FPRINT, štampanje VP fakture vrsta plaćanja "G" - sa partnerom
-  - 
+  - kalk/fin, kontiranje DATVAL() korekcije
+  - F18_DB_LOCK - korekcija ispitivanja datuma  
  
 1.4.231 2013-09-24, vsasa
  

@@ -1,3 +1,8 @@
+1.4.232 2013-10-02, vsasa
+ 
+  - fiskalne funkcije FPRINT, štampanje VP fakture vrsta plaćanja "G" - sa partnerom
+  - 
+ 
 1.4.231 2013-09-24, vsasa
  
   - fiskalne funkcije FPRINT, štampanje duplikata, korekcije

@@ -519,15 +519,17 @@ _vrsta_p := field->idvrstep
 // 7 - ino partner
 // 8 - pdv obveznik
 
-if ! ( tip_dok $ "#10#11#" ) .or. EMPTY( _partn_id ) .or. _vrsta_p == "G "
+if ! ( tip_dok $ "#10#11#" ) .or. EMPTY( _partn_id ) 
    return NIL
 endif
 
-if tip_dok $ "#10#" .or. ( tip_dok == "11" .and. _vrsta_p == "VR" )
+if ( tip_dok $ "#10#" .and. !_vrsta_p == "G " ) .or. ( tip_dok == "11" .and. _vrsta_p == "VR" )
     // virmansko placanje
     // tip dokumenta: 10
     // tip dokumenta: 11 i vrsta placanja "VR"
     _v_plac := "3"
+elseif ( tip_dok == "10" .and. _vrsta_p == "G " )
+    _v_plac := "0"
 endif
 
 if tip_dok $ "#11#" .and. _vrsta_p == "KT"
@@ -539,6 +541,12 @@ endif
 _partn_jib := ALLTRIM( IzSifK( "PARTN", "REGB", _partn_id, .f. ) )
 // oslobadjanje po clanu
 _partn_clan := ALLTRIM( IzSifK( "PARTN" , "PDVO", _partn_id, .f. ) )
+
+// u ovoj varijanti nam partner ne treba !
+// dokument 10, vrsta placanja "G " i nema ID broja ili je INO
+if tip_dok == "10" .and. _vrsta_p == "G " .and. ( EMPTY( _partn_jib ) .or. LEN( ALLTRIM( _partn_jib ) ) < 12 )
+    return NIL
+endif
 
 //if tip_dok == "11"
  

@@ -1,3 +1,7 @@
+1.4.233 2013-10-09, vsasa
+ 
+  - StartPrint() -> START PRINT CRET / fakturno, štampa
+ 
 1.4.232 2013-10-02, vsasa
  
   - fiskalne funkcije FPRINT, štampanje VP fakture vrsta plaćanja "G" - sa partnerom

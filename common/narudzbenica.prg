@@ -81,12 +81,7 @@ private nGMargina // gornja margina
 
 
 if lStartPrint
-
-	if !StartPrint()
-		close all
-		return
-	endif
-
+    START PRINT CRET
 endif
 
 nSw6 := VAL(get_dtxt_opis("X09"))
@@ -212,7 +207,7 @@ nar_footer()
 
 if lStartPrint
 	FF
-	EndPrint()
+    END PRINT
 endif
 
 return

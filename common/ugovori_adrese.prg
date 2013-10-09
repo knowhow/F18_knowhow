@@ -360,11 +360,11 @@ AADD( aKol, { "Adresa"       , {|| ADRESA       }, .f., "C", 40, 0, 1, 8} )
 AADD( aKol, { "Telefon"      , {|| TELEFON      }, .f., "C", 12, 0, 1, 9} )
 AADD( aKol, { "Fax"          , {|| FAX          }, .f., "C", 12, 0, 1,10} )
 
-StartPrint()
+START PRINT CRET
 
 StampaTabele( aKol, NIL, NIL, _table_type, NIL, NIL, "PREGLED BAZE PRIPREMLJENIH NALJEPNICA", , , , , )
 
-EndPrint()
+END PRINT
 
 close all
 

@@ -68,10 +68,7 @@ private lStZagl // automatski formirati zaglavlje
 private nGMargina // gornja margina
 
 if lStartPrint
-	if !StartPrint()
-		close all
-		return
-	endif
+    START PRINT CRET
 endif
 
 lPrintedTotal := .f.
@@ -155,7 +152,7 @@ rnal_footer()
 
 if lStartPrint
 	FF
-	EndPrint()
+    END PRINT
 endif
 
 return

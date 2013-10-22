@@ -102,7 +102,7 @@ _partn_data := fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, _storno )
 
 if VALTYPE( _partn_data ) == "L"
     // nesto nije dobro, zatvaram opciju
-    return _err_level
+    return 1
 endif
 
 // pripremi mi matricu sa stavkama racuna
@@ -110,7 +110,7 @@ _items_data := fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, _storno, _p
 
 // da nije slucajno NIL ???
 if VALTYPE( _items_data ) == "L" .or. _items_data == NIL
-    return _err_level
+    return 1
 endif
 
 do case

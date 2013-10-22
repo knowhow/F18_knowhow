@@ -58,7 +58,7 @@ _storno := pos_dok_is_storno( id_pos, "42", datum, rn_broj )
 _items := pos_items_prepare( id_pos, "42", datum, rn_broj, _storno, uplaceni_iznos )
 
 if _items == NIL
-    return _err_level
+    return 1
 endif
 
 do case

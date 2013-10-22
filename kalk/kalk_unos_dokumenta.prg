@@ -2267,7 +2267,6 @@ do while .t.
     ?
 
     do while .t.
-    
         if (cidvd=="10".and.!((gVarEv=="2").or.(gmagacin=="1")).or.(cidvd $ "11#12#13")).and.(c10Var=="3")
             gPSOld := gPStranica
             gPStranica := VAL(IzFmkIni("KALK","A3_GPSTRANICA","-20",EXEPATH))
@@ -2281,9 +2280,9 @@ do while .t.
                 FF
             endif
             select kalk_pripr
-            cIdfirma:=kalk_doks->idfirma
-            cIdvd:=kalk_doks->idvd
-            cBrdok:=kalk_doks->brdok
+            cIdfirma:=kalk_pripr->idfirma
+            cIdvd:=kalk_pripr->idvd
+            cBrdok:=kalk_pripr->brdok
             hseek cIdFirma+cIdVD+cBrDok
         endif
 
@@ -2394,17 +2393,14 @@ do while .t.
 
         if (cSeek != 'IZDOKS')
             exit
-
         else
-
-            select kalk_doks
+            select kalk_pripr
             skip
             if eof()
                 exit
             endif
             ?
             ?
-
         endif
         
         if (cidvd == "10" .and. !((gVarEv=="2").or.(gmagacin=="1")).or.(cidvd $ "11#12#13")).and.(c10Var=="3")

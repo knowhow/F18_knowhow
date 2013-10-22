@@ -1,3 +1,7 @@
+1.4.235 2013-10-22, vsasa
+ 
+  - KALK, štampa liste dokumenata sa ispisom sadržaja - korekcije
+ 
 1.4.234 2013-10-22, vsasa
  
   - KALK, izvještaj po objektima - korekcije

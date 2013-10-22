@@ -370,6 +370,11 @@ do while !EOF() .and. field->idfirma == id_firma ;
         _art_plu := auto_plu( nil, nil,  __device_params )
     endif
 
+    if __DRV_CURRENT == "FPRINT" .and. _art_plu == 0
+        MsgBeep( "PLU artikla = 0, to nije moguce !" )
+        return NIL
+    endif
+
     _cijena := roba->mpc
     // izracunaj cijenu
     if tip_dok == "10"

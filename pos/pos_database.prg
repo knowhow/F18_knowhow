@@ -579,14 +579,14 @@ SELECT PRIPRZ
 __dbPack()
 
 // ova opcija ce setovati plu kodove u sifrarniku ako nisu vec setovani
-if fiscal_opt_active() .and. .f. 
+if fiscal_opt_active() 
 
     nTArea := SELECT()
 
     // generisi plu kodove za nove sifre
     gen_all_plu( .t. )
 
-    select (nTArea)
+    select ( nTArea )
 
 endif
 

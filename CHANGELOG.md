@@ -1,3 +1,8 @@
+1.4.234 2013-10-22, vsasa
+ 
+  - KALK, izvještaj po objektima - korekcije
+  - KALK/POS prenos, setovanje PLU kodova
+ 
 1.4.233 2013-10-09, vsasa
  
   - StartPrint() -> START PRINT CRET / fakturno, štampa

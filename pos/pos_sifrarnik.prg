@@ -13,6 +13,26 @@
 #include "pos.ch"
 
 
+
+// ------------------------------------------------------
+// blok za robu koji se koristi kod pos sifrarnika
+// ------------------------------------------------------
+function pos_roba_block( ch )
+
+do case
+
+    case UPPER( CHR( ch ) ) == "P"
+        if gen_all_plu()
+            return DE_REFRESH
+        endif
+
+endcase
+
+return DE_CONT
+
+
+
+
 // ----------------------------------------------------
 // vraca mpc na osnovu seta cijena koji se koristi
 // ----------------------------------------------------

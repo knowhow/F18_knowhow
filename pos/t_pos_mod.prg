@@ -509,6 +509,8 @@ kalk_konto_za_stanje_pos( .t. )
 // koristenje fiskalnih opcija
 fiscal_opt_active()
 
+gRobaBlock := { |Ch| pos_roba_block( Ch ) }
+
 return
 
 

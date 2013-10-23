@@ -23,7 +23,6 @@ local _opcexe := {}
 
 // otvori tabele
 kadev_o_tables()
-
 // setuj sve relacije tabela
 kadev_set_relations()
 
@@ -344,6 +343,10 @@ ENDIF
 
 FF
 END PRINT             
+
+kadev_o_tables()
+kadev_set_relations()
+select kadev_0
 
 return
 

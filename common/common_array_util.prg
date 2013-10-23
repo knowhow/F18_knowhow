@@ -374,23 +374,20 @@ LOCAL cScrAbr
 LOCAL nTekuciRed:=1
 LOCAL nStep:=nB-nT-1
 LOCAL nI
+LOCAL oCol
 
 // Preserve cursor setting, turn off cursor
 nOldCursor := SetCursor( 0 )
 
-
-
 // Preserve static var (just in case), set it to 1
 nOldNRow := nRow
 nRow := 1
-
 
 // Handle omitted parameters
 nT := IF( nT == NIL, 0, nT )
 nL := IF( nL == NIL, 0, nL )
 nB := IF( nB == NIL, MAXROW(), nB )
 nR := IF( nR == NIL, MAXCOL(), nR )
-
 
 // Create the TBrowse object
 o := TBrowseNew( nT+1, nL+1, nB-1, nR-1 )
@@ -407,14 +404,15 @@ o:SkipBlock := { |nSkip|                                             ;
 o:GoTopBlock := { || nRow := 1 }
 
 // The "go bottom" block sets nRow to the length of the array
-o:GoBottomBlock := { || nRow := LEN(aArray) }
+o:GoBottomBlock := { || nRow := LEN( aArray ) }
 
 // Create column blocks and add TBColumn objects to the TBrowse
 // (see ABrowseBlock() below)
 FOR n = 1 TO LEN( aArray[1] )
-       o:AddColumn( TBColumnNew("", ABrowseBlock(aArray, n)) )
+    oCol := TBColumnNew( "", ABrowseBlock( aArray, n ) )
+    //oCol:colorBlock := { || IF( aArray[ n, 2 ] == "*" , { 5, 2 }, { 1, 2 } ) }
+    o:AddColumn( oCol )
 NEXT
-
 
 // Start the event handler loop
 DO WHILE nKey <> K_ESC .AND. nKey <> K_RETURN
@@ -438,7 +436,7 @@ DO WHILE nKey <> K_ESC .AND. nKey <> K_RETURN
       DO CASE
       CASE ( nKey == ASC(' ') )
          Tone(300,1)
-         aArray[nTekuciRed,2]:=if(aArray[nTekuciRed,2]=='*',' ','*')
+         aArray[ nTekuciRed, 2 ] := IF( aArray[ nTekuciRed, 2 ] == '*', ' ', '*' )
          o:RefreshCurrent()
 
       CASE ( nKey == K_DOWN )
@@ -454,8 +452,6 @@ DO WHILE nKey <> K_ESC .AND. nKey <> K_RETURN
 
       CASE ( nKey == K_LEFT )
          o:Left()
-
-
 
       ENDCASE
 

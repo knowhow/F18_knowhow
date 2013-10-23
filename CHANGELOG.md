@@ -1,3 +1,8 @@
+1.4.236 2013-10-23, vsasa
+ 
+  - KADEV, browse obrazaca korekcije
+  - 
+ 
 1.4.235 2013-10-22, vsasa
  
   - KALK, štampa liste dokumenata sa ispisom sadržaja - korekcije

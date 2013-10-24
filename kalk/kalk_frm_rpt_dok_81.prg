@@ -126,7 +126,7 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
       nMarza2:=nMarza2-nPRUC
     ENDIF
 
-    if prow() > ( RPT_PAGE_LEN + gPStranica ) 
+    if prow() > ( RPT_PAGE_LEN + gPStranica ) - 4 
         FF  
         @ prow(), 125 SAY "Str:"+str(++nStr,3)
     endif
@@ -241,13 +241,14 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
   skip
 enddo
 
-if prow() > ( RPT_PAGE_LEN + gPStranica )
+if prow() > ( RPT_PAGE_LEN + gPStranica ) - 3
 	FF
 	@ prow(),125 SAY "Str:"+str(++nStr,3)
 endif
 
 ? m
-@ prow()+1,0        SAY "Ukupno:"
+
+@ prow() + 1, 0        SAY "Ukupno:"
 *************************** magacin *****************************
 if !fzatops
   @ prow(),nCol1     SAY nTot          picture         PICDEM
@@ -276,6 +277,7 @@ endif
 
 nTot1:=nTot2:=nTot2b:=nTot3:=nTot4:=0
 nTot5:=nTot6:=nTot7:=0
+
 RekTarife()
 
 if !fZaTops
@@ -286,7 +288,6 @@ endif
 
 // potpis na dokumentu
 dok_potpis( 90, "L", nil, nil )
-
 
 return
 

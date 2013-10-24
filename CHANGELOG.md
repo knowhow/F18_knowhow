@@ -1,7 +1,7 @@
-1.4.236 2013-10-23, vsasa
+1.4.236 2013-10-24, vsasa
  
   - KADEV, browse obrazaca korekcije
-  - 
+  - FAKT, provjera PLU kod-a kod generisanja stavki računa
  
 1.4.235 2013-10-22, vsasa
  

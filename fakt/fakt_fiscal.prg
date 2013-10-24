@@ -364,18 +364,22 @@ do while !EOF() .and. field->idfirma == id_firma ;
     _art_jmj := ALLTRIM( roba->jmj )
 
     _art_plu := roba->fisc_plu
+
     // generisi automatski plu ako treba
     if __device_params["plu_type"] == "D" .and. ;
         ( __device_params["vp_sum"] <> 1 .or. tip_dok $ "11" )
-        _art_plu := auto_plu( nil, nil,  __device_params )
-    endif
 
-    if __DRV_CURRENT == "FPRINT" .and. _art_plu == 0
-        MsgBeep( "PLU artikla = 0, to nije moguce !" )
-        return NIL
+        _art_plu := auto_plu( nil, nil,  __device_params )
+        
+        if __DRV_CURRENT == "FPRINT" .and. _art_plu == 0
+            MsgBeep( "PLU artikla = 0, to nije moguce !" )
+            return NIL
+        endif
+
     endif
 
     _cijena := roba->mpc
+
     // izracunaj cijenu
     if tip_dok == "10"
         // moramo uzeti cijenu sa pdv-om

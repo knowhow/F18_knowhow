@@ -1,3 +1,7 @@
+1.4.237 2013-10-25, vsasa
+ 
+  - KADEV, ispis progres bara kod filterisanja zapisa
+ 
 1.4.236 2013-10-24, vsasa
  
   - KADEV, browse obrazaca korekcije

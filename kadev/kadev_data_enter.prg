@@ -1311,6 +1311,27 @@ endif
 return .t.
 
 
+// ----------------------------------------------------------------------
+// provjerava da li radnik postoji u evidenciji vec po mat.broju
+// ----------------------------------------------------------------------
+function kadev_radnik_postoji( id_broj )
+local _ok := .f.
+local _srv := my_server()
+local _qry, _ret
+
+_qry := "SELECT id FROM fmk.kadev_0 WHERE id = " + _sql_quote( id_broj )
+
+_ret := _sql_query( _srv, _qry )
+if VALTYPE( _ret ) <> "L" .and. _ret:LastRec() <> 0
+    _ok := .t.
+endif
+
+if !_ok
+    MsgBeep( "Radnik sa ovim maticnim brojem ne postoji u evidenciji !" )
+endif
+
+return _ok
+
 
 // ---------------------------------------------------------
 // brisanje osnovnog i njemu pridruzenih slogova

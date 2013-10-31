@@ -1,3 +1,7 @@
+1.4.238 2013-10-31, vsasa
+ 
+  - VIRM, firma nalogodavac kod ručnog unosa virmana
+ 
 1.4.237 2013-10-25, vsasa
  
   - KADEV, ispis progres bara kod filterisanja zapisa

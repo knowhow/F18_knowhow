@@ -52,6 +52,8 @@ IF LastKey() <> K_ESC
     set_metric("virm_org_jedinica", nil, _org_jed )
     set_metric("virm_konverzija_delphirb", nil, _konverzija )
 
+    gVirmFirma := _firma
+
 ENDIF
 
 return

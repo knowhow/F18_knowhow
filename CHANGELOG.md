@@ -1,3 +1,7 @@
+1.4.239 2013-11-01, vsasa
+ 
+  - KADEV, informacije o stažu i statusu uposlenika na formi podataka
+ 
 1.4.238 2013-10-31, vsasa
  
   - VIRM, firma nalogodavac kod ručnog unosa virmana

@@ -50,17 +50,13 @@ cTrID      := kadev_0->id
 Box(, _x, _y )
 
 @ m_x + _x - 4, m_y + 2 SAY PADR(" < c+N > Novi", _w1 ) + ;
-                            BROWSE_COL_SEP + PADR( " < T > Trazi (pr+ime)", _w1 ) + ;
-                            BROWSE_COL_SEP + PADR( " < ctrl+T > brisanje", _w1 )
+                            BROWSE_COL_SEP + PADR( " < T > Trazi (pr+ime)", _w1 ) 
 @ m_x + _x - 3, m_y + 2 SAY PADR(" < ENT > Ispravka", _w1 ) + ;
-                            BROWSE_COL_SEP + PADR( " < S > Trazi (id)", _w1) + ;
-                            BROWSE_COL_SEP + PADR( " -", _w1 )
+                            BROWSE_COL_SEP + PADR( " < S > Trazi (id)", _w1)
 @ m_x + _x - 2, m_y + 2 SAY PADR(" < R > Rjesenje", _w1) + ;
-                            BROWSE_COL_SEP + PADR( " -",_w1 ) + ;
-                            BROWSE_COL_SEP + PADR( " -", _w1 )
+                            BROWSE_COL_SEP + PADR( " < c + T > brisanje ", _w1 )
 @ m_x + _x - 1, m_y + 2 SAY PADR(" < P > Pregl.promjene", _w1) + ;
-                            BROWSE_COL_SEP + PADR( " -", _w1 ) + ;
-                            BROWSE_COL_SEP + PADR( " -", _w1 )
+                            BROWSE_COL_SEP + PADR( " < I > info staz ", _w1 ) 
 
 ObjDbEdit( 'bpod', _x - 3, _y, {|| data_handler() }, _header, _footer, , , , , 2 )
 
@@ -95,6 +91,111 @@ return
 
 
 
+// -------------------------------------------------------------
+// ispisuje informacije po parametrima zadatim
+// -------------------------------------------------------------
+static function kadev_radnik_info_by_params( jmbg )
+local _params := hb_hash()
+local _status, _radni_staz
+local _datum_od := CTOD("")
+local _datum_do := DATE()
+local oDATA
+local _ok := .t.
+private GetList := {}
+
+Box(, 1, 60 )
+    @ m_x + 1, m_y + 2 SAY "Za datum od:" GET _datum_od
+    @ m_x + 1, col() + 1 SAY "do:" GET _datum_do
+    read
+BoxC()
+
+if LastKey() == K_ESC
+    return _ok
+endif
+
+_params["jmbg"] := jmbg
+_params["datum_od"] := _datum_od
+_params["datum_do"] := _datum_do
+
+oDATA := KADEV_DATA_CALC():new()
+oDATA:params := _params
+
+// izvuci podatke
+oDATA:data_selection()
+
+// vrati mi podatke statusa
+oDATA:get_status()
+// vrati mi podatke o stazu
+oDATA:get_radni_staz()
+
+_status := oDATA:status
+_staz := oDATA:radni_staz
+
+if _status == NIL
+    MsgBeep( "Nemamo statusa za ovog radnika !" )
+    return _ok 
+endif
+
+Box(, 12, 70 )
+
+    @ m_x + 1, m_y + 2 SAY "Radnik: " + jmbg COLOR "I"
+    @ m_x + 3, m_y + 2 SAY "Podaci od " + DTOC( _datum_od ) + " do " + DTOC( _datum_do )
+    @ m_x + 5, m_y + 2 SAY "STATUS = [" + _status["status"] + "]" COLOR "I"
+    @ m_x + 7, m_y + 2 SAY "Podaci radnog staza:" COLOR "I"
+    @ m_x + 8, m_y + 2 SAY REPLICATE( "-", 60 ) 
+    @ m_x + 9, m_y + 2 SAY  "(1)    efektivni:" + _staz["rst_ef_info"]
+    @ m_x + 10, m_y + 2 SAY "(2) beneficirani:" + _staz["rst_ben_info"]
+    @ m_x + 11, m_y + 2 SAY "(3)       ukupno:" + _staz["rst_uk_info"]
+
+	while Inkey(0.1) != K_ESC
+    end
+	
+BoxC()
+
+return _ok
+
+
+
+// ispisuje status radnika na dnu
+static function kadev_status_radnika( jmbg )
+local _params := hb_hash()
+local _status, _radni_staz
+local oDATA
+local _pos_x := MAXROWS() - 8
+local _pos_y := ( MAXCOLS() / 3 ) * 2 
+
+_params["jmbg"] := jmbg
+_params["datum_od"] := CTOD("")
+_params["datum_do"] := DATE()
+
+oDATA := KADEV_DATA_CALC():new()
+oDATA:params := _params
+
+// izvuci podatke
+oDATA:data_selection()
+
+// vrati mi podatke statusa
+oDATA:get_status()
+
+// vrati mi podatke o stazu
+oDATA:get_radni_staz()
+
+_status := oDATA:status
+_staz := oDATA:radni_staz
+
+if _status == NIL
+    return 
+endif
+
+@ m_x + _pos_x, m_y + _pos_y SAY "STATUS: [" + _status["status"] + "] / Radni staz:" COLOR "I"
+@ m_x + _pos_x + 1, m_y + _pos_y SAY "(1)  efekt.: " + _staz["rst_ef_info"]
+@ m_x + _pos_x + 2, m_y + _pos_y SAY "(2)  benef.: " + _staz["rst_ben_info"]
+@ m_x + _pos_x + 3, m_y + _pos_y SAY "(3) ef/ben.: " + _staz["rst_uk_info"]
+
+return 
+
+
+
 
 // ---------------------------------------------
 // key handler
@@ -105,12 +206,16 @@ local _vars := {}
 local _tmp := {}
 local _strana := 0
 local _tek_strana := 1
+local oDATA
 local _tmp_2 := {}
 private fNovi := .f.
 
 // broj podataka
 @ m_x + 1, m_y + 2 SAY "Broj promjena:" COLOR "GR+/B"
 @ m_x + 1, col() + 2 SAY PADL( ALLTRIM( STR( kadev_broj_podataka( field->id ), 5, 0 ) ), 8 ) COLOR "W/R+"
+
+// ispisi status radnika
+kadev_status_radnika( field->id )
 
 do case
 
@@ -134,6 +239,15 @@ do case
 	    if ent_K_0()
             _rec := get_dbf_global_memvars()
             update_rec_server_and_dbf( "kadev_0", _rec, 1, "FULL" )
+            
+            //if Ch == K_CTRL_N
+                oDATA := KADEV_DATA_CALC():new()
+                oDATA:params["datum_od"] := CTOD("")
+                oDATA:params["datum_do"] := DATE()
+                oDATA:params["jmbg"] := field->id
+                oDATA:update_status()
+            //endif
+            
 		    fNovi := .f.
             return DE_REFRESH
         else
@@ -150,6 +264,11 @@ do case
 	        brisi_kadrovski_karton()
     	    return DE_REFRESH
  	    endif
+
+    case CH == ASC("I") .or. CH == ASC("i")
+
+        kadev_radnik_info_by_params( field->id )
+        return DE_CONT
 
     case Ch == ASC("T") .or. Ch == ASC("t")
 
@@ -1018,9 +1137,9 @@ do case
 
      		if qdatumod >= _daturmj 
 			    // ako se ubacuje stara promjena ovaj uslov
-      			qIdRJ := _idRJ   
+      			qIdRJ := _idrj   
 			    // nije zadovoljen
-      			qIdRMJ := _idRmj
+      			qIdRMJ := _idrmj
      		endif
 
      		if P_Promj( qIdPromj, -6 ) == "1"  

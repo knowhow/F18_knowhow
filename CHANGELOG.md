@@ -1,6 +1,7 @@
-1.4.239 2013-11-01, vsasa
+1.4.239 2013-11-04, vsasa
  
   - KADEV, informacije o stažu i statusu uposlenika na formi podataka
+  - KADEV, 3 nova odt izvještaja
  
 1.4.238 2013-10-31, vsasa
  

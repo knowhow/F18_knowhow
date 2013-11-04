@@ -44,8 +44,8 @@ return
 // -----------------------------------------------------
 static function _get_vars( params )
 local _ok := .f.
-local _datum_od := fetch_metric( "kadev_rpt_br_datum_od", my_user(), CTOD("") )
-local _datum_do := fetch_metric( "kadev_rpt_br_datum_do", my_user(), DATE() )
+local _datum_od := CTOD("")
+local _datum_do := DATE()
 local _promjene := PADR( fetch_metric( "kadev_rpt_br_promjene", my_user(), "P1;P2;" ), 200 )
 local _rj := PADR( fetch_metric( "kadev_rpt_br_rj", my_user(), "" ), 100 )
 local _rmj := PADR( fetch_metric( "kadev_rpt_br_rmj", my_user(), "" ), 100 )
@@ -69,8 +69,6 @@ if LastKey() == K_ESC
     return _ok
 endif
 
-set_metric( "kadev_rpt_br_datum_od", my_user(), _datum_od )
-set_metric( "kadev_rpt_br_datum_do", my_user(), _datum_do )
 set_metric( "kadev_rpt_br_rj", my_user(), ALLTRIM( _rj ) )
 set_metric( "kadev_rpt_br_rmj", my_user(), ALLTRIM( _rmj ) )
 
@@ -118,14 +116,15 @@ endif
 
 _qry := "WITH tmp AS ( "
 _qry += " SELECT " 
-_qry += "  pr.id AS jmbg, "
+_qry += "  main.id AS jmbg, "
 _qry += "  main.idrj AS idrj, "
 _qry += "  main.idstrspr AS idstrspr "
 _qry += "FROM fmk.kadev_1 pr "
 _qry += "LEFT JOIN fmk.kadev_0 main ON pr.id = main.id "
+_qry += "LEFT JOIN fmk.kadev_promj prom ON pr.idpromj = prom.id "
 _qry += " " + _where + " "
-_qry += "GROUP BY pr.id, main.idrj, main.idstrspr "
-_qry += "ORDER BY pr.id " 
+_qry += "GROUP BY main.id, main.idrj, main.idstrspr "
+_qry += "ORDER BY main.id " 
 _qry += " ) "
 _qry += " SELECT "
 _qry += "  idrj, "
@@ -190,7 +189,6 @@ xml_node( "f_naz", to_xml_encoding( gNFirma ) )
 xml_node( "dat_od", DTOC( params["datum_od"] ) )
 xml_node( "dat_do", DTOC( params["datum_do"] ) )
 xml_node( "datum", DTOC( DATE() ) )
-xml_node( "strspr", to_xml_encoding( params["strspr"] ) )
 
 do while !_data:EOF()
 

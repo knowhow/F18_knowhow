@@ -50,8 +50,9 @@ local _promjene := PADR( fetch_metric( "kadev_rpt_prom_promjene", my_user(), "P1
 local _rj := PADR( fetch_metric( "kadev_rpt_prom_rj", my_user(), "" ), 100 )
 local _rmj := PADR( fetch_metric( "kadev_rpt_prom_rmj", my_user(), "" ), 100 )
 local _strspr := PADR( fetch_metric( "kadev_rpt_prom_strspr", my_user(), "" ), 100 )
+local _spol := " "
 
-Box(, 8, 65 )
+Box(, 10, 65 )
 
     @ m_x + 1, m_y + 2 SAY "Za datum od:" GET _datum_od
     @ m_x + 1, col() + 1 SAY "do:" GET _datum_do
@@ -61,6 +62,8 @@ Box(, 8, 65 )
     @ m_x + 5, m_y + 2 SAY "Radne jedinice (prazno-sve):" GET _rj PICT "@S30"
     @ m_x + 6, m_y + 2 SAY "  Radna mjesta (prazno-sve):" GET _rmj PICT "@S30"
     @ m_x + 7, m_y + 2 SAY "Strucne spreme (prazno-sve):" GET _strspr PICT "@S30"
+
+    @ m_x + 9, m_y + 2 SAY "Spol ( /M/Z):" GET _spol VALID _spol $ " MZ" PICT "@!"
 
     read
 
@@ -84,6 +87,7 @@ params["promjene"] := _promjene
 params["rj"] := _rj
 params["rmj"] := _rmj
 params["strspr"] := _strspr
+params["spol"] := _spol
 
 _ok := .t.
 
@@ -114,6 +118,10 @@ endif
 
 if !EMPTY( param["rmj"] )
     _where += " AND ( "  + _sql_cond_parse( "main.idrmj", param["rmj"] ) + " ) " 
+endif
+
+if !EMPTY( param["spol"] )
+    _where += " AND main.pol = " + _sql_quote( param["spol"] )
 endif
 
 // sredi WHERE upit na kraju...
@@ -161,6 +169,8 @@ return _data
 static function _cre_xml( params )
 local _data, oRow
 local _ok := .f.
+local _count := 0
+local _tmp, _jmbg
 
 // uzmi podatke za izvjestaj....
 _data := _get_data( params )
@@ -182,21 +192,36 @@ xml_node( "dat_od", DTOC( params["datum_od"] ) )
 xml_node( "dat_do", DTOC( params["datum_do"] ) )
 xml_node( "datum", DTOC( DATE() ) )
 xml_node( "promjene", to_xml_encoding( params["promjene"] ) )
+xml_node( "strspr", to_xml_encoding( params["strspr"] ) )
+
+_tmp := "XXX"
 
 do while !_data:EOF()
 
     oRow := _data:GetRow()
+    
+    _jmbg := oRow:FieldGet( oRow:FieldPos("jmbg") )
 
     xml_subnode( "item", .f. )
 
-    xml_node( "jmbg", oRow:FieldGet( oRow:FieldPos( "jmbg" ) ) )
-    xml_node( "radn", to_xml_encoding( hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "radnik" ) ) ) ) )
+    if _jmbg <> _tmp
+        xml_node( "no", ALLTRIM( STR( ++_count ) ) )
+        xml_node( "jmbg", to_xml_encoding( _jmbg ) )
+        xml_node( "radn", to_xml_encoding( hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "radnik" ) ) ) ) )
+    else
+        xml_node( "no", "" )
+        xml_node( "jmbg", "" )
+        xml_node( "radn", "" )
+    endif
+
     xml_node( "rj", to_xml_encoding( hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "rj_naz" ) ) ) ) )
     xml_node( "strspr", to_xml_encoding( hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "strspr_naz" ) ) ) ) )
     xml_node( "datum", DTOC( oRow:FieldGet( oRow:FieldPos( "datum" ) ) ) )
     xml_node( "rmj", to_xml_encoding( hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "rmj_naz" ) ) ) ) )
 
     xml_subnode( "item", .t. )
+
+    _tmp := _jmbg
 
     _ok := .t.
     _data:SKIP()

@@ -190,8 +190,6 @@ _rec_0["idzanim"] := ""
 
 select kadev_1
 
-altd()
-
 do while field->id = kadev_0->id .and. ( field->datumod < dDoDat )
 
     select kadev_promj
@@ -201,13 +199,9 @@ do while field->id = kadev_0->id .and. ( field->datumod < dDoDat )
 
     // kadev_1 tabela
     _rec_1 := dbf_get_rec()
-    
-    if kadev_promj->tip <> "X"
-        if EMPTY( _int_status )                           
-            _rec_0["status"] := kadev_promj->status
-        else                                       
-            _rec_0["status"] := _int_status
-        endif  
+   
+    if kadev_promj->tip <> "X" 
+        _rec_0["status"] := kadev_promj->status
     endif
 
     if kadev_promj->srmj == "1"  

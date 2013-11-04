@@ -87,7 +87,7 @@ local _rec
 ::get_radni_staz()
 
 select kadev_0
-_rec := get_dbf_rec()
+_rec := dbf_get_rec()
 
 _rec["radste"] := ::radni_staz["rst_ef"]
 _rec["radstb"] := ::radni_staz["rst_ben"]
@@ -102,7 +102,7 @@ _rec["idzanim"] := ::status["id_zanimanja"]
 _rec["vrslvr"] := ::status["sluzenje_vojnog_roka_dana"]
 _rec["slvr"] := ::status["sluzenje_vojnog_roka"]
 
-update_rec_dbf_and_server( "fmk.kadev_0", _rec, 1, "FULL" )
+update_rec_server_and_dbf( "fmk.kadev_0", _rec, 1, "FULL" )
 
 return Self
 
@@ -181,6 +181,8 @@ _qry += "  prs.urrasp, "
 _qry += "  prs.ustrspr, "
 _qry += "  rrsp.catr, "
 _qry += "  main.vrslvr, "
+_qry += "  main.idrj AS k0_idrj, "
+_qry += "  main.idrmj AS k0_idrmj, "
 _qry += "  ben.iznos AS benef_iznos "
 _qry += "FROM fmk.kadev_1 pr "
 _qry += "LEFT JOIN fmk.kadev_promj prs ON pr.idpromj = prs.id "
@@ -511,8 +513,8 @@ do while !_data:EOF()
         ::status["datum_u_rmj"] := _d_od
         ::status["datum_van_rmj"] := CTOD("")
     else
-        ::status["rj"] := kadev_0->idrj
-        ::status["rmj"] := kadev_0->idrmj
+        ::status["rj"] := oRow:FieldGet( oRow:FieldPos( "k0_idrj" ) )
+        ::status["rmj"] := oRow:FieldGet( oRow:FieldPos( "k0_idrmj" ) )
     endif
 
     if _u_ratni_raspored == "1" 

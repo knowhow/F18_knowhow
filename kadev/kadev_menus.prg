@@ -73,6 +73,9 @@ AADD( _opcexe, {|| kadev_izvjestaj_promjene() })
 AADD( _opc, "2. pregled radnog staza za radnike        " )
 AADD( _opcexe, {|| kadev_izvjestaj_staz() })
 
+AADD( _opc, "3. pregled brojnog stanja radnika        " )
+AADD( _opcexe, {|| kadev_izvjestaj_br_stanje() })
+
 AADD( _opc, "6. pregled godisnjih odmora             " )
 AADD( _opcexe, {|| gododmori() })
 

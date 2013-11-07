@@ -1332,10 +1332,11 @@ _t_rec := RECNO()
 _t_order := INDEXORD()
 
 set order to tag "1"
+go top
 seek ( noviId )
 
 if FOUND() .and. RECNO() <> _t_rec
-    MsgO("Vec postoji zapis sa ovim ID brojem. Ispravite to !")
+    MsgO( "Vec postoji zapis sa ovim ID brojem. Ispravite to !" )
     Inkey(0)
     MsgC()
     dbsetorder( _t_order )

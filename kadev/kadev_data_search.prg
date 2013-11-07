@@ -413,7 +413,9 @@ cFilt:= aUsl1+".and."+ aUsl2+".and."+;
   Box(,2,40)
   nSlog:=0
   nUkupno:=RECCOUNT2()
-  INDEX ON &cSort1 TO "TMPKADEV_0" FOR &cFilt EVAL show_progress( nUkupno, cFilt )
+  index on (id) TAG "1" TO "TMPKADEV_0"
+  index on (id2) TAG "3" TO "TMPKADEV_0"
+  INDEX ON &cSort1 TAG "2" TO "TMPKADEV_0" FOR &cFilt EVAL show_progress( nUkupno, cFilt )
   GO TOP
   INKEY(0)
   BoxC()

@@ -137,7 +137,8 @@ _qry += "LEFT JOIN fmk.kadev_rj rj ON main.idrj = rj.id "
 _qry += "LEFT JOIN fmk.kadev_rmj rmj ON main.idrmj = rmj.id "
 _qry += "LEFT JOIN fmk.strspr ss ON main.idstrspr = ss.id "
 _qry += " " + _where + " "
-_qry += "GROUP BY pr.id, main.ime, main.prezime, main.imerod, rj.naz, main.idrmj, rmj.naz, main.idrj, rj.naz, main.idstrspr, ss.naz "
+_qry += "GROUP BY pr.id, main.ime, main.prezime, "
+_qry += "  main.imerod, rj.naz, main.idrmj, rmj.naz, main.idrj, rj.naz, main.idstrspr, ss.naz2 "
 _qry += "ORDER BY pr.id " 
 
 MsgO( "Formiram podatke izvjestaja ..." ) 

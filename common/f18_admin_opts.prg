@@ -341,20 +341,44 @@ return _ok
 // razdvajenje sezona...
 // -----------------------------------------------------------------------
 METHOD F18AdminOpts:new_session()
-local _params := hb_hash()
+local _params
 local _dbs := {}
 local _i
 local _pg_srv, _my_params, _t_user, _t_pwd, _t_database
 local _qry 
 local _from_sess, _to_sess
 local _db_from, _db_to
+local _db := SPACE(100)
+local _db_delete := "N"
 local _count := 0
 local _res := {}
 local _ok := .t.
 
-// ovo jos ne radi 
-MsgBeep( "Funkcija nije u upotrebi !" )
-return
+if !SigmaSif("ADMIN")
+    MsgBeep( "Opcija zasticena !" )
+    return _ok
+endif
+
+_from_sess := YEAR( DATE() ) - 1
+_to_sess := YEAR( DATE() )
+
+SET CURSOR ON
+SET CONFIRM ON
+ 
+Box(, 7, 60 )
+    @ m_x + 1, m_y + 2 SAY "Otvaranje baze za novu sezonu ***" COLOR "I"
+    @ m_x + 3, m_y + 2 SAY "Vrsi se prenos sa godine:" GET _from_sess PICT "9999"
+    @ m_x + 3, col() + 1 SAY "na godinu:" GET _to_sess PICT "9999" VALID ( _to_sess > _from_sess .and. _to_sess - _from_sess == 1 )
+    @ m_x + 5, m_y + 2 SAY "Baza (prazno-sve):" GET _db PICT "@S30"
+    @ m_x + 6, m_y + 2 SAY "Ako baza postoji, pobrisi je ? (D/N)" GET _db_delete VALID _db_delete $ "DN" PICT "@!"
+    read
+BoxC()
+
+SET CONFIRM OFF
+
+if LastKey() == K_ESC
+    return _ok
+endif
 
 _my_params := my_server_params()
 _t_user := _my_params["user"]
@@ -365,7 +389,12 @@ _t_database := _my_params["database"]
 _pg_srv := ::relogin_as( "admin", "boutpgmin" )
 
 _qry := "SELECT datname FROM pg_database " 
-_qry += "WHERE datname LIKE '% + " + _from_year + "' "
+
+if EMPTY( _db )
+    _qry += "WHERE datname LIKE '% + " + ALLTRIM( STR( _from_sess ) ) + "' "
+else
+    _qry += "WHERE datname = " + _sql_quote( ALLTRIM( _db ) + "_" + ALLTRIM( STR( _from_sess ) ) )
+endif
 _qry += "ORDER BY datname;"
 
 // daj mi listu...
@@ -376,41 +405,52 @@ _dbs:GoTo(1)
 // treba da imamo listu baza...
 // uzemomo sa select-om sve sto ima 2013 recimo 
 // i onda cemo provrtiti te baze i napraviti 2014
+Box(, 3, 60 )
 
 do while !_dbs:EOF()
 
-    ++ _count
 
     oRow := _dbs:GetRow()
 
     // test_2013
     _db_from := ALLTRIM( oRow:FieldGet(1) )
     // test_2014
-    _db_to := STRTRAN( _tmp, "_" + _from_year, "_" + _to_year ) 
+    _db_to := STRTRAN( _db_from, "_" + ALLTRIM( STR( _from_sess ) ), "_" + ALLTRIM( STR( _to_sess ) ) ) 
+
+    @ m_x + 1, m_y + 2 SAY "Vrsim otvaranje " + _db_from + " > " + _db_to
 
     // init parametri za razdvajanje...
     // pocetno stanje je 1
+    _params := hb_hash()
     _params["db_type"] := 1
     _params["db_name"] := _db_to
     _params["db_template"] := _db_from
-    _params["db_drop"] := "D"
+    _params["db_drop"] := _db_delete
     _params["db_comment"] := ""
 
     // otvori bazu...
     if ! ::create_new_db( _params, _pg_srv )
         AADD( _res, { _db_to, _db_from, "ERR" } )
+    else
+        ++ _count
     endif
 
     _dbs:Skip()
 
 enddo
 
+boxC()
+
 // vrati se gdje si bio...
 ::relogin_as( _t_user, _t_pwd, _t_database )
 
 // imamo i rezultate operacije... kako da to vidimo ?
 if LEN( _res ) > 0
-    // ?????
+    MsgBeep( "Postoje greske kod otvaranja sezone !" )
+endif
+
+if _count > 0
+    MsgBeep( "Uspjesno otvoreno " + ALLTRIM( STR( _count ) ) + " baza..." )
 endif
 
 return _ok
@@ -462,16 +502,12 @@ endif
 // ===============================================================
 // napravi relogin na bazi... radi admin prava...
 if _pg_srv == NIL
-
     _db_params := my_server_params()
     _t_user := _db_params["user"]
     _t_pwd := _db_params["password"]
     _t_database := _db_params["database"]
-
     _pg_srv := ::relogin_as( "admin", "boutpgmin" )
-
     _relogin := .t.
-
 endif
 
 // 3) DROP DATABASE
@@ -479,6 +515,21 @@ endif
 if _db_drop
     // napravi mi DROP baze
     if !::drop_db( _db_name, _pg_srv )
+        // vrati se u prvobitno stanje operacije...
+        if _relogin
+            ::relogin_as( _t_user, _t_pwd, _t_database )
+        endif
+        return _ok
+    endif
+else
+    // provjeri da li ovakva baza vec postoji ?!!!
+    _qry := "SELECT COUNT(*) FROM pg_database " 
+    _qry += "WHERE datname = " + _sql_quote( _db_name )
+    if _sql_query( _pg_srv, _qry ):GetRow(1):FieldGet(1) > 0
+        // vrati se u prvobitno stanje operacije...
+        if _relogin
+            ::relogin_as( _t_user, _t_pwd, _t_database )
+        endif
         return _ok
     endif
 endif
@@ -499,6 +550,9 @@ MsgC()
 
 if VALTYPE( _ret ) == "L" .and. _ret == .f.
     // doslo je do neke greske...
+    if _relogin
+        ::relogin_as( _t_user, _t_pwd, _t_database )
+    endif
     return _ok
 endif
 
@@ -515,6 +569,9 @@ MsgC()
 
 if VALTYPE( _ret ) == "L" .and. _ret == .f.
     // doslo je do neke greske...
+    if _relogin
+        ::relogin_as( _t_user, _t_pwd, _t_database )
+    endif
     return _ok
 endif
 

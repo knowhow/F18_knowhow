@@ -779,7 +779,7 @@ f18_free_tables( { "kalk_doks", "kalk_kalk" } )
 
 
 // ako je sve ok, predji na import tabela sifrarnika
-if _cnt > 0
+if _cnt >= 0
 
     // ocisti mi 3 red
     @ m_x + 3, m_y + 2 SAY PADR( "", 69 )

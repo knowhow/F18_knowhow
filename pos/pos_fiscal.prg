@@ -58,7 +58,7 @@ _storno := pos_dok_is_storno( id_pos, "42", datum, rn_broj )
 _items := pos_items_prepare( id_pos, "42", datum, rn_broj, _storno, uplaceni_iznos )
 
 if _items == NIL
-    return _err_level
+    return 1
 endif
 
 do case
@@ -219,8 +219,14 @@ do while !EOF() .and. field->idpos == id_pos ;
 
 	if __device_params["plu_type"] == "D"
 		// generisi PLU iz parametara
-		_plu := auto_plu(nil, nil, __device_params )
+		_plu := auto_plu( nil, nil, __device_params )
 	endif
+
+    // plu ne moze biti 0
+    if __DRV_CURRENT == "FPRINT" .and. _plu == 0
+        MsgBeep( "PLU artikla = 0, to nije moguce !" )
+        return NIL
+    endif
 
 	_cijena := pos_get_mpc()
 	_art_barkod := roba->barkod

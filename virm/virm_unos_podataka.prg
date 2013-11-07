@@ -236,15 +236,15 @@ _IdBanka := LEFT( _ko_zr, 3 )
 @ m_x+3,m_y+2 SAY "Posiljaoc (sifra banke):       " GET _IdBanka valid OdBanku( _firma, @_IdBanka )
 read
 ESC_RETURN 0
-_ko_zr:=_IdBanka
+_ko_zr := _IdBanka
 
-_IdBanka2:=left(_kome_zr,3)
+_IdBanka2 := left(_kome_zr,3)
+
 select partn
-seek gVirmFirma
+seek _firma
 
 select virm_pripr
 _ko_txt := trim(partn->naz) + ", " + trim(partn->mjesto)+", "+trim(partn->adresa) + ", " + trim(partn->telefon)
-
 
 if vrprim->IdPartner == padr("JP", len(vrprim->idpartner))
    _bpo := gOrgJed // ova varijabla je iskoristena za broj poreskog obv.
@@ -254,8 +254,8 @@ else
    @ m_x+5,m_y+2 SAY "Primaoc (partner/banka):" GET _u_korist valid P_Firma(@_u_korist)  pict "@!"
    @ m_x+5,col()+2 GET _IdBanka2 valid {|| OdBanku(_u_korist,@_IdBanka2), SetPrimaoc()}
   else
-     _kome_txt:=vrprim->naz
-     _kome_zr:=vrprim->racun
+     _kome_txt := vrprim->naz
+     _kome_zr := vrprim->racun
      @ m_x+5,m_y+2 SAY "Primaoc (partner/banka):" + trim(_kome_txt)
   endif
 

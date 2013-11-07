@@ -236,7 +236,8 @@ local _minutes := _a_tmp[2]
 
 _time := hb_datetime( 0, 0, 0, VAL( _hour ), VAL( _minutes ) + fix , 0 )
 _time := RIGHT( ALLTRIM( hb_ttoc( _time ) ), 12 )
-_time := PADR( _time, 5 ) + ":00"
+_time := PADR( _time, 5 ) + "00"
+_time := STRTRAN( _time, ":", "" )
 
 return _time
 

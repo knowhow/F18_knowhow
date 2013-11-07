@@ -579,14 +579,14 @@ SELECT PRIPRZ
 __dbPack()
 
 // ova opcija ce setovati plu kodove u sifrarniku ako nisu vec setovani
-if fiscal_opt_active() .and. .f. 
+if fiscal_opt_active() 
 
     nTArea := SELECT()
 
     // generisi plu kodove za nove sifre
     gen_all_plu( .t. )
 
-    select (nTArea)
+    select ( nTArea )
 
 endif
 
@@ -1360,7 +1360,7 @@ do while !EOF()
     _rec["mpc"] := tops_roba->cijena1
     _rec["mpc2"] := tops_roba->cijena2
 
-    if tops_roba->( FieldPOS("fisc_plu") )
+    if tops_roba->( FieldPOS("fisc_plu") ) <> 0
         _rec["fisc_plu"] := tops_roba->fisc_plu
     endif
 

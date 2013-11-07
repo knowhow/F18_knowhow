@@ -199,10 +199,8 @@ return
 
 
 function TekRec()
-*{
 @ m_x+1,m_y+2 SAY recno()
 return nil
-*}
 
 
 function BodSort()

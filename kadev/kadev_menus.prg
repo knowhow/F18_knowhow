@@ -61,14 +61,25 @@ return
 
 
 
+
 function kadev_rpt_menu()
 local _opc := {}
 local _opcexe := {}
-local _izbor := 2
+local _izbor := 1
 
-AADD( _opc, "1. pregled godisnjih odmora             " )
+AADD( _opc, "1. pregled radnika po promjenama            " )
+AADD( _opcexe, {|| kadev_izvjestaj_promjene() })
+
+AADD( _opc, "2. pregled radnog staza za radnike        " )
+AADD( _opcexe, {|| kadev_izvjestaj_staz() })
+
+AADD( _opc, "3. pregled brojnog stanja radnika        " )
+AADD( _opcexe, {|| kadev_izvjestaj_br_stanje() })
+
+AADD( _opc, "6. pregled godisnjih odmora             " )
 AADD( _opcexe, {|| gododmori() })
-AADD( _opc, "2. pregled staza u firmi" )
+
+AADD( _opc, "7. pregled staza u firmi" )
 AADD( _opcexe, {|| stazufirmi() })
 
 f18_menu( "izvjestaji", .f., _izbor, _opc, _opcexe )

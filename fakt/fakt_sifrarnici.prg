@@ -156,7 +156,10 @@ elseif upper(Chr(Ch))=="O"
     return 7
 
 elseif upper(CHR(ch)) == "P"
-    return gen_all_plu()
+    
+    if gen_all_plu()
+        return DE_REFRESH
+    endif
 
 elseif Ch==K_ALT_M
 

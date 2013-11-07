@@ -266,24 +266,38 @@ enddo
 return
 
 
+// ----------------------------------------------------
+// setovanje linije za izvjestaj
+// ----------------------------------------------------
 static function SetLinSpo()
 local nObjekata
 
-cLinija:=REPLICATE("-",4)+" "+REPLICATE("-",10)+" "+REPLICATE("-",ROBAN_LEN)
+cLinija := REPLICATE( "-", 4 ) + " " + REPLICATE( "-", 10 ) + " " + REPLICATE( "-", ROBAN_LEN )
 
 select pobjekti
 go top
-nObjekata:=0
-do while !eof()
-	if field->id <> "99" .and. !EMPTY(cObjUsl) .and. !( &cObjUsl )
+
+nObjekata := 0
+
+do while !EOF()
+
+	if field->id <> "99" .and. !EMPTY( cObjUsl ) .and. !( &cObjUsl )
 		skip
 		loop
 	endif
-	cLinija:=cLinija+" "+REPLICATE("-",KOLICINA_LEN)
-	++nObjekata
+
+	cLinija := cLinija + " " + REPLICATE( "-", KOLICINA_LEN )
+
+	++ nObjekata
+
 	skip
+
 enddo
+
 return
+
+
+
 
 static function ZaglSPo(nStr) 
 local nObjekata

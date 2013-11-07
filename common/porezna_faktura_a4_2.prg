@@ -35,12 +35,7 @@ private nGMargina // gornja margina
 private cPDVSvStavka // varijanta fakture 
 
 if lStartPrint
-
-	if !StartPrint()
-		close all
-		return
-	endif
-
+    START PRINT CRET
 endif
 
 // uzmi glavne varijable za stampu fakture
@@ -201,7 +196,7 @@ pf_a4_footer(cRazmak, cLine)
 
 if lStartPrint
 	FF
-	EndPrint()
+    END PRINT
 endif
 
 return

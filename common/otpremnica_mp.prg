@@ -70,12 +70,7 @@ private nGMargina // gornja margina
 
 
 if lStartPrint
-
-	if !StartPrint()
-		close all
-		return
-	endif
-
+    START PRINT CRET
 endif
 
 // uzmi glavne varijable za stampu fakture
@@ -215,7 +210,7 @@ a4_footer()
 
 if lStartPrint
 	FF
-	EndPrint()
+    END PRINT
 endif
 
 return

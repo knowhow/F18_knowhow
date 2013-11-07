@@ -139,12 +139,7 @@ nDuzStrKorekcija := 0
 lPrintedTotal := .f.
 
 if lStartPrint
-
-	if !StartPrint(nil, nil, cDocumentName)
-		close all
-		return
-	endif
-
+    START PRINT CRET
 endif
 
 nSw1 := VAL(get_dtxt_opis("X04"))
@@ -324,8 +319,7 @@ a4_footer()
 
 if lStartPrint
 	FF
-    close all
-	EndPrint()
+    END PRINT
 endif
 
 return

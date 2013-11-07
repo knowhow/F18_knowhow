@@ -406,13 +406,14 @@ cFilt:= aUsl1+".and."+ aUsl2+".and."+;
         aUslS8+".and."+ aUslS9+".and."+ aUSlSa+".and."+ aUSlSb +".and."+;
         IF(UPPER(aSvUsl)=".T.",".t.","TacnoNO(aSvUsl,bInit1,bWhile1,bSkip1,bEnd1)")
 
-cFilt:=STRTRAN(cFilt,".t..and.","")
+  cFilt:=STRTRAN(cFilt,".t..and.","")
 
   SELECT (F_KADEV_0)
   GO TOP
-  Box(,2,30)
-  nSlog:=0; nUkupno:=RECCOUNT2()
-  INDEX ON &cSort1 TO "TMPKADEV_0" FOR &cFilt 
+  Box(,2,40)
+  nSlog:=0
+  nUkupno:=RECCOUNT2()
+  INDEX ON &cSort1 TO "TMPKADEV_0" FOR &cFilt EVAL show_progress( nUkupno, cFilt )
   GO TOP
   INKEY(0)
   BoxC()
@@ -491,6 +492,24 @@ cFilt:=STRTRAN(cFilt,".t..and.","")
 
 close all
 return
+
+
+
+// ----------------------------------------------------------------
+// prikazuje se progres bar kod pretrage
+// ----------------------------------------------------------------
+static function show_progress( last_rec, filt )
+
+if RECNO() <= last_rec
+    @ m_x + 1, m_y + 2 SAY "Filter: " + ALLTRIM( STR ( RECNO() ) ) + " od " + ALLTRIM( STR( last_rec ) )
+endif
+
+if &filt
+    @ m_x + 2, m_y + 2 SAY "Pronasao: " + ALLTRIM( STR( ++ nSlog ) ) 
+endif
+
+return .t.
+
 
 
 function EdK_02()

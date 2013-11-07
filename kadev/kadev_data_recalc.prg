@@ -70,6 +70,7 @@ return
 function kadev_rekstatall()
 local nOldArr
 local _postotak := ( gPostotak == "D" )
+local _radn_id := SPACE(13)
 
 O_KADEV_0
 
@@ -80,9 +81,10 @@ _o_tables()
 
 dDoDat := DATE()
 
-Box("b0XX", 1, 65,.f.)  
+Box("b0XX", 2, 65,.f.)  
     set cursor on
-    @ m_x + 1, m_y + 2 SAY "Kalkulacija do datuma:" GET dDoDat
+    @ m_x + 1, m_y + 2 SAY "Radnik (prazno-svi):" GET _radn_id VALID EMPTY( _radn_id ) .or. kadev_radnik_postoji( _radn_id )
+    @ m_x + 2, m_y + 2 SAY "Kalkulacija do datuma:" GET dDoDat
     read
 BoxC()
 
@@ -108,7 +110,22 @@ endif
 
 sql_table_update( NIL, "BEGIN" )
 
-do while !eof()
+select kadev_0
+
+if !EMPTY( _radn_id )
+
+    set order to tag "1"
+    go top
+    seek _radn_id
+
+    if !FOUND()
+        MsgBeep( "Nisam pronasao radnika !" )
+        return
+    endif
+
+endif
+
+do while !EOF() .and. IF( !EMPTY( _radn_id ), field->id == _radn_id, .t.  ) 
     
     if !_postotak
         @ m_x + 1, m_y + 2 SAY kadev_0->( id + ": " + prezime + " " + ime )
@@ -182,34 +199,23 @@ do while field->id = kadev_0->id .and. ( field->datumod < dDoDat )
 
     // kadev_1 tabela
     _rec_1 := dbf_get_rec()
-    
-    if kadev_promj->tip <> "X"
-        if EMPTY( _int_status )                           
-            _rec_0["status"] := kadev_promj->status
-        else                                       
-            _rec_0["status"] := _int_status
-        endif  
+   
+    if kadev_promj->tip <> "X" 
+        _rec_0["status"] := kadev_promj->status
     endif
 
     if kadev_promj->srmj == "1"  
-
         // SRMJ=="1" - promjena radnog mjesta
-
         _rec_0["idrj"] := kadev_1->idrj
         _rec_0["idrmj"] := kadev_1->idrmj
         _rec_0["daturmj"] := kadev_1->datumod
-
         if empty( kadev_0->datUF )
             _rec_0["datuf"] := kadev_1->datumod
         endif
-        
         _rec_0["datvrmj"] := CTOD("")
-   
     else
-        
         _rec_1["idrj"] := kadev_0->idrj
         _rec_1["idrmj"] := kadev_0->idrmj
-    
     endif
 
     if kadev_promj->urrasp == "1" 
@@ -231,9 +237,10 @@ do while field->id = kadev_0->id .and. ( field->datumod < dDoDat )
     endif
 
     if kadev_promj->tip == "I"  
-        // intervalna promjena
 
-        if !(EMPTY(kadev_1->DatumDo) .or. ( kadev_1->DatumDo > dDoDat )) // zatvorena
+        // intervalna promjena
+        if !( EMPTY( kadev_1->DatumDo ) .or. ( kadev_1->DatumDo > dDoDat )) 
+            // zatvorena
             if kadev_promj->status = "M" .and. kdv_rrasp->catr = "V" 
                 // catr="V" -> sluzenje vojnog roka
                 _rec_0["slvr"] := "D"
@@ -241,12 +248,12 @@ do while field->id = kadev_0->id .and. ( field->datumod < dDoDat )
             endif
         endif
 
-        if EMPTY( kadev_1->datumdo) .or. ( kadev_1->datumdo > dDoDat )
+        if EMPTY( kadev_1->datumdo ) .or. ( kadev_1->datumdo > dDoDat )
             _rec_0["datvrmj"] := kadev_1->datumod
             _int_status := kadev_promj->status                  
         else   
             // vrsi se zatvaranje promjene
-            if kadev_promj->uRrasp = "1"  
+            if kadev_promj->urrasp = "1"  
                 // ako je intervalna promjena setovala RRasp
                 _rec_0["idrrasp"] := ""
             endif

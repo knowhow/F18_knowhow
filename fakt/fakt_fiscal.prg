@@ -103,7 +103,7 @@ _partn_data := fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, _storno )
 
 if VALTYPE( _partn_data ) == "L"
     // nesto nije dobro, zatvaram opciju
-    return _err_level
+    return 1
 endif
 
 // pripremi mi matricu sa stavkama racuna
@@ -111,7 +111,7 @@ _items_data := fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, _storno, _p
 
 // da nije slucajno NIL ???
 if VALTYPE( _items_data ) == "L" .or. _items_data == NIL
-    return _err_level
+    return 1
 endif
 
 do case
@@ -365,13 +365,22 @@ do while !EOF() .and. field->idfirma == id_firma ;
     _art_jmj := ALLTRIM( roba->jmj )
 
     _art_plu := roba->fisc_plu
+
     // generisi automatski plu ako treba
     if __device_params["plu_type"] == "D" .and. ;
         ( __device_params["vp_sum"] <> 1 .or. tip_dok $ "11" )
+
         _art_plu := auto_plu( nil, nil,  __device_params )
+        
+        if __DRV_CURRENT == "FPRINT" .and. _art_plu == 0
+            MsgBeep( "PLU artikla = 0, to nije moguce !" )
+            return NIL
+        endif
+
     endif
 
     _cijena := roba->mpc
+
     // izracunaj cijenu
     if tip_dok == "10"
         // moramo uzeti cijenu sa pdv-om
@@ -520,15 +529,17 @@ _vrsta_p := field->idvrstep
 // 7 - ino partner
 // 8 - pdv obveznik
 
-if ! ( tip_dok $ "#10#11#" ) .or. EMPTY( _partn_id ) .or. _vrsta_p == "G "
+if ! ( tip_dok $ "#10#11#" ) .or. EMPTY( _partn_id ) 
    return NIL
 endif
 
-if tip_dok $ "#10#" .or. ( tip_dok == "11" .and. _vrsta_p == "VR" )
+if ( tip_dok $ "#10#" .and. !_vrsta_p == "G " ) .or. ( tip_dok == "11" .and. _vrsta_p == "VR" )
     // virmansko placanje
     // tip dokumenta: 10
     // tip dokumenta: 11 i vrsta placanja "VR"
     _v_plac := "3"
+elseif ( tip_dok == "10" .and. _vrsta_p == "G " )
+    _v_plac := "0"
 endif
 
 if tip_dok $ "#11#" .and. _vrsta_p == "KT"
@@ -540,6 +551,12 @@ endif
 _partn_jib := ALLTRIM( IzSifK( "PARTN", "REGB", _partn_id, .f. ) )
 // oslobadjanje po clanu
 _partn_clan := ALLTRIM( IzSifK( "PARTN" , "PDVO", _partn_id, .f. ) )
+
+// u ovoj varijanti nam partner ne treba !
+// dokument 10, vrsta placanja "G " i nema ID broja ili je INO
+if tip_dok == "10" .and. _vrsta_p == "G " .and. ( EMPTY( _partn_jib ) .or. LEN( ALLTRIM( _partn_jib ) ) < 12 )
+    return NIL
+endif
 
 //if tip_dok == "11"
  

@@ -23,7 +23,6 @@ local _opcexe := {}
 
 // otvori tabele
 kadev_o_tables()
-
 // setuj sve relacije tabela
 kadev_set_relations()
 
@@ -163,21 +162,22 @@ aUslovi := {}
 
 select kdv_globusl
 
-DBEVAL( {|| AADD(aUslovi, {Komentar,' ', trim(Uslov), trim(ime_baze) } ) })
+DBEVAL( {|| AADD( aUslovi, { Komentar, ' ', trim(Uslov), trim(ime_baze) } ) })
 
-if len(aUslovi)==0
+if LEN( aUslovi ) == 0
     MsgO("Prekidam generisanje izvjestaja. Nije kreiran nijedan globalni uslov!")
     Inkey(0)
     MsgC()
     return
 endif
 
-Box("musl",10,30,.f.)
-    @ m_x,m_y+2 SAY "<SPACE> markiranje"
-    MABROWSE( aUslovi, m_x+1, m_y+1, m_x+10, m_y+30 )
+Box( "musl", 10, 60, .f. )
+    @ m_x, m_y + 2 SAY "<SPACE> markiranje"
+    MABROWSE( aUslovi, m_x + 1, m_y + 1, m_x + 10, m_y + 60 )
 BoxC()
 
-if ASCAN(aUslovi, {|aElem| aElem[2]='*'}) == 0
+if ASCAN( aUslovi, { |aElem| aElem[2] = '*' }) == 0
+    MsgBeep( "Nije markiran niti jedan uslov sa <SPACE> !" )
     return
 endif
 
@@ -343,6 +343,10 @@ ENDIF
 
 FF
 END PRINT             
+
+kadev_o_tables()
+kadev_set_relations()
+select kadev_0
 
 return
 

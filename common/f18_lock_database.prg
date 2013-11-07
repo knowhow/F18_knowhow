@@ -162,7 +162,8 @@ local _client := fetch_metric( DB_LOCK_PARAM, my_user(), DTOC( CTOD("") ) )
 ::lock_params[ SRV_LOCK_PARAM ] := _server
 ::lock_params[ CLI_LOCK_PARAM ] := _client
 
-if _server <> DTOC( CTOD( "" ) ) .and. _server <> "0" 
+if ! ( _server $ "  .  .  #0#" ) 
+    //if _server <> DTOC( CTOD( "" ) ) .and. _server <> "0" 
     ::lock_params["database_locked"] := .t.
 else
     ::lock_params["database_locked"] := .f.

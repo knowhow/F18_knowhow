@@ -1,6 +1,7 @@
 1.4.240 2013-11-07, vsasa
  
   - F18, otvaranje nove godine za sve ili pojedinačnu bazu (admin opcije F10)
+  - KADEV, korekcija indeksa kod pretrage podataka
  
 1.4.239 2013-11-04, vsasa
  

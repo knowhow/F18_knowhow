@@ -141,12 +141,12 @@ for _i := 1 TO LEN(ids)
 
 next
 
-// ako id sadrzi vise od 1000 stavki, korisnik je dugo neaktivan, pokreni full sync
+// ako id sadrzi vise od 2000 stavki, korisnik je dugo neaktivan, pokreni full sync
 _qry += "UPDATE " + _tbl + " SET ids = ARRAY['#F']  WHERE "
 if !to_myself
  _qry += "user_code <> " + _sql_quote(_user) + " AND "
 endif
-_qry += "ids IS NOT NULL AND array_length(ids,1) > 1000"
+_qry += "ids IS NOT NULL AND array_length(ids,1) > 2000"
 _ret := _sql_query( _server, _qry )
 
 // ova komanda svakako treba da ide u log, jer je to kljucna stvar kod otklanjanja kvarova

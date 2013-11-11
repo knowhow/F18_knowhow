@@ -1,3 +1,7 @@
+1.4.241 2013-11-11, vsasa
+ 
+  - KADEV, šifrarnik sistematizacije, korekcije (uvođenje opcije F4)
+ 
 1.4.240 2013-11-07, vsasa
  
   - F18, otvaranje nove godine za sve ili pojedinačnu bazu (admin opcije F10)

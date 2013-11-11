@@ -66,10 +66,10 @@ _item["algoritam"] := {}
 // algoritam 1 - default
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
-_alg["dbf_key_block"]  := {|| field->idrj + field->idrmj }
-_alg["dbf_key_fields"] := { "idrj", "idrmj" }
-_alg["sql_in"]         := " rpad( idrj, 6 ) || rpad( idrmj, 4 ) " 
-_alg["dbf_tag"]        := "1"
+_alg["dbf_key_block"]  := {|| field->idrj + field->idrmj + field->idzanim1 + field->idstrsprod + field->idstrsprdo }
+_alg["dbf_key_fields"] := { "idrj", "idrmj", "idzanim1", "idstrsprod", "idstrsprdo" }
+_alg["sql_in"]         := " rpad( idrj, 6 ) || rpad( idrmj, 4 ) || rpad( idzanim1, 4 ) || rpad( idstrsprod, 3 ) || rpad( idstrsprdo, 3 ) " 
+_alg["dbf_tag"]        := "ID"
 AADD(_item["algoritam"], _alg )
 
 _item["sql_order"] := "idrj, idrmj"

@@ -251,20 +251,41 @@ return .t.
 
 
 function EdRJRMJ()
-Ch:=Lastkey()
+
+Ch := Lastkey()
+
 do case
-	case Ch=K_ENTER
-     		return DE_ABORT
-  	case Ch=K_CTRL_N .or. Ch==K_F2
-    		set cursor on
-    		fNovi:=.f.
-    		if Ch==K_CTRL_N
-      			fNovi:=.t.
-      			append blank
-    		endif
-    		set_global_vars_from_dbf("s")
-    		Box("bd09s",11,77,.f.)
+
+    case Ch = K_ENTER
+     	return DE_ABORT
+
+  	case ( Ch = K_CTRL_N .or. Ch == K_F2 .or. Ch == K_F4 )
+
+    	set cursor on
+
+    	fNovi := .f.
+
+    	if Ch == K_CTRL_N .or. Ch == K_F4
+
+      		fNovi := .t.
+
+            if Ch == K_F4
+    	        set_global_vars_from_dbf("s")
+            endif
+
+      		append blank
+
+            if Ch == K_CTRL_N
+    	        set_global_vars_from_dbf("s")
+            endif
+        else
+    	    set_global_vars_from_dbf("s")
+    	endif
+        
+    	Box("bd09s",11,77,.f.)
+
     		Private Getlist:={}
+
     		@ m_x+1, m_y+2 SAY "R.jedinica " GET sIDRJ valid P_KADEV_RJ(@sIdRJ,1,25) PICTURE "@!"
     		@ m_x+2, m_y+2 SAY "R.mjesto   " GET sIDRMJ valid P_RMJ(@sIdRMJ,2,25) PICTURE "@!"
     		@ m_x+3, m_y+2 SAY "Strucna sprema OD " GET sIdStrsprOd valid P_STRSPR(@sIdStrSprOd,3,40) PICTURE "@!"
@@ -281,41 +302,40 @@ do case
     		@ m_x+10,COL()+2 SAY "K./3 " GET sIdK3 PICTURE "@!"
     		@ m_x+10,COL()+2 SAY "K./4 " GET sIdK4 PICTURE "@!"
     		@ m_x+11,m_y+2 SAY "Opis              " GET sOpis   
+
     		read
-    		BoxC()
-    		if lastkey()==K_ESC
-      			if fNovi
-                    _rec := dbf_get_rec()
-                    delete_rec_server_and_dbf( "kadev_rjrmj", _rec, 1, "FULL" )
-				skip -1
-         			RETURN DE_REFRESH
-      			else
-         			return DE_CONT
-      			endif
-    		else
-      			_rec := get_dbf_global_memvars("s")
-                update_rec_server_and_dbf( "kadev_rjrmj", _rec, 1, "FULL" )
-      			return DE_REFRESH
-    		endif
 
-  	case Ch==K_CTRL_P
-    		
-		PushWa()
-    		go top
-    		Izlaz("Pregled: SISTEMATIZACIJA        na dan "+dtoc(date())+" g.","sistemat")
-    		PopWa()
-    		return DE_CONT
+    	BoxC()
 
-  	case Ch=K_CTRL_T
-    		if Pitanje("psist","Zelite li izbrisati ovu stavku ??","D")=="D"
-      			_rec := dbf_get_rec()
+    	if lastkey() == K_ESC
+
+      		if fNovi
+                _rec := dbf_get_rec()
                 delete_rec_server_and_dbf( "kadev_rjrmj", _rec, 1, "FULL" )
-                return DE_REFRESH
-    		else
-      			return DE_CONT
-    		endif
+				skip -1
+         		return DE_REFRESH
+            else
+         		return DE_CONT
+      		endif
+    	else
+      		_rec := get_dbf_global_memvars("s")
+            update_rec_server_and_dbf( "kadev_rjrmj", _rec, 1, "FULL" )
+      		return DE_REFRESH
+    	endif
+
+  	case Ch = K_CTRL_T
+
+    	if Pitanje("psist","Zelite li izbrisati ovu stavku ??","D")=="D"
+      		_rec := dbf_get_rec()
+            delete_rec_server_and_dbf( "kadev_rjrmj", _rec, 1, "FULL" )
+            return DE_REFRESH
+    	else
+      		return DE_CONT
+    	endif
+
   	otherwise
-    		return DE_CONT
+    	return DE_CONT
+
 endcase
 
 return

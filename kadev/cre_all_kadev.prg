@@ -258,7 +258,7 @@ _table_name := "kadev_rjrmj"
 IF_NOT_FILE_DBF_CREATE
 IF_C_RESET_SEMAPHORE
 
-CREATE_INDEX( "id", "IDRJ+IDRMJ", _alias )
+CREATE_INDEX( "id", "idrj + idrmj + idzanim1 + idstrsprod + idstrsprdo", _alias )
 
 
 // ------------------------------------------------

@@ -427,6 +427,9 @@ do while !_dbs:EOF()
     _params["db_drop"] := _db_delete
     _params["db_comment"] := ""
 
+    // napravi relogin...
+    _pg_srv := ::relogin_as( "admin", "boutpgmin" )
+
     // otvori bazu...
     if ! ::create_new_db( _params, _pg_srv )
         AADD( _res, { _db_to, _db_from, "ERR" } )
@@ -438,7 +441,7 @@ do while !_dbs:EOF()
 
 enddo
 
-boxC()
+BoxC()
 
 // vrati se gdje si bio...
 ::relogin_as( _t_user, _t_pwd, _t_database )
@@ -459,38 +462,38 @@ return _ok
 // ---------------------------------------------------------------
 // kreiranje nove baze 
 // ---------------------------------------------------------------
-METHOD F18AdminOpts:create_new_db( _params, _pg_srv )
+METHOD F18AdminOpts:create_new_db( params, pg_srv )
 local _ok := .f.
 local _db_name, _db_template, _db_drop, _db_type, _db_comment
 local _qry
-local _ret 
+local _ret, _res 
 local _relogin := .f.
 local _db_params, _t_user, _t_pwd, _t_database
 
 // 1) params read
 // ===============================================================
-if _params == NIL
+if params == NIL
 
     if !SigmaSif("ADMIN")
         MsgBeep( "Opcija zasticena !" )
         return _ok
     endif
 
-    _params := hb_hash()
+    params := hb_hash()
 
     // CREATE DATABASE name OWNER admin TEMPLATE templ;
-    if !::create_new_db_params( @_params )
+    if !::create_new_db_params( @params )
         return _ok
     endif
 
 endif
 
 // uzmi parametre koje ces koristiti dalje...
-_db_name := _params["db_name"]
-_db_template := _params["db_template"]
-_db_drop := _params["db_drop"] == "D"
-_db_type := _params["db_type"]
-_db_comment := _params["db_comment"]
+_db_name := params["db_name"]
+_db_template := params["db_template"]
+_db_drop := params["db_drop"] == "D"
+_db_type := params["db_type"]
+_db_comment := params["db_comment"]
 
 if EMPTY( _db_template ) .or. LEFT( _db_template, 5 ) == "empty"
     // ovo ce biti prazna baza uvijek...
@@ -500,12 +503,12 @@ endif
 // 2) relogin as admin
 // ===============================================================
 // napravi relogin na bazi... radi admin prava...
-if _pg_srv == NIL
+if pg_srv == NIL
     _db_params := my_server_params()
     _t_user := _db_params["user"]
     _t_pwd := _db_params["password"]
     _t_database := _db_params["database"]
-    _pg_srv := ::relogin_as( "admin", "boutpgmin" )
+    pg_srv := ::relogin_as( "admin", "boutpgmin" )
     _relogin := .t.
 endif
 
@@ -513,7 +516,7 @@ endif
 // ===============================================================
 if _db_drop
     // napravi mi DROP baze
-    if !::drop_db( _db_name, _pg_srv )
+    if !::drop_db( _db_name, pg_srv )
         // vrati se u prvobitno stanje operacije...
         if _relogin
             ::relogin_as( _t_user, _t_pwd, _t_database )
@@ -524,12 +527,15 @@ else
     // provjeri da li ovakva baza vec postoji ?!!!
     _qry := "SELECT COUNT(*) FROM pg_database " 
     _qry += "WHERE datname = " + _sql_quote( _db_name )
-    if _sql_query( _pg_srv, _qry ):GetRow(1):FieldGet(1) > 0
-        // vrati se u prvobitno stanje operacije...
-        if _relogin
-            ::relogin_as( _t_user, _t_pwd, _t_database )
+    _res := _sql_query( pg_srv, _qry )
+    if VALTYPE( _res ) <> "L" 
+        if _res:GetRow(1):FieldGet(1) > 0
+            // vrati se u prvobitno stanje operacije...
+            if _relogin
+                ::relogin_as( _t_user, _t_pwd, _t_database )
+            endif
+            return _ok
         endif
-        return _ok
     endif
 endif
 
@@ -544,7 +550,7 @@ endif
 _qry += ";"
 
 MsgO( "Kreiram novu bazu " + _db_name + " ..." )
-_ret := _sql_query( _pg_srv, _qry )
+_ret := _sql_query( pg_srv, _qry )
 MsgC()
 
 if VALTYPE( _ret ) == "L" .and. _ret == .f.
@@ -563,7 +569,7 @@ _qry := "GRANT ALL ON DATABASE " + _db_name + " TO admin;"
 _qry += "GRANT ALL ON DATABASE " + _db_name + " TO xtrole WITH GRANT OPTION;"
 
 MsgO( "Postavljam privilegije baze..." )
-_ret := _sql_query( _pg_srv, _qry )
+_ret := _sql_query( pg_srv, _qry )
 MsgC()
 
 if VALTYPE( _ret ) == "L" .and. _ret == .f.
@@ -582,7 +588,7 @@ endif
 if !EMPTY( _db_comment )
     _qry := "COMMENT ON DATABASE " + _db_name + " IS " + _sql_quote( hb_strtoutf8( _db_comment ) ) + ";"
     MsgO( "Postavljam opis baze..." )
-    _ret := _sql_query( _pg_srv, _qry )
+    _ret := _sql_query( pg_srv, _qry )
     MsgC()
 endif
 

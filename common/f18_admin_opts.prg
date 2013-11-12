@@ -391,7 +391,7 @@ _pg_srv := ::relogin_as( "admin", "boutpgmin" )
 _qry := "SELECT datname FROM pg_database " 
 
 if EMPTY( _db )
-    _qry += "WHERE datname LIKE '% + " + ALLTRIM( STR( _from_sess ) ) + "' "
+    _qry += "WHERE datname LIKE '%_" + ALLTRIM( STR( _from_sess ) ) + "' "
 else
     _qry += "WHERE datname = " + _sql_quote( ALLTRIM( _db ) + "_" + ALLTRIM( STR( _from_sess ) ) )
 endif
@@ -408,7 +408,6 @@ _dbs:GoTo(1)
 Box(, 3, 60 )
 
 do while !_dbs:EOF()
-
 
     oRow := _dbs:GetRow()
 

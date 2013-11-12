@@ -1,3 +1,7 @@
+1.4.242 2013-11-12, vsasa
+ 
+  - F18, otvaranje novih baza, uslov sve baze bugfix
+ 
 1.4.241 2013-11-11, vsasa
  
   - KADEV, šifrarnik sistematizacije, korekcije (uvođenje opcije F4)

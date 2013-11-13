@@ -1,3 +1,7 @@
+1.5.29 2013-11-13, vsasa
+
+   - FAKT, unos dokumenta, nakon zadnjeg merge-a sa mastera uletila loša varijabla
+
 1.5.28 2013-11-07, vsasa
 
    - git merge master, 1.4.239

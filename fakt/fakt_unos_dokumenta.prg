@@ -822,7 +822,7 @@ return
 // --------------------------------------------------------
 // hendliranje unosa novih stavki u pripremi
 // --------------------------------------------------------
-static function edit_fakt_priprema(novi, items_atrib)
+static function edit_fakt_priprema( novi, items_atrib )
 local _a_tipdok := {}
 local _h
 local _rok_placanja := 0
@@ -992,7 +992,7 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
     @ m_x + _x, m_y + 2 SAY PADR( _a_tipdok[ ASCAN( _a_tipdok, {|x| _idtipdok == LEFT( x, 2 ) } ) ], 40 )
     
     // ako treba resetovati broj dokumenta !
-    if !fNovi .and. __redni_broj == 1
+    if !__nove_stavke .and. __redni_broj == 1
         if _idtipdok <> _old_tip_dok .and. !EMPTY( field->brdok ) .and. ALLTRIM( field->brdok ) <> "00000"
             MsgBeep( "Vrsite promjenu vrste dokumenta. Obratiti paznju na broj !" )
             if Pitanje(, "Resetovati broj dokumenta na 00000 (D/N) ?", "D" ) == "D"

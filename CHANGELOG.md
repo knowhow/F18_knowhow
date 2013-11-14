@@ -1,3 +1,7 @@
+1.4.243 2013-11-12, vsasa
+ 
+  - KALK, kontiranje naloga domaća/strana valuta - bugfix 
+ 
 1.4.242 2013-11-12, vsasa
  
   - F18, otvaranje novih baza, uslov sve baze bugfix

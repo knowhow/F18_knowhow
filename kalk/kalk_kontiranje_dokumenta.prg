@@ -336,10 +336,14 @@ do while !EOF()
                 if lDatFakt
                     dDFDok := finmat->DatFaktP
                 endif
-      
-                nIz2 := Round7( nIz, RIGHT( TRFP->naz, 2 ))
-                nIz := Round7( nIz2, RIGHT( TRFP->naz, 2 ))
-
+     
+                if gBaznaV == "P"
+                    nIz := ROUND7( nIz, RIGHT( trfp->naz, 2 ) )
+                    nIz2 := ROUND7( nIz * Kurs( dDFDok, "P", "D" ), RIGHT( trfp->naz, 2 ) )
+                else
+                    nIz2 := ROUND7( nIz, RIGHT( trfp->naz, 2 ) )
+                    nIz := ROUND7( nIz2 * Kurs( dDFDok, "D", "P" ), RIGHT( trfp->naz, 2 ) )
+                endif
 
                 if "IDKONTO"==padr(trfp->IdKonto,7)
                     cIdKonto:=finmat->idkonto

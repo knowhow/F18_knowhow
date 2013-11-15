@@ -232,12 +232,115 @@ return _storno
 // otvaranje potrebnih tabela
 // --------------------------------------------------
 static function _o_tables()
+O_TARIFA
 O_FAKT_DOKS
 O_FAKT
 O_ROBA
 O_SIFK
 O_SIFV
 return
+
+
+
+// ----------------------------------------------------------
+// kalkulise iznose na osnovu datih parametara
+// ----------------------------------------------------------
+static function calculate_iznosi( arr, partner, tip_dok )
+local _calc := hb_hash()
+local _tar, _i, _iznos
+local _t_area := SELECT()
+
+_calc["ukupno"] := 0
+_calc["pdv"] := 0
+_calc["osnovica"] := 0
+
+// prodji kroz matricu sa porezima i iznosima
+for _i := 1 to LEN( arr )
+
+    _tar := PADR( arr[ _i, 1 ], 6 )
+    _iznos := arr[ _i, 2 ]
+
+    select tarifa
+    hseek _tar
+
+    if tip_dok $ "11#13#23"
+        // MP dokumenti, kod njih je ovo iznos sa porezom
+        if !IsIno( partner ) .and. !IsOslClan( partner ) .and. tarifa->opp > 0
+            _calc["ukupno"] := _calc["ukupno"] + _iznos
+            _calc["osnovica"] := _calc["osnovica"] + ( _iznos / ( 1 + tarifa->opp / 100 ) )
+            _calc["pdv"] := _calc["pdv"] + ( ( _iznos / ( 1 + tarifa->opp / 100 ) ) * ( tarifa->opp / 100 ) )
+        else
+            _calc["ukupno"] := _calc["ukupno"] + _iznos
+            _calc["osnovica"] := _calc["osnovica"] + _iznos
+        endif
+    else
+        // VP dokumenti, kod njih je ovo iznos bez poreza
+        if !IsIno( partner ) .and. !IsOslClan( partner ) .and. tarifa->opp > 0
+            _calc["ukupno"] := _calc["ukupno"] + ( _iznos * ( 1 + tarifa->opp / 100 ) )
+            _calc["osnovica"] := _calc["osnovica"] + _iznos
+            _calc["pdv"] := _calc["pdv"] + ( _iznos * ( tarifa->opp / 100 ) )
+        else
+            _calc["ukupno"] := _calc["ukupno"] + _iznos
+            _calc["osnovica"] := _calc["osnovica"] + _iznos
+        endif
+    endif
+
+next
+
+select ( _t_area )
+
+return _calc
+
+
+
+// -------------------------------------------------
+// -------------------------------------------------
+static function get_a_iznos( idfirma, idtipdok, brdok )
+local _a_iznos := {}
+local _tar, _roba, _scan
+
+select fakt
+go top
+seek idfirma + idtipdok + brdok
+do while !EOF() .and. field->idfirma == idfirma .and. ;
+                    field->idtipdok == idtipdok .and. ;
+                    field->brdok == brdok
+
+    _roba := field->idroba
+    _cijena := field->cijena
+    _kol := field->kolicina 
+    _rab := field->rabat
+
+
+    select roba
+    hseek _roba
+
+    select tarifa
+    hseek roba->idtarifa
+
+    _tar := tarifa->id
+
+    select fakt
+
+    if field->dindem == LEFT( ValBazna(), 3 )
+        _iznos := Round( _kol * _cijena * PrerCij() * ( 1 - _rab / 100), ZAOKRUZENJE )
+    else
+        _iznos := round( _kol * _cijena * PrerCij() * ( 1 - _rab / 100), ZAOKRUZENJE )
+    endif
+   
+    _scan := ASCAN( _a_iznos, { |var| var[1] == tarifa->id } )
+
+    if _scan == 0
+        AADD( _a_iznos, { PADR( _tar, 6 ), _iznos } )
+    else
+        _a_iznos[ _scan, 2 ] := _a_iznos[ _scan, 2 ] + _iznos
+    endif
+
+    skip
+
+enddo
+
+return _a_iznos
 
 
 
@@ -253,6 +356,8 @@ local _art_barkod, _rn_rbr, _memo
 local _pop_na_teret_prod := .f.
 local _partn_ino := .f.
 local _partn_pdv := .t.
+local _a_iznosi := {}
+local _data_item, _data_total, _arr
 
 // 0 - gotovina
 // 3 - ziralno / virman
@@ -292,6 +397,10 @@ _rn_rabat := field->rabat
 _rn_datum := field->datdok
 _partn_id := field->idpartner
 
+// matrica sa tarifama i iznosima ukupnim sa dokumenta...
+_a_iznosi := get_a_iznos( id_firma, tip_dok, br_dok )
+_data_total := calculate_iznosi( _a_iznosi, _partn_id, tip_dok )
+
 // nastimaj me na fakt_fakt
 select fakt
 go top
@@ -318,7 +427,10 @@ endif
 // upisat cemo ga u svaku stavku matrice
 // to je total koji je bitan kod regularnih racuna
 // pdv, ne pdv obveznici itd...
-_rn_total := _uk_sa_pdv( tip_dok, _partn_id, _rn_iznos )
+//_rn_total := _uk_sa_pdv( tip_dok, _partn_id, _rn_iznos )
+
+_rn_total := _data_total["ukupno"]
+
 // total za sracunavanje kod samaranja po stavkama racuna
 _rn_f_total := 0
 
@@ -362,7 +474,6 @@ do while !EOF() .and. field->idfirma == id_firma ;
     endif
 
     _art_jmj := ALLTRIM( roba->jmj )
-
     _art_plu := roba->fisc_plu
 
     // generisi automatski plu ako treba
@@ -380,13 +491,18 @@ do while !EOF() .and. field->idfirma == id_firma ;
 
     _cijena := roba->mpc
 
+    _tarifa_id := ALLTRIM( roba->idtarifa )
+    
+    // hash_matrica sa iznosima po stavci...
+    _arr := {}
+    AADD( _arr, { _tarifa_id, field->cijena } )
+    _data_item := calculate_iznosi( _arr, _partn_id, tip_dok )
+
+    _cijena := _data_item["ukupno"]
+
     // izracunaj cijenu
     if tip_dok == "10"
-        // moramo uzeti cijenu sa pdv-om
-        _cijena := ABS( _uk_sa_pdv( tip_dok, _partn_id, field->cijena ) )
         _vr_plac := "3"
-    else
-        _cijena := ABS( field->cijena )
     endif
     
     _kolicina := ABS( field->kolicina )
@@ -400,8 +516,6 @@ do while !EOF() .and. field->idfirma == id_firma ;
     else
         _rn_rabat := ABS ( field->rabat ) 
     endif
-
-    _tarifa_id := ALLTRIM( roba->idtarifa )
 
     // ako je za ino kupca onda ide nulta stopa
     // oslobodi ga poreza
@@ -475,7 +589,7 @@ if _pop_na_teret_prod .or. _partn_ino
 endif
 
 // zbirni racun
-if tip_dok $ "10"
+if tip_dok $ "10" .and. LEN( _a_iznosi ) < 2
     set_fiscal_rn_zbirni( @_data )
 endif
 
@@ -877,9 +991,9 @@ if __DRV_CURRENT  $ "#FPRINT#HCP#TRING#"
 endif
 
 // ukupna vrijednost racuna za sve stavke matrice je ista popunjena
-_total := ROUND2( data[1, 14], 2 )
+_total := ROUND2( data[ 1, 14 ], 2 )
 
-if !EMPTY( data[1, 8] )
+if !EMPTY( data[ 1, 8 ] )
     // ako je storno racun
     // napravi korekciju da je iznos pozitivan
     _total := ABS( _total )

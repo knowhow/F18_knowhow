@@ -1,3 +1,7 @@
+1.4.244 2013-11-15, vsasa
+ 
+  - FAKT, fiskalne opcije, miksani račun PDV0, PDV17
+ 
 1.4.243 2013-11-12, vsasa
  
   - KALK, kontiranje naloga domaća/strana valuta - bugfix 

@@ -245,7 +245,7 @@ return
 // ----------------------------------------------------------
 // kalkulise iznose na osnovu datih parametara
 // ----------------------------------------------------------
-static function calculate_iznosi( arr, partner, tip_dok )
+static function fakt_izracunaj_total( arr, partner, tip_dok )
 local _calc := hb_hash()
 local _tar, _i, _iznos
 local _t_area := SELECT()
@@ -399,7 +399,7 @@ _partn_id := field->idpartner
 
 // matrica sa tarifama i iznosima ukupnim sa dokumenta...
 _a_iznosi := get_a_iznos( id_firma, tip_dok, br_dok )
-_data_total := calculate_iznosi( _a_iznosi, _partn_id, tip_dok )
+_data_total := fakt_izracunaj_total( _a_iznosi, _partn_id, tip_dok )
 
 // nastimaj me na fakt_fakt
 select fakt
@@ -496,7 +496,7 @@ do while !EOF() .and. field->idfirma == id_firma ;
     // hash_matrica sa iznosima po stavci...
     _arr := {}
     AADD( _arr, { _tarifa_id, field->cijena } )
-    _data_item := calculate_iznosi( _arr, _partn_id, tip_dok )
+    _data_item := fakt_izracunaj_total( _arr, _partn_id, tip_dok )
 
     _cijena := _data_item["ukupno"]
 

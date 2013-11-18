@@ -1,3 +1,7 @@
+1.4.245 2013-11-18, vsasa
+ 
+  - VALUTE, opcije valutiranja Kurs(), Omjer() ... korekcije
+ 
 1.4.244 2013-11-15, vsasa
  
   - FAKT, fiskalne opcije, miksani račun PDV0, PDV17

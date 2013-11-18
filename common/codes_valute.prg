@@ -23,133 +23,126 @@
  *
  *  \return f-ja vraca protuvrijednost jedinice valute cValIz u valuti cValU
  */
-function Kurs(dDat, cValIz, cValU)
-local nNaz
-local nArr
-local nPom1:=0
-local nPom2:=0
-local cPom:=""
-local cOrderTag:=""
+function Kurs( datum, val_iz, val_u )
+local _data, _qry, _tmp_1, _tmp_2, oRow
 
-IF cValIz==nil
-	cValIz:="P"
-ENDIF
+_tmp := 1
+_tmp_2 := 1
 
-IF cValU==nil
-	if cValIz == "P"
-	   cValU:="D"
+if val_iz == NIL
+	val_iz := "P"
+endif
+
+if val_u == NIL
+	if val_iz == "P"
+	    val_u := "D"
 	else
-	   cVAlU:="P"
+	    val_u := "P"
 	endif 
-ENDIF
-
-nArr:=SELECT()
-
-SELECT (F_VALUTE)
-IF !USED()
-	O_VALUTE
-ENDIF
-
-cOrderTag := UPPER(ORDNAME())
-
-// pronadjimo kurs valute "iz"
-if (cValIz == "P" .or. cValIz == "D") 
-   if cOrderTag <> "NAZ"
-   	SET ORDER TO TAG "NAZ"
-	cOrderTag := "ID"
-   endif
-else
-   if cOrderTag <> "ID2"
-      SET ORDER TO TAG "ID2"
-      cOrderTag:= "ID2"
-   endif
 endif
 
-SEEK cValIz
-IF !FOUND()
-	Msg("Nepostojeca valuta iz koje se pretvara iznos:## '"+cValIz+"' !")
-  	nPom1:=1
-ELSEIF DTOS(dDat)<DTOS(valute->datum)
-  	Msg("Nepostojeci kurs valute iz koje se pretvara iznos:## '"+cValIz+"'. Provjeriti datum !")
-  	nPom1:=1
-ELSE
-  	cPom:=id
-  	DO WHILE DTOS(dDat)>=DTOS(valute->datum) .and. cPom==valute->id
-	     SKIP 1
-	ENDDO
-  	SKIP -1
-  	nPom1:= kurs1
-ENDIF
-
-// pronadjimo kurs valute "u"
-if (cValU == "P" .or. cValU == "D") 
-   if cOrderTag <> "NAZ"
-   	SET ORDER TO TAG "NAZ"
-	cOrderTag := "ID"
-   endif
+if ( val_iz == "P" .or. val_iz == "D" )
+    _where := " tip = " + _sql_quote( val_iz )
 else
-   if cOrderTag <> "ID2"
-      SET ORDER TO TAG "ID2"
-      cOrderTag:= "ID2"
-   endif
+    _where := " id = " + _sql_quote( val_iz )
 endif
 
-SEEK cValU
-IF !FOUND()
-  	Msg("Nepostojeca valuta u koju se pretvara iznos:## '"+cValU+"' !")
-  	nPom2:=1
-        nPom1:=1
+if !EMPTY( datum )
+    _where += " AND ( " + _sql_date_parse( "datum", NIL, datum ) + ") "
+endif
 
-ELSEIF DTOS(dDat) < DTOS(valute->datum)
-  	Msg("Nepostojeci kurs valute u koju se pretvara iznos:## '"+cValU+"'. Provjeriti datum !")
-  	nPom2:=1
-        nPom1:=1
-ELSE
-  	cPom:=id
-  	DO WHILE DTOS(dDat)>=DTOS(valute->datum) .and. cPom==valute->id
-	    SKIP 1
-	ENDDO
-  	SKIP -1
-  	nPom2:= valute->kurs1
-ENDIF
+_qry := "SELECT * FROM fmk.valute "
+_qry += "WHERE " + _where
+_qry += " ORDER BY id, datum"
 
-select (nArr)
-return (nPom2/nPom1)
+_data := _sql_query( my_server(), _qry )
+_data:Refresh()
+_data:GoTo(1)
+oRow := _data:GetRow(1)
+
+if _data:LastRec() == 0
+	Msg( "Nepostojeca valuta iz koje se pretvara iznos:## '" + val_iz + "' !" )
+  	_tmp_1 := 1
+elseif !EMPTY( datum ) .and. ( DTOS( datum ) < DTOS( oRow:FieldGet( oRow:FieldPos( "datum" )))) 
+  	Msg( "Nepostojeci kurs valute iz koje se pretvara iznos:## '" + val_iz + "'. Provjeriti datum !" )
+  	_tmp_1 := 1
+else
+  	_id := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "id" ) ) )
+    do while !_data:EOF() .and. _id == hb_utf8tostr( _data:FieldGet( _data:FieldPos( "id" ) ) )
+        oRow := _data:GetRow()
+        if !EMPTY( datum ) .and. ( DTOS( datum ) >= DTOS( oRow:FieldGet( oRow:FieldPos( "datum" ) ) ) )
+            _data:Skip()
+        else
+            _tmp_1 := oRow:FieldGet( oRow:FieldPos("kurs1") )
+            exit
+        endif
+    enddo
+endif
+
+// valuta u
+if ( val_u == "P" .or. val_u == "D" )
+    _where := " tip = " + _sql_quote( val_u )
+else
+    _where := " id = " + _sql_quote( val_u )
+endif
+
+if !EMPTY( datum )
+    _where += " AND ( " + _sql_date_parse( "datum", NIL, datum ) + ") "
+endif
+
+_qry := "SELECT * FROM fmk.valute "
+_qry += "WHERE " + _where
+_qry += " ORDER BY id, datum"
+
+_data := _sql_query( my_server(), _qry )
+_data:Refresh()
+_data:GoTo(1)
+oRow := _data:GetRow(1)
+
+if _data:LastRec() == 0
+	Msg( "Nepostojeca valuta u koju se pretvara iznos:## '" + val_u + "' !" )
+  	_tmp_1 := 1
+    _tmp_2 := 1
+elseif !EMPTY( datum ) .and. ( DTOS( datum ) < DTOS( oRow:FieldGet( oRow:FieldPos( "datum" ))))
+  	Msg( "Nepostojeci kurs valute u koju se pretvara iznos:## '" + val_u + "'. Provjeriti datum !" )
+  	_tmp_1 := 1
+    _tmp_2 := 1
+else
+  	_id := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "id" ) ) )
+    do while !_data:EOF() .and. _id == hb_utf8tostr( _data:FieldGet( _data:FieldPos( "id" ) ) )
+        oRow := _data:GetRow()
+        if !EMPTY( datum ) .and. ( DTOS( datum ) >= DTOS( oRow:FieldGet( oRow:FieldPos( "datum" ) ) ) )
+            _data:Skip()
+        else
+            _tmp_2 := oRow:FieldGet( oRow:FieldPos("kurs1") )
+            exit
+        endif
+    enddo
+endif
+
+return ( _tmp_2 / _tmp_1 )
+
+
+
 
 // -----------------------------------------------
 // vraca skraceni naziv domace valute
 // -----------------------------------------------
 function ValDomaca()     
-local xRez
-PushWa()
-SELECT F_VALUTE
-IF !USED()
-O_VALUTE
-ENDIF
-SET ORDER TO TAG "NAZ"
-xRez:=Ocitaj(F_VALUTE,"D","naz2")
-PopWa()
-return xRez
+local _ret
+_ret := hb_utf8tostr( _sql_get_value( "fmk.valute", "naz2", { { "tip", "D" } } ) )
+return _ret
+
+
 
 // ------------------------------------------------
 // vraca skraceni naziv pomocne (strane) valute
 // -----------------------------------------------
 function ValPomocna()    
-local xRez
+local _ret
+_ret := hb_utf8tostr( _sql_get_value( "fmk.valute", "naz2", { { "tip", "P" } } ) )
+return _ret
 
-PushWa()
-
-SELECT F_VALUTE
-IF !USED()
-	O_VALUTE
-ENDIF
-
-SET ORDER TO TAG "NAZ"
-xRez := Ocitaj(F_VALUTE, "P", "naz2")
-
-PopWa()
-
-return xRez
 
 
 // -----------------------------------
@@ -198,7 +191,7 @@ endif
 // --------------------------------------
 // omjer valuta
 // --------------------------------------
-function OmjerVal(ckU, ckIz, dD)
+function OmjerVal( ckU, ckIz, dD )
 local nU:=0
 local nIz:=0
 local nArr:=SELECT()
@@ -229,6 +222,8 @@ local nArr:=SELECT()
      MsgBeep("Greska! Za valutu "+ckU+" na dan "+DTOC(dD)+" nemoguce utvrditi kurs!")
    ENDIF
 RETURN IF( nIz==0 .or. nU==0 , 0 , (nU/nIz) )
+
+
 
 
 // --------------------------------------------

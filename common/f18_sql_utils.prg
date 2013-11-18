@@ -577,32 +577,123 @@ _ret := RIGHT( _ret, LEN( _ret ) - 5 )
 return _ret
 
 
+// --------------------------------------------------------------------
+// vraca sve zapise iz tabele po zadatom uslovu
+// --------------------------------------------------------------------
+function _select_all_from_table( table, fields, where_cond, order_fields )
+local _srv := my_server()
+local _qry, _data, _i, _n, _o
+
+_qry := "SELECT "
+
+if fields == NIL
+    _qry += " * "
+else
+    for _i := 1 to LEN( fields )
+        _qry += fields[ _i ]
+        if _i < LEN( fields )
+            _qry += ","
+        endif
+    next
+endif
+
+_qry += " FROM " + table
+
+if where_cond <> NIL
+
+    _qry += " WHERE "
+
+    for _n := 1 to LEN( where_cond )
+        _qry += where_cond[ _n ]
+        if _n < LEN( where_cond )
+            _qry += " AND "
+        endif    
+    next
+
+endif
+
+if order_fields <> NIL
+
+    _qry += " ORDER BY "
+
+    for _o := 1 to LEN( order_fields )
+        _qry += order_fields[ _o ]
+        if _o < LEN( order_fields )
+            _qry += ","
+        endif
+    next
+
+endif
+
+_data := _sql_query( _srv, _qry )
+
+if VALTYPE( _data ) == "L"
+    _data := NIL
+endif
+
+return _data
+
+
+
 // ------------------------------------------------------
 // vraca vrijednost polja po zadatom uslovu
 //
-//  _sql_get_value( "partn", "naz", { "id", "1AL001" } )
+//  _sql_get_value( "partn", "naz", { { "id", "1AL001" }, { ... } } )
 // ------------------------------------------------------
 function _sql_get_value( table_name, field_name, cond )
 local _val 
 local _qry := ""
 local _table
 local _server := pg_server()
+local _where := ""
 local _data := {}
 local _i, oRow
 
-_qry += "SELECT " + field_name + " FROM fmk." + table_name 
-_qry += " WHERE " + cond[1] + " = " + _sql_quote( cond[2] )
+if cond == NIL
+    cond := {}
+endif
+
+if ! ( "." $ table_name )
+    table_name := "fmk." + table_name
+endif
+
+_qry += "SELECT " + field_name + " FROM " + table_name 
+
+for _i := 1 to LEN( cond )
+
+    if cond[ _i ] <> NIL
+
+        if !EMPTY( _where )
+            _where += " AND "
+        endif
+
+        if VALTYPE( cond[ _i, 2 ] ) == "N"
+            _where += cond[ _i, 1 ] + " = " + STR( cond[ _i, 2 ] )
+        else
+            _where += cond[ _i, 1 ] + " = " + _sql_quote( cond[ _i, 2 ] )
+        endif
+
+    endif
+
+next
+
+if !EMPTY( _where )
+    _qry += " WHERE " + _where
+endif
 
 _table := _sql_query( _server, _qry )
 _table:Refresh()
 
-oRow := _table:GetRow( 1 )
-
-_val := oRow:FieldGet( oRow:FieldPos( field_name ))
+oRow := _table:GetRow(1)
+_val := oRow:FieldGet(1)
 
 // ako nema polja vraca NIL
 if VALTYPE( _val ) == "L"
     _val := NIL
+endif
+
+if VALTYPE( _val ) == "C"
+    _val := hb_utf8tostr( _val )
 endif
 
 return _val

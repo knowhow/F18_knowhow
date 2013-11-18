@@ -311,7 +311,6 @@ do while !EOF() .and. field->idfirma == idfirma .and. ;
     _kol := field->kolicina 
     _rab := field->rabat
 
-
     select roba
     hseek _roba
 
@@ -327,8 +326,14 @@ do while !EOF() .and. field->idfirma == idfirma .and. ;
     else
         _iznos := round( _kol * _cijena * PrerCij() * ( 1 - _rab / 100), ZAOKRUZENJE )
     endif
+
+    // roba zasticena cijena !
+    // ove tarife cemo tretirati u kalkulaciji kao PDV17 takodjer
+    if RobaZastCijena( _tar )
+        _tar := PADR( "PDV17", 6 )
+    endif
    
-    _scan := ASCAN( _a_iznos, { |var| var[1] == tarifa->id } )
+    _scan := ASCAN( _a_iznos, { |var| var[1] == _tar } )
 
     if _scan == 0
         AADD( _a_iznos, { PADR( _tar, 6 ), _iznos } )

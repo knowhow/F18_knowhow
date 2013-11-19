@@ -1,6 +1,8 @@
 1.4.249 2013-11-19, vsasa
  
   - FIN, specifikacija po dospjeću, picture iznosa parametar
+  - KALK, korekcija izvještaja pregled po objektima
+  - FIN, specifikacija dospjeća po ročnim intervalima
  
 1.4.248 2013-11-19, vsasa
  

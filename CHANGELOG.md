@@ -1,3 +1,7 @@
+1.4.248 2013-11-19, vsasa
+ 
+  - Kurs() opet bug, ispravljeno (beskonačna petlja)
+ 
 1.4.247 2013-11-19, vsasa
  
   - poziv funkcije _sql_get_value() ispravljen

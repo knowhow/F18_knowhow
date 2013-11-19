@@ -73,6 +73,8 @@ else
         _tmp_1 := oRow:FieldGet( oRow:FieldPos("kurs1") )
         if !EMPTY( datum ) .and. ( DTOS( datum ) >= DTOS( oRow:FieldGet( oRow:FieldPos( "datum" ) ) ) )
             _data:Skip()
+        else
+            exit
         endif
     enddo
 endif
@@ -112,6 +114,8 @@ else
         _tmp_2 := oRow:FieldGet( oRow:FieldPos("kurs1") )
         if !EMPTY( datum ) .and. ( DTOS( datum ) >= DTOS( oRow:FieldGet( oRow:FieldPos( "datum" ) ) ) )
             _data:Skip()
+        else
+            exit
         endif
     enddo
 endif

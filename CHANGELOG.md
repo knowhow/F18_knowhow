@@ -1,3 +1,7 @@
+1.4.247 2013-11-19, vsasa
+ 
+  - poziv funkcije _sql_get_value() ispravljen
+ 
 1.4.246 2013-11-19, vsasa
  
   - Kurs() korekcija funkcije, problem kod knjiženja naloga

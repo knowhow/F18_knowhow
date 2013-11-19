@@ -463,7 +463,7 @@ do while !table:EOF()
     
     // naziv konta 
     if !EMPTY( _id_konto )
-        _naz_konto := _sql_get_value( "konto", "naz", { "id", ALLTRIM( _id_konto ) } )
+        _naz_konto := _sql_get_value( "konto", "naz", {{ "id", ALLTRIM( _id_konto ) }} )
     else
         _naz_konto := ""
     endif
@@ -475,7 +475,7 @@ do while !table:EOF()
 
     // naziv partnera
     if !EMPTY( _id_partner )
-        _naz_partner := _sql_get_value( "partn", "naz", { "id", ALLTRIM( _id_partner ) } )
+        _naz_partner := _sql_get_value( "partn", "naz", {{ "id", ALLTRIM( _id_partner ) }} )
     else
         _naz_partner := ""
     endif

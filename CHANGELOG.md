@@ -1,3 +1,7 @@
+1.4.246 2013-11-19, vsasa
+ 
+  - Kurs() korekcija funkcije, problem kod knjiženja naloga
+ 
 1.4.245 2013-11-18, vsasa
  
   - VALUTE, opcije valutiranja Kurs(), Omjer() ... korekcije

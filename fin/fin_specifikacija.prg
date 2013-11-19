@@ -3380,97 +3380,99 @@ DO WHILE !EOF()
 	DO WHILESC !EOF() .and. cIdPartner==IdPartner
     		
 		IF cPoRn=="D"
-      			? datdok, datval, PADR(brdok,10)
-      			nCol1:=pcol()+1
-      			?? " "
-      			?? TRANSFORM(dug, picbhd), TRANSFORM(pot, picbhd), TRANSFORM(dug-pot, picbhd)
-      			IF gVar1=="0"
-        			?? " "+TRANSFORM(dug2,picdem), TRANSFORM(pot2,picdem), TRANSFORM(dug2-pot2,picdem)
-      			ENDIF
-    		ELSEIF cLastIdPartner!=cIdPartner .or. LEN(cLastIdPartner)<1
-     			Pljuc(cIdPartner)
-      			cP_naz := PADR(Ocitaj(F_PARTN,cIdPartner,"naz"), 25)
-      			PPljuc( cP_naz )
+            ? datdok, datval, PADR(brdok,10)
+      		nCol1:=pcol()+1
+      		?? " "
+      		?? TRANSFORM(dug, picbhd), TRANSFORM(pot, picbhd), TRANSFORM(dug-pot, picbhd)
+      		IF gVar1=="0"
+        		?? " "+TRANSFORM(dug2,picdem), TRANSFORM(pot2,picdem), TRANSFORM(dug2-pot2,picdem)
+      		ENDIF
+    	ELSEIF cLastIdPartner!=cIdPartner .or. LEN(cLastIdPartner)<1
+     		Pljuc(cIdPartner)
+      		cP_naz := PADR(Ocitaj(F_PARTN,cIdPartner,"naz"), 25)
+      		PPljuc( cP_naz )
 			cLastIdPartner:=cIdPartner
-    		ENDIF
-    		IF otvst==" "
-      			IF cPoRn=="D"
-        			?? "   U VALUTI"+IF(cSaRokom=="D",IspisRocnosti(),"")
-      			ENDIF
-      			nUkUVD  += Dug 
+    	ENDIF
+    		
+        IF otvst==" "
+      		IF cPoRn=="D"
+        		?? "   U VALUTI"+IF(cSaRokom=="D",IspisRocnosti(),"")
+      		ENDIF
+      		nUkUVD  += Dug 
 			nUkUVP  += Pot
 			nUkUVD2 += Dug2
 			nUkUVP2 += Pot2
-      			IF cSaRokom=="D"
-       				anInterUV[nFaza,1,1] += dug
-       				anInterUV[nFaza,2,1] += pot
-       				anInterUV[nFaza,3,1] += dug2
-       				anInterUV[nFaza,4,1] += pot2
-      			ENDIF
-    		ELSE
-      			IF cPoRn=="D"
-        			?? " VAN VALUTE"+IF(cSaRokom=="D",IspisRocnosti(),"")
-      			ENDIF
-      			nUkVVD  += Dug 
+      		IF cSaRokom=="D"
+       			anInterUV[nFaza,1,1] += dug
+       			anInterUV[nFaza,2,1] += pot
+       			anInterUV[nFaza,3,1] += dug2
+       			anInterUV[nFaza,4,1] += pot2
+      		ENDIF
+    	ELSE
+      		IF cPoRn=="D"
+        		?? " VAN VALUTE"+IF(cSaRokom=="D",IspisRocnosti(),"")
+      		ENDIF
+      		nUkVVD  += Dug 
 			nUkVVP  += Pot
 			nUkVVD2 += Dug2
 			nUkVVP2 += Pot2
-      			IF cSaRokom=="D"
-       				anInterVV[nFaza,1,1] += dug
-       				anInterVV[nFaza,2,1] += pot
-       				anInterVV[nFaza,3,1] += dug2
-       				anInterVV[nFaza,4,1] += pot2
-      			ENDIF
-    		ENDIF
-    		nUDug+=Dug
+      		IF cSaRokom=="D"
+       			anInterVV[nFaza,1,1] += dug
+       			anInterVV[nFaza,2,1] += pot
+       			anInterVV[nFaza,3,1] += dug2
+       			anInterVV[nFaza,4,1] += pot2
+      		ENDIF
+    	ENDIF
+    	nUDug+=Dug
 		nUPot+=Pot
-    		nUDug2+=Dug2
+    	nUDug2+=Dug2
 		nUPot2+=Pot2
-    		SKIP 1
-                //  znaci da treba
-    		IF cFaza!=otvst .or. EOF() .or. cIdPartner!=idpartner //<-³ prikazati
-      			IF cPoRn=="D"
+    		
+        SKIP 1
+        //  znaci da treba
+    	IF cFaza!=otvst .or. EOF() .or. cIdPartner!=idpartner //<-³ prikazati
+      		IF cPoRn=="D"
 				? m
 			ENDIF                           //  À subtotal
-      			IF cFaza==" "
-        			IF cSaRokom=="D"
-         				SKIP -1
-         				IF cPoRn=="D"
-           					? "UK.U VALUTI"+IspisRocnosti()+":"
+      		IF cFaza==" "
+        		IF cSaRokom=="D"
+         			SKIP -1
+         			IF cPoRn=="D"
+           				? "UK.U VALUTI"+IspisRocnosti()+":"
 						@ prow(),nCol1 SAY anInterUV[nFaza,1,1] PICTURE picBHD
-           					@ prow(),pcol()+1 SAY anInterUV[nFaza,2,1] PICTURE picBHD
-           					@ prow(),pcol()+1 SAY anInterUV[nFaza,1,1]-anInterUV[nFaza,2,1] PICTURE picBHD
+           				@ prow(),pcol()+1 SAY anInterUV[nFaza,2,1] PICTURE picBHD
+           				@ prow(),pcol()+1 SAY anInterUV[nFaza,1,1]-anInterUV[nFaza,2,1] PICTURE picBHD
            					
 						if gVar1=="0"
              						@ prow(),pcol()+1 SAY anInterUV[nFaza,3,1] PICTURE picdem
              						@ prow(),pcol()+1 SAY anInterUV[nFaza,4,1] PICTURE picdem
              						@ prow(),pcol()+1 SAY anInterUV[nFaza,3,1]-anInterUV[nFaza,4,1] PICTURE picdem
-           					endif
-         				endif
-         				anInterUV[nFaza,1,2] += anInterUV[nFaza,1,1]
-         				anInterUV[nFaza,2,2] += anInterUV[nFaza,2,1]
-         				anInterUV[nFaza,3,2] += anInterUV[nFaza,3,1]
-         				anInterUV[nFaza,4,2] += anInterUV[nFaza,4,1]
-         				IF cPoRn=="D"
+           				endif
+         			endif
+         			anInterUV[nFaza,1,2] += anInterUV[nFaza,1,1]
+         			anInterUV[nFaza,2,2] += anInterUV[nFaza,2,1]
+         			anInterUV[nFaza,3,2] += anInterUV[nFaza,3,1]
+         			anInterUV[nFaza,4,2] += anInterUV[nFaza,4,1]
+         			IF cPoRn=="D"
 						? m
 					ENDIF
          			SKIP 1
         		ENDIF
         		IF cPoRn=="D"
           			? "UKUPNO U VALUTI:"
-				@ prow(),nCol1 SAY nUkUVD PICTURE picBHD
+				    @ prow(),nCol1 SAY nUkUVD PICTURE picBHD
           			@ prow(),pcol()+1 SAY nUkUVP PICTURE picBHD
           			@ prow(),pcol()+1 SAY nUkUVD-nUkUVP PICTURE picBHD
-				if gVar1=="0"
+				    if gVar1=="0"
             				@ prow(),pcol()+1 SAY nUkUVD2 PICTURE picdem
             				@ prow(),pcol()+1 SAY nUkUVP2 PICTURE picdem
             				@ prow(),pcol()+1 SAY nUkUVD2-nUkUVP2 PICTURE picdem
           			endif
         		ENDIF
         		nTUkUVD  += nUkUVD 
-			nTUkUVP  += nUkUVP
+			    nTUkUVP  += nUkUVP
         		nTUkUVD2 += nUkUVD2
-			nTUkUVP2 += nUkUVP2
+			    nTUkUVP2 += nUkUVP2
       		ELSE
         		IF cSaRokom=="D"
          			SKIP -1

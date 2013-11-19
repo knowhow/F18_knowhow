@@ -19,6 +19,7 @@ static __par_len
 function SpecDugPartnera()
 local nCol1:=72
 local cSvi:="N"
+local _partner := fetch_metric( "fin_spec_po_dobav_partner", NIL, SPACE(6) )
 private cIdPartner
 
 cDokument:=SPACE(8)
@@ -74,11 +75,14 @@ endif
 @ m_x+7,m_y+2 SAY "Interval 4: do (dana)" GET nDoDana4 PICT "999"
 @ m_x+10,m_y+2 SAY "Prikaz iznosa (format)" GET PICPIC PICT "@!"
 @ m_x+11,m_y+2 SAY "Uslov po opcini (prazno - nista)" GET cOpcine
+@ m_x+12,m_y+2 SAY "Partner (prazno-svi):" GET _partner VALID EMPTY( _partner ) .or. P_Firma( @_partner )
 @ m_x+13,m_y+2 SAY "Izvjestaj za (1)KM (2)EURO" GET cValuta VALID cValuta$"12"
+
 read
 ESC_BCR
 BoxC()
 
+set_metric( "fin_spec_po_dobav_partner", NIL, _partner )
 
 if EMPTY(cIdPartner)
     cIdPartner:=""
@@ -121,75 +125,94 @@ set order to tag "3"
 seek cIdFirma+cIdKonto+cIdPartner
 
 DO WHILESC !EOF() .and. idfirma==cIdfirma .AND. cIdKonto==IdKonto
-        cIdPartner:=idpartner
-        nUDug2:=0
-        nUPot2:=0
-        nUDug:=0
-        nUPot:=0
-        fPrviProlaz:=.t.
-        DO WHILESC !EOF() .and. idfirma==cIdfirma .AND. cIdKonto==IdKonto .and. cIdPartner==IdPartner
-            cBrDok:=BrDok
-            cOtvSt:=otvst
-            nDug2:=0
-            nPot2:=0
-            nDug:=0
-            nPot:=0
-            aFaktura:={CTOD(""),CTOD(""),CTOD("")}
-            DO WHILESC !EOF() .and. idfirma==cIdfirma .AND. cIdKonto==IdKonto .and. cIdPartner==IdPartner .and. brdok==cBrDok
-                    IF D_P=="1"
-                        nDug+=IznosBHD
-                        nDug2+=IznosDEM
-                    ELSE
-                        nPot+=IznosBHD
-                        nPot2+=IznosDEM
-                    ENDIF
-                    IF D_P==cDugPot
-                        aFaktura[1]:=DATDOK
-                        aFaktura[2]:=DATVAL
-                    ENDIF
-                    if aFaktura[3]<DatDok  // datum zadnje promjene
-                        aFaktura[3]:=DatDok
-                    endif
+        
+    cIdPartner:=idpartner
+    nUDug2:=0
+    nUPot2:=0
+    nUDug:=0
+    nUPot:=0
+        
+    fPrviProlaz:=.t.
+    
+    DO WHILESC !EOF() .and. idfirma==cIdfirma .AND. cIdKonto==IdKonto .and. cIdPartner==IdPartner
 
-                    SKIP 1
-            ENDDO
-
-            if round(nDug-nPot,2)==0
-                    // nista
-            else
-                    fPrviProlaz:=.f.
-                    if cPrelomljeno=="D"
-                        if (nDug-nPot)>0
-                            nDug:=nDug-nPot
-                            nPot:=0
-                        else
-                            nPot:=nPot-nDug
-                            nDug:=0
-                        endif
-                        if (nDug2-nPot2)>0
-                            nDug2:=nDug2-nPot2
-                            nPot2:=0
-                        else
-                            nPot2:=nPot2-nDug2
-                            nDug2:=0
-                        endif
-                    endif
-                    SELECT POM
-            APPEND BLANK
-                    Scatter()
-                    _idpartner := cIdPartner
-                    _datdok    := aFaktura[1]
-                    _datval    := aFaktura[2]
-                    _datzpr    := aFaktura[3]
-                    _brdok     := cBrDok
-                    _dug       := nDug
-                    _pot       := nPot
-                    _dug2      := nDug2
-                    _pot2      := nPot2
-                    _otvst     := IF(IF(EMPTY(_datval),_datdok>dNaDan,_datval>dNaDan)," ","1")
-                    Gather()
-                    SELECT SUBAN
+           
+        cBrDok:=BrDok
+        cOtvSt:=otvst
+        nDug2:=0
+        nPot2:=0
+        nDug:=0
+        nPot:=0
+            
+        aFaktura:={CTOD(""),CTOD(""),CTOD("")}
+            
+        DO WHILESC !EOF() .and. idfirma==cIdfirma .AND. cIdKonto==IdKonto .and. cIdPartner==IdPartner .and. brdok==cBrDok
+ 
+            if !EMPTY( _partner )
+                if _partner <> idpartner
+                    skip
+                    loop
+                endif
             endif
+                    
+            IF D_P=="1"
+                nDug+=IznosBHD
+                nDug2+=IznosDEM
+            ELSE
+                nPot+=IznosBHD
+                nPot2+=IznosDEM
+            ENDIF
+                    
+            IF D_P==cDugPot
+                aFaktura[1]:=DATDOK
+                aFaktura[2]:=DATVAL
+            ENDIF
+                    
+            if aFaktura[3]<DatDok  // datum zadnje promjene
+                aFaktura[3]:=DatDok
+            endif
+
+            SKIP 1
+        ENDDO
+
+        if round(nDug-nPot,2)==0
+            // nista
+        else
+            fPrviProlaz:=.f.
+            if cPrelomljeno=="D"
+                if (nDug-nPot)>0
+                    nDug:=nDug-nPot
+                    nPot:=0
+                else
+                    nPot:=nPot-nDug
+                    nDug:=0
+                endif
+                if (nDug2-nPot2)>0
+                    nDug2:=nDug2-nPot2
+                    nPot2:=0
+                else
+                    nPot2:=nPot2-nDug2
+                    nDug2:=0
+                endif
+            endif
+                    
+            SELECT POM
+            APPEND BLANK
+                    
+            Scatter()
+            _idpartner := cIdPartner
+            _datdok    := aFaktura[1]
+            _datval    := aFaktura[2]
+            _datzpr    := aFaktura[3]
+            _brdok     := cBrDok
+            _dug       := nDug
+            _pot       := nPot
+            _dug2      := nDug2
+            _pot2      := nPot2
+            _otvst     := IF(IF(EMPTY(_datval),_datdok>dNaDan,_datval>dNaDan)," ","1")
+            Gather()
+            SELECT SUBAN
+        endif
     enddo // partner
     
     IF prow()>58+gPStranica
@@ -198,15 +221,14 @@ DO WHILESC !EOF() .and. idfirma==cIdfirma .AND. cIdKonto==IdKonto
     ENDIF
     
     if (!fVeci .and. idpartner=cSvi) .or. fVeci
-        else
-            exit
-        endif
+    else
+        exit
+    endif
+
 enddo
 
 SELECT POM
-
 INDEX ON IDPARTNER+OTVST+Rocnost()+DTOS(DATDOK)+DTOS(IIF(EMPTY(DATVAL),DATDOK,DATVAL))+BRDOK TAG "2"
-
 SET ORDER TO TAG "2" 
 GO TOP
 
@@ -230,8 +252,11 @@ anInterVV:={ { {0,0} , {0,0} , {0,0} , {0,0} },;        // do - interval 1
 cLastIdPartner:=""
 fPrviProlaz:=.t.
 
+altd()
 do while !EOF()
-    cIdPartner:=idpartner
+
+    cIdPartner := idpartner
+
     // a sada provjeri opcine
     // nadji partnera
     if !EMPTY(cOpcine)
@@ -245,86 +270,95 @@ do while !EOF()
         select pom
     endif
     
-    nUDug:=nUPot:=nUDug2:=nUPot2:=0
-    nUkUVD:=nUkUVP:=nUkUVD2:=nUkUVP2:=0
-    nUkVVD:=nUkVVP:=nUkVVD2:=nUkVVP2:=0
+    nUDug := nUPot := nUDug2 := nUPot2:=0
+    nUkUVD := nUkUVP := nUkUVD2 := nUkUVP2 := 0
+    nUkVVD := nUkVVP := nUkVVD2 := nUkVVP2 := 0
     
-    cFaza:=otvst
-    
-    FOR i:=1 TO LEN(anInterUV)
-            FOR j:=1 TO LEN(anInterUV[i])
-                anInterVV[i,j,1]:=0
-            NEXT
+    FOR i:=1 TO LEN(anInterVV)
+        FOR j:=1 TO LEN(anInterVV[i])
+            anInterVV[i,j,1]:=0
+        NEXT
     NEXT
-    
-    nFaza:=RRocnost()
-    
-    DO WHILESC !EOF() .and. cIdPartner==IdPartner
-            if fPrviProlaz
-                ZaglDuznici()
-                fPrviProlaz:=.f.
-            endif
-            SELECT POM
-            IF cLastIdPartner!=cIdPartner .or. LEN(cLastIdPartner)<1
+          
+    cFaza := otvst
+    nFaza := RRocnost()
+
+    do while !EOF() .and. cIdPartner == IdPartner
+    		        
+        if fPrviProlaz
+            ZaglDuznici()
+            fPrviProlaz:=.f.
+        endif
+            
+        select pom
+        
+        IF cLastIdPartner!=cIdPartner .or. LEN(cLastIdPartner)<1
             Pljuc(cIdPartner)
-                PPljuc( PADR( Ocitaj(F_PARTN,cIdPartner,"naz"), 25) )
-                cLastIdPartner:=cIdPartner
-            ENDIF
-            IF otvst<>" "
-                nUkVVD  += Dug 
-            nUkVVP  += Pot
-            nUkVVD2 += Dug2
-            nUkVVP2 += Pot2
-                anInterVV[nFaza,1,1] += dug
-                anInterVV[nFaza,2,1] += pot
-                anInterVV[nFaza,3,1] += dug2
-                anInterVV[nFaza,4,1] += pot2
-            ENDIF
-            nUDug+=Dug
-        nUPot+=Pot
-            nUDug2+=Dug2
-        nUPot2+=Pot2
-            SKIP 1
-                //  znaci da treba
-            IF cFaza==otvst .or. !EOF() .or. cIdPartner==idpartner //<-³ prikazati
-                SKIP -1
-                anInterVV[nFaza,1,2] += anInterVV[nFaza,1,1]
-                anInterVV[nFaza,2,2] += anInterVV[nFaza,2,1]
-                anInterVV[nFaza,3,2] += anInterVV[nFaza,3,1]
-                anInterVV[nFaza,4,2] += anInterVV[nFaza,4,1]
-                SKIP 1
-                nTUkVVD  += nUkVVD 
-            nTUkVVP  += nUkVVP
-                nTUkVVD2 += nUkVVD2
-            nTUkVVP2 += nUkVVP2
-            ENDIF
-            cFaza:=otvst
-            nFaza:=RRocnost()
-            SKIP -1
-            IF cFaza<>" "
-                anInterVV[nFaza,1,2] += anInterVV[nFaza,1,1]
-                anInterVV[nFaza,2,2] += anInterVV[nFaza,2,1]
-                anInterVV[nFaza,3,2] += anInterVV[nFaza,3,1]
-                anInterVV[nFaza,4,2] += anInterVV[nFaza,4,1]
-            ENDIF
-            SKIP 1
-            nFaza:=RRocnost()
+            PPljuc( PADR( Ocitaj(F_PARTN,cIdPartner,"naz"), 25) )
+            cLastIdPartner:=cIdPartner
+        ENDIF
+ 
+        if otvst <> " "
+      	    nUkVVD  += Dug 
+		    nUkVVP  += Pot
+		    nUkVVD2 += Dug2
+		    nUkVVP2 += Pot2
+       	    anInterVV[nFaza,1,1] += dug
+       	    anInterVV[nFaza,2,1] += pot
+       	    anInterVV[nFaza,3,1] += dug2
+       	    anInterVV[nFaza,4,1] += pot2
+        endif
+    	
+        nUDug+=Dug
+	    nUPot+=Pot
+        nUDug2+=Dug2
+	    nUPot2+=Pot2
+    	
+        skip 1
+	
+        //  znaci da treba
+    	if cFaza != otvst .or. EOF() .or. cIdPartner != idpartner
 
-    ENDDO
+      		if cFaza <> " "
+        		anInterVV[nFaza,1,2] += anInterVV[nFaza,1,1]
+         		anInterVV[nFaza,2,2] += anInterVV[nFaza,2,1]
+         		anInterVV[nFaza,3,2] += anInterVV[nFaza,3,1]
+         		anInterVV[nFaza,4,2] += anInterVV[nFaza,4,1]
+       		    nTUkVVD  += nUkVVD 
+			    nTUkVVP  += nUkVVP
+        		nTUkVVD2 += nUkVVD2
+			    nTUkVVP2 += nUkVVP2
+      		endif
 
+    	elseif nFaza != RRocnost()
+
+      		if cFaza <> " "
+        		anInterVV[nFaza,1,2] += anInterVV[nFaza,1,1]
+        		anInterVV[nFaza,2,2] += anInterVV[nFaza,2,1]
+        		anInterVV[nFaza,3,2] += anInterVV[nFaza,3,1]
+        		anInterVV[nFaza,4,2] += anInterVV[nFaza,4,1]
+      		endif
+
+        endif
     
+        cFaza := otvst
+        nFaza := RRocnost()
+
+    enddo
+   
     SELECT POM
+
     if !fPrviProlaz  // bilo je stavki
         nIznosRok:=0
         nSaldo:=nUDug-nUPot
         nSldDem:=nUDug2-nUPot2
         FOR i:=1 TO LEN(anInterVV)
             if ( cValuta == "1" )
-                nIznosRok+=anInterVV[i,1,1]-anInterVV[i,2,1]
-                nIznosStavke:=nSaldo-nIznosRok
+                nIznosRok += anInterVV[ i, 1, 1 ] - anInterVV[ i, 2, 1 ]
+                nIznosStavke := nSaldo - nIznosRok
                 PPljuc(TRANSFORM(nIznosStavke,PICPIC))
             else
-                nIznosRok+=anInterVV[i,3,1]-anInterVV[i,4,1]
+                nIznosRok += anInterVV[ i, 3, 1 ] - anInterVV[ i, 4, 1 ]
                 nIznosStavke:=nSldDem-nIznosRok
                 PPljuc(TRANSFORM(nIznosStavke,PICPIC))
         
@@ -389,6 +423,19 @@ use
 CLOSERET
 return
 
+/////////////////////
+	
+
+
+
+
+
+
+
+
+
+
+/////////////////////
 
 /*! \fn ZaglDuznici(fStrana, lSvi)
  *  \brief Zaglavlje izvjestaja duznika

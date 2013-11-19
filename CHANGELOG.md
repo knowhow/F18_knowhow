@@ -1,3 +1,7 @@
+1.4.249 2013-11-19, vsasa
+ 
+  - FIN, specifikacija po dospjeću, picture iznosa parametar
+ 
 1.4.248 2013-11-19, vsasa
  
   - Kurs() opet bug, ispravljeno (beskonačna petlja)

@@ -3081,7 +3081,7 @@ nDoDana2 := 15
 nDoDana3 := 30
 nDoDana4 := 60
 
-PICPIC := PADR("999999.99", 12)  
+PICPIC := PADR( fetch_metric( "fin_spec_po_dosp_picture", NIL, "99999999.99" ), 15 )
 
 Box(,18,60)
 
@@ -3117,6 +3117,7 @@ ESC_BCR
 Boxc()
 
 PICPIC := ALLTRIM(PICPIC)
+set_metric( "fin_spec_po_dosp_picture", NIL, PICPIC )  
 
 lExpRpt := (cExpRpt == "D")
 

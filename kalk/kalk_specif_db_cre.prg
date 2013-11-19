@@ -19,10 +19,15 @@ function CreTblPObjekti()
 local cTbl
 local aDbf
 local _rec
+local _table
 
 CLOSE ALL
 
-cTbl:="pobjekti"
+cTbl := "pobjekti"
+
+_table := my_home() + cTbl + ".dbf"
+FERASE( _table )
+FERASE( STRTRAN( _table, ".dbf", ".cdx" ) )
 
 aDbf:={ {"id","C",2,0}   ,;
         {"naz","C", 10,0}, ;
@@ -113,6 +118,9 @@ endif
 // f5 - reklamacije u toku mjeseca, f7 - reklamacije u toku godine
 // f8 -
 
+CLOSE ALL
+
+FERASE( my_home() + _table + ".dbf" )
 FERASE( my_home() + _table + ".cdx" )
 
 DBCREATE( my_home() + _table + ".dbf", aDbf )
@@ -159,8 +167,12 @@ aDbf:={ {"objekat" ,"C", 7 ,0},;
         {"SNIZENJE","N",16,2} ;
      }
 
-DBCREATE( my_home() + _table + ".dbf", aDbf)
+CLOSE ALL
+
+FERASE( my_home() + _table + ".dbf" )
 FERASE( my_home() + _table + ".cdx" )
+
+DBCREATE( my_home() + _table + ".dbf", aDbf)
 
 SELECT(F_REKAP2)
 my_use_temp( "REKAP2", my_home() + _table + ".dbf", .f., .t. )
@@ -198,8 +210,11 @@ aDbf:={ {"G1"      ,"C", 4 ,0},;
      }
 
 _table := "kalk_reka22"
+
+FERASE( my_home() + _table + ".dbf")
+FERASE( my_home() + _table + ".cdx")
+
 DBCREATE( my_home() + _table + ".dbf", aDbf )
-ferase( my_home() + _table + ".cdx")
 
 SELECT(F_REKA22)
 my_use_temp( "REKA22", my_home() + _table + ".dbf", .f., .t. )
@@ -249,6 +264,11 @@ AADD(aTblCols,{"polog09","N",12,2})
 AADD(aTblCols,{"polog10","N",12,2})
 AADD(aTblCols,{"polog11","N",12,2})
 AADD(aTblCols,{"polog12","N",12,2})
+
+CLOSE ALL
+
+FERASE( my_home() + cTblName + ".dbf" )
+FERASE( my_home() + cTblName + ".cdx" )
 
 DBCREATE( my_home() + cTblName + ".dbf", aTblCols )
 

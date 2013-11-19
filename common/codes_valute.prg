@@ -26,7 +26,7 @@
 function Kurs( datum, val_iz, val_u )
 local _data, _qry, _tmp_1, _tmp_2, oRow
 
-_tmp := 1
+_tmp_1 := 1
 _tmp_2 := 1
 
 if val_iz == NIL
@@ -70,11 +70,9 @@ else
   	_id := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "id" ) ) )
     do while !_data:EOF() .and. _id == hb_utf8tostr( _data:FieldGet( _data:FieldPos( "id" ) ) )
         oRow := _data:GetRow()
+        _tmp_1 := oRow:FieldGet( oRow:FieldPos("kurs1") )
         if !EMPTY( datum ) .and. ( DTOS( datum ) >= DTOS( oRow:FieldGet( oRow:FieldPos( "datum" ) ) ) )
             _data:Skip()
-        else
-            _tmp_1 := oRow:FieldGet( oRow:FieldPos("kurs1") )
-            exit
         endif
     enddo
 endif
@@ -111,11 +109,9 @@ else
   	_id := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "id" ) ) )
     do while !_data:EOF() .and. _id == hb_utf8tostr( _data:FieldGet( _data:FieldPos( "id" ) ) )
         oRow := _data:GetRow()
+        _tmp_2 := oRow:FieldGet( oRow:FieldPos("kurs1") )
         if !EMPTY( datum ) .and. ( DTOS( datum ) >= DTOS( oRow:FieldGet( oRow:FieldPos( "datum" ) ) ) )
             _data:Skip()
-        else
-            _tmp_2 := oRow:FieldGet( oRow:FieldPos("kurs1") )
-            exit
         endif
     enddo
 endif

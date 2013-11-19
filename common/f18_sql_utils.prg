@@ -494,6 +494,13 @@ local _ret := ""
 // dva su datuma
 if PCOUNT() > 2
 
+    if date1 == NIL
+        date1 := CTOD("")
+    endif
+    if date2 == NIL
+        date2 := CTOD("")
+    endif
+
     // oba su prazna
     if DTOC(date1) == DTOC(CTOD("")) .and. DTOC(date2) == DTOC(CTOD(""))
         _ret := "TRUE"

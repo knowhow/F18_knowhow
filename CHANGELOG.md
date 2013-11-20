@@ -1,3 +1,7 @@
+1.4.251 2013-11-20, vsasa
+ 
+  - POS, generisanje plu kodova nakon zaduženja iz KALK-a
+ 
 1.4.250 2013-11-20, vsasa
  
   - KALK, dorada, lager liste i minimalna količina

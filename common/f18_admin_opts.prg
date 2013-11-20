@@ -31,6 +31,8 @@ CLASS F18AdminOpts
 
     METHOD force_synchro_db()
 
+    METHOD run_external_app()
+
     DATA create_db_result
     
     PROTECTED:
@@ -55,7 +57,38 @@ return self
 
 
 
+// ------------------------------------------------
+// ------------------------------------------------
+METHOD F18AdminOpts:run_external_app( app, quit_app )
+local _script
 
+if app == NIL
+    // nemamo app, pokrenut cemo default skriptu
+    #ifdef __PLATFORM__WINDOWS
+        _script := "c:" + SLASH + "knowhowERP" + SLASH + "util" + SLASH + "f18_script.bat"
+    #endif
+    #ifdef __PLATFORM__UNIX
+        _script := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH + "f18_script.sh"
+    #endif
+else
+    _script := app
+endif
+
+hb_run( _script )
+
+if quit_app == NIL
+    quit_app := .f.
+endif
+
+if quit_app
+    QUIT
+endif
+
+return SELF
+
+
+// -----------------------------------------------
+// -----------------------------------------------
 METHOD F18AdminOpts:update_db()
 local _ok := .f.
 local _x := 1

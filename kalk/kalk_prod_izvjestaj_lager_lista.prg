@@ -31,6 +31,7 @@ local cPicDem := gPicDem
 local cSrKolNula := "0"
 local _curr_user := "<>"
 local cMpcIzSif := "N"
+local cMinK := "N"
 
 gPicCDEM:=REPLICATE("9", VAL(gFPicCDem)) + gPicCDEM 
 gPicDEM:= REPLICATE("9", VAL(gFPicDem)) + gPicDem
@@ -91,7 +92,6 @@ if !lPocStanje
  cNula := fetch_metric("kalk_lager_lista_prod_prikaz_nula", _curr_user, cNula )
  dDatOd := fetch_metric("kalk_lager_lista_prod_datum_od", _curr_user, dDatOd )
  dDatDo := fetch_metric("kalk_lager_lista_prod_datum_do", _curr_user, dDatDo )
-
 endif
 
 do while .t.
@@ -121,7 +121,8 @@ do while .t.
  	@ m_x+12, COL()+2 SAY " generisati kontrolnu tabelu ? " GET cKontrolnaTabela VALID cKontrolnaTabela $ "DN" PICT "@!"
  	@ m_x+13,m_y+2 SAY "Odabir grupacije (prazno-svi) GET" GET cGrupacija pict "@!"
  	@ m_x+14,m_y+2 SAY "Prikaz prethodnog stanja" GET cPredhStanje pict "@!" valid cPredhStanje $ "DN"
- 
+    @ m_x+14,col()+2 SAY "Prik. samo kriticnih zaliha (D/N/O) ?" GET cMinK pict "@!" valid cMink $ "DNO"
+
 	if IsPlanika()
  		@ m_x+15,m_y+2 SAY "Prikaz dobavljaca (D/N) ?" GET cPrikazDob pict "@!" valid cPrikazDob $ "DN"
 		@ m_x+16,m_y+2 SAY "Prikaz po K9 (uslov)" GET cK9 pict "@!"
@@ -282,6 +283,8 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
 	select roba
 	hseek cIdRoba
 	
+   	nMink := roba->mink
+
 	if IsVindija()
 		if !EMPTY(cGr)
 			if ALLTRIM(cGr) <> ALLTRIM(IzSifK("ROBA", "GR1", cIdRoba, .f.))
@@ -328,11 +331,15 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
 	nNVI:=0
 	nRabat:=0
 
-	if cTU=="N" .and. roba->tip $ "TU"
+	if cTU == "N" .and. roba->tip $ "TU"
 		skip
 		loop
 	endif
 
+	//if cMink == "O"
+	//	cNula := "D"
+	//endif
+	
 	do while !EOF() .and. cIdfirma + cIdkonto + cIdroba == field->idFirma + field->pkonto + field->idroba .and. IspitajPrekid()
 	    
         if lSMark .and. SkLoNMark("ROBA",cIdroba)
@@ -431,6 +438,14 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
 		skip
 	enddo
 	
+    if cMinK == "D" .and. ( nUlaz - nIzlaz - nMink ) > 0
+        LOOP
+    endif
+
+    //if cMinK == "O" .and. nMinK == 0 .and. ROUND( nUlaz - nIzlaz, 4 ) == 0
+      //  LOOP
+    //endif   
+ 
 	// ne prikazuj stavke 0
 	if cNula == "D" .or. ROUND( nMPVU - nMPVI + nPMPV, 2 ) <> 0 
 	

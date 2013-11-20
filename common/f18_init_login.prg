@@ -755,6 +755,9 @@ AADD( menuexec, {|| F18AdminOpts():New():drop_db(), .t. } )
 AADD( menuop, hb_utf8tostr( "5. otvaranje nove godine" ) )
 AADD( menuexec, {|| F18AdminOpts():New():new_session(), .t. } )
 
+AADD( menuop, hb_utf8tostr( "6. update F18" ) )
+AADD( menuexec, {|| F18AdminOpts():New():run_external_app( NIL, .t. ), .t. } )
+
 return
 
 

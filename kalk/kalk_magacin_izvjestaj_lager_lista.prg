@@ -151,7 +151,6 @@ if !fPocStanje
  cNula := fetch_metric("kalk_lager_lista_prikaz_nula", _curr_user, cNula )
  dDatOd := fetch_metric("kalk_lager_lista_datum_od", _curr_user, dDatOd )
  dDatDo := fetch_metric("kalk_lager_lista_datum_do", _curr_user, dDatDo )
- cMinK := fetch_metric("kalk_lager_lista_minimalne_kolicine", _curr_user, cMinK )
  cDoNab := fetch_metric("kalk_lager_Lista_prikaz_do_nabavne", _curr_user, cDoNab )
  _vpc_iz_sif := fetch_metric("kalk_lager_Lista_vpc_iz_sif", _curr_user, _vpc_iz_sif )
 endif
@@ -272,7 +271,6 @@ if !fPocStanje
  set_metric("kalk_lager_lista_prikaz_nula", f18_user(), cNula )
  set_metric("kalk_lager_lista_datum_od", f18_user(), dDatOd )
  set_metric("kalk_lager_lista_datum_do", f18_user(), dDatDo )
- set_metric("kalk_lager_lista_minimalne_kolicine", f18_user(), cMinK )
  set_metric("kalk_lager_lista_prikaz_do_nabavne", f18_user(), cDoNab )
  set_metric("kalk_lager_Lista_vpc_iz_sif", _curr_user, _vpc_iz_sif )
 
@@ -583,9 +581,9 @@ do while !eof() .and. IIF(fSint .and. lSabKon, idfirma, idfirma+mkonto ) = ;
 
 	cIdkonto:=mkonto
 	
-	if cMink=="O"
-		cNula:="D"
-	endif
+	//if cMink=="O"
+	//	cNula:="D"
+	//endif
 	
 	// ako zelim oznaciti sve kriticne zalihe onda mi trebaju i artikli
 	// sa stanjem 0 !!
@@ -689,14 +687,12 @@ do while !eof() .and. IIF(fSint .and. lSabKon, idfirma, idfirma+mkonto ) = ;
   	 skip
 	enddo
 
-	if (cMink<>"D" .and. (cNula=="D" .or. IIF(IsPDV() .and. (IsMagPNab() .or. IsMagSNab()), round(nNVU-nNVI,4)<>0, round(nVPVU-nVPVI,4)<>0))) .or. (cMink=="D" .and. nMink<>0 .and. (nUlaz-nIzlaz-nMink)<0)
-	
-	 if cMink=="O" .and. nMink==0 .and. round(nUlaz-nIzlaz,4)==0
-  		loop
-	 endif
-	 if cMink=="O" .and.  nMink<>0 .and. (nUlaz-nIzlaz-nMink)<0
-   		B_ON
-	 endif
+    if cMinK == "D" .and. ( nUlaz - nIzlaz - nMink ) > 0
+        LOOP
+    endif
+   
+    if cNula == "D" .or. IIF( IsPDV() .and. ( IsMagPNab() .or. IsMagSNab() ), ROUND( nNVU - nNVI, 4 ) <> 0, ;
+            ROUND( nVPVU - nVPVI, 4 ) <> 0 ) 
 
 	 aNaz:=Sjecistr(roba->naz,20)
 	 NovaStrana(bZagl)

@@ -1,3 +1,7 @@
+1.4.250 2013-11-20, vsasa
+ 
+  - KALK, dorada, lager liste i minimalna količina
+ 
 1.4.249 2013-11-19, vsasa
  
   - FIN, specifikacija po dospjeću, picture iznosa parametar

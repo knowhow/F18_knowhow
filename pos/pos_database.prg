@@ -583,8 +583,16 @@ if fiscal_opt_active()
 
     nTArea := SELECT()
 
-    // generisi plu kodove za nove sifre
-    gen_all_plu( .t. )
+    // ispitajmo paramtre fiskalnog uredjaja !
+    _dev_id := get_fiscal_device( my_user(), NIL, .t. )
+    
+    if _dev_id > 0
+        _dev_params := get_fiscal_device_params( _dev_id, my_user() )
+        if _dev_params["plu_type"] == "P"     
+            // generisi plu kodove za nove sifre
+            gen_all_plu( .t. )
+        endif
+    endif
 
     select ( nTArea )
 

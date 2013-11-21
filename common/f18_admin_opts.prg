@@ -103,7 +103,7 @@ endif
 
 if ::update_app_version == "#LAST#"
     if ::update_app_type == "F"
-        ::update_app_version := _ver_params["F18"]
+        ::update_app_version := _ver_params["f18"]
     else
         ::update_app_version := _ver_params["template"]
     endif
@@ -213,7 +213,7 @@ return _ok
 METHOD F18AdminOpts:update_app_get_versions()
 local _urls := hb_hash()
 local _o_file, _tmp, _a_tmp
-local _file := my_home_root() + "LATEST_VERSIONS"
+local _file := my_home_root() + "UPDATE_INFO"
 local _count := 0
 
 _o_file := TFileRead():New( _file )
@@ -252,9 +252,9 @@ return _urls
 METHOD F18AdminOpts:update_app_dl_scripts()
 local _ok := .f.
 local _path := my_home_root()
-local _url := "https://github.com/knowhow/F18_knowhow/blob/master/"
+local _url := "https://raw.github.com/knowhow/F18_knowhow/master/"
 local _script := "f18_upd"
-local _versions := "LATEST_VERSIONS"
+local _versions := "UPDATE_INFO"
 local _ver_params
 
 #ifdef __PLATFORM__WINDOWS

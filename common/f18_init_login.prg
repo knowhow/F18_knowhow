@@ -743,20 +743,20 @@ static function _set_menu_choices( menuop, menuexec )
 AADD( menuop, hb_utf8tostr( "1. rekonfiguracija servera        " ) )
 AADD( menuexec, {|| f18_init_app_login( .f. ), .t. } )
 
-AADD( menuop, hb_utf8tostr( "2. update baze" ) )
+AADD( menuop, hb_utf8tostr( "2. update F18" ) )
+AADD( menuexec, {|| F18AdminOpts():New():update_app(), .t. } )
+
+AADD( menuop, hb_utf8tostr( "3. update baze" ) )
 AADD( menuexec, {|| F18AdminOpts():New():update_db(), .t. } )
 
-AADD( menuop, hb_utf8tostr( "3. nova baza" ) )
+AADD( menuop, hb_utf8tostr( "4. nova baza" ) )
 AADD( menuexec, {|| F18AdminOpts():New():create_new_db(), .t. } )
 
-AADD( menuop, hb_utf8tostr( "4. brisanje baze" ) )
+AADD( menuop, hb_utf8tostr( "5. brisanje baze" ) )
 AADD( menuexec, {|| F18AdminOpts():New():drop_db(), .t. } )
 
-AADD( menuop, hb_utf8tostr( "5. otvaranje nove godine" ) )
+AADD( menuop, hb_utf8tostr( "6. otvaranje nove godine" ) )
 AADD( menuexec, {|| F18AdminOpts():New():new_session(), .t. } )
-
-AADD( menuop, hb_utf8tostr( "6. update F18" ) )
-AADD( menuexec, {|| F18AdminOpts():New():run_external_app( NIL, .t. ), .t. } )
 
 return
 

@@ -16,6 +16,9 @@
 
 CLASS F18AdminOpts
 
+    VAR update_app_version
+    VAR update_app_type
+
     METHOD new()
 
     METHOD update_db()
@@ -31,7 +34,11 @@ CLASS F18AdminOpts
 
     METHOD force_synchro_db()
 
-    METHOD run_external_app()
+    METHOD update_app()
+
+    METHOD get_os_name()
+
+    METHOD wget_download()
 
     DATA create_db_result
     
@@ -42,6 +49,11 @@ CLASS F18AdminOpts
         METHOD update_db_company()
         METHOD update_db_command()
         METHOD create_new_db_params()
+    
+        METHOD update_app_form()
+        METHOD update_app_dl_scripts()
+        METHOD update_app_get_versions()
+        METHOD update_app_run_script()
 
         DATA _new_db_params
         DATA _update_params
@@ -59,32 +71,283 @@ return self
 
 // ------------------------------------------------
 // ------------------------------------------------
-METHOD F18AdminOpts:run_external_app( app, quit_app )
-local _script
+METHOD F18AdminOpts:update_app()
+local _ver_params := hb_hash()
+local _upd_params := hb_hash()
+local _upd_file := ""
+local _ok := .f.
 
-if app == NIL
-    // nemamo app, pokrenut cemo default skriptu
-    #ifdef __PLATFORM__WINDOWS
-        _script := "c:" + SLASH + "knowhowERP" + SLASH + "util" + SLASH + "f18_script.bat"
-    #endif
-    #ifdef __PLATFORM__UNIX
-        _script := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH + "f18_script.sh"
-    #endif
-else
-    _script := app
+// daj mi parametre za update
+if !::update_app_form()
+    return SELF
 endif
 
-hb_run( _script )
-
-if quit_app == NIL
-    quit_app := .f.
+// download scripts...
+if !::update_app_dl_scripts()
+    MsgBeep( "Problem sa download-om skripti. Provjerite internet koneciju." )
+    return SELF
 endif
 
-if quit_app
-    QUIT
+// konacno mozemo ici na update...
+_ver_params := ::update_app_get_versions()
+
+if _ver_params == NIL
+    return SELF
 endif
+
+if ::update_app_type == "T"
+    _upd_file := "F18_templates_#VER#.gz"
+elseif ::update_app_type == "F"
+    _upd_file := "F18_#OS#_#VER#.gz"
+endif
+
+if ::update_app_version == "#LAST#"
+    if ::update_app_type == "F"
+        ::update_app_version := _ver_params["F18"]
+    else
+        ::update_app_version := _ver_params["template"]
+    endif
+endif
+
+#ifdef __PLATFORM__LINUX
+    _upd_file := STRTRAN( _upd_file, "#OS#", ::get_os_name() + "_i686" )
+#else
+    _upd_file := STRTRAN( _upd_file, "#OS#", ::get_os_name() )
+#endif
+
+_upd_file := STRTRAN( _upd_file, "#VER#", ::update_app_version )
+
+if !::wget_download( _ver_params["url"], _upd_file, my_home_root() + _upd_file, .t. )
+    return SELF
+endif
+
+// update run script
+::update_app_run_script( my_home_root() + _upd_file )
 
 return SELF
+
+
+// -----------------------------------------------------------
+// -----------------------------------------------------------
+METHOD F18AdminOpts:update_app_run_script( update_file )
+local _url := my_home_root() + "f18_upd."
+
+#ifdef __PLATFORM__WINDOWS
+    _url += "bat"
+    _url := '"' + _url + '"'
+#else
+    _url += "sh "
+#endif
+
+_url += " " + update_file
+    
+hb_run( _url )
+QUIT
+
+return SELF
+
+
+
+
+
+// ------------------------------------------------
+// ------------------------------------------------
+METHOD F18AdminOpts:update_app_form()
+local _ok := .f.
+local _ver_prim := 1
+local _ver_sec := 4
+local _ver_third := SPACE(10)
+local _upd_type := "F"
+local _x := 1
+
+Box(, 10, 60 )
+
+    @ m_x + _x, m_y + 2 SAY "## UPDATE F18 APP ##"
+   
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Verzija:" GET _ver_prim PICT "99" VALID _ver_prim > 0
+    @ m_x + _x, col() + 1 SAY "." GET _ver_sec PICT "99" VALID _ver_sec > 0
+    @ m_x + _x, col() + 1 SAY "." GET _ver_third PICT "@S10"
+ 
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Tip update-a (F/T):" GET _upd_type VALID _upd_type $ "TFS" PICT "@!"
+
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "info: [F] - update F18, [T] - update templates"    
+    
+    READ
+
+BoxC()
+
+if LastKey() == K_ESC
+    return _ok
+endif
+
+// sastavi mi verziju
+if !EMPTY( _ver_third )
+    // zadana verzija
+    ::update_app_version := ALLTRIM( STR( _ver_prim ) ) + ;
+                            "." + ;
+                            ALLTRIM( STR( _ver_sec ) ) + ;
+                            "." + ;
+                            ALLTRIM( _ver_third )
+else
+    ::update_app_version := "#LAST#"
+endif
+
+::update_app_type := _upd_type
+
+_ok := .t.
+return _ok
+
+
+
+
+// ------------------------------------------------
+// ------------------------------------------------
+METHOD F18AdminOpts:update_app_get_versions()
+local _urls := hb_hash()
+local _o_file, _tmp, _a_tmp
+local _file := my_home_root() + "LATEST_VERSIONS"
+local _count := 0
+
+_o_file := TFileRead():New( _file )
+_o_file:Open()
+
+if _o_file:Error()
+	MSGBEEP( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
+	return SELF
+endif
+
+_tmp := ""
+
+// prodji kroz svaku liniju i procitaj zapise
+while _o_file:MoreToRead()
+	_tmp := hb_strtoutf8( _o_file:ReadLine() )
+    _a_tmp := TokToNiz( _tmp, "=" )
+    if LEN( _a_tmp ) > 1
+        ++ _count
+        _urls[ LOWER( _a_tmp[1] ) ] := _a_tmp[2]
+    endif
+enddo
+
+_o_file:Close()
+
+if _count == 0
+    MsgBeep( "Nisam uspio nista procitati iz fajla sa verzijama !" )
+    _urls := NIL
+endif
+
+return _urls
+
+
+
+// ------------------------------------------------
+// ------------------------------------------------
+METHOD F18AdminOpts:update_app_dl_scripts()
+local _ok := .f.
+local _path := my_home_root()
+local _url := "https://github.com/knowhow/F18_knowhow/blob/master/"
+local _script := "f18_upd"
+local _versions := "LATEST_VERSIONS"
+local _ver_params
+
+#ifdef __PLATFORM__WINDOWS
+    _script += ".bat"
+#else
+    _script += ".sh"
+#endif
+
+// skini mi info fajl o verzijama...
+if !::wget_download( _url, _versions, _path + _versions, .t. )
+    return _ok
+endif
+
+// skini mi skriptu f18_upd.sh
+if !::wget_download( _url, _script, _path + _script, .t. )
+    return _ok
+endif
+
+_ok := .t.
+return _ok
+
+
+
+// ----------------------------------------------
+// ----------------------------------------------
+METHOD F18AdminOpts:get_os_name()
+local _os := "Ubuntu"
+
+#ifdef __PLATFORM__WINDOWS
+    _os := "Windows"
+#endif
+
+#ifdef __PLATFORM__DARWIN
+    _os := "MacOSX"
+#endif
+
+return _os
+
+
+
+// ---------------------------------------------------------------
+// ---------------------------------------------------------------
+METHOD F18AdminOpts:wget_download( url, filename, location, erase_file )
+local _ok := .f.
+local _cmd := ""
+
+if erase_file == NIL
+    erase_file := .f.
+endif
+
+if FILE( ALLTRIM( location ) )
+    if erase_file .or. Pitanje( , "Fajl postoji na lokaciji, pobrisati ga ? (D/N)", "N" ) == "D"
+        FERASE( ALLTRIM( location ) )
+        SLEEP(1)
+    else
+        return _ok
+    endif
+endif
+
+_cmd := "wget " 
+#ifdef __PLATFORM__WINDOWS
+    _cmd += '"' + url + filename + '"'
+#else
+    _cmd += url + filename
+#endif
+
+_cmd += " -O "
+
+#ifdef __PLATFORM__WINDOWS
+    _cmd += '"' + location + '"'
+#else
+    _cmd += location 
+#endif
+
+MsgO( "vrsim download ... sacekajte !" )
+
+hb_run( _cmd )
+
+sleep(1)
+
+MsgC()
+
+if !FILE( location )
+    // nema fajle
+    MsgBeep( "Fajl " + location + " nije download-ovan !!!" )
+    return _ok
+endif
+
+_ok := .t.
+
+return _ok
+
+
 
 
 // -----------------------------------------------
@@ -169,14 +432,15 @@ return _ok
 
 
 
-
-
+// ----------------------------------------------------------------
+// ----------------------------------------------------------------
 METHOD F18AdminOpts:update_db_download()
 local _ok := .f.
 local _ver := ::_update_params["version"]
 local _cmd := ""
 local _path := my_home_root()
 local _file := "f18_db_migrate_package_" + ALLTRIM( _ver ) + ".gz"
+local _url := "http://knowhow-erp-f18.googlecode.com/files/"
 
 if FILE( ALLTRIM( _path ) + ALLTRIM( _file ) )
 
@@ -190,39 +454,11 @@ if FILE( ALLTRIM( _path ) + ALLTRIM( _file ) )
 
 endif
 
-
-_cmd := "wget " 
-#ifdef __PLATFORM__WINDOWS
-    _cmd += '"' +  "http://knowhow-erp-f18.googlecode.com/files/" + _file + '"'
-#else
-    _cmd += "http://knowhow-erp-f18.googlecode.com/files/" + _file
-#endif
-
-_cmd += " -O "
-
-#ifdef __PLATFORM__WINDOWS
-    _cmd += '"' + _path + _file + '"'
-#else
-    _cmd += _path + _file
-#endif
-
-MsgO( "vrsim download db paketa ... sacekajte !" )
-
-hb_run( _cmd )
-
-sleep(1)
-
-MsgC()
-
-if !FILE( _path + _file )
-    // nema fajle
-    MsgBeep( "Fajl " + _path + _file + " nije download-ovan !!!" )
-    return _ok
+// download fajla
+if ::wget_download( _url, _file, _path + _file )
+    ::_update_params["file"] := ALLTRIM( _path ) + ALLTRIM( _file )
+    _ok := .t.
 endif
-
-::_update_params["file"] := ALLTRIM( _path ) + ALLTRIM( _file )
-
-_ok := .t.
 
 return _ok
 
@@ -354,7 +590,6 @@ for _i := 1 to LEN( _sess_list )
 
     MsgO( "Vrsim update baze " + _database ) 
   
-    altd() 
     _ok := hb_run( _cmd )
 
     // ubaci u matricu rezultat...

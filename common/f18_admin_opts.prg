@@ -117,6 +117,7 @@ endif
 
 _upd_file := STRTRAN( _upd_file, "#VER#", ::update_app_version )
 
+// download fajla za update...
 if !::wget_download( _ver_params["url"], _upd_file, my_home_root() + _upd_file, .t. )
     return SELF
 endif

@@ -14,22 +14,22 @@ if "%ERRORLEVEL%"=="0" goto :SERVICE  else GOTO :UPDATE
 
 :UPDATE
 
-if not exist %1 echo "F18 update fajl ne postoji"  goto :ERR 
+if not exist %1  goto :ERR1 
 
 
 gzip -dNfc  < %1 > %DEST%\F18.exe 
 del /Q  %1 
 goto :END
 
-:ERR
-echo "Prekidam operaciju UPDATE-a"
+:ERR1
+echo "Problem sa F18 update fajlom, Prekidam operaciju UPDATE-a"
 exit /b
 
 :END
-echo ""
-echo ""
+echo
+echo 
 echo "UPDATE OK"
-echo ""
-echo ""
+echo 
+echo 
 PING -n 2 www.google.com  >NUL
 exit /b

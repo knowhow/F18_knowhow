@@ -22,14 +22,19 @@ del /Q  %1
 goto :END
 
 :ERR1
+echo.
+echo.
 echo "Problem sa F18 update fajlom, Prekidam operaciju UPDATE-a"
+echo.
+echo.
+pause
 exit /b
 
 :END
-echo
-echo 
-echo "UPDATE OK"
-echo 
-echo 
+echo.
+echo.
+echo >>>>>>>>>>"UPDATE OK"<<<<<<<<<<<
+echo.
+echo. 
 PING -n 2 www.google.com  >NUL
-exit /b
+exit 

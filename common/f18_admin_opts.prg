@@ -219,8 +219,8 @@ METHOD F18AdminOpts:update_app_run_script( update_file )
 local _url := my_home_root() + ::update_app_script_file
 
 #ifdef __PLATFORM__WINDOWS
-    _url := 'start cmd /C "' + _url + '"'
-    //_url += ' ' + update_file + '"' 
+    _url := 'start cmd /C ""' + _url
+    _url += '" "' + ::update_app_f18_version + '""' 
 #else
     #ifdef __PLATFORM__LINUX
         _url := "bash " + _url
@@ -232,12 +232,13 @@ local _url := my_home_root() + ::update_app_script_file
     _url := _url + " &"
 #endif
 
-MsgBeep( "F18 ce se sada zatvoriti#Nakon update procesa ponovo otvorite F18" )
+Msg( "F18 ce se sada zatvoriti#Nakon update procesa ponovo otvorite F18", 4)
 
 // pokreni skriptu    
 hb_run( _url )
 
-sleep(2)
+sleep(1)
+
 // zatvori aplikaciju ako je update aplikacije...
 QUIT
 
@@ -503,10 +504,6 @@ if erase_file
     FERASE( location )
     sleep(1)
 endif
-
-#ifdef __PLATFORM__WINDOWS
-    _cmd += "start "
-#endif
 
 _cmd += "wget " 
 

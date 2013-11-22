@@ -10,13 +10,15 @@ DEST=/opt/knowhowERP/bin
 # spavaj dok F18 ne zatvori
 sleep 3
 
-# dali je update fajl tu
-if [ ! -f $1 ]; then
+# dali je update zero lenght
+if [ ! -s $1 ]; then
     echo "nema fajla!"
     exit 0
 else 
     echo "sve spremno za update, nastavljam" 
+fi
 
+# provjeravam F18 servis i updateujem" 
 while  [ "$SERVICE" -gt 0 ]
 	do	
     	echo "$SERVICE je pokrenut cekam da se zatvori"

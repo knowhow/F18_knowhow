@@ -18,6 +18,8 @@ CLASS F18AdminOpts
 
     VAR update_app_version
     VAR update_app_type
+    VAR update_app_info_file
+    VAR update_app_script_file
 
     METHOD new()
 
@@ -77,6 +79,14 @@ local _upd_params := hb_hash()
 local _upd_file := ""
 local _ok := .f.
 
+// setuj mi ove stavke...
+::update_app_info_file := "UPDATE_INFO"
+::update_app_script_file := "f18_upd.sh"
+
+#ifdef __PLATFORM__WINDOWS
+    ::update_app_script_file := "f18_upd.bat"
+#endif
+
 // daj mi parametre za update
 if !::update_app_form()
     return SELF
@@ -88,7 +98,7 @@ if !::update_app_dl_scripts()
     return SELF
 endif
 
-// konacno mozemo ici na update...
+// daj mi informacije o url i verzijama
 _ver_params := ::update_app_get_versions()
 
 if _ver_params == NIL
@@ -128,6 +138,8 @@ endif
 return SELF
 
 
+
+
 // -----------------------------------------------------------
 // -----------------------------------------------------------
 METHOD F18AdminOpts:update_app_run_script( update_file )
@@ -138,11 +150,17 @@ local _url := my_home_root() + "f18_upd."
     _url := '"' + _url + '"'
 #else
     _url += "sh "
+    #ifdef __PLATFORM__LINUX
+        _url := "bash " + _url
+    #endif
 #endif
 
 _url += " " + update_file
-    
+
+// pokreni skriptu    
 hb_run( _url )
+
+// zatvori aplikaciju
 QUIT
 
 return SELF
@@ -172,6 +190,10 @@ Box(, 10, 60 )
     @ m_x + _x, col() + 1 SAY "." GET _ver_sec PICT "99" VALID _ver_sec > 0
     @ m_x + _x, col() + 1 SAY "." GET _ver_third PICT "@S10"
  
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "(ako je verzija prazno, vrsi se download posljednje)"
+    
     ++ _x
     ++ _x
 
@@ -214,7 +236,7 @@ return _ok
 METHOD F18AdminOpts:update_app_get_versions()
 local _urls := hb_hash()
 local _o_file, _tmp, _a_tmp
-local _file := my_home_root() + "UPDATE_INFO"
+local _file := my_home_root() + ::update_app_info_file
 local _count := 0
 
 _o_file := TFileRead():New( _file )
@@ -233,7 +255,7 @@ while _o_file:MoreToRead()
     _a_tmp := TokToNiz( _tmp, "=" )
     if LEN( _a_tmp ) > 1
         ++ _count
-        _urls[ LOWER( _a_tmp[1] ) ] := _a_tmp[2]
+        _urls[ ALLTRIM( LOWER( _a_tmp[1] ) ) ] := ALLTRIM( _a_tmp[2] )
     endif
 enddo
 
@@ -253,24 +275,19 @@ return _urls
 METHOD F18AdminOpts:update_app_dl_scripts()
 local _ok := .f.
 local _path := my_home_root()
-local _url := "https://raw.github.com/knowhow/F18_knowhow/master/"
-local _script := "f18_upd"
-local _versions := "UPDATE_INFO"
+local _url 
+local _script 
 local _ver_params
 
-#ifdef __PLATFORM__WINDOWS
-    _script += ".bat"
-#else
-    _script += ".sh"
-#endif
-
 // skini mi info fajl o verzijama...
-if !::wget_download( _url, _versions, _path + _versions, .t. )
+_url := "https://raw.github.com/knowhow/F18_knowhow/master/"
+if !::wget_download( _url, ::update_app_info_file, _path + ::update_app_info_file, .t. )
     return _ok
 endif
 
 // skini mi skriptu f18_upd.sh
-if !::wget_download( _url, _script, _path + _script, .t. )
+_url := "https://raw.github.com/knowhow/F18_knowhow/master/scripts/"
+if !::wget_download( _url, ::update_app_script_file, _path + ::update_app_script_file, .t. )
     return _ok
 endif
 

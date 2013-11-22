@@ -1,3 +1,7 @@
+1.4.252 2013-11-22, vsasa
+ 
+  - F18, update aplikacije
+ 
 1.4.251 2013-11-20, vsasa
  
   - POS, generisanje plu kodova nakon zaduženja iz KALK-a

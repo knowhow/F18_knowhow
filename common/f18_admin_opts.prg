@@ -157,11 +157,17 @@ local _url := my_home_root() + "f18_upd."
 
 _url += " " + update_file
 
+if ::update_app_type == "F"
+    Msg( "Zbog update-a aplikacije, F18 ce biti zatvoren.#Nakon update procedure ponovo udjite u F18." , 4 )
+endif
+
 // pokreni skriptu    
 hb_run( _url )
 
-// zatvori aplikaciju
-QUIT
+if ::update_app_type == "F"
+    // zatvori aplikaciju ako je update aplikacije...
+    QUIT
+endif
 
 return SELF
 
@@ -180,13 +186,12 @@ local _upd_type := "F"
 local _x := 1
 local _col_app, _col_temp, _line
 
-_col_app := ""
-_col_temp := ""
+_col_app := "W/G+"
+_col_temp := "W/G+"
 
 if F18_VER < upd_params["f18"]
     _col_app := "W/R+" 
 endif
-
 if F18_TEMPLATE_VER < upd_params["templates"]
     _col_temp := "W/R+"
 endif
@@ -198,21 +203,25 @@ Box(, 14, 65 )
     ++ _x
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY PADR( "[INFO]", 10 ) + " " + PADC( "Trenutna verzija", 15 ) + "/" + PADC( "Dostupna verzija", 15 )
+    @ m_x + _x, m_y + 2 SAY _line := ( REPLICATE( "-", 10 ) + " " + REPLICATE( "-", 20 ) + " " + REPLICATE( "-", 20 ) )
 
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY _line := ( REPLICATE( "-", 10 ) + " " + REPLICATE( "-", 15 ) + " " + REPLICATE( "-", 15 ) )
+    @ m_x + _x, m_y + 2 SAY PADR( "[INFO]", 10 ) + "/" + PADC( "Trenutna", 20 ) + "/" + PADC( "Dostupna", 20 )
+
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY _line 
 
     ++ _x
     
-    @ m_x + _x, m_y + 2 SAY PADR( "F18", 10 ) + " " + PADC( F18_VER, 15 )
-    @ m_x + _x, col() + 1 SAY PADC( upd_params["f18"], 16 ) COLOR _col_app
+    @ m_x + _x, m_y + 2 SAY PADR( "F18", 10 ) + " " + PADC( F18_VER, 20 )
+    @ m_x + _x, col() SAY " " + PADC( upd_params["f18"], 20 ) COLOR _col_app
 
     ++ _x
     
-    @ m_x + _x, m_y + 2 SAY PADR( "template", 10 ) + " " + PADC( F18_TEMPLATE_VER, 15 )
-    @ m_x + _x, col() + 1 SAY PADC( upd_params["templates"], 16 ) COLOR _col_temp
+    @ m_x + _x, m_y + 2 SAY PADR( "template", 10 ) + " " + PADC( F18_TEMPLATE_VER, 20 )
+    @ m_x + _x, col() SAY " " + PADC( upd_params["templates"], 20 ) COLOR _col_temp
 
     ++ _x
 

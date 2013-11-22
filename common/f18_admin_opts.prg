@@ -505,19 +505,19 @@ if erase_file
     sleep(1)
 endif
 
-_cmd := "wget " 
 #ifdef __PLATFORM__WINDOWS
-    _cmd += " --no-check_certificate "
-    _cmd += '"' + url + filename + '"'
-#else
-    _cmd += url + filename
+    _cmd += "start "
 #endif
 
-_cmd += " -O "
+_cmd += "wget " 
 
-if only_newer
-    _cmd += " -N "
-endif
+#ifdef __PLATFORM__WINDOWS
+    _cmd += " --no-check-certificate "
+#endif
+
+_cmd += url + filename
+
+_cmd += " -O "
 
 #ifdef __PLATFORM__WINDOWS
     _cmd += '"' + location + '"'
@@ -551,8 +551,8 @@ if _h >= 0
     FSEEK( _h, 0 )
     FCLOSE( _h )
     if _length <= 0
-        MsgBeep( "Trazeni fajl ne postoji !!!" )
-        return _ok
+        //MsgBeep( "Trazeni fajl ne postoji !!!" )
+        //return _ok
     endif
 endif
 

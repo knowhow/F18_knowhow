@@ -507,6 +507,7 @@ endif
 
 _cmd := "wget " 
 #ifdef __PLATFORM__WINDOWS
+    _cmd += " --no-check_certificate "
     _cmd += '"' + url + filename + '"'
 #else
     _cmd += url + filename

@@ -9,7 +9,7 @@ set DEST=C:\knowhowERP\bin
 echo  "Provjeravam dali je F18 zatvoren"
 PING -n 6 www.google.com  >NUL
 REM # provjeri dali se F18 vrti
-tasklist /FI "IMAGENAME eq F18.exe" 2>NUL | "find /I /N" "F18.exe">NUL
+tasklist /FI "IMAGENAME eq F18.exe" 2>NUL | find /I /N "F18.exe" >NUL
 if "%ERRORLEVEL%"=="0" goto SERVICE  else got UPDATE
 
 :UPDATE

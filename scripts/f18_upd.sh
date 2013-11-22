@@ -13,7 +13,7 @@ while  [ "$SERVICE" -gt 0 ]
     	echo "$SERVICE je pokrenut cekam da se zatvori"
         sleep 5  
     done
-    	gzip -dNf $1
+    	gzip -dNf $1 .
     	mv F18 $DEST
     	chmod +x $DEST/F18
     	echo "update je zavrsen"

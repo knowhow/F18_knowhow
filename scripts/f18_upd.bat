@@ -1,4 +1,4 @@
-@echo on
+@echo off
 REM # ver 1.0.1
 REM # bjasko@bring.out.ba
 REM # date 22.11.2013

@@ -169,6 +169,10 @@ local _url := my_home_root() + "f18_upd."
 
 _url += " " + update_file
 
+#ifdef __PLATFORM__UNIX
+    _url := _url + " &"
+#endif
+
 if ::update_app_type == "F"
     Msg( "Zbog update-a aplikacije, F18 ce biti zatvoren.#Nakon update procedure ponovo udjite u F18." , 4 )
 endif

@@ -3,7 +3,7 @@
 PATH=/bin:/usr/bin:/usr/local/bin:/opt/knowhowERP/bin:/opt/knowhowERP/util
 VER=1.0.0
 DAT=22.11.2013
-SERVICE=$(ps ax | grep -v grep | grep -c F18) 
+SERVICE=$(ps ax | grep -v grep | grep -c 'F18$') 
 DEST=/opt/knowhowERP/bin
 
 sleep 3

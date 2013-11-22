@@ -7,7 +7,7 @@ DAT=22.11.2013
 SERVICE=$(ps ax | grep -v grep | grep -c 'F18$') 
 DEST=/opt/knowhowERP/bin
 
-# spavaj dok F18 ne zatvori
+# spavaj dok se F18 ne zatvori
 sleep 3
 
 # dali je update zero lenght
@@ -18,15 +18,15 @@ else
     echo "sve spremno za update, nastavljam" 
 fi
 
-# provjeravam F18 servis i updateujem" 
+# provjeravam F18 servis i radim update" 
 while  [ "$SERVICE" -gt 0 ]
 	do	
-    	echo "$SERVICE je pokrenut cekam da se zatvori"
-        sleep 5  
+       echo "$SERVICE je pokrenut cekam da se zatvori"
+       sleep 5  
     done
-    	gzip -dNfc  < $1 > $DEST/F18
-    	chmod +x $DEST/F18
-    	echo "update je zavrsen"
-
+       gzip -dNfc  < $1 > $DEST/F18
+       chmod +x $DEST/F18
+       echo "update je zavrsen"
+       rm $1  
 exit 0
 

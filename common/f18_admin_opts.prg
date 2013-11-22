@@ -335,21 +335,20 @@ local _url
 local _script 
 local _ver_params
 local _silent := .t.
-local _always_erase := .f.
-local _newer := .t.
+local _always_erase := .t.
 
 MsgO( "Vrsim download skripti za update ... sacekajte trenutak !" )
 
 // skini mi info fajl o verzijama...
 _url := "https://raw.github.com/knowhow/F18_knowhow/master/"
-if !::wget_download( _url, ::update_app_info_file, _path + ::update_app_info_file, _always_erase, _silent, _newer )
+if !::wget_download( _url, ::update_app_info_file, _path + ::update_app_info_file, _always_erase, _silent )
     MsgC()
     return _ok
 endif
 
 // skini mi skriptu f18_upd.sh
 _url := "https://raw.github.com/knowhow/F18_knowhow/master/scripts/"
-if !::wget_download( _url, ::update_app_script_file, _path + ::update_app_script_file, _always_erase, _silent, _newer )
+if !::wget_download( _url, ::update_app_script_file, _path + ::update_app_script_file, _always_erase, _silent )
     MsgC()
     return _ok
 endif

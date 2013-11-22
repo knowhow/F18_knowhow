@@ -13,6 +13,7 @@
 #include "hbclass.ch"
 #include "common.ch"
 #include "f18_ver.ch"
+#include "fileio.ch"
 
 CLASS F18AdminOpts
 
@@ -232,6 +233,8 @@ _url += " " + update_file
 #else
     _url := "call " + _url
 #endif
+
+Msg( "F18 ce se sada zatvoriti#Nakon update procesa ponovo otvorite F18" , 4)
 
 // pokreni skriptu    
 hb_run( _url )
@@ -483,6 +486,7 @@ return _os
 METHOD F18AdminOpts:wget_download( url, filename, location, erase_file, silent, only_newer )
 local _ok := .f.
 local _cmd := ""
+local _h, _lenght
 
 if erase_file == NIL
     erase_file := .f.
@@ -536,6 +540,19 @@ if !FILE( location )
     // nema fajle
     MsgBeep( "Fajl " + location + " nije download-ovan !!!" )
     return _ok
+endif
+
+// provjeri velicinu fajla...
+_h := FOPEN( location )
+
+if _h >= 0
+    _length := FSEEK( _h, 0, FS_END )
+    FSEEK( _h, 0 )
+    FCLOSE( _h )
+    if _length <= 0
+        MsgBeep( "Trazeni fajl ne postoji !!!" )
+        return _ok
+    endif
 endif
 
 _ok := .t.

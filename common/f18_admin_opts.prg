@@ -12,7 +12,7 @@
 #include "fmk.ch"
 #include "hbclass.ch"
 #include "common.ch"
-
+#include "f18_ver.ch"
 
 CLASS F18AdminOpts
 
@@ -87,11 +87,6 @@ local _ok := .f.
     ::update_app_script_file := "f18_upd.bat"
 #endif
 
-// daj mi parametre za update
-if !::update_app_form()
-    return SELF
-endif
-
 // download scripts...
 if !::update_app_dl_scripts()
     MsgBeep( "Problem sa download-om skripti. Provjerite internet koneciju." )
@@ -105,6 +100,11 @@ if _ver_params == NIL
     return SELF
 endif
 
+// daj mi parametre za update
+if !::update_app_form( _ver_params )
+    return SELF
+endif
+
 if ::update_app_type == "T"
     _upd_file := "F18_templates_#VER#.gz"
 elseif ::update_app_type == "F"
@@ -115,7 +115,7 @@ if ::update_app_version == "#LAST#"
     if ::update_app_type == "F"
         ::update_app_version := _ver_params["f18"]
     else
-        ::update_app_version := _ver_params["template"]
+        ::update_app_version := _ver_params["templates"]
     endif
 endif
 
@@ -171,20 +171,53 @@ return SELF
 
 // ------------------------------------------------
 // ------------------------------------------------
-METHOD F18AdminOpts:update_app_form()
+METHOD F18AdminOpts:update_app_form( upd_params )
 local _ok := .f.
 local _ver_prim := 1
 local _ver_sec := 4
 local _ver_third := SPACE(10)
 local _upd_type := "F"
 local _x := 1
+local _col_app, _col_temp, _line
 
-Box(, 10, 65 )
+_col_app := ""
+_col_temp := ""
+
+if F18_VER < upd_params["f18"]
+    _col_app := "W/R+" 
+endif
+
+if F18_TEMPLATE_VER < upd_params["templates"]
+    _col_temp := "W/R+"
+endif
+
+Box(, 14, 65 )
+
+    @ m_x + _x, m_y + 2 SAY PADR( "## UPDATE F18 APP ##", 64 ) COLOR "I"
+   
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY PADR( "[INFO]", 10 ) + " " + PADC( "Trenutna verzija", 15 ) + "/" + PADC( "Dostupna verzija", 15 )
 
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY PADR( "## UPDATE F18 APP ##", 60 ) COLOR "I"
-   
+    @ m_x + _x, m_y + 2 SAY _line := ( REPLICATE( "-", 10 ) + " " + REPLICATE( "-", 15 ) + " " + REPLICATE( "-", 15 ) )
+
+    ++ _x
+    
+    @ m_x + _x, m_y + 2 SAY PADR( "F18", 10 ) + " " + PADC( F18_VER, 15 )
+    @ m_x + _x, col() + 1 SAY PADC( upd_params["f18"], 16 ) COLOR _col_app
+
+    ++ _x
+    
+    @ m_x + _x, m_y + 2 SAY PADR( "template", 10 ) + " " + PADC( F18_TEMPLATE_VER, 15 )
+    @ m_x + _x, col() + 1 SAY PADC( upd_params["templates"], 16 ) COLOR _col_temp
+
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY _line
+
     ++ _x
     ++ _x
 
@@ -193,10 +226,6 @@ Box(, 10, 65 )
     @ m_x + _x, col() + 1 SAY "." GET _ver_third PICT "@S10"
     @ m_x + _x, col() + 1 SAY "(prazno, posljednja verzija)"
     
-    ++ _x
-    
-    @ m_x + _x, m_y + 2 SAY REPLICATE( "=", 60 )
-
     ++ _x
     ++ _x
 

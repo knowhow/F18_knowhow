@@ -1,12 +1,21 @@
 #!/bin/bash
 
+# VARS
 PATH=/bin:/usr/bin:/usr/local/bin:/opt/knowhowERP/bin:/opt/knowhowERP/util
 VER=1.0.0
 DAT=22.11.2013
 SERVICE=$(ps ax | grep -v grep | grep -c 'F18$') 
 DEST=/opt/knowhowERP/bin
 
+# spavaj dok F18 ne zatvori
 sleep 3
+
+# dali je update fajl tu
+if [ ! -f $1 ]; then
+    echo "nema fajla!"
+    exit 0
+else 
+    echo "sve spremno za update, nastavljam" 
 
 while  [ "$SERVICE" -gt 0 ]
 	do	

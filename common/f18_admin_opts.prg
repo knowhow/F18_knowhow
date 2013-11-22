@@ -147,7 +147,7 @@ if ::update_app_templates_version == F18_TEMPLATE_VER
 endif
 
 // download fajla za update...
-if !::wget_download( params["url"], _upd_file, _dest + _upd_file, .t. )
+if !::wget_download( params["url"], _upd_file, _dest + _upd_file, .t., .t. )
     return SELF
 endif
 
@@ -165,13 +165,11 @@ local _cmd
 
 MsgO( "Vrsim update template fajlova ..." )
 
-DirChange( destination )
+//DirChange( destination )
 
-_cmd := "gzip -dNf " + location
+_cmd := "tar -C " + destination + " -jxf " + location
 
 hb_run( _cmd )
-
-DirChange( my_home_root() )
 
 MsgC()
 
@@ -203,7 +201,7 @@ if ::update_app_f18_version == F18_VER
 endif
 
 // download fajla za update...
-if !::wget_download( params["url"], _upd_file, my_home_root() + _upd_file, .t. )
+if !::wget_download( params["url"], _upd_file, my_home_root() + _upd_file, .t., .t. )
     return SELF
 endif
 

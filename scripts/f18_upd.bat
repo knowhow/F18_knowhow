@@ -1,4 +1,4 @@
-@echo off
+@echo on
 REM # ver 1.0.1
 REM # bjasko@bring.out.ba
 REM # date 22.11.2013
@@ -14,11 +14,8 @@ if "%ERRORLEVEL%"=="0" goto :SERVICE  else GOTO :UPDATE
 
 :UPDATE
 
-if not exist %1 echo "F18 update fajl ne postoji"  
-goto :ERR 
-if %z1 eq 0 
-del %1 
-goto :ERR
+if not exist %1 echo "F18 update fajl ne postoji"  goto :ERR 
+
 
 gzip -dNfc  < %1 > %DEST%\F18.exe 
 del /Q  %1 

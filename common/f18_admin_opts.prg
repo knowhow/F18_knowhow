@@ -105,18 +105,6 @@ if !::update_app_form( _ver_params )
     return SELF
 endif
 
-if ::update_app_type == "F"
-    if _ver_params["f18"] == F18_VER
-        MsgBeep( "Verzija " + F18_VER + " je vec instalirana !" )
-        return SELF
-    endif
-else
-    if _ver_params["templates"] == F18_TEMPLATE_VER
-        MsgBeep( "Verzija " + F18_TEMPLATE_VER + " je vec instalirana !" )
-        return SELF
-    endif
-endif
-
 if ::update_app_type == "T"
     _upd_file := "F18_templates_#VER#.gz"
 elseif ::update_app_type == "F"
@@ -138,6 +126,18 @@ endif
 #endif
 
 _upd_file := STRTRAN( _upd_file, "#VER#", ::update_app_version )
+
+if ::update_app_type == "F"
+    if ::update_app_version == F18_VER
+        MsgBeep( "Verzija " + F18_VER + " je vec instalirana !" )
+        return SELF
+    endif
+else
+    if ::update_app_version == F18_TEMPLATE_VER
+        MsgBeep( "Verzija " + F18_TEMPLATE_VER + " je vec instalirana !" )
+        return SELF
+    endif
+endif
 
 // download fajla za update...
 if !::wget_download( _ver_params["url"], _upd_file, my_home_root() + _upd_file, .t. )

@@ -1,3 +1,7 @@
+1.4.253 2013-11-22, vsasa
+ 
+  - F18, update aplikacije korekcije
+ 
 1.4.252 2013-11-22, vsasa
  
   - F18, update aplikacije

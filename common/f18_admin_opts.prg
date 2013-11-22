@@ -171,6 +171,8 @@ _url += " " + update_file
 
 #ifdef __PLATFORM__UNIX
     _url := _url + " &"
+#else
+    _url := "call " + _url
 #endif
 
 if ::update_app_type == "F"

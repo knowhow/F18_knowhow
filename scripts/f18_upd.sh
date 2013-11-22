@@ -15,7 +15,7 @@ while  [ "$SERVICE" -gt 0 ]
     done
     	gzip -dNf $1
     	mv F18 $DEST
-    	chmod +x $FILE
+    	chmod +x $DEST/F18
     	echo "update je zavrsen"
 
 exit 0

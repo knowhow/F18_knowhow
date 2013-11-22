@@ -10,20 +10,20 @@ echo  "Provjeravam dali je F18 zatvoren"
 PING -n 1 www.google.com  >NUL
 REM # provjeri dali se F18 vrti
 tasklist /FI "IMAGENAME eq F18.exe" 2>NUL | find /I /N "F18.exe">NUL
-if "%ERRORLEVEL%"=="0" goto :SERVICE  else GOTO :UPDATE
+if "%ERRORLEVEL%"=="0" goto SERVICE  else got UPDATE
 
 :UPDATE
 
-if not exist %1  goto :ERR1 
+if not exist %1  goto ERR1 
 
 gzip -tv  %1
-if errorlevel 1 goto ERR2if errorlevel 0 goto OK 
+if errorlevel 1 goto ERR2 if errorlevel 0 goto OK 
 
 :OK
 
 gzip -dNfc  < %1 > %DEST%\F18.exe 
 del /Q  %1 
-goto :END
+goto END
 
 :ERR1
 echo.
@@ -38,7 +38,7 @@ exit
 
 echo.
 echo.
-echo "Greška unutar F18 update fajla, Prekidam operaciju, ponovite UPDATE"
+echo "Greska unutar F18 update fajla, Prekidam operaciju, ponovite UPDATE"
 echo.
 echo.
 pause
@@ -49,9 +49,9 @@ exit
 START/min mplay32 /play /close %windir%\media\ding.wav
 echo.
 echo.
-echo "Update je završen uspješno"
+echo "Update je zavrsen uspjesno"
 echo.
-echo "Možete zatvoriti ovaj prozor te ponovo pokrenuti F18"
+echo "Mozete zatvoriti ovaj prozor te ponovo pokrenuti F18"
 echo.
 echo. 
 pause

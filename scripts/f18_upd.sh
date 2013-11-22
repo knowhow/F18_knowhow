@@ -17,8 +17,6 @@ while  [ "$SERVICE" -gt 0 ]
     	mv F18 $DEST
     	chmod +x $FILE
     	echo "update je zavrsen"
-fi
-
 
 exit 0
 

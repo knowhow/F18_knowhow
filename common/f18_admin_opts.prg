@@ -105,6 +105,18 @@ if !::update_app_form( _ver_params )
     return SELF
 endif
 
+if ::update_app_type == "F"
+    if _ver_params["f18"] == F18_VER
+        MsgBeep( "Verzija " + F18_VER + " je vec instalirana !" )
+        return SELF
+    endif
+else
+    if _ver_params["templates"] == F18_TEMPLATE_VER
+        MsgBeep( "Verzija " + F18_TEMPLATE_VER + " je vec instalirana !" )
+        return SELF
+    endif
+endif
+
 if ::update_app_type == "T"
     _upd_file := "F18_templates_#VER#.gz"
 elseif ::update_app_type == "F"
@@ -216,12 +228,14 @@ Box(, 14, 65 )
     ++ _x
     
     @ m_x + _x, m_y + 2 SAY PADR( "F18", 10 ) + " " + PADC( F18_VER, 20 )
-    @ m_x + _x, col() SAY " " + PADC( upd_params["f18"], 20 ) COLOR _col_app
+    @ m_x + _x, col() SAY " "
+    @ m_x + _x, col() SAY PADC( upd_params["f18"], 20 ) COLOR _col_app
 
     ++ _x
     
     @ m_x + _x, m_y + 2 SAY PADR( "template", 10 ) + " " + PADC( F18_TEMPLATE_VER, 20 )
-    @ m_x + _x, col() SAY " " + PADC( upd_params["templates"], 20 ) COLOR _col_temp
+    @ m_x + _x, col() SAY " "
+    @ m_x + _x, col() SAY PADC( upd_params["templates"], 20 ) COLOR _col_temp
 
     ++ _x
 
@@ -320,18 +334,27 @@ local _path := my_home_root()
 local _url 
 local _script 
 local _ver_params
+local _silent := .t.
+local _always_erase := .f.
+local _newer := .t.
+
+MsgO( "Vrsim download skripti za update ... sacekajte trenutak !" )
 
 // skini mi info fajl o verzijama...
 _url := "https://raw.github.com/knowhow/F18_knowhow/master/"
-if !::wget_download( _url, ::update_app_info_file, _path + ::update_app_info_file, .t. )
+if !::wget_download( _url, ::update_app_info_file, _path + ::update_app_info_file, _always_erase, _silent, _newer )
+    MsgC()
     return _ok
 endif
 
 // skini mi skriptu f18_upd.sh
 _url := "https://raw.github.com/knowhow/F18_knowhow/master/scripts/"
-if !::wget_download( _url, ::update_app_script_file, _path + ::update_app_script_file, .t. )
+if !::wget_download( _url, ::update_app_script_file, _path + ::update_app_script_file, _always_erase, _silent, _newer )
+    MsgC()
     return _ok
 endif
+
+MsgC()
 
 _ok := .t.
 return _ok
@@ -357,7 +380,7 @@ return _os
 
 // ---------------------------------------------------------------
 // ---------------------------------------------------------------
-METHOD F18AdminOpts:wget_download( url, filename, location, erase_file )
+METHOD F18AdminOpts:wget_download( url, filename, location, erase_file, silent, only_newer )
 local _ok := .f.
 local _cmd := ""
 
@@ -365,13 +388,17 @@ if erase_file == NIL
     erase_file := .f.
 endif
 
-if FILE( ALLTRIM( location ) )
-    if erase_file .or. Pitanje( , "Fajl postoji na lokaciji, pobrisati ga ? (D/N)", "N" ) == "D"
-        FERASE( ALLTRIM( location ) )
-        SLEEP(1)
-    else
-        return _ok
-    endif
+if silent == NIL
+    silent := .f.
+endif
+
+if only_newer == NIL
+    only_newer := .f.
+endif
+
+if erase_file
+    FERASE( location )
+    sleep(1)
 endif
 
 _cmd := "wget " 
@@ -383,19 +410,27 @@ _cmd := "wget "
 
 _cmd += " -O "
 
+if only_newer
+    _cmd += " -N "
+endif
+
 #ifdef __PLATFORM__WINDOWS
     _cmd += '"' + location + '"'
 #else
     _cmd += location 
 #endif
 
-MsgO( "vrsim download ... sacekajte !" )
+if !silent
+    MsgO( "vrsim download ... sacekajte !" )
+endif
 
 hb_run( _cmd )
 
 sleep(1)
 
-MsgC()
+if !silent
+    MsgC()
+endif
 
 if !FILE( location )
     // nema fajle

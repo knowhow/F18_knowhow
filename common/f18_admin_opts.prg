@@ -219,26 +219,25 @@ METHOD F18AdminOpts:update_app_run_script( update_file )
 local _url := my_home_root() + ::update_app_script_file
 
 #ifdef __PLATFORM__WINDOWS
-    _url := '"' + _url + '"'
+    _url := 'start "' + _url + '"'
+    _url += ' "' + update_file + '"' 
 #else
     #ifdef __PLATFORM__LINUX
         _url := "bash " + _url
     #endif
+    _url += " " + update_file
 #endif
-
-_url += " " + update_file
 
 #ifdef __PLATFORM__UNIX
     _url := _url + " &"
-#else
-    _url := "call " + _url
 #endif
 
-Msg( "F18 ce se sada zatvoriti#Nakon update procesa ponovo otvorite F18" , 4)
+MsgBeep( "F18 ce se sada zatvoriti#Nakon update procesa ponovo otvorite F18" )
 
 // pokreni skriptu    
 hb_run( _url )
 
+sleep(2)
 // zatvori aplikaciju ako je update aplikacije...
 QUIT
 
@@ -551,8 +550,8 @@ if _h >= 0
     FSEEK( _h, 0 )
     FCLOSE( _h )
     if _length <= 0
-        //MsgBeep( "Trazeni fajl ne postoji !!!" )
-        //return _ok
+        MsgBeep( "Trazeni fajl ne postoji !!!" )
+        return _ok
     endif
 endif
 

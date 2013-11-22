@@ -16,8 +16,10 @@
 
 CLASS F18AdminOpts
 
-    VAR update_app_version
-    VAR update_app_type
+    VAR update_app_f18
+    VAR update_app_f18_version
+    VAR update_app_templates
+    VAR update_app_templates_version
     VAR update_app_info_file
     VAR update_app_script_file
 
@@ -56,6 +58,9 @@ CLASS F18AdminOpts
         METHOD update_app_dl_scripts()
         METHOD update_app_get_versions()
         METHOD update_app_run_script()
+        METHOD update_app_run_app_update()
+        METHOD update_app_run_templates_update()
+        METHOD update_app_unzip_templates()
 
         DATA _new_db_params
         DATA _update_params
@@ -105,18 +110,83 @@ if !::update_app_form( _ver_params )
     return SELF
 endif
 
-if ::update_app_type == "T"
-    _upd_file := "F18_templates_#VER#.gz"
-elseif ::update_app_type == "F"
-    _upd_file := "F18_#OS#_#VER#.gz"
+// update template-a...
+if ::update_app_templates
+    ::update_app_run_templates_update( _ver_params )
 endif
 
-if ::update_app_version == "#LAST#"
-    if ::update_app_type == "F"
-        ::update_app_version := _ver_params["f18"]
-    else
-        ::update_app_version := _ver_params["templates"]
-    endif
+// update f18 aplikcije
+if ::update_app_f18
+    ::update_app_run_app_update( _ver_params )
+endif
+
+return SELF
+
+
+
+// ------------------------------------------------------------------------
+// update aplikcije...
+// ------------------------------------------------------------------------
+METHOD F18AdminOpts:update_app_run_templates_update( params )
+local _upd_file := "F18_template_#VER#.tar.bz2"
+local _dest := SLASH + "opt" + SLASH + "knowhowERP" + SLASH
+
+#ifdef __PLATFORM__WINDOWS
+    _dest := "c:" + SLASH + "knowhowERP" + SLASH
+#endif
+    
+if ::update_app_f18_version == "#LAST#"
+    ::update_app_f18_version := params["templates"]
+endif
+
+_upd_file := STRTRAN( _upd_file, "#VER#", ::update_app_templates_version )
+
+if ::update_app_templates_version == F18_TEMPLATE_VER
+    MsgBeep( "Verzija template-a " + F18_TEMPLATE_VER + " je vec instalirana !" )
+    return SELF
+endif
+
+// download fajla za update...
+if !::wget_download( params["url"], _upd_file, _dest + _upd_file, .t. )
+    return SELF
+endif
+
+// update run script
+::update_app_unzip_templates( _dest, _dest + _upd_file )
+
+return SELF
+
+
+
+// -----------------------------------------------------------------------
+// -----------------------------------------------------------------------
+METHOD F18AdminOpts:update_app_unzip_templates( destination, location )
+local _cmd
+
+MsgO( "Vrsim update template fajlova ..." )
+
+DirChange( destination )
+
+_cmd := "gzip -dNf " + location
+
+hb_run( _cmd )
+
+DirChange( my_home_root() )
+
+MsgC()
+
+return SELF
+
+
+
+// ------------------------------------------------------------------------
+// update aplikcije...
+// ------------------------------------------------------------------------
+METHOD F18AdminOpts:update_app_run_app_update( params )
+local _upd_file := "F18_#OS#_#VER#.gz"
+    
+if ::update_app_f18_version == "#LAST#"
+    ::update_app_f18_version := params["f18"]
 endif
 
 #ifdef __PLATFORM__LINUX
@@ -125,22 +195,15 @@ endif
     _upd_file := STRTRAN( _upd_file, "#OS#", ::get_os_name() )
 #endif
 
-_upd_file := STRTRAN( _upd_file, "#VER#", ::update_app_version )
+_upd_file := STRTRAN( _upd_file, "#VER#", ::update_app_f18_version )
 
-if ::update_app_type == "F"
-    if ::update_app_version == F18_VER
-        MsgBeep( "Verzija " + F18_VER + " je vec instalirana !" )
-        return SELF
-    endif
-else
-    if ::update_app_version == F18_TEMPLATE_VER
-        MsgBeep( "Verzija " + F18_TEMPLATE_VER + " je vec instalirana !" )
-        return SELF
-    endif
+if ::update_app_f18_version == F18_VER
+    MsgBeep( "Verzija aplikacije " + F18_VER + " je vec instalirana !" )
+    return SELF
 endif
 
 // download fajla za update...
-if !::wget_download( _ver_params["url"], _upd_file, my_home_root() + _upd_file, .t. )
+if !::wget_download( params["url"], _upd_file, my_home_root() + _upd_file, .t. )
     return SELF
 endif
 
@@ -151,17 +214,14 @@ return SELF
 
 
 
-
 // -----------------------------------------------------------
 // -----------------------------------------------------------
 METHOD F18AdminOpts:update_app_run_script( update_file )
-local _url := my_home_root() + "f18_upd."
+local _url := my_home_root() + ::update_app_script_file
 
 #ifdef __PLATFORM__WINDOWS
-    _url += "bat"
     _url := '"' + _url + '"'
 #else
-    _url += "sh "
     #ifdef __PLATFORM__LINUX
         _url := "bash " + _url
     #endif
@@ -175,17 +235,11 @@ _url += " " + update_file
     _url := "call " + _url
 #endif
 
-if ::update_app_type == "F"
-    Msg( "Zbog update-a aplikacije, F18 ce biti zatvoren.#Nakon update procedure ponovo udjite u F18." , 4 )
-endif
-
 // pokreni skriptu    
 hb_run( _url )
 
-if ::update_app_type == "F"
-    // zatvori aplikaciju ako je update aplikacije...
-    QUIT
-endif
+// zatvori aplikaciju ako je update aplikacije...
+QUIT
 
 return SELF
 
@@ -197,13 +251,18 @@ return SELF
 // ------------------------------------------------
 METHOD F18AdminOpts:update_app_form( upd_params )
 local _ok := .f.
-local _ver_prim := 1
-local _ver_sec := 4
-local _ver_third := SPACE(10)
-local _upd_type := "F"
+local _f_ver_prim := 1
+local _f_ver_sec := 4
+local _f_ver_third := SPACE(10)
+local _t_ver_prim := 1
+local _t_ver_sec := 4
+local _t_ver_third := SPACE(10)
 local _x := 1
 local _col_app, _col_temp, _line
+local _upd_f, _upd_t, _pos
 
+_upd_f := "D"
+_upd_t := "N"
 _col_app := "W/G+"
 _col_temp := "W/G+"
 
@@ -250,22 +309,37 @@ Box(, 14, 65 )
     ++ _x
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "VERZIJA:" GET _ver_prim PICT "99" VALID _ver_prim > 0
-    @ m_x + _x, col() + 1 SAY "." GET _ver_sec PICT "99" VALID _ver_sec > 0
-    @ m_x + _x, col() + 1 SAY "." GET _ver_third PICT "@S10"
-    @ m_x + _x, col() + 1 SAY "(prazno, posljednja verzija)"
-    
-    ++ _x
-    ++ _x
+    _pos := _x
 
-    @ m_x + _x, m_y + 2 SAY "Tip update-a (F/T):" GET _upd_type VALID _upd_type $ "TFS" PICT "@!"
+    @ m_x + _x, m_y + 2 SAY "       Update F18 ?" GET _upd_f PICT "@!" VALID _upd_f $ "DN"
 
-    ++ _x
-    ++ _x
-
-    @ m_x + _x, m_y + 2 SAY "info: [F] - update F18, [T] - update templates"    
-    
     READ
+
+    if _upd_f == "D"
+
+        @ m_x + _x, m_y + 25 SAY "VERZIJA:" GET _f_ver_prim PICT "99" VALID _f_ver_prim > 0
+        @ m_x + _x, col() + 1 SAY "." GET _f_ver_sec PICT "99" VALID _f_ver_sec > 0
+        @ m_x + _x, col() + 1 SAY "." GET _f_ver_third PICT "@S10"
+    
+    endif
+
+    ++ _x
+    ++ _x
+    _pos := _x
+
+    @ m_x + _x, m_y + 2 SAY "  Update template ?" GET _upd_t PICT "@!" VALID _upd_t $ "DN"
+
+    READ
+
+    if _upd_t == "D"
+        
+        @ m_x + _x, m_y + 25 SAY "VERZIJA:" GET _t_ver_prim PICT "99" VALID _t_ver_prim > 0
+        @ m_x + _x, col() + 1 SAY "." GET _t_ver_sec PICT "99" VALID _t_ver_sec > 0
+        @ m_x + _x, col() + 1 SAY "." GET _t_ver_third PICT "@S10"
+    
+        READ
+
+    endif
 
 BoxC()
 
@@ -273,21 +347,44 @@ if LastKey() == K_ESC
     return _ok
 endif
 
-// sastavi mi verziju
-if !EMPTY( _ver_third )
-    // zadana verzija
-    ::update_app_version := ALLTRIM( STR( _ver_prim ) ) + ;
+// setuj postavke...
+::update_app_f18 := ( _upd_f == "D" )
+::update_app_templates := ( _upd_t == "D" )
+
+if ::update_app_f18
+    // sastavi mi verziju
+    if !EMPTY( _f_ver_third )
+        // zadana verzija
+        ::update_app_f18_version := ALLTRIM( STR( _f_ver_prim ) ) + ;
                             "." + ;
-                            ALLTRIM( STR( _ver_sec ) ) + ;
+                            ALLTRIM( STR( _f_ver_sec ) ) + ;
                             "." + ;
-                            ALLTRIM( _ver_third )
-else
-    ::update_app_version := "#LAST#"
+                            ALLTRIM( _f_ver_third )
+    else
+        ::update_app_f18_version := "#LAST#"
+    endif
+
+    _ok := .t.
+
 endif
 
-::update_app_type := _upd_type
+if ::update_app_templates
+    // sastavi mi verziju
+    if !EMPTY( _t_ver_third )
+        // zadana verzija
+        ::update_app_templates_version := ALLTRIM( STR( _t_ver_prim ) ) + ;
+                            "." + ;
+                            ALLTRIM( STR( _t_ver_sec ) ) + ;
+                            "." + ;
+                            ALLTRIM( _t_ver_third )
+    else
+        ::update_app_templates_version := "#LAST#"
+    endif
 
-_ok := .t.
+    _ok := .t.
+
+endif
+
 return _ok
 
 

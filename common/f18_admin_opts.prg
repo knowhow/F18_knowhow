@@ -220,7 +220,7 @@ local _url := my_home_root() + ::update_app_script_file
 
 #ifdef __PLATFORM__WINDOWS
     _url := 'start cmd /C ""' + _url
-    _url += '" "' + ::update_app_f18_version + '""' 
+    _url += '" "' + update_file + '""' 
 #else
     #ifdef __PLATFORM__LINUX
         _url := "bash " + _url

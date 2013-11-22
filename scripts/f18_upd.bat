@@ -16,6 +16,10 @@ if "%ERRORLEVEL%"=="0" goto :SERVICE  else GOTO :UPDATE
 
 if not exist %1  goto :ERR1 
 
+gzip -tv  %1
+if errorlevel 1 goto ERR2if errorlevel 0 goto OK 
+
+:OK
 
 gzip -dNfc  < %1 > %DEST%\F18.exe 
 del /Q  %1 
@@ -28,13 +32,27 @@ echo "Problem sa F18 update fajlom, Prekidam operaciju UPDATE-a"
 echo.
 echo.
 pause
-exit /b
+exit
+
+:ERR2
+
+echo.
+echo.
+echo "Greška unutar F18 update fajla, Prekidam operaciju, ponovite UPDATE"
+echo.
+echo.
+pause
+exit
+
 
 :END
+START/min mplay32 /play /close %windir%\media\ding.wav
 echo.
 echo.
-echo >>>>>>>>>>"UPDATE OK"<<<<<<<<<<<
+echo "Update je završen uspješno"
+echo.
+echo "Možete zatvoriti ovaj prozor te ponovo pokrenuti F18"
 echo.
 echo. 
-PING -n 2 www.google.com  >NUL
+pause
 exit 

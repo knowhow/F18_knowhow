@@ -179,26 +179,30 @@ local _ver_third := SPACE(10)
 local _upd_type := "F"
 local _x := 1
 
-Box(, 10, 60 )
+Box(, 10, 65 )
 
-    @ m_x + _x, m_y + 2 SAY "## UPDATE F18 APP ##"
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY PADR( "## UPDATE F18 APP ##", 60 ) COLOR "I"
    
     ++ _x
     ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Verzija:" GET _ver_prim PICT "99" VALID _ver_prim > 0
+    @ m_x + _x, m_y + 2 SAY "VERZIJA:" GET _ver_prim PICT "99" VALID _ver_prim > 0
     @ m_x + _x, col() + 1 SAY "." GET _ver_sec PICT "99" VALID _ver_sec > 0
     @ m_x + _x, col() + 1 SAY "." GET _ver_third PICT "@S10"
- 
-    ++ _x
-
-    @ m_x + _x, m_y + 2 SAY "(ako je verzija prazno, vrsi se download posljednje)"
+    @ m_x + _x, col() + 1 SAY "(prazno, posljednja verzija)"
     
+    ++ _x
+    
+    @ m_x + _x, m_y + 2 SAY REPLICATE( "=", 60 )
+
     ++ _x
     ++ _x
 
     @ m_x + _x, m_y + 2 SAY "Tip update-a (F/T):" GET _upd_type VALID _upd_type $ "TFS" PICT "@!"
 
+    ++ _x
     ++ _x
 
     @ m_x + _x, m_y + 2 SAY "info: [F] - update F18, [T] - update templates"    

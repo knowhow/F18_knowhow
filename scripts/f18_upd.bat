@@ -56,7 +56,6 @@ rem exit
 
 
 :END
-START/min mplay32 /play /close %windir%\media\ding.wav
 echo.
 echo.
 echo "Update je zavrsen uspjesno"

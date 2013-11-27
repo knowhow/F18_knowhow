@@ -286,6 +286,12 @@ IF_C_RESET_SEMAPHORE
 CREATE_INDEX( "1", "IdFirma+idvd+brdok", _alias )
 
 
+// -----------------------------------------------
+// KALK_DOKS2
+// -----------------------------------------------
+F18_DOK_ATRIB():new("kalk"):create_local_atrib_table()
+
+
 return .t.
 
 

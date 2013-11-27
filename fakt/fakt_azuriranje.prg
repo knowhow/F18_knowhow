@@ -24,6 +24,7 @@ local _tbl_fakt  := "fakt_fakt"
 local _tbl_doks  := "fakt_doks"
 local _tbl_doks2 := "fakt_doks2"
 local _msg
+local oAtrib
 
 if ( lSilent == nil)
     lSilent := .f.
@@ -61,7 +62,7 @@ if LEN( _a_fakt_doks ) == 1
 endif
 
 // fiksiranje tabele atributa
-fakt_atributi_fix( _a_fakt_doks )
+F18_DOK_ATRIB():new("fakt"):fix_atrib( F_FAKT_PRIPR, _a_fakt_doks )
 
 _ok := .t.
 
@@ -120,7 +121,7 @@ else
 endif
 
 // pobrisi mi fakt_atribute takodjer
-zapp_fakt_atributi()
+F18_DOK_ATRIB():new("fakt"):zapp_local_table()
 
 MsgC()
     
@@ -169,6 +170,7 @@ local _msg
 local _ids_fakt  := {}
 local _ids_doks  := {}
 local _ids_doks2 := {}
+local oAtrib
 
 close all
 
@@ -242,7 +244,11 @@ endif
 
 if _ok == .t.
     @ m_x + 4, m_y + 2 SAY "fakt_atributi -> server "
-    _ok := fakt_atributi_dbf_to_server( id_firma, id_tip_dok, br_dok )
+    oAtrib := F18_DOK_ATRIB():new("fakt")
+    oAtrib:dok_hash["idfirma"] := id_firma
+    oAtrib:dok_hash["idtipdok"] := id_tip_dok
+    oAtrib:dok_hash["brdok"] := br_dok
+    _ok := oAtrib:atrib_dbf_to_server()
 endif
 
 if !_ok
@@ -994,6 +1000,7 @@ return .f.
 // ------------------------------------------------
 function fakt_brisanje_pripreme()
 local _id_firma, _tip_dok, _br_dok
+local oAtrib
 
 if !(ImaPravoPristupa(goModul:oDataBase:cName,"DOK","BRISANJE" ))
     MsgBeep(cZabrana)
@@ -1009,10 +1016,15 @@ if Pitanje("FAKT_BRISI_PRIPR", "Zelite li izbrisati pripremu !!????","N")=="D"
     _tip_dok := IdTipDok
     _br_dok := BrDok
     
+    oAtrib := F18_DOK_ATRIB():new("fakt")
+    oAtrib:dok_hash["idfirma"] := _id_firma
+    oAtrib:dok_hash["idtipdok"] := _tip_dok
+    oAtrib:dok_hash["brdok"] := _br_dok
+ 
     if gcF9usmece == "D"
 
         // pobrisi i atribute...
-        delete_fakt_atribut( _id_firma, _tip_dok, _br_dok )
+        oAtrib:delete_atrib()
 
         // azuriraj dokument u smece 
         azuriraj_smece( .t. )    
@@ -1025,7 +1037,8 @@ if Pitanje("FAKT_BRISI_PRIPR", "Zelite li izbrisati pripremu !!????","N")=="D"
         
         // ponisti pripremu...
         zapp()
-        zapp_fakt_atributi()
+        // ponisti i atribut        // ponisti i atributee
+        oAtrib:zapp_local_table() 
         
         log_write( "F18_DOK_OPER: fakt, brisanje dokumenta iz pripreme: " + _id_firma + "-" + _tip_dok + "-" + _br_dok, 2 )
 

@@ -14,7 +14,7 @@
 
 
 function cre_all_fakt( ver )
-local aDbf
+local aDbf, oAtrib
 local _alias, _table_name
 local _created
 local _tbl
@@ -206,28 +206,6 @@ CREATE_INDEX("1","IdFirma+idtipdok+brdok", _alias )
 
 
 // ---------------------------------------------------
-// FAKT_ATRIBUTI
-// ---------------------------------------------------
-
-aDbf := {}
-AADD(aDBf,{ 'IDFIRMA'   , 'C' ,   2 ,  0 })
-AADD(aDBf,{ 'IDTIPDOK'  , 'C' ,   2 ,  0 })
-AADD(aDBf,{ 'BRDOK'     , 'C' ,   8 ,  0 })
-AADD(aDBf,{ 'RBR'       , 'C' ,   3 ,  0 })
-AADD(aDBf,{ 'ATRIBUT'   , 'C' ,  50 ,  0 })
-AADD(aDBf,{ 'VALUE'     , 'C' , 250 ,  0 })
-
-_alias := "FAKT_ATRIB"
-_table_name := "fakt_pripr_atributi"
-
-IF_NOT_FILE_DBF_CREATE
-
-// unique index
-CREATE_INDEX("1", {"idfirma+idtipdok+brdok+rbr+atribut", ".t.", .t.}, _alias )
-
-
-
-// ---------------------------------------------------
 // FAKT_UPL
 // ---------------------------------------------------
 
@@ -262,6 +240,12 @@ IF_NOT_FILE_DBF_CREATE
 IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX("ID","ID", _alias )
+
+
+// ------------------------------------------------
+// FAKT_PRIPR_ATRIB
+// ---------------------------------------------------
+F18_DOK_ATRIB():new("fakt"):create_local_atrib_table()
 
 return .t.
 

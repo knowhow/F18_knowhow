@@ -138,6 +138,8 @@ local _fiscal_use := fiscal_opt_active()
 local _items_atrib := hb_hash()
 local _params := fakt_params()
 local _dok := hb_hash()
+local oAtrib
+local _dok_hash 
 
 if ( Ch == K_ENTER .and. EMPTY( field->brdok ) .and. EMPTY( field->rbr ) )
     return DE_CONT
@@ -243,6 +245,7 @@ do case
         Box( "ist", MAXROWS() - 10, MAXCOLS() - 10, .f. )
 
         set_global_vars_from_dbf( "_" )
+
         _dok["idfirma"] := _idfirma
         _dok["idtipdok"] := _idtipdok
         _dok["brdok"] := _brdok
@@ -251,7 +254,7 @@ do case
         __redni_broj := RbrUnum( _rbr )
 
         if _params["fakt_opis_stavke"]
-            _items_atrib["opis"] := get_fakt_atribut_opis( _dok, .f.)
+            _items_atrib["opis"] := get_fakt_atribut_opis( _dok, .f. )
         endif
 
         if _params["ref_lot"]
@@ -262,9 +265,17 @@ do case
         if edit_fakt_priprema( .f., @_items_atrib ) == 0
             _ret := DE_CONT
         else
-            
+
+            _dok_hash := hb_hash()
+            _dok_hash["idfirma"] := _idfirma
+            _dok_hash["idtipdok"] := _idtipdok
+            _dok_hash["brdok"] := _brdok
+            _dok_hash["rbr"] := _rbr
+
+            oAtrib := F18_DOK_ATRIB():new("fakt")
+            oAtrib:dok_hash := _dok_hash
             // ubaci mi atribute u fakt_atribute
-            fakt_atrib_hash_to_dbf( _idfirma, _idtipdok, _brdok, _rbr, _items_atrib )
+            oAtrib:atrib_hash_to_dbf( _items_atrib )
             
             _rec := get_dbf_global_memvars("_")
 
@@ -591,6 +602,7 @@ static function fakt_unos_nove_stavke()
 local _items_atrib
 local _rec
 local _total := 0
+local oAtrib, _dok_hash
 
 go top
 
@@ -649,13 +661,17 @@ do while .t.
     _rec := get_dbf_global_memvars("_")
     dbf_update_rec( _rec, .f. )
 
+    _dok_hash := hb_hash()
+    _dok_hash["idfirma"] := field->idfirma
+    _dok_hash["idtipdok"] := field->idtipdok
+    _dok_hash["brdok"] := field->brdok
+    _dok_hash["rbr"] := field->rbr
+        
     // ubaci mi atribute u fakt_atribute
-    fakt_atrib_hash_to_dbf( field->idfirma, ;
-                            field->idtipdok, ;
-                            field->brdok, ;
-                            field->rbr, ;
-                            _items_atrib )
-
+    oAtrib := F18_DOK_ATRIB():new("fakt")
+    oAtrib:dok_hash := _dok_hash
+    oAtrib:atrib_hash_to_dbf( _items_atrib )
+    
     // promijeni cijenu u sifrarniku ako treba
     PrCijSif()      
 
@@ -681,8 +697,7 @@ if LEN( _a_fakt_doks ) == 0
 endif
 
 // fiksiranje tabele atributa
-fakt_atributi_fix( _a_fakt_doks )
-
+F18_DOK_ATRIB():new("fakt"):fix_atrib( F_FAKT_ATRIB, _a_fakt_doks )
 
 o_fakt_edit() 
 
@@ -1798,6 +1813,7 @@ local _rec, _tek_dok, _t_rec
 local _new_firma := new_dok["idfirma"]
 local _new_brdok := new_dok["brdok"]
 local _new_tipdok := new_dok["idtipdok"]
+local oAtrib
 
 // treba da imam podatke koja je stavka bila prije korekcije
 // kao i koja je nova 
@@ -1846,10 +1862,9 @@ do while !EOF() .and. field->idfirma + field->idtipdok + field->brdok == ;
 enddo
 go top
 
-select ( F_FAKT_ATRIB )
-if !Used()
-    O_FAKT_ATRIB
-endif
+oAtrib := F18_DOK_ATRIB():new("fakt")
+oAtrib:open_local_table()
+
 go top
 
 do while !EOF()

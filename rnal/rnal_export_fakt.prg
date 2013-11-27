@@ -342,7 +342,14 @@ do while !EOF()
         _items_atrib := hb_hash()
         _items_atrib["opis"] := cDesc
 
-        fakt_atrib_hash_to_dbf( field->idfirma, field->idtipdok, field->brdok, field->rbr, _items_atrib )
+        oAtrib := F18_DOK_ATRIB():new("fakt")
+        oAtrib:dok_hash := hb_hash()
+        oAtrib:dok_hash["idfirma"] := field->idfirma
+        oAtrib:dok_hash["idtipdok"] := field->idtipdok
+        oAtrib:dok_hash["brdok"] := field->brdok
+        oAtrib:dok_hash["rbr"] := field->rbr
+
+        oAtrib:atrib_hash_to_dbf( _items_atrib )
 
         select ( _t_area )
 
@@ -503,7 +510,15 @@ do while !EOF()
 
         _items_atrib := hb_hash()
         _items_atrib["opis"] := cArt_sh
-        fakt_atrib_hash_to_dbf( field->idfirma, field->idtipdok, field->brdok, field->rbr, _items_atrib )
+    
+        oAtrib := F18_DOK_ATRIB():new("fakt")
+        oAtrib:dok_hash := hb_hash()
+        oAtrib:dok_hash["idfirma"] := field->idfirma
+        oAtrib:dok_hash["idtipdok"] := field->idtipdok
+        oAtrib:dok_hash["brdok"] := field->brdok
+        oAtrib:dok_hash["rbr"] := field->rbr
+
+        oAtrib:atrib_hash_to_dbf( _items_atrib )
 
         select ( _t_area )
 

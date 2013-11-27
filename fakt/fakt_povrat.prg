@@ -20,6 +20,7 @@ local _brisi_kum := "D"
 local _rec, _del_rec, _ok
 local _field_ids, _where_block
 local _t_rec
+local oAtrib, _dok_hash
 
 IF test == nil
     test := .f.
@@ -104,9 +105,15 @@ DO WHILE !EOF() .and. id_firma == field->idfirma .and. id_tip_dok == field->idti
 ENDDO
 
 // fakt atributi....
-fakt_atributi_server_to_dbf( id_firma, id_tip_dok, br_dok )
+_dok_hash := hb_hash()
+_dok_hash["idfirma"] := id_firma
+_dok_hash["idtipdok"] := id_tip_dok
+_dok_hash["brdok"] := br_dok
 
- 
+oAtrib := F18_DOK_ATRIB():new("fakt")
+oAtrib:dok_hash := _dok_hash
+oAtrib:atrib_server_to_dbf()
+
 IF test == .t.
     _brisi_kum := "D"
 ELSE
@@ -128,7 +135,7 @@ IF ( _brisi_kum == "D" )
         // FOREIGN key trazi da se prvo brisu fakt atributi...
         @ m_x + 4, m_y + 2 SAY "delete fakt_fakt_atributi"
         // pobrisi ih sa servera...
-        _ok := _ok .and. delete_fakt_atributi_from_server( id_firma, id_tip_dok, br_dok )
+        _ok := _ok .and. oAtrib:delete_atrib_from_server()
 
 
         _tbl := "fakt_fakt"

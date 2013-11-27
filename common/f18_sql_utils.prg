@@ -611,10 +611,13 @@ if where_cond <> NIL
     _qry += " WHERE "
 
     for _n := 1 to LEN( where_cond )
+
         _qry += where_cond[ _n ]
+
         if _n < LEN( where_cond )
             _qry += " AND "
         endif    
+
     next
 
 endif

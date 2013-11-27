@@ -340,6 +340,7 @@ local _broj_dokumenta
 local _t_rec
 local _firma, _td, _null_brdok
 local _fakt_params := fakt_params()
+local oAtrib
 
 PushWa()
 
@@ -384,13 +385,10 @@ do while !EOF()
 
 enddo
 
-select ( F_FAKT_ATRIB )
-if !Used()
-    O_FAKT_ATRIB
-endif
+oAtrib := F18_DOK_ATRIB():new("fakt")
+oAtrib:open_local_table()
 
 // promjeni mi i u fakt_atributi
-select fakt_atrib
 set order to tag "1"
 go top
 
@@ -409,7 +407,6 @@ do while !EOF()
 enddo
 
 // zatvori mi atribute
-select ( F_FAKT_ATRIB )
 use
 
 PopWa()

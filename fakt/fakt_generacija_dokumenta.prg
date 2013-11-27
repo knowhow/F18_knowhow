@@ -632,6 +632,7 @@ local _veza_otpremnice, _broj_dokumenta
 local _id_partner, _rec
 local _ok := .t.
 local _gen_params  
+local oAtrib
 
 _broj_dokumenta := fakt_prazan_broj_dokumenta()
 
@@ -741,7 +742,9 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
         _params["new_tipdok"] := "22"
         _params["new_brdok"] := __novi_broj
 
-        if !update_fakt_atributi_from_server( _params )
+        oAtrib := F18_DOK_ATRIB():new("fakt")
+        
+        if !oAtrib:update_atrib_from_server( _params )
             f18_free_tables({"fakt_doks", "fakt_fakt"})
             sql_table_update( nil, "ROLLBACK" )
             MsgBeep( "Nisam uspio napraviti promjene na tabeli fakt_fakt_atributi !!!" )
@@ -808,9 +811,6 @@ enddo
     
 f18_free_tables({"fakt_doks", "fakt_fakt"})
 sql_table_update( nil, "END" )
-
-// obradi i atribute...
-//fakt_atributi_server_to_dbf( _params["new_firma"], _params["new_tipdok"], _params["new_brdok"] )
 
 if !EMPTY( _veza_otpremnice )
 

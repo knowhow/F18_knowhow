@@ -2096,7 +2096,7 @@ local _t_area
 local _rec, _t_rec
 local _tek, _prva
 local _id_tip_dok, _id_firma, _br_dok, _r_br
-
+local oAtrib
    
 if Pitanje(, "Zelite izbrisati ovu stavku ?", "D" ) == "N"
     return 0
@@ -2134,7 +2134,12 @@ go ( _t_rec )
 _t_area := SELECT()
     
 // pobrisi i fakt atribute ove stavke...
-delete_fakt_atribut( _id_firma, _id_tip_dok, _br_dok, _r_br )
+oAtrib := F18_DOK_ATRIB():new("fakt")
+oAtrib:dok_hash["idfirma"] := _id_firma
+oAtrib:dok_hash["idtipdok"] := _id_tip_dok
+oAtrib:dok_hash["brdok"] := _br_dok
+oAtrib:dok_hash["rbr"] := _r_br
+oAtrib:delete_atrib()
     
 select ( _t_area )
 

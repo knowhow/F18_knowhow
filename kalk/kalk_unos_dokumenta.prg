@@ -331,6 +331,7 @@ if ( Ch == K_CTRL_T .or. Ch == K_ENTER ) .and. EOF()
     return DE_CONT
 endif
 
+private fNovi := .f.
 PRIVATE PicCDEM := gPicCDEM
 PRIVATE PicProc := gPicProc
 PRIVATE PicDEM := gPicDEM
@@ -470,6 +471,7 @@ do case
     case Ch==K_CTRL_A .or. lAsistRadi
         return EditAll() 
     case Ch==K_CTRL_N  // nove stavke
+        fNovi := .t.
         return NovaStavka()
     case Ch==K_CTRL_F8
         RaspTrosk()
@@ -529,6 +531,8 @@ return DE_CONT
 // ispravka stavke
 // ------------------------------------------------------------
 function EditStavka()
+local _atributi := hb_hash()
+local _dok
 
 if RecCount() == 0
     Msg("Ako zelite zapoceti unos novog dokumenta: <Ctrl-N>")
@@ -548,7 +552,16 @@ _ERROR := ""
 
 Box( "ist", __box_x, __box_y, .f. )
 
-if EditPRIPR(.f.)==0
+_dok := hb_hash()                   
+_dok["idfirma"] := _idfirma
+_dok["idtipdok"] := _idvd
+_dok["brdok"] := _brdok
+_dok["rbr"] := _rbr  
+
+_atributi["rok"] := get_kalk_atribut_opis( _dok, .f. )
+_atributi["opis"] := get_kalk_atribut_rok( _dok, .f. )
+ 
+if EditPRIPR( .f., @_atributi ) == 0
     BoxC()
     return DE_CONT
 else
@@ -630,6 +643,8 @@ return DE_CONT
 // unos nove stavke
 // --------------------------------------------------
 function NovaStavka()
+local _atributi := hb_hash()
+local _dok 
 
 // isprazni kontrolnu matricu
 aNC_ctrl := {}
@@ -685,7 +700,16 @@ Box( "knjn", __box_x, __box_y, .f., "Unos novih stavki" )
            
         nRbr := RbrUNum( _Rbr ) + 1
 
-        if EditPRIPR( .t. ) == 0
+        _dok := hb_hash()                   
+        _dok["idfirma"] := _idfirma
+        _dok["idtipdok"] := _idvd
+        _dok["brdok"] := _brdok
+        _dok["rbr"] := _rbr  
+
+        _atributi["rok"] := get_kalk_atribut_opis( _dok, .f. )
+        _atributi["opis"] := get_kalk_atribut_rok( _dok, .f. )
+ 
+        if EditPRIPR( .t., @_atributi ) == 0
              exit
         endif
            
@@ -758,6 +782,8 @@ return DE_REFRESH
 // ispravka svih stavki
 // ---------------------------------------------------------
 function EditAll()
+local _atributi := hb_hash()
+local _dok
 
 // ovu opciju moze pozvati i asistent alt+F10 !
 PushWA()
@@ -769,11 +795,15 @@ Box( "anal", __box_x, __box_y, .f., "Ispravka naloga" )
     nPot := 0
 
     do while !eof()
+
         skip
         nTR2:=RECNO()
         skip-1
+
         Scatter()
+
         _ERROR:=""
+
         if left(_idkonto2,3) == "XXX"
             // 80-ka
             skip
@@ -799,8 +829,17 @@ Box( "anal", __box_x, __box_y, .f., "Ispravka naloga" )
             next
             keyboard cSekv
         ENDIF
-            
-        if EditPRIPR(.f.)==0
+
+        _dok := hb_hash()                   
+        _dok["idfirma"] := _idfirma
+        _dok["idtipdok"] := _idvd
+        _dok["brdok"] := _brdok
+        _dok["rbr"] := _rbr  
+
+        _atributi["rok"] := get_kalk_atribut_opis( _dok, .f. )
+        _atributi["opis"] := get_kalk_atribut_rok( _dok, .f. )
+      
+        if EditPRIPR(.f., @_atributi )==0
             exit
         endif
             
@@ -1209,7 +1248,7 @@ return
 
 
 //ulaz _IdFirma, _IdRoba, ...., nRBr (val(_RBr))
-function EditPripr(fNovi)
+function EditPripr( fNovi, atrib )
 private nMarza := 0
 private nMarza2 := 0
 private nR
@@ -1228,9 +1267,9 @@ do while .t.
     SETKEY( K_CTRL_K, {|| a_val_convert() } )
 
     if nStrana == 1
-        nR := GET1( fnovi )
+        nR := GET1( fNovi, @atrib )
     elseif nStrana==2
-        nR := GET2( fnovi )
+        nR := GET2( fNovi )
     endif
 
     SETKEY( K_PGDN, NIL )
@@ -1275,13 +1314,11 @@ return
  *  \brief Prva strana/prozor maske unosa/ispravke stavke dokumenta
  */
 
-function Get1()
-parameters fnovi
-
+function Get1( fNovi, atrib )
 private pIzgSt := .f.   
 private Getlist := {}
 
-if Get1Header() == 0
+if Get1Header( fNovi ) == 0
     return K_ESC
 endif
 
@@ -1336,9 +1373,9 @@ elseif _idvd=="19"
 elseif _idvd $ "41#42#43#47#49"
     return GET1_41()
 elseif _idvd == "81"
-    return get1_81()
+    return get1_81( @atrib )
 elseif _idvd == "80"
-    return GET1_80()
+    return GET1_80( @atrib )
 elseif _idvd=="24"
     if IsPDV()
         return GET1_24PDV()
@@ -1405,8 +1442,7 @@ return .t.
  *  \brief Druga strana/prozor maske unosa/ispravke stavke dokumenta
  */
 
-function Get2()
-parameters fnovi
+function Get2( fNovi )
 
 if _idvd $ "10"
     if !IsPDV()
@@ -1424,7 +1460,7 @@ return K_ESC
 
 
 
-function Get1Header()
+function Get1Header( fNovi )
 
 if fnovi
     _idfirma := gFirma

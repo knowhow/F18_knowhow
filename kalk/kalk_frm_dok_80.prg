@@ -15,13 +15,20 @@
 // ------------------------------------------------------------
 // prijem prodavnica, predispozicija
 // ------------------------------------------------------------
-function Get1_80()
+function Get1_80( atrib )
 local _x := 5
 local _kord_x := 0
 local _unos_left := 40
+local _opis
 private aPorezi := {}
 private fMarza := " "
 
+if fNovi
+    _opis := PADR( "", 300 )
+else
+    _opis := PADR( atrib["opis"], 300 )
+endif
+ 
 if nRbr == 1 .and. fnovi
     _DatFaktP := _datdok
 endif
@@ -106,6 +113,9 @@ endif
 VTPorezi()
 
 // KOLICINA
+
+++ _x
+@ m_x + _x, m_y + 2 SAY "Opis:" GET _opis PICT "@S40"
 
 ++ _x
 @ m_x + _x, m_y + 2 SAY "Kolicina " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
@@ -200,6 +210,9 @@ _PKonto:=_Idkonto
 _PU_I:="1"
 _MKonto:=""
 _MU_I:=""
+
+// setuj atribute...
+atrib["opis"] := _opis
 
 nStrana := 3
 

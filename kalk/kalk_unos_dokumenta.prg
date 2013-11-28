@@ -533,6 +533,14 @@ return DE_CONT
 function EditStavka()
 local _atributi := hb_hash()
 local _dok
+local _rok, _opis, _dok_hash
+local _old_dok, _new_dok
+local oAtrib, _t_rec
+
+_old_dok := hb_hash()
+
+_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
+_opis := fetch_metric( "kalk_dodatni_opis_kod_unosa_dokumenta", NIL, "N" ) == "D"
 
 if RecCount() == 0
     Msg("Ako zelite zapoceti unos novog dokumenta: <Ctrl-N>")
@@ -552,15 +560,24 @@ _ERROR := ""
 
 Box( "ist", __box_x, __box_y, .f. )
 
+_old_dok["idfirma"] := _idfirma
+_old_dok["idvd"] := _idvd
+_old_dok["brdok"] := _brdok
+
 _dok := hb_hash()                   
 _dok["idfirma"] := _idfirma
 _dok["idtipdok"] := _idvd
 _dok["brdok"] := _brdok
 _dok["rbr"] := _rbr  
 
-_atributi["rok"] := get_kalk_atribut_opis( _dok, .f. )
-_atributi["opis"] := get_kalk_atribut_rok( _dok, .f. )
- 
+if _rok
+    _atributi["rok"] := get_kalk_atribut_rok( _dok, .f. )
+endif
+
+if _opis
+    _atributi["opis"] := get_kalk_atribut_opis( _dok, .f. )
+endif
+
 if EditPRIPR( .f., @_atributi ) == 0
     BoxC()
     return DE_CONT
@@ -582,6 +599,28 @@ else
 
     Gather()
         
+    _dok_hash := hb_hash()
+    _dok_hash["idfirma"] := field->idfirma
+    _dok_hash["idtipdok"] := field->idvd
+    _dok_hash["brdok"] := field->brdok
+    _dok_hash["rbr"] := field->rbr
+        
+    // ubaci mi atribute u fakt_atribute
+    oAtrib := F18_DOK_ATRIB():new("kalk")
+    oAtrib:dok_hash := _dok_hash
+    oAtrib:atrib_hash_to_dbf( _atributi )
+
+    // izmjeni sve stavke dokumenta na osnovu prve stavke        
+    if nRbr == 1
+
+        select kalk_pripr
+        _t_rec := RECNO()
+        _new_dok := dbf_get_rec()
+        izmjeni_sve_stavke_dokumenta( _old_dok, _new_dok )
+        select kalk_pripr
+        go ( _t_rec )
+    endif
+
     if _idvd $ "16#80" .and. !EMPTY( _idkonto2 )
         
         cIdkont := _idkonto
@@ -644,11 +683,18 @@ return DE_CONT
 // --------------------------------------------------
 function NovaStavka()
 local _atributi := hb_hash()
-local _dok 
+local _dok, _dok_hash 
+local _old_dok := hb_hash()
+local _new_dok
+local oAtrib
+local _rok, _opis
 
 // isprazni kontrolnu matricu
 aNC_ctrl := {}
     
+_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
+_opis := fetch_metric( "kalk_dodatni_opis_kod_unosa_dokumenta", NIL, "N" ) == "D"
+
 Box( "knjn", __box_x, __box_y, .f., "Unos novih stavki" )    
 
     _TMarza := "A"
@@ -677,6 +723,15 @@ Box( "knjn", __box_x, __box_y, .f., "Unos novih stavki" )
     do while .t.
 
         Scatter()
+        
+        _atributi := hb_hash()
+
+        if _rok
+            _atributi["rok"] := SPACE(10)
+        endif
+        if _opis
+            _atributi["opis"] := SPACE(300)
+        endif
 
         _ERROR := ""
            
@@ -700,15 +755,10 @@ Box( "knjn", __box_x, __box_y, .f., "Unos novih stavki" )
            
         nRbr := RbrUNum( _Rbr ) + 1
 
-        _dok := hb_hash()                   
-        _dok["idfirma"] := _idfirma
-        _dok["idtipdok"] := _idvd
-        _dok["brdok"] := _brdok
-        _dok["rbr"] := _rbr  
+        _old_dok["idfirma"] := _idfirma
+        _old_dok["idvd"] := _idvd
+        _old_dok["brdok"] := _brdok
 
-        _atributi["rok"] := get_kalk_atribut_opis( _dok, .f. )
-        _atributi["opis"] := get_kalk_atribut_rok( _dok, .f. )
- 
         if EditPRIPR( .t., @_atributi ) == 0
              exit
         endif
@@ -728,7 +778,32 @@ Box( "knjn", __box_x, __box_y, .f., "Unos novih stavki" )
         _oldvaln := _nc * _kolicina
 
         Gather()
-           
+
+        _dok_hash := hb_hash()
+        _dok_hash["idfirma"] := field->idfirma
+        _dok_hash["idtipdok"] := field->idvd
+        _dok_hash["brdok"] := field->brdok
+        _dok_hash["rbr"] := field->rbr
+        
+        // ubaci mi atribute u fakt_atribute
+        oAtrib := F18_DOK_ATRIB():new("kalk")
+        oAtrib:dok_hash := _dok_hash
+        oAtrib:atrib_hash_to_dbf( _atributi )
+
+        // izmjeni sve stavke dokumenta na osnovu prve stavke        
+        if nRbr == 1
+
+            select kalk_pripr
+            _t_rec := RECNO()
+
+            _new_dok := dbf_get_rec()
+            izmjeni_sve_stavke_dokumenta( _old_dok, _new_dok )
+
+            select kalk_pripr
+            go ( _t_rec )
+
+        endif
+
         if _idvd $ "16#80" .and. !EMPTY( _idkonto2 )
 
             cIdkont := _idkonto
@@ -784,10 +859,15 @@ return DE_REFRESH
 function EditAll()
 local _atributi := hb_hash()
 local _dok
+local oAtrib, _dok_hash, _old_dok, _new_dok
+local _rok, _opis
 
 // ovu opciju moze pozvati i asistent alt+F10 !
 PushWA()
 select kalk_pripr
+
+_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
+_opis := fetch_metric( "kalk_dodatni_opis_kod_unosa_dokumenta", NIL, "N" ) == "D"
 
 Box( "anal", __box_x, __box_y, .f., "Ispravka naloga" )
 
@@ -799,6 +879,8 @@ Box( "anal", __box_x, __box_y, .f., "Ispravka naloga" )
         skip
         nTR2:=RECNO()
         skip-1
+
+        _old_dok := dbf_get_rec()
 
         Scatter()
 
@@ -836,8 +918,13 @@ Box( "anal", __box_x, __box_y, .f., "Ispravka naloga" )
         _dok["brdok"] := _brdok
         _dok["rbr"] := _rbr  
 
-        _atributi["rok"] := get_kalk_atribut_opis( _dok, .f. )
-        _atributi["opis"] := get_kalk_atribut_rok( _dok, .f. )
+        if _opis
+            _atributi["opis"] := get_kalk_atribut_opis( _dok, .f. )
+        endif
+
+        if _rok
+            _atributi["rok"] := get_kalk_atribut_rok( _dok, .f. )
+        endif
       
         if EditPRIPR(.f., @_atributi )==0
             exit
@@ -851,8 +938,28 @@ Box( "anal", __box_x, __box_y, .f., "Ispravka naloga" )
         // stavka onda postavi ERROR
         _oldval:=_mpcsapp*_kolicina  // vrijednost prosle stavke
         _oldvaln:=_nc*_kolicina
+
         Gather()
-        
+       
+        // ubaci mi atribute u fakt_atribute
+        oAtrib := F18_DOK_ATRIB():new("kalk")
+        oAtrib:dok_hash := _dok_hash
+        oAtrib:atrib_hash_to_dbf( _atributi )
+
+        // izmjeni sve stavke dokumenta na osnovu prve stavke        
+        if nRbr == 1
+
+            select kalk_pripr
+            _t_rec := RECNO()
+
+            _new_dok := dbf_get_rec()
+            izmjeni_sve_stavke_dokumenta( _old_dok, _new_dok )
+
+            select kalk_pripr
+            go ( _t_rec )
+
+        endif
+
         if _idvd $ "16#80" .and. !empty(_idkonto2)
             
             cIdkont:=_idkonto
@@ -1514,9 +1621,9 @@ if fNovi .and. gBrojac == "D" .and. ( _idfirma <> idfirma .or. _idvd <> idvd )
 
 endif
 
-@ m_x + 2, m_y + 40  SAY "Broj:" GET _BrDok valid {|| !P_Kalk(_IdFirma,_IdVD,_BrDok) }
+@ m_x + 2, m_y + 40  SAY "Broj:" GET _brdok valid {|| !P_Kalk( _idfirma, _idvd, _brdok ) }
 
-@ m_x + 2, COL() + 2 SAY "Datum:" GET _DatDok
+@ m_x + 2, COL() + 2 SAY "Datum:" GET _datdok
 
 @ m_x + 3, m_y + 2  SAY "Redni broj stavke:" GET nRBr PICT '9999'
 
@@ -1525,6 +1632,104 @@ read
 ESC_RETURN 0
 
 return 1
+
+
+
+
+// --------------------------------------------------------------------
+// izmjeni sve stavke dokumenta prema tekucoj stavci
+// ovo treba da radi samo na stavci broj 1
+// --------------------------------------------------------------------
+static function izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
+local _old_firma := old_dok["idfirma"]
+local _old_brdok := old_dok["brdok"]
+local _old_tipdok := old_dok["idvd"]
+local _rec, _tek_dok, _t_rec
+local _new_firma := new_dok["idfirma"]
+local _new_brdok := new_dok["brdok"]
+local _new_tipdok := new_dok["idvd"]
+local oAtrib
+
+// treba da imam podatke koja je stavka bila prije korekcije
+// kao i koja je nova 
+// misli se na "idfirma + tipdok + brdok"
+
+select kalk_pripr
+go top
+
+// uzmi podatke sa izmjenjene stavke
+seek _new_firma + _new_tipdok + _new_brdok
+
+if !FOUND()
+    return .f.
+endif
+
+_tek_dok := dbf_get_rec()
+
+// zatim mi pronadji ostale stavke bivseg dokumenta
+go top
+seek _old_firma + _old_tipdok + _old_brdok
+
+if !FOUND()
+    return .f.
+endif
+
+do while !EOF() .and. field->idfirma + field->idvd + field->brdok == ;
+        _old_firma + _old_tipdok + _old_brdok 
+
+    skip 1
+    _t_rec := RECNO()
+    skip -1 
+
+    // napravi zamjenu podataka
+    _rec := dbf_get_rec()
+    _rec["idfirma"] := _tek_dok["idfirma"]
+    _rec["idvd"] := _tek_dok["idvd"]
+    _rec["brdok"] := _tek_dok["brdok"]
+    _rec["datdok"] := _tek_dok["datdok"]
+    _rec["idkonto"] := _tek_dok["idkonto"]
+    _rec["idkonto2"] := _tek_dok["idkonto2"]
+    _rec["pkonto"] := _tek_dok["pkonto"]
+    _rec["mkonot"] := _tek_dok["mkonto"]
+    _rec["idpartner"] := _tek_dok["idpartner"]
+
+    dbf_update_rec( _rec )
+
+    go ( _t_rec )
+
+enddo
+go top
+
+oAtrib := F18_DOK_ATRIB():new("kalk")
+oAtrib:open_local_table()
+
+go top
+
+do while !EOF()
+
+    skip 1
+    _t_rec := RECNO()
+    skip -1
+
+    _rec := dbf_get_rec()
+
+    _rec["idfirma"] := _tek_dok["idfirma"]
+    _rec["idvd"] := _tek_dok["idvd"]
+    _rec["brdok"] := _tek_dok["brdok"]
+
+    dbf_update_rec( _rec )
+ 
+    go ( _t_rec )
+
+enddo
+// zatvori atribute
+use
+
+select kalk_pripr
+go top
+
+return .t.
+
 
 
 

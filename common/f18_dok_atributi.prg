@@ -354,6 +354,7 @@ if !FOUND()
     // ako je prazan vrijednost
     // nemoj upisivati...
     if EMPTY( value )
+        use
         select ( _t_area )
         return _ok
     endif
@@ -551,6 +552,7 @@ endif
 
 // prvo mi pobrisi sa servera ove podatke... 
 if !::delete_atrib_from_server()
+    USE
     _ok := .f.
     select ( _t_area )
     return _ok

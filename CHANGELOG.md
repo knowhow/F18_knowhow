@@ -1,3 +1,7 @@
+1.4.255 2013-11-28, vsasa
+ 
+  - KALK, FIN, atributi stavki kod unosa dokumenta
+
 1.4.254 2013-11-22, vsasa
  
   - F18, update aplikacije - windows update

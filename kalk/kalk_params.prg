@@ -203,6 +203,8 @@ local _unos_barkod := "N"
 local _x := 1
 local _reset_roba := fetch_metric( "kalk_reset_artikla_kod_unosa", my_user(), "N" )
 local _rabat := fetch_metric( "pregled_rabata_kod_ulaza", my_user(), "N" )
+local _rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" )
+local _opis := fetch_metric( "kalk_dodatni_opis_kod_unosa_dokumenta", NIL, "N" )
 private  GetList:={}
 
 if glBrojacPoKontima
@@ -252,7 +254,9 @@ Box(, 20, 75, .f., "RAZNO" )
     @ m_x + _x,m_y+2 SAY "Reset artikla prilikom unosa dokumenta (D/N)" GET _reset_roba PICT "@!" VALID _reset_roba $ "DN"
     ++ _x
     @ m_x + _x,m_y+2 SAY "Pregled rabata za dobavljaca kod unosa ulaza (D/N)" GET _rabat PICT "@!" VALID _rabat $ "DN"
-
+    ++ _x
+    @ m_x + _x,m_y+2 SAY "Def.opisa kod unosa (D/N)" GET _opis VALID _opis $ "DN" PICT "@!"
+    @ m_x + _x, col()+1 SAY "Def.roka trajanja (D/N)" GET _rok VALID _rok $ "DN" PICT "@!"
     read
 
 BoxC()
@@ -289,6 +293,8 @@ if lastkey() <> K_ESC
   	set_metric("kalk_index_za_pretragu_artikala", f18_user(), gArtCDX)
 	set_metric( "kalk_reset_artikla_kod_unosa", my_user(), _reset_roba )
     set_metric( "pregled_rabata_kod_ulaza", my_user(), _rabat )
+    set_metric( "kalk_definisanje_roka_trajanja", NIL, _rok )
+    set_metric( "kalk_dodatni_opis_kod_unosa_dokumenta", NIL, _opis )
 
 endif
 

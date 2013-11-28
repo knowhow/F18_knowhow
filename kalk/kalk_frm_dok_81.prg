@@ -16,11 +16,35 @@ static aPorezi:={}
 
 
 // direktni ulaz u prodavnicu
-function Get1_81()
+function Get1_81( atrib )
 local _x := 5
 local _kord_x := 0
 local _unos_left := 40
+local _use_opis := .f.
+local _use_rok := .f.
+local _opis := SPACE(300)
+local _rok := CTOD("")
 
+if hb_hhaskey( atrib, "opis" )
+    _use_opis := .t.
+endif
+
+if hb_hhaskey( atrib, "rok" )
+    _use_rok := .t.
+endif
+
+if _use_opis
+    if !fNovi 
+        _opis := PADR( atrib["opis"], 300 )
+    endif
+endif
+ 
+if _use_rok
+    if !fNovi 
+        _rok := CTOD( ALLTRIM( atrib["rok"] ) )
+    endif
+endif
+ 
 __k_val := "N"
 
 if nRbr == 1 .and. fnovi
@@ -114,6 +138,16 @@ DatPosljP()
 
 ++ _x
 
+if _use_rok
+    @ m_x + _x, m_y + 2 SAY "Datum isteka roka:" GET _rok
+endif
+
+if _use_opis
+    @ m_x + _x, m_y + 30 SAY "Opis:" GET _opis PICT "@S40"
+endif
+
+++ _x
+
 @ m_x + _x, m_y + 2 SAY "Kolicina " GET _kolicina PICT PicKol VALID _kolicina <> 0
 
 if fNovi
@@ -162,6 +196,15 @@ ESC_RETURN K_ESC
 
 _fcj2 := _fcj * ( 1 - _rabat / 100 )
 
+// setuj atribute...
+if _use_opis
+    atrib["opis"] := _opis
+endif
+
+if _use_rok
+    atrib["rok"] := DTOC( _rok )
+endif
+
 obracun_kalkulacija_tip_81_pdv( _x )
 
 return lastkey()
@@ -199,7 +242,7 @@ return .t.
 // --------------------------------------------------------
 static function obracun_kalkulacija_tip_81_pdv( x_kord )
 local cSPom:=" (%,A,U,R) "
-local _x := x_kord + 4
+local _x := x_kord + 2
 local _unos_left := 40
 local _kord_x
 local _sa_troskovima := .t.

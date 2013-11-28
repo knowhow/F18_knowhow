@@ -107,6 +107,9 @@ else
     return
 endif
 
+// pobrisi mi fakt_atribute takodjer
+F18_DOK_ATRIB():new("kalk"):zapp_local_table()
+
 // generisi zavisne dokumente nakon azuriranja kalkulacije
 kalk_zavisni_nakon_azuriranja( lGenerisiZavisne, lAuto )
 
@@ -789,6 +792,7 @@ local _ids := {}
 local _ids_kalk := {}
 local _ids_doks := {}
 local _log_dok
+local oAtrib
 
 _tbl_kalk := "kalk_kalk"
 _tbl_doks := "kalk_doks"
@@ -888,6 +892,20 @@ if _ok = .t.
     endif
    
 endif
+
+if _ok == .t.
+
+    @ m_x + 3, m_y + 2 SAY "kalk_atributi -> server "
+
+    oAtrib := F18_DOK_ATRIB():new("kalk")
+    oAtrib:dok_hash["idfirma"] := _record["idfirma"]
+    oAtrib:dok_hash["idtipdok"] := _record["idvd"]
+    oAtrib:dok_hash["brdok"] := _record["brdok"]
+
+    _ok := oAtrib:atrib_dbf_to_server()
+
+endif
+
 
 if !_ok
 
@@ -1071,6 +1089,7 @@ local _id_vd
 local _br_dok
 local _del_rec, _ok
 local _t_rec
+local _dok_hash, oAtrib
 
 _brisi_kum := .f.
 
@@ -1148,6 +1167,17 @@ enddo
 
 MsgC()
 
+// kalk atributi....
+_dok_hash := hb_hash()
+_dok_hash["idfirma"] := _id_firma
+_dok_hash["idtipdok"] := _id_vd
+_dok_hash["brdok"] := _br_dok
+
+oAtrib := F18_DOK_ATRIB():new("kalk")
+oAtrib:dok_hash := _dok_hash
+oAtrib:atrib_server_to_dbf()
+
+
 if _brisi_kum
     
     if !f18_lock_tables({"kalk_doks", "kalk_kalk", "kalk_doks2" })
@@ -1169,7 +1199,12 @@ if _brisi_kum
         log_write( "F18_DOK_OPER: kalk povrat dokumenta: " + _id_firma + "-" + _id_vd + "-" + _br_dok, 2 )
 
         _del_rec := dbf_get_rec()
+
         _ok := .t.
+        
+        // pobrisi atribute ih sa servera...
+        _ok := _ok .and.  oAtrib:delete_atrib_from_server()
+
         _ok := delete_rec_server_and_dbf( "kalk_kalk", _del_rec, 2, "CONT" )
     
         select kalk_doks
@@ -1241,6 +1276,7 @@ local _filter
 local _id_firma := gFirma
 local _rec
 local _del_rec, _ok
+local _dok_hash, oAtrib, __firma, __idvd, __brdok
 
 if !SigmaSif()
     close all
@@ -1285,14 +1321,30 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
 
         select kalk
 
+        __firma := field->idfirma
+        __idvd := field->idvd
+        __brdok := field->brdok
+
         _rec := dbf_get_rec()
 
         select kalk_pripr
                 
         IF ! ( _rec["idvd"] $ "97" .and. _rec["tbanktr"] == "X" )
+
             append ncnl
             _rec["error"] := ""
             dbf_update_rec( _rec )
+
+            // kalk atributi....
+            _dok_hash := hb_hash()
+            _dok_hash["idfirma"] := __firma
+            _dok_hash["idtipdok"] := __idvd
+            _dok_hash["brdok"] := __brdok
+
+            oAtrib := F18_DOK_ATRIB():new("kalk")
+            oAtrib:dok_hash := _dok_hash
+            oAtrib:atrib_server_to_dbf()
+ 
         ENDIF
 
         select kalk
@@ -1301,7 +1353,7 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
     enddo
 
     MsgC()
-            
+     
     select kalk
     set order to tag "1"
     go top
@@ -1337,7 +1389,18 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
         _t_rec := RECNO()
 
         _ok := .t.
-        _ok :=  delete_rec_server_and_dbf( "kalk_kalk", _del_rec, 2, "CONT" )
+
+        _dok_hash := hb_hash()
+        _dok_hash["idfirma"] := _id_firma
+        _dok_hash["idtipdok"] := _id_vd
+        _dok_hash["brdok"] := _br_dok
+
+        oAtrib := F18_DOK_ATRIB():new("kalk")
+        oAtrib:dok_hash := _dok_hash
+        
+        _ok := _ok .and.  oAtrib:delete_atrib_from_server()
+
+        _ok := delete_rec_server_and_dbf( "kalk_kalk", _del_rec, 2, "CONT" )
 
         if _ok
             // pobrsi mi sada tabelu kalk_doks

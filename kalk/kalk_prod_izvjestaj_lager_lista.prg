@@ -32,6 +32,11 @@ local cSrKolNula := "0"
 local _curr_user := "<>"
 local cMpcIzSif := "N"
 local cMinK := "N"
+local _is_rok := .f.
+local _istek_roka := CTOD("")
+local _item_istek_roka, _dok_hash, _sh_item_istek_roka
+
+_is_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
 
 gPicCDEM:=REPLICATE("9", VAL(gFPicCDem)) + gPicCDEM 
 gPicDEM:= REPLICATE("9", VAL(gFPicDem)) + gPicDem
@@ -111,6 +116,10 @@ do while .t.
  	@ m_x+8,m_y+2 SAY "Prikaz stavki kojima je MPV 0 D/N" GET cNula  valid cNula $ "DN" pict "@!"
  	@ m_x+9,m_y+2 SAY "Datum od " GET dDatOd
  	@ m_x+9,col()+2 SAY "do" GET dDatDo
+
+    if _is_rok
+        @ m_x + 9, col() + 1 SAY "Datum isteka roka:" GET _istek_roka
+    endif
 	
 	if lPocStanje
 		@ m_x+11,m_y+2 SAY "sredi kol=0, nv<>0 (0/1/2)" GET cSrKolNula ;
@@ -347,6 +356,31 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
      		loop
   		endif
 
+        // provjeri mi i datum isteka roka kod artikala
+        if _is_rok
+
+            if !EMPTY( _istek_roka ) 
+                
+                _dok_hash := hb_hash()
+                _dok_hash["idfirma"] := field->idfirma
+                _dok_hash["idtipdok"] := field->idvd
+                _dok_hash["brdok"] := field->brdok
+                _dok_hash["rbr"] := field->rbr
+
+                _item_istek_roka := CTOD( get_kalk_atribut_rok( _dok_hash, .t. ) )
+
+                if DTOC( _item_istek_roka ) == DTOC( CTOD("") ) .or. _item_istek_roka > _istek_roka
+                    select kalk
+                    skip
+                    loop
+                else
+                    _sh_item_istek_roka := _item_istek_roka
+                endif
+
+            endif
+
+        endif
+
   		if cPredhStanje=="D"
     		if field->datdok < dDatOd
      			if field->pu_i == "1"
@@ -462,15 +496,11 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
 
 		? str(++nRbr,4)+".",cIdRoba
 
-		nCr:=pcol()+1
+		nCr := pcol() + 1
 
 		@ prow(),pcol()+1 SAY aNaz[1]
 		@ prow(),pcol()+1 SAY roba->jmj
 
-		if lPoNarudzbi .and. cPKN=="D"
-  			@ prow(),pcol()+1 SAY cIdNar
-		endif
-		
 		nCol0:=pCol()+1
 		
 		if cPredhStanje=="D"
@@ -666,6 +696,13 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
 		if lKoristitiBK
 		   ? SPACE(6) + roba->barkod
 		endif
+
+        if _is_rok .and. !EMPTY( _istek_roka ) .and. !EMPTY( _sh_item_istek_roka )
+            if !lKoristitiBK
+                ? SPACE(6)
+            endif
+            ?? " rok istice:", DTOC( _sh_item_istek_roka ), " dana:", ALLTRIM( STR( DATE() - _sh_item_istek_roka ) ) 
+        endif
 		
 	endif 
 

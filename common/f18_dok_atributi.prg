@@ -308,7 +308,7 @@ if !EMPTY( _rbr )
 endif
 
 if !EMPTY( _atrib )
-    _where += "atribut = " + _sql_quote( _atrib )
+    _where += " AND atribut = " + _sql_quote( _atrib )
 endif
  
 _table := _select_all_from_table( ::table_name_server, NIL, { _where }, { "atribut" } )

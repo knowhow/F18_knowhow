@@ -142,11 +142,6 @@ endif
 
 _upd_file := STRTRAN( _upd_file, "#VER#", ::update_app_templates_version )
 
-if ::update_app_templates_version == F18_TEMPLATE_VER
-    MsgBeep( "Verzija template-a " + F18_TEMPLATE_VER + " je vec instalirana !" )
-    return SELF
-endif
-
 // download fajla za update...
 if !::wget_download( params["url"], _upd_file, _dest + _upd_file, .t., .t. )
     return SELF

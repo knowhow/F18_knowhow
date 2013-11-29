@@ -179,7 +179,7 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
         _dok_hash["brdok"] := field->brdok   
         _dok_hash["rbr"] := field->rbr   
         _item_istek_roka := CTOD( get_kalk_atribut_rok( _dok_hash, .t. ) )
-        if DTOC( _item_istek_roka ) <> CTOD( "" )
+        if DTOC( _item_istek_roka ) <> DTOC( CTOD("") )
             ?? " datum isteka roka:", _item_istek_roka
         endif
     endif
@@ -317,7 +317,7 @@ return
  */
 
 function StKalk81_2()
-*{
+local _dok_hash, _is_rok
 local nCol1:=nCol2:=0,npom:=0
 private aPorezi
 
@@ -331,6 +331,8 @@ cBrFaktP:=BrFaktP
 dDatFaktP:=DatFaktP
 cIdKonto:=IdKonto
 cIdKonto2:=IdKonto2
+
+_is_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
 
 P_10CPI
 ?? "ULAZ U PRODAVNICU DIREKTNO OD DOBAVLJACA"
@@ -456,6 +458,18 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 		?? ", BK: " + roba->barkod
 	endif
     
+    if _is_rok
+        _dok_hash := hb_hash()
+        _dok_hash["idfirma"] := field->idfirma   
+        _dok_hash["idtipdok"] := field->idvd
+        _dok_hash["brdok"] := field->brdok   
+        _dok_hash["rbr"] := field->rbr   
+        _item_istek_roka := CTOD( get_kalk_atribut_rok( _dok_hash, .t. ) )
+        if DTOC( _item_istek_roka ) <> DTOC( CTOD("") )
+            ?? " datum isteka roka:", _item_istek_roka
+        endif
+    endif
+
     @ prow()+1,4 SAY IdRoba
     nCol1:=pcol()+1
     @ prow(),pcol()+1 SAY FCJ                   PICTURE PicCDEM

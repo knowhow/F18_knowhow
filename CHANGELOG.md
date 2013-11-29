@@ -2,6 +2,7 @@
  
   - F18 update, korekcije
   - FAKT, atributi korekcije
+  - KALK, atributi, rok trajanja kartica prodavnice
 
 1.4.255 2013-11-28, vsasa
  

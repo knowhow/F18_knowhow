@@ -158,13 +158,19 @@ return SELF
 // -----------------------------------------------------------------------
 METHOD F18AdminOpts:update_app_unzip_templates( destination, location )
 local _cmd
+local _args := "-jxf"
 
 MsgO( "Vrsim update template fajlova ..." )
 
-//DirChange( destination )
+// 1) pozicioniraj se u potrebni direktorij...
+DirChange( destination )
 
-_cmd := "tar -C " + destination + " -jxf " + location
+// 2) prvo bunzip2
+_cmd := "bunzip2 -f " + location
+hb_run( _cmd )
 
+// 3) tar 
+_cmd := "tar xvf " + STRTRAN( location, ".bz2", "" )
 hb_run( _cmd )
 
 MsgC()

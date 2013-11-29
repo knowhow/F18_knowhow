@@ -27,6 +27,8 @@ while  [ "$SERVICE" -gt 0 ]
        gzip -dNfc  < $1 > $DEST/F18
        chmod +x $DEST/F18
        echo "update je zavrsen"
+       DISPLAY=:0 notify-send  "F18 upgrade završen, možete pokrenuti F18"
        rm $1  
+       
 exit 0
 

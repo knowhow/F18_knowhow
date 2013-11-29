@@ -697,7 +697,7 @@ if LEN( _a_fakt_doks ) == 0
 endif
 
 // fiksiranje tabele atributa
-F18_DOK_ATRIB():new("fakt"):fix_atrib( F_FAKT_ATRIB, _a_fakt_doks )
+F18_DOK_ATRIB():new("fakt"):fix_atrib( F_FAKT_PRIPR, _a_fakt_doks )
 
 o_fakt_edit() 
 

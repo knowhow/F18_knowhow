@@ -1,3 +1,8 @@
+1.4.256 2013-11-29, vsasa
+ 
+  - F18 update, korekcije
+  - FAKT, atributi korekcije
+
 1.4.255 2013-11-28, vsasa
  
   - KALK, FIN, atributi stavki kod unosa dokumenta

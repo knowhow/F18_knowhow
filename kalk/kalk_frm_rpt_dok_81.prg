@@ -15,10 +15,13 @@
 
 function StKalk81(fzatops)
 local nCol1:=nCol2:=0,npom:=0
+local _is_rok, _dok_hash
 
 Private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2,nPRUC,aPorezi
+
 nMarza:=nMarza2:=nPRUC:=0
 aPorezi:={}
+
 // iznosi troskova i marzi koji se izracunavaju u KTroskovi()
 
 nStr:=0
@@ -29,6 +32,8 @@ cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
 if fzaTops==NIL
  fzaTops:=.f.
 endif
+
+_is_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
 
 P_COND2
 
@@ -166,6 +171,18 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 	if lKoristitiBK .and. !EMPTY( roba->barkod )
 		?? ", BK: " + ROBA->barkod 
 	endif
+
+    if _is_rok
+        _dok_hash := hb_hash()
+        _dok_hash["idfirma"] := field->idfirma   
+        _dok_hash["idtipdok"] := field->idvd
+        _dok_hash["brdok"] := field->brdok   
+        _dok_hash["rbr"] := field->rbr   
+        _item_istek_roka := CTOD( get_kalk_atribut_rok( _dok_hash, .t. ) )
+        if DTOC( _item_istek_roka ) <> CTOD( "" )
+            ?? " datum isteka roka:", _item_istek_roka
+        endif
+    endif
 
 	@ prow()+1,4 SAY IdRoba
     nCol1:=pcol()+1

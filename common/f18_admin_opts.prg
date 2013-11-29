@@ -148,7 +148,7 @@ if !::wget_download( params["url"], _upd_file, _dest + _upd_file, .t., .t. )
 endif
 
 // update run script
-::update_app_unzip_templates( _dest, _dest + _upd_file )
+::update_app_unzip_templates( _dest, _dest, _upd_file )
 
 return SELF
 
@@ -156,22 +156,31 @@ return SELF
 
 // -----------------------------------------------------------------------
 // -----------------------------------------------------------------------
-METHOD F18AdminOpts:update_app_unzip_templates( destination, location )
+METHOD F18AdminOpts:update_app_unzip_templates( destination_path, location_path, filename )
 local _cmd
 local _args := "-jxf"
 
 MsgO( "Vrsim update template fajlova ..." )
 
-// 1) pozicioniraj se u potrebni direktorij...
-DirChange( destination )
+#ifdef __PLATFORM__WINDOWS
 
-// 2) prvo bunzip2
-_cmd := "bunzip2 -f " + location
-hb_run( _cmd )
+    // 1) pozicioniraj se u potrebni direktorij...
+    DirChange( destination_path )
 
-// 3) tar 
-_cmd := "tar xvf " + STRTRAN( location, ".bz2", "" )
-hb_run( _cmd )
+    // 2) prvo bunzip2
+    _cmd := "bunzip2 -f " + location_path + filename
+    hb_run( _cmd )
+
+    // 3) tar 
+    _cmd := "tar xvf " + STRTRAN( filename, ".bz2", "" ) 
+    hb_run( _cmd )
+
+#else
+
+    _cmd := "tar -C " + location_path + " " + _args + " " + location_path + filename
+    hb_run( _cmd )
+
+#endif
 
 MsgC()
 

@@ -237,8 +237,6 @@ Msg( "F18 ce se sada zatvoriti#Nakon update procesa ponovo otvorite F18", 4)
 // pokreni skriptu    
 hb_run( _url )
 
-sleep(1)
-
 // zatvori aplikaciju ako je update aplikacije...
 QUIT
 

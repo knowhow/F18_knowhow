@@ -256,7 +256,7 @@ Box(, 20, 75, .f., "RAZNO" )
     @ m_x + _x,m_y+2 SAY "Pregled rabata za dobavljaca kod unosa ulaza (D/N)" GET _rabat PICT "@!" VALID _rabat $ "DN"
     ++ _x
     @ m_x + _x,m_y+2 SAY "Def.opisa kod unosa (D/N)" GET _opis VALID _opis $ "DN" PICT "@!"
-    @ m_x + _x, col()+1 SAY "Def.roka trajanja (D/N)" GET _rok VALID _rok $ "DN" PICT "@!"
+    @ m_x + _x, col()+1 SAY "Def.datuma isteka roka (D/N)" GET _rok VALID _rok $ "DN" PICT "@!"
     read
 
 BoxC()

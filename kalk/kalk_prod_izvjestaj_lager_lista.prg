@@ -701,7 +701,7 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
             if !lKoristitiBK
                 ? SPACE(6)
             endif
-            ?? " rok istice:", DTOC( _sh_item_istek_roka ), " dana:", ALLTRIM( STR( DATE() - _sh_item_istek_roka ) ) 
+            ?? " rok istice:", DTOC( _sh_item_istek_roka ), " dana:", ALLTRIM( STR( _sh_item_istek_roka - DATE() ) ) 
         endif
 		
 	endif 

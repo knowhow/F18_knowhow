@@ -136,8 +136,8 @@ local _dest := SLASH + "opt" + SLASH + "knowhowERP" + SLASH
     _dest := "c:" + SLASH + "knowhowERP" + SLASH
 #endif
     
-if ::update_app_f18_version == "#LAST#"
-    ::update_app_f18_version := params["templates"]
+if ::update_app_templates_version == "#LAST#"
+    ::update_app_templates_version := params["templates"]
 endif
 
 _upd_file := STRTRAN( _upd_file, "#VER#", ::update_app_templates_version )

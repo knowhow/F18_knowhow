@@ -27,12 +27,15 @@ local cLine
 local cTxt1
 local cTxt2
 local cTxt3
+local _is_rok, _dok_hash, _item_istek_roka
 
 private PicCDEM := REPLICATE("9", VAL(gFPicCDem)) + gPicCDEM 
 private PicProc := gPicProc
 private PicDEM := REPLICATE("9", VAL(gFPicDem)) + gPicDem
 private Pickol :="@Z " + REPLICATE("9", VAL(gFPicKol)) + gPickol
 private nMarza, nMarza2, nPRUC, aPorezi
+
+_is_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
 
 O_TARIFA
 O_SIFK
@@ -327,6 +330,19 @@ do while !EOF() .and. field->idfirma + field->pkonto + field->idroba = cIdFirma 
             if field->datdok >= dDatOd
                 @ prow(), pcol()+1 SAY nMpv pict picdem
             endif
+
+            if _is_rok
+                _dok_hash := hb_hash()
+                _dok_hash["idfirma"] := field->idfirma   
+                _dok_hash["idtipdok"] := field->idvd
+                _dok_hash["brdok"] := field->brdok   
+                _dok_hash["rbr"] := field->rbr   
+                _item_istek_roka := CTOD( get_kalk_atribut_rok( _dok_hash, .t. ) )
+                if DTOC( _item_istek_roka ) <> DTOC( CTOD("") )
+                    @ prow(), pcol() + 1 SAY  "rok: " + DTOC( _item_istek_roka )
+                endif
+            endif
+
 
         elseif field->pu_i == "5" .and. !( field->idvd $ "12#13#22" )
 

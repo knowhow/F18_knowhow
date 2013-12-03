@@ -943,7 +943,7 @@ Box( "anal", __box_x, __box_y, .f., "Ispravka naloga" )
        
         // ubaci mi atribute u fakt_atribute
         oAtrib := F18_DOK_ATRIB():new("kalk")
-        oAtrib:dok_hash := _dok_hash
+        oAtrib:dok_hash := _dok
         oAtrib:atrib_hash_to_dbf( _atributi )
 
         // izmjeni sve stavke dokumenta na osnovu prve stavke        

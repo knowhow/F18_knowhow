@@ -1,3 +1,7 @@
+1.4.257 2013-12-03, vsasa
+ 
+  - KALK, unos atributa - korekcije na opciji CTRL+A
+ 
 1.4.256 2013-11-29, vsasa
  
   - F18 update, korekcije

@@ -345,10 +345,6 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
 		loop
 	endif
 
-	//if cMink == "O"
-	//	cNula := "D"
-	//endif
-	
 	do while !EOF() .and. cIdfirma + cIdkonto + cIdroba == field->idFirma + field->pkonto + field->idroba .and. IspitajPrekid()
 	    
         if lSMark .and. SkLoNMark("ROBA",cIdroba)
@@ -476,10 +472,6 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
         LOOP
     endif
 
-    //if cMinK == "O" .and. nMinK == 0 .and. ROUND( nUlaz - nIzlaz, 4 ) == 0
-      //  LOOP
-    //endif   
- 
 	// ne prikazuj stavke 0
 	if cNula == "D" .or. ROUND( nMPVU - nMPVI + nPMPV, 2 ) <> 0 
 	

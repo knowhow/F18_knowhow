@@ -585,14 +585,14 @@ else
 
     BoxC()
 
-    if _ERROR<>"1"
-        _ERROR:="0"
-    endif       // stavka onda postavi ERROR
+    if _error <> "1"
+        _error := "0"
+    endif      
 
-    if _idvd=="16"
-        _oldval:=_vpc*_kolicina  // vrijednost prosle stavke
+    if _idvd == "16"
+        _oldval := _vpc * _kolicina  
     else
-        _oldval:=_mpcsapp*_kolicina  // vrijednost prosle stavke
+        _oldval := _mpcsapp * _kolicina  
     endif
 
     _oldvaln := _nc * _kolicina
@@ -610,17 +610,17 @@ else
     oAtrib:dok_hash := _dok_hash
     oAtrib:atrib_hash_to_dbf( _atributi )
 
+    select kalk_pripr
+
     // izmjeni sve stavke dokumenta na osnovu prve stavke        
     if nRbr == 1
-        select kalk_pripr
         _t_rec := RECNO()
         _new_dok := dbf_get_rec()
         izmjeni_sve_stavke_dokumenta( _old_dok, _new_dok )
         select kalk_pripr
         go ( _t_rec )
     endif
-
-    altd()
+    
     if _idvd $ "16#80" .and. !EMPTY( _idkonto2 )
         
         cIdkont := _idkonto
@@ -633,12 +633,16 @@ else
         _rbr := RedniBroj( nRbr )
 
         Box( "", __box_x, __box_y, .f., "Protustavka" )
+
             seek _idfirma + _idvd + _brdok + _rbr
-            _Tbanktr:="X"
-            do while !EOF() .and. _idfirma + _idvd + _brdok + _rbr == idfirma + idvd + brdok + rbr
-                if LEFT( _idkonto2, 3 ) == "XXX"
+
+            _tbanktr := "X"
+
+            do while !EOF() .and. _idfirma + _idvd + _brdok + _rbr == field->idfirma + ;
+                    field->idvd + field->brdok + field->rbr
+                if LEFT( field->idkonto2, 3 ) == "XXX"
                     Scatter()
-                    _TBankTr := ""
+                    _tbanktr := ""
                     exit
                 endif
                 skip
@@ -931,9 +935,10 @@ Box( "anal", __box_x, __box_y, .f., "Ispravka naloga" )
         oAtrib:dok_hash := _dok
         oAtrib:atrib_hash_to_dbf( _atributi )
 
+        select kalk_pripr
+
         // izmjeni sve stavke dokumenta na osnovu prve stavke        
         if nRbr == 1
-            select kalk_pripr
             _t_rec := RECNO()
             _new_dok := dbf_get_rec()
             izmjeni_sve_stavke_dokumenta( _old_dok, _new_dok )
@@ -956,8 +961,9 @@ Box( "anal", __box_x, __box_y, .f., "Ispravka naloga" )
             Box( "", __box_x, __box_y, .f., "Protustavka" )
                 seek _idfirma + _idvd + _brdok + _rbr
                 _tbanktr := "X"
-                do while !EOF() .and. _idfirma + _idvd + _brdok + _rbr == idfirma + idvd + brdok + rbr
-                    if LEFT( _idkonto2, 3 ) == "XXX"
+                do while !EOF() .and. _idfirma + _idvd + _brdok + _rbr == field->idfirma + ;
+                        field->idvd + field->brdok + field->rbr
+                    if LEFT( field->idkonto2, 3 ) == "XXX"
                         Scatter()
                         _tbanktr := ""
                         exit
@@ -1668,12 +1674,15 @@ do while !EOF() .and. field->idfirma + field->idvd + field->brdok == ;
     _rec["idvd"] := _tek_dok["idvd"]
     _rec["brdok"] := _tek_dok["brdok"]
     _rec["datdok"] := _tek_dok["datdok"]
-    _rec["idkonto"] := _tek_dok["idkonto"]
-    _rec["idkonto2"] := _tek_dok["idkonto2"]
     _rec["pkonto"] := _tek_dok["pkonto"]
     _rec["mkonot"] := _tek_dok["mkonto"]
     _rec["idpartner"] := _tek_dok["idpartner"]
 
+    if ! ( _rec["idvd"] $ "16#80" )
+        _rec["idkonto"] := _tek_dok["idkonto"]
+        _rec["idkonto2"] := _tek_dok["idkonto2"]
+    endif
+ 
     dbf_update_rec( _rec )
 
     go ( _t_rec )

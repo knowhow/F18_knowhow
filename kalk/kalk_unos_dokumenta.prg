@@ -886,20 +886,20 @@ Box( "anal", __box_x, __box_y, .f., "Ispravka naloga" )
 
         _ERROR:=""
 
-        if left(_idkonto2,3) == "XXX"
+        if LEFT( _idkonto2, 3 ) == "XXX"
             // 80-ka
             skip
             skip
             nTR2 := RECNO()
-            skip-1
+            skip -1
             Scatter()
             _ERROR:=""
-            if left(_idkonto2,3) == "XXX"
+            if LEFT( _idkonto2, 3 ) == "XXX"
                 exit
             endif
         endif
             
-        nRbr:=RbrUNum(_Rbr)
+        nRbr := RbrUNum(_Rbr)
         IF lAsistRadi
                     
             // pocisti bafer

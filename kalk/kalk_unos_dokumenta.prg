@@ -1674,13 +1674,13 @@ do while !EOF() .and. field->idfirma + field->idvd + field->brdok == ;
     _rec["idvd"] := _tek_dok["idvd"]
     _rec["brdok"] := _tek_dok["brdok"]
     _rec["datdok"] := _tek_dok["datdok"]
-    _rec["pkonto"] := _tek_dok["pkonto"]
-    _rec["mkonot"] := _tek_dok["mkonto"]
     _rec["idpartner"] := _tek_dok["idpartner"]
 
     if ! ( _rec["idvd"] $ "16#80" )
         _rec["idkonto"] := _tek_dok["idkonto"]
         _rec["idkonto2"] := _tek_dok["idkonto2"]
+        _rec["pkonto"] := _tek_dok["pkonto"]
+        _rec["mkonot"] := _tek_dok["mkonto"]
     endif
  
     dbf_update_rec( _rec )

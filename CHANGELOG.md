@@ -1,3 +1,7 @@
+1.4.258 2013-12-06, vsasa
+ 
+  - KALK, unos/ispravka dokumenta 80 (predisp.) bugfix
+ 
 1.4.257 2013-12-03, vsasa
  
   - KALK, unos atributa - korekcije na opciji CTRL+A

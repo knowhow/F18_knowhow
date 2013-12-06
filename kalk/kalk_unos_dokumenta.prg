@@ -612,7 +612,6 @@ else
 
     // izmjeni sve stavke dokumenta na osnovu prve stavke        
     if nRbr == 1
-
         select kalk_pripr
         _t_rec := RECNO()
         _new_dok := dbf_get_rec()
@@ -621,6 +620,7 @@ else
         go ( _t_rec )
     endif
 
+    altd()
     if _idvd $ "16#80" .and. !EMPTY( _idkonto2 )
         
         cIdkont := _idkonto
@@ -633,10 +633,10 @@ else
         _rbr := RedniBroj( nRbr )
 
         Box( "", __box_x, __box_y, .f., "Protustavka" )
-            seek _idfirma+_idvd+_brdok+_rbr
+            seek _idfirma + _idvd + _brdok + _rbr
             _Tbanktr:="X"
-            do while !eof() .and. _idfirma+_idvd+_brdok+_rbr==idfirma+idvd+brdok+rbr
-                if LEFT( idkonto2, 3 ) == "XXX"
+            do while !EOF() .and. _idfirma + _idvd + _brdok + _rbr == idfirma + idvd + brdok + rbr
+                if LEFT( _idkonto2, 3 ) == "XXX"
                     Scatter()
                     _TBankTr := ""
                     exit
@@ -657,12 +657,12 @@ else
                 Get1_80b()
             endif
                     
-            if _TBanktr == "X"
+            if _tbanktr == "X"
                 append ncnl
             endif
 
-            if _ERROR<>"1"
-                _ERROR:="0"
+            if _error <> "1"
+                _error := "0"
             endif       
 
             Gather()
@@ -688,6 +688,7 @@ local _old_dok := hb_hash()
 local _new_dok
 local oAtrib
 local _rok, _opis
+local _rbr_uvecaj := 0
 
 // isprazni kontrolnu matricu
 aNC_ctrl := {}
@@ -701,22 +702,11 @@ Box( "knjn", __box_x, __box_y, .f., "Unos novih stavki" )
 
     // ipak idi na zadnju stavku !
     go bottom
-
     if LEFT( field->idkonto2, 3 ) = "XXX"
+        _rbr_uvecaj := 1
         skip -1
     endif
         
-    // TODO: popni se u odnosu na negativne brojeve
-    // TODO: VIDJETI ?? negativne su protustavke ????!!! zar to ima
-
-    do while !BOF()
-        if VAL( field->rbr ) < 0
-           skip -1
-        else
-           exit
-        endif
-    enddo
-
     cIdkont := ""
     cIdkont2 := ""
         
@@ -753,7 +743,7 @@ Box( "knjn", __box_x, __box_y, .f., "Unos novih stavki" )
 
         _NC := _VPC := _VPCSaP := _MPC := _MPCSaPP := 0
            
-        nRbr := RbrUNum( _Rbr ) + 1
+        nRbr := RbrUNum( _rbr ) + 1 + _rbr_uvecaj
 
         _old_dok["idfirma"] := _idfirma
         _old_dok["idvd"] := _idvd
@@ -792,16 +782,12 @@ Box( "knjn", __box_x, __box_y, .f., "Unos novih stavki" )
 
         // izmjeni sve stavke dokumenta na osnovu prve stavke        
         if nRbr == 1
-
             select kalk_pripr
             _t_rec := RECNO()
-
             _new_dok := dbf_get_rec()
             izmjeni_sve_stavke_dokumenta( _old_dok, _new_dok )
-
             select kalk_pripr
             go ( _t_rec )
-
         endif
 
         if _idvd $ "16#80" .and. !EMPTY( _idkonto2 )
@@ -831,8 +817,8 @@ Box( "knjn", __box_x, __box_y, .f., "Unos novih stavki" )
 
                 append blank
 
-                if _ERROR <> "1"
-                    _ERROR := "0"
+                if _error <> "1"
+                    _error := "0"
                 endif       
 
                 // stavka onda postavi ERROR
@@ -874,43 +860,41 @@ Box( "anal", __box_x, __box_y, .f., "Ispravka naloga" )
     nDug := 0
     nPot := 0
 
-    do while !eof()
+    do while !EOF()
 
         skip
-        nTR2:=RECNO()
-        skip-1
+        nTR2 := RECNO()
+        skip -1
 
         _old_dok := dbf_get_rec()
 
         Scatter()
 
-        _ERROR:=""
+        _error := ""
 
         if LEFT( _idkonto2, 3 ) == "XXX"
             // 80-ka
-            skip
-            skip
+            skip 1
+            skip 1
             nTR2 := RECNO()
             skip -1
             Scatter()
-            _ERROR:=""
+            _error := ""
             if LEFT( _idkonto2, 3 ) == "XXX"
                 exit
             endif
         endif
             
-        nRbr := RbrUNum(_Rbr)
-        IF lAsistRadi
-                    
-            // pocisti bafer
+        nRbr := RbrUNum( _rbr )
+
+        if lAsistRadi
             CLEAR TYPEAHEAD
-            // spucaj mu dovoljno entera za jednu stavku
             cSekv:=""
             for nkekk:=1 to 17
                 cSekv+=cEnter
             next
             keyboard cSekv
-        ENDIF
+        endif
 
         _dok := hb_hash()                   
         _dok["idfirma"] := _idfirma
@@ -932,12 +916,13 @@ Box( "anal", __box_x, __box_y, .f., "Ispravka naloga" )
             
         select kalk_pripr
         
-        if _ERROR<>"1"
-            _ERROR:="0"
+        if _error <> "1"
+            _error := "0"
         endif       
+
         // stavka onda postavi ERROR
-        _oldval:=_mpcsapp*_kolicina  // vrijednost prosle stavke
-        _oldvaln:=_nc*_kolicina
+        _oldval := _mpcsapp * _kolicina  // vrijednost prosle stavke
+        _oldvaln := _nc * _kolicina
 
         Gather()
        
@@ -948,54 +933,50 @@ Box( "anal", __box_x, __box_y, .f., "Ispravka naloga" )
 
         // izmjeni sve stavke dokumenta na osnovu prve stavke        
         if nRbr == 1
-
             select kalk_pripr
             _t_rec := RECNO()
-
             _new_dok := dbf_get_rec()
             izmjeni_sve_stavke_dokumenta( _old_dok, _new_dok )
-
             select kalk_pripr
             go ( _t_rec )
-
         endif
 
-        if _idvd $ "16#80" .and. !empty(_idkonto2)
+        if _idvd $ "16#80" .and. !EMPTY( _idkonto2 )
             
-            cIdkont:=_idkonto
-            cIdkont2:=_idkonto2
-            _idkonto:=cidkont2
-            _idkonto2:="XXX"
-            _kolicina:=-kolicina
+            cIdkont := _idkonto
+            cIdkont2 := _idkonto2
+            _idkonto := cIdkont2
+            _idkonto2 := "XXX"
+            _kolicina := -kolicina
                          
             // uvecaj redni broj stavke
             nRbr := RbrUNum( _rbr ) + 1
             _Rbr := RedniBroj( nRbr )
   
             Box( "", __box_x, __box_y, .f., "Protustavka" )
-                seek _idfirma+_idvd+_brdok+_rbr
-                _Tbanktr:="X"
-                do while !eof() .and. _idfirma+_idvd+_brdok+_rbr == idfirma+idvd+brdok+rbr
-                    if left(idkonto2,3)=="XXX"
+                seek _idfirma + _idvd + _brdok + _rbr
+                _tbanktr := "X"
+                do while !EOF() .and. _idfirma + _idvd + _brdok + _rbr == idfirma + idvd + brdok + rbr
+                    if LEFT( _idkonto2, 3 ) == "XXX"
                         Scatter()
-                        _TBankTr:=""
+                        _tbanktr := ""
                         exit
                     endif
                     skip
                 enddo
-                _idkonto:=cidkont2
-                _idkonto2:="XXX"
-                if _idvd=="16"
+                _idkonto := cIdkont2
+                _idkonto2 := "XXX"
+                if _idvd == "16"
                     Get1_16b()
                 else
                     Get1_80b()
                 endif
                         
-                if _TBanktr=="X"
+                if _tbanktr=="X"
                     append ncnl
                 endif
-                if _ERROR<>"1"
-                    _ERROR:="0"
+                if _error <> "1"
+                    _error := "0"
                 endif       
                 // stavka onda postavi ERROR
                 Gather()

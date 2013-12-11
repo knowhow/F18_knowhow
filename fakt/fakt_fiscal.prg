@@ -1073,31 +1073,31 @@ local _trig := 1
 local _fiscal_no := 0
 
 if storno
-    trig := 2
+    _trig := 2
 endif
 
 // brisi ulazne fajlove, ako postoje
-tring_delete_out( __dev_params, trig )
+tring_delete_out( __device_params, _trig )
 
 // ispisi racun
-tring_rn( __dev_params, items, head, storno )
+tring_rn( __device_params, items, head, storno )
 
 // procitaj gresku
-_err_level := tring_read_error( __dev_params, @_fiscal_no, trig )
+_err_level := tring_read_error( __device_params, @_fiscal_no, _trig )
 
 if _fiscal_no <= 0
     _err_level := 1
 endif
 
 // pobrisi izlazni fajl
-tring_delete_out( __dev_params, trig )
+tring_delete_out( __device_params, _trig )
 
 if _err_level <> 0
     // ostavit cu answer fajl za svaki slucaj!
     // pobrisi izlazni fajl ako je ostao !
     msgbeep("Postoji greska sa stampanjem !!!")
 else
-    tring_delete_answer( __dev_params, trig )
+    tring_delete_answer( __device_params, _trig )
     // ubaci broj fiskalnog racuna u fakturu
     set_fiscal_no_to_fakt_doks( id_firma, tip_dok, br_dok, _fiscal_no )
     msgbeep("Kreiran fiskalni racun broj: " + ALLTRIM(STR( _fiscal_no )))

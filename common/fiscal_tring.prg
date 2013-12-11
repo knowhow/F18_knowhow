@@ -252,7 +252,7 @@ xml_subnode("RacunZahtjev", .t.)
 
 close_xml()
 
-return _err
+return _err_level
 
 
 // ----------------------------------------------
@@ -469,6 +469,8 @@ local nTrigg := 10
 
 cF_out := fiscal_out_filename( dev_param["out_file"], __zahtjev_nula, _tr_init )
 
+cOper := ALLTRIM( dev_param["op_id"] )
+
 // c:\tring\xml\inicijalizacija.001
 cXML := dev_param["out_dir"] + cF_out
 
@@ -492,9 +494,6 @@ xml_subnode("Operator", .t.)
 close_xml()
 
 return
-
-
-
 
 
 // ----------------------------------------------

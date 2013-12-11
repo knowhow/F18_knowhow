@@ -1,3 +1,7 @@
+1.4.259 2013-12-11, vsasa
+ 
+  - TRING fiskalne funkcije, korekcije
+ 
 1.4.258 2013-12-06, vsasa
  
   - KALK, unos/ispravka dokumenta 80 (predisp.) bugfix

@@ -753,6 +753,8 @@ _f_name := dev_param["out_dir"] + ;
             SLASH + ;
             fiscal_out_filename( dev_param["out_file"], __zahtjev_nula, _trig )
 
+_err_data := {}
+
 Box(, 3, 60 )
 
 @ m_x + 1, m_y + 2 SAY "Uredjaj ID: " + ALLTRIM( STR( dev_param["id"] ) ) + ;

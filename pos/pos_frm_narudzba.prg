@@ -64,7 +64,7 @@ private bPrevUp
 private bPrevDn
 private GetList:={}
 
-o_edit_rn()
+o_edit_rn( .f. )
 
 select _pos
 
@@ -77,7 +77,6 @@ endif
 if ( cSto == nil )
     cSto := ""
 endif
-
 
 AADD( ImeKol, { PADR( "Artikal", 10 ), { || idroba } } )
 AADD( ImeKol, { PADC( "Naziv", 50 ), { || PADR( robanaz, 50 ) } } )
@@ -158,7 +157,6 @@ _mu_i := R_I
 if gStolovi == "D"
     _sto_br := VAL(cSto)
 endif
-
 
 do while .t.
 

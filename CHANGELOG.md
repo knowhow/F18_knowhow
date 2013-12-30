@@ -1,3 +1,7 @@
+1.4.260 2013-12-30, vsasa
+ 
+  - POS, inventura/nivelacija - korekcije na formi unosa (kontrole itd...)
+ 
 1.4.259 2013-12-11, vsasa
  
   - TRING fiskalne funkcije, korekcije

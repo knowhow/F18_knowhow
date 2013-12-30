@@ -17,7 +17,31 @@
 // otvori baze potrebne za 
 // pregled racuna
 // --------------------
-function o_pregled()
+function o_pregled( kum )
+
+if kum == NIL
+    kum := .t.
+endif
+
+if kum
+    
+    SELECT F_POS
+    if !used()
+        O_POS
+    endif
+
+    SELECT F_POS_DOKS
+    if !used()
+        O_POS_DOKS
+    endif
+
+    SELECT F_DOKSPF
+    if !used()
+        O_DOKSPF
+    endif
+
+endif
+
 
 SELECT F_ODJ
 if !used()
@@ -32,21 +56,6 @@ endif
 SELECT F_VRSTEP
 if !used()
     O_VRSTEP
-endif
-
-SELECT F_POS
-if !used()
-    O_POS
-endif
-
-SELECT F_POS_DOKS
-if !used()
-    O_POS_DOKS
-endif
-
-SELECT F_DOKSPF
-if !used()
-    O_DOKSPF
 endif
 
 SELECT F_ROBA
@@ -69,7 +78,11 @@ if !used()
     O_SIFV
 endif
 
-select pos_doks
+if kum
+    select pos_doks
+else
+    select _pos
+endif
 
 return
 
@@ -77,7 +90,7 @@ return
 // -----------------------------------------------
 // otvori tabele potrebne za unos stavki u racun
 // ------------------------------------------------
-function o_edit_rn()
+function o_edit_rn( kum )
 
 select F__POS
 if !used()
@@ -104,7 +117,7 @@ if !used()
     O_UREDJ 
 endif
 
-o_pregled()
+o_pregled( kum )
 
 return
 
@@ -206,10 +219,6 @@ return
 
  
 function o_pos_narudzba()
-
-if gPratiStanje $ "D!"
-    O_POS
-endif
 
 O_MJTRUR 
 O_UREDJ 

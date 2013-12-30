@@ -318,7 +318,7 @@ if !fSadAz
         ObjDBedit( "PripInv", MAXROWS() - 15, MAXCOLS() - 3, {|| EditInvNiv( dDatRada ) }, ;
                 "Broj dokumenta: " + ALLTRIM( cBrDok ) + " datum: " + DTOC( dDatRada ) , ;
                 "PRIPREMA " + cNazDok + "E", nil, ;
-                { "<c-N>   Dodaj stavku", "<Enter> Ispravi stavku", "<a-P>   Popisna lista", "<c-P>   Stampanje", "<c-A> cirk ispravka" }, 2, , , )
+                { "<c-N>   Dodaj stavku", "<Enter> Ispravi stavku", "<a-P>   Popisna lista", "<c-P>   Stampanje", "<c-A> cirk ispravka", "<D> ispravi datum" }, 2, , , )
 
         // 3) nakon prekida rada na inventuri (<Esc>) utvrdjuje se da li je inventura zavrsena
 
@@ -416,16 +416,15 @@ go top
 do while !EOF()
 
     if field->datum <> dDatRada
-
         _rec := dbf_get_rec()
         _rec["datum"] := dDatRada
         dbf_update_rec( _rec )
-    
     endif
-
     skip
-
 enddo
+
+select priprz
+go top
 
 MsgC()
 
@@ -440,6 +439,7 @@ function EditInvNiv( dat_inv_niv )
 local nRec := RECNO()
 local i := 0
 local lVrati := DE_CONT
+local _dat
 
 do case
 
@@ -452,6 +452,25 @@ do case
         go nRec
         
         lVrati := DE_REFRESH
+
+    case UPPER( CHR( Ch ) ) == "D"
+
+        _dat := DATE()
+
+        // zamjena vrijednosti polja datum...
+        Box(, 1, 50 )
+            @ m_x + 1, m_y + 2 SAY "Postavi datum na:" GET _dat
+            READ
+        BoxC()        
+
+        if LastKey() <> K_ESC
+            check_before_azur( _dat )   
+            TB:RefreshAll()
+            DO WHILE !TB:stable .AND. ( Ch := INKEY() ) == 0 
+                Tb:stabilize()
+            ENDDO
+            lVrati := DE_REFRESH 
+        endif
 
     case Ch == K_ALT_P
 
@@ -669,7 +688,8 @@ do while .t.
     endif
 
     @ nLX, m_y + 3 SAY "       Cijena:" GET _cijena PICT _pict ;
-         WHEN { || .t.}
+         WHEN { || .t. } ;
+         VALID { || _cijena < 999999.99 }
 
     if cIdVd == VD_NIV
 

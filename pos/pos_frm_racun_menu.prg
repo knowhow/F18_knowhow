@@ -210,7 +210,7 @@ local _uplaceno := params["uplaceno"]
 
 o_stazur()
 
-if gRadniRac=="D"
+if gRadniRac == "D"
 
     _br_dok := SPACE(6)
     set cursor on

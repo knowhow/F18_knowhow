@@ -184,7 +184,7 @@ public gSTRAD
 public gSetMPCijena := "1"
 public gIdCijena:="1"   
 public gPopust:=0
-public gPopDec:=1
+public gPopDec:=2
 public gPopZcj:="N"
 public gPopVar:="P"
 public gPopProc:="N"
@@ -423,7 +423,7 @@ grbReduk := fetch_metric("RacunRedukcijaTrake", nil, grbReduk)
 gSetMPCijena := fetch_metric("pos_set_cijena", nil, gSetMPCijena )
 gIdCijena := fetch_metric("SetCijena", nil, gIdCijena)
 gPopust := fetch_metric("Popust", nil, gPopust)
-gPopDesc := fetch_metric("PopustDecimale", nil, gPopDec)
+gPopDec := fetch_metric("PopustDecimale", nil, gPopDec)
 gPopVar := fetch_metric("PopustVarijanta", nil, gPopVar)
 gPopZCj := fetch_metric("PopustZadavanjemCijene", nil, gPopZCj)
 gPopProc := fetch_metric("PopustProcenat", nil, gPopProc)

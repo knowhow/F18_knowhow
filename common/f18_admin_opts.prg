@@ -1105,6 +1105,11 @@ return _ok
 METHOD F18AdminOpts:relogin_as( user, pwd, database )
 local _pg_server
 local _db_params := my_server_params()
+local _conn := 1
+
+if database == "postgres"
+    _conn := 0
+endif
 
 // logout
 my_server_logout()
@@ -1117,7 +1122,7 @@ if database <> NIL
 endif
 
 my_server_params( _db_params )
-my_server_login( _db_params )
+my_server_login( _db_params, _conn )
 _pg_server := pg_server()
 
 return _pg_server

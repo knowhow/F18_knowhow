@@ -871,7 +871,7 @@ _t_pwd := _my_params["password"]
 _t_database := _my_params["database"]
 
 // napravi relogin...
-_pg_srv := ::relogin_as( "admin", "boutpgmin" )
+_pg_srv := ::relogin_as( "admin", "boutpgmin", "postgres" )
 
 _qry := "SELECT datname FROM pg_database " 
 
@@ -913,7 +913,7 @@ do while !_dbs:EOF()
     _params["db_comment"] := ""
 
     // napravi relogin...
-    _pg_srv := ::relogin_as( "admin", "boutpgmin" )
+    _pg_srv := ::relogin_as( "admin", "boutpgmin", "postgres" )
 
     // otvori bazu...
     if ! ::create_new_db( _params, _pg_srv )

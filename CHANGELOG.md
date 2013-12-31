@@ -2,6 +2,7 @@
 
  - rnal, parametri zaokruženja naloga [#29852](http://redmine.bring.out.ba/issues/29852)
  - fakt, kod ispravke prve stavke izmjeni i fakt atribute
+ - pos, formiranje dokumenta početnog stanja [#29899](http://redmine.bring.out.ba/issues/29899)
  
 1.4.49 2012-12-28, vsasa
 

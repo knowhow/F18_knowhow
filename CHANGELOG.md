@@ -1,3 +1,7 @@
+1.4.261 2013-12-31, vsasa
+ 
+  - KALK, bugfix kod automatskog prenosa TOPS->KALK
+ 
 1.4.260 2013-12-30, vsasa
  
   - POS, inventura/nivelacija - korekcije na formi unosa (kontrole itd...)

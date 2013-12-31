@@ -200,7 +200,9 @@ local _mag_konto
 private gIdPos
 
 // parametri prenosa...
-_get_prenos_params( @_params )
+if !_get_prenos_params( @_params )
+    return 
+endif
 
 _datum_od := _params["datum_od"]
 _datum_do := _params["datum_do"]

@@ -52,7 +52,7 @@ local _izbor := 1
 
 AADD( _opc, "1. prenos podataka pos->kalk                        ")
 AADD( _opcexe, {|| kalk_preuzmi_tops_dokumente() } )
-AADD( _opc, "1. prenos podataka pos->kalk (razduzi automatski)")
+AADD( _opc, "2. prenos podataka pos->kalk (razduzi automatski)")
 AADD( _opcexe, {|| kalk_preuzmi_tops_dokumente_auto() } )
 AADD( _opc, "3. pos->kalk 96 po normativima za period ")
 AADD( _opcexe, {|| tops_nor_96() } )

@@ -439,7 +439,7 @@ for _i := 1 to LEN( items )
 	_tmp += _razmak1 + 'VAT="' + _art_tarifa + '"'
 	_tmp += _razmak1 + 'MES="' + _art_jmj + '"'
 	_tmp += _razmak1 + 'DEP="' + _dep + '"'
-	_tmp += _razmak1 + 'DSC="' + ALLTRIM( to_xml_encoding( _art_naz ) ) + '"'
+	_tmp += _razmak1 + 'DSC="' + to_xml_encoding( _art_naz ) + '"'
 	_tmp += _razmak1 + 'PRC="' + ALLTRIM( STR( _art_cijena , 12, 2)) + '"'
 	_tmp += _razmak1 + 'LGR="' + ALLTRIM( STR( _lager, 12, 2)) + '"'
 	

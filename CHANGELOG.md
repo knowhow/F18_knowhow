@@ -1,3 +1,7 @@
+1.4.51 2012-12-31, vsasa
+
+ - fakt, početno stanje [#29908](http://redmine.bring.out.ba/issues/29908)
+ 
 1.4.50 2012-12-31, vsasa
 
  - rnal, parametri zaokruženja naloga [#29852](http://redmine.bring.out.ba/issues/29852)

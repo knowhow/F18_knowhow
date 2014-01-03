@@ -1065,6 +1065,16 @@ if cSt_fisc == nil
     cSt_fisc := SPACE(10)
 endif
 
+select ( F_POS )
+if !USED()
+    O_POS
+endif
+
+select ( F_POS_DOKS )
+if !USED()
+    O_POS_DOKS
+endif
+
 Box(, 4, 55 )
     
     @ m_x + 1, m_y + 2 SAY "Racun je danasnji ?" GET _danasnji VALID _danasnji $ "DN" PICT "@!"
@@ -1109,6 +1119,13 @@ select ( nTArea )
 // filuj stavke storno racuna
 __fill_storno( dSt_date, cSt_rn, cSt_fisc )
 
+select ( F_POS )
+use
+select ( F_POS_DOKS )
+use
+
+select ( nTArea )
+
 if lSilent == .f.
 
     // ovo refreshira pripremu
@@ -1132,6 +1149,10 @@ local _t_area := SELECT()
 local _t_roba, _rec
 
 // napuni pripremu sa stavkama racuna za storno
+select ( F_POS )
+if !USED()
+    O_POS
+endif
 select pos
 seek gIdPos + "42" + DTOS( rn_datum ) + storno_rn
 
@@ -1171,6 +1192,9 @@ do while !EOF() .and. field->idpos == gIdPos ;
     skip
 
 enddo
+
+select pos
+use
 
 select ( _t_area )
 

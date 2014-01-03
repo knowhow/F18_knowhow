@@ -2,6 +2,7 @@
  
   - KALK, bugfix kod automatskog prenosa TOPS->KALK
   - F18, otvaranje nove baze, reset RNAL brojača
+  - POS, storniranje računa, otvaranje tabela POS, POS_DOKS
  
 1.4.260 2013-12-30, vsasa
  

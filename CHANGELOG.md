@@ -1,6 +1,7 @@
 1.4.261 2013-12-31, vsasa
  
   - KALK, bugfix kod automatskog prenosa TOPS->KALK
+  - F18, otvaranje nove baze, reset RNAL brojača
  
 1.4.260 2013-12-30, vsasa
  

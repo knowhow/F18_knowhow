@@ -1,3 +1,7 @@
+1.4.262 2014-01-13, vsasa
+ 
+  - KALK, početno stanje magacina - bugfix 
+ 
 1.4.261 2013-12-31, vsasa
  
   - KALK, bugfix kod automatskog prenosa TOPS->KALK

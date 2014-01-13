@@ -132,6 +132,7 @@ local _tar_filter := SPACE(300)
 local _part_filter := SPACE(300)
 local _dok_filter := SPACE(300)
 local _curr_user := my_user()
+local _set_roba := "N"
 
 // pocetno stanje parametar
 if ps == NIL
@@ -192,6 +193,10 @@ Box( "# LAGER LISTA PRODAVNICE" + if( ps, " / POCETNO STANJE", "" ), 15, MAXCOLS
     ++ _x
 	@ m_x + _x, m_y + 2 SAY "Prikaz robe tipa T/U (D/N)" GET _roba_tip_tu VALID _roba_tip_tu $ "DN" PICT "@!"
  
+    if ps
+        @ m_x + _x, col() + 1 SAY "MPC uzmi iz sifrarnika (D/N) ?" GET _set_roba VALID _set_roba $ "DN" PICT "@!"
+    endif
+
     read
 
 BoxC()
@@ -220,6 +225,7 @@ params["filter_dok"] := _dok_filter
 params["filter_roba"] := _art_filter
 params["filter_partner"] := _part_filter
 params["filter_tarifa"] := _tar_filter
+params["set_mpc"] := ( _set_roba == "D" )
 
 return _ret
 
@@ -358,11 +364,16 @@ do while !data:EOF()
 
     _rec["kolicina"] := ( _ulaz - _izlaz )
     _rec["nc"] := ( _nvu - _nvi ) / ( _ulaz - _izlaz )
-    _rec["mpcsapp"] := ROUND( ( _mpvu - _mpvi ) / ( _ulaz - _izlaz ), 2 )
 	_rec["fcj"] := _rec["nc"]
 	_rec["vpc"] := _rec["nc"]
 	_rec["error"] := "0"
-    
+    _rec["mpcsapp"] := ROUND( ( _mpvu - _mpvi ) / ( _ulaz - _izlaz ), 2 )
+   
+    if params["set_mpc"]
+        // ako je setovanje cijene iz sifrarnika
+        _rec["mpcsapp"] := UzmiMpcSif()
+    endif
+ 
     if _rec["mpcsapp"] <> 0
         _rec["mpc"] := MpcBezPor( _rec["mpcsapp"], aPorezi, NIL, _rec["nc"] ) 
         _rec["marza2"] := _rec["mpc"] - _rec["nc"]

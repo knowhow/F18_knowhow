@@ -30,24 +30,25 @@ local _len_naz := 25
 cVarijanta := "1"
 cKolicina := "N"
 
-// kreiraj tabelu rLabele
-CreTblRLabele()
-
 if GetVars( @cVarijanta, @cKolicina, @_tkm_no, @_len_naz ) == 0 
 	close all
 	return
 endif
 
+// kreiraj tabelu rLabele
+CreTblRLabele()
+
 if cVarijanta == "2"
     _template := "rlab2.odt"
 endif
 
-// izvrsi funkciju koja filuje tabelu rLabele 
-// podacima a vraca varijantu ( 1-5 )
-if ( gModul == "KALK" )
-	KaFillRLabele( cKolicina )
-else
-	FaFillRLabele()
+KaFillRLabele( cKolicina )
+
+select rlabele
+if RECCOUNT() == 0
+    MsgBeep( "Nisam generisao nista !!!! greska..." )
+    close all
+    return 
 endif
 
 // generisi xml fajl sa podacima labele
@@ -59,11 +60,6 @@ if f18_odt_generate( _template, _xml_file )
 	// printaj odt
     f18_odt_print()
 endif
-
-
-//if ( cVarijanta > "0" .and. cVarijanta < "3" )
-//	PrintRLabele( cVarijanta )
-//endif
 
 return
 
@@ -152,18 +148,16 @@ local _dbf
 local _cdx
 
 SELECT ( F_RLABELE )
+if USED()
+    USE
+endif
 
 _tbl := "rlabele"
 _dbf := my_home() + _tbl + ".dbf"
 _cdx := my_home() + _tbl + ".cdx"
 
-if ( FILE( _dbf ) .and. FERASE( _dbf ) == -1 )
-    MsgBeep( "Ne mogu izbrisati " + _dbf + " !" )
-endif
-
-if ( FILE( _cdx ) .and. FERASE( _cdx ) == -1 )
-	MsgBeep( "Ne mogu izbrisati " + _cdx + " !")
-endif
+FERASE( _dbf )
+FERASE( _cdx )
 
 aDBf := {}
 AADD(aDBf,{ 'idRoba'		, 'C', 10, 0 })
@@ -188,11 +182,14 @@ AADD(aDBf,{ 'porez2'		, 'N',  8, 2 })
 AADD(aDBf,{ 'porez3'		, 'N',  8, 2 })
 
 DbCreate( _dbf, aDbf )
+
+select ( F_RLABELE )
 my_use_temp( "RLABELE", ALLTRIM( _dbf ), .f., .t. )
+
 index on ("idroba") tag "1" 
 set order to tag "1"
 
-return nil
+return NIL
 
 
 
@@ -207,10 +204,11 @@ local cDok
 local nBr_labela := 0
 local _predisp := .f.
 
-O_KALK_PRIPR
 O_ROBA
+O_KALK_PRIPR
 
 select kalk_pripr
+set order to tag "1"
 go top
 
 if mp_predispozicija( field->idfirma, field->idvd, field->brdok )
@@ -222,12 +220,8 @@ go top
 
 cDok := ( field->idFirma + field->idVd + field->brDok )
 
-do while ( !eof() .and. cDok == ( field->idFirma + field->idVd + ;
+do while ( !EOF() .and. cDok == ( field->idFirma + field->idVd + ;
 	field->brDok ) )
-
-    // ako je rijec o predispozicijama onda generisi za onaj
-    // konto kojem ide roba
-    // a to je konto kojem je idkonto2 = "XXX"
 
     if _predisp 
 	    if field->idkonto2 <> "XXX"
@@ -250,7 +244,7 @@ do while ( !eof() .and. cDok == ( field->idFirma + field->idVd + ;
 	seek kalk_pripr->idRoba
 	
 	// pregledaj postoji li vec u rlabele.dbf !
-	select rLabele
+	select rlabele
 	seek kalk_pripr->idroba
 	
 	if ( cKolicina == "D" .or. ( cKolicina == "N" .and. !FOUND() ) )
@@ -288,6 +282,7 @@ do while ( !eof() .and. cDok == ( field->idFirma + field->idVd + ;
 	
 	select kalk_pripr
 	skip 1
+
 enddo
 
 return nil

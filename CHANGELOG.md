@@ -1,3 +1,7 @@
+1.4.263 2014-01-15, vsasa
+ 
+  - KALK, generisanje labela - korekcije
+ 
 1.4.262 2014-01-13, vsasa
  
   - KALK, početno stanje magacina - bugfix 

@@ -107,21 +107,7 @@ if !EMPTY( _filt_jmj )
     if !EMPTY( _filter )
         _filter += " .AND. "
     endif
-    _filter += Parsiraj( _filt_jmj, "jmj" )
-endif
-
-if !EMPTY( _filt_k1 )
-    if !EMPTY( _filter )
-        _filter += " .AND. "
-    endif
-    _filter += Parsiraj( _filt_jmj, "k1" )
-endif
-
-if !EMPTY( _filt_dob )
-    if !EMPTY( _filter )
-        _filter += " .AND. "
-    endif
-    _filter += Parsiraj( _filt_dob, "idpartner" )
+    _filter += Parsiraj( UPPER( _filt_jmj ) , "UPPER(jmj)" )
 endif
 
 if !EMPTY( _filt_k1 )
@@ -129,6 +115,13 @@ if !EMPTY( _filt_k1 )
         _filter += " .AND. "
     endif
     _filter += Parsiraj( _filt_k1, "k1" )
+endif
+
+if !EMPTY( _filt_dob )
+    if !EMPTY( _filter )
+        _filter += " .AND. "
+    endif
+    _filter += Parsiraj( _filt_dob, "idpartner" )
 endif
 
 if !EMPTY( _filter )
@@ -150,6 +143,7 @@ xml_node( "kid", to_xml_encoding( _idrj ) )
 xml_node( "knaz", "" )
 xml_node( "pid", "" )
 xml_node( "pnaz", "" )
+xml_node( "modul", "OS" )
 
 do while !EOF()
 

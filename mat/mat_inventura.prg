@@ -932,6 +932,7 @@ DO WHILE !EOF() .AND. _id_firma == field->idfirma .and. _konto == field->idkonto
    
     IF A == 0
 
+        xml_node( "modul", "MAT" )
         xml_node( "datum", DTOC( _datum ) )
 
         select partn

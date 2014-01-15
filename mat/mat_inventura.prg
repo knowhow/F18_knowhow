@@ -887,6 +887,7 @@ local _konto
 local _datum
 local _partner
 local _filter := ""
+local _my_xml := my_home() + "data.xml"
 
 O_KONTO
 O_PARTN
@@ -901,11 +902,9 @@ _datum := _vars["datum"]
 _id_firma := LEFT( _vars["id_firma"], 2 )
 _partner := _vars["partner"]
 
-I:=0
-K:=0
-C:=0
-
-m:="---- ---------- ----------------------------------- --- ------------ ---------"
+I := 0
+K := 0
+C := 0
 
 O_MAT_SUBAN
 O_SIFV
@@ -921,51 +920,59 @@ go top
 SEEK _id_firma + _konto
 NFOUND CRET
 
-START PRINT CRET
-?
-P_COND
+A := 0
+B := 0
 
-A:=0
-B:=0
+open_xml( _my_xml )
+xml_head()
 
-DO WHILE !eof() .AND. _id_firma == IdFirma .and. _konto == IdKonto
+xml_subnode( "inv", .f. )
+
+DO WHILE !EOF() .AND. _id_firma == field->idfirma .and. _konto == field->idkonto
    
     IF A == 0
-        ?
-        @ A, 0 SAY "MAT.P: POPISNA LISTA ZA INVENTARISANJE NA DAN:"
-        @ A, pcol() + 1 SAY _datum
-        @ ++A,0 SAY "FIRMA:"; @ A,pcol()+1 SAY _id_firma
-        
-        SELECT PARTN
-        HSEEK _id_firma
-      
-        @ A,pcol()+2 SAY naz
-        @ A,pcol()+2 SAY naz2
 
-        @ ++A,0 SAY "KONTO:"
-        @ A,pcol()+1 SAY _konto
+        xml_node( "datum", DTOC( _datum ) )
 
-        SELECT KONTO
-        HSEEK _konto
+        select partn
+        hseek _id_firma
 
-        @ A,pcol()+2 SAY naz
+        xml_node( "fid", to_xml_encoding( gFirma ) )
+        xml_node( "fnaz", to_xml_encoding( gNFirma ) )
 
-        if !EMPTY( _partner )        
-            SELECT PARTN
-            HSEEK _partner
-            @ ++A, 0 SAY "PARTNER:"
-            @ A, pcol() + 1 SAY _partner + "-" + PADR( ALLTRIM( partn->naz ), 40 )
+        if !EMPTY( _konto )
+ 
+            select konto
+            hseek _konto
+
+            xml_node( "kid", to_xml_encoding( _konto ) )
+            xml_node( "knaz", to_xml_encoding( ALLTRIM( field->naz ) ) )
+
+        else
+
+            xml_node( "kid", "" )
+            xml_node( "knaz", "" )
+
         endif
-   
-        @ ++A,0 SAY m
-        @ ++A,0 SAY "*R. *  SIFRA   *          NAZIV ARTIKLA            *J. *   CIJENA   *KOLICINA*"
-        @ ++A,0 SAY "*BR.* ARTIKLA  *                                   *MJ.*            *        *"
-        @ ++A,0 SAY m
-    ENDIF
+ 
+        if !EMPTY( _partner )        
 
-    IF A > 62
-        EJECTA0
-    ENDIF
+            select partn
+            hseek _partner
+
+            xml_node( "pid", to_xml_encoding( _partner ) )
+            xml_node( "pnaz", to_xml_encoding( ALLTRIM( field->naz ) ) )
+
+        else
+
+            xml_node( "pid", "" )
+            xml_node( "pnaz", "" )
+
+        endif
+ 
+    endif
+
+    ++ A
 
     SELECT mat_suban
     cIdRoba := IdRoba
@@ -978,12 +985,15 @@ DO WHILE !eof() .AND. _id_firma == IdFirma .and. _konto == IdKonto
     nIznos := nIznos2 := nStanje := nCijena := 0
 
     DO WHILE !eof() .AND. _id_firma == field->IdFirma .and. _konto == field->IdKonto .and. cIdRoba == field->IdRoba
+
         // saberi za jednu robu
+
         IF field->U_I="1"
             nStanje += field->kolicina
         ELSE
             nStanje -= field->Kolicina
         ENDIF
+
         IF D_P="1"
             nIznos+=field->Iznos
             nIznos2+=field->Iznos2
@@ -991,49 +1001,51 @@ DO WHILE !eof() .AND. _id_firma == IdFirma .and. _konto == IdKonto
             nIznos-=field->Iznos
             nIznos2-=field->Iznos2
         ENDIF
+
         SKIP
+
     ENDDO
 
     IF round(nStanje,4)<>0 .or. round(nIznos,4)<>0  
+
         // uzimaj samo one koji su na stanju  <> 0
         SELECT ROBA
         HSEEK cIdRoba
-        @ ++A,0 SAY ++B PICTURE '9999'
-        @ A,5 SAY Id
-        @ A,16 SAY naz PICTURE replicate ("X",35)
-        @ A,52 SAY jmj
+
         IF round(nStanje,4) <> 0
-            nCijena:=nIznos/nStanje
+            nCijena := nIznos/nStanje
         ELSE
-            nCijena:=0
+            nCijena := 0
         ENDIF    
-        @ A,57 SAY nCijena PICTURE PicDEM
-        @ A,70 SAY "________"
+ 
+        xml_subnode( "items", .f. )
+        
+        xml_node( "rbr", ALLTRIM(STR( ++B ) ) )
+        xml_node( "rid", to_xml_encoding( field->id ) )
+        xml_node( "naz", to_xml_encoding( field->naz ) )
+        xml_node( "jmj", to_xml_encoding( field->jmj ) )
+        xml_node( "cijena", STR( nCijena, 12, 3 )  )
+        xml_node( "stanje", STR( nStanje, 12, 3 )  )
+
+        xml_subnode( "items", .t. )
 
         SELECT mat_suban
+
     ENDIF
+
 ENDDO
 
-IF A > 56
-    EJECTA0
-ENDIF
-
-@ ++A,0 say m
-A+=3
-@ A,10 SAY "ODGOVORNO LICE:"
-@ A,50 SAY "CLANOVI KOMISIJE:"
-A+=2
-@ A,5 SAY "_________________________"
-@ A,45 SAY "1.________________________"
-A+=2
-@ A,45 SAY "2.________________________"
-A+=2
-@ A,45 SAY "3.________________________"
-
-EJECTNA0
-END PRINT
+xml_subnode( "inv", .t. )
+close_xml()
 
 close all
+
+if B > 0
+    if f18_odt_generate( "mat_invent.odt", _my_xml )
+        f18_odt_print()
+    endif
+endif
+
 return
 
 

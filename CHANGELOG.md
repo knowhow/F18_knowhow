@@ -1,6 +1,7 @@
 1.4.263 2014-01-15, vsasa
  
   - KALK, generisanje labela - korekcije
+  - MAT, popisna lista inventure ODT
  
 1.4.262 2014-01-13, vsasa
  

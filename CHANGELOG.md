@@ -1,3 +1,7 @@
+1.4.264 2014-01-15, vsasa
+ 
+  - LD, git export - bugfix 
+ 
 1.4.263 2014-01-15, vsasa
  
   - KALK, generisanje labela - korekcije

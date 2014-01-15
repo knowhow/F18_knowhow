@@ -1,3 +1,7 @@
+1.4.265 2014-01-15, vsasa
+ 
+  - F18 atributi dokumenta, korekcije
+ 
 1.4.264 2014-01-15, vsasa
  
   - LD, git export - bugfix 

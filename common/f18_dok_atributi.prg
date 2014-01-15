@@ -440,7 +440,12 @@ _idfirma := ::dok_hash["idfirma"]
 _idtipdok := ::dok_hash["idtipdok"]
 _brdok := ::dok_hash["brdok"]
 _rbr := ::dok_hash["rbr"]
-_atribut := ::dok_hash["atribut"]
+
+if hb_hhaskey( ::dok_hash, "atribut" )
+    _atribut := ::dok_hash["atribut"]
+else
+    _atribut := NIL
+endif
 
 if _rbr == NIL
     _rbr := ""

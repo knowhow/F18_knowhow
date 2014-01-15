@@ -1,3 +1,7 @@
+1.5.30 2014-01-15, vsasa
+
+   - LD, generisanje gip obrasca - korekcije
+
 1.5.29 2013-11-13, vsasa
 
    - FAKT, unos dokumenta, nakon zadnjeg merge-a sa mastera uletila loša varijabla

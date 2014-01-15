@@ -672,22 +672,11 @@ _partn_clan := ALLTRIM( IzSifK( "PARTN" , "PDVO", _partn_id, .f. ) )
 
 // u ovoj varijanti nam partner ne treba !
 // dokument 10, vrsta placanja "G " i nema ID broja ili je INO
-if tip_dok == "10" .and. _vrsta_p == "G " .and. ( EMPTY( _partn_jib ) .or. LEN( ALLTRIM( _partn_jib ) ) < 12 )
+if ( ( tip_dok == "10" .and. _vrsta_p == "G " ) .or. ;
+        ( tip_dok == "11" .and. _vrsta_p == "VR" ) ) ;
+    .and. ( EMPTY( _partn_jib ) .or. LEN( ALLTRIM( _partn_jib ) ) < 12 )
     return NIL
 endif
-
-//if tip_dok == "11"
- 
-  //  _partn_ino := .f.
-  //  _partn_pdv := .t.
-
-  //  if _v_plac == "3" 
-  //      _prikazi_partnera := .t.
-  //  else 
-  //      _prikazi_partnera := .f.
-  //  endif
-
-//endif
 
 if !EMPTY( _partn_jib ) .and. ( LEN( _partn_jib ) < 12 .or. !EMPTY( _partn_clan ) )
 

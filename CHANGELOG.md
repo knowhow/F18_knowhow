@@ -1,3 +1,8 @@
+1.4.266 2014-01-15, vsasa
+ 
+  - FAKT, štampa fiskalnih računa 11 i tip placanja VR i INO partner - korekcija
+  - OS, popisna lista
+ 
 1.4.265 2014-01-15, vsasa
  
   - F18 atributi dokumenta, korekcije

@@ -35,6 +35,7 @@ local cMinK := "N"
 local _is_rok := .f.
 local _istek_roka := CTOD("")
 local _item_istek_roka, _dok_hash, _sh_item_istek_roka
+local _print := "1"
 
 _is_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
 
@@ -91,12 +92,12 @@ cGrupacija:=space(4)
 cPredhStanje:="N"
 
 if !lPocStanje
-
- cIdKonto := fetch_metric("kalk_lager_lista_prod_id_konto", _curr_user, cIdKonto )
- cPNab := fetch_metric("kalk_lager_lista_prod_po_nabavnoj", _curr_user, cPNab )
- cNula := fetch_metric("kalk_lager_lista_prod_prikaz_nula", _curr_user, cNula )
- dDatOd := fetch_metric("kalk_lager_lista_prod_datum_od", _curr_user, dDatOd )
- dDatDo := fetch_metric("kalk_lager_lista_prod_datum_do", _curr_user, dDatDo )
+    cIdKonto := fetch_metric("kalk_lager_lista_prod_id_konto", _curr_user, cIdKonto )
+    cPNab := fetch_metric("kalk_lager_lista_prod_po_nabavnoj", _curr_user, cPNab )
+    cNula := fetch_metric("kalk_lager_lista_prod_prikaz_nula", _curr_user, cNula )
+    dDatOd := fetch_metric("kalk_lager_lista_prod_datum_od", _curr_user, dDatOd )
+    dDatDo := fetch_metric("kalk_lager_lista_prod_datum_do", _curr_user, dDatDo )
+    _print := fetch_metric( "kalk_lager_lista_prod_print", _curr_user, _print )
 endif
 
 do while .t.
@@ -121,6 +122,8 @@ do while .t.
         @ m_x + 9, col() + 1 SAY "Datum isteka roka:" GET _istek_roka
     endif
 	
+    @ m_x + 10, m_y + 2 SAY "Varijanta stampe TXT/ODT (1/2)" GET _print VALID _print $ "12" PICT "@!"
+
 	if lPocStanje
 		@ m_x+11,m_y+2 SAY "sredi kol=0, nv<>0 (0/1/2)" GET cSrKolNula ;
 			VALID cSrKolNula $ "012" PICT "@!"
@@ -162,13 +165,12 @@ enddo
 BoxC()
 
 if !lPocStanje
- 
- set_metric("kalk_lager_lista_prod_id_konto", _curr_user, cIdKonto )
- set_metric("kalk_lager_lista_prod_po_nabavnoj", _curr_user, cPNab )
- set_metric("kalk_lager_lista_prod_prikaz_nula", _curr_user, cNula )
- set_metric("kalk_lager_lista_prod_datum_od", _curr_user, dDatOd )
- set_metric("kalk_lager_lista_prod_datum_do", _curr_user, dDatDo )
-
+    set_metric("kalk_lager_lista_prod_id_konto", _curr_user, cIdKonto )
+    set_metric("kalk_lager_lista_prod_po_nabavnoj", _curr_user, cPNab )
+    set_metric("kalk_lager_lista_prod_prikaz_nula", _curr_user, cNula )
+    set_metric("kalk_lager_lista_prod_datum_od", _curr_user, dDatOd )
+    set_metric("kalk_lager_lista_prod_datum_do", _curr_user, dDatDo )
+    set_metric( "kalk_lager_lista_prod_print", _curr_user, _print )
 endif
 
 CLOSE ALL
@@ -227,6 +229,19 @@ set filter to &cFilter
 
 hseek cIdfirma+cIdkonto
 EOF CRET
+
+if _print == "2"
+    // odt stampa 
+    _params := hb_hash()
+    _params["idfirma"] := gFirma 
+    _params["idkonto"] := cIdKonto
+    _params["nule"] := cNula == "D"
+    _params["datum_od"] := dDatOd
+    _params["datum_do"] := dDatDo
+    kalk_prodavnica_llp_odt( _params )
+    return
+endif
+
 
 nLen:=1
 
@@ -1003,5 +1018,219 @@ REPLACE Mpv WITH nMpv
 
 SELECT(nArea)
 return
+
+
+
+// -----------------------------------------------------
+// stampa dokumenta u odt formatu
+// -----------------------------------------------------
+static function kalk_prodavnica_llp_odt( params )
+
+if !_gen_xml( params )
+    MsgBeep("Problem sa generisanjem podataka ili nema podataka !")
+    return
+endif
+
+if f18_odt_generate( "kalk_llp.odt", my_home() + "data.xml" )
+    f18_odt_print()
+endif
+
+return 
+
+
+
+// -----------------------------------------------------
+// generisanje xml fajla
+// -----------------------------------------------------
+static function _gen_xml( params )
+local _idfirma := params["idfirma"]
+local _idkonto := params["idkonto"]
+local _idroba, _mpc, _mpcs
+local _ulaz, _izlaz, _nv_u, _nv_i, _mpv_u, _mpv_i, _rabat
+local _t_ulaz, _t_izlaz, _t_nv_u, _t_nv_i, _t_mpv_u, _t_mpv_i, _t_rabat
+local _rbr := 0
+
+private aPorezi
+
+select konto
+hseek params["idkonto"]
+
+_t_ulaz := _t_izlaz := _t_nv_u := _t_nv_i := 0
+_t_mpv_u := _t_mpv_i := _t_rabat := 0
+
+open_xml( my_home() + "data.xml" )
+xml_head()
+
+xml_subnode( "ll", .f. )
+
+xml_node( "dat_od", DTOC( params["datum_od"] ) )
+xml_node( "dat_do", DTOC( params["datum_do"] ) )
+xml_node( "dat", DTOC( DATE() ) )
+xml_node( "tip", "PRODAVNICA" )
+xml_node( "fid", to_xml_encoding( gFirma ) )
+xml_node( "fnaz", to_xml_encoding( gNFirma ) )
+xml_node( "kid", to_xml_encoding( params["idkonto"] ) )
+xml_node( "knaz", to_xml_encoding( ALLTRIM( konto->naz ) ) )
+
+select kalk
+
+do while !EOF() .and. _idfirma + _idkonto == field->idfirma + field->pkonto .and. IspitajPrekid()
+	
+    _idroba := field->Idroba
+	
+	select roba
+	hseek _idroba
+
+	select kalk
+
+	_ulaz := 0
+	_izlaz := 0
+    _nv_u := 0
+    _nv_i := 0
+    _mpv_u := 0
+    _mpv_i := 0
+    _rabat := 0
+
+	do while !EOF() .and. _idfirma + _idkonto + _idroba == field->idfirma + field->pkonto + field->idroba .and. IspitajPrekid()
+	    
+        if field->datdok < params["datum_od"] .or. field->datdok > params["datum_do"]
+      		skip
+      		loop
+  		endif 
+
+  		if field->datdok >= params["datum_od"]  
+            // nisu predhodni podaci
+  			if field->pu_i == "1"
+    			SumirajKolicinu( field->kolicina, 0, @_ulaz, 0, .f., .f. )
+    			_mpv_u += field->mpcsapp * field->kolicina
+    			_nv_u += field->nc * ( field->kolicina )
+  			elseif field->pu_i == "5"
+                aPorezi := {}        
+                Tarifa( field->pkonto, field->idroba, @aPorezi, field->idtarifa )
+                aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
+                nPor1 := aIPor[1]
+                VtPorezi()
+    			if field->idvd $ "12#13"
+     				SumirajKolicinu( -(field->kolicina), 0, @_ulaz, 0, .f., .f.)
+     				_mpv_u -= field->mpcsapp * field->kolicina
+     				_nv_u -= field->nc * field->kolicina
+    			else
+     				SumirajKolicinu( 0, field->kolicina, 0, @_izlaz, .f., .f.)
+     				_mpv_i += field->mpcsapp * field->kolicina
+     				_nv_i += field->nc * field->kolicina
+    			endif
+
+  			elseif field->pu_i=="3"    
+			    // nivelacija
+    			_mpv_u += field->mpcsapp * field->kolicina
+  			elseif field->pu_i=="I"
+    	        SumirajKolicinu(0, field->gkolicin2, 0, @_izlaz, .f., .f. )
+    			_mpv_i += field->mpcsapp * field->gkolicin2
+    			_nv_i += field->nc * field->gkolicin2
+			endif
+
+  		endif
+
+		skip
+
+	enddo
+	
+	// ne prikazuj stavke 0
+	if params["nule"] .or. ROUND( _mpv_u - _mpv_i, 2 ) <> 0 
+			
+        select koncij
+		seek _idkonto
+
+		select roba
+		hseek _idroba
+
+		_mpcs := UzmiMPCSif()
+
+        select kalk
+
+        xml_subnode( "items", .f. )
+
+        xml_node( "rbr", ALLTRIM( STR( ++_rbr ) ) )
+        xml_node( "id", to_xml_encoding( _idroba ) )
+        xml_node( "naz", to_xml_encoding( ALLTRIM( roba->naz ) ) )
+        xml_node( "barkod", to_xml_encoding( ALLTRIM( roba->barkod ) ) )
+        xml_node( "tar", to_xml_encoding( ALLTRIM( roba->idtarifa ) ) )
+        xml_node( "jmj", to_xml_encoding( ALLTRIM( roba->jmj ) ) )
+
+        xml_node( "ulaz", STR( _ulaz, 12, 3 ) )
+        xml_node( "izlaz", STR( _izlaz, 12, 3 ) )
+        xml_node( "stanje", STR( _ulaz - _izlaz, 12, 3 ) )
+
+        xml_node( "nvu", STR( _nv_u, 12, 3 ) )
+        xml_node( "nvi", STR( _nv_i, 12, 3 ) )
+        xml_node( "nv", STR( _nv_u - _nv_i, 12, 3 ) )
+
+        xml_node( "mpvu", STR( _mpv_u, 12, 3 ) )
+        xml_node( "mpvi", STR( _mpv_i, 12, 3 ) )
+        xml_node( "mpv", STR( _mpv_u - _mpv_i, 12, 3 ) )
+  
+        xml_node( "rabat", STR( _rabat, 12, 3 ) )
+        
+        xml_node( "mpcs", STR( _mpcs, 12, 3 ) )
+        
+        if ROUND( _ulaz - _izlaz, 3 ) <> 0
+            _mpc := ROUND( ( _mpv_u - _mpv_i ) / ( _ulaz - _izlaz ), 3 )
+            _nc := ROUND( ( _nv_u - _nv_i ) / ( _ulaz - _izlaz ), 3 )
+        else
+            _mpc := 0
+            _nc := 0
+        endif
+
+        xml_node( "mpc", STR( ROUND( _mpc, 3 ), 12, 3 ) )
+        xml_node( "nc", STR( ROUND( _nc, 3 ), 12, 3 ) )
+
+        if ( _mpcs <> _mpc )
+            xml_node( "err", "ERR" ) 
+        else
+            xml_node( "err", "" )
+        endif
+
+		_t_ulaz += _ulaz 
+		_t_izlaz += _izlaz
+    
+        _t_mpv_u += _mpv_u
+        _t_mpv_i += _mpv_i
+
+        _t_nv_u += _nv_u
+        _t_nv_i += _nv_i
+        
+        _t_rabat += _rabat
+
+        xml_subnode( "items", .t. ) 
+
+    endif 
+
+enddo
+
+xml_node( "ulaz", STR( _t_ulaz, 12, 3 ) )
+xml_node( "izlaz", STR( _t_izlaz, 12, 3 ) )
+xml_node( "stanje", STR( _t_ulaz - _t_izlaz, 12, 3 ) )
+
+xml_node( "nvu", STR( _t_nv_u, 12, 3 ) )
+xml_node( "nvi", STR( _t_nv_i, 12, 3 ) )
+xml_node( "nv", STR( _t_nv_u - _t_nv_i, 12, 3 ) )
+
+xml_node( "mpvu", STR( _t_mpv_u, 12, 3 ) )
+xml_node( "mpvi", STR( _t_mpv_i, 12, 3 ) )
+xml_node( "mpv", STR( _t_mpv_u - _t_mpv_i, 12, 3 ) )
+xml_node( "rabat", STR( _t_rabat, 12, 3 ) )
+ 
+xml_subnode( "ll", .t. )
+
+close_xml()
+close all
+
+if _rbr > 0
+    _ok := .t.
+endif
+
+return _ok
+
+
 
 

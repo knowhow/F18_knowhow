@@ -1,3 +1,8 @@
+1.4.267 2014-01-16, vsasa
+ 
+  - FAKT, fiskalne opcije - korekcija 
+  - KALK, LLM/LLP ODT varijanta izvještaja
+ 
 1.4.266 2014-01-15, vsasa
  
   - FAKT, štampa fiskalnih računa 11 i tip placanja VR i INO partner - korekcija

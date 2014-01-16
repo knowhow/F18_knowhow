@@ -483,7 +483,7 @@ do while !EOF() .and. field->idfirma == id_firma ;
 
     // generisi automatski plu ako treba
     if __device_params["plu_type"] == "D" .and. ;
-        ( __device_params["vp_sum"] <> 1 .or. tip_dok $ "11" )
+        ( __device_params["vp_sum"] <> 1 .or. tip_dok $ "11" .or. LEN( _a_iznosi ) > 1 )
 
         _art_plu := auto_plu( nil, nil,  __device_params )
         

@@ -13,9 +13,9 @@
 #include "mat.ch"
 
 
-static PicDEM := "99999999.99"
+static PicDEM := "9999999999.99"
 static PicBHD := "9999999999.99"
-static PicKol := "999999.999"
+static PicKol := "9999999999.999"
 
 
 // --------------------------------------
@@ -81,7 +81,10 @@ EOF CRET
 
 START PRINT CRET
 
-m := "------- ---- ----------- -------------- -------------- -------------- --------------"
+m := "------- ---- -----------"
+for _i := 1 to 4
+    m += " " + REPLICATE( "-", LEN( PicDEM ) ) 
+next
 
 do while !eof() 
 // firma
@@ -151,17 +154,45 @@ return
 // zaglavlje sinteticke kartice
 // ----------------------------------------------
 static function ZaglKSintK()
-?? "MAT.P: SINTETICKA KARTICA   NA DAN "; @ prow(),PCOL()+1 SAY DATE()
-SELECT PARTN; HSEEK cIdFirma
-? "FIRMA:",cidfirma,PADR( partn->naz, 25 ), PADR( partn->naz2, 25 )
+local _line1, _line2, _line3
 
-SELECT KONTO; HSEEK cIdKonto
-? KonSeks("KONTO")+":", cIdkonto, konto->naz
+_line1 := "*NALOG * R. *  DATUM    *"
+_line2 := "*      * Br *            "
+_line3 := "*      *    *  NALOGA   *"
+
+_line1 += PADC( "I Z N O S  U  " + ValDomaca(), ( LEN( PicDEM ) * 2 ) + 1 ) 
+_line1 += "*"
+_line1 += PADC( "I Z N O S  U  " + ValPomocna(), ( LEN( PicDEM ) * 2 ) + 1 )
+_line1 += "*"
+
+_line2 += REPLICATE( "-", ( LEN( PICDEM ) * 2 ) + 1 )
+_line2 += " " 
+_line2 += REPLICATE( "-", ( LEN( PICDEM ) * 2 ) + 1 )
+
+_line3 += PADC( "DUGUJE", LEN( PICDEM ) ) + "*"
+_line3 += PADC( "POTRAZUJE", LEN( PICDEM ) ) + "*"
+_line3 += PADC( "DUGUJE", LEN( PICDEM ) ) + "*"
+_line3 += PADC( "POTRAZUJE", LEN( PICDEM ) ) + "*"
+
+?? "MAT.P: SINTETICKA KARTICA   NA DAN "
+@ prow(), PCOL() + 1 SAY DATE()
+
+SELECT PARTN
+HSEEK cIdFirma
+
+? "FIRMA:", cIdFirma, PADR( partn->naz, 25 ), PADR( partn->naz2, 25 )
+
+SELECT KONTO
+HSEEK cIdKonto
+
+? KonSeks("KONTO") + ":", cIdkonto, ALLTRIM( konto->naz )
+
 ? m
-? "*NALOG * R. *  DATUM    *   I Z N O S   U   "+ValDomaca()+"      *  I Z N O S    U    "+ValPomocna()+"    *"
-? "*      * Br *           ------------------------------ -----------------------------"
-? "*      *    *  NALOGA   *    DUGUJE    *  POTRAZUJE   *      DUGUJE   *  POTRAZUJE *"
+? _line1
+? _line2
+? _line3
 ? m
+
 SELECT mat_sint
 RETURN
 
@@ -222,9 +253,11 @@ EOF CRET
 
 START PRINT CRET
 
-m:="-- ---- --- -------- ------------- -------------- -------------- ----------------"
+m := "-- ---- --- -------- "
+for _i := 1 to 4
+    m += " " + REPLICATE("-", LEN( PICDEM ) ) 
+next
 
-*
 a:=0
 do while !eof()
 
@@ -283,6 +316,23 @@ return
 
 
 static function ZaglKAnalK()
+local _line1, _line2, _line3
+
+_line1 := "*V* BR *  DATUM   *"
+_line2 := "* *NAL *           "
+_line3 := "*N*    *  NALOGA  *"
+
+_line1 += PADC( "I Z N O S  U  " + ValDomaca(), ( LEN( PicDEM ) * 2 ) + 2 ) + "*"
+_line1 += PADC( "I Z N O S  U  " + ValPomocna(), ( LEN( PicDEM ) * 2 ) + 2 )
+
+_line2 += REPLICATE( "-", ( LEN( PICDEM ) * 2 ) + 1 )
+_line2 += " " + REPLICATE( "-", ( LEN( PICDEM ) * 2 ) + 1 )
+
+_line3 += PADC( "DUGUJE", LEN( PICDEM ) ) + "*"
+_line3 += PADC( "POTRAZUJE", LEN( PICDEM ) ) + "*"
+_line3 += PADC( "DUGUJE", LEN( PICDEM ) ) + "*"
+_line3 += PADC( "POTRAZUJE", LEN( PICDEM ) ) + "*"
+
 P_COND
 @ a,0  SAY "MAT.P: KARTICA - ANALITICKI "+KonSeks("KONTO")+" - ZA POJEDINACNI "+KonSeks("KONTO")
 @ ++A,0 SAY "FIRMA:"; @ A,pcol()+1 SAY cIdFirma
@@ -293,10 +343,10 @@ SELECT PARTN; HSEEK cIdFirma
 SELECT KONTO; HSEEK cIdKonto
 @ A,pcol()+1 SAY naz
 
-@ ++A,0 SAY "---------------------------------------------------------------------------------"
-@ ++A,0 SAY "*V*BR  *R  * DATUM  *  I Z N O S   U   "+ValDomaca()+"     *    I Z N O S    U    "+ValPomocna()+"     *"
-@ ++A,0 SAY "                      -------------------------- --------------------------------"
-@ ++A,0 SAY "*N*NAL *BR * NALOGA *    DUGUJE   *  POTRAZUJE  *     DUGUJE    *   POTRAZUJE   *"
+@ ++A,0 SAY m 
+@ ++A,0 SAY _line1
+@ ++A,0 SAY _line2
+@ ++A,0 SAY _line3
 @ ++A,0 SAY m
 
 SELECT mat_anal
@@ -338,7 +388,10 @@ NFOUND CRET
 START PRINT CRET
 A:=0
 
-M:="------- --------------------------------- ------------- ------------- ------------- --------------- --------------- ----------------"
+m := "------- ---------------------------------"
+for _i := 1 to 6
+    m += " " + REPLICATE( "-", LEN( PICDEM ) ) 
+next
 
 nUkDug:=nUkUkDug:=nUkPot:=nUkUkPot:=0
 nUkDug2:=nUkUk2Dug:=nUkPot2:=nUkUk2Pot:=0
@@ -395,6 +448,26 @@ return
 
 
 function ZagKKAnalK()
+local _line1, _line2, _line3
+
+_line1 := KonSeks("*KONTO ") + "*  NAZIV " + KonSeks( "KONTA " ) + "               *" 
+_line2 := "                                          "
+_line3 := "*       *                                 *"
+
+_line1 += PADC( "I Z N O S  U  " + ValDomaca(), ( LEN( PicDEM ) * 2 ) + 3 ) + "*"
+_line1 += PADC( "I Z N O S  U  " + ValPomocna(), ( LEN( PicDEM ) * 2 ) + 3 )
+
+_line2 += REPLICATE( "-", ( LEN( PICDEM ) * 3 ) + 1 )
+_line2 += " " + REPLICATE( "-", ( LEN( PICDEM ) * 3 ) + 1 )
+
+_line3 += PADC( "DUGUJE", LEN( PICDEM ) ) + "*"
+_line3 += PADC( "POTRAZUJE", LEN( PICDEM ) ) + "*"
+_line3 += PADC( "SALDO", LEN( PICDEM ) ) + "*"
+_line3 += PADC( "DUGUJE", LEN( PICDEM ) ) + "*"
+_line3 += PADC( "POTRAZUJE", LEN( PICDEM ) ) + "*"
+_line3 += PADC( "SALDO", LEN( PICDEM ) ) + "*"
+
+
 P_COND
 @ a,0  SAY "MAT.P: KARTICA STANJA PO ANALITICKIM "+KonSeks("KONT")+"IMA NA DAN "; @ A,PCOL()+1 SAY DATE()
 @ A,0 SAY "FIRMA:"
@@ -402,11 +475,11 @@ P_COND
 SELECT PARTN; HSEEK cIdFirma
 @ A,PCOL()+2 SAY naz; @ A,PCOL()+1 SAY naz2
 
-@ ++A,0 SAY "------- --------------------------------- ----------------------------------------- ------------------------------------------------"
-@ ++A,0 SAY KonSeks("*KONTO ")+"*      NAZIV "+KonSeks("KONTA  ")+"              *     I  Z  N  O  S     U     "+ValDomaca()+"        *       I  Z  N  O  S     U     "+ValPomocna()+"            *"
-@ ++A,0 SAY "                                          ----------------------------------------- --------------- --------------- ----------------"
-@ ++A,0 SAY "*      *                                 *    DUGUJE   *  POTRAZUJE  *    SALDO    *     DUGUJE    *  POTRAZUJE    *  SALDO        *"
-@ ++A,0 SAY M
+@ ++A,0 SAY m 
+@ ++A,0 SAY _line1
+@ ++A,0 SAY _line2
+@ ++A,0 SAY _line3
+@ ++A,0 SAY m
 
 SELECT mat_anal
 RETURN
@@ -587,7 +660,17 @@ endif
 
 EOF CRET
 
-m:="-- ---- -- -------- -------- ------ ---------- ---------- ---------- ----------- ------------- ------------- --------------- ---------------"
+m := "-- ---- -- -------- -------- ------"
+
+for _i := 1 to 3
+    m += " " + REPLICATE( "-", LEN( PICKOL ) )
+next
+
+_i := 1
+for _i := 1 to 5
+    m += " " + REPLICATE( "-", LEN( PICDEM ) )
+next
+
 nStr:=0
 START PRINT CRET
 
@@ -674,7 +757,7 @@ do while !eof() .and. IdFirma==_id_firma
         nIzlazK+=Kolicina
      ENDIF
      @ prow(),pcol()+1 SAY nUlazK-nIzlazK pict pickol
-     @ prow(),pcol()+1 SAY iif(round(Kolicina,4)<>0,Iznos/Kolicina,0) picture "9999999.999"
+     @ prow(),pcol()+1 SAY iif(round(Kolicina,4)<>0,Iznos/Kolicina,0) pict PICDEM
 
      _col_2 := pcol()+1
      IF D_P="1"
@@ -803,14 +886,34 @@ HSEEK id_konto
 
 @ prow(),pcol()+1 SAY konto->naz
 
-?  "------- --------------------------- --------------------- ---------- ----------- --------------------------- -------------------------------"
-?  "*NALOG *   D O K U M E N T         *       KOLICINA      *  STANJE  *  CIJENA   *     I Z N O S   "+ValDomaca()+"      *     I Z N O S    "+ValPomocna()+"        *"
+? line
 
-?  "------- --------------------------- ---------------------           *           * -------------------------- -------------------------------"
-?  "*V*BROJ*TIP* BROJ  * DATUM  * PART *   ULAZ   *   IZLAZ  *          *   "+ValDomaca()+"    *    DUGUJE   *   POTRAZUJE *    DUGUJE     *   POTRAZUJE  *"
-?  "*N*    *  *        *        * NER  *          *          *          *           *             *             *               *              *"
-?  line
+?  "*NALOG *   D O K U M E N T         " + ;
+        "*" + PADC( "KOLICINA", LEN( PICKOL ) * 2 + 1 ) + ;
+        "*" + PADC( "STANJE", LEN( PICKOL) ) + ;
+        "*" + PADC( "CIJENA", LEN( PICDEM) ) + ;
+        "*" + PADC( "I Z N O S  U " + ValDomaca(), ( LEN( PICDEM ) * 2 ) + 1 ) + ;
+        "*" + PADC( "I Z N O S  U " + ValPomocna(), ( LEN( PICDEM ) * 2 ) + 1 ) + ;
+        "*"
 
+?  "------- --------------------------- " + ;
+        REPLICATE( "-", LEN( PICKOL ) * 3 + 2 ) + ;
+        "*" + REPLICATE( "-", LEN( PICDEM ) ) + ;
+        "*" + REPLICATE( "-", LEN( PICDEM ) * 2 + 1 ) + ;
+        "*" + REPLICATE( "-", LEN( PICDEM ) * 2 + 1 ) + ;
+        "*"
+
+?  "*V*BROJ*TIP* BROJ  * DATUM  * PART *" + ;
+        PADC( "ULAZ", LEN( PICKOL ) ) + ;
+        "*" + PADC( "IZLAZ", LEN( PICKOL ) ) + ;
+        "*" + PADC( "STANJE", LEN( PICKOL ) ) + ;
+        "*" + PADC( ValDomaca(), LEN( PICDEM ) ) + ;
+        "*" + PADC( "DUGUJE", LEN( PICDEM ) ) + ;
+        "*" + PADC( "POTRAZUJE", LEN( PICDEM ) ) + ;
+        "*" + PADC( "DUGUJE", LEN( PICDEM ) ) + ;
+        "*" + PADC( "POTRAZUJE", LEN( PICDEM ) ) + ;
+        "*"
+? line
 
 SELECT mat_suban
 return

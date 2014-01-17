@@ -223,8 +223,7 @@ endif
 
 zapp()
 
-set order to
-index on idfirma+idkonto+idpartner+idroba to "PRIPTMP"
+set order to tag "4"
 GO TOP
 
 Box(,5,60)
@@ -361,7 +360,6 @@ enddo
 // eof
 
 select mat_pripr
-// set order to 0
 set order to
 go top
 do while !eof()
@@ -391,10 +389,7 @@ do while !eof()
     enddo
 enddo
 close all
-
 END PRINT
-
-closeret
 
 return
 

@@ -13,9 +13,9 @@
 #include "mat.ch"
 
 
-static PicDEM := "999999999.99"
-static PicBHD := "999999999.99"
-static PicKol := "9999999.99"
+static PicDEM := "9999999999.99"
+static PicBHD := "9999999999.99"
+static PicKol := "999999999.999"
 
 
 // -------------------------------------------------

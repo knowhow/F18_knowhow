@@ -38,6 +38,8 @@ RPar("p4",@qqIdRj)
 
 qqIdRj:=PADR(qqIdRj,80)
 
+SET CENTURY ON
+
 Box(,6,77)
 DO WHILE .t.
  @ m_x+2,m_y+2 SAY "Pregled godisnjih odmora za godinu:" get cGodina PICT "9999"

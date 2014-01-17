@@ -102,7 +102,7 @@ _rec["idzanim"] := ::status["id_zanimanja"]
 _rec["vrslvr"] := ::status["sluzenje_vojnog_roka_dana"]
 _rec["slvr"] := ::status["sluzenje_vojnog_roka"]
 
-update_rec_server_and_dbf( "fmk.kadev_0", _rec, 1, "FULL" )
+update_rec_server_and_dbf( "kadev_0", _rec, 1, "FULL" )
 
 return Self
 

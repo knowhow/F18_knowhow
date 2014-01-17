@@ -242,6 +242,7 @@ do case
             
             //if Ch == K_CTRL_N
                 oDATA := KADEV_DATA_CALC():new()
+                oDATA:params := hb_hash()
                 oDATA:params["datum_od"] := CTOD("")
                 oDATA:params["datum_do"] := DATE()
                 oDATA:params["jmbg"] := field->id

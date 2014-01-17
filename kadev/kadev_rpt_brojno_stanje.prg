@@ -51,6 +51,8 @@ local _rj := PADR( fetch_metric( "kadev_rpt_br_rj", my_user(), "" ), 100 )
 local _rmj := PADR( fetch_metric( "kadev_rpt_br_rmj", my_user(), "" ), 100 )
 local _spol := " "
 
+SET CENTURY ON
+
 Box(, 8, 65 )
 
     @ m_x + 1, m_y + 2 SAY "Za datum od:" GET _datum_od

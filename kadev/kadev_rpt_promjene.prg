@@ -52,6 +52,8 @@ local _rmj := PADR( fetch_metric( "kadev_rpt_prom_rmj", my_user(), "" ), 100 )
 local _strspr := PADR( fetch_metric( "kadev_rpt_prom_strspr", my_user(), "" ), 100 )
 local _spol := " "
 
+SET CENTURY ON
+
 Box(, 10, 65 )
 
     @ m_x + 1, m_y + 2 SAY "Za datum od:" GET _datum_od
@@ -139,12 +141,16 @@ _qry += "  rj.naz AS rj_naz, "
 _qry += "  main.idrmj AS rmj, "
 _qry += "  rmj.naz AS rmj_naz, "
 _qry += "  main.idstrspr AS strspr, "
+_qry += "  ben.naz AS kben_naz, "
+_qry += "  ben.iznos AS kben_iznos, "
 _qry += "  ss.naz2 AS strspr_naz "
 _qry += "FROM fmk.kadev_1 pr "
 _qry += "LEFT JOIN fmk.kadev_0 main ON pr.id = main.id "
 _qry += "LEFT JOIN fmk.kadev_promj prom ON pr.idpromj = prom.id "
 _qry += "LEFT JOIN fmk.kadev_rj rj ON main.idrj = rj.id "
 _qry += "LEFT JOIN fmk.kadev_rmj rmj ON main.idrmj = rmj.id "
+_qry += "LEFT JOIN fmk.kadev_rjrmj rjrmj ON main.idrmj = rjrmj.idrmj AND main.idrj = rjrmj.idrj "
+_qry += "LEFT JOIN fmk.kbenef ben ON rjrmj.sbenefrst = ben.id "
 _qry += "LEFT JOIN fmk.strspr ss ON main.idstrspr = ss.id "
 _qry += " " + _where + " "
 _qry += "ORDER BY pr.id, pr.datumod" 
@@ -218,6 +224,8 @@ do while !_data:EOF()
     xml_node( "strspr", to_xml_encoding( hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "strspr_naz" ) ) ) ) )
     xml_node( "datum", DTOC( oRow:FieldGet( oRow:FieldPos( "datum" ) ) ) )
     xml_node( "rmj", to_xml_encoding( hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "rmj_naz" ) ) ) ) )
+    xml_node( "b_st", STR( oRow:FieldGet( oRow:FieldPos( "kben_iznos" ) ) ) )
+    xml_node( "b_naz", to_xml_encoding( hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "kben_naz" ) ) ) ) )
 
     xml_subnode( "item", .t. )
 

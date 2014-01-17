@@ -1,6 +1,7 @@
 1.4.268 2014-01-17, vsasa
  
   - KADEV, bugfix, snimanje promjena 
+  - MAT, bugfix, opcija početnog stanja, proširenje izvještaja
  
 1.4.267 2014-01-16, vsasa
  

@@ -1,3 +1,7 @@
+1.4.269 2014-01-21, vsasa
+ 
+  - MAT, proširenje izvještaja
+ 
 1.4.268 2014-01-17, vsasa
  
   - KADEV, bugfix, snimanje promjena 

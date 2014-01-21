@@ -13,9 +13,9 @@
 #include "mat.ch"
 
 
-static PicDEM := "9999999999.99"
-static PicBHD := "9999999999.99"
-static PicKol := "999999999.999"
+static PicDEM := "99999999.99"
+static PicBHD := "99999999.99"
+static PicKol := "999999.999"
 
 
 function mat_specifikacija()

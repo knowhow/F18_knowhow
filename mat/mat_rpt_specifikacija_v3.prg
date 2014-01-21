@@ -13,9 +13,9 @@
 #include "mat.ch"
 
 
-static PicDEM := "9999999999.99"
-static PicBHD := "9999999999.99"
-static PicKol := "999999999.999"
+static PicDEM := "999999999.99"
+static PicBHD := "999999999.99"
+static PicKol := "99999999.999"
 
 
 // -------------------------------------------------
@@ -181,38 +181,38 @@ _line += REPLICATE( "-", 3 )
 if params["samo_vrijednost"] == "N"
 
     _line += SPACE(1)
-    _line += REPLICATE( "-", 10 )
+    _line += REPLICATE( "-", LEN( PICDEM ) )
     _line += SPACE(1)
-    _line += REPLICATE( "-", 10 )
+    _line += REPLICATE( "-", LEN( PICDEM ) )
     _line += SPACE(1)
-    _line += REPLICATE( "-", 10 )
+    _line += REPLICATE( "-", LEN( PICDEM ) )
 
 endif
 
 if r_format == "1"    
     _line += SPACE(1)
-    _line += REPLICATE( "-", 10 )
+    _line += REPLICATE( "-", LEN( PICDEM ) )
     _line += SPACE(1)
-    _line += REPLICATE( "-", 10 )
+    _line += REPLICATE( "-", LEN( PICDEM ) )
     _line += SPACE(1)
-    _line += REPLICATE( "-", 10 )
+    _line += REPLICATE( "-", LEN( PICDEM ) )
 endif
 
 _line += SPACE(1)
-_line += REPLICATE( "-", 12 )
+_line += REPLICATE( "-", LEN( PICDEM ) )
 _line += SPACE(1)
-_line += REPLICATE( "-", 12 )
+_line += REPLICATE( "-", LEN( PICDEM ) )
 _line += SPACE(1)
-_line += REPLICATE( "-", 12 )
+_line += REPLICATE( "-", LEN( PICDEM ) )
 
 if r_format == "1"
     _line += SPACE(1)
-    _line += REPLICATE( "-", 12 )
+    _line += REPLICATE( "-", LEN( PICDEM ) )
     _line += SPACE(1)
-    _line += REPLICATE( "-", 12 )
+    _line += REPLICATE( "-", LEN( PICDEM ) )
     _line += SPACE(1)
-    _line += REPLICATE( "-", 12 )
-endif
+    _line += REPLICATE( "-", LEN( PICDEM ) )
+endif 
 
 return _line
 
@@ -435,14 +435,14 @@ do while !EOF()
     @ prow(), pcol() + 1 SAY field->roba_jmj
 
     if _fmt == "1"
-        @ prow(), pcol() + 1 SAY field->roba_nc PICT "999999.999"
-        @ prow(), pcol() + 1 SAY field->roba_vpc PICT "999999.999"
-        @ prow(), pcol() + 1 SAY field->roba_mpc PICT "999999.999"
+        @ prow(), pcol() + 1 SAY field->roba_nc PICT PICDEM
+        @ prow(), pcol() + 1 SAY field->roba_vpc PICT PICDEM
+        @ prow(), pcol() + 1 SAY field->roba_mpc PICT PICDEM
     endif
 
-    @ prow(), pcol() + 1 SAY field->ulaz_1 PICT picKol
-    @ prow(), pcol() + 1 SAY field->izlaz_1 PICT picKol
-    @ prow(), pcol() + 1 SAY field->saldo_k_1 PICT picKol
+    @ prow(), pcol() + 1 SAY field->ulaz_1 PICT PICKOL
+    @ prow(), pcol() + 1 SAY field->izlaz_1 PICT PICKOL
+    @ prow(), pcol() + 1 SAY field->saldo_k_1 PICT PICKOL
     
     _mark_pos := pcol()
      
@@ -779,8 +779,9 @@ local _r_line_1 := ""
 local _r_line_2 := ""
 local _r_line_3 := ""
 
-P_COND
+P_COND2
 ?
+
 @ prow(), 0 SAY "MAT.P: SPECIFIKACIJA ROBE (U "
 
 if param["format"] == "1"
@@ -840,15 +841,19 @@ _r_line_3 += "*   "
 
 if param["samo_vrijednost"] == "N"
 
-    _r_line_1 += "*       K O L I C I N A          "
-    _r_line_2 += " --------------------------------"
-    _r_line_3 += "*   ULAZ   *  IZLAZ   *  STANJE  "
+    _r_line_1 += "*" + PADC( "K O L I C I N A", LEN( PICKOL ) * 3 + 2 )
+    _r_line_2 += REPLICATE( "-", LEN( PICKOL ) * 3 + 2 )
+    _r_line_3 += "*" + PADC( "ULAZ", LEN( PICKOL ) )
+    _r_line_3 += "*" + PADC( "IZLAZ", LEN( PICKOL ) )
+    _r_line_3 += "*" + PADC( "STANJE", LEN( PICKOL ) )
 
 endif
 
-_r_line_1 += "*     V R I J E D N O S T              *"
-_r_line_2 += " --------------------------------------"
-_r_line_3 += "*  DUGUJE    * POTRAZUJE  *   SALDO    *"
+_r_line_1 += "*" + PADC( "V R I J E D N O S T", LEN( PICDEM ) * 3 + 2 ) + "*"
+_r_line_2 += REPLICATE( "-", LEN( PICDEM ) * 3 + 2 )
+_r_line_3 += "*" + PADC( "DUGUJE", LEN( PICDEM ) )
+_r_line_3 += "*" + PADC( "POTRAZUJE", LEN( PICDEM ) ) 
+_r_line_3 += "*" + PADC( "SALDO", LEN( PICDEM ) ) + "*"
 
 ? _r_line_1
 ? _r_line_2

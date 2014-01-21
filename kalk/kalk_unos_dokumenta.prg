@@ -468,9 +468,11 @@ do case
         return DE_REFRESH
     case Ch==K_CTRL_F9
         if Pitanje( , "Zelite Izbrisati cijelu pripremu ??","N")=="D"
+     
             select kalk_pripr
             go top            
             _rec := dbf_get_rec()
+            cOpis := _rec["idfirma"] + "-" + _rec["idvd"] + "-" + _rec["brdok"] + "/" + DTOC( _rec["datdok"] )
             if !empty(_rec["idfirma"])
                 kalk_rewind(_rec["idfirma"], _rec["idvd"], _rec["datdok"], _rec["brdok"])
             endif
@@ -479,7 +481,7 @@ do case
             zapp()
             select kalk_pripr
 
-            log_write( "F18_DOK_OPER: kalk, brisanje pripreme: " + cOpis , 2 )
+            log_write( "F18_DOK_OPER: kalk, brisanje kompletne pripreme: " + cOpis , 2 )
 
             return DE_REFRESH
         endif

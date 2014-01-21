@@ -1,3 +1,7 @@
+1.5.31 2014-01-21, vsasa
+
+   - KALK, brisanje kompletne pripreme - bugfix
+
 1.5.30 2014-01-15, vsasa
 
    - LD, generisanje gip obrasca - korekcije

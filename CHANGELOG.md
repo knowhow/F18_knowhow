@@ -1,3 +1,7 @@
+1.4.270 2014-01-21, vsasa
+ 
+  - FAKT, provjera brojača dokumenta - bugfix
+ 
 1.4.269 2014-01-21, vsasa
  
   - MAT, proširenje izvještaja

@@ -431,9 +431,16 @@ if !_params["kontrola_brojaca"]
     return _ret
 endif
 
+// brojaci otpremnica po tip-u "22"
+if id_tip_dok == "12" .and. _params["fakt_otpr_22_brojac"]
+    _tip_srch := "22"
+else    
+    _tip_srch := id_tip_dok
+endif
+
 _qry := " SELECT MAX( brdok ) FROM fmk.fakt_doks " + ;
         " WHERE idfirma = " + _sql_quote( id_firma ) + ;
-        " AND idtipdok = " + _sql_quote( id_tip_dok )
+        " AND idtipdok = " + _sql_quote( _tip_srch )
 
 // ovo je tabela
 _table := _sql_query( _server, _qry )
@@ -443,7 +450,7 @@ _max_dok := VAL( ALLTRIM( _tmp[1] ) )
 
 // ovo je iz parametara...
 // param: fakt/10/10
-_param := "fakt" + "/" + id_firma + "/" + id_tip_dok
+_param := "fakt" + "/" + id_firma + "/" + _tip_srch
 _par_dok := fetch_metric( _param, nil, 0 )
 
 // provjera brojaca server dokument <> server param 

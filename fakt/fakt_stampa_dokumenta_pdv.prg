@@ -336,7 +336,7 @@ do while !EOF() .and. idfirma==dok["idfirma"]  .and. idtipdok==dok["idtipdok"] .
 	// procenat pdv-a
 	nPPDV := tarifa->opp
 	
-	cIdPartner = fakt_pripr->idpartner
+	cIdPartner := fakt_pripr->idpartner
 
     if _fakt_params["fakt_opis_stavke"]
         dok["rbr"] := rbr

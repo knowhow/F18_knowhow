@@ -1,3 +1,7 @@
+1.4.271 2014-01-21, vsasa
+ 
+  - FAKT, kritični bug kod štampanja dokumenta
+ 
 1.4.270 2014-01-21, vsasa
  
   - FAKT, provjera brojača dokumenta - bugfix

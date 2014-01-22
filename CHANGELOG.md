@@ -1,6 +1,8 @@
-1.5.31 2014-01-21, vsasa
+1.5.31 2014-01-22, vsasa
 
    - KALK, brisanje kompletne pripreme - bugfix
+   - FAKT, štampa računa - bugfix
+   - KALK, početno stanje prodavnice - korekcija
 
 1.5.30 2014-01-15, vsasa
 

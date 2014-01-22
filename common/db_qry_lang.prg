@@ -135,7 +135,7 @@ nLen:=LEN(cSifra)
 
     if cOperator $ "< > >= <= <> !=" .and. empty(cProlaz) .and. npoz1>0
       nPoz1end:=NextToken(@cSifra,@cToken)
-      cDesno:=Substr(cSifra,nPoz1+1,nPoz1end-nPoz1-len(cOperator))
+      cDesno := SUBSTR( cSifra, nPoz1 + LEN( cOperator ) , nPoz1end - nPoz1 - LEN(cOperator) )
       do case
        case cTip=="C"
         cIzraz+=cImeSifre+cOperator+"'"+cDesno+"'"
@@ -143,7 +143,6 @@ nLen:=LEN(cSifra)
         cIzraz+=cImeSifre+cOperator+cDesno
        case cTip=="D"
         cIzraz+=cImeSifre+cOperator+"CTOD('"+cDesno+"')"
-//        cIzraz+="DTOS("+cImeSifre+")"+cOperator+"DTOS(CTOD('"+cDesno+"'))"
       endcase
       cSifra:=substr(cSifra,nPoz1End+len(cOperator))
       cProlaz+=cOperator

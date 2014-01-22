@@ -63,7 +63,7 @@ _qry := " SELECT " + ;
                     "WHEN k.mu_i = '1' AND k.idvd NOT IN ('12', '22', '94') THEN r.vpc * k.kolicina ELSE 0 " + ;
                 "END ), " + _zaokr + " ) AS vpvu, " + ;
             "SUM( CASE " + ;
-                    "WHEN k.mu_i = '1' AND k.idvd IN ('12', '22', '94') THEN k.kolicina " + ;
+                    "WHEN k.mu_i = '1' AND k.idvd IN ('12', '22', '94') THEN -k.kolicina " + ;
                     "WHEN k.mu_i = '5' THEN k.kolicina ELSE 0 " + ;
                 "END ) AS izlaz, " + ;
             "ROUND( SUM( CASE " + ;

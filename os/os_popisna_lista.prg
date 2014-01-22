@@ -138,7 +138,7 @@ xml_subnode( "inv", .f. )
 //header
 xml_node( "fid", to_xml_encoding( gFirma ) )
 xml_node( "fnaz", to_xml_encoding( gNFirma ) )
-xml_node( "datum", DTOC( DATE() ) )
+xml_node( "datum", DTOC( gDatObr ) )
 xml_node( "kid", to_xml_encoding( _idrj ) )
 xml_node( "knaz", "" )
 xml_node( "pid", "" )
@@ -193,3 +193,5 @@ if _rbr > 0
 endif
 
 return _ok
+
+

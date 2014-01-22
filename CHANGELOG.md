@@ -1,3 +1,7 @@
+1.4.272 2014-01-22, vsasa
+ 
+  - OS, popisna lista, datum obrade u headeru izvještaja
+ 
 1.4.271 2014-01-21, vsasa
  
   - FAKT, kritični bug kod štampanja dokumenta

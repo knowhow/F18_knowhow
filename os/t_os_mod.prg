@@ -40,15 +40,18 @@ return nil
 // -----------------------------------------------
 // -----------------------------------------------
 method mMenu()
+local _tmp
 
-nPom:=VAL(IzFmkIni("SET","Epoch","1945",KUMPATH))
+_tmp := fetch_metric( "os_set_epoch", NIL, 0 )
+//nPom := VAL( IzFmkIni( "SET", "Epoch", "1945", KUMPATH ) )
 
-IF nPom>0
-  SET EPOCH TO (nPom)
+IF _tmp > 0 
+    SET EPOCH TO ( _tmp )
 ENDIF
 
-PUBLIC gSQL:="N"
-PUBLIC gCentOn:=IzFmkIni("SET","CenturyOn","N",KUMPATH)
+PUBLIC gSQL := "N"
+PUBLIC gCentOn := fetch_metric( "os_set_century_on", NIL, "N" ) 
+                    //IzFmkIni( "SET", "CenturyOn", "N", KUMPATH )
 
 IF gCentOn == "D"
     SET CENTURY ON
@@ -58,10 +61,9 @@ ENDIF
 
 os_set_datum_obrade()
 set_os_info()
-
 set_hot_keys()
 
-@ 1,2 SAY padc(gTS+": "+gNFirma,50,"*")
+@ 1,2 SAY padc( gTS + ": " + gNFirma, 50, "*" )
 @ 4,5 SAY ""
 
 ::mMenuStandard()

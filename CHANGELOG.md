@@ -1,3 +1,7 @@
+1.5.32 2014-01-22, vsasa
+
+   - git push zaboravljen
+ 
 1.5.31 2014-01-22, vsasa
 
    - KALK, brisanje kompletne pripreme - bugfix

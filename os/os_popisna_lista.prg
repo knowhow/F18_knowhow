@@ -48,8 +48,9 @@ local _on := "N"
 local _filt_k1 := SPACE(100)
 local _filt_dob := SPACE(100)
 local _filt_jmj := PADR( fetch_metric( "os_popis_jmj", my_user(), "" ), 100 )
+local _cijena := "N"
 
-Box(, 8, 77 )
+Box(, 10, 77 )
 
     @ m_x + 1, m_y + 2 SAY "Radna jedinica:" GET _idrj ;
             VALID {|| P_RJ( @_idrj ), IF( !EMPTY( _idrj ), _idrj := PADR( _idrj, 4), .t. ), .t. }
@@ -59,9 +60,11 @@ Box(, 8, 77 )
             VALID _on $ "ONBG"
     
     @ m_x + 5, m_y + 2 SAY "Filter po grupaciji K1:" GET _filt_k1 PICT "@!S20"
-    @ m_x + 6, m_y + 2 SAY "Filter po dobavljacima:" GET _filt_dob pict "@!S20"
-    @ m_x + 7, m_y + 2 SAY "Filter po jedin. mjere:" GET _filt_jmj pict "@!S20"
+    @ m_x + 6, m_y + 2 SAY "Filter po dobavljacima:" GET _filt_dob PICT "@!S20"
+    @ m_x + 7, m_y + 2 SAY "Filter po jedin. mjere:" GET _filt_jmj PICT "@!S20"
 
+    @ m_x + 9, m_y + 2 SAY "Prikaz nab.cijene (D/N) ?" GET _cijena PICT "@!" VALID _cijena $ "DN"
+    
     READ
 
 BoxC()
@@ -81,6 +84,7 @@ params["prikaz"] := _on
 params["filter_k1"] := _filt_k1
 params["filter_dob"] := _filt_dob
 params["filter_jmj"] := _filt_jmj
+params["cijena"] := ( _cijena == "D" )
 
 return _ok
 
@@ -173,8 +177,13 @@ do while !EOF()
     xml_node( "rid", to_xml_encoding( field->id ) )
     xml_node( "naz", to_xml_encoding( field->naz ) )
     xml_node( "jmj", to_xml_encoding( field->jmj ) )
-    xml_node( "cijena", STR( field->nabvr, 12, 2 ) )
     xml_node( "stanje", STR( field->kolicina, 12, 2 ) )
+    
+    if params["cijena"]
+        xml_node( "cijena", STR( field->nabvr, 12, 2 ) )
+    else
+        xml_node( "cijena", "" )
+    endif
 
     xml_subnode( "items", .t. )
     

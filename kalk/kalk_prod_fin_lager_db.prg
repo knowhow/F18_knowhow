@@ -315,7 +315,7 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
                 _mp_ulaz -= field->mpc * field->kolicina
                 _mp_ulaz_p -= field->mpcsapp * field->kolicina
                 _nv_ulaz -= field->nc * field->kolicina
-                _rabat -= field->rabatv
+                _rabat -= field->rabatv * field->kolicina
                 _porez -= __porez * field->kolicina
 
             else
@@ -323,7 +323,7 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
                 _mp_izlaz += field->mpc * field->kolicina
                 _mp_izlaz_p += field->mpcsapp * field->kolicina
                 _nv_izlaz += field->nc * field->kolicina
-                _rabat += field->rabatv
+                _rabat += field->rabatv * field->kolicina
                 _porez += __porez * field->kolicina
             
             endif

@@ -1,3 +1,7 @@
+1.4.273 2014-01-23, vsasa
+ 
+  - KALK, izvještaj TKM, popust u maloprodaji na ulaznoj strani u minusu 
+ 
 1.4.272 2014-01-22, vsasa
  
   - OS, popisna lista, datum obrade u headeru izvještaja

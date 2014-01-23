@@ -181,15 +181,12 @@ do while !EOF()
     @ prow(), _n_opis := pcol() + 1 SAY _a_opis[ 1 ]
 
     // zaduzenje sa PDV
-    @ prow(), _n_iznosi := pcol() + 1 SAY STR( field->mpp_dug, 12, 2 )
+    @ prow(), _n_iznosi := pcol() + 1 SAY STR( field->mpp_dug + ( -field->mp_rabat ), 12, 2 )
 
     // razduzenje sa PDV
     @ prow(), pcol() + 1 SAY STR( ( field->mp_pot + field->mp_porez ), 12, 2 )
 
-    // odobreni rabat
-    //@ prow(), pcol() + 1 SAY STR( field->mp_rabat, 12, 2 )
-
-    _t_dug += field->mpp_dug
+    _t_dug += field->mpp_dug + ( -field->mp_rabat )
     _t_pot += field->mp_pot + field->mp_porez
     _t_rabat += field->mp_rabat
 

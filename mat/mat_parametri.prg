@@ -38,6 +38,10 @@ local cK1 := cK2 := cK3 := cK4 := "N"
 gNalPr := PADR( gNalPr, 30 )
 gDirPor := PADR( gDirPor, 50 )
 
+gPicDem := PADR( gPicDem, 15 )
+gPicDin := PADR( gPicDin, 15 )
+gPicKol := PADR( gPicKol, 15 )
+
 Box(,21,74)
     set cursor on
     @ m_x+3,m_y+2 SAY "Polje K1  D/N" GET cK1 valid cK1 $ "DN" pict "@!"
@@ -51,9 +55,9 @@ Box(,21,74)
     @ m_x+13,m_y+2 SAY "Zadati datum naloga D/N:" GET gDatNal valid gDatNal $ "DN" pict "@!"
     @ m_x+14,m_y+2 SAY "Koristiti polja partnera, lice zaduzuje D/N" GET gKupZad valid gKupZad $ "DN" pict "@!"
     @ m_x+16,m_y+2 SAY "Prikaz dvovalutno D/N" GET g2Valute valid g2Valute $ "DN" pict "@!"
-    @ m_x+17,m_y+2 SAY "Pict "+ValPomocna()+":"  get gpicdem
-    @ m_x+18,m_y+2 SAY "Pict "+ValDomaca()+":"  get gpicdin
-    @ m_x+19,m_y+2 SAY "Pict KOL :"  get gpickol
+    @ m_x+17,m_y+2 SAY "Pict "+ValPomocna()+":" get gpicdem PICT "@S15"
+    @ m_x+18,m_y+2 SAY "Pict "+ValDomaca()+":"  get gpicdin PICT "@S15"
+    @ m_x+19,m_y+2 SAY "Pict KOL :"  get gpickol PICT "@S15"
     @ m_x+20,m_y+2 SAY "Sa sifrom je vezan konto D/N" GET gKonto valid gKonto $ "DN" pict "@!"
     @ m_x+21,m_y+2 SAY "Sekretarski sistem (D/N) ?"  GET gSekS valid gSekS $ "DN" pict "@!"
     read

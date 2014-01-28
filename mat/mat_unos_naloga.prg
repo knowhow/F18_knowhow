@@ -721,41 +721,41 @@ DO WHILE !EOF()
          @ prow(),pcol()+1 SAY DatDok
          if (gkonto=="D" .or. g2Valute=="N") .and. gNW!="R"
            if round(kolicina,4)<>0
-            @ prow(),pcol()+1 SAY iznos/kolicina picture RIGHT(gpicdem+"9",LEN(gPicDem))
+            @ prow(),pcol()+1 SAY iznos/kolicina picture RIGHT( gpicdem + "9", LEN( gPicDem ) )
            else
-            @ prow(),pcol()+1  SAY 0 picture RIGHT(gpicdem+"9",LEN(gPicDem))
+            @ prow(),pcol()+1  SAY 0 picture RIGHT( gpicdem + "9", LEN( gPicDem ) )
            endif
          endif
          nCK:=pcol()+1
          if U_I=="1"
-           @ prow(),pcol()+1 SAY Kolicina PICTURE "@Z "+gPicKol
-           @ prow(),pcol()+1 SAY 0        PICTURE "@Z "+gPicKol
+           @ prow(),pcol()+1 SAY Kolicina PICTURE "@Z " + gPicKol
+           @ prow(),pcol()+1 SAY 0        PICTURE "@Z " + gPicKol
          else
-           @ prow(),pcol()+1 SAY 0        PICTURE "@Z "+gPicKol
-           @ prow(),pcol()+1 SAY Kolicina PICTURE "@Z "+gPicKol
+           @ prow(),pcol()+1 SAY 0        PICTURE "@Z " + gPicKol
+           @ prow(),pcol()+1 SAY Kolicina PICTURE "@Z " + gPicKol
          endif
 
          nCI:=pcol()+1
          IF gNW!="R"
            IF D_P="1"
-              @ prow(),pcol()+1 SAY Iznos PICTURE "@Z "+gPicDEM()
-              @ prow(),pcol()+1 SAY 0 PICTURE "@Z "+gPicDEM()
+              @ prow(),pcol()+1 SAY Iznos PICTURE "@Z " + gPicDEM()
+              @ prow(),pcol()+1 SAY 0 PICTURE "@Z " + gPicDEM()
               nDug+=Iznos
            ELSE
-              @ prow(),pcol()+1 SAY 0 PICTURE "@Z "+gPicDEM()
-              @ prow(),pcol()+1 SAY Iznos PICTURE "@Z "+gPicDEM()
+              @ prow(),pcol()+1 SAY 0 PICTURE "@Z " + gPicDEM()
+              @ prow(),pcol()+1 SAY Iznos PICTURE "@Z " + gPicDEM()
               nPot+=Iznos
            ENDIF
          ENDIF
 
          if gkonto=="N" .and. g2Valute=="D" .and. gNW!="R"
            IF D_P="1"
-              @ prow(),pcol()+1 SAY Iznos2  PICTURE "@Z "+gPicDIN
-              @ prow(),pcol()+1 SAY 0  PICTURE "@Z "+gPicDIN
+              @ prow(),pcol()+1 SAY Iznos2  PICTURE "@Z " + gPicDIN
+              @ prow(),pcol()+1 SAY 0  PICTURE "@Z " + gPicDIN
               nDug2+=Iznos2
            ELSE
-              @ prow(),pcol()+1 SAY 0     PICTURE "@Z "+gPicDIN
-              @ prow(),pcol()+1 SAY Iznos2 PICTURE "@Z "+gPicDIN
+              @ prow(),pcol()+1 SAY 0     PICTURE "@Z " + gPicDIN
+              @ prow(),pcol()+1 SAY Iznos2 PICTURE "@Z " + gPicDIN
               nPot2+=Iznos2
            ENDIF
          endif
@@ -792,12 +792,12 @@ DO WHILE !EOF()
         ? "UKUPNO ZA DOKUMENT:"
         @ prow(),pcol()+1 SAY cBrDok
         @ prow(),nCI-1 SAY ""
-        @ prow(),pcol()+1 SAY nDug PICTURE "@Z "+gPicDEM()
-        @ prow(),pcol()+1 SAY nPot PICTURE "@Z "+gPicDEM()
+        @ prow(),pcol()+1 SAY nDug PICTURE "@Z " + gPicDEM()
+        @ prow(),pcol()+1 SAY nPot PICTURE "@Z " + gPicDEM()
 
         if gkonto=="N" .and. g2Valute=="D"
-         @ prow(),pcol()+1 SAY nDug2 PICTURE "@Z "+gPicDIN
-         @ prow(),pcol()+1 SAY nPot2 PICTURE "@Z "+gPicDIN
+         @ prow(),pcol()+1 SAY nDug2 PICTURE "@Z " + gPicDIN
+         @ prow(),pcol()+1 SAY nPot2 PICTURE "@Z " + gPicDIN
         endif
         ? M
       ENDIF
@@ -812,11 +812,11 @@ DO WHILE !EOF()
      ? M
      ? "ZBIR NALOGA:"
      @ prow(),nCI-1 SAY ""
-     @ prow(),pcol()+1 SAY nUkDug PICTURE "@Z "+gPicDEM()
-     @ prow(),pcol()+1 SAY nUkPot PICTURE "@Z "+gPicDEM()
+     @ prow(),pcol()+1 SAY nUkDug PICTURE "@Z " + gPicDEM()
+     @ prow(),pcol()+1 SAY nUkPot PICTURE "@Z " + gPicDEM()
      if gkonto=="N" .and. g2Valute=="D"
-      @ prow(),pcol()+1 SAY nUkDug2 PICTURE "@Z "+gPicDIN
-      @ prow(),pcol()+1 SAY nUkPot2 PICTURE "@Z "+gPicDIN
+      @ prow(),pcol()+1 SAY nUkDug2 PICTURE "@Z " + gPicDIN
+      @ prow(),pcol()+1 SAY nUkPot2 PICTURE "@Z " + gPicDIN
      endif
      ? M
    ENDIF
@@ -871,9 +871,8 @@ else
 endif
 ? M
 
-
-
 return
+
 
 
 function mat_sint_stav()

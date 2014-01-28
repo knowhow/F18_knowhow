@@ -1,3 +1,7 @@
+1.4.274 2014-01-28, vsasa
+ 
+  - MAT, štampanje dokumenata i PICT kodovi, ispravka
+ 
 1.4.273 2014-01-23, vsasa
  
   - KALK, izvještaj TKM, popust u maloprodaji na ulaznoj strani u minusu 

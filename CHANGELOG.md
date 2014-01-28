@@ -1,3 +1,8 @@
+1.4.276 2014-01-28, vsasa
+ 
+  - KALK, TKM, rabat iskazan kao negativno zaduženje treba biti u bruto iznosu, 
+    sa uračunatim PDV-om
+ 
 1.4.275 2014-01-28, vsasa
  
   - FIN, štampanje fin kartice ODT, dupla konverzija

@@ -46,6 +46,7 @@ return
 // -----------------------------------------------
 function kalk_gen_fin_stanje_prodavnice( vars )
 local _konto := ""
+local _tarifa, _opp
 local _datum_od := DATE()
 local _datum_do := DATE()
 local _tarife := ""
@@ -53,7 +54,7 @@ local _vrste_dok := ""
 local _id_firma := gFirma
 local _vise_konta := .f.
 local _t_area, _t_rec
-local _ulaz, _izlaz, _rabat
+local _ulaz, _izlaz, _rabatv, _rabatm
 local _nv_ulaz, _nv_izlaz, _mp_ulaz, _mp_izlaz, _mp_ulaz_p, _mp_izlaz_p
 local _tr_prevoz, _tr_prevoz_2
 local _tr_bank, _tr_zavisni, _tr_carina, _tr_sped
@@ -195,7 +196,8 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
     _mp_izlaz_p := 0
     _nv_ulaz := 0
     _nv_izlaz := 0
-    _rabat := 0
+    _rabatv := 0
+    _rabatm := 0
     _tr_bank := 0
     _tr_zavisni := 0
     _tr_carina := 0
@@ -274,7 +276,7 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
                 loop
             endif
         endif
-        
+
         select roba
         hseek kalk->idroba
 
@@ -308,23 +310,36 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
         
             // porez stavke
             __porez := _a_porezi[1]        
-
             // prodavnicki izlazi
             if field->idvd $ "12#13"
 
                 _mp_ulaz -= field->mpc * field->kolicina
                 _mp_ulaz_p -= field->mpcsapp * field->kolicina
                 _nv_ulaz -= field->nc * field->kolicina
-                _rabat -= field->rabatv * field->kolicina
                 _porez -= __porez * field->kolicina
+
+                // rabat treba da bude sa uracunatim pdv-om
+                _rabatv -= field->rabatv * field->kolicina
+                if tarifa->opp <> 0
+                    _rabatm -= field->kolicina * ( field->rabatv * ( 1 + tarifa->opp / 100 ) )
+                else
+                    _rabatm -= field->kolicina * field->rabatv
+                endif
 
             else
 
                 _mp_izlaz += field->mpc * field->kolicina
                 _mp_izlaz_p += field->mpcsapp * field->kolicina
                 _nv_izlaz += field->nc * field->kolicina
-                _rabat += field->rabatv * field->kolicina
                 _porez += __porez * field->kolicina
+
+                // rabat treba da bude sa uracunatim porezom
+                _rabatv += field->rabatv * field->kolicina
+                if tarifa->opp <> 0
+                    _rabatm += field->kolicina * ( field->rabatv * ( 1 + tarifa->opp / 100 ) )
+                else
+                    _rabatm += field->kolicina * field->rabatv
+                endif
             
             endif
 
@@ -355,7 +370,7 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
                 _nv_ulaz, _nv_izlaz, _nv_ulaz - _nv_izlaz, ;
                 _mp_ulaz, _mp_izlaz, _mp_ulaz - _mp_izlaz, ;
                 _mp_ulaz_p, _mp_izlaz_p, _mp_ulaz_p - _mp_izlaz_p, ;
-                _rabat, _porez, 0, 0, 0, 0, 0, 0 )
+                _rabatv, _rabatm, _porez, 0, 0, 0, 0, 0, 0 )
 
     ++ _cnt
 
@@ -383,23 +398,24 @@ AADD( _dbf, { "part_mj"   , "C", 50, 0 } )
 AADD( _dbf, { "part_ptt"  , "C", 10, 0 } )
 AADD( _dbf, { "part_adr"  , "C", 50, 0 } )
 AADD( _dbf, { "br_fakt"   , "C", 20, 0 } )
-AADD( _dbf, { "nv_dug"    , "N", 15, 2 } )
-AADD( _dbf, { "nv_pot"    , "N", 15, 2 } )
-AADD( _dbf, { "nv_saldo"  , "N", 15, 2 } )
-AADD( _dbf, { "mp_dug"    , "N", 15, 2 } )
-AADD( _dbf, { "mp_pot"    , "N", 15, 2 } )
-AADD( _dbf, { "mp_saldo"  , "N", 15, 2 } )
-AADD( _dbf, { "mpp_dug"   , "N", 15, 2 } )
-AADD( _dbf, { "mpp_pot"   , "N", 15, 2 } )
-AADD( _dbf, { "mpp_saldo" , "N", 15, 2 } )
-AADD( _dbf, { "mp_rabat"  , "N", 15, 2 } )
-AADD( _dbf, { "mp_porez"  , "N", 15, 2 } )
-AADD( _dbf, { "t_prevoz"  , "N", 15, 2 } )
-AADD( _dbf, { "t_prevoz2" , "N", 15, 2 } )
-AADD( _dbf, { "t_bank"    , "N", 15, 2 } )
-AADD( _dbf, { "t_sped"    , "N", 15, 2 } )
-AADD( _dbf, { "t_cardaz"  , "N", 15, 2 } )
-AADD( _dbf, { "t_zav"     , "N", 15, 2 } )
+AADD( _dbf, { "nv_dug"    , "N", 18, 5 } )
+AADD( _dbf, { "nv_pot"    , "N", 18, 5 } )
+AADD( _dbf, { "nv_saldo"  , "N", 18, 5 } )
+AADD( _dbf, { "mp_dug"    , "N", 18, 5 } )
+AADD( _dbf, { "mp_pot"    , "N", 18, 5 } )
+AADD( _dbf, { "mp_saldo"  , "N", 18, 5 } )
+AADD( _dbf, { "mpp_dug"   , "N", 18, 5 } )
+AADD( _dbf, { "mpp_pot"   , "N", 18, 5 } )
+AADD( _dbf, { "mpp_saldo" , "N", 18, 5 } )
+AADD( _dbf, { "vp_rabat"  , "N", 18, 5 } )
+AADD( _dbf, { "mp_rabat"  , "N", 18, 5 } )
+AADD( _dbf, { "mp_porez"  , "N", 18, 5 } )
+AADD( _dbf, { "t_prevoz"  , "N", 18, 5 } )
+AADD( _dbf, { "t_prevoz2" , "N", 18, 5 } )
+AADD( _dbf, { "t_bank"    , "N", 18, 5 } )
+AADD( _dbf, { "t_sped"    , "N", 18, 5 } )
+AADD( _dbf, { "t_cardaz"  , "N", 18, 5 } )
+AADD( _dbf, { "t_zav"     , "N", 18, 5 } )
 
 t_exp_create( _dbf )
 
@@ -414,7 +430,7 @@ static function _add_to_exp( id_firma, id_tip_dok, broj_dok, datum_dok, vrsta_do
                             n_v_dug, n_v_pot, n_v_saldo, ;
                             m_p_dug, m_p_pot, m_p_saldo, ;
                             m_pp_dug, m_pp_pot, m_pp_saldo, ;
-                            m_p_rabat, m_p_porez, tr_prevoz, tr_prevoz_2, ;
+                            v_p_rabat, m_p_rabat, m_p_porez, tr_prevoz, tr_prevoz_2, ;
                             tr_bank, tr_sped, tr_carina, tr_zavisni )
 
 local _t_area := SELECT()
@@ -446,6 +462,7 @@ _rec["mpp_dug"] := m_pp_dug
 _rec["mpp_pot"] := m_pp_pot
 _rec["mpp_saldo"] := m_pp_saldo
 _rec["mp_rabat"] := m_p_rabat
+_rec["vp_rabat"] := v_p_rabat
 _rec["mp_porez"] := m_p_porez
 _rec["t_prevoz"] := tr_prevoz
 _rec["t_prevoz2"] := tr_prevoz_2

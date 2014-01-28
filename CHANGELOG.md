@@ -1,3 +1,7 @@
+1.4.275 2014-01-28, vsasa
+ 
+  - FIN, štampanje fin kartice ODT, dupla konverzija
+ 
 1.4.274 2014-01-28, vsasa
  
   - MAT, štampanje dokumenata i PICT kodovi, ispravka

@@ -468,7 +468,7 @@ do while !table:EOF()
         _naz_konto := ""
     endif
 
-    xml_node( "konto_naz", to_xml_encoding( hb_utf8tostr( _naz_konto ) ) )
+    xml_node( "konto_naz", to_xml_encoding( _naz_konto ) )
 
     // partner 
     xml_node( "partner", to_xml_encoding( hb_utf8tostr( _id_partner ) ) )
@@ -480,7 +480,7 @@ do while !table:EOF()
         _naz_partner := ""
     endif
 
-    xml_node( "partner_naz", to_xml_encoding( hb_utf8tostr( _naz_partner ) ) )
+    xml_node( "partner_naz", to_xml_encoding( _naz_partner ) )
 
     _u_pot1 := 0
     _u_dug1 := 0

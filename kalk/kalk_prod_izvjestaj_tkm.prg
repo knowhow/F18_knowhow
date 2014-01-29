@@ -168,12 +168,20 @@ do while !EOF()
     _opis_knjizenja += ALLTRIM( field->idvd ) + "-" + ALLTRIM( field->brdok )
     _opis_knjizenja += ", "
     _opis_knjizenja += "veza: " + ALLTRIM( field->br_fakt )
-    _opis_knjizenja += ", "
-    _opis_knjizenja += ALLTRIM( field->part_naz )
-    _opis_knjizenja += ", "
-    _opis_knjizenja += ALLTRIM( field->part_adr )
-    _opis_knjizenja += ", "
-    _opis_knjizenja += ALLTRIM( field->part_mj )
+
+    if !EMPTY( field->opis )
+        _opis_knjizenja += ", "
+        _opis_knjizenja += ALLTRIM( field->opis )
+    endif
+
+    if !EMPTY( field->part_naz )
+        _opis_knjizenja += ", "
+        _opis_knjizenja += ALLTRIM( field->part_naz )
+        _opis_knjizenja += ", "
+        _opis_knjizenja += ALLTRIM( field->part_adr )
+        _opis_knjizenja += ", "
+        _opis_knjizenja += ALLTRIM( field->part_mj )
+    endif
 
     _a_opis := SjeciStr( _opis_knjizenja, __LEN_OPIS )
 

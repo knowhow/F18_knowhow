@@ -68,7 +68,7 @@ local _v_konta := "N"
 local _gledati_usluge := "N"
 local _cnt := 0
 local _a_porezi
-local __porez, _porez
+local __porez, _porez, _d_opis
 
 aPorezi := {}
 
@@ -214,7 +214,13 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
     _dat_dok := field->datdok
     _broj_dok := field->idvd + "-" + field->brdok
     _tip_dok := field->idvd
-    
+    _d_opis := ""
+
+    // predispozicija...
+    if field->idvd == "80" .and. !EMPTY( field->idkonto2 )
+        _d_opis := "predispozicija " + ALLTRIM( field->idkonto ) + " -> " + ALLTRIM( field->idkonto2 )
+    endif
+
     _t_area := SELECT()
     
     select tdok
@@ -349,9 +355,9 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
             _mp_ulaz += field->mpc * field->kolicina
             _mp_ulaz_p += field->mpcsapp * field->kolicina
   
-        elseif pu_i=="I"
+        elseif field->pu_i == "I"
 
-            Tarifa(field->pkonto, field->idRoba, @aPorezi )
+            Tarifa( field->pkonto, field->idRoba, @aPorezi )
 
             _mp_izlaz += DokMpc( field->idvd, aPorezi ) * field->gkolicin2
             _mp_izlaz_p += field->mpcsapp * field->gkolicin2
@@ -365,7 +371,7 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
 
     @ m_x + 2, m_y + 2 SAY "Dokument: " + _id_d_firma + "-" + _tip_dok + "-" + _d_br_dok
 
-    _add_to_exp( _id_d_firma, _tip_dok, _d_br_dok, _dat_dok, _tip_dok_naz, _id_partner, ;
+    _add_to_exp( _id_d_firma, _tip_dok, _d_br_dok, _d_opis, _dat_dok, _tip_dok_naz, _id_partner, ;
                 _partn_naziv, _partn_mjesto, _partn_ptt, _partn_adresa, _br_fakt, ;
                 _nv_ulaz, _nv_izlaz, _nv_ulaz - _nv_izlaz, ;
                 _mp_ulaz, _mp_izlaz, _mp_ulaz - _mp_izlaz, ;
@@ -398,6 +404,7 @@ AADD( _dbf, { "part_mj"   , "C", 50, 0 } )
 AADD( _dbf, { "part_ptt"  , "C", 10, 0 } )
 AADD( _dbf, { "part_adr"  , "C", 50, 0 } )
 AADD( _dbf, { "br_fakt"   , "C", 20, 0 } )
+AADD( _dbf, { "opis"      , "C", 50, 0 } )
 AADD( _dbf, { "nv_dug"    , "N", 18, 5 } )
 AADD( _dbf, { "nv_pot"    , "N", 18, 5 } )
 AADD( _dbf, { "nv_saldo"  , "N", 18, 5 } )
@@ -425,7 +432,7 @@ return _dbf
 // ---------------------------------------
 // dodaj podatke u r_export tabelu
 // ---------------------------------------
-static function _add_to_exp( id_firma, id_tip_dok, broj_dok, datum_dok, vrsta_dok, id_partner, ;
+static function _add_to_exp( id_firma, id_tip_dok, broj_dok, d_opis, datum_dok, vrsta_dok, id_partner, ;
                             part_naz, part_mjesto, part_ptt, part_adr, broj_fakture, ;
                             n_v_dug, n_v_pot, n_v_saldo, ;
                             m_p_dug, m_p_pot, m_p_saldo, ;
@@ -444,6 +451,7 @@ _rec := hb_hash()
 _rec["idfirma"] := id_firma
 _rec["idvd"] := id_tip_dok
 _rec["brdok"] := broj_dok
+_rec["opis"] := d_opis
 _rec["datum"] := datum_dok
 _rec["vr_dok"] := vrsta_dok
 _rec["idpartner"] := id_partner

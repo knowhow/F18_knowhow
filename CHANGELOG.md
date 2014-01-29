@@ -1,3 +1,7 @@
+1.4.277 2014-01-29, vsasa
+ 
+  - KALK, TKM, opis stavke ako je predispozicija 
+ 
 1.4.276 2014-01-28, vsasa
  
   - KALK, TKM, rabat iskazan kao negativno zaduženje treba biti u bruto iznosu, 

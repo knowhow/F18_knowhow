@@ -1,3 +1,7 @@
+1.4.278 2014-01-29, vsasa
+ 
+  - FAKT, fiskalne funkcije, selekcija partnera i vrste plaćanja G ili VR itd... 
+ 
 1.4.277 2014-01-29, vsasa
  
   - KALK, TKM, opis stavke ako je predispozicija 

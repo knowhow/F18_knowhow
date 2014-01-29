@@ -665,18 +665,12 @@ if tip_dok $ "#11#" .and. _vrsta_p == "KT"
     _v_plac := "1"
 endif
 
+__vrsta_pl := _v_plac
+
 // podaci partnera
 _partn_jib := ALLTRIM( IzSifK( "PARTN", "REGB", _partn_id, .f. ) )
 // oslobadjanje po clanu
 _partn_clan := ALLTRIM( IzSifK( "PARTN" , "PDVO", _partn_id, .f. ) )
-
-// u ovoj varijanti nam partner ne treba !
-// dokument 10, vrsta placanja "G " i nema ID broja ili je INO
-if ( ( tip_dok == "10" .and. _vrsta_p == "G " ) .or. ;
-        ( tip_dok == "11" .and. _vrsta_p == "VR" ) ) ;
-    .and. ( EMPTY( _partn_jib ) .or. LEN( ALLTRIM( _partn_jib ) ) < 12 )
-    return NIL
-endif
 
 if !EMPTY( _partn_jib ) .and. ( LEN( _partn_jib ) < 12 .or. !EMPTY( _partn_clan ) )
 
@@ -712,6 +706,16 @@ if tip_dok == "11"
     endif
 endif
 
+// u ovoj varijanti nam partner ne treba !
+// dokument 10, vrsta placanja "G "
+// dokuemnt 11, vrsta placanja gotovina
+// nema ID broja
+
+if ( tip_dok == "10" .and. _vrsta_p == "G " ) .or. ;
+        ( tip_dok == "11" .and. ! ( _vrsta_p $ "#VR#" ) ) .or. ;
+        EMPTY( _partn_jib )
+    _prikazi_partnera := .f.
+endif
 
 // setuj staticke
 __vrsta_pl := _v_plac

@@ -129,7 +129,7 @@ local _mp_template := "f-stdm.odt"
 local _vp_template := "f-std.odt"
 local _kol_template := "f-stdk.odt"
 local _auto_odabir := __auto_odt == "D"
-local _f_path := my_home()
+local _f_path := F18_TEMPLATE_LOCATION
 local _f_filter := "f-*.odt"
 
 // imamo i gpsamokol parametar koji je bitan... valjda !

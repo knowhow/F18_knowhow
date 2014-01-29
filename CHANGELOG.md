@@ -1,3 +1,7 @@
+1.4.279 2014-01-29, vsasa
+ 
+  - FAKT, štampa ODT faktura, odabir template-a uvijek ide iz /opt/knowhowERP/template/ lokacije 
+ 
 1.4.278 2014-01-29, vsasa
  
   - FAKT, fiskalne funkcije, selekcija partnera i vrste plaćanja G ili VR itd... 

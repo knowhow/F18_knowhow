@@ -19,6 +19,8 @@ local _sr_id, _sr_id_rj, _sr_id_am, _sr_dat_otp, _sr_datum
 local cIdKonto:=qidkonto:=space(7), cidsk:="", ndug:=ndug2:=npot:=npot2:=ndug3:=npot3:=0
 local nCol1:=10
 local _mod_name := "OS"
+local _t_nab, _t_otp, _t_amp
+local _sanacija := .f.
 
 if gOsSii == "S"
     _mod_name := "SII"
@@ -153,16 +155,25 @@ n1:=0
 n2:=0
 
 do while !eof() .and. ( field->idrj = cIdrj .or. empty(cidrj))
+
     cIdSK:=left(idkonto,3)
     nDug2:=nPot21:=nPot22:=0
+    _t_nab := _t_otp := _t_amp := 0
+    _sanacija := .f.
+
     do while !eof() .and. (idrj=cidrj .or. empty(cidrj))  .and. left(idkonto,3)==cidsk
+
         cIdKonto:=idkonto
         nDug3:=nPot31:=nPot32:=0
+        _t_nab := _t_otp := _t_amp := 0
+
         do while !eof() .and. (idrj=cidrj .or. empty(cidrj))  .and. idkonto==cidkonto
+
             if prow() > RPT_PAGE_LEN
                 FF
                 os_zagl_amort()
             endif
+
             if !( (cON=="N" .and. empty(datotp)) .or.;
                (con=="O" .and. !empty(datotp)) .or.;
                (con=="B" .and. year(datum)=year(gdatobr)) .or.;
@@ -188,24 +199,27 @@ do while !eof() .and. ( field->idrj = cIdrj .or. empty(cidrj))
                 select_os_sii()
             endif
 
-            // utvrÐivanje da li sredstvo ima sadaçnju vrijednost
+            // utvrdjivanje da li sredstvo ima sadaçnju vrijednost
             // --------------------------------------------------
+
             lImaSadVr:=.f.
+
             if cPromj <> "3"
                 if nabvr-otpvr-amp>0
                     lImaSadVr:=.t.
                 endif
             endif
+
             if cPromj $ "23"  
                 // prikaz promjena
                 _sr_id := field->id
                 select_promj()
                 hseek _sr_id
-                do while !eof() .and. field->id == _sr_id .and. field->datum <= gDatObr
-                    n1:=0
-                    n2:=amp
-                    if nabvr-otpvr-amp>0
-                        lImaSadVr:=.t.
+                do while !EOF() .and. field->id == _sr_id .and. field->datum <= gDatObr
+                    n1 := 0
+                    n2 := amp
+                    if nabvr - otpvr - amp > 0
+                        lImaSadVr := .t.
                     endif
                     skip
                 enddo
@@ -229,8 +243,12 @@ do while !eof() .and. ( field->idrj = cIdrj .or. empty(cidrj))
                     @ prow(),pcol()+1 SAY amp*nBBK pict gpici
                     @ prow(),pcol()+1 SAY otpvr*nBBK+amp*nBBK pict gpici
                     @ prow(),pcol()+1 SAY nabvr*nBBK-otpvr*nBBK-amp*nBBK pict gpici
-                    nDug3+=nabvr; nPot31+=otpvr
+                    nDug3+=nabvr
+                    nPot31+=otpvr
                     nPot32+=amp
+                    _t_nab += nabvr
+                    _t_otp += otpvr
+                    _t_amp += amp
                 endif
                 if cPromj $ "23"  // prikaz promjena
                     _sr_id := field->id
@@ -238,22 +256,51 @@ do while !eof() .and. ( field->idrj = cIdrj .or. empty(cidrj))
                     select_promj()
                     hseek _sr_id
                     do while !eof() .and. field->id == _sr_id .and. field->datum <= gDatObr
+
                         ? space(5),space(len(id)),space(len( _sr_id_rj )),datum,opis
-                        n1:=0; n2:=amp
+
+                        n1 := 0
+                        n2 := amp
+
+                        if LEFT( field->opis, 2 ) == "#S"
+                            _sanacija := .t.
+                            _t_amp += amp
+                            _t_otp += otpvr
+                            _t_nab += nabvr
+                        endif
+                        
                         @ prow(),ncol1    SAY nabvr*nBBK pict gpici
                         @ prow(),pcol()+1 SAY otpvr*nBBK pict gpici
-                        @ prow(),pcol()+1 SAY amp*nBBK pict gpici
-                        @ prow(),pcol()+1 SAY otpvr*nBBK+amp*nBBK pict gpici
-                        @ prow(),pcol()+1 SAY nabvr*nBBK-amp*nBBK-otpvr*nBBK pict gpici
+                        
+                        if !_sanacija
+                            @ prow(),pcol()+1 SAY amp*nBBK pict gpici
+                            @ prow(),pcol()+1 SAY otpvr*nBBK+amp*nBBK pict gpici
+                            @ prow(),pcol()+1 SAY nabvr*nBBK-amp*nBBK-otpvr*nBBK pict gpici
+                        endif
+
                         nDug3+=nabvr; nPot31+=otpvr
                         nPot32+=amp
                         skip
                     enddo
+
                     select_os_sii()
+
                 endif
+
             endif
 
             skip
+
+            if _sanacija 
+                // ispisati stanje sanacija ako treba....
+                ? SPACE(20) + REPLICATE("-", 88 )
+                ? PADL( "Ukupni obracun sanacija:", nCol1 )
+                @ prow(), nCol1 SAY _t_nab PICT gPicI
+                @ prow(), pcol() + 1 SAY _t_otp PICT gPicI
+                @ prow(), pcol() + 1 SAY _t_amp PICT gPicI
+                ?
+                _sanacija := .f.
+            endif
 
         enddo
 

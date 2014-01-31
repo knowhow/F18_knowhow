@@ -1,6 +1,7 @@
-1.4.279 2014-01-29, vsasa
+1.4.279 2014-01-31, vsasa
  
   - FAKT, štampa ODT faktura, odabir template-a uvijek ide iz /opt/knowhowERP/template/ lokacije 
+  - OS, opcija sanacija kod obračuna amortizacije sredstava
  
 1.4.278 2014-01-29, vsasa
  

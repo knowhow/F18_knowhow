@@ -519,6 +519,8 @@ local _ok := .t.
 local _qry
 local _server := pg_server()
 
+::set_table_name()
+
 // prvo pobrisi sa servera
 _qry := "DELETE FROM " + ::table_name_server
 _qry += " WHERE "

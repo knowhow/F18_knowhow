@@ -441,8 +441,10 @@ _show_report_roba( _roba_data )
 
 if ( gMultiPM == "D" .and. _count > 0 .and. _auto_razduzenje == "N" )
 	// pobrisi fajlove...
-	FileDelete( _imp_file )
-	FileDelete( STRTRAN( _imp_file , ".dbf", ".txt" ) )
+	if FERASE( _imp_file ) == -1
+        MsgBeep( "Problem sa brisanjem fajla !" )
+    endif
+	FERASE( STRTRAN( _imp_file , ".dbf", ".txt" ) )
 endif
 
 return

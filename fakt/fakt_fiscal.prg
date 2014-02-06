@@ -697,15 +697,6 @@ elseif LEN( _partn_jib ) > 12
 
 endif
 
-// kod mp racuna pogledaj na osnovu placanja treba li prikazati partnera ?
-if tip_dok == "11" 
-    if _v_plac == "3" 
-        _prikazi_partnera := .t.
-    else 
-        _prikazi_partnera := .f.
-    endif
-endif
-
 // u ovoj varijanti nam partner ne treba !
 // dokument 10, vrsta placanja "G "
 // dokuemnt 11, vrsta placanja gotovina

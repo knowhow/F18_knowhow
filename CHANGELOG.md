@@ -1,8 +1,9 @@
-1.4.279 2014-02-04, vsasa
+1.4.279 2014-02-06, vsasa
  
   - FAKT, štampa ODT faktura, odabir template-a uvijek ide iz /opt/knowhowERP/template/ lokacije 
   - OS, opcija sanacija kod obračuna amortizacije sredstava
   - KALK, brisanje grupe dokumenata - bugfix
+  - FAKT, štampa fiskalnog računa, bugfix (ino partner, virmansko plaćanje)
  
 1.4.278 2014-01-29, vsasa
  

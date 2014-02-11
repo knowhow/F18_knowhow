@@ -16,7 +16,7 @@
 
 #define FMK_LIB_VER   "4.3.4"
 
-#define F18_TEMPLATE_VER "1.4.6"
+#define F18_TEMPLATE_VER "1.4.7"
 
 #define F18_DBF_VER_MAJOR  0
 #define F18_DBF_VER_MINOR  9

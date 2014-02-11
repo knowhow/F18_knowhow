@@ -1,6 +1,7 @@
 1.4.280 2014-02-11, vsasa
  
   - RNAL, datum štampanja specifikacije / obračunskog lista
+  - RNAL, štampa specifikacije - korekcije
  
 1.4.279 2014-02-06, vsasa
  

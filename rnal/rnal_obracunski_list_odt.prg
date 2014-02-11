@@ -142,6 +142,7 @@ xml_subnode( "spec", .f. )
 // upisi osvnovne podatke naloga
 xml_node( "fdesc", to_xml_encoding( params["firma_naziv"] ) )
 xml_node( "no", params["nalog_broj"] )
+xml_node( "cdate", DTOC( DATE() ) )
 xml_node( "date", params["nalog_datum"] )
 xml_node( "time", params["nalog_vrijeme"] )
 xml_node( "ob_id", to_xml_encoding( params["nalog_objekat_id"] ) )

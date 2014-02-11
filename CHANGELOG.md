@@ -1,3 +1,7 @@
+1.4.280 2014-02-11, vsasa
+ 
+  - RNAL, datum štampanja specifikacije / obračunskog lista
+ 
 1.4.279 2014-02-06, vsasa
  
   - FAKT, štampa ODT faktura, odabir template-a uvijek ide iz /opt/knowhowERP/template/ lokacije 

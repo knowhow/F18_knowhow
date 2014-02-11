@@ -130,6 +130,7 @@ local _docs, _doc_no, _doc_xxx, _doc_no_str, _doc_it_str, _art_sh, _art_id
 local _t_neto, _t_qtty, _t_total, _t_total_m
 local _t_u_neto, _t_u_qtty, _t_u_total, _t_u_total_m
 local _ok := .t.
+local _count := 0
 
 PIC_VRIJEDNOST := PADL( ALLTRIM( RIGHT( _picdem, LEN_VRIJEDNOST ) ), LEN_VRIJEDNOST, "9" )
 
@@ -213,6 +214,8 @@ do while !EOF()
         do while !EOF() .and. field->doc_no == _doc_no ;
             .and. PADR(field->art_sh_des, 150 ) == ;
                 PADR( _art_sh, 150 )
+
+            ++ _count
 
             // da li se stavka stampa ili ne ?
             if field->print == "N"

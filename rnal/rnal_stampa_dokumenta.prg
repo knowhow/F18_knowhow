@@ -299,7 +299,7 @@ local lGroups := .f.
 local nGr1 
 local nGr2
 local cPosition
-local cIt_lab_pos
+local cIt_lab_pos, cArtShTmp
 local xx
 local nScan
 
@@ -333,6 +333,7 @@ seek docno_str(__doc_no)
 
 nArtTmp := -1
 cGrTmp := "-1"
+cArtShTmp := "xxx"
 
 // filuj stavke
 do while !EOF() .and. field->doc_no == __doc_no
@@ -436,7 +437,7 @@ do while !EOF() .and. field->doc_no == __doc_no
     endif
 
     // ako je artikal isti ne treba mu opis...
-    if ( nArt_Id == nArtTmp ) .and. ( cGrTmp == cDoc_gr_no )
+    if ( nArt_Id == nArtTmp ) .and. ( cGrTmp == cDoc_gr_no ) .and. ( cArt_sh == cArtShTmp )
         if lZpoGN == .f.
             cArt_desc := ""
         endif
@@ -550,19 +551,19 @@ do while !EOF() .and. field->doc_no == __doc_no
     
         for xx := 1 to ( LEN(cDoc_gr_no) )
     
-        // ako je vec kao grupa 1 onda preskoci...
-        if VAL(SUBSTR(cDoc_gr_no, xx, 1)) == nGr1
-            loop
-        endif
+            // ako je vec kao grupa 1 onda preskoci...
+            if VAL(SUBSTR(cDoc_gr_no, xx, 1)) == nGr1
+                loop
+            endif
 
-        a_t_docit( __doc_no, VAL(SUBSTR(cDoc_Gr_no, xx, 1)), nDoc_it_no, nArt_id, cArt_desc , cArt_sh, ;
-          cDoc_it_schema, cDoc_it_desc, cDoc_it_type, ;
-          nQtty, nHeigh, nWidth, ;
-          nHe2, nWi2, ;
-          nDocit_altt, cDocit_city, nTotal, nTot_m, ;
-          nZHeigh, nZWidth, ;
-          nZH2, nZW2, ;
-          nNeto, nBruto, cDoc_it_pos, cIt_lab_pos )
+            a_t_docit( __doc_no, VAL(SUBSTR(cDoc_Gr_no, xx, 1)), nDoc_it_no, nArt_id, cArt_desc , cArt_sh, ;
+                cDoc_it_schema, cDoc_it_desc, cDoc_it_type, ;
+                nQtty, nHeigh, nWidth, ;
+                nHe2, nWi2, ;
+                nDocit_altt, cDocit_city, nTotal, nTot_m, ;
+                nZHeigh, nZWidth, ;
+                nZH2, nZW2, ;
+                nNeto, nBruto, cDoc_it_pos, cIt_lab_pos )
 
         next
 
@@ -570,7 +571,8 @@ do while !EOF() .and. field->doc_no == __doc_no
     
     nArtTmp := nArt_Id
     cGrTmp := cDoc_gr_no
-    
+    cArtShTmp := cArt_sh
+
     select ( nTable )
     skip
 enddo

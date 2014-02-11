@@ -299,7 +299,7 @@ local lGroups := .f.
 local nGr1 
 local nGr2
 local cPosition
-local cIt_lab_pos, cArtShTmp
+local cIt_lab_pos, cArtShTmp, cOrigDesc
 local xx
 local nScan
 
@@ -436,6 +436,8 @@ do while !EOF() .and. field->doc_no == __doc_no
         cArt_desc += cOper_desc
     endif
 
+    cOrigDesc := cArt_desc
+
     // ako je artikal isti ne treba mu opis...
     if ( nArt_Id == nArtTmp ) .and. ( cGrTmp == cDoc_gr_no ) .and. ( cArt_sh == cArtShTmp )
         if lZpoGN == .f.
@@ -534,7 +536,7 @@ do while !EOF() .and. field->doc_no == __doc_no
     nGr1 := VAL( SUBSTR(cDoc_gr_no, 1, 1) )
 
     // dodaj u stavke
-    a_t_docit( __doc_no, nGr1, nDoc_it_no, nArt_id, cArt_desc , cArt_sh, ;
+    a_t_docit( __doc_no, nGr1, nDoc_it_no, nArt_id, cArt_desc , cArt_sh, cOrigDesc, ;
           cDoc_it_schema, cDoc_it_desc, cDoc_it_Type, ;
           nQtty, nHeigh, nWidth, ;
           nHe2, nWi2, ;
@@ -556,7 +558,7 @@ do while !EOF() .and. field->doc_no == __doc_no
                 loop
             endif
 
-            a_t_docit( __doc_no, VAL(SUBSTR(cDoc_Gr_no, xx, 1)), nDoc_it_no, nArt_id, cArt_desc , cArt_sh, ;
+            a_t_docit( __doc_no, VAL(SUBSTR(cDoc_Gr_no, xx, 1)), nDoc_it_no, nArt_id, cArt_desc , cArt_sh, cOrigDesc, ;
                 cDoc_it_schema, cDoc_it_desc, cDoc_it_type, ;
                 nQtty, nHeigh, nWidth, ;
                 nHe2, nWi2, ;

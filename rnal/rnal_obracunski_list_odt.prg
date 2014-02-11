@@ -127,7 +127,7 @@ static function _cre_xml( params )
 local _xml := my_home() + "data.xml"
 local _picdem := "999999999.99"
 local _docs, _doc_no, _doc_xxx, _doc_no_str, _doc_it_str, _art_sh, _art_id
-local _t_neto, _t_qtty, _t_total, _t_total_m
+local _t_neto, _t_qtty, _t_total, _t_total_m, _description
 local _t_u_neto, _t_u_qtty, _t_u_total, _t_u_total_m
 local _ok := .t.
 local _count := 0
@@ -246,11 +246,16 @@ do while !EOF()
             _t_total += field->doc_it_tot
             _t_total_m += field->doc_it_tm
 
+            _description := ALLTRIM( field->art_desc )
+            if _count == 1 .and. EMPTY( _description )
+                _description := ALLTRIM( field->full_desc )
+            endif
+
             // opis stavke...
-            if EMPTY( field->art_desc )
+            if EMPTY( _description )
                 _art_desc := "-//-"
             else
-                _art_desc := ALLTRIM( field->art_desc )
+                _art_desc := ALLTRIM( _description )
             endif
 
             // redni broj u nalogu

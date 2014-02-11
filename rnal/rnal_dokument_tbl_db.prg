@@ -59,7 +59,7 @@ endif
 
 // kreiraj T_DOCIT
 if !FILE(PRIVPATH + cT_DOCIT)
-	g_docit_fields(@aT_DOCIT)
+	g_docit_fields( @aT_DOCIT )
 	dbcreate2(PRIVPATH + cT_DOCIT, aT_DOCIT)
 endif
 
@@ -120,6 +120,7 @@ AADD(aArr,{ "doc_it_no"  , "N" ,   4 ,  0 })
 AADD(aArr,{ "art_id"     , "N" ,  10 ,  0 })
 AADD(aArr,{ "art_sh_des", "C" , 150 ,  0 })
 AADD(aArr,{ "art_desc"   , "C" , 250 ,  0 })
+AADD(aArr,{ "full_desc" , "C" , 250 ,  0 })
 AADD(aArr,{ "doc_it_qtt", "N" ,  15 ,  5 })
 AADD(aArr,{ "doc_it_hei" , "N" ,  15 ,  5 })
 AADD(aArr,{ "doc_it_h2" , "N" ,  15 ,  5 })
@@ -290,7 +291,7 @@ return
 
 // dodaj stavke u tabelu T_RNST
 function a_t_docit( nDoc_no, nDoc_gr_no, nDoc_it_no, nArt_id, cArt_desc, ;
-		    cArt_sh_desc, ;
+		    cArt_sh_desc, cOrigDesc, ;
 		    cDoc_it_schema, cDoc_it_desc, cDoc_it_type, ;
 		    nDoc_it_qtty, nDoc_it_heigh, nDoc_it_width, ;
 		    nDoc_it_h2, nDoc_it_w2, ;
@@ -308,6 +309,7 @@ replace doc_no with nDoc_no
 replace doc_it_no with nDoc_it_no
 replace art_id with nArt_id
 replace art_desc with cArt_desc
+replace full_desc with cOrigDesc
 replace art_sh_des with cArt_sh_desc
 replace doc_it_qtt with nDoc_it_qtty
 replace doc_it_hei with nDoc_it_heigh

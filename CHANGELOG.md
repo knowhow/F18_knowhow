@@ -1,3 +1,7 @@
+1.4.281 2014-02-14, vsasa
+ 
+  - LD, štampa specifikacije za RS, omjer doprinosa za zdravstvo
+ 
 1.4.280 2014-02-11, vsasa
  
   - RNAL, datum štampanja specifikacije / obračunskog lista

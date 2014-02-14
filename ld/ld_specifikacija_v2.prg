@@ -98,6 +98,7 @@ local cRTipRada := " "
 local cMatBr
 local _proizv_ini
 local _a_benef := {}
+local _omjer_zdravstvo, _omjer_nezap
 
 private aSpec:={}
 private cFNTZ:="D"
@@ -227,6 +228,9 @@ qqOpSt := fetch_metric("ld_specifikacija_opcine", nil, qqOpSt)
 qqIdRj:=PadR(qqIdRj, 80) 
 qqOpSt:=PadR(qqOpSt, 80)
 
+_omjer_zdravstvo := fetch_metric("ld_specifikacija_omjer_dopr_zdr", NIL, 10.2 )
+_omjer_nezap := fetch_metric("ld_specifikacija_omjer_dopr_nezap", NIL, 30 )
+
 cIsplata := fetch_metric("ld_specifikacija_vrsta_isplate", nil, cIsplata)
 
 cMatBr := fetch_metric( "ld_specifikacija_maticni_broj", nil, cMatBr )
@@ -276,8 +280,10 @@ do while .t.
         @ m_x+10,col()+ 2 SAY "Dopr.pio (na)" GET cDopr5
         @ m_x+11,m_y+ 2 SAY "Dopr.zdr (iz)" GET cDopr2
         @ m_x+11,col()+ 2 SAY "Dopr.zdr (na)" GET cDopr6
+        @ m_x+11, col() + 1 SAY "Omjer dopr.zdr (%):" GET _omjer_zdravstvo PICT "999.99999"
         @ m_x+12,m_y+ 2 SAY "Dopr.nez (iz)" GET cDopr3
         @ m_x+12,col()+ 2 SAY "Dopr.nez (na)" GET cDopr7
+        @ m_x+12, col() + 1 SAY "Omjer dopr.nez (%):" GET _omjer_nezap PICT "999.99999"
             
         @ m_x+13,m_y+ 2 SAY "Dod.dopr.pio" GET cDDoprPio PICT "@S35"
         @ m_x+14,m_y+ 2 SAY "Dod.dopr.zdr" GET cDDoprZdr PICT "@S35"
@@ -329,6 +335,8 @@ set_metric("ld_specifikacija_n2", nil, cnOO2)
 set_metric("ld_specifikacija_n3", nil, cnOO3)
 set_metric("ld_specifikacija_n4", nil, cnOO4)
 set_metric("ld_specifikacija_vrsta_isplate", nil, cIsplata)
+set_metric("ld_specifikacija_omjer_dopr_zdr", NIL, _omjer_zdravstvo )
+set_metric("ld_specifikacija_omjer_dopr_nezap", NIL, _omjer_nezap )
 
 qqIdRj:=TRIM(qqIdRj)
 qqOpSt:=TRIM(qqOpSt)
@@ -864,7 +872,7 @@ nPom2 := nPom
 UzmiIzIni(cIniName,'Varijable','D21', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
  
 // zdravstvo za RS
-nPom := nPom2 * 0.09
+nPom := nPom2 * ( _omjer_zdravstvo / 100 )
 nD21a := nPom
 UzmiIzIni(cIniName,'Varijable','D21a', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
 
@@ -874,7 +882,7 @@ nPom2 := nPom
 UzmiIzIni(cIniName,'Varijable','D22', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
  
 // nezaposlenost za RS
-nPom := nPom2 * 0.30
+nPom := nPom2 * ( _omjer_nezap / 100 )
 nD22a := nPom
 UzmiIzIni(cIniName,'Varijable','D22a', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
 

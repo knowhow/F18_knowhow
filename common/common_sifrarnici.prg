@@ -142,7 +142,7 @@ return IsInoDob(cIdPartner, lShow)
 function IsInoDob(cIdPartner, lShow)
 local cIdBroj
 
-cIdBroj := IzSifK("PARTN", "REGB", cIdPartner, .f.)
+cIdBroj := IzSifK( "PARTN", "REGB", cIdPartner, .f. )
 
 if !EMPTY(cIdBroj)
   if LEN(ALLTRIM(cIdBroj)) < 12
@@ -163,7 +163,7 @@ endif
 function PdvParIIIF(cIdPartner, nPdvObv, nNoPdv, nIno, nUndefined)
 local cIdBroj
 
-cIdBroj := IzSifK("PARTN", "REGB", cIdPartner, .f.)
+cIdBroj := IzSifK("PARTN", "REGB", cIdPartner, .f. )
 cIdBroj := ALLTRIM(cIdBroj)
 
 if !EMPTY(cIdBroj)
@@ -183,7 +183,7 @@ endif
 //
 function PdvOslobadjanje(cIdPartner)
 local cIdBroj
-return cIdBroj := IzSifK("PARTN", "PDVO", cIdPartner, .f.)
+return cIdBroj := IzSifK("PARTN", "PDVO", cIdPartner, .f. )
 
 // ---------------------------------------------
 // da li je partner oslobodjen po clanu
@@ -221,7 +221,7 @@ return lRet
 //  ------------------------------------------------------------------------
 function IsProfil(cIdPartner, cProfId)
 local cProfili
-cProfili := IzSifK("PARTN", "PROF", cIdPartner, .f.)
+cProfili := IzSifK("PARTN", "PROF", cIdPartner, .f. )
 
 if cProfId $ UPPER(cProfili)
 	return .t.

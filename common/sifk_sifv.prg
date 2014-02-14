@@ -181,12 +181,11 @@ cField := aFields[nField, 1]
 return .t.
 
 
-function IzSifk (dbf_name, ozna, id_sif, return_nil)
+function IzSifk( dbf_name, ozna, id_sif, return_nil )
 local _tmp
 
 PushWa()
-_tmp := get_sifk_value(dbf_name, ozna, id_sif, return_nil)
-
+_tmp := get_sifk_value( dbf_name, ozna, id_sif, return_nil )
 PopWa()
 
 return _tmp
@@ -217,13 +216,12 @@ endif
 
 // ID default polje
 if id_sif == NIL
-  id_sif:=(dbf_name)->ID
+  id_sif := (dbf_name)->ID
 endif
 
 dbf_name := PADR(dbf_name, SIFK_LEN_DBF )
 ozna     := PADR(ozna, SIFK_LEN_OZNAKA )
 id_sif   := PADR(id_sif, SIFK_LEN_IDSIF)
-
 
 SELECT sifk
 SET ORDER TO TAG "ID2"

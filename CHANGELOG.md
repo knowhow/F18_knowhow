@@ -1,3 +1,7 @@
+1.4.282 2014-02-14, vsasa
+ 
+  - FAKT, provjera PDV-a prilikom štampanja fakture 
+ 
 1.4.281 2014-02-14, vsasa
  
   - LD, štampa specifikacije za RS, omjer doprinosa za zdravstvo

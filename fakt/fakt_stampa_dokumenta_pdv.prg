@@ -32,7 +32,7 @@ local _fakt_params := fakt_params()
 // samo kolicine
 local lSamoKol:=.f. 
 
-if lJFill == nil
+if lJFill == NIL
 	lJFill := .f.
 endif
 
@@ -63,26 +63,25 @@ if _fakt_params["barkod"] $ "12"  // pitanje, default "N"
 endif
 
 if PCount() == 0 .or. ( cIdTipDok == nil .and. lJFill == .t. )
- 	cIdTipdok:=idtipdok
-	cIdFirma:=IdFirma
-	cBrDok:=BrDok
+ 	cIdTipdok := field->idtipdok
+	cIdFirma := field->IdFirma
+	cBrDok := field->BrDok
 endif
 
 seek cIdFirma + cIdTipDok + cBrDok
 NFOUND CRET
 
-if PCount() <= 1 .or. ( cIdTipDok == nil .and. lJFill == .t.)
+if PCount() <= 1 .or. ( cIdTipDok == NIL .and. lJFill == .t. )
 	select fakt_pripr
 endif
 
 //napuni podatke za stampu
-_dok["idfirma"] := IdFirma
-_dok["idtipdok"] := IdTipDok
-_dok["brdok"] := BrDok 
-_dok["datdok"] := DatDok 
+_dok["idfirma"] := field->IdFirma
+_dok["idtipdok"] := field->IdTipDok
+_dok["brdok"] := field->BrDok 
+_dok["datdok"] := field->DatDok 
 
-
-cDocumentName:=doc_name(_dok, fakt_pripr->IdPartner)
+cDocumentName := doc_name( _dok, fakt_pripr->IdPartner )
 
 // prikaz samo kolicine
 if cIdTipDok $ "01#00#12#13#19#21#22#23#26"
@@ -104,12 +103,15 @@ __FIN_KUM := STRTRAN( KUMPATH, "FAKT", "FIN" )
 _fill_params["barkod"] := lPBarkod
 _fill_params["samo_kolicine"] := lSamoKol
  
-fill_porfakt_data(_dok, _fill_params)
+// ako nije nesto uredu! izadji...
+if !fill_porfakt_data( _dok, _fill_params )
+    // izadji ....
+    return
+endif
 
 if lJFill
 	return
 endif
-
 
 if cIdTipDok $ "13#23"
 	// stampa 13-ke
@@ -154,7 +156,6 @@ return
 // puni  pomocne tabele rn drn
 // ----------------------------------------------------------------------
 static function fill_porfakt_data(dok, params)
-
 local cTxt1,cTxt2,cTxt3,cTxt4,cTxt5
 local cIdPartner
 local dDatDok
@@ -255,7 +256,7 @@ select fakt_pripr
 // napuni podatke partnera
 
 lPdvObveznik := .f.
-fill_part_data(idpartner, @lPdvObveznik)
+fill_part_data( field->idpartner, @lPdvObveznik )
 
 // popuni ostale podatke, radni nalog i slicno
 fill_other()
@@ -263,7 +264,7 @@ fill_other()
 select fakt_pripr
 
 // vrati naziv dokumenta
-get_dok_naz(@cDokNaz, idtipdok, idvrstep, params["samo_kolicine"])
+get_dok_naz( @cDokNaz, field->idtipdok, field->idvrstep, params["samo_kolicine"] )
 
 select fakt_pripr
 
@@ -282,25 +283,42 @@ DEC_CIJENA(ZAO_CIJENA())
 DEC_VRIJEDNOST(ZAO_VRIJEDNOST())
 
 lIno:=.f.
-do while !EOF() .and. idfirma==dok["idfirma"]  .and. idtipdok==dok["idtipdok"] .and. brdok==dok["brdok"]
+do while !EOF() .and. field->idfirma == dok["idfirma"] .and. ;
+                    field->idtipdok == dok["idtipdok"] .and. ;
+                    field->brdok == dok["brdok"]
+
 	// Nastimaj (hseek) Sifr.Robe Na fakt_pripr->IdRoba
-	NSRNPIdRoba()   
+	//NSRNPIdRoba()
+    select roba
+    set order to tag "ID"
+    go top
+    seek fakt_pripr->idroba   
+
+    if !FOUND()
+        Msgbeep( "Artikal " + field->idroba + " ne postoji u sifrarniku !!!" )
+        return .f.
+    endif
 
 	// nastimaj i tarifu
 	select tarifa
-	hseek roba->idtarifa
+    set order to tag "ID"
+    go top
+	seek roba->idtarifa
+
+    if !FOUND()
+        MsgBeep( "Tarifa " + roba->idtarifa + " ne postoji u sifraniku !!!" )
+        return .f.
+    endif
+
 	select fakt_pripr
 
-    aMemo:=ParsMemo(txt)
+    aMemo := ParsMemo( field->txt )
 	cIdRoba := field->idroba
 	
-	if roba->tip="U"
-
-		cRobaNaz:=aMemo[1]
-	
+	if roba->tip == "U"
+		cRobaNaz := aMemo[1]
 	else
 		cRobaNaz := ALLTRIM( roba->naz )
-		
 		if params["barkod"]
 			cRobaNaz := cRobaNaz + " (BK: " + roba->barkod + ")"
 		endif
@@ -308,13 +326,12 @@ do while !EOF() .and. idfirma==dok["idfirma"]  .and. idtipdok==dok["idtipdok"] .
 
 	// ako je roba grupa:
 	if glRGrPrn == "D"
-		
-		cPom := _op_gr(roba->id, "GR1") + ": " + _val_gr(roba->id, "GR1") + ;
+		cPom := _op_gr( roba->id, "GR1") + ": " + _val_gr(roba->id, "GR1") + ;
 			", " + _op_gr(roba->id, "GR2") + ": " + _val_gr(roba->id, "GR2")
 		
 		cRobaNaz += " "
 		cRobaNaz += cPom
-		
+        select fakt_pripr
 	endif
 
 	// dodaj i vrijednost iz polja SERBR
@@ -328,19 +345,26 @@ do while !EOF() .and. idfirma==dok["idfirma"]  .and. idtipdok==dok["idtipdok"] .
 	nCjBPDV := 0
 	nCj2BPDV := 0
 	nVPopust := 0
+    nPPDV := 0
 	
-	cRbr := rbr
-	cPodBr := podbr
+	cRbr := field->rbr
+	cPodBr := field->podbr
 	cJmj := roba->jmj
 
 	// procenat pdv-a
 	nPPDV := tarifa->opp
 	
-	cIdPartner := fakt_pripr->idpartner
+	cIdPartner := field->idpartner
+
+    if EMPTY( cIdPartner )
+        MsgBeep( "Partner na fakturi - prazno - nesto nije ok !????" )
+        return .f.
+    endif
 
     if _fakt_params["fakt_opis_stavke"]
         dok["rbr"] := rbr
         cOpis := get_fakt_atribut_opis( dok, params["from_server"])
+        select fakt_pripr
     else
         cOpis := ""
     endif
@@ -392,9 +416,9 @@ do while !EOF() .and. idfirma==dok["idfirma"]  .and. idtipdok==dok["idtipdok"] .
 	   	nPopNaTeretProdavca := field->rabat
 	   	nPopust := 0
 	else
-	    	// rabat - popust
-	    	nPopust := field->rabat
-	    	nPopNaTeretProdavca := 0
+	    // rabat - popust
+	    nPopust := field->rabat
+	    nPopNaTeretProdavca := 0
 	endif
 	
 	// ako je 13-ka ili 27-ca
@@ -478,15 +502,13 @@ do while !EOF() .and. idfirma==dok["idfirma"]  .and. idtipdok==dok["idtipdok"] .
 
 	select fakt_pripr
 	skip
+
 enddo	
 
 // zaokruzi pdv na zao_vrijednost()
 nUkPDV := ROUND( nUkPDV, ZAO_VRIJEDNOST() ) 
 
-nTotal := (nUkBPDVPop + nUkPDV)
-
-// zaokruzenje
-//nFZaokr := ROUND(nTotal, ZAO_VRIJEDNOST()) - ROUND2(ROUND(nTotal, ZAO_VRIJEDNOST()), gFZaok)
+nTotal := ( nUkBPDVPop + nUkPDV )
 
 if goModul:oDataBase:cSezona >= "2011" 
 	nFZaokr := zaokr_5pf( nTotal )
@@ -676,7 +698,13 @@ endcase
 // dodaj total u DRN
 add_drn(dok["brdok"], dok["datdok"], dDatVal, dDatIsp, cTime, nUkBPDV, nUkVPop, nUkBPDVPop, nUkPDV, nTotal, nCSum, nUkPopNaTeretProdavca, nDrnZaokr, nUkKol)
 
-return
+if ROUND( nUkPDV, 2 ) == 0
+    if Pitanje(, "Faktura je bez iznosa PDV-a! Da li je to uredu (D/N)", "D" ) == "N"
+        return .f.
+    endif
+endif
+
+return .t.
 
 
 // -------------------------------------
@@ -1089,36 +1117,31 @@ local cPartFax:=""
 local cPartPTT:=""
 local aMemo:={}
 local lFromMemo:=.f.
+local _t_area := SELECT()
 
 if Empty(ALLTRIM(cID))
-	
 	// ako je prazan partner uzmi iz memo polja
 	aMemo:=ParsMemo(txt)
 	lFromMemo := .t.
-	
 else
-	
 	O_PARTN
 	select partn
 	set order to tag "ID"
 	hseek cId
-	
 endif
 
 if !lFromMemo .and. partn->id == cId
-	
 	// uzmi podatke iz SIFK
-	cIdBroj := IzSifK("PARTN", "REGB", cId, .f.)
-	cPorBroj := IzSifK("PARTN", "PORB", cId, .f.)
-	cBrRjes := IzSifK("PARTN", "BRJS", cId, .f.)
-	cBrUpisa := IzSifK("PARTN", "BRUP", cId, .f.)
+	cIdBroj := IzSifK( "PARTN", "REGB", cId, .f. )
+	cPorBroj := IzSifK( "PARTN", "PORB", cId, .f. )
+	cBrRjes := IzSifK( "PARTN", "BRJS", cId, .f. )
+	cBrUpisa := IzSifK( "PARTN", "BRUP", cId, .f. )
 	cPartNaziv := partn->naz
 	cPartAdres := partn->adresa
 	cPartMjesto := partn->mjesto
 	cPartPtt := partn->ptt
 	cPartTel := partn->telefon
 	cPartFax := partn->fax
-	
 else
 	if LEN(aMemo) == 0
 		cPartNaziv := ""
@@ -1164,13 +1187,18 @@ add_drntext("K06", cBrRjes)
 // brupisa
 add_drntext("K07", cBrUpisa)
 
+select ( _t_area )
+
 return
+
 
 static function fill_firm_data()
 local i
 local cBanke
 local cPom
 local lPrazno
+local _t_area := SELECT()
+
 // opci podaci
 add_drntext("I01", gFNaziv)
 add_drntext("I20", gFPNaziv)
@@ -1214,6 +1242,8 @@ add_drntext("I09", cBanke )
 add_drntext("I12", ALLTRIM(gFText1))
 add_drntext("I13", ALLTRIM(gFText2))
 add_drntext("I14", ALLTRIM(gFText3))
+
+select ( _t_area )
 
 return
 

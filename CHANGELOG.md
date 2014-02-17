@@ -1,3 +1,7 @@
+1.4.283 2014-02-17, vsasa
+ 
+  - KALK, dokument 81 unos kaskadnog rabata + unos ukupne fakturne vrijednosti 
+ 
 1.4.282 2014-02-14, vsasa
  
   - FAKT, provjera PDV-a prilikom štampanja fakture 

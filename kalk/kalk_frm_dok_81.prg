@@ -24,6 +24,7 @@ local _use_opis := .f.
 local _use_rok := .f.
 local _opis := SPACE(300)
 local _rok := CTOD("")
+local _krabat := NIL
 
 if hb_hhaskey( atrib, "opis" )
     _use_opis := .t.
@@ -174,12 +175,20 @@ if gDokKVal == "D"
     @ m_x + _x, col() + 1 SAY "pr.->" GET __k_val VALID _val_konv( __k_val ) PICT "@!"
 endif
 
-@ m_x + _x, m_y + _unos_left GET _fcj PICT PicDEM VALID _fcj > 0 WHEN VKol()
+@ m_x + _x, m_y + _unos_left GET _fcj ;
+        PICT PicDEM ;
+        VALID {|| SETKEY( K_ALT_T, { || NIL } ), _fcj > 0 } ;
+        WHEN VKol()
+@ m_x + _x, col() + 1 SAY "*** <ALT+T> unos ukupne FV"
 
 // KASA-SKONTO ili RABAT
+
 ++ _x
 @ m_x + _x, m_y + 2   SAY "Rabat (%):"
-@ m_x + _x, m_y + _unos_left GET _rabat PICT PicDEM WHEN DuplRoba()
+@ m_x + _x, m_y + _unos_left GET _rabat PICT PicDEM ;
+        WHEN { || SETKEY( K_ALT_T, { || _kaskadni_rabat( @_krabat ) } ), DuplRoba() } ;
+        VALID { || SETKEY( K_ALT_T, { || NIL } ), .t. }
+@ m_x + _x, col() + 1 SAY "*** <ALT+T> unos kaskadnog rabata"
 
 if gNW <> "X"
     ++ _x 
@@ -211,29 +220,100 @@ return lastkey()
 
 
 
+// ---------------------------------------------
+// unos kaskadnog rabata
+// ---------------------------------------------
+static function _kaskadni_rabat( krabat )
+local _r_1 := 0
+local _r_2 := 0
+local _r_3 := 0
+local _r_4 := 0
+local _ok := .t.
+private GetList := {}
 
+Box(, 8, 50 )
+    @ m_x + 1, m_y + 2 SAY "Unos kaskadnog rabata:"
+    @ m_x + 3, m_y + 2 SAY "Rabat 1 (%):" GET _r_1 PICT PicDem
+    @ m_x + 4, m_y + 2 SAY "Rabat 2 (%):" GET _r_2 PICT PicDem
+    @ m_x + 5, m_y + 2 SAY "Rabat 3 (%):" GET _r_3 PICT PicDem
+    @ m_x + 6, m_y + 2 SAY "Rabat 4 (%):" GET _r_4 PICT PicDem
+    READ
+BoxC()
 
-static function VKol()
-if _kolicina<0  // storno
-//////// kalkulacija nabavne cijene
-//////// nKolZN:=kolicina koja je na stanju a porijeklo je od zadnje nabavke
-nKolS:=0;nKolZN:=0;nc1:=nc2:=0; dDatNab:=ctod("")
- if !empty(gMetodaNC)
-  MsgO("Racunam stanje na u prodavnici")
-  KalkNabP(_idfirma,_idroba,_idkonto,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab)
-  MsgC()
-  @ m_x+12,m_y+30   SAY "Ukupno na stanju "; @ m_x+12,col()+2 SAY nkols pict pickol
- endif
- if dDatNab>_DatDok; Beep(1);Msg("Datum nabavke je "+dtoc(dDatNab),4);endif
- //if _nc==0; _nc:=nc2; endif
- //if gMetodaNC $ "13"; _nc:=nc1; elseif gMetodaNC=="2"; _nc:=nc2; endif
- if nkols < abs(_kolicina)
-   _ERROR:="1"
-   Beep(2)
-   Msg("Na stanju je samo kolicina:"+str(nkols,12,3))
- endif
-select kalk_pripr
+if LastKey() == K_ESC
+    return _ok
 endif
+
+_rabat := ( 100 - 100 * ( 1 - _r_1 / 100 ) * ;
+          IF( _r_2 > 0, ( 1 - _r_2 / 100 ), 1 ) * ;
+          IF( _r_3 > 0, ( 1 - _r_3 / 100 ), 1 ) * ;
+          IF( _r_4 > 0, ( 1 - _r_4 / 100 ), 1 ) ;
+          )
+
+return _ok
+
+
+
+// ---------------------------------------------
+// unos ukupne fakturne vrijednosti
+// ---------------------------------------------
+static function _fv_ukupno()
+local _uk_fv := 0
+local _ok := .t.
+private GetList := {}
+
+Box(, 1, 50 )
+    @ m_x + 1, m_y + 2 SAY "Ukupna FV:" GET _uk_fv PICT PicDem
+    READ
+BoxC()
+
+if LastKey() == K_ESC .or. ROUND( _uk_fv, 2 ) == 0
+    return _ok
+endif
+
+_fcj := ( _uk_fv / _kolicina )
+
+return _ok
+
+
+// --------------------------------------------
+// --------------------------------------------
+static function VKol()
+
+SETKEY( K_ALT_T, { || _fv_ukupno() } )
+
+if _kolicina < 0  
+    
+    // storno
+
+    //////// kalkulacija nabavne cijene
+    //////// nKolZN:=kolicina koja je na stanju a porijeklo je od zadnje nabavke
+    nKolS := 0
+    nKolZN := 0
+    nc1 := nc2 := 0
+    dDatNab := CTOD("")
+
+    if !empty(gMetodaNC)
+        MsgO("Racunam stanje na u prodavnici")
+        KalkNabP(_idfirma,_idroba,_idkonto,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab)
+        MsgC()
+        @ m_x + 12, m_y + 30 SAY "Ukupno na stanju "
+        @ m_x + 12, col() + 2 SAY nKols pict pickol
+    endif
+
+    if dDatNab > _DatDok
+        Beep(1)
+        Msg("Datum nabavke je "+dtoc(dDatNab),4)
+    endif
+
+    if nkols < abs(_kolicina)
+        _ERROR:="1"
+        Beep(2)
+        Msg("Na stanju je samo kolicina:"+str(nkols,12,3))
+    endif
+    select kalk_pripr
+endif
+
 return .t.
 
 

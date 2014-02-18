@@ -75,6 +75,9 @@ AADD( _dbf, { "TEKRN"   , "C", 50, 0 } )
 AADD( _dbf, { "KNJIZ"   , "C", 50, 0 } )
 AADD( _dbf, { "IZNOS_1" , "N", 15, 2 } )
 AADD( _dbf, { "IZNOS_2" , "N", 15, 2 } )
+AADD( _dbf, { "KREDIT"  , "N", 15, 2 } )
+AADD( _dbf, { "PARTIJA" , "C", 50, 2 } )
+AADD( _dbf, { "BANK_PART" , "C", 50, 2 } )
 AADD( _dbf, { "UNETO"   , "N", 15, 2 } )
 AADD( _dbf, { "USATI"   , "N", 15, 2 } )
 
@@ -141,7 +144,7 @@ local _dod_polja := PADR( fetch_metric("ld_export_banke_dodatna_polja", my_user(
 // citaj parametre
 O_KRED
 
-Box(, 15, 70 )
+Box(, 16, 70 )
 
     @ m_x + _x, m_y + 2 SAY "Datumski period / mjesec:" GET _mjesec PICT "99"
     @ m_x + _x, col() + 1 SAY "godina:" GET _godina PICT "9999"
@@ -155,13 +158,13 @@ Box(, 15, 70 )
     ++ _x
 
     @ m_x + _x, m_y + 2 SAY "Dodatna eksport polja (Sx, Ix):" GET _dod_polja PICT "@S32"
-    
+ 
     ++ _x
     ++ _x
 
     @ m_x + _x, m_y + 2 SAY "Tekuca formula eksporta (1 ... n):" GET _id_formula PICT "999" VALID ::get_export_params( @_id_formula )
    
-    read
+    READ
 
     if LastKey() == K_ESC
         ::export_params := NIL
@@ -194,7 +197,7 @@ Box(, 15, 70 )
 
     @ m_x + _x, m_y + 2 SAY "Eksportuj podatke (D/N)?" GET _export VALID _export $ "DN" PICT "@!"
     
-    read
+    READ
 
 BoxC()
 
@@ -219,6 +222,8 @@ set_metric( "ld_export_banke_dodatna_polja", my_user(), ALLTRIM( _dod_polja ) )
 ::export_params["dodatna_polja"] := _dod_polja
 ::export_params["separator"] := ::formula_params["separator"]
 ::export_params["separator_formula"] := ::formula_params["separator_formula"]
+::export_params["kreditori"] := ::formula_params["kreditori"]
+::export_params["krediti_export"] := ( ::formula_params["krediti_export"] == "D" )
 
 _ok := .t.
 
@@ -302,10 +307,23 @@ _qry := "SELECT " + ;
         " ld.uneto, " + ;
         " ld.usati, " + ;
         " ld.uodbici, " + ;
-        " ld.uiznos" + ;
-        " FROM fmk.ld_ld ld " + ;
-        " LEFT JOIN fmk.ld_radn rd ON ld.idradn = rd.id "
-        
+        " ld.uiznos "
+
+if ::export_params["krediti_export"]
+    _qry += " , kr.placeno AS kredit, "
+    _qry += " kr.naosnovu AS partija, "
+    _qry += " kred.ziro AS bank_part "
+endif
+ 
+_qry += " FROM fmk.ld_ld ld "
+_qry += " LEFT JOIN fmk.ld_radn rd ON ld.idradn = rd.id "
+
+if ::export_params["krediti_export"]
+    _qry += " LEFT JOIN fmk.ld_radkr kr ON ld.idradn = kr.idradn AND "
+    _qry += "             ld.mjesec = kr.mjesec AND ld.godina = kr.godina "
+    _qry += " LEFT JOIN fmk.kred kred ON kr.idkred = kred.id "
+endif
+
 _qry += " WHERE ld.godina = " + ALLTRIM( STR( ::export_params["godina"] ) )
 _qry += " AND ld.mjesec = " + ALLTRIM( STR( ::export_params["mjesec"] ) )
 _qry += " AND ld.obr = " + _sql_quote( ::export_params["obracun"] )
@@ -314,6 +332,18 @@ _qry += " AND rd.isplata = " + _sql_quote( "TR" )
 
 if !EMPTY( ::export_params["rj"] )
     _qry += " AND " + _sql_cond_parse( "ld.idrj", ALLTRIM( ::export_params["rj"] ) )
+endif
+
+if ::export_params["krediti_export"] .and. !EMPTY( ::export_params["kreditori"] )
+    _qry += " AND kr.idkred IN ( "
+    _a_kreditor := TokToNiz( ALLTRIM( ::export_params["kreditori"] ), ";" )
+    for _i := 1 to LEN( _a_kreditor )
+        if _i > 1
+            _qry += ", "
+        endif
+        _qry += _sql_quote( _a_kreditor[ _i ] )
+    next
+    _qry += " ) "
 endif
 
 // sortiranje exporta po prezimenu
@@ -366,6 +396,13 @@ do while !_table:EOF()
 
     _rec["usati"] := oRow:FieldGet( oRow:FieldPos("usati") )
     _rec["uneto"] := oRow:FieldGet( oRow:FieldPos("uneto") )
+    
+    if ::export_params["krediti_export"]
+        // kredit
+        _rec["kredit"] := oRow:FieldGet( oRow:FieldPos("kredit") )
+        _rec["partija"] := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos("partija") ) )
+        _rec["bank_part"] := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos("bank_part") ) )
+    endif
 
     if !EMPTY( _dod_polja )
         for _i := 1 to LEN( _a_polja )
@@ -569,10 +606,10 @@ METHOD LDExportTxt:export_setup()
 local _ok := .f.
 local _x := 1
 local _id_formula := fetch_metric( "ld_export_banke_tek", my_user(), 1 )
-local _active, _formula, _filename, _name, _sep, _sep_formula, _banka
+local _active, _formula, _filename, _name, _sep, _sep_formula, _banka, _kreditori, _kred_exp
 local _write_params
 
-Box(, 12, 70 )
+Box(, 15, 70 )
 
     @ m_x + _x, m_y + 2 SAY "Varijanta eksporta:" GET _id_formula PICT "999"
 
@@ -591,6 +628,8 @@ Box(, 12, 70 )
     _sep := ::formula_params["separator"]
     _sep_formula := ::formula_params["separator_formula"]
     _banka := ::formula_params["banka"]
+    _kreditori := ::formula_params["kreditori"]
+    _kred_exp := ::formula_params["krediti_export"]
 
     if _formula == NIL
         // tek se podesavaju parametri za ovu formulu
@@ -598,6 +637,8 @@ Box(, 12, 70 )
         _name := PADR( "XXXXX Banka", 100 )
         _filename := PADR( "", 50 )
         _banka := SPACE(6)
+        _kreditori := SPACE(300)
+        _kred_exp := "N"
         _sep := ";"
         _sep_formula := ";"
     else
@@ -607,6 +648,8 @@ Box(, 12, 70 )
         _sep := PADR( _sep, 1 )
         _sep_formula := PADR( _sep_formula, 1 )
         _banka := PADR( _banka, 6 )
+        _kreditori := PADR( _kreditori, 300 )
+        _kred_exp := PADR( _kred_exp, 1 )
     endif
 
     ++ _x
@@ -618,7 +661,7 @@ Box(, 12, 70 )
     ++ _x  
 
     @ m_x + _x, m_y + 2 SAY "(*)   Banka:" GET _banka PICT "@S50" VALID !EMPTY( _banka ) .and. P_Kred( @_banka )
-    
+       
     ++ _x
     ++ _x  
 
@@ -638,7 +681,16 @@ Box(, 12, 70 )
  
     @ m_x + _x, m_y + 2 SAY "    Separator formule [ ; , . ]:" GET _sep_formula 
 
-    read
+    ++ _x
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Eksport kredita (D/N) ?" GET _kred_exp PICT "!@" VALID _kred_exp $ "DN"
+
+    ++ _x
+
+    @ m_x + _x, m_y + 2 SAY "Lista kreditora za kredite:" GET _kreditori PICT "@S30"
+ 
+    READ
 
 BoxC()
 
@@ -656,6 +708,8 @@ set_metric( "ld_export_banke_tek", my_user(), _id_formula )
 ::formula_params["file"] := _filename
 ::formula_params["name"] := _name
 ::formula_params["banka"] := _banka
+::formula_params["kreditori"] := _kreditori
+::formula_params["krediti_export"] := _kred_exp
 
 ::export_setup_write_params( _id_formula )
 
@@ -681,6 +735,8 @@ local _ok := .t.
 ::formula_params["separator"] := fetch_metric( _param_name + "sep", NIL, NIL )
 ::formula_params["separator_formula"] := fetch_metric( _param_name + "sep_formula", NIL, ";" )
 ::formula_params["banka"] := fetch_metric( _param_name + "banka", NIL, NIL )
+::formula_params["kreditori"] := fetch_metric( _param_name + "kreditori", NIL, NIL )
+::formula_params["krediti_export"] := fetch_metric( _param_name + "krediti_export", NIL, "N" )
 
 return _ok
 
@@ -701,6 +757,8 @@ set_metric( _param_name + "formula", NIL, ALLTRIM( ::formula_params["formula"] )
 set_metric( _param_name + "sep", NIL, ALLTRIM( ::formula_params["separator"] ) )
 set_metric( _param_name + "sep_formula", NIL, ALLTRIM( ::formula_params["separator_formula"] ) )
 set_metric( _param_name + "banka", NIL, ::formula_params["banka"] )
+set_metric( _param_name + "kreditori", NIL, ::formula_params["kreditori"] )
+set_metric( _param_name + "krediti_export", NIL, ::formula_params["krediti_export"] )
 
 return .t.
 

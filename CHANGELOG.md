@@ -1,3 +1,7 @@
+1.4.285 2014-02-18, vsasa
+ 
+  - LD, export podataka kredita za banke
+ 
 1.4.284 2014-02-18, vsasa
  
   - KALK, više konta na jednoj kalkulaciji - parametar 

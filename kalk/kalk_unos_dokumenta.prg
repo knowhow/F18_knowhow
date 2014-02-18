@@ -1636,6 +1636,7 @@ local _new_firma := new_dok["idfirma"]
 local _new_brdok := new_dok["brdok"]
 local _new_tipdok := new_dok["idvd"]
 local oAtrib
+local _vise_konta := fetch_metric( "kalk_dokument_vise_konta", NIL, "N" ) == "D"
 
 // treba da imam podatke koja je stavka bila prije korekcije
 // kao i koja je nova 
@@ -1674,9 +1675,12 @@ do while !EOF() .and. field->idfirma + field->idvd + field->brdok == ;
     _rec["idvd"] := _tek_dok["idvd"]
     _rec["brdok"] := _tek_dok["brdok"]
     _rec["datdok"] := _tek_dok["datdok"]
-    _rec["idpartner"] := _tek_dok["idpartner"]
 
-    if ! ( _rec["idvd"] $ "16#80" )
+    if !_vise_konta
+        _rec["idpartner"] := _tek_dok["idpartner"]
+    endif
+
+    if ! ( _rec["idvd"] $ "16#80" ) .and. !_vise_konta
         _rec["idkonto"] := _tek_dok["idkonto"]
         _rec["idkonto2"] := _tek_dok["idkonto2"]
         _rec["pkonto"] := _tek_dok["pkonto"]

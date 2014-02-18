@@ -1,3 +1,7 @@
+1.4.284 2014-02-18, vsasa
+ 
+  - KALK, više konta na jednoj kalkulaciji - parametar 
+ 
 1.4.283 2014-02-17, vsasa
  
   - KALK, dokument 81 unos kaskadnog rabata + unos ukupne fakturne vrijednosti 

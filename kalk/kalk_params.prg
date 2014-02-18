@@ -203,6 +203,7 @@ local _unos_barkod := "N"
 local _x := 1
 local _reset_roba := fetch_metric( "kalk_reset_artikla_kod_unosa", my_user(), "N" )
 local _rabat := fetch_metric( "pregled_rabata_kod_ulaza", my_user(), "N" )
+local _vise_konta := fetch_metric( "kalk_dokument_vise_konta", NIL, "N" )
 local _rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" )
 local _opis := fetch_metric( "kalk_dodatni_opis_kod_unosa_dokumenta", NIL, "N" )
 private  GetList:={}
@@ -231,6 +232,7 @@ Box(, 20, 75, .f., "RAZNO" )
     @ m_x + _x,m_y+2 SAY "Varijanta evidencije (1-sa cijenama, 2-iskljucivo kolicinski)" GET gVarEv valid gVarEv $ "12" pict "9"
     ++ _x
     @ m_x + _x,m_y+2 SAY "Tip tabele (0/1/2)             " GET gTabela VALID gTabela<3 PICT "9"
+    @ m_x + _x,col() + 2 SAY "Vise konta na dokumentu (D/N) ?" GET _vise_konta VALID _vise_konta $ "DN" PICT "@!"
     ++ _x
     @ m_x + _x,m_y+2 SAY "Zabraniti promjenu tarife u dokumentima? (D/N)" GET gPromTar VALID gPromTar $ "DN" PICT "@!"
     ++ _x
@@ -257,7 +259,8 @@ Box(, 20, 75, .f., "RAZNO" )
     ++ _x
     @ m_x + _x,m_y+2 SAY "Def.opisa kod unosa (D/N)" GET _opis VALID _opis $ "DN" PICT "@!"
     @ m_x + _x, col()+1 SAY "Def.datuma isteka roka (D/N)" GET _rok VALID _rok $ "DN" PICT "@!"
-    read
+    
+    READ
 
 BoxC()
 
@@ -295,6 +298,7 @@ if lastkey() <> K_ESC
     set_metric( "pregled_rabata_kod_ulaza", my_user(), _rabat )
     set_metric( "kalk_definisanje_roka_trajanja", NIL, _rok )
     set_metric( "kalk_dodatni_opis_kod_unosa_dokumenta", NIL, _opis )
+    set_metric( "kalk_dokument_vise_konta", NIL, _vise_konta )
 
 endif
 

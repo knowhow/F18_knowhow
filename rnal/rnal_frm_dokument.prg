@@ -675,6 +675,109 @@ m_y := nY
 return nRet
 
 
+// ---------------------------------------------------
+// provjera problematicnih stavki naloga
+// ---------------------------------------------------
+static function _check_orphaned_items()
+local _ok := .t.
+local _orph := {}
+local _t_area := SELECT()
+local _t_rec := RECNO()
+local _it_no
+
+// 1) provjera operacija
+select _doc_ops
+set order to tag "1"
+go top
+
+do while !EOF()
+    _it_no := field->doc_it_no
+    select _doc_it
+    set order to tag "1"
+    go top
+    seek doc_str( _doc ) + docit_str( _it_no )
+    if !FOUND()
+        _scan := ASCAN( _orph, { |val| val[2] == _it_no } )
+        if _scan == 0
+            AADD( _orph, { _doc, _it_no, "operacija" } )
+        endif
+    endif   
+    select _doc_ops 
+    skip
+enddo
+go top
+
+// 2) provjera repromaterijala...
+select _doc_it2
+set order to tag "1"
+go top
+do while !EOF()
+    _it_no := field->doc_it_no
+    select _doc_it
+    set order to tag "1"
+    go top
+    seek doc_str( _doc ) + docit_str( _it_no )
+    if !FOUND()
+        _scan := ASCAN( _orph, { |val| val[2] == _it_no } )
+        if _scan == 0
+            AADD( _orph, { _doc, _it_no, "repromaterijal" } )
+        endif
+    endif   
+    select _doc_it2 
+    skip
+enddo
+go top
+
+select ( _t_area )
+go ( _t_rec )
+
+if LEN( _orph ) > 0
+    _show_orphaned_items( _orph )
+    _ok := .f.
+endif
+
+return _ok
+
+
+// ---------------------------------------------------------
+// ---------------------------------------------------------
+static function _show_orphaned_items( orph )
+local _m_x := m_x
+local _m_y := m_y
+local _i
+local _tmp
+private izbor := 1
+private opc := {}
+private opcexe := {}
+private GetList := {}
+
+AADD( opc, PADC( "*** Nepovezane stavke naloga  ( <ESC> - izlaz )", 70 ) )
+AADD( opcexe, {|| NIL } )
+AADD( opc, "-" )
+AADD( opcexe, {|| NIL } )
+
+for _i := 1 to LEN( orph )
+    _tmp := PADL( ALLTRIM( STR( _i ) ) + ")", 4 )
+    _tmp += " nepovezana stavka " 
+    _tmp += ALLTRIM( orph[ _i, 3 ] ) + " trazi broj: " + PADR( ALLTRIM( STR( orph[ _i, 2 ] ) ) , 10 ) 
+    AADD( opc, _tmp )
+    AADD( opcexe, {|| NIL } )
+next
+
+menu_sc( "orph" )
+
+if LastKEY() == K_ESC
+    ch := 0
+    izbor := 0
+endif
+
+m_x := _m_x
+m_y := _m_y
+
+return
+
+
+
 // ----------------------------------------
 // promjeni redni broj !
 // ----------------------------------------
@@ -853,6 +956,11 @@ if lPrint == .f.
     if nContId == 0
         MsgBeep("Polje kontakta mora biti popunjeno !!!")
     endif
+endif
+
+// provjera nepovezanih stavki naloga...
+if !_check_orphaned_items() 
+    nRet := 0
 endif
 
 return nRet

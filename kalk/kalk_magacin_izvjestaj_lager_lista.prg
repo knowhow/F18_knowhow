@@ -1155,8 +1155,22 @@ return
 // --------------------------------------------------
 static function pic_format( curr_pic, num )
 local _format
+local _a_pic := TokToNiz( ALLTRIM( curr_pic ), "." )
 
-if LEN( curr_pic ) < LEN( ALLTRIM( STR( num ) ) )
+if _a_pic == NIL
+    _num := 12
+    _dec := 2
+else
+    if LEN( _a_pic ) == 1
+        _num := LEN( _a_pic[1] )
+        _dec := 0
+    else
+        _num := LEN( _a_pic[1] )
+        _dec := LEN( _a_pic[2] )
+    endif
+endif
+
+if LEN( ALLTRIM( curr_pic ) ) < LEN( ALLTRIM( STR( num, _num, _dec ) ) )
     // jednostavno ukini decimalno mjesto kod ispisa
     _format := STRTRAN( curr_pic, ".", "9" )
 else

@@ -1,3 +1,8 @@
+1.4.286 2014-02-20, vsasa
+ 
+  - FAKT, količinski pregled po artiklima - proširenje izvještaja
+  - KALK, lager lista ulaz/izlaz količine sa decimalama 
+ 
 1.4.285 2014-02-18, vsasa
  
   - LD, export podataka kredita za banke

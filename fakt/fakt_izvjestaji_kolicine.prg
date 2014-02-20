@@ -34,11 +34,13 @@ return
 // -----------------------------------------------------------------------
 static function set_articles()
 local _x := 1
-local _count := 20
+local _count := 40
 local _tmp, _i
 local _ok := .t.
 local _art_1, _art_2, _art_3, _art_4, _art_5, _art_6, _art_7, _art_8, _art_9, _art_10
 local _art_11, _art_12, _art_13, _art_14, _art_15, _art_16, _art_17, _art_18, _art_19, _art_20
+local _art_21, _art_22, _art_23, _art_24, _art_25, _art_26, _art_27, _art_28, _art_29, _art_30
+local _art_31, _art_32, _art_33, _art_34, _art_35, _art_36, _art_37, _art_38, _art_39, _art_40
 local _var, _valid_block
 
 // procitaj paramtre iz sql/db
@@ -47,7 +49,7 @@ for _i := 1 to _count
     &_var := PADR( fetch_metric( "fakt_pregled_prodaje_rpt_artikal_" + PADL( ALLTRIM(STR(_i)), 2, "0"), NIL, SPACE(10) ), 10 )
 next
 
-Box(, _count + 2, 65 )
+Box(, ( _count / 2 ) + 3, 65 )
     
     @ m_x + _x, m_y + 2 SAY "Izvjestaj se pravi za sljedece artikle:"
 
@@ -56,13 +58,18 @@ Box(, _count + 2, 65 )
     
     _i := 1
 
+    // prikaz u 2 reda
     for _i := 1 to _count
    
         _var := "_art_" + ALLTRIM(STR(_i))
         _valid_block := "EMPTY(_art_" + ALLTRIM(STR(_i))+ ") .or. P_Roba(@_art_" + ALLTRIM(STR(_i)) + ")"
-        @ m_x + _x, m_y + 2 SAY "Artikal " +  PADL( ALLTRIM(STR(_i)), 2 ) + ":" GET &_var VALID &_valid_block
 
-        ++ _x   
+        if _i % 2 == 0
+            @ m_x + _x, col() + 2 SAY "Artikal " +  PADL( ALLTRIM(STR(_i)), 2 ) + ":" GET &_var VALID &_valid_block
+            ++ _x   
+        else
+            @ m_x + _x, m_y + 2 SAY "Artikal " +  PADL( ALLTRIM(STR(_i)), 2 ) + ":" GET &_var VALID &_valid_block
+        endif
 
     next
 
@@ -72,17 +79,12 @@ BoxC()
 
 // snimi parametre
 if LastKey() != K_ESC
-
     // snimi parametre
     _i := 1
-
     for _i := 1 to _count
-
         _var := "_art_" + ALLTRIM( STR( _i ) )
         set_metric( "fakt_pregled_prodaje_rpt_artikal_" + PADL( ALLTRIM(STR(_i)), 2, "0"), NIL, ALLTRIM( &_var ) )
-
     next
-
 endif
 
 return _ok
@@ -97,7 +99,7 @@ return _ok
 static function _g_ini_roba( )
 local _arr := {}
 local _i
-local _param_count := 20
+local _param_count := 40
 local _item
 local _count := 0
 
@@ -107,11 +109,8 @@ for _i := 1 to _param_count
     _item := fetch_metric( "fakt_pregled_prodaje_rpt_artikal_" + PADL( ALLTRIM( STR( _i ) ), 2, "0" ), NIL, "" )
     
     if !EMPTY( _item )
-
         ++ _count
-
         AADD( _arr, { _item, "ROBA" + ALLTRIM( STR( _count ) ), 0 } ) 
-    
     endif
 
 next

@@ -874,7 +874,6 @@ endif
 
 if it_no >= 1
 
-    MsgBeep( "dokument: " + ALLTRIM( STR( _doc ) ) )
     select _doc_it
     go top
     seek docno_str( _doc ) + docit_str( it_no )

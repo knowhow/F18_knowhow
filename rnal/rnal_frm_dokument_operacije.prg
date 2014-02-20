@@ -373,21 +373,23 @@ return nRet
 static function _item_range( nItemNo )
 local lRet := .t.
 local nTArea := SELECT()
-local nDocItRec 
+local nDocItRec, _t_rec
 
 select _doc_it
+_t_rec := RECNO()
+go top
+seek docno_str( _doc ) + docit_str( nItemNo )
 
-nDocItRec := _doc_it->(RECCOUNT2())
-
-if nItemNo > nDocItRec .or. nItemNo <= 0
+if nItemNo <= 0 .or. !FOUND()
     lRet := .f.
 endif
 
-select (nTArea)
+go ( _t_rec )
+
+select ( nTArea )
 
 if lRet == .f.
-    MsgBeep("Nepostojeca stavka naloga !!!##Nalog sadrzi " + ;
-        ALLTRIM(STR(nDocItRec)) + " stavki.")
+    MsgBeep( "Nepostojeca stavka naloga !!!" )
 endif
 
 return lRet

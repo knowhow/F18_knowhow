@@ -155,6 +155,7 @@ local nX := 1
 local aArtArr := {}
 local nTmpArea
 local nLeft := 21
+local _curr_doc_no
 
 cGetDOper := "N"
 
@@ -182,9 +183,11 @@ if l_new_it
     
 endif
 
+_curr_doc_no := _doc_it_no
+
 nX += 2
 
-@ m_x + nX, m_y + 2 SAY PADL("r.br stavke (*)", nLeft) GET _doc_it_no 
+@ m_x + nX, m_y + 2 SAY PADL("r.br stavke (*)", nLeft) GET _doc_it_no WHEN l_new_it 
 
 nX += 2
 
@@ -297,16 +300,18 @@ endif
 
 // ako je nova stavka obezbjedi unos operacija...
 if l_new_it
-
     nX += 2
-
     @ m_x + nX, m_y + 2 SAY PADL("unesi dod.oper.stavke (D/N)? (*):", nLeft + 15) GET cGetDOper PICT "@!" VALID cGetDOper $ "DN" WHEN set_opc_box( nBoxX, 50, "unos dodatnih operacija za stavku")
-
 endif
 
-read
+READ
 
 ESC_RETURN 0
+
+// da li je doslo do promjene rednog broja stavke ?
+if !l_new_it .and. ( _curr_doc_no <> _doc_no )
+    MsgBeep( "Uslijedila je promjena rednog broja !!!" )
+endif
 
 return 1
 

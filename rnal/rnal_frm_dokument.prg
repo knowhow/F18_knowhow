@@ -140,7 +140,7 @@ do while .t.
         
     endif
     
-    ObjDBedit("docum", nX, nY, {|Ch| key_handler(Ch)},"","",,,,,1)
+    ObjDBedit( "docum", nX, nY, {|Ch| key_handler(Ch)},"","",,,,,1)
 
     if LastKey() == K_ESC
     
@@ -292,13 +292,20 @@ aKol:={}
 
 AADD(aImeKol, {"dod.oper", {|| PADR(g_aop_desc( aop_id ),10) }, "aop_id"})
 AADD(aImeKol, {"atr.dod.oper", {|| PADR( g_aop_att_desc( aop_att_id ), 10 ) }, "aop_att_id" })
-AADD(aImeKol, {"dod.opis", {|| PADR(doc_op_des, 15) + ".."}, "doc_op_des" })
+AADD(aImeKol, {"dod.opis", {|| PADR(doc_op_des, 13) + ".."}, "doc_op_des" })
 
 for i:=1 to LEN(aImeKol)
     AADD(aKol,i)
 next
 
 return
+
+
+// --------------------------------------------
+// --------------------------------------------
+static function _show_op_item( x, y )
+@ x + ( __dok_x - 10 ), y + 2 SAY "stavka: " + PADR( ALLTRIM( STR( field->doc_it_no ) ), 10 )
+return .t.
 
 
 // ---------------------------------------------
@@ -313,6 +320,11 @@ local nRec := RecNo()
 local nDocNoNew := 0
 local cDesc := ""
 local nArea
+
+if ALIAS() == "_DOC_OPS"
+    // ispis broja stavke na koju se odnosi operacija
+    _show_op_item( nX, nY )
+endif
 
 do case 
 
@@ -502,11 +514,20 @@ do case
         endif
 
     case UPPER(CHR(Ch)) == "E"
-        
         // export dokumenta
         m_export( _docs->doc_no, nil, .t., .t. )
-        
         return DE_CONT
+
+    case UPPER( CHR( Ch )  ) == "R"
+
+        // promjena rednog broja stavke
+        if ALIAS() <> "_DOC_IT"
+            return DE_CONT
+        endif
+
+        if _change_item_no( field->doc_it_no )
+            return DE_REFRESH
+        endif
 
     case Ch == K_ALT_C
 
@@ -653,6 +674,123 @@ m_y := nY
 
 return nRet
 
+
+// ----------------------------------------
+// promjeni redni broj !
+// ----------------------------------------
+static function _change_item_no( docitno )
+local _ok := .f.
+local _new_it_no := 0
+local _rec
+local _m_x, _m_y
+local _op_count := 0
+local _it2_count := 0
+
+_m_x := m_x
+_m_y := m_y
+
+Box(, 2, 60 )
+    @ m_x + 1, m_y + 2 SAY "*** promjena rednog broja stavke"
+    @ m_x + 2, m_y + 2 SAY "Broj " + ALLTRIM( STR( docitno ) ) + " postavi na:" GET _new_it_no ;
+            PICT "9999" VALID _change_item_no_valid( _new_it_no )
+    READ
+BoxC()
+
+m_x := _m_x
+m_y := _m_y
+
+if LastKey() == K_ESC
+    return _ok
+endif
+
+// 1) promjeni redni broj u stavkama
+select _doc_it
+_rec := dbf_get_rec()
+_rec["doc_it_no"] := _new_it_no
+dbf_update_rec( _rec )
+
+// 2) promjeni operacije ako ih ima...
+select _doc_ops
+set order to
+go top
+
+do while !EOF()
+    if field->doc_it_no == docitno
+        ++ _op_count
+        _rec := dbf_get_rec()
+        _rec["doc_it_no"] := _new_it_no
+        dbf_update_rec( _rec )
+    endif
+    skip
+enddo
+
+set order to tag "1"
+go top
+
+// 3) promjeni repromaterijal 
+select _doc_it2
+set order to
+go top
+
+do while !EOF()
+    if field->doc_it_no == docitno
+        ++ _it2_count
+        _rec := dbf_get_rec()
+        _rec["doc_it_no"] := _new_it_no
+        dbf_update_rec( _rec )
+    endif
+    skip
+enddo
+
+set order to tag "1"
+go top
+
+// 4) vrati se na postojecu tabelu stavki...
+select _doc_it
+
+log_write( "F18_DOK_OPER, promjena rednog broja naloga sa " + ALLTRIM( STR( docitno ) ) + ;
+            " na " + ALLTRIM( STR( _new_it_no ) ) + ;
+            " / broj operacija: " + ALLTRIM( STR( _op_count ) )  + ;
+            " / broj stavki repromaterijala: " + ALLTRIM( STR( _it2_count ) ), 3 )
+
+_ok := .t.
+
+return _ok
+
+
+// --------------------------------------------------
+// --------------------------------------------------
+static function _change_item_no_valid( it_no )
+local _ok := .f.
+local _t_rec := RECNO()
+
+if it_no < 1
+    MsgBeep( "Redni broj mora biti > 0 !!!" )
+    return _ok
+endif
+
+if it_no >= 1
+
+    MsgBeep( "dokument: " + ALLTRIM( STR( _doc ) ) )
+    select _doc_it
+    go top
+    seek docno_str( _doc ) + docit_str( it_no )
+
+    if FOUND()
+        MsgBeep( "Redni broj " + ALLTRIM( STR( it_no ) ) + " vec postoji !!!" )
+        go ( _t_rec )
+        return _ok
+    endif
+
+endif
+
+go ( _t_rec )
+_ok := .t.
+
+return _ok
+
+
+
 // ----------------------------------------
 // vraca box sa opisom
 // ----------------------------------------
@@ -669,6 +807,8 @@ BoxC()
 ESC_RETURN 0
 
 return 1
+
+
 
 // -------------------------------------------
 // docs - integritet
@@ -694,7 +834,7 @@ select _doc_it
 nItems := RECCOUNT2()
 
 // vrati se gdje si bio...
-select (nTAREA)
+select ( nTAREA )
 
 if lPrint == .f. .and. ( nItems == 0 .or. nCustId == 0 .or. nContId == 0 )
     nRet := 0
@@ -727,6 +867,9 @@ static function docs_delete( lSilent )
 local nDoc_no
 local nDoc_status 
 local _vals, _id_fields, _where_bl
+local _it_count := 0
+local _it2_count := 0
+local _op_count := 0
 
 if lSilent == nil
     lSilent := .f.
@@ -739,35 +882,62 @@ endif
 nDoc_no := field->doc_no
 nDoc_status := field->doc_status
 
-// brisi dokument
+// 1) brisi dokument
 delete
 __dbPack()
 
+// 2) brisi stavke
 select _doc_it
 go top
 do while !EOF()
+    ++ _it_count
     delete
     skip
 enddo
 __dbPack()
 
+// 3) brisi pomocne stavke
+select _doc_it2
+go top
+do while !EOF()
+    ++ _it2_count
+    delete
+    skip
+enddo
+__dbPack()
+
+// 4) brisi operacije
 select _doc_ops
 go top
 do while !EOF()
+    ++ _op_count
     delete
     skip
 enddo
 __dbPack()
 
 if nDoc_status == 3
-
     // ukloni marker sa azuriranog dokumenta (busy)
     set_doc_marker( nDoc_no, 0 )
-
 endif
 
 select _docs
 go top
+
+log_write( "F18_DOK_OPER, brisanje naloga iz pripreme broj: " + ;
+            ALLTRIM( STR( nDoc_no ) ) + ;
+            " / status: " + ALLTRIM( STR( nDoc_status ) ) + ;
+            " / broj stavki: " + ALLTRIM( STR( _it_count ) ) + ;
+            " / broj dodatnih stavki: " + ALLTRIM( STR( _it2_count ) ) + ;
+            " / broj operacija: " + ALLTRIM( STR( _op_count ) ) , 3 )
+
+MsgBeep( "INFO: brisanje naloga broj: " + ALLTRIM( STR( nDoc_no ) ) + ", status: " + ALLTRIM( STR( nDoc_status ) ) + ;
+        "#" + ;
+        "stavke: " + ALLTRIM( STR( _it_count ) ) + ;
+        "#" + ;
+        "reprom: " + ALLTRIM( STR( _it2_count ) ) + ;
+        "#" + ;
+        "operacija: " + ALLTRIM( STR( _op_count ) ) )
 
 return 1
 
@@ -778,34 +948,72 @@ return 1
 // --------------------------------------------
 static function docit_delete( lSilent )
 local nDoc_it_no
+local nDoc_no
+local _art_id, _qtty
+local _it2_count := 0
+local _op_count := 0
 
-if lSilent == nil
+if lSilent == NIL
     lSilent := .f.
 endif
 
-if !lSilent .and. Pitanje(,"Izbrisati stavku (D/N)?", "D") == "N"
+if !lSilent .and. Pitanje(, "Izbrisati stavku (D/N) ?", "D" ) == "N"
     return 0
 endif
 
+nDoc_no := field->doc_no
 nDoc_it_no := field->doc_it_no
+_art_id := field->art_id
+_qtty := field->doc_it_qtt
 
+// 1) brisi stavku
 delete
 __dbPack()
 
+// 2) brisi operacije
 select _doc_ops
 set order to tag "1"
 go top
-seek doc_str( _doc ) + docit_str( nDoc_it_no )
+seek doc_str( nDoc_no ) + docit_str( nDoc_it_no )
 
-do while !EOF() .and. field->doc_no == _doc ;
+do while !EOF() .and. field->doc_no == nDoc_no ;
         .and. field->doc_it_no == nDoc_it_no
 
+    ++ _op_count
     delete
     skip
 enddo
 __dbPack()
 
+// 3) brisi repromaterijal
+if !lSilent .and. Pitanje(, "Brisati vezne stavke repromaterijala (D/N) ?", "D" ) == "D"
+    select _doc_it2
+    set order to tag "1"
+    go top
+    seek doc_str( nDoc_no ) + docit_str( nDoc_it_no )
+    do while !EOF() .and. field->doc_no == nDoc_no .and. field->doc_it_no == nDoc_it_no
+        ++ _it2_count
+        delete
+        skip
+    enddo 
+endif
+
+// 5) vrati se na pravo podrucje
 select _doc_it
+
+log_write( "F18_DOK_OPER, brisanje stavke naloga iz pripreme broj: " + ALLTRIM( STR( nDoc_no ) ) + ;
+        " / stavka broj: " + ALLTRIM( STR( nDoc_it_no ) ) + ;
+        " / kolicina: " + ALLTRIM( STR( _qtty, 12, 2 ) ) + " / artikal id: " + ALLTRIM( STR( _art_id ) ) + ;
+        " / broj operacija: " + ALLTRIM( STR( _op_count ) ) + ;
+        " / broj stavki repromaterijala: " + ALLTRIM( STR( _it2_count ) ), 3 )
+
+MsgBeep( "INFO / brisanje: stavka broj: " + ALLTRIM( STR( nDoc_it_no ) ) + ;
+            "#" + ;
+            "artikal id: " + ALLTRIM( STR( _art_id ) ) + " / kolicina: " + ALLTRIM( STR( _qtty, 12, 2 ) ) + ;
+            "#" + ;
+            "broj operacija: " + ALLTRIM( STR( _op_count ) ) + ;
+            "#" + ;
+            "broj reprom: " + ALLTRIM( STR( _it2_count ) ) )
 
 return 1
 
@@ -815,7 +1023,9 @@ return 1
 // lSilent - tihi nacin rada bez upita
 // --------------------------------------------
 static function docop_delete( lSilent )
-if lSilent == nil
+local _doc_no, _doc_it_no, _doc_op_no
+
+if lSilent == NIL
     lSilent := .f.
 endif
 
@@ -823,8 +1033,16 @@ if !lSilent .and. Pitanje(,"Izbrisati stavku (D/N)?", "D") == "N"
     return 0
 endif
 
+_doc_no := field->doc_no
+_doc_it_no := field->doc_it_no
+_doc_op_no := field->doc_op_no
+
 delete
 __dbPack()
+
+log_write( "F18_DOK_OPER, brisanje operacije naloga broj: " + ALLTRIM( STR( _doc_no ) ) + ;
+            " / stavka broj: " + ALLTRIM( STR( _doc_it_no ) ) + ;
+            " / broj operacije: " + ALLTRIM( STR( _doc_op_no ) ), 3 )
 
 return 1
 

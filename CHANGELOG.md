@@ -1,3 +1,7 @@
+1.4.287 2014-02-20, vsasa
+ 
+  - RNAL, dorade na unosu naloga, stavke, operacije, logiranja, promjena broja stavke itd...
+ 
 1.4.286 2014-02-20, vsasa
  
   - FAKT, količinski pregled po artiklima - proširenje izvještaja

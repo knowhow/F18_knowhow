@@ -1,4 +1,4 @@
-1.4.287 2014-02-20, vsasa
+1.4.287 2014-02-21, vsasa
  
   - RNAL, dorade na unosu naloga, stavke, operacije, logiranja, promjena broja stavke itd...
  

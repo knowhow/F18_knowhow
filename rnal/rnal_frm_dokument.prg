@@ -145,9 +145,7 @@ do while .t.
     if LastKey() == K_ESC
     
         if _docs->doc_status == 3
-        
             MsgBeep("Dokument ostavljen za doradu !!!")
-        
         endif
         
         exit
@@ -184,6 +182,22 @@ endif
 return
 
 
+
+// -----------------------------------------------------------------------
+// vraca broj dokumenta u pripremi
+// -----------------------------------------------------------------------
+static function get_document_no()
+return "dok.broj:" + PADL( ALLTRIM( STR ( _doc ) ), 10 )
+
+// ----------------------------------------------------------------------
+// prikazuje broj dokumenta u pripremi
+// ----------------------------------------------------------------------
+static function show_document_no()
+@ 2, 3 SAY get_document_no()
+return
+
+
+
 // -----------------------------------------------
 // prikazi header i footer 
 // -----------------------------------------------
@@ -201,9 +215,7 @@ cFooter += "<F2> ispravka "
 cFooter += "<c-P> stampa "
 cFooter += "<a-A> azur."
 
-
-cHeader := "dok.broj: "
-cHeader += doc_str( _doc )
+cHeader := get_document_no()
 cHeader += SPACE(5)
 
 if l_new
@@ -375,11 +387,9 @@ do case
         if ALIAS() == "_DOCS"
         
             if e_doc_main_data( .t. ) == 1
-            
                 select _docs
                 nRet := DE_REFRESH
                 l_auto_tab := .t.
-
             endif
             
             select _docs
@@ -394,7 +404,6 @@ do case
             endif
         
             _doc := field->doc_no
-            
             select _doc_it
             set order to tag "1"
             
@@ -525,7 +534,7 @@ do case
             return DE_CONT
         endif
 
-        if _change_item_no( field->doc_it_no )
+        if _change_item_no( field->doc_no, field->doc_it_no )
             return DE_REFRESH
         endif
 
@@ -538,6 +547,10 @@ do case
 
         // reset broja dokumenta na "0"
         if _reset_to_zero()
+            select _docs
+            go top
+            _doc := field->doc_no
+            show_document_no()
             return DE_REFRESH
         endif
 
@@ -592,17 +605,17 @@ do case
             if doc_insert( cDesc ) == 1
                 select _docs
                 l_auto_tab := .t.
-                KEYBOARD CHR(K_TAB)
+                KEYBOARD CHR( K_TAB )
+                _doc := 0
                 nRet := DE_REFRESH
             else
                 select _docs
                 l_auto_tab := .t.
-                KEYBOARD CHR(K_TAB)            
+                KEYBOARD CHR( K_TAB )            
             endif
         
         elseif ALIAS() <> "_DOCS"
-            Msgbeep("Pozicionirajte se na tabelu osnovnih podataka")
-        
+            Msgbeep( "Pozicionirajte se na tabelu osnovnih podataka" )
         endif
         
         return nRet
@@ -632,7 +645,9 @@ do case
 
         select _docs
         go top
-        
+        _doc := field->doc_no
+        show_document_no()
+ 
         st_nalpr( .t. , _docs->doc_no )
         
         select (nTArea)
@@ -665,6 +680,8 @@ do case
 
         select _docs
         go top
+        _doc := field->doc_no
+        show_document_no()
         
         st_obr_list( .t. , _docs->doc_no )
         
@@ -687,6 +704,7 @@ do case
         st_label( .t., _docs->doc_no )
         select (nTArea)
         nRet := DE_CONT
+
 endcase
 
 m_x := nX
@@ -881,7 +899,7 @@ return
 // ----------------------------------------
 // promjeni redni broj !
 // ----------------------------------------
-static function _change_item_no( docitno )
+static function _change_item_no( docno, docitno )
 local _ok := .f.
 local _new_it_no := 0
 local _rec, _t_rec
@@ -895,7 +913,7 @@ _m_y := m_y
 Box(, 2, 60 )
     @ m_x + 1, m_y + 2 SAY "*** promjena rednog broja stavke"
     @ m_x + 2, m_y + 2 SAY "Broj " + ALLTRIM( STR( docitno ) ) + " postavi na:" GET _new_it_no ;
-            PICT "9999" VALID _change_item_no_valid( _new_it_no, docitno )
+            PICT "9999" VALID _change_item_no_valid( _new_it_no, docitno, docno )
     READ
 BoxC()
 
@@ -969,7 +987,7 @@ return _ok
 
 // --------------------------------------------------
 // --------------------------------------------------
-static function _change_item_no_valid( it_no, it_old )
+static function _change_item_no_valid( it_no, it_old, doc_no )
 local _ok := .f.
 local _t_rec := RECNO()
 
@@ -987,7 +1005,7 @@ if it_no >= 1
 
     select _doc_it
     go top
-    seek docno_str( _doc ) + docit_str( it_no )
+    seek docno_str( doc_no ) + docit_str( it_no )
 
     if FOUND()
         MsgBeep( "Redni broj " + ALLTRIM( STR( it_no ) ) + " vec postoji !!!" )

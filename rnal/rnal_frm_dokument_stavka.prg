@@ -187,7 +187,8 @@ _curr_doc_no := _doc_it_no
 
 nX += 2
 
-@ m_x + nX, m_y + 2 SAY PADL("r.br stavke (*)", nLeft) GET _doc_it_no WHEN l_new_it 
+@ m_x + nX, m_y + 2 SAY PADL("r.br stavke (*)", nLeft) GET _doc_it_no WHEN l_new_it ;
+        VALID _check_rbr( _doc_no, _doc_it_no ) 
 
 nX += 2
 
@@ -314,6 +315,33 @@ if !l_new_it .and. ( _curr_doc_no <> _doc_no )
 endif
 
 return 1
+
+
+// -------------------------------------------------------
+// provjera rednog broja na unosu
+// -------------------------------------------------------
+static function _check_rbr( docno, docitno )
+local _ok := .t.
+local _t_rec := RECNO()
+
+if docitno == 0
+    MsgBeep( "Redni broj ne moze biti 0 !!!" )
+    _ok := .f.
+    return _ok
+endif
+
+select _doc_it
+go top
+seek docno_str( docno ) + docit_str( docitno )
+
+if FOUND()
+    MsgBeep( "Redni broj vec postoji unutar dokumenta !!!" )
+    _ok := .f.
+endif
+
+go ( _t_rec )
+
+return _ok
 
 
 

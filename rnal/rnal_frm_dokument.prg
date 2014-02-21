@@ -529,6 +529,18 @@ do case
             return DE_REFRESH
         endif
 
+    case UPPER( CHR( Ch )  ) == "O"
+
+        // promjena rednog broja stavke
+        if ALIAS() <> "_DOCS"
+            return DE_CONT
+        endif
+
+        // reset broja dokumenta na "0"
+        if _reset_to_zero()
+            return DE_REFRESH
+        endif
+
     case Ch == K_ALT_C
 
         nRet := DE_CONT
@@ -559,6 +571,8 @@ do case
             // ima li stavki u nalogu
             if _doc_integ() == 0
                 msgbeep("!!! Azuriranje naloga onemoguceno !!!")
+                m_x := nX
+                m_y := nY
                 return DE_CONT
             endif
             
@@ -601,6 +615,9 @@ do case
         
         // ima li stavki u nalogu
         if _doc_integ( .t. ) == 0
+            m_x := nX
+            m_y := nY
+            select ( nTArea )
             return DE_CONT
         endif
             
@@ -631,6 +648,9 @@ do case
         
         // ima li stavki u nalogu
         if _doc_integ( .t. ) == 0
+            m_x := nX
+            m_y := nY
+            select ( nTArea )
             return DE_CONT
         endif
             
@@ -676,6 +696,76 @@ return nRet
 
 
 // ---------------------------------------------------
+// vraca broj naloga na 0
+// ---------------------------------------------------
+static function _reset_to_zero()
+local _t_area := SELECT()
+local _rec, _t_rec
+
+if Pitanje(, "Resetovati broj dokumenta na 0 (D/N) ?", "N" ) == "N"
+    return .f.
+endif
+
+// 1) _doc_it
+select _doc_it
+set order to tag "1"
+go top
+do while !EOF()
+    skip 1
+    _t_rec := RECNO()
+    skip -1
+    _rec := dbf_get_rec()
+    _rec["doc_no"] := 0
+    dbf_update_rec( _rec )
+    go ( _t_rec )
+enddo
+go top
+
+// 2) _doc_it2
+select _doc_it2
+set order to tag "1"
+go top
+do while !EOF()
+    skip 1
+    _t_rec := RECNO()
+    skip -1
+    _rec := dbf_get_rec()
+    _rec["doc_no"] := 0
+    dbf_update_rec( _rec )
+    go ( _t_rec )
+enddo
+go top
+
+// 3) _doc_ops
+select _doc_ops
+set order to tag "1" 
+go top
+do while !EOF()
+    skip 1
+    _t_rec := RECNO()
+    skip -1
+    _rec := dbf_get_rec()
+    _rec["doc_no"] := 0
+    dbf_update_rec( _rec )
+    go ( _t_rec )
+enddo
+go top
+
+// 4) _docs
+select _docs
+set order to tag "1" 
+go top
+_rec := dbf_get_rec()
+_rec["doc_no"] := 0
+dbf_update_rec( _rec )
+
+select ( _t_area )
+return .t.
+
+
+
+
+// ---------------------------------------------------
 // provjera problematicnih stavki naloga
 // ---------------------------------------------------
 static function _check_orphaned_items()
@@ -683,28 +773,31 @@ local _ok := .t.
 local _orph := {}
 local _t_area := SELECT()
 local _t_rec := RECNO()
-local _it_no
+local _it_no, _doc_no
 
 // 1) provjera operacija
 select _doc_ops
 set order to tag "1"
 go top
 
+_doc_no := field->doc_no
+
 do while !EOF()
     _it_no := field->doc_it_no
     select _doc_it
     set order to tag "1"
     go top
-    seek doc_str( _doc ) + docit_str( _it_no )
+    seek doc_str( _doc_no ) + docit_str( _it_no )
     if !FOUND()
         _scan := ASCAN( _orph, { |val| val[2] == _it_no } )
         if _scan == 0
-            AADD( _orph, { _doc, _it_no, "operacija" } )
+            AADD( _orph, { _doc_no, _it_no, "operacija" } )
         endif
     endif   
     select _doc_ops 
     skip
 enddo
+select _doc_ops
 go top
 
 // 2) provjera repromaterijala...
@@ -716,16 +809,21 @@ do while !EOF()
     select _doc_it
     set order to tag "1"
     go top
-    seek doc_str( _doc ) + docit_str( _it_no )
+    seek doc_str( _doc_no ) + docit_str( _it_no )
     if !FOUND()
         _scan := ASCAN( _orph, { |val| val[2] == _it_no } )
         if _scan == 0
-            AADD( _orph, { _doc, _it_no, "repromaterijal" } )
+            AADD( _orph, { _doc_no, _it_no, "repromaterijal" } )
         endif
     endif   
     select _doc_it2 
     skip
 enddo
+select _doc_it2
+go top
+
+select _doc_it
+set order to tag "1"
 go top
 
 select ( _t_area )
@@ -735,6 +833,8 @@ if LEN( _orph ) > 0
     _show_orphaned_items( _orph )
     _ok := .f.
 endif
+
+select ( _t_area )
 
 return _ok
 
@@ -784,7 +884,7 @@ return
 static function _change_item_no( docitno )
 local _ok := .f.
 local _new_it_no := 0
-local _rec
+local _rec, _t_rec
 local _m_x, _m_y
 local _op_count := 0
 local _it2_count := 0
@@ -795,7 +895,7 @@ _m_y := m_y
 Box(, 2, 60 )
     @ m_x + 1, m_y + 2 SAY "*** promjena rednog broja stavke"
     @ m_x + 2, m_y + 2 SAY "Broj " + ALLTRIM( STR( docitno ) ) + " postavi na:" GET _new_it_no ;
-            PICT "9999" VALID _change_item_no_valid( _new_it_no )
+            PICT "9999" VALID _change_item_no_valid( _new_it_no, docitno )
     READ
 BoxC()
 
@@ -814,17 +914,20 @@ dbf_update_rec( _rec )
 
 // 2) promjeni operacije ako ih ima...
 select _doc_ops
-set order to
+set order to tag "1"
 go top
 
 do while !EOF()
+    skip 1
+    _t_rec := RECNO()
+    skip -1
     if field->doc_it_no == docitno
         ++ _op_count
         _rec := dbf_get_rec()
         _rec["doc_it_no"] := _new_it_no
         dbf_update_rec( _rec )
     endif
-    skip
+    go ( _t_rec )
 enddo
 
 set order to tag "1"
@@ -832,17 +935,20 @@ go top
 
 // 3) promjeni repromaterijal 
 select _doc_it2
-set order to
+set order to tag "1"
 go top
 
 do while !EOF()
+    skip 1
+    _t_rec := RECNO()
+    skip -1
     if field->doc_it_no == docitno
         ++ _it2_count
         _rec := dbf_get_rec()
         _rec["doc_it_no"] := _new_it_no
         dbf_update_rec( _rec )
     endif
-    skip
+    go ( _t_rec )
 enddo
 
 set order to tag "1"
@@ -863,12 +969,17 @@ return _ok
 
 // --------------------------------------------------
 // --------------------------------------------------
-static function _change_item_no_valid( it_no )
+static function _change_item_no_valid( it_no, it_old )
 local _ok := .f.
 local _t_rec := RECNO()
 
 if it_no < 1
     MsgBeep( "Redni broj mora biti > 0 !!!" )
+    return _ok
+endif
+
+if it_no == it_old
+    MsgBeep( "Odabran je isti redni broj !!!" )
     return _ok
 endif
 

@@ -1,3 +1,7 @@
+1.4.288 2014-02-26, vsasa
+ 
+  - KALK, generisanje inventure, ako je količina = 0 i FCJ = 0 kao i NC itd...
+ 
 1.4.287 2014-02-21, vsasa
  
   - RNAL, dorade na unosu naloga, stavke, operacije, logiranja, promjena broja stavke itd...

@@ -42,7 +42,7 @@ IF lOsvjezi
 
 ELSE
 
-	Box(,7,70)
+	Box(,10,70)
  	cIdFirma:=gFirma
  	cIdKonto:=padr("1310",gDuzKonto)
  	dDatDok:=date()
@@ -186,15 +186,15 @@ endif
 
 MsgC()
 
-closeret
+close all
 
 return
-*}
+
 
 
 // generisanje dokumenta tipa IM razlike na osnovu postojece inventure
 function gen_im_razlika()
-*{
+
 O_KONTO
 
 Box(,8,70)
@@ -306,10 +306,11 @@ do while !EOF() .and. cIdFirma+cIdKonto==field->idfirma+field->mkonto
 enddo
 
 MsgC()
-closeret
+
+close all
 
 return
-*}
+
 
 
 function AzurPostojece(cIdFirma, cIdKonto, cBrDok, dDatDok, nRbr, cIdRoba, nUlaz, nIzlaz, nVpvU, nVpvI, nNvU, nNvI, cSrSort )
@@ -368,7 +369,7 @@ else
 	Gather2()
 endif
 return
-*}
+
 
 
 static function DodajImStavku(cIdFirma, cIdKonto, cBrDok, dDatDok, nRbr, cIdRoba, nUlaz, nIzlaz, nVpvU, nVpvI, nNcU, nNcI, lKolNula, cSrSort )
@@ -402,25 +403,27 @@ _datdok:=dDatDok
 _DatFaktP:=dDatdok
 _ERROR:=""
 _fcj:=nVpvu-nVpvi 
+
 if round(nUlaz-nIzlaz,4)<>0
 	_vpc:=round((nVPVU-nVPVI)/(nUlaz-nIzlaz),3)
-else
-	_vpc:=0
+elsei
+    _fcj := 0
+	_vpc := 0
 endif
+
 if round(nUlaz-nIzlaz,4)<>0 .and. nNcI<>nil .and. nNcU<>nil
 	_nc:=round((nNcU-nNcI)/(nUlaz-nIzlaz),3)
 else
-	_nc:=0
+	_nc := 0
 endif
 
 Gather2()
 
 return
-*}
+
 
 
 function RowKolicina(nUlaz, nIzlaz)
-*{ 
   
 if field->mu_i=="1" .and. !(field->idVd $ "12#22#94")
 	nUlaz+=field->kolicina-field->gkolicina-field->gkolicin2
@@ -433,11 +436,10 @@ elseif mu_i=="3"
 endif
 
 return
-*}
 
 
 function RowVpvRabat(nVpvU, nVpvI, nRabat)
-*{
+
 if mu_i=="1" .and. !(idvd $ "12#22#94")
 	nVPVU+=vpc*(kolicina-gkolicina-gkolicin2)
 elseif mu_i=="5"
@@ -450,7 +452,8 @@ elseif mu_i=="1" .and. (idvd $ "12#22#94")
 elseif mu_i=="3"    
 	nVPVU+=vpc*kolicina
 endif
-*}
+return
+
 
 
 /*! \fn RowNC(nNcU, nNcI)
@@ -458,7 +461,7 @@ endif
  */
  
 function RowNC(nNcU, nNcI)
-*{
+
 if mu_i=="1" .and. !(idvd $ "12#22#94")
 	nNcU+=nc*(kolicina-gkolicina-gkolicin2)
 elseif mu_i=="5"
@@ -469,5 +472,7 @@ elseif mu_i=="1" .and. (idvd $ "12#22#94")
 elseif mu_i=="3"    
 	nNcU+=nc*kolicina
 endif
-*}
+
+return
+
 

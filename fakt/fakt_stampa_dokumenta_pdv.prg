@@ -295,7 +295,7 @@ do while !EOF() .and. field->idfirma == dok["idfirma"] .and. ;
     seek fakt_pripr->idroba   
 
     if !FOUND()
-        Msgbeep( "Artikal " + field->idroba + " ne postoji u sifrarniku !!!" )
+        Msgbeep( "Artikal " + fakt_pripr->idroba + " ne postoji u sifrarniku !!!" )
         return .f.
     endif
 

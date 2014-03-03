@@ -1,3 +1,7 @@
+1.4.289 2014-03-03, vsasa
+ 
+  - FAKT, pogrešna referenca na tabelu kod štampe dokumenta 
+ 
 1.4.288 2014-02-26, vsasa
  
   - KALK, generisanje inventure, ako je količina = 0 i FCJ = 0 kao i NC itd...

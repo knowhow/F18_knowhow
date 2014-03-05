@@ -1,6 +1,7 @@
-1.4.289 2014-03-03, vsasa
+1.4.289 2014-03-05, vsasa
  
-  - FAKT, pogrešna referenca na tabelu kod štampe dokumenta 
+  - FAKT, pogrešna referenca na tabelu kod štampe dokumenta
+  - LD, export podataka za banke - korekcija 
  
 1.4.288 2014-02-26, vsasa
  

@@ -856,6 +856,7 @@ do while !EOF() .and. field->idfirma == id_firma ;
     _rec := dbf_get_rec()
     _rec["idpartner"] := __idpartn
     _rec["idvrstep"] := __id_vrsta_p
+    _rec["fisc_rn"] := 0
 
     if _cnt == 1
         

@@ -327,8 +327,11 @@ endif
 _qry += " WHERE ld.godina = " + ALLTRIM( STR( ::export_params["godina"] ) )
 _qry += " AND ld.mjesec = " + ALLTRIM( STR( ::export_params["mjesec"] ) )
 _qry += " AND ld.obr = " + _sql_quote( ::export_params["obracun"] )
-_qry += " AND rd.idbanka = " + _sql_quote( ::export_params["banka"] )
 _qry += " AND rd.isplata = " + _sql_quote( "TR" )
+
+if !::export_params["krediti_export"]
+    _qry += " AND rd.idbanka = " + _sql_quote( ::export_params["banka"] )
+endif
 
 if !EMPTY( ::export_params["rj"] )
     _qry += " AND " + _sql_cond_parse( "ld.idrj", ALLTRIM( ::export_params["rj"] ) )

@@ -406,7 +406,7 @@ _fcj:=nVpvu-nVpvi
 
 if round(nUlaz-nIzlaz,4)<>0
 	_vpc:=round((nVPVU-nVPVI)/(nUlaz-nIzlaz),3)
-elsei
+else
     _fcj := 0
 	_vpc := 0
 endif

@@ -274,7 +274,7 @@ _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg)
 
 _item["sql_order"] := "idfirma, idtipdok, brdok, rbr"
-_item["blacklisted"] := { "fisc_rn" }
+_item["blacklisted"] := { "fisc_rn", "dok_veza", "opis" }
 
 f18_dbfs_add( _tbl, @_item )
 

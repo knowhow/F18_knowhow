@@ -590,7 +590,7 @@ return _ver_user
 // nuliraj ids-ove, postavi da je verzija semafora = posljednja verzija
 // ------------------------------------------------------------------------
 function nuliraj_ids_and_update_my_semaphore_ver(table)
-local _tbl
+local _tbl, _count
 local _ret
 local _user := f18_user()
 local _server := pg_server()
@@ -600,11 +600,11 @@ local _sem_status
 log_write( "START: nuliraj ids-ove - user: " + _user, 7)
 
 _tbl := "fmk.semaphores_" + LOWER(table)
-
 _qry := "UPDATE " + _tbl + " SET " 
 _qry += " ids=NULL , dat=NULL,"
 _qry += " version=last_trans_version"
 _qry += " WHERE user_code =" + _sql_quote(_user) 
+	
 _ret := _sql_query( _server, _qry )
 
 log_write( "END: nuliraj ids-ove - user: " + _user, 7)

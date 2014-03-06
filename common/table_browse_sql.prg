@@ -11,7 +11,6 @@
 
 #include "fmk.ch"
 #include "hbclass.ch"
-#include "hbcompat.ch"
 #include "common.ch"
 #include "f18_separator.ch"
 

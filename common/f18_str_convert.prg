@@ -134,3 +134,25 @@ AADD( _arr, { "Đ", "&#272;" } )
 return _arr
 
 
+function string_to_number(cNumber, countryCode)
+local sepDec := ","
+local sep1000 := "."
+local cTmp
+
+if countryCode == NIL
+   countryCode = "BA"
+endif
+
+if countryCode == "EN"
+   // u tom slucaju je sepDec := ".", sep1000 := ","
+   // nemamo sta konvertovati
+   return VAL(cNumber)
+endif
+
+cTmp := strtran(cNumber, sep1000, "")
+cTmp := strtran(cNumber, sepDec, ".")
+
+return VAL(cTmp)
+
+
+

@@ -20,7 +20,8 @@ CLASS F18Csv
 
     DATA struct
     DATA csvname
-    DATA dbfname
+    DATA memname
+    DATA delimiter
 
     METHOD new()
     METHOD read()
@@ -37,7 +38,8 @@ ENDCLASS
 // -----------------------------------------------------
 METHOD F18Csv:New()
 
-::dbfname := "csvimp.dbf"
+
+::memname := "csvimp.dbf"
 
 return self
 
@@ -53,6 +55,15 @@ if ::struct == NIL
     return _ok
 endif
 
+if ::csvname == NIL
+    MsgBeep( "A koji fajl da importujem ???" )
+    return _ok
+endif
+
+if ::delimiter == NIL
+    ::delimiter := ","
+endif
+
 // kreiraj i otvori lokalni dbf
 ::create_local_dbf()
 
@@ -66,10 +77,8 @@ return _ok
 // ------------------------------------------------------
 METHOD F18Csv:create_local_dbf()
 
-// brisi ako postoji...
-FERASE( my_home() + ::dbfname )
 // kreiraj....
-DBCREATE( my_home() + ::dbfname, ::struct, "ARRAYRDD" )
+DBCREATE( ::memname, ::struct, "ARRAYRDD" )
 
 return
 
@@ -78,13 +87,8 @@ return
 // ------------------------------------------------------
 METHOD F18Csv:open_csv_as_local_dbf()
 
-SELECT (400)
-if USED()
-    USE
-endif
-
-USE ( my_home() + ::dbfname ) VIA "ARRAYRDD"
-APPEND FROM ::csvfile DELIMITED
+USE (::memname ) VIA "ARRAYRDD"
+APPEND FROM ::csvname DELIMITED
 // preskoci header...
 GO TOP
 SKIP 1

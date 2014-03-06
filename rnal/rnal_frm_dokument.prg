@@ -331,7 +331,7 @@ local GetList := {}
 local nRec := RecNo()
 local nDocNoNew := 0
 local cDesc := ""
-local nArea
+local nArea, oCsvImport
 
 if ALIAS() == "_DOC_OPS"
     // ispis broja stavke na koju se odnosi operacija
@@ -538,7 +538,21 @@ do case
             return DE_REFRESH
         endif
 
-    case UPPER( CHR( Ch )  ) == "O"
+    case UPPER( CHR( Ch ) ) == "C"
+
+        // import CSV
+        if ALIAS() <> "_DOC_IT"
+            return DE_CONT
+        endif
+
+        oCsvImport := RnalCsvImport():new()
+        if oCsvImport:import()
+            select _doc_it
+            go top
+            return DE_REFRESH
+        endif
+
+    case UPPER( CHR( Ch ) ) == "O"
 
         // promjena rednog broja stavke
         if ALIAS() <> "_DOCS"

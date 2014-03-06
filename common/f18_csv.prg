@@ -12,9 +12,6 @@
 #include "fmk.ch"
 #include "hbclass.ch"
 #include "common.ch"
-#include "fileio.ch"
-
-REQUEST ARRAYRDD
 
 CLASS F18Csv
 
@@ -37,10 +34,7 @@ ENDCLASS
 // -----------------------------------------------------
 // -----------------------------------------------------
 METHOD F18Csv:New()
-
-
-::memname := "csvimp.dbf"
-
+::memname := "csvimp"
 return self
 
 
@@ -76,10 +70,7 @@ return _ok
 // ------------------------------------------------------
 // ------------------------------------------------------
 METHOD F18Csv:create_local_dbf()
-
-// kreiraj....
 DBCREATE( ::memname, ::struct, "ARRAYRDD" )
-
 return
 
 

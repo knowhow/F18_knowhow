@@ -47,7 +47,6 @@ AADD(aDBf,{ 'M1'        , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'TXT'       , 'M' ,  10 ,  0 })
 AADD(aDBf,{ 'IDVRSTEP'  , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'IDPM'      , 'C' ,  15 ,  0 })
-AADD(aDBf,{ 'FISC_RN'   , 'I' ,   4 ,  0 })
 AADD(aDBf,{ 'C1'        , 'C' ,  20 ,  0 })
 AADD(aDBf,{ 'C2'        , 'C' ,  20 ,  0 })
 AADD(aDBf,{ 'C3'        , 'C' ,  20 ,  0 })
@@ -72,6 +71,13 @@ if ver["current"] > 0 .and. ver["current"] < 00803
 
 endif
 
+// 0.9.2
+if ver["current"] > 0 .and. ver["current"] < 00902
+    modstru( { "*" + "fakt_fakt", "D FISC_RN I 4 0" } )
+    modstru( { "*" + "fakt_pripr", "C FISC_RN I 4 0 FISC_RN N 10 0" } )
+endif
+
+
 IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX("1", "IdFirma+idtipdok+brdok+rbr+podbr", _alias)
@@ -86,6 +92,9 @@ CREATE_INDEX("IDPARTN","idpartner", _alias)
 // FAKT_PRIPR
 // ----------------------------------------------------------------------------
 
+// dodaj polje fiskalnog racuna ali samo za pripremu
+AADD(aDBf,{ 'FISC_RN'   , 'N' ,   10 ,  0 })
+
 _alias := "FAKT_PRIPR"
 _table_name := "fakt_pripr"
 
@@ -94,6 +103,7 @@ IF_NOT_FILE_DBF_CREATE
 CREATE_INDEX("1", "IdFirma+idtipdok+brdok+rbr+podbr", _alias)
 CREATE_INDEX("2", "IdFirma+dtos(datdok)", _alias)
 CREATE_INDEX("3", "IdFirma+idroba+rbr", _alias)
+
 
 // ----------------------------------------------------------------------------
 // FAKT_PRIPR9
@@ -140,7 +150,6 @@ AADD(aDBf, { 'IDPARTNER'           , 'C' ,   6 ,  0 })
 AADD(aDBf, { 'IDVRSTEP'            , 'C' ,   2 ,  0 })
 AADD(aDBf, { 'DATPL'               , 'D' ,   8 ,  0 })
 AADD(aDBf, { 'IDPM'                , 'C' ,  15 ,  0 })
-AADD(aDBf, { 'DOK_VEZA'            , 'C' , 150 ,  0 })
 AADD(aDBf, { 'OPER_ID'             , 'N' ,  10 ,  0 })
 AADD(aDBf, { 'FISC_RN'             , 'N' ,  10 ,  0 })
 AADD(aDBf, { 'FISC_ST'             , 'N' ,  10 ,  0 })
@@ -169,6 +178,11 @@ endif
 // 0.9.0
 if ver["current"] > 0 .and. ver["current"] < 0900
     modstru({"*" + _table_name, "A FISC_TIME C 10 0", "A FISC_DATE D 8 0" })
+endif
+
+// 0.9.3
+if ver["current"] > 0 .and. ver["current"] < 00903
+    modstru({"*" + _table_name, "D DOK_VEZA C 150 0" } )
 endif
 
 IF_C_RESET_SEMAPHORE

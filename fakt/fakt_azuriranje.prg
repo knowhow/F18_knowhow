@@ -214,7 +214,6 @@ AADD( _ids_fakt, "#2" + _tmp_id )
 
 do while !EOF() .and. field->idfirma == id_firma .and. field->idtipdok == id_tip_dok .and. field->brdok == br_dok
     _record := dbf_get_rec()
-    _record["fisc_rn"] := 0
     if !sql_table_update("fakt_fakt", "ins", _record )
         _ok := .f.
         exit
@@ -469,7 +468,7 @@ _fakt_data["idvrstep"] := field->idvrstep
 _fakt_data["datpl"] := field->datdok
 _fakt_data["idpm"] := field->idpm
 
-_fakt_data["dok_veza"] := ""
+//_fakt_data["dok_veza"] := ""
 
 _fakt_data["dat_isp"]  := iif( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )
 _fakt_data["dat_otpr"] := iif( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )

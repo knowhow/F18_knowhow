@@ -34,10 +34,11 @@ return _ret
 // ------------------------------
 // no_lock - ne zakljucavaj
 // ------------------------------
-function dbf_update_rec(vars, no_lock)
+function dbf_update_rec( vars, no_lock )
 local _key
 local _field_b
 local _msg
+local _a_dbf_rec
 
 if no_lock == NIL
    no_lock := .f.
@@ -51,9 +52,18 @@ if !used()
 endif
 
 if no_lock .or. rlock()
+
+    _a_dbf_rec := get_a_dbf_rec( ALIAS() )
+    
     for each _key in vars:Keys
+
+        // blacklistovano polje
+        if field_in_blacklist( _key, _a_dbf_rec["blacklisted"] )
+            LOOP
+        endif
+
         // replace polja
-        if FIELDPOS(_key) == 0
+        if FIELDPOS( _key ) == 0
            _msg := RECI_GDJE_SAM + "dbf field " + _key + " ne postoji u " + ALIAS()
            //Alert(_msg)
            log_write( _msg, 1 )
@@ -62,7 +72,9 @@ if no_lock .or. rlock()
            // napuni field sa vrijednosti
            EVAL( _field_b, vars[_key] )
         endif
-    next 
+
+    next
+ 
     if !no_lock 
          dbrunlock()
     endif

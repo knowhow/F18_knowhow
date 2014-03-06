@@ -136,6 +136,7 @@ f18_dbfs_add(dbf_table, @_item)
 return .t.
 
 
+
 // -------------------------------------------------------
 // tbl - dbf_table ili alias
 //
@@ -147,39 +148,34 @@ local _msg, _rec, _keys, _dbf_tbl, _key
 _dbf_tbl := "x"
 
 if _only_basic_params == NIL
-   _only_basic_params = .f.
+    _only_basic_params = .f.
 endif
 
 if VALTYPE(__f18_dbfs) <> "H"
-   Alert(RECI_GDJE_SAM + " " + tbl + "__f18_dbfs nije inicijalizirana")
+    Alert(RECI_GDJE_SAM + " " + tbl + "__f18_dbfs nije inicijalizirana")
 endif
 
 if HB_HHASKEY(__f18_dbfs, tbl)
-   _dbf_tbl := tbl
-
+    _dbf_tbl := tbl
 else
-   // probaj preko aliasa
-   for each _key IN __f18_dbfs:Keys
-      if VALTYPE(tbl) == "N"
-
-        // zadana je workarea
-        if __f18_dbfs[_key]["wa"] == tbl
-            _dbf_tbl := _key
-        endif
-
-      else 
-
-        if __f18_dbfs[_key]["alias"] == UPPER(tbl)
-            _dbf_tbl := _key
-        endif
-
-      endif    
-   next 
+    // probaj preko aliasa
+    for each _key IN __f18_dbfs:Keys
+        if VALTYPE(tbl) == "N"
+            // zadana je workarea
+            if __f18_dbfs[_key]["wa"] == tbl
+                _dbf_tbl := _key
+            endif
+        else 
+            if __f18_dbfs[_key]["alias"] == UPPER(tbl)
+                _dbf_tbl := _key
+            endif
+        endif    
+    next 
 endif
 
-if HB_HHASKEY(__f18_dbfs, _dbf_tbl)
+if HB_HHASKEY( __f18_dbfs, _dbf_tbl )
     // preferirani set parametara
-    _rec := __f18_dbfs[_dbf_tbl]
+    _rec := __f18_dbfs[ _dbf_tbl ]
 else
     _rec := hb_hash()
     _rec["table"] := NIL
@@ -192,6 +188,10 @@ if !HB_HHASKEY(_rec, "table") .or. _rec["table"] == NIL
    QUIT_1
 endif
 
+// ako nema definisane blackliste, setuj je ali kao NIL
+if !HB_HHASKEY( _rec, "blacklisted" )
+    _rec["blacklisted"] := NIL
+endif
 
 if _only_basic_params
    return _rec
@@ -200,7 +200,7 @@ endif
 // nije zadano - ja cu na osnovu strukture dbf-a
 //  napraviti dbf_fields
 if !HB_HHASKEY(_rec, "dbf_fields")
-   set_dbf_fields_from_struct(@_rec)
+    set_dbf_fields_from_struct(@_rec)
 endif
 
 if !HB_HHASKEY(_rec, "sql_order")

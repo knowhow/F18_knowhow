@@ -38,7 +38,7 @@ return _sql_fields
 // -------------------------------------------------
 function sql_table_update( table, op, record, where_str, silent )
 local _i, _tmp, _tmp_2, _msg
-LOCAL _ret
+LOCAL _ret := .f.
 LOCAL _result
 LOCAL _qry
 LOCAL _tbl
@@ -111,29 +111,42 @@ DO CASE
    CASE op == "ins"
 
         _qry := "INSERT INTO " + _sql_tbl +  "("  
-        for _i := 1 to LEN(_a_dbf_rec["dbf_fields"])
+        
+        for _i := 1 to LEN( _a_dbf_rec["dbf_fields"] )
+            
+            // polje je u blacklisti ?
+            if field_in_blacklist( _a_dbf_rec["dbf_fields"][_i], _a_dbf_rec["blacklisted"] )
+                LOOP
+            endif
 
             _qry += _a_dbf_rec["dbf_fields"][_i]
 
-            if _i < LEN(_a_dbf_rec["dbf_fields"])
+            if _i < LEN( _a_dbf_rec["dbf_fields"] )
                 _qry += ","
             endif
 
         next
 
         _qry += ")  VALUES (" 
-        for _i := 1 to LEN(_a_dbf_rec["dbf_fields"])
+
+        for _i := 1 to LEN( _a_dbf_rec["dbf_fields"] )
 
             _tmp := _a_dbf_rec["dbf_fields"][_i]
 
-            if !HB_HHASKEY(record, _tmp)
+            // polje je u blacklisti ?
+            if field_in_blacklist( _tmp, _a_dbf_rec["blacklisted"] )
+                LOOP
+            endif
+
+            if !HB_HHASKEY( record, _tmp )
                    _msg := "record " + op + " ne sadrzi " + _tmp + " field !?## pogledaj log !"
                    log_write(_msg + " " + pp(record), 2)
                    MsgBeep(_msg)
-                   RaiseError(_msg + " " + pp(record) )
+                   RaiseError( _msg + " " + pp(record) )
+                   return _ret
             endif
 
-            if VALTYPE(record[_tmp]) == "N"
+            if VALTYPE( record[_tmp] ) == "N"
 
                    _tmp_2 := STR(record[_tmp], _a_dbf_rec["dbf_fields_len"][_tmp][2], _a_dbf_rec["dbf_fields_len"][_tmp][3])
                    

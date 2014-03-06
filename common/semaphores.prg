@@ -457,15 +457,18 @@ dbf_write_time := SECONDS()
 DO WHILE !_qry_obj:EOF()
 
     ++ _counter
-    append blank
+    APPEND BLANK
 
-    for _i := 1 to LEN(_dbf_fields)
-        _fld := FIELDBLOCK(_dbf_fields[_i])
+    for _i := 1 to LEN( _dbf_fields )
+
+        _fld := FIELDBLOCK( _dbf_fields[_i] )
+
         if VALTYPE(EVAL(_fld)) $ "CM"
-            EVAL(_fld, hb_Utf8ToStr(_qry_obj:FieldGet(_i)))
+            EVAL( _fld, hb_Utf8ToStr( _qry_obj:FieldGet( _qry_obj:FieldPos( _dbf_fields[ _i ] ) ) ) )
         else
-            EVAL(_fld, _qry_obj:FieldGet(_i))
+            EVAL( _fld, _qry_obj:FieldGet( _qry_obj:FieldPos( _dbf_fields[ _i ] ) ) )
         endif
+
     next 
                 
     _msg := ToStr(Time()) + " : sync fill : " + dbf_table + " : " + ALLTRIM( STR( _counter ) )
@@ -482,7 +485,30 @@ log_write( "fill_dbf_from_server(), table: " + dbf_table + ", count: " + ALLTRIM
 log_write( "fill_dbf_from_server(), zavrsio", 9 )
 
 dbf_write_time := SECONDS() - dbf_write_time
+
 return
+
+
+
+
+// --------------------------------------------------------------------
+// da li je polje u blacklisti
+// --------------------------------------------------------------------
+function field_in_blacklist( field_name, blacklist )
+local _ok := .f.
+local _scan
+
+// mozda nije definisana blacklista
+if blacklist == NIL
+    return _ok
+endif
+
+if ASCAN( blacklist, { |val| val == field_name } ) > 0
+    _ok := .t.
+endif
+
+return _ok
+
 
 
 // --------------------------------------------------------------------------------------------

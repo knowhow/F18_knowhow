@@ -110,7 +110,7 @@ _item["table"] := dbf_table
 _item["wa"]    := wa
 
 _item["temp"]  := .f.
-
+_item["sql"]   := .t.
 _item["algoritam"] := {}
 
 _alg := hb_hash()
@@ -191,6 +191,10 @@ endif
 // ako nema definisane blackliste, setuj je ali kao NIL
 if !HB_HHASKEY( _rec, "blacklisted" )
     _rec["blacklisted"] := NIL
+endif
+
+if !HB_HHASKEY( _rec, "sql" )
+    _rec["sql"] := .f.
 endif
 
 if _only_basic_params
@@ -295,9 +299,7 @@ return _sql_order
 // rec["dbf_fields"]
 // ----------------------------------------------
 function set_dbf_fields_from_struct(rec)
-local _struct, _i
 local _opened := .t.
-local _fields :={}, _fields_len
 local _dbf
 
 #ifdef NODE
@@ -331,6 +333,26 @@ if !used()
     _opened := .t.
 endif
 
+rec["dbf_fields"] := NIL
+set_rec_from_dbstruct(@rec)
+
+if _opened
+   USE
+endif
+
+return .t.
+
+// ----------------------------------------
+// ----------------------------------------
+function set_rec_from_dbstruct(rec)
+local _struct, _i
+local _fields :={}, _fields_len
+
+if rec["dbf_fields"] != NIL
+    // dbf_fields, dbf_fields_len su vec popunjena
+    return nil
+endif
+
 _struct := DBSTRUCT()
 
 _fields_len := hb_hash()
@@ -358,10 +380,4 @@ next
 rec["dbf_fields"]     := _fields
 rec["dbf_fields_len"] := _fields_len
 
-if _opened
-   USE
-endif
-
-return .t.
-
-
+return nil

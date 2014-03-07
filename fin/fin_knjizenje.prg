@@ -185,7 +185,7 @@ O_PNALOG
 O_PAREK
 O_KONTO
 O_PARTN
-O_TNAL
+O_TNAL_SQL
 O_TDOK
 O_NALOG
 O_FIN_PRIPR
@@ -227,11 +227,11 @@ if gNW=="D"
     @  m_x+1,m_y+2 SAY "Firma: "
     ?? gFirma,"-",gNFirma
     @  m_x+3,m_y+2 SAY "NALOG: "
-    @  m_x+3,m_y+14 SAY "Vrsta:" GET _idvn VALID P_VN(@_IdVN,3,26) PICT "@!"
+    @  m_x+3,m_y+14 SAY "Vrsta:" GET _idvn VALID browse_tnal(@_IdVN, 3, 26) PICT "@!"
 else
     @  m_x+1,m_y+2 SAY "Firma:" GET _idfirma VALID {|| P_Firma(@_IdFirma,1,20), _idfirma:=left(_idfirma,2),.t.}
     @  m_x+3,m_y+2 SAY "NALOG: "
-    @  m_x+3,m_y+14 SAY "Vrsta:" GET _idvn VALID P_VN(@_IdVN,3,26)
+    @  m_x+3,m_y+14 SAY "Vrsta:" GET _idvn VALID browse_tnal(@_IdVN,3,26)
 endif
 
 read

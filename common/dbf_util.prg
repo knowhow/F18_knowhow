@@ -13,9 +13,9 @@
 
 function delete_with_rlock()
 
-if rlock()
+if my_rlock()
    DELETE
-   dbrunlock()
+   my_unlock()
    return .t.
 else
    return .f.

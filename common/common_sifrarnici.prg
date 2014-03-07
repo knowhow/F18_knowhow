@@ -38,7 +38,7 @@ endif
 
 AADD(opc,"3. tipovi naloga")
 if (ImaPravoPristupa("FMK","SIF","TIPNALOPEN"))
-	AADD(opcexe, {|| P_VN() } )
+	AADD(opcexe, {|| browse_tnal() } )
 else
 	AADD(opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
 endif

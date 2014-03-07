@@ -137,7 +137,7 @@ endif
 
 
 if USED()
-	nOrder := ORDNUMBER( cTag )
+	nOrder := index_tag_num( cTag )
 	cOrdKey := ORDKEY(cTag)
 	select (_wa)
 	use

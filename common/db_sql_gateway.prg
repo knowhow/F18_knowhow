@@ -151,7 +151,7 @@ if !used()
     O_SQLPAR
 endif
 
-do while .not. RLOCK()
+do while .not. my_rlock()
     // moras lockovati tekuci slog !!
     inkey(0.4)
 enddo

@@ -29,6 +29,7 @@ return
 
 
 function StAnalNal( lAuto )
+
 local _print_opt := "V"
 local _izgenerisi := .f.
 private aNalozi:={}
@@ -41,7 +42,7 @@ O_VRSTEP
 O_FIN_PRIPR
 O_KONTO
 O_PARTN
-O_TNAL
+O_TNAL_SQL
 O_TDOK
 O_PSUBAN
 
@@ -234,13 +235,14 @@ return
 
 
 static function _o_tables()
+
 O_PSUBAN
 O_PARTN
 O_PANAL
 O_PSINT
 O_PNALOG
 O_KONTO
-O_TNAL
+O_TNAL_SQL
 return
 
 

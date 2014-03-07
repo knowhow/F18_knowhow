@@ -39,7 +39,7 @@
 // -----------------------------------------------------
 function f18_lock_tables( a_tables, unlock_table )
 local _ok := .t.
-local _i, _tbl 
+local _i, _tbl, _dbf_rec 
 
 PushWa()
 
@@ -64,9 +64,14 @@ if sql_table_update( nil, "BEGIN" )
         my_use_semaphore_on()
 
         for _i := 1 to LEN( a_tables )
-            _tbl := get_a_dbf_rec(a_tables[_i])["table"]
-            // otvori tabelu i selectuj workarea koja je rezervisana za ovu tabelu
-            my_use(_tbl, NIL, NIL, NIL, NIL, NIL, .t.)
+            altd()
+            _dbf_rec := get_a_dbf_rec(a_tables[_i])
+            _tbl := _dbf_rec["table"] 
+            
+            if !_dbf_rec["sql"]
+                // otvori tabelu i selectuj workarea koja je rezervisana za ovu tabelu
+                my_use(_tbl, NIL, NIL, NIL, NIL, NIL, .t.)
+            endif
         next
 
         my_use_semaphore_off()
@@ -84,7 +89,6 @@ else
 
 endif
 
-// pozicioniraj se na dbf prije ulaska u funkciju
 PopWA()
 
 return _ok
@@ -420,6 +424,7 @@ ENDIF
 _result := _table_obj:Fieldget(1)
 
 RETURN _result
+
 
 
 

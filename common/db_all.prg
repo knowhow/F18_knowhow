@@ -122,9 +122,9 @@ local nRec
 
 do while .t.
 
-if rlock()
+if my_rlock()
   dbdelete2()
-  DBUNLOCK()
+  my_unlock()
   exit
 else
     inkey(0.4)
@@ -853,8 +853,12 @@ return
 // --------------------------------
 function PushWA()
 
-if used()
-   StackPush(aWAStack, {select(), IndexOrd(), DBFilter(), RECNO()})
+if USED()
+   //if rddName() == "SQLMIX"
+   //   StackPush(aWAStack, {select(), "", "", RECNO()})
+   //else
+      StackPush(aWAStack, {select(), IndexOrd(), DBFilter(), RECNO()})
+   //endif
 else
    StackPush(aWAStack, {NIL, NIL, NIL, NIL})
 endif
@@ -876,29 +880,32 @@ if aWa[1]<>nil
    // select
    SELECT(aWa[1])
    
-   // order
-   if used()
+
+   //if rddName() != "SQLMIX"
+     // order
+     if used()
 	   if !empty(aWa[2])
 	      ordsetfocus(aWa[2])
 	   else
-	    set order to
+	      set order to
 	   endif
-   endif
-
-   // filter
-   if !empty(aWa[3])
-     set filter to &(aWa[3])
-   else
-     if !empty(dbfilter())
-       set filter to
      endif
-     //   DBCLEARFILTER( )
-   endif
+
+     // filter
+     if !empty(aWa[3])
+        set filter to &(aWa[3])
+     else
+        if !empty(dbfilter())
+          set filter to
+        endif
+      endif
+
    
-   if used()
+   if USED()
     go aWa[4]
    endif
    
+   //endif
 endif  // wa[1]<>NIL
 
 return nil

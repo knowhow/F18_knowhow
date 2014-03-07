@@ -66,7 +66,7 @@ endif
 set_mc_imekol(nDbf)
 
 nOrderSif := indexord() 
-nOrdId := ORDNUMBER("ID")
+nOrdId := index_tag_num("ID")
 
 sif_set_order( nNTX, nOrdId, @fID_j )
 
@@ -474,7 +474,7 @@ return xVal
 
 // ---------------------------------------------------
 // ---------------------------------------------------
-function PushSifV()
+static function PushSifV()
 __PSIF_NIVO__ ++
 if __PSIF_NIVO__ > len(__A_SIFV__)
   AADD(__A_SIFV__,{"",0,0})
@@ -1720,7 +1720,7 @@ if cTag == NIL
    cTag := "ID"
 endif
 
-if ORDNUMBER(cTag) == 0
+if index_tag_num(cTag) == 0
    _msg := "alias: " + ALIAS() + ", tag ne postoji :" + cTag
    log_write(_msg)
    MsgBeep(_msg)
@@ -1971,7 +1971,7 @@ cPom2   := RTRIM(cPom2)
 cPom    := cK1 + CHR(255)
 PushWA()
 
-nOrder:=ORDNUMBER("BROBA")
+nOrder := index_tag_num("BROBA")
 IF nOrder=0
     MsgBeep("Ako ste u mrezi, svi korisnici moraju napustiti FMK. Zatim pritisnite Enter!")
     MsgO("Kreiram tag(index) 'BROBA'")

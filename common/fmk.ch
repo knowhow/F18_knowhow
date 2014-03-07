@@ -13,6 +13,7 @@
 #define F18_DEFINED
 
 #include "o_f18.ch"
+#include "o_f18_sql.ch"
 #include "f_fmk.ch"
 #include "inkey.ch"
 #include "box.ch"

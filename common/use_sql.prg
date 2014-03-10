@@ -15,7 +15,11 @@
 #include "dbinfo.ch"
 #include "error.ch"
 
+
+
 REQUEST SDDPG, SQLMIX
+
+static __connected := .f.
 
 //ANNOUNCE RDDSYS
 
@@ -31,17 +35,21 @@ endif
 //inkey(0)
 
 rddSetDefault( "SQLMIX" )
+
+if !__connected 
 IF rddInfo( RDDI_CONNECT, { "POSTGRESQL", "localhost", "test1", "test1" , "f18_2014" } ) == 0
       ? "Unable connect to the server"
       RETURN
 ENDIF
+__connected := .t.
+endif
 
 
 dbUseArea( .f., "SQLMIX", "SELECT * FROM fmk." + table,  table )
 
 if l_make_index
-   INDEX ON ID TAG ID TO (table)
-   INDEX ON NAZ TAG NAZ TO (table)
+  INDEX ON ID TAG ID TO (table)
+  INDEX ON NAZ TAG NAZ TO (table)
 endif
 
 rddSetDefault( "DBFCDX" )

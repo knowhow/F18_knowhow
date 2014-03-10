@@ -777,7 +777,7 @@ do while .t.
         
         _alias := LOWER(ALIAS())        
 
-        if !f18_lock_tables( { _alias, "sifv", "sifk" } )
+        if !f18_lock_tables( { _alias, "sifv", "sifk", _alias } )
             log_write( "ERROR: nisam uspio lokovati tabele: " + _alias + ", sifk, sifv", 2 )
             exit
         endif
@@ -791,6 +791,7 @@ do while .t.
         update_sifk_na_osnovu_ime_kol_from_global_var(ImeKol, "w", Ch==K_CTRL_N, "CONT")
 
         f18_free_tables( { _alias, "sifv", "sifk" } )
+
         sql_table_update( nil, "END" )
 
         set_global_vars_from_dbf("w")
@@ -801,6 +802,7 @@ do while .t.
             skip
         endif
 
+        altd()
         if EOF()
             skip -1
             exit
@@ -1312,3 +1314,64 @@ return
 static function PopSifV()
 --__PSIF_NIVO__
 return
+
+
+// ---------------------------------------------------------------------
+//  VpSifra(wId)
+//  Stroga kontrola ID-a sifre pri unosu nove ili ispravci postojece!
+//  wId - ID koji se provjerava
+// --------------------------------------------------------------------
+function sifra_postoji( wId, cTag )
+local nRec := RecNo()
+local nRet := .t.
+local cUpozorenje
+
+if cTag == NIL
+   cTag := "ID"
+endif
+
+altd()
+if index_tag_num(cTag) == 0
+   _msg := "alias: " + ALIAS() + ", tag ne postoji :" + cTag
+   log_write(_msg)
+   MsgBeep(_msg)
+   QUIT_1
+endif
+
+// ako nije tag = ID, dozvoli i dupli unos, moze biti barkod polje
+if cTag <> "ID" .and. EMPTY( wId )
+    return nRet
+endif
+
+cUpozorenje := "Vrijednost polja " + cTag + " vec postoji !!!"
+
+PushWa()
+
+SET ORDER TO TAG (cTag)
+seek wId
+
+if ( FOUND() .and. ( Ch == K_CTRL_N .or. Ch == K_F4 ) ) 
+    
+    MsgBeep( cUpozorenje )
+    nRet := .f.
+
+elseif ( gSKSif == "D" .and. FOUND() )    
+    // nasao na ispravci ili dupliciranju
+    if nRec <> RecNo()
+        MsgBeep(cUpozorenje)
+        nRet:=.f.
+    else       
+        // bio isti zapis, idi na drugi
+        skip 1
+        if (!EOF() .and. wId==id)
+            MsgBeep(cUpozorenje)
+            nRet := .f.
+        endif
+    endif
+endif
+
+PopWa()
+
+return nRet
+
+

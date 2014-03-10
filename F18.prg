@@ -20,6 +20,12 @@ function Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 local _arg_v := hb_hash()
 public gDebug := 9
 
+/*
+use_sql("tnal")
+go 10
+browse()
+*/
+
 cre_arg_v_hash( @_arg_v, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
 set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )

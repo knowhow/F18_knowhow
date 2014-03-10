@@ -27,7 +27,7 @@ nTArea := SELECT()
 
 O_TNAL_SQL
 
-AADD(ImeKol, { "ID", {|| id}, "id", {|| .t.}, {|| vpsifra(wId)} })
+AADD(ImeKol, { "ID", {|| id}, "id", {|| .t.}, {|| sifra_postoji(wId)} })
 AADD(ImeKol, { "Naziv", {|| naz}, "naz" })
 
 for i:=1 to LEN(ImeKol)

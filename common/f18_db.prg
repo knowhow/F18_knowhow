@@ -33,6 +33,7 @@ local _values_dbf
 local _alg_tag := ""
 local _ret
 
+altd()
 _ret := .t.
 
 if lock == NIL
@@ -57,6 +58,7 @@ endif
 log_write( "START: update_rec_server_and_dbf " + table, 9 )
 
 _values_dbf := dbf_get_rec()
+
 // trebamo where str za stanje dbf-a
 set_table_values_algoritam_vars(@table, @_values_dbf, @algoritam, @transaction, @_a_dbf_rec, @_alg, @_where_str_dbf, @_alg_tag)
 

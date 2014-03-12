@@ -1,3 +1,7 @@
+1.4.290 2014-03-12, vsasa
+ 
+  - RNAL, ispis repromaterijala po stavkama na nalogu za proizvodnju #32627
+ 
 1.4.289 2014-03-05, vsasa
  
   - FAKT, pogrešna referenca na tabelu kod štampe dokumenta

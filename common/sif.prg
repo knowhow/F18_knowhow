@@ -366,30 +366,6 @@ endif
 
 return .t.
 
-// ------------------------------------
-// ------------------------------------
-static function sif_ispisi_naziv(nDbf, dx, dy)
-if dx <> NIL .and. dy <> nil
-
-    if (nDbf)->(fieldpos("naz")) <> 0
-        @ m_x + dx, m_y + dy SAY PADR(TRIM((nDbf)->naz), 70 - dy)
-    endif
-
-    if (nDbf)->(fieldpos("naziv")) <> 0
-        @ m_x + dx, m_y + dy SAY PADR(TRIM((nDbf)->naziv), 70 - dy)
-    endif
-
-elseif dx <> NIL .and. dx > 0 .and. dx < 25
-
-    if (nDbf)->(fieldpos("naz")) <> 0
-        CentrTxt(trim((nDbf)->naz), dx)
-    endif
-
-    if (nDbf)->(fieldpos("naziv")) <> 0
-        CentrTxt(trim((nDbf)->naziv), dx)
-    endif
-endif
-
 // ------------------------------------------------------------
 // -----------------------------------------------------------
 static function EdSif(nDbf, cNaslov, bBlok, aZabrane, aZabIsp)

@@ -67,7 +67,6 @@ if sql_table_update( nil, "BEGIN" )
         my_use_semaphore_on()
 
         for _i := 1 to LEN( a_tables )
-            altd()
             _dbf_rec := get_a_dbf_rec(a_tables[_i])
             _tbl := _dbf_rec["table"] 
             

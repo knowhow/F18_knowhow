@@ -252,7 +252,6 @@ anInterVV:={ { {0,0} , {0,0} , {0,0} , {0,0} },;        // do - interval 1
 cLastIdPartner:=""
 fPrviProlaz:=.t.
 
-altd()
 do while !EOF()
 
     cIdPartner := idpartner

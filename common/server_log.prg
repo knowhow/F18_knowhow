@@ -24,6 +24,10 @@ LOCAL _tbl
 LOCAL _user := f18_user()
 LOCAL _server := pg_server()
 
+// TODO: server_log wratiti nazad
+
+return .f.
+
 if silent == NIL
 	silent := .f.
 endif
@@ -48,6 +52,7 @@ endif
 
 _ret := srv:Query( qry )
 
+/* TODO: ne znam odakle ove neterror greske
 if _ret:NetErr()
 
 	if !silent
@@ -58,7 +63,7 @@ if _ret:NetErr()
     return .f.
 
 endif
-
+*/
 return _ret
 
 

@@ -25,16 +25,15 @@ Kol := {}
 
 nTArea := SELECT()
 
-O_TNAL_SQL
+O_TNAL
 
-AADD(ImeKol, { "ID", {|| id}, "id", {|| .t.}, {|| sifra_postoji(wId)} })
-AADD(ImeKol, { "Naziv", {|| naz}, "naz" })
+AADD(ImeKol, { "ID", { || id }, "id", {|| .t.}, {|| sifra_postoji(wId)} })
+AADD(ImeKol, { "Naziv", {|| PADR(ToStr(naz), 30) }, "naz" })
 
-for i:=1 to LEN(ImeKol)
+for i := 1 to LEN(ImeKol)
 	AADD(Kol, i)
 next
 
 select (nTArea)
-return p_sifra_2(F_TNAL, 1, 10, 60, "Lista: Vrste naloga", @cId, dx, dy)
-
+return p_sifra_2(F_TNAL, 1, MAX(maxrows() - 20, 10), MAX(maxcols() - 30, 50), "OsnPod: Vrste naloga", @cId, dx, dy)
 

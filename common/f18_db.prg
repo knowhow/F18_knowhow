@@ -33,7 +33,6 @@ local _values_dbf
 local _alg_tag := ""
 local _ret
 
-altd()
 _ret := .t.
 
 if lock == NIL

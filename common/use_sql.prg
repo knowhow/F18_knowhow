@@ -16,16 +16,17 @@
 #include "error.ch"
 
 
-
 REQUEST SDDPG, SQLMIX
-
-static __connected := .f.
-
-//ANNOUNCE RDDSYS
 
 // -----------------------------------------
 // -----------------------------------------
 function use_sql( table, l_make_index )
+LOCAL oConn
+
+
+if USED()
+   return .f.
+endif
 
 if l_make_index == NIL
    l_make_index = .f.
@@ -34,23 +35,23 @@ endif
 //AEval( rddList(), {| x | QOut( x ) } )
 //inkey(0)
 
+oConn := my_server():pDB 
+//? PQHOST(oConn)
+
 rddSetDefault( "SQLMIX" )
 
-if !__connected 
-IF rddInfo( RDDI_CONNECT, { "POSTGRESQL", "localhost", "test1", "test1" , "f18_2014" } ) == 0
+IF rddInfo( RDDI_CONNECT, { "POSTGRESQL", oConn } ) == 0
       ? "Unable connect to the server"
       RETURN
 ENDIF
-__connected := .t.
-endif
 
-
-dbUseArea( .f., "SQLMIX", "SELECT * FROM fmk." + table,  table )
+dbUseArea( .f., "SQLMIX", "SELECT * FROM fmk." + table + " ORDER BY ID",  table )
 
 if l_make_index
-  INDEX ON ID TAG ID TO (table)
-  INDEX ON NAZ TAG NAZ TO (table)
+     INDEX ON ID TAG ID TO (table)
+     INDEX ON NAZ TAG NAZ TO (table)
 endif
+
 
 rddSetDefault( "DBFCDX" )
 

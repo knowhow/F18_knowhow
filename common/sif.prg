@@ -58,7 +58,8 @@ endif
 
 select (nDbf)
 if !used()
-    my_use(nDbf, nil, .f.)
+    MsgBeep("USED FALSE ?!")
+    return .f.
 endif
 
 // setuj match_code polje...
@@ -100,8 +101,6 @@ if ( fPonaz .and. ( cNazSrch == "" .or. !TRIM( cNazSrch ) == TRIM( naz ) ) ) ;
     .or. ( !FOUND() .and. cNaslov <> NIL ) ;
     .or. ( cNaslov <> NIL .and. LEFT( cNaslov, 1 ) = "#" )   
   
-    // if cID == nil - pregled sifrarnika
-
     lPrviPoziv := .t.
 
     if EOF() 
@@ -113,7 +112,7 @@ if ( fPonaz .and. ( cNazSrch == "" .or. !TRIM( cNazSrch ) == TRIM( naz ) ) ) ;
         go top
     endif
 
-    ObjDbedit(, nVisina, nSirina,  {|| EdSif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )}, cNaslov, "", invert, _komande, 1, bPodvuci, , , aPoredak )
+    browse_tbl_2(, nVisina, nSirina,  {|| EdSif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )}, cNaslov, "", invert, _komande, 1, bPodvuci, , , aPoredak )
 
     IF TYPE("id") $ "U#UE"       
         cID:=(nDbf)->(FIELDGET(1))
@@ -722,16 +721,16 @@ do while .t.
                     nRed := 0
                 endif
 
-                // ne prikazuj nil vrijednosti
-                if EVAL(ImeKol[i, 2]) <> NIL .and. ToStr(EVAL(ImeKol[i,2])) <> "_?_"  
-                    if nKolona=1
+                // TODO: ne prikazuj nil vrijednosti
+                //if EVAL(ImeKol[i, 2]) <> NIL .and. ToStr(EVAL(ImeKol[i,2])) <> "_?_"  
+                    if nKolona == 1
                         ++nTekRed
                     endif
-                    @ m_x + nTekRed, m_y + nKolona SAY PADL( alltrim(ImeKol[i, 1]) ,15)
+                    @ m_x + nTekRed, m_y + nKolona SAY PADL( ALLTRIM(ImeKol[i, 1]) ,15)
                     @ m_x + nTekRed, col() + 1 SAY EVAL(ImeKol[i,2])
-                else
-                    ++nNestampati
-                endif
+                //else
+                //    ++nNestampati
+                //endif
 
             endif 
 
@@ -802,7 +801,6 @@ do while .t.
             skip
         endif
 
-        altd()
         if EOF()
             skip -1
             exit
@@ -936,6 +934,7 @@ local nRed, nKolona
 local cWhenSifk, cValidSifk
 local _when_block, _valid_block
 local _m_block := MEMVARBLOCK(var_name)
+local tmpRec
 
 // uzmi when, valid kodne blokove
 if (Ch==K_F2 .and. lZabIsp .and. ASCAN(aZabIsp, UPPER(ImeKol[i, 3]))>0)
@@ -963,9 +962,9 @@ if LEN( ToStr( EVAL(_m_block)) ) > 50
         @ m_x + nTekRed + 1, m_y + 67 SAY Chr(16)
 
 elseif Len(ImeKol[i]) >= 7 .and. ImeKol[i , 7] <> NIL
-        cPic:= ImeKol[i, 7]
+        cPic := ImeKol[i, 7]
 else
-        cPic:=""
+        cPic := ""
 endif
 
 nRed := 1
@@ -1011,13 +1010,20 @@ else
         _valid_block := bValid
 endif
 
-@ m_x + nTekRed , m_y + nKolona SAY  IIF(nKolona > 1, "  " + alltrim(ImeKol[i, 1]) , PADL( alltrim(ImeKol[i, 1]) , 15))  + " "
+@ m_x + nTekRed , m_y + nKolona SAY  IIF(nKolona > 1, "  " + ALLTRIM(ImeKol[i, 1]) , PADL( ALLTRIM(ImeKol[i, 1]) , 15))  + " "
+
+if &var_name == NIL
+    tmpRec = RECNO()
+    GO BOTTOM
+    SKIP
+    // EOF record
+    &var_name := EVAL(ImeKol[i, 2])
+    go tmpRec
+endif
 
 AAdd( GetList, _GET_( &var_name, var_name,  cPic, _valid_block, _when_block) ) ;;
 
 ATail(GetList):display()
-
-
 
 return .t.
 
@@ -1330,7 +1336,6 @@ if cTag == NIL
    cTag := "ID"
 endif
 
-altd()
 if index_tag_num(cTag) == 0
    _msg := "alias: " + ALIAS() + ", tag ne postoji :" + cTag
    log_write(_msg)

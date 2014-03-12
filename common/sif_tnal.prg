@@ -14,7 +14,7 @@
 
 // ------------------------------------
 // ------------------------------------
-function browse_tnal(CId, dx, dy)
+function browse_tnal(cId, dx, dy)
 
 local nTArea
 private ImeKol
@@ -37,3 +37,4 @@ next
 select (nTArea)
 return p_sifra_2(F_TNAL, 1, MAX(maxrows() - 20, 10), MAX(maxcols() - 30, 50), "OsnPod: Vrste naloga", @cId, dx, dy)
 
+function P_VN(cId, dx, dy)

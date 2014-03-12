@@ -27,7 +27,7 @@ cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
 cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
 
 P_COND2
-?? "KALK: KALKULACIJA BR:",  cIdFirma+"-"+cIdVD+"-"+cBrDok,SPACE(2),P_TipDok(cIdVD,-2), SPACE(2),"Datum:",DatDok
+?? "KALK: KALKULACIJA BR:",  cIdFirma+"-"+cIdVD+"-"+cBrDok,SPACE(2), P_TipDok(cIdVD,-2), SPACE(2),"Datum:",DatDok
 @ prow(),125 SAY "Str:"+str(++nStr,3)
 select PARTN; HSEEK cIdPartner
 

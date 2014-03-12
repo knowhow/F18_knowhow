@@ -20,7 +20,7 @@ REQUEST SDDPG, SQLMIX
 
 // -----------------------------------------
 // -----------------------------------------
-function use_sql( table, l_make_index )
+function use_sql_sif( table, l_make_index )
 LOCAL oConn
 
 

@@ -178,7 +178,10 @@ if HB_HHASKEY( __f18_dbfs, _dbf_tbl )
     _rec := __f18_dbfs[ _dbf_tbl ]
 else
     _rec := hb_hash()
-    _rec["table"] := NIL
+    _rec["table"] := _dbf_tbl
+    _rec["alias"] := ALIAS()
+    _rec["wa"] := SELECT()
+    _rec["temp"] := .t.
 endif
 
 if !HB_HHASKEY(_rec, "table") .or. _rec["table"] == NIL

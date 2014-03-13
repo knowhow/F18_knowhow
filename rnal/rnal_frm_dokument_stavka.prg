@@ -155,8 +155,7 @@ local nX := 1
 local aArtArr := {}
 local nTmpArea
 local nLeft := 21
-local _curr_doc_no
-local _shape_two_dimensions := ( fetch_metric( "rnal_shape_sa_dvije_dimenzije", NIL, "D" ) == "D" )
+local _curr_doc_it_no
 
 cGetDOper := "N"
 
@@ -164,8 +163,6 @@ if l_new_it
     
     _doc_no := _doc
     _doc_it_no := inc_docit( _doc )
-    //_doc_it_altt := 0
-    //_doc_acity := SPACE( LEN(_doc_acity) )
     _doc_it_typ := " "
 	_it_lab_pos := "I"
     
@@ -184,7 +181,7 @@ if l_new_it
     
 endif
 
-_curr_doc_no := _doc_it_no
+_curr_doc_it_no := _doc_it_no
 
 nX += 2
 
@@ -204,7 +201,7 @@ nX += 2
 nX += 1
 
 @ m_x + nX, m_y + 2 SAY PADL("Tip artikla (*):", nLeft) GET _doc_it_typ ;
-        VALID {|| _doc_it_typ $ " SR", show_it( _g_doc_it_type( _doc_it_typ ) ) } ;
+        VALID {|| _doc_it_typ $ " SR" .and. show_it( _g_doc_it_type( _doc_it_typ ) ) } ;
         WHEN set_opc_box( nBoxX, 50, "' ' - standardni, 'R' - radius, 'S' - shape") PICT "@!"
 
 READ
@@ -225,6 +222,8 @@ if _doc_it_typ $ "SR"
     _doc_it_sch := "D"
 endif
 
+_doc_it_h2 := 0
+_doc_it_w2 := 0
 
 nX += 1
 
@@ -240,29 +239,21 @@ nX += 1
 
 nX += 1
 
-@ m_x + nX, m_y + 2 SAY PADL("dod.nap.stavke:", nLeft) GET _doc_it_des PICT "@S40" WHEN set_opc_box( nBoxX, 50, "dodatne napomene vezane za samu stavku")
+@ m_x + nX, m_y + 2 SAY PADL("dod.nap.stavke:", nLeft) GET _doc_it_des PICT "@S40" ;
+    WHEN set_opc_box( nBoxX, 50, "dodatne napomene vezane za samu stavku")
 
 nX += 2
     
-@ m_x + nX, m_y + 2 SAY PADL( cDimADesc , nLeft + 3) GET _doc_it_wid PICT Pic_Dim() VALID val_width(_doc_it_wid) .and. rule_items("DOC_IT_WIDTH", _doc_it_wid, aArtArr ) WHEN set_opc_box( nBoxX, 50 )
+@ m_x + nX, m_y + 2 SAY PADL( cDimADesc , nLeft + 3) GET _doc_it_wid PICT Pic_Dim() ;
+    VALID val_width(_doc_it_wid) .and. rule_items("DOC_IT_WIDTH", _doc_it_wid, aArtArr ) ;
+    WHEN set_opc_box( nBoxX, 50 )
 
-// ako je tip SHAPE
-if _doc_it_typ == "S" .and. !_shape_two_dimensions
-    @ m_x + nX, col() + 2 SAY PADL( cDimCDesc , nLeft + 3) GET _doc_it_w2 PICT Pic_Dim() VALID val_width(_doc_it_w2) .and. rule_items("DOC_IT_WIDTH", _doc_it_w2, aArtArr ) WHEN set_opc_box( nBoxX, 50 )
-else
-    _doc_it_w2 := 0
-endif
 
 nX += 1
 
-@ m_x + nX, m_y + 2 SAY PADL( cDimBDesc , nLeft + 3) GET _doc_it_hei PICT Pic_Dim() VALID val_heigh(_doc_it_hei) .and. rule_items("DOC_IT_HEIGH", _doc_it_hei, aArtArr ) WHEN set_opc_box( nBoxX, 50 )
-
-// ako je tip SHAPE
-if _doc_it_typ == "S" .and. !_shape_two_dimensions
-    @ m_x + nX, col() + 2 SAY PADL( cDimDDesc , nLeft + 3) GET _doc_it_h2 PICT Pic_Dim() VALID val_heigh(_doc_it_h2) .and. rule_items("DOC_IT_HEIGH", _doc_it_h2, aArtArr ) WHEN set_opc_box( nBoxX, 50 )
-else
-    _doc_it_h2 := 0
-endif
+@ m_x + nX, m_y + 2 SAY PADL( cDimBDesc , nLeft + 3) GET _doc_it_hei PICT Pic_Dim() ;
+    VALID val_heigh(_doc_it_hei) .and. rule_items("DOC_IT_HEIGH", _doc_it_hei, aArtArr ) ;
+    WHEN set_opc_box( nBoxX, 50 )
 
 nX += 1
 
@@ -299,7 +290,7 @@ READ
 ESC_RETURN 0
 
 // da li je doslo do promjene rednog broja stavke ?
-if !l_new_it .and. ( _curr_doc_no <> _doc_no )
+if !l_new_it .and. ( ALLTRIM( STR( _curr_doc_it_no ) ) <> ALLTRIM( STR( _doc_it_no ) ) )
     MsgBeep( "Uslijedila je promjena rednog broja !!!" )
 endif
 

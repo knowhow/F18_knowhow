@@ -696,9 +696,9 @@ endcase
 
 
 // dodaj total u DRN
-add_drn(dok["brdok"], dok["datdok"], dDatVal, dDatIsp, cTime, nUkBPDV, nUkVPop, nUkBPDVPop, nUkPDV, nTotal, nCSum, nUkPopNaTeretProdavca, nDrnZaokr, nUkKol)
+add_drn( dok["brdok"], dok["datdok"], dDatVal, dDatIsp, cTime, nUkBPDV, nUkVPop, nUkBPDVPop, nUkPDV, nTotal, nCSum, nUkPopNaTeretProdavca, nDrnZaokr, nUkKol)
 
-if ROUND( nUkPDV, 2 ) == 0
+if ( dok["idtipdok"] $ "10#11" ) .and. ROUND( nUkPDV, 2 ) == 0
     if Pitanje(, "Faktura je bez iznosa PDV-a! Da li je to uredu (D/N)", "D" ) == "N"
         return .f.
     endif

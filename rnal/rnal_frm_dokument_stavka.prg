@@ -389,69 +389,31 @@ go (nTRec)
 return nRet
 
 
-// -------------------------------------
-// validacija precnika (fi)
-// -------------------------------------
-static function val_fi( nVal )
+// --------------------------------------
+// vrijednost mora biti <> 0
+// --------------------------------------
+static function razlicito_od_0( nVal, cObjekatValidacije )
+
 local lRet := .f.
 if nVal <> 0
     lRet := .t.
 endif
-val_msg(lRet, "FI mora biti <> 0 !")
+val_msg(lRet, cObjekatValidacije + " : mora biti <> 0 !")
 return lRet
 
-
-// -------------------------------------
-// validacija kolicine
-// -------------------------------------
-static function val_qtty( nVal )
+// ---------------------------------------------------------------------
+// vrijednost mora biti u opsegu
+// ---------------------------------------------------------------------
+static function u_opsegu( nVal, nMin, nMax, cObjekatValidacije, cJMJ )
 local lRet := .f.
-if nVal <> 0
-    lRet := .t.
-endif
-val_msg(lRet, "Kolicina mora biti <> 0 !")
-return lRet
 
-
-// -------------------------------------
-// validacija nadmorske visine
-// -------------------------------------
-static function val_altt( nVal )
-local lRet := .f.
-if nVal <> 0
+if nVal >= nMin .and. nVal <= nMax
     lRet := .t.
 endif
 
-val_msg(lRet, "Nadmorska visina mora biti <> 0 !")
-
+val_msg(lRet, "Dozvoljeni opseg za " + cObjekatValidacije +;
+         ALLTRIM(STR(nMin)) + " - " +  ALLTRIM(STR(max_width()) ) + " " + cJMJ + " !")
 return lRet
-
-
-// ----------------------------------
-// validacija visine
-// ----------------------------------
-static function val_width( nVal )
-local lRet := .f.
-if nVal >= 0 .and. nVal <= max_width()
-    lRet := .t.
-endif
-val_msg(lRet, "!! Dozvoljeni opseg 0 - " + ALLTRIM(STR(max_width())) + " mm" )
-return lRet
-
-
-
-// ----------------------------------
-// validacija sirine
-// ----------------------------------
-static function val_heigh( nVal )
-local lRet := .f.
-if nVal >= 0 .and. nVal <= max_heigh()
-    lRet := .t.
-endif
-val_msg(lRet, "!! Dozvoljeni opseg 0 - " + ALLTRIM(STR(max_heigh())) + " mm" )
-return lRet
-
-
 
 // -------------------------------------
 // poruka pri validaciji
@@ -461,6 +423,36 @@ if lRet == .f.
     MsgBeeP(cMsg)
 endif
 return 
+
+
+// ------------------------------------------------------
+// validacija precnika (fi), kolicine, nadmorske visine
+// -------------------------------------------------------
+static function val_fi( nVal )
+return razlicito_od_0( nVal, "Prečnik")
+
+// -------------------------------------
+// validacija kolicine
+// -------------------------------------
+static function val_qtty( nVal )
+return razlicito_od_0( nVal, "Kolicina")
+
+// -------------------------------------
+// validacija nadmorske visine
+// -------------------------------------
+static function val_altt( nVal )
+return razlicito_od_0( nVal, "Nadmorska visina")
+
+
+// ----------------------------------
+// validacija sirine, visine
+// ----------------------------------
+static function val_width( nVal )
+return  u_opsegu( nVal, nMin, nMax, "Sirina", "mm" )
+
+
+static function val_heigh( nVal )
+return  u_opsegu( nVal, nMin, nMax, "Visina", "mm" )
 
 
 

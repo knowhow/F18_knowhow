@@ -1,6 +1,8 @@
 1.4.290 2014-03-12, vsasa
  
   - RNAL, ispis repromaterijala po stavkama na nalogu za proizvodnju #32627
+  - FAKT, kod štampe narudžbenice i reversa ODT bez cijena
+  - RNAL, unos nepravilnog oblika stakla samo sa osnovnim dimenzijama #32624
  
 1.4.289 2014-03-05, vsasa
  

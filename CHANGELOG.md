@@ -3,6 +3,8 @@
   - RNAL, ispis repromaterijala po stavkama na nalogu za proizvodnju #32627
   - FAKT, kod štampe narudžbenice i reversa ODT bez cijena
   - RNAL, unos nepravilnog oblika stakla samo sa osnovnim dimenzijama #32624
+  - KADEV, ispravka matičnog broja uposlenika #32684
+  - KADEV, snimanje promjena - bug fix #32684
  
 1.4.289 2014-03-05, vsasa
  

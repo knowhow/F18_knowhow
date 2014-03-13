@@ -1351,12 +1351,6 @@ go ( _t_rec )
 
 if noviId <> kadev_0->id
 
-    if !EMPTY( kadev_0->id ) .and. !( KLevel $ "01" )
-        Msg("Vi ne mozete mijenjati postojece podatke !",15)
-        noviId := kadev_0->id
-        return .t.
-    endif
-
     if EMPTY( kadev_0->id ) .or. Pitanje( "p01", "Promijenili ste ID broj. Zelite li ovo snimiti (D/N) ?"," ")=="D"
 
         if !f18_lock_tables( { "kadev_1", "kadev_0" } )

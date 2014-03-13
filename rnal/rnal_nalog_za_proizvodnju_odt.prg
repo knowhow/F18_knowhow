@@ -524,7 +524,7 @@ for _i := 1 to LEN( a_items )
 	
         xml_subnode( "item", .f. )
 
-            xml_node( "no", ALLTRIM(STR( field->it_no )) )
+            xml_node( "no", "(" + ALLTRIM(STR( field->doc_it_no ) ) + ")/" + ALLTRIM(STR( field->it_no ) ) )
             xml_node( "id", to_xml_encoding( ALLTRIM( field->art_id ) ) )
             xml_node( "desc", to_xml_encoding( ALLTRIM( field->art_desc ) ) )
             xml_node( "notes", to_xml_encoding( ALLTRIM( field->descr ) ) )

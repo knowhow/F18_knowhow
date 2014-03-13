@@ -89,15 +89,25 @@ local _rec
 select kadev_0
 _rec := dbf_get_rec()
 
+// samo ako su ove vrijednosti razlicite od praznog
+if !EMPTY( ::status["rj"] )
+    _rec["idrj"] := ::status["rj"]
+endif
+
+if !EMPTY( ::status["rmj"] )
+    _rec["idrmj"] := ::status["rmj"]
+endif
+
+if !EMPTY( ::status["id_strucna_sprema"] )
+    _rec["idstrspr"] := ::status["id_strucna_sprema"]
+endif
+
 _rec["radste"] := ::radni_staz["rst_ef"]
 _rec["radstb"] := ::radni_staz["rst_ben"]
 _rec["status"] := ::status["status"]
-_rec["idrj"] := ::status["rj"]
-_rec["idrmj"] := ::status["rmj"]
 _rec["daturmj"] := ::status["datum_u_rmj"]
 _rec["datvrmj"] := ::status["datum_van_rmj"]
 _rec["idrrasp"] := ::status["id_ratni_raspored"]
-_rec["idstrspr"] := ::status["id_strucna_sprema"]
 _rec["idzanim"] := ::status["id_zanimanja"]
 _rec["vrslvr"] := ::status["sluzenje_vojnog_roka_dana"]
 _rec["slvr"] := ::status["sluzenje_vojnog_roka"]

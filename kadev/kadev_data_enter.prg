@@ -1100,7 +1100,7 @@ do case
      	endif
 
      	if Ch == K_CTRL_N
-       		append blank
+       		APPEND BLANK
      	endif
 
         set_global_vars_from_dbf( "q" )
@@ -1118,7 +1118,7 @@ do case
 			            VALID P_Promj( @qidpromj, 3, 40 ) PICTURE "@!"
      		@ m_x + 4, m_y + 2 SAY "Karakteristika" GET qidk PICT "@!"
      		
-		    read
+		    READ
 
      		if qIdPromj == "G1"     
 			    // godisnji odmor
@@ -1196,12 +1196,15 @@ do case
      		@ m_x+10+IF(!("U" $ TYPE("qnAtr3")),7,0),m_y+2 SAY "Opis      " GET qOpis     PICTURE "@!"
      		@ m_x+12+IF(!("U" $ TYPE("qnAtr3")),7,0),m_y+2 SAY "Nadlezan  " GET qNadlezan PICTURE "@!"
      		
-		    read
+		    READ
      		
         BoxC()
 
-     	if LastKey() <> K_ESC
+        altd()
 
+     	if LastKey() <> K_ESC
+            
+            select kadev_1
             _rec := get_dbf_global_memvars( "q", .f. )
             update_rec_server_and_dbf( "kadev_1", _rec, 1, "FULL" )
 
@@ -1248,10 +1251,10 @@ do case
 			return DE_REFRESH
      		
         else
-        		
+        	altd()	
             if Ch == K_CTRL_N
-                _rec := dbf_get_rec()
-                delete_rec_server_and_dbf( "kadev_1", _rec, 1, "FULL" )
+                // brisemo samo append blank u dbf-u, nema nista na serveru
+                delete_with_rlock()
             	skip -1
             endif
         		

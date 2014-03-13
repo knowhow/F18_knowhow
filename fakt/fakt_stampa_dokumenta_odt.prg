@@ -139,7 +139,7 @@ template := ""
 // odabir template fajla na osnovu tipa dokumenta
 do case
 
-    case tip_dok $ "12#13#22#23"
+    case tip_dok $ "12#13#21#22#23#26"
 
         // tipovi dokumenata gdje trebaju samo kolicine 
 

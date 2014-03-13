@@ -353,7 +353,6 @@ for _i := 1 to LEN( groups )
 	    select t_docit
 	
 	    if _item_type == "R"
-            
             // tip
             xml_node( "type", "fi" )	  
 
@@ -372,16 +371,12 @@ for _i := 1 to LEN( groups )
             endif
 
 	    elseif _item_type == "S"
-
 	        // tip	
             xml_node( "type", "shp" )	  
             // sirina kod shape
-	        xml_node( "w", show_number( field->doc_it_wid, PIC_VRIJEDNOST ) + ;
-                IF( field->doc_it_w2 > 0, "/" + show_number( field->doc_it_w2, PIC_VRIJEDNOST ), "" ) )
+	        xml_node( "w", show_number( field->doc_it_wid, PIC_VRIJEDNOST ) )
             // visina kod shape
-	        xml_node( "h", show_number( field->doc_it_hei, PIC_VRIJEDNOST ) + ;
-                IF( field->doc_it_h2 > 0, "/" + show_number( field->doc_it_h2, PIC_VRIJEDNOST ), "" ) )
-  
+	        xml_node( "h", show_number( field->doc_it_hei, PIC_VRIJEDNOST ) )
 	    else
 
             // tip	

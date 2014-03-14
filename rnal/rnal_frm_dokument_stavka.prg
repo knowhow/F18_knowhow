@@ -245,14 +245,14 @@ nX += 1
 nX += 2
     
 @ m_x + nX, m_y + 2 SAY PADL( cDimADesc , nLeft + 3) GET _doc_it_wid PICT Pic_Dim() ;
-    VALID val_width(_doc_it_wid) .and. rule_items("DOC_IT_WIDTH", _doc_it_wid, aArtArr ) ;
+    VALID val_width( _doc_it_wid ) .and. rule_items("DOC_IT_WIDTH", _doc_it_wid, aArtArr ) ;
     WHEN set_opc_box( nBoxX, 50 )
 
 
 nX += 1
 
 @ m_x + nX, m_y + 2 SAY PADL( cDimBDesc , nLeft + 3) GET _doc_it_hei PICT Pic_Dim() ;
-    VALID val_heigh(_doc_it_hei) .and. rule_items("DOC_IT_HEIGH", _doc_it_hei, aArtArr ) ;
+    VALID val_heigh( _doc_it_hei ) .and. rule_items("DOC_IT_HEIGH", _doc_it_hei, aArtArr ) ;
     WHEN set_opc_box( nBoxX, 50 )
 
 nX += 1
@@ -439,11 +439,11 @@ return razlicito_od_0( nVal, "Nadmorska visina")
 // validacija sirine, visine
 // ----------------------------------
 static function val_width( nVal )
-return  u_opsegu( nVal, nMin, nMax, "Sirina", "mm" )
+return  u_opsegu( nVal, 0, gMaxWidth, "Sirina", "mm" )
 
 
 static function val_heigh( nVal )
-return  u_opsegu( nVal, nMin, nMax, "Visina", "mm" )
+return  u_opsegu( nVal, 0, gMaxHeigh, "Visina", "mm" )
 
 
 

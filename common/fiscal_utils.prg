@@ -141,7 +141,7 @@ if lSilent == .f. .and. !SigmaSIF("GENPLU")
 	return .f.
 endif
 
-if lSilent == .f. .and. Pitanje(,"Resetovati postojece PLU", "N") == "D"
+if lSilent == .f. .and. Pitanje(,"Resetovati postojeće PLU", "N") == "D"
 	lReset := .t.
 endif
 
@@ -257,7 +257,7 @@ endif
 
 if reset_plu = .t. .and. !silent_mode
 	if !SigmaSif("RESET")
-		msgbeep("Unesena pogresna sifra !")
+		msgbeep("Unesena pogrešna šifra !")
 		select (_t_area)
 		return _plu
 	endif
@@ -267,7 +267,7 @@ endif
 set_metric( _param_name, nil, _plu )
 
 if reset_plu = .t. .and. !silent_mode
-	MsgBeep( "Setovan pocetni PLU na: " + ALLTRIM( STR( _plu ) ) )
+	MsgBeep( "Setovan početni PLU na: " + ALLTRIM( STR( _plu ) ) )
 endif
 
 select ( _t_area )
@@ -346,7 +346,7 @@ do case
 
     otherwise
 
-        MsgBeep( "Greska sa tarifom !!!" )
+        MsgBeep( "Greška sa tarifom !!!" )
 
 endcase
 
@@ -461,12 +461,12 @@ next
 
 if _fix > 0 .and. level > 1
 
-	msgbeep( "Pojedini artikli na racunu su prepakovani na 100 kom !" )
+	msgbeep( "Pojedini artikli na računu su prepakovani na 100 kom !" )
 
 elseif _fix > 0 .and. level == 1
 	
 	_ret := -99
-	msgbeep( "Pojedinim artiklima je kolicina/cijena van dozvoljenog ranga#Prekidam operaciju !!!!" )
+	msgbeep( "Pojedinim artiklima je količina/cijena van dozvoljenog ranga#Prekidam operaciju !!!!" )
 
 	if storno
 		// ako je rijec o storno dokumentu, prikazi poruku
@@ -594,12 +594,12 @@ endif
 
 if DTOC( DATE() ) + ALLTRIM( TIME() ) > DTOC( _z_date ) + ALLTRIM( _z_time ) 
 
-    MsgBeep( "Zadnji dnevni izvjestaj radjen " + DTOC( _z_date ) + " u " + _z_time + "#" + ;
-            "Potrebno napraviti dnevni izvjestaj#" + ;
-            "prije izdavanja novih racuna !" )
+    MsgBeep( "Zadnji dnevni izvještaj rađen " + DTOC( _z_date ) + " u " + _z_time + "#" + ;
+            "Potrebno napraviti dnevni izvještaj#" + ;
+            "prije izdavanja novih računa !" )
 
     if cre_rpt
-        if Pitanje(, "Napraviti dnevni izvjestaj (D/N) ?", "N" ) == "D"
+        if Pitanje(, "Napraviti dnevni izvještaj (D/N) ?", "N" ) == "D"
             // pokrenuti proceduru kreiranja fiskalnog izvjestaja...
         endif
     endif

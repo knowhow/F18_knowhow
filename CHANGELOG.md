@@ -1,3 +1,7 @@
+1.4.291 2014-03-14, vsasa
+ 
+  - RNAL, refaktor validacije na unosu naloga, #32624
+ 
 1.4.290 2014-03-12, vsasa
  
   - RNAL, ispis repromaterijala po stavkama na nalogu za proizvodnju #32627

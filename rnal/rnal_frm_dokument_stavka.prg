@@ -245,14 +245,14 @@ nX += 1
 nX += 2
     
 @ m_x + nX, m_y + 2 SAY PADL( cDimADesc , nLeft + 3) GET _doc_it_wid PICT Pic_Dim() ;
-    VALID val_width(_doc_it_wid) .and. rule_items("DOC_IT_WIDTH", _doc_it_wid, aArtArr ) ;
+    VALID val_width( _doc_it_wid ) .and. rule_items("DOC_IT_WIDTH", _doc_it_wid, aArtArr ) ;
     WHEN set_opc_box( nBoxX, 50 )
 
 
 nX += 1
 
 @ m_x + nX, m_y + 2 SAY PADL( cDimBDesc , nLeft + 3) GET _doc_it_hei PICT Pic_Dim() ;
-    VALID val_heigh(_doc_it_hei) .and. rule_items("DOC_IT_HEIGH", _doc_it_hei, aArtArr ) ;
+    VALID val_heigh( _doc_it_hei ) .and. rule_items("DOC_IT_HEIGH", _doc_it_hei, aArtArr ) ;
     WHEN set_opc_box( nBoxX, 50 )
 
 nX += 1
@@ -380,69 +380,33 @@ go (nTRec)
 return nRet
 
 
-// -------------------------------------
-// validacija precnika (fi)
-// -------------------------------------
-static function val_fi( nVal )
-local lRet := .f.
-if nVal <> 0
-    lRet := .t.
-endif
-val_msg(lRet, "FI mora biti <> 0 !")
-return lRet
+// --------------------------------------
+// vrijednost mora biti <> 0
+// --------------------------------------
+static function razlicito_od_0( nVal, cObjekatValidacije )
+local lRet := .t.
 
-
-// -------------------------------------
-// validacija kolicine
-// -------------------------------------
-static function val_qtty( nVal )
-local lRet := .f.
-if nVal <> 0
-    lRet := .t.
-endif
-val_msg(lRet, "Kolicina mora biti <> 0 !")
-return lRet
-
-
-// -------------------------------------
-// validacija nadmorske visine
-// -------------------------------------
-static function val_altt( nVal )
-local lRet := .f.
-if nVal <> 0
-    lRet := .t.
+if ROUND( nVal, 2 ) == 0
+    lRet := .f.
 endif
 
-val_msg(lRet, "Nadmorska visina mora biti <> 0 !")
+val_msg( lRet, cObjekatValidacije + " : mora biti <> 0 !" ) 
 
 return lRet
 
-
-// ----------------------------------
-// validacija visine
-// ----------------------------------
-static function val_width( nVal )
+// ---------------------------------------------------------------------
+// vrijednost mora biti u opsegu
+// ---------------------------------------------------------------------
+static function u_opsegu( nVal, nMin, nMax, cObjekatValidacije, cJMJ )
 local lRet := .f.
-if nVal >= 0 .and. nVal <= max_width()
+
+if nVal >= nMin .and. nVal <= nMax
     lRet := .t.
 endif
-val_msg(lRet, "!! Dozvoljeni opseg 0 - " + ALLTRIM(STR(max_width())) + " mm" )
+
+val_msg(lRet, "Dozvoljeni opseg za " + cObjekatValidacije + " " + ;
+         ALLTRIM(STR(nMin)) + " - " +  ALLTRIM(STR(max_width()) ) + " " + cJMJ + " !")
 return lRet
-
-
-
-// ----------------------------------
-// validacija sirine
-// ----------------------------------
-static function val_heigh( nVal )
-local lRet := .f.
-if nVal >= 0 .and. nVal <= max_heigh()
-    lRet := .t.
-endif
-val_msg(lRet, "!! Dozvoljeni opseg 0 - " + ALLTRIM(STR(max_heigh())) + " mm" )
-return lRet
-
-
 
 // -------------------------------------
 // poruka pri validaciji
@@ -453,6 +417,34 @@ if lRet == .f.
 endif
 return 
 
+
+// ------------------------------------------------------
+// validacija precnika (fi), kolicine, nadmorske visine
+// -------------------------------------------------------
+static function val_fi( nVal )
+return razlicito_od_0( nVal, "prečnik")
+
+// -------------------------------------
+// validacija kolicine
+// -------------------------------------
+static function val_qtty( nVal )
+return razlicito_od_0( nVal, "količina")
+
+// -------------------------------------
+// validacija nadmorske visine
+// -------------------------------------
+static function val_altt( nVal )
+return razlicito_od_0( nVal, "nadmorska visina" )
+
+// ----------------------------------
+// validacija sirine, visine
+// ----------------------------------
+static function val_width( nVal )
+return u_opsegu( nVal, 1, gMaxWidth, "širina", "mm" )
+
+
+static function val_heigh( nVal )
+return u_opsegu( nVal, 1, gMaxHeigh, "visina", "mm" )
 
 
 // -----------------------------------------------

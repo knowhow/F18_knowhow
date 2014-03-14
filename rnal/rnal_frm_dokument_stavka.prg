@@ -422,13 +422,13 @@ return
 // validacija precnika (fi), kolicine, nadmorske visine
 // -------------------------------------------------------
 static function val_fi( nVal )
-return razlicito_od_0( nVal, "precnik")
+return razlicito_od_0( nVal, "prečnik")
 
 // -------------------------------------
 // validacija kolicine
 // -------------------------------------
 static function val_qtty( nVal )
-return razlicito_od_0( nVal, "kolicina")
+return razlicito_od_0( nVal, "količina")
 
 // -------------------------------------
 // validacija nadmorske visine
@@ -440,7 +440,7 @@ return razlicito_od_0( nVal, "nadmorska visina" )
 // validacija sirine, visine
 // ----------------------------------
 static function val_width( nVal )
-return u_opsegu( nVal, 1, gMaxWidth, "sirina", "mm" )
+return u_opsegu( nVal, 1, gMaxWidth, "širina", "mm" )
 
 
 static function val_heigh( nVal )

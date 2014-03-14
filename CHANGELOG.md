@@ -1,3 +1,7 @@
+1.4.292 2014-03-14, vsasa
+ 
+  - Fiskalne funkcije, provjera količine i cijene prije slanja fiskalnog računa na fiskalni uređaj - bugfix #32714 
+ 
 1.4.291 2014-03-14, vsasa
  
   - RNAL, refaktor validacije na unosu naloga, #32624

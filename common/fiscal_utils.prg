@@ -461,12 +461,12 @@ next
 
 if _fix > 0 .and. level > 1
 
-	msgbeep("Pojedini artikli na racunu su prepakovani na 100 kom !")
+	msgbeep( "Pojedini artikli na racunu su prepakovani na 100 kom !" )
 
 elseif _fix > 0 .and. level == 1
 	
 	_ret := -99
-	msgbeep("Pojedinim artiklima je kolicina/cijena van dozvoljenog ranga#Prekidam operaciju !!!!")
+	msgbeep( "Pojedinim artiklima je kolicina/cijena van dozvoljenog ranga#Prekidam operaciju !!!!" )
 
 	if storno
 		// ako je rijec o storno dokumentu, prikazi poruku
@@ -517,35 +517,37 @@ return
 // provjerava da li zadovoljava kolicina
 // -------------------------------------------------
 function _chk_qtty( rn_qtty )
-local _ret := .t.
-
-// ispitivanje vrijednosti
-if rn_qtty > __MAX_QT .or. rn_qtty < __MIN_QT
-	_ret := .f.
-    return _ret
-endif
-
-// ispitivanje decimala
-// fiskalni uredjaj dozvoljava unos na 3 decimale
-if ABS( rn_qtty ) - ABS( VAL( STR( rn_qtty, 12, 3 ) ) ) <> 0
-    _ret := .f.
-    return _ret
-endif
-
-return _ret
+return _validate( rn_qtty, __MIN_QT, __MAX_QT, 3 )
 
 
 // -------------------------------------------------
 // provjerava da li zadovoljava cijena
 // -------------------------------------------------
-function _chk_price( nPrice )
-local lRet := .t.
+function _chk_price( price )
+return _validate( price, __MIN_PRICE, __MAX_PRICE, 2 )
 
-if nPrice > __MAX_PRICE .or. nPrice < __MIN_PRICE
-	lRet := .f.
+
+// --------------------------------------------------------------------
+// validator iznosa prema omjeru i prema decimalnom separatoru
+// --------------------------------------------------------------------
+static function _validate( value, min_value, max_value, dec )
+local _ok := .f.
+
+// validator min/max vrijednosti
+if value > max_value .or. value < min_value
+    return _ok
 endif
 
-return lRet
+// validator decimalnog mjesta
+// fiskalni uredjaj dozvoljava unos na 3 decimale
+if dec <> NIL .and. ( ABS( value ) - ABS( VAL( STR( value, 12, dec ) ) ) <> 0 )
+    return _ok
+endif
+
+// sve je ok
+_ok := .t.
+
+return _ok
 
 
 // -------------------------------------------------

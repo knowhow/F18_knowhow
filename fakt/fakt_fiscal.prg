@@ -598,12 +598,9 @@ if tip_dok $ "10" .and. LEN( _a_iznosi ) < 2
     set_fiscal_rn_zbirni( @_data )
 endif
 
-// provjeri prije stampe stavke kolicina, cijena
-_item_level_check := 1
-
-if tip_dok $ "11"
-    _item_level_check := 2
-endif
+// level validacije kolicine, cijene i decimalnih separatora 
+// kod ovog levela, desit ce se prepakivanje artikla na x100 metodu
+_item_level_check := 2
 
 if fiscal_items_check( @_data, storno, _item_level_check, __device_params["drv"] ) < 0
     return NIL    

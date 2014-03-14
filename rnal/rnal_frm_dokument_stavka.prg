@@ -384,12 +384,14 @@ return nRet
 // vrijednost mora biti <> 0
 // --------------------------------------
 static function razlicito_od_0( nVal, cObjekatValidacije )
+local lRet := .t.
 
-local lRet := .f.
-if nVal <> 0
-    lRet := .t.
+if ROUND( nVal, 2 ) == 0
+    lRet := .f.
 endif
-val_msg(lRet, cObjekatValidacije + " : mora biti <> 0 !")
+
+val_msg( lRet, cObjekatValidacije + " : mora biti <> 0 !" ) 
+
 return lRet
 
 // ---------------------------------------------------------------------
@@ -438,11 +440,11 @@ return razlicito_od_0( nVal, "nadmorska visina" )
 // validacija sirine, visine
 // ----------------------------------
 static function val_width( nVal )
-return u_opsegu( nVal, 0, gMaxWidth, "sirina", "mm" )
+return u_opsegu( nVal, 1, gMaxWidth, "sirina", "mm" )
 
 
 static function val_heigh( nVal )
-return u_opsegu( nVal, 0, gMaxHeigh, "visina", "mm" )
+return u_opsegu( nVal, 1, gMaxHeigh, "visina", "mm" )
 
 
 // -----------------------------------------------

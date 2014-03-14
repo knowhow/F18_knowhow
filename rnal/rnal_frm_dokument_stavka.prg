@@ -402,7 +402,7 @@ if nVal >= nMin .and. nVal <= nMax
     lRet := .t.
 endif
 
-val_msg(lRet, "Dozvoljeni opseg za " + cObjekatValidacije +;
+val_msg(lRet, "Dozvoljeni opseg za " + cObjekatValidacije + " " + ;
          ALLTRIM(STR(nMin)) + " - " +  ALLTRIM(STR(max_width()) ) + " " + cJMJ + " !")
 return lRet
 
@@ -420,31 +420,29 @@ return
 // validacija precnika (fi), kolicine, nadmorske visine
 // -------------------------------------------------------
 static function val_fi( nVal )
-return razlicito_od_0( nVal, "Prečnik")
+return razlicito_od_0( nVal, "precnik")
 
 // -------------------------------------
 // validacija kolicine
 // -------------------------------------
 static function val_qtty( nVal )
-return razlicito_od_0( nVal, "Kolicina")
+return razlicito_od_0( nVal, "kolicina")
 
 // -------------------------------------
 // validacija nadmorske visine
 // -------------------------------------
 static function val_altt( nVal )
-return razlicito_od_0( nVal, "Nadmorska visina")
-
+return razlicito_od_0( nVal, "nadmorska visina" )
 
 // ----------------------------------
 // validacija sirine, visine
 // ----------------------------------
 static function val_width( nVal )
-return  u_opsegu( nVal, 0, gMaxWidth, "Sirina", "mm" )
+return u_opsegu( nVal, 0, gMaxWidth, "sirina", "mm" )
 
 
 static function val_heigh( nVal )
-return  u_opsegu( nVal, 0, gMaxHeigh, "Visina", "mm" )
-
+return u_opsegu( nVal, 0, gMaxHeigh, "visina", "mm" )
 
 
 // -----------------------------------------------

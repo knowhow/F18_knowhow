@@ -204,5 +204,3 @@ f18_email_send( _mail_params, _attach )
 return
 
 
-
-

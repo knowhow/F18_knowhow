@@ -39,7 +39,9 @@ set_a_dbf_sifarnik("ops"        , "OPS"       , F_OPS        )
 set_a_dbf_sifarnik("banke"      , "BANKE"     , F_BANKE      )
 set_a_dbf_sifarnik("refer"      , "REFER"     , F_REFER      )
 set_a_dbf_sifarnik("partn"      , "PARTN"     , F_PARTN      )
+
 set_a_dbf_sifarnik("tnal"       , "TNAL"      , F_TNAL       )
+
 set_a_dbf_sifarnik("tdok"       , "TDOK"      , F_TDOK       )
 
 set_a_dbf_sifarnik("roba"       , "ROBA"      , F_ROBA       )

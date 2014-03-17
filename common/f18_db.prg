@@ -57,6 +57,7 @@ endif
 log_write( "START: update_rec_server_and_dbf " + table, 9 )
 
 _values_dbf := dbf_get_rec()
+
 // trebamo where str za stanje dbf-a
 set_table_values_algoritam_vars(@table, @_values_dbf, @algoritam, @transaction, @_a_dbf_rec, @_alg, @_where_str_dbf, @_alg_tag)
 
@@ -217,8 +218,8 @@ if sql_table_update(table, "del", nil, _where_str)
 
     SELECT (_a_dbf_rec["wa"])
     
-    if ORDNUMBER(_alg["dbf_tag"]) < 1
-          _msg := "ERR : " + RECI_GDJE_SAM0 + " DBF_TAG" + _alg["dbf_tag"]
+    if index_tag_num(_alg["dbf_tag"]) < 1
+          _msg := "ERR : " + RECI_GDJE_SAM0 + " DBF_TAG " + _alg["dbf_tag"]
           Alert(_msg)
           log_write( _msg, 1 )
           RaiseError(_msg)
@@ -227,7 +228,7 @@ if sql_table_update(table, "del", nil, _where_str)
     endif
     SET ORDER TO TAG (_alg["dbf_tag"])
 
-    if FLOCK()
+    if my_flock()
         
         _count := 0
 
@@ -240,7 +241,8 @@ if sql_table_update(table, "del", nil, _where_str)
             SEEK _full_id
         enddo
 
-        DBUNLOCKALL() 
+        //DBUNLOCKALL() 
+        my_unlock()
 
         log_write( "table: " + table + ", pobrisano iz lokalnog dbf-a broj zapisa = " + ALLTRIM( STR( _count ) ), 7 ) 
 
@@ -392,6 +394,7 @@ for each _key in alg["dbf_key_fields"]
             // ako je dbf_fields_len['id'][2] = 6
             // karakterna polja se moraju PADR-ovati
             // values['id'] = '0' => '0     '
+            set_rec_from_dbstruct(@a_dbf_rec)
             values[_key] := PADR(values[_key], a_dbf_rec["dbf_fields_len"][_key][2])
             // provjeri prvi dio kljuca
             // ako je # onda obavezno setuj tag

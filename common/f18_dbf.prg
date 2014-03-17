@@ -51,7 +51,7 @@ if !used()
    quit_1
 endif
 
-if no_lock .or. rlock()
+if no_lock .or. my_rlock()
 
     _a_dbf_rec := get_a_dbf_rec( ALIAS() )
     
@@ -76,7 +76,7 @@ if no_lock .or. rlock()
     next
  
     if !no_lock 
-         dbrunlock()
+         my_unlock()
     endif
 else
     MsgBeep( "Ne mogu rlock-ovati:" + ALIAS())

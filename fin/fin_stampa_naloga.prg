@@ -29,6 +29,7 @@ return
 
 
 function StAnalNal( lAuto )
+
 local _print_opt := "V"
 local _izgenerisi := .f.
 private aNalozi:={}
@@ -234,6 +235,7 @@ return
 
 
 static function _o_tables()
+
 O_PSUBAN
 O_PARTN
 O_PANAL

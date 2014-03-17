@@ -17,7 +17,7 @@
                                    ;  my_use_semaphore_off();
                                    ;  my_use(_alias);
                                    ;  my_use_semaphore_on();
-                                   ;  if reccount() == 0;
+                                   ;  if reccount() == 0 .and. !sql_table_empty(_alias);
                                    ;       _created := .t.;
                                    ;  end;
                                    ;  use;

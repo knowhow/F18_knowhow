@@ -107,6 +107,7 @@ index_mcode( my_home(), _alias  )
 fill_tbl_valute()
 
 
+/* TNAL -> SQL
 // TNAL
 
 _alias := "TNAL"
@@ -123,6 +124,7 @@ IF_C_RESET_SEMAPHORE
 CREATE_INDEX("ID","id", _alias )  
 CREATE_INDEX("NAZ","naz", _alias )
 index_mcode( my_home(), _alias )
+*/
 
 
 // TDOK

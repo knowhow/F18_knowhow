@@ -39,7 +39,7 @@
 // -----------------------------------------------------
 function f18_lock_tables( a_tables, unlock_table )
 local _ok := .t.
-local _i, _tbl 
+local _i, _tbl, _dbf_rec 
 
 PushWa()
 
@@ -51,8 +51,11 @@ endif
 if sql_table_update( nil, "BEGIN" )
 
     for _i := 1 to LEN( a_tables )
-       _tbl := get_a_dbf_rec(a_tables[_i])["table"]
-       _ok := _ok .and. lock_semaphore( _tbl, "lock", unlock_table )
+       _dbf_rec := get_a_dbf_rec(a_tables[_i])
+       _tbl := _dbf_rec["table"]
+       if !_dbf_rec["sql"] 
+          _ok := _ok .and. lock_semaphore( _tbl, "lock", unlock_table )
+       endif
     next
 
     if _ok
@@ -64,9 +67,13 @@ if sql_table_update( nil, "BEGIN" )
         my_use_semaphore_on()
 
         for _i := 1 to LEN( a_tables )
-            _tbl := get_a_dbf_rec(a_tables[_i])["table"]
-            // otvori tabelu i selectuj workarea koja je rezervisana za ovu tabelu
-            my_use(_tbl, NIL, NIL, NIL, NIL, NIL, .t.)
+            _dbf_rec := get_a_dbf_rec(a_tables[_i])
+            _tbl := _dbf_rec["table"] 
+            
+            if !_dbf_rec["sql"]
+                // otvori tabelu i selectuj workarea koja je rezervisana za ovu tabelu
+                my_use(_tbl, NIL, NIL, NIL, NIL, NIL, .t.)
+            endif
         next
 
         my_use_semaphore_off()
@@ -84,7 +91,6 @@ else
 
 endif
 
-// pozicioniraj se na dbf prije ulaska u funkciju
 PopWA()
 
 return _ok
@@ -95,15 +101,18 @@ return _ok
 // -----------------------------------------------------
 function f18_free_tables( a_tables )
 local _ok := .t.
-local _i, _tbl
+local _i, _tbl, _dbf_rec
 
 if LEN( a_tables ) == NIL
     return .f.
 endif
 
 for _i := 1 to LEN( a_tables )
-    _tbl := get_a_dbf_rec(a_tables[_i])["table"]
-    lock_semaphore( _tbl, "free" )
+    _dbf_rec := get_a_dbf_rec(a_tables[_i])
+    _tbl := _dbf_rec["table"] 
+    if !_dbf_rec["sql"]
+        lock_semaphore( _tbl, "free" )
+    endif
 next
 
 log_write( "uspjesno izvrseno oslobadjanje tabela " + pp( a_tables ), 7 )
@@ -420,6 +429,7 @@ ENDIF
 _result := _table_obj:Fieldget(1)
 
 RETURN _result
+
 
 
 

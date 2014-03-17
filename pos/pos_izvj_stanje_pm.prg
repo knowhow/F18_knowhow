@@ -137,7 +137,7 @@ endif
 
 
 SELECT POS
-if ORDNUMBER("5") == 0
+if index_tag_num("5") == 0
 	use
 	CREATE_INDEX("5","IdPos+idroba+DTOS(Datum)", KUMPATH+"POS")
 	select (F_POS)

@@ -23,7 +23,7 @@ if fields == NIL
    return NIL
 endif
 
-for _i:=1 to LEN(fields)
+for _i := 1 to LEN(fields)
    _sql_fields += fields[_i]
    if _i < LEN(fields)
       _sql_fields +=  ","
@@ -219,7 +219,7 @@ for _i := 1 to retry
         endif
     end sequence
 
-    if _qry_obj:NetErr()
+    if _qry_obj:NetErr() .and. !EMPTY(_qry_obj:ErrorMsg())
 
         log_write( "run_sql_query(), ajoj: " + _qry_obj:ErrorMsg(), 2 )
         log_write( "run_sql_query(), error na sljedecem upitu: " + qry, 2 )
@@ -258,16 +258,22 @@ endif
 
 oResult := oServer:Query( cQuery + ";")
 
-IF oResult:NetErr()
+IF oResult:NetErr() 
 
     cMsg := oResult:ErrorMsg()
 
-    log_write("ERROR: _sql_query: " + cQuery + "err msg:" + cMsg, 1, silent )
+    if !EMPTY(cMsg)
+       log_write("ERROR: _sql_query: " + cQuery + "err msg:" + cMsg, 1, silent )
 
-    if !silent 
-        MsgBeep( cMsg )
+       if !silent 
+          MsgBeep( cMsg )
+       endif
+
+    else
+        // TODO: nesto je sa postgresql drajverom pa je poceo izbacivati ove errore ?!
+        return .t.
     endif
-    
+
     return .f.
 
 ELSE
@@ -295,9 +301,9 @@ local _msg
 _result := _server:Query( _qry )
 IF _result:NetErr()
     _msg := _result:ErrorMsg()
-    log_write( _qry, 2 )
-    log_write( _msg, 2 )
-    MsgBeep( _msg )
+    //log_write( _qry, 2 )
+    //log_write( _msg, 2 )
+    MsgBeep( "ERR?! :" + _qry )
     return .f.
 ELSE
     log_write( "sql() set search path ok", 9 )

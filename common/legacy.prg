@@ -286,9 +286,9 @@ local cOutfTxt
 local _f_path
 PRIVATE cPom
 
-// #27234
 #ifdef __PLATFORM__UNIX
-       close all
+// TODO: #27234
+//       close all
 #endif
 
 

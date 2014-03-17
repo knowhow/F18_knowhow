@@ -133,10 +133,10 @@ DO CASE
 
         _cmd := "f18_editor " + f_name
 
-        // #27234
-        #ifdef __PLATFORM__UNIX
-            close all
-        #endif
+        // TODO: #27234
+        //#ifdef __PLATFORM__UNIX
+        //    close all
+        //#endif
        
         _ret := f18_run(_cmd)
 

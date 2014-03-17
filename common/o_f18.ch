@@ -22,7 +22,9 @@
 #xcommand O_TRFP3    => select (F_TRFP3)   ;  my_use  ("trfp3")     ; set order to tag "ID"
 #xcommand O_TRMP     => select (F_TRMP)    ;  my_use  ("trmp")      ; set order to tag "ID"
 #xcommand O_PARTN    => select (F_PARTN)   ;  my_use  ("partn")     ; set order to tag "ID"
-#xcommand O_TNAL     => select (F_TNAL)    ;  my_use  ("tnal" )     ; set order to tag "ID"
+
+#xcommand O_TNAL     => select (F_TNAL)    ;  use_sql_sif  ( "tnal", .t. )     ; set order to tag "ID"
+
 #xcommand O_TDOK     => select (F_TDOK)    ;  my_use  ("tdok" )     ; set order to tag "ID"
 #xcommand O_KONCIJ   => select (F_KONCIJ)  ;  my_use  ("koncij")    ; set order to tag "ID"
 #xcommand O_VALUTE   => select (F_VALUTE)  ;  my_use  ("valute")    ; set order to tag "ID"

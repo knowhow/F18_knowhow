@@ -36,19 +36,23 @@ return
 
 
 
-/*! \fn StOAnal()
- *  \brief Stampanje proknjizenog analitickog naloga
+/*
+   Stampanje proknjizenog analitickog naloga
  */
  
 function StOANal()
+
 private fK1:=fk2:=fk3:=fk4:="N",gnLOst:=0,gPotpis:="N"
 private dDatNal:=date()
 
 fin_read_params()
 
+// TODO: izbaci
+/*
 IF IzFMKIni("FAKT","VrstePlacanja","N",SIFPATH)=="D"
   O_VRSTEP
 ENDIF
+*/
 
 O_NALOG
 O_SUBAN
@@ -63,14 +67,16 @@ cIdVN:=space(2)
 cIdFirma:=gFirma
 cBrNal:=space(8)
 
-Box("",2,35)
+Box("", 2, 35)
  set cursor on
  @ m_x+1,m_y+2 SAY "Nalog:"
+
  if gNW=="D"
   @ m_x+1,col()+1 SAY cIdFirma
  else
   @ m_x+1,col()+1 GET cIdFirma
  endif
+
  @ m_x+1,col()+1 SAY "-" GET cIdVN PICT "@!"
  @ m_x+1,col()+1 SAY "-" GET cBrNal VALID _f_brnal( @cBrNal )
 

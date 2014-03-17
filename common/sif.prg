@@ -15,13 +15,12 @@
 
 // static integer
 static __PSIF_NIVO__:=0
-// ;
 
 static _LOG_PROMJENE := .f.
 
 static __A_SIFV__:= { {NIL,NIL,NIL}, {NIL,NIL,NIL}, {NIL,NIL,NIL}, {NIL,NIL,NIL}}
 
-function PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aPoredak, bPodvuci, aZabrane, invert, aZabIsp )
+function p_sifra_2( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aPoredak, bPodvuci, aZabrane, invert, aZabIsp )
 
 local cRet, cIdBK
 local _i
@@ -59,7 +58,8 @@ endif
 
 select (nDbf)
 if !used()
-    my_use(nDbf, nil, .f.)
+    MsgBeep("USED FALSE ?!")
+    return .f.
 endif
 
 // setuj match_code polje...
@@ -101,8 +101,6 @@ if ( fPonaz .and. ( cNazSrch == "" .or. !TRIM( cNazSrch ) == TRIM( naz ) ) ) ;
     .or. ( !FOUND() .and. cNaslov <> NIL ) ;
     .or. ( cNaslov <> NIL .and. LEFT( cNaslov, 1 ) = "#" )   
   
-    // if cID == nil - pregled sifrarnika
-
     lPrviPoziv := .t.
 
     if EOF() 
@@ -114,7 +112,7 @@ if ( fPonaz .and. ( cNazSrch == "" .or. !TRIM( cNazSrch ) == TRIM( naz ) ) ) ;
         go top
     endif
 
-    ObjDbedit(, nVisina, nSirina,  {|| EdSif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )}, cNaslov, "", invert, _komande, 1, bPodvuci, , , aPoredak )
+    browse_tbl_2(, nVisina, nSirina,  {|| EdSif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )}, cNaslov, "", invert, _komande, 1, bPodvuci, , , aPoredak )
 
     IF TYPE("id") $ "U#UE"       
         cID:=(nDbf)->(FIELDGET(1))
@@ -368,102 +366,6 @@ endif
 
 return .t.
 
-// --------------------------
-// --------------------------
-function ID_J(nOffSet)
-
-if nOffset=NIL
- nOffset:=1
-endif
-if __PSIF_NIVO__ + nOffset > 0
-  return __A_SIFV__[__PSIF_NIVO__+nOffset,1]
-else
-  return __A_SIFV__[1,1]
-endif
-return
-
-// -------------------------------------------
-// setuje match_code imekol {}
-// -------------------------------------------
-function set_mc_imekol(nDBF)
-local nSeek
-local bPom
-
-cFldId := "ID"
-cFldMatchCode := "MATCH_CODE"
-
-if (nDBF == F_SIFK) .or. (nDBF == F_SIFV)
-    return
-endif
-
-// ako nema polja match code ... nista...
-if (nDBF)->(fieldpos(cFldMatchCode)) == 0
-    return
-endif
-
-nSeek := ASCAN(ImeKol, {|xEditFieldNaz| UPPER(xEditFieldNaz[3]) == "ID" })
-//cFldId := ImeKol[nSeek, 3]
-
-// setuj prikaz polja
-if nSeek > 0
-
-    bPom := { || ;
-        PADR( ALLTRIM(&cFldID) + ;
-        IF( !EMPTY(&cFldMatchCode), ;
-            IF( LEN(ALLTRIM(&cFldMatchCode)) > 4 , ;
-               "/" + LEFT(ALLTRIM(&cFldMatchCode), 2) + "..", ;
-               "/" + LEFT(ALLTRIM(&cFldMatchCode), 4)), ;
-        ""), ;
-        LEN(&cFldID) + 5 ) ;
-        }
-    
-    ImeKol[nSeek, 1] := "ID/MC"
-    ImeKol[nSeek, 2] := bPom
-    
-    
-endif
-
-return
-
-// ----------------------------------
-// ----------------------------------
-function SIF_TEKREC(cDBF, nOffset)
-
-local xVal
-local nArr
-if nOffset=NIL
- nOffset:=1
-endif
-if __PSIF_NIVO__ + nOffset > 0
- xVal:= __A_SIFV__[__PSIF_NIVO__+nOffset,2]
-else
- xVal:= __A_SIFV__[1,2]
-endif
-
-if cDBF<>NIL
-    nArr:=select()
-    select (cDBF)
-      go xVal
-    select (nArr)
-endif
-return xVal
-
-// ---------------------------------------------------
-// ---------------------------------------------------
-static function PushSifV()
-__PSIF_NIVO__ ++
-if __PSIF_NIVO__ > len(__A_SIFV__)
-  AADD(__A_SIFV__,{"",0,0})
-endif
-return
-
-// ------------------------------
-// ------------------------------
-static function PopSifV()
-
---__PSIF_NIVO__
-return
-
 // ------------------------------------------------------------
 // -----------------------------------------------------------
 static function EdSif(nDbf, cNaslov, bBlok, aZabrane, aZabIsp)
@@ -598,7 +500,7 @@ do case
    
     Tb:RefreshCurrent()
 
-    if EditSifItem(Ch, nOrder, aZabIsp) == 1
+    if edit_item(Ch, nOrder, aZabIsp) == 1
         return DE_REFRESH
     endif
 
@@ -647,7 +549,7 @@ do case
     return SifClipBoard()
 
   case Ch==K_F10
-      SifPopup(nOrder)
+      popup(nOrder)
       RETURN DE_CONT
 
   otherwise
@@ -662,7 +564,7 @@ return
 
 // ------------------------------------------
 // ------------------------------------------
-function EditSifItem(Ch, nOrder, aZabIsp)
+static function edit_item(Ch, nOrder, aZabIsp)
 local i
 local j
 local _alias
@@ -731,7 +633,7 @@ endif
 do while .t.
    
     // setuj varijable za tekuci slog
-    SetSifVars()
+    set_sif_vars()
   
     if Ch == K_CTRL_N
         // nastimaj default vrijednosti za sifrarnik robe
@@ -795,16 +697,16 @@ do while .t.
                     nRed := 0
                 endif
 
-                // ne prikazuj nil vrijednosti
-                if EVAL(ImeKol[i, 2]) <> NIL .and. ToStr(EVAL(ImeKol[i,2])) <> "_?_"  
-                    if nKolona=1
+                // TODO: ne prikazuj nil vrijednosti
+                //if EVAL(ImeKol[i, 2]) <> NIL .and. ToStr(EVAL(ImeKol[i,2])) <> "_?_"  
+                    if nKolona == 1
                         ++nTekRed
                     endif
-                    @ m_x + nTekRed, m_y + nKolona SAY PADL( alltrim(ImeKol[i, 1]) ,15)
+                    @ m_x + nTekRed, m_y + nKolona SAY PADL( ALLTRIM(ImeKol[i, 1]) ,15)
                     @ m_x + nTekRed, col() + 1 SAY EVAL(ImeKol[i,2])
-                else
-                    ++nNestampati
-                endif
+                //else
+                //    ++nNestampati
+                //endif
 
             endif 
 
@@ -850,7 +752,7 @@ do while .t.
         
         _alias := LOWER(ALIAS())        
 
-        if !f18_lock_tables( { _alias, "sifv", "sifk" } )
+        if !f18_lock_tables( { _alias, "sifv", "sifk", _alias } )
             log_write( "ERROR: nisam uspio lokovati tabele: " + _alias + ", sifk, sifv", 2 )
             exit
         endif
@@ -864,6 +766,7 @@ do while .t.
         update_sifk_na_osnovu_ime_kol_from_global_var(ImeKol, "w", Ch==K_CTRL_N, "CONT")
 
         f18_free_tables( { _alias, "sifv", "sifk" } )
+
         sql_table_update( nil, "END" )
 
         set_global_vars_from_dbf("w")
@@ -898,10 +801,7 @@ if lastkey() == K_ESC
 
 endif
 
-//
 // ako je novi zapis napravi APPEND BLANK
-//
-
 if lNovi
 
     // provjeri da li vec ovaj id postoji ?
@@ -970,7 +870,6 @@ endif
 return 1
 
 
-
 static function set_w_var(ImeKol, _i, show_grup)
 local _tmp, _var_name
 
@@ -1011,6 +910,7 @@ local nRed, nKolona
 local cWhenSifk, cValidSifk
 local _when_block, _valid_block
 local _m_block := MEMVARBLOCK(var_name)
+local tmpRec
 
 // uzmi when, valid kodne blokove
 if (Ch==K_F2 .and. lZabIsp .and. ASCAN(aZabIsp, UPPER(ImeKol[i, 3]))>0)
@@ -1038,9 +938,9 @@ if LEN( ToStr( EVAL(_m_block)) ) > 50
         @ m_x + nTekRed + 1, m_y + 67 SAY Chr(16)
 
 elseif Len(ImeKol[i]) >= 7 .and. ImeKol[i , 7] <> NIL
-        cPic:= ImeKol[i, 7]
+        cPic := ImeKol[i, 7]
 else
-        cPic:=""
+        cPic := ""
 endif
 
 nRed := 1
@@ -1086,13 +986,20 @@ else
         _valid_block := bValid
 endif
 
-@ m_x + nTekRed , m_y + nKolona SAY  IIF(nKolona > 1, "  " + alltrim(ImeKol[i, 1]) , PADL( alltrim(ImeKol[i, 1]) , 15))  + " "
+@ m_x + nTekRed , m_y + nKolona SAY  IIF(nKolona > 1, "  " + ALLTRIM(ImeKol[i, 1]) , PADL( ALLTRIM(ImeKol[i, 1]) , 15))  + " "
+
+if &var_name == NIL
+    tmpRec = RECNO()
+    GO BOTTOM
+    SKIP
+    // EOF record
+    &var_name := EVAL(ImeKol[i, 2])
+    go tmpRec
+endif
 
 AAdd( GetList, _GET_( &var_name, var_name,  cPic, _valid_block, _when_block) ) ;;
 
 ATail(GetList):display()
-
-
 
 return .t.
 
@@ -1226,7 +1133,7 @@ return cChanges
 
 // -----------------------
 // -----------------------
-function SetSifVars()
+static function set_sif_vars()
 local _i, _struct
 private cImeP
 private cVar
@@ -1263,18 +1170,18 @@ return
 
 //-------------------------------------------------------
 //-------------------------------------------------------
-function SifPopup(nOrder)
+static function popup(nOrder)
 
 private Opc:={}
 private opcexe:={}
 private Izbor
 
 AADD(Opc, "1. novi                  ")
-AADD(opcexe, {|| EditSifItem(K_CTRL_N, nOrder) } )
+AADD(opcexe, {|| edit_item(K_CTRL_N, nOrder) } )
 AADD(Opc, "2. edit  ")
-AADD(opcexe, {|| EditSifItem(K_F2, nOrder) } )
+AADD(opcexe, {|| edit_item(K_F2, nOrder) } )
 AADD(Opc, "3. dupliciraj  ")
-AADD(opcexe, {|| EditSifItem(K_F4, nOrder) } )
+AADD(opcexe, {|| edit_item(K_F4, nOrder) } )
 AADD(Opc, "4. <a+R> za sifk polja  ")
 AADD(opcexe, {|| repl_sifk_item() } )
 AADD(Opc, "5. copy polje -> sifk polje  ")
@@ -1286,400 +1193,109 @@ Menu_Sc("bsif")
 return 0
 
 
-// -------------------------------------------------------------------
-// @function   Fill_IDJ
-// @abstract   Koristi se za punjenje sifre ID_J sa zadatim stringom
-// @discussion fja koja punjeni polje ID_J tako sto ce se uglavnom definisati
-//             kao validacioni string u sifrarniku Sifk
-//             Primjer:
-//             - Zelim da napunim sifru po prinicpu ( GR1 + GR2 + GR3 + sekvencijalni dio)
-//             - Zadajem sljedeci kWhenBlok:
-//               When: FILL_IDJ( WSIFK_GR1 + WSIFK_GR2 + WSIFK_GR3)
-// @param      cStr  zadati string
-// --------------------------------------------------------------------
-function Fill_IDJ(cSTR)
+// -------------------------------------------
+// sredi uslov ako nije postavljeno ; na kraj
+// -------------------------------------------
+static function _fix_usl(xUsl)
+local nLenUsl := LEN(xUsl)
+local xRet := SPACE(nLenUsl)
 
-local nTrec , cPoz
-
-PushWA()
-
-
-nTrec:=recno()
-set order to tag "ID_J"
-seek cStr + chr(246)
-skip -1
-// ova fja se uvijek poziva nakon Edsif-a
-// ako je __LAST_CH__=f4 onda se radi o dupliciranju
-
-if (__A_SIFV__[__PSIF_NIVO__,3]==K_F4) .or. ;
-   ( recno()<>nTrec .and. ( left(wId_J, len(cStr)) != cStr) ) 
-   // ne mjenjam samog sebe
-        if  right(alltrim(wNAZ),3)=="..."
-           // naziv je u formi "KATEGORIJA ARTIKALA.........."
-           cPoz:=  REPLICATE (".",len(ID_J)-LEN(cStr))
-        elseif (left( ID_J, len(cStr) ) = cStr ) .and. ( SUBSTR(ID_J , len(cstr)+1,1)<>".")
-           // GUMEPODA01
-           // Len(id_j) - len( cStr )  = 10 - 8 = 2
-           cPoz:=  PADL ( alltrim( STR( VAL (substr( ID_J , len(cstr)+1)) +1)) , len(ID_J) - LEN(cStr), "0" )
-        else
-           cPoz:=  PADL ( "1" , len(ID_J)-LEN(cStr), "0" )
-        endif
-
-        go nTrec
-        //replace ID_J with   ( cStr +  cPoz)
-        wID_J :=  ( cStr +  cPoz)
+if EMPTY(xUsl)
+    return xUsl
 endif
-PopWa()
-return .t.
 
-// --------------------------------------------------------------------------------
-// SetSifFilt
-// postavlja _M1_ na "*" za polja kod kojih je cSearch .t.;
-//   takodje parsira ulaz (npr. RAKO, GSLO 10 20 30, GR1>55, GR2 20 $55#66#77#88 )
-// formiraj filterski uslov
-// --------------------------------------------------------------------------------
-function SetSifFilt(cSearch)
-local _i
-local n1, n2, cVarijabla, cTipVar
-local fAddNaPost := .f.
-local fOrNaPost  := .f.
-local nCount, nCount2
-private cFilt:=".t. "
+if RIGHT(ALLTRIM(xUsl), 1) <> ";"
+    xRet := PADR( ALLTRIM(xUsl) + ";", nLENUSL )
+else
+    xRet := xUsl
+endif
 
-cSearch:=ALLTRIM(trim(cSearch))
-// zamjenit "NAZ $ MISHEL"  -> NAZ $MISHEL
-cSearch:=strtran(cSearch,"$ ","$")
+return xRet
 
-n1 := NumToken(cSearch,",")
-for _i := 1 to n1
 
-    cUslov := token(cSearch,",", _i)
-    n2 := numtoken(cUslov, " ")
+// -------------------------------
+// -------------------------------
+static function sif_brisi_stavku()
+local _rec_dbf, _rec, _alias
 
-    if n2 == 1
-        if cUslov == "+"  // dodaj na postojeci uslov
-            fAddNaPost := .t.
-        elseif upper(cUslov) == "*"  // dodaj na postojeci uslov
-            fOrNaPost := .t.
-        else
-            cFilt += ".and." + iif(fieldpos("ID_J")=0,"Id","ID_J") + "=" + token(cUslov," ", 1)
+if Pitanje( , "Zelite li izbrisati ovu stavku ??","D") == "D"
+
+    PushWa()
+
+    _alias := ALIAS()
+
+    sql_table_update(nil, "BEGIN")
+
+    _rec_dbf := dbf_get_rec()
+    delete_rec_server_and_dbf(ALIAS(), _rec_dbf, 1, "CONT")
+
+    // ako postoji id polje, pobriši i sifv
+    if hb_hhaskey( _rec_dbf, "id" )
+        SELECT (F_SIFV)
+        if !USED()
+            O_SIFV
         endif
-
-    elseif n2 >= 2  // npr ....,GSLO 33 55 77,.......
-
-        if  fieldpos( token(cUslov," ", 1) ) <> 0  // radi se o polju unutar baze
-            cVarijabla:=token(cUslov," ", 1)
-        else
-            // radi se o polju sifk
-            cVarijabla:="IzSifk('" + ALIAS() + "','" + ALLTRIM(TOKEN(cUslov," ", 1)) + ",####',NIL,.f.,.t.)"
-        endif
-
-
-        cOperator := NIL
-        cFilt += ".and. ("
-
-        for j := 2 to n2  // sada nastiklaj uslove ...
-
-                DO CASE
-                    CASE left(token(cUslov," ",j) ,1) == ">"
-                        cOperator:=">"
-                    CASE left(token(cUslov," ",j) ,1) == "$"
-                        cOperator:="$"
-                    CASE left(token(cUslov," ",j) ,1) == "!"
-                        cOperator:="!"
-                    CASE left(token(cUslov," ",j) ,2) == "<>"
-                        cOperator:="<>"
-                    CASE left(token(cUslov," ",j) ,1) == "<"
-                        cOperator:="<"
-                    CASE left(token(cUslov," ",j) ,2) == ">="
-                        cOperator:=">="
-                    CASE left(token(cUslov," ",j) ,2) == "<="
-                        cOperator := "<="
-                END CASE
-
-                if cOperator == NIL
-                    cOperator := "="
-                    cV2 := substr(token(cUslov," ",j) ,1)
-                else
-                    if cOperator == "="
-                    cV2 := substr(token(cUslov," ", j), len(cOperator))
-                    else
-                    cV2 := substr(token(cUslov," ", j), 1 + len(cOperator))
-                    endif
-                endif
-
-                cV2 := strtran(cV2,"_"," ")  // !!! pretvori "_" u " "
-
-
-                if cVarijabla == "IzSifk("
-                if cOperator == "="
-                    cVarijabla := strtran(cVarijabla, "####", cV2)
-                else
-                    cVarijabla := strtran(cVarijabla, ",####", "")
-                endif
-                endif
-
-                cTipVar := VALTYPE( &cVarijabla )
-                if j > 2 
-                    cFilt += ".or. "
-                endif
-
-                if cOperator="$"
-                    cFilt +=  "'" +cV2 + "'"  + cOperator + cVarijabla
-                else
-                    if cOperator=="!"
-                        cOperator := "!="
-                    endif
-
-                    if cTipVar == "C"
-                        cFilt += cVarijabla + cOperator + "'" +cV2 + "'"
-                    elseif cTipVar == "N"
-                        cFilt += cVarijabla + cOperator +cV2
-                    elseif cTipVar == "D"
-                        cFilt += cVarijabla + "CTOD(" +cOperator +cV2 +")"
-                    endif
-                endif
-
-        next
-
-        cFilt +=")"
-
+   
+        _rec := hb_hash()
+        _rec["id"]    := PADR(_alias, 8)
+        _rec["idsif"] := PADR(_rec_dbf["id"], 15)
+        // id + idsif
+        delete_rec_server_and_dbf("sifv", _rec, 3, "CONT")
     endif
-next
 
-if !fAddNaPost
-  set filter to
+    sql_table_update(nil, "END")
+
+    PopWa()
+    return DE_REFRESH
+else
+    return DE_CONT
 endif
 
-go top
-// prodji kroz bazu i markiraj
-@ 25,1 SAY cFilt
-MsgO("Vrsim odabir zeljenih stavki: ....")
-nCount:=0
-nCount2:=0
-do while !eof()
+RETURN DE_REFRESH
 
-  Scatter()
-  if empty(cFilt) .or. &cFilt
-      replace _M1_ with "*"
-      ++nCount2
-  else
-      if !fOrNaPost
-         replace _M1_ with " "
-      endif
-  endif
-  ++nCount
-  if (nCount % 10 == 0)
-     @ m_x+6, m_y+40 SAY nCount
-  endif
-  skip
-enddo
-Msgc()
+// -------------------------------
+// -------------------------------
+static function sif_brisi_sve()
 
-@ m_x + 1, m_y + 20 SAY  STR(nCount2, 3) + "/"
+if Pitanje( , "Zelite li sigurno izbrisati SVE zapise ??", "N") == "N"
+    return DE_CONT
+endif
+        
+Beep(6)
+    
+nTArea := SELECT()
+// logiraj promjenu brisanja stavke
+if _LOG_PROMJENE == .t.
+    EventLog(nUser, "FMK", "SIF", "PROMJENE", nil, nil, nil, nil, ;
+    "", "", "", DATE(), DATE(), "", ;
+    "pokusaj brisanja kompletnog sifrarnika")
+endif
+select (nTArea)
 
-private cFM1 := "_M1_='*'"
-SET FILTER TO  &cFM1
-go top
+if Pitanje( , "Ponavljam : izbrisati BESPOVRATNO kompletan sifrarnik ??","N")=="D"
+        
+    delete_all_dbf_and_server(ALIAS())   
+    select (nTArea)
 
+endif
+        
+return DE_REFRESH
+
+
+// ---------------------------------------------------
+// ---------------------------------------------------
+static function PushSifV()
+__PSIF_NIVO__ ++
+if __PSIF_NIVO__ > len(__A_SIFV__)
+  AADD(__A_SIFV__,{"",0,0})
+endif
 return
 
-
-// prikaz idroba
-// nalazim se u tabeli koja sadrzi IDROBA, IDROBA_J
-function StIdROBA()
-
-static cPrikIdRoba:=""
-
-if cPrikIdroba == ""
-  cPrikIdRoba := IzFmkIni('SIFROBA', 'PrikID', 'ID', SIFPATH)
-endif
-
-if cPrikIdRoba="ID_J"
-  return IDROBA_J
-else
-  return IDROBA
-endif
-
-function aTacno(aUsl)
-local i
-for i=1 to len(aUsl)
-   if !(Tacno(aUsl[i]))
-       return .f.
-   endif
-next
-return .t.
-
-
-// -----------------------------------------
-// nadji sifru, v2 funkcije
-// -----------------------------------------
-function n_num_sif()
-local cFilter := "val(id) <> 0"
-local i
-local nLId
-local lCheck
-local lLoop
-
-// ime polja : "wid"
-private cImeVar := READVAR()
-// vrijednost unjeta u polje
-cPom := &(cImeVar)
-
-if cImeVar == "WID"
-    
-    PushWA()
-    
-    nDuzSif := LEN( cPom )
-
-    // postavi filter na numericke sifre
-    set filter to &cFilter
-    
-    // kreiraj indeks
-    index on VAL(id) tag "_VAL"
-    
-    go bottom
-
-    // zapis
-    nTRec := RECNO()
-    nLast := nTRec
-
-    // sifra kao uzorak
-    nLId := VAL( ID )
-    lCheck := .f.
-
-    do while lCheck = .f.
-       
-       lLoop := .f.
-       // ispitaj prekid sifri
-       for i := 1 to 10
-
-        skip -1
-
-        if nLId = VAL( field->id )
-            // ako je zadnja sifra ista kao i prethodna
-            // idi na sljedecu
-            // ili idi na zadnju sifru
-            nTRec := nLast
-            lLoop := .t.
-            exit
-        endif
-
-        if nLId - VAL( field->id ) <> i
-            // ima prekid
-            // idi, ponovo...
-            nLID := VAL( field->id )
-            nTRec := RECNO()
-            lCheck := .f.
-            lLoop := .f.
-            exit
-        else
-            lLoop := .t.
-        endif
-
-       next
-
-       if lLoop = .t.
-        lCheck := .t.
-       endif
-
-    enddo
-
-    go (nTREC)
-    
-    &(cImeVar) := PADR(NovaSifra( IF( EMPTY(id) , id , RTRIM(id) ) ), nDuzSif, " " )
-
-    set filter to
-
-    if nOrdId <> 0
-        set order to tag "ID"
-    else
-        set order to tag "1"
-    endif
-    
-    GO TOP
-
-endif
-
-AEVAL(GetList,{|o| o:display()})
-PopWA()
-
-return nil
-
-
-// ----------------------------------------------------
-// nadji novu sifru - radi na pritisak F8 pri unosu
-// nove sifre
-// ----------------------------------------------------
-function NNSifru()      
-local cPom
-local nDuzSif:=0
-local lPopuni:=.f.
-local nDuzUn:=0
-local cLast:=CHR(252) + CHR(253)
-local nKor:=0
-
-IF IzFmkIni("NovaSifraOpc_F8","PopunjavaPraznine","N")=="D"
-    lPopuni:=.t.
-ENDIF
-
-// ime polja
-private cImeVar := READVAR()
-// vrijednost unjeta u polje
-cPom := &(cImeVar)
-
-IF cImeVar == "WID"
-    
-    nDuzSif := LEN(cPom)
-    nDuzUn := LEN(TRIM(cPom))
-    cPom := PADR(RTRIM(cPom), nDuzSif, "Z")
-    
-    PushWA()
-    
-    if nOrdId <> 0
-        set order to tag "ID"
-    else
-        set order to tag "1"
-    endif
-    
-    GO TOP
-    IF lPopuni
-            SEEK LEFT(cPom,nDuzUn)
-            DO WHILE !EOF() .and. LEFT(cPom,2)=LEFT(id,2)
-                // preskoci stavke opisa grupe artikala
-                IF LEN(TRIM(id))<=nDuzUn .or. RIGHT(TRIM(id),1)=="."
-                SKIP 1
-            ENDIF
-                IF cLast=="¬¦æÑ" // tj. prva konkretna u nizu
-                    IF VAL(SUBSTR(id,nDuzUn+1)) > 1
-                        // rupa odmah na poetku
-                        nKor:= nDuzSif-LEN(TRIM(id))
-                        EXIT
-                    ENDIF
-                ELSEIF VAL(SUBSTR(id,nDuzUn+1))-VAL(cLast) > 1
-                    // rupa izmeÐu
-                    EXIT
-                ENDIF
-                cLast:=SUBSTR(id,nDuzUn+1)
-                SKIP 1
-            ENDDO
-            // na osnovu cLast formiram slijedeu çifru
-            cPom:=LEFT(cPom,nDuzUn)+IF(cLast=="¬¦æÑ",REPL("0",nDuzSif-nDuzUn-nKor),cLast)
-            &(cImeVar):=PADR(NovaSifra( IF( EMPTY(cPom) , cPom , RTRIM(cPom) ) ),nDuzSif," ")
-    ELSE
-            
-        SEEK cPom
-            SKIP -1
-            &(cImeVar):=PADR(NovaSifra( IF( EMPTY(id) , id , RTRIM(id) ) ),nDuzSif," ")
-    
-    ENDIF
-
-    AEVAL(GetList,{|o| o:display()})
-    PopWA()
-ENDIF
-
-RETURN (NIL)
-
+// ------------------------------
+// ------------------------------
+static function PopSifV()
+--__PSIF_NIVO__
+return
 
 
 // ---------------------------------------------------------------------
@@ -1687,7 +1303,7 @@ RETURN (NIL)
 //  Stroga kontrola ID-a sifre pri unosu nove ili ispravci postojece!
 //  wId - ID koji se provjerava
 // --------------------------------------------------------------------
-function VpSifra( wId, cTag )
+function sifra_postoji( wId, cTag )
 local nRec := RecNo()
 local nRet := .t.
 local cUpozorenje
@@ -1739,357 +1355,4 @@ PopWa()
 
 return nRet
 
-
-
-/*! \fn VpNaziv(wNaziv)
- *  \brief Stroga kontrola naziva sifre pri unosu nove ili ispravci postojece sifre
- *  \param wNaziv - Naziv koji se provjerava
- */
- 
-function VpNaziv(wNaziv)
-local nRec := RecNo()
-local nRet := .t.
-local cId
-local cUpozorenje := "Ovaj naziv se vec nalazi u sifri:   "
-
-set order to tag "naz"
-HSeek wNaziv
-cId:=roba->id
-
-if (FOUND() .and. Ch==K_CTRL_N)
-    MsgBeep(cUpozorenje + ALLTRIM(cId) + " !!!")
-    nRet:=.f.
-elseif (gSKSif=="D" .and. FOUND()) 
-    if nRec<>RecNo()
-        MsgBeep(cUpozorenje + ALLTRIM(cId) + " !!!")
-        nRet:=.f.
-    else       
-        // bio isti zapis, idi na drugi
-        skip 1
-        if !EOF() .and. wNaziv==naz
-           MsgBeep(cUpozorenje + ALLTRIM(cId) + " !!!")
-           nRet:=.f.
-        endif
-    endif
-endif
-
-set order to tag "ID"
-go nRec
-
-return nRet
-
-
-// ---------------------------------
-// ---------------------------------
-function ImaSlovo(cSlova, cString)
-local i
-
-for i:=1 to len(cSlova)
-  if substr(cSlova,i,1)  $ cString
-    return .t.
-  endif
-next
-
-return .f.
-
-// ------------------------------
-// ------------------------------
-function UslovSif()
-local aStruct:=DBSTRUCT()
-
-SkratiAZaD(@aStruct)
-
-Box("", IF(len(aStruct)>22, 22, LEN(aStruct)), 67, .f. ,"","Postavi kriterije za pretrazivanje")
-
-private Getlist:={}
-
-*
-* postavljanje uslova
-*
-aQQ:={}
-aUsl:={}
-
-IF "U" $ TYPE("aDefSpremBaz")
-    aDefSpremBaz := NIL
-ENDIF
-
-IF aDefSpremBaz != NIL .and. !EMPTY(aDefSpremBaz)
-    FOR i:=1 TO LEN(aDefSpremBaz)
-            aDefSpremBaz[i,4]:=""
-    NEXT
-ENDIF
-
-set cursor on
-
-for i:=1 to len(aStruct)
-    if i==23
-        @ m_x+1,m_y+1 CLEAR TO m_x+22,m_y+67
-    endif
-    AADD(aQQ, SPACE(100))
-    AADD(aUsl, NIL)
-    @ m_x+IF(i>22, i-22, i), m_y+67 SAY Chr(16)
-    @ m_x+IF(i>22,i-22,i),m_y+1 SAY PADL( alltrim(aStruct[i,1]),15) GET aQQ[i] PICTURE "@S50" ;
-            valid {|| aUsl[i]:=Parsiraj(aQQ[i]:=_fix_usl(aQQ[i]),aStruct[i,1],iif(aStruct[i,2]=="M","C",aStruct[i,2])) , aUsl[i] <> NIL  }
- read
- IF LASTKEY()==K_ESC
-   EXIT
- ELSE
-   IF aDefSpremBaz!=NIL .and. !EMPTY(aDefSpremBaz) .and. aUsl[i]<>NIL .and.;
-   aUsl[i]<>".t."
-     FOR j:=1 TO LEN(aDefSpremBaz)
-       IF UPPER(aDefSpremBaz[j,2]) == UPPER(aStruct[i,1])
-         aDefSpremBaz[j,4] := aDefSpremBaz[j,4] +;
-                              IF( !EMPTY(aDefSpremBaz[j,4]), ".and.", "") +;
-                              IF( UPPER(aDefSpremBaz[j,2]) == UPPER(aDefSpremBaz[j,3]), aUsl[i],;
-                                   Parsiraj(aQQ[i]:=_fix_usl(aQQ[i]),aDefSpremBaz[j,3],iif(aStruct[i,2]=="M","C",aStruct[i,2])) )
-       ENDIF
-     NEXT
-   ENDIF
- ENDIF
-next
-read
-BoxC()
-if lastkey()==K_ESC; return DE_CONT; endif
-aOKol:=ACLONE(Kol)
-
-private cFilter:=".t."
-for i:=1 to len(aUsl)
- if ausl[i]<>NIL .and. aUsl[i]<>".t."
-   cFilter+=".and."+aUsl[i]
- endif
-next
-if cFilter==".t."
-  set filter to
-else
-  if left(cfilter, 8) == ".t..and."
-     cFilter := SUBSTR(cFilter,9)
-     set filter to &cFilter
-  endif
-endif
-go top
-return NIL
-
-// -------------------------------------------
-// sredi uslov ako nije postavljeno ; na kraj
-// -------------------------------------------
-static function _fix_usl(xUsl)
-local nLenUsl := LEN(xUsl)
-local xRet := SPACE(nLenUsl)
-
-if EMPTY(xUsl)
-    return xUsl
-endif
-
-if RIGHT(ALLTRIM(xUsl), 1) <> ";"
-    xRet := PADR( ALLTRIM(xUsl) + ";", nLENUSL )
-else
-    xRet := xUsl
-endif
-
-return xRet
-
-
-//---------------------------------
-//---------------------------------
-function P_Sifk(cId, dx, dy)
-local i
-private imekol,kol
-Kol:={}
-O_SIFK
-O_SIFV
-ImeKol:={ { padr("Id", 15),      {|| id}, "id"  }           ,;
-          { padr("Naz", 25),     {|| naz}, "naz" }         ,;
-          { padr("Sort", 4),     {|| sort}, "sort" } ,;
-          { padr("Oznaka", 4),   {|| oznaka}, "oznaka" } ,;
-          { padr("Veza", 4),     {|| veza}, "veza" }       ,;
-          { padr("Izvor", 15),   {|| izvor}, "izvor" }   ,;
-          { padr("Uslov", 30),   {|| PADR(uslov, 30) }, "uslov" }   ,;
-          { padr("Tip", 3),      {|| tip}, "tip" }   ,;
-          { padr("Unique", 3),   {|| f_unique}, "f_unique", NIL, NIL,NIL,NIL,NIL,NIL, 20}   ,;
-          { padr("Duz", 3),      {|| duzina}, "duzina" }   ,;
-          { padr("Dec", 3),      {|| f_decimal}, "f_decimal" }   ,;
-          { padr("K Validacija", 50), {|| PADR(KValid, 50) }, "KValid" }   ,;
-          { padr("K When", 50),  {|| KWhen }, "KWhen" }   ,;
-          { padr("UBrowsu", 4),  {|| UBrowsu}, "UBrowsu" }             ,;
-          { padr("EdKolona", 4), {|| EdKolona}, "EdKolona" }             ,;
-          { padr("K1", 4),       {|| k1}, "k1" }             ,;
-          { padr("K2", 4),       {|| k2}, "k2" }             ,;
-          { padr("K3", 4),       {|| k3}, "k3" }             ,;
-          { padr("K4", 4),       {|| k4}, "k4" }             ;
-       }
-
-FOR i := 1 TO LEN(ImeKol)
-   AADD(Kol, i)
-NEXT
-
-return PostojiSifra(F_SIFK, 1, MAXROWS()-15, MAXCOLS()-15, "sifk - Karakteristike", @cId, dx, dy)
-
-// nadji novu sifru - radi na pritisak F5 pri unosu
-// nove sifre
-function NNSifru2()     
-
-local cPom
-local cPom2
-local nOrder
-local nDuz
-
-private cK1:=""
-private cImeVar:=""
-private cNumDio:=""
-
-if ALIAS()<>"ROBA" .or.  FIELDPOS("K1")==0 .or. !((cImeVar:=READVAR())=="WID") .or. !EMPTY(cK1:=SPACE(LEN(K1))) .or. !VarEdit({ {"Unesite K1","cK1",,"@!",} }, 10, 23, 14, 56, "Odredjivanje nove sifre artikla","B5")
-    return (NIL)
-endif
-cNumDio := IzFMKINI("ROBA","NumDio","SUBSTR(ID,7,3)",SIFPATH)
-cPom2   := &(cImeVar)
-nDuz    := LEN(cPom2)
-cPom2   := RTRIM(cPom2)
-cPom    := cK1 + CHR(255)
-PushWA()
-
-nOrder := index_tag_num("BROBA")
-IF nOrder=0
-    MsgBeep("Ako ste u mrezi, svi korisnici moraju napustiti FMK. Zatim pritisnite Enter!")
-    MsgO("Kreiram tag(index) 'BROBA'")
-        cSort := IzFMKINI("ROBA","Sort","K1+SUBSTR(ID,7,3)",SIFPATH)
-        INDEX ON &cSort TAG BROBA
-    MsgC()
-ENDIF
-set order to tag "BROBA"
-GO TOP
-SEEK cPom
-SKIP -1
-cNumDio := &cNumDio
-IF K1 == cK1
-    &(cImeVar) := PADR( cPom2 + PADL(ALLTRIM(STR(VAL(cNumDio)+1)),LEN(cNumDio),"0") , nDuz )
-else
-    &(cImeVar) := PADR( cPom2 + PADL("1",LEN(cNumDio),"0") , nDuz )
-ENDIF
-
-wk1 := cK1
-AEVAL(GetList,{|o| o:display()})
-PopWA()
-KEYBOARD CHR(K_END)
-RETURN (NIL)
-
-
-
-function SeekBarKod( cId, cIdBk, lNFGR )
-local nRec
-
-if lNFGR == nil
-    lNFGR := .f.
-endif
-if lNFGR
-    nRec:=RECNO()
-endif
-
-// trazi glavni barkod
-if fieldpos("BARKOD")<>0 
-    set order to tag "BARKOD"
-    seek cID
-    gOcitBarkod:=.t.
-    cId:=ID
-    if fID_J
-        cID:=ID_J
-        set order to tag "ID_J"
-        seek cID
-    endif
-else
-    seek "àáâ"
-endif
-
-// nisam nasao barkod u polju BARKOD
-if !found()   
-    cIdBK:=cID
-    cId:=""
-    ImauSifV("ROBA","BARK", cIdBK, @cId)
-    if !empty(cID)
-        Beep(1)
-        select roba
-        set order to tag "ID"
-        seek cId  // nasao sam sifru !!
-        cId:=Id
-        if fID_J
-            gOcitBarkod:=.t.
-            cID:=ID_J
-            set order to tag "ID_J"
-            seek cID
-        endif
-    endif
-endif
-
-if lNFGR .and. !FOUND()
-    set order to tag "ID"
-    go (nRec)
-endif
-
-return
-
-// -------------------------------
-// -------------------------------
-static function sif_brisi_stavku()
-local _rec_dbf, _rec, _alias
-
-if Pitanje( , "Zelite li izbrisati ovu stavku ??","D")=="D"
-    PushWa()
-
-    _alias := ALIAS()
-
-    sql_table_update(nil, "BEGIN")
-
-    _rec_dbf := dbf_get_rec()
-    delete_rec_server_and_dbf(ALIAS(), _rec_dbf, 1, "CONT")
-
-    // ako postoji id polje, pobriši i sifv
-    if hb_hhaskey( _rec_dbf, "id" )
-        SELECT (F_SIFV)
-        if !USED()
-            O_SIFV
-        endif
-   
-        _rec := hb_hash()
-        _rec["id"]    := PADR(_alias, 8)
-        _rec["idsif"] := PADR(_rec_dbf["id"], 15)
-        // id + idsif
-        delete_rec_server_and_dbf("sifv", _rec, 3, "CONT")
-    endif
-
-    sql_table_update(nil, "END")
-
-    PopWa()
-    return DE_REFRESH
-else
-    return DE_CONT
-endif
-
-RETURN DE_REFRESH
-
-// -------------------------------
-// -------------------------------
-static function sif_brisi_sve()
-
-if Pitanje( ,"Zelite li sigurno izbrisati SVE zapise ??","N") == "N"
-    return DE_CONT
-endif
-        
-Beep(6)
-    
-nTArea := SELECT()
-// logiraj promjenu brisanja stavke
-if _LOG_PROMJENE == .t.
-    EventLog(nUser, "FMK", "SIF", "PROMJENE", nil, nil, nil, nil, ;
-    "", "", "", DATE(), DATE(), "", ;
-    "pokusaj brisanja kompletnog sifrarnika")
-endif
-select (nTArea)
-
-if Pitanje( , "Ponavljam : izbrisati BESPOVRATNO kompletan sifrarnik ??","N")=="D"
-        
-    delete_all_dbf_and_server(ALIAS())   
-    select (nTArea)
-
-endif
-        
-return DE_REFRESH
 

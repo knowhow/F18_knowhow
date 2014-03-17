@@ -114,6 +114,7 @@ function iterate_through_active_tables(iterate_block)
 local _key
 local _f18_dbf
 local _temp_tbl
+local _sql_tbl := .f.
 
 get_dbf_params_from_config()
 _f18_dbfs := f18_dbfs()
@@ -122,7 +123,14 @@ for each _key in _f18_dbfs:Keys
 
     _temp_tbl := _f18_dbfs[_key]["temp"]
 
-    if !_temp_tbl
+    // sql tabela
+    if hb_hhaskey( _f18_dbfs[_key], "sql" )
+         if _f18_dbfs[_key]["sql"]
+               _sql_tbl := .t.
+         endif
+    endif
+         
+    if !_temp_tbl .and. !_sql_tbl
 
 		_tbl_base := _table_base( _f18_dbfs[_key] )
 

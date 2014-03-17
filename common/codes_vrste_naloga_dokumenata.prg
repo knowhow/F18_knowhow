@@ -60,4 +60,3 @@ select (nTArea)
 return PostojiSifra(F_TDOK, 1, 10, 32, "Lista: Tipovi dokumenata", @cId, dx, dy)
 
 
-

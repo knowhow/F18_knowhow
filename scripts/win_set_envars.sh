@@ -12,7 +12,7 @@ HB_ROOT=/c/knowhowERP/hbout
 
 #HB_ROOT=/c/hbout
 
-export PATH=$HB_ROOT/bin:/c/MinGW/bin:/c/PostgreSQL/9.1/bin:$PATH
+export PATH=$HB_ROOT/bin:/c/MinGW/bin:/c/PostgreSQL/9.1/bin:/c/mysql/bin:$PATH
 export HB_INC_INSTALL=$HB_ROOT/include
 export HB_LIB_INSTALL=$HB_ROOT/lib/win/mingw
 
@@ -20,6 +20,7 @@ export HB_INSTALL_PREFIX=$HB_ROOT
 
 export HB_WITH_QT=c:\\Qt\\4.7.4\\include
 export HB_WITH_PGSQL=c:\\PostgreSQL\\9.1\\include
+export HB_WITH_MYSQL=c:\\mysql\\include
 
 
 #export QT_DIR=/c/Qt/4.7.4

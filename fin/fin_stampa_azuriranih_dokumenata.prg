@@ -58,7 +58,7 @@ O_NALOG
 O_SUBAN
 O_KONTO
 O_PARTN
-O_TNAL_SQL
+O_TNAL
 O_TDOK
 
 SELECT SUBAN
@@ -131,7 +131,7 @@ if fkum  // stampa starog naloga - naloga iz kumulativa - datoteka anal
 
  O_KONTO
  O_PARTN
- O_TNAL_SQL
+ O_TNAL
  O_NALOG
 
  cIdVN := space(2)

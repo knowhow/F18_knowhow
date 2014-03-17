@@ -1,3 +1,7 @@
+1.7.1   2014-03-17, hernad
+
+  - SQLRDD/SDDPG #32746, #32745 (use_sql_sif: tnal, tdok)
+
 1.4.292 2014-03-14, vsasa
  
   - Fiskalne funkcije, provjera količine i cijene prije slanja fiskalnog računa na fiskalni uređaj - bugfix #32714 

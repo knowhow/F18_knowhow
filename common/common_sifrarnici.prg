@@ -45,7 +45,7 @@ endif
 
 AADD(opc,"4. tipovi dokumenata")
 if (ImaPravoPristupa("FMK","SIF","TIPDOKOPEN"))
-	AADD(opcexe, {|| P_TipDok() } )
+	AADD(opcexe, {|| browse_tdok() } )
 else
 	AADD(opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
 endif

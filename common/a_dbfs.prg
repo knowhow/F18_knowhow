@@ -97,11 +97,20 @@ f18_dbfs_add(table, @_item)
 return .t.
 
 
+// ---------------------------------------------------------
+// ---------------------------------------------------------
+function set_a_sql_sifarnik(dbf_table, alias, wa, rec)
+set_a_dbf_sifarnik(dbf_table, alias, wa, rec, .t.)
+
 // ----------------------------------------------------
 // sifarnici su svi na isti fol
 // ----------------------------------------------------
-function set_a_dbf_sifarnik(dbf_table, alias, wa, rec)
+function set_a_dbf_sifarnik(dbf_table, alias, wa, rec, lSql)
 local _alg, _item
+
+if lSql == NIL
+  lSql := .f.
+endif
 
 _item := hb_hash()
 
@@ -110,7 +119,7 @@ _item["table"] := dbf_table
 _item["wa"]    := wa
 
 _item["temp"]  := .f.
-_item["sql"]   := .t.
+_item["sql"]   :=  lSql
 _item["algoritam"] := {}
 
 _alg := hb_hash()
@@ -131,7 +140,6 @@ endif
 
 AADD(_item["algoritam"], _alg)
 
-   
 f18_dbfs_add(dbf_table, @_item)
 return .t.
 

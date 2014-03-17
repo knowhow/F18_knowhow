@@ -127,24 +127,6 @@ index_mcode( my_home(), _alias )
 */
 
 
-// TDOK
-
-_alias := "TDOK"
-_table_name := "tdok"
-
-aDbf:={}
-AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
-add_f_mcode(@aDbf)
-AADD(aDBf,{ 'NAZ'                 , 'C' ,  13 ,  0 })
-
-IF_NOT_FILE_DBF_CREATE
-IF_C_RESET_SEMAPHORE
-        
-CREATE_INDEX("ID","id", _alias ) 
-CREATE_INDEX("NAZ","naz", _alias )
-index_mcode( my_home(), _alias )
-
-
 // OPS
 
 _alias := "OPS"

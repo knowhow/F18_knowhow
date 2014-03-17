@@ -257,7 +257,7 @@ set key K_ALT_O to KonsultOS()
 
 //if gNW <> "D"
 if _fin_params["fin_tip_dokumenta"]
-    @ m_x+7,m_y+14  SAY "Tip:" get _IdTipDok valid P_TipDok(@_IdTipDok,7,26)
+    @ m_x+7,m_y+14  SAY "Tip:" get _IdTipDok valid browse_tdok(@_IdTipDok,7,26)
 endif
 
 if (IsRamaGlas())

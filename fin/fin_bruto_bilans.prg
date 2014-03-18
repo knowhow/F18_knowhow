@@ -16,7 +16,7 @@
 
 // ----------------------------------------------------
 // ----------------------------------------------------
-CLASS FIN_BILANS
+CLASS FinBrutoBilans
 
     DATA params
     DATA data
@@ -62,7 +62,7 @@ ENDCLASS
 
 // ----------------------------------------------------
 // ----------------------------------------------------
-METHOD FIN_BILANS:New( _tip_ )
+METHOD FinBrutoBilans:New( _tip_ )
 
 ::tip := 1
 ::klase := {}
@@ -80,7 +80,7 @@ return SELF
 
 // ----------------------------------------------------
 // ----------------------------------------------------
-METHOD FIN_BILANS:init_params()
+METHOD FinBrutoBilans:init_params()
 
 ::params := hb_hash()
 ::params["idfirma"] := gFirma
@@ -104,7 +104,7 @@ return SELF
 
 // ----------------------------------------------------
 // ----------------------------------------------------
-METHOD FIN_BILANS:set_bb_params()
+METHOD FinBrutoBilans:set_bb_params()
 
 do case 
     case ::tip == 1
@@ -127,7 +127,7 @@ return SELF
 
 // ------------------------------------------------------
 // ------------------------------------------------------
-METHOD FIN_BILANS:get_vars()
+METHOD FinBrutoBilans:get_vars()
 local _ok := .f.
 local _val := 1
 local _x := 1
@@ -250,7 +250,7 @@ return _ok
 
 // ---------------------------------------------------------------
 // ---------------------------------------------------------------
-METHOD FIN_BILANS:get_data()
+METHOD FinBrutoBilans:get_data()
 local _qry, _data
 local _server := my_server()
 local _konto := ::params["konto"]
@@ -382,10 +382,10 @@ return SELF
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
-METHOD FIN_BILANS:set_txt_lines()
+METHOD FinBrutoBilans:set_txt_lines()
 local _arr := {}
 local _tmp 
-local oRPT := F18_REPORT():new()
+local oRPT := ReportCommon():new()
 
 // r.br
 _tmp := 4
@@ -451,7 +451,7 @@ return SELF
 
 // -----------------------------------------------------
 // -----------------------------------------------------
-METHOD FIN_BILANS:zaglavlje_txt()
+METHOD FinBrutoBilans:zaglavlje_txt()
 
 P_COND2
 
@@ -477,7 +477,7 @@ return SELF
 
 // ---------------------------------------------------
 // ---------------------------------------------------
-METHOD FIN_BILANS:gen_xml()
+METHOD FinBrutoBilans:gen_xml()
 local _xml := "data.xml"
 local _sint_len := 3
 local _kl_len := 1
@@ -728,7 +728,7 @@ return _ok
 
 // ----------------------------------------------------------
 // ----------------------------------------------------------
-METHOD FIN_BILANS:print()
+METHOD FinBrutoBilans:print()
 
 // parametri...
 if EMPTY( ::params["konto"] )
@@ -764,7 +764,7 @@ return SELF
 
 // -----------------------------------------------
 // -----------------------------------------------
-METHOD FIN_BILANS:print_odt()
+METHOD FinBrutoBilans:print_odt()
 local _template := "fin_bbl.odt"
 
 // generisi xml report
@@ -784,7 +784,7 @@ return SELF
 
 // -----------------------------------------------------------
 // -----------------------------------------------------------
-METHOD FIN_BILANS:print_txt()
+METHOD FinBrutoBilans:print_txt()
 local _line, _i_col
 local _a_klase := {}
 local _klasa, _i, _count, _sint, _id_konto, _id_partner, __partn, __klasa, __sint, __konto
@@ -856,7 +856,7 @@ do while !EOF()
                     __partn := _set_sql_record_to_hash( "fmk.partn", field->idpartner ) 
                 endif
 
-                if ::tip == 1
+                if ::tip == 1 .and. __partn <> NIL
                     _opis := hb_utf8tostr( __partn["naz"] )
                 else
                     _opis := ""
@@ -962,8 +962,12 @@ do while !EOF()
 
             @ prow() + 1, 2 SAY ++ _rbr_2 PICT "9999"      
             @ prow(), pcol() + 1 SAY _sint
-
-            @ prow(), pcol() + 1 SAY PADR( hb_utf8tostr( __sint["naz"] ), 40 )
+            
+            if __sint == NIL
+                @ prow(), pcol() + 1 SAY PADR( "Nepostojeća šifra za sint.konto " + _sint, 40)    
+            else
+                @ prow(), pcol() + 1 SAY PADR( hb_utf8tostr( __sint["naz"] ), 40 )
+            endif
 
             @ prow(), _i_col SAY _u_ps_dug PICT ::pict_iznos
             @ prow(), pcol() + 1 SAY _u_ps_pot PICT ::pict_iznos
@@ -998,7 +1002,11 @@ do while !EOF()
     @ prow(), pcol() + 1 SAY _klasa
 
     if ::tip < 3
-        @ prow(), pcol() + 1 SAY PADR( hb_utf8tostr( __klasa["naz"] ), 40 )
+        if __klasa == NIL
+            @ prow(), pcol() + 1 SAY PADR( "Nepostojeća šifra klase " + _klasa, 40 )
+        else
+            @ prow(), pcol() + 1 SAY PADR( hb_utf8tostr( __klasa["naz"] ), 40 )
+        endif
     endif
 
     @ prow(), _i_col SAY _t_ps_dug PICT ::pict_iznos
@@ -1058,7 +1066,7 @@ return SELF
 
 // -----------------------------------------------------------
 // -----------------------------------------------------------
-METHOD FIN_BILANS:rekapitulacija_klasa()
+METHOD FinBrutoBilans:rekapitulacija_klasa()
 local _line
 local _kl_ps_dug := _kl_ps_pot := _kl_tek_dug := _kl_tek_pot := _kl_sld_dug := _kl_sld_pot := 0
 local _kl_kum_dug := _kl_kum_pot := 0
@@ -1121,7 +1129,7 @@ return SELF
 
 // -----------------------------------------------------
 // -----------------------------------------------------
-METHOD FIN_BILANS:fill_temp_table()
+METHOD FinBrutoBilans:fill_temp_table()
 local _count := 0
 local oRow, _rec
 local __konto, __partn
@@ -1156,7 +1164,11 @@ do while !::data:EOF()
 
     if ::tip == 1
         _rec["idpartner"] := _id_partn
-        _rec["partner"] := PADR( hb_utf8tostr( __partn["naz"] ), 100 )
+        if !EMPTY( _id_partn )
+            _rec["partner"] := PADR( hb_utf8tostr( __partn["naz"] ), 100 )
+        else
+            _rec["partner"] := ""
+        endif
     endif
 
     _rec["ps_dug"] := query_row( oRow, "ps_dug" )
@@ -1203,7 +1215,7 @@ return _count
 // ----------------------------------------------
 // kreiranje pomocne tabele izvjestaja
 // ----------------------------------------------
-METHOD FIN_BILANS:create_temp_table()
+METHOD FinBrutoBilans:create_temp_table()
 local _dbf := {}
 
 AADD( _dbf, { "idkonto", "C", 7, 0 } )

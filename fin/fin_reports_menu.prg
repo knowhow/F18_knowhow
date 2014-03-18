@@ -20,7 +20,7 @@ private opcexe:={}
 AADD(opc,"1. kartica                      ")
 AADD(opcexe,{|| fin_kartica()})
 AADD(opc,"2. bruto bilansi")
-AADD(opcexe,{|| FIN_BILANS():new():print() })
+AADD(opcexe,{|| FinBrutoBilans():new():print() })
 AADD(opc,"3. specifikacije")
 AADD(opcexe,{|| fin_menu_specifikacije()})
 AADD(opc,"5. proizvoljni izvjestaji")

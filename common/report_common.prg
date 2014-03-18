@@ -15,7 +15,7 @@
 #include "common.ch"
 
 
-CLASS F18_REPORT
+CLASS ReportCommon
 
     DATA pict_kolicina
     DATA pict_cijena
@@ -40,7 +40,7 @@ ENDCLASS
 
 // -----------------------------------------------------------
 // -----------------------------------------------------------
-METHOD F18_REPORT:New()
+METHOD ReportCommon:New()
 ::zagl_delimiter := " "
 ::set_picture_codes()
 return SELF
@@ -50,7 +50,7 @@ return SELF
 
 // -----------------------------------------------------------
 // -----------------------------------------------------------
-METHOD F18_REPORT:set_picture_codes( _set, params )
+METHOD ReportCommon:set_picture_codes( _set, params )
 
 if _set == NIL
     _set := .f.
@@ -73,7 +73,7 @@ return SELF
 
 // -----------------------------------------------------------
 // -----------------------------------------------------------
-METHOD F18_REPORT:get_company( id_firma )
+METHOD ReportCommon:get_company( id_firma )
 local _data, oRow
 local _comp
 
@@ -98,7 +98,7 @@ return _comp
 
 // -----------------------------------------------------------
 // -----------------------------------------------------------
-METHOD F18_REPORT:show_company( id_firma )
+METHOD ReportCommon:show_company( id_firma )
 local _comp := ::get_company( id_firma )
 
 P_10CPI
@@ -115,7 +115,7 @@ return SELF
 
 
 
-METHOD F18_REPORT:get_zaglavlje( item )
+METHOD ReportCommon:get_zaglavlje( item )
 local _line := ""
 local _i, _empty_fill
 

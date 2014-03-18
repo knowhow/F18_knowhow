@@ -502,6 +502,7 @@ _ret += ")"
 return _ret
 
 
+
 // -----------------------------------------------------
 // parsiranje datuma u sql izrazu
 // -----------------------------------------------------
@@ -550,6 +551,39 @@ else
 endif
 
 return _ret
+
+// parsiranje uslova za IN listu unutar upita... id IN ( '', '', '', .... )
+function _sql_in_list_parse( string_cond, brackets )
+local _list := ""
+local _cond_arr := TokToNiz( string_cond, ";" )
+local _cnt := 0
+local _cond
+
+if brackets == NIL
+    brackets := .f.
+endif
+
+for each _cond in _cond_arr
+
+    if EMPTY( _cond )
+        LOOP
+    endif 
+
+    _list += _sql_quote( _cond )
+    _list += ","
+
+next
+
+_list := PADR( _list, LEN( ALLTRIM( _list ) ) - 1 )
+
+// dodaj zagrade...
+if brackets
+    _list := " ( " + _list + " ) "
+endif
+
+return _list
+
+
 
 
 // ---------------------------------------------------
@@ -601,67 +635,6 @@ next
 _ret := RIGHT( _ret, LEN( _ret ) - 5 )
 
 return _ret
-
-
-// --------------------------------------------------------------------
-// vraca sve zapise iz tabele po zadatom uslovu
-// --------------------------------------------------------------------
-function _select_all_from_table( table, fields, where_cond, order_fields )
-local _srv := my_server()
-local _qry, _data, _i, _n, _o
-
-_qry := "SELECT "
-
-if fields == NIL
-    _qry += " * "
-else
-    for _i := 1 to LEN( fields )
-        _qry += fields[ _i ]
-        if _i < LEN( fields )
-            _qry += ","
-        endif
-    next
-endif
-
-_qry += " FROM " + table
-
-if where_cond <> NIL
-
-    _qry += " WHERE "
-
-    for _n := 1 to LEN( where_cond )
-
-        _qry += where_cond[ _n ]
-
-        if _n < LEN( where_cond )
-            _qry += " AND "
-        endif    
-
-    next
-
-endif
-
-if order_fields <> NIL
-
-    _qry += " ORDER BY "
-
-    for _o := 1 to LEN( order_fields )
-        _qry += order_fields[ _o ]
-        if _o < LEN( order_fields )
-            _qry += ","
-        endif
-    next
-
-endif
-
-_data := _sql_query( _srv, _qry )
-
-if VALTYPE( _data ) == "L"
-    _data := NIL
-endif
-
-return _data
-
 
 
 // ------------------------------------------------------
@@ -728,7 +701,6 @@ endif
 return _val
 
 
-
 // -----------------------------------------------------
 // vraca serverski datum 
 // -----------------------------------------------------
@@ -747,6 +719,64 @@ else
 endif
 
 return _date
+
+
+// --------------------------------------------------------------------
+// vraca sve zapise iz tabele po zadatom uslovu
+// --------------------------------------------------------------------
+function _select_all_from_table( table, fields, where_cond, order_fields )
+local _srv := my_server()
+local _qry, _data, _i, _n, _o
+
+_qry := "SELECT "
+
+if fields == NIL
+    _qry += " * "
+else
+    for _i := 1 to LEN( fields )
+        _qry += fields[ _i ]
+        if _i < LEN( fields )
+            _qry += ","
+        endif
+    next
+endif
+
+_qry += " FROM " + table
+
+if where_cond <> NIL
+
+    _qry += " WHERE "
+
+    for _n := 1 to LEN( where_cond )
+        _qry += where_cond[ _n ]
+        if _n < LEN( where_cond )
+            _qry += " AND "
+        endif    
+    next
+
+endif
+
+if order_fields <> NIL
+
+    _qry += " ORDER BY "
+
+    for _o := 1 to LEN( order_fields )
+        _qry += order_fields[ _o ]
+        if _o < LEN( order_fields )
+            _qry += ","
+        endif
+    next
+
+endif
+
+_data := _sql_query( _srv, _qry )
+
+if VALTYPE( _data ) == "L" .or. _data:LastRec() == 0
+    _data := NIL
+endif
+
+return _data
+
 
 
 
@@ -898,6 +928,113 @@ _qry += " SELECT * FROM tmp;"
 return _qry
 
 
+// ---------------------------------------------------------------
+// prebacuje record iz query-ja u hash matricu
+// ---------------------------------------------------------------
+function _sql_query_record_to_hash( query, rec_no )
+local _hash := hb_hash()
+local _i, _field, _value, _type
+local _row 
+
+if query == NIL
+    return query
+endif
+
+if rec_no == NIL
+    // default
+    rec_no := 1
+endif
+
+_row := query:GetRow( rec_no )
+
+for _i := 1 to _row:FCOUNT()
+    _field := _row:FieldName( _i )
+    _value := _row:FieldGet( _i )
+    if VALTYPE( _value ) $ "C#M"
+        _value := hb_utf8tostr( _value )
+    endif
+    _hash[ LOWER( _field ) ] := _value
+next
+
+return _hash
+
+
+
+
+// ----------------------------------------------------------------
+// iz query-ja ce sve prebaciti u hash matricu...
+// ----------------------------------------------------------------
+function _sql_query_to_table( alias, qry )
+local _row
+local _i
+local _hash
+local _field, _value
+local _count := 0
+
+SELECT ( alias )
+GO TOP
+
+qry:Refresh()
+qry:Goto(1)
+
+do while !qry:EOF()
+
+    APPEND BLANK
+    _hash := dbf_get_rec()
+
+    _row := qry:GetRow()
+    _i := 1
+
+    for _i := 1 to _row:FCOUNT()
+        _field := _row:FieldName( _i )
+        if hb_hhaskey( _hash, LOWER( _field ) )
+            _value := _row:FieldGet( _row:FieldPos( LOWER( _field ) ) )
+            if VALTYPE( _value ) == "C"
+                _value := hb_utf8tostr( _value )
+            endif
+            _hash[ LOWER( _field ) ] := _value 
+        endif
+    next
+
+    dbf_update_rec( _hash )
+
+    ++ _count
+
+    qry:Skip()
+
+enddo
+
+return _count
+
+
+
+// ------------------------------------------------------------
+// vraca hash strukturu iz strukture sql tabele
+// ------------------------------------------------------------
+function _get_hash_from_sql_table( table )
+local _hash := hb_hash()
+local _struct := _sql_table_struct( table )
+local _i, _value, _type
+
+for _i := 1 to LEN( _struct )
+
+    _type := _struct[ _i, 2 ]
+    
+    if _type $ "CM"
+        _value := ""
+    elseif _type == "D"
+        _value := CTOD("")
+    elseif _type == "N"
+        _value := 0
+    endif
+
+    _hash[ LOWER( _struct[ _i, 1 ] ) ] := _value
+
+next
+
+return _hash
+
+
 // --------------------------------------------------------------------
 // kreira update qry iz hash tabele
 // --------------------------------------------------------------------
@@ -951,5 +1088,31 @@ _qry += " SELECT * FROM tmp;"
 
 return _qry
 
+
+function _set_sql_record_to_hash( table, id )
+local _hash
+if VALTYPE( id ) == "N"
+    _hash := _sql_query_record_to_hash( _select_all_from_table( table, NIL, { "id = " + ALLTRIM( STR( id ) ) } ) )
+else
+    _hash := _sql_query_record_to_hash( _select_all_from_table( table, NIL, { "id = " + _sql_quote( id ) } ) )
+endif
+return _hash
+
+
+
+// -----------------------------------------------------------
+// -----------------------------------------------------------
+function query_row( row, field_name )
+local _ret := NIL
+local _type
+
+_type := row:FieldType( field_name )
+_ret := row:FieldGet( row:fieldPos( field_name ) )
+
+if _type $ "C"
+    _ret := hb_utf8tostr( _ret )
+endif
+
+return _ret
 
 

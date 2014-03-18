@@ -1,3 +1,7 @@
+1.7.2   2014-03-18, vsasa
+
+  - backport fin bruto bilans izvještaja iz no-dbf branča (#32713) 
+
 1.7.1   2014-03-17, hernad
 
   - SQLRDD/SDDPG #32746, #32745 (use_sql_sif: tnal, tdok)

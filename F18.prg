@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,254 +12,256 @@
 #include "inkey.ch"
 #include "hbthread.ch"
 
-static __relogin_opt := .f.
+STATIC __relogin_opt := .F.
 
 #ifndef TEST
 
-function Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
-local _arg_v := hb_hash()
-public gDebug := 9
+FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
-cre_arg_v_hash( @_arg_v, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
+   LOCAL _arg_v := hb_Hash()
+   PUBLIC gDebug := 9
 
-set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
+   cre_arg_v_hash( @_arg_v, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
-f18_init_app( _arg_v )
+   set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
-return
+   f18_init_app( _arg_v )
+
+   RETURN
 
 #endif
 
 
 // vraca hash matricu sa parametrima
-static function cre_arg_v_hash( hash )
-local _i := 2
-local _param
-local _count := 0
+STATIC FUNCTION cre_arg_v_hash( hash )
 
-hash := hb_hash()
-hash["p1"] := NIL
-hash["p2"] := NIL
-hash["p3"] := NIL
-hash["p4"] := NIL
-hash["p5"] := NIL
-hash["p6"] := NIL
-hash["p7"] := NIL
-hash["p8"] := NIL
-hash["p9"] := NIL
-hash["p10"] := NIL
-hash["p11"] := NIL
+   LOCAL _i := 2
+   LOCAL _param
+   LOCAL _count := 0
 
-do while _i <= PCount()
-    // ucitaj parametar
-    _param := hb_PValue( _i++ )
-    // p1, p2, p3...
-    hash[ "p" + ALLTRIM(STR( ++_count )) ] := _param 
-enddo
+   hash := hb_Hash()
+   hash[ "p1" ] := NIL
+   hash[ "p2" ] := NIL
+   hash[ "p3" ] := NIL
+   hash[ "p4" ] := NIL
+   hash[ "p5" ] := NIL
+   hash[ "p6" ] := NIL
+   hash[ "p7" ] := NIL
+   hash[ "p8" ] := NIL
+   hash[ "p9" ] := NIL
+   hash[ "p10" ] := NIL
+   hash[ "p11" ] := NIL
 
-return
+   DO WHILE _i <= PCount()
+      // ucitaj parametar
+      _param := hb_PValue( _i++ )
+      // p1, p2, p3...
+      hash[ "p" + AllTrim( Str( ++_count ) ) ] := _param
+   ENDDO
+
+   RETURN
 
 
 
 // ----------------------------
 // ----------------------------
-function module_menu( arg_v )
-local menuop := {}
-local menuexec := {}
-local mnu_choice
-local mnu_left := 2
-local mnu_top := 5
-local mnu_bottom := 23
-local mnu_right := 65
-local _x := 1
-local _db_params
-local _count := 0
-local oBackup := F18Backup():New()
-local oDb_lock
-local _user_roles := f18_user_roles_info()
-local _server_db_version := get_version_str( server_db_version() )
-local _lock_db 
-local _tmp
-local _color := "BG+/B"
+FUNCTION module_menu( arg_v )
 
-if arg_v == NIL
-    // napravi NIL parametre
-    cre_arg_v_hash( @arg_v )
-endif
+   LOCAL menuop := {}
+   LOCAL menuexec := {}
+   LOCAL mnu_choice
+   LOCAL mnu_left := 2
+   LOCAL mnu_top := 5
+   LOCAL mnu_bottom := 23
+   LOCAL mnu_right := 65
+   LOCAL _x := 1
+   LOCAL _db_params
+   LOCAL _count := 0
+   LOCAL oBackup := F18Backup():New()
+   LOCAL oDb_lock
+   LOCAL _user_roles := f18_user_roles_info()
+   LOCAL _server_db_version := get_version_str( server_db_version() )
+   LOCAL _lock_db
+   LOCAL _tmp
+   LOCAL _color := "BG+/B"
 
-do while .t.
+   IF arg_v == NIL
+      // napravi NIL parametre
+      cre_arg_v_hash( @arg_v )
+   ENDIF
 
-    ++ _count
+   DO WHILE .T.
 
-	clear screen
+      ++ _count
 
-    _db_params := my_server_params()
+      CLEAR SCREEN
 
-    oDb_lock := F18_DB_LOCK():New()
-    _lock_db := oDb_lock:is_locked()
-    
-    _x := 1
+      _db_params := my_server_params()
 
-    @ _x, mnu_left + 1 SAY "Tekuca baza: " + ALLTRIM( _db_params["database"] ) + " / db ver: " + _server_db_version
+      oDb_lock := F18_DB_LOCK():New()
+      _lock_db := oDb_lock:is_locked()
 
-    if _lock_db
-        _tmp := "[ srv lock " + oDb_lock:lock_params["server_lock"] + " / cli lock " + oDb_lock:lock_params["client_lock"]  + " ]"
-    else
-        _tmp := ""
-    endif
-    
-    @ _x, col() + 1 SAY _tmp COLOR _color 
-    
-    ++ _x
+      _x := 1
 
-    @ _x, mnu_left + 1 SAY "   Korisnik: " + ALLTRIM( _db_params["user"] ) + "   u grupama " + _user_roles
+      @ _x, mnu_left + 1 SAY "Tekuca baza: " + AllTrim( _db_params[ "database" ] ) + " / db ver: " + _server_db_version
 
-    ++ _x
+      IF _lock_db
+         _tmp := "[ srv lock " + oDb_lock:lock_params[ "server_lock" ] + " / cli lock " + oDb_lock:lock_params[ "client_lock" ]  + " ]"
+      ELSE
+         _tmp := ""
+      ENDIF
 
-    @ _x, mnu_left SAY REPLICATE( "-", 55 )
+      @ _x, Col() + 1 SAY _tmp COLOR _color
 
-    // backup okidamo samo na prvom ulasku
-    // ili na opciji relogina
-    if _count == 1 .or. __relogin_opt
-       
-        // provjera da li je backup locked ?
-        if oBackup:locked( .f. )
+      ++ _x
+
+      @ _x, mnu_left + 1 SAY "   Korisnik: " + AllTrim( _db_params[ "user" ] ) + "   u grupama " + _user_roles
+
+      ++ _x
+
+      @ _x, mnu_left SAY Replicate( "-", 55 )
+
+      // backup okidamo samo na prvom ulasku
+      // ili na opciji relogina
+      IF _count == 1 .OR. __relogin_opt
+
+         // provjera da li je backup locked ?
+         IF oBackup:locked( .F. )
             oBackup:unlock()
-        endif
- 
-        // automatski backup podataka preduzeca
-        f18_auto_backup_data(1)
-        __relogin_opt := .f.
+         ENDIF
 
-    endif
+         // automatski backup podataka preduzeca
+         f18_auto_backup_data( 1 )
+         __relogin_opt := .F.
 
-	// resetuj...
-	menuop := {}
-	menuexec := {}
+      ENDIF
 
-	// setuj odabir
-	set_menu_choices( @menuop, @menuexec, arg_v["p3"], arg_v["p4"], arg_v["p5"], arg_v["p6"], arg_v["p7"] )
+      // resetuj...
+      menuop := {}
+      menuexec := {}
 
-	// daj mi odabir
-    // ubacio sam ACHOICE2 radi meni funkcija stadnardnih...
- 	mnu_choice := ACHOICE2( mnu_top, mnu_left, mnu_bottom, mnu_right, menuop, .t., "MenuFunc", 1 )
+      // setuj odabir
+      set_menu_choices( @menuop, @menuexec, arg_v[ "p3" ], arg_v[ "p4" ], arg_v[ "p5" ], arg_v[ "p6" ], arg_v[ "p7" ] )
 
- 	do case
-		case mnu_choice == 0
+      // daj mi odabir
+      // ubacio sam ACHOICE2 radi meni funkcija stadnardnih...
+      mnu_choice := ACHOICE2( mnu_top, mnu_left, mnu_bottom, mnu_right, menuop, .T., "MenuFunc", 1 )
 
-            if !oBackup:locked
-    		    exit
-            else
-                MsgBeep( oBackup:backup_in_progress_info() )
-            endif
+      DO CASE
+      CASE mnu_choice == 0
 
-		case mnu_choice > 0 
-			eval( menuexec[ mnu_choice ] )
-	endcase
+         IF !oBackup:locked
+            EXIT
+         ELSE
+            MsgBeep( oBackup:backup_in_progress_info() )
+         ENDIF
 
- 	loop
+      CASE mnu_choice > 0
+         Eval( menuexec[ mnu_choice ] )
+      ENDCASE
 
-enddo
+      LOOP
 
-return
+   ENDDO
+
+   RETURN
 
 // -----------------------------------------------------------------------------
 // setuje matricu sa odabirom za meni
 // -----------------------------------------------------------------------------
-static function set_menu_choices( menuop, menuexec, p3, p4, p5, p6, p7 )
-local _count := 0
-local _brojac
+STATIC FUNCTION set_menu_choices( menuop, menuexec, p3, p4, p5, p6, p7 )
 
-if f18_use_module( "fin" )
-	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
-	AADD( menuop, _brojac + ". FIN   # finansijsko poslovanje                 " )
-	AADD( menuexec, {|| MainFin( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
-endif
+   LOCAL _count := 0
+   LOCAL _brojac
 
-if f18_use_module( "kalk" )
-	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
-	AADD( menuop, _brojac + ". KALK  # robno-materijalno poslovanje" )
-	AADD( menuexec, {|| MainKalk( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
-endif
+   IF f18_use_module( "fin" )
+      _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, _brojac + ". FIN   # finansijsko poslovanje                 " )
+      AAdd( menuexec, {|| MainFin( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+   ENDIF
 
-if f18_use_module( "fakt" )
-	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
-	AADD( menuop, _brojac + ". FAKT  # fakturisanje" )
-	AADD( menuexec, {|| MainFakt( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
-endif
+   IF f18_use_module( "kalk" )
+      _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, _brojac + ". KALK  # robno-materijalno poslovanje" )
+      AAdd( menuexec, {|| MainKalk( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+   ENDIF
 
-if f18_use_module( "epdv" )
-	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
-	AADD( menuop, _brojac + ". ePDV  # elektronska evidencija PDV-a" )
-	AADD( menuexec, {|| MainEpdv( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
-endif
+   IF f18_use_module( "fakt" )
+      _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, _brojac + ". FAKT  # fakturisanje" )
+      AAdd( menuexec, {|| MainFakt( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+   ENDIF
 
-if f18_use_module( "ld" )
-	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
-	AADD( menuop, _brojac + ". LD    # obracun plata" )
-	AADD( menuexec, {|| MainLd( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
-endif
+   IF f18_use_module( "epdv" )
+      _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, _brojac + ". ePDV  # elektronska evidencija PDV-a" )
+      AAdd( menuexec, {|| MainEpdv( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+   ENDIF
 
-if f18_use_module( "rnal" )
-	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
-	AADD( menuop, _brojac + ". RNAL  # radni nalozi" )
-	AADD( menuexec, {|| MainRnal( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
-endif
+   IF f18_use_module( "ld" )
+      _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, _brojac + ". LD    # obracun plata" )
+      AAdd( menuexec, {|| MainLd( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+   ENDIF
 
-if f18_use_module( "os" )
-	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
-	AADD( menuop, _brojac + ". OS/SII# osnovna sredstva i sitan inventar" )
-	AADD( menuexec, {|| MainOs( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
-endif
+   IF f18_use_module( "rnal" )
+      _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, _brojac + ". RNAL  # radni nalozi" )
+      AAdd( menuexec, {|| MainRnal( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+   ENDIF
 
-if f18_use_module( "pos" )
-	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
-	AADD( menuop, _brojac + ". POS   # maloprodajna kasa" )
-	AADD( menuexec, {|| MainPos( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
-endif
+   IF f18_use_module( "os" )
+      _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, _brojac + ". OS/SII# osnovna sredstva i sitan inventar" )
+      AAdd( menuexec, {|| MainOs( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+   ENDIF
 
-if f18_use_module( "mat" )
-	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
-	AADD( menuop, _brojac + ". MAT   # materijalno" )
-	AADD( menuexec, {|| MainMat( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
-endif
+   IF f18_use_module( "pos" )
+      _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, _brojac + ". POS   # maloprodajna kasa" )
+      AAdd( menuexec, {|| MainPos( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+   ENDIF
 
-if f18_use_module( "virm" )
-	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
-	AADD( menuop, _brojac + ". VIRM  # virmani" )
-	AADD( menuexec, {|| MainVirm( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
-endif
+   IF f18_use_module( "mat" )
+      _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, _brojac + ". MAT   # materijalno" )
+      AAdd( menuexec, {|| MainMat( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+   ENDIF
 
-if f18_use_module( "kadev" )
-	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
-	AADD( menuop, _brojac + ". KADEV  # kadrovska evidencija" )
-	AADD( menuexec, {|| MainKadev( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
-endif
+   IF f18_use_module( "virm" )
+      _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, _brojac + ". VIRM  # virmani" )
+      AAdd( menuexec, {|| MainVirm( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+   ENDIF
 
-if f18_use_module( "reports" )
-	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
-	AADD( menuop, _brojac + ". REPORTS  # izvjestajni modul" )
-	AADD( menuexec, {|| MainReports( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
-endif
+   IF f18_use_module( "kadev" )
+      _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, _brojac + ". KADEV  # kadrovska evidencija" )
+      AAdd( menuexec, {|| MainKadev( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+   ENDIF
 
-
-AADD( menuop, "---------------------------------------------" )
-AADD( menuexec, {|| NIL } )
-
-// ostale opcije...
-AADD( menuop, " B. Backup podataka" )
-AADD( menuexec, {|| f18_backup_data() } )
-AADD( menuop, " F. Forsirana sinhronizacija podataka" )
-AADD( menuexec, {|| F18AdminOpts():New():force_synchro_db() } )
-AADD( menuop, " L. Zakljucavanje/otkljucavanje baze" )
-AADD( menuexec, {|| f18_database_lock_menu() } )
-AADD( menuop, " P. Parametri aplikacije" )
-AADD( menuexec, {|| f18_app_parameters() } )
-AADD( menuop, " W. Pregled log-a" )
-AADD( menuexec, {|| f18_view_log() } )
-AADD( menuop, " V. VPN podrska" )
-AADD( menuexec, {|| vpn_support() } )
-
-return
+   IF f18_use_module( "reports" )
+      _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, _brojac + ". REPORTS  # izvjestajni modul" )
+      AAdd( menuexec, {|| MainReports( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+   ENDIF
 
 
+   AAdd( menuop, "---------------------------------------------" )
+   AAdd( menuexec, {|| NIL } )
+
+   // ostale opcije...
+   AAdd( menuop, " B. Backup podataka" )
+   AAdd( menuexec, {|| f18_backup_data() } )
+   AAdd( menuop, " F. Forsirana sinhronizacija podataka" )
+   AAdd( menuexec, {|| F18AdminOpts():New():force_synchro_db() } )
+   AAdd( menuop, " L. Zakljucavanje/otkljucavanje baze" )
+   AAdd( menuexec, {|| f18_database_lock_menu() } )
+   AAdd( menuop, " P. Parametri aplikacije" )
+   AAdd( menuexec, {|| f18_app_parameters() } )
+   AAdd( menuop, " W. Pregled log-a" )
+   AAdd( menuexec, {|| f18_view_log() } )
+   AAdd( menuop, " V. VPN podrska" )
+   AAdd( menuexec, {|| vpn_support() } )
+
+   RETURN

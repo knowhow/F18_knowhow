@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -17,21 +17,21 @@
 
 CLASS ReportCommon
 
-    DATA pict_kolicina
-    DATA pict_cijena
-    DATA pict_iznos
+   DATA pict_kolicina
+   DATA pict_cijena
+   DATA pict_iznos
 
-    DATA zagl_arr
-    DATA zagl_delimiter
+   DATA zagl_arr
+   DATA zagl_delimiter
 
-    METHOD New()
-    METHOD get_company()
-    METHOD show_company()
-    METHOD get_zaglavlje()
+   METHOD New()
+   METHOD get_company()
+   METHOD show_company()
+   METHOD get_zaglavlje()
 
-    PROTECTED:
+   PROTECTED:
 
-        METHOD set_picture_codes()
+   METHOD set_picture_codes()
 
 ENDCLASS
 
@@ -41,9 +41,11 @@ ENDCLASS
 // -----------------------------------------------------------
 // -----------------------------------------------------------
 METHOD ReportCommon:New()
-::zagl_delimiter := " "
-::set_picture_codes()
-return SELF
+
+   ::zagl_delimiter := " "
+   ::set_picture_codes()
+
+   RETURN SELF
 
 
 
@@ -52,21 +54,21 @@ return SELF
 // -----------------------------------------------------------
 METHOD ReportCommon:set_picture_codes( _set, params )
 
-if _set == NIL
-    _set := .f.
-endif
+   IF _set == NIL
+      _set := .F.
+   ENDIF
 
-if _set 
-    set_metric( "f18_global_pict_code_qtty", NIL, params["pict_qtty"] )
-    set_metric( "f18_global_pict_code_amount", NIL, params["pict_amount"] )
-    set_metric( "f18_global_pict_code_price", NIL, params["pict_price"] )
-endif
+   IF _set
+      set_metric( "f18_global_pict_code_qtty", NIL, params[ "pict_qtty" ] )
+      set_metric( "f18_global_pict_code_amount", NIL, params[ "pict_amount" ] )
+      set_metric( "f18_global_pict_code_price", NIL, params[ "pict_price" ] )
+   ENDIF
 
-::pict_kolicina := fetch_metric( "f18_global_pict_code_qtty", NIL, "9999999.99" )
-::pict_iznos := fetch_metric( "f18_global_pict_code_amount", NIL, "9999999.99" )
-::pict_cijena := fetch_metric( "f18_global_pict_code_price", NIL, "999999.999" )
+   ::pict_kolicina := fetch_metric( "f18_global_pict_code_qtty", NIL, "9999999.99" )
+   ::pict_iznos := fetch_metric( "f18_global_pict_code_amount", NIL, "9999999.99" )
+   ::pict_cijena := fetch_metric( "f18_global_pict_code_price", NIL, "999999.999" )
 
-return SELF
+   RETURN SELF
 
 
 
@@ -74,78 +76,77 @@ return SELF
 // -----------------------------------------------------------
 // -----------------------------------------------------------
 METHOD ReportCommon:get_company( id_firma )
-local _data, oRow
-local _comp
 
-_comp := ALLTRIM( gTS ) + ": "
+   LOCAL _data, oRow
+   LOCAL _comp
 
-if gNW == "D"
-    _comp += gFirma + " - " + ALLTRIM( gNFirma )
-else
-    if id_firma == NIL
-        id_firma := gFirma
-    endif
-    _data := _select_all_from_table( "fmk.partn", { "naz", "naz2" }, { "id = " + _sql_quote( id_firma ) } )
-    oRow := _data:GetRow(1)
-    _comp += id_firma + " " + ;
-        hb_utf8tostr( ALLTRIM( oRow:FieldGet( oRow:FieldPos( "naz" ) ) ) ) + " " + ;
-        hb_utf8tostr( ALLTRIM( oRow:FieldGet( oRow:FieldPos( "naz2" ) ) ) )
-endif
+   _comp := AllTrim( gTS ) + ": "
 
-return _comp
+   IF gNW == "D"
+      _comp += gFirma + " - " + AllTrim( gNFirma )
+   ELSE
+      IF id_firma == NIL
+         id_firma := gFirma
+      ENDIF
+      _data := _select_all_from_table( "fmk.partn", { "naz", "naz2" }, { "id = " + _sql_quote( id_firma ) } )
+      oRow := _data:GetRow( 1 )
+      _comp += id_firma + " " + ;
+         hb_UTF8ToStr( AllTrim( oRow:FieldGet( oRow:FieldPos( "naz" ) ) ) ) + " " + ;
+         hb_UTF8ToStr( AllTrim( oRow:FieldGet( oRow:FieldPos( "naz2" ) ) ) )
+   ENDIF
+
+   RETURN _comp
 
 
 
 // -----------------------------------------------------------
 // -----------------------------------------------------------
 METHOD ReportCommon:show_company( id_firma )
-local _comp := ::get_company( id_firma )
 
-P_10CPI
-B_ON
+   LOCAL _comp := ::get_company( id_firma )
 
-? _comp
+   P_10CPI
+   B_ON
 
-B_OFF
-?
+   ? _comp
 
-return SELF
+   B_OFF
+   ?
+
+   RETURN SELF
 
 
 
 
 
 METHOD ReportCommon:get_zaglavlje( item )
-local _line := ""
-local _i, _empty_fill
 
-for _i := 1 to LEN( ::zagl_arr )
+   LOCAL _line := ""
+   LOCAL _i, _empty_fill
 
-	if item == 0
-		_line += REPLICATE( "-", ::zagl_arr[ _i, 1 ] )
-	elseif item == 1
-		_empty_fill := ::zagl_arr[ _i, 1 ] - LEN( ::zagl_arr[ _i, 2 ] )
-		_line += ::zagl_arr[ _i, 2 ] + SPACE( _empty_fill )	
-	elseif item == 2
-		_empty_fill := ::zagl_arr[ _i, 1 ] - LEN( ::zagl_arr[ _i, 3 ] )
-		_line += ::zagl_arr[ _i, 3 ] + SPACE( _empty_fill )	
-	elseif item == 3
-		_empty_fill := ::zagl_arr[ _i, 1 ] - LEN( ::zagl_arr[ _i, 4 ] )
-		_line += ::zagl_arr[ _i, 4 ] + SPACE( _empty_fill )	
-	endif
+   FOR _i := 1 TO Len( ::zagl_arr )
+
+      IF item == 0
+         _line += Replicate( "-", ::zagl_arr[ _i, 1 ] )
+      ELSEIF item == 1
+         _empty_fill := ::zagl_arr[ _i, 1 ] - Len( ::zagl_arr[ _i, 2 ] )
+         _line += ::zagl_arr[ _i, 2 ] + Space( _empty_fill )
+      ELSEIF item == 2
+         _empty_fill := ::zagl_arr[ _i, 1 ] - Len( ::zagl_arr[ _i, 3 ] )
+         _line += ::zagl_arr[ _i, 3 ] + Space( _empty_fill )
+      ELSEIF item == 3
+         _empty_fill := ::zagl_arr[ _i, 1 ] - Len( ::zagl_arr[ _i, 4 ] )
+         _line += ::zagl_arr[ _i, 4 ] + Space( _empty_fill )
+      ENDIF
 		
-	if _i <> LEN( ::zagl_arr )
-		if item == 0
-			_line += " "
-		else
-			_line += ::zagl_delimiter
-		endif
-	endif
+      IF _i <> Len( ::zagl_arr )
+         IF item == 0
+            _line += " "
+         ELSE
+            _line += ::zagl_delimiter
+         ENDIF
+      ENDIF
 
-next
+   NEXT
 
-return _line
-
-
-
-
+   RETURN _line

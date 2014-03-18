@@ -537,6 +537,11 @@ do while !EOF()
         _sint := LEFT( field->idkonto, _sint_len )
         __konto := _set_sql_record_to_hash( "fmk.konto", _sint )
 
+        if __konto == NIL
+            MsgBeep( "Ne postoji sintetički konto " + _sint + " u šifraniku konta" )
+            return _ok
+        endif
+
         xml_subnode( "sint", .f. )
 
         xml_node( "id", to_xml_encoding( _sint ) )
@@ -822,13 +827,23 @@ do while !EOF()
     
     _klasa := hb_utf8tostr( LEFT( field->idkonto, _kl_len ) )
     __klasa := _set_sql_record_to_hash( "fmk.konto", _klasa )
-    
+   
+    if __klasa == NIL
+        MsgBeep( "Ne postoji šifra klase " + _klasa + " u šifrarniku konta !" )
+        return Self
+    endif
+ 
     do while !EOF() .and. LEFT( field->idkonto, _kl_len ) == _klasa
 
         _u_ps_dug := _u_ps_pot := _u_kum_pot := _u_kum_dug := _u_tek_dug := _u_tek_pot := _u_sld_dug := _u_sld_pot := 0
         
         _sint := hb_utf8tostr( LEFT( field->idkonto, _sint_len ) )
         __sint := _set_sql_record_to_hash( "fmk.konto", _sint )
+
+        if __sint == NIL
+            MsgBeep( "Ne postoji šifra sintetike " + _sint + " u šifrarniku konta !" )
+            return Self
+        endif
 
         do while !EOF() .and. LEFT( field->idkonto, _sint_len ) == _sint 
 
@@ -853,7 +868,9 @@ do while !EOF()
 
                 if ::tip == 1
                     @ prow(), pcol() + 1 SAY hb_utf8tostr( field->idpartner )
-                    __partn := _set_sql_record_to_hash( "fmk.partn", field->idpartner ) 
+                    __partn := _set_sql_record_to_hash( "fmk.partn", field->idpartner )
+                    // ovdje mogu biti šifre koje nemaju partnera a da u sifrarniku nemamo praznog zapisa
+                    // znači __partn može biti NIL 
                 endif
 
                 if ::tip == 1 .and. __partn <> NIL
@@ -862,6 +879,7 @@ do while !EOF()
                     _opis := ""
                 endif
 
+                // ako nema partnera kao opis će se koristiti naziv konta
                 if EMPTY( _opis )
                     _opis := hb_utf8tostr( __konto["naz"] )
                 endif       
@@ -1151,6 +1169,8 @@ do while !::data:EOF()
     __konto := _set_sql_record_to_hash( "fmk.konto", _id_konto )
     
     if ::tip == 1
+        // postoji mogućnost da imamo praznog partnera a u šifrarniku nemamo prazan zapis koji bi se uzeo
+        // __partn može u konačnici biti = NIL
         _id_partn := query_row( oRow, "idpartner" )
         __partn := _set_sql_record_to_hash( "fmk.partn", _id_partn )
     endif
@@ -1164,7 +1184,7 @@ do while !::data:EOF()
 
     if ::tip == 1
         _rec["idpartner"] := _id_partn
-        if !EMPTY( _id_partn )
+        if !EMPTY( _id_partn ) .and. __partn <> NIL
             _rec["partner"] := PADR( hb_utf8tostr( __partn["naz"] ), 100 )
         else
             _rec["partner"] := ""

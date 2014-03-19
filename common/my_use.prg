@@ -30,34 +30,15 @@ thread static __my_use_semaphore := .t.
 function my_use_semaphore_off()
 __my_use_semaphore := .f.
 log_write( "stanje semafora : OFF", 6 )
-f18_ispisi_status_semafora( .f. )
 return
 
 function my_use_semaphore_on()
 __my_use_semaphore := .t.
 log_write( "stanje semafora : ON", 6 )
-f18_ispisi_status_semafora( .t. )
 return
 
 function my_use_semaphore()
 return __my_use_semaphore
-
-
-// vraca status semafora
-function get_my_use_semaphore_status( status )
-local _ret := "ON"
-
-if status == NIL
-    if my_use_semaphore() == .f.
-        _ret := "OFF"
-    endif
-else
-    if status == .f.
-        _ret := "OFF"
-    endif
-endif
-
-return _ret
 
 
 
@@ -127,6 +108,7 @@ local _area
 local _force_erase := .f.
 local _dbf
 local _tmp
+local _lock
 
 if excl == NIL
   excl := .f.
@@ -180,10 +162,10 @@ endif
 
 if !(_a_dbf_rec["temp"])
 
+    _lock := F18_DB_LOCK():New()
     // tabela je pokrivena semaforom
     if ( _rdd != "SEMAPHORE" ) .and. ;
-        ( !F18_DB_LOCK():New():is_locked() .or. ;
-            ( F18_DB_LOCK():New():is_locked() .and. F18_DB_LOCK():New():run_synchro() ) ) .and. my_use_semaphore()
+        ( !_lock:is_locked() .or. ( _lock:is_locked() .and. _lock:run_synchro() ) ) .and. my_use_semaphore()
         dbf_semaphore_synchro(table)
     else
         // rdd = "SEMAPHORE" poziv is update from sql server procedure
@@ -196,6 +178,11 @@ endif
 
 if USED()
     use
+endif
+
+// nije nikada uradjena inicijalna kontrola ove tabele
+if !_a_dbf_rec["chk0"] .and. !_a_dbf_rec["temp"] 
+   refresh_me(_a_dbf_rec, .T., .T.)
 endif
 
 _dbf := my_home() + table

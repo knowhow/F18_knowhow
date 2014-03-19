@@ -541,9 +541,6 @@ if gvars
     set_all_gvars()
 endif
 
-if !oDB_lock:is_locked() .or. _need_lock_synchro
-    f18_init_semaphores()
-endif
 
 if _need_lock_synchro
     // setuj tekuci klijentski lock parametar

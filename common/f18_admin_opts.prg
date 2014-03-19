@@ -1414,7 +1414,6 @@ cre_all_dbfs( _ver )
 set_a_dbfs_key_fields()
 write_dbf_version_to_config()
 check_server_db_version()
-f18_init_semaphores()
 
 if _is_locked
     // ponovo vrati lock

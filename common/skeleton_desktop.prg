@@ -168,8 +168,6 @@ endif
 // dodatni ispisi na glavnoj formi
 // LOG level
 f18_ispisi_status_log_levela()
-// statu semafora
-f18_ispisi_status_semafora()
 // podrucje
 f18_ispisi_status_podrucja( _ver_pos )
 // ispisi status modula
@@ -243,21 +241,6 @@ endif
 return
 
 
-
-
-// --------------------------------------------------------------
-// --------------------------------------------------------------
-function f18_ispisi_status_semafora( status )
-local _status := get_my_use_semaphore_status( status )
-local _color := "GR+/B" 
-
-if _status == "OFF"
-    _color := "W/R+"
-endif
-
-@ MAXROWS()-1, 15 SAY "sem: " + PADR( _status, 3 ) COLOR _color
-
-return
 
 
 

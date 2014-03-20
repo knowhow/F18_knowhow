@@ -551,8 +551,8 @@ do while !EOF()
         _u_ps_dug := _u_ps_pot := _u_kum_dug := _u_kum_pot := _u_tek_dug := _u_tek_pot := _u_sld_dug := _u_sld_pot := 0
 
         do while !EOF() .and. LEFT( field->idkonto, _sint_len ) == _sint 
-        
-            xml_subnode( "item", .f. )
+            	
+			xml_subnode( "item", .f. )
         
             xml_node( "rb", ALLTRIM( STR( ++ _count ) ) )
             xml_node( "kto", to_xml_encoding( field->idkonto ) )
@@ -865,8 +865,8 @@ do while !EOF()
             if ::tip < 4
             
                 __konto := _set_sql_record_to_hash( "fmk.konto", field->idkonto )
-
-                if ::tip == 1
+                
+				if ::tip == 1
                     @ prow(), pcol() + 1 SAY field->idpartner
                     __partn := _set_sql_record_to_hash( "fmk.partn", field->idpartner )
                     // ovdje mogu biti šifre koje nemaju partnera a da u sifrarniku nemamo praznog zapisa
@@ -1179,13 +1179,13 @@ do while !::data:EOF()
     append blank
     _rec := dbf_get_rec()
 
-    _rec["konto"] := PADR( hb_utf8tostr( __konto["naz"] ), 60 )
+    _rec["konto"] := PADR( __konto["naz"], 60 )
     _rec["idkonto"] := _id_konto
 
     if ::tip == 1
         _rec["idpartner"] := _id_partn
         if !EMPTY( _id_partn ) .and. __partn <> NIL
-            _rec["partner"] := PADR( hb_utf8tostr( __partn["naz"] ), 100 )
+            _rec["partner"] := PADR( __partn["naz"], 100 )
         else
             _rec["partner"] := ""
         endif

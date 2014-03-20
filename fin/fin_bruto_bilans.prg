@@ -568,8 +568,14 @@ do while !EOF()
                 endif
 
             elseif ::tip == 2 .or. ::tip == 3
-
+				
+				xml_node( "part", "" )
                 xml_node( "naz", to_xml_encoding( field->konto ) )
+
+			else
+		
+				xml_node( "part", "" )
+				xml_node( "naz", "" )
 
             endif
 
@@ -663,9 +669,9 @@ do while !EOF()
             xml_node( "sld_dug", ALLTRIM( STR( _u_sld_dug, 12, 2 ) ) ) 
             xml_node( "sld_pot", ALLTRIM( STR( _u_sld_pot, 12, 2 ) ) ) 
 
-            xml_subnode( "sint", .t. )
-
         endif
+
+        xml_subnode( "sint", .t. )
 
     enddo
 

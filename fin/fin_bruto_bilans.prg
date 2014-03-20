@@ -136,7 +136,9 @@ local _user := my_user()
 local _konto := PADR( fetch_metric( "fin_bb_konto", _user, "" ), 200 )
 local _dat_od := fetch_metric( "fin_bb_dat_od", _user, CTOD("") )
 local _dat_do := fetch_metric( "fin_bb_dat_do", _user, CTOD("") )
-local _txt := fetch_metric( "fin_bb_txt_odt", _user, 1 )
+local _txt := 1
+// izbacujemo za sada ovaj parametar
+//fetch_metric( "fin_bb_txt_odt", _user, 1 )
 local _tek_prom := fetch_metric( "fin_bb_kol_tek_promet", _user, "D" )
 local _saldo_nula := fetch_metric( "fin_bb_saldo_nula", _user, "D" )
 local _id_rj := SPACE(6)
@@ -189,7 +191,7 @@ Box(, 17, 70 )
     ++ _x
     ++ _x
 
- 	@ m_x + _x, m_y + 2 SAY "Varijanta stampe TXT/ODT (1/2):" GET _txt PICT "9"
+ 	@ m_x + _x, m_y + 2 SAY "Varijanta stampe TXT/ODT (1/2):" GET _txt PICT "9" WHEN .f.
 
     ++ _x
 
@@ -233,7 +235,8 @@ set_metric( "fin_bb_kol_tek_promet", _user, _tek_prom )
 ::params["export_dbf"] := ( _export_dbf == "D" )
 ::params["saldo_nula"] := ( _saldo_nula == "D" )
 ::params["kolona_tek_prom"] := ( _tek_prom == "D" )
-::params["txt"] := ( _txt == 1 )
+// tekstualnu varijantu postavljamo kao defaultnu dok se ne ispravi bug #32651
+::params["txt"] := .t. 
 
 ::tip := _tip
 

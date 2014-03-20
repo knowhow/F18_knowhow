@@ -108,13 +108,13 @@ METHOD FinBrutoBilans:set_bb_params()
 
 do case 
     case ::tip == 1
-        ::params["naziv"] := "SUBANALITICKI BRUTO BILANS"
+        ::params["naziv"] := "SUBANALITIČKI BRUTO BILANS"
         ::params["odt_template"] := "fin_bbl.odt"
     case ::tip == 2
-        ::params["naziv"] := "ANALITICKI BRUTO BILANS"
+        ::params["naziv"] := "ANALITIČKI BRUTO BILANS"
         ::params["odt_template"] := "fin_bbl.odt"
     case ::tip == 3
-        ::params["naziv"] := "SINTETICKI BRUTO BILANS"
+        ::params["naziv"] := "SINTETIČKI BRUTO BILANS"
         ::params["odt_template"] := "fin_bbl.odt"
     case ::tip == 4
         ::params["naziv"] := "BRUTO BILANS PO GRUPAMA"
@@ -411,27 +411,27 @@ if ::tip == 1
 elseif ::tip == 2
     // naziv konto/partner
     _tmp := 40
-    AADD( _arr, { _tmp, PADC("NAZIV ANALITICKOG KONTA", _tmp ), PADC("", _tmp ), PADC("", _tmp) })
+    AADD( _arr, { _tmp, PADC("NAZIV ANALITIČKOG KONTA", _tmp ), PADC("", _tmp ), PADC("", _tmp) })
 elseif ::tip == 3
     // naziv konto/partner
     _tmp := 40
-    AADD( _arr, { _tmp, PADC("NAZIV SINTETICKOG KONTA", _tmp ), PADC("", _tmp ), PADC("", _tmp) })
+    AADD( _arr, { _tmp, PADC("NAZIV SINTETIČKOG KONTA", _tmp ), PADC("", _tmp ), PADC("", _tmp) })
 endif
 
 // pocetno stanje
 _tmp := ( LEN( ::pict_iznos ) * 2 ) + 1
-AADD( _arr, { _tmp, PADC( "POCETNO STANJE", _tmp), PADC( REPL("-", _tmp ), _tmp ), PADC( "DUGUJE     POTRAZUJE" , _tmp ) })
+AADD( _arr, { _tmp, PADC( "POČETNO STANJE", _tmp), PADC( REPL("-", _tmp ), _tmp ), PADC( "DUGUJE     POTRAŽUJE" , _tmp ) })
 
 if ::params["kolona_tek_prom"]
     // tekuci promet
-    AADD( _arr, { _tmp, PADC("TEKUCI PROMET", _tmp), PADC( REPL("-", _tmp ), _tmp), PADC( "DUGUJE     POTRAZUJE" , _tmp ) })
+    AADD( _arr, { _tmp, PADC("TEKUĆI PROMET", _tmp), PADC( REPL("-", _tmp ), _tmp), PADC( "DUGUJE     POTRAŽUJE" , _tmp ) })
 endif
 
 // kumulativni promet
-AADD( _arr, { _tmp, PADC("KUMULATIVNI PROMET", _tmp), PADC( REPL("-", _tmp ), _tmp), PADC( "DUGUJE     POTRAZUJE" , _tmp ) })
+AADD( _arr, { _tmp, PADC("KUMULATIVNI PROMET", _tmp), PADC( REPL("-", _tmp ), _tmp), PADC( "DUGUJE     POTRAŽUJE" , _tmp ) })
 
 // saldo
-AADD( _arr, { _tmp, PADC("SALDO", _tmp), PADC( REPL("-", _tmp ), _tmp ), PADC( "DUGUJE     POTRAZUJE" , _tmp ) })
+AADD( _arr, { _tmp, PADC("SALDO", _tmp), PADC( REPL("-", _tmp ), _tmp ), PADC( "DUGUJE     POTRAŽUJE" , _tmp ) })
 
 oRPT:zagl_arr := _arr
 
@@ -440,9 +440,9 @@ oRPT:zagl_arr := _arr
 
 oRPT:zagl_delimiter := "*"
 
-::zagl["txt1"] := oRPT:get_zaglavlje( 1, "*" )
-::zagl["txt2"] := oRPT:get_zaglavlje( 2, "*" )
-::zagl["txt3"] := oRPT:get_zaglavlje( 3, "*" )
+::zagl["txt1"] := hb_utf8tostr( oRPT:get_zaglavlje( 1, "*" ) )
+::zagl["txt2"] := hb_utf8tostr( oRPT:get_zaglavlje( 2, "*" ) )
+::zagl["txt3"] := hb_utf8tostr( oRPT:get_zaglavlje( 3, "*" ) )
 
 return SELF
 
@@ -458,7 +458,7 @@ P_COND2
 Preduzece()
 
 ?
-? "FIN: " + ::params["naziv"] + " U VALUTI " + if( ::params["valuta"] == 1, ValDomaca(), ValPomocna() )
+? "FIN: " + hb_utf8tostr( ::params["naziv"] ) + " U VALUTI " + if( ::params["valuta"] == 1, ValDomaca(), ValPomocna() )
 ?? " ZA PERIOD OD", ::params["datum_od"], "-", ::params["datum_do"]
 ?? " NA DAN: "
 ?? DATE()
@@ -825,7 +825,7 @@ do while !EOF()
 
     _t_ps_dug := _t_ps_pot := _t_kum_dug := _t_kum_pot := _t_tek_dug := _t_tek_pot := _t_sld_dug := _t_sld_pot := 0
     
-    _klasa := hb_utf8tostr( LEFT( field->idkonto, _kl_len ) )
+    _klasa := LEFT( field->idkonto, _kl_len )
     __klasa := _set_sql_record_to_hash( "fmk.konto", _klasa )
    
     if __klasa == NIL
@@ -837,7 +837,7 @@ do while !EOF()
 
         _u_ps_dug := _u_ps_pot := _u_kum_pot := _u_kum_dug := _u_tek_dug := _u_tek_pot := _u_sld_dug := _u_sld_pot := 0
         
-        _sint := hb_utf8tostr( LEFT( field->idkonto, _sint_len ) )
+        _sint := LEFT( field->idkonto, _sint_len )
         __sint := _set_sql_record_to_hash( "fmk.konto", _sint )
 
         if __sint == NIL
@@ -860,28 +860,28 @@ do while !EOF()
             endif
 
             @ prow() + 1, 0 SAY ++ _rbr PICT "9999"
-            @ prow(), pcol() + 1 SAY hb_utf8tostr( field->idkonto )
+            @ prow(), pcol() + 1 SAY field->idkonto
             
             if ::tip < 4
             
                 __konto := _set_sql_record_to_hash( "fmk.konto", field->idkonto )
 
                 if ::tip == 1
-                    @ prow(), pcol() + 1 SAY hb_utf8tostr( field->idpartner )
+                    @ prow(), pcol() + 1 SAY field->idpartner
                     __partn := _set_sql_record_to_hash( "fmk.partn", field->idpartner )
                     // ovdje mogu biti šifre koje nemaju partnera a da u sifrarniku nemamo praznog zapisa
                     // znači __partn može biti NIL 
                 endif
 
                 if ::tip == 1 .and. __partn <> NIL
-                    _opis := hb_utf8tostr( __partn["naz"] )
+                    _opis := __partn["naz"]
                 else
                     _opis := ""
                 endif
 
                 // ako nema partnera kao opis će se koristiti naziv konta
                 if EMPTY( _opis )
-                    _opis := hb_utf8tostr( __konto["naz"] )
+                    _opis := __konto["naz"]
                 endif       
 
                 @ prow(), pcol() + 1 SAY PADR( _opis, 40 )
@@ -984,7 +984,7 @@ do while !EOF()
             if __sint == NIL
                 @ prow(), pcol() + 1 SAY PADR( "Nepostojeća šifra za sint.konto " + _sint, 40)    
             else
-                @ prow(), pcol() + 1 SAY PADR( hb_utf8tostr( __sint["naz"] ), 40 )
+                @ prow(), pcol() + 1 SAY PADR( __sint["naz"], 40 )
             endif
 
             @ prow(), _i_col SAY _u_ps_dug PICT ::pict_iznos
@@ -1023,7 +1023,7 @@ do while !EOF()
         if __klasa == NIL
             @ prow(), pcol() + 1 SAY PADR( "Nepostojeća šifra klase " + _klasa, 40 )
         else
-            @ prow(), pcol() + 1 SAY PADR( hb_utf8tostr( __klasa["naz"] ), 40 )
+            @ prow(), pcol() + 1 SAY PADR( __klasa["naz"], 40 )
         endif
     endif
 
@@ -1099,14 +1099,14 @@ endif
 ? "REKAPITULACIJA PO KLASAMA NA DAN: "
 ?? DATE()
 ? _line := "--------- --------------- --------------- --------------- --------------- --------------- ---------------"
-? "*        *          POCETNO STANJE       *        KUMULATIVNI PROMET     *            SALDO             *"
+? hb_utf8tostr( "*        *          POČETNO STANJE       *        KUMULATIVNI PROMET     *            SALDO             *" )
 ? "  KLASA   ------------------------------- ------------------------------- -------------------------------"
-? "*        *    DUGUJE     *   POTRAZUJE   *    DUGUJE     *   POTRAZUJE   *     DUGUJE    *    POTRAZUJE *"
+? hb_utf8tostr( "*        *    DUGUJE     *   POTRAŽUJE   *    DUGUJE     *   POTRAŽUJE   *     DUGUJE    *    POTRAŽUJE *" )
 ? _line 
 
 for _i := 1 to LEN( ::klase )
 
-    @ prow() + 1, 4 SAY hb_utf8tostr( ::klase[ _i, 1 ] )
+    @ prow() + 1, 4 SAY ::klase[ _i, 1 ]
 
     // ps dug / ps pot
     @ prow(), 10 SAY ::klase[ _i, 2 ] PICT ::pict_iznos

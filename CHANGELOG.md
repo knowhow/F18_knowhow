@@ -1,3 +1,8 @@
+1.7.4   2014-03-19, hernad
+
+  - DEBUG/NEW blinkanje off, dbf_rec[ chk0 ], refresh_me se poziva iz my_use
+  - REFACTOR hbformat na par prg-ova
+
 1.7.2   2014-03-18, vsasa
 
   - backport fin bruto bilans izvještaja iz no-dbf branča (#32713) 

@@ -830,7 +830,7 @@ do while !EOF()
    
     if __klasa == NIL
         MsgBeep( "Ne postoji šifra klase " + _klasa + " u šifrarniku konta !" )
-        return Self
+        //return Self
     endif
  
     do while !EOF() .and. LEFT( field->idkonto, _kl_len ) == _klasa
@@ -842,7 +842,7 @@ do while !EOF()
 
         if __sint == NIL
             MsgBeep( "Ne postoji šifra sintetike " + _sint + " u šifrarniku konta !" )
-            return Self
+            //return Self
         endif
 
         do while !EOF() .and. LEFT( field->idkonto, _sint_len ) == _sint 
@@ -873,16 +873,24 @@ do while !EOF()
                     // znači __partn može biti NIL 
                 endif
 
-                if ::tip == 1 .and. __partn <> NIL
-                    _opis := __partn["naz"]
+                if ::tip == 1 .and. !EMPTY( field->idpartner ) 
+					if __partn <> NIL
+                    	_opis := __partn["naz"]
+					else
+						_opis := "Nema partnera " + field->idpartner + " !"
+					endif
                 else
                     _opis := ""
                 endif
 
                 // ako nema partnera kao opis će se koristiti naziv konta
                 if EMPTY( _opis )
-                    _opis := __konto["naz"]
-                endif       
+					if __konto <> NIL
+                    	_opis := __konto["naz"]
+                	else
+						_opis := "Nema konta " + field->idkonto + " !" 
+					endif
+				endif       
 
                 @ prow(), pcol() + 1 SAY PADR( _opis, 40 )
             
@@ -982,7 +990,7 @@ do while !EOF()
             @ prow(), pcol() + 1 SAY _sint
             
             if __sint == NIL
-                @ prow(), pcol() + 1 SAY PADR( "Nepostojeća šifra za sint.konto " + _sint, 40)    
+                @ prow(), pcol() + 1 SAY PADR( "Nema sintetičkog konta " + _sint, 40)    
             else
                 @ prow(), pcol() + 1 SAY PADR( __sint["naz"], 40 )
             endif

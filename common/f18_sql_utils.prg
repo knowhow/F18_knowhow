@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,273 +16,278 @@
 // fields := { "id, "naz" }
 // => "id, naz"
 //
-function sql_fields(fields)
-local  _i, _sql_fields := ""    
+FUNCTION sql_fields( fields )
 
-if fields == NIL
-   return NIL
-endif
+   LOCAL  _i, _sql_fields := ""
 
-for _i := 1 to LEN(fields)
-   _sql_fields += fields[_i]
-   if _i < LEN(fields)
-      _sql_fields +=  ","
-   endif
-next
+   IF fields == NIL
+      RETURN NIL
+   ENDIF
 
-return _sql_fields
+   FOR _i := 1 TO Len( fields )
+      _sql_fields += fields[ _i ]
+      IF _i < Len( fields )
+         _sql_fields +=  ","
+      ENDIF
+   NEXT
 
- 
+   RETURN _sql_fields
 
-//-------------------------------------------------
+
+
 // -------------------------------------------------
-function sql_table_update( table, op, record, where_str, silent )
-local _i, _tmp, _tmp_2, _msg
-LOCAL _ret := .f.
-LOCAL _result
-LOCAL _qry
-LOCAL _tbl
-LOCAL _where
-LOCAL _server := pg_server()
-local _key
-local _pos
-local _dec
-local _len
-local _a_dbf_rec, _alg
-local _dbf_fields, _sql_fields, _sql_order, _dbf_wa, _dbf_alias, _sql_tbl
+// -------------------------------------------------
+FUNCTION sql_table_update( table, op, record, where_str, silent )
 
-if silent == NIL
-    silent := .f.
-endif
+   LOCAL _i, _tmp, _tmp_2, _msg
+   LOCAL _ret := .F.
+   LOCAL _result
+   LOCAL _qry
+   LOCAL _tbl
+   LOCAL _where
+   LOCAL _server := pg_server()
+   LOCAL _key
+   LOCAL _pos
+   LOCAL _dec
+   LOCAL _len
+   LOCAL _a_dbf_rec, _alg
+   LOCAL _dbf_fields, _sql_fields, _sql_order, _dbf_wa, _dbf_alias, _sql_tbl
 
-if op $ "ins#del"
+   IF silent == NIL
+      silent := .F.
+   ENDIF
 
-    if table == NIL
-       table := ALIAS()
-    endif
+   IF op $ "ins#del"
 
-    _a_dbf_rec := get_a_dbf_rec(table)
+      IF table == NIL
+         table := Alias()
+      ENDIF
 
-    _dbf_fields := _a_dbf_rec["dbf_fields"]
-    _sql_fields := sql_fields( _dbf_fields )
+      _a_dbf_rec := get_a_dbf_rec( table )
 
-    _sql_order  := _a_dbf_rec["sql_order"]
+      _dbf_fields := _a_dbf_rec[ "dbf_fields" ]
+      _sql_fields := sql_fields( _dbf_fields )
 
-    _dbf_wa    := _a_dbf_rec["wa"]
-    _dbf_alias := _a_dbf_rec["alias"]
+      _sql_order  := _a_dbf_rec[ "sql_order" ]
 
-    _sql_tbl   := "fmk." + table
+      _dbf_wa    := _a_dbf_rec[ "wa" ]
+      _dbf_alias := _a_dbf_rec[ "alias" ]
 
-    // uvijek je algoritam 1 nivo recorda
-    _alg := _a_dbf_rec["algoritam"][1]
+      _sql_tbl   := "fmk." + table
 
-    if where_str == NIL
-        if record <> NIL
-            where_str := sql_where_from_dbf_key_fields(_alg["dbf_key_fields"], record)
-        endif
-    endif
+      // uvijek je algoritam 1 nivo recorda
+      _alg := _a_dbf_rec[ "algoritam" ][ 1 ]
 
-endif
+      IF where_str == NIL
+         IF record <> NIL
+            where_str := sql_where_from_dbf_key_fields( _alg[ "dbf_key_fields" ], record )
+         ENDIF
+      ENDIF
 
-log_write( "sql table update, poceo", 9, silent )
+   ENDIF
 
-DO CASE
+   log_write( "sql table update, poceo", 9, silent )
 
-    CASE op == "BEGIN"
-        _qry := "BEGIN"
+   DO CASE
 
-    CASE (op == "END") .or. (op == "COMMIT")
-        _qry := "COMMIT" 
+   CASE op == "BEGIN"
+      _qry := "BEGIN"
 
-    CASE op == "ROLLBACK"
-        _qry := "ROLLBACK"
+   CASE ( op == "END" ) .OR. ( op == "COMMIT" )
+      _qry := "COMMIT"
 
-    CASE op == "del"
+   CASE op == "ROLLBACK"
+      _qry := "ROLLBACK"
 
-        if (where_str == NIL) .and. (record == NIL .or. (record["id"] == NIL))
-            // brisi kompletnu tabel
-            _msg := RECI_GDJE_SAM + " nedozvoljeno stanje, postavit eksplicitno where na 'true' !!"
-            Alert(_msg)
-            log_write( _msg, 2, silent )
-            QUIT_1
-        endif
-        _qry := "DELETE FROM " + _sql_tbl + " WHERE " + where_str 
-        
+   CASE op == "del"
+
+      IF ( where_str == NIL ) .AND. ( record == NIL .OR. ( record[ "id" ] == NIL ) )
+         // brisi kompletnu tabel
+         _msg := RECI_GDJE_SAM + " nedozvoljeno stanje, postavit eksplicitno where na 'true' !!"
+         Alert( _msg )
+         log_write( _msg, 2, silent )
+         QUIT_1
+      ENDIF
+      _qry := "DELETE FROM " + _sql_tbl + " WHERE " + where_str
+
    CASE op == "ins"
 
-        _qry := "INSERT INTO " + _sql_tbl +  "("  
-        
-        for _i := 1 to LEN( _a_dbf_rec["dbf_fields"] )
-            
-            // polje je u blacklisti ?
-            if field_in_blacklist( _a_dbf_rec["dbf_fields"][_i], _a_dbf_rec["blacklisted"] )
-                LOOP
-            endif
+      _qry := "INSERT INTO " + _sql_tbl +  "("
 
-            _qry += _a_dbf_rec["dbf_fields"][_i]
+      FOR _i := 1 TO Len( _a_dbf_rec[ "dbf_fields" ] )
 
-            if _i < LEN( _a_dbf_rec["dbf_fields"] )
-                _qry += ","
-            endif
+         // polje je u blacklisti ?
+         IF field_in_blacklist( _a_dbf_rec[ "dbf_fields" ][ _i ], _a_dbf_rec[ "blacklisted" ] )
+            LOOP
+         ENDIF
 
-        next
+         _qry += _a_dbf_rec[ "dbf_fields" ][ _i ]
 
-        _qry += ")  VALUES (" 
+         IF _i < Len( _a_dbf_rec[ "dbf_fields" ] )
+            _qry += ","
+         ENDIF
 
-        for _i := 1 to LEN( _a_dbf_rec["dbf_fields"] )
+      NEXT
 
-            _tmp := _a_dbf_rec["dbf_fields"][_i]
+      _qry += ")  VALUES ("
 
-            // polje je u blacklisti ?
-            if field_in_blacklist( _tmp, _a_dbf_rec["blacklisted"] )
-                LOOP
-            endif
+      FOR _i := 1 TO Len( _a_dbf_rec[ "dbf_fields" ] )
 
-            if !HB_HHASKEY( record, _tmp )
-                   _msg := "record " + op + " ne sadrzi " + _tmp + " field !?## pogledaj log !"
-                   log_write(_msg + " " + pp(record), 2)
-                   MsgBeep(_msg)
-                   RaiseError( _msg + " " + pp(record) )
-                   return _ret
-            endif
+         _tmp := _a_dbf_rec[ "dbf_fields" ][ _i ]
 
-            if VALTYPE( record[_tmp] ) == "N"
+         // polje je u blacklisti ?
+         IF field_in_blacklist( _tmp, _a_dbf_rec[ "blacklisted" ] )
+            LOOP
+         ENDIF
 
-                   _tmp_2 := STR(record[_tmp], _a_dbf_rec["dbf_fields_len"][_tmp][2], _a_dbf_rec["dbf_fields_len"][_tmp][3])
-                   
+         IF !hb_HHasKey( record, _tmp )
+            _msg := "record " + op + " ne sadrzi " + _tmp + " field !?## pogledaj log !"
+            log_write( _msg + " " + pp( record ), 2 )
+            MsgBeep( _msg )
+            RaiseError( _msg + " " + pp( record ) )
+            RETURN _ret
+         ENDIF
 
-                   if LEFT(_tmp_2, 1) == "*"
-                      _msg := "err_num_width - field: " + _tmp + "  value:" + ALLTRIM(STR(record[_tmp])) + " / width: " +  ALLTRIM(STR(_a_dbf_rec["dbf_fields_len"][_tmp][2])) + " : " +  ALLTRIM(STR(_a_dbf_rec["dbf_fields_len"][_tmp][3]))
-                      log_write( _msg, 2 )
-                      RaiseError(_msg)
-                   else
-                      _qry += _tmp_2
-                   endif
-            else
-                _qry += _sql_quote(record[_tmp])
-            endif
+         IF ValType( record[ _tmp ] ) == "N"
 
-            if _i < LEN(_a_dbf_rec["dbf_fields"])
-                _qry += ","
-            endif
-
-        next
-        
-        _qry += ")"
-
-END CASE
-   
-_ret := _sql_query( _server, _qry, silent )
-
-log_write( "sql table update, table: " + IF(table == NIL, "NIL", table ) + ", op: " + op + ", qry: " + _qry, 8, silent )
-log_write( "sql table update, VALTYPE(_ret): " + VALTYPE(_ret), 9, silent )
-log_write( "sql table update, zavrsio", 9, silent )
-
-if VALTYPE(_ret) == "L"
-    // u slucaju ERROR-a _sql_query vraca  .f.
-    return _ret
-else
-    return .t.
-endif
+            _tmp_2 := Str( record[ _tmp ], _a_dbf_rec[ "dbf_fields_len" ][ _tmp ][ 2 ], _a_dbf_rec[ "dbf_fields_len" ][ _tmp ][ 3 ] )
 
 
-// ----------------------------------------
-// ----------------------------------------
-function run_sql_query(qry, retry) 
-local _i, _qry_obj
+            IF Left( _tmp_2, 1 ) == "*"
+               _msg := "err_num_width - field: " + _tmp + "  value:" + AllTrim( Str( record[ _tmp ] ) ) + " / width: " +  AllTrim( Str( _a_dbf_rec[ "dbf_fields_len" ][ _tmp ][ 2 ] ) ) + " : " +  AllTrim( Str( _a_dbf_rec[ "dbf_fields_len" ][ _tmp ][ 3 ] ) )
+               log_write( _msg, 2 )
+               RaiseError( _msg )
+            ELSE
+               _qry += _tmp_2
+            ENDIF
+         ELSE
+            _qry += _sql_quote( record[ _tmp ] )
+         ENDIF
 
-local _server := my_server()
+         IF _i < Len( _a_dbf_rec[ "dbf_fields" ] )
+            _qry += ","
+         ENDIF
 
-if retry == NIL
-  retry := 1
-endif
+      NEXT
 
-if VALTYPE(qry) != "C"
-    _msg := "qry ne valja VALTYPE(qry) =" + VALTYPE(qry)
-    log_write( _msg, 2 )
-    MsgBeep(_msg)
-    quit_1
-endif
+      _qry += ")"
 
-log_write( "QRY OK: run_sql_query: " + qry, 9 )
+   END CASE
 
-for _i := 1 to retry
+   _ret := _sql_query( _server, _qry, silent )
 
-    begin sequence with {|err| Break(err)}
-        _qry_obj := _server:Query(qry + ";")
-    recove
-        log_write( "run_sql_query(), ajoj ajoj: qry ne radi !?!", 2 )
-        my_server_logout()
-        hb_IdleSleep(0.5)
-        if my_server_login()
+   log_write( "sql table update, table: " + IF( table == NIL, "NIL", table ) + ", op: " + op + ", qry: " + _qry, 8, silent )
+   log_write( "sql table update, VALTYPE(_ret): " + ValType( _ret ), 9, silent )
+   log_write( "sql table update, zavrsio", 9, silent )
+
+   IF ValType( _ret ) == "L"
+      // u slucaju ERROR-a _sql_query vraca  .f.
+      RETURN _ret
+   ELSE
+      RETURN .T.
+   ENDIF
+
+
+   // ----------------------------------------
+   // ----------------------------------------
+
+FUNCTION run_sql_query( qry, retry )
+
+   LOCAL _i, _qry_obj
+
+   LOCAL _server := my_server()
+
+   IF retry == NIL
+      retry := 1
+   ENDIF
+
+   IF ValType( qry ) != "C"
+      _msg := "qry ne valja VALTYPE(qry) =" + ValType( qry )
+      log_write( _msg, 2 )
+      MsgBeep( _msg )
+      quit_1
+   ENDIF
+
+   log_write( "QRY OK: run_sql_query: " + qry, 9 )
+
+   FOR _i := 1 TO retry
+
+      BEGIN SEQUENCE WITH {| err| Break( err ) }
+         _qry_obj := _server:Query( qry + ";" )
+         recove
+         log_write( "run_sql_query(), ajoj ajoj: qry ne radi !?!", 2 )
+         my_server_logout()
+         hb_idleSleep( 0.5 )
+         IF my_server_login()
             _server := my_server()
-        endif
-    end sequence
+         ENDIF
+      END SEQUENCE
 
-    if _qry_obj:NetErr() .and. !EMPTY(_qry_obj:ErrorMsg())
+      IF _qry_obj:NetErr() .AND. !Empty( _qry_obj:ErrorMsg() )
 
-        log_write( "run_sql_query(), ajoj: " + _qry_obj:ErrorMsg(), 2 )
-        log_write( "run_sql_query(), error na sljedecem upitu: " + qry, 2 )
+         log_write( "run_sql_query(), ajoj: " + _qry_obj:ErrorMsg(), 2 )
+         log_write( "run_sql_query(), error na sljedecem upitu: " + qry, 2 )
 
-        my_server_logout()
-        hb_IdleSleep(0.5)
+         my_server_logout()
+         hb_idleSleep( 0.5 )
 
-        if my_server_login()
+         IF my_server_login()
             _server := my_server()
-        endif
+         ENDIF
 
-        if _i == retry
-            MsgBeep("neuspjesno nakon " + to_str(retry) + "pokusaja !?")
+         IF _i == retry
+            MsgBeep( "neuspjesno nakon " + to_str( retry ) + "pokusaja !?" )
             QUIT_1
-        endif
-    else
-        _i := retry + 1
-    endif
-next
+         ENDIF
+      ELSE
+         _i := retry + 1
+      ENDIF
+   NEXT
 
-return _qry_obj
+   RETURN _qry_obj
 
 
 
 // pomoćna funkcija za sql query izvršavanje
-function _sql_query( oServer, cQuery, silent )
-local oResult, cMsg
+FUNCTION _sql_query( oServer, cQuery, silent )
 
-if silent == NIL
-    silent := .f.
-endif
+   LOCAL oQuery, cMsg
+
+   IF silent == NIL
+      silent := .F.
+   ENDIF
 
 #ifdef NODE
-   log_write(cQuery, 1)
+   log_write( cQuery, 1 )
 #endif
 
-oResult := oServer:Query( cQuery + ";")
+   oQuery := oServer:Query( cQuery + ";" )
 
-IF oResult:NetErr() 
+   IF oQuery:lError
 
-    cMsg := oResult:ErrorMsg()
+      cMsg := oQuery:cError
 
-    if !EMPTY(cMsg)
-       log_write("ERROR: _sql_query: " + cQuery + "err msg:" + cMsg, 1, silent )
+      IF !Empty( cMsg )
+         log_write( "ERROR: _sql_query: " + cQuery + "err msg:" + cMsg, 1, silent )
 
-       if !silent 
-          MsgBeep( cMsg )
-       endif
+         IF !silent
+            MsgBeep( cMsg )
+         ENDIF
 
-    else
-        // TODO: nesto je sa postgresql drajverom pa je poceo izbacivati ove errore ?!
-        return .t.
-    endif
+      ELSE
+         // TODO: nesto je sa postgresql drajverom pa je poceo izbacivati ove errore ?!
+         RETURN .T.
+      ENDIF
 
-    return .f.
+      RETURN .F.
 
-ELSE
+   ELSE
 
-    log_write("QRY OK: _sql_query: " + cQuery, 9, silent )
+      log_write( "QRY OK: _sql_query: " + cQuery, 9, silent )
 
-ENDIF
+   ENDIF
 
-RETURN oResult
+   RETURN oQuery
 
 
 
@@ -290,93 +295,99 @@ RETURN oResult
 // -------------------------------------
 // setovanje sql schema path-a
 // -----------------------------------
-function set_sql_search_path()
-local _server := my_server()
-local _path := my_server_search_path()
+FUNCTION set_sql_search_path()
 
-local _qry := "SET search_path TO " + _path + ";"
-local _result
-local _msg
+   LOCAL _server := my_server()
+   LOCAL _path := my_server_search_path()
 
-_result := _server:Query( _qry )
-IF _result:NetErr()
-    _msg := _result:ErrorMsg()
-    //log_write( _qry, 2 )
-    //log_write( _msg, 2 )
-    MsgBeep( "ERR?! :" + _qry )
-    return .f.
-ELSE
-    log_write( "sql() set search path ok", 9 )
-ENDIF
+   LOCAL _qry := "SET search_path TO " + _path + ";"
+   LOCAL _result
+   LOCAL _msg
 
-RETURN _result
+   _result := _server:Query( _qry )
+   IF _result:NetErr()
+      _msg := _result:ErrorMsg()
+      // log_write( _qry, 2 )
+      // log_write( _msg, 2 )
+      MsgBeep( "ERR?! :" + _qry )
+      RETURN .F.
+   ELSE
+      log_write( "sql() set search path ok", 9 )
+   ENDIF
+
+   RETURN _result
 
 
 // ----------------------------------------
 // sql date
 // ----------------------------------------
-function _sql_date_str( var )
-local _out            
-_out := DTOS( var )
-//1234-56-78
-_out := substr( _out, 1, 4) + "-" + substr( _out, 5, 2) + "-" + substr( _out, 7, 2) 
-return _out
+FUNCTION _sql_date_str( var )
+
+   LOCAL _out
+
+   _out := DToS( var )
+   // 1234-56-78
+   _out := SubStr( _out, 1, 4 ) + "-" + SubStr( _out, 5, 2 ) + "-" + SubStr( _out, 7, 2 )
+
+   RETURN _out
 
 
 // ------------------------
 // ------------------------
-function _sql_quote(xVar)
-local cOut
+FUNCTION _sql_quote( xVar )
 
-if VALTYPE(xVar) == "C"
-    cOut := STRTRAN(xVar, "'","''")
-    cOut := "'" + hb_strtoutf8(cOut) + "'"
-elseif VALTYPE(xVar) == "D"
-    if xVar == CTOD("")
-        cOut := "NULL"
-    else
-        cOut := "'" + _sql_date_str( xVar ) + "'"
-    endif
-else
-    cOut := "NULL"
-endif
+   LOCAL cOut
 
-return cOut
+   IF ValType( xVar ) == "C"
+      cOut := StrTran( xVar, "'", "''" )
+      cOut := "'" + hb_StrToUTF8( cOut ) + "'"
+   ELSEIF ValType( xVar ) == "D"
+      IF xVar == CToD( "" )
+         cOut := "NULL"
+      ELSE
+         cOut := "'" + _sql_date_str( xVar ) + "'"
+      ENDIF
+   ELSE
+      cOut := "NULL"
+   ENDIF
+
+   RETURN cOut
 
 
 
 // ---------------------------------------
 // ---------------------------------------
-function sql_where_from_dbf_key_fields(dbf_key_fields, rec)
-local _ret, _pos, _item, _key
+FUNCTION sql_where_from_dbf_key_fields( dbf_key_fields, rec )
 
-// npr dbf_key_fields := {{"godina", 4}, "idrj", {"mjesec", 2}, "obr", "idradn" }
-_ret := ""
-for each _item in dbf_key_fields
+   LOCAL _ret, _pos, _item, _key
 
-   if !EMPTY(_ret)
-       _ret += " AND "
-   endif
+   // npr dbf_key_fields := {{"godina", 4}, "idrj", {"mjesec", 2}, "obr", "idradn" }
+   _ret := ""
+   FOR EACH _item in dbf_key_fields
 
-   if VALTYPE(_item) == "A"
-      // numeric
-      _key := LOWER(_item[1])
-      check_hash_key(rec, _key)              
-      _ret += _item[1] + "=" + STR(rec[_key], _item[2])
+      IF !Empty( _ret )
+         _ret += " AND "
+      ENDIF
 
-   elseif VALTYPE(_item) == "C"
-      _key := LOWER(_item)
-      check_hash_key(rec, _key)              
-      _ret += _item + "=" + _sql_quote(rec[_key])
- 
-   else
-       MsgBeep(PROCNAME(1) + "valtype _item ?!")
-       QUIT_1
-   endif
+      IF ValType( _item ) == "A"
+         // numeric
+         _key := Lower( _item[ 1 ] )
+         check_hash_key( rec, _key )
+         _ret += _item[ 1 ] + "=" + Str( rec[ _key ], _item[ 2 ] )
 
-next
+      ELSEIF ValType( _item ) == "C"
+         _key := Lower( _item )
+         check_hash_key( rec, _key )
+         _ret += _item + "=" + _sql_quote( rec[ _key ] )
 
-return _ret
+      ELSE
+         MsgBeep( ProcName( 1 ) + "valtype _item ?!" )
+         QUIT_1
+      ENDIF
+
+   NEXT
+
+   RETURN _ret
 
 
 
@@ -384,204 +395,209 @@ return _ret
 // hernad izbaciti iz upotrebe !
 // koristiti gornju funkciju
 // ---------------------------------------
-function sql_where_block(table_name, x)
-local _ret, _pos, _fields, _item, _key
+FUNCTION sql_where_block( table_name, x )
 
-_pos := ASCAN(gaDBFS, {|x| x[3] == table_name })
+   LOCAL _ret, _pos, _fields, _item, _key
 
-if _pos == 0
-   MsgBeep(PROCLINE(1) + "sql_where_block tbl ne postoji" + table_name)
-   log_write("ERR sql_where: " + table_name)
-   QUIT_1
-endif
+   _pos := AScan( gaDBFS, {| x| x[ 3 ] == table_name } )
 
-// npr. _fields := {{"godina", 4}, "idrj", {"mjesec", 2}, "obr", "idradn" }
-_fields := gaDBFS[_pos, 6]
+   IF _pos == 0
+      MsgBeep( ProcLine( 1 ) + "sql_where_block tbl ne postoji" + table_name )
+      log_write( "ERR sql_where: " + table_name )
+      QUIT_1
+   ENDIF
 
-_ret := ""
-for each _item in _fields
+   // npr. _fields := {{"godina", 4}, "idrj", {"mjesec", 2}, "obr", "idradn" }
+   _fields := gaDBFS[ _pos, 6 ]
 
-   if !EMPTY(_ret)
-       _ret += " AND "
-   endif
+   _ret := ""
+   FOR EACH _item in _fields
 
-   if VALTYPE(_item) == "A"
-      // numeric
-      _key := LOWER(_item[1])
-      _ret += _item[1] + "=" + STR(x[_key], _item[2])
+      IF !Empty( _ret )
+         _ret += " AND "
+      ENDIF
 
-   elseif VALTYPE(_item) == "C"
-      _key := LOWER(_item)
-      _ret += _item + "=" + _sql_quote(x[_key])
- 
-   else
-       MsgBeep(PROCNAME(1) + "valtype _item ?!")
-       QUIT_1
-   endif
+      IF ValType( _item ) == "A"
+         // numeric
+         _key := Lower( _item[ 1 ] )
+         _ret += _item[ 1 ] + "=" + Str( x[ _key ], _item[ 2 ] )
 
-next
+      ELSEIF ValType( _item ) == "C"
+         _key := Lower( _item )
+         _ret += _item + "=" + _sql_quote( x[ _key ] )
 
-return _ret
+      ELSE
+         MsgBeep( ProcName( 1 ) + "valtype _item ?!" )
+         QUIT_1
+      ENDIF
 
-// ---------------------------------------
-// ---------------------------------------
-function sql_concat_ids(table_name)
-local _ret, _pos, _fields, _item
+   NEXT
 
-_pos := ASCAN(gaDBFS, {|x| x[3] == table_name })
-
-if _pos == 0
-   MsgBeep(PROCLINE(1) + "sql tbl ne postoji in gaDBFs " + table_name)
-   QUIT_1
-endif
-
-// npr. _fields := {{"godina", 4}, "idrj", {"mjesec", 2}, "obr", "idradn" }
-_fields := gaDBFS[_pos, 6]
-
-_ret := ""
-
-for each _item in _fields
-
-   if !EMPTY(_ret)
-       _ret += " || "
-   endif
-
-   if VALTYPE(_item) == "A"
-      // numeric
-      // to_char(godina, '9999') 
-      _ret += "to_char(" + _item[1] + ",'" + REPLICATE("9", _item[2]) + "')"
-
-   elseif VALTYPE(_item) == "C"
-      _ret += _item
- 
-   else
-       MsgBeep(PROCNAME(1) + "valtype _item ?!")
-       QUIT_1
-   endif
-
-next
-
-return _ret
+   RETURN _ret
 
 // ---------------------------------------
 // ---------------------------------------
-function sql_primary_key(table_name)
-local _ret, _pos, _fields, _i, _item
+FUNCTION sql_concat_ids( table_name )
 
-_pos := ASCAN(gaDBFS, {|x| x[3] == LOWER(table_name) })
+   LOCAL _ret, _pos, _fields, _item
 
-if _pos == 0
-   MsgBeep(PROCLINE(1) + "sql tbl ne postoji in gaDBFs " + table_name)
-   QUIT_1
-endif
+   _pos := AScan( gaDBFS, {| x| x[ 3 ] == table_name } )
 
-// npr. _fields := {{"godina", 4}, "idrj", {"mjesec", 2}, "obr", "idradn" }
-_fields := gaDBFS[_pos, 6]
+   IF _pos == 0
+      MsgBeep( ProcLine( 1 ) + "sql tbl ne postoji in gaDBFs " + table_name )
+      QUIT_1
+   ENDIF
 
-_ret := "(org_id, b_year, b_seasson"
+   // npr. _fields := {{"godina", 4}, "idrj", {"mjesec", 2}, "obr", "idradn" }
+   _fields := gaDBFS[ _pos, 6 ]
 
-for each _item in _fields
+   _ret := ""
 
-   _ret += ", "
-   if VALTYPE(_item) == "A"
-      // numericko polje
-      _ret += _item[1]
+   FOR EACH _item in _fields
 
-   elseif VALTYPE(_item) == "C"
-      _ret += _item
- 
-   else
-       MsgBeep(PROCNAME(1) + " valtype _item ?!")
-       QUIT_1
-   endif
+      IF !Empty( _ret )
+         _ret += " || "
+      ENDIF
 
-next
+      IF ValType( _item ) == "A"
+         // numeric
+         // to_char(godina, '9999')
+         _ret += "to_char(" + _item[ 1 ] + ",'" + Replicate( "9", _item[ 2 ] ) + "')"
 
-_ret += ")"
+      ELSEIF ValType( _item ) == "C"
+         _ret += _item
 
-return _ret
+      ELSE
+         MsgBeep( ProcName( 1 ) + "valtype _item ?!" )
+         QUIT_1
+      ENDIF
+
+   NEXT
+
+   RETURN _ret
+
+// ---------------------------------------
+// ---------------------------------------
+FUNCTION sql_primary_key( table_name )
+
+   LOCAL _ret, _pos, _fields, _i, _item
+
+   _pos := AScan( gaDBFS, {| x| x[ 3 ] == Lower( table_name ) } )
+
+   IF _pos == 0
+      MsgBeep( ProcLine( 1 ) + "sql tbl ne postoji in gaDBFs " + table_name )
+      QUIT_1
+   ENDIF
+
+   // npr. _fields := {{"godina", 4}, "idrj", {"mjesec", 2}, "obr", "idradn" }
+   _fields := gaDBFS[ _pos, 6 ]
+
+   _ret := "(org_id, b_year, b_seasson"
+
+   FOR EACH _item in _fields
+
+      _ret += ", "
+      IF ValType( _item ) == "A"
+         // numericko polje
+         _ret += _item[ 1 ]
+
+      ELSEIF ValType( _item ) == "C"
+         _ret += _item
+
+      ELSE
+         MsgBeep( ProcName( 1 ) + " valtype _item ?!" )
+         QUIT_1
+      ENDIF
+
+   NEXT
+
+   _ret += ")"
+
+   RETURN _ret
 
 
 
 // -----------------------------------------------------
 // parsiranje datuma u sql izrazu
 // -----------------------------------------------------
-function _sql_date_parse( field_name, date1, date2 )
-local _ret := ""
+FUNCTION _sql_date_parse( field_name, date1, date2 )
 
-// datdok BETWEEN '2012-02-01' AND '2012-05-01'
+   LOCAL _ret := ""
 
-// dva su datuma
-if PCOUNT() > 2
+   // datdok BETWEEN '2012-02-01' AND '2012-05-01'
 
-    if date1 == NIL
-        date1 := CTOD("")
-    endif
-    if date2 == NIL
-        date2 := CTOD("")
-    endif
+   // dva su datuma
+   IF PCount() > 2
 
-    // oba su prazna
-    if DTOC(date1) == DTOC(CTOD("")) .and. DTOC(date2) == DTOC(CTOD(""))
-        _ret := "TRUE"
-    // samo prvi je prazan
-    elseif DTOC(date1) == DTOC(CTOD(""))
-        _ret := field_name + " <= " + _sql_quote( date2 )
-    // drugi je prazan
-    elseif DTOC(date2) == DTOC(CTOD(""))
-        _ret := field_name + " >= " + _sql_quote( date1 )
-    // imamo dva regularna datuma
-    else
-        // ako su razliciti datumi
-        if DTOC(date1) <> DTOC(date2)
+      IF date1 == NIL
+         date1 := CToD( "" )
+      ENDIF
+      IF date2 == NIL
+         date2 := CToD( "" )
+      ENDIF
+
+      // oba su prazna
+      IF DToC( date1 ) == DToC( CToD( "" ) ) .AND. DToC( date2 ) == DToC( CToD( "" ) )
+         _ret := "TRUE"
+         // samo prvi je prazan
+      ELSEIF DToC( date1 ) == DToC( CToD( "" ) )
+         _ret := field_name + " <= " + _sql_quote( date2 )
+         // drugi je prazan
+      ELSEIF DToC( date2 ) == DToC( CToD( "" ) )
+         _ret := field_name + " >= " + _sql_quote( date1 )
+         // imamo dva regularna datuma
+      ELSE
+         // ako su razliciti datumi
+         IF DToC( date1 ) <> DToC( date2 )
             _ret := field_name + " BETWEEN " + _sql_quote( date1 ) + " AND " + _sql_quote( date2 )
-        // ako su identicni, samo nam jedan treba u LIKE klauzuli
-        else
+            // ako su identicni, samo nam jedan treba u LIKE klauzuli
+         ELSE
             _ret := field_name + "::char(20) LIKE " + _sql_quote( _sql_date_str( date1 ) + "%" )
-        endif
-    endif
+         ENDIF
+      ENDIF
 
-// imamo samo jedan uslov, field_name ili nista
-elseif PCOUNT() <= 1
-    _ret := "TRUE"    
+      // imamo samo jedan uslov, field_name ili nista
+   ELSEIF PCount() <= 1
+      _ret := "TRUE"
 
-// samo jedan datumski uslov
-else
-    _ret := field_name + "::char(20) LIKE " + _sql_quote( _sql_date_str( date1 ) + "%" )
-endif
+      // samo jedan datumski uslov
+   ELSE
+      _ret := field_name + "::char(20) LIKE " + _sql_quote( _sql_date_str( date1 ) + "%" )
+   ENDIF
 
-return _ret
+   RETURN _ret
 
 // parsiranje uslova za IN listu unutar upita... id IN ( '', '', '', .... )
-function _sql_in_list_parse( string_cond, brackets )
-local _list := ""
-local _cond_arr := TokToNiz( string_cond, ";" )
-local _cnt := 0
-local _cond
+FUNCTION _sql_in_list_parse( string_cond, brackets )
 
-if brackets == NIL
-    brackets := .f.
-endif
+   LOCAL _list := ""
+   LOCAL _cond_arr := TokToNiz( string_cond, ";" )
+   LOCAL _cnt := 0
+   LOCAL _cond
 
-for each _cond in _cond_arr
+   IF brackets == NIL
+      brackets := .F.
+   ENDIF
 
-    if EMPTY( _cond )
-        LOOP
-    endif 
+   FOR EACH _cond in _cond_arr
 
-    _list += _sql_quote( _cond )
-    _list += ","
+      IF Empty( _cond )
+         LOOP
+      ENDIF
 
-next
+      _list += _sql_quote( _cond )
+      _list += ","
 
-_list := PADR( _list, LEN( ALLTRIM( _list ) ) - 1 )
+   NEXT
 
-// dodaj zagrade...
-if brackets
-    _list := " ( " + _list + " ) "
-endif
+   _list := PadR( _list, Len( AllTrim( _list ) ) - 1 )
 
-return _list
+   // dodaj zagrade...
+   IF brackets
+      _list := " ( " + _list + " ) "
+   ENDIF
+
+   RETURN _list
 
 
 
@@ -589,193 +605,197 @@ return _list
 // ---------------------------------------------------
 // sql parsiranje uslova sa ;
 // ---------------------------------------------------
-function _sql_cond_parse( field_name, cond, not )
-local _ret := ""
-local cond_arr := TokToNiz( cond, ";" ) 
-local _i, _cond
+FUNCTION _sql_cond_parse( field_name, cond, not )
 
-if not == NIL
-    not := .f.
-endif
+   LOCAL _ret := ""
+   LOCAL cond_arr := TokToNiz( cond, ";" )
+   LOCAL _i, _cond
 
-// idkonto LIKE '211%' AND idkonto LIKE '5411%'
+   IF not == NIL
+      not := .F.
+   ENDIF
 
-for each _cond in cond_arr
+   // idkonto LIKE '211%' AND idkonto LIKE '5411%'
 
-    // prazan uslov... preskacem
-    if EMPTY( _cond )
-        loop
-    endif
+   FOR EACH _cond in cond_arr
 
-    _ret += "  OR " + field_name 
+      // prazan uslov... preskacem
+      IF Empty( _cond )
+         LOOP
+      ENDIF
 
-    if LEN( cond_arr ) > 1
-        // ubaci NOT po potrebi...
-        if not
+      _ret += "  OR " + field_name
+
+      IF Len( cond_arr ) > 1
+         // ubaci NOT po potrebi...
+         IF not
             _ret += " NOT "
-        endif
+         ENDIF
 
-        _ret += " LIKE " + _sql_quote( ALLTRIM( _cond ) + "%" )
+         _ret += " LIKE " + _sql_quote( AllTrim( _cond ) + "%" )
 
-    else
+      ELSE
 
-        if not
+         IF not
             _ret += " <> "
-        else
+         ELSE
             _ret += " = "
-        endif
+         ENDIF
 
-        _ret += _sql_quote( _cond )
+         _ret += _sql_quote( _cond )
 
-    endif
+      ENDIF
 
-next
+   NEXT
 
-// skini mi prvi OR iz uslova !
-_ret := RIGHT( _ret, LEN( _ret ) - 5 )
+   // skini mi prvi OR iz uslova !
+   _ret := Right( _ret, Len( _ret ) - 5 )
 
-return _ret
+   RETURN _ret
 
 
 // ------------------------------------------------------
 // vraca vrijednost polja po zadatom uslovu
 //
-//  _sql_get_value( "partn", "naz", { { "id", "1AL001" }, { ... } } )
+// _sql_get_value( "partn", "naz", { { "id", "1AL001" }, { ... } } )
 // ------------------------------------------------------
-function _sql_get_value( table_name, field_name, cond )
-local _val 
-local _qry := ""
-local _table
-local _server := pg_server()
-local _where := ""
-local _data := {}
-local _i, oRow
+FUNCTION _sql_get_value( table_name, field_name, cond )
 
-if cond == NIL
-    cond := {}
-endif
+   LOCAL _val
+   LOCAL _qry := ""
+   LOCAL _table
+   LOCAL _server := pg_server()
+   LOCAL _where := ""
+   LOCAL _data := {}
+   LOCAL _i, oRow
 
-if ! ( "." $ table_name )
-    table_name := "fmk." + table_name
-endif
+   IF cond == NIL
+      cond := {}
+   ENDIF
 
-_qry += "SELECT " + field_name + " FROM " + table_name 
+   IF ! ( "." $ table_name )
+      table_name := "fmk." + table_name
+   ENDIF
 
-for _i := 1 to LEN( cond )
+   _qry += "SELECT " + field_name + " FROM " + table_name
 
-    if cond[ _i ] <> NIL
+   FOR _i := 1 TO Len( cond )
 
-        if !EMPTY( _where )
+      IF cond[ _i ] <> NIL
+
+         IF !Empty( _where )
             _where += " AND "
-        endif
+         ENDIF
 
-        if VALTYPE( cond[ _i, 2 ] ) == "N"
-            _where += cond[ _i, 1 ] + " = " + STR( cond[ _i, 2 ] )
-        else
+         IF ValType( cond[ _i, 2 ] ) == "N"
+            _where += cond[ _i, 1 ] + " = " + Str( cond[ _i, 2 ] )
+         ELSE
             _where += cond[ _i, 1 ] + " = " + _sql_quote( cond[ _i, 2 ] )
-        endif
+         ENDIF
 
-    endif
+      ENDIF
 
-next
+   NEXT
 
-if !EMPTY( _where )
-    _qry += " WHERE " + _where
-endif
+   IF !Empty( _where )
+      _qry += " WHERE " + _where
+   ENDIF
 
-_table := _sql_query( _server, _qry )
-_table:Refresh()
+   _table := _sql_query( _server, _qry )
+   _table:Refresh()
 
-oRow := _table:GetRow(1)
-_val := oRow:FieldGet(1)
+   oRow := _table:GetRow( 1 )
+   _val := oRow:FieldGet( 1 )
 
-// ako nema polja vraca NIL
-if VALTYPE( _val ) == "L"
-    _val := NIL
-endif
+   // ako nema polja vraca NIL
+   IF ValType( _val ) == "L"
+      _val := NIL
+   ENDIF
 
-if VALTYPE( _val ) == "C"
-    _val := hb_utf8tostr( _val )
-endif
+   IF ValType( _val ) == "C"
+      _val := hb_UTF8ToStr( _val )
+   ENDIF
 
-return _val
+   RETURN _val
 
 
 // -----------------------------------------------------
-// vraca serverski datum 
+// vraca serverski datum
 // -----------------------------------------------------
-function _sql_server_date()
-local _date
-local _pg_server := my_server()
-local _qry := "SELECT CURRENT_DATE;"
-local _res
+FUNCTION _sql_server_date()
 
-_res := _sql_query( _pg_server, _qry )
+   LOCAL _date
+   LOCAL _pg_server := my_server()
+   LOCAL _qry := "SELECT CURRENT_DATE;"
+   LOCAL _res
 
-if VALTYPE( _res ) <> "L"
-    _date := _res:FieldGet(1)
-else
-    _date := NIL
-endif
+   _res := _sql_query( _pg_server, _qry )
 
-return _date
+   IF ValType( _res ) <> "L"
+      _date := _res:FieldGet( 1 )
+   ELSE
+      _date := NIL
+   ENDIF
+
+   RETURN _date
 
 
 // --------------------------------------------------------------------
 // vraca sve zapise iz tabele po zadatom uslovu
 // --------------------------------------------------------------------
-function _select_all_from_table( table, fields, where_cond, order_fields )
-local _srv := my_server()
-local _qry, _data, _i, _n, _o
+FUNCTION _select_all_from_table( table, fields, where_cond, order_fields )
 
-_qry := "SELECT "
+   LOCAL _srv := my_server()
+   LOCAL _qry, _data, _i, _n, _o
 
-if fields == NIL
-    _qry += " * "
-else
-    for _i := 1 to LEN( fields )
-        _qry += fields[ _i ]
-        if _i < LEN( fields )
+   _qry := "SELECT "
+
+   IF fields == NIL
+      _qry += " * "
+   ELSE
+      FOR _i := 1 TO Len( fields )
+         _qry += fields[ _i ]
+         IF _i < Len( fields )
             _qry += ","
-        endif
-    next
-endif
+         ENDIF
+      NEXT
+   ENDIF
 
-_qry += " FROM " + table
+   _qry += " FROM " + table
 
-if where_cond <> NIL
+   IF where_cond <> NIL
 
-    _qry += " WHERE "
+      _qry += " WHERE "
 
-    for _n := 1 to LEN( where_cond )
-        _qry += where_cond[ _n ]
-        if _n < LEN( where_cond )
+      FOR _n := 1 TO Len( where_cond )
+         _qry += where_cond[ _n ]
+         IF _n < Len( where_cond )
             _qry += " AND "
-        endif    
-    next
+         ENDIF
+      NEXT
 
-endif
+   ENDIF
 
-if order_fields <> NIL
+   IF order_fields <> NIL
 
-    _qry += " ORDER BY "
+      _qry += " ORDER BY "
 
-    for _o := 1 to LEN( order_fields )
-        _qry += order_fields[ _o ]
-        if _o < LEN( order_fields )
+      FOR _o := 1 TO Len( order_fields )
+         _qry += order_fields[ _o ]
+         IF _o < Len( order_fields )
             _qry += ","
-        endif
-    next
+         ENDIF
+      NEXT
 
-endif
+   ENDIF
 
-_data := _sql_query( _srv, _qry )
+   _data := _sql_query( _srv, _qry )
 
-if VALTYPE( _data ) == "L" .or. _data:LastRec() == 0
-    _data := NIL
-endif
+   IF ValType( _data ) == "L" .OR. _data:LastRec() == 0
+      _data := NIL
+   ENDIF
 
-return _data
+   RETURN _data
 
 
 
@@ -784,179 +804,183 @@ return _data
 // vraca strukturu tabele sa servera
 // ... klasicno vraca matricu kao ASTRUCT()
 // -----------------------------------------------------
-function _sql_table_struct( table )
-local _struct := {}
-local _server := my_server()
-local _qry 
-local _i
-local _data
-local _field_name, _field_type, _field_len, _field_dec
-local _field_type_short
+FUNCTION _sql_table_struct( table )
 
-_qry := "SELECT column_name, data_type, character_maximum_length, numeric_precision, numeric_scale " + ;
-        " FROM information_schema.columns " + ;
-        " WHERE ( table_schema || '.' || table_name ) = " + _sql_quote( table ) + ;
-        " ORDER BY ordinal_position;"
+   LOCAL _struct := {}
+   LOCAL _server := my_server()
+   LOCAL _qry
+   LOCAL _i
+   LOCAL _data
+   LOCAL _field_name, _field_type, _field_len, _field_dec
+   LOCAL _field_type_short
 
-_data := _sql_query( _server, _qry )
-_data:refresh()
-_data:goto(1)
+   _qry := "SELECT column_name, data_type, character_maximum_length, numeric_precision, numeric_scale " + ;
+      " FROM information_schema.columns " + ;
+      " WHERE ( table_schema || '.' || table_name ) = " + _sql_quote( table ) + ;
+      " ORDER BY ordinal_position;"
 
-do while !_data:EOF()
+   _data := _sql_query( _server, _qry )
+   _data:refresh()
+   _data:goto( 1 )
 
-    oRow := _data:GetRow()
+   DO WHILE !_data:Eof()
 
-    _field_name := oRow:FieldGet( 1 )
-    _field_type := oRow:FieldGet( 2 )
+      oRow := _data:GetRow()
 
-    do case
+      _field_name := oRow:FieldGet( 1 )
+      _field_type := oRow:FieldGet( 2 )
 
-        case "character" $ _field_type
+      DO CASE
 
-            _field_type_short := "C"
-            _field_len := oRow:FieldGet( 3 )
-            _field_dec := 0
+      CASE "character" $ _field_type
 
-        case _field_type == "numeric"
+         _field_type_short := "C"
+         _field_len := oRow:FieldGet( 3 )
+         _field_dec := 0
 
-            _field_type_short := "N"
-            _field_len := oRow:FieldGet( 4 )
-            _field_dec := oRow:FieldGet( 5 )
+      CASE _field_type == "numeric"
 
-        case _field_type == "text"
+         _field_type_short := "N"
+         _field_len := oRow:FieldGet( 4 )
+         _field_dec := oRow:FieldGet( 5 )
 
-            _field_type_short := "M"
-            _field_len := 1000
-            _field_dec := 0
+      CASE _field_type == "text"
 
-        case _field_type == "date"
+         _field_type_short := "M"
+         _field_len := 1000
+         _field_dec := 0
 
-            _field_type_short := "D"
-            _field_len := 8
-            _field_dec := 0
+      CASE _field_type == "date"
 
-    endcase
+         _field_type_short := "D"
+         _field_len := 8
+         _field_dec := 0
 
-    AADD( _struct, { _field_name, _field_type_short, _field_len, _field_dec } )
+      ENDCASE
 
-    _data:Skip()
+      AAdd( _struct, { _field_name, _field_type_short, _field_len, _field_dec } )
 
-enddo
+      _data:Skip()
 
-return _struct
+   ENDDO
+
+   RETURN _struct
 
 
 
 
 // --------------------------------------------------------------------
-// sql update 
+// sql update
 // --------------------------------------------------------------------
-function sql_update_table_from_hash( table, op, hash, where_fields )
-local _qry 
-local _server := my_server()
-local _result
+FUNCTION sql_update_table_from_hash( table, op, hash, where_fields )
 
-do case
-    case op == "ins"
-        _qry := _create_insert_qry_from_hash( table, hash )
-    case op == "upd"
-        _qry := _create_update_qry_from_hash( table, hash, where_fields )
-endcase
+   LOCAL _qry
+   LOCAL _server := my_server()
+   LOCAL _result
 
-// odradi qry
-_sql_query( _server, "BEGIN;" )
+   DO CASE
+   CASE op == "ins"
+      _qry := _create_insert_qry_from_hash( table, hash )
+   CASE op == "upd"
+      _qry := _create_update_qry_from_hash( table, hash, where_fields )
+   ENDCASE
 
-// odradi upit
-_result := _sql_query( _server, _qry )
+   // odradi qry
+   _sql_query( _server, "BEGIN;" )
 
-// obradi gresku !
-if VALTYPE( _result ) == "L"
-    _sql_query( _server, "ROLLBACK;" )
-else
-    _sql_query( _server, "COMMIT;" )
-endif
+   // odradi upit
+   _result := _sql_query( _server, _qry )
 
-return _result
+   // obradi gresku !
+   IF ValType( _result ) == "L"
+      _sql_query( _server, "ROLLBACK;" )
+   ELSE
+      _sql_query( _server, "COMMIT;" )
+   ENDIF
+
+   RETURN _result
 
 
 
 // --------------------------------------------------------------------
 // kreira insert qry iz hash tabele
 // --------------------------------------------------------------------
-static function _create_insert_qry_from_hash( table, hash )
-local _qry, _key
+STATIC FUNCTION _create_insert_qry_from_hash( table, hash )
 
-_qry := "WITH tmp AS ( "
-_qry += "INSERT INTO " + table
-_qry += " ( "
+   LOCAL _qry, _key
 
-for each _key in hash:keys
-    _qry += _key + ","
-next
+   _qry := "WITH tmp AS ( "
+   _qry += "INSERT INTO " + table
+   _qry += " ( "
 
-_qry := PADR( _qry, LEN( _qry ) - 1 )
+   FOR EACH _key in hash:keys
+      _qry += _key + ","
+   NEXT
 
-_qry += " ) VALUES ( "
+   _qry := PadR( _qry, Len( _qry ) - 1 )
 
-for each _key in hash:keys
+   _qry += " ) VALUES ( "
 
-    if VALTYPE( hash[ _key ] ) == "N"
-        _qry += STR( hash[ _key ] )
-    else
-        _qry += _sql_quote( hash[ _key ] )
-    endif
+   FOR EACH _key in hash:keys
 
-    _qry += ","
+      IF ValType( hash[ _key ] ) == "N"
+         _qry += Str( hash[ _key ] )
+      ELSE
+         _qry += _sql_quote( hash[ _key ] )
+      ENDIF
 
-next
+      _qry += ","
 
-_qry := PADR( _qry, LEN( _qry ) - 1 )
+   NEXT
 
-_qry += " ) "
+   _qry := PadR( _qry, Len( _qry ) - 1 )
 
-_qry += " RETURNING "
+   _qry += " ) "
 
-for each _key in hash:keys
-    _qry += _key + ","
-next
+   _qry += " RETURNING "
 
-_qry := PADR( _qry, LEN( _qry ) - 1 )
+   FOR EACH _key in hash:keys
+      _qry += _key + ","
+   NEXT
 
-_qry += " ) "
-_qry += " SELECT * FROM tmp;"
+   _qry := PadR( _qry, Len( _qry ) - 1 )
 
-return _qry
+   _qry += " ) "
+   _qry += " SELECT * FROM tmp;"
+
+   RETURN _qry
 
 
 // ---------------------------------------------------------------
 // prebacuje record iz query-ja u hash matricu
 // ---------------------------------------------------------------
-function _sql_query_record_to_hash( query, rec_no )
-local _hash := hb_hash()
-local _i, _field, _value, _type
-local _row 
+FUNCTION _sql_query_record_to_hash( query, rec_no )
 
-if query == NIL
-    return query
-endif
+   LOCAL _hash := hb_Hash()
+   LOCAL _i, _field, _value, _type
+   LOCAL _row
 
-if rec_no == NIL
-    // default
-    rec_no := 1
-endif
+   IF query == NIL
+      RETURN query
+   ENDIF
 
-_row := query:GetRow( rec_no )
+   IF rec_no == NIL
+      // default
+      rec_no := 1
+   ENDIF
 
-for _i := 1 to _row:FCOUNT()
-    _field := _row:FieldName( _i )
-    _value := _row:FieldGet( _i )
-    if VALTYPE( _value ) $ "C#M"
-        _value := hb_utf8tostr( _value )
-    endif
-    _hash[ LOWER( _field ) ] := _value
-next
+   _row := query:GetRow( rec_no )
 
-return _hash
+   FOR _i := 1 TO _row:FCount()
+      _field := _row:FieldName( _i )
+      _value := _row:FieldGet( _i )
+      IF ValType( _value ) $ "C#M"
+         _value := hb_UTF8ToStr( _value )
+      ENDIF
+      _hash[ Lower( _field ) ] := _value
+   NEXT
+
+   RETURN _hash
 
 
 
@@ -964,155 +988,160 @@ return _hash
 // ----------------------------------------------------------------
 // iz query-ja ce sve prebaciti u hash matricu...
 // ----------------------------------------------------------------
-function _sql_query_to_table( alias, qry )
-local _row
-local _i
-local _hash
-local _field, _value
-local _count := 0
+FUNCTION _sql_query_to_table( alias, qry )
 
-SELECT ( alias )
-GO TOP
+   LOCAL _row
+   LOCAL _i
+   LOCAL _hash
+   LOCAL _field, _value
+   LOCAL _count := 0
 
-qry:Refresh()
-qry:Goto(1)
+   SELECT ( alias )
+   GO TOP
 
-do while !qry:EOF()
+   qry:Refresh()
+   qry:Goto( 1 )
 
-    APPEND BLANK
-    _hash := dbf_get_rec()
+   DO WHILE !qry:Eof()
 
-    _row := qry:GetRow()
-    _i := 1
+      APPEND BLANK
+      _hash := dbf_get_rec()
 
-    for _i := 1 to _row:FCOUNT()
-        _field := _row:FieldName( _i )
-        if hb_hhaskey( _hash, LOWER( _field ) )
-            _value := _row:FieldGet( _row:FieldPos( LOWER( _field ) ) )
-            if VALTYPE( _value ) == "C"
-                _value := hb_utf8tostr( _value )
-            endif
-            _hash[ LOWER( _field ) ] := _value 
-        endif
-    next
+      _row := qry:GetRow()
+      _i := 1
 
-    dbf_update_rec( _hash )
+      FOR _i := 1 TO _row:FCount()
+         _field := _row:FieldName( _i )
+         IF hb_HHasKey( _hash, Lower( _field ) )
+            _value := _row:FieldGet( _row:FieldPos( Lower( _field ) ) )
+            IF ValType( _value ) == "C"
+               _value := hb_UTF8ToStr( _value )
+            ENDIF
+            _hash[ Lower( _field ) ] := _value
+         ENDIF
+      NEXT
 
-    ++ _count
+      dbf_update_rec( _hash )
 
-    qry:Skip()
+      ++ _count
 
-enddo
+      qry:Skip()
 
-return _count
+   ENDDO
+
+   RETURN _count
 
 
 
 // ------------------------------------------------------------
 // vraca hash strukturu iz strukture sql tabele
 // ------------------------------------------------------------
-function _get_hash_from_sql_table( table )
-local _hash := hb_hash()
-local _struct := _sql_table_struct( table )
-local _i, _value, _type
+FUNCTION _get_hash_from_sql_table( table )
 
-for _i := 1 to LEN( _struct )
+   LOCAL _hash := hb_Hash()
+   LOCAL _struct := _sql_table_struct( table )
+   LOCAL _i, _value, _type
 
-    _type := _struct[ _i, 2 ]
-    
-    if _type $ "CM"
-        _value := ""
-    elseif _type == "D"
-        _value := CTOD("")
-    elseif _type == "N"
-        _value := 0
-    endif
+   FOR _i := 1 TO Len( _struct )
 
-    _hash[ LOWER( _struct[ _i, 1 ] ) ] := _value
+      _type := _struct[ _i, 2 ]
 
-next
+      IF _type $ "CM"
+         _value := ""
+      ELSEIF _type == "D"
+         _value := CToD( "" )
+      ELSEIF _type == "N"
+         _value := 0
+      ENDIF
 
-return _hash
+      _hash[ Lower( _struct[ _i, 1 ] ) ] := _value
+
+   NEXT
+
+   RETURN _hash
 
 
 // --------------------------------------------------------------------
 // kreira update qry iz hash tabele
 // --------------------------------------------------------------------
-static function _create_update_qry_from_hash( table, hash, where_key_fields )
-local _qry, _key 
-local _i
+STATIC FUNCTION _create_update_qry_from_hash( table, hash, where_key_fields )
 
-_qry := "WITH tmp AS ( "
+   LOCAL _qry, _key
+   LOCAL _i
 
-_qry += "UPDATE " + table
-_qry += " SET "
+   _qry := "WITH tmp AS ( "
 
-for each _key in hash:keys
-    if VALTYPE( hash[ _key ] ) == "N"
-        _qry += _key + " = " + STR( hash[ _key ] )
-    else
-        _qry += _key + " = " + _sql_quote( hash[ _key ] )
-    endif
+   _qry += "UPDATE " + table
+   _qry += " SET "
 
-    _qry += ","
-next
+   FOR EACH _key in hash:keys
+      IF ValType( hash[ _key ] ) == "N"
+         _qry += _key + " = " + Str( hash[ _key ] )
+      ELSE
+         _qry += _key + " = " + _sql_quote( hash[ _key ] )
+      ENDIF
 
-// ukini zarez
-_qry := PADR( _qry, LEN( _qry ) - 1 )
+      _qry += ","
+   NEXT
 
-_qry += " WHERE "
+   // ukini zarez
+   _qry := PadR( _qry, Len( _qry ) - 1 )
 
-for _i := 1 to LEN( where_key_fields )
-    if _i > 1
-        _qry += " AND "
-    endif
-    
-    if VALTYPE( hash[ where_key_fields[ _i ] ] ) == "N" 
-        _qry += where_key_fields[ _i ] + " = " + STR( hash[ where_key_fields[ _i ] ] )
-    else
-        _qry += where_key_fields[ _i ] + " = " + _sql_quote( hash[ where_key_fields[ _i ] ] )
-    endif
+   _qry += " WHERE "
 
-next
+   FOR _i := 1 TO Len( where_key_fields )
+      IF _i > 1
+         _qry += " AND "
+      ENDIF
 
-_qry += " RETURNING "
+      IF ValType( hash[ where_key_fields[ _i ] ] ) == "N"
+         _qry += where_key_fields[ _i ] + " = " + Str( hash[ where_key_fields[ _i ] ] )
+      ELSE
+         _qry += where_key_fields[ _i ] + " = " + _sql_quote( hash[ where_key_fields[ _i ] ] )
+      ENDIF
 
-for each _key in hash:keys
-    _qry += _key + ","
-next
+   NEXT
 
-_qry := PADR( _qry, LEN( _qry ) - 1 )
+   _qry += " RETURNING "
 
-_qry += " ) "
-_qry += " SELECT * FROM tmp;"
+   FOR EACH _key in hash:keys
+      _qry += _key + ","
+   NEXT
 
-return _qry
+   _qry := PadR( _qry, Len( _qry ) - 1 )
+
+   _qry += " ) "
+   _qry += " SELECT * FROM tmp;"
+
+   RETURN _qry
 
 
-function _set_sql_record_to_hash( table, id )
-local _hash
-if VALTYPE( id ) == "N"
-    _hash := _sql_query_record_to_hash( _select_all_from_table( table, NIL, { "id = " + ALLTRIM( STR( id ) ) } ) )
-else
-    _hash := _sql_query_record_to_hash( _select_all_from_table( table, NIL, { "id = " + _sql_quote( id ) } ) )
-endif
-return _hash
+FUNCTION _set_sql_record_to_hash( table, id )
+
+   LOCAL _hash
+
+   IF ValType( id ) == "N"
+      _hash := _sql_query_record_to_hash( _select_all_from_table( table, NIL, { "id = " + AllTrim( Str( id ) ) } ) )
+   ELSE
+      _hash := _sql_query_record_to_hash( _select_all_from_table( table, NIL, { "id = " + _sql_quote( id ) } ) )
+   ENDIF
+
+   RETURN _hash
 
 
 
 // -----------------------------------------------------------
 // -----------------------------------------------------------
-function query_row( row, field_name )
-local _ret := NIL
-local _type
+FUNCTION query_row( row, field_name )
 
-_type := row:FieldType( field_name )
-_ret := row:FieldGet( row:fieldPos( field_name ) )
+   LOCAL _ret := NIL
+   LOCAL _type
 
-if _type $ "C"
-    _ret := hb_utf8tostr( _ret )
-endif
+   _type := row:FieldType( field_name )
+   _ret := row:FieldGet( row:FieldPos( field_name ) )
 
-return _ret
+   IF _type $ "C"
+      _ret := hb_UTF8ToStr( _ret )
+   ENDIF
 
-
+   RETURN _ret

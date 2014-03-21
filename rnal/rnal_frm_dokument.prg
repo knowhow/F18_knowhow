@@ -798,9 +798,11 @@ select _doc_ops
 set order to tag "1"
 go top
 
-_doc_no := field->doc_no
+if RECCOUNT() > 0
 
-do while !EOF()
+ _doc_no := field->doc_no
+
+ do while !EOF()
     _it_no := field->doc_it_no
     select _doc_it
     set order to tag "1"
@@ -814,14 +816,18 @@ do while !EOF()
     endif   
     select _doc_ops 
     skip
-enddo
-select _doc_ops
-go top
+ enddo
+ select _doc_ops
+ go top
+
+endif
 
 // 2) provjera repromaterijala...
 select _doc_it2
 set order to tag "1"
 go top
+_doc_no := field->doc_no
+
 do while !EOF()
     _it_no := field->doc_it_no
     select _doc_it

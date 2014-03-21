@@ -75,7 +75,10 @@ if f18_odt_generate( _template )
     f18_odt_print()
 endif
 
+close all
+
 _ok := .t.
+
 return _ok
 
 
@@ -525,7 +528,7 @@ for _i := 1 to LEN( a_items )
             xml_node( "id", to_xml_encoding( ALLTRIM( field->art_id ) ) )
             xml_node( "desc", to_xml_encoding( ALLTRIM( field->art_desc ) ) )
             xml_node( "notes", to_xml_encoding( ALLTRIM( field->descr ) ) )
-            xml_node( "qtty", ALLTRIM( STR( field->doc_it_qtt, 12, 2 ) ) )
+            xml_node( "qtty", repro_qtty_str( field->doc_it_qtt, field->doc_it_q2 ) )
 
         xml_subnode( "item", .t. )
 
@@ -542,6 +545,23 @@ set order to tag "2"
 go ( _t_rec )
 
 return
+
+
+
+// ------------------------------------------------------
+// ------------------------------------------------------
+function repro_qtty_str( kol, duzina )
+local _str := ""
+
+_str := ALLTRIM( STR( kol, 12, 2 ) )
+
+// ako u polju postoji informacija onda je to sigurno unesena dužina
+if duzina > 0
+	_str += " x " + ALLTRIM( STR( duzina, 12, 2 ) ) + " (mm)"
+endif
+
+return _str
+
 
 
 // -------------------------------------------------------

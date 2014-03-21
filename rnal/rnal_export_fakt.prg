@@ -240,17 +240,20 @@ do while !EOF()
         
     nDoc_no := field->doc_no
     cArt_id := field->art_id
-    nQtty := field->doc_it_qtt
+	// vrsi se preracunavanje kolicine
+    nQtty := preracunaj_kolicinu_repromaterijala( field->doc_it_qtt, ;
+													field->doc_it_q2, ;
+													field->jmj, ;
+													field->jmj_art )
     cDesc := field->descr
 
     if lSumirati == .t.
-        
         nQtty := 0
-
         do while !EOF() .and. field->art_id == cArt_id
-            
-            nQtty += field->doc_it_qtt
-
+            nQtty += preracunaj_kolicinu_repromaterijala( field->doc_it_qtt, ;
+															field->doc_it_q2, ;
+															field->jmj, ;
+															field->jmj_art )
             skip
         enddo
     endif

@@ -111,7 +111,9 @@ AADD(aImeKol, {"Stavka", {|| doc_it_no }, "it_no" })
 AADD(aImeKol, {"R.br", {|| it_no }, "it_no" })
 AADD(aImeKol, {"Artikal", {|| art_id }, "art_id" })
 AADD(aImeKol, {"Kol.", {|| doc_it_qtt }, "doc_it_qtt" })
-AADD(aImeKol, {"Kol.2", {|| doc_it_q2 }, "doc_it_q2" })
+AADD(aImeKol, {"Duzina", {|| doc_it_q2 }, "doc_it_q2" })
+AADD(aImeKol, {"JMJ", {|| jmj }, "jmj" })
+AADD(aImeKol, {"RJM", {|| jmj_art }, "jmj_art" })
 AADD(aImeKol, {"Cijena", {|| doc_it_pri }, "doc_it_pri" })
 AADD(aImeKol, {"Opis", {|| sh_desc }, "sh_desc" })
 AADD(aImeKol, {"Napomene", {|| descr }, "descr" })
@@ -212,11 +214,13 @@ local nX := 1
 local nLeft := 21
 local cPicQtty := "999999.999"
 local cPicPrice := "999999.99"
+local __roba
 
 if l_new_it
     _doc_no := __doc
     _doc_it_no := __doc_it_no
     _it_no := inc_docit2( __doc, __doc_it_no )
+	_jmj := "KOM"
 endif
 
 nX += 2
@@ -230,21 +234,36 @@ nX += 1
 
 nX += 2
 
-@ m_x + nX, m_y + 2 SAY PADL("FMK ARTIKAL (*):", nLeft) GET _art_id ;
-    VALID {|| p_roba( @_art_id ), ;
-            _doc_it_pri := g_roba_price( _art_id ), ;
+@ m_x + nX, m_y + 2 SAY PADL("F18 ARTIKAL (*):", nLeft) GET _art_id ;
+    VALID {|| p_roba( @_art_id ), __roba := g_roba_hash( _art_id ), ;
+            _doc_it_pri := __roba["vpc"], ;
             show_it( g_roba_desc( _art_id ) + ".." , 35 ) } ;
-    WHEN set_opc_box( nBoxX, 50, "uzmi sifru iz FMK sifrarnika" )
+    WHEN set_opc_box( nBoxX, 50, "uzmi sifru iz F18/roba" )
 
 nX += 2
     
-@ m_x + nX, m_y + 2 SAY PADL("kolicina (*):", nLeft + 3) GET _doc_it_qtt ;
-    PICT cPicQtty WHEN set_opc_box( nBoxX, 50 )
+@ m_x + nX, m_y + 2 SAY PADL( "Jedinica mjere (*):", nLeft + 3 ) GET _jmj ;
+	PICT "@S3" ;
+	VALID {|| _jmj_art := UPPER( __roba["jmj"] ), !EMPTY( _jmj ) } ;
+	WHEN set_opc_box( nBoxX, 50, "Unositi komadno ili u originalnoj jmj ?" )
+
+READ
+ESC_RETURN 0
 
 nX += 1
 
-@ m_x + nX, m_y + 2 SAY PADL("kolicina 2:", nLeft + 3) GET _doc_it_q2 ;
-    PICT cPicQtty WHEN set_opc_box( nBoxX, 50, "dodatna kolicina" )
+@ m_x + nX, m_y + 2 SAY PADL("kolicina (*):", nLeft + 3) GET _doc_it_qtt ;
+    PICT cPicQtty ;
+	WHEN set_opc_box( nBoxX, 50, "koliko komada se isporučuje ?" )
+
+// provjeriti da li je jedinica mjere artikla metrička
+// ako jeste otključaj polje za unos dužine
+// u slučaju da je 
+if jmj_is_metric( _jmj_art ) .and. ( _jmj == "KOM" )
+	@ m_x + nX, col() + 1 SAY hb_utf8tostr( "dužina [mm] (*):" ) GET _doc_it_q2 ;
+    	PICT cPicQtty ;
+		WHEN set_opc_box( nBoxX, 50, "repromaterijal je metrički, unesi dužinu u mm" )
+endif
 
 nX += 1
 
@@ -264,8 +283,7 @@ nX += 1
     WHEN set_opc_box( nBoxX, 50, "dodatne napomene vezane za samu stavku")
 
 
-read
-
+READ
 ESC_RETURN 0
 
 return 1
@@ -298,9 +316,6 @@ select (nTArea)
 go (nTRec)
 
 return nRet
-
-
-
 
 
 // ----------------------------------------------
@@ -349,6 +364,16 @@ endif
 
 select (nTArea)
 return nPrice
+
+
+
+// ---------------------------------------------------------------
+// vraca hash matricu sa podacima iz tabele roba
+// ---------------------------------------------------------------
+function g_roba_hash( id_roba )
+local _hash
+_hash := _set_sql_record_to_hash( "fmk.roba", id_roba )
+return _hash
 
 
 

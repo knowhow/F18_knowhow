@@ -109,11 +109,11 @@ cTxt1 := PADR(cTxt1, nLeft)
 cTxt2 := PADR(cTxt2, nLeft)
 cTxt3 := PADR(cTxt3, nLeft)
 
-@ m_x + nX - 2 , m_y + 2 SAY cTxt1 COLOR cColor
-@ m_x + nX - 1 , m_y + 2 SAY cTxt2 COLOR cColor
+@ m_x + nX - 2 , m_y + 2 SAY hb_utf8tostr( cTxt1 ) COLOR cColor
+@ m_x + nX - 1 , m_y + 2 SAY hb_utf8tostr( cTxt2 ) COLOR cColor
 
 if !EMPTY( cTxt3 )
-	@ m_x + nX , m_y + 2 SAY cTxt3 COLOR cColor
+	@ m_x + nX , m_y + 2 SAY hb_utf8tostr( cTxt3 ) COLOR cColor
 endif
 
 return .t.

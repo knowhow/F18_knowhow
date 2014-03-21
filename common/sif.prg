@@ -320,7 +320,7 @@ if left(trim(cId), 1) == "/"
 
         cUslovSrch:=space(120)
         Beep(1)
-          @ m_x+1, m_y+2 SAY "Zelim pronaci:" GET cUslovSrch PICT "@!S40"
+          @ m_x+1, m_y+2 SAY "Želim pronaći:" GET cUslovSrch PICT "@!S40"
         read
 
         cUslovSrch := TRIM( cUslovSrch )

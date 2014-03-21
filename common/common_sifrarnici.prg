@@ -64,7 +64,7 @@ else
 	AADD(opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
 endif
 
-AADD(opc,"7. opcine")
+AADD(opc,"7. općine")
 if (ImaPravoPristupa("FMK","SIF","OPCINEOPEN"))
 	AADD(opcexe, {|| P_Ops() } )
 else
@@ -85,7 +85,7 @@ else
 	AADD(opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
 endif
 
-AADD(opc,"10. vrste placanja")  
+AADD(opc,"A. vrste plaćanja")  
 if (ImaPravoPristupa("FMK","SIF","SIFKOPEN"))
 	AADD(opcexe, {|| P_VrsteP() } )
 else

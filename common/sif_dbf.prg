@@ -93,7 +93,7 @@ endif
 
 if !EMPTY( cUslovSrch )
     // postavi filter u sifrarniku
-    SetSifFilt( cUslovSrch )  
+    set_sif_filt( cUslovSrch )  
 endif
 
 if ( fPonaz .and. ( cNazSrch == "" .or. !TRIM( cNazSrch ) == TRIM( naz ) ) ) ;
@@ -587,7 +587,7 @@ do case
 
     if !empty(cUslovSrch)
        // postavi filter u sifrarniku
-       SetSifFilt(cUslovSrch)  
+       set_sif_filt(cUslovSrch)  
     else
        set filter to
     endif
@@ -1333,12 +1333,12 @@ PopWa()
 return .t.
 
 // --------------------------------------------------------------------------------
-// SetSifFilt
+// set_sif_filt
 // postavlja _M1_ na "*" za polja kod kojih je cSearch .t.;
 //   takodje parsira ulaz (npr. RAKO, GSLO 10 20 30, GR1>55, GR2 20 $55#66#77#88 )
 // formiraj filterski uslov
 // --------------------------------------------------------------------------------
-function SetSifFilt(cSearch)
+function set_sif_filt(cSearch)
 local _i
 local n1, n2, cVarijabla, cTipVar
 local fAddNaPost := .f.
@@ -1346,6 +1346,7 @@ local fOrNaPost  := .f.
 local nCount, nCount2
 private cFilt:=".t. "
 
+altd()
 cSearch:=ALLTRIM(trim(cSearch))
 // zamjenit "NAZ $ MISHEL"  -> NAZ $MISHEL
 cSearch:=strtran(cSearch,"$ ","$")
@@ -1454,7 +1455,7 @@ endif
 go top
 // prodji kroz bazu i markiraj
 @ 25,1 SAY cFilt
-MsgO("Vrsim odabir zeljenih stavki: ....")
+MsgO("Vršim odabir željenih stavki: ....")
 nCount:=0
 nCount2:=0
 do while !eof()

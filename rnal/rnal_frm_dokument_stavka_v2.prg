@@ -240,14 +240,14 @@ nX += 2
 @ m_x + nX, m_y + 2 SAY PADL("F18 ARTIKAL (*):", nLeft) GET _art_id ;
     VALID {|| p_roba( @_art_id ), __roba := g_roba_hash( _art_id ), ;
             _doc_it_pri := __roba["vpc"], ;
-            show_it( g_roba_desc( _art_id ) + ".." , 35 ) } ;
+            show_it( g_roba_desc( _art_id ) + ".." + "[" + ALLTRIM( UPPER( __roba["jmj"] ) )+ "]" , 35 ) } ;
     WHEN set_opc_box( nBoxX, 50, "uzmi sifru iz F18/roba" )
 
 nX += 2
     
 @ m_x + nX, m_y + 2 SAY PADL( "Jedinica mjere (*):", nLeft + 3 ) GET _jmj ;
 	PICT "@!S3" ;
-	VALID {|| _jmj_art := UPPER( __roba["jmj"] ), !EMPTY( _jmj ) } ;
+	VALID {|| _jmj_art := UPPER( __roba["jmj"] ), !EMPTY( _jmj ), valid_repro_jmj( _jmj, _jmj_art ) } ;
 	WHEN set_opc_box( nBoxX, 50, "Unositi komadno ili u originalnoj jmj ?" )
 
 READ

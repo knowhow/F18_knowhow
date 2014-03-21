@@ -56,7 +56,7 @@ if jmj_is_metric( jmj_art ) .and. jmj == "KOM"
 
 		otherwise
 			// sve ostalo bi trebala biti greška
-			MsgBeep( "Ne mogu pretvoriti [mm] u [" + ALLTRIM( jmj_art ) + ")" )
+			MsgBeep( "Problem sa pretvaranjem [mm] u [" + ALLTRIM( jmj_art ) + ")" )
 			_kolicina := kolicina
 
 	endcase
@@ -88,6 +88,35 @@ else
 endif
 
 return _kolicina
+
+
+
+// --------------------------------------------------------------------
+// validacija ispravnosti unesenih parova jedinica mjere
+// --------------------------------------------------------------------
+function valid_repro_jmj( jmj, jmj_art )
+local _ok := .t.
+local _x := m_x
+local _y := m_y
+
+if jmj_is_metric( jmj ) .and. !jmj_is_metric( jmj_art )
+	// primjer: M -> KG
+	_ok := .f.
+elseif ( !jmj_is_metric( jmj ) .and. jmj <> "KOM" ) .and. jmj_is_metric( jmj_art )
+	// primjer: KG -> M
+	_ok := .f.
+elseif !jmj_is_metric( jmj ) .and. !jmj_is_metric( jmj_art ) .and. ( jmj <> jmj_art )
+	// primjer: KG -> PAK ili KOM -> KG itd...
+	_ok := .f.
+endif
+
+if !_ok
+	MsgBeep( "Ne postoji konverzija [" + ALLTRIM( jmj )  + "] u [" + ALLTRIM( jmj_art ) + "] !" )
+	m_x := _x
+	m_y := _y
+endif
+
+return _ok
 
 
 

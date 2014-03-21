@@ -63,6 +63,8 @@ endif
 
 close all
 
+sleep(1)
+
 o_tables( __temp )
 
 return DE_REFRESH
@@ -158,7 +160,7 @@ else
 endif
 
 close all
-
+sleep(1)
 o_tables( __temp )
 
 return DE_REFRESH

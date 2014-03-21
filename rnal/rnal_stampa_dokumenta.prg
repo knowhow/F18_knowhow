@@ -448,7 +448,7 @@ do while !EOF() .and. field->doc_no == __doc_no
     select ( nTable )
     
     nQtty := field->doc_it_qtt
-    
+ 
     // dimenzije stakla
     if nHeigh < field->doc_it_hei
         nHeigh := field->doc_it_hei
@@ -638,7 +638,11 @@ do while !EOF() .and. field->doc_no == __doc_no
     select ( nTable )
     
     nQtty := field->doc_it_qtt
+    nQ2 := field->doc_it_q2
     nPrice := field->doc_it_pri
+
+	cJmj := field->jmj
+	cJmjArt := field->jmj_art
 
     cDesc := ALLTRIM( field->descr )
     cSh_desc := ALLTRIM( field->sh_desc )
@@ -655,7 +659,7 @@ do while !EOF() .and. field->doc_no == __doc_no
     
     // dodaj u stavke
     a_t_docit2( __doc_no, nDoc_it_no, nIt_no, cArt_id, cArt_desc , ;
-          nQtty, nPrice, cDescription )
+          nQtty, nQ2, cJmj, cJmjArt, nPrice, cDescription )
     
     select ( nTable )
     skip

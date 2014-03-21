@@ -221,6 +221,9 @@ if l_new_it
     _doc_it_no := __doc_it_no
     _it_no := inc_docit2( __doc, __doc_it_no )
 	_jmj := "KOM"
+	_jmj_art := ""
+	_doc_it_q2 := 0
+	_doc_it_qtt := 0
 endif
 
 nX += 2

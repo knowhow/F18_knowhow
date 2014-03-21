@@ -342,6 +342,13 @@ if RECCOUNT2() <> 0 .and. params["rekap_materijala"]
             xml_node( "notes", to_xml_encoding( ALLTRIM( field->descr ) ) )
             xml_node( "qtty", ALLTRIM( STR( field->doc_it_qtt, 12, 2 ) ) )
 
+			// ako u polju postoji informacija onda je to sigurno unesena dužina
+			if field->doc_it_q2 > 0
+				xml_node( "duz", "x " + ALLTRIM( STR( field->doc_it_q2, 12, 2 ) ) + " (mm)" ) 
+			else
+				xml_node( "duz", "" )
+			endif
+
             xml_subnode( "item", .t. )
 
 		    skip

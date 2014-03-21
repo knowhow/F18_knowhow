@@ -172,9 +172,13 @@ AADD(aArr,{ "it_no"      , "N" ,   4 ,  0 })
 AADD(aArr,{ "art_id"     , "C" ,  10 ,  0 })
 AADD(aArr,{ "art_desc"   , "C" , 250 ,  0 })
 AADD(aArr,{ "doc_it_qtt" , "N" ,  15 ,  5 })
+AADD(aArr,{ "doc_it_q2"  , "N" ,  15 ,  5 })
+AADD(aArr,{ "jmj"        , "C" ,   3 ,  0 })
+AADD(aArr,{ "jmj_art"    , "C" ,   3 ,  0 })
 AADD(aArr,{ "doc_it_pri" , "N" ,  15 ,  5 })
 AADD(aArr,{ "descr"      , "C" , 200 ,  5 })
 return
+
 
 
 // setovanje polja tabele T_PARS
@@ -268,7 +272,7 @@ return xRet
 
 // dodaj stavke u tabelu T_DOCIT2
 function a_t_docit2( nDoc_no, nDoc_it_no, nIt_no, cArt_id, cArt_desc, ;
-		    nDoc_it_qtty, nDoc_it_price, ;
+		    nDoc_it_qtty, nDoc_it_q2, cJmj, cJmjArt, nDoc_it_price, ;
 		    nDescr )
 
 O_T_DOCIT2
@@ -282,6 +286,9 @@ replace it_no with nIt_no
 replace art_id with cArt_id
 replace art_desc with cArt_desc
 replace doc_it_qtt with nDoc_it_qtty
+replace doc_it_q2 with nDoc_it_q2
+replace jmj with cJmj
+replace jmj_art with cJmjArt
 replace doc_it_pri with nDoc_it_price
 replace descr with nDescr
 

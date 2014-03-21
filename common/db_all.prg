@@ -881,8 +881,6 @@ if aWa[1]<>nil
    SELECT(aWa[1])
    
 
-   //if rddName() != "SQLMIX"
-     // order
      if used()
 	   if !empty(aWa[2])
 	      ordsetfocus(aWa[2])
@@ -905,7 +903,6 @@ if aWa[1]<>nil
     go aWa[4]
    endif
    
-   //endif
 endif  // wa[1]<>NIL
 
 return nil

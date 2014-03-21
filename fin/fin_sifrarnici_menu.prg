@@ -18,7 +18,7 @@ local _opc:={}
 local _opcexe:={}
 local _izbor:=1
 
-AADD(_opc, "1. opći šifarnik                  ")
+AADD(_opc, "1. opći šifarnici                  ")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","OPCISIFOPEN"))
 	AADD(_opcexe, {|| SifFmkSvi()})
 else

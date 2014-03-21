@@ -51,7 +51,7 @@ return .t.
 
 // -------------------------------------
 // --------------------------------------
-function get_dbf_global_memvars( zn, rel )
+function get_dbf_global_memvars( zn, rel, lUtf )
 local _ime_polja, _i, _struct
 local _ret := hb_hash()
 
@@ -64,7 +64,12 @@ if rel == NIL
     rel := .t.
 endif
 
+if lUtf == NIL
+   lUtf := .f.
+endif
+
 _struct := DBSTRUCT()
+
 for _i := 1 to len(_struct)
 
     _ime_polja := _struct[_i, 1]
@@ -74,6 +79,10 @@ for _i := 1 to len(_struct)
         // punimo hash matricu sa vrijednostima public varijabli
         // _ret["idfirma"] := wIdFirma, za zn = "w"
         _ret[ LOWER(_ime_polja) ] := EVAL( MEMVARBLOCK( zn + _ime_polja) )
+        
+        IF lUtf 
+            _ret[ LOWER(_ime_polja) ] := hb_StrToUtf8 ( _ret[ LOWER(_ime_polja) ]  )
+        ENDIF
 
         if rel
             // oslobadja public ili private varijablu

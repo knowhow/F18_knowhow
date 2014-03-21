@@ -112,7 +112,7 @@ if ( fPonaz .and. ( cNazSrch == "" .or. !TRIM( cNazSrch ) == TRIM( naz ) ) ) ;
         go top
     endif
 
-    browse_tbl_2(, nVisina, nSirina,  {|| EdSif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )}, cNaslov, "", invert, _komande, 1, bPodvuci, , , aPoredak )
+    browse_table_sql(, nVisina, nSirina,  {|| ed_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )}, cNaslov, "", invert, _komande, 1, bPodvuci, , , aPoredak )
 
     IF TYPE("id") $ "U#UE"       
         cID:=(nDbf)->(FIELDGET(1))
@@ -359,7 +359,7 @@ return .t.
 
 // ------------------------------------------------------------
 // -----------------------------------------------------------
-static function EdSif(nDbf, cNaslov, bBlok, aZabrane, aZabIsp)
+static function ed_sif(nDbf, cNaslov, bBlok, aZabrane, aZabIsp)
 local i
 local j
 local imin
@@ -513,7 +513,7 @@ do case
   case Ch==K_CTRL_F6
 
     Box( , 1, 30)
-      public gIdFilter := eval(ImeKol[TB:ColPos,2])
+      public gIdFilter := EVAL(ImeKol[TB:ColPos, 2])
       @ m_x+1, m_y+2 SAY "Filter :" GET gidfilter
       read
     BoxC()
@@ -521,7 +521,7 @@ do case
     if empty(gidfilter)
       set filter to
     else
-      set filter to eval(ImeKol[TB:ColPos,2])==gidfilter
+      set filter to eval(ImeKol[TB:ColPos, 2])==gidfilter
       go top
     endif
     return DE_REFRESH
@@ -684,23 +684,18 @@ do while .t.
                     nRed := 0
                 endif
 
-                // TODO: ne prikazuj nil vrijednosti
-                //if EVAL(ImeKol[i, 2]) <> NIL .and. ToStr(EVAL(ImeKol[i,2])) <> "_?_"  
-                    if nKolona == 1
-                        ++nTekRed
-                    endif
-                    @ m_x + nTekRed, m_y + nKolona SAY PADL( ALLTRIM(ImeKol[i, 1]) ,15)
-                    @ m_x + nTekRed, col() + 1 SAY EVAL(ImeKol[i,2])
-                //else
-                //    ++nNestampati
-                //endif
+                if nKolona == 1
+                    ++nTekRed
+                 endif
+                 @ m_x + nTekRed, m_y + nKolona SAY8 PADL( ALLTRIM(ImeKol[i, 1]) ,15)
+                 @ m_x + nTekRed, col() + 1 SAY EVAL(ImeKol[i, 2])
 
             endif 
 
             i++                               
                 
             // ! sljedeci slog se stampa u istom redu
-            if ( len(imeKol) < i) .or. (nTekRed > MIN( MAXROWS() -7, nTrebaRedova) .and. !(Len(ImeKol[i] ) >= 10 .and. imekol[i, 10] <> NIL)  )
+            if ( len(ImeKol) < i) .or. (nTekRed > MIN( MAXROWS() -7, nTrebaRedova) .and. !(Len(ImeKol[i] ) >= 10 .and. imekol[i, 10] <> NIL)  )
                     // izadji dosao sam do zadnjeg reda boxa, ili do kraja imekol
                 exit 
             endif
@@ -730,12 +725,11 @@ do while .t.
     else
 
         // ovo vazi samo za CTRL + A opciju !!!!!
-
         if LastKey() == K_ESC
             exit
         endif
              
-        _vars := get_dbf_global_memvars("w")
+        _vars := get_dbf_global_memvars( "w", NIL, .T. )
         
         _alias := LOWER(ALIAS())        
 
@@ -805,16 +799,10 @@ if lNovi
 
 endif
 
-//
-// uzmi mi varijable sa unosne maske
-//
+// uzmi varijable sa forme za unos
+_vars := get_dbf_global_memvars( "w", NIL, .T. )
 
-_vars := get_dbf_global_memvars("w")
-
-//
 // lokuj tabele i napravi update zapisa....
-//
-
 if f18_lock_tables( { LOWER( ALIAS() ), "sifv", "sifk" } )
 
     sql_table_update( nil, "BEGIN" )
@@ -856,7 +844,8 @@ endif
     
 return 1
 
-
+// ----------------------------------------------------
+// ----------------------------------------------------
 static function set_w_var(ImeKol, _i, show_grup)
 local _tmp, _var_name
 
@@ -975,6 +964,7 @@ endif
 
 @ m_x + nTekRed , m_y + nKolona SAY  IIF(nKolona > 1, "  " + ALLTRIM(ImeKol[i, 1]) , PADL( ALLTRIM(ImeKol[i, 1]) , 15))  + " "
 
+// SQL moze vratiti nil vrijednosti
 if &var_name == NIL
     tmpRec = RECNO()
     GO BOTTOM
@@ -982,6 +972,10 @@ if &var_name == NIL
     // EOF record
     &var_name := EVAL(ImeKol[i, 2])
     go tmpRec
+endif
+
+if VALTYPE(&var_name) == "C"
+   &var_name = hb_Utf8ToStr( &var_name )
 endif
 
 AAdd( GetList, _GET_( &var_name, var_name,  cPic, _valid_block, _when_block) ) ;;

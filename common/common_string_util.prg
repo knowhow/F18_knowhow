@@ -57,12 +57,20 @@ do case
   case _val_t  == "D"
      return(DTOC(xVal))
   case _val_t  == "L"
-     return(iif(xVal,".t.",".f."))
+     return(iif(xVal, ".t." , ".f." ))
   case _val_t  == "N"
      return(STR(xVal))
   otherwise
      return "_?_"
 endcase
+
+// ----------------------------
+// view UTF-8 string na ekranu
+// ----------------------------
+function ToStrU( val )
+
+return hb_Utf8ToStr( ToStr( val ) )
+
 
 // --------------------------------
 // --------------------------------

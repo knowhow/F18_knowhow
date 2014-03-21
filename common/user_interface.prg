@@ -1,13 +1,14 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
+
 
 #include "fmk.ch"
 #include "f18_ver.ch"
@@ -41,16 +42,16 @@ NaslEkran( clear )
 return
 
 
-/*! \fn Menu(MenuId,Items,ItemNo,Inv)
+/*  Menu(MenuId,Items,ItemNo,Inv)
  *
- *  \brief Prikazuje zadati meni, vraca odabranu opciju
+ *  Prikazuje zadati meni, vraca odabranu opciju
  *
- *  \param MenuId  - identifikacija menija     C
- *  \param Items   - niz opcija za izbor       C[]
- *  \param ItemNo  - Broj pocetne pozicije     N
- *  \param Inv     - da li je meni invertovan  L
+ *  MenuId  - identifikacija menija     C
+ *  Items   - niz opcija za izbor       {}
+ *  ItemNo  - Broj pocetne pozicije     N
+ *  Inv     - da li je meni invertovan  L
  *
- *  \result Broj izabrane opcije, 0 kraj
+ *  Broj izabrane opcije, 0 kraj
  *
  */
 
@@ -90,7 +91,7 @@ if Inv==NIL
     Inv:=.f.
 endif
 
-LocalC  :=  IIF(Inv,Invert,Normal)
+LocalC  := IIF(Inv,Invert,Normal)
 LocalIC := IIF(Inv,Normal,Invert)
 
 
@@ -114,11 +115,12 @@ IF Len(aMenuStack)==0 .or. (Len(aMenuStack)<>0 .and. MenuId<>(StackTop(aMenuStac
                         cHelpT;
    })
 
-//  Ako se meni ne zove prvi put, uzmi koordinate sa steka
 ELSE
-  aMenu:=StackTop(aMenuStack)
-  m_x:=aMenu[2]
-  m_y:=aMenu[3]
+     //  Ako se meni ne zove prvi put, uzmi koordinate sa steka
+     aMenu:=StackTop(aMenuStack)
+     m_x:=aMenu[2]
+     m_y:=aMenu[3]
+
 END IF
 
 @ m_x,m_y CLEAR TO m_x+N+1,m_y+Length+3 
@@ -135,11 +137,10 @@ ELSE
 ENDIF
 
 SetColor(Invert)
-IF ItemNo<>0
-  // CentrTxt(h[ItemNo],24)
-ELSE
+IF ItemNo == 0
   CentrTxt(h[1], MAXROWS()-1)
 END IF
+
 SetColor(LocalC)
 IF LEN(Items) > nMaxVR
  ItemNo:=AChoice3(m_x+1, m_y+2, m_x+N+1, m_y+Length+1, Items, .t., "MenuFunc", RetItem(ItemNo), RetItem(ItemNo)-1)
@@ -149,20 +150,19 @@ ENDIF
 
 nTItemNo := RetItem(ItemNo)
 
-aMenu:=StackTop(aMenuStack)
+aMenu := StackTop(aMenuStack)
 m_x:=aMenu[2]
 m_y:=aMenu[3]
 aMenu[5]:=nTItemNo
 
-@ m_x,m_y TO m_x+N+1,m_y+Length+3
-//StackPop(aWhereStack)
+@ m_x,m_y TO m_x+N+1, m_y+Length+3
 
 //
 //  Ako nije pritisnuto ESC, <-, ->, oznaci izabranu opciju
 //
 IF nTItemNo<>0
   SetColor(LocalIC)
-  @ m_x + MIN(nTItemNo, nMaxVR), m_y + 1 SAY " " + Items[nTItemNo] + " "
+  @ m_x + MIN(nTItemNo, nMaxVR), m_y + 1 SAY8 " " + Items[nTItemNo] + " "
   @ m_x + MIN(nTItemNo, nMaxVR), m_y + 2 SAY ""
 END IF
 
@@ -171,7 +171,7 @@ Ch:=LastKey()
 //  Ako je ESC meni treba odmah izbrisati (ItemNo=0),
 //  skini meni sa steka
 IF Ch==K_ESC .or. nTItemNo==0 .or. nTItemNo==nPovratak
-  @ m_x,m_y CLEAR TO m_x+N+2-IF(lFK,1,0),m_y+Length+4-IF(lFK,1,0)
+  @ m_x,m_y CLEAR TO m_x+N+2-IF(lFK,1, 0), m_y+Length + 4 - IIF(lFK,1,0)
   aMenu:=StackPop(aMenuStack)
   RestScreen(m_x, m_y, m_x + N + 2 -IIF(lFK, 1, 0), m_y + Length + 4 - IIF(lFK, 1, 0), aMenu[4])
 END IF
@@ -477,7 +477,7 @@ if Inv==NIL
  Inv:=.f.
 endif
 
-LocalC: = IIF(Inv,Invert,Normal)
+LocalC := IIF (Inv, Invert, Normal)
 
 SetColor(LocalC)
 
@@ -494,7 +494,6 @@ return
 
 
 function BoxC()
-
 
 local aBoxPar[11], cPom
 
@@ -549,18 +548,17 @@ function OpcTipke(aNiz)
 LOCAL i:=0, j:=0, k:=0, nOmax:=0
 local nBrKol, nOduz, nBrRed, xVrati := ""
 
-IF VALTYPE(aNiz)=="A"
+IF VALTYPE(aNiz) == "A"
+
     AEVAL(aNiz, {|x| IF(LEN(x) > nOmax, nOmax:=LEN(x),) } )
 
     nBrKol:=INT( MAXCOLS() / (nOmax+1) )
-
     nBrRed := INT(LEN(aNiz)/nBrKol) + IIF(MOD(LEN(aNiz),nBrKol)!=0, 1, 0)
-
     nOduz := IIF(nOmax<10, 10, IF(nOmax < 16, 16, IIF(nOmax < 20, 20, IIF(nOmax < 27, 27, 40))))
 
     Prozor1(MAXROWS() - 3 - nBrRed, 0,  MAXROWS() - 2, MAXCOLS() ,,, SPACE(9), , "W/N")
 
-    FOR i:=1 TO nBrRed * nBrKol
+    FOR i := 1 TO nBrRed * nBrKol
 
         IF( MOD(i-1, nBrKol)==0 , EVAL({|| ++j, k:=0})  , k+=nOduz )
 
@@ -572,6 +570,7 @@ IF VALTYPE(aNiz)=="A"
             aNiz[i] := ""
         ENDIF
         @ MAXROWS() - 3 - nBrRed + j , k SAY PADR(aNiz[i], nOduz-1) + IIF(MOD(i-1, nBrKol)==nBrKol-1, "", BROWSE_COL_SEP)
+    
     NEXT
     
     FOR i:=1 TO nBrKol
@@ -580,6 +579,7 @@ IF VALTYPE(aNiz)=="A"
 
     xVrati := nBrRed + 1
 ENDIF
+
 return xVrati
 
 
@@ -645,7 +645,7 @@ endif
 
 fExit:=.f.
 
-nOldCurs:=if(setcursor()==0,0,iif(readinsert(),2,1))
+nOldCurs:= iif(setcursor()==0,0,iif(readinsert(),2,1))
 cOldColor:=setcolor()
 set cursor off
 
@@ -664,23 +664,24 @@ for i:=1 to nLen
     else
         setcolor(cOldColor)
     endif
-    @ x1+i-1,y1 SAY PADR(Items[i],nWidth)
+    @ x1 + i-1, y1 SAY8 PADR(Items[i],nWidth)
 next
 
 fFirst:=.t.
 
 do while .t.
+
     SetColor(Invert)
     SetColor(cOldColor)
     if !fFirst
         setcolor(cOldColor)
-        @ x1+nOldItemNo-1,y1 SAY PADR(Items[nOldItemNo],nWidth)
-        if left(cOldColor,3)==left(Normal,3)
+        @ x1+nOldItemNo-1,y1 SAY8 PADR(Items[nOldItemNo],nWidth)
+        if left(cOldColor,3) == left(Normal,3)
             setcolor(Invert)
         else
             setcolor(Normal)
         endif
-        @ x1+nItemNo-1,y1 SAY PADR(Items[nItemNo],nWidth)
+        @ x1 + nItemNo-1, y1 SAY8 PADR(Items[nItemNo],nWidth)
     endif
     fFirst:=.f.
 
@@ -788,17 +789,18 @@ nGornja:=IF(nItemNo>nVisina,nItemNo-nVisina+1,1)
 
 do while .t. // ovu liniju sam premjestio odozdo radi korektnog ispisa
 
-IF nVisina<nLen
- @   x2,y1+INT((y2-y1)/2) SAY IIF(nGornja==1,"  ",IF(nItemNo==nLen,"ÍÍÍ","  "))
- @   x1-1,y1+INT((y2-y1)/2) SAY IIF(nGornja==1,"ÍÍÍ",IF(nItemNo==nLen,"  ","  "))
+IF nVisina < nLen
+ @   x2,y1 + INT((y2-y1)/2) SAY IIF(nGornja==1," ^ ", IIF(nItemNo==nLen," v "," v "))
+ @   x1-1, y1 + INT((y2-y1)/2) SAY IIF(nGornja==1," v ", IIF(nItemNo==nLen," ^ "," ^ "))
 ENDIF
+
 for i:=nGornja to nVisina+nGornja-1
  if i==nItemNo
    if left(cOldColor,3)==left(Normal,3);  setcolor(Invert); else; setcolor(Normal); endif
  else
    setcolor(cOldColor)
  endif
- @ x1+i-nGornja,y1 SAY PADR(Items[i],nWidth)
+ @ x1+i-nGornja,y1 SAY8 PADR(Items[i],nWidth)
 next
 
 
@@ -867,22 +869,6 @@ LOCAL xM:=0,yM:=0
  xM:=LEN(aNiz); AEVAL(aNiz,{|x| IF(LEN(x)>yM,yM:=LEN(x),)})
  Prozor1(x1,y1,x1+xM+1,y1+yM+1,,,,,,0)
  nIzb:=ACHOICE2(x1+1, y1+1, x1+xM, y1+yM, aNiz,, "KorMenu2", nIzb)
- Prozor0()
-return nIzb
-
-function Menu3(x1,y1,aNiz,nIzb,cNasl)
-
-LOCAL xM:=0,yM:=0
- xM:=LEN(aNiz); AEVAL(aNiz,{|x| x:=" "+x+" ",IF(LEN(x)>yM,yM:=LEN(x),)})
- h:=ARRAY(LEN(aNiz))
- AFILL(h,"")
- Prozor1(x1,y1,x1+xM+2,y1+yM+1,cNasl,,B_DOUBLE+" ",,,0)
- @ x1+1,y1 SAY "Ì"+REPLICATE("Í",yM)+"¹"
- IF LEN(aNiz)>16
-  nIzb:=ACHOICE3(x1+2,y1+1,x1+xM+2,y1+yM,aNiz,,"KorMenu2",nIzb)
- ELSE
-  nIzb:=ACHOICE2(x1+2,y1+1,x1+xM+2,y1+yM,aNiz,,"KorMenu2",nIzb)
- ENDIF
  Prozor0()
 return nIzb
 
@@ -1348,7 +1334,7 @@ SET DEVICE TO SCREEN
     ENDIF
 
     pom1:=aNiz[i,1]; pom4:=aNiz[i,4]; pom5:=aNiz[i,5]
-    @ x1+1+i,y1+2 SAY PADR(pom1,y2-y1-4-IF("S" $ pom4,DuzMaske(pom4), IF(EMPTY(pom4),LENx(&(cPom)),LEN(TRANSFORM(&cPom,pom4)))),".") GET &cPom WHEN &pom5 VALID &pom3 PICT pom4
+    @ x1+1+i,y1+2 SAY8 PADR(pom1,y2-y1-4-IF("S" $ pom4,DuzMaske(pom4), IF(EMPTY(pom4),LENx(&(cPom)),LEN(TRANSFORM(&cPom,pom4)))),".") GET &cPom WHEN &pom5 VALID &pom3 PICT pom4
    NEXT
    PRIVATE MGetList:=GetList
    READ
@@ -1433,6 +1419,9 @@ return fret
 
 
 
+//#define BOX_CHAR_BACKGROUND Chr( 176 )
+#define BOX_CHAR_BACKGROUND Chr( 177 )
+#define BOX_CHAR_BACKGROUND_HEAD " "
 
 // -------------------------------------------
 // -------------------------------------------
@@ -1448,10 +1437,10 @@ endif
 @ 0, COL() + 2 SAY DATE() COLOR INVERT
 @ _max_rows - 1, _max_cols - 16  SAY fmklibver()
 
-DISPBox( 2, 0, 4, _max_cols - 1, B_DOUBLE + ' ' , NORMAL )
+DISPBox( 2, 0, 4, _max_cols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND_HEAD , NORMAL )
 
 if fBox
-    DISPBox( 5 ,0, _max_rows - 1, _max_cols - 1, B_DOUBLE + "±", INVERT )
+    DISPBox( 5 ,0, _max_rows - 1, _max_cols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND, INVERT )
 endif
 
 @ 3, 1 SAY PADC( gNaslov, _max_cols - 8 ) COLOR NORMAL

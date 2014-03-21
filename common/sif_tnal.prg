@@ -27,8 +27,8 @@ nTArea := SELECT()
 
 O_TNAL
 
-AADD(ImeKol, { "ID", { || id }, "id", {|| .t.}, {|| sifra_postoji(wId)} })
-AADD(ImeKol, { "Naziv", {|| PADR(ToStr(naz), 30) }, "naz" })
+AADD(ImeKol, { "ID", { || field->id }, "id", {|| .t.}, {|| sifra_postoji(wId)} })
+AADD(ImeKol, { "Naziv", {|| PADR(ToStrU(field->naz), 30) }, "naz" })
 
 for i := 1 to LEN(ImeKol)
 	AADD(Kol, i)

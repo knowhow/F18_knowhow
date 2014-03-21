@@ -52,6 +52,7 @@ FUNCTION sql_table_update( table, op, record, where_str, silent )
    LOCAL _len
    LOCAL _a_dbf_rec, _alg
    LOCAL _dbf_fields, _sql_fields, _sql_order, _dbf_wa, _dbf_alias, _sql_tbl
+   LOCAL _sql_dbf := .F.
 
    IF silent == NIL
       silent := .F.
@@ -61,6 +62,11 @@ FUNCTION sql_table_update( table, op, record, where_str, silent )
 
       IF table == NIL
          table := Alias()
+      ENDIF
+
+      IF rddName() == "SQLMIX"
+           // u sql tabeli su utf enkodirani stringovi
+           _sql_dbf := .T.
       ENDIF
 
       _a_dbf_rec := get_a_dbf_rec( table )
@@ -102,7 +108,6 @@ FUNCTION sql_table_update( table, op, record, where_str, silent )
    CASE op == "del"
 
       IF ( where_str == NIL ) .AND. ( record == NIL .OR. ( record[ "id" ] == NIL ) )
-         // brisi kompletnu tabel
          _msg := RECI_GDJE_SAM + " nedozvoljeno stanje, postavit eksplicitno where na 'true' !!"
          Alert( _msg )
          log_write( _msg, 2, silent )
@@ -116,7 +121,6 @@ FUNCTION sql_table_update( table, op, record, where_str, silent )
 
       FOR _i := 1 TO Len( _a_dbf_rec[ "dbf_fields" ] )
 
-         // polje je u blacklisti ?
          IF field_in_blacklist( _a_dbf_rec[ "dbf_fields" ][ _i ], _a_dbf_rec[ "blacklisted" ] )
             LOOP
          ENDIF
@@ -135,7 +139,6 @@ FUNCTION sql_table_update( table, op, record, where_str, silent )
 
          _tmp := _a_dbf_rec[ "dbf_fields" ][ _i ]
 
-         // polje je u blacklisti ?
          IF field_in_blacklist( _tmp, _a_dbf_rec[ "blacklisted" ] )
             LOOP
          ENDIF
@@ -161,7 +164,12 @@ FUNCTION sql_table_update( table, op, record, where_str, silent )
                _qry += _tmp_2
             ENDIF
          ELSE
-            _qry += _sql_quote( record[ _tmp ] )
+            IF _sql_dbf
+                // sql tabela sadrzi utf-8 enkodirane podatke
+                _qry += _sql_quote_u( record[ _tmp ] )
+            ELSE
+                _qry += _sql_quote( record[ _tmp ] )
+            ENDIF
          ENDIF
 
          IF _i < Len( _a_dbf_rec[ "dbf_fields" ] )
@@ -349,6 +357,23 @@ FUNCTION _sql_quote( xVar )
       ENDIF
    ELSE
       cOut := "NULL"
+   ENDIF
+
+   RETURN cOut
+
+
+// ------------------------------
+// xVar je vec UTF-8 enkodiran
+// ------------------------------
+FUNCTION _sql_quote_u( xVar )
+
+   LOCAL cOut
+
+   IF ValType( xVar ) == "C"
+      cOut := StrTran( xVar, "'", "''" )
+      cOut := "'" + cOut + "'"
+   ELSE
+      cOut := _sql_quote( xVar )
    ENDIF
 
    RETURN cOut

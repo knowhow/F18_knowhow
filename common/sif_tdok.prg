@@ -24,8 +24,8 @@ Kol := {}
 nTArea := SELECT()
 O_TDOK
 
-AADD(ImeKol, { "ID",    {|| id}, "id", {|| .t.}, {|| vpsifra(wId)} })
-AADD(ImeKol, { "Naziv", {|| naz}, "naz" })
+AADD(ImeKol, { "ID",    {|| field->id }, "id", {|| .t.}, {|| vpsifra(wId)} })
+AADD(ImeKol, { "Naziv", {|| PADR( ToStrU( field->naz ), 35 ) }, "naz" })
 
 for i := 1 to LEN(ImeKol)
 	AADD(Kol, i)

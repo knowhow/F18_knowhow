@@ -42,7 +42,7 @@
 */
 
 
-function browse_tbl_2(cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipblock)
+function browse_table_sql(cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipblock)
 local _params := hb_hash()
 local nBroji2
 local cSmj, nRez, i, K, aUF, cPomDB, nTTrec
@@ -118,7 +118,7 @@ _params["prazno"]        := nPrazno
 _params["gprazno"]       := nGPrazno
 _params["podvuci_b"]     := bPodvuci
 
-NeTBDirektni(_params, .t.)
+browse_only(_params, .t.)
 
 DO WHILE .T.
 
@@ -191,7 +191,7 @@ DO WHILE .T.
         TB:PageDown()
 
      otherwise
-       StandTBKomande( Tb, Ch, @nRez, nPored, aPoredak )
+       standardne_browse_komande( Tb, Ch, @nRez, nPored, aPoredak )
 
    endcase
 
@@ -223,11 +223,10 @@ ENDDO
 
 return
 
-
 // -------------------------------------------------------
 //
 // -------------------------------------------------------
-static function NeTBDirektni(params, lIzOBJDB)
+static function browse_only(params, lIzOBJDB)
 LOCAL i, j, k
 local _rows, _width
 
@@ -319,7 +318,7 @@ RETURN
 
 //-----------------------------------------------------
 //-----------------------------------------------------
-static function StandTBKomande( TB, Ch, nRez, nPored, aPoredak )
+static function standardne_browse_komande( TB, Ch, nRez, nPored, aPoredak )
 local _tr := hb_Utf8ToStr("Traži:"), _zam := "Zamijeni sa:" 
 local _last_srch := "N"
 local _has_semaphore := .f.
@@ -332,7 +331,7 @@ local _rec, _saved
 
 DO CASE
 
-	CASE Ch == K_SH_F1
+    CASE Ch == K_SH_F1
 		calc()
 
     CASE (Ch==K_F3)
@@ -390,7 +389,7 @@ DO CASE
 	// trazi-zamjeni opcija nad string, datum poljima
 	CASE Ch == K_ALT_R
 
-    	IF ( gReadOnly .or. !ImaPravoPristupa(goModul:oDatabase:cName,"CUI","STANDTBKOMANDE-ALTR_ALTS") )
+    	IF ( gReadOnly .or. !ImaPravoPristupa(goModul:oDatabase:cName, "CUI", "STANDTBKOMANDE-ALTR_ALTS") )
     		Msg("Nemate pravo na koristenje ove opcije",15)
     	ELSE
 		
@@ -712,9 +711,9 @@ SetKey( K_INS, {|| InsToggle()} )
 col := TB:getColumn(TB:colPos)
 
 IF LEN(ImeKol[TB:colpos])>4 // ima validaciju
-  EditPolja(ROW(),COL(),EVAL(col:block),ImeKol[TB:ColPos,3],ImeKol[TB:ColPos,4],ImeKol[TB:ColPos,5],TB:colorSpec)
+  EditPolja(ROW(),COL(),EVAL(col:block), ImeKol[TB:ColPos,3],ImeKol[TB:ColPos,4],ImeKol[TB:ColPos,5],TB:colorSpec)
 ELSEIF LEN(ImeKol[TB:colpos])>2  // nema validaciju
-  EditPolja(ROW(),COL(),EVAL(col:block),ImeKol[TB:ColPos,3],{|| .t.},{|| .t.},TB:colorSpec)
+  EditPolja(ROW(),COL(),EVAL(col:block), ImeKol[TB:ColPos,3],{|| .t.},{|| .t.},TB:colorSpec)
 ENDIF
 
 // Restore state

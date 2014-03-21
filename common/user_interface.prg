@@ -30,7 +30,7 @@ public gModul   := "F18"
 public gVerzija := F18_VER
 
 public Invert   := .t.
-public Normal   :="GR+/B,R/N+,,,N/W"
+public Normal   := "GR+/B,R/N+,,,N/W"
 
 if clear == NIL
     clear := .t.
@@ -326,7 +326,7 @@ SET(_SET_DEVICE,cPom)
 
 return
 
-function MsgO(cText, sec)
+function MsgO(cText, sec, lUtf)
 
 local nLen
 local msg_x1
@@ -335,13 +335,21 @@ local msg_y1
 local msg_y2
 local cPom
 
-cPom:=SET(_SET_DEVICE)
+if lUtf == NIL
+   lUtf := .t.
+endif
+
+cPom := SET(_SET_DEVICE)
 if gAppSrv
     ? text
     return
 endif
 
 SET DEVICE TO SCREEN
+
+if lUtf
+ cText := hb_Utf8ToStr( cText )
+endif
 
 nLen := Len(cText)
 
@@ -353,7 +361,7 @@ msg_y2:= MAXCOLS() - msg_y1
 
 
 StackPush( aMsgStack, ;
-         {if(setcursor()==0, 0, iif(readinsert(),2,1)), setcolor(Invert), nLen, ;
+         { iif(setcursor()==0, 0, iif(readinsert(),2,1)), setcolor(Invert), nLen, ;
           SaveScreen(msg_x1, msg_y1, msg_x2, msg_y2) })
 
 @ msg_x1, msg_y1 CLEAR TO msg_x2, msg_y2
@@ -425,7 +433,7 @@ Calc_xy(@_m_x, @_m_y, @_n, Length)
 
 
 // stvori prostor za prikaz
-IF VALTYPE(chMsg)=="A"
+IF VALTYPE(chMsg)== "A"
 
   BoxId := OpcTipke(chMsg)
 
@@ -469,7 +477,7 @@ if Inv==NIL
  Inv:=.f.
 endif
 
-LocalC:=IIF(Inv,Invert,Normal)
+LocalC: = IIF(Inv,Invert,Normal)
 
 SetColor(LocalC)
 
@@ -506,7 +514,7 @@ Length:=aBoxPar[4]
 
 
 SCROLL(m_x,m_y,m_x+N+1,m_y+Length+2)
-RestScreen(m_x,m_y,m_x+N+1,m_y+Length+2,aBoxPar[5])
+RestScreen( m_x, m_y, m_x+N+1, m_y+Length+2, aBoxPar[5] )
 
 @ AboxPar[7],aBoxPar[8] SAY ""
 
@@ -567,7 +575,6 @@ IF VALTYPE(aNiz)=="A"
     NEXT
     
     FOR i:=1 TO nBrKol
-        // @ MAXROWS() - 3 - nBrRed,(i-1) * nOduz SAY REPLICATE(BROWSE_ROW_SEP, nOduz - IIF(i==nBrKol, 0, 1)) + IIF( i == nBrKol,"", "Ñ")
         @ MAXROWS() - 3 - nBrRed,(i-1) * nOduz SAY REPLICATE(BROWSE_PODVUCI_2, nOduz - IIF(i==nBrKol, 0, 1)) + IIF( i == nBrKol,"", BROWSE_COL_SEP)
     NEXT
 
@@ -782,8 +789,8 @@ nGornja:=IF(nItemNo>nVisina,nItemNo-nVisina+1,1)
 do while .t. // ovu liniju sam premjestio odozdo radi korektnog ispisa
 
 IF nVisina<nLen
- @   x2,y1+INT((y2-y1)/2) SAY IF(nGornja==1,"  ",IF(nItemNo==nLen,"ÍÍÍ","  "))
- @ x1-1,y1+INT((y2-y1)/2) SAY IF(nGornja==1,"ÍÍÍ",IF(nItemNo==nLen,"  ","  "))
+ @   x2,y1+INT((y2-y1)/2) SAY IIF(nGornja==1,"  ",IF(nItemNo==nLen,"ÃÃÃ","  "))
+ @   x1-1,y1+INT((y2-y1)/2) SAY IIF(nGornja==1,"ÃÃÃ",IF(nItemNo==nLen,"  ","  "))
 ENDIF
 for i:=nGornja to nVisina+nGornja-1
  if i==nItemNo
@@ -870,7 +877,7 @@ LOCAL xM:=0,yM:=0
  h:=ARRAY(LEN(aNiz))
  AFILL(h,"")
  Prozor1(x1,y1,x1+xM+2,y1+yM+1,cNasl,,B_DOUBLE+" ",,,0)
- @ x1+1,y1 SAY "Ì"+REPLICATE("Í",yM)+"¹"
+ @ x1+1,y1 SAY "ÃŒ"+REPLICATE("Ã",yM)+"Â¹"
  IF LEN(aNiz)>16
   nIzb:=ACHOICE3(x1+2,y1+1,x1+xM+2,y1+yM,aNiz,,"KorMenu2",nIzb)
  ELSE
@@ -977,13 +984,13 @@ function Postotak(nIndik,nUkupno,cTekst,cBNasl,cBOkv,lZvuk)
       nCilj:=nUkupno
       cKraj:=cTekst+" zavrseno."
       Prozor1(10, 13, 14, 66, cTekst+" u toku...",cNas,,cOkv,"B/W",0)
-      @ 12,15 SAY REPLICATE("°",50) COLOR "B/W"
+      @ 12,15 SAY REPLICATE("Â°",50) COLOR "B/W"
       IF lZvuk
           TONE(1900,0)
       ENDIF
     CASE nIndik==2
       nKara=INT(50*nUkupno/nCilj)
-      @ 12,15 SAY REPLICATE("²", nKara) COLOR "B/BG"
+      @ 12,15 SAY REPLICATE("Â²", nKara) COLOR "B/BG"
       @ 13,37 SAY STR(2 * nKara, 3)+" %" COLOR "B/W"
     CASE nIndik<=0
       @ 10,(MAXCOLS() - 2 - LEN(cKraj))/2 SAY " "+cKraj+" " COLOR cNas
@@ -1070,7 +1077,7 @@ LOCAL nVrati:=1,nTipka,i:=0,nOpc:=LEN(aOpc),nRedova:=1,p:=0
   NEXT
   nRedova:=INT((nOpc-1)/3+1)
   nXp:=INT((MAXROWS()-nRedova*4-2)/2)+2
-  Prozor1(nXp-2,4,nXp+1+4*nRedova,75,,"N/W","²ß²²²Ü²² ","N/W","W/W",0)
+  Prozor1(nXp-2,4,nXp+1+4*nRedova,75,,"N/W","Â²ÃŸÂ²Â²Â²ÃœÂ²Â² ","N/W","W/W",0)
   @ nXp-1, 5 SAY PADC(cTekst,70) COLOR "N/W"
   DO WHILE .t.
     FOR j=1 TO nRedova
@@ -1198,8 +1205,8 @@ function KonvZnakova(cTekst)
 
 
  // jedan par: { 7-bit znak, 852 znak }
- LOCAL aNiz:={  {"[","æ"}, {"{","ç"}, {"}","†"}, {"]",""}, {"^","¬"},;
-                {"~","Ÿ"}, {"`","§"}, {"@","¦"}, {"|","Ð"}, {"\","Ñ"}  }
+ LOCAL aNiz:={  {"[","Ã¦"}, {"{","Ã§"}, {"}","Â†"}, {"]","Â"}, {"^","Â¬"},;
+                {"~","ÂŸ"}, {"`","Â§"}, {"@","Â¦"}, {"|","Ã"}, {"\","Ã‘"}  }
  LOCAL i,j
  IF "U" $ TYPE("g852"); g852:="D"; ENDIF
  IF g852=="D"
@@ -1444,7 +1451,7 @@ endif
 DISPBox( 2, 0, 4, _max_cols - 1, B_DOUBLE + ' ' , NORMAL )
 
 if fBox
-    DISPBox( 5 ,0, _max_rows - 1, _max_cols - 1, B_DOUBLE + "±", INVERT )
+    DISPBox( 5 ,0, _max_rows - 1, _max_cols - 1, B_DOUBLE + "Â±", INVERT )
 endif
 
 @ 3, 1 SAY PADC( gNaslov, _max_cols - 8 ) COLOR NORMAL

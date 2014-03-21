@@ -93,7 +93,7 @@ endif
 
 if !EMPTY( cUslovSrch )
     // postavi filter u sifrarniku
-    set_sif_filt( cUslovSrch )  
+    SetSifFilt( cUslovSrch )  
 endif
 
 if ( fPonaz .and. ( cNazSrch == "" .or. !TRIM( cNazSrch ) == TRIM( naz ) ) ) ;
@@ -587,7 +587,7 @@ do case
 
     if !empty(cUslovSrch)
        // postavi filter u sifrarniku
-       set_sif_filt(cUslovSrch)  
+       SetSifFilt(cUslovSrch)  
     else
        set filter to
     endif
@@ -1333,12 +1333,12 @@ PopWa()
 return .t.
 
 // --------------------------------------------------------------------------------
-// set_sif_filt
+// SetSifFilt
 // postavlja _M1_ na "*" za polja kod kojih je cSearch .t.;
 //   takodje parsira ulaz (npr. RAKO, GSLO 10 20 30, GR1>55, GR2 20 $55#66#77#88 )
 // formiraj filterski uslov
 // --------------------------------------------------------------------------------
-function set_sif_filt(cSearch)
+function SetSifFilt(cSearch)
 local _i
 local n1, n2, cVarijabla, cTipVar
 local fAddNaPost := .f.

@@ -319,16 +319,7 @@ if left(trim(cId), 1) == "/"
     Box(, 1, 60)
 
         cUslovSrch:=space(120)
-        Beep(1)
-          @ m_x+1, m_y+2 SAY "Želim pronaći:" GET cUslovSrch PICT "@!S40"
-        read
-
-        cUslovSrch := TRIM( cUslovSrch )
-
-        if RIGHT( cUslovSrch, 1 ) == "*"
-            cUslovSrch := LEFT( cUslovSrch , len(cUslovSrch) - 1 )
-        endif
-
+        zelim_pronaci( cUslovSrch )
     BoxC()
 
 elseif left(TRIM(cId), 1) == "."
@@ -479,12 +470,8 @@ do case
 
     Box( , 1, 60)
        cUslovSrch := space(120)
-       @ m_x+1, m_y+2 SAY "Zelim pronaci:" GET cUslovSrch pict "@!S40"
-       read
-       cUslovSrch:=trim(cUslovSrch)
-       if right(cUslovSrch,1) == "*"
-          cUslovSrch := left( cUslovSrch , len(cUslovSrch)-1 )
-       endif
+       zelim_pronaci( @cUslovSrch )
+
     BoxC()
 
     if !empty(cUslovSrch)
@@ -1355,4 +1342,17 @@ PopWa()
 
 return nRet
 
+// ------------------------------------------
+// ------------------------------------------
+function zelim_pronaci( cUslovSrch )
+ 
+    @ m_x+1, m_y+2 SAY8 "Želim pronaći:" GET cUslovSrch pict "@!S40"
+    read
+
+    cUslovSrch:=trim(cUslovSrch)
+    if right(cUslovSrch,1) == "*"
+       cUslovSrch := left( cUslovSrch , len(cUslovSrch)-1 )
+    endif
+
+return .t.
 

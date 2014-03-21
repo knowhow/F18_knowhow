@@ -1,3 +1,7 @@
+1.7.5   2014-03-21, vsasa
+
+  - FIN, bruto bilans SQL, korekcije
+
 1.7.4   2014-03-19, hernad
 
   - DEBUG/NEW blinkanje off, dbf_rec[ chk0 ], refresh_me se poziva iz my_use

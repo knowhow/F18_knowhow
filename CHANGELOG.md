@@ -1,3 +1,7 @@
+1.7.7   2014-03-22, hernad
+
+  - DEBUG RDDSQL nasa slova #32809
+
 1.7.6   2014-03-21, hernad
 
   - DEBUG novi harbour 32/hbpgsql uzrokovali bug na semaforima

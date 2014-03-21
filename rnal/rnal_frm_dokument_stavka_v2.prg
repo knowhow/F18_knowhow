@@ -243,7 +243,7 @@ nX += 2
 nX += 2
     
 @ m_x + nX, m_y + 2 SAY PADL( "Jedinica mjere (*):", nLeft + 3 ) GET _jmj ;
-	PICT "@S3" ;
+	PICT "@!S3" ;
 	VALID {|| _jmj_art := UPPER( __roba["jmj"] ), !EMPTY( _jmj ) } ;
 	WHEN set_opc_box( nBoxX, 50, "Unositi komadno ili u originalnoj jmj ?" )
 

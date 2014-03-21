@@ -266,6 +266,8 @@ if jmj_is_metric( _jmj_art ) .and. ( _jmj == "KOM" )
 	@ m_x + nX, col() + 1 SAY hb_utf8tostr( "dužina [mm] (*):" ) GET _doc_it_q2 ;
     	PICT cPicQtty ;
 		WHEN set_opc_box( nBoxX, 50, "repromaterijal je metrički, unesi dužinu u mm" )
+else
+	@ m_x + nX, col() + 1 SAY PADR("", 28 )
 endif
 
 nX += 1

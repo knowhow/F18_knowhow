@@ -106,8 +106,8 @@ FUNCTION repl_sifk_item()
    m_x := nTekX
    m_y := nTekY
 	
-   @ m_x + 2, m_y + 2 SAY hb_UTF8ToStr( "      Traži:" ) GET cOldVal
-   @ m_x + 3, m_y + 2 SAY              "Zamijeni sa:" GET cNewVal
+   @ m_x + 2, m_y + 2 SAY8 "      Traži:"  GET cOldVal
+   @ m_x + 3, m_y + 2 SAY8 "Zamijeni sa:" GET cNewVal
 	
    READ
    BoxC()
@@ -116,7 +116,7 @@ FUNCTION repl_sifk_item()
       RETURN 0
    ENDIF
 
-   IF Pitanje( , "Izvrsiti zamjenu polja? (D/N)", "D" ) == "N"
+   IF Pitanje( , "Izvršiti zamjenu polja? (D/N)", "D" ) == "N"
       RETURN 0
    ENDIF
 
@@ -513,9 +513,9 @@ STATIC FUNCTION get_sifv_naz( val, sifk_rec )
 
 
 /*!
- @function ImauSifv
- @abstract Povjerava ima li u sifv vrijednost ...
- @discussion - poziv ImaUSifv("ROBA","BARK","BK0002030300303",@cIdSif)
+ ImauSifv
+ Povjerava ima li u sifv vrijednost ...
+ ImaUSifv("ROBA","BARK","BK0002030300303",@cIdSif)
  @param cDBF ime DBF-a
  @param cOznaka oznaka BARK , GR1 itd
  @param cVOznaka oznaka BARK003030301

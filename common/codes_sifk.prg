@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,52 +12,52 @@
 
 #include "fmk.ch"
 
- 
-function SifkFill(cSifk,cSifv,cSifrarnik,cIDSif)
 
-PushWa()
+FUNCTION SifkFill( cSifk, cSifv, cSifrarnik, cIDSif )
 
-use (cSifK) new   alias _SIFK
-use (cSifV) new   alias _SIFV
+   PushWa()
 
-select _SIFK
-if reccount2()==0  // nisu upisane karakteristike, ovo se radi samo jednom
-select sifk; set order to tag "ID";  seek padr(cSifrarnik,8)
-// uzmi iz sifk sve karakteristike ID="ROBA"
+   USE ( cSifK ) NEW   ALIAS _SIFK
+   USE ( cSifV ) NEW   ALIAS _SIFV
 
-do while !eof() .and. ID=padr(cSifrarnik,8)
-   Scatter()
-   select _Sifk; append blank
-   Gather()
-   select sifK
-   skip
-enddo
-endif // reccount()
+   SELECT _SIFK
+   IF reccount2() == 0  // nisu upisane karakteristike, ovo se radi samo jednom
+      SELECT sifk; SET ORDER TO TAG "ID";  SEEK PadR( cSifrarnik, 8 )
+      // uzmi iz sifk sve karakteristike ID="ROBA"
 
-// uzmi iz sifv sve one kod kojih je ID=ROBA, idsif=2MON0002
+      DO WHILE !Eof() .AND. ID = PadR( cSifrarnik, 8 )
+         Scatter()
+         SELECT _Sifk; APPEND BLANK
+         Gather()
+         SELECT sifK
+         SKIP
+      ENDDO
+   ENDIF // reccount()
 
-select sifv
-set order to tag "IDIDSIF"
-seek padr(cSifrarnik,8) + cidsif
+   // uzmi iz sifv sve one kod kojih je ID=ROBA, idsif=2MON0002
 
-do while !eof() .and. ID == padr(cSifrarnik,8) .and. idsif == padr(cidsif, len(cIdSif))
- Scatter()
- select _SifV
- append blank
- Gather()
- select sifv
- skip
-enddo
+   SELECT sifv
+   SET ORDER TO TAG "IDIDSIF"
+   SEEK PadR( cSifrarnik, 8 ) + cidsif
 
-select _sifv
-use
-select _sifk
-use
+   DO WHILE !Eof() .AND. ID == PadR( cSifrarnik, 8 ) .AND. idsif == PadR( cidsif, Len( cIdSif ) )
+      Scatter()
+      SELECT _SifV
+      APPEND BLANK
+      Gather()
+      SELECT sifv
+      SKIP
+   ENDDO
 
-PopWa()
+   SELECT _sifv
+   USE
+   SELECT _sifk
+   USE
 
-return
-*}
+   PopWa()
+
+   RETURN
+// }
 
 /*!
  @function   SifkOsv
@@ -68,69 +68,71 @@ return
  @param cSifrarnik sifrarnik (npr "ROBA")
 */
 
-function SifkOsv(cSifk,cSifv,cSifrarnik,cIDSif)
-*{
-PushWa()
+FUNCTION SifkOsv( cSifk, cSifv, cSifrarnik, cIDSif )
 
-use (cSifK) new   alias _SIFK
-use (cSifV) new   alias _SIFV
+   // {
+   PushWa()
 
-select sifk; set order to tag "ID2" // id + oznaka
-select _sifk
-do while !eof()
- scatter()
- select sifk
- seek _SIFK->(ID+OZNAKA)
- if !found()
-  append blank
- endif
- Gather()
- select _SIFK
- skip
-enddo
+   USE ( cSifK ) NEW   ALIAS _SIFK
+   USE ( cSifV ) NEW   ALIAS _SIFV
 
-select sifv
+   SELECT sifk; SET ORDER TO TAG "ID2" // id + oznaka
+   SELECT _sifk
+   DO WHILE !Eof()
+      scatter()
+      SELECT sifk
+      SEEK _SIFK->( ID + OZNAKA )
+      IF !Found()
+         APPEND BLANK
+      ENDIF
+      Gather()
+      SELECT _SIFK
+      SKIP
+   ENDDO
 
-//"ID","id+oznaka+IdSif",SIFPATH+"SIFV"
-set order to tag "ID"  
+   SELECT sifv
 
-select _SIFV
-do while !eof()
- scatter()
- select SIFV
- seek _SIFV->(ID+OZNAKA+IDSIF)
- if !found()
-   append blank
- endif
- Gather()
- select _SIFV
- skip
-enddo
+   // "ID","id+oznaka+IdSif",SIFPATH+"SIFV"
+   SET ORDER TO TAG "ID"
 
-select _SIFK
-use
-select _SIFV
-use
+   SELECT _SIFV
+   DO WHILE !Eof()
+      scatter()
+      SELECT SIFV
+      SEEK _SIFV->( ID + OZNAKA + IDSIF )
+      IF !Found()
+         APPEND BLANK
+      ENDIF
+      Gather()
+      SELECT _SIFV
+      SKIP
+   ENDDO
 
-PopWa()
+   SELECT _SIFK
+   USE
+   SELECT _SIFV
+   USE
 
-return
+   PopWa()
+
+   RETURN
 
 /*! \fn DaUSifv(cBaza,cIdKar,cId,cVrKar)
- *  \brief 
+ *  \brief
  *  \param cBaza
  *  \param cIdKar
  *  \param cId
  *  \param cVrKar
  */
-function DaUSifV(cBaza,cIdKar,cId,cVrKar)
+FUNCTION DaUSifV( cBaza, cIdKar, cId, cVrKar )
 
-LOCAL nArr:=SELECT(), lVrati:=.f.
- SELECT SIFV
- SEEK PADR(cBaza,8)+PADR(cIdKar,4)+PADR(cId,15)+cVrKar
- IF FOUND()
-   lVrati:=.t.
- ENDIF
- SELECT (nArr)
-RETURN lVrati
+   LOCAL nArr := Select(), lVrati := .F.
 
+   SELECT SIFV
+   SEEK PadR( cBaza, 8 ) + PadR( cIdKar, 4 ) + PadR( cId, 15 ) + cVrKar
+   IF Found()
+      lVrati := .T.
+   ENDIF
+   SELECT ( nArr )
+
+   RETURN lVrati

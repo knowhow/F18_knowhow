@@ -32,9 +32,7 @@ FUNCTION set_a_dbf_sifk()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_SIFK
 
-   // temporary tabela - nema semafora
    _item[ "temp" ]  := .F.
-
    _item[ "algoritam" ] := {}
 
    // algoritam 1 - default
@@ -64,9 +62,7 @@ FUNCTION set_a_dbf_sifv()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_SIFV
 
-   // temporary tabela - nema semafora
    _item[ "temp" ]  := .F.
-
    _item[ "algoritam" ] := {}
 
    // algoritam 1 - default

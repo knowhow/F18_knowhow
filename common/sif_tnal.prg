@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,27 +14,28 @@
 
 // ------------------------------------
 // ------------------------------------
-function browse_tnal(cId, dx, dy)
+FUNCTION browse_tnal( cId, dx, dy )
 
-local nTArea
-private ImeKol
-private Kol
+   LOCAL nTArea
+   PRIVATE ImeKol
+   PRIVATE Kol
 
-ImeKol := {}
-Kol := {}
+   ImeKol := {}
+   Kol := {}
 
-nTArea := SELECT()
+   nTArea := Select()
 
-O_TNAL
+   O_TNAL
 
-AADD(ImeKol, { "ID", { || field->id }, "id", {|| .t.}, {|| sifra_postoji(wId)} })
-AADD(ImeKol, { "Naziv", {|| PADR(ToStrU(field->naz), 30) }, "naz" })
+   AAdd( ImeKol, { "ID", {|| field->id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
+   AAdd( ImeKol, { "Naziv", {|| PadR( ToStrU( field->naz ), 30 ) }, "naz" } )
 
-for i := 1 to LEN(ImeKol)
-	AADD(Kol, i)
-next
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
 
-select (nTArea)
-return p_sifra_2(F_TNAL, 1, MAX(maxrows() - 20, 10), MAX(maxcols() - 30, 50), "OsnPod: Vrste naloga", @cId, dx, dy)
+   SELECT ( nTArea )
 
-function P_VN(cId, dx, dy)
+   RETURN p_sifra_2( F_TNAL, 1, Max( maxrows() - 20, 10 ), Max( maxcols() - 30, 50 ), "OsnPod: Vrste naloga", @cId, dx, dy )
+
+FUNCTION P_VN( cId, dx, dy )

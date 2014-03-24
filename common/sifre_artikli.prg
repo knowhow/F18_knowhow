@@ -184,7 +184,7 @@ set order to tag "ID"
 seek "ROBA"
 
 do while !eof() .and. ID="ROBA"
-    AADD (ImeKol, {  IzSifKNaz("ROBA",SIFK->Oznaka) })
+    AADD (ImeKol, {  IzSifKNaz("ROBA", SIFK->Oznaka) })
     AADD (ImeKol[Len(ImeKol)], &( "{|| ToStr(IzSifk('ROBA','" + sifk->oznaka + "')) }" ) )
     AADD (ImeKol[Len(ImeKol)], "SIFK->"+SIFK->Oznaka )
     if sifk->edkolona > 0

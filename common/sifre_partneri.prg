@@ -154,23 +154,17 @@ FOR i := 1 TO LEN(ImeKol)
 	AADD(Kol, i)
 NEXT
 
-select (F_SIFK)
-if !used()
-    O_SIFK
-endif
-
-select (F_SIFV)
-if !useD()
-    O_SIFV
-endif
-
-select sifk
 set order to tag "ID"
-seek "PARTN"
+use_sql_sifk("PARTN", nil)
+
+use_sql_sifv()
+
+altd()
+SELECT sifk
 
 do while !eof() .and. ID="PARTN"
 
- AADD (ImeKol, {  IzSifKNaz("PARTN", SIFK->Oznaka) })
+ AADD (ImeKol, {  IzSifKNaz( "PARTN", SIFK->Oznaka) })
  AADD (ImeKol[Len(ImeKol)], &( "{|| ToStr(IzSifk('PARTN','" + sifk->oznaka + "')) }" ) )
  AADD (ImeKol[Len(ImeKol)], "SIFK->" + SIFK->Oznaka )
 
@@ -180,7 +174,7 @@ do while !eof() .and. ID="PARTN"
    next
    AADD( ImeKol[Len(ImeKol)], sifk->edkolona  )
  else
-   for ii:=4 to 10
+   for ii := 4 to 10
       AADD( ImeKol[Len(ImeKol)], NIL  )
    next
  endif

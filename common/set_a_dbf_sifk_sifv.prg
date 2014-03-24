@@ -31,7 +31,7 @@ FUNCTION set_a_dbf_sifk()
    _item[ "alias" ] := "SIFK"
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_SIFK
-
+   _item[ "sql" ]   := .T.
    _item[ "temp" ]  := .F.
    _item[ "algoritam" ] := {}
 
@@ -61,7 +61,7 @@ FUNCTION set_a_dbf_sifv()
    _item[ "alias" ] := "SIFV"
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_SIFV
-
+   _item[ "sql" ]   := .T.
    _item[ "temp" ]  := .F.
    _item[ "algoritam" ] := {}
 
@@ -83,8 +83,6 @@ FUNCTION set_a_dbf_sifv()
    _alg[ "dbf_tag" ]        := "ID"
    AAdd( _item[ "algoritam" ], _alg )
 
-
-   // vidi cre_sifk_sifv()
 
    // algoritam 3 - brisi sve stavke sa kljucem id + oznaka + idsif
    // -------------------------------------------------------------------------------

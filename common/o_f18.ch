@@ -10,8 +10,8 @@
  */
 
 // sifk, sifv
-#xcommand O_SIFK     => select(F_SIFK)    ;  my_use  ("sifk")      ; set order to tag "ID"
-#xcommand O_SIFV     => select(F_SIFV)    ;  my_use  ("sifv")      ; set order to tag "ID"
+#xcommand O_SIFK     => select(F_SIFK)    ;  use_sql_sifk()
+#xcommand O_SIFV     => select(F_SIFV)    ;  use_sql_sifv()
 
 // sifrarnici
 #xcommand O_ROBA     => select (F_ROBA)    ;  my_use  ("roba")      ; set order to tag "ID"

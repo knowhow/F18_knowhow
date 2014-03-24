@@ -198,23 +198,23 @@ FUNCTION IzSifk( dbf_name, ozna, id_sif, return_nil )
 // param oznaka oznaka BARK , GR1 itd
 // param id_sif       sifra u sifrarniku, npr  000000232  ,
 // ili "00000232,XXX1233233" pri pretrazivanju
-// param return_nil   NIL - vrati nil za nedefinisanu vrijednost,
-// .f. - vrati "" za nedefinisanu vrijednost
-// -----------------------------------------------------------
+
+/*
+  get_sifk_value( "PARTN", "BANK", "K01", NIL )
+
+  => "0123456789012345,0123456789012349"
+  => NIL - ne postoji SIFK PARTN/BANK
+  => PADR("", 190) ako postoji SIFV ili je prazan zapis
+ 
+
+  - return_nil  = NIL => NIL - NIL za nedefinisanu vrijednost,
+                  .T. => ""  - "" za nedefinisanu vrijednost
+*/
+
 FUNCTION get_sifk_value ( dbf_name, ozna, id_sif, return_nil )
 
    LOCAL _ret := ""
    LOCAL _sifk_tip, _sifk_duzina, _sifk_veza
-
-   SELECT F_SIFK
-   IF !Used()
-      O_SIFK
-   ENDIF
-
-   SELECT F_SIFV
-   IF !Used()
-      O_SIFV
-   ENDIF
 
    // ID default polje
    IF id_sif == NIL
@@ -225,12 +225,13 @@ FUNCTION get_sifk_value ( dbf_name, ozna, id_sif, return_nil )
    ozna     := PadR( ozna, SIFK_LEN_OZNAKA )
    id_sif   := PadR( id_sif, SIFK_LEN_IDSIF )
 
-   SELECT sifk
-   SET ORDER TO TAG "ID2"
-   SEEK dbf_name + ozna
 
+   SELECT F_SIFK
+   USE
+   use_sql_sifk( dbf_name, ozna ) 
    _ret := NIL
 
+   GO TOP
    IF !Found()
       // uopste ne postoji takva karakteristika
       IF return_nil <> NIL
@@ -245,10 +246,9 @@ FUNCTION get_sifk_value ( dbf_name, ozna, id_sif, return_nil )
    _sifk_tip    := sifk->tip
    _sifk_veza   := sifk->veza
 
-   SELECT sifv
-   SET ORDER TO TAG "ID"
-   dbSeek( dbf_name + ozna + id_sif, .T. )
-
+   SELECT F_SIFV
+   use_sql_sifv( dbf_name, ozna, id_sif )
+   GO TOP
    IF !Found()
       _ret := get_sifv_value( _sifk_tip, _sifk_duzina, "" )
       IF _sifk_veza == "N"
@@ -293,20 +293,24 @@ STATIC FUNCTION get_sifv_value( sifk_tip, sifk_duzina, naz_value )
 
    RETURN _ret
 
-// -------------------------------
-// -------------------------------
+/* 
+
+  IzSifkNaz( "ROBA", "GR1" ) => "Grupa 1  " 
+  IzSifkNaz( "ROBA", "XYZ" ) => "         "
+
+*/
 FUNCTION IzSifkNaz( cDBF, cOznaka )
 
    LOCAL xRet := "", nArea
 
    PushWA()
+
    cDBF := PadR( cDBF, SIFK_LEN_DBF )
    cOznaka := PadR( cOznaka, SIFK_LEN_OZNAKA )
 
-   SELECT sifk
-   SET ORDER TO TAG "ID2"
-   SEEK cDBF + cOznaka
-   xRet := sifk->Naz
+   SELECT F_SIFK
+   use_sql_sifk( cDBF, cOznaka )
+   xRet := field->NAZ
 
    PopWA()
 
@@ -320,12 +324,11 @@ FUNCTION IzSifkWV( cDBF, cOznaka, cWhen, cValid )
 
    PushWa()
 
-   cDBF := PadR( cDBF, 8 )
-   cOznaka := PadR( cOznaka, 4 )
-   SELECT sifk
-   SET ORDER TO TAG "ID2"
-   SEEK cDBF + cOznaka
-
+   cDBF := PadR( cDBF, SIFK_LEN_DBF )
+   cOznaka := PadR( cOznaka, SIFK_LEN_OZNAKA )
+   SELECT F_SIFK
+   use_sql_sifk( cDBF, cOznaka )
+   
    cWhen  := sifk->KWHEN
    cValid := sifk->KVALID
 
@@ -335,7 +338,7 @@ FUNCTION IzSifkWV( cDBF, cOznaka, cWhen, cValid )
 
 // -------------------------------------------------------
 // USifk
-// Postavlja vrijednost u tabel SIFK
+// Postavlja vrijednost u tabelu SIFK
 // cDBF ime DBF-a
 // cOznaka oznaka xxxx
 // cIdSif  Id u sifrarniku npr. 2MON0001
@@ -361,38 +364,29 @@ FUNCTION USifk( dbf_name, ozna, id_sif, val, transaction )
       transaction := "FULL"
    ENDIF
 
-   PushWa()
-
-   SELECT F_SIFV
-   IF !Used()
-      O_SIFV
-   ENDIF
-
-   SELECT F_SIFK
-   IF !Used()
-      O_SIFK
-   ENDIF
-
    IF val == NIL
       RETURN .F.
    ENDIF
 
+   PushWa()
+
    dbf_name := PadR( dbf_name, SIFK_LEN_DBF )
    ozna     := PadR( ozna, SIFK_LEN_OZNAKA )
+   id_sif   := PadR( id_sif, SIFK_LEN_IDSIF )
 
-
-   SELECT SIFK
-   SET ORDER TO TAG "ID2"
-   SEEK dbf_name + ozna
+   SELECT F_SIFK
+   use_sql_sifk( dbf_name, ozna )
 
    IF !Found() .OR. !( sifk->tip $ "CDN" )
       PopWa()
       RETURN .F.
    ENDIF
 
-   _sifk_rec := dbf_get_rec()
-   id_sif := PadR( id_sif, SIFK_LEN_IDSIF )
+   SELECT F_SIFV
+   use_sql_sifv( dbf_name, ozna, id_sif )
 
+   _sifk_rec := dbf_get_rec()
+   altd()
 
    IF transaction == "FULL"
       _tran := "BEGIN"
@@ -433,8 +427,6 @@ STATIC FUNCTION update_sifv_n_relation( sifk_rec, id_sif, vals )
 
    // veza 1->N posebno se tretira !!
    SELECT sifv
-   SET ORDER TO TAG "ID"
-
    brisi_sifv_item( sifk_rec[ "id" ], sifk_rec[ "oznaka" ], id_sif )
 
    _numtok := NumToken( vals, "," )
@@ -442,7 +434,6 @@ STATIC FUNCTION update_sifv_n_relation( sifk_rec, id_sif, vals )
    FOR _i := 1 TO _numtok
 
       _tmp := Token( vals, ",", _i )
-
       APPEND BLANK
 
       _sifv_rec[ "naz" ] := get_sifv_naz( _tmp, sifk_rec )
@@ -470,8 +461,6 @@ STATIC FUNCTION update_sifv_1_relation( sifk_rec, id_sif, value )
 
    // veza 1-1
    SELECT  SIFV
-   SET ORDER TO TAG "ID"
-
    brisi_sifv_item( sifk_rec[ "id" ], sifk_rec[ "oznaka" ], id_sif )
 
    APPEND BLANK
@@ -519,31 +508,28 @@ STATIC FUNCTION get_sifv_naz( val, sifk_rec )
  @param cDBF ime DBF-a
  @param cOznaka oznaka BARK , GR1 itd
  @param cVOznaka oznaka BARK003030301
- @param cIDSif   00000232 - interna sifra
+ @param cIDSif   ROBA01 - idroba
 */
 
-FUNCTION ImaUSifv( cDBF, cOznaka, cVOznaka, cIdSif )
+FUNCTION ImaUSifv( cDBF, cOznaka, cVrijednost, cIdSif )
 
    LOCAL cJedanod := ""
    LOCAL xRet := ""
    LOCAL nTr1, nTr2, xVal
    PRIVATE cPom := ""
 
-   PushWa()
-   cDBF := PadR( cDBF, 8 )
-   cOznaka := PadR( cOznaka, 4 )
+   cDBF    := PadR( cDBF, SIFK_LEN_DBF )
+   cOznaka := PadR( cOznaka, SIFK_LEN_OZNAKA )
 
    xVal := NIL
 
-   SELECT sifv
    PushWa()
-   SET ORDER TO TAG "NAZ"
-   hseek cDbf + cOznaka + cVOznaka
+
+   SELECT F_SIFV
+   use_sql_sifv( cDbf, cOznaka, NIL, cVrijednost )
    IF Found()
       cIdSif := IdSif
    ENDIF
-   PopWa()
-
    PopWa()
 
    RETURN

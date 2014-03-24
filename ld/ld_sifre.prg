@@ -877,7 +877,7 @@ set order to tag "ID"
 seek "POR"
 
 do while !eof() .and. ID="POR"
-    AADD (ImeKol, {  IzSifKNaz("POR",SIFK->Oznaka) })
+    AADD (ImeKol, {  IzSifKNaz("POR", SIFK->Oznaka) })
     AADD (ImeKol[Len(ImeKol)], &( "{|| ToStr(IzSifk('POR','" + sifk->oznaka + "')) }" ) )
     AADD (ImeKol[Len(ImeKol)], "SIFK->"+SIFK->Oznaka )
 
@@ -967,7 +967,7 @@ set order to tag "ID"
 seek "DOPR"
 
 do while !eof() .and. ID="DOPR"
-    AADD(ImeKol,{IzSifKNaz("DOPR",SIFK->Oznaka)})
+    AADD(ImeKol,{IzSifKNaz("DOPR", SIFK->Oznaka)})
     AADD(ImeKol[Len(ImeKol)], &( "{|| ToStr(IzSifk('DOPR','" + sifk->oznaka + "')) }" ) )
     AADD(ImeKol[Len(ImeKol)], "SIFK->"+SIFK->Oznaka )
     if (sifk->edkolona>0)

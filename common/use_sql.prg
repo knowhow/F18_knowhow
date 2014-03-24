@@ -12,6 +12,7 @@
 #require "rddsql"
 #require "sddpg"
 
+#include "fmk.ch"
 #include "dbinfo.ch"
 #include "error.ch"
 
@@ -25,7 +26,7 @@ LOCAL oConn
 
 
 if USED()
-   return .f.
+   USE
 endif
 
 if l_make_index == NIL
@@ -55,4 +56,91 @@ endif
 
 rddSetDefault( "DBFCDX" )
 
-return .f.
+return .T.
+
+
+// -----------------------------------------
+// -----------------------------------------
+function use_sql( table, sql_query )
+LOCAL oConn
+
+
+if USED()
+   USE
+endif
+
+oConn := my_server():pDB 
+//? PQHOST(oConn)
+
+rddSetDefault( "SQLMIX" )
+
+IF rddInfo( RDDI_CONNECT, { "POSTGRESQL", oConn } ) == 0
+      ? "Unable connect to the server"
+      RETURN
+ENDIF
+
+dbUseArea( .f., "SQLMIX", sql_query,  table )
+
+rddSetDefault( "DBFCDX" )
+
+return .T.
+
+/*
+   use_sql_sifk() => otvori citavu tabelu
+   use_sql_sifk( "ROBA", "GR1  " ) =>  filter na ROBA/GR1
+*/
+function use_sql_sifk( cDbf, cOznaka )
+
+   LOCAL cSql
+
+   cSql := "SELECT * from fmk.sifk"
+   IF cDbf != NIL 
+       cSql += " WHERE id=" + _sql_quote( cDbf ) 
+   ENDIF
+   IF cOznaka != NIL
+       cSql += " AND oznaka=" + _sql_quote( cOznaka )
+   ENDIF
+    
+   cSQL += " ORDER BY id,oznaka,sort" 
+   SELECT F_SIFK
+   use_sql( "sifk", cSql )
+
+   RETURN .T.
+
+
+/*
+   use_sql_sifv( "ROBA", "GR1", NIL, "G000000001" ) =>  filter na ROBA/GR1/grupa1=G0000000001
+   use_sql_isfv( "ROBA", "GR1", "ROBA99", NIL )        =>  filter na ROBA/GR1/idroba=ROBA99
+*/
+function use_sql_sifv( cDbf, cOznaka, cIdSif, cVrijednost )
+
+   LOCAL cSql
+
+   IF cDbf == NIL
+      SELECT F_SIFK
+      IF !USED()
+         Alert("USE_SQL Prije SIFV mora se otvoriti SIFK !")
+         QUIT_1
+      ENDIF
+      cDbf := field->id
+      cOznaka := field->oznaka
+   ENDIF
+
+   cSql := "SELECT * from fmk.sifv"
+   cSql += " WHERE id=" + _sql_quote( cDbf ) + " AND oznaka=" + _sql_quote( cOznaka )
+   
+   IF cIdSif != NIL
+      cSql += " AND idsif=" + _sql_quote( cIdSif )
+   ENDIF
+
+   IF cVrijednost != NIL
+      cSql += " AND naz=" + _sql_quote( cVrijednost )
+   ENDIF
+
+   cSQL += " ORDER BY id,oznaka,idsif,naz" 
+   SELECT F_SIFV
+   use_sql( "sifv", cSql )
+
+   RETURN .T.
+
+

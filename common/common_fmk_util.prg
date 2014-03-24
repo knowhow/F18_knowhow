@@ -376,7 +376,6 @@ seek "ADRES   "
 do while !eof() .and. ID="ADRES   "
 
  AADD (ImeKol, {  IzSifKNaz("ADRES   ",SIFK->Oznaka) })
- // AADD (ImeKol[Len(ImeKol)], &( "{|| padr(ToStr(IzSifk('ADRES   ','" + sifk->oznaka + "')),10) }" ) )
  AADD (ImeKol[Len(ImeKol)], &( "{|| ToStr(IzSifk('ADRES   ','" + sifk->oznaka + "')) }" ) )
  AADD (ImeKol[Len(ImeKol)], "SIFK->"+SIFK->Oznaka )
  if sifk->edkolona > 0

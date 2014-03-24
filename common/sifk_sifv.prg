@@ -595,7 +595,6 @@ _recs := {}
 GO TOP
 do while !EOF() .and. ID=cDbf
  _rec := dbf_get_rec()
- altd()
  AADD( _recs, _rec )
  SKIP
 enddo

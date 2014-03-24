@@ -39,17 +39,9 @@ if !used()
 	O_PARTN
 endif
 
-SELECT (F_SIFK)
-if !used()
-	O_SIFK
-endif
-
-SELECT (F_SIFV)
-if !used()
-	O_SIFV
-endif
-
-
+	
+O_SIFK
+O_SIFV
 
 
 SELECT (nArea)

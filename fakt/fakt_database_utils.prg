@@ -203,21 +203,17 @@ local cId
 local cOznaka
 
 SELECT (F_SIFK)
-
-if !used()
-	O_SIFK
-endif
-
+O_SIFK
 SET ORDER TO TAG "ID"
-//id+SORT+naz
-
-
 cId := PADR("PARTN", 8) 
 cNaz := PADR("PDV oslob. ZPDV", LEN(naz))
 cRbr := "08"
 cOznaka := "PDVO"
 add_n_found(cId, cNaz, cRbr, cOznaka, 3)
 
+SELECT (F_SIFK)
+O_SIFK
+SET ORDER TO TAG "ID"
 cId := PADR("PARTN", 8) 
 cNaz := PADR("Profil partn.", LEN(naz))
 cRbr := "09"
@@ -230,7 +226,7 @@ return
 // -------------------------------------------
 // -------------------------------------------
 static function add_n_found(cId, cNaz, cRbr, cOznaka, nDuzina)
-local cSeek
+local cSeek, _rec
 
 cSeek :=  cId + cRbr + cNaz
 SEEK cSeek   
@@ -245,9 +241,13 @@ if !FOUND()
 		tip with "C" ,;
 		duzina with nDuzina,;
 		f_decimal with 0
+        _rec := dbf_get_rec()
+        update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL")
+        return .T.
 endif
 
-return
+
+return .F.
 
 // ------------------------------------------------------------
 // resetuje brojač dokumenta ako smo pobrisali dokument

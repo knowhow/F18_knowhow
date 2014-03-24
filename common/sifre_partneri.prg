@@ -151,47 +151,11 @@ endif
 
 
 FOR i := 1 TO LEN(ImeKol)
-	AADD(Kol, i)
+     AADD(Kol, i)
 NEXT
 
 set order to tag "ID"
-use_sql_sifk("PARTN", nil)
-
-use_sql_sifv()
-
-altd()
-SELECT sifk
-
-do while !eof() .and. ID="PARTN"
-
- AADD (ImeKol, {  IzSifKNaz( "PARTN", SIFK->Oznaka) })
- AADD (ImeKol[Len(ImeKol)], &( "{|| ToStr(IzSifk('PARTN','" + sifk->oznaka + "')) }" ) )
- AADD (ImeKol[Len(ImeKol)], "SIFK->" + SIFK->Oznaka )
-
- if sifk->edkolona > 0
-   for ii:=4 to 9
-      AADD( ImeKol[Len(ImeKol)], NIL  )
-   next
-   AADD( ImeKol[Len(ImeKol)], sifk->edkolona  )
- else
-   for ii := 4 to 10
-      AADD( ImeKol[Len(ImeKol)], NIL  )
-   next
- endif
-
- // postavi picture za brojeve
- if sifk->Tip == "N"
-   if f_decimal > 0
-     ImeKol [Len(ImeKol),7] := replicate("9", sifk->duzina - sifk->f_decimal-1 )+"."+replicate("9",sifk->f_decimal)
-   else
-     ImeKol [Len(ImeKol),7] := replicate("9", sifk->duzina )
-   endif
- endif
-
- AADD  (Kol, iif( sifk->UBrowsu='1', ++i, 0) )
-
- skip
-enddo
+sif_sifk_fill_kol( "PARTN", @ImeKol, @Kol)
 
 cRet := PostojiSifra(F_PARTN, 1, maxrows() - 15, maxcols() - 15, "Lista Partnera", @cId, dx, dy, {|Ch| k_handler(Ch)},,,,, {"ID"})
 
@@ -468,9 +432,7 @@ local cId
 
 
 SELECT (F_SIFK)
-if !used()
-	O_SIFK
-endif
+O_SIFK
 
 SET ORDER TO TAG "ID"
 // id + SORT + naz
@@ -514,9 +476,7 @@ local cNaz
 local cId
 
 SELECT (F_SIFK)
-if !used()
-	O_SIFK
-endif
+O_SIFK
 
 SET ORDER TO TAG "ID"
 // id + SORT + naz

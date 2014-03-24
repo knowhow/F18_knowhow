@@ -176,6 +176,7 @@ local _a_dbf_rec, _alg
 local _msg
 local _alg_tag := ""
 local _ret
+local lSql_index := .T.
 
 if lock == NIL
   if transaction == "FULL"
@@ -219,29 +220,38 @@ if sql_table_update(table, "del", nil, _where_str)
     SELECT (_a_dbf_rec["wa"])
     
     if index_tag_num(_alg["dbf_tag"]) < 1
-          _msg := "ERR : " + RECI_GDJE_SAM0 + " DBF_TAG " + _alg["dbf_tag"]
-          Alert(_msg)
-          log_write( _msg, 1 )
-          RaiseError(_msg)
-          lock_semaphore(table, "free")
-          QUIT_1
+          if !_a_dbf_rec["sql"] 
+             _msg := "ERR : " + RECI_GDJE_SAM0 + " DBF_TAG " + _alg["dbf_tag"]
+             Alert(_msg)
+             log_write( _msg, 1 )
+             RaiseError(_msg)
+             lock_semaphore(table, "free")
+             QUIT_1
+          else
+             lSql_index := .F.
+          endif
+    else
+          SET ORDER TO TAG (_alg["dbf_tag"])
     endif
-    SET ORDER TO TAG (_alg["dbf_tag"])
 
     if my_flock()
         
         _count := 0
 
-        SEEK _full_id
+        IF lSql_index
+           SEEK _full_id
 
-        while FOUND()
-            ++ _count
-            DELETE
-            // sve dok budes nalazio pod ovim kljucem brisi
-            SEEK _full_id
-        enddo
+           while FOUND()
+              ++ _count
+              DELETE
+              // sve dok budes nalazio pod ovim kljucem brisi
+              SEEK _full_id
+           enddo
+        else
+            // ali ovo i nije bitno, sql tabela se svaki put iznova refreshira sa servera
+            log_write( "table: " + table + " sql index " + _alg[ "dbf_tag" ] + " ne postoji!", 3)
+        endif
 
-        //DBUNLOCKALL() 
         my_unlock()
 
         log_write( "table: " + table + ", pobrisano iz lokalnog dbf-a broj zapisa = " + ALLTRIM( STR( _count ) ), 7 ) 
@@ -261,7 +271,6 @@ if sql_table_update(table, "del", nil, _where_str)
         Alert(_msg)
 
         _ret := .f.
-
     endif
 
 else

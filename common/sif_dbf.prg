@@ -1346,7 +1346,6 @@ local fOrNaPost  := .f.
 local nCount, nCount2
 private cFilt:=".t. "
 
-altd()
 cSearch:=ALLTRIM(trim(cSearch))
 // zamjenit "NAZ $ MISHEL"  -> NAZ $MISHEL
 cSearch:=strtran(cSearch,"$ ","$")

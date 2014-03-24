@@ -92,6 +92,7 @@ return .T.
 function use_sql_sifk( cDbf, cOznaka )
 
    LOCAL cSql
+   LOCAL cTable := "sifk"
 
    cSql := "SELECT * from fmk.sifk"
    IF cDbf != NIL 
@@ -103,7 +104,14 @@ function use_sql_sifk( cDbf, cOznaka )
     
    cSQL += " ORDER BY id,oznaka,sort" 
    SELECT F_SIFK
-   use_sql( "sifk", cSql )
+   use_sql( cTable, cSql )
+
+
+   if cDbf == NIL .and. cOznaka == NIL 
+      INDEX ON ID+SORT+NAZ TAG ID  TO ( cTable )
+      INDEX ON NAZ            TAG NAZ TO ( cTable )
+      SET ORDER TO TAG ID
+   endif
 
    RETURN .T.
 

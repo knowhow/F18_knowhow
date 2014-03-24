@@ -1200,8 +1200,6 @@ do case
      		
         BoxC()
 
-        altd()
-
      	if LastKey() <> K_ESC
             
             select kadev_1
@@ -1251,7 +1249,6 @@ do case
 			return DE_REFRESH
      		
         else
-        	altd()	
             if Ch == K_CTRL_N
                 // brisemo samo append blank u dbf-u, nema nista na serveru
                 delete_with_rlock()

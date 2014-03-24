@@ -62,9 +62,6 @@ METHOD mMenu()
 
    @ 1, 2 SAY PadC( gTS + ": " + gNFirma, 50, "*" )
 
-   // dodaj polja grupe u sifrarnik sifk
-   set_sifk_roba_group()
-
    ::mMenuStandard()
 
    RETURN NIL

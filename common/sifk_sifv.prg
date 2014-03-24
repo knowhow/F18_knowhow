@@ -226,13 +226,11 @@ FUNCTION get_sifk_value ( dbf_name, ozna, id_sif, return_nil )
    id_sif   := PadR( id_sif, SIFK_LEN_IDSIF )
 
 
-   SELECT F_SIFK
-   USE
    use_sql_sifk( dbf_name, ozna ) 
    _ret := NIL
 
    GO TOP
-   IF !Found()
+   IF EOF()
       // uopste ne postoji takva karakteristika
       IF return_nil <> NIL
          _ret := get_sifv_value( "X", "" )
@@ -249,7 +247,7 @@ FUNCTION get_sifk_value ( dbf_name, ozna, id_sif, return_nil )
    SELECT F_SIFV
    use_sql_sifv( dbf_name, ozna, id_sif )
    GO TOP
-   IF !Found()
+   IF EOF()
       _ret := get_sifv_value( _sifk_tip, _sifk_duzina, "" )
       IF _sifk_veza == "N"
          _ret := PadR( _ret, 190 )
@@ -376,8 +374,8 @@ FUNCTION USifk( dbf_name, ozna, id_sif, val, transaction )
 
    SELECT F_SIFK
    use_sql_sifk( dbf_name, ozna )
-
-   IF !Found() .OR. !( sifk->tip $ "CDN" )
+   GO TOP
+   IF EOF() .OR. !( sifk->tip $ "CDN" )
       PopWa()
       RETURN .F.
    ENDIF
@@ -385,8 +383,8 @@ FUNCTION USifk( dbf_name, ozna, id_sif, val, transaction )
    SELECT F_SIFV
    use_sql_sifv( dbf_name, ozna, id_sif )
 
+   SELECT sifk
    _sifk_rec := dbf_get_rec()
-   altd()
 
    IF transaction == "FULL"
       _tran := "BEGIN"
@@ -527,7 +525,8 @@ FUNCTION ImaUSifv( cDBF, cOznaka, cVrijednost, cIdSif )
 
    SELECT F_SIFV
    use_sql_sifv( cDbf, cOznaka, NIL, cVrijednost )
-   IF Found()
+   GO TOP
+   IF !EOF()
       cIdSif := IdSif
    ENDIF
    PopWa()
@@ -581,3 +580,59 @@ STATIC FUNCTION val_fld( cField )
    ENDIF
 
    RETURN lRet
+
+
+// ---------------------------------------------
+// ---------------------------------------------
+function sif_sifk_fill_kol( cDbf, ImeKol, Kol )
+local _rec, _recs
+
+use_sql_sifk( cDbf, NIL )
+use_sql_sifv()
+
+SELECT sifk
+_recs := {}
+GO TOP
+do while !EOF() .and. ID=cDbf
+ _rec := dbf_get_rec()
+ altd()
+ AADD( _recs, _rec )
+ SKIP
+enddo
+
+
+FOR EACH _rec in _recs
+
+ AADD (ImeKol, {  IzSifKNaz( cDbf, _rec["oznaka"]) })
+ AADD (ImeKol[Len(ImeKol)], &( "{|| ToStr(IzSifk('PARTN','" + _rec["oznaka"] + "')) }" ) )
+ AADD (ImeKol[Len(ImeKol)], "SIFK->" + _rec["oznaka"] )
+
+ if _rec["edkolona"] > 0
+   for ii:=4 to 9
+      AADD( ImeKol[Len(ImeKol)], NIL  )
+   next
+   AADD( ImeKol[Len(ImeKol)], _rec["edkolona"]  )
+ else
+   for ii := 4 to 10
+      AADD( ImeKol[Len(ImeKol)], NIL  )
+   next
+ endif
+
+ // postavi picture za brojeve
+ if _rec["tip"] == "N"
+   if f_decimal > 0
+     ImeKol [Len(ImeKol),7] := replicate("9", _rec["duzina"] - _rec["f_decimal"]-1 ) + "." + replicate("9", _rec["f_decimal"] )
+   else
+     ImeKol [Len(ImeKol),7] := replicate("9", _rec["duzina"] )
+   endif
+ endif
+
+ AADD  (Kol, iif( _rec["ubrowsu"]=='1', ++i, 0) )
+
+ skip
+
+NEXT
+
+RETURN .T.
+
+

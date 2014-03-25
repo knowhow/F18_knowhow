@@ -33,7 +33,7 @@ AADD( _opc, "3. prenos FIN->kamate         " )
 AADD( _opcexe, { || prenos_fin_kam() } )
 AADD( _opc, "4. kontrola cjelovitosti kamatnih stopa   " )
 AADD( _opcexe, { || kontrola_cjelovitosti_ks() } )
-AADD( _opc, "5. sifrarnik kamatnih stopa  " )
+AADD( _opc, "5. lista kamatnih stopa  " )
 AADD( _opcexe, { || p_ks() } )
 
 gDatObr := DATE()

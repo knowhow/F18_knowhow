@@ -20,8 +20,8 @@ close all
 
 private opc:={}
 private opcexe:={}
-AADD(opc,"1. opci sifrarnici                  ")
-if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","OPCISIFOPEN"))
+AADD(opc,"1. opći šifarnici                  ")
+if (ImaPravoPristupa(goModul:oDataBase:cName, "SIF", "OPCISIFOPEN"))
 	AADD(opcexe, {|| SifFmkSvi()})
 else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})

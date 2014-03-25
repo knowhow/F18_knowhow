@@ -91,14 +91,14 @@ else
 	AADD(opcexe, {|| oDb_lock:warrning() } )
 endif
 
-AADD(opc, "4. izvjestaji")
+AADD(opc, "4. izvještaji")
 AADD(opcexe, {|| epdv_izvjestaji()})
 
 
 AADD(opc, "------------------------------------")
 AADD(opcexe, {|| nil})
 
-AADD(opc, "S. sifrarnici")
+AADD(opc, "S. šifarnici")
 AADD(opcexe, {|| epdv_sifrarnici()})
 
 AADD(opc, "------------------------------------")

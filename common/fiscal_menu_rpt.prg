@@ -148,18 +148,18 @@ do case
     AADD(opc,"------ ostale komande --------------------")
     AADD(opcexe,{|| .f. })
     
-    AADD(opc,"5. kopija racuna    ")
+    AADD(opc,"5. kopija računa    ")
     AADD(opcexe,{|| hcp_rn_copy( __device_params ) })
-    AADD(opc,"6. polog u uredjaj    ")
+    AADD(opc,"6. polog u uređaj    ")
     AADD(opcexe,{|| hcp_polog( __device_params ) })
-    AADD(opc,"7. posalji cmd.ok    ")
+    AADD(opc,"7. pošalji cmd.ok    ")
     AADD(opcexe,{|| hcp_create_cmd_ok( __device_params ) })
 
    	if !low_level
     
-    	AADD(opc,"8. izbaci stanje racuna    ")
+    	AADD(opc,"8. izbaci stanje računa    ")
     	AADD(opcexe,{|| hcp_fisc_no( __device_params ) })
-    	AADD(opc,"11. reset PLU ")
+    	AADD(opc,"P. reset PLU ")
     	AADD(opcexe,{|| auto_plu( .t., nil, __device_params ) })
    
    	endif
@@ -172,19 +172,19 @@ do case
     	AADD(opc,"------ izvjestaji -----------------------")
     	AADD(opcexe,{|| .f. })
     
-    	AADD(opc,"1. dnevni fiskalni izvjestaj (Z rep.)    ")
+    	AADD(opc,"1. dnevni fiskalni izvještaj (Z rep.)    ")
    	 	AADD(opcexe,{|| tremol_z_rpt( __device_params ) })
     
-    	AADD(opc,"2. izvjestaj po artiklima (Z rep.)    ")
+    	AADD(opc,"2. izvještaj po artiklima (Z rep.)    ")
    	 	AADD(opcexe,{|| tremol_z_item( __device_params ) })
    
     	AADD(opc,"3. presjek stanja (X rep.)    ")
    	 	AADD(opcexe,{|| tremol_x_rpt( __device_params ) })
  
-   	 	AADD(opc,"4. izvjestaj po artiklima (X rep.)    ")
+   	 	AADD(opc,"4. izvještaj po artiklima (X rep.)    ")
     	AADD(opcexe,{|| tremol_x_item( __device_params ) })
     
-    	AADD(opc,"5. periodicni izvjestaj (Z rep.)    ")
+    	AADD(opc,"5. periodični izvjestaj (Z rep.)    ")
     	AADD(opcexe,{|| tremol_per_rpt( __device_params ) })
    
 	endif
@@ -192,7 +192,7 @@ do case
     AADD(opc,"------ ostale komande --------------------")
     AADD(opcexe,{|| .f. })
 
-    AADD(opc,"K. kopija racuna    ")
+    AADD(opc,"K. kopija računa    ")
     AADD(opcexe,{|| tremol_rn_copy( __device_params ) })
 
 	if !low_level
@@ -202,11 +202,11 @@ do case
 
 	endif
 
-    AADD(opc,"P. polog u uredjaj    ")
+    AADD(opc,"P. polog u uređaj    ")
     AADD(opcexe,{|| tremol_polog( __device_params ) })
 
 	if !low_level    
-    	AADD(opc,"11. reset PLU ")
+    	AADD(opc,"R. reset PLU ")
     	AADD(opcexe,{|| auto_plu( .t., nil, __device_params ) })
 	endif
 
@@ -240,10 +240,10 @@ do case
 
     	AADD(opc,"8. inicijalizacija ")
     	AADD(opcexe,{|| tring_init( __device_params, "1", "" ) })
-    	AADD(opc,"10. reset zahtjeva na PU serveru ")
+    	AADD(opc,"S. reset zahtjeva na PU serveru ")
     	AADD(opcexe,{|| tring_reset( __device_params ) })
      
-    	AADD(opc,"11. reset PLU ")
+    	AADD(opc,"R. reset PLU ")
     	AADD(opcexe,{|| auto_plu( .t., nil, __device_params ) })
 
 	endif

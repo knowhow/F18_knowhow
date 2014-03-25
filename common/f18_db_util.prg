@@ -148,7 +148,7 @@ for each _key in _f18_dbfs:Keys
 			_tbl_base := "os"
 		endif
 
-        // EMPTY - sifarnici (roba, tarifa itd)
+                // EMPTY - sifarnici (roba, tarifa itd)
 		if  EMPTY( _tbl_base ) .or. f18_use_module( _tbl_base )
 			EVAL(iterate_block, _f18_dbfs[_key] )
 		endif

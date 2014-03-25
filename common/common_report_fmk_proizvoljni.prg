@@ -87,20 +87,19 @@ set_metric( "proiz_por_dob", _my_user, gnPorDob )
 
 nTekIzv := VAL( cBrI )
 
-opc[1] := "1. generisanje izvjestaja                       "      
-opc[2] := "2. sifrarnik izvjestaja"              
+opc[1] := "1. generisanje izvještaja                       "      
+opc[2] := "2. šifarnik izvjestaja"              
 opc[3] := "3. redovi izvjestaja"                
 opc[4] := "4. zaglavlje izvjestaja"              
 opc[5] := "5. kolone izvjestaja"                 
 opc[6] := "6. parametri (svi izvjestaji) "        
-opc[7] := "7. tekuci izvjestaj: "+STR(nTekIzv,2) 
+opc[7] := "7. tekuci izvjestaj: " + STR(nTekIzv,2) 
 opc[8] := "8. preuzimanje definicija izvjestaja sa diskete" 
 opc[9] := "9. promjeni broj izvjestaja" 
 opc[10] := "A. ispravka proizvj.ini" 
 
 izbor := 1
 
-// ???????
 PrikaziTI( cBrI )
 
 if goModul:oDataBase:cName == "KALK"

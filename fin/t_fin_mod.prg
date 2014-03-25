@@ -115,7 +115,7 @@ METHOD mMenuStandard()
    AAdd( _opc, "------------------------------------" )
    AAdd( _opcexe, {|| nil } )
 
-   AAdd( _opc, "8. sifrarnici" )
+   AAdd( _opc, "8. matični podaci - šifarnici" )
    AAdd( _opcexe, {|| MnuSifrarnik() } )
 
    AAdd( _opc, "9. administracija baze podataka" )

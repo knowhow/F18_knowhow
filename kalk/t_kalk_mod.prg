@@ -121,7 +121,7 @@ METHOD mMenuStandard
    AAdd( opc, "------------------------------------" )
    AAdd( opcexe, nil )
 
-   AAdd( opc,   "8. sifrarnici" )
+   AAdd( opc,   "8. šifarnici" )
    AAdd( opcexe, {|| kalk_sifrarnik() } )
 
    AAdd( opc,   "9. administriranje baze podataka" )

@@ -108,10 +108,6 @@ FUNCTION set_a_sql_sifarnik( dbf_table, alias, wa, rec )
 
    set_a_dbf_sifarnik( dbf_table, alias, wa, rec, .T. )
 
-   // ----------------------------------------------------
-   // sifarnici su svi na isti fol
-   // ----------------------------------------------------
-
 FUNCTION set_a_dbf_sifarnik( dbf_table, alias, wa, rec, lSql )
 
    LOCAL _alg, _item

@@ -1,6 +1,6 @@
 1.7.11  2014-03-25, hernad
 
-  - PERFORMANCE: SQLRDD nasa slova za 16-tak tabela #32846
+  - PERFORMANCE: SQLRDD nasa slova za 16-tak tabela #32846, DEBUG #32854
 
 1.7.10  2014-03-25, hernad
 

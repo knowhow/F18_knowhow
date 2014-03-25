@@ -50,7 +50,9 @@ dbUseArea( .f., "SQLMIX", "SELECT * FROM fmk." + table + " ORDER BY ID",  table 
 
 if l_make_index
      INDEX ON ID TAG ID TO (table)
-     INDEX ON NAZ TAG NAZ TO (table)
+     IF FIELDPOS( "NAZ" ) > 0
+       INDEX ON NAZ TAG NAZ TO (table)
+     ENDIF
 endif
 
 rddSetDefault( "DBFCDX" )
@@ -106,9 +108,10 @@ function use_sql_sifk( cDbf, cOznaka )
    use_sql( cTable, cSql )
 
 
-   if cDbf == NIL .and. cOznaka == NIL 
+   if cDbf == NIL .and. cOznaka == NIL
+
       INDEX ON ID+SORT+NAZ TAG ID  TO ( cTable )
-      INDEX ON NAZ            TAG NAZ TO ( cTable )
+      INDEX ON NAZ             TAG NAZ TO ( cTable )
       SET ORDER TO TAG ID
    endif
 

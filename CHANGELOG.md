@@ -1,3 +1,7 @@
+1.7.11  2014-03-25, hernad
+
+  - PERFORMANCE: SQLRDD nasa slova za 16-tak tabela #32846
+
 1.7.10  2014-03-25, hernad
 
   - DEBUG PARTN/SIFV #32839
@@ -8,7 +12,7 @@
 
 1.7.8   2014-03-25, hernad
 
-  - DEBUG my_use full sync, PERFORMANCE: izbaceno iz mysql F18_DB_LOCK
+  - DEBUG my_use full sync, PERFORMANCE: izbaceno iz my_use F18_DB_LOCK
 
 1.7.7   2014-03-22, hernad
 

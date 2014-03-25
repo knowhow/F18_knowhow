@@ -399,7 +399,7 @@ ImeKol:={ { "ID  ",  {|| id },   "id"   , {|| .t.}, {|| vpsifra(wid)}    },;
         }
 Kol:={1,2}
 
-return PostojiSifra(F_PKONTO, 1, 10, 60, "Lista: Nacin prenosa konta u novu godinu",@cId,dx,dy)
+return p_sifra(F_PKONTO, 1, 10, 60, "MatPod: Način prenosa konta u novu godinu",@cId, dx, dy)
 
 
 

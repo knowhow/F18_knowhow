@@ -13,7 +13,9 @@
 #include "cre_all.ch"
 
 
-
+/* 
+   Kreiraj sve DBFCDX
+*/
 function cre_all_dbfs(ver)
 local _first_start := fetch_metric( "f18_first_start", my_user(), 0 )
 local _local_files, _local_files_count
@@ -32,6 +34,9 @@ if _first_start = 0
     endif
 
 endif
+
+//TODO: skloni ovo !
+return .t.
 
 log_write("START cre_all_dbfs", 5)
 

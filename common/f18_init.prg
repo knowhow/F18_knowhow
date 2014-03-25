@@ -526,6 +526,7 @@ set_a_dbfs()
     cre_all_dbfs(_ver)
 #endif
 
+altd()
 // inicijaliziraj "dbf_key_fields" u __f18_dbf hash matrici
 set_a_dbfs_key_fields()
 
@@ -561,6 +562,10 @@ return .t.
 function set_all_gvars()
 public goModul
 
+// TODO: skloni
+
+return .f.
+
 goModul := TFinMod():new()
 goModul:setgvars()
 
@@ -570,7 +575,7 @@ goModul:setgvars()
 goModul := TFaktMod():new()
 goModul:setgvars()
 
-return
+return .t.
 
 // ------------------------------------------
 // kreira sve potrbne indekse

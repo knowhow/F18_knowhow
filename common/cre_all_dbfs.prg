@@ -35,9 +35,6 @@ if _first_start = 0
 
 endif
 
-//TODO: skloni ovo !
-return .t.
-
 log_write("START cre_all_dbfs", 5)
 
 cre_sifrarnici_1(ver)

@@ -282,10 +282,6 @@ FUNCTION _sql_query( oServer, cQuery, silent )
          IF !silent
             MsgBeep( cMsg )
          ENDIF
-
-      ELSE
-         // TODO: nesto je sa postgresql drajverom pa je poceo izbacivati ove errore ?!
-         RETURN .T.
       ENDIF
 
       RETURN .F.

@@ -53,8 +53,7 @@ if l_make_index
      INDEX ON NAZ TAG NAZ TO (table)
 endif
 
-
-//rddSetDefault( "DBFCDX" )
+rddSetDefault( "DBFCDX" )
 
 return .T.
 
@@ -157,5 +156,4 @@ function use_sql_sifv( cDbf, cOznaka, cIdSif, cVrijednost )
    use_sql( "sifv", cSql )
 
    RETURN .T.
-
 

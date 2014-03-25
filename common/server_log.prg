@@ -38,7 +38,9 @@ return .t.
 
 
 
-
+/* 
+  run query bez upisivanja u log
+*/
 static function _sql_query_no_log( srv, qry, silent )
 local _msg, _ret
 
@@ -48,18 +50,6 @@ endif
 
 _ret := srv:Query( qry )
 
-/* TODO: ne znam odakle ove neterror greske
-if _ret:NetErr()
-
-	if !silent
-    	_msg := _ret:ErrorMsg()
-      	MsgBeep( _msg )
-	endif
-
-    return .f.
-
-endif
-*/
 return _ret
 
 

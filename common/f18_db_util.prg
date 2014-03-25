@@ -21,7 +21,7 @@ function set_global_memvars_from_dbf(zn)
 return set_global_vars_from_dbf(zn)
 
 // --------------------------------------------------
-// TODO: imee set_global_vars_from_dbf je legacy
+// TODO: ime set_global_vars_from_dbf je legacy
 // --------------------------------------------------
 function set_global_vars_from_dbf(zn)
 

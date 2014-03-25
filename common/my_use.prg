@@ -83,7 +83,7 @@ FUNCTION my_use_temp( alias, table, new_area, excl )
 
    recover using _err
 
-      _msg := "ERR-MYUTMP: " + _err:description + ": tbl:" + table + " alias:" + alias + " se ne moze otvoriti ?!"
+      _msg := "ERROR-MYUTMP: " + _err:description + ": tbl:" + table + " alias:" + alias + " se ne moze otvoriti ?!"
       Alert( _msg )
       log_write( _msg, 2 )
 

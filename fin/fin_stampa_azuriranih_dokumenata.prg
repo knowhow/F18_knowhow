@@ -47,13 +47,6 @@ private dDatNal:=date()
 
 fin_read_params()
 
-// TODO: izbaci
-/*
-IF IzFMKIni("FAKT","VrstePlacanja","N",SIFPATH)=="D"
-  O_VRSTEP
-ENDIF
-*/
-
 O_NALOG
 O_SUBAN
 O_KONTO

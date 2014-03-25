@@ -598,13 +598,10 @@ private cSection := cs
 private cHistory := ch
 private aHistory := {}
 
-// ----------------------------------------------------------
-// TODO: cPosebno vazi samo za cSection "1" i cHistory " " ?!
-// ----------------------------------------------------------
 select (F_PARAMS)
 USE
 O_PARAMS
-RPar("p?",@cPosebno)
+RPar("p?", @cPosebno)
 select params
 use
  

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,362 +16,367 @@
 // -----------------------------------------------------------------------------------------------------
 // synchro dbf tabele na osnovu id-ova koje su poslali drugi
 // -----------------------------------------------------------------------------------------------------
-function ids_synchro(dbf_table)
-local _i, _ids_queries
-local _zap
+FUNCTION ids_synchro( dbf_table )
 
-_ids_queries := create_queries_from_ids(dbf_table)
+   LOCAL _i, _ids_queries
+   LOCAL _zap
 
-
-//  _ids_queries["ids"] = {  {"00113333 1", "0011333 2"}, {"00224444"}  }
-//  _ids_queries["qry"] = {  "select .... in ... rpad('0011333  1') ...", "select .. in ... rpad("0022444")" }
-
-log_write( "START ids_synchro", 9 )
-
-log_write( "ids_synchro ids_queries: " + pp(_ids_queries), 7 )
-
-do while .t.
-
-  // ovo je posebni query koji se pojavi ako se nadje ids '#F'
-  _zap := ASCAN(_ids_queries["qry"], "UZMI_STANJE_SA_SERVERA")
-
-  if _zap <> 0
-
-   // postoji zahtjev za full synchro
-   full_synchro(dbf_table, 50000, .f.)   
-
-   // otvoricu tabelu ponovo ... ekskluzivno, ne bi to trebalo biti problem
-   reopen_shared(dbf_table, .t.)
-
-   ADEL(_zap, _ids_queries["qry"])
-
-   // ponovo kreiraj _ids_queries u slucaju da je bilo jos azuriranja
-   _ids_queries := create_queries_from_ids(dbf_table)
-  
-  else
-     exit
-  endif
-
-enddo
-
-for _i := 1 TO LEN(_ids_queries["ids"])
-
-    log_write( "ids_synchro ids_queries/2: " + pp( _ids_queries["ids"][_i]  ), 9 )
-    // ako nema id-ova po algoritmu _i, onda je NIL ova varijabla
-    if _ids_queries["ids"][_i] != NIL
-
-        // pobrisi u dbf-u id-ove koji su u semaforu tabele
-        delete_ids_in_dbf( dbf_table, _ids_queries["ids"][_i], _i)
-
-        // dodaj sa servera
-        fill_dbf_from_server( dbf_table, _ids_queries["qry"][_i])
-
-    endif
-next
+   _ids_queries := create_queries_from_ids( dbf_table )
 
 
-log_write( "END ids_synchro", 9 )
+   // _ids_queries["ids"] = {  {"00113333 1", "0011333 2"}, {"00224444"}  }
+   // _ids_queries["qry"] = {  "select .... in ... rpad('0011333  1') ...", "select .. in ... rpad("0022444")" }
 
-return .t.
+   log_write( "START ids_synchro", 9 )
+
+   log_write( "ids_synchro ids_queries: " + pp( _ids_queries ), 7 )
+
+   DO WHILE .T.
+
+      // ovo je posebni query koji se pojavi ako se nadje ids '#F'
+      _zap := AScan( _ids_queries[ "qry" ], "UZMI_STANJE_SA_SERVERA" )
+
+      IF _zap <> 0
+
+         // postoji zahtjev za full synchro
+         full_synchro( dbf_table, 50000, .F. )
+
+         // otvoricu tabelu ponovo ... ekskluzivno, ne bi to trebalo biti problem
+         reopen_shared( dbf_table, .T. )
+
+         ADel( _zap, _ids_queries[ "qry" ] )
+
+         // ponovo kreiraj _ids_queries u slucaju da je bilo jos azuriranja
+         _ids_queries := create_queries_from_ids( dbf_table )
+
+      ELSE
+         EXIT
+      ENDIF
+
+   ENDDO
+
+   FOR _i := 1 TO Len( _ids_queries[ "ids" ] )
+
+      log_write( "ids_synchro ids_queries/2: " + pp( _ids_queries[ "ids" ][ _i ]  ), 9 )
+      // ako nema id-ova po algoritmu _i, onda je NIL ova varijabla
+      IF _ids_queries[ "ids" ][ _i ] != NIL
+
+         // pobrisi u dbf-u id-ove koji su u semaforu tabele
+         delete_ids_in_dbf( dbf_table, _ids_queries[ "ids" ][ _i ], _i )
+
+         // dodaj sa servera
+         fill_dbf_from_server( dbf_table, _ids_queries[ "qry" ][ _i ] )
+
+      ENDIF
+   NEXT
+
+
+   log_write( "END ids_synchro", 9 )
+
+   RETURN .T.
 
 
 
-//-------------------------------------------------
+// -------------------------------------------------
 // stavi id-ove za dbf tabelu na server
-//-------------------------------------------------
-function push_ids_to_semaphore( table, ids, to_myself )
-local _tbl
-local _result
-local _user := f18_user()
-local _ret
-local _qry
-local _sql_ids
-local _i
-local _set_1, _set_2
-LOCAL _server := pg_server()
+// -------------------------------------------------
+FUNCTION push_ids_to_semaphore( table, ids, to_myself )
 
-if LEN(ids) < 1
-   return .f.
-endif
+   LOCAL _tbl
+   LOCAL _result
+   LOCAL _user := f18_user()
+   LOCAL _ret
+   LOCAL _qry
+   LOCAL _sql_ids
+   LOCAL _i
+   LOCAL _set_1, _set_2
+   LOCAL _server := pg_server()
 
-// stavi semafor i samom sebi
-if to_myself == NIL
-   to_myself := .f.
-endif
+   IF Len( ids ) < 1
+      RETURN .F.
+   ENDIF
 
-log_write( "START push_ids_to_semaphore", 9 )
-log_write( "push ids: " + table + " / " + pp(ids), 5 )
+   // stavi semafor i samom sebi
+   IF to_myself == NIL
+      to_myself := .F.
+   ENDIF
 
-_tbl := "fmk.semaphores_" + LOWER(table)
+   log_write( "START push_ids_to_semaphore", 9 )
+   log_write( "push ids: " + table + " / " + pp( ids ), 5 )
 
-// treba dodati id za sve DRUGE korisnike
-_result := table_count(_tbl, IIF(to_myself, NIL, "user_code <> " + _sql_quote(_user))) 
+   _tbl := "fmk.semaphores_" + Lower( table )
 
-if _result < 1
-    // jedan korisnik
-    log_write( "push_ids_to_semaphore(), samo je jedan korsnik, nista nije pushirano", 9 )
-    return .t.
-endif
+   // treba dodati id za sve DRUGE korisnike
+   _result := table_count( _tbl, iif( to_myself, NIL, "user_code <> " + _sql_quote( _user ) ) )
 
-_qry := ""    
+   IF _result < 1
+      // jedan korisnik
+      log_write( "push_ids_to_semaphore(), samo je jedan korsnik, nista nije pushirano", 9 )
+      RETURN .T.
+   ENDIF
 
-for _i := 1 TO LEN(ids)
+   _qry := ""
 
-    _sql_ids := "ARRAY[" + _sql_quote(ids[_i]) + "]"
+   FOR _i := 1 TO Len( ids )
 
-    // full synchro
-    if ids[_i] == "#F"
-    	// svi raniji id-ovi su nebitni
-        // brisemo kompletnu tabelu - radimo full synchro
-        _set_1 := "set ids = "
-        _set_2 := ""
-    else
-        // dodajemo postojece
-        _set_1 := "SET ids = ids || "
-        _set_2 := " AND ((ids IS NULL) OR NOT ( (" + _sql_ids + " <@ ids) OR ids = ARRAY['#F'] ) )"
-    endif
+      _sql_ids := "ARRAY[" + _sql_quote( ids[ _i ] ) + "]"
 
-    _qry += "UPDATE " + _tbl + " " + _set_1 + _sql_ids + " WHERE " 
-    if !to_myself
-      _qry += "user_code <> " + _sql_quote(_user) 
-    else
-      _qry += "true"
-    endif
-    _qry +=  _set_2 + ";"
+      // full synchro
+      IF ids[ _i ] == "#F"
+         // svi raniji id-ovi su nebitni
+         // brisemo kompletnu tabelu - radimo full synchro
+         _set_1 := "set ids = "
+         _set_2 := ""
+      ELSE
+         // dodajemo postojece
+         _set_1 := "SET ids = ids || "
+         _set_2 := " AND ((ids IS NULL) OR NOT ( (" + _sql_ids + " <@ ids) OR ids = ARRAY['#F'] ) )"
+      ENDIF
 
-next
+      _qry += "UPDATE " + _tbl + " " + _set_1 + _sql_ids + " WHERE "
+      IF !to_myself
+         _qry += "user_code <> " + _sql_quote( _user )
+      ELSE
+         _qry += "true"
+      ENDIF
+      _qry +=  _set_2 + ";"
 
-// ako id sadrzi vise od 2000 stavki, korisnik je dugo neaktivan, pokreni full sync
-_qry += "UPDATE " + _tbl + " SET ids = ARRAY['#F']  WHERE "
-if !to_myself
- _qry += "user_code <> " + _sql_quote(_user) + " AND "
-endif
-_qry += "ids IS NOT NULL AND array_length(ids,1) > 2000"
-_ret := _sql_query( _server, _qry )
+   NEXT
 
-// ova komanda svakako treba da ide u log, jer je to kljucna stvar kod otklanjanja kvarova
+   // ako id sadrzi vise od 2000 stavki, korisnik je dugo neaktivan, pokreni full sync
+   _qry += "UPDATE " + _tbl + " SET ids = ARRAY['#F']  WHERE "
+   IF !to_myself
+      _qry += "user_code <> " + _sql_quote( _user ) + " AND "
+   ENDIF
+   _qry += "ids IS NOT NULL AND array_length(ids,1) > 2000"
+   _ret := _sql_query( _server, _qry )
 
-log_write( "END push_ids_to_semaphore", 9 )
+   // ova komanda svakako treba da ide u log, jer je to kljucna stvar kod otklanjanja kvarova
 
-// na kraju uradi update verzije semafora, push operacija
-update_semaphore_version_after_push(table, to_myself)
+   log_write( "END push_ids_to_semaphore", 9 )
 
-if VALTYPE(_ret) == "O"
-    return .t.
-else
-    return .f.
-endif
+   // na kraju uradi update verzije semafora, push operacija
+   update_semaphore_version_after_push( table, to_myself )
 
-
-
-//---------------------------------------
-// vrati matricu id-ova za dbf tabelu
-//---------------------------------------
-function get_ids_from_semaphore(table)
-local _tbl
-local _tbl_obj, _update_obj
-local _qry
-local _ids, _num_arr, _arr, _i
-local _server := pg_server()
-local _user := f18_user()
-local _tok, _versions, _tmp
-local _log_level := log_level()
-
-log_write( "START get_ids_from_semaphore", 7)
-
-_tbl := "fmk.semaphores_" + LOWER(table)
-
-run_sql_query("BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE")
-
-if _log_level > 6
-
-    // uzmi verziju i stanje iz semafora prije pocetka
-    _versions := get_semaphore_version_h( LOWER(table) )
-
-    _tmp := "prije SELECT, tabela: " + LOWER(table)  
-    _tmp += " version: " + ALLTRIM( STR( _versions["version"] ) )
-    _tmp += " last version: " + ALLTRIM( STR( _versions["last_version"] ) )
-
-    log_write( _tmp  , 7 )
-
-endif
-
-_qry := "SELECT ids FROM " + _tbl + " WHERE user_code=" + _sql_quote(_user)
-_tbl_obj := _sql_query( _server, _qry )
-
-_qry := "UPDATE " + _tbl + " SET  ids=NULL , dat=NULL, version=last_trans_version"
-_qry += " WHERE user_code =" + _sql_quote(_user) 
-_update_obj := _sql_query( _server, _qry, .t. )
+   IF ValType( _ret ) == "O"
+      RETURN .T.
+   ELSE
+      RETURN .F.
+   ENDIF
 
 
-if ( _tbl_obj == NIL ) .or. ( _update_obj == NIL ) .or. ( VALTYPE( _update_obj ) == "L" .and. _update_obj == .f. )
-      
-	sql_table_update( nil, "ROLLBACK", nil, nil, .t. )
 
-    log_write( "transakcija neuspjesna #29667 ISOLATION LEVEL !", 1, .t. )
-      
-	// retry !
-    return get_ids_from_semaphore( table )
+   // ---------------------------------------
+   // vrati matricu id-ova za dbf tabelu
+   // ---------------------------------------
 
-endif
+FUNCTION get_ids_from_semaphore( table )
 
-if _log_level > 6
+   LOCAL _tbl
+   LOCAL _tbl_obj, _update_obj
+   LOCAL _qry
+   LOCAL _ids, _num_arr, _arr, _i
+   LOCAL _server := pg_server()
+   LOCAL _user := f18_user()
+   LOCAL _tok, _versions, _tmp
+   LOCAL _log_level := log_level()
 
-    // uzmi verziju i stanje verzija na kraju transakcije
-    _versions := get_semaphore_version_h( LOWER( table ) )
+   log_write( "START get_ids_from_semaphore", 7 )
 
-    _tmp := "nakon UPDATE, tabela: " + LOWER( table )
-    _tmp += " version: " + ALLTRIM( STR( _versions["version"] ) )
-    _tmp += " last version: " + ALLTRIM( STR( _versions["last_version"] ) )
+   _tbl := "fmk.semaphores_" + Lower( table )
 
-    log_write( _tmp  , 7 )
+   run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE" )
 
-endif
+   IF _log_level > 6
 
-sql_table_update(nil, "END")
+      // uzmi verziju i stanje iz semafora prije pocetka
+      _versions := get_semaphore_version_h( Lower( table ) )
 
-_ids := _tbl_obj:Fieldget(1)
+      _tmp := "prije SELECT, tabela: " + Lower( table )
+      _tmp += " version: " + AllTrim( Str( _versions[ "version" ] ) )
+      _tmp += " last version: " + AllTrim( Str( _versions[ "last_version" ] ) )
 
-_arr := {}
-if _ids == NIL
-    return _arr
-endif
+      log_write( _tmp, 7 )
 
-_ids := hb_Utf8ToStr(_ids)
+   ENDIF
 
-// {id1,id2,id3}
-_ids := SUBSTR(_ids, 2, LEN(_ids)-2)
+   _qry := "SELECT ids FROM " + _tbl + " WHERE user_code=" + _sql_quote( _user )
+   _tbl_obj := _sql_query( _server, _qry )
 
-_num_arr := numtoken(_ids, ",")
+   _qry := "UPDATE " + _tbl + " SET  ids=NULL , dat=NULL, version=last_trans_version"
+   _qry += " WHERE user_code =" + _sql_quote( _user )
+   _update_obj := _sql_query( _server, _qry, .T. )
 
-for _i := 1 to _num_arr
-   _tok := token(_ids, ",", _i)
-   if LEFT(_tok, 1) == '"' .and. RIGHT(_tok, 1) == '"'
-     // odsjeci duple navodnike "..."
-     _tok := SUBSTR(_tok, 2, LEN(_tok) -2)
-   endif
-   AADD(_arr, _tok)
-next
 
-log_write( "END get_ids_from_semaphore", 7)
+   IF ( _tbl_obj == NIL ) .OR. ( _update_obj == NIL ) .OR. ( ValType( _update_obj ) == "L" .AND. _update_obj == .F. )
 
-RETURN _arr
+      sql_table_update( nil, "ROLLBACK", nil, nil, .T. )
+
+      log_write( "transakcija neuspjesna #29667 ISOLATION LEVEL !", 1, .T. )
+
+      // retry !
+      RETURN get_ids_from_semaphore( table )
+
+   ENDIF
+
+   IF _log_level > 6
+
+      // uzmi verziju i stanje verzija na kraju transakcije
+      _versions := get_semaphore_version_h( Lower( table ) )
+
+      _tmp := "nakon UPDATE, tabela: " + Lower( table )
+      _tmp += " version: " + AllTrim( Str( _versions[ "version" ] ) )
+      _tmp += " last version: " + AllTrim( Str( _versions[ "last_version" ] ) )
+
+      log_write( _tmp, 7 )
+
+   ENDIF
+
+   sql_table_update( nil, "END" )
+
+   _ids := _tbl_obj:FieldGet( 1 )
+
+   _arr := {}
+   IF _ids == NIL
+      RETURN _arr
+   ENDIF
+
+   _ids := hb_UTF8ToStr( _ids )
+
+   // {id1,id2,id3}
+   _ids := SubStr( _ids, 2, Len( _ids ) -2 )
+
+   _num_arr := NumToken( _ids, "," )
+
+   FOR _i := 1 TO _num_arr
+      _tok := Token( _ids, ",", _i )
+      IF Left( _tok, 1 ) == '"' .AND. Right( _tok, 1 ) == '"'
+         // odsjeci duple navodnike "..."
+         _tok := SubStr( _tok, 2, Len( _tok ) -2 )
+      ENDIF
+      AAdd( _arr, _tok )
+   NEXT
+
+   log_write( "END get_ids_from_semaphore", 7 )
+
+   RETURN _arr
 
 
 
 // ---------------------------------------------------------------------------------------------------------
 // napraviti array qry, za sve dostupne ids algoritme
 //
-//  ret["qry"] := { "select .... where .. uslov za podsifra ..", "select ... where ... uslov za sifra .." }
-//  ret["ids"] := { "01/1", "01/2" }, {"03", "04"}
+// ret["qry"] := { "select .... where .. uslov za podsifra ..", "select ... where ... uslov za sifra .." }
+// ret["ids"] := { "01/1", "01/2" }, {"03", "04"}
 //
-//  u gornjem primjeru imamo dva algoritma i dva seta ids-ova - prvi na nivou sifra/podsifra ("01/1", "01/2")
-//  a drugi na nivou sifre "01", "04"
+// u gornjem primjeru imamo dva algoritma i dva seta ids-ova - prvi na nivou sifra/podsifra ("01/1", "01/2")
+// a drugi na nivou sifre "01", "04"
 //
-//  algoritmi se nalaze u hash varijabli koju nam vraca funkcija f18_dbfs()
-//  set_a_dbf... funkcije definišu tu hash varijablu
+// algoritmi se nalaze u hash varijabli koju nam vraca funkcija f18_dbfs()
+// set_a_dbf... funkcije definišu tu hash varijablu
 //
-// ova util funkcija daje nam id-ove i sql queries potrebne da 
+// ova util funkcija daje nam id-ove i sql queries potrebne da
 // sinhroniziramo dbf sa promjenama koje su napravili drugi korisnici
 // -------------------------------------------------------------------------------------------------------------
-function create_queries_from_ids(table)
-local _a_dbf_rec, _msg
-local _qry_1, _qry_2
-local _queries     := {}
-local _ids, _ids_2 := {}
-local _sql_ids := {}
-local _i, _id
-local _ret := hb_hash()
-local _sql_fields
-local _algoritam, _alg
+FUNCTION create_queries_from_ids( table )
 
-_a_dbf_rec := get_a_dbf_rec(table)
+   LOCAL _a_dbf_rec, _msg
+   LOCAL _qry_1, _qry_2
+   LOCAL _queries     := {}
+   LOCAL _ids, _ids_2 := {}
+   LOCAL _sql_ids := {}
+   LOCAL _i, _id
+   LOCAL _ret := hb_Hash()
+   LOCAL _sql_fields
+   LOCAL _algoritam, _alg
 
-_sql_fields := sql_fields(_a_dbf_rec["dbf_fields"])
-_alg := _a_dbf_rec["algoritam"]
+   _a_dbf_rec := get_a_dbf_rec( table )
 
-_sql_tbl := "fmk." + table
+   _sql_fields := sql_fields( _a_dbf_rec[ "dbf_fields" ] )
+   _alg := _a_dbf_rec[ "algoritam" ]
 
-for _i := 1 to LEN(_alg)
-    AADD(_queries, "SELECT " + _sql_fields + " FROM " + _sql_tbl + " WHERE ")
-    AADD(_sql_ids, NIL)
-    AADD(_ids_2, NIL)
-next
+   _sql_tbl := "fmk." + table
 
-_ids := get_ids_from_semaphore( table )
-//nuliraj_ids_and_update_my_semaphore_ver(table)
+   FOR _i := 1 TO Len( _alg )
+      AAdd( _queries, "SELECT " + _sql_fields + " FROM " + _sql_tbl + " WHERE " )
+      AAdd( _sql_ids, NIL )
+      AAdd( _ids_2, NIL )
+   NEXT
 
-log_write("create_queries..(), poceo", 9 )
+   _ids := get_ids_from_semaphore( table )
+   // nuliraj_ids_and_update_my_semaphore_ver(table)
 
-// primjer
-// suban 00-11-2222 rbr 1, rbr 2 
-// kompletan nalog (#2) 00-11-3333
-// Full synchro (#F)
-// _ids := { "00112222 1", "00112222 2", "#200113333", "#F" }
+   log_write( "create_queries..(), poceo", 9 )
 
-for each _id in _ids
+   // primjer
+   // suban 00-11-2222 rbr 1, rbr 2
+   // kompletan nalog (#2) 00-11-3333
+   // Full synchro (#F)
+   // _ids := { "00112222 1", "00112222 2", "#200113333", "#F" }
 
-    if LEFT(_id, 1) == "#"
+   FOR EACH _id in _ids
 
-        if SUBSTR(_id, 2, 1) == "F"
+      IF Left( _id, 1 ) == "#"
+
+         IF SubStr( _id, 2, 1 ) == "F"
             // full sinchro
             _algoritam := 99
             _id := "X"
-        else
+         ELSE
             // algoritam "#2" => algoritam 2
-            _algoritam := VAL(SUBSTR( _id, 2, 1))
-            _id := SUBSTR(_id, 3)
-        endif
+            _algoritam := Val( SubStr( _id, 2, 1 ) )
+            _id := SubStr( _id, 3 )
+         ENDIF
 
-    else
-        _algoritam := 1
-    endif
+      ELSE
+         _algoritam := 1
+      ENDIF
 
-    if _algoritam == 99
-        // full sync zahtjev
-        AADD(_queries, "UZMI_STANJE_SA_SERVERA")
-        AADD(_sql_ids, NIL)
-    else
-        // ne moze biti "#3" a da tabela ima definisana samo dva algoritma
-        if _algoritam > LEN(_alg)
+      IF _algoritam == 99
+         // full sync zahtjev
+         AAdd( _queries, "UZMI_STANJE_SA_SERVERA" )
+         AAdd( _sql_ids, NIL )
+      ELSE
+         // ne moze biti "#3" a da tabela ima definisana samo dva algoritma
+         IF _algoritam > Len( _alg )
             _msg := "nasao sam ids " + _id + ". Ovaj algoritam nije podrzan za " + table
-            Alert(_msg)
+            Alert( _msg )
             log_write( "create_queries..(), " + _msg, 5 )
-            RaiseError(_msg)
+            RaiseError( _msg )
             QUIT_1
-        endif
+         ENDIF
 
-        if _sql_ids[_algoritam] == NIL
-            _sql_ids[_algoritam] := "("
-            _ids_2[_algoritam] := {}
-        endif
+         IF _sql_ids[ _algoritam ] == NIL
+            _sql_ids[ _algoritam ] := "("
+            _ids_2[ _algoritam ] := {}
+         ENDIF
 
-        _sql_ids[_algoritam] += _sql_quote(_id) + ","
-        AADD(_ids_2[_algoritam], _id)
+         _sql_ids[ _algoritam ] += _sql_quote( _id ) + ","
+         AAdd( _ids_2[ _algoritam ], _id )
 
-     endif 
-next
+      ENDIF
+   NEXT
 
-for _i := 1 to LEN(_alg)
+   FOR _i := 1 TO Len( _alg )
 
-    if _sql_ids[_i] != NIL
-        // odsjeci zarez na kraju
-        _sql_ids[_i] := LEFT(_sql_ids[_i], LEN(_sql_ids[_i]) - 1)
-        _sql_ids[_i] += ")"
-        _queries[_i] +=  "(" + _alg[_i]["sql_in"]  + ") IN " + _sql_ids[_i]
-    else
-        _queries[_i] := NIL
-    endif
+      IF _sql_ids[ _i ] != NIL
+         // odsjeci zarez na kraju
+         _sql_ids[ _i ] := Left( _sql_ids[ _i ], Len( _sql_ids[ _i ] ) - 1 )
+         _sql_ids[ _i ] += ")"
+         _queries[ _i ] +=  "(" + _alg[ _i ][ "sql_in" ]  + ") IN " + _sql_ids[ _i ]
+      ELSE
+         _queries[ _i ] := NIL
+      ENDIF
 
-next
+   NEXT
 
-log_write("create_queries..(), ret[qry]=" + pp(_queries), 9 )
-log_write("create_queries..(), ret[ids]=" + pp(_ids_2), 9 )
-log_write("create_queries..(), zavrsio", 9 )
-_ret["qry"] := _queries
-_ret["ids"] := _ids_2
+   log_write( "create_queries..(), ret[qry]=" + pp( _queries ), 9 )
+   log_write( "create_queries..(), ret[ids]=" + pp( _ids_2 ), 9 )
+   log_write( "create_queries..(), zavrsio", 9 )
+   _ret[ "qry" ] := _queries
+   _ret[ "ids" ] := _ids_2
 
-return _ret
+   RETURN _ret
 
 
 
@@ -381,102 +386,96 @@ return _ret
 // ids       := {"#20011", "#2012"}
 // algoritam := 2
 // ------------------------------------------------------
-function delete_ids_in_dbf(dbf_table, ids, algoritam)
-local _a_dbf_rec, _alg
-local _counter, _msg
-local _fnd, _tmp_id, _rec
-local _dbf_alias
-local _dbf_tag
-local _key_block
-local _i
+FUNCTION delete_ids_in_dbf( dbf_table, ids, algoritam )
 
-log_write( "delete_ids_in_dbf(), poceo", 9 )
+   LOCAL _a_dbf_rec, _alg
+   LOCAL _counter, _msg
+   LOCAL _fnd, _tmp_id, _rec
+   LOCAL _dbf_alias
+   LOCAL _dbf_tag
+   LOCAL _key_block
+   LOCAL _i
 
-_a_dbf_rec := get_a_dbf_rec(dbf_table)
-_alg := _a_dbf_rec["algoritam"]
+   log_write( "delete_ids_in_dbf(), poceo", 9 )
 
-_dbf_alias := _a_dbf_rec["alias"]
-_dbf_tag := _alg[algoritam]["dbf_tag"]
+   _a_dbf_rec := get_a_dbf_rec( dbf_table )
+   _alg := _a_dbf_rec[ "algoritam" ]
 
-_key_block := _alg[algoritam]["dbf_key_block"]
+   _dbf_alias := _a_dbf_rec[ "alias" ]
+   _dbf_tag := _alg[ algoritam ][ "dbf_tag" ]
 
-// pobrisimo sve dbf zapise na kojima su drugi radili
-SET ORDER TO TAG (_dbf_tag)
+   _key_block := _alg[ algoritam ][ "dbf_key_block" ]
 
-_counter := 0
+   // pobrisimo sve dbf zapise na kojima su drugi radili
+   SET ORDER TO TAG ( _dbf_tag )
 
-if VALTYPE(ids) != "A"
-    Alert("ids type ? " + VALTYPE(ids))
-endif
+   _counter := 0
 
-do while .t.
-    
-    _fnd := .f.
-    
-    for each _tmp_id in ids
-        
-        HSEEK _tmp_id
-        
-        do while !EOF() .and. EVAL(_key_block) == _tmp_id
+   IF ValType( ids ) != "A"
+      Alert( "ids type ? " + ValType( ids ) )
+   ENDIF
 
-            _msg := ToStr(Time()) + " : sync del : " + dbf_table + " : " + _tmp_id
-            @ maxrows() - 1, maxcols() - 70 SAY PADR( _msg, 53 )
- 
-            skip
-            _rec := RECNO()
-            skip -1 
-            delete_with_rlock()            
-            go _rec
- 
-            _fnd := .t.
+   DO WHILE .T.
+
+      _fnd := .F.
+
+      FOR EACH _tmp_id in ids
+
+         HSEEK _tmp_id
+
+         DO WHILE !Eof() .AND. Eval( _key_block ) == _tmp_id
+            SKIP
+            _rec := RecNo()
+            SKIP -1
+            delete_with_rlock()
+            GO _rec
+
+            _fnd := .T.
             ++ _counter
- 
-       enddo
-    next
+         ENDDO
+      NEXT
 
-    if !_fnd 
-        exit 
-    endif
-enddo
+      IF !_fnd
+         EXIT
+      ENDIF
+   ENDDO
 
-log_write( "delete_ids_in_dbf(), table: " + dbf_table + "/ dbf_tag =" + _dbf_tag + " pobrisao iz lokalnog dbf-a zapisa = " + ALLTRIM(STR( _counter )), 5 )
+   log_write( "delete_ids_in_dbf(), table: " + dbf_table + "/ dbf_tag =" + _dbf_tag + " pobrisao iz lokalnog dbf-a zapisa = " + AllTrim( Str( _counter ) ), 5 )
 
-log_write( "delete_ids_in_dbf(), zavrsio", 9 )
+   log_write( "delete_ids_in_dbf(), zavrsio", 9 )
 
-return
+   RETURN
 
 
 // ----------------------------------------------------------
 // util funkcija za ids algoritam kreira dbf kljuc potreban
 // za brisanje zapisa koje su drugi mijenjali
-// 
+//
 // dbf_fields - {"id", {"iznos", 12, 2} }
 // rec - { "01", 15.5 }
 //
 // => "01       15.50"
 // ----------------------------------------------------------
-function get_dbf_rec_primary_key(dbf_key_fields, rec)
-local _field, _t_field, _t_field_dec
-local _full_id := ""
+FUNCTION get_dbf_rec_primary_key( dbf_key_fields, rec )
 
-for each _field in dbf_key_fields
+   LOCAL _field, _t_field, _t_field_dec
+   LOCAL _full_id := ""
 
-    if VALTYPE( _field ) == "A"    
-        _t_field := _field[1]
-        _t_field_dec := _field[2]
-        _full_id += STR( rec[ _t_field ], _t_field_dec )
-    else
-        _t_field := _field
-        if VALTYPE( rec[ _t_field ] ) == "D"
-            _full_id += DTOS( rec[ _t_field ] )
-        else
+   FOR EACH _field in dbf_key_fields
+
+      IF ValType( _field ) == "A"
+         _t_field := _field[ 1 ]
+         _t_field_dec := _field[ 2 ]
+         _full_id += Str( rec[ _t_field ], _t_field_dec )
+      ELSE
+         _t_field := _field
+         IF ValType( rec[ _t_field ] ) == "D"
+            _full_id += DToS( rec[ _t_field ] )
+         ELSE
             _full_id += rec[ _t_field ]
-        endif
-    endif
+         ENDIF
+      ENDIF
 
-next
+   NEXT
 
-return _full_id
-
-
-
+   RETURN _full_id

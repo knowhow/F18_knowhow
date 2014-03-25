@@ -1,3 +1,8 @@
+
+1.7.8   2014-03-25, hernad
+
+  - DEBUG my_use full sync, PERFORMANCE: izbaceno iz mysql F18_DB_LOCK
+
 1.7.7   2014-03-22, hernad
 
   - DEBUG RDDSQL nasa slova #32809

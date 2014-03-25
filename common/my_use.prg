@@ -169,7 +169,6 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
    IF !( _a_dbf_rec[ "temp" ] )
 
       _lock := F18_DB_LOCK():New()
-      // tabela je pokrivena semaforom
       IF ( _rdd != "SEMAPHORE" ) .AND. ;
             ( !_lock:is_locked() .OR. ( _lock:is_locked() .AND. _lock:run_synchro() ) ) .AND. my_use_semaphore()
          dbf_semaphore_synchro( table )
@@ -187,7 +186,7 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
    ENDIF
 
    // nije nikada uradjena inicijalna kontrola ove tabele
-   IF !_a_dbf_rec[ "chk0" ] .AND. !_a_dbf_rec[ "temp" ]
+   IF !_a_dbf_rec[ "chk0" ] .AND. my_use_semaphore() .and. !_a_dbf_rec[ "temp" ]
       refresh_me( _a_dbf_rec, .T., .T. )
    ENDIF
 
@@ -257,8 +256,6 @@ FUNCTION dbf_semaphore_synchro( table )
       log_write( "dbf_semaphore_synchro/2, _last_version: " + Str( _last_version ) + " _version: " + Str( _version ), 5 )
 
    ENDDO
-
-   check_after_synchro( table )
 
    log_write( "END dbf_semaphore_synchro", 9 )
 

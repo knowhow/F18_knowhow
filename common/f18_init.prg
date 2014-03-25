@@ -17,7 +17,7 @@ static __server := NIL
 static __server_params := NIL
 
 // logiranje na server
-static __server_log := .f.
+static __server_log := .F.
 
 static __f18_home := NIL
 static __f18_home_root := NIL
@@ -479,13 +479,13 @@ endif
 
 // -------------------------------
 // -------------------------------
-function post_login( gvars )
+function post_login( gVars )
 local _ver
 local oDB_lock := F18_DB_LOCK():New()
 local _need_lock_synchro := .f.
 
-if gvars == NIL
-    gvars := .t.
+if gVars == NIL
+    gVars := .t.
 endif
 
 // da li treba zakljucati bazu
@@ -534,10 +534,9 @@ write_dbf_version_to_config()
 #endif
 
 check_server_db_version()
+server_log_enable()
 
-__server_log := .t.
-
-if gvars
+if gVars
     set_all_gvars()
 endif
 
@@ -1154,13 +1153,13 @@ if oBackup:locked()
     return _ret
 endif
 
-__server_log := .f.
-
+server_log_disable()
 my_server_logout()
 
 _get_server_params_from_config()
 
 if f18_form_login()
+   server_log_enable()
    post_login()
 endif
 
@@ -1201,7 +1200,7 @@ _msg_time += ": "
 
 #ifndef TEST
 #ifndef NODE
-if __server_log
+if server_log()
     server_log_write( msg, silent )
 endif
 #endif
@@ -1209,13 +1208,15 @@ endif
 
 return
 
+function server_log()
+return __server_log
 
-function log_disable()
-__server_log := .f.
+function server_log_disable()
+__server_log := .F.
 return
 
-function log_enable()
-__server_log := .f.
+function server_log_enable()
+__server_log := .T.
 return
 
 

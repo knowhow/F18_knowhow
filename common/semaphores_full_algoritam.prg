@@ -32,6 +32,8 @@ if f18_session()['id'] > 1
     return .f.
 endif
 
+altd()
+
 if step_size == NIL
     step_size := 20000
 endif
@@ -109,7 +111,7 @@ Box(, 6, 70)
 BoxC()
 
 MsgO("Reindex nakon full sync: " + dbf_table)
-   log_write("reopen sa indexom, START reindex " + dbf_table, 3)
+   log_write("reopen nakon full_sync START:" + dbf_table, 3)
    reopen_exclusive(_a_dbf_rec["table"], .t.)
    REINDEX
 MsgC()

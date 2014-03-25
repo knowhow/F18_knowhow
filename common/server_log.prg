@@ -24,10 +24,6 @@ LOCAL _tbl
 LOCAL _user := f18_user()
 LOCAL _server := pg_server()
 
-// TODO: server_log wratiti nazad
-
-return .f.
-
 if silent == NIL
 	silent := .f.
 endif

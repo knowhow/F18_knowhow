@@ -80,7 +80,6 @@ endif
 
 log_write("stanje nakon sync " + _msg_1 + " " + _msg_2, 8 )
 
-
 // 4) uradi check i fix ako treba
 //
 // _cnt - _del je broj aktivnih dbf zapisa, dajemo taj info check_recno funkciji

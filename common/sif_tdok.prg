@@ -33,7 +33,7 @@ FUNCTION browse_tdok( cId, dx, dy )
 
    SELECT ( nTArea )
 
-   RETURN p_sifra_2( F_TDOK, 1, Max( maxrows() - 20, 10 ), Max( maxcols() - 30, 35 ), "OsnPod: Vrste dokumenata", @cId, dx, dy )
+   RETURN p_sifra( F_TDOK, 1, Max( maxrows() - 20, 10 ), Max( maxcols() - 30, 35 ), "OsnPod: Vrste dokumenata", @cId, dx, dy )
 
 
 FUNCTION P_TipDok( cId, dx, dy )

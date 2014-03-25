@@ -28,15 +28,15 @@ nTArea := SELECT()
 
 O_RJ
 
-AADD(ImeKol, { PADR("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wId)} })
-AADD(ImeKol, { PADR("Naziv",35), {|| naz}, "naz" })
-AADD(ImeKol, { PADR("Tip cij.",10), {|| tip}, "tip" })
-AADD(ImeKol, { PADR("Konto",10), {|| konto}, "konto" })
+AADD(ImeKol, { PADR("Id" ,  2),     {|| id },   "id", {|| .t.}, {|| vpsifra(wId)} })
+AADD(ImeKol, { PADR("Naziv" , 35),  {|| Padr( ToStrU(naz), 35) },  "naz" })
+AADD(ImeKol, { PADR("Tip cij." , 10), {|| tip }, "tip" })
+AADD(ImeKol, { PADR("Konto" , 10), {|| konto },  "konto" })
 
 for i:=1 to LEN(ImeKol)
 	AADD(Kol, i)
 next
 
 select (nTArea)
-return PostojiSifra(F_RJ, 1, MAXROWS() - 15, MAXCOLS() - 30 ,"LRJ: Lista radnih jedinica", @cId, dx, dy)
+return p_sifra(F_RJ, 1, MAXROWS() - 15, MAXCOLS() - 30 ,"MatPod: Lista radnih jedinica", @cId, dx, dy)
 

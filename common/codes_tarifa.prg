@@ -33,7 +33,7 @@ nTArea := SELECT()
 O_TARIFA
 
 AADD(ImeKol, { "ID", {|| id}, "id", {|| .t.}, {|| vpsifra(wId)}  })
-AADD(ImeKol, { PADC("Naziv",35), {|| LEFT(naz, 35)}, "naz" })
+AADD(ImeKol, { PADC("Naziv", 35), {|| Padr( ToStrU( naz ) , 35 ) }, "naz" })
 
 if IsPDV()
 	AADD(ImeKol,  { "PDV ", {|| opp} ,  "opp"  } )
@@ -62,7 +62,7 @@ if !USED()
 	O_TARIFA
 endif
 
-cRet := PostojiSifra(F_TARIFA, 1, 10, 65, "Tarifne grupe", @cid, dx, dy)
+cRet := p_sifra(F_TARIFA, 1, MAXROWS() - 15, MAXCOLS() - 25, "Tarifne grupe", @cid, dx, dy)
 
 PopWa()
 

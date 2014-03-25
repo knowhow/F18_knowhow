@@ -20,7 +20,7 @@ STATIC _LOG_PROMJENE := .F.
 
 STATIC __A_SIFV__ := { { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL } }
 
-FUNCTION p_sifra_2( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aPoredak, bPodvuci, aZabrane, invert, aZabIsp )
+FUNCTION p_sifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aPoredak, bPodvuci, aZabrane, invert, aZabIsp )
 
    LOCAL cRet, cIdBK
    LOCAL _i
@@ -112,7 +112,7 @@ FUNCTION p_sifra_2( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
          GO TOP
       ENDIF
 
-      browse_table_sql(, nVisina, nSirina,  {|| ed_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, cNaslov, "", invert, _komande, 1, bPodvuci, , , aPoredak )
+      browse_table_sql(, nVisina, nSirina,  {|| ed_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, ToStrU( cNaslov ) , "", invert, _komande, 1, bPodvuci, , , aPoredak )
 
       IF Type( "id" ) $ "U#UE"
          cID := ( nDbf )->( FieldGet( 1 ) )
@@ -492,7 +492,7 @@ STATIC FUNCTION ed_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
       Tb:RefreshCurrent()
 
-      IF edit_item( Ch, nOrder, aZabIsp ) == 1
+      IF edit_sif_item( Ch, nOrder, aZabIsp ) == 1
          RETURN DE_REFRESH
       ENDIF
 
@@ -557,7 +557,7 @@ STATIC FUNCTION ed_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
 // ------------------------------------------
 // ------------------------------------------
-STATIC FUNCTION edit_item( Ch, nOrder, aZabIsp )
+STATIC FUNCTION edit_sif_item( Ch, nOrder, aZabIsp )
 
    LOCAL i
    LOCAL j
@@ -608,10 +608,6 @@ STATIC FUNCTION edit_item( Ch, nOrder, aZabIsp )
       GO ( nPrevRecNo )
 
    ENDIF
-
-   //
-   // odrednica za novi zapis....
-   //
 
    IF Ch == K_CTRL_N
       lNovi := .T.
@@ -1173,11 +1169,11 @@ STATIC FUNCTION Popup( nOrder )
    PRIVATE Izbor
 
    AAdd( Opc, "1. novi                  " )
-   AAdd( opcexe, {|| edit_item( K_CTRL_N, nOrder ) } )
+   AAdd( opcexe, {|| edit_sif_item( K_CTRL_N, nOrder ) } )
    AAdd( Opc, "2. edit  " )
-   AAdd( opcexe, {|| edit_item( K_F2, nOrder ) } )
+   AAdd( opcexe, {|| edit_sif_item( K_F2, nOrder ) } )
    AAdd( Opc, "3. dupliciraj  " )
-   AAdd( opcexe, {|| edit_item( K_F4, nOrder ) } )
+   AAdd( opcexe, {|| edit_sif_item( K_F4, nOrder ) } )
    AAdd( Opc, "4. <a+R> za sifk polja  " )
    AAdd( opcexe, {|| repl_sifk_item() } )
    AAdd( Opc, "5. copy polje -> sifk polje  " )

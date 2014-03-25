@@ -69,7 +69,6 @@ FUNCTION my_use_temp( alias, table, new_area, excl )
       new_area := .F.
    ENDIF
 
-
    IF Used()
       USE
    ENDIF
@@ -159,7 +158,6 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
       log_write( _msg, 5 )
       QUIT_1
    ENDIF
-
 
    IF _rdd == NIL
       _rdd = DBFENGINE

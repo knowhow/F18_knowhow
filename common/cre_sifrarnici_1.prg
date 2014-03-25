@@ -24,7 +24,6 @@ FUNCTION cre_sifrarnici_1( ver )
    LOCAL aDbf
 
    // KONTO
-
    _alias := "KONTO"
    _table_name := "konto"
 
@@ -49,7 +48,6 @@ FUNCTION cre_sifrarnici_1( ver )
    db_cre_ugov( ver )
 
    RETURN .T.
-
 
 
 // ----------------------------------------

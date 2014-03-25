@@ -53,8 +53,6 @@ CLASS F18Backup
 ENDCLASS
 
 
-
-
 METHOD F18Backup:New()
 
    ::backup_interval := 0
@@ -63,7 +61,6 @@ METHOD F18Backup:New()
    ::ping_time := 0
 
    RETURN SELF
-
 
 
 METHOD F18Backup:backup_in_progress_info()
@@ -108,9 +105,6 @@ METHOD F18Backup:Backup_now( auto )
    ::unlock()
 
    RETURN .T.
-
-
-
 
 METHOD F18Backup:Backup_company()
 
@@ -169,22 +163,16 @@ METHOD F18Backup:Backup_company()
    _cmd += ' "' + _database + '"'
 
    @ _x, _y SAY "Obavjestenje: nakon pokretanja procedure backup-a slobodno se prebacite"
-
    ++_x
    @ _x, _y SAY "              na prozor aplikacije i nastavite raditi."
-
    ++ _x
    @ _x, _y SAY _line
-
    ++ _x
    @ _x, _y SAY "Backup podataka u toku...."
-
    ++ _x
    @ _x, _y SAY _line
-
    ++ _x
    @ _x, _y SAY "  Lokacija backup-a: " + ::backup_path
-
    ++ _x
    @ _x, _y SAY "Naziv fajla backupa: " + ::backup_filename
 
@@ -229,11 +217,6 @@ METHOD F18Backup:Backup_company()
    NEXT
 
    RETURN _ok
-
-
-
-
-
 
 METHOD F18Backup:Backup_server()
 
@@ -288,29 +271,22 @@ METHOD F18Backup:Backup_server()
    _cmd += " -w "
    _cmd += ' -f "' + _backup_file + '"'
 
-   @ _x, _y SAY "Obavjestenje: nakon pokretanja procedure backup-a slobodno se prebacite"
-
+   @ _x, _y SAY8 "Obavještenje: nakon pokretanja procedure backup-a slobodno se prebacite"
    ++_x
-   @ _x, _y SAY "              na prozor aplikacije i nastavite raditi."
-
+   @ _x, _y SAY8 "              na prozor aplikacije i nastavite raditi."
    ++ _x
    @ _x, _y SAY _line
-
    ++ _x
-   @ _x, _y SAY "Backup podataka u toku...."
-
+   @ _x, _y SAY8 "Backup podataka u toku...."
    ++ _x
    @ _x, _y SAY Replicate( "=", 70 )
-
    ++ _x
    @ _x, _y SAY "   Lokacija backupa: " + ::backup_path
    ++ _x
    @ _x, _y SAY "Naziv fajla backupa: " + ::backup_filename
-
-
    ++ _x
    ++ _x
-   @ _x, _y SAY "ocekujem rezulat operacije... "
+   @ _x, _y SAY8 "očekujem rezulat operacije... "
 
    // pokreni komandu
 #ifdef __PLATFORM__WINDOWS
@@ -388,15 +364,11 @@ METHOD F18Backup:get_windows_ping_time()
    RETURN .T.
 
 
-
-
 METHOD F18Backup:get_removable_drive()
 
    ::removable_drive := fetch_metric( "backup_removable_drive", my_user(), "" )
 
    RETURN .T.
-
-
 
 METHOD F18Backup:get_backup_path()
 
@@ -413,10 +385,6 @@ METHOD F18Backup:get_backup_path()
    ENDIF
 
    RETURN .T.
-
-
-
-
 
 
 METHOD F18Backup:get_backup_filename()
@@ -450,10 +418,6 @@ METHOD F18Backup:get_backup_filename()
 
    RETURN _name
 
-
-
-
-
 // ---------------------------------------------------------
 // get backup interval
 // ---------------------------------------------------------
@@ -468,8 +432,6 @@ METHOD F18Backup:get_backup_interval()
    ::backup_interval := fetch_metric( _param, my_user(), 0 )
 
    RETURN .T.
-
-
 
 
 // ---------------------------------------------------------
@@ -559,8 +521,6 @@ METHOD F18Backup:locked( info )
    RETURN _ret
 
 
-
-
 // ---------------------------------------------------------
 // set/get backup date
 // ---------------------------------------------------------
@@ -589,10 +549,6 @@ METHOD F18Backup:get_last_backup_date()
 
    RETURN
 
-
-
-
-
 // ------------------------------------------------
 // poziv backupa podataka sa menija...
 // ------------------------------------------------
@@ -601,10 +557,6 @@ FUNCTION f18_backup_data()
    hb_threadStart( @f18_backup_data_thread(), NIL )
 
    RETURN
-
-
-
-
 
 // ------------------------------------------------
 // poziv backupa podataka automatski...
@@ -645,17 +597,12 @@ FUNCTION f18_auto_backup_data( backup_type_def, start_now )
 
    RETURN
 
-
-
-
-
 FUNCTION f18_backup_data_thread( type_def )
 
    LOCAL oBackup
    LOCAL auto_backup := .T.
 
 #ifdef  __PLATFORM__WINDOWS
-
    _w := hb_gtCreate( "WVT" )
 #else
    _w := hb_gtCreate( "XWC" )

@@ -114,7 +114,6 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
    LOCAL _force_erase := .F.
    LOCAL _dbf
    LOCAL _tmp
-   LOCAL _lock
 
    IF excl == NIL
       excl := .F.
@@ -168,10 +167,12 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
 
    IF !( _a_dbf_rec[ "temp" ] )
 
-      _lock := F18_DB_LOCK():New()
-      IF ( _rdd != "SEMAPHORE" ) .AND. ;
-            ( !_lock:is_locked() .OR. ( _lock:is_locked() .AND. _lock:run_synchro() ) ) .AND. my_use_semaphore()
+      IF ( _rdd != "SEMAPHORE" ) .AND. my_use_semaphore()
          dbf_semaphore_synchro( table )
+         IF !_a_dbf_rec[ "chk0" ]
+             // nije nikada uradjena inicijalna kontrola ove tabele
+             refresh_me( _a_dbf_rec, .T., .T. )
+         ENDIF
       ELSE
          // rdd = "SEMAPHORE" poziv is update from sql server procedure
          // samo otvori tabelu
@@ -183,11 +184,6 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
 
    IF Used()
       USE
-   ENDIF
-
-   // nije nikada uradjena inicijalna kontrola ove tabele
-   IF !_a_dbf_rec[ "chk0" ] .AND. my_use_semaphore() .and. !_a_dbf_rec[ "temp" ]
-      refresh_me( _a_dbf_rec, .T., .T. )
    ENDIF
 
    _dbf := my_home() + table

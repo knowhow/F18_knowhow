@@ -140,7 +140,7 @@ FUNCTION WRbr()
    _rec := dbf_get_rec()
 
    IF Val( _rec[ "rbr" ] ) < 2
-      @ m_x + 1, m_y + 2 SAY "Dokument:" GET _rec[ "idvn" ]
+      @ m_x + 1, m_y + 2 SAY8 "Dokument:" GET _rec[ "idvn" ]
       @ m_x + 1, Col() + 2  GET _rec[ "brnal" ]
       READ
    ENDIF
@@ -231,7 +231,7 @@ FUNCTION edit_fin_priprema()
    SET CURSOR ON
 
    IF gNW == "D"
-      @  m_x + 1, m_y + 2 SAY "Firma: "
+      @  m_x + 1, m_y + 2 SAY8 "Firma: "
       ?? gFirma, "-", gNFirma
       @  m_x + 3, m_y + 2 SAY "NALOG: "
       @  m_x + 3, m_y + 14 SAY "Vrsta:" GET _idvn VALID browse_tnal( @_IdVN, 3, 26 ) PICT "@!"

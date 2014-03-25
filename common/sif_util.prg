@@ -14,11 +14,11 @@ function sif_ispisi_naziv(nDbf, dx, dy)
 local cTmp  := ""
 
 if (nDbf)->(FIELDPOS("naz")) <> 0
-   cTmp := TRIM( ToStr( (nDbf)->naz ) )
+   cTmp := TRIM( ToStrU( (nDbf)->naz ) )
 endif
 
 if (nDbf)->(FIELDPOS("naziv")) <> 0
-   cTmp := TRIM( ToStr( (nDbf)->naziv ) )
+   cTmp := TRIM( ToStrU( (nDbf)->naziv ) )
 endif
 
 if dx <> NIL .and. dy <> nil

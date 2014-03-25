@@ -694,7 +694,7 @@ STATIC FUNCTION edit_item( Ch, nOrder, aZabIsp )
                IF nKolona == 1
                   ++nTekRed
                ENDIF
-               @ m_x + nTekRed, m_y + nKolona SAY8 PadL( AllTrim( ImeKol[ i, 1 ] ),15 )
+               @ m_x + nTekRed, m_y + nKolona SAY8 PadL( AllTrim( ImeKol[ i, 1 ] ), 15 )
                @ m_x + nTekRed, Col() + 1 SAY Eval( ImeKol[ i, 2 ] )
 
             ENDIF
@@ -971,7 +971,7 @@ STATIC FUNCTION sif_getlist( var_name, GetList, lZabIsp, aZabIsp, lShowGrup, Ch,
       _valid_block := bValid
    ENDIF
 
-   @ m_x + nTekRed, m_y + nKolona SAY  iif( nKolona > 1, "  " + AllTrim( ImeKol[ i, 1 ] ), PadL( AllTrim( ImeKol[ i, 1 ] ), 15 ) )  + " "
+   @ m_x + nTekRed, m_y + nKolona SAY  IIF( nKolona > 1, "  " + AllTrim( ImeKol[ i, 1 ] ), PadL( AllTrim( ImeKol[ i, 1 ] ), 15 ) )  + " "
 
    // SQL moze vratiti nil vrijednosti
    if &var_name == NIL
@@ -1387,7 +1387,6 @@ FUNCTION set_sif_filt( cSearch )
    LOCAL nCount, nCount2
    PRIVATE cFilt := ".t. "
 
-   AltD()
    cSearch := AllTrim( Trim( cSearch ) )
    // zamjeniti "NAZ $ MISHEL"  -> NAZ $MISHEL
    cSearch := StrTran( cSearch, "$ ", "$" )

@@ -70,13 +70,11 @@ FUNCTION f18_lock_tables( a_tables, unlock_table )
          FOR _i := 1 TO Len( a_tables )
             _dbf_rec := get_a_dbf_rec( a_tables[ _i ] )
             _tbl := _dbf_rec[ "table" ]
-
             IF !_dbf_rec[ "sql" ]
                // otvori tabelu i selectuj workarea koja je rezervisana za ovu tabelu
                my_use( _tbl, NIL, NIL, NIL, NIL, NIL, .T. )
             ENDIF
          NEXT
-
          my_use_semaphore_off()
 
       ELSE
@@ -514,8 +512,6 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
       NEXT
 
       _msg := ToStr( Time() ) + " : sync fill : " + dbf_table + " : " + AllTrim( Str( _counter ) )
-
-      @ maxrows() - 1, maxcols() - 70 SAY PadR( _msg, 53 )
 
       _qry_obj:Skip()
 

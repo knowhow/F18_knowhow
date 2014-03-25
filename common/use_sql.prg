@@ -30,7 +30,7 @@ if USED()
 endif
 
 if l_make_index == NIL
-   l_make_index = .f.
+   l_make_index = .t.
 endif
 
 //AEval( rddList(), {| x | QOut( x ) } )
@@ -133,7 +133,6 @@ function use_sql_sifv( cDbf, cOznaka, cIdSif, cVrijednost )
       cOznaka := field->oznaka
    ENDIF
 
-
    cSql := "SELECT * from fmk.sifv"
    cSql += " WHERE id=" + _sql_quote( cDbf ) + " AND oznaka=" + _sql_quote( cOznaka )
    
@@ -156,4 +155,34 @@ function use_sql_sifv( cDbf, cOznaka, cIdSif, cVrijednost )
    use_sql( "sifv", cSql )
 
    RETURN .T.
+
+
+// ----------------------------------
+// kreiranje tabela "rules"
+// ----------------------------------
+function use_sql_rules()
+
+   local _table_name, _alias
+   LOCAL cSql 
+
+   _alias := "FMKRULES"
+   _table_name := "f18_rules"
+
+
+   cSql := "SELECT * FROM fmk." + _table_name
+   
+   SELECT F_FMKRULES
+   use_sql( _alias, cSql )
+
+   INDEX ON STR(RULE_ID,10)                                       TAG 1 TO (_table_name)
+   INDEX ON MODUL_NAME+RULE_OBJ+STR(RULE_NO,10)                   TAG 2 TO (_table_name)
+   INDEX ON MODUL_NAME+RULE_OBJ+STR(RULE_LEVEL,2)+STR(RULE_NO,10) TAG 3 TO (_table_name)
+   INDEX ON MODUL_NAME+RULE_OBJ+RULE_C1+RULE_C2                   TAG 4 TO (_table_name)
+   // kreiranje rules index-a specificnih za rnal
+   INDEX ON MODUL_NAME+RULE_OBJ+RULE_C3+RULE_C4                   TAG ELCODE TO (_table_name)
+   INDEX ON MODUL_NAME+RULE_OBJ+RULE_C3+STR(RULE_NO,5)            TAG RNART1 TO (_table_name)
+   INDEX ON MODUL_NAME+RULE_OBJ+RULE_C5+STR(RULE_NO,5)            TAG ITEM1  TO (_table_name)
+
+   return .T.
+
 

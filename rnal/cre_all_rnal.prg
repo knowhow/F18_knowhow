@@ -330,10 +330,6 @@ IF_C_RESET_SEMAPHORE
 CREATE_INDEX("1", "STR(id,5)+STR(gl_tick,2)", _alias )
 CREATE_INDEX("2", "descr", _alias )
 
-// kreiraj pravila : RULES
-cre_fmkrules( ver )
-// kreiraj pravila : RULES cdx files
-c_rule_cdx()
 // kreiranje tabele pretraga parametri
 _cre_fnd_par( ver, .t. )
 // kreiraj relacije
@@ -342,21 +338,6 @@ cre_relation( ver )
 return .t.
 
 
-
-// -----------------------------------------------
-// kreiranje rules index-a specificnih za rnal
-// -----------------------------------------------
-static function c_rule_cdx()
-local _alias := "FMKRULES"
-
-// ELEMENT CODE
-CREATE_INDEX( "ELCODE", "MODUL_NAME+RULE_OBJ+RULE_C3+RULE_C4", _alias )
-// ARTICLES NEW
-CREATE_INDEX( "RNART1", "MODUL_NAME+RULE_OBJ+RULE_C3+STR(RULE_NO,5)", _alias )
-// ITEMS
-CREATE_INDEX( "ITEM1", "MODUL_NAME+RULE_OBJ+RULE_C5+STR(RULE_NO,5)", _alias )
-
-return
 
 
 

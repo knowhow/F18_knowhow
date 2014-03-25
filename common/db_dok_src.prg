@@ -22,15 +22,6 @@ local cDokSrcName := "DOKSRC"
 local cPDokSrcName := "P_" + cDokSrcName
 local nBrDokLen := 8
 
-//if (goModul:oDataBase:cName <> NIL) .and. (goModul:oDatabase:cName == "POS")
-//	nBrDokLen := 6
-//endif
-
-// ako nije jedan od ponudjenih modula preskoci
-//if !(goModul:oDataBase:cName $ "FIN#KALK#FAKT#POS")
-//	return
-//endif
-
 AADD(aDBf,{ "idfirma"             , "C" ,   2 ,  0 })
 AADD(aDBf,{ "idvd"                , "C" ,   2 ,  0 })
 AADD(aDBf,{ "brdok"               , "C" ,  nBrDokLen ,  0 })
@@ -45,7 +36,6 @@ AADD(aDBf,{ "src_kto_za"         , "C" ,   7 ,  0 })
 AADD(aDBf,{ "src_partne"         , "C" ,   6 ,  0 })
 AADD(aDBf,{ "src_opis"            , "C" ,  30 ,  0 })
 
-// kreiraj u KUMPATH
 if !FILE( f18_ime_dbf(cDokSrcName) )
 	DBCREATE2(cDokSrcName + ".dbf", aDbf)
 endif

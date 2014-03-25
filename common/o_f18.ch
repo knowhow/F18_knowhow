@@ -15,30 +15,42 @@
 
 // sifrarnici
 #xcommand O_ROBA     => select (F_ROBA)    ;  my_use  ("roba")      ; set order to tag "ID"
-#xcommand O_TARIFA   => select (F_TARIFA)  ;  my_use  ("tarifa")    ; set order to tag "ID"
+#xcommand O_BARKOD   => select (F_BARKOD)  ;  my_usex ("barkod")    ; set order to tag "1"
 #xcommand O_KONTO    => select (F_KONTO)   ;  my_use  ("konto" )    ; set order to tag "ID"
-#xcommand O_TRFP     => select (F_TRFP)    ;  my_use  ("trfp")      ; set order to tag "ID"
-#xcommand O_TRFP2    => select (F_TRFP2)   ;  my_use  ("trfp2")     ; set order to tag "ID"
-#xcommand O_TRFP3    => select (F_TRFP3)   ;  my_use  ("trfp3")     ; set order to tag "ID"
-#xcommand O_TRMP     => select (F_TRMP)    ;  my_use  ("trmp")      ; set order to tag "ID"
 #xcommand O_PARTN    => select (F_PARTN)   ;  my_use  ("partn")     ; set order to tag "ID"
-
-#xcommand O_TNAL     => select (F_TNAL)    ;  use_sql_sif  ( "tnal", .t. )  ; set order to tag "ID"
-#xcommand O_TDOK     => select (F_TDOK)    ;  use_sql_sif   ("tdok", .t. )  ; set order to tag "ID"
-#xcommand O_KONCIJ   => select (F_KONCIJ)  ;  my_use  ("koncij")    ; set order to tag "ID"
-#xcommand O_VALUTE   => select (F_VALUTE)  ;  my_use  ("valute")    ; set order to tag "ID"
 #xcommand O_SAST     => select (F_SAST)    ;  my_use  ("sast")      ; set order to tag "ID"
-#xcommand O_REFER    => select (F_REFER)   ;  my_use  ("refer")     ; set order to tag "ID"
-#xcommand O_OPS      => select (F_OPS)     ;  my_use  ( "ops")      ; set order to tag "ID"
-#xcommand O_FAKT_OBJEKTI  => select (F_FAKT_OBJEKTI) ;  my_use  ( "fakt_objekti") ; set order to tag "ID"
+
+#xcommand O_TARIFA   => select (F_TARIFA)  ;  use_sql_sif  ("tarifa")    ; set order to tag "ID"
+#xcommand O_TRFP     => select (F_TRFP)    ;  use_sql_sif  ("trfp")      ; set order to tag "ID"
+#xcommand O_TRFP2    => select (F_TRFP2)   ;  use_sql_sif  ("trfp2")     ; set order to tag "ID"
+#xcommand O_TRFP3    => select (F_TRFP3)   ;  use_sql_sif  ("trfp3")     ; set order to tag "ID"
+#xcommand O_TRMP     => select (F_TRMP)    ;  use_sql_sif  ("trmp")      ; set order to tag "ID"
+#xcommand O_TNAL     => select (F_TNAL)    ;  use_sql_sif  ( "tnal" )  ; set order to tag "ID"
+#xcommand O_TDOK     => select (F_TDOK)    ;  use_sql_sif  ( "tdok" )  ; set order to tag "ID"
+#xcommand O_KONCIJ   => select (F_KONCIJ)  ;  use_sql_sif  ("koncij")  ; set order to tag "ID"
+#xcommand O_VALUTE   => select (F_VALUTE)  ;  use_sql_sif  ("valute")    ; set order to tag "ID"
+#xcommand O_REFER    => select (F_REFER)   ;  use_sql_sif  ("refer" )     ; set order to tag "ID"
+#xcommand O_OPS      => select (F_OPS)     ;  use_sql_sif  ( "ops" )      ; set order to tag "ID"
+#xcommand O_FAKT_OBJEKTI  => select (F_FAKT_OBJEKTI) ;  use_sql_sif ( "fakt_objekti" ) ; set order to tag "ID"
+// lokalizacija
+#xcommand O_LOKAL    => select (F_LOKAL)   ;  use_sql_sif ( "lokal" )
+#xcommand O_RJ       => select (F_RJ)      ;  use_sql_sif  ("rj")        ; set order to tag "ID"
+#xcommand O_VRSTEP   => SELECT (F_VRSTEP)  ;  use_sql_sif  ("vrstep")    ; set order to tag "ID"
+#xcommand O_PKONTO       => select (F_PKONTO); use_sql_sif ("pkonto")  ; set order to tag "ID"
+#xcommand O_KS           => select (F_KS);     use_sql_sif ("ks") ; set order to tag "ID"
+#xcommand O_BANKE    => select (F_BANKE)   ;  use_sql_sif  ("banke")     ; set order to tag "ID"
+
+
+
 #xcommand O__ROBA    => select (F__ROBA)   ;  my_usex("_roba")
 #xcommand O__PARTN   => select (F__PARTN)  ;  my_use  ("_partn")
-#xcommand O_BANKE    => select (F_BANKE)   ;  my_use  ("banke")     ; set order to tag "ID"
-#xcommand O_BARKOD   => select (F_BARKOD)  ;  my_usex ("barkod")    ; set order to tag "1"
-#xcommand O_RJ       => select (F_RJ)      ;  my_use  ("rj")        ; set order to tag "ID"
-#xcommand O_VRSTEP   => SELECT (F_VRSTEP)  ;  my_use  ("vrstep")    ; set order to tag "ID"
+
+
+
+
 #xcommand O_RELAC    => SELECT (F_RELAC)   ;  my_use  ("relac")     ; set order to tag "ID"
 #xcommand O_VOZILA   => SELECT (F_VOZILA)  ;  my_use  ("vozila")    ; set order to tag "ID"
+
 #xcommand O_RELATION => SELECT (F_RELATION);  my_use  ("relation")  ; set order to tag "1"
 #xcommand O_FINMAT   => select (F_FINMAT)  ;  my_usex ("finmat")    ; set order to tag "1"
 #xcommand O_ULIMIT   => SELECT (F_ULIMIT)  ;  my_use ("ulimit")     ; set order to tag "ID"
@@ -51,9 +63,6 @@
 #xcommand O_GEN_UG   => select(F_GEN_UG)   ;  my_use  ("gen_ug")    ; set order to tag "DAT_GEN"
 #xcommand O_G_UG_P   => select(F_G_UG_P)   ;  my_use  ("gen_ug_p")  ; set order to tag "DAT_GEN"
 
-// lokalizacija
-#xcommand O_LOKAL    => select (F_LOKAL)   ;  my_use ("lokal")
-
 // grupe i karakteristike
 #xcommand O_STRINGS  => select(F_STRINGS)  ;  my_use ("strings")   ; set order to tag "1"
 
@@ -63,7 +72,7 @@
 
 
 // fmk rules
-#xcommand O_FMKRULES  => select (F_FMKRULES); my_use  ("fmkrules") ; set order to tag "2"
+#xcommand O_FMKRULES  => select (F_FMKRULES); use_sql_rules() ; set order to tag "2"
 
 // tabele DOK_SRC
 #xcommand O_DOKSRC    => SELECT (F_DOKSRC)  ; my_use ("doksrc")    ; set order to tag "1"
@@ -90,7 +99,6 @@
 
 #xcommand O_KAM_PRIPR    => select (F_KAMPRIPR);  my_usex ("kam_pripr") ; set order to tag "1"
 #xcommand O_KAM_KAMAT    => select (F_KAMAT);  my_usex ("kam_kamat") ; set order to tag "1"
-#xcommand O_KS           => select (F_KS);    my_use ("ks") ; set order to tag "ID"
 
 #xcommand O_SUBAN     => SELECT (F_SUBAN);    my_use("suban")     ; set order to tag "1"
 #xcommand O_ANAL      => SELECT (F_ANAL);     my_use("anal")      ; set order to tag "1"
@@ -115,7 +123,6 @@
 #xcommand O_RPARTN    => select (F_PARTN);  my_usex ("partn") ; set order to tag "ID"
 #xcommand OX_TNAL    => select (F_TNAL);  my_usex ("tnal")      ; set order to tag "ID"
 #xcommand OX_TDOK    => select (F_TDOK);  my_usex ("tdok")      ; set order to tag "ID"
-#xcommand O_PKONTO   => select (F_PKONTO); my_use ("pkonto")  ; set order to tag "ID"
 #xcommand OX_PKONTO   => select (F_PKONTO); my_use  ("pkonto")  ; set order to tag "ID"
 #xcommand OX_VALUTE   => select(F_VALUTE);  my_usex  ("valute")  ; set order to tag "ID"
 #xcommand O__KONTO => select(F__KONTO); MY_USE  ("_konto")

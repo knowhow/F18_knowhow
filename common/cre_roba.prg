@@ -112,32 +112,6 @@ IF_NOT_FILE_DBF_CREATE
 CREATE_INDEX( "ID", "ID", _alias )  
 
 // -------------------------------------------------
-// TARIFA
-// -------------------------------------------------
-
-_alias := "TARIFA"
-_table_name := "tarifa"
-        
-aDbf:={}
-AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
-add_f_mcode(@aDbf)
-AADD(aDBf,{ 'NAZ'                 , 'C' ,  50 ,  0 })
-AADD(aDBf,{ 'OPP'                 , 'N' ,   6 ,  2 })  // ppp
-AADD(aDBf,{ 'PPP'                 , 'N' ,   6 ,  2 })  // ppu
-AADD(aDBf,{ 'ZPP'                 , 'N' ,   6 ,  2 })  //nista
-AADD(aDBf,{ 'VPP'                 , 'N' ,   6 ,  2 })  // pnamar
-AADD(aDBf,{ 'MPP'                 , 'N' ,   6 ,  2 })  // pnamar MP
-AADD(aDBf,{ 'DLRUC'               , 'N' ,   6 ,  2 })  // donji limit RUC-a(%)
-
-IF_NOT_FILE_DBF_CREATE
-IF_C_RESET_SEMAPHORE
-        
-CREATE_INDEX("ID","id",  _alias )
-CREATE_INDEX("naz","naz", _alias )
-index_mcode( my_home(), _alias )
-
-
-// -------------------------------------------------
 // SAST
 // -------------------------------------------------
 

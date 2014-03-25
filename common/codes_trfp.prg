@@ -218,7 +218,6 @@ RETURN lVrati
 
 
 function v_setform()
-*{
 local cscsr
 if file(SIFPATH+gSetForm+"TRXX.ZIP") .and. pitanje(,"Sifranik parametara kontiranja iz arhive br. "+gSetForm+" ?","N")=="D"
  private ckomlin:="unzip  -o -d "+SIFPATH+gSetForm+"TRXX.ZIP "+SIFPATH
@@ -231,7 +230,6 @@ if file(SIFPATH+gSetForm+"TRXX.ZIP") .and. pitanje(,"Sifranik parametara kontira
  P_Trfp()
  select F_TRMP
  if !used(); O_TRMP; endif
- //P_Trmp()
  select trfp; use
  select trmp; use
  select params
@@ -243,4 +241,3 @@ elseif  pitanje(,"Tekuce parametre kontiranja staviti u arhivu br. "+gSetForm+" 
  restore screen from cscr
 endif
 return .t.
-*}

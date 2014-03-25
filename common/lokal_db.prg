@@ -26,24 +26,3 @@ AADD(aDBf,{ "naz"    , "C" ,   200 ,  0 })
 
 return aDbf
 
-
-// --------------------------------
-// --------------------------------
-function cre_lokal(ver)
-local aDBF, _table_name, _alias, _created
-
-aDbf := g_lokal_fields()
-	
-_table_name := "lokal"
-_alias := "LOKAL"
-
-IF_NOT_FILE_DBF_CREATE
-IF_C_RESET_SEMAPHORE
-
-CREATE_INDEX("ID","id+STR(id_str,6,0)+naz", _alias )
-CREATE_INDEX("IDNAZ","id+naz", _alias )
-CREATE_INDEX("ID_STR","STR(id_str,6,0)+naz+id", _alias )
-CREATE_INDEX("NAZ","naz+str(id_str,6,0)", _alias )
-
-return
-

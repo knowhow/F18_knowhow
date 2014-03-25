@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,35 +16,35 @@
 
 CLASS F18Login
 
-    METHOD New()
-    METHOD main_db_login()
-    METHOD company_db_login()
-    METHOD company_db_relogin()
-    METHOD browse_database_array()
-    METHOD manual_enter_company_data()
-    METHOD administrative_options()
-    METHOD database_array()
-    METHOD get_database_browse_array()
-    METHOD get_database_top_session()
-    METHOD get_database_sessions()
-    METHOD get_database_description()
-    METHOD show_info_bar()
-    METHOD main_db_login_form()
-    METHOD company_db_login_form()
-    METHOD connect()
-    METHOD disconnect()        
-    METHOD _read_params()
-    METHOD _write_params()
-    METHOD included_databases_for_user()
+   METHOD New()
+   METHOD main_db_login()
+   METHOD company_db_login()
+   METHOD company_db_relogin()
+   METHOD browse_database_array()
+   METHOD manual_enter_company_data()
+   METHOD administrative_options()
+   METHOD database_array()
+   METHOD get_database_browse_array()
+   METHOD get_database_top_session()
+   METHOD get_database_sessions()
+   METHOD get_database_description()
+   METHOD show_info_bar()
+   METHOD main_db_login_form()
+   METHOD company_db_login_form()
+   METHOD connect()
+   METHOD disconnect()
+   METHOD _read_params()
+   METHOD _write_params()
+   METHOD included_databases_for_user()
 
-    DATA _company_db_connected
-    DATA _company_db_curr_choice
-    DATA _company_db_curr_session 
-    DATA _main_db_connected
-    DATA main_db_params
-    DATA company_db_params
-    DATA _login_count
-    DATA _include_db_filter
+   DATA _company_db_connected
+   DATA _company_db_curr_choice
+   DATA _company_db_curr_session
+   DATA _main_db_connected
+   DATA main_db_params
+   DATA company_db_params
+   DATA _login_count
+   DATA _include_db_filter
 
 ENDCLASS
 
@@ -54,66 +54,73 @@ ENDCLASS
 // oLogin = F18Login():New()
 // oLogin:MainDbLoginForm()
 // if !oLogin:_main_db_connected
-//   ....
+// ....
 // endif
 
 
 
 
 METHOD F18Login:New()
-::main_db_params := hb_hash()
-::company_db_params := hb_hash()
-::_company_db_curr_choice := ""
-::_company_db_curr_session := ""
-::_login_count := 0
-::_include_db_filter := ""
-return SELF
+
+   ::main_db_params := hb_Hash()
+   ::company_db_params := hb_Hash()
+   ::_company_db_curr_choice := ""
+   ::_company_db_curr_session := ""
+   ::_login_count := 0
+   ::_include_db_filter := ""
+
+   RETURN SELF
 
 
 
 METHOD F18Login:included_databases_for_user()
-local _ini_sect := "login_options"
-local _ini_var := "database_filter"
-local _ini_params := hb_hash()
-local _inc_filter := ""
 
-_ini_params[ _ini_var ] := NIL
+   LOCAL _ini_sect := "login_options"
+   LOCAL _ini_var := "database_filter"
+   LOCAL _ini_params := hb_Hash()
+   LOCAL _inc_filter := ""
 
-f18_ini_read( _ini_sect, @_ini_params, .t. )
+   _ini_params[ _ini_var ] := NIL
 
-if _ini_params[ _ini_var ] == NIL
-    ::_include_db_filter := ""
-else
-    ::_include_db_filter := _ini_params[ _ini_var ]
-endif
+   f18_ini_read( _ini_sect, @_ini_params, .T. )
 
-return
+   IF _ini_params[ _ini_var ] == NIL
+      ::_include_db_filter := ""
+   ELSE
+      ::_include_db_filter := _ini_params[ _ini_var ]
+   ENDIF
+
+   RETURN
 
 
 METHOD F18Login:connect( params, conn_type, silent )
-local _connected
 
-if silent == NIL
-    silent := .f.
-endif
- 
-_connected := my_server_login( params, conn_type )
+   LOCAL _connected
 
-if !silent .and. !_connected
-    //MsgBeep( "Neuspjesna prijava na server !" )
-else
-    ++ ::_login_count 
-endif
+   IF silent == NIL
+      silent := .F.
+   ENDIF
 
-return _connected
+   _connected := my_server_login( params, conn_type )
+
+   IF !silent .AND. !_connected
+      // MsgBeep( "Neuspjesna prijava na server !" )
+   ELSE
+      ++ ::_login_count
+   ENDIF
+
+   RETURN _connected
 
 
 
 
 METHOD F18Login:disconnect()
-local _disconn 
-_disconn := my_server_logout()
-return _disconn
+
+   LOCAL _disconn
+
+   _disconn := my_server_logout()
+
+   RETURN _disconn
 
 
 
@@ -121,131 +128,133 @@ return _disconn
 
 METHOD F18Login:_read_params( server_param )
 
-::main_db_params := hb_hash()
-::main_db_params["username"] := server_param["user"]
-::main_db_params["password"] := server_param["password"]
-::main_db_params["host"] := server_param["host"]
-::main_db_params["port"] := server_param["port"]
-::main_db_params["database"] := server_param["database"]
-::main_db_params["schema"] := server_param["schema"]
-::main_db_params["session"] := server_param["session"]
-::main_db_params["postgres"] := server_param["postgres"]
+   ::main_db_params := hb_Hash()
+   ::main_db_params[ "username" ] := server_param[ "user" ]
+   ::main_db_params[ "password" ] := server_param[ "password" ]
+   ::main_db_params[ "host" ] := server_param[ "host" ]
+   ::main_db_params[ "port" ] := server_param[ "port" ]
+   ::main_db_params[ "database" ] := server_param[ "database" ]
+   ::main_db_params[ "schema" ] := server_param[ "schema" ]
+   ::main_db_params[ "session" ] := server_param[ "session" ]
+   ::main_db_params[ "postgres" ] := server_param[ "postgres" ]
 
-return .t.
+   RETURN .T.
 
 
 
 
 
 METHOD F18Login:_write_params( server_params )
-server_params["database"] := ::main_db_params["database"]
-server_params["session"] := ::main_db_params["session"]
-server_params["user"] := ::main_db_params["username"]
-server_params["password"] := ::main_db_params["password"]
-server_params["host"] := ::main_db_params["host"]
-server_params["port"] := ::main_db_params["port"]
-server_params["schema"] := ::main_db_params["schema"]
-return .t.
 
+   server_params[ "database" ] := ::main_db_params[ "database" ]
+   server_params[ "session" ] := ::main_db_params[ "session" ]
+   server_params[ "user" ] := ::main_db_params[ "username" ]
+   server_params[ "password" ] := ::main_db_params[ "password" ]
+   server_params[ "host" ] := ::main_db_params[ "host" ]
+   server_params[ "port" ] := ::main_db_params[ "port" ]
+   server_params[ "schema" ] := ::main_db_params[ "schema" ]
 
+   RETURN .T.
 
 
 
 METHOD F18Login:main_db_login( server_param, force_connect )
-local _max_login := 4
-local _i
-local _logged_in := .f.
 
-if force_connect == NIL
-    force_connect := .t.
-endif
+   LOCAL _max_login := 4
+   LOCAL _i
+   LOCAL _logged_in := .F.
 
-// ucitaj parametre iz ini fajla i setuj ::main_db_params
-::_read_params( @server_param )
+   IF force_connect == NIL
+      force_connect := .T.
+   ENDIF
 
-if force_connect .and. ::_main_db_params["username"] <> NIL
-    // try to connect
-    // if not, open login form
-    if ::connect( server_param, 0 )
-        _logged_in := .t.
-    endif
+   // ucitaj parametre iz ini fajla i setuj ::main_db_params
+   ::_read_params( @server_param )
 
-endif
+   IF force_connect .AND. ::_main_db_params[ "username" ] <> NIL
+      // try to connect
+      // if not, open login form
+      if ::connect( server_param, 0 )
+         _logged_in := .T.
+      ENDIF
 
-if !_logged_in
-    
-    // imamo pravo na 4 pokusaja !
-    for _i := 1 to _max_login
-       
-        // login forma...
-        if ! ::main_db_login_form()
+   ENDIF
+
+   IF !_logged_in
+
+      // imamo pravo na 4 pokusaja !
+      FOR _i := 1 TO _max_login
+
+         // login forma...
+         IF ! ::main_db_login_form()
             // ovdje naprosto izlazimo, vjerovatno je ESC u pitanju
             ::_main_db_connected := _logged_in
-            return _logged_in
-        endif
-       
-        ::_write_params( @server_param )
+            RETURN _logged_in
+         ENDIF
 
-        // zakaci se !
-        if ::connect( server_param, 0 )
-            _logged_in := .t.
-            exit
-        endif
+         ::_write_params( @server_param )
 
-    next
+         // zakaci se !
+         if ::connect( server_param, 0 )
+            _logged_in := .T.
+            EXIT
+         ENDIF
 
-endif
+      NEXT
 
-::_main_db_connected := _logged_in
+   ENDIF
 
-return _logged_in
+   ::_main_db_connected := _logged_in
+
+   RETURN _logged_in
 
 
 
 
 
 METHOD F18Login:company_db_login( server_param )
-local _logged_in := .f.
-local _i
-local _max_login := 4
-local _ret_comp
 
-// procitaj mi parametre za preduzece
-::_read_params( @server_param )
+   LOCAL _logged_in := .F.
+   LOCAL _i
+   LOCAL _max_login := 4
+   LOCAL _ret_comp
 
-if !_logged_in
+   // procitaj mi parametre za preduzece
+   ::_read_params( @server_param )
 
-    // imamo pravo na 4 pokusaja !
-    for _i := 1 to _max_login
-        
-        // login forma...
-        _ret_comp := ::company_db_login_form()
+   IF !_logged_in
 
-        if _ret_comp == 0
+      // imamo pravo na 4 pokusaja !
+      FOR _i := 1 TO _max_login
+
+         // login forma...
+         _ret_comp := ::company_db_login_form()
+
+         IF _ret_comp == 0
             // ovdje naprosto izlazimo, vjerovatno je ESC u pitanju
-            return _logged_in
-        endif
+            RETURN _logged_in
+         ENDIF
 
-        // neka opcija se koristi...
-        if _ret_comp < 0
-            loop
-        endif
-        
-        // _rec_comp je > 1 
-        ::_write_params( @server_param )
-      
-        // zakaci se !
-        if ::connect( server_param, 1 )
-            _logged_in := .t.
-            exit
-        endif
+         // neka opcija se koristi...
+         IF _ret_comp < 0
+            LOOP
+         ENDIF
 
-    next
-endif
+         // _rec_comp je > 1
+         ::_write_params( @server_param )
 
-::_company_db_connected := _logged_in
+         // zakaci se !
+         if ::connect( server_param, 1 )
+            _logged_in := .T.
+            EXIT
+         ENDIF
 
-return
+      NEXT
+   ENDIF
+
+   ::_company_db_connected := _logged_in
+
+   RETURN
 
 
 
@@ -257,91 +266,92 @@ return
 // relogin metoda...
 // --------------------------------------------------------------------
 METHOD F18Login:company_db_relogin( server_param, database, session )
-local _ok := .f.
-local _new_session := ALLTRIM( STR( YEAR( DATE() ) - 1 ) )
-local _curr_database := server_param["database"]
-local _curr_session := RIGHT( _curr_database, 4 )
-local _show_box := .t.
 
-// uzmi iz proslijedjenih parametara
-// ovo omogucava automatski switch na bazu...
+   LOCAL _ok := .F.
+   LOCAL _new_session := AllTrim( Str( Year( Date() ) - 1 ) )
+   LOCAL _curr_database := server_param[ "database" ]
+   LOCAL _curr_session := Right( _curr_database, 4 )
+   LOCAL _show_box := .T.
 
-if database <> NIL
-    _curr_database := database    
-    _show_box := .f.
-endif
+   // uzmi iz proslijedjenih parametara
+   // ovo omogucava automatski switch na bazu...
 
-if session <> NIL
-    _new_session := session
-    _show_box := .f.
-endif
+   IF database <> NIL
+      _curr_database := database
+      _show_box := .F.
+   ENDIF
 
-// relogin radi samo kod baza "ime_godina"
-if ! ( "_" $ _curr_database )
-    return _ok
-endif
+   IF session <> NIL
+      _new_session := session
+      _show_box := .F.
+   ENDIF
 
-// ovdje se sada moze ubaciti i parametar firme... tako da mozemo skociti i u drugu firmu...
+   // relogin radi samo kod baza "ime_godina"
+   IF ! ( "_" $ _curr_database )
+      RETURN _ok
+   ENDIF
 
-if _show_box
+   // ovdje se sada moze ubaciti i parametar firme... tako da mozemo skociti i u drugu firmu...
 
-    Box(, 1, 50 )
-        @ m_x + 1, m_y + 2 SAY "Pristup podacima sezone:" GET _new_session VALID !EMPTY( _new_session )
-        read
-    BoxC()
+   IF _show_box
 
-    if LastKey() == K_ESC
-        return _ok
-    endif
+      Box(, 1, 50 )
+      @ m_x + 1, m_y + 2 SAY "Pristup podacima sezone:" GET _new_session VALID !Empty( _new_session )
+      READ
+      BoxC()
 
-endif
+      IF LastKey() == K_ESC
+         RETURN _ok
+      ENDIF
 
-// ako sam u istoj sezoni
-if _curr_session == _new_session
-    MsgBeep( hb_utf8tostr( "Već se nalazimo u sezoni " ) + _curr_session  )
-    return _ok
-endif
+   ENDIF
 
-// promjeni mi podatke... database - bringout_2013 > bringout_2012
-server_param["database"] := STRTRAN( _curr_database, _curr_session, _new_session )
+   // ako sam u istoj sezoni
+   IF _curr_session == _new_session
+      MsgBeep( hb_UTF8ToStr( "Već se nalazimo u sezoni " ) + _curr_session  )
+      RETURN _ok
+   ENDIF
 
-// imamo sezonu... sada samo da se prebacimo
-if ::connect( server_param, 1 )
-    _ok := .t.
-endif
+   // promjeni mi podatke... database - bringout_2013 > bringout_2012
+   server_param[ "database" ] := StrTran( _curr_database, _curr_session, _new_session )
 
-// samo ako su uslovi zadovoljeni i ako je prelazak u sezonu sa pitanjem
-// ako se koristi direktni prelaz u sezonu onda mi ovo nista nije potrebno
-// sve sto treba je konekcija na sql server !
+   // imamo sezonu... sada samo da se prebacimo
+   if ::connect( server_param, 1 )
+      _ok := .T.
+   ENDIF
 
-if _ok .and. _show_box
-   
-    SetgaSDbfs()
+   // samo ako su uslovi zadovoljeni i ako je prelazak u sezonu sa pitanjem
+   // ako se koristi direktni prelaz u sezonu onda mi ovo nista nije potrebno
+   // sve sto treba je konekcija na sql server !
 
-    // zatvori mi sve baze aktuelne ako su otvorene
-    close all
+   IF _ok .AND. _show_box
 
-    set_global_vars_0()
+      SetgaSDbfs()
 
-    init_gui( .f. )
+      // zatvori mi sve baze aktuelne ako su otvorene
+      CLOSE ALL
 
-    set_global_vars()
+      set_global_vars_0()
 
-    post_login( .f. )
-    
-    f18_app_parameters( .t. )
+      init_gui( .F. )
 
-    set_hot_keys()
+      set_global_vars()
 
-    // init parametara sezonskog podrucja...
-    goModul:setGVars()
+      post_login( .F. )
 
-    // prikazi info baza/user na vrhu u skladu sa tekucom bazom
-    say_database_info()
+      f18_app_parameters( .T. )
 
-endif
+      set_hot_keys()
 
-return _ok
+      // init parametara sezonskog podrucja...
+      goModul:setGVars()
+
+      // prikazi info baza/user na vrhu u skladu sa tekucom bazom
+      say_database_info()
+
+   ENDIF
+
+   RETURN _ok
 
 
 
@@ -349,285 +359,290 @@ return _ok
 
 
 METHOD F18Login:main_db_login_form()
-local _ok := .f.
-local _user, _pwd, _port, _host
-local _server
-local _x := 5
-local _left := 7
-local _srv_config := "N"
-local _session 
 
-_user := ::main_db_params["username"]
-_pwd := ""
-//::main_db_params["username"]
-_host := ::main_db_params["host"]
-_port := ::main_db_params["port"]
-_db := ::main_db_params["postgres"]
-_schema := ::main_db_params["schema"]
-_session := ::main_db_params["session"]
+   LOCAL _ok := .F.
+   LOCAL _user, _pwd, _port, _host
+   LOCAL _server
+   LOCAL _x := 5
+   LOCAL _left := 7
+   LOCAL _srv_config := "N"
+   LOCAL _session
 
-if ( _host == NIL ) .or. ( _port == NIL )
-    _srv_config := "D"
-endif 
+   _user := ::main_db_params[ "username" ]
+   _pwd := ""
+   // ::main_db_params["username"]
+   _host := ::main_db_params[ "host" ]
+   _port := ::main_db_params[ "port" ]
+   _db := ::main_db_params[ "postgres" ]
+   _schema := ::main_db_params[ "schema" ]
+   _session := ::main_db_params[ "session" ]
 
-if _host == NIL
-    _host := "localhost"
-endif
+   IF ( _host == NIL ) .OR. ( _port == NIL )
+      _srv_config := "D"
+   ENDIF
 
-if _port == NIL
-    _port := 5432
-endif
+   IF _host == NIL
+      _host := "localhost"
+   ENDIF
 
-// ovdje nije fmk
-if _schema == NIL
-    _schema := "fmk"
-endif
+   IF _port == NIL
+      _port := 5432
+   ENDIF
 
-if _user == NIL
-    _user := "test1"
-endif
+   // ovdje nije fmk
+   IF _schema == NIL
+      _schema := "fmk"
+   ENDIF
 
-if _session == NIL
-    _session := ALLTRIM( STR( YEAR( DATE() ) ) ) 
-endif
+   IF _user == NIL
+      _user := "test1"
+   ENDIF
 
-_host := PADR( _host, 100 )
-_user := PADR( _user, 100 )
-_pwd := PADR( _pwd, 100 )
+   IF _session == NIL
+      _session := AllTrim( Str( Year( Date() ) ) )
+   ENDIF
 
-CLEAR SCREEN
+   _host := PadR( _host, 100 )
+   _user := PadR( _user, 100 )
+   _pwd := PadR( _pwd, 100 )
 
-@ 5, 5, 18, 77 BOX B_DOUBLE_SINGLE
+   CLEAR SCREEN
 
-++ _x
+   @ 5, 5, 18, 77 BOX B_DOUBLE_SINGLE
 
-@ _x, _left SAY PADC( "***** Unestite podatke za pristup *****", 60 )
+   ++ _x
 
-++ _x
-++ _x
-@ _x, _left SAY PADL( "Konfigurisati server ?:", 21 ) GET _srv_config ;
-                    VALID _srv_config $ "DN" PICT "@!"
-++ _x
+   @ _x, _left SAY PadC( "***** Unestite podatke za pristup *****", 60 )
 
-read
+   ++ _x
+   ++ _x
+   @ _x, _left SAY PadL( "Konfigurisati server ?:", 21 ) GET _srv_config ;
+      VALID _srv_config $ "DN" PICT "@!"
+   ++ _x
 
-if _srv_config == "D"
-    ++ _x
-    @ _x, _left SAY PADL( "Server:", 8 ) GET _host PICT "@S20"
-    @ _x, 37 SAY "Port:" GET _port PICT "9999"
-else    
-    ++ _x
-endif
+   READ
 
-++ _x
-++ _x
+   IF _srv_config == "D"
+      ++ _x
+      @ _x, _left SAY PadL( "Server:", 8 ) GET _host PICT "@S20"
+      @ _x, 37 SAY "Port:" GET _port PICT "9999"
+   ELSE
+      ++ _x
+   ENDIF
 
-@ _x, _left SAY PADL( "KORISNIK:", 15 ) GET _user PICT "@S30"
+   ++ _x
+   ++ _x
 
-++ _x
-++ _x
+   @ _x, _left SAY PadL( "KORISNIK:", 15 ) GET _user PICT "@S30"
 
-@ _x, _left SAY PADL( "LOZINKA:", 15 ) GET _pwd PICT "@S30" //COLOR "BG/BG"
+   ++ _x
+   ++ _x
 
-read
+   @ _x, _left SAY PadL( "LOZINKA:", 15 ) GET _pwd PICT "@S30" // COLOR "BG/BG"
 
-if Lastkey() == K_ESC
-    return _ok
-endif
+   READ
 
-::main_db_params["username"] := ALLTRIM( _user )
-::main_db_params["host"] := ALLTRIM( _host )
-::main_db_params["port"] := _port
-::main_db_params["schema"] := _schema
-::main_db_params["postgres"] := "postgres"
-::main_db_params["session"] := ""
-::main_db_params["database"] := "postgres"
+   IF LastKey() == K_ESC
+      RETURN _ok
+   ENDIF
 
-// omogucice da se korisnici user=password jednostavno logiraju
-if EMPTY( _pwd )
-    ::main_db_params["password"] := ::main_db_params["username"]
-else
-    ::main_db_params["password"] := ALLTRIM( _pwd )
-endif 
+   ::main_db_params[ "username" ] := AllTrim( _user )
+   ::main_db_params[ "host" ] := AllTrim( _host )
+   ::main_db_params[ "port" ] := _port
+   ::main_db_params[ "schema" ] := _schema
+   ::main_db_params[ "postgres" ] := "postgres"
+   ::main_db_params[ "session" ] := ""
+   ::main_db_params[ "database" ] := "postgres"
 
-_ok := .t.
+   // omogucice da se korisnici user=password jednostavno logiraju
+   IF Empty( _pwd )
+      ::main_db_params[ "password" ] := ::main_db_params[ "username" ]
+   ELSE
+      ::main_db_params[ "password" ] := AllTrim( _pwd )
+   ENDIF
 
-return _ok
+   _ok := .T.
+
+   RETURN _ok
 
 
 
 
 
 METHOD F18Login:company_db_login_form()
-local _db, _session
-local _x := 5
-local _left := 7
-local _srv_config := "N"
-local _arr, _tmp
-local _ret := 0
 
-_db := ::main_db_params["database"]
-_session := ALLTRIM( STR( YEAR( DATE() ) ) )
+   LOCAL _db, _session
+   LOCAL _x := 5
+   LOCAL _left := 7
+   LOCAL _srv_config := "N"
+   LOCAL _arr, _tmp
+   LOCAL _ret := 0
 
-_db := PADR( _db, 30 )
-_session := PADR( _session, 4 )
+   _db := ::main_db_params[ "database" ]
+   _session := AllTrim( Str( Year( Date() ) ) )
 
-// daj filter baza dostupnih useru, ako postoji !
-::included_databases_for_user()
+   _db := PadR( _db, 30 )
+   _session := PadR( _session, 4 )
 
-// daj matricu sa firmama dostupnim...
-_tmp := ::database_array()
+   // daj filter baza dostupnih useru, ako postoji !
+   ::included_databases_for_user()
 
-// nema firmi ??!???
-if LEN( _tmp ) == 0
-    MsgBeep( "Na serveru ne postoji definisana niti jedna baza !" )
-    // izlazimo
-    return 0
-endif
+   // daj matricu sa firmama dostupnim...
+   _tmp := ::database_array()
 
-// broj firmi je veci od 1
-//if LEN( _tmp ) > 1
+   // nema firmi ??!???
+   IF Len( _tmp ) == 0
+      MsgBeep( "Na serveru ne postoji definisana niti jedna baza !" )
+      // izlazimo
+      RETURN 0
+   ENDIF
 
-    // daj mi formiranu matricu za prikaz
-    _arr := ::get_database_browse_array( _tmp )
+   // broj firmi je veci od 1
+   // if LEN( _tmp ) > 1
 
-    // treba napraviti da ako je jedna baza samo da odmah udje
+   // daj mi formiranu matricu za prikaz
+   _arr := ::get_database_browse_array( _tmp )
 
-    // browsaj listu firmi
-    _ret := ::browse_database_array( _arr )
+   // treba napraviti da ako je jedna baza samo da odmah udje
 
-//else
-    
-    // samo jednu firmu imamo u matrici, odmah se logiraj...
+   // browsaj listu firmi
+   _ret := ::browse_database_array( _arr )
 
-//    ::_company_db_curr_session := NIL
-//    ::_company_db_curr_choice := ALLTRIM( _tmp[ 1, 1 ] )
+   // else
 
-//    _ret := 1
+   // samo jednu firmu imamo u matrici, odmah se logiraj...
 
-//endif
+   // ::_company_db_curr_session := NIL
+   // ::_company_db_curr_choice := ALLTRIM( _tmp[ 1, 1 ] )
 
-if _ret > 0
-    
-    _ok := .t.
+   // _ret := 1
 
-    if ::_company_db_curr_session == NIL
-        // ako nije zadata sezona... odaberi top sezonu
-        // NIL je ako nije zadata...
-        _session := ::get_database_top_session( ::_company_db_curr_choice )
-    else    
-        // ako je zadata... uzmi nju !
-        _session := ALLTRIM( ::_company_db_curr_session )
-    endif
-    
-    ::main_db_params["database"] := ALLTRIM( ::_company_db_curr_choice ) + ;
-            IF( !EMPTY( _session ), "_" + ALLTRIM( _session ), "" )
-    ::main_db_params["session"] := ALLTRIM( _session )
+   // endif
 
-endif
+   IF _ret > 0
 
-return _ret
+      _ok := .T.
+
+      if ::_company_db_curr_session == NIL
+         // ako nije zadata sezona... odaberi top sezonu
+         // NIL je ako nije zadata...
+         _session := ::get_database_top_session( ::_company_db_curr_choice )
+      ELSE
+         // ako je zadata... uzmi nju !
+         _session := AllTrim( ::_company_db_curr_session )
+      ENDIF
+
+      ::main_db_params[ "database" ] := AllTrim( ::_company_db_curr_choice ) + ;
+         IF( !Empty( _session ), "_" + AllTrim( _session ), "" )
+      ::main_db_params[ "session" ] := AllTrim( _session )
+
+   ENDIF
+
+   RETURN _ret
 
 
 
 
 METHOD F18Login:get_database_sessions( database )
-local _session := ""
-local _server := pg_server()
-local _table, oRow, _db, _qry
-local _arr := {}
 
-if EMPTY( database )
-    return NIL
-endif
+   LOCAL _session := ""
+   LOCAL _server := pg_server()
+   LOCAL _table, oRow, _db, _qry
+   LOCAL _arr := {}
 
-_qry := "SELECT DISTINCT substring( datname, '" + ALLTRIM( database ) +  "_([0-9]+)') AS godina " + ;
-        "FROM pg_database " + ;
-        "ORDER BY godina"
+   IF Empty( database )
+      RETURN NIL
+   ENDIF
 
-_table := _sql_query( _server, _qry )
-_table:Refresh()
+   _qry := "SELECT DISTINCT substring( datname, '" + AllTrim( database ) +  "_([0-9]+)') AS godina " + ;
+      "FROM pg_database " + ;
+      "ORDER BY godina"
 
-if _table == NIL
-    return NIL
-endif
+   _table := _sql_query( _server, _qry )
+   _table:Refresh()
 
-_table:GoTo(1)
+   IF _table == NIL
+      RETURN NIL
+   ENDIF
 
-do while !_table:EOF()
+   _table:GoTo( 1 )
 
-    oRow := _table:GetRow()
-    _session := oRow:FieldGet( oRow:FieldPos( "godina" ) )
+   DO WHILE !_table:Eof()
 
-    if !EMPTY( _session )
-        AADD( _arr, { _session } )
-    endif
+      oRow := _table:GetRow()
+      _session := oRow:FieldGet( oRow:FieldPos( "godina" ) )
 
-    _table:skip()
+      IF !Empty( _session )
+         AAdd( _arr, { _session } )
+      ENDIF
 
-enddo
+      _table:skip()
 
-return _arr
+   ENDDO
+
+   RETURN _arr
 
 
 
 
 METHOD F18Login:get_database_top_session( database )
-local _session := ""
-local _server := pg_server()
-local _table, oRow, _db, _qry
 
-_qry := "SELECT MAX( DISTINCT substring( datname, '" + ALLTRIM( database ) +  "_([0-9]+)') ) AS godina " + ;
-        "FROM pg_database " + ;
-        "ORDER BY godina"
+   LOCAL _session := ""
+   LOCAL _server := pg_server()
+   LOCAL _table, oRow, _db, _qry
 
-_table := _sql_query( _server, _qry )
-_table:Refresh()
+   _qry := "SELECT MAX( DISTINCT substring( datname, '" + AllTrim( database ) +  "_([0-9]+)') ) AS godina " + ;
+      "FROM pg_database " + ;
+      "ORDER BY godina"
 
-if _table == NIL
-    return NIL
-endif
+   _table := _sql_query( _server, _qry )
+   _table:Refresh()
 
-oRow := _table:GetRow()
-_session := oRow:FieldGet( oRow:FieldPos( "godina") )
+   IF _table == NIL
+      RETURN NIL
+   ENDIF
 
-return _session
+   oRow := _table:GetRow()
+   _session := oRow:FieldGet( oRow:FieldPos( "godina" ) )
+
+   RETURN _session
 
 
 
 METHOD F18Login:get_database_description( database, session )
-local _descr := ""
-local _server := pg_server()
-local _table, oRow, _qry
-local _database_name := ""
 
-if EMPTY( database )
-    return _descr
-endif
+   LOCAL _descr := ""
+   LOCAL _server := pg_server()
+   LOCAL _table, oRow, _qry
+   LOCAL _database_name := ""
 
-_database_name := database + IF( !EMPTY( session ), "_" + session, "" )
+   IF Empty( database )
+      RETURN _descr
+   ENDIF
 
-_qry := "SELECT description AS opis " + ;
-        "FROM pg_shdescription " + ;
-        "JOIN pg_database on objoid = pg_database.oid " + ;
-        "WHERE datname = " + _sql_quote( _database_name )
+   _database_name := database + IF( !Empty( session ), "_" + session, "" )
 
-_table := _sql_query( _server, _qry )
-_table:Refresh()
+   _qry := "SELECT description AS opis " + ;
+      "FROM pg_shdescription " + ;
+      "JOIN pg_database on objoid = pg_database.oid " + ;
+      "WHERE datname = " + _sql_quote( _database_name )
 
-if _table == NIL
-    return NIL
-endif
+   _table := _sql_query( _server, _qry )
+   _table:Refresh()
 
-oRow := _table:GetRow()
+   IF _table == NIL
+      RETURN NIL
+   ENDIF
 
-if oRow <> NIL
-    _descr := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "opis" ) ) )
-else
-    _descr := "< naziv nije setovan >"
-endif
+   oRow := _table:GetRow()
 
-return _descr
+   IF oRow <> NIL
+      _descr := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "opis" ) ) )
+   ELSE
+      _descr := "< naziv nije setovan >"
+   ENDIF
+
+   RETURN _descr
 
 
 
@@ -635,169 +650,173 @@ return _descr
 
 
 METHOD F18Login:get_database_browse_array( arr )
-local _arr := {}
-local _count, _n, _x
-local _len := 20
 
-_count := 0
-// punimo sada matricu _arr
-for _n := 1 to 30
+   LOCAL _arr := {}
+   LOCAL _count, _n, _x
+   LOCAL _len := 20
 
-    AADD( _arr, { "", "", "", "" } )
+   _count := 0
+   // punimo sada matricu _arr
+   FOR _n := 1 TO 30
 
-    for _x := 1 to 4
-        ++ _count
-        _arr[ _n, _x ] := IF( _count > LEN( arr ), PADR( "", _len ), PADR( arr[ _count, 1 ], _len ) )
-    next
+      AAdd( _arr, { "", "", "", "" } )
 
-next
+      FOR _x := 1 TO 4
+         ++ _count
+         _arr[ _n, _x ] := IF( _count > Len( arr ), PadR( "", _len ), PadR( arr[ _count, 1 ], _len ) )
+      NEXT
 
-return _arr
+   NEXT
+
+   RETURN _arr
 
 
 
 
 METHOD F18Login:database_array()
-local _server := pg_server()
-local _table, oRow, _db, _qry
-local _tmp := {}
-local _filter_db := "empty#empty_sezona"
-local _where := ""
 
-_where := " WHERE has_database_privilege( CURRENT_USER, datname, 'connect' ) "
+   LOCAL _server := pg_server()
+   LOCAL _table, oRow, _db, _qry
+   LOCAL _tmp := {}
+   LOCAL _filter_db := "empty#empty_sezona"
+   LOCAL _where := ""
 
-if !EMPTY( ::_include_db_filter )
-    _where += " AND " + _sql_cond_parse( "datname", ::_include_db_filter + " " )
-endif
+   _where := " WHERE has_database_privilege( CURRENT_USER, datname, 'connect' ) "
 
-_qry := "SELECT DISTINCT substring( datname, '(.*)_[0-9]+') AS datab " + ;
-        " FROM pg_database " + ;
-        _where + ;
-        " ORDER BY datab "
+   IF !Empty( ::_include_db_filter )
+      _where += " AND " + _sql_cond_parse( "datname", ::_include_db_filter + " " )
+   ENDIF
 
-_table := _sql_query( _server, _qry )
-_table:Refresh()
+   _qry := "SELECT DISTINCT substring( datname, '(.*)_[0-9]+') AS datab " + ;
+      " FROM pg_database " + ;
+      _where + ;
+      " ORDER BY datab "
 
-if _table == NIL
-    return NIL
-endif
+   _table := _sql_query( _server, _qry )
+   _table:Refresh()
 
-_table:GoTo(1)
+   IF _table == NIL
+      RETURN NIL
+   ENDIF
 
-do while !_table:EOF()
-    
-    oRow := _table:GetRow()
-    _db := oRow:FieldGet( oRow:FieldPos( "datab" ) )
-    
-    // filter za tabele
-    if !EMPTY( _db ) .and. ! ( ALLTRIM( _db ) $ _filter_db )
-        AADD( _tmp, { _db } )    
-    endif
+   _table:GoTo( 1 )
 
-    _table:Skip()
+   DO WHILE !_table:Eof()
 
-enddo
+      oRow := _table:GetRow()
+      _db := oRow:FieldGet( oRow:FieldPos( "datab" ) )
 
-return _tmp
+      // filter za tabele
+      IF !Empty( _db ) .AND. ! ( AllTrim( _db ) $ _filter_db )
+         AAdd( _tmp, { _db } )
+      ENDIF
+
+      _table:Skip()
+
+   ENDDO
+
+   RETURN _tmp
 
 
 
 
 METHOD F18Login:administrative_options( x_pos, y_pos )
-local _ok := .f.
-local _x, _y
-local _menuop, _menuexec
 
-_x := x_pos
-_y := ( MAXCOLS() / 2 ) - 5
+   LOCAL _ok := .F.
+   LOCAL _x, _y
+   LOCAL _menuop, _menuexec
 
-// resetuj...
-_menuop := {}
-_menuexec := {}
+   _x := x_pos
+   _y := ( MAXCOLS() / 2 ) - 5
 
-// setuj odabir
-_set_menu_choices( @_menuop, @_menuexec )
+   // resetuj...
+   _menuop := {}
+   _menuexec := {}
 
-do while .t.
+   // setuj odabir
+   _set_menu_choices( @_menuop, @_menuexec )
 
-    _mnu_choice := ACHOICE2( _x, _y + 1, _x + 5, _y + 40, _menuop, .t., "MenuFunc", 1 )
+   DO WHILE .T.
 
- 	do case
-	    case _mnu_choice == 0
-            exit
-		case _mnu_choice > 0 
-			EVAL( _menuexec[ _mnu_choice ] )
-	endcase
+      _mnu_choice := ACHOICE2( _x, _y + 1, _x + 5, _y + 40, _menuop, .T., "MenuFunc", 1 )
 
- 	loop
+      DO CASE
+      CASE _mnu_choice == 0
+         EXIT
+      CASE _mnu_choice > 0
+         Eval( _menuexec[ _mnu_choice ] )
+      ENDCASE
 
-enddo
+      LOOP
 
-return _ok
+   ENDDO
+
+   RETURN _ok
 
 
 
 
-static function _set_menu_choices( menuop, menuexec )
+STATIC FUNCTION _set_menu_choices( menuop, menuexec )
 
-AADD( menuop, hb_utf8tostr( "1. rekonfiguracija servera        " ) )
-AADD( menuexec, {|| f18_init_app_login( .f. ), .t. } )
+   AAdd( menuop, hb_UTF8ToStr( "1. rekonfiguracija servera        " ) )
+   AAdd( menuexec, {|| f18_init_app_login( .F. ), .T. } )
 
-AADD( menuop, hb_utf8tostr( "2. update F18" ) )
-AADD( menuexec, {|| F18AdminOpts():New():update_app(), .t. } )
+   AAdd( menuop, hb_UTF8ToStr( "2. update F18" ) )
+   AAdd( menuexec, {|| F18AdminOpts():New():update_app(), .T. } )
 
-AADD( menuop, hb_utf8tostr( "3. update baze" ) )
-AADD( menuexec, {|| F18AdminOpts():New():update_db(), .t. } )
+   AAdd( menuop, hb_UTF8ToStr( "3. update baze" ) )
+   AAdd( menuexec, {|| F18AdminOpts():New():update_db(), .T. } )
 
-AADD( menuop, hb_utf8tostr( "4. nova baza" ) )
-AADD( menuexec, {|| F18AdminOpts():New():create_new_db(), .t. } )
+   AAdd( menuop, hb_UTF8ToStr( "4. nova baza" ) )
+   AAdd( menuexec, {|| F18AdminOpts():New():create_new_db(), .T. } )
 
-AADD( menuop, hb_utf8tostr( "5. brisanje baze" ) )
-AADD( menuexec, {|| F18AdminOpts():New():drop_db(), .t. } )
+   AAdd( menuop, hb_UTF8ToStr( "5. brisanje baze" ) )
+   AAdd( menuexec, {|| F18AdminOpts():New():drop_db(), .T. } )
 
-AADD( menuop, hb_utf8tostr( "6. otvaranje nove godine" ) )
-AADD( menuexec, {|| F18AdminOpts():New():new_session(), .t. } )
+   AAdd( menuop, hb_UTF8ToStr( "6. otvaranje nove godine" ) )
+   AAdd( menuexec, {|| F18AdminOpts():New():new_session(), .T. } )
 
-return
+   RETURN
 
 
 
 
 
 METHOD F18Login:manual_enter_company_data( x_pos, y_pos )
-local _x
-local _y := 3
-local _db := SPACE(20)
-local _session := ALLTRIM( STR( YEAR(DATE()) ) )
-local _ok := .f.
 
-_x := x_pos
+   LOCAL _x
+   LOCAL _y := 3
+   LOCAL _db := Space( 20 )
+   LOCAL _session := AllTrim( Str( Year( Date() ) ) )
+   LOCAL _ok := .F.
 
-@ _x, _y + 1 SAY hb_utf8tostr( "Pristupiti sljedećoj bazi:" )
+   _x := x_pos
 
-++ _x
-++ _x
+   @ _x, _y + 1 SAY hb_UTF8ToStr( "Pristupiti sljedećoj bazi:" )
 
-@ _x, _y + 3 SAY SPACE( 30 )
-@ _x, _y + 3 SAY "  Baza:" GET _db VALID !EMPTY( _db )
+   ++ _x
+   ++ _x
 
-++ _x
+   @ _x, _y + 3 SAY Space( 30 )
+   @ _x, _y + 3 SAY "  Baza:" GET _db VALID !Empty( _db )
 
-@ _x, _y  + 3 SAY "Sezona:" GET _session 
+   ++ _x
 
-read
+   @ _x, _y  + 3 SAY "Sezona:" GET _session
 
-if LastKey() == K_ESC
-    return _ok    
-endif
+   READ
 
-if LastKey() == K_ENTER
-    _ok := .t.
-    ::_company_db_curr_choice := ALLTRIM( _db )
-    ::_company_db_curr_session := ALLTRIM( _session )
-endif
+   IF LastKey() == K_ESC
+      RETURN _ok
+   ENDIF
 
-return _ok
+   IF LastKey() == K_ENTER
+      _ok := .T.
+      ::_company_db_curr_choice := AllTrim( _db )
+      ::_company_db_curr_session := AllTrim( _session )
+   ENDIF
+
+   RETURN _ok
 
 
 
@@ -807,204 +826,204 @@ return _ok
 // 1 - ENTER
 // -------------------------------------------------------
 
-METHOD F18Login:browse_database_array( arr, table_type ) 
-local _i
-local _key
-local _br
-local _opt := 0
-local _pos_left := 3
-local _pos_top := 5
-local _pos_bottom := _pos_top + 12
-local _pos_right := MAXCOLS() - 12
-local _company_count 
+METHOD F18Login:browse_database_array( arr, table_type )
 
-if table_type == NIL
-    table_type := 0
-endif
+   LOCAL _i
+   LOCAL _key
+   LOCAL _br
+   LOCAL _opt := 0
+   LOCAL _pos_left := 3
+   LOCAL _pos_top := 5
+   LOCAL _pos_bottom := _pos_top + 12
+   LOCAL _pos_right := MAXCOLS() - 12
+   LOCAL _company_count
 
-_row := 1
+   IF table_type == NIL
+      table_type := 0
+   ENDIF
 
-if arr == NIL
-    MsgBeep( "Nema podataka za prikaz..." )
-    return NIL
-endif
+   _row := 1
 
-// stvarni broj aktuelenih firmi 
-_company_count := _get_company_count( arr )
+   IF arr == NIL
+      MsgBeep( "Nema podataka za prikaz..." )
+      RETURN NIL
+   ENDIF
 
-CLEAR SCREEN
+   // stvarni broj aktuelenih firmi
+   _company_count := _get_company_count( arr )
 
-@ 0,0 SAY ""
+   CLEAR SCREEN
 
-// opcija 1
-// =========================
+   @ 0, 0 SAY ""
 
-@ 1, 3 SAY hb_utf8tostr( "[1] Odabir baze" ) COLOR "I"
+   // opcija 1
+   // =========================
 
-@ 2, 2 SAY hb_utf8tostr( " - Strelicama odaberite željenu bazu " )
+   @ 1, 3 SAY hb_UTF8ToStr( "[1] Odabir baze" ) COLOR "I"
 
-@ 3, 2 SAY hb_utf8tostr( " - <TAB> ručno zadavanje konekcije  <F10> admin. opcije  <ESC> izlaz" )
+   @ 2, 2 SAY hb_UTF8ToStr( " - Strelicama odaberite željenu bazu " )
 
-// top, left, bottom, right
+   @ 3, 2 SAY hb_UTF8ToStr( " - <TAB> ručno zadavanje konekcije  <F10> admin. opcije  <ESC> izlaz" )
 
-// box za selekciju firme....
-@ 4, 2, _pos_bottom + 1, _pos_right + 2 BOX B_DOUBLE_SINGLE
+   // top, left, bottom, right
 
-// opcija 2
-// =========================
-// ispis opisa
-@ _pos_bottom + 2, 3 SAY hb_utf8tostr( "[2] Ručna konekcija na bazu" ) COLOR "I"
+   // box za selekciju firme....
+   @ 4, 2, _pos_bottom + 1, _pos_right + 2 BOX B_DOUBLE_SINGLE
 
-// box za rucni odabir firme
-@ _pos_bottom + 3, 2, _pos_bottom + 10, ( _pos_right / 2 ) - 3 BOX B_DOUBLE_SINGLE
-@ _pos_bottom + 6, 11 SAY hb_utf8tostr( "<<< pritisni TAB >>>" )
+   // opcija 2
+   // =========================
+   // ispis opisa
+   @ _pos_bottom + 2, 3 SAY hb_UTF8ToStr( "[2] Ručna konekcija na bazu" ) COLOR "I"
 
-// opcija 3
-// =========================
-// ispis opisa
-@ _pos_bottom + 2, ( _pos_right / 2 ) + 1 SAY hb_utf8tostr( "[3] Administrativne opcije" ) COLOR "I"
+   // box za rucni odabir firme
+   @ _pos_bottom + 3, 2, _pos_bottom + 10, ( _pos_right / 2 ) - 3 BOX B_DOUBLE_SINGLE
+   @ _pos_bottom + 6, 11 SAY hb_UTF8ToStr( "<<< pritisni TAB >>>" )
 
-// box za administrativne opcije
-@ _pos_bottom + 3,  ( _pos_right / 2 ) , _pos_bottom + 10, _pos_right + 2 BOX B_DOUBLE_SINGLE
-@ _pos_bottom + 6, ( _pos_right / 2 ) + 12 SAY hb_utf8tostr( "<<< pritisni F10 >>>" )
+   // opcija 3
+   // =========================
+   // ispis opisa
+   @ _pos_bottom + 2, ( _pos_right / 2 ) + 1 SAY hb_UTF8ToStr( "[3] Administrativne opcije" ) COLOR "I"
 
-_br := TBrowseNew( _pos_top, _pos_left, _pos_bottom, _pos_right )
+   // box za administrativne opcije
+   @ _pos_bottom + 3,  ( _pos_right / 2 ), _pos_bottom + 10, _pos_right + 2 BOX B_DOUBLE_SINGLE
+   @ _pos_bottom + 6, ( _pos_right / 2 ) + 12 SAY hb_UTF8ToStr( "<<< pritisni F10 >>>" )
 
-if table_type == 0
-    _br:HeadSep := ""
-    _br:FootSep := ""
-    _br:ColSep := " "
-elseif table_type == 1
-    _br:headSep := "-"
-    _br:footSep := "-"
-    _br:colSep := "|"
-elseif table_type == 2
-    _br:HeadSep := hb_UTF8ToStr( "╤═" )
-    _br:FootSep := hb_UTF8ToStr( "╧═" )
-    _br:ColSep := hb_UTF8ToStr( "│" )
-endif
+   _br := TBrowseNew( _pos_top, _pos_left, _pos_bottom, _pos_right )
 
-_br:skipBlock := { | _skip | _skip := _skip_it( arr, _row, _skip ), _row += _skip, _skip }
-_br:goTopBlock := { || _row := 1 }
-_br:goBottomBlock := { || _row := LEN( arr ) }
+   IF table_type == 0
+      _br:HeadSep := ""
+      _br:FootSep := ""
+      _br:ColSep := " "
+   ELSEIF table_type == 1
+      _br:headSep := "-"
+      _br:footSep := "-"
+      _br:colSep := "|"
+   ELSEIF table_type == 2
+      _br:HeadSep := hb_UTF8ToStr( "╤═" )
+      _br:FootSep := hb_UTF8ToStr( "╧═" )
+      _br:ColSep := hb_UTF8ToStr( "│" )
+   ENDIF
 
-for _l := 1 TO LEN( arr[ 1 ] )
-    _br:addColumn( TBColumnNew( "", _browse_block( arr, _l )) )
-next
+   _br:skipBlock := {| _skip | _skip := _skip_it( arr, _row, _skip ), _row += _skip, _skip }
+   _br:goTopBlock := {|| _row := 1 }
+   _br:goBottomBlock := {|| _row := Len( arr ) }
 
-// vrijednost uzimamo kao:
-// EVAL( _br:GetColumn( _br:colpos ):block ) => "cago      "
+   FOR _l := 1 TO Len( arr[ 1 ] )
+      _br:addColumn( TBColumnNew( "", _browse_block( arr, _l ) ) )
+   NEXT
 
-// main key handler loop
-do while ( _key <> K_ESC ) .and. ( _key <> K_RETURN )
+   // vrijednost uzimamo kao:
+   // EVAL( _br:GetColumn( _br:colpos ):block ) => "cago      "
 
-    // stabilize the browse and wait for a keystroke
-    _br:forcestable()
-    
-    ::show_info_bar( ALLTRIM( EVAL( _br:GetColumn( _br:colpos ):block ) ), _pos_bottom + 4 )
-    
-    _key := inkey( 0 )
+   // main key handler loop
+   DO WHILE ( _key <> K_ESC ) .AND. ( _key <> K_RETURN )
 
-    // process the directional keys
-    if _br:stable
+      // stabilize the browse and wait for a keystroke
+      _br:forcestable()
 
-        do case
-                
-            case ( _key == K_DOWN )
-                _br:down()
-            case ( _key == K_UP )
-                _br:up()
-            case ( _key == K_RIGHT )
-                _br:right()
-            case ( _key == K_LEFT )
-                _br:left()
-            case ( _key == K_F10 )
-                ::administrative_options( _pos_bottom + 4, _pos_left )
-                return -1
-            case ( _key == K_TAB )
-                if ::manual_enter_company_data( _pos_bottom + 4, _pos_left )
-                    return 1
-                else
-                    return -1
-                endif
-            case ( _key == K_ENTER )
-                // ovo je firma koju smo odabrali...
-                ::_company_db_curr_choice := ALLTRIM( EVAL( _br:GetColumn( _br:colpos ):block ) )
-                // sezona treba da bude uzeta kao TOP sezona
-                ::_company_db_curr_session := NIL
-                return 1
-        endcase
-    
-    endif
+      ::show_info_bar( AllTrim( Eval( _br:GetColumn( _br:colpos ):block ) ), _pos_bottom + 4 )
 
-enddo
+      _key := Inkey( 0 )
 
-return 0
+      // process the directional keys
+      IF _br:stable
+
+         DO CASE
+
+         CASE ( _key == K_DOWN )
+            _br:down()
+         CASE ( _key == K_UP )
+            _br:up()
+         CASE ( _key == K_RIGHT )
+            _br:Right()
+         CASE ( _key == K_LEFT )
+            _br:Left()
+         CASE ( _key == K_F10 )
+            ::administrative_options( _pos_bottom + 4, _pos_left )
+            RETURN -1
+         CASE ( _key == K_TAB )
+            if ::manual_enter_company_data( _pos_bottom + 4, _pos_left )
+               RETURN 1
+            ELSE
+               RETURN -1
+            ENDIF
+         CASE ( _key == K_ENTER )
+            // ovo je firma koju smo odabrali...
+            ::_company_db_curr_choice := AllTrim( Eval( _br:GetColumn( _br:colpos ):block ) )
+            // sezona treba da bude uzeta kao TOP sezona
+            ::_company_db_curr_session := NIL
+            RETURN 1
+         ENDCASE
+
+      ENDIF
+
+   ENDDO
+
+   RETURN 0
 
 
 
 METHOD F18Login:show_info_bar( database, x_pos )
-local _x := x_pos + 7
-local _y := 3
-local _info := ""
-local _arr := ::get_database_sessions( database )
-local _max_len := MAXCOLS() - 2
-local _descr := ""
 
-if !_arr == NIL .and. LEN( _arr ) > 0
+   LOCAL _x := x_pos + 7
+   LOCAL _y := 3
+   LOCAL _info := ""
+   LOCAL _arr := ::get_database_sessions( database )
+   LOCAL _max_len := MAXCOLS() - 2
+   LOCAL _descr := ""
 
-    _descr := ::get_database_description( database, _arr[ LEN( _arr ), 1 ] )
+   IF !_arr == NIL .AND. Len( _arr ) > 0
 
-    _info += ALLTRIM( _descr )
+      _descr := ::get_database_description( database, _arr[ Len( _arr ), 1 ] )
 
-    if LEN( _arr ) > 1
-        _info += ", dostupne sezone: " + _arr[ 1, 1 ] + " ... " + _arr[ LEN( _arr ), 1 ]
-    else
-        _info += ", sezona: " + _arr[ 1, 1 ]
-    endif
+      _info += AllTrim( _descr )
 
-endif
+      IF Len( _arr ) > 1
+         _info += ", dostupne sezone: " + _arr[ 1, 1 ] + " ... " + _arr[ Len( _arr ), 1 ]
+      ELSE
+         _info += ", sezona: " + _arr[ 1, 1 ]
+      ENDIF
 
-@ _x, _y SAY PADR( "Info: " + _info, _max_len )
-++ _x
-@ _x, _y SAY PADR( "F18 version: " + F18_VER, _max_len )
+   ENDIF
 
-return .t.
+   @ _x, _y SAY PadR( "Info: " + _info, _max_len )
+   ++ _x
+   @ _x, _y SAY PadR( "F18 version: " + F18_VER, _max_len )
+
+   RETURN .T.
 
 
 
-static function _get_company_count( arr )
-local _count := 0
+STATIC FUNCTION _get_company_count( arr )
 
-for _i := 1 to LEN( arr )
-    for _n := 1 to 4
-        if !EMPTY( arr[ _i, _n ] )
+   LOCAL _count := 0
+
+   FOR _i := 1 TO Len( arr )
+      FOR _n := 1 TO 4
+         IF !Empty( arr[ _i, _n ] )
             ++ _count
-        endif
-    next
-next
+         ENDIF
+      NEXT
+   NEXT
 
-return _count
-
-
-
-
-static function _browse_block( arr, x )
-return ( {|p| if( PCount() == 0, arr[ _row, x ], arr[ _row, x ] := p ) } )
+   RETURN _count
 
 
 
-static function _skip_it( arr, curr, skiped )
 
-if ( curr + skiped < 1 )
-    // Would skip past the top...
-    return( -curr + 1 )
-elseif ( curr + skiped > LEN( arr ) )
-    // Would skip past the bottom...
-    return ( LEN( arr ) - curr )
-endif
-
-return( skiped )
+STATIC FUNCTION _browse_block( arr, x )
+   RETURN ( {| p| if( PCount() == 0, arr[ _row, x ], arr[ _row, x ] := p ) } )
 
 
 
+STATIC FUNCTION _skip_it( arr, curr, skiped )
+
+   IF ( curr + skiped < 1 )
+      // Would skip past the top...
+      RETURN( -curr + 1 )
+   ELSEIF ( curr + skiped > Len( arr ) )
+      // Would skip past the bottom...
+      RETURN ( Len( arr ) - curr )
+   ENDIF
+
+   RETURN( skiped )

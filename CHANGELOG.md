@@ -1,3 +1,7 @@
+1.7.10  2014-03-25, hernad
+
+  - DEBUG PARTN/SIFV #32839
+
 1.7.9   2014-03-25, hernad
 
   - DEBUG sifk/edkolona = NIL

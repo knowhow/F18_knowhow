@@ -102,25 +102,15 @@ AADD(ImeKol, { PADR("Ziro R ", 22), {|| ZIROR},   "ziror"  , {|| .t.},{|| .t. } 
 
 Kol:={}
 
-if IzFMkIni('SifPartn','DZIROR','N')=="D"
-    if partn->(fieldpos("DZIROR")) <> 0
+if partn->(fieldpos("DZIROR")) <> 0
         AADD (ImeKol,{ padr("Dev ZR", 22 ), {|| DZIROR}, "Dziror" })
-    endif
 endif
 
 
-if IzFMKINI('SifPartn','Telefon','D')=="D"
-    AADD(Imekol,{ PADR("Telefon",12),  {|| TELEFON}, "telefon"  } )
-endif
-
-if IzFMKINI('SifPartn','Fax','D')=="D"
-    AADD (ImeKol,{ padr("Fax",12 ), {|| fax}, "fax" })
-endif
-
-if IzFMKINI('SifPartn','MOBTEL','D')=="D"
-    if partn->(fieldpos("MOBTEL")) <> 0
+AADD(Imekol,{ PADR("Telefon",12),  {|| TELEFON}, "telefon"  } )
+AADD (ImeKol,{ padr("Fax",12 ), {|| fax}, "fax" })
+if partn->(fieldpos("MOBTEL")) <> 0
         AADD (ImeKol,{ padr("MobTel", 20 ), {|| mobtel}, "mobtel" })
-    endif
 endif
 
 if partn->(fieldpos("ID2")) <> 0
@@ -155,6 +145,7 @@ FOR i := 1 TO LEN(ImeKol)
 NEXT
 
 set order to tag "ID"
+
 sif_sifk_fill_kol( "PARTN", @ImeKol, @Kol)
 
 cRet := PostojiSifra(F_PARTN, 1, maxrows() - 15, maxcols() - 15, "Lista Partnera", @cId, dx, dy, {|Ch| k_handler(Ch)},,,,, {"ID"})

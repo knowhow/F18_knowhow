@@ -54,7 +54,7 @@ if l_make_index
 endif
 
 
-rddSetDefault( "DBFCDX" )
+//rddSetDefault( "DBFCDX" )
 
 return .T.
 
@@ -134,12 +134,19 @@ function use_sql_sifv( cDbf, cOznaka, cIdSif, cVrijednost )
       cOznaka := field->oznaka
    ENDIF
 
+
    cSql := "SELECT * from fmk.sifv"
    cSql += " WHERE id=" + _sql_quote( cDbf ) + " AND oznaka=" + _sql_quote( cOznaka )
    
-   IF cIdSif != NIL
-      cSql += " AND idsif=" + _sql_quote( cIdSif )
+   IF cIdSif == NIL
+      IF EMPTY( cDbf )
+        // nepostojeca sifra
+        cIdSif := "MLFJUSX" + CHR(170)
+      ELSE
+        cIdSif := ( cDbf )->id
+      ENDIF
    ENDIF
+   cSql += " AND idsif=" + _sql_quote( cIdSif )
 
    IF cVrijednost != NIL
       cSql += " AND naz=" + _sql_quote( cVrijednost )

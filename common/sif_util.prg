@@ -88,7 +88,6 @@ FUNCTION sif_sifk_fill_kol( cDbf, ImeKol, Kol )
       ENDIF
 
       AAdd  ( Kol, iif( _rec[ "ubrowsu" ] == '1', ++i, 0 ) )
-      SKIP
 
    NEXT
 

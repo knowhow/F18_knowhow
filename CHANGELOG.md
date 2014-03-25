@@ -1,3 +1,6 @@
+1.7.9   2014-03-25, hernad
+
+  - DEBUG sifk/edkolona = NIL
 
 1.7.8   2014-03-25, hernad
 

@@ -4,79 +4,83 @@
 // -----------------------------------------------------
 // konvertuje nase karaktere u US format
 // -----------------------------------------------------
-function to_us_encoding( cp852_str )
-local _us_str
-local _cnt
-local _arr := _get_us_codes_array()
+FUNCTION to_us_encoding( cp852_str )
 
-_us_str := hb_strtoutf8( cp852_str )
+   LOCAL _us_str
+   LOCAL _cnt
+   LOCAL _arr := _get_us_codes_array()
 
-for _cnt := 1 to LEN( _arr )
-	_us_str := STRTRAN( _us_str, _arr[ _cnt, 1 ], _arr[ _cnt, 2 ] )
-next
+   _us_str := hb_StrToUTF8( cp852_str )
 
-return _us_str
+   FOR _cnt := 1 TO Len( _arr )
+      _us_str := StrTran( _us_str, _arr[ _cnt, 1 ], _arr[ _cnt, 2 ] )
+   NEXT
+
+   RETURN _us_str
 
 
 // -------------------------------------------------
 // vraca matricu sa US kodovima
 // -------------------------------------------------
-static function _get_us_codes_array()
-local _arr := {}
+STATIC FUNCTION _get_us_codes_array()
 
-AADD( _arr, { "Ž", "Z" } )
-AADD( _arr, { "ž", "z" } )
-AADD( _arr, { "Č", "C" } )
-AADD( _arr, { "č", "c" } )
-AADD( _arr, { "Ć", "C" } )
-AADD( _arr, { "ć", "c" } )
-AADD( _arr, { "Đ", "Dj" } )
-AADD( _arr, { "đ", "dj" } )
-AADD( _arr, { "Š", "S" } )
-AADD( _arr, { "š", "s" } )
+   LOCAL _arr := {}
 
-return _arr
+   AAdd( _arr, { "Ž", "Z" } )
+   AAdd( _arr, { "ž", "z" } )
+   AAdd( _arr, { "Č", "C" } )
+   AAdd( _arr, { "č", "c" } )
+   AAdd( _arr, { "Ć", "C" } )
+   AAdd( _arr, { "ć", "c" } )
+   AAdd( _arr, { "Đ", "Dj" } )
+   AAdd( _arr, { "đ", "dj" } )
+   AAdd( _arr, { "Š", "S" } )
+   AAdd( _arr, { "š", "s" } )
+
+   RETURN _arr
 
 
 // -----------------------------------------------------
 // konvertuje nase karaktere u windows-1250 format
 // -----------------------------------------------------
-function to_win1250_encoding( cp852_str, convert_852 )
-local _win_str
-local _cnt
-local _arr := _get_win_1250_codes_array()
+FUNCTION to_win1250_encoding( cp852_str, convert_852 )
 
-if convert_852 == NIL
-    convert_852 := .t.
-endif
+   LOCAL _win_str
+   LOCAL _cnt
+   LOCAL _arr := _get_win_1250_codes_array()
 
-_win_str := cp852_str
+   IF convert_852 == NIL
+      convert_852 := .T.
+   ENDIF
 
-for _cnt := 1 to LEN( _arr )
-	_win_str := STRTRAN( _win_str, _arr[ _cnt, 1 ], if( convert_852, _arr[ _cnt, 2 ], _arr[ _cnt, 3 ] ) )
-next
+   _win_str := cp852_str
 
-return _win_str
+   FOR _cnt := 1 TO Len( _arr )
+      _win_str := StrTran( _win_str, _arr[ _cnt, 1 ], if( convert_852, _arr[ _cnt, 2 ], _arr[ _cnt, 3 ] ) )
+   NEXT
+
+   RETURN _win_str
 
 
 // -------------------------------------------------
 // vraca matricu sa windows 1250 kodovima
 // -------------------------------------------------
-static function _get_win_1250_codes_array()
-local _arr := {}
+STATIC FUNCTION _get_win_1250_codes_array()
 
-AADD( _arr, { "Č", CHR(200), "C" } ) 
-AADD( _arr, { "č", CHR(232), "c" } ) 
-AADD( _arr, { "Ć", CHR(198), "C" } ) 
-AADD( _arr, { "ć", CHR(230), "c" } ) 
-AADD( _arr, { "Ž", CHR(142), "Z" } ) 
-AADD( _arr, { "ž", CHR(158), "z" } ) 
-AADD( _arr, { "Đ", CHR(208), "Dj" } ) 
-AADD( _arr, { "đ", CHR(240), "dj" } ) 
-AADD( _arr, { "Š", CHR(138), "S" } ) 
-AADD( _arr, { "š", CHR(154), "s" } ) 
+   LOCAL _arr := {}
 
-return _arr
+   AAdd( _arr, { "Č", Chr( 200 ), "C" } )
+   AAdd( _arr, { "č", Chr( 232 ), "c" } )
+   AAdd( _arr, { "Ć", Chr( 198 ), "C" } )
+   AAdd( _arr, { "ć", Chr( 230 ), "c" } )
+   AAdd( _arr, { "Ž", Chr( 142 ), "Z" } )
+   AAdd( _arr, { "ž", Chr( 158 ), "z" } )
+   AAdd( _arr, { "Đ", Chr( 208 ), "Dj" } )
+   AAdd( _arr, { "đ", Chr( 240 ), "dj" } )
+   AAdd( _arr, { "Š", Chr( 138 ), "S" } )
+   AAdd( _arr, { "š", Chr( 154 ), "s" } )
+
+   RETURN _arr
 
 
 
@@ -85,52 +89,51 @@ return _arr
 // --------------------------------------------------------------------
 // pretvara specijalne string karaktere u xml encoding kraktere
 // npr: Č -> &#262; itd...
-// to_xml_encoding( "Čekić" ) 
-//  => "&#262;eki&#269;"
+// to_xml_encoding( "Čekić" )
+// => "&#262;eki&#269;"
 // --------------------------------------------------------------------
-function to_xml_encoding( cp852_str )
-local _ent_arr := _get_ent_codes_array()
-local _cnt
-local _utf8_str 
+FUNCTION to_xml_encoding( cp852_str )
 
-_utf8_str := hb_strtoutf8( cp852_str )
+   LOCAL _ent_arr := _get_ent_codes_array()
+   LOCAL _cnt
+   LOCAL _utf8_str
 
-for _cnt := 1 to LEN( _ent_arr )
-	_utf8_str := STRTRAN( _utf8_str, _ent_arr[ _cnt, 1 ], _ent_arr[ _cnt, 2 ] )
-next
+   _utf8_str := hb_StrToUTF8( cp852_str )
 
-return _utf8_str
+   FOR _cnt := 1 TO Len( _ent_arr )
+      _utf8_str := StrTran( _utf8_str, _ent_arr[ _cnt, 1 ], _ent_arr[ _cnt, 2 ] )
+   NEXT
+
+   RETURN _utf8_str
 
 
 // ------------------------------------------------
-// napuni i vrati matricu sa parovima 
+// napuni i vrati matricu sa parovima
 // utf8 karakter, xml entity code
 // ------------------------------------------------
-static function _get_ent_codes_array() 
-local _arr := {}
+STATIC FUNCTION _get_ent_codes_array()
 
-// rezervisani znakovi
+   LOCAL _arr := {}
 
-AADD( _arr, { "&", "&amp;" } ) 
-AADD( _arr, { "!", "&#33;" } ) 
-AADD( _arr, { '"', "&quot;" } ) 
-AADD( _arr, { "'", "&#39;" } ) 
-AADD( _arr, { ",", "&#44;" } ) 
-AADD( _arr, { "<", "&lt;" } ) 
-AADD( _arr, { ">", "&gt;" } ) 
+   // rezervisani znakovi
+   AAdd( _arr, { "&", "&amp;" } )
+   AAdd( _arr, { "!", "&#33;" } )
+   AAdd( _arr, { '"', "&quot;" } )
+   AAdd( _arr, { "'", "&#39;" } )
+   AAdd( _arr, { ",", "&#44;" } )
+   AAdd( _arr, { "<", "&lt;" } )
+   AAdd( _arr, { ">", "&gt;" } )
 
-// bh karakteri
-AADD( _arr, { "č", "&#269;" } ) 
-AADD( _arr, { "ć", "&#263;" } ) 
-AADD( _arr, { "ž", "&#382;" } ) 
-AADD( _arr, { "š", "&#353;" } ) 
-AADD( _arr, { "đ", "&#273;" } ) 
-AADD( _arr, { "Č", "&#268;" } ) 
-AADD( _arr, { "Ć", "&#262;" } ) 
-AADD( _arr, { "Ž", "&#381;" } ) 
-AADD( _arr, { "Š", "&#352;" } ) 
-AADD( _arr, { "Đ", "&#272;" } ) 
+   // bh karakteri
+   AAdd( _arr, { "č", "&#269;" } )
+   AAdd( _arr, { "ć", "&#263;" } )
+   AAdd( _arr, { "ž", "&#382;" } )
+   AAdd( _arr, { "š", "&#353;" } )
+   AAdd( _arr, { "đ", "&#273;" } )
+   AAdd( _arr, { "Č", "&#268;" } )
+   AAdd( _arr, { "Ć", "&#262;" } )
+   AAdd( _arr, { "Ž", "&#381;" } )
+   AAdd( _arr, { "Š", "&#352;" } )
+   AAdd( _arr, { "Đ", "&#272;" } )
 
-return _arr
-
-
+   RETURN _arr

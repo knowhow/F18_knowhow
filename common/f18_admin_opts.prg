@@ -674,7 +674,7 @@ METHOD F18AdminOpts:update_db_download()
    LOCAL _cmd := ""
    LOCAL _path := my_home_root()
    LOCAL _file := "f18_db_migrate_package_" + AllTrim( _ver ) + ".gz"
-   LOCAL _url := "http://knowhow-erp-f18.googlecode.com/files/"
+   LOCAL _url := "http://download.bring.out.ba/"
 
    IF File( AllTrim( _path ) + AllTrim( _file ) )
 

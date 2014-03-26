@@ -184,7 +184,7 @@ FUNCTION sql_table_update( table, op, record, where_str, silent )
 
    _ret := _sql_query( _server, _qry, silent )
 
-   log_write( "sql table update, table: " + IF( table == NIL, "NIL", table ) + ", op: " + op + ", qry: " + _qry, 8, silent )
+   log_write( "sql table update, table: " + IIF( table == NIL, "NIL", table ) + ", op: " + op + ", qry: " + _qry, 8, silent )
    log_write( "sql table update, VALTYPE(_ret): " + ValType( _ret ), 9, silent )
    log_write( "sql table update, zavrsio", 9, silent )
 
@@ -280,7 +280,7 @@ FUNCTION _sql_query( oServer, cQuery, silent )
          log_write( "ERROR: _sql_query: " + cQuery + "err msg:" + cMsg, 1, silent )
 
          IF !silent
-            MsgBeep( cMsg )
+            Alert( cQuery + " : " + cMsg )
          ENDIF
       ENDIF
 

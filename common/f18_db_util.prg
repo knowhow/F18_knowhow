@@ -80,7 +80,7 @@ for _i := 1 to len(_struct)
         // _ret["idfirma"] := wIdFirma, za zn = "w"
         _ret[ LOWER(_ime_polja) ] := EVAL( MEMVARBLOCK( zn + _ime_polja) )
         
-        IF lUtf 
+        IF ( VALTYPE( _ret[ LOWER(_ime_polja) ] ) == "C" ) .AND.  lUtf 
             _ret[ LOWER(_ime_polja) ] := hb_StrToUtf8 ( _ret[ LOWER(_ime_polja) ]  )
         ENDIF
 

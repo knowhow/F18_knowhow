@@ -12,16 +12,6 @@
 
 #include "fin.ch"
 
-// -------------------------------------------
-// kreiraj index FIN rules....
-// -------------------------------------------
-function cre_rule_cdx()
-
-CREATE_INDEX( "FINKNJ1", "MODUL_NAME+RULE_OBJ+STR(RULE_NO,5)", "FMKRULES" )
-
-CREATE_INDEX( "ELBA1", "MODUL_NAME+RULE_OBJ+RULE_C3", "FMKRULES" )
-return
-
 
 // --------------------------------------------
 // rule - kolone specificne

@@ -653,21 +653,18 @@ return .t.
 // ------------------------------------------------------------------
 function array_from_sifv( cDBF, cOznaka, cIdSif )
 local aSifV := {}
-
-PushWa()
+local _t_area := SELECT()
 
 cDBF := PADR( cDBF, 8 )
 cOznaka := PADR( cOznaka, 4 )
 
 xVal := NIL
 
-select sifv
-PushWa() 
-
+SELECT F_SIFV
+use_sql_sifv( cDbf, cOznaka, cIdSif )
 set order to tag "ID"
-// "ID", "id+oznaka+IdSif+Naz"
-hseek cDbf + cOznaka + cIdSif
-
+go top
+   
 do while !EOF() .and. field->id + field->oznaka + field->idsif = cDbf + cOznaka + cIdSif
     if !EMPTY( naz )
         AADD( aSifV, ALLTRIM( naz ) )
@@ -675,7 +672,7 @@ do while !EOF() .and. field->id + field->oznaka + field->idsif = cDbf + cOznaka 
     skip
 enddo
 
-PopWa()
+select ( _t_area )
 
 return aSifv
 

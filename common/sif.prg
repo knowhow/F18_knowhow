@@ -1225,6 +1225,12 @@ STATIC FUNCTION sif_brisi_stavku()
 
       // ako postoji id polje, pobriši i sifv
       IF hb_HHasKey( _rec_dbf, "id" )
+
+         SELECT ( F_SIFK )
+         IF !Used()
+            O_SIFK
+         ENDIF
+
          SELECT ( F_SIFV )
          IF !Used()
             O_SIFV

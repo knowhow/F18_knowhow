@@ -185,6 +185,9 @@ function use_sql_rules()
    INDEX ON MODUL_NAME+RULE_OBJ+RULE_C3+RULE_C4                   TAG ELCODE TO (_table_name)
    INDEX ON MODUL_NAME+RULE_OBJ+RULE_C3+STR(RULE_NO,5)            TAG RNART1 TO (_table_name)
    INDEX ON MODUL_NAME+RULE_OBJ+RULE_C5+STR(RULE_NO,5)            TAG ITEM1  TO (_table_name)
+   // kreiranje rules index-a specificnih za fin
+   INDEX ON MODUL_NAME+RULE_OBJ+STR(RULE_NO,5)                    TAG FINKNJ1 TO (_table_name)
+   INDEX ON MODUL_NAME+RULE_OBJ+RULE_C3                           TAG ELBA1 TO (_table_name)
 
    return .T.
 

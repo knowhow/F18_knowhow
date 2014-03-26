@@ -1082,8 +1082,7 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
         @ _part_x := m_x + _x, _part_y := m_y + 2 SAY "Partner:" GET _idpartner ;
                 PICT "@!" ;
                 VALID {|| P_Firma( @_idpartner ), ;
-                            IzSifre(), ;
-                            ispisi_partn( _idpartner, _part_x, _part_y + 18 ) }
+                            IzSifre(), ispisi_partn( _idpartner, _part_x, _part_y + 18 ) }
             
         ++ _x
         ++ _x
@@ -1436,28 +1435,6 @@ return .t.
 
 
 
-
-
-// ------------------------------------------
-// ispisi partnera 
-// ------------------------------------------
-function ispisi_partn( cPartn, nX, nY )
-local nTArea := SELECT()
-local cDesc := "..."
-select partn
-seek cPartn
-
-if FOUND()
-    cDesc := ALLTRIM( field->naz )
-    if LEN( cDesc ) > 13
-        cDesc := PADR( cDesc, 12 ) + "..."
-    endif
-endif
-
-@ nX, nY SAY PADR( cDesc, 15 )
-
-select (nTArea)
-return .t.
 
 
 static function _f_idpm( cIdPm )

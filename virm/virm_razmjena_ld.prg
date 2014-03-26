@@ -166,7 +166,6 @@ local _oznaka := "IS_"
 local _id_kred, _rec
 local _formula, _izr_formula
 local _svrha_placanja
-local _poziv_na_broj := fetch_metric( "virm_poziv_na_broj", my_user(), PADR( "", 10 ) ) 
 local _racun_upl := fetch_metric( "virm_zr_uplatioca", my_user(), SPACE(16) ) 
 local _bez_nula := fetch_metric( "virm_generisanje_nule", my_user(), "N" ) 
 local _ispl_posebno := fetch_metric( "virm_isplate_za_radnike_posebno", my_user(), "N" ) 
@@ -254,7 +253,6 @@ do while !EOF() .and. field->id = _oznaka
         replace field->ko_zr with _ko_zr
         replace field->kome_sj with _kome_sjed
         replace field->kome_zr with _kome_zr
-        replace field->pnabr with _poziv_na_broj
         replace field->dat_upl with dat_virm
         replace field->svrha_doz with ALLTRIM( vrprim->pom_txt ) + " " + ALLTRIM( dod_opis ) + " " + _isplata_opis
         replace field->u_korist with _id_kred
@@ -337,7 +335,6 @@ do while !EOF()
         replace field->mjesto with gMjesto
         replace field->svrha_pl with _svrha_placanja
         replace field->iznos with _izr_formula
-        replace field->pnabr with _poziv_na_broj
         replace field->vupl with "0"
 
         // posaljioc
@@ -345,6 +342,10 @@ do while !EOF()
         replace field->ko_txt with _ko_txt
         replace field->ko_zr with _racun_upl
         replace field->kome_txt with vrprim->naz
+
+        if PADR( vrprim->idpartner, 2 ) == "JP" 
+        	replace field->pnabr with _poziv_na_broj
+		endif
 
         _tmp_opis := TRIM( vrprim->pom_txt ) + ;
                 IF( !EMPTY( dod_opis ), " " + ALLTRIM( dod_opis ), "" ) + ;

@@ -2048,7 +2048,6 @@ if Pitanje( , "Želite li izbrisati ovu stavku ??","D")=="D"
     // ako postoji id polje, pobriši i sifv
     if hb_hhaskey( _rec_dbf, "id" )
 
-		altd()
 		SELECT (F_SIFK)
 		if !USED()
 			O_SIFK

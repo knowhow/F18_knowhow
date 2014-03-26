@@ -531,7 +531,6 @@ FUNCTION ispisi_partn( cPartn, nX, nY )
    LOCAL nTArea := Select()
    LOCAL cDesc := "<??>"
 
-   altd()
    SELECT partn
    SET ORDER TO TAG "ID"
    SEEK cPartn

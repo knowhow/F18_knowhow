@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -15,222 +15,229 @@
 
 // -----------------------------------------------
 // -----------------------------------------------
-function GlobalErrorHandler(err_obj)
+FUNCTION GlobalErrorHandler( err_obj )
 
-local _i, _err_code
-local _out_file
-local _msg, _log_msg := "BUG REPORT: "
+   LOCAL _i, _err_code
+   LOCAL _out_file
+   LOCAL _msg, _log_msg := "BUG REPORT: "
 
-_err_code := err_obj:genCode
+   _err_code := err_obj:genCode
 
-BEEP(5)
-_out_file := my_home_root() + "error.txt"
+   BEEP( 5 )
+   _out_file := my_home_root() + "error.txt"
 
-PTxtSekvence()
-
-
-set console off
-    
-set printer off
-set device to printer
-
-set printer to (_out_file)
-set printer on
+   PTxtSekvence()
 
 
-P_12CPI
+   SET CONSOLE OFF
 
-? REPLICATE("=", 84) 
-? "F18 bug report (v3.2) :", DATE(), TIME()
-? REPLICATE("=", 84) 
+   SET PRINTER OFF
+   SET DEVICE TO PRINTER
 
-
-_msg := "Verzija programa: " + F18_VER + " " + F18_VER_DATE + " " + FMK_LIB_VER
-? _msg
-
-_log_msg += _msg
-
-?
-
-_msg := "SubSystem/severity    : " + err_obj:SubSystem + " " + to_str(err_obj:severity)
-? _msg
-_log_msg += " ; " + _msg
-
-_msg := "GenCod/SubCode/OsCode : " + to_str(err_obj:GenCode) + " " + to_str(err_obj:SubCode) + " " + to_str(err_obj:OsCode)
-? _msg
-_log_msg += " ; " + _msg
-
-_msg := "Opis                  : " + err_obj:description
-? _msg
-_log_msg += " ; " + _msg
-
-_msg := "ImeFajla              : " + err_obj:filename
-? _msg
-_log_msg += " ; " + _msg
+   SET PRINTER to ( _out_file )
+   SET PRINTER ON
 
 
-_msg := "Operacija             : " + err_obj:operation
-? _msg
-_log_msg += " ; " + _msg
+   P_12CPI
 
-_msg := "Argumenti             : " + to_str(err_obj:args)
-? _msg
-_log_msg += " ; " + _msg
-
-_msg := "canRetry/canDefault   : " + to_str(err_obj:canRetry) + " " + to_str( err_obj:canDefault)
-? _msg
-_log_msg += " ; " + _msg
-
-? 
-_msg := "CALL STACK:"
-? _msg
-_log_msg += " ; " + _msg
-
-? "---", REPLICATE("-", 80)
-for _i := 1 to 30
-   if !empty(PROCNAME(_i))
-       _msg := STR(_i, 3) + " " + PROCNAME(_i) + " / " + ALLTRIM(STR(ProcLine(_i), 6))
-       ? _msg
-       _log_msg += " ; " + _msg
-   endif
-next
-? "---", REPLICATE("-", 80)
-?
-
-if ! no_sql_mode()
-  server_connection_info()
-  server_db_version_info()
-  server_info()
-endif
-
-if USED() 
-   current_dbf_info()
-else
-   _msg := "USED() = false"
-endif
-
-? _msg
-_log_msg += " ; " + _msg
+   ? Replicate( "=", 84 )
+   ? "F18 bug report (v3.2) :", Date(), Time()
+   ? Replicate( "=", 84 )
 
 
-if err_obj:cargo <> NIL
+   _msg := "Verzija programa: " + F18_VER + " " + F18_VER_DATE + " " + FMK_LIB_VER
+   ? _msg
 
-    ? "== CARGO" , REPLICATE("=", 50)
-    for _i := 1 TO LEN(err_obj:cargo)
-    if err_obj:cargo[_i] == "var"
-        _msg :=  "* var " + to_str(err_obj:cargo[++_i])  + " : " + to_str( pp(err_obj:cargo[++_i]) )
-        ? _msg
-        _log_msg += " ; " + _msg
-    endif
-    next
-    ? REPLICATE("-", 60)
+   _log_msg += _msg
 
-endif
-    
-? "== END OF BUG REPORT =="
+   ?
+
+   _msg := "SubSystem/severity    : " + err_obj:SubSystem + " " + to_str( err_obj:severity )
+   ? _msg
+   _log_msg += " ; " + _msg
+
+   _msg := "GenCod/SubCode/OsCode : " + to_str( err_obj:GenCode ) + " " + to_str( err_obj:SubCode ) + " " + to_str( err_obj:OsCode )
+   ? _msg
+   _log_msg += " ; " + _msg
+
+   _msg := "Opis                  : " + err_obj:description
+   ? _msg
+   _log_msg += " ; " + _msg
+
+   _msg := "ImeFajla              : " + err_obj:filename
+   ? _msg
+   _log_msg += " ; " + _msg
 
 
-SET DEVICE TO SCREEN
-set printer off
-set printer to
-set console on
+   _msg := "Operacija             : " + err_obj:operation
+   ? _msg
+   _log_msg += " ; " + _msg
+
+   _msg := "Argumenti             : " + to_str( err_obj:args )
+   ? _msg
+   _log_msg += " ; " + _msg
+
+   _msg := "canRetry/canDefault   : " + to_str( err_obj:canRetry ) + " " + to_str( err_obj:canDefault )
+   ? _msg
+   _log_msg += " ; " + _msg
+
+   ?
+   _msg := "CALL STACK:"
+   ? _msg
+   _log_msg += " ; " + _msg
+
+   ? "---", Replicate( "-", 80 )
+   FOR _i := 1 TO 30
+      IF !Empty( ProcName( _i ) )
+         _msg := Str( _i, 3 ) + " " + ProcName( _i ) + " / " + AllTrim( Str( ProcLine( _i ), 6 ) )
+         ? _msg
+         _log_msg += " ; " + _msg
+      ENDIF
+   NEXT
+   ? "---", Replicate( "-", 80 )
+   ?
+
+   IF ! no_sql_mode()
+      server_connection_info()
+      server_db_version_info()
+      server_info()
+   ENDIF
+
+   IF Used()
+      current_dbf_info()
+   ELSE
+      _msg := "USED() = false"
+   ENDIF
+
+   ? _msg
+   _log_msg += " ; " + _msg
 
 
-close all
+   IF err_obj:cargo <> NIL
 
-log_write( _log_msg, 1 )
-_cmd := "f18_editor " + _out_file
+      ? "== CARGO", Replicate( "=", 50 )
+      FOR _i := 1 TO Len( err_obj:cargo )
+         IF err_obj:cargo[ _i ] == "var"
+            _msg :=  "* var " + to_str( err_obj:cargo[ ++_i ] )  + " : " + to_str( pp( err_obj:cargo[ ++_i ] ) )
+            ? _msg
+            _log_msg += " ; " + _msg
+         ENDIF
+      NEXT
+      ? Replicate( "-", 60 )
 
-f18_run(_cmd)
+   ENDIF
 
-QUIT_1
-RETURN
+   ? "== END OF BUG REPORT =="
+
+
+   SET DEVICE TO SCREEN
+   SET PRINTER OFF
+   SET PRINTER TO
+   SET CONSOLE ON
+
+
+   CLOSE ALL
+
+   log_write( _log_msg, 1 )
+   _cmd := "f18_editor " + _out_file
+
+   f18_run( _cmd )
+
+   QUIT_1
+
+   RETURN
 
 // ----------------------------------------------------
 // ----------------------------------------------------
-static function server_info()
-local _key
-local _server_vars := {"server_version", "TimeZone"}
-local _sys_info
+STATIC FUNCTION server_info()
 
-?
-? "/---------- BEGIN PostgreSQL vars --------/"
-?
-for each _key in _server_vars 
-  ? PADR(_key, 25) + ":",  server_show(_key)
-next
-?
+   LOCAL _key
+   LOCAL _server_vars := { "server_version", "TimeZone" }
+   LOCAL _sys_info
 
-? "/----------  END PostgreSQL vars --------/"
-?
-_sys_info := server_sys_info()
+   ?
+   ? "/---------- BEGIN PostgreSQL vars --------/"
+   ?
+   FOR EACH _key in _server_vars
+      ? PadR( _key, 25 ) + ":",  server_show( _key )
+   NEXT
+   ?
 
-if _sys_info != NIL
-    ?
-    ? "/-------- BEGIN PostgreSQL sys info --------/"
-    for each _key in _sys_info:Keys
-        ? PADR(_key, 25) + ":",  _sys_info[_key]
-    next
-    ?
-    ? "/-------  END PostgreSQL sys info --------/"
-    ?
-endif
+   ? "/----------  END PostgreSQL vars --------/"
+   ?
+   _sys_info := server_sys_info()
 
-return .t.
+   IF _sys_info != NIL
+      ?
+      ? "/-------- BEGIN PostgreSQL sys info --------/"
+      FOR EACH _key in _sys_info:Keys
+         ? PadR( _key, 25 ) + ":",  _sys_info[ _key ]
+      NEXT
+      ?
+      ? "/-------  END PostgreSQL sys info --------/"
+      ?
+   ENDIF
+
+   RETURN .T.
 
 // --------------------------------------
 // --------------------------------------
-static function server_connection_info()
-?
-? "/----- SERVER connection info: ---------- /"
-?
-? "host/database/port/schema :", my_server_params()["host"] + " / " + my_server_params()["database"] + " / " +  ALLTRIM(STR(my_server_params()["port"], 0)) + " / " +  my_server_params()["schema"]  
-? "                     user :", my_server_params()["user"]
-?
-return .t.
+STATIC FUNCTION server_connection_info()
+
+   ?
+   ? "/----- SERVER connection info: ---------- /"
+   ?
+   ? "host/database/port/schema :", my_server_params()[ "host" ] + " / " + my_server_params()[ "database" ] + " / " +  AllTrim( Str( my_server_params()[ "port" ], 0 ) ) + " / " +  my_server_params()[ "schema" ]
+   ? "                     user :", my_server_params()[ "user" ]
+   ?
+
+   RETURN .T.
 
 // -------------------------------
 // -------------------------------
-static function server_db_version_info()
-local _server_db_num, _server_db_str, _f18_required_server_str, _f18_required_server_num
+STATIC FUNCTION server_db_version_info()
 
-_f18_required_server_num := get_version_num(SERVER_DB_VER_MAJOR, SERVER_DB_VER_MINOR, SERVER_DB_VER_PATCH)
+   LOCAL _server_db_num, _server_db_str, _f18_required_server_str, _f18_required_server_num
 
-_server_db_num := server_db_version()
+   _f18_required_server_num := get_version_num( SERVER_DB_VER_MAJOR, SERVER_DB_VER_MINOR, SERVER_DB_VER_PATCH )
 
-_f18_required_server_str := get_version_str(_f18_required_server_num)
-_server_db_str := get_version_str(_server_db_num)
+   _server_db_num := server_db_version()
 
-? "F18 client required server db >=     :", _f18_required_server_str, "/", ALLTRIM(STR(_f18_required_server_num, 0))
-? "Actual knowhow ERP server db version :", _server_db_str, "/", ALLTRIM(STR(_server_db_num, 0))
+   _f18_required_server_str := get_version_str( _f18_required_server_num )
+   _server_db_str := get_version_str( _server_db_num )
 
-return .t.
+   ? "F18 client required server db >=     :", _f18_required_server_str, "/", AllTrim( Str( _f18_required_server_num, 0 ) )
+   ? "Actual knowhow ERP server db version :", _server_db_str, "/", AllTrim( Str( _server_db_num, 0 ) )
+
+   RETURN .T.
 
 
 // ---------------------------------
 // ---------------------------------
-static function current_dbf_info()
-local _struct, _i
+STATIC FUNCTION current_dbf_info()
 
-? "Trenutno radno podrucje:", alias() ,", record:", RECNO(), "/", RECCOUNT()
+   LOCAL _struct, _i
 
-_struct := DBSTRUCT()
+   ? "Trenutno radno podrucje:", Alias(),", record:", RecNo(), "/", RecCount()
 
-? REPLICATE("-", 60)
-? "Record content:"
-? REPLICATE("-", 60)
-for _i := 1 to LEN( _struct )
-   ? STR(_i, 3), PADR(_struct[_i, 1], 15), _struct[_i, 2], _struct[_i, 3], _struct[_i, 4], EVAL(FIELDBLOCK(_struct[_i, 1]))
-next
-? REPLICATE("-", 60)
+   _struct := dbStruct()
 
-return .t.
+   ? Replicate( "-", 60 )
+   ? "Record content:"
+   ? Replicate( "-", 60 )
+   FOR _i := 1 TO Len( _struct )
+      ? Str( _i, 3 ), PadR( _struct[ _i, 1 ], 15 ), _struct[ _i, 2 ], _struct[ _i, 3 ], _struct[ _i, 4 ], Eval( FieldBlock( _struct[ _i, 1 ] ) )
+   NEXT
+   ? Replicate( "-", 60 )
+
+   RETURN .T.
 
 
 // -----------------------------------
 // -----------------------------------
-function RaiseError(cErrMsg)
-Local oErr
+FUNCTION RaiseError( cErrMsg )
+
+   LOCAL oErr
 
    oErr := ErrorNew()
    oErr:severity    := ES_ERROR
@@ -241,5 +248,4 @@ Local oErr
 
    Eval( ErrorBlock(), oErr )
 
-return .t.
-
+   RETURN .T.

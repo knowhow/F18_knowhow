@@ -64,7 +64,7 @@ if rddName() ==  "SQLMIX"
    PopSifV()
    PopWa()
 
-   return p_sifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aPoredak, bPodvuci, aZabrane, invert, aZabIsp )
+   return p_sifra( nDbf, nNtx, nVisina, nSirina, cNaslov, @cID, dx, dy,  bBlok, aPoredak, bPodvuci, aZabrane, invert, aZabIsp )
 endif
 
 

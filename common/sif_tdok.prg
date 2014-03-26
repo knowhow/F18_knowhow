@@ -37,4 +37,4 @@ FUNCTION browse_tdok( cId, dx, dy )
 
 
 FUNCTION P_TipDok( cId, dx, dy )
-   RETURN browse_tdok( cId, dx, dy )
+   RETURN browse_tdok( @cId, dx, dy )

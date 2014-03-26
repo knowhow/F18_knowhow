@@ -65,7 +65,6 @@ FUNCTION p_sifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aP
    // setuj match_code polje...
    set_mc_imekol( nDbf )
 
-   nOrderSif := IndexOrd()
    nOrdId := index_tag_num( "ID" )
 
    sif_set_order( nNTX, nOrdId, @fID_j )
@@ -130,7 +129,6 @@ FUNCTION p_sifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aP
 
    ELSE
 
-      // nisam ni ulazio u objdb
       IF fID_J
          cId := ( nDBF )->id
          __A_SIFV__[ __PSIF_NIVO__, 1 ] := ( nDBF )->ID_J
@@ -141,13 +139,12 @@ FUNCTION p_sifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aP
    __A_SIFV__[ __PSIF_NIVO__, 2 ] := RecNo()
 
    // ispisi naziv
-
    sif_ispisi_naziv( nDbf, dx, dy )
 
    SELECT ( nDbf )
 
    // vrati order sifranika !!
-   ordSetFocus( nOrderSif )
+   ordSetFocus( nOrdId )
 
    SET FILTER TO
    PopSifV()
@@ -210,6 +207,7 @@ STATIC FUNCTION sif_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j, nOrdId )
    LOCAL _order := IndexOrd()
    LOCAL _tezina := 0
 
+   altd()
    IF cId == NIL
       RETURN
    ENDIF
@@ -231,7 +229,6 @@ STATIC FUNCTION sif_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j, nOrdId )
 
    // glavni seek
    // id, barkod
-
    SEEK cId
 
    IF Found()

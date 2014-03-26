@@ -45,7 +45,7 @@ FOR i:=1 TO LEN(ImeKol)
   AADD(Kol,i)
 NEXT
 
-return p_sifra(F_VRSTEP, 1, 10, 55, "Sifrarnik vrsta placanja",@cid, dx, dy)
+return p_sifra(F_VRSTEP, 1, 10, 55, "Šifarnik vrsta plaćanja",@cid, dx, dy)
 
 
 

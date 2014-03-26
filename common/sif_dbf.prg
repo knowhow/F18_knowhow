@@ -31,10 +31,6 @@ local _komande := {"<c-N> Novi", "<F2>  Ispravka", "<ENT> Odabir", _to_str("<c-T
 local cUslovSrch :=  ""
 local cNazSrch
 
-if rddName() ==  "SQLMIX"
-   return p_sifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aPoredak, bPodvuci, aZabrane, invert, aZabIsp )
-endif
-
 // trazenje je po nazivu
 private fPoNaz:=.f.  
 private fID_J := .f.
@@ -62,6 +58,17 @@ if invert == NIL
 endif
 
 select (nDbf)
+
+if rddName() ==  "SQLMIX"
+
+   PopSifV()
+   PopWa()
+
+   return p_sifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aPoredak, bPodvuci, aZabrane, invert, aZabIsp )
+endif
+
+
+
 if !used()
     my_use(nDbf, nil, .f.)
 endif

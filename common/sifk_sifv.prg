@@ -582,4 +582,31 @@ STATIC FUNCTION val_fld( cField )
    RETURN lRet
 
 
+// ------------------------------------------------------------------
+// formiranje matrice na osnovu podataka iz tabele sifv
+// ------------------------------------------------------------------
+function array_from_sifv( dbf, oznaka, id_sif )
+local _arr := {}
+local _t_area := SELECT()
+
+dbf := PADR( dbf, 8 )
+oznaka := PADR( oznaka, 4 )
+
+SELECT F_SIFV
+use_sql_sifv( dbf, oznaka, id_sif )
+set order to tag "ID"
+go top
+   
+do while !EOF() .and. field->id + field->oznaka + field->idsif = dbf + oznaka + id_sif
+    if !EMPTY( naz )
+        AADD( _arr, ALLTRIM( field->naz ) )
+    endif
+    skip
+enddo
+
+select ( _t_area )
+
+return _arr
+
+
 

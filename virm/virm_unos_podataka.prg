@@ -648,35 +648,6 @@ return .t.
 
 
 
-// ------------------------------------------------------------------
-// formiranje matrice na osnovu podataka iz tabele sifv
-// ------------------------------------------------------------------
-function array_from_sifv( cDBF, cOznaka, cIdSif )
-local aSifV := {}
-local _t_area := SELECT()
-
-cDBF := PADR( cDBF, 8 )
-cOznaka := PADR( cOznaka, 4 )
-
-xVal := NIL
-
-SELECT F_SIFV
-use_sql_sifv( cDbf, cOznaka, cIdSif )
-set order to tag "ID"
-go top
-   
-do while !EOF() .and. field->id + field->oznaka + field->idsif = cDbf + cOznaka + cIdSif
-    if !EMPTY( naz )
-        AADD( aSifV, ALLTRIM( naz ) )
-    endif
-    skip
-enddo
-
-select ( _t_area )
-
-return aSifv
-
-
 
 // ----------------------------------------------------
 // po izlasku iz ove funkcije kursor

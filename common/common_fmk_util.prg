@@ -177,8 +177,8 @@ function round2(nizraz,niznos)
 
 *
 * pretpostavlja definisanu globalnu varijablu g50F
-* za g50F="5" vrÁi se zaokrußenje na 0.5
-*        =" " odra–uje obiüni round()
+* za g50F="5" vr√ßi se zaokru¬ßenje na 0.5
+*        =" " odra√êuje obi¬üni round()
 
 local npom,npom2,nznak
 if g50f="5"
@@ -494,7 +494,7 @@ MsgBeep ("Postoji jos "+STR (nSlobodno, 10, 2)+;
          IIF (nSlobodno<20, "#Preporucuje se brisanje najstarije sezone#"+;
                             "kako bi se oslobodio prostor i ubrzao rad!";
                           , ""))
-IF Pitanje ("bss","Zelite li izbrisati staru sezonu?","N")=="D"
+IF Pitanje ("bss","≈Ωelite li izbrisati staru sezonu?","N")=="D"
   Box(,2,60)
   @ m_x+1,m_y+1 SAY "Sezona koju zelite obrisati" GET cSezBris ;
                     Valid NijeRTS (cSezBris)

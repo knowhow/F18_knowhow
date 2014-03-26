@@ -114,7 +114,7 @@ if (gSQL=="D")
 
 	if (cPitanje=="0")
 		goModul:quit()
-	elseif Pitanje(,"Zelite li ugasiti racunar D/N ?", cPitanje)=="D"
+	elseif Pitanje(,"Želite li ugasiti racunar D/N ?", cPitanje)=="D"
 		if Gw("OMSG SHUTDOWN")=="OK"
 			goModul:quit()
 		endif

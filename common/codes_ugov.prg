@@ -619,8 +619,8 @@ endif
 for i:=1 to len(ImeKol); AADD(Kol,i); next
 
 Box(,20,72)
- @ m_x+19,m_y+1 SAY "<PgDn> sljedeci, <PgUp> prethodni ³<c-N> nova stavka          "
- @ m_x+20,m_y+1 SAY "<TAB>  podaci o ugovoru           ³<c-L> novi ugovor          "
+ @ m_x+19,m_y+1 SAY "<PgDn> sljedeci, <PgUp> prethodni Â³<c-N> nova stavka          "
+ @ m_x+20,m_y+1 SAY "<TAB>  podaci o ugovoru           Â³<c-L> novi ugovor          "
 
  private  bGoreRed:=NIL
  private  bDoleRed:=NIL
@@ -1149,7 +1149,7 @@ set filter to &cFilP
 go top
 if eof()
   MsgBeep("Ne postoje definisani ugovori za korisnika")
-  if pitanje(,"Zelite li definisati novi ugovor ?","N")=="D"
+  if pitanje(,"Å½elite li definisati novi ugovor ?","N")=="D"
      set filter to
      P_UGov2(partn->id)
 

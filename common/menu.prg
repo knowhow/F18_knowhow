@@ -13,7 +13,8 @@
 
 STATIC aMenuStack:={}    
 
-
+// -----------------------------------------------------
+// -----------------------------------------------------
 FUNCTION f18_menu( cIzp, main_menu, izbor, opc, opcexe )
 
    LOCAL cOdgovor
@@ -34,7 +35,7 @@ FUNCTION f18_menu( cIzp, main_menu, izbor, opc, opcexe )
       DO CASE
       CASE izbor == 0
          IF main_menu
-            cOdgovor := Pitanje( "", 'Želite izaci iz programa ?', 'N' )
+            cOdgovor := Pitanje( "", 'Želite izaći iz programa ?', 'N' )
             IF cOdgovor == "D"
                EXIT
             ELSEIF cOdgovor == "L"
@@ -72,87 +73,11 @@ FUNCTION f18_menu( cIzp, main_menu, izbor, opc, opcexe )
 
 
 
-/*! \fn Menu_SC(cIzp, fMain, lBug)
- *
- * \param opc    - indirektno priv.var, matrica naslova opcija
- * \param opcexe - indirektno priv.var, matrica funkcija (string ili kodni blok promjenljive)
- *
- *  \code
- *  private Opc:={}
- *  private opcexe:={}
- *  AADD(Opc,"1. kartica                                ")
- *  AADD(opcexe, {|| Kart41_42()})
- *  AADD(Opc,"2. kartica v2 (uplata,obaveza,saldo)")
- *  AADD(opcexe, {|| Kart412v2()})
- *  AADD(Opc,"5. realizovani porez")
- *  AADD(opcexe, {|| RekRPor})
- *  private Izbor:=1
- *  Menu_SC("itar")
- * \endcode
- *
- */
 
-FUNCTION Menu_SC( cIzp, fMain )
+FUNCTION Menu_SC( cIzp, lMain )
 
-   LOCAL _i
-   LOCAL cOdgovor
-   LOCAL nIzbor
-
-   IF fMain == NIL
-      fMain := .F.
-   ENDIF
-
-   IF fMain
-      @ 4, 5 SAY ""
-   ENDIF
-
-   FOR _i := 1 TO Len( opc )
-      opc[ _i ] := hb_UTF8ToStr( opc[ _i ] )
-   NEXT
-
-   DO WHILE .T.
-      Izbor := menu( cIzp, opc, Izbor, .F. )
-      nIzbor := retitem( Izbor )
-      DO CASE
-      CASE Izbor == 0
-         IF fMain
-            cOdgovor := Pitanje( "", hb_UTF8ToStr( 'Želite izaći iz programa ?' ), 'N' )
-            IF cOdgovor == "D"
-               EXIT
-            ELSEIF cOdgovor == "L"
-               Prijava()
-               Izbor := 1
-               @ 4, 5 SAY ""
-               LOOP
-            ELSE
-               Izbor := 1
-               @ 4, 5 SAY ""
-               LOOP
-            ENDIF
-         ELSE
-            EXIT
-         ENDIF
-
-      OTHERWISE
-
-         IF opcexe[ nIzbor ] <> nil
-            PRIVATE xPom := opcexe[ nIzbor ]
-
-            IF ValType( xPom ) == "C"
-               xDummy := &( xPom )
-            ELSEIF ValType( xPom ) == "B"
-               Eval( xPom )
-            ELSE
-               Alert( RECI_GDJE_SAM + " xPom ?!" )
-            ENDIF
-
-         ENDIF
-      ENDCASE
-
-   ENDDO
-
-   RETURN
-
+  //pretpostavljamo privatne varijable Izbor, Opc, OpcExe
+  RETURN f18_menu( cIzp, lMain, Izbor, Opc, Opcexe )
 
 
 /*  Menu(MenuId,Items,ItemNo,Inv)

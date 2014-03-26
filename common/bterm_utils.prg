@@ -52,7 +52,7 @@ do while .t. .and. LastKey()!=K_ESC
         	exit
         else
         	cImpFile:=Trim(cPath)+Trim(LEFT(OpcF[IzbF],15))
-        	if Pitanje(,"Zelite li izvrsiti import fajla ?","D")=="D"
+        	if Pitanje( , "Želite li izvrsiti import fajla ?","D")=="D"
         		IzbF:=0
 			lRet:=.t.
 		endif

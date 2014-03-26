@@ -249,7 +249,7 @@ static function APBlok(Ch)
 
 LOCAL lVrati:=DE_CONT, nRec:=0, i:=0
  IF Ch==K_ALT_P
-     IF Pitanje(,"Zelite li preuzeti podatke iz drugog izvjestaja? (D/N)","N")=="D"
+     IF Pitanje(,"Želite li preuzeti podatke iz drugog izvjestaja? (D/N)","N")=="D"
        i:=1
        Box(,3,60)
         @ m_x+2, m_y+2 SAY "Preuzeti podatke iz izvjestaja br.? (1-99)" GET i VALID i>0 .and. i<100 .and. i<>nTekIzv PICT "99"
@@ -461,7 +461,7 @@ STATIC FUNCTION KonIzBlok()
      SELECT KONIZ; GO (nRec)
 
    CASE Ch==K_ALT_P      // popuni nanovo iz sifrarnika kljucnog polja
-     IF cPIKSif!="BEZ" .and. Pitanje(,"Zelite li obrisati bazu i formirati novu na osnovu sifrar.klj.polja?(D/N)","N")=="D"
+     IF cPIKSif!="BEZ" .and. Pitanje( ,"Zelite li obrisati bazu i formirati novu na osnovu sifrar.klj.polja?(D/N)","N")=="D"
        SELECT KONIZ
        ZAPP()
 

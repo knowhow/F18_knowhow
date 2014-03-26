@@ -39,7 +39,7 @@ private cShema:=" "
 private cKavd:="  "
 private cFiltTRFP:=""
 
-if Pitanje(,"Zelite li postaviti filter za odredjenu shemu","N")=="D"
+if Pitanje(, "Želite li postaviti filter za odredjenu shemu","N")=="D"
   
   Box(,1,60)
      @ m_x+1,m_y+2 SAY "Odabir sheme:" GET cShema  pict "@!"

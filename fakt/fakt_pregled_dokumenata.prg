@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -15,1167 +15,1179 @@
 
 
 // -----------------------------------------------
-// pregled / stampa azuriranih dokumenata 
+// pregled / stampa azuriranih dokumenata
 // -----------------------------------------------
-function fakt_pregled_liste_dokumenata()
-local _curr_user := "<>"
-local nCol1:=0
-local nul,nizl,nRbr
-local m
-local _objekat_id
-local dDatod, dDatdo
-local _params := fakt_params()
-local _vrste_pl := _params["fakt_vrste_placanja"]
-local _objekti := _params["fakt_objekti"]
-local _vezni_dokumenti := _params["fakt_dok_veze"]
-local lOpcine := .t.
-local valute := SPACE(3)
-private cImekup, cIdFirma, qqTipDok, cBrFakDok, qqPartn
-private cFilter := ".t."
+FUNCTION fakt_pregled_liste_dokumenata()
 
-O_VRSTEP
-O_OPS
-O_VALUTE
-O_RJ
-O_FAKT_OBJEKTI
-O_FAKT
-O_PARTN
-O_FAKT_DOKS
+   LOCAL _curr_user := "<>"
+   LOCAL nCol1 := 0
+   LOCAL nul, nizl, nRbr
+   LOCAL m
+   LOCAL _objekat_id
+   LOCAL dDatod, dDatdo
+   LOCAL _params := fakt_params()
+   LOCAL _vrste_pl := _params[ "fakt_vrste_placanja" ]
+   LOCAL _objekti := _params[ "fakt_objekti" ]
+   LOCAL _vezni_dokumenti := _params[ "fakt_dok_veze" ]
+   LOCAL lOpcine := .T.
+   LOCAL valute := Space( 3 )
+   PRIVATE cImekup, cIdFirma, qqTipDok, cBrFakDok, qqPartn
+   PRIVATE cFilter := ".t."
 
-// setuj relacije 
-SET RELATION TO fakt_doks->idfirma + fakt_doks->idtipdok + fakt_doks->brdok INTO fakt, ;
-            TO fakt_doks->idvrstep INTO vrstep, ;
-            TO fakt_doks->idpartner INTO partn
+   O_VRSTEP
+   O_OPS
+   O_VALUTE
+   O_RJ
+   O_FAKT_OBJEKTI
+   O_FAKT
+   O_PARTN
+   O_FAKT_DOKS
 
-qqVrsteP := SPACE(20)
-dDatVal0 := dDatVal1 := CTOD("")
+   // setuj relacije
+   SET RELATION TO fakt_doks->idfirma + fakt_doks->idtipdok + fakt_doks->brdok INTO fakt, ;
+      TO fakt_doks->idvrstep INTO vrstep, ;
+      TO fakt_doks->idpartner INTO partn
 
-cIdfirma := gFirma
-dDatOd := ctod("")
-dDatDo := date()
-qqTipDok := ""
-qqPartn := space(20)
-cTabela := "N"
-cBrFakDok := SPACE(40)
-cImeKup := space(20)
-cOpcina := SPACE(30)
+   qqVrsteP := Space( 20 )
+   dDatVal0 := dDatVal1 := CToD( "" )
 
-if _objekti
-    _objekat_id := SPACE(10)
-endif
+   cIdfirma := gFirma
+   dDatOd := CToD( "" )
+   dDatDo := Date()
+   qqTipDok := ""
+   qqPartn := Space( 20 )
+   cTabela := "N"
+   cBrFakDok := Space( 40 )
+   cImeKup := Space( 20 )
+   cOpcina := Space( 30 )
 
-Box( , 13 + IF( _vrste_pl .or. lOpcine .or. _objekti, 6, 0 ), 77 )
+   IF _objekti
+      _objekat_id := Space( 10 )
+   ENDIF
 
-    cIdFirma := fetch_metric("fakt_stampa_liste_id_firma", _curr_user, cIdFirma )
-    qqTipDok := fetch_metric("fakt_stampa_liste_dokumenti", _curr_user, qqTipDok )
-    dDatOd := fetch_metric("fakt_stampa_liste_datum_od", _curr_user, dDatOd )
-    dDatDo := fetch_metric("fakt_stampa_liste_datum_do", _curr_user, dDatDo )
-    cTabela := fetch_metric("fakt_stampa_liste_tabelarni_pregled", _curr_user, cTabela )
-    cImeKup := fetch_metric("fakt_stampa_liste_ime_kupca", _curr_user, cImeKup )
-    qqPartn := fetch_metric("fakt_stampa_liste_partner", _curr_user, qqPartn )
-    cBrFakDok := fetch_metric("fakt_stampa_liste_broj_dokumenta", _curr_user, cBrFakDok )
+   Box( , 13 + IIF( _vrste_pl .OR. lOpcine .OR. _objekti, 6, 0 ), 77 )
 
-    cImeKup := PADR( cImeKup, 20 )
-    qqPartn := PADR( qqPartn, 20 )
-    qqTipDok := PADR( qqTipDok, 2 )
+   cIdFirma := fetch_metric( "fakt_stampa_liste_id_firma", _curr_user, cIdFirma )
+   qqTipDok := fetch_metric( "fakt_stampa_liste_dokumenti", _curr_user, qqTipDok )
+   dDatOd := fetch_metric( "fakt_stampa_liste_datum_od", _curr_user, dDatOd )
+   dDatDo := fetch_metric( "fakt_stampa_liste_datum_do", _curr_user, dDatDo )
+   cTabela := fetch_metric( "fakt_stampa_liste_tabelarni_pregled", _curr_user, cTabela )
+   cImeKup := fetch_metric( "fakt_stampa_liste_ime_kupca", _curr_user, cImeKup )
+   qqPartn := fetch_metric( "fakt_stampa_liste_partner", _curr_user, qqPartn )
+   cBrFakDok := fetch_metric( "fakt_stampa_liste_broj_dokumenta", _curr_user, cBrFakDok )
 
-    do while .t.
+   cImeKup := PadR( cImeKup, 20 )
+   qqPartn := PadR( qqPartn, 20 )
+   qqTipDok := PadR( qqTipDok, 2 )
 
-    if gNW $ "DR"
-        cIdFirma := PADR( cIdfirma, 2 )
-        @ m_x + 1, m_y + 2 SAY "RJ prazno svi" GET cIdFirma valid {|| empty(cidfirma) .or. cidfirma==gfirma .or. P_RJ(@cIdFirma), cIdFirma := LEFT( cIdFirma, 2 ), .t. }
-        read
-    else
-        @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma), cIdFirma := LEFT(cIdFirma, 2 ), .t. }
-    endif
+   DO WHILE .T.
 
-    @ m_x + 2, m_y + 2 SAY "Tip dokumenta (prazno svi tipovi)" GET qqTipDok pict "@!"
-    @ m_x + 3, m_y + 2 SAY "Od datuma " GET dDatOd
-    @ m_x + 3, col() + 1 SAY "do" GET dDatDo
-    @ m_x + 5, m_y + 2 SAY "Ime kupca pocinje sa (prazno svi)" GET cImeKup pict "@!"
-    @ m_x + 6, m_y + 2 SAY "Uslov po sifri kupca (prazno svi)" GET qqPartn pict "@!" ;
-                VALID {|| aUslSK := Parsiraj( @qqPartn, "IDPARTNER", "C", NIL, F_PARTN ), .t. }
-    @ m_x + 7, m_y + 2 SAY "Broj dokumenta (prazno svi)" GET cBrFakDok pict "@!"
-    @ m_x + 9, m_y + 2 SAY "Tabelarni pregled" GET cTabela valid cTabela $ "DN" pict "@!"
- 
-    cRTarifa := "N"
+      IF gNW $ "DR"
+         cIdFirma := PadR( cIdfirma, 2 )
+         @ m_x + 1, m_y + 2 SAY "RJ prazno svi" GET cIdFirma valid {|| Empty( cidfirma ) .OR. cidfirma == gfirma .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+         READ
+      ELSE
+         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      ENDIF
 
-    @ m_x + 11, m_y + 2 SAY "Rekapitulacija po tarifama ?" GET cRTarifa valid cRtarifa $"DN" pict "@!"
+      @ m_x + 2, m_y + 2 SAY "Tip dokumenta (prazno svi tipovi)" GET qqTipDok PICT "@!"
+      @ m_x + 3, m_y + 2 SAY "Od datuma " GET dDatOd
+      @ m_x + 3, Col() + 1 SAY "do" GET dDatDo
+      @ m_x + 5, m_y + 2 SAY8 "Ime kupca počinje sa (prazno svi)" GET cImeKup PICT "@!"
+      @ m_x + 6, m_y + 2 SAY8 "Uslov po šifri kupca (prazno svi)" GET qqPartn PICT "@!" ;
+         VALID {|| aUslSK := Parsiraj( @qqPartn, "IDPARTNER", "C", NIL, F_PARTN ), .T. }
+      @ m_x + 7, m_y + 2 SAY "Broj dokumenta (prazno svi)" GET cBrFakDok PICT "@!"
+      @ m_x + 9, m_y + 2 SAY "Tabelarni pregled" GET cTabela VALID cTabela $ "DN" PICT "@!"
 
-    IF _vrste_pl
-        @ m_x + 12, m_y + 2 SAY "----------------------------------------"
-        @ m_x + 13, m_y + 2 SAY "Za fakture (Tip dok.10):"
-        @ m_x + 14, m_y + 2 SAY "Nacin placanja:" GET qqVrsteP
-        @ m_x + 15, m_y + 2 SAY "Datum valutiranja od" GET dDatVal0
-        @ m_x + 15, col() + 2 SAY "do" GET dDatVal1
-        @ m_x + 16, m_y + 2 SAY "----------------------------------------"
-    ENDIF
+      cRTarifa := "N"
 
-    @ m_x + 17, m_y + 2 SAY "Opcina (prazno-sve): "  get cOpcina
-    
-    if _objekti
-        @ m_x + 18, m_y + 2 SAY "Objekat (prazno-svi): "  get _objekat_id valid EMPTY(_objekat_id) .or. P_fakt_objekti(@_objekat_id)
-    endif
-        
-    @ m_x + 19, m_y + 2 SAY "Valute ( /KM/EUR)"  GET valute 
- 
-    read
+      @ m_x + 11, m_y + 2 SAY "Rekapitulacija po tarifama ?" GET cRTarifa VALID cRtarifa $ "DN" PICT "@!"
 
-    ESC_BCR
+      IF _vrste_pl
+         @ m_x + 12, m_y + 2 SAY "----------------------------------------"
+         @ m_x + 13, m_y + 2 SAY "Za fakture (Tip dok.10):"
+         @ m_x + 14, m_y + 2 SAY8 "Način placanja:" GET qqVrsteP
+         @ m_x + 15, m_y + 2 SAY8 "Datum valutiranja od" GET dDatVal0
+         @ m_x + 15, Col() + 2 SAY "do" GET dDatVal1
+         @ m_x + 16, m_y + 2 SAY "----------------------------------------"
+      ENDIF
 
-    aUslBFD := Parsiraj( cBrFakDok, "BRDOK", "C" )
-    aUslSK := Parsiraj( qqPartn, "IDPARTNER", "C" )
-    aUslVrsteP := Parsiraj( qqVrsteP, "IDVRSTEP", "C" )
-    aUslOpc := Parsiraj( cOpcina, "IDOPS", "C" )
-    
-    if (!lOpcine .or. aUslOpc <> NIL) .and. aUslBFD<>NIL .and. aUslSK<>NIL .and. ( !_vrste_pl .or. aUslVrsteP <> NIL )
-        exit
-    endif
+      @ m_x + 17, m_y + 2 SAY8 "Općina (prazno-sve): "  GET cOpcina
 
-    enddo
+      IF _objekti
+         @ m_x + 18, m_y + 2 SAY "Objekat (prazno-svi): "  GET _objekat_id VALID Empty( _objekat_id ) .OR. P_fakt_objekti( @_objekat_id )
+      ENDIF
 
-    qqTipDok := TRIM( qqTipDok )
-    qqPartn := TRIM( qqPartn )
+      @ m_x + 19, m_y + 2 SAY "Valute ( /KM/EUR)"  GET valute
 
-    set_metric( "fakt_stampa_liste_id_firma", f18_user(), cIdFirma )
-    set_metric( "fakt_stampa_liste_dokumenti", f18_user(), qqTipDok )
-    set_metric( "fakt_stampa_liste_datum_od", f18_user(), dDatOd )
-    set_metric( "fakt_stampa_liste_datum_do", f18_user(), dDatDo )
-    set_metric( "fakt_stampa_liste_tabelarni_pregled", f18_user(), cTabela )
-    set_metric( "fakt_stampa_liste_ime_kupca", f18_user(), cImeKup )
-    set_metric( "fakt_stampa_liste_partner", f18_user(), qqPartn )
-    set_metric( "fakt_stampa_liste_broj_dokumenta", f18_user(), cBrFakDok )
+      READ
 
-BoxC()
+      ESC_BCR
 
-select fakt_doks
-set order to tag "1"
-go top
+      aUslBFD := Parsiraj( cBrFakDok, "BRDOK", "C" )
+      aUslSK := Parsiraj( qqPartn, "IDPARTNER", "C" )
+      aUslVrsteP := Parsiraj( qqVrsteP, "IDVRSTEP", "C" )
+      aUslOpc := Parsiraj( cOpcina, "IDOPS", "C" )
 
-IF !EMPTY( dDatVal0 ) .or. !EMPTY( dDatVal1 )
-    cFilter += ".and. ( !idtipdok='10' .or. datpl>=" + _filter_quote( dDatVal0 ) + ".and. datpl<=" + _filter_quote( dDatVal1 ) + ")"
-ENDIF
+      IF ( !lOpcine .OR. aUslOpc <> NIL ) .AND. aUslBFD <> NIL .AND. aUslSK <> NIL .AND. ( !_vrste_pl .OR. aUslVrsteP <> NIL )
+         EXIT
+      ENDIF
 
-IF !EMPTY( qqVrsteP )
-    cFilter += ".and. (!idtipdok='10' .or. " + aUslVrsteP + ")"
-ENDIF
+   ENDDO
 
-if !EMPTY( qqTipDok )
-   cFilter += ".and. idtipdok==" + _filter_quote( qqTipDok )
-endif
+   qqTipDok := Trim( qqTipDok )
+   qqPartn := Trim( qqPartn )
 
-if !EMPTY( dDatOd ) .or. !EMPTY( dDatDo )
-    cFilter += ".and. datdok>=" + _filter_quote( dDatOd ) + ".and. datdok<=" + _filter_quote( dDatDo )
-endif
+   set_metric( "fakt_stampa_liste_id_firma", f18_user(), cIdFirma )
+   set_metric( "fakt_stampa_liste_dokumenti", f18_user(), qqTipDok )
+   set_metric( "fakt_stampa_liste_datum_od", f18_user(), dDatOd )
+   set_metric( "fakt_stampa_liste_datum_do", f18_user(), dDatDo )
+   set_metric( "fakt_stampa_liste_tabelarni_pregled", f18_user(), cTabela )
+   set_metric( "fakt_stampa_liste_ime_kupca", f18_user(), cImeKup )
+   set_metric( "fakt_stampa_liste_partner", f18_user(), qqPartn )
+   set_metric( "fakt_stampa_liste_broj_dokumenta", f18_user(), cBrFakDok )
 
-if !EMPTY( cImekup )
-    cFilter += ".and. partner=" + _filter_quote( TRIM( cImeKup ) )
-endif
+   BoxC()
 
-if !EMPTY( cIdFirma )
-    cFilter += ".and. IdFirma=" + _filter_quote( cIdFirma )
-endif
+   altd()
+   SELECT fakt_doks
+   SET ORDER TO TAG "1"
+   GO TOP
 
-if !EMPTY( cOpcina )
-    cFilter += ".and. PARTN->(" + aUslOpc + ")"
-endif
+   IF !Empty( dDatVal0 ) .OR. !Empty( dDatVal1 )
+      cFilter += ".and. ( !idtipdok='10' .or. datpl>=" + _filter_quote( dDatVal0 ) + ".and. datpl<=" + _filter_quote( dDatVal1 ) + ")"
+   ENDIF
 
-if _objekti .and. !Empty(_objekat_id)
-    cFilter += ".and. fakt_objekat_id() == " + _filter_quote( _objekat_id )
-endif
+   IF !Empty( qqVrsteP )
+      cFilter += ".and. (!idtipdok='10' .or. " + aUslVrsteP + ")"
+   ENDIF
 
-if !EMPTY( cBrFakDok )
-    cFilter += ".and." + aUslBFD
-endif
+   IF !Empty( qqTipDok )
+      cFilter += ".and. idtipdok==" + _filter_quote( qqTipDok )
+   ENDIF
 
-if !EMPTY( qqPartn )
-    cFilter += ".and." + aUslSK
-endif
+   IF !Empty( dDatOd ) .OR. !Empty( dDatDo )
+      cFilter += ".and. datdok>=" + _filter_quote( dDatOd ) + ".and. datdok<=" + _filter_quote( dDatDo )
+   ENDIF
 
-if !EMPTY( valute )
-    cFilter += ".and. dindem = " + _filter_quote( valute )
-endif
+   IF !Empty( cImekup )
+      cFilter += ".and. partner=" + _filter_quote( Trim( cImeKup ) )
+   ENDIF
 
-if cFilter == ".t. .and."
-    cFilter := SUBSTR( cFilter, 9 ) 
-endif
+   IF !Empty( cIdFirma )
+      cFilter += ".and. IdFirma=" + _filter_quote( cIdFirma )
+   ENDIF
 
-if cFilter == ".t."
-    set Filter to
-else
-    set Filter to &cFilter
-endif
+   IF !Empty( cOpcina )
+      cFilter += ".and. PARTN->(" + aUslOpc + ")"
+   ENDIF
 
-@ MAXROW() - 4, MAXCOL() - 3 SAY STR( rloptlevel(), 2 )
+   IF _objekti .AND. !Empty( _objekat_id )
+      cFilter += ".and. fakt_objekat_id() == " + _filter_quote( _objekat_id )
+   ENDIF
 
-qqTipDok := TRIM( qqTipDok )
+   IF !Empty( cBrFakDok )
+      cFilter += ".and." + aUslBFD
+   ENDIF
 
-seek cIdFirma + qqTipDok
+   IF !Empty( qqPartn )
+      cFilter += ".and." + aUslSK
+   ENDIF
 
-EOF CRET
+   IF !Empty( valute )
+      cFilter += ".and. dindem = " + _filter_quote( valute )
+   ENDIF
 
-if cTabela == "D"
-    fakt_lista_dokumenata_tabelarni_pregled( _vrste_pl, lOpcine, cFilter )
-else
-    gaZagFix := { 3, 3 }
-    stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, _objekat_id, cImeKup, lOpcine, aUslOpc, valute )
-endif
+   IF cFilter == ".t. .and."
+      cFilter := SubStr( cFilter, 9 )
+   ENDIF
 
-close all
-return
+   IF cFilter == ".t."
+      SET FILTER TO
+   ELSE
+      SET FILTER to &cFilter
+   ENDIF
+
+   @ MaxRow() - 4, MaxCol() - 3 SAY Str( rloptlevel(), 2 )
+
+   qqTipDok := Trim( qqTipDok )
+
+   SEEK cIdFirma + qqTipDok
+
+   EOF CRET
+
+   IF cTabela == "D"
+      fakt_lista_dokumenata_tabelarni_pregled( _vrste_pl, lOpcine, cFilter )
+   ELSE
+      gaZagFix := { 3, 3 }
+      stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, _objekat_id, cImeKup, lOpcine, aUslOpc, valute )
+   ENDIF
+
+   CLOSE ALL
+
+   RETURN
 
 
 
 // printaj narudzbenicu
-function pr_nar(lOpcine)
+FUNCTION pr_nar( lOpcine )
 
-select fakt_doks
-nTrec:=recno()
-_cIdFirma:=idfirma
-_cIdTipDok:=idtipdok
-_cBrDok:=brdok
+   SELECT fakt_doks
+   nTrec := RecNo()
+   _cIdFirma := idfirma
+   _cIdTipDok := idtipdok
+   _cBrDok := brdok
 
-close all
-o_fakt_edit()
-StampTXT(_cidfirma, _cIdTipdok, _cbrdok, .t.)
+   CLOSE ALL
+   o_fakt_edit()
+   StampTXT( _cidfirma, _cIdTipdok, _cbrdok, .T. )
 
-nar_print(.t.)
-select (F_FAKT_DOKS)
-use
-O_FAKT_DOKS
+   nar_print( .T. )
+   SELECT ( F_FAKT_DOKS )
+   USE
+   O_FAKT_DOKS
 
-if lOpcine
-    O_PARTN
-    select fakt_doks
-    set relation to idpartner into PARTN
-endif
-if cFilter == ".t."
-    set Filter to
-else
-    set Filter to &cFilter
-endif
-go nTrec
+   IF lOpcine
+      O_PARTN
+      SELECT fakt_doks
+      SET RELATION TO idpartner into PARTN
+   ENDIF
+   IF cFilter == ".t."
+      SET FILTER TO
+   ELSE
+      SET FILTER to &cFilter
+   ENDIF
+   GO nTrec
 
-return DE_CONT
+   RETURN DE_CONT
 
 // print radni nalog
-function pr_rn()
+FUNCTION pr_rn()
 
-select fakt_doks
-nTrec:=recno()
-_cIdFirma:=idfirma
-_cIdTipDok:=idtipdok
-_cBrDok:=brdok
-close all
-o_fakt_edit()
-StampTXT(_cidfirma, _cIdTipdok, _cbrdok, .t.)
+   SELECT fakt_doks
+   nTrec := RecNo()
+   _cIdFirma := idfirma
+   _cIdTipDok := idtipdok
+   _cBrDok := brdok
+   CLOSE ALL
+   o_fakt_edit()
+   StampTXT( _cidfirma, _cIdTipdok, _cbrdok, .T. )
 
-// printaj radni nalog
-rnal_print(.t.)
-select (F_FAKT_DOKS)
-use
+   // printaj radni nalog
+   rnal_print( .T. )
+   SELECT ( F_FAKT_DOKS )
+   USE
 
-O_FAKT_DOKS
-if lOpcine
-    O_PARTN
-    select fakt_doks
-    set relation to idpartner into PARTN
-endif
-if cFilter==".t."
-    set Filter to
-else
-    set Filter to &cFilter
-endif
-go nTrec
-return DE_CONT
+   O_FAKT_DOKS
+   IF lOpcine
+      O_PARTN
+      SELECT fakt_doks
+      SET RELATION TO idpartner into PARTN
+   ENDIF
+   IF cFilter == ".t."
+      SET FILTER TO
+   ELSE
+      SET FILTER to &cFilter
+   ENDIF
+   GO nTrec
+
+   RETURN DE_CONT
 
 
 
 // stampaj poresku fakturu
-function pr_pf(lOpcine)
-local nTrec
+FUNCTION pr_pf( lOpcine )
 
-select fakt_doks
-nTrec := recno()
+   LOCAL nTrec
 
-_cIdFirma:=idfirma
-_cIdTipDok:=idtipdok
-_cBrDok:=brdok
+   SELECT fakt_doks
+   nTrec := RecNo()
 
-close all
+   _cIdFirma := idfirma
+   _cIdTipDok := idtipdok
+   _cBrDok := brdok
 
-o_fakt_edit()
+   CLOSE ALL
 
-StampTXT(_cidfirma, _cIdTipdok, _cbrdok)
+   o_fakt_edit()
 
-select (F_FAKT_DOKS)
-use
+   StampTXT( _cidfirma, _cIdTipdok, _cbrdok )
 
-O_FAKT_DOKS
-if lOpcine
-    O_PARTN
-    select fakt_doks
-    set relation to idpartner into PARTN
-endif
-if cFilter == ".t."
-    set Filter to
-else
-    set Filter to &cFilter
-endif
-go nTrec
-    
-return DE_CONT
+   SELECT ( F_FAKT_DOKS )
+   USE
+
+   O_FAKT_DOKS
+   IF lOpcine
+      O_PARTN
+      SELECT fakt_doks
+      SET RELATION TO idpartner into PARTN
+   ENDIF
+   IF cFilter == ".t."
+      SET FILTER TO
+   ELSE
+      SET FILTER to &cFilter
+   ENDIF
+   GO nTrec
+
+   RETURN DE_CONT
 
 
 // stampaj poresku fakturu u odt formatu
-function pr_odt(lOpcine)
-select fakt_doks
+FUNCTION pr_odt( lOpcine )
 
-nTrec:=recno()
-_cIdFirma:=idfirma
-_cIdTipDok:=idtipdok
-_cBrDok:=brdok
-close all
+   SELECT fakt_doks
 
-StDokOdt( _cidfirma, _cIdTipdok, _cbrdok )
+   nTrec := RecNo()
+   _cIdFirma := idfirma
+   _cIdTipDok := idtipdok
+   _cBrDok := brdok
+   CLOSE ALL
+
+   StDokOdt( _cidfirma, _cIdTipdok, _cbrdok )
 
 
-o_fakt_edit()
-select (F_FAKT_DOKS)
-use
-O_FAKT_DOKS
-if lOpcine
-    O_PARTN
-    select fakt_doks
-    set relation to idpartner into PARTN
-endif
-if cFilter==".t."
-    set Filter to
-else
-    set Filter to &cFilter
-endif
-go nTrec
-    
-return DE_CONT
+   o_fakt_edit()
+   SELECT ( F_FAKT_DOKS )
+   USE
+   O_FAKT_DOKS
+   IF lOpcine
+      O_PARTN
+      SELECT fakt_doks
+      SET RELATION TO idpartner into PARTN
+   ENDIF
+   IF cFilter == ".t."
+      SET FILTER TO
+   ELSE
+      SET FILTER to &cFilter
+   ENDIF
+   GO nTrec
+
+   RETURN DE_CONT
 
 
 
 // --------------------------
 // generisi fakturu
 // --------------------------
-function generisi_fakturu( is_opcine )
-local cTipDok
-local cFirma
-local cBrFakt
-local nCnt := 0
-local dDatFakt
-local dDatVal
-local dDatIsp
-local i
-local cPart
-local aMemo := {}
-local _rec
-local _t_area := SELECT()
+FUNCTION generisi_fakturu( is_opcine )
 
-if Pitanje(,"Generisati fakturu na osnovu ponude ?", "D") == "N"
-    return DE_CONT
-endif
+   LOCAL cTipDok
+   LOCAL cFirma
+   LOCAL cBrFakt
+   LOCAL nCnt := 0
+   LOCAL dDatFakt
+   LOCAL dDatVal
+   LOCAL dDatIsp
+   LOCAL i
+   LOCAL cPart
+   LOCAL aMemo := {}
+   LOCAL _rec
+   LOCAL _t_area := Select()
 
-O_FAKT_PRIPR
-O_FAKT
+   IF Pitanje(, "Generisati fakturu na osnovu ponude ?", "D" ) == "N"
+      RETURN DE_CONT
+   ENDIF
 
-if fakt_pripr->( RECCOUNT() ) <> 0
-    MsgBeep( "Priprema mora biti prazna !!!" )
-    select ( _t_area )
-    return DE_CONT
-endif
+   O_FAKT_PRIPR
+   O_FAKT
 
-select fakt_doks
+   IF fakt_pripr->( RecCount() ) <> 0
+      MsgBeep( "Priprema mora biti prazna !!!" )
+      SELECT ( _t_area )
+      RETURN DE_CONT
+   ENDIF
 
-nTrec := RecNo()
+   SELECT fakt_doks
 
-cTipDok := field->idtipdok
-cFirma := field->idfirma
-cBrFakt := field->brdok
-cPart := field->idpartner
-dDatFakt := DATE()
-dDatVal := DATE()
-dDatIsp := DATE()
-cNBrFakt := PADR( "00000", 8 )
+   nTrec := RecNo()
 
-// uslovi generisanja...
-Box(, 5, 55)
-    
-    @ m_x + 1, m_y + 2 SAY "*** Parametri fakture "  
-    
-    @ m_x + 3, m_y + 2 SAY "  Datum fakture: " GET dDatFakt VALID !EMPTY(dDatFakt) 
-    @ m_x + 4, m_y + 2 SAY "   Datum valute: " GET dDatVal VALID !EMPTY(dDatVal) 
-    @ m_x + 5, m_y + 2 SAY " Datum isporuke: " GET dDatIsp VALID !EMPTY(dDatIsp) 
+   cTipDok := field->idtipdok
+   cFirma := field->idfirma
+   cBrFakt := field->brdok
+   cPart := field->idpartner
+   dDatFakt := Date()
+   dDatVal := Date()
+   dDatIsp := Date()
+   cNBrFakt := PadR( "00000", 8 )
 
-    read
+   // uslovi generisanja...
+   Box(, 5, 55 )
 
-BoxC()
+   @ m_x + 1, m_y + 2 SAY "*** Parametri fakture "
 
-// dokument ubaci u pripremu...
-select fakt
-set order to tag "1"
-go top
-seek cFirma + cTipDok + cBrFakt
+   @ m_x + 3, m_y + 2 SAY "  Datum fakture: " GET dDatFakt VALID !Empty( dDatFakt )
+   @ m_x + 4, m_y + 2 SAY "   Datum valute: " GET dDatVal VALID !Empty( dDatVal )
+   @ m_x + 5, m_y + 2 SAY " Datum isporuke: " GET dDatIsp VALID !Empty( dDatIsp )
 
-do while !EOF() .and. field->idfirma + field->idtipdok + field->brdok == cFirma + cTipDok + cBrFakt
+   READ
 
-    ++ nCnt
+   BoxC()
 
-    _rec := dbf_get_rec()
-   
-    aMemo := ParsMemo( _rec["txt"] )
+   // dokument ubaci u pripremu...
+   SELECT fakt
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK cFirma + cTipDok + cBrFakt
 
-    _rec["idtipdok"] := "10"
-    _rec["brdok"] := cNBrFakt
-    _rec["datdok"] := dDatFakt
-    
-    // dodaj memo polje, samo prva stavka
-    if nCnt = 1
-    
-        _rec["txt"] := ""
-        _rec["txt"] += CHR(16) + aMemo[1] + CHR(17)
-        _rec["txt"] += CHR(16) + aMemo[2] + CHR(17)
-        _rec["txt"] += CHR(16) + aMemo[3] + CHR(17)
-        _rec["txt"] += CHR(16) + aMemo[4] + CHR(17)
-        _rec["txt"] += CHR(16) + aMemo[5] + CHR(17)
-        _rec["txt"] += CHR(16) + aMemo[6] + CHR(17)
-        // datum otpremnice
-        _rec["txt"] += CHR(16) + DTOC(dDatIsp) + CHR(17)
-        _rec["txt"] += CHR(16) + aMemo[8] + CHR(17)
-        // datum narudzbe / amemo[9]
-        _rec["txt"] += CHR(16) + DTOC(dDatVal) + CHR(17)
-        // datum valute / amemo[10]
-        _rec["txt"] += CHR(16) + DTOC(dDatVal) + CHR(17)
+   DO WHILE !Eof() .AND. field->idfirma + field->idtipdok + field->brdok == cFirma + cTipDok + cBrFakt
 
-        // dodaj i ostala polja
+      ++ nCnt
 
-        if LEN(aMemo) > 10
-            for i:=11 to LEN(aMemo)
-                _rec["txt"] += CHR(16) + aMemo[i] + CHR(17)
-            next
-        endif
+      _rec := dbf_get_rec()
 
-    endif
-    
-    select fakt_pripr
-    append blank
-    dbf_update_rec( _rec )
+      aMemo := ParsMemo( _rec[ "txt" ] )
 
-    select fakt
-    skip
+      _rec[ "idtipdok" ] := "10"
+      _rec[ "brdok" ] := cNBrFakt
+      _rec[ "datdok" ] := dDatFakt
 
-enddo
+      // dodaj memo polje, samo prva stavka
+      IF nCnt = 1
 
-if nCnt > 0
-    MsgBeep( "Dokument formiran i nalazi se u pripremi. Obradite ga !" )
-endif
-    
-// sada imamo dokument u pripremi...
+         _rec[ "txt" ] := ""
+         _rec[ "txt" ] += Chr( 16 ) + aMemo[ 1 ] + Chr( 17 )
+         _rec[ "txt" ] += Chr( 16 ) + aMemo[ 2 ] + Chr( 17 )
+         _rec[ "txt" ] += Chr( 16 ) + aMemo[ 3 ] + Chr( 17 )
+         _rec[ "txt" ] += Chr( 16 ) + aMemo[ 4 ] + Chr( 17 )
+         _rec[ "txt" ] += Chr( 16 ) + aMemo[ 5 ] + Chr( 17 )
+         _rec[ "txt" ] += Chr( 16 ) + aMemo[ 6 ] + Chr( 17 )
+         // datum otpremnice
+         _rec[ "txt" ] += Chr( 16 ) + DToC( dDatIsp ) + Chr( 17 )
+         _rec[ "txt" ] += Chr( 16 ) + aMemo[ 8 ] + Chr( 17 )
+         // datum narudzbe / amemo[9]
+         _rec[ "txt" ] += Chr( 16 ) + DToC( dDatVal ) + Chr( 17 )
+         // datum valute / amemo[10]
+         _rec[ "txt" ] += Chr( 16 ) + DToC( dDatVal ) + Chr( 17 )
 
-// mozemo ga automatski azurirati po zelji... 
-// ostavljam ovo za sada...
+         // dodaj i ostala polja
 
-if isugovori()
+         IF Len( aMemo ) > 10
+            FOR i := 11 TO Len( aMemo )
+               _rec[ "txt" ] += Chr( 16 ) + aMemo[ i ] + Chr( 17 )
+            NEXT
+         ENDIF
 
-    if pitanje(,"Setovati datum uplate za partnera ?", "N") == "D"
-        
-        O_UGOV
-        select ugov
-        set order to tag "PARTNER"
-        go top
-        seek cPart
+      ENDIF
 
-        if FOUND() .and. field->idpartner == cPart
+      SELECT fakt_pripr
+      APPEND BLANK
+      dbf_update_rec( _rec )
+
+      SELECT fakt
+      SKIP
+
+   ENDDO
+
+   IF nCnt > 0
+      MsgBeep( "Dokument formiran i nalazi se u pripremi. Obradite ga !" )
+   ENDIF
+
+   // sada imamo dokument u pripremi...
+
+   // mozemo ga automatski azurirati po zelji...
+   // ostavljam ovo za sada...
+
+   IF isugovori()
+
+      IF pitanje(, "Setovati datum uplate za partnera ?", "N" ) == "D"
+
+         O_UGOV
+         SELECT ugov
+         SET ORDER TO TAG "PARTNER"
+         GO TOP
+         SEEK cPart
+
+         IF Found() .AND. field->idpartner == cPart
             _rec := dbf_get_rec()
-            _rec["dat_l_fakt"] := DATE()
+            _rec[ "dat_l_fakt" ] := Date()
             update_rec_server_and_dbf( "fakt_ugov", _rec, 1, "FULL" )
-        endif
-        
-    endif
+         ENDIF
 
-endif
+      ENDIF
 
-select fakt_doks
+   ENDIF
 
-if is_opcine
-    O_PARTN
-    select fakt_doks
-    set relation to idpartner into PARTN
-endif
+   SELECT fakt_doks
 
-if cFilter == ".t."
-    set Filter to
-else
-    set Filter to &cFilter
-endif
+   IF is_opcine
+      O_PARTN
+      SELECT fakt_doks
+      SET RELATION TO idpartner into PARTN
+   ENDIF
 
-go nTrec
-   
-return DE_REFRESH
+   IF cFilter == ".t."
+      SET FILTER TO
+   ELSE
+      SET FILTER to &cFilter
+   ENDIF
 
+   GO nTrec
 
+   RETURN DE_REFRESH
 
 
 
-function pr_choice()
-local nSelected
-private Opc:={}
-private opcexe:={}
-private Izbor
-    
-AADD(opc, "   >  stampa dokumenta        " )
-AADD(opcexe, {|| nSelected:=Izbor, Izbor:=0  } )
-AADD(opc, "   >  stampa narudzbenice     " )
-AADD(opcexe, {|| nSelected:=Izbor, Izbor:=0  } )
-AADD(opc, "   >  stampa radnog naloga    " )
-AADD(opcexe, {|| nSelected:=Izbor, Izbor:=0  } )
 
-Izbor := 1
-Menu_SC("pch")
 
-return nSelected
+FUNCTION pr_choice()
+
+   LOCAL nSelected
+   PRIVATE Opc := {}
+   PRIVATE opcexe := {}
+   PRIVATE Izbor
+
+   AAdd( opc, "   >  stampa dokumenta        " )
+   AAdd( opcexe, {|| nSelected := Izbor, Izbor := 0  } )
+   AAdd( opc, "   >  stampa narudzbenice     " )
+   AAdd( opcexe, {|| nSelected := Izbor, Izbor := 0  } )
+   AAdd( opc, "   >  stampa radnog naloga    " )
+   AAdd( opcexe, {|| nSelected := Izbor, Izbor := 0  } )
+
+   Izbor := 1
+   Menu_SC( "pch" )
+
+   RETURN nSelected
 
 
 // -------------------------------------------------
 // prikazuje broj fiskalnog racuna
 // -------------------------------------------------
-static function _veza_fc_rn()
-local _fisc_rn
-local _rekl_rn
-local _total
-local _txt := ""
+STATIC FUNCTION _veza_fc_rn()
 
-_fisc_rn := ALLTRIM( STR( fakt_doks->fisc_rn ) )
-_rekl_rn := ALLTRIM( STR( fakt_doks->fisc_st ) )
-_total := fakt_doks->iznos
+   LOCAL _fisc_rn
+   LOCAL _rekl_rn
+   LOCAL _total
+   LOCAL _txt := ""
 
-// samo za izlazne dokumente
-if fakt_doks->idtipdok $ "10#11"
-    
-    if _fisc_rn == "0" .and. _rekl_rn == "0"
+   _fisc_rn := AllTrim( Str( fakt_doks->fisc_rn ) )
+   _rekl_rn := AllTrim( Str( fakt_doks->fisc_st ) )
+   _total := fakt_doks->iznos
 
-        _txt := "nema fiskalnog racuna !?!!!"
+   // samo za izlazne dokumente
+   IF fakt_doks->idtipdok $ "10#11"
 
-        @ m_x + 1, m_y + 2 SAY PADR( _txt, 60 ) COLOR "W/R+"
-    
-    else
-        
-        _txt := ""
+      IF _fisc_rn == "0" .AND. _rekl_rn == "0"
 
-        if _rekl_rn <> "0"
-            _txt += "reklamni racun: " + _rekl_rn + ", " 
-        endif
+         _txt := "nema fiskalnog racuna !?!!!"
 
-        _txt += "fiskalni rn: " + _fisc_rn
-               
-        @ m_x + 1, m_y + 2 SAY PADR( _txt, 60 ) COLOR "GR+/B"
-    endif
+         @ m_x + 1, m_y + 2 SAY PadR( _txt, 60 ) COLOR "W/R+"
 
-else
-    @ m_x + 1, m_y + 2 SAY PADR( "", 60 )
-endif
+      ELSE
 
-return
+         _txt := ""
 
+         IF _rekl_rn <> "0"
+            _txt += "reklamni racun: " + _rekl_rn + ", "
+         ENDIF
 
+         _txt += "fiskalni rn: " + _fisc_rn
 
-// -------------------------------------------------------- 
-// -------------------------------------------------------- 
-function fakt_tabela_komande( lOpcine, fakt_doks_filt )
-local nRet := DE_CONT
-local _rec
-local _filter
-local _dev_id, _dev_params
-local _refresh
-local _t_rec := RECNO()
-local _t_area := SELECT()
-local oDB_lock := F18_DB_LOCK():New()
-local _db_locked := oDb_lock:is_locked()
+         @ m_x + 1, m_y + 2 SAY PadR( _txt, 60 ) COLOR "GR+/B"
+      ENDIF
 
-_filter := DBFilter()
+   ELSE
+      @ m_x + 1, m_y + 2 SAY PadR( "", 60 )
+   ENDIF
 
-// ispis informacije o fiskalnom racunu
-_veza_fc_rn()
-
-_refresh := .f.
-
-do case
- 
-    // stampa dokumenta
-    case Ch == K_ENTER 
-
-        nRet := pr_pf( lOpcine )
-        _refresh := .t.
-
-    // odt stampa dokumenta
-    case Ch == K_ALT_P
-        
-        nRet := pr_odt( lOpcine )
-        _refresh := .t.
- 
-    // refresh tabele
-    case Ch == K_F5
-    
-        // zatvori tabelu, pa otvori  
-        select fakt_doks
-        use
-        O_FAKT_DOKS
-
-        // refresh tabele
-        nRet := DE_REFRESH
-        _refresh := .t.
+   RETURN
 
 
-    // setovanje broja veze fiskalnog racuna
-    case CH == K_CTRL_V
 
-        if _db_locked
-            oDb_lock:warrning()
-            return DE_CONT
-        endif
-    
-        // setovanje broj fiskalnog isjecka
-        select fakt_doks
-    
-        if field->fisc_rn <> 0
+// --------------------------------------------------------
+// --------------------------------------------------------
+FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
 
-            msgbeep("veza: fiskalni racun vec setovana !")
+   LOCAL nRet := DE_CONT
+   LOCAL _rec
+   LOCAL _filter
+   LOCAL _dev_id, _dev_params
+   LOCAL _refresh
+   LOCAL _t_rec := RecNo()
+   LOCAL _t_area := Select()
+   LOCAL oDB_lock := F18_DB_LOCK():New()
+   LOCAL _db_locked := oDb_lock:is_locked()
 
-            if Pitanje( "FAKT_PROM_VEZU", "Promjeniti postojecu vezu (D/N)?", "N" ) == "N"
-                return DE_CONT
-            endif
+   _filter := dbFilter()
 
-        endif
-    
-        if Pitanje( "FISC_NVEZA_SET", "Setovati novu vezu sa fiskalnim racunom (D/N)?", "D" ) == "N"
-            return DE_CONT
-        endif
-    
-        nFiscal := field->fisc_rn
-        nRekl := field->fisc_st
-        dFiscal_date := field->fisc_date
-        cFiscal_time := PADR( field->fisc_time, 10 )
+   // ispis informacije o fiskalnom racunu
+   _veza_fc_rn()
 
-        Box(, 4, 40)
-            @ m_x + 1, m_y + 2 SAY "fiskalni racun:" GET nFiscal PICT "9999999999"
-            @ m_x + 2, m_y + 2 SAY "reklamni racun:" GET nRekl PICT "9999999999"
-            @ m_x + 3, m_y + 2 SAY "         datum:" GET dFiscal_date
-            @ m_x + 4, m_y + 2 SAY "       vrijeme:" GET cFiscal_time PICT "@S10"
-            read
-        BoxC()
-    
-        if nFiscal <> field->fisc_rn .or. nRekl <> field->fisc_st
+   _refresh := .F.
 
-            _rec := dbf_get_rec()
-            _rec["fisc_rn"] := nFiscal
-            _rec["fisc_st"] := nRekl
-            _rec["fisc_time"] := cFiscal_time
-            _rec["fisc_date"] := dFiscal_date
+   DO CASE
 
-            update_rec_server_and_dbf( "fakt_doks", _rec, 1, "FULL" )
+      // stampa dokumenta
+   CASE Ch == K_ENTER
+
+      nRet := pr_pf( lOpcine )
+      _refresh := .T.
+
+      // odt stampa dokumenta
+   CASE Ch == K_ALT_P
+
+      nRet := pr_odt( lOpcine )
+      _refresh := .T.
+
+      // refresh tabele
+   CASE Ch == K_F5
+
+      // zatvori tabelu, pa otvori
+      SELECT fakt_doks
+      USE
+      O_FAKT_DOKS
+
+      // refresh tabele
+      nRet := DE_REFRESH
+      _refresh := .T.
+
+
+      // setovanje broja veze fiskalnog racuna
+   CASE CH == K_CTRL_V
+
+      IF _db_locked
+         oDb_lock:warrning()
+         RETURN DE_CONT
+      ENDIF
+
+      // setovanje broj fiskalnog isjecka
+      SELECT fakt_doks
+
+      IF field->fisc_rn <> 0
+
+         msgbeep( "veza: fiskalni racun vec setovana !" )
+
+         IF Pitanje( "FAKT_PROM_VEZU", "Promjeniti postojecu vezu (D/N)?", "N" ) == "N"
+            RETURN DE_CONT
+         ENDIF
+
+      ENDIF
+
+      IF Pitanje( "FISC_NVEZA_SET", "Setovati novu vezu sa fiskalnim racunom (D/N)?", "D" ) == "N"
+         RETURN DE_CONT
+      ENDIF
+
+      nFiscal := field->fisc_rn
+      nRekl := field->fisc_st
+      dFiscal_date := field->fisc_date
+      cFiscal_time := PadR( field->fisc_time, 10 )
+
+      Box(, 4, 40 )
+      @ m_x + 1, m_y + 2 SAY "fiskalni racun:" GET nFiscal PICT "9999999999"
+      @ m_x + 2, m_y + 2 SAY "reklamni racun:" GET nRekl PICT "9999999999"
+      @ m_x + 3, m_y + 2 SAY "         datum:" GET dFiscal_date
+      @ m_x + 4, m_y + 2 SAY "       vrijeme:" GET cFiscal_time PICT "@S10"
+      READ
+      BoxC()
+
+      IF nFiscal <> field->fisc_rn .OR. nRekl <> field->fisc_st
+
+         _rec := dbf_get_rec()
+         _rec[ "fisc_rn" ] := nFiscal
+         _rec[ "fisc_st" ] := nRekl
+         _rec[ "fisc_time" ] := cFiscal_time
+         _rec[ "fisc_date" ] := dFiscal_date
+
+         update_rec_server_and_dbf( "fakt_doks", _rec, 1, "FULL" )
+
+         nRet := DE_REFRESH
+         _refresh := .T.
+
+      ENDIF
+
+      // informacije o dokumentu
+   CASE Chr( Ch ) $ "iI"
+
+      // info dokument
+      msgbeep( getfullusername( field->oper_id ) )
+
+      // korekcija podataka dokumenta
+   CASE Chr( Ch ) $ "kK"
+
+      IF _db_locked
+         oDb_lock:warrning()
+         RETURN DE_CONT
+      ENDIF
+
+      // korekcija podataka na dokumentu
+      IF fakt_edit_data( field->idfirma, field->idtipdok, field->brdok )
+         nRet := DE_REFRESH
+         _refresh := .T.
+      ENDIF
+
+      // duplikat fiskalnog racuna...
+   CASE Upper( Chr( Ch ) ) == "T"
+
+      IF ! ( field->idtipdok $ "10#11" )
+         MsgBeep( "Opcija moguca samo za racune !" )
+         RETURN DE_CONT
+      ENDIF
+
+      IF !fiscal_opt_active()
+         RETURN DE_CONT
+      ENDIF
+
+      IF _db_locked
+         oDb_lock:warrning()
+         RETURN DE_CONT
+      ENDIF
+
+      _dev_id := get_fiscal_device( my_user(), field->idtipdok )
+
+      IF _dev_id > 0
+
+         _dev_params := get_fiscal_device_params( _dev_id, my_user() )
+
+         IF _dev_params == NIL
+            RETURN DE_CONT
+         ENDIF
+
+      ELSE
+         MsgBeep( "Problem sa fiskalnim parametrima !!!" )
+         RETURN DE_CONT
+      ENDIF
+
+      IF _dev_params[ "drv" ] <> "FPRINT"
+         MsgBeep( "Opcija moguca samo za FPRINT/DATECS uredjaje !" )
+         RETURN DE_CONT
+      ENDIF
+
+      _rn_params := hb_Hash()
+
+      // stampaj fiskalni duplikat...
+      IF field->fisc_st <> 0
+         _rn_params[ "storno" ] := .T.
+      ELSE
+         _rn_params[ "storno" ] := .F.
+      ENDIF
+
+      _rn_params[ "datum" ] := field->fisc_date
+      _rn_params[ "vrijeme" ] := field->fisc_time
+
+      fprint_double( _dev_params, _rn_params )
+
+      MsgBeep( "Duplikat racuna za datum: " + DToC( field->fisc_date ) + ", vrijeme: " + AllTrim( field->fisc_time ) )
+
+      // stampanje fiskalnog racuna
+   CASE Upper( Chr( Ch ) ) == "R"
+
+      IF !fiscal_opt_active()
+         RETURN DE_CONT
+      ENDIF
+
+      IF _db_locked
+         oDb_lock:warrning()
+         RETURN DE_CONT
+      ENDIF
+
+      // stampa fiskalnog racuna
+      IF field->idtipdok $ "10#11"
+
+         IF field->fisc_rn > 0
+            msgbeep( "Fiskalni racun vec stampan za ovaj dokument !!!#Ako je potrebna ponovna stampa resetujte broj veze." )
+            RETURN DE_CONT
+         ENDIF
+
+         IF Pitanje( "ST FISK RN5", "Stampati fiskalni racun za dokument " + ;
+               AllTrim( field->idfirma ) + "-" + ;
+               AllTrim( field->idtipdok ) + "-" + ;
+               AllTrim( field->brdok ) + " (D/N) ?", "D" ) == "D"
+
+            _dev_id := get_fiscal_device( my_user(), field->idtipdok )
+
+            IF _dev_id > 0
+
+               _dev_params := get_fiscal_device_params( _dev_id, my_user() )
+
+               IF _dev_params == NIL
+                  RETURN DE_CONT
+               ENDIF
+
+            ELSE
+               MsgBeep( "Problem sa fiskalnim parametrima !!!" )
+               RETURN DE_CONT
+            ENDIF
+
+            // da li je korisniku dozvoljeno da stampa racune ?
+            IF _dev_params[ "print_fiscal" ] == "N"
+               MsgBeep( "Nije Vam dozvoljena opcija za stampu fiskalnih racuna !" )
+               RETURN DE_CONT
+            ENDIF
+
+            fakt_fisc_rn( field->idfirma, field->idtipdok, field->brdok, .F., _dev_params )
+
+            SELECT ( _t_area )
 
             nRet := DE_REFRESH
-            _refresh := .t.
-        
-        endif
-   
-    // informacije o dokumentu 
-    case chr(Ch) $ "iI"
-    
-        // info dokument
-        msgbeep( getfullusername( field->oper_id ) )
-
-    // korekcija podataka dokumenta
-    case chr(Ch) $ "kK"
-
-        if _db_locked
-            oDb_lock:warrning()
-            return DE_CONT
-        endif
-    
-        // korekcija podataka na dokumentu
-        if fakt_edit_data( field->idfirma, field->idtipdok, field->brdok )
-            nRet := DE_REFRESH
-            _refresh := .t.
-        endif
-
-    // duplikat fiskalnog racuna...
-    case UPPER( chr( Ch ) ) == "T"
-
-        if ! ( field->idtipdok $ "10#11" )
-            MsgBeep( "Opcija moguca samo za racune !" ) 
-            return DE_CONT
-        endif
-
-        if !fiscal_opt_active()
-            return DE_CONT
-        endif
-
-        if _db_locked
-            oDb_lock:warrning()
-            return DE_CONT
-        endif
-
-        _dev_id := get_fiscal_device( my_user(), field->idtipdok )
-
-        if _dev_id > 0
-
-            _dev_params := get_fiscal_device_params( _dev_id, my_user() )
-
-            if _dev_params == NIL
-                return DE_CONT
-            endif
-
-        else
-            MsgBeep("Problem sa fiskalnim parametrima !!!")
-            return DE_CONT
-        endif
-
-        if _dev_params["drv"] <> "FPRINT"
-            MsgBeep( "Opcija moguca samo za FPRINT/DATECS uredjaje !" )
-            return DE_CONT
-        endif
-
-        _rn_params := hb_hash()
-
-        // stampaj fiskalni duplikat...
-        if field->fisc_st <> 0
-            _rn_params["storno"] := .t.            
-        else
-            _rn_params["storno"] := .f.
-        endif
-
-        _rn_params["datum"] := field->fisc_date 
-        _rn_params["vrijeme"] := field->fisc_time
-
-        fprint_double( _dev_params, _rn_params ) 
-
-        MsgBeep( "Duplikat racuna za datum: " + DTOC( field->fisc_date ) + ", vrijeme: " + ALLTRIM( field->fisc_time ) )
-
-    // stampanje fiskalnog racuna
-    case UPPER( chr( Ch ) ) == "R"
-
-        if !fiscal_opt_active()
-            return DE_CONT
-        endif
-
-        if _db_locked
-            oDb_lock:warrning()
-            return DE_CONT
-        endif
-
-        // stampa fiskalnog racuna
-        if field->idtipdok $ "10#11"
-        
-            if field->fisc_rn > 0
-                msgbeep("Fiskalni racun vec stampan za ovaj dokument !!!#Ako je potrebna ponovna stampa resetujte broj veze.")
-                return DE_CONT
-            endif
-        
-            if Pitanje( "ST FISK RN5","Stampati fiskalni racun za dokument " + ;
-                ALLTRIM( field->idfirma ) + "-" + ;
-                ALLTRIM( field->idtipdok ) + "-" + ;
-                ALLTRIM( field->brdok ) + " (D/N) ?", "D") == "D"
-
-                _dev_id := get_fiscal_device( my_user(), field->idtipdok )
-
-                if _dev_id > 0
-
-                    _dev_params := get_fiscal_device_params( _dev_id, my_user() )
-
-                    if _dev_params == NIL
-                        return DE_CONT
-                    endif
-
-                else
-                    MsgBeep("Problem sa fiskalnim parametrima !!!")
-                    return DE_CONT
-                endif
-
-                // da li je korisniku dozvoljeno da stampa racune ?
-                if _dev_params["print_fiscal"] == "N"
-                    MsgBeep( "Nije Vam dozvoljena opcija za stampu fiskalnih racuna !" )
-                    return DE_CONT
-                endif
- 
-                fakt_fisc_rn( field->idfirma, field->idtipdok, field->brdok, .f., _dev_params )
-       
-				select ( _t_area )
-
-                nRet := DE_REFRESH
-                _refresh := .t.
-
-            endif
-
-        endif
-
-    // duplikat dokumenta
-    case chr(ch) $ "wW"
-        
-        if _db_locked
-            oDb_lock:warrning()
-            return DE_CONT
-        endif
-
-        fakt_napravi_duplikat( field->idfirma, field->idtipdok, field->brdok )
-        select fakt_doks
-
-    // generisanje storno dokumenta
-    case chr(Ch) $ "sS"
-
-        if _db_locked
-            oDb_lock:warrning()
-            return DE_CONT
-        endif
-
-        // generisi storno dokument
-        storno_dok( field->idfirma, field->idtipdok, field->brdok )
-     
-        if Pitanje(, "Preci u tabelu pripreme ?", "D" ) == "D"
-            fUPripremu := .t.
-            nRet := DE_ABORT
-        else
-            nRet := DE_REFRESH
-            _refresh := .t.
-        endif
-  
-    // printanje radnog naloga
-    case UPPER(chr(Ch)) == "B"
-
-        nRet := pr_rn() 
-        _refresh := .t. 
-     
-    // printanje narudzbenice
-    case chr(Ch) $ "nN"
-        
-        nRet := pr_nar(lOpcine)
-        _refresh := .t.
-  
-    // generisanje fakture na osnovu ponude
-    case chr(Ch) $ "fF"
-        
-        if _db_locked
-            oDb_lock:warrning()
-            return DE_CONT
-        endif
+            _refresh := .T.
 
-        if idtipdok $ "20"
-            nRet := generisi_fakturu(lOpcine)
-            _refresh := .t.
-        endif
-     
-    // povrat dokumenta u pripremu
-    case chr(Ch) $ "pP"
- 
-        if _db_locked
-            oDb_lock:warrning()
-            return DE_CONT
-        endif
-        _tmp := povrat_fakt_dokumenta( .f., field->idfirma, field->idtipdok, field->brdok )
+         ENDIF
 
-        O_FAKT_DOKS
+      ENDIF
 
-        if _tmp <> 0 .and. Pitanje(, "Preci u tabelu pripreme ?", "D" ) == "D"
-            fUPripremu := .t.
-            _refresh := .f.
-            nRet := DE_ABORT
-        else
-            nRet := DE_REFRESH
-            _refresh := .t.
-        endif
+      // duplikat dokumenta
+   CASE Chr( ch ) $ "wW"
 
-endcase
+      IF _db_locked
+         oDb_lock:warrning()
+         RETURN DE_CONT
+      ENDIF
 
-// refresh ako ima potrebe za tim...
-if _refresh 
+      fakt_napravi_duplikat( field->idfirma, field->idtipdok, field->brdok )
+      SELECT fakt_doks
 
-	select ( _t_area )
-	set order to tag "1"
+      // generisanje storno dokumenta
+   CASE Chr( Ch ) $ "sS"
 
-    refresh_fakt_tbl_dbfs( _filter )
-
-	go ( _t_rec )
-
-endif
-
-return nRet
-
-
-
-
-function refresh_fakt_tbl_dbfs( tbl_filter )
-
-close all
-
-O_VRSTEP
-O_OPS
-O_FAKT_DOKS2
-O_VALUTE
-O_RJ
-O_FAKT_OBJEKTI
-O_FAKT
-O_PARTN
-O_FAKT_DOKS
-
-// setuj relacije 
-SET RELATION TO fakt_doks->idfirma + fakt_doks->idtipdok + fakt_doks->brdok INTO fakt, ;
-            TO fakt_doks->idvrstep INTO vrstep, ;
-            TO fakt_doks->idpartner INTO partn
-
-
-select fakt_doks
-set order to tag "1"
-go top
-
-SET FILTER TO &(tbl_filter)
-
-return .t.
-
-
-
-
-function fakt_vt_porezi()
-public _ZPP:=0
-if roba->tip=="V"
-  public _OPP:=0,_PPP:=tarifa->ppp/100
-  public _PORVT:=tarifa->opp/100
-elseif roba->tip=="K"
-  public _OPP:=tarifa->opp/100,_PPP:=tarifa->ppp/100
-  public _PORVT:=tarifa->opp/100
-else
-  public _OPP:=tarifa->opp/100
-  public _PPP:=tarifa->ppp/100
-  public _ZPP:=tarifa->zpp/100
-  public _PORVT:=0
-endif
-return
-
-
-
-
-
-function fakt_real_partnera()
-
-O_FAKT_DOKS
-O_PARTN
-O_VALUTE
-O_RJ
-
-cIdfirma := gFirma
-dDatOd := CTOD("")
-dDatDo := DATE()
-
-qqTipDok := "10;"
-
-Box(,11,77)
-
-cTabela := "N"
-cBrFakDok := SPACE(40)
-cImeKup := SPACE(20)
-
-qqPartn := SPACE(20)
-qqOpc := SPACE(20)
-
-cTabela := fetch_metric("fakt_real_tabela", my_user(), cTabela )
-cImeKup := fetch_metric("fakt_real_ime_kupca", my_user(), cImeKup )
-qqPartn := fetch_metric("fakt_real_partner", my_user(), qqPartn )
-cBrFakDok := fetch_metric("fakt_real_broj_dok", my_user(), cBrFakDok )
-cIdFirma := fetch_metric("fakt_real_id_firma", my_user(), cIdFirma )
-dDatOd := fetch_metric("fakt_real_datum_od", my_user(), dDatOd )
-dDatDo := fetch_metric("fakt_real_datum_do", my_user(), dDatDo )
-
-qqPartn:=padr(qqPartn,20)
-qqTipDok:=padr(qqTipDok,40)
-qqOpc:=padr(qqOpc,20)
-
-do while .t.
-    cIdFirma:=padr(cidfirma,2)
-    @ m_x+1,m_y+2 SAY "RJ            " GET cIdFirma valid {|| empty(cidfirma) .or. cidfirma==gfirma .or. P_RJ(@cIdFirma), cIdFirma := LEFT( cIdFirma, 2 ), .t. }
-    @ m_x+2,m_y+2 SAY "Tip dokumenta " GET qqTipDok pict "@!S20"
-    @ m_x+3,m_y+2 SAY "Od datuma "  get dDatOd
-    @ m_x+3,col()+1 SAY "do"  get dDatDo
-    @ m_x+6,m_y+2 SAY "Uslov po nazivu kupca (prazno svi)"  get qqPartn pict "@!"
-    @ m_x+7,m_y+2 SAY "Broj dokumenta (prazno svi)"  get cBrFakDok pict "@!"
-    @ m_x+9,m_y+2 SAY "Opcina (prazno sve)" get qqOpc pict "@!"
-    read
-    ESC_BCR
-    aUslBFD:=Parsiraj(cBrFakDok,"BRDOK","C")
-    //aUslSK:=Parsiraj(qqPartn,"IDPARTNER")
-    aUslTD:=Parsiraj(qqTipdok,"IdTipdok","C")
-    if aUslBFD<>NIL .and. aUslTD<>NIL
-        exit
-    endif
-enddo
-
-qqTipDok:=trim(qqTipDok)
-qqPartn:=trim(qqPartn)
-
-set_metric("fakt_real_tabela", my_user(), cTabela )
-set_metric("fakt_real_ime_kupca", my_user(), cImeKup )
-set_metric("fakt_real_partner", my_user(), qqPartn )
-set_metric("fakt_real_broj_dok", my_user(), cBrFakDok )
-set_metric("fakt_real_id_firma", my_user(), cIdFirma )
-set_metric("fakt_real_datum_od", my_user(), dDatOd )
-set_metric("fakt_real_datum_do", my_user(), dDatDo )
-
-BoxC()
-
-select fakt_doks
-
-private cFilter:=".t."
-
-if !empty(dDatOd) .or. !empty(dDatDo)
-    cFilter+=".and.  datdok>="+cm2str(dDatOd)+".and. datdok<="+cm2str(dDatDo)
-endif
-
-if cTabela=="D"  // tabel prikaz
-    cFilter+=".and. IdFirma="+cm2str(cIdFirma)
-endif
-
-if !empty(cBrFakDok)
-  cFilter+=".and."+aUslBFD
-endif
-
-//if !empty(qqPartn)
-//  cFilter+=".and."+aUslSK
-//endif
-
-if !empty(qqTipDok)
-  cFilter+=".and."+aUslTD
-endif
-
-if cFilter=".t..and."
-  cFilter:=substr(cFilter,9)
-endif
-
-if cFilter==".t."
-  set Filter to
-else
-  set Filter to &cFilter
-endif
-
-EOF CRET
-
-//gaZagFix:={3,3}
-START PRINT CRET
-
-private nStrana:=0
-private m:="---- ------ -------------------------- ------------ ------------ ------------"
-
-fakt_zagl_real_partnera()
-
-set order to tag "6"
-//"6","IdFirma+idpartner+idtipdok",KUMPATH+"DOKS"
-seek cIdFirma
-
-nC:=0
-ncol1:=10
-nTIznos:=nTRabat:=0
-private cRezerv:=" "
-do while !eof() .and. IdFirma=cIdFirma
-    // uslov po partneru
-    if !Empty(qqPartn)
-        if !(fakt_doks->partner=qqPartn)
-            skip
-            loop
-        endif
-    endif
-    
-    nIznos:=0
-    nRabat:=0
-    cIdPartner:=idpartner
-    select partn
-    hseek cIdPartner
-    select fakt_doks
-    
-    
-    // uslov po opcini
-    if !Empty(qqOpc)
-        if AT(partn->idops, qqOpc)==0
-            skip
-            loop
-        endif
-    endif
-    
-    do while !eof() .and. IdFirma=cIdFirma .and. idpartner==cIdpartner
-        if DinDem==left(ValBazna(),3)
-                nIznos+=ROUND(iznos,ZAOKRUZENJE)
-                nRabat+=ROUND(Rabat,ZAOKRUZENJE)
-            else
-                nIznos+=ROUND(iznos*UBaznuValutu(datdok),ZAOKRUZENJE)
-                nRabat+=ROUND(Rabat*UBaznuValutu(datdok),ZAOKRUZENJE)
-            endif
-        skip
-    enddo
-    if prow()>61
-        FF
-        fakt_zagl_real_partnera()
-    endif
-
-    ? space(gnLMarg)
-    ?? Str(++nC,4)+".", cIdPartner, PADR( partn->naz, 25 )
-    nCol1 := pcol() + 1
-    @ prow(),pcol()+1 SAY str(nIznos+nRabat,12,2)
-    @ prow(),pcol()+1 SAY str(nRabat,12,2)
-    @ prow(),pcol()+1 SAY str(nIznos,12,2)
-
-    ntIznos+=nIznos
-    ntRabat+=nRabat
-enddo
-
-if prow()>59
-    FF
-    fakt_zagl_real_partnera()
-endif
-
-? space(gnLMarg)
-?? m
-? space(gnLMarg)
-?? " Ukupno"
-@ prow(),nCol1 SAY str(ntIznos+ntRabat,12,2)
-@ prow(),pcol()+1 SAY str(ntRabat,12,2)
-@ prow(),pcol()+1 SAY str(ntIznos,12,2)
-? space(gnLMarg)
-?? m
-
-set filter to  // ukini filter
-
-FF
-END PRINT
-
-return
+      IF _db_locked
+         oDb_lock:warrning()
+         RETURN DE_CONT
+      ENDIF
+
+      // generisi storno dokument
+      storno_dok( field->idfirma, field->idtipdok, field->brdok )
+
+      IF Pitanje(, "Preci u tabelu pripreme ?", "D" ) == "D"
+         fUPripremu := .T.
+         nRet := DE_ABORT
+      ELSE
+         nRet := DE_REFRESH
+         _refresh := .T.
+      ENDIF
+
+      // printanje radnog naloga
+   CASE Upper( Chr( Ch ) ) == "B"
+
+      nRet := pr_rn()
+      _refresh := .T.
+
+      // printanje narudzbenice
+   CASE Chr( Ch ) $ "nN"
+
+      nRet := pr_nar( lOpcine )
+      _refresh := .T.
+
+      // generisanje fakture na osnovu ponude
+   CASE Chr( Ch ) $ "fF"
+
+      IF _db_locked
+         oDb_lock:warrning()
+         RETURN DE_CONT
+      ENDIF
+
+      IF idtipdok $ "20"
+         nRet := generisi_fakturu( lOpcine )
+         _refresh := .T.
+      ENDIF
+
+      // povrat dokumenta u pripremu
+   CASE Chr( Ch ) $ "pP"
+
+      IF _db_locked
+         oDb_lock:warrning()
+         RETURN DE_CONT
+      ENDIF
+      _tmp := povrat_fakt_dokumenta( .F., field->idfirma, field->idtipdok, field->brdok )
+
+      O_FAKT_DOKS
+
+      IF _tmp <> 0 .AND. Pitanje(, "Preci u tabelu pripreme ?", "D" ) == "D"
+         fUPripremu := .T.
+         _refresh := .F.
+         nRet := DE_ABORT
+      ELSE
+         nRet := DE_REFRESH
+         _refresh := .T.
+      ENDIF
+
+   ENDCASE
+
+   // refresh ako ima potrebe za tim...
+   IF _refresh
+
+      SELECT ( _t_area )
+      SET ORDER TO TAG "1"
+
+      refresh_fakt_tbl_dbfs( _filter )
+
+      GO ( _t_rec )
+
+   ENDIF
+
+   RETURN nRet
+
+
+
+
+FUNCTION refresh_fakt_tbl_dbfs( tbl_filter )
+
+   CLOSE ALL
+
+   O_VRSTEP
+   O_OPS
+   O_FAKT_DOKS2
+   O_VALUTE
+   O_RJ
+   O_FAKT_OBJEKTI
+   O_FAKT
+   O_PARTN
+   O_FAKT_DOKS
+
+   // setuj relacije
+   SET RELATION TO fakt_doks->idfirma + fakt_doks->idtipdok + fakt_doks->brdok INTO fakt, ;
+      TO fakt_doks->idvrstep INTO vrstep, ;
+      TO fakt_doks->idpartner INTO partn
+
+
+   SELECT fakt_doks
+   SET ORDER TO TAG "1"
+   GO TOP
+
+   SET FILTER TO &( tbl_filter )
+
+   RETURN .T.
+
+
+
+
+FUNCTION fakt_vt_porezi()
+
+   PUBLIC _ZPP := 0
+
+   IF roba->tip == "V"
+      PUBLIC _OPP := 0, _PPP := tarifa->ppp / 100
+      PUBLIC _PORVT := tarifa->opp / 100
+   ELSEIF roba->tip == "K"
+      PUBLIC _OPP := tarifa->opp / 100, _PPP := tarifa->ppp / 100
+      PUBLIC _PORVT := tarifa->opp / 100
+   ELSE
+      PUBLIC _OPP := tarifa->opp / 100
+      PUBLIC _PPP := tarifa->ppp / 100
+      PUBLIC _ZPP := tarifa->zpp / 100
+      PUBLIC _PORVT := 0
+   ENDIF
+
+   RETURN
+
+
+
+
+
+FUNCTION fakt_real_partnera()
+
+   O_FAKT_DOKS
+   O_PARTN
+   O_VALUTE
+   O_RJ
+
+   cIdfirma := gFirma
+   dDatOd := CToD( "" )
+   dDatDo := Date()
+
+   qqTipDok := "10;"
+
+   Box(, 11, 77 )
+
+   cTabela := "N"
+   cBrFakDok := Space( 40 )
+   cImeKup := Space( 20 )
+
+   qqPartn := Space( 20 )
+   qqOpc := Space( 20 )
+
+   cTabela := fetch_metric( "fakt_real_tabela", my_user(), cTabela )
+   cImeKup := fetch_metric( "fakt_real_ime_kupca", my_user(), cImeKup )
+   qqPartn := fetch_metric( "fakt_real_partner", my_user(), qqPartn )
+   cBrFakDok := fetch_metric( "fakt_real_broj_dok", my_user(), cBrFakDok )
+   cIdFirma := fetch_metric( "fakt_real_id_firma", my_user(), cIdFirma )
+   dDatOd := fetch_metric( "fakt_real_datum_od", my_user(), dDatOd )
+   dDatDo := fetch_metric( "fakt_real_datum_do", my_user(), dDatDo )
+
+   qqPartn := PadR( qqPartn, 20 )
+   qqTipDok := PadR( qqTipDok, 40 )
+   qqOpc := PadR( qqOpc, 20 )
+
+   DO WHILE .T.
+      cIdFirma := PadR( cidfirma, 2 )
+      @ m_x + 1, m_y + 2 SAY "RJ            " GET cIdFirma valid {|| Empty( cidfirma ) .OR. cidfirma == gfirma .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      @ m_x + 2, m_y + 2 SAY "Tip dokumenta " GET qqTipDok PICT "@!S20"
+      @ m_x + 3, m_y + 2 SAY "Od datuma "  GET dDatOd
+      @ m_x + 3, Col() + 1 SAY "do"  GET dDatDo
+      @ m_x + 6, m_y + 2 SAY "Uslov po nazivu kupca (prazno svi)"  GET qqPartn PICT "@!"
+      @ m_x + 7, m_y + 2 SAY "Broj dokumenta (prazno svi)"  GET cBrFakDok PICT "@!"
+      @ m_x + 9, m_y + 2 SAY "Opcina (prazno sve)" GET qqOpc PICT "@!"
+      READ
+      ESC_BCR
+      aUslBFD := Parsiraj( cBrFakDok, "BRDOK", "C" )
+      // aUslSK:=Parsiraj(qqPartn,"IDPARTNER")
+      aUslTD := Parsiraj( qqTipdok, "IdTipdok", "C" )
+      IF aUslBFD <> NIL .AND. aUslTD <> NIL
+         EXIT
+      ENDIF
+   ENDDO
+
+   qqTipDok := Trim( qqTipDok )
+   qqPartn := Trim( qqPartn )
+
+   set_metric( "fakt_real_tabela", my_user(), cTabela )
+   set_metric( "fakt_real_ime_kupca", my_user(), cImeKup )
+   set_metric( "fakt_real_partner", my_user(), qqPartn )
+   set_metric( "fakt_real_broj_dok", my_user(), cBrFakDok )
+   set_metric( "fakt_real_id_firma", my_user(), cIdFirma )
+   set_metric( "fakt_real_datum_od", my_user(), dDatOd )
+   set_metric( "fakt_real_datum_do", my_user(), dDatDo )
+
+   BoxC()
+
+   SELECT fakt_doks
+
+   PRIVATE cFilter := ".t."
+
+   IF !Empty( dDatOd ) .OR. !Empty( dDatDo )
+      cFilter += ".and.  datdok>=" + cm2str( dDatOd ) + ".and. datdok<=" + cm2str( dDatDo )
+   ENDIF
+
+   IF cTabela == "D"  // tabel prikaz
+      cFilter += ".and. IdFirma=" + cm2str( cIdFirma )
+   ENDIF
+
+   IF !Empty( cBrFakDok )
+      cFilter += ".and." + aUslBFD
+   ENDIF
+
+   // if !empty(qqPartn)
+   // cFilter+=".and."+aUslSK
+   // endif
+
+   IF !Empty( qqTipDok )
+      cFilter += ".and." + aUslTD
+   ENDIF
+
+   IF cFilter = ".t..and."
+      cFilter := SubStr( cFilter, 9 )
+   ENDIF
+
+   IF cFilter == ".t."
+      SET FILTER TO
+   ELSE
+      SET FILTER to &cFilter
+   ENDIF
+
+   EOF CRET
+
+   // gaZagFix:={3,3}
+   START PRINT CRET
+
+   PRIVATE nStrana := 0
+   PRIVATE m := "---- ------ -------------------------- ------------ ------------ ------------"
+
+   fakt_zagl_real_partnera()
+
+   SET ORDER TO TAG "6"
+   // "6","IdFirma+idpartner+idtipdok",KUMPATH+"DOKS"
+   SEEK cIdFirma
+
+   nC := 0
+   ncol1 := 10
+   nTIznos := nTRabat := 0
+   PRIVATE cRezerv := " "
+   DO WHILE !Eof() .AND. IdFirma = cIdFirma
+      // uslov po partneru
+      IF !Empty( qqPartn )
+         IF !( fakt_doks->partner = qqPartn )
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
+
+      nIznos := 0
+      nRabat := 0
+      cIdPartner := idpartner
+      SELECT partn
+      hseek cIdPartner
+      SELECT fakt_doks
+
+
+      // uslov po opcini
+      IF !Empty( qqOpc )
+         IF At( partn->idops, qqOpc ) == 0
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
+
+      DO WHILE !Eof() .AND. IdFirma = cIdFirma .AND. idpartner == cIdpartner
+         IF DinDem == Left( ValBazna(), 3 )
+            nIznos += Round( iznos, ZAOKRUZENJE )
+            nRabat += Round( Rabat, ZAOKRUZENJE )
+         ELSE
+            nIznos += Round( iznos * UBaznuValutu( datdok ), ZAOKRUZENJE )
+            nRabat += Round( Rabat * UBaznuValutu( datdok ), ZAOKRUZENJE )
+         ENDIF
+         SKIP
+      ENDDO
+      IF PRow() > 61
+         FF
+         fakt_zagl_real_partnera()
+      ENDIF
+
+      ? Space( gnLMarg )
+      ?? Str( ++nC, 4 ) + ".", cIdPartner, PadR( partn->naz, 25 )
+      nCol1 := PCol() + 1
+      @ PRow(), PCol() + 1 SAY Str( nIznos + nRabat, 12, 2 )
+      @ PRow(), PCol() + 1 SAY Str( nRabat, 12, 2 )
+      @ PRow(), PCol() + 1 SAY Str( nIznos, 12, 2 )
+
+      ntIznos += nIznos
+      ntRabat += nRabat
+   ENDDO
+
+   IF PRow() > 59
+      FF
+      fakt_zagl_real_partnera()
+   ENDIF
+
+   ? Space( gnLMarg )
+   ?? m
+   ? Space( gnLMarg )
+   ?? " Ukupno"
+   @ PRow(), nCol1 SAY Str( ntIznos + ntRabat, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( ntRabat, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( ntIznos, 12, 2 )
+   ? Space( gnLMarg )
+   ?? m
+
+   SET FILTER TO  // ukini filter
+
+   FF
+   ENDPRINT
+
+   RETURN
 
 
 // --------------------------------------------------------
 // fakt_zagl_real_partnera()
-// Zaglavlje izvjestaja realizacije partnera 
+// Zaglavlje izvjestaja realizacije partnera
 // --------------------------------------------------------
-function fakt_zagl_real_partnera()
+FUNCTION fakt_zagl_real_partnera()
 
-? 
-P_12CPI
-?? space(gnLMarg)
-IspisFirme(cidfirma)
-?
-set century on
-P_12CPI
-? space(gnLMarg); ?? "FAKT: Stampa prometa partnera na dan:",date(),space(8),"Strana:",STR(++nStrana,3)
-? space(gnLMarg); ?? "      period:",dDatOd,"-",dDatDo
-if qqTipDok<>"10;"
- ? space(gnLMarg); ?? "-izvjestaj za tipove dokumenata :",trim(qqTipDok)
-endif
+   ?
+   P_12CPI
+   ?? Space( gnLMarg )
+   IspisFirme( cidfirma )
+   ?
+   SET CENTURY ON
+   P_12CPI
+   ? Space( gnLMarg ); ?? "FAKT: Stampa prometa partnera na dan:", Date(), Space( 8 ), "Strana:", Str( ++nStrana, 3 )
+   ? Space( gnLMarg ); ?? "      period:", dDatOd, "-", dDatDo
+   IF qqTipDok <> "10;"
+      ? Space( gnLMarg ); ?? "-izvjestaj za tipove dokumenata :", Trim( qqTipDok )
+   ENDIF
 
-set century off
-P_12CPI
-? space(gnLMarg); ?? m
-? space(gnLMarg); ?? " Rbr  Sifra     Partner                  Ukupno        Rabat          UKUPNO"
-? space(gnLMarg); ?? "                                           (1)          (2)            (1-2)"
-? space(gnLMarg); ?? m
+   SET CENTURY OFF
+   P_12CPI
+   ? Space( gnLMarg ); ?? m
+   ? Space( gnLMarg ); ?? " Rbr  Sifra     Partner                  Ukupno        Rabat          UKUPNO"
+   ? Space( gnLMarg ); ?? "                                           (1)          (2)            (1-2)"
+   ? Space( gnLMarg ); ?? m
 
-return
-
+   RETURN

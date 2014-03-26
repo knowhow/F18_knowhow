@@ -171,6 +171,8 @@
 
 #command END PRINT => f18_end_print(NIL, __print_opt)
 
+#command ENDPRINT => f18_end_print(NIL, __print_opt)
+
 #command EOF CRET <x> =>  if EofFndret(.t.,.t.)       ;
                           ;return <x>                 ;
                           ;endif

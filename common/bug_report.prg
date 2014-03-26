@@ -30,10 +30,8 @@ FUNCTION GlobalErrorHandler( err_obj )
 
 
    SET CONSOLE OFF
-
    SET PRINTER OFF
    SET DEVICE TO PRINTER
-
    SET PRINTER to ( _out_file )
    SET PRINTER ON
 
@@ -134,7 +132,6 @@ FUNCTION GlobalErrorHandler( err_obj )
    SET PRINTER OFF
    SET PRINTER TO
    SET CONSOLE ON
-
 
    CLOSE ALL
 

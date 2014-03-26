@@ -17,7 +17,6 @@
 
 static aBoxStack:={}
 static aPrStek:={}
-static aMenuStack:={}    
 static aMsgStack:={}
 
 function init_gui( clear )
@@ -40,145 +39,6 @@ endif
 NaslEkran( clear )
 
 return
-
-
-/*  Menu(MenuId,Items,ItemNo,Inv)
- *
- *  Prikazuje zadati meni, vraca odabranu opciju
- *
- *  MenuId  - identifikacija menija     C
- *  Items   - niz opcija za izbor       {}
- *  ItemNo  - Broj pocetne pozicije     N
- *  Inv     - da li je meni invertovan  L
- *
- *  Broj izabrane opcije, 0 kraj
- *
- */
-
-function Menu(MenuId, Items, ItemNo, Inv, cHelpT, nPovratak, aFixKoo, nMaxVR)
-
-local Length
-local N
-local OldC
-local LocalC
-local LocalIC
-local ItemSav
-local i
-local aMenu:={}
-local cPom:=SET(_SET_DEVICE)
-local lFK:=.f.
-
-
-SET DEVICE TO SCREEN
-
-IF nPovratak==NIL
-    nPovratak:=0
-ENDIF
-IF nMaxVR==NIL
-    nMaxVR:=16
-ENDIF
-IF aFixKoo==NIL
-    aFixKoo:={}
-ENDIF
-IF LEN(aFixKoo)==2
-    lFK:=.t.
-ENDIF
-
-N:=IF(Len(Items)>nMaxVR,nMaxVR,LEN(Items))
-Length:=Len(Items[1])+1
-
-if Inv==NIL
-    Inv:=.f.
-endif
-
-LocalC  := IIF(Inv,Invert,Normal)
-LocalIC := IIF(Inv,Normal,Invert)
-
-
-OldC := SetColor(LocalC)
-
-//  Ako se meni zove prvi put, upisi ga na stek
-IF Len(aMenuStack)==0 .or. (Len(aMenuStack)<>0 .and. MenuId<>(StackTop(aMenuStack))[1])  
-  IF lFK
-    m_x := aFixKoo[1]
-    m_y := aFixKoo[2]
-  ELSE
-    // odredi koordinate menija
-    Calc_xy(@m_x, @m_y, N,Length) 
-  ENDIF
-
-  StackPush(aMenuStack,{MenuId,;
-                        m_x,;
-                        m_y,;
-                        SaveScreen(m_x,m_y,m_x+N+2-IF(lFK,1,0),m_y+Length+4-IF(lFK,1,0)),;
-                        ItemNo,;
-                        cHelpT;
-   })
-
-ELSE
-     //  Ako se meni ne zove prvi put, uzmi koordinate sa steka
-     aMenu:=StackTop(aMenuStack)
-     m_x:=aMenu[2]
-     m_y:=aMenu[3]
-
-END IF
-
-@ m_x,m_y CLEAR TO m_x+N+1,m_y+Length+3 
-IF lFK
-  @ m_x,m_y TO m_x+N+1,m_y+Length+3
-ELSE
-  @ m_x,m_y TO m_x+N+1,m_y+Length+3 DOUBLE 
-  @ m_x + N + 2, m_y+1 SAY REPLICATE(Chr(177), Length+4)
-
-  FOR i:=1 TO N + 1
-    @ m_x + i, m_y + Length + 4 SAY Chr(177)
-  NEXT
-
-ENDIF
-
-SetColor(Invert)
-IF ItemNo == 0
-  CentrTxt(h[1], MAXROWS()-1)
-END IF
-
-SetColor(LocalC)
-IF LEN(Items) > nMaxVR
- ItemNo:=AChoice3(m_x+1, m_y+2, m_x+N+1, m_y+Length+1, Items, .t., "MenuFunc", RetItem(ItemNo), RetItem(ItemNo)-1)
-ELSE
- ItemNo:=AChoice2(m_x+1, m_y+2, m_x+N+1, m_y+Length+1, Items, .t., "MenuFunc", RetItem(ItemNo), RetItem(ItemNo)-1)
-ENDIF
-
-nTItemNo := RetItem(ItemNo)
-
-aMenu := StackTop(aMenuStack)
-m_x:=aMenu[2]
-m_y:=aMenu[3]
-aMenu[5]:=nTItemNo
-
-@ m_x,m_y TO m_x+N+1, m_y+Length+3
-
-//
-//  Ako nije pritisnuto ESC, <-, ->, oznaci izabranu opciju
-//
-IF nTItemNo<>0
-  SetColor(LocalIC)
-  @ m_x + MIN(nTItemNo, nMaxVR), m_y + 1 SAY8 " " + Items[nTItemNo] + " "
-  @ m_x + MIN(nTItemNo, nMaxVR), m_y + 2 SAY ""
-END IF
-
-Ch:=LastKey()
-
-//  Ako je ESC meni treba odmah izbrisati (ItemNo=0),
-//  skini meni sa steka
-IF Ch==K_ESC .or. nTItemNo==0 .or. nTItemNo==nPovratak
-  @ m_x,m_y CLEAR TO m_x+N+2-IF(lFK,1, 0), m_y+Length + 4 - IIF(lFK,1,0)
-  aMenu:=StackPop(aMenuStack)
-  RestScreen(m_x, m_y, m_x + N + 2 -IIF(lFK, 1, 0), m_y + Length + 4 - IIF(lFK, 1, 0), aMenu[4])
-END IF
-
-SetColor(OldC)
-SET(_SET_DEVICE,cPom)
-return ItemNo
 
 
 // ---------------------------------------------------------
@@ -860,29 +720,6 @@ enddo
 setcursor(iif(nOldCurs==0,0,iif(readinsert(),2,1)))
 setcolor(cOldColor)
 return nItemNo + nCtrlKeyVal
-
-
-// ------------------------------------
-// ------------------------------------
-function Menu2(x1,y1,aNiz,nIzb)
-LOCAL xM:=0,yM:=0
- xM:=LEN(aNiz); AEVAL(aNiz,{|x| IF(LEN(x)>yM,yM:=LEN(x),)})
- Prozor1(x1,y1,x1+xM+1,y1+yM+1,,,,,,0)
- nIzb:=ACHOICE2(x1+1, y1+1, x1+xM, y1+yM, aNiz,, "KorMenu2", nIzb)
- Prozor0()
-return nIzb
-
-
-function KorMenu2
- 
- LOCAL nVrati:=2,nTipka:=LASTKEY()
- DO CASE
-   CASE nTipka==K_ESC
-     nVrati:=0
-   CASE nTipka==K_ENTER
-     nVrati:=1
- ENDCASE
-return nVrati
 
 
 function Prozor1( v1, h1, v2, h2, cNaslov, cBojaN, cOkvir, cBojaO, cBojaT, nKursor )
@@ -1622,61 +1459,6 @@ if i%nstep=0
   SET(_SET_DEVICE,cPom)
 endif
 return .t.
-
-
-function f18_menu(cIzp, main_menu, izbor, opc, opcexe)
-local cOdgovor
-local nIzbor
-local _menu_opc
-
-if main_menu==NIL
-  main_menu:=.f.
-endif
-
-if main_menu
-  @ 4,5 SAY ""
-endif
-
-do while .t.
-   Izbor := menu(cIzp, opc, izbor, .f.)
-   nIzbor := retitem(izbor)
-   do case
-     case izbor==0
-       if main_menu
-         cOdgovor:=Pitanje("",'Zelite izaci iz programa ?','N')
-         if cOdgovor=="D"
-          EXIT
-         elseif cOdgovor=="L"
-            Prijava()
-            Izbor:=1
-            @ 4,5 SAY ""
-             LOOP
-         else
-             Izbor:=1
-             @ 4,5 SAY ""
-             LOOP
-         endif
-       else
-          EXIT
-       endif
-    
-     otherwise
-
-         if opcexe[nIzbor] <> nil
-
-             _menu_opc := opcexe[nIzbor]
-
-             if valtype(_menu_opc) == "B"
-                EVAL(_menu_opc)
-             else
-                MsgBeep("meni cudan ?" + hb_ValToStr(nIzbor))
-             endif
-
-         endif  
-   endcase
-     
-enddo
-return
 
 
 

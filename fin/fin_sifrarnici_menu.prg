@@ -11,8 +11,6 @@
 
 #include "fin.ch"
 
-
-
 function MnuSifrarnik()
 local _opc:={}
 local _opcexe:={}

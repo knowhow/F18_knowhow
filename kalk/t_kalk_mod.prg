@@ -13,7 +13,6 @@
 #include "kalk.ch"
 #include "hbclass.ch"
 
-
 // -----------------------------------------------
 // -----------------------------------------------
 CLASS TKalkMod FROM TAppMod
@@ -58,7 +57,7 @@ METHOD mMenu()
 
    gDuzKonto := 7
 
-   gRobaBlock := {| Ch| RobaBlock( Ch ) }
+   gRobaBlock := {| Ch| KalkRobaBlock( Ch ) }
 
    @ 1, 2 SAY PadC( gTS + ": " + gNFirma, 50, "*" )
 
@@ -74,8 +73,9 @@ METHOD mMenuStandard
 
    LOCAL oDb_lock := F18_DB_LOCK():New()
    LOCAL _db_locked := oDb_lock:is_locked()
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
+   LOCAL opc := {}
+   LOCAL opcexe := {}
+   LOCAL Izbor := 1
 
    AAdd( opc,   "1. unos/ispravka dokumenata                " )
    IF ( ImaPravoPristupa( goModul:oDataBase:cName, "DOK", "UNOSDOK" ) ) .AND. !F18_DB_LOCK():new():is_locked()
@@ -155,8 +155,7 @@ METHOD mMenuStandard
       AAdd( opcexe, {|| oDb_lock:warrning() } )
    ENDIF
 
-   PRIVATE Izbor := 1
-   Menu_SC( "gkas", .T. )
+   f18_menu( "gkas", .T.,  izbor, opc, opcexe )
 
    RETURN
 
@@ -435,7 +434,7 @@ METHOD setGVars()
    glEvidOtpis := fetch_metric( "kalk_evidentiraj_otpis", nil, glEvidOtpis )
    gcSlObracun := fetch_metric( "kalk_sl_obrazac", nil, gcSLObrazac )
 
-   gRobaBlock := {| Ch| RobaBlock( Ch ) }
+   gRobaBlock := {| Ch| KalkRobaBlock( Ch ) }
 
    // ne znam zasto, ali ovako je bilo ???
    // u svim modulima je "D"

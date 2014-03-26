@@ -85,7 +85,7 @@ Box("kzb",12,70, .f., "Kontrola zbira naloga")
         
 	cDN:="N"
     set cursor on
-        @ m_x+10,m_y+2 SAY "Zelite li uravnoteziti nalog (D/N) ?" GET cDN valid (cDN $ "DN") pict "@!"
+        @ m_x+10,m_y+2 SAY "Želite li uravnoteziti nalog (D/N) ?" GET cDN valid (cDN $ "DN") pict "@!"
         read
 
         if cDN=="D"

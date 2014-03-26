@@ -51,7 +51,7 @@ endif
            //DirMak2(cPath)
            if file(cPath+cDBF)
                MsgBeep("Tabela "+cPath+cDBF+" vec postoji !")
-               if pitanje(,"Zelite li ipak prebaciti podatke u clipboard ?","N")=="N"
+               if pitanje(,"Želite li ipak prebaciti podatke u clipboard ?","N")=="N"
                     loop
                endif
            endif

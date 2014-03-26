@@ -2035,7 +2035,7 @@ return
 static function sif_brisi_stavku()
 local _rec_dbf, _rec, _alias
 
-if Pitanje( , "Zelite li izbrisati ovu stavku ??","D")=="D"
+if Pitanje( , "Želite li izbrisati ovu stavku ??","D")=="D"
     PushWa()
 
     _alias := ALIAS()
@@ -2073,7 +2073,7 @@ RETURN DE_REFRESH
 // -------------------------------
 static function sif_brisi_sve()
 
-if Pitanje( ,"Zelite li sigurno izbrisati SVE zapise ??","N") == "N"
+if Pitanje( ,"Želite li sigurno izbrisati SVE zapise ??","N") == "N"
     return DE_CONT
 endif
         

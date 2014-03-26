@@ -824,7 +824,7 @@ FUNCTION edit_fin_pripr()
 
    CASE Ch == K_CTRL_F9
 
-      IF Pitanje(, "Zelite li izbrisati pripremu !!????", "N" ) == "D"
+      IF Pitanje(, "Želite li izbrisati pripremu !!????", "N" ) == "D"
 
          _log_info := fin_pripr->idfirma + "-" + fin_pripr->idvn + "-" + fin_pripr->brnal
 

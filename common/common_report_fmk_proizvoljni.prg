@@ -461,7 +461,7 @@ STATIC FUNCTION KonIzBlok()
      SELECT KONIZ; GO (nRec)
 
    CASE Ch==K_ALT_P      // popuni nanovo iz sifrarnika kljucnog polja
-     IF cPIKSif!="BEZ" .and. Pitanje( ,"Zelite li obrisati bazu i formirati novu na osnovu sifrar.klj.polja?(D/N)","N")=="D"
+     IF cPIKSif!="BEZ" .and. Pitanje( ,"Želite li obrisati bazu i formirati novu na osnovu sifrar.klj.polja?(D/N)","N")=="D"
        SELECT KONIZ
        ZAPP()
 
@@ -481,7 +481,7 @@ STATIC FUNCTION KonIzBlok()
        lVrati:=DE_REFRESH
      ENDIF
    CASE Ch==K_ALT_N      // popuni iz drugog izvjestaja
-     IF Pitanje(,"Zelite li postojeće zamijeniti podacima iz drugog izvještaja?(D/N)","N")=="D"
+     IF Pitanje(,"Želite li postojeće zamijeniti podacima iz drugog izvještaja?(D/N)","N")=="D"
        i:=1
        Box(,3,60)
         @ m_x+2, m_y+2 SAY "Preuzeti podatke iz izvjestaja br.? (1-99)" GET i VALID i>0 .and. i<100 .and. i<>nTekIzv PICT "99"
@@ -606,7 +606,7 @@ STATIC FUNCTION KonIzBlok()
      ENDIF
 
    CASE Ch==K_CTRL_T
-     IF Pitanje(,"Zelite li izbrisati ovu stavku ?","D")=="D"
+     IF Pitanje(,"Želite li izbrisati ovu stavku ?","D")=="D"
        n0:=ri
        DELETE
        // DbfRBrSort(n0,0,"ri",RECNO())     // recno() je ovdje nebitan

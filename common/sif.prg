@@ -1212,7 +1212,7 @@ STATIC FUNCTION sif_brisi_stavku()
 
    LOCAL _rec_dbf, _rec, _alias
 
-   IF Pitanje( , "Zelite li izbrisati ovu stavku ??", "D" ) == "D"
+   IF Pitanje( , "Želite li izbrisati ovu stavku ??", "D" ) == "D"
 
       PushWa()
 
@@ -1251,7 +1251,7 @@ STATIC FUNCTION sif_brisi_stavku()
 // -------------------------------
 STATIC FUNCTION sif_brisi_sve()
 
-   IF Pitanje( , "Zelite li sigurno izbrisati SVE zapise ??", "N" ) == "N"
+   IF Pitanje( , "Želite li sigurno izbrisati SVE zapise ??", "N" ) == "N"
       RETURN DE_CONT
    ENDIF
 

@@ -70,10 +70,10 @@ for _i := 1 to LEN( imekol )
 next
 
 Box(, _x, _y )
-	@ m_x + (_x-2), m_y + 2 SAY " <c-N>  Nove Stavke      ≥ <ENT> Ispravi stavku   ≥ <c-T> Brisi Stavku"
-	@ m_x + (_x-1), m_y + 2 SAY " <c-A>  Ispravka Dokum.  ≥ <c-P> Stampa svi KL    ≥ <c-U> Lista uk.dug"
-	@ m_x + _x, m_y + 2 SAY " <c-F9> Brisi pripremu   ≥ <a-P> Stampa pojedinac.≥                   "
-	ObjDbedit( "PNal", _x , _y ,{|| _key_handler() },"","KAMATE Priprema.....ÕÕÕÕÕ", , , , ,3)
+	@ m_x + (_x-2), m_y + 2 SAY " <c-N>  Nove Stavke      ¬≥ <ENT> Ispravi stavku   ¬≥ <c-T> Brisi Stavku"
+	@ m_x + (_x-1), m_y + 2 SAY " <c-A>  Ispravka Dokum.  ¬≥ <c-P> Stampa svi KL    ¬≥ <c-U> Lista uk.dug"
+	@ m_x + _x, m_y + 2 SAY " <c-F9> Brisi pripremu   ¬≥ <a-P> Stampa pojedinac.¬≥                   "
+	ObjDbedit( "PNal", _x , _y ,{|| _key_handler() },"","KAMATE Priprema.....√ç√ç√ç√ç√ç", , , , ,3)
 BoxC()
 
 close all
@@ -171,7 +171,7 @@ do case
     // brisi pripremu
     case Ch = K_CTRL_F9
 
-        if Pitanje(, "Zelite li izbrisati pripremu !!????", "N" ) == "D"
+        if Pitanje(, "≈Ωelite li izbrisati pripremu !!????", "N" ) == "D"
             zap
             __dbPack()
         endif

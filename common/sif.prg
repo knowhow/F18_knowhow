@@ -20,7 +20,7 @@ STATIC _LOG_PROMJENE := .F.
 
 STATIC __A_SIFV__ := { { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL } }
 
-FUNCTION p_sifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aPoredak, bPodvuci, aZabrane, invert, aZabIsp )
+FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aPoredak, bPodvuci, aZabrane, invert, aZabIsp )
 
    LOCAL cRet, cIdBK
    LOCAL _i
@@ -47,7 +47,7 @@ FUNCTION p_sifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aP
       _LOG_PROMJENE := .T.
    ENDIF
 
-   PRIVATE nOrdId
+   PRIVATE cOrderTag
 
    PushWa()
    PushSifV()
@@ -65,11 +65,11 @@ FUNCTION p_sifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aP
    // setuj match_code polje...
    set_mc_imekol( nDbf )
 
-   nOrdId := index_tag_num( "ID" )
+   cOrderTag := ordName( 1 )
 
-   sif_set_order( nNTX, nOrdId, @fID_j )
+   sif_set_order( xIndex, cOrderTag, @fID_j )
 
-   sif_seek( @cId, @cIdBK, @cUslovSrch, @cNazSrch, fId_j, nOrdId )
+   sif_sql_seek( @cId, @cIdBK, @cUslovSrch, @cNazSrch, fId_j, cOrderTag )
 
    IF dx <> NIL .AND. dx < 0
       // u slucaju negativne vrijednosti vraca se vrijednost polja
@@ -111,7 +111,7 @@ FUNCTION p_sifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aP
          GO TOP
       ENDIF
 
-      browse_table_sql(, nVisina, nSirina,  {|| ed_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, ToStrU( cNaslov ) , "", invert, _komande, 1, bPodvuci, , , aPoredak )
+      browse_table_sql(, nVisina, nSirina,  {|| ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, ToStrU( cNaslov ) , "", invert, _komande, 1, bPodvuci, , , aPoredak )
 
       IF Type( "id" ) $ "U#UE"
          cID := ( nDbf )->( FieldGet( 1 ) )
@@ -142,9 +142,7 @@ FUNCTION p_sifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aP
    sif_ispisi_naziv( nDbf, dx, dy )
 
    SELECT ( nDbf )
-
-   // vrati order sifranika !!
-   ordSetFocus( nOrdId )
+   ordSetFocus( cOrderTag )
 
    SET FILTER TO
    PopSifV()
@@ -154,45 +152,40 @@ FUNCTION p_sifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aP
 
 // ------------------------------------------------
 // ------------------------------------------------
-STATIC FUNCTION sif_set_order( nNTX, nOrdId, fID_j )
+STATIC FUNCTION sif_set_order( xIndex, cOrderTag, fID_j )
 
    LOCAL nPos
 
-   // POSTAVLJANJE ORDERA...
    DO CASE
-   CASE ValType( nNTX ) == "N"
+   CASE ValType( xIndex ) == "N"
 
-      IF nNTX == 1
-         IF nOrdid <> 0
-            SET ORDER TO TAG "ID"
-         ELSE
-            SET ORDER TO TAG "1"
-         ENDIF
+      IF xIndex == 1
+         ordSetFocus( cOrderTag )
       ELSE
 
-         IF nOrdid == 0
+         IF EMPTY( cOrderTag )
             SET ORDER TO TAG "2"
          ENDIF
       ENDIF
 
-   CASE ValType( nNTX ) == "C" .AND. Right( Upper( Trim( nNTX ) ), 2 ) == "_J"
+   CASE ValType( xIndex ) == "C" .AND. Right( Upper( Trim( xIndex ) ), 2 ) == "_J"
 
       // postavi order na ID_J
-      SET ORDER TO tag ( nNTX )
+      SET ORDER TO tag ( xIndex )
       fID_J := .T.
 
    OTHERWISE
 
       // IDX varijanta:  TAG_IMEIDXA
-      nPos := At( "_", nNTX )
+      nPos := At( "_", xIndex )
       IF nPos <> 0
-         IF Empty( Left( nNtx, nPos - 1 ) )
-            dbSetIndex( SubStr( nNTX, nPos + 1 ) )
+         IF Empty( Left( xIndex, nPos - 1 ) )
+            dbSetIndex( SubStr( xIndex, nPos + 1 ) )
          ELSE
-            SET ORDER TO tag ( Left( nNtx, nPos - 1 ) ) IN ( SubStr( nNTX, nPos + 1 ) )
+            SET ORDER TO tag ( Left( xIndex, nPos - 1 ) ) IN ( SubStr( xIndex, nPos + 1 ) )
          ENDIF
       ELSE
-         SET ORDER TO tag ( nNtx )
+         SET ORDER TO tag ( xIndex )
       ENDIF
 
    END CASE
@@ -201,13 +194,12 @@ STATIC FUNCTION sif_set_order( nNTX, nOrdId, fID_j )
 
 // ----------------------------------------------------------------------
 // ----------------------------------------------------------------------
-STATIC FUNCTION sif_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j, nOrdId )
+STATIC FUNCTION sif_sql_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j, cOrderTag )
 
    LOCAL _bk := ""
-   LOCAL _order := IndexOrd()
+   LOCAL _order := ordName()
    LOCAL _tezina := 0
 
-   altd()
    IF cId == NIL
       RETURN
    ENDIF
@@ -223,7 +215,7 @@ STATIC FUNCTION sif_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j, nOrdId )
    ENDIF
 
    IF Right( Trim( cId ), 1 ) $ "./$"
-      sif_point_or_slash( @cId, @fPoNaz, @nOrdId, @cUslovSrch, @cNazSrch )
+      sif_point_or_slash( @cId, @fPoNaz, @cOrderTag, @cUslovSrch, @cNazSrch )
       RETURN
    ENDIF
 
@@ -245,7 +237,6 @@ STATIC FUNCTION sif_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j, nOrdId )
       ENDIF
 
       ordSetFocus( _order )
-
       RETURN
 
    ENDIF
@@ -280,6 +271,7 @@ STATIC FUNCTION sif_katbr_zvjezdica( cId, cIdBK, fId_j )
 
          SELECT roba
          SET ORDER TO TAG "ID"
+      
          // nasao sam sifru !!
          SEEK cId
          cId := Id
@@ -296,16 +288,16 @@ STATIC FUNCTION sif_katbr_zvjezdica( cId, cIdBK, fId_j )
 
 
 
-STATIC FUNCTION sif_point_or_slash( cId, fPoNaz, nOrdId, cUslovSrch, cNazSrch )
+STATIC FUNCTION sif_point_or_slash( cId, fPoNaz, cOrderTag, cUslovSrch, cNazSrch )
 
    LOCAL _filter
 
    cId := PadR( cId, 10 )
 
-   IF nOrdid <> 0
-      SET ORDER TO TAG "NAZ"
+   IF !EMPTY( cOrderTag )
+      ordSetFocus( "NAZ" )
    ELSE
-      SET ORDER TO TAG "2"
+      ordSetFocus( "2" )
    ENDIF
 
    fPoNaz := .T.
@@ -360,7 +352,7 @@ STATIC FUNCTION sif_point_or_slash( cId, fPoNaz, nOrdId, cUslovSrch, cNazSrch )
 
 // ------------------------------------------------------------
 // -----------------------------------------------------------
-STATIC FUNCTION ed_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
+STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
    LOCAL i
    LOCAL j
@@ -368,7 +360,7 @@ STATIC FUNCTION ed_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    LOCAL imax
    LOCAL nGet
    LOCAL nRet
-   LOCAL nOrder
+   LOCAL cOrderTag
    LOCAL nLen
    LOCAL nRed
    LOCAL nKolona
@@ -376,8 +368,6 @@ STATIC FUNCTION ed_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    LOCAL nTrebaRedova
    LOCAL cUslovSrch
    LOCAL lNovi
-   LOCAL oDb_lock := F18_DB_LOCK():New
-   LOCAL _db_locked := oDb_lock:is_locked()
 
    PRIVATE cPom
    PRIVATE aQQ
@@ -406,7 +396,7 @@ STATIC FUNCTION ed_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
       PRIVATE &cVar := &cImeP
    NEXT
 
-   nOrder := IndexOrd()
+   cOrderTag := ordName()
    nRet := -1
    lZabIsp := .F.
 
@@ -436,9 +426,8 @@ STATIC FUNCTION ed_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    // provjeri pristup opcijama koje mjenjaju podatke
    IF ( Ch == K_CTRL_N .OR. Ch == K_CTRL_A .OR. Ch == K_F2 .OR. ;
          Ch == K_CTRL_T .OR. Ch == K_F4 .OR. Ch == K_CTRL_F9 .OR. Ch == K_F10 ) .AND. ;
-         ( !ImaPravoPristupa( goModul:oDatabase:cName, "SIF", "EDSIF" ) .OR. _db_locked )
+         ( !ImaPravoPristupa( goModul:oDatabase:cName, "SIF", "EDSIF" ) )
 
-      oDb_lock:warrning()
       RETURN DE_CONT
 
    ENDIF
@@ -489,7 +478,7 @@ STATIC FUNCTION ed_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
       Tb:RefreshCurrent()
 
-      IF edit_sif_item( Ch, nOrder, aZabIsp ) == 1
+      IF edit_sql_sif_item( Ch, cOrderTag, aZabIsp ) == 1
          RETURN DE_REFRESH
       ENDIF
 
@@ -538,7 +527,7 @@ STATIC FUNCTION ed_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
       RETURN SifClipBoard()
 
    CASE Ch == K_F10
-      Popup( nOrder )
+      Popup( cOrderTag )
       RETURN DE_CONT
 
    OTHERWISE
@@ -554,7 +543,7 @@ STATIC FUNCTION ed_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
 // ------------------------------------------
 // ------------------------------------------
-STATIC FUNCTION edit_sif_item( Ch, nOrder, aZabIsp )
+STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp )
 
    LOCAL i
    LOCAL j
@@ -582,6 +571,7 @@ STATIC FUNCTION edit_sif_item( Ch, nOrder, aZabIsp )
    PRIVATE aUsl
    PRIVATE aStruct
 
+   altd()
    nPrevRecNo := RecNo()
 
    lNovi := .F.
@@ -597,11 +587,7 @@ STATIC FUNCTION edit_sif_item( Ch, nOrder, aZabIsp )
 
    IF Ch == K_CTRL_N .OR. Ch == K_F2
 
-      IF nOrdid <> 0
-         SET ORDER TO TAG "ID"
-      ELSE
-         SET ORDER TO TAG "1"
-      ENDIF
+      ordSetFocus( cOrderTag )
       GO ( nPrevRecNo )
 
    ENDIF
@@ -637,9 +623,7 @@ STATIC FUNCTION edit_sif_item( Ch, nOrder, aZabIsp )
 
       i := 1
       // tekuci red u matrici imekol
-      FOR _jg := 1 TO 3  // glavna petlja
-
-         // moguca su  tri get ekrana
+      FOR _jg := 1 TO 3  
 
          IF _jg == 1
             Box( NIL, Min( MAXROWS() -7, nTrebaRedova ) + 1, MAXCOLS() -20, .F. )
@@ -739,15 +723,11 @@ STATIC FUNCTION edit_sif_item( Ch, nOrder, aZabIsp )
          ENDIF
 
          sql_table_update( nil, "BEGIN" )
-
          // sifarnik
          update_rec_server_and_dbf( _alias, _vars, 1, "CONT" )
-
          // sifk/sifv
          update_sifk_na_osnovu_ime_kol_from_global_var( ImeKol, "w", Ch == K_CTRL_N, "CONT" )
-
          f18_free_tables( { _alias, "sifv", "sifk" } )
-
          sql_table_update( nil, "END" )
 
          set_global_vars_from_dbf( "w" )
@@ -769,7 +749,7 @@ STATIC FUNCTION edit_sif_item( Ch, nOrder, aZabIsp )
 
 
    IF Ch == K_CTRL_N .OR. Ch == K_F2
-      ordSetFocus( nOrder )
+        ordSetFocus( cOrderTag )
    ENDIF
 
    IF LastKey() == K_ESC
@@ -842,6 +822,7 @@ STATIC FUNCTION edit_sif_item( Ch, nOrder, aZabIsp )
       GO ( nPrevRecNo )
    ENDIF
 
+   ordSetFocus( cOrderTag)
    RETURN 1
 
 // ----------------------------------------------------
@@ -1159,25 +1140,25 @@ STATIC FUNCTION set_roba_defaults()
 
 // -------------------------------------------------------
 // -------------------------------------------------------
-STATIC FUNCTION Popup( nOrder )
+STATIC FUNCTION Popup( cOrderTag )
 
-   PRIVATE Opc := {}
-   PRIVATE opcexe := {}
-   PRIVATE Izbor
+   LOCAL opc := {}
+   LOCAL opcexe := {}
+   LOCAL Izbor
 
    AAdd( Opc, "1. novi                  " )
-   AAdd( opcexe, {|| edit_sif_item( K_CTRL_N, nOrder ) } )
+   AAdd( opcexe, {|| edit_sql_sif_item( K_CTRL_N, cOrderTag ) } )
    AAdd( Opc, "2. edit  " )
-   AAdd( opcexe, {|| edit_sif_item( K_F2, nOrder ) } )
+   AAdd( opcexe, {|| edit_sql_sif_item( K_F2, cOrderTag ) } )
    AAdd( Opc, "3. dupliciraj  " )
-   AAdd( opcexe, {|| edit_sif_item( K_F4, nOrder ) } )
+   AAdd( opcexe, {|| edit_sql_sif_item( K_F4, cOrderTag ) } )
    AAdd( Opc, "4. <a+R> za sifk polja  " )
    AAdd( opcexe, {|| repl_sifk_item() } )
    AAdd( Opc, "5. copy polje -> sifk polje  " )
    AAdd( opcexe, {|| copy_to_sifk() } )
 
    Izbor := 1
-   Menu_Sc( "bsif" )
+   f18_menu( "bsif", .F., izbor, opc, opcexe )
 
    RETURN 0
 

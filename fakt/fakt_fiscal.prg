@@ -78,15 +78,12 @@ __DRV_CURRENT := _dev_drv
 // priprema podatak za racun....
 select fakt_doks
 set filter to
-set relation to
 
 select fakt
 set filter to
-set relation to
 
 select partn
 set filter to
-set relation to
 
 select fakt_doks
 

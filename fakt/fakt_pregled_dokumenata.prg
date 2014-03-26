@@ -43,11 +43,12 @@ FUNCTION fakt_pregled_liste_dokumenata()
    O_PARTN
    O_FAKT_DOKS
 
+/*
    // setuj relacije
    SET RELATION TO fakt_doks->idfirma + fakt_doks->idtipdok + fakt_doks->brdok INTO fakt, ;
       TO fakt_doks->idvrstep INTO vrstep, ;
       TO fakt_doks->idpartner INTO partn
-
+*/
    qqVrsteP := Space( 20 )
    dDatVal0 := dDatVal1 := CToD( "" )
 

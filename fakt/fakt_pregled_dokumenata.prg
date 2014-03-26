@@ -241,11 +241,8 @@ FUNCTION pr_nar( lOpcine )
    USE
    O_FAKT_DOKS
 
-   IF lOpcine
-      O_PARTN
-      SELECT fakt_doks
-      SET RELATION TO idpartner into PARTN
-   ENDIF
+   O_PARTN
+   SELECT FAKT_DOKS
    IF cFilter == ".t."
       SET FILTER TO
    ELSE
@@ -273,11 +270,7 @@ FUNCTION pr_rn()
    USE
 
    O_FAKT_DOKS
-   IF lOpcine
-      O_PARTN
-      SELECT fakt_doks
-      SET RELATION TO idpartner into PARTN
-   ENDIF
+   O_PARTN
    IF cFilter == ".t."
       SET FILTER TO
    ELSE
@@ -311,11 +304,8 @@ FUNCTION pr_pf( lOpcine )
    USE
 
    O_FAKT_DOKS
-   IF lOpcine
-      O_PARTN
-      SELECT fakt_doks
-      SET RELATION TO idpartner into PARTN
-   ENDIF
+   O_PARTN
+   SELECT fakt_doks
    IF cFilter == ".t."
       SET FILTER TO
    ELSE
@@ -344,11 +334,8 @@ FUNCTION pr_odt( lOpcine )
    SELECT ( F_FAKT_DOKS )
    USE
    O_FAKT_DOKS
-   IF lOpcine
-      O_PARTN
-      SELECT fakt_doks
-      SET RELATION TO idpartner into PARTN
-   ENDIF
+   O_PARTN
+   SELECT fakt_doks
    IF cFilter == ".t."
       SET FILTER TO
    ELSE
@@ -502,11 +489,8 @@ FUNCTION generisi_fakturu( is_opcine )
 
    SELECT fakt_doks
 
-   IF is_opcine
-      O_PARTN
-      SELECT fakt_doks
-      SET RELATION TO idpartner into PARTN
-   ENDIF
+   O_PARTN
+   SELECT fakt_doks
 
    IF cFilter == ".t."
       SET FILTER TO
@@ -924,12 +908,6 @@ FUNCTION refresh_fakt_tbl_dbfs( tbl_filter )
    O_FAKT
    O_PARTN
    O_FAKT_DOKS
-
-   // setuj relacije
-   SET RELATION TO fakt_doks->idfirma + fakt_doks->idtipdok + fakt_doks->brdok INTO fakt, ;
-      TO fakt_doks->idvrstep INTO vrstep, ;
-      TO fakt_doks->idpartner INTO partn
-
 
    SELECT fakt_doks
    SET ORDER TO TAG "1"

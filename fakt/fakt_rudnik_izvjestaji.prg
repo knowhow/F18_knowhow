@@ -976,11 +976,9 @@ RETURN
  */
  
 function VRobPoPar()
-*{
-IF IzFmkIni("FAKT","Opcine","N",SIFPATH)=="D"
-    O_OPS
-  ENDIF
-  O_SIFK; O_SIFV
+  O_OPS
+  O_SIFK
+  O_SIFV
   O_ROBA
   O_TARIFA
   O_RJ
@@ -1047,7 +1045,6 @@ IF IzFmkIni("FAKT","Opcine","N",SIFPATH)=="D"
   SELECT FAKT
 
   IF cVarSubTot=="1"
-    SET RELATION TO idpartner INTO PARTN
     cSort1 := "PARTN->idops+idpartner"
   ELSE
     cSort1 := "idpartner"

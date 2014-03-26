@@ -43,12 +43,6 @@ FUNCTION fakt_pregled_liste_dokumenata()
    O_PARTN
    O_FAKT_DOKS
 
-/*
-   // setuj relacije
-   SET RELATION TO fakt_doks->idfirma + fakt_doks->idtipdok + fakt_doks->brdok INTO fakt, ;
-      TO fakt_doks->idvrstep INTO vrstep, ;
-      TO fakt_doks->idpartner INTO partn
-*/
    qqVrsteP := Space( 20 )
    dDatVal0 := dDatVal1 := CToD( "" )
 
@@ -150,7 +144,6 @@ FUNCTION fakt_pregled_liste_dokumenata()
 
    BoxC()
 
-   altd()
    SELECT fakt_doks
    SET ORDER TO TAG "1"
    GO TOP
@@ -435,7 +428,6 @@ FUNCTION generisi_fakturu( is_opcine )
       ++ nCnt
 
       _rec := dbf_get_rec()
-
       aMemo := ParsMemo( _rec[ "txt" ] )
 
       _rec[ "idtipdok" ] := "10"

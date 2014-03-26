@@ -135,7 +135,7 @@ METHOD mMenuStandard
    AAdd( opcexe, nil )
 
    // najcesece koristenje opcije
-   AAdd( opc,   "A. stampa azuriranog dokumenta" )
+   AAdd( opc,   "A. štampa ažuriranog dokumenta" )
    AAdd( opcexe, {|| kalk_centr_stampa_dokumenta( .T. ) } )
 
    AAdd( opc,   "P. povrat dokumenta u pripremu" )
@@ -164,23 +164,6 @@ METHOD mMenuStandard
 // -----------------------------------------------
 // -----------------------------------------------
 METHOD srv()
-
-   ? "Pokrecem KALK aplikacijski server"
-   IF ( MPar37( "/KONVERT", goModul ) )
-      IF Left( self:cP5, 3 ) == "/S="
-         cKonvSez := SubStr( self:cP5, 4 )
-         ? "Radim sezonu: " + cKonvSez
-         IF cKonvSez <> "RADP"
-            // prebaci se u sezonu cKonvSez
-            goModul:oDataBase:cSezonDir := SLASH + cKonvSez
-            goModul:oDataBase:setDirKum( Trim( goModul:oDataBase:cDirKum ) + SLASH + cKonvSez )
-            goModul:oDataBase:setDirSif( Trim( goModul:oDataBase:cDirSif ) + SLASH + cKonvSez )
-            goModul:oDataBase:setDirPriv( Trim( goModul:oDataBase:cDirPriv ) + SLASH + cKonvSez )
-         ENDIF
-      ENDIF
-      goModul:oDataBase:KonvZN()
-      goModul:quit( .F. )
-   ENDIF
 
    RETURN
 

@@ -571,7 +571,6 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp )
    PRIVATE aUsl
    PRIVATE aStruct
 
-   altd()
    nPrevRecNo := RecNo()
 
    lNovi := .F.

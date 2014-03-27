@@ -56,17 +56,9 @@ FOR i:=1 TO LEN(ImeKol)
 	AADD(Kol,i)
 NEXT
 
-PushWa()
-select F_TARIFA
-if !USED()
-	O_TARIFA
-endif
+select ( nTArea )
 
 cRet := p_sifra(F_TARIFA, 1, MAXROWS() - 15, MAXCOLS() - 25, "Tarifne grupe", @cid, dx, dy)
-
-PopWa()
-
-select (nTArea)
 
 return cRet
 

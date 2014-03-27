@@ -166,14 +166,14 @@
 #xcommand O_FAKT_DOKS2     => select(F_FAKT_DOKS2) ; my_use ( "fakt_doks2" )  ; set order to tag "1"
 
 // fakt pripr
-#xcommand O_FAKT_PRIPR     => select (F_FAKT_PRIPR)     ; my_usex ("fakt_pripr")   ; set order to tag "1"
-#xcommand O_FAKT_PRIPRRP   => select (F_FAKT_PRIPR)     ; my_usex ("fakt_pripr")   ; set order to tag  "1"
-#xcommand O_FAKT_S_PRIPR   => select (F_FAKT_PRIPR)     ; my_usex ("fakt_pripr")   ; set order to "1"
+#xcommand O_FAKT_PRIPR     => select (F_FAKT_PRIPR)     ; my_use ("fakt_pripr")   ; set order to tag "1"
+#xcommand O_FAKT_PRIPRRP   => select (F_FAKT_PRIPR)     ; my_use ("fakt_pripr")   ; set order to tag  "1"
+#xcommand O_FAKT_S_PRIPR   => select (F_FAKT_PRIPR)     ; my_use ("fakt_pripr")   ; set order to "1"
 
 // fakt tmp
-#xcommand O__FAKT          => select(F__FAKT)      ; my_usex ("_fakt") 
-#xcommand O_FAKT_PRIPR9    => select (F_PRIPR9)    ; my_usex ("fakt_pripr9") ; set order to tag  "1"
-#xcommand O_FAKT_ATRIB     => select (F_FAKT_ATRIB) ; my_usex ("fakt_atrib") ; set order to tag  "1"
+#xcommand O__FAKT          => select(F__FAKT)      ; my_use ("_fakt") 
+#xcommand O_FAKT_PRIPR9    => select (F_PRIPR9)    ; my_use  ("fakt_pripr9") ; set order to tag  "1"
+#xcommand O_FAKT_ATRIB     => select (F_FAKT_ATRIB) ; my_use ("fakt_atrib") ; set order to tag  "1"
 
 #xcommand O__SDIM          => select(F__SDIM)      ; my_use ("_sdim"); set order to tag "1"
 

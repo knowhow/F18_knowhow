@@ -125,7 +125,7 @@ return .t.
 static function dbf_open_temp(a_dbf_rec, cnt, del)
 
 SELECT (a_dbf_rec["wa"])
-my_use_temp(a_dbf_rec["alias"], my_home() + a_dbf_rec["table"], .f., .t.)
+my_use_temp(a_dbf_rec["alias"], my_home() + a_dbf_rec["table"], .f., .F.)
 
 set deleted off
 

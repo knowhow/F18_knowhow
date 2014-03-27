@@ -62,7 +62,7 @@ FUNCTION my_use_temp( alias, table, new_area, excl )
    LOCAL _err
 
    IF excl == NIL
-      excl := .T.
+      excl := .F.
    ENDIF
 
    IF new_area == NIL

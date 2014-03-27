@@ -1,3 +1,9 @@
+1.7.12  2014-03-27, vsasa
+
+  - FAKT, štampa dokumenta iz pripreme puca kod otvaranja tabele - bugfix 
+  - ostalo, mnoštvo problema sa otvarnjem indeksa nakon otvaranja tabale - bugfix
+  - DBF verzija 0.9.4
+
 1.7.11  2014-03-25, hernad
 
   - PERFORMANCE: SQLRDD nasa slova za 16-tak tabela #32846, DEBUG #32854

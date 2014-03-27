@@ -645,6 +645,11 @@ return _fakt_doks
 // -------------------------------------
 function o_fakt_edit( _open_pfakt )
 
+select ( F_FAKT_PRIPR )
+if used()
+    USE
+endif
+
 close all
 
 if _open_pfakt == NIL
@@ -695,28 +700,6 @@ if !used()
     O_ROBA
 endif
 
-if _open_pfakt
-
-    // otvori fakt_fakt pod fakt_pripr aliasom
-    select F_FAKT
-    if !used()
-        O_PFAKT
-    endif
-
-else
-
-    select F_FAKT_PRIPR
-    if !used()
-        O_FAKT_PRIPR
-    endif
-
-    select F_FAKT
-    if !used()
-        O_FAKT
-    endif
-
-endif
-
 select F_FTXT
 if !used()
     O_FTXT
@@ -757,11 +740,34 @@ if !used()
     O_SIFV
 endif
 
+if _open_pfakt == .t.
+
+    // otvori fakt_fakt pod fakt_pripr aliasom
+    select F_FAKT
+    if !used()
+        O_PFAKT
+    endif
+
+else
+
+    select F_FAKT_PRIPR
+    if !used()
+        O_FAKT_PRIPR
+    endif
+
+    select F_FAKT
+    if !used()
+        O_FAKT
+    endif
+
+endif
+
 select fakt_pripr
 set order to tag "1"
 go top
 
 return nil
+
 
 
 

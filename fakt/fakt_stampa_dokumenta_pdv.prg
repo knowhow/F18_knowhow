@@ -113,11 +113,12 @@ if lJFill
 	return
 endif
 
+close all
+
 if cIdTipDok $ "13#23"
 	// stampa 13-ke
 	omp_print()
 else
-
   if cIdTipDok == "11" .and. gMPPrint $ "DXT"
 	
 	if gMPPrint == "D" .or. ( gMpPrint == "X" .and. Pitanje(,"Stampati na traku (D/N)?","D") == "D" ) .or. gMPPrint == "T"

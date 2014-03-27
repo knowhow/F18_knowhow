@@ -1,80 +1,82 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 #include "fmk.ch"
 
-function delete_with_rlock()
+FUNCTION delete_with_rlock()
 
-if my_rlock()
-   DELETE
-   my_unlock()
-   return .t.
-else
-   return .f.
-endif
+   IF my_rlock()
+      DELETE
+      my_unlock()
+      RETURN .T.
+   ELSE
+      RETURN .F.
+   ENDIF
 
-// --------------------------------------------
-// --------------------------------------------
-function ferase_dbf(tbl_name, _silent)
-local _tmp, _odg
+   // --------------------------------------------
+   // --------------------------------------------
 
-if _silent == NIL
-  _silent := .f.
-endif
+FUNCTION ferase_dbf( tbl_name, _silent )
 
-if !_silent
+   LOCAL _tmp, _odg
 
-    _odg := Pitanje(, "Izbrisati dbf tabelu " + tbl_name + " (L-quit) ?!", "N") 
+   IF _silent == NIL
+      _silent := .F.
+   ENDIF
 
-    if _odg == "L"
-       log_write( "ferase_dbf quit: " + tbl_name, 3 )
-       QUIT_1
-    endif
+   IF !_silent
 
-    if _odg == "N"
-       return .f.
-    endif
+      _odg := Pitanje(, "Izbrisati dbf tabelu " + tbl_name + " (L-quit) ?!", "N" )
 
-endif
+      IF _odg == "L"
+         log_write( "ferase_dbf quit: " + tbl_name, 3 )
+         QUIT_1
+      ENDIF
 
-log_write( "ferase_dbf : " + tbl_name, 3 ) 
-tbl_name := f18_ime_dbf(tbl_name)
+      IF _odg == "N"
+         RETURN .F.
+      ENDIF
+
+   ENDIF
+
+   log_write( "ferase_dbf : " + tbl_name, 3 )
+   tbl_name := f18_ime_dbf( tbl_name )
 
 
-if FILE(tbl_name)
-   if FERASE(tbl_name) != 0
-      log_write("ferase_dbf : " + tbl_name + "neuspjesno !", 3 ) 
-      return .f.
-   endif
-endif
+   IF File( tbl_name )
+      IF FErase( tbl_name ) != 0
+         log_write( "ferase_dbf : " + tbl_name + "neuspjesno !", 3 )
+         RETURN .F.
+      ENDIF
+   ENDIF
 
-_tmp := STRTRAN(tbl_name, DBFEXT, INDEXEXT)
-if FILE(_tmp)
-   log_write("ferase_dbf, brisem: " + _tmp, 3 )
-   if FERASE(_tmp) != 0
-        log_write("ferase_dbf : " + _tmp + "neuspjesno !", 3 ) 
-        return .f.
-   endif
-endif
+   _tmp := StrTran( tbl_name, DBFEXT, INDEXEXT )
+   IF File( _tmp )
+      log_write( "ferase_dbf, brisem: " + _tmp, 3 )
+      IF FErase( _tmp ) != 0
+         log_write( "ferase_dbf : " + _tmp + "neuspjesno !", 3 )
+         RETURN .F.
+      ENDIF
+   ENDIF
 
-_tmp := STRTRAN(tbl_name, DBFEXT, MEMOEXT)
-if FILE(_tmp)
-   log_write("ferase, brisem: " + _tmp, 3 )
-   if FERASE(_tmp) != 0
-        log_write("ferase_dbf : " + _tmp + "neuspjesno !", 3 ) 
-        return .f.
-   endif
-endif
+   _tmp := StrTran( tbl_name, DBFEXT, MEMOEXT )
+   IF File( _tmp )
+      log_write( "ferase, brisem: " + _tmp, 3 )
+      IF FErase( _tmp ) != 0
+         log_write( "ferase_dbf : " + _tmp + "neuspjesno !", 3 )
+         RETURN .F.
+      ENDIF
+   ENDIF
 
-return .t.
+   RETURN .T.
 
 
 /*!
@@ -84,155 +86,155 @@ return .t.
               Program (radi prometnih datoteka) ove sifre ne smije dirati)
               Zato ce se nove sifre davati po kljucu Chr(246)+Chr(246) + sekvencijalni dio
 */
-function NoviID_A()
+FUNCTION NoviID_A()
 
-local cPom , xRet
+   LOCAL cPom, xRet
 
-PushWA()
+   PushWA()
 
-nCount:=1
-do while .t.
+   nCount := 1
+   DO WHILE .T.
 
-set filter to 
-// pocisti filter
-set order to tag "ID"
-go bottom
-if id>"99"
-   seek chr(246)+chr(246)+chr(246) 
-   // chr(246) pokusaj
-   skip -1
-   if id < chr(246) + chr(246) + "9"
-      cPom:=   str( val(substr(id,4))+nCount , len(id)-2 )
-      xRet:= chr(246)+chr(246) + padl(  cPom , len(id)-2 ,"0")
-   endif
-else
-  cPom:= str( val(id) + nCount , len(id) )
-  xRet:= cPom
-endif
+      SET FILTER TO
+      // pocisti filter
+      SET ORDER TO TAG "ID"
+      GO BOTTOM
+      IF id > "99"
+         SEEK Chr( 246 ) + Chr( 246 ) + Chr( 246 )
+         // chr(246) pokusaj
+         SKIP -1
+         IF id < Chr( 246 ) + Chr( 246 ) + "9"
+            cPom :=   Str( Val( SubStr( id, 4 ) ) + nCount, Len( id ) -2 )
+            xRet := Chr( 246 ) + Chr( 246 ) + PadL(  cPom, Len( id ) -2,"0" )
+         ENDIF
+      ELSE
+         cPom := Str( Val( id ) + nCount, Len( id ) )
+         xRet := cPom
+      ENDIF
 
-++nCount
-SEEK xRet
-if !found()
-  exit
-endif
+      ++nCount
+      SEEK xRet
+      IF !Found()
+         EXIT
+      ENDIF
 
-if nCount>100
-  MsgBeep("Ne mogu da dodijelim sifru automatski ????")
-  xRet:=""
-  exit
-endif
+      IF nCount > 100
+         MsgBeep( "Ne mogu da dodijelim sifru automatski ????" )
+         xRet := ""
+         EXIT
+      ENDIF
 
-enddo
+   ENDDO
 
-PopWa()
+   PopWa()
 
-return xRet
+   RETURN xRet
 
 // -----------------------------
 // -----------------------------
-function full_table_synchro()
-local _sifra := SPACE(6), _full_table_name, _alias := PADR("PAROBR", 30)
+FUNCTION full_table_synchro()
 
+   LOCAL _sifra := Space( 6 ), _full_table_name, _alias := PadR( "PAROBR", 30 )
 
-Box( , 3, 60)
-  @ m_x + 1, m_y + 2 SAY " Admin sifra :" GET  _sifra PICT "@!"
-  @ m_x + 2, m_y + 2 SAY "Table alias  :"  GET _alias PICTURE "@S20"
-  READ
-BoxC()
+   Box( , 3, 60 )
+   @ m_x + 1, m_y + 2 SAY " Admin sifra :" GET  _sifra PICT "@!"
+   @ m_x + 2, m_y + 2 SAY "Table alias  :"  GET _alias PICTURE "@S20"
+   READ
+   BoxC()
 
-if (LASTKEY() == K_ESC) .or. (UPPER(ALLTRIM(_sifra)) != "F18AD")
-  MsgBeep("nista od ovog posla !")
-  return .f.
-endif
+   IF ( LastKey() == K_ESC ) .OR. ( Upper( AllTrim( _sifra ) ) != "F18AD" )
+      MsgBeep( "nista od ovog posla !" )
+      RETURN .F.
+   ENDIF
 
-_alias := ALLTRIM(UPPER(_alias))
+   _alias := AllTrim( Upper( _alias ) )
 
-close all
-_full_table_name := f18_ime_dbf(_alias)
+   CLOSE ALL
+   _full_table_name := f18_ime_dbf( _alias )
 
-if FILE(_full_table_name)
-   ferase_dbf(_alias)
-else
-   MsgBeep("ove dbf tabele nema: " + _full_table_name)
-endif
+   IF File( _full_table_name )
+      ferase_dbf( _alias )
+   ELSE
+      MsgBeep( "ove dbf tabele nema: " + _full_table_name )
+   ENDIF
 
-post_login()
+   post_login()
 
-return .t.
+   RETURN .T.
 
 
 // ------------------------------------------------------
-// open exclusive, open_index - otvoriti index 
+// open exclusive, open_index - otvoriti index
 // ------------------------------------------------------
-function reopen_shared(dbf_table, open_index)
-return reopen_dbf(.f., dbf_table, open_index)
+FUNCTION reopen_shared( dbf_table, open_index )
+   RETURN reopen_dbf( .F., dbf_table, open_index )
 
-function reopen_exclusive(dbf_table, open_index)
-return reopen_dbf(.t., dbf_table, open_index)
+FUNCTION reopen_exclusive( dbf_table, open_index )
+   RETURN reopen_dbf( .T., dbf_table, open_index )
 
 // ----------------------------------------------------
 // ----------------------------------------------------
-function reopen_dbf(excl, dbf_table, open_index)
-local _a_dbf_rec
-local _dbf
+FUNCTION reopen_dbf( excl, dbf_table, open_index )
 
-if open_index == NIL
-  open_index := .t.
-endif
+   LOCAL _a_dbf_rec
+   LOCAL _dbf
 
-_a_dbf_rec  := get_a_dbf_rec(dbf_table) 
+   IF open_index == NIL
+      open_index := .T.
+   ENDIF
 
-SELECT (_a_dbf_rec["wa"])
-USE
+   _a_dbf_rec  := get_a_dbf_rec( dbf_table )
 
-_dbf := my_home() + _a_dbf_rec["table"]
+   SELECT ( _a_dbf_rec[ "wa" ] )
+   USE
 
-// finalno otvaranje tabele
-SELECT (_a_dbf_rec["wa"])
-USE
-dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], IIF(excl, .f., .t.) , .f.)
+   _dbf := my_home() + _a_dbf_rec[ "table" ]
 
-if open_index 
+   // finalno otvaranje tabele
+   SELECT ( _a_dbf_rec[ "wa" ] )
+   USE
+   dbUseArea( .F., DBFENGINE, _dbf, _a_dbf_rec[ "alias" ], iif( excl, .F., .T. ), .F. )
 
-   if FILE(ImeDbfCdx(_dbf))
-       dbSetIndex(ImeDbfCDX(_dbf))
-       return .t.
-   endif
-endif
+   IF open_index
 
-return .t.
+      IF File( ImeDbfCdx( _dbf ) )
+         dbSetIndex( ImeDbfCDX( _dbf ) )
+         RETURN .T.
+      ENDIF
+   ENDIF
+
+   RETURN .T.
 
 // ------------------------------------------------------
-// zap, then open shared, open_index - otvori index 
+// zap, then open shared, open_index - otvori index
 // ------------------------------------------------------
-function reopen_exclusive_and_zap(dbf_table, open_index)
-local _a_dbf_rec
-local _dbf
-local _idx
+FUNCTION reopen_exclusive_and_zap( dbf_table, open_index )
 
+   LOCAL _a_dbf_rec
+   LOCAL _dbf
+   LOCAL _idx
 
-if open_index == NIL
-  open_index := .t.
-endif
+   IF open_index == NIL
+      open_index := .T.
+   ENDIF
 
-_a_dbf_rec  := get_a_dbf_rec(dbf_table) 
+   _a_dbf_rec  := get_a_dbf_rec( dbf_table )
 
-SELECT (_a_dbf_rec["wa"])
-USE
+   SELECT ( _a_dbf_rec[ "wa" ] )
+   USE
 
-_dbf := my_home() + _a_dbf_rec["table"]
-_idx := ImeDbfCdx(_dbf)
+   _dbf := my_home() + _a_dbf_rec[ "table" ]
+   _idx := ImeDbfCdx( _dbf )
 
-// otvori ekskluzivno - 5 parametar .t. kada zelimo shared otvaranje
-SET AUTOPEN OFF
-dbUseArea( .f., DBFENGINE, _dbf, _a_dbf_rec["alias"], .f. , .f.)
-// kod prvog otvaranja uvijek otvori index da i njega nuliram 
+   // otvori ekskluzivno - 5 parametar .t. kada zelimo shared otvaranje
+   SET AUTOPEN OFF
+   dbUseArea( .F., DBFENGINE, _dbf, _a_dbf_rec[ "alias" ], .F., .F. )
+   // kod prvog otvaranja uvijek otvori index da i njega nuliram
 
-if FILE(_idx)
-  dbSetIndex(_idx)
-endif
+   IF File( _idx )
+      dbSetIndex( _idx )
+   ENDIF
 
-__dbZap()
+   __dbZap()
 
-return .t.
-
+   RETURN .T.

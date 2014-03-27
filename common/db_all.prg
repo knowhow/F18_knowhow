@@ -852,13 +852,16 @@ return
 // --------------------------------
 // --------------------------------
 function PushWA()
+local cFilter
 
 if USED()
-   //if rddName() == "SQLMIX"
-   //   StackPush(aWAStack, {select(), "", "", RECNO()})
-   //else
-      StackPush(aWAStack, {select(), IndexOrd(), DBFilter(), RECNO()})
-   //endif
+
+   if rddName() != "SQLMIX"
+       cFilter := DBFilter()
+   else
+       cFilter := ""
+   endif
+   StackPush(aWAStack, { select(), IndexOrd(), cFilter, RECNO()})
 else
    StackPush(aWAStack, {NIL, NIL, NIL, NIL})
 endif
@@ -875,35 +878,27 @@ local i
 
 aWa := StackPop(aWaStack)
 
-if aWa[1]<>nil
+if aWa[1] <> NIL
    
    // select
-   SELECT(aWa[1])
+   SELECT( aWa[ 1 ] )
    
+   ordSetFocus( aWa[ 2 ] )
 
-     if used()
-	   if !empty(aWa[2])
-	      ordsetfocus(aWa[2])
-	   else
-	      set order to
-	   endif
-     endif
-
-     // filter
-     if !empty(aWa[3])
+   // filter
+   if !empty(aWa[3])
         set filter to &(aWa[3])
-     else
+   else
         if !empty(dbfilter())
           set filter to
         endif
-      endif
+   endif
 
-   
    if USED()
-    go aWa[4]
+      go aWa[4]
    endif
    
-endif  // wa[1]<>NIL
+endif
 
 return nil
 

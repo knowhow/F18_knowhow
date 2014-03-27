@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -35,22 +35,7 @@ O_TARIFA
 AADD(ImeKol, { "ID", {|| id}, "id", {|| .t.}, {|| vpsifra(wId)}  })
 AADD(ImeKol, { PADC("Naziv", 35), {|| Padr( ToStrU( naz ) , 35 ) }, "naz" })
 
-if IsPDV()
-	AADD(ImeKol,  { "PDV ", {|| opp} ,  "opp"  } )
-endif
-
-if !IsPDV()
-	AADD(ImeKol, { "PPP ", {|| opp},     "opp"   } )
-  	AADD(ImeKol, { "PPU ", {|| ppp},     "ppp"   } )
-  	AADD(ImeKol,  { "PP  ", {|| zpp},  "zpp"      } )
-  	AADD(ImeKol,  { "P.na Marzu", {|| vpp},  "vpp"} )
-	IF TARIFA->(FIELDPOS("MPP"))<>0
-  		AADD (ImeKol,{ PADC("Por.RUC MP",10) , {|| MPP} , "MPP" })
- 	ENDIF
- 	IF TARIFA->(FIELDPOS("DLRUC"))<>0
-   		AADD (ImeKol,{ PADC("Min.RUC(%)",10) , {|| DLRUC} , "DLRUC" })
- 	ENDIF
-endif
+AADD(ImeKol,  { "PDV ", {|| opp} ,  "opp"  } )
 
 FOR i:=1 TO LEN(ImeKol)
 	AADD(Kol,i)

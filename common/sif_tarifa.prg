@@ -13,39 +13,29 @@
 #include "fmk.ch"
 
 
-/*! \fn P_Tarifa(cId,dx,dy)
- *  \brief Otvara sifrarnik tarifa
- *  \param cId
- *  \param dx
- *  \param dy
- */
+FUNCTION P_Tarifa( cid, dx, dy )
 
-function P_Tarifa(cid,dx,dy)
-local nTArea
-private ImeKol
-private Kol
+   LOCAL nTArea
+   PRIVATE ImeKol
+   PRIVATE Kol
 
-ImeKol := {}
-Kol := {}
+   ImeKol := {}
+   Kol := {}
 
-nTArea := SELECT()
+   O_TARIFA
 
-O_TARIFA
+   AAdd( ImeKol, { "ID", {|| id }, "id", {|| .T. }, {|| vpsifra( wId ) }  } )
+   AAdd( ImeKol, { PadC( "Naziv", 35 ), {|| PadR( ToStrU( naz ), 35 ) }, "naz" } )
 
-AADD(ImeKol, { "ID", {|| id}, "id", {|| .t.}, {|| vpsifra(wId)}  })
-AADD(ImeKol, { PADC("Naziv", 35), {|| Padr( ToStrU( naz ) , 35 ) }, "naz" })
+   AAdd( ImeKol,  { "PDV ", {|| opp },  "opp"  } )
 
-AADD(ImeKol,  { "PDV ", {|| opp} ,  "opp"  } )
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
 
-FOR i:=1 TO LEN(ImeKol)
-	AADD(Kol,i)
-NEXT
+   cRet := p_sifra( F_TARIFA, 1, MAXROWS() - 15, MAXCOLS() - 25, "Tarifne grupe", @cid, dx, dy )
 
-select ( nTArea )
-
-cRet := p_sifra(F_TARIFA, 1, MAXROWS() - 15, MAXCOLS() - 25, "Tarifne grupe", @cid, dx, dy)
-
-return cRet
+   RETURN cRet
 
 
 
@@ -56,118 +46,121 @@ return cRet
  *\param aPorezi - matrica za vrijednosti poreza
  *\param cIdTar - oznaka tarife, ovaj parametar je nil, ali se koristi za izvjestaje radi starih dokumenata (gdje je bilo promjene tarifa)
  */
- 
-function Tarifa(cIdKonto, cIdRoba, aPorezi, cIdTar)
-local cTarifa
-local lUsedRoba
-local lUsedTarifa
-local cIdTarifa
 
-private cPolje
+FUNCTION Tarifa( cIdKonto, cIdRoba, aPorezi, cIdTar )
 
-lUsedRoba:=.t.
-lUsedTarifa:=.t.
+   LOCAL cTarifa
+   LOCAL lUsedRoba
+   LOCAL lUsedTarifa
+   LOCAL cIdTarifa
 
-PushWa()
+   PRIVATE cPolje
 
-if empty(cIdKonto)
- cPolje:="IdTarifa"
+   lUsedRoba := .T.
+   lUsedTarifa := .T.
 
-else
-	SELECT (F_KONCIJ)
-	if (!used())
-	   O_KONCIJ
-	endif
-	seek cIdKonto
-	if !found()
-	  cPolje:="IdTarifa"
-	else
-	  if FIELDPOS("region")<>0
-	    if (koncij->region=="1" .or. koncij->region==" ")
-	       cPolje:="IdTarifa"
-	    elseif koncij->region=="2"
-	       cPolje:="IdTarifa2"
-	    elseif koncij->region=="3"
-	       cPolje:="IdTarifa3"
-	    else
-	       cPolje:="IdTarifa"
-	    endif
-	  else
-	    cPolje:="IdTarifa"
-	  endif
-	endif
-endif
+   PushWa()
 
-if cIdTar==nil
-	SELECT(F_ROBA)
-	if (!USED())
-		lUsedRoba:=.f.
-		O_ROBA
-	endif
-	seek cIdRoba
-	cTarifa:=&cPolje
+   IF Empty( cIdKonto )
+      cPolje := "IdTarifa"
 
-	SELECT(F_TARIFA)
-	if (!USED())
-		lUsedTarifa:=.f.
-		O_TARIFA
-	endif
-	seek cTarifa
-	cIdTarifa:=tarifa->id
-else
-	cTarifa:=cIdTar
-	SELECT(F_TARIFA)
-	if (!USED())
-		lUsedTarifa:=.f.
-		O_TARIFA
-	endif
-	seek cTarifa
-	cIdTarifa:=cIdTar
-endif
+   ELSE
+      SELECT ( F_KONCIJ )
+      IF ( !Used() )
+         O_KONCIJ
+      ENDIF
+      SEEK cIdKonto
+      IF !Found()
+         cPolje := "IdTarifa"
+      ELSE
+         IF FieldPos( "region" ) <> 0
+            IF ( koncij->region == "1" .OR. koncij->region == " " )
+               cPolje := "IdTarifa"
+            ELSEIF koncij->region == "2"
+               cPolje := "IdTarifa2"
+            ELSEIF koncij->region == "3"
+               cPolje := "IdTarifa3"
+            ELSE
+               cPolje := "IdTarifa"
+            ENDIF
+         ELSE
+            cPolje := "IdTarifa"
+         ENDIF
+      ENDIF
+   ENDIF
 
-SetAPorezi(@aPorezi)
+   IF cIdTar == nil
+      SELECT( F_ROBA )
+      IF ( !Used() )
+         lUsedRoba := .F.
+         O_ROBA
+      ENDIF
+      SEEK cIdRoba
+      cTarifa := &cPolje
 
-if (!lUsedRoba)
-	SELECT(F_ROBA)
-	USE
-endif
+      SELECT( F_TARIFA )
+      IF ( !Used() )
+         lUsedTarifa := .F.
+         O_TARIFA
+      ENDIF
+      SEEK cTarifa
+      cIdTarifa := tarifa->id
+   ELSE
+      cTarifa := cIdTar
+      SELECT( F_TARIFA )
+      IF ( !Used() )
+         lUsedTarifa := .F.
+         O_TARIFA
+      ENDIF
+      SEEK cTarifa
+      cIdTarifa := cIdTar
+   ENDIF
 
-if (!lUsedTarifa)
-	SELECT(F_TARIFA)
-	USE
-endif
+   SetAPorezi( @aPorezi )
 
-PopWa()
-return cIdTarifa
-*}
+   IF ( !lUsedRoba )
+      SELECT( F_ROBA )
+      USE
+   ENDIF
+
+   IF ( !lUsedTarifa )
+      SELECT( F_TARIFA )
+      USE
+   ENDIF
+
+   PopWa()
+
+   RETURN cIdTarifa
 
 
 /*! \fn SetAPorezi(aPorezi)
  *  \brief Filovanje matrice aPorezi sa porezima
  *  \param aPorezi Matrica poreza, aPorezi:={PPP,PP,PPU,PRUC,PRUCMP,DLRUC}
  */
-function SetAPorezi(aPorezi)
-*{
-if (aPorezi==nil)
-	aPorezi:={}
-endif
-if (LEN(aPorezi)==0)
-  	//inicijaliziraj poreze
-  	aPorezi:={0,0,0,0,0,0,0}
-endif
-aPorezi[POR_PPP]:=tarifa->opp
-aPorezi[POR_PP ]:=tarifa->zpp
-aPorezi[POR_PPU]:=tarifa->ppp
-aPorezi[POR_PRUC]  :=tarifa->vpp
-if tarifa->(FIELDPOS("mpp"))<>0
-	aPorezi[POR_PRUCMP]:=tarifa->mpp
-	aPorezi[POR_DLRUC]:=tarifa->dlruc
-else
-	aPorezi[POR_PRUCMP]:=0
-	aPorezi[POR_DLRUC]:=0
-endif
-return nil
-*}
+FUNCTION SetAPorezi( aPorezi )
+
+   // {
+   IF ( aPorezi == nil )
+      aPorezi := {}
+   ENDIF
+   IF ( Len( aPorezi ) == 0 )
+      // inicijaliziraj poreze
+      aPorezi := { 0, 0, 0, 0, 0, 0, 0 }
+   ENDIF
+   aPorezi[ POR_PPP ] := tarifa->opp
+   aPorezi[ POR_PP ] := tarifa->zpp
+   aPorezi[ POR_PPU ] := tarifa->ppp
+   aPorezi[ POR_PRUC ]  := tarifa->vpp
+   IF tarifa->( FieldPos( "mpp" ) ) <> 0
+      aPorezi[ POR_PRUCMP ] := tarifa->mpp
+      aPorezi[ POR_DLRUC ] := tarifa->dlruc
+   ELSE
+      aPorezi[ POR_PRUCMP ] := 0
+      aPorezi[ POR_DLRUC ] := 0
+   ENDIF
+
+   RETURN NIL
+// }
 
 
 /*! \fn MpcSaPorUgost(nPosebniPorez, nPorezNaRuc, aPorezi)
@@ -176,18 +169,19 @@ return nil
  *  \param nPorezNaRuc Porez na razliku u cijeni
  *  \param aPorezi Matrica sa porezima
  */
-function MpcSaPorUgost(nPosebniPorez, nPorezNaRuc, aPorezi)
-*{
-local nPom
+FUNCTION MpcSaPorUgost( nPosebniPorez, nPorezNaRuc, aPorezi )
 
-// (MpcSapp - PorezNaRuc) * StopaPP = PosebniPorez
-// PosebniPorez/StopaPP = MpcSaPP - PorezNaRuc
-// MpcSaPP = PosebniPorez/StopaPP + PorezNaRuc
+   // {
+   LOCAL nPom
 
-nPom:= nPosebniPorez/(aPorezi[POR_P_PRUC]/100) + nPorezNaRUC
+   // (MpcSapp - PorezNaRuc) * StopaPP = PosebniPorez
+   // PosebniPorez/StopaPP = MpcSaPP - PorezNaRuc
+   // MpcSaPP = PosebniPorez/StopaPP + PorezNaRuc
+
+   nPom := nPosebniPorez / ( aPorezi[ POR_P_PRUC ] / 100 ) + nPorezNaRUC
 	
-return nPom
-*}
+   RETURN nPom
+// }
 
 /*! \fn MpcSaPor(nMpcBP, aPorezi, aPoreziIzn)
  *  \brief Racuna maloprodajnu cijenu sa porezom
@@ -195,91 +189,48 @@ return nPom
  *  \param aPorezi Matrica poreza
  *  \param aPoreziIzn Matrica sa izracunatim porezima
  */
-function MpcSaPor(nMPCBp, aPorezi, aPoreziIzn)
-local nPom
-local nMPP
-local nPP
-local nPPP
+FUNCTION MpcSaPor( nMPCBp, aPorezi, aPoreziIzn )
 
-nPDV:=aPorezi[POR_PPP]/100
+   LOCAL nPom
+   LOCAL nMPP
+   LOCAL nPP
+   LOCAL nPPP
 
-if glUgost
-  nPP := aPorezi[POR_PP]/100
-else
-  nPP := 0
-endif
+   nPDV := aPorezi[ POR_PPP ] / 100
 
-if IsPdv()
-    //  bez poreza * ( 0.17 + 0 + 1)
-    nPom:= nMpcBp * ( nPDV + nPP + 1)
-    return nPom
-else
-    return MpcSaPorO(nMPCBp, aPorezi, aPoreziIzn)
-endif 
+   IF glUgost
+      nPP := aPorezi[ POR_PP ] / 100
+   ELSE
+      nPP := 0
+   ENDIF
 
-function MpcSaPorO(nMPCBp, aPorezi, aPoreziIzn)
-*{
-local nPom
-local nDLRUC
-local nMPP
-local nPP
-local nPPP
-local nPPU
-nDLRUC:=aPorezi[POR_DLRUC]/100
-nMPP:=aPorezi[POR_PRUCMP]/100
-nPP:=aPorezi[POR_PP]/100
-nPPP:=aPorezi[POR_PPP]/100
-nPPU:=aPorezi[POR_PPU]/100
+   IF IsPdv()
+      // bez poreza * ( 0.17 + 0 + 1)
+      nPom := nMpcBp * ( nPDV + nPP + 1 )
+      RETURN nPom
+   ELSE
+      RETURN MpcSaPorO( nMPCBp, aPorezi, aPoreziIzn )
+   ENDIF
 
-nPom:=nMpcBp*(nPP+(nPPP+1)*(1+nPPU))
+FUNCTION MpcSaPorO( nMPCBp, aPorezi, aPoreziIzn )
 
-return nPom
-*}
+   // {
+   LOCAL nPom
+   LOCAL nDLRUC
+   LOCAL nMPP
+   LOCAL nPP
+   LOCAL nPPP
+   LOCAL nPPU
+   nDLRUC := aPorezi[ POR_DLRUC ] / 100
+   nMPP := aPorezi[ POR_PRUCMP ] / 100
+   nPP := aPorezi[ POR_PP ] / 100
+   nPPP := aPorezi[ POR_PPP ] / 100
+   nPPU := aPorezi[ POR_PPU ] / 100
 
+   nPom := nMpcBp * ( nPP + ( nPPP + 1 ) * ( 1 + nPPU ) )
 
-/*! \fn MpcBezPor(nMpcSaPP, aPorezi, nRabat, nNC)
- *  \brief Racuna maloprodajnu cijenu bez poreza
- *  \param nMpcSaPP maloprodajna cijena sa porezom
- *  \param aPorezi Matrica poreza
- *  \param nRabat Rabat
- *  \param nNC Nabavna cijena
- */
-function MpcBezPor( nMpcSaPP, aPorezi, nRabat, nNC )
-
-local nStopa
-local nPor1
-local nPor2
-local nPom
-local nMPP
-local nPP
-local nPDV
-local nBrutoMarza
-local nMpcBezPor
-
-
-if IsPdv()
-
-    if nRabat == nil
-	    nRabat := 0
-    endif
-
-    nPDV := aPorezi[POR_PPP]
-
-    if glUgost
-        nPP := aPorezi[POR_PP]
-    else
-        nPP := 0
-    endif
-
-    return nMpcSaPP / ( (nPDV + nPP)/100 + 1 )
-
-else
-
-    // stari PPP obracun 
-    // suma nepregledna ...
-    return MpcBezPorO(nMpcSaPP, aPorezi, nRabat, nNc)
-
-endif
+   RETURN nPom
+// }
 
 
 /*! \fn MpcBezPor(nMpcSaPP, aPorezi, nRabat, nNC)
@@ -289,55 +240,99 @@ endif
  *  \param nRabat Rabat
  *  \param nNC Nabavna cijena
  */
-function MpcBezPorO( nMpcSaPP, aPorezi, nRabat, nNC )
-*{
-local nPor1
-local nPor2
-local nPom
-local nDLRUC
-local nMPP
-local nPP
-local nPPP
-local nPPU
-local nBrutoMarza
-local nMpcBezPor
+FUNCTION MpcBezPor( nMpcSaPP, aPorezi, nRabat, nNC )
 
-if nRabat==nil
-	nRabat:=0
-endif
+   LOCAL nStopa
+   LOCAL nPor1
+   LOCAL nPor2
+   LOCAL nPom
+   LOCAL nMPP
+   LOCAL nPP
+   LOCAL nPDV
+   LOCAL nBrutoMarza
+   LOCAL nMpcBezPor
 
-nDLRUC:=aPorezi[POR_DLRUC]/100
-nMPP:=aPorezi[POR_PRUCMP]/100
-nPP:=aPorezi[POR_PP]/100
-nPPP:=aPorezi[POR_PPP]/100
-nPPU:=aPorezi[POR_PPU]/100
+   IF IsPdv()
 
-if (!IsVindija()) .and. nMpcSaPP<>nil
-	nMpcSaPP:=nMpcSaPP-nRabat
-endif
+      IF nRabat == nil
+         nRabat := 0
+      ENDIF
+
+      nPDV := aPorezi[ POR_PPP ]
+
+      IF glUgost
+         nPP := aPorezi[ POR_PP ]
+      ELSE
+         nPP := 0
+      ENDIF
+
+      RETURN nMpcSaPP / ( ( nPDV + nPP ) / 100 + 1 )
+
+   ELSE
+
+      // stari PPP obracun
+      // suma nepregledna ...
+      RETURN MpcBezPorO( nMpcSaPP, aPorezi, nRabat, nNc )
+
+   ENDIF
 
 
-if glUgost
-		// ovo je zapetljano ali izgleda da radi
-		// racun se sigurno moze pojednostaviti 
+/*! \fn MpcBezPor(nMpcSaPP, aPorezi, nRabat, nNC)
+ *  \brief Racuna maloprodajnu cijenu bez poreza
+ *  \param nMpcSaPP maloprodajna cijena sa porezom
+ *  \param aPorezi Matrica poreza
+ *  \param nRabat Rabat
+ *  \param nNC Nabavna cijena
+ */
+
+FUNCTION MpcBezPorO( nMpcSaPP, aPorezi, nRabat, nNC )
+
+   LOCAL nPor1
+   LOCAL nPor2
+   LOCAL nPom
+   LOCAL nDLRUC
+   LOCAL nMPP
+   LOCAL nPP
+   LOCAL nPPP
+   LOCAL nPPU
+   LOCAL nBrutoMarza
+   LOCAL nMpcBezPor
+
+   IF nRabat == nil
+      nRabat := 0
+   ENDIF
+
+   nDLRUC := aPorezi[ POR_DLRUC ] / 100
+   nMPP := aPorezi[ POR_PRUCMP ] / 100
+   nPP := aPorezi[ POR_PP ] / 100
+   nPPP := aPorezi[ POR_PPP ] / 100
+   nPPU := aPorezi[ POR_PPU ] / 100
+
+   IF ( !IsVindija() ) .AND. nMpcSaPP <> nil
+      nMpcSaPP := nMpcSaPP - nRabat
+   ENDIF
+
+
+   IF glUgost
+      // ovo je zapetljano ali izgleda da radi
+      // racun se sigurno moze pojednostaviti
 		
-		// porez na razliku u cijeni u maloprodaji
-		// =  bruto_marza * preracunata_stopa_poreza
-		nPor2:=Izn_P_PRugost(nMpcSaPP,,nNC,aPorezi)
+      // porez na razliku u cijeni u maloprodaji
+      // =  bruto_marza * preracunata_stopa_poreza
+      nPor2 := Izn_P_PRugost( nMpcSaPP,, nNC, aPorezi )
 		
-		// osnovica porez na potrosnju = 
-		// ( cijena_sa_porezom - porez_na_razliku_u_cijeni )
-		// posebni porez - porez na potrosnju
-		nPor3:=(nMpcSaPP-nPor2)*nPP
+      // osnovica porez na potrosnju =
+      // ( cijena_sa_porezom - porez_na_razliku_u_cijeni )
+      // posebni porez - porez na potrosnju
+      nPor3 := ( nMpcSaPP - nPor2 ) * nPP
 
-		nPom:=nMpcSaPP-nPor1-nPor2-nPor3
-else
-		nPom:=nMpcSaPP/(nPP+(nPPP+1)*(1+nPPU))
-endif
+      nPom := nMpcSaPP - nPor1 - nPor2 - nPor3
+   ELSE
+      nPom := nMpcSaPP / ( nPP + ( nPPP + 1 ) * ( 1 + nPPU ) )
+   ENDIF
 
-
-return nPom
-*}
+   RETURN nPom
+// }
 
 
 
@@ -348,48 +343,49 @@ return nPom
  *  \param aPoreziIzn Matrica izracunatih poreza
  *  \param nMpcSaP Maloprodajna cijena sa porezom
  */
-function Izn_P_PPP(nMpcBp, aPorezi, aPoreziIzn, nMpcSaP)
-*{
-local nPom
-local nUkPor
+FUNCTION Izn_P_PPP( nMpcBp, aPorezi, aPoreziIzn, nMpcSaP )
 
-if IsPdv()
+   // {
+   LOCAL nPom
+   LOCAL nUkPor
+
+   IF IsPdv()
 
 
-// zadate je cijena sa porezom, utvrdi cijenu bez poreza
-if nMpcBp == nil
-    // PPP - PDV, 
-    // PP -  porez na potrosnju 
-    nUkPor := aPorezi[POR_PPP] + aPorezi[POR_PP]
-    nMpcBp:=nMpcSaP/(nUkPor/100+1)
-endif
+      // zadate je cijena sa porezom, utvrdi cijenu bez poreza
+      IF nMpcBp == nil
+         // PPP - PDV,
+         // PP -  porez na potrosnju
+         nUkPor := aPorezi[ POR_PPP ] + aPorezi[ POR_PP ]
+         nMpcBp := nMpcSaP / ( nUkPor / 100 + 1 )
+      ENDIF
 
-nPom := nMpcBP * aPorezi[POR_PPP]/100
+      nPom := nMpcBP * aPorezi[ POR_PPP ] / 100
 
-else
-// ovo dole je obracun PPP
-// ostavimo ovu sumu za sada po strani
-if !glPoreziLegacy 
-	if glUgost 
-		if gUgostVarijanta=="MPCSAPOR"
-			nPom:=nMpcSaP*(aPorezi[POR_PPP]/100)/((aPorezi[POR_PPP]/100)+1)
-		else
-			nPom:=nMpcSaP*(aPorezi[POR_PPP]/100)/((aPorezi[POR_PPP]/100)+1)
-		endif
-	else
-		nPom:=nMpcSaP*(aPorezi[POR_PPP]/100)/((aPorezi[POR_PPP]/100)+1)
-	endif
-else
-	if gUVarPP$"MT"
-		nPom:=nMpcSaP*(aPorezi[POR_PPP]/100)/((aPorezi[POR_PPP]/100)+1)
-	else
-		nPom:=nMpcBp*(aPorezi[POR_PPP]/100) 
-	endif
-endif
-endif
+   ELSE
+      // ovo dole je obracun PPP
+      // ostavimo ovu sumu za sada po strani
+      IF !glPoreziLegacy
+         IF glUgost
+            IF gUgostVarijanta == "MPCSAPOR"
+               nPom := nMpcSaP * ( aPorezi[ POR_PPP ] / 100 ) / ( ( aPorezi[ POR_PPP ] / 100 ) + 1 )
+            ELSE
+               nPom := nMpcSaP * ( aPorezi[ POR_PPP ] / 100 ) / ( ( aPorezi[ POR_PPP ] / 100 ) + 1 )
+            ENDIF
+         ELSE
+            nPom := nMpcSaP * ( aPorezi[ POR_PPP ] / 100 ) / ( ( aPorezi[ POR_PPP ] / 100 ) + 1 )
+         ENDIF
+      ELSE
+         IF gUVarPP $ "MT"
+            nPom := nMpcSaP * ( aPorezi[ POR_PPP ] / 100 ) / ( ( aPorezi[ POR_PPP ] / 100 ) + 1 )
+         ELSE
+            nPom := nMpcBp * ( aPorezi[ POR_PPP ] / 100 )
+         ENDIF
+      ENDIF
+   ENDIF
 
-return nPom
-*}
+   RETURN nPom
+// }
 
 
 /*! \fn Izn_P_PPU(nMpcBp, aPorezi, aPoreziIzn)
@@ -398,12 +394,14 @@ return nPom
  *  \param aPorezi Matrica poreza
  *  \param aPoreziIzn Matrica izracunatih poreza
  */
-function Izn_P_PPU(nMPCBp, aPorezi, aPoreziIzn)
-*{
-local nPom
-nPom:= nMpcBp * (aPorezi[POR_PPP]/100+1)*(aPorezi[POR_PPU]/100) 
-return nPom
-*}
+FUNCTION Izn_P_PPU( nMPCBp, aPorezi, aPoreziIzn )
+
+   // {
+   LOCAL nPom
+   nPom := nMpcBp * ( aPorezi[ POR_PPP ] / 100 + 1 ) * ( aPorezi[ POR_PPU ] / 100 )
+
+   RETURN nPom
+// }
 
 
 /*! \fn Izn_P_PP(nMpcBp, aPorezi, aPoreziIzn)
@@ -412,22 +410,23 @@ return nPom
  *  \param aPorezi Matrica poreza
  *  \param aPoreziIzn Matrica izracunatih poreza
  */
-function Izn_P_PP(nMpcBp, aPorezi, aPoreziIzn)
-*{
-local nOsnovica
-local nMpcSaPor
-local nPom
-local nUkPor
+FUNCTION Izn_P_PP( nMpcBp, aPorezi, aPoreziIzn )
+
+   // {
+   LOCAL nOsnovica
+   LOCAL nMpcSaPor
+   LOCAL nPom
+   LOCAL nUkPor
 
 
-if glUgost 
-        nPom := nMpcBp * aPorezi[POR_PP]/100
-else
-   	nPom:=0
-endif
+   IF glUgost
+      nPom := nMpcBp * aPorezi[ POR_PP ] / 100
+   ELSE
+      nPom := 0
+   ENDIF
 
-return nPom
-*}
+   RETURN nPom
+// }
 
 /*! \fn Izn_P_PPUgost(nMpcSaPP, nIznPRuc, aPorezi)
  *  \brief Racuna posebni porez u ugostiteljstvu
@@ -435,26 +434,27 @@ return nPom
  *  \param nIznPRuc Iznos poreza na razliku u cijeni
  *  \param aPorezi Matrica poreza
  */
-function Izn_P_PPUgost(nMpcSaPP, nIznPRuc, aPorezi)
-*{
-local nPom
-local nDLRUC
-local nMPP
+FUNCTION Izn_P_PPUgost( nMpcSaPP, nIznPRuc, aPorezi )
 
-// ova se funkcija u PDV-u ne koristi
+   // {
+   LOCAL nPom
+   LOCAL nDLRUC
+   LOCAL nMPP
 
-nDLRUC:=aPorezi[POR_DLRUC]/100
-nMPP:=aPorezi[POR_PRUCMP]/100
+   // ova se funkcija u PDV-u ne koristi
 
-if gUgostVarijanta="MPCSAPOR"
-	nIznPRuc:=nMpcSaPP*nDLRUC*nMPP/(1+nMPP)
-endif
+   nDLRUC := aPorezi[ POR_DLRUC ] / 100
+   nMPP := aPorezi[ POR_PRUCMP ] / 100
 
-// osnovica je cijena sa porezom umanjena za porez na ruc
-nPom:= (nMpcSaPP - nIznPRuc)*aPorezi[POR_PP]/100
+   IF gUgostVarijanta = "MPCSAPOR"
+      nIznPRuc := nMpcSaPP * nDLRUC * nMPP / ( 1 + nMPP )
+   ENDIF
 
-return nPom
-*}
+   // osnovica je cijena sa porezom umanjena za porez na ruc
+   nPom := ( nMpcSaPP - nIznPRuc ) * aPorezi[ POR_PP ] / 100
+
+   RETURN nPom
+// }
 
 
 /*! \fn Izn_P_PRugost(nMpcSaPP, nMPCBp, nNc, aPorezi, aPoreziIzn)
@@ -465,170 +465,174 @@ return nPom
  *  \param aPorezi matrica poreza
  *  \param aPoreziIzn matrica izracunatih poreza
  */
-function Izn_P_PRugost(nMpcSaPP, nMPCBp, nNc, aPorezi, aPoreziIzn)
-*{
+FUNCTION Izn_P_PRugost( nMpcSaPP, nMPCBp, nNc, aPorezi, aPoreziIzn )
 
-// ovo se ne koristi u rezimu PDV-a
+   // {
 
-local nPom
-local nMarza
-local nDLRUC
-//preracunata stopa poreza na ruc
-local nPStopaMPP
-//donji limit stope RUC-a
-nDLRUC:=aPorezi[POR_DLRUC]/100
+   // ovo se ne koristi u rezimu PDV-a
 
-//porez na ruc
-nMPP:=aPorezi[POR_PRUCMP]/100
+   LOCAL nPom
+   LOCAL nMarza
+   LOCAL nDLRUC
+   // preracunata stopa poreza na ruc
+   LOCAL nPStopaMPP
+   // donji limit stope RUC-a
+   nDLRUC := aPorezi[ POR_DLRUC ] / 100
 
-//preracunata stopa poreza na ruc
-nPStopaMPP:= nMPP/(1 + nMPP)
+   // porez na ruc
+   nMPP := aPorezi[ POR_PRUCMP ] / 100
 
-// varijanta "I", izaslo u sl.novinama.
-if gUVarPP=="I"
-	// ako je nc=0 marzu racunaj kao mpc * dlruc
-	if nNc==0
-		nMarza:=nMpcSaPP*nDLRUC
-	else
-		nMarza:= nMpcSaPP-nNc
-	endif
-else
-	nMarza:= nMpcSaPP-nNc-Izn_P_PPP(,aPorezi,,nMpcSaPP)
-endif
+   // preracunata stopa poreza na ruc
+   nPStopaMPP := nMPP / ( 1 + nMPP )
 
-DO CASE
-	CASE gUgostVarijanta$"MPCSAPOR"
-		// uvijek je osnova mpc
-		nPom:= (nMpcSaPP*nDLRUC)*nPStopaMPP
+   // varijanta "I", izaslo u sl.novinama.
+   IF gUVarPP == "I"
+      // ako je nc=0 marzu racunaj kao mpc * dlruc
+      IF nNc == 0
+         nMarza := nMpcSaPP * nDLRUC
+      ELSE
+         nMarza := nMpcSaPP - nNc
+      ENDIF
+   ELSE
+      nMarza := nMpcSaPP - nNc - Izn_P_PPP(, aPorezi,, nMpcSaPP )
+   ENDIF
+
+   DO CASE
+   CASE gUgostVarijanta $ "MPCSAPOR"
+      // uvijek je osnova mpc
+      nPom := ( nMpcSaPP * nDLRUC ) * nPStopaMPP
 		
-	CASE gUgostVarijanta="RMARZA_DLIMIT"
-		// realizovana marza ili dlimit 
-		nPom := MAX( (nMpcSaPP*nDLRUC)*nPStopaMPP, nMarza*nPStopaMPP )
-	OTHERWISE
-		nPom := -9999999
-ENDCASE
+   CASE gUgostVarijanta = "RMARZA_DLIMIT"
+      // realizovana marza ili dlimit
+      nPom := Max( ( nMpcSaPP * nDLRUC ) * nPStopaMPP, nMarza * nPStopaMPP )
+   OTHERWISE
+      nPom := -9999999
+   ENDCASE
 				
-return nPom
-*}
+   RETURN nPom
+// }
 
 
 
 /*! \fn KorekTar()
  *  \brief Korekcija tarifa
  */
-function KorekTar()
-*{
-local cTekIdTarifa
-local cPriprema
+FUNCTION KorekTar()
 
-if !SigmaSif("SIGMATAR")
-	return
-endif
+   // {
+   LOCAL cTekIdTarifa
+   LOCAL cPriprema
 
-CLOSE ALL
+   IF !SigmaSif( "SIGMATAR" )
+      RETURN
+   ENDIF
 
-O_ROBA
+   CLOSE ALL
 
-SELECT 0
+   O_ROBA
 
-cIdVD:=space(2)
-cIdTarifa:=space(6)
+   SELECT 0
 
-set cursor on
+   cIdVD := Space( 2 )
+   cIdTarifa := Space( 6 )
 
-cPriprema:="D"
+   SET CURSOR ON
 
-Box(,3,60)
-  @ m_x+1,m_y+2 SAY "Vrsta dokumenta (prazno svi)" GET cIdVD
-  @ m_x+2,m_y+2 SAY "Tarifa koju treba zamijeniti (prazno svi)" GET cIdTarifa pict "@!"
-if gModul=="KALK" 
- @ m_x+3,m_y+2 SAY "Izvrsiti korekciju nad pripremom D/N ? " GET cPriprema pict "@!" valid cPriprema  $ "DN"
-endif
+   cPriprema := "D"
 
-  read
-Boxc()
-if lastkey()==K_ESC
-	return
-endif
+   Box(, 3, 60 )
+   @ m_x + 1, m_y + 2 SAY "Vrsta dokumenta (prazno svi)" GET cIdVD
+   @ m_x + 2, m_y + 2 SAY "Tarifa koju treba zamijeniti (prazno svi)" GET cIdTarifa PICT "@!"
+   IF gModul == "KALK"
+      @ m_x + 3, m_y + 2 SAY "Izvrsiti korekciju nad pripremom D/N ? " GET cPriprema PICT "@!" VALID cPriprema  $ "DN"
+   ENDIF
 
-nKumArea:=0
+   READ
+   Boxc()
+   IF LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-if gModul=="KALK"
- if cPriprema=="D"
-   use (PRIVPATH+"PRIPR")
- else  
-   use (KUMPATH+"KALK")
- endif
-elseif gModul=="TOPS"
- use (KUMPATH+"POS")
-else
- CLOSERET
-endif
-nKumArea:=SELECT()
+   nKumArea := 0
 
-nC:=0
-Box(,1,50)
-go top
-do while !eof()
-  if ( empty(cIdVD) .or. cIdvd==IDVD ) .and. ( empty(cIdTarifa) .or. cIdTarifa==(nKumArea)->IdTarifa )
-    select roba; hseek (nKumArea)->idroba
-    if !found()
-      MsgBeep("Artikal "+(nKumArea)->idroba+" ne postoji u sifraniku robe")
-    else
-      select (nKumArea)
-      
-      private aPorezi:={}
-      if gModul=="KALK"
-         cTekIdTarifa:=Tarifa( (nKumArea)->PKONTO , (nKumArea)->IdRoba, @aPorezi)
-      else
-         cTekIdTarifa:=roba->IdTarifa
-      endif
-      if (nKumArea)->IdTarifa<>cTekIdTarifa
-        select (nKumArea)
-        @ m_x+1, m_y+2 SAY ++Nc pict "999999"
-        @ m_x+1, col()+2 SAY IdTarifa
-        @ m_x+1, col()+2 SAY "->"
-        @ m_x+1, col()+2 SAY cTekIdTarifa
+   IF gModul == "KALK"
+      IF cPriprema == "D"
+         USE ( PRIVPATH + "PRIPR" )
+      ELSE
+         USE ( KUMPATH + "KALK" )
+      ENDIF
+   ELSEIF gModul == "TOPS"
+      USE ( KUMPATH + "POS" )
+   ELSE
+      CLOSERET
+   ENDIF
+   nKumArea := Select()
 
-        REPLACE IdTarifa with cTekIdTarifa
-	    //REPLSQL IdTarifa with cTekIdTarifa
-      endif
-    endif
-  endif
-  select (nKumArea)
-  skip 1
-enddo
-BoxC()
+   nC := 0
+   Box(, 1, 50 )
+   GO TOP
+   DO WHILE !Eof()
+      IF ( Empty( cIdVD ) .OR. cIdvd == IDVD ) .AND. ( Empty( cIdTarifa ) .OR. cIdTarifa == ( nKumArea )->IdTarifa )
+         SELECT roba; hseek ( nKumArea )->idroba
+         IF !Found()
+            MsgBeep( "Artikal " + ( nKumArea )->idroba + " ne postoji u sifraniku robe" )
+         ELSE
+            SELECT ( nKumArea )
 
-select(nKumArea)
-use
+            PRIVATE aPorezi := {}
+            IF gModul == "KALK"
+               cTekIdTarifa := Tarifa( ( nKumArea )->PKONTO, ( nKumArea )->IdRoba, @aPorezi )
+            ELSE
+               cTekIdTarifa := roba->IdTarifa
+            ENDIF
+            IF ( nKumArea )->IdTarifa <> cTekIdTarifa
+               SELECT ( nKumArea )
+               @ m_x + 1, m_y + 2 SAY ++Nc PICT "999999"
+               @ m_x + 1, Col() + 2 SAY IdTarifa
+               @ m_x + 1, Col() + 2 SAY "->"
+               @ m_x + 1, Col() + 2 SAY cTekIdTarifa
 
-CLOSERET
-return
-*}
+               REPLACE IdTarifa WITH cTekIdTarifa
+               // REPLSQL IdTarifa with cTekIdTarifa
+            ENDIF
+         ENDIF
+      ENDIF
+      SELECT ( nKumArea )
+      SKIP 1
+   ENDDO
+   BoxC()
+
+   SELECT( nKumArea )
+   USE
+
+   CLOSERET
+
+   RETURN
+// }
 
 
 /*! \fn PrPPUMP()
  *  \brief Vraca procenat poreza na usluge. U ugostiteljstvu to je porez na razliku u cijeni. aPorezi, _mpp i _ppp moraju biti definisane (privatne ili javne var.)
 */
-function PrPPUMP()
-*{
-local nV
-if !glPoreziLegacy
-	if glUgost
-		nV:=aPorezi[POR_PRUCMP]
-	else
-		nV:=aPorezi[POR_PPU]
-	endif
-else
-	if gUVarPP$"MJT"
-		nV:=_mpp*100
-	else
-		nV:=_ppp*100
-	endif
-endif
-return nV
-*}
+FUNCTION PrPPUMP()
+
+   LOCAL nV
+
+   IF !glPoreziLegacy
+      IF glUgost
+         nV := aPorezi[ POR_PRUCMP ]
+      ELSE
+         nV := aPorezi[ POR_PPU ]
+      ENDIF
+   ELSE
+      IF gUVarPP $ "MJT"
+         nV := _mpp * 100
+      ELSE
+         nV := _ppp * 100
+      ENDIF
+   ENDIF
+
+   RETURN nV
 
 
 
@@ -639,54 +643,31 @@ return nV
  * \param nMpcSaPP Maloprodajna cijena sa porezom
  * \param nNc Nabavna cijena
 */
-function RacPorezeMP(aPorezi, nMpc, nMpcSaPP, nNc)
-*{
-local nIznPRuc
-local nP1, nP2, nP3
+FUNCTION RacPorezeMP( aPorezi, nMpc, nMpcSaPP, nNc )
 
-if IsPdV()
+   // {
+   LOCAL nIznPRuc
+   LOCAL nP1, nP2, nP3
 
- // PDV
- nP1:=Izn_P_PPP(nMpc, aPorezi, , nMpcSaPP)
- if glUgost
-        // posebni porez
-	nP2:=0
-	nP3:=Izn_P_PP(nMpc, aPorezi)
- else
- 	nP2:=0
-	nP3:=0
- endif
+   // PDV
+   nP1 := Izn_P_PPP( nMpc, aPorezi, , nMpcSaPP )
+   nP2 := 0
+   nP3 := 0
 
-else
-// stari PPP obracun
-// ne dirati do daljnjeg
-nP1:=Izn_P_PPP(nMpc, aPorezi, , nMpcSaPP)
-if glUgost
-	nIznPRuc:=Izn_P_PRugost( nMpcSaPP, nMpc, nNc, aPorezi)
-	nP2:=nIznPRuc
-	nP3:=Izn_P_PPUgost(nMpcSaPP, nIznPRuc, aPorezi)
-else
-	nP2:=Izn_P_PPU( nMpc, aPorezi )
-	nP3:=Izn_P_PP( nMpc, aPorezi )
-endif
-endif
-return {nP1, nP2, nP3}
-*}			
+   RETURN { nP1, nP2, nP3 }
 
 
-// formatiraj stopa pdv kao string 
-//  " 17 %"
-//  "15.5%"
-function stopa_pdv( nPdv )
+// formatiraj stopa pdv kao string
+// " 17 %"
+// "15.5%"
+FUNCTION stopa_pdv( nPdv )
 
-if nPdv == nil
-	nPdv := tarifa->opp
-endif
+   IF nPdv == nil
+      nPdv := tarifa->opp
+   ENDIF
 
-if round(nPdv, 1) == round(nPdv,0)
-   return STR(nPdv, 3, 0) + " %"
-else
-   return STR(nPdv, 3, 1) + "%"
-endif
-
-
+   IF Round( nPdv, 1 ) == Round( nPdv, 0 )
+      RETURN Str( nPdv, 3, 0 ) + " %"
+   ELSE
+      RETURN Str( nPdv, 3, 1 ) + "%"
+   ENDIF

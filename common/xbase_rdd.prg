@@ -24,13 +24,12 @@ FUNCTION PushWA()
    LOCAL cFilter
 
    IF Used()
-
       IF rddName() != "SQLMIX"
          cFilter := dbFilter()
       ELSE
          cFilter := ""
       ENDIF
-      StackPush( aWAStack, { Select(), IndexOrd(), cFilter, RecNo() } )
+      StackPush( aWAStack, { Select(), ordName(), cFilter, RecNo() } )
    ELSE
       StackPush( aWAStack, { NIL, NIL, NIL, NIL } )
    ENDIF

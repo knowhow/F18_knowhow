@@ -24,8 +24,7 @@ if lSay
 	Reci( 11, 23, TRIM( LEFT( roba->naz, 40 )) + " (" + ALLTRIM( roba->jmj ) + ")", 40 )
 endif
 
-if fNovi .or. IsJerry() .or. IsPlanika()
-	// nadji odgovarajucu tarifu regiona
+if fNovi
 	cTarifa := Tarifa( _idkonto, _idroba, @aPorezi )
 else
 	// za postojece dokumente uzmi u obzir unesenu tarifu

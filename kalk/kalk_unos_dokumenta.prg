@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,994 +13,1003 @@
 #include "kalk.ch"
 #include "f18_separator.ch"
 
-static cENTER := CHR(K_ENTER) + CHR(K_ENTER) + CHR(K_ENTER)
-static __box_x
-static __box_y
+STATIC cENTER := Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER )
+STATIC __box_x
+STATIC __box_y
 
 
 
-function kalk_unos_dokumenta()
-private PicCDEM:=gPicCDEM
-private PicProc:=gPicProc
-private PicDEM:= gPICDEM
-private Pickol:= gPICKOL
-private lAsistRadi:=.f.
+FUNCTION kalk_unos_dokumenta()
 
-__box_x := MAXROWS() - 8
-__box_y := MAXCOLS() - 6
+   PRIVATE PicCDEM := gPicCDEM
+   PRIVATE PicProc := gPicProc
+   PRIVATE PicDEM := gPICDEM
+   PRIVATE Pickol := gPICKOL
+   PRIVATE lAsistRadi := .F.
 
-kalk_unos_stavki_dokumenta()
+   __box_x := MAXROWS() - 8
+   __box_y := MAXCOLS() - 6
 
-close all
-return
+   kalk_unos_stavki_dokumenta()
+
+   CLOSE ALL
+
+   RETURN
 
 
 
 // ----------------------------------------------------------------
 // unos stavki kalkulacije
 // ----------------------------------------------------------------
-function kalk_unos_stavki_dokumenta(lAObrada)
-local nMaxCol := MAXCOLS() - 3
-local nMaxRow := MAXROWS() - 4
-local _opt_row, _opt_d
-local _sep := BROWSE_COL_SEP
+FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
 
-O_PARAMS
+   LOCAL nMaxCol := MAXCOLS() - 3
+   LOCAL nMaxRow := MAXROWS() - 4
+   LOCAL _opt_row, _opt_d
+   LOCAL _sep := BROWSE_COL_SEP
 
-private lAutoObr := .f.
-private lAAsist := .f.
-private lAAzur := .f.
+   O_PARAMS
 
-if lAObrada == nil
-    lAutoObr := .f.
-else
-    lAutoObr := lAObrada
-    lAAsist := .t.
-    lAAzur := .t.
-endif
+   PRIVATE lAutoObr := .F.
+   PRIVATE lAAsist := .F.
+   PRIVATE lAAzur := .F.
 
-private cSection:="K"
-private cHistory:=" "
-private aHistory:={}
+   IF lAObrada == nil
+      lAutoObr := .F.
+   ELSE
+      lAutoObr := lAObrada
+      lAAsist := .T.
+      lAAzur := .T.
+   ENDIF
 
-select 99
-use
+   PRIVATE cSection := "K"
+   PRIVATE cHistory := " "
+   PRIVATE aHistory := {}
 
-o_kalk_edit()
+   SELECT 99
+   USE
 
-private gVarijanta := "2"
-private PicV := "99999999.9"
+   o_kalk_edit()
 
-private ImeKol := {}
-private Kol := {}
+   PRIVATE gVarijanta := "2"
+   PRIVATE PicV := "99999999.9"
 
-// definisi strukturu pripreme
-AADD( ImeKol, { "F." , {|| idfirma   }, "idfirma"   } )
-AADD( ImeKol, { "VD"        , {|| IdVD                     }, "IdVD"        } )
-AADD( ImeKol, { "BrDok"     , {|| BrDok                    }, "BrDok"       } )
-AADD( ImeKol, { "R.Br"      , {|| Rbr                      }, "Rbr"         } )
-AADD( ImeKol, { "Dat.Kalk"  , {|| DatDok                   }, "DatDok"      } )
-AADD( ImeKol, { "Dat.Fakt"  , {|| DatFaktP                 }, "DatFaktP"    } )
-AADD( ImeKol, { "K.zad. "   , {|| IdKonto                  }, "IdKonto"     } )
-AADD( ImeKol, { "K.razd."   , {|| IdKonto2                 }, "IdKonto2"    } )
-AADD( ImeKol, { "IdRoba"    , {|| IdRoba                   }, "IdRoba"      } )
+   PRIVATE ImeKol := {}
+   PRIVATE Kol := {}
 
-if lKoristitiBK
-    AADD( ImeKol, { "Barkod"    , {|| roba_ocitaj_barkod( idroba ) }, "IdRoba" } )
-endif
+   // definisi strukturu pripreme
+   AAdd( ImeKol, { "F.", {|| idfirma   }, "idfirma"   } )
+   AAdd( ImeKol, { "VD", {|| IdVD                     }, "IdVD"        } )
+   AAdd( ImeKol, { "BrDok", {|| BrDok                    }, "BrDok"       } )
+   AAdd( ImeKol, { "R.Br", {|| Rbr                      }, "Rbr"         } )
+   AAdd( ImeKol, { "Dat.Kalk", {|| DatDok                   }, "DatDok"      } )
+   AAdd( ImeKol, { "Dat.Fakt", {|| DatFaktP                 }, "DatFaktP"    } )
+   AAdd( ImeKol, { "K.zad. ", {|| IdKonto                  }, "IdKonto"     } )
+   AAdd( ImeKol, { "K.razd.", {|| IdKonto2                 }, "IdKonto2"    } )
+   AAdd( ImeKol, { "IdRoba", {|| IdRoba                   }, "IdRoba"      } )
 
-AADD( ImeKol, { "Kolicina"  , {|| transform(Kolicina,picv) }, "kolicina"    } )
-AADD( ImeKol, { "IdTarifa"  , {|| idtarifa                 }, "idtarifa"    } )
-AADD( ImeKol, { "F.Cj."     , {|| transform(FCJ,picv)      }, "fcj"         } )
-AADD( ImeKol, { "F.Cj2."    , {|| transform(FCJ2,picv)     }, "fcj2"        } )
-AADD( ImeKol, { "Nab.Cj."   , {|| transform(NC,picv)       }, "nc"          } )
-AADD( ImeKol, { "VPC"       , {|| transform(VPC,picv)      }, "vpc"         } )
-AADD( ImeKol, { "VPCj.sa P.", {|| transform(VPCsaP,picv)   }, "vpcsap"      } )
-AADD( ImeKol, { "MPC"       , {|| transform(MPC,picv)      }, "mpc"         } )
-AADD( ImeKol, { "MPC sa PP" , {|| transform(MPCSaPP,picv)  }, "mpcsapp"     } )
-AADD( ImeKol, { "RN"        , {|| idzaduz2                 }, "idzaduz2"    } )
-AADD( ImeKol, { "Br.Fakt"   , {|| brfaktp                  }, "brfaktp"     } )
-AADD( ImeKol, { "Partner"   , {|| idpartner                }, "idpartner"   } )
-AADD( ImeKol, { "Marza"     , {|| tmarza                   }, "tmarza"   } )
-AADD( ImeKol, { "Marza 2"   , {|| tmarza2                  }, "tmarza2"   } )
-AADD( ImeKol, { "E"         , {|| error                    }, "error"       } )
+   IF lKoristitiBK
+      AAdd( ImeKol, { "Barkod", {|| roba_ocitaj_barkod( idroba ) }, "IdRoba" } )
+   ENDIF
 
-if lPoNarudzbi
-    AADD( ImeKol , { "Br.nar." , {|| brojnar   }, "brojnar"   } )
-    AADD( ImeKol , { "Narucioc" , {|| idnar   }, "idnar"   } )
-endif
+   AAdd( ImeKol, { "Kolicina", {|| Transform( Kolicina, picv ) }, "kolicina"    } )
+   AAdd( ImeKol, { "IdTarifa", {|| idtarifa                 }, "idtarifa"    } )
+   AAdd( ImeKol, { "F.Cj.", {|| Transform( FCJ, picv )      }, "fcj"         } )
+   AAdd( ImeKol, { "F.Cj2.", {|| Transform( FCJ2, picv )     }, "fcj2"        } )
+   AAdd( ImeKol, { "Nab.Cj.", {|| Transform( NC, picv )       }, "nc"          } )
+   AAdd( ImeKol, { "VPC", {|| Transform( VPC, picv )      }, "vpc"         } )
+   AAdd( ImeKol, { "VPCj.sa P.", {|| Transform( VPCsaP, picv )   }, "vpcsap"      } )
+   AAdd( ImeKol, { "MPC", {|| Transform( MPC, picv )      }, "mpc"         } )
+   AAdd( ImeKol, { "MPC sa PP", {|| Transform( MPCSaPP, picv )  }, "mpcsapp"     } )
+   AAdd( ImeKol, { "RN", {|| idzaduz2                 }, "idzaduz2"    } )
+   AAdd( ImeKol, { "Br.Fakt", {|| brfaktp                  }, "brfaktp"     } )
+   AAdd( ImeKol, { "Partner", {|| idpartner                }, "idpartner"   } )
+   AAdd( ImeKol, { "Marza", {|| tmarza                   }, "tmarza"   } )
+   AAdd( ImeKol, { "Marza 2", {|| tmarza2                  }, "tmarza2"   } )
+   AAdd( ImeKol, { "E", {|| error                    }, "error"       } )
 
-for i := 1 to LEN( ImeKol )
-    AADD( Kol, i )
-next
+   IF lPoNarudzbi
+      AAdd( ImeKol, { "Br.nar.", {|| brojnar   }, "brojnar"   } )
+      AAdd( ImeKol, { "Narucioc", {|| idnar   }, "idnar"   } )
+   ENDIF
 
-Box(, nMaxRow, nMaxCol )
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
 
-    _opt_d := ( nMaxCol / 4 )
-    
-    _opt_row := PADR( "<c+N> Nova stavka", _opt_d ) + _sep
-    _opt_row += PADR( "<ENT> Ispravka", _opt_d ) + _sep
-    _opt_row += PADR( hb_utf8tostr("<c+T> Brisi stavku"), _opt_d ) + _sep
-    _opt_row += "<K> Kalk.cijena"
+   Box(, nMaxRow, nMaxCol )
 
-    @ m_x + nMaxRow - 3, m_y + 2 SAY _opt_row
-    
-    _opt_row := PADR( "<c+A> Ispravka", _opt_d ) + _sep
-    _opt_row += PADR( hb_utf8tostr("<c+P> Stampa dok."), _opt_d ) + _sep
-    _opt_row += PADR( hb_utf8tostr("<a+A> Azuriranje"), _opt_d ) + _sep
-    _opt_row += "<Q> Etikete"
+   _opt_d := ( nMaxCol / 4 )
 
-    @ m_x + nMaxRow - 2, m_y + 2 SAY _opt_row
- 
-    _opt_row := PADR( "<a+K> Kontiranje", _opt_d ) + _sep
-    _opt_row += PADR( hb_utf8tostr("<c+F9> Brisi sve"), _opt_d ) + _sep
-    _opt_row += PADR( hb_utf8tostr("<a+P> Stampa pripreme"), _opt_d ) + _sep
-   
-    @ m_x + nMaxRow - 1, m_y + 2 SAY _opt_row
- 
-    _opt_row := PADR( hb_utf8tostr("<c+F8> Rasp.troskova"), _opt_d ) + _sep
-    _opt_row += PADR( "<A> Asistent", _opt_d ) + _sep
-    _opt_row += PADR( "<F10> Dodatne opc.", _opt_d ) + _sep
-    _opt_row += "<F11> Dodatne opc./2"
-   
-    @ m_x + nMaxRow, m_y + 2 SAY _opt_row
+   _opt_row := PadR( "<c+N> Nova stavka", _opt_d ) + _sep
+   _opt_row += PadR( "<ENT> Ispravka", _opt_d ) + _sep
+   _opt_row += PadR( hb_UTF8ToStr( "<c+T> Brisi stavku" ), _opt_d ) + _sep
+   _opt_row += "<K> Kalk.cijena"
 
-    if gCijene == "1" .and. gMetodaNC == " "
-        Soboslikar({{ nMaxRow - 3, m_y + 1, nMaxRow, m_y + 77 }}, 23, 14 )
-    endif
+   @ m_x + nMaxRow - 3, m_y + 2 SAY _opt_row
 
-    private lAutoAsist:=.f.
+   _opt_row := PadR( "<c+A> Ispravka", _opt_d ) + _sep
+   _opt_row += PadR( hb_UTF8ToStr( "<c+P> Stampa dok." ), _opt_d ) + _sep
+   _opt_row += PadR( hb_UTF8ToStr( "<a+A> Azuriranje" ), _opt_d ) + _sep
+   _opt_row += "<Q> Etikete"
 
-    ObjDbedit("PNal", nMaxRow, nMaxCol, {|| kalk_pripr_key_handler(lAutoObr)},"<F5>-kartica magacin, <F6>-kartica prodavnica","Priprema...", , , , ,4)
+   @ m_x + nMaxRow - 2, m_y + 2 SAY _opt_row
 
-BoxC()
+   _opt_row := PadR( "<a+K> Kontiranje", _opt_d ) + _sep
+   _opt_row += PadR( hb_UTF8ToStr( "<c+F9> Brisi sve" ), _opt_d ) + _sep
+   _opt_row += PadR( hb_UTF8ToStr( "<a+P> Stampa pripreme" ), _opt_d ) + _sep
 
-close all
-return
+   @ m_x + nMaxRow - 1, m_y + 2 SAY _opt_row
+
+   _opt_row := PadR( hb_UTF8ToStr( "<c+F8> Rasp.troskova" ), _opt_d ) + _sep
+   _opt_row += PadR( "<A> Asistent", _opt_d ) + _sep
+   _opt_row += PadR( "<F10> Dodatne opc.", _opt_d ) + _sep
+   _opt_row += "<F11> Dodatne opc./2"
+
+   @ m_x + nMaxRow, m_y + 2 SAY _opt_row
+
+   IF gCijene == "1" .AND. gMetodaNC == " "
+      Soboslikar( { { nMaxRow - 3, m_y + 1, nMaxRow, m_y + 77 } }, 23, 14 )
+   ENDIF
+
+   PRIVATE lAutoAsist := .F.
+
+   ObjDbedit( "PNal", nMaxRow, nMaxCol, {|| kalk_pripr_key_handler( lAutoObr ) }, "<F5>-kartica magacin, <F6>-kartica prodavnica", "Priprema...", , , , , 4 )
+
+   BoxC()
+
+   CLOSE ALL
+
+   RETURN
 
 
 
 
-function o_kalk_edit()
+FUNCTION o_kalk_edit()
 
-select F_KALK_DOKS
-if !used()
-    O_KALK_DOKS
-endif
+   SELECT F_KALK_DOKS
+   IF !Used()
+      O_KALK_DOKS
+   ENDIF
 
-select F_KALK_PRIPR
-if !used()
-    O_KALK_PRIPR
-endif
+   SELECT F_KALK_PRIPR
+   IF !Used()
+      O_KALK_PRIPR
+   ENDIF
 
-select F_DOKSRC
-if !used()
-    O_DOKSRC
-endif
+   SELECT F_DOKSRC
+   IF !Used()
+      O_DOKSRC
+   ENDIF
 
-select F_P_DOKSRC
-if !used()
-    O_P_DOKSRC
-endif
+   SELECT F_P_DOKSRC
+   IF !Used()
+      O_P_DOKSRC
+   ENDIF
 
-select F_SIFK
-if !used()
-    O_SIFK
-endif
+   SELECT F_SIFK
+   IF !Used()
+      O_SIFK
+   ENDIF
 
-select F_SIFV
-if !used()
-    O_SIFV
-endif
+   SELECT F_SIFV
+   IF !Used()
+      O_SIFV
+   ENDIF
 
-select F_ROBA
-if !used()
-    O_ROBA
-endif
+   SELECT F_ROBA
+   IF !Used()
+      O_ROBA
+   ENDIF
 
-select F_KALK
-if !used()
-    O_KALK
-endif
+   SELECT F_KALK
+   IF !Used()
+      O_KALK
+   ENDIF
 
-select F_KONTO
-if !used()
-    O_KONTO
-endif
+   SELECT F_KONTO
+   IF !Used()
+      O_KONTO
+   ENDIF
 
-select F_PARTN
-if !used()
-    O_PARTN
-endif
+   SELECT F_PARTN
+   IF !Used()
+      O_PARTN
+   ENDIF
 
-select F_TDOK
-if !used()
-    O_TDOK
-endif
+   SELECT F_TDOK
+   IF !Used()
+      O_TDOK
+   ENDIF
 
-select F_VALUTE
-if !used()
-    O_VALUTE
-endif
+   SELECT F_VALUTE
+   IF !Used()
+      O_VALUTE
+   ENDIF
 
-select F_TARIFA
-if !used()
-    O_TARIFA 
-endif
+   SELECT F_TARIFA
+   IF !Used()
+      O_TARIFA
+   ENDIF
 
-select F_KONCIJ
-if !used()
-    O_KONCIJ
-endif
+   SELECT F_KONCIJ
+   IF !Used()
+      O_KONCIJ
+   ENDIF
 
-select kalk_pripr
-set order to tag "1"
-go top
+   SELECT kalk_pripr
+   SET ORDER TO TAG "1"
+   GO TOP
 
-return
+   RETURN
 
 
 // -------------------------------------------------------
 // provjeri i ispisi duple stavke iz pripreme
 // -------------------------------------------------------
-static function _kalk_pripr_duple_stavke()
-local _data := {}
-local _dup := {}
-local _scan
+STATIC FUNCTION _kalk_pripr_duple_stavke()
 
-O_ROBA
-O_KALK_PRIPR
+   LOCAL _data := {}
+   LOCAL _dup := {}
+   LOCAL _scan
 
-select kalk_pripr
-go top
+   O_ROBA
+   O_KALK_PRIPR
 
-do while !EOF()
+   SELECT kalk_pripr
+   GO TOP
 
-    select roba
-    hseek kalk_pripr->idroba
+   DO WHILE !Eof()
 
-    select kalk_pripr
+      SELECT roba
+      hseek kalk_pripr->idroba
 
-    _scan := ASCAN( _data, {|var| var[1] == kalk_pripr->idroba } )
+      SELECT kalk_pripr
 
-    if _scan == 0
-        AADD( _data, { kalk_pripr->idroba } )    
-    else
-        AADD( _dup, { kalk_pripr->idroba, roba->naz, roba->barkod, kalk_pripr->rbr } )    
-    endif
+      _scan := AScan( _data, {| var| VAR[ 1 ] == kalk_pripr->idroba } )
 
-    skip
+      IF _scan == 0
+         AAdd( _data, { kalk_pripr->idroba } )
+      ELSE
+         AAdd( _dup, { kalk_pripr->idroba, roba->naz, roba->barkod, kalk_pripr->rbr } )
+      ENDIF
 
-enddo
+      SKIP
 
-go top
+   ENDDO
 
-if LEN( _dup ) > 0
+   GO TOP
 
-    START PRINT CRET
-    
-    ? "Sljedeci artikli u pripremi su dupli:"
-    ? REPLICATE( "-", 80 )
-    ? PADR("R.br", 5 ) + " " + PADR( "Rb.st", 5 ) + " " + PADR( "ID", 10 ) + " " + PADR( "NAZIV", 40 ) + " " + PADR( "BARKOD", 13 )
-    ? REPLICATE( "-", 80 )
-    
-    for _i := 1 to LEN( _dup )
-        ? PADL( ALLTRIM( STR( _i, 5 ) ) + ".", 5 )
-        @ prow(), pcol() + 1 SAY PADR( _dup[ _i, 4 ], 5 )
-        @ prow(), pcol() + 1 SAY _dup[ _i, 1 ]
-        @ prow(), pcol() + 1 SAY PADR( _dup[ _i, 2 ], 40 )
-        @ prow(), pcol() + 1 SAY _dup[ _i, 3 ]
-    next
+   IF Len( _dup ) > 0
 
-    END PRINT
+      START PRINT CRET
 
-endif
+      ? "Sljedeci artikli u pripremi su dupli:"
+      ? Replicate( "-", 80 )
+      ? PadR( "R.br", 5 ) + " " + PadR( "Rb.st", 5 ) + " " + PadR( "ID", 10 ) + " " + PadR( "NAZIV", 40 ) + " " + PadR( "BARKOD", 13 )
+      ? Replicate( "-", 80 )
 
-return
+      FOR _i := 1 TO Len( _dup )
+         ? PadL( AllTrim( Str( _i, 5 ) ) + ".", 5 )
+         @ PRow(), PCol() + 1 SAY PadR( _dup[ _i, 4 ], 5 )
+         @ PRow(), PCol() + 1 SAY _dup[ _i, 1 ]
+         @ PRow(), PCol() + 1 SAY PadR( _dup[ _i, 2 ], 40 )
+         @ PRow(), PCol() + 1 SAY _dup[ _i, 3 ]
+      NEXT
+
+      ENDPRINT
+
+   ENDIF
+
+   RETURN
 
 
 // ------------------------------------------------------------
 // rekapitulacija kalkulacije tip-a 24
 // ------------------------------------------------------------
-static function kalk_24_rekapitulacija()
+STATIC FUNCTION kalk_24_rekapitulacija()
 
-close all
+   CLOSE ALL
 
-RekapK()
-        
-if Pitanje(, "Zelite li izvrsiti kontiranje dokumenta (D/N) ?", "D" ) == "D"
-    kalk_kontiranje_naloga()
-endif
-        
-o_kalk_edit()
- 
-return DE_REFRESH
+   RekapK()
+
+   IF Pitanje(, "Zelite li izvrsiti kontiranje dokumenta (D/N) ?", "D" ) == "D"
+      kalk_kontiranje_naloga()
+   ENDIF
+
+   o_kalk_edit()
+
+   RETURN DE_REFRESH
 
 
 // -------------------------------------------------------------
 // obrada dogadjaja tastature u pripremi kalkulacija
 // -------------------------------------------------------------
-function kalk_pripr_key_handler()
-local nTr2
-local cSekv
-local nKekk
-local iSekv
-local _log_info
+FUNCTION kalk_pripr_key_handler()
 
-if ( Ch == K_CTRL_T .or. Ch == K_ENTER ) .and. EOF()
-    return DE_CONT
-endif
+   LOCAL nTr2
+   LOCAL cSekv
+   LOCAL nKekk
+   LOCAL iSekv
+   LOCAL _log_info
 
-private fNovi := .f.
-PRIVATE PicCDEM := gPicCDEM
-PRIVATE PicProc := gPicProc
-PRIVATE PicDEM := gPicDEM
-PRIVATE Pickol := gPicKol
+   IF ( Ch == K_CTRL_T .OR. Ch == K_ENTER ) .AND. Eof()
+      RETURN DE_CONT
+   ENDIF
 
-select kalk_pripr
+   PRIVATE fNovi := .F.
+   PRIVATE PicCDEM := gPicCDEM
+   PRIVATE PicProc := gPicProc
+   PRIVATE PicDEM := gPicDEM
+   PRIVATE Pickol := gPicKol
 
-do case
+   SELECT kalk_pripr
 
-    case Ch == K_ALT_H
-        Savjetnik()
+   DO CASE
 
-    case Ch == K_ALT_K
-        return kalk_24_rekapitulacija()
+   CASE Ch == K_ALT_H
+      Savjetnik()
 
-    case Ch == K_SH_F9
+   CASE Ch == K_ALT_K
+      RETURN kalk_24_rekapitulacija()
 
-        renumeracija_kalk_pripr( nil, nil, .f. )
-        return DE_REFRESH
+   CASE Ch == K_SH_F9
 
-    case Ch == K_SH_F8
-        
-        if kalk_pripr_brisi_od_do()
-            return DE_REFRESH
-        endif
+      renumeracija_kalk_pripr( nil, nil, .F. )
+      RETURN DE_REFRESH
 
-    case Ch==K_ALT_P
+   CASE Ch == K_SH_F8
 
-        close all
-        IzbDokOLPP()
-        // StPripr()
-        o_kalk_edit()
+      IF kalk_pripr_brisi_od_do()
+         RETURN DE_REFRESH
+      ENDIF
 
-        return DE_REFRESH
+   CASE Ch == K_ALT_P
 
-    case Ch==K_ALT_L
+      CLOSE ALL
+      IzbDokOLPP()
+      // StPripr()
+      o_kalk_edit()
 
-        close all
+      RETURN DE_REFRESH
 
-        label_bkod()
-        o_kalk_edit()
+   CASE Ch == K_ALT_L
 
-        return DE_REFRESH
+      CLOSE ALL
 
-    case UPPER(CHR(Ch)) == "Q"
+      label_bkod()
+      o_kalk_edit()
 
-        if Pitanje(,"Stampa naljepnica(labela) za robu ?","D")=="D"
+      RETURN DE_REFRESH
 
-            CLOSE ALL
+   CASE Upper( Chr( Ch ) ) == "Q"
 
-            RLabele()
-            o_kalk_edit()       
+      IF Pitanje(, "Stampa naljepnica(labela) za robu ?", "D" ) == "D"
 
-            return DE_REFRESH
+         CLOSE ALL
 
-        endif
+         RLabele()
+         o_kalk_edit()
 
-        return DE_CONT
+         RETURN DE_REFRESH
 
-    case Ch == K_ALT_A
+      ENDIF
 
-        if IsJerry()
-            JerryMP()
-        endif
+      RETURN DE_CONT
 
-        close all
+   CASE Ch == K_ALT_A
 
-        azur_kalk()
-        o_kalk_edit()
+      IF IsJerry()
+         JerryMP()
+      ENDIF
 
-        if kalk_pripr->(RECCOUNT())==0 .and. IzFMKINI("Indikatori","ImaU_KALK","N",PRIVPATH) == "D"
+      CLOSE ALL
 
-            O__KALK
+      azur_kalk()
+      o_kalk_edit()
 
-            select _kalk
-            do while !EOF()
-                _rec := dbf_get_rec()
-                select kalk_pripr
-                append blank
-                dbf_update_rec( _rec )
-                select _kalk
-                skip            
-            enddo
-            
+      IF kalk_pripr->( RecCount() ) == 0 .AND. IzFMKINI( "Indikatori", "ImaU_KALK", "N", PRIVPATH ) == "D"
+
+         O__KALK
+
+         SELECT _kalk
+         DO WHILE !Eof()
+            _rec := dbf_get_rec()
             SELECT kalk_pripr
-            
-            UzmiIzINI(PRIVPATH+"FMK.INI","Indikatori","ImaU_KALK","N","WRITE")
-            close all
+            APPEND BLANK
+            dbf_update_rec( _rec )
+            SELECT _kalk
+            SKIP
+         ENDDO
 
-            o_kalk_edit()
-            MsgBeep("Stavke koje su bile privremeno sklonjene sada su vracene! Obradite ih!")
+         SELECT kalk_pripr
 
-        endif
+         UzmiIzINI( PRIVPATH + "FMK.INI", "Indikatori", "ImaU_KALK", "N", "WRITE" )
+         CLOSE ALL
 
-        return DE_REFRESH
+         o_kalk_edit()
+         MsgBeep( "Stavke koje su bile privremeno sklonjene sada su vracene! Obradite ih!" )
 
-    case Ch == K_CTRL_P
+      ENDIF
 
-        close all
-        kalk_centr_stampa_dokumenta()
+      RETURN DE_REFRESH
 
-        close all
-        o_kalk_edit()
+   CASE Ch == K_CTRL_P
 
-        return DE_REFRESH
+      CLOSE ALL
+      kalk_centr_stampa_dokumenta()
 
-    case Ch == K_CTRL_T
-        
-        if Pitanje(, "Zelite izbrisati ovu stavku ?", "D" ) == "D"
-                
-            _log_info := kalk_pripr->idfirma + "-" + kalk_pripr->idvd + "-" + kalk_pripr->brdok
-            cStavka := kalk_pripr->rbr
-            cArtikal := kalk_pripr->idroba
-            nKolicina := kalk_pripr->kolicina
-            nNc := kalk_pripr->nc
-            nVpc := kalk_pripr->vpc
+      CLOSE ALL
+      o_kalk_edit()
 
-            delete
-            
-            log_write( "F18_DOK_OPER: kalk, brisanje stavke u pripremi: " + _log_info + " stavka br: " + cStavka , 2 )
+      RETURN DE_REFRESH
 
-            _t_rec := RECNO()
-            __dbPack()
-            go ( _t_rec )
+   CASE Ch == K_CTRL_T
 
-            return DE_REFRESH
+      IF Pitanje(, "Zelite izbrisati ovu stavku ?", "D" ) == "D"
 
-        endif
+         _log_info := kalk_pripr->idfirma + "-" + kalk_pripr->idvd + "-" + kalk_pripr->brdok
+         cStavka := kalk_pripr->rbr
+         cArtikal := kalk_pripr->idroba
+         nKolicina := kalk_pripr->kolicina
+         nNc := kalk_pripr->nc
+         nVpc := kalk_pripr->vpc
 
-        return DE_CONT
+         DELETE
 
-    case IsDigit(Chr(Ch))
-        Msg("Ako zelite zapoceti unos novog dokumenta: <Ctrl-N>")
-        return DE_CONT
-    case Ch==K_ENTER
-        return EditStavka()
-    case Ch==K_CTRL_A .or. lAsistRadi
-        return EditAll() 
-    case Ch==K_CTRL_N  // nove stavke
-        fNovi := .t.
-        return NovaStavka()
-    case Ch==K_CTRL_F8
-        RaspTrosk()
-        return DE_REFRESH
-    case Ch==K_CTRL_F9
-        if Pitanje(,"Zelite Izbrisati cijelu pripremu ??","N")=="D"
-            
-            cOpis := kalk_pripr->idfirma + "-" + ;
-                kalk_pripr->idvd + "-" + ;
-                kalk_pripr->brdok 
+         log_write( "F18_DOK_OPER: kalk, brisanje stavke u pripremi: " + _log_info + " stavka br: " + cStavka, 2 )
 
-           
-            zapp()
-            select p_doksrc
-            zapp()
-            select kalk_pripr
+         _t_rec := RecNo()
+         __dbPack()
+         GO ( _t_rec )
 
-            log_write( "F18_DOK_OPER: kalk, brisanje pripreme: " + cOpis , 2 )
+         RETURN DE_REFRESH
 
-            return DE_REFRESH
+      ENDIF
 
-        endif
-        return DE_CONT
-    case UPPER( CHR(Ch) ) == "A" .or. lAutoAsist
-        return KnjizAsistent()
-    case UPPER( CHR(Ch) ) == "K"
-        // kalkulacija cijena
-        kalkulacija_cijena( .f. )
-        select kalk_pripr
-        go top
-        return DE_CONT
-    case Ch==K_F10
-        return MeniF10()
-    case Ch==K_F11
-        return MeniF11()
-    case Ch==K_F5
-        Kmag()
-        return DE_CONT
-    case Ch==K_F6
-        KPro()
-        return DE_CONT
-    case lAutoObr .and. lAAsist 
-        // automatski obradi dokument
-        // asistent
-        lAAsist := .f.
-        return KnjizAsistent()
-    case lAutoObr .and. !lAAsist
-        lAutoObr := .f.
-        keyboard CHR(K_ESC)
-        return DE_REFRESH
-endcase
+      RETURN DE_CONT
 
-return DE_CONT
+   CASE IsDigit( Chr( Ch ) )
+      Msg( "Ako zelite zapoceti unos novog dokumenta: <Ctrl-N>" )
+      RETURN DE_CONT
+   CASE Ch == K_ENTER
+      RETURN EditStavka()
+   CASE Ch == K_CTRL_A .OR. lAsistRadi
+      RETURN EditAll()
+   CASE Ch == K_CTRL_N  // nove stavke
+      fNovi := .T.
+      RETURN NovaStavka()
+   CASE Ch == K_CTRL_F8
+      RaspTrosk()
+      RETURN DE_REFRESH
+   CASE Ch == K_CTRL_F9
+      IF Pitanje(, "Zelite Izbrisati cijelu pripremu ??", "N" ) == "D"
+
+         cOpis := kalk_pripr->idfirma + "-" + ;
+            kalk_pripr->idvd + "-" + ;
+            kalk_pripr->brdok
+
+
+         zapp()
+         SELECT p_doksrc
+         zapp()
+         SELECT kalk_pripr
+
+         log_write( "F18_DOK_OPER: kalk, brisanje pripreme: " + cOpis, 2 )
+
+         RETURN DE_REFRESH
+
+      ENDIF
+      RETURN DE_CONT
+   CASE Upper( Chr( Ch ) ) == "A" .OR. lAutoAsist
+      RETURN KnjizAsistent()
+   CASE Upper( Chr( Ch ) ) == "K"
+      // kalkulacija cijena
+      kalkulacija_cijena( .F. )
+      SELECT kalk_pripr
+      GO TOP
+      RETURN DE_CONT
+   CASE Ch == K_F10
+      RETURN MeniF10()
+   CASE Ch == K_F11
+      RETURN MeniF11()
+   CASE Ch == K_F5
+      Kmag()
+      RETURN DE_CONT
+   CASE Ch == K_F6
+      KPro()
+      RETURN DE_CONT
+   CASE lAutoObr .AND. lAAsist
+      // automatski obradi dokument
+      // asistent
+      lAAsist := .F.
+      RETURN KnjizAsistent()
+   CASE lAutoObr .AND. !lAAsist
+      lAutoObr := .F.
+      KEYBOARD Chr( K_ESC )
+      RETURN DE_REFRESH
+   ENDCASE
+
+   RETURN DE_CONT
 
 
 // ------------------------------------------------------------
 // ispravka stavke
 // ------------------------------------------------------------
-function EditStavka()
-local _atributi := hb_hash()
-local _dok
-local _rok, _opis, _dok_hash
-local _old_dok, _new_dok
-local oAtrib, _t_rec
+FUNCTION EditStavka()
 
-_old_dok := hb_hash()
+   LOCAL _atributi := hb_Hash()
+   LOCAL _dok
+   LOCAL _rok, _opis, _dok_hash
+   LOCAL _old_dok, _new_dok
+   LOCAL oAtrib, _t_rec
 
-_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
-_opis := fetch_metric( "kalk_dodatni_opis_kod_unosa_dokumenta", NIL, "N" ) == "D"
+   _old_dok := hb_Hash()
 
-if RecCount() == 0
-    Msg("Ako zelite zapoceti unos novog dokumenta: <Ctrl-N>")
-    return DE_CONT
-endif
+   _rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
+   _opis := fetch_metric( "kalk_dodatni_opis_kod_unosa_dokumenta", NIL, "N" ) == "D"
 
-Scatter()
+   IF RecCount() == 0
+      Msg( "Ako zelite zapoceti unos novog dokumenta: <Ctrl-N>" )
+      RETURN DE_CONT
+   ENDIF
 
-if LEFT( _idkonto2, 3 ) = "XXX"
-    Beep(2)
-    Msg("Ne mozete ispravljati protustavke")
-    return DE_CONT
-endif
+   Scatter()
 
-nRbr := RbrUNum( _Rbr )
-_ERROR := ""
+   IF Left( _idkonto2, 3 ) = "XXX"
+      Beep( 2 )
+      Msg( "Ne mozete ispravljati protustavke" )
+      RETURN DE_CONT
+   ENDIF
 
-Box( "ist", __box_x, __box_y, .f. )
+   nRbr := RbrUNum( _Rbr )
+   _ERROR := ""
 
-_old_dok["idfirma"] := _idfirma
-_old_dok["idvd"] := _idvd
-_old_dok["brdok"] := _brdok
+   Box( "ist", __box_x, __box_y, .F. )
 
-_dok := hb_hash()                   
-_dok["idfirma"] := _idfirma
-_dok["idtipdok"] := _idvd
-_dok["brdok"] := _brdok
-_dok["rbr"] := _rbr  
+   _old_dok[ "idfirma" ] := _idfirma
+   _old_dok[ "idvd" ] := _idvd
+   _old_dok[ "brdok" ] := _brdok
 
-if _rok
-    _atributi["rok"] := get_kalk_atribut_rok( _dok, .f. )
-endif
+   _dok := hb_Hash()
+   _dok[ "idfirma" ] := _idfirma
+   _dok[ "idtipdok" ] := _idvd
+   _dok[ "brdok" ] := _brdok
+   _dok[ "rbr" ] := _rbr
 
-if _opis
-    _atributi["opis"] := get_kalk_atribut_opis( _dok, .f. )
-endif
+   IF _rok
+      _atributi[ "rok" ] := get_kalk_atribut_rok( _dok, .F. )
+   ENDIF
 
-if EditPRIPR( .f., @_atributi ) == 0
-    BoxC()
-    return DE_CONT
-else
+   IF _opis
+      _atributi[ "opis" ] := get_kalk_atribut_opis( _dok, .F. )
+   ENDIF
 
-    BoxC()
+   IF EditPRIPR( .F., @_atributi ) == 0
+      BoxC()
+      RETURN DE_CONT
+   ELSE
 
-    if _error <> "1"
-        _error := "0"
-    endif      
+      BoxC()
 
-    if _idvd == "16"
-        _oldval := _vpc * _kolicina  
-    else
-        _oldval := _mpcsapp * _kolicina  
-    endif
+      IF _error <> "1"
+         _error := "0"
+      ENDIF
 
-    _oldvaln := _nc * _kolicina
+      IF _idvd == "16"
+         _oldval := _vpc * _kolicina
+      ELSE
+         _oldval := _mpcsapp * _kolicina
+      ENDIF
 
-    Gather()
-        
-    _dok_hash := hb_hash()
-    _dok_hash["idfirma"] := field->idfirma
-    _dok_hash["idtipdok"] := field->idvd
-    _dok_hash["brdok"] := field->brdok
-    _dok_hash["rbr"] := field->rbr
-        
-    // ubaci mi atribute u fakt_atribute
-    oAtrib := F18_DOK_ATRIB():new("kalk")
-    oAtrib:dok_hash := _dok_hash
-    oAtrib:atrib_hash_to_dbf( _atributi )
+      _oldvaln := _nc * _kolicina
 
-    select kalk_pripr
+      Gather()
 
-    // izmjeni sve stavke dokumenta na osnovu prve stavke        
-    if nRbr == 1
-        _t_rec := RECNO()
-        _new_dok := dbf_get_rec()
-        izmjeni_sve_stavke_dokumenta( _old_dok, _new_dok )
-        select kalk_pripr
-        go ( _t_rec )
-    endif
-    
-    if _idvd $ "16#80" .and. !EMPTY( _idkonto2 )
-        
-        cIdkont := _idkonto
-        cIdkont2 := _idkonto2
-        _idkonto := cIdkont2
-        _idkonto2 := "XXX"
-        _kolicina := -kolicina
-          
-        nRbr := RbrUNum( _rbr ) + 1
-        _rbr := RedniBroj( nRbr )
+      _dok_hash := hb_Hash()
+      _dok_hash[ "idfirma" ] := field->idfirma
+      _dok_hash[ "idtipdok" ] := field->idvd
+      _dok_hash[ "brdok" ] := field->brdok
+      _dok_hash[ "rbr" ] := field->rbr
 
-        Box( "", __box_x, __box_y, .f., "Protustavka" )
+      // ubaci mi atribute u fakt_atribute
+      oAtrib := F18_DOK_ATRIB():new( "kalk" )
+      oAtrib:dok_hash := _dok_hash
+      oAtrib:atrib_hash_to_dbf( _atributi )
 
-            seek _idfirma + _idvd + _brdok + _rbr
+      SELECT kalk_pripr
 
-            _tbanktr := "X"
+      // izmjeni sve stavke dokumenta na osnovu prve stavke
+      IF nRbr == 1
+         _t_rec := RecNo()
+         _new_dok := dbf_get_rec()
+         izmjeni_sve_stavke_dokumenta( _old_dok, _new_dok )
+         SELECT kalk_pripr
+         GO ( _t_rec )
+      ENDIF
 
-            do while !EOF() .and. _idfirma + _idvd + _brdok + _rbr == field->idfirma + ;
-                    field->idvd + field->brdok + field->rbr
-                if LEFT( field->idkonto2, 3 ) == "XXX"
-                    Scatter()
-                    _tbanktr := ""
-                    exit
-                endif
-                skip
-            enddo
-                   
-            _idkonto := cIdKont2
-            _idkonto2 := "XXX"
-                    
-            if _idvd=="16"
-                if IsPDV()
-                    Get1_16bPDV()
-                else
-                    Get1_16b()
-                endif
-            else
-                Get1_80b()
-            endif
-                    
-            if _tbanktr == "X"
-                append ncnl
-            endif
+      IF _idvd $ "16#80" .AND. !Empty( _idkonto2 )
 
-            if _error <> "1"
-                _error := "0"
-            endif       
+         cIdkont := _idkonto
+         cIdkont2 := _idkonto2
+         _idkonto := cIdkont2
+         _idkonto2 := "XXX"
+         _kolicina := -kolicina
 
-            Gather()
+         nRbr := RbrUNum( _rbr ) + 1
+         _rbr := RedniBroj( nRbr )
 
-        BoxC()
+         Box( "", __box_x, __box_y, .F., "Protustavka" )
 
-    endif
+         SEEK _idfirma + _idvd + _brdok + _rbr
 
-    return DE_REFRESH
+         _tbanktr := "X"
 
-endif
+         DO WHILE !Eof() .AND. _idfirma + _idvd + _brdok + _rbr == field->idfirma + ;
+               field->idvd + field->brdok + field->rbr
+            IF Left( field->idkonto2, 3 ) == "XXX"
+               Scatter()
+               _tbanktr := ""
+               EXIT
+            ENDIF
+            SKIP
+         ENDDO
 
-return DE_CONT
+         _idkonto := cIdKont2
+         _idkonto2 := "XXX"
+
+         IF _idvd == "16"
+            IF IsPDV()
+               Get1_16bPDV()
+            ELSE
+               Get1_16b()
+            ENDIF
+         ELSE
+            Get1_80b()
+         ENDIF
+
+         IF _tbanktr == "X"
+            APPEND ncnl
+         ENDIF
+
+         IF _error <> "1"
+            _error := "0"
+         ENDIF
+
+         Gather()
+
+         BoxC()
+
+      ENDIF
+
+      RETURN DE_REFRESH
+
+   ENDIF
+
+   RETURN DE_CONT
 
 
 // --------------------------------------------------
 // unos nove stavke
 // --------------------------------------------------
-function NovaStavka()
-local _atributi := hb_hash()
-local _dok, _dok_hash 
-local _old_dok := hb_hash()
-local _new_dok
-local oAtrib
-local _rok, _opis
-local _rbr_uvecaj := 0
+FUNCTION NovaStavka()
 
-// isprazni kontrolnu matricu
-aNC_ctrl := {}
-    
-_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
-_opis := fetch_metric( "kalk_dodatni_opis_kod_unosa_dokumenta", NIL, "N" ) == "D"
+   LOCAL _atributi := hb_Hash()
+   LOCAL _dok, _dok_hash
+   LOCAL _old_dok := hb_Hash()
+   LOCAL _new_dok
+   LOCAL oAtrib
+   LOCAL _rok, _opis
+   LOCAL _rbr_uvecaj := 0
 
-Box( "knjn", __box_x, __box_y, .f., "Unos novih stavki" )    
+   // isprazni kontrolnu matricu
+   aNC_ctrl := {}
 
-    _TMarza := "A"
+   _rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
+   _opis := fetch_metric( "kalk_dodatni_opis_kod_unosa_dokumenta", NIL, "N" ) == "D"
 
-    // ipak idi na zadnju stavku !
-    go bottom
-    if LEFT( field->idkonto2, 3 ) = "XXX"
-        _rbr_uvecaj := 1
-        skip -1
-    endif
-        
-    cIdkont := ""
-    cIdkont2 := ""
-        
-    do while .t.
+   Box( "knjn", __box_x, __box_y, .F., "Unos novih stavki" )
 
-        Scatter()
-        
-        _atributi := hb_hash()
+   _TMarza := "A"
 
-        if _rok
-            _atributi["rok"] := SPACE(10)
-        endif
-        if _opis
-            _atributi["opis"] := SPACE(300)
-        endif
+   // ipak idi na zadnju stavku !
+   GO BOTTOM
+   IF Left( field->idkonto2, 3 ) = "XXX"
+      _rbr_uvecaj := 1
+      SKIP -1
+   ENDIF
 
-        _ERROR := ""
-           
-        if _idvd $ "16#80" .and. _idkonto2 = "XXX"
-            _idkonto := cIdkont
-            _idkonto2 := cIdkont2
-        endif
-        
-        if fetch_metric( "kalk_reset_artikla_kod_unosa", my_user(), "N" ) == "D"
-            _idroba := SPACE(10)
-        endif
+   cIdkont := ""
+   cIdkont2 := ""
 
-        _Kolicina := _GKolicina := _GKolicin2 := 0
-        _FCj := _FCJ2 := _Rabat := 0
-           
-        if !( _idvd $ "10#81" )
-            _Prevoz := _Prevoz2 := _Banktr := _SpedTr := _CarDaz := _ZavTr := 0
-        endif
+   DO WHILE .T.
 
-        _NC := _VPC := _VPCSaP := _MPC := _MPCSaPP := 0
-           
-        nRbr := RbrUNum( _rbr ) + 1 + _rbr_uvecaj
+      Scatter()
 
-        _old_dok["idfirma"] := _idfirma
-        _old_dok["idvd"] := _idvd
-        _old_dok["brdok"] := _brdok
+      _atributi := hb_Hash()
 
-        if EditPRIPR( .t., @_atributi ) == 0
-             exit
-        endif
-           
-        append blank
-           
-        if _error <> "1"
+      IF _rok
+         _atributi[ "rok" ] := Space( 10 )
+      ENDIF
+      IF _opis
+         _atributi[ "opis" ] := Space( 300 )
+      ENDIF
+
+      _ERROR := ""
+
+      IF _idvd $ "16#80" .AND. _idkonto2 = "XXX"
+         _idkonto := cIdkont
+         _idkonto2 := cIdkont2
+      ENDIF
+
+      IF fetch_metric( "kalk_reset_artikla_kod_unosa", my_user(), "N" ) == "D"
+         _idroba := Space( 10 )
+      ENDIF
+
+      _Kolicina := _GKolicina := _GKolicin2 := 0
+      _FCj := _FCJ2 := _Rabat := 0
+
+      IF !( _idvd $ "10#81" )
+         _Prevoz := _Prevoz2 := _Banktr := _SpedTr := _CarDaz := _ZavTr := 0
+      ENDIF
+
+      _NC := _VPC := _VPCSaP := _MPC := _MPCSaPP := 0
+
+      nRbr := RbrUNum( _rbr ) + 1 + _rbr_uvecaj
+
+      _old_dok[ "idfirma" ] := _idfirma
+      _old_dok[ "idvd" ] := _idvd
+      _old_dok[ "brdok" ] := _brdok
+
+      IF EditPRIPR( .T., @_atributi ) == 0
+         EXIT
+      ENDIF
+
+      APPEND BLANK
+
+      IF _error <> "1"
+         _error := "0"
+      ENDIF
+
+      IF _idvd == "16"
+         _oldval := _vpc * _kolicina
+      ELSE
+         _oldval := _mpcsapp * _kolicina
+      ENDIF
+
+      _oldvaln := _nc * _kolicina
+
+      Gather()
+
+      _dok_hash := hb_Hash()
+      _dok_hash[ "idfirma" ] := field->idfirma
+      _dok_hash[ "idtipdok" ] := field->idvd
+      _dok_hash[ "brdok" ] := field->brdok
+      _dok_hash[ "rbr" ] := field->rbr
+
+      // ubaci mi atribute u fakt_atribute
+      oAtrib := F18_DOK_ATRIB():new( "kalk" )
+      oAtrib:dok_hash := _dok_hash
+      oAtrib:atrib_hash_to_dbf( _atributi )
+
+      // izmjeni sve stavke dokumenta na osnovu prve stavke
+      IF nRbr == 1
+         SELECT kalk_pripr
+         _t_rec := RecNo()
+         _new_dok := dbf_get_rec()
+         izmjeni_sve_stavke_dokumenta( _old_dok, _new_dok )
+         SELECT kalk_pripr
+         GO ( _t_rec )
+      ENDIF
+
+      IF _idvd $ "16#80" .AND. !Empty( _idkonto2 )
+
+         cIdkont := _idkonto
+         cIdkont2 := _idkonto2
+
+         _idkonto := cIdKont2
+         _idkonto2 := "XXX"
+         _kolicina := -kolicina
+
+         // uvecaj redni broj stavke
+         nRbr := RbrUNum( _rbr ) + 1
+         _Rbr := RedniBroj( nRbr )
+
+         Box( "", __box_x, __box_y, .F., "Protustavka" )
+
+         IF _idvd == "16"
+            IF IsPDV()
+               Get1_16bPDV()
+            ELSE
+               Get1_16b()
+            ENDIF
+         ELSE
+            Get1_80b()
+         ENDIF
+
+         APPEND BLANK
+
+         IF _error <> "1"
             _error := "0"
-        endif       
-           
-        if _idvd == "16"
-            _oldval := _vpc * _kolicina  
-        else
-            _oldval := _mpcsapp*_kolicina  
-        endif
+         ENDIF
 
-        _oldvaln := _nc * _kolicina
+         // stavka onda postavi ERROR
+         Gather()
 
-        Gather()
+         BoxC()
 
-        _dok_hash := hb_hash()
-        _dok_hash["idfirma"] := field->idfirma
-        _dok_hash["idtipdok"] := field->idvd
-        _dok_hash["brdok"] := field->brdok
-        _dok_hash["rbr"] := field->rbr
-        
-        // ubaci mi atribute u fakt_atribute
-        oAtrib := F18_DOK_ATRIB():new("kalk")
-        oAtrib:dok_hash := _dok_hash
-        oAtrib:atrib_hash_to_dbf( _atributi )
+         _idkonto := cIdkont
+         _idkonto2 := cIdkont2
 
-        // izmjeni sve stavke dokumenta na osnovu prve stavke        
-        if nRbr == 1
-            select kalk_pripr
-            _t_rec := RECNO()
-            _new_dok := dbf_get_rec()
-            izmjeni_sve_stavke_dokumenta( _old_dok, _new_dok )
-            select kalk_pripr
-            go ( _t_rec )
-        endif
+      ENDIF
 
-        if _idvd $ "16#80" .and. !EMPTY( _idkonto2 )
+   ENDDO
 
-            cIdkont := _idkonto
-            cIdkont2 := _idkonto2
+   BoxC()
 
-            _idkonto := cIdKont2
-            _idkonto2 := "XXX"
-            _kolicina := -kolicina
-
-            // uvecaj redni broj stavke
-            nRbr := RbrUNum( _rbr ) + 1
-            _Rbr := RedniBroj( nRbr )
-            
-            Box( "", __box_x, __box_y, .f., "Protustavka" )
-
-                if _idvd == "16"
-                    if IsPDV()
-                        Get1_16bPDV()
-                    else
-                        Get1_16b()
-                    endif
-                else
-                    Get1_80b()
-                endif
-
-                append blank
-
-                if _error <> "1"
-                    _error := "0"
-                endif       
-
-                // stavka onda postavi ERROR
-                Gather()
-
-            BoxC()
-
-            _idkonto := cIdkont
-            _idkonto2 := cIdkont2
-
-        endif
-
-    enddo
-
-BoxC()
-
-return DE_REFRESH
+   RETURN DE_REFRESH
 
 
 
 // ---------------------------------------------------------
 // ispravka svih stavki
 // ---------------------------------------------------------
-function EditAll()
-local _atributi := hb_hash()
-local _dok
-local oAtrib, _dok_hash, _old_dok, _new_dok
-local _rok, _opis
+FUNCTION EditAll()
 
-// ovu opciju moze pozvati i asistent alt+F10 !
-PushWA()
-select kalk_pripr
+   LOCAL _atributi := hb_Hash()
+   LOCAL _dok
+   LOCAL oAtrib, _dok_hash, _old_dok, _new_dok
+   LOCAL _rok, _opis
 
-_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
-_opis := fetch_metric( "kalk_dodatni_opis_kod_unosa_dokumenta", NIL, "N" ) == "D"
+   // ovu opciju moze pozvati i asistent alt+F10 !
+   PushWA()
+   SELECT kalk_pripr
 
-Box( "anal", __box_x, __box_y, .f., "Ispravka naloga" )
+   _rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
+   _opis := fetch_metric( "kalk_dodatni_opis_kod_unosa_dokumenta", NIL, "N" ) == "D"
 
-    nDug := 0
-    nPot := 0
+   Box( "anal", __box_x, __box_y, .F., "Ispravka naloga" )
 
-    do while !EOF()
+   nDug := 0
+   nPot := 0
 
-        skip
-        nTR2 := RECNO()
-        skip -1
+   DO WHILE !Eof()
 
-        _old_dok := dbf_get_rec()
+      SKIP
+      nTR2 := RecNo()
+      SKIP -1
 
-        Scatter()
+      _old_dok := dbf_get_rec()
 
-        _error := ""
+      Scatter()
 
-        if LEFT( _idkonto2, 3 ) == "XXX"
-            // 80-ka
-            skip 1
-            skip 1
-            nTR2 := RECNO()
-            skip -1
-            Scatter()
-            _error := ""
-            if LEFT( _idkonto2, 3 ) == "XXX"
-                exit
-            endif
-        endif
-            
-        nRbr := RbrUNum( _rbr )
+      _error := ""
 
-        if lAsistRadi
-            CLEAR TYPEAHEAD
-            cSekv:=""
-            for nkekk:=1 to 17
-                cSekv+=cEnter
-            next
-            keyboard cSekv
-        endif
+      IF Left( _idkonto2, 3 ) == "XXX"
+         // 80-ka
+         SKIP 1
+         SKIP 1
+         nTR2 := RecNo()
+         SKIP -1
+         Scatter()
+         _error := ""
+         IF Left( _idkonto2, 3 ) == "XXX"
+            EXIT
+         ENDIF
+      ENDIF
 
-        _dok := hb_hash()                   
-        _dok["idfirma"] := _idfirma
-        _dok["idtipdok"] := _idvd
-        _dok["brdok"] := _brdok
-        _dok["rbr"] := _rbr  
+      nRbr := RbrUNum( _rbr )
 
-        if _opis
-            _atributi["opis"] := get_kalk_atribut_opis( _dok, .f. )
-        endif
+      IF lAsistRadi
+         CLEAR TYPEAHEAD
+         cSekv := ""
+         FOR nkekk := 1 TO 17
+            cSekv += cEnter
+         NEXT
+         KEYBOARD cSekv
+      ENDIF
 
-        if _rok
-            _atributi["rok"] := get_kalk_atribut_rok( _dok, .f. )
-        endif
-      
-        if EditPRIPR(.f., @_atributi )==0
-            exit
-        endif
-            
-        select kalk_pripr
-        
-        if _error <> "1"
+      _dok := hb_Hash()
+      _dok[ "idfirma" ] := _idfirma
+      _dok[ "idtipdok" ] := _idvd
+      _dok[ "brdok" ] := _brdok
+      _dok[ "rbr" ] := _rbr
+
+      IF _opis
+         _atributi[ "opis" ] := get_kalk_atribut_opis( _dok, .F. )
+      ENDIF
+
+      IF _rok
+         _atributi[ "rok" ] := get_kalk_atribut_rok( _dok, .F. )
+      ENDIF
+
+      IF EditPRIPR( .F., @_atributi ) == 0
+         EXIT
+      ENDIF
+
+      SELECT kalk_pripr
+
+      IF _error <> "1"
+         _error := "0"
+      ENDIF
+
+      // stavka onda postavi ERROR
+      _oldval := _mpcsapp * _kolicina  // vrijednost prosle stavke
+      _oldvaln := _nc * _kolicina
+
+      Gather()
+
+      // ubaci mi atribute u fakt_atribute
+      oAtrib := F18_DOK_ATRIB():new( "kalk" )
+      oAtrib:dok_hash := _dok
+      oAtrib:atrib_hash_to_dbf( _atributi )
+
+      SELECT kalk_pripr
+
+      // izmjeni sve stavke dokumenta na osnovu prve stavke
+      IF nRbr == 1
+         _t_rec := RecNo()
+         _new_dok := dbf_get_rec()
+         izmjeni_sve_stavke_dokumenta( _old_dok, _new_dok )
+         SELECT kalk_pripr
+         GO ( _t_rec )
+      ENDIF
+
+      IF _idvd $ "16#80" .AND. !Empty( _idkonto2 )
+
+         cIdkont := _idkonto
+         cIdkont2 := _idkonto2
+         _idkonto := cIdkont2
+         _idkonto2 := "XXX"
+         _kolicina := -kolicina
+
+         // uvecaj redni broj stavke
+         nRbr := RbrUNum( _rbr ) + 1
+         _Rbr := RedniBroj( nRbr )
+
+         Box( "", __box_x, __box_y, .F., "Protustavka" )
+         SEEK _idfirma + _idvd + _brdok + _rbr
+         _tbanktr := "X"
+         DO WHILE !Eof() .AND. _idfirma + _idvd + _brdok + _rbr == field->idfirma + ;
+               field->idvd + field->brdok + field->rbr
+            IF Left( field->idkonto2, 3 ) == "XXX"
+               Scatter()
+               _tbanktr := ""
+               EXIT
+            ENDIF
+            SKIP
+         ENDDO
+         _idkonto := cIdkont2
+         _idkonto2 := "XXX"
+         IF _idvd == "16"
+            Get1_16b()
+         ELSE
+            Get1_80b()
+         ENDIF
+
+         IF _tbanktr == "X"
+            APPEND ncnl
+         ENDIF
+         IF _error <> "1"
             _error := "0"
-        endif       
+         ENDIF
+         // stavka onda postavi ERROR
+         Gather()
+         BoxC()
+      ENDIF
+      GO nTR2
+   ENDDO
 
-        // stavka onda postavi ERROR
-        _oldval := _mpcsapp * _kolicina  // vrijednost prosle stavke
-        _oldvaln := _nc * _kolicina
+   Beep( 1 )
 
-        Gather()
-       
-        // ubaci mi atribute u fakt_atribute
-        oAtrib := F18_DOK_ATRIB():new("kalk")
-        oAtrib:dok_hash := _dok
-        oAtrib:atrib_hash_to_dbf( _atributi )
+   CLEAR TYPEAHEAD
+   PopWA()
 
-        select kalk_pripr
+   BoxC()
 
-        // izmjeni sve stavke dokumenta na osnovu prve stavke        
-        if nRbr == 1
-            _t_rec := RECNO()
-            _new_dok := dbf_get_rec()
-            izmjeni_sve_stavke_dokumenta( _old_dok, _new_dok )
-            select kalk_pripr
-            go ( _t_rec )
-        endif
+   lAsistRadi := .F.
 
-        if _idvd $ "16#80" .and. !EMPTY( _idkonto2 )
-            
-            cIdkont := _idkonto
-            cIdkont2 := _idkonto2
-            _idkonto := cIdkont2
-            _idkonto2 := "XXX"
-            _kolicina := -kolicina
-                         
-            // uvecaj redni broj stavke
-            nRbr := RbrUNum( _rbr ) + 1
-            _Rbr := RedniBroj( nRbr )
-  
-            Box( "", __box_x, __box_y, .f., "Protustavka" )
-                seek _idfirma + _idvd + _brdok + _rbr
-                _tbanktr := "X"
-                do while !EOF() .and. _idfirma + _idvd + _brdok + _rbr == field->idfirma + ;
-                        field->idvd + field->brdok + field->rbr
-                    if LEFT( field->idkonto2, 3 ) == "XXX"
-                        Scatter()
-                        _tbanktr := ""
-                        exit
-                    endif
-                    skip
-                enddo
-                _idkonto := cIdkont2
-                _idkonto2 := "XXX"
-                if _idvd == "16"
-                    Get1_16b()
-                else
-                    Get1_80b()
-                endif
-                        
-                if _tbanktr=="X"
-                    append ncnl
-                endif
-                if _error <> "1"
-                    _error := "0"
-                endif       
-                // stavka onda postavi ERROR
-                Gather()
-            BoxC()
-        endif
-        go nTR2
-    enddo
-       
-    Beep(1)
-        
-    clear typeahead
-    PopWA()
-
-BoxC()
-
-lAsistRadi := .f.
-
-return DE_REFRESH
+   RETURN DE_REFRESH
 
 
 
@@ -1008,12 +1017,14 @@ return DE_REFRESH
  *  \brief Asistent za obradu stavki dokumenta u kalk_pripremi
  */
 
-function KnjizAsistent()
-lAutoAsist := .f.
-lAsistRadi:=.t.
-cSekv := CHR(K_CTRL_A)
-keyboard cSekv
-return DE_REFRESH
+FUNCTION KnjizAsistent()
+
+   lAutoAsist := .F.
+   lAsistRadi := .T.
+   cSekv := Chr( K_CTRL_A )
+   KEYBOARD cSekv
+
+   RETURN DE_REFRESH
 
 
 
@@ -1021,230 +1032,233 @@ return DE_REFRESH
  *  \brief Meni ostalih opcija koji se poziva tipkom F10 u tabeli kalk_pripreme
  */
 
-function MeniF10()
-private opc[9]
+FUNCTION MeniF10()
 
-opc[1]:="1. prenos dokumenta fakt->kalk                                  "
-opc[2]:="2. povrat dokumenta u pripremu"
-opc[3]:="3. priprema -> smece"
-opc[4]:="4. smece    -> priprema"
-opc[5]:="5. najstariji dokument iz smeca u pripremu"
-opc[6]:="6. generacija dokumenta inventure magacin "
-opc[7]:="7. generacija dokumenta inventure prodavnica"
-opc[8]:="8. generacija nivelacije prodavn. na osnovu niv. za drugu prod"
-opc[9]:="9. parametri obrade - nc / obrada sumnjivih dokumenata"
-h[1]:=h[2]:=""
+   PRIVATE opc[ 9 ]
 
-select kalk_pripr
-go top
+   opc[ 1 ] := "1. prenos dokumenta fakt->kalk                                  "
+   opc[ 2 ] := "2. povrat dokumenta u pripremu"
+   opc[ 3 ] := "3. priprema -> smece"
+   opc[ 4 ] := "4. smece    -> priprema"
+   opc[ 5 ] := "5. najstariji dokument iz smeca u pripremu"
+   opc[ 6 ] := "6. generacija dokumenta inventure magacin "
+   opc[ 7 ] := "7. generacija dokumenta inventure prodavnica"
+   opc[ 8 ] := "8. generacija nivelacije prodavn. na osnovu niv. za drugu prod"
+   opc[ 9 ] := "9. parametri obrade - nc / obrada sumnjivih dokumenata"
+   h[ 1 ] := h[ 2 ] := ""
 
-cIdVDTek := IdVD  
-// tekuca vrsta dokumenta
+   SELECT kalk_pripr
+   GO TOP
 
-if cIdVdTek=="19"
-    AADD(opc,"A. obrazac promjene cijena")
-else
-    AADD(opc,"--------------------------")
-endif
+   cIdVDTek := IdVD
+   // tekuca vrsta dokumenta
 
-AADD( opc , "B. pretvori 11 -> 41  ili  11 -> 42"        )
-AADD( opc , "C. promijeni predznak za kolicine"          )
-AADD( opc , "D. preuzmi tarife iz sifrarnika"            )
-AADD( opc , "E. storno dokumenta"                        )
-AADD( opc , "F. prenesi VPC(sifr)+POREZ -> MPCSAPP(dok)" )
-AADD( opc , "G. prenesi MPCSAPP(dok)    -> MPC(sifr)"    )
-AADD( opc , "H. prenesi VPC(sif)        -> VPC(dok)"     )
-AADD( opc , "I. povrat (12,11) -> u drugo skl.(96,97)"   )
-AADD( opc , "J. zaduzenje prodavnice iz magacina (10->11)"   )
-AADD( opc , "K. veleprodaja na osnovu dopreme u magacin (16->14)"   )
+   IF cIdVdTek == "19"
+      AAdd( opc, "A. obrazac promjene cijena" )
+   ELSE
+      AAdd( opc, "--------------------------" )
+   ENDIF
 
-close all
+   AAdd( opc, "B. pretvori 11 -> 41  ili  11 -> 42"        )
+   AAdd( opc, "C. promijeni predznak za kolicine"          )
+   AAdd( opc, "D. preuzmi tarife iz sifrarnika"            )
+   AAdd( opc, "E. storno dokumenta"                        )
+   AAdd( opc, "F. prenesi VPC(sifr)+POREZ -> MPCSAPP(dok)" )
+   AAdd( opc, "G. prenesi MPCSAPP(dok)    -> MPC(sifr)"    )
+   AAdd( opc, "H. prenesi VPC(sif)        -> VPC(dok)"     )
+   AAdd( opc, "I. povrat (12,11) -> u drugo skl.(96,97)"   )
+   AAdd( opc, "J. zaduzenje prodavnice iz magacina (10->11)"   )
+   AAdd( opc, "K. veleprodaja na osnovu dopreme u magacin (16->14)"   )
 
-private am_x:=m_x,am_y:=m_y
-private Izbor:=1
+   CLOSE ALL
 
-do while .t.
-          Izbor:=menu("prip",opc,Izbor,.f.)
-          do case
-            case Izbor==0
-                EXIT
-            case izbor == 1
-               if gVodiSamoTarife=="D"
-                  Gen41S()
-               else
-                  FaktKalk()
-               endif
-            case izbor == 2
-                Povrat_kalk_dokumenta()
-            case izbor == 3
-                azur_kalk_pripr9()
-            case izbor == 4
-                Povrat9()
-            case izbor == 5
-                P9najst()
+   PRIVATE am_x := m_x, am_y := m_y
+   PRIVATE Izbor := 1
 
-            case izbor == 6
-               im()
-            case izbor == 7
-               ip()
-            case izbor == 8
-                GenNivP()
-            case izbor == 9
-                aRezim:={gCijene,gMetodaNC}
-                O_PARAMS
-                private cSection:="K",cHistory:=" "; aHistory:={}
-                cIspravka:="D"
-                kalk_par_metoda_nc()
-                select params; use
-                IF gCijene<>aRezim[1] .or. gMetodaNC<>aRezim[2]
-                  IF gCijene=="1".and.gMetodaNC==" "
-                    Soboslikar({{m_x+17,m_y+1,m_x+20,m_y+77}},23,14)
-                  ELSEIF aRezim[1]=="1".and.aRezim[2]==" "
-                    Soboslikar({{m_x+17,m_y+1,m_x+20,m_y+77}},14,23)
-                  ENDIF
-                ENDIF
+   DO WHILE .T.
+      Izbor := menu( "prip", opc, Izbor, .F. )
+      DO CASE
+      CASE Izbor == 0
+         EXIT
+      CASE izbor == 1
+         IF gVodiSamoTarife == "D"
+            Gen41S()
+         ELSE
+            FaktKalk()
+         ENDIF
+      CASE izbor == 2
+         Povrat_kalk_dokumenta()
+      CASE izbor == 3
+         azur_kalk_pripr9()
+      CASE izbor == 4
+         Povrat9()
+      CASE izbor == 5
+         P9najst()
 
-            case izbor == 10 .and. cIdVDTek=="19"
-                o_kalk_edit()
-                select kalk_pripr
-                go top
-                cidfirma:=idfirma
-                cidvd:=idvd
-                cbrdok:=brdok
-                Obraz19()
-                select kalk_pripr
-                go top
-                RETURN DE_REFRESH
+      CASE izbor == 6
+         im()
+      CASE izbor == 7
+         ip()
+      CASE izbor == 8
+         GenNivP()
+      CASE izbor == 9
+         aRezim := { gCijene, gMetodaNC }
+         O_PARAMS
+         PRIVATE cSection := "K", cHistory := " "; aHistory := {}
+         cIspravka := "D"
+         kalk_par_metoda_nc()
+         SELECT params; USE
+         IF gCijene <> aRezim[ 1 ] .OR. gMetodaNC <> aRezim[ 2 ]
+            IF gCijene == "1" .AND. gMetodaNC == " "
+               Soboslikar( { { m_x + 17, m_y + 1, m_x + 20, m_y + 77 } }, 23, 14 )
+            ELSEIF aRezim[ 1 ] == "1" .AND. aRezim[ 2 ] == " "
+               Soboslikar( { { m_x + 17, m_y + 1, m_x + 20, m_y + 77 } }, 14, 23 )
+            ENDIF
+         ENDIF
 
-            case izbor == 11
-                Iz11u412()
+      CASE izbor == 10 .AND. cIdVDTek == "19"
+         o_kalk_edit()
+         SELECT kalk_pripr
+         GO TOP
+         cidfirma := idfirma
+         cidvd := idvd
+         cbrdok := brdok
+         Obraz19()
+         SELECT kalk_pripr
+         GO TOP
+         RETURN DE_REFRESH
 
-            case izbor == 12
-                PlusMinusKol()
+      CASE izbor == 11
+         Iz11u412()
 
-            case izbor == 13
-                UzmiTarIzSif()
+      CASE izbor == 12
+         PlusMinusKol()
 
-            case izbor == 14
-                storno_kalk_dokument()
+      CASE izbor == 13
+         UzmiTarIzSif()
 
-            case izbor == 15
-                DiskMPCSAPP()
+      CASE izbor == 14
+         storno_kalk_dokument()
 
-            case izbor == 16
+      CASE izbor == 15
+         DiskMPCSAPP()
 
-                kalk_dokument_prenos_cijena()
+      CASE izbor == 16
 
-            case izbor == 17
-                VPCSifUDok()
+         kalk_dokument_prenos_cijena()
 
-            case izbor == 18
-                Iz12u97()     // 11,12 -> 96,97
+      CASE izbor == 17
+         VPCSifUDok()
 
-            case izbor == 19
-                Iz10u11()
+      CASE izbor == 18
+         Iz12u97()     // 11,12 -> 96,97
 
-            case izbor == 20
-                Iz16u14()
+      CASE izbor == 19
+         Iz10u11()
 
-
-            endcase
-enddo
-m_x:=am_x; m_y:=am_y
-o_kalk_edit()
-return DE_REFRESH
+      CASE izbor == 20
+         Iz16u14()
 
 
+      ENDCASE
+   ENDDO
+   m_x := am_x; m_y := am_y
+   o_kalk_edit()
 
-static function kalk_dokument_prenos_cijena()
-local _opt := 2
-local _update := .f.
-local _konto := SPACE(7)
-local _t_area := SELECT()
-private getList := {}
+   RETURN DE_REFRESH
 
-Box(, 7, 65 )
-    @ m_x + 1, m_y + 2 SAY "Prenos cijena dokument/sifrarnik ****"
-    @ m_x + 3, m_y + 2 SAY "1) prenos MPCSAPP (dok) => sifrarnik"
-    @ m_x + 4, m_y + 2 SAY "2) prenos sifrarnik => MPCSAPP (dok)"
-    @ m_x + 6, m_y + 2 SAY "    odabir > " GET _opt PICT "9"
-    read
-BoxC()
 
-if LastKey() == K_ESC
-    return
-endif
 
-if _opt == 1
-    if Pitanje(,"Koristiti dokument u kalk_pripremi (D) ili azurirani (N) ?","N")=="D"
-        MPCSAPPuSif()
-    else
-        MPCSAPPiz80uSif()
-    endif
-    return
-endif
+STATIC FUNCTION kalk_dokument_prenos_cijena()
 
-if _opt == 2
-    
-    O_KALK_PRIPR
-    O_ROBA
-    O_KONCIJ
-    O_KONTO
+   LOCAL _opt := 2
+   LOCAL _update := .F.
+   LOCAL _konto := Space( 7 )
+   LOCAL _t_area := Select()
+   PRIVATE getList := {}
 
-    Box(, 1, 50 )
-        @ m_x + 1, m_y + 2 SAY "Prodavnicki konto:" GET _konto VALID p_konto( @_konto )
-        read
-    BoxC()
+   Box(, 7, 65 )
+   @ m_x + 1, m_y + 2 SAY "Prenos cijena dokument/sifrarnik ****"
+   @ m_x + 3, m_y + 2 SAY "1) prenos MPCSAPP (dok) => sifrarnik"
+   @ m_x + 4, m_y + 2 SAY "2) prenos sifrarnik => MPCSAPP (dok)"
+   @ m_x + 6, m_y + 2 SAY "    odabir > " GET _opt PICT "9"
+   READ
+   BoxC()
 
-    if LastKey() == K_ESC
-        return
-    endif
+   IF LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-    // imamo konto, mozemo sada da ubacimo cijene...
-    select koncij
-    hseek _konto
+   IF _opt == 1
+      IF Pitanje(, "Koristiti dokument u kalk_pripremi (D) ili azurirani (N) ?", "N" ) == "D"
+         MPCSAPPuSif()
+      ELSE
+         MPCSAPPiz80uSif()
+      ENDIF
+      RETURN
+   ENDIF
 
-    select kalk_pripr   
-    go top
+   IF _opt == 2
 
-    do while !EOF()
+      O_KALK_PRIPR
+      O_ROBA
+      O_KONCIJ
+      O_KONTO
 
-        _update := .t.
-        _rec := dbf_get_rec()
-        
-        select roba
-        hseek _rec["idroba"]
-    
-        if !FOUND()
-            MsgBeep( "Nepostojeca sifra artikla " + _rec["idroba"] )
-            select kalk_pripr
-            skip
-            loop
-        endif
+      Box(, 1, 50 )
+      @ m_x + 1, m_y + 2 SAY "Prodavnicki konto:" GET _konto VALID p_konto( @_konto )
+      READ
+      BoxC()
 
-        select kalk_pripr
-        _rec["mpcsapp"] := UzmiMpcSif() 
+      IF LastKey() == K_ESC
+         RETURN
+      ENDIF
 
-        if ROUND( _rec["mpcsapp"], 2 ) <= 0
-            MsgBeep( "Artikal " + _rec["idroba"] + " cijena <= 0 !"  )
-        endif
+      // imamo konto, mozemo sada da ubacimo cijene...
+      SELECT koncij
+      hseek _konto
 
-        dbf_update_rec( _rec )
+      SELECT kalk_pripr
+      GO TOP
 
-        skip
+      DO WHILE !Eof()
 
-    enddo     
+         _update := .T.
+         _rec := dbf_get_rec()
 
-    select kalk_pripr
-    go top
+         SELECT roba
+         hseek _rec[ "idroba" ]
 
-endif
+         IF !Found()
+            MsgBeep( "Nepostojeca sifra artikla " + _rec[ "idroba" ] )
+            SELECT kalk_pripr
+            SKIP
+            LOOP
+         ENDIF
 
-if _update 
-    MsgBeep( "Ubacene cijene iz sifrarnika !#Odradite asistenta sa opcijom A" )
-endif
+         SELECT kalk_pripr
+         _rec[ "mpcsapp" ] := UzmiMpcSif()
 
-return
+         IF Round( _rec[ "mpcsapp" ], 2 ) <= 0
+            MsgBeep( "Artikal " + _rec[ "idroba" ] + " cijena <= 0 !"  )
+         ENDIF
+
+         dbf_update_rec( _rec )
+
+         SKIP
+
+      ENDDO
+
+      SELECT kalk_pripr
+      GO TOP
+
+   ENDIF
+
+   IF _update
+      MsgBeep( "Ubacene cijene iz sifrarnika !#Odradite asistenta sa opcijom A" )
+   ENDIF
+
+   RETURN
 
 
 
@@ -1252,152 +1266,156 @@ return
  *  \brief Meni ostalih opcija koji se poziva tipkom F11 u tabeli kalk_pripreme
  */
 
-function MeniF11()
-private opc:={}
-private opcexe:={}
+FUNCTION MeniF11()
 
-AADD(opc, "1. preuzimanje kalkulacije iz druge firme        ")
-AADD(opcexe, {|| IzKalk2f()})
-AADD(opc, "2. ubacivanje troskova-uvozna kalkulacija")
-AADD(opcexe, {|| KalkTrUvoz()})
-AADD(opc, "3. pretvori maloprodajni popust u smanjenje MPC")
-AADD(opcexe, {|| PopustKaoNivelacijaMP()})
-AADD(opc, "4. obracun poreza pri uvozu")
-AADD(opcexe, {|| ObracunPorezaUvoz()})
-AADD(opc, "5. pregled smeca")
-AADD(opcexe, {|| kalk_pripr9View()})
-AADD(opc, "6. brisi sve protu-stavke")
-AADD(opcexe, {|| ProtStErase()})
-AADD(opc, "7. setuj sve NC na 0")
-AADD(opcexe, {|| SetNcTo0()})
-AADD(opc, "8. renumeracija kalk priprema")
-AADD(opcexe, {|| renumeracija_kalk_pripr( nil, nil, .f. )})
-AADD(opc, "9. provjeri duple stavke u pripremi")
-AADD(opcexe, {|| _kalk_pripr_duple_stavke() })
+   PRIVATE opc := {}
+   PRIVATE opcexe := {}
 
-close all
-private am_x:=m_x,am_y:=m_y
-private Izbor:=1
+   AAdd( opc, "1. preuzimanje kalkulacije iz druge firme        " )
+   AAdd( opcexe, {|| IzKalk2f() } )
+   AAdd( opc, "2. ubacivanje troskova-uvozna kalkulacija" )
+   AAdd( opcexe, {|| KalkTrUvoz() } )
+   AAdd( opc, "3. pretvori maloprodajni popust u smanjenje MPC" )
+   AAdd( opcexe, {|| PopustKaoNivelacijaMP() } )
+   AAdd( opc, "4. obracun poreza pri uvozu" )
+   AAdd( opcexe, {|| ObracunPorezaUvoz() } )
+   AAdd( opc, "5. pregled smeca" )
+   AAdd( opcexe, {|| kalk_pripr9View() } )
+   AAdd( opc, "6. brisi sve protu-stavke" )
+   AAdd( opcexe, {|| ProtStErase() } )
+   AAdd( opc, "7. setuj sve NC na 0" )
+   AAdd( opcexe, {|| SetNcTo0() } )
+   AAdd( opc, "8. renumeracija kalk priprema" )
+   AAdd( opcexe, {|| renumeracija_kalk_pripr( nil, nil, .F. ) } )
+   AAdd( opc, "9. provjeri duple stavke u pripremi" )
+   AAdd( opcexe, {|| _kalk_pripr_duple_stavke() } )
 
-Menu_SC("osop2")
-m_x := am_x
-m_y := am_y
+   CLOSE ALL
+   PRIVATE am_x := m_x, am_y := m_y
+   PRIVATE Izbor := 1
 
-o_kalk_edit()
+   Menu_SC( "osop2" )
+   m_x := am_x
+   m_y := am_y
 
-return DE_REFRESH
+   o_kalk_edit()
+
+   RETURN DE_REFRESH
 
 
 
 /*! \fn ProtStErase()
  *  \brief Brisi sve protustavke
  */
- function ProtStErase()
+FUNCTION ProtStErase()
 
-if Pitanje(,"Pobrisati protustavke dokumenta (D/N)?", "N") == "N"
-    return
-endif
+   IF Pitanje(, "Pobrisati protustavke dokumenta (D/N)?", "N" ) == "N"
+      RETURN
+   ENDIF
 
-O_KALK_PRIPR
-select kalk_pripr
-go top
+   O_KALK_PRIPR
+   SELECT kalk_pripr
+   GO TOP
 
-do while !EOF()
-    if "XXX" $ idkonto2
-        delete
-    endif
-    skip
-enddo
+   DO WHILE !Eof()
+      IF "XXX" $ idkonto2
+         DELETE
+      ENDIF
+      SKIP
+   ENDDO
 
-__dbPack()
+   __dbPack()
 
-go top
-return
+   GO TOP
+
+   RETURN
 
 
 
 /*! \fn SetNcTo0()
  *  \brief Setuj sve NC na 0
  */
-function SetNcTo0()
+FUNCTION SetNcTo0()
 
-if Pitanje(, "Setovati NC na 0 (D/N)?", "N") == "N"
-    return
-endif
+   IF Pitanje(, "Setovati NC na 0 (D/N)?", "N" ) == "N"
+      RETURN
+   ENDIF
 
-O_KALK_PRIPR
-select kalk_pripr
-go top
-do while !EOF()
-    Scatter()
-    _nc := 0
-    Gather()
-    skip
-enddo
+   O_KALK_PRIPR
+   SELECT kalk_pripr
+   GO TOP
+   DO WHILE !Eof()
+      Scatter()
+      _nc := 0
+      Gather()
+      SKIP
+   ENDDO
 
-go top
-return
+   GO TOP
+
+   RETURN
 
 
 
 
-//ulaz _IdFirma, _IdRoba, ...., nRBr (val(_RBr))
-function EditPripr( fNovi, atrib )
-private nMarza := 0
-private nMarza2 := 0
-private nR
-private PicDEM := "9999999.99999999"
-private PicKol := gPicKol
+// ulaz _IdFirma, _IdRoba, ...., nRBr (val(_RBr))
+FUNCTION EditPripr( fNovi, atrib )
 
-nStrana := 1
+   PRIVATE nMarza := 0
+   PRIVATE nMarza2 := 0
+   PRIVATE nR
+   PRIVATE PicDEM := "9999999.99999999"
+   PRIVATE PicKol := gPicKol
 
-do while .t.
+   nStrana := 1
 
-    @ m_x + 1, m_y + 1 CLEAR TO m_x + __box_x, m_y + __box_y
+   DO WHILE .T.
 
-    SETKEY( K_PGDN, {|| NIL} )
-    SETKEY( K_PGUP, {|| NIL} )
-    // konvertovanje valute - ukljuci
-    SETKEY( K_CTRL_K, {|| a_val_convert() } )
+      @ m_x + 1, m_y + 1 CLEAR TO m_x + __box_x, m_y + __box_y
 
-    if nStrana == 1
-        nR := GET1( fNovi, @atrib )
-    elseif nStrana==2
-        nR := GET2( fNovi )
-    endif
+      SetKey( K_PGDN, {|| NIL } )
+      SetKey( K_PGUP, {|| NIL } )
+      // konvertovanje valute - ukljuci
+      SetKey( K_CTRL_K, {|| a_val_convert() } )
 
-    SETKEY( K_PGDN, NIL )
-    SETKEY( K_PGUP, NIL )
-    // konvertovanje valute - iskljuci
-    SETKEY( K_CTRL_K, NIL )
+      IF nStrana == 1
+         nR := GET1( fNovi, @atrib )
+      ELSEIF nStrana == 2
+         nR := GET2( fNovi )
+      ENDIF
 
-    set escape on
+      SetKey( K_PGDN, NIL )
+      SetKey( K_PGUP, NIL )
+      // konvertovanje valute - iskljuci
+      SetKey( K_CTRL_K, NIL )
 
-    if nR == K_ESC
-        exit
-    elseif nR == K_PGUP
-        --nStrana
-    elseif nR == K_PGDN .or. nR == K_ENTER
-        ++nStrana
-    endif
+      SET ESCAPE ON
 
-    if nStrana==0
-        nStrana++
-    elseif nStrana>=3
-        exit
-    endif
+      IF nR == K_ESC
+         EXIT
+      ELSEIF nR == K_PGUP
+         --nStrana
+      ELSEIF nR == K_PGDN .OR. nR == K_ENTER
+         ++nStrana
+      ENDIF
 
-enddo
+      IF nStrana == 0
+         nStrana++
+      ELSEIF nStrana >= 3
+         EXIT
+      ENDIF
 
-if lastkey() <> K_ESC
-    _Rbr := RedniBroj( nRbr )
-    _Dokument := P_TipDok( _IdVD, -2 )
-    return 1
-else
-    return 0
-endif
+   ENDDO
 
-return
+   IF LastKey() <> K_ESC
+      _Rbr := RedniBroj( nRbr )
+      _Dokument := P_TipDok( _IdVD, -2 )
+      RETURN 1
+   ELSE
+      RETURN 0
+   ENDIF
+
+   RETURN
 
 
 
@@ -1408,126 +1426,118 @@ return
  *  \brief Prva strana/prozor maske unosa/ispravke stavke dokumenta
  */
 
-function Get1( fNovi, atrib )
-private pIzgSt := .f.   
-private Getlist := {}
+FUNCTION Get1( fNovi, atrib )
 
-if Get1Header( fNovi ) == 0
-    return K_ESC
-endif
+   PRIVATE pIzgSt := .F.
+   PRIVATE Getlist := {}
 
-if _idvd=="10"
+   IF Get1Header( fNovi ) == 0
+      RETURN K_ESC
+   ENDIF
 
-    if nRbr == 1 .and. !IsPDV()
-        if gVarEv=="2" .or. glEkonomat .or. Pitanje(,"Skracena varijanta (bez troskova) D/N ?","D")=="D"
-                gVarijanta := "1"
-        else
-                gVarijanta := "2"
-        endif
-    endif
+   IF _idvd == "10"
 
-    if IsPDV()
-        return Get1_10PDV()
-    else
-        return if( gVarijanta == "1", Get1_10s(), Get1_10() )
-    endif
+      IF nRbr == 1 .AND. !IsPDV()
+         IF gVarEv == "2" .OR. glEkonomat .OR. Pitanje(, "Skracena varijanta (bez troskova) D/N ?", "D" ) == "D"
+            gVarijanta := "1"
+         ELSE
+            gVarijanta := "2"
+         ENDIF
+      ENDIF
 
-elseif _idvd=="11"
-    return GET1_11()
-elseif _idvd=="12"
-    return GET1_12()
-elseif _idvd=="13"
-    return GET1_12()
-elseif _idvd=="14"  //.or._idvd=="74"
-    if IsPDV()
-        return Get1_14PDV()
-    else
-        return GET1_14()
-    endif
-elseif _idvd=="KO"   // vindija KO
-    if IsPDV()
-        return GET1_14PDV()
-    else
-        return GET1_14()
-    endif
-elseif _idvd=="15"
-    if !IsPDV()
-        return GET1_15()
-    endif
-elseif _idvd=="16"
-    if IsPDV()
-        return GET1_16PDV()
-    else
-        return GET1_16()
-    endif
-elseif _idvd=="18"
-    return GET1_18()
-elseif _idvd=="19"
-    return GET1_19()
-elseif _idvd $ "41#42#43#47#49"
-    return GET1_41()
-elseif _idvd == "81"
-    return get1_81( @atrib )
-elseif _idvd == "80"
-    return GET1_80( @atrib )
-elseif _idvd=="24"
-    if IsPDV()
-        return GET1_24PDV()
-    else
-        return GET1_24()
-    endif
-elseif _idvd $ "95#96#97"
-    return GET1_95()
+      IF IsPDV()
+         RETURN Get1_10PDV()
+      ELSE
+         RETURN IF( gVarijanta == "1", Get1_10s(), Get1_10() )
+      ENDIF
 
-elseif _idvd $  "94#16"    // storno fakture, storno otpreme, doprema
+   ELSEIF _idvd == "11"
+      RETURN GET1_11()
+   ELSEIF _idvd == "12"
+      RETURN GET1_12()
+   ELSEIF _idvd == "13"
+      RETURN GET1_12()
+   ELSEIF _idvd == "14"
+      IF IsPDV()
+         RETURN Get1_14PDV()
+      ELSE
+         RETURN GET1_14()
+      ENDIF
+   ELSEIF _idvd == "KO"
+      RETURN GET1_14PDV()
+   ELSEIF _idvd == "15"
+      IF !IsPDV()
+         RETURN GET1_15()
+      ENDIF
+   ELSEIF _idvd == "16"
+      RETURN GET1_16PDV()
+   ELSEIF _idvd == "18"
+      RETURN GET1_18()
+   ELSEIF _idvd == "19"
+      RETURN GET1_19()
+   ELSEIF _idvd $ "41#42#43#47#49"
+      RETURN GET1_41()
+   ELSEIF _idvd == "81"
+      RETURN get1_81( @atrib )
+   ELSEIF _idvd == "80"
+      RETURN GET1_80( @atrib )
+   ELSEIF _idvd == "24"
+      RETURN GET1_24PDV()
+   ELSEIF _idvd $ "95#96#97"
+      RETURN GET1_95()
 
-    return GET1_94()
-elseif _idvd == "82"
-    return GET1_82()
-elseif _idvd == "IM"
-    return GET1_IM()
-elseif _idvd == "IP"
-    return GET1_IP()
-elseif _idvd == "RN"
-    return GET1_RN()
-elseif _idvd == "PR"
-    return GET1_PR()
-else
-    return K_ESC
-endif
-return
+   ELSEIF _idvd $  "94#16"    // storno fakture, storno otpreme, doprema
+
+      RETURN GET1_94()
+   ELSEIF _idvd == "82"
+      RETURN GET1_82()
+   ELSEIF _idvd == "IM"
+      RETURN GET1_IM()
+   ELSEIF _idvd == "IP"
+      RETURN GET1_IP()
+   ELSEIF _idvd == "RN"
+      RETURN GET1_RN()
+   ELSEIF _idvd == "PR"
+      RETURN GET1_PR()
+   ELSE
+      RETURN K_ESC
+   ENDIF
+
+   RETURN
 
 
 // ----------------------------------------------------------
 // ispisuje naziv sifre na zeljenoj lokaciji
 // ----------------------------------------------------------
-function ispisi_naziv_sifre( area, id, x, y, len )
-local _naz := ""
-local _t_area := SELECT()
+FUNCTION ispisi_naziv_sifre( area, id, x, y, len )
 
-if EMPTY( id )
-    return .t.
-endif
+   LOCAL _naz := ""
+   LOCAL _t_area := Select()
 
-select ( area )
-    
-if (area)->(fieldpos("naz")) <> 0
+   IF Empty( id )
+      RETURN .T.
+   ENDIF
 
-    _naz := ALLTRIM( field->naz )
+   SELECT ( area )
 
-    if (area)->(fieldpos("jmj")) <> 0
-        if LEN( _naz ) >= len
-            _naz := PADR( _naz, len - 6 )
-        endif
-        _naz += " (" + ALLTRIM( field->jmj ) + ")"
-    endif
+   IF ( area )->( FieldPos( "naz" ) ) <> 0
 
-endif
+      _naz := AllTrim( field->naz )
 
-@ x, y SAY PADR( _naz, len )
+      IF ( area )->( FieldPos( "jmj" ) ) <> 0
+         IF Len( _naz ) >= len
+            _naz := PadR( _naz, len - 6 )
+         ENDIF
+         _naz += " (" + AllTrim( field->jmj ) + ")"
+      ENDIF
 
-select ( _t_area )
-return .t.
+   ENDIF
+
+   @ x, y SAY PadR( _naz, len )
+
+   SELECT ( _t_area )
+
+   RETURN .T.
 
 
 
@@ -1536,89 +1546,89 @@ return .t.
  *  \brief Druga strana/prozor maske unosa/ispravke stavke dokumenta
  */
 
-function Get2( fNovi )
+FUNCTION Get2( fNovi )
 
-if _idvd $ "10"
-    if !IsPDV()
-        return Get2_10()
-    endif
-elseif _idvd == "RN"
-  return Get2_RN()
-elseif _idvd == "PR"
-  return Get2_PR()
-endif
+   IF _idvd $ "10"
+      IF !IsPDV()
+         RETURN Get2_10()
+      ENDIF
+   ELSEIF _idvd == "RN"
+      RETURN Get2_RN()
+   ELSEIF _idvd == "PR"
+      RETURN Get2_PR()
+   ENDIF
 
-return K_ESC
-
-
+   RETURN K_ESC
 
 
 
-function Get1Header( fNovi )
 
-if fnovi
-    _idfirma := gFirma
-endif
 
-if fnovi .and. _TBankTr=="X"
-    _TBankTr := "%"
-endif  
+FUNCTION Get1Header( fNovi )
 
-// izgenerisani izlazi
+   IF fnovi
+      _idfirma := gFirma
+   ENDIF
 
-if gNW $ "DX"
-    @  m_x + 1, m_y + 2 SAY "Firma: " 
-    ?? gFirma, "-", gNFirma
-else
-    @  m_x + 1, m_y + 2 SAY "Firma:" GET _IdFirma VALID P_Firma(@_IdFirma,1,25) .and. len(trim(_idFirma))<=2
-endif
+   IF fnovi .AND. _TBankTr == "X"
+      _TBankTr := "%"
+   ENDIF
 
-@  m_x + 2, m_y + 2 SAY "KALKULACIJA: "
-@  m_x + 2, col() SAY "Vrsta:" get _idvd valid P_TipDok( @_idvd, 2, 25 ) PICT "@!"
+   // izgenerisani izlazi
 
-read
+   IF gNW $ "DX"
+      @  m_x + 1, m_y + 2 SAY "Firma: "
+      ?? gFirma, "-", gNFirma
+   ELSE
+      @  m_x + 1, m_y + 2 SAY "Firma:" GET _IdFirma VALID P_Firma( @_IdFirma, 1, 25 ) .AND. Len( Trim( _idFirma ) ) <= 2
+   ENDIF
 
-ESC_RETURN 0
+   @  m_x + 2, m_y + 2 SAY "KALKULACIJA: "
+   @  m_x + 2, Col() SAY "Vrsta:" GET _idvd VALID P_TipDok( @_idvd, 2, 25 ) PICT "@!"
 
-if fNovi .and. gBrojac == "D" .and. ( _idfirma <> idfirma .or. _idvd <> idvd )
+   READ
 
-    if glBrojacPoKontima
+   ESC_RETURN 0
 
-        Box( "#Glavni konto", 3, 70 )
-            if _idvd $ "10#16#18#IM#"
-                @ m_x+2, m_y+2 SAY "Magacinski konto zaduzuje" GET _idKonto VALID P_Konto(@_idKonto) PICT "@!"
-                read
-                cSufiks := SufBrKalk( _idKonto )
-            else
-                @ m_x+2, m_y+2 SAY "Magacinski konto razduzuje" GET _idKonto2 VALID P_Konto(@_idKonto2) PICT "@!"
-                read
-                cSufiks := SufBrKalk( _idKonto2 )
-            endif
-        BoxC()
+   IF fNovi .AND. gBrojac == "D" .AND. ( _idfirma <> idfirma .OR. _idvd <> idvd )
 
-        _brDok := SljBrKalk( _idvd, _idfirma, cSufiks )
+      IF glBrojacPoKontima
 
-    else
+         Box( "#Glavni konto", 3, 70 )
+         IF _idvd $ "10#16#18#IM#"
+            @ m_x + 2, m_y + 2 SAY "Magacinski konto zaduzuje" GET _idKonto VALID P_Konto( @_idKonto ) PICT "@!"
+            READ
+            cSufiks := SufBrKalk( _idKonto )
+         ELSE
+            @ m_x + 2, m_y + 2 SAY "Magacinski konto razduzuje" GET _idKonto2 VALID P_Konto( @_idKonto2 ) PICT "@!"
+            READ
+            cSufiks := SufBrKalk( _idKonto2 )
+         ENDIF
+         BoxC()
 
-        _brDok := SljBrKalk( _idvd, _idfirma )
+         _brDok := SljBrKalk( _idvd, _idfirma, cSufiks )
 
-    endif
+      ELSE
 
-    select kalk_pripr
+         _brDok := SljBrKalk( _idvd, _idfirma )
 
-endif
+      ENDIF
 
-@ m_x + 2, m_y + 40  SAY "Broj:" GET _brdok valid {|| !P_Kalk( _idfirma, _idvd, _brdok ) }
+      SELECT kalk_pripr
 
-@ m_x + 2, COL() + 2 SAY "Datum:" GET _datdok
+   ENDIF
 
-@ m_x + 3, m_y + 2  SAY "Redni broj stavke:" GET nRBr PICT '9999'
+   @ m_x + 2, m_y + 40  SAY "Broj:" GET _brdok valid {|| !P_Kalk( _idfirma, _idvd, _brdok ) }
 
-read
+   @ m_x + 2, Col() + 2 SAY "Datum:" GET _datdok
 
-ESC_RETURN 0
+   @ m_x + 3, m_y + 2  SAY "Redni broj stavke:" GET nRBr PICT '9999'
 
-return 1
+   READ
+
+   ESC_RETURN 0
+
+   RETURN 1
 
 
 
@@ -1627,102 +1637,103 @@ return 1
 // izmjeni sve stavke dokumenta prema tekucoj stavci
 // ovo treba da radi samo na stavci broj 1
 // --------------------------------------------------------------------
-static function izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
-local _old_firma := old_dok["idfirma"]
-local _old_brdok := old_dok["brdok"]
-local _old_tipdok := old_dok["idvd"]
-local _rec, _tek_dok, _t_rec
-local _new_firma := new_dok["idfirma"]
-local _new_brdok := new_dok["brdok"]
-local _new_tipdok := new_dok["idvd"]
-local oAtrib
-local _vise_konta := fetch_metric( "kalk_dokument_vise_konta", NIL, "N" ) == "D"
+STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
 
-// treba da imam podatke koja je stavka bila prije korekcije
-// kao i koja je nova 
-// misli se na "idfirma + tipdok + brdok"
+   LOCAL _old_firma := old_dok[ "idfirma" ]
+   LOCAL _old_brdok := old_dok[ "brdok" ]
+   LOCAL _old_tipdok := old_dok[ "idvd" ]
+   LOCAL _rec, _tek_dok, _t_rec
+   LOCAL _new_firma := new_dok[ "idfirma" ]
+   LOCAL _new_brdok := new_dok[ "brdok" ]
+   LOCAL _new_tipdok := new_dok[ "idvd" ]
+   LOCAL oAtrib
+   LOCAL _vise_konta := fetch_metric( "kalk_dokument_vise_konta", NIL, "N" ) == "D"
 
-select kalk_pripr
-go top
+   // treba da imam podatke koja je stavka bila prije korekcije
+   // kao i koja je nova
+   // misli se na "idfirma + tipdok + brdok"
 
-// uzmi podatke sa izmjenjene stavke
-seek _new_firma + _new_tipdok + _new_brdok
+   SELECT kalk_pripr
+   GO TOP
 
-if !FOUND()
-    return .f.
-endif
+   // uzmi podatke sa izmjenjene stavke
+   SEEK _new_firma + _new_tipdok + _new_brdok
 
-_tek_dok := dbf_get_rec()
+   IF !Found()
+      RETURN .F.
+   ENDIF
 
-// zatim mi pronadji ostale stavke bivseg dokumenta
-go top
-seek _old_firma + _old_tipdok + _old_brdok
+   _tek_dok := dbf_get_rec()
 
-if !FOUND()
-    return .f.
-endif
+   // zatim mi pronadji ostale stavke bivseg dokumenta
+   GO TOP
+   SEEK _old_firma + _old_tipdok + _old_brdok
 
-do while !EOF() .and. field->idfirma + field->idvd + field->brdok == ;
-        _old_firma + _old_tipdok + _old_brdok 
+   IF !Found()
+      RETURN .F.
+   ENDIF
 
-    skip 1
-    _t_rec := RECNO()
-    skip -1 
+   DO WHILE !Eof() .AND. field->idfirma + field->idvd + field->brdok == ;
+         _old_firma + _old_tipdok + _old_brdok
 
-    // napravi zamjenu podataka
-    _rec := dbf_get_rec()
-    _rec["idfirma"] := _tek_dok["idfirma"]
-    _rec["idvd"] := _tek_dok["idvd"]
-    _rec["brdok"] := _tek_dok["brdok"]
-    _rec["datdok"] := _tek_dok["datdok"]
+      SKIP 1
+      _t_rec := RecNo()
+      SKIP -1
 
-    if !_vise_konta
-        _rec["idpartner"] := _tek_dok["idpartner"]
-    endif
+      // napravi zamjenu podataka
+      _rec := dbf_get_rec()
+      _rec[ "idfirma" ] := _tek_dok[ "idfirma" ]
+      _rec[ "idvd" ] := _tek_dok[ "idvd" ]
+      _rec[ "brdok" ] := _tek_dok[ "brdok" ]
+      _rec[ "datdok" ] := _tek_dok[ "datdok" ]
 
-    if ! ( _rec["idvd"] $ "16#80" ) .and. !_vise_konta
-        _rec["idkonto"] := _tek_dok["idkonto"]
-        _rec["idkonto2"] := _tek_dok["idkonto2"]
-        _rec["pkonto"] := _tek_dok["pkonto"]
-        _rec["mkonot"] := _tek_dok["mkonto"]
-    endif
- 
-    dbf_update_rec( _rec )
+      IF !_vise_konta
+         _rec[ "idpartner" ] := _tek_dok[ "idpartner" ]
+      ENDIF
 
-    go ( _t_rec )
+      IF ! ( _rec[ "idvd" ] $ "16#80" ) .AND. !_vise_konta
+         _rec[ "idkonto" ] := _tek_dok[ "idkonto" ]
+         _rec[ "idkonto2" ] := _tek_dok[ "idkonto2" ]
+         _rec[ "pkonto" ] := _tek_dok[ "pkonto" ]
+         _rec[ "mkonot" ] := _tek_dok[ "mkonto" ]
+      ENDIF
 
-enddo
-go top
+      dbf_update_rec( _rec )
 
-oAtrib := F18_DOK_ATRIB():new("kalk")
-oAtrib:open_local_table()
+      GO ( _t_rec )
 
-go top
+   ENDDO
+   GO TOP
 
-do while !EOF()
+   oAtrib := F18_DOK_ATRIB():new( "kalk" )
+   oAtrib:open_local_table()
 
-    skip 1
-    _t_rec := RECNO()
-    skip -1
+   GO TOP
 
-    _rec := dbf_get_rec()
+   DO WHILE !Eof()
 
-    _rec["idfirma"] := _tek_dok["idfirma"]
-    _rec["idvd"] := _tek_dok["idvd"]
-    _rec["brdok"] := _tek_dok["brdok"]
+      SKIP 1
+      _t_rec := RecNo()
+      SKIP -1
 
-    dbf_update_rec( _rec )
- 
-    go ( _t_rec )
+      _rec := dbf_get_rec()
 
-enddo
-// zatvori atribute
-use
+      _rec[ "idfirma" ] := _tek_dok[ "idfirma" ]
+      _rec[ "idvd" ] := _tek_dok[ "idvd" ]
+      _rec[ "brdok" ] := _tek_dok[ "brdok" ]
 
-select kalk_pripr
-go top
+      dbf_update_rec( _rec )
 
-return .t.
+      GO ( _t_rec )
+
+   ENDDO
+   // zatvori atribute
+   USE
+
+   SELECT kalk_pripr
+   GO TOP
+
+   RETURN .T.
 
 
 
@@ -1733,19 +1744,21 @@ return .t.
  *  \brief Vrsi se preracunavanje veleprodajnih cijena ako je _VPC=0
  */
 
-function VpcSaPpp()
-*{
-if _VPC==0
-  _RabatV:=0
-  _VPC:=(_VPCSAPPP+_NC*tarifa->vpp/100)/(1+tarifa->vpp/100+_mpc/100)
-  nMarza:=_VPC-_NC
-  _VPCSAP:=_VPC+nMarza*TARIFA->VPP/100
-  _PNAP:=_VPC*_mpc/100
-  _VPCSAPP:=_VPC+_PNAP
-endif
-ShowGets()
-return .t.
-*}
+FUNCTION VpcSaPpp()
+
+   // {
+   IF _VPC == 0
+      _RabatV := 0
+      _VPC := ( _VPCSAPPP + _NC * tarifa->vpp / 100 ) / ( 1 + tarifa->vpp / 100 + _mpc / 100 )
+      nMarza := _VPC - _NC
+      _VPCSAP := _VPC + nMarza * TARIFA->VPP / 100
+      _PNAP := _VPC * _mpc / 100
+      _VPCSAPP := _VPC + _PNAP
+   ENDIF
+   ShowGets()
+
+   RETURN .T.
+// }
 
 
 
@@ -1754,246 +1767,248 @@ return .t.
  *  \brief Rasporedjivanje troskova koji su predvidjeni za raspored. Takodje se koristi za raspored ukupne nabavne vrijednosti na pojedinacne artikle kod npr. unosa pocetnog stanja prodavnice ili magacina
  */
 
-function RaspTrosk(fSilent)
-*{
-local nStUc:=20
+FUNCTION RaspTrosk( fSilent )
 
-if fsilent==NIL
-  fsilent:=.f.
-endif
-if fsilent .or.  Pitanje(,"Rasporediti troskove ??","N")=="D"
-   private qqTar:=""
-   private aUslTar:=""
-   if idvd $ "16#80"
-     Box(,1,55)
-      if idvd=="16"
-       @ m_x+1,m_y+2 SAY "Stopa marze (vpc - stopa*vpc)=nc:" GET nStUc pict "999.999"
-      else
-       @ m_x+1,m_y+2 SAY "Stopa marze (mpc-stopa*mpcsapp)=nc:" GET nStUc pict "999.999"
-      endif
-      read
-     BoxC()
-   endif
-   go top
+   // {
+   LOCAL nStUc := 20
 
-   select F_KONCIJ
-   if !used(); O_KONCIJ; endif
-   select koncij
-   seek trim(kalk_pripr->mkonto)
-   select kalk_pripr
+   IF fsilent == NIL
+      fsilent := .F.
+   ENDIF
+   IF fsilent .OR.  Pitanje(, "Rasporediti troskove ??", "N" ) == "D"
+      PRIVATE qqTar := ""
+      PRIVATE aUslTar := ""
+      IF idvd $ "16#80"
+         Box(, 1, 55 )
+         IF idvd == "16"
+            @ m_x + 1, m_y + 2 SAY "Stopa marze (vpc - stopa*vpc)=nc:" GET nStUc PICT "999.999"
+         ELSE
+            @ m_x + 1, m_y + 2 SAY "Stopa marze (mpc-stopa*mpcsapp)=nc:" GET nStUc PICT "999.999"
+         ENDIF
+         READ
+         BoxC()
+      ENDIF
+      GO TOP
 
-   if IsVindija()
-    PushWA()
-    if !EMPTY(qqTar)
-        aUslTar:=Parsiraj(qqTar,"idTarifa")
-        if aUslTar<>nil .and. !aUslTar==".t."
-            set filter to &aUslTar
-        endif
-    endif
-   endif
+      SELECT F_KONCIJ
+      IF !Used(); O_KONCIJ; ENDIF
+      SELECT koncij
+      SEEK Trim( kalk_pripr->mkonto )
+      SELECT kalk_pripr
 
-   do while !eof()
-      nUKIzF:=0
-      nUkProV:=0
-      cIdFirma:=idfirma;cIdVD:=idvd;cBrDok:=Brdok
-      nRec:=recno()
-      do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cBrDok==BrDok
-         if cidvd $ "10#16#81#80"    
-           // zaduzenje magacina,prodavnice
-           nUkIzF+=round(fcj*(1-Rabat/100)*kolicina,gZaokr)
-         endif
-         if cidvd $ "11#12#13"    
-           // magacin-> prodavnica,povrat
-           nUkIzF+=round(fcj*kolicina,gZaokr)
-         endif
-         if cidvd $ "RN"
-           if val(Rbr)<900
-            nUkProV+=round(vpc*kolicina,gZaokr)
-           else
-            nUkIzF+=round(nc*kolicina,gZaokr)  // sirovine
-           endif
-         endif
-         skip
-      enddo
-      if cidvd $ "10#16#81#80#RN"  // zaduzenje magacina,prodavnice
-       go nRec
-       RTPrevoz:=.f.; RPrevoz:=0
-       RTCarDaz:=.f.;RCarDaz:=0
-       RTBankTr:=.f.;RBankTr:=0
-       RTSpedTr:=.f.;RSpedTr:=0
-       RTZavTr:=.f.;RZavTr:=0
-       if TPrevoz=="R"; RTPrevoz:=.t.;RPrevoz:=Prevoz; endif
-       if TCarDaz=="R"; RTCarDaz:=.t.;RCarDaz:=CarDaz; endif
-       if TBankTr=="R"; RTBankTr:=.t.;RBankTr:=BankTr; endif
-       if TSpedTr=="R"; RTSpedTr:=.t.;RSpedTr:=SpedTr; endif
-       if TZavTr =="R"; RTZavTr :=.t.;RZavTr :=ZavTr ; endif
+      IF IsVindija()
+         PushWA()
+         IF !Empty( qqTar )
+            aUslTar := Parsiraj( qqTar, "idTarifa" )
+            IF aUslTar <> NIL .AND. !aUslTar == ".t."
+               SET FILTER to &aUslTar
+            ENDIF
+         ENDIF
+      ENDIF
 
-       UBankTr:=0   // do sada utroçeno na bank tr itd, radi "sitniça"
-       UPrevoz:=0
-       UZavTr:=0
-       USpedTr:=0
-       UCarDaz:=0
-       do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cBrDok==BrDok
-         Scatter()
+      DO WHILE !Eof()
+         nUKIzF := 0
+         nUkProV := 0
+         cIdFirma := idfirma;cIdVD := idvd;cBrDok := Brdok
+         nRec := RecNo()
+         DO WHILE !Eof() .AND. cidfirma == idfirma .AND. cidvd == idvd .AND. cBrDok == BrDok
+            IF cidvd $ "10#16#81#80"
+               // zaduzenje magacina,prodavnice
+               nUkIzF += Round( fcj * ( 1 -Rabat / 100 ) * kolicina, gZaokr )
+            ENDIF
+            IF cidvd $ "11#12#13"
+               // magacin-> prodavnica,povrat
+               nUkIzF += Round( fcj * kolicina, gZaokr )
+            ENDIF
+            IF cidvd $ "RN"
+               IF Val( Rbr ) < 900
+                  nUkProV += Round( vpc * kolicina, gZaokr )
+               ELSE
+                  nUkIzF += Round( nc * kolicina, gZaokr )  // sirovine
+               ENDIF
+            ENDIF
+            SKIP
+         ENDDO
+         IF cidvd $ "10#16#81#80#RN"  // zaduzenje magacina,prodavnice
+            GO nRec
+            RTPrevoz := .F. ; RPrevoz := 0
+            RTCarDaz := .F. ;RCarDaz := 0
+            RTBankTr := .F. ;RBankTr := 0
+            RTSpedTr := .F. ;RSpedTr := 0
+            RTZavTr := .F. ;RZavTr := 0
+            IF TPrevoz == "R"; RTPrevoz := .T. ;RPrevoz := Prevoz; ENDIF
+            IF TCarDaz == "R"; RTCarDaz := .T. ;RCarDaz := CarDaz; ENDIF
+            IF TBankTr == "R"; RTBankTr := .T. ;RBankTr := BankTr; ENDIF
+            IF TSpedTr == "R"; RTSpedTr := .T. ;RSpedTr := SpedTr; ENDIF
+            IF TZavTr == "R"; RTZavTr := .T. ;RZavTr := ZavTr ; ENDIF
 
-         if _idvd $ "RN" .and. val(_rbr)<900
-            _fcj:=_fcj2:= _vpc/nUKProV*nUkIzF
-            // nabavne cijene izmisli proporcionalno prodajnim
-         endif
+            UBankTr := 0   // do sada utroÃ§eno na bank tr itd, radi "sitniÃ§a"
+            UPrevoz := 0
+            UZavTr := 0
+            USpedTr := 0
+            UCarDaz := 0
+            DO WHILE !Eof() .AND. cidfirma == idfirma .AND. cidvd == idvd .AND. cBrDok == BrDok
+               Scatter()
 
-         if RTPrevoz    //troskovi 1
-             if round(nUkIzF,4)==0
-              _Prevoz:=0
-             else
-              _Prevoz:=round( _fcj*(1-_Rabat/100)*_kolicina/nUkIzF*RPrevoz ,gZaokr)
-              UPrevoz+=_Prevoz
-              if abs(RPrevoz-UPrevoz)< 0.1 // sitniç, baci ga na zadnju st.
-                   skip
-                   if .not. ( !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cBrDok==BrDok )
-                     _Prevoz+=(RPrevoz-UPrevoz)
-                   endif
-                   skip -1
-              endif
-             endif
-             _TPrevoz:="U"
-         endif
-         if RTCarDaz   //troskovi 2
-             if round(nUkIzF,4)==0
-              _CarDaz:=0
-             else
-              _CarDaz:=round( _fcj*(1-_Rabat/100)*_kolicina/nUkIzF*RCarDaz ,gZaokr)
-              UCardaz+=_Cardaz
-              if abs(RCardaz-UCardaz)< 0.1 // sitniç, baci ga na zadnju st.
-                   skip
-                   if .not. ( !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cBrDok==BrDok )
-                     _Cardaz+=(RCardaz-UCardaz)
-                   endif
-                   skip -1
-              endif
-             endif
-             _TCarDaz:="U"
-         endif
-         if RTBankTr  //troskovi 3
-             if round(nUkIzF,4)==0
-              _BankTr:=0
-             else
-              _BankTr:=round( _fcj*(1-_Rabat/100)*_kolicina/nUkIzF*RBankTr ,gZaokr)
-              UBankTr+=_BankTr
-              if abs(RBankTr-UBankTr)< 0.1 // sitniç, baci ga na zadnju st.
-                   skip
-                   if .not. ( !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cBrDok==BrDok )
-                     _BankTr+=(RBankTr-UBankTr)
-                   endif
-                   skip -1
-              endif
-             endif
-             _TBankTr:="U"
-         endif
-         if RTSpedTr    //troskovi 4
-             if round(nUkIzF,4)==0
-              _SpedTr:=0
-             else
-              _SpedTr:=round(_fcj*(1-_Rabat/100)*_kolicina/nUkIzF*RSpedTr,gZaokr)
-              USpedTr+=_SpedTr
-              if abs(RSpedTr-USpedTr)< 0.1 // sitniç, baci ga na zadnju st.
-                   skip
-                   if .not. ( !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cBrDok==BrDok )
-                     _SpedTr+=(RSpedTr-USpedTr)
-                   endif
-                   skip -1
-              endif
-             endif
-             _TSpedTr:="U"
-         endif
-         if RTZavTr    //troskovi
-             if round(nUkIzF,4)==0
-              _ZavTr:=0
-             else
-              _ZavTr:=round( _fcj*(1-_Rabat/100)*_kolicina/nUkIzF*RZavTr ,gZaokr)
-              UZavTR+=_ZavTR
-              if abs(RZavTR-UZavTR)< 0.1 // sitniç, baci ga na zadnju st.
-                   skip
-                   if .not. ( !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cBrDok==BrDok )
-                     _ZavTR+=(RZavTR-UZavTR)
-                   endif
-                   skip -1
-              endif
-             endif
-             _TZavTr:="U"
-         endif
-         select roba; hseek _idroba
-         select tarifa; hseek _idtarifa; select kalk_pripr
-         if _idvd=="RN"
-           if val(_rbr)<900
-            NabCj()
-           endif
-         else
-            NabCj()
-         endif
-         if _idvd=="16"
-           _nc:=_vpc*(1-nStUc/100)
-         endif
-         if _idvd=="80"
-           _nc:=_mpc-_mpcsapp*nStUc/100
-           _vpc:=_nc
-           _TMarza2:="A"
-           _Marza2:=_mpc-_nc
-         endif
-         if koncij->naz=="N1"; _VPC:=_NC; endif
-         if _idvd=="RN"
-           if val(_rbr)<900
-            Marza()
-           endif
-         else
-            Marza()
-         endif
+               IF _idvd $ "RN" .AND. Val( _rbr ) < 900
+                  _fcj := _fcj2 := _vpc / nUKProV * nUkIzF
+                  // nabavne cijene izmisli proporcionalno prodajnim
+               ENDIF
 
-         Gather()
-         skip
-       enddo
-      endif //cidvd $ 10
-      if cidvd $ "11#12#13"
-       go nRec
-       RTPrevoz:=.f.;RPrevoz:=0
-       if TPrevoz=="R"; RTPrevoz:=.t.;RPrevoz:=Prevoz; endif
-       nMarza2:=0
-       do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cBrDok==BrDok
-         Scatter()
-         if RTPrevoz    //troskovi 1
-             if round(nUkIzF,4)==0
-              _Prevoz:=0
-             else
-              _Prevoz:=_fcj/nUkIzF*RPrevoz
-             endif
-             _TPrevoz:="A"
-         endif
-         _nc:=_fcj+_prevoz
-         if koncij->naz=="N1"; _VPC:=_NC; endif
-         _marza:=_VPC-_FCJ
-         _TMarza:="A"
-         select roba
-         hseek _idroba
-         select tarifa
-         hseek _idtarifa
-         select kalk_pripr
-         Marza2()
-         _TMarza2:="A"
-         _Marza2:=nMarza2
-         Gather()
-         skip
-       enddo
-      endif //cidvd $ "11#12#13"
-   enddo  // eof()
+               IF RTPrevoz    // troskovi 1
+                  IF Round( nUkIzF, 4 ) == 0
+                     _Prevoz := 0
+                  ELSE
+                     _Prevoz := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkIzF * RPrevoz,gZaokr )
+                     UPrevoz += _Prevoz
+                     IF Abs( RPrevoz - UPrevoz ) < 0.1 // sitniÃ§, baci ga na zadnju st.
+                        SKIP
+                        IF ! ( !Eof() .AND. cidfirma == idfirma .AND. cidvd == idvd .AND. cBrDok == BrDok )
+                           _Prevoz += ( RPrevoz - UPrevoz )
+                        ENDIF
+                        SKIP -1
+                     ENDIF
+                  ENDIF
+                  _TPrevoz := "U"
+               ENDIF
+               IF RTCarDaz   // troskovi 2
+                  IF Round( nUkIzF, 4 ) == 0
+                     _CarDaz := 0
+                  ELSE
+                     _CarDaz := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkIzF * RCarDaz,gZaokr )
+                     UCardaz += _Cardaz
+                     IF Abs( RCardaz - UCardaz ) < 0.1 // sitniÃ§, baci ga na zadnju st.
+                        SKIP
+                        IF ! ( !Eof() .AND. cidfirma == idfirma .AND. cidvd == idvd .AND. cBrDok == BrDok )
+                           _Cardaz += ( RCardaz - UCardaz )
+                        ENDIF
+                        SKIP -1
+                     ENDIF
+                  ENDIF
+                  _TCarDaz := "U"
+               ENDIF
+               IF RTBankTr  // troskovi 3
+                  IF Round( nUkIzF, 4 ) == 0
+                     _BankTr := 0
+                  ELSE
+                     _BankTr := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkIzF * RBankTr,gZaokr )
+                     UBankTr += _BankTr
+                     IF Abs( RBankTr - UBankTr ) < 0.1 // sitniÃ§, baci ga na zadnju st.
+                        SKIP
+                        IF ! ( !Eof() .AND. cidfirma == idfirma .AND. cidvd == idvd .AND. cBrDok == BrDok )
+                           _BankTr += ( RBankTr - UBankTr )
+                        ENDIF
+                        SKIP -1
+                     ENDIF
+                  ENDIF
+                  _TBankTr := "U"
+               ENDIF
+               IF RTSpedTr    // troskovi 4
+                  IF Round( nUkIzF, 4 ) == 0
+                     _SpedTr := 0
+                  ELSE
+                     _SpedTr := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkIzF * RSpedTr, gZaokr )
+                     USpedTr += _SpedTr
+                     IF Abs( RSpedTr - USpedTr ) < 0.1 // sitniÃ§, baci ga na zadnju st.
+                        SKIP
+                        IF ! ( !Eof() .AND. cidfirma == idfirma .AND. cidvd == idvd .AND. cBrDok == BrDok )
+                           _SpedTr += ( RSpedTr - USpedTr )
+                        ENDIF
+                        SKIP -1
+                     ENDIF
+                  ENDIF
+                  _TSpedTr := "U"
+               ENDIF
+               IF RTZavTr    // troskovi
+                  IF Round( nUkIzF, 4 ) == 0
+                     _ZavTr := 0
+                  ELSE
+                     _ZavTr := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkIzF * RZavTr,gZaokr )
+                     UZavTR += _ZavTR
+                     IF Abs( RZavTR - UZavTR ) < 0.1 // sitniÃ§, baci ga na zadnju st.
+                        SKIP
+                        IF ! ( !Eof() .AND. cidfirma == idfirma .AND. cidvd == idvd .AND. cBrDok == BrDok )
+                           _ZavTR += ( RZavTR - UZavTR )
+                        ENDIF
+                        SKIP -1
+                     ENDIF
+                  ENDIF
+                  _TZavTr := "U"
+               ENDIF
+               SELECT roba; hseek _idroba
+               SELECT tarifa; hseek _idtarifa; SELECT kalk_pripr
+               IF _idvd == "RN"
+                  IF Val( _rbr ) < 900
+                     NabCj()
+                  ENDIF
+               ELSE
+                  NabCj()
+               ENDIF
+               IF _idvd == "16"
+                  _nc := _vpc * ( 1 -nStUc / 100 )
+               ENDIF
+               IF _idvd == "80"
+                  _nc := _mpc - _mpcsapp * nStUc / 100
+                  _vpc := _nc
+                  _TMarza2 := "A"
+                  _Marza2 := _mpc - _nc
+               ENDIF
+               IF koncij->naz == "N1"; _VPC := _NC; ENDIF
+               IF _idvd == "RN"
+                  IF Val( _rbr ) < 900
+                     Marza()
+                  ENDIF
+               ELSE
+                  Marza()
+               ENDIF
 
-   if IsVindija()
-    select kalk_pripr
-    PopWA()
-   endif
+               Gather()
+               SKIP
+            ENDDO
+         ENDIF // cidvd $ 10
+         IF cidvd $ "11#12#13"
+            GO nRec
+            RTPrevoz := .F. ;RPrevoz := 0
+            IF TPrevoz == "R"; RTPrevoz := .T. ;RPrevoz := Prevoz; ENDIF
+            nMarza2 := 0
+            DO WHILE !Eof() .AND. cidfirma == idfirma .AND. cidvd == idvd .AND. cBrDok == BrDok
+               Scatter()
+               IF RTPrevoz    // troskovi 1
+                  IF Round( nUkIzF, 4 ) == 0
+                     _Prevoz := 0
+                  ELSE
+                     _Prevoz := _fcj / nUkIzF * RPrevoz
+                  ENDIF
+                  _TPrevoz := "A"
+               ENDIF
+               _nc := _fcj + _prevoz
+               IF koncij->naz == "N1"; _VPC := _NC; ENDIF
+               _marza := _VPC - _FCJ
+               _TMarza := "A"
+               SELECT roba
+               hseek _idroba
+               SELECT tarifa
+               hseek _idtarifa
+               SELECT kalk_pripr
+               Marza2()
+               _TMarza2 := "A"
+               _Marza2 := nMarza2
+               Gather()
+               SKIP
+            ENDDO
+         ENDIF // cidvd $ "11#12#13"
+      ENDDO  // eof()
 
-endif // pitanje
-go top
-return
-*}
+      IF IsVindija()
+         SELECT kalk_pripr
+         PopWA()
+      ENDIF
+
+   ENDIF // pitanje
+   GO TOP
+
+   RETURN
+// }
 
 
 
@@ -2002,73 +2017,75 @@ return
  *  \brief Zamisljeno da se koristi kao pomoc u rjesavanju problema pri unosu dokumenta. Nije razradjeno.
  */
 
-function Savjetnik()
- LOCAL nRec:=RECNO(),lGreska:=.f.
+FUNCTION Savjetnik()
 
- MsgO("Priprema izvjestaja...")
- set console off
- cKom:=PRIVPATH+"savjeti.txt"
- set printer off
- set device to printer
- cDDir:=SET(_SET_DEFAULT)
- set default to
- set printer to (ckom)
- set printer on
- SET(_SET_DEFAULT,cDDir)
+   LOCAL nRec := RecNo(), lGreska := .F.
 
-SELECT kalk_pripr
-GO TOP
+   MsgO( "Priprema izvjestaja..." )
+   SET CONSOLE OFF
+   cKom := PRIVPATH + "savjeti.txt"
+   SET PRINTER OFF
+   SET DEVICE TO PRINTER
+   cDDir := Set( _SET_DEFAULT )
+   SET DEFAULT TO
+   SET PRINTER to ( ckom )
+   SET PRINTER ON
+   SET( _SET_DEFAULT, cDDir )
 
-DO WHILE !EOF()
- lGreska:=.f.
- DO CASE
+   SELECT kalk_pripr
+   GO TOP
 
-  CASE idvd=="11"     // magacin->prodavnica
-    IF vpc==0
-      OpisStavke(@lGreska)
-      ? "PROBLEM: - veleprodajna cijena = 0"
-      ? "OPIS:    - niste napravili ulaz u magacin, ili nemate veleprodajnu"
-      ? "           cijenu (VPC) u sifrarniku za taj artikal"
-    ENDIF
+   DO WHILE !Eof()
+      lGreska := .F.
+      DO CASE
 
- ENDCASE
+      CASE idvd == "11"     // magacin->prodavnica
+         IF vpc == 0
+            OpisStavke( @lGreska )
+            ? "PROBLEM: - veleprodajna cijena = 0"
+            ? "OPIS:    - niste napravili ulaz u magacin, ili nemate veleprodajnu"
+            ? "           cijenu (VPC) u sifrarniku za taj artikal"
+         ENDIF
 
- IF EMPTY(datdok)
-   OpisStavke(@lGreska)
-   ? "DATUM KALKULACIJE NIJE UNESEN!!!"
- ENDIF
+      ENDCASE
 
- IF EMPTY(error)
-   OpisStavke(@lGreska)
-   ? "STAVKA PRIPADA AUTOMATSKI FORMIRANOM DOKUMENTU !!!"
-   ? "Pokrenite opciju <A> - asistent ako zelite da program sam prodje"
-   ? "kroz sve stavke ili udjite sa <Enter> u ispravku samo ove stavke."
-   IF idvd=="11"
-     ? "Kada pokrenete <A> za ovu kalkulaciju (11), veleprodajna"
-     ? "cijena ce biti preuzeta: 1) Ako program omogucava azuriranje"
-     ? "sumnjivih dokumenata, VPC ce ostati nepromijenjena; 2) Ako program"
-     ? "radi tako da ne omogucava azuriranje sumnjivih dokumenata, VPC ce"
-     ? "biti preuzeta iz trenutne kartice artikla. Ako nemate evidentiranih"
-     ? "ulaza artikla u magacin, bice preuzeta 0 sto naravno nije korektno."
-   ENDIF
- ENDIF
+      IF Empty( datdok )
+         OpisStavke( @lGreska )
+         ? "DATUM KALKULACIJE NIJE UNESEN!!!"
+      ENDIF
 
- If lGreska; ?; ENDIF
- SKIP 1
-ENDDO
+      IF Empty( error )
+         OpisStavke( @lGreska )
+         ? "STAVKA PRIPADA AUTOMATSKI FORMIRANOM DOKUMENTU !!!"
+         ? "Pokrenite opciju <A> - asistent ako zelite da program sam prodje"
+         ? "kroz sve stavke ili udjite sa <Enter> u ispravku samo ove stavke."
+         IF idvd == "11"
+            ? "Kada pokrenete <A> za ovu kalkulaciju (11), veleprodajna"
+            ? "cijena ce biti preuzeta: 1) Ako program omogucava azuriranje"
+            ? "sumnjivih dokumenata, VPC ce ostati nepromijenjena; 2) Ako program"
+            ? "radi tako da ne omogucava azuriranje sumnjivih dokumenata, VPC ce"
+            ? "biti preuzeta iz trenutne kartice artikla. Ako nemate evidentiranih"
+            ? "ulaza artikla u magacin, bice preuzeta 0 sto naravno nije korektno."
+         ENDIF
+      ENDIF
 
- set printer to
- set printer off
- set console on
- SET DEVICE TO SCREEN
- set printer to
- MsgC()
- save screen to cS
- VidiFajl(cKom)
- restore screen from cS
- SELECT kalk_pripr
- GO (nRec)
-return
+      IF lGreska; ?; ENDIF
+      SKIP 1
+   ENDDO
+
+   SET PRINTER TO
+   SET PRINTER OFF
+   SET CONSOLE ON
+   SET DEVICE TO SCREEN
+   SET PRINTER TO
+   MsgC()
+   SAVE SCREEN TO cS
+   VidiFajl( cKom )
+   RESTORE SCREEN FROM cS
+   SELECT kalk_pripr
+   GO ( nRec )
+
+   RETURN
 
 
 
@@ -2077,106 +2094,117 @@ return
  *  \sa Savjetnik()
  */
 
-function OpisStavke(lGreska)
- IF !lGreska
-  ? "Dokument:    "+idfirma+"-"+idvd+"-"+brdok+", stavka "+rbr
-  ? "Artikal: "+idroba+"-"+LEFT(Ocitaj(F_ROBA,idroba,"naz"), 40)
-  lGreska:=.t.
- ENDIF
-return
+FUNCTION OpisStavke( lGreska )
+
+   IF !lGreska
+      ? "Dokument:    " + idfirma + "-" + idvd + "-" + brdok + ", stavka " + rbr
+      ? "Artikal: " + idroba + "-" + Left( Ocitaj( F_ROBA, idroba, "naz" ), 40 )
+      lGreska := .T.
+   ENDIF
+
+   RETURN
 
 
 
 
-function Soboslikar(aNiz,nIzKodaBoja,nUKodBoja)
- LOCAL i, cEkran
-  FOR i:=1 TO LEN(aNiz)
-    cEkran:=SAVESCREEN(aNiz[i,1],aNiz[i,2],aNiz[i,3],aNiz[i,4])
-    cEkran:=STRTRAN(cEkran,CHR(nIzKodaBoja),CHR(nUKodBoja))
-    RESTSCREEN(aNiz[i,1],aNiz[i,2],aNiz[i,3],aNiz[i,4],cEkran)
-  NEXT
-return
+FUNCTION Soboslikar( aNiz, nIzKodaBoja, nUKodBoja )
+
+   LOCAL i, cEkran
+
+   FOR i := 1 TO Len( aNiz )
+      cEkran := SaveScreen( aNiz[ i, 1 ], aNiz[ i, 2 ], aNiz[ i, 3 ], aNiz[ i, 4 ] )
+      cEkran := StrTran( cEkran, Chr( nIzKodaBoja ), Chr( nUKodBoja ) )
+      RestScreen( aNiz[ i, 1 ], aNiz[ i, 2 ], aNiz[ i, 3 ], aNiz[ i, 4 ], cEkran )
+   NEXT
+
+   RETURN
 
 
-function kalk_zagl_firma()
-P_12CPI
-U_OFF
-B_OFF
-I_OFF
-? "Subjekt:"
-U_ON
-?? PADC(TRIM(gTS)+" "+TRIM(gNFirma),39)
-U_OFF
-? "Prodajni objekat:"
-U_ON
-?? PADC(ALLTRIM(NazProdObj()),30)
-U_OFF
-? "(poslovnica-poslovna jedinica)"
-? "Datum:"
-U_ON
-?? PADC(SrediDat(DATDOK),18)
-U_OFF
-?
-?
-return
+FUNCTION kalk_zagl_firma()
+
+   P_12CPI
+   U_OFF
+   B_OFF
+   I_OFF
+   ? "Subjekt:"
+   U_ON
+   ?? PadC( Trim( gTS ) + " " + Trim( gNFirma ), 39 )
+   U_OFF
+   ? "Prodajni objekat:"
+   U_ON
+   ?? PadC( AllTrim( NazProdObj() ), 30 )
+   U_OFF
+   ? "(poslovnica-poslovna jedinica)"
+   ? "Datum:"
+   U_ON
+   ?? PadC( SrediDat( DATDOK ), 18 )
+   U_OFF
+   ?
+   ?
+
+   RETURN
 
 
-static function NazProdObj()
- LOCAL cVrati:=""
-  SELECT KONTO
-  SEEK kalk_pripr->pkonto
-  cVrati:=naz
-  SELECT kalk_pripr
-return cVrati
+STATIC FUNCTION NazProdObj()
+
+   LOCAL cVrati := ""
+
+   SELECT KONTO
+   SEEK kalk_pripr->pkonto
+   cVrati := naz
+   SELECT kalk_pripr
+
+   RETURN cVrati
 
 
 
 
-function IzbDokOLPP()
+FUNCTION IzbDokOLPP()
 
-do while .t.
+   DO WHILE .T.
 
-    o_kalk_edit()
+      o_kalk_edit()
 
-    select kalk_pripr
-    set order to tag "1"
-    go top
+      SELECT kalk_pripr
+      SET ORDER TO TAG "1"
+      GO TOP
 
-    cIdFirma := field->IdFirma
-    cBrDok := field->BrDok
-    cIdVD := field->IdVD
+      cIdFirma := field->IdFirma
+      cBrDok := field->BrDok
+      cIdVD := field->IdVD
 
-    if eof()
-        exit
-    endif
+      IF Eof()
+         EXIT
+      ENDIF
 
-    if empty(cidvd+cbrdok+cidfirma) .or. ! (cIdVd $ "11#19#81#80")
-        skip; loop
-    endif
+      IF Empty( cidvd + cbrdok + cidfirma ) .OR. ! ( cIdVd $ "11#19#81#80" )
+         skip; LOOP
+      ENDIF
 
-    Box("",2,50)
-        set cursor on
-        @ m_x+1,m_y+2 SAY "Dokument broj:"
-        if gNW $ "DX"
-            @ m_x+1,col()+2  SAY cIdFirma
-        else
-            @ m_x+1,col()+2 GET cIdFirma
-        endif
-        @ m_x+1,col()+1 SAY "-" GET cIdVD  VALID cIdVd $ "11#19#81#80"  PICT "@!"
-        @ m_x+1,col()+1 SAY "-" GET cBrDok
-        read; ESC_BCR
+      Box( "", 2, 50 )
+      SET CURSOR ON
+      @ m_x + 1, m_y + 2 SAY "Dokument broj:"
+      IF gNW $ "DX"
+         @ m_x + 1, Col() + 2  SAY cIdFirma
+      ELSE
+         @ m_x + 1, Col() + 2 GET cIdFirma
+      ENDIF
+      @ m_x + 1, Col() + 1 SAY "-" GET cIdVD  VALID cIdVd $ "11#19#81#80"  PICT "@!"
+      @ m_x + 1, Col() + 1 SAY "-" GET cBrDok
+      read; ESC_BCR
 
-    BoxC()
+      BoxC()
 
-    HSEEK cIdFirma+cIdVD+cBrDok
-    EOF CRET
+      HSEEK cIdFirma + cIdVD + cBrDok
+      EOF CRET
 
-    KalkStOLPP()
+      KalkStOLPP()
 
-enddo
+   ENDDO
 
-close all
-return
+   CLOSE ALL
+
+   RETURN
 
 
 
@@ -2185,24 +2213,26 @@ return
  *  \brief Mijenja predznak kolicini u svim stavkama u kalk_pripremi
  */
 
-function PlusMinusKol()
-*{
-  o_kalk_edit()
-  SELECT kalk_pripr
-  GO TOP
-  DO WHILE !EOF()
-    Scatter()
+FUNCTION PlusMinusKol()
+
+   // {
+   o_kalk_edit()
+   SELECT kalk_pripr
+   GO TOP
+   DO WHILE !Eof()
+      Scatter()
       _kolicina := -_kolicina
       _ERROR := " "
-    Gather()
-    SKIP 1
-  ENDDO
-  // Msg("Automatski pokrecem asistenta (Alt+F10)!",1)
-  // lAutoAsist:=.t.
-  KEYBOARD CHR(K_ESC)
-CLOSERET
-return
-*}
+      Gather()
+      SKIP 1
+   ENDDO
+   // Msg("Automatski pokrecem asistenta (Alt+F10)!",1)
+   // lAutoAsist:=.t.
+   KEYBOARD Chr( K_ESC )
+   CLOSERET
+
+   RETURN
+// }
 
 
 
@@ -2211,24 +2241,26 @@ return
  *  \brief Filuje tarifu u svim stavkama u kalk_pripremi odgovarajucom sifrom tarife iz sifrarnika robe
  */
 
-function UzmiTarIzSif()
-*{
-  o_kalk_edit()
-  SELECT kalk_pripr
-  GO TOP
-  DO WHILE !EOF()
-    Scatter()
-      _idtarifa := Ocitaj(F_ROBA,_idroba,"idtarifa")
+FUNCTION UzmiTarIzSif()
+
+   // {
+   o_kalk_edit()
+   SELECT kalk_pripr
+   GO TOP
+   DO WHILE !Eof()
+      Scatter()
+      _idtarifa := Ocitaj( F_ROBA, _idroba, "idtarifa" )
       _ERROR := " "
-    Gather()
-    SKIP 1
-  ENDDO
-  Msg("Automatski pokrecem asistenta (opcija A)!",1)
-  lAutoAsist:=.t.
-  KEYBOARD CHR(K_ESC)
-CLOSERET
-return
-*}
+      Gather()
+      SKIP 1
+   ENDDO
+   Msg( "Automatski pokrecem asistenta (opcija A)!", 1 )
+   lAutoAsist := .T.
+   KEYBOARD Chr( K_ESC )
+   CLOSERET
+
+   RETURN
+// }
 
 
 
@@ -2237,33 +2269,35 @@ return
  *  \brief Formira diskontnu maloprodajnu cijenu u svim stavkama u kalk_pripremi
  */
 
-function DiskMPCSAPP()
-*{
-aPorezi:={}
-o_kalk_edit()
-SELECT kalk_pripr
-GO TOP
-DO WHILE !EOF()
-    SELECT ROBA
-    HSEEK kalk_pripr->idroba
-    SELECT TARIFA
-    HSEEK ROBA->idtarifa
-    Tarifa(kalk_pripr->pKonto,kalk_pripr->idRoba,@aPorezi)
-    SELECT kalk_pripr
-    Scatter()
-    
-    _mpcSaPP:=MpcSaPor(roba->vpc,aPorezi)
-    
-    _ERROR := " "
-    Gather()
-    SKIP 1
-ENDDO
-Msg("Automatski pokrecem asistenta (opcija A)!",1)
-lAutoAsist:=.t.
-KEYBOARD CHR(K_ESC)
-CLOSERET
-return
-*}
+FUNCTION DiskMPCSAPP()
+
+   // {
+   aPorezi := {}
+   o_kalk_edit()
+   SELECT kalk_pripr
+   GO TOP
+   DO WHILE !Eof()
+      SELECT ROBA
+      HSEEK kalk_pripr->idroba
+      SELECT TARIFA
+      HSEEK ROBA->idtarifa
+      Tarifa( kalk_pripr->pKonto, kalk_pripr->idRoba, @aPorezi )
+      SELECT kalk_pripr
+      Scatter()
+
+      _mpcSaPP := MpcSaPor( roba->vpc, aPorezi )
+
+      _ERROR := " "
+      Gather()
+      SKIP 1
+   ENDDO
+   Msg( "Automatski pokrecem asistenta (opcija A)!", 1 )
+   lAutoAsist := .T.
+   KEYBOARD Chr( K_ESC )
+   CLOSERET
+
+   RETURN
+// }
 
 
 
@@ -2271,27 +2305,29 @@ return
  *  \brief Maloprodajne cijene svih artikala u kalk_pripremi kopira u sifrarnik robe
  */
 
-function MPCSAPPuSif()
-*{
-  o_kalk_edit()
-  SELECT kalk_pripr
-  GO TOP
-  DO WHILE !EOF()
-    cIdKonto:=kalk_pripr->pkonto
-    SELECT KONCIJ; HSEEK cIdKonto
-    SELECT kalk_pripr
-    DO WHILE !EOF() .and. pkonto==cIdKonto
-      SELECT ROBA; HSEEK kalk_pripr->idroba
-      IF FOUND()
-        StaviMPCSif(kalk_pripr->mpcsapp,.f.)
-      ENDIF
+FUNCTION MPCSAPPuSif()
+
+   // {
+   o_kalk_edit()
+   SELECT kalk_pripr
+   GO TOP
+   DO WHILE !Eof()
+      cIdKonto := kalk_pripr->pkonto
+      SELECT KONCIJ; HSEEK cIdKonto
       SELECT kalk_pripr
-      SKIP 1
-    ENDDO
-  ENDDO
-CLOSERET
-return
-*}
+      DO WHILE !Eof() .AND. pkonto == cIdKonto
+         SELECT ROBA; HSEEK kalk_pripr->idroba
+         IF Found()
+            StaviMPCSif( kalk_pripr->mpcsapp, .F. )
+         ENDIF
+         SELECT kalk_pripr
+         SKIP 1
+      ENDDO
+   ENDDO
+   CLOSERET
+
+   RETURN
+// }
 
 
 
@@ -2299,39 +2335,41 @@ return
  *  \brief Maloprodajne cijene svih artikala iz izabranog azuriranog dokumenta tipa 80 kopira u sifrarnik robe
  */
 
-function MPCSAPPiz80uSif()
-*{
-  o_kalk_edit()
+FUNCTION MPCSAPPiz80uSif()
 
-  cIdFirma := gFirma
-  cIdVdU   := "80"
-  cBrDokU  := SPACE(LEN(kalk_pripr->brdok))
+   // {
+   o_kalk_edit()
 
-  Box(,4,75)
-    @ m_x+0, m_y+5 SAY "FORMIRANJE MPC U SIFRARNIKU OD MPCSAPP DOKUMENTA TIPA 80"
-    @ m_x+2, m_y+2 SAY "Dokument: "+cIdFirma+"-"+cIdVdU+"-"
-    @ row(),col() GET cBrDokU VALID postoji_kalk_dok(cIdFirma+cIdVdU+cBrDokU)
-    READ; ESC_BCR
-  BoxC()
+   cIdFirma := gFirma
+   cIdVdU   := "80"
+   cBrDokU  := Space( Len( kalk_pripr->brdok ) )
 
-  // pocnimo
-  SELECT KALK
-  SEEK cIdFirma+cIdVDU+cBrDokU
-  cIdKonto:=KALK->pkonto
-  SELECT KONCIJ; HSEEK cIdKonto
-  SELECT KALK
-  DO WHILE !EOF() .and. cIdFirma+cIdVDU+cBrDokU == IDFIRMA+IDVD+BRDOK
-    SELECT ROBA; HSEEK KALK->idroba
-    IF FOUND()
-      StaviMPCSif(KALK->mpcsapp,.f.)
-    ENDIF
-    SELECT KALK
-    SKIP 1
-  ENDDO
+   Box(, 4, 75 )
+   @ m_x + 0, m_y + 5 SAY "FORMIRANJE MPC U SIFRARNIKU OD MPCSAPP DOKUMENTA TIPA 80"
+   @ m_x + 2, m_y + 2 SAY "Dokument: " + cIdFirma + "-" + cIdVdU + "-"
+   @ Row(), Col() GET cBrDokU VALID postoji_kalk_dok( cIdFirma + cIdVdU + cBrDokU )
+   READ; ESC_BCR
+   BoxC()
 
-CLOSERET
-return
-*}
+   // pocnimo
+   SELECT KALK
+   SEEK cIdFirma + cIdVDU + cBrDokU
+   cIdKonto := KALK->pkonto
+   SELECT KONCIJ; HSEEK cIdKonto
+   SELECT KALK
+   DO WHILE !Eof() .AND. cIdFirma + cIdVDU + cBrDokU == IDFIRMA + IDVD + BRDOK
+      SELECT ROBA; HSEEK KALK->idroba
+      IF Found()
+         StaviMPCSif( KALK->mpcsapp, .F. )
+      ENDIF
+      SELECT KALK
+      SKIP 1
+   ENDDO
+
+   CLOSERET
+
+   RETURN
+// }
 
 
 
@@ -2340,437 +2378,442 @@ return
  *  \brief Filuje VPC u svim stavkama u kalk_pripremi odgovarajucom VPC iz sifrarnika robe
  */
 
-function VPCSifUDok()
-*{
-  o_kalk_edit()
-  SELECT kalk_pripr
-  GO TOP
-  DO WHILE !EOF()
-    SELECT ROBA; HSEEK kalk_pripr->idroba
-    SELECT KONCIJ; SEEK TRIM(kalk_pripr->mkonto)
-    // SELECT TARIFA; HSEEK ROBA->idtarifa
-    SELECT kalk_pripr
-    Scatter()
+FUNCTION VPCSifUDok()
+
+   // {
+   o_kalk_edit()
+   SELECT kalk_pripr
+   GO TOP
+   DO WHILE !Eof()
+      SELECT ROBA; HSEEK kalk_pripr->idroba
+      SELECT KONCIJ; SEEK Trim( kalk_pripr->mkonto )
+      // SELECT TARIFA; HSEEK ROBA->idtarifa
+      SELECT kalk_pripr
+      Scatter()
       _vpc := KoncijVPC()
       _ERROR := " "
-    Gather()
-    SKIP 1
-  ENDDO
-  Msg("Automatski pokrecem asistenta (opcija A)!",1)
-  lAutoAsist:=.t.
-  KEYBOARD CHR(K_ESC)
-CLOSERET
-return
-*}
+      Gather()
+      SKIP 1
+   ENDDO
+   Msg( "Automatski pokrecem asistenta (opcija A)!", 1 )
+   lAutoAsist := .T.
+   KEYBOARD Chr( K_ESC )
+   CLOSERET
+
+   RETURN
+// }
 
 
 
 // ------------------------------------------------
 // otvara tabele za pregled izvjestaja
 // ------------------------------------------------
-static function _o_ctrl_tables( azurirana )
+STATIC FUNCTION _o_ctrl_tables( azurirana )
 
-O_KONCIJ
-O_ROBA
-O_TARIFA
-O_PARTN
-O_KONTO
-O_TDOK
+   O_KONCIJ
+   O_ROBA
+   O_TARIFA
+   O_PARTN
+   O_KONTO
+   O_TDOK
 
-if azurirana 
-    O_SKALK   
-    // alias kalk_pripr
-else
-    O_KALK_PRIPR
-endif
+   IF azurirana
+      O_SKALK
+      // alias kalk_pripr
+   ELSE
+      O_KALK_PRIPR
+   ENDIF
 
-return
+   RETURN
 
 
 
 // ---------------------------------------------------
 // centralna funkcija za stampu dokumenta
 // ---------------------------------------------------
-function kalk_centr_stampa_dokumenta()
-parameters fStara, cSeek, lAuto
-local nCol1
-local nCol2
-local nPom
+FUNCTION kalk_centr_stampa_dokumenta()
 
-nCol1:=0
-nCol2:=0
-nPom:=0
+   PARAMETERS fStara, cSeek, lAuto
+   LOCAL nCol1
+   LOCAL nCol2
+   LOCAL nPom
 
-PRIVATE PicCDEM :=gPICCDEM
-PRIVATE PicProc :=gPICPROC
-PRIVATE PicDEM  := gPICDEM
-PRIVATE Pickol  := gPICKOL
-private nStr:=0
+   nCol1 := 0
+   nCol2 := 0
+   nPom := 0
 
-if (pcount()==0)
-    fstara:=.f.
-endif
+   PRIVATE PicCDEM := gPICCDEM
+   PRIVATE PicProc := gPICPROC
+   PRIVATE PicDEM  := gPICDEM
+   PRIVATE Pickol  := gPICKOL
+   PRIVATE nStr := 0
 
-if (fStara == nil)
-    fStara := .f.
-endif
+   IF ( PCount() == 0 )
+      fstara := .F.
+   ENDIF
 
-if (lAuto==nil)
-    lAuto := .f.
-endif
+   IF ( fStara == nil )
+      fStara := .F.
+   ENDIF
 
-if (cSeek==nil)
-    cSeek := ""
-endif
+   IF ( lAuto == nil )
+      lAuto := .F.
+   ENDIF
 
-close all
+   IF ( cSeek == nil )
+      cSeek := ""
+   ENDIF
 
-// otvori potrebne tabele
-_o_ctrl_tables( fstara )
+   CLOSE ALL
 
-select kalk_pripr
-set order to tag "1"
-go top
+   // otvori potrebne tabele
+   _o_ctrl_tables( fstara )
 
-// kalk dokument tip-a 24
-// on ce koristiti rekapitulaciju kao izvjestaj
-if ( field->idvd == "24" )
-    return kalk_24_rekapitulacija()
-endif
+   SELECT kalk_pripr
+   SET ORDER TO TAG "1"
+   GO TOP
 
-fTopsD:=.f.
-fFaktD:=.f.
+   // kalk dokument tip-a 24
+   // on ce koristiti rekapitulaciju kao izvjestaj
+   IF ( field->idvd == "24" )
+      RETURN kalk_24_rekapitulacija()
+   ENDIF
 
-do while .t.
+   fTopsD := .F.
+   fFaktD := .F.
 
-    cIdFirma := IdFirma
-    cBrDok := BrDok
-    cIdVD := IdVD
+   DO WHILE .T.
 
-    if eof()
-        exit
-    endif
+      cIdFirma := IdFirma
+      cBrDok := BrDok
+      cIdVD := IdVD
 
-    if empty( cIdvd + cBrdok + cIdfirma )
-        skip
-        loop
-    endif
-    
-    if !lAuto
-    
-    if (cSeek == "")
-        Box("",1,50)
-            set cursor on
-            @ m_x+1,m_y+2 SAY "Dokument broj:"
-            if (gNW $ "DX")
-                @ m_x+1,col()+2  SAY cIdFirma
-            else
-                @ m_x+1,col()+2 GET cIdFirma
-            endif
-            @ m_x+1,col()+1 SAY "-" GET cIdVD  pict "@!"
-            @ m_x+1,col()+1 SAY "-" GET cBrDok
-            read
+      IF Eof()
+         EXIT
+      ENDIF
+
+      IF Empty( cIdvd + cBrdok + cIdfirma )
+         SKIP
+         LOOP
+      ENDIF
+
+      IF !lAuto
+
+         IF ( cSeek == "" )
+            Box( "", 1, 50 )
+            SET CURSOR ON
+            @ m_x + 1, m_y + 2 SAY "Dokument broj:"
+            IF ( gNW $ "DX" )
+               @ m_x + 1, Col() + 2  SAY cIdFirma
+            ELSE
+               @ m_x + 1, Col() + 2 GET cIdFirma
+            ENDIF
+            @ m_x + 1, Col() + 1 SAY "-" GET cIdVD  PICT "@!"
+            @ m_x + 1, Col() + 1 SAY "-" GET cBrDok
+            READ
             ESC_BCR
-        BoxC()
-    endif
+            BoxC()
+         ENDIF
 
-    endif
-    
-    if ( !EMPTY( cSeek ) .and. cSeek != 'IZDOKS' )
-        HSEEK cSeek
-        cIdfirma:=substr(cSeek,1,2)
-        cIdvd:=substr(cSeek,3,2)
-        cBrDok:=padr(substr(cSeek,5,8) ,8)
-    else
-        HSEEK cIdFirma + cIdVD + cBrDok
-    endif
+      ENDIF
 
-    // provjeri da li kalkulacija ima sve cijene ?
-    if !kalkulacija_ima_sve_cijene( cIdFirma, cIdVd, cBrDok )
-        MsgBeep( "Unutar kalkulacije nedostaju pojedine cijene bitne za obracun!#Stampanje onemoguceno." )
-        close all
-        return
-    endif
+      IF ( !Empty( cSeek ) .AND. cSeek != 'IZDOKS' )
+         HSEEK cSeek
+         cIdfirma := SubStr( cSeek, 1, 2 )
+         cIdvd := SubStr( cSeek, 3, 2 )
+         cBrDok := PadR( SubStr( cSeek, 5, 8 ),8 )
+      ELSE
+         HSEEK cIdFirma + cIdVD + cBrDok
+      ENDIF
 
-    if (cSeek != 'IZDOKS')
-        EOF CRET
-    else
-        private nStr:=1
-    endif
+      // provjeri da li kalkulacija ima sve cijene ?
+      IF !kalkulacija_ima_sve_cijene( cIdFirma, cIdVd, cBrDok )
+         MsgBeep( "Unutar kalkulacije nedostaju pojedine cijene bitne za obracun!#Stampanje onemoguceno." )
+         CLOSE ALL
+         RETURN
+      ENDIF
 
-    START PRINT CRET
-    ?
+      IF ( cSeek != 'IZDOKS' )
+         EOF CRET
+      ELSE
+         PRIVATE nStr := 1
+      ENDIF
 
-    do while .t.
-        if (cidvd=="10".and.!((gVarEv=="2").or.(gmagacin=="1")).or.(cidvd $ "11#12#13")).and.(c10Var=="3")
+      START PRINT CRET
+      ?
+
+      DO WHILE .T.
+         IF ( cidvd == "10" .AND. !( ( gVarEv == "2" ) .OR. ( gmagacin == "1" ) ) .OR. ( cidvd $ "11#12#13" ) ) .AND. ( c10Var == "3" )
             gPSOld := gPStranica
-            gPStranica := VAL(IzFmkIni("KALK","A3_GPSTRANICA","-20",EXEPATH))
+            gPStranica := Val( IzFmkIni( "KALK", "A3_GPSTRANICA", "-20", EXEPATH ) )
             P_PO_L
-        endif
-    
-        if (cSeek=='IZDOKS')  
+         ENDIF
+
+         IF ( cSeek == 'IZDOKS' )
             // stampaj sve odjednom !!!
-            if (prow()>42)
-                ++nStr
-                FF
-            endif
-            select kalk_pripr
-            cIdfirma:=kalk_pripr->idfirma
-            cIdvd:=kalk_pripr->idvd
-            cBrdok:=kalk_pripr->brdok
-            hseek cIdFirma+cIdVD+cBrDok
-        endif
+            IF ( PRow() > 42 )
+               ++nStr
+               FF
+            ENDIF
+            SELECT kalk_pripr
+            cIdfirma := kalk_pripr->idfirma
+            cIdvd := kalk_pripr->idvd
+            cBrdok := kalk_pripr->brdok
+            hseek cIdFirma + cIdVD + cBrDok
+         ENDIF
 
-        Preduzece()
+         Preduzece()
 
-        if (cidvd=="10" .or. cidvd=="70") .and. !IsPDV()
-            if (gVarEv=="2")
-                StKalk10_sk()
-            elseif (gMagacin=="1")
-                    // samo po nabavnim
-                StKalk10_1()
-            else
-                if (c10Var=="1")
-                    StKalk10_2()
-                elseif (c10Var=="2")
-                    StKalk10_3()
-                else
-                    StKalk10_4()
-                endif
-            endif
-        elseif cIdVD == "10" .and. IsPDV()
-            if (gMagacin == "1")
-                    // samo po nabavnim
-                StKalk10_1()
-            else
-                // PDV ulazna kalkulacija
-                StKalk10_PDV()
-            endif
-        elseif cidvd $ "15"
-            if !IsPDV()
-                StKalk15()
-            endif
-        elseif (cidvd $ "11#12#13")
-            if (c10Var=="3")
-                StKalk11_3()
-            else
-                if (gmagacin=="1")
-                    StKalk11_1()
-                else
-                    StKalk11_2()
-                endif
-            endif
-        elseif (cidvd $ "14#94#74#KO")
-            if (c10Var=="3")
-                Stkalk14_3()
-            else
-                if IsPDV()
-                    StKalk14PDV()
-                else
-                    Stkalk14()
-                endif
-            endif
-        elseif (cidvd $ "16#95#96#97") .and. IsPDV()
-            if gPDVMagNab == "D"
-                StKalk95_1()
-            else
-                StKalk95_PDV()
-            endif
-        elseif (cidvd $ "95#96#97#16") .and. !IsPDV()
-            if (gVarEv=="2")
-                Stkalk95_sk()
-            elseif (gmagacin=="1")
-                Stkalk95_1()
-            else
-                Stkalk95()
-            endif
-        elseif (cidvd $ "41#42#43#47#49")   
+         IF ( cidvd == "10" .OR. cidvd == "70" ) .AND. !IsPDV()
+            IF ( gVarEv == "2" )
+               StKalk10_sk()
+            ELSEIF ( gMagacin == "1" )
+               // samo po nabavnim
+               StKalk10_1()
+            ELSE
+               IF ( c10Var == "1" )
+                  StKalk10_2()
+               ELSEIF ( c10Var == "2" )
+                  StKalk10_3()
+               ELSE
+                  StKalk10_4()
+               ENDIF
+            ENDIF
+         ELSEIF cIdVD == "10" .AND. IsPDV()
+            IF ( gMagacin == "1" )
+               // samo po nabavnim
+               StKalk10_1()
+            ELSE
+               // PDV ulazna kalkulacija
+               StKalk10_PDV()
+            ENDIF
+         ELSEIF cidvd $ "15"
+            IF !IsPDV()
+               StKalk15()
+            ENDIF
+         ELSEIF ( cidvd $ "11#12#13" )
+            IF ( c10Var == "3" )
+               StKalk11_3()
+            ELSE
+               IF ( gmagacin == "1" )
+                  StKalk11_1()
+               ELSE
+                  StKalk11_2()
+               ENDIF
+            ENDIF
+         ELSEIF ( cidvd $ "14#94#74#KO" )
+            IF ( c10Var == "3" )
+               Stkalk14_3()
+            ELSE
+               IF IsPDV()
+                  StKalk14PDV()
+               ELSE
+                  Stkalk14()
+               ENDIF
+            ENDIF
+         ELSEIF ( cidvd $ "16#95#96#97" ) .AND. IsPDV()
+            IF gPDVMagNab == "D"
+               StKalk95_1()
+            ELSE
+               StKalk95_PDV()
+            ENDIF
+         ELSEIF ( cidvd $ "95#96#97#16" ) .AND. !IsPDV()
+            IF ( gVarEv == "2" )
+               Stkalk95_sk()
+            ELSEIF ( gmagacin == "1" )
+               Stkalk95_1()
+            ELSE
+               Stkalk95()
+            ENDIF
+         ELSEIF ( cidvd $ "41#42#43#47#49" )
             // realizacija prodavnice
-            if (IsJerry() .and. cIdVd$"41#42#47")
-                StKalk47J()
-            else
-                StKalk41()
-            endif
-        elseif (cidvd == "18")
+            IF ( IsJerry() .AND. cIdVd $ "41#42#47" )
+               StKalk47J()
+            ELSE
+               StKalk41()
+            ENDIF
+         ELSEIF ( cidvd == "18" )
             StKalk18()
-        elseif (cidvd == "19")
-            if IsJerry()
-                StKalk19J()
-            else
-                StKalk19()
-            endif
-        elseif (cidvd == "80")
+         ELSEIF ( cidvd == "19" )
+            IF IsJerry()
+               StKalk19J()
+            ELSE
+               StKalk19()
+            ENDIF
+         ELSEIF ( cidvd == "80" )
             StKalk80()
-        elseif (cidvd == "81")
-            if IsJerry()
-                StKalk81J()
-            else
-                if (c10Var=="1")
-                    StKalk81()
-                else
-                    StKalk81_2()
-                endif
-            endif
-        elseif (cidvd == "82")
+         ELSEIF ( cidvd == "81" )
+            IF IsJerry()
+               StKalk81J()
+            ELSE
+               IF ( c10Var == "1" )
+                  StKalk81()
+               ELSE
+                  StKalk81_2()
+               ENDIF
+            ENDIF
+         ELSEIF ( cidvd == "82" )
             StKalk82()
-        elseif (cidvd == "IM")
+         ELSEIF ( cidvd == "IM" )
             StKalkIm()
-        elseif (cidvd == "IP")
+         ELSEIF ( cidvd == "IP" )
             StKalkIp()
-        elseif (cidvd == "RN")
-            if !fStara
-                RaspTrosk(.t.)
-            endif
+         ELSEIF ( cidvd == "RN" )
+            IF !fStara
+               RaspTrosk( .T. )
+            ENDIF
             StkalkRN()
-        elseif (cidvd == "PR")
+         ELSEIF ( cidvd == "PR" )
             StkalkPR()
-        endif
+         ENDIF
 
-        if (cSeek != 'IZDOKS')
-            exit
-        else
-            select kalk_pripr
-            skip
-            if eof()
-                exit
-            endif
+         IF ( cSeek != 'IZDOKS' )
+            EXIT
+         ELSE
+            SELECT kalk_pripr
+            SKIP
+            IF Eof()
+               EXIT
+            ENDIF
             ?
             ?
-        endif
-        
-        if (cidvd == "10" .and. !((gVarEv=="2").or.(gmagacin=="1")).or.(cidvd $ "11#12#13")).and.(c10Var=="3")
-            gPStranica:=gPSOld
+         ENDIF
+
+         IF ( cidvd == "10" .AND. !( ( gVarEv == "2" ) .OR. ( gmagacin == "1" ) ) .OR. ( cidvd $ "11#12#13" ) ) .AND. ( c10Var == "3" )
+            gPStranica := gPSOld
             P_PO_P
-        endif
+         ENDIF
 
-    enddo // cSEEK
+      ENDDO // cSEEK
 
-    if (gPotpis=="D")
-        if (prow() > 57 + gPStranica)
+      IF ( gPotpis == "D" )
+         IF ( PRow() > 57 + gPStranica )
             FF
-            @ prow(),125 SAY "Str:"+str(++nStr,3)
-        endif
-        ?
-        ?
-        P_12CPI
-        @ prow()+1,47 SAY "Obrada AOP  "; ?? replicate("_",20)
-        @ prow()+1,47 SAY "Komercijala "; ?? replicate("_",20)
-        @ prow()+1,47 SAY "Likvidatura "; ?? replicate("_",20)
-    endif
+            @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
+         ENDIF
+         ?
+         ?
+         P_12CPI
+         @ PRow() + 1, 47 SAY "Obrada AOP  "; ?? Replicate( "_", 20 )
+         @ PRow() + 1, 47 SAY "Komercijala "; ?? Replicate( "_", 20 )
+         @ PRow() + 1, 47 SAY "Likvidatura "; ?? Replicate( "_", 20 )
+      ENDIF
 
-    ?
-    ?
+      ?
+      ?
 
-    FF
+      FF
 
-    // zapamti tabelu, zapis na kojima si stao
-    PushWa()
-    close all
-    END PRINT
+      // zapamti tabelu, zapis na kojima si stao
+      PushWa()
+      CLOSE ALL
+      ENDPRINT
 
-    _o_ctrl_tables( fstara )
-    PopWa()
+      _o_ctrl_tables( fstara )
+      PopWa()
 
-    if (cidvd $ "80#11#81#12#13#IP#19")
-        fTopsD:=.t.
-    endif
-    
-    if (cidvd $ "10#11#81")
-        fFaktD:=.t.
-    endif
+      IF ( cidvd $ "80#11#81#12#13#IP#19" )
+         fTopsD := .T.
+      ENDIF
 
-    if (!empty(cSeek))
-        exit
-    endif
+      IF ( cidvd $ "10#11#81" )
+         fFaktD := .T.
+      ENDIF
 
-enddo  // vrti kroz kalkulacije
+      IF ( !Empty( cSeek ) )
+         EXIT
+      ENDIF
 
-if (fTopsD .and. !fstara .and. gTops!="0 ")
-    start print cret
-    select kalk_pripr
-    set order to tag "1"
-    go top
-    cIdFirma:=IdFirma
-    cBrDok:=BrDok
-    cIdVD:=IdVD
-    if (cIdVd $ "11#12")
-        StKalk11_2(.t.)  //maksuzija za tops - bez NC
-    elseif (cIdVd == "80")
-        Stkalk80(.t.)
-    elseif (cIdVd == "81")
-        Stkalk81(.t.)
-    elseif (cIdVd == "IP")
-        StkalkIP(.t.)
-    elseif (cIdVd == "19")
-        Stkalk19()
-    endif
-    close all
-    FF
-    END PRINT
+   ENDDO  // vrti kroz kalkulacije
 
-    kalk_generisi_tops_dokumente()
+   IF ( fTopsD .AND. !fstara .AND. gTops != "0 " )
+      start PRINT cret
+      SELECT kalk_pripr
+      SET ORDER TO TAG "1"
+      GO TOP
+      cIdFirma := IdFirma
+      cBrDok := BrDok
+      cIdVD := IdVD
+      IF ( cIdVd $ "11#12" )
+         StKalk11_2( .T. )  // maksuzija za tops - bez NC
+      ELSEIF ( cIdVd == "80" )
+         Stkalk80( .T. )
+      ELSEIF ( cIdVd == "81" )
+         Stkalk81( .T. )
+      ELSEIF ( cIdVd == "IP" )
+         StkalkIP( .T. )
+      ELSEIF ( cIdVd == "19" )
+         Stkalk19()
+      ENDIF
+      CLOSE ALL
+      FF
+      ENDPRINT
 
-endif
+      kalk_generisi_tops_dokumente()
 
-if (fFaktD .and. !fStara .and. gFakt!="0 ")
-    start print cret
-    o_kalk_edit()
-    select kalk_pripr
-    set order to tag "1"
-    go top
-    cIdFirma:=IdFirma
-    cBrDok:=BrDok
-    cIdVD:=IdVD
-    if (cIdVd $ "11#12")
-        StKalk11_2(.t.)  //maksuzija za tops - bez NC
-    elseif (cIdVd == "10")
-        StKalk10_3(.t.)
-    elseif (cIdVd == "81")
-        StKalk81(.t.)
-    endif
-    close all
-    FF
-    END PRINT
+   ENDIF
 
-endif
+   IF ( fFaktD .AND. !fStara .AND. gFakt != "0 " )
+      start PRINT cret
+      o_kalk_edit()
+      SELECT kalk_pripr
+      SET ORDER TO TAG "1"
+      GO TOP
+      cIdFirma := IdFirma
+      cBrDok := BrDok
+      cIdVD := IdVD
+      IF ( cIdVd $ "11#12" )
+         StKalk11_2( .T. )  // maksuzija za tops - bez NC
+      ELSEIF ( cIdVd == "10" )
+         StKalk10_3( .T. )
+      ELSEIF ( cIdVd == "81" )
+         StKalk81( .T. )
+      ENDIF
+      CLOSE ALL
+      FF
+      ENDPRINT
 
-close all
-return nil
+   ENDIF
+
+   CLOSE ALL
+
+   RETURN NIL
 
 
 
 // ---------------------------------------------------------------------
 // provjerava da li kalkulacija ima sve potrebne cijene
 // ---------------------------------------------------------------------
-function kalkulacija_ima_sve_cijene( firma, tip_dok, br_dok )
-local _ok := .t.
-local _area := SELECT()
-local _t_rec := RECNO()
+FUNCTION kalkulacija_ima_sve_cijene( firma, tip_dok, br_dok )
 
-do while !EOF() .and. field->idfirma + field->idvd + field->brdok == firma + tip_dok + br_dok
+   LOCAL _ok := .T.
+   LOCAL _area := Select()
+   LOCAL _t_rec := RecNo()
 
-    if field->idvd $ "11#41#42#RN"
-        if field->fcj == 0
-            _ok := .f.
-            MsgBeep( "Stavka broj " + ALLTRIM( field->rbr ) + " FCJ <= 0 !" )
-            exit
-        endif
-    elseif field->idvd $ "16#96#94#95#14#80#"
-        if field->nc == 0
-            _ok := .f.
-            MsgBeep( "Stavka broj " + ALLTRIM( field->rbr ) + " NC <= 0 !" )
-            exit
-        endif
-    endif
+   DO WHILE !Eof() .AND. field->idfirma + field->idvd + field->brdok == firma + tip_dok + br_dok
 
-    skip
+      IF field->idvd $ "11#41#42#RN"
+         IF field->fcj == 0
+            _ok := .F.
+            MsgBeep( "Stavka broj " + AllTrim( field->rbr ) + " FCJ <= 0 !" )
+            EXIT
+         ENDIF
+      ELSEIF field->idvd $ "16#96#94#95#14#80#"
+         IF field->nc == 0
+            _ok := .F.
+            MsgBeep( "Stavka broj " + AllTrim( field->rbr ) + " NC <= 0 !" )
+            EXIT
+         ENDIF
+      ENDIF
 
-enddo
+      SKIP
 
-select ( _area )
-go ( _t_rec )
+   ENDDO
 
-return _ok
+   SELECT ( _area )
+   GO ( _t_rec )
+
+   RETURN _ok
 
 
 
@@ -2779,41 +2822,43 @@ return _ok
  *  \brief Umjesto iskazanog popusta odradjuje smanjenje MPC
  */
 
-function PopustKaoNivelacijaMP()
-*{
-local lImaPromjena
-lImaPromjena:=.f.
-o_kalk_edit()
-select kalk_pripr
-go top
-do while !eof()
-    if (!idvd="4" .or. rabatv==0)
-        skip 1
-        loop
-    endif
-    lImaPromjena:=.t.
-    Scatter()
-        _mpcsapp:=ROUND(_mpcsapp-_rabatv,2)
-        _rabatv:=0
-        private aPorezi:={}
-        private fNovi:=.f.
-        VRoba(.f.)
-        WMpc(.t.)
-        _error:=" "
-        select kalk_pripr
-    Gather()
-    skip 1
-enddo
-if lImaPromjena
-    Msg("Izvrsio promjene!",1)
-    //lAutoAsist:=.t.
-    keyboard CHR(K_ESC)
-else
-    MsgBeep("Nisam nasao nijednu stavku sa maloprodajnim popustom!")
-endif
-CLOSERET
-return
-*}
+FUNCTION PopustKaoNivelacijaMP()
+
+   // {
+   LOCAL lImaPromjena
+   lImaPromjena := .F.
+   o_kalk_edit()
+   SELECT kalk_pripr
+   GO TOP
+   DO WHILE !Eof()
+      IF ( !idvd = "4" .OR. rabatv == 0 )
+         SKIP 1
+         LOOP
+      ENDIF
+      lImaPromjena := .T.
+      Scatter()
+      _mpcsapp := Round( _mpcsapp - _rabatv, 2 )
+      _rabatv := 0
+      PRIVATE aPorezi := {}
+      PRIVATE fNovi := .F.
+      VRoba( .F. )
+      WMpc( .T. )
+      _error := " "
+      SELECT kalk_pripr
+      Gather()
+      SKIP 1
+   ENDDO
+   IF lImaPromjena
+      Msg( "Izvrsio promjene!", 1 )
+      // lAutoAsist:=.t.
+      KEYBOARD Chr( K_ESC )
+   ELSE
+      MsgBeep( "Nisam nasao nijednu stavku sa maloprodajnim popustom!" )
+   ENDIF
+   CLOSERET
+
+   RETURN
+// }
 
 
 
@@ -2821,78 +2866,76 @@ return
  *  \brief Funkcija za stampu OLPP-a za azurirani KALK dokument
  */
 
-function StOLPPAz()
-*{
-local nCol1
-local nCol2
-local nPom
+FUNCTION StOLPPAz()
 
-nCol1:=0
-nCol2:=0
-nPom:=0
+   // {
+   LOCAL nCol1
+   LOCAL nCol2
+   LOCAL nPom
 
-PRIVATE PicCDEM:=gPICCDEM
-PRIVATE PicProc:=gPICPROC
-PRIVATE PicDEM:= gPICDEM
-PRIVATE Pickol:= gPICKOL
+   nCol1 := 0
+   nCol2 := 0
+   nPom := 0
 
-private nStr:=0
+   PRIVATE PicCDEM := gPICCDEM
+   PRIVATE PicProc := gPICPROC
+   PRIVATE PicDEM := gPICDEM
+   PRIVATE Pickol := gPICKOL
 
-O_KONCIJ
-O_ROBA
-O_TARIFA
-O_PARTN
-O_KONTO
-O_TDOK
-O_SKALK   
-// alias kalk_pripr
+   PRIVATE nStr := 0
 
-select kalk_pripr
-set order to tag "1"
-go top
+   O_KONCIJ
+   O_ROBA
+   O_TARIFA
+   O_PARTN
+   O_KONTO
+   O_TDOK
+   O_SKALK
+   // alias kalk_pripr
 
-do while .t.
+   SELECT kalk_pripr
+   SET ORDER TO TAG "1"
+   GO TOP
 
-    cIdFirma:=IdFirma
-    cBrDok:=BrDok
-    cIdVD:=IdVD
+   DO WHILE .T.
 
-    if eof()
-        exit
-    endif
+      cIdFirma := IdFirma
+      cBrDok := BrDok
+      cIdVD := IdVD
 
-    if empty(cIdVd+cBrDok+cIdFirma)
-        skip
-        loop
-    endif
+      IF Eof()
+         EXIT
+      ENDIF
 
-    Box("",2,50)
-        set cursor on
-        @ m_x+1,m_y+2 SAY "Dokument broj:"
-        if (gNW $ "DX")
-            @ m_x+1,col()+2  SAY cIdFirma
-        else
-            @ m_x+1,col()+2 GET cIdFirma
-        endif
-        @ m_x+1,col()+1 SAY "-" GET cIdVD  valid cIdVd$"11#19#80#81" pict "@!"
-        @ m_x+1,col()+1 SAY "-" GET cBrDok
-        @ m_x+2, m_y+2 SAY "(moguce vrste KALK dok.su: 11,19,80,81)"
-        read
-        ESC_BCR
-    BoxC()
+      IF Empty( cIdVd + cBrDok + cIdFirma )
+         SKIP
+         LOOP
+      ENDIF
 
-    HSEEK cIdFirma+cIdVD+cBrDok
+      Box( "", 2, 50 )
+      SET CURSOR ON
+      @ m_x + 1, m_y + 2 SAY "Dokument broj:"
+      IF ( gNW $ "DX" )
+         @ m_x + 1, Col() + 2  SAY cIdFirma
+      ELSE
+         @ m_x + 1, Col() + 2 GET cIdFirma
+      ENDIF
+      @ m_x + 1, Col() + 1 SAY "-" GET cIdVD  VALID cIdVd $ "11#19#80#81" PICT "@!"
+      @ m_x + 1, Col() + 1 SAY "-" GET cBrDok
+      @ m_x + 2, m_y + 2 SAY "(moguce vrste KALK dok.su: 11,19,80,81)"
+      READ
+      ESC_BCR
+      BoxC()
 
-    EOF CRET
+      HSEEK cIdFirma + cIdVD + cBrDok
 
-    KalkStOlpp()
-        
+      EOF CRET
 
-enddo  // vrti kroz kalkulacije
-
-close all
-
-return nil
+      KalkStOlpp()
 
 
+   ENDDO  // vrti kroz kalkulacije
 
+   CLOSE ALL
+
+   RETURN NIL

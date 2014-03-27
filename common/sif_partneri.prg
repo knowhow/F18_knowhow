@@ -90,12 +90,6 @@ FUNCTION p_partneri( cId, dx, dy )
    AAdd( ImeKol, { PadR( "ID", 6 ),   {|| id },  "id", {|| .T. }, {|| vpsifra( wid ) }    } )
    AAdd( ImeKol, { PadR( "Naziv", 35 ),  {|| PadR( naz, 35 ) },  "naz" } )
 
-   cN2Fin := IzFMkIni( 'FIN', 'PartnerNaziv2', 'N' )
-
-   IF cN2Fin == "D"
-      AAdd( ImeKol, { PadR( "Naziv2", 25 ), {|| naz2 },     "naz2"      } )
-   ENDIF
-
    AAdd( ImeKol, { PadR( "PTT", 5 ),      {|| PTT },     "ptt"      } )
    AAdd( ImeKol, { PadR( "Mjesto", 16 ),  {|| MJESTO },  "mjesto"   } )
    AAdd( ImeKol, { PadR( "Adresa", 24 ),  {|| ADRESA },  "adresa"   } )

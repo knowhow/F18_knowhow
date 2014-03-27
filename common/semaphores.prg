@@ -567,6 +567,7 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
    LOCAL _versions
    LOCAL _a_dbf_rec
    LOCAL _ret_ver
+   LOCAL cVerUser
 
    IF to_myself == NIL
       to_myself := .F.
@@ -588,8 +589,8 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
    ENDIF
 
    _ver_user := _last_ver
-
    ++ _ver_user
+   cVerUser := ALLTRIM( STR( _ver_user ) )
 
    IF ( _result == 0 )
 
@@ -597,31 +598,31 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
       _id_full := "ARRAY[" + _sql_quote( "#F" ) + "]"
 
       _qry := "INSERT INTO " + _tbl + "(user_code, version, last_trans_version, ids) " + ;
-         "VALUES(" + _sql_quote( _user )  + ", " + Str( _ver_user ) + ", (select max(last_trans_version) from " +  _tbl + "), " + _id_full + ")"
+         "VALUES(" + _sql_quote( _user )  + ", " + cVerUser + ", (select max(last_trans_version) from " +  _tbl + "), " + _id_full + ")"
 
       _ret := _sql_query( _server, _qry )
 
-      log_write( "Dodajem novu stavku semafora za tabelu: " + _tbl + " user: " + _user + " ver.user: " + Str( _ver_user ), 7 )
+      log_write( "Dodajem novu stavku semafora za tabelu: " + _tbl + " user: " + _user + " ver.user: " + cVerUser, 7 )
 
    ENDIF
+
+   _qry := ""
 
    IF !to_myself
       // setuj moju verziju ako ne zelim sebe refreshirati
-      _qry := "UPDATE " + _tbl + " SET version=" + Str( _ver_user ) + " WHERE user_code=" + _sql_quote( _user ) + ";"
+      _qry := "UPDATE " + _tbl + " SET version=" + cVerUser + " WHERE user_code=" + _sql_quote( _user ) + "; "
    ENDIF
 
    // svim userima setuj last_trans_version
-   _qry := "UPDATE " + _tbl + " SET last_trans_version=" + Str( _ver_user ) + ";"
-   // kod svih usera verzija ne moze biti veca od nLast + 1
-   _qry += "UPDATE " + _tbl + " SET version=" + Str( _ver_user ) + ;
-      " WHERE version > " + Str( _ver_user )
-
+   _qry += "UPDATE " + _tbl + " SET last_trans_version=" + cVerUser + "; "
+   // kod svih usera verzija ne moze biti veca od posljednje
+   _qry += "UPDATE " + _tbl + " SET version=" + cVerUser + ;
+      " WHERE version > " + cVerUser + ";"
    _ret := _sql_query( _server, _qry )
 
    log_write( "END: update semaphore version after push user: " + _user + ", tabela: " + _tbl + ", last_ver=" + Str( _ver_user ), 7 )
 
    RETURN _ver_user
-
 
 
 

@@ -151,8 +151,6 @@ FUNCTION push_ids_to_semaphore( table, ids, to_myself )
    _qry += "ids IS NOT NULL AND array_length(ids,1) > 2000"
    _ret := _sql_query( _server, _qry )
 
-   // ova komanda svakako treba da ide u log, jer je to kljucna stvar kod otklanjanja kvarova
-
    log_write( "END push_ids_to_semaphore", 9 )
 
    // na kraju uradi update verzije semafora, push operacija

@@ -158,24 +158,11 @@ select kam_pripr
 
 do case
 
-    // brisi stavku
     case Ch == K_CTRL_T
+        RETURN browse_brisi_stavku()
 
-        if Pitanje("p01","Zelite izbrisati ovu stavku ?", "D" ) == "D"
-            delete
-            __dbPack()
-            return DE_REFRESH
-        endif
-        return DE_CONT
-
-    // brisi pripremu
     case Ch = K_CTRL_F9
-
-        if Pitanje(, "Želite li izbrisati pripremu !!????", "N" ) == "D"
-            zap
-            __dbPack()
-        endif
-        return DE_REFRESH
+        RETURN browse_brisi_pripremu()
 
     // ispravka stavke
     case Ch == K_ENTER

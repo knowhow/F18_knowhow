@@ -141,9 +141,8 @@ FUNCTION fin_azur( automatic )
    f18_free_tables( { __tbl_suban, __tbl_anal, __tbl_sint, __tbl_nalog } )
    sql_table_update( nil, "END" )
 	
-   // pakuj pripremu...
    SELECT fin_pripr
-   __dbPack()
+   my_dbf_pack()
 
    // pobrisi pomocne tabele
    fin_brisi_p_tabele( .T. )
@@ -1168,7 +1167,7 @@ STATIC FUNCTION prip_brisi_duple()
    ENDDO
 
    IF _brisao
-      __dbPack()
+      my_dbf_pack()
    ENDIF
 
    RETURN 0

@@ -574,7 +574,7 @@ do case
                 skip -1
             endif
 
-            __dbPack()
+            my_dbf_pack()
 
             return DE_REFRESH
         else

@@ -448,8 +448,10 @@ if fGenerisano
   	Scatter()  
 
 	if fNovi
-    	delete
-		__dbPack()
+          my_rlock()
+    	  delete
+          my_unlock()
+          my_dbf_pack()
   	else
 		// pa ga za svaki slucaj pohrani
     	Gather()   

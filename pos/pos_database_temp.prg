@@ -60,8 +60,7 @@ enddo
 
 // pobrisi mi _pos_pripr
 select _pos_pripr
-Zapp() 
-__dbPack()
+my_dbf_zap()
 
 return
 
@@ -112,8 +111,7 @@ endif
 
 // brisat cemo pripremu....
 if _oper == "1"
-    Zapp()
-    __dbPack()
+   my_dbf_zap()
 endif
 
 if _oper == "2"
@@ -193,8 +191,7 @@ local _rec
 
 select _pos_pripr
 
-Zapp()
-__dbPack()
+my_dbf_zap()
 
 go top
 scatter()

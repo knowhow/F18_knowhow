@@ -742,12 +742,7 @@ do case
     
     case ch == K_CTRL_T
 
-        // brisi stavku iz tabele
-        if Pitanje(,"Brisati stavku ?", "N") == "D"
-            delete
-            __dbPack()
-            return DE_REFRESH
-        endif
+        return browse_brisi_stavku()
     
     case UPPER(CHR(ch)) == "F"
         

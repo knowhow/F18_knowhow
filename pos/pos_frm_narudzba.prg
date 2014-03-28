@@ -99,7 +99,7 @@ Box(, _max_rows - 3, _max_cols - 3 , , aUnosMsg )
 
 @ m_x, m_y + 23 SAY PADC ("RACUN BR: " + ALLTRIM( cBrojRn ), 40 ) COLOR Invert
 
-oBrowse := FormBrowse( m_x + 7, m_y + 1, m_x + _max_rows - 12, m_y + _max_cols - 2, ImeKol, Kol,{ "Í", "Ä", "³"}, 0)
+oBrowse := FormBrowse( m_x + 7, m_y + 1, m_x + _max_rows - 12, m_y + _max_cols - 2, ImeKol, Kol,{ "Ã", "Ã„", "Â³"}, 0)
 
 oBrowse:autolite := .f.
 aAutoKeys := HangKeys()
@@ -641,8 +641,11 @@ nPopust -= _pos_pripr->( kolicina * ncijena )
 _show_total( nIznNar, nPopust, m_x + 2 )
 ispisi_iznos_veliki_brojevi( ( nIznNar - nPopust ), m_x + ( MAXROWS() - 12 ), MAXCOLS() - 2 )
 
-DELETE    
-__dbPack()
+my_rlock()
+DELETE 
+my_unlock()
+
+my_dbf_pack()
 
 oBrowse:refreshAll()
 

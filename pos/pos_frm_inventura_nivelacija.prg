@@ -255,8 +255,7 @@ if fPocInv
 
     else
         select priprz
-        Zapp() 
-        __dbPack()  
+        my_dbf_zap() 
     endif
 
 else
@@ -341,8 +340,7 @@ if !fSadAz
             SELECT _POS
             AppFrom( "PRIPRZ", .f. )
             SELECT PRIPRZ
-            Zapp()
-            __dbPack()
+            my_dbf_zap()
             close all
             return
 
@@ -352,8 +350,7 @@ if !fSadAz
 
                 // obrisati pripremu
                 SELECT PRIPRZ
-                Zapp()
-                __dbPack()
+                my_dbf_zap()
                 // reset brojaca dokumenta...
                 pos_reset_broj_dokumenta( gIdPos, cIdVd, cBrDok )
                 close all
@@ -365,8 +362,7 @@ if !fSadAz
                 SELECT _POS
                 AppFrom( "PRIPRZ", .f. )
                 SELECT PRIPRZ
-                Zapp()
-                __dbPack()
+                my_dbf_zap()
                 close all
                 return
 
@@ -534,11 +530,12 @@ do case
         
         lVrati := DE_CONT
 
-        // brisi stavku u pripremi...
         if Pitanje(, "Stavku " + ALLTRIM( priprz->idroba ) + " izbrisati ?", "N" ) == "D"
-            
+            my_rlock()            
             delete
-            __dbPack()
+            my_unlock()
+
+            my_dbf_pack()
             lVrati := DE_REFRESH        
             
         endif

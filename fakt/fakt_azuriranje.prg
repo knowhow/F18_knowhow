@@ -832,8 +832,8 @@ do while !eof()
     endif
     go (nRecNo)
 enddo
-            
-__dbpack()
+
+my_dbf_pack()            
             
 return
 

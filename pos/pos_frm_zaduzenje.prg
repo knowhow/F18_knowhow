@@ -130,8 +130,7 @@ if RecCount2() > 0
 endif
 
 SELECT priprz
-Zapp()
-__dbPack()
+my_dbf_zap()
 
 // vrati ili pobrisi ono sto je poceo raditi ili prekini s radom
 if !pos_vrati_dokument_iz_pripr( cIdVd, gIdRadnik, cIdOdj, cIdDio )
@@ -345,9 +344,7 @@ if RecCount2() > 0
         SELECT _POS
         AppFrom("PRIPRZ",.f.)
         SELECT PRIPRZ
-        Zapp()
-        select priprz
-        __dbPack()
+        my_dbf_zap()
         MsgBeep("Dokument nije stavljen na stanje!#"+"Ostavljen je za doradu!",20)
     endif
 endif

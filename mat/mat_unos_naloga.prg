@@ -362,13 +362,7 @@ select mat_pripr
 do case
 
     case Ch == K_CTRL_T
-        if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
-            delete
-            __dbPack()
-            mat_brisi_pbaze()
-            return DE_REFRESH
-        endif
-        return DE_CONT
+        return browse_brisi_stavku()
 
     case Ch == K_F5 
 

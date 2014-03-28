@@ -24,6 +24,16 @@ FUNCTION f18_ime_dbf( alias )
    RETURN ALIAS
 
 
+FUNCTION my_delete()
+   
+   return delete_with_rlock()
+
+FUNCTION my_delete_with_pack()
+  
+   my_delete()
+ 
+   return my_dbf_pack()
+
 FUNCTION delete_with_rlock()
 
    IF my_rlock()
@@ -119,6 +129,7 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
 
    LOCAL _a_dbf_rec
    LOCAL _dbf
+   LOCAL lRet
 
    IF open_index == NIL
       open_index := .T.
@@ -134,17 +145,23 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
    // finalno otvaranje tabele
    SELECT ( _a_dbf_rec[ "wa" ] )
    USE
-   dbUseArea( .F., DBFENGINE, _dbf, _a_dbf_rec[ "alias" ], iif( excl, .F., .T. ), .F. )
 
-   IF open_index
+   BEGIN SEQUENCE WITH {| err| Break( err ) }
 
-      IF File( ImeDbfCdx( _dbf ) )
-         dbSetIndex( ImeDbfCDX( _dbf ) )
-         RETURN .T.
-      ENDIF
-   ENDIF
+      dbUseArea( .F., DBFENGINE, _dbf, _a_dbf_rec[ "alias" ], iif( excl, .F., .T. ), .F. )
 
-   RETURN .T.
+       IF open_index
+           IF File( ImeDbfCdx( _dbf ) )
+               dbSetIndex( ImeDbfCDX( _dbf ) )
+           ENDIF
+           lRet := .T.
+       ENDIF
+
+   RECOVER USING _err
+       lRet := .F.
+   END SEQUENCE
+
+   RETURN lRet
 
 // ------------------------------------------------------
 // zap, then open shared, open_index - otvori index
@@ -179,6 +196,57 @@ FUNCTION reopen_exclusive_and_zap( dbf_table, open_index )
    __dbZap()
 
    RETURN .T.
+
+
+FUNCTION my_dbf_zap()
+     RETURN reopen_exclusive_and_zap( ALIAS(), .T. )
+
+FUNCTION my_dbf_pack( lOpenUSharedRezimu )
+
+   IF lOpenUSharedRezimu == NIL
+      lOpenUSharedRezimu := .T.
+   ENDIF
+
+   IF reopen_dbf( .T., ALIAS(), .t. )
+      __dbPack()
+   ELSE
+      RETURN .F.
+   ENDIF
+
+   if lOpenUSharedRezimu
+       RETURN reopen_dbf( .F., ALIAS(), .t. )
+   ENDIF
+
+   return .T.
+
+FUNCTION pakuj_dbf( a_dbf_rec, lSilent )
+
+   log_write( "PACK table " + a_dbf_rec[ "alias" ], 2 )
+
+   BEGIN SEQUENCE WITH {| err| Break( err ) }
+ 
+      SELECT ( a_dbf_rec[ "wa" ] )
+      my_use_temp( a_dbf_rec[ "alias" ], my_home() + a_dbf_rec[ "table" ], .T., .T. )
+
+
+      IF ! lSilent
+         Box( "#Molimo sacekajte...", 7, 60 )
+         @ m_x + 7, m_y + 2 SAY8 "Pakujem tabelu radi brzine, molim sačekajte ..."
+      ENDIF
+
+      PACK
+      USE
+
+      IF ! lSilent
+         BoxC()
+      ENDIF
+
+   RECOVER using _err
+      log_write( "NOTIFY: PACK neuspjesan dbf: " + a_dbf_rec[ "table" ] + "  " + _err:Description, 3 )
+
+   END SEQUENCE
+
+   RETURN
 
 
 // -----------------------------

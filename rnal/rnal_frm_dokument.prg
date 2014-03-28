@@ -230,14 +230,14 @@ cHeader += PADR( ALLTRIM( f18_user() ), 30 )
 
 @ m_x, m_y + 2 SAY cHeader
 
-@ m_x + 6, m_y + 1 SAY REPLICATE( "อ", __dok_y + 1 ) COLOR cLineClr
+@ m_x + 6, m_y + 1 SAY REPLICATE( "ร", __dok_y + 1 ) COLOR cLineClr
 
-@ m_x + __dok_x - 1, m_y + 1 SAY REPLICATE( "อ", __dok_y + 1 ) COLOR cLineClr
+@ m_x + __dok_x - 1, m_y + 1 SAY REPLICATE( "ร", __dok_y + 1 ) COLOR cLineClr
 
 @ m_x + __dok_x, m_y + 1 SAY cFooter
 
 for i := 7 to ( __dok_x - 2 )
-    @ m_x + i, m_y + ( __dok_x * 2 ) SAY "บ" COLOR cLineClr
+    @ m_x + i, m_y + ( __dok_x * 2 ) SAY "ยบ" COLOR cLineClr
 next
 
 select (nTArea)
@@ -1125,38 +1125,46 @@ nDoc_no := field->doc_no
 nDoc_status := field->doc_status
 
 // 1) brisi dokument
+my_rlock()
 delete
-__dbPack()
+my_unlock()
+my_dbf_pack()
 
 // 2) brisi stavke
 select _doc_it
+my_flock()
 go top
 do while !EOF()
     ++ _it_count
     delete
     skip
 enddo
-__dbPack()
+my_unlock()
+my_dbf_pack()
 
 // 3) brisi pomocne stavke
 select _doc_it2
 go top
+my_flock()
 do while !EOF()
     ++ _it2_count
     delete
     skip
 enddo
-__dbPack()
+my_unlock()
+my_dbf_pack()
 
 // 4) brisi operacije
 select _doc_ops
 go top
+my_flock()
 do while !EOF()
     ++ _op_count
     delete
     skip
 enddo
-__dbPack()
+my_unlock()
+my_dbf_pack()
 
 if nDoc_status == 3
     // ukloni marker sa azuriranog dokumenta (busy)
@@ -1209,8 +1217,11 @@ _art_id := field->art_id
 _qtty := field->doc_it_qtt
 
 // 1) brisi stavku
+my_rlock()
 delete
-__dbPack()
+my_unlock()
+my_dbf_pack()
+
 
 // 2) brisi operacije
 select _doc_ops
@@ -1218,6 +1229,7 @@ set order to tag "1"
 go top
 seek doc_str( nDoc_no ) + docit_str( nDoc_it_no )
 
+my_flock()
 do while !EOF() .and. field->doc_no == nDoc_no ;
         .and. field->doc_it_no == nDoc_it_no
 
@@ -1225,19 +1237,22 @@ do while !EOF() .and. field->doc_no == nDoc_no ;
     delete
     skip
 enddo
-__dbPack()
+my_unlock()
+my_dbf_pack()
 
 // 3) brisi repromaterijal
 if !lSilent .and. Pitanje(, "Brisati vezne stavke repromaterijala (D/N) ?", "D" ) == "D"
     select _doc_it2
     set order to tag "1"
     go top
+    my_flock()
     seek doc_str( nDoc_no ) + docit_str( nDoc_it_no )
     do while !EOF() .and. field->doc_no == nDoc_no .and. field->doc_it_no == nDoc_it_no
         ++ _it2_count
         delete
         skip
     enddo 
+    my_unlock()
 endif
 
 // 5) vrati se na pravo podrucje
@@ -1279,8 +1294,8 @@ _doc_no := field->doc_no
 _doc_it_no := field->doc_it_no
 _doc_op_no := field->doc_op_no
 
-delete
-__dbPack()
+my_delete_with_pack()
+
 
 log_write( "F18_DOK_OPER, brisanje operacije naloga broj: " + ALLTRIM( STR( _doc_no ) ) + ;
             " / stavka broj: " + ALLTRIM( STR( _doc_it_no ) ) + ;

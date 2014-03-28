@@ -660,7 +660,7 @@ FUNCTION edit_fin_pripr()
 
    CASE Ch == K_CTRL_T
 
-      IF Pitanje(, "Zelite izbrisati ovu stavku ?", "D" ) == "D"
+      IF Pitanje(, "Želite izbrisati ovu stavku ?", "D" ) == "D"
 
          cBDok := field->idfirma + "-" + field->idvn + "-" + field->brnal
          cStavka := field->rbr
@@ -668,10 +668,12 @@ FUNCTION edit_fin_pripr()
          cBDP := field->d_p
          dBDatnal := field->datdok
          cBIznos := Str( field->iznosbhd )
-
+ 
+         my_rlock()
          DELETE
+         my_unlock()
          _t_rec := RecNo()
-         __dbPack()
+         my_dbf_pack()
          GO ( _t_rec )
 
          BrisiPBaze()
@@ -1446,8 +1448,7 @@ STATIC FUNCTION _brisi_pripr_po_uslovu()
 
       _ok := .T.
 
-      // pakuj
-      __dbPack()
+      my_dbf_pack()
 
       // renumerisi fin pripremu...
       sredirbrfin( .T. )

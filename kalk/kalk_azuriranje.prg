@@ -302,7 +302,8 @@ DO WHILE !EOF()
     ENDIF
     GO (nRecNo)
 ENDDO
-__dbpack()
+my_dbf_pack()
+
 MsgBeep("U kalk_pripremi su ostali dokumenti koji izgleda da vec postoje medju azuriranim!")
   
 return

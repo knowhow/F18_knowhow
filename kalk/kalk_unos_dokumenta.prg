@@ -460,7 +460,7 @@ FUNCTION kalk_pripr_key_handler()
          log_write( "F18_DOK_OPER: kalk, brisanje stavke u pripremi: " + _log_info + " stavka br: " + cStavka, 2 )
 
          _t_rec := RecNo()
-         __dbPack()
+         my_dbf_pack()
          GO ( _t_rec )
 
          RETURN DE_REFRESH
@@ -1324,7 +1324,7 @@ FUNCTION ProtStErase()
       SKIP
    ENDDO
 
-   __dbPack()
+   my_dbf_pack()
 
    GO TOP
 

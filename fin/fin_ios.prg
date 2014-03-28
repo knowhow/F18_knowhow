@@ -424,8 +424,7 @@ O_IOS
 
 // reset tabele IOS
 select ios
-zap
-__dbPack()
+my_dbf_zap()
 
 select suban
 set order to tag "1"

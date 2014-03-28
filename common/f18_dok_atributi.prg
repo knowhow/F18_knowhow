@@ -417,10 +417,7 @@ local _t_area := SELECT()
 
 ::open_local_table()
 
-zap
-__dbPack()
-
-// zatvori ih
+reopen_exclusive_and_zap( ALIAS() , .T. )
 use
 
 select ( _t_area )
@@ -467,8 +464,8 @@ do while !EOF() .and. field->idfirma == _idfirma .and. field->idtipdok == _idtip
     skip
 enddo
 
-__dbPack()
-// zatvori mi fakt atribute
+
+reopen_exclusive_and_zap( ALIAS() , .T. )
 use
 
 select ( _t_area )
@@ -747,7 +744,7 @@ do while !EOF()
 enddo
 
 if _deleted
-    __dbPack()
+    my_dbf_pack()
 endif
 
 // zatvori atribute
@@ -814,10 +811,9 @@ do while !eof() .and. EVAL(_b1)
 enddo
 
 if _deleted
-    __dbPack()
+    my_dbf_pack( .F. )
 endif
 
-// zatvori atribute
 use
 
 select ( _t_area )

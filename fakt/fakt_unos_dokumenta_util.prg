@@ -2127,7 +2127,7 @@ endif
 
 delete
 _t_rec := RECNO()
-__dbPack()
+my_dbf_pack()
 
 go ( _t_rec )
 

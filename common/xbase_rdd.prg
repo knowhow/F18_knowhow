@@ -165,37 +165,6 @@ FUNCTION hocu_li_pakovati_dbf( cnt, del )
    RETURN .F.
 
 
-// Pokusaj pakovati dbf
-
-FUNCTION pakuj_dbf( a_dbf_rec, lSilent )
-
-   log_write( "PACK table " + a_dbf_rec[ "alias" ], 2 )
-
-   altd()
-   BEGIN SEQUENCE WITH {| err| Break( err ) }
- 
-      SELECT ( a_dbf_rec[ "wa" ] )
-      my_use_temp( a_dbf_rec[ "alias" ], my_home() + a_dbf_rec[ "table" ], .T., .T. )
-
-
-      IF ! lSilent
-         Box( "#Molimo sacekajte...", 7, 60 )
-         @ m_x + 7, m_y + 2 SAY8 "Pakujem tabelu radi brzine, molim sačekajte ..."
-      ENDIF
-
-      PACK
-      USE
-
-      IF ! lSilent
-         BoxC()
-      ENDIF
-
-   RECOVER using _err
-      log_write( "NOTIFY: PACK neuspjesan dbf: " + a_dbf_rec[ "table" ] + "  " + _err:Description, 3 )
-
-   END SEQUENCE
-
-   RETURN
 
 // ------------------------------------------------------------
 // vraca informacije o dbf parametrima

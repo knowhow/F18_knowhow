@@ -35,18 +35,6 @@ local cVeznik:="",cToken:="", cIddd
 
 if fr=NIL; fR:=.f.; endif  // rekurzivni poziv
 
-if upper(cImeSifre)="IDROBA"  .and. right(trim(cSifra),1)=="*" // ovo cemo sada ovako staviti
-
-  PushWa()  // moram otici u sifrarnik robe
-  select roba
-  cSifra:=trim(cSifra)
-  cSifra:=substr(cSifra,1,len(cSifra)-1)
-  SetSifFilt(cSifra)  // postavi filter u sifrarniku
-  set filter to
-  PopWA()
-  return ".t."   // samo markirana roba
-endif
-
 if !fr
  cStartSifra:=cSifra
 endif

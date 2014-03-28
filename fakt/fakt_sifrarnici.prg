@@ -740,21 +740,6 @@ local GetList:={}
 
 local nRet:=DE_CONT
 do case
-  case Ch==K_F5
-
-    cUslovSrch:=""
-    Box(,1,60)
-       cUslovSrch:=space(120)
-       @ m_x+1,m_y+2 SAY "Zelim pronaci:" GET cUslovSrch pict "@!S40"
-       read
-    BoxC()
-
-    if empty(cNazSrch)
-      SetSifFilt(cUslovSrch)  // postavi filter u sifrarniku
-    else
-      set filter to
-    endif
-    return DE_REFRESH
 
   case Ch==K_F2  .or. Ch==K_CTRL_N
 

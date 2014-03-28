@@ -109,11 +109,11 @@ cTxt1 := PADR(cTxt1, nLeft)
 cTxt2 := PADR(cTxt2, nLeft)
 cTxt3 := PADR(cTxt3, nLeft)
 
-@ m_x + nX - 2 , m_y + 2 SAY hb_utf8tostr( cTxt1 ) COLOR cColor
-@ m_x + nX - 1 , m_y + 2 SAY hb_utf8tostr( cTxt2 ) COLOR cColor
+@ m_x + nX - 2 , m_y + 2 SAY8 cTxt1 COLOR cColor
+@ m_x + nX - 1 , m_y + 2 SAY8 cTxt2 COLOR cColor
 
 if !EMPTY( cTxt3 )
-	@ m_x + nX , m_y + 2 SAY hb_utf8tostr( cTxt3 ) COLOR cColor
+	@ m_x + nX , m_y + 2 SAY8 cTxt3 COLOR cColor
 endif
 
 return .t.
@@ -161,24 +161,24 @@ _operater_i := _oper_id
 
 // unos podataka...
 
-@ m_x + nX, m_y + 2 SAY "Datum naloga (*):" GET _doc_date WHEN set_opc_box( nBoxX, 50 ) 
+@ m_x + nX, m_y + 2 SAY8 "Datum naloga (*):" GET _doc_date WHEN set_opc_box( nBoxX, 50 ) 
 
-@ m_x + nX, col() + 2 SAY "Tip naloga (*):" GET _doc_type WHEN set_opc_box( nBoxX, 50, "prazno - klasicni nalog, NP - neuskladjen proizvod" ) ;
+@ m_x + nX, col() + 2 SAY8 "Tip naloga (*):" GET _doc_type WHEN set_opc_box( nBoxX, 50, "prazno - klasicni nalog, NP - neuskladjen proizvod" ) ;
             VALID _doc_type $ "  #NP" 
 
 nX += 2
 
-@ m_x + nX, m_y + 2 SAY PADL("Narucioc (*):", nLeft) GET cCustid VALID {|| s_customers(@cCustId, cCustId), set_var(@_cust_id, @cCustId) , show_it(g_cust_desc( _cust_id ), 35 ) } WHEN set_opc_box( nBoxX, 50, "0 - otvori sifrarnik" ) 
+@ m_x + nX, m_y + 2 SAY8 PADL("Naručioc (*):", nLeft) GET cCustid VALID {|| s_customers(@cCustId, cCustId), set_var(@_cust_id, @cCustId) , show_it(g_cust_desc( _cust_id ), 35 ) } WHEN set_opc_box( nBoxX, 50, "0 - otvori sifrarnik" ) 
 
 nX += 2
 
-@ m_x + nX, m_y + 2 SAY PADL("Datum isporuke (*):", nLeft) GET _doc_dvr_da VALID must_enter( _doc_dvr_da ) WHEN set_opc_box( nBoxX, 50 )
+@ m_x + nX, m_y + 2 SAY8 PADL("Datum isporuke (*):", nLeft) GET _doc_dvr_da VALID must_enter( _doc_dvr_da ) WHEN set_opc_box( nBoxX, 50 )
 
-@ m_x + nX, col() + 2 SAY PADL("Vrijeme isporuke (*):", nLeft) GET _doc_dvr_ti VALID must_enter(_doc_dvr_ti) WHEN set_opc_box(nBoxX, 50, "format: HH:MM")
+@ m_x + nX, col() + 2 SAY8 PADL("Vrijeme isporuke (*):", nLeft) GET _doc_dvr_ti VALID must_enter(_doc_dvr_ti) WHEN set_opc_box(nBoxX, 50, "format: HH:MM")
 
 nX += 2
 
-@ m_x + nX, m_y + 2 SAY PADL("Objekat isporuke (*):", nLeft) GET cObjId VALID {|| s_objects( @cObjid, _cust_id, cObjId), set_var(@_obj_id, @cObjid) , show_it( g_obj_desc( _obj_id ), 35 ) } WHEN set_opc_box( nBoxX, 50, "Objekat u koji se isporucuje", "0 - otvori sifrarnik")
+@ m_x + nX, m_y + 2 SAY8 PADL("Objekat isporuke (*):", nLeft) GET cObjId VALID {|| s_objects( @cObjid, _cust_id, cObjId), set_var(@_obj_id, @cObjid) , show_it( g_obj_desc( _obj_id ), 35 ) } WHEN set_opc_box( nBoxX, 50, "Objekat u koji se isporučuje", "0 - otvori šifarnik")
 
 nX += 1
 

@@ -52,7 +52,7 @@ return vrati
 function P_LDVIRM(cId,dx,dy)
 LOCAL vrati
 PRIVATE ImeKol,Kol
-ImeKol:={ { "ID"     , {|| id }   , "id"    , {|| .t.}, {|| P_VRPRIM(@wId), wnaz:=vrprim->naz,.t. } },;
+ImeKol:={ { "ID"     , {|| id }   , "id"    , {|| .t.}, {|| P_VRPRIM(@wId), wnaz := PADR( vrprim->naz, LEN( vrprim->naz ) ),.t. } },;
           { "Opis"   , {|| NAZ}, "NAZ"      },;
           { "FORMULA"   , {|| formula          }, "formula"  };
         }

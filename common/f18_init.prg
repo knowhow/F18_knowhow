@@ -565,20 +565,6 @@ FUNCTION post_login( gVars )
    RETURN .T.
 
 
-
-// ------------------------------------------
-// kreira sve potrbne indekse
-// ------------------------------------------
-FUNCTION repair_dbfs()
-
-   LOCAL _ver
-
-   _ver := read_dbf_version_from_config()
-
-   cre_all_dbfs( _ver )
-
-   RETURN
-
 #ifdef NODE
 STATIC FUNCTION _get_log_level_from_config()
 

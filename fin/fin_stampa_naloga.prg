@@ -12,8 +12,6 @@
 #include "fin.ch"
 
 
-// izbaciti StNal
-
 FUNCTION StNal( lAuto )
    RETURN stampa_fin_document( lAuto )
 
@@ -263,25 +261,30 @@ FUNCTION SintStav( lAuto )
 
    _o_tables()
 
+   altd()
    SELECT PANAL
    zapp()
+   my_flock()
+
    SELECT PSINT
    zapp()
+   my_flock()
+
    SELECT PNALOG
    zapp()
+   my_flock()
 
    SELECT PSUBAN
    SET ORDER TO TAG "2"
-   GO TOP
+   my_flock()
 
+   GO TOP
    IF Empty( BrNal )
       CLOSE ALL
       RETURN
    ENDIF
 
    A := 0
-
-   // svi nalozi
    DO WHILE !Eof()
 
       nStr := 0
@@ -300,7 +303,7 @@ FUNCTION SintStav( lAuto )
             nPotBHD := IznosBHD; nPotDEM := IznosDEM
          ENDIF
 
-         SELECT PANAL     // analitika
+         SELECT PANAL
 
          SEEK cidfirma + cidvn + cbrnal + cidkonto
          fNasao := .F.
@@ -344,7 +347,7 @@ FUNCTION SintStav( lAuto )
                   fNasao := .T.
                   EXIT
                ENDIF
-            ELSE // sintetika se generise na osnovu dDatNal
+            ELSE
                IF Month( dDatNal ) == Month( datnal )
                   fNasao := .T.
                   EXIT
@@ -369,9 +372,9 @@ FUNCTION SintStav( lAuto )
          SELECT PSUBAN
          SKIP
 
-      ENDDO  // nalog
+      ENDDO
 
-      SELECT PNALOG    // datoteka naloga
+      SELECT PNALOG
       APPEND BLANK
       REPLACE IdFirma WITH cIdFirma, IdVN WITH cIdVN, BrNal WITH cBrNal, ;
          DatNal WITH iif( gDatNal == "D", dDatNal, Date() ), ;
@@ -382,7 +385,7 @@ FUNCTION SintStav( lAuto )
 
       IF !lAuto
          Box(, 2, 58 )
-         @ m_x + 1, m_y + 2 SAY "Stampanje analitike/sintetike za nalog " + cIdfirma + "-" + cIdvn + "-" + cBrnal + " ?"  GET cDN PICT "@!" VALID cDN $ "DN"
+         @ m_x + 1, m_y + 2 SAY8 "Štampanje analitike/sintetike za nalog " + cIdfirma + "-" + cIdvn + "-" + cBrnal + " ?"  GET cDN PICT "@!" VALID cDN $ "DN"
          IF gDatNal == "D"
             @ m_x + 2, m_y + 2 SAY "Datum naloga:" GET dDatNal
          ENDIF
@@ -404,13 +407,15 @@ FUNCTION SintStav( lAuto )
 
    ENDDO
 
-   // svi nalozi
-
    SELECT PANAL
+   my_flock()
+
    GO TOP
    DO WHILE !Eof()
       nRbr := 0
-      cIdFirma := IdFirma;cIDVn = IdVN;cBrNal := BrNal
+      cIdFirma := IdFirma
+      cIDVn = IdVN
+      cBrNal := BrNal
       DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal     // jedan nalog
          REPLACE rbr WITH Str( ++nRbr, 3 )
          SKIP
@@ -418,10 +423,14 @@ FUNCTION SintStav( lAuto )
    ENDDO
 
    SELECT PSINT
+   my_flock()
+
    GO TOP
    DO WHILE !Eof()
       nRbr := 0
-      cIdFirma := IdFirma;cIDVn = IdVN;cBrNal := BrNal
+      cIdFirma := IdFirma
+      cIDVn = IdVN
+      cBrNal := BrNal
       DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal     // jedan nalog
          REPLACE rbr WITH Str( ++nRbr, 3 )
          SKIP

@@ -91,14 +91,14 @@
 #xcommand O_ERRORS  => SELECT (F_ERRORS)    ; my_usex ("errors")   ; set order to tag "1"
 
 // modul FIN
-#xcommand O_FIN_PRIPR    => select (F_FIN_PRIPR);  my_usex ("fin_pripr") ; set order to tag "1"
-#xcommand O_PNALOG       => select (F_PNALOG);     my_usex ("pnalog")    ; set order to tag "1"
-#xcommand O_PSUBAN       => select (F_PSUBAN);     my_usex ("psuban")    ; set order to tag "1"
-#xcommand O_PANAL        => select (F_PANAL);      my_usex ("panal")     ; set order to tag "1"
-#xcommand O_PSINT        => select (F_PSINT);      my_usex ("psint")     ; set order to tag "1"
+#xcommand O_FIN_PRIPR    => select (F_FIN_PRIPR);  my_use ("fin_pripr") ; set order to tag "1"
+#xcommand O_PNALOG       => select (F_PNALOG);     my_use ("pnalog")    ; set order to tag "1"
+#xcommand O_PSUBAN       => select (F_PSUBAN);     my_use ("psuban")    ; set order to tag "1"
+#xcommand O_PANAL        => select (F_PANAL);      my_use ("panal")     ; set order to tag "1"
+#xcommand O_PSINT        => select (F_PSINT);      my_use ("psint")     ; set order to tag "1"
 
-#xcommand O_KAM_PRIPR    => select (F_KAMPRIPR);  my_usex ("kam_pripr") ; set order to tag "1"
-#xcommand O_KAM_KAMAT    => select (F_KAMAT);  my_usex ("kam_kamat") ; set order to tag "1"
+#xcommand O_KAM_PRIPR    => select (F_KAMPRIPR);  my_use ("kam_pripr") ; set order to tag "1"
+#xcommand O_KAM_KAMAT    => select (F_KAMAT);  my_use ("kam_kamat") ; set order to tag "1"
 
 #xcommand O_SUBAN     => SELECT (F_SUBAN);    my_use("suban")     ; set order to tag "1"
 #xcommand O_ANAL      => SELECT (F_ANAL);     my_use("anal")      ; set order to tag "1"

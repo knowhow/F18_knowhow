@@ -11,12 +11,20 @@
 
 #include "fmk.ch"
 
+STATIC __dbf_pack_algoritam := "1"
+
+// algoritam 1 - vise od 700 deleted zapisa
+STATIC __dbf_pack_v1 := 700
+// algoritam 2 - vise od 10% deleted zapisa
+STATIC __dbf_pack_v2 := 10
+
+
 /*
    Funkcije koje koriste xBASE RDD-ovi (replacable database driver)
    DBCDX, SQLMIX
 */
 
-static aWaStack:={}
+STATIC aWaStack := {}
 // --------------------------------
 // --------------------------------
 FUNCTION PushWA()
@@ -109,3 +117,130 @@ FUNCTION my_unlock()
    ELSE
       RETURN .T.
    ENDIF
+
+
+   // -------------------------------------------------------------
+   // provjeri da li je potrebno pakovati dbfcdx tabelu
+   // - da li se nakupilo deleted zapisa
+   // -------------------------------------------------------------
+
+FUNCTION hocu_li_pakovati_dbf( cnt, del )
+
+   LOCAL _pack_alg
+
+   _pack_alg := dbf_pack_algoritam()
+
+   DO CASE
+   CASE _pack_alg == "0"
+
+      RETURN .F.
+
+   CASE _pack_alg == "1"
+
+      // 1 - pakuje ako ima vise od 00 deleted() zapisa
+      IF del > dbf_pack_v1()
+         RETURN .T.
+      ENDIF
+
+   CASE _pack_alg == "2"
+
+
+      IF cnt > 0
+         // 2 - standardno pakuje se samo ako je > 10% od broja zapisa deleted
+         IF ( del / cnt ) * 100 > dbf_pack_v2()
+            RETURN .T.
+         ENDIF
+      ENDIF
+
+   CASE "9"
+   CASE _pack_alg == "9"
+
+      // 9 - uvijek ako ima ijedan delted rec
+      IF del > 0
+         RETURN .T.
+      ENDIF
+
+   END CASE
+
+   RETURN .F.
+
+
+// Pokusaj pakovati dbf
+
+FUNCTION pakuj_dbf( a_dbf_rec, lSilent )
+
+   log_write( "PACK table " + a_dbf_rec[ "alias" ], 2 )
+
+   altd()
+   BEGIN SEQUENCE WITH {| err| Break( err ) }
+ 
+      SELECT ( a_dbf_rec[ "wa" ] )
+      my_use_temp( a_dbf_rec[ "alias" ], my_home() + a_dbf_rec[ "table" ], .T., .T. )
+
+
+      IF ! lSilent
+         Box( "#Molimo sacekajte...", 7, 60 )
+         @ m_x + 7, m_y + 2 SAY8 "Pakujem tabelu radi brzine, molim sačekajte ..."
+      ENDIF
+
+      PACK
+      USE
+
+      IF ! lSilent
+         BoxC()
+      ENDIF
+
+   RECOVER using _err
+      log_write( "NOTIFY: PACK neuspjesan dbf: " + a_dbf_rec[ "table" ] + "  " + _err:Description, 3 )
+
+   END SEQUENCE
+
+   RETURN
+
+// ------------------------------------------------------------
+// vraca informacije o dbf parametrima
+// ------------------------------------------------------------
+FUNCTION get_dbf_params_from_config()
+
+   LOCAL _var_name
+   LOCAL _ini_params := hb_Hash()
+
+   _ini_params[ "pack_algoritam" ] := nil
+   _ini_params[ "pack_v1" ] := nil
+   _ini_params[ "pack_v2" ] := nil
+
+   IF !f18_ini_read( F18_DBF_INI_SECTION, @_ini_params, .T. )
+      MsgBeep( F18_DBF_INI_SECTION + "  problem sa ini read" )
+      RETURN
+   ENDIF
+
+   // setuj varijable iz inija
+   IF _ini_params[ "pack_algoritam" ] != nil
+      __dbf_pack_algoritam := _ini_params[ "pack_algoritam" ]
+   ENDIF
+
+   IF _ini_params[ "pack_v1" ] != nil
+      __dbf_pack_v1 := Val( _ini_params[ "pack_v1" ] )
+   ENDIF
+
+   IF _ini_params[ "pack_v2" ] != nil
+      __dbf_pack_v2 := Val( _ini_params[ "pack_v2" ] )
+   ENDIF
+
+   RETURN .T.
+
+// --------------------------------------------------------------
+// --------------------------------------------------------------
+STATIC FUNCTION dbf_pack_algoritam()
+   RETURN __dbf_pack_algoritam
+
+// --------------------------------------------------------------
+// --------------------------------------------------------------
+STATIC FUNCTION dbf_pack_v1()
+   RETURN __dbf_pack_v1
+
+
+// --------------------------------------------------------------
+// --------------------------------------------------------------
+STATIC FUNCTION dbf_pack_v2()
+   RETURN __dbf_pack_v2

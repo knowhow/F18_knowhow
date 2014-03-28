@@ -351,7 +351,7 @@ SELECT ( rec[ "wa" ] )
 IF !Used()
 
 _dbf := my_home() + rec[ "table" ]
-BEGIN SEQUENCE WITH {|err| err:cargo := { ProcName( 1 ), ProcName( 2 ), ProcLine( 1 ), ProcLine( 2 ) }, Break( err ) }
+BEGIN SEQUENCE WITH {| err| err:cargo := { ProcName( 1 ), ProcName( 2 ), ProcLine( 1 ), ProcLine( 2 ) }, Break( err ) }
 dbUseArea( .F., DBFENGINE, _dbf, rec[ "alias" ], .T., .F. )
 
 recover using _err

@@ -1046,8 +1046,6 @@ FUNCTION OstaleOpcije()
 
    opc[ 1 ] := "1. novi datum->datum, stari datum->dat.valute "
    opc[ 2 ] := "2. podijeli nalog na vise dijelova"
-   opc[ 3 ] := "3. -------------------------------"
-   opc[ 4 ] := "4. konverzija partnera"
 
    h[ 1 ] := h[ 2 ] := h[ 3 ] := h[ 4 ] := ""
    PRIVATE Izbor := 1
@@ -1062,12 +1060,6 @@ FUNCTION OstaleOpcije()
          SetDatUPripr()
       CASE izbor == 2
          PodijeliN()
-      CASE izbor == 4
-         msgo( "konverzija - polje partnera" )
-         O_FIN_PRIPR
-         mod_f_val( "idpartner", "1", "0", 4, 2, .T. )
-         GO TOP
-         msgc()
       ENDCASE
    ENDDO
    m_x := am_x

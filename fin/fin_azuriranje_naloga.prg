@@ -1056,21 +1056,17 @@ seek nalog_ctrl
 
 @ m_x + 3, m_y + 2 SAY "BRISEM PRIPREMU "
 
+my_flock()
+
 do while !EOF() .and. nalog_ctrl == IdFirma + IdVn + BrNal
 
     skip
-
     _t_rec := RECNO()
-
     skip -1
-
     delete
-
     go ( _t_rec )
 
 enddo
-
-__dbPack()
 
 return .t.
 

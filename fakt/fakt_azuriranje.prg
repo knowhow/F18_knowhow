@@ -62,7 +62,7 @@ if LEN( _a_fakt_doks ) == 1
 endif
 
 // fiksiranje tabele atributa
-F18_DOK_ATRIB():new("fakt"):fix_atrib( F_FAKT_PRIPR, _a_fakt_doks )
+F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB):fix_atrib( F_FAKT_PRIPR, _a_fakt_doks )
 
 _ok := .t.
 
@@ -121,7 +121,7 @@ else
 endif
 
 // pobrisi mi fakt_atribute takodjer
-F18_DOK_ATRIB():new("fakt"):zapp_local_table()
+F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB):zapp_local_table()
 
 MsgC()
     
@@ -243,7 +243,7 @@ endif
 
 if _ok == .t.
     @ m_x + 4, m_y + 2 SAY "fakt_atributi -> server "
-    oAtrib := F18_DOK_ATRIB():new("fakt")
+    oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
     oAtrib:dok_hash["idfirma"] := id_firma
     oAtrib:dok_hash["idtipdok"] := id_tip_dok
     oAtrib:dok_hash["brdok"] := br_dok
@@ -1018,7 +1018,7 @@ if Pitanje("FAKT_BRISI_PRIPR", "Zelite li izbrisati pripremu !!????","N")=="D"
     _tip_dok := IdTipDok
     _br_dok := BrDok
     
-    oAtrib := F18_DOK_ATRIB():new("fakt")
+    oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
     oAtrib:dok_hash["idfirma"] := _id_firma
     oAtrib:dok_hash["idtipdok"] := _tip_dok
     oAtrib:dok_hash["brdok"] := _br_dok

@@ -2134,7 +2134,7 @@ go ( _t_rec )
 _t_area := SELECT()
     
 // pobrisi i fakt atribute ove stavke...
-oAtrib := F18_DOK_ATRIB():new("fakt")
+oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
 oAtrib:dok_hash["idfirma"] := _id_firma
 oAtrib:dok_hash["idtipdok"] := _id_tip_dok
 oAtrib:dok_hash["brdok"] := _br_dok

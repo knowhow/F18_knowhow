@@ -9,13 +9,14 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "fakt.ch"
+#include "fmk.ch"
 
 // --------------------------------------------------
 // get atribut opis
 // --------------------------------------------------
 function get_fakt_atribut_opis( dok, from_server )
-local oAtrib := F18_DOK_ATRIB():new("fakt")
+local oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
+
 oAtrib:from_dbf := ( from_server == .f. )
 oAtrib:atrib := "opis"
 oAtrib:dok_hash := dok
@@ -25,7 +26,7 @@ return oAtrib:get_atrib()
 // get atribut ref, lot
 // --------------------------------------------------
 function get_fakt_atribut_ref( dok, from_server )
-local oAtrib := F18_DOK_ATRIB():new("fakt")
+local oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
 oAtrib:from_dbf := ( from_server == .f. )
 oAtrib:atrib := "ref"
 oAtrib:dok_hash := dok
@@ -33,7 +34,7 @@ return oAtrib:get_atrib()
 
 
 function get_fakt_atribut_lot( dok, from_server )
-local oAtrib := F18_DOK_ATRIB():new("fakt")
+local oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
 oAtrib:from_dbf := ( from_server == .f. )
 oAtrib:atrib := "lot"
 oAtrib:dok_hash := dok

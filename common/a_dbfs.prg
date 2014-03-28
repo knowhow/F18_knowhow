@@ -188,6 +188,10 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
       NEXT
    ENDIF
 
+   if _dbf_tbl == "x"
+       Alert( "dbf alias " + tbl + " ne postoji u a_dbf_rec ?!")
+       QUIT_1
+   ENDIF
    IF hb_HHasKey( __f18_dbfs, _dbf_tbl )
       // preferirani set parametara
       _rec := __f18_dbfs[ _dbf_tbl ]

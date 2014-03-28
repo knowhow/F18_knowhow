@@ -613,7 +613,7 @@ FUNCTION EditStavka()
       _dok_hash[ "rbr" ] := field->rbr
 
       // ubaci mi atribute u fakt_atribute
-      oAtrib := F18_DOK_ATRIB():new( "kalk" )
+      oAtrib := F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB)
       oAtrib:dok_hash := _dok_hash
       oAtrib:atrib_hash_to_dbf( _atributi )
 
@@ -788,7 +788,7 @@ FUNCTION NovaStavka()
       _dok_hash[ "rbr" ] := field->rbr
 
       // ubaci mi atribute u fakt_atribute
-      oAtrib := F18_DOK_ATRIB():new( "kalk" )
+      oAtrib := F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB )
       oAtrib:dok_hash := _dok_hash
       oAtrib:atrib_hash_to_dbf( _atributi )
 
@@ -940,7 +940,7 @@ FUNCTION EditAll()
       Gather()
 
       // ubaci mi atribute u fakt_atribute
-      oAtrib := F18_DOK_ATRIB():new( "kalk" )
+      oAtrib := F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB )
       oAtrib:dok_hash := _dok
       oAtrib:atrib_hash_to_dbf( _atributi )
 
@@ -1705,7 +1705,7 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
    ENDDO
    GO TOP
 
-   oAtrib := F18_DOK_ATRIB():new( "kalk" )
+   oAtrib := F18_DOK_ATRIB():new("kalk", F_KALK_ATRIB)
    oAtrib:open_local_table()
 
    GO TOP

@@ -272,7 +272,7 @@ do case
             _dok_hash["brdok"] := _brdok
             _dok_hash["rbr"] := _rbr
 
-            oAtrib := F18_DOK_ATRIB():new("fakt")
+            oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
             oAtrib:dok_hash := _dok_hash
             // ubaci mi atribute u fakt_atribute
             oAtrib:atrib_hash_to_dbf( _items_atrib )
@@ -668,7 +668,7 @@ do while .t.
     _dok_hash["rbr"] := field->rbr
         
     // ubaci mi atribute u fakt_atribute
-    oAtrib := F18_DOK_ATRIB():new("fakt")
+    oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
     oAtrib:dok_hash := _dok_hash
     oAtrib:atrib_hash_to_dbf( _items_atrib )
     
@@ -697,7 +697,7 @@ if LEN( _a_fakt_doks ) == 0
 endif
 
 // fiksiranje tabele atributa
-F18_DOK_ATRIB():new("fakt"):fix_atrib( F_FAKT_PRIPR, _a_fakt_doks )
+F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB):fix_atrib( _a_fakt_doks )
 
 o_fakt_edit() 
 
@@ -1839,7 +1839,7 @@ do while !EOF() .and. field->idfirma + field->idtipdok + field->brdok == ;
 enddo
 go top
 
-oAtrib := F18_DOK_ATRIB():new("fakt")
+oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
 oAtrib:open_local_table()
 
 go top

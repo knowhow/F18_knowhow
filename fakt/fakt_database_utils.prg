@@ -387,7 +387,7 @@ do while !EOF()
 enddo
 my_unlock()
 
-oAtrib := F18_DOK_ATRIB():new("fakt")
+oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
 oAtrib:open_local_table()
 
 set order to tag "1"

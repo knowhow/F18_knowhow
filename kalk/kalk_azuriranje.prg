@@ -108,7 +108,7 @@ else
 endif
 
 // pobrisi mi fakt_atribute takodjer
-F18_DOK_ATRIB():new("kalk"):zapp_local_table()
+F18_DOK_ATRIB():new("kalk", F_KALK_ATRIB):zapp_local_table()
 
 // generisi zavisne dokumente nakon azuriranja kalkulacije
 kalk_zavisni_nakon_azuriranja( lGenerisiZavisne, lAuto )
@@ -898,7 +898,7 @@ if _ok == .t.
 
     @ m_x + 3, m_y + 2 SAY "kalk_atributi -> server "
 
-    oAtrib := F18_DOK_ATRIB():new("kalk")
+    oAtrib := F18_DOK_ATRIB():new("kalk", F_KALK_ATRIB)
     oAtrib:dok_hash["idfirma"] := _record["idfirma"]
     oAtrib:dok_hash["idtipdok"] := _record["idvd"]
     oAtrib:dok_hash["brdok"] := _record["brdok"]
@@ -1174,7 +1174,7 @@ _dok_hash["idfirma"] := _id_firma
 _dok_hash["idtipdok"] := _id_vd
 _dok_hash["brdok"] := _br_dok
 
-oAtrib := F18_DOK_ATRIB():new("kalk")
+oAtrib := F18_DOK_ATRIB():new("kalk", F_KALK_ATRIB)
 oAtrib:dok_hash := _dok_hash
 oAtrib:atrib_server_to_dbf()
 
@@ -1342,7 +1342,7 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
             _dok_hash["idtipdok"] := __idvd
             _dok_hash["brdok"] := __brdok
 
-            oAtrib := F18_DOK_ATRIB():new("kalk")
+            oAtrib := F18_DOK_ATRIB():new("kalk", F_KALK_ATRIB)
             oAtrib:dok_hash := _dok_hash
             oAtrib:atrib_server_to_dbf()
  
@@ -1396,7 +1396,7 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
         _dok_hash["idtipdok"] := _id_vd
         _dok_hash["brdok"] := _br_dok
 
-        oAtrib := F18_DOK_ATRIB():new("kalk")
+        oAtrib := F18_DOK_ATRIB():new("kalk", F_KALK_ATRIB)
         oAtrib:dok_hash := _dok_hash
         
         _ok := _ok .and.  oAtrib:delete_atrib_from_server()

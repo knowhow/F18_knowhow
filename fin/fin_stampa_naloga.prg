@@ -261,7 +261,6 @@ FUNCTION SintStav( lAuto )
 
    _o_tables()
 
-   altd()
    SELECT PANAL
    zapp()
    my_flock()

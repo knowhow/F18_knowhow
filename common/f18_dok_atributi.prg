@@ -65,7 +65,7 @@ if _modul_ <> NIL
     ::modul := _modul_
 endif
 
-if _atrib_ <> NIL
+if _wa_ <> NIL
     ::workarea := _wa_
 endif
 
@@ -95,8 +95,7 @@ local _alias
 
 SELECT ( ::workarea )
 
-altd()
-my_use( ::workarea, ::table_name_local, .f., .t. )
+my_use( ::table_name_local )
 
 SET ORDER TO TAG "1"
 

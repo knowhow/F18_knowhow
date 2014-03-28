@@ -177,7 +177,6 @@ FUNCTION reopen_exclusive_and_zap( dbf_table, open_index )
       open_index := .T.
    ENDIF
 
-   altd()
    _a_dbf_rec  := get_a_dbf_rec( dbf_table )
 
    SELECT ( _a_dbf_rec[ "wa" ] )
@@ -188,7 +187,6 @@ FUNCTION reopen_exclusive_and_zap( dbf_table, open_index )
 
    // otvori ekskluzivno - 5 parametar .t. kada zelimo shared otvaranje
    SET AUTOPEN OFF
-   altd()
    dbUseArea( .F., DBFENGINE, _dbf, _a_dbf_rec[ "alias" ], .F., .F. )
    // kod prvog otvaranja uvijek otvori index da i njega nuliram
 

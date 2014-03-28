@@ -313,7 +313,7 @@ STATIC FUNCTION kalk_24_rekapitulacija()
 
    RekapK()
 
-   IF Pitanje(, "Zelite li izvrsiti kontiranje dokumenta (D/N) ?", "D" ) == "D"
+   IF Pitanje(, "Želite li izvršiti kontiranje dokumenta (D/N) ?", "D" ) == "D"
       kalk_kontiranje_naloga()
    ENDIF
 
@@ -446,7 +446,7 @@ FUNCTION kalk_pripr_key_handler()
 
    CASE Ch == K_CTRL_T
 
-      IF Pitanje(, "Zelite izbrisati ovu stavku ?", "D" ) == "D"
+      IF Pitanje(, "Želite izbrisati ovu stavku ?", "D" ) == "D"
 
          _log_info := kalk_pripr->idfirma + "-" + kalk_pripr->idvd + "-" + kalk_pripr->brdok
          cStavka := kalk_pripr->rbr
@@ -455,7 +455,7 @@ FUNCTION kalk_pripr_key_handler()
          nNc := kalk_pripr->nc
          nVpc := kalk_pripr->vpc
 
-         DELETE
+         my_delete()
 
          log_write( "F18_DOK_OPER: kalk, brisanje stavke u pripremi: " + _log_info + " stavka br: " + cStavka, 2 )
 

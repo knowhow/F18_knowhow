@@ -1,3 +1,7 @@
+1.7.13  2014-03-28, vsasa
+
+  - VIRM, update šifranika LDVIRM, problem dužine polja rješen
+ 
 1.7.12  2014-03-27, vsasa
 
   - FAKT, štampa dokumenta iz pripreme puca kod otvaranja tabele - bugfix 

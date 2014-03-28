@@ -2098,7 +2098,7 @@ local _tek, _prva
 local _id_tip_dok, _id_firma, _br_dok, _r_br
 local oAtrib
    
-if Pitanje(, "Zelite izbrisati ovu stavku ?", "D" ) == "N"
+if Pitanje(, "Želite izbrisati ovu stavku ?", "D" ) == "N"
     return 0
 endif
 
@@ -2125,7 +2125,7 @@ if _r_br == PADL( "1", 3 ) .and. ( RECCOUNT() > 1 )
     skip -1
 endif 
 
-delete
+my_delete()
 _t_rec := RECNO()
 my_dbf_pack()
 

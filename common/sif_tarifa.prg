@@ -15,7 +15,7 @@
 
 FUNCTION P_Tarifa( cid, dx, dy )
 
-   LOCAL nTArea
+   LOCAL nTArea := SELECT()
    PRIVATE ImeKol
    PRIVATE Kol
 
@@ -35,6 +35,7 @@ FUNCTION P_Tarifa( cid, dx, dy )
 
    cRet := p_sifra( F_TARIFA, 1, MAXROWS() - 15, MAXCOLS() - 25, "Tarifne grupe", @cid, dx, dy )
 
+   SELECT ( nTArea )
    RETURN cRet
 
 

@@ -74,7 +74,7 @@ endif
 if !sql_table_update(table, "del", nil, _where_str)
 
     sql_table_update(table, "ROLLBACK")
-    _msg := RECI_GDJE_SAM + "sql delete " + table +  " neuspjesno ! ROLLBACK"
+    _msg := "ERROR: sql delete " + table +  " , ROLLBACK, where: " + _where_str
     log_write( _msg, 1 )
     Alert(_msg)
 
@@ -97,7 +97,7 @@ if _ret .and.  (_where_str_dbf != _where_str)
     if !sql_table_update(table, "del", nil, _where_str_dbf)
 
         sql_table_update(table, "ROLLBACK")
-        _msg := RECI_GDJE_SAM + "sql delete " + table +  " neuspjesno ! ROLLBACK"
+        _msg := "ERROR: sql delete " + table +  " , ROLLBACK, where: " + _where_str_dbf
         log_write( _msg, 1 )
         Alert(_msg)
 
@@ -109,7 +109,7 @@ endif
 // dodaj nove
 if _ret .and. !sql_table_update(table, "ins", values)
     sql_table_update(table, "ROLLBACK")
-    _msg := RECI_GDJE_SAM + "sql ins " + table + " neuspjesno ! ROLLBACK"
+    _msg := RECI_GDJE_SAM + "ERRORY: sql_insert: " + table + " , ROLLBACK values: " + pp( values )
     log_write( _msg, 1 )
     RaiseError(_msg)
     return .f.

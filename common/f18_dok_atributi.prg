@@ -254,7 +254,7 @@ METHOD F18_DOK_ATRIB:get_atrib_from_server()
 local _val := ""
 local _attr := ::get_atrib_list_from_server()
 
-if LEN( _attr ) <> 0
+if _attr != NIL .and. LEN( _attr ) <> 0
     _val := _attr[ 1, 3 ]
 endif
 

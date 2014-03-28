@@ -10,6 +10,7 @@
  */
 
 #include "rnal.ch"
+#include "f18_separator.ch"
 
 static l_new
 static _doc
@@ -31,10 +32,8 @@ if lNewDoc == nil
 endif
 
 l_new := lNewDoc
-
 // otvori radne i pripremne tabele...
 o_tables(.t.)
-
 // otvori unos dokumenta
 _document()
 
@@ -230,14 +229,14 @@ cHeader += PADR( ALLTRIM( f18_user() ), 30 )
 
 @ m_x, m_y + 2 SAY cHeader
 
-@ m_x + 6, m_y + 1 SAY REPLICATE( "Í", __dok_y + 1 ) COLOR cLineClr
+@ m_x + 6, m_y + 1 SAY REPLICATE( BROWSE_PODVUCI_2, __dok_y + 1 ) COLOR cLineClr
 
-@ m_x + __dok_x - 1, m_y + 1 SAY REPLICATE( "Í", __dok_y + 1 ) COLOR cLineClr
+@ m_x + __dok_x - 1, m_y + 1 SAY REPLICATE( BROWSE_PODVUCI, __dok_y + 1 ) COLOR cLineClr
 
 @ m_x + __dok_x, m_y + 1 SAY cFooter
 
 for i := 7 to ( __dok_x - 2 )
-    @ m_x + i, m_y + ( __dok_x * 2 ) SAY "º" COLOR cLineClr
+    @ m_x + i, m_y + ( __dok_x * 2 ) SAY BROWSE_COL_SEP COLOR cLineClr
 next
 
 select (nTArea)

@@ -74,85 +74,22 @@ FUNCTION o_tables( lTemporary )
 // -----------------------------------------
 FUNCTION rnal_o_sif_tables()
 
-   SELECT F_E_GROUPS
-   IF !Used()
-      O_E_GROUPS
-   ENDIF
-
-   SELECT F_E_GR_ATT
-   IF !Used()
-      O_E_GR_ATT
-   ENDIF
-
-   SELECT F_E_GR_VAL
-   IF !Used()
-      O_E_GR_VAL
-   ENDIF
-
-   SELECT F_ARTICLES
-   IF !Used()
-      O_ARTICLES
-   ENDIF
-
-   SELECT F_ELEMENTS
-   IF !Used()
-      O_ELEMENTS
-   ENDIF
-
-   SELECT F_E_AOPS
-   IF !Used()
-      O_E_AOPS
-   ENDIF
-
-   SELECT F_E_ATT
-   IF !Used()
-      O_E_ATT
-   ENDIF
-
-   SELECT F_CUSTOMS
-   IF !Used()
-      O_CUSTOMS
-   ENDIF
-
-   SELECT F_CONTACTS
-   IF !Used()
-      O_CONTACTS
-   ENDIF
-
-   SELECT F_OBJECTS
-   IF !Used()
-      O_OBJECTS
-   ENDIF
-
-   SELECT F_AOPS
-   IF !Used()
-      O_AOPS
-   ENDIF
-
-   SELECT F_AOPS_ATT
-   IF !Used()
-      O_AOPS_ATT
-   ENDIF
-
-   SELECT F_RAL
-   IF !Used()
-      O_RAL
-   ENDIF
-
-   SELECT F_SIFK
-   IF !Used()
-      O_SIFK
-   ENDIF
-
-   SELECT F_SIFV
-   IF !Used()
-      O_SIFV
-   ENDIF
-
-   SELECT F_ROBA
-   IF !Used()
-      O_ROBA
-   ENDIF
+   O_E_GROUPS
+   O_E_GR_ATT
+   O_E_GR_VAL
+   O_ARTICLES
+   O_ELEMENTS
+   O_E_AOPS
+   O_E_ATT
+   O_CUSTOMS
+   O_CONTACTS
+   O_OBJECTS
+   O_AOPS
+   O_AOPS_ATT
+   O_RAL
+   O_SIFK
+   O_SIFV
+   O_ROBA
 
    RETURN
 

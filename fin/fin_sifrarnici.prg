@@ -201,12 +201,7 @@ local i
 private ImeKol := {}
 private Kol := {}
 
-SELECT ( F_KONTO )
-if !USED()
-      O_KONTO
-else
-      SET ORDER TO TAG "ID"
-endif
+O_KONTO
 
 ImeKol:={ { PADR("ID",7),  {|| id },     "id"  , {|| .t.}, {|| vpsifra(wid)} },;
           { "Naziv",       {|| naz},     "naz"      };

@@ -11,6 +11,30 @@
 
 #include "fmk.ch"
 
+FUNCTION f18_ime_dbf( alias )
+
+   LOCAL _pos, _a_dbf_rec
+   LOCAL cFullName
+
+   cFullName := FILEBASE( alias )
+
+   _a_dbf_rec := get_a_dbf_rec( cFullName, .T. )
+
+   cFullName := my_home() + _a_dbf_rec[ "table" ] + "." + DBFEXT
+
+   RETURN cFullName
+
+
+FUNCTION my_delete()
+   
+   return delete_with_rlock()
+
+FUNCTION my_delete_with_pack()
+  
+   my_delete()
+ 
+   return my_dbf_pack()
+
 FUNCTION delete_with_rlock()
 
    IF my_rlock()
@@ -21,15 +45,12 @@ FUNCTION delete_with_rlock()
       RETURN .F.
    ENDIF
 
-   // --------------------------------------------
-   // --------------------------------------------
-
 FUNCTION ferase_dbf( tbl_name, _silent )
 
    LOCAL _tmp, _odg
 
    IF _silent == NIL
-      _silent := .F.
+      _silent := .T.
    ENDIF
 
    IF !_silent
@@ -49,7 +70,6 @@ FUNCTION ferase_dbf( tbl_name, _silent )
 
    log_write( "ferase_dbf : " + tbl_name, 3 )
    tbl_name := f18_ime_dbf( tbl_name )
-
 
    IF File( tbl_name )
       IF FErase( tbl_name ) != 0
@@ -79,88 +99,20 @@ FUNCTION ferase_dbf( tbl_name, _silent )
    RETURN .T.
 
 
-/*!
- @function    NoviID_A
- @abstract    Novi ID - automatski
- @discussion  Za one koji ne pocinju iz pocetak, ID-ovi su dosadasnje sifre
-              Program (radi prometnih datoteka) ove sifre ne smije dirati)
-              Zato ce se nove sifre davati po kljucu Chr(246)+Chr(246) + sekvencijalni dio
-*/
-FUNCTION NoviID_A()
+// ------------------------------------------
+// kreira sve potrbne indekse
+// ------------------------------------------
+FUNCTION repair_dbfs()
 
-   LOCAL cPom, xRet
+   LOCAL _ver
 
-   PushWA()
+   _ver := read_dbf_version_from_config()
 
-   nCount := 1
-   DO WHILE .T.
+   cre_all_dbfs( _ver )
 
-      SET FILTER TO
-      // pocisti filter
-      SET ORDER TO TAG "ID"
-      GO BOTTOM
-      IF id > "99"
-         SEEK Chr( 246 ) + Chr( 246 ) + Chr( 246 )
-         // chr(246) pokusaj
-         SKIP -1
-         IF id < Chr( 246 ) + Chr( 246 ) + "9"
-            cPom :=   Str( Val( SubStr( id, 4 ) ) + nCount, Len( id ) -2 )
-            xRet := Chr( 246 ) + Chr( 246 ) + PadL(  cPom, Len( id ) -2,"0" )
-         ENDIF
-      ELSE
-         cPom := Str( Val( id ) + nCount, Len( id ) )
-         xRet := cPom
-      ENDIF
+   RETURN
 
-      ++nCount
-      SEEK xRet
-      IF !Found()
-         EXIT
-      ENDIF
 
-      IF nCount > 100
-         MsgBeep( "Ne mogu da dodijelim sifru automatski ????" )
-         xRet := ""
-         EXIT
-      ENDIF
-
-   ENDDO
-
-   PopWa()
-
-   RETURN xRet
-
-// -----------------------------
-// -----------------------------
-FUNCTION full_table_synchro()
-
-   LOCAL _sifra := Space( 6 ), _full_table_name, _alias := PadR( "PAROBR", 30 )
-
-   Box( , 3, 60 )
-   @ m_x + 1, m_y + 2 SAY " Admin sifra :" GET  _sifra PICT "@!"
-   @ m_x + 2, m_y + 2 SAY "Table alias  :"  GET _alias PICTURE "@S20"
-   READ
-   BoxC()
-
-   IF ( LastKey() == K_ESC ) .OR. ( Upper( AllTrim( _sifra ) ) != "F18AD" )
-      MsgBeep( "nista od ovog posla !" )
-      RETURN .F.
-   ENDIF
-
-   _alias := AllTrim( Upper( _alias ) )
-
-   CLOSE ALL
-   _full_table_name := f18_ime_dbf( _alias )
-
-   IF File( _full_table_name )
-      ferase_dbf( _alias )
-   ELSE
-      MsgBeep( "ove dbf tabele nema: " + _full_table_name )
-   ENDIF
-
-   post_login()
-
-   RETURN .T.
 
 
 // ------------------------------------------------------
@@ -178,6 +130,7 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
 
    LOCAL _a_dbf_rec
    LOCAL _dbf
+   LOCAL lRet
 
    IF open_index == NIL
       open_index := .T.
@@ -193,17 +146,23 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
    // finalno otvaranje tabele
    SELECT ( _a_dbf_rec[ "wa" ] )
    USE
-   dbUseArea( .F., DBFENGINE, _dbf, _a_dbf_rec[ "alias" ], iif( excl, .F., .T. ), .F. )
 
-   IF open_index
+   BEGIN SEQUENCE WITH {| err| Break( err ) }
 
-      IF File( ImeDbfCdx( _dbf ) )
-         dbSetIndex( ImeDbfCDX( _dbf ) )
-         RETURN .T.
-      ENDIF
-   ENDIF
+      dbUseArea( .F., DBFENGINE, _dbf, _a_dbf_rec[ "alias" ], iif( excl, .F., .T. ), .F. )
 
-   RETURN .T.
+       IF open_index
+           IF File( ImeDbfCdx( _dbf ) )
+               dbSetIndex( ImeDbfCDX( _dbf ) )
+           ENDIF
+           lRet := .T.
+       ENDIF
+
+   RECOVER USING _err
+       lRet := .F.
+   END SEQUENCE
+
+   RETURN lRet
 
 // ------------------------------------------------------
 // zap, then open shared, open_index - otvori index
@@ -236,5 +195,89 @@ FUNCTION reopen_exclusive_and_zap( dbf_table, open_index )
    ENDIF
 
    __dbZap()
+
+   RETURN .T.
+
+
+FUNCTION my_dbf_zap()
+     RETURN reopen_exclusive_and_zap( ALIAS(), .T. )
+
+FUNCTION my_dbf_pack( lOpenUSharedRezimu )
+
+   IF lOpenUSharedRezimu == NIL
+      lOpenUSharedRezimu := .T.
+   ENDIF
+
+   IF reopen_dbf( .T., ALIAS(), .t. )
+      __dbPack()
+   ELSE
+      RETURN .F.
+   ENDIF
+
+   if lOpenUSharedRezimu
+       RETURN reopen_dbf( .F., ALIAS(), .t. )
+   ENDIF
+
+   return .T.
+
+FUNCTION pakuj_dbf( a_dbf_rec, lSilent )
+
+   log_write( "PACK table " + a_dbf_rec[ "alias" ], 2 )
+
+   BEGIN SEQUENCE WITH {| err| Break( err ) }
+ 
+      SELECT ( a_dbf_rec[ "wa" ] )
+      my_use_temp( a_dbf_rec[ "alias" ], my_home() + a_dbf_rec[ "table" ], .T., .T. )
+
+
+      IF ! lSilent
+         Box( "#Molimo sacekajte...", 7, 60 )
+         @ m_x + 7, m_y + 2 SAY8 "Pakujem tabelu radi brzine, molim sačekajte ..."
+      ENDIF
+
+      PACK
+      USE
+
+      IF ! lSilent
+         BoxC()
+      ENDIF
+
+   RECOVER using _err
+      log_write( "NOTIFY: PACK neuspjesan dbf: " + a_dbf_rec[ "table" ] + "  " + _err:Description, 3 )
+
+   END SEQUENCE
+
+   RETURN
+
+
+// -----------------------------
+// -----------------------------
+FUNCTION full_table_synchro()
+
+   LOCAL _sifra := Space( 6 ), _full_table_name, _alias := PadR( "PAROBR", 30 )
+
+   Box( , 3, 60 )
+   @ m_x + 1, m_y + 2 SAY " Admin sifra :" GET  _sifra PICT "@!"
+   @ m_x + 2, m_y + 2 SAY "Table alias  :"  GET _alias PICTURE "@S20"
+   READ
+   BoxC()
+
+   IF ( LastKey() == K_ESC ) .OR. ( Upper( AllTrim( _sifra ) ) != "F18AD" )
+      MsgBeep( "nista od ovog posla !" )
+      RETURN .F.
+   ENDIF
+
+   _alias := AllTrim( Upper( _alias ) )
+
+   CLOSE ALL
+   _full_table_name := f18_ime_dbf( _alias )
+
+   IF File( _full_table_name )
+      ferase_dbf( _alias )
+   ELSE
+      MsgBeep( "ove dbf tabele nema: " + _full_table_name )
+   ENDIF
+
+   post_login()
 
    RETURN .T.

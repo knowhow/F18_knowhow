@@ -207,12 +207,7 @@ do case
   case (Ch == K_CTRL_T)
 
     select P_KUF
-    if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
-        delete
-        __dbPack()
-        return DE_REFRESH
-    endif
-    return DE_CONT
+    RETURN browse_brisi_stavku( .T. )
 
    case (Ch == K_F5)
    
@@ -224,6 +219,7 @@ do case
  
     SELECT P_KUF
     nTekRec := RECNO()
+    my_flock()
     Scatter()
     if ed_item(.f.)
         SELECT P_KUF
@@ -231,6 +227,7 @@ do case
         Gather()
         RETURN DE_REFRESH
     endif
+    my_unlock()
     return DE_CONT
     
    case (Ch == K_CTRL_N)

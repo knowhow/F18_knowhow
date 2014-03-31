@@ -313,7 +313,7 @@ STATIC FUNCTION kalk_24_rekapitulacija()
 
    RekapK()
 
-   IF Pitanje(, "Zelite li izvrsiti kontiranje dokumenta (D/N) ?", "D" ) == "D"
+   IF Pitanje(, "Želite li izvršiti kontiranje dokumenta (D/N) ?", "D" ) == "D"
       kalk_kontiranje_naloga()
    ENDIF
 
@@ -446,7 +446,7 @@ FUNCTION kalk_pripr_key_handler()
 
    CASE Ch == K_CTRL_T
 
-      IF Pitanje(, "Zelite izbrisati ovu stavku ?", "D" ) == "D"
+      IF Pitanje(, "Želite izbrisati ovu stavku ?", "D" ) == "D"
 
          _log_info := kalk_pripr->idfirma + "-" + kalk_pripr->idvd + "-" + kalk_pripr->brdok
          cStavka := kalk_pripr->rbr
@@ -455,12 +455,12 @@ FUNCTION kalk_pripr_key_handler()
          nNc := kalk_pripr->nc
          nVpc := kalk_pripr->vpc
 
-         DELETE
+         my_delete()
 
          log_write( "F18_DOK_OPER: kalk, brisanje stavke u pripremi: " + _log_info + " stavka br: " + cStavka, 2 )
 
          _t_rec := RecNo()
-         __dbPack()
+         my_dbf_pack()
          GO ( _t_rec )
 
          RETURN DE_REFRESH
@@ -613,7 +613,7 @@ FUNCTION EditStavka()
       _dok_hash[ "rbr" ] := field->rbr
 
       // ubaci mi atribute u fakt_atribute
-      oAtrib := F18_DOK_ATRIB():new( "kalk" )
+      oAtrib := F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB)
       oAtrib:dok_hash := _dok_hash
       oAtrib:atrib_hash_to_dbf( _atributi )
 
@@ -788,7 +788,7 @@ FUNCTION NovaStavka()
       _dok_hash[ "rbr" ] := field->rbr
 
       // ubaci mi atribute u fakt_atribute
-      oAtrib := F18_DOK_ATRIB():new( "kalk" )
+      oAtrib := F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB )
       oAtrib:dok_hash := _dok_hash
       oAtrib:atrib_hash_to_dbf( _atributi )
 
@@ -940,7 +940,7 @@ FUNCTION EditAll()
       Gather()
 
       // ubaci mi atribute u fakt_atribute
-      oAtrib := F18_DOK_ATRIB():new( "kalk" )
+      oAtrib := F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB )
       oAtrib:dok_hash := _dok
       oAtrib:atrib_hash_to_dbf( _atributi )
 
@@ -1324,7 +1324,7 @@ FUNCTION ProtStErase()
       SKIP
    ENDDO
 
-   __dbPack()
+   my_dbf_pack()
 
    GO TOP
 
@@ -1705,7 +1705,7 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
    ENDDO
    GO TOP
 
-   oAtrib := F18_DOK_ATRIB():new( "kalk" )
+   oAtrib := F18_DOK_ATRIB():new("kalk", F_KALK_ATRIB)
    oAtrib:open_local_table()
 
    GO TOP

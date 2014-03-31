@@ -660,7 +660,7 @@ FUNCTION edit_fin_pripr()
 
    CASE Ch == K_CTRL_T
 
-      IF Pitanje(, "Zelite izbrisati ovu stavku ?", "D" ) == "D"
+      IF Pitanje(, "Želite izbrisati ovu stavku ?", "D" ) == "D"
 
          cBDok := field->idfirma + "-" + field->idvn + "-" + field->brnal
          cStavka := field->rbr
@@ -668,10 +668,12 @@ FUNCTION edit_fin_pripr()
          cBDP := field->d_p
          dBDatnal := field->datdok
          cBIznos := Str( field->iznosbhd )
-
+ 
+         my_rlock()
          DELETE
+         my_unlock()
          _t_rec := RecNo()
-         __dbPack()
+         my_dbf_pack()
          GO ( _t_rec )
 
          BrisiPBaze()
@@ -831,8 +833,7 @@ FUNCTION edit_fin_pripr()
          // ima li potrebe resetovati gl.brojac
          fin_reset_broj_dokumenta( fin_pripr->idfirma, fin_pripr->idvn, fin_pripr->brnal )
 
-         // zapuj pripremu
-         zapp()
+         my_dbf_zap()
 
          // brisi i pomocne tabele psuban, panal....
          BrisiPBaze()
@@ -1046,8 +1047,6 @@ FUNCTION OstaleOpcije()
 
    opc[ 1 ] := "1. novi datum->datum, stari datum->dat.valute "
    opc[ 2 ] := "2. podijeli nalog na vise dijelova"
-   opc[ 3 ] := "3. -------------------------------"
-   opc[ 4 ] := "4. konverzija partnera"
 
    h[ 1 ] := h[ 2 ] := h[ 3 ] := h[ 4 ] := ""
    PRIVATE Izbor := 1
@@ -1062,12 +1061,6 @@ FUNCTION OstaleOpcije()
          SetDatUPripr()
       CASE izbor == 2
          PodijeliN()
-      CASE izbor == 4
-         msgo( "konverzija - polje partnera" )
-         O_FIN_PRIPR
-         mod_f_val( "idpartner", "1", "0", 4, 2, .T. )
-         GO TOP
-         msgc()
       ENDCASE
    ENDDO
    m_x := am_x
@@ -1454,8 +1447,7 @@ STATIC FUNCTION _brisi_pripr_po_uslovu()
 
       _ok := .T.
 
-      // pakuj
-      __dbPack()
+      my_dbf_pack()
 
       // renumerisi fin pripremu...
       sredirbrfin( .T. )

@@ -337,7 +337,6 @@ do while !EOF()
 
     gather()
 
-    // ubaci mi atribute u fakt_atribute
     if !EMPTY( cDesc ) 
 
         _t_area := SELECT()
@@ -345,7 +344,7 @@ do while !EOF()
         _items_atrib := hb_hash()
         _items_atrib["opis"] := cDesc
 
-        oAtrib := F18_DOK_ATRIB():new("fakt")
+        oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
         oAtrib:dok_hash := hb_hash()
         oAtrib:dok_hash["idfirma"] := field->idfirma
         oAtrib:dok_hash["idtipdok"] := field->idtipdok
@@ -765,7 +764,7 @@ endif
 // po metru
 if UPPER(cQttyType) == "M"  
 
-    // po metru, znaèi uzmi sve stranice stakla
+    // po metru, znaÃ¨i uzmi sve stranice stakla
     
     if "#D1#" $ cValue
         nTmp += nWidth1

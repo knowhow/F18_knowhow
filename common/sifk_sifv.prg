@@ -534,15 +534,6 @@ FUNCTION ImaUSifv( cDBF, cOznaka, cVrijednost, cIdSif )
    RETURN
 
 
-/*
- @function   GatherSifk
- @abstract
- @discussion Popunjava ID_J (uz pomoc fje NoviId_A()),
-             te puni SIFV (na osnovu ImeKol)
- @param cTip  prefix varijabli sa kojima se tabela puni
- @param lNovi .t. - radi se o novom slogu
-
-*/
 FUNCTION update_sifk_na_osnovu_ime_kol_from_global_var( ime_kol, var_prefix, novi, transaction )
 
    LOCAL _i

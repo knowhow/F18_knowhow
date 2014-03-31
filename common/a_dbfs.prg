@@ -188,6 +188,10 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
       NEXT
    ENDIF
 
+   if _dbf_tbl == "x"
+       Alert( "dbf alias " + tbl + " ne postoji u a_dbf_rec ?!")
+       QUIT_1
+   ENDIF
    IF hb_HHasKey( __f18_dbfs, _dbf_tbl )
       // preferirani set parametara
       _rec := __f18_dbfs[ _dbf_tbl ]
@@ -351,7 +355,7 @@ SELECT ( rec[ "wa" ] )
 IF !Used()
 
 _dbf := my_home() + rec[ "table" ]
-BEGIN SEQUENCE WITH {|err| err:cargo := { ProcName( 1 ), ProcName( 2 ), ProcLine( 1 ), ProcLine( 2 ) }, Break( err ) }
+BEGIN SEQUENCE WITH {| err| err:cargo := { ProcName( 1 ), ProcName( 2 ), ProcLine( 1 ), ProcLine( 2 ) }, Break( err ) }
 dbUseArea( .F., DBFENGINE, _dbf, rec[ "alias" ], .T., .F. )
 
 recover using _err

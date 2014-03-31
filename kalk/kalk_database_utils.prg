@@ -733,7 +733,7 @@ do while !EOF()
     skip
 enddo
 
-__dbPack()
+my_dbf_pack()
 select kalk_pripr
 go top
 

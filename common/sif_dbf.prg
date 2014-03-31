@@ -102,11 +102,6 @@ if dx <> NIL .and. dx < 0
 
 endif
 
-if !EMPTY( cUslovSrch )
-    // postavi filter u sifrarniku
-    SetSifFilt( cUslovSrch )  
-endif
-
 if ( fPonaz .and. ( cNazSrch == "" .or. !TRIM( cNazSrch ) == TRIM( naz ) ) ) ;
     .or. cId == NIL ;
     .or. ( !FOUND() .and. cNaslov <> NIL ) ;
@@ -234,8 +229,8 @@ if RIGHT( TRIM( cId ), 1) == "*"
     return
 endif    
 
-if RIGHT( TRIM(cId), 1) $ "./$"
-    sif_point_or_slash( @cId, @fPoNaz, @nOrdId, @cUslovSrch, @cNazSrch )
+if RIGHT( TRIM(cId), 1) $ ".$"
+    sif_dbf_point_or_slash( @cId, @fPoNaz, @nOrdId, @cUslovSrch, @cNazSrch )
     return
 endif
 
@@ -309,7 +304,7 @@ return .t.
 
 
 
-static function sif_point_or_slash(cId, fPoNaz, nOrdId, cUslovSrch, cNazSrch)
+function sif_dbf_point_or_slash(cId, fPoNaz, nOrdId, cUslovSrch, cNazSrch)
 local _filter
 
 cId := PADR( cId, 10 )
@@ -325,26 +320,7 @@ fPoNaz:=.t.
 cNazSrch :=""
 cUslovSrch :=""
 
-if left(trim(cId), 1) == "/"
-
-    private GetList:={}
-
-    Box(, 1, 60)
-
-        cUslovSrch:=space(120)
-        Beep(1)
-          @ m_x+1, m_y+2 SAY "Želim pronaći:" GET cUslovSrch PICT "@!S40"
-        read
-
-        cUslovSrch := TRIM( cUslovSrch )
-
-        if RIGHT( cUslovSrch, 1 ) == "*"
-            cUslovSrch := LEFT( cUslovSrch , len(cUslovSrch) - 1 )
-        endif
-
-    BoxC()
-
-elseif left(TRIM(cId), 1) == "."
+IF left(TRIM(cId), 1) == "."
 
     // SEEK PO NAZ kada se unese DUGACKI DIO
     private GetList:={}
@@ -581,29 +557,6 @@ do case
     else
         return DE_REFRESH
     endif
-
-  case Ch == ASC("/")
-
-    cUslovSrch := ""
-
-    Box( , 1, 60)
-       cUslovSrch := space(120)
-       @ m_x+1, m_y+2 SAY "Zelim pronaci:" GET cUslovSrch pict "@!S40"
-       read
-       cUslovSrch:=trim(cUslovSrch)
-       if right(cUslovSrch,1) == "*"
-          cUslovSrch := left( cUslovSrch , len(cUslovSrch)-1 )
-       endif
-    BoxC()
-
-    if !empty(cUslovSrch)
-       // postavi filter u sifrarniku
-       SetSifFilt(cUslovSrch)  
-    else
-       set filter to
-    endif
-    return DE_REFRESH
-
 
   case (Ch==K_CTRL_N .or. Ch==K_F2 .or. Ch==K_F4 .or. Ch==K_CTRL_A)
    
@@ -1343,159 +1296,6 @@ endif
 PopWa()
 return .t.
 
-// --------------------------------------------------------------------------------
-// SetSifFilt
-// postavlja _M1_ na "*" za polja kod kojih je cSearch .t.;
-//   takodje parsira ulaz (npr. RAKO, GSLO 10 20 30, GR1>55, GR2 20 $55#66#77#88 )
-// formiraj filterski uslov
-// --------------------------------------------------------------------------------
-function SetSifFilt(cSearch)
-local _i
-local n1, n2, cVarijabla, cTipVar
-local fAddNaPost := .f.
-local fOrNaPost  := .f.
-local nCount, nCount2
-private cFilt:=".t. "
-
-cSearch:=ALLTRIM(trim(cSearch))
-// zamjenit "NAZ $ MISHEL"  -> NAZ $MISHEL
-cSearch:=strtran(cSearch,"$ ","$")
-
-n1 := NumToken(cSearch,",")
-for _i := 1 to n1
-
-    cUslov := token(cSearch,",", _i)
-    n2 := numtoken(cUslov, " ")
-
-    if n2 == 1
-        if cUslov == "+"  // dodaj na postojeci uslov
-            fAddNaPost := .t.
-        elseif upper(cUslov) == "*"  // dodaj na postojeci uslov
-            fOrNaPost := .t.
-        else
-            cFilt += ".and." + iif(fieldpos("ID_J")=0,"Id","ID_J") + "=" + token(cUslov," ", 1)
-        endif
-
-    elseif n2 >= 2  // npr ....,GSLO 33 55 77,.......
-
-        if  fieldpos( token(cUslov," ", 1) ) <> 0  // radi se o polju unutar baze
-            cVarijabla:=token(cUslov," ", 1)
-        else
-            // radi se o polju sifk
-            cVarijabla:="IzSifk('" + ALIAS() + "','" + ALLTRIM(TOKEN(cUslov," ", 1)) + ",####',NIL,.f.,.t.)"
-        endif
-
-
-        cOperator := NIL
-        cFilt += ".and. ("
-
-        for j := 2 to n2  // sada nastiklaj uslove ...
-
-                DO CASE
-                    CASE left(token(cUslov," ",j) ,1) == ">"
-                        cOperator:=">"
-                    CASE left(token(cUslov," ",j) ,1) == "$"
-                        cOperator:="$"
-                    CASE left(token(cUslov," ",j) ,1) == "!"
-                        cOperator:="!"
-                    CASE left(token(cUslov," ",j) ,2) == "<>"
-                        cOperator:="<>"
-                    CASE left(token(cUslov," ",j) ,1) == "<"
-                        cOperator:="<"
-                    CASE left(token(cUslov," ",j) ,2) == ">="
-                        cOperator:=">="
-                    CASE left(token(cUslov," ",j) ,2) == "<="
-                        cOperator := "<="
-                END CASE
-
-                if cOperator == NIL
-                    cOperator := "="
-                    cV2 := substr(token(cUslov," ",j) ,1)
-                else
-                    if cOperator == "="
-                    cV2 := substr(token(cUslov," ", j), len(cOperator))
-                    else
-                    cV2 := substr(token(cUslov," ", j), 1 + len(cOperator))
-                    endif
-                endif
-
-                cV2 := strtran(cV2,"_"," ")  // !!! pretvori "_" u " "
-
-
-                if cVarijabla == "IzSifk("
-                if cOperator == "="
-                    cVarijabla := strtran(cVarijabla, "####", cV2)
-                else
-                    cVarijabla := strtran(cVarijabla, ",####", "")
-                endif
-                endif
-
-                cTipVar := VALTYPE( &cVarijabla )
-                if j > 2 
-                    cFilt += ".or. "
-                endif
-
-                if cOperator="$"
-                    cFilt +=  "'" +cV2 + "'"  + cOperator + cVarijabla
-                else
-                    if cOperator=="!"
-                        cOperator := "!="
-                    endif
-
-                    if cTipVar == "C"
-                        cFilt += cVarijabla + cOperator + "'" +cV2 + "'"
-                    elseif cTipVar == "N"
-                        cFilt += cVarijabla + cOperator +cV2
-                    elseif cTipVar == "D"
-                        cFilt += cVarijabla + "CTOD(" +cOperator +cV2 +")"
-                    endif
-                endif
-
-        next
-
-        cFilt +=")"
-
-    endif
-next
-
-if !fAddNaPost
-  set filter to
-endif
-
-go top
-// prodji kroz bazu i markiraj
-@ 25,1 SAY cFilt
-MsgO("Vršim odabir željenih stavki: ....")
-nCount:=0
-nCount2:=0
-do while !eof()
-
-  Scatter()
-  if empty(cFilt) .or. &cFilt
-      replace _M1_ with "*"
-      ++nCount2
-  else
-      if !fOrNaPost
-         replace _M1_ with " "
-      endif
-  endif
-  ++nCount
-  if (nCount % 10 == 0)
-     @ m_x+6, m_y+40 SAY nCount
-  endif
-  skip
-enddo
-Msgc()
-
-@ m_x + 1, m_y + 20 SAY  STR(nCount2, 3) + "/"
-
-private cFM1 := "_M1_='*'"
-SET FILTER TO  &cFM1
-go top
-
-return
-
-
 // prikaz idroba
 // nalazim se u tabeli koja sadrzi IDROBA, IDROBA_J
 function StIdROBA()
@@ -1503,7 +1303,7 @@ function StIdROBA()
 static cPrikIdRoba:=""
 
 if cPrikIdroba == ""
-  cPrikIdRoba := IzFmkIni('SIFROBA', 'PrikID', 'ID', SIFPATH)
+  cPrikIdRoba := 'ID'
 endif
 
 if cPrikIdRoba="ID_J"

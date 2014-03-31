@@ -110,7 +110,7 @@ _dok_hash["idfirma"] := id_firma
 _dok_hash["idtipdok"] := id_tip_dok
 _dok_hash["brdok"] := br_dok
 
-oAtrib := F18_DOK_ATRIB():new("fakt")
+oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
 oAtrib:dok_hash := _dok_hash
 oAtrib:atrib_server_to_dbf()
 

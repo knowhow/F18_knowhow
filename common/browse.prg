@@ -907,3 +907,37 @@ STATIC FUNCTION EvEr( cExpr, cMes, cT )
    ENDIF
 
    RETURN lVrati
+
+
+FUNCTION browse_brisi_stavku( lPack )
+
+if lPack == NIL
+   lPack := .F.
+ENDIF
+
+if Pitanje( , "Želite izbrisati ovu stavku ?","D") == "D"
+
+         my_rlock()           
+         delete
+         my_unlock()
+
+         if lPack
+               my_dbf_pack()
+         endif
+           
+         return DE_REFRESH
+endif
+        
+return DE_CONT
+
+
+FUNCTION browse_brisi_pripremu()
+
+   if Pitanje(, "Želite li izbrisati pripremu !!????", "N" ) == "D"
+       my_dbf_zap()
+       RETURN DE_REFRESH
+   endif
+
+   return DE_CONT
+
+

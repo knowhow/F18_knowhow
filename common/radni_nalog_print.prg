@@ -346,7 +346,7 @@ aKupac:=Sjecistr(cNaziv, LEN_COLONA)
 aDobavljac:=SjeciStr(cNaziv2, LEN_COLONA)
 
 B_ON
-cPom := PADR("Narucioc:", LEN_COLONA) + " " + PADR("Dobavljac:", LEN_COLONA)
+cPom := PADR("Naručioc:", LEN_COLONA) + " " + PADR("Dobavljač:", LEN_COLONA)
 
 p_line( cPom, 12, .t.)
 

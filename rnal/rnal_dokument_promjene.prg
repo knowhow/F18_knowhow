@@ -109,10 +109,10 @@ local cCust := SPACE(10)
 
 Box(, 7, 65)
 	cDesc := SPACE(150)
-	@ m_x + 1, m_y + 2 SAY "Promjena na osnovnim podacima naloga:"
-	@ m_x + 3, m_y + 2 SAY "Narucioc:" GET cCust VALID {|| s_customers(@cCust, cCust), set_var(@nCust, @cCust), show_it( g_cust_desc( nCust ) ) }
-	@ m_x + 4, m_y + 2 SAY "Prioritet (1/2/3):" GET nPrior VALID nPrior > 0 .and. nPrior < 4
-	@ m_x + 7, m_y + 2 SAY "Opis promjene:" GET cDesc PICT "@S40"
+	@ m_x + 1, m_y + 2 SAY8 "Osnovni podaci naloga:"
+	@ m_x + 3, m_y + 2 SAY8 "Naručioc:" GET cCust VALID {|| s_customers(@cCust, cCust), set_var(@nCust, @cCust), show_it( g_cust_desc( nCust ) ) }
+	@ m_x + 4, m_y + 2 SAY8 "Prioritet (1/2/3):" GET nPrior VALID nPrior > 0 .and. nPrior < 4
+	@ m_x + 7, m_y + 2 SAY8 "Opis promjene:" GET cDesc PICT "@S40"
 	read
 BoxC()
 

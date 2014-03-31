@@ -360,6 +360,7 @@ enddo
 // eof
 
 select mat_pripr
+my_flock()
 set order to
 go top
 do while !eof()
@@ -369,13 +370,15 @@ do while !eof()
     endif
     skip
 enddo
-__dbpack()
+my_unlock()
+my_dbf_pack()
 
 set order to tag "1"
 go top
 
 nTrec := 0
 
+my_flock()
 do while !eof()
     cIdFirma := idfirma
     nRbr := 0
@@ -388,6 +391,8 @@ do while !eof()
         go nTrec
     enddo
 enddo
+my_unlock()
+
 close all
 END PRINT
 

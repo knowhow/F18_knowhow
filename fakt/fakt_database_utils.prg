@@ -371,6 +371,7 @@ select fakt_pripr
 set order to tag "1"
 go top
 
+my_flock()
 do while !EOF()
 
     skip 1
@@ -384,14 +385,15 @@ do while !EOF()
     go (_t_rec)
 
 enddo
+my_unlock()
 
-oAtrib := F18_DOK_ATRIB():new("fakt")
+oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
 oAtrib:open_local_table()
 
-// promjeni mi i u fakt_atributi
 set order to tag "1"
 go top
 
+my_flock()
 do while !EOF()
 
     skip 1
@@ -405,8 +407,8 @@ do while !EOF()
     go ( _t_rec )
 
 enddo
+my_unlock()
 
-// zatvori mi atribute
 use
 
 PopWa()

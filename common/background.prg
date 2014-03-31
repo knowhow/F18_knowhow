@@ -69,10 +69,6 @@ log_write_db( my_home() )
 
 do while .t.
 
-//? "thread_db begin", VALTYPE(_arr)
-
-//if hb_dbRequest(  , , @_query_b, .t.)
-
     for _i := 1 to LEN(_arr)
         _area := _arr[_i, 1]
         _alias := _arr[_i, 2]

@@ -237,8 +237,7 @@ if Pitanje(, "Priprema modula FAKT nije prazna, izbrisati postojece stavke (D/N)
 
     // pobrisi pripremu
     select fakt_pripr
-    zapp()
-    __dbPack()
+    my_dbf_zap()
     _ret := .t.
 
 endif

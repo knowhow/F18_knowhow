@@ -91,14 +91,14 @@
 #xcommand O_ERRORS  => SELECT (F_ERRORS)    ; my_usex ("errors")   ; set order to tag "1"
 
 // modul FIN
-#xcommand O_FIN_PRIPR    => select (F_FIN_PRIPR);  my_usex ("fin_pripr") ; set order to tag "1"
-#xcommand O_PNALOG       => select (F_PNALOG);     my_usex ("pnalog")    ; set order to tag "1"
-#xcommand O_PSUBAN       => select (F_PSUBAN);     my_usex ("psuban")    ; set order to tag "1"
-#xcommand O_PANAL        => select (F_PANAL);      my_usex ("panal")     ; set order to tag "1"
-#xcommand O_PSINT        => select (F_PSINT);      my_usex ("psint")     ; set order to tag "1"
+#xcommand O_FIN_PRIPR    => select (F_FIN_PRIPR);  my_use ("fin_pripr") ; set order to tag "1"
+#xcommand O_PNALOG       => select (F_PNALOG);     my_use ("pnalog")    ; set order to tag "1"
+#xcommand O_PSUBAN       => select (F_PSUBAN);     my_use ("psuban")    ; set order to tag "1"
+#xcommand O_PANAL        => select (F_PANAL);      my_use ("panal")     ; set order to tag "1"
+#xcommand O_PSINT        => select (F_PSINT);      my_use ("psint")     ; set order to tag "1"
 
-#xcommand O_KAM_PRIPR    => select (F_KAMPRIPR);  my_usex ("kam_pripr") ; set order to tag "1"
-#xcommand O_KAM_KAMAT    => select (F_KAMAT);  my_usex ("kam_kamat") ; set order to tag "1"
+#xcommand O_KAM_PRIPR    => select (F_KAMPRIPR);  my_use ("kam_pripr") ; set order to tag "1"
+#xcommand O_KAM_KAMAT    => select (F_KAMAT);  my_use ("kam_kamat") ; set order to tag "1"
 
 #xcommand O_SUBAN     => SELECT (F_SUBAN);    my_use("suban")     ; set order to tag "1"
 #xcommand O_ANAL      => SELECT (F_ANAL);     my_use("anal")      ; set order to tag "1"
@@ -166,14 +166,15 @@
 #xcommand O_FAKT_DOKS2     => select(F_FAKT_DOKS2) ; my_use ( "fakt_doks2" )  ; set order to tag "1"
 
 // fakt pripr
-#xcommand O_FAKT_PRIPR     => select (F_FAKT_PRIPR)     ; my_usex ("fakt_pripr")   ; set order to tag "1"
-#xcommand O_FAKT_PRIPRRP   => select (F_FAKT_PRIPR)     ; my_usex ("fakt_pripr")   ; set order to tag  "1"
-#xcommand O_FAKT_S_PRIPR   => select (F_FAKT_PRIPR)     ; my_usex ("fakt_pripr")   ; set order to "1"
+#xcommand O_FAKT_PRIPR     => select (F_FAKT_PRIPR)     ; my_use ("fakt_pripr")   ; set order to tag "1"
+#xcommand O_FAKT_PRIPRRP   => select (F_FAKT_PRIPR)     ; my_use ("fakt_pripr")   ; set order to tag  "1"
+#xcommand O_FAKT_S_PRIPR   => select (F_FAKT_PRIPR)     ; my_use ("fakt_pripr")   ; set order to "1"
 
 // fakt tmp
-#xcommand O__FAKT          => select(F__FAKT)      ; my_usex ("_fakt") 
-#xcommand O_FAKT_PRIPR9    => select (F_PRIPR9)    ; my_usex ("fakt_pripr9") ; set order to tag  "1"
-#xcommand O_FAKT_ATRIB     => select (F_FAKT_ATRIB) ; my_usex ("fakt_atrib") ; set order to tag  "1"
+#xcommand O__FAKT          => select(F__FAKT)      ; my_use ("_fakt") 
+#xcommand O_FAKT_PRIPR9    => select (F_PRIPR9)    ; my_use  ("fakt_pripr9") ; set order to tag  "1"
+#xcommand O_FAKT_ATRIB     => select (F_FAKT_ATRIB) ; my_use ("fakt_atrib") ; set order to tag  "1"
+#xcommand O_KALK_ATRIB     => select (F_KALK_ATRIB) ; my_use ("kalk_atrib") ; set order to tag  "1"
 
 #xcommand O__SDIM          => select(F__SDIM)      ; my_use ("_sdim"); set order to tag "1"
 
@@ -194,18 +195,19 @@
 #xcommand O_DOKSTXT        => select (F_DOKSTXT)   ; my_use  ("dokstxt") ; set order to tag "ID"
 
 // modul RNAL
-#xcommand O__DOCS => select (F__DOCS); my_usex ("_docs"); set order to tag "1"
-#xcommand O__DOC_IT => select (F__DOC_IT); my_usex ("_doc_it"); set order to tag "1"
-#xcommand O__DOC_IT2 => select (F__DOC_IT2); my_usex ("_doc_it2"); set order to tag "1"
-#xcommand O__DOC_OPS => select (F__DOC_OPS); my_usex ("_doc_ops"); set order to tag "1"
-#xcommand O__DOC_OPST => select (F__DOC_OPST); my_usex ("_doc_opst"); set order to tag "1"
-#xcommand O__FND_PAR => select (F__FND_PAR); my_usex ("_fnd_par"); set order to tag "1"
-#xcommand O_T_DOCIT => select (F_T_DOCIT); my_usex ("t_docit"); set order to tag "1"
-#xcommand O_T_DOCIT2 => select (F_T_DOCIT2); my_usex ("t_docit2"); set order to tag "1"
-#xcommand O_T_DOCOP => select (F_T_DOCOP); my_usex ("t_docop"); set order to tag "1"
-#xcommand O_T_PARS => select (F_T_PARS); my_usex ("t_pars"); set order to tag "id_par"
-#xcommand O__TMP1 => select (F__TMP1); my_usex ("_tmp1"); set order to tag "1"
-#xcommand O__TMP2 => select (F__TMP2); my_usex ("_tmp2"); set order to tag "1"
+#xcommand O__DOCS => select (F__DOCS); my_use ("_docs"); set order to tag "1"
+#xcommand O__DOC_IT => select (F__DOC_IT); my_use ("_doc_it"); set order to tag "1"
+#xcommand O__DOC_IT2 => select (F__DOC_IT2); my_use ("_doc_it2"); set order to tag "1"
+#xcommand O__DOC_OPS => select (F__DOC_OPS); my_use ("_doc_ops"); set order to tag "1"
+#xcommand O__DOC_OPST => select (F__DOC_OPST); my_use ("_doc_opst"); set order to tag "1"
+#xcommand O__FND_PAR => select (F__FND_PAR); my_use ("_fnd_par"); set order to tag "1"
+#xcommand O_T_DOCIT => select (F_T_DOCIT); my_use ("t_docit"); set order to tag "1"
+#xcommand O_T_DOCIT2 => select (F_T_DOCIT2); my_use ("t_docit2"); set order to tag "1"
+#xcommand O_T_DOCOP => select (F_T_DOCOP); my_use ("t_docop"); set order to tag "1"
+#xcommand O_T_PARS => select (F_T_PARS); my_use ("t_pars"); set order to tag "id_par"
+#xcommand O__TMP1 => select (F__TMP1); my_use ("_tmp1"); set order to tag "1"
+#xcommand O__TMP2 => select (F__TMP2); my_use ("_tmp2"); set order to tag "1"
+
 #xcommand O_DOCS => select (F_DOCS); my_use ("docs"); set order to tag "1"
 #xcommand O_DOC_IT => select (F_DOC_IT); my_use ("doc_it"); set order to tag "1"
 #xcommand O_DOC_IT2 => select (F_DOC_IT2); my_use ("doc_it2"); set order to tag "1"

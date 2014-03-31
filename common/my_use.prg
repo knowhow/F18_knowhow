@@ -62,7 +62,7 @@ FUNCTION my_use_temp( alias, table, new_area, excl )
    LOCAL _err
 
    IF excl == NIL
-      excl := .T.
+      excl := .F.
    ENDIF
 
    IF new_area == NIL
@@ -83,15 +83,11 @@ FUNCTION my_use_temp( alias, table, new_area, excl )
    recover using _err
 
       _msg := "ERROR-MYUTMP: " + _err:description + ": tbl:" + table + " alias:" + alias + " se ne moze otvoriti ?!"
-      Alert( _msg )
       log_write( _msg, 2 )
 
       IF _err:description == "Read error"
          _force_erase := .T.
       ENDIF
-
-      // ovo trazi a_dbf_rec definisan za tabelu pa iskljucujem
-      // ferase_dbf(alias, _force_erase)
 
       RaiseError( _msg )
       QUIT_1
@@ -202,10 +198,10 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
          _force_erase := .T.
       ENDIF
 
-      ferase_dbf( alias, _force_erase )
-
-      repair_dbfs()
-      QUIT_1
+      if ferase_dbf( alias, _force_erase )
+           repair_dbfs()
+           QUIT_1
+      endif
 
    END SEQUENCE
 

@@ -135,7 +135,7 @@ do case
 		if Pitanje(,"Izbrisati stavku ?","N") == "D"
 
 			delete_with_rlock()
-            __dbPack()
+                        my_dbf_pack()
 			nUkUplata := UkUplata()
 			DajStanjeKupca()
 			nRet := DE_REFRESH

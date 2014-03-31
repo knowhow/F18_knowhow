@@ -585,7 +585,7 @@ f18_free_tables({"pos_pos", "pos_doks", "roba"})
 sql_table_update( nil, "END")
 
 SELECT PRIPRZ
-__dbPack()
+my_dbf_pack()
 
 // ova opcija ce setovati plu kodove u sifrarniku ako nisu vec setovani
 if fiscal_opt_active() 
@@ -895,8 +895,7 @@ MsgO("brisem pripremu....")
 // ostalo je jos da izbrisemo stavke iz pomocne baze
 SELECT PRIPRZ
 
-Zapp()
-__dbPack()
+my_dbf_zap()
 
 MsgC()
 

@@ -2098,7 +2098,7 @@ local _tek, _prva
 local _id_tip_dok, _id_firma, _br_dok, _r_br
 local oAtrib
    
-if Pitanje(, "Zelite izbrisati ovu stavku ?", "D" ) == "N"
+if Pitanje(, "Želite izbrisati ovu stavku ?", "D" ) == "N"
     return 0
 endif
 
@@ -2125,16 +2125,16 @@ if _r_br == PADL( "1", 3 ) .and. ( RECCOUNT() > 1 )
     skip -1
 endif 
 
-delete
+my_delete()
 _t_rec := RECNO()
-__dbPack()
+my_dbf_pack()
 
 go ( _t_rec )
 
 _t_area := SELECT()
     
 // pobrisi i fakt atribute ove stavke...
-oAtrib := F18_DOK_ATRIB():new("fakt")
+oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
 oAtrib:dok_hash["idfirma"] := _id_firma
 oAtrib:dok_hash["idtipdok"] := _id_tip_dok
 oAtrib:dok_hash["brdok"] := _br_dok

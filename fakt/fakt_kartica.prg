@@ -137,8 +137,8 @@ endif
 IF lPoNarudzbi
   qqIdNar := SPACE(60)
   cPKN    := "N"
-  @ row()+1,m_y+2 SAY "Uslov po sifri narucioca:" GET qqIdNar PICT "@!S30"
-  @ row()+1,m_y+2 SAY "Prikazati kolone 'narucilac' i 'br.narudzbe' ? (D/N)" GET cPKN VALID cPKN$"DN" pict "@!"
+  @ row()+1,m_y+2 SAY8 "Uslov po šifri naručioca:" GET qqIdNar PICT "@!S30"
+  @ row()+1,m_y+2 SAY8 "Prikazati kolone 'narucilac' i 'br.narudzbe' ? (D/N)" GET cPKN VALID cPKN$"DN" pict "@!"
 ENDIF
 
 read

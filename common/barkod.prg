@@ -72,7 +72,7 @@ for i:=1 to len(ImeKol)
 next
 
 Box(,20,50)
-ObjDbedit("PLBK",20,50, {|| KaEdPrLBK()},"<SPACE> markiranje             อ<ESC> kraj","Priprema za labeliranje bar-kodova...", .t. , , , ,0)
+ObjDbedit("PLBK",20,50, {|| KaEdPrLBK()},"<SPACE> markiranje             ร<ESC> kraj","Priprema za labeliranje bar-kodova...", .t. , , , ,0)
 BoxC()
 
 nRezerva:=0
@@ -204,7 +204,7 @@ ImeKol:={ {"IdRoba",      {|| IdRoba  }      } ,;
 
 Kol:={}; for i:=1 to len(ImeKol); AADD(Kol,i); next
 Box(,20,50)
-ObjDbedit("PLBK",20,50,{|| KaEdPrLBK()},"<SPACE> markiranjeออออออออออออออ<ESC> kraj","Priprema za labeliranje bar-kodova...", .t. , , , ,0)
+ObjDbedit("PLBK",20,50,{|| KaEdPrLBK()},"<SPACE> markiranjeรรรรรรรรรรรรรร<ESC> kraj","Priprema za labeliranje bar-kodova...", .t. , , , ,0)
 BoxC()
 
 nRezerva:=0
@@ -356,7 +356,7 @@ endif
 
 set filter to // pocisti filter
 set order to tag "BARKOD"
-seek cPrefix+"แ" // idi na kraj
+seek cPrefix+"รก" // idi na kraj
 skip -1 // lociraj se na zadnji slog iz grupe prefixa
 if left(barkod,nDuzPrefix) == cPrefix
  if cEAN=="13"

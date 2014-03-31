@@ -742,7 +742,7 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
         _params["new_tipdok"] := "22"
         _params["new_brdok"] := __novi_broj
 
-        oAtrib := F18_DOK_ATRIB():new("fakt")
+        oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
         
         if !oAtrib:update_atrib_from_server( _params )
             f18_free_tables({"fakt_doks", "fakt_fakt"})

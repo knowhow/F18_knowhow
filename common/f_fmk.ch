@@ -102,7 +102,7 @@
 #define F_PRIPT     104
 #define F_CACHE     105
 #define F_KALPOS    106
-
+#define F_KALK_ATRIB  107
 
 
 // modul FAKT (wa 110-130)

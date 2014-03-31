@@ -86,6 +86,45 @@ rddSetDefault( "DBFCDX" )
 
 return .T.
 
+
+/*
+   use_sql_tarifa() => otvori šifarnik tarifa sa prilagođenim poljima
+*/
+function use_sql_tarifa( l_make_index )
+
+   LOCAL cSql
+   LOCAL cTable := "tarifa"
+
+   if l_make_index == NIL
+         l_make_index := .t.
+   endif
+
+   cSql := "SELECT "
+   cSql += "  id, "
+   cSql += "  naz, "
+   cSql += "  CASE WHEN opp IS NULL THEN 0.00 ELSE opp END, "
+   cSql += "  CASE WHEN ppp IS NULL THEN 0.00 ELSE ppp END, "
+   cSql += "  CASE WHEN zpp IS NULL THEN 0.00 ELSE zpp END, "
+   cSql += "  CASE WHEN vpp IS NULL THEN 0.00 ELSE vpp END, "
+   cSql += "  CASE WHEN mpp IS NULL THEN 0.00 ELSE mpp END, "
+   cSql += "  CASE WHEN dlruc IS NULL THEN 0.00 ELSE dlruc END "
+   cSql += "FROM fmk.tarifa "
+   cSQL += "ORDER BY id" 
+
+   SELECT F_TARIFA
+   use_sql( cTable, cSql )
+
+   if l_make_index
+         INDEX ON ID TAG ID TO ( cTable )
+         INDEX ON NAZ TAG NAZ TO ( cTable )
+   endif
+
+   SET ORDER TO TAG ID
+
+   RETURN .T.
+
+
+
 /*
    use_sql_sifk() => otvori citavu tabelu
    use_sql_sifk( "ROBA", "GR1  " ) =>  filter na ROBA/GR1

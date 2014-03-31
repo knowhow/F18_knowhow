@@ -321,15 +321,11 @@ seek ( ::dok_hash["idfirma"] + ::dok_hash["idtipdok"] + ::dok_hash["brdok"] + ::
 
 if !FOUND() 
 
-    // ako je prazan vrijednost
-    // nemoj upisivati...
     if EMPTY( value )
         use
         select ( _t_area )
         return _ok
     endif
-
-    // nema zapisa...
 
     append blank
 
@@ -346,17 +342,14 @@ if !FOUND()
 
 else
     
-    // setuj i ako je value empty i ako nije
     _rec := dbf_get_rec()
     _rec["value"] := value
     dbf_update_rec( _rec )
 
 endif
 
-// zatvori fakt atribute
 use
 
-// vrati se gdje si bio !
 select ( _t_area )
 
 return _ok
@@ -517,14 +510,12 @@ local _res
 
 ::open_local_table()
 
-// nema zapisa, nemam sta raditi....
 if RECCOUNT() == 0
     USE
     select ( _t_area )
     return _ok
 endif
 
-// prvo mi pobrisi sa servera ove podatke... 
 if !::delete_atrib_from_server()
     USE
     _ok := .f.
@@ -536,10 +527,8 @@ select ALIAS( ::workarea )
 set order to tag "1"
 go top
 
-// insertuj iz dbf table
 do while !EOF()
 
-    // ako je prazna vrijednost, nemoj nista upisivati...
     if EMPTY( field->value )
         skip
         loop
@@ -548,7 +537,6 @@ do while !EOF()
     if ( ::dok_hash["idfirma"] != field->idfirma ) .or. ;
             ( ::dok_hash["idtipdok"] != field->idtipdok ) .or. ;
             ( ::dok_hash["brdok"] != field->brdok )
-        // ogranici se na stavke dokumenta
         skip
         loop
     endif
@@ -575,7 +563,6 @@ do while !EOF()
 
 enddo
 
-// zatvori mi atribute
 select ALIAS( ::workarea )
 use
 
@@ -596,16 +583,13 @@ local _ok := .t.
 
 ::set_table_name()
 
-// daj mi atribute sa servera... ako postoje !
 _atrib := ::get_atrib_list_from_server()
 
 if _atrib == NIL
-    // nije se nista napunilo, matrica je NIL
     _ok := .f.
     return _ok 
 endif
 
-// matrica je jednostavno prazna, nema nista...
 if LEN( _atrib ) == 0
     return _ok
 endif
@@ -655,12 +639,10 @@ for _i := 1 to LEN( dok_arr )
     _dok_params["idtipdok"] := dok_arr[ _i, 2 ]
     _dok_params["brdok"] := dok_arr[ _i, 3 ]
     
-    // pobrisi duple zapise
     ::atrib_delete_duplicate( _dok_params )
 
 next
     
-// brisi visak atributa ako postoji
 ::atrib_delete_rest( area )
 
 return
@@ -677,11 +659,9 @@ local _deleted := .f.
 local _alias := ::alias
 local _tmp := ALLTRIM( LOWER( ::modul ) ) + "_pripr"
 
-// selekt pripreme tabele modula
 select ALIAS( area )
 set order to tag "1"
 
-// otvori atribute
 ::open_local_table()
 
 set order to tag "1"
@@ -693,14 +673,11 @@ do while !EOF()
     _t_rec := RECNO()
     skip -1
 
-    // selektuje pripremu tabelu modula !
     select ALIAS( area )
 
-    // ima li u njoj stavke iz atributa ?
     seek &(_alias)->idfirma + &(_alias)->idtipdok + &(_alias)->brdok + &(_alias)->rbr
 
     if !FOUND()
-        // prebaci se na atribute i pobrisi ...
         select ALIAS( ::workarea )
         delete
         _deleted := .t.
@@ -716,7 +693,6 @@ if _deleted
     my_dbf_pack()
 endif
 
-// zatvori atribute
 use
 
 select ( _t_area )
@@ -751,11 +727,8 @@ _b1 := {|| field->idfirma == _id_firma .and. field->idtipdok == _tip_dok .and. f
 
 do while !eof() .and. EVAL(_b1)
 
-    // prvi zapis
     _r_br := field->rbr
     _atrib := field->atribut
-
-    // sljedeci zapis  
     skip 1
     _t_rec := RECNO()
     _r_br_2 := field->rbr

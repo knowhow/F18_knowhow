@@ -923,7 +923,7 @@ if roba->tip == "U"
     if fNovi
         _cijena := roba->vpc
         if !( _idtipdok $ "11#15#27" )
-            _porez := tarifa->ppp
+            _porez := tarifa->opp
         endif
     endif
 

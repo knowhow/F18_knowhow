@@ -197,88 +197,55 @@ RETURN DE_CONT
  *  \param lBlag
  */
 function P_KontoFin(cId,dx,dy,lBlag)
+local i
+private ImeKol := {}
+private Kol := {}
 
-private ImeKol:={}
-private Kol:={}
+SELECT ( F_KONTO )
+if !USED()
+      O_KONTO
+else
+      SET ORDER TO TAG "ID"
+endif
+
 ImeKol:={ { PADR("ID",7),  {|| id },     "id"  , {|| .t.}, {|| vpsifra(wid)} },;
           { "Naziv",       {|| naz},     "naz"      };
         }
 
 if KONTO->(FIELDPOS("POZBILS"))<>0
-  AADD (ImeKol,{ padr("Poz.u bil.st.",20 ), {|| pozbils}, "pozbils" })
+      AADD (ImeKol,{ padr("Poz.u bil.st.",20 ), {|| pozbils}, "pozbils" })
 endif
 if KONTO->(FIELDPOS("POZBILU"))<>0
-  AADD (ImeKol,{ padr("Poz.u bil.usp.",20 ), {|| pozbilu}, "pozbilu" })
+      AADD (ImeKol,{ padr("Poz.u bil.usp.",20 ), {|| pozbilu}, "pozbilu" })
 endif
-
 if KONTO->(FIELDPOS("OZNAKA"))<>0
-  AADD (ImeKol,{ padr("Oznaka",20 ), {|| oznaka}, "oznaka" })
+      AADD (ImeKol,{ padr("Oznaka",20 ), {|| oznaka}, "oznaka" })
 endif
 
-FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
+for i := 1 to LEN(ImeKol)
+      AADD( Kol, i )
+next
 
-IF lBlag==NIL; lBlag:=.f.; ENDIF
-
-PushWa()
-
-select ( F_SIFK )
-if USED()
-      use
-endif
-select ( F_SIFV ) 
-if USED()
-      use
+if lBlag == NIL
+      lBlag := .f.
 endif
 
-O_SIFK
-O_SIFV
-
-select sifk
-set order to tag "ID"
-go top
-seek "KONTO"
-
-do while !eof() .and. ID="KONTO"
-
- AADD (ImeKol, {  IzSifKNaz("KONTO", SIFK->Oznaka) })
- AADD (ImeKol[Len(ImeKol)], &( "{|| ToStr(IzSifk('KONTO','" + sifk->oznaka + "')) }" ) )
- AADD (ImeKol[Len(ImeKol)], "SIFK->" + SIFK->Oznaka )
- if sifk->edkolona > 0
-   for ii:=4 to 9
-    AADD( ImeKol[Len(ImeKol)], NIL  )
-   next
-   AADD( ImeKol[Len(ImeKol)], sifk->edkolona  )
- else
-   for ii:=4 to 10
-    AADD( ImeKol[Len(ImeKol)], NIL  )
-   next
- endif
-
- // postavi picture za brojeve
- if sifk->Tip="N"
-   if f_decimal > 0
-     ImeKol [Len(ImeKol),7] := replicate("9", sifk->duzina - sifk->f_decimal-1 )+"."+replicate("9",sifk->f_decimal)
-   else
-     ImeKol [Len(ImeKol),7] := replicate("9", sifk->duzina )
-   endif
- endif
-
- AADD  (Kol, iif( sifk->UBrowsu='1',++i, 0) )
-
- skip
-enddo
+SELECT konto
+sif_sifk_fill_kol( "KONTO", @ImeKol, @Kol )
 
 IF lBlag .and. !LEFT(cId,1)$"0123456789"
-  SELECT KONTO
-  // ukini zaostali filter
-  SET FILTER TO
-  // postavi filter za zadanu vrijednost karakteristike BLOP
-  cFilter := "DaUSifV('KONTO','BLOP',ID,"+cm2str(TRIM(cId))+")"
-  SET FILTER TO &cFilter
-  GO TOP
-  cId:=SPACE(LEN(cId))
+      SELECT KONTO
+      // ukini zaostali filter
+      SET FILTER TO
+      // postavi filter za zadanu vrijednost karakteristike BLOP
+      cFilter := "DaUSifV('KONTO','BLOP',ID,"+cm2str(TRIM(cId))+")"
+      SET FILTER TO &cFilter
+      GO TOP
+      cId:=SPACE(LEN(cId))
 ENDIF
-PopWa()
+
+SELECT KONTO
+SET ORDER TO TAG "ID"
 
 return PostojiSifra(F_KONTO, 1, MAXROWS() - 17, MAXCOLS() - 10, "LKTF Lista: Konta ", @cId, dx, dy, {|Ch| KontoBlok(Ch)},,,,,{"ID"})
 

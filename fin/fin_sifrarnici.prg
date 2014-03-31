@@ -220,15 +220,24 @@ FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
 IF lBlag==NIL; lBlag:=.f.; ENDIF
 
 PushWa()
-select (F_SIFK)
-if !used()
-  O_SIFK
-  O_SIFV
+
+select ( F_SIFK )
+if USED()
+      use
 endif
+select ( F_SIFV ) 
+if USED()
+      use
+endif
+
+O_SIFK
+O_SIFV
 
 select sifk
 set order to tag "ID"
+go top
 seek "KONTO"
+
 do while !eof() .and. ID="KONTO"
 
  AADD (ImeKol, {  IzSifKNaz("KONTO", SIFK->Oznaka) })

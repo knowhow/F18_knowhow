@@ -34,8 +34,8 @@ FUNCTION P_Tarifa( cid, dx, dy )
    NEXT
 
    cRet := p_sifra( F_TARIFA, 1, MAXROWS() - 15, MAXCOLS() - 25, "Tarifne grupe", @cid, dx, dy )
-
-   SELECT ( nTArea )
+	
+   SELECT( nTArea )
    RETURN cRet
 
 

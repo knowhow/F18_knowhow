@@ -1,3 +1,11 @@
+1.7.14  2014-03-31, vsasa
+
+  - TARIFA, use_sql_tarifa() funkcija, bugfix sa NIL poljima tabele tarifa
+ 
+1.7.13  2014-03-28, vsasa
+
+  - VIRM, update šifranika LDVIRM, problem dužine polja rješen
+ 
 1.7.12  2014-03-27, vsasa
 
   - FAKT, štampa dokumenta iz pripreme puca kod otvaranja tabele - bugfix 

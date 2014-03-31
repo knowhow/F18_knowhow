@@ -599,7 +599,7 @@ local _ok := .t.
 // daj mi atribute sa servera... ako postoje !
 _atrib := ::get_atrib_list_from_server()
 
-if VALTYPE( _atrib ) == "L"
+if _atrib == NIL
     // nije se nista napunilo, matrica je NIL
     _ok := .f.
     return _ok 

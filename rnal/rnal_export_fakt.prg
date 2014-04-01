@@ -629,15 +629,18 @@ return .t.
 // sredi redne brojeve
 // -----------------------------------
 static function _fix_rbr()
-local nRbr
+local nRbr, _rec
 
 // sredi redne brojeve pripreme
 select fakt_pripr
 set order to tag "0"
 go top
 nRbr := 0
+
 do while !EOF()
-    replace field->rbr with STR( ++nRbr, 3 )
+	_rec := dbf_get_rec()
+	_rec["rbr"] := STR( ++nRbr, 3 )
+	dbf_update_rec( _rec )
     skip
 enddo
 

@@ -579,19 +579,13 @@ METHOD F18_DOK_ATRIB:atrib_server_to_dbf()
 local _atrib
 local _i, _rec
 local _t_area := SELECT()
-local _ok := .t.
 
 ::set_table_name()
 
 _atrib := ::get_atrib_list_from_server()
 
 if _atrib == NIL
-    _ok := .f.
-    return _ok 
-endif
-
-if LEN( _atrib ) == 0
-    return _ok
+    return .f.
 endif
 
 ::open_local_table()
@@ -618,7 +612,7 @@ use
 
 select ( _t_area )
 
-return _ok
+return .t.
 
 
 // -----------------------------------------------------

@@ -246,7 +246,7 @@ STATIC FUNCTION obrada_tekuci_racun( godina, mjesec, dat_virm, r_br, dod_opis )
 
          APPEND BLANK
 
-         REPLACE field->rbr with+ + r_br
+         REPLACE field->rbr with ++r_br
          REPLACE field->mjesto WITH gmjesto
          REPLACE field->svrha_pl WITH "IS"
          REPLACE field->iznos WITH _total
@@ -334,7 +334,7 @@ STATIC FUNCTION obrada_plate( godina, mjesec, dat_virm, r_br, dod_opis, per_od, 
 
          APPEND BLANK
 
-         REPLACE field->rbr with+ + r_br
+         REPLACE field->rbr with ++r_br
          REPLACE field->mjesto WITH gMjesto
          REPLACE field->svrha_pl WITH _svrha_placanja
          REPLACE field->iznos WITH _izr_formula
@@ -572,7 +572,7 @@ STATIC FUNCTION obrada_kredita( godina, mjesec, dat_virm, r_br, dod_opis, bez_nu
 
          APPEND BLANK
 
-         REPLACE field->rbr with+ + r_br
+         REPLACE field->rbr with ++r_br
          REPLACE field->mjesto WITH gMjesto
          REPLACE field->svrha_pl WITH "KR"
          REPLACE field->iznos WITH _total

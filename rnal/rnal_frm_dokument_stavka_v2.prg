@@ -80,7 +80,10 @@ do case
         
         if Pitanje(, "Izbrisati stavku ?", "N") == "D"
             select _doc_it2
+			my_rlock()
             delete
+			my_unlock()
+			my_dbf_pack()
             nRet := DE_REFRESH
         endif
     
@@ -89,7 +92,7 @@ do case
         if Pitanje(,"Izbrisati kompletnu tabelu ?", "N") == "D"
             if Pitanje(,"Sigurni 100% ?", "N") == "D"
                 select _doc_it2
-                zapp()
+                my_dbf_zap()
                 nRet := DE_REFRESH
             endif
         endif

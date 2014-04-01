@@ -221,19 +221,19 @@ return
 function t_rpt_empty()
 O_T_DOCOP
 select t_docop
-zapp()
+my_dbf_zap()
 
 O_T_DOCIT
 select t_docit
-zapp()
+my_dbf_zap()
 
 O_T_DOCIT2
 select t_docit2
-zapp()
+my_dbf_zap()
 
 O_T_PARS
 select t_pars
-zapp()
+my_dbf_zap()
 
 return
 

@@ -38,6 +38,8 @@ __cust_id := nCust_id
 
 nTArea := SELECT()
 
+O_CONTACTS
+
 cHeader := "Kontakti /"
 
 select contacts

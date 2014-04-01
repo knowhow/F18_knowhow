@@ -383,7 +383,7 @@ cre_tmp1( _db_struct )
 o_tmp1()
 index on ( STR( doc_no, 10, 0 ) + STR( doc_it_no, 4, 0 ) + STR( art_id, 10, 0 ) ) TAG "1"
 select _tmp1
-zapp()
+my_dbf_zap()
 
 // 2) napuni mi podatke iz tabele ostecenih stavki
 ::damage_data:GoTo(1)

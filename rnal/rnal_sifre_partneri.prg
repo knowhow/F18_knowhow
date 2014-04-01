@@ -23,6 +23,8 @@ private Kol
 
 nTArea := SELECT()
 
+O_CUSTOMS
+
 cHeader := "Narucioci"
 cHeader += SPACE(5)
 cHeader += "/ 'K' - pr.kontakata  / 'O' - pr.objekata"

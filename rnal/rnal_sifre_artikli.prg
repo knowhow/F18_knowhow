@@ -89,6 +89,8 @@ endif
 
 nTArea := SELECT()
 
+O_ARTICLES
+
 cHeader := "Artikli /"
 cFooter := ""
 

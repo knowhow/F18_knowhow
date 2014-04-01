@@ -1,3 +1,11 @@
+1.7.21  2014-04-01, vsasa
+
+  - VIRM, generisani virmani imaju redni broj 0
+  - atrib_server_to_dbf() korekcija
+  - RNAL, tabela dodatnih operacija iskočila iz glavne forme
+  - RNAL, odabir elementa artikla menu problem
+  - FIN, bruto bilans PTXT print - bugfix 
+ 
 1.7.20  2014-03-31, vsasa
 
   - FIN, otvaranje tabele KONTO i korekcija funkcije p_kontofin()

@@ -31,18 +31,9 @@ ImeKol:={  ;
         }
 Kol:={1,2,3,4,5,6,7,8,9,10,11}
 
-IF TRFP->(FIELDPOS("PORJ")<>0)
-  AADD( ImeKol, { "Po RJ(D/S/N)",{|| porj},"porj",{|| .t.}, {|| wporj$"DSN"} } )
-  AADD( Kol , LEN(Kol)+1 )
-ENDIF
-
 trfp_filter()
 
-PostojiSifra( F_TRFP, 1, 15, 76, "Parametri prenosa u FP", @cId, dx, dy, {|Ch| TRfpb(Ch) } )
-
-SELECT (F_TRFP)
-USE
-O_TRFP
+p_sifra( F_TRFP, 1, 15, 76, "Parametri prenosa u FP", @cId, dx, dy, {|Ch| TRfpb(Ch) } )
 
 return
 

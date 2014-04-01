@@ -456,9 +456,10 @@ return SELF
 // -----------------------------------------------------
 METHOD FinBrutoBilans:zaglavlje_txt()
 
-P_COND2
 
 Preduzece()
+
+P_COND2
 
 ?
 ? "FIN: " + hb_utf8tostr( ::params["naziv"] ) + " U VALUTI " + if( ::params["valuta"] == 1, ValDomaca(), ValPomocna() )

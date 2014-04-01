@@ -129,7 +129,7 @@ do while .t.
         // bilo: 15
         nX := ( __dok_x - 10 )
         // bilo: 28
-        nY := ( ( __dok_x * 2 ) - 5 )
+        nY := ( __dok_y - ( ( __dok_x * 2 ) - 1 ) )
         // bilo: 50
         m_y += ( __dok_x * 2 )
         

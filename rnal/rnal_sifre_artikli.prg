@@ -117,7 +117,6 @@ if l_open_dbedit
     cOptions += "F2-ispr. "
     cOptions += "F3-isp.naz. "
     cOptions += "F4-dupl. "
-    cOptions += "aF-trazi "
     cOptions += "Q-br.traz"
 
     Box(, nBoxX, nBoxY, .t.)

@@ -40,6 +40,8 @@ private nEl_gr_id := 0
 private ImeKol
 private Kol
 
+_o_tables()
+
 __box_x := MAXROWS() - 5
 __box_y := MAXCOLS() - 5
 
@@ -211,6 +213,20 @@ enddo
 BoxC()
 
 return nRet
+
+
+// -----------------------------------------------
+// otvaranje grupe tabela za sifrarnik
+// -----------------------------------------------
+static function _o_tables()
+
+O_E_ATT
+O_E_AOPS
+O_E_GROUPS
+O_ELEMENTS
+
+return
+
 
 
 

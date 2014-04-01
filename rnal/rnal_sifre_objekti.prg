@@ -39,6 +39,8 @@ nTArea := SELECT()
 
 cHeader := "Objekti /"
 
+O_OBJECTS
+
 select objects
 
 if cID == nil

@@ -17,7 +17,6 @@
 static l_open_dbedit
 static par_count
 static _art_id
-static l_auto_find
 static l_quick_find
 static __art_sep
 // article separator
@@ -62,12 +61,7 @@ if lQuickFind == nil
     lQuickFind := .f.
 endif
 
-l_auto_find := lAutoFind
 l_quick_find := lQuickFind 
-
-if l_auto_find == .t.
-    l_quick_find := .f.
-endif
 
 if ( par_count > 0 )
     
@@ -178,21 +172,6 @@ box_preview( maxrows() - 9, 2, maxcols() - 3 )
 
 do case
     
-    // ako je iz auto pretrage sortiraj artikle
-    case l_auto_find == .t.
-        
-        // odaberi artikle po filteru
-        pick_articles()
-        
-        l_auto_find := .f.
-        
-        Tb:RefreshAll()
-            
-        while !TB:stabilize()
-        end
-        
-        return DE_CONT
-
     case l_quick_find == .t.
 
         _quick_find()
@@ -328,15 +307,6 @@ do case
             return DE_ABORT
         endif
 
-    case Ch == K_ALT_F
-
-        // selekcija artikala....
-        if pick_articles() == 1
-            return DE_REFRESH
-        endif
-        
-        return DE_CONT
-        
     case UPPER(CHR(Ch)) == "Q"
 
         // quick find...

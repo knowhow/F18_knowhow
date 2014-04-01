@@ -341,9 +341,6 @@ local _izbor := 1
 local _opc := {}
 local _opcexe := {}
 private GetList:={}
-//private izbor := 1
-//private opc := {}
-//private opcexe := {}
 
 nChoice := 1
 
@@ -357,7 +354,6 @@ for i := 1 to LEN(aElem)
 next
 
 f18_menu( "izbor", .f., @_izbor, _opc, _opcexe )
-//Menu_sc("izbor")
 
 if LastKey() == K_ESC
     nChoice := 0

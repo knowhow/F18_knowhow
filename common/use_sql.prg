@@ -138,7 +138,7 @@ function use_sql_trfp( shema, dok, l_make_index )
          l_make_index := .t.
    endif
 
-   cSql := "SELECT * FROM " + cTable 
+   cSql := "SELECT * FROM fmk.trfp "
 
    if shema <> NIL .and. !EMPTY( shema )
          cWhere += " shema = " + _sql_quote( shema )
@@ -159,7 +159,7 @@ function use_sql_trfp( shema, dok, l_make_index )
 
    SELECT F_TRFP
    use_sql( cTable, cSql )
-
+   
    if l_make_index
          INDEX ON IDVD + SHEMA + IDKONTO + ID + IDTARIFA + IDVN + NAZ TAG ID TO ( cTable )
    endif

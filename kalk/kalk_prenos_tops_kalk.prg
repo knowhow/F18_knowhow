@@ -591,6 +591,9 @@ endif
 _mpcsapp := topska->mpc
 
 select kalk_pripr
+
+my_flock()
+
 locate for field->idroba == topska->idroba
 
 if !FOUND()
@@ -625,6 +628,8 @@ else
  
 endif
 
+my_unlock()
+
 select ( _t_area )
 return
 
@@ -643,6 +648,9 @@ if ( topska->kolicina == 0 )
 endif
 
 select kalk_pripr
+
+my_flock()
+
 append blank
 			
 replace field->idfirma with gFirma
@@ -660,7 +668,10 @@ replace field->idtarifa with topska->idtarifa
 replace field->mpcsapp with topska->( mpc - stmpc )
 replace field->tprevoz with "R"
 
+my_unlock()
+
 select ( _t_area )
+
 return
 
 
@@ -680,6 +691,9 @@ hseek topska->idtarifa
 _opp := tarifa->opp
 
 select kalk_pripr
+
+my_flock()
+
 append blank
 			
 replace field->idfirma with gFirma
@@ -704,6 +718,8 @@ if ROUND( topska->stmpc, 2 ) <> 0
         replace field->rabatv with topska->stmpc
     endif
 endif
+
+my_unlock()
 
 select ( _t_area )
 return

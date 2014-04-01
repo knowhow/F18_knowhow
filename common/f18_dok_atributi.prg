@@ -416,6 +416,7 @@ if _atribut == NIL
 endif
 
 ::open_local_table()
+my_flock()
 go top
 seek ( _idfirma + _idtipdok + _brdok + _rbr + _atribut ) 
 
@@ -426,6 +427,7 @@ do while !EOF() .and. field->idfirma == _idfirma .and. field->idtipdok == _idtip
     delete
     skip
 enddo
+my_unlock()
 
 
 reopen_exclusive_and_zap( ALIAS() , .T. )
@@ -658,6 +660,8 @@ set order to tag "1"
 
 ::open_local_table()
 
+my_flock()
+
 set order to tag "1"
 go top
 
@@ -682,6 +686,7 @@ do while !EOF()
     go ( _t_rec )
 
 enddo
+my_unlock()
 
 if _deleted
     my_dbf_pack()
@@ -712,6 +717,8 @@ _tip_dok := param["idtipdok"]
 _br_dok := param["brdok"]
 
 ::open_local_table()
+
+my_flock()
 
 set order to tag "1"
 go top
@@ -745,6 +752,8 @@ do while !eof() .and. EVAL(_b1)
     
     go _t_rec
 enddo
+
+my_unlock()
 
 if _deleted
     my_dbf_pack( .F. )

@@ -158,11 +158,10 @@ function use_sql_trfp( shema, dok, l_make_index )
    cSql += " ORDER BY idvd, shema, idkonto, id, idtarifa, idvn, naz"
 
    SELECT F_TRFP
-   USE
    use_sql( cTable, cSql )
    
    if l_make_index
-         INDEX ON ( "IDVD + SHEMA + IDKONTO + ID + IDTARIFA + IDVN + NAZ" ) TAG ID TO ( cTable )
+         INDEX ON ( field->idvd + field->shema + field->idkonto + field->id + field->idtarifa + field->idvn + field->naz )  TAG ID TO ( cTable )
    endif
 
    SET ORDER TO TAG ID

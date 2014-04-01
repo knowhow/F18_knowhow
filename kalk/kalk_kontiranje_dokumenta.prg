@@ -78,9 +78,8 @@ if !used()
 endif
 
 SELECT F_TRFP
-if !used()
-    O_TRFP
-endif
+USE
+O_TRFP
 
 SELECT F_KONCIJ
 if !used()
@@ -480,6 +479,7 @@ do while !EOF()
                 fExist := .f.
                 seek finmat->IdFirma+cidvn+cBrNalF
             
+                my_flock()
                 if found()
                     fExist:=.f.
                     do while !EOF() .and. finmat->idfirma+cidvn+cBrNalF==IdFirma+idvn+BrNal
@@ -558,7 +558,7 @@ do while !EOF()
                 if !fExist
                     replace Rbr  with str(nRbr,4)
                 endif
-
+                my_unlock()
             endif // nIz <>0
 
             select trfp
@@ -667,6 +667,7 @@ if lAFin .or. lAFin2
     select fin_pripr
     go top
     seek finmat->idfirma+cIdVN+cBrNalF
+    my_flock()
     if found()
         do while !eof() .and. IDFIRMA+IDVN+BRNAL==finmat->idfirma+cIdVN+cBrNalF
             cPom:=right(opis,1)
@@ -686,6 +687,7 @@ if lAFin .or. lAFin2
             skip
         enddo 
     endif
+    my_unlock()
 endif 
 
 MsgC()

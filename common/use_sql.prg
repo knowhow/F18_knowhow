@@ -126,6 +126,52 @@ function use_sql_tarifa( l_make_index )
 
 
 /*
+   use_sql_trfp() => otvori šifarnik šema kontiranja sa uslovima
+*/
+function use_sql_trfp( shema, dok, l_make_index )
+
+   LOCAL cSql
+   LOCAL cTable := "trfp"
+   LOCAL cWhere := ""
+
+   if l_make_index == NIL
+         l_make_index := .t.
+   endif
+
+   cSql := "SELECT * FROM " + cTable 
+
+   if shema <> NIL .and. !EMPTY( shema )
+         cWhere += " shema = " + _sql_quote( shema )
+   endif
+
+   if dok <> NIL .and. !EMPTY( dok )
+         if !EMPTY( cWhere )
+               cWhere += " AND "
+         endif
+         cWhere += " idvd = " + _sql_quote( dok )
+   endif
+
+   if !EMPTY( cWhere )
+         cSql += " WHERE " + cWhere
+   endif
+
+   cSql += " ORDER BY idvd, shema, idkonto, id, idtarifa, idvn, naz"
+
+   SELECT F_TRFP
+   use_sql( cTable, cSql )
+
+   if l_make_index
+         INDEX ON IDVD + SHEMA + IDKONTO + ID + IDTARIFA + IDVN + NAZ TAG ID TO ( cTable )
+   endif
+
+   SET ORDER TO TAG ID
+
+   RETURN .T.
+
+
+
+
+/*
    use_sql_sifk() => otvori citavu tabelu
    use_sql_sifk( "ROBA", "GR1  " ) =>  filter na ROBA/GR1
 */

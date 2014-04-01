@@ -21,7 +21,7 @@
 #xcommand O_SAST     => select (F_SAST)    ;  my_use  ("sast")      ; set order to tag "ID"
 
 #xcommand O_TARIFA   => select (F_TARIFA)  ;  use_sql_tarifa()    ; set order to tag "ID"
-#xcommand O_TRFP     => select (F_TRFP)    ;  use_sql_sif  ("trfp")      ; set order to tag "ID"
+#xcommand O_TRFP     => select (F_TRFP)    ;  use_sql_trfp()      ; set order to tag "ID"
 #xcommand O_TRFP2    => select (F_TRFP2)   ;  use_sql_sif  ("trfp2")     ; set order to tag "ID"
 #xcommand O_TRFP3    => select (F_TRFP3)   ;  use_sql_sif  ("trfp3")     ; set order to tag "ID"
 #xcommand O_TRMP     => select (F_TRMP)    ;  use_sql_sif  ("trmp")      ; set order to tag "ID"

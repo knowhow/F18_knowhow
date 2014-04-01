@@ -13,8 +13,9 @@
 #include "fmk.ch"
 
 
-function P_TRFP(cId,dx,dy)
-Private imekol,kol
+function P_TRFP( cId, dx, dy )
+private imekol,kol
+
 ImeKol:={  ;
            { "Kalk",  {|| padc(IdVD,4)} ,    "IdVD"                  },;
            { padc("Shema",5),    {|| padc(shema,5)},      "shema"                    },;
@@ -35,35 +36,43 @@ IF TRFP->(FIELDPOS("PORJ")<>0)
   AADD( Kol , LEN(Kol)+1 )
 ENDIF
 
-private cShema:=" "
-private cKavd:="  "
-private cFiltTRFP:=""
+trfp_filter()
 
-if Pitanje(, "Želite li postaviti filter za odredjenu shemu","N")=="D"
-  
-  Box(,1,60)
-     @ m_x+1,m_y+2 SAY "Odabir sheme:" GET cShema  pict "@!"
-     @ m_x+1,col()+2 SAY "vrsta kalkulacije (prazno sve)" GET cKavd pict "@!"
-     read
-  Boxc()
-  
-  select TRFP
-  cFiltTRFP := "SHEMA='"+ cShema + "'" +IIF(EMPTY(cKaVD),"",".and.IDVD=='"+cKaVD+"'")
-  set filter to &cFiltTRFP
-  go top
-  
-else
-  select trfp
-  set filter to
-endif
-return PostojiSifra(F_TRFP,1,15,76,"Parametri prenosa u FP", @cId, dx, dy, {|Ch| TRfpb(Ch)})
-select trfp
-set filter to
+PostojiSifra( F_TRFP, 1, 15, 76, "Parametri prenosa u FP", @cId, dx, dy, {|Ch| TRfpb(Ch) } )
 
-*}
+SELECT (F_TRFP)
+USE
+O_TRFP
+
+return
+
+
+// -------------------------------------------------------
+// -------------------------------------------------------
+static function trfp_filter()
+local cShema := SPACE(1)
+local cKavd := SPACE(2)
+
+if Pitanje(, "Želite li postaviti filter za odredjenu shemu", "N" ) == "D"
+      Box(, 1, 60 )
+            @ m_x+1,m_y+2 SAY "Odabir sheme:" GET cShema  pict "@!"
+            @ m_x+1,col()+2 SAY "vrsta kalkulacije (prazno sve)" GET cKavd pict "@!"
+            READ
+      BoxC()
+endif 
+	 
+SELECT (F_TRFP)
+USE
+use_sql_trfp( cShema, cKavd )
+
+SET ORDER TO TAG "ID"
+GO TOP 
+
+return
+
+
 
 function TrfpB(Ch)
-*{
 local cShema2:="1"
 local cTekShema
 local cIdvd:=""

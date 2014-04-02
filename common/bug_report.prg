@@ -296,7 +296,7 @@ STATIC FUNCTION send_email()
 
    MsgC()
 
-   FERASE( _attachment )
+   //FERASE( _attachment )
 
    RETURN .T.
 
@@ -309,18 +309,36 @@ STATIC FUNCTION send_email_attachment()
    LOCAL _path := my_home_root()
    LOCAL _server := my_server_params()
    LOCAL _filename, _err
-   LOCAL _rel_path := .t.
-  
-   // setovanje naziva fajla
+   LOCAL _log_file, _log_params
+   LOCAL _error_file := "error.txt"
+ 
+   // setovanje naziva izlaznog fajla
    _filename := ALLTRIM( _server["database"] )
    _filename += "_" + ALLTRIM( f18_user() )
    _filename += "_" + DTOS( DATE() ) 
    _filename += "_" + STRTRAN( TIME(), ":", "" ) 
    _filename += ".zip"
 
-   AADD( _a_files, _path + "error.txt" )
+   // izvuci podatke iz server log-a
+   _log_params := hb_hash()
+   _log_params["date_from"] := DATE()
+   _log_params["date_to"] := DATE()
+   _log_params["user"] := f18_user()
+   _log_params["limit"] := 1000
+   _log_params["conds_true"] := ""
+   _log_params["conds_false"] := ""
+   _log_params["doc_oper"] := "D"
+   _log_file := f18_view_log( _log_params )
 
-   _err := zip_files( _path, _filename, _a_files, _rel_path )
+   // dodaj fajlove za zip kompresiju
+   AADD( _a_files, _error_file )
+   AADD( _a_files, _log_file )
+
+   DirChange( _path )
+   
+   _err := zip_files( _path, _filename, _a_files )
+
+   DirChange( my_home() )
 
    if _err <> 0
         RETURN .F.

@@ -15,12 +15,17 @@
 // -----------------------------------------------------------
 // pregled log-a
 // -----------------------------------------------------------
-function f18_view_log()
-local _params
+function f18_view_log( _params )
 local _data
+local _print_to_file := .f.
+local _log_file
+
+if PCOUNT() > 0
+	_print_to_file := .t.
+endif
 
 // uslovi pregleda...
-if !_vars( @_params )
+if _params == NIL .and. !_vars( @_params )
     return
 endif
 
@@ -28,9 +33,9 @@ endif
 _data := _log_get_data( _params )
 
 // printanje sadrzaja
-_print_log_data( _data, _params )
+_log_file := _print_log_data( _data, _params, _print_to_file )
 
-return
+return _log_file
 
 
 
@@ -202,19 +207,27 @@ return _data
 // -----------------------------------------------------------
 // printanje sadrzaja log-a
 // -----------------------------------------------------------
-static function _print_log_data( data, params )
+static function _print_log_data( data, params, print_to_file )
 local _row
 local _user, _txt, _date, _id
 local _a_txt, _tmp, _i, _pos_y
 local _txt_len := 100
+local _log_file := DTOS( DATE() ) + "_" + STRTRAN( TIME(), ":", "" ) + "_log.txt"
+local _log_path := my_home_root()
 
 // nema zapisa
 if data == NIL .or. data:LastRec() == 0
-    MsgBeep( "Za zadati uslov ne postoje podaci u log-u !!!" )
+    if !print_to_file
+    	MsgBeep( "Za zadati uslov ne postoje podaci u log-u !!!" )
+	endif
     return
 endif
 
-START PRINT CRET
+if print_to_file
+	f18_start_print( _log_path + _log_file, "D" )
+else
+	START PRINT CRET
+endif
 
 ?
 
@@ -254,10 +267,14 @@ do while !data:EOF()
 
 enddo
 
-FF
-END PRINT
+if print_to_file
+	f18_end_print( _log_path + _log_file, "D" )
+else
+	FF
+	END PRINT
+endif
 
-return
+return _log_file
 
 
 
@@ -332,5 +349,4 @@ endif
 return _ok
 
 
-
-
+ 

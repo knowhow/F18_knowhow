@@ -67,6 +67,8 @@ _bcc := mail_params["mail_bcc"]
 _repl_to := mail_params["mail_reply_to"]
 _body := mail_params["mail_body"]
 _subject := mail_params["mail_subject"]
+_trace := mail_params["trace"]
+_smtp_pass := mail_params["smtp_password"]
 
 if attach <> NIL .and. LEN( attach ) <> 0
 	_files := attach
@@ -117,11 +119,12 @@ function f18_email_prepare( subject, body, m_from, m_to, m_cc, m_bcc, m_reply )
 local _mail_params := hb_hash()
 
 // ucitaj parametre F18
-
+_mail_params["trace"] := .f.
 _mail_params["server"] := ALLTRIM( fetch_metric( "email_server", my_user(), "" ) )
 _mail_params["port"] := fetch_metric( "email_port", my_user(), 25 )
 _mail_params["user_name"] := ALLTRIM( fetch_metric( "email_user_name", my_user(), "" ) )
 _mail_params["user_password"] := ALLTRIM( fetch_metric( "email_user_pass", my_user(), "" ) )
+_mail_params["smtp_password"] := ""
 
 // sve ostalo setuj default, ako ne postoji
 // ili proslijedi iz funkcije

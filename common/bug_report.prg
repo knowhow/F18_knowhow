@@ -257,7 +257,7 @@ STATIC FUNCTION send_email()
 
    LOCAL _mail_params, _attach, _body, _subject, _from, _to, _cc
    LOCAL _srv, _port, _username, _pwd
-   LOCAL _error_txt
+   LOCAL _attachment
 
    if Pitanje(, "Poslati poruku greške email-om podrški bring.out-a (D/N) ?", "D" ) == "N"
          RETURN .F.
@@ -279,9 +279,16 @@ STATIC FUNCTION send_email()
    _mail_params["port"] := _port
    _mail_params["user_name"] := _username
    _mail_params["user_password"] := _pwd
+   _mail_params["trace"] := .t.
+   _mail_params["smpt_password"] := _pwd
 
-   _error_txt := my_home_root() + "error.txt"
-   _attach := { _error_txt }
+   _attachment := send_email_attachment()
+
+   if VALTYPE( _attachment ) == "L"
+         RETURN .F.
+   endif
+
+   _attach := { _attachment }
 
    MsgO( "Slanje email-a u toku ...." )
 
@@ -289,8 +296,35 @@ STATIC FUNCTION send_email()
 
    MsgC()
 
+   FERASE( _attachment )
+
    RETURN .T.
 
 
 
+// ----------------------------------------------------------------
+// ----------------------------------------------------------------
+STATIC FUNCTION send_email_attachment()
+   LOCAL _a_files := {}
+   LOCAL _path := my_home_root()
+   LOCAL _server := my_server_params()
+   LOCAL _filename, _err
+   LOCAL _rel_path := .t.
+  
+   // setovanje naziva fajla
+   _filename := ALLTRIM( _server["database"] )
+   _filename += "_" + ALLTRIM( f18_user() )
+   _filename += "_" + DTOS( DATE() ) 
+   _filename += "_" + STRTRAN( TIME(), ":", "" ) 
+   _filename += ".zip"
+
+   AADD( _a_files, _path + "error.txt" )
+
+   _err := zip_files( _path, _filename, _a_files, _rel_path )
+
+   if _err <> 0
+        RETURN .F.
+   endif
+
+   RETURN ( _path + _filename )
 

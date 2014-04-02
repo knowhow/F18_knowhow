@@ -258,10 +258,18 @@ STATIC FUNCTION send_email()
    LOCAL _mail_params, _attach, _body, _subject, _from, _to, _cc
    LOCAL _srv, _port, _username, _pwd
    LOCAL _attachment
+   LOCAL _answ := fetch_metric( "bug_report_email", NIL, "D" )
 
-   if Pitanje(, "Poslati poruku greške email-om podrški bring.out-a (D/N) ?", "D" ) == "N"
-         RETURN .F.
-   endif
+   DO CASE
+         CASE _answ $ "D#N#A"
+              if _answ $ "DN"
+                   if Pitanje(, "Poslati poruku greške email-om podrški bring.out-a (D/N) ?", _answ ) == "N"
+                        RETURN .F.
+                   endif
+              endif
+         OTHERWISE
+              RETURN .F.
+   ENDCASE
    
    _subject := "BUG report ..."
    _body := "U prilogu zip fajl sa sadržajem trenutne greške i log fajlom servera"

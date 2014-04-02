@@ -124,23 +124,36 @@ function use_sql_tarifa( l_make_index )
    RETURN .T.
 
 
+/*
+   use_sql_trfp() => otvori šifarnik šema kontiranja kalk->fin sa uslovima
+*/
+function use_sql_trfp( cShema, cDok )
+return _use_sql_trfp( "trfp", F_TRFP, cShema, cDok )
+
+
+/*
+   use_sql_trfp2() => otvori šifarnik šema kontiranja fakt->fin sa uslovima
+*/
+function use_sql_trfp2( cShema, cDok )
+return _use_sql_trfp( "trfp2", F_TRFP2, cShema, cDok )
+
+
 
 /*
    use_sql_trfp() => otvori šifarnik šema kontiranja sa uslovima
 */
-function use_sql_trfp( cShema, cDok )
+static function _use_sql_trfp( cTable, nWa, cShema, cDok )
 
    LOCAL cSql
-   LOCAL cTable := "trfp"
    LOCAL cWhere := ""
 
-   cSql := "SELECT * FROM fmk.trfp "
+   cSql := "SELECT * FROM fmk." + cTable 
 
-   if cShema <> NIL .and. !EMPTY( cShema )
+   if cShema <> NIL
          cWhere += " shema = " + _sql_quote( cShema )
    endif
 
-   if cDok <> NIL .and. !EMPTY( cDok )
+   if cDok <> NIL
          if !EMPTY( cWhere )
                cWhere += " AND "
          endif
@@ -153,7 +166,7 @@ function use_sql_trfp( cShema, cDok )
 
    cSql += " ORDER BY idvd, shema, idkonto, id, idtarifa, idvn, naz"
 
-   SELECT F_TRFP
+   SELECT ( nWa )
    use_sql( cTable, cSql )
    
    INDEX ON ( field->idvd + field->shema + field->idkonto + field->id + field->idtarifa + field->idvn + field->naz )  TAG ID TO ( cTable )

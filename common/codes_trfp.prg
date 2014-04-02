@@ -14,6 +14,8 @@
 
 
 function P_TRFP( cId, dx, dy )
+local cShema := SPACE(1)
+local cKavd := SPACE(2)
 private imekol,kol
 
 ImeKol:={  ;
@@ -31,27 +33,8 @@ ImeKol:={  ;
         }
 Kol:={1,2,3,4,5,6,7,8,9,10,11}
 
-trfp_filter()
+trfp_filter( @cShema, @cKavd )
 
-p_sifra( F_TRFP, 1, 15, 76, "Parametri prenosa u FP", @cId, dx, dy, {|Ch| TRfpb(Ch) } )
-
-return
-
-
-// -------------------------------------------------------
-// -------------------------------------------------------
-static function trfp_filter()
-local cShema := SPACE(1)
-local cKavd := SPACE(2)
-
-if Pitanje(, "Želite li postaviti filter za odredjenu shemu", "N" ) == "D"
-      Box(, 1, 60 )
-            @ m_x+1,m_y+2 SAY "Odabir sheme:" GET cShema  pict "@!"
-            @ m_x+1,col()+2 SAY "vrsta kalkulacije (prazno sve)" GET cKavd pict "@!"
-            READ
-      BoxC()
-endif 
-	 
 SELECT (F_TRFP)
 USE
 use_sql_trfp( cShema, cKavd )
@@ -59,8 +42,60 @@ use_sql_trfp( cShema, cKavd )
 SET ORDER TO TAG "ID"
 GO TOP 
 
+p_sifra( F_TRFP, 1, 15, 76, "Šeme kontiranja KALK->FIN", @cId, dx, dy, {|Ch| TRfpb(Ch) } )
+
 return
 
+
+
+// -------------------------------------------------------
+// -------------------------------------------------------
+static function trfp_filter( cShema, cVd )
+
+if Pitanje(, "Želite li postaviti filter za odredjenu shemu", "N" ) == "D"
+      Box(, 1, 60 )
+            @ m_x+1,m_y+2 SAY "Odabir sheme:" GET cShema  pict "@!"
+            @ m_x+1,col()+2 SAY "vrsta dokumenta (prazno sve)" GET cVd pict "@!"
+            READ
+      BoxC()
+endif 
+	 
+return
+
+
+
+function P_TRFP2(cId,dx,dy)
+local cShema := SPACE(1)
+local cFavd := SPACE(2)
+private imekol, kol
+
+ImeKol:={  ;
+           { "VD",  {|| padc(IdVD,4)} ,    "IdVD"                  },;
+           { padc("Shema",5),    {|| padc(shema,5)},      "shema"                    },;
+           { padc("ID",10),    {|| id },      "id"                    },;
+           { padc("Naziv",20), {|| naz},     "naz"                   },;
+           { "Konto  ", {|| idkonto},        "Idkonto" , {|| .t.} , {|| ("?" $ widkonto) .or. ("A" $ widkonto) .or. ("B" $ widkonto) .or. ("IDKONT" $ widkonto) .or.  P_kontoFin(@wIdkonto) }   },;
+           { "Tarifa", {|| idtarifa},        "IdTarifa"              },;
+           { "D/P",   {|| padc(D_P,3)},      "D_P"                   },;
+           { "Znak",    {|| padc(Znak,4)},        "ZNAK"                  },;
+           { "Dokument", {|| padc(Dokument,8)},   "Dokument"              },;
+           { "Partner", {|| padc(Partner,7)},     "Partner"               },;
+           { "IDVN",    {|| padc(idvn,4)},        "idvn"                  };
+        }
+Kol:={1,2,3,4,5,6,7,8,9,10,11}
+
+trfp_filter( @cShema, @cFavd )
+
+SELECT (F_TRFP2)
+USE
+use_sql_trfp2( cShema, cFavd )
+
+SET ORDER TO TAG "ID"
+GO TOP 
+
+p_sifra( F_TRFP2, 1, 15, 76, "Šeme kontiranja FAKT->FIN", @cId, dx, dy )
+
+return
 
 
 function TrfpB(Ch)

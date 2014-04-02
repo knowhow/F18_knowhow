@@ -175,7 +175,7 @@ next
 
 select (nTArea)
 
-return PostojiSifra(F_VALUTE, 2, 10, 77, "Valute", @cid, dx, dy)
+return p_sifra( F_VALUTE, 2, 10, 77, "Valute", @cid, dx, dy)
 
 // -------------------------------------
 // sekundarna valuta

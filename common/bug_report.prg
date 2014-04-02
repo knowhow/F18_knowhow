@@ -271,7 +271,7 @@ STATIC FUNCTION send_email()
               RETURN .F.
    ENDCASE
    
-   _subject := "BUG report ..."
+   _subject := "BUG report " + my_server_params()["database"] + " " + DTOC( DATE() ) + " od korisnika " + f18_user()
    _body := "U prilogu zip fajl sa sadržajem trenutne greške i log fajlom servera"
    _to := "podrska@bring.out.ba"
    _from := "f18.debug@bring.out.ba"

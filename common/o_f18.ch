@@ -30,7 +30,7 @@
 #xcommand O_KONCIJ   => select (F_KONCIJ)  ;  use_sql_sif  ("koncij")  ; set order to tag "ID"
 #xcommand O_VALUTE   => select (F_VALUTE)  ;  use_sql_sif  ("valute")    ; set order to tag "ID"
 #xcommand O_REFER    => select (F_REFER)   ;  use_sql_sif  ("refer" )     ; set order to tag "ID"
-#xcommand O_OPS      => select (F_OPS)     ;  use_sql_sif  ( "ops" )      ; set order to tag "ID"
+#xcommand O_OPS      => select (F_OPS)     ;  use_sql_opstine()      ; set order to tag "ID"
 #xcommand O_FAKT_OBJEKTI  => select (F_FAKT_OBJEKTI) ;  use_sql_sif ( "fakt_objekti" ) ; set order to tag "ID"
 // lokalizacija
 #xcommand O_LOKAL    => select (F_LOKAL)   ;  use_sql_sif ( "lokal" )

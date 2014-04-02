@@ -88,6 +88,26 @@ return .T.
 
 
 /*
+   use_sql_opstine() => otvori šifarnik tarifa sa prilagođenim poljima
+*/
+function use_sql_opstine()
+
+   LOCAL cSql
+   LOCAL cTable := "ops"
+
+   SELECT ( F_OPS )
+   use_sql_sif( cTable )
+
+   INDEX ON IDJ TAG IDJ TO ( cTable )
+   INDEX ON IDKAN TAG IDKAN TO ( cTable )
+   INDEX ON IDN0 TAG IDN0 TO ( cTable )
+
+   SET ORDER TO TAG ID
+
+   RETURN .T.
+
+
+/*
    use_sql_tarifa() => otvori šifarnik tarifa sa prilagođenim poljima
 */
 function use_sql_tarifa( l_make_index )

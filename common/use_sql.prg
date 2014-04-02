@@ -128,27 +128,23 @@ function use_sql_tarifa( l_make_index )
 /*
    use_sql_trfp() => otvori šifarnik šema kontiranja sa uslovima
 */
-function use_sql_trfp( shema, dok, l_make_index )
+function use_sql_trfp( cShema, cDok )
 
    LOCAL cSql
    LOCAL cTable := "trfp"
    LOCAL cWhere := ""
 
-   if l_make_index == NIL
-         l_make_index := .t.
-   endif
-
    cSql := "SELECT * FROM fmk.trfp "
 
-   if shema <> NIL .and. !EMPTY( shema )
-         cWhere += " shema = " + _sql_quote( shema )
+   if cShema <> NIL .and. !EMPTY( cShema )
+         cWhere += " shema = " + _sql_quote( cShema )
    endif
 
-   if dok <> NIL .and. !EMPTY( dok )
+   if cDok <> NIL .and. !EMPTY( cDok )
          if !EMPTY( cWhere )
                cWhere += " AND "
          endif
-         cWhere += " idvd = " + _sql_quote( dok )
+         cWhere += " idvd = " + _sql_quote( cDok )
    endif
 
    if !EMPTY( cWhere )
@@ -160,11 +156,9 @@ function use_sql_trfp( shema, dok, l_make_index )
    SELECT F_TRFP
    use_sql( cTable, cSql )
    
-   if l_make_index
-         INDEX ON ( field->idvd + field->shema + field->idkonto + field->id + field->idtarifa + field->idvn + field->naz )  TAG ID TO ( cTable )
-   endif
+   INDEX ON ( field->idvd + field->shema + field->idkonto + field->id + field->idtarifa + field->idvn + field->naz )  TAG ID TO ( cTable )
 
-   SET ORDER TO TAG ID
+   SET ORDER TO TAG "ID"
 
    RETURN .T.
 

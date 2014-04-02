@@ -108,6 +108,31 @@ function use_sql_opstine()
 
 
 /*
+   use_sql_valute() => otvori šifarnik valuta sa prilagođenim poljima
+*/
+function use_sql_valute()
+
+   LOCAL cSql
+   LOCAL cTable := "valute"
+
+   cSql := "SELECT * FROM fmk.valute ORDER BY id"
+
+   SELECT F_VALUTE
+   use_sql( cTable, cSql )
+
+   INDEX ON ID TAG ID TO ( cTable )
+   INDEX ON TIP+ID+DTOS(DATUM) TAG NAZ TO ( cTable )
+   INDEX ON ID+DTOS(DATUM) TAG ID2 TO ( cTable )
+
+   SET ORDER TO TAG ID
+
+   RETURN .T.
+
+
+
+
+
+/*
    use_sql_tarifa() => otvori šifarnik tarifa sa prilagođenim poljima
 */
 function use_sql_tarifa( l_make_index )

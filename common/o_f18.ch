@@ -28,7 +28,7 @@
 #xcommand O_TNAL     => select (F_TNAL)    ;  use_sql_sif  ( "tnal" )  ; set order to tag "ID"
 #xcommand O_TDOK     => select (F_TDOK)    ;  use_sql_sif  ( "tdok" )  ; set order to tag "ID"
 #xcommand O_KONCIJ   => select (F_KONCIJ)  ;  use_sql_sif  ("koncij")  ; set order to tag "ID"
-#xcommand O_VALUTE   => select (F_VALUTE)  ;  use_sql_sif  ("valute")    ; set order to tag "ID"
+#xcommand O_VALUTE   => select (F_VALUTE)  ;  use_sql_valute()    ; set order to tag "ID"
 #xcommand O_REFER    => select (F_REFER)   ;  use_sql_sif  ("refer" )     ; set order to tag "ID"
 #xcommand O_OPS      => select (F_OPS)     ;  use_sql_opstine()      ; set order to tag "ID"
 #xcommand O_FAKT_OBJEKTI  => select (F_FAKT_OBJEKTI) ;  use_sql_sif ( "fakt_objekti" ) ; set order to tag "ID"

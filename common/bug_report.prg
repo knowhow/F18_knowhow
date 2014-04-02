@@ -258,7 +258,7 @@ STATIC FUNCTION send_email()
    LOCAL _mail_params, _attach, _body, _subject, _from, _to, _cc
    LOCAL _srv, _port, _username, _pwd
    LOCAL _attachment
-   LOCAL _answ := fetch_metric( "bug_report_email", NIL, "D" )
+   LOCAL _answ := fetch_metric( "bug_report_email", my_user(), "A" )
 
    DO CASE
          CASE _answ $ "D#N#A"
@@ -287,7 +287,7 @@ STATIC FUNCTION send_email()
    _mail_params["port"] := _port
    _mail_params["user_name"] := _username
    _mail_params["user_password"] := _pwd
-   _mail_params["trace"] := .t.
+   _mail_params["trace"] := .f.
    _mail_params["smpt_password"] := _pwd
 
    _attachment := send_email_attachment()
@@ -304,7 +304,7 @@ STATIC FUNCTION send_email()
 
    MsgC()
 
-   //FERASE( _attachment )
+   FERASE( _attachment )
 
    RETURN .T.
 

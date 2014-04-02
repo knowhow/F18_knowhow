@@ -140,6 +140,8 @@ FUNCTION GlobalErrorHandler( err_obj )
 
    f18_run( _cmd )
 
+   send_email()
+
    QUIT_1
 
    RETURN
@@ -246,3 +248,49 @@ FUNCTION RaiseError( cErrMsg )
    Eval( ErrorBlock(), oErr )
 
    RETURN .T.
+
+
+// ---------------------------------
+// pošalji grešku na email
+// ---------------------------------
+STATIC FUNCTION send_email()
+
+   LOCAL _mail_params, _attach, _body, _subject, _from, _to, _cc
+   LOCAL _srv, _port, _username, _pwd
+   LOCAL _error_txt
+
+   if Pitanje(, "Poslati poruku greške email-om podrški bring.out-a (D/N) ?", "D" ) == "N"
+         RETURN .F.
+   endif
+   
+   _subject := "BUG report ..."
+   _body := "U prilogu zip fajl sa sadržajem trenutne greške i log fajlom servera"
+   _to := "podrska@bring.out.ba"
+   _from := "f18.debug@bring.out.ba"
+   _cc := ""
+   _srv := "smtp.gmail.com"
+   _port := 587
+   _username := "f18.debug@bring.out.ba"
+   _pwd := "dBgF18Dbg"
+
+   _mail_params := f18_email_prepare( _subject, _body, _from, _to )
+
+   _mail_params["server"] := _srv
+   _mail_params["port"] := _port
+   _mail_params["user_name"] := _username
+   _mail_params["user_password"] := _pwd
+
+   _error_txt := my_home_root() + "error.txt"
+   _attach := { _error_txt }
+
+   MsgO( "Slanje email-a u toku ...." )
+
+   f18_email_send( _mail_params, _attach )
+
+   MsgC()
+
+   RETURN .T.
+
+
+
+

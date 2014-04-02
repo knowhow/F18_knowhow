@@ -53,6 +53,9 @@ method mMenu()
 
 private Izbor
 
+if izbor == namjerni_bug
+endif
+
 set_hot_keys()
 
 Izbor:=1

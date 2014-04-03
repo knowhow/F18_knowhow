@@ -118,8 +118,10 @@ do case
     case Ch == K_CTRL_T
 
         if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
+			my_rlock()
             delete
-            __dbPack()
+			my_unlock()
+            my_dbf_pack()
             return DE_REFRESH
         endif
         return DE_CONT
@@ -195,7 +197,7 @@ do case
 
     case Ch = K_CTRL_F9
         if Pitanje(,"Zelite li izbrisati pripremu !!????","N")=="D"
-             zapp()
+             my_dbf_zap()
         endif
         return DE_REFRESH
 
@@ -432,7 +434,7 @@ bErr := ERRORBLOCK( { |o| MyErrH(o) } )
 
 BEGIN SEQUENCE
     O_IZLAZ
-    ZAPP()
+    my_dbf_zap()
 
 RECOVER
     MsgBeep("Vec je aktiviran delphirb ?")

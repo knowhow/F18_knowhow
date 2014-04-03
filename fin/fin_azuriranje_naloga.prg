@@ -799,16 +799,16 @@ STATIC FUNCTION fin_brisi_p_tabele( close_all )
    ENDIF
 
    SELECT PNALOG
-   zapp()
+   my_dbf_zap()
 
    SELECT PSUBAN
-   zapp()
+   my_dbf_zap()
 
    SELECT PANAL
-   zapp()
+   my_dbf_zap()
 
    SELECT PSINT
-   zapp()
+   my_dbf_zap()
 
    IF close_all
       CLOSE ALL

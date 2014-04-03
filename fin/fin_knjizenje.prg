@@ -1010,13 +1010,13 @@ FUNCTION BrisiPBaze()
    PushWA()
 
    SELECT F_PSUBAN
-   ZAPP()
+   my_dbf_zap()
    SELECT F_PANAL
-   ZAPP()
+   my_dbf_zap()
    SELECT F_PSINT
-   ZAPP()
+   my_dbf_zap()
    SELECT F_PNALOG
-   ZAPP()
+   my_dbf_zap()
 
    PopWA()
 

@@ -47,8 +47,7 @@ FUNCTION StAnalNal( lAuto )
    __par_len := Len( partn->id )
 
    SELECT PSUBAN
-   ZAPP()
-
+   my_dbf_zap()
 
    SELECT fin_pripr
    SET ORDER TO TAG "1"
@@ -262,15 +261,15 @@ FUNCTION SintStav( lAuto )
    _o_tables()
 
    SELECT PANAL
-   zapp()
+   my_dbf_zap()
    my_flock()
 
    SELECT PSINT
-   zapp()
+   my_dbf_zap()
    my_flock()
 
    SELECT PNALOG
-   zapp()
+   my_dbf_zap()
    my_flock()
 
    SELECT PSUBAN

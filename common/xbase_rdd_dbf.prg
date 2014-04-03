@@ -187,10 +187,7 @@ FUNCTION reopen_exclusive_and_zap( dbf_table, open_index )
 
    BEGIN SEQUENCE
 
-       // otvori ekskluzivno - 5 parametar .t. kada zelimo shared otvaranje
-       SET AUTOPEN OFF
        dbUseArea( .F., DBFENGINE, _dbf, _a_dbf_rec[ "alias" ], .F., .F. )
-       // kod prvog otvaranja uvijek otvori index da i njega nuliram
 
        IF File( _idx )
            dbSetIndex( _idx )
@@ -204,8 +201,6 @@ FUNCTION reopen_exclusive_and_zap( dbf_table, open_index )
        zapp()
 
    END SEQUENCE
-
-   SET AUTOOPEN ON
 
    RETURN .T.
 

@@ -205,6 +205,8 @@ FUNCTION reopen_exclusive_and_zap( dbf_table, open_index )
 
    END SEQUENCE
 
+   SET AUTOOPEN ON
+
    RETURN .T.
 
 

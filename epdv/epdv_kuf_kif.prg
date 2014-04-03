@@ -131,7 +131,7 @@ use
 
 // sve je ok brisi pripremu
 SELECT (nPArea)
-zapp()
+my_dbf_zap()
 
 use
 

@@ -197,6 +197,7 @@ endif
 static function k_handler()
 local nTekRec
 local nBrDokP
+local lDelete := .f.
 
 if (Ch==K_CTRL_T .or. Ch==K_ENTER) .and. reccount2()==0
     return DE_CONT
@@ -232,38 +233,48 @@ do case
     
    case (Ch == K_CTRL_N)
 
-    // stavke unosimo cirkularno do ESC znaka
-    DO WHILE .t.
-    
     SELECT P_KIF
-    APPEND BLANK
-    nTekRec := RECNO()
+	SET ORDER TO TAG "BR_DOK"
+
+   	my_flock()
+    
+	// stavke unosimo cirkularno do ESC znaka
+    DO WHILE .t.
+
+		SELECT P_KIF    	
+		APPEND BLANK
+		nTekRec := RECNO()
         Scatter()
     
-    if ed_item(.t.)
-    
-            //EventLog(nUser, goModul:oDataBase:cName, "DOK", "EDIT", nDug, nPot, nil, nil, "", "", "Unos stavke ....", Date(), Date(), "", "KIF - nova stavka")
-        GO nTekRec
-        Gather()
-    else
-        // brisi necemo ovu stavku
-        SELECT P_KIF
-        go nTekRec
-        DELETE
-        exit
-    endif
+    	if ed_item(.t.)
+        	GO nTekRec
+        	Gather()
+    	else
+        	// brisi necemo ovu stavku
+        	SELECT P_KIF
+        	go nTekRec
+        	DELETE
+        	exit
+    	endif
+
+
     ENDDO 
     
-    GO BOTTOM
+	my_unlock()
+	my_dbf_pack()
+
+	SET ORDER TO TAG "BR_DOK"
+	GO BOTTOM
+
     return DE_REFRESH
     
    case (Ch  == K_CTRL_F9)
    
         if Pitanje( ,"Zelite li izbrisati pripremu !!????","N") == "D"
             //EventLog(nUser, goModul:oDataBase:cName, "DOK", "EDIT", nil, nil, nil, nil, "", "", pripr->idfirma+"-"+pripr->idvn+"-"+pripr->brnal, Date(), Date(), "", " KIF Brisanje pripreme ....")
-            zapp()
+            my_dbf_zap()
             return DE_REFRESH
-    endif
+    	endif
         return DE_CONT
 
    case Ch==K_CTRL_P
@@ -319,6 +330,9 @@ do case
     endif
 
     SELECT P_KIF
+	SET ORDER TO TAG "BR_DOK"
+	GO TOP
+
     RETURN DE_REFRESH
 
 

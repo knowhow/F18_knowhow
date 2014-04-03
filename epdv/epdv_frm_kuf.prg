@@ -232,37 +232,43 @@ do case
     
    case (Ch == K_CTRL_N)
 
+    SELECT P_KUF
+    my_flock()
+
     // stavke unosimo cirkularno do ESC znaka
     DO WHILE .t.
     
-    SELECT P_KUF
-    APPEND BLANK
-    nTekRec := RECNO()
-        Scatter()
+    	SELECT P_KUF
+    	APPEND BLANK
+    	nTekRec := RECNO()
+    	Scatter()
     
-    if ed_item(.t.)
-    
-            //EventLog(nUser, goModul:oDataBase:cName, "DOK", "EDIT", nDug, nPot, nil, nil, "", "", "Unos stavke ....", Date(), Date(), "", "KUF - nova stavka")
-        GO nTekRec
-        Gather()
-    else
-        // brisi necemo ovu stavku
-        SELECT P_KUF
-        go nTekRec
-        DELETE
-        exit
-    endif
-    ENDDO 
-    
+    	if ed_item(.t.)
+        	GO nTekRec
+        	Gather()
+    	else
+        	// brisi necemo ovu stavku
+        	SELECT P_KUF
+        	go nTekRec
+        	DELETE
+        	exit
+    	endif
+    ENDDO
+ 
+    my_unlock()
+
+	my_dbf_pack()
+    SET ORDER TO TAG "BR_DOK" 
     GO BOTTOM
+
     return DE_REFRESH
     
    case (Ch  == K_CTRL_F9)
    
         if Pitanje( ,"Zelite li izbrisati pripremu !!????","N") == "D"
-            zapp()
+            my_dbf_zap()
             return DE_REFRESH
-    endif
+    	endif
         return DE_CONT
 
    case Ch==K_CTRL_P
@@ -320,6 +326,9 @@ do case
     endif
 
     SELECT P_KUF
+	SET ORDER TO TAG "BR_DOK"
+	GO TOP
+
     RETURN DE_REFRESH
 
    case (Ch == K_F10)

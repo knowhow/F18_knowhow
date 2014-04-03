@@ -188,9 +188,9 @@ AADD(aZagl, { "(1)",   "(2)",  "(3)",   "(4)",   "(5)",  "(6)",     "(7)", "(8)"
 // napuni podatke izvjestaja
 fill_rpt( nBrDok )
 
-if _export == "D"
+close all
 
-    close all
+if _export == "D"
 
     _file := my_home() + "epdv_r_kuf.dbf"
 
@@ -413,6 +413,7 @@ nRow := 0
 
 r_zagl()
 
+O_R_KUF
 SELECT r_kuf
 SET ORDER TO TAG "1"
 go top
@@ -554,8 +555,9 @@ r_linija()
 
 FF
 END PRINT
+
 return
-*}
+
 
 // ----------------------------
 // ----------------------------

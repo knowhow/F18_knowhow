@@ -275,13 +275,15 @@ do case
     if LASTKEY() <> K_ESC
             rpt_kuf(nBrDokP)
     endif
-    
+
     close all
+
     o_kuf(.t.)
+
     SELECT P_KUF
     SET ORDER TO TAG "br_dok"
 
-        return DE_REFRESH
+    return DE_REFRESH
 
    case Ch==K_ALT_A
    

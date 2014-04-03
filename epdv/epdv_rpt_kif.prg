@@ -189,9 +189,9 @@ AADD(aZagl, { "(1)",   "(2)",  "(3)",   "(4)",   "(5)",  "(6)",     "(7)", "(8)"
 
 fill_rpt( nBrDok )
 
-if _export == "D"
+close all
 
-    close all
+if _export == "D"
 
     _file := my_home() + "epdv_r_kif.dbf"
 
@@ -411,6 +411,7 @@ nRow := 0
 
 r_zagl()
 
+O_R_KIF
 SELECT r_kif
 SET ORDER TO TAG "1"
 go top

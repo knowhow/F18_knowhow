@@ -130,6 +130,51 @@ function use_sql_valute()
 
 
 
+/*
+   use_sql_pkonto() => otvori šifarnik pkonto sa prilagođenim poljima
+*/
+function use_sql_pkonto()
+
+   LOCAL cSql
+   LOCAL cTable := "pkonto"
+
+   cSql := "SELECT * FROM fmk.pkonto ORDER BY id"
+
+   SELECT F_PKONTO
+   use_sql( cTable, cSql )
+
+   INDEX ON ID TAG ID TO ( cTable )
+   INDEX ON TIP TAG NAZ TO ( cTable )
+
+   SET ORDER TO TAG ID
+
+   RETURN .T.
+
+
+/*
+   use_sql_lokal() => otvori šifarnik lokalizacije sa prilagođenim poljima
+*/
+function use_sql_lokalizacija()
+
+   LOCAL cSql
+   LOCAL cTable := "lokal"
+
+   cSql := "SELECT * FROM fmk.lokal ORDER BY id"
+
+   SELECT F_LOKAL
+   use_sql( cTable, cSql )
+
+   INDEX ON ID+STR(ID_STR,6)+NAZ TAG ID TO ( cTable )
+   INDEX ON ID+NAZ TAG IDNAZ TO ( cTable )
+   INDEX ON STR(ID_STR,6)+NAZ+ID TAG ID_STR TO ( cTable )
+   INDEX ON NAZ+STR(ID_STR,6) TAG NAZ TO ( cTable )
+
+   SET ORDER TO TAG ID
+
+   RETURN .T.
+
+
+
 
 
 /*

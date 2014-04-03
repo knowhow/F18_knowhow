@@ -363,7 +363,6 @@ return DE_CONT
  */
  
 function P_PKonto(CId,dx,dy)
-
 PRIVATE ImeKol,Kol
 ImeKol:={ { "ID  ",  {|| id },   "id"   , {|| .t.}, {|| vpsifra(wid)}    },;
           { PADC("Tip prenosa",25), {|| PADC(TipPkonto(tip),25)},     "tip" ,{|| .t.}, {|| wtip $ "123456"}     };

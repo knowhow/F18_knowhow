@@ -17,20 +17,16 @@
 function P_Lokal(cId, dx, dy)
 local cHeader := lokal("Lista: Lokalizacija")
 local nArea := F_LOKAL
-	
-
-SELECT (nArea)
-
-if !used()
-	O_LOKAL
-endif
-
 private Kol
 private ImeKol
 
+SELECT (nArea)
+
+O_LOKAL
+
 set_a_kol( @Kol, @ImeKol)
 
-return PostojiSifra( nArea, 1, 10, 75, cHeader, ;
+return p_sifra( nArea, 1, 10, 75, cHeader, ;
 	       @cId, dx, dy, ;
                {|Ch| k_handler(Ch)} )
 								       

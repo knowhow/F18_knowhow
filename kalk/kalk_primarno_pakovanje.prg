@@ -220,7 +220,7 @@ function NaPrPak2()
 
   APPEND FROM kalk_pripr
   SELECT kalk_pripr
-  ZAPP()
+  my_dbf_zap()
 
   // utvrdimo broj nove kalkulacije
   // ------------------------------

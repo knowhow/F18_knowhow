@@ -1131,7 +1131,7 @@ endif
 if fPocStanje
     if fimagresaka .and. Pitanje(,"Nulirati pripremu (radi ponavljanja procedure) ?","D")=="D"
         select kalk_pripr
-        zapp()
+        my_dbf_zap()
     else
         renumeracija_kalk_pripr( cBrPst, "16" )
     endif

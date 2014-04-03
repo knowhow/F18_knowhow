@@ -75,8 +75,7 @@ O_TDOK
 O_PSUBAN
 
 select PSUBAN
-ZAPP()
-
+my_dbf_zap()
 
 SELECT fin_pripr
 set order to tag "1"
@@ -142,7 +141,7 @@ if lAuto == nil
 endif
 
 select PSUBAN
-ZAPP()
+my_dbf_zap()
 
 SELECT fin_pripr
 set order to tag "1"
@@ -416,13 +415,13 @@ if lAuto == nil
 endif
 
 select PANAL
-zapp()
+my_dbf_zap()
 
 select PSINT
-zapp()
+my_dbf_zap()
 
 select PNALOG
-zapp()
+my_dbf_zap()
 
 
 select PSUBAN

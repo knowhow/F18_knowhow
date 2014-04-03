@@ -490,7 +490,7 @@ FUNCTION kalk_pripr_key_handler()
             kalk_pripr->brdok
 
 
-         zapp()
+         my_dbf_zap()
          SELECT p_doksrc
          zapp()
          SELECT kalk_pripr

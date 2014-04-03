@@ -241,7 +241,7 @@ cre_cache()
 
 O_CACHE
 select cache
-zapp(.t.)
+my_dbf_zap()
 
 O_CACHE
 O_KALK_DOKS

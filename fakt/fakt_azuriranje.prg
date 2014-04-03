@@ -117,7 +117,7 @@ if LEN( _a_fakt_doks ) > 1
 else
     // izbrisi pripremu
     select fakt_pripr
-    ZAPP( .t. )
+    my_dbf_zap()
 endif
 
 // pobrisi mi fakt_atribute takodjer
@@ -1038,7 +1038,7 @@ if Pitanje(, "Želite li izbrisati pripremu !!????","N") == "D"
     else
         
         // ponisti pripremu...
-        zapp()
+        my_dbf_zap()
         // ponisti i atribut        // ponisti i atributee
         oAtrib:zapp_local_table() 
         

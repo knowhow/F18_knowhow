@@ -55,7 +55,7 @@ endif
 // isprazni kalk_pripr2
 // trebat ce nam poslije radi generisanja zavisnih dokumenata
 O_KALK_PRIPR2
-zapp()
+my_dbf_zap()
 use
 
 lViseDok := kalk_provjeri_duple_dokumente( @aRezim )
@@ -119,7 +119,7 @@ if lViseDok == .t. .and. LEN( aOstaju ) > 0
 else
     // pobrisi kalk_pripr
     select kalk_pripr
-    zapp()
+    my_dbf_zap()
 
 endif
 
@@ -214,7 +214,7 @@ if lPrebaci == .t.
     enddo
 
     select kalk_pripr2
-    zapp() 
+    my_dbf_zap() 
 
 endif
 
@@ -1069,10 +1069,7 @@ do while !EOF()
 enddo
 
 select kalk_pripr
-go top
-
-select kalk_pripr
-zapp()
+my_dbf_zap()
 
 close all
 return

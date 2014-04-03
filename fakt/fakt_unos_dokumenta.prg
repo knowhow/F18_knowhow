@@ -692,12 +692,13 @@ local _a_fakt_doks
 fakt_set_broj_dokumenta()
 
 _a_fakt_doks := fakt_dokumenti_u_pripremi()
+
 if LEN( _a_fakt_doks ) == 0
     MsgBeep( "Postojeci dokumenti u pripremi vec postoje azurirani u bazi !" )
 endif
-
+altd()
 // fiksiranje tabele atributa
-F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB):fix_atrib( _a_fakt_doks )
+F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB ):fix_atrib( F_FAKT_PRIPR, _a_fakt_doks )
 
 o_fakt_edit() 
 

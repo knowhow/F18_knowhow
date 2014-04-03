@@ -194,7 +194,7 @@ endif
 
 select fakt_pripr9
 go top
-zapp()
+my_dbf_zap()
 
 nTArea := SELECT()
 
@@ -295,7 +295,7 @@ do while !EOF()
 enddo
 
 select fakt_pripr
-zapp()
+my_dbf_zap()
 
 nTArea := SELECT()
 if Logirati(goModul:oDataBase:cName,"DOK","SMECE")

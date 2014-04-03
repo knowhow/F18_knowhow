@@ -1,3 +1,8 @@
+1.7.22  2014-04-03, vsasa
+
+  - ePDV, greške kod štampe dokumenata i manipulacija tabelam pripreme
+  - indexi i otvaranja tabela PKONTO, VALUTE, OPS, LOKAL, itd... bugfix 
+ 
 1.7.21  2014-04-01, vsasa
 
   - VIRM, generisani virmani imaju redni broj 0

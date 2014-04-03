@@ -832,8 +832,8 @@ FUNCTION edit_fin_pripr()
 
          // ima li potrebe resetovati gl.brojac
          fin_reset_broj_dokumenta( fin_pripr->idfirma, fin_pripr->idvn, fin_pripr->brnal )
-
-         my_dbf_zap()
+         
+		 my_dbf_zap()
 
          // brisi i pomocne tabele psuban, panal....
          BrisiPBaze()

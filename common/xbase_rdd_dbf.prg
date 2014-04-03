@@ -185,16 +185,25 @@ FUNCTION reopen_exclusive_and_zap( dbf_table, open_index )
    _dbf := my_home() + _a_dbf_rec[ "table" ]
    _idx := ImeDbfCdx( _dbf )
 
-   // otvori ekskluzivno - 5 parametar .t. kada zelimo shared otvaranje
-   SET AUTOPEN OFF
-   dbUseArea( .F., DBFENGINE, _dbf, _a_dbf_rec[ "alias" ], .F., .F. )
-   // kod prvog otvaranja uvijek otvori index da i njega nuliram
+   BEGIN SEQUENCE
 
-   IF File( _idx )
-      dbSetIndex( _idx )
-   ENDIF
+       // otvori ekskluzivno - 5 parametar .t. kada zelimo shared otvaranje
+       SET AUTOPEN OFF
+       dbUseArea( .F., DBFENGINE, _dbf, _a_dbf_rec[ "alias" ], .F., .F. )
+       // kod prvog otvaranja uvijek otvori index da i njega nuliram
 
-   __dbZap()
+       IF File( _idx )
+           dbSetIndex( _idx )
+       ENDIF
+
+       ZAP
+
+   RECOVER USING _err
+
+       my_use( _a_dbf_rec["table"] )
+       zapp()
+
+   END SEQUENCE
 
    RETURN .T.
 

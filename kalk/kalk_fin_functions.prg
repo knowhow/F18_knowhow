@@ -22,7 +22,7 @@ private cDatVal:="D"
 if (lAuto == nil)
 	lAuto := .f.
 endif
-
+altd()
 if gafin == "D"
 	
 	// kontrola zbira - uravnotezenje
@@ -66,6 +66,8 @@ return
 // filovanje potrebnih tabela kod auto importa
 // ---------------------------------------------
 static function fill_psuban()
+
+close all
 
 O_FIN_PRIPR
 O_KONTO
@@ -120,6 +122,8 @@ return
 // stampa analitickog naloga
 // ----------------------------------------
 static function StAnalNal(lAuto)
+
+close all
 
 O_FIN_PRIPR
 O_KONTO
@@ -333,7 +337,7 @@ DO WHILE !EOF()
 
 ENDDO   
 
-closeret2
+close all
 return
 
 
@@ -402,6 +406,9 @@ return
  */
 
 static function SintStav( lAuto )
+
+close all
+sleep(2)
 
 O_PSUBAN
 O_PANAL

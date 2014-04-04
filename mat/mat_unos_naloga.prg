@@ -538,7 +538,7 @@ do case
    case Ch == K_CTRL_F9
 
         if Pitanje(,"Zelite li izbrisati pripremu !!????","N") == "D"
-            zapp(.t.)
+            my_dbf_zap()
             mat_brisi_pbaze()
         endif
 
@@ -636,7 +636,7 @@ if fnovi
     O_MAT_PRIPR
     O_MAT_PSUBAN
     select mat_psuban
-    zapp()
+    my_dbf_zap()
     SELECT mat_pripr
     set order to tag "2"
     go top
@@ -877,13 +877,13 @@ O_MAT_PSINT
 O_MAT_PNALOG
 
 select mat_panal
-zapp()
+my_dbf_zap()
 
 select mat_psint
-zapp()
+my_dbf_zap()
 
 select mat_pnalog
-zapp()
+my_dbf_zap()
 
 select mat_psuban
 set order to tag "2"
@@ -1000,16 +1000,16 @@ function mat_brisi_pbaze()
 PushWA()
   
 SELECT (F_MAT_PSUBAN)
-ZAPP()
+my_dbf_zap()
   
 SELECT (F_MAT_PANAL)
-ZAPP()
+my_dbf_zap()
   
 SELECT (F_MAT_PSINT)
-ZAPP()
+my_dbf_zap()
   
 SELECT (F_MAT_PNALOG)
-ZAPP()
+my_dbf_zap()
   
 PopWA()
 return nil

@@ -216,7 +216,7 @@ function NaPrPak2()
   // kalk_pripr -> _KALK
   // --------------
   SELECT _KALK
-  ZAPP()
+  my_dbf_zap()
 
   APPEND FROM kalk_pripr
   SELECT kalk_pripr

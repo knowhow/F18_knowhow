@@ -91,7 +91,7 @@ cPrefix:=IzFmkIni("Barkod","Prefix","", SIFPATH)
 cSPrefix:= pitanje(,"Stampati barkodove koji NE pocinju sa +'"+cPrefix+"' ?","N")
 
 SELECT BARKOD
-zapp()
+my_dbf_zap()
 
 SELECT KALK_PRIPR
 GO TOP
@@ -226,7 +226,7 @@ cPrefix:=IzFmkIni("Barkod","Prefix","",SIFPATH)
 cSPrefix:= pitanje(,"Stampati barkodove koji NE pocinju sa +'"+cPrefix+"' ?","N")
 
 SELECT BARKOD
-zapp()
+my_dbf_zap()
 
 SELECT fakt_pripr
 GO TOP

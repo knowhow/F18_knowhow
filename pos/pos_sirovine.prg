@@ -87,7 +87,7 @@ local fNaso
 
 // ispraznim pripremu
 SELECT PRIPRG
-Zapp()
+my_dbf_zap()
 
 Scatter()
 

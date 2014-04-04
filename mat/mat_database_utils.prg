@@ -221,7 +221,7 @@ if reccount2()<>0
     return
 endif
 
-zapp()
+my_dbf_zap()
 
 set order to tag "4"
 GO TOP

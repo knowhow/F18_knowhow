@@ -100,7 +100,7 @@ O_MAT_SUBAN
 msgO( "Generisem stavke inventure..." )
 
 select MAT_INVENT
-ZAPP()
+my_dbf_zap()
 
 
 _r_br := 0
@@ -335,7 +335,7 @@ do case
     case Ch==K_CTRL_Z
 
         if Pitanje("ppl","Zelite sve stavke (D/N) !!!!????","N")=="D"
-            zapp()
+			my_dbf_zap()
 
             go top
             return DE_REFRESH

@@ -45,7 +45,7 @@ for nCnt:=3 to nKoliko
 next
 
 SELECT RAZDR
-Zapp()
+my_dbf_zap()
 
 SELECT _POS
 Seek gIdPos+VD_RN+dtos(gDatum)+cRadRac

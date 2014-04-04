@@ -424,7 +424,7 @@ endif
 
 select _pos_pripr
 
-Zapp()
+my_dbf_zap()
 
 Scatter()
 
@@ -473,7 +473,7 @@ Box(, 15, 73 )
     ShowBrowse(oBrowse,{},{})
 
     select _pos_pripr
-    Zapp()
+    my_dbf_zap()
 BoxC()
     
 SETCOLOR (cPrevCol)

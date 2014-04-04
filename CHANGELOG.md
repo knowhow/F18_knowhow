@@ -1,3 +1,8 @@
+1.7.23  2014-04-04, vsasa
+
+  - lock required i workarea not in use greške - bugfix 
+  - CLOSE ALL => my_close_all_dbf()
+ 
 1.7.22  2014-04-03, vsasa
 
   - ePDV, greške kod štampe dokumenata i manipulacija tabelam pripreme

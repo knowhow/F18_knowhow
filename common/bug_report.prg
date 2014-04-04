@@ -273,12 +273,12 @@ STATIC FUNCTION send_email()
    
    _subject := "BUG report " + my_server_params()["database"] + " " + DTOC( DATE() ) + " od korisnika " + f18_user()
    _body := "U prilogu zip fajl sa sadržajem trenutne greške i log fajlom servera"
-   _to := "cs@bring.out.ba"
-   _from := "f18.debug@bring.out.ba"
-   _srv := "smpt.bug.out.ba"
+   _to := "F18@bug.out.ba"
+   _from := "F18@bug.out.ba"
+   _srv := "smtp.bug.out.ba"
    _port := 999
-   _username := ""
-   _pwd := ""
+   _username := "xx"
+   _pwd := "xx"
 
    _mail_params := f18_email_prepare( _subject, _body, _from, _to )
 
@@ -286,9 +286,13 @@ STATIC FUNCTION send_email()
    _mail_params["port"] := _port
    _mail_params["user_name"] := _username
    _mail_params["user_password"] := _pwd
-   _mail_params["smtp_password"] := _pwd
    _mail_params["trace"] := .f.
 
+   // ponisti cc i bcc ako postoji
+   _mail_params["mail_cc"] := ""
+   _mail_params["mail_bcc"] := ""
+   _mail_params["mail_reply_to"] := ""
+   
    _attachment := send_email_attachment()
 
    if VALTYPE( _attachment ) == "L"

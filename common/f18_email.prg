@@ -43,16 +43,16 @@ function f18_email_send( mail_params, attach )
 local _pop_srv := ""
 local _smtp_pass := ""
 local _pop_auth := .f.
-local _no_auth := nil
-local _timeout := nil
+local _no_auth := NIL
+local _timeout := NIL
 local _tls := .f.
 local _encoding := ""
 local _charset := ""
-local _priority := nil
-local _read := nil
+local _priority := NIL
+local _read := NIL
 local _trace := .f.
 local _ret := .f.
-local _files := nil
+local _files := NIL
 local _server, _port, _user, _pass, _from, _to, _cc, _bcc, _repl_to, _body, _subject
 
 // parametri iz mail matrice
@@ -69,6 +69,7 @@ _body := mail_params["mail_body"]
 _subject := mail_params["mail_subject"]
 _trace := mail_params["trace"]
 _smtp_pass := mail_params["smtp_password"]
+_no_auth := mail_params["no_auth"]
 
 if attach <> NIL .and. LEN( attach ) <> 0
 	_files := attach
@@ -120,6 +121,7 @@ local _mail_params := hb_hash()
 
 // ucitaj parametre F18
 _mail_params["trace"] := .f.
+_mail_params["no_auth"] := NIL
 _mail_params["server"] := ALLTRIM( fetch_metric( "email_server", my_user(), "" ) )
 _mail_params["port"] := fetch_metric( "email_port", my_user(), 25 )
 _mail_params["user_name"] := ALLTRIM( fetch_metric( "email_user_name", my_user(), "" ) )

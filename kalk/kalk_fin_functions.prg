@@ -22,7 +22,7 @@ private cDatVal:="D"
 if (lAuto == nil)
 	lAuto := .f.
 endif
-altd()
+
 if gafin == "D"
 	
 	// kontrola zbira - uravnotezenje
@@ -54,8 +54,6 @@ if lAuto == nil
 endif
 
 StAnalNal( lAuto )
-
-//StSintNal()
 SintStav()
 
 return
@@ -122,8 +120,6 @@ return
 // stampa analitickog naloga
 // ----------------------------------------
 static function StAnalNal(lAuto)
-
-my_close_all_dbf()
 
 O_FIN_PRIPR
 O_KONTO
@@ -290,6 +286,7 @@ DO WHILE !EOF()
 
         select PSUBAN
 		Scatter()
+
 		select fin_pripr
 		Scatter()
 
@@ -338,6 +335,7 @@ DO WHILE !EOF()
 ENDDO   
 
 my_close_all_dbf()
+
 return
 
 
@@ -407,12 +405,12 @@ return
 
 static function SintStav( lAuto )
 
-my_close_all_dbf()
+hb_IdleSleep(1)
 
-O_PSUBAN
 O_PANAL
 O_PSINT
 O_PNALOG
+O_PSUBAN
 O_KONTO
 O_TNAL
 
@@ -590,11 +588,7 @@ do while !eof()
    enddo
 enddo
 
-if lAuto == .t.
-	closeret
-else
-	closeret2
-endif
+my_close_all_dbf()
 
 return
 
@@ -733,7 +727,6 @@ nCol1:=70
  ? M
 
 FF
-
 END PRINT
 
 if fkum
@@ -892,11 +885,7 @@ Box("kzb",12,70,.f.,"Kontrola zbira FIN naloga")
  	endif
 BoxC()
 
-if lAuto == .t.
-	closeret
-else
-	closeret2
-endif
+my_close_all_dbf()
 
 return
 

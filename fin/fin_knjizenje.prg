@@ -14,6 +14,7 @@
 
 STATIC cTekucaRj := ""
 STATIC __par_len
+STATIC __rj_len := 6
 
 // FmkIni_KumPath_TekucaRj - Tekuca radna jedinica
 // Koristi se u slucaju da u Db unosimo podatke za odredjenu radnu jedinicu
@@ -225,7 +226,7 @@ FUNCTION edit_fin_priprema()
    ENDIF
 
    IF ( ( gRj == "D" ) .AND. fNovi )
-      _idRj := cTekucaRj
+      _idrj := cTekucaRj
    ENDIF
 
    SET CURSOR ON
@@ -307,7 +308,7 @@ FUNCTION edit_fin_priprema()
    ENDIF
 
    IF gRj == "D"
-      @ m_x + 11, Col() + 2 SAY "RJ" GET _idrj VALID Empty( _idrj ) .OR. P_Rj( @_idrj ) PICT "@!"
+      @ m_x + 11, Col() + 2 SAY "RJ" GET _idrj VALID EMPTY( _idrj ) .OR. P_Rj( @_idrj ) PICT "@!"
    ENDIF
 
    IF gTroskovi == "D"
@@ -1279,64 +1280,13 @@ FUNCTION BrDokOK()
 
 
 FUNCTION SetTekucaRJ( cRJ )
-
-   LOCAL nArr
-   LOCAL lUsed
-
-   nArr := Select()
-   lUsed := .T.
-   SELECT ( F_PARAMS )
-   IF !Used()
-      lUsed := .F.
-      O_PARAMS
-   ENDIF
-   PRIVATE cSection := "1", cHistory := " ", aHistory := {}
-   Params1()
-   WPar( "tj", cRJ )
-   IF !lUsed
-      SELECT params
-      USE
-   ENDIF
-   SELECT ( nArr )
-
+   set_metric( "fin_knjiz_tek_rj", my_home(), cRJ )
    RETURN
 
 
 
 FUNCTION GetTekucaRJ()
-
-   LOCAL nArr
-   LOCAL lUsed
-   LOCAL cRJ
-   LOCAL nLen
-
-   nArr := Select()
-   lUsed := .T.
-
-   O_FIN_PRIPR
-   IF gRJ == "D" .AND. fin_pripr->( FieldPos( "IDRJ" ) ) <> 0
-      nLen := Len( fin_pripr->idrj )
-      cRJ := Space( nLen )
-   ELSE
-      nLen := 6
-      cRj := Space( nLen )
-   ENDIF
-   SELECT ( F_PARAMS )
-   IF !Used()
-      lUsed := .F.
-      O_PARAMS
-   ENDIF
-
-   PRIVATE cSection := "1", cHistory := " ", aHistory := {}
-   Params1()
-   RPar( "tj", @cRJ )
-   IF !lUsed
-      SELECT params
-      USE
-   ENDIF
-   SELECT ( nArr )
-
-   RETURN ( PadR( cRJ, nLen ) )
+   RETURN fetch_metric( "fin_knjiz_tek_rj", my_home(), PADR( "", __rj_len ) )
 
 
 

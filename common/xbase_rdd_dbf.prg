@@ -195,6 +195,8 @@ FUNCTION reopen_exclusive_and_zap( dbf_table, open_index )
        ENDIF
 
        ZAP
+       USE
+       my_use( _a_dbf_rec["table"] )
 
    RECOVER USING _err
 
@@ -203,6 +205,7 @@ FUNCTION reopen_exclusive_and_zap( dbf_table, open_index )
 
    END SEQUENCE
 
+  
    RETURN .T.
 
 

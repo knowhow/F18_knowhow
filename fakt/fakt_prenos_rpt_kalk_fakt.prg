@@ -547,7 +547,7 @@ else
   ? space(gnLMarg); ?? m
 endif
 
-close all
+my_close_all_dbf()
 
 FF
 END PRINT

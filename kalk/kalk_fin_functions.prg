@@ -67,7 +67,7 @@ return
 // ---------------------------------------------
 static function fill_psuban()
 
-close all
+my_close_all_dbf()
 
 O_FIN_PRIPR
 O_KONTO
@@ -84,7 +84,7 @@ set order to tag "1"
 go top
 
 if EOF()
-	close all
+	my_close_all_dbf()
 	return
 endif
 
@@ -114,7 +114,7 @@ DO WHILE !EOF()
 
 ENDDO   
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -123,7 +123,7 @@ return
 // ----------------------------------------
 static function StAnalNal(lAuto)
 
-close all
+my_close_all_dbf()
 
 O_FIN_PRIPR
 O_KONTO
@@ -337,7 +337,7 @@ DO WHILE !EOF()
 
 ENDDO   
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -407,8 +407,7 @@ return
 
 static function SintStav( lAuto )
 
-close all
-sleep(2)
+my_close_all_dbf()
 
 O_PSUBAN
 O_PANAL

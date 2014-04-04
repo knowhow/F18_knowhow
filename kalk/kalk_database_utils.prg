@@ -45,7 +45,7 @@ function Gen9999()
   // sve sezone izuzev pocetne
   // -----------------------------------------------------------------------
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -1584,7 +1584,7 @@ BoxC()
 
 MsgBeep("Formirao PDV cijene u sifrarniku Roba tekuca godina")
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -1665,7 +1665,7 @@ BoxC()
 
 MsgBeep("Formirao nove cijene, pomnozio sa faktorom !")
 
-close all
+my_close_all_dbf()
 return
 
 

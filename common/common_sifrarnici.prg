@@ -105,7 +105,7 @@ if gLokal <> "0"
 endif
 
 
-CLOSE ALL
+my_close_all_dbf()
 OFmkSvi()
 
 private Izbor:=1

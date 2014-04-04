@@ -732,7 +732,7 @@ xml_subnode( "rpt", .t. )
 
 close_xml()
 
-close all
+my_close_all_dbf()
 
 _ok := .t.
 
@@ -1093,7 +1093,7 @@ endif
 FF
 END PRINT
 
-close all
+my_close_all_dbf()
 
 return SELF
 
@@ -1243,7 +1243,7 @@ enddo
 
 MsgC()
 
-close all
+my_close_all_dbf()
 
 return _count
 

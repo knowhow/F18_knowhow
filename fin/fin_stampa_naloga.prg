@@ -109,7 +109,7 @@ FUNCTION StAnalNal( lAuto )
       HSEEK cIdFirma + cIdVN + cBrNal
 
       IF Eof()
-         CLOSE ALL
+         my_close_all_dbf()
          RETURN
       ENDIF
 
@@ -120,7 +120,7 @@ FUNCTION StAnalNal( lAuto )
       stampa_suban_dokument( "1", lAuto )
 
       IF !_izgenerisi
-         CLOSE ALL
+         my_close_all_dbf()
          f18_end_print( NIL, @_print_opt )
       ENDIF
 
@@ -143,7 +143,7 @@ FUNCTION StAnalNal( lAuto )
       Msg( "Sve stavke su stavljene na stanje" )
    ENDIF
 
-   CLOSE ALL
+   my_close_all_dbf()
 
    RETURN
 
@@ -278,7 +278,7 @@ FUNCTION SintStav( lAuto )
 
    GO TOP
    IF Empty( BrNal )
-      CLOSE ALL
+      my_close_all_dbf()
       RETURN
    ENDIF
 
@@ -435,6 +435,6 @@ FUNCTION SintStav( lAuto )
       ENDDO
    ENDDO
 
-   CLOSE ALL
+   my_close_all_dbf()
 
    RETURN

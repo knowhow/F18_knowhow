@@ -175,7 +175,7 @@ O_FIN_PRIPR
 
 if reccount2() <> 0
     MsgBeep( "Priprema mora biti prazna" )
-    close all
+    my_close_all_dbf()
 endif
 
 zap
@@ -616,7 +616,7 @@ enddo // eof
 Postotak(0)
 
 end print
-close all
+my_close_all_dbf()
 
 return
 
@@ -678,7 +678,7 @@ do while .t.
     if !VarEdit( _arr, 9,5,17,74,;
                'POSTAVLJANJE USLOVA ZA IZDVAJANJE SUBANALITICKIH STAVKI',;
                "B1")
-        close all
+        my_close_all_dbf()
         return
     endif
    
@@ -796,7 +796,7 @@ DO WHILE .t.
     ENDIF
 ENDDO
 
-close all
+my_close_all_dbf()
 return ( NIL )
 
 

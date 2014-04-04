@@ -694,7 +694,7 @@ MsgC()
 
 // ako je vise kalkulacija ne zatvaraj tabele
 if !lViseKalk
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -1556,7 +1556,7 @@ do while .t.
         cBrdok := brdok
 
         if !lViseKalk
-            close all
+            my_close_all_dbf()
         endif
 
         // kontiranje dokumenta...
@@ -1582,7 +1582,7 @@ if fStara .and. !lViseKalk
 endif
 
 if !lViseKalk
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -1647,7 +1647,7 @@ BoxC()
 dDatMax := dDatDo
 
 if LASTKEY() == K_ESC
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -1685,7 +1685,7 @@ do while !eof()
 enddo
 
 MsgBeep("Obradjeno " + STR(nCount, 7, 0) + " dokumenata")
-close all
+my_close_all_dbf()
 RETURN
 
 

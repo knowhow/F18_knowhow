@@ -117,11 +117,11 @@ ObjDbedit("", _x-3, _y, {|| fakt_tabela_komande (lOpcine, cFilter) }, "", "", , 
 BoxC()
 
 if fUpripremu
-    close all
+    my_close_all_dbf()
     fakt_unos_dokumenta()
 endif
 
-close all
+my_close_all_dbf()
 return
 
 

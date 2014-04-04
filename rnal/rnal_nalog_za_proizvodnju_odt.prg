@@ -75,7 +75,7 @@ if f18_odt_generate( _template )
     f18_odt_print()
 endif
 
-close all
+my_close_all_dbf()
 
 _ok := .t.
 

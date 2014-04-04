@@ -60,7 +60,7 @@ else
 	_print_list( cMonthFrom, cMonthTo, cYear, nRptVar1, nRptVar2, cKred )
 endif
 
-close all
+my_close_all_dbf()
 
 return
 

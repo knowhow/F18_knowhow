@@ -136,7 +136,7 @@ return
 function _kreiraj_params_tabele()
 local _table_name, _alias, aDBF
 
-close all
+CLOSE ALL
 
 aDbf := {}
 AADD(aDbf, {"FH","C",1,0} )  // istorija
@@ -212,7 +212,7 @@ if (nArea==nil)
     nArea:=-1
 endif
 
-close all
+CLOSE ALL
 
 if gReadonly
     return
@@ -259,7 +259,7 @@ if fieldpos("VAR")<>0  // stara varijanta parametara
        restore screen from cScr
 endif
 endif
-close all
+CLOSE ALL
 return
 *}
 

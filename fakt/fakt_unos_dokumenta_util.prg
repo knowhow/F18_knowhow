@@ -1691,7 +1691,7 @@ return lRet
 
 
 function ImportTxt()
-CLOSE ALL
+my_close_all_dbf()
 cKom :="fmk.exe --batch --exe:ImportTxt --db:"+STRTRAN(TRIM(gNFirma), " ", "_") 
 //hb_run(cKom)
 MsgBeep("nije implementirano u F18 ##" + cKom)

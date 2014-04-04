@@ -140,7 +140,7 @@ lPrintedTotal := .f.
 if lStartPrint
 
     if !StartPrint(nil, nil)
-        close all
+        my_close_all_dbf()
         return
     endif
 

@@ -79,7 +79,7 @@ Box(, 8, 60)
 BoxC()
 
 if LastKey()==K_ESC
-	close all
+	my_close_all_dbf()
     return
 endif
 
@@ -97,7 +97,7 @@ AADD(aZagl, { "(1)",     "(2)",      "(3)",  "(4)",  "(5)",  "(6)", "(7)" })
 fill_rpt()
 show_rpt(  .f.,  .f.)
 
-close all
+my_close_all_dbf()
 *}
 
 // ----------------------------------------------
@@ -119,7 +119,7 @@ static function cre_r_tbl()
 
 local aArr:={}
 
-close all
+my_close_all_dbf()
 
 ferase_dbf (cTbl)
 

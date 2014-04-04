@@ -74,7 +74,7 @@ ObjDbedit("lstnal", nBoxX, nBoxY, {|| key_handler() }, cHeader, cFooter, , , , ,
 
 BoxC()
 
-close all
+my_close_all_dbf()
 
 return 1
 

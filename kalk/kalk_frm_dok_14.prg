@@ -321,7 +321,7 @@ function KM2()
   nR2:=recno()
   select tarifa
   nR3:=recno()
-  close all
+  my_close_all_dbf()
   Karticam(_IdFirma,_idroba,_IdKonto2)
   o_kalk_edit()
   select roba

@@ -88,7 +88,7 @@ if nVar == 1
 		cArtFilter, cSezona, nVar, cSirovina )
 endif
 
-close all
+my_close_all_dbf()
 O_ROBA
 
 o_rxp( nVar )

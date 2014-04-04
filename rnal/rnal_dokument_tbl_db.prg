@@ -17,7 +17,7 @@
 // brisanje print tabela
 // ----------------------------------
 function d_rpt_dbfs()
-close all
+my_close_all_dbf()
 
 // t_docit.dbf
 FErase( my_home() + "t_docit.dbf")

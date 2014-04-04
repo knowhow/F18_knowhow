@@ -132,7 +132,7 @@ ELSE
     END PRINT
 ENDIF
 
-close all
+my_close_all_dbf()
 return
 
 

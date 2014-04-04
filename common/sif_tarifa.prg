@@ -528,7 +528,7 @@ FUNCTION KorekTar()
       RETURN
    ENDIF
 
-   CLOSE ALL
+   my_close_all_dbf()
 
    O_ROBA
 

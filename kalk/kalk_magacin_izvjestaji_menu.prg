@@ -58,7 +58,7 @@ AADD(_opcexe, {|| rpt_prspec() })
 
 f18_menu( "imag", .f., _izbor, _opc, _opcexe )
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -92,7 +92,7 @@ AADD(_opcexe,{|| RekmagTar()})
 
 f18_menu( "porm", .f., _izbor, _opc, _opcexe )
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -105,7 +105,7 @@ AADD(_opc,"1. rekapitulacija finansijskog stanja")
 AADD(_opcexe, {|| RFLLM() } )
 
 f18_menu( "rmag", .f., _izbor, _opc, _opcexe )
-close all
+my_close_all_dbf()
 return
 
 

@@ -477,7 +477,7 @@ IF lGusto
     gPStranica-=nDSGusto
 ENDIF
 
-close all
+my_close_all_dbf()
 END PRINT
 
 if Pitanje(, "Generisati virmane za ovaj obracun plate ? (D/N)", "N" ) == "D"
@@ -494,7 +494,7 @@ if Pitanje(, "Generisati virmane za ovaj obracun plate ? (D/N)", "N" ) == "D"
     // otvori pripremu virmana...
     unos_virmana()
     
-    close all
+    my_close_all_dbf()
 
 endif
 

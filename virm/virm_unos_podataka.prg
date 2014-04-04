@@ -61,7 +61,7 @@ ObjDBedit( "PripVir", MAXROWS()-8, MAXCOLS()-3, {|| _k_handler()},"","Priprema v
                "<c-P>   Stampanje",;
                "<a-P>   Rekapitulacija"},2,,,)
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -525,7 +525,7 @@ use
 select izlaz
 use
 
-close all
+my_close_all_dbf()
 
 // ovdje treba kod za filovanje datoteke IZLAZ.DBF
 if LastKey() != K_ESC 

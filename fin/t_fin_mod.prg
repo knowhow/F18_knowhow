@@ -57,7 +57,7 @@ METHOD mMenu()
 
    auto_kzb()
 
-   CLOSE ALL
+   my_close_all_dbf()
 
    @ 1, 2 SAY PadC( gTS + ": " + gNFirma, 50, "*" )
    @ 4, 5 SAY ""

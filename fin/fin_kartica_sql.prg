@@ -70,7 +70,7 @@ if _cre_xml( _rpt_data, _rpt_vars )
 endif
 
 if _exported 
-    close all
+    my_close_all_dbf()
     // otvori mi eksport dokument
     f18_open_mime_document( my_home() + "r_export.dbf" )
 endif

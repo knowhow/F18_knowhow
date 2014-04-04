@@ -30,7 +30,7 @@ AADD( _opcexe, {|| kadev_rekrstall() } )
 
 f18_menu( "recl", .f., _izbor, _opc, _opcexe )
 
-close all
+my_close_all_dbf()
 
 return
 
@@ -89,7 +89,7 @@ Box("b0XX", 2, 65,.f.)
 BoxC()
 
 if LastKey() == K_ESC
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -140,7 +140,7 @@ do while !EOF() .and. IF( !EMPTY( _radn_id ), field->id == _radn_id, .t.  )
         f18_free_tables( { "kadev_0","kadev_1" } )
         sql_table_update( NIL, "ROLLBACK" )
         PopWa()
-        close all
+        my_close_all_dbf()
         return
     endif
 
@@ -160,7 +160,7 @@ endif
 
 PopWa()
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -333,7 +333,7 @@ ELSE
         read
     BoxC()
     if lastkey()==K_ESC
-        close all
+        my_close_all_dbf()
         return
     endif
 endif
@@ -369,7 +369,7 @@ do while !eof()
         // otkljucaj tabele...
         f18_free_tables( { "kadev_0", "kadev_1" } )
         sql_table_update( NIL, "ROLLBACK" )
-        close all
+        my_close_all_dbf()
         return
     endif
 
@@ -393,7 +393,7 @@ ENDIF
 
 PopWa()
 
-close all
+my_close_all_dbf()
 
 return
 

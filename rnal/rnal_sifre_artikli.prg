@@ -1919,7 +1919,7 @@ enddo
 
 BoxC()
 
-close all
+my_close_all_dbf()
 
 if LEN( _error ) == 0
     return

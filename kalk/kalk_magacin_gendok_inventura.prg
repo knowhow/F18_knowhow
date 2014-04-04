@@ -186,7 +186,7 @@ endif
 
 MsgC()
 
-close all
+my_close_all_dbf()
 
 return
 
@@ -307,7 +307,7 @@ enddo
 
 MsgC()
 
-close all
+my_close_all_dbf()
 
 return
 

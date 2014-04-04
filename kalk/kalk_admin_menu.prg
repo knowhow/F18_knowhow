@@ -41,7 +41,7 @@ AADD( _opcexe, {|| roba_setuj_mpc_iz_vpc() })
 
 f18_menu("admk", .f., _izbor, _opc, _opcexe )
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -68,7 +68,7 @@ AADD(opcexe, {|| NaPrimPak() })
 private Izbor:=1
 Menu_SC("kska")
 
-close all
+my_close_all_dbf()
 return
 
 

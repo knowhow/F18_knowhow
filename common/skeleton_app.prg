@@ -204,7 +204,7 @@ return
 method quit(lVratiseURP)
 
 local cKontrDbf
-close all
+my_close_all_dbf()
 
 if (lVratiseURP==nil)
   lVratiseURP:=.t.

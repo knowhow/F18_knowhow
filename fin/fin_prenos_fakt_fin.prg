@@ -85,7 +85,7 @@ select params
 use
 
 if lastkey()==K_ESC
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -216,7 +216,7 @@ enddo
 
 select finmat
 if reccount2()>0
-    close all
+    my_close_all_dbf()
     fin_kontiranje_naloga(dDatDo)
 else
     MsgBeep("Nema dokumenata za prenos ...")

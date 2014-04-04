@@ -208,7 +208,7 @@ select kalk; set order to tag "1"; go nTrec
  skip
 enddo
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -368,7 +368,7 @@ do while !eof() .and. cIdFirma+cIdKonto==idFirma+pKonto
 enddo
 
 MsgC()
-close all
+my_close_all_dbf()
 return
 
 
@@ -455,7 +455,7 @@ DO WHILE !EOF().and.idvd=="19".and.brdok==cStBrDok
 ENDDO
 MsgC()
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -659,7 +659,7 @@ if lGenerisao
     MsgBeep("Generisana nivelacija u kalk_pripremi - obradite je!")
 endif
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -725,7 +725,7 @@ do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
   skip
 enddo
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -808,7 +808,7 @@ DO WHILE !EOF() .AND. cIdFirma==IdFirma .and. Pkonto==cPKonto
    if round(nMPVSaPP,4)<>0
      if !lUPripr
        MsgBeep("U kalk_pripremi se ne nalazi unesena stavka za tarifu :"+cIdtarifa+" ?")
-       close all
+       my_close_all_dbf()
        return .f.
      else
        nMPVSappREal := kalk_pripr->mpcsapp * kolicina
@@ -851,7 +851,7 @@ DO WHILE !EOF() .AND. cIdFirma==IdFirma .and. Pkonto==cPKonto
 
 ENDDO // konto
 
-close all
+my_close_all_dbf()
 return .t.
 
 
@@ -952,7 +952,7 @@ endif
     SKIP 1
   ENDDO
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -1049,7 +1049,7 @@ endif
     SKIP 1
   ENDDO
 
-close all
+my_close_all_dbf()
 return
 
 

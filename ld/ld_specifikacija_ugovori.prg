@@ -471,7 +471,7 @@ UzmiIzIni(cIniName,'Varijable','UKOBAV',FormNum2(nPom,16,gPici2),'WRITE')
 IniRefresh()
 //Odstampaj izvjestaj
 
-close all
+my_close_all_dbf()
 
 if lastkey() != K_ESC
 

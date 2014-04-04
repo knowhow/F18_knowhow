@@ -145,11 +145,11 @@ do while !EOF()
 	SELECT kalk_pripr
 	SKIP 1
 enddo
-close all
+my_close_all_dbf()
 
 f18_rtm_print( "barkod", "barkod", "1" )
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -297,11 +297,11 @@ SKIP 1
 
 enddo
 
-close all
+my_close_all_dbf()
 
 f18_rtm_print( "barkod", "barkod", "1" )
 
-close all
+my_close_all_dbf()
 return
 
 

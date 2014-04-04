@@ -128,7 +128,7 @@ if lGenerisiZavisne = .t.
     kalk_vrati_iz_pripr2()
 endif
 
-close all
+my_close_all_dbf()
 
 return
 
@@ -546,7 +546,7 @@ do while !eof()
         if field->idvd == "11".and. field->vpc == 0
             Beep(1)
             Msg('VPC = 0, pozovite "savjetnika" sa <Alt-H>!')
-            close all
+            my_close_all_dbf()
             return .f.
         endif
         skip
@@ -591,14 +591,14 @@ do while !eof()
         if gMetodaNC <> " " .and. ( field->error == "1" .and. field->tbanktr == "X" )
             Beep(2)
             MSG("Izgenerisane stavke su ispravljane, azuriranje nece biti izvrseno",6)
-            close all
+            my_close_all_dbf()
             return .f.
         endif
 
         if gMetodaNC <> " " .and. field->error == "1"
             Beep(2)
             MSG("Utvrdjena greska pri obradi dokumenta, rbr: "+rbr,6)
-            close all
+            my_close_all_dbf()
             return .f.
         endif
 
@@ -606,7 +606,7 @@ do while !eof()
             if gMetodaNC <> " " .and. field->error == " "
                 Beep(2)
                 MSG("Dokument je izgenerisan, pokrenuti opciju <A> za obradu",6)
-                close all
+                my_close_all_dbf()
                 return .f.
             endif
             if dDatDok <> field->datdok
@@ -614,7 +614,7 @@ do while !eof()
                 if Pitanje(,"Datum razlicit u odnosu na prvu stavku. Ispraviti ?", "D") == "D"
                     replace field->datdok with dDatDok
                 else
-                    close all
+                    my_close_all_dbf()
                     return .f.
                 endif
             endif
@@ -623,14 +623,14 @@ do while !eof()
         if field->idvd <> "24" .and. empty(field->mu_i) .and. empty(field->pu_i)
             Beep(2)
             Msg("Stavka broj " + field->rbr + ". neobradjena , sa <A> pokrenite obradu")
-            close all
+            my_close_all_dbf()
             return .f.
         endif
         
         if cIdzaduz2 <> field->idzaduz2
             Beep(2)
             Msg("Stavka broj " + field->rbr + ". razlicito polje RN u odnosu na prvu stavku")
-            close all
+            my_close_all_dbf()
             return .f.
         endif
 
@@ -645,7 +645,7 @@ do while !eof()
         Beep(1)
         Msg("Vec postoji dokument pod brojem " + cIdFirma + "-" + cIdvd + "-" + ALLTRIM(cBrDok) )
         if !lViseDok
-            close all
+            my_close_all_dbf()
             return .f.
         else
             AADD( aDoks, cIdFirma + cIdVd + cBrDok )
@@ -659,11 +659,11 @@ enddo
 if gMetodaNC <> " " .and. nBrDoks > 1
     Beep(1)
     Msg("U kalk_pripremi je vise dokumenata.Prebaci ih u smece, pa obradi pojedinacno")
-    close all
+    my_close_all_dbf()
     return .f.
 endif
 
-close all
+my_close_all_dbf()
 
 return .t.
 
@@ -735,7 +735,7 @@ if raspored_tr == NIL
 endif
 
 // prvo zatvori sve tabele
-close all
+my_close_all_dbf()
 
 O_KALK_PRIPR
 O_KALK
@@ -1071,7 +1071,7 @@ enddo
 select kalk_pripr
 my_dbf_zap()
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -1094,7 +1094,7 @@ _brisi_kum := .f.
 if gCijene=="2" .and. Pitanje(,"Zadati broj (D) / Povrat po hronologiji obrade (N) ?","D") = "N"
     Beep(1)
     PNajn()
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -1128,12 +1128,12 @@ BoxC()
 // ako je uslov sa tackom, vrati sve nabrojane u pripremu...
 if _br_dok = "."
     povrat_vise_dokumenata()
-    close all
+    my_close_all_dbf()
     return
 endif
     
 if Pitanje( "", "Kalk. " + _id_firma + "-" + _id_vd + "-" + _br_dok + " povuci u pripremu (D/N) ?", "D" ) == "N"
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -1240,7 +1240,7 @@ if _brisi_kum
         f18_free_tables({"kalk_doks", "kalk_kalk", "kalk_doks2" })
 
         msgbeep("Brisanje KALK dokumenta neuspjesno !?")
-        close all
+        my_close_all_dbf()
         return
     endif
 
@@ -1255,7 +1255,7 @@ use
 select kalk
 use
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -1277,7 +1277,7 @@ local _del_rec, _ok
 local _dok_hash, oAtrib, __firma, __idvd, __brdok
 
 if !SigmaSif()
-    close all
+    my_close_all_dbf()
     return .f.
 endif
     
@@ -1358,7 +1358,7 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
 
     // ako ne treba brisati kumulativ
     if !_brisi_kum
-        close all
+        my_close_all_dbf()
         return .f.
     endif
 
@@ -1423,7 +1423,7 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
         if !_ok
             MsgC()
             MsgBeep("Problem sa brisanjem tabele kalk !!!")
-            close all
+            my_close_all_dbf()
             return .f.
         endif
         
@@ -1440,7 +1440,7 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
 
 endif
     
-close all
+my_close_all_dbf()
     
 return .t.
 
@@ -1533,14 +1533,14 @@ if !lSilent
             enddo
             MsgC()
         endif
-        close all
+        my_close_all_dbf()
         return
     endif
 endif 
 
 if Pitanje("","Iz smeca "+cIdFirma+"-"+cIdVD+"-"+cBrDok+" povuci u pripremu (D/N) ?","D")=="N"
     if !lSilent
-        close all
+        my_close_all_dbf()
         return
     else
         return
@@ -1580,7 +1580,7 @@ MsgC()
 log_write( "F18_DOK_OPER: kalk, povrat dokumenta iz smeca: " + cIdFirma + "-" + cIdVd + "-" + cBrDok, 2 )
 
 if !lSilent
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -1607,7 +1607,7 @@ cIdVD:=space(2)
 cBrDok:=space(8)
 
 if Pitanje(,"Povuci u pripremu najstariji dokument ?","N")=="N"
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -1645,7 +1645,7 @@ enddo
 use
 MsgC()
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -1678,12 +1678,12 @@ dDatDok := datdok
 
 if EOF()
     Msg("Na stanju nema dokumenata..")
-    close all
+    my_close_all_dbf()
     return
 endif
 
 if Pitanje(,"Vratiti u pripremu dokumente od "+dtoc(dDatDok)+" ?","N")=="N"
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -1774,7 +1774,7 @@ enddo
 
 MsgC()
 
-close all
+my_close_all_dbf()
 return
 
 

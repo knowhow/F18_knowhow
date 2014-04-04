@@ -257,7 +257,7 @@ if Pitanje(,"Obraditi automatski dokument iz kalk_pripreme (D/N)?", "N") == "D"
 	ObradiDokument( nil, nil, __stampaj )
 else
 	MsgBeep("Dokument nije obradjen!#Obradu uradite iz kalk_pripreme!")
-	close all
+	my_close_all_dbf()
 endif
 
 return
@@ -323,7 +323,7 @@ local cDelimiter := ";"
 local _o_file 
 
 // prvo kreiraj tabelu temp
-close all
+my_close_all_dbf()
 
 CreTemp(aDbf, .f.)
 O_TEMP
@@ -454,7 +454,7 @@ local cFirstRow
 local _o_file
 
 // prvo kreiraj tabelu temp
-close all
+my_close_all_dbf()
 
 CreTemp(aDbf)
 O_TEMP

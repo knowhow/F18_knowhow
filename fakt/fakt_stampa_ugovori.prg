@@ -33,7 +33,7 @@ cTipDok := "10"
 fakt_stampa_azuriranog_period( gFirma, cTipDok, cBrOd, cBrDo )
 
 gcDirekt := cDirPom
-close all
+my_close_all_dbf()
 
 return
 

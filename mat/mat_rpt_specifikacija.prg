@@ -230,7 +230,7 @@ go top
 
 if eof()
     Msg("Ne postoje trazeni podaci...",6)
-    close all 
+    my_close_all_dbf() 
     return
 endif
 
@@ -255,7 +255,7 @@ StampaTabele(aKol,{|| FSvaki1()},,gTabela,,;
 
 END PRINT
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -377,7 +377,7 @@ FUNCTION SrediKonta()
     ENDIF
     GO (nRec)
   ENDDO
-close all
+my_close_all_dbf()
 return
 
 

@@ -32,7 +32,7 @@ FUNCTION kalk_unos_dokumenta()
 
    kalk_unos_stavki_dokumenta()
 
-   CLOSE ALL
+   my_close_all_dbf()
 
    RETURN
 
@@ -158,7 +158,7 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
 
    BoxC()
 
-   CLOSE ALL
+   my_close_all_dbf()
 
    RETURN
 
@@ -309,7 +309,7 @@ STATIC FUNCTION _kalk_pripr_duple_stavke()
 // ------------------------------------------------------------
 STATIC FUNCTION kalk_24_rekapitulacija()
 
-   CLOSE ALL
+   my_close_all_dbf()
 
    RekapK()
 
@@ -366,7 +366,7 @@ FUNCTION kalk_pripr_key_handler()
 
    CASE Ch == K_ALT_P
 
-      CLOSE ALL
+      my_close_all_dbf()
       IzbDokOLPP()
       // StPripr()
       o_kalk_edit()
@@ -375,7 +375,7 @@ FUNCTION kalk_pripr_key_handler()
 
    CASE Ch == K_ALT_L
 
-      CLOSE ALL
+      my_close_all_dbf()
 
       label_bkod()
       o_kalk_edit()
@@ -386,7 +386,7 @@ FUNCTION kalk_pripr_key_handler()
 
       IF Pitanje(, "Stampa naljepnica(labela) za robu ?", "D" ) == "D"
 
-         CLOSE ALL
+         my_close_all_dbf()
 
          RLabele()
          o_kalk_edit()
@@ -403,7 +403,7 @@ FUNCTION kalk_pripr_key_handler()
          JerryMP()
       ENDIF
 
-      CLOSE ALL
+      my_close_all_dbf()
 
       azur_kalk()
       o_kalk_edit()
@@ -425,7 +425,7 @@ FUNCTION kalk_pripr_key_handler()
          SELECT kalk_pripr
 
          UzmiIzINI( PRIVPATH + "FMK.INI", "Indikatori", "ImaU_KALK", "N", "WRITE" )
-         CLOSE ALL
+         my_close_all_dbf()
 
          o_kalk_edit()
          MsgBeep( "Stavke koje su bile privremeno sklonjene sada su vracene! Obradite ih!" )
@@ -436,10 +436,10 @@ FUNCTION kalk_pripr_key_handler()
 
    CASE Ch == K_CTRL_P
 
-      CLOSE ALL
+      my_close_all_dbf()
       kalk_centr_stampa_dokumenta()
 
-      CLOSE ALL
+      my_close_all_dbf()
       o_kalk_edit()
 
       RETURN DE_REFRESH
@@ -1070,7 +1070,7 @@ FUNCTION MeniF10()
    AAdd( opc, "J. zaduzenje prodavnice iz magacina (10->11)"   )
    AAdd( opc, "K. veleprodaja na osnovu dopreme u magacin (16->14)"   )
 
-   CLOSE ALL
+   my_close_all_dbf()
 
    PRIVATE am_x := m_x, am_y := m_y
    PRIVATE Izbor := 1
@@ -1288,7 +1288,7 @@ FUNCTION MeniF11()
    AAdd( opc, "8. provjeri duple stavke u pripremi" )
    AAdd( opcexe, {|| _kalk_pripr_duple_stavke() } )
 
-   CLOSE ALL
+   my_close_all_dbf()
    PRIVATE am_x := m_x, am_y := m_y
    PRIVATE Izbor := 1
 
@@ -2200,7 +2200,7 @@ FUNCTION IzbDokOLPP()
 
    ENDDO
 
-   CLOSE ALL
+   my_close_all_dbf()
 
    RETURN
 
@@ -2462,7 +2462,7 @@ FUNCTION kalk_centr_stampa_dokumenta()
       cSeek := ""
    ENDIF
 
-   CLOSE ALL
+   my_close_all_dbf()
 
    // otvori potrebne tabele
    _o_ctrl_tables( fstara )
@@ -2527,7 +2527,7 @@ FUNCTION kalk_centr_stampa_dokumenta()
       // provjeri da li kalkulacija ima sve cijene ?
       IF !kalkulacija_ima_sve_cijene( cIdFirma, cIdVd, cBrDok )
          MsgBeep( "Unutar kalkulacije nedostaju pojedine cijene bitne za obracun!#Stampanje onemoguceno." )
-         CLOSE ALL
+         my_close_all_dbf()
          RETURN
       ENDIF
 
@@ -2704,7 +2704,7 @@ FUNCTION kalk_centr_stampa_dokumenta()
 
       // zapamti tabelu, zapis na kojima si stao
       PushWa()
-      CLOSE ALL
+      my_close_all_dbf()
       ENDPRINT
 
       _o_ctrl_tables( fstara )
@@ -2743,7 +2743,7 @@ FUNCTION kalk_centr_stampa_dokumenta()
       ELSEIF ( cIdVd == "19" )
          Stkalk19()
       ENDIF
-      CLOSE ALL
+      my_close_all_dbf()
       FF
       ENDPRINT
 
@@ -2767,13 +2767,13 @@ FUNCTION kalk_centr_stampa_dokumenta()
       ELSEIF ( cIdVd == "81" )
          StKalk81( .T. )
       ENDIF
-      CLOSE ALL
+      my_close_all_dbf()
       FF
       ENDPRINT
 
    ENDIF
 
-   CLOSE ALL
+   my_close_all_dbf()
 
    RETURN NIL
 
@@ -2934,6 +2934,6 @@ FUNCTION StOLPPAz()
 
    ENDDO  // vrti kroz kalkulacije
 
-   CLOSE ALL
+   my_close_all_dbf()
 
    RETURN NIL

@@ -58,7 +58,7 @@ else
    endif   
 endif
 
-close all
+CLOSE ALL
 
 alias := FILEBASE(alias)
  
@@ -206,7 +206,7 @@ endif
 
 next
 
-close all
+CLOSE ALL
 return
 
 

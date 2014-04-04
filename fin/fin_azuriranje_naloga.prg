@@ -188,7 +188,7 @@ STATIC FUNCTION get_fin_nalozi()
 // -----------------------------
 FUNCTION o_fin_za_azuriranje()
 
-   CLOSE ALL
+   my_close_all_dbf()
 
    // kumulativne...
    O_KONTO
@@ -811,7 +811,7 @@ STATIC FUNCTION fin_brisi_p_tabele( close_all )
    my_dbf_zap()
 
    IF close_all
-      CLOSE ALL
+      my_close_all_dbf()
    ENDIF
 
    RETURN

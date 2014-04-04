@@ -150,7 +150,7 @@ _o_tbls()
 
 // napravi bazne provjere dokumenta prije azuriranja
 if !_provjera_dokumenta()
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -164,7 +164,7 @@ else
     msgbeep( "Problem sa azuriranjem mat/sql !" )
 endif
 
-close all
+my_close_all_dbf()
 
 return
 

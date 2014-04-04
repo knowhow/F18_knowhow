@@ -33,7 +33,7 @@ AADD(_opcexe,{||  mag_fa_ka_prenos_otpr_period() })
 
 f18_menu("fkma", .f., _izbor, _opc, _opcexe )
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -262,7 +262,7 @@ enddo
 
 BoxC()
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -522,7 +522,7 @@ enddo
 
 BoxC()
 
-close all
+my_close_all_dbf()
 
 return
 
@@ -707,7 +707,7 @@ ENDDO
 
 BoxC()
 
-close all
+my_close_all_dbf()
 
 return
 

@@ -125,7 +125,7 @@ F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB):zapp_local_table()
 
 MsgC()
     
-close all
+my_close_all_dbf()
 
 return _a_fakt_doks
 
@@ -172,7 +172,7 @@ local _ids_doks  := {}
 local _ids_doks2 := {}
 local oAtrib
 
-close all
+my_close_all_dbf()
 
 _tbl_fakt  := "fakt_fakt"
 _tbl_doks  := "fakt_doks"
@@ -291,7 +291,7 @@ local _fakt_totals
 local _fakt_doks_data
 local _fakt_doks2_data
 
-close all
+my_close_all_dbf()
 o_fakt_edit()
 
 Box( "#Proces azuriranja dbf-a u toku", 3, 60 )
@@ -595,7 +595,7 @@ if ( gProtu13 == "D" .and. ;
         
     if lVecPostoji
         Msg("Vec postoji dokument pod brojem "+fakt_pripr->(cPRJ+"-01-"+TRIM(brdok)+"/13"),4)
-        close all
+        my_close_all_dbf()
         return .f.
     endif
 
@@ -650,7 +650,7 @@ if used()
     USE
 endif
 
-close all
+my_close_all_dbf()
 
 if _open_pfakt == NIL
   _open_pfakt := .f.

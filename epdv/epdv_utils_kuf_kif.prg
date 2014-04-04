@@ -158,7 +158,7 @@ local _table := "epdv_kuf"
 
 // TAG: datum : "dtos(datum)+src_br_2"
 
-close all
+my_close_all_dbf()
 
 do case
 	case cTblName == "KUF"
@@ -177,7 +177,7 @@ GO TOP
 if !FLOCK()
 	MsgBeep("Ne mogu zakljucati bazu " + cTblName + ;
 	 "## renumeracije nije izvrsena !")
-	 close all
+	 my_close_all_dbf()
 endif	 
 
 Box( , 2, 35)
@@ -204,6 +204,6 @@ sql_table_update( nil, "END" )
 
 BoxC()
 
-close all
+my_close_all_dbf()
 return 
 

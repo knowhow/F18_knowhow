@@ -280,7 +280,7 @@ if _export
 	tbl_export( _start_cmd )
 endif
 
-close all
+my_close_all_dbf()
 return
 
 

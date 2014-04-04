@@ -282,7 +282,7 @@ do case
             rpt_kuf(nBrDokP)
     endif
 
-    close all
+    my_close_all_dbf()
 
     o_kuf(.t.)
 

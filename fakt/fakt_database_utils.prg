@@ -177,7 +177,7 @@ do while !eof()
 	nKey:=INKEY()
 	
 	if (nKey==K_ESC)
-		CLOSE ALL 
+		my_close_all_dbf() 
 		RETURN
 	endif
 

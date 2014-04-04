@@ -332,7 +332,7 @@ else
 endif
 
 if close .and. fRet
-  close all
+  my_close_all_dbf()
 endif
 return fRet
 
@@ -667,7 +667,7 @@ if _rec <> NIL
 endif
 
 if _area <= 0
-    close all
+    my_close_all_dbf()
     quit
 endif
 
@@ -683,7 +683,7 @@ _area := F_baze( tbl )
 if _area > 0
     select ( _area )
 else
-    close all
+    my_close_all_dbf()
     quit
 endif
 

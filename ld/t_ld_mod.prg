@@ -48,7 +48,7 @@ set_hot_keys()
 
 Izbor:=1
 
-close all
+my_close_all_dbf()
 
 @ 1,2 SAY padc(gTS+": "+gNFirma,50,"*")
 @ 4,5 SAY ""

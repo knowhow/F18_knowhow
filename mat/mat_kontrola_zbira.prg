@@ -120,7 +120,7 @@ Box("KZB",10,77,.f.)
     Inkey(0)
 BoxC()
 
-close all
+my_close_all_dbf()
 return
 
 

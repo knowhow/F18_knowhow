@@ -39,7 +39,7 @@ AADD(_opcexe, {|| kont_v_kalk()} )
 
 f18_menu( "rmod", .f., _izbor, _opc, _opcexe )
 
-close all
+my_close_all_dbf()
 
 return
 

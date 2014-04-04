@@ -96,7 +96,7 @@ enddo
 
 ? cLine
 
-close all
+my_close_all_dbf()
 
 FF
 END PRINT

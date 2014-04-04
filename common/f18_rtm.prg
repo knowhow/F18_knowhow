@@ -38,7 +38,7 @@ local _error
 #endif
 
 #ifdef __PLATFORM__LINUX
-   close all
+   my_close_all_dbf()
 #endif
 
 // provjera uslova

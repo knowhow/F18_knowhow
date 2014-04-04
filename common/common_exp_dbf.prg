@@ -29,7 +29,7 @@ static cKonverzija := "4"
 // kreiraj tabelu u home direktoriju
 function t_exp_create( field_list )
 
-close all
+my_close_all_dbf()
 
 ferase( my_home() + __table + ".dbf" )
 
@@ -43,7 +43,7 @@ return
 function tbl_export( launch )
 local _cmd
 
-close all
+my_close_all_dbf()
 
 _cmd := ALLTRIM( launch )
 _cmd += " "

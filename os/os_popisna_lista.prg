@@ -195,7 +195,7 @@ xml_subnode( "inv", .t. )
 
 close_xml()
 
-close all
+my_close_all_dbf()
 
 if _rbr > 0
     _ok := .t.

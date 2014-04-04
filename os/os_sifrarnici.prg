@@ -68,7 +68,7 @@ _o_sif_tables()
 
 f18_menu("sifre", .f., _izbor, _opc, _opcexe )
 
-close all
+my_close_all_dbf()
 return
 
 

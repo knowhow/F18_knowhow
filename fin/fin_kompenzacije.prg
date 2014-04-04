@@ -269,7 +269,7 @@ Box(, _row, _col )
 
 BoxC()
 
-close all
+my_close_all_dbf()
 return
 
 

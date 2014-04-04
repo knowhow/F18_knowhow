@@ -243,7 +243,7 @@ nDugBHD:=nPotBHD:=0
 FF
 END PRINT
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -457,7 +457,7 @@ Box("count",1,30,.f.)
 BoxC() 
 // counter zatvaranja
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -656,7 +656,7 @@ Box(, MAXROWS() - 5, MAXCOLS() - 10 )
 
 BoxC()
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -1639,7 +1639,7 @@ do while !EOF() .and. field->idfirma + field->idkonto + field->idpartner = cIdfi
         if cDugPot = field->d_p .and. empty( field->brdok )
             MsgBeep("Postoje nepopunjen brojevi veze :" + ;
                 field->idvn + "-" + field->brdok + "/" + field->rbr + "##Morate ih popuniti !")
-            close all
+            my_close_all_dbf()
             return
         endif
 
@@ -2123,7 +2123,7 @@ if pitanje(, "Zelite li izvrsiti azuriranje rezultata asistenta u bazu SUBAN !!"
                 
         if EOF() .or. idfirma<>osuban->idfirma .or. idvn<>osuban->idvn .or. brnal<>osuban->brnal .or. idkonto<>osuban->idkonto .or. idpartner<>osuban->idpartner .or. d_p<>osuban->d_p
                 MsgBeep("Izgleda da je drugi korisnik radio na ovom partneru#Prekidam operaciju !!!")
-            close all
+            my_close_all_dbf()
         endif
                 
         select osuban
@@ -2205,7 +2205,7 @@ if pitanje(, "Zelite li izvrsiti azuriranje rezultata asistenta u bazu SUBAN !!"
 
 endif
 
-close all
+my_close_all_dbf()
 return
 
 

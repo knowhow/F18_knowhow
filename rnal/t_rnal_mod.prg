@@ -51,7 +51,7 @@ method mMenu()
 //	return
 //endif
 
-close all
+my_close_all_dbf()
 
 set_hot_keys()
 
@@ -59,7 +59,7 @@ O_DOCS
 select docs 
 use
 
-close all
+my_close_all_dbf()
 
 @ 1,2 SAY padc( gNFirma, 50, "*")
 @ 4,5 SAY ""

@@ -288,7 +288,7 @@ PRIVATE cPom
 
 #ifdef __PLATFORM__UNIX
 // TODO: #27234
-//       close all
+//       my_close_all_dbf()
 #endif
 
 

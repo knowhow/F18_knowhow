@@ -50,7 +50,7 @@ f18_menu( "obr", .f., _izbor, _opc, _opcexe )
 
 @ 1,39 SAY SPACE(40) COLOR "N/N"
 
-close all
+my_close_all_dbf()
 
 return
 

@@ -34,7 +34,7 @@ Box("#KONTIRANJE OBRACUNA PLATE", 10, 75)
 BoxC()
 
 if LASTKEY() == K_ESC
-	close all
+	my_close_all_dbf()
 	return
 endif
 
@@ -51,7 +51,7 @@ O_REKLD
 
 if RECCOUNT() == 0
     MsgBeep("Potrebno pokrenuti specifikaciju u modulu LD !")
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -129,7 +129,7 @@ do while !eof()
 	skip 1
 enddo
 
-close all
+my_close_all_dbf()
 return
 
 

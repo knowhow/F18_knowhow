@@ -135,10 +135,10 @@ endif
 // azuriraj dokument automatski
 fin_set_broj_dokumenta()
 
-close all
+my_close_all_dbf()
 stampa_fin_document( .t. )
 
-close all
+my_close_all_dbf()
 fin_azur( .t. ) 
 
 MsgBeep( "Dokument formiran i automatski azuriran..." )

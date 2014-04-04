@@ -331,7 +331,7 @@ HSEEK STR(nGodina,4)+STR(nMjesec,2)
 
 IF !FOUND()
 	MsgBeep("Obracun za ovaj mjesec ne postoji !")
-	close all
+	my_close_all_dbf()
 	return .t.
 ENDIF
 
@@ -663,7 +663,7 @@ if LastKey() != K_ESC
 
 endif
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -932,7 +932,7 @@ if !_create_mtemp()
     return
 endif
 
-close all
+my_close_all_dbf()
 
 O_LD_RJ
 O_STRSPR
@@ -1146,7 +1146,7 @@ StampaTabele(aKol,{|| FSvaki3()},,gTabela,,;
 
 select ld
 
-close all
+my_close_all_dbf()
 
 FF
 END PRINT

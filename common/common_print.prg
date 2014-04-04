@@ -135,7 +135,7 @@ DO CASE
 
         // TODO: #27234
         //#ifdef __PLATFORM__UNIX
-        //    close all
+        //    my_close_all_dbf()
         //#endif
        
         _ret := f18_run(_cmd)

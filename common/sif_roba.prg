@@ -419,7 +419,7 @@ MsgC()
 
 // nema gresaka
 if LEN( _check ) == 0
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -483,7 +483,7 @@ next
 
 FF
 
-close all
+my_close_all_dbf()
 
 END PRINT
 

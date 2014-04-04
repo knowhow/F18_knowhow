@@ -368,7 +368,7 @@ static function o_tbl_roba( lTest, cSezSif )
 local cSifPath
 
 if lTest == .t.
-    close all
+    my_close_all_dbf()
     
     cSifPath := PADR( SIFPATH , 14 )
     // "c:\sigma\sif1\"
@@ -704,7 +704,7 @@ Box(,15,60)
     
 Boxc()
 
-close all
+my_close_all_dbf()
 
 return
 

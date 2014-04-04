@@ -74,11 +74,11 @@ else
     AADD( _opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
 endif
 
-close all
+my_close_all_dbf()
 OFmkRoba()
 
 f18_menu( "srob", .f., _izbor, _opc, _opcexe )
 
-close all
+my_close_all_dbf()
 return
 

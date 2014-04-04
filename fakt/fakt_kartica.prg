@@ -501,7 +501,7 @@ if cOstran!="D"
 endif
 
 END PRINT
-CLOSE ALL; MyFERASE(cTMPFAKT)
+my_close_all_dbf(); MyFERASE(cTMPFAKT)
 closeret
 
 

@@ -170,7 +170,7 @@ enddo
 
 RESTSCREEN(1,0,1,79,cScr)
 
-close all
+my_close_all_dbf()
 return
 
 

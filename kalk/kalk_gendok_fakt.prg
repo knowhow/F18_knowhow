@@ -335,7 +335,7 @@ do while .t.
 enddo
 Boxc()
 
-close all
+my_close_all_dbf()
 
 // fakt trazi ove varijabl
 glRadNal := .f.
@@ -343,7 +343,7 @@ glDistrib := .f.
 
 azur_fakt( .t. )
 
-close all
+my_close_all_dbf()
 
 return
 

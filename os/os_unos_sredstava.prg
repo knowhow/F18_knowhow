@@ -183,12 +183,12 @@ Box("#UNOS PROMJENA NAD STALNIM SREDSTVIMA", maxrows()-5, maxcols()-5 )
 
         ENDDO
 
-    close all
+    my_close_all_dbf()
     enddo
 
 BoxC()
 
-close all
+my_close_all_dbf()
 
 return
 

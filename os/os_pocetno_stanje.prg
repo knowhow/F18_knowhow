@@ -91,7 +91,7 @@ Box(, 10, 60 )
 
 BoxC()
 
-close all
+my_close_all_dbf()
 
 if LEN( _info ) > 0
     _rpt_info( _info )
@@ -112,7 +112,7 @@ return MsgBeep( _msg )
 // ---------------------------------------------------------------
 static function _set_os_promj_tables()
 
-close all
+my_close_all_dbf()
 
 o_os_sii()
 o_os_sii_promj()
@@ -127,7 +127,7 @@ select_promj()
 __table_promj := get_promj_table_name( ALIAS() )
 __table_promj_alias := ALIAS()
 
-close all
+my_close_all_dbf()
 
 return
 
@@ -167,7 +167,7 @@ local _count_promj := 0
 local _t_rec
 local _pos_x, _pos_y
 
-close all
+my_close_all_dbf()
 
 o_os_sii()
 o_os_sii_promj()
@@ -230,7 +230,7 @@ AADD( info, { "2) izbrisano promjena:", _count_promj, ""  } )
 
 _ok := .t.
 
-close all
+my_close_all_dbf()
 
 return _ok
 
@@ -345,7 +345,7 @@ local _i
 local _table
 local _row, _rec
 
-close all
+my_close_all_dbf()
 o_os_sii()
 
 data:Refresh()
@@ -369,7 +369,7 @@ do while !data:EOF()
 
 enddo
 
-close all
+my_close_all_dbf()
 
 return
 
@@ -382,7 +382,7 @@ local _i
 local _table
 local _row, _rec
 
-close all
+my_close_all_dbf()
 o_os_sii_promj()
 
 data:Refresh()
@@ -403,7 +403,7 @@ do while !data:EOF()
 
 enddo
 
-close all
+my_close_all_dbf()
 
 return
 
@@ -427,7 +427,7 @@ local _pos_x, _pos_y
 // nalazim se u tekucoj godini, zelim "slijepiti" promjene i izbrisati
 // otpisana sredstva u protekloj godini
 
-close all
+my_close_all_dbf()
 o_os_sii()
 o_os_sii_promj()
 
@@ -529,7 +529,7 @@ enddo
 f18_free_tables( { __table_os, __table_promj } )
 sql_table_update( nil, "END" )        
 
-close all
+my_close_all_dbf()
 
 _ok := .t.
 

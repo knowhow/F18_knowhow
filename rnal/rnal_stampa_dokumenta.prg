@@ -61,7 +61,7 @@ else
     nalpr_print( .t. )
 endif
 
-close all
+my_close_all_dbf()
 
 sleep(1)
 
@@ -159,7 +159,7 @@ else
     obrl_print( .t. )
 endif
 
-close all
+my_close_all_dbf()
 sleep(1)
 o_tables( __temp )
 
@@ -229,7 +229,7 @@ for i:=1 to LEN( aOlDocs )
 
 next
 
-close all
+my_close_all_dbf()
 
 o_tables( __temp )
 
@@ -263,7 +263,7 @@ _fill_aops()
 // printaj labele
 lab_print( lTemporary )
 
-close all
+my_close_all_dbf()
 
 o_tables( __temp )
 

@@ -85,7 +85,7 @@ AADD(aZagl, { "(1)"  , "(2)" , "(3)", "(4)", "(5)", "(6)=(4x5)", "7", "8=(5x7)",
 fill_uio(cIdFirma, cIdVd, cBrDok, lAkciznaRoba, lZasticeneCijene)
 show_uio( (cLandscape=="D"), (cSvakaHeader=="D"), lAkciznaRoba, lZasticeneCijene )
 
-close all
+my_close_all_dbf()
 *}
 
 /*! \fn get_uio_fields(aArr)
@@ -120,7 +120,7 @@ function t_uio_create()
 local cUioTbl := "R_UIO.DBF"
 local aArr:={}
 
-close all
+my_close_all_dbf()
 
 ferase ( PRIVPATH + "R_UIO.CDX" )
 

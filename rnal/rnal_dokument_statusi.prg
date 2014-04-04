@@ -221,7 +221,7 @@ if LastKey() == K_ESC
 
 endif
 
-close all
+my_close_all_dbf()
 
 return _ok
 

@@ -134,7 +134,7 @@ do while !EOF()
     skip 1
 enddo
 
-close all
+my_close_all_dbf()
 return
 
 

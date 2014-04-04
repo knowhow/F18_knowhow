@@ -1020,7 +1020,7 @@ END PRINT
 
 // export podataka, dbf
 if cExpDbf == "D"
-    close all
+    my_close_all_dbf()
   	tbl_export( cLaunch )
 endif
 

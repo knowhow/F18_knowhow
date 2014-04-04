@@ -67,7 +67,7 @@ do while !EOF()
 enddo
 MsgC()
 
-CLOSE ALL
+my_close_all_dbf()
 return
 
 
@@ -156,7 +156,7 @@ else
     MsgBeep("Inventurom nije evidentiran manjak pa nije generisan nikakav dokument!")
 endif
 
-CLOSE ALL
+my_close_all_dbf()
 
 return
 
@@ -243,7 +243,7 @@ else
     MsgBeep("Inventurom nije evidentiran visak pa nije generisan nikakav dokument!")
 endif
 
-CLOSE ALL
+my_close_all_dbf()
 return
 
 
@@ -367,7 +367,7 @@ Box(, 20, 75 )
         // ukini lock opcije
         set_metric( _lock_param, NIL, "" )
         
-        close all
+        my_close_all_dbf()
         o_fakt_edit()
         select fakt_pripr
         BoxC()
@@ -393,7 +393,7 @@ Box(, 20, 75 )
                 
                 set_metric( _lock_param, NIL, "" )
 
-                close all
+                my_close_all_dbf()
                 o_fakt_edit()
                 select fakt_pripr
 
@@ -444,7 +444,7 @@ else
     set_metric( _lock_param, NIL, "" )
 endif 
 
-close all
+my_close_all_dbf()
 o_fakt_edit()
 select fakt_pripr
 

@@ -21,10 +21,10 @@ if !empty(goModul:oDataBase:cSezonDir) .and. Pitanje(,"Prebaciti dokument u radn
            select kalk_priprrp
            append from kalk_pripr
            select kalk_pripr; zap
-           close all
+           my_close_all_dbf()
           endif
 endif
-close all
+my_close_all_dbf()
 
 return nil
 

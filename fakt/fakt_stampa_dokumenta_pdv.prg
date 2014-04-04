@@ -113,7 +113,7 @@ if lJFill
 	return
 endif
 
-close all
+my_close_all_dbf()
 
 if cIdTipDok $ "13#23"
 	// stampa 13-ke

@@ -76,7 +76,7 @@ Box(, _x, _y )
 	ObjDbedit( "PNal", _x , _y ,{|| _key_handler() },"","KAMATE Priprema.....ÍÍÍÍÍ", , , , ,3)
 BoxC()
 
-close all
+my_close_all_dbf()
 return
 
 

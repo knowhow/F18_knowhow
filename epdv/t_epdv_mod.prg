@@ -44,7 +44,7 @@ return nil
 // -----------------------------------------------
 method mMenu()
 
-close all
+my_close_all_dbf()
 
 set_hot_keys()
 

@@ -1620,7 +1620,7 @@ _create_ld_tmp()
 my_use( "_ld" )
 index on idradn + idrj tag "1"
  
-close all
+my_close_all_dbf()
 O_PAROBR
 O_LD_RJ
 O_RADN

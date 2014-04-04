@@ -138,7 +138,7 @@ enddo
 
 MsgC()
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -439,7 +439,7 @@ if RECCOUNT() > 0
     MsgBeep( "Dokument inventure formiran u pripremi, obradite ga!" )
 endif
 
-close all
+my_close_all_dbf()
 return
 
 

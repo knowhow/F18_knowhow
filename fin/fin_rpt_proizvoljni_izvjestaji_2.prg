@@ -268,7 +268,7 @@ Box(, 20, 70 )
 BoxC()
 
 if LASTKEY() == K_ESC
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -901,7 +901,7 @@ cNazRTM := trim(gmodul)+UzmiIzIni(EXEPATH+"proizvj.ini",'Varijable','OznakaIzvj'
 
 if file( EXEPATH+cNazRTM+".RTM")
     if Pitanje(,"Aktivirati Win report ?","D")=="D"
-        close all
+        my_close_all_dbf()
         KZNbazaWin(PRIVPATH+"pom")
         private cKomLin:="DelphiRB "+cNazRTM+" "+PRIVPATH+"  pom  "+cTag
         f18_run(cKomLin)
@@ -909,7 +909,7 @@ if file( EXEPATH+cNazRTM+".RTM")
     endif
 endif
 
-close all
+my_close_all_dbf()
 return
 
 

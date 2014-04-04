@@ -31,7 +31,7 @@ AADD( _opcexe, {|| ug_ch_price() })
 
 f18_menu( "mugo", .f., _izbor, _opc, _opcexe )
 
-close all
+my_close_all_dbf()
 
 return
 

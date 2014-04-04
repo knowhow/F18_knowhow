@@ -540,7 +540,7 @@ if lExpRpt
 	cLaunch := exp_report()
 	tbl_export(cLaunch)
 
-	close all
+	my_close_all_dbf()
 	return
 
 endif

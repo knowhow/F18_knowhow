@@ -563,7 +563,7 @@ endif
 
 select (nTArea)
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -662,7 +662,7 @@ do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
 
 enddo
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -814,7 +814,7 @@ function Iz16u14()
     SKIP 1
   ENDDO
 
-close all
+my_close_all_dbf()
 return
 
 

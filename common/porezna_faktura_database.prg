@@ -24,7 +24,7 @@ return
 // delete rn dbf's
 function del_rndbf()
 
-close all
+my_close_all_dbf()
 
 // drn.dbf
 FErase( my_home() + "drn.dbf" )

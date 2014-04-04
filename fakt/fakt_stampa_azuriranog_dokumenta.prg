@@ -31,7 +31,7 @@ if LASTKEY()==K_ESC
 	return
 endif
 
-close all
+my_close_all_dbf()
 
 StampTXT(cIdFirma, cIdTipDok, cBrDok)
 
@@ -78,7 +78,7 @@ if !lDirekt
 	endif
 endif
 
-close all
+my_close_all_dbf()
 O_FAKT_DOKS
 set order to tag "1"
 hseek cIdFirma + cIdTipDok

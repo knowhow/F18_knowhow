@@ -25,6 +25,13 @@ FUNCTION f18_ime_dbf( alias )
    RETURN cFullName
 
 
+
+FUNCTION my_close_all_dbf()
+   CLOSE ALL
+   hb_idleSleep( 0.5 )
+   RETURN
+
+
 FUNCTION my_delete()
    
    return delete_with_rlock()

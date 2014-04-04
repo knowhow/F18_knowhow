@@ -35,7 +35,7 @@ gPotpis := fetch_metric( "mat_rpt_potpis", my_user(), gPotpis )
 // unos naloga
 mat_unos_naloga()
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -86,7 +86,7 @@ Box(, __unos_x, __unos_y )
 
 BoxC()
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -546,13 +546,13 @@ do case
 
     case Ch == K_CTRL_P
         
-        close all
+        my_close_all_dbf()
         mat_st_nalog()
         mat_o_edit()
         return DE_REFRESH
 
     case Ch == K_ALT_A
-        close all
+        my_close_all_dbf()
         azur_mat()
         mat_o_edit()
         return DE_REFRESH
@@ -674,7 +674,7 @@ DO WHILE !EOF()
 
     HSEEK cIdFirma+cIdVN+cBrNal
     if EOF()
-        close all
+        my_close_all_dbf()
         return
     endif
 
@@ -832,7 +832,7 @@ DO WHILE !EOF()
 
 ENDDO  // eof()
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -890,7 +890,7 @@ set order to tag "2"
 go top
 
 if empty(BrNal)
-	close all
+	my_close_all_dbf()
 	return
 endif
 
@@ -992,7 +992,7 @@ do while !eof()
    enddo
 enddo
 
-close all
+my_close_all_dbf()
 return
 
 

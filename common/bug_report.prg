@@ -133,7 +133,7 @@ FUNCTION GlobalErrorHandler( err_obj )
    SET PRINTER TO
    SET CONSOLE ON
 
-   CLOSE ALL
+   my_close_all_dbf()
 
    log_write( _log_msg, 1 )
    _cmd := "f18_editor " + _out_file

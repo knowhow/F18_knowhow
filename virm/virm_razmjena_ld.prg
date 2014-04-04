@@ -156,7 +156,7 @@ FUNCTION virm_prenos_ld( prenos_ld )
    // popuni polja javnih prihoda
    filljprih()
 
-   CLOSE ALL
+   my_close_all_dbf()
 
    RETURN
 

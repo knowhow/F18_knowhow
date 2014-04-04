@@ -262,7 +262,7 @@ if _count > 0
     // renumerisi brojeve u pripremi...
     renumeracija_kalk_pripr( nil, nil, .t. )
 
-    close all
+    my_close_all_dbf()
 
     azur_kalk( .t. )
 

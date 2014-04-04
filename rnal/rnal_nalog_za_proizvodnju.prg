@@ -100,7 +100,7 @@ do while !EOF() .and. field->doc_no == nDoc_no
 enddo
 
 if !StartPrint(nil, nil)
-	close all
+	my_close_all_dbf()
 	return
 endif
 
@@ -136,7 +136,7 @@ lPrintedTotal := .f.
 if lStartPrint
 
 	if !StartPrint(nil, nil)
-		close all
+		my_close_all_dbf()
 		return
 	endif
 

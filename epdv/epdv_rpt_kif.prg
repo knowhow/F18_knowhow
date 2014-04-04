@@ -127,7 +127,7 @@ Box(, 11, 60)
 BoxC()
 
 if LastKey()==K_ESC
-	close all
+	my_close_all_dbf()
     return
 endif
 
@@ -189,7 +189,7 @@ AADD(aZagl, { "(1)",   "(2)",  "(3)",   "(4)",   "(5)",  "(6)",     "(7)", "(8)"
 
 fill_rpt( nBrDok )
 
-close all
+my_close_all_dbf()
 
 if _export == "D"
 
@@ -236,7 +236,7 @@ return
 static function cre_r_tbl()
 local aArr:={}
 
-close all
+my_close_all_dbf()
 
 ferase ( my_home() + "epdv_r_" +  cTbl + ".cdx" )
 ferase ( my_home() + "epdv_r_" +  cTbl + ".dbf" )

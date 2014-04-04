@@ -217,7 +217,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
       stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, _objekat_id, cImeKup, lOpcine, aUslOpc, valute )
    ENDIF
 
-   CLOSE ALL
+   my_close_all_dbf()
 
    RETURN
 
@@ -232,7 +232,7 @@ FUNCTION pr_nar( lOpcine )
    _cIdTipDok := idtipdok
    _cBrDok := brdok
 
-   CLOSE ALL
+   my_close_all_dbf()
    o_fakt_edit()
    StampTXT( _cidfirma, _cIdTipdok, _cbrdok, .T. )
 
@@ -260,7 +260,7 @@ FUNCTION pr_rn()
    _cIdFirma := idfirma
    _cIdTipDok := idtipdok
    _cBrDok := brdok
-   CLOSE ALL
+   my_close_all_dbf()
    o_fakt_edit()
    StampTXT( _cidfirma, _cIdTipdok, _cbrdok, .T. )
 
@@ -294,7 +294,7 @@ FUNCTION pr_pf( lOpcine )
    _cIdTipDok := idtipdok
    _cBrDok := brdok
 
-   CLOSE ALL
+   my_close_all_dbf()
 
    o_fakt_edit()
 
@@ -325,7 +325,7 @@ FUNCTION pr_odt( lOpcine )
    _cIdFirma := idfirma
    _cIdTipDok := idtipdok
    _cBrDok := brdok
-   CLOSE ALL
+   my_close_all_dbf()
 
    StDokOdt( _cidfirma, _cIdTipdok, _cbrdok )
 
@@ -897,7 +897,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
 
 FUNCTION refresh_fakt_tbl_dbfs( tbl_filter )
 
-   CLOSE ALL
+   my_close_all_dbf()
 
    O_VRSTEP
    O_OPS

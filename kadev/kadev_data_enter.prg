@@ -62,7 +62,7 @@ ObjDbEdit( 'bpod', _x - 3, _y, {|| data_handler() }, _header, _footer, , , , , 2
 
 BoxC()
 
-close all
+my_close_all_dbf()
 
 return
 

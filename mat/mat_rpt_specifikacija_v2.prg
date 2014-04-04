@@ -299,7 +299,7 @@ ENDDO
 
 END PRINT
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -378,7 +378,7 @@ if EMPTY(cIdRoba)
 
     if eof()
         Msg("Ne postoje trazeni podaci...",6)
-        close all
+        my_close_all_dbf()
         return 
     endif
 
@@ -426,7 +426,7 @@ ELSE
 
     if eof()
         Msg("Ne postoje trazeni podaci...",6)
-        close all
+        my_close_all_dbf()
         return
     endif
 

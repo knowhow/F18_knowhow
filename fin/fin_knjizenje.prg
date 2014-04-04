@@ -37,7 +37,7 @@ FUNCTION fin_unos_naloga()
 
    KnjNal()
 
-   CLOSE ALL
+   my_close_all_dbf()
 
    RETURN
 
@@ -126,7 +126,7 @@ FUNCTION KnjNal()
 
    BoxC()
 
-   CLOSE ALL
+   my_close_all_dbf()
 
    RETURN
 
@@ -168,7 +168,7 @@ FUNCTION vrbr()
 
 FUNCTION o_fin_edit()
 
-   CLOSE ALL
+   my_close_all_dbf()
 
    O_VRSTEP
    O_ULIMIT
@@ -850,7 +850,7 @@ FUNCTION edit_fin_pripr()
       // setuj mi broj dokumenta
       fin_set_broj_dokumenta()
 
-      CLOSE ALL
+      my_close_all_dbf()
       // stampaj stavke
       StNal()
       // otvori ponovo tabele
@@ -864,11 +864,11 @@ FUNCTION edit_fin_pripr()
       // setuj fin broj dokumenta ako ima potrebe za tim
       fin_set_broj_dokumenta()
 
-      CLOSE ALL
+      my_close_all_dbf()
 
       // stampaj dokument
       stampa_fin_document( .T. )
-      CLOSE ALL
+      my_close_all_dbf()
       fin_azur( .T. )
       o_fin_edit()
       RETURN DE_REFRESH
@@ -888,7 +888,7 @@ FUNCTION edit_fin_pripr()
       // setuj fin broj dokumenta ako je potrebno
       fin_set_broj_dokumenta()
 
-      CLOSE ALL
+      my_close_all_dbf()
       // blagajnicki izvjestaj
       Blagajna()
 
@@ -918,7 +918,7 @@ FUNCTION edit_fin_pripr()
          RETURN DE_CONT
       ENDIF
 
-      CLOSE ALL
+      my_close_all_dbf()
       povrat_fin_naloga()
       o_fin_edit()
 
@@ -1051,7 +1051,7 @@ FUNCTION OstaleOpcije()
    h[ 1 ] := h[ 2 ] := h[ 3 ] := h[ 4 ] := ""
    PRIVATE Izbor := 1
    PRIVATE am_x := m_x, am_y := m_y
-   CLOSE ALL
+   my_close_all_dbf()
    DO WHILE .T.
       Izbor := menu( "prip", opc, Izbor, .F. )
       DO CASE
@@ -1113,7 +1113,7 @@ FUNCTION PodijeliN()
    Boxc()
 
    IF LastKey() == K_ESC
-      CLOSE ALL
+      my_close_all_dbf()
       RETURN DE_CONT
    ENDIF
 
@@ -1241,7 +1241,7 @@ FUNCTION PodijeliN()
    ENDDO
    MsgC()
 
-   CLOSE ALL
+   my_close_all_dbf()
 
    RETURN DE_REFRESH
 

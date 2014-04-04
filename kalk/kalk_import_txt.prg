@@ -218,7 +218,7 @@ if Pitanje(,"Obraditi dokumente iz pomocne tabele (D/N)?", "D") == "D"
 	ObradiImport( nil, nil, __stampaj )
 else
 	MsgBeep("Dokumenti nisu obradjeni!#Obrada se moze uraditi i naknadno!")
-	close all
+	my_close_all_dbf()
 endif
 
 return
@@ -554,7 +554,7 @@ static function Txt2TTbl(aDbf, aRules, cTxtFile)
 local _o_file
 
 // prvo kreiraj tabelu temp
-close all
+my_close_all_dbf()
 
 CreTemp( aDbf )
 O_TEMP
@@ -662,7 +662,7 @@ return
 function CrePriptDbf()
 local _pript_tbl := "kalk_pript"
 
-close all
+my_close_all_dbf()
 
 FErase( my_home() + _pript_tbl + ".dbf" )
 FErase( my_home() + _pript_tbl + ".cdx" )

@@ -119,7 +119,7 @@ return
 static function cre_r_tbl()
 local aArr:={}
 
-close all
+my_close_all_dbf()
 
 ferase ( my_home() + "epdv_r_" +  cTbl + ".cdx" )
 ferase ( my_home() + "epdv_r_" +  cTbl + ".dbf" )

@@ -142,7 +142,7 @@ GO TOP
 
 if eof()
 	Msg("Ne postoje trazeni podaci...",6)
-	close all
+	my_close_all_dbf()
     return
 endif
 
@@ -209,7 +209,7 @@ StampaTabele(aKol,{|| FSvaki1()},,gTabela,,;
 FF
 END PRINT
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -394,7 +394,7 @@ StampaTabele(aKol,{|| FSvaki2()},,gTabela,,;
                              {|| FFor2()},IF(gOstr=="D",,-1),,,,,)
 FF
 END PRINT
-CLOSE ALL; MyFERASE(cTMPFAKT)
+my_close_all_dbf(); MyFERASE(cTMPFAKT)
 
 CLOSERET
 return
@@ -591,7 +591,7 @@ StampaTabele(aKol,{|| FSvaki3()},,gTabela,,;
                              {|| FFor3()},IF(gOstr=="D",,-1),,cProsCij=="D",,,)
 FF
 END PRINT
-CLOSE ALL; MyFERASE(cTMPFAKT)
+my_close_all_dbf(); MyFERASE(cTMPFAKT)
 
 CLOSERET
 return
@@ -744,7 +744,7 @@ StampaTabele(aKol,{|| FSvaki4()},,gTabela,,;
                              {|| FFor4()},IF(gOstr=="D",,-1),,,,,)
 FF
 END PRINT
-CLOSE ALL; MyFERASE(cTMPFAKT)
+my_close_all_dbf(); MyFERASE(cTMPFAKT)
 
 CLOSERET
 return
@@ -917,7 +917,7 @@ StampaTabele(aKol,{|| FSvaki5()},,gTabela,,;
                              {|| FFor5()},IF(gOstr=="D",,-1),,,,,)
 FF
 END PRINT
-CLOSE ALL; MyFERASE(cTMPFAKT)
+my_close_all_dbf(); MyFERASE(cTMPFAKT)
 
 CLOSERET
 return
@@ -1155,7 +1155,7 @@ aKol:={ { "SIFRA"        , {|| cIdRoba                }, .f., "C",10, 0, 1, 1},;
 
   FF
   END PRINT
-CLOSE ALL; MyFERASE(cTMPFAKT)
+my_close_all_dbf(); MyFERASE(cTMPFAKT)
 CLOSERET
 return
 *}
@@ -1436,7 +1436,7 @@ aKol:={ { "OPSTINA"      , {|| ops                 }, .f., "C",10, 0, 1, 1},;
                                {|| FFor8()},IF(gOstr=="D",,-1),,,,,)
 
   END PRINT
-CLOSE ALL; MyFERASE(cTMPFAKT)
+my_close_all_dbf(); MyFERASE(cTMPFAKT)
 CLOSERET
 return
 *}

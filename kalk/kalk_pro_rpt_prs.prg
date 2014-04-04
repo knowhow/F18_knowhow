@@ -235,7 +235,7 @@ enddo
 
 FERASE(_idx)
 
-close all
+my_close_all_dbf()
 
 return
 

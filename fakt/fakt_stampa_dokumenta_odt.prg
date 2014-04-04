@@ -96,7 +96,7 @@ MsgC()
 // odaberi template za stampu...
 fakt_odaberi_template( @_template, __tip_dok )
 
-close all
+my_close_all_dbf()
 
 if f18_odt_generate( _template, _xml_file )
 
@@ -431,7 +431,7 @@ do case
             return
         endif
 
-        close all
+        my_close_all_dbf()
 
         // generisi i printaj dokument...
         if f18_odt_generate( _template, _xml_file )
@@ -484,7 +484,7 @@ do case
                 endif
             endif
 
-            close all
+            my_close_all_dbf()
 
             // u ovoj varijanti mi ne printarj dokument samo generisi
             if f18_odt_generate( _template, _xml_file )

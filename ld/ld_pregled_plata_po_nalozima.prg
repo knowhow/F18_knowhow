@@ -128,7 +128,7 @@ start print cret
 
 end print
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -200,7 +200,7 @@ if !FILE(f18_ime_dbf(_alias))
     DBCREATE2(_alias, aDbf)
     reset_semaphore_version(_table_name)
     my_use(_alias)
-    close all
+    my_close_all_dbf()
 endif
    
 CREATE_INDEX( "1", "godina+mjesec+id+idRNal", _alias)

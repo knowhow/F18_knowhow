@@ -19,7 +19,7 @@ local _izbor := 1
 
 PRIVATE PicDem
 PicDem:=gPICDem
-close all
+my_close_all_dbf()
 
 AADD(_opc,"1. opći šifarnici                  ")
 if (ImaPravoPristupa(goModul:oDataBase:cName, "SIF", "OPCISIFOPEN"))

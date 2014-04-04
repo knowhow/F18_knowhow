@@ -243,7 +243,7 @@ if RECCOUNT() <> 0
     MsgBeep( "Prenos dokumenata uspjesan, nalazi se u pripremi !" )
 endif
 
-close all
+my_close_all_dbf()
 
 return
 
@@ -284,7 +284,7 @@ if sync_file <> NIL
 else
     // daj mi fajl za import
     if !get_import_file( @_imp_file )
-	    close all
+	    my_close_all_dbf()
 	    return
     endif
 endif
@@ -305,7 +305,7 @@ locate for idprodmjes == topska->idpos
 
 if !FOUND()
 	MsgBeep("U sifrarniku KONTA-TIPOVI CIJENA nije postavljeno#nigdje prodajno mjesto :" + field->idprodmjes + "#Prenos nije izvrsen.")
-  	close all
+  	my_close_all_dbf()
 	return
 endif
 
@@ -330,7 +330,7 @@ else
 
   	if FOUND()
 		Msg("Vec postoji dokument pod brojem " + gFirma + "-" + _idvd_pos + "-" + _br_kalk + "#Prenos nece biti izvrsen" )
-		close all
+		my_close_all_dbf()
 		return
 	endif
 
@@ -434,7 +434,7 @@ enddo
 
 MsgC()
 
-close all
+my_close_all_dbf()
 
 // prikazi report...
 _show_report_roba( _roba_data )

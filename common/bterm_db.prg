@@ -42,7 +42,7 @@ local _o_file
 cTxtFile := ALLTRIM( cTxtFile )
 
 // prvo kreiraj tabelu temp
-close all
+my_close_all_dbf()
 
 // polja tabele TEMP.DBF
 _sTblTerm( @aDbf )

@@ -49,14 +49,14 @@ SET ORDER TO TAG "1"
 IF PCOUNT() == 0  
     // daj mi uslove za povrat dokumenta, nemam navedeno 
     IF !_get_povrat_vars( @_vars )
-        CLOSE ALL
+        my_close_all_dbf()
         RETURN 0
     ENDIF
 ENDIF  
 
 // provjeri zabrane povrata itd...
 IF !_chk_povrat_zabrana( _vars )
-    CLOSE ALL
+    my_close_all_dbf()
     RETURN 0
 ENDIF
 
@@ -66,7 +66,7 @@ id_tip_dok := _vars["idtipdok"]
 br_dok     := _vars["brdok"]
 
 IF Pitanje("FAKT_POV_DOK", "Dokument " + id_firma + "-" + id_tip_dok + "-" + br_dok + " povuci u pripremu (D/N) ?", "D") == "N"
-    CLOSE ALL
+    my_close_all_dbf()
     RETURN 0
 ENDIF
 
@@ -82,7 +82,7 @@ if ( fakt->m1 == "X" )
     // izgenerisani dokument
     MsgBeep("Radi se o izgenerisanom dokumentu!!!")
     if Pitanje("IZGEN_CONT", "Zelite li nastaviti?!", "N")=="N"
-        close all
+        my_close_all_dbf()
         return 0
     endif
 endif
@@ -182,7 +182,7 @@ IF ( _brisi_kum == "N" )
     ENDDO
 ENDIF
 
-close all
+my_close_all_dbf()
 return 1
 
 
@@ -273,14 +273,14 @@ SET ORDER TO TAG "1"
 
 // daj uslove za povrat dokumenta
 if !_get_vars( @_vars )
-    close all
+    my_close_all_dbf()
     return
 endif
 
 Beep(6)
 
 if Pitanje("","Jeste li sigurni ???","N")=="N"
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -391,7 +391,7 @@ enddo
 f18_free_tables({"fakt_doks", "fakt_doks2", "fakt_fakt"})
 sql_table_update( nil, "END" )
 
-close all
+my_close_all_dbf()
 return
 
 

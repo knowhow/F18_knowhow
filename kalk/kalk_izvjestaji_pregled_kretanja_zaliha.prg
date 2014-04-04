@@ -560,7 +560,7 @@ gvim_end()
 //end print
 
 #ifdef CAX
-close all
+my_close_all_dbf()
 #endif
 
 closeret

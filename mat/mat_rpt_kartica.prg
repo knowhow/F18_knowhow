@@ -36,7 +36,7 @@ AADD( _opcexe, { || KSuban() } )
 
 f18_menu("kca", .f., _izbor, _opc, _opcexe )
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -146,7 +146,7 @@ enddo
 FF
 END PRINT
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -310,7 +310,7 @@ EJECTNA0
 END PRINT
 
 set filter to
-close all
+my_close_all_dbf()
 
 return
 
@@ -442,7 +442,7 @@ nUkUkDug:=nUkUkPot:=nUkUk2Dug:=nUkUk2Pot:=0
 
 EJECTNA0
 END PRINT
-close all
+my_close_all_dbf()
 return
 
 
@@ -844,7 +844,7 @@ enddo
 FF
 END PRINT
 
-close all
+my_close_all_dbf()
 return
 
 

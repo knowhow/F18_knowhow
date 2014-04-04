@@ -288,7 +288,7 @@ do case
             rpt_kif(nBrDokP)
     endif
     
-    close all
+    my_close_all_dbf()
     o_kif(.t.)
     SELECT P_KIF
     SET ORDER TO TAG "br_dok"

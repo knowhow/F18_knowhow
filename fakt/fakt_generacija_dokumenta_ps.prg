@@ -29,7 +29,7 @@ AADD( _opcexe, {|| FaUnosInv()})
 
 f18_menu( "mgdok", .f., _izbor, _opc, _opcexe )
 
-close all
+my_close_all_dbf()
 return
 
 

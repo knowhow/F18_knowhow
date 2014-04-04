@@ -100,7 +100,7 @@ SEEK kalk->PKonto
 
 fill_exp(cIdFirma, cIdVd, cBrDok, (cVpcCij == "D") , (cMpcCij == "D") )
 
-close all
+my_close_all_dbf()
 *}
 
 
@@ -195,7 +195,7 @@ function kt_exp_create(cIdVd, lVpcCij, lMpcCij)
 local cExpTbl := "R_EXPORT.DBF"
 local aArr:={}
 
-close all
+my_close_all_dbf()
 
 //ferase ( PRIVPATH + "R_EXPORT.CDX" )
 
@@ -332,7 +332,7 @@ next
 
 BoxC()
 
-close all
+my_close_all_dbf()
 
 cLauncher := ALLTRIM(cLauncher)
 if (cLauncher == "start")

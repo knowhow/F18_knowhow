@@ -209,7 +209,7 @@ enddo
 go top
 my_dbf_pack( .F. )
 
-close all
+my_close_all_dbf()
 
 return
 

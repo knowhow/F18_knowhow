@@ -1018,7 +1018,7 @@ endif
 if Pitanje(,"Obracun " + fakt_do(dDatObr) + " postoji, ponoviti (D/N)?", "D") == "D"
     vrati_nazad( dDatObr, cIdArt )
 
-    close all
+    my_close_all_dbf()
     o_ugov()
     // otvori i fakt
     O_FAKT

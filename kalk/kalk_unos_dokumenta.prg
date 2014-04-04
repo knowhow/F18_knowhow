@@ -492,7 +492,7 @@ FUNCTION kalk_pripr_key_handler()
 
          my_dbf_zap()
          SELECT p_doksrc
-         zapp()
+         my_dbf_zap()
          SELECT kalk_pripr
 
          log_write( "F18_DOK_OPER: kalk, brisanje pripreme: " + cOpis, 2 )

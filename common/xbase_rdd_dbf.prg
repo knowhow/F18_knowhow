@@ -28,7 +28,7 @@ FUNCTION f18_ime_dbf( alias )
 
 FUNCTION my_close_all_dbf()
    CLOSE ALL
-   hb_idleSleep( 0.5 )
+   hb_idleSleep( 2 )
    RETURN
 
 

@@ -115,7 +115,7 @@ set order to tag "1"
 //"1","IdFirma+idtipdok+brdok+rbr+podbr",KUMPATH+"FAKT")
 
 select FINMAT
-zapp()
+my_dbf_zap()
 
 aUsl:=Parsiraj(qqDok,"Brdok","C")
 

@@ -1107,7 +1107,7 @@ do while .t.
     endif
 
     select finmat
-    zapp()
+    my_dbf_zap()
 
     select KALK_PRIPR
     // idfirma+ idvd + brdok+rbr

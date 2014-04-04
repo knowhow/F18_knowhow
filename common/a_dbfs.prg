@@ -421,3 +421,43 @@ FUNCTION set_rec_from_dbstruct( rec )
    rec[ "dbf_fields_len" ] := _fields_len
 
    RETURN NIL
+
+
+
+FUNCTION my_close_all_dbf()
+
+  LOCAL nPos := 100
+
+  CLOSE ALL
+
+  WHILE nPos > 0
+
+      // ako je neki dbf ostao otvoren nPos ce vratiti poziciju tog a_dbf_recorda 
+      nPos := hb_hScan( __f18_dbfs, { | key, rec | zatvori_dbf( rec ) == .F.  } )
+
+      IF nPos > 0
+        hb_IdleSleep( 0.1 )
+      ELSE
+        // svi dbf-ovi su zatvoreni
+        EXIT
+      ENDIF
+
+  ENDDO
+
+  RETURN
+
+
+STATIC FUNCTION zatvori_dbf( value )
+
+  SELECT( value[ 'wa' ]) 
+
+  IF !USED()
+     // ostalo je još otvorenih DBF-ova
+     USE
+     RETURN .F.
+  ELSE
+     RETURN .T.
+  ENDIF
+
+
+

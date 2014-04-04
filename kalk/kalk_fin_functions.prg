@@ -405,8 +405,6 @@ return
 
 static function SintStav( lAuto )
 
-hb_IdleSleep(1)
-
 O_PANAL
 O_PSINT
 O_PNALOG
@@ -414,7 +412,7 @@ O_PSUBAN
 O_KONTO
 O_TNAL
 
-if lAuto == nil
+if lAuto == NIL
 	lAuto := .f.
 endif
 
@@ -426,7 +424,6 @@ my_dbf_zap()
 
 select PNALOG
 my_dbf_zap()
-
 
 select PSUBAN
 set order to tag "2"
@@ -498,9 +495,12 @@ DO WHILE !eof()
            endif
            skip
          enddo
+
          if !fNasao
             append blank
          endif
+
+         my_rlock()
 
          replace IdFirma WITH cIdFirma
 	 replace IdKonto WITH cIdKonto
@@ -511,6 +511,8 @@ DO WHILE !eof()
 	 replace PotBHD WITH PotBHD + nPotBHD
          replace DugDEM WITH DugDEM + nDugDEM
 	 replace PotDEM WITH PotDEM + nPotDEM
+         my_unlock()
+
 
          SELECT PSINT
          seek cidfirma+cidvn+cbrnal+left(cidkonto,3)
@@ -538,11 +540,14 @@ DO WHILE !eof()
              append blank
          endif
 
+         my_rlock()
          REPLACE IdFirma WITH cIdFirma,IdKonto WITH left(cIdKonto,3),IdVN WITH cIdVN,;
               BrNal WITH cBrNal,;
               DatNal WITH iif(gDatNal=="D", dDatNal,  max(psuban->datdok,datnal) ),;
               DugBHD WITH DugBHD+nDugBHD,PotBHD WITH PotBHD+nPotBHD,;
               DugDEM WITH DugDEM+nDugDEM,PotDEM WITH PotDEM+nPotDEM
+
+         my_unlock()
 
          nD1+=nDugBHD; nD2+=nDugDEM; nP1+=nPotBHD; nP2+=nPotDEM
 
@@ -554,10 +559,15 @@ DO WHILE !eof()
 
    SELECT PNALOG    // datoteka naloga
    APPEND BLANK
+
+   my_rlock()
+
    REPLACE IdFirma WITH cIdFirma,IdVN WITH cIdVN,BrNal WITH cBrNal,;
            DatNal WITH iif(gDatNal=="D",dDatNal,date()),;
            DugBHD WITH nD1,PotBHD WITH nP1,;
            DugDEM WITH nD2,PotDEM WITH nP2
+
+   my_unlock()
 
    private cDN:="N"
 
@@ -568,6 +578,7 @@ ENDDO
 
 select PANAL
 go top
+my_flock()
 do while !eof()
    nRbr:=0
    cIdFirma:=IdFirma;cIDVn=IdVN;cBrNal:=BrNal
@@ -576,9 +587,11 @@ do while !eof()
      skip
    enddo
 enddo
+my_unlock()
 
 select PSINT
 go top
+my_flock()
 do while !eof()
    nRbr:=0
    cIdFirma:=IdFirma;cIDVn=IdVN;cBrNal:=BrNal
@@ -587,6 +600,7 @@ do while !eof()
      skip
    enddo
 enddo
+my_unlock()
 
 my_close_all_dbf()
 

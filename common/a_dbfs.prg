@@ -451,7 +451,7 @@ STATIC FUNCTION zatvori_dbf( value )
 
   SELECT( value[ 'wa' ]) 
 
-  IF !USED()
+  IF USED()
      // ostalo je još otvorenih DBF-ova
      USE
      RETURN .F.

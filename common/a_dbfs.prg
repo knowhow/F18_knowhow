@@ -434,7 +434,6 @@ FUNCTION my_close_all_dbf()
 
       // ako je neki dbf ostao otvoren nPos ce vratiti poziciju tog a_dbf_recorda 
       nPos := hb_hScan( __f18_dbfs, { | key, rec | zatvori_dbf( rec ) == .F.  } )
-
       IF nPos > 0
         hb_IdleSleep( 0.1 )
       ELSE

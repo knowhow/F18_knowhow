@@ -815,7 +815,7 @@ do case
     case Ch==K_CTRL_T
         
         if Pitanje("p01","Zelite izbrisati ovu stavku ?","D")=="D"
-            MY_DELETE
+            my_delete()
             return DE_REFRESH
         endif
         

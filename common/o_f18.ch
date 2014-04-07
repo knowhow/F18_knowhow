@@ -37,7 +37,7 @@
 #xcommand O_RJ       => select (F_RJ)      ;  use_sql_sif  ("rj")        ; set order to tag "ID"
 #xcommand O_VRSTEP   => SELECT (F_VRSTEP)  ;  use_sql_sif  ("vrstep")    ; set order to tag "ID"
 #xcommand O_PKONTO       => select (F_PKONTO); use_sql_pkonto()  ; set order to tag "ID"
-#xcommand O_KS           => select (F_KS);     use_sql_sif ("ks") ; set order to tag "ID"
+#xcommand O_KS           => select (F_KS);     use_sql_ks() ; set order to tag "ID"
 #xcommand O_BANKE    => select (F_BANKE)   ;  use_sql_sif  ("banke")     ; set order to tag "ID"
 
 

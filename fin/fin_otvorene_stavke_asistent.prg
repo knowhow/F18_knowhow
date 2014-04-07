@@ -46,9 +46,7 @@ FUNCTION ProvDuplePartnere( cIdP, cIdK, cDp, lAsist, lSumirano )
       GO TOP
       DO WHILE !Eof()
          IF field->idpartner == cIdP .AND. field->idkonto == cIdK .AND. field->d_p == cDp
-            MY_DELETE
-            // replace field->idfirma with "XX"
-            // replace field->rbr with "000"
+            my_delete()
          ENDIF
          SKIP
       ENDDO
@@ -77,7 +75,7 @@ STATIC FUNCTION _del_nal_xx()
    DO WHILE !Eof() .AND. field->idfirma == "XX"
 	
       IF field->rbr == "000"
-         MY_DELETE
+         my_delete()
       ENDIF
 	
       SKIP
@@ -452,10 +450,7 @@ FUNCTION konsultos( xEdit )
       Scatter()
 
       IF fNovi
-         my_rlock()
-         DELETE
-         my_unlock()
-         my_dbf_pack()
+         my_delete()
       ELSE
          // pa ga za svaki slucaj pohrani
          Gather()
@@ -554,7 +549,7 @@ STATIC FUNCTION EdKonsROS()
    CASE Ch == K_CTRL_T
 
       IF Pitanje(, "Izbrisati stavku ?", "N" ) == "D"
-         MY_DELETE
+         my_delete()
          nRet := DE_REFRESH
       ELSE
          nRet := DE_CONT

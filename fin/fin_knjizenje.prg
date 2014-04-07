@@ -960,11 +960,13 @@ STATIC FUNCTION br_oddo()
       cRbr := field->rbr
 
       IF cRbr >= cOd .AND. cRbr <= cDo
-         DELETE
+         my_delete()
       ENDIF
 
       SKIP
    ENDDO
+
+   my_dbf_pack()
 
    GO TOP
 
@@ -1382,7 +1384,7 @@ STATIC FUNCTION _brisi_pripr_po_uslovu()
       // brisi ako treba ?
       IF _delete_rec
          _deleted := .T.
-         DELETE
+         my_delete()
       ENDIF
 
       SKIP

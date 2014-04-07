@@ -1150,6 +1150,7 @@ STATIC FUNCTION prip_brisi_duple()
    SELECT fin_pripr
    GO TOP
 
+   my_flock()
    DO WHILE !Eof()
 
       cSeek := fin_pripr->( idfirma + idvn + brnal )
@@ -1165,6 +1166,7 @@ STATIC FUNCTION prip_brisi_duple()
       SKIP
 
    ENDDO
+   my_unlock()
 
    IF _brisao
       my_dbf_pack()
@@ -1179,6 +1181,10 @@ STATIC FUNCTION prip_brisi_duple()
 STATIC FUNCTION kum_brisi_duple()
 
    LOCAL cSeek
+
+   // ova funkcija nikada nije prebačena na sql varijantu
+   RETURN
+
 
    SELECT fin_pripr
    GO TOP

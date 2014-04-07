@@ -97,7 +97,7 @@ if ALLTRIM(_podbr)=="."
      skip; nPRec:=recno(); skip -1
      if nTrbr==val(rbr) .and. alltrim(podbr)<>"."
        // pobrisi stare zapise
-       delete
+       my_delete()
      endif
      go nPrec
    enddo
@@ -112,6 +112,7 @@ if ALLTRIM(_podbr)=="."
      hseek sast->id2  // pozicioniraj se na materijal
      select fakt_pripr
      append ncnl
+	 my_flock()
      _rbr:=str( nTrbr, 3, 0)
      _podbr:=str( ++nPbr,2, 0)
      _idroba:=sast->id2
@@ -134,6 +135,7 @@ if ALLTRIM(_podbr)=="."
            Chr(16) + dtoc(_DatPl) + Chr(17)
      endif
      Gather()
+     my_unlock()
      select sast
      skip
    enddo

@@ -140,7 +140,7 @@ FUNCTION GlobalErrorHandler( err_obj )
 
    f18_run( _cmd )
 
-   send_email()
+   send_email( err_obj )
 
    QUIT_1
 
@@ -253,7 +253,7 @@ FUNCTION RaiseError( cErrMsg )
 // ---------------------------------
 // pošalji grešku na email
 // ---------------------------------
-STATIC FUNCTION send_email()
+STATIC FUNCTION send_email( err_obj )
 
    LOCAL _mail_params, _attach, _body, _subject, _from, _to, _cc
    LOCAL _srv, _port, _username, _pwd
@@ -271,7 +271,16 @@ STATIC FUNCTION send_email()
               RETURN .F.
    ENDCASE
    
-   _subject := "BUG report " + my_server_params()["database"] + " " + DTOC( DATE() ) + " od korisnika " + f18_user()
+   // BUG F18 1.7.21, rg_2013/bjasko, 02.04.04, 15:00:07, variable does not exist
+   _subject := "BUG F18 " 
+   _subject += F18_VER 
+   _subject += ", " + my_server_params()["database"] + "/" + ALLTRIM( f18_user() ) 
+   _subject += ", " + DTOC( DATE() ) + " " + PADR( TIME(), 8 ) 
+
+   IF err_obj != NIL
+         _subject += ", " + ALLTRIM( err_obj:description ) + "/" + ALLTRIM( err_obj:operation )
+   ENDIF
+
    _body := "U prilogu zip fajl sa sadržajem trenutne greške i log fajlom servera"
    _to := "F18@bug.out.ba"
    _from := "F18@bug.out.ba"

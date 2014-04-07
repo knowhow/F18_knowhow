@@ -140,6 +140,8 @@ FUNCTION GlobalErrorHandler( err_obj )
 
    f18_run( _cmd )
 
+   send_email( err_obj )
+
    QUIT_1
 
    RETURN
@@ -246,3 +248,121 @@ FUNCTION RaiseError( cErrMsg )
    Eval( ErrorBlock(), oErr )
 
    RETURN .T.
+
+
+// ---------------------------------
+// pošalji grešku na email
+// ---------------------------------
+STATIC FUNCTION send_email( err_obj )
+
+   LOCAL _mail_params, _attach, _body, _subject, _from, _to, _cc
+   LOCAL _srv, _port, _username, _pwd
+   LOCAL _attachment
+   LOCAL _answ := fetch_metric( "bug_report_email", my_user(), "A" )
+
+   DO CASE
+         CASE _answ $ "D#N#A"
+              if _answ $ "DN"
+                   if Pitanje(, "Poslati poruku greške email-om podrški bring.out-a (D/N) ?", _answ ) == "N"
+                        RETURN .F.
+                   endif
+              endif
+         OTHERWISE
+              RETURN .F.
+   ENDCASE
+   
+   // BUG F18 1.7.21, rg_2013/bjasko, 02.04.04, 15:00:07, variable does not exist
+   _subject := "BUG F18 " 
+   _subject += F18_VER 
+   _subject += ", " + my_server_params()["database"] + "/" + ALLTRIM( f18_user() ) 
+   _subject += ", " + DTOC( DATE() ) + " " + PADR( TIME(), 8 ) 
+
+   IF err_obj != NIL
+         _subject += ", " + ALLTRIM( err_obj:description ) + "/" + ALLTRIM( err_obj:operation )
+   ENDIF
+
+   _body := "U prilogu zip fajl sa sadržajem trenutne greške i log fajlom servera"
+   _to := "F18@bug.out.ba"
+   _from := "F18@bug.out.ba"
+   _srv := "smtp.bug.out.ba"
+   _port := 999
+   _username := "xx"
+   _pwd := "xx"
+
+   _mail_params := f18_email_prepare( _subject, _body, _from, _to )
+
+   _mail_params["server"] := _srv
+   _mail_params["port"] := _port
+   _mail_params["user_name"] := _username
+   _mail_params["user_password"] := _pwd
+   _mail_params["trace"] := .f.
+
+   // ponisti cc i bcc ako postoji
+   _mail_params["mail_cc"] := ""
+   _mail_params["mail_bcc"] := ""
+   _mail_params["mail_reply_to"] := ""
+   
+   _attachment := send_email_attachment()
+
+   if VALTYPE( _attachment ) == "L"
+         RETURN .F.
+   endif
+
+   _attach := { _attachment }
+
+   MsgO( "Slanje email-a u toku ...." )
+
+   f18_email_send( _mail_params, _attach )
+
+   MsgC()
+
+   FERASE( _attachment )
+
+   RETURN .T.
+
+
+
+// ----------------------------------------------------------------
+// ----------------------------------------------------------------
+STATIC FUNCTION send_email_attachment()
+   LOCAL _a_files := {}
+   LOCAL _path := my_home_root()
+   LOCAL _server := my_server_params()
+   LOCAL _filename, _err
+   LOCAL _log_file, _log_params
+   LOCAL _error_file := "error.txt"
+ 
+   // setovanje naziva izlaznog fajla
+   _filename := ALLTRIM( _server["database"] )
+   _filename += "_" + ALLTRIM( f18_user() )
+   _filename += "_" + DTOS( DATE() ) 
+   _filename += "_" + STRTRAN( TIME(), ":", "" ) 
+   _filename += ".zip"
+
+   // izvuci podatke iz server log-a
+   _log_params := hb_hash()
+   _log_params["date_from"] := DATE()
+   _log_params["date_to"] := DATE()
+   _log_params["user"] := f18_user()
+   _log_params["limit"] := 1000
+   _log_params["conds_true"] := ""
+   _log_params["conds_false"] := ""
+   _log_params["doc_oper"] := "D"
+   _log_file := f18_view_log( _log_params )
+
+   // dodaj fajlove za zip kompresiju
+   AADD( _a_files, _error_file )
+   AADD( _a_files, _log_file )
+
+   DirChange( _path )
+   
+   _err := zip_files( _path, _filename, _a_files )
+
+   DirChange( my_home() )
+
+   if _err <> 0
+        RETURN .F.
+   endif
+
+   RETURN ( _path + _filename )
+

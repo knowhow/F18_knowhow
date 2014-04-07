@@ -117,12 +117,7 @@ do case
         return DE_REFRESH
 
     case Ch == K_CTRL_T
-
-        if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
-			my_delete_with_pack()
-            return DE_REFRESH
-        endif
-        return DE_CONT
+        return browse_brisi_stavku()
 
     case Ch == K_CTRL_P
         stampa_virmana_drb()
@@ -194,10 +189,7 @@ do case
         endif
 
     case Ch = K_CTRL_F9
-        if Pitanje(,"Zelite li izbrisati pripremu !!????","N")=="D"
-             my_dbf_zap()
-        endif
-        return DE_REFRESH
+        return browse_brisi_pripremu()
 
 endcase
 

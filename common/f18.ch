@@ -89,3 +89,14 @@
 #define DATA_XML_FILE "data" + IIF(f18_session()['id'] == 1, "", "_" + ALLTRIM(STR(f18_session()['id']))) + ".xml"
 
 #command QUIT_1                    => ErrorLevel(1); __Quit()
+
+#command @ <row>, <col> SAY8 <exp> [PICTURE <pic>] [COLOR <clr>] => ;
+         DevPos( <row>, <col> ) ; DevOutPict( hb_utf8toStr( <exp> ), <pic> [, <clr>] )
+#command @ <row>, <col> SAY8 <exp> [COLOR <clr>] => ;
+         DevPos( <row>, <col> ) ; DevOut( hb_utf8toStr( <exp> ) [, <clr>] )
+
+#command @ <row>, <col> SAY8 <say> [<sayexp,...>] GET <get> [<getexp,...>] => ;
+         @ <row>, <col> SAY8 <say> [ <sayexp>] ;;
+         @ Row(), Col() + 1 GET <get> [ <getexp>]
+
+

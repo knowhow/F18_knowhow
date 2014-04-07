@@ -12,6 +12,7 @@
 
 #include "epdv.ch"
 
+
 function s_partner(cIdPartn)
 
 local cPom
@@ -161,6 +162,7 @@ local cRejon
 PushWa()
 
 o_partn()
+go top
 seek gFirma
 
 cRejon := IzSifK("PARTN", "REJO", cIdPart, .f.)
@@ -174,11 +176,6 @@ return cRejon
 // -------------------------------------
 function o_partn()
 
-select F_PARTN
-if !used()
-	O_PARTN
-endif
-
 select F_SIFK
 if !used()
 	O_SIFK
@@ -187,6 +184,11 @@ endif
 select F_SIFV
 if !used()
 	O_SIFV
+endif
+
+select F_PARTN
+if !used()
+	O_PARTN
 endif
 
 return

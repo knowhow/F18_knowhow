@@ -13,31 +13,4 @@
 #include "kalk.ch"
 
  
-function KaSifPlanika()
-private opc:={}
-private opcexe:={}
-private Izbor
-
-O_K1
-O_OBJEKTI
-O_RVRSTA
-
-AADD(opc,"1. k1 - grupe dobavljaca            ")
-AADD(opcexe, {|| P_K1()})
-AADD(opc,"2. objekti (prodavnice i magacini")
-AADD(opcexe, {|| P_Objekti()})
-AADD(opc,"3. planika vrste artikala")
-AADD(opcexe, {|| P_RVrsta()})
-AADD(opc,"4. popuni planika - polje vrsta")
-AADD(opcexe, {|| PlFill_Vrsta()})
-AADD(opc,"5. popuni planika - polje sezona")
-AADD(opcexe, {|| PlFill_Sezona()})
-
-Izbor:=1
-Menu_SC("spla")
-
-return
-
-
-
 

@@ -31,7 +31,7 @@ cVarijanta := "1"
 cKolicina := "N"
 
 if GetVars( @cVarijanta, @cKolicina, @_tkm_no, @_len_naz ) == 0 
-	close all
+	my_close_all_dbf()
 	return
 endif
 
@@ -47,14 +47,14 @@ KaFillRLabele( cKolicina )
 select rlabele
 if RECCOUNT() == 0
     MsgBeep( "Nisam generisao nista !!!! greska..." )
-    close all
+    my_close_all_dbf()
     return 
 endif
 
 // generisi xml fajl sa podacima labele
 _gen_xml( _xml_file, _tkm_no, _len_naz )
 
-CLOSE ALL
+my_close_all_dbf()
 
 if f18_odt_generate( _template, _xml_file )
 	// printaj odt

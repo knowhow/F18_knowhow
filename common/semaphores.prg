@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -15,297 +15,331 @@
 // --------------------------------------------------------------
 // koristenje f18_lock_tables( arr ), f18_free_tables( arr )
 // --------
-//   if !f18_lock_tables( {"pos_doks", "pos_pos"} )
-//       -- prekidamo operaciju
-//   endif
-//   
-//   sql_table_update(nil, "BEGIN")
-//   update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-//   f18_free_tables( {"pos_doks", "pos_pos"} )
-//   sql_table_update(nil, "END")
+// if !f18_lock_tables( {"pos_doks", "pos_pos"} )
+// -- prekidamo operaciju
+// endif
 //
-//  ako imamo samo jednan zapis, jednu tabelu, transakcija i lockovanje
-//  se desavaju unutar funkcije update_rec_server_and_dbf:
+// sql_table_update(nil, "BEGIN")
+// update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+// f18_free_tables( {"pos_doks", "pos_pos"} )
+// sql_table_update(nil, "END")
 //
-//   update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+// ako imamo samo jednan zapis, jednu tabelu, transakcija i lockovanje
+// se desavaju unutar funkcije update_rec_server_and_dbf:
 //
-//  na isti nacin se koristi i u kombinaciji sa 
-//      delete_rec_server_and_dbf()
+// update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+//
+// na isti nacin se koristi i u kombinaciji sa
+// delete_rec_server_and_dbf()
 // --------------------------------------------------------------
 
 // -----------------------------------------------------
 // lokovanje tabela zadatih u matrici a_tables
 // a_tables := {"sifk", "sifv"...}
 // -----------------------------------------------------
-function f18_lock_tables( a_tables, unlock_table )
-local _ok := .t.
-local _i, _tbl 
+FUNCTION f18_lock_tables( a_tables, unlock_table )
 
-PushWa()
+   LOCAL _ok := .T.
+   LOCAL _i, _tbl, _dbf_rec
 
-if LEN( a_tables ) == NIL
-    PopWA()
-    return .f.
-endif
+   PushWa()
 
-if sql_table_update( nil, "BEGIN" )
+   IF Len( a_tables ) == NIL
+      PopWA()
+      RETURN .F.
+   ENDIF
 
-    for _i := 1 to LEN( a_tables )
-       _tbl := get_a_dbf_rec(a_tables[_i])["table"]
-       _ok := _ok .and. lock_semaphore( _tbl, "lock", unlock_table )
-    next
+   IF sql_table_update( nil, "BEGIN" )
 
-    if _ok
+      FOR _i := 1 TO Len( a_tables )
+         _dbf_rec := get_a_dbf_rec( a_tables[ _i ] )
+         _tbl := _dbf_rec[ "table" ]
+         IF !_dbf_rec[ "sql" ]
+            _ok := _ok .AND. lock_semaphore( _tbl, "lock", unlock_table )
+         ENDIF
+      NEXT
 
-        sql_table_update( nil, "END" ) 
-        log_write( "uspjesno izvrsen lock tabela " + pp( a_tables ), 7 )
+      IF _ok
 
-        // nakon uspjesnog lockovanja svih tabela preuzmi promjene od drugih korisnika
-        my_use_semaphore_on()
+         sql_table_update( nil, "END" )
+         log_write( "uspjesno izvrsen lock tabela " + pp( a_tables ), 7 )
 
-        for _i := 1 to LEN( a_tables )
-            _tbl := get_a_dbf_rec(a_tables[_i])["table"]
-            // otvori tabelu i selectuj workarea koja je rezervisana za ovu tabelu
-            my_use(_tbl, NIL, NIL, NIL, NIL, NIL, .t.)
-        next
+         // nakon uspjesnog lockovanja svih tabela preuzmi promjene od drugih korisnika
+         my_use_semaphore_on()
 
-        my_use_semaphore_off()
+         FOR _i := 1 TO Len( a_tables )
+            _dbf_rec := get_a_dbf_rec( a_tables[ _i ] )
+            _tbl := _dbf_rec[ "table" ]
+            IF !_dbf_rec[ "sql" ]
+               // otvori tabelu i selectuj workarea koja je rezervisana za ovu tabelu
+               my_use( _tbl, NIL, NIL, NIL, NIL, NIL, .T. )
+            ENDIF
+         NEXT
+         my_use_semaphore_off()
 
-    else
-        log_write( "ERROR: nisam uspio napraviti lock tabela " + pp( a_tables ) , 2 )
-        sql_table_update( nil, "ROLLBACK")
-        _ok := .f.
-    endif
+      ELSE
+         log_write( "ERROR: nisam uspio napraviti lock tabela " + pp( a_tables ), 2 )
+         sql_table_update( nil, "ROLLBACK" )
+         _ok := .F.
+      ENDIF
 
-else
+   ELSE
 
-    _ok := .f.
-    log_write( "ERROR: nisam uspio napraviti lock tabela " + pp( a_tables ) , 2 )
+      _ok := .F.
+      log_write( "ERROR: nisam uspio napraviti lock tabela " + pp( a_tables ), 2 )
 
-endif
+   ENDIF
 
-// pozicioniraj se na dbf prije ulaska u funkciju
-PopWA()
+   PopWA()
 
-return _ok
+   RETURN _ok
 
 // -----------------------------------------------------
 // unlokovanje tabela zadatih u matrici a_tables
 // a_tables := {"sifk", "sifv"}
 // -----------------------------------------------------
-function f18_free_tables( a_tables )
-local _ok := .t.
-local _i, _tbl
+FUNCTION f18_free_tables( a_tables )
 
-if LEN( a_tables ) == NIL
-    return .f.
-endif
+   LOCAL _ok := .T.
+   LOCAL _i, _tbl, _dbf_rec
 
-for _i := 1 to LEN( a_tables )
-    _tbl := get_a_dbf_rec(a_tables[_i])["table"]
-    lock_semaphore( _tbl, "free" )
-next
+   IF Len( a_tables ) == NIL
+      RETURN .F.
+   ENDIF
 
-log_write( "uspjesno izvrseno oslobadjanje tabela " + pp( a_tables ), 7 )
+   FOR _i := 1 TO Len( a_tables )
+      _dbf_rec := get_a_dbf_rec( a_tables[ _i ] )
+      _tbl := _dbf_rec[ "table" ]
+      IF !_dbf_rec[ "sql" ]
+         lock_semaphore( _tbl, "free" )
+      ENDIF
+   NEXT
 
-my_use_semaphore_on()
+   log_write( "uspjesno izvrseno oslobadjanje tabela " + pp( a_tables ), 7 )
 
-return _ok
+   my_use_semaphore_on()
+
+   RETURN _ok
 
 
 // ------------------------------------------
 // status = "lock" (locked_by_me), "free"
 // ------------------------------------------
-function lock_semaphore( table, status, unlock_table )
-local _qry
-local _ret
-local _i
-local _err_msg, _msg
-local _server := pg_server()
-local _user   := f18_user()
-local _get_status
+FUNCTION lock_semaphore( table, status, unlock_table )
 
-if unlock_table == NIL
-    unlock_table := .t.
-endif
+   LOCAL _qry
+   LOCAL _ret
+   LOCAL _i
+   LOCAL _err_msg, _msg
+   LOCAL _server := pg_server()
+   LOCAL _user   := f18_user()
+   LOCAL _get_status
 
-// status se moze mijenjati samo ako neko drugi nije lock-ovao tabelu
+   IF unlock_table == NIL
+      unlock_table := .T.
+   ENDIF
 
-log_write( "table: " + table + ", status:" + status + " START" , 8 )
+   // status se moze mijenjati samo ako neko drugi nije lock-ovao tabelu
 
-_i := 0
+   log_write( "table: " + table + ", status:" + status + " START", 8 )
 
-while .t.
+   _i := 0
 
-    _i++
+   WHILE .T.
 
-    // daj mi status semafora
-    _get_status := get_semaphore_status( table )
+      _i++
 
-    if !unlock_table .and. _get_status == "lock"
-        // tabela je lokovana i ja bjezim odavdje
-        return .f.
-    endif
+      // daj mi status semafora
+      _get_status := get_semaphore_status( table )
 
-    if _get_status == "lock" 
-        _err_msg := ToStr(Time()) + " : table locked : " + table + " retry : " + STR(_i, 2) + "/" + STR(SEMAPHORE_LOCK_RETRY_NUM, 2)
-        log_write( _err_msg, 2 )
-        @ maxrows() - 1, maxcols() - 70 SAY PADR(_err_msg, 53)
-        hb_IdleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-        log_write( "call stack 1 " + PROCNAME(1) + ALLTRIM(STR(PROCLINE(1))), 2 )
-        log_write( "call stack 2 " + PROCNAME(2) + ALLTRIM(STR(PROCLINE(2))), 2 )
-        MsgC()
-    else
-        if _i > 1
-            _err_msg := ToStr(Time()) + " : table unlocked : " + table + " retry : " + STR(_i, 2) + "/" + STR(SEMAPHORE_LOCK_RETRY_NUM, 2)
-            @ maxrows() - 1, maxcols() - 70 SAY PADR(_err_msg, 53)
+      IF !unlock_table .AND. _get_status == "lock"
+         // tabela je lokovana i ja bjezim odavdje
+         RETURN .F.
+      ENDIF
+
+      IF _get_status == "lock"
+         _err_msg := ToStr( Time() ) + " : table locked : " + table + " retry : " + Str( _i, 2 ) + "/" + Str( SEMAPHORE_LOCK_RETRY_NUM, 2 )
+         log_write( _err_msg, 2 )
+         @ maxrows() - 1, maxcols() - 70 SAY PadR( _err_msg, 53 )
+         hb_idleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+         log_write( "call stack 1 " + ProcName( 1 ) + AllTrim( Str( ProcLine( 1 ) ) ), 2 )
+         log_write( "call stack 2 " + ProcName( 2 ) + AllTrim( Str( ProcLine( 2 ) ) ), 2 )
+         MsgC()
+      ELSE
+         IF _i > 1
+            _err_msg := ToStr( Time() ) + " : table unlocked : " + table + " retry : " + Str( _i, 2 ) + "/" + Str( SEMAPHORE_LOCK_RETRY_NUM, 2 )
+            @ maxrows() - 1, maxcols() - 70 SAY PadR( _err_msg, 53 )
             log_write( _err_msg, 2 )
-        endif
-        exit
-    endif
+         ENDIF
+         EXIT
+      ENDIF
 
-    if ( _i >= SEMAPHORE_LOCK_RETRY_NUM )
-          _err_msg := "table " + table + " ostala lockovana nakon " + STR(SEMAPHORE_LOCK_RETRY_NUM, 2) + " pokusaja ##" + ;
-                      "nasilno uklanjam lock !"
-          MsgBeep(_err_msg)
-          log_write( _err_msg, 2 )
-          exit
+      IF ( _i >= SEMAPHORE_LOCK_RETRY_NUM )
+         _err_msg := "table " + table + " ostala lockovana nakon " + Str( SEMAPHORE_LOCK_RETRY_NUM, 2 ) + " pokusaja ##" + ;
+            "nasilno uklanjam lock !"
+         MsgBeep( _err_msg )
+         log_write( _err_msg, 2 )
+         EXIT
 
-          return .f.
-    endif
+         RETURN .F.
+      ENDIF
 
-enddo
+   ENDDO
 
-// svi useri su lockovani
-_qry := "UPDATE fmk.semaphores_" + table + " SET algorithm=" + _sql_quote(status) + ", last_trans_user_code=" + _sql_quote(_user) + "; "
+   // svi useri su lockovani
+   _qry := "UPDATE fmk.semaphores_" + table + " SET algorithm=" + _sql_quote( status ) + ", last_trans_user_code=" + _sql_quote( _user ) + "; "
 
-if (status == "lock")
-    _qry += "UPDATE fmk.semaphores_" + table + " SET algorithm='locked_by_me' WHERE user_code=" + _sql_quote(_user) + ";" 
-endif
+   IF ( status == "lock" )
+      _qry += "UPDATE fmk.semaphores_" + table + " SET algorithm='locked_by_me' WHERE user_code=" + _sql_quote( _user ) + ";"
+   ENDIF
 
-_ret := _sql_query( _server, _qry )
+   _ret := _sql_query( _server, _qry )
 
-log_write( "table: " + table + ", status:" + status + " - END" , 7 )
+   log_write( "table: " + table + ", status:" + status + " - END", 7 )
 
-if VALTYPE(_ret) == "L"
-    // ERROR
-    log_write("qry error: " + _qry, 7 )
-    Alert("error :" + _qry)
-    QUIT_1
-endif
+   IF ValType( _ret ) == "L"
+      // ERROR
+      log_write( "qry error: " + _qry, 7 )
+      Alert( "error :" + _qry )
+      QUIT_1
+   ENDIF
 
-return .t.
+   RETURN .T.
 
 
 // -----------------------------------
 // -----------------------------------
-function get_semaphore_status(table)
-local _qry
-local _ret
-local _server := pg_server()
-local _user   := f18_user()
+FUNCTION get_semaphore_status( table )
 
-_qry := "SELECT algorithm FROM fmk.semaphores_" + table + " WHERE user_code=" + _sql_quote(_user)
-_ret := _sql_query( _server, _qry )
+   LOCAL _qry
+   LOCAL _ret
+   LOCAL _server := pg_server()
+   LOCAL _user   := f18_user()
 
-if VALTYPE(_ret) == "L"
-    log_write( "semafor status error: " + _qry, 6 )
-    QUIT_1
-endif
+   _qry := "SELECT algorithm FROM fmk.semaphores_" + table + " WHERE user_code=" + _sql_quote( _user )
+   _ret := _sql_query( _server, _qry )
 
-return ALLTRIM(_ret:Fieldget( 1 ))
+   IF ValType( _ret ) == "L"
+      log_write( "semafor status error: " + _qry, 6 )
+      QUIT_1
+   ENDIF
+
+   RETURN AllTrim( _ret:FieldGet( 1 ) )
 
 
 
 // ------------------------------------
 // ------------------------------------
-function last_semaphore_version(table)
-local _qry
-local _ret
-local _server:= pg_server()
+FUNCTION last_semaphore_version( table )
 
-_qry := "SELECT last_trans_version FROM  fmk.semaphores_" + table + " WHERE user_code=" + _sql_quote(f18_user())
-_ret := _sql_query( _server, _qry )
+   LOCAL _qry
+   LOCAL _ret
+   LOCAL _server := pg_server()
 
-if VALTYPE(_ret) == "L"
-    return -1
-endif
+   _qry := "SELECT last_trans_version FROM  fmk.semaphores_" + table + " WHERE user_code=" + _sql_quote( f18_user() )
+   _ret := _sql_query( _server, _qry )
 
-return _ret:Fieldget( 1 )
+   IF sql_query_bez_zapisa( _ret )
+      RETURN -1
+   ENDIF
 
+   RETURN _ret:FieldGet( 1 )
+
+
+// -------------------------------
+// -------------------------------
+FUNCTION sql_query_bez_zapisa( ret )
+
+   SWITCH ValType( ret )
+   CASE "L"
+      RETURN .T.
+   CASE "O"
+      // TPQQuery nema nijednog zapisa
+      IF ret:lEof .AND. ret:lBof
+         RETURN .T.
+      ENDIF
+      EXIT
+   OTHERWISE
+      MsgBeep( "sql_query ? ret valtype: " + ValType( ret ) )
+      QUIT_1
+   END SWITCH
+
+   RETURN .F.
 
 // -----------------------------------------------------------------------
 // get_semaphore_version( "konto", last = .t. => last_version)
 // -----------------------------------------------------------------------
-function get_semaphore_version(table, last)
-LOCAL _tbl_obj
-LOCAL _result
-LOCAL _qry
-local _tbl
-local _server := pg_server()
-local _user := f18_user()
+FUNCTION get_semaphore_version( table, last )
 
-// trebam last_version
-if last == NIL
-   last := .f.
-endif
+   LOCAL _tbl_obj
+   LOCAL _result
+   LOCAL _qry
+   LOCAL _tbl
+   LOCAL _server := pg_server()
+   LOCAL _user := f18_user()
 
-_tbl := "fmk.semaphores_" + LOWER(table)
+   // trebam last_version
+   IF last == NIL
+      last := .F.
+   ENDIF
 
-_qry := "SELECT "
-if last
-    _qry +=  "MAX(last_trans_version) AS ver"
-else
-    _qry += "version as ver"
-endif
-_qry += " FROM " + _tbl + " WHERE user_code=" + _sql_quote(_user)
+   _tbl := "fmk.semaphores_" + Lower( table )
 
-_qry += " UNION SELECT -1 ORDER BY ver DESC LIMIT 1"
+   _qry := "SELECT "
+   IF last
+      _qry +=  "MAX(last_trans_version) AS ver"
+   ELSE
+      _qry += "version as ver"
+   ENDIF
+   _qry += " FROM " + _tbl + " WHERE user_code=" + _sql_quote( _user )
 
-_tbl_obj := _sql_query( _server, _qry )
+   _qry += " UNION SELECT -1 ORDER BY ver DESC LIMIT 1"
 
-if VALTYPE(_tbl_obj) == "L" 
+   _tbl_obj := _sql_query( _server, _qry )
+
+   IF ValType( _tbl_obj ) == "L"
       _msg = "problem sa:" + _qry
-      log_write( _msg, 2)
-      MsgBeep(2)
+      log_write( _msg, 2 )
+      MsgBeep( 2 )
       QUIT_1
-endif
+   ENDIF
 
-_result := _tbl_obj:Fieldget(1)
+   _result := _tbl_obj:FieldGet( 1 )
 
-RETURN _result
+   RETURN _result
 
 
 // -------------------------------------------
 // get_semaphore_version_h( "konto")
 // -------------------------------------------
-function get_semaphore_version_h(table)
-LOCAL _tbl_obj
-LOCAL _qry
-local _tbl
-local _server := pg_server()
-local _user := f18_user()
-local _ret := hb_hash()
+FUNCTION get_semaphore_version_h( table )
 
-_tbl := "fmk.semaphores_" + LOWER(table)
+   LOCAL _tbl_obj
+   LOCAL _qry
+   LOCAL _tbl
+   LOCAL _server := pg_server()
+   LOCAL _user := f18_user()
+   LOCAL _ret := hb_Hash()
 
-_qry := "SELECT version, last_trans_version AS last_version"
-_qry += " FROM " + _tbl + " WHERE user_code=" + _sql_quote(_user)
-_qry += " UNION SELECT -1, -1 ORDER BY version DESC LIMIT 1"
+   _tbl := "fmk.semaphores_" + Lower( table )
 
-_tbl_obj := _sql_query( _server, _qry )
+   _qry := "SELECT version, last_trans_version AS last_version"
+   _qry += " FROM " + _tbl + " WHERE user_code=" + _sql_quote( _user )
+   _qry += " UNION SELECT -1, -1 ORDER BY version DESC LIMIT 1"
 
-if VALTYPE(_tbl_obj) == "L" 
+   _tbl_obj := _sql_query( _server, _qry )
+
+   IF ValType( _tbl_obj ) == "L"
       _msg = "problem sa:" + _qry
-      log_write( _msg, 2)
-      MsgBeep(2)
+      log_write( _msg, 2 )
+      MsgBeep( 2 )
       QUIT_1
-endif
+   ENDIF
 
-_ret["version"]      := _tbl_obj:Fieldget(1)
-_ret["last_version"] := _tbl_obj:Fieldget(2)
+   _ret[ "version" ]      := _tbl_obj:FieldGet( 1 )
+   _ret[ "last_version" ] := _tbl_obj:FieldGet( 2 )
 
-RETURN _ret
+   RETURN _ret
 
 
 
@@ -314,112 +348,117 @@ RETURN _ret
 // reset_semaphore_version( "konto")
 // set version to -1
 // -------------------------------------------
-function reset_semaphore_version(table)
-LOCAL _ret
-LOCAL _result
-LOCAL _qry
-LOCAL _tbl
-LOCAL _user := f18_user()
-LOCAL _server := pg_server()
+FUNCTION reset_semaphore_version( table )
 
-_tbl := "fmk.semaphores_" + LOWER(table)
-_result := table_count( _tbl, "user_code=" + _sql_quote(_user)) 
+   LOCAL _ret
+   LOCAL _result
+   LOCAL _qry
+   LOCAL _tbl
+   LOCAL _user := f18_user()
+   LOCAL _server := pg_server()
 
-if ( _result == 0 )
-    log_write( "reset semaphore " + _tbl + " insert ", 1 )
-    _qry := "INSERT INTO " + _tbl + "(user_code, last_trans_version, version, algorithm) " + ;
-               "VALUES(" + _sql_quote(_user)  + ", 0, -1, 'free')"
-else
-     log_write( "reset semaphore " + _tbl + " update ", 1 )
-    _qry := "UPDATE " + _tbl + " SET version=-1, last_trans_version=(CASE WHEN last_trans_version IS NULL THEN 0 ELSE last_trans_version END) WHERE user_code =" + _sql_quote(_user) 
-endif
+   _tbl := "fmk.semaphores_" + Lower( table )
+   _result := table_count( _tbl, "user_code=" + _sql_quote( _user ) )
 
-_ret := _sql_query( _server, _qry )
+   IF ( _result == 0 )
+      log_write( "reset semaphore " + _tbl + " insert ", 1 )
+      _qry := "INSERT INTO " + _tbl + "(user_code, last_trans_version, version, algorithm) " + ;
+         "VALUES(" + _sql_quote( _user )  + ", 0, -1, 'free')"
+   ELSE
+      log_write( "reset semaphore " + _tbl + " update ", 1 )
+      _qry := "UPDATE " + _tbl + " SET version=-1, last_trans_version=(CASE WHEN last_trans_version IS NULL THEN 0 ELSE last_trans_version END) WHERE user_code =" + _sql_quote( _user )
+   ENDIF
 
-_qry := "SELECT version from " + _tbl + " WHERE user_code =" + _sql_quote(_user) 
-_ret := _sql_query( _server, _qry )
+   _ret := _sql_query( _server, _qry )
+   _qry := "SELECT version from " + _tbl + " WHERE user_code =" + _sql_quote( _user )
+   _ret := _sql_query( _server, _qry )
 
-log_write( "reset semaphore, select version" + STR( _ret:Fieldget(1) ) , 7 )
+   log_write( "reset semaphore, select version" + Str( _ret:FieldGet( 1 ) ), 7 )
 
-return _ret:Fieldget(1)
+   RETURN _ret:FieldGet( 1 )
 
 
-//---------------------------------------
+// ---------------------------------------
 // date algoritam
-//---------------------------------------
-function push_dat_to_semaphore( table, date )
-local _tbl
-local _result
-local _ret
-local _qry
-local _sql_ids
-local _i
-local _user := f18_user()
-local _server := pg_server()
+// ---------------------------------------
+FUNCTION push_dat_to_semaphore( table, date )
 
-_tbl := "fmk.semaphores_" + table
-_result := table_count(_tbl, "user_code=" + _sql_quote(_user)) 
+   LOCAL _tbl
+   LOCAL _result
+   LOCAL _ret
+   LOCAL _qry
+   LOCAL _sql_ids
+   LOCAL _i
+   LOCAL _user := f18_user()
+   LOCAL _server := pg_server()
 
-_qry := "UPDATE " + _tbl + ;
-              " SET dat=" + _sql_quote(date) + ;
-              " WHERE user_code =" + _sql_quote(_user) 
-_ret := _sql_query( _server, _qry )
+   _tbl := "fmk.semaphores_" + table
+   _result := table_count( _tbl, "user_code=" + _sql_quote( _user ) )
 
-return _ret
+   _qry := "UPDATE " + _tbl + ;
+      " SET dat=" + _sql_quote( date ) + ;
+      " WHERE user_code =" + _sql_quote( _user )
+   _ret := _sql_query( _server, _qry )
+
+   RETURN _ret
 
 
 
-//---------------------------------------
+// ---------------------------------------
 // vrati date za DATE algoritam
-//---------------------------------------
-function get_dat_from_semaphore(table)
-local _server :=  pg_server()
-local _tbl
-local _tbl_obj
-local _qry
-local _dat
+// ---------------------------------------
+FUNCTION get_dat_from_semaphore( table )
 
-_tbl := "fmk.semaphores_" + table
+   LOCAL _server :=  pg_server()
+   LOCAL _tbl
+   LOCAL _tbl_obj
+   LOCAL _qry
+   LOCAL _dat
 
-_qry := "SELECT dat FROM " + _tbl + " WHERE user_code=" + _sql_quote(f18_user())
-_tbl_obj := _sql_query( _server, _qry )
-IF VALTYPE(_tbl_obj) == "L" 
-      MsgBeep( "problem sa:" + _qry)
+   _tbl := "fmk.semaphores_" + table
+
+   _qry := "SELECT dat FROM " + _tbl + " WHERE user_code=" + _sql_quote( f18_user() )
+   _tbl_obj := _sql_query( _server, _qry )
+   IF ValType( _tbl_obj ) == "L"
+      MsgBeep( "problem sa:" + _qry )
       QUIT_1
-ENDIF
+   ENDIF
 
-_dat := oTable:Fieldget(1)
+   _dat := oTable:FieldGet( 1 )
 
-RETURN _dat
+   RETURN _dat
 
 
-// ------------------------------  
-//  broj redova za tabelu
-//  --------------------------------
-function table_count(table, condition)
-LOCAL _table_obj
-LOCAL _result
-LOCAL _qry
-LOCAL _server := pg_server()
-// provjeri prvo da li postoji uopšte ovaj site zapis
-_qry := "SELECT COUNT(*) FROM " + table 
+// ------------------------------
+// broj redova za tabelu
+// --------------------------------
+FUNCTION table_count( table, condition )
 
-if condition != NIL
-  _qry += " WHERE " + condition
-endif
+   LOCAL _table_obj
+   LOCAL _result
+   LOCAL _qry
+   LOCAL _server := pg_server()
 
-_table_obj := _sql_query( _server, _qry )
+   // provjeri prvo da li postoji uopšte ovaj site zapis
+   _qry := "SELECT COUNT(*) FROM " + table
 
-log_write( "table: " + table + " count = " + ALLTRIM(STR( _table_obj:Fieldget(1))) , 8 )
+   IF condition != NIL
+      _qry += " WHERE " + condition
+   ENDIF
 
-IF VALTYPE(_table_obj) == "L" 
-    log_write( "table_count(), error: " + _qry, 1 )
-    QUIT_1
-ENDIF
+   _table_obj := _sql_query( _server, _qry )
 
-_result := _table_obj:Fieldget(1)
+   log_write( "table: " + table + " count = " + AllTrim( Str( _table_obj:FieldGet( 1 ) ) ), 8 )
 
-RETURN _result
+   IF ValType( _table_obj ) == "L"
+      log_write( "table_count(), error: " + _qry, 1 )
+      QUIT_1
+   ENDIF
+
+   _result := _table_obj:FieldGet( 1 )
+
+   RETURN _result
+
 
 
 
@@ -427,66 +466,65 @@ RETURN _result
 // napuni dbf tabelu sa podacima sa servera
 // dbf_tabela mora biti otvorena i u tekucoj WA
 // --------------------------------------------------------------------------------
-function fill_dbf_from_server(dbf_table, sql_query, sql_fetch_time, dbf_write_time)
-local _counter := 0
-local _i, _fld
-local _server := pg_server()
-local _qry_obj
-local _retry := 3
-local _a_dbf_rec, _msg
-local _dbf_alias, _dbf_fields
+FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_time )
 
-_a_dbf_rec := get_a_dbf_rec(dbf_table)
-_dbf_alias := _a_dbf_rec["alias"]
-_dbf_fields := _a_dbf_rec["dbf_fields"]
+   LOCAL _counter := 0
+   LOCAL _i, _fld
+   LOCAL _server := pg_server()
+   LOCAL _qry_obj
+   LOCAL _retry := 3
+   LOCAL _a_dbf_rec, _msg
+   LOCAL _dbf_alias, _dbf_fields
 
-sql_fetch_time := SECONDS()
-_qry_obj := run_sql_query(sql_query, _retry ) 
-sql_fetch_time := SECONDS() - sql_fetch_time
+   _a_dbf_rec := get_a_dbf_rec( dbf_table )
+   _dbf_alias := _a_dbf_rec[ "alias" ]
+   _dbf_fields := _a_dbf_rec[ "dbf_fields" ]
 
-if !USED() .or. ( _dbf_alias != ALIAS() )
-    Alert(PROCNAME(1) + "(" + ALLTRIM(STR(PROCLINE(1))) + ") " + dbf_table + " dbf mora biti otvoren !")
-    log_write( "ERR - tekuci dbf alias je " + ALIAS() + " a treba biti " + _dbf_alias, 2 )
-    QUIT_1 
-endif
+   sql_fetch_time := Seconds()
+   _qry_obj := run_sql_query( sql_query, _retry )
+   sql_fetch_time := Seconds() - sql_fetch_time
 
-log_write( "fill_dbf_from_server(), poceo", 9 )
+   IF !Used() .OR. ( _dbf_alias != Alias() )
+      Alert( ProcName( 1 ) + "(" + AllTrim( Str( ProcLine( 1 ) ) ) + ") " + dbf_table + " dbf mora biti otvoren !" )
+      log_write( "ERR - tekuci dbf alias je " + Alias() + " a treba biti " + _dbf_alias, 2 )
+      QUIT_1
+   ENDIF
 
-dbf_write_time := SECONDS()
+   log_write( "fill_dbf_from_server(), poceo", 9 )
 
-DO WHILE !_qry_obj:EOF()
+   dbf_write_time := Seconds()
 
-    ++ _counter
-    APPEND BLANK
+   DO WHILE !_qry_obj:Eof()
 
-    for _i := 1 to LEN( _dbf_fields )
+      ++ _counter
+      APPEND BLANK
 
-        _fld := FIELDBLOCK( _dbf_fields[_i] )
+      FOR _i := 1 TO Len( _dbf_fields )
 
-        if VALTYPE(EVAL(_fld)) $ "CM"
-            EVAL( _fld, hb_Utf8ToStr( _qry_obj:FieldGet( _qry_obj:FieldPos( _dbf_fields[ _i ] ) ) ) )
-        else
-            EVAL( _fld, _qry_obj:FieldGet( _qry_obj:FieldPos( _dbf_fields[ _i ] ) ) )
-        endif
+         _fld := FieldBlock( _dbf_fields[ _i ] )
 
-    next 
-                
-    _msg := ToStr(Time()) + " : sync fill : " + dbf_table + " : " + ALLTRIM( STR( _counter ) )
+         IF ValType( Eval( _fld ) ) $ "CM"
+            Eval( _fld, hb_UTF8ToStr( _qry_obj:FieldGet( _qry_obj:FieldPos( _dbf_fields[ _i ] ) ) ) )
+         ELSE
+            Eval( _fld, _qry_obj:FieldGet( _qry_obj:FieldPos( _dbf_fields[ _i ] ) ) )
+         ENDIF
 
-    @ maxrows() - 1, maxcols() - 70 SAY PADR( _msg, 53 )
- 
-    _qry_obj:Skip()
+      NEXT
+
+      _msg := ToStr( Time() ) + " : sync fill : " + dbf_table + " : " + AllTrim( Str( _counter ) )
+
+      _qry_obj:Skip()
 
 
-ENDDO
+   ENDDO
 
-log_write( "fill_dbf_from_server(), table: " + dbf_table + ", count: " + ALLTRIM( STR( _counter )), 7 )
+   log_write( "fill_dbf_from_server(), table: " + dbf_table + ", count: " + AllTrim( Str( _counter ) ), 7 )
 
-log_write( "fill_dbf_from_server(), zavrsio", 9 )
+   log_write( "fill_dbf_from_server(), zavrsio", 9 )
 
-dbf_write_time := SECONDS() - dbf_write_time
+   dbf_write_time := Seconds() - dbf_write_time
 
-return
+   RETURN
 
 
 
@@ -494,20 +532,21 @@ return
 // --------------------------------------------------------------------
 // da li je polje u blacklisti
 // --------------------------------------------------------------------
-function field_in_blacklist( field_name, blacklist )
-local _ok := .f.
-local _scan
+FUNCTION field_in_blacklist( field_name, blacklist )
 
-// mozda nije definisana blacklista
-if blacklist == NIL
-    return _ok
-endif
+   LOCAL _ok := .F.
+   LOCAL _scan
 
-if ASCAN( blacklist, { |val| val == field_name } ) > 0
-    _ok := .t.
-endif
+   // mozda nije definisana blacklista
+   IF blacklist == NIL
+      RETURN _ok
+   ENDIF
 
-return _ok
+   IF AScan( blacklist, {|val| val == field_name } ) > 0
+      _ok := .T.
+   ENDIF
+
+   RETURN _ok
 
 
 
@@ -515,73 +554,75 @@ return _ok
 // update_semaphore_version_after_push( "konto")
 //
 // --------------------------------------------------------------------------------------------
-function update_semaphore_version_after_push(table, to_myself)
-LOCAL _ret
-LOCAL _result
-LOCAL _qry
-LOCAL _tbl
-LOCAL _user := f18_user()
-LOCAL _last
-LOCAL _server := pg_server()
-LOCAL _ver_user, _last_ver, _id_full
-local _versions
-local _a_dbf_rec
-local _ret_ver
+FUNCTION update_semaphore_version_after_push( table, to_myself )
 
-if to_myself == NIL
-   to_myself := .f.
-endif
+   LOCAL _ret
+   LOCAL _result
+   LOCAL _qry
+   LOCAL _tbl
+   LOCAL _user := f18_user()
+   LOCAL _last
+   LOCAL _server := pg_server()
+   LOCAL _ver_user, _last_ver, _id_full
+   LOCAL _versions
+   LOCAL _a_dbf_rec
+   LOCAL _ret_ver
+   LOCAL cVerUser
 
-log_write( "START: update semaphore version after push", 7 )
+   IF to_myself == NIL
+      to_myself := .F.
+   ENDIF
 
-_a_dbf_rec := get_a_dbf_rec(table)
+   log_write( "START: update semaphore version after push", 7 )
 
-_tbl := "fmk.semaphores_" + LOWER(table)
-_result := table_count(_tbl, "user_code=" + _sql_quote(_user)) 
-_versions := get_semaphore_version_h(table)
+   _a_dbf_rec := get_a_dbf_rec( table )
 
-_last_ver := _versions["last_version"]
-_version  := _versions["version"]
+   _tbl := "fmk.semaphores_" + Lower( table )
+   _result := table_count( _tbl, "user_code=" + _sql_quote( _user ) )
+   _versions := get_semaphore_version_h( table )
 
-if _last_ver < 0
-	_last_ver := 1
-endif
+   _last_ver := _versions[ "last_version" ]
+   _version  := _versions[ "version" ]
 
-_ver_user := _last_ver
+   IF _last_ver < 0
+      _last_ver := 1
+   ENDIF
 
-++ _ver_user
+   _ver_user := _last_ver
+   ++ _ver_user
+   cVerUser := ALLTRIM( STR( _ver_user ) )
 
-if ( _result == 0 )
+   IF ( _result == 0 )
 
-    // user po prvi put radi sa tabelom semafora, iniciraj full sync
-    _id_full := "ARRAY[" + _sql_quote("#F") + "]"
+      // user po prvi put radi sa tabelom semafora, iniciraj full sync
+      _id_full := "ARRAY[" + _sql_quote( "#F" ) + "]"
 
-    _qry := "INSERT INTO " + _tbl + "(user_code, version, last_trans_version, ids) " + ;
-               "VALUES(" + _sql_quote(_user)  + ", " + STR(_ver_user) + ", (select max(last_trans_version) from " +  _tbl + "), " + _id_full + ")"
+      _qry := "INSERT INTO " + _tbl + "(user_code, version, last_trans_version, ids) " + ;
+         "VALUES(" + _sql_quote( _user )  + ", " + cVerUser + ", (select max(last_trans_version) from " +  _tbl + "), " + _id_full + ")"
 
-    _ret := _sql_query( _server, _qry)
+      _ret := _sql_query( _server, _qry )
 
-    log_write( "Dodajem novu stavku semafora za tabelu: " + _tbl + " user: " + _user + " ver.user: " + STR(_ver_user), 7)
+      log_write( "Dodajem novu stavku semafora za tabelu: " + _tbl + " user: " + _user + " ver.user: " + cVerUser, 7 )
 
-endif
+   ENDIF
 
-if !to_myself
-  // setuj moju verziju ako ne zelim sebe refreshirati
-  _qry := "UPDATE " + _tbl + " SET version=" + STR( _ver_user ) + " WHERE user_code=" + _sql_quote( _user ) + ";"
-endif
+   _qry := ""
 
-// svim userima setuj last_trans_version
-_qry := "UPDATE " + _tbl + " SET last_trans_version=" + STR( _ver_user ) + ";"
-// kod svih usera verzija ne moze biti veca od nLast + 1
-_qry += "UPDATE " + _tbl + " SET version=" + STR( _ver_user ) + ;
-        " WHERE version > " + STR( _ver_user )
+   IF !to_myself
+      // setuj moju verziju ako ne zelim sebe refreshirati
+      _qry := "UPDATE " + _tbl + " SET version=" + cVerUser + " WHERE user_code=" + _sql_quote( _user ) + "; "
+   ENDIF
 
-_ret := _sql_query( _server, _qry )
+   // svim userima setuj last_trans_version
+   _qry += "UPDATE " + _tbl + " SET last_trans_version=" + cVerUser + "; "
+   // kod svih usera verzija ne moze biti veca od posljednje
+   _qry += "UPDATE " + _tbl + " SET version=" + cVerUser + ;
+      " WHERE version > " + cVerUser + ";"
+   _ret := _sql_query( _server, _qry )
 
-log_write( "END: update semaphore version after push user: " + _user + ", tabela: " + _tbl + ", last_ver=" + STR( _ver_user ), 7)
+   log_write( "END: update semaphore version after push user: " + _user + ", tabela: " + _tbl + ", last_ver=" + Str( _ver_user ), 7 )
 
-return _ver_user
-
+   RETURN _ver_user
 
 
 
@@ -589,29 +630,25 @@ return _ver_user
 // ----------------------------------------------------------------------
 // nuliraj ids-ove, postavi da je verzija semafora = posljednja verzija
 // ------------------------------------------------------------------------
-function nuliraj_ids_and_update_my_semaphore_ver(table)
-local _tbl, _count
-local _ret
-local _user := f18_user()
-local _server := pg_server()
-local _free
-local _sem_status
+FUNCTION nuliraj_ids_and_update_my_semaphore_ver( table )
 
-log_write( "START: nuliraj ids-ove - user: " + _user, 7)
+   LOCAL _tbl, _count
+   LOCAL _ret
+   LOCAL _user := f18_user()
+   LOCAL _server := pg_server()
+   LOCAL _free
+   LOCAL _sem_status
 
-_tbl := "fmk.semaphores_" + LOWER(table)
-_qry := "UPDATE " + _tbl + " SET " 
-_qry += " ids=NULL , dat=NULL,"
-_qry += " version=last_trans_version"
-_qry += " WHERE user_code =" + _sql_quote(_user) 
+   log_write( "START: nuliraj ids-ove - user: " + _user, 7 )
+
+   _tbl := "fmk.semaphores_" + Lower( table )
+   _qry := "UPDATE " + _tbl + " SET "
+   _qry += " ids=NULL , dat=NULL,"
+   _qry += " version=last_trans_version"
+   _qry += " WHERE user_code =" + _sql_quote( _user )
 	
-_ret := _sql_query( _server, _qry )
+   _ret := _sql_query( _server, _qry )
 
-log_write( "END: nuliraj ids-ove - user: " + _user, 7)
+   log_write( "END: nuliraj ids-ove - user: " + _user, 7 )
 
-return _ret
-
-
-
-
-
+   RETURN _ret

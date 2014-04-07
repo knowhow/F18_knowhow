@@ -425,7 +425,7 @@ elseif cTipRada == "3"
 	cRtm := "pdn1033"
 endif
 
-close all
+my_close_all_dbf()
 
 // stampaj akontaciju poreza delphi
 f18_rtm_print( ALLTRIM(cRtm), "r_export", "1" )

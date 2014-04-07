@@ -100,7 +100,7 @@ do case
  case Ch==K_CTRL_P
      PushWa()
      cSeek:=idfirma+idvd+brdok
-     close all
+     my_close_all_dbf()
      kalk_centr_stampa_dokumenta(.t.,cSeek)
      O_KALK
      O_KALK_DOKS

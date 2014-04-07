@@ -259,7 +259,10 @@ CREATE_INDEX("ID","ID", _alias )
 // ------------------------------------------------
 // FAKT_PRIPR_ATRIB
 // ---------------------------------------------------
-F18_DOK_ATRIB():new("fakt"):create_local_atrib_table()
+F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB):create_local_atrib_table()
+
+// kreiraj relacije : RELATION
+cre_relation( ver )
 
 return .t.
 

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,349 +13,351 @@
 #include "virm.ch"
 
 
-static function _o_tables()
+STATIC FUNCTION _o_tables()
 
-select (F_BANKE)
-if !USED()
-    O_BANKE
-endif
+   SELECT ( F_BANKE )
+   IF !Used()
+      O_BANKE
+   ENDIF
 
-select (F_JPRIH)
-if !USED()
-    O_JPRIH
-endif
+   SELECT ( F_JPRIH )
+   IF !Used()
+      O_JPRIH
+   ENDIF
 
-select (F_SIFK)
-if !USED()
-    O_SIFK
-endif
+   SELECT ( F_SIFK )
+   IF !Used()
+      O_SIFK
+   ENDIF
 
-select (F_SIFV)
-if !USED()
-    O_SIFV
-endif
+   SELECT ( F_SIFV )
+   IF !Used()
+      O_SIFV
+   ENDIF
 
-select (F_KRED)
-if !USED()
-    O_KRED
-endif
+   SELECT ( F_KRED )
+   IF !Used()
+      O_KRED
+   ENDIF
 
-select (F_REKLD)
-if !USED()
-    O_REKLD
-endif
+   SELECT ( F_REKLD )
+   IF !Used()
+      O_REKLD
+   ENDIF
 
-select (F_PARTN)
-if !USED()
-    O_PARTN
-endif
+   SELECT ( F_PARTN )
+   IF !Used()
+      O_PARTN
+   ENDIF
 
-select (F_VRPRIM)
-if !USED()
-    O_VRPRIM
-endif
+   SELECT ( F_VRPRIM )
+   IF !Used()
+      O_VRPRIM
+   ENDIF
 
-select (F_LDVIRM)
-if !USED()
-    O_LDVIRM
-endif
+   SELECT ( F_LDVIRM )
+   IF !Used()
+      O_LDVIRM
+   ENDIF
 
-select (F_VIPRIPR)
-if !USED()
-    O_VIRM_PRIPR
-endif
+   SELECT ( F_VIPRIPR )
+   IF !Used()
+      O_VIRM_PRIPR
+   ENDIF
 
-return
+   RETURN
 
 
 
 // ------------------------------------------------------------------------
 // prenos virmana iz modula LD
 // ------------------------------------------------------------------------
-function virm_prenos_ld( prenos_ld )
-local _poziv_na_broj
-local _dat_virm := DATE()
-local _bez_nula := fetch_metric( "virm_generisanje_nule", my_user(), "D" ) 
-local _ispl_posebno := fetch_metric( "virm_isplate_za_radnike_posebno", my_user(), "N" ) 
-local _dod_opis1 := "D"
-local _racun_upl
-local _per_od, _per_do
-local _id_banka, _dod_opis
-local _r_br, _firma
+FUNCTION virm_prenos_ld( prenos_ld )
 
-private _mjesec, _godina, broj_radnika
+   LOCAL _poziv_na_broj
+   LOCAL _dat_virm := Date()
+   LOCAL _bez_nula := fetch_metric( "virm_generisanje_nule", my_user(), "D" )
+   LOCAL _ispl_posebno := fetch_metric( "virm_isplate_za_radnike_posebno", my_user(), "N" )
+   LOCAL _dod_opis1 := "D"
+   LOCAL _racun_upl
+   LOCAL _per_od, _per_do
+   LOCAL _id_banka, _dod_opis
+   LOCAL _r_br, _firma
 
-if prenos_ld == NIL
-    prenos_ld := .f.
-endif
+   PRIVATE _mjesec, _godina, broj_radnika
 
-_o_tables()
+   IF prenos_ld == NIL
+      prenos_ld := .F.
+   ENDIF
 
-// uzmi parametre iz sql/db
-_godina := fetch_metric( "virm_godina", my_user(), YEAR( DATE() ) )
-_mjesec := fetch_metric( "virm_mjesec", my_user(), MONTH( DATE() ) ) 
-_poziv_na_broj := fetch_metric( "virm_poziv_na_broj", my_user(), PADR( "", 10 ) ) 
-_racun_upl := fetch_metric( "virm_zr_uplatioca", my_user(), SPACE(16) ) 
-_firma := PADR( fetch_metric("virm_org_id", nil, "" ), 6 )
-// setuj globalnu
-gVirmFirma := _firma
+   _o_tables()
 
-// period od-do
-_per_od := CTOD("")
-_per_do := _per_od
+   // uzmi parametre iz sql/db
+   _godina := fetch_metric( "virm_godina", my_user(), Year( Date() ) )
+   _mjesec := fetch_metric( "virm_mjesec", my_user(), Month( Date() ) )
+   _poziv_na_broj := fetch_metric( "virm_poziv_na_broj", my_user(), PadR( "", 10 ) )
+   _racun_upl := fetch_metric( "virm_zr_uplatioca", my_user(), Space( 16 ) )
+   _firma := PadR( fetch_metric( "virm_org_id", nil, "" ), 6 )
+   // setuj globalnu
+   gVirmFirma := _firma
 
-Box(, 10, 70 )
+   // period od-do
+   _per_od := CToD( "" )
+   _per_do := _per_od
 
-    @ m_x + 1, m_y + 2 SAY "GENERISANJE VIRMANA NA OSNOVU OBRACUNA PLATE"
+   Box(, 10, 70 )
 
-    _id_banka := PADR( _racun_upl, 3 )
+   @ m_x + 1, m_y + 2 SAY8 "GENERISANJE VIRMANA NA OSNOVU OBRAČUNA PLATE"
 
-    @ m_x + 2, m_y + 2 SAY "Posiljaoc (sifra banke):       " GET _id_banka valid OdBanku( _firma, @_id_banka )
-    read
+   _id_banka := PadR( _racun_upl, 3 )
 
-    _racun_upl := _id_banka
+   @ m_x + 2, m_y + 2 SAY "Posiljaoc (sifra banke):       " GET _id_banka VALID OdBanku( _firma, @_id_banka )
+   READ
 
-    select virm_pripr
+   _racun_upl := _id_banka
 
-    @ m_x + 3, m_y + 2 SAY "Poziv na broj " GET _poziv_na_broj
-    @ m_x + 4, m_y + 2 SAY "Godina" GET _godina PICT "9999"
-    @ m_x + 5, m_y + 2 SAY "Mjesec" GET _mjesec  PICT "99"
-    @ m_x + 7, m_y + 2 SAY "Datum" GET _dat_virm
-    @ m_x + 8, m_y + 2 SAY "Porezni period od" GET _per_od
-    @ m_x + 8, col() + 2 SAY "do" GET _per_do
-    @ m_x + 9, m_y + 2 SAY "Isplate prebaciti pojedinacno za svakog radnika (D/N)?" GET _ispl_posebno VALID _ispl_posebno $ "DN" PICT "@!"
-    @ m_x + 10, m_y + 2 SAY "Formirati samo stavke sa iznosima vecim od 0 (D/N)?" GET _bez_nula VALID _bez_nula $ "DN" PICT "@!"
-    
-    read
+   SELECT virm_pripr
 
-    ESC_BCR
+   @ m_x + 3, m_y + 2 SAY "Poziv na broj " GET _poziv_na_broj
+   @ m_x + 4, m_y + 2 SAY "Godina" GET _godina PICT "9999"
+   @ m_x + 5, m_y + 2 SAY "Mjesec" GET _mjesec  PICT "99"
+   @ m_x + 7, m_y + 2 SAY "Datum" GET _dat_virm
+   @ m_x + 8, m_y + 2 SAY "Porezni period od" GET _per_od
+   @ m_x + 8, Col() + 2 SAY "do" GET _per_do
+   @ m_x + 9, m_y + 2 SAY8 "Isplate prebaciti pojedinačno za svakog radnika (D/N)?" GET _ispl_posebno VALID _ispl_posebno $ "DN" PICT "@!"
+   @ m_x + 10, m_y + 2 SAY8 "Formirati samo stavke sa iznosima većim od 0 (D/N)?" GET _bez_nula VALID _bez_nula $ "DN" PICT "@!"
 
-BoxC()
-    
-set_metric( "virm_zr_uplatioca", my_user(), _racun_upl ) 
-set_metric( "virm_godina", my_user(), _godina )
-set_metric( "virm_mjesec", my_user(), _mjesec ) 
-set_metric( "virm_poziv_na_broj", my_user(), _poziv_na_broj ) 
-set_metric( "virm_generisanje_nule", my_user(), _bez_nula ) 
-set_metric( "virm_isplate_za_radnike_posebno", my_user(), _ispl_posebno ) 
+   READ
 
-_dod_opis := ", za " + STR( _mjesec, 2 ) + "." + STR( _godina, 4 )
+   ESC_BCR
 
-_r_br := 0
+   BoxC()
 
-// obrada plate
-obrada_plate( _godina, _mjesec, _dat_virm, @_r_br, _dod_opis, _per_od, _per_do )
+   set_metric( "virm_zr_uplatioca", my_user(), _racun_upl )
+   set_metric( "virm_godina", my_user(), _godina )
+   set_metric( "virm_mjesec", my_user(), _mjesec )
+   set_metric( "virm_poziv_na_broj", my_user(), _poziv_na_broj )
+   set_metric( "virm_generisanje_nule", my_user(), _bez_nula )
+   set_metric( "virm_isplate_za_radnike_posebno", my_user(), _ispl_posebno )
 
-// obradi kredite
-obrada_kredita( _godina, _mjesec, _dat_virm, @_r_br, _dod_opis )
+   _dod_opis := ", za " + Str( _mjesec, 2 ) + "." + Str( _godina, 4 )
 
-// obrada tekucih racuna
-obrada_tekuci_racun( _godina, _mjesec, _dat_virm, @_r_br, _dod_opis )
+   _r_br := 0
 
-// popuni polja javnih prihoda
-filljprih()  
+   // obrada plate
+   obrada_plate( _godina, _mjesec, _dat_virm, @_r_br, _dod_opis, _per_od, _per_do )
 
-close all
-return
+   // obradi kredite
+   obrada_kredita( _godina, _mjesec, _dat_virm, @_r_br, _dod_opis )
+
+   // obrada tekucih racuna
+   obrada_tekuci_racun( _godina, _mjesec, _dat_virm, @_r_br, _dod_opis )
+
+   // popuni polja javnih prihoda
+   filljprih()
+
+   my_close_all_dbf()
+
+   RETURN
 
 // ---------------------------------------------------------------------------------------------
 // obrada podataka za isplate na tekuci racun
 // ---------------------------------------------------------------------------------------------
-static function obrada_tekuci_racun( godina, mjesec, dat_virm, r_br, dod_opis )
-local _oznaka := "IS_"
-local _id_kred, _rec
-local _formula, _izr_formula
-local _svrha_placanja
-local _poziv_na_broj := fetch_metric( "virm_poziv_na_broj", my_user(), PADR( "", 10 ) ) 
-local _racun_upl := fetch_metric( "virm_zr_uplatioca", my_user(), SPACE(16) ) 
-local _bez_nula := fetch_metric( "virm_generisanje_nule", my_user(), "N" ) 
-local _ispl_posebno := fetch_metric( "virm_isplate_za_radnike_posebno", my_user(), "N" ) 
-local _isplata_opis := ""
+STATIC FUNCTION obrada_tekuci_racun( godina, mjesec, dat_virm, r_br, dod_opis )
 
-select rekld
-seek STR( godina, 4 ) + STR( mjesec, 2 ) + _oznaka
+   LOCAL _oznaka := "IS_"
+   LOCAL _id_kred, _rec
+   LOCAL _formula, _izr_formula
+   LOCAL _svrha_placanja
+   LOCAL _racun_upl := fetch_metric( "virm_zr_uplatioca", my_user(), Space( 16 ) )
+   LOCAL _bez_nula := fetch_metric( "virm_generisanje_nule", my_user(), "N" )
+   LOCAL _ispl_posebno := fetch_metric( "virm_isplate_za_radnike_posebno", my_user(), "N" )
+   LOCAL _isplata_opis := ""
 
-do while !EOF() .and. field->id = _oznaka 
+   SELECT rekld
+   SEEK Str( godina, 4 ) + Str( mjesec, 2 ) + _oznaka
 
-    _id_kred := SUBSTR( field->id, 4 )  
-    // sifra banke
+   DO WHILE !Eof() .AND. field->id = _oznaka
 
-    // nastimaj se na kreditora i dodaj po potrebi
-    _ld_kreditor( _id_kred )     
+      _id_kred := SubStr( field->id, 4 )
+      // sifra banke
 
-    // pozicioniraj se na vrprim za isplatu
-    _ld_vrprim_isplata()
+      // nastimaj se na kreditora i dodaj po potrebi
+      _ld_kreditor( _id_kred )
 
-    select vrprim
+      // pozicioniraj se na vrprim za isplatu
+      _ld_vrprim_isplata()
 
-    _svrha_placanja := field->id
-        
-    select partn
-    seek _id_kred
+      SELECT vrprim
 
-    _u_korist := field->id
-    _kome_txt := field->naz
-    _kome_sjed := field->mjesto
-    _nacin_pl := "1"
+      _svrha_placanja := field->id
 
-    _kome_zr := SPACE(16)
-    OdBanku( _u_korist, @_kome_zr, .f. )
+      SELECT partn
+      SEEK _id_kred
 
-    select virm_pripr
-    go top   
-        
-    // uzmi podatke iz prve stavke
-    _ko_txt := field->ko_txt
-    _ko_zr := field->ko_zr
+      _u_korist := field->id
+      _kome_txt := field->naz
+      _kome_sjed := field->mjesto
+      _nacin_pl := "1"
 
-    select partn
-    hseek gVirmFirma
+      _kome_zr := Space( 16 )
+      OdBanku( _u_korist, @_kome_zr, .F. )
 
-    _total := 0
-    _kredit := 0
-     
-    select rekld
-    _sk_sifra := field->idpartner 
-    // SK=sifra kreditora/banke
-     
-    // isplate za jednu banku - sumirati
-    if _ispl_posebno == "N"
+      SELECT virm_pripr
+      GO TOP
 
-        do while !EOF() .and. field->id = _oznaka .and. field->idpartner = _sk_sifra
+      // uzmi podatke iz prve stavke
+      _ko_txt := field->ko_txt
+      _ko_zr := field->ko_zr
+
+      SELECT partn
+      hseek gVirmFirma
+
+      _total := 0
+      _kredit := 0
+
+      SELECT rekld
+      _sk_sifra := field->idpartner
+      // SK=sifra kreditora/banke
+
+      // isplate za jednu banku - sumirati
+      IF _ispl_posebno == "N"
+
+         DO WHILE !Eof() .AND. field->id = _oznaka .AND. field->idpartner = _sk_sifra
             ++ _kredit
             _total += rekld->iznos1
-            _isplata_opis := "obuhvaceno " + ALLTRIM( STR( _kredit ) ) + " radnika"
-            skip 1
-        enddo
-        skip -1
-     
-    else
-     
-        // svaka isplata ce se tretirati posebno
-        _kredit := 1
-        _total := rekld->iznos1
-        _isplata_opis := ALLTRIM( field->opis2 )
+            _isplata_opis := "obuhvaceno " + AllTrim( Str( _kredit ) ) + " radnika"
+            SKIP 1
+         ENDDO
+         SKIP -1
 
-    endif
+      ELSE
 
-    select virm_pripr
+         // svaka isplata ce se tretirati posebno
+         _kredit := 1
+         _total := rekld->iznos1
+         _isplata_opis := AllTrim( field->opis2 )
 
-    if _bez_nula == "N" .or. _total > 0
-            
-        append blank
+      ENDIF
 
-        replace field->rbr with ++ r_br
-        replace field->mjesto with gmjesto
-        replace field->svrha_pl with "IS"
-        replace field->iznos with _total
-        replace field->na_teret with gVirmFirma
-        replace field->kome_txt with _kome_txt 
-        replace field->ko_txt with _ko_txt
-        replace field->ko_zr with _ko_zr
-        replace field->kome_sj with _kome_sjed
-        replace field->kome_zr with _kome_zr
-        replace field->pnabr with _poziv_na_broj
-        replace field->dat_upl with dat_virm
-        replace field->svrha_doz with ALLTRIM( vrprim->pom_txt ) + " " + ALLTRIM( dod_opis ) + " " + _isplata_opis
-        replace field->u_korist with _id_kred
+      SELECT virm_pripr
 
-        if _ispl_posebno == "D"
+      IF _bez_nula == "N" .OR. _total > 0
+
+         APPEND BLANK
+
+         REPLACE field->rbr with ++r_br
+         REPLACE field->mjesto WITH gmjesto
+         REPLACE field->svrha_pl WITH "IS"
+         REPLACE field->iznos WITH _total
+         REPLACE field->na_teret WITH gVirmFirma
+         REPLACE field->kome_txt WITH _kome_txt
+         REPLACE field->ko_txt WITH _ko_txt
+         REPLACE field->ko_zr WITH _ko_zr
+         REPLACE field->kome_sj WITH _kome_sjed
+         REPLACE field->kome_zr WITH _kome_zr
+         REPLACE field->dat_upl WITH dat_virm
+         REPLACE field->svrha_doz WITH AllTrim( vrprim->pom_txt ) + " " + AllTrim( dod_opis ) + " " + _isplata_opis
+         REPLACE field->u_korist WITH _id_kred
+
+         IF _ispl_posebno == "D"
             // jedan radnik
-            replace field->svrha_doz with TRIM( svrha_doz ) + ", tekuci rn:" + TRIM( rekld->opis )
-        endif
+            REPLACE field->svrha_doz WITH Trim( svrha_doz ) + ", tekuci rn:" + Trim( rekld->opis )
+         ENDIF
 
-    endif
- 
-    select rekld
-    skip
+      ENDIF
 
-enddo
+      SELECT rekld
+      SKIP
 
+   ENDDO
 
-return
+   RETURN
 
 
 // ----------------------------------------------------------------------------------------------------
 // obrada virmana za regularnu isplatu plata, doprinosi, porezi itd...
 // ----------------------------------------------------------------------------------------------------
-static function obrada_plate( godina, mjesec, dat_virm, r_br, dod_opis, per_od, per_do )
-local _broj_radnika
-local _formula, _izr_formula
-local _svrha_placanja
-local _poziv_na_broj := fetch_metric( "virm_poziv_na_broj", my_user(), PADR( "", 10 ) ) 
-local _racun_upl := fetch_metric( "virm_zr_uplatioca", my_user(), SPACE(16) ) 
-local _bez_nula := fetch_metric( "virm_generisanje_nule", my_user(), "N" ) 
+STATIC FUNCTION obrada_plate( godina, mjesec, dat_virm, r_br, dod_opis, per_od, per_do )
 
-private _kome_zr := ""
-private _kome_txt := ""
-private _budzorg := ""
-private _idjprih := ""
- 
-select partn 
-seek gVirmFirma
+   LOCAL _broj_radnika
+   LOCAL _formula, _izr_formula
+   LOCAL _svrha_placanja
+   LOCAL _poziv_na_broj := fetch_metric( "virm_poziv_na_broj", my_user(), PadR( "", 10 ) )
+   LOCAL _racun_upl := fetch_metric( "virm_zr_uplatioca", my_user(), Space( 16 ) )
+   LOCAL _bez_nula := fetch_metric( "virm_generisanje_nule", my_user(), "N" )
 
-_ko_txt := TRIM( partn->naz ) + ", " + ;
-           TRIM( partn->mjesto ) + ", " + ;
-           TRIM( partn->adresa ) + ", " + ;
-           TRIM( partn->telefon )
+   PRIVATE _kome_zr := ""
+   PRIVATE _kome_txt := ""
+   PRIVATE _budzorg := ""
+   PRIVATE _idjprih := ""
 
-_broj_radnika := ""  
+   SELECT partn
+   SEEK gVirmFirma
 
-select ldvirm
-go top
+   _ko_txt := Trim( partn->naz ) + ", " + ;
+      Trim( partn->mjesto ) + ", " + ;
+      Trim( partn->adresa ) + ", " + ;
+      Trim( partn->telefon )
 
-do while !EOF()
+   _broj_radnika := ""
 
-    _formula := field->formula
-     
-    // nema formule - preskoci...
-    if EMPTY( _formula )
-        skip
-        loop
-    endif
-     
-    _svrha_placanja := ALLTRIM( field->id )
+   SELECT ldvirm
+   GO TOP
 
-    select vrprim
-    hseek ldvirm->id
+   DO WHILE !Eof()
 
-    select partn
-    hseek gVirmFirma
+      _formula := field->formula
 
-    select virm_pripr
-    
-    _izr_formula := &_formula
-    // npr. RLD("DOPR1XZE01")
+      // nema formule - preskoci...
+      IF Empty( _formula )
+         SKIP
+         LOOP
+      ENDIF
 
-    select virm_pripr
+      _svrha_placanja := AllTrim( field->id )
 
-    if _bez_nula == "N" .or. _izr_formula > 0
+      SELECT vrprim
+      hseek ldvirm->id
 
-        append blank
+      SELECT partn
+      hseek gVirmFirma
 
-        replace field->rbr with ++ r_br
-        replace field->mjesto with gMjesto
-        replace field->svrha_pl with _svrha_placanja
-        replace field->iznos with _izr_formula
-        replace field->pnabr with _poziv_na_broj
-        replace field->vupl with "0"
+      SELECT virm_pripr
 
-        // posaljioc
-        replace field->na_teret with gVirmFirma
-        replace field->ko_txt with _ko_txt
-        replace field->ko_zr with _racun_upl
-        replace field->kome_txt with vrprim->naz
+      _izr_formula := &_formula
+      // npr. RLD("DOPR1XZE01")
 
-        _tmp_opis := TRIM( vrprim->pom_txt ) + ;
-                IF( !EMPTY( dod_opis ), " " + ALLTRIM( dod_opis ), "" ) + ;
-                IF( !EMPTY( broj_radnika ), " " + broj_radnika, "" ) 
+      SELECT virm_pripr
 
-        // resetuj varijable
-        _kome_zr := ""
-        _kome_txt := ""
-        _budzorg := ""
-       
-        if PADR( vrprim->idpartner, 2 ) == "JP" 
+      IF _bez_nula == "N" .OR. _izr_formula > 0
+
+         APPEND BLANK
+
+         REPLACE field->rbr with ++r_br
+         REPLACE field->mjesto WITH gMjesto
+         REPLACE field->svrha_pl WITH _svrha_placanja
+         REPLACE field->iznos WITH _izr_formula
+         REPLACE field->vupl WITH "0"
+
+         // posaljioc
+         REPLACE field->na_teret WITH gVirmFirma
+         REPLACE field->ko_txt WITH _ko_txt
+         REPLACE field->ko_zr WITH _racun_upl
+         REPLACE field->kome_txt WITH vrprim->naz
+
+         IF PadR( vrprim->idpartner, 2 ) == "JP"
+            REPLACE field->pnabr WITH _poziv_na_broj
+         ENDIF
+
+         _tmp_opis := Trim( vrprim->pom_txt ) +  IIF( !Empty( dod_opis ), " " + AllTrim( dod_opis ), "" ) +  IIF( !Empty( broj_radnika ), " " + broj_radnika, "" )
+
+         // resetuj varijable
+         _kome_zr := ""
+         _kome_txt := ""
+         _budzorg := ""
+
+         IF PadR( vrprim->idpartner, 2 ) == "JP"
 
             // javni prihodi
             // setuj varijable _kome_zr, _kome_txt , _budzorg
@@ -365,254 +367,259 @@ do while !EOF()
             __kome_txt := _kome_txt
             __budz_org := _budzorg
             __org_jed := gOrgJed
-            __id_jprih := _idjprih  
+            __id_jprih := _idjprih
 
-        else
+         ELSE
 
-            if vrprim->dobav == "D"
-                
-                _kome_zr := PADR( _kome_zr, 3 )
-                
-                select partn
-                seek vrprim->idpartner
-                
-                select virm_pripr
-                
-                MsgBeep( "Odrediti racun za partnera :" + vrprim->idpartner )
-                OdBanku( vrprim->idpartner, @_kome_zr )
+            IF vrprim->dobav == "D"
 
-            else
-                _kome_zr := vrprim->racun
-            endif
+               _kome_zr := PadR( _kome_zr, 3 )
+
+               SELECT partn
+               SEEK vrprim->idpartner
+
+               SELECT virm_pripr
+
+               MsgBeep( "Odrediti racun za partnera :" + vrprim->idpartner )
+               OdBanku( vrprim->idpartner, @_kome_zr )
+
+            ELSE
+               _kome_zr := vrprim->racun
+            ENDIF
 
             __kome_zr := _kome_zr
-            __budz_org := "" 
+            __budz_org := ""
             __org_jed := ""
             __id_jprih := ""
-            _per_od := ctod("")
-            _per_do := ctod("")
+            _per_od := CToD( "" )
+            _per_do := CToD( "" )
 
-        endif
+         ENDIF
 
-        replace field->kome_zr with __kome_zr
-        replace field->dat_upl with dat_virm
-        replace field->svrha_doz with _tmp_opis
-        replace field->pod with per_od
-        replace field->pdo with per_do
-        replace field->budzorg with __budz_org
-        replace field->bpo with __org_jed
-        replace field->idjprih with __id_jprih
+         REPLACE field->kome_zr WITH __kome_zr
+         REPLACE field->dat_upl WITH dat_virm
+         REPLACE field->svrha_doz WITH _tmp_opis
+         REPLACE field->pod WITH per_od
+         REPLACE field->pdo WITH per_do
+         REPLACE field->budzorg WITH __budz_org
+         REPLACE field->bpo WITH __org_jed
+         REPLACE field->idjprih WITH __id_jprih
 
-    endif
+      ENDIF
 
-    select ldvirm
-    skip 1
+      SELECT ldvirm
+      SKIP 1
 
-enddo 
+   ENDDO
 
-return
-
-
-
-static function _ld_vrprim_kredit()
-local _rec
- 
-select vrprim
-hseek PADR( "KR", LEN(field->id) ) 
- 
-if !FOUND()
-
-    append blank
-    _rec := dbf_get_rec()
-    _rec["id"] := "KR"
-    _rec["naz"] := "Kredit"
-    _rec["pom_txt"] := "Kredit"
-    _rec["nacin_pl"] := "1"
-    _rec["dobav"] := "D"
-
-    update_rec_server_and_dbf( "vrprim", _rec, 1, "FULL" )
-
-endif
-
-return
+   RETURN
 
 
 
-static function _ld_vrprim_isplata()
-local _rec
- 
-select vrprim
-hseek PADR( "IS", LEN(field->id) ) 
- 
-if !FOUND()
+STATIC FUNCTION _ld_vrprim_kredit()
 
-    append blank
-    _rec := dbf_get_rec()
-    _rec["id"] := "IS"
-    _rec["naz"] := "Isplata na tekuci racun"
-    _rec["pom_txt"] := "Plata"
-    _rec["nacin_pl"] := "1"
-    _rec["dobav"] := "D"
+   LOCAL _rec
 
-    update_rec_server_and_dbf( "vrprim", _rec, 1, "FULL" )
+   SELECT vrprim
+   hseek PadR( "KR", Len( field->id ) )
 
-endif
+   IF !Found()
 
-return
+      APPEND BLANK
+      _rec := dbf_get_rec()
+      _rec[ "id" ] := "KR"
+      _rec[ "naz" ] := "Kredit"
+      _rec[ "pom_txt" ] := "Kredit"
+      _rec[ "nacin_pl" ] := "1"
+      _rec[ "dobav" ] := "D"
+
+      update_rec_server_and_dbf( "vrprim", _rec, 1, "FULL" )
+
+   ENDIF
+
+   RETURN
 
 
-static function _ld_kreditor( id_kred )
-local _rec
 
-select kred
-hseek PADR( id_kred, LEN( kred->id ) )
+STATIC FUNCTION _ld_vrprim_isplata()
 
-select partn
-hseek PADR( id_kred, LEN( partn->id ) )
-     
-if !FOUND()  
+   LOCAL _rec
 
-    // dodaj kreditora u listu partnera
-    append blank
+   SELECT vrprim
+   hseek PadR( "IS", Len( field->id ) )
 
-    _rec := dbf_get_rec()
-    _rec["id"] := kred->id
-    _rec["naz"] := kred->naz
-    _rec["ziror"] := kred->ziro
+   IF !Found()
 
-    update_rec_server_and_dbf( "partn", _rec, 1, "FULL")
+      APPEND BLANK
+      _rec := dbf_get_rec()
+      _rec[ "id" ] := "IS"
+      _rec[ "naz" ] := "Isplata na tekuci racun"
+      _rec[ "pom_txt" ] := "Plata"
+      _rec[ "nacin_pl" ] := "1"
+      _rec[ "dobav" ] := "D"
 
-endif
+      update_rec_server_and_dbf( "vrprim", _rec, 1, "FULL" )
 
-return
+   ENDIF
+
+   RETURN
+
+
+STATIC FUNCTION _ld_kreditor( id_kred )
+
+   LOCAL _rec
+
+   SELECT kred
+   hseek PadR( id_kred, Len( kred->id ) )
+
+   SELECT partn
+   hseek PadR( id_kred, Len( partn->id ) )
+
+   IF !Found()
+
+      // dodaj kreditora u listu partnera
+      APPEND BLANK
+
+      _rec := dbf_get_rec()
+      _rec[ "id" ] := kred->id
+      _rec[ "naz" ] := kred->naz
+      _rec[ "ziror" ] := kred->ziro
+
+      update_rec_server_and_dbf( "partn", _rec, 1, "FULL" )
+
+   ENDIF
+
+   RETURN
 
 
 // --------------------------------------------------------------------------------------
 // obrada virmana za kredite
 // --------------------------------------------------------------------------------------
-static function obrada_kredita( godina, mjesec, dat_virm, r_br, dod_opis, bez_nula )
-local _oznaka := "KRED"
-local _id_kred, _rec
-local _svrha_placanja, _u_korist
-local _kome_txt, _kome_zr, _kome_sjed, _nacin_pl    
-local _ko_zr, _ko_txt
-local _bez_nula := fetch_metric( "virm_generisanje_nule", my_user(), "N" ) 
-local _total, _kredit, _sk_sifra
-local _kred_opis := ""
+STATIC FUNCTION obrada_kredita( godina, mjesec, dat_virm, r_br, dod_opis, bez_nula )
 
-// odraditi kredite
-select rekld
-seek STR( godina, 4 ) + STR( mjesec, 2 ) + _oznaka
+   LOCAL _oznaka := "KRED"
+   LOCAL _id_kred, _rec
+   LOCAL _svrha_placanja, _u_korist
+   LOCAL _kome_txt, _kome_zr, _kome_sjed, _nacin_pl
+   LOCAL _ko_zr, _ko_txt
+   LOCAL _bez_nula := fetch_metric( "virm_generisanje_nule", my_user(), "N" )
+   LOCAL _total, _kredit, _sk_sifra
+   LOCAL _kred_opis := ""
 
-do while !EOF() .and. field->id = _oznaka
+   // odraditi kredite
+   SELECT rekld
+   SEEK Str( godina, 4 ) + Str( mjesec, 2 ) + _oznaka
 
-    // sifra kreditora
-    _id_kred := SUBSTR( field->id, 5 )  
+   DO WHILE !Eof() .AND. field->id = _oznaka
 
-    // nastimaj kreditora i dodaj po potrebi
-    _ld_kreditor( _id_kred )     
+      // sifra kreditora
+      _id_kred := SubStr( field->id, 5 )
 
-    // vrsta primanja - kredit
-    _ld_vrprim_kredit()
+      // nastimaj kreditora i dodaj po potrebi
+      _ld_kreditor( _id_kred )
 
-    select vrprim
-    _svrha_placanja := field->id
+      // vrsta primanja - kredit
+      _ld_vrprim_kredit()
 
-    select partn
-    seek _id_kred
+      SELECT vrprim
+      _svrha_placanja := field->id
 
-    _u_korist := field->id
-    _kome_txt := field->naz
-    _kome_sjed := field->mjesto
-    _nacin_pl := "1"
-    _kome_zr := SPACE(16)
-     
-    OdBanku( _u_korist, @_kome_zr, .f. )
+      SELECT partn
+      SEEK _id_kred
 
-    select virm_pripr
-    go top   
+      _u_korist := field->id
+      _kome_txt := field->naz
+      _kome_sjed := field->mjesto
+      _nacin_pl := "1"
+      _kome_zr := Space( 16 )
 
-    // uzmi podatke iz prve stavke
-    _ko_txt := field->ko_txt
-    _ko_zr := field->ko_zr
+      OdBanku( _u_korist, @_kome_zr, .F. )
 
-    select partn
-    hseek gVirmFirma
+      SELECT virm_pripr
+      GO TOP
 
-    _total := 0
-    _kredit := 0
+      // uzmi podatke iz prve stavke
+      _ko_txt := field->ko_txt
+      _ko_zr := field->ko_zr
 
-    select rekld
-    _sk_sifra := field->idpartner 
-    // SK = sifra kreditora
+      SELECT partn
+      hseek gVirmFirma
 
-    do while !EOF() .and. field->id = "KRED" .and. field->idpartner = _sk_sifra
-        ++ _kredit
-        _total += rekld->iznos1
-        _kred_opis := ALLTRIM( field->opis ) + ", " + ALLTRIM( field->opis2 )
-        skip 1
-    enddo
+      _total := 0
+      _kredit := 0
 
-    // ako je vise kredita... opis treba promjeniti
-    if _kredit > 1
-        _kredit_opis := "Krediti za " + PADL( STR( mjesec, 2 ), "0" ) + "/" + STR( godina, 4 ) + ", partija: " + ALLTRIM( kred->zirod )
-    endif
+      SELECT rekld
+      _sk_sifra := field->idpartner
+      // SK = sifra kreditora
 
-    skip -1
+      DO WHILE !Eof() .AND. field->id = "KRED" .AND. field->idpartner = _sk_sifra
+         ++ _kredit
+         _total += rekld->iznos1
+         _kred_opis := AllTrim( field->opis ) + ", " + AllTrim( field->opis2 )
+         SKIP 1
+      ENDDO
 
-    select virm_pripr
+      // ako je vise kredita... opis treba promjeniti
+      IF _kredit > 1
+         _kredit_opis := "Krediti za " + PadL( Str( mjesec, 2 ), "0" ) + "/" + Str( godina, 4 ) + ", partija: " + AllTrim( kred->zirod )
+      ENDIF
 
-    if _bez_nula == "N" .or. _total > 0
-       
-        append blank
+      SKIP -1
 
-        replace field->rbr with ++ r_br
-        replace field->mjesto with gMjesto
-        replace field->svrha_pl with "KR"
-        replace field->iznos with _total
-        replace field->na_teret with gVirmFirma
-        replace field->kome_txt with _kome_txt
-        replace field->ko_txt with _ko_txt
-        replace field->ko_zr with _ko_zr
-        replace field->kome_sj with _kome_sjed
-        replace field->kome_zr with _kome_zr
-        replace field->dat_upl with dat_virm
-        replace field->svrha_doz with ALLTRIM( vrprim->pom_txt ) + IF( !EMPTY( vrprim->pom_txt), " ", "" ) + ALLTRIM( dod_opis ) + IF( !EMPTY( dod_opis), " ", "" ) + ALLTRIM( _kred_opis )
-        replace field->u_korist with _id_kred
+      SELECT virm_pripr
 
-    endif
+      IF _bez_nula == "N" .OR. _total > 0
 
-    select rekld
-    skip
+         APPEND BLANK
 
-enddo
+         REPLACE field->rbr with ++r_br
+         REPLACE field->mjesto WITH gMjesto
+         REPLACE field->svrha_pl WITH "KR"
+         REPLACE field->iznos WITH _total
+         REPLACE field->na_teret WITH gVirmFirma
+         REPLACE field->kome_txt WITH _kome_txt
+         REPLACE field->ko_txt WITH _ko_txt
+         REPLACE field->ko_zr WITH _ko_zr
+         REPLACE field->kome_sj WITH _kome_sjed
+         REPLACE field->kome_zr WITH _kome_zr
+         REPLACE field->dat_upl WITH dat_virm
+         REPLACE field->svrha_doz WITH AllTrim( vrprim->pom_txt ) + IF( !Empty( vrprim->pom_txt ), " ", "" ) + AllTrim( dod_opis ) + IF( !Empty( dod_opis ), " ", "" ) + AllTrim( _kred_opis )
+         REPLACE field->u_korist WITH _id_kred
 
-return
+      ENDIF
+
+      SELECT rekld
+      SKIP
+
+   ENDDO
+
+   RETURN
 
 
 
 // --------------------------------------------
-// RLD, funkcija koju zadajemo 
+// RLD, funkcija koju zadajemo
 // kao formulu pri prenosu...
 // --------------------------------------------
-function RLD( cId, nIz12, qqPartn, br_dok )
-local nPom1 := 0
-local nPom2 := 0
+FUNCTION RLD( cId, nIz12, qqPartn, br_dok )
 
-if nIz12 == NIL
-    nIz12 := 1
-endif
+   LOCAL nPom1 := 0
+   LOCAL nPom2 := 0
 
-// prolazim kroz rekld i trazim npr DOPR1XSA01
-rekapld( cId, _godina, _mjesec, @nPom1, @nPom2, , @broj_radnika, qqPartn )
+   IF nIz12 == NIL
+      nIz12 := 1
+   ENDIF
 
-if VALTYPE(nIz12) == "N" .and. nIz12 == 1
-    return nPom1
-else
-    return nPom2
-endif
+   // prolazim kroz rekld i trazim npr DOPR1XSA01
+   rekapld( cId, _godina, _mjesec, @nPom1, @nPom2, , @broj_radnika, qqPartn )
 
-return 0
+   IF ValType( nIz12 ) == "N" .AND. nIz12 == 1
+      RETURN nPom1
+   ELSE
+      RETURN nPom2
+   ENDIF
+
+   RETURN 0
 
 
 
@@ -620,107 +627,104 @@ return 0
 // --------------------------------------
 // Rekapitulacija LD-a
 // --------------------------------------
-static function Rekapld( cId, ;
-        nGodina, ;
-        nMjesec, ;
-        nIzn1, ;
-        nIzn2, ;
-        cIdPartner, ;
-        cOpis, ;
-        qqPartn )
+STATIC FUNCTION Rekapld( cId, ;
+      nGodina, ;
+      nMjesec, ;
+      nIzn1, ;
+      nIzn2, ;
+      cIdPartner, ;
+      cOpis, ;
+      qqPartn )
 
-local lGroup := .f.
+   LOCAL lGroup := .F.
 
-PushWA()
+   PushWA()
 
-if cIdPartner == NIL
-    cIdPartner := ""
-endif
+   IF cIdPartner == NIL
+      cIdPartner := ""
+   ENDIF
 
-if cOpis == NIL
-    cOpis := ""
-endif
+   IF cOpis == NIL
+      cOpis := ""
+   ENDIF
 
-// ima li marker "*"
-if "**" $ cId
-    lGroup := .t.
-    // izbaci zvjezdice..
-    cId := STRTRAN(cId, "**", "")
-endif
+   // ima li marker "*"
+   IF "**" $ cId
+      lGroup := .T.
+      // izbaci zvjezdice..
+      cId := StrTran( cId, "**", "" )
+   ENDIF
 
-select rekld
-go top
+   SELECT rekld
+   GO TOP
 
-if qqPartn == NIL
-    
-    hseek STR( nGodina, 4) + STR( nMjesec, 2) + cId
-    
-    if lGroup == .t.
-    
-        do while !EOF() .and. STR( nGodina, 4 ) == field->godina ;
-                .and. STR( nMjesec, 2 ) == field->mjesec ;
-                .and. id = cId
-        
-                nIzn1 += field->iznos1
-                nIzn2 += field->iznos2
-        
-                skip
-        enddo
-        
-    else
+   IF qqPartn == NIL
 
-        nIzn1 := field->iznos1
-        nIzn2 := field->iznos2
+      hseek Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cId
 
-    endif
-    
-    cIdPartner := field->idpartner
-    cOpis := field->opis
+      IF lGroup == .T.
 
-else
+         DO WHILE !Eof() .AND. Str( nGodina, 4 ) == field->godina ;
+               .AND. Str( nMjesec, 2 ) == field->mjesec ;
+               .AND. id = cId
 
-    nIzn1 := 0
-    nIzn2 := 0
-    nRadnika := 0
-    aUslP := Parsiraj( qqPartn, "IDPARTNER" )
-
-    seek STR( nGodina, 4 ) + STR( nMjesec, 2 ) + cId
-
-    do while !EOF() .and. field->godina + field->mjesec + field->id = STR( nGodina, 4 ) + STR( nMjesec, 2 ) + cId
-        
-        if &aUslP
-                
             nIzn1 += field->iznos1
             nIzn2 += field->iznos2
-                
-            if LEFT( field->opis, 1 ) == "("
 
-                cOpis := field->opis
-                cOpis := STRTRAN( cOpis, "(", "" )
-                cOpis := ALLTRIM( STRTRAN( cOpis, ")", "" ))
-                nRadnika += VAL( cOpis )
+            SKIP
+         ENDDO
 
-            endif
+      ELSE
 
-        endif
+         nIzn1 := field->iznos1
+         nIzn2 := field->iznos2
 
-        skip 1
+      ENDIF
 
-    enddo
-    
-    cIdPartner := ""
+      cIdPartner := field->idpartner
+      cOpis := field->opis
 
-    if nRadnika > 0
-        cOpis := "(" + ALLTRIM( STR( nRadnika )) + ")"
-    else
-        cOpis := ""
-    endif
+   ELSE
 
-endif
+      nIzn1 := 0
+      nIzn2 := 0
+      nRadnika := 0
+      aUslP := Parsiraj( qqPartn, "IDPARTNER" )
 
-PopWA()
+      SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cId
 
-return
+      DO WHILE !Eof() .AND. field->godina + field->mjesec + field->id = Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cId
 
+         if &aUslP
 
+            nIzn1 += field->iznos1
+            nIzn2 += field->iznos2
 
+            IF Left( field->opis, 1 ) == "("
+
+               cOpis := field->opis
+               cOpis := StrTran( cOpis, "(", "" )
+               cOpis := AllTrim( StrTran( cOpis, ")", "" ) )
+               nRadnika += Val( cOpis )
+
+            ENDIF
+
+         ENDIF
+
+         SKIP 1
+
+      ENDDO
+
+      cIdPartner := ""
+
+      IF nRadnika > 0
+         cOpis := "(" + AllTrim( Str( nRadnika ) ) + ")"
+      ELSE
+         cOpis := ""
+      ENDIF
+
+   ENDIF
+
+   PopWA()
+
+   RETURN

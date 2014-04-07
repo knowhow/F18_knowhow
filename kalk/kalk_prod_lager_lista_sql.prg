@@ -255,7 +255,7 @@ if _count > 0
     // renumerisi pripremu...
     renumeracija_kalk_pripr( nil, nil, .t. )
 
-    close all
+    my_close_all_dbf()
     azur_kalk( .t. )
 
     MsgBeep( "Formiran dokument pocetnog stanj i automatski azuriran !" )

@@ -677,7 +677,7 @@ FF
 END PRINT
 
 
-CLOSE ALL
+my_close_all_dbf()
 MyFERASE(cTMPFAKT)
 
 // MsgBeep("gCnt1="+STR(gCnt1,6))

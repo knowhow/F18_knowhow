@@ -133,10 +133,10 @@ DO CASE
 
         _cmd := "f18_editor " + f_name
 
-        // #27234
-        #ifdef __PLATFORM__UNIX
-            close all
-        #endif
+        // TODO: #27234
+        //#ifdef __PLATFORM__UNIX
+        //    my_close_all_dbf()
+        //#endif
        
         _ret := f18_run(_cmd)
 
@@ -598,13 +598,10 @@ private cSection := cs
 private cHistory := ch
 private aHistory := {}
 
-// ----------------------------------------------------------
-// TODO: cPosebno vazi samo za cSection "1" i cHistory " " ?!
-// ----------------------------------------------------------
 select (F_PARAMS)
 USE
 O_PARAMS
-RPar("p?",@cPosebno)
+RPar("p?", @cPosebno)
 select params
 use
  

@@ -64,7 +64,7 @@ else
 	//label_2_deklar(aStampati)
 endif
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -290,7 +290,7 @@ if !EMPTY( cPrefix )
 endif
 
 SELECT BARKOD
-zapp()
+my_dbf_zap()
 
 SELECT FAKT_PRIPR
 GO TOP
@@ -377,7 +377,7 @@ enddo
 select (F_BARKOD)
 use
 
-close all
+my_close_all_dbf()
 
 f18_rtm_print( "barkod", "barkod", "1" )
 

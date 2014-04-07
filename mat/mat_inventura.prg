@@ -38,7 +38,7 @@ AADD( _opcexe, { || mat_inv_obr_poreza() } )
 
 f18_menu("invnt", .f., _izbor, _opc, _opcexe )
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -59,7 +59,7 @@ AADD( _opcexe, { || mat_popisna_lista() } )
 
 f18_menu("bedpl", .f., _izbor, _opc, _opcexe )
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -84,7 +84,7 @@ O_KONTO
 O_PARTN
 
 if !_get_inv_vars( @_vars )
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -100,7 +100,7 @@ O_MAT_SUBAN
 msgO( "Generisem stavke inventure..." )
 
 select MAT_INVENT
-ZAPP()
+my_dbf_zap()
 
 
 _r_br := 0
@@ -178,7 +178,7 @@ enddo
 
 msgC()
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -218,7 +218,7 @@ _header := "<c-T> Brisi stavku <ENT> Ispravka <c-A> Ispravka svih stavki <c-N> N
 ObjDbedit( "USKSP", MAXROW() - 4, MAXCOL() - 3, {|| _ed_pop_list_khandler() }, _header, ;
     "Pregled popisne liste..." )
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -279,7 +279,7 @@ do case
         BoxC()
         
         if lastkey() == K_ESC .and. _new == .t.
-            delete
+            my_delete_with_pack()
             return DE_CONT
         endif
         
@@ -327,7 +327,7 @@ do case
     case Ch==K_CTRL_T
 
         if Pitanje("ppl","Zelite izbrisati ovu stavku (D/N) ?","N")=="D"
-            delete
+            my_delete_with_pack()
             return DE_REFRESH
         endif
         return DE_CONT
@@ -335,7 +335,7 @@ do case
     case Ch==K_CTRL_Z
 
         if Pitanje("ppl","Zelite sve stavke (D/N) !!!!????","N")=="D"
-            zapp()
+			my_dbf_zap()
 
             go top
             return DE_REFRESH
@@ -453,7 +453,7 @@ O_KONTO
 O_PARTN
 
 if !_get_inv_vars( @_vars )
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -513,7 +513,7 @@ ENDIF
 ? m
 
 END  PRINT
-close all
+my_close_all_dbf()
 return
 
 
@@ -690,7 +690,7 @@ ENDDO
 
 EJECTNA0
 END PRINT
-close all
+my_close_all_dbf()
 return
 
 
@@ -792,7 +792,7 @@ DO WHILE !eof()
    skip
 ENDDO
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -874,7 +874,7 @@ DO WHILE !eof()
    skip
 ENDDO
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -893,7 +893,7 @@ O_KONTO
 O_PARTN
 
 IF !_get_inv_vars( @_vars )
-    CLOSE ALL
+    my_close_all_dbf()
     return
 ENDIF
 
@@ -1039,7 +1039,7 @@ ENDDO
 xml_subnode( "inv", .t. )
 close_xml()
 
-close all
+my_close_all_dbf()
 
 if B > 0
     if f18_odt_generate( "mat_invent.odt", _my_xml )

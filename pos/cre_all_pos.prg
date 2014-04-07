@@ -365,5 +365,10 @@ IF_NOT_FILE_DBF_CREATE
 CREATE_INDEX ("ID", "ID"     , _alias )
 CREATE_INDEX ("2" , "ID+ID2" , _alias )
 
+
+// kreiraj tabele dok_src : DOK_SRC
+cre_doksrc( ver )
+
+
 return .t.
 

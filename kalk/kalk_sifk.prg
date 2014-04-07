@@ -61,7 +61,7 @@ do while !eof()
   skip
 enddo
 set filter to
-close all
+my_close_all_dbf()
 restore screen from cscr
 return
 *}
@@ -111,7 +111,7 @@ do while !eof()
   skip
 enddo
 set filter to
-close all
+my_close_all_dbf()
 restore screen from cscr
 return
 *}

@@ -177,4 +177,5 @@ _ok := .t.
 return _ok
 
 
-
+function string_to_number(val)
+return VAL(val)

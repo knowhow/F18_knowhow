@@ -406,7 +406,7 @@ HSEEK STR(nGodina,4)+STR(nMjesec,2)
 
 IF !FOUND()
 	MsgBeep("Obracun za ovaj mjesec ne postoji !")
-	close all
+	my_close_all_dbf()
 	return .t.
 ENDIF
  
@@ -908,7 +908,7 @@ UzmiIzIni(cIniName,'Varijable','URSOB', FormNum2(nPom,16,gPici2), 'WRITE')
  
 IniRefresh()
 
-close all
+my_close_all_dbf()
 
 if LastKey() != K_ESC
 

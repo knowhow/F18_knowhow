@@ -6,7 +6,7 @@ else
    SUPERUSER=postgres
 fi
 
-PSQLCMD="psql -t -h localhost -U $SUPERUSER"
+PSQLCMD="sudo -u postgres psql -t -h localhost -U $SUPERUSER"
 
 function create_postgres {
 ret=`echo "select rolname from pg_roles where rolname='postgres'" | $PSQLCMD | grep -q $USER`

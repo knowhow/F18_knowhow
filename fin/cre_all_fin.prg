@@ -457,10 +457,6 @@ IF_NOT_FILE_DBF_CREATE
 CREATE_INDEX("1", "idpartner+brdok+dtos(datod)", _alias)
 
 
-
-// kreiraj indexe tabele FMKRULES
-cre_rule_cdx()
-
 return
 
 

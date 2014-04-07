@@ -74,7 +74,7 @@ ObjDbedit("lstnal", nBoxX, nBoxY, {|| key_handler() }, cHeader, cFooter, , , , ,
 
 BoxC()
 
-close all
+my_close_all_dbf()
 
 return 1
 
@@ -175,7 +175,7 @@ Box( , nBoxX, nBoxY)
 
 nX += 2
 
-@ m_x + nX, m_y + 2 SAY PADL( "Narucioc (prazno-svi):", 25 ) GET cCustomer ;
+@ m_x + nX, m_y + 2 SAY PADL( "Naručioc (prazno-svi):", 25 ) GET cCustomer ;
     VALID {|| EMPTY(cCustomer) .or. ;
             s_customers( @cCustomer, cCustomer), ;
             set_var(@nCustomer, @cCustomer),  ;
@@ -849,7 +849,7 @@ local nDoc_no := 0
 local cFilter := ""
 
 Box(,1, 30)
-	@ m_x+1, m_y+2 SAY "Zelim pronaci nalog:" GET nDoc_no PICT "999999999" 
+	@ m_x+1, m_y+2 SAY8 "Želim pronaci nalog:" GET nDoc_no PICT "999999999" 
 	read
 BoxC()
 
@@ -865,7 +865,6 @@ go top
 return DE_REFRESH
 
 
-
 // ----------------------------------------------
 // direktna dorada naloga, po zadatom broju 
 // ----------------------------------------------
@@ -874,7 +873,7 @@ local GetList := {}
 local nDoc_no := 0 
 
 Box(,1, 30)
-	@ m_x+1, m_y+2 SAY "Broj naloga:" GET nDoc_no PICT "999999999" 
+	@ m_x+1, m_y+2 SAY8 "Broj naloga:" GET nDoc_no PICT "999999999" 
 	read
 BoxC()
 

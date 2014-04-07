@@ -37,7 +37,7 @@ AADD(_opcexe, {|| kalkulacija_cijena() })
 
 f18_menu( "razp", .f., _izbor, _opc, _opcexe )
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -80,6 +80,6 @@ endif
 
 f18_menu( "mazd", .f., _izbor, _opc, _opcexe )
 
-close all
+my_close_all_dbf()
 return
 

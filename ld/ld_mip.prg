@@ -449,7 +449,7 @@ MsgBeep( cMsg )
 
 DirChange( my_home() )
 
-close all
+my_close_all_dbf()
 
 _output_file := "mip_" + ALLTRIM( my_server_params()["database"] ) + "_" + ALLTRIM( mjesec ) + "_" + ALLTRIM( godina ) + ".xml" 
 

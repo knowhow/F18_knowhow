@@ -84,7 +84,7 @@ BoxC()
 
 
 if Pitanje(,"Nalog " + cIdFirma + "-" + cIdVN + "-" + cBrNal + IIF(lStorno," stornirati"," povuci u pripremu") + " (D/N) ?","D") == "N"
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -129,7 +129,7 @@ enddo
 MsgC()
 
 if !lBrisi
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -141,7 +141,7 @@ if !lStorno
     endif
 endif
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -217,11 +217,11 @@ O_MAT_PRIPR
 
 if reccount2()<>0
     MsgBeep("Tabela pripreme mora biti prazna !!!")
-    close all
+    my_close_all_dbf()
     return
 endif
 
-zapp()
+my_dbf_zap()
 
 set order to tag "4"
 GO TOP
@@ -360,6 +360,7 @@ enddo
 // eof
 
 select mat_pripr
+my_flock()
 set order to
 go top
 do while !eof()
@@ -369,13 +370,15 @@ do while !eof()
     endif
     skip
 enddo
-__dbpack()
+my_unlock()
+my_dbf_pack()
 
 set order to tag "1"
 go top
 
 nTrec := 0
 
+my_flock()
 do while !eof()
     cIdFirma := idfirma
     nRbr := 0
@@ -388,7 +391,9 @@ do while !eof()
         go nTrec
     enddo
 enddo
-close all
+my_unlock()
+
+my_close_all_dbf()
 END PRINT
 
 return

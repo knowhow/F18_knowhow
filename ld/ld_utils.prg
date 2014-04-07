@@ -618,7 +618,7 @@ Box(,1,12)
 
 BoxC()
 
-close all
+my_close_all_dbf()
 
 return
 
@@ -726,7 +726,7 @@ BoxC()
 
 // nemam sta prikazati
 if LEN( _data ) == 0
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -747,7 +747,7 @@ next
 FF
 END PRINT
 
-close all
+my_close_all_dbf()
 return
 
 // -------------------------------------------
@@ -756,7 +756,7 @@ return
 function ld_gen_virm()
 
 O_VIRM_PRIPR
-zapp(.t.)
+my_dbf_zap()
 
 MsgBeep( "Opcija podrazumjeva da ste prozvali rekapitulaciju plate" )
 
@@ -765,7 +765,7 @@ virm_prenos_ld( .t. )
 // otvori pripremu virmana...
 unos_virmana()
     
-close all
+my_close_all_dbf()
 
 return
 

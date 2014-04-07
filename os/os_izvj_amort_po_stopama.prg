@@ -315,7 +315,7 @@ if lExpRpt
     tbl_export( cLaunch )
 endif
 
-close all
+my_close_all_dbf()
 return
 
 

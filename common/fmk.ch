@@ -106,12 +106,12 @@
 
 
 
-#xcommand CLOSERET2      => close all; return
-#xcommand CLOSERET       => close all; return
+#xcommand CLOSERET2      => my_close_all_dbf(); return
+#xcommand CLOSERET       => my_close_all_dbf(); return
 
 
 #xcommand ESC_BCR   =>  if lastkey() == K_ESC;
-                         ; close all        ;
+                         ; my_close_all_dbf()        ;
                          ; BoxC()           ;
                          ;return            ;
                          ;endif
@@ -119,13 +119,13 @@
 
 #command START PRINT CRET <x> =>  ;private __print_opt := NIL ; 
                                   ; if EMPTY(f18_start_print(NIL, @_print_opt))       ;
-                                  ;close all             ;
+                                  ;my_close_all_dbf()             ;
                                   ;    return <x>            ;
                                   ;endif
 
 #command START PRINT CRET     =>  ;private __print_opt := NIL ; 
                                   ;if EMPTY(f18_start_print(NIL, @__print_opt)) ;
-                                  ;close all             ;
+                                  ;my_close_all_dbf()             ;
                                   ;return                ;
                                   ;endif
 
@@ -141,25 +141,25 @@
 
 #command START PRINT2 CRET <p>, <x> =>  ;private __print_opt := NIL ;
                                         ;IF !SPrint2(<p>)       ;
-                                        ;close all             ;
+                                        ;my_close_all_dbf()             ;
                                         ;return <x>            ;
                                         ;endif
 
 #command START PRINT2 CRET <p>   =>  ;private __print_opt := NIL ;
                                      ;if !Sprint2(<p>)          ;
-                                     ;close all             ;
+                                     ;my_close_all_dbf()             ;
                                      ;return                ;
                                      ;endif
 
 #command START PRINT CRET DOCNAME <y>    =>  ;private __print_opt := NIL ;
                                              ;if !StartPrint(nil, nil, <y>)    ;
-                                             ;close all             ;
+                                             ;my_close_all_dbf()             ;
                                              ;return                ;
                                              ;endif
 
 #command START PRINT CRET <x> DOCNAME  <y> => ;private __print_opt := NIL ;  
                                   ;if !StartPrint(nil, nil, <y>  )  ;
-                                  ;close all             ;
+                                  ;my_close_all_dbf()             ;
                                   ;return <x>            ;
                                   ;endif
 
@@ -170,6 +170,8 @@
 
 
 #command END PRINT => f18_end_print(NIL, __print_opt)
+
+#command ENDPRINT => f18_end_print(NIL, __print_opt)
 
 #command EOF CRET <x> =>  if EofFndret(.t.,.t.)       ;
                           ;return <x>                 ;
@@ -287,7 +289,7 @@
 
 
 #command POCNI STAMPU   => if !lSSIP99 .and. !StartPrint()       ;
-                           ;close all             ;
+                           ;my_close_all_dbf()             ;
                            ;return                ;
                            ;endif
 

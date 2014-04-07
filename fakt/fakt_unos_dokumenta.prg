@@ -42,7 +42,7 @@ select fakt_pripr
 
 // unos inventure
 if field->idtipdok == "IM"
-    close all
+    my_close_all_dbf()
     FaUnosInv()
     return
 endif
@@ -118,7 +118,7 @@ Box( , _x, _y )
 
 BoxC()
 
-close all
+my_close_all_dbf()
 
 return
 
@@ -205,14 +205,14 @@ do case
             if _dev_params["print_a4"] $ "D#X" .and. Pitanje(,"Stampati fakturu ?", "N") == "D"
                 // stampaj dokument odmah nakon fiskalnog racuna
                 StampTXT( __id_firma, __tip_dok, __br_dok )
-                close all
+                my_close_all_dbf()
                 o_fakt_edit()
                 select fakt_pripr
             endif
         
             if _dev_params["print_a4"] $ "G#X" .and. Pitanje(,"Stampati graficku fakturu ?", "N") == "D"
                 stdokodt( __id_firma, __tip_dok, __br_dok )
-                close all 
+                my_close_all_dbf() 
                 o_fakt_edit()
                 select fakt_pripr
             endif
@@ -272,7 +272,7 @@ do case
             _dok_hash["brdok"] := _brdok
             _dok_hash["rbr"] := _rbr
 
-            oAtrib := F18_DOK_ATRIB():new("fakt")
+            oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
             oAtrib:dok_hash := _dok_hash
             // ubaci mi atribute u fakt_atribute
             oAtrib:atrib_hash_to_dbf( _items_atrib )
@@ -332,7 +332,7 @@ do case
     // stampanje labela
     case Ch == K_ALT_L
   
-          close all
+          my_close_all_dbf()
           label_bkod()
           o_fakt_edit()
 
@@ -380,7 +380,7 @@ do case
             return DE_REFRESH
         endif
             
-        CLOSE ALL
+        my_close_all_dbf()
             
         // funkcija azuriranja vraca matricu sa podacima dokumenta
         _fakt_doks := azur_fakt()
@@ -668,7 +668,7 @@ do while .t.
     _dok_hash["rbr"] := field->rbr
         
     // ubaci mi atribute u fakt_atribute
-    oAtrib := F18_DOK_ATRIB():new("fakt")
+    oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
     oAtrib:dok_hash := _dok_hash
     oAtrib:atrib_hash_to_dbf( _items_atrib )
     
@@ -692,12 +692,13 @@ local _a_fakt_doks
 fakt_set_broj_dokumenta()
 
 _a_fakt_doks := fakt_dokumenti_u_pripremi()
+
 if LEN( _a_fakt_doks ) == 0
     MsgBeep( "Postojeci dokumenti u pripremi vec postoje azurirani u bazi !" )
 endif
 
 // fiksiranje tabele atributa
-F18_DOK_ATRIB():new("fakt"):fix_atrib( F_FAKT_PRIPR, _a_fakt_doks )
+F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB ):fix_atrib( F_FAKT_PRIPR, _a_fakt_doks )
 
 o_fakt_edit() 
 
@@ -1082,8 +1083,7 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
         @ _part_x := m_x + _x, _part_y := m_y + 2 SAY "Partner:" GET _idpartner ;
                 PICT "@!" ;
                 VALID {|| P_Firma( @_idpartner ), ;
-                            IzSifre(), ;
-                            ispisi_partn( _idpartner, _part_x, _part_y + 18 ) }
+                            IzSifre(), ispisi_partn( _idpartner, _part_x, _part_y + 18 ) }
             
         ++ _x
         ++ _x
@@ -1438,28 +1438,6 @@ return .t.
 
 
 
-// ------------------------------------------
-// ispisi partnera 
-// ------------------------------------------
-function ispisi_partn( cPartn, nX, nY )
-local nTArea := SELECT()
-local cDesc := "..."
-select partn
-seek cPartn
-
-if FOUND()
-    cDesc := ALLTRIM( field->naz )
-    if LEN( cDesc ) > 13
-        cDesc := PADR( cDesc, 12 ) + "..."
-    endif
-endif
-
-@ nX, nY SAY PADR( cDesc, 15 )
-
-select (nTArea)
-return .t.
-
-
 static function _f_idpm( cIdPm )
 cIdPM := UPPER(cIdPM)  
 return .t.
@@ -1688,7 +1666,7 @@ AADD(opc, "U. stampa ugovora od do ")
 
 h[1] := h[2] := ""
 
-close all
+my_close_all_dbf()
 private am_x:=m_x,am_y:=m_y
 private Izbor:=1
 
@@ -1714,7 +1692,7 @@ do while .t.
       else
     IsprUzorTxt()
       endif
-      close all
+      my_close_all_dbf()
     case izbor == 4
        O_ROBA
        O_TARIFA
@@ -1739,7 +1717,7 @@ do while .t.
       read
       if lastkey()==K_ESC
         boxc()
-        close all
+        my_close_all_dbf()
         return DE_CONT
       endif
       _cijena:=nDug/_kolicina
@@ -1757,7 +1735,7 @@ do while .t.
       endif
       if lastkey()=K_ESC
         boxc()
-        close all
+        my_close_all_dbf()
          return DE_CONT
       endif
       append blank
@@ -1862,7 +1840,7 @@ do while !EOF() .and. field->idfirma + field->idtipdok + field->brdok == ;
 enddo
 go top
 
-oAtrib := F18_DOK_ATRIB():new("fakt")
+oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
 oAtrib:open_local_table()
 
 go top

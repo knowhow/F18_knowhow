@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,209 +14,200 @@
 #include "hbclass.ch"
 
 CLASS TFinMod FROM TAppMod
-	method New
-	method dummy
-	method setGVars
-	method mMenu
-	method mMenuStandard
-	method initdb
+
+   METHOD NEW
+   METHOD dummy
+   METHOD setGVars
+   METHOD mMenu
+   METHOD mMenuStandard
+   METHOD initdb
+
 END CLASS
 
 
 // ----------------------------------------------------
 // ----------------------------------------------------
-method new(p1, p2, p3, p4, p5, p6, p7, p8, p9)
+METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
 
-::super:new(p1, p2, p3, p4, p5, p6, p7, p8, p9)
+   ::super:new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
 
-return self
-
-
-// ----------------------------------------
-// ----------------------------------------
-method initdb()
-
-::oDatabase:=TDbFin():new()
-
-return nil
+   RETURN self
 
 
 // ----------------------------------------
 // ----------------------------------------
-method dummy()
-return
+METHOD initdb()
+
+   ::oDatabase := TDbFin():new()
+
+   RETURN NIL
 
 
 // ----------------------------------------
 // ----------------------------------------
-method mMenu()
-
-set_hot_keys()
-
-O_NALOG
-select NALOG
-use
-
-// ? ne znam zasto ovo
-OKumul(F_SUBAN, KUMPATH, "SUBAN", 5, "D")
-OKumul(F_ANAL, KUMPATH, "ANAL", 2, "D")
-OKumul(F_SINT, KUMPATH, "SINT", 2, "D")
-OKumul(F_NALOG, KUMPATH, "NALOG", 2, "D")
-
-auto_kzb()
-
-close all
-
-@ 1,2 SAY padc(gTS + ": " + gNFirma, 50, "*")
-@ 4,5 SAY ""
-
-::mMenuStandard()
-
-return nil
+METHOD dummy()
+   RETURN
 
 
-method mMenuStandard()
-local _izbor :=1
-local _opc:={}
-local _opcexe:={}
-local oDb_lock := F18_DB_LOCK():New()
-local _locked := oDb_lock:is_locked()
+// ----------------------------------------
+// ----------------------------------------
+METHOD mMenu()
 
-AADD(_opc, "1. unos/ispravka dokumenta                   ")
-if (ImaPravoPristupa(goModul:oDataBase:cName, "DOK", "KNJIZNALOGA")) .and. !_locked
-	AADD(_opcexe, {|| fin_unos_naloga() })
-else
-	AADD(_opcexe, {|| oDb_lock:warrning() })
-endif
+   set_hot_keys()
 
-AADD(_opc, "2. izvjestaji")
-AADD(_opcexe, {|| Izvjestaji()})
+   auto_kzb()
 
-AADD(_opc, "3. pregled dokumenata")
-AADD(_opcexe, {|| MnuPregledDokumenata()})
+   my_close_all_dbf()
 
-AADD(_opc, "4. generacija dokumenata")
-if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","GENDOK")) .and. !_locked
-	AADD(_opcexe, {|| MnuGenDok()})
-else
-	AADD(_opcexe, {|| oDb_lock:warrning() })
-endif
+   @ 1, 2 SAY PadC( gTS + ": " + gNFirma, 50, "*" )
+   @ 4, 5 SAY ""
 
-AADD(_opc, "5. moduli - razmjena podataka")
-if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","MODULIRAZMJENA")) .and. !_locked
-	AADD(_opcexe, {|| MnuRazmjenaPodataka()})
-else
-	AADD(_opcexe, {|| oDb_lock:warrning() })
-endif
+   ::mMenuStandard()
 
-AADD(_opc, "6. ostale operacije nad dokumentima")
-AADD(_opcexe, {|| MnuOstOperacije()})
-
-AADD(_opc, "7. udaljene lokacije - razmjena podataka ")
-if (ImaPravoPristupa(goModul:oDataBase:cName,"RAZDB","UDLOKRAZMJENA")) .and. !_locked
-	AADD(_opcexe, {|| fin_udaljena_razmjena_podataka()})
-else
-	AADD(_opcexe, {|| oDb_lock:warrning() })
-endif
-
-AADD(_opc, "------------------------------------")
-AADD(_opcexe, {|| nil})
-
-AADD(_opc, "8. sifrarnici")
-AADD(_opcexe, {|| MnuSifrarnik()})
-
-AADD(_opc, "9. administracija baze podataka")
-
-if (ImaPravoPristupa(goModul:oDataBase:cName,"MAIN","DBADMIN")) .and. !_locked
-	AADD(_opcexe, {|| MnuAdminDB()})
-else
-	AADD(_opcexe, {|| oDb_lock:warrning() })
-endif
-
-AADD(_opc, "------------------------------------")
-AADD(_opcexe, {|| nil})
-
-AADD(_opc, "K. kontrola zbira datoteka")
-AADD(_opcexe, {|| KontrZb()})
-
-AADD(_opc, "P. povrat dokumenta u pripremu")
-if (ImaPravoPristupa(goModul:oDatabase:cName, "UT", "POVRATNALOGA")) .and. !_locked
-	AADD(_opcexe, {|| povrat_fin_naloga()})
-else
-	AADD(_opcexe, {|| oDb_lock:warrning() })
-endif
-
-AADD(_opc, "------------------------------------")
-AADD(_opcexe, {|| nil})
-
-AADD(_opc, "X. parametri")
-if (ImaPravoPristupa(goModul:oDataBase:cName,"PARAM","PARAMETRI"))
-	AADD(_opcexe, {|| mnu_fin_params()})
-else
-	AADD(_opcexe, {|| oDb_lock:warrning() })
-endif
+   RETURN NIL
 
 
-f18_menu("gfin", .t., _izbor, _opc, _opcexe )
+METHOD mMenuStandard()
 
-return
+   LOCAL _izbor := 1
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL oDb_lock := F18_DB_LOCK():New()
+   LOCAL _locked := oDb_lock:is_locked()
+
+   AAdd( _opc, "1. unos/ispravka dokumenta                   " )
+   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "DOK", "KNJIZNALOGA" ) ) .AND. !_locked
+      AAdd( _opcexe, {|| fin_unos_naloga() } )
+   ELSE
+      AAdd( _opcexe, {|| oDb_lock:warrning() } )
+   ENDIF
+
+   AAdd( _opc, "2. izvjestaji" )
+   AAdd( _opcexe, {|| Izvjestaji() } )
+
+   AAdd( _opc, "3. pregled dokumenata" )
+   AAdd( _opcexe, {|| MnuPregledDokumenata() } )
+
+   AAdd( _opc, "4. generacija dokumenata" )
+   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "DOK", "GENDOK" ) ) .AND. !_locked
+      AAdd( _opcexe, {|| MnuGenDok() } )
+   ELSE
+      AAdd( _opcexe, {|| oDb_lock:warrning() } )
+   ENDIF
+
+   AAdd( _opc, "5. moduli - razmjena podataka" )
+   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "RAZDB", "MODULIRAZMJENA" ) ) .AND. !_locked
+      AAdd( _opcexe, {|| MnuRazmjenaPodataka() } )
+   ELSE
+      AAdd( _opcexe, {|| oDb_lock:warrning() } )
+   ENDIF
+
+   AAdd( _opc, "6. ostale operacije nad dokumentima" )
+   AAdd( _opcexe, {|| MnuOstOperacije() } )
+
+   AAdd( _opc, "7. udaljene lokacije - razmjena podataka " )
+   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "RAZDB", "UDLOKRAZMJENA" ) ) .AND. !_locked
+      AAdd( _opcexe, {|| fin_udaljena_razmjena_podataka() } )
+   ELSE
+      AAdd( _opcexe, {|| oDb_lock:warrning() } )
+   ENDIF
+
+   AAdd( _opc, "------------------------------------" )
+   AAdd( _opcexe, {|| nil } )
+
+   AAdd( _opc, "8. matični podaci - šifarnici" )
+   AAdd( _opcexe, {|| MnuSifrarnik() } )
+
+   AAdd( _opc, "9. administracija baze podataka" )
+
+   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "MAIN", "DBADMIN" ) ) .AND. !_locked
+      AAdd( _opcexe, {|| MnuAdminDB() } )
+   ELSE
+      AAdd( _opcexe, {|| oDb_lock:warrning() } )
+   ENDIF
+
+   AAdd( _opc, "------------------------------------" )
+   AAdd( _opcexe, {|| nil } )
+
+   AAdd( _opc, "K. kontrola zbira datoteka" )
+   AAdd( _opcexe, {|| KontrZb() } )
+
+   AAdd( _opc, "P. povrat dokumenta u pripremu" )
+   IF ( ImaPravoPristupa( goModul:oDatabase:cName, "UT", "POVRATNALOGA" ) ) .AND. !_locked
+      AAdd( _opcexe, {|| povrat_fin_naloga() } )
+   ELSE
+      AAdd( _opcexe, {|| oDb_lock:warrning() } )
+   ENDIF
+
+   AAdd( _opc, "------------------------------------" )
+   AAdd( _opcexe, {|| nil } )
+
+   AAdd( _opc, "X. parametri" )
+   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "PARAM", "PARAMETRI" ) )
+      AAdd( _opcexe, {|| mnu_fin_params() } )
+   ELSE
+      AAdd( _opcexe, {|| oDb_lock:warrning() } )
+   ENDIF
+
+
+   f18_menu( "gfin", .T., _izbor, _opc, _opcexe )
+
+   RETURN
 
 
 
-method setGVars()
+METHOD setGVars()
 
-set_global_vars()
-set_roba_global_vars()
+   set_global_vars()
+   set_roba_global_vars()
 
-private cSection:="1"
-private cHistory:=" "
-private aHistory:={}
+   PRIVATE cSection := "1"
+   PRIVATE cHistory := " "
+   PRIVATE aHistory := {}
 
-public gRavnot := "D"
-public gDatNal := "N"
-public gSAKrIz := "N"
-public gBezVracanja := "N"  
-public gBuIz := "N"  
-public gPicDEM := "9999999.99"
-public gPicBHD := "999999999999.99"
-public gVar1 := "1"
-public gRj := "N"
-public gTroskovi := "N"
-public gnRazRed := 3
-public gVSubOp := "N"
-public gnLMONI := 120
-public gKtoLimit := "N"
-public gnKtoLimit := 3
-public gDUFRJ:="N"
-public gBrojac:="1"
-public gDatVal:="D"
-public gnLOSt:=0
-public gPotpis:="N"
-public gnKZBDana:=0
-public gOAsDuPartn:="N"
-public gAzurTimeOut := 120
-public g_knjiz_help := "N"
-public gMjRj := "N"
-public aRuleCols := g_rule_cols_fin()
-public bRuleBlock := g_rule_block_fin()
+   PUBLIC gRavnot := "D"
+   PUBLIC gDatNal := "N"
+   PUBLIC gSAKrIz := "N"
+   PUBLIC gBezVracanja := "N"
+   PUBLIC gBuIz := "N"
+   PUBLIC gPicDEM := "9999999.99"
+   PUBLIC gPicBHD := "999999999999.99"
+   PUBLIC gVar1 := "1"
+   PUBLIC gRj := "N"
+   PUBLIC gTroskovi := "N"
+   PUBLIC gnRazRed := 3
+   PUBLIC gVSubOp := "N"
+   PUBLIC gnLMONI := 120
+   PUBLIC gKtoLimit := "N"
+   PUBLIC gnKtoLimit := 3
+   PUBLIC gDUFRJ := "N"
+   PUBLIC gBrojac := "1"
+   PUBLIC gDatVal := "D"
+   PUBLIC gnLOSt := 0
+   PUBLIC gPotpis := "N"
+   PUBLIC gnKZBDana := 0
+   PUBLIC gOAsDuPartn := "N"
+   PUBLIC gAzurTimeOut := 120
+   PUBLIC g_knjiz_help := "N"
+   PUBLIC gMjRj := "N"
+   PUBLIC aRuleCols := g_rule_cols_fin()
+   PUBLIC bRuleBlock := g_rule_block_fin()
 
-::super:setTGVars()
+   ::super:setTGVars()
 
-// procitaj parametre fin modula
-fin_read_params()
+   // procitaj parametre fin modula
+   fin_read_params()
 
-public gModul
-public gTema
-public gGlBaza
+   PUBLIC gModul
+   PUBLIC gTema
+   PUBLIC gGlBaza
 
-gModul := "FIN"
-gTema := "OSN_MENI"
-gGlBaza := "SUBAN.DBF"
+   gModul := "FIN"
+   gTema := "OSN_MENI"
+   gGlBaza := "SUBAN.DBF"
 
-public cZabrana := "Opcija nedostupna za ovaj nivo !!!"
+   PUBLIC cZabrana := "Opcija nedostupna za ovaj nivo !!!"
 
-fin_params(.t.)
+   fin_params( .T. )
 
-return
-
-
+   RETURN

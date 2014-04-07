@@ -1,10 +1,10 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,47 +12,40 @@
 
 #include "kalk.ch"
 
-
 function kalk_sifrarnik()
+local _opc:={}
+local _opcexe:={}
+local _izbor := 1
+
 PRIVATE PicDem
 PicDem:=gPICDem
-close all
+my_close_all_dbf()
 
-private opc:={}
-private opcexe:={}
-AADD(opc,"1. opci sifrarnici                  ")
-if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","OPCISIFOPEN"))
-	AADD(opcexe, {|| SifFmkSvi()})
+AADD(_opc,"1. opći šifarnici                  ")
+if (ImaPravoPristupa(goModul:oDataBase:cName, "SIF", "OPCISIFOPEN"))
+	AADD(_opcexe, {|| SifFmkSvi()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
-AADD(opc,"2. robno-materijalno poslovanje")
+AADD(_opc,"2. robno-materijalno poslovanje")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","ROBMATSIFOPEN"))
-	AADD(opcexe, {|| SifFmkRoba()})
+	AADD(_opcexe, {|| SifFmkRoba()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc,"3. magacinski i prodajni objekti")
+AADD(_opc,"3. magacinski i prodajni objekti")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","PRODOBJSIFOPEN"))
-	AADD(opcexe, {|| P_Objekti()})
+	AADD(_opcexe, {|| P_Objekti()})
 else
-	AADD(opcexe, {|| MsgBeep(cZabrana)})
+	AADD(_opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-if IsPlanika()
-	AADD(opc, "P. planika")
-	if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","PLSIFOPEN"))
-		AADD(opcexe, {|| KaSifPlanika() })
-	else
-		AADD(opcexe, {|| MsgBeep(cZabrana) })
-	endif
-endif
-private Izbor:=1
-Menu_SC("msif")
+
+f18_menu("msif", .f., _izbor, _opc, _opcexe )
+
 CLOSERET
 return .f.
-
 
 
 
@@ -62,8 +55,7 @@ closeret
 return
 
 
-
-function RobaBlock(Ch)
+function KalkRobaBlock(Ch)
 LOCAL cSif:=ROBA->id, cSif2:=""
 
 if Ch==K_CTRL_T .and. gSKSif=="D"
@@ -94,8 +86,8 @@ elseif Ch==K_F2 .and. gSKSif=="D"
     endif
 
 elseif Ch == K_F8  
+
     // cjenovnik
- 
     PushWa()
     nRet:=CjenR()
     OSifBaze()
@@ -137,8 +129,6 @@ return DE_CONT
 
 
 function OSifBaze()
-O_SIFK
-O_SIFV
 O_KONTO
 O_KONCIJ
 O_PARTN
@@ -152,8 +142,6 @@ O_ROBA
 O_SAST
 return
 
-
-
 function P_Objekti()
 local nTArea
 private ImeKol
@@ -165,17 +153,17 @@ Kol := {}
 nTArea := SELECT()
 O_OBJEKTI
 
-AADD(ImeKol, { "ID", {|| id}, "id" })
+AADD(ImeKol, { "ID", { || id }, "id" })
 add_mcode(@ImeKol)
-AADD(ImeKol, { "Naziv", {|| naz}, "naz" })
-AADD(ImeKol, { "IdObj", {|| idobj}, "idobj" })
+AADD(ImeKol, { "Naziv", { || PadR( ToStrU( naz ), 20 ) }, "naz" })
+AADD(ImeKol, { "IdObj", { || idobj }, "idobj" })
 
 for i:=1 to LEN(ImeKol)
 	AADD(Kol, i)
 next
 
 select (nTArea)
-PostojiSifra(F_OBJEKTI, 1, 10, 60, "Objekti")
+p_sifra(F_OBJEKTI, 1, MAXROWS()-15, MAXCOLS()-20, "Objekti")
 return 
 
 

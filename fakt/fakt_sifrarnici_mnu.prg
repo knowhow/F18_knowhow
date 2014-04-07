@@ -18,7 +18,7 @@ private opc:={}
 private opcexe:={}
 private Izbor:=1
 
-AADD(opc,"1. opci sifrarnici              ")
+AADD(opc,"1. opći šifarnici              ")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","OPCISIFOPEN"))
 	AADD(opcexe,{|| SifFMKSvi()})
 else

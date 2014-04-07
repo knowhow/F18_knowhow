@@ -139,7 +139,7 @@ if PCount() == 0
 
     if EMPTY(cIdRoba)
         if Pitanje(,"Niste zadali sifru artikla, izlistati sve kartice ?","N")=="N"
-            close all
+            my_close_all_dbf()
             return
         else
             if !EMPTY(cIdroba)
@@ -506,7 +506,7 @@ do while !EOF() .and. field->idfirma + field->pkonto + field->idroba = cIdFirma 
 
 enddo
 
-close all
+my_close_all_dbf()
 
 FF
 END PRINT

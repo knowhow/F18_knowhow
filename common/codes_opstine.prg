@@ -31,7 +31,7 @@ AADD( ImeKol, { PADR( "Id", 2 ), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} })
 AADD( ImeKol, { PADR( "IDJ", 3 ), {|| idj }, "idj" })
 AADD( ImeKol, { PADR( "Kan", 3 ), {|| idkan }, "idkan" })
 AADD( ImeKol, { PADR( "N0", 3 ), {|| idN0 }, "idN0" })
-AADD( ImeKol, { PADR( "Naziv", 20 ), {|| naz }, "naz" })
+AADD( ImeKol, { PADR( "Naziv", 25 ), {|| Padr( ToStrU( naz ), 25 ) }, "naz" })
 AADD( ImeKol, { PADR( "Reg", 3 ), {|| reg }, "reg" })
 
 for _i := 1 to LEN( ImeKol )
@@ -39,7 +39,7 @@ for _i := 1 to LEN( ImeKol )
 next
 
 select ( _arr )
-return PostojiSifra( F_OPS, 1, MAXROWS()-15, MAXCOLS()-10, "Lista opcina", @cId, dx, dy )
+return p_sifra( F_OPS, 1, MAXROWS() - 10, MAXCOLS() - 10, "Lista općina", @cId, dx, dy )
 
 
 // ---------------------------------
@@ -55,7 +55,7 @@ O_BANKE
 
 ImeKol := {}
 AADD( ImeKol, { PADR("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wId)} })
-AADD( ImeKol, { "Naziv", {|| naz}, "naz" })
+AADD( ImeKol, { PADR( "Naziv", 35 ), {|| Padr( ToStrU( naz ), 35 ) }, "naz" })
 AADD( ImeKol, { "Mjesto", {|| mjesto}, "mjesto" })
 AADD( ImeKol, { "Adresa", {|| adresa}, "adresa" })
 
@@ -65,7 +65,7 @@ for _i := 1 to LEN( ImeKol )
 next
 
 select ( _arr )
-return PostojiSifra( F_BANKE, 1, MAXROWS()-15, MAXCOLS()-10, "Lista banaka", @cId, dx, dy )
+return p_sifra( F_BANKE, 1, MAXROWS()-15, MAXCOLS()-10, "MatPod: Lista banaka", @cId, dx, dy )
 
 
 

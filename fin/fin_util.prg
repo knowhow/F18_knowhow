@@ -87,7 +87,7 @@ local _n_scan
 local _a_error := {}
 local _broj_naloga := ""
 
-CLOSE ALL
+my_close_all_dbf()
 
 O_NALOG
 O_SUBAN
@@ -136,7 +136,7 @@ NEXT
 // ispisi greske ako postoje !
 _ispisi_greske( _a_error )
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -226,7 +226,7 @@ local nGrDate
 local nGrMonth
 local nGrSaldo := 0
 
-close all
+my_close_all_dbf()
 
 O_SUBAN
 select suban 
@@ -420,7 +420,7 @@ if dGrDate <> nil .and. nGrSaldo <> 0
 
 endif
 
-close all
+my_close_all_dbf()
 
 ff
 end print
@@ -430,5 +430,20 @@ return
 
 
 
+function BBMnoziSaK()
 
+LOCAL nArr:=SELECT()
+  IF cTip==ValDomaca().and.;
+     IzFMKIni("FIN","BrutoBilansUDrugojValuti","N",KUMPATH)=="D"
+    Box(,5,70)
+      @ m_x+2, m_y+2 SAY "Pomocna valuta      " GET cBBV pict "@!" valid ImaUSifVal(cBBV)
+      @ m_x+3, m_y+2 SAY "Omjer pomocna/domaca" GET nBBK WHEN {|| nBBK:=OmjerVal2(cBBV,cTip),.t.} PICT "999999999.999999999"
+      READ
+    BoxC()
+  ELSE
+    cBBV:=cTip
+    nBBK:=1
+  ENDIF
+ SELECT (nArr)
+RETURN
 

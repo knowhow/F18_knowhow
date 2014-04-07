@@ -29,6 +29,8 @@ private GetList:={}
 
 nTArea := SELECT()
 
+O_E_GR_VAL
+
 cHeader := "Elementi - atributi, vrijednosti atributa /"
 
 if nE_gr_at_id == nil

@@ -11,14 +11,6 @@
 
 #include "fmk.ch"
 
-// -------------------------------------------------
-// -------------------------------------------------
-function check_after_synchro(dbf_alias)
-
-// dummy funkcija do daljnjeg
-
-return .t.
-
 // ------------------------------------------
 // param full synchro - uradi full synchro
 // ------------------------------------------
@@ -70,7 +62,7 @@ else
   _cnt_dbf := cnt_dbf
 endif
 
-log_write( "broj zapisa dbf " + _a_dbf_rec["alias"] + ": " + ALLTRIM(STR(_cnt_dbf, 10)) + " / sql " + _sql_table + ": " + ALLTRIM(STR(_cnt_sql, 10)), 7 )
+log_write( "DBF recs " + _a_dbf_rec["alias"] + ": " + ALLTRIM(STR(_cnt_dbf, 10)) + " / sql recs " + _sql_table + ": " + ALLTRIM(STR(_cnt_sql, 10)), 7 )
 
 if _cnt_sql <> _cnt_dbf
 

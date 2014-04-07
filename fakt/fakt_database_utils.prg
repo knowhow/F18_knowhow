@@ -177,7 +177,7 @@ do while !eof()
 	nKey:=INKEY()
 	
 	if (nKey==K_ESC)
-		CLOSE ALL 
+		my_close_all_dbf() 
 		RETURN
 	endif
 
@@ -203,21 +203,17 @@ local cId
 local cOznaka
 
 SELECT (F_SIFK)
-
-if !used()
-	O_SIFK
-endif
-
+O_SIFK
 SET ORDER TO TAG "ID"
-//id+SORT+naz
-
-
 cId := PADR("PARTN", 8) 
 cNaz := PADR("PDV oslob. ZPDV", LEN(naz))
 cRbr := "08"
 cOznaka := "PDVO"
 add_n_found(cId, cNaz, cRbr, cOznaka, 3)
 
+SELECT (F_SIFK)
+O_SIFK
+SET ORDER TO TAG "ID"
 cId := PADR("PARTN", 8) 
 cNaz := PADR("Profil partn.", LEN(naz))
 cRbr := "09"
@@ -230,7 +226,7 @@ return
 // -------------------------------------------
 // -------------------------------------------
 static function add_n_found(cId, cNaz, cRbr, cOznaka, nDuzina)
-local cSeek
+local cSeek, _rec
 
 cSeek :=  cId + cRbr + cNaz
 SEEK cSeek   
@@ -245,9 +241,21 @@ if !FOUND()
 		tip with "C" ,;
 		duzina with nDuzina,;
 		f_decimal with 0
+        _rec := dbf_get_rec()
+        update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL")
+        return .T.
 endif
 
-return
+
+return .F.
+
+
+// ----------------------------------------------------------
+// vraca numericki dio za broj dokumenta iz parametra
+// ----------------------------------------------------------
+function fakt_brdok_numdio()
+return fetch_metric( "fakt_numericki_dio_dokumenta", NIL, 5 )
+
 
 // ------------------------------------------------------------
 // resetuje brojač dokumenta ako smo pobrisali dokument
@@ -260,7 +268,7 @@ local _broj := 0
 _param := "fakt" + "/" + firma + "/" + tip_dokumenta 
 _broj := fetch_metric( _param, nil, _broj )
 
-if VAL( PADR( broj_dokumenta, gNumDio ) ) == _broj
+if VAL( PADR( broj_dokumenta, fakt_brdok_numdio() ) ) == _broj
     -- _broj
     // smanji globalni brojac za 1
     set_metric( _param, nil, _broj )
@@ -274,7 +282,7 @@ return
 // vraca prazan broj dokumenta
 // ---------------------------------------------------------------
 function fakt_prazan_broj_dokumenta()
-return PADR( PADL( ALLTRIM( STR( 0 ) ), gNumDio, "0" ), 8 )
+return PADR( PADL( ALLTRIM( STR( 0 ) ), fakt_brdok_numdio(), "0" ), 8 )
 
 
 
@@ -288,6 +296,7 @@ local _param
 local _tmp, _rest
 local _ret := ""
 local _t_area := SELECT()
+local _num_dio := fakt_brdok_numdio()
 
 if sufiks == nil
     sufiks := ""
@@ -305,7 +314,7 @@ seek firma + tip_dokumenta + "Ž"
 skip -1
 
 if field->idfirma == firma .and. field->idtipdok == tip_dokumenta
-    _broj_doks := VAL( PADR( field->brdok, gNumDio ) )
+    _broj_doks := VAL( PADR( field->brdok, _num_dio ) )
 else
     _broj_doks := 0
 endif
@@ -317,7 +326,7 @@ _broj := MAX( _broj, _broj_doks )
 ++ _broj
 
 // ovo ce napraviti string prave duzine...
-_ret := PADL( ALLTRIM( STR( _broj ) ), gNumDio, "0" )
+_ret := PADL( ALLTRIM( STR( _broj ) ), _num_dio, "0" )
 
 if !EMPTY( sufiks )
     _ret := _ret + sufiks
@@ -347,7 +356,7 @@ PushWa()
 select fakt_pripr
 go top
 
-_null_brdok := PADR( REPLICATE( "0", gNumDio ), 8 )
+_null_brdok := PADR( REPLICATE( "0", fakt_brdok_numdio() ), 8 )
 _firma := field->idfirma
 _td := field->idtipdok
        
@@ -371,6 +380,7 @@ select fakt_pripr
 set order to tag "1"
 go top
 
+my_flock()
 do while !EOF()
 
     skip 1
@@ -384,14 +394,15 @@ do while !EOF()
     go (_t_rec)
 
 enddo
+my_unlock()
 
-oAtrib := F18_DOK_ATRIB():new("fakt")
+oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
 oAtrib:open_local_table()
 
-// promjeni mi i u fakt_atributi
 set order to tag "1"
 go top
 
+my_flock()
 do while !EOF()
 
     skip 1
@@ -405,8 +416,8 @@ do while !EOF()
     go ( _t_rec )
 
 enddo
+my_unlock()
 
-// zatvori mi atribute
 use
 
 PopWa()

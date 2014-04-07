@@ -50,7 +50,7 @@ select r_export
 if reccount2() == 0
 	
 	msgbeep("Nema podataka za prikaz !")
-	close all
+	my_close_all_dbf()
 	return
 
 endif

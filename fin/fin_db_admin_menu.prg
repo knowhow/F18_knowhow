@@ -34,7 +34,7 @@ AADD(opcexe, {|| f18_test_data() })
 AADD(opc, "------------------------------------------------------")
 AADD(opcexe, {|| NIL })
 
-AADD(opc, "B. podesenje brojaca naloga")
+AADD(opc, "B. podešenje brojaca naloga")
 AADD(opcexe, {|| fin_set_param_broj_dokumenta() })
 
 AADD(opc, "------------------------------------------------------")

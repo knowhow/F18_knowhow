@@ -240,17 +240,20 @@ do while !EOF()
         
     nDoc_no := field->doc_no
     cArt_id := field->art_id
-    nQtty := field->doc_it_qtt
+	// vrsi se preracunavanje kolicine
+    nQtty := preracunaj_kolicinu_repromaterijala( field->doc_it_qtt, ;
+													field->doc_it_q2, ;
+													field->jmj, ;
+													field->jmj_art )
     cDesc := field->descr
 
     if lSumirati == .t.
-        
         nQtty := 0
-
         do while !EOF() .and. field->art_id == cArt_id
-            
-            nQtty += field->doc_it_qtt
-
+            nQtty += preracunaj_kolicinu_repromaterijala( field->doc_it_qtt, ;
+															field->doc_it_q2, ;
+															field->jmj, ;
+															field->jmj_art )
             skip
         enddo
     endif
@@ -334,7 +337,6 @@ do while !EOF()
 
     gather()
 
-    // ubaci mi atribute u fakt_atribute
     if !EMPTY( cDesc ) 
 
         _t_area := SELECT()
@@ -342,7 +344,7 @@ do while !EOF()
         _items_atrib := hb_hash()
         _items_atrib["opis"] := cDesc
 
-        oAtrib := F18_DOK_ATRIB():new("fakt")
+        oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
         oAtrib:dok_hash := hb_hash()
         oAtrib:dok_hash["idfirma"] := field->idfirma
         oAtrib:dok_hash["idtipdok"] := field->idtipdok
@@ -627,15 +629,18 @@ return .t.
 // sredi redne brojeve
 // -----------------------------------
 static function _fix_rbr()
-local nRbr
+local nRbr, _rec
 
 // sredi redne brojeve pripreme
 select fakt_pripr
 set order to tag "0"
 go top
 nRbr := 0
+
 do while !EOF()
-    replace field->rbr with STR( ++nRbr, 3 )
+	_rec := dbf_get_rec()
+	_rec["rbr"] := STR( ++nRbr, 3 )
+	dbf_update_rec( _rec )
     skip
 enddo
 
@@ -762,7 +767,7 @@ endif
 // po metru
 if UPPER(cQttyType) == "M"  
 
-    // po metru, znaèi uzmi sve stranice stakla
+    // po metru, znaÃ¨i uzmi sve stranice stakla
     
     if "#D1#" $ cValue
         nTmp += nWidth1

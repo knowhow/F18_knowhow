@@ -33,7 +33,7 @@ tmp_damage( @aDbf )
 cre_tmp1( aDbf )
 o_tmp1()
 select _tmp1
-zapp()
+my_dbf_zap()
 
 
 select docs

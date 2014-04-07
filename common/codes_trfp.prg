@@ -13,8 +13,11 @@
 #include "fmk.ch"
 
 
-function P_TRFP(cId,dx,dy)
-Private imekol,kol
+function P_TRFP( cId, dx, dy )
+local cShema := SPACE(1)
+local cKavd := SPACE(2)
+private imekol,kol
+
 ImeKol:={  ;
            { "Kalk",  {|| padc(IdVD,4)} ,    "IdVD"                  },;
            { padc("Shema",5),    {|| padc(shema,5)},      "shema"                    },;
@@ -30,40 +33,72 @@ ImeKol:={  ;
         }
 Kol:={1,2,3,4,5,6,7,8,9,10,11}
 
-IF TRFP->(FIELDPOS("PORJ")<>0)
-  AADD( ImeKol, { "Po RJ(D/S/N)",{|| porj},"porj",{|| .t.}, {|| wporj$"DSN"} } )
-  AADD( Kol , LEN(Kol)+1 )
-ENDIF
+trfp_filter( @cShema, @cKavd )
 
-private cShema:=" "
-private cKavd:="  "
-private cFiltTRFP:=""
+SELECT (F_TRFP)
+USE
+use_sql_trfp( cShema, cKavd )
 
-if Pitanje(,"Zelite li postaviti filter za odredjenu shemu","N")=="D"
-  
-  Box(,1,60)
-     @ m_x+1,m_y+2 SAY "Odabir sheme:" GET cShema  pict "@!"
-     @ m_x+1,col()+2 SAY "vrsta kalkulacije (prazno sve)" GET cKavd pict "@!"
-     read
-  Boxc()
-  
-  select TRFP
-  cFiltTRFP := "SHEMA='"+ cShema + "'" +IIF(EMPTY(cKaVD),"",".and.IDVD=='"+cKaVD+"'")
-  set filter to &cFiltTRFP
-  go top
-  
-else
-  select trfp
-  set filter to
-endif
-return PostojiSifra(F_TRFP,1,15,76,"Parametri prenosa u FP", @cId, dx, dy, {|Ch| TRfpb(Ch)})
-select trfp
-set filter to
+SET ORDER TO TAG "ID"
+GO TOP 
 
-*}
+p_sifra( F_TRFP, 1, 15, 76, "Šeme kontiranja KALK->FIN", @cId, dx, dy, {|Ch| TRfpb(Ch) } )
+
+return
+
+
+
+// -------------------------------------------------------
+// -------------------------------------------------------
+static function trfp_filter( cShema, cVd )
+
+if Pitanje(, "Želite li postaviti filter za odredjenu shemu", "N" ) == "D"
+      Box(, 1, 60 )
+            @ m_x+1,m_y+2 SAY "Odabir sheme:" GET cShema  pict "@!"
+            @ m_x+1,col()+2 SAY "vrsta dokumenta (prazno sve)" GET cVd pict "@!"
+            READ
+      BoxC()
+endif 
+	 
+return
+
+
+
+function P_TRFP2(cId,dx,dy)
+local cShema := SPACE(1)
+local cFavd := SPACE(2)
+private imekol, kol
+
+ImeKol:={  ;
+           { "VD",  {|| padc(IdVD,4)} ,    "IdVD"                  },;
+           { padc("Shema",5),    {|| padc(shema,5)},      "shema"                    },;
+           { padc("ID",10),    {|| id },      "id"                    },;
+           { padc("Naziv",20), {|| naz},     "naz"                   },;
+           { "Konto  ", {|| idkonto},        "Idkonto" , {|| .t.} , {|| ("?" $ widkonto) .or. ("A" $ widkonto) .or. ("B" $ widkonto) .or. ("IDKONT" $ widkonto) .or.  P_kontoFin(@wIdkonto) }   },;
+           { "Tarifa", {|| idtarifa},        "IdTarifa"              },;
+           { "D/P",   {|| padc(D_P,3)},      "D_P"                   },;
+           { "Znak",    {|| padc(Znak,4)},        "ZNAK"                  },;
+           { "Dokument", {|| padc(Dokument,8)},   "Dokument"              },;
+           { "Partner", {|| padc(Partner,7)},     "Partner"               },;
+           { "IDVN",    {|| padc(idvn,4)},        "idvn"                  };
+        }
+Kol:={1,2,3,4,5,6,7,8,9,10,11}
+
+trfp_filter( @cShema, @cFavd )
+
+SELECT (F_TRFP2)
+USE
+use_sql_trfp2( cShema, cFavd )
+
+SET ORDER TO TAG "ID"
+GO TOP 
+
+p_sifra( F_TRFP2, 1, 15, 76, "Šeme kontiranja FAKT->FIN", @cId, dx, dy )
+
+return
+
 
 function TrfpB(Ch)
-*{
 local cShema2:="1"
 local cTekShema
 local cIdvd:=""
@@ -218,7 +253,6 @@ RETURN lVrati
 
 
 function v_setform()
-*{
 local cscsr
 if file(SIFPATH+gSetForm+"TRXX.ZIP") .and. pitanje(,"Sifranik parametara kontiranja iz arhive br. "+gSetForm+" ?","N")=="D"
  private ckomlin:="unzip  -o -d "+SIFPATH+gSetForm+"TRXX.ZIP "+SIFPATH
@@ -231,7 +265,6 @@ if file(SIFPATH+gSetForm+"TRXX.ZIP") .and. pitanje(,"Sifranik parametara kontira
  P_Trfp()
  select F_TRMP
  if !used(); O_TRMP; endif
- //P_Trmp()
  select trfp; use
  select trmp; use
  select params
@@ -243,4 +276,3 @@ elseif  pitanje(,"Tekuce parametre kontiranja staviti u arhivu br. "+gSetForm+" 
  restore screen from cscr
 endif
 return .t.
-*}

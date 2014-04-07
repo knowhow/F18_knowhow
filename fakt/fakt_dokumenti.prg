@@ -247,7 +247,7 @@ recover
 end sequence
 
 // forsiraj refresh dbf-ova
-close all
+my_close_all_dbf()
 o_fakt_edit()
 
 ::p_idtipdok := new_idtipdok

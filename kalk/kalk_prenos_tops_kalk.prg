@@ -243,7 +243,7 @@ if RECCOUNT() <> 0
     MsgBeep( "Prenos dokumenata uspjesan, nalazi se u pripremi !" )
 endif
 
-close all
+my_close_all_dbf()
 
 return
 
@@ -284,7 +284,7 @@ if sync_file <> NIL
 else
     // daj mi fajl za import
     if !get_import_file( @_imp_file )
-	    close all
+	    my_close_all_dbf()
 	    return
     endif
 endif
@@ -305,7 +305,7 @@ locate for idprodmjes == topska->idpos
 
 if !FOUND()
 	MsgBeep("U sifrarniku KONTA-TIPOVI CIJENA nije postavljeno#nigdje prodajno mjesto :" + field->idprodmjes + "#Prenos nije izvrsen.")
-  	close all
+  	my_close_all_dbf()
 	return
 endif
 
@@ -330,7 +330,7 @@ else
 
   	if FOUND()
 		Msg("Vec postoji dokument pod brojem " + gFirma + "-" + _idvd_pos + "-" + _br_kalk + "#Prenos nece biti izvrsen" )
-		close all
+		my_close_all_dbf()
 		return
 	endif
 
@@ -434,7 +434,7 @@ enddo
 
 MsgC()
 
-close all
+my_close_all_dbf()
 
 // prikazi report...
 _show_report_roba( _roba_data )
@@ -591,6 +591,9 @@ endif
 _mpcsapp := topska->mpc
 
 select kalk_pripr
+
+my_flock()
+
 locate for field->idroba == topska->idroba
 
 if !FOUND()
@@ -625,6 +628,8 @@ else
  
 endif
 
+my_unlock()
+
 select ( _t_area )
 return
 
@@ -643,6 +648,9 @@ if ( topska->kolicina == 0 )
 endif
 
 select kalk_pripr
+
+my_flock()
+
 append blank
 			
 replace field->idfirma with gFirma
@@ -660,7 +668,10 @@ replace field->idtarifa with topska->idtarifa
 replace field->mpcsapp with topska->( mpc - stmpc )
 replace field->tprevoz with "R"
 
+my_unlock()
+
 select ( _t_area )
+
 return
 
 
@@ -680,6 +691,9 @@ hseek topska->idtarifa
 _opp := tarifa->opp
 
 select kalk_pripr
+
+my_flock()
+
 append blank
 			
 replace field->idfirma with gFirma
@@ -704,6 +718,8 @@ if ROUND( topska->stmpc, 2 ) <> 0
         replace field->rabatv with topska->stmpc
     endif
 endif
+
+my_unlock()
 
 select ( _t_area )
 return

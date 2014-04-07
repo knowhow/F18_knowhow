@@ -11,14 +11,12 @@
 
 #include "fin.ch"
 
-
-
 function MnuSifrarnik()
 local _opc:={}
 local _opcexe:={}
 local _izbor:=1
 
-AADD(_opc, "1. opci sifrarnik                  ")
+AADD(_opc, "1. opći šifarnici                  ")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","OPCISIFOPEN"))
 	AADD(_opcexe, {|| SifFmkSvi()})
 else
@@ -33,7 +31,7 @@ else
 endif
 
 if (gRj=="D" .or. gTroskovi=="D")
-	AADD(_opc, "3. budzet")
+	AADD(_opc, "3. budžet")
 	AADD(_opcexe, {|| _menu_budzet()})
 endif
 

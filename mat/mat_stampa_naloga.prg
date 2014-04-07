@@ -166,7 +166,7 @@ EJECTA0
 
 END PRINT
 
-close all
+my_close_all_dbf()
 return
 
 static function Zagl12()

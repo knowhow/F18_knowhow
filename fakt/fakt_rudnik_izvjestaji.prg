@@ -142,7 +142,7 @@ GO TOP
 
 if eof()
 	Msg("Ne postoje trazeni podaci...",6)
-	close all
+	my_close_all_dbf()
     return
 endif
 
@@ -209,7 +209,7 @@ StampaTabele(aKol,{|| FSvaki1()},,gTabela,,;
 FF
 END PRINT
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -394,7 +394,7 @@ StampaTabele(aKol,{|| FSvaki2()},,gTabela,,;
                              {|| FFor2()},IF(gOstr=="D",,-1),,,,,)
 FF
 END PRINT
-CLOSE ALL; MyFERASE(cTMPFAKT)
+my_close_all_dbf(); MyFERASE(cTMPFAKT)
 
 CLOSERET
 return
@@ -591,7 +591,7 @@ StampaTabele(aKol,{|| FSvaki3()},,gTabela,,;
                              {|| FFor3()},IF(gOstr=="D",,-1),,cProsCij=="D",,,)
 FF
 END PRINT
-CLOSE ALL; MyFERASE(cTMPFAKT)
+my_close_all_dbf(); MyFERASE(cTMPFAKT)
 
 CLOSERET
 return
@@ -744,7 +744,7 @@ StampaTabele(aKol,{|| FSvaki4()},,gTabela,,;
                              {|| FFor4()},IF(gOstr=="D",,-1),,,,,)
 FF
 END PRINT
-CLOSE ALL; MyFERASE(cTMPFAKT)
+my_close_all_dbf(); MyFERASE(cTMPFAKT)
 
 CLOSERET
 return
@@ -917,7 +917,7 @@ StampaTabele(aKol,{|| FSvaki5()},,gTabela,,;
                              {|| FFor5()},IF(gOstr=="D",,-1),,,,,)
 FF
 END PRINT
-CLOSE ALL; MyFERASE(cTMPFAKT)
+my_close_all_dbf(); MyFERASE(cTMPFAKT)
 
 CLOSERET
 return
@@ -968,140 +968,6 @@ return .t.
 static function FSvaki5()
 *{
 RETURN
-*}
-
-
-/*! \fn VRobPoPar()
- *  \brief Vrijednost robe po partnerima/prodavnicama
- */
- 
-function VRobPoPar()
-*{
-IF IzFmkIni("FAKT","Opcine","N",SIFPATH)=="D"
-    O_OPS
-  ENDIF
-  O_SIFK; O_SIFV
-  O_ROBA
-  O_TARIFA
-  O_RJ
-  O_PARTN
-  O_FAKT
-
-  cTMPFAKT:=""
-
-  cIdfirma:=gFirma
-  qqRoba:=""
-  dDatOd:=ctod("")
-  dDatDo:=date()
-  qqTipdok:="  "
-  qqPartn:=SPACE(60)
-  cVarSubTot:="1"        // 1-po PARTN->idops    2-po left(idpartner,2)
-
-  O_PARAMS
-  private cSection:="5",cHistory:=" "; aHistory:={}
-  Params1()
-  RPar("c1",@cIdFirma); RPar("c2",@qqRoba)
-  RPar("c4",@cVarSubTot)
-  RPar("c8",@qqTipDok)
-  RPar("d1",@dDatOd) ; RPar("d2",@dDatDo)
-  qqRoba:=PADR(qqRoba,80)
-
-  Box(,8,75)
-  DO WHILE .t.
-   if gNW$"DR"
-     @ m_x+1,m_y+2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| empty(cIdFirma) .or. cidfirma==gFirma .or. P_RJ(@cIdFirma) }
-   else
-     @ m_x+1,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
-   endif
-   @ m_x+2,m_y+2 SAY "Roba   "  GET qqRoba   pict "@!S40"
-   @ m_x+4,m_y+2 SAY "Tip dokumenta (prazno - svi)"  GET qqTipdok
-   @ m_x+5,m_y+2 SAY "Obuhvatiti sifre partnera (prazno - svi)"  GET qqPartn PICT "@!S25"
-   @ m_x+6,m_y+2 SAY "Od datuma "  get dDatOd
-   @ m_x+6,col()+1 SAY "do"  get dDatDo
-   IF IzFmkIni("FAKT","Opcine","N",SIFPATH)<>"D"
-     cVarSubTot:="2"
-   ELSE
-     @ m_x+8,m_y+2 SAY "Varijanta subtotala po opcinama (1/2)"  get cVarSubTot VALID cVarSubTot$"12"
-   ENDIF
-   READ; ESC_BCR
-   aUsl1:=Parsiraj(qqRoba,"IDROBA")
-   aUsl2:=Parsiraj(qqPartn,"IDPARTNER")
-   IF aUsl1<>NIL; EXIT; ENDIF
-  ENDDO
-  BoxC()
-
-  select params
-  qqRoba:=trim(qqRoba)
-  WPar("c1",cIdFirma); WPar("c2",qqRoba)
-  WPar("c4",cVarSubTot)
-  WPar("c8",qqTipDok)
-  WPar("d1",dDatOd); WPar("d2",dDatDo)
-  use
-
-  fSMark:=.f.
-  if right(qqRoba,1)="*"
-    // izvrsena je markacija robe ..
-    fSMark:=.t.
-  endif
-
-  SELECT FAKT
-
-  IF cVarSubTot=="1"
-    SET RELATION TO idpartner INTO PARTN
-    cSort1 := "PARTN->idops+idpartner"
-  ELSE
-    cSort1 := "idpartner"
-  ENDIF
-  cFilt1 := aUsl1
-  if !empty(dDatOd) .or. !empty(dDatDo)
-    cFilt1 += ".and. DatDok>="+cm2str(dDatOd)+".and. DatDok<="+cm2str(dDatDo)
-  endif
-  IF !EMPTY(qqTipDok)
-    cFilt1 += ".and. IDTIPDOK=="+cm2str(qqTipDok)
-  ENDIF
-  IF !EMPTY(cIdFirma)
-    cFilt1 += ".and. IDFIRMA=="+cm2str(cIdFirma)
-  ENDIF
-  IF !EMPTY(qqPartn)
-    cFilt1 += (".and."+aUsl2)
-  ENDIF
-
-  INDEX ON &cSort1 TO (cTMPFAKT:=TMPFAKT()) FOR &cFilt1
-
-  START PRINT CRET
-
-  PRIVATE cIdPartner:="", cNPartnera:="", nUkIznos:=0, lSubTot6:=.f.
-  PRIVATE cSubTot6:="", cIdOps:=""
-  gOstr:="D"
-  nOpor:=nNeOpor:=0
-
-aKol:={ { "SIFRA"        , {|| cIdPartner             }, .f., "C", 6, 0, 1, 1},;
-        { "PARTNER"      , {|| cNPartnera             }, .f., "C",50, 0, 1, 2},;
-        { "Neoporezovani", {|| ROUND(nNeOpor ,gFZaok) }, .t., "N",13, 2, 1, 3},;
-        { "iznos"        , {|| "#"                    }, .f., "C",13, 0, 2, 3},;
-        { "Oporezovani"  , {|| ROUND(nOpor ,gFZaok)   }, .t., "N",13, 2, 1, 4},;
-        { "iznos"        , {|| "#"                    }, .f., "C",13, 0, 2, 4},;
-        { "UKUPNO IZNOS" , {|| ROUND(nUkIznos,gFZaok) }, .t., "N",13, 2, 1, 5} }
-
-  P_12CPI
-  ?
-  ?? space(gnLMarg)
-  ?? "FAKT: Izvjestaj na dan",date()
-  ? space(gnLMarg); IspisFirme("")
-  ? space(gnLMarg); ?? "RJ: " + IF( EMPTY(cIdFirma) , "SVE" , cIdFirma )
-  IF !EMPTY(qqPartn)
-    ? space(gnLMarg); ?? "OBUHVACENI PARTNERI: "+TRIM(qqPartn)
-  ENDIF
-
-  StampaTabele(aKol,{|| FSvaki6()},,gTabela,,;
-       ,"Vrijednost isporuke partnerima za period od "+DTOC(ddatod)+" do "+DTOC(ddatdo),;
-                               {|| FFor6()},IF(gOstr=="D",,-1),,,{|| SubTot6()},,)
-
-  FF
-  END PRINT
-CLOSE ALL; MyFERASE(cTMPFAKT)
-CLOSERET
-return
 *}
 
 
@@ -1160,9 +1026,7 @@ RETURN .t.
  */
  
 static function FSvaki6()
-*{
 RETURN
-*}
 
 
 /*! \fn SubTot6()
@@ -1170,7 +1034,6 @@ RETURN
  */
  
 static function SubTot6()
-*{
 LOCAL aVrati:={.f.,""}, cOps:="", cIdOpc:=""
   IF lSubTot6 .or. EOF()
     IF cVarSubTot=="1"
@@ -1184,7 +1047,6 @@ LOCAL aVrati:={.f.,""}, cOps:="", cIdOpc:=""
     lSubTot6:=.f.
   ENDIF
 RETURN aVrati
-*}
 
 
 /*! \fn VRobPoIzd()
@@ -1293,7 +1155,7 @@ aKol:={ { "SIFRA"        , {|| cIdRoba                }, .f., "C",10, 0, 1, 1},;
 
   FF
   END PRINT
-CLOSE ALL; MyFERASE(cTMPFAKT)
+my_close_all_dbf(); MyFERASE(cTMPFAKT)
 CLOSERET
 return
 *}
@@ -1518,7 +1380,7 @@ O_SIFK; O_SIFV
     NEXT
     APPEND BLANK
     REPLACE ops   WITH cOps,;
-            por   WITH "ÄUKUPNO",;
+            por   WITH "Ã„UKUPNO",;
             iznos WITH nU1 ,;
             ppp   WITH nU2 ,;
             ppu   WITH nU3 ,;
@@ -1574,7 +1436,7 @@ aKol:={ { "OPSTINA"      , {|| ops                 }, .f., "C",10, 0, 1, 1},;
                                {|| FFor8()},IF(gOstr=="D",,-1),,,,,)
 
   END PRINT
-CLOSE ALL; MyFERASE(cTMPFAKT)
+my_close_all_dbf(); MyFERASE(cTMPFAKT)
 CLOSERET
 return
 *}
@@ -1595,11 +1457,11 @@ RETURN .t.
 
 static function FSvaki8()
 *{
-IF por="ÄUKUPNO"
+IF por="Ã„UKUPNO"
     RETURN "PODVUCI="
   ENDIF
   SKIP 1
-  IF por="ÄUKUPNO".or.ops="UKUPNO SVE"
+  IF por="Ã„UKUPNO".or.ops="UKUPNO SVE"
     SKIP -1
     RETURN "PODVUCI "
   ELSE

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -17,111 +17,114 @@
 
 CLASS F18AdminOpts
 
-    VAR update_app_f18
-    VAR update_app_f18_version
-    VAR update_app_templates
-    VAR update_app_templates_version
-    VAR update_app_info_file
-    VAR update_app_script_file
+   VAR update_app_f18
+   VAR update_app_f18_version
+   VAR update_app_templates
+   VAR update_app_templates_version
+   VAR update_app_info_file
+   VAR update_app_script_file
 
-    METHOD new()
+   METHOD new()
 
-    METHOD update_db()
-    DATA update_db_result
+   METHOD update_db()
+   DATA update_db_result
 
-    METHOD create_new_db()
-    METHOD drop_db()
-    METHOD delete_db_data_all()
+   METHOD create_new_db()
+   METHOD drop_db()
+   METHOD delete_db_data_all()
 
-    METHOD new_session()
+   METHOD new_session()
 
-    METHOD relogin_as()
+   METHOD relogin_as()
 
-    METHOD force_synchro_db()
+   METHOD force_synchro_db()
 
-    METHOD update_app()
+   METHOD update_app()
 
-    METHOD get_os_name()
+   METHOD get_os_name()
 
-    METHOD wget_download()
+   METHOD wget_download()
 
-    DATA create_db_result
-    
-    PROTECTED:
-        
-        METHOD update_db_download()
-        METHOD update_db_all()
-        METHOD update_db_company()
-        METHOD update_db_command()
-        METHOD create_new_db_params()
-    
-        METHOD update_app_form()
-        METHOD update_app_dl_scripts()
-        METHOD update_app_get_versions()
-        METHOD update_app_run_script()
-        METHOD update_app_run_app_update()
-        METHOD update_app_run_templates_update()
-        METHOD update_app_unzip_templates()
+   DATA create_db_result
 
-        DATA _new_db_params
-        DATA _update_params
+   PROTECTED:
+
+   METHOD update_db_download()
+   METHOD update_db_all()
+   METHOD update_db_company()
+   METHOD update_db_command()
+   METHOD create_new_db_params()
+
+   METHOD update_app_form()
+   METHOD update_app_dl_scripts()
+   METHOD update_app_get_versions()
+   METHOD update_app_run_script()
+   METHOD update_app_run_app_update()
+   METHOD update_app_run_templates_update()
+   METHOD update_app_unzip_templates()
+
+   DATA _new_db_params
+   DATA _update_params
 
 ENDCLASS
 
 
 
 METHOD F18AdminOpts:New()
-::update_db_result := {}
-::create_db_result := {}
-return self
+
+   ::update_db_result := {}
+   ::create_db_result := {}
+
+   RETURN self
 
 
 
 // ------------------------------------------------
 // ------------------------------------------------
 METHOD F18AdminOpts:update_app()
-local _ver_params := hb_hash()
-local _upd_params := hb_hash()
-local _upd_file := ""
-local _ok := .f.
 
-// setuj mi ove stavke...
-::update_app_info_file := "UPDATE_INFO"
-::update_app_script_file := "f18_upd.sh"
+   LOCAL _ver_params := hb_Hash()
+   LOCAL _upd_params := hb_Hash()
+   LOCAL _upd_file := ""
+   LOCAL _ok := .F.
+
+   // setuj mi ove stavke...
+   ::update_app_info_file := "UPDATE_INFO"
+   ::update_app_script_file := "f18_upd.sh"
 
 #ifdef __PLATFORM__WINDOWS
-    ::update_app_script_file := "f18_upd.bat"
+   ::update_app_script_file := "f18_upd.bat"
 #endif
 
-// download scripts...
-if !::update_app_dl_scripts()
-    MsgBeep( "Problem sa download-om skripti. Provjerite internet koneciju." )
-    return SELF
-endif
+   // download scripts...
+   IF !::update_app_dl_scripts()
+      MsgBeep( "Problem sa download-om skripti. Provjerite internet koneciju." )
+      RETURN SELF
+   ENDIF
 
-// daj mi informacije o url i verzijama
-_ver_params := ::update_app_get_versions()
+   // daj mi informacije o url i verzijama
+   _ver_params := ::update_app_get_versions()
 
-if _ver_params == NIL
-    return SELF
-endif
+   IF _ver_params == NIL
+      RETURN SELF
+   ENDIF
 
-// daj mi parametre za update
-if !::update_app_form( _ver_params )
-    return SELF
-endif
+   // daj mi parametre za update
+   IF !::update_app_form( _ver_params )
+      RETURN SELF
+   ENDIF
 
-// update template-a...
-if ::update_app_templates
-    ::update_app_run_templates_update( _ver_params )
-endif
+   // update template-a...
+   if ::update_app_templates
+      ::update_app_run_templates_update( _ver_params )
+   ENDIF
 
-// update f18 aplikcije
-if ::update_app_f18
-    ::update_app_run_app_update( _ver_params )
-endif
+   // update f18 aplikcije
+   if ::update_app_f18
+      ::update_app_run_app_update( _ver_params )
+   ENDIF
 
-return SELF
+   RETURN SELF
 
 
 
@@ -129,62 +132,64 @@ return SELF
 // update aplikcije...
 // ------------------------------------------------------------------------
 METHOD F18AdminOpts:update_app_run_templates_update( params )
-local _upd_file := "F18_template_#VER#.tar.bz2"
-local _dest := SLASH + "opt" + SLASH + "knowhowERP" + SLASH
+
+   LOCAL _upd_file := "F18_template_#VER#.tar.bz2"
+   LOCAL _dest := SLASH + "opt" + SLASH + "knowhowERP" + SLASH
 
 #ifdef __PLATFORM__WINDOWS
-    _dest := "c:" + SLASH + "knowhowERP" + SLASH
+   _dest := "c:" + SLASH + "knowhowERP" + SLASH
 #endif
-    
-if ::update_app_templates_version == "#LAST#"
-    ::update_app_templates_version := params["templates"]
-endif
 
-_upd_file := STRTRAN( _upd_file, "#VER#", ::update_app_templates_version )
+   if ::update_app_templates_version == "#LAST#"
+      ::update_app_templates_version := params[ "templates" ]
+   ENDIF
 
-// download fajla za update...
-if !::wget_download( params["url"], _upd_file, _dest + _upd_file, .t., .t. )
-    return SELF
-endif
+   _upd_file := StrTran( _upd_file, "#VER#", ::update_app_templates_version )
 
-// update run script
-::update_app_unzip_templates( _dest, _dest, _upd_file )
+   // download fajla za update...
+   IF !::wget_download( params[ "url" ], _upd_file, _dest + _upd_file, .T., .T. )
+      RETURN SELF
+   ENDIF
 
-return SELF
+   // update run script
+   ::update_app_unzip_templates( _dest, _dest, _upd_file )
+
+   RETURN SELF
 
 
 
 // -----------------------------------------------------------------------
 // -----------------------------------------------------------------------
 METHOD F18AdminOpts:update_app_unzip_templates( destination_path, location_path, filename )
-local _cmd
-local _args := "-jxf"
 
-MsgO( "Vrsim update template fajlova ..." )
+   LOCAL _cmd
+   LOCAL _args := "-jxf"
+
+   MsgO( "Vrsim update template fajlova ..." )
 
 #ifdef __PLATFORM__WINDOWS
 
-    // 1) pozicioniraj se u potrebni direktorij...
-    DirChange( destination_path )
+   // 1) pozicioniraj se u potrebni direktorij...
+   DirChange( destination_path )
 
-    // 2) prvo bunzip2
-    _cmd := "bunzip2 -f " + location_path + filename
-    hb_run( _cmd )
+   // 2) prvo bunzip2
+   _cmd := "bunzip2 -f " + location_path + filename
+   hb_run( _cmd )
 
-    // 3) tar 
-    _cmd := "tar xvf " + STRTRAN( filename, ".bz2", "" ) 
-    hb_run( _cmd )
+   // 3) tar
+   _cmd := "tar xvf " + StrTran( filename, ".bz2", "" )
+   hb_run( _cmd )
 
 #else
 
-    _cmd := "tar -C " + location_path + " " + _args + " " + location_path + filename
-    hb_run( _cmd )
+   _cmd := "tar -C " + location_path + " " + _args + " " + location_path + filename
+   hb_run( _cmd )
 
 #endif
 
-MsgC()
+   MsgC()
 
-return SELF
+   RETURN SELF
 
 
 
@@ -192,65 +197,68 @@ return SELF
 // update aplikcije...
 // ------------------------------------------------------------------------
 METHOD F18AdminOpts:update_app_run_app_update( params )
-local _upd_file := "F18_#OS#_#VER#.gz"
-    
-if ::update_app_f18_version == "#LAST#"
-    ::update_app_f18_version := params["f18"]
-endif
+
+   LOCAL _upd_file := "F18_#OS#_#VER#.gz"
+
+   if ::update_app_f18_version == "#LAST#"
+      ::update_app_f18_version := params[ "f18" ]
+   ENDIF
 
 #ifdef __PLATFORM__LINUX
-    _upd_file := STRTRAN( _upd_file, "#OS#", ::get_os_name() + "_i686" )
+   _upd_file := StrTran( _upd_file, "#OS#", ::get_os_name() + "_i686" )
 #else
-    _upd_file := STRTRAN( _upd_file, "#OS#", ::get_os_name() )
+   _upd_file := StrTran( _upd_file, "#OS#", ::get_os_name() )
 #endif
 
-_upd_file := STRTRAN( _upd_file, "#VER#", ::update_app_f18_version )
+   _upd_file := StrTran( _upd_file, "#VER#", ::update_app_f18_version )
 
-if ::update_app_f18_version == F18_VER
-    MsgBeep( "Verzija aplikacije " + F18_VER + " je vec instalirana !" )
-    return SELF
-endif
+   if ::update_app_f18_version == F18_VER
+      MsgBeep( "Verzija aplikacije " + F18_VER + " je vec instalirana !" )
+      RETURN SELF
+   ENDIF
 
-// download fajla za update...
-if !::wget_download( params["url"], _upd_file, my_home_root() + _upd_file, .t., .t. )
-    return SELF
-endif
+   // download fajla za update...
+   IF !::wget_download( params[ "url" ], _upd_file, my_home_root() + _upd_file, .T., .T. )
+      RETURN SELF
+   ENDIF
 
-// update run script
-::update_app_run_script( my_home_root() + _upd_file )
+   // update run script
+   ::update_app_run_script( my_home_root() + _upd_file )
 
-return SELF
+   RETURN SELF
 
 
 
 // -----------------------------------------------------------
 // -----------------------------------------------------------
 METHOD F18AdminOpts:update_app_run_script( update_file )
-local _url := my_home_root() + ::update_app_script_file
+
+   LOCAL _url := my_home_root() + ::update_app_script_file
 
 #ifdef __PLATFORM__WINDOWS
-    _url := 'start cmd /C ""' + _url
-    _url += '" "' + update_file + '""' 
+
+   _url := 'start cmd /C ""' + _url
+   _url += '" "' + update_file + '""'
 #else
-    #ifdef __PLATFORM__LINUX
-        _url := "bash " + _url
-    #endif
-    _url += " " + update_file
+#ifdef __PLATFORM__LINUX
+   _url := "bash " + _url
+#endif
+   _url += " " + update_file
 #endif
 
 #ifdef __PLATFORM__UNIX
-    _url := _url + " &"
+   _url := _url + " &"
 #endif
 
-Msg( "F18 ce se sada zatvoriti#Nakon update procesa ponovo otvorite F18", 4)
+   Msg( "F18 ce se sada zatvoriti#Nakon update procesa ponovo otvorite F18", 4 )
 
-// pokreni skriptu    
-hb_run( _url )
+   // pokreni skriptu
+   hb_run( _url )
 
-// zatvori aplikaciju ako je update aplikacije...
-QUIT
+   // zatvori aplikaciju ako je update aplikacije...
+   QUIT
 
-return SELF
+   RETURN SELF
 
 
 
@@ -259,142 +267,143 @@ return SELF
 // ------------------------------------------------
 // ------------------------------------------------
 METHOD F18AdminOpts:update_app_form( upd_params )
-local _ok := .f.
-local _f_ver_prim := 1
-local _f_ver_sec := 4
-local _f_ver_third := SPACE(10)
-local _t_ver_prim := 1
-local _t_ver_sec := 4
-local _t_ver_third := SPACE(10)
-local _x := 1
-local _col_app, _col_temp, _line
-local _upd_f, _upd_t, _pos
 
-_upd_f := "D"
-_upd_t := "N"
-_col_app := "W/G+"
-_col_temp := "W/G+"
+   LOCAL _ok := .F.
+   LOCAL _f_ver_prim := 1
+   LOCAL _f_ver_sec := 4
+   LOCAL _f_ver_third := Space( 10 )
+   LOCAL _t_ver_prim := 1
+   LOCAL _t_ver_sec := 4
+   LOCAL _t_ver_third := Space( 10 )
+   LOCAL _x := 1
+   LOCAL _col_app, _col_temp, _line
+   LOCAL _upd_f, _upd_t, _pos
 
-if F18_VER < upd_params["f18"]
-    _col_app := "W/R+" 
-endif
-if F18_TEMPLATE_VER < upd_params["templates"]
-    _col_temp := "W/R+"
-endif
+   _upd_f := "D"
+   _upd_t := "N"
+   _col_app := "W/G+"
+   _col_temp := "W/G+"
 
-Box(, 14, 65 )
+   IF F18_VER < upd_params[ "f18" ]
+      _col_app := "W/R+"
+   ENDIF
+   IF F18_TEMPLATE_VER < upd_params[ "templates" ]
+      _col_temp := "W/R+"
+   ENDIF
 
-    @ m_x + _x, m_y + 2 SAY PADR( "## UPDATE F18 APP ##", 64 ) COLOR "I"
-   
-    ++ _x
-    ++ _x
+   Box(, 14, 65 )
 
-    @ m_x + _x, m_y + 2 SAY _line := ( REPLICATE( "-", 10 ) + " " + REPLICATE( "-", 20 ) + " " + REPLICATE( "-", 20 ) )
+   @ m_x + _x, m_y + 2 SAY PadR( "## UPDATE F18 APP ##", 64 ) COLOR "I"
 
-    ++ _x
+   ++ _x
+   ++ _x
 
-    @ m_x + _x, m_y + 2 SAY PADR( "[INFO]", 10 ) + "/" + PADC( "Trenutna", 20 ) + "/" + PADC( "Dostupna", 20 )
+   @ m_x + _x, m_y + 2 SAY _line := ( Replicate( "-", 10 ) + " " + Replicate( "-", 20 ) + " " + Replicate( "-", 20 ) )
 
-    ++ _x
+   ++ _x
 
-    @ m_x + _x, m_y + 2 SAY _line 
+   @ m_x + _x, m_y + 2 SAY PadR( "[INFO]", 10 ) + "/" + PadC( "Trenutna", 20 ) + "/" + PadC( "Dostupna", 20 )
 
-    ++ _x
-    
-    @ m_x + _x, m_y + 2 SAY PADR( "F18", 10 ) + " " + PADC( F18_VER, 20 )
-    @ m_x + _x, col() SAY " "
-    @ m_x + _x, col() SAY PADC( upd_params["f18"], 20 ) COLOR _col_app
+   ++ _x
 
-    ++ _x
-    
-    @ m_x + _x, m_y + 2 SAY PADR( "template", 10 ) + " " + PADC( F18_TEMPLATE_VER, 20 )
-    @ m_x + _x, col() SAY " "
-    @ m_x + _x, col() SAY PADC( upd_params["templates"], 20 ) COLOR _col_temp
+   @ m_x + _x, m_y + 2 SAY _line
 
-    ++ _x
+   ++ _x
 
-    @ m_x + _x, m_y + 2 SAY _line
+   @ m_x + _x, m_y + 2 SAY PadR( "F18", 10 ) + " " + PadC( F18_VER, 20 )
+   @ m_x + _x, Col() SAY " "
+   @ m_x + _x, Col() SAY PadC( upd_params[ "f18" ], 20 ) COLOR _col_app
 
-    ++ _x
-    ++ _x
+   ++ _x
 
-    _pos := _x
+   @ m_x + _x, m_y + 2 SAY PadR( "template", 10 ) + " " + PadC( F18_TEMPLATE_VER, 20 )
+   @ m_x + _x, Col() SAY " "
+   @ m_x + _x, Col() SAY PadC( upd_params[ "templates" ], 20 ) COLOR _col_temp
 
-    @ m_x + _x, m_y + 2 SAY "       Update F18 ?" GET _upd_f PICT "@!" VALID _upd_f $ "DN"
+   ++ _x
 
-    READ
+   @ m_x + _x, m_y + 2 SAY _line
 
-    if _upd_f == "D"
+   ++ _x
+   ++ _x
 
-        @ m_x + _x, m_y + 25 SAY "VERZIJA:" GET _f_ver_prim PICT "99" VALID _f_ver_prim > 0
-        @ m_x + _x, col() + 1 SAY "." GET _f_ver_sec PICT "99" VALID _f_ver_sec > 0
-        @ m_x + _x, col() + 1 SAY "." GET _f_ver_third PICT "@S10"
-    
-    endif
+   _pos := _x
 
-    ++ _x
-    ++ _x
-    _pos := _x
+   @ m_x + _x, m_y + 2 SAY "       Update F18 ?" GET _upd_f PICT "@!" VALID _upd_f $ "DN"
 
-    @ m_x + _x, m_y + 2 SAY "  Update template ?" GET _upd_t PICT "@!" VALID _upd_t $ "DN"
+   READ
 
-    READ
+   IF _upd_f == "D"
 
-    if _upd_t == "D"
-        
-        @ m_x + _x, m_y + 25 SAY "VERZIJA:" GET _t_ver_prim PICT "99" VALID _t_ver_prim > 0
-        @ m_x + _x, col() + 1 SAY "." GET _t_ver_sec PICT "99" VALID _t_ver_sec > 0
-        @ m_x + _x, col() + 1 SAY "." GET _t_ver_third PICT "@S10"
-    
-        READ
+      @ m_x + _x, m_y + 25 SAY "VERZIJA:" GET _f_ver_prim PICT "99" VALID _f_ver_prim > 0
+      @ m_x + _x, Col() + 1 SAY "." GET _f_ver_sec PICT "99" VALID _f_ver_sec > 0
+      @ m_x + _x, Col() + 1 SAY "." GET _f_ver_third PICT "@S10"
 
-    endif
+   ENDIF
 
-BoxC()
+   ++ _x
+   ++ _x
+   _pos := _x
 
-if LastKey() == K_ESC
-    return _ok
-endif
+   @ m_x + _x, m_y + 2 SAY "  Update template ?" GET _upd_t PICT "@!" VALID _upd_t $ "DN"
 
-// setuj postavke...
-::update_app_f18 := ( _upd_f == "D" )
-::update_app_templates := ( _upd_t == "D" )
+   READ
 
-if ::update_app_f18
-    // sastavi mi verziju
-    if !EMPTY( _f_ver_third )
-        // zadana verzija
-        ::update_app_f18_version := ALLTRIM( STR( _f_ver_prim ) ) + ;
-                            "." + ;
-                            ALLTRIM( STR( _f_ver_sec ) ) + ;
-                            "." + ;
-                            ALLTRIM( _f_ver_third )
-    else
-        ::update_app_f18_version := "#LAST#"
-    endif
+   IF _upd_t == "D"
 
-    _ok := .t.
+      @ m_x + _x, m_y + 25 SAY "VERZIJA:" GET _t_ver_prim PICT "99" VALID _t_ver_prim > 0
+      @ m_x + _x, Col() + 1 SAY "." GET _t_ver_sec PICT "99" VALID _t_ver_sec > 0
+      @ m_x + _x, Col() + 1 SAY "." GET _t_ver_third PICT "@S10"
 
-endif
+      READ
 
-if ::update_app_templates
-    // sastavi mi verziju
-    if !EMPTY( _t_ver_third )
-        // zadana verzija
-        ::update_app_templates_version := ALLTRIM( STR( _t_ver_prim ) ) + ;
-                            "." + ;
-                            ALLTRIM( STR( _t_ver_sec ) ) + ;
-                            "." + ;
-                            ALLTRIM( _t_ver_third )
-    else
-        ::update_app_templates_version := "#LAST#"
-    endif
+   ENDIF
 
-    _ok := .t.
+   BoxC()
 
-endif
+   IF LastKey() == K_ESC
+      RETURN _ok
+   ENDIF
 
-return _ok
+   // setuj postavke...
+   ::update_app_f18 := ( _upd_f == "D" )
+   ::update_app_templates := ( _upd_t == "D" )
+
+   if ::update_app_f18
+      // sastavi mi verziju
+      IF !Empty( _f_ver_third )
+         // zadana verzija
+         ::update_app_f18_version := AllTrim( Str( _f_ver_prim ) ) + ;
+            "." + ;
+            AllTrim( Str( _f_ver_sec ) ) + ;
+            "." + ;
+            AllTrim( _f_ver_third )
+      ELSE
+         ::update_app_f18_version := "#LAST#"
+      ENDIF
+
+      _ok := .T.
+
+   ENDIF
+
+   if ::update_app_templates
+      // sastavi mi verziju
+      IF !Empty( _t_ver_third )
+         // zadana verzija
+         ::update_app_templates_version := AllTrim( Str( _t_ver_prim ) ) + ;
+            "." + ;
+            AllTrim( Str( _t_ver_sec ) ) + ;
+            "." + ;
+            AllTrim( _t_ver_third )
+      ELSE
+         ::update_app_templates_version := "#LAST#"
+      ENDIF
+
+      _ok := .T.
+
+   ENDIF
+
+   RETURN _ok
 
 
 
@@ -402,167 +411,173 @@ return _ok
 // ------------------------------------------------
 // ------------------------------------------------
 METHOD F18AdminOpts:update_app_get_versions()
-local _urls := hb_hash()
-local _o_file, _tmp, _a_tmp
-local _file := my_home_root() + ::update_app_info_file
-local _count := 0
 
-_o_file := TFileRead():New( _file )
-_o_file:Open()
+   LOCAL _urls := hb_Hash()
+   LOCAL _o_file, _tmp, _a_tmp
+   LOCAL _file := my_home_root() + ::update_app_info_file
+   LOCAL _count := 0
 
-if _o_file:Error()
-	MSGBEEP( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
-	return SELF
-endif
+   _o_file := TFileRead():New( _file )
+   _o_file:Open()
 
-_tmp := ""
+   IF _o_file:Error()
+      MSGBEEP( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
+      RETURN SELF
+   ENDIF
 
-// prodji kroz svaku liniju i procitaj zapise
-while _o_file:MoreToRead()
-	_tmp := hb_strtoutf8( _o_file:ReadLine() )
-    _a_tmp := TokToNiz( _tmp, "=" )
-    if LEN( _a_tmp ) > 1
-        ++ _count
-        _urls[ ALLTRIM( LOWER( _a_tmp[1] ) ) ] := ALLTRIM( _a_tmp[2] )
-    endif
-enddo
+   _tmp := ""
 
-_o_file:Close()
+   // prodji kroz svaku liniju i procitaj zapise
+   WHILE _o_file:MoreToRead()
+      _tmp := hb_StrToUTF8( _o_file:ReadLine() )
+      _a_tmp := TokToNiz( _tmp, "=" )
+      IF Len( _a_tmp ) > 1
+         ++ _count
+         _urls[ AllTrim( Lower( _a_tmp[ 1 ] ) ) ] := AllTrim( _a_tmp[ 2 ] )
+      ENDIF
+   ENDDO
 
-if _count == 0
-    MsgBeep( "Nisam uspio nista procitati iz fajla sa verzijama !" )
-    _urls := NIL
-endif
+   _o_file:Close()
 
-return _urls
+   IF _count == 0
+      MsgBeep( "Nisam uspio nista procitati iz fajla sa verzijama !" )
+      _urls := NIL
+   ENDIF
+
+   RETURN _urls
 
 
 
 // ------------------------------------------------
 // ------------------------------------------------
 METHOD F18AdminOpts:update_app_dl_scripts()
-local _ok := .f.
-local _path := my_home_root()
-local _url 
-local _script 
-local _ver_params
-local _silent := .t.
-local _always_erase := .t.
 
-MsgO( "Vrsim download skripti za update ... sacekajte trenutak !" )
+   LOCAL _ok := .F.
+   LOCAL _path := my_home_root()
+   LOCAL _url
+   LOCAL _script
+   LOCAL _ver_params
+   LOCAL _silent := .T.
+   LOCAL _always_erase := .T.
 
-// skini mi info fajl o verzijama...
-_url := "https://raw.github.com/knowhow/F18_knowhow/master/"
-if !::wget_download( _url, ::update_app_info_file, _path + ::update_app_info_file, _always_erase, _silent )
-    MsgC()
-    return _ok
-endif
+   MsgO( "Vrsim download skripti za update ... sacekajte trenutak !" )
 
-// skini mi skriptu f18_upd.sh
-_url := "https://raw.github.com/knowhow/F18_knowhow/master/scripts/"
-if !::wget_download( _url, ::update_app_script_file, _path + ::update_app_script_file, _always_erase, _silent )
-    MsgC()
-    return _ok
-endif
+   // skini mi info fajl o verzijama...
+   _url := "https://raw.github.com/knowhow/F18_knowhow/master/"
+   IF !::wget_download( _url, ::update_app_info_file, _path + ::update_app_info_file, _always_erase, _silent )
+      MsgC()
+      RETURN _ok
+   ENDIF
 
-MsgC()
+   // skini mi skriptu f18_upd.sh
+   _url := "https://raw.github.com/knowhow/F18_knowhow/master/scripts/"
+   IF !::wget_download( _url, ::update_app_script_file, _path + ::update_app_script_file, _always_erase, _silent )
+      MsgC()
+      RETURN _ok
+   ENDIF
 
-_ok := .t.
-return _ok
+   MsgC()
+
+   _ok := .T.
+
+   RETURN _ok
 
 
 
 // ----------------------------------------------
 // ----------------------------------------------
 METHOD F18AdminOpts:get_os_name()
-local _os := "Ubuntu"
+
+   LOCAL _os := "Ubuntu"
 
 #ifdef __PLATFORM__WINDOWS
-    _os := "Windows"
+
+   _os := "Windows"
 #endif
 
 #ifdef __PLATFORM__DARWIN
-    _os := "MacOSX"
+   _os := "MacOSX"
 #endif
 
-return _os
+   RETURN _os
 
 
 
 // ---------------------------------------------------------------
 // ---------------------------------------------------------------
 METHOD F18AdminOpts:wget_download( url, filename, location, erase_file, silent, only_newer )
-local _ok := .f.
-local _cmd := ""
-local _h, _lenght
 
-if erase_file == NIL
-    erase_file := .f.
-endif
+   LOCAL _ok := .F.
+   LOCAL _cmd := ""
+   LOCAL _h, _lenght
 
-if silent == NIL
-    silent := .f.
-endif
+   IF erase_file == NIL
+      erase_file := .F.
+   ENDIF
 
-if only_newer == NIL
-    only_newer := .f.
-endif
+   IF silent == NIL
+      silent := .F.
+   ENDIF
 
-if erase_file
-    FERASE( location )
-    sleep(1)
-endif
+   IF only_newer == NIL
+      only_newer := .F.
+   ENDIF
 
-_cmd += "wget " 
+   IF erase_file
+      FErase( location )
+      Sleep( 1 )
+   ENDIF
+
+   _cmd += "wget "
 
 #ifdef __PLATFORM__WINDOWS
-    _cmd += " --no-check-certificate "
+   _cmd += " --no-check-certificate "
 #endif
 
-_cmd += url + filename
+   _cmd += url + filename
 
-_cmd += " -O "
+   _cmd += " -O "
 
 #ifdef __PLATFORM__WINDOWS
-    _cmd += '"' + location + '"'
+   _cmd += '"' + location + '"'
 #else
-    _cmd += location 
+   _cmd += location
 #endif
 
-if !silent
-    MsgO( "vrsim download ... sacekajte !" )
-endif
+   IF !silent
+      MsgO( "vrsim download ... sacekajte !" )
+   ENDIF
 
-hb_run( _cmd )
+   hb_run( _cmd )
 
-sleep(1)
+   Sleep( 1 )
 
-if !silent
-    MsgC()
-endif
+   IF !silent
+      MsgC()
+   ENDIF
 
-if !FILE( location )
-    // nema fajle
-    MsgBeep( "Fajl " + location + " nije download-ovan !!!" )
-    return _ok
-endif
+   IF !File( location )
+      // nema fajle
+      MsgBeep( "Fajl " + location + " nije download-ovan !!!" )
+      RETURN _ok
+   ENDIF
 
-// provjeri velicinu fajla...
-_h := FOPEN( location )
+   // provjeri velicinu fajla...
+   _h := FOpen( location )
 
-if _h >= 0
-    _length := FSEEK( _h, 0, FS_END )
-    FSEEK( _h, 0 )
-    FCLOSE( _h )
-    if _length <= 0
-        MsgBeep( "Trazeni fajl ne postoji !!!" )
-        return _ok
-    endif
-endif
+   IF _h >= 0
+      _length := FSeek( _h, 0, FS_END )
+      FSeek( _h, 0 )
+      FClose( _h )
+      IF _length <= 0
+         MsgBeep( "Trazeni fajl ne postoji !!!" )
+         RETURN _ok
+      ENDIF
+   ENDIF
 
-_ok := .t.
+   _ok := .T.
 
-return _ok
+   RETURN _ok
 
 
 
@@ -570,255 +585,262 @@ return _ok
 // -----------------------------------------------
 // -----------------------------------------------
 METHOD F18AdminOpts:update_db()
-local _ok := .f.
-local _x := 1
-local _version := SPACE(50)
-local _db_list := {}
-local _server := my_server_params()
-local _database := ""
-local _upd_empty := "N"
-private GetList := {}
 
-_database := SPACE(50)
+   LOCAL _ok := .F.
+   LOCAL _x := 1
+   LOCAL _version := Space( 50 )
+   LOCAL _db_list := {}
+   LOCAL _server := my_server_params()
+   LOCAL _database := ""
+   LOCAL _upd_empty := "N"
+   PRIVATE GetList := {}
 
-Box(, 10, 70 )
+   _database := Space( 50 )
 
-    @ m_x + _x, m_y + 2 SAY "**** upgrade db-a / unesite verziju ..."
-    
-    ++ _x
-    ++ _x
-    
-    @ m_x + _x, m_y + 2 SAY "     verzija db-a (npr. 4.6.1):" GET _version PICT "@S30" VALID !EMPTY( _version )
+   Box(, 10, 70 )
 
-    ++ _x
-    ++ _x
-    
-    @ m_x + _x, m_y + 2 SAY "naziv baze / prazno update-sve:" GET _database PICT "@S30"
+   @ m_x + _x, m_y + 2 SAY "**** upgrade db-a / unesite verziju ..."
 
-    ++ _x
-    ++ _x
+   ++ _x
+   ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Update template [empty] baza (D/N) ?" GET _upd_empty VALID _upd_empty $ "DN" PICT "@!"
+   @ m_x + _x, m_y + 2 SAY "     verzija db-a (npr. 4.6.1):" GET _version PICT "@S30" VALID !Empty( _version )
 
-    read
+   ++ _x
+   ++ _x
 
-BoxC()
+   @ m_x + _x, m_y + 2 SAY "naziv baze / prazno update-sve:" GET _database PICT "@S30"
 
-if LastKey() == K_ESC
-    return _ok
-endif
+   ++ _x
+   ++ _x
 
-// snimi parametre...
-::_update_params := hb_hash()
-::_update_params["version"] := ALLTRIM( _version )
-::_update_params["database"] := ALLTRIM( _database )
-::_update_params["host"] := _server["host"]
-::_update_params["port"] := _server["port"]
-::_update_params["file"] := "?"
-::_update_params["updade_empty"] := _upd_empty
+   @ m_x + _x, m_y + 2 SAY "Update template [empty] baza (D/N) ?" GET _upd_empty VALID _upd_empty $ "DN" PICT "@!"
 
-if !EMPTY( _database )
-    AADD( _db_list, { ALLTRIM( _database ) } )
-else
-    _db_list := F18Login():New():database_array()
-endif
+   READ
 
-if _upd_empty == "D"	
-	// dodaj i empty template tabele u update shemu...
-    AADD( _db_list, { "empty" } )
-    AADD( _db_list, { "empty_sezona" } )
-endif
+   BoxC()
 
-// download fajla sa interneta...
-if !::update_db_download()  
-    return _ok
-endif
+   IF LastKey() == K_ESC
+      RETURN _ok
+   ENDIF
 
-if ! ::update_db_all( _db_list )
-    return _ok
-endif
+   // snimi parametre...
+   ::_update_params := hb_Hash()
+   ::_update_params[ "version" ] := AllTrim( _version )
+   ::_update_params[ "database" ] := AllTrim( _database )
+   ::_update_params[ "host" ] := _server[ "host" ]
+   ::_update_params[ "port" ] := _server[ "port" ]
+   ::_update_params[ "file" ] := "?"
+   ::_update_params[ "updade_empty" ] := _upd_empty
 
-if LEN( ::update_db_result ) > 0
-    // imamo i rezultate...
-    
-endif
+   IF !Empty( _database )
+      AAdd( _db_list, { AllTrim( _database ) } )
+   ELSE
+      _db_list := F18Login():New():database_array()
+   ENDIF
 
-_ok := .t.
+   IF _upd_empty == "D"
+      // dodaj i empty template tabele u update shemu...
+      AAdd( _db_list, { "empty" } )
+      AAdd( _db_list, { "empty_sezona" } )
+   ENDIF
 
-return _ok
+   // download fajla sa interneta...
+   IF !::update_db_download()
+      RETURN _ok
+   ENDIF
+
+   IF ! ::update_db_all( _db_list )
+      RETURN _ok
+   ENDIF
+
+   IF Len( ::update_db_result ) > 0
+      // imamo i rezultate...
+
+   ENDIF
+
+   _ok := .T.
+
+   RETURN _ok
 
 
 
 // ----------------------------------------------------------------
 // ----------------------------------------------------------------
 METHOD F18AdminOpts:update_db_download()
-local _ok := .f.
-local _ver := ::_update_params["version"]
-local _cmd := ""
-local _path := my_home_root()
-local _file := "f18_db_migrate_package_" + ALLTRIM( _ver ) + ".gz"
-local _url := "http://knowhow-erp-f18.googlecode.com/files/"
 
-if FILE( ALLTRIM( _path ) + ALLTRIM( _file ) )
+   LOCAL _ok := .F.
+   LOCAL _ver := ::_update_params[ "version" ]
+   LOCAL _cmd := ""
+   LOCAL _path := my_home_root()
+   LOCAL _file := "f18_db_migrate_package_" + AllTrim( _ver ) + ".gz"
+   LOCAL _url := "http://download.bring.out.ba/"
 
-    if Pitanje(, "Izbrisati postojeci download file ?", "N" ) == "D"
-        FERASE( ALLTRIM( _path ) + ALLTRIM( _file ) )
-        sleep(1)
-    else
-        ::_update_params["file"] := ALLTRIM( _path ) + ALLTRIM( _file )
-        return .t.
-    endif
+   IF File( AllTrim( _path ) + AllTrim( _file ) )
 
-endif
+      IF Pitanje(, "Izbrisati postojeci download file ?", "N" ) == "D"
+         FErase( AllTrim( _path ) + AllTrim( _file ) )
+         Sleep( 1 )
+      ELSE
+         ::_update_params[ "file" ] := AllTrim( _path ) + AllTrim( _file )
+         RETURN .T.
+      ENDIF
 
-// download fajla
-if ::wget_download( _url, _file, _path + _file )
-    ::_update_params["file"] := ALLTRIM( _path ) + ALLTRIM( _file )
-    _ok := .t.
-endif
+   ENDIF
 
-return _ok
+   // download fajla
+   if ::wget_download( _url, _file, _path + _file )
+      ::_update_params[ "file" ] := AllTrim( _path ) + AllTrim( _file )
+      _ok := .T.
+   ENDIF
+
+   RETURN _ok
 
 
 
 METHOD F18AdminOpts:update_db_all( arr )
-local _i
-local _ok := .f.
 
-for _i := 1 to LEN( arr )
-    if ! ::update_db_company( ALLTRIM( arr[ _i, 1 ] ) )
-        return _ok
-    endif
-next
+   LOCAL _i
+   LOCAL _ok := .F.
 
-_ok := .t.
-return _ok
+   FOR _i := 1 TO Len( arr )
+      IF ! ::update_db_company( AllTrim( arr[ _i, 1 ] ) )
+         RETURN _ok
+      ENDIF
+   NEXT
+
+   _ok := .T.
+
+   RETURN _ok
 
 
 METHOD F18AdminOpts:update_db_command( database )
-local _cmd := ""
-local _file := ::_update_params["file"]
+
+   LOCAL _cmd := ""
+   LOCAL _file := ::_update_params[ "file" ]
 
 #ifdef __PLATFORM__DARWIN
-    _cmd += "open "
+
+   _cmd += "open "
 #endif
 
 #ifdef __PLATFORM__WINDOWS
-    _cmd += "c:" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+   _cmd += "c:" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
 #else
-    _cmd += SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+   _cmd += SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
 #endif
 
-_cmd += "knowhowERP_package_updater"
+   _cmd += "knowhowERP_package_updater"
 
 #ifdef __PLATFORM__WINDOWS
-    _cmd += ".exe"
+   _cmd += ".exe"
 #endif
 
 #ifdef __PLATFORM__DARWIN
-    _cmd += ".app"
+   _cmd += ".app"
 #endif
 
 #ifndef __PLATFORM__DARWIN
-if !FILE( _cmd )
-    MsgBeep( "Fajl " + _cmd  + " ne postoji !" )
-    return NIL
-endif
+   IF !File( _cmd )
+      MsgBeep( "Fajl " + _cmd  + " ne postoji !" )
+      RETURN NIL
+   ENDIF
 #endif
 
-_cmd += " -databaseURL=//" + ALLTRIM( ::_update_params["host"] ) 
+   _cmd += " -databaseURL=//" + AllTrim( ::_update_params[ "host" ] )
 
-_cmd += ":"
+   _cmd += ":"
 
-_cmd += ALLTRIM( STR( ::_update_params["port"] ) )
+   _cmd += AllTrim( Str( ::_update_params[ "port" ] ) )
 
-_cmd += "/" + ALLTRIM( database )
+   _cmd += "/" + AllTrim( database )
 
-_cmd += " -username=admin"
+   _cmd += " -username=admin"
 
-_cmd += " -passwd=boutpgmin"
+   _cmd += " -passwd=boutpgmin"
 
 #ifdef __PLATFORM__WINDOWS
-    _cmd += " -file=" + '"' + ::_update_params["file"] + '"'
+   _cmd += " -file=" + '"' + ::_update_params[ "file" ] + '"'
 #else
-    _cmd += " -file=" + ::_update_params["file"]
+   _cmd += " -file=" + ::_update_params[ "file" ]
 #endif
 
-_cmd += " -autorun"
+   _cmd += " -autorun"
 
-return _cmd
+   RETURN _cmd
 
 
 
 
 METHOD F18AdminOpts:update_db_company( company )
-local _sess_list := {}
-local _i
-local _database
-local _cmd 
-local _ok := .f.
 
-if ALLTRIM( company ) $ "#empty#empty_sezona#"
-    // ovo su template tabele...
-    AADD( _sess_list, { "empty" } )    
-else
+   LOCAL _sess_list := {}
+   LOCAL _i
+   LOCAL _database
+   LOCAL _cmd
+   LOCAL _ok := .F.
 
-    if LEFT( company, 1 ) == "!"
+   IF AllTrim( company ) $ "#empty#empty_sezona#"
+      // ovo su template tabele...
+      AAdd( _sess_list, { "empty" } )
+   ELSE
 
-		company := RIGHT( ALLTRIM( company ), LEN( ALLTRIM( company ) ) - 1 )
-        // rucno zadat naziv baze, ne gledaj sezone...
-        AADD( _sess_list, { "empty" } )        
+      IF Left( company, 1 ) == "!"
 
-    elseif ! ( "_" $ company )
+         company := Right( AllTrim( company ), Len( AllTrim( company ) ) - 1 )
+         // rucno zadat naziv baze, ne gledaj sezone...
+         AAdd( _sess_list, { "empty" } )
 
-        // nema sezone, uzmi sa servera...
-        _sess_list := F18Login():New():get_database_sessions( company )
+      ELSEIF ! ( "_" $ company )
 
-    else
+         // nema sezone, uzmi sa servera...
+         _sess_list := F18Login():New():get_database_sessions( company )
 
-	    if SUBSTR( company, LEN( company ) - 3, 1 ) $ "1#2" 
-		    // vec postoji zadana sezona...
-    	    // samo je dodaj u matricu...
-		    AADD( _sess_list, { RIGHT( ALLTRIM( company ) , 4 ) } )
-		    company := PADR( ALLTRIM( company ), LEN( ALLTRIM( company ) ) - 5  )
-	    else
-    	    _sess_list := F18Login():New():get_database_sessions( company )
-	    endif
+      ELSE
 
-    endif
+         IF SubStr( company, Len( company ) - 3, 1 ) $ "1#2"
+            // vec postoji zadana sezona...
+            // samo je dodaj u matricu...
+            AAdd( _sess_list, { Right( AllTrim( company ), 4 ) } )
+            company := PadR( AllTrim( company ), Len( AllTrim( company ) ) - 5  )
+         ELSE
+            _sess_list := F18Login():New():get_database_sessions( company )
+         ENDIF
 
-endif
+      ENDIF
 
-for _i := 1 to LEN( _sess_list )
+   ENDIF
 
-    // ako je ovaj marker uzmi cisto ono sto je navedeno...
-    if _sess_list[ _i, 1 ] == "empty"
-        // ovo je za empty template tabele..
-        _database := ALLTRIM( company )
-    else 
-        _database := ALLTRIM( company ) + "_" + ALLTRIM( _sess_list[ _i, 1 ] )
-    endif
+   FOR _i := 1 TO Len( _sess_list )
 
-    _cmd := ::update_db_command( _database )
+      // ako je ovaj marker uzmi cisto ono sto je navedeno...
+      IF _sess_list[ _i, 1 ] == "empty"
+         // ovo je za empty template tabele..
+         _database := AllTrim( company )
+      ELSE
+         _database := AllTrim( company ) + "_" + AllTrim( _sess_list[ _i, 1 ] )
+      ENDIF
 
-    if _cmd == NIL
-        return _ok
-    endif
+      _cmd := ::update_db_command( _database )
 
-    MsgO( "Vrsim update baze " + _database ) 
-  
-    _ok := hb_run( _cmd )
+      IF _cmd == NIL
+         RETURN _ok
+      ENDIF
 
-    // ubaci u matricu rezultat...
-    AADD( ::update_db_result, { company, _database, _cmd, _ok } )
+      MsgO( "Vršim update baze " + _database )
 
-    MsgC()
+      _ok := hb_run( _cmd )
 
-next
+      // ubaci u matricu rezultat...
+      AAdd( ::update_db_result, { company, _database, _cmd, _ok } )
 
-_ok := .t.
+      MsgC()
 
-return _ok
+   NEXT
+
+   _ok := .T.
+
+   RETURN _ok
 
 
 
@@ -826,380 +848,384 @@ return _ok
 // razdvajenje sezona...
 // -----------------------------------------------------------------------
 METHOD F18AdminOpts:new_session()
-local _params
-local _dbs := {}
-local _i
-local _pg_srv, _my_params, _t_user, _t_pwd, _t_database
-local _qry 
-local _from_sess, _to_sess
-local _db_from, _db_to
-local _db := SPACE(100)
-local _db_delete := "N"
-local _count := 0
-local _res := {}
-local _ok := .t.
 
-if !SigmaSif("ADMIN")
-    MsgBeep( "Opcija zasticena !" )
-    return _ok
-endif
+   LOCAL _params
+   LOCAL _dbs := {}
+   LOCAL _i
+   LOCAL _pg_srv, _my_params, _t_user, _t_pwd, _t_database
+   LOCAL _qry
+   LOCAL _from_sess, _to_sess
+   LOCAL _db_from, _db_to
+   LOCAL _db := Space( 100 )
+   LOCAL _db_delete := "N"
+   LOCAL _count := 0
+   LOCAL _res := {}
+   LOCAL _ok := .T.
 
-_from_sess := YEAR( DATE() ) - 1
-_to_sess := YEAR( DATE() )
+   IF !SigmaSif( "ADMIN" )
+      MsgBeep( "Opcija zasticena !" )
+      RETURN _ok
+   ENDIF
 
-SET CURSOR ON
-SET CONFIRM ON
- 
-Box(, 7, 60 )
-    @ m_x + 1, m_y + 2 SAY "Otvaranje baze za novu sezonu ***" COLOR "I"
-    @ m_x + 3, m_y + 2 SAY "Vrsi se prenos sa godine:" GET _from_sess PICT "9999"
-    @ m_x + 3, col() + 1 SAY "na godinu:" GET _to_sess PICT "9999" VALID ( _to_sess > _from_sess .and. _to_sess - _from_sess == 1 )
-    @ m_x + 5, m_y + 2 SAY "Baza (prazno-sve):" GET _db PICT "@S30"
-    @ m_x + 6, m_y + 2 SAY "Ako baza postoji, pobrisi je ? (D/N)" GET _db_delete VALID _db_delete $ "DN" PICT "@!"
-    read
-BoxC()
+   _from_sess := Year( Date() ) - 1
+   _to_sess := Year( Date() )
 
-SET CONFIRM OFF
+   SET CURSOR ON
+   SET CONFIRM ON
 
-if LastKey() == K_ESC
-    return _ok
-endif
+   Box(, 7, 60 )
+   @ m_x + 1, m_y + 2 SAY "Otvaranje baze za novu sezonu ***" COLOR "I"
+   @ m_x + 3, m_y + 2 SAY "Vrsi se prenos sa godine:" GET _from_sess PICT "9999"
+   @ m_x + 3, Col() + 1 SAY "na godinu:" GET _to_sess PICT "9999" VALID ( _to_sess > _from_sess .AND. _to_sess - _from_sess == 1 )
+   @ m_x + 5, m_y + 2 SAY "Baza (prazno-sve):" GET _db PICT "@S30"
+   @ m_x + 6, m_y + 2 SAY "Ako baza postoji, pobrisi je ? (D/N)" GET _db_delete VALID _db_delete $ "DN" PICT "@!"
+   READ
+   BoxC()
 
-_my_params := my_server_params()
-_t_user := _my_params["user"]
-_t_pwd := _my_params["password"]
-_t_database := _my_params["database"]
+   SET CONFIRM OFF
 
-// napravi relogin...
-_pg_srv := ::relogin_as( "admin", "boutpgmin", "postgres" )
+   IF LastKey() == K_ESC
+      RETURN _ok
+   ENDIF
 
-_qry := "SELECT datname FROM pg_database " 
+   _my_params := my_server_params()
+   _t_user := _my_params[ "user" ]
+   _t_pwd := _my_params[ "password" ]
+   _t_database := _my_params[ "database" ]
 
-if EMPTY( _db )
-    _qry += "WHERE datname LIKE '%_" + ALLTRIM( STR( _from_sess ) ) + "' "
-else
-    _qry += "WHERE datname = " + _sql_quote( ALLTRIM( _db ) + "_" + ALLTRIM( STR( _from_sess ) ) )
-endif
-_qry += "ORDER BY datname;"
+   // napravi relogin...
+   _pg_srv := ::relogin_as( "admin", "boutpgmin", "postgres" )
 
-// daj mi listu...
-_dbs := _sql_query( _pg_srv, _qry )
-_dbs:Refresh()
-_dbs:GoTo(1)
+   _qry := "SELECT datname FROM pg_database "
 
-// treba da imamo listu baza...
-// uzemomo sa select-om sve sto ima 2013 recimo 
-// i onda cemo provrtiti te baze i napraviti 2014
-Box(, 3, 60 )
+   IF Empty( _db )
+      _qry += "WHERE datname LIKE '%_" + AllTrim( Str( _from_sess ) ) + "' "
+   ELSE
+      _qry += "WHERE datname = " + _sql_quote( AllTrim( _db ) + "_" + AllTrim( Str( _from_sess ) ) )
+   ENDIF
+   _qry += "ORDER BY datname;"
 
-do while !_dbs:EOF()
+   // daj mi listu...
+   _dbs := _sql_query( _pg_srv, _qry )
+   _dbs:Refresh()
+   _dbs:GoTo( 1 )
 
-    oRow := _dbs:GetRow()
+   // treba da imamo listu baza...
+   // uzemomo sa select-om sve sto ima 2013 recimo
+   // i onda cemo provrtiti te baze i napraviti 2014
+   Box(, 3, 60 )
 
-    // test_2013
-    _db_from := ALLTRIM( oRow:FieldGet(1) )
-    // test_2014
-    _db_to := STRTRAN( _db_from, "_" + ALLTRIM( STR( _from_sess ) ), "_" + ALLTRIM( STR( _to_sess ) ) ) 
+   DO WHILE !_dbs:Eof()
 
-    @ m_x + 1, m_y + 2 SAY "Vrsim otvaranje " + _db_from + " > " + _db_to
+      oRow := _dbs:GetRow()
 
-    // init parametri za razdvajanje...
-    // pocetno stanje je 1
-    _params := hb_hash()
-    _params["db_type"] := 1
-    _params["db_name"] := _db_to
-    _params["db_template"] := _db_from
-    _params["db_drop"] := _db_delete
-    _params["db_comment"] := ""
+      // test_2013
+      _db_from := AllTrim( oRow:FieldGet( 1 ) )
+      // test_2014
+      _db_to := StrTran( _db_from, "_" + AllTrim( Str( _from_sess ) ), "_" + AllTrim( Str( _to_sess ) ) )
 
-    // napravi relogin...
-    _pg_srv := ::relogin_as( "admin", "boutpgmin", "postgres" )
+      @ m_x + 1, m_y + 2 SAY "Vrsim otvaranje " + _db_from + " > " + _db_to
 
-    // otvori bazu...
-    if ! ::create_new_db( _params, _pg_srv )
-        AADD( _res, { _db_to, _db_from, "ERR" } )
-    else
-        ++ _count
-    endif
+      // init parametri za razdvajanje...
+      // pocetno stanje je 1
+      _params := hb_Hash()
+      _params[ "db_type" ] := 1
+      _params[ "db_name" ] := _db_to
+      _params[ "db_template" ] := _db_from
+      _params[ "db_drop" ] := _db_delete
+      _params[ "db_comment" ] := ""
 
-    _dbs:Skip()
+      // napravi relogin...
+      _pg_srv := ::relogin_as( "admin", "boutpgmin", "postgres" )
 
-enddo
+      // otvori bazu...
+      IF ! ::create_new_db( _params, _pg_srv )
+         AAdd( _res, { _db_to, _db_from, "ERR" } )
+      ELSE
+         ++ _count
+      ENDIF
 
-BoxC()
+      _dbs:Skip()
 
-// vrati se gdje si bio...
-::relogin_as( _t_user, _t_pwd, _t_database )
+   ENDDO
 
-// imamo i rezultate operacije... kako da to vidimo ?
-if LEN( _res ) > 0
-    MsgBeep( "Postoje greske kod otvaranja sezone !" )
-endif
+   BoxC()
 
-if _count > 0
-    MsgBeep( "Uspjesno otvoreno " + ALLTRIM( STR( _count ) ) + " baza..." )
-endif
+   // vrati se gdje si bio...
+   ::relogin_as( _t_user, _t_pwd, _t_database )
 
-return _ok
+   // imamo i rezultate operacije... kako da to vidimo ?
+   IF Len( _res ) > 0
+      MsgBeep( "Postoje greske kod otvaranja sezone !" )
+   ENDIF
+
+   IF _count > 0
+      MsgBeep( "Uspjesno otvoreno " + AllTrim( Str( _count ) ) + " baza..." )
+   ENDIF
+
+   RETURN _ok
 
 
 
 // ---------------------------------------------------------------
-// kreiranje nove baze 
+// kreiranje nove baze
 // ---------------------------------------------------------------
 METHOD F18AdminOpts:create_new_db( params, pg_srv )
-local _ok := .f.
-local _db_name, _db_template, _db_drop, _db_type, _db_comment
-local _qry
-local _ret, _res 
-local _relogin := .f.
-local _db_params, _t_user, _t_pwd, _t_database
 
-// 1) params read
-// ===============================================================
-if params == NIL
+   LOCAL _ok := .F.
+   LOCAL _db_name, _db_template, _db_drop, _db_type, _db_comment
+   LOCAL _qry
+   LOCAL _ret, _res
+   LOCAL _relogin := .F.
+   LOCAL _db_params, _t_user, _t_pwd, _t_database
 
-    if !SigmaSif("ADMIN")
-        MsgBeep( "Opcija zasticena !" )
-        return _ok
-    endif
+   // 1) params read
+   // ===============================================================
+   IF params == NIL
 
-    params := hb_hash()
+      IF !SigmaSif( "ADMIN" )
+         MsgBeep( "Opcija zasticena !" )
+         RETURN _ok
+      ENDIF
 
-    // CREATE DATABASE name OWNER admin TEMPLATE templ;
-    if !::create_new_db_params( @params )
-        return _ok
-    endif
+      params := hb_Hash()
 
-endif
+      // CREATE DATABASE name OWNER admin TEMPLATE templ;
+      IF !::create_new_db_params( @params )
+         RETURN _ok
+      ENDIF
 
-// uzmi parametre koje ces koristiti dalje...
-_db_name := params["db_name"]
-_db_template := params["db_template"]
-_db_drop := params["db_drop"] == "D"
-_db_type := params["db_type"]
-_db_comment := params["db_comment"]
+   ENDIF
 
-if EMPTY( _db_template ) .or. LEFT( _db_template, 5 ) == "empty"
-    // ovo ce biti prazna baza uvijek...
-    _db_type := 0
-endif
+   // uzmi parametre koje ces koristiti dalje...
+   _db_name := params[ "db_name" ]
+   _db_template := params[ "db_template" ]
+   _db_drop := params[ "db_drop" ] == "D"
+   _db_type := params[ "db_type" ]
+   _db_comment := params[ "db_comment" ]
 
-// 2) relogin as admin
-// ===============================================================
-// napravi relogin na bazi... radi admin prava...
-if pg_srv == NIL
-    _db_params := my_server_params()
-    _t_user := _db_params["user"]
-    _t_pwd := _db_params["password"]
-    _t_database := _db_params["database"]
-    pg_srv := ::relogin_as( "admin", "boutpgmin" )
-    _relogin := .t.
-endif
+   IF Empty( _db_template ) .OR. Left( _db_template, 5 ) == "empty"
+      // ovo ce biti prazna baza uvijek...
+      _db_type := 0
+   ENDIF
 
-// 3) DROP DATABASE
-// ===============================================================
-if _db_drop
-    // napravi mi DROP baze
-    if !::drop_db( _db_name, pg_srv )
-        // vrati se u prvobitno stanje operacije...
-        if _relogin
+   // 2) relogin as admin
+   // ===============================================================
+   // napravi relogin na bazi... radi admin prava...
+   IF pg_srv == NIL
+      _db_params := my_server_params()
+      _t_user := _db_params[ "user" ]
+      _t_pwd := _db_params[ "password" ]
+      _t_database := _db_params[ "database" ]
+      pg_srv := ::relogin_as( "admin", "boutpgmin" )
+      _relogin := .T.
+   ENDIF
+
+   // 3) DROP DATABASE
+   // ===============================================================
+   IF _db_drop
+      // napravi mi DROP baze
+      IF !::drop_db( _db_name, pg_srv )
+         // vrati se u prvobitno stanje operacije...
+         IF _relogin
             ::relogin_as( _t_user, _t_pwd, _t_database )
-        endif
-        return _ok
-    endif
-else
-    // provjeri da li ovakva baza vec postoji ?!!!
-    _qry := "SELECT COUNT(*) FROM pg_database " 
-    _qry += "WHERE datname = " + _sql_quote( _db_name )
-    _res := _sql_query( pg_srv, _qry )
-    if VALTYPE( _res ) <> "L" 
-        if _res:GetRow(1):FieldGet(1) > 0
+         ENDIF
+         RETURN _ok
+      ENDIF
+   ELSE
+      // provjeri da li ovakva baza vec postoji ?!!!
+      _qry := "SELECT COUNT(*) FROM pg_database "
+      _qry += "WHERE datname = " + _sql_quote( _db_name )
+      _res := _sql_query( pg_srv, _qry )
+      IF ValType( _res ) <> "L"
+         IF _res:GetRow( 1 ):FieldGet( 1 ) > 0
             // vrati se u prvobitno stanje operacije...
-            if _relogin
-                ::relogin_as( _t_user, _t_pwd, _t_database )
-            endif
-            return _ok
-        endif
-    endif
-endif
+            IF _relogin
+               ::relogin_as( _t_user, _t_pwd, _t_database )
+            ENDIF
+            RETURN _ok
+         ENDIF
+      ENDIF
+   ENDIF
 
 
-// 4) CREATE DATABASE
-// ===============================================================
-// query string za CREATE DATABASE sekvencu
-_qry := "CREATE DATABASE " + _db_name + " OWNER admin"
-if !EMPTY( _db_template )
-    _qry += " TEMPLATE " + _db_template
-endif
-_qry += ";"
+   // 4) CREATE DATABASE
+   // ===============================================================
+   // query string za CREATE DATABASE sekvencu
+   _qry := "CREATE DATABASE " + _db_name + " OWNER admin"
+   IF !Empty( _db_template )
+      _qry += " TEMPLATE " + _db_template
+   ENDIF
+   _qry += ";"
 
-MsgO( "Kreiram novu bazu " + _db_name + " ..." )
-_ret := _sql_query( pg_srv, _qry )
-MsgC()
+   MsgO( "Kreiram novu bazu " + _db_name + " ..." )
+   _ret := _sql_query( pg_srv, _qry )
+   MsgC()
 
-if VALTYPE( _ret ) == "L" .and. _ret == .f.
-    // doslo je do neke greske...
-    if _relogin
-        ::relogin_as( _t_user, _t_pwd, _t_database )
-    endif
-    return _ok
-endif
+   IF ValType( _ret ) == "L" .AND. _ret == .F.
+      // doslo je do neke greske...
+      IF _relogin
+         ::relogin_as( _t_user, _t_pwd, _t_database )
+      ENDIF
+      RETURN _ok
+   ENDIF
 
-// 5) GRANT ALL ...
-// ===============================================================
+   // 5) GRANT ALL ...
+   // ===============================================================
 
-// mozemo sada da napravimo grantove
-_qry := "GRANT ALL ON DATABASE " + _db_name + " TO admin;"
-_qry += "GRANT ALL ON DATABASE " + _db_name + " TO xtrole WITH GRANT OPTION;"
+   // mozemo sada da napravimo grantove
+   _qry := "GRANT ALL ON DATABASE " + _db_name + " TO admin;"
+   _qry += "GRANT ALL ON DATABASE " + _db_name + " TO xtrole WITH GRANT OPTION;"
 
-MsgO( "Postavljam privilegije baze..." )
-_ret := _sql_query( pg_srv, _qry )
-MsgC()
+   MsgO( "Postavljam privilegije baze..." )
+   _ret := _sql_query( pg_srv, _qry )
+   MsgC()
 
-if VALTYPE( _ret ) == "L" .and. _ret == .f.
-    // doslo je do neke greske...
-    if _relogin
-        ::relogin_as( _t_user, _t_pwd, _t_database )
-    endif
-    return _ok
-endif
-
-
-// 6) COMMENT ON DATABASE ...
-// ===============================================================
-
-// komentar ako postoji !
-if !EMPTY( _db_comment )
-    _qry := "COMMENT ON DATABASE " + _db_name + " IS " + _sql_quote( hb_strtoutf8( _db_comment ) ) + ";"
-    MsgO( "Postavljam opis baze..." )
-    _ret := _sql_query( pg_srv, _qry )
-    MsgC()
-endif
+   IF ValType( _ret ) == "L" .AND. _ret == .F.
+      // doslo je do neke greske...
+      IF _relogin
+         ::relogin_as( _t_user, _t_pwd, _t_database )
+      ENDIF
+      RETURN _ok
+   ENDIF
 
 
-// 7) sredi podatake....
-// ===============================================================
+   // 6) COMMENT ON DATABASE ...
+   // ===============================================================
 
-// sad se mogu pozabaviti brisanje podataka...
-if _db_type > 0
-    ::delete_db_data_all( _db_name, _db_type )
-endif
-
-// 8) vrati se na postgres bazu...
-// ===============================================================
-
-// vrati se u prvobitno stanje operacije...
-if _relogin
-    ::relogin_as( _t_user, _t_pwd, _t_database )
-endif
-
-_ok := .t.
-
-return _ok
+   // komentar ako postoji !
+   IF !Empty( _db_comment )
+      _qry := "COMMENT ON DATABASE " + _db_name + " IS " + _sql_quote( hb_StrToUTF8( _db_comment ) ) + ";"
+      MsgO( "Postavljam opis baze..." )
+      _ret := _sql_query( pg_srv, _qry )
+      MsgC()
+   ENDIF
 
 
-//-------------------------------------------------------------------
+   // 7) sredi podatake....
+   // ===============================================================
+
+   // sad se mogu pozabaviti brisanje podataka...
+   IF _db_type > 0
+      ::delete_db_data_all( _db_name, _db_type )
+   ENDIF
+
+   // 8) vrati se na postgres bazu...
+   // ===============================================================
+
+   // vrati se u prvobitno stanje operacije...
+   IF _relogin
+      ::relogin_as( _t_user, _t_pwd, _t_database )
+   ENDIF
+
+   _ok := .T.
+
+   RETURN _ok
+
+
+// -------------------------------------------------------------------
 // drop baze podataka
-//-------------------------------------------------------------------
+// -------------------------------------------------------------------
 METHOD F18AdminOpts:relogin_as( user, pwd, database )
-local _pg_server
-local _db_params := my_server_params()
-local _conn := 1
 
-if database == "postgres"
-    _conn := 0
-endif
+   LOCAL _pg_server
+   LOCAL _db_params := my_server_params()
+   LOCAL _conn := 1
 
-// logout
-my_server_logout()
+   IF database == "postgres"
+      _conn := 0
+   ENDIF
 
-_db_params["user"] := user
-_db_params["password"] := pwd
+   // logout
+   my_server_logout()
 
-if database <> NIL
-    _db_params["database"] := database
-endif
+   _db_params[ "user" ] := user
+   _db_params[ "password" ] := pwd
 
-my_server_params( _db_params )
-my_server_login( _db_params, _conn )
-_pg_server := pg_server()
+   IF database <> NIL
+      _db_params[ "database" ] := database
+   ENDIF
 
-return _pg_server
+   my_server_params( _db_params )
+   my_server_login( _db_params, _conn )
+   _pg_server := pg_server()
+
+   RETURN _pg_server
 
 
 
-//-------------------------------------------------------------------
+// -------------------------------------------------------------------
 // drop baze podataka
-//-------------------------------------------------------------------
+// -------------------------------------------------------------------
 METHOD F18AdminOpts:drop_db( db_name, pg_srv )
-local _ok := .t.
-local _qry, _ret
-local _my_params
-local _relogin := .f.
 
-if db_name == NIL
+   LOCAL _ok := .T.
+   LOCAL _qry, _ret
+   LOCAL _my_params
+   LOCAL _relogin := .F.
 
-    if !SigmaSif("ADMIN")
-        MsgBeep( "Opcija zasticena !" )
-        _ok := .f.
-        return
-    endif
+   IF db_name == NIL
 
-    // treba mi db name ?
-    db_name := SPACE( 30 )
+      IF !SigmaSif( "ADMIN" )
+         MsgBeep( "Opcija zasticena !" )
+         _ok := .F.
+         RETURN
+      ENDIF
 
-    Box(, 1, 60 )
-        @ m_x + 1, m_y + 2 SAY "Naziv baze:" GET db_name VALID !EMPTY( db_name )
-        read
-    BoxC()
+      // treba mi db name ?
+      db_name := Space( 30 )
 
-    if LastKey() == K_ESC
-        _ok := .f.
-        return _ok
-    endif
+      Box(, 1, 60 )
+      @ m_x + 1, m_y + 2 SAY "Naziv baze:" GET db_name VALID !Empty( db_name )
+      READ
+      BoxC()
 
-    db_name := ALLTRIM( db_name )
+      IF LastKey() == K_ESC
+         _ok := .F.
+         RETURN _ok
+      ENDIF
 
-    if Pitanje(, "100% sigurni da zelite izbrisati bazu '" + db_name + "' ?", "N" ) == "N"
-        _ok := .f.
-        return _ok
-    endif
+      db_name := AllTrim( db_name )
 
-endif
+      IF Pitanje(, "100% sigurni da zelite izbrisati bazu '" + db_name + "' ?", "N" ) == "N"
+         _ok := .F.
+         RETURN _ok
+      ENDIF
 
-if pg_srv == NIL
+   ENDIF
 
-    // treba mi relogin...
-    _relogin := .t.
+   IF pg_srv == NIL
 
-    _my_params := my_server_params()
-    _t_user := _my_params["user"]
-    _t_pwd := _my_params["password"]
-    _t_database := _my_params["database"]
+      // treba mi relogin...
+      _relogin := .T.
 
-    // napravi relogin...
-    pg_srv := ::relogin_as( "admin", "boutpgmin" )
+      _my_params := my_server_params()
+      _t_user := _my_params[ "user" ]
+      _t_pwd := _my_params[ "password" ]
+      _t_database := _my_params[ "database" ]
 
-endif
+      // napravi relogin...
+      pg_srv := ::relogin_as( "admin", "boutpgmin" )
 
-_qry := "DROP DATABASE IF EXISTS " + db_name + ";"
+   ENDIF
 
-MsgO( "Brisanje baze u toku..." )
-_ret := _sql_query( pg_srv, _qry )
-MsgC()
+   _qry := "DROP DATABASE IF EXISTS " + db_name + ";"
 
-if VALTYPE( _ret ) == "L" .and. _ret == .f.
-    _ok := .f.
-endif
+   MsgO( "Brisanje baze u toku..." )
+   _ret := _sql_query( pg_srv, _qry )
+   MsgC()
 
-// vrati me nazad ako je potrebno
-if _relogin
-    ::relogin_as( _t_user, _t_pwd, _t_database )
-endif
+   IF ValType( _ret ) == "L" .AND. _ret == .F.
+      _ok := .F.
+   ENDIF
 
-return _ok
- 
+   // vrati me nazad ako je potrebno
+   IF _relogin
+      ::relogin_as( _t_user, _t_pwd, _t_database )
+   ENDIF
+
+   RETURN _ok
+
 
 
 
@@ -1207,189 +1233,191 @@ return _ok
 // brisanje podataka u bazi podataka
 // -------------------------------------------------------------------
 METHOD F18AdminOpts:delete_db_data_all( db_name, data_type )
-local _ok := .t.
-local _ret
-local _qry
-local _pg_srv
 
-if db_name == NIL
-    MsgBeep( "Opcija zahtjeva naziv baze ..." )
-    _ok := .f.
-    return _ok
-endif
+   LOCAL _ok := .T.
+   LOCAL _ret
+   LOCAL _qry
+   LOCAL _pg_srv
 
-if data_type == NIL
-    data_type := 1
-endif
+   IF db_name == NIL
+      MsgBeep( "Opcija zahtjeva naziv baze ..." )
+      _ok := .F.
+      RETURN _ok
+   ENDIF
 
-// napravi relogin na bazu...
-_pg_srv := ::relogin_as( "admin", "boutpgmin", ALLTRIM( db_name ) )
+   IF data_type == NIL
+      data_type := 1
+   ENDIF
 
-// data_type
-// 1 - pocetno stanje
-// 2 - brisi sve podatke
+   // napravi relogin na bazu...
+   _pg_srv := ::relogin_as( "admin", "boutpgmin", AllTrim( db_name ) )
 
-// bitne tabele za reset podataka baze
-_qry := ""
-_qry += "DELETE FROM fmk.kalk_kalk;"
-_qry += "DELETE FROM fmk.kalk_doks;"
-_qry += "DELETE FROM fmk.kalk_doks2;"
+   // data_type
+   // 1 - pocetno stanje
+   // 2 - brisi sve podatke
 
-_qry += "DELETE FROM fmk.pos_doks;"
-_qry += "DELETE FROM fmk.pos_pos;"
-_qry += "DELETE FROM fmk.pos_dokspf;"
+   // bitne tabele za reset podataka baze
+   _qry := ""
+   _qry += "DELETE FROM fmk.kalk_kalk;"
+   _qry += "DELETE FROM fmk.kalk_doks;"
+   _qry += "DELETE FROM fmk.kalk_doks2;"
 
-_qry += "DELETE FROM fmk.fakt_fakt_atributi;"
-_qry += "DELETE FROM fmk.fakt_doks;"
-_qry += "DELETE FROM fmk.fakt_doks2;"
-_qry += "DELETE FROM fmk.fakt_fakt;"
+   _qry += "DELETE FROM fmk.pos_doks;"
+   _qry += "DELETE FROM fmk.pos_pos;"
+   _qry += "DELETE FROM fmk.pos_dokspf;"
 
-_qry += "DELETE FROM fmk.fin_suban;"
-_qry += "DELETE FROM fmk.fin_anal;"
-_qry += "DELETE FROM fmk.fin_sint;"
-_qry += "DELETE FROM fmk.fin_nalog;"
+   _qry += "DELETE FROM fmk.fakt_fakt_atributi;"
+   _qry += "DELETE FROM fmk.fakt_doks;"
+   _qry += "DELETE FROM fmk.fakt_doks2;"
+   _qry += "DELETE FROM fmk.fakt_fakt;"
 
-_qry += "DELETE FROM fmk.mat_suban;"
-_qry += "DELETE FROM fmk.mat_anal;"
-_qry += "DELETE FROM fmk.mat_sint;"
-_qry += "DELETE FROM fmk.mat_nalog;"
+   _qry += "DELETE FROM fmk.fin_suban;"
+   _qry += "DELETE FROM fmk.fin_anal;"
+   _qry += "DELETE FROM fmk.fin_sint;"
+   _qry += "DELETE FROM fmk.fin_nalog;"
 
-_qry += "DELETE FROM fmk.rnal_docs;"
-_qry += "DELETE FROM fmk.rnal_doc_it;"
-_qry += "DELETE FROM fmk.rnal_doc_it2;"
-_qry += "DELETE FROM fmk.rnal_doc_ops;"
-_qry += "DELETE FROM fmk.rnal_doc_log;"
-_qry += "DELETE FROM fmk.rnal_doc_lit;"
+   _qry += "DELETE FROM fmk.mat_suban;"
+   _qry += "DELETE FROM fmk.mat_anal;"
+   _qry += "DELETE FROM fmk.mat_sint;"
+   _qry += "DELETE FROM fmk.mat_nalog;"
 
-_qry += "DELETE FROM fmk.epdv_kuf;"
-_qry += "DELETE FROM fmk.epdv_kif;"
+   _qry += "DELETE FROM fmk.rnal_docs;"
+   _qry += "DELETE FROM fmk.rnal_doc_it;"
+   _qry += "DELETE FROM fmk.rnal_doc_it2;"
+   _qry += "DELETE FROM fmk.rnal_doc_ops;"
+   _qry += "DELETE FROM fmk.rnal_doc_log;"
+   _qry += "DELETE FROM fmk.rnal_doc_lit;"
 
-_qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'fin/%';"
-_qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'kalk/%';"
-_qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'fakt/%';"
-_qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'pos/%';"
-_qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'epdv/%';"
-_qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'rnal_doc_no';"
-_qry += "DELETE FROM fmk.metric WHERE metric_name LIKE '%auto_plu%';"
-_qry += "DELETE FROM fmk.metric WHERE metric_name LIKE '%lock%';"
+   _qry += "DELETE FROM fmk.epdv_kuf;"
+   _qry += "DELETE FROM fmk.epdv_kif;"
 
-// ako je potrebno brisati sve onda dodaj i sljedece...
-if data_type > 1
-    
-    _qry += "DELETE FROM fmk.os_os;"
-    _qry += "DELETE FROM fmk.os_promj;"
+   _qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'fin/%';"
+   _qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'kalk/%';"
+   _qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'fakt/%';"
+   _qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'pos/%';"
+   _qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'epdv/%';"
+   _qry += "DELETE FROM fmk.metric WHERE metric_name LIKE 'rnal_doc_no';"
+   _qry += "DELETE FROM fmk.metric WHERE metric_name LIKE '%auto_plu%';"
+   _qry += "DELETE FROM fmk.metric WHERE metric_name LIKE '%lock%';"
 
-    _qry += "DELETE FROM fmk.sii_sii;"
-    _qry += "DELETE FROM fmk.sii_promj;"
+   // ako je potrebno brisati sve onda dodaj i sljedece...
+   IF data_type > 1
 
-    _qry += "DELETE FROM fmk.ld_ld;"
-    _qry += "DELETE FROM fmk.ld_radkr;"
-    _qry += "DELETE FROM fmk.ld_radn;"
-    _qry += "DELETE FROM fmk.ld_pk_data;"
-    _qry += "DELETE FROM fmk.ld_pk_radn;"
+      _qry += "DELETE FROM fmk.os_os;"
+      _qry += "DELETE FROM fmk.os_promj;"
 
-    _qry += "DELETE FROM fmk.roba;"
-    _qry += "DELETE FROM fmk.partn;"
-    _qry += "DELETE FROM fmk.sifv;"
+      _qry += "DELETE FROM fmk.sii_sii;"
+      _qry += "DELETE FROM fmk.sii_promj;"
 
-endif
+      _qry += "DELETE FROM fmk.ld_ld;"
+      _qry += "DELETE FROM fmk.ld_radkr;"
+      _qry += "DELETE FROM fmk.ld_radn;"
+      _qry += "DELETE FROM fmk.ld_pk_data;"
+      _qry += "DELETE FROM fmk.ld_pk_radn;"
 
-MsgO( "Priprema podataka za novu bazu..." )
-_ret := _sql_query( _pg_srv, _qry )
-MsgC()
+      _qry += "DELETE FROM fmk.roba;"
+      _qry += "DELETE FROM fmk.partn;"
+      _qry += "DELETE FROM fmk.sifv;"
 
-if VALTYPE( _ret ) == "L" .and. _ret == .f.
-    _ok := .f.
-endif
+   ENDIF
 
-return _ok
- 
+   MsgO( "Priprema podataka za novu bazu..." )
+   _ret := _sql_query( _pg_srv, _qry )
+   MsgC()
+
+   IF ValType( _ret ) == "L" .AND. _ret == .F.
+      _ok := .F.
+   ENDIF
+
+   RETURN _ok
+
 
 
 // -------------------------------------------------------------------
 // kreiranje baze, parametri
 // -------------------------------------------------------------------
 METHOD F18AdminOpts:create_new_db_params( params )
-local _ok := .f.
-local _x := 1
-local _db_name := SPACE(50)
-local _db_template := SPACE(50)
-local _db_year := ALLTRIM( STR( YEAR( DATE() ) ) )
-local _db_comment := SPACE(100)
-local _db_drop := "N"
-local _db_type := 1
-local _db_str
 
-Box(, 12, 70 )
+   LOCAL _ok := .F.
+   LOCAL _x := 1
+   LOCAL _db_name := Space( 50 )
+   LOCAL _db_template := Space( 50 )
+   LOCAL _db_year := AllTrim( Str( Year( Date() ) ) )
+   LOCAL _db_comment := Space( 100 )
+   LOCAL _db_drop := "N"
+   LOCAL _db_type := 1
+   LOCAL _db_str
 
-    @ m_x + _x, m_y + 2 SAY "*** KREIRANJE NOVE BAZE PODATAKA ***"
+   Box(, 12, 70 )
 
-    ++ _x
-    ++ _x
+   @ m_x + _x, m_y + 2 SAY "*** KREIRANJE NOVE BAZE PODATAKA ***"
 
-    @ m_x + _x, m_y + 2 SAY "Naziv nove baze:" GET _db_name VALID _new_db_valid( _db_name ) PICT "@S30"
-    @ m_x + _x, col() + 1 SAY "godina:" GET _db_year PICT "@S4" VALID !EMPTY( _db_year )
+   ++ _x
+   ++ _x
 
-    ++ _x
-    
-    @ m_x + _x, m_y + 2 SAY "Opis baze (*):" GET _db_comment PICT "@S50"
+   @ m_x + _x, m_y + 2 SAY "Naziv nove baze:" GET _db_name VALID _new_db_valid( _db_name ) PICT "@S30"
+   @ m_x + _x, Col() + 1 SAY "godina:" GET _db_year PICT "@S4" VALID !Empty( _db_year )
 
-    ++ _x
-    ++ _x
+   ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Koristiti kao uzorak postojecu bazu (*):"
-    
-    ++ _x
+   @ m_x + _x, m_y + 2 SAY "Opis baze (*):" GET _db_comment PICT "@S50"
 
-    @ m_x + _x, m_y + 2 SAY "Naziv:" GET _db_template PICT "@S40"
+   ++ _x
+   ++ _x
 
-    ++ _x
-    ++ _x
+   @ m_x + _x, m_y + 2 SAY "Koristiti kao uzorak postojecu bazu (*):"
 
-    @ m_x + _x, m_y + 2 SAY "Brisi bazu ako vec postoji ! (D/N)" GET _db_drop VALID _db_drop $ "DN" PICT "@!"
+   ++ _x
 
-    ++ _x
+   @ m_x + _x, m_y + 2 SAY "Naziv:" GET _db_template PICT "@S40"
 
-    @ m_x + _x, m_y + 2 SAY "Praznjenje podataka (1) pocetno stanje (2) sve" GET _db_type PICT "9"
-    
-    ++ _x
-    ++ _x
-    
-    @ m_x + _x, m_y + 2 SAY "*** opcije markirane kao (*) nisu obavezne"
+   ++ _x
+   ++ _x
 
-    read
+   @ m_x + _x, m_y + 2 SAY "Brisi bazu ako vec postoji ! (D/N)" GET _db_drop VALID _db_drop $ "DN" PICT "@!"
 
-BoxC()
+   ++ _x
 
-if LastKey() == K_ESC
-    return _ok
-endif
+   @ m_x + _x, m_y + 2 SAY "Praznjenje podataka (1) pocetno stanje (2) sve" GET _db_type PICT "9"
 
-// formiranje strina naziva baze...
-_db_str := ALLTRIM( _db_name ) + "_" + ALLTRIM( _db_year )
+   ++ _x
+   ++ _x
 
-// provjeri string ...
-// .... nesto ....
+   @ m_x + _x, m_y + 2 SAY "*** opcije markirane kao (*) nisu obavezne"
 
-// template empty
-if EMPTY( _db_template )
-    _db_template := "empty"
-endif
+   READ
 
-// - zaista nema template !
-if ALLTRIM( _db_template ) == "!"
-    _db_template := ""
-endif
+   BoxC()
 
-params["db_name"] := ALLTRIM( _db_str )
-params["db_template"] := ALLTRIM( _db_template )
-params["db_drop"] := _db_drop
-params["db_type"] := _db_type
-params["db_comment"] := ALLTRIM( _db_comment )
+   IF LastKey() == K_ESC
+      RETURN _ok
+   ENDIF
 
-_ok := .t.
+   // formiranje strina naziva baze...
+   _db_str := AllTrim( _db_name ) + "_" + AllTrim( _db_year )
 
-return _ok
+   // provjeri string ...
+   // .... nesto ....
+
+   // template empty
+   IF Empty( _db_template )
+      _db_template := "empty"
+   ENDIF
+
+   // - zaista nema template !
+   IF AllTrim( _db_template ) == "!"
+      _db_template := ""
+   ENDIF
+
+   params[ "db_name" ] := AllTrim( _db_str )
+   params[ "db_template" ] := AllTrim( _db_template )
+   params[ "db_drop" ] := _db_drop
+   params[ "db_type" ] := _db_type
+   params[ "db_comment" ] := AllTrim( _db_comment )
+
+   _ok := .T.
+
+   RETURN _ok
 
 
 
@@ -1397,58 +1425,57 @@ return _ok
 // forsirana sinhronizacija podataka baze
 // ----------------------------------------------------------
 METHOD F18AdminOpts:force_synchro_db()
-local _var
-local oDb_lock := F18_DB_LOCK():New()
-local _is_locked := oDb_lock:is_locked()
-local _curr_lock_str
 
-if _is_locked 
-    // privremeno moramo iskljuciti lock
-    _curr_lock_str := oDb_lock:lock_params["server_lock"]
-    oDb_lock:set_lock_params( .f. )
-endif
+   LOCAL _var
+   LOCAL oDb_lock := F18_DB_LOCK():New()
+   LOCAL _is_locked := oDb_lock:is_locked()
+   LOCAL _curr_lock_str
 
-_ver := read_dbf_version_from_config()
-set_a_dbfs()
-cre_all_dbfs( _ver )
-set_a_dbfs_key_fields()
-write_dbf_version_to_config()
-check_server_db_version()
-f18_init_semaphores()
+   IF _is_locked
+      // privremeno moramo iskljuciti lock
+      _curr_lock_str := oDb_lock:lock_params[ "server_lock" ]
+      oDb_lock:set_lock_params( .F. )
+   ENDIF
 
-if _is_locked
-    // ponovo vrati lock
-    oDb_lock:set_lock_params( .t., _curr_lock_str )
-endif
+   _ver := read_dbf_version_from_config()
+   set_a_dbfs()
+   cre_all_dbfs( _ver )
+   set_a_dbfs_key_fields()
+   write_dbf_version_to_config()
+   check_server_db_version()
 
-return
+   IF _is_locked
+      // ponovo vrati lock
+      oDb_lock:set_lock_params( .T., _curr_lock_str )
+   ENDIF
+
+   RETURN
 
 
 
 // ----------------------------------------------------------
 // dodavanje nove baze - validator
 // ----------------------------------------------------------
-static function _new_db_valid( db_name )
-local _ok := .f.
+STATIC FUNCTION _new_db_valid( db_name )
 
-if EMPTY( db_name )
-    MsgBeep( "Naziv baze ne moze biti prazno !" )
-    return _ok
-endif
+   LOCAL _ok := .F.
 
-if ( "-" $ db_name .or. ; 
-   "?" $ db_name .or. ;
-   ":" $ db_name .or. ;
-   "," $ db_name .or. ;
-   "." $ db_name )
+   IF Empty( db_name )
+      MsgBeep( "Naziv baze ne moze biti prazno !" )
+      RETURN _ok
+   ENDIF
 
-    MsgBeep( "Naziv baze ne moze sadrzavati znakove .:- itd... !" )
-    return _ok
+   IF ( "-" $ db_name .OR. ;
+         "?" $ db_name .OR. ;
+         ":" $ db_name .OR. ;
+         "," $ db_name .OR. ;
+         "." $ db_name )
 
-endif
+      MsgBeep( "Naziv baze ne moze sadrzavati znakove .:- itd... !" )
+      RETURN _ok
 
-_ok := .t.
-return _ok
+   ENDIF
 
+   _ok := .T.
 
-
+   RETURN _ok

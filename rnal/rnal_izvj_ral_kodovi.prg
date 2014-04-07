@@ -305,7 +305,7 @@ do while !EOF()
 
 enddo
 
-close all
+my_close_all_dbf()
 
 FF
 END PRINT

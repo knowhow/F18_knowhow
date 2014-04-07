@@ -33,16 +33,19 @@ return PostojiSifra( F_K1, I_ID, 10, 60, "Lista - K1", @cId, dx, dy )
  */
 
 function P_VrsteP(cId,dx,dy)
+PRIVATE ImeKol, Kol:={}
 
-PRIVATE ImeKol,Kol:={}
-ImeKol:={ { "ID ",  {|| id },       "id"  , {|| .t.}, {|| vpsifra(wId)}      },;
-          { PADC("Naziv",20), {|| naz},      "naz"       };
+O_VRSTEP
+
+ImeKol:={ { "ID ",             {|| id }                       ,  "id"  , {|| .t.}, {|| vpsifra(wId)}      },;
+          { PADC("Naziv", 20), {|| Padr( ToStrU( naz ), 20 ) },  "naz" };
         }
 
 FOR i:=1 TO LEN(ImeKol)
   AADD(Kol,i)
 NEXT
-return PostojiSifra(F_VRSTEP, 1, 10, 55, "Sifrarnik vrsta placanja",@cid, dx, dy)
+
+return p_sifra(F_VRSTEP, 1, 10, 55, "Šifarnik vrsta plaćanja",@cid, dx, dy)
 
 
 

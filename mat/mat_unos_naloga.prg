@@ -35,7 +35,7 @@ gPotpis := fetch_metric( "mat_rpt_potpis", my_user(), gPotpis )
 // unos naloga
 mat_unos_naloga()
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -86,7 +86,7 @@ Box(, __unos_x, __unos_y )
 
 BoxC()
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -362,13 +362,7 @@ select mat_pripr
 do case
 
     case Ch == K_CTRL_T
-        if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
-            delete
-            __dbPack()
-            mat_brisi_pbaze()
-            return DE_REFRESH
-        endif
-        return DE_CONT
+        return browse_brisi_stavku()
 
     case Ch == K_F5 
 
@@ -544,7 +538,7 @@ do case
    case Ch == K_CTRL_F9
 
         if Pitanje(,"Zelite li izbrisati pripremu !!????","N") == "D"
-            zapp(.t.)
+            my_dbf_zap()
             mat_brisi_pbaze()
         endif
 
@@ -552,13 +546,13 @@ do case
 
     case Ch == K_CTRL_P
         
-        close all
+        my_close_all_dbf()
         mat_st_nalog()
         mat_o_edit()
         return DE_REFRESH
 
     case Ch == K_ALT_A
-        close all
+        my_close_all_dbf()
         azur_mat()
         mat_o_edit()
         return DE_REFRESH
@@ -642,7 +636,7 @@ if fnovi
     O_MAT_PRIPR
     O_MAT_PSUBAN
     select mat_psuban
-    zapp()
+    my_dbf_zap()
     SELECT mat_pripr
     set order to tag "2"
     go top
@@ -680,7 +674,7 @@ DO WHILE !EOF()
 
     HSEEK cIdFirma+cIdVN+cBrNal
     if EOF()
-        close all
+        my_close_all_dbf()
         return
     endif
 
@@ -838,7 +832,7 @@ DO WHILE !EOF()
 
 ENDDO  // eof()
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -883,20 +877,20 @@ O_MAT_PSINT
 O_MAT_PNALOG
 
 select mat_panal
-zapp()
+my_dbf_zap()
 
 select mat_psint
-zapp()
+my_dbf_zap()
 
 select mat_pnalog
-zapp()
+my_dbf_zap()
 
 select mat_psuban
 set order to tag "2"
 go top
 
 if empty(BrNal)
-	close all
+	my_close_all_dbf()
 	return
 endif
 
@@ -998,7 +992,7 @@ do while !eof()
    enddo
 enddo
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -1006,16 +1000,16 @@ function mat_brisi_pbaze()
 PushWA()
   
 SELECT (F_MAT_PSUBAN)
-ZAPP()
+my_dbf_zap()
   
 SELECT (F_MAT_PANAL)
-ZAPP()
+my_dbf_zap()
   
 SELECT (F_MAT_PSINT)
-ZAPP()
+my_dbf_zap()
   
 SELECT (F_MAT_PNALOG)
-ZAPP()
+my_dbf_zap()
   
 PopWA()
 return nil

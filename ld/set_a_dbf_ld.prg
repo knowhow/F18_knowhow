@@ -25,7 +25,6 @@ set_a_dbf_sifarnik("strspr"     , "STRSPR"    , F_STRSPR     )
 set_a_dbf_sifarnik("vposla"     , "VPOSLA"    , F_VPOSLA     )
 set_a_dbf_sifarnik("strspr"     , "STRSPR"    , F_STRSPR     )
 set_a_dbf_sifarnik("kbenef"     , "KBENEF"    , F_KBENEF     )
-set_a_dbf_sifarnik("rj"         , "RJ"        , F_RJ         )
 
 return
 

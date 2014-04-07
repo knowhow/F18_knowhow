@@ -41,11 +41,11 @@ local _izbor := 1
 // setuj mi glavnu varijablu
 fiscal_opt_active()
 
-AADD( _opc, "1. fiskalni uredjaji: globalne postavke        " )
+AADD( _opc, "1. fiskalni uređaji: globalne postavke        " )
 AADD( _opc_exe, { || set_main_fiscal_params() })
-AADD( _opc, "2. fiskalni uredjaji: korisnicke postavke " )
+AADD( _opc, "2. fiskalni uređaji: korisničke postavke " )
 AADD( _opc_exe, { || set_user_fiscal_params() })
-AADD( _opc, "3. korisnicke fiskalne postavke  " )
+AADD( _opc, "3. korisničke fiskalne postavke  " )
 AADD( _opc_exe, { || set_global_fiscal_params() })
 AADD( _opc, "4. pregled parametara" )
 AADD( _opc_exe, { || print_fiscal_params() })

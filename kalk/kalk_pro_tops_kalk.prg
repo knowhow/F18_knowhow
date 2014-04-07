@@ -46,7 +46,7 @@ O_TARIFA
 
 if lTest == .t.
 	
-	close all
+	my_close_all_dbf()
 	
 	cSifPath := PADR( SIFPATH , 14 )
 	// "c:\sigma\sif1\"

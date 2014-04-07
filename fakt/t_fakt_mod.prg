@@ -126,7 +126,7 @@ endif
 AADD(_opc,"------------------------------------")
 AADD(_opcexe,{|| nil})
 
-AADD(_opc,"8. sifrarnici")
+AADD(_opc,"8. šifarnici")
 AADD(_opcexe,{|| fakt_sifrarnik()})
 
 AADD(_opc,"9. uplate")
@@ -139,7 +139,7 @@ endif
 AADD(_opc,"------------------------------------")
 AADD(_opcexe,{|| nil})
 
-AADD(_opc,"A. stampa azuriranog dokumenta")
+AADD(_opc,"A. štampa ažuriranog dokumenta")
 AADD(_opcexe,{|| fakt_stampa_azuriranog()})
 
 AADD(_opc,"P. povrat dokumenta u pripremu")

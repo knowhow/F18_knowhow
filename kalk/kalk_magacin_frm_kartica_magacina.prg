@@ -45,7 +45,7 @@ else
    	cIdRoba := kalk_pripr->idroba
 endif
 
-close all
+my_close_all_dbf()
 
 KarticaM( cIdFirma, cIdRoba, cKonto )
 

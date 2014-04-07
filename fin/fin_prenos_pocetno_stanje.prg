@@ -135,10 +135,10 @@ endif
 // azuriraj dokument automatski
 fin_set_broj_dokumenta()
 
-close all
+my_close_all_dbf()
 stampa_fin_document( .t. )
 
-close all
+my_close_all_dbf()
 fin_azur( .t. ) 
 
 MsgBeep( "Dokument formiran i automatski azuriran..." )
@@ -480,9 +480,8 @@ if RECCOUNT2() == 0
     return _ret
 endif
 
-if Pitanje(, "Priprema FIN nije prazna ! Izbrisati postojece stavke (D/N) ?", "D" ) == "D"
-    zapp()
-    __dbPack()
+if Pitanje(, "Priprema FIN nije prazna ! Izbrisati postojeće stavke (D/N) ?", "D" ) == "D"
+    my_dbf_zap()
     return _ret
 else
     _ret := .f.

@@ -177,8 +177,8 @@ function round2(nizraz,niznos)
 
 *
 * pretpostavlja definisanu globalnu varijablu g50F
-* za g50F="5" vrçi se zaokru§enje na 0.5
-*        =" " odraÐuje obiŸni round()
+* za g50F="5" vrÃ§i se zaokruÂ§enje na 0.5
+*        =" " odraÃuje obiÂŸni round()
 
 local npom,npom2,nznak
 if g50f="5"
@@ -376,7 +376,6 @@ seek "ADRES   "
 do while !eof() .and. ID="ADRES   "
 
  AADD (ImeKol, {  IzSifKNaz("ADRES   ",SIFK->Oznaka) })
- // AADD (ImeKol[Len(ImeKol)], &( "{|| padr(ToStr(IzSifk('ADRES   ','" + sifk->oznaka + "')),10) }" ) )
  AADD (ImeKol[Len(ImeKol)], &( "{|| ToStr(IzSifk('ADRES   ','" + sifk->oznaka + "')) }" ) )
  AADD (ImeKol[Len(ImeKol)], "SIFK->"+SIFK->Oznaka )
  if sifk->edkolona > 0
@@ -437,7 +436,7 @@ AADD(aDBf,{ 'K9'     , 'C' ,  3 ,   0 })
 DBCREATE2(PRIVPATH+"koverte.DBF",aDBf)
 
 usex (PRIVPATH+"koverte", NIL, .t.)
-zapp()
+my_dbf_zap()
 
 index on  "id+naz"  TAG "ID"
 
@@ -495,7 +494,7 @@ MsgBeep ("Postoji jos "+STR (nSlobodno, 10, 2)+;
          IIF (nSlobodno<20, "#Preporucuje se brisanje najstarije sezone#"+;
                             "kako bi se oslobodio prostor i ubrzao rad!";
                           , ""))
-IF Pitanje ("bss","Zelite li izbrisati staru sezonu?","N")=="D"
+IF Pitanje ("bss","Å½elite li izbrisati staru sezonu?","N")=="D"
   Box(,2,60)
   @ m_x+1,m_y+1 SAY "Sezona koju zelite obrisati" GET cSezBris ;
                     Valid NijeRTS (cSezBris)

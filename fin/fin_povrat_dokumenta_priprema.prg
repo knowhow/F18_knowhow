@@ -76,7 +76,7 @@ BoxC()
 
 if Pitanje(, "Nalog " + cIdFirma + "-" + cIdVN + "-" + cBrNal + ;
         IIF( storno ," stornirati", " povuci u pripremu" ) + " (D/N) ?", "D" ) == "N"
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -118,7 +118,7 @@ enddo
 MsgC()
 
 if !_brisi_nalog
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -183,7 +183,7 @@ else
     log_write( "F18_DOK_OPER: povrat finansijskog naloga u pripremu: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
 endif
 
-close all
+my_close_all_dbf()
 return
 
 

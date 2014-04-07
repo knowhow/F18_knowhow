@@ -58,7 +58,7 @@ else
    endif   
 endif
 
-close all
+CLOSE ALL
 
 alias := FILEBASE(alias)
  
@@ -137,7 +137,7 @@ endif
 
 
 if USED()
-	nOrder := ORDNUMBER( cTag )
+	nOrder := index_tag_num( cTag )
 	cOrdKey := ORDKEY(cTag)
 	select (_wa)
 	use
@@ -206,7 +206,7 @@ endif
 
 next
 
-close all
+CLOSE ALL
 return
 
 
@@ -334,30 +334,6 @@ BREAK o
 return .t.
 
 
-
-
-/*! \fn ImdDBFCDX(cIme)
- *  \brief Mjenja DBF u indeksnu extenziju
- *
- * \code 
- *  suban     -> suban.CDX
- *  suban.DBF -> suban.CDX
- * \endcode
- */
- 
-function ImeDBFCDX(cIme, ext)
-
-if ext == NIL
-  ext := INDEXEXT
-endif
-
-cIme := TRIM(strtran(ToUnix(cIme), "." + DBFEXT, "." + ext))
-
-if right (cIme, 4) <> "." + ext
-  cIme := cIme + "." + ext
-endif
-
-return  cIme
 
 
 static function Every()

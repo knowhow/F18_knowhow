@@ -207,9 +207,9 @@ do while !eof()
 enddo
 
 go top
-__dbPack()
+my_dbf_pack( .F. )
 
-close all
+my_close_all_dbf()
 
 return
 

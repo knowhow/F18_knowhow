@@ -69,7 +69,7 @@ do while .t.
 
         if Pitanje( , "Stavke vec postoje. Zamijeniti novim podacima ?","D")=="N"
                 MsgBeep("Rate nisu formirane! Unesite novu osnovu kredita za zadanog kreditora!")
-                close all
+                my_close_all_dbf()
                 return
         else
                 // pobrisi sve rate kredita
@@ -159,7 +159,7 @@ do while .t.
     set confirm on
 #endif
 
-    close all
+    my_close_all_dbf()
 
     if (cDn == "D")
         EditKredit(cIdRadn, cIdKred, cOsnov)
@@ -167,7 +167,7 @@ do while .t.
 
 enddo
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -218,7 +218,7 @@ Box(,19,77)
 
 BoxC()
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -830,7 +830,7 @@ enddo
 FF
 END PRINT
 
-close all
+my_close_all_dbf()
 
 return
 
@@ -1132,7 +1132,7 @@ Box("#BRISANJE NEOTPLACENIH RATA KREDITA",9,77)
 BoxC()
 
 if cBrisi == "N"
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -1169,7 +1169,7 @@ ELSE
     MsgBeep("Nista nije izbrisano. Za izabrani kredit ne postoje neotplacene rate!")
 ENDIF
 
-close all
+my_close_all_dbf()
 return
 
 

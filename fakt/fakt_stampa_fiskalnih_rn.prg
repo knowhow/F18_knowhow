@@ -46,7 +46,7 @@ if !lDirekt
 	endif
 endif
 
-close all
+my_close_all_dbf()
 
 // uzmi device iz liste uredjaja
 _dev_id := get_fiscal_device( my_user() )

@@ -27,7 +27,7 @@ Box("kzb",12,70, .f., "Kontrola zbira naloga")
     cBrNal:=BrNal
 
     @ m_x+1, m_y+1 SAY "       Firma: "+cIDFirma
-    @ m_x+2, m_y+1 SAY "Vrsta naloga:" GET cIdVn valid P_VN(@cIdVN,2,20)
+    @ m_x+2, m_y+1 SAY "Vrsta naloga:" GET cIdVn valid browse_tnal(@cIdVN, 2, 20)
     @ m_x+3, m_y+1 SAY " Broj naloga:" GET cBrNal
 
     READ
@@ -85,7 +85,7 @@ Box("kzb",12,70, .f., "Kontrola zbira naloga")
         
 	cDN:="N"
     set cursor on
-        @ m_x+10,m_y+2 SAY "Zelite li uravnoteziti nalog (D/N) ?" GET cDN valid (cDN $ "DN") pict "@!"
+        @ m_x+10, m_y+2 SAY8 "Želite li uravnoteziti nalog (D/N) ?" GET cDN valid (cDN $ "DN") pict "@!"
         read
 
         if cDN=="D"

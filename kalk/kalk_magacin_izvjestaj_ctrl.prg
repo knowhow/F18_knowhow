@@ -88,7 +88,7 @@ if nVar == 1
 		cArtFilter, cSezona, nVar, cSirovina )
 endif
 
-close all
+my_close_all_dbf()
 O_ROBA
 
 o_rxp( nVar )
@@ -484,7 +484,7 @@ msgc()
 
 // pobrisi na kraju kalk_pripremu
 select kalk_pripr
-zapp()
+my_dbf_zap()
 
 return
 

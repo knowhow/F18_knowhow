@@ -55,7 +55,7 @@ endif
 // isprazni kalk_pripr2
 // trebat ce nam poslije radi generisanja zavisnih dokumenata
 O_KALK_PRIPR2
-zapp()
+my_dbf_zap()
 use
 
 lViseDok := kalk_provjeri_duple_dokumente( @aRezim )
@@ -108,7 +108,7 @@ else
 endif
 
 // pobrisi mi fakt_atribute takodjer
-F18_DOK_ATRIB():new("kalk"):zapp_local_table()
+F18_DOK_ATRIB():new("kalk", F_KALK_ATRIB):zapp_local_table()
 
 // generisi zavisne dokumente nakon azuriranja kalkulacije
 kalk_zavisni_nakon_azuriranja( lGenerisiZavisne, lAuto )
@@ -119,7 +119,7 @@ if lViseDok == .t. .and. LEN( aOstaju ) > 0
 else
     // pobrisi kalk_pripr
     select kalk_pripr
-    zapp()
+    my_dbf_zap()
 
 endif
 
@@ -128,7 +128,7 @@ if lGenerisiZavisne = .t.
     kalk_vrati_iz_pripr2()
 endif
 
-close all
+my_close_all_dbf()
 
 return
 
@@ -214,7 +214,7 @@ if lPrebaci == .t.
     enddo
 
     select kalk_pripr2
-    zapp() 
+    my_dbf_zap() 
 
 endif
 
@@ -293,6 +293,7 @@ static function kalk_ostavi_samo_duple( lViseDok, aOstaju )
 select kalk_pripr
 
 GO TOP
+my_flock()
 DO WHILE !EOF()
     SKIP 1
     nRecNo:=RECNO()
@@ -302,7 +303,9 @@ DO WHILE !EOF()
     ENDIF
     GO (nRecNo)
 ENDDO
-__dbpack()
+my_unlock()
+my_dbf_pack()
+
 MsgBeep("U kalk_pripremi su ostali dokumenti koji izgleda da vec postoje medju azuriranim!")
   
 return
@@ -545,7 +548,7 @@ do while !eof()
         if field->idvd == "11".and. field->vpc == 0
             Beep(1)
             Msg('VPC = 0, pozovite "savjetnika" sa <Alt-H>!')
-            close all
+            my_close_all_dbf()
             return .f.
         endif
         skip
@@ -590,14 +593,14 @@ do while !eof()
         if gMetodaNC <> " " .and. ( field->error == "1" .and. field->tbanktr == "X" )
             Beep(2)
             MSG("Izgenerisane stavke su ispravljane, azuriranje nece biti izvrseno",6)
-            close all
+            my_close_all_dbf()
             return .f.
         endif
 
         if gMetodaNC <> " " .and. field->error == "1"
             Beep(2)
             MSG("Utvrdjena greska pri obradi dokumenta, rbr: "+rbr,6)
-            close all
+            my_close_all_dbf()
             return .f.
         endif
 
@@ -605,7 +608,7 @@ do while !eof()
             if gMetodaNC <> " " .and. field->error == " "
                 Beep(2)
                 MSG("Dokument je izgenerisan, pokrenuti opciju <A> za obradu",6)
-                close all
+                my_close_all_dbf()
                 return .f.
             endif
             if dDatDok <> field->datdok
@@ -613,7 +616,7 @@ do while !eof()
                 if Pitanje(,"Datum razlicit u odnosu na prvu stavku. Ispraviti ?", "D") == "D"
                     replace field->datdok with dDatDok
                 else
-                    close all
+                    my_close_all_dbf()
                     return .f.
                 endif
             endif
@@ -622,14 +625,14 @@ do while !eof()
         if field->idvd <> "24" .and. empty(field->mu_i) .and. empty(field->pu_i)
             Beep(2)
             Msg("Stavka broj " + field->rbr + ". neobradjena , sa <A> pokrenite obradu")
-            close all
+            my_close_all_dbf()
             return .f.
         endif
         
         if cIdzaduz2 <> field->idzaduz2
             Beep(2)
             Msg("Stavka broj " + field->rbr + ". razlicito polje RN u odnosu na prvu stavku")
-            close all
+            my_close_all_dbf()
             return .f.
         endif
 
@@ -644,7 +647,7 @@ do while !eof()
         Beep(1)
         Msg("Vec postoji dokument pod brojem " + cIdFirma + "-" + cIdvd + "-" + ALLTRIM(cBrDok) )
         if !lViseDok
-            close all
+            my_close_all_dbf()
             return .f.
         else
             AADD( aDoks, cIdFirma + cIdVd + cBrDok )
@@ -658,11 +661,11 @@ enddo
 if gMetodaNC <> " " .and. nBrDoks > 1
     Beep(1)
     Msg("U kalk_pripremi je vise dokumenata.Prebaci ih u smece, pa obradi pojedinacno")
-    close all
+    my_close_all_dbf()
     return .f.
 endif
 
-close all
+my_close_all_dbf()
 
 return .t.
 
@@ -734,7 +737,7 @@ if raspored_tr == NIL
 endif
 
 // prvo zatvori sve tabele
-close all
+my_close_all_dbf()
 
 O_KALK_PRIPR
 O_KALK
@@ -897,7 +900,7 @@ if _ok == .t.
 
     @ m_x + 3, m_y + 2 SAY "kalk_atributi -> server "
 
-    oAtrib := F18_DOK_ATRIB():new("kalk")
+    oAtrib := F18_DOK_ATRIB():new("kalk", F_KALK_ATRIB)
     oAtrib:dok_hash["idfirma"] := _record["idfirma"]
     oAtrib:dok_hash["idtipdok"] := _record["idvd"]
     oAtrib:dok_hash["brdok"] := _record["brdok"]
@@ -1068,12 +1071,9 @@ do while !EOF()
 enddo
 
 select kalk_pripr
-go top
+my_dbf_zap()
 
-select kalk_pripr
-zapp()
-
-close all
+my_close_all_dbf()
 return
 
 
@@ -1096,7 +1096,7 @@ _brisi_kum := .f.
 if gCijene=="2" .and. Pitanje(,"Zadati broj (D) / Povrat po hronologiji obrade (N) ?","D") = "N"
     Beep(1)
     PNajn()
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -1130,12 +1130,12 @@ BoxC()
 // ako je uslov sa tackom, vrati sve nabrojane u pripremu...
 if _br_dok = "."
     povrat_vise_dokumenata()
-    close all
+    my_close_all_dbf()
     return
 endif
     
 if Pitanje( "", "Kalk. " + _id_firma + "-" + _id_vd + "-" + _br_dok + " povuci u pripremu (D/N) ?", "D" ) == "N"
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -1173,7 +1173,7 @@ _dok_hash["idfirma"] := _id_firma
 _dok_hash["idtipdok"] := _id_vd
 _dok_hash["brdok"] := _br_dok
 
-oAtrib := F18_DOK_ATRIB():new("kalk")
+oAtrib := F18_DOK_ATRIB():new("kalk", F_KALK_ATRIB)
 oAtrib:dok_hash := _dok_hash
 oAtrib:atrib_server_to_dbf()
 
@@ -1242,7 +1242,7 @@ if _brisi_kum
         f18_free_tables({"kalk_doks", "kalk_kalk", "kalk_doks2" })
 
         msgbeep("Brisanje KALK dokumenta neuspjesno !?")
-        close all
+        my_close_all_dbf()
         return
     endif
 
@@ -1257,7 +1257,7 @@ use
 select kalk
 use
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -1279,7 +1279,7 @@ local _del_rec, _ok
 local _dok_hash, oAtrib, __firma, __idvd, __brdok
 
 if !SigmaSif()
-    close all
+    my_close_all_dbf()
     return .f.
 endif
     
@@ -1341,7 +1341,7 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
             _dok_hash["idtipdok"] := __idvd
             _dok_hash["brdok"] := __brdok
 
-            oAtrib := F18_DOK_ATRIB():new("kalk")
+            oAtrib := F18_DOK_ATRIB():new("kalk", F_KALK_ATRIB)
             oAtrib:dok_hash := _dok_hash
             oAtrib:atrib_server_to_dbf()
  
@@ -1360,7 +1360,7 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
 
     // ako ne treba brisati kumulativ
     if !_brisi_kum
-        close all
+        my_close_all_dbf()
         return .f.
     endif
 
@@ -1395,7 +1395,7 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
         _dok_hash["idtipdok"] := _id_vd
         _dok_hash["brdok"] := _br_dok
 
-        oAtrib := F18_DOK_ATRIB():new("kalk")
+        oAtrib := F18_DOK_ATRIB():new("kalk", F_KALK_ATRIB)
         oAtrib:dok_hash := _dok_hash
         
         _ok := _ok .and.  oAtrib:delete_atrib_from_server()
@@ -1425,7 +1425,7 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
         if !_ok
             MsgC()
             MsgBeep("Problem sa brisanjem tabele kalk !!!")
-            close all
+            my_close_all_dbf()
             return .f.
         endif
         
@@ -1442,7 +1442,7 @@ if Pitanje(, "Povuci u pripremu kalk sa ovim kriterijom ?", "N" ) == "D"
 
 endif
     
-close all
+my_close_all_dbf()
     
 return .t.
 
@@ -1530,19 +1530,19 @@ if !lSilent
                 skip
                 nRec := recno()
                 skip -1
-                dbDelete2()
+                my_delete()
                 go nRec
             enddo
             MsgC()
         endif
-        close all
+        my_close_all_dbf()
         return
     endif
 endif 
 
 if Pitanje("","Iz smeca "+cIdFirma+"-"+cIdVD+"-"+cBrDok+" povuci u pripremu (D/N) ?","D")=="N"
     if !lSilent
-        close all
+        my_close_all_dbf()
         return
     else
         return
@@ -1582,7 +1582,7 @@ MsgC()
 log_write( "F18_DOK_OPER: kalk, povrat dokumenta iz smeca: " + cIdFirma + "-" + cIdVd + "-" + cBrDok, 2 )
 
 if !lSilent
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -1609,7 +1609,7 @@ cIdVD:=space(2)
 cBrDok:=space(8)
 
 if Pitanje(,"Povuci u pripremu najstariji dokument ?","N")=="N"
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -1641,13 +1641,13 @@ do while !eof() .and. cIdFirma==IdFirma .and. cIdVD==IdVD .and. cBrDok==BrDok
     skip 1
     nRec:=recno()
     skip -1
-    dbdelete2()
+    my_delete()
     go nRec
 enddo
 use
 MsgC()
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -1680,12 +1680,12 @@ dDatDok := datdok
 
 if EOF()
     Msg("Na stanju nema dokumenata..")
-    close all
+    my_close_all_dbf()
     return
 endif
 
 if Pitanje(,"Vratiti u pripremu dokumente od "+dtoc(dDatDok)+" ?","N")=="N"
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -1757,7 +1757,6 @@ do while !BOF() .and. cIdFirma==IdFirma .and. datdok==dDatDok
         if found()
             _del_rec := dbf_get_rec()
             delete_rec_server_and_dbf( "kalk_doks", _del_rec, 1, "FULL" )
-            delete
         endif
 
         select kalk
@@ -1776,7 +1775,7 @@ enddo
 
 MsgC()
 
-close all
+my_close_all_dbf()
 return
 
 

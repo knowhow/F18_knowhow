@@ -31,8 +31,7 @@ endif
 
 select _doc_opst
 if RECCOUNT() > 0
-    zap
-    __dbPack()
+    my_dbf_zap()
 endif
 
 select doc_ops
@@ -142,8 +141,7 @@ sql_table_update( nil, "END" )
 
 // pobrisi pripremu...
 select _doc_opst
-zap
-__dbPack()
+my_dbf_zap()
 
 return _ok
 
@@ -223,7 +221,7 @@ if LastKey() == K_ESC
 
 endif
 
-close all
+my_close_all_dbf()
 
 return _ok
 

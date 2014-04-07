@@ -337,10 +337,10 @@ static function _pick_element( aElem, nChoice )
 local nRet
 local i
 local cPom
+local _izbor := 1
+local _opc := {}
+local _opcexe := {}
 private GetList:={}
-private izbor := 1
-private opc := {}
-private opcexe := {}
 
 nChoice := 1
 
@@ -348,12 +348,12 @@ for i := 1 to LEN(aElem)
 
     cPom := PADL( ALLTRIM(STR(i)) + ")", 3 ) + " " + PADR( aElem[i, 2] , 40 )
     
-    AADD(opc, cPom)
-    AADD(opcexe, {|| nChoice := izbor, izbor := 0 })
+    AADD( _opc, cPom )
+    AADD( _opcexe, {|| nChoice := _izbor, _izbor := 0 })
     
 next
 
-Menu_sc("izbor")
+f18_menu( "izbor", .f., @_izbor, _opc, _opcexe )
 
 if LastKey() == K_ESC
     nChoice := 0

@@ -347,7 +347,7 @@ endif
 enddo
 
 if lastkey()==K_ESC
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -492,7 +492,7 @@ cFilt:= aUsl1+".and."+ aUsl2+".and."+;
     set relation to
   ENDIF
 
-close all
+my_close_all_dbf()
 return
 
 

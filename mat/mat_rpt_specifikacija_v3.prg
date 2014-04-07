@@ -239,7 +239,7 @@ _o_rpt_tables()
 
 // daj mi uslove izvjestaja
 if !_get_vars( @_params )
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -304,7 +304,7 @@ endif
 FF
 END PRINT
 
-close all
+my_close_all_dbf()
 
 return
 

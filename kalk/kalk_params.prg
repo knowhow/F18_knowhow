@@ -57,7 +57,7 @@ f18_menu( "pars", .f., _izbor, _opc, _opcexe )
 
 gNW := "X"
 
-close all
+my_close_all_dbf()
 return
 
 

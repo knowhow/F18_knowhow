@@ -33,8 +33,8 @@ set_a_dbf_sifarnik("fin_funk"      , "FUNK"     ,       F_FUNK       )
 set_a_dbf_sifarnik("fin_fond"      , "FOND"     ,       F_FOND       )
 set_a_dbf_sifarnik("fin_buiz"      , "BUIZ"     ,       F_BUIZ       )
 set_a_dbf_sifarnik("fin_ulimit"    , "ULIMIT"   ,       F_ULIMIT     )
-set_a_dbf_sifarnik("ks"            , "KS"       ,       F_KS         )
 
+set_a_sql_sifarnik("ks"            , "KS"       ,       F_KS         )
 
 // temporary
 set_a_dbf_temp("fin_konto"        , "_KONTO"   ,       F__KONTO   )
@@ -55,7 +55,9 @@ set_a_dbf_temp("fin_bbklas"      , "BBKLAS"     ,       F_IOS       )
 set_a_dbf_temp("fin_ios"         , "IOS"        ,       F_BBKLAS    )
 set_a_dbf_temp("fin_ostav"       , "OSTAV"      ,       F_OSTAV     )
 set_a_dbf_temp("fin_osuban"      , "OSUBAN"     ,       F_OSUBAN    )
-set_a_dbf_temp("vksg"           , "VKSG"        ,       F_VKSG      )
+set_a_dbf_temp("vksg"            , "VKSG"       ,       F_VKSG      )
+set_a_dbf_temp("temp12"          , "TEMP12"     ,       F_TMP_1     )
+set_a_dbf_temp("temp60"          , "TEMP60"     ,       F_TMP_2     )
 set_a_dbf_temp("kam_pripr"    , "KAM_PRIPR"     , F_KAMPRIPR  )
 set_a_dbf_temp("kam_kamat"    , "KAM_KAMAT"     , F_KAMAT )
 
@@ -406,8 +408,6 @@ _item["sql_order"] := "id"
 f18_dbfs_add( _tbl, @_item )
 
 return .t.
-
-
 
 // ------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------

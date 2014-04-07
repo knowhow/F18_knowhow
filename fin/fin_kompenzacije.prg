@@ -269,7 +269,7 @@ Box(, _row, _col )
 
 BoxC()
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -610,13 +610,9 @@ if ! ( (Ch==K_CTRL_T .or. Ch==K_ENTER) .and. reccount2()==0 )
             ENDIF
 
         case Ch==K_CTRL_T                
-            
-            if Pitanje("p01","Zelite izbrisati ovu stavku ?","D")=="D"
-                delete
-                __dbPack()
-                nVrati := DE_REFRESH
-            endif
-
+           
+            nVrati := browse_brisi_stavku() 
+         
         case Ch == K_ENTER                        
             
             Scatter()

@@ -56,7 +56,7 @@ do while !EOF()
 enddo
 MsgC()
 
-close all
+my_close_all_dbf()
 
  // Izbor cjenovnika  ( /M/V)
 

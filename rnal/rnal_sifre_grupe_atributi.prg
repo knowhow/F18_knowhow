@@ -34,6 +34,8 @@ __wo_id := lwoID
 
 nTArea := SELECT()
 
+O_E_GR_ATT
+
 cHeader := "Elementi - grupe atributi /  'V' - pr.vrijednosti / required '*'"
 
 if nGr_id == nil

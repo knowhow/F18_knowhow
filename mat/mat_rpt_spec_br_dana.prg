@@ -41,7 +41,7 @@ _o_rpt_tables()
 
 // uslovi izvjestaja
 if !_get_vars( @_params )
-    close all
+    my_close_all_dbf()
     return 
 endif
 

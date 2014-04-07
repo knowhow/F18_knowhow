@@ -51,7 +51,7 @@ AADD(opcexe,{|| P_Vozila()})
 AADD(opc,"3. kalendar posjeta")
 AADD(opcexe,{|| P_KalPos()})
 
-CLOSE ALL
+my_close_all_dbf()
 O_PARTN
 OSifVindija()
 

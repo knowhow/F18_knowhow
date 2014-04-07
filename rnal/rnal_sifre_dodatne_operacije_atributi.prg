@@ -42,6 +42,9 @@ _aop_id := nAop_id
 __wo_id := lwo_ID
 
 nTArea := SELECT()
+
+O_AOPS_ATT
+
 cHeader := "Dodatne operacije, atributi /"
 
 select aops_att

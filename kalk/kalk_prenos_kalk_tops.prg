@@ -131,7 +131,7 @@ local _pos_locations
 local _from_kum := .t.
 local _total := 0
 
-close all
+my_close_all_dbf()
 
 if PCOUNT() == 0
     // generisanje iz pripreme
@@ -262,13 +262,13 @@ if _rbr > 0
     // napravi i prebaci izlazne fajlove gdje trebaju
     _exp_file := _kreiraj_fajl_prenosa( _dat_dok, _pos_locations, _rbr )
 
-	close all
+	my_close_all_dbf()
     // ispisi report
     _print_report( id_firma, id_tip_dok, br_dok, _rbr, _total, _exp_file )
 
 endif
 
-close all
+my_close_all_dbf()
 return
 
 

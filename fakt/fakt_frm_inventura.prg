@@ -161,7 +161,7 @@ do case
         return DE_REFRESH
 
 	case ::nCh == K_ALT_A
-		close all
+		my_close_all_dbf()
 		azur_fakt()
 		o_fakt_edit()
 		return DE_REFRESH
@@ -316,14 +316,14 @@ return nCnt
 
 method deleteAll()
 if Pitanje(,"Zelite li zaista izbrisati cijeli dokument?","N")=="D"
-	ZAP
+	my_dbf_zap()
 endif
 return
 
 
 
 method deleteItem()
-DELETE
+my_delete_with_pack()
 return 1
 
 
@@ -359,7 +359,7 @@ Box(,2,40)
 BoxC()
 
 if Pitanje(,"Generisati dokument inventure za RJ "+cIdRj,"N")=="D"
-	CLOSE ALL
+	my_close_all_dbf()
 	GDokInv(cIdRj)
 	o_fakt_edit()
 endif

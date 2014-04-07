@@ -95,11 +95,11 @@ enddo
 if !_valid
 
     select mat_psuban
-    zapp()
+    my_dbf_zap()
     select mat_panal
-    zapp()
+    my_dbf_zap()
     select mat_psint
-    zapp()
+    my_dbf_zap()
     
 endif
 
@@ -150,7 +150,7 @@ _o_tbls()
 
 // napravi bazne provjere dokumenta prije azuriranja
 if !_provjera_dokumenta()
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -164,7 +164,7 @@ else
     msgbeep( "Problem sa azuriranjem mat/sql !" )
 endif
 
-close all
+my_close_all_dbf()
 
 return
 
@@ -361,7 +361,7 @@ Box(,7,30,.f.)
     enddo
 
     select mat_panal
-    zapp()
+    my_dbf_zap()
 
     @ m_x + 3, m_y + 2 SAY "SINTETIKA"
     select mat_psint
@@ -382,7 +382,7 @@ Box(,7,30,.f.)
     enddo
 
     select mat_psint
-    zapp()
+    my_dbf_zap()
 
     @ m_x + 5, m_y + 2 SAY "NALOZI"
     select mat_pnalog
@@ -403,7 +403,7 @@ Box(,7,30,.f.)
     enddo
 
     select mat_pnalog
-    zapp()
+    my_dbf_zap()
 
     @ m_x + 7, m_y + 2 SAY "SUBANALITIKA"
     select mat_psuban
@@ -424,10 +424,10 @@ Box(,7,30,.f.)
     enddo
 
     select mat_psuban
-    zapp()
+    my_dbf_zap()
 
     select mat_pripr
-    zapp()
+    my_dbf_zap()
 
     Inkey(2)
 

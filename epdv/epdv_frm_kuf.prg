@@ -207,12 +207,7 @@ do case
   case (Ch == K_CTRL_T)
 
     select P_KUF
-    if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
-        delete
-        __dbPack()
-        return DE_REFRESH
-    endif
-    return DE_CONT
+    RETURN browse_brisi_stavku( .T. )
 
    case (Ch == K_F5)
    
@@ -224,6 +219,7 @@ do case
  
     SELECT P_KUF
     nTekRec := RECNO()
+    my_flock()
     Scatter()
     if ed_item(.f.)
         SELECT P_KUF
@@ -231,41 +227,48 @@ do case
         Gather()
         RETURN DE_REFRESH
     endif
+    my_unlock()
     return DE_CONT
     
    case (Ch == K_CTRL_N)
 
+    SELECT P_KUF
+    my_flock()
+
     // stavke unosimo cirkularno do ESC znaka
     DO WHILE .t.
     
-    SELECT P_KUF
-    APPEND BLANK
-    nTekRec := RECNO()
-        Scatter()
+    	SELECT P_KUF
+    	APPEND BLANK
+    	nTekRec := RECNO()
+    	Scatter()
     
-    if ed_item(.t.)
-    
-            //EventLog(nUser, goModul:oDataBase:cName, "DOK", "EDIT", nDug, nPot, nil, nil, "", "", "Unos stavke ....", Date(), Date(), "", "KUF - nova stavka")
-        GO nTekRec
-        Gather()
-    else
-        // brisi necemo ovu stavku
-        SELECT P_KUF
-        go nTekRec
-        DELETE
-        exit
-    endif
-    ENDDO 
-    
+    	if ed_item(.t.)
+        	GO nTekRec
+        	Gather()
+    	else
+        	// brisi necemo ovu stavku
+        	SELECT P_KUF
+        	go nTekRec
+        	DELETE
+        	exit
+    	endif
+    ENDDO
+ 
+    my_unlock()
+
+	my_dbf_pack()
+    SET ORDER TO TAG "BR_DOK" 
     GO BOTTOM
+
     return DE_REFRESH
     
    case (Ch  == K_CTRL_F9)
    
         if Pitanje( ,"Zelite li izbrisati pripremu !!????","N") == "D"
-            zapp()
+            my_dbf_zap()
             return DE_REFRESH
-    endif
+    	endif
         return DE_CONT
 
    case Ch==K_CTRL_P
@@ -278,13 +281,15 @@ do case
     if LASTKEY() <> K_ESC
             rpt_kuf(nBrDokP)
     endif
-    
-    close all
+
+    my_close_all_dbf()
+
     o_kuf(.t.)
+
     SELECT P_KUF
     SET ORDER TO TAG "br_dok"
 
-        return DE_REFRESH
+    return DE_REFRESH
 
    case Ch==K_ALT_A
    
@@ -321,6 +326,9 @@ do case
     endif
 
     SELECT P_KUF
+	SET ORDER TO TAG "BR_DOK"
+	GO TOP
+
     RETURN DE_REFRESH
 
    case (Ch == K_F10)

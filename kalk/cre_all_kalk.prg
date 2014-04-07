@@ -289,7 +289,7 @@ CREATE_INDEX( "1", "IdFirma+idvd+brdok", _alias )
 // -----------------------------------------------
 // KALK_DOKS2
 // -----------------------------------------------
-F18_DOK_ATRIB():new("kalk"):create_local_atrib_table()
+F18_DOK_ATRIB():new("kalk", F_KALK_ATRIB):create_local_atrib_table()
 
 
 return .t.

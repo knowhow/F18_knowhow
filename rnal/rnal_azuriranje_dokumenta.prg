@@ -181,16 +181,16 @@ endif
 
 // sve je ok brisi pripremu
 select _docs
-zapp()
+my_dbf_zap()
 
 select _doc_it
-zapp()
+my_dbf_zap()
 
 select _doc_it2
-zapp()
+my_dbf_zap()
 
 select _doc_ops
-zapp()
+my_dbf_zap()
 
 use
 

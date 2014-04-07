@@ -99,7 +99,7 @@ if lPrint == .t. .and. _export == "N"
 endif
 
 if _export == "D"
-    close all
+    my_close_all_dbf()
     f18_run( _rpt_file )
 endif
 
@@ -1772,7 +1772,7 @@ endif
 
 ? cLine 
 
-close all
+my_close_all_dbf()
 
 FF
 END PRINT

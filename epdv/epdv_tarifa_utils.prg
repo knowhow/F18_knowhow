@@ -86,6 +86,7 @@ static function _append_tarifa( tar_id, naziv, iznos )
 local _rec
 
 select tarifa
+set order to tag "ID"
 go top
 seek tar_id
 

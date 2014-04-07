@@ -997,14 +997,13 @@ Box("",20,65)
  		if gRJ=="D"
   			@ m_x+13,m_y+2 SAY "Rasclaniti po RJ (D/N) "  GET cRasclaniti pict "@!" valid cRasclaniti $ "DN"
  			@ m_x+14,m_y+2 SAY "Rasclaniti po RJ/FUNK/FOND? (D/N) "  GET cRascFunkFond pict "@!" valid cRascFunkFond $ "DN"
- 	
 		endif
 
 		@ m_x + 15, m_y + 2 SAY "Opcina (prazno-sve):" GET cOpcine
 
 		UpitK1k4(16)
 
- 		@ m_x + 18, m_y + 2 SAY "Export izvjestaja u dbf (D/N) ?" GET cExpRptDN pict "@!" valid cExpRptDN $ "DN"
+ 		@ m_x + 19, m_y + 2 SAY "Export izvjestaja u dbf (D/N) ?" GET cExpRptDN pict "@!" valid cExpRptDN $ "DN"
 		
 		READ
 		ESC_BCR
@@ -2825,7 +2824,6 @@ IF lK==NIL
 ENDIF
 
 IF lVrsteP
-
   	SELECT (F_VRSTEP)
   	IF !USED()
     		O_VRSTEP
@@ -2838,14 +2836,13 @@ cM:=replicate("-",55)
 cStr:="Pregled odabranih kriterija :"
 
 if gRJ=="D" .and. len(cIdRJ)<>0
-  
   cRjNaz := ""
   nArr := SELECT()
   O_RJ
   select rj
   hseek cIdRj
   
-  if rj->id == cIdRj
+  if PADR( rj->id, 6 ) == PADR( cIdRj, 6 )
   	cRjNaz:=rj->naz
   endif
   

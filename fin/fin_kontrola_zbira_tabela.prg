@@ -53,7 +53,7 @@ if lSilent
 	MsgO("Provjeravam kontrolu zbira datoteka...")
 endif
 
-close all
+my_close_all_dbf()
 O_NALOG
 O_SUBAN
 O_SINT

@@ -50,17 +50,6 @@ endif
 AADD(_opc,"R. specificni izvjestaji (rmu)")
 AADD(_opcexe, {|| mnu_sp_rudnik() })
 
-if IsStampa()
-	AADD(_opc,"S. stampa")
-	AADD(_opcexe,{|| MnuStampa()})
-endif
-
-if IsKonsig()
-	AADD(_opc,"K. konsignacija")
-	AADD(_opcexe,{|| KarticaKons()})
-endif    	
-
-
 private fID_J:=.f.
 if IzFmkIni('SifRoba','ID_J','N')=="D"
 	private fId_J:=.t.

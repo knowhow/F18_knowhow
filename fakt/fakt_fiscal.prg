@@ -78,15 +78,12 @@ __DRV_CURRENT := _dev_drv
 // priprema podatak za racun....
 select fakt_doks
 set filter to
-set relation to
 
 select fakt
 set filter to
-set relation to
 
 select partn
 set filter to
-set relation to
 
 select fakt_doks
 
@@ -598,8 +595,9 @@ if tip_dok $ "10" .and. LEN( _a_iznosi ) < 2
     set_fiscal_rn_zbirni( @_data )
 endif
 
-// provjeri prije stampe stavke kolicina, cijena
-_item_level_check := 1
+// level validacije kolicine, cijene i decimalnih separatora 
+// kod ovog levela, desit ce se prepakivanje artikla na x100 metodu
+_item_level_check := 2
 
 if fiscal_items_check( @_data, storno, _item_level_check, __device_params["drv"] ) < 0
     return NIL    

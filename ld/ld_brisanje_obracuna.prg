@@ -132,7 +132,7 @@ do while .t.
     use
 enddo
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -182,7 +182,7 @@ do while .t.
     endif
     
     if Pitanje(,"Sigurno zelite izbrisati sve podatke za RJ za ovaj mjesec !?","N")=="N"
-        close all
+        my_close_all_dbf()
         return
     endif
     
@@ -206,7 +206,7 @@ do while .t.
 
 enddo
 
-close all
+my_close_all_dbf()
 return
 
 

@@ -106,7 +106,7 @@ endif
 seek cSection+cHistory+cImeVar
 
  if found()
-  if flock()
+  if my_flock()
     do while !eof() .and. cSection+cHistory+cImeVar==Fsec+Fh+Fvar
       skip
       nRec:=recno()
@@ -149,7 +149,7 @@ seek cSection+cHistory+cImeVar
   else
     MsgBeep("FLOCK:parametri nedostupni!!")
   endif
-  dbunlockall()
+  my_unlock()
  endif
 
 

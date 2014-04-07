@@ -81,14 +81,13 @@ CLOSERET
  */
  
 function RazdPoNorm(dDatOd,dDatDo,cSmjena,fTekuci)
-*{
 local i:=1
 local cVrsta
 local fNaso
 
 // ispraznim pripremu
 SELECT PRIPRG
-Zapp()
+my_dbf_zap()
 
 Scatter()
 
@@ -280,10 +279,9 @@ for i:=1 to 2
 next //i
 
 SELECT PRIPRG
-Zapp()
-__dbPack()
+
+my_dbf_zap()
 return
-*}
 
 
 

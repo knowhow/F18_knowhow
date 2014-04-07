@@ -265,7 +265,7 @@ enddo
 ?? m
 
 FF
-END PRINT
+ENDPRINT
 
 return .t.
 

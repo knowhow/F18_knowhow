@@ -266,7 +266,7 @@ NEXT
 
 END PRINT
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -603,7 +603,7 @@ endif
 
 END PRINT
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -904,7 +904,7 @@ endif
 
 END PRINT
 
-close all
+my_close_all_dbf()
 return
 
 

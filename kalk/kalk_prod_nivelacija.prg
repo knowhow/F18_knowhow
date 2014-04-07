@@ -36,7 +36,7 @@ private cIdVD := field->idvd
 private cBrDok := field->brdok
 
 if !( cIdvd $ "11#81" ) .and. !EMPTY( gMetodaNC )
-	close all
+	my_close_all_dbf()
 	return
 endif
 
@@ -169,7 +169,7 @@ do while !EOF() .and. cIdFirma == idfirma .and. cIdvd == idvd .and. cBrdok == br
 
 enddo
 
-close all
+my_close_all_dbf()
 return
 
 

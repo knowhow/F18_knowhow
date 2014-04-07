@@ -440,7 +440,7 @@ enddo
 FF
 END PRINT
 
-close all
+my_close_all_dbf()
 return
 
 

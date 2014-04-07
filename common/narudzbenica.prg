@@ -494,7 +494,7 @@ aKupac:=Sjecistr(cNaziv, LEN_COLONA)
 aDobavljac:=SjeciStr(cNaziv2, LEN_COLONA)
 
 B_ON
-cPom := PADR(lokal("Narucioc:"), LEN_COLONA) + " " + PADR(lokal("Dobavljac:"), LEN_COLONA)
+cPom := PADR(lokal("Naručioc:"), LEN_COLONA) + " " + PADR(lokal("Dobavljač:"), LEN_COLONA)
 
 p_line( cPom, 12, .t.)
 
@@ -626,12 +626,12 @@ cPom := lokal("Vrijeme isporuke ________________________________________________
 ?
 p_line( cPom, 12, .t.)
 ?
-cPom:=lokal("Napomena: Molimo popuniti prazna polja, te zaokruziti zeljene opcije")
+cPom:=lokal("Napomena: Molimo popuniti prazna polja, te zaokružiti željene opcije")
 p_line(cPom, 20, .f.)
 
 ?
 cPom := PADL(lokal(" M.P.          "), LEN_COLONA) + " "
-cPom += PADC(lokal("Za narucioca:"), LEN_COLONA)
+cPom += PADC(lokal("Za naručioca:"), LEN_COLONA)
 p_line(cPom, 12, .f.)
 ?
 cPom := PADC(" ", LEN_COLONA) + " "

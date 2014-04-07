@@ -67,7 +67,7 @@ do while !EOF()
 enddo
 MsgC()
 
-CLOSE ALL
+my_close_all_dbf()
 return
 
 
@@ -156,7 +156,7 @@ else
     MsgBeep("Inventurom nije evidentiran manjak pa nije generisan nikakav dokument!")
 endif
 
-CLOSE ALL
+my_close_all_dbf()
 
 return
 
@@ -243,7 +243,7 @@ else
     MsgBeep("Inventurom nije evidentiran visak pa nije generisan nikakav dokument!")
 endif
 
-CLOSE ALL
+my_close_all_dbf()
 return
 
 
@@ -367,7 +367,7 @@ Box(, 20, 75 )
         // ukini lock opcije
         set_metric( _lock_param, NIL, "" )
         
-        close all
+        my_close_all_dbf()
         o_fakt_edit()
         select fakt_pripr
         BoxC()
@@ -393,7 +393,7 @@ Box(, 20, 75 )
                 
                 set_metric( _lock_param, NIL, "" )
 
-                close all
+                my_close_all_dbf()
                 o_fakt_edit()
                 select fakt_pripr
 
@@ -444,7 +444,7 @@ else
     set_metric( _lock_param, NIL, "" )
 endif 
 
-close all
+my_close_all_dbf()
 o_fakt_edit()
 select fakt_pripr
 
@@ -742,7 +742,7 @@ do while !EOF() .and. field->idfirma + field->idtipdok = firma + otpr_tip ;
         _params["new_tipdok"] := "22"
         _params["new_brdok"] := __novi_broj
 
-        oAtrib := F18_DOK_ATRIB():new("fakt")
+        oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
         
         if !oAtrib:update_atrib_from_server( _params )
             f18_free_tables({"fakt_doks", "fakt_fakt"})

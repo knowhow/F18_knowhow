@@ -62,7 +62,7 @@ if LEN( _a_fakt_doks ) == 1
 endif
 
 // fiksiranje tabele atributa
-F18_DOK_ATRIB():new("fakt"):fix_atrib( F_FAKT_PRIPR, _a_fakt_doks )
+F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB):fix_atrib( F_FAKT_PRIPR, _a_fakt_doks )
 
 _ok := .t.
 
@@ -117,15 +117,15 @@ if LEN( _a_fakt_doks ) > 1
 else
     // izbrisi pripremu
     select fakt_pripr
-    ZAPP( .t. )
+    my_dbf_zap()
 endif
 
 // pobrisi mi fakt_atribute takodjer
-F18_DOK_ATRIB():new("fakt"):zapp_local_table()
+F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB):zapp_local_table()
 
 MsgC()
     
-close all
+my_close_all_dbf()
 
 return _a_fakt_doks
 
@@ -172,7 +172,7 @@ local _ids_doks  := {}
 local _ids_doks2 := {}
 local oAtrib
 
-close all
+my_close_all_dbf()
 
 _tbl_fakt  := "fakt_fakt"
 _tbl_doks  := "fakt_doks"
@@ -243,7 +243,7 @@ endif
 
 if _ok == .t.
     @ m_x + 4, m_y + 2 SAY "fakt_atributi -> server "
-    oAtrib := F18_DOK_ATRIB():new("fakt")
+    oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
     oAtrib:dok_hash["idfirma"] := id_firma
     oAtrib:dok_hash["idtipdok"] := id_tip_dok
     oAtrib:dok_hash["brdok"] := br_dok
@@ -291,7 +291,7 @@ local _fakt_totals
 local _fakt_doks_data
 local _fakt_doks2_data
 
-close all
+my_close_all_dbf()
 o_fakt_edit()
 
 Box( "#Proces azuriranja dbf-a u toku", 3, 60 )
@@ -595,7 +595,7 @@ if ( gProtu13 == "D" .and. ;
         
     if lVecPostoji
         Msg("Vec postoji dokument pod brojem "+fakt_pripr->(cPRJ+"-01-"+TRIM(brdok)+"/13"),4)
-        close all
+        my_close_all_dbf()
         return .f.
     endif
 
@@ -645,7 +645,12 @@ return _fakt_doks
 // -------------------------------------
 function o_fakt_edit( _open_pfakt )
 
-close all
+select ( F_FAKT_PRIPR )
+if used()
+    USE
+endif
+
+my_close_all_dbf()
 
 if _open_pfakt == NIL
   _open_pfakt := .f.
@@ -695,28 +700,6 @@ if !used()
     O_ROBA
 endif
 
-if _open_pfakt
-
-    // otvori fakt_fakt pod fakt_pripr aliasom
-    select F_FAKT
-    if !used()
-        O_PFAKT
-    endif
-
-else
-
-    select F_FAKT_PRIPR
-    if !used()
-        O_FAKT_PRIPR
-    endif
-
-    select F_FAKT
-    if !used()
-        O_FAKT
-    endif
-
-endif
-
 select F_FTXT
 if !used()
     O_FTXT
@@ -757,11 +740,34 @@ if !used()
     O_SIFV
 endif
 
+if _open_pfakt == .t.
+
+    // otvori fakt_fakt pod fakt_pripr aliasom
+    select F_FAKT
+    if !used()
+        O_PFAKT
+    endif
+
+else
+
+    select F_FAKT_PRIPR
+    if !used()
+        O_FAKT_PRIPR
+    endif
+
+    select F_FAKT
+    if !used()
+        O_FAKT
+    endif
+
+endif
+
 select fakt_pripr
 set order to tag "1"
 go top
 
 return nil
+
 
 
 
@@ -817,6 +823,7 @@ local nRecNo
 
 select fakt_pripr
 go top
+my_flock()
 do while !eof()
     skip 1
     nRecNo := RecNo()
@@ -826,8 +833,9 @@ do while !eof()
     endif
     go (nRecNo)
 enddo
-            
-__dbpack()
+my_unlock()
+
+my_dbf_pack()            
             
 return
 
@@ -884,7 +892,7 @@ function prip_brisi_duple()
 local cSeek
 select fakt_pripr
 go top
-
+my_flock()
 do while !EOF()
     cSeek := fakt_pripr->(idfirma + idtipdok + brdok)
     
@@ -897,7 +905,7 @@ do while !EOF()
     select fakt_pripr
     skip
 enddo
-
+my_unlock()
 return 0
 
 
@@ -1003,7 +1011,7 @@ if !(ImaPravoPristupa(goModul:oDataBase:cName,"DOK","BRISANJE" ))
     return DE_CONT
 endif
 
-if Pitanje("FAKT_BRISI_PRIPR", "Zelite li izbrisati pripremu !!????","N")=="D"
+if Pitanje(, "Želite li izbrisati pripremu !!????","N") == "D"
  
     select fakt_pripr
     go top
@@ -1012,7 +1020,7 @@ if Pitanje("FAKT_BRISI_PRIPR", "Zelite li izbrisati pripremu !!????","N")=="D"
     _tip_dok := IdTipDok
     _br_dok := BrDok
     
-    oAtrib := F18_DOK_ATRIB():new("fakt")
+    oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
     oAtrib:dok_hash["idfirma"] := _id_firma
     oAtrib:dok_hash["idtipdok"] := _tip_dok
     oAtrib:dok_hash["brdok"] := _br_dok
@@ -1032,7 +1040,7 @@ if Pitanje("FAKT_BRISI_PRIPR", "Zelite li izbrisati pripremu !!????","N")=="D"
     else
         
         // ponisti pripremu...
-        zapp()
+        my_dbf_zap()
         // ponisti i atribut        // ponisti i atributee
         oAtrib:zapp_local_table() 
         

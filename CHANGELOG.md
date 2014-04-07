@@ -1,3 +1,107 @@
+1.7.25  2014-04-07, vsasa
+
+  - dosta tabela pripreme prebačeno na my_use()
+  - VIRM, štampa virmana - korekcija lock required
+ 
+1.7.24  2014-04-07, vsasa
+
+  - bug report na email
+  - PrikK1K4() ispravka funkcije, prikaz radne jedinice na uslovima izvještaja 
+ 
+1.7.23  2014-04-04, vsasa
+
+  - lock required i workarea not in use greške - bugfix 
+  - CLOSE ALL => my_close_all_dbf()
+ 
+1.7.22  2014-04-03, vsasa
+
+  - ePDV, greške kod štampe dokumenata i manipulacija tabelam pripreme
+  - indexi i otvaranja tabela PKONTO, VALUTE, OPS, LOKAL, itd... bugfix 
+ 
+1.7.21  2014-04-01, vsasa
+
+  - VIRM, generisani virmani imaju redni broj 0
+  - atrib_server_to_dbf() korekcija
+  - RNAL, tabela dodatnih operacija iskočila iz glavne forme
+  - RNAL, odabir elementa artikla menu problem
+  - FIN, bruto bilans PTXT print - bugfix 
+ 
+1.7.20  2014-03-31, vsasa
+
+  - FIN, otvaranje tabele KONTO i korekcija funkcije p_kontofin()
+  - KALK, povrat dokumenta u pripremu - bugfix 
+ 
+1.7.14  2014-03-31, vsasa
+
+  - TARIFA, use_sql_tarifa() funkcija, bugfix sa NIL poljima tabele tarifa
+ 
+1.7.13  2014-03-28, vsasa
+
+  - VIRM, update šifranika LDVIRM, problem dužine polja rješen
+ 
+1.7.12  2014-03-27, vsasa
+
+  - FAKT, štampa dokumenta iz pripreme puca kod otvaranja tabele - bugfix 
+  - ostalo, mnoštvo problema sa otvarnjem indeksa nakon otvaranja tabale - bugfix
+  - DBF verzija 0.9.4
+
+1.7.11  2014-03-25, hernad
+
+  - PERFORMANCE: SQLRDD nasa slova za 16-tak tabela #32846, DEBUG #32854
+
+1.7.10  2014-03-25, hernad
+
+  - DEBUG PARTN/SIFV #32839
+
+1.7.9   2014-03-25, hernad
+
+  - DEBUG sifk/edkolona = NIL
+
+1.7.8   2014-03-25, hernad
+
+  - DEBUG my_use full sync, PERFORMANCE: izbaceno iz my_use F18_DB_LOCK
+
+1.7.7   2014-03-22, hernad
+
+  - DEBUG RDDSQL nasa slova #32809
+
+1.7.6   2014-03-21, hernad
+
+  - DEBUG novi harbour 32/hbpgsql uzrokovali bug na semaforima
+ 
+1.7.5   2014-03-21, vsasa
+
+  - FIN, bruto bilans SQL, korekcije
+
+1.7.4   2014-03-19, hernad
+
+  - DEBUG/NEW blinkanje off, dbf_rec[ chk0 ], refresh_me se poziva iz my_use
+  - REFACTOR hbformat na par prg-ova
+
+1.7.2   2014-03-18, vsasa
+
+  - backport fin bruto bilans izvještaja iz no-dbf branča (#32713) 
+
+1.7.1   2014-03-17, hernad
+
+  - SQLRDD/SDDPG #32746, #32745 (use_sql_sif: tnal, tdok)
+
+1.4.292 2014-03-14, vsasa
+ 
+  - Fiskalne funkcije, provjera količine i cijene prije slanja fiskalnog računa na fiskalni uređaj - bugfix #32714 
+ 
+1.4.291 2014-03-14, vsasa
+ 
+  - RNAL, refaktor validacije na unosu naloga, #32624
+ 
+1.4.290 2014-03-12, vsasa
+ 
+  - RNAL, ispis repromaterijala po stavkama na nalogu za proizvodnju #32627
+  - FAKT, kod štampe narudžbenice i reversa ODT bez cijena
+  - RNAL, unos nepravilnog oblika stakla samo sa osnovnim dimenzijama #32624
+  - KADEV, ispravka matičnog broja uposlenika #32684
+  - KADEV, snimanje promjena - bug fix #32684
+ 
 1.4.289 2014-03-05, vsasa
  
   - FAKT, pogrešna referenca na tabelu kod štampe dokumenta

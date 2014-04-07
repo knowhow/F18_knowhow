@@ -1545,7 +1545,7 @@ Box(, 15, 60 )
 	
 Boxc()
 
-close all
+my_close_all_dbf()
 return
 
 

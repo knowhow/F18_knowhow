@@ -78,9 +78,8 @@ if !used()
 endif
 
 SELECT F_TRFP
-if !used()
-    O_TRFP
-endif
+USE
+O_TRFP
 
 SELECT F_KONCIJ
 if !used()
@@ -480,6 +479,7 @@ do while !EOF()
                 fExist := .f.
                 seek finmat->IdFirma+cidvn+cBrNalF
             
+                my_flock()
                 if found()
                     fExist:=.f.
                     do while !EOF() .and. finmat->idfirma+cidvn+cBrNalF==IdFirma+idvn+BrNal
@@ -558,7 +558,7 @@ do while !EOF()
                 if !fExist
                     replace Rbr  with str(nRbr,4)
                 endif
-
+                my_unlock()
             endif // nIz <>0
 
             select trfp
@@ -667,6 +667,7 @@ if lAFin .or. lAFin2
     select fin_pripr
     go top
     seek finmat->idfirma+cIdVN+cBrNalF
+    my_flock()
     if found()
         do while !eof() .and. IDFIRMA+IDVN+BRNAL==finmat->idfirma+cIdVN+cBrNalF
             cPom:=right(opis,1)
@@ -686,13 +687,14 @@ if lAFin .or. lAFin2
             skip
         enddo 
     endif
+    my_unlock()
 endif 
 
 MsgC()
 
 // ako je vise kalkulacija ne zatvaraj tabele
 if !lViseKalk
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -1105,7 +1107,7 @@ do while .t.
     endif
 
     select finmat
-    zapp()
+    my_dbf_zap()
 
     select KALK_PRIPR
     // idfirma+ idvd + brdok+rbr
@@ -1554,7 +1556,7 @@ do while .t.
         cBrdok := brdok
 
         if !lViseKalk
-            close all
+            my_close_all_dbf()
         endif
 
         // kontiranje dokumenta...
@@ -1580,7 +1582,7 @@ if fStara .and. !lViseKalk
 endif
 
 if !lViseKalk
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -1645,7 +1647,7 @@ BoxC()
 dDatMax := dDatDo
 
 if LASTKEY() == K_ESC
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -1683,7 +1685,7 @@ do while !eof()
 enddo
 
 MsgBeep("Obradjeno " + STR(nCount, 7, 0) + " dokumenata")
-close all
+my_close_all_dbf()
 RETURN
 
 

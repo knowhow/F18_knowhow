@@ -113,11 +113,12 @@ if lJFill
 	return
 endif
 
+my_close_all_dbf()
+
 if cIdTipDok $ "13#23"
 	// stampa 13-ke
 	omp_print()
 else
-
   if cIdTipDok == "11" .and. gMPPrint $ "DXT"
 	
 	if gMPPrint == "D" .or. ( gMpPrint == "X" .and. Pitanje(,"Stampati na traku (D/N)?","D") == "D" ) .or. gMPPrint == "T"
@@ -696,9 +697,9 @@ endcase
 
 
 // dodaj total u DRN
-add_drn(dok["brdok"], dok["datdok"], dDatVal, dDatIsp, cTime, nUkBPDV, nUkVPop, nUkBPDVPop, nUkPDV, nTotal, nCSum, nUkPopNaTeretProdavca, nDrnZaokr, nUkKol)
+add_drn( dok["brdok"], dok["datdok"], dDatVal, dDatIsp, cTime, nUkBPDV, nUkVPop, nUkBPDVPop, nUkPDV, nTotal, nCSum, nUkPopNaTeretProdavca, nDrnZaokr, nUkKol)
 
-if ROUND( nUkPDV, 2 ) == 0
+if ( dok["idtipdok"] $ "10#11" ) .and. ROUND( nUkPDV, 2 ) == 0
     if Pitanje(, "Faktura je bez iznosa PDV-a! Da li je to uredu (D/N)", "D" ) == "N"
         return .f.
     endif

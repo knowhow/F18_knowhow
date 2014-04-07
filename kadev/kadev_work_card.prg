@@ -201,7 +201,7 @@ select kdv_rjrmj; set order to tag "ID"
  end print
 
 
-close all
+my_close_all_dbf()
 
 return
 

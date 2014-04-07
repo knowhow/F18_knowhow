@@ -226,7 +226,7 @@ return
 
 method closeDb
 
-CLOSE ALL
+my_close_all_dbf()
 return
 *}
 
@@ -392,7 +392,7 @@ CREATE_INDEX("idTarifa", "idTarifa+idRoba", cTbl, .f.)
 CREATE_INDEX("jmj", "jmj+idRoba+idTarifa", cTbl, .f.)
 CREATE_INDEX("idPartner", "idPartner+idroba+idTarifa", cTbl, .f.)
 
-CLOSE ALL
+my_close_all_dbf()
 
 O_RPT_TMP
 SET ORDER TO TAG "idRoba"

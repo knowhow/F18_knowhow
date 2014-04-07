@@ -160,26 +160,16 @@ endif
 
 select fakt_pripr9
 seek cIdF+cIdTipDok+cBrDok
-
+my_flock()
 do while !eof() .and. cIdF==IdFirma .and. cIdTipDok==Idtipdok .and. cBrDok==BrDok
 	skip 1
 	nRec:=RecNo()
 	skip -1
-   	dbdelete2()
+   	DELETE
    	go nRec
 enddo
-
-nTArea := SELECT()
-
-if Logirati(goModul:oDataBase:cName,"DOK","SMECE")
-	cOpis := "dokument: " + cIdF + "-" + cIdTipDok + "-" + cBrDok
-	EventLog(nUser, goModul:oDataBase:cName, "DOK", "SMECE", ;
-		nil, nil, nil, nil, ;
-		"","", cOpis, DATE(), DATE(), "", ;
-		"Brisanje dokumenta iz tabele smeca")
-endif
-
-select (nTArea)
+my_unlock()
+my_dbf_pack()
 
 return
 
@@ -194,7 +184,7 @@ endif
 
 select fakt_pripr9
 go top
-zapp()
+my_dbf_zap()
 
 nTArea := SELECT()
 
@@ -263,6 +253,8 @@ do while !EOF()
 	if lFound == .t.
 		
 		go (nRecNO)
+
+        my_flock()
 		// zamjeni brdok sa 00001-1
 		do while !EOF() .and. idfirma == cIdFirma ;
 				.and. idtipdok == cIdTipDok ;
@@ -271,6 +263,7 @@ do while !EOF()
 			replace brdok with PADR(brdok, 5)+"-"+ALLTRIM(STR(nCount)) 
 			skip
 		enddo
+        my_unlock()
 
 		go (nRecNo)
 
@@ -295,21 +288,10 @@ do while !EOF()
 enddo
 
 select fakt_pripr
-zapp()
-
-nTArea := SELECT()
-if Logirati(goModul:oDataBase:cName,"DOK","SMECE")
-	cOpis := "dokument: "+ cIdFirma + "-" + cIdTipDok + "-" + cBrDok
-	EventLog(nUser, goModul:oDataBase:cName, "DOK", "SMECE", ;
-		nil, nil, nil, nil, ;
-		"","", cOpis, DATE(), DATE(), "", ;
-		"Prebacivanje dokumenta iz pripreme u smece")
-endif
-
-select (nTArea)
+my_dbf_zap()
 
 if lSilent == .f.
-	closeret
+	my_close_all_dbf()
 endif
 
 return
@@ -354,7 +336,8 @@ endif
 if Pitanje("","Iz smeca "+cIdFirma+"-"+cIdtipdok+"-"+ALLTRIM(cBrDok)+" povuci u pripremu (D/N) ?","D")=="N"
 	
 	if !lSilent
-		CLOSERET
+		my_close_all_dbf()
+		return
 	else
 		return
 	endif
@@ -366,6 +349,7 @@ select fakt_pripr9
 hseek cIdFirma+cIdtipdok+cBrDok
 
 MsgO("PRIPREMA")
+
 do while !eof() .and. cIdFirma==IdFirma .and. cIdtipdok==Idtipdok .and. cBrDok==BrDok
    select fakt_pripr9
    Scatter()
@@ -379,31 +363,23 @@ enddo
 
 select fakt_pripr9
 seek cIdFirma+cIdTipDok+cBrDok
+my_flock()
 do while !eof() .and. cIdFirma==IdFirma .and. cIdtipdok==Idtipdok .and. cBrDok==BrDok
    skip 1
    nRec:=recno()
    skip -1
-   dbdelete2()
+   DELETE
    go nRec
 enddo
+my_unlock()
 
 use
 
 MsgC()
 
-nTArea := SELECT()
-if Logirati(goModul:oDataBase:cName,"DOK","SMECE")
-	cOpis := "dokument: " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok
-	EventLog(nUser, goModul:oDataBase:cName, "DOK", "SMECE", ;
-		nil, nil, nil, nil, ;
-		"","", cOpis, DATE(), DATE(), "", ;
-		"Prebacivanje dokumenta smeca u pripremu")
-endif
-
-select (nTArea)
-
 if !lSilent
-	closeret
+	my_close_all_dbf()
+	return
 endif
 
 O_FAKT_PRIPR9

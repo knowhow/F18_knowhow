@@ -141,7 +141,7 @@ if lSilent == .f. .and. !SigmaSIF("GENPLU")
 	return .f.
 endif
 
-if lSilent == .f. .and. Pitanje(,"Resetovati postojece PLU", "N") == "D"
+if lSilent == .f. .and. Pitanje(,"Resetovati postojeće PLU", "N") == "D"
 	lReset := .t.
 endif
 
@@ -257,7 +257,7 @@ endif
 
 if reset_plu = .t. .and. !silent_mode
 	if !SigmaSif("RESET")
-		msgbeep("Unesena pogresna sifra !")
+		msgbeep("Unesena pogrešna šifra !")
 		select (_t_area)
 		return _plu
 	endif
@@ -267,7 +267,7 @@ endif
 set_metric( _param_name, nil, _plu )
 
 if reset_plu = .t. .and. !silent_mode
-	MsgBeep( "Setovan pocetni PLU na: " + ALLTRIM( STR( _plu ) ) )
+	MsgBeep( "Setovan početni PLU na: " + ALLTRIM( STR( _plu ) ) )
 endif
 
 select ( _t_area )
@@ -346,7 +346,7 @@ do case
 
     otherwise
 
-        MsgBeep( "Greska sa tarifom !!!" )
+        MsgBeep( "Greška sa tarifom !!!" )
 
 endcase
 
@@ -461,12 +461,12 @@ next
 
 if _fix > 0 .and. level > 1
 
-	msgbeep("Pojedini artikli na racunu su prepakovani na 100 kom !")
+	msgbeep( "Pojedini artikli na računu su prepakovani na 100 kom !" )
 
 elseif _fix > 0 .and. level == 1
 	
 	_ret := -99
-	msgbeep("Pojedinim artiklima je kolicina/cijena van dozvoljenog ranga#Prekidam operaciju !!!!")
+	msgbeep( "Pojedinim artiklima je količina/cijena van dozvoljenog ranga#Prekidam operaciju !!!!" )
 
 	if storno
 		// ako je rijec o storno dokumentu, prikazi poruku
@@ -517,35 +517,37 @@ return
 // provjerava da li zadovoljava kolicina
 // -------------------------------------------------
 function _chk_qtty( rn_qtty )
-local _ret := .t.
-
-// ispitivanje vrijednosti
-if rn_qtty > __MAX_QT .or. rn_qtty < __MIN_QT
-	_ret := .f.
-    return _ret
-endif
-
-// ispitivanje decimala
-// fiskalni uredjaj dozvoljava unos na 3 decimale
-if ABS( rn_qtty ) - ABS( VAL( STR( rn_qtty, 12, 3 ) ) ) <> 0
-    _ret := .f.
-    return _ret
-endif
-
-return _ret
+return _validate( rn_qtty, __MIN_QT, __MAX_QT, 3 )
 
 
 // -------------------------------------------------
 // provjerava da li zadovoljava cijena
 // -------------------------------------------------
-function _chk_price( nPrice )
-local lRet := .t.
+function _chk_price( price )
+return _validate( price, __MIN_PRICE, __MAX_PRICE, 2 )
 
-if nPrice > __MAX_PRICE .or. nPrice < __MIN_PRICE
-	lRet := .f.
+
+// --------------------------------------------------------------------
+// validator iznosa prema omjeru i prema decimalnom separatoru
+// --------------------------------------------------------------------
+static function _validate( value, min_value, max_value, dec )
+local _ok := .f.
+
+// validator min/max vrijednosti
+if value > max_value .or. value < min_value
+    return _ok
 endif
 
-return lRet
+// validator decimalnog mjesta
+// fiskalni uredjaj dozvoljava unos na 3 decimale
+if dec <> NIL .and. ( ABS( value ) - ABS( VAL( STR( value, 12, dec ) ) ) <> 0 )
+    return _ok
+endif
+
+// sve je ok
+_ok := .t.
+
+return _ok
 
 
 // -------------------------------------------------
@@ -592,12 +594,12 @@ endif
 
 if DTOC( DATE() ) + ALLTRIM( TIME() ) > DTOC( _z_date ) + ALLTRIM( _z_time ) 
 
-    MsgBeep( "Zadnji dnevni izvjestaj radjen " + DTOC( _z_date ) + " u " + _z_time + "#" + ;
-            "Potrebno napraviti dnevni izvjestaj#" + ;
-            "prije izdavanja novih racuna !" )
+    MsgBeep( "Zadnji dnevni izvještaj rađen " + DTOC( _z_date ) + " u " + _z_time + "#" + ;
+            "Potrebno napraviti dnevni izvještaj#" + ;
+            "prije izdavanja novih računa !" )
 
     if cre_rpt
-        if Pitanje(, "Napraviti dnevni izvjestaj (D/N) ?", "N" ) == "D"
+        if Pitanje(, "Napraviti dnevni izvještaj (D/N) ?", "N" ) == "D"
             // pokrenuti proceduru kreiranja fiskalnog izvjestaja...
         endif
     endif

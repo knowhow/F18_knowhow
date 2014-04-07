@@ -25,16 +25,16 @@ local _params := fakt_params()
 
 ImeKol:={}
 
-AADD(ImeKol,{ " ", {|| g_fiscal_info( fisc_rn, fisc_st )} })
-AADD(ImeKol,{ "RJ",          {|| idfirma}  })
-AADD(ImeKol,{ "VD",          {|| idtipdok} })
-AADD(ImeKol,{ "Brdok",       {|| brdok+rezerv} })
-AADD(ImeKol,{ "VP",          {|| idvrstep } })
-AADD(ImeKol,{ "Datum",       {|| Datdok } })
-AADD(ImeKol,{ "Partner",     {|| PADR(partner, 45) } })
-AADD(ImeKol,{ "Ukupno-Rab ", {|| iznos} })
-AADD(ImeKol,{ "Rabat",       {|| rabat} })
-AADD(ImeKol,{ "Ukupno",      {|| iznos+rabat} })
+AADD(ImeKol,{ " ",            {|| g_fiscal_info( fisc_rn, fisc_st )} })
+AADD(ImeKol,{ "RJ",           {|| idfirma}  })
+AADD(ImeKol,{ "VD",           {|| idtipdok} })
+AADD(ImeKol,{ "Brdok",        {|| brdok+rezerv} })
+AADD(ImeKol,{ "VP",           {|| idvrstep } })
+AADD(ImeKol,{ "Datum",        {|| Datdok } })
+AADD(ImeKol,{ "Partner"    ,  {|| PADR(partner, 45) } })
+AADD(ImeKol,{ "Ukupno"     ,  {|| iznos+rabat} })
+AADD(ImeKol,{ "Rabat"      ,  {|| rabat} })
+AADD(ImeKol,{ "Ukupno-Rab ",  {|| iznos} })
 
 if lVrsteP
     AADD(ImeKol,{ "Nacin placanja", {|| idvrstep} })
@@ -42,14 +42,14 @@ endif
 
 // datum otpremnice datum valute
 AADD(ImeKol,{ "Datum placanja", {|| datpl} })
-AADD(ImeKol,{ "Dat.otpr", {|| dat_otpr} })
-AADD(ImeKol,{ "Dat.val.", {|| dat_val} })
+AADD(ImeKol,{ "Dat.otpr",       {|| dat_otpr} })
+AADD(ImeKol,{ "Dat.val.",       {|| dat_val} })
 
-AADD(ImeKol,{ "Fisk.rn", {|| PADR( sh_fiscal_rn( fisc_rn, fisc_st ), 20 ) } })
-AADD(ImeKol,{ "Fisk.vr", {|| PADR( DTOC( fisc_date ) + " " + ALLTRIM( fisc_time ), 20 ) } })
+AADD(ImeKol,{ "Fisk.rn",        {|| PADR( sh_fiscal_rn( fisc_rn, fisc_st ), 20 ) } })
+AADD(ImeKol,{ "Fisk.vr",        {|| PADR( DTOC( fisc_date ) + " " + ALLTRIM( fisc_time ), 20 ) } })
 
 // prikaz operatera
-AADD(ImeKol,{ "Operater", {|| GetUserName( oper_id ) } })
+AADD(ImeKol,{ "Operater",       {|| GetUserName( oper_id ) } })
 
 // veza sa dokumentima
 if _params["fakt_dok_veze"]
@@ -117,11 +117,11 @@ ObjDbedit("", _x-3, _y, {|| fakt_tabela_komande (lOpcine, cFilter) }, "", "", , 
 BoxC()
 
 if fUpripremu
-    close all
+    my_close_all_dbf()
     fakt_unos_dokumenta()
 endif
 
-close all
+my_close_all_dbf()
 return
 
 

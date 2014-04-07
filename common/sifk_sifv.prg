@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,181 +14,182 @@
 // ----------------------------------------------------------
 // kopiranje vrijednosti nekog polja u neko SIFK polje
 // ----------------------------------------------------------
-function copy_to_sifk()
+FUNCTION copy_to_sifk()
 
-local cTable := ALIAS()
-local cFldFrom := SPACE(8)
-local cFldTo := SPACE(4)
-local cEraseFld := "D"
-local cRepl := "D"
-local nTekX 
-local nTekY
+   LOCAL cTable := Alias()
+   LOCAL cFldFrom := Space( 8 )
+   LOCAL cFldTo := Space( 4 )
+   LOCAL cEraseFld := "D"
+   LOCAL cRepl := "D"
+   LOCAL nTekX
+   LOCAL nTekY
 
-Box(, 6, 65, .f.)
+   Box(, 6, 65, .F. )
 	
-	private GetList:={}
-	set cursor on
+   PRIVATE GetList := {}
+   SET CURSOR ON
 	
-	nTekX := m_x
-	nTekY := m_y
+   nTekX := m_x
+   nTekY := m_y
 	
-	@ m_x+1, m_y+2 SAY PADL("Polje iz kojeg kopiramo (polje 1)", 40) GET cFldFrom VALID !EMPTY(cFldFrom) .and. val_fld(cFldFrom)
-	@ m_x+2, m_y+2 SAY PADL("SifK polje u koje kopiramo (polje 2)", 40) GET cFldTo VALID g_sk_flist(@cFldTo)
+   @ m_x + 1, m_y + 2 SAY PadL( "Polje iz kojeg kopiramo (polje 1)", 40 ) GET cFldFrom VALID !Empty( cFldFrom ) .AND. val_fld( cFldFrom )
+   @ m_x + 2, m_y + 2 SAY PadL( "SifK polje u koje kopiramo (polje 2)", 40 ) GET cFldTo VALID g_sk_flist( @cFldTo )
 	
-	@ m_x+4, m_y+2 SAY "Brisati vrijednost (polje 1) nakon kopiranja ?" GET cEraseFld VALID cEraseFld $ "DN" PICT "@!"
+   @ m_x + 4, m_y + 2 SAY "Brisati vrijednost (polje 1) nakon kopiranja ?" GET cEraseFld VALID cEraseFld $ "DN" PICT "@!"
 	
-	@ m_x+6, m_y+2 SAY "*** izvrsiti zamjenu ?" GET cRepl VALID cRepl $ "DN" PICT "@!"
-	read
- 
-BoxC()
+   @ m_x + 6, m_y + 2 SAY "*** izvrsiti zamjenu ?" GET cRepl VALID cRepl $ "DN" PICT "@!"
+   READ
 
-if cRepl == "N"
-	return 0
-endif
+   BoxC()
 
-if LastKey()==K_ESC
-	return 0
-endif
+   IF cRepl == "N"
+      RETURN 0
+   ENDIF
 
-nTRec := RecNo()
-go top
+   IF LastKey() == K_ESC
+      RETURN 0
+   ENDIF
 
-do while !EOF()
+   nTRec := RecNo()
+   GO TOP
+
+   DO WHILE !Eof()
 	
-	skip
-	nRec := RECNO()
-	skip -1
+      SKIP
+      nRec := RecNo()
+      SKIP -1
 	
-	cCpVal := (ALIAS())->&cFldFrom
-	if !EMPTY( cCpval)
-		USifK( ALIAS(), cFldTo, (ALIAS())->id, cCpVal)
-	endif
+      cCpVal := ( Alias() )->&cFldFrom
+      IF !Empty( cCpval )
+         USifK( Alias(), cFldTo, ( Alias() )->id, cCpVal )
+      ENDIF
 	
-	if cEraseFld == "D"
-		replace (ALIAS())->&cFldFrom with ""
-	endif
+      IF cEraseFld == "D"
+         REPLACE ( Alias() )->&cFldFrom WITH ""
+      ENDIF
 	
-	go (nRec)
-enddo
+      GO ( nRec )
+   ENDDO
 
-go (nTRec)
+   GO ( nTRec )
 
-return 0
+   RETURN 0
 
 
 // --------------------------------------------------
 // zamjena vrijednosti sifk polja
 // --------------------------------------------------
-function repl_sifk_item()
+FUNCTION repl_sifk_item()
 
-local cTable := ALIAS()
-local cField := SPACE(4)
-local cOldVal
-local cNewVal
-local cCurrVal
-local cPtnField
+   LOCAL cTable := Alias()
+   LOCAL cField := Space( 4 )
+   LOCAL cOldVal
+   LOCAL cNewVal
+   LOCAL cCurrVal
+   LOCAL cPtnField
 
-Box(, 3, 60, .f.)
-	private GetList:={}
-	set cursor on
+   Box(, 3, 60, .F. )
+   PRIVATE GetList := {}
+   SET CURSOR ON
 	
-	nTekX := m_x
-	nTekY := m_y
+   nTekX := m_x
+   nTekY := m_y
 	
-	@ m_x+1,m_y+2 SAY " SifK polje:" GET cField VALID g_sk_flist(@cField)
-	read
+   @ m_x + 1, m_y + 2 SAY " SifK polje:" GET cField VALID g_sk_flist( @cField )
+   READ
 	
-	cCurrVal:= "wSifk_" + cField
-	&cCurrVal:= IzSifk(ALIAS(), cField)
-	cOldVal := &cCurrVal
-	cNewVal := SPACE(LEN(cOldVal))
+   cCurrVal := "wSifk_" + cField
+   &cCurrVal := IzSifk( Alias(), cField )
+   cOldVal := &cCurrVal
+   cNewVal := Space( Len( cOldVal ) )
 	
-	m_x := nTekX
-	m_y := nTekY
+   m_x := nTekX
+   m_y := nTekY
 	
-	@ m_x + 2, m_y + 2 SAY hb_Utf8ToStr("      Traži:") GET cOldVal
-    @ m_x + 3, m_y + 2 SAY              "Zamijeni sa:" GET cNewVal
+   @ m_x + 2, m_y + 2 SAY8 "      Traži:"  GET cOldVal
+   @ m_x + 3, m_y + 2 SAY8 "Zamijeni sa:" GET cNewVal
 	
-    read 
-BoxC()
+   READ
+   BoxC()
 
-if LastKey()==K_ESC
-	return 0
-endif
+   IF LastKey() == K_ESC
+      RETURN 0
+   ENDIF
 
-if Pitanje( , "Izvrsiti zamjenu polja? (D/N)", "D") == "N"
-	return 0
-endif
+   IF Pitanje( , "Izvršiti zamjenu polja? (D/N)", "D" ) == "N"
+      RETURN 0
+   ENDIF
 
-nTRec := RecNo()
+   nTRec := RecNo()
 
-do while !EOF()
-	&cCurrVal := IzSifK(ALIAS(), cField)
-	if &cCurrVal == cOldVal
-		USifK(ALIAS(), cField, (ALIAS())->id, cNewVal)
-	endif
-	skip
-enddo
+   DO WHILE !Eof()
+      &cCurrVal := IzSifK( Alias(), cField )
+      if &cCurrVal == cOldVal
+         USifK( Alias(), cField, ( Alias() )->id, cNewVal )
+      ENDIF
+      SKIP
+   ENDDO
 
-go (nTRec)
+   GO ( nTRec )
 
-return 0
+   RETURN 0
 
 
 
-function g_sk_flist(cField)
+FUNCTION g_sk_flist( cField )
 
-local aFields:={}
-local cCurrAlias := ALIAS()
-local nArr
-local nField
+   LOCAL aFields := {}
+   LOCAL cCurrAlias := Alias()
+   LOCAL nArr
+   LOCAL nField
 
-nArr := SELECT()
+   nArr := Select()
 
-select sifk
-set order to tag "ID"
-cCurrAlias := PADR(cCurrAlias,8)
-seek cCurrAlias
+   SELECT sifk
+   SET ORDER TO TAG "ID"
+   cCurrAlias := PadR( cCurrAlias, 8 )
+   SEEK cCurrAlias
 
-do while !EOF() .and. field->id == cCurrAlias
-	AADD(aFields, {field->oznaka, field->naz})
-	skip
-enddo
+   DO WHILE !Eof() .AND. field->id == cCurrAlias
+      AAdd( aFields, { field->oznaka, field->naz } )
+      SKIP
+   ENDDO
 
-select (nArr)
+   SELECT ( nArr )
 
-if !EMPTY(cField) .and. ASCAN(aFields, {|xVal| xVal[1] == cField}) > 0
-	return .t.
-endif
+   IF !Empty( cField ) .AND. AScan( aFields, {| xVal| xVal[ 1 ] == cField } ) > 0
+      RETURN .T.
+   ENDIF
 
-if LEN(aFields) > 0
-	private Izbor:=1
-	private opc:={}
-	private opcexe:={}
-	private GetList:={}
+   IF Len( aFields ) > 0
+      PRIVATE Izbor := 1
+      PRIVATE opc := {}
+      PRIVATE opcexe := {}
+      PRIVATE GetList := {}
 	
-	for i:=1 to LEN(aFields)
-		AADD(opc, PADR(aFields[i, 1] + " - " + aFields[i, 2], 40))
-		AADD(opcexe, {|| nField := Izbor, Izbor:=0})
-	next
+      FOR i := 1 TO Len( aFields )
+         AAdd( opc, PadR( aFields[ i, 1 ] + " - " + aFields[ i, 2 ], 40 ) )
+         AAdd( opcexe, {|| nField := Izbor, Izbor := 0 } )
+      NEXT
 	
-	Izbor:=1
-	Menu_SC("skf")
-endif
+      Izbor := 1
+      Menu_SC( "skf" )
+   ENDIF
 
-cField := aFields[nField, 1]
+   cField := aFields[ nField, 1 ]
 
-return .t.
+   RETURN .T.
 
 
-function IzSifk( dbf_name, ozna, id_sif, return_nil )
-local _tmp
+FUNCTION IzSifk( dbf_name, ozna, id_sif, return_nil )
 
-PushWa()
-_tmp := get_sifk_value( dbf_name, ozna, id_sif, return_nil )
-PopWa()
+   LOCAL _tmp
 
-return _tmp
+   PushWa()
+   _tmp := get_sifk_value( dbf_name, ozna, id_sif, return_nil )
+   PopWa()
+
+   RETURN _tmp
 
 // -----------------------------------------------------------
 // get_karakter_value
@@ -196,389 +197,407 @@ return _tmp
 // param dbf_name ime DBF-a
 // param oznaka oznaka BARK , GR1 itd
 // param id_sif       sifra u sifrarniku, npr  000000232  ,
-//                    ili "00000232,XXX1233233" pri pretrazivanju
-// param return_nil   NIL - vrati nil za nedefinisanu vrijednost,
-//                    .f. - vrati "" za nedefinisanu vrijednost
-// -----------------------------------------------------------
-function get_sifk_value (dbf_name, ozna, id_sif, return_nil)
-local _ret := ""
-local _sifk_tip, _sifk_duzina, _sifk_veza
+// ili "00000232,XXX1233233" pri pretrazivanju
 
-SELECT F_SIFK
-if !used()
-   O_SIFK
-endif
+/*
+  get_sifk_value( "PARTN", "BANK", "K01", NIL )
 
-SELECT F_SIFV
-if !used()
-  O_SIFV
-endif
+  => "0123456789012345,0123456789012349"
+  => NIL - ne postoji SIFK PARTN/BANK
+  => PADR("", 190) ako postoji SIFV ili je prazan zapis
+ 
 
-// ID default polje
-if id_sif == NIL
-  id_sif := (dbf_name)->ID
-endif
+  - return_nil  = NIL => NIL - NIL za nedefinisanu vrijednost,
+                  .T. => ""  - "" za nedefinisanu vrijednost
+*/
 
-dbf_name := PADR(dbf_name, SIFK_LEN_DBF )
-ozna     := PADR(ozna, SIFK_LEN_OZNAKA )
-id_sif   := PADR(id_sif, SIFK_LEN_IDSIF)
+FUNCTION get_sifk_value ( dbf_name, ozna, id_sif, return_nil )
 
-SELECT sifk
-SET ORDER TO TAG "ID2"
-SEEK dbf_name + ozna
+   LOCAL _ret := ""
+   LOCAL _sifk_tip, _sifk_duzina, _sifk_veza
 
-_ret := NIL
+   // ID default polje
+   IF id_sif == NIL
+      id_sif := ( dbf_name )->ID
+   ENDIF
 
-if !FOUND()
-   // uopste ne postoji takva karakteristika
-   if return_nil <> NIL
-        _ret := get_sifv_value("X", "")
-    else
-        _ret := NIL
-    endif
-    return _ret
-endif
+   dbf_name := PadR( dbf_name, SIFK_LEN_DBF )
+   ozna     := PadR( ozna, SIFK_LEN_OZNAKA )
+   id_sif   := PadR( id_sif, SIFK_LEN_IDSIF )
 
-_sifk_duzina := sifk->duzina
-_sifk_tip    := sifk->tip
-_sifk_veza   := sifk->veza
 
-SELECT sifv
-SET ORDER TO TAG "ID"
-DBSEEK(dbf_name + ozna + id_sif, .t.)
+   use_sql_sifk( dbf_name, ozna ) 
+   _ret := NIL
 
-if !FOUND()
-   _ret := get_sifv_value(_sifk_tip, _sifk_duzina, "")
-   if _sifk_veza == "N"
-      _ret := PADR(_ret, 190)
-   endif
-   return _ret
-endif
+   GO TOP
+   IF EOF()
+      // uopste ne postoji takva karakteristika
+      IF return_nil <> NIL
+         _ret := get_sifv_value( "X", "" )
+      ELSE
+         _ret := NIL
+      ENDIF
+      RETURN _ret
+   ENDIF
 
-_ret := get_sifv_value(_sifk_tip, _sifk_duzina, sifv->naz)
+   _sifk_duzina := sifk->duzina
+   _sifk_tip    := sifk->tip
+   _sifk_veza   := sifk->veza
 
-if _sifk_veza == "N"
-    _ret := ToStr(_ret)
-    skip
-    do while !EOF() .and.  ((id + oznaka + idsif) == (dbf_name + ozna + id_sif))
-        _ret += "," + ToStr(get_sifv_value(_sifk_tip, _sifk_duzina, sifv->naz)) 
-        skip
-    enddo
-    _ret := padr(_ret, 190)
-endif
+   SELECT F_SIFV
+   use_sql_sifv( dbf_name, ozna, id_sif )
+   GO TOP
+   IF EOF()
+      _ret := get_sifv_value( _sifk_tip, _sifk_duzina, "" )
+      IF _sifk_veza == "N"
+         _ret := PadR( _ret, 190 )
+      ENDIF
+      RETURN _ret
+   ENDIF
 
-return _ret
+   _ret := get_sifv_value( _sifk_tip, _sifk_duzina, sifv->naz )
+
+   IF _sifk_veza == "N"
+      _ret := ToStr( _ret )
+      SKIP
+      DO WHILE !Eof() .AND.  ( ( id + oznaka + idsif ) == ( dbf_name + ozna + id_sif ) )
+         _ret += "," + ToStr( get_sifv_value( _sifk_tip, _sifk_duzina, sifv->naz ) )
+         SKIP
+      ENDDO
+      _ret := PadR( _ret, 190 )
+   ENDIF
+
+   RETURN _ret
 
 // --------------------------------------
 // --------------------------------------
-static function get_sifv_value(sifk_tip, sifk_duzina, naz_value)
-local _ret
+STATIC FUNCTION get_sifv_value( sifk_tip, sifk_duzina, naz_value )
 
+   LOCAL _ret
 
-DO CASE
-  CASE sifk_tip =="C"
-      _ret := PADR(naz_value, sifk_duzina)
+   DO CASE
+   CASE sifk_tip == "C"
+      _ret := PadR( naz_value, sifk_duzina )
 
-  CASE sifk_tip =="N"
-      _ret := VAL(ALLTRIM(naz_value))
+   CASE sifk_tip == "N"
+      _ret := Val( AllTrim( naz_value ) )
 
-  CASE sifk_tip =="D"
-      _ret:= STOD(TRIM(naz_value))
-  OTHERWISE
-      _ret:= "?NEPTIP?"
+   CASE sifk_tip == "D"
+      _ret := SToD( Trim( naz_value ) )
+   OTHERWISE
+      _ret := "?NEPTIP?"
 
-END DO
+   END DO
 
-return _ret
+   RETURN _ret
 
-// -------------------------------
-// -------------------------------
-function IzSifkNaz(cDBF, cOznaka)
-local xRet:="", nArea
+/* 
 
-PushWA()
-cDBF := padr(cDBF, SIFK_LEN_DBF)
-cOznaka := padr(cOznaka, SIFK_LEN_OZNAKA)
+  IzSifkNaz( "ROBA", "GR1" ) => "Grupa 1  " 
+  IzSifkNaz( "ROBA", "XYZ" ) => "         "
 
-select sifk
-set order to tag "ID2"
-seek cDBF + cOznaka
-xRet := sifk->Naz
+*/
+FUNCTION IzSifkNaz( cDBF, cOznaka )
 
-PopWA()
-return xRet
+   LOCAL xRet := "", nArea
+
+   PushWA()
+
+   cDBF := PadR( cDBF, SIFK_LEN_DBF )
+   cOznaka := PadR( cOznaka, SIFK_LEN_OZNAKA )
+
+   SELECT F_SIFK
+   use_sql_sifk( cDBF, cOznaka )
+   xRet := field->NAZ
+
+   PopWA()
+
+   RETURN xRet
 
 // ------------------------------------------
 // ------------------------------------------
-function IzSifkWV(cDBF, cOznaka, cWhen, cValid)
+FUNCTION IzSifkWV( cDBF, cOznaka, cWhen, cValid )
 
-local xRet:=""
+   LOCAL xRet := ""
 
-PushWa()
+   PushWa()
 
-cDBF:=padr(cDBF,8)
-cOznaka:=padr(cOznaka,4)
-select sifk
-set order to tag "ID2"
-seek cDBF + cOznaka
+   cDBF := PadR( cDBF, SIFK_LEN_DBF )
+   cOznaka := PadR( cOznaka, SIFK_LEN_OZNAKA )
+   SELECT F_SIFK
+   use_sql_sifk( cDBF, cOznaka )
+   
+   cWhen  := sifk->KWHEN
+   cValid := sifk->KVALID
 
-cWhen  := sifk->KWHEN
-cValid := sifk->KVALID
+   PopWa()
 
-PopWa()
-return NIL
+   RETURN NIL
 
 // -------------------------------------------------------
 // USifk
-// Postavlja vrijednost u tabel SIFK
+// Postavlja vrijednost u tabelu SIFK
 // cDBF ime DBF-a
 // cOznaka oznaka xxxx
 // cIdSif  Id u sifrarniku npr. 2MON0001
 // xValue  vrijednost (moze biti tipa C,N,D)
 //
-//  veza: 1
-//	USifK("PARTN", "ROKP", temp->idpartner, temp->rokpl)
-//	USifK("PARTN", "PORB", temp->idpartner, temp->porbr)
+// veza: 1
+// USifK("PARTN", "ROKP", temp->idpartner, temp->rokpl)
+// USifK("PARTN", "PORB", temp->idpartner, temp->porbr)
 
-//  veza: N
-//  USifK( "PARTN", "BANK", cPartn, "1400000000001,131111111111112" )
-//  iz ovoga se vidi da je "," nedozvoljen znak u ID-u
+// veza: N
+// USifK( "PARTN", "BANK", cPartn, "1400000000001,131111111111112" )
+// iz ovoga se vidi da je "," nedozvoljen znak u ID-u
 // ------------------------------------------------------------------
 
-function USifk(dbf_name, ozna, id_sif, val, transaction )
-local _i
-local ntrec, numtok
-local _sifk_rec
-local _tran
+FUNCTION USifk( dbf_name, ozna, id_sif, val, transaction )
 
-if transaction == NIL
-  transaction := "FULL"
-endif
+   LOCAL _i
+   LOCAL ntrec, numtok
+   LOCAL _sifk_rec
+   LOCAL _tran
 
-PushWa()
+   IF transaction == NIL
+      transaction := "FULL"
+   ENDIF
 
-SELECT F_SIFV
-if !used()
-   O_SIFV
-endif
+   IF val == NIL
+      RETURN .F.
+   ENDIF
 
-SELECT F_SIFK
-if !used()
-     O_SIFK
-endif
+   PushWa()
 
-if val == NIL
-   return .f.
-endif
+   dbf_name := PadR( dbf_name, SIFK_LEN_DBF )
+   ozna     := PadR( ozna, SIFK_LEN_OZNAKA )
+   id_sif   := PadR( id_sif, SIFK_LEN_IDSIF )
 
-dbf_name := PADR(dbf_name, SIFK_LEN_DBF )
-ozna     := PADR(ozna, SIFK_LEN_OZNAKA )
+   SELECT F_SIFK
+   use_sql_sifk( dbf_name, ozna )
+   GO TOP
+   IF EOF() .OR. !( sifk->tip $ "CDN" )
+      PopWa()
+      RETURN .F.
+   ENDIF
 
+   SELECT F_SIFV
+   use_sql_sifv( dbf_name, ozna, id_sif )
 
-SELECT SIFK
-set order to tag "ID2"
-seek dbf_name + ozna
+   SELECT sifk
+   _sifk_rec := dbf_get_rec()
 
-if !FOUND() .or. !(sifk->tip $ "CDN")
-    PopWa()
-    return .f.
-endif
-
-_sifk_rec := dbf_get_rec()
-id_sif := PADR(id_sif, SIFK_LEN_IDSIF)
-
-    
-if transaction == "FULL"
-   _tran := "BEGIN"
-    sql_table_update(nil, _tran)
-endif
+   IF transaction == "FULL"
+      _tran := "BEGIN"
+      sql_table_update( nil, _tran )
+   ENDIF
 
 
-if sifk->veza == "N" 
-   if !update_sifv_n_relation(_sifk_rec, id_sif, val) 
-      return .f.
-   endif
-else
-   if !update_sifv_1_relation(_sifk_rec, id_sif, val)
-      return .f.
-   endif
-endif
- 
-if transaction == "FULL"
-   _tran := "END"
-    sql_table_update(nil, _tran)
-endif
+   IF sifk->veza == "N"
+      IF !update_sifv_n_relation( _sifk_rec, id_sif, val )
+         RETURN .F.
+      ENDIF
+   ELSE
+      IF !update_sifv_1_relation( _sifk_rec, id_sif, val )
+         RETURN .F.
+      ENDIF
+   ENDIF
 
-PopWa()
-return .t.
+   IF transaction == "FULL"
+      _tran := "END"
+      sql_table_update( nil, _tran )
+   ENDIF
+
+   PopWa()
+
+   RETURN .T.
 
 // -------------------------------------------------------------------
 // -------------------------------------------------------------------
-static function update_sifv_n_relation(sifk_rec, id_sif, vals) 
-local _i, _numtok, _tmp, _naz, _values
-local _sifv_rec
+STATIC FUNCTION update_sifv_n_relation( sifk_rec, id_sif, vals )
 
+   LOCAL _i, _numtok, _tmp, _naz, _values
+   LOCAL _sifv_rec
 
-_sifv_rec := hb_hash()           
-_sifv_rec["id"] := sifk_rec["id"]
-_sifv_rec["oznaka"] := sifk_rec["oznaka"]
-_sifv_rec["idsif"] := id_sif
+   _sifv_rec := hb_Hash()
+   _sifv_rec[ "id" ] := sifk_rec[ "id" ]
+   _sifv_rec[ "oznaka" ] := sifk_rec[ "oznaka" ]
+   _sifv_rec[ "idsif" ] := id_sif
 
-// veza 1->N posebno se tretira !!
-SELECT sifv
-SET ORDER TO TAG "ID"
+   // veza 1->N posebno se tretira !!
+   SELECT sifv
+   brisi_sifv_item( sifk_rec[ "id" ], sifk_rec[ "oznaka" ], id_sif )
 
-brisi_sifv_item(sifk_rec["id"], sifk_rec["oznaka"], id_sif)
+   _numtok := NumToken( vals, "," )
 
-_numtok := NUMTOKEN(vals, ",")
+   FOR _i := 1 TO _numtok
 
-for _i := 1 to _numtok
+      _tmp := Token( vals, ",", _i )
+      APPEND BLANK
 
-    _tmp := TOKEN(vals, "," , _i)    
+      _sifv_rec[ "naz" ] := get_sifv_naz( _tmp, sifk_rec )
+      _sifv_rec[ "naz" ] := PadR( _sifv_rec[ "naz" ], 50 )
 
-    APPEND BLANK
+      // zakljucavanje se desava u nadfunkciji
+      update_rec_server_and_dbf( "sifv", _sifv_rec, 1, "CONT" )
 
-    _sifv_rec["naz"] := get_sifv_naz(_tmp, sifk_rec) 
-    _sifv_rec["naz"] := PADR( _sifv_rec["naz"], 50 )
+   NEXT
 
-    // zakljucavanje se desava u nadfunkciji
-    update_rec_server_and_dbf("sifv", _sifv_rec, 1, "CONT")
-
-next
- 
-return .t.
+   RETURN .T.
 
 // -------------------------------------------------------------------
 // -------------------------------------------------------------------
-static function update_sifv_1_relation(sifk_rec, id_sif, value)
-local _sifv_rec
+STATIC FUNCTION update_sifv_1_relation( sifk_rec, id_sif, value )
 
-_sifv_rec := hb_hash()           
-_sifv_rec["id"] := sifk_rec["id"]
-_sifv_rec["oznaka"] := sifk_rec["oznaka"]
-_sifv_rec["idsif"] := id_sif
+   LOCAL _sifv_rec
 
-value := PADR(value, sifk_rec["duzina"])
+   _sifv_rec := hb_Hash()
+   _sifv_rec[ "id" ] := sifk_rec[ "id" ]
+   _sifv_rec[ "oznaka" ] := sifk_rec[ "oznaka" ]
+   _sifv_rec[ "idsif" ] := id_sif
 
-// veza 1-1
-SELECT  SIFV
-SET ORDER TO TAG "ID"
+   value := PadR( value, sifk_rec[ "duzina" ] )
 
-brisi_sifv_item(sifk_rec["id"], sifk_rec["oznaka"], id_sif)
+   // veza 1-1
+   SELECT  SIFV
+   brisi_sifv_item( sifk_rec[ "id" ], sifk_rec[ "oznaka" ], id_sif )
 
-APPEND BLANK
+   APPEND BLANK
 
-_sifv_rec["naz"] := get_sifv_naz(value, sifk_rec)
-_sifv_rec["naz"] := PADR( _sifv_rec["naz"], 50 )
+   _sifv_rec[ "naz" ] := get_sifv_naz( value, sifk_rec )
+   _sifv_rec[ "naz" ] := PadR( _sifv_rec[ "naz" ], 50 )
 
-// zakljucavanje se desava u nadfunkciji
-update_rec_server_and_dbf("sifv", _sifv_rec, 1, "CONT")
+   // zakljucavanje se desava u nadfunkciji
+   update_rec_server_and_dbf( "sifv", _sifv_rec, 1, "CONT" )
 
-return .t.
+   RETURN .T.
 
 
 // -----------------------------------------------------
 // -----------------------------------------------------
-static function brisi_sifv_item(dbf_name, ozn, id_sif)
-local _sifv_rec := hb_hash()
+STATIC FUNCTION brisi_sifv_item( dbf_name, ozn, id_sif )
 
-_sifv_rec["id"]     := dbf_name
-_sifv_rec["oznaka"] := ozn
-_sifv_rec["idsif"]  := id_sif
+   LOCAL _sifv_rec := hb_Hash()
 
-return delete_rec_server_and_dbf("sifv", _sifv_rec, 2, "CONT")
+   _sifv_rec[ "id" ]     := dbf_name
+   _sifv_rec[ "oznaka" ] := ozn
+   _sifv_rec[ "idsif" ]  := id_sif
+
+   RETURN delete_rec_server_and_dbf( "sifv", _sifv_rec, 2, "CONT" )
 
 // ----------------------------------------
 // ----------------------------------------
-static function get_sifv_naz(val, sifk_rec)
-do case 
-   CASE sifk_rec["tip"] == "C"
-        return PADR(val, sifk_rec["duzina"])
-   case sifk_rec["tip"] == "N"
-        return val
-   CASE sifk_rec["tip"] == "D"
-     	return DTOS(val)
-end case
+STATIC FUNCTION get_sifv_naz( val, sifk_rec )
+
+   DO CASE
+   CASE sifk_rec[ "tip" ] == "C"
+      RETURN PadR( val, sifk_rec[ "duzina" ] )
+   CASE sifk_rec[ "tip" ] == "N"
+      RETURN val
+   CASE sifk_rec[ "tip" ] == "D"
+      RETURN DToS( val )
+   END CASE
 
 
 
 /*!
- @function ImauSifv
- @abstract Povjerava ima li u sifv vrijednost ...
- @discussion - poziv ImaUSifv("ROBA","BARK","BK0002030300303",@cIdSif)
+ ImauSifv
+ Povjerava ima li u sifv vrijednost ...
+ ImaUSifv("ROBA","BARK","BK0002030300303",@cIdSif)
  @param cDBF ime DBF-a
  @param cOznaka oznaka BARK , GR1 itd
  @param cVOznaka oznaka BARK003030301
- @param cIDSif   00000232 - interna sifra
+ @param cIDSif   ROBA01 - idroba
 */
-function ImaUSifv(cDBF,cOznaka,cVOznaka, cIdSif)
 
-local cJedanod:=""
-local xRet:=""
-local nTr1, nTr2 , xVal
-private cPom:=""
+FUNCTION ImaUSifv( cDBF, cOznaka, cVrijednost, cIdSif )
 
-PushWa()
-cDBF:=padr(cDBF,8)
-cOznaka:=padr(cOznaka,4)
+   LOCAL cJedanod := ""
+   LOCAL xRet := ""
+   LOCAL nTr1, nTr2, xVal
+   PRIVATE cPom := ""
 
-xVal:=NIL
+   cDBF    := PadR( cDBF, SIFK_LEN_DBF )
+   cOznaka := PadR( cOznaka, SIFK_LEN_OZNAKA )
 
-select sifv
-PushWa() 
-set order to tag "NAZ"
-hseek cDbf + cOznaka + cVOznaka
-if found()
-   cIdSif:=IdSif
-endif
-PopWa()
+   xVal := NIL
 
-PopWa()
-return
+   PushWa()
+
+   SELECT F_SIFV
+   use_sql_sifv( cDbf, cOznaka, NIL, cVrijednost )
+   GO TOP
+   IF !EOF()
+      cIdSif := IdSif
+   ENDIF
+   PopWa()
+
+   RETURN
 
 
-/*
- @function   GatherSifk
- @abstract
- @discussion Popunjava ID_J (uz pomoc fje NoviId_A()),
-             te puni SIFV (na osnovu ImeKol)
- @param cTip  prefix varijabli sa kojima se tabela puni
- @param lNovi .t. - radi se o novom slogu
+FUNCTION update_sifk_na_osnovu_ime_kol_from_global_var( ime_kol, var_prefix, novi, transaction )
 
-*/
-function update_sifk_na_osnovu_ime_kol_from_global_var(ime_kol, var_prefix, novi, transaction)
-local _i
-local _alias
-local _field_b
+   LOCAL _i
+   LOCAL _alias
+   LOCAL _field_b
 
-_alias := ALIAS()
+   _alias := Alias()
 
-for _i := 1 to len(ime_kol)
-   if LEFT(ime_kol[_i, 3], 6) == "SIFK->"
-     _field_b :=  MEMVARBLOCK( var_prefix + "SIFK_" + SUBSTR(ime_kol[_i, 3], 7))
+   FOR _i := 1 TO Len( ime_kol )
+      IF Left( ime_kol[ _i, 3 ], 6 ) == "SIFK->"
+         _field_b :=  MemVarBlock( var_prefix + "SIFK_" + SubStr( ime_kol[ _i, 3 ], 7 ) )
 
-     if IzSifk( _alias, SUBSTR(ime_kol[_i, 3], 7), (_alias)->id) <> NIL
-         USifk( _alias, SUBSTR(ImeKol[_i, 3], 7), (_alias)->id, EVAL(_field_b), transaction)
-     endif
-   endif
-next
+         IF IzSifk( _alias, SubStr( ime_kol[ _i, 3 ], 7 ), ( _alias )->id ) <> NIL
+            USifk( _alias, SubStr( ImeKol[ _i, 3 ], 7 ), ( _alias )->id, Eval( _field_b ), transaction )
+         ENDIF
+      ENDIF
+   NEXT
 
-return
+   RETURN
 
 
 // --------------------------------------------
 // validacija da li polje postoji
 // --------------------------------------------
-static function val_fld(cField)
-local lRet := .t.
-if (ALIAS())->(FieldPOS(cField)) == 0
-	lRet := .f.
-endif
+STATIC FUNCTION val_fld( cField )
 
-if lRet == .f.
-	msgbeep("Polje ne postoji !!!")
-endif
+   LOCAL lRet := .T.
 
-return lRet
+   IF ( Alias() )->( FieldPos( cField ) ) == 0
+      lRet := .F.
+   ENDIF
+
+   IF lRet == .F.
+      msgbeep( "Polje ne postoji !!!" )
+   ENDIF
+
+   RETURN lRet
+
+
+// ------------------------------------------------------------------
+// formiranje matrice na osnovu podataka iz tabele sifv
+// ------------------------------------------------------------------
+function array_from_sifv( dbf, oznaka, id_sif )
+local _arr := {}
+local _t_area := SELECT()
+
+dbf := PADR( dbf, 8 )
+oznaka := PADR( oznaka, 4 )
+
+SELECT F_SIFV
+use_sql_sifv( dbf, oznaka, id_sif )
+set order to tag "ID"
+go top
+   
+do while !EOF() .and. field->id + field->oznaka + field->idsif = dbf + oznaka + id_sif
+    if !EMPTY( naz )
+        AADD( _arr, ALLTRIM( field->naz ) )
+    endif
+    skip
+enddo
+
+select ( _t_area )
+
+return _arr
+
 
 

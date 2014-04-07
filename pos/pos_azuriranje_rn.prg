@@ -131,7 +131,7 @@ sql_table_update( nil, "END" )
 
 // pobrisi _pos
 select _pos
-zapp(.t.)
+my_dbf_zap()
 
 return
 

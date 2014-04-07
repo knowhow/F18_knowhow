@@ -9,13 +9,12 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "fmk.ch"
+#include "fileio.ch"
 
-static aWaStack:={}
 static aBoxStack:={}
 static nPos:=0
-static cPokPonovo:="Pokusati ponovo (D/N) ?"
+static cPokPonovo:="Pokušati ponovo (D/N) ?"
 static nPreuseLevel:=0
 
 
@@ -122,9 +121,9 @@ local nRec
 
 do while .t.
 
-if rlock()
+if my_rlock()
   dbdelete2()
-  DBUNLOCK()
+  my_unlock()
   exit
 else
     inkey(0.4)
@@ -264,7 +263,7 @@ return nil
 // - pack - prepakuj zapise
 // -------------------------------------------------------------------
 
-function zapp(pack)
+function zapp( pack )
 local bErr
 
 if pack == NIL
@@ -333,7 +332,7 @@ else
 endif
 
 if close .and. fRet
-  close all
+  my_close_all_dbf()
 endif
 return fRet
 
@@ -668,7 +667,7 @@ if _rec <> NIL
 endif
 
 if _area <= 0
-    close all
+    my_close_all_dbf()
     quit
 endif
 
@@ -684,7 +683,7 @@ _area := F_baze( tbl )
 if _area > 0
     select ( _area )
 else
-    close all
+    my_close_all_dbf()
     quit
 endif
 
@@ -717,259 +716,22 @@ LOCAL nArr:=SELECT()
 return
 
 
-function PoljeBrisano(cImeDbf)
-*{
-* select je na bazi koju ispitujes
+/* 
+  ImdDBFCDX(cIme)
+    suban     -> suban.CDX
+    suban.DBF -> suban.CDX
+*/
+function ImeDBFCDX(cIme, ext)
 
-if fieldpos("BRISANO")=0 // ne postoji polje "brisano"
-  use
-  save screen to cScr
-  cls
-  Modstru(cImeDbf,"C  V C 15 0  FV C 15 0",.t.)
-  Modstru(cImeDbf,"A BRISANO C 1 0",.t.)  // dodaj polje "BRISANO"
-  inkey(10)
-  restore screen from cScr
-
-  use (cImeDBf)
-endif
-return nil
-
-
-/*! \fn SmReplace(cField, xValue, lReplAlways)
- *  \brief Smart Replace - vrsi replace. Ako je lReplAlways .T. uvijek vrsi, .F. samo ako je vrijdnost polja razlicita 
- *  \note vrsi se i REPLSQL, kada je gSql=="D"
- */
- 
-function SmReplace(cField, xValue, lReplAlways)
-private cPom
-
-if (lReplAlways == nil)
-	lReplAlways := .f.
+if ext == NIL
+  ext := INDEXEXT
 endif
 
-cPom:=cField
+cIme := TRIM(strtran(ToUnix(cIme), "." + DBFEXT, "." + ext))
 
-if ((&cPom<>xValue) .or. (lReplAlways == .t.))
-	REPLACE &cPom WITH xValue
-	if (gSql=="D")
-		//REPLSQL &cPom WITH xValue
-	endif
+if right (cIme, 4) <> "." + ext
+  cIme := cIme + "." + ext
 endif
 
-return
-
-/*! \fn  PreUseEvent(cImeDbf, fShared)
- *  \brief Poziva se prije svako otvaranje DBF-a komanom USE
- *
- * Za gSQL=="D":
- * Ako fajl KUMPATH + DOKS.gwu postoji, to znaci da je Gateway izvrsio
- * update fajla pa zato reindeksiraj i pakuj DBF
- * Na kraju izbrisi *.gwu fajl
- *
- */
-
-function PreUseEvent(cImeDbf, fShared)
-*{
-local cImeCdx
-local cImeGwu
-local nArea
-local cOnlyName
-
-if (goModul:oDatabase<>nil) 
-	if (goModul:oDatabase:lAdmin)
-		return 0
-	endif
-else
-	//sistem jos nije inicijaliziran, samo vrati isto ime tabele
-	return cImeDbf
-endif
-
-if nPreuseLevel>0
-	return 0
-endif
-// ne dozvoli rekurziju funkcije
-nPreuseLevel:=1
-
-cOnlyName:=ChangeEXT(ExFileName(cImeDbf),"DBF","")
-
-cImeGwu:=ChangeEXT(cImeDbf, DBFEXT, "gwu")
-cImeCdx:=ChangeEXT(cImeDbf, DBFEXT, INDEXEXT)
-
-cImeDbf:=LOWER(cImeDbf)
-cImeDbf:=STRTRAN(cImeDbf, ".korisn","korisn")
-cImeGw:=ChangeEXT(cImeDbf, DBFEXT, "gwu")
-
-if gReadOnly 
-	nPreuseLevel:=0
-	return cImeDbf
-endif
-
-
-if (GW_STATUS="-" .and. FILE(cImeGwu))
-
-	nArea:=DbfArea(UPPER(cOnlyName))
-	FERASE(cImeCdx)
-	goModul:oDatabase:kreiraj(nArea)
-	FERASE(cImeGwu)
-		
-endif
-
-nPreuseLevel:=0
-return cImeDbf
-*}
-
-/*! \fn ScanDb()
- *  \brief Prodji kroz sve tabele i pokreni PreuseEvent
- *  \note sve tabele koje je gateway azurirao bice indeksirane
- */
-function ScanDb()
-local i
-local cDbfName
-
-CLOSE ALL
-
-for i:=1 to 250
-	MsgO("ScanDb "+STR(i))
-	cDbfName:=DbfName(i,.t.)
-	if !EMPTY(cDbfName)
-		if FILE(cDbfName+"."+DBFEXT)
-			USEX (cDbfName)
-			if (RECCOUNT()<>RecCount2())
-				MsgO("Pakujem "+cDbfName)
-					__DBPACK()
-				MsgC()
-			endif
-			USE
-		endif
-		PreUseEvent(cDbfName, .f.)
-	endif
-	MsgC()
-		
-next
-CLOSE ALL
-return
-
-// --------------------------------
-// --------------------------------
-function PushWA()
-
-if used()
-   StackPush(aWAStack, {select(), IndexOrd(), DBFilter(), RECNO()})
-else
-   StackPush(aWAStack, {NIL, NIL, NIL, NIL})
-endif
-
-return NIL
-
-
-// ---------------------------
-// ---------------------------
-function PopWA()
-
-local aWa
-local i
-
-aWa := StackPop(aWaStack)
-
-if aWa[1]<>nil
-   
-   // select
-   SELECT(aWa[1])
-   
-   // order
-   if used()
-	   if !empty(aWa[2])
-	      ordsetfocus(aWa[2])
-	   else
-	    set order to
-	   endif
-   endif
-
-   // filter
-   if !empty(aWa[3])
-     set filter to &(aWa[3])
-   else
-     if !empty(dbfilter())
-       set filter to
-     endif
-     //   DBCLEARFILTER( )
-   endif
-   
-   if used()
-    go aWa[4]
-   endif
-   
-endif  // wa[1]<>NIL
-
-return nil
-
-
-// ---------------------------------------------------------
-// modificiranje polja, ubacivanje predznaka itd...
-//
-// params:
-//   - cField = "SIFRADOB" 
-//   - cIndex - indeks na tabeli "1" ili "ID" itd...
-//   - cInsChar - karakter koji se insertuje
-//   - nLen - duzina sifra na koju se primjenjuje konverzija
-//            i insert (napomena: nije duzina kompletne sifre)
-//            IDROBA = LEN(10), ali mi zelimo da konvertujemo
-//            na LEN(5) sifre sa vodecom nulom
-//   - nSufPref - sufiks (1) ili prefiks (2)
-//   - funkcija vraca konvertovani broj zapisa
-//   - lSilent - tihi mod rada .t. ili .f.
-//   
-//   Napomena:
-//   tabela na kojoj radimo konverziju moraju biti prije pokretanja 
-//   funkcije otvoreni
-// ---------------------------------------------------------
-function mod_f_val( cField, cIndex, cInsChar, nLen, nSufPref, lSilent )
-local nCount := 0
-
-if cIndex == nil
-	cIndex := "1"
-endif
-
-if nSufPref == nil
-	nSufPref := 2
-endif
-
-if lSilent == nil
-	lSilent := .f.
-endif
-
-if lSilent == .f. .and. Pitanje(,"Izvrsiti konverziju ?", "N") == "N"
-	return -1
-endif
-
-set order to tag cIndex
-go top
-
-do while !EOF()
-	
-	// trazena vrijednost iz polja
-	cVal := ALLTRIM( field->&cField )
-	nFld_len := LEN( field->&cField )
- 
- 	if !EMPTY( cVal ) .and. LEN( cVal ) < nLen
-
-		if nSufPref == 1
-			// sufiks
-			cNew_val := PADR( cVal, nLen, cInsChar )
-		else
-			// prefiks
-			cNew_Val := PADL( cVal, nLen, cInsChar )
- 		endif
-
-		// ubaci novu sifru sa nulama
-		replace field->&cField with PADR( cNew_val, nFld_len )
-		++ nCount 
-	endif
-	
-	skip
-
-enddo
-
-return nCount
-
+return  cIme
 

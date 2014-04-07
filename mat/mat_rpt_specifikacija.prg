@@ -230,7 +230,7 @@ go top
 
 if eof()
     Msg("Ne postoje trazeni podaci...",6)
-    close all 
+    my_close_all_dbf() 
     return
 endif
 
@@ -255,7 +255,7 @@ StampaTabele(aKol,{|| FSvaki1()},,gTabela,,;
 
 END PRINT
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -268,117 +268,6 @@ static function FFor2()
     cNPartnera:=Ocitaj(F_PARTN,idpartner,"TRIM(naz)+' '+TRIM(naz2)")
   ENDIF
 RETURN lVrati
-
-
-FUNCTION SrediKonta()
-  LOCAL aProm := { { "2101"   , "1010" },;
-                   { "210101" , "DEL"  },;
-                   { "2102"   , "1011" },;
-                   { "210201" , "DEL"  },;
-                   { "2103"   , "1012" },;
-                   { "2104"   , "1013" },;
-                   { "2105"   , "DEL"  },;
-                   { "2106"   , "DEL"  },;
-                   { "210601" , "DEL"  },;
-                   { "2107"   , "DEL"  },;
-                   { "2109"   , "DEL"  },;
-                   { "2200"   , "1020" },;
-                   { "2201"   , "DEL"  },;
-                   { "2202"   , "1022" },;
-                   { "220201" , "DEL"  },;
-                   { "2203"   , "1023" },;
-                   { "220301" , "DEL"  },;
-                   { "2204"   , "DEL"  },;
-                   { "2205"   , "1025" },;
-                   { "220501" , "DEL"  },;
-                   { "2206"   , "DEL"  },;
-                   { "2207"   , "DEL"  },;
-                   { "2300"   , "1030" },;
-                   { "2303"   , "DEL"  },;
-                   { "5602"   , "1310" },;
-                   { "560201" , "DEL"  },;
-                   { "5604"   , "1312" },;
-                   { "560401" , "DEL"  },;
-                   { "5605"   , "DEL"  },;
-                   { "5606"   , "1314" },;
-                   { "560601" , "DEL"  },;
-                   { "5607"   , "DEL"  },;
-                   { "560701" , "DEL"  } }
-  O_ROBA
-  O_SIFV
-  O_SIFK
-  O_MAT_SINT
-  O_MAT_ANAL
-  O_MAT_SUBAN
-  SELECT (F_ROBA)
-  GO TOP
-  DO WHILE !EOF()
-    SKIP 1; nRec:=RECNO(); SKIP -1
-    nPom:=ASCAN(aProm,{|x| PADR(x[1],7)==IDKONTO})
-    IF nPom>0  // znaŸi predviĞena je promjena
-      IF aProm[nPom,2]=="DEL"     // brisanje
-        DELETE
-      ELSE                        // promjena
-        Scatter()
-        _idkonto:=aProm[nPom,2]
-        Gather()
-      ENDIF
-    ENDIF
-    GO (nRec)
-  ENDDO
-  SELECT (F_MAT_SINT)
-  GO TOP
-  DO WHILE !EOF()
-    SKIP 1; nRec:=RECNO(); SKIP -1
-    nPom:=ASCAN(aProm,{|x| PADR(x[1],3)==IDKONTO.and.x[2]!="DEL"})
-    IF nPom>0  // znaŸi predviĞena je promjena          ³
-                                                     // ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-      IF aProm[nPom,2]=="DEL"     // brisanje:ne†e se nikad pojaviti zbogÄÙ
-        DELETE
-      ELSE                        // promjena
-        Scatter()
-        _idkonto:=aProm[nPom,2]
-        Gather()
-      ENDIF
-    ENDIF
-    GO (nRec)
-  ENDDO
-  SELECT (F_MAT_ANAL)
-  GO TOP
-  DO WHILE !EOF()
-    SKIP 1; nRec:=RECNO(); SKIP -1
-    nPom:=ASCAN(aProm,{|x| PADR(x[1],7)==IDKONTO.and.x[2]!="DEL"})
-    IF nPom>0  // znaŸi predviĞena je promjena          ³
-                                                     // ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-      IF aProm[nPom,2]=="DEL"     // brisanje:ne†e se nikad pojaviti zbogÄÙ
-        DELETE
-      ELSE                        // promjena
-        Scatter()
-        _idkonto:=aProm[nPom,2]
-        Gather()
-      ENDIF
-    ENDIF
-    GO (nRec)
-  ENDDO
-  SELECT (F_MAT_SUBAN)
-  GO TOP
-  DO WHILE !EOF()
-    SKIP 1; nRec:=RECNO(); SKIP -1
-    nPom:=ASCAN(aProm,{|x| PADR(x[1],7)==IDKONTO.and.x[2]!="DEL"})
-    IF nPom>0  // znaŸi predviĞena je promjena          ³
-                                                     // ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-      IF aProm[nPom,2]=="DEL"     // brisanje:ne†e se nikad pojaviti zbogÄÙ
-        DELETE
-      ELSE                        // promjena
-        Scatter()
-        _idkonto:=aProm[nPom,2]
-        Gather()
-      ENDIF
-    ENDIF
-    GO (nRec)
-  ENDDO
-close all
-return
 
 
 

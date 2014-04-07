@@ -21,7 +21,7 @@ function set_global_memvars_from_dbf(zn)
 return set_global_vars_from_dbf(zn)
 
 // --------------------------------------------------
-// TODO: imee set_global_vars_from_dbf je legacy
+// TODO: ime set_global_vars_from_dbf je legacy
 // --------------------------------------------------
 function set_global_vars_from_dbf(zn)
 
@@ -51,7 +51,7 @@ return .t.
 
 // -------------------------------------
 // --------------------------------------
-function get_dbf_global_memvars( zn, rel )
+function get_dbf_global_memvars( zn, rel, lUtf )
 local _ime_polja, _i, _struct
 local _ret := hb_hash()
 
@@ -64,7 +64,12 @@ if rel == NIL
     rel := .t.
 endif
 
+if lUtf == NIL
+   lUtf := .f.
+endif
+
 _struct := DBSTRUCT()
+
 for _i := 1 to len(_struct)
 
     _ime_polja := _struct[_i, 1]
@@ -74,6 +79,10 @@ for _i := 1 to len(_struct)
         // punimo hash matricu sa vrijednostima public varijabli
         // _ret["idfirma"] := wIdFirma, za zn = "w"
         _ret[ LOWER(_ime_polja) ] := EVAL( MEMVARBLOCK( zn + _ime_polja) )
+        
+        IF ( VALTYPE( _ret[ LOWER(_ime_polja) ] ) == "C" ) .AND.  lUtf 
+            _ret[ LOWER(_ime_polja) ] := hb_StrToUtf8 ( _ret[ LOWER(_ime_polja) ]  )
+        ENDIF
 
         if rel
             // oslobadja public ili private varijablu
@@ -114,6 +123,7 @@ function iterate_through_active_tables(iterate_block)
 local _key
 local _f18_dbf
 local _temp_tbl
+local _sql_tbl := .f.
 
 get_dbf_params_from_config()
 _f18_dbfs := f18_dbfs()
@@ -122,7 +132,14 @@ for each _key in _f18_dbfs:Keys
 
     _temp_tbl := _f18_dbfs[_key]["temp"]
 
-    if !_temp_tbl
+    // sql tabela
+    if hb_hhaskey( _f18_dbfs[_key], "sql" )
+         if _f18_dbfs[_key]["sql"]
+               _sql_tbl := .t.
+         endif
+    endif
+         
+    if !_temp_tbl .and. !_sql_tbl
 
 		_tbl_base := _table_base( _f18_dbfs[_key] )
 
@@ -131,7 +148,7 @@ for each _key in _f18_dbfs:Keys
 			_tbl_base := "os"
 		endif
 
-        // EMPTY - sifarnici (roba, tarifa itd)
+                // EMPTY - sifarnici (roba, tarifa itd)
 		if  EMPTY( _tbl_base ) .or. f18_use_module( _tbl_base )
 			EVAL(iterate_block, _f18_dbfs[_key] )
 		endif

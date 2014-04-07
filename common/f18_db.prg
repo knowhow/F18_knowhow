@@ -57,6 +57,7 @@ endif
 log_write( "START: update_rec_server_and_dbf " + table, 9 )
 
 _values_dbf := dbf_get_rec()
+
 // trebamo where str za stanje dbf-a
 set_table_values_algoritam_vars(@table, @_values_dbf, @algoritam, @transaction, @_a_dbf_rec, @_alg, @_where_str_dbf, @_alg_tag)
 
@@ -73,7 +74,7 @@ endif
 if !sql_table_update(table, "del", nil, _where_str)
 
     sql_table_update(table, "ROLLBACK")
-    _msg := RECI_GDJE_SAM + "sql delete " + table +  " neuspjesno ! ROLLBACK"
+    _msg := "ERROR: sql delete " + table +  " , ROLLBACK, where: " + _where_str
     log_write( _msg, 1 )
     Alert(_msg)
 
@@ -96,7 +97,7 @@ if _ret .and.  (_where_str_dbf != _where_str)
     if !sql_table_update(table, "del", nil, _where_str_dbf)
 
         sql_table_update(table, "ROLLBACK")
-        _msg := RECI_GDJE_SAM + "sql delete " + table +  " neuspjesno ! ROLLBACK"
+        _msg := "ERROR: sql delete " + table +  " , ROLLBACK, where: " + _where_str_dbf
         log_write( _msg, 1 )
         Alert(_msg)
 
@@ -108,7 +109,7 @@ endif
 // dodaj nove
 if _ret .and. !sql_table_update(table, "ins", values)
     sql_table_update(table, "ROLLBACK")
-    _msg := RECI_GDJE_SAM + "sql ins " + table + " neuspjesno ! ROLLBACK"
+    _msg := RECI_GDJE_SAM + "ERRORY: sql_insert: " + table + " , ROLLBACK values: " + pp( values )
     log_write( _msg, 1 )
     RaiseError(_msg)
     return .f.
@@ -175,6 +176,7 @@ local _a_dbf_rec, _alg
 local _msg
 local _alg_tag := ""
 local _ret
+local lSql_index := .T.
 
 if lock == NIL
   if transaction == "FULL"
@@ -217,30 +219,40 @@ if sql_table_update(table, "del", nil, _where_str)
 
     SELECT (_a_dbf_rec["wa"])
     
-    if ORDNUMBER(_alg["dbf_tag"]) < 1
-          _msg := "ERR : " + RECI_GDJE_SAM0 + " DBF_TAG" + _alg["dbf_tag"]
-          Alert(_msg)
-          log_write( _msg, 1 )
-          RaiseError(_msg)
-          lock_semaphore(table, "free")
-          QUIT_1
+    if index_tag_num(_alg["dbf_tag"]) < 1
+          if !_a_dbf_rec["sql"] 
+             _msg := "ERR : " + RECI_GDJE_SAM0 + " DBF_TAG " + _alg["dbf_tag"]
+             Alert(_msg)
+             log_write( _msg, 1 )
+             RaiseError(_msg)
+             lock_semaphore(table, "free")
+             QUIT_1
+          else
+             lSql_index := .F.
+          endif
+    else
+          SET ORDER TO TAG (_alg["dbf_tag"])
     endif
-    SET ORDER TO TAG (_alg["dbf_tag"])
 
-    if FLOCK()
+    if my_flock()
         
         _count := 0
 
-        SEEK _full_id
+        IF lSql_index
+           SEEK _full_id
 
-        while FOUND()
-            ++ _count
-            DELETE
-            // sve dok budes nalazio pod ovim kljucem brisi
-            SEEK _full_id
-        enddo
+           while FOUND()
+              ++ _count
+              DELETE
+              // sve dok budes nalazio pod ovim kljucem brisi
+              SEEK _full_id
+           enddo
+        else
+            // ali ovo i nije bitno, sql tabela se svaki put iznova refreshira sa servera
+            log_write( "table: " + table + " sql index " + _alg[ "dbf_tag" ] + " ne postoji!", 3)
+        endif
 
-        DBUNLOCKALL() 
+        my_unlock()
 
         log_write( "table: " + table + ", pobrisano iz lokalnog dbf-a broj zapisa = " + ALLTRIM( STR( _count ) ), 7 ) 
 
@@ -259,7 +271,6 @@ if sql_table_update(table, "del", nil, _where_str)
         Alert(_msg)
 
         _ret := .f.
-
     endif
 
 else
@@ -314,7 +325,7 @@ if sql_table_update( table, "del", _rec, "true")
    sql_table_update( table, "END")
 
    // zapujemo dbf
-   zapp()
+   my_dbf_zap()
 
    return .t.
 
@@ -392,6 +403,7 @@ for each _key in alg["dbf_key_fields"]
             // ako je dbf_fields_len['id'][2] = 6
             // karakterna polja se moraju PADR-ovati
             // values['id'] = '0' => '0     '
+            set_rec_from_dbstruct(@a_dbf_rec)
             values[_key] := PADR(values[_key], a_dbf_rec["dbf_fields_len"][_key][2])
             // provjeri prvi dio kljuca
             // ako je # onda obavezno setuj tag

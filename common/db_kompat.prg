@@ -22,7 +22,7 @@
 function DBT2FPT(cImeDBF)
 
 cImeDbf := strtran(cImeDBF,"."+DBFEXT,"")
-close all
+my_close_all_dbf()
 
 if file(cimedbf+".DBT") .and. Pitanje(,"Izvrsiti konverziju "+cImeDBF," ")=="D"
    if file(cimedbf+".FPT")
@@ -39,7 +39,7 @@ if file(cimedbf+".DBT") .and. Pitanje(,"Izvrsiti konverziju "+cImeDBF," ")=="D"
         field_len with 1, field_dec with 0
      use
 
-     close all
+     my_close_all_dbf()
      COPY FILE (cImeDBF+".DBF") TO (PRIVPATH+"TEMP.DBF")
      COPY FILE (cImeDBF+".DBT") TO (PRIVPATH+"TEMP.DBT")
      ferase(cImeDBF+".DBT")
@@ -47,7 +47,7 @@ if file(cimedbf+".DBT") .and. Pitanje(,"Izvrsiti konverziju "+cImeDBF," ")=="D"
      ferase(cImeDBF+".CDX")
      ferase(cImeDBF+".FPT")
      create (cImeDBF) from struct  VIA RDDENGINE
-     close all
+     my_close_all_dbf()
      MY_USE (PRIVPATH+"TEMP", nil, .t., "DBFNTX")
      set order to 0
      MY_USE (cImeDBF, "novi", .t., RDDENGINE)
@@ -66,7 +66,7 @@ if file(cimedbf+".DBT") .and. Pitanje(,"Izvrsiti konverziju "+cImeDBF," ")=="D"
    MsgC()
 endif
 
-close all
+my_close_all_dbf()
 
 return
 

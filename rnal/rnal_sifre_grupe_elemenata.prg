@@ -28,6 +28,8 @@ private GetList:={}
 
 nTArea := SELECT()
 
+O_E_GROUPS
+
 cHeader := "Elementi - grupe /"
 cHeader += SPACE(5)
 cHeader += "'A' - pregled atributa grupe"

@@ -87,20 +87,19 @@ set_metric( "proiz_por_dob", _my_user, gnPorDob )
 
 nTekIzv := VAL( cBrI )
 
-opc[1] := "1. generisanje izvjestaja                       "      
-opc[2] := "2. sifrarnik izvjestaja"              
+opc[1] := "1. generisanje izvještaja                       "      
+opc[2] := "2. šifarnik izvjestaja"              
 opc[3] := "3. redovi izvjestaja"                
 opc[4] := "4. zaglavlje izvjestaja"              
 opc[5] := "5. kolone izvjestaja"                 
 opc[6] := "6. parametri (svi izvjestaji) "        
-opc[7] := "7. tekuci izvjestaj: "+STR(nTekIzv,2) 
+opc[7] := "7. tekuci izvjestaj: " + STR(nTekIzv,2) 
 opc[8] := "8. preuzimanje definicija izvjestaja sa diskete" 
 opc[9] := "9. promjeni broj izvjestaja" 
 opc[10] := "A. ispravka proizvj.ini" 
 
 izbor := 1
 
-// ???????
 PrikaziTI( cBrI )
 
 if goModul:oDataBase:cName == "KALK"
@@ -171,7 +170,7 @@ enddo
 
 RESTSCREEN(1,0,1,79,cScr)
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -250,7 +249,7 @@ static function APBlok(Ch)
 
 LOCAL lVrati:=DE_CONT, nRec:=0, i:=0
  IF Ch==K_ALT_P
-     IF Pitanje(,"Zelite li preuzeti podatke iz drugog izvjestaja? (D/N)","N")=="D"
+     IF Pitanje(,"Želite li preuzeti podatke iz drugog izvjestaja? (D/N)","N")=="D"
        i:=1
        Box(,3,60)
         @ m_x+2, m_y+2 SAY "Preuzeti podatke iz izvjestaja br.? (1-99)" GET i VALID i>0 .and. i<100 .and. i<>nTekIzv PICT "99"
@@ -462,9 +461,9 @@ STATIC FUNCTION KonIzBlok()
      SELECT KONIZ; GO (nRec)
 
    CASE Ch==K_ALT_P      // popuni nanovo iz sifrarnika kljucnog polja
-     IF cPIKSif!="BEZ" .and. Pitanje(,"Zelite li obrisati bazu i formirati novu na osnovu sifrar.klj.polja?(D/N)","N")=="D"
+     IF cPIKSif!="BEZ" .and. Pitanje( ,"Želite li obrisati bazu i formirati novu na osnovu sifrar.klj.polja?(D/N)","N")=="D"
        SELECT KONIZ
-       ZAPP()
+       my_dbf_zap()
 
        O_KSIF()
        dbGoTop()
@@ -482,7 +481,7 @@ STATIC FUNCTION KonIzBlok()
        lVrati:=DE_REFRESH
      ENDIF
    CASE Ch==K_ALT_N      // popuni iz drugog izvjestaja
-     IF Pitanje(,"Zelite li postojeće zamijeniti podacima iz drugog izvještaja?(D/N)","N")=="D"
+     IF Pitanje(,"Želite li postojeće zamijeniti podacima iz drugog izvještaja?(D/N)","N")=="D"
        i:=1
        Box(,3,60)
         @ m_x+2, m_y+2 SAY "Preuzeti podatke iz izvjestaja br.? (1-99)" GET i VALID i>0 .and. i<100 .and. i<>nTekIzv PICT "99"
@@ -607,7 +606,7 @@ STATIC FUNCTION KonIzBlok()
      ENDIF
 
    CASE Ch==K_CTRL_T
-     IF Pitanje(,"Zelite li izbrisati ovu stavku ?","D")=="D"
+     IF Pitanje(,"Želite li izbrisati ovu stavku ?","D")=="D"
        n0:=ri
        DELETE
        // DbfRBrSort(n0,0,"ri",RECNO())     // recno() je ovdje nebitan

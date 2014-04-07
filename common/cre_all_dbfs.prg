@@ -13,7 +13,9 @@
 #include "cre_all.ch"
 
 
-
+/* 
+   Kreiraj sve DBFCDX
+*/
 function cre_all_dbfs(ver)
 local _first_start := fetch_metric( "f18_first_start", my_user(), 0 )
 local _local_files, _local_files_count
@@ -35,7 +37,6 @@ endif
 
 log_write("START cre_all_dbfs", 5)
 
-cre_sifk_sifv(ver)
 cre_sifrarnici_1(ver)
 cre_roba(ver)
 cre_partn(ver)
@@ -135,7 +136,7 @@ return
 function _kreiraj_params_tabele()
 local _table_name, _alias, aDBF
 
-close all
+CLOSE ALL
 
 aDbf := {}
 AADD(aDbf, {"FH","C",1,0} )  // istorija
@@ -211,7 +212,7 @@ if (nArea==nil)
     nArea:=-1
 endif
 
-close all
+CLOSE ALL
 
 if gReadonly
     return
@@ -258,7 +259,7 @@ if fieldpos("VAR")<>0  // stara varijanta parametara
        restore screen from cScr
 endif
 endif
-close all
+CLOSE ALL
 return
 *}
 

@@ -122,7 +122,7 @@ _table_name := "kadev_1"
 IF_NOT_FILE_DBF_CREATE
 IF_C_RESET_SEMAPHORE
 
-CREATE_INDEX("1" , "id+dtos(datumOd)" , _alias )
+CREATE_INDEX("1" , "id+dtos(datumOd)+idpromj+opis" , _alias )
 CREATE_INDEX("2" , "dtos(datumOd)"    , _alias )
 CREATE_INDEX("3" , "id+idpromj"       , _alias )
 

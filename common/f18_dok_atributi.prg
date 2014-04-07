@@ -21,6 +21,7 @@ CLASS F18_DOK_ATRIB
     DATA from_dbf
     DATA dok_hash
     DATA atrib
+    DATA workarea
 
     METHOD New()
     METHOD get_atrib()
@@ -41,14 +42,12 @@ CLASS F18_DOK_ATRIB
         VAR table_name_server
         VAR table_name_local
         VAR alias
-        VAR area
 
         METHOD get_atrib_from_server()
         METHOD get_atrib_from_dbf()
         METHOD get_atrib_list_from_server()
         METHOD set_table_name()
         METHOD set_dbf_alias()
-        METHOD set_dbf_area()
         METHOD atrib_delete_duplicate()
         METHOD atrib_delete_rest()
 
@@ -58,7 +57,7 @@ ENDCLASS
 
 // --------------------------------------------------
 // --------------------------------------------------
-METHOD F18_DOK_ATRIB:New( _modul_, _dok_hash_, _atrib_ )
+METHOD F18_DOK_ATRIB:New( _modul_, _wa_ )
 
 ::dok_hash := hb_hash()
 
@@ -66,12 +65,8 @@ if _modul_ <> NIL
     ::modul := _modul_
 endif
 
-if _dok_hash_ <> NIL
-    ::dok_hash := _dok_hash_
-endif
-
-if _atrib_ <> NIL
-    ::atrib := _atrib_
+if _wa_ <> NIL
+    ::workarea := _wa_
 endif
 
 return SELF
@@ -90,28 +85,6 @@ return SELF
 
 // --------------------------------------------------
 // --------------------------------------------------
-METHOD F18_DOK_ATRIB:set_dbf_area()
-local _tmp := 355
-
-do while .t.   
-    SELECT ( _tmp )
-    if USED()
-        ++ _tmp
-        loop
-    else
-        exit
-    endif
-enddo
-
-::area := _tmp
-
-return SELF
-
-
-
-
-// --------------------------------------------------
-// --------------------------------------------------
 METHOD F18_DOK_ATRIB:open_local_table()
 local _alias 
 
@@ -119,13 +92,10 @@ local _alias
 ::set_table_name()
 // setuj alijas
 ::set_dbf_alias()
-// oredi podrucje
-::set_dbf_area()
 
-//#xcommand O_FAKT_ATRIB => select (F_FAKT_ATRIB) ; my_usex ("fakt_atrib") ; set order to tag  "1"
-SELECT ( ::area )
+SELECT ( ::workarea )
 
-my_use_temp( ::alias, my_home() + ::table_name_local + ".dbf", .f., .t. )
+my_use( ::table_name_local )
 
 SET ORDER TO TAG "1"
 
@@ -166,7 +136,7 @@ endif
 //INDEX ON &cKljucIz  TAG (cTag)  TO (cImeCdx) FOR &cFilter UNIQUE
 INDEX ON &_ind_key TAG "1" FOR &_ind_uniq UNIQUE
 
-SELECT ( ::area )
+SELECT ( ::workarea )
 USE
      	         
 return SELF
@@ -254,7 +224,7 @@ METHOD F18_DOK_ATRIB:get_atrib_from_server()
 local _val := ""
 local _attr := ::get_atrib_list_from_server()
 
-if LEN( _attr ) <> 0
+if _attr != NIL .and. LEN( _attr ) <> 0
     _val := _attr[ 1, 3 ]
 endif
 
@@ -351,15 +321,11 @@ seek ( ::dok_hash["idfirma"] + ::dok_hash["idtipdok"] + ::dok_hash["brdok"] + ::
 
 if !FOUND() 
 
-    // ako je prazan vrijednost
-    // nemoj upisivati...
     if EMPTY( value )
         use
         select ( _t_area )
         return _ok
     endif
-
-    // nema zapisa...
 
     append blank
 
@@ -376,17 +342,14 @@ if !FOUND()
 
 else
     
-    // setuj i ako je value empty i ako nije
     _rec := dbf_get_rec()
     _rec["value"] := value
     dbf_update_rec( _rec )
 
 endif
 
-// zatvori fakt atribute
 use
 
-// vrati se gdje si bio !
 select ( _t_area )
 
 return _ok
@@ -417,10 +380,7 @@ local _t_area := SELECT()
 
 ::open_local_table()
 
-zap
-__dbPack()
-
-// zatvori ih
+reopen_exclusive_and_zap( ALIAS() , .T. )
 use
 
 select ( _t_area )
@@ -456,6 +416,7 @@ if _atribut == NIL
 endif
 
 ::open_local_table()
+my_flock()
 go top
 seek ( _idfirma + _idtipdok + _brdok + _rbr + _atribut ) 
 
@@ -466,9 +427,10 @@ do while !EOF() .and. field->idfirma == _idfirma .and. field->idtipdok == _idtip
     delete
     skip
 enddo
+my_unlock()
 
-__dbPack()
-// zatvori mi fakt atribute
+
+reopen_exclusive_and_zap( ALIAS() , .T. )
 use
 
 select ( _t_area )
@@ -550,14 +512,12 @@ local _res
 
 ::open_local_table()
 
-// nema zapisa, nemam sta raditi....
 if RECCOUNT() == 0
     USE
     select ( _t_area )
     return _ok
 endif
 
-// prvo mi pobrisi sa servera ove podatke... 
 if !::delete_atrib_from_server()
     USE
     _ok := .f.
@@ -565,14 +525,12 @@ if !::delete_atrib_from_server()
     return _ok
 endif
 
-select ALIAS( ::area )
+select ALIAS( ::workarea )
 set order to tag "1"
 go top
 
-// insertuj iz dbf table
 do while !EOF()
 
-    // ako je prazna vrijednost, nemoj nista upisivati...
     if EMPTY( field->value )
         skip
         loop
@@ -581,7 +539,6 @@ do while !EOF()
     if ( ::dok_hash["idfirma"] != field->idfirma ) .or. ;
             ( ::dok_hash["idtipdok"] != field->idtipdok ) .or. ;
             ( ::dok_hash["brdok"] != field->brdok )
-        // ogranici se na stavke dokumenta
         skip
         loop
     endif
@@ -608,8 +565,7 @@ do while !EOF()
 
 enddo
 
-// zatvori mi atribute
-select ALIAS( ::area )
+select ALIAS( ::workarea )
 use
 
 select ( _t_area )
@@ -625,22 +581,13 @@ METHOD F18_DOK_ATRIB:atrib_server_to_dbf()
 local _atrib
 local _i, _rec
 local _t_area := SELECT()
-local _ok := .t.
 
 ::set_table_name()
 
-// daj mi atribute sa servera... ako postoje !
 _atrib := ::get_atrib_list_from_server()
 
-if VALTYPE( _atrib ) == "L"
-    // nije se nista napunilo, matrica je NIL
-    _ok := .f.
-    return _ok 
-endif
-
-// matrica je jednostavno prazna, nema nista...
-if LEN( _atrib ) == 0
-    return _ok
+if _atrib == NIL
+    return .f.
 endif
 
 ::open_local_table()
@@ -662,13 +609,12 @@ for _i := 1 to LEN( _atrib )
 
 next
 
-// zatvori mi fakt atribute
-select ( ::area )
+select ( ::workarea )
 use
 
 select ( _t_area )
 
-return _ok
+return .t.
 
 
 // -----------------------------------------------------
@@ -689,12 +635,10 @@ for _i := 1 to LEN( dok_arr )
     _dok_params["idtipdok"] := dok_arr[ _i, 2 ]
     _dok_params["brdok"] := dok_arr[ _i, 3 ]
     
-    // pobrisi duple zapise
     ::atrib_delete_duplicate( _dok_params )
 
 next
     
-// brisi visak atributa ako postoji
 ::atrib_delete_rest( area )
 
 return
@@ -711,12 +655,12 @@ local _deleted := .f.
 local _alias := ::alias
 local _tmp := ALLTRIM( LOWER( ::modul ) ) + "_pripr"
 
-// selekt pripreme tabele modula
 select ALIAS( area )
 set order to tag "1"
 
-// otvori atribute
 ::open_local_table()
+
+my_flock()
 
 set order to tag "1"
 go top
@@ -727,30 +671,27 @@ do while !EOF()
     _t_rec := RECNO()
     skip -1
 
-    // selektuje pripremu tabelu modula !
     select ALIAS( area )
 
-    // ima li u njoj stavke iz atributa ?
     seek &(_alias)->idfirma + &(_alias)->idtipdok + &(_alias)->brdok + &(_alias)->rbr
 
     if !FOUND()
-        // prebaci se na atribute i pobrisi ...
-        select ALIAS( ::area )
+        select ALIAS( ::workarea )
         delete
         _deleted := .t.
     else
-        select ALIAS( ::area )
+        select ALIAS( ::workarea )
     endif
 
     go ( _t_rec )
 
 enddo
+my_unlock()
 
 if _deleted
-    __dbPack()
+    my_dbf_pack()
 endif
 
-// zatvori atribute
 use
 
 select ( _t_area )
@@ -777,6 +718,8 @@ _br_dok := param["brdok"]
 
 ::open_local_table()
 
+my_flock()
+
 set order to tag "1"
 go top
 seek _id_firma + _tip_dok + _br_dok
@@ -785,11 +728,8 @@ _b1 := {|| field->idfirma == _id_firma .and. field->idtipdok == _tip_dok .and. f
 
 do while !eof() .and. EVAL(_b1)
 
-    // prvi zapis
     _r_br := field->rbr
     _atrib := field->atribut
-
-    // sljedeci zapis  
     skip 1
     _t_rec := RECNO()
     _r_br_2 := field->rbr
@@ -813,11 +753,12 @@ do while !eof() .and. EVAL(_b1)
     go _t_rec
 enddo
 
+my_unlock()
+
 if _deleted
-    __dbPack()
+    my_dbf_pack( .F. )
 endif
 
-// zatvori atribute
 use
 
 select ( _t_area )

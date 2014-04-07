@@ -79,7 +79,6 @@ PUBLIC Blink:="R****/W,W/B,,,W/RB"
 PUBLIC Nevid:="W/W,N/N"
 PUBLIC gVeryBusyInterval
 PUBLIC gKonvertPath := "N"
-PUBLIC gSifk := .t.
 PUBLIC gHostOS
 
 #ifdef __WINDOWS

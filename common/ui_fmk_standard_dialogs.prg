@@ -57,7 +57,7 @@ set escape off
 Box( , 3, LEN(cPitanje) + 6, .f.)
 
  set cursor on
- @ m_x + 2, m_y + 3 SAY cPitanje GET cOdgovor PICTURE "@!" ; 
+ @ m_x + 2, m_y + 3 SAY8 cPitanje GET cOdgovor PICTURE "@!" ; 
  	VALID ValidSamo(cOdgovor, cMogOdg)
 
  READ

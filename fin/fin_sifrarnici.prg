@@ -118,7 +118,7 @@ endif
 select sifk; set order to tag "ID"; seek "PARTN"
 do while !eof() .and. ID="PARTN"
 
- AADD (ImeKol, {  IzSifKNaz("PARTN",SIFK->Oznaka) })
+ AADD (ImeKol, {  IzSifKNaz("PARTN", SIFK->Oznaka) })
  AADD (ImeKol[Len(ImeKol)], &( "{|| ToStr(IzSifk('PARTN','" + sifk->oznaka + "')) }" ) )
  AADD (ImeKol[Len(ImeKol)], "SIFK->"+SIFK->Oznaka )
  if sifk->edkolona > 0
@@ -197,79 +197,50 @@ RETURN DE_CONT
  *  \param lBlag
  */
 function P_KontoFin(cId,dx,dy,lBlag)
+local i
+private ImeKol := {}
+private Kol := {}
 
-private ImeKol:={}
-private Kol:={}
+O_KONTO
+
 ImeKol:={ { PADR("ID",7),  {|| id },     "id"  , {|| .t.}, {|| vpsifra(wid)} },;
           { "Naziv",       {|| naz},     "naz"      };
         }
 
 if KONTO->(FIELDPOS("POZBILS"))<>0
-  AADD (ImeKol,{ padr("Poz.u bil.st.",20 ), {|| pozbils}, "pozbils" })
+      AADD (ImeKol,{ padr("Poz.u bil.st.",20 ), {|| pozbils}, "pozbils" })
 endif
 if KONTO->(FIELDPOS("POZBILU"))<>0
-  AADD (ImeKol,{ padr("Poz.u bil.usp.",20 ), {|| pozbilu}, "pozbilu" })
+      AADD (ImeKol,{ padr("Poz.u bil.usp.",20 ), {|| pozbilu}, "pozbilu" })
 endif
-
 if KONTO->(FIELDPOS("OZNAKA"))<>0
-  AADD (ImeKol,{ padr("Oznaka",20 ), {|| oznaka}, "oznaka" })
+      AADD (ImeKol,{ padr("Oznaka",20 ), {|| oznaka}, "oznaka" })
 endif
 
-FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
+for i := 1 to LEN(ImeKol)
+      AADD( Kol, i )
+next
 
-IF lBlag==NIL; lBlag:=.f.; ENDIF
-
-PushWa()
-select (F_SIFK)
-if !used()
-  O_SIFK
-  O_SIFV
+if lBlag == NIL
+      lBlag := .f.
 endif
 
-select sifk
-set order to tag "ID"
-seek "KONTO"
-do while !eof() .and. ID="KONTO"
-
- AADD (ImeKol, {  IzSifKNaz("KONTO",SIFK->Oznaka) })
- AADD (ImeKol[Len(ImeKol)], &( "{|| ToStr(IzSifk('KONTO','" + sifk->oznaka + "')) }" ) )
- AADD (ImeKol[Len(ImeKol)], "SIFK->"+SIFK->Oznaka )
- if sifk->edkolona > 0
-   for ii:=4 to 9
-    AADD( ImeKol[Len(ImeKol)], NIL  )
-   next
-   AADD( ImeKol[Len(ImeKol)], sifk->edkolona  )
- else
-   for ii:=4 to 10
-    AADD( ImeKol[Len(ImeKol)], NIL  )
-   next
- endif
-
- // postavi picture za brojeve
- if sifk->Tip="N"
-   if f_decimal > 0
-     ImeKol [Len(ImeKol),7] := replicate("9", sifk->duzina - sifk->f_decimal-1 )+"."+replicate("9",sifk->f_decimal)
-   else
-     ImeKol [Len(ImeKol),7] := replicate("9", sifk->duzina )
-   endif
- endif
-
- AADD  (Kol, iif( sifk->UBrowsu='1',++i, 0) )
-
- skip
-enddo
+SELECT konto
+sif_sifk_fill_kol( "KONTO", @ImeKol, @Kol )
 
 IF lBlag .and. !LEFT(cId,1)$"0123456789"
-  SELECT KONTO
-  // ukini zaostali filter
-  SET FILTER TO
-  // postavi filter za zadanu vrijednost karakteristike BLOP
-  cFilter := "DaUSifV('KONTO','BLOP',ID,"+cm2str(TRIM(cId))+")"
-  SET FILTER TO &cFilter
-  GO TOP
-  cId:=SPACE(LEN(cId))
+      SELECT KONTO
+      // ukini zaostali filter
+      SET FILTER TO
+      // postavi filter za zadanu vrijednost karakteristike BLOP
+      cFilter := "DaUSifV('KONTO','BLOP',ID,"+cm2str(TRIM(cId))+")"
+      SET FILTER TO &cFilter
+      GO TOP
+      cId:=SPACE(LEN(cId))
 ENDIF
-PopWa()
+
+SELECT KONTO
+SET ORDER TO TAG "ID"
 
 return PostojiSifra(F_KONTO, 1, MAXROWS() - 17, MAXCOLS() - 10, "LKTF Lista: Konta ", @cId, dx, dy, {|Ch| KontoBlok(Ch)},,,,,{"ID"})
 
@@ -392,14 +363,13 @@ return DE_CONT
  */
  
 function P_PKonto(CId,dx,dy)
-
 PRIVATE ImeKol,Kol
 ImeKol:={ { "ID  ",  {|| id },   "id"   , {|| .t.}, {|| vpsifra(wid)}    },;
           { PADC("Tip prenosa",25), {|| PADC(TipPkonto(tip),25)},     "tip" ,{|| .t.}, {|| wtip $ "123456"}     };
         }
 Kol:={1,2}
 
-return PostojiSifra(F_PKONTO, 1, 10, 60, "Lista: Nacin prenosa konta u novu godinu",@cId,dx,dy)
+return p_sifra(F_PKONTO, 1, 10, 60, "MatPod: Način prenosa konta u novu godinu",@cId, dx, dy)
 
 
 
@@ -454,6 +424,8 @@ local _i
 private imekol := {}
 private kol := {}
 
+O_KS
+
 AADD( imekol, { PADR( "ID", 3 ) , {|| id }  , "id", {|| .t.}, {|| vpsifra(wid)} } )
 AADD( imekol, { PADR( "Tip", 3 ) , {|| PADC( tip, 3 ) }  , "tip" } )
 AADD( imekol, { PADR( "DatOd", 8 ) , {|| datod }  , "datod" } )
@@ -467,7 +439,7 @@ for _i := 1 to LEN( imekol )
     AADD( kol, _i )
 next
 
-return PostojiSifra( F_KS, 1, MAXROWS()-10, MAXCOLS()-5, "Lista kamatni stopa",@cId,dx,dy)
+return p_sifra( F_KS, 1, MAXROWS()-10, MAXCOLS()-5, "Lista kamatni stopa",@cId,dx,dy)
 
 
 
@@ -555,53 +527,6 @@ Kol:={1,2}
 
 return PostojiSifra(F_PAREK,1,10,55,"Partije->Konta" ,@cId,dx,dy)
 
-
-
-/*! \fn P_TRFP2(cId,dx,dy)
- *  \brief Otvara sifrarnik parametri prenosa u FP
- *  \param cId
- *  \param dx
- *  \param dy
- */
- 
-function P_TRFP2(cId,dx,dy)
-
-private imekol,kol
-ImeKol:={  ;
-           { "VD",  {|| padc(IdVD,4)} ,    "IdVD"                  },;
-           { padc("Shema",5),    {|| padc(shema,5)},      "shema"                    },;
-           { padc("ID",10),    {|| id },      "id"                    },;
-           { padc("Naziv",20), {|| naz},     "naz"                   },;
-           { "Konto  ", {|| idkonto},        "Idkonto" , {|| .t.} , {|| ("?" $ widkonto) .or. ("A" $ widkonto) .or. ("B" $ widkonto) .or. ("IDKONT" $ widkonto) .or.  P_kontoFin(@wIdkonto) }   },;
-           { "Tarifa", {|| idtarifa},        "IdTarifa"              },;
-           { "D/P",   {|| padc(D_P,3)},      "D_P"                   },;
-           { "Znak",    {|| padc(Znak,4)},        "ZNAK"                  },;
-           { "Dokument", {|| padc(Dokument,8)},   "Dokument"              },;
-           { "Partner", {|| padc(Partner,7)},     "Partner"               },;
-           { "IDVN",    {|| padc(idvn,4)},        "idvn"                  };
-        }
-Kol:={1,2,3,4,5,6,7,8,9,10,11}
-
-private cShema:=" ", ckavd:="  "
-
-if Pitanje(,"Zelite li postaviti filter za odredjenu shemu","N")=="D"
-  Box(,1,60)
-     @ m_x+1,m_y+2 SAY "Odabir sheme:" GET cShema  pict "@!"
-     @ m_x+1,col()+2 SAY "vrsta kalkulacije (prazno sve)" GET cKavd pict "@!"
-     read
-  Boxc()
-  select trfp2
-  cFiltTRFP2 := "shema="+cm2str(cShema) + IF(!EMPTY(cKaVD),".and.IDVD=="+cm2str(cKaVD),"")
-  SET FILTER TO &cFiltTRFP2
-  go top
-else
-  select trfp2
-  set filter to
-endif
-return PostojiSifra(F_TRFP2,1,15,76,"Parametri prenosa u FP",@cId,dx,dy)
-select trfp2
-set filter to
-return
 
 
 

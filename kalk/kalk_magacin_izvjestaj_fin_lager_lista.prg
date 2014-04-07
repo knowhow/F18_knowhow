@@ -414,7 +414,7 @@ if _export
     tbl_export( _launch )
 endif
 
-close all
+my_close_all_dbf()
 return
 
 // -----------------------------------------

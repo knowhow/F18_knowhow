@@ -877,7 +877,7 @@ set order to tag "ID"
 seek "POR"
 
 do while !eof() .and. ID="POR"
-    AADD (ImeKol, {  IzSifKNaz("POR",SIFK->Oznaka) })
+    AADD (ImeKol, {  IzSifKNaz("POR", SIFK->Oznaka) })
     AADD (ImeKol[Len(ImeKol)], &( "{|| ToStr(IzSifk('POR','" + sifk->oznaka + "')) }" ) )
     AADD (ImeKol[Len(ImeKol)], "SIFK->"+SIFK->Oznaka )
 
@@ -967,7 +967,7 @@ set order to tag "ID"
 seek "DOPR"
 
 do while !eof() .and. ID="DOPR"
-    AADD(ImeKol,{IzSifKNaz("DOPR",SIFK->Oznaka)})
+    AADD(ImeKol,{IzSifKNaz("DOPR", SIFK->Oznaka)})
     AADD(ImeKol[Len(ImeKol)], &( "{|| ToStr(IzSifk('DOPR','" + sifk->oznaka + "')) }" ) )
     AADD(ImeKol[Len(ImeKol)], "SIFK->"+SIFK->Oznaka )
     if (sifk->edkolona>0)
@@ -1153,20 +1153,7 @@ Box(,7,75)
             go (nRec)
         enddo
                 
-        // brisem ga iz baze obracuna u smecu
-        // ----------------------------------
-        select (F_LDSM)
-        set order to tag "RADN"
-        go top
-        seek cIdRadn
-        do while !eof() .and. idradn==cIdRadn
-            skip 1
-            nRec:=RecNo()
-            skip -1
-            DELETE
-            go (nRec)
-        enddo
-    enddo
+   enddo
 
     f18_free_tables({"ld_radn", "ld_radkr"})        
     sql_table_update( nil, "END" )
@@ -1175,7 +1162,7 @@ Box(,7,75)
 
 BoxC()
 
-close all
+my_close_all_dbf()
 return
 
 

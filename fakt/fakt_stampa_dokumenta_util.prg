@@ -65,7 +65,7 @@ return cRet
 
 function pocni_stampu()
 	if !lSSIP99 .and. !StartPrint()
-		close all
+		my_close_all_dbf()
 		return
 	endif
 return
@@ -73,7 +73,7 @@ return
 
 function zavrsi_stampu()
 	if !lSSIP99
-        close all 
+        my_close_all_dbf() 
 		EndPrint()
 	endif
 return

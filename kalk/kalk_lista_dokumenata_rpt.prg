@@ -28,7 +28,7 @@ if reccount2() == 0
     kalk_gen_doks_iz_kalk()
 endif
 
-close all
+my_close_all_dbf()
 
 SStDoks()
 
@@ -178,7 +178,7 @@ seek cIdFirma + qqVD
 
 if cStampaj == "D"
 	kalk_centr_stampa_dokumenta( .t., "IZDOKS" )
-   	close all
+   	my_close_all_dbf()
 	return
 endif
 
@@ -327,7 +327,7 @@ endif
 FF
 END PRINT
 
-close all
+my_close_all_dbf()
 return
 
 

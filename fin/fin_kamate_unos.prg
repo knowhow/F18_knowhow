@@ -33,7 +33,7 @@ AADD( _opc, "3. prenos FIN->kamate         " )
 AADD( _opcexe, { || prenos_fin_kam() } )
 AADD( _opc, "4. kontrola cjelovitosti kamatnih stopa   " )
 AADD( _opcexe, { || kontrola_cjelovitosti_ks() } )
-AADD( _opc, "5. sifrarnik kamatnih stopa  " )
+AADD( _opc, "5. lista kamatnih stopa  " )
 AADD( _opcexe, { || p_ks() } )
 
 gDatObr := DATE()
@@ -70,13 +70,13 @@ for _i := 1 to LEN( imekol )
 next
 
 Box(, _x, _y )
-	@ m_x + (_x-2), m_y + 2 SAY " <c-N>  Nove Stavke      ³ <ENT> Ispravi stavku   ³ <c-T> Brisi Stavku"
-	@ m_x + (_x-1), m_y + 2 SAY " <c-A>  Ispravka Dokum.  ³ <c-P> Stampa svi KL    ³ <c-U> Lista uk.dug"
-	@ m_x + _x, m_y + 2 SAY " <c-F9> Brisi pripremu   ³ <a-P> Stampa pojedinac.³                   "
-	ObjDbedit( "PNal", _x , _y ,{|| _key_handler() },"","KAMATE Priprema.....ÍÍÍÍÍ", , , , ,3)
+	@ m_x + (_x-2), m_y + 2 SAY " <c-N>  Nove Stavke      Â³ <ENT> Ispravi stavku   Â³ <c-T> Brisi Stavku"
+	@ m_x + (_x-1), m_y + 2 SAY " <c-A>  Ispravka Dokum.  Â³ <c-P> Stampa svi KL    Â³ <c-U> Lista uk.dug"
+	@ m_x + _x, m_y + 2 SAY " <c-F9> Brisi pripremu   Â³ <a-P> Stampa pojedinac.Â³                   "
+	ObjDbedit( "PNal", _x , _y ,{|| _key_handler() },"","KAMATE Priprema.....ÃÃÃÃÃ", , , , ,3)
 BoxC()
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -158,24 +158,11 @@ select kam_pripr
 
 do case
 
-    // brisi stavku
     case Ch == K_CTRL_T
+        RETURN browse_brisi_stavku()
 
-        if Pitanje("p01","Zelite izbrisati ovu stavku ?", "D" ) == "D"
-            delete
-            __dbPack()
-            return DE_REFRESH
-        endif
-        return DE_CONT
-
-    // brisi pripremu
     case Ch = K_CTRL_F9
-
-        if Pitanje(, "Zelite li izbrisati pripremu !!????", "N" ) == "D"
-            zap
-            __dbPack()
-        endif
-        return DE_REFRESH
+        RETURN browse_brisi_pripremu()
 
     // ispravka stavke
     case Ch == K_ENTER
@@ -489,6 +476,8 @@ do while !EOF()
       
     if ObracV( _id_partner, .f., _var_obr ) > _mala_kamata 
 
+        my_flock()
+
         select pom
         append blank
         
@@ -496,6 +485,8 @@ do while !EOF()
         replace field->osndug with nOsnDug 
         replace field->kamate with nKamate 
 		replace field->pdv with nPdvTotal
+
+        my_unlock()
         
         select kam_pripr
         

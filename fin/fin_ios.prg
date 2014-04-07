@@ -350,7 +350,7 @@ endif
 FF
 END PRINT
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -424,8 +424,7 @@ O_IOS
 
 // reset tabele IOS
 select ios
-zap
-__dbPack()
+my_dbf_zap()
 
 select suban
 set order to tag "1"
@@ -729,7 +728,7 @@ if _print_tip == "2" .and. _export_dbf == "D"
     f18_open_mime_document( my_home() + "r_export.dbf" )
 endif
 
-close all
+my_close_all_dbf()
 
 if _print_tip == "1"
     

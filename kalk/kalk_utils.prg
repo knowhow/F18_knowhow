@@ -181,7 +181,7 @@ endif
 
 select kalk_pripr9
 go top
-zapp()
+my_dbf_zap()
 
 return
 

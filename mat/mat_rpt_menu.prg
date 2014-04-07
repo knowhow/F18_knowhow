@@ -44,7 +44,7 @@ AADD( _opcexe, { || mat_spec_br_dan() } )
 
 f18_menu( "matizv", .f., _izbor, _opc, _opcexe )
 
-close all
+my_close_all_dbf()
 
 return
 

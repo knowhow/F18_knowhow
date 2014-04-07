@@ -238,10 +238,6 @@ do while !EOF()
 		// napuni matricu aArtDesc radi podataka o artiklu !
 		_art_set_descr( nArt_id, nil, nil, @aArtDesc, .t. )
       
-        //if nDoc_no == 11101
-          //  altd()
-        //endif
- 
         // sracunaj broj stakala
         _glass_count := broj_stakala( aArtDesc, nQtty )
 
@@ -581,7 +577,7 @@ do while !EOF()
 
 enddo
 
-close all
+my_close_all_dbf()
 
 FF
 END PRINT

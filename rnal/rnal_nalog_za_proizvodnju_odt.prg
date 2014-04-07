@@ -35,21 +35,15 @@ go top
 _doc_no := field->doc_no
 
 // izvuci sve grupe....
-do while !EOF() .and. field->doc_no == _doc_no
-	
+do while !EOF() .and. field->doc_no == _doc_no	
 	// grupa dokumenta
 	_doc_gr := field->doc_gr_no
-	
 	do while !EOF() .and. field->doc_no == _doc_no .and. ;
 			field->doc_gr_no == _doc_gr
-		
 		skip		
 	enddo
-	
 	++ _cnt
-	
 	AADD( _groups, { _doc_gr, _cnt })
-	
 enddo
 
 select t_docit
@@ -81,7 +75,10 @@ if f18_odt_generate( _template )
     f18_odt_print()
 endif
 
+my_close_all_dbf()
+
 _ok := .t.
+
 return _ok
 
 
@@ -186,6 +183,7 @@ local _count
 local _t_total
 local _xml := my_home() + "data.xml"
 local _picdem := "999999999.99"
+local _a_items := {}
 
 PIC_VRIJEDNOST := PADL( ALLTRIM( RIGHT( _picdem, LEN_VRIJEDNOST ) ), LEN_VRIJEDNOST, "9" )
 
@@ -234,6 +232,9 @@ xml_node( "cont_desc_3", to_xml_encoding( params["kontakt_opis_2"] ) )
 
 for _i := 1 to LEN( groups )
 
+    // resetuj matricu stavki grupe
+    _a_items := {}
+
     // subnode
     xml_subnode( "nalog", .f. )
     
@@ -273,6 +274,9 @@ for _i := 1 to LEN( groups )
 
     do while !EOF() .and. field->doc_no == _doc_no .and. field->doc_gr_no == _group_id
 	
+        // dodaj u matricu stavki naloga po grupi
+        AADD( _a_items, { field->doc_no, field->doc_it_no } )
+
         xml_subnode( "item", .f. )
 	    
 	    _art_id := field->art_id
@@ -352,7 +356,6 @@ for _i := 1 to LEN( groups )
 	    select t_docit
 	
 	    if _item_type == "R"
-            
             // tip
             xml_node( "type", "fi" )	  
 
@@ -371,14 +374,12 @@ for _i := 1 to LEN( groups )
             endif
 
 	    elseif _item_type == "S"
-
 	        // tip	
             xml_node( "type", "shp" )	  
             // sirina kod shape
-	        xml_node( "w", show_number( field->doc_it_wid, PIC_VRIJEDNOST ) + "/" + show_number( field->doc_it_w2, PIC_VRIJEDNOST ) )
+	        xml_node( "w", show_number( field->doc_it_wid, PIC_VRIJEDNOST ) )
             // visina kod shape
-	        xml_node( "h", show_number( field->doc_it_hei, PIC_VRIJEDNOST ) + "/" + show_number( field->doc_it_h2, PIC_VRIJEDNOST ) )
-  
+	        xml_node( "h", show_number( field->doc_it_hei, PIC_VRIJEDNOST ) )
 	    else
 
             // tip	
@@ -456,66 +457,12 @@ for _i := 1 to LEN( groups )
 
     xml_node( "qtty", show_number( _qtty_total, PIC_VRIJEDNOST ) )
 
+    // ispis repromaterijala koji je vezan za stavku...
+    _xml_repromaterijal( _a_items, groups, _group_id, params )
+
     xml_subnode( "nalog", .t. )
 
 next
-
-// rekapitulacija materijala treba
-xml_subnode( "rekap", .f. )
-
-select t_docit2
-go top
-
-if RECCOUNT2() <> 0 .and. params["rekap_materijala"]
-	
-    seek docno_str( _doc_no )
-
-    do while !EOF() 
-
-	    if _doc_no > 0
-		    if field->doc_no <> _doc_no
-			    skip
-			    loop
-		    endif
-	    endif
-
-	    _r_doc := field->doc_no
-	    _r_doc_it_no := field->doc_it_no
-
-	    // da li se treba stampati ?
-	    select t_docit
-	    seek docno_str( _r_doc ) + docit_str( _r_doc_it_no )
-	
-	    if field->print == "N"
-		    select t_docit2
-		    skip
-		    loop
-	    endif
-	
-	    // vrati se
-	    select t_docit2
-
-	    do while !EOF() .and. field->doc_no == _r_doc ;
-		                .and. field->doc_it_no == _r_doc_it_no
-		
-            xml_subnode( "item", .f. )
-
-            xml_node( "no", ALLTRIM(STR( field->it_no )) )
-            xml_node( "id", to_xml_encoding( ALLTRIM( field->art_id ) ) )
-            xml_node( "desc", to_xml_encoding( ALLTRIM( field->art_desc ) ) )
-            xml_node( "notes", to_xml_encoding( ALLTRIM( field->descr ) ) )
-            xml_node( "qtty", ALLTRIM( STR( field->doc_it_qtt, 12, 2 ) ) )
-
-            xml_subnode( "item", .t. )
-
-		    skip
-	    enddo
-
-    enddo
-
-endif
-
-xml_subnode( "rekap", .t. )
 
 xml_subnode( "nalozi", .t. )
 
@@ -528,6 +475,117 @@ return _ok
 
 
 
+// --------------------------------------------------------
+// generisanje xml-a za repromaterijal
+// --------------------------------------------------------
+function _xml_repromaterijal( a_items, groups, group_id, params )
+local _t_area := SELECT()
+local _t_rec := RECNO()
+local _doc_no, _doc_it_no, _i
+
+select t_docit2
+go top
+
+if RECCOUNT2() == 0 .or. !params["rekap_materijala"]
+    return 
+endif
+
+// rekapitulacija materijala treba
+xml_subnode( "rekap", .f. )
+
+for _i := 1 to LEN( a_items )
+
+    _doc_no := a_items[ _i, 1 ]
+    _doc_it_no := a_items[ _i, 2 ]
+
+    // provjera: da li ima vise grupa i da li je artikal u zadnjoj grupi
+    if LEN( groups ) > 1 .and. group_id <> _item_last_group( _doc_no, _doc_it_no )
+        LOOP
+    endif
+
+    select t_docit2
+    set order to tag "1"
+    go top
+    seek docno_str( _doc_no ) + docit_str( _doc_it_no )
+
+    do while !EOF() .and. field->doc_no == _doc_no .and. field->doc_it_no == _doc_it_no
+
+	    // da li se treba stampati ?
+	    select t_docit
+	    seek docno_str( _doc_no ) + docit_str( _doc_it_no )
+	
+	    if field->print == "N"
+		    select t_docit2
+		    skip
+		    LOOP
+	    endif
+
+        select t_docit2
+	
+        xml_subnode( "item", .f. )
+
+            xml_node( "no", "(" + ALLTRIM(STR( field->doc_it_no ) ) + ")/" + ALLTRIM(STR( field->it_no ) ) )
+            xml_node( "id", to_xml_encoding( ALLTRIM( field->art_id ) ) )
+            xml_node( "desc", to_xml_encoding( ALLTRIM( field->art_desc ) ) )
+            xml_node( "notes", to_xml_encoding( ALLTRIM( field->descr ) ) )
+            xml_node( "qtty", repro_qtty_str( field->doc_it_qtt, field->doc_it_q2 ) )
+
+        xml_subnode( "item", .t. )
+
+		skip
+
+    enddo
+
+next
+
+xml_subnode( "rekap", .t. )
+
+select ( _t_area )
+set order to tag "2"
+go ( _t_rec )
+
+return
+
+
+
+// ------------------------------------------------------
+// ------------------------------------------------------
+function repro_qtty_str( kol, duzina )
+local _str := ""
+
+_str := ALLTRIM( STR( kol, 12, 2 ) )
+
+// ako u polju postoji informacija onda je to sigurno unesena dužina
+if duzina > 0
+	_str += " x " + ALLTRIM( STR( duzina, 12, 2 ) ) + " (mm)"
+endif
+
+return _str
+
+
+
+// -------------------------------------------------------
+// odredjuje zadnju grupu stavke naloga
+// -------------------------------------------------------
+function _item_last_group( doc_no, doc_it_no )
+local _group := 1
+local _t_area := SELECT()
+
+select t_docit
+set order to tag "1"
+go top
+seek docno_str( doc_no ) + docit_str( doc_it_no )
+
+do while !EOF() .and. field->doc_no == doc_no .and. field->doc_it_no == doc_it_no
+    if field->doc_gr_no > _group
+        _group := field->doc_gr_no
+    endif
+    SKIP
+enddo
+
+select ( _t_area )
+
+return _group
 
 
 

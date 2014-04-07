@@ -61,7 +61,7 @@ ObjDBedit( "PripVir", MAXROWS()-8, MAXCOLS()-3, {|| _k_handler()},"","Priprema v
                "<c-P>   Stampanje",;
                "<a-P>   Rekapitulacija"},2,,,)
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -107,22 +107,17 @@ do case
     case Ch == ASC(" ")
         // ako je _ST_ = " " onda stavku treba odstampati
         //        _ST_ = "*" onda stavku ne treba stampati
-
+		my_rlock()
         if field->_ST_ =  "*"
             replace _st_ with  " "
         else
             replace _st_ with "*"
         endif
+		my_unlock()
         return DE_REFRESH
 
     case Ch == K_CTRL_T
-
-        if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
-            delete
-            __dbPack()
-            return DE_REFRESH
-        endif
-        return DE_CONT
+        return browse_brisi_stavku()
 
     case Ch == K_CTRL_P
         stampa_virmana_drb()
@@ -194,10 +189,7 @@ do case
         endif
 
     case Ch = K_CTRL_F9
-        if Pitanje(,"Zelite li izbrisati pripremu !!????","N")=="D"
-             zapp()
-        endif
-        return DE_REFRESH
+        return browse_brisi_pripremu()
 
 endcase
 
@@ -432,7 +424,7 @@ bErr := ERRORBLOCK( { |o| MyErrH(o) } )
 
 BEGIN SEQUENCE
     O_IZLAZ
-    ZAPP()
+    my_dbf_zap()
 
 RECOVER
     MsgBeep("Vec je aktiviran delphirb ?")
@@ -455,6 +447,8 @@ set order to tag "1"
 if _marker = "D"
     go top
 endif
+
+my_flock()
 
 do while !eof()
 
@@ -502,6 +496,8 @@ if eof()
     skip -1
 endif
 
+my_unlock()
+
 // pokreni stampu delphi rb-a
 _stampaj_virman()
 
@@ -523,7 +519,7 @@ use
 select izlaz
 use
 
-close all
+my_close_all_dbf()
 
 // ovdje treba kod za filovanje datoteke IZLAZ.DBF
 if LastKey() != K_ESC 
@@ -646,38 +642,6 @@ cDefault := LEFT( aBanke[izbor], 16 )
 
 return .t.
 
-
-
-// ------------------------------------------------------------------
-// formiranje matrice na osnovu podataka iz tabele sifv
-// ------------------------------------------------------------------
-function array_from_sifv( cDBF, cOznaka, cIdSif )
-local aSifV := {}
-
-PushWa()
-
-cDBF := PADR( cDBF, 8 )
-cOznaka := PADR( cOznaka, 4 )
-
-xVal := NIL
-
-select sifv
-PushWa() 
-
-set order to tag "ID"
-// "ID", "id+oznaka+IdSif+Naz"
-hseek cDbf + cOznaka + cIdSif
-
-do while !EOF() .and. field->id + field->oznaka + field->idsif = cDbf + cOznaka + cIdSif
-    if !EMPTY( naz )
-        AADD( aSifV, ALLTRIM( naz ) )
-    endif
-    skip
-enddo
-
-PopWa()
-
-return aSifv
 
 
 

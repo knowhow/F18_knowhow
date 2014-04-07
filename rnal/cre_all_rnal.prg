@@ -96,6 +96,14 @@ _alias := "DOC_IT2"
 _table_name := "rnal_doc_it2"
 
 IF_NOT_FILE_DBF_CREATE
+
+// 0.9.4
+if ver["current"] > 0 .and. ver["current"] < 00904
+	for each _tbl in { _table_name, "rnal__doc_it2" }
+   		modstru({"*" + _tbl, "A JMJ C 3 0", "A JMJ_ART C 3 0" })
+	next
+endif
+
 IF_C_RESET_SEMAPHORE
 
 CREATE_INDEX("1", "STR(doc_no,10)+STR(doc_it_no,4)+STR(it_no,4)", _alias )
@@ -322,10 +330,6 @@ IF_C_RESET_SEMAPHORE
 CREATE_INDEX("1", "STR(id,5)+STR(gl_tick,2)", _alias )
 CREATE_INDEX("2", "descr", _alias )
 
-// kreiraj pravila : RULES
-cre_fmkrules( ver )
-// kreiraj pravila : RULES cdx files
-c_rule_cdx()
 // kreiranje tabele pretraga parametri
 _cre_fnd_par( ver, .t. )
 // kreiraj relacije
@@ -334,21 +338,6 @@ cre_relation( ver )
 return .t.
 
 
-
-// -----------------------------------------------
-// kreiranje rules index-a specificnih za rnal
-// -----------------------------------------------
-static function c_rule_cdx()
-local _alias := "FMKRULES"
-
-// ELEMENT CODE
-CREATE_INDEX( "ELCODE", "MODUL_NAME+RULE_OBJ+RULE_C3+RULE_C4", _alias )
-// ARTICLES NEW
-CREATE_INDEX( "RNART1", "MODUL_NAME+RULE_OBJ+RULE_C3+STR(RULE_NO,5)", _alias )
-// ITEMS
-CREATE_INDEX( "ITEM1", "MODUL_NAME+RULE_OBJ+RULE_C5+STR(RULE_NO,5)", _alias )
-
-return
 
 
 
@@ -452,6 +441,8 @@ AADD(aDBf,{ "art_id", "C", 10, 0 })
 AADD(aDBf,{ "doc_it_qtt",  "N", 15,  5 })
 AADD(aDBf,{ "doc_it_q2",  "N", 15,  5 })
 AADD(aDBf,{ "doc_it_pri", "N", 15,  5 })
+AADD(aDBf,{ "jmj", "C", 3,  0 })
+AADD(aDBf,{ "jmj_art", "C", 3,  0 })
 AADD(aDBf,{ "sh_desc", "C", 100,  0 })
 AADD(aDBf,{ "descr", "C", 200,  0 })
 

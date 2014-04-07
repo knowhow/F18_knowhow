@@ -25,7 +25,7 @@ O_ROBA
 select kalk_pripr; go top
 private cIdFirma:=idfirma,cIdVD:=idvd,cBrDok:=brdok
 if !(cidvd $ "16") .or. "-X"$cBrDok .or. Pitanje(,"Formirati dokument radi evidentiranja otpisanog dijela? (D/N)","N")=="N"
-  close all
+  my_close_all_dbf()
   return .f.
 endif
 
@@ -47,7 +47,7 @@ do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
   skip
 enddo
 
-close all
+my_close_all_dbf()
 RETURN .t.
 *}
 

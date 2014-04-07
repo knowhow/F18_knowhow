@@ -291,7 +291,7 @@ enddo
 
 BoxC()
 
-close all
+my_close_all_dbf()
 
 return
 
@@ -653,7 +653,7 @@ DO WHILE .T.
 ENDDO
 Boxc()
 
-close all
+my_close_all_dbf()
 return
 
 

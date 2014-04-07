@@ -241,7 +241,7 @@ cre_cache()
 
 O_CACHE
 select cache
-zapp(.t.)
+my_dbf_zap()
 
 O_CACHE
 O_KALK_DOKS
@@ -273,10 +273,6 @@ for i := 1 to LEN( aKto )
     
 
     cIdRoba := field->idroba
-
-    if ALLTRIM( cIdRoba ) == "K11001"
-        altd()
-    endif
 
     nKolicina := 0
     nIzlNV:=0   
@@ -746,12 +742,7 @@ do case
     
     case ch == K_CTRL_T
 
-        // brisi stavku iz tabele
-        if Pitanje(,"Brisati stavku ?", "N") == "D"
-            delete
-            __dbPack()
-            return DE_REFRESH
-        endif
+        return browse_brisi_stavku()
     
     case UPPER(CHR(ch)) == "F"
         

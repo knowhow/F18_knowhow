@@ -46,7 +46,7 @@ local _curr_stru, _new_stru
 local _full_name
 local _msg
 
-close all
+CLOSE ALL
 
 log_write("Modstru cmd: " + pp(a_commands), 7)
 
@@ -96,7 +96,7 @@ for each _lin in a_commands
 
         if empty(_ime_dbf)
             log_write( "MODSTRU, nije zadat DBF fajl nad kojim se vrsi modifikacija strukture !", 3 )
-            close all
+            CLOSE ALL
             return .f.
         endif
 
@@ -114,7 +114,7 @@ kopi(_path, _ime_dbf, _curr_stru, _new_stru, @_brisi_dbf, @_rename_dbf, @_stru_c
 log_write("END modstru ", 2)
 
 BoxC()
-close all
+CLOSE ALL
 return
 
 
@@ -361,7 +361,7 @@ if stru_changed
     
     enddo
 
-   close all
+   CLOSE ALL
      
    for each _tmp in { DBFEXT, MEMOEXT, INDEXEXT }
 

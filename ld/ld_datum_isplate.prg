@@ -79,7 +79,7 @@ local cRj := "  "
 local nX := 1
 local cOk := "D"
 
-close all
+my_close_all_dbf()
 
 O_OBRACUNI
 O_LD_RJ
@@ -279,7 +279,7 @@ if LastKey() <> K_ESC
 
 endif
 
-close all
+my_close_all_dbf()
 
 return
 

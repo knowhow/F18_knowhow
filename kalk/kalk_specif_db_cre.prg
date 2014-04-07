@@ -21,7 +21,7 @@ local aDbf
 local _rec
 local _table
 
-CLOSE ALL
+my_close_all_dbf()
 
 cTbl := "pobjekti"
 
@@ -46,7 +46,7 @@ aDbf:={ {"id","C",2,0}   ,;
 DBCREATE2( cTbl, aDbf )
 CREATE_INDEX( "ID", "id", cTbl )
 
-CLOSE ALL
+my_close_all_dbf()
 
 O_POBJEKTI
 O_OBJEKTI
@@ -71,7 +71,7 @@ enddo
 
 MsgC()
 
-CLOSE ALL
+my_close_all_dbf()
 return
 
 
@@ -118,7 +118,7 @@ endif
 // f5 - reklamacije u toku mjeseca, f7 - reklamacije u toku godine
 // f8 -
 
-CLOSE ALL
+my_close_all_dbf()
 
 FERASE( my_home() + _table + ".dbf" )
 FERASE( my_home() + _table + ".cdx" )
@@ -132,7 +132,7 @@ index on objekat+idroba tag "1"
 index on g1+idtarifa+idroba+objekat tag "2"
 set order to tag "1"
  
-CLOSE ALL
+my_close_all_dbf()
 
 return
 
@@ -167,7 +167,7 @@ aDbf:={ {"objekat" ,"C", 7 ,0},;
         {"SNIZENJE","N",16,2} ;
      }
 
-CLOSE ALL
+my_close_all_dbf()
 
 FERASE( my_home() + _table + ".dbf" )
 FERASE( my_home() + _table + ".cdx" )
@@ -222,7 +222,7 @@ my_use_temp( "REKA22", my_home() + _table + ".dbf", .f., .t. )
 index on g1 tag "1"
 set order to tag "1"
 
-CLOSE ALL
+my_close_all_dbf()
 
 return
 
@@ -265,7 +265,7 @@ AADD(aTblCols,{"polog10","N",12,2})
 AADD(aTblCols,{"polog11","N",12,2})
 AADD(aTblCols,{"polog12","N",12,2})
 
-CLOSE ALL
+my_close_all_dbf()
 
 FERASE( my_home() + cTblName + ".dbf" )
 FERASE( my_home() + cTblName + ".cdx" )

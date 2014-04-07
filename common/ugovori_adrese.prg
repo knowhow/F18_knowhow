@@ -366,7 +366,7 @@ StampaTabele( aKol, NIL, NIL, _table_type, NIL, NIL, "PREGLED BAZE PRIPREMLJENIH
 
 END PRINT
 
-close all
+my_close_all_dbf()
 
 return
 

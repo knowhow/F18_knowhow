@@ -155,7 +155,7 @@ local nX := 1
 local aArtArr := {}
 local nTmpArea
 local nLeft := 21
-local _curr_doc_no
+local _curr_doc_it_no
 
 cGetDOper := "N"
 
@@ -163,8 +163,6 @@ if l_new_it
     
     _doc_no := _doc
     _doc_it_no := inc_docit( _doc )
-    //_doc_it_altt := 0
-    //_doc_acity := SPACE( LEN(_doc_acity) )
     _doc_it_typ := " "
 	_it_lab_pos := "I"
     
@@ -183,7 +181,7 @@ if l_new_it
     
 endif
 
-_curr_doc_no := _doc_it_no
+_curr_doc_it_no := _doc_it_no
 
 nX += 2
 
@@ -202,10 +200,11 @@ nX += 2
 
 nX += 1
 
-@ m_x + nX, m_y + 2 SAY PADL("Tip artikla (*):", nLeft) GET _doc_it_typ VALID {|| _doc_it_typ $ " SR", show_it( _g_doc_it_type( _doc_it_typ ) ) } WHEN set_opc_box( nBoxX, 50, "' ' - standardni, 'R' - radius, 'S' - shape") PICT "@!"
+@ m_x + nX, m_y + 2 SAY PADL("Tip artikla (*):", nLeft) GET _doc_it_typ ;
+        VALID {|| _doc_it_typ $ " SR" .and. show_it( _g_doc_it_type( _doc_it_typ ) ) } ;
+        WHEN set_opc_box( nBoxX, 50, "' ' - standardni, 'R' - radius, 'S' - shape") PICT "@!"
 
-read
-
+READ
 ESC_RETURN 0
 
 // set opisa na formi
@@ -223,6 +222,8 @@ if _doc_it_typ $ "SR"
     _doc_it_sch := "D"
 endif
 
+_doc_it_h2 := 0
+_doc_it_w2 := 0
 
 nX += 1
 
@@ -238,58 +239,37 @@ nX += 1
 
 nX += 1
 
-@ m_x + nX, m_y + 2 SAY PADL("dod.nap.stavke:", nLeft) GET _doc_it_des PICT "@S40" WHEN set_opc_box( nBoxX, 50, "dodatne napomene vezane za samu stavku")
+@ m_x + nX, m_y + 2 SAY PADL("dod.nap.stavke:", nLeft) GET _doc_it_des PICT "@S40" ;
+    WHEN set_opc_box( nBoxX, 50, "dodatne napomene vezane za samu stavku")
 
 nX += 2
     
-@ m_x + nX, m_y + 2 SAY PADL( cDimADesc , nLeft + 3) GET _doc_it_wid PICT Pic_Dim() VALID val_width(_doc_it_wid) .and. rule_items("DOC_IT_WIDTH", _doc_it_wid, aArtArr ) WHEN set_opc_box( nBoxX, 50 )
+@ m_x + nX, m_y + 2 SAY PADL( cDimADesc , nLeft + 3) GET _doc_it_wid PICT Pic_Dim() ;
+    VALID val_width( _doc_it_wid ) .and. rule_items("DOC_IT_WIDTH", _doc_it_wid, aArtArr ) ;
+    WHEN set_opc_box( nBoxX, 50 )
 
-// ako je tip SHAPE
-if _doc_it_typ == "S"
-    
-    @ m_x + nX, col() + 2 SAY PADL( cDimCDesc , nLeft + 3) GET _doc_it_w2 PICT Pic_Dim() VALID val_width(_doc_it_w2) .and. rule_items("DOC_IT_WIDTH", _doc_it_w2, aArtArr ) WHEN set_opc_box( nBoxX, 50 )
-
-else
-
-    _doc_it_w2 := 0
-
-endif
 
 nX += 1
 
-@ m_x + nX, m_y + 2 SAY PADL( cDimBDesc , nLeft + 3) GET _doc_it_hei PICT Pic_Dim() VALID val_heigh(_doc_it_hei) .and. rule_items("DOC_IT_HEIGH", _doc_it_hei, aArtArr ) WHEN set_opc_box( nBoxX, 50 )
-
-// ako je tip SHAPE
-if _doc_it_typ == "S"
-        
-    @ m_x + nX, col() + 2 SAY PADL( cDimDDesc , nLeft + 3) GET _doc_it_h2 PICT Pic_Dim() VALID val_heigh(_doc_it_h2) .and. rule_items("DOC_IT_HEIGH", _doc_it_h2, aArtArr ) WHEN set_opc_box( nBoxX, 50 )
-
-else
-    _doc_it_h2 := 0
-endif
+@ m_x + nX, m_y + 2 SAY PADL( cDimBDesc , nLeft + 3) GET _doc_it_hei PICT Pic_Dim() ;
+    VALID val_heigh( _doc_it_hei ) .and. rule_items("DOC_IT_HEIGH", _doc_it_hei, aArtArr ) ;
+    WHEN set_opc_box( nBoxX, 50 )
 
 nX += 1
-
 
 @ m_x + nX, m_y + 2 SAY PADL("kolicina [kom] (*):", nLeft + 3) GET _doc_it_qtt PICT Pic_Qtty() VALID val_qtty(_doc_it_qtt) .and. rule_items("DOC_IT_QTTY", _doc_it_qtt, aArtArr ) WHEN set_opc_box( nBoxX, 50 )
 
 nX += 1
 
-read
+READ
 
 ESC_RETURN 0
 
 
 if rule_items( "DOC_IT_ALT", _doc_it_alt, aArtArr ) <> .t.
-
-
     @ m_x + nX, m_y + 2 SAY PADL("nadm. visina [m] (*):", nLeft + 3) GET _doc_it_alt PICT "999999" VALID val_altt(_doc_it_alt) WHEN set_opc_box( nBoxX, 50, "Nadmorska visina izrazena u metrima" )
-
     @ m_x + nX, col() + 2 SAY "grad:" GET _doc_acity VALID !EMPTY(_doc_acity) PICT "@S20" WHEN set_opc_box(nBoxX, 50, "Grad u kojem se montira proizvod")
-
-
 else
-    
     // pobrisi screen na lokaciji nadmorske visine
     @ m_x + nX, m_y + 2 SAY SPACE(70)
     
@@ -310,7 +290,7 @@ READ
 ESC_RETURN 0
 
 // da li je doslo do promjene rednog broja stavke ?
-if !l_new_it .and. ( _curr_doc_no <> _doc_no )
+if !l_new_it .and. ( ALLTRIM( STR( _curr_doc_it_no ) ) <> ALLTRIM( STR( _doc_it_no ) ) )
     MsgBeep( "Uslijedila je promjena rednog broja !!!" )
 endif
 
@@ -400,69 +380,33 @@ go (nTRec)
 return nRet
 
 
-// -------------------------------------
-// validacija precnika (fi)
-// -------------------------------------
-static function val_fi( nVal )
-local lRet := .f.
-if nVal <> 0
-    lRet := .t.
-endif
-val_msg(lRet, "FI mora biti <> 0 !")
-return lRet
+// --------------------------------------
+// vrijednost mora biti <> 0
+// --------------------------------------
+static function razlicito_od_0( nVal, cObjekatValidacije )
+local lRet := .t.
 
-
-// -------------------------------------
-// validacija kolicine
-// -------------------------------------
-static function val_qtty( nVal )
-local lRet := .f.
-if nVal <> 0
-    lRet := .t.
-endif
-val_msg(lRet, "Kolicina mora biti <> 0 !")
-return lRet
-
-
-// -------------------------------------
-// validacija nadmorske visine
-// -------------------------------------
-static function val_altt( nVal )
-local lRet := .f.
-if nVal <> 0
-    lRet := .t.
+if ROUND( nVal, 2 ) == 0
+    lRet := .f.
 endif
 
-val_msg(lRet, "Nadmorska visina mora biti <> 0 !")
+val_msg( lRet, cObjekatValidacije + " : mora biti <> 0 !" ) 
 
 return lRet
 
-
-// ----------------------------------
-// validacija visine
-// ----------------------------------
-static function val_width( nVal )
+// ---------------------------------------------------------------------
+// vrijednost mora biti u opsegu
+// ---------------------------------------------------------------------
+static function u_opsegu( nVal, nMin, nMax, cObjekatValidacije, cJMJ )
 local lRet := .f.
-if nVal >= 0 .and. nVal <= max_width()
+
+if nVal >= nMin .and. nVal <= nMax
     lRet := .t.
 endif
-val_msg(lRet, "!! Dozvoljeni opseg 0 - " + ALLTRIM(STR(max_width())) + " mm" )
+
+val_msg(lRet, "Dozvoljeni opseg za " + cObjekatValidacije + " " + ;
+         ALLTRIM(STR(nMin)) + " - " +  ALLTRIM(STR(max_width()) ) + " " + cJMJ + " !")
 return lRet
-
-
-
-// ----------------------------------
-// validacija sirine
-// ----------------------------------
-static function val_heigh( nVal )
-local lRet := .f.
-if nVal >= 0 .and. nVal <= max_heigh()
-    lRet := .t.
-endif
-val_msg(lRet, "!! Dozvoljeni opseg 0 - " + ALLTRIM(STR(max_heigh())) + " mm" )
-return lRet
-
-
 
 // -------------------------------------
 // poruka pri validaciji
@@ -473,6 +417,34 @@ if lRet == .f.
 endif
 return 
 
+
+// ------------------------------------------------------
+// validacija precnika (fi), kolicine, nadmorske visine
+// -------------------------------------------------------
+static function val_fi( nVal )
+return razlicito_od_0( nVal, "prečnik")
+
+// -------------------------------------
+// validacija kolicine
+// -------------------------------------
+static function val_qtty( nVal )
+return razlicito_od_0( nVal, "količina")
+
+// -------------------------------------
+// validacija nadmorske visine
+// -------------------------------------
+static function val_altt( nVal )
+return razlicito_od_0( nVal, "nadmorska visina" )
+
+// ----------------------------------
+// validacija sirine, visine
+// ----------------------------------
+static function val_width( nVal )
+return u_opsegu( nVal, 1, gMaxWidth, "širina", "mm" )
+
+
+static function val_heigh( nVal )
+return u_opsegu( nVal, 1, gMaxHeigh, "visina", "mm" )
 
 
 // -----------------------------------------------

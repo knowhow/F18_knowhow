@@ -152,7 +152,7 @@ msgc()
 // stampa reporta
 _print_rpt()
 
-close all
+my_close_all_dbf()
 
 return
 

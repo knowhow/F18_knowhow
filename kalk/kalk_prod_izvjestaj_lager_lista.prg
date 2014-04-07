@@ -173,7 +173,7 @@ if !lPocStanje
     set_metric( "kalk_lager_lista_prod_print", _curr_user, _print )
 endif
 
-CLOSE ALL
+my_close_all_dbf()
 
 if (cKontrolnaTabela=="D")
 	CreTblKontrola()
@@ -771,7 +771,7 @@ gPicDem := cPicDem
 gPicKol := cPicKol
 gPicCDem := cPicCDem
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -1223,7 +1223,7 @@ xml_node( "rabat", STR( _t_rabat, 12, 3 ) )
 xml_subnode( "ll", .t. )
 
 close_xml()
-close all
+my_close_all_dbf()
 
 if _rbr > 0
     _ok := .t.

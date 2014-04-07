@@ -270,7 +270,7 @@ endif
 END PRINT
 
 if pcount() < 4
-	close all
+	my_close_all_dbf()
 else // pcount >= "4"
 
     if __radni_sati == "D"

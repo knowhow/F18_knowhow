@@ -467,11 +467,11 @@ endif
 FF
 
 END PRINT
-CLOSE ALL
+my_close_all_dbf()
 MyFERASE(cTMPFAKT)
 
 
-close all
+my_close_all_dbf()
 return
 
 

@@ -336,11 +336,11 @@ if RECCOUNT2() <> 0 .and. params["rekap_materijala"]
 		
             xml_subnode( "item", .f. )
 
-            xml_node( "no", ALLTRIM(STR( field->it_no )) )
+            xml_node( "no", "(" + ALLTRIM( STR( field->doc_it_no ) )+ ")/" + ALLTRIM(STR( field->it_no ) ) )
             xml_node( "id", to_xml_encoding( ALLTRIM( field->art_id ) ) )
             xml_node( "desc", to_xml_encoding( ALLTRIM( field->art_desc ) ) )
             xml_node( "notes", to_xml_encoding( ALLTRIM( field->descr ) ) )
-            xml_node( "qtty", ALLTRIM( STR( field->doc_it_qtt, 12, 2 ) ) )
+            xml_node( "qtty", repro_qtty_str( field->doc_it_qtt, field->doc_it_q2 ) )
 
             xml_subnode( "item", .t. )
 

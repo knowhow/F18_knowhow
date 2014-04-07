@@ -174,7 +174,7 @@ O_KONCIJ
 
 if FIELDPOS("KUMTOPS")=0
 	MsgBeep("Prvo izvrsite modifikaciju struktura pomocu KALK.CHS !")
-	CLOSE ALL
+	my_close_all_dbf()
 	return 0
 endif
 GO TOP

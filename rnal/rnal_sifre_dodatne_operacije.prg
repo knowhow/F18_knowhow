@@ -26,6 +26,9 @@ private ImeKol
 private Kol
 
 nTArea := SELECT()
+
+O_AOPS
+
 cHeader := "Dodatne operacije /  'A' - pregled atributa"
 
 if cDesc == nil

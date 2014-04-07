@@ -54,8 +54,6 @@ if lAuto == nil
 endif
 
 StAnalNal( lAuto )
-
-//StSintNal()
 SintStav()
 
 return
@@ -67,6 +65,8 @@ return
 // ---------------------------------------------
 static function fill_psuban()
 
+my_close_all_dbf()
+
 O_FIN_PRIPR
 O_KONTO
 O_PARTN
@@ -75,15 +75,14 @@ O_TDOK
 O_PSUBAN
 
 select PSUBAN
-ZAPP()
-
+my_dbf_zap()
 
 SELECT fin_pripr
 set order to tag "1"
 go top
 
 if EOF()
-	close all
+	my_close_all_dbf()
 	return
 endif
 
@@ -113,7 +112,7 @@ DO WHILE !EOF()
 
 ENDDO   
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -142,7 +141,7 @@ if lAuto == nil
 endif
 
 select PSUBAN
-ZAPP()
+my_dbf_zap()
 
 SELECT fin_pripr
 set order to tag "1"
@@ -287,6 +286,7 @@ DO WHILE !EOF()
 
         select PSUBAN
 		Scatter()
+
 		select fin_pripr
 		Scatter()
 
@@ -334,7 +334,8 @@ DO WHILE !EOF()
 
 ENDDO   
 
-closeret2
+my_close_all_dbf()
+
 return
 
 
@@ -404,26 +405,25 @@ return
 
 static function SintStav( lAuto )
 
-O_PSUBAN
 O_PANAL
 O_PSINT
 O_PNALOG
+O_PSUBAN
 O_KONTO
 O_TNAL
 
-if lAuto == nil
+if lAuto == NIL
 	lAuto := .f.
 endif
 
 select PANAL
-zapp()
+my_dbf_zap()
 
 select PSINT
-zapp()
+my_dbf_zap()
 
 select PNALOG
-zapp()
-
+my_dbf_zap()
 
 select PSUBAN
 set order to tag "2"
@@ -495,9 +495,12 @@ DO WHILE !eof()
            endif
            skip
          enddo
+
          if !fNasao
             append blank
          endif
+
+         my_rlock()
 
          replace IdFirma WITH cIdFirma
 	 replace IdKonto WITH cIdKonto
@@ -508,6 +511,8 @@ DO WHILE !eof()
 	 replace PotBHD WITH PotBHD + nPotBHD
          replace DugDEM WITH DugDEM + nDugDEM
 	 replace PotDEM WITH PotDEM + nPotDEM
+         my_unlock()
+
 
          SELECT PSINT
          seek cidfirma+cidvn+cbrnal+left(cidkonto,3)
@@ -535,11 +540,14 @@ DO WHILE !eof()
              append blank
          endif
 
+         my_rlock()
          REPLACE IdFirma WITH cIdFirma,IdKonto WITH left(cIdKonto,3),IdVN WITH cIdVN,;
               BrNal WITH cBrNal,;
               DatNal WITH iif(gDatNal=="D", dDatNal,  max(psuban->datdok,datnal) ),;
               DugBHD WITH DugBHD+nDugBHD,PotBHD WITH PotBHD+nPotBHD,;
               DugDEM WITH DugDEM+nDugDEM,PotDEM WITH PotDEM+nPotDEM
+
+         my_unlock()
 
          nD1+=nDugBHD; nD2+=nDugDEM; nP1+=nPotBHD; nP2+=nPotDEM
 
@@ -551,10 +559,15 @@ DO WHILE !eof()
 
    SELECT PNALOG    // datoteka naloga
    APPEND BLANK
+
+   my_rlock()
+
    REPLACE IdFirma WITH cIdFirma,IdVN WITH cIdVN,BrNal WITH cBrNal,;
            DatNal WITH iif(gDatNal=="D",dDatNal,date()),;
            DugBHD WITH nD1,PotBHD WITH nP1,;
            DugDEM WITH nD2,PotDEM WITH nP2
+
+   my_unlock()
 
    private cDN:="N"
 
@@ -565,6 +578,7 @@ ENDDO
 
 select PANAL
 go top
+my_flock()
 do while !eof()
    nRbr:=0
    cIdFirma:=IdFirma;cIDVn=IdVN;cBrNal:=BrNal
@@ -573,9 +587,11 @@ do while !eof()
      skip
    enddo
 enddo
+my_unlock()
 
 select PSINT
 go top
+my_flock()
 do while !eof()
    nRbr:=0
    cIdFirma:=IdFirma;cIDVn=IdVN;cBrNal:=BrNal
@@ -584,12 +600,9 @@ do while !eof()
      skip
    enddo
 enddo
+my_unlock()
 
-if lAuto == .t.
-	closeret
-else
-	closeret2
-endif
+my_close_all_dbf()
 
 return
 
@@ -728,7 +741,6 @@ nCol1:=70
  ? M
 
 FF
-
 END PRINT
 
 if fkum
@@ -887,122 +899,9 @@ Box("kzb",12,70,.f.,"Kontrola zbira FIN naloga")
  	endif
 BoxC()
 
-if lAuto == .t.
-	closeret
-else
-	closeret2
-endif
+my_close_all_dbf()
 
 return
 
 
-
-
-/*! \fn PovFin(cidfirma,cidvn,cbrnal)
- *  \brief Povrat finansijskog naloga u fin_pripremu
- *  \param cidfirma - firma
- *  \param cidvn - vrsta naloga
- *  \param cbrnal - broj naloga
- */
-
-function PovFin(cidfirma,cidvn,cbrnal)
-local nRec
-
-O_SUBAN
-O_FIN_PRIPR
-O_ANAL
-O_SINT
-O_NALOG
-
-SELECT SUBAN; set order to tag "4"
-if pcount()==0
-
-cIdFirma:=gFirma
-cIdVN:=space(2)
-cBrNal:=space(8)
-
-Box("",1,35)
- @ m_x+1,m_y+2 SAY "Nalog:"
- if gNW=="D"
-  @ m_x+1,col()+1 SAY cIdFirma
- else
-  @ m_x+1,col()+1 GET cIdFirma
- endif
- @ m_x+1,col()+1 SAY "-" GET cIdVN
- @ m_x+1,col()+1 SAY "-" GET cBrNal
- read; ESC_BCR
-BoxC()
-
-if Pitanje(,"Nalog "+cIdFirma+"-"+cIdVN+"-"+cBrNal+" povuci u pripremu (D/N) ?","D")=="N"
-   closeret2
-endif
-
-endif
-//if Pitanje(,"Zelite li izbrisati stanje datoteke pripr (D/N)?","N") == "D"
-//  select fin_pripr
-//  zap
-//endif
-
-if !(suban->(flock()) .and. anal->(flock()) .and. sint->(flock()) .and. nalog->(flock()) )
-  Msg("Neko vec koristi datoteke !",6); closeret2
-endif
-
-MsgO("SUBAN")
-
-select SUBAN
-seek cidfirma+cidvn+cbrNal
-do while !eof() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
-   select fin_pripr; Scatter()
-   select SUBAN; Scatter()
-   select fin_pripr
-   append ncnl; Gather2()
-   select SUBAN
-   skip
-enddo
-seek cidfirma+cidvn+cbrNal
-do while !eof() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
-   skip 1; nRec:=recno(); skip -1
-   dbdelete2()
-   go nRec
-enddo
-use
-
-MsgC()
-
-MsgO("ANAL")
-select ANAL; set order to tag "2"
-seek cidfirma+cidvn+cbrNal
-do while !eof() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
-  skip 1; nRec:=recno(); skip -1
-  dbdelete2()
-  go nRec
-enddo
-use
-MsgC()
-
-MsgO("SINT")
-select sint;  set order to tag "2"
-seek cidfirma+cidvn+cbrNal
-do while !eof() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
-  skip 1; nRec:=recno(); skip -1
-  dbdelete2()
-  go nRec
-enddo
-
-use
-MsgC()
-
-MsgO("NALOG")
-select nalog
-seek cidfirma+cidvn+cbrNal
-do while !eof() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
-  skip 1; nRec:=recno(); skip -1
-  dbdelete2()
-  go nRec
-enddo
-use
-MsgC()
-closeret2
-return
-*}
 

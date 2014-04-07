@@ -24,7 +24,7 @@ return
 // delete rn dbf's
 function del_rndbf()
 
-close all
+my_close_all_dbf()
 
 // drn.dbf
 FErase( my_home() + "drn.dbf" )
@@ -379,15 +379,15 @@ return
 function drn_empty()
 O_DRN
 select drn
-zapp()
+my_dbf_zap()
 
 O_RN
 select rn
-zapp()
+my_dbf_zap()
 
 O_DRNTEXT
 select drntext
-zapp()
+my_dbf_zap()
 
 return
 

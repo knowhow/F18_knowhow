@@ -128,7 +128,7 @@ Box(, 11, 60)
 BoxC()
 
 if LastKey() == K_ESC
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -188,9 +188,9 @@ AADD(aZagl, { "(1)",   "(2)",  "(3)",   "(4)",   "(5)",  "(6)",     "(7)", "(8)"
 // napuni podatke izvjestaja
 fill_rpt( nBrDok )
 
-if _export == "D"
+my_close_all_dbf()
 
-    close all
+if _export == "D"
 
     _file := my_home() + "epdv_r_kuf.dbf"
 
@@ -234,7 +234,7 @@ return
 static function cre_r_tbl()
 local aArr:={}
 
-close all
+my_close_all_dbf()
 
 ferase ( my_home() + "epdv_r_" +  cTbl + ".cdx" )
 ferase ( my_home() + "epdv_r_" +  cTbl + ".dbf" )
@@ -413,6 +413,7 @@ nRow := 0
 
 r_zagl()
 
+O_R_KUF
 SELECT r_kuf
 SET ORDER TO TAG "1"
 go top
@@ -554,8 +555,9 @@ r_linija()
 
 FF
 END PRINT
+
 return
-*}
+
 
 // ----------------------------
 // ----------------------------

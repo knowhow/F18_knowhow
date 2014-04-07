@@ -32,7 +32,7 @@ AADD(_opcexe, {|| krpt_export()})
 
 f18_menu( "izvj", .f., _izbor, _opc, _opcexe )
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -64,7 +64,7 @@ endif
 
 f18_menu( "izmp", .f., _izbor, _opc, _opcexe )
 
-close all
+my_close_all_dbf()
 return
 
 

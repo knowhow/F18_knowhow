@@ -85,7 +85,7 @@ select params
 use
 
 if lastkey()==K_ESC
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -115,7 +115,7 @@ set order to tag "1"
 //"1","IdFirma+idtipdok+brdok+rbr+podbr",KUMPATH+"FAKT")
 
 select FINMAT
-zapp()
+my_dbf_zap()
 
 aUsl:=Parsiraj(qqDok,"Brdok","C")
 
@@ -216,7 +216,7 @@ enddo
 
 select finmat
 if reccount2()>0
-    close all
+    my_close_all_dbf()
     fin_kontiranje_naloga(dDatDo)
 else
     MsgBeep("Nema dokumenata za prenos ...")

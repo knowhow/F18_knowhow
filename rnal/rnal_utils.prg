@@ -67,13 +67,10 @@ endif
 // { nElNo, cGrValCode, cGrVal, cAttJoker, cAttValCode, cAttVal }
 
 for _i := 1 to LEN( arr )
-
     _gr_name := ALLTRIM( arr[ _i, 4 ] )
-    
     if _gr_name == "<GL_TYPE>"
         ++ _count
     endif
-
 next
 
 if _count > 0 .and. qtty <> 0

@@ -21,8 +21,6 @@ local _alg
 set_a_dbf_kadev_0()
 set_a_dbf_kadev_1()
 set_a_dbf_kadev_globusl()
-// ova ne treba na server za sada !
-//set_a_dbf_kadev_obrazdef()
 set_a_dbf_kadev_uslovi()
 set_a_dbf_kadev_rjrmj()
 set_a_dbf_kadev_defrjes()
@@ -134,11 +132,12 @@ _item["algoritam"] := {}
 // algoritam 1 - default
 // -------------------------------------------------------------------------------
 _alg := hb_hash()
-_alg["dbf_key_block"]  := {|| field->id + DTOS(field->datumod) }
-_alg["dbf_key_fields"] := { "id", "datumod" }
-_alg["sql_in"]         := " rpad( id, 13 ) || to_char( datumod, 'YYYYMMDD' ) " 
+_alg["dbf_key_block"]  := {|| field->id + DTOS(field->datumod) + field->idpromj + field->opis }
+_alg["dbf_key_fields"] := { "id", "datumod", "idpromj", "opis" }
+_alg["sql_in"]         := " rpad( id, 13 ) || to_char( datumod, 'YYYYMMDD' ) || rpad( idpromj, 2 ) || rpad( opis, 50 )" 
 _alg["dbf_tag"]        := "1"
 AADD(_item["algoritam"], _alg )
+
 
 // algoritam 2 - sve promjene
 // -------------------------------------------------------------------------------

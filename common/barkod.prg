@@ -72,7 +72,7 @@ for i:=1 to len(ImeKol)
 next
 
 Box(,20,50)
-ObjDbedit("PLBK",20,50, {|| KaEdPrLBK()},"<SPACE> markiranje             Õ<ESC> kraj","Priprema za labeliranje bar-kodova...", .t. , , , ,0)
+ObjDbedit("PLBK",20,50, {|| KaEdPrLBK()},"<SPACE> markiranje             √ç<ESC> kraj","Priprema za labeliranje bar-kodova...", .t. , , , ,0)
 BoxC()
 
 nRezerva:=0
@@ -91,7 +91,7 @@ cPrefix:=IzFmkIni("Barkod","Prefix","", SIFPATH)
 cSPrefix:= pitanje(,"Stampati barkodove koji NE pocinju sa +'"+cPrefix+"' ?","N")
 
 SELECT BARKOD
-zapp()
+my_dbf_zap()
 
 SELECT KALK_PRIPR
 GO TOP
@@ -145,11 +145,11 @@ do while !EOF()
 	SELECT kalk_pripr
 	SKIP 1
 enddo
-close all
+my_close_all_dbf()
 
 f18_rtm_print( "barkod", "barkod", "1" )
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -204,7 +204,7 @@ ImeKol:={ {"IdRoba",      {|| IdRoba  }      } ,;
 
 Kol:={}; for i:=1 to len(ImeKol); AADD(Kol,i); next
 Box(,20,50)
-ObjDbedit("PLBK",20,50,{|| KaEdPrLBK()},"<SPACE> markiranjeÕÕÕÕÕÕÕÕÕÕÕÕÕÕ<ESC> kraj","Priprema za labeliranje bar-kodova...", .t. , , , ,0)
+ObjDbedit("PLBK",20,50,{|| KaEdPrLBK()},"<SPACE> markiranje√ç√ç√ç√ç√ç√ç√ç√ç√ç√ç√ç√ç√ç√ç<ESC> kraj","Priprema za labeliranje bar-kodova...", .t. , , , ,0)
 BoxC()
 
 nRezerva:=0
@@ -226,7 +226,7 @@ cPrefix:=IzFmkIni("Barkod","Prefix","",SIFPATH)
 cSPrefix:= pitanje(,"Stampati barkodove koji NE pocinju sa +'"+cPrefix+"' ?","N")
 
 SELECT BARKOD
-zapp()
+my_dbf_zap()
 
 SELECT fakt_pripr
 GO TOP
@@ -297,11 +297,11 @@ SKIP 1
 
 enddo
 
-close all
+my_close_all_dbf()
 
 f18_rtm_print( "barkod", "barkod", "1" )
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -356,7 +356,7 @@ endif
 
 set filter to // pocisti filter
 set order to tag "BARKOD"
-seek cPrefix+"·" // idi na kraj
+seek cPrefix+"√°" // idi na kraj
 skip -1 // lociraj se na zadnji slog iz grupe prefixa
 if left(barkod,nDuzPrefix) == cPrefix
  if cEAN=="13"

@@ -34,7 +34,7 @@ AADD(_opcexe, {|| _kalk_import() })
 
 f18_menu( "razmjena", .f., _izbor, _opc, _opcexe )
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -59,7 +59,7 @@ delete_exp_files( __export_dbf_path, "kalk" )
 _exported_rec := __export( _vars, @_a_data )
 
 // zatvori sve tabele prije operacije pakovanja
-close all
+my_close_all_dbf()
 
 // arhiviraj podatke
 if _exported_rec > 0 
@@ -92,7 +92,7 @@ if ( _exported_rec > 0 )
 
 endif
 
-close all
+my_close_all_dbf()
 return
 
 
@@ -153,7 +153,7 @@ endif
 _imported_rec := __import( _vars, @_a_data )
 
 // zatvori sve
-close all
+my_close_all_dbf()
 
 // brisi fajlove importa
 delete_exp_files( __import_dbf_path, "kalk" )
@@ -953,7 +953,7 @@ endif
 log_write("otvaram kalk tabele importa i pravim indekse...", 9 )
 
 // zatvori sve prije otvaranja ovih tabela
-close all
+my_close_all_dbf()
 
 _dbf_name := "e_kalk.dbf"
 if from_fmk

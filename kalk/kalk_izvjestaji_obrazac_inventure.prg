@@ -672,7 +672,7 @@ IF XXX=1
 		endif
 	next //xxxx
 	#ifdef CAX
-  		close all
+  		my_close_all_dbf()
 	#endif
 	closeret
 return

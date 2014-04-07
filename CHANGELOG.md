@@ -1,3 +1,8 @@
+1.7.24  2014-04-07, vsasa
+
+  - bug report na email
+  - PrikK1K4() ispravka funkcije, prikaz radne jedinice na uslovima izvještaja 
+ 
 1.7.23  2014-04-04, vsasa
 
   - lock required i workarea not in use greške - bugfix 

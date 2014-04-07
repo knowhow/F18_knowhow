@@ -1,3 +1,8 @@
+1.7.25  2014-04-07, vsasa
+
+  - dosta tabela pripreme prebačeno na my_use()
+  - VIRM, štampa virmana - korekcija lock required
+ 
 1.7.24  2014-04-07, vsasa
 
   - bug report na email

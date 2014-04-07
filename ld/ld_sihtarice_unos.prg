@@ -113,7 +113,7 @@ Box(,6 ,68)
        Gather()
     else
        if found() // a sadr§aj je 0
-          DELETE
+          my_delete()
        endif
     endif
 

@@ -173,7 +173,7 @@ IF lOdvojiVisak
      Beep(1)
      IF Pitanje(,"U smecu vec postoji "+cidfirma+"-16-"+cbrdop+", zelite li ga izbrisati?","D")=="D"
        DO WHILE !EOF() .and. idfirma+idvd+brdok==cIdFirma+"16"+cBrDop
-         SKIP 1; nBrSl:=RECNO(); SKIP -1; DELETE; GO (nBrSl)
+         SKIP 1; nBrSl:=RECNO(); SKIP -1; my_delete(); GO (nBrSl)
        ENDDO
        EXIT
      ELSE   // probaj sljedeci broj dokumenta

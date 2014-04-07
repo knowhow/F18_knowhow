@@ -347,7 +347,7 @@
 #xcommand O_LDVIRM   => select (F_LDVIRM) ; my_use ("ldvirm") ; set order to tag "ID"
 #xcommand O_KALVIR   => select (F_KALVIR) ; my_use ("kalvir") ; set order to tag "ID"
 #xcommand O_JPRIH   => select (F_JPRIH) ; my_use  ("jprih")  ; set order to tag "ID"
-#xcommand O_IZLAZ   => select (F_IZLAZ) ; my_usex ("izlaz") ; set order to tag "1"
+#xcommand O_IZLAZ   => select (F_IZLAZ) ; my_use ("izlaz") ; set order to tag "1"
 
 
 // --------------------------------------------------------------------------------------

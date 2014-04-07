@@ -107,24 +107,17 @@ do case
     case Ch == ASC(" ")
         // ako je _ST_ = " " onda stavku treba odstampati
         //        _ST_ = "*" onda stavku ne treba stampati
-
+		my_rlock()
         if field->_ST_ =  "*"
             replace _st_ with  " "
         else
             replace _st_ with "*"
         endif
+		my_unlock()
         return DE_REFRESH
 
     case Ch == K_CTRL_T
-
-        if Pitanje(,"Zelite izbrisati ovu stavku ?","D")=="D"
-			my_rlock()
-            delete
-			my_unlock()
-            my_dbf_pack()
-            return DE_REFRESH
-        endif
-        return DE_CONT
+        return browse_brisi_stavku()
 
     case Ch == K_CTRL_P
         stampa_virmana_drb()
@@ -196,10 +189,7 @@ do case
         endif
 
     case Ch = K_CTRL_F9
-        if Pitanje(,"Zelite li izbrisati pripremu !!????","N")=="D"
-             my_dbf_zap()
-        endif
-        return DE_REFRESH
+        return browse_brisi_pripremu()
 
 endcase
 
@@ -458,6 +448,8 @@ if _marker = "D"
     go top
 endif
 
+my_flock()
+
 do while !eof()
 
     Scatter()
@@ -503,6 +495,8 @@ enddo
 if eof()
     skip -1
 endif
+
+my_unlock()
 
 // pokreni stampu delphi rb-a
 _stampaj_virman()

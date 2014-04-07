@@ -176,7 +176,7 @@ return
 
 
 method deleteItem()
-DELETE
+my_delete_with_pack()
 return
 
 

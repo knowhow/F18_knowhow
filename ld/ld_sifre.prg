@@ -1153,20 +1153,7 @@ Box(,7,75)
             go (nRec)
         enddo
                 
-        // brisem ga iz baze obracuna u smecu
-        // ----------------------------------
-        select (F_LDSM)
-        set order to tag "RADN"
-        go top
-        seek cIdRadn
-        do while !eof() .and. idradn==cIdRadn
-            skip 1
-            nRec:=RecNo()
-            skip -1
-            DELETE
-            go (nRec)
-        enddo
-    enddo
+   enddo
 
     f18_free_tables({"ld_radn", "ld_radkr"})        
     sql_table_update( nil, "END" )

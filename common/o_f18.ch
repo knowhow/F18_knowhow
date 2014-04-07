@@ -37,7 +37,7 @@
 #xcommand O_RJ       => select (F_RJ)      ;  use_sql_sif  ("rj")        ; set order to tag "ID"
 #xcommand O_VRSTEP   => SELECT (F_VRSTEP)  ;  use_sql_sif  ("vrstep")    ; set order to tag "ID"
 #xcommand O_PKONTO       => select (F_PKONTO); use_sql_pkonto()  ; set order to tag "ID"
-#xcommand O_KS           => select (F_KS);     use_sql_sif ("ks") ; set order to tag "ID"
+#xcommand O_KS           => select (F_KS);     use_sql_ks() ; set order to tag "ID"
 #xcommand O_BANKE    => select (F_BANKE)   ;  use_sql_sif  ("banke")     ; set order to tag "ID"
 
 
@@ -51,8 +51,8 @@
 #xcommand O_RELAC    => SELECT (F_RELAC)   ;  my_use  ("relac")     ; set order to tag "ID"
 #xcommand O_VOZILA   => SELECT (F_VOZILA)  ;  my_use  ("vozila")    ; set order to tag "ID"
 
-#xcommand O_RELATION => SELECT (F_RELATION);  my_use  ("relation")  ; set order to tag "1"
-#xcommand O_FINMAT   => select (F_FINMAT)  ;  my_usex ("finmat")    ; set order to tag "1"
+#xcommand O_RELATION => SELECT (F_RELATION);  my_use ("relation")  ; set order to tag "1"
+#xcommand O_FINMAT   => select (F_FINMAT)  ;  my_use ("finmat")    ; set order to tag "1"
 #xcommand O_ULIMIT   => SELECT (F_ULIMIT)  ;  my_use ("ulimit")     ; set order to tag "ID"
 #xcommand O_TIPBL    => SELECT (F_TIPBL)   ;  my_use ("tipbl")      ; set order to tag "1"
 #xcommand O_VRNAL    => SELECT (F_VRNAL)   ;  my_use ("vrnal")      ; set order to tag "1"
@@ -132,10 +132,10 @@
 
 
 // modul KALK
-#xcommand O_KALK_PRIPR    => select(F_KALK_PRIPR); my_usex ( "kalk_pripr") ; set order to tag "1"
+#xcommand O_KALK_PRIPR    => select(F_KALK_PRIPR); my_use ( "kalk_pripr") ; set order to tag "1"
 #xcommand O_KALK_S_PRIPR  => select(F_KALK_PRIPR); my_usex ( "kalk_pripr") ; set order to tag "1"
-#xcommand O_KALK_PRIPR2   => select(F_KALK_PRIPR2); my_usex ("kalk_pripr2") ; set order to tag "1"
-#xcommand O_KALK_PRIPR9   => select(F_KALK_PRIPR9); my_usex ("kalk_pripr9") ; set order to tag "1"
+#xcommand O_KALK_PRIPR2   => select(F_KALK_PRIPR2); my_use ("kalk_pripr2") ; set order to tag "1"
+#xcommand O_KALK_PRIPR9   => select(F_KALK_PRIPR9); my_use ("kalk_pripr9") ; set order to tag "1"
 #xcommand O__KALK         => select(F__KALK); my_usex ("_kalk" )
 #xcommand O_KALK_FINMAT   => select(F_KALK_FINMAT); my_usex ("kalk_finmat")    ; set order to tag "1"
 #xcommand O_KALK          => select(F_KALK);  my_use  ("kalk")  ; set order to tag "1"
@@ -321,23 +321,23 @@
 #xcommand O_DOKSPF    => select (F_DOKSPF); my_use ("dokspf"); set order to tag "1"
 
 // modul MAT
-#xcommand O_MAT_PRIPR    =>  select(F_MAT_PRIPR); my_usex ("mat_pripr") ; set order to tag "1"
-#xcommand O_MAT_PRIPRRP  =>  select(F_MAT_PRIPR); my_usex("mat_priprrp", "mat_pripr"); set order to tag "1"
-#xcommand O_MAT_SUBAN    =>  select(F_MAT_SUBAN); my_use ( "mat_suban" ); set order to tag "1"
-#xcommand O_MAT_SUBANX   =>  select(F_MAT_SUBAN); my_use ( "mat_suban" ); set order to tag "1"
-#xcommand O_MAT_SUBAN2   =>  select(F_MAT_SUBAN); my_use ( "mat_pripr", "mat_suban" ); set order to tag "4"
-#xcommand O_MAT_ANAL     =>  select(F_MAT_ANAL); my_use ( "mat_anal" ); set order to tag "1"
-#xcommand O_MAT_SINT     =>  select(F_MAT_SINT); my_use ( "mat_sint" ); set order to tag "1"
-#xcommand O_MAT_NALOG    =>  select(F_MAT_NALOG); my_use ( "mat_nalog" ); set order to tag "1"
+#xcommand O_MAT_PRIPR    =>  select(F_MAT_PRIPR); my_use("mat_pripr") ; set order to tag "1"
+#xcommand O_MAT_PRIPRRP  =>  select(F_MAT_PRIPR); my_use("mat_priprrp", "mat_pripr"); set order to tag "1"
+#xcommand O_MAT_SUBAN    =>  select(F_MAT_SUBAN); my_use( "mat_suban" ); set order to tag "1"
+#xcommand O_MAT_SUBANX   =>  select(F_MAT_SUBAN); my_use( "mat_suban" ); set order to tag "1"
+#xcommand O_MAT_SUBAN2   =>  select(F_MAT_SUBAN); my_use( "mat_pripr", "mat_suban" ); set order to tag "4"
+#xcommand O_MAT_ANAL     =>  select(F_MAT_ANAL); my_use( "mat_anal" ); set order to tag "1"
+#xcommand O_MAT_SINT     =>  select(F_MAT_SINT); my_use( "mat_sint" ); set order to tag "1"
+#xcommand O_MAT_NALOG    =>  select(F_MAT_NALOG); my_use( "mat_nalog" ); set order to tag "1"
 #xcommand O_IZDEF        =>  select(F_IZDEF); my_use ( "izdef" ); set order to tag "1"
 #xcommand O_IZOP         =>  select(F_IZOP ); my_use ( "izop" ); set order to tag "1"
-#xcommand O_MAT_PNALOG   =>  select(F_MAT_PNALOG); my_usex ( "mat_pnalog" ); set order to tag "1"
-#xcommand O_MAT_PSUBAN   =>  select(F_MAT_PSUBAN); my_usex ( "mat_psuban" ); set order to tag "1"
-#xcommand O_MAT_PSUBAN2  =>  select(F_MAT_PSUBAN); my_usex ( "mat_suban", "mat_psuban" ); set order to tag "1"
-#xcommand O_MAT_PANAL    =>  select(F_MAT_PANAL) ; my_usex ( "mat_panal") ; set order to tag "1"
-#xcommand O_MAT_PANAL2   =>  select(F_MAT_PANAL) ; my_usex ( "mat_anal", "mat_panal"); set order to tag "1"
-#xcommand O_MAT_PSINT    =>  select(F_MAT_PSINT) ; my_usex ( "mat_psint" ) ; set order to tag "1"
-#xcommand O_MAT_INVENT   =>  select(F_MAT_INVENT); my_usex ( "mat_invent" ); set order to tag "1"
+#xcommand O_MAT_PNALOG   =>  select(F_MAT_PNALOG); my_use( "mat_pnalog" ); set order to tag "1"
+#xcommand O_MAT_PSUBAN   =>  select(F_MAT_PSUBAN); my_use( "mat_psuban" ); set order to tag "1"
+#xcommand O_MAT_PSUBAN2  =>  select(F_MAT_PSUBAN); my_use( "mat_suban", "mat_psuban" ); set order to tag "1"
+#xcommand O_MAT_PANAL    =>  select(F_MAT_PANAL) ; my_use( "mat_panal") ; set order to tag "1"
+#xcommand O_MAT_PANAL2   =>  select(F_MAT_PANAL) ; my_use( "mat_anal", "mat_panal"); set order to tag "1"
+#xcommand O_MAT_PSINT    =>  select(F_MAT_PSINT) ; my_use( "mat_psint" ) ; set order to tag "1"
+#xcommand O_MAT_INVENT   =>  select(F_MAT_INVENT); my_use( "mat_invent" ); set order to tag "1"
 #xcommand O_KARKON       =>  select(F_KARKON); my_use ( "karkon" ); set order to tag "ID"
 
 // modul VIRM
@@ -347,7 +347,7 @@
 #xcommand O_LDVIRM   => select (F_LDVIRM) ; my_use ("ldvirm") ; set order to tag "ID"
 #xcommand O_KALVIR   => select (F_KALVIR) ; my_use ("kalvir") ; set order to tag "ID"
 #xcommand O_JPRIH   => select (F_JPRIH) ; my_use  ("jprih")  ; set order to tag "ID"
-#xcommand O_IZLAZ   => select (F_IZLAZ) ; my_usex ("izlaz") ; set order to tag "1"
+#xcommand O_IZLAZ   => select (F_IZLAZ) ; my_use ("izlaz") ; set order to tag "1"
 
 
 // --------------------------------------------------------------------------------------

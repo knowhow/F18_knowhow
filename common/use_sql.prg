@@ -129,6 +129,27 @@ function use_sql_valute()
    RETURN .T.
 
 
+/*
+   use_sql_ks() => otvori šifarnik kamatnih stopa sa prilagođenim poljima
+*/
+function use_sql_ks()
+
+   LOCAL cSql
+   LOCAL cTable := "ks"
+
+   cSql := "SELECT * FROM fmk.ks ORDER BY id"
+
+   SELECT ( F_KS )
+   use_sql( cTable, cSql )
+
+   INDEX ON ID TAG ID TO ( cTable )
+   INDEX ON DTOS(DATOD) TAG "2" TO ( cTable )
+
+   SET ORDER TO TAG ID
+
+   RETURN .T.
+
+
 
 /*
    use_sql_pkonto() => otvori šifarnik pkonto sa prilagođenim poljima

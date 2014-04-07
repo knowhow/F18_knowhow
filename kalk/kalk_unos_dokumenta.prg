@@ -1317,7 +1317,7 @@ FUNCTION ProtStErase()
 
    DO WHILE !Eof()
       IF "XXX" $ idkonto2
-         DELETE
+         my_delete()
       ENDIF
       SKIP
    ENDDO

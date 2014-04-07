@@ -185,7 +185,7 @@ private GetList:={}
         fdupli:=.t.
         dfcj:=(dfcj*dkolicina+fcj*kolicina)/(dkolicina+kolicina)
         dkolicina+=kolicina
-        delete
+        my_delete()
      else
         _ERROR:="1"
      endif
@@ -728,7 +728,7 @@ endif
 
 do while !EOF()
     if ALLTRIM( field->rbr ) >= ALLTRIM( _od ) .and. IF( ALLTRIM( _do ) <> "", ALLTRIM( field->rbr ) <= ALLTRIM(_do), .t. )
-        delete
+        my_delete()
     endif 
     skip
 enddo
@@ -1357,7 +1357,7 @@ do while !EOF()
         append blank
         Gather()
         select kalk_pripr9
-        delete
+        my_delete()
         skip
     else
         skip
@@ -2156,6 +2156,9 @@ function del_docs()
 local dD_f
 local dD_t
 local dDate
+
+// ova funkcija se ne koristi, nije prebacena na SQL
+RETURN 
 
 if ddoc_vars( @dD_f, @dD_t ) = 0
     return

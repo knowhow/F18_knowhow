@@ -424,6 +424,8 @@ local _i
 private imekol := {}
 private kol := {}
 
+O_KS
+
 AADD( imekol, { PADR( "ID", 3 ) , {|| id }  , "id", {|| .t.}, {|| vpsifra(wid)} } )
 AADD( imekol, { PADR( "Tip", 3 ) , {|| PADC( tip, 3 ) }  , "tip" } )
 AADD( imekol, { PADR( "DatOd", 8 ) , {|| datod }  , "datod" } )
@@ -437,7 +439,7 @@ for _i := 1 to LEN( imekol )
     AADD( kol, _i )
 next
 
-return PostojiSifra( F_KS, 1, MAXROWS()-10, MAXCOLS()-5, "Lista kamatni stopa",@cId,dx,dy)
+return p_sifra( F_KS, 1, MAXROWS()-10, MAXCOLS()-5, "Lista kamatni stopa",@cId,dx,dy)
 
 
 

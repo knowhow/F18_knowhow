@@ -476,6 +476,8 @@ do while !EOF()
       
     if ObracV( _id_partner, .f., _var_obr ) > _mala_kamata 
 
+        my_flock()
+
         select pom
         append blank
         
@@ -483,6 +485,8 @@ do while !EOF()
         replace field->osndug with nOsnDug 
         replace field->kamate with nKamate 
 		replace field->pdv with nPdvTotal
+
+        my_unlock()
         
         select kam_pripr
         

@@ -823,6 +823,7 @@ local nRecNo
 
 select fakt_pripr
 go top
+my_flock()
 do while !eof()
     skip 1
     nRecNo := RecNo()
@@ -832,6 +833,7 @@ do while !eof()
     endif
     go (nRecNo)
 enddo
+my_unlock()
 
 my_dbf_pack()            
             
@@ -890,7 +892,7 @@ function prip_brisi_duple()
 local cSeek
 select fakt_pripr
 go top
-
+my_flock()
 do while !EOF()
     cSeek := fakt_pripr->(idfirma + idtipdok + brdok)
     
@@ -903,7 +905,7 @@ do while !EOF()
     select fakt_pripr
     skip
 enddo
-
+my_unlock()
 return 0
 
 

@@ -316,14 +316,14 @@ return nCnt
 
 method deleteAll()
 if Pitanje(,"Zelite li zaista izbrisati cijeli dokument?","N")=="D"
-	ZAP
+	my_dbf_zap()
 endif
 return
 
 
 
 method deleteItem()
-DELETE
+my_delete_with_pack()
 return 1
 
 

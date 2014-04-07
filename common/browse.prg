@@ -912,7 +912,7 @@ STATIC FUNCTION EvEr( cExpr, cMes, cT )
 FUNCTION browse_brisi_stavku( lPack )
 
 if lPack == NIL
-   lPack := .F.
+   lPack := .T.
 ENDIF
 
 if Pitanje( , "Želite izbrisati ovu stavku ?","D") == "D"

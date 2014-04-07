@@ -293,6 +293,7 @@ static function kalk_ostavi_samo_duple( lViseDok, aOstaju )
 select kalk_pripr
 
 GO TOP
+my_flock()
 DO WHILE !EOF()
     SKIP 1
     nRecNo:=RECNO()
@@ -302,6 +303,7 @@ DO WHILE !EOF()
     ENDIF
     GO (nRecNo)
 ENDDO
+my_unlock()
 my_dbf_pack()
 
 MsgBeep("U kalk_pripremi su ostali dokumenti koji izgleda da vec postoje medju azuriranim!")
@@ -1528,7 +1530,7 @@ if !lSilent
                 skip
                 nRec := recno()
                 skip -1
-                dbDelete2()
+                my_delete()
                 go nRec
             enddo
             MsgC()
@@ -1639,7 +1641,7 @@ do while !eof() .and. cIdFirma==IdFirma .and. cIdVD==IdVD .and. cBrDok==BrDok
     skip 1
     nRec:=recno()
     skip -1
-    dbdelete2()
+    my_delete()
     go nRec
 enddo
 use
@@ -1755,7 +1757,6 @@ do while !BOF() .and. cIdFirma==IdFirma .and. datdok==dDatDok
         if found()
             _del_rec := dbf_get_rec()
             delete_rec_server_and_dbf( "kalk_doks", _del_rec, 1, "FULL" )
-            delete
         endif
 
         select kalk

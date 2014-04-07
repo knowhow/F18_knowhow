@@ -51,8 +51,8 @@
 #xcommand O_RELAC    => SELECT (F_RELAC)   ;  my_use  ("relac")     ; set order to tag "ID"
 #xcommand O_VOZILA   => SELECT (F_VOZILA)  ;  my_use  ("vozila")    ; set order to tag "ID"
 
-#xcommand O_RELATION => SELECT (F_RELATION);  my_use  ("relation")  ; set order to tag "1"
-#xcommand O_FINMAT   => select (F_FINMAT)  ;  my_usex ("finmat")    ; set order to tag "1"
+#xcommand O_RELATION => SELECT (F_RELATION);  my_use ("relation")  ; set order to tag "1"
+#xcommand O_FINMAT   => select (F_FINMAT)  ;  my_use ("finmat")    ; set order to tag "1"
 #xcommand O_ULIMIT   => SELECT (F_ULIMIT)  ;  my_use ("ulimit")     ; set order to tag "ID"
 #xcommand O_TIPBL    => SELECT (F_TIPBL)   ;  my_use ("tipbl")      ; set order to tag "1"
 #xcommand O_VRNAL    => SELECT (F_VRNAL)   ;  my_use ("vrnal")      ; set order to tag "1"
@@ -132,10 +132,10 @@
 
 
 // modul KALK
-#xcommand O_KALK_PRIPR    => select(F_KALK_PRIPR); my_usex ( "kalk_pripr") ; set order to tag "1"
+#xcommand O_KALK_PRIPR    => select(F_KALK_PRIPR); my_use ( "kalk_pripr") ; set order to tag "1"
 #xcommand O_KALK_S_PRIPR  => select(F_KALK_PRIPR); my_usex ( "kalk_pripr") ; set order to tag "1"
-#xcommand O_KALK_PRIPR2   => select(F_KALK_PRIPR2); my_usex ("kalk_pripr2") ; set order to tag "1"
-#xcommand O_KALK_PRIPR9   => select(F_KALK_PRIPR9); my_usex ("kalk_pripr9") ; set order to tag "1"
+#xcommand O_KALK_PRIPR2   => select(F_KALK_PRIPR2); my_use ("kalk_pripr2") ; set order to tag "1"
+#xcommand O_KALK_PRIPR9   => select(F_KALK_PRIPR9); my_use ("kalk_pripr9") ; set order to tag "1"
 #xcommand O__KALK         => select(F__KALK); my_usex ("_kalk" )
 #xcommand O_KALK_FINMAT   => select(F_KALK_FINMAT); my_usex ("kalk_finmat")    ; set order to tag "1"
 #xcommand O_KALK          => select(F_KALK);  my_use  ("kalk")  ; set order to tag "1"

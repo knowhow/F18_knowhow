@@ -279,7 +279,7 @@ do case
         BoxC()
         
         if lastkey() == K_ESC .and. _new == .t.
-            delete
+            my_delete_with_pack()
             return DE_CONT
         endif
         
@@ -327,7 +327,7 @@ do case
     case Ch==K_CTRL_T
 
         if Pitanje("ppl","Zelite izbrisati ovu stavku (D/N) ?","N")=="D"
-            delete
+            my_delete_with_pack()
             return DE_REFRESH
         endif
         return DE_CONT

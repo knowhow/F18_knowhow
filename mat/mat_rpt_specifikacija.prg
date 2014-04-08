@@ -166,8 +166,8 @@ return (NIL)
 function CArDob()
 
 O_ROBA
-O_SIFV
 O_SIFK
+O_SIFV
 O_PARTN
 O_MAT_SUBAN
 

@@ -60,8 +60,8 @@ local cIdFirma:=gFirma,cIdTipDok:="11",cBrdok:=space(8),cBrMat:="",;
 O_MAT_PRIPR
 O_MAT_NALOG
 O_ROBA
-O_SIFV
 O_SIFK
+O_SIFV
 O_KONTO
 O_PARTN
 O_VALUTE

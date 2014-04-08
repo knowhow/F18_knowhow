@@ -21,8 +21,8 @@ static PicKol := "999999.999"
 function mat_specifikacija()
 
 O_ROBA
-O_SIFV
 O_SIFK
+O_SIFV
 O_TARIFA
 O_MAT_SUBAN
 O_PARTN
@@ -313,8 +313,8 @@ function IArtPoPogonima()
   
 O_PARTN         // pogoni
 O_ROBA          // artikli
-O_SIFV
 O_SIFK
+O_SIFV
 O_MAT_SUBAN         // dokumenti
 
   cIdRoba:=SPACE(LEN(ROBA->id))

@@ -544,7 +544,7 @@ if !_auto_prenos
     @ m_x+3,m_y+2 SAY "Uslov po artiklima:" GET _usl_roba PICT "@S40"
     @ m_x+4,m_y+2 SAY "Artikle (U)kljuci / (I)skljuci iz prenosa:" GET _usl_mark PICT "@!" VALID _usl_mark $ "UI"
     
-	read
+	READ
    	ESC_BCR
 
     BoxC()
@@ -571,6 +571,10 @@ EOF CRET
 _r_br := 0
 _kol := 0
 _iznos := 0
+
+if !EMPTY( _usl_roba ) .and. RIGHT( ALLTRIM( _usl_roba ) ) <> ";"
+     _usl_roba := ALLTRIM( _usl_roba ) + ";"
+endif  
 
 do while !eof() .and. pos_doks->IdVd == cIdVd .and. pos_doks->Datum <= _dat_do
     

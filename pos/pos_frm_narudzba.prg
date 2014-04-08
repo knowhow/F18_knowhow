@@ -11,6 +11,7 @@
 
 #include "pos.ch"
 #include "getexit.ch"
+#include "f18_separator.ch"
 
 static __max_kolicina := NIL
 static __kalk_konto := NIL
@@ -99,7 +100,8 @@ Box(, _max_rows - 3, _max_cols - 3 , , aUnosMsg )
 
 @ m_x, m_y + 23 SAY PADC ("RACUN BR: " + ALLTRIM( cBrojRn ), 40 ) COLOR Invert
 
-oBrowse := FormBrowse( m_x + 7, m_y + 1, m_x + _max_rows - 12, m_y + _max_cols - 2, ImeKol, Kol,{ "Í", "Ä", "³"}, 0)
+oBrowse := FormBrowse( m_x + 7, m_y + 1, m_x + _max_rows - 12, m_y + _max_cols - 2, ;
+					ImeKol, Kol,{ BROWSE_PODVUCI_2, BROWSE_PODVUCI, BROWSE_COL_SEP }, 0 )
 
 oBrowse:autolite := .f.
 aAutoKeys := HangKeys()

@@ -13,6 +13,8 @@
 #include "hbclass.ch"
 #include "common.ch"
 
+REQUEST ARRAYRDD
+
 CLASS F18Csv
 
     DATA struct
@@ -25,7 +27,7 @@ CLASS F18Csv
    
     PROTECTED:
     
-        METHOD create_local_dbf()
+        METHOD create_mem_dbf()
         METHOD open_csv_as_local_dbf()
 
 ENDCLASS
@@ -59,7 +61,7 @@ if ::delimiter == NIL
 endif
 
 // kreiraj i otvori lokalni dbf
-::create_local_dbf()
+::create_mem_dbf()
 
 // otvori csv u dbf
 ::open_csv_as_local_dbf()
@@ -69,8 +71,9 @@ return _ok
 
 // ------------------------------------------------------
 // ------------------------------------------------------
-METHOD F18Csv:create_local_dbf()
-DBCREATE( ::memname, ::struct, "ARRAYRDD" )
+METHOD F18Csv:create_mem_dbf()
+altd()
+DBCREATE( ::memname + ".dbf" , ::struct, "ARRAYRDD" )
 return
 
 

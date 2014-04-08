@@ -1,3 +1,8 @@
+1.7.29  2014-04-08, vsasa
+
+  - POS, ažuriranje zaduženja/inventure - bugfix LOCK REQUIRED 
+  - VIRM, ispravka dokumenta, bugfix LOCK REQUIRED
+ 
 1.7.28  2014-04-08, vsasa
 
   - MAT, otvaranje tabela SIFK/SIFV - bugfix

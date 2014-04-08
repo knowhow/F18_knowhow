@@ -741,7 +741,7 @@ NaprPom( aDbf )
 
 select ( F_POM )
 if used()
-	use
+	USE
 endif
 
 my_use_temp( "POM", my_home() + "pom", .f., .t. )

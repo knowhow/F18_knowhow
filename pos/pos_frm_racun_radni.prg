@@ -82,7 +82,7 @@ if (CHR(LastKey())=="B" .or. CHR(LastKey())=="b")
 	if Pitanje(,"Izbrisati stavku racuna (D/N)?","D") == "N"
 		return (DE_CONT)
 	endif
-	delete
+	my_delete()
 	return (DE_REFRESH)
 endif
 

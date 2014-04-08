@@ -351,10 +351,7 @@ if UPPER(CHR(LASTKEY())) == "Z"
   	UkloniRadne(ZAKSM->IdRadnik)
   	gIdRadnik := cIdSave
   	SELECT ZAKSM
-        my_rlock()
-  	DELETE
-        my_unlock()
-	my_dbf_pack()
+  	my_delete_with_pack()
   	return (DE_REFRESH)
 endif
 return (DE_CONT)

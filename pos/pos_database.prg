@@ -311,7 +311,7 @@ return (cRet)
 // azuriranje zaduzenja...
 // ---------------------------------------------------------
 function AzurPriprZ(cBrDok, cIdVd)
-local _rec, _app
+local _rec, _app, _t_rec
 local _cnt := 0
 local _tbl_pos := "pos_pos"
 local _tbl_doks := "pos_doks"
@@ -407,8 +407,13 @@ do while !EOF()
     endif
 
     SELECT PRIPRZ
+	SKIP 1
+    _t_rec := RECNO()
+	SKIP -1
 
-    Del_Skip()
+    my_delete()
+
+	GO ( _t_rec )
 
 enddo
 
@@ -560,8 +565,8 @@ local nNextRec
 nNextRec:=0
 SKIP
 nNextRec:=RECNO()
-Skip -1
-delete
+SKIP -1
+my_delete()
 GO nNextRec
 return
 

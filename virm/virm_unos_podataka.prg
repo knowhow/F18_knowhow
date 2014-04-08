@@ -139,7 +139,9 @@ do case
              //BrisiPBaze()
            endif
            select virm_pripr
+           my_rlock()
            Gather()
+           my_unlock()
            go nTR2
          enddo
          PopWA()
@@ -169,7 +171,9 @@ do case
             inkey(10)
             select virm_pripr
             APPEND BLANK
-            Gather()
+            my_rlock()
+            Gather() 
+            my_unlock()
         enddo
 
         BoxC()
@@ -183,7 +187,9 @@ do case
             BoxC()
             return DE_CONT
         else
+            my_rlock()
             Gather()
+            my_unlock()
             BoxC()
             return DE_REFRESH
         endif
@@ -831,7 +837,9 @@ do while !eof()
     _iznosstr := ""
     _iznosstr := "=" + IF( _iznos == 0 .and. gINulu == "N", SPACE(6) , ALLTRIM(STRTRAN(STR(_iznos), ".", "," ) ) )
 
+    my_rlock()
     Gather()
+    my_unlock()
 
     skip
 

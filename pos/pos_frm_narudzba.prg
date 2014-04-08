@@ -703,7 +703,9 @@ Box (, 3, 75)
             
                 nIznNar+=(_cijena*_kolicina)-cijena*kolicina
                 nPopust+=(_ncijena*_kolicina)  - ncijena*kolicina
+                my_rlock()
                 Gather () 
+                my_unlock()
             else
                 MsgBeep ("Za robu "+ALLTRIM (_IdRoba)+" nije odredjeno odjeljenje!#"+"Narucivanje nije moguce!!!", 15)
                 select _pos_pripr
@@ -715,7 +717,9 @@ Box (, 3, 75)
             // azuriraj narudzbu
             nIznNar += (_cijena*_kolicina) - cijena * kolicina
             nPopust += (_ncijena*_kolicina) - ncijena * kolicina
+            my_rlock()
             REPLACE Kolicina WITH _Kolicina
+            my_unlock()
         endif
     
     endif

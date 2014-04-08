@@ -341,7 +341,7 @@
 #xcommand O_KARKON       =>  select(F_KARKON); my_use ( "karkon" ); set order to tag "ID"
 
 // modul VIRM
-#xcommand O_VIRM_PRIPR   => select (F_VIPRIPR); my_usex("virm_pripr") ; set order to tag "1"
+#xcommand O_VIRM_PRIPR   => select (F_VIPRIPR); my_use("virm_pripr") ; set order to tag "1"
 #xcommand O_VRPRIM   => select (F_VRPRIM) ; my_use  ("vrprim") ; set order to tag "ID"
 #xcommand O_VRPRIM2  => select (F_VRPRIM2); my_use  ("vrprim2") ; set order to tag "ID"
 #xcommand O_LDVIRM   => select (F_LDVIRM) ; my_use ("ldvirm") ; set order to tag "ID"

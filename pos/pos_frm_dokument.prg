@@ -328,7 +328,7 @@ do case
 
             PushWa()
             print_zak_br(pos_doks->zak_br)
-            o_pregled()
+            o_pos_tables()
             PopWa()
             select pos_doks
             return (DE_REFRESH)     

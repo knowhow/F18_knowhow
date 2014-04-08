@@ -13,70 +13,43 @@
 #include "pos.ch"
 
 
-// --------------------
-// otvori baze potrebne za 
-// pregled racuna
-// --------------------
-function o_pregled( kum )
+// -------------------------------------------------
+// otvaranje pos tabela
+// -------------------------------------------------
+function o_pos_tables( kum )
+
+my_close_all_dbf()
 
 if kum == NIL
-    kum := .t.
+	kum := .t.
 endif
 
-if kum
-    
-    SELECT F_POS
-    if !used()
-        O_POS
-    endif
-
-    SELECT F_POS_DOKS
-    if !used()
-        O_POS_DOKS
-    endif
-
-    SELECT F_DOKSPF
-    if !used()
-        O_DOKSPF
-    endif
-
+if kum 
+	O_POS
+	O_POS_DOKS
+	O_DOKSPF
 endif
 
+O_ODJ
 
-SELECT F_ODJ
-if !used()
-    O_ODJ
-endif
+O_OSOB
+SET ORDER TO TAG "NAZ"
 
-SELECT F_OSOB
-if !used()
-    O_OSOB
-endif
-
-SELECT F_VRSTEP
-if !used()
-    O_VRSTEP
-endif
-
-SELECT F_ROBA
-if !used()
-    O_ROBA
-endif
-
-SELECT F_TARIFA
-if !used()
-    O_TARIFA
-endif
-
-SELECT F_SIFK
-if !used()
-    O_SIFK
-endif
-
-SELECT F_SIFV
-if !used()
-    O_SIFV
-endif
+O_VRSTEP
+O_PARTN
+O_DIO
+O_K2C
+O_MJTRUR
+O_KASE
+O_SAST
+O_ROBA
+O_TARIFA
+O_SIFK
+O_SIFV
+O_PRIPRZ
+O_PRIPRG
+O__POS
+O__POS_PRIPR
 
 if kum
     select pos_doks
@@ -86,63 +59,6 @@ endif
 
 return
 
-
-// -----------------------------------------------
-// otvori tabele potrebne za unos stavki u racun
-// ------------------------------------------------
-function o_edit_rn( kum )
-
-select F__POS
-if !used()
-    O__POS
-endif
-
-select F__PRIPR
-if !used()
-    O__POS_PRIPR
-endif
-
-select F_K2C
-if !used()
-    O_K2C
-endif
-
-select F_MJTRUR
-if !used()
-    O_MJTRUR 
-endif
-
-select F_UREDJ
-if !used()
-    O_UREDJ 
-endif
-
-o_pregled( kum )
-
-return
-
-
- 
-function OpenPos()
-
-O_PARTN
-O_VRSTEP
-O_DIO
-O_ODJ
-O_KASE
-O_OSOB
-set order to tag "NAZ"
-
-O_TARIFA 
-O_VALUTE
-O_SIFK
-O_SIFV
-O_ROBA
-O__POS
-O_POS_DOKS
-O_POS
-
-return
 
 
 function o_pos_sifre()
@@ -160,91 +76,6 @@ O_STRAD
 O_SIFK
 O_SIFV
 
-return
-
-
- 
-function O_InvNiv()
-
-O_UREDJ
-O_MJTRUR
-O_ODJ
-O_DIO
-
-O_SIFK
-O_SIFV
-
-O_SAST
-O_ROBA
-
-O_POS_DOKS
-O_POS
-O__POS
-O_PRIPRZ
-return
-
-
-function OpenZad()
-O_UREDJ
-O_MJTRUR
-O_ODJ  
-O_DIO
-O_TARIFA
-O_POS_DOKS
-O_POS
-O__POS
-O_PRIPRZ
-O_SIFK
-O_SIFV
-O_ROBA 
-return
-
-
- 
-function ODbRpt()
-
-O_OSOB
-O_SIFK
-O_SIFV
-O_VRSTEP 
-O_ROBA
-O_ODJ 
-O_DIO
-O_KASE
-O_POS
-O_POS_DOKS
-
-return
-
-
- 
-function o_pos_narudzba()
-
-O_MJTRUR 
-O_UREDJ 
-O_ODJ 
-O_K2C
-O_ROBA
-O_SIFK
-O_SIFV
-O__POS_PRIPR 
-O__POS
-
-return
-
-
-
-function O_StAzur()
-O__POS
-O_ODJ
-O_VRSTEP
-O_PARTN
-O_OSOB
-O_VALUTE
-O_TARIFA
-O_POS_DOKS
-O_POS
-O_ROBA
 return
 
 

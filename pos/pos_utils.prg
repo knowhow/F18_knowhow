@@ -557,7 +557,7 @@ do while .t.
                 case nIzb==1
                     fIzm:=.t.
                 case nIzb==2
-                    DELETE
+                    my_delete()
                     LOOP
             endcase
     endif

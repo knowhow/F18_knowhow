@@ -920,19 +920,11 @@ local nZakBr:=0
 local nFZaokr := 0
 
 drn_create()
+
+o_pos_tables()
+
 drn_open()
 drn_empty()
-
-o_pos_narudzba()
-
-O_ROBA
-O_OSOB
-O_POS
-O_VRSTEP
-O_POS_DOKS
-O_DOKSPF
-O_TARIFA
-O__POS
 
 firma_params_fill()
 

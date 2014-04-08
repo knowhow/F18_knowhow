@@ -32,7 +32,7 @@ if (cVarijanta==nil)
 	cVarijanta:="0"
 endif
 
-ODbRpt()
+o_pos_tables()
 
 if (cVarijanta == "0")
 	cIdPos:=gIdPos
@@ -45,8 +45,10 @@ endif
 START PRINT CRET
 Zagl(dDat0, dDat1, cIdPos)
 
-
-O_POS_DOKS
+SELECT ( F_POS_DOKS )
+if !USED()
+	O_POS_DOKS
+endif
 SetFilter(@cFilter, cIdPos, dDat0, dDat1)
 
 nCnt:=0
@@ -66,7 +68,7 @@ enddo
 
 END PRINT
 
-close all
+my_close_all_dbf()
 
 return .t.
 

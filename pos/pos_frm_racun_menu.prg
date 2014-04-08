@@ -28,7 +28,7 @@ return _ret
 function narudzba_tops()
 local _ret
 
-o_pos_narudzba()
+o_pos_tables()
 
 select _pos_pripr
 
@@ -208,7 +208,7 @@ local _id_vrsta_p := params["idvrstap"]
 local _id_partner := params["idpartner"]
 local _uplaceno := params["uplaceno"]
 
-o_stazur()
+o_pos_tables()
 
 if gRadniRac == "D"
 
@@ -489,10 +489,14 @@ READ
 ESC_BCR
 BoxC()
 
-O_StAzur()
+o_pos_tables()
+
 O_RAZDR
+
 RazdRac(cRacBroj, .f., 2, "N", "ZAKLJUCENJE DIJELA RACUNA")
-close all
+
+my_close_all_dbf()
+
 return
 
 
@@ -519,10 +523,11 @@ while cOK<>"D"
 end
 BoxC()
 
-O_StAzur()
+o_pos_tables()
+
 O_RAZDR
 RazdRac(cRacBroj, .t., nKoliko, cAuto, "RAZDIOBA RACUNA")
-CLOSERET
+my_close_all_dbf()
 return
 
 
@@ -659,7 +664,7 @@ RETURN .F.
 
 
 function PreglNezakljRN()
-O_StAzur()
+o_pos_tables()
 
 dDatOd:=Date()
 dDatDo:=Date()
@@ -682,8 +687,7 @@ return
 function RekapViseRacuna()
 cBrojStola:=SPACE(3)
 
-O__POS_PRIPR
-O_StAzur()
+o_pos_tables()
 
 dDatOd:=Date()
 dDatDo:=Date()
@@ -716,8 +720,7 @@ private aVezani := {}
 private dDatum
 private cVrijeme
 
-O__POS_PRIPR
-O_StAzur()
+o_pos_tables()
 
 Box (, 3, 60)
 
@@ -755,7 +758,7 @@ ENDIF
 
 StampaPrep( cIdPos, cPolRacun, aVezani )
 
-close all
+my_close_all_dbf()
 
 return
 

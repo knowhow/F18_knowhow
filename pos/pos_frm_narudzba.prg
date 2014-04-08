@@ -65,7 +65,7 @@ private bPrevUp
 private bPrevDn
 private GetList:={}
 
-o_edit_rn( .f. )
+o_pos_tables()
 
 select _pos
 
@@ -643,11 +643,7 @@ nPopust -= _pos_pripr->( kolicina * ncijena )
 _show_total( nIznNar, nPopust, m_x + 2 )
 ispisi_iznos_veliki_brojevi( ( nIznNar - nPopust ), m_x + ( MAXROWS() - 12 ), MAXCOLS() - 2 )
 
-my_rlock()
-DELETE 
-my_unlock()
-
-my_dbf_pack()
+my_delete_with_pack() 
 
 oBrowse:refreshAll()
 

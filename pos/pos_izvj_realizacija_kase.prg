@@ -59,14 +59,10 @@ elseif (cVarijanta=="2")
 	cK1:="D"
 endif
 
-
-ODbRpt()
-
 TblCrePom()
-// TblCrePom prilikom kreiranja 
-// indeksa zatvori sve tabele
 
-ODbRpt()
+o_pos_tables()
+o_pom_table()
 
 SELECT osob
 SET ORDER TO TAG "NAZ"
@@ -105,7 +101,8 @@ else
 	Zagl(dDat0, dDat1, cIdPos, cSmjena, cIdDio, cRadnici, cVrsteP, cIdOdj, cGotZir)
 endif // fZaklj
 
-ODbRpt()
+o_pos_tables()
+o_pom_table()
 
 select pos_doks
 
@@ -153,7 +150,7 @@ if !fZaklj
 	endif
 
 	if ROUND(ABS(nTotal2)+ABS(nTotal3),4)<>0
-		ODbRpt()
+		o_pos_tables()
 		if IsPDV()
 			PDVPorPoTar(dDat0,dDat1,cIdPos,"3")  // STA JE OVO? => APOTEKE!!
 		else
@@ -170,7 +167,7 @@ else
 	END PRINT
 endif
 
-close all
+my_close_all_dbf()
 
 return .t.
 
@@ -489,6 +486,11 @@ AADD(aDbf,{"K1"       ,"C",  4, 0})
 AADD(aDbf,{"K2"       ,"C",  4, 0})
 
 NaprPom( aDbf )
+
+return
+
+
+static function o_pom_table()
 
 select ( F_POM )
 if used()

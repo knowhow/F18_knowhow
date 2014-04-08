@@ -26,7 +26,7 @@ if admin == NIL
     admin := .f.
 endif
 
-O_StAzur()
+o_pos_tables()
 
 Box(, 1, 50)
     @ m_x + 1, m_y + 2 SAY "Samo danasnji ? (D/N)" GET _danas VALID _danas $ "DN" PICT "!@"
@@ -39,7 +39,7 @@ endif
 
 PRacuni( _datum )
 
-close all
+my_close_all_dbf()
 
 return
 
@@ -253,7 +253,7 @@ endif
 if UPPER(CHR(LASTKEY()))=="Z"
     PushWa()
     print_zak_br(pos_doks->zak_br)
-    o_pregled()
+    o_pos_tables()
     PopWa()
     return DE_REFRESH
 endif

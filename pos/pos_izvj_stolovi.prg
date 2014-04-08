@@ -160,10 +160,11 @@ local cVezRacuni
 nArr:=SELECT()
 
 drn_create()
+
+o_pos_tables()
+
 drn_open()
 drn_empty()
-
-o_pregled()
 
 select pos
 SET ORDER TO TAG "1"

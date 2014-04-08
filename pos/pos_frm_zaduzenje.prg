@@ -86,7 +86,7 @@ ImeKol := { { "Sifra",    {|| idroba},      "idroba" }, ;
           }
 Kol := { 1, 2, 3, 4, 5 }
 
-OpenZad()
+o_pos_tables()
 
 Box(, 6, 60)
 
@@ -134,7 +134,7 @@ my_dbf_zap()
 
 // vrati ili pobrisi ono sto je poceo raditi ili prekini s radom
 if !pos_vrati_dokument_iz_pripr( cIdVd, gIdRadnik, cIdOdj, cIdDio )
-    close all
+    my_close_all_dbf()
     return
 endif
 
@@ -155,7 +155,7 @@ if ( cIdVd <> VD_REK ) .and. pos_preuzmi_iz_kalk( @cIdVd, @cBrDok, @cRsDBF )
             endif
 
             // otvori ponovo tabele
-            openzad()
+            o_pos_tables()
 
             if Pitanje(,"Ako je sve u redu, zelite li staviti na stanje dokument ?"," ")=="D"
                 fSadAz := .t.
@@ -168,13 +168,13 @@ endif
 
 if cIdVD == "NI"
     
-    close all
+    my_close_all_dbf()
     InventNivel( .f., .t., fSadaz, dDatRada )   
     return
 
 elseif cIdVd == "IN"
 
-    close all
+    my_close_all_dbf()
     InventNivel( .t., .t., fSadAz, dDatRada )
     return
 
@@ -335,7 +335,7 @@ if RecCount2() > 0
 
     if !fSadAz .and. Pitanje(, "Zelite li odstampati dokument ?", "N" ) == "D"
         StampZaduz( cIdVd, cBrDok )
-        OpenZad()
+        o_pos_tables()
     endif
 
     if fSadAz .or. Pitanje(,"Zelite li staviti dokument na stanje? (D/N)", "D" ) == "D"
@@ -349,7 +349,7 @@ if RecCount2() > 0
     endif
 endif
 
-close all
+my_close_all_dbf()
 return
 
 

@@ -35,7 +35,7 @@ _ok := .t.
 log_write( "F18_DOK_OPER: pos azuriranje racuna: " + cStalRac, 2 )
 
 my_use_semaphore_off()
-o_stazur()
+o_pos_tables()
 my_use_semaphore_on()
 
 if !f18_lock_tables({"pos_pos", "pos_doks"})

@@ -209,8 +209,7 @@ dPrevDat:=d_POS
 cPrevSmj:=s_POS
 
 // azuriraj nezakljucene
-CLOSE ALL
-O_StAzur()
+o_pos_tables()
 
 cVrijeme  := LEFT (TIME (), 5)
 cIdVrsteP := gGotPlac
@@ -309,7 +308,7 @@ realizacija_kase(.t.)
 gDatum  := SavegDatum
 gSmjena := SavegSmjena
 
-CLOSE ALL
+my_close_all_dbf()
 
 return .t.
 *}
@@ -426,7 +425,8 @@ if FOUND()
 	fImaNezak:=.t.
   	MsgBeep ("Postoje nezakljuceni radnici!!!")
   	if Pitanje(,"Zelite li nastaviti s otvaranjem smjene!", " ")=="N"
-    		CLOSERET
+   		my_close_all_dbf()
+		return
   	endif
 endif
 
@@ -437,7 +437,7 @@ else
   	Close All
   	if !realizacija_kase(.t.)
     		MsgBeep ("#Stampanje pazara smjene nije uspjelo!#")
-    		close all
+    		my_close_all_dbf()
 			return 0
   	endif
   	if gModul=="HOPS"
@@ -448,7 +448,7 @@ endif
 
 gSmjena:=STR(VAL(gSmjena)+1,LEN(gSmjena))
 MsgBeep("Otvorena je smjena "+gSmjena)
-close all
+my_close_all_dbf()
 return
-*}
+
 

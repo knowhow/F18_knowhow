@@ -85,7 +85,7 @@ else
     private cIdDio := SPACE(2)
 endif
 
-O_InvNiv()
+o_pos_tables()
 
 set cursor on
 
@@ -146,7 +146,7 @@ if fPocInv
     fPreuzeo := .f.
 
     if !fPreuzeo
-        O_InvNiv()
+        o_pos_tables()
     endif
 
     if stanje_dn == "N" .and. cIdVd == VD_INV
@@ -443,7 +443,7 @@ do case
 
         StampaInv()
         
-        o_invniv()
+        o_pos_tables()
         select priprz
         go nRec
         
@@ -472,7 +472,7 @@ do case
 
         if cIdVd == VD_INV
             StampaInv( .t. )
-            o_invniv()
+            o_pos_tables()
             select priprz
             go nRec
             lVrati:=DE_REFRESH
@@ -531,11 +531,7 @@ do case
         lVrati := DE_CONT
 
         if Pitanje(, "Stavku " + ALLTRIM( priprz->idroba ) + " izbrisati ?", "N" ) == "D"
-            my_rlock()            
-            delete
-            my_unlock()
-
-            my_dbf_pack()
+            my_delete_with_pack()
             lVrati := DE_REFRESH        
             
         endif

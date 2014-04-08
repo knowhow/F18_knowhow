@@ -604,7 +604,9 @@ FUNCTION EditStavka()
 
       _oldvaln := _nc * _kolicina
 
+      my_rlock()
       Gather()
+      my_unlock()
 
       _dok_hash := hb_Hash()
       _dok_hash[ "idfirma" ] := field->idfirma
@@ -676,7 +678,9 @@ FUNCTION EditStavka()
             _error := "0"
          ENDIF
 
+         my_rlock()
          Gather()
+         my_unlock()
 
          BoxC()
 
@@ -937,7 +941,9 @@ FUNCTION EditAll()
       _oldval := _mpcsapp * _kolicina  // vrijednost prosle stavke
       _oldvaln := _nc * _kolicina
 
+	  my_rlock()
       Gather()
+      my_unlock()
 
       // ubaci mi atribute u fakt_atribute
       oAtrib := F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB )
@@ -994,7 +1000,9 @@ FUNCTION EditAll()
             _error := "0"
          ENDIF
          // stavka onda postavi ERROR
+         my_rlock()
          Gather()
+         my_unlock()
          BoxC()
       ENDIF
       GO nTR2

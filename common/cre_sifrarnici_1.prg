@@ -50,56 +50,42 @@ FUNCTION cre_sifrarnici_1( ver )
    RETURN .T.
 
 
-// ----------------------------------------
-// dodaj defaut valute u sifrarnik valuta
-// ----------------------------------------
+
+
 FUNCTION fill_tbl_valute()
+   LOCAL _rec, _tmp, _id
+   LOCAL _table := "fmk.valute"
 
-   LOCAL _rec
+   _tmp := _select_all_from_table( _table )
 
-   CLOSE ALL
-   O_VALUTE
+   if _tmp == NIL
 
-   IF RecCount() <> 0
-      CLOSE ALL
-      RETURN .T.
-   ENDIF
+      _qry := "INSERT INTO " + _table
+      _qry += " ( id, naz, naz2, datum, tip, kurs1, kurs2, kurs3 ) "
+      _qry += " VALUES( "
+      _qry += " '000', "
+      _qry += " 'KONVERTIBILNA MARKA', "
+      _qry += " 'KM ', "
+      _qry += _sql_quote( CTOD( "01.01.04" ) ) + ", "
+      _qry += " 'D', "
+      _qry += " 1, 1, 1 "
+      _qry += " ); "
+      _qry += "INSERT INTO " + _table
+      _qry += " ( id, naz, naz2, datum, tip, kurs1, kurs2, kurs3 ) "
+      _qry += " VALUES( "
+      _qry += " '978', "
+      _qry += " 'EURO', "
+      _qry += " 'EUR', "
+      _qry += _sql_quote( CTOD( "01.01.04" ) ) + ", "
+      _qry += " 'P', "
+      _qry += " 0.51128, 0.51128, 0.51128 "
+      _qry += " ); "
 
-   IF !f18_lock_tables( { "valute" } )
-      CLOSE ALL
-      RETURN .T.
-   ENDIF
+      _sql_query( my_server(), _qry )
 
-   sql_table_update( nil, "BEGIN" )
-
-   APPEND BLANK
-   _rec := dbf_get_rec()
-   _rec[ "id" ]    := "000"
-   _rec[ "naz" ]   := "KONVERTIBILNA MARKA"
-   _rec[ "naz2" ]  := "KM"
-   _rec[ "datum" ] := CToD( "01.01.04" )
-   _rec[ "tip" ]   := "D"
-   _rec[ "kurs1" ] := 1
-   _rec[ "kurs2" ] := 1
-   _rec[ "kurs3" ] := 1
-   update_rec_server_and_dbf( 'valute', _rec, 1, "CONT" )
-
-   APPEND BLANK
-   _rec := dbf_get_rec()
-   _rec[ "id" ]    := "978"
-   _rec[ "naz" ]   := "EURO"
-   _rec[ "naz2" ]  := "EUR"
-   _rec[ "datum" ] := CToD( "01.01.04" )
-   _rec[ "tip" ]   := "P"
-   _rec[ "kurs1" ] := 0.51128
-   _rec[ "kurs2" ] := 0.51128
-   _rec[ "kurs3" ] := 0.51128
-   update_rec_server_and_dbf( 'valute', _rec, 1, "CONT" )
-
-
-   f18_free_tables( { "valute" } )
-   sql_table_update( nil, "END" )
-
-   CLOSE ALL
+   endif
 
    RETURN .T.
+
+
+

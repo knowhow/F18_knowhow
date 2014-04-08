@@ -533,12 +533,14 @@ Box(, 3, 60)
 read
 
 if LASTKEY()<>K_ESC
+	my_rlock()
     if _idroba<>PrevRoba
-            // priprz
-            REPLACE RobaNaz WITH &cRSdbf.->Naz,Jmj WITH &cRSdbf.->Jmj,Cijena WITH &cRSdbf.->Cijena,IdRoba WITH _IdRoba
-        endif
-        // priprz
-        REPLACE Kolicina WITH _Kolicina
+    	// priprz
+        REPLACE RobaNaz WITH &cRSdbf.->Naz,Jmj WITH &cRSdbf.->Jmj,Cijena WITH &cRSdbf.->Cijena,IdRoba WITH _IdRoba
+   	endif
+   	// priprz
+   	REPLACE Kolicina WITH _Kolicina
+	my_unlock()
 endif
 
 BoxC()

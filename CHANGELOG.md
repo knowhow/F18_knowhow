@@ -1,3 +1,9 @@
+1.7.28  2014-04-08, vsasa
+
+  - MAT, otvaranje tabela SIFK/SIFV - bugfix
+  - setovanje valuta, table_count() umjesto _select_all_from_table()
+  - KALK, unos/ispravka dokumenta - bugfix LOCK REQUIRED 
+ 
 1.7.27  2014-04-08, vsasa
 
   - POS, prenos realizacije u KALK, bugfix sa POM tabelom

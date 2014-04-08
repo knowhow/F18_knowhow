@@ -270,10 +270,10 @@ METHOD F18AdminOpts:update_app_form( upd_params )
 
    LOCAL _ok := .F.
    LOCAL _f_ver_prim := 1
-   LOCAL _f_ver_sec := 4
+   LOCAL _f_ver_sec := 7
    LOCAL _f_ver_third := Space( 10 )
    LOCAL _t_ver_prim := 1
-   LOCAL _t_ver_sec := 4
+   LOCAL _t_ver_sec := 5
    LOCAL _t_ver_third := Space( 10 )
    LOCAL _x := 1
    LOCAL _col_app, _col_temp, _line

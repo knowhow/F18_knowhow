@@ -504,8 +504,8 @@ local _dat_do := CTOD( "" )
 
 O_PARTN
 O_KONTO
-O_SIFV
 O_SIFK
+O_SIFV
 O_ROBA
 
 Box( "", 10, 70, .f. )

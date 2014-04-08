@@ -23,8 +23,8 @@ static PicKol := "99999999.999"
 // -------------------------------------------------
 static function _o_rpt_tables()
 O_ROBA
-O_SIFV
 O_SIFK
+O_SIFV
 O_MAT_SUBAN
 O_PARTN
 return

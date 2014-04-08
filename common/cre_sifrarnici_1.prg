@@ -56,9 +56,9 @@ FUNCTION fill_tbl_valute()
    LOCAL _rec, _tmp, _id
    LOCAL _table := "fmk.valute"
 
-   _tmp := _select_all_from_table( _table )
+   _tmp := table_count( _table )
 
-   if _tmp == NIL
+   if _tmp == 0
 
       _qry := "INSERT INTO " + _table
       _qry += " ( id, naz, naz2, datum, tip, kurs1, kurs2, kurs3 ) "

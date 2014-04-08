@@ -193,8 +193,8 @@ private imekol := {}
 
 O_MAT_INVENT
 O_ROBA
-O_SIFV
 O_SIFK
+O_SIFV
 O_PARTN
 
 SELECT MAT_INVENT
@@ -447,8 +447,8 @@ local _vars := hb_hash()
 
 O_MAT_INVENT
 O_ROBA
-O_SIFV
 O_SIFK
+O_SIFV
 O_KONTO
 O_PARTN
 
@@ -584,8 +584,8 @@ picK:='@Z 99999.99'
 
 O_MAT_INVENT
 O_ROBA
-O_SIFV
 O_SIFK
+O_SIFV
 O_MAT_SUBAN
 set order to tag "3"
 set filter to DatDok<=cIdD
@@ -730,8 +730,8 @@ O_VALUTE
 O_MAT_PRIPR
 O_MAT_INVENT
 O_ROBA
-O_SIFV
 O_SIFK
+O_SIFV
 O_MAT_SUBAN
 set order to tag "3"
 set filter to DatDok<=cIdD
@@ -816,8 +816,8 @@ cidvn:="  "; cBrNal:=space(4)
 cIdTipDok:="09"
 O_TARIFA; O_KONTO
 O_MAT_INVENT
-O_SIFV
 O_SIFK
+O_SIFV
 O_ROBA
 nMjes:=month(cIdD)
 Box("",7,60)
@@ -907,8 +907,8 @@ K := 0
 C := 0
 
 O_MAT_SUBAN
-O_SIFV
 O_SIFK
+O_SIFV
 O_ROBA
 
 SELECT mat_suban

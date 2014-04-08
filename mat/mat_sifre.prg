@@ -25,8 +25,8 @@ O_TDOK
 O_ROBA
 O_VALUTE
 O_KARKON
-O_SIFV
 O_SIFK
+O_SIFV
 O_TARIFA
 
 AADD(opc, "1. partneri                            ")

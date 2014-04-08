@@ -1,3 +1,8 @@
+1.7.26  2014-04-08, vsasa
+
+  - POS, ispravke dijelova koda sa otvaranjem tabela
+  - insert valuta prebačen na SQL insert
+ 
 1.7.25  2014-04-07, vsasa
 
   - dosta tabela pripreme prebačeno na my_use()

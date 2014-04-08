@@ -431,7 +431,9 @@ do case
             BoxC()
             return DE_CONT
         else
+            my_rlock()
             Gather()
+            my_unlock()
             mat_brisi_pbaze()
             BoxC()
             return DE_REFRESH
@@ -478,7 +480,9 @@ do case
             @ m_x + __unos_x - 5, m_y + 56 SAY nDug-nPot PICTURE PicDEM
 
             select mat_pripr
+            my_rlock()
             Gather()
+            my_unlock()
             go nTR2
 
         enddo
@@ -528,7 +532,9 @@ do case
             select mat_pripr
             APPEND BLANK
 
+            my_rlock()
             Gather()
+            my_unlock()
 
         enddo
 

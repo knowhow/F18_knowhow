@@ -503,7 +503,7 @@ if RecCount2()==0
         return (DE_CONT)
 endif
 Beep(2)
-DELETE
+my_delete_with_pack()
 oBrowse:refreshAll()
 return (DE_CONT)
 

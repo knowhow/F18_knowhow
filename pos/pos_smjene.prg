@@ -174,7 +174,7 @@ if Empty(d_POS)
 	endif
 	if !(d_DOKS==dDatum .and. s_DOKS==cSmjena)
 		SELECT _POS
-		ZAP
+		my_dbf_zap()
 	endif
 	return .t.
 endif
@@ -195,7 +195,7 @@ endif
 
 if gVsmjene=="N"
 	select _POS
-	ZAP
+	my_dbf_zap()
 	return .t.
 endif
 

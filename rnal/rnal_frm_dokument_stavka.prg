@@ -633,4 +633,57 @@ select (nTArea)
 return
 
 
+// --------------------------------------------------------
+// --------------------------------------------------------
+function set_items_article()
+local _ret := .f.
+local _art_id, _rec
+
+_art_id := get_items_article()
+
+if _art_id == NIL
+	return _ret
+endif
+
+SELECT _doc_it
+GO TOP
+DO WHILE !EOF() 
+	_rec := dbf_get_rec()
+	_rec["art_id"] := _art_id
+	dbf_update_rec( _rec )
+	SKIP
+ENDDO
+GO TOP
+_ret := .t.
+return _ret
+
+
+
+// --------------------------------------------------------
+// --------------------------------------------------------
+function get_items_article()
+local _art_id := 0
+local _box_x := 3
+local _box_y := 40
+local _x := m_x
+local _y := m_y
+private GetList := {}
+
+Box(, _box_x, _box_y )
+	@ m_x + 1, m_y + 2 SAY "Odaberi artikal iz liste artikala:"
+	@ m_x + 2, m_y + 2 SAY "Artikal:" GET _art_id VALID {|| s_articles( @_art_id, .f., .t. ), .t. }
+	READ
+BoxC()
+
+m_x := _x
+m_y := _y
+
+if LastKey() == K_ESC
+	RETURN NIL
+endif
+
+RETURN _art_id
+
+
+
 

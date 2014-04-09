@@ -331,6 +331,7 @@ local nRec := RecNo()
 local nDocNoNew := 0
 local cDesc := ""
 local nArea, oCsvImport
+local _art_id, _imported
 
 if ALIAS() == "_DOC_OPS"
     // ispis broja stavke na koju se odnosi operacija
@@ -546,10 +547,27 @@ do case
 
         oCsvImport := RnalCsvImport():new( _doc )
         if oCsvImport:import()
-            select _doc_it
-            go top
+			select _doc_it
+        	go top
+			m_x := nX
+			m_y := nY
             return DE_REFRESH
         endif
+
+
+    case UPPER( CHR( Ch ) ) == "S"
+
+        // setovanje artikla za sve stavke
+        if ALIAS() <> "_DOC_IT"
+            return DE_CONT
+        endif
+
+		if Pitanje(, "Postaviti novi artikal za sve stavke (D/N) ?", "D") == "D" .and. set_items_article()
+			m_x := nX
+			m_y := nY
+			return DE_REFRESH
+		endif 
+
 
     case UPPER( CHR( Ch ) ) == "O"
 

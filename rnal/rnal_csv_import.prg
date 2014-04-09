@@ -23,7 +23,9 @@ CLASS RnalCsvImport
     METHOD import()
    
     PROTECTED:
-        
+
+		METHOD get_article()    
+		METHOD get_shape_type()    
         METHOD get_vars()
 		METHOD csv_browse()
 		METHOD csv_browse_key_handler()
@@ -57,10 +59,13 @@ endif
 
 // sada ja ovo rucno zadajem...
 // prakticno obicna struktura kao za DBF tabelu
-AADD( _struct, { "ID", "C", 10, 0 } )
-AADD( _struct, { "WIDTH", "C", 20, 0 } )
-AADD( _struct, { "HEIGHT", "C", 20, 0 } )
-AADD( _struct, { "QTTY", "C", 20, 0 } )
+AADD( _struct, { "POSITION", "C", 20, 0 } )
+AADD( _struct, { "WIDTH", "C", 15, 0 } )
+AADD( _struct, { "HEIGHT", "C", 15, 0 } )
+AADD( _struct, { "QTTY", "C", 10, 0 } )
+AADD( _struct, { "SHAPE", "C", 10, 0 } )
+AADD( _struct, { "M2",   "C", 15, 0 } )
+AADD( _struct, { "UM2",   "C", 15, 0 } )
 AADD( _struct, { "MARKER", "C", 1, 0 } )
 
 // otvori mi CSV fajl
@@ -78,7 +83,7 @@ GO TOP
 
 // markiraj sve stavke za prenos, osim headera
 DO WHILE !EOF()
-	IF UPPER( ALLTRIM( field->id ) ) <> "SIFRA"
+	IF UPPER( ALLTRIM( field->position ) ) <> "POZICIJA"
 		REPLACE field->marker WITH "*"
 	ENDIF
 	SKIP
@@ -88,6 +93,12 @@ GO TOP
 
 // daj mi pregled csvimp tabele
 if ::csv_browse() == 0
+	return _ok
+endif
+
+_art_id := ::get_article()
+
+if _art_id == NIL
 	return _ok
 endif
 
@@ -101,10 +112,12 @@ do while !EOF()
 		LOOP
 	endif
 
-    ++ _count 
+	if VAL( field->height ) == 0 .or. VAL( field->width ) == 0 .or. VAL( field->qtty ) == 0
+		SKIP 1
+		LOOP
+	endif
 
-    // uzmi potrebna polja...    
-    _art_id := _sql_get_value( "fmk.rnal_articles", "art_id", { { "art_desc", ALLTRIM( field->id ) } } ) 
+    ++ _count 
 
     _qtty := ::string_to_number( field->qtty, "BA" )
     _height := ::string_to_number( field->height, "BA" )
@@ -123,6 +136,8 @@ do while !EOF()
     _rec["doc_it_alt"] := gDefNVM
     _rec["doc_acity"] := PADR( gDefCity, 50 )
     _rec["doc_it_sch"] := "N" 
+	_rec["doc_it_typ"] := ::get_shape_type( csvimp->shape )
+	_rec["doc_it_pos"] := ALLTRIM( csvimp->position )
 
     // sada podaci artikla i kolicina... 
     _rec["art_id"] := _art_id
@@ -137,12 +152,36 @@ do while !EOF()
 
 enddo
 
-if _count > 0
-    Msgbeep( "Uspjesno importovano " + ALLTRIM( STR( _count ) ) + " zapisa." )
+//if _count > 0
+//    Msgbeep( "Uspjesno importovano " + ALLTRIM( STR( _count ) ) + " zapisa." )
     _ok := .t.
-endif
+//endif
 
 return _ok
+
+
+
+
+// ---------------------------------------------------
+// ---------------------------------------------------
+METHOD RnalCsvImport:get_article()
+RETURN get_items_article()
+
+
+
+
+// ---------------------------------------------------
+// ---------------------------------------------------
+METHOD RnalCsvImport:get_shape_type( shape )
+local _type := " "
+
+if LOWER( ALLTRIM( shape ) ) == "nepravilni"
+	_type := "S"
+endif
+
+RETURN _type
+
+
 
 
 
@@ -154,15 +193,18 @@ local _box_y := MAXCOLS() - 10
 local _t_area := SELECT()
 local _ret := 0
 local _header := "Pregled importovanih podataka CSV fajla..."
+local _x := m_x
+local _y := m_y
 private ImeKol := {}
 private Kol := {}
 private GetList := {}
 
 // kolone browse-a
-AADD( ImeKol, { PADC( "Artikal", 10 ), {|| id }, "id" } )
-AADD( ImeKol, { PADC( "Sirina", 20 ), {|| width }, "width" } )
-AADD( ImeKol, { PADC( "Visina", 20 ), {|| height }, "height" } )
-AADD( ImeKol, { PADC( "Kolicina", 20 ), {|| qtty }, "qtty" } )
+AADD( ImeKol, { PADC( "Pozicija", 20 ), {|| position }, "position" } )
+AADD( ImeKol, { PADC( "Sirina", 15 ), {|| width }, "width" } )
+AADD( ImeKol, { PADC( "Visina", 15 ), {|| height }, "height" } )
+AADD( ImeKol, { PADC( "Kolicina", 15 ), {|| qtty }, "qtty" } )
+AADD( ImeKol, { PADC( "Oblik", 10 ), {|| shape }, "shape" } )
 AADD( ImeKol, { PADC( "Marker", 6 ), {|| marker }, "marker" } )
 
 for _i := 1 to LEN( ImeKol )
@@ -184,6 +226,9 @@ if LastKey() == K_ESC .and. Pitanje(, "Importovati sadržaj fajla (D/N) ?", "D" 
 endif
 
 BoxC()
+
+m_x := _x
+m_y := _y
 
 select ( _t_area )
 

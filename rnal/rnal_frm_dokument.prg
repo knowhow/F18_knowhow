@@ -330,7 +330,8 @@ local GetList := {}
 local nRec := RecNo()
 local nDocNoNew := 0
 local cDesc := ""
-local nArea
+local nArea, oCsvImport
+local _art_id, _imported
 
 if ALIAS() == "_DOC_OPS"
     // ispis broja stavke na koju se odnosi operacija
@@ -488,7 +489,28 @@ do case
             select _doc_ops
     
         endif
-    
+   
+    case Ch == K_CTRL_F9
+
+		// brisanje sve iz stavki ili operacija
+
+		nRet := DE_CONT
+
+   		if ALIAS() == "_DOCS"
+			return nRet
+		endif
+
+		if ALIAS() == "_DOC_IT" .and. RECCOUNT() > 0
+			if docit_delete_all() == 1
+				nRet := DE_REFRESH
+			endif
+		elseif ALIAS() == "_DOC_OPS" .and. RECCOUNT() > 0
+			if docop_delete_all() == 1
+				nRet := DE_REFRESH
+			endif
+		endif
+
+ 
     case Ch == K_CTRL_T
 
         nRet := DE_CONT
@@ -537,7 +559,41 @@ do case
             return DE_REFRESH
         endif
 
-    case UPPER( CHR( Ch )  ) == "O"
+    case UPPER( CHR( Ch ) ) == "C"
+
+        // import CSV
+        if ALIAS() <> "_DOC_IT"
+            return DE_CONT
+        endif
+
+        oCsvImport := RnalCsvImport():new( _doc )
+        if oCsvImport:import()
+			select _doc_it
+        	go top
+			m_x := nX
+			m_y := nY
+            return DE_REFRESH
+		else
+			select _doc_it
+			go top
+        endif
+
+
+    case UPPER( CHR( Ch ) ) == "S"
+
+        // setovanje artikla za sve stavke
+        if ALIAS() <> "_DOC_IT"
+            return DE_CONT
+        endif
+
+		if Pitanje(, "Postaviti novi artikal za sve stavke (D/N) ?", "D") == "D" .and. set_items_article()
+			m_x := nX
+			m_y := nY
+			return DE_REFRESH
+		endif 
+
+
+    case UPPER( CHR( Ch ) ) == "O"
 
         // promjena rednog broja stavke
         if ALIAS() <> "_DOCS"
@@ -1191,6 +1247,50 @@ MsgBeep( "INFO: brisanje naloga broj: " + ALLTRIM( STR( nDoc_no ) ) + ", status:
 return 1
 
 
+
+// -------------------------------------------
+// brisanje svih zapisa stavki naloga
+// -------------------------------------------
+static function docit_delete_all( lSilent )
+local _ret := 0
+local _doc_no
+
+if lSilent == NIL
+	lSilent := .f.
+endif
+
+if !lSilent .and. Pitanje(, "Izbrisati sve stavke naloga (D/N) ?", "D" ) == "N"
+    return _ret
+endif
+
+SELECT _docs
+_doc_no := field->doc_no
+
+SELECT _doc_it
+my_dbf_zap()
+my_dbf_pack()
+
+SELECT _doc_ops
+my_dbf_zap()
+my_dbf_pack()
+
+SELECT _doc_it2
+my_dbf_zap()
+my_dbf_pack()
+
+SELECT _doc_it
+GO TOP
+_ret := 1
+
+log_write( "F18_DOK_OPER, brisanje svih stavki naloga iz pripreme broj: " + ALLTRIM( STR( _doc_no ) ), 3 )
+
+MsgBeep( "INFO / brisanje: pobrisane sve stavke naloga " )
+
+return _ret
+
+
+
+
 // --------------------------------------------
 // opcija brisanja stavke naloga
 // lSilent - tihi nacin rada bez upita
@@ -1301,6 +1401,42 @@ log_write( "F18_DOK_OPER, brisanje operacije naloga broj: " + ALLTRIM( STR( _doc
             " / broj operacije: " + ALLTRIM( STR( _doc_op_no ) ), 3 )
 
 return 1
+
+
+
+// -------------------------------------------
+// brisanje svih zapisa stavki naloga
+// -------------------------------------------
+static function docop_delete_all( lSilent )
+local _ret := 0
+local _doc_no
+
+if lSilent == NIL
+	lSilent := .f.
+endif
+
+if !lSilent .and. Pitanje(, "Izbrisati sve operacije naloga (D/N) ?", "D" ) == "N"
+    return _ret
+endif
+
+SELECT _docs
+_doc_no := field->doc_no
+
+SELECT _doc_ops
+my_dbf_zap()
+my_dbf_pack()
+
+GO TOP
+
+_ret := 1
+
+log_write( "F18_DOK_OPER, brisanje svih operacija naloga iz pripreme broj: " + ALLTRIM( STR( _doc_no ) ), 3 )
+
+MsgBeep( "INFO / brisanje: pobrisane sve operacije naloga " )
+
+return _ret
+
+
 
 
 // ------------------------------------------------

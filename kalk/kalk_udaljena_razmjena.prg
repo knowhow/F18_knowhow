@@ -368,6 +368,8 @@ _dat_do := vars["datum_do"]
 _konta := ALLTRIM( vars["konta"] )
 _vrste_dok := ALLTRIM( vars["vrste_dok"] )
 _export_sif := ALLTRIM( vars["export_sif"] )
+
+altd()
  
 // kreiraj tabele exporta
 _cre_exp_tbls( __export_dbf_path )

@@ -137,3 +137,9 @@ STATIC FUNCTION _get_ent_codes_array()
    AAdd( _arr, { "Đ", "&#272;" } )
 
    RETURN _arr
+
+
+
+
+
+

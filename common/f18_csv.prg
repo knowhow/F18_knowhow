@@ -13,8 +13,6 @@
 #include "hbclass.ch"
 #include "common.ch"
 
-REQUEST ARRAYRDD
-
 CLASS F18Csv
 
     DATA struct
@@ -72,8 +70,7 @@ return _ok
 // ------------------------------------------------------
 // ------------------------------------------------------
 METHOD F18Csv:create_mem_dbf()
-altd()
-DBCREATE( ::memname + ".dbf" , ::struct, "ARRAYRDD" )
+DBCREATE( ::memname, ::struct, "ARRAYRDD" )
 return
 
 
@@ -81,6 +78,7 @@ return
 // ------------------------------------------------------
 METHOD F18Csv:open_csv_as_local_dbf()
 
+SELECT (360)
 USE (::memname ) VIA "ARRAYRDD"
 APPEND FROM ::csvname DELIMITED
 // preskoci header...

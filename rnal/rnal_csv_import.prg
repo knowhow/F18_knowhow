@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -15,22 +15,22 @@
 
 CLASS RnalCsvImport
 
-    DATA params
-    
-    VAR doc_no
+   DATA params
 
-    METHOD new()
-    METHOD import()
-   
-    PROTECTED:
+   VAR doc_no
 
-		METHOD get_article()    
-		METHOD get_shape_type()    
-        METHOD get_vars()
-		METHOD csv_browse()
-		METHOD csv_browse_key_handler()
-		METHOD string_to_number()
-    
+   METHOD new()
+   METHOD import()
+
+   PROTECTED:
+
+   METHOD get_article()
+   METHOD get_shape_type()
+   METHOD get_vars()
+   METHOD csv_browse()
+   METHOD csv_browse_key_handler()
+   METHOD string_to_number()
+
 ENDCLASS
 
 
@@ -38,126 +38,135 @@ ENDCLASS
 // -----------------------------------------------------
 // -----------------------------------------------------
 METHOD RnalCsvImport:New( _doc_no )
-::params := NIL
-::doc_no := _doc_no
-return self
+
+   ::params := NIL
+   ::doc_no := _doc_no
+
+   RETURN self
 
 
 
 // ----------------------------------------------------
 // ----------------------------------------------------
 METHOD RnalCsvImport:import()
-local _ok := .f.
-local oCsv
-local _struct := {}
-local _rec, _art_id, _qtty, _height, _width
-local _count := 0
 
-if ::params == NIL .and. !::get_vars()
-    return _ok
-endif
+   LOCAL _ok := .F.
+   LOCAL oCsv
+   LOCAL _struct := {}
+   LOCAL _rec, _art_id, _qtty, _height, _width
+   LOCAL _count := 0
+   LOCAL _t_area := Select()
 
-// sada ja ovo rucno zadajem...
-// prakticno obicna struktura kao za DBF tabelu
-AADD( _struct, { "POSITION", "C", 20, 0 } )
-AADD( _struct, { "WIDTH", "C", 15, 0 } )
-AADD( _struct, { "HEIGHT", "C", 15, 0 } )
-AADD( _struct, { "QTTY", "C", 10, 0 } )
-AADD( _struct, { "SHAPE", "C", 10, 0 } )
-AADD( _struct, { "M2",   "C", 15, 0 } )
-AADD( _struct, { "UM2",   "C", 15, 0 } )
-AADD( _struct, { "MARKER", "C", 1, 0 } )
+   if ::params == NIL .AND. !::get_vars()
+      RETURN _ok
+   ENDIF
 
-// otvori mi CSV fajl
-oCsv := CsvReader():new()
-oCsv:struct := _struct
-oCsv:csvname := ::params["import_path"] + ::params["csv_file"]
-oCsv:read()
+   // sada ja ovo rucno zadajem...
+   // prakticno obicna struktura kao za DBF tabelu
+   AAdd( _struct, { "POSITION", "C", 20, 0 } )
+   AAdd( _struct, { "WIDTH", "C", 15, 0 } )
+   AAdd( _struct, { "HEIGHT", "C", 15, 0 } )
+   AAdd( _struct, { "QTTY", "C", 10, 0 } )
+   AAdd( _struct, { "SHAPE", "C", 10, 0 } )
+   AAdd( _struct, { "M2",   "C", 15, 0 } )
+   AAdd( _struct, { "UM2",   "C", 15, 0 } )
+   AAdd( _struct, { "MARKER", "C", 1, 0 } )
 
-if RECCOUNT() == 0
-	return _ok
-endif
+   // otvori mi CSV fajl
+   oCsv := CsvReader():new()
+   oCsv:struct := _struct
+   oCsv:csvname := ::params[ "import_path" ] + ::params[ "csv_file" ]
+   oCsv:read()
 
-SELECT csvimp
-GO TOP
+   IF RecCount() == 0
+      oCsv:close()
+      RETURN _ok
+   ENDIF
 
-// markiraj sve stavke za prenos, osim headera
-DO WHILE !EOF()
-	IF UPPER( ALLTRIM( field->position ) ) <> "POZICIJA"
-		REPLACE field->marker WITH "*"
-	ENDIF
-	SKIP
-ENDDO
+   SELECT csvimp
+   GO TOP
 
-GO TOP
+   // markiraj sve stavke za prenos, osim headera
+   DO WHILE !Eof()
+      IF Upper( AllTrim( field->position ) ) <> "POZICIJA"
+         REPLACE field->marker WITH "*"
+      ENDIF
+      SKIP
+   ENDDO
 
-// daj mi pregled csvimp tabele
-if ::csv_browse() == 0
-	return _ok
-endif
+   GO TOP
 
-_art_id := ::get_article()
+   // daj mi pregled csvimp tabele
+   if ::csv_browse() == 0
+      oCsv:close()
+      RETURN _ok
+   ENDIF
 
-if _art_id == NIL
-	return _ok
-endif
+   _art_id := ::get_article()
 
-GO TOP
+   IF _art_id == NIL
+      oCsv:close()
+      RETURN _ok
+   ENDIF
 
-do while !EOF()
+   GO TOP
 
-	// preskacemo sve što nije markirano za prenos
-	if field->marker <> "*"
-		SKIP 1
-		LOOP
-	endif
+   DO WHILE !Eof()
 
-	if VAL( field->height ) == 0 .or. VAL( field->width ) == 0 .or. VAL( field->qtty ) == 0
-		SKIP 1
-		LOOP
-	endif
+      // preskacemo sve što nije markirano za prenos
+      IF field->marker <> "*"
+         SKIP 1
+         LOOP
+      ENDIF
 
-    ++ _count 
+      IF Val( field->height ) == 0 .OR. Val( field->width ) == 0 .OR. Val( field->qtty ) == 0
+         SKIP 1
+         LOOP
+      ENDIF
 
-    _qtty := ::string_to_number( field->qtty, "BA" )
-    _height := ::string_to_number( field->height, "BA" )
-    _width := ::string_to_number( field->width, "BA" )
- 
-    select _doc_it
-    APPEND BLANK
+      ++ _count
 
-    _rec := dbf_get_rec()
+      _qtty := ::string_to_number( field->qtty, "BA" )
+      _height := ::string_to_number( field->height, "BA" )
+      _width := ::string_to_number( field->width, "BA" )
 
-    // standardna polja bitna za unos
-    _rec["doc_no"] := ::doc_no
-    _rec["doc_it_no"] := inc_docit( ::doc_no )
-    _rec["doc_it_typ"] := " "
-    _rec["it_lab_pos"] := "I"
-    _rec["doc_it_alt"] := gDefNVM
-    _rec["doc_acity"] := PADR( gDefCity, 50 )
-    _rec["doc_it_sch"] := "N" 
-	_rec["doc_it_typ"] := ::get_shape_type( csvimp->shape )
-	_rec["doc_it_pos"] := ALLTRIM( csvimp->position )
+      SELECT _doc_it
+      APPEND BLANK
 
-    // sada podaci artikla i kolicina... 
-    _rec["art_id"] := _art_id
-    _rec["doc_it_wid"] := _width
-    _rec["doc_it_hei"] := _height
-    _rec["doc_it_qtt"] := _qtty
+      _rec := dbf_get_rec()
 
-    dbf_update_rec( _rec )
+      // standardna polja bitna za unos
+      _rec[ "doc_no" ] := ::doc_no
+      _rec[ "doc_it_no" ] := inc_docit( ::doc_no )
+      _rec[ "doc_it_typ" ] := " "
+      _rec[ "it_lab_pos" ] := "I"
+      _rec[ "doc_it_alt" ] := gDefNVM
+      _rec[ "doc_acity" ] := PadR( gDefCity, 50 )
+      _rec[ "doc_it_sch" ] := "N"
+      _rec[ "doc_it_typ" ] := ::get_shape_type( csvimp->shape )
+      _rec[ "doc_it_pos" ] := AllTrim( csvimp->position )
 
-    SELECT csvimp
-    SKIP
+      // sada podaci artikla i kolicina...
+      _rec[ "art_id" ] := _art_id
+      _rec[ "doc_it_wid" ] := _width
+      _rec[ "doc_it_hei" ] := _height
+      _rec[ "doc_it_qtt" ] := _qtty
 
-enddo
+      dbf_update_rec( _rec )
 
-//if _count > 0
-//    Msgbeep( "Uspjesno importovano " + ALLTRIM( STR( _count ) ) + " zapisa." )
-    _ok := .t.
-//endif
+      SELECT csvimp
+      SKIP
 
-return _ok
+   ENDDO
+
+   oCsv:close()
+
+   IF _count > 0
+      Msgbeep( "Uspjesno importovano " + AllTrim( Str( _count ) ) + " zapisa." )
+      _ok := .T.
+   ENDIF
+
+   RETURN _ok
 
 
 
@@ -165,7 +174,7 @@ return _ok
 // ---------------------------------------------------
 // ---------------------------------------------------
 METHOD RnalCsvImport:get_article()
-RETURN get_items_article()
+   RETURN get_items_article()
 
 
 
@@ -173,13 +182,14 @@ RETURN get_items_article()
 // ---------------------------------------------------
 // ---------------------------------------------------
 METHOD RnalCsvImport:get_shape_type( shape )
-local _type := " "
 
-if LOWER( ALLTRIM( shape ) ) == "nepravilni"
-	_type := "S"
-endif
+   LOCAL _type := " "
 
-RETURN _type
+   IF Lower( AllTrim( shape ) ) == "nepravilni"
+      _type := "S"
+   ENDIF
+
+   RETURN _type
 
 
 
@@ -188,149 +198,150 @@ RETURN _type
 // ---------------------------------------------------
 // ---------------------------------------------------
 METHOD RnalCsvImport:csv_browse()
-local _box_x := MAXROWS() - 10
-local _box_y := MAXCOLS() - 10
-local _t_area := SELECT()
-local _ret := 0
-local _header := "Pregled importovanih podataka CSV fajla..."
-local _x := m_x
-local _y := m_y
-private ImeKol := {}
-private Kol := {}
-private GetList := {}
 
-// kolone browse-a
-AADD( ImeKol, { PADC( "Pozicija", 20 ), {|| position }, "position" } )
-AADD( ImeKol, { PADC( "Sirina", 15 ), {|| width }, "width" } )
-AADD( ImeKol, { PADC( "Visina", 15 ), {|| height }, "height" } )
-AADD( ImeKol, { PADC( "Kolicina", 15 ), {|| qtty }, "qtty" } )
-AADD( ImeKol, { PADC( "Oblik", 10 ), {|| shape }, "shape" } )
-AADD( ImeKol, { PADC( "Marker", 6 ), {|| marker }, "marker" } )
+   LOCAL _box_x := MAXROWS() - 10
+   LOCAL _box_y := MAXCOLS() - 10
+   LOCAL _t_area := Select()
+   LOCAL _ret := 0
+   LOCAL _header := "Pregled importovanih podataka CSV fajla..."
+   LOCAL _x := m_x
+   LOCAL _y := m_y
+   PRIVATE ImeKol := {}
+   PRIVATE Kol := {}
+   PRIVATE GetList := {}
 
-for _i := 1 to LEN( ImeKol )
-    AADD( Kol, _i )
-next
+   // kolone browse-a
+   AAdd( ImeKol, { PadC( "Pozicija", 20 ), {|| position }, "position" } )
+   AAdd( ImeKol, { PadC( "Sirina", 15 ), {|| width }, "width" } )
+   AAdd( ImeKol, { PadC( "Visina", 15 ), {|| height }, "height" } )
+   AAdd( ImeKol, { PadC( "Kolicina", 15 ), {|| qtty }, "qtty" } )
+   AAdd( ImeKol, { PadC( "Oblik", 10 ), {|| shape }, "shape" } )
+   AAdd( ImeKol, { PadC( "Marker", 6 ), {|| marker }, "marker" } )
 
-SELECT csvimp
-GO TOP
+   FOR _i := 1 TO Len( ImeKol )
+      AAdd( Kol, _i )
+   NEXT
 
-// otvori box
-Box(, _box_x, _box_y )
+   SELECT csvimp
+   GO TOP
 
-@ m_x + _box_x, m_x + 2 SAY "<SPACE> markiranje stavki za prenos  <ESC> izlaz"
+   // otvori box
+   Box(, _box_x, _box_y )
 
-ObjDbedit( "csvimp", _box_x, _box_y, {|| ::csv_browse_key_handler() }, _header, "foot",,,,, 1 )
+   @ m_x + _box_x, m_x + 2 SAY "<SPACE> markiranje stavki za prenos  <ESC> izlaz"
 
-if LastKey() == K_ESC .and. Pitanje(, "Importovati sadržaj fajla (D/N) ?", "D" ) == "D"
-	_ret := 1
-endif
+   ObjDbedit( "csvimp", _box_x, _box_y, {|| ::csv_browse_key_handler() }, _header, "foot",,,,, 1 )
 
-BoxC()
+   IF LastKey() == K_ESC .AND. Pitanje(, "Importovati sadržaj fajla (D/N) ?", "D" ) == "D"
+      _ret := 1
+   ENDIF
 
-m_x := _x
-m_y := _y
+   BoxC()
 
-select ( _t_area )
+   m_x := _x
+   m_y := _y
 
-return _ret
+   SELECT ( _t_area )
+
+   RETURN _ret
 
 
 // ---------------------------------------------------
 // ---------------------------------------------------
 METHOD RnalCsvImport:csv_browse_key_handler()
 
-DO CASE
+   DO CASE
 
-	CASE Ch == K_SPACE
-		IF field->marker == "*"
-			REPLACE field->marker WITH ""
-		ELSE
-			REPLACE field->marker WITH "*"
-		ENDIF
-		RETURN DE_REFRESH
+   CASE Ch == K_SPACE
+      IF field->marker == "*"
+         REPLACE field->marker WITH ""
+      ELSE
+         REPLACE field->marker WITH "*"
+      ENDIF
+      RETURN DE_REFRESH
 
-ENDCASE 
+   ENDCASE
 
-return DE_CONT
+   RETURN DE_CONT
 
 
 
 // ----------------------------------------------------
 // ----------------------------------------------------
 METHOD RnalCsvImport:get_vars()
-local _ok := .f.
-local _x := 1
-local _import_path := PADR( fetch_metric( "rnal_csv_import_path", my_user(), "" ), 200 )
-local _imp_ok := "D"
-local _csv_file := ""
-local _csv_filter := "*.csv"
-local _delimiter := ","
 
-Box(, 5, 60 )
+   LOCAL _ok := .F.
+   LOCAL _x := 1
+   LOCAL _import_path := PadR( fetch_metric( "rnal_csv_import_path", my_user(), "" ), 200 )
+   LOCAL _imp_ok := "D"
+   LOCAL _csv_file := ""
+   LOCAL _csv_filter := "*.csv"
+   LOCAL _delimiter := ","
 
-    @ m_x + _x, m_y + 2 SAY "*** import CSV fajla"
+   Box(, 5, 60 )
 
-    ++ _x
-    ++ _x
+   @ m_x + _x, m_y + 2 SAY "*** import CSV fajla"
 
-    @ m_x + _x, m_y + 2 SAY "Lokacija fajla:" GET _import_path PICT "@S35"
+   ++ _x
+   ++ _x
 
-    ++ _x
-    ++ _x
+   @ m_x + _x, m_y + 2 SAY "Lokacija fajla:" GET _import_path PICT "@S35"
 
-    @ m_x + _x, m_y + 2 SAY "Izvrsiti import fajla (D/N) ?" GET _imp_ok VALID _imp_ok $ "DN" PICT "@!"
+   ++ _x
+   ++ _x
 
-    READ
+   @ m_x + _x, m_y + 2 SAY "Izvrsiti import fajla (D/N) ?" GET _imp_ok VALID _imp_ok $ "DN" PICT "@!"
 
-BoxC()
+   READ
 
-if LastKey() == K_ESC .or. _imp_ok == "N"
-    return _ok
-endif
+   BoxC()
 
-_import_path := ALLTRIM( _import_path )
-if RIGHT( _import_path, 1 ) <> SLASH
-    _import_path += SLASH
-endif
+   IF LastKey() == K_ESC .OR. _imp_ok == "N"
+      RETURN _ok
+   ENDIF
 
-// zabiljezi za ubuduce
-set_metric( "rnal_csv_import_path", my_user(), _import_path )
+   _import_path := AllTrim( _import_path )
+   IF Right( _import_path, 1 ) <> SLASH
+      _import_path += SLASH
+   ENDIF
 
-// idemo na izbor fajla
-if get_file_list_array( _import_path, _csv_filter, @_csv_file ) == 0
-    return _ok
-endif
+   // zabiljezi za ubuduce
+   set_metric( "rnal_csv_import_path", my_user(), _import_path )
 
-if Pitanje(, "Import fajla " + _csv_file + " (D/N) ?", "D" ) == "N"
-    return _ok
-endif
+   // idemo na izbor fajla
+   IF get_file_list_array( _import_path, _csv_filter, @_csv_file ) == 0
+      RETURN _ok
+   ENDIF
 
-_ok := .t.
+   IF Pitanje(, "Import fajla " + _csv_file + " (D/N) ?", "D" ) == "N"
+      RETURN _ok
+   ENDIF
 
-::params := hb_hash()
-::params["import_path"] := ALLTRIM( _import_path )
-::params["csv_file"] := _csv_file
-::params["delimiter"] := _delimiter
+   _ok := .T.
 
-return _ok
+   ::params := hb_Hash()
+   ::params[ "import_path" ] := AllTrim( _import_path )
+   ::params[ "csv_file" ] := _csv_file
+   ::params[ "delimiter" ] := _delimiter
+
+   RETURN _ok
 
 
 METHOD RnalCsvImport:string_to_number( val, countryCode )
-local sepDec := ","
-local sep1000 := "."
-local cTmp
 
-if countryCode == NIL
-   countryCode = "BA"
-endif
+   LOCAL sepDec := ","
+   LOCAL sep1000 := "."
+   LOCAL cTmp
 
-if countryCode == "EN"
-   return VAL( val )
-endif
+   IF countryCode == NIL
+      countryCode = "BA"
+   ENDIF
 
-cTmp := strtran( val, sep1000, "" )
-cTmp := strtran( val, sepDec, "." )
+   IF countryCode == "EN"
+      RETURN Val( val )
+   ENDIF
 
-return VAL( cTmp )
+   cTmp := StrTran( val, sep1000, "" )
+   cTmp := StrTran( val, sepDec, "." )
 
-
+   RETURN Val( cTmp )

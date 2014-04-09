@@ -1,3 +1,7 @@
+1.7.30  2014-04-09, vsasa
+
+  - RNAL, import podataka iz CSV fajlova
+ 
 1.7.29  2014-04-08, vsasa
 
   - POS, ažuriranje zaduženja/inventure - bugfix LOCK REQUIRED 

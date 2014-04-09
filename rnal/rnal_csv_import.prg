@@ -55,9 +55,9 @@ endif
 // sada ja ovo rucno zadajem...
 // prakticno obicna struktura kao za DBF tabelu
 AADD( _struct, { "ID", "C", 10, 0 } )
-AADD( _struct, { "QTTY", "C", 20, 0 } )
 AADD( _struct, { "WIDTH", "C", 20, 0 } )
 AADD( _struct, { "HEIGHT", "C", 20, 0 } )
+AADD( _struct, { "QTTY", "C", 20, 0 } )
 
 // otvori mi CSV fajl
 oCsv := F18Csv():new()

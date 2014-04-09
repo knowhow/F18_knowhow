@@ -55,7 +55,7 @@ if ::csvname == NIL
 endif
 
 if ::delimiter == NIL
-    ::delimiter := ","
+    ::delimiter := ";"
 endif
 
 // kreiraj i otvori lokalni dbf
@@ -80,7 +80,8 @@ METHOD F18Csv:open_csv_as_local_dbf()
 
 SELECT (360)
 USE (::memname ) VIA "ARRAYRDD"
-APPEND FROM ::csvname DELIMITED
+
+APPEND FROM ( ::csvname ) DELIMITED
 // preskoci header...
 GO TOP
 SKIP 1

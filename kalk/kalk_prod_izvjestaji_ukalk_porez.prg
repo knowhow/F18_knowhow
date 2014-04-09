@@ -65,8 +65,8 @@ BoxC()
 set softseek off
 
 O_PARTN
-O_SIFV
 O_SIFK
+O_SIFV
 O_KONTO
 O_TARIFA
 

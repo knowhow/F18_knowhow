@@ -15,8 +15,8 @@
 
 static function _o_tables()
 O_SIFK
-O_PARTN
 O_SIFV
+O_PARTN
 O_ROBA
 O_TARIFA
 O_KALK

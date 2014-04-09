@@ -544,7 +544,7 @@ do case
             return DE_CONT
         endif
 
-        oCsvImport := RnalCsvImport():new()
+        oCsvImport := RnalCsvImport():new( _doc )
         if oCsvImport:import()
             select _doc_it
             go top

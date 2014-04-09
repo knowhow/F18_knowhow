@@ -25,6 +25,9 @@ CLASS RnalCsvImport
     PROTECTED:
         
         METHOD get_vars()
+		METHOD csv_browse()
+		METHOD csv_browse_key_handler()
+		METHOD string_to_number()
     
 ENDCLASS
 
@@ -58,29 +61,54 @@ AADD( _struct, { "ID", "C", 10, 0 } )
 AADD( _struct, { "WIDTH", "C", 20, 0 } )
 AADD( _struct, { "HEIGHT", "C", 20, 0 } )
 AADD( _struct, { "QTTY", "C", 20, 0 } )
+AADD( _struct, { "MARKER", "C", 1, 0 } )
 
 // otvori mi CSV fajl
-oCsv := F18Csv():new()
+oCsv := CsvReader():new()
 oCsv:struct := _struct
 oCsv:csvname := ::params["import_path"] + ::params["csv_file"]
 oCsv:read()
 
-altd()
+if RECCOUNT() == 0
+	return _ok
+endif
 
-// sada bi trebao da sam na toj tabeli...
+SELECT csvimp
 GO TOP
-SKIP 1
+
+// markiraj sve stavke za prenos, osim headera
+DO WHILE !EOF()
+	IF UPPER( ALLTRIM( field->id ) ) <> "SIFRA"
+		REPLACE field->marker WITH "*"
+	ENDIF
+	SKIP
+ENDDO
+
+GO TOP
+
+// daj mi pregled csvimp tabele
+if ::csv_browse() == 0
+	return _ok
+endif
+
+GO TOP
 
 do while !EOF()
+
+	// preskacemo sve što nije markirano za prenos
+	if field->marker <> "*"
+		SKIP 1
+		LOOP
+	endif
 
     ++ _count 
 
     // uzmi potrebna polja...    
-    _art_id := _sql_get_value( "fmk.rnal_articles", "id", { { "art_desc", ALLTRIM( field->id ) } } ) 
+    _art_id := _sql_get_value( "fmk.rnal_articles", "art_id", { { "art_desc", ALLTRIM( field->id ) } } ) 
 
-    _qtty := string_to_number( field->qtty, "BA" )
-    _height := string_to_number( field->height, "BA" )
-    _width := string_to_number( field->width, "BA" )
+    _qtty := ::string_to_number( field->qtty, "BA" )
+    _height := ::string_to_number( field->height, "BA" )
+    _width := ::string_to_number( field->width, "BA" )
  
     select _doc_it
     APPEND BLANK
@@ -104,7 +132,7 @@ do while !EOF()
 
     dbf_update_rec( _rec )
 
-    select (400)
+    SELECT csvimp
     SKIP
 
 enddo
@@ -115,6 +143,71 @@ if _count > 0
 endif
 
 return _ok
+
+
+
+// ---------------------------------------------------
+// ---------------------------------------------------
+METHOD RnalCsvImport:csv_browse()
+local _box_x := MAXROWS() - 10
+local _box_y := MAXCOLS() - 10
+local _t_area := SELECT()
+local _ret := 0
+local _header := "Pregled importovanih podataka CSV fajla..."
+private ImeKol := {}
+private Kol := {}
+private GetList := {}
+
+// kolone browse-a
+AADD( ImeKol, { PADC( "Artikal", 10 ), {|| id }, "id" } )
+AADD( ImeKol, { PADC( "Sirina", 20 ), {|| width }, "width" } )
+AADD( ImeKol, { PADC( "Visina", 20 ), {|| height }, "height" } )
+AADD( ImeKol, { PADC( "Kolicina", 20 ), {|| qtty }, "qtty" } )
+AADD( ImeKol, { PADC( "Marker", 6 ), {|| marker }, "marker" } )
+
+for _i := 1 to LEN( ImeKol )
+    AADD( Kol, _i )
+next
+
+SELECT csvimp
+GO TOP
+
+// otvori box
+Box(, _box_x, _box_y )
+
+@ m_x + _box_x, m_x + 2 SAY "<SPACE> markiranje stavki za prenos  <ESC> izlaz"
+
+ObjDbedit( "csvimp", _box_x, _box_y, {|| ::csv_browse_key_handler() }, _header, "foot",,,,, 1 )
+
+if LastKey() == K_ESC .and. Pitanje(, "Importovati sadržaj fajla (D/N) ?", "D" ) == "D"
+	_ret := 1
+endif
+
+BoxC()
+
+select ( _t_area )
+
+return _ret
+
+
+// ---------------------------------------------------
+// ---------------------------------------------------
+METHOD RnalCsvImport:csv_browse_key_handler()
+
+DO CASE
+
+	CASE Ch == K_SPACE
+		IF field->marker == "*"
+			REPLACE field->marker WITH ""
+		ELSE
+			REPLACE field->marker WITH "*"
+		ENDIF
+		RETURN DE_REFRESH
+
+ENDCASE 
+
+return DE_CONT
+
 
 
 // ----------------------------------------------------
@@ -177,5 +270,22 @@ _ok := .t.
 return _ok
 
 
-function string_to_number(val)
-return VAL(val)
+METHOD RnalCsvImport:string_to_number( val, countryCode )
+local sepDec := ","
+local sep1000 := "."
+local cTmp
+
+if countryCode == NIL
+   countryCode = "BA"
+endif
+
+if countryCode == "EN"
+   return VAL( val )
+endif
+
+cTmp := strtran( val, sep1000, "" )
+cTmp := strtran( val, sepDec, "." )
+
+return VAL( cTmp )
+
+

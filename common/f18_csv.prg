@@ -13,12 +13,13 @@
 #include "hbclass.ch"
 #include "common.ch"
 
-CLASS F18Csv
+CLASS CsvReader
 
     DATA struct
     DATA csvname
     DATA memname
     DATA delimiter
+	DATA wa
 
     METHOD new()
     METHOD read()
@@ -33,15 +34,16 @@ ENDCLASS
 
 // -----------------------------------------------------
 // -----------------------------------------------------
-METHOD F18Csv:New()
+METHOD CsvReader:New()
 ::memname := "csvimp"
+::wa := 360
 return self
 
 
 
 // ------------------------------------------------------
 // ------------------------------------------------------
-METHOD F18Csv:read()
+METHOD CsvReader:read()
 local _ok := .f.
 
 if ::struct == NIL
@@ -69,20 +71,19 @@ return _ok
 
 // ------------------------------------------------------
 // ------------------------------------------------------
-METHOD F18Csv:create_mem_dbf()
+METHOD CsvReader:create_mem_dbf()
 DBCREATE( ::memname, ::struct, "ARRAYRDD" )
 return
 
 
 // ------------------------------------------------------
 // ------------------------------------------------------
-METHOD F18Csv:open_csv_as_local_dbf()
+METHOD CsvReader:open_csv_as_local_dbf()
 
-SELECT (360)
+SELECT (::wa)
 USE (::memname ) VIA "ARRAYRDD"
 
 APPEND FROM ( ::csvname ) DELIMITED
-// preskoci header...
 GO TOP
 SKIP 1
 

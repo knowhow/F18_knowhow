@@ -248,8 +248,7 @@ if sql_table_update(table, "del", nil, _where_str)
               SEEK _full_id
            enddo
         else
-            // ali ovo i nije bitno, sql tabela se svaki put iznova refreshira sa servera
-            log_write( "table: " + table + " sql index " + _alg[ "dbf_tag" ] + " ne postoji!", 3)
+            DELETE
         endif
 
         my_unlock()

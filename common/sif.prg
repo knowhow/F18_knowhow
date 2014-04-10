@@ -1157,14 +1157,14 @@ STATIC FUNCTION sif_brisi_stavku()
 
    IF Pitanje( , "Želite li izbrisati ovu stavku ??", "D" ) == "D"
 
-      PushWa()
-
       _alias := Alias()
+      PushWa()
 
       sql_table_update( nil, "BEGIN" )
 
       _rec_dbf := dbf_get_rec()
-      delete_rec_server_and_dbf( Alias(), _rec_dbf, 1, "CONT" )
+      altd()
+      delete_rec_server_and_dbf( _alias, _rec_dbf, 1, "CONT" )
 
       // ako postoji id polje, pobriši i sifv
       IF hb_HHasKey( _rec_dbf, "id" )

@@ -229,24 +229,25 @@ return
 // -------------------------------------------------------
 function NeTBDirektni(params, lIzOBJDB)
 LOCAL i, j, k
-local _rows, _width
+local _rows, _width, _rows_prazno
 
 IF lIzOBJDB==NIL
   lIzOBJDB:=.f.
 ENDIF
 
+_rows_prazno :=  params["prazno"]
 _rows        :=  params["xw"] 
-_rows_poruke :=  params["prazno"] + iif(params["prazno"] <> 0, 1 , 0)
+_rows_poruke :=  _rows_prazno + IIF( _rows_prazno <> 0, 1 , 0)
 _width       :=  params["yw"]
 
-if params["prazno"]==0
+if _rows_prazno == 0
  
  IF !lIzOBJDB
     BoxC()
  ENDIF
   Box(params["ime"], _rows, _width, params["invert"], params["msgs"])
 else
-  @ m_x + params["xw"] - params["prazno"], m_y + 1 SAY replicate( BROWSE_PODVUCI, params["yw"])
+  @ m_x + params["xw"] - _rows_prazno, m_y + 1 SAY replicate( BROWSE_PODVUCI, params["yw"])
 
 endif
 
@@ -259,10 +260,10 @@ ENDIF
 @ m_x + params["xw"] + 1,  m_y + 2   SAY params["msg_bott"] COLOR "GR+/B"
 
 @ m_x + params["xw"] + 1,  col() + 1 SAY IIF(!lIzOBJDB, REPL(BROWSE_PODVUCI_2, 42),"")
-@ m_x + 1, m_y + params["yw"] - 6    SAY STR( RECCOUNT(), 5)
+@ m_x + 1, m_y + params["yw"] - 6    SAY STR( my_reccount(), 5)
 
 
-TB := TBRowseDB( m_x + 2 + params["prazno"], m_y + 1, m_x + _rows - _rows_poruke, m_y + _width) 
+TB := TBRowseDB( m_x + 2 + IF( _rows_prazno > 4, 1, _rows_prazno ), m_y + 1, ( m_x + _rows ) - _rows_poruke, m_y + _width ) 
 
 if TBSkipBlock<>NIL
      Tb:skipBlock := TBSkipBlock

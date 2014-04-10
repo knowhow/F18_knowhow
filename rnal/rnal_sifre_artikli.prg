@@ -123,7 +123,7 @@ if l_open_dbedit
     
     @ m_x + nBoxX + 1, m_y + 2 SAY cOptions
 
-    ObjDbedit(, nBoxX, nBoxY, {|| key_handler(Ch)}, cHeader, cFooter , .t.,,,,7)
+    ObjDbedit(, nBoxX, nBoxY, {|| key_handler(Ch)}, cHeader, cFooter , .t.,,,, 7 )
 
     BoxC()
 

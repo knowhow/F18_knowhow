@@ -24,17 +24,15 @@ FUNCTION f18_ime_dbf( alias )
 
    RETURN cFullName
 
-
+FUNCTION my_reccount()
+   RETURN RECCOUNT()
 
 FUNCTION my_delete()
-   
-   return delete_with_rlock()
+   RETURN delete_with_rlock()
 
 FUNCTION my_delete_with_pack()
-  
    my_delete()
- 
-   return my_dbf_pack()
+   RETURN my_dbf_pack()
 
 FUNCTION delete_with_rlock()
 

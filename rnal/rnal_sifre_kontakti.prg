@@ -71,7 +71,7 @@ set filter to
 
 cust_filter(nCust_id, cContDesc, @cId)
 
-cRet := PostojiSifra(F_CONTACTS, cTag, MAXROWS()-12, MAXCOLS()-5, cHeader, @cId, dx, dy, ;
+cRet := PostojiSifra(F_CONTACTS, cTag, MAXROWS()-15, MAXCOLS()-5, cHeader, @cId, dx, dy, ;
 		{|| key_handler( Ch ) })
 
 if LastKey() == K_ESC

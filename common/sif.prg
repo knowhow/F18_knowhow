@@ -1163,7 +1163,6 @@ STATIC FUNCTION sif_brisi_stavku()
       sql_table_update( nil, "BEGIN" )
 
       _rec_dbf := dbf_get_rec()
-      altd()
       delete_rec_server_and_dbf( _alias, _rec_dbf, 1, "CONT" )
 
       // ako postoji id polje, pobriši i sifv

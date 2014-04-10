@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * ERP software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -15,219 +15,219 @@
 // ------------------------------------------
 // prenos podataka iz fin u kam
 // ------------------------------------------
-function prenos_fin_kam()
-local _id_konto := PADR( "2110", 7 )
-local _dat_obr := DATE()
-local _limit_dana := 0
-local _zatvorene := "D"
-local _dodaj_dana := 30
-local _partneri := SPACE( 100 )
-local _usl, _rec
-local _filter := ""
+FUNCTION prenos_fin_kam()
 
-O_KAM_PRIPR
-O_KONTO
-O_PARTN
+   LOCAL _id_konto := PadR( "2110", 7 )
+   LOCAL _dat_obr := Date()
+   LOCAL _limit_dana := 0
+   LOCAL _zatvorene := "D"
+   LOCAL _dodaj_dana := 30
+   LOCAL _partneri := Space( 100 )
+   LOCAL _usl, _rec
+   LOCAL _filter := ""
 
-Box("#PRENOS RACUNA ZA OBRACUN FIN->KAM", 8, 65)
+   O_KAM_PRIPR
+   O_KONTO
+   O_PARTN
 
-	@ m_x+1,m_y+2 SAY "Konto:         " GET _id_konto valid P_Konto(@_id_konto)
-  	@ m_x+2,m_y+2 SAY "Datum obracuna:" GET _dat_obr
-  	@ m_x+3,m_y+2 SAY "Uzeti u obzir samo racune cije je"
-	@ m_x+4,m_y+2 SAY "valutiranje starije od (br.dana)" GET _limit_dana pict "9999999"
-  	@ m_x+5,m_y+2 SAY "Uzeti u obzir stavke koje su zatvorene? (D/N)" GET _zatvorene pict "@!" valid _zatvorene $ "DN"
-  	@ m_x+6,m_y+2 SAY "Ukoliko nije naveden datum valutiranja"
-  	@ m_x+7,m_y+2 SAY "na datum dokumenta dodaj (br.dana)    " GET _dodaj_dana pict "99"
-  	@ m_x+8,m_y+2 SAY "Partneri" GET _partneri pict "@!S50"
+   Box( "#PRENOS RACUNA ZA OBRACUN FIN->KAM", 8, 65 )
+
+   @ m_x + 1, m_y + 2 SAY "Konto:         " GET _id_konto VALID P_Konto( @_id_konto )
+   @ m_x + 2, m_y + 2 SAY "Datum obracuna:" GET _dat_obr
+   @ m_x + 3, m_y + 2 SAY "Uzeti u obzir samo racune cije je"
+   @ m_x + 4, m_y + 2 SAY "valutiranje starije od (br.dana)" GET _limit_dana PICT "9999999"
+   @ m_x + 5, m_y + 2 SAY "Uzeti u obzir stavke koje su zatvorene? (D/N)" GET _zatvorene PICT "@!" VALID _zatvorene $ "DN"
+   @ m_x + 6, m_y + 2 SAY "Ukoliko nije naveden datum valutiranja"
+   @ m_x + 7, m_y + 2 SAY "na datum dokumenta dodaj (br.dana)    " GET _dodaj_dana PICT "99"
+   @ m_x + 8, m_y + 2 SAY "Partneri" GET _partneri PICT "@!S50"
 	
-	do while .t.
+   DO WHILE .T.
 
-  		READ
-		ESC_BCR
+      READ
+      ESC_BCR
   		
-        _usl := Parsiraj( _partneri, "IdPartner", "C" )
+      _usl := Parsiraj( _partneri, "IdPartner", "C" )
 
-  		if _usl <> NIL
-			exit
-		endif
+      IF _usl <> NIL
+         EXIT
+      ENDIF
 
-	enddo
+   ENDDO
 
-BoxC()
+   BoxC()
 
-O_SUBAN
+   O_SUBAN
 
-if !EMPTY( _usl )
-    _filter := _usl
- 	set filter to &_filter
-else
- 	set filter to
-endif
+   IF !Empty( _usl )
+      _filter := _usl
+      SET FILTER to &_filter
+   ELSE
+      SET FILTER TO
+   ENDIF
 
-set order to tag "3"
-seek gFirma + _id_konto
+   SET ORDER TO TAG "3"
+   SEEK gFirma + _id_konto
 
-do while !EOF() .and. field->idkonto == _id_konto .and. field->idfirma == gFirma
+   DO WHILE !Eof() .AND. field->idkonto == _id_konto .AND. field->idfirma == gFirma
 
-	_id_partner := field->idpartner
-    // osnovni dug
-   	_osn_dug := 0
-  
-   	do while !EOF() .and. field->idkonto == _id_konto .and. field->idpartner == _id_partner .and. field->idfirma == gFirma
+      _id_partner := field->idpartner
+      // osnovni dug
+      _osn_dug := 0
+
+      DO WHILE !Eof() .AND. field->idkonto == _id_konto .AND. field->idpartner == _id_partner .AND. field->idfirma == gFirma
 		
-        _br_dok := field->brdok
+         _br_dok := field->brdok
       		
-        _duguje := 0
-        _potrazuje := 0
-		_dat_pocetka := CTOD("")
+         _duguje := 0
+         _potrazuje := 0
+         _dat_pocetka := CToD( "" )
 
-      	_tmp := "XYZYXYYXXX"
+         _tmp := "XYZYXYYXXX"
       		
-        do while !EOF() .and. field->idkonto == _id_konto .and. field->idpartner == _id_partner ;
-                        .and. field->brdok == _br_dok  .and. field->idfirma == gFirma
-        
-            if field->brdok == _tmp .or. field->datdok > _dat_obr
-                skip
-				loop
-          	endif
+         DO WHILE !Eof() .AND. field->idkonto == _id_konto .AND. field->idpartner == _id_partner ;
+               .AND. field->brdok == _br_dok  .AND. field->idfirma == gFirma
+
+            IF field->brdok == _tmp .OR. field->datdok > _dat_obr
+               SKIP
+               LOOP
+            ENDIF
           		
-            if field->otvst = "9" .and. _zatvorene == "N" 
-			    // samo otvorene stavke
-             	if field->d_p=="1"
-              		_osn_dug += field->iznosbhd
-             	else
-              		_osn_dug -= field->iznosbhd
-             	endif
-             	skip
-				loop
-          	endif
+            IF field->otvst = "9" .AND. _zatvorene == "N"
+               // samo otvorene stavke
+               IF field->d_p == "1"
+                  _osn_dug += field->iznosbhd
+               ELSE
+                  _osn_dug -= field->iznosbhd
+               ENDIF
+               SKIP
+               LOOP
+            ENDIF
 			
-            if field->d_p=="1"
-                
-                if EMPTY( _dat_pocetka )		
-                    if EMPTY( field->datval )
-                 	    _dat_pocetka := field->datdok + _dodaj_dana
-              		else
-					    // datum valutiranja
-                		_dat_pocetka := field->datval  
-              		endif
-             	endif
+            IF field->d_p == "1"
+
+               IF Empty( _dat_pocetka )
+                  IF Empty( field->datval )
+                     _dat_pocetka := field->datdok + _dodaj_dana
+                  ELSE
+                     // datum valutiranja
+                     _dat_pocetka := field->datval
+                  ENDIF
+               ENDIF
              			
-                _duguje += field->iznosbhd
-             	_osn_dug += field->iznosbhd
+               _duguje += field->iznosbhd
+               _osn_dug += field->iznosbhd
           	
-            else
+            ELSE
              			
-                if !EMPTY( _dat_pocetka ) 
-				    // vec je nastalo dugovanje!!
-                	_dat_pocetka := field->datdok
-             	endif
+               IF !Empty( _dat_pocetka )
+                  // vec je nastalo dugovanje!!
+                  _dat_pocetka := field->datdok
+               ENDIF
              			
-                _potrazuje += field->iznosbhd
-             	_osn_dug -= field->iznosbhd
+               _potrazuje += field->iznosbhd
+               _osn_dug -= field->iznosbhd
           	
-            endif
+            ENDIF
 			
-			if !EMPTY( _dat_pocetka )
-                
-				select kam_pripr
+            IF !Empty( _dat_pocetka )
+
+               SELECT kam_pripr
 				
-             	if ( field->idpartner + field->idkonto + field->brdok == _id_partner + _id_konto + _br_dok )
-                    // vec postoji prosli dio racuna
-				    // njega zatvori sa
-                	// predhodnim danom
-                    if field->datod >= _dat_pocetka 
-                        // slijedeca promjena na isti datum
-						my_rlock()
-                  	    replace field->osnovica with ;
-                           			field->osnovica + suban->(iif(d_p=="1", iznosbhd,-iznosbhd))
-						my_unlock()
-						select suban
-						skip
-						loop
-                    else
-						my_rlock()
-                  		replace field->datdo with _dat_pocetka - 1
-						my_unlock()
-                	endif
-                endif
+               IF ( field->idpartner + field->idkonto + field->brdok == _id_partner + _id_konto + _br_dok )
+                  // vec postoji prosli dio racuna
+                  // njega zatvori sa
+                  // predhodnim danom
+                  IF field->datod >= _dat_pocetka
+                     // slijedeca promjena na isti datum
+                     my_rlock()
+                     REPLACE field->osnovica with ;
+                        field->osnovica + suban->( iif( d_p == "1", iznosbhd, -iznosbhd ) )
+                     my_unlock()
+                     SELECT suban
+                     SKIP
+                     LOOP
+                  ELSE
+                     my_rlock()
+                     REPLACE field->datdo WITH _dat_pocetka - 1
+                     my_unlock()
+                  ENDIF
+               ENDIF
 
-             	if ( field->idpartner + field->idkonto + field->brdok <> _id_partner + _id_konto + _br_dok ) ;
-                    .and. ( _dat_obr - _limit_dana < _dat_pocetka )
-                    // onda ne pohranjuj
-                	_tmp := _br_dok
-             	else
-                    
-                    append blank
-					my_rlock()
-                    replace idpartner with _id_partner
-					replace idkonto with _id_konto
-					replace osnovica with _duguje - _potrazuje
-					replace brdok with _br_dok
-					replace datod with _dat_pocetka
-					replace datdo with _dat_obr
-					my_unlock()
-             	endif
-          	endif
+               IF ( field->idpartner + field->idkonto + field->brdok <> _id_partner + _id_konto + _br_dok ) ;
+                     .AND. ( _dat_obr - _limit_dana < _dat_pocetka )
+                  // onda ne pohranjuj
+                  _tmp := _br_dok
+               ELSE
+
+                  APPEND BLANK
+                  my_rlock()
+                  REPLACE idpartner WITH _id_partner
+                  REPLACE idkonto WITH _id_konto
+                  REPLACE osnovica WITH _duguje - _potrazuje
+                  REPLACE brdok WITH _br_dok
+                  REPLACE datod WITH _dat_pocetka
+                  REPLACE datdo WITH _dat_obr
+                  my_unlock()
+               ENDIF
+            ENDIF
 			
-            select suban
-          	skip
+            SELECT suban
+            SKIP
       	
-        enddo
+         ENDDO
     	
-    enddo
+      ENDDO
 
-	select kam_pripr
-   	_t_rec := recno()
-   	seek _id_partner
+      SELECT kam_pripr
+      _t_rec := RecNo()
+      SEEK _id_partner
    		
-	my_flock()
+      my_flock()
 
-	do while !EOF() .and. _id_partner == field->idpartner
-        replace field->osndug with _osn_dug  
-        // nafiluj osnovni dug
-      	skip
-   	enddo
+      DO WHILE !Eof() .AND. _id_partner == field->idpartner
+         REPLACE field->osndug WITH _osn_dug
+         // nafiluj osnovni dug
+         SKIP
+      ENDDO
 
-	my_unlock()
+      my_unlock()
 
-   	go _t_rec
-   	select suban
+      GO _t_rec
+      SELECT suban
 
-enddo 
+   ENDDO
 
-select kam_pripr
-set order to tag "1"
-go top
+   SELECT kam_pripr
+   SET ORDER TO TAG "1"
+   GO TOP
 
-_tmp := "XYZXYZSC"
+   _tmp := "XYZXYZSC"
 
-do while !eof()
-	skip
-	_t_rec := recno()
-	skip -1
-    if field->datod <= field->datdo .and. _tmp == field->brdok .and. field->osndug = 0
-        // ako se radi o zadnjoj uplati vec postojeceg racuna
-		// ne brisi !
-      	skip
-		loop
-    endif
+   DO WHILE !Eof()
+      SKIP
+      _t_rec := RecNo()
+      SKIP -1
+      IF field->datod <= field->datdo .AND. _tmp == field->brdok .AND. field->osndug = 0
+         // ako se radi o zadnjoj uplati vec postojeceg racuna
+         // ne brisi !
+         SKIP
+         LOOP
+      ENDIF
     	
-    if field->datod >= field->datdo .or. field->osndug <= 0
-      	my_delete()
-    else
-      	_tmp := field->brdok
-    endif
+      IF field->datod >= field->datdo .OR. field->osndug <= 0
+         my_delete()
+      ELSE
+         _tmp := field->brdok
+      ENDIF
 
-    go _t_rec
+      GO _t_rec
 
-enddo
+   ENDDO
 
-go top
+   GO TOP
 
-my_dbf_pack()
+   my_dbf_pack()
 
-my_close_all_dbf()
+   my_close_all_dbf()
 
-return
-
+   RETURN

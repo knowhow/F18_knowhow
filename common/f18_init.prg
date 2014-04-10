@@ -108,7 +108,7 @@ PUBLIC glBrojacPoKontima := .T.
 
 set_f18_home_root()
 
-log_create()
+//log_create()
 
 SetgaSDbfs()
 set_global_vars_0()
@@ -1237,7 +1237,8 @@ FUNCTION server_log_enable()
 FUNCTION log_create()
 
    IF ( __log_handle := FCreate( F18_LOG_FILE ) ) == -1
-      ? "Cannot create log file: " + F18_LOG_FILE
+      Alert( "Cannot create log file: " + F18_LOG_FILE )
+      
       QUIT_1
    ENDIF
 

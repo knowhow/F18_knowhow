@@ -129,20 +129,26 @@ do while !EOF() .and. field->idkonto == _id_konto .and. field->idfirma == gFirma
             endif
 			
 			if !EMPTY( _dat_pocetka )
-                select kam_pripr
+                
+				select kam_pripr
+				
              	if ( field->idpartner + field->idkonto + field->brdok == _id_partner + _id_konto + _br_dok )
                     // vec postoji prosli dio racuna
 				    // njega zatvori sa
                 	// predhodnim danom
                     if field->datod >= _dat_pocetka 
                         // slijedeca promjena na isti datum
+						my_rlock()
                   	    replace field->osnovica with ;
                            			field->osnovica + suban->(iif(d_p=="1", iznosbhd,-iznosbhd))
+						my_unlock()
 						select suban
 						skip
 						loop
                     else
+						my_rlock()
                   		replace field->datdo with _dat_pocetka - 1
+						my_unlock()
                 	endif
                 endif
 
@@ -153,12 +159,14 @@ do while !EOF() .and. field->idkonto == _id_konto .and. field->idfirma == gFirma
              	else
                     
                     append blank
+					my_rlock()
                     replace idpartner with _id_partner
 					replace idkonto with _id_konto
 					replace osnovica with _duguje - _potrazuje
 					replace brdok with _br_dok
 					replace datod with _dat_pocetka
 					replace datdo with _dat_obr
+					my_unlock()
              	endif
           	endif
 			
@@ -168,17 +176,24 @@ do while !EOF() .and. field->idkonto == _id_konto .and. field->idfirma == gFirma
         enddo
     	
     enddo
+
 	select kam_pripr
    	_t_rec := recno()
    	seek _id_partner
    		
+	my_flock()
+
 	do while !EOF() .and. _id_partner == field->idpartner
         replace field->osndug with _osn_dug  
         // nafiluj osnovni dug
       	skip
    	enddo
+
+	my_unlock()
+
    	go _t_rec
    	select suban
+
 enddo 
 
 select kam_pripr
@@ -186,6 +201,7 @@ set order to tag "1"
 go top
 
 _tmp := "XYZXYZSC"
+
 do while !eof()
 	skip
 	_t_rec := recno()
@@ -198,16 +214,18 @@ do while !eof()
     endif
     	
     if field->datod >= field->datdo .or. field->osndug <= 0
-      	delete()
+      	my_delete()
     else
       	_tmp := field->brdok
     endif
+
     go _t_rec
 
 enddo
 
 go top
-my_dbf_pack( .F. )
+
+my_dbf_pack()
 
 my_close_all_dbf()
 

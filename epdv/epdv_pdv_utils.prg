@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -15,55 +15,60 @@
 
 // -------------------------------
 // -------------------------------
-function save_pdv_obracun(dDatOd, dDatDo)
+FUNCTION save_pdv_obracun( dDatOd, dDatDo )
 
-SELECT (F_R_PDV)
-if !used()
-	O_R_PDV
-endif
-// set mem vars _
-Scatter()
+   LOCAL _rec
 
-if Pitanje( , "Zelite li obracun pohraniti u bazu PDV prijava ?", " ") == "D"
+   SELECT ( F_R_PDV )
 
-	SELECT F_PDV
-	if !used()
-		O_PDV
-	endif
+   IF !Used()
+      O_R_PDV
+   ENDIF
 
-	SET ORDER TO TAG "period"
-	seek DTOS(dDatOd) + DTOS(dDatDo)
-	if !found()
-		APPEND BLANK
-	else
-		if lock == "D"
-			MsgBeep("Vec postoji obracun koji je zakljucan #" +;
-				"promjena NIJE snimljena !")
-			SELECT (F_PDV)
-			use
-			SELECT (F_R_PDV)
-			use
-			return
-		endif
-	endif
+   set_global_vars_from_dbf()
 
-// datum kreiranja
+   IF Pitanje( , "Zelite li obracun pohraniti u bazu PDV prijava ?", " " ) == "D"
 
-	if empty(pdv->datum_1)
-		// datum kreiranja
-		_datum_1 := date()
-	endif
-	// datum azuriranja
-	_datum_2 := date()
+      SELECT F_PDV
+      IF !Used()
+         O_PDV
+      ENDIF
 
+      SET ORDER TO TAG "period"
+      SEEK DToS( dDatOd ) + DToS( dDatDo )
+      IF !Found()
+         APPEND BLANK
+      ELSE
+         IF lock == "D"
+            MsgBeep( "Vec postoji obracun koji je zakljucan #" + ;
+               "promjena NIJE snimljena !" )
+            SELECT ( F_PDV )
+            USE
+            SELECT ( F_R_PDV )
+            USE
+            RETURN
+         ENDIF
+      ENDIF
 
-	// snimi _ -> PDV
-	Gather()
-	SELECT (F_PDV)
+      // datum kreiranja
 
+      IF Empty( pdv->datum_1 )
+         // datum kreiranja
+         _datum_1 := Date()
+      ENDIF
 
-	use
+      // datum azuriranja
+      _datum_2 := Date()
 
-endif
+      // Gather()
+      _rec := get_dbf_global_memvars()
 
-return
+      update_rec_server_and_dbf( "epdv_pdv", _rec, 1, "FULL" )
+
+      SELECT ( F_PDV )
+
+      USE
+
+   ENDIF
+
+   RETURN

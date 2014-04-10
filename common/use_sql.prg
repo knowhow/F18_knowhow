@@ -137,7 +137,19 @@ function use_sql_ks()
    LOCAL cSql
    LOCAL cTable := "ks"
 
-   cSql := "SELECT * FROM fmk.ks ORDER BY id"
+   cSql := "SELECT "
+   cSql += "  id, "
+   cSql += "  naz, "
+   cSql += "  datod, "
+   cSql += "  datdo, "
+   cSql += "  CAST( CASE WHEN strev IS NULL THEN 0.0000 ELSE strev END AS float8 ) AS strev, "
+   cSql += "  CAST( CASE WHEN stkam IS NULL THEN 0.0000 ELSE stkam END AS float8 ) AS stkam, "
+   cSql += "  CAST( CASE WHEN den IS NULL THEN 0.000000 ELSE den END AS float8 ) AS den, "
+   cSql += "  tip, "
+   cSql += "  CAST( CASE WHEN duz IS NULL THEN 0 ELSE duz END AS float8 ) AS duz "
+   cSql += "FROM fmk.ks "
+   cSQL += "ORDER BY id" 
+
 
    SELECT ( F_KS )
    use_sql( cTable, cSql )

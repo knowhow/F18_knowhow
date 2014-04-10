@@ -175,7 +175,9 @@ do case
             BoxC()
             return DE_CONT
         else
+			my_rlock()
             Gather()
+			my_unlock()
             BoxC()
             return DE_REFRESH
         endif
@@ -207,7 +209,9 @@ do case
                     exit
                 endif
                 select kam_pripr
+				my_rlock()
                 Gather()
+				my_unlock()
                 go nTR2
             enddo
 
@@ -236,7 +240,9 @@ do case
             endif
             select kam_pripr
             append blank
+			my_rlock()
             Gather()
+			my_unlock()
         enddo
 
         BoxC()
@@ -388,7 +394,9 @@ do while !EOF()
     go _t_rec
                 
     do while !EOF() .and. _id_partner == field->idpartner
+		my_rlock()
         replace field->osndug with _osn_dug
+		my_unlock()
         skip
     enddo
 
@@ -897,7 +905,7 @@ DO WHILE !EOF()
         SKIP 1
         LOOP
     ENDIF
-    IF den<>0
+    IF field->den<>0
         nK := nK * field->den
     ENDIF
     SKIP 1

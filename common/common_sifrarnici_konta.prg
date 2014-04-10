@@ -37,7 +37,8 @@ PostojiSifra(F_KONTO, 1, MAXROWS() - 15, MAXCOLS() - 20, "LKT: Lista: Konta", @c
 
 select (nTArea)
 
-return
+return .t.
+
 
 // Funkcija vraca vrijednost polja naziv po zadatom idkonto
 function GetNameFromKonto(cIdKonto)

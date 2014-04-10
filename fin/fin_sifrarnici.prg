@@ -198,6 +198,7 @@ RETURN DE_CONT
  */
 function P_KontoFin(cId,dx,dy,lBlag)
 local i
+local _t_area := SELECT()
 private ImeKol := {}
 private Kol := {}
 
@@ -242,7 +243,11 @@ ENDIF
 SELECT KONTO
 SET ORDER TO TAG "ID"
 
-return PostojiSifra(F_KONTO, 1, MAXROWS() - 17, MAXCOLS() - 10, "LKTF Lista: Konta ", @cId, dx, dy, {|Ch| KontoBlok(Ch)},,,,,{"ID"})
+PostojiSifra(F_KONTO, 1, MAXROWS() - 17, MAXCOLS() - 10, "LKTF Lista: Konta ", @cId, dx, dy, {|Ch| KontoBlok(Ch)},,,,,{"ID"})
+
+SELECT ( _t_area )
+
+return .t.
 
 
 

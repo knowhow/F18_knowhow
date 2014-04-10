@@ -58,6 +58,9 @@ if Pitanje(, "Želite li postaviti filter za odredjenu shemu", "N" ) == "D"
             @ m_x+1,col()+2 SAY "vrsta dokumenta (prazno sve)" GET cVd pict "@!"
             READ
       BoxC()
+else
+	cShema := NIL
+	cVD := NIL
 endif 
 	 
 return

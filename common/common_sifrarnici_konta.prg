@@ -33,9 +33,11 @@ for i:=1 to LEN(ImeKol)
 	AADD(Kol, i)
 next
 
+PostojiSifra(F_KONTO, 1, MAXROWS() - 15, MAXCOLS() - 20, "LKT: Lista: Konta", @cId, dx, dy)
+
 select (nTArea)
 
-return PostojiSifra(F_KONTO, 1, MAXROWS() - 15, MAXCOLS() - 20, "LKT: Lista: Konta", @cId, dx, dy)
+return
 
 // Funkcija vraca vrijednost polja naziv po zadatom idkonto
 function GetNameFromKonto(cIdKonto)

@@ -276,7 +276,7 @@ static function _use_sql_trfp( cTable, nWa, cShema, cDok )
          cWhere += " shema = " + _sql_quote( cShema )
    endif
 
-   if cDok <> NIL
+   if cDok <> NIL .and. !EMPTY( cDok )
          if !EMPTY( cWhere )
                cWhere += " AND "
          endif

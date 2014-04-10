@@ -153,7 +153,7 @@ _item["wa"]    := wa
 
 // temporary tabela - nema semafora
 _item["temp"]  := .f.
-
+_item["sql"] := .t.
 _item["algoritam"] := {}
 
 // algoritam 1 - default

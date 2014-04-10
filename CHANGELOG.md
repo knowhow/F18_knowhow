@@ -1,7 +1,10 @@
-1.7.30  2014-04-09, vsasa
+1.7.30  2014-04-10, vsasa
 
   - RNAL, import podataka iz CSV fajlova
- 
+  - objdbedit(), korekcija praznina
+  - ePDV, snimanje pdv prijave u bazu - bugfix
+  - KAM, ispravke sa LOCK REQUIRED
+
 1.7.29  2014-04-08, vsasa
 
   - POS, ažuriranje zaduženja/inventure - bugfix LOCK REQUIRED 

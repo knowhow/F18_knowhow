@@ -598,7 +598,9 @@ DO WHILE .T.
           			IF FOUND() .and. ROUND(nKalkCijena-cijena,5)==0 .and.( cTipFakt="0" .or. ROUND(nKalkRabat-rabat,5)==0 ) .and.( !lPoNarudzbi .or. idnar==cIdNar.and.brojnar==cBrojNar )
             				Scatter()
             				_kolicina += nKolicina
+                            my_rlock()
             				Gather()
+                            my_unlock()
             				SELECT KALK
 					SKIP 1
 					LOOP

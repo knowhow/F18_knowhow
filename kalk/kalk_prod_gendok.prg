@@ -202,7 +202,10 @@ select kalk; set order to tag "1"; go nTrec
     _ERROR:="1"
  endif
 
+ my_rlock()
  Gather2()
+ my_unlock()
+
  select kalk
 
  skip
@@ -359,8 +362,9 @@ do while !eof() .and. cIdFirma+cIdKonto==idFirma+pKonto
         VRoba(.f.)
         //P_Tarifa(@_idTarifa)
         select kalk_pripr
-    
+        my_rlock() 
         Gather2()
+        my_unlock()
         select kalk
         PopWA()
     endif
@@ -947,8 +951,12 @@ endif
     _nc     := _fcj
     _marza2 := _mpc - _nc
 
-    SELECT kalk_pripr; Gather()
-    SELECT KALK; PopWA()
+    SELECT kalk_pripr
+    my_rlock()
+    Gather()
+    my_unlock()
+    SELECT KALK 
+    PopWA()
     SKIP 1
   ENDDO
 
@@ -1044,8 +1052,12 @@ endif
     _nc     := _fcj
     _marza  := _vpc - _nc
 
-    SELECT kalk_pripr; Gather()
-    SELECT KALK; PopWA()
+    SELECT kalk_pripr
+    my_rlock()
+    Gather()
+    my_unlock()
+    SELECT KALK
+    PopWA()
     SKIP 1
   ENDDO
 

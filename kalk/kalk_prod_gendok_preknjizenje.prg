@@ -522,8 +522,8 @@ do while !eof() .and. cIdFirma+cPKonto==idfirma+pkonto .and. IspitajPrekid()
 				// prva stavka stara tarifa
 				append blank
 				++ nRbr
-     				replace idFirma with cIdfirma
-     				replace brfaktp with cBrDok
+     			replace idFirma with cIdfirma
+     			replace brfaktp with cBrDok
 				replace idroba with cIdRoba
 				replace rbr with RedniBroj(nRbr)
 				replace idkonto with cPKonto

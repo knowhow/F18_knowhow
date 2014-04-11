@@ -174,7 +174,9 @@ if cSRSort == "D"
 	do while !EOF()
 		scatter()
 		_rbr := RedniBroj( ++nRbr )
+        my_rlock()
 		gather()
+        my_unlock()
 		skip
 	enddo
 	
@@ -333,8 +335,10 @@ if found()
 	_gkolicina:=nUlaz-nIzlaz
 	_ERROR:=""
 	// knjizno stannje
-	_fcj:=nVpvu-nVpvi 
+	_fcj:=nVpvu-nVpvi
+    my_rlock() 
 	Gather()
+    my_unlock()
 else
 	GO BOTTOM
 	nRbr:=VAL(ALLTRIM(field->rbr))

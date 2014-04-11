@@ -917,8 +917,9 @@ if lastkey()<>K_ESC
         endif
         
         NabCj()
-        
+        my_rlock() 
         Gather()
+        my_unlock()
         skip 1
     enddo
 endif
@@ -1812,7 +1813,9 @@ do while !EOF()
         
         scatter()
         _p_updated := "D"
+        my_rlock()
         gather()
+        my_unlock()
         
     endif
         
@@ -1946,7 +1949,9 @@ do while !EOF() .and. field->&cPMU_I == "P" ;
             Scatter()
             _pu_i := get_pu_i(cKIdVd)
             _mu_i := get_mu_i(cKIdVd)
+            my_rlock()
             Gather()
+            my_unlock()
 
             ++ nCount
 

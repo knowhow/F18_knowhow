@@ -1197,7 +1197,12 @@ do while !::data:EOF()
     append blank
     _rec := dbf_get_rec()
 
-    _rec["konto"] := PADR( __konto["naz"], 60 )
+	if __konto <> NIL .and. !EMPTY( __konto["naz"] )
+    	_rec["konto"] := PADR( __konto["naz"], 60 )
+	else
+		_rec["konto"] := "?????????????"
+	endif
+
     _rec["idkonto"] := _id_konto
 
     if ::tip == 1

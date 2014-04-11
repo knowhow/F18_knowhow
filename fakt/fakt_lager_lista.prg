@@ -696,7 +696,7 @@ function Zaglfakt_lager_lista()
 local cPomZK
 local _rj_tip := ""
 
-if rj->(fieldpos("tip")) <> 0
+if rj->(fieldpos("tip")) <> 0 .and. rj->tip <> NIL
     _rj_tip := rj->tip
 endif
 
@@ -776,8 +776,8 @@ ELSE
             IF( cUI $ "S" , PADC("Stanje",12) , "" )
     if cRR $ "NF"
         if IsPDV()
- 	        ?? "R.br  Sifra       Naziv                                  "+IIF(lPoNarudzbi.and.cPKN=="D","Naruc. ","")+cPomZK+"jmj     "+IIF(_rj_tip$"N1#M1#M2".and.!EMPTY(cIdFirma),"Cij.",iif(cRealizacija=="D","PR.C"," PC "))+;
-                iif(cREalizacija=="N","      Iznos","       PV        Rabat      Realizovano")
+ 	        ?? "R.br  Sifra       Naziv                                  " + IIF( lPoNarudzbi.and.cPKN=="D","Naruc. ","")+cPomZK+"jmj     "+IIF( _rj_tip $ "N1#M1#M2".and.!EMPTY(cIdFirma),"Cij.",iif(cRealizacija=="D","PR.C"," PC "))+;
+            iif(cREalizacija=="N","      Iznos","       PV        Rabat      Realizovano")
         else
      	    ?? "R.br  Sifra       Naziv                                  "+IIF(lPoNarudzbi.and.cPKN=="D","Naruc. ","")+cPomZK+"jmj     "+IIF(_rj_tip$"N1#M1#M2".and.!EMPTY(cIdFirma),"Cij.",iif(cRealizacija=="D","PR.C","VPC "))+;
                 iif(cREalizacija=="N","      Iznos","      VPV        Rabat      Realizovano")

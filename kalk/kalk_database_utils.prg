@@ -769,10 +769,12 @@ go top
 
 _rbr := 0
 
+my_flock()
 do while !eof()
     replace field->rbr with RedniBroj( ++ _rbr )
     skip
 enddo
+my_unlock()
 
 select kalk_pripr
 set order to tag "1"

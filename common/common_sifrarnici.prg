@@ -99,13 +99,12 @@ endif
 
 // lokalizacija
 gLokal := ALLTRIM(gLokal)
+
 if gLokal <> "0"
 	AADD(opc, "L. lokalizacija")
 	AADD(opcexe, {|| P_Lokal() } )
 endif
 
-
-my_close_all_dbf()
 OFmkSvi()
 
 private Izbor:=1
@@ -113,7 +112,8 @@ gMeniSif:=.t.
 Menu_SC("ssvi")
 gMeniSif:=.f.
 
-CLOSERET
+my_close_all_dbf()
+
 return
 
 

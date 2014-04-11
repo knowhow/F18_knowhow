@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -15,1103 +15,1112 @@
 // -----------------------------------------------------
 // prenos dokumenata
 // -----------------------------------------------------
-function PrenosFin()
-local cStranaBitna
-local lStranaBitna
-private fK1:=fk2:=fk3:=fk4:="N"
-O_PARAMS
-Private cSection:="1"
-private cHistory:=" "
-private aHistory:={}
+FUNCTION PrenosFin()
+
+   LOCAL cStranaBitna
+   LOCAL lStranaBitna
+   PRIVATE fK1 := fk2 := fk3 := fk4 := "N"
+
+   O_PARAMS
+   PRIVATE cSection := "1"
+   PRIVATE cHistory := " "
+   PRIVATE aHistory := {}
 
 
-RPar("k1",@fk1)
-RPar("k2",@fk2)
-RPar("k3",@fk3)
-RPar("k4",@fk4)
-select params 
-use
+   RPar( "k1", @fk1 )
+   RPar( "k2", @fk2 )
+   RPar( "k3", @fk3 )
+   RPar( "k4", @fk4 )
+   SELECT params
+   USE
 
-private cK1:=cK2:="9"
-private cK3:=cK4:="99"
+   PRIVATE cK1 := cK2 := "9"
+   PRIVATE cK3 := cK4 := "99"
 
-IF IzFMKIni("FIN","LimitiPoUgovoru_PoljeK3","N",SIFPATH)=="D"
-    ck3:="999"
-ENDIF
+   IF IzFMKIni( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
+      ck3 := "999"
+   ENDIF
 
-O_PKONTO
-P_PKonto()
+   O_PKONTO
+   P_PKonto()
 
-cStranaBitna := "N"
-cKlDuguje := fetch_metric( "fin_klasa_duguje", NIL, "2" )
-cKlPotraz := fetch_metric( "fin_klasa_potrazuje", NIL, "5" )
+   cStranaBitna := "N"
+   cKlDuguje := fetch_metric( "fin_klasa_duguje", NIL, "2" )
+   cKlPotraz := fetch_metric( "fin_klasa_potrazuje", NIL, "5" )
 
-Box(, 12, 60)
-    nMjesta := 3
-    ddatDo := date()
-  
-    @ m_x+1,m_y+2 SAY "Navedite koje grupacije konta se isto ponasaju:"
-    @ m_x+3,m_y+2 SAY "Grupisem konte na (broj mjesta)" GET nMjesta pict "9"
-    @ m_x+5,m_y+2 SAY "Datum do kojeg se promet prenosi" GET dDatDo
+   Box(, 12, 60 )
+   nMjesta := 3
+   ddatDo := Date()
 
-    if fk1=="D"; @ m_x+7,m_y+2   SAY "K1 (9 svi) :" GET cK1; endif
-    if fk2=="D"; @ m_x+7,col()+2 SAY "K2 (9 svi) :" GET cK2; endif
-    if fk3=="D"; @ m_x+8,m_y+2   SAY "K3 ("+ck3+" svi):" GET cK3; endif
-    if fk4=="D"; @ m_x+8,col()+1 SAY "K4 (99 svi):" GET cK4; endif
+   @ m_x + 1, m_y + 2 SAY "Navedite koje grupacije konta se isto ponasaju:"
+   @ m_x + 3, m_y + 2 SAY "Grupisem konte na (broj mjesta)" GET nMjesta PICT "9"
+   @ m_x + 5, m_y + 2 SAY "Datum do kojeg se promet prenosi" GET dDatDo
 
-    @ m_x+9, m_y+2 SAY "Klasa konta duguje " GET cKlDuguje PICT "9"
-    @ m_x+10, m_y+2 SAY "Klasa konta potraz " GET cKlPotraz PICT "9"
-  
-    @ m_x+12, m_y+2 SAY "Saldo strane valute je bitan ?" GET cStranaBitna ;
-        PICT "@!" ;
-        VALID cStranaBitna $ "DN"
-  
-    read
-    ESC_BCR
-  
-BoxC()
+   IF fk1 == "D"; @ m_x + 7, m_y + 2   SAY "K1 (9 svi) :" GET cK1; ENDIF
+   IF fk2 == "D"; @ m_x + 7, Col() + 2 SAY "K2 (9 svi) :" GET cK2; ENDIF
+   IF fk3 == "D"; @ m_x + 8, m_y + 2   SAY "K3 (" + ck3 + " svi):" GET cK3; ENDIF
+   IF fk4 == "D"; @ m_x + 8, Col() + 1 SAY "K4 (99 svi):" GET cK4; ENDIF
 
-// snimi parametre
-set_metric( "fin_klasa_duguje", NIL, cKlDuguje )
-set_metric( "fin_klasa_potrazuje", NIL, cKlPotraz )
+   @ m_x + 9, m_y + 2 SAY "Klasa konta duguje " GET cKlDuguje PICT "9"
+   @ m_x + 10, m_y + 2 SAY "Klasa konta potraz " GET cKlPotraz PICT "9"
 
-lStranaBitna := ( cStranaBitna == "D" )
+   @ m_x + 12, m_y + 2 SAY "Saldo strane valute je bitan ?" GET cStranaBitna ;
+      PICT "@!" ;
+      VALID cStranaBitna $ "DN"
 
-if ck1=="9"
-    ck1:=""
-endif
-if ck2=="9"
-    ck2:=""
-endif
-if ck3==REPL("9",LEN(ck3))
-    ck3:=""
-else
-    ck3:=k3u256(ck3)
-endif
-if ck4=="99"
-    ck4:=""
-endif
+   READ
+   ESC_BCR
 
-lPrenos4 := lPrenos5 := lPrenos6 := .f.
+   BoxC()
 
-SELECT (F_PKONTO)
-GO TOP
+   // snimi parametre
+   set_metric( "fin_klasa_duguje", NIL, cKlDuguje )
+   set_metric( "fin_klasa_potrazuje", NIL, cKlPotraz )
 
-DO WHILE !EOF()
-    IF tip=="4"
-        lPrenos4:=.t.
-    ENDIF
-    IF tip=="5"
-        lPrenos5:=.t.
-    ENDIF
-    IF tip=="6"
-        lPrenos6:=.t.
-    ENDIF
-    SKIP 1
-ENDDO
+   lStranaBitna := ( cStranaBitna == "D" )
 
-cFilter := ".t."
+   IF ck1 == "9"
+      ck1 := ""
+   ENDIF
+   IF ck2 == "9"
+      ck2 := ""
+   ENDIF
+   IF ck3 == REPL( "9", Len( ck3 ) )
+      ck3 := ""
+   ELSE
+      ck3 := k3u256( ck3 )
+   ENDIF
+   IF ck4 == "99"
+      ck4 := ""
+   ENDIF
 
-if fk1=="D" .and. len(ck1)<>0
-    cFilter+=" .and. k1='"+ck1+"'"
-endif
+   lPrenos4 := lPrenos5 := lPrenos6 := .F.
 
-if fk2=="D" .and. len(ck2)<>0
-    cFilter+=" .and. k2='"+ck2+"'"
-endif
+   SELECT ( F_PKONTO )
+   GO TOP
 
-if fk3=="D" .and. len(ck3)<>0
-    cFilter+=" .and. k3='"+ck3+"'"
-endif
+   DO WHILE !Eof()
+      IF tip == "4"
+         lPrenos4 := .T.
+      ENDIF
+      IF tip == "5"
+         lPrenos5 := .T.
+      ENDIF
+      IF tip == "6"
+         lPrenos6 := .T.
+      ENDIF
+      SKIP 1
+   ENDDO
 
-if fk4=="D" .and. len(ck4)<>0
-    cFilter+=" .and. k4='"+ck4+"'"
-endif
+   cFilter := ".t."
 
-IF lPrenos4 .or. lPrenos5 .or. lPrenos6
-    select (F_SUBAN)
-    usex ("suban")
-    if lPrenos4
-        index on idfirma+idkonto+idpartner+idrj+funk+fond to SUBSUB
-    endif
-    if lPrenos5
-        index on idfirma+idkonto+idpartner+idrj+fond to SUBSUB5
-    endif
-    if lPrenos6
-        index on idfirma+idkonto+idpartner+idrj to SUBSUB6
-    endif
-    use
-    select (F_SUBAN)
-    usex ("suban")
-    if lPrenos4
-        SET INDEX TO SUBSUB
-        SET ORDER TO TAG "SUBSUB"
-    endif
-    if lPrenos5
-        SET INDEX TO SUBSUB5
-        SET ORDER TO TAG "SUBSUB5"
-    endif
-    if lPrenos6
-        SET INDEX TO SUBSUB6
-        SET ORDER TO TAG "SUBSUB6"
-    endif
-ELSE
-    select (F_SUBAN)
-    usex ("suban")
-    set order to tag "3"
-    //IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)"
-ENDIF
+   IF fk1 == "D" .AND. Len( ck1 ) <> 0
+      cFilter += " .and. k1='" + ck1 + "'"
+   ENDIF
 
-IF !(cFilter==".t.")
-    SELECT (F_SUBAN)
-    SET FILTER TO &(cFilter)
-ENDIF
+   IF fk2 == "D" .AND. Len( ck2 ) <> 0
+      cFilter += " .and. k2='" + ck2 + "'"
+   ENDIF
 
-select (F_PKONTO)
-usex ("pkonto")
-set order to tag "ID"
+   IF fk3 == "D" .AND. Len( ck3 ) <> 0
+      cFilter += " .and. k3='" + ck3 + "'"
+   ENDIF
 
-O_FIN_PRIPR
+   IF fk4 == "D" .AND. Len( ck4 ) <> 0
+      cFilter += " .and. k4='" + ck4 + "'"
+   ENDIF
 
-if reccount2() <> 0
-    MsgBeep( "Priprema mora biti prazna" )
-    my_close_all_dbf()
-endif
+   IF lPrenos4 .OR. lPrenos5 .OR. lPrenos6
+      SELECT ( F_SUBAN )
+      usex ( "suban" )
+      IF lPrenos4
+         INDEX ON idfirma + idkonto + idpartner + idrj + funk + fond TO SUBSUB
+      ENDIF
+      IF lPrenos5
+         INDEX ON idfirma + idkonto + idpartner + idrj + fond TO SUBSUB5
+      ENDIF
+      IF lPrenos6
+         INDEX ON idfirma + idkonto + idpartner + idrj TO SUBSUB6
+      ENDIF
+      USE
+      SELECT ( F_SUBAN )
+      usex ( "suban" )
+      IF lPrenos4
+         SET INDEX TO SUBSUB
+         SET ORDER TO TAG "SUBSUB"
+      ENDIF
+      IF lPrenos5
+         SET INDEX TO SUBSUB5
+         SET ORDER TO TAG "SUBSUB5"
+      ENDIF
+      IF lPrenos6
+         SET INDEX TO SUBSUB6
+         SET ORDER TO TAG "SUBSUB6"
+      ENDIF
+   ELSE
+      SELECT ( F_SUBAN )
+      usex ( "suban" )
+      SET ORDER TO TAG "3"
+      // IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)"
+   ENDIF
 
-zap
-set order to 0
+   IF !( cFilter == ".t." )
+      SELECT ( F_SUBAN )
+      SET FILTER TO &( cFilter )
+   ENDIF
 
-start print cret
+   SELECT ( F_PKONTO )
+   usex ( "pkonto" )
+   SET ORDER TO TAG "ID"
 
-?
-? "Prolazim kroz bazu...."
+   O_FIN_PRIPR
 
-select suban
-go top
+   IF reccount2() <> 0
+      MsgBeep( "Priprema mora biti prazna" )
+      my_close_all_dbf()
+   ENDIF
 
-lVodeSeRJ := FIELDPOS("IDRJ") > 0
+   ZAP
+   SET ORDER TO 0
 
-Postotak(1,RECCOUNT2(),"Generacija pocetnog stanja")
+   start PRINT cret
 
-nProslo:=0
+   ?
+   ? "Prolazim kroz bazu...."
 
-GO TOP
-// idfirma, idkonto, idpartner, datdok
+   SELECT suban
+   GO TOP
 
-dDatVal := CTOD("")
+   lVodeSeRJ := FieldPos( "IDRJ" ) > 0
 
-// ----------------------------------- petlja 1
-do while !eof()
+   Postotak( 1, RECCOUNT2(), "Generacija pocetnog stanja" )
 
-    nRbr:=ZadnjiRBR()
-    cIdFirma:=idfirma
+   nProslo := 0
 
-    // ----------------------------------- petlja 2
-    do while !eof() .and. cIdFirma==IdFirma
+   GO TOP
+   // idfirma, idkonto, idpartner, datdok
 
-        cIdKonto:=IdKonto
-        cTipPr:="0" // tip prenosa
-        select pkonto
-        seek left(cIdKonto,nMjesta)
-        if found()        // 1 - otvorene stavke, 2 - saldo partnera,
-            cTipPr:=tip     // 3 - otv.st.bez sabiranja,
-        endif             // 4 - salda po konto+partner+rj+funkcija+fond
-                        // 5 - salda po konto+partner+rj+fond
-                        // 6 - salda po konto+partner+rj
-        select suban
+   dDatVal := CToD( "" )
 
-        if cTipPr=="4"    // mijenjam sort za ovu varijantu
+   // ----------------------------------- petlja 1
+   DO WHILE !Eof()
+
+      nRbr := ZadnjiRBR()
+      cIdFirma := idfirma
+
+      // ----------------------------------- petlja 2
+      DO WHILE !Eof() .AND. cIdFirma == IdFirma
+
+         cIdKonto := IdKonto
+         cTipPr := "0" // tip prenosa
+         SELECT pkonto
+         SEEK Left( cIdKonto, nMjesta )
+         IF Found()        // 1 - otvorene stavke, 2 - saldo partnera,
+            cTipPr := tip     // 3 - otv.st.bez sabiranja,
+         ENDIF             // 4 - salda po konto+partner+rj+funkcija+fond
+         // 5 - salda po konto+partner+rj+fond
+         // 6 - salda po konto+partner+rj
+         SELECT suban
+
+         IF cTipPr == "4"    // mijenjam sort za ovu varijantu
             SET ORDER TO TAG "SUBSUB"
-            SEEK cIdFirma+cIdKonto
-        elseif cTipPr=="5"    // mijenjam sort za ovu varijantu
+            SEEK cIdFirma + cIdKonto
+         ELSEIF cTipPr == "5"    // mijenjam sort za ovu varijantu
             SET ORDER TO TAG "SUBSUB5"
-            SEEK cIdFirma+cIdKonto
-        elseif cTipPr=="6"    // mijenjam sort za ovu varijantu
+            SEEK cIdFirma + cIdKonto
+         ELSEIF cTipPr == "6"    // mijenjam sort za ovu varijantu
             SET ORDER TO TAG "SUBSUB6"
-            SEEK cIdFirma+cIdKonto
-        elseif lPrenos4 .or. lPrenos5 .or. lPrenos6   // standardni sort
+            SEEK cIdFirma + cIdKonto
+         ELSEIF lPrenos4 .OR. lPrenos5 .OR. lPrenos6   // standardni sort
             SET ORDER TO TAG "3"
-            SEEK cIdFirma+cIdKonto
-        endif
+            SEEK cIdFirma + cIdKonto
+         ENDIF
 
-        nDin:=nDem:=0
-        //KONTO....pocinje
+         nDin := nDem := 0
+         // KONTO....pocinje
 
-        // ----------------------------------- petlja 3
-        do while !eof() .and. cIdFirma==IdFirma .and. cIdKonto==IdKonto
+         // ----------------------------------- petlja 3
+         DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdKonto == IdKonto
 
-            cIdPartner:=IdPartner
-            ? "Konto:",cidkonto,"    Partner:",cidpartner
-            if cTipPr $ "2"    // sabirem po konto+partner
-                nDin:=0
-                nDem:=0
-            endif
+            cIdPartner := IdPartner
+            ? "Konto:", cidkonto, "    Partner:", cidpartner
+            IF cTipPr $ "2"    // sabirem po konto+partner
+               nDin := 0
+               nDem := 0
+            ENDIF
 
-            if ctippr=="3"
-                cSUBk1:=k1
-                cSUBk2:=k2
-                cSUBk3:=k3
-                cSUBk4:=k4
+            IF ctippr == "3"
+               cSUBk1 := k1
+               cSUBk2 := k2
+               cSUBk3 := k3
+               cSUBk4 := k4
 
-                if Otvst==" "
-                    Scatter()
-                    select fin_pripr
-                    append blank
-                    Gather()
-                    replace rbr with str(++nRbr,4),;
-                        idvn with "00",;
-                        brnal with "00000001"
+               IF Otvst == " "
+                  Scatter()
+                  SELECT fin_pripr
+                  APPEND BLANK
+                  Gather()
+                  REPLACE rbr WITH Str( ++nRbr, 4 ), ;
+                     idvn WITH "00", ;
+                     brnal WITH "00000001"
 
-                    select suban
-                endif
-                
-                Postotak(2,++nProslo)
-                skip 1
+                  SELECT suban
+               ENDIF
 
-            else // tipppr=="3#
+               Postotak( 2, ++nProslo )
+               SKIP 1
 
-                cSUBk1:=k1
-                cSUBk2:=k2
-                cSUBk3:=k3
-                cSUBk4:=k4
+            ELSE // tipppr=="3#
 
-                // ----------------------------------- petlja 4
-                do while !eof() .and. cIdFirma==IdFirma .and. cIdKonto==IdKonto .and. IdPartner==cIdPartner
+               cSUBk1 := k1
+               cSUBk2 := k2
+               cSUBk3 := k3
+               cSUBk4 := k4
 
-                    cSUBk1:=k1
-                    cSUBk2:=k2
-                    cSUBk3:=k3
-                    cSUBk4:=k4
+               // ----------------------------------- petlja 4
+               DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdKonto == IdKonto .AND. IdPartner == cIdPartner
 
-                    // tip prenosa otvorene stavke - "1"
+                  cSUBk1 := k1
+                  cSUBk2 := k2
+                  cSUBk3 := k3
+                  cSUBk4 := k4
 
-                    if cTipPr == "1"
-                        cBrDok := Brdok
-                        nDin:=0
-                        nDem:=0
-                        cOtvSt := otvSt 
-                        // pretpostavlja se da sve stavke jednog
-                        // dokumenta imaju isti znak - otvoren ili zatvoren
-                        cTekucaRJ:=""
-                        // ----------------------------------- petlja 5
-                        dDatVal := CTOD("")
+                  // tip prenosa otvorene stavke - "1"
 
-                        do while !eof() .and. cIdFirma==IdFirma .and. cIdKonto==IdKonto .and. ;
-                            IdPartner==cIdPartner .and. BrDok==cBrDok
+                  IF cTipPr == "1"
+                     cBrDok := Brdok
+                     nDin := 0
+                     nDem := 0
+                     cOtvSt := otvSt
+                     // pretpostavlja se da sve stavke jednog
+                     // dokumenta imaju isti znak - otvoren ili zatvoren
+                     cTekucaRJ := ""
+                     // ----------------------------------- petlja 5
+                     dDatVal := CToD( "" )
 
-                            if EMPTY( dDatVal )
+                     DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdKonto == IdKonto .AND. ;
+                           IdPartner == cIdPartner .AND. BrDok == cBrDok
 
-                                // konto kupaca
-                                if ( LEFT( IdKonto, 1 ) == cKlDuguje ) .and. ( d_p == "1" ) 
-                                    if IsVindija()
-                                        if EMPTY( DatVal ) .and. !(IsVindija() .and. idvn == "09") 
-                                            dDatVal := datdok
-                                        else
-                                            dDatVal := datval
-                                        endif
-                                    else
-                                        if EMPTY( DatVal ) 
-                                            dDatVal := datdok
-                                        else
-                                            dDatVal := datval
-                                        endif
-                                    endif
-                                endif
+                        IF Empty( dDatVal )
 
-                                // konto dobavljaca
-                                if ( LEFT(IdKonto, 1) == cKlPotraz ) .and. (d_p=="2") 
-                                    if EMPTY(DatVal)
-                                        dDatVal:=datdok
-                                    else
-                                        dDatVal:=datval
-                                    endif
-                                endif
+                           // konto kupaca
+                           IF ( Left( IdKonto, 1 ) == cKlDuguje ) .AND. ( d_p == "1" )
+                              IF IsVindija()
+                                 IF Empty( DatVal ) .AND. !( IsVindija() .AND. idvn == "09" )
+                                    dDatVal := datdok
+                                 ELSE
+                                    dDatVal := datval
+                                 ENDIF
+                              ELSE
+                                 IF Empty( DatVal )
+                                    dDatVal := datdok
+                                 ELSE
+                                    dDatVal := datval
+                                 ENDIF
+                              ENDIF
+                           ENDIF
 
-                            endif
-           
-                            nDin+=iif(d_p=="1", iznosbhd, -iznosbhd)
-                            nDem+=iif(d_p=="1", iznosdem, -iznosdem)
-           
-                            IF lVodeSeRJ .and. EMPTY(cTekucaRJ)
-                                cTekucaRJ:=IDRJ
-                            ENDIF
-                            Postotak(2,++nProslo)
-                            skip 1
+                           // konto dobavljaca
+                           IF ( Left( IdKonto, 1 ) == cKlPotraz ) .AND. ( d_p == "2" )
+                              IF Empty( DatVal )
+                                 dDatVal := datdok
+                              ELSE
+                                 dDatVal := datval
+                              ENDIF
+                           ENDIF
 
-                        enddo // brdok
-                        // ----------------------------------- petlja 5
+                        ENDIF
 
-                        //if cOtvSt=="9"
-                        if round(nDin, 3) <> 0  // ako saldo nije 0
-                            select fin_pripr
-                            append blank
-                            replace  idfirma with cidfirma,;
-                                idvn with "00",;
-                                brnal with "00000001",;
-                                rbr with str(++nRbr,4),;
-                                idkonto with cIdkonto,;
-                                idpartner with cidpartner,;
-                                brdok  with cBrDok,;
-                                datdok with dDatDo+1 ,;
-                                datval with dDatVal
-            
-                            if !(cFilter==".t.")
-                                REPLACE  k1 WITH cSUBk1,;
-                                    k2 WITH cSUBk2,;
-                                    k3 WITH cSUBk3,;
-                                    k4 WITH cSUBk4
-                            endif
+                        nDin += iif( d_p == "1", iznosbhd, -iznosbhd )
+                        nDem += iif( d_p == "1", iznosdem, -iznosdem )
 
-                            if cTipPr == "1"
-                                if LEFT(IdKonto, 1) == cKlPotraz 
-                                    // konto dobavljaca
-                                    replace d_p with "2", iznosbhd with -nDin,iznosdem with -nDem
-                                else
-                                    // konto kupca
-                                    replace d_p with "1", iznosbhd with nDin,iznosdem with nDem
-                                endif
-         
-                            else
-                                // cTipPr <> "1" 
-                                if nDin >= 0
-                                    replace d_p with "1",iznosbhd with nDin,iznosdem with nDem
-                                else
-                                    replace d_p with "2",iznosbhd with -nDin, iznosdem with -nDem
-                                endif 
-                            endif
-           
-                            IF lVodeSeRj
-                                REPLACE IDRJ WITH cTekucaRJ
-                            ENDIF
-                            select suban
-                        endif  // limit
-                        //endif // cotvst=="9"
+                        IF lVodeSeRJ .AND. Empty( cTekucaRJ )
+                           cTekucaRJ := IDRJ
+                        ENDIF
+                        Postotak( 2, ++nProslo )
+                        SKIP 1
 
-                    endif  // cTipPr=="1"
+                     ENDDO // brdok
+                     // ----------------------------------- petlja 5
 
-                    if cTipPr=="4"
-                        cIDRJ := IDRJ
-                        cFunk := FUNK
-                        cFond := FOND
-                        nDin:=0; nDem:=0
+                     // if cOtvSt=="9"
+                     IF Round( nDin, 3 ) <> 0  // ako saldo nije 0
+                        SELECT fin_pripr
+                        APPEND BLANK
+                        REPLACE  idfirma WITH cidfirma, ;
+                           idvn WITH "00", ;
+                           brnal WITH "00000001", ;
+                           rbr WITH Str( ++nRbr, 4 ), ;
+                           idkonto WITH cIdkonto, ;
+                           idpartner WITH cidpartner, ;
+                           brdok  WITH cBrDok, ;
+                           datdok WITH dDatDo + 1,;
+                           datval WITH dDatVal
 
-                        // ----------------------------------- petlja 6
-                        do while !eof() .and. cIdFirma==IdFirma .and. cIdKonto==IdKonto .and. IdPartner==cIdPartner ;
-                                    .and. cIDRJ==IDRJ .and. cFunk==FUNK .and. cFond==FOND
+                        IF !( cFilter == ".t." )
+                           REPLACE  k1 WITH cSUBk1, ;
+                              k2 WITH cSUBk2, ;
+                              k3 WITH cSUBk3, ;
+                              k4 WITH cSUBk4
+                        ENDIF
 
-                            nDin+=iif(d_p=="1",iznosbhd, -iznosbhd)
-                            nDem+=iif(d_p=="1",iznosdem, -iznosdem)
-                            Postotak(2,++nProslo)
-                            skip 1
+                        IF cTipPr == "1"
+                           IF Left( IdKonto, 1 ) == cKlPotraz
+                              // konto dobavljaca
+                              REPLACE d_p WITH "2", iznosbhd WITH -nDin, iznosdem WITH -nDem
+                           ELSE
+                              // konto kupca
+                              REPLACE d_p WITH "1", iznosbhd WITH nDin, iznosdem WITH nDem
+                           ENDIF
 
-                        enddo // brdok
-                        // ----------------------------------- petlja 6
+                        ELSE
+                           // cTipPr <> "1"
+                           IF nDin >= 0
+                              REPLACE d_p WITH "1", iznosbhd WITH nDin, iznosdem WITH nDem
+                           ELSE
+                              REPLACE d_p WITH "2", iznosbhd WITH -nDin, iznosdem WITH -nDem
+                           ENDIF
+                        ENDIF
 
-                        if round(nDin, 3) <> 0  // ako saldo nije 0
-                            select fin_pripr
-                            append blank
-                            replace  idfirma with cidfirma,;
-                                idvn with "00",;
-                                brnal with "00000001",;
-                                rbr with str(++nRbr,4),;
-                                idkonto with cIdkonto,;
-                                idpartner with cidpartner,;
-                                idrj with cIDRJ,;
-                                funk with cFunk,;
-                                fond with cFond,;
-                                datdok with dDatDo+1
-            
-                            if !(cFilter==".t.")
-                                REPLACE  k1 WITH cSUBk1,;
-                                    k2 WITH cSUBk2,;
-                                    k3 WITH cSUBk3,;
-                                    k4 WITH cSUBk4
-                            endif
-                            if nDin>=0
-                                replace d_p with "1",iznosbhd with nDin,iznosdem with nDem
-                            else
-                                replace d_p with "2",iznosbhd with -nDin, iznosdem with -nDem
-                            endif // ndin
-                            select suban
-                        endif  // limit
+                        IF lVodeSeRj
+                           REPLACE IDRJ WITH cTekucaRJ
+                        ENDIF
+                        SELECT suban
+                     ENDIF  // limit
+                     // endif // cotvst=="9"
 
-                    endif  // cTipPr=="4"
+                  ENDIF  // cTipPr=="1"
 
-                    if cTipPr=="5"
-                        cIDRJ := IDRJ
-                        cFond := FOND
-                        nDin:=0; nDem:=0
+                  IF cTipPr == "4"
+                     cIDRJ := IDRJ
+                     cFunk := FUNK
+                     cFond := FOND
+                     nDin := 0; nDem := 0
 
-                        // ----------------------------------- petlja 6
-                        do while !eof() .and. cIdFirma==IdFirma .and. cIdKonto==IdKonto .and. IdPartner==cIdPartner ;
-                                .and. cIDRJ==IDRJ .and. cFond==FOND
+                     // ----------------------------------- petlja 6
+                     DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdKonto == IdKonto .AND. IdPartner == cIdPartner ;
+                           .AND. cIDRJ == IDRJ .AND. cFunk == FUNK .AND. cFond == FOND
 
-                            nDin+=iif(d_p=="1",iznosbhd,-iznosbhd)
-                            nDem+=iif(d_p=="1",iznosdem,-iznosdem)
-                            Postotak(2,++nProslo)
-                            skip 1
+                        nDin += iif( d_p == "1", iznosbhd, -iznosbhd )
+                        nDem += iif( d_p == "1", iznosdem, -iznosdem )
+                        Postotak( 2, ++nProslo )
+                        SKIP 1
 
-                        enddo // brdok
-                        // ----------------------------------- petlja 6
+                     ENDDO // brdok
+                     // ----------------------------------- petlja 6
 
-                        if round(nDin,3)<>0  // ako saldo nije 0
-                            select fin_pripr
-                            append blank
-                            replace  idfirma with cidfirma,;
-                                idvn with "00",;
-                                brnal with "00000001",;
-                                rbr with str(++nRbr,4),;
-                                idkonto with cIdkonto,;
-                                idpartner with cidpartner,;
-                                idrj with cIDRJ,;
-                                fond with cFond,;
-                                datdok with dDatDo+1
-                            if !(cFilter==".t.")
-                                REPLACE  k1 WITH cSUBk1,;
-                                    k2 WITH cSUBk2,;
-                                    k3 WITH cSUBk3,;
-                                    k4 WITH cSUBk4
-                            endif
-                            if nDin>=0
-                                replace d_p with "1",iznosbhd with nDin,iznosdem with nDem
-                            else
-                                replace d_p with "2",iznosbhd with -nDin, iznosdem with -nDem
-                            endif // ndin
-                            select suban
-                        endif  // limit
+                     IF Round( nDin, 3 ) <> 0  // ako saldo nije 0
+                        SELECT fin_pripr
+                        APPEND BLANK
+                        REPLACE  idfirma WITH cidfirma, ;
+                           idvn WITH "00", ;
+                           brnal WITH "00000001", ;
+                           rbr WITH Str( ++nRbr, 4 ), ;
+                           idkonto WITH cIdkonto, ;
+                           idpartner WITH cidpartner, ;
+                           idrj WITH cIDRJ, ;
+                           funk WITH cFunk, ;
+                           fond WITH cFond, ;
+                           datdok WITH dDatDo + 1
 
-                    endif  // cTipPr=="5"
+                        IF !( cFilter == ".t." )
+                           REPLACE  k1 WITH cSUBk1, ;
+                              k2 WITH cSUBk2, ;
+                              k3 WITH cSUBk3, ;
+                              k4 WITH cSUBk4
+                        ENDIF
+                        IF nDin >= 0
+                           REPLACE d_p WITH "1", iznosbhd WITH nDin, iznosdem WITH nDem
+                        ELSE
+                           REPLACE d_p WITH "2", iznosbhd WITH -nDin, iznosdem WITH -nDem
+                        ENDIF // ndin
+                        SELECT suban
+                     ENDIF  // limit
 
-                    if cTipPr=="6"
-                        cIDRJ := IDRJ
-                        nDin:=0; nDem:=0
+                  ENDIF  // cTipPr=="4"
 
-                        // ----------------------------------- petlja 6
-                        do while !eof() .and. cIdFirma==IdFirma .and. cIdKonto==IdKonto .and. IdPartner==cIdPartner ;
-                                .and. cIDRJ==IDRJ
+                  IF cTipPr == "5"
+                     cIDRJ := IDRJ
+                     cFond := FOND
+                     nDin := 0; nDem := 0
 
-                            nDin+=iif(d_p=="1",iznosbhd,-iznosbhd)
-                            nDem+=iif(d_p=="1",iznosdem,-iznosdem)
-                            Postotak(2,++nProslo)
-                            skip 1
+                     // ----------------------------------- petlja 6
+                     DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdKonto == IdKonto .AND. IdPartner == cIdPartner ;
+                           .AND. cIDRJ == IDRJ .AND. cFond == FOND
 
-                        enddo // brdok
-                        // ----------------------------------- petlja 6
+                        nDin += iif( d_p == "1", iznosbhd, -iznosbhd )
+                        nDem += iif( d_p == "1", iznosdem, -iznosdem )
+                        Postotak( 2, ++nProslo )
+                        SKIP 1
 
-                        if round(nDin,3)<>0  // ako saldo nije 0
-                            select fin_pripr
-                            append blank
-                            replace  idfirma with cidfirma,;
-                                idvn with "00",;
-                                brnal with "00000001",;
-                                rbr with str(++nRbr,4),;
-                                idkonto with cIdkonto,;
-                                idpartner with cidpartner,;
-                                idrj with cIDRJ,;
-                                datdok with dDatDo+1
-                            if !(cFilter==".t.")
-                                REPLACE  k1 WITH cSUBk1,;
-                                    k2 WITH cSUBk2,;
-                                    k3 WITH cSUBk3,;
-                                    k4 WITH cSUBk4
-                            endif
-                            if nDin>=0
-                                replace d_p with "1",iznosbhd with nDin,iznosdem with nDem
-                            else
-                                replace d_p with "2",iznosbhd with -nDin, iznosdem with -nDem
-                            endif // ndin
-                            select suban
-                        endif  // limit
+                     ENDDO // brdok
+                     // ----------------------------------- petlja 6
 
-                    endif  // cTipPr=="6"
+                     IF Round( nDin, 3 ) <> 0  // ako saldo nije 0
+                        SELECT fin_pripr
+                        APPEND BLANK
+                        REPLACE  idfirma WITH cidfirma, ;
+                           idvn WITH "00", ;
+                           brnal WITH "00000001", ;
+                           rbr WITH Str( ++nRbr, 4 ), ;
+                           idkonto WITH cIdkonto, ;
+                           idpartner WITH cidpartner, ;
+                           idrj WITH cIDRJ, ;
+                           fond WITH cFond, ;
+                           datdok WITH dDatDo + 1
+                        IF !( cFilter == ".t." )
+                           REPLACE  k1 WITH cSUBk1, ;
+                              k2 WITH cSUBk2, ;
+                              k3 WITH cSUBk3, ;
+                              k4 WITH cSUBk4
+                        ENDIF
+                        IF nDin >= 0
+                           REPLACE d_p WITH "1", iznosbhd WITH nDin, iznosdem WITH nDem
+                        ELSE
+                           REPLACE d_p WITH "2", iznosbhd WITH -nDin, iznosdem WITH -nDem
+                        ENDIF // ndin
+                        SELECT suban
+                     ENDIF  // limit
 
-                    if cTipPr $ "02"
-                        if d_p=="1"
-                            nDin+=iznosbhd
-                            nDem+=IznosDEM
-                        endif
-                        if d_p=="2"
-                            nDin-=iznosbhd
-                            nDem-=IznosDEM
-                        endif
-                        skip 1
-                        Postotak(2,++nProslo)
-                    endif
+                  ENDIF  // cTipPr=="5"
 
-                enddo // konto, partner
-                // ----------------------------------- petlja 4
+                  IF cTipPr == "6"
+                     cIDRJ := IDRJ
+                     nDin := 0; nDem := 0
 
-            endif    // tippr=="3"
+                     // ----------------------------------- petlja 6
+                     DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdKonto == IdKonto .AND. IdPartner == cIdPartner ;
+                           .AND. cIDRJ == IDRJ
 
-            if cTipPr=="2"  // sabirem po konto+partner
-                if (round(nDin,2) <> 0) .or. ((round(nDem, 2) <> 0 ) .and. lStranaBitna)
-                    select fin_pripr
-                    append blank
-                    replace rbr with  str(++nRbr,4),;
-                        idkonto with cIdkonto,;
-                        idpartner with cidpartner,;
-                        datdok with dDatDo+1,;
-                        idfirma with cidfirma,;
-                        idvn with "00", idtipdok with "00",;
-                        brnal with "00000001"
-                    if !(cFilter==".t.")
-                        REPLACE  k1 WITH cSUBk1,;
-                            k2 WITH cSUBk2,;
-                            k3 WITH cSUBk3,;
-                            k4 WITH cSUBk4
-                    endif
-        
-                    if nDin >= 0
-                        replace d_p with "1",;
-                            iznosbhd with nDin,;
-                            iznosdem with nDem
-                    else
-                        replace d_p with "2",;
-                            iznosbhd with -nDin,;
-                            iznosdem with -nDem
-                    endif // ndin
-        
-                    select suban
-                endif // <> 0
-            endif
+                        nDin += iif( d_p == "1", iznosbhd, -iznosbhd )
+                        nDem += iif( d_p == "1", iznosdem, -iznosdem )
+                        Postotak( 2, ++nProslo )
+                        SKIP 1
 
-        enddo // konto
-        // ----------------------------------- petlja 3
+                     ENDDO // brdok
+                     // ----------------------------------- petlja 6
 
-        if cTipPr=="0"  // sabirem po konto bez obzira na partnera
-            if (round(nDin,2) <> 0) .or. (round( nDem, 2 ) <> 0  .and. lStranaBitna)
-                select fin_pripr
-                append blank
-                replace rbr with  str(++nRbr,4),;
-                    idkonto with cIdkonto,;
-                    datdok with dDatDo+1,;
-                    idfirma with cidfirma,;
-                    idvn with "00", idtipdok with "00",;
-                    brnal with "00000001"
-                if !(cFilter==".t.")
-                    REPLACE  k1 WITH cSUBk1,;
-                        k2 WITH cSUBk2,;
-                        k3 WITH cSUBk3,;
+                     IF Round( nDin, 3 ) <> 0  // ako saldo nije 0
+                        SELECT fin_pripr
+                        APPEND BLANK
+                        REPLACE  idfirma WITH cidfirma, ;
+                           idvn WITH "00", ;
+                           brnal WITH "00000001", ;
+                           rbr WITH Str( ++nRbr, 4 ), ;
+                           idkonto WITH cIdkonto, ;
+                           idpartner WITH cidpartner, ;
+                           idrj WITH cIDRJ, ;
+                           datdok WITH dDatDo + 1
+                        IF !( cFilter == ".t." )
+                           REPLACE  k1 WITH cSUBk1, ;
+                              k2 WITH cSUBk2, ;
+                              k3 WITH cSUBk3, ;
+                              k4 WITH cSUBk4
+                        ENDIF
+                        IF nDin >= 0
+                           REPLACE d_p WITH "1", iznosbhd WITH nDin, iznosdem WITH nDem
+                        ELSE
+                           REPLACE d_p WITH "2", iznosbhd WITH -nDin, iznosdem WITH -nDem
+                        ENDIF // ndin
+                        SELECT suban
+                     ENDIF  // limit
+
+                  ENDIF  // cTipPr=="6"
+
+                  IF cTipPr $ "02"
+                     IF d_p == "1"
+                        nDin += iznosbhd
+                        nDem += IznosDEM
+                     ENDIF
+                     IF d_p == "2"
+                        nDin -= iznosbhd
+                        nDem -= IznosDEM
+                     ENDIF
+                     SKIP 1
+                     Postotak( 2, ++nProslo )
+                  ENDIF
+
+               ENDDO // konto, partner
+               // ----------------------------------- petlja 4
+
+            ENDIF    // tippr=="3"
+
+            IF cTipPr == "2"  // sabirem po konto+partner
+               IF ( Round( nDin, 2 ) <> 0 ) .OR. ( ( Round( nDem, 2 ) <> 0 ) .AND. lStranaBitna )
+                  SELECT fin_pripr
+                  APPEND BLANK
+                  REPLACE rbr WITH  Str( ++nRbr, 4 ), ;
+                     idkonto WITH cIdkonto, ;
+                     idpartner WITH cidpartner, ;
+                     datdok WITH dDatDo + 1, ;
+                     idfirma WITH cidfirma, ;
+                     idvn WITH "00", idtipdok WITH "00", ;
+                     brnal WITH "00000001"
+                  IF !( cFilter == ".t." )
+                     REPLACE  k1 WITH cSUBk1, ;
+                        k2 WITH cSUBk2, ;
+                        k3 WITH cSUBk3, ;
                         k4 WITH cSUBk4
-                endif
-                if nDin>=0
-                    replace d_p with "1",;
-                        iznosbhd with nDin,;
-                        iznosdem with nDem
-                else
-                    replace d_p with "2",;
-                        iznosbhd with -nDin,;
-                        iznosdem with -nDem
-                endif // ndin
-                select suban
-            endif // <> 0
-        endif
+                  ENDIF
 
-    enddo // firma
-    // ----------------------------------- petlja 2
+                  IF nDin >= 0
+                     REPLACE d_p WITH "1", ;
+                        iznosbhd WITH nDin, ;
+                        iznosdem WITH nDem
+                  ELSE
+                     REPLACE d_p WITH "2", ;
+                        iznosbhd WITH -nDin, ;
+                        iznosdem WITH -nDem
+                  ENDIF // ndin
 
-enddo // eof
-// ----------------------------------- petlja 1
+                  SELECT suban
+               ENDIF // <> 0
+            ENDIF
 
-Postotak(0)
+         ENDDO // konto
+         // ----------------------------------- petlja 3
 
-end print
-my_close_all_dbf()
+         IF cTipPr == "0"  // sabirem po konto bez obzira na partnera
+            IF ( Round( nDin, 2 ) <> 0 ) .OR. ( Round( nDem, 2 ) <> 0  .AND. lStranaBitna )
+               SELECT fin_pripr
+               APPEND BLANK
+               REPLACE rbr WITH  Str( ++nRbr, 4 ), ;
+                  idkonto WITH cIdkonto, ;
+                  datdok WITH dDatDo + 1, ;
+                  idfirma WITH cidfirma, ;
+                  idvn WITH "00", idtipdok WITH "00", ;
+                  brnal WITH "00000001"
+               IF !( cFilter == ".t." )
+                  REPLACE  k1 WITH cSUBk1, ;
+                     k2 WITH cSUBk2, ;
+                     k3 WITH cSUBk3, ;
+                     k4 WITH cSUBk4
+               ENDIF
+               IF nDin >= 0
+                  REPLACE d_p WITH "1", ;
+                     iznosbhd WITH nDin, ;
+                     iznosdem WITH nDem
+               ELSE
+                  REPLACE d_p WITH "2", ;
+                     iznosbhd WITH -nDin, ;
+                     iznosdem WITH -nDem
+               ENDIF // ndin
+               SELECT suban
+            ENDIF // <> 0
+         ENDIF
 
-return
+      ENDDO // firma
+      // ----------------------------------- petlja 2
+
+   ENDDO // eof
+   // ----------------------------------- petlja 1
+
+   Postotak( 0 )
+
+   END PRINT
+
+   my_close_all_dbf()
+
+   RETURN
 
 
 
 // ----------------------------------------------------------------
 // kreiranje pomocne tabele temp77
 // ----------------------------------------------------------------
-static function _cre_temp77()
-local _table := "temp77"
-local _ret := .t.
-local _dbf
+STATIC FUNCTION _cre_temp77()
 
-if !FILE( my_home() + _table + ".dbf" )
+   LOCAL _table := "temp77"
+   LOCAL _ret := .T.
+   LOCAL _dbf
 
-    _dbf := DBSTRUCT()
+   IF !File( my_home() + _table + ".dbf" )
 
-    AADD( _dbf, {"KONTO2","C",7,0} )
-    AADD( _dbf, {"PART2", "C",6,0} )
-    AADD( _dbf, {"NSLOG","N",10,0} )
+      _dbf := dbStruct()
 
-    DBCREATE( my_home() + _table + ".dbf", _dbf )
+      AAdd( _dbf, { "KONTO2", "C", 7, 0 } )
+      AAdd( _dbf, { "PART2", "C", 6, 0 } )
+      AAdd( _dbf, { "NSLOG", "N", 10, 0 } )
 
-endif
+      dbCreate( my_home() + _table + ".dbf", _dbf )
 
-my_use_temp( "TEMP77", my_home() + _table, .f., .t. )
+   ENDIF
 
-my_dbf_zap()
+   my_use_temp( "TEMP77", my_home() + _table, .F., .T. )
 
-return
+   my_dbf_zap()
+
+   RETURN
 
 
 // ---------------------------------------------------------------
-// prebacivanje kartica 
+// prebacivanje kartica
 // ---------------------------------------------------------------
-function fin_prekart()
-local _arr := {}
-local _usl_kto, _usl_part, _tmp_dbf
-private _id_konto := fetch_metric( "fin_preb_kart_id_konto", my_user(), SPACE(60) )
-private _id_partn := fetch_metric( "fin_preb_kart_id_partner", my_user(), SPACE(60) )
-private _dat_od := fetch_metric( "fin_preb_kart_dat_od", my_user(), CTOD("") )
-private _dat_do := fetch_metric( "fin_preb_kart_dat_do", my_user(), CTOD("") )
-private _id_firma := gFirma
+FUNCTION fin_prekart()
 
-Msg( "Ova opcija omogucava prebacivanje svih ili dijela stavki sa#" + ;
-     "postojeceg na drugi konto. Zeljeni konto je u tabeli prikazan#" + ;
-     "u koloni sa zaglavljem 'Novi konto'. POSLJEDICA OVIH PROMJENA#" + ;
-     "JE DA CE NALOZI KOJI SADRZE IZMIJENJENE STAVKE BITI RAZLICITI#" + ;
-     "OD ODSTAMPANIH, PA SE PREPORUCUJE PONOVNA STAMPA TIH NALOGA." )
+   LOCAL _arr := {}
+   LOCAL _usl_kto, _usl_part, _tmp_dbf
+   PRIVATE _id_konto := fetch_metric( "fin_preb_kart_id_konto", my_user(), Space( 60 ) )
+   PRIVATE _id_partn := fetch_metric( "fin_preb_kart_id_partner", my_user(), Space( 60 ) )
+   PRIVATE _dat_od := fetch_metric( "fin_preb_kart_dat_od", my_user(), CToD( "" ) )
+   PRIVATE _dat_do := fetch_metric( "fin_preb_kart_dat_do", my_user(), CToD( "" ) )
+   PRIVATE _id_firma := gFirma
 
-AADD ( _arr, { "Firma (prazno-sve)", "_id_firma",,,})
-AADD ( _arr, { "Konto (prazno-sva)", "_id_konto",,"@!S30",})
-AADD ( _arr, { "Partner (prazno-svi)", "_id_partner",,"@!S30",})
-AADD ( _arr, { "Za period od datuma", "_dat_od",,,})
-AADD ( _arr, { "          do datuma", "_dat_do",,,})
+   Msg( "Ova opcija omogucava prebacivanje svih ili dijela stavki sa#" + ;
+      "postojeceg na drugi konto. Zeljeni konto je u tabeli prikazan#" + ;
+      "u koloni sa zaglavljem 'Novi konto'. POSLJEDICA OVIH PROMJENA#" + ;
+      "JE DA CE NALOZI KOJI SADRZE IZMIJENJENE STAVKE BITI RAZLICITI#" + ;
+      "OD ODSTAMPANIH, PA SE PREPORUCUJE PONOVNA STAMPA TIH NALOGA." )
 
-do while .t.
-   
-    if !VarEdit( _arr, 9,5,17,74,;
-               'POSTAVLJANJE USLOVA ZA IZDVAJANJE SUBANALITICKIH STAVKI',;
-               "B1")
-        my_close_all_dbf()
-        return
-    endif
-   
-    _usl_kto := Parsiraj( _id_konto, "idkonto" )
-    _usl_part := Parsiraj( _id_partn, "idpartner" )
-    
-    if _usl_kto <> NIL .and. _usl_part <> NIL
-        exit
-    elseif _usl_part <> NIL
-        MsgBeep ("Kriterij za partnera nije korektno postavljen!")
-    elseif _usl_kto <> NIL
-        MsgBeep ("Kriterij za konto nije korektno postavljen!")
-    else
-        MsgBeep ("Kriteriji za konto i partnera nisu korektno postavljeni!")
-    endif
- 
-enddo 
+   AAdd ( _arr, { "Firma (prazno-sve)", "_id_firma",,, } )
+   AAdd ( _arr, { "Konto (prazno-sva)", "_id_konto",, "@!S30", } )
+   AAdd ( _arr, { "Partner (prazno-svi)", "_id_partner",, "@!S30", } )
+   AAdd ( _arr, { "Za period od datuma", "_dat_od",,, } )
+   AAdd ( _arr, { "          do datuma", "_dat_do",,, } )
 
-// otvaranje potrebnih baza
-///////////////////////////
+   DO WHILE .T.
 
-O_KONTO
-O_PARTN
-O_SINT
-SET ORDER TO tag "2"
-O_ANAL
-SET ORDER TO tag "2"
-O_SUBAN
+      IF !VarEdit( _arr, 9, 5, 17, 74, ;
+            'POSTAVLJANJE USLOVA ZA IZDVAJANJE SUBANALITICKIH STAVKI', ;
+            "B1" )
+         my_close_all_dbf()
+         RETURN
+      ENDIF
 
-// kreriraj i otvori temp77 na osnovu tabele suban
-_cre_temp77()
+      _usl_kto := Parsiraj( _id_konto, "idkonto" )
+      _usl_part := Parsiraj( _id_partn, "idpartner" )
 
-SELECT ( F_SUBAN )
+      IF _usl_kto <> NIL .AND. _usl_part <> NIL
+         EXIT
+      ELSEIF _usl_part <> NIL
+         MsgBeep ( "Kriterij za partnera nije korektno postavljen!" )
+      ELSEIF _usl_kto <> NIL
+         MsgBeep ( "Kriterij za konto nije korektno postavljen!" )
+      ELSE
+         MsgBeep ( "Kriteriji za konto i partnera nisu korektno postavljeni!" )
+      ENDIF
 
-_filter := ".t." + IF(!EMPTY(_id_firma),".and.IDFIRMA=="+cm2str(_id_firma),"")+ IIF(!EMPTY(_dat_od),".and.DATDOK>="+cm2str(_dat_do),"")+;
-           IF(!EMPTY(_dat_do), ".and.DATDOK<=" + cm2str(_dat_do),"") + ".and."+_usl_kto+".and."+_usl_part
+   ENDDO
 
-_filter := STRTRAN( _filter , ".t..and." , "" )
- 
-IF !( _filter == ".t." )
-    SET FILTER TO &(_filter)
-ENDIF
+   // otvaranje potrebnih baza
+   // /////////////////////////
 
-GO TOP
-DO WHILE !EOF()
+   O_KONTO
+   O_PARTN
+   O_SINT
+   SET ORDER TO TAG "2"
+   O_ANAL
+   SET ORDER TO TAG "2"
+   O_SUBAN
 
-    _rec := dbf_get_rec()
-    _rec["konto2"] := _rec["idkonto"]
-    _rec["part2"] := _rec["idpartner"]
-    _rec["nslog"] := RECNO()
-    
-    SELECT TEMP77
-    APPEND BLANK
-    
-    dbf_update_rec( _rec )
-   
-    SELECT F_SUBAN
-    SKIP 1
+   // kreriraj i otvori temp77 na osnovu tabele suban
+   _cre_temp77()
 
-ENDDO
+   SELECT ( F_SUBAN )
 
-SELECT TEMP77
-GO TOP
+   _filter := ".t." + IF( !Empty( _id_firma ), ".and.IDFIRMA==" + cm2str( _id_firma ), "" ) + iif( !Empty( _dat_od ), ".and.DATDOK>=" + cm2str( _dat_do ), "" ) + ;
+      IF( !Empty( _dat_do ), ".and.DATDOK<=" + cm2str( _dat_do ), "" ) + ".and." + _usl_kto + ".and." + _usl_part
 
-ImeKol:={ ;
-          {"F.",            {|| IdFirma }, "IdFirma" } ,;
-          {"VN",            {|| IdVN    }, "IdVN" } ,;
-          {"Br.",           {|| BrNal   }, "BrNal" },;
-          {"R.br",          {|| RBr     }, "rbr" , {|| wrbr()}, {|| vrbr()} } ,;
-          {"Konto",         {|| IdKonto }, "IdKonto", {|| .t.}, {|| P_Konto(@_IdKonto),.t. } } ,;
-          {"Novi konto",    {|| konto2  }, "konto2", {|| .t.}, {|| P_Konto(@_konto2),.t. } } ,;
-          {"Partner",       {|| IdPartner }, "IdPartner", {|| .t.}, {|| P_Firma(@_idpartner), .t. } } ,;
-          {"Novi partner",  {|| part2  }, "part2", {|| .t.}, {|| P_Firma(@_part2),.t. } } ,;
-      {"Br.veze ",      {|| BrDok   }, "BrDok" } ,;
-          {"Datum",         {|| DatDok  }, "DatDok" } ,;
-          {"D/P",           {|| D_P     }, "D_P" } ,;
-          {ValDomaca(),     {|| transform(IznosBHD,FormPicL(gPicBHD,15)) }, "iznos "+ALLTRIM(ValDomaca()) } ,;
-          {ValPomocna(),    {|| transform(IznosDEM,FormPicL(gPicDEM,10)) }, "iznos "+ALLTRIM(ValPomocna()) } ,;
-          {"Opis",          {|| Opis      }, "OPIS" }, ;
-          {"K1",            {|| k1      }, "k1" },;
-          {"K2",            {|| k2      }, "k2" },;
-          {"K3",            {|| k3iz256(k3)      }, "k3" },;
-          {"K4",            {|| k4      }, "k4" } ;
-        }
+   _filter := StrTran( _filter, ".t..and.", "" )
 
-Kol:={}
-for i := 1 to LEN(ImeKol)
-    AADD( Kol, i )
-next
+   IF !( _filter == ".t." )
+      SET FILTER TO &( _filter )
+   ENDIF
 
-DO WHILE .t.
- 
-    Box(,20,77)
-        @ m_x+19,m_y+2 SAY "                         ³                        ³                   "
-        @ m_x+20,m_y+2 SAY " <c-T>  Brisi stavku     ³ <ENTER>  Ispravi konto ³ <a-A> Azuriraj    "
-        ObjDbedit("PPK",20,77,{|| EPPK()},"","Priprema za prebacivanje stavki", , , , ,2)
-    BoxC()
-    
-    IF RECCOUNT2()>0
-        i:=KudaDalje("ZAVRSAVATE SA PRIPREMOM PODATAKA. STA RADITI SA URADJENIM?",;
-            { "AZURIRATI PODATKE",;
-              "IZBRISATI PODATKE",;
-              "VRATIMO SE U PRIPREMU" })
-        DO CASE
-            CASE i==1
-                AzurPPK()
-                EXIT
-            CASE i==2
-                EXIT
-            CASE i==3
-                GO TOP
-        ENDCASE
-    ELSE
-        EXIT
-    ENDIF
-ENDDO
+   GO TOP
+   DO WHILE !Eof()
 
-my_close_all_dbf()
-return ( NIL )
+      _rec := dbf_get_rec()
+      _rec[ "konto2" ] := _rec[ "idkonto" ]
+      _rec[ "part2" ] := _rec[ "idpartner" ]
+      _rec[ "nslog" ] := RecNo()
 
+      SELECT TEMP77
+      APPEND BLANK
 
+      dbf_update_rec( _rec )
 
-static function EPPK()
-local nTr2
+      SELECT F_SUBAN
+      SKIP 1
 
-if (Ch==K_CTRL_T .or. Ch==K_ENTER) .and. reccount2()==0
-    return DE_CONT
-endif
+   ENDDO
 
-select temp77
+   SELECT TEMP77
+   GO TOP
 
-do case
+   ImeKol := { ;
+      { "F.",            {|| IdFirma }, "IdFirma" },;
+      { "VN",            {|| IdVN    }, "IdVN" },;
+      { "Br.",           {|| BrNal   }, "BrNal" }, ;
+      { "R.br",          {|| RBr     }, "rbr", {|| wrbr() }, {|| vrbr() } },;
+      { "Konto",         {|| IdKonto }, "IdKonto", {|| .T. }, {|| P_Konto( @_IdKonto ), .T. } },;
+      { "Novi konto",    {|| konto2  }, "konto2", {|| .T. }, {|| P_Konto( @_konto2 ), .T. } },;
+      { "Partner",       {|| IdPartner }, "IdPartner", {|| .T. }, {|| P_Firma( @_idpartner ), .T. } },;
+      { "Novi partner",  {|| part2  }, "part2", {|| .T. }, {|| P_Firma( @_part2 ), .T. } },;
+      { "Br.veze ",      {|| BrDok   }, "BrDok" },;
+      { "Datum",         {|| DatDok  }, "DatDok" },;
+      { "D/P",           {|| D_P     }, "D_P" },;
+      { ValDomaca(),     {|| Transform( IznosBHD, FormPicL( gPicBHD, 15 ) ) }, "iznos " + AllTrim( ValDomaca() ) },;
+      { ValPomocna(),    {|| Transform( IznosDEM, FormPicL( gPicDEM, 10 ) ) }, "iznos " + AllTrim( ValPomocna() ) },;
+      { "Opis",          {|| Opis      }, "OPIS" }, ;
+      { "K1",            {|| k1      }, "k1" }, ;
+      { "K2",            {|| k2      }, "k2" }, ;
+      { "K3",            {|| k3iz256( k3 )      }, "k3" }, ;
+      { "K4",            {|| k4      }, "k4" } ;
+      }
 
-    case Ch==K_CTRL_T
-        
-        if Pitanje("p01","Zelite izbrisati ovu stavku ?","D")=="D"
-            my_delete()
-            return DE_REFRESH
-        endif
-        
-        return DE_CONT
+   Kol := {}
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
 
-    case Ch==K_ENTER
-        Scatter()
-        IF !VarEdit({{"Konto","_konto2","P_Konto(@_konto2)",,}}, 9,5,17,74,;
-               'POSTAVLJANJE NOVOG KONTA',;
-               "B1")
-            return DE_CONT
-        ELSE
-            Gather()
-            return DE_REFRESH
-        ENDIF
+   DO WHILE .T.
 
-    case Ch==K_ALT_A
-        AzurPPK()
-        return DE_REFRESH
+      Box(, 20, 77 )
+      @ m_x + 19, m_y + 2 SAY "                         ³                        ³                   "
+      @ m_x + 20, m_y + 2 SAY " <c-T>  Brisi stavku     ³ <ENTER>  Ispravi konto ³ <a-A> Azuriraj    "
+      ObjDbedit( "PPK", 20, 77, {|| EPPK() }, "", "Priprema za prebacivanje stavki", , , , , 2 )
+      BoxC()
 
-endcase
+      IF RECCOUNT2() > 0
+         i := KudaDalje( "ZAVRSAVATE SA PRIPREMOM PODATAKA. STA RADITI SA URADJENIM?", ;
+            { "AZURIRATI PODATKE", ;
+            "IZBRISATI PODATKE", ;
+            "VRATIMO SE U PRIPREMU" } )
+         DO CASE
+         CASE i == 1
+            AzurPPK()
+            EXIT
+         CASE i == 2
+            EXIT
+         CASE i == 3
+            GO TOP
+         ENDCASE
+      ELSE
+         EXIT
+      ENDIF
+   ENDDO
 
-return DE_CONT
+   my_close_all_dbf()
+
+   RETURN ( NIL )
 
 
 
- 
-static function AzurPPK()
-local lIndik1:=.f., lIndik2:=.f., nZapisa:=0, nSlog:=0, cStavka:="   "
-  
-SELECT SUBAN
-SET FILTER TO
-GO TOP
-  
-SELECT TEMP77
-  
-Postotak(1,RECCOUNT2(),"Azuriranje promjena na subanalitici",,,.t.)
-  
-GO TOP
-  
-f18_lock_tables({"fin_suban", "fin_anal", "fin_sint"})      
-sql_table_update( nil, "BEGIN" )
+STATIC FUNCTION EPPK()
 
-DO WHILE !EOF()
+   LOCAL nTr2
 
-    // azuriraj subanalitiku
-    if ( TEMP77->idkonto != TEMP77->konto2 )  
-        SELECT SUBAN
-        GO TEMP77->NSLOG
-        _rec := dbf_get_rec()
-        _rec["idkonto"] := temp77->konto2
-        update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
-    endif
+   IF ( Ch == K_CTRL_T .OR. Ch == K_ENTER ) .AND. reccount2() == 0
+      RETURN DE_CONT
+   ENDIF
 
-    if ( TEMP77->idpartner != TEMP77->part2 )  
-        SELECT SUBAN
-        GO TEMP77->NSLOG
-        _rec := dbf_get_rec()
-        _rec["idpartner"] := temp77->part2
-        update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
-    endif
+   SELECT temp77
 
-    // azuriraj analitiku
-    if TEMP77->idkonto!=TEMP77->konto2
-    
-        SELECT ANAL
-        GO TOP
-        SEEK TEMP77->(idfirma+idvn+brnal)
-    
-        lIndik1:=.f.
-        lIndik2:=.f.
-    
-        DO WHILE !EOF() .and. idfirma+idvn+brnal==TEMP77->(idfirma+idvn+brnal)
-    
-            IF idkonto==TEMP77->idkonto .and. !lIndik1
+   DO CASE
 
-                lIndik1:=.t.
+   CASE Ch == K_CTRL_T
 
-                _rec := dbf_get_rec()
+      IF Pitanje( "p01", "Zelite izbrisati ovu stavku ?", "D" ) == "D"
+         my_delete()
+         RETURN DE_REFRESH
+      ENDIF
 
-                IF TEMP77->d_p=="1"
-                    _rec["dugbhd"] := _rec["dugbhd"] - TEMP77->iznosbhd
-                    _rec["dugdem"] := _rec["dugdem"] - TEMP77->iznosdem
-                ELSE
-                    _rec["potbhd"] := _rec["potbhd"] - TEMP77->iznosbhd
-                    _rec["potdem"] := _rec["potdem"] - TEMP77->iznosdem
-                ENDIF
+      RETURN DE_CONT
 
-                update_rec_server_and_dbf( "fin_anal", _rec, 1, "CONT" )
-    
-            ELSEIF idkonto == TEMP77->konto2 .and. !lIndik2
+   CASE Ch == K_ENTER
+      Scatter()
+      IF !VarEdit( { { "Konto", "_konto2", "P_Konto(@_konto2)",, } }, 9, 5, 17, 74, ;
+            'POSTAVLJANJE NOVOG KONTA', ;
+            "B1" )
+         RETURN DE_CONT
+      ELSE
+         my_rlock()
+         Gather()
+         my_unlock()
+         RETURN DE_REFRESH
+      ENDIF
 
-                lIndik2:=.t.
+   CASE Ch == K_ALT_A
+      AzurPPK()
+      RETURN DE_REFRESH
 
-                _rec := dbf_get_rec()
+   ENDCASE
 
-                IF TEMP77->d_p=="1"
-                    _rec["dugbhd"] := _rec["dugbhd"] + TEMP77->iznosbhd
-                    _rec["dugdem"] := _rec["dugdem"] + TEMP77->iznosdem
-                ELSE
-                    _rec["potbhd"] := _rec["potbhd"] + TEMP77->iznosbhd
-                    _rec["potdem"] := _rec["potdem"] + TEMP77->iznosdem
-                ENDIF
+   RETURN DE_CONT
 
-                update_rec_server_and_dbf( "fin_anal", _rec, 1, "CONT" )
+
+
+
+STATIC FUNCTION AzurPPK()
+
+   LOCAL lIndik1 := .F., lIndik2 := .F., nZapisa := 0, nSlog := 0, cStavka := "   "
+
+   SELECT SUBAN
+   SET FILTER TO
+   GO TOP
+
+   SELECT TEMP77
+
+   Postotak( 1, RECCOUNT2(), "Azuriranje promjena na subanalitici",,, .T. )
+
+   GO TOP
+
+   f18_lock_tables( { "fin_suban", "fin_anal", "fin_sint" } )
+   sql_table_update( nil, "BEGIN" )
+
+   DO WHILE !Eof()
+
+      // azuriraj subanalitiku
+      IF ( TEMP77->idkonto != TEMP77->konto2 )
+         SELECT SUBAN
+         GO TEMP77->NSLOG
+         _rec := dbf_get_rec()
+         _rec[ "idkonto" ] := temp77->konto2
+         update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+      ENDIF
+
+      IF ( TEMP77->idpartner != TEMP77->part2 )
+         SELECT SUBAN
+         GO TEMP77->NSLOG
+         _rec := dbf_get_rec()
+         _rec[ "idpartner" ] := temp77->part2
+         update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+      ENDIF
+
+      // azuriraj analitiku
+      IF TEMP77->idkonto != TEMP77->konto2
+
+         SELECT ANAL
+         GO TOP
+         SEEK TEMP77->( idfirma + idvn + brnal )
+
+         lIndik1 := .F.
+         lIndik2 := .F.
+
+         DO WHILE !Eof() .AND. idfirma + idvn + brnal == TEMP77->( idfirma + idvn + brnal )
+
+            IF idkonto == TEMP77->idkonto .AND. !lIndik1
+
+               lIndik1 := .T.
+
+               _rec := dbf_get_rec()
+
+               IF TEMP77->d_p == "1"
+                  _rec[ "dugbhd" ] := _rec[ "dugbhd" ] - TEMP77->iznosbhd
+                  _rec[ "dugdem" ] := _rec[ "dugdem" ] - TEMP77->iznosdem
+               ELSE
+                  _rec[ "potbhd" ] := _rec[ "potbhd" ] - TEMP77->iznosbhd
+                  _rec[ "potdem" ] := _rec[ "potdem" ] - TEMP77->iznosdem
+               ENDIF
+
+               update_rec_server_and_dbf( "fin_anal", _rec, 1, "CONT" )
+
+            ELSEIF idkonto == TEMP77->konto2 .AND. !lIndik2
+
+               lIndik2 := .T.
+
+               _rec := dbf_get_rec()
+
+               IF TEMP77->d_p == "1"
+                  _rec[ "dugbhd" ] := _rec[ "dugbhd" ] + TEMP77->iznosbhd
+                  _rec[ "dugdem" ] := _rec[ "dugdem" ] + TEMP77->iznosdem
+               ELSE
+                  _rec[ "potbhd" ] := _rec[ "potbhd" ] + TEMP77->iznosbhd
+                  _rec[ "potdem" ] := _rec[ "potdem" ] + TEMP77->iznosdem
+               ENDIF
+
+               update_rec_server_and_dbf( "fin_anal", _rec, 1, "CONT" )
 
             ENDIF
 
             SKIP 1
 
-        ENDDO
-        
-        SKIP -1
-      
-        IF !lIndik2
+         ENDDO
+
+         SKIP -1
+
+         IF !lIndik2
 
             _rec := dbf_get_rec()
 
-            _rec["idkonto"] := TEMP77->konto2
-            _rec["rbr"] := NovaSifra( _rec["rbr"] )
+            _rec[ "idkonto" ] := TEMP77->konto2
+            _rec[ "rbr" ] := NovaSifra( _rec[ "rbr" ] )
 
-            IF gDatNal=="N"
-                _rec["datnal"] := TEMP77->datdok
+            IF gDatNal == "N"
+               _rec[ "datnal" ] := TEMP77->datdok
             ENDIF
 
-            _rec["dugbhd"] := IF(TEMP77->d_p=="1",TEMP77->iznosbhd,0)
-            _rec["potbhd"] := IF(TEMP77->d_p=="2",TEMP77->iznosbhd,0)
-            _rec["dugdem"] := IF(TEMP77->d_p=="1",TEMP77->iznosdem,0)
-            _rec["potdem"] := IF(TEMP77->d_p=="2",TEMP77->iznosdem,0)
+            _rec[ "dugbhd" ] := IF( TEMP77->d_p == "1", TEMP77->iznosbhd, 0 )
+            _rec[ "potbhd" ] := IF( TEMP77->d_p == "2", TEMP77->iznosbhd, 0 )
+            _rec[ "dugdem" ] := IF( TEMP77->d_p == "1", TEMP77->iznosdem, 0 )
+            _rec[ "potdem" ] := IF( TEMP77->d_p == "2", TEMP77->iznosdem, 0 )
 
             APPEND BLANK
 
             update_rec_server_and_dbf( "fin_anal", _rec, 1, "CONT" )
 
-        ENDIF
-    
-    endif
+         ENDIF
 
-    // azuriraj sintetiku
-    if LEFT( TEMP77->idkonto, 3 ) != LEFT( TEMP77->konto2, 3 )
+      ENDIF
 
-        SELECT SINT
-        GO TOP
-        SEEK TEMP77->(idfirma+idvn+brnal)
+      // azuriraj sintetiku
+      IF Left( TEMP77->idkonto, 3 ) != Left( TEMP77->konto2, 3 )
 
-        lIndik1:=.f.
-        lIndik2:=.f.
-        
-        DO WHILE !EOF() .and. idfirma+idvn+brnal == TEMP77->(idfirma+idvn+brnal)
-            
-            IF idkonto==LEFT(TEMP77->idkonto,3) .and. !lIndik1
+         SELECT SINT
+         GO TOP
+         SEEK TEMP77->( idfirma + idvn + brnal )
 
-                lIndik1:=.t.
-    
-                _rec := dbf_get_rec()
+         lIndik1 := .F.
+         lIndik2 := .F.
 
-                IF TEMP77->d_p=="1"
-                    _rec["dugbhd"] := _rec["dugbhd"] + TEMP77->iznosbhd
-                    _rec["dugdem"] := _rec["dugdem"] + TEMP77->iznosdem
-                ELSE
-                    _rec["potbhd"] := _rec["potbhd"] + TEMP77->iznosbhd
-                    _rec["potdem"] := _rec["potdem"] + TEMP77->iznosdem
-                ENDIF
+         DO WHILE !Eof() .AND. idfirma + idvn + brnal == TEMP77->( idfirma + idvn + brnal )
 
-                update_rec_server_and_dbf( "fin_sint", _rec, 1, "CONT" )
+            IF idkonto == Left( TEMP77->idkonto, 3 ) .AND. !lIndik1
 
-            ELSEIF idkonto == LEFT(TEMP77->konto2,3) .and. !lIndik2
-                
-                lIndik2:=.t.
+               lIndik1 := .T.
 
-                _rec := dbf_get_rec()
+               _rec := dbf_get_rec()
 
-                IF TEMP77->d_p=="1"
-                    _rec["dugbhd"] := _rec["dugbhd"] + TEMP77->iznosbhd
-                    _rec["dugdem"] := _rec["dugdem"] + TEMP77->iznosdem
-                ELSE
-                    _rec["potbhd"] := _rec["potbhd"] + TEMP77->iznosbhd
-                    _rec["potdem"] := _rec["potdem"] + TEMP77->iznosdem
-                ENDIF
+               IF TEMP77->d_p == "1"
+                  _rec[ "dugbhd" ] := _rec[ "dugbhd" ] + TEMP77->iznosbhd
+                  _rec[ "dugdem" ] := _rec[ "dugdem" ] + TEMP77->iznosdem
+               ELSE
+                  _rec[ "potbhd" ] := _rec[ "potbhd" ] + TEMP77->iznosbhd
+                  _rec[ "potdem" ] := _rec[ "potdem" ] + TEMP77->iznosdem
+               ENDIF
 
-                update_rec_server_and_dbf( "fin_sint", _rec, 1, "CONT" )
+               update_rec_server_and_dbf( "fin_sint", _rec, 1, "CONT" )
+
+            ELSEIF idkonto == Left( TEMP77->konto2, 3 ) .AND. !lIndik2
+
+               lIndik2 := .T.
+
+               _rec := dbf_get_rec()
+
+               IF TEMP77->d_p == "1"
+                  _rec[ "dugbhd" ] := _rec[ "dugbhd" ] + TEMP77->iznosbhd
+                  _rec[ "dugdem" ] := _rec[ "dugdem" ] + TEMP77->iznosdem
+               ELSE
+                  _rec[ "potbhd" ] := _rec[ "potbhd" ] + TEMP77->iznosbhd
+                  _rec[ "potdem" ] := _rec[ "potdem" ] + TEMP77->iznosdem
+               ENDIF
+
+               update_rec_server_and_dbf( "fin_sint", _rec, 1, "CONT" )
 
             ENDIF
-    
+
             SKIP 1
-     
-        ENDDO
-      
-        SKIP -1
-      
-        IF !lIndik2
+
+         ENDDO
+
+         SKIP -1
+
+         IF !lIndik2
 
             _rec := dbf_get_rec()
 
-            _rec["idkonto"] := LEFT( TEMP77->konto2, 3 )
-            _rec["rbr"] := NovaSifra( _rec["rbr"] )
+            _rec[ "idkonto" ] := Left( TEMP77->konto2, 3 )
+            _rec[ "rbr" ] := NovaSifra( _rec[ "rbr" ] )
 
-            IF gDatNal=="N"
-                _rec["datnal"] := TEMP77->datdok
+            IF gDatNal == "N"
+               _rec[ "datnal" ] := TEMP77->datdok
             ENDIF
 
-            _rec["dugbhd"] := IF(TEMP77->d_p=="1",TEMP77->iznosbhd,0)
-            _rec["potbhd"] := IF(TEMP77->d_p=="2",TEMP77->iznosbhd,0)
-            _rec["dugdem"] := IF(TEMP77->d_p=="1",TEMP77->iznosdem,0)
-            _rec["potdem"] := IF(TEMP77->d_p=="2",TEMP77->iznosdem,0)
+            _rec[ "dugbhd" ] := IF( TEMP77->d_p == "1", TEMP77->iznosbhd, 0 )
+            _rec[ "potbhd" ] := IF( TEMP77->d_p == "2", TEMP77->iznosbhd, 0 )
+            _rec[ "dugdem" ] := IF( TEMP77->d_p == "1", TEMP77->iznosdem, 0 )
+            _rec[ "potdem" ] := IF( TEMP77->d_p == "2", TEMP77->iznosdem, 0 )
 
             APPEND BLANK
 
             update_rec_server_and_dbf( "fin_sint", _rec, 1, "CONT" )
 
-        ENDIF
+         ENDIF
 
-    endif
+      ENDIF
 
-    SELECT TEMP77
-    SKIP 1
+      SELECT TEMP77
+      SKIP 1
 
-    Postotak( 2, ++ nZapisa,,,, .f. )
-  
-ENDDO
- 
-Postotak(-1,,,,,.f.)
+      Postotak( 2, ++nZapisa,,,, .F. )
 
-select TEMP77  
-my_dbf_zap()
+   ENDDO
 
-SELECT ANAL
-nZapisa := 0
-  
-Postotak(1,RECCOUNT2(),"Azuriranje promjena na analitici",,,.f.)
-  
-GO TOP
-  
-DO WHILE !EOF()
-    IF dugbhd==0 .and. potbhd==0 .and. dugdem==0 .and. potdem==0
-        SKIP 1
-        nSlog:=RECNO()
-        SKIP -1
-        _rec := dbf_get_rec()
-        delete_rec_server_and_dbf( "fin_anal", _rec, 1, "CONT" )
-        GO nSlog
-    ELSE
-        SKIP 1
-    ENDIF
-    Postotak(2,++nZapisa,,,,.f.)
-ENDDO
-  
-Postotak(-1,,,,,.f.)
+   Postotak( -1,,,,, .F. )
 
-SELECT SINT
-nZapisa:=0
-  
-Postotak(1,RECCOUNT2(),"Azuriranje promjena na sintetici",,,.f.)
-  
-GO TOP
+   SELECT TEMP77
+   my_dbf_zap()
 
-DO WHILE !EOF()
-    
-    IF dugbhd==0 .and. potbhd==0 .and. dugdem==0 .and. potdem==0
-        SKIP 1
-        nSlog:=RECNO()
-        SKIP -1
-        _rec := dbf_get_rec()
-        delete_rec_server_and_dbf( "fin_sint", _rec, 1, "CONT" )
-        GO nSlog
-    ELSE
-        SKIP 1
-    ENDIF
-    Postotak(2,++nZapisa,,,,.f.)
-ENDDO
-  
-Postotak(-1,,,,,.t.)
+   SELECT ANAL
+   nZapisa := 0
 
-f18_free_tables({"fin_suban", "fin_anal", "fin_sint"})      
-sql_table_update( nil, "END" )
+   Postotak( 1, RECCOUNT2(), "Azuriranje promjena na analitici",,, .F. )
 
-select TEMP77
-use
+   GO TOP
 
-RETURN
+   DO WHILE !Eof()
+      IF dugbhd == 0 .AND. potbhd == 0 .AND. dugdem == 0 .AND. potdem == 0
+         SKIP 1
+         nSlog := RecNo()
+         SKIP -1
+         _rec := dbf_get_rec()
+         delete_rec_server_and_dbf( "fin_anal", _rec, 1, "CONT" )
+         GO nSlog
+      ELSE
+         SKIP 1
+      ENDIF
+      Postotak( 2, ++nZapisa,,,, .F. )
+   ENDDO
+
+   Postotak( -1,,,,, .F. )
+
+   SELECT SINT
+   nZapisa := 0
+
+   Postotak( 1, RECCOUNT2(), "Azuriranje promjena na sintetici",,, .F. )
+
+   GO TOP
+
+   DO WHILE !Eof()
+
+      IF dugbhd == 0 .AND. potbhd == 0 .AND. dugdem == 0 .AND. potdem == 0
+         SKIP 1
+         nSlog := RecNo()
+         SKIP -1
+         _rec := dbf_get_rec()
+         delete_rec_server_and_dbf( "fin_sint", _rec, 1, "CONT" )
+         GO nSlog
+      ELSE
+         SKIP 1
+      ENDIF
+      Postotak( 2, ++nZapisa,,,, .F. )
+   ENDDO
+
+   Postotak( -1,,,,, .T. )
+
+   f18_free_tables( { "fin_suban", "fin_anal", "fin_sint" } )
+   sql_table_update( nil, "END" )
+
+   SELECT TEMP77
+   USE
+
+   RETURN
 
 
 
 /*! \fn ZadnjiRbr()
- *  \brief Vraca zadnji redni broj 
+ *  \brief Vraca zadnji redni broj
  */
- 
-function ZadnjiRBR()
 
-local nZRBR:=0
-local nObl:=SELECT()
+FUNCTION ZadnjiRBR()
 
-O_FIN_PRIPR
-go bottom
-nZRBR:=VAL(rbr)
-select (nObl)
-return (nZRBR)
+   LOCAL nZRBR := 0
+   LOCAL nObl := Select()
 
+   O_FIN_PRIPR
+   GO BOTTOM
+   nZRBR := Val( rbr )
+   SELECT ( nObl )
 
+   RETURN ( nZRBR )

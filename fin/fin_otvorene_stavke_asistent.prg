@@ -275,6 +275,7 @@ FUNCTION konsultos( xEdit )
       IF Round( nDug - nPot, 2 ) <> 0
         	
          SELECT ostav
+         
          APPEND BLANK
           	
          // replace iznosbhd with (ndug-npot), datdok with dDatDok, brdok with cbrdok
@@ -354,7 +355,6 @@ FUNCTION konsultos( xEdit )
    fGenerisano := .F.
 
    IF fM3 .AND. Pitanje( "", "Izgenerisati stavke u nalogu za knjizenje ?", "D" ) == "D"
-      // napraviti stavke?
 
       SELECT ( F_OSTAV )
       GO TOP
@@ -363,9 +363,11 @@ FUNCTION konsultos( xEdit )
 
       DO WHILE !Eof()
 
-         IF field->m2 == "3"
-      				
+         IF field->m2 == "3" 
+            
+            my_rlock()		
             REPLACE field->m2 WITH ""
+            my_unlock()
       				
             SELECT ( F_FIN_PRIPR )
       				
@@ -425,8 +427,10 @@ FUNCTION konsultos( xEdit )
 
             wBrDok    := ostav->brdok
             wiznosdem := if( Round( nNaz, 4 ) == 0, 0, wiznosbhd / nNaz )
-      				
+      			
+            my_rlock()
             Gather( "w" )
+            my_unlock()
 
             SELECT ( F_OSTAV )
     			
@@ -453,7 +457,9 @@ FUNCTION konsultos( xEdit )
          my_delete()
       ELSE
          // pa ga za svaki slucaj pohrani
+         my_rlock()
          Gather()
+         my_unlock()
       ENDIF
 
       _k3 := K3Iz256( _k3 )

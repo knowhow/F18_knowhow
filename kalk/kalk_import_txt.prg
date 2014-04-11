@@ -2045,7 +2045,9 @@ do while !EOF()
 	// upisi zapis
 	Scatter()
 	_sifradob := cSifra
+    my_rlock()
 	Gather()
+    my_unlock()
 	
 	// potrazi sifru u matrici
 	nRes := ASCAN(aSDob, {|aVal| aVal[1] == cSifra})

@@ -840,7 +840,9 @@ if LastKey() == K_ESC
     return 0
 endif
 
+my_rlock()
 Gather()
+my_unlock()
 
 // izadji ako je dodavanje novog zapisa...
 if lNew 
@@ -854,7 +856,9 @@ if ( nL_nv <> field->nv ) .or. ( nL_znv <> field->z_nv )
     nTmp := ROUND( field->nv, 4 ) - ROUND( field->z_nv, 4 )
     nOdst := ( nTmp / ROUND( field->z_nv, 4 )) * 100
 
+    my_rlock()
     replace field->odst with ROUND( nOdst, 2 )
+    my_unlock()
 
 endif
 

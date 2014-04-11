@@ -242,7 +242,9 @@ enddo
 
 // azuriram R_PDV za stavke KUF-a
 SELECT r_pdv
+my_rlock()
 Gather()
+my_unlock()
 
 SELECT KUF
 use
@@ -401,7 +403,9 @@ zaok_p_pdv()
 nPdvSaldo := _i_pdv_uk -  _u_pdv_uk 
 _pdv_uplati := nPdvSaldo
 
+my_rlock()
 Gather()
+my_unlock()
 
 SELECT KIF
 use
@@ -481,7 +485,9 @@ Scatter()
 
 SELECT (F_R_PDV)
 // zapisi u report
+my_rlock()
 Gather()
+my_unlock()
 
 SELECT (F_PDV)
 use

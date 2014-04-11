@@ -901,7 +901,9 @@ else
             @ m_x+2, m_y+2 SAY "Status: Ispravljam stavku  "
             Scatter()
             _kolicina+=nKolicina
+            my_rlock()
             Gather()
+            my_unlock()
             nEdit++
             select fakt
             skip

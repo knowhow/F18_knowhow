@@ -1336,13 +1336,14 @@ FUNCTION SetNcTo0()
    O_KALK_PRIPR
    SELECT kalk_pripr
    GO TOP
+   my_flock()
    DO WHILE !Eof()
       Scatter()
       _nc := 0
       Gather()
       SKIP
    ENDDO
-
+   my_unlock()
    GO TOP
 
    RETURN
@@ -1953,8 +1954,9 @@ FUNCTION RaspTrosk( fSilent )
                ELSE
                   Marza()
                ENDIF
-
+               my_rlock()
                Gather()
+               my_unlock()
                SKIP
             ENDDO
          ENDIF // cidvd $ 10
@@ -1985,7 +1987,9 @@ FUNCTION RaspTrosk( fSilent )
                Marza2()
                _TMarza2 := "A"
                _Marza2 := nMarza2
+               my_rlock()
                Gather()
+               my_unlock()
                SKIP
             ENDDO
          ENDIF // cidvd $ "11#12#13"
@@ -2000,7 +2004,6 @@ FUNCTION RaspTrosk( fSilent )
    GO TOP
 
    RETURN
-// }
 
 
 
@@ -2211,6 +2214,7 @@ FUNCTION PlusMinusKol()
    o_kalk_edit()
    SELECT kalk_pripr
    GO TOP
+   my_flock()
    DO WHILE !Eof()
       Scatter()
       _kolicina := -_kolicina
@@ -2218,13 +2222,14 @@ FUNCTION PlusMinusKol()
       Gather()
       SKIP 1
    ENDDO
+   my_unlock()
    // Msg("Automatski pokrecem asistenta (Alt+F10)!",1)
    // lAutoAsist:=.t.
    KEYBOARD Chr( K_ESC )
-   CLOSERET
+
+   my_close_all_dbf()
 
    RETURN
-// }
 
 
 
@@ -2239,6 +2244,7 @@ FUNCTION UzmiTarIzSif()
    o_kalk_edit()
    SELECT kalk_pripr
    GO TOP
+   my_flock()
    DO WHILE !Eof()
       Scatter()
       _idtarifa := Ocitaj( F_ROBA, _idroba, "idtarifa" )
@@ -2246,10 +2252,11 @@ FUNCTION UzmiTarIzSif()
       Gather()
       SKIP 1
    ENDDO
+   my_unlock()
    Msg( "Automatski pokrecem asistenta (opcija A)!", 1 )
    lAutoAsist := .T.
    KEYBOARD Chr( K_ESC )
-   CLOSERET
+   my_close_all_dbf()
 
    RETURN
 // }
@@ -2268,6 +2275,7 @@ FUNCTION DiskMPCSAPP()
    o_kalk_edit()
    SELECT kalk_pripr
    GO TOP
+   my_flock()
    DO WHILE !Eof()
       SELECT ROBA
       HSEEK kalk_pripr->idroba
@@ -2283,10 +2291,11 @@ FUNCTION DiskMPCSAPP()
       Gather()
       SKIP 1
    ENDDO
+   my_unlock()
    Msg( "Automatski pokrecem asistenta (opcija A)!", 1 )
    lAutoAsist := .T.
    KEYBOARD Chr( K_ESC )
-   CLOSERET
+   my_close_all_dbf()
 
    RETURN
 // }
@@ -2316,7 +2325,7 @@ FUNCTION MPCSAPPuSif()
          SKIP 1
       ENDDO
    ENDDO
-   CLOSERET
+   my_close_all_dbf()
 
    RETURN
 // }
@@ -2358,7 +2367,7 @@ FUNCTION MPCSAPPiz80uSif()
       SKIP 1
    ENDDO
 
-   CLOSERET
+   my_close_all_dbf()
 
    RETURN
 // }
@@ -2376,6 +2385,7 @@ FUNCTION VPCSifUDok()
    o_kalk_edit()
    SELECT kalk_pripr
    GO TOP
+   my_flock()
    DO WHILE !Eof()
       SELECT ROBA; HSEEK kalk_pripr->idroba
       SELECT KONCIJ; SEEK Trim( kalk_pripr->mkonto )
@@ -2387,10 +2397,11 @@ FUNCTION VPCSifUDok()
       Gather()
       SKIP 1
    ENDDO
+   my_unlock()
    Msg( "Automatski pokrecem asistenta (opcija A)!", 1 )
    lAutoAsist := .T.
    KEYBOARD Chr( K_ESC )
-   CLOSERET
+   my_close_all_dbf()
 
    RETURN
 // }
@@ -2837,7 +2848,9 @@ FUNCTION PopustKaoNivelacijaMP()
       WMpc( .T. )
       _error := " "
       SELECT kalk_pripr
+      my_rlock()
       Gather()
+      my_unlock()
       SKIP 1
    ENDDO
    IF lImaPromjena

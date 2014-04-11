@@ -346,7 +346,9 @@ append blank
 Scatter()
 _fnd_par_no := nFndParNo
 _fnd_par_ty := PADR(cFndParType, 10)
+my_rlock()
 Gather()
+my_unlock()
 
 go top
 

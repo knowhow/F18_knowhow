@@ -62,8 +62,10 @@ select _docs
 if l_new_doc
 	append blank
 endif
-   
+
+my_rlock()   
 Gather()
+my_unlock()
 
 return 1
 

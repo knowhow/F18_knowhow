@@ -118,22 +118,6 @@ else
 endif
 
 
-// -----------------------------------------------------------
-// Ponisti datum valutiranja u dokumentima pocetnog stanja
-// -----------------------------------------------------------
-function PonDVPS()
-O_SUBAN
-SET ORDER TO TAG "4"
-SEEK gFirma+"00"
-DO WHILE !EOF() .and. IDFIRMA+IDVN==gFirma+"00"
-	Scatter()
-      	_datval := CTOD("")
-    	Gather()
-    	SKIP 1
-ENDDO
-CLOSERET
-return
-
 
 // ------------------------------------------
 // prikaz vrijednosti na izvjestaju

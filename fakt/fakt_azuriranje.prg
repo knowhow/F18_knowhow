@@ -1115,7 +1115,9 @@ Gather()
 
 MsgBeep("Formirana je dodatna stavka. Vratite se tipkom <Esc> u pripremu"+"#i prekontrolisite fakturu!")
 
-CLOSERET
+my_close_all_dbf()
+
+RETURN
 
 
 // ---------------------------------------------------

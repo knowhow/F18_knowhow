@@ -626,7 +626,9 @@ if ! ( (Ch==K_CTRL_T .or. Ch==K_ENTER) .and. reccount2()==0 )
             IF LASTKEY() == K_ESC
                 GO (nRec)
             ELSE
+                my_rlock()
                 Gather()
+                my_unlock()
                 nVrati := DE_REFRESH
             ENDIF
 

@@ -55,6 +55,8 @@ STATIC FUNCTION fill( nRataIznos, nDanUplate, lNaredni )
    SELECT kam_pripr
    GO TOP
 
+   my_flock()
+
    Scatter()
    nOsn := _osnovica
    nMonth := Month( _datOd )
@@ -65,6 +67,7 @@ STATIC FUNCTION fill( nRataIznos, nDanUplate, lNaredni )
    ENDIF
 
    _datDo := d_m_y( nDanUplate, nMonth, nYear )
+
    Gather()
 
    DO WHILE !Eof()
@@ -85,6 +88,8 @@ STATIC FUNCTION fill( nRataIznos, nDanUplate, lNaredni )
       ENDIF
 
    ENDDO
+
+   my_unlock()
 
    RETURN
 

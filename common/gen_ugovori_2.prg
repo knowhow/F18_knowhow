@@ -184,7 +184,8 @@ O_FAKT_PRIPR
 
 if RecCount2() <> 0
     MsgBeep("U pripremi postoje dokumenti#Prekidam generaciju!")
-    closeret
+    my_close_all_dbf()
+    return
 endif
 
 // ako postoji vec generisano za datum sta izadji ili nastavi
@@ -880,8 +881,10 @@ do while !EOF() .and. ( id == cUId )
 
     // dodaj u kontrolnu matricu sta je generisano
     add_to_generated_data( @aData, _idfirma, _idtipdok, _brdok, _idpartner, __destinacija )
-    
+   
+    my_rlock() 
     Gather()
+    my_unlock()
     
     // resetuj _txt
     _txt := ""
@@ -935,7 +938,9 @@ Scatter()
 // obradi djokere
 txt_djokeri(nSaldoKup, nSaldoDob, dPUplKup, dPPromKup, dPPromDob, dDatLUpl, cUPartn )
 
+my_rlock()
 Gather()
+my_unlock()
 
 go (nTRec)
 

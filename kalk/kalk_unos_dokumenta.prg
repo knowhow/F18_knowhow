@@ -177,16 +177,6 @@ FUNCTION o_kalk_edit()
       O_KALK_PRIPR
    ENDIF
 
-   SELECT F_DOKSRC
-   IF !Used()
-      O_DOKSRC
-   ENDIF
-
-   SELECT F_P_DOKSRC
-   IF !Used()
-      O_P_DOKSRC
-   ENDIF
-
    SELECT F_SIFK
    IF !Used()
       O_SIFK
@@ -489,11 +479,7 @@ FUNCTION kalk_pripr_key_handler()
             kalk_pripr->idvd + "-" + ;
             kalk_pripr->brdok
 
-
          my_dbf_zap()
-         SELECT p_doksrc
-         my_dbf_zap()
-         SELECT kalk_pripr
 
          log_write( "F18_DOK_OPER: kalk, brisanje pripreme: " + cOpis, 2 )
 

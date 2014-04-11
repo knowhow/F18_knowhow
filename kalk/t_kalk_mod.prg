@@ -310,6 +310,7 @@ METHOD setGVars()
    PUBLIC glBrojacPoKontima := .F.
    PUBLIC glEvidOtpis
    PUBLIC gcSLObrazac
+   PUBLIC ZAOKRUZENJE := 2
 
    // inicijalizujem ovu varijablu uvijek pri startu
    // ona sluzi za automatsku obradu kalkulacija

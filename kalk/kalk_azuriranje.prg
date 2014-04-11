@@ -1246,9 +1246,6 @@ if _brisi_kum
         return
     endif
 
-    // vrati i dokument iz kalk_doksRC
-    povrat_doksrc( _id_firma, _id_vd, _br_dok )
-
 endif
 
 select kalk_doks

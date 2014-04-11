@@ -1,3 +1,12 @@
+1.7.31  2014-04-11, vsasa
+
+  - FAKT, udaljene lokacije prenos
+  - KALK, izbrisani pozivi tabela P_DOKSRC, DOKSRC
+  - KALK, razmjena podataka FAKT->KALK
+  - FIN, štampa suban kartice, filovanje tabele
+  - KALK, ažuriranje fakt dokumenta prenos
+  - razni lock required bugovi fix 
+
 1.7.30  2014-04-10, vsasa
 
   - RNAL, import podataka iz CSV fajlova

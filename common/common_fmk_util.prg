@@ -317,7 +317,7 @@ endif
 
 SELECT(F_SIFV)
 if !USED()
-	O_SIFV
+	use_sql_sifv( PADR( "ADRES", 8 ) )
 endif
  
 P_Adres()
@@ -369,40 +369,8 @@ NEXT
 
 PushWa()
 
-select sifk
-set order to tag "ID"
-seek "ADRES   "
+sif_sifk_fill_kol( PADR( "ADRES", 8 ), @ImeKol, @Kol )
 
-do while !eof() .and. ID="ADRES   "
-
- AADD (ImeKol, {  IzSifKNaz("ADRES   ",SIFK->Oznaka) })
- AADD (ImeKol[Len(ImeKol)], &( "{|| ToStr(IzSifk('ADRES   ','" + sifk->oznaka + "')) }" ) )
- AADD (ImeKol[Len(ImeKol)], "SIFK->"+SIFK->Oznaka )
- if sifk->edkolona > 0
-   for ii:=4 to 9
-    AADD( ImeKol[Len(ImeKol)], NIL  )
-   next
-   AADD( ImeKol[Len(ImeKol)], sifk->edkolona  )
- else
-   for ii:=4 to 10
-    AADD( ImeKol[Len(ImeKol)], NIL  )
-   next
- endif
-
- // postavi picture za brojeve
- if sifk->Tip="N"
-   if f_decimal > 0
-     ImeKol [Len(ImeKol),7] := replicate("9", sifk->duzina-sifk->f_decimal-1 )+"."+replicate("9",sifk->f_decimal)
-   else
-     ImeKol [Len(ImeKol),7] := replicate("9", sifk->duzina )
-   endif
- endif
-
- AADD  (Kol, iif( sifk->UBrowsu='1',++i, 0) )
-
- skip
-
-enddo
 PopWa()
 
 return PostojiSifra( F_ADRES, 1, MAXROWS()-15, MAXCOLS()-3,"Adresar:",@cId,dx,dy, {|Ch| AdresBlok(Ch)} )

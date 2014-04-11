@@ -1,3 +1,7 @@
+1.7.32  2014-04-11, vsasa
+
+  - otvaranje adresara - bugfix
+ 
 1.7.31  2014-04-11, vsasa
 
   - FAKT, udaljene lokacije prenos

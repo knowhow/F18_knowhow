@@ -318,12 +318,23 @@ if _copy_sif == "D"
 
         _pr_konto := field->idkonto
         _pr_partn := field->idpartner
-       
-        if !EMPTY( _pr_konto )
-            append_sif_konto( _pr_konto, konto_data )
-        endif
 
-        if !EMPTY( _pr_partn )
+		// 1.       
+        if !EMPTY( _pr_konto )
+       		
+			append_sif_konto( _pr_konto, konto_data )
+				
+			// insert grupe, klase, sintetike
+			// 1) grupa
+        	append_sif_konto( PADR( LEFT( _pr_konto, 1 ), 7 ), konto_data )
+			// 2) klasa
+        	append_sif_konto( PADR( LEFT( _pr_konto, 2 ), 7 ), konto_data )
+			// 3) sintetika
+        	append_sif_konto( PADR( LEFT( _pr_konto, 3 ), 7 ), konto_data )
+
+		endif
+        
+		if !EMPTY( _pr_partn )
             append_sif_partn( _pr_partn, partn_data )
         endif
 
@@ -380,11 +391,8 @@ do while !konto_data:EOF()
         // imamo ga !!!
         _kto_id := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos("id") ) )
         _kto_naz := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos("naz") ) )
-
         _append := .t.
-
         exit
-
     endif
 
     konto_data:Skip()

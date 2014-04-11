@@ -1470,10 +1470,11 @@ Box(, 15, 60 )
 					   .and. _razl_cijene == "N" )
 
 						// samo odradi append kolicine
+						my_rlock()
 						replace field->kolicina with ;
 							field->kolicina + ;
 							fakt->kolicina 
-					
+						my_unlock()
 					else
 					
 						private aPorezi:={}
@@ -1546,6 +1547,7 @@ Box(, 15, 60 )
 Boxc()
 
 my_close_all_dbf()
+
 return
 
 

@@ -1581,7 +1581,9 @@ _txt:=Chr(16)+trim(_txt1)+Chr(17) + Chr(16)+_txt2+Chr(17)+;
       IF( lDoks2 , Chr(16)+d2n2+Chr(17) , "" )
 
 if !fSilent
+    my_rlock()
     Gather()
+    my_unlock()
 endif
 
 return
@@ -2010,7 +2012,9 @@ if datDok<>dDatDok
     lSetujDatum:=.t.
 endif
 
+my_rlock()
 Gather()
+my_unlock()
 
 return
 

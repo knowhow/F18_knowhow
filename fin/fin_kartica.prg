@@ -59,8 +59,12 @@ return
 // otvara potrebne tabele za izvjestaj kartice
 static function o_kart_tbl()
 
+my_close_all_dbf()
+
 O_KONTO
 O_PARTN
+O_SIFK
+O_SIFV
 O_RJ
 O_SUBAN
 O_TDOK
@@ -1024,7 +1028,8 @@ if cExpDbf == "D"
   	tbl_export( cLaunch )
 endif
 
-closeret
+my_close_all_dbf()
+
 return
 
 

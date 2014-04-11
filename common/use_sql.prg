@@ -324,8 +324,8 @@ function use_sql_sifk( cDbf, cOznaka )
 
 
    if cDbf == NIL .and. cOznaka == NIL
-
       INDEX ON ID+SORT+NAZ TAG ID  TO ( cTable )
+      INDEX ON ID+OZNAKA TAG ID2  TO ( cTable )
       INDEX ON NAZ             TAG NAZ TO ( cTable )
       SET ORDER TO TAG ID
    endif
@@ -340,6 +340,7 @@ function use_sql_sifk( cDbf, cOznaka )
 function use_sql_sifv( cDbf, cOznaka, cIdSif, cVrijednost )
 
    LOCAL cSql
+   LOCAL cTable := "sifv"
 
    IF cDbf == NIL
       SELECT F_SIFK
@@ -371,6 +372,11 @@ function use_sql_sifv( cDbf, cOznaka, cIdSif, cVrijednost )
    cSQL += " ORDER BY id,oznaka,idsif,naz" 
    SELECT F_SIFV
    use_sql( "sifv", cSql )
+
+   INDEX ON ID+OZNAKA+IDSIF+NAZ TAG ID  TO ( cTable )
+   INDEX ON ID+IDSIF TAG IDIDSIF  TO ( cTable )
+   GO TOP
+   SET ORDER TO TAG "ID"
 
    RETURN .T.
 

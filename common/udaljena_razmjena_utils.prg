@@ -649,9 +649,12 @@ PushWa()
 
 select e_sifk
 
-if reccount2() == 0  
+if RecCount2() == 0  
+
     // karakteristike upisi samo jednom i to sve
     // za svaki slucaj !
+
+	O_SIFK
     select sifk
     set order to tag "ID"
     go top
@@ -664,11 +667,16 @@ if reccount2() == 0
         select sifk
         skip
     enddo
+
 endif 
 
 // uzmi iz sifv sve one kod kojih je ID=ROBA, idsif=2MON0002
+use_sql_sifv()
+//INDEX ON ID + IDSIF TAG IDIDSIF TO "sifv" 
+
 select sifv
 set order to tag "IDIDSIF"
+
 seek PADR( sifrarnik, 8 ) + id_sif
 
 do while !EOF() .and. field->id = PADR( sifrarnik, 8 ) ;

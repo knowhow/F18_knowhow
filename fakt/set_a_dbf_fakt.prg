@@ -52,6 +52,21 @@ set_a_dbf_temp("_fakt_fakt"   ,   "_FAKT"        , F__FAKT   )
 set_a_dbf_temp("fakt_fapripr" ,    "FAKT_FAPRIPR" , F_FAKT_PRIPR )
 set_a_dbf_temp("fakt_pripr_atrib", "FAKT_ATRIB"   , F_FAKT_ATRIB )
 
+// tabele razmjene podataka udaljene lokacije
+set_a_dbf_temp("e_doks", "E_DOKS"   , F_TMP_E_DOKS )
+set_a_dbf_temp("e_doks2", "E_DOKS2"   , F_TMP_E_DOKS2 )
+set_a_dbf_temp("e_fakt", "E_FAKT"   , F_TMP_E_FAKT )
+set_a_dbf_temp("e_kalk", "E_KALK"   , F_TMP_E_KALK )
+set_a_dbf_temp("e_suban", "E_SUBAN"   , F_TMP_E_SUBAN )
+set_a_dbf_temp("e_sint", "E_SINT"   , F_TMP_E_SINT )
+set_a_dbf_temp("e_nalog", "E_NALOG"   , F_TMP_E_NALOG )
+set_a_dbf_temp("e_anal", "E_ANAL"   , F_TMP_E_ANAL )
+set_a_dbf_temp("e_roba", "E_ROBA"   , F_TMP_E_ROBA )
+set_a_dbf_temp("e_konto", "E_KONTO"   , F_TMP_E_KONTO )
+set_a_dbf_temp("e_partn", "E_PARTN"   , F_TMP_E_PARTN )
+set_a_dbf_temp("e_sifk", "E_SIFK"   , F_TMP_E_SIFK )
+set_a_dbf_temp("e_sifv", "E_SIFV"   , F_TMP_E_SIFV )
+
 return
 
 

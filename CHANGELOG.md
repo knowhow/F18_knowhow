@@ -1,3 +1,9 @@
+1.7.33  2014-04-11, vsasa
+
+  - korekcije poziva Gather() u mnogim dijelovima koda
+  - KALK, renumercija pripreme
+  - FIN, otvorene stavke lock required
+ 
 1.7.32  2014-04-11, vsasa
 
   - otvaranje adresara - bugfix

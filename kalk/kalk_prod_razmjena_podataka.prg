@@ -35,7 +35,7 @@ AADD(Opc,"7. fakt->kalk (15->15) izlaz iz MP putem VP")
 AADD(opcexe,{||  FaKaPrenos_izlaz_putem_vp() })
 private Izbor:=1
 Menu_SC("fkpr")
-CLOSERET
+my_close_all_dbf()
 
 return
 
@@ -205,10 +205,12 @@ do while .t.
 		endif
 		
 		// saberi kolicine za jedan artikal
+		my_rlock()
 		replace kolicina with ( kolicina + fakt->kolicina )
+		my_unlock()
        		
 		select fakt
-       		skip
+       	skip
      	
 	enddo
      
@@ -243,7 +245,7 @@ do while .t.
 enddo
 
 Boxc()
-closeret
+my_close_all_dbf()
 
 return
 
@@ -409,7 +411,7 @@ do while .t.
 
 enddo
 Boxc()
-closeret
+my_close_all_dbf()
 return
 *}
 
@@ -680,7 +682,7 @@ Box(,15,60)
 	enddo
 Boxc()
 
-closeret
+my_close_all_dbf()
 return
 
 
@@ -817,7 +819,7 @@ do while .t.
 
 enddo
 Boxc()
-closeret
+my_close_all_dbf()
 return
 *}
 
@@ -932,7 +934,8 @@ do while .t.
        cPKonto:=cIdKonto
        private aPorezi:={}
        cIdTarifa:=Tarifa(cPKonto, fakt->idroba , @aPorezi )
-       select kalk_pripr;       APPEND BLANK
+       select kalk_pripr
+	   APPEND BLANK
        replace idfirma with cIdFirma,;
                rbr     with str(++nRbr,3),;
                idvd with "80",;   // izlazna faktura
@@ -989,7 +992,7 @@ do while .t.
 
 enddo
 Boxc()
-closeret
+my_close_all_dbf()
 return
 *}
 
@@ -1117,7 +1120,9 @@ do while .t.
                    brdok with cBrKalk,;
                    idfirma with cidfirma
         endif
+		my_rlock()
         replace DatVal with dDatPl
+		my_unlock()
         select fakt
      endif
 
@@ -1176,7 +1181,7 @@ do while .t.
 
 enddo
 Boxc()
-closeret
+my_close_all_dbf()
 return
 
 

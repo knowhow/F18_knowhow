@@ -1,3 +1,7 @@
+1.7.34  2014-04-11, vsasa
+
+  - FAKT, lager lista - bugfix 
+ 
 1.7.33  2014-04-11, vsasa
 
   - korekcije poziva Gather() u mnogim dijelovima koda

@@ -37,9 +37,6 @@ AADD(_opcexe, {|| lst_ch_date() })
 AADD(_opc, "------------------------------------------- ")
 AADD(_opcexe, {|| nil })
 
-AADD(_opc, "M. montaza  ")
-AADD(_opcexe, {|| rnal_rpt_montaza() })
-
 AADD(_opc, "S. specifikacija naloga za poslovodje  ")
 AADD(_opcexe, {|| m_get_spec( 1 ) })
 
@@ -59,9 +56,6 @@ AADD(_opc, "K. kontrola prebacenih dokumenata  ")
 AADD(_opcexe, {|| m_rpt_check() })
 AADD(_opc, "Kp. popuni veze RNAL <> FAKT (dok.11) ")
 AADD(_opcexe, {|| chk_dok_11() })
-
-AADD(_opc, "X. mysql test ")
-AADD(_opcexe, {|| rnal_mysql_test() })
 
 AADD(_opc, "------------------------------------------- ")
 AADD(_opcexe, {|| nil })

@@ -4,39 +4,22 @@
 #10.8 macosc/darvin ne treba ovo
 {mingw|mingwce|(gcc&(linux))}libs=supc++
 
-#{mingw|mingwce|(gcc&(linux|darwin))}libs=supc++
-
-#{allwin&!HB_QT_STATIC}libs=QtCore4 QtGui4 QtNetwork4 QtWebKit4
-#{allwin&HB_QT_STATIC}libs=QtCore QtGui QtNetwork QtWebKit
-
-
-#{linux}libs=QtCore QtGui QtNetwork QtWebKit
-
-#{darwin}libs=/Library/Frameworks/QtCore.framework/QtCore
-#{darwin}libs=/Library/Frameworks/QtGui.framework/QtGui
-#{darwin}libs=/Library/Frameworks/QtNetwork.framework/QtNetwork
-#{darwin}libs=/Library/Frameworks/QtWebKit.framework/QtWebKit
-
-#libs=hbrtl hblang hbrdd hbrtl hbmacro hbpp rddcdx rddfpt rddntx
-#libs=hbsqlit3 sqlite3
-#libs=hbcommon 
 libs=hbct 
-#libs=hbclipsm
-libs=hbpgsql
-#libs=hbdebug
 libs=hbmzip minizip
 
 libs=hbtip
 
-#gt=gtcrs
 {unix}gt=gtxwc
 {darwin}gt=gtxwc
 
 {allwin}gt=gtwvt
-#{allwin}gt=gtwin
 
-{unix}libs=pq
-{!unix}libs=libpq
+libs=hbpgsql
+
+{unix|mingw}libs=pq
+{win}libs=libpq
+
+{mingw}libpaths=/usr/i586-mingw32msvc/lib
 {darwin}libpaths=/Library/PostgreSQL/9.1/lib
 
 

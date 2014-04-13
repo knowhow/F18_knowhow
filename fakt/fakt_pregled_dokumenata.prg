@@ -222,61 +222,6 @@ FUNCTION fakt_pregled_liste_dokumenata()
    RETURN
 
 
-
-// printaj narudzbenicu
-FUNCTION pr_nar( lOpcine )
-
-   SELECT fakt_doks
-   nTrec := RecNo()
-   _cIdFirma := idfirma
-   _cIdTipDok := idtipdok
-   _cBrDok := brdok
-
-   close_open_fakt_tabele()
-   StampTXT( _cidfirma, _cIdTipdok, _cbrdok, .T. )
-
-   nar_print( .T. )
-   SELECT ( F_FAKT_DOKS )
-   USE
-   O_FAKT_DOKS
-
-   O_PARTN
-   SELECT FAKT_DOKS
-   IF cFilter == ".t."
-      SET FILTER TO
-   ELSE
-      SET FILTER to &cFilter
-   ENDIF
-   GO nTrec
-
-   RETURN DE_CONT
-
-FUNCTION print_radni_nalog()
-
-   SELECT fakt_doks
-   nTrec := RecNo()
-   _cIdFirma := idfirma
-   _cIdTipDok := idtipdok
-   _cBrDok := brdok
-   close_open_fakt_tabele()
-   StampTXT( _cidfirma, _cIdTipdok, _cbrdok, .T. )
-
-   rnal_print( .T. )
-   SELECT ( F_FAKT_DOKS )
-   USE
-
-   O_FAKT_DOKS
-   O_PARTN
-   IF cFilter == ".t."
-      SET FILTER TO
-   ELSE
-      SET FILTER to &cFilter
-   ENDIF
-   GO nTrec
-
-   RETURN DE_CONT
-
-
 FUNCTION print_porezna_faktura( lOpcine )
 
    LOCAL nTrec
@@ -829,7 +774,9 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
 
    CASE Chr( Ch ) $ "nN"
 
-      nRet := pr_nar( lOpcine )
+      SELECT fakt_doks
+      fakt_print_narudzbenica( field->idFirma, field->IdTipDok, field->BrDok)
+      nRet := DE_CONT
       _refresh := .T.
 
    CASE Chr( Ch ) $ "fF"

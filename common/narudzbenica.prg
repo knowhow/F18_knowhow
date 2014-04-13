@@ -30,11 +30,8 @@ STATIC nDuzStrKorekcija := 0
 STATIC nSw6
 
 
-// glavna funkcija za poziv stampe fakture a4
-// lStartPrint - pozovi funkcije stampe START PRINT
-FUNCTION nar_print( lStartPrint )
+FUNCTION print_narudzbenica( lStartPrint )
 
-   // ako je nil onda je uvijek .t.
    IF lStartPrint == nil
       lStartPrint := .T.
    ENDIF
@@ -47,6 +44,10 @@ FUNCTION nar_print( lStartPrint )
 
    SELECT drn
    GO TOP
+
+   IF EOF()
+      RETURN .F.
+   ENDIF
 
    LEN_NAZIV( 53 )
    LEN_UKUPNO( 99 )

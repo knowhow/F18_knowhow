@@ -377,27 +377,27 @@ FUNCTION SubKart2( lOtvSt )
             IF fOtvSt .AND. cOtvSt == "9"
                nZDugBHD += nDBHD
                nZPotBHD += nPBHD
-            ELSE // otvorena stavka
+            ELSE
                @ PRow(), PCol() + 1 SAY nDBHD PICTURE picBHD
                @ PRow(), PCol() + 1 SAY nPBHD  PICTURE picBHD
                nDugBHD += nDBHD
                nPotBHD += nPBHD
-               IF cKumul == "2"   // prikaz kumulativa
+               IF cKumul == "2"
                   @ PRow(), PCol() + 1 SAY nDugBHD PICT picbhd
                   @ PRow(), PCol() + 1 SAY nPotBHD PICT picbhd
                ENDIF
             ENDIF
-         ELSEIF cDinDem == "2"   // devize
+         ELSEIF cDinDem == "2"
 
             IF fOtvSt .AND. cOtvSt == "9"
                nZDugDEM += nDDEM
                nZPotDEM += nPDEM
-            ELSE  // otvorena stavka
+            ELSE 
                @ PRow(), PCol() + 1 SAY nDDEM PICTURE picbhd
                @ PRow(), PCol() + 1 SAY nPDEM PICTURE picbhd
                nDugDEM += nDDEM
                nPotDEM += nPDEM
-               IF cKumul == "2"   // prikaz kumulativa
+               IF cKumul == "2"
                   @ PRow(), PCol() + 1 SAY nDugDEM PICT picbhd
                   @ PRow(), PCol() + 1 SAY nPotDEM PICT picbhd
                ENDIF
@@ -406,7 +406,7 @@ FUNCTION SubKart2( lOtvSt )
             IF fOtvSt .AND. cOtvSt == "9"
                nZDugBHD += nDBHD; nZDugDEM += nDDEM
                nZPotBHD += nPBHD; nZPotDEM += nPDEM
-            ELSE  // otvorene stavke
+            ELSE
                @ PRow(), PCol() + 1 SAY nDBHD PICTURE picBHD
                @ PRow(), PCol() + 1 SAY nPBHD PICTURE picBHD
                nDugBHD += nDBHD
@@ -422,7 +422,7 @@ FUNCTION SubKart2( lOtvSt )
          ENDIF
 
          IF !( fOtvSt .AND. cOtvSt == "9" )
-            // ******* saldo ..........
+            
             IF cDinDem = "1"
                @ PRow(), PCol() + 1 SAY nDugBHD - nPotBHD PICT picbhd
             ELSEIF cDinDem == "2"
@@ -444,7 +444,7 @@ FUNCTION SubKart2( lOtvSt )
             ENDIF
          ENDIF
 
-      ENDDO // konto
+      ENDDO
 
       IF cNula == "D" .OR. fprosao .OR.   Round( nZDugBHD - nZPotBHD, 2 ) <> 0
 
@@ -525,10 +525,10 @@ FUNCTION SubKart2( lOtvSt )
          EXIT
       ELSEIF nprolaz == 1
          SEEK cidfirma + qqkonto + cidpartner + Chr( 255 )
-         IF qqkonto <> idkonto // nema vise
+         IF qqkonto <> idkonto
             nProlaz := 2
             SEEK cidfirma + qqkonto2
-            cIdpartner := Replicate( "", Len( idpartner ) )
+            cIdpartner := Replicate( CHR( 255 ), Len( idpartner ) )
             IF !Found()
                EXIT
             ENDIF
@@ -538,7 +538,7 @@ FUNCTION SubKart2( lOtvSt )
 
       IF nProlaz == 2
          DO WHILE .T.
-            SEEK cidfirma + qqkonto2 + cidpartner + Chr( 255 )
+            SEEK cidfirma + qqkonto2 + cIdpartner + Chr( 255 )
             nTRec := RecNo()
             IF idkonto == qqkonto2
                cIdPartner := idpartner

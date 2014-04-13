@@ -20,16 +20,26 @@ STATIC lShowPopust
 STATIC cLine
 STATIC lPrintedTotal := .F.
 STATIC nStr := 0
-
-// ako se koristi PTXT onda se ova korekcija primjenjuje
-// za prikaz vecih fontova
 STATIC nDuzStrKorekcija := 0
-// prikaz samo kolicine 0, cijena 1
 STATIC nSw6
 
+/* public F18 varijable koje lib koristi */ 
 MEMVAR PicKol, PicDem, PicCDEM
 MEMVAR gFirma
 MEMVAR __print_opt
+
+
+/* 
+   Koristenje:
+   ----------
+   - Napunjen drn.dbf, za to se koristi stdokpdv()
+
+   Primjeri koristenja: 
+  ---------------------
+   fakt/fakt_print_narudzbenica.prg
+   - FUNCTION fakt_print_narudzbenica( cIdFirma, cIdTipDok, cBrDok )
+   - FUNCTION fakt_print_narudzbenica_priprema()
+*/
 
 FUNCTION print_narudzbenica()
 
@@ -73,6 +83,7 @@ STATIC FUNCTION generisi_rpt()
 
    STARTPRINT CRET .F.
 
+   // nSw6 = prikaz samo kolicine 0, cijena 1
    nSw6 := Val( get_dtxt_opis( "X09" ) )
 
    lPrintedTotal := .F.
@@ -169,7 +180,7 @@ STATIC FUNCTION generisi_rpt()
    endif
 
    IF nSw6 > 0
-      print_total( cLine, cValuta )
+      print_total( cValuta )
       lPrintedTotal := .T.
 
       IF PRow() > nDodRedova + ( LEN_STRANICA() - LEN_FOOTER )
@@ -282,7 +293,7 @@ STATIC FUNCTION nar_line()
 
    RETURN cLine
 
-STATIC FUNCTION print_total( cLine, cValuta )
+STATIC FUNCTION print_total( cValuta )
 
    LOCAL cSlovima
 

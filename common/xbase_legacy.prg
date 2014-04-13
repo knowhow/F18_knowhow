@@ -306,14 +306,15 @@ return nil
 function nerr(oe)
 break oe
 
-/*! \fn EofFndRet(ef, close)
- *  \brief Daje poruku da ne postoje podaci
- *  \param ef = .t.   gledaj eof();  ef == .f. gledaj found()
- *  \return  .t. ako ne postoje podaci
+/*  EofFndRet(ef, close)
+ *  Daje poruku da ne postoje podaci
+ *  param ef = .t.   gledaj eof();  ef == .f. gledaj found()
+ *  return  .t. ako ne postoje podaci
  */
  
 function EofFndRet(ef, close)
-local fRet:=.f., cStr:="Ne postoje trazeni podaci.."
+
+local fRet:=.f., cStr := "Ne postoje traženi podaci.."
 if ef // eof()
   if eof()
     if !gAppSrv

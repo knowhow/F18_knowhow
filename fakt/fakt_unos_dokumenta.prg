@@ -38,7 +38,7 @@ zadnji_fiscal_z_report_info()
 
 o_fakt_edit()
 
-select fakt_pripr
+select_fakt_pripr()
 
 // unos inventure
 if field->idtipdok == "IM"
@@ -145,7 +145,7 @@ if ( Ch == K_ENTER .and. EMPTY( field->brdok ) .and. EMPTY( field->rbr ) )
     return DE_CONT
 endif
 
-select fakt_pripr
+select_fakt_pripr()
 
 do case
 
@@ -198,7 +198,7 @@ do case
 
         MsgC()
 
-        select fakt_pripr
+        select_fakt_pripr()
     
         if _dev_params["print_a4"] $ "D#G#X"
             
@@ -207,14 +207,14 @@ do case
                 StampTXT( __id_firma, __tip_dok, __br_dok )
                 my_close_all_dbf()
                 o_fakt_edit()
-                select fakt_pripr
+                select_fakt_pripr()
             endif
         
             if _dev_params["print_a4"] $ "G#X" .and. Pitanje(,"Stampati graficku fakturu ?", "N") == "D"
                 stdokodt( __id_firma, __tip_dok, __br_dok )
                 my_close_all_dbf() 
                 o_fakt_edit()
-                select fakt_pripr
+                select_fakt_pripr()
             endif
 
             return DE_REFRESH
@@ -474,7 +474,7 @@ do case
         // pregled smeca
         Pripr9View()
         
-        select fakt_pripr
+        select_fakt_pripr()
         go top
         
         return DE_REFRESH
@@ -486,13 +486,13 @@ do case
         // prvo mi stampaj dokument
         stdokpdv( nil, nil, nil, .t. )
 
-        // pa onda ostalo...       	
-        select fakt_pripr
+        select_fakt_pripr()
+
         _t_rec := RECNO()
         GO TOP
         nar_print(.t.)
         o_fakt_edit()
-        select fakt_pripr
+        select_fakt_pripr()
         GO (_t_rec)
         return DE_CONT
 
@@ -500,16 +500,16 @@ do case
     // radni nalog
     case Ch == K_CTRL_R
 
-        // prvo mi stampaj dokument 
         stdokpdv( nil, nil, nil, .t. )
 
-        // pa onda ostalo
-        select fakt_pripr
+        select_fakt_pripr()
         _t_rec := RECNO()
         GO TOP
         rnal_print(.t.)
+
         o_fakt_edit()
-        select fakt_pripr
+        select_fakt_pripr()
+
         GO (_t_rec)
         return DE_CONT
 
@@ -522,7 +522,7 @@ do case
             exp_dok2dbf()
             o_fakt_edit()
    
-            select fakt_pripr
+            select_fakt_pripr()
             go top
 
         endif
@@ -544,7 +544,7 @@ local _rec_no, _rec
 
 PushWA()
 
-select fakt_pripr
+select_fakt_pripr()
 
 Box(, 22, 75, .f., "")
 
@@ -576,7 +576,7 @@ do while !EOF()
 
     InkeySc( 10 )
 
-    select fakt_pripr
+    select_fakt_pripr()
 
     _rec := get_dbf_global_memvars("_")
     dbf_update_rec( _rec, .f. )
@@ -655,7 +655,7 @@ do while .t.
 
     InkeySc(10)
 
-    select fakt_pripr
+    select_fakt_pripr()
     append blank
 
     _rec := get_dbf_global_memvars("_")
@@ -1214,7 +1214,7 @@ if ( __redni_broj == 1 .and. VAL( _podbr ) < 1 )
       
         ESC_RETURN 0
 
-        select fakt_pripr
+        select_fakt_pripr()
       
         exit
    
@@ -1400,7 +1400,7 @@ set order to tag "ID"
 go top
 seek id_rj
 
-select fakt_pripr
+select_fakt_pripr()
 
 if EMPTY( rj->konto )
     return .t.
@@ -1611,6 +1611,7 @@ return glDistrib .and. _idtipdok=="10" .and. UPPER(RIGHT(TRIM(_BrDok),1))=="S"
  
 function RabPor10()
 local nArr:=SELECT()
+
 SELECT FAKT
 SET ORDER to TAG "1"
 SEEK _idfirma+"10"+left(_brdok,gNumDio)
@@ -1684,7 +1685,7 @@ do while .t.
     case izbor == 3
       O_FAKT_S_PRIPR
       O_FTXT
-      select fakt_pripr
+      select_fakt_pripr()
       go top
       lDoks2 := ( IzFMKINI("FAKT","Doks2","N",KUMPATH)=="D" )
       if val(rbr)<>1
@@ -1728,10 +1729,14 @@ do while .t.
       endif
       @ m_x+3 ,m_y+2 SAY "Cijena" GET _cijena  pict piccdem
       cDN:="D"
-      @ m_x+4 ,m_y+2 SAY "Staviti cijenu u sifrarnik ?" GET cDN valid cDN $ "DN" pict "@!"
+      @ m_x+4 ,m_y+2 SAY8 "Staviti cijenu u šifarnik ?" GET cDN valid cDN $ "DN" pict "@!"
       read
-      if cDN=="D"
-         select roba; replace vpc with _cijena; select fakt_pripr
+      if cDN == "D"
+         select roba
+         my_rlock()
+         replace vpc with _cijena
+         my_unlock()
+         select fakt_pripr
       endif
       if lastkey()=K_ESC
         boxc()
@@ -1771,8 +1776,8 @@ m_x:=am_x
 m_y:=am_y
 
 o_fakt_edit()
+select_fakt_pripr()
 
-select fakt_pripr
 go bottom
 
 return
@@ -1797,7 +1802,7 @@ local oAtrib
 // kao i koja je nova 
 // misli se na "idfirma + tipdok + brdok"
 
-select fakt_pripr
+select_fakt_pripr()
 go top
 
 // uzmi podatke sa izmjenjene stavke
@@ -1865,7 +1870,7 @@ enddo
 // zatvori atribute
 use
 
-select fakt_pripr
+select_fakt_pripr()
 go top
 
 return .t.
@@ -2041,5 +2046,16 @@ return
 
 
 
+
+static function select_fakt_pripr()
+
+select F_FAKT_PRIPR
+
+IF !USED()
+    o_fakt_edit()
+    select F_FAKT_PRIPR
+ENDIF
+    
+RETURN
 
 

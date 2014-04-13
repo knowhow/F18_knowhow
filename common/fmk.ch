@@ -173,32 +173,36 @@
 
 #command ENDPRINT => f18_end_print(NIL, __print_opt)
 
-#command EOF CRET <x> =>  if EofFndret(.t.,.t.)       ;
+#command EOF CRET <x> =>  if EofFndret(.T., .T.)       ;
                           ;return <x>                 ;
                           ;endif
-#command EOF CRET     =>  if EofFndret(.t.,.t.)       ;
+
+#command EOF CRET     =>  if EofFndret(.T., .T.)       ;
                           ;return                     ;
                           ;endif
 
-#command EOF RET <x> =>   if EofFndret(.t.,.f.)      ;
-                          ;return <x>             ;
-                          ;endif
-#command EOF RET     =>   if EofFndret(.t.,.f.)      ;
-                          ;return                 ;
+#command EOF RET <x> =>   if EofFndret(.T., .F.)    ;
+                          ; return <x>               ;
                           ;endif
 
-#command NFOUND CRET <x> =>  if EofFndret(.f.,.t.)       ;
-                             ;return <x>                 ;
-                             ;endif
-#command NFOUND CRET     =>  if EofFndret(.f.,.t.)       ;
-                             ;return                     ;
+#command EOF RET     =>   if EofFndret(.T., .F.)      ;
+                          ;    return                 ;
+                          ;endif
+
+#command NFOUND CRET <x> =>  if EofFndret(.F., .T.)      ;
+                             ;    return <x>             ;
                              ;endif
 
-#command NFOUND RET <x> =>  if EofFndret(.f.,.f.)       ;
-                            ;return  <x>                ;
+#command NFOUND CRET     =>  if EofFndret(.F., .T.)      ;
+                             ;   return                  ;
+                             ;endif
+
+#command NFOUND RET <x> =>  if EofFndret(.F., .F.)       ;
+                            ;   return  <x>             ;
                             ;endif
-#command NFOUND RET     =>  if EofFndret(.f.,.f.)       ;
-                            ;return                     ;
+
+#command NFOUND RET     =>  if EofFndret(.F., .F.)       ;
+                            ;   return                  ;
                             ;endif
 
 #define SLASH  HB_OSPATHSEPARATOR()

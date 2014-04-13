@@ -265,7 +265,7 @@ KalkEof := EOF()
 
 if FaktEof .and. KalkEof
   Beep (3)
-  Msg ("Ne postoje trazeni podaci")
+  Msg ("Ne postoje traženi podaci")
   CLOSERET
 endif
 

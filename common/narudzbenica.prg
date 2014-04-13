@@ -90,11 +90,8 @@ FUNCTION narudzba( lStartPrint )
 
    lPrintedTotal := .F.
 
-   // uzmi glavne varijable za stampu fakture
-   // razmak, broj redova sl.teksta,
    get_nar_vars( @nLMargina, @nGMargina, @nDodRedova, @nSlTxtRow, @lSamoKol, @lZaglStr, @lStZagl, @lDatOtp, @cValuta )
 
-   // razmak ce biti
    RAZMAK( Space( nLMargina ) )
 
    cLine := nar_line()
@@ -116,21 +113,16 @@ FUNCTION narudzba( lStartPrint )
 
    st_zagl_data()
 
-   SELECT rn
 
    nStr := 1
    aArtNaz := {}
 
-   // data
+   SELECT rn
    DO WHILE !Eof()
 	
-	
-      // uzmi naziv u matricu
       cNazivDobra := NazivDobra( rn->idroba, rn->robanaz, rn->jmj )
       aNazivDobra := SjeciStr( cNazivDobra, LEN_NAZIV() )
 	
-      // PRVI RED
-      // redni broj ili podbroj
       ? RAZMAK()
 	
       IF Empty( rn->podbr )
@@ -217,19 +209,10 @@ FUNCTION narudzba( lStartPrint )
 // uzmi osnovne parametre za stampu dokumenta
 FUNCTION get_nar_vars( nLMargina, nGMargina, nDodRedova, nSlTxtRow, lSamoKol, lZaglStr, lStZagl, lDatOtp, cValuta, cPDVStavka )
 
-   // uzmi podatak za lijevu marginu
    nLMargina := Val( get_dtxt_opis( "P01" ) )
-
-   // uzmi podatak za gornju marginu
    nGMargina := Val( get_dtxt_opis( "P07" ) )
-
-   // broj dodatnih redova po listu
    nDodRedova := Val( get_dtxt_opis( "P06" ) )
-
-   // uzmi podatak za duzinu slobodnog teksta
    nSlTxtRow := Val( get_dtxt_opis( "P02" ) )
-
-   // varijanta fakture (porez na svaku stavku D/N)
    cPDVStavka := get_dtxt_opis( "P11" )
 
    // da li se prikazuju samo kolicine
@@ -260,13 +243,13 @@ FUNCTION get_nar_vars( nLMargina, nGMargina, nDodRedova, nSlTxtRow, lSamoKol, lZ
    cValuta := get_dtxt_opis( "D07" )
 
    RETURN
-// }
 
 
-// zaglavlje glavne tabele sa stavkama
+/*
+  zaglavlje glavne tabele sa stavkama
+*/
 STATIC FUNCTION st_zagl_data()
 
-   // {
 
    LOCAL cRed1 := ""
    LOCAL cRed2 := ""
@@ -277,9 +260,9 @@ STATIC FUNCTION st_zagl_data()
 
    cRed1 := RAZMAK()
    cRed1 += PadC( "R.br", LEN_RBR() )
-   cRed1 += " " + PadR( lokal( "Trgovacki naziv dobra/usluge (sifra, naziv, jmj)" ), LEN_NAZIV() )
+   cRed1 += " " + PadR( lokal( "Trgovački naziv dobra/usluge (sifra, naziv, jmj)" ), LEN_NAZIV() )
 
-   cRed1 += " " + PadC( lokal( "kolicina" ), LEN_KOLICINA() )
+   cRed1 += " " + PadC( lokal( "količina" ), LEN_KOLICINA() )
 
    IF nSw6 > 0
       cRed1 += " " + PadC( lokal( "C.b.PDV" ), LEN_CIJENA() )
@@ -295,7 +278,6 @@ STATIC FUNCTION st_zagl_data()
    ? cLine
 
    RETURN
-// }
 
 // definicija linije za glavnu tabelu sa stavkama
 FUNCTION nar_line()
@@ -330,8 +312,6 @@ FUNCTION nar_line()
 STATIC FUNCTION print_total()
 
    ? cLine
-
-   // kolona bez PDV
 
    ? RAZMAK()
    ?? Space( LEN_UKUPNO() - ( LEN_KOLICINA() + LEN_CIJENA() + 2 ) )
@@ -594,14 +574,14 @@ STATIC FUNCTION nar_header()
    ?
    P_10CPI
    // broj dokumenta
-   cPom := lokal( "NARUDZBENICA br. ___________ od " ) + cDatDok
+   cPom := lokal( "NARUDŽBENICA br. ___________ od " ) + cDatDok
    cPom := PadC( cPom, LEN_COLONA * 2 )
    p_line( cPom, 10, .T. )
    B_OFF
    ?
    cPom := lokal( "Molimo da nam na osnovu ponude/dogovora/ugovora _________________ " )
    p_line( cPom, 12, .F. )
-   cPom := lokal( "isporucite sljedeca dobra/usluge:" )
+   cPom := lokal( "isporučite sljedeca dobra/usluge:" )
    p_line( cPom, 12, .F. )
 
    nPRowsDelta := PRow() - nPRowsDelta
@@ -623,7 +603,7 @@ FUNCTION nar_footer()
    cPom := "----------------"
    p_line( cPom, 12, .T. )
    ?
-   cPom := lokal( "Mjesto isporuke _______________________  Nacin placanja: gotovina/banka/kompenzacija" )
+   cPom := lokal( "Mjesto isporuke _______________________  Način placanja: gotovina/banka/kompenzacija" )
    p_line( cPom, 12, .T. )
    ?
    cPom := lokal( "Vrijeme isporuke _____________________________________________________________" )
@@ -651,14 +631,11 @@ FUNCTION nar_footer()
 // -----------------------------------------
 STATIC FUNCTION NStr_a4( nStr, lShZagl )
 
-   // {
-
-   // korekcija duzine je na svako strani razlicita
    nDuzStrKorekcija := 0
 
    P_COND
    ? cLine
-   p_line( lokal( "Prenos na sljedecu stranicu" ), 17, .F. )
+   p_line( lokal( "Prenos na sljedeću stranicu" ), 17, .F. )
    ? cLine
 
    FF
@@ -683,7 +660,6 @@ STATIC FUNCTION NStr_a4( nStr, lShZagl )
    ENDIF
 
    RETURN
-// }
 
 
 // --------------------------------

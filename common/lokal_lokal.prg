@@ -20,6 +20,8 @@ function lokal(cString, cLokal )
 local cPrevod
 local nIdStr
 
+cString := hb_UTF8ToStr( cString )
+
 if (cLokal == nil)
 	cLokal := gLokal
 endif

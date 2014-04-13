@@ -59,7 +59,7 @@ select fakt_pripr
 private lPBarkod := .f.
 
 if _fakt_params["barkod"] $ "12"  // pitanje, default "N"
-	lPBarkod := ( Pitanje( ,"Zelite li ispis barkodova ?", IIF( _fakt_params["barkod"] == "1", "N", "D" ) ) == "D" )
+	lPBarkod := ( Pitanje( ,"Želite li ispis barkodova ?", IIF( _fakt_params["barkod"] == "1", "N", "D" ) ) == "D" )
 endif
 
 if PCount() == 0 .or. ( cIdTipDok == nil .and. lJFill == .t. )

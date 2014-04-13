@@ -356,9 +356,10 @@ IF !Used()
 
 _dbf := my_home() + rec[ "table" ]
 BEGIN SEQUENCE WITH {| err| err:cargo := { ProcName( 1 ), ProcName( 2 ), ProcLine( 1 ), ProcLine( 2 ) }, Break( err ) }
-dbUseArea( .F., DBFENGINE, _dbf, rec[ "alias" ], .T., .F. )
 
-recover using _err
+   dbUseArea( .F., DBFENGINE, _dbf, rec[ "alias" ], .T., .F. )
+
+RECOVER using _err
 
 // tabele ocigledno nema, tako da se struktura ne moze utvrditi
 rec[ "dbf_fields" ]     := NIL

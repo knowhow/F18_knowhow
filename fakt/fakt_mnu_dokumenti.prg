@@ -27,15 +27,12 @@ AADD(_opc,"3. štampa txt dokumenata od broja do broja      ")
 AADD(_opcexe, {|| fakt_stampa_azuriranog_period()})
 AADD(_opc,"4. štampa/export odt dokumenata po zadanom uslovu")
 AADD(_opcexe, {|| stdokodt_grupno() })
-AADD(_opc,"5. štampa narudzbenice")
-AADD(_opcexe,{|| Mnu_Narudzba()})
 
 if IsUgovori()
 	AADD(_opc,"U. stampa fakt.na osnovu ugovora od-do")
 	AADD(_opcexe, {|| ug_za_period()})
 endif
 
-// ako koristimo fiskalne funkcije
 if fiscal_opt_active()
 	AADD( _opc,"F. stampa fiskalnih racuna od-do" )
 	AADD( _opcexe, {|| st_fisc_per()})

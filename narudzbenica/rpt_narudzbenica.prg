@@ -30,14 +30,7 @@ STATIC nDuzStrKorekcija := 0
 STATIC nSw6
 
 
-// glavna funkcija za poziv stampe fakture a4
-// lStartPrint - pozovi funkcije stampe START PRINT
-FUNCTION nar_print( lStartPrint )
-
-   // ako je nil onda je uvijek .t.
-   IF lStartPrint == nil
-      lStartPrint := .T.
-   ENDIF
+FUNCTION narudzbenica_print()
 
    PIC_KOLICINA( PadL( AllTrim( Right( PicKol, LEN_KOLICINA() ) ), LEN_KOLICINA(), "9" ) )
    PIC_VRIJEDNOST( PadL( AllTrim( Right( PicDem, LEN_VRIJEDNOST() ) ), LEN_VRIJEDNOST(), "9" ) )
@@ -48,6 +41,10 @@ FUNCTION nar_print( lStartPrint )
    SELECT drn
    GO TOP
 
+   IF EOF()
+       RETURN .F.
+   ENDIF
+
    LEN_NAZIV( 53 )
    LEN_UKUPNO( 99 )
    IF Round( drn->ukpopust, 2 ) <> 0
@@ -57,34 +54,30 @@ FUNCTION nar_print( lStartPrint )
       LEN_NAZIV( LEN_NAZIV() + LEN_PROC2() + LEN_CIJENA() + 2 )
    ENDIF
 
-   narudzba( lStartPrint )
+   napravi_rpt()
 
    RETURN
 
 
 
-// stampa narudzbenice
-FUNCTION narudzba( lStartPrint )
+STATIC FUNCTION generisi_rpt()
 
    LOCAL cBrDok
    LOCAL dDatDok
    LOCAL aRNaz
    LOCAL cArtikal
    LOCAL cSlovima
+   LOCAL nLMargina // lijeva margina
+   LOCAL nDodRedova // broj dodatnih redova
+   LOCAL nSlTxtRow // broj redova slobodnog text-a
+   LOCAL lSamoKol // prikaz samo kolicina
+   LOCAL lZaglStr // zaglavlje na svakoj stranici
+   LOCAL lDatOtp // prikaz datuma otpremnice i narudzbenice
+   LOCAL cValuta // prikaz valute KM ili ???
+   LOCAL lStZagl // automatski formirati zaglavlje
+   LOCAL nGMargina // gornja margina
 
-   PRIVATE nLMargina // lijeva margina
-   PRIVATE nDodRedova // broj dodatnih redova
-   PRIVATE nSlTxtRow // broj redova slobodnog text-a
-   PRIVATE lSamoKol // prikaz samo kolicina
-   PRIVATE lZaglStr // zaglavlje na svakoj stranici
-   PRIVATE lDatOtp // prikaz datuma otpremnice i narudzbenice
-   PRIVATE cValuta // prikaz valute KM ili ???
-   PRIVATE lStZagl // automatski formirati zaglavlje
-   PRIVATE nGMargina // gornja margina
-
-   IF lStartPrint
-      START PRINT CRET
-   ENDIF
+   START PRINT CRET
 
    nSw6 := Val( get_dtxt_opis( "X09" ) )
 
@@ -96,7 +89,6 @@ FUNCTION narudzba( lStartPrint )
 
    cLine := nar_line()
 
-   // zaglavlje por.fakt
    nar_header()
 
    IF nSw6 == 0
@@ -112,7 +104,6 @@ FUNCTION narudzba( lStartPrint )
    ENDIF
 
    st_zagl_data()
-
 
    nStr := 1
    aArtNaz := {}
@@ -206,7 +197,6 @@ FUNCTION narudzba( lStartPrint )
 
    RETURN
 
-// uzmi osnovne parametre za stampu dokumenta
 FUNCTION get_nar_vars( nLMargina, nGMargina, nDodRedova, nSlTxtRow, lSamoKol, lZaglStr, lStZagl, lDatOtp, cValuta, cPDVStavka )
 
    nLMargina := Val( get_dtxt_opis( "P01" ) )
@@ -245,9 +235,6 @@ FUNCTION get_nar_vars( nLMargina, nGMargina, nDodRedova, nSlTxtRow, lSamoKol, lZ
    RETURN
 
 
-/*
-  zaglavlje glavne tabele sa stavkama
-*/
 STATIC FUNCTION st_zagl_data()
 
 
@@ -279,8 +266,7 @@ STATIC FUNCTION st_zagl_data()
 
    RETURN
 
-// definicija linije za glavnu tabelu sa stavkama
-FUNCTION nar_line()
+STATIC FUNCTION nar_line()
 
    LOCAL cLine
 
@@ -386,7 +372,7 @@ STATIC FUNCTION nar_header()
    LOCAL cPom, cPom2
    LOCAL cLin
    LOCAL cPartMjesto
-   LOCAL cPartPTT
+   LOCAL cPTT
    LOCAL cNaziv, cNaziv2
    LOCAL cAdresa, cAdresa2
    LOCAL cIdBroj, cIdBroj2

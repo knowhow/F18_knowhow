@@ -11,6 +11,7 @@ count_prgs fin
 count_prgs kalk
 count_prgs fakt
 count_prgs pos
+count_prgs epdv
 count_prgs os
 count_prgs ld
 count_prgs virm

@@ -30,11 +30,11 @@ MEMVAR __print_opt
 
 
 /* 
-   Koristenje:
+   Korištenje:
    ----------
-   - Napunjen drn.dbf, za to se koristi stdokpdv()
+   - Prije poziva napniti drn.dbf, za to se koristi npr. stdokpdv()
 
-   Primjeri koristenja: 
+   Primjeri korištenja: 
   ---------------------
    fakt/fakt_print_narudzbenica.prg
    - FUNCTION fakt_print_narudzbenica( cIdFirma, cIdTipDok, cBrDok )

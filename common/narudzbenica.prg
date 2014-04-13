@@ -1,697 +1,703 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 
+
 #include "fmk.ch"
 
-static LEN_COLONA :=  42
-static LEN_FOOTER := 14
+STATIC LEN_COLONA :=  42
+STATIC LEN_FOOTER := 14
 
-static lShowPopust
+STATIC lShowPopust
 
-static cLine
-static lPrintedTotal := .f.
-static nStr := 0
+STATIC cLine
+STATIC lPrintedTotal := .F.
+STATIC nStr := 0
 
 // ako se koristi PTXT onda se ova korekcija primjenjuje
 // za prikaz vecih fontova
-static nDuzStrKorekcija := 0
+STATIC nDuzStrKorekcija := 0
 
 // prikaz samo kolicine 0, cijena 1
-static nSw6
+STATIC nSw6
 
 
 // glavna funkcija za poziv stampe fakture a4
 // lStartPrint - pozovi funkcije stampe START PRINT
-function nar_print(lStartPrint)
+FUNCTION nar_print( lStartPrint )
 
-// ako je nil onda je uvijek .t.
-if lStartPrint == nil
-	lStartPrint := .t.
-endif
+   // ako je nil onda je uvijek .t.
+   IF lStartPrint == nil
+      lStartPrint := .T.
+   ENDIF
 
-PIC_KOLICINA(PADL(ALLTRIM(RIGHT(PicKol, LEN_KOLICINA())), LEN_KOLICINA(), "9"))
-PIC_VRIJEDNOST(PADL(ALLTRIM(RIGHT(PicDem, LEN_VRIJEDNOST())), LEN_VRIJEDNOST(), "9"))
-PIC_CIJENA(PADL(ALLTRIM(RIGHT(PicCDem, LEN_CIJENA())), LEN_CIJENA(), "9"))
+   PIC_KOLICINA( PadL( AllTrim( Right( PicKol, LEN_KOLICINA() ) ), LEN_KOLICINA(), "9" ) )
+   PIC_VRIJEDNOST( PadL( AllTrim( Right( PicDem, LEN_VRIJEDNOST() ) ), LEN_VRIJEDNOST(), "9" ) )
+   PIC_CIJENA( PadL( AllTrim( Right( PicCDem, LEN_CIJENA() ) ), LEN_CIJENA(), "9" ) )
 
-drn_open()
+   drn_open()
 
-select drn
-go top
+   SELECT drn
+   GO TOP
 
-LEN_NAZIV(53)
-LEN_UKUPNO(99)
-if Round(drn->ukpopust, 2) <> 0
-	lShowPopust :=.t.
-else
-	lShowPopust:=.f.
-	LEN_NAZIV( LEN_NAZIV() + LEN_PROC2() + LEN_CIJENA() + 2 )
-endif
+   LEN_NAZIV( 53 )
+   LEN_UKUPNO( 99 )
+   IF Round( drn->ukpopust, 2 ) <> 0
+      lShowPopust := .T.
+   ELSE
+      lShowPopust := .F.
+      LEN_NAZIV( LEN_NAZIV() + LEN_PROC2() + LEN_CIJENA() + 2 )
+   ENDIF
 
-narudzba(lStartPrint)
-return
+   narudzba( lStartPrint )
+
+   RETURN
 
 
 
 // stampa narudzbenice
-function narudzba(lStartPrint)
-local cBrDok
-local dDatDok
-local aRNaz
-local cArtikal
-local cSlovima
+FUNCTION narudzba( lStartPrint )
 
-private nLMargina // lijeva margina
-private nDodRedova // broj dodatnih redova
-private nSlTxtRow // broj redova slobodnog text-a
-private lSamoKol // prikaz samo kolicina
-private lZaglStr // zaglavlje na svakoj stranici
-private lDatOtp // prikaz datuma otpremnice i narudzbenice
-private cValuta // prikaz valute KM ili ???
-private lStZagl // automatski formirati zaglavlje
-private nGMargina // gornja margina
+   LOCAL cBrDok
+   LOCAL dDatDok
+   LOCAL aRNaz
+   LOCAL cArtikal
+   LOCAL cSlovima
 
+   PRIVATE nLMargina // lijeva margina
+   PRIVATE nDodRedova // broj dodatnih redova
+   PRIVATE nSlTxtRow // broj redova slobodnog text-a
+   PRIVATE lSamoKol // prikaz samo kolicina
+   PRIVATE lZaglStr // zaglavlje na svakoj stranici
+   PRIVATE lDatOtp // prikaz datuma otpremnice i narudzbenice
+   PRIVATE cValuta // prikaz valute KM ili ???
+   PRIVATE lStZagl // automatski formirati zaglavlje
+   PRIVATE nGMargina // gornja margina
 
-if lStartPrint
-    START PRINT CRET
-endif
+   IF lStartPrint
+      START PRINT CRET
+   ENDIF
 
-nSw6 := VAL(get_dtxt_opis("X09"))
+   nSw6 := Val( get_dtxt_opis( "X09" ) )
 
-lPrintedTotal := .f.
+   lPrintedTotal := .F.
 
-// uzmi glavne varijable za stampu fakture
-// razmak, broj redova sl.teksta, 
-get_nar_vars(@nLMargina, @nGMargina, @nDodRedova, @nSlTxtRow, @lSamoKol, @lZaglStr, @lStZagl, @lDatOtp, @cValuta)
+   // uzmi glavne varijable za stampu fakture
+   // razmak, broj redova sl.teksta,
+   get_nar_vars( @nLMargina, @nGMargina, @nDodRedova, @nSlTxtRow, @lSamoKol, @lZaglStr, @lStZagl, @lDatOtp, @cValuta )
 
-// razmak ce biti
-RAZMAK(SPACE(nLMargina))
+   // razmak ce biti
+   RAZMAK( Space( nLMargina ) )
 
-cLine := nar_line()
+   cLine := nar_line()
 
-// zaglavlje por.fakt
-nar_header()
+   // zaglavlje por.fakt
+   nar_header()
 
-if nSw6 == 0
-	P_12CPI
-endif
+   IF nSw6 == 0
+      P_12CPI
+   ENDIF
 
-select rn
-set order to tag "1"
-go top
+   SELECT rn
+   SET ORDER TO TAG "1"
+   GO TOP
 
-if nSw6 > 0
-	P_COND
-endif
+   IF nSw6 > 0
+      P_COND
+   ENDIF
 
-st_zagl_data()
+   st_zagl_data()
 
-select rn
+   SELECT rn
 
-nStr:=1
-aArtNaz := {}
+   nStr := 1
+   aArtNaz := {}
 
-// data
-do while !EOF()
+   // data
+   DO WHILE !Eof()
 	
 	
-	// uzmi naziv u matricu
-	cNazivDobra := NazivDobra(rn->idroba, rn->robanaz, rn->jmj)
-	aNazivDobra := SjeciStr(cNazivDobra, LEN_NAZIV())
+      // uzmi naziv u matricu
+      cNazivDobra := NazivDobra( rn->idroba, rn->robanaz, rn->jmj )
+      aNazivDobra := SjeciStr( cNazivDobra, LEN_NAZIV() )
 	
-	// PRVI RED
-	// redni broj ili podbroj
-	? RAZMAK()
+      // PRVI RED
+      // redni broj ili podbroj
+      ? RAZMAK()
 	
-	if EMPTY(rn->podbr)
-		?? PADL(rn->rbr + ")", LEN_RBR())
-	else
-		?? PADL(rn->rbr + "." + ALLTRIM(rn->podbr), LEN_RBR())
-	endif
-	?? " "
+      IF Empty( rn->podbr )
+         ?? PadL( rn->rbr + ")", LEN_RBR() )
+      ELSE
+         ?? PadL( rn->rbr + "." + AllTrim( rn->podbr ), LEN_RBR() )
+      ENDIF
+      ?? " "
 	
-	// idroba, naziv robe, kolicina, jmj
-	?? PADR( aNazivDobra[1], LEN_NAZIV()) 
-	?? " "
-	?? show_number(rn->kolicina, PIC_KOLICINA()) 
-	?? " "
+      // idroba, naziv robe, kolicina, jmj
+      ?? PadR( aNazivDobra[ 1 ], LEN_NAZIV() )
+      ?? " "
+      ?? show_number( rn->kolicina, PIC_KOLICINA() )
+      ?? " "
 	
-	if nSw6 > 0
+      IF nSw6 > 0
 	
-		// cijena bez pdv
-		?? show_number(rn->cjenbpdv, PIC_CIJENA()) 
-		?? " "
+         // cijena bez pdv
+         ?? show_number( rn->cjenbpdv, PIC_CIJENA() )
+         ?? " "
 
 
-		if lShowPopust
-			// procenat popusta
-			?? show_popust(rn->popust)
-			?? " "
+         IF lShowPopust
+            // procenat popusta
+            ?? show_popust( rn->popust )
+            ?? " "
 
-			// cijena bez pd - popust
-			?? show_number(rn->cjen2bpdv, PIC_CIJENA()) 
-			?? " "
-		endif
+            // cijena bez pd - popust
+            ?? show_number( rn->cjen2bpdv, PIC_CIJENA() )
+            ?? " "
+         ENDIF
 
 
-		// ukupno bez pdv
-		?? show_number( rn->cjenbpdv * rn->kolicina,  PIC_VRIJEDNOST())
-		?? " "
-	endif
+         // ukupno bez pdv
+         ?? show_number( rn->cjenbpdv * rn->kolicina,  PIC_VRIJEDNOST() )
+         ?? " "
+      ENDIF
 
-	if LEN(aNazivDobra) > 1
-	    // DRUGI RED
-	    ? RAZMAK()
-	    ?? " "
-	    ?? SPACE(LEN_RBR())
-	    ?? PADR(aNazivDobra[2], LEN_NAZIV())
-	endif
+      IF Len( aNazivDobra ) > 1
+         // DRUGI RED
+         ? RAZMAK()
+         ?? " "
+         ?? Space( LEN_RBR() )
+         ?? PadR( aNazivDobra[ 2 ], LEN_NAZIV() )
+      ENDIF
 	
-	// provjeri za novu stranicu
-	if prow() > (nDodRedova + LEN_STRANICA() - DSTR_KOREKCIJA()) 
-		++nStr
-		Nstr_a4(nStr, .t.)
-    	endif	
+      // provjeri za novu stranicu
+      IF PRow() > ( nDodRedova + LEN_STRANICA() - DSTR_KOREKCIJA() )
+         ++nStr
+         Nstr_a4( nStr, .T. )
+      endif
 
-	SELECT rn
-	skip
-enddo
+      SELECT rn
+      SKIP
+   ENDDO
 
-// provjeri za novu stranicu
-if prow() > nDodRedova + (LEN_STRANICA() - LEN_FOOTER)
-	++nStr
-	Nstr_a4(nStr, .t.)
-endif	
+   // provjeri za novu stranicu
+   IF PRow() > nDodRedova + ( LEN_STRANICA() - LEN_FOOTER )
+      ++nStr
+      Nstr_a4( nStr, .T. )
+   endif
 
-if nSw6 > 0
-	print_total()
-	lPrintedTotal:=.t.
+   IF nSw6 > 0
+      print_total()
+      lPrintedTotal := .T.
 
-	if prow() > nDodRedova + (LEN_STRANICA() - LEN_FOOTER)
-		++nStr
-		Nstr_a4(nStr, .t.)
-	endif	
-endif
+      IF PRow() > nDodRedova + ( LEN_STRANICA() - LEN_FOOTER )
+         ++nStr
+         Nstr_a4( nStr, .T. )
+      endif
+   ENDIF
 
-// dodaj text na kraju fakture
-nar_footer()
+   // dodaj text na kraju fakture
+   nar_footer()
 
 
-if lStartPrint
-	FF
-    END PRINT
-endif
+   IF lStartPrint
+      FF
+      ENDPRINT
+   ENDIF
 
-return
-*}
+   RETURN
 
 // uzmi osnovne parametre za stampu dokumenta
-function get_nar_vars(nLMargina, nGMargina, nDodRedova, nSlTxtRow, lSamoKol, lZaglStr, lStZagl, lDatOtp, cValuta, cPDVStavka)
-*{
+FUNCTION get_nar_vars( nLMargina, nGMargina, nDodRedova, nSlTxtRow, lSamoKol, lZaglStr, lStZagl, lDatOtp, cValuta, cPDVStavka )
 
-// uzmi podatak za lijevu marginu
-nLMargina := VAL(get_dtxt_opis("P01"))
+   // uzmi podatak za lijevu marginu
+   nLMargina := Val( get_dtxt_opis( "P01" ) )
 
-// uzmi podatak za gornju marginu
-nGMargina := VAL(get_dtxt_opis("P07"))
+   // uzmi podatak za gornju marginu
+   nGMargina := Val( get_dtxt_opis( "P07" ) )
 
-// broj dodatnih redova po listu
-nDodRedova := VAL(get_dtxt_opis("P06"))
+   // broj dodatnih redova po listu
+   nDodRedova := Val( get_dtxt_opis( "P06" ) )
 
-// uzmi podatak za duzinu slobodnog teksta
-nSlTxtRow := VAL(get_dtxt_opis("P02"))
+   // uzmi podatak za duzinu slobodnog teksta
+   nSlTxtRow := Val( get_dtxt_opis( "P02" ) )
 
-// varijanta fakture (porez na svaku stavku D/N)
-cPDVStavka := get_dtxt_opis("P11")
+   // varijanta fakture (porez na svaku stavku D/N)
+   cPDVStavka := get_dtxt_opis( "P11" )
 
-// da li se prikazuju samo kolicine
-lSamoKol := .f.
-if get_dtxt_opis("P03") == "D"
-	lSamoKol := .t.
-endif
+   // da li se prikazuju samo kolicine
+   lSamoKol := .F.
+   IF get_dtxt_opis( "P03" ) == "D"
+      lSamoKol := .T.
+   ENDIF
 
-// da li se kreira zaglavlje na svakoj stranici
-lZaglStr := .f.
-if get_dtxt_opis("P04") == "D"
-	lZaglStr := .t.
-endif
+   // da li se kreira zaglavlje na svakoj stranici
+   lZaglStr := .F.
+   IF get_dtxt_opis( "P04" ) == "D"
+      lZaglStr := .T.
+   ENDIF
 
-// da li se kreira zaglavlje na svakoj stranici
-lStZagl := .f.
-if get_dtxt_opis("P10") == "D"
-	lStZagl := .t.
-endif
+   // da li se kreira zaglavlje na svakoj stranici
+   lStZagl := .F.
+   IF get_dtxt_opis( "P10" ) == "D"
+      lStZagl := .T.
+   ENDIF
 
-// da li se ispisuji podaci otpremnica itd....
-lDatOtp := .t.
-if get_dtxt_opis("P05") == "N"
-	lZaglStr := .f.
-endif
+   // da li se ispisuji podaci otpremnica itd....
+   lDatOtp := .T.
+   IF get_dtxt_opis( "P05" ) == "N"
+      lZaglStr := .F.
+   ENDIF
 
-// valuta dokuemnta
-cValuta := get_dtxt_opis("D07")
+   // valuta dokuemnta
+   cValuta := get_dtxt_opis( "D07" )
 
-return
-*}
+   RETURN
+// }
 
 
 // zaglavlje glavne tabele sa stavkama
-static function st_zagl_data()
-*{
+STATIC FUNCTION st_zagl_data()
 
-local cRed1:=""
-local cRed2:=""
-local cRed3:=""
+   // {
+
+   LOCAL cRed1 := ""
+   LOCAL cRed2 := ""
+   LOCAL cRed3 := ""
 
 
-? cLine
+   ? cLine
 
-cRed1 := RAZMAK() 
-cRed1 += PADC("R.br", LEN_RBR()) 
-cRed1 += " " + PADR(lokal("Trgovacki naziv dobra/usluge (sifra, naziv, jmj)"), LEN_NAZIV())
+   cRed1 := RAZMAK()
+   cRed1 += PadC( "R.br", LEN_RBR() )
+   cRed1 += " " + PadR( lokal( "Trgovacki naziv dobra/usluge (sifra, naziv, jmj)" ), LEN_NAZIV() )
 
-cRed1 += " " + PADC(lokal("kolicina"), LEN_KOLICINA())
+   cRed1 += " " + PadC( lokal( "kolicina" ), LEN_KOLICINA() )
 
-if nSw6 > 0
-	cRed1 += " " + PADC(lokal("C.b.PDV"), LEN_CIJENA())
-	if lShowPopust
- 		cRed1 += " " + PADC(lokal("Pop.%"), LEN_PROC2())
- 		cRed1 += " " + PADC(lokal("C.2.b.PDV"), LEN_CIJENA())
-	endif
-	cRed1 += " " + PADC(lokal("Uk.bez.PDV"), LEN_VRIJEDNOST())
-endif
+   IF nSw6 > 0
+      cRed1 += " " + PadC( lokal( "C.b.PDV" ), LEN_CIJENA() )
+      IF lShowPopust
+         cRed1 += " " + PadC( lokal( "Pop.%" ), LEN_PROC2() )
+         cRed1 += " " + PadC( lokal( "C.2.b.PDV" ), LEN_CIJENA() )
+      ENDIF
+      cRed1 += " " + PadC( lokal( "Uk.bez.PDV" ), LEN_VRIJEDNOST() )
+   ENDIF
 
-? cRed1
+   ? cRed1
 
-? cLine
+   ? cLine
 
-return
-*}
+   RETURN
+// }
 
 // definicija linije za glavnu tabelu sa stavkama
-function nar_line()
-local cLine
+FUNCTION nar_line()
 
+   LOCAL cLine
 
-cLine:= RAZMAK()
-cLine += REPLICATE("-", LEN_RBR())
-cLine += " " + REPLICATE("-", LEN_NAZIV())
-// kolicina
-cLine += " " + REPLICATE("-", LEN_KOLICINA())
+   cLine := RAZMAK()
+   cLine += Replicate( "-", LEN_RBR() )
+   cLine += " " + Replicate( "-", LEN_NAZIV() )
+   // kolicina
+   cLine += " " + Replicate( "-", LEN_KOLICINA() )
 
-if nSw6 > 0
-	// cijena b. pdv
-	cLine += " " + REPLICATE("-", LEN_CIJENA())
+   IF nSw6 > 0
+      // cijena b. pdv
+      cLine += " " + Replicate( "-", LEN_CIJENA() )
 
-	if lShowPopust
- 		// popust
- 		cLine += " " + REPLICATE("-", LEN_PROC2())
- 		// cijen b. pdv - popust
- 		cLine += " " + REPLICATE("-", LEN_CIJENA())
-	endif
+      IF lShowPopust
+         // popust
+         cLine += " " + Replicate( "-", LEN_PROC2() )
+         // cijen b. pdv - popust
+         cLine += " " + Replicate( "-", LEN_CIJENA() )
+      ENDIF
 
-	// vrijednost b. pdv
-	cLine += " " + REPLICATE("-", LEN_VRIJEDNOST())
-endif
+      // vrijednost b. pdv
+      cLine += " " + Replicate( "-", LEN_VRIJEDNOST() )
+   ENDIF
 
-return cLine
+   RETURN cLine
 
 // --------------------------------------------------
 // --------------------------------------------------
-static function print_total()
+STATIC FUNCTION print_total()
 
-? cLine
+   ? cLine
 
-// kolona bez PDV
-   
-? RAZMAK()
-?? SPACE(LEN_UKUPNO() - (LEN_KOLICINA() + LEN_CIJENA() + 2))
+   // kolona bez PDV
 
-if ROUND(drn->ukkol,2)<>0
-	?? show_number(drn->ukkol, PIC_KOLICINA())
-else
- 	?? SPACE(LEN_KOLICINA())
-endif
-?? " "
+   ? RAZMAK()
+   ?? Space( LEN_UKUPNO() - ( LEN_KOLICINA() + LEN_CIJENA() + 2 ) )
 
-?? SPACE( LEN_CIJENA() )
-?? " "
+   IF Round( drn->ukkol, 2 ) <> 0
+      ?? show_number( drn->ukkol, PIC_KOLICINA() )
+   ELSE
+      ?? Space( LEN_KOLICINA() )
+   ENDIF
+   ?? " "
 
-?? show_number(drn->ukbezpdv, PIC_VRIJEDNOST())
-   
-// cijene se ne rekapituliraju
-?? " "
-?? SPACE(LEN(PIC_CIJENA()))
+   ?? Space( LEN_CIJENA() )
+   ?? " "
+
+   ?? show_number( drn->ukbezpdv, PIC_VRIJEDNOST() )
+
+   // cijene se ne rekapituliraju
+   ?? " "
+   ?? Space( Len( PIC_CIJENA() ) )
 
 
-// provjeri i dodaj stavke vezane za popust
-if Round(drn->ukpopust, 2) <> 0
-		? RAZMAK()
-		?? PADL(lokal("Popust (")+cValuta+") :", LEN_UKUPNO())
-		?? show_number(drn->ukpopust, PIC_VRIJEDNOST())
+   // provjeri i dodaj stavke vezane za popust
+   IF Round( drn->ukpopust, 2 ) <> 0
+      ? RAZMAK()
+      ?? PadL( lokal( "Popust (" ) + cValuta + ") :", LEN_UKUPNO() )
+      ?? show_number( drn->ukpopust, PIC_VRIJEDNOST() )
 		
-		? RAZMAK()
-		?? PADL(lokal("Uk.bez.PDV-popust (")+cValuta+") :", LEN_UKUPNO())
-		?? show_number(drn->ukbpdvpop, PIC_VRIJEDNOST())
-endif
+      ? RAZMAK()
+      ?? PadL( lokal( "Uk.bez.PDV-popust (" ) + cValuta + ") :", LEN_UKUPNO() )
+      ?? show_number( drn->ukbpdvpop, PIC_VRIJEDNOST() )
+   ENDIF
 
 
-// obracun PDV-a
-? RAZMAK()
-?? PADL(lokal("PDV 17% :"), LEN_UKUPNO())
-?? show_number(drn->ukpdv, PIC_VRIJEDNOST())
+   // obracun PDV-a
+   ? RAZMAK()
+   ?? PadL( lokal( "PDV 17% :" ), LEN_UKUPNO() )
+   ?? show_number( drn->ukpdv, PIC_VRIJEDNOST() )
 
 
-// zaokruzenje
-if ROUND(drn->zaokr,4) <> 0
-	? RAZMAK() 
-	?? PADL(lokal("Zaokruzenje :"), LEN_UKUPNO())
-	?? show_number(drn->zaokr, PIC_VRIJEDNOST())
-endif
+   // zaokruzenje
+   IF Round( drn->zaokr, 4 ) <> 0
+      ? RAZMAK()
+      ?? PadL( lokal( "Zaokruzenje :" ), LEN_UKUPNO() )
+      ?? show_number( drn->zaokr, PIC_VRIJEDNOST() )
+   ENDIF
 	
-? cLine
-? RAZMAK()
-// ipak izleti za dva karaktera rekapitulacija u bold rezimu
-?? SPACE(50 - 2)
-B_ON
-?? PADL(lokal("** SVEUKUPNO SA PDV  (")+cValuta+") :", LEN_UKUPNO() - 50)
-?? TRANSFORM(drn->ukupno, PIC_VRIJEDNOST())
-B_OFF
+   ? cLine
+   ? RAZMAK()
+   // ipak izleti za dva karaktera rekapitulacija u bold rezimu
+   ?? Space( 50 - 2 )
+   B_ON
+   ?? PadL( lokal( "** SVEUKUPNO SA PDV  (" ) + cValuta + ") :", LEN_UKUPNO() - 50 )
+   ?? Transform( drn->ukupno, PIC_VRIJEDNOST() )
+   B_OFF
 
 	
-cSlovima := get_dtxt_opis("D04")
-? RAZMAK() 
-B_ON
-?? lokal("slovima: ") + cSlovima
-B_OFF
-? cLine
-return
+   cSlovima := get_dtxt_opis( "D04" )
+   ? RAZMAK()
+   B_ON
+   ?? lokal( "slovima: " ) + cSlovima
+   B_OFF
+   ? cLine
+
+   RETURN
 
 
 // ----------------------------------------
 // funkcija za ispis podataka o kupcu
 // ----------------------------------------
-static function nar_header()
-local cPom, cPom2
-local cLin
-local cPartMjesto
-local cPartPTT
-local cNaziv, cNaziv2
-local cAdresa, cAdresa2
-local cIdBroj, cIdBroj2
-local cMjesto, cMjesto2
-local cTelFax, cTelFax2
-local aKupac, aDobavljac
-local cDatDok
-local cDatIsp
-local cDatVal
-local cBrDok
-local cBrNar
-local cBrOtp
-local nPRowsDelta
+STATIC FUNCTION nar_header()
 
-nPRowsDelta := prow()
+   LOCAL cPom, cPom2
+   LOCAL cLin
+   LOCAL cPartMjesto
+   LOCAL cPartPTT
+   LOCAL cNaziv, cNaziv2
+   LOCAL cAdresa, cAdresa2
+   LOCAL cIdBroj, cIdBroj2
+   LOCAL cMjesto, cMjesto2
+   LOCAL cTelFax, cTelFax2
+   LOCAL aKupac, aDobavljac
+   LOCAL cDatDok
+   LOCAL cDatIsp
+   LOCAL cDatVal
+   LOCAL cBrDok
+   LOCAL cBrNar
+   LOCAL cBrOtp
+   LOCAL nPRowsDelta
 
-drn_open()
-select drn
-go top
+   nPRowsDelta := PRow()
 
-cDatDok := DToC(datdok)
+   drn_open()
+   SELECT drn
+   GO TOP
 
-if EMPTY(datIsp)
-	// posto je ovo obavezno polje na racunu
-	// stavicemo ako nije uneseno da je datum isporuke
-	// jednak datumu dokumenta
-	cDatIsp := DTOC(datDok)
-else
-	cDatIsp := DToC(datisp)
-endif
+   cDatDok := DToC( datdok )
 
-cDatVal := DToC(field->datval)
-cBrDok := field->brdok
+   IF Empty( datIsp )
+      // posto je ovo obavezno polje na racunu
+      // stavicemo ako nije uneseno da je datum isporuke
+      // jednak datumu dokumenta
+      cDatIsp := DToC( datDok )
+   ELSE
+      cDatIsp := DToC( datisp )
+   ENDIF
 
-cBrNar := get_dtxt_opis("D06") 
-cBrOtp := get_dtxt_opis("D05") 
+   cDatVal := DToC( field->datval )
+   cBrDok := field->brdok
 
-cNaziv := get_dtxt_opis("K01")
-cAdresa := get_dtxt_opis("K02")
-cIdBroj := get_dtxt_opis("K03")
-cDestinacija := get_dtxt_opis("D08")
+   cBrNar := get_dtxt_opis( "D06" )
+   cBrOtp := get_dtxt_opis( "D05" )
 
-cTelFax := "tel: "
-cPom := ALLTRIM(get_dtxt_opis("K13"))
+   cNaziv := get_dtxt_opis( "K01" )
+   cAdresa := get_dtxt_opis( "K02" )
+   cIdBroj := get_dtxt_opis( "K03" )
+   cDestinacija := get_dtxt_opis( "D08" )
 
-if EMPTY( cPom )
-	cPom:="-"
-endif
+   cTelFax := "tel: "
+   cPom := AllTrim( get_dtxt_opis( "K13" ) )
 
-cTelFax += cPom
-cPom := ALLTRIM(get_dtxt_opis("K14"))
-if EMPTY( cPom )
-	cPom:="-"
-endif
-cTelFax += ", fax: " + cPom
+   IF Empty( cPom )
+      cPom := "-"
+   ENDIF
 
-//K10 - partner mjesto
-cMjesto := get_dtxt_opis("K10") 
-//K11 - partner PTT
-cPTT := get_dtxt_opis("K11")
+   cTelFax += cPom
+   cPom := AllTrim( get_dtxt_opis( "K14" ) )
+   IF Empty( cPom )
+      cPom := "-"
+   ENDIF
+   cTelFax += ", fax: " + cPom
 
-
-PushWa()
-SELECT F_PARTN
-if !used()
-	O_PARTN
-endif
-
-// gFirma sadrzi podatke o maticnoj firmi
-seek gFirma
-
-cNaziv2  := ALLTRIM(partn->naz)
-cMjesto2 := ALLTRIM(partn->ptt) + " " + ALLTRIM(partn->mjesto)
-cAdresa2 := ALLTRIM(partn->adresa)
-cAdresa2 := get_dtxt_opis("I02")
-// idbroj
-cIdBroj2 := get_dtxt_opis("I03") 
-cTelFax2 := "tel: " + ALLTRIM(partn->telefon)  + ", fax: " + ALLTRIM(partn->fax)
-
-PopWa()
-
-cMjesto:= ALLTRIM(cMjesto)
-if !EMPTY(cPTT)
- cMjesto := ALLTRIM(cPTT) + " " + cMjesto
-endif
-
-aKupac:=Sjecistr(cNaziv, LEN_COLONA)
-aDobavljac:=SjeciStr(cNaziv2, LEN_COLONA)
-
-B_ON
-cPom := PADR(lokal("Naručioc:"), LEN_COLONA) + " " + PADR(lokal("Dobavljač:"), LEN_COLONA)
-
-p_line( cPom, 12, .t.)
-
-cPom := PADR(REPLICATE("-",LEN_COLONA-2), LEN_COLONA)
-cLin := cPom + " " + cPom
-p_line( cLin  , 12, .f.)
-
-// prvi red kupca, 10cpi, bold
-cPom := ALLTRIM(aKupac[1])
-if EMPTY(cPom)
-  cPom := "-"
-endif
-cPom := PADR(cPom, LEN_COLONA)
-
-// prvi red dobavljaca, 10cpi, bold
-cPom2 := ALLTRIM(aDobavljac[1])
-if EMPTY(cPom2)
-  cPom2 := "-"
-endif
-cPom := cPom +  " " + PADR(cPom2, LEN_COLONA)
-p_line( cPom , 12, .f.)
+   // K10 - partner mjesto
+   cMjesto := get_dtxt_opis( "K10" )
+   // K11 - partner PTT
+   cPTT := get_dtxt_opis( "K11" )
 
 
-cPom := ALLTRIM(cAdresa)
-if EMPTY(cPom)
-  cPom := "-"
-endif
-cPom2 := ALLTRIM(cAdresa2)
-if EMPTY(cPom2)
-  cPom2 := "-"
-endif
+   PushWa()
+   SELECT F_PARTN
+   IF !Used()
+      O_PARTN
+   ENDIF
 
-cPom := PADR(cPom, LEN_COLONA)
-cPom += " " + PADR(cPom2, LEN_COLONA)
-p_line( cPom, 12, .t.)
+   // gFirma sadrzi podatke o maticnoj firmi
+   SEEK gFirma
 
-// mjesto
-cPom := ALLTRIM(cMjesto)
-if EMPTY(cPom)
-  cPom := "-"
-endif
-cPom2 := ALLTRIM(cMjesto2)
-if EMPTY(cPom2)
-  cPom2 := "-"
-endif
-cPom := PADR(cPom, LEN_COLONA)
-cPom += " " + PADR(cPom2, LEN_COLONA)
-p_line( cPom, 12, .t.)
+   cNaziv2  := AllTrim( partn->naz )
+   cMjesto2 := AllTrim( partn->ptt ) + " " + AllTrim( partn->mjesto )
+   cAdresa2 := AllTrim( partn->adresa )
+   cAdresa2 := get_dtxt_opis( "I02" )
+   // idbroj
+   cIdBroj2 := get_dtxt_opis( "I03" )
+   cTelFax2 := "tel: " + AllTrim( partn->telefon )  + ", fax: " + AllTrim( partn->fax )
 
-// idbroj
-cPom := ALLTRIM(cIdBroj)
-if EMPTY(cPom)
-  cPom := "-"
-endif
-cPom2 := ALLTRIM(cIdBroj2)
-if EMPTY(cPom2)
-  cPom2 := "-"
-endif
-cPom := PADR(lokal("ID: ") + cPom, LEN_COLONA)
-cPom += " " + PADR(lokal("ID: ") + cPom2, LEN_COLONA)
-p_line( cPom, 12, .t.)
+   PopWa()
 
+   cMjesto := AllTrim( cMjesto )
+   IF !Empty( cPTT )
+      cMjesto := AllTrim( cPTT ) + " " + cMjesto
+   ENDIF
 
-// telfax
-cPom := ALLTRIM(cTelFax)
-if EMPTY(cTelFax)
-  cPom := "-"
-endif
-cPom2 := ALLTRIM(cTelFax2)
-if EMPTY(cPom2)
-  cPom2 := "-"
-endif
+   aKupac := Sjecistr( cNaziv, LEN_COLONA )
+   aDobavljac := SjeciStr( cNaziv2, LEN_COLONA )
 
+   B_ON
+   cPom := PadR( lokal( "Naručioc:" ), LEN_COLONA ) + " " + PadR( lokal( "Dobavljač:" ), LEN_COLONA )
 
-cPom := PADR(cPom, LEN_COLONA)
-cPom += " " + PADR(cPom2, LEN_COLONA)
-p_line( cPom, 12, .t.)
+   p_line( cPom, 12, .T. )
+
+   cPom := PadR( Replicate( "-", LEN_COLONA - 2 ), LEN_COLONA )
+   cLin := cPom + " " + cPom
+   p_line( cLin, 12, .F. )
+
+   // prvi red kupca, 10cpi, bold
+   cPom := AllTrim( aKupac[ 1 ] )
+   IF Empty( cPom )
+      cPom := "-"
+   ENDIF
+   cPom := PadR( cPom, LEN_COLONA )
+
+   // prvi red dobavljaca, 10cpi, bold
+   cPom2 := AllTrim( aDobavljac[ 1 ] )
+   IF Empty( cPom2 )
+      cPom2 := "-"
+   ENDIF
+   cPom := cPom +  " " + PadR( cPom2, LEN_COLONA )
+   p_line( cPom, 12, .F. )
 
 
-p_line( cLin  , 12, .t.)
+   cPom := AllTrim( cAdresa )
+   IF Empty( cPom )
+      cPom := "-"
+   ENDIF
+   cPom2 := AllTrim( cAdresa2 )
+   IF Empty( cPom2 )
+      cPom2 := "-"
+   ENDIF
 
-B_OFF
+   cPom := PadR( cPom, LEN_COLONA )
+   cPom += " " + PadR( cPom2, LEN_COLONA )
+   p_line( cPom, 12, .T. )
 
-if !EMPTY(cDestinacija)
- ?
- p_line( REPLICATE("-", LEN_KUPAC() - 10) , 12, .f.)
- cPom := lokal("Destinacija: ")  + ALLTRIM( cDestinacija )
- p_line(cPom, 12 , .f.)
- ?
-endif
+   // mjesto
+   cPom := AllTrim( cMjesto )
+   IF Empty( cPom )
+      cPom := "-"
+   ENDIF
+   cPom2 := AllTrim( cMjesto2 )
+   IF Empty( cPom2 )
+      cPom2 := "-"
+   ENDIF
+   cPom := PadR( cPom, LEN_COLONA )
+   cPom += " " + PadR( cPom2, LEN_COLONA )
+   p_line( cPom, 12, .T. )
+
+   // idbroj
+   cPom := AllTrim( cIdBroj )
+   IF Empty( cPom )
+      cPom := "-"
+   ENDIF
+   cPom2 := AllTrim( cIdBroj2 )
+   IF Empty( cPom2 )
+      cPom2 := "-"
+   ENDIF
+   cPom := PadR( lokal( "ID: " ) + cPom, LEN_COLONA )
+   cPom += " " + PadR( lokal( "ID: " ) + cPom2, LEN_COLONA )
+   p_line( cPom, 12, .T. )
 
 
-?
-?
-P_10CPI
-// broj dokumenta
-cPom := lokal("NARUDZBENICA br. ___________ od ") + cDatDok
-cPom := PADC(cPom, LEN_COLONA * 2)
-p_line( cPom, 10, .t.)
-B_OFF
-?
-cPom:=lokal("Molimo da nam na osnovu ponude/dogovora/ugovora _________________ ")
-p_line(cPom, 12 , .f.)
-cPom:=lokal("isporucite sljedeca dobra/usluge:" )
-p_line(cPom, 12 , .f.)
+   // telfax
+   cPom := AllTrim( cTelFax )
+   IF Empty( cTelFax )
+      cPom := "-"
+   ENDIF
+   cPom2 := AllTrim( cTelFax2 )
+   IF Empty( cPom2 )
+      cPom2 := "-"
+   ENDIF
 
-nPRowsDelta:= prow() - nPRowsDelta 
-if IsPtxtOutput()
-	nDuzStrKorekcija += nPRowsDelta * 7/100 
-endif
 
-return
+   cPom := PadR( cPom, LEN_COLONA )
+   cPom += " " + PadR( cPom2, LEN_COLONA )
+   p_line( cPom, 12, .T. )
 
-//-----------------------------------
-//-----------------------------------
-function nar_footer()
-local cPom
 
-?
-cPom:=lokal("USLOVI NABAVKE:")
-p_line( cPom, 12, .t.)
-cPom:="----------------"
-p_line( cPom, 12, .t.)
-?
-cPom:= lokal("Mjesto isporuke _______________________  Nacin placanja: gotovina/banka/kompenzacija")
-p_line( cPom, 12, .t.)
-?
-cPom := lokal("Vrijeme isporuke _____________________________________________________________")
-?
-p_line( cPom, 12, .t.)
-?
-cPom:=lokal("Napomena: Molimo popuniti prazna polja, te zaokružiti željene opcije")
-p_line(cPom, 20, .f.)
+   p_line( cLin, 12, .T. )
 
-?
-cPom := PADL(lokal(" M.P.          "), LEN_COLONA) + " "
-cPom += PADC(lokal("Za naručioca:"), LEN_COLONA)
-p_line(cPom, 12, .f.)
-?
-cPom := PADC(" ", LEN_COLONA) + " "
-cPom += PADC(REPLICATE("-", LEN_COLONA - 4), LEN_COLONA)
-p_line(cPom, 12, .f.)
+   B_OFF
 
-?
-return
+   IF !Empty( cDestinacija )
+      ?
+      p_line( Replicate( "-", LEN_KUPAC() - 10 ), 12, .F. )
+      cPom := lokal( "Destinacija: " )  + AllTrim( cDestinacija )
+      p_line( cPom, 12, .F. )
+      ?
+   ENDIF
+
+
+   ?
+   ?
+   P_10CPI
+   // broj dokumenta
+   cPom := lokal( "NARUDZBENICA br. ___________ od " ) + cDatDok
+   cPom := PadC( cPom, LEN_COLONA * 2 )
+   p_line( cPom, 10, .T. )
+   B_OFF
+   ?
+   cPom := lokal( "Molimo da nam na osnovu ponude/dogovora/ugovora _________________ " )
+   p_line( cPom, 12, .F. )
+   cPom := lokal( "isporucite sljedeca dobra/usluge:" )
+   p_line( cPom, 12, .F. )
+
+   nPRowsDelta := PRow() - nPRowsDelta
+   IF IsPtxtOutput()
+      nDuzStrKorekcija += nPRowsDelta * 7 / 100
+   ENDIF
+
+   RETURN
+
+// -----------------------------------
+// -----------------------------------
+FUNCTION nar_footer()
+
+   LOCAL cPom
+
+   ?
+   cPom := lokal( "USLOVI NABAVKE:" )
+   p_line( cPom, 12, .T. )
+   cPom := "----------------"
+   p_line( cPom, 12, .T. )
+   ?
+   cPom := lokal( "Mjesto isporuke _______________________  Nacin placanja: gotovina/banka/kompenzacija" )
+   p_line( cPom, 12, .T. )
+   ?
+   cPom := lokal( "Vrijeme isporuke _____________________________________________________________" )
+   ?
+   p_line( cPom, 12, .T. )
+   ?
+   cPom := lokal( "Napomena: Molimo popuniti prazna polja, te zaokružiti željene opcije" )
+   p_line( cPom, 20, .F. )
+
+   ?
+   cPom := PadL( lokal( " M.P.          " ), LEN_COLONA ) + " "
+   cPom += PadC( lokal( "Za naručioca:" ), LEN_COLONA )
+   p_line( cPom, 12, .F. )
+   ?
+   cPom := PadC( " ", LEN_COLONA ) + " "
+   cPom += PadC( Replicate( "-", LEN_COLONA - 4 ), LEN_COLONA )
+   p_line( cPom, 12, .F. )
+
+   ?
+
+   RETURN
 
 // -----------------------------------------
 // funkcija za novu stranu
 // -----------------------------------------
-static function NStr_a4(nStr, lShZagl)
-*{
+STATIC FUNCTION NStr_a4( nStr, lShZagl )
 
-// korekcija duzine je na svako strani razlicita
-nDuzStrKorekcija := 0 
+   // {
 
-P_COND
-? cLine
-p_line( lokal("Prenos na sljedecu stranicu"), 17, .f. )
-? cLine
+   // korekcija duzine je na svako strani razlicita
+   nDuzStrKorekcija := 0
 
-FF
+   P_COND
+   ? cLine
+   p_line( lokal( "Prenos na sljedecu stranicu" ), 17, .F. )
+   ? cLine
 
-P_COND
-? cLine
-if nStr <> nil
-	p_line( lokal("       Strana:") + str(nStr, 3), 17, .f.)
-endif
+   FF
 
-// total nije odstampan znaci ima jos podataka
-if lShZagl 
-	if !lPrintedTotal
-		st_zagl_data()
-	else
-		// vec je odstampan, znaci nema vise stavki
-		// najbolje ga prenesi na ovu stranu koja je posljednja
-		print_total()
-	endif
-else
-	? cLine
-endif
+   P_COND
+   ? cLine
+   IF nStr <> nil
+      p_line( lokal( "       Strana:" ) + Str( nStr, 3 ), 17, .F. )
+   ENDIF
 
-return
-*}
+   // total nije odstampan znaci ima jos podataka
+   IF lShZagl
+      IF !lPrintedTotal
+         st_zagl_data()
+      ELSE
+         // vec je odstampan, znaci nema vise stavki
+         // najbolje ga prenesi na ovu stranu koja je posljednja
+         print_total()
+      ENDIF
+   ELSE
+      ? cLine
+   ENDIF
+
+   RETURN
+// }
 
 
 // --------------------------------
 // korekcija za duzinu strane
 // --------------------------------
-static function	DSTR_KOREKCIJA()
-local nPom
+STATIC FUNCTION DSTR_KOREKCIJA()
 
-nPom := ROUND(nDuzStrKorekcija, 0)
-if ROUND(nDuzStrKorekcija - nPom, 1) > 0.2
-	nPom ++
-endif
+   LOCAL nPom
 
-return nPom
+   nPom := Round( nDuzStrKorekcija, 0 )
+   IF Round( nDuzStrKorekcija - nPom, 1 ) > 0.2
+      nPom ++
+   ENDIF
 
-return
+   RETURN nPom
 
+   RETURN

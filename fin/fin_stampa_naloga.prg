@@ -206,7 +206,7 @@ FUNCTION fin_zagl_11()
 
    @ PRow(), PCol() + 15 SAY "Str:" + Str( ++nStr, 3 )
 
-   lJerry := ( IzFMKIni( "FIN", "JednovalutniNalogJerry", "N", KUMPATH ) == "D" )
+   lJerry := .F.
 
    P_NRED
 

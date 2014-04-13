@@ -129,7 +129,7 @@ else
 
     // ppp varijanta
     // ovo dole do daljnjeg ostavljamo
-    if ((_idvd<>'47'.or.(IsJerry().and._idvd="4")) .and. !fnovi .and. gcijene=="2" .and. roba->tip!="T" .and. _MpcSapp=0)
+    if ((_idvd<>'47' ) .and. !fnovi .and. gcijene=="2" .and. roba->tip!="T" .and. _MpcSapp=0)
         // uzmi mpc sa kartice
         FaktMPC( @_MPCSAPP,_idfirma+_idkonto+_idroba )
     endif
@@ -143,7 +143,7 @@ endif
 
 SetStPor_()
 
-if ( ( _idvd<>"47" .or. ( IsJerry() .and. _idvd = "4" ) ) .and. roba->tip != "T" )
+if ( ( _idvd<>"47" ) .and. roba->tip != "T" )
 
     //////// kalkulacija nabavne cijene
     //////// nKolZN:=kolicina koja je na stanju a porijeklo je od zadnje nabavke

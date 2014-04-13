@@ -324,7 +324,7 @@ DokNovaStrana(125, @nStr, 4)
 @ prow(),pcol()+1   SAY nTotP pict picdem  
 @ prow(),pcol()+1   SAY nTot5 pict picdem
 ? m
-if cIdVd<>"47" .and. !lVoSaTa .and. !IsJerry()
+if cIdVd<>"47" .and. !lVoSaTa
     ? "RUC:"
     @ prow(),pcol()+1 SAY nTot6 pict picdem
 ? m
@@ -359,45 +359,17 @@ P_COND
 
 ?
 
-IF IsJerry()
-    cSvediDatFakt := IzFmkIni("KALK","Jerry_KALK4x_SvediDatum","F",KUMPATH)
-    ?
-    ?? "KALK BR: "
-    B_ON
-    ?? cIdFirma+"-"+cIdVD+"-"+cBrDok
-    B_OFF
-    ?? "   ", P_TipDok(cIdVD,-2), SPACE(2),"Datum:",IF(cSvediDatFakt=="F",DatFaktP,DatDok)
-    @ prow(),125 SAY "Str:"+str(++nStr,3)
-    ?
-ELSE
-    ?? "KALK BR:",  cIdFirma+"-"+cIdVD+"-"+cBrDok,SPACE(2),P_TipDok(cIdVD,-2), SPACE(2),"Datum:",DatDok
-    @ prow(),125 SAY "Str:"+str(++nStr,3)
-ENDIF
+?? "KALK BR:",  cIdFirma+"-"+cIdVD+"-"+cBrDok,SPACE(2),P_TipDok(cIdVD,-2), SPACE(2),"Datum:",DatDok
+@ prow(),125 SAY "Str:"+str(++nStr,3)
 
 select PARTN
 HSEEK cIdPartner
 
-IF IsJerry()
-    if cidvd=="41"
-        ?  "KUPAC: "
-        B_ON
-        ?? cIdPartner,"-", PADR( naz, 20 )
-        B_OFF
-        ?? SPACE(6),"DOKUMENT Broj:",cBrFaktP,"Datum:",dDatFaktP
-    elseif cidvd=="43"
-        ?  "DOBAVLJAC KOMIS.ROBE: "
-        B_ON
-        ?? cIdPartner,"-", PADR( naz, 20 )
-        B_OFF
-    endif
-    ?
-ELSE
-    if cIdVd == "41"
+if cIdVd == "41"
         ?  "KUPAC:", cIdPartner, "-", PADR( naz, 20 ), SPACE(5), "DOKUMENT Broj:", cBrFaktP, "Datum:", dDatFaktP
     elseif cidvd=="43"
         ?  "DOBAVLJAC KOMIS.ROBE:",cIdPartner,"-", PADR( naz, 20 )
-    endif
-ENDIF
+endif
 
 select KONTO
 HSEEK cIdKonto

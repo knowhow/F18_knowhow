@@ -282,7 +282,7 @@ cIdFirma := IDFIRMA; cIdVN := IDVN; cBrNal := BRNAL; dDatNal := DATNAL
 PicBHD:="@Z "+FormPicL(gPicBHD,15)
 PicDEM:="@Z "+FormPicL(gPicDEM,10)
 
-lJerry := ( IzFMKIni("FIN","JednovalutniNalogJerry","N",KUMPATH) == "D" )
+lJerry := .F.
 
 IF gNW=="N"
     M := "------ -------------- --- "+"---- ------- " + REPL("-", __par_len) + " ----------------------------"+IF(gVar1=="1".and.lJerry,"-- "+REPL("-",20),"")+" -- ------------- ----------- -------- -------- --------------- ---------------"+IF(gVar1=="1","-"," ---------- ----------")

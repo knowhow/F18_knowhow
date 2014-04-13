@@ -22,8 +22,6 @@ local aDbf
 local _alias, _table_name
 local _created
 
-// IZVJE.DBF ( fin_izvje.dbf )
-
 aDBf := {}
 AADD( aDBf, { 'ID'      , 'C' ,   2 ,  0 } )
 AADD( aDBf, { 'NAZ'     , 'C' ,  50 ,  0 } )

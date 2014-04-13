@@ -29,7 +29,7 @@ return
 
 function Gen9999()
   if !(gRadnoPodr=="9999")  
-    // sezonsko kumulativno podrucje za zbirne izvjeçtaje
+    // sezonsko kumulativno podrucje za zbirne izvjeÃ§taje
     MsgBeep("Ova operacija se radi u 9999 podrucju")
     return
   endif
@@ -164,11 +164,10 @@ return .t.
  */
 
 function DuplRoba()
-*{
 local nRREC,fdupli:=.f.,dkolicina:=0,dfcj:=0
 private GetList:={}
  // pojava robe vise puta unutar kalkulacije!!!
- if ( (roba->tip $ "UTY") .or. empty(gMetodaNC) .or. gmagacin=="1" .or. (IsJerry() .and. _idvd="4") )
+ if ( (roba->tip $ "UTY") .or. empty(gMetodaNC) .or. gMagacin=="1" )
     return .t.
  endif
  select kalk_pripr; set order to tag "3"
@@ -261,7 +260,7 @@ return
 function SljBroj(cidfirma,cIdvD,nMjesta)
 private cReturn:="0"
 select kalk
-seek cidfirma+cidvd+"ä"
+seek cidfirma+cidvd+"Ã¤"
 skip -1
 if idvd<>cidvd
      cReturn:=space(8)
@@ -1053,7 +1052,7 @@ if (idvd $ "11#12#13")
     else
         nMarza2:=MPC-VPC-nPrevoz
     endif
-elseif ( (idvd $ "41#42#43#81") .or. (IsJerry() .and. idvd="4") )
+elseif ( (idvd $ "41#42#43#81") )
     if (roba->tip=="V")
         nMarza2:=(MPC-roba->VPC)+roba->vpc*nPPP-NC
     elseif (roba->tip=="X")

@@ -604,7 +604,6 @@ do while !eof()
             return .f.
         endif
 
-        if !(IsJerry() .and. cIdVd = "4")
             if gMetodaNC <> " " .and. field->error == " "
                 Beep(2)
                 MSG("Dokument je izgenerisan, pokrenuti opciju <A> za obradu",6)
@@ -620,7 +619,6 @@ do while !eof()
                     return .f.
                 endif
             endif
-        endif
     
         if field->idvd <> "24" .and. empty(field->mu_i) .and. empty(field->pu_i)
             Beep(2)

@@ -471,7 +471,7 @@ endif
 
 if (idvd $ "11#12#13")
     nMarza2:=MPC-VPC-nPrevoz
-elseif ( (idvd $ "41#42#43#81") .or. (IsJerry() .and. idvd="4") )
+elseif ( (idvd $ "41#42#43#81") )
     nMarza2:=MPC-NC
 else
     nMarza2:=MPC-VPC

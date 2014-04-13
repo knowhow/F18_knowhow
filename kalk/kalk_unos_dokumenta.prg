@@ -389,10 +389,6 @@ FUNCTION kalk_pripr_key_handler()
 
    CASE Ch == K_ALT_A
 
-      IF IsJerry()
-         JerryMP()
-      ENDIF
-
       my_close_all_dbf()
 
       azur_kalk()
@@ -2629,32 +2625,19 @@ FUNCTION kalk_centr_stampa_dokumenta()
                Stkalk95()
             ENDIF
          ELSEIF ( cidvd $ "41#42#43#47#49" )
-            // realizacija prodavnice
-            IF ( IsJerry() .AND. cIdVd $ "41#42#47" )
-               StKalk47J()
-            ELSE
                StKalk41()
-            ENDIF
          ELSEIF ( cidvd == "18" )
             StKalk18()
          ELSEIF ( cidvd == "19" )
-            IF IsJerry()
-               StKalk19J()
-            ELSE
                StKalk19()
-            ENDIF
          ELSEIF ( cidvd == "80" )
             StKalk80()
          ELSEIF ( cidvd == "81" )
-            IF IsJerry()
-               StKalk81J()
-            ELSE
                IF ( c10Var == "1" )
                   StKalk81()
                ELSE
                   StKalk81_2()
                ENDIF
-            ENDIF
          ELSEIF ( cidvd == "82" )
             StKalk82()
          ELSEIF ( cidvd == "IM" )
@@ -2766,7 +2749,7 @@ FUNCTION kalk_centr_stampa_dokumenta()
       cBrDok := BrDok
       cIdVD := IdVD
       IF ( cIdVd $ "11#12" )
-         StKalk11_2( .T. )  // maksuzija za tops - bez NC
+         StKalk11_2( .T. )
       ELSEIF ( cIdVd == "10" )
          StKalk10_3( .T. )
       ELSEIF ( cIdVd == "81" )

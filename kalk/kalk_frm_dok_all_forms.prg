@@ -33,7 +33,7 @@ else
 	SetAPorezi( @aPorezi )
 endif
 
-if fNovi .or. ( gVodiSamoTarife == "D" ) .or. IsJerry() .or. IsPlanika()
+if fNovi .or. ( gVodiSamoTarife == "D" ) 
 	_idtarifa := cTarifa
 endif
 
@@ -65,7 +65,7 @@ if _mpcsapp <> 0
 endif
 
 if fRealizacija
-	if (_idvd=="47" .and. !(IsJerry().and._idvd="4"))
+	if (_idvd=="47" )
 		_nc:=_mpc
 	endif
 endif
@@ -241,7 +241,7 @@ local _ocitani_barkod := _idroba
 
 P_Roba( @_IdRoba )
 
-if fNovi .or. IsJerry()
+if fNovi
     // nadji odgovarajucu tarifu regiona
     cTarifa := Tarifa(_IdKonto,_IdRoba, @aPorezi)
 else
@@ -251,7 +251,7 @@ else
     SetAPorezi( @aPorezi )
 endif
 
-if fNovi .or. ( gVodiSamoTarife == "D" ) .or. IsJerry()
+if fNovi .or. ( gVodiSamoTarife == "D" )
    _IdTarifa := cTarifa
 endif
 
@@ -328,7 +328,7 @@ if _MpcSapp<>0
 endif
 
 if fRealizacija
-  if (_idvd=="47" .and. !( IsJerry() .and. _idvd="4"))
+  if (_idvd=="47")
      _nc:=_mpc
   endif
 endif

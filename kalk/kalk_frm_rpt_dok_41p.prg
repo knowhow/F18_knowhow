@@ -512,7 +512,7 @@ endif
 
 ? _line
 
-if cIdVd <> "47" .and. !IsJerry()
+if cIdVd <> "47"
     ? "        UKUPNA RUC:"
     @ prow(), pcol() + 1 SAY nTot6 pict picdem
     ? "UKUPNO POPUST U MP:"

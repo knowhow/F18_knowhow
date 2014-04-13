@@ -62,9 +62,6 @@ FUNCTION SubKart2( lOtvSt )
    cK1 := cK2 := "9"
    cK3 := cK4 := "99"
 
-   IF IzFMKIni( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
-      cK3 := "999"
-   ENDIF
    cPoVezi := "N"
    cNula := "N"
 
@@ -76,7 +73,7 @@ FUNCTION SubKart2( lOtvSt )
       @ m_x + 1, m_y + 2 SAY8 "SUBANALITIČKA KARTICA"
    ENDIF
    @ m_x + 2, m_y + 2 SAY "BEZ/SA kumulativnim prometom  (1/2):" GET cKumul
-   @ m_x + 4, m_y + 2 SAY "Sazeta kartica (bez opisa) D/N" GET cSazeta  PICT "@!" VALID cSazeta $ "DN"
+   @ m_x + 4, m_y + 2 SAY8 "Sažeta kartica (bez opisa) D/N" GET cSazeta  PICT "@!" VALID cSazeta $ "DN"
    READ
    DO WHILE .T.
       IF gNW == "D"
@@ -205,7 +202,7 @@ FUNCTION SubKart2( lOtvSt )
 
    IF cPoVezi == "D"
 
-      // SUBANi3","IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)",KUMPATH+"SUBAN")
+      // "IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)"
       SET ORDER TO TAG "3"
 
    ENDIF
@@ -519,7 +516,7 @@ FUNCTION SubKart2( lOtvSt )
          ENDIF
 
          ? m
-      ENDIF // fprosao
+      ENDIF
 
       nKonD += nDugBHD;  nKonP += nPotBHD
       nKonD2 += nDugDEM; nKonP2 += nPotDEM
@@ -546,11 +543,11 @@ FUNCTION SubKart2( lOtvSt )
             IF idkonto == qqkonto2
                cIdPartner := idpartner
                hseek cidfirma + qqkonto + cIdpartner
-               IF !Found() // ove kartice nije bilo
+               IF !Found() 
                   GO nTRec
                   EXIT
                ELSE
-                  LOOP  // vrati se traziti
+                  LOOP
                ENDIF
             ENDIF
             EXIT
@@ -585,9 +582,9 @@ FUNCTION ZaglSif2( fStrana )
    ENDIF
 
    IF fOtvSt
-      ?? "FIN: KARTICA OTVORENIH STAVKI KONTO/KONTO2 "
+      ??U "FIN: KARTICA OTVORENIH STAVKI KONTO/KONTO2 "
    ELSE
-      ?? "FIN: SUBANALITICKA KARTICA  ZA "
+      ??U "FIN: SUBANALITIČKA KARTICA  ZA "
    ENDIF
 
    ?? iif( cDinDem == "1", AllTrim( ValDomaca() ), iif( cDinDem == "2", AllTrim( ValPomocna() ), AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() ) ) ), " NA DAN:", Date()
@@ -658,24 +655,24 @@ FUNCTION ZaglSif2( fStrana )
       ENDIF
    ELSE
       IF cSazeta == "D"
-         ?  "------- ----------- ---------------------------- --------------------------- ------------------------------ ---------------"
-         ?  " KONTO * NALOG     *      D O K U M E N T       *        P R O M E T        *      K U M U L A T I V       *    SALDO     *"
-         ?  "        ----------- -------------------- -------- --------------------------- ------------------------------              *"
-         ?  "       * V.*BR     *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*   DUGUJE    *  POTRAZUJE   *    DUGUJE    *  POTRAZUJE   *              *"
-         ?  "       *           *          *        *        *             *              *              *              *              *"
+         ?U  "------- ----------- ---------------------------- --------------------------- ------------------------------ ---------------"
+         ?U  " KONTO * NALOG     *      D O K U M E N T       *        P R O M E T        *      K U M U L A T I V       *    SALDO     *"
+         ?U  "        ----------- -------------------- -------- --------------------------- ------------------------------              *"
+         ?U  "       * V.*BR     *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*   DUGUJE    *  POTRAŽUJE   *    DUGUJE    *  POTRAŽUJE   *              *"
+         ?U  "       *           *          *        *        *             *              *              *              *              *"
       ELSE
          IF gNW == "N"
-            ?  "------- ---------------- ------------------------------------------------------------------ ---------------------------------- ---------------------------------- ---------------"
-            ?  "*KONTO *   NALOG        *                    D  O  K  U  M  E  N  T                        *           P R O M E T            *           K U M U L A T I V      *    SALDO     *"
-            ?  "*       ---------------- ------------------------------------ -------- -------------------- ---------------------------------- ----------------------------------               *"
-            ?  "*      * V.*BR     * R. *     TIP I      *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*    OPIS            *    DUGUJE     *    POTRA¦UJE     *    DUGUJE     *    POTRA¦UJE     *              *"
-            ?  "*      * N.*       * Br.*     NAZIV      *          *        *        *                    *               *                  *               *                  *              *"
+            ?U  "------- ---------------- ------------------------------------------------------------------ ---------------------------------- ---------------------------------- ---------------"
+            ?U  "*KONTO *   NALOG        *                    D  O  K  U  M  E  N  T                        *           P R O M E T            *           K U M U L A T I V      *    SALDO     *"
+            ?U  "*       ---------------- ------------------------------------ -------- -------------------- ---------------------------------- ----------------------------------               *"
+            ?U  "*      * V.*BR     * R. *     TIP I      *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*    OPIS            *    DUGUJE     *    POTRAŽUJE     *    DUGUJE     *    POTRAŽUJE     *              *"
+            ?U  "*      * N.*       * Br.*     NAZIV      *          *        *        *                    *               *                  *               *                  *              *"
          ELSE
-            ?  "------- ---------------- ------------------------------------------------- ---------------------------------- ---------------------------------- ----------------"
-            ?  "*KONTO *   NALOG        *            D O K U M E N T                      *           P R O M E T            *           K U M U L A T I V      *    SALDO      *"
+            ?U  "------- ---------------- ------------------------------------------------- ---------------------------------- ---------------------------------- ----------------"
+            ?U  "*KONTO *   NALOG        *            D O K U M E N T                      *           P R O M E T            *           K U M U L A T I V      *    SALDO      *"
             ?  "*       ---------------- ------------------- -------- -------------------- ---------------------------------- ----------------------------------                *"
-            ?  "*      * V.*BR     * R. *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*    OPIS            *    DUGUJE     *    POTRAZUJE     *    DUGUJE     *    POTRA¦UJE     *               *"
-            ?  "*      * N.*       * Br.*          *        *        *                    *               *                  *               *                  *               *"
+            ?U  "*      * V.*BR     * R. *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*    OPIS            *    DUGUJE     *    POTRAŽUJE     *    DUGUJE     *    POTRAŽUJE     *               *"
+            ?U  "*      * N.*       * Br.*          *        *        *                    *               *                  *               *                  *               *"
          ENDIF
       ENDIF
    ENDIF

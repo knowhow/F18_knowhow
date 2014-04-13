@@ -543,7 +543,7 @@ FUNCTION SubKart2( lOtvSt )
             IF idkonto == qqkonto2
                cIdPartner := idpartner
                hseek cidfirma + qqkonto + cIdpartner
-               IF !Found() 
+               IF !Found()
                   GO nTRec
                   EXIT
                ELSE
@@ -679,6 +679,3 @@ FUNCTION ZaglSif2( fStrana )
    ? m
 
    RETURN
-
-
-

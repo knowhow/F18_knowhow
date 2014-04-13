@@ -15,7 +15,6 @@
 /*
  finansijska kartica
 */
-
 FUNCTION fin_kartice_menu()
 
    LOCAL _opc := {}

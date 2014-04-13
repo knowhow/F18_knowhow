@@ -13,36 +13,26 @@
 #include "kalk.ch"
 
 
-// -----------------------------------------------
-// specifikacija maloprodaje po dobavljacima
-// -----------------------------------------------
-function kalk_spec_mp_po_dob()
+function asortiman_dobavljac_mp()
 local _vars
 
-// forma uslova izvjestaja
 if !frm_vars( @_vars )
     return
 endif
 
-// kreiraj pomocnu tabelu
 _cre_tmp()
 
-// generisi report
 gen_rpt( _vars )
 
 if _vars["narudzba"] == "D"
     print_frm_asort_nar( _vars )
 else
-    // printaj report
     print_report( _vars )
 endif
 
 return
 
 
-// ----------------------------------------
-// kreiraj pomocnu tabelu
-// ----------------------------------------
 static function _cre_tmp()
 local _dbf := {}
 	
@@ -66,10 +56,6 @@ index on idroba tag "roba"
 return
 
 
-
-// ----------------------------------------
-// forma uslova izvjestaja
-// ----------------------------------------
 static function frm_vars( vars )
 local _dat_od, _dat_do, _p_konto, _artikli, _dob, _prik_nule
 local _narudzba
@@ -83,34 +69,26 @@ _dob := fetch_metric( "kalk_spec_mp_dob_dobavljac", my_user(), PADR( "", 6 ) )
 _prik_nule := fetch_metric( "kalk_spec_mp_dob_nule", my_user(), "N" )
 _narudzba := fetch_metric( "kalk_spec_mp_dob_narudzba", my_user(), "N" )
 
-// forma uslova #
 Box(, 10, 70 )
     
     @ m_x + _x, m_y + 2 SAY "Datum od:" GET _dat_od
     @ m_x + _x, col() + 1 SAY "do:" GET _dat_do
 
+    _x += 2
+    @ m_x + _x, m_y + 2 SAY8 "Prodavnički konto:" GET _p_konto VALID P_Konto( @_p_konto )
     ++ _x
+    @ m_x + _x, m_y + 2 SAY8 "Dobavljač:" GET _dob VALID P_Firma( @_dob )
+    _x += 2
+    @ m_x + _x, m_y + 2 SAY8 "Artikli (prazno-svi):" GET _artikli PICT "@S35"
     ++ _x
-    @ m_x + _x, m_y + 2 SAY "Prodavnicki konto:" GET _p_konto VALID P_Konto( @_p_konto )
-    
+    @ m_x + _x, m_y + 2 SAY8 "Prikaz stavki kojima je ulaz = 0 (D/N) ?" GET _prik_nule VALID _prik_nule $ "DN" PICT "@!"
     ++ _x
-    @ m_x + _x, m_y + 2 SAY "Dobavljac:" GET _dob VALID P_Firma( @_dob )
-
-    ++ _x
-    ++ _x
-    @ m_x + _x, m_y + 2 SAY "Artikli (prazno-svi):" GET _artikli PICT "@S35"
-
-    ++ _x
-    @ m_x + _x, m_y + 2 SAY "Prikaz stavki kojima je ulaz = 0 (D/N) ?" GET _prik_nule VALID _prik_nule $ "DN" PICT "@!"
-
-    ++ _x
-    @ m_x + _x, m_y + 2 SAY "Stampati formu narudzbe (D/N) ?" GET _narudzba VALID _narudzba $ "DN" PICT "@!"
+    @ m_x + _x, m_y + 2 SAY8 "Štampati formu narudžbe (D/N) ?" GET _narudzba VALID _narudzba $ "DN" PICT "@!"
 
     read
 
 BoxC()
 
-// ESC - vozdra forma i opcija
 if LastKey() == K_ESC
     return .f.
 endif
@@ -155,7 +133,6 @@ endif
 
 return .t.
 
-
 // ------------------------------------------------------
 // izdvoji ulaze u pomocnu tabelu
 // ------------------------------------------------------
@@ -197,7 +174,6 @@ if !EMPTY( _date )
 endif
 
 // sql upit za ulaze:
-//
 _qry := "SELECT " + ;
    "kalk.pkonto pkonto, " + ;
    "kalk.idroba idroba, " + ;
@@ -260,7 +236,6 @@ next
 MsgC()
 
 return _cnt
-
 
 
 // ------------------------------------------------------
@@ -334,7 +309,6 @@ _table:Refresh()
 
 log_write( _qry, 7 )
 
-// provrti se kroz matricu i azuriraj rezultat u pomocni dbf
 for _i := 1 to _table:LastRec()
 
     ++ _cnt
@@ -450,7 +424,7 @@ local _n_pos := 50
 local _nule := vars["nule"]
 
 if RECCOUNT() == 0
-    MsgBeep( "Ne postoje trazeni podaci !" )
+    MsgBeep( "Ne postoje traženi podaci !" )
     return
 endif
 
@@ -460,15 +434,15 @@ _line := _get_line()
 START PRINT CRET
 ?
 
-? "SPECIFIKACIJA ASORTIMANA PO DOBAVLJACIMA NA DAN", DTOC( DATE() )
-? "Za period od", DTOC( vars["datum_od"]), "do", DTOC(vars["datum_do"])
-? "Prodavnicki konto:", vars["p_konto"]
+?U "SPECIFIKACIJA ASORTIMANA PO DOBAVLJAČIMA NA DAN", DTOC( DATE() )
+?U "Za period od", DTOC( vars["datum_od"]), "do", DTOC(vars["datum_do"])
+?U "Prodavnički konto:", vars["p_konto"]
 
 O_KONTO
 seek vars["p_konto"]
 ?? ALLTRIM( konto->naz )
 
-? "Dobavljac:", vars["dobavljac"]
+?U "Dobavljač:", vars["dobavljac"]
 
 O_PARTN
 seek vars["dobavljac"]
@@ -510,7 +484,6 @@ enddo
 
 ? _line
 
-// ispis totala
 ? "UKUPNO:"
 
 @ prow(), _n_pos SAY STR( _t_ulaz, 12, 2 )
@@ -520,14 +493,11 @@ enddo
 ? _line
 
 FF
-END PRINT
+ENDPRINT
 
 return
 
 
-// ----------------------------------------
-// vraca header izvjestaja
-// ----------------------------------------
 static function _get_head()
 local _head := ""
 
@@ -549,11 +519,6 @@ _head += PADR( "Razlika", 12 )
 
 return _head
 
-
-
-// ----------------------------------------
-// vraca liniju izvjestaja
-// ----------------------------------------
 static function _get_line()
 local _line := ""
 
@@ -574,6 +539,5 @@ _line += SPACE(1)
 _line += REPLICATE("-", 12)
 
 return _line
-
 
 

@@ -19,11 +19,11 @@ local _opc := {}
 local _opcexe := {}
 local _izbor := 1
 
-AADD(_opc,"1. izvjestaji magacin             ")
+AADD(_opc,"1. izvještaji magacin             ")
 AADD(_opcexe, {|| kalk_izvjestaji_magacina()})
-AADD(_opc,"2. izvjestaji prodavnica")
-AADD(_opcexe, {|| kalk_izvjestaji_prodavnice()})
-AADD(_opc,"3. izvjestaji magacin+prodavnica")
+AADD(_opc,"2. izvještaji prodavnica")
+AADD(_opcexe, {|| kalk_izvjestaji_prodavnice_menu()})
+AADD(_opc,"3. izvještaji magacin+prodavnica")
 AADD(_opcexe, {|| kalk_izvjestaji_mag_i_pro() } )
 AADD(_opc,"4. proizvoljni izvjestaji")
 AADD(_opcexe, {|| ProizvKalk()})

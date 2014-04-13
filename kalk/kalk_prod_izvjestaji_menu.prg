@@ -12,8 +12,7 @@
 
 #include "kalk.ch"
 
-// menij izvjestaji prodavnica
-function kalk_izvjestaji_prodavnice()
+function kalk_izvjestaji_prodavnice_menu()
 local _opc := {}
 local _opcexe := {}
 local _izbor := 1
@@ -26,15 +25,15 @@ AADD(_Opc, "3. finansijsko stanje prodavnice")
 AADD(_opcexe, {|| FLLP()})
 AADD(_Opc, "4. TKM")
 AADD(_opcexe, {|| kalk_tkm() })
-AADD(_Opc, "5. specifikacija asortimana po dobavljacu")
-AADD(_opcexe, {|| kalk_spec_mp_po_dob() })
+AADD(_Opc, "5. pregled asortimana za dobavljača")
+AADD(_opcexe, {|| asortiman_dobavljac_mp() })
 AADD(_Opc,  "---------------------------------")
 AADD(_opcexe, NIL)
 AADD(_Opc,  "P. porezi")
 AADD(_opcexe, {|| PoreziProd()})
 AADD(_Opc,  "---------------------------------")
 AADD(_opcexe, NIL)
-AADD(_Opc,  "V. pregled za vise objekata")
+AADD(_Opc,  "V. pregled za više objekata")
 AADD(_opcexe, {|| RekProd()})
 
 f18_menu( "izp", .f., _izbor, _opc, _opcexe )

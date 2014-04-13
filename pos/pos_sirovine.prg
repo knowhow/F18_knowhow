@@ -193,10 +193,7 @@ while !eof()
 				endif
 				Set order to tag "2"
         			Append Blank
-        			sql_append()
         			Gather()
-        			sql_azur(.t.)
-        			GathSQL()
       			else
         			cBrDok := ""
         			do while !Eof() .and. pos_doks->IdVd=="96" .and. pos_doks->Datum==xDatum.and. pos_doks->Smjena==xSmjena
@@ -215,10 +212,7 @@ while !eof()
 					endif
 					Set order to tag "2"
           				Append Blank
-          				sql_append()
           				Gather()
-          				sql_azur(.t.)
-          				GathSQL()
         			endif
       			endif
       			SELECT PRIPRG    // xDatum je priprg->datum
@@ -242,11 +236,8 @@ while !eof()
           				REPLSQL Kolicina WITH Kolicina+_Kolicina
         			else
           				Append Blank
-          				sql_append()
           				_BrDok := cBrDok
           				Gather()
-          				sql_azur(.t.)
-          				GathSQL()
         			endif
         			SELECT PRIPRG
         			SKIP

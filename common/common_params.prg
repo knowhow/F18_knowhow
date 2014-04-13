@@ -99,9 +99,6 @@ endif
 if (cAkcija==nil)
 	cAkcija:="A"
 endif
-if (gSql=="D") .and. (goModul:lSqlDirektno)
-	cAkcija:="L"
-endif	
 
 seek cSection+cHistory+cImeVar
 
@@ -114,38 +111,6 @@ seek cSection+cHistory+cImeVar
       dbdelete2()
       go nRec
     enddo
-    if fSQL
-      cSQL:="update "+ALIAS()+" SET BRISANO='1' where Fh="+sqlvalue(Fh)+" and FSec="+sqlvalue(FSec)+" and FVar="+sqlvalue(FVar)
-	
-	if (goModul:lSqlDirektno)
-		GwDirektno(cSql)
-	else
-	      	if cAkcija=="A"
-	       		Gw(cSQL, @GW_HANDLE,"A")
-		elseif cAkcija=="P"
-			Gw(cSQL, @GW_HANDLE,"P")
-	      	elseif cAkcija=="D" .or. cAkcija=="Z"
-	       		Gw(cSQL, @GW_HANDLE,"D")
-	      	endif
-	endif
-	
-      cSQL:="delete from "+ALIAS()+" where Fsec="+sqlvalue(cSection)+" and Fh="+sqlvalue(cHistory)+" and FVar="+sqlvalue(cImeVar)
-     
-     	NextAkcija(cAkcija)
-	
-        if (goModul:lSqlDirektno)
-       		GwDirektno(cSql)
-	else
-		if cAkcija=="A"
-	       		Gw(cSQL, @GW_HANDLE,"A")
-	      	elseif cAkcija=="D" .or. cAkcija=="P"
-	       		Gw(cSQL, @GW_HANDLE,"D")
-	      	elseif cAkcija=="Z"
-	       		Gw(cSQL, @GW_HANDLE,"D")
-	      	endif
-	endif	   
-
-    endif
   else
     MsgBeep("FLOCK:parametri nedostupni!!")
   endif
@@ -168,16 +133,6 @@ cPom+=chr(CHR254)
 cRbr:="0"
 do while len(cPom)<>0
 	append blank
-	if fSQL
-		
-		if goModul:lSqlDirektno
-			sql_append(@GW_HANDLE,"L")
-		elseif cAkcija=="A"
-	    		sql_append(@GW_HANDLE,"A")
-	 	else
-	    		sql_append(@GW_HANDLE,"D")
-	 	endif
-	endif
 
 	Chadd(@cRbr,1)
 
@@ -187,20 +142,6 @@ do while len(cPom)<>0
 		tip with clTip,;
 		rBr with cRbr,;
 		Fv   with left(cPom,15)
-
-	if fSql
-	  	sql_azur(.t.)
-		NextAkcija(@cAkcija)
-
-        /*
-		replsql TYPE cAkcija Fh with chistory,;
-			Fsec with cSection,;
-		  	Fvar with cImeVar,;
-		  	tip with clTip,;
-		  	rBr with cRbr,;
-		  	Fv   with left(cPom,15)
-        */
-	endif
 
 	cPom:=substr(cPom,16)
 enddo

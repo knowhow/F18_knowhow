@@ -227,9 +227,7 @@ do while !eof() .and. _POS->(IdPos+IdVd)==(gIdPos+VD_RN)
 	_IdOdj    := SPACE (LEN (_IdOdj))
 	_M1       := OBR_NIJE
 	Append Blank
-	sql_append()
 	Gather()
-	GathSQL()
 	SELECT _POS
 	while !eof() .and. _POS->(IdPos+IdVd+BrDok)==(gIdPos+VD_RN+cRadRac)
 		if _POS->m1=="Z"
@@ -254,9 +252,7 @@ do while !eof() .and. _POS->(IdPos+IdVd)==(gIdPos+VD_RN)
 		_Vrijeme  := cVrijeme
 		_IdVrsteP := cIdVrsteP
 		Append Blank
-		sql_append()
 		Gather()
-		GathSql()
 		SELECT _POS
 		GO nRec
 		do While ! Eof() .and. _POS->(IdPos+IdVd+BrDok)==(gIdPos+VD_RN+cRadRac).and._POS->(IdRoba+IdCijena)==(_IdRoba+_IdCijena) .and. ;

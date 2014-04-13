@@ -242,13 +242,11 @@ begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1)
         ::unlock()
         _ok := .t.
 recover
-    MsgBeep("neuspjesna konverzija " + _broj + " idtpdok => " + new_idtipdok + " !")
+    MsgBeep("neuspješna konverzija " + _broj + " idtpdok => " + new_idtipdok + " !")
     _ok := .f.
 end sequence
 
-// forsiraj refresh dbf-ova
-my_close_all_dbf()
-o_fakt_edit()
+close_open_fakt_tabele()
 
 ::p_idtipdok := new_idtipdok
 

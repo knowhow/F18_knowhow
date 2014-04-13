@@ -88,7 +88,7 @@ method open()
 private imekol
 private kol
 
-o_fakt_edit()
+close_open_fakt_tabele()
 
 select fakt_pripr
 set order to tag "1"
@@ -163,7 +163,7 @@ do case
 	case ::nCh == K_ALT_A
 		my_close_all_dbf()
 		azur_fakt()
-		o_fakt_edit()
+                close_open_fakt_tabele()
 		return DE_REFRESH
 
    	case ::nCh == K_CTRL_F9
@@ -361,7 +361,7 @@ BoxC()
 if Pitanje(,"Generisati dokument inventure za RJ "+cIdRj,"N")=="D"
 	my_close_all_dbf()
 	GDokInv(cIdRj)
-	o_fakt_edit()
+        close_open_fakt_tabele()
 endif
 
 return

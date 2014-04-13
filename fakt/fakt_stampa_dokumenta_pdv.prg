@@ -40,17 +40,15 @@ drn_create()
 drn_open()
 drn_empty()
 
-// otvori tabele
-if PCount() == 4 .and. ( cIdtipdok <> nil )
+if PCount() == 4 .and. ( cIdtipDok <> nil )
     lPrepisDok := .t.
     _fill_params["from_server"] := .t.
-    o_fakt_edit(.t.)
+    close_open_fakt_tabele( .T. )
 else
     _fill_params["from_server"] := .f.
-    o_fakt_edit(.f.)
+    close_open_fakt_tabele()
 endif
 
-// otvori pomocne tabele racuna
 o_dracun()
 
 select fakt_pripr

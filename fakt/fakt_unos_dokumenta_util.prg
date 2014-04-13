@@ -1694,18 +1694,6 @@ return lRet
 
 
 
-function ImportTxt()
-my_close_all_dbf()
-cKom :="fmk.exe --batch --exe:ImportTxt --db:"+STRTRAN(TRIM(gNFirma), " ", "_") 
-//hb_run(cKom)
-MsgBeep("nije implementirano u F18 ##" + cKom)
-return .f.
-
-
-o_fakt_edit()
-return
-
-
 function GetKarC3N2(mx)
 local nKor:=0
 local nDod:=0

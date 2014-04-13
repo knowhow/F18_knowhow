@@ -46,12 +46,12 @@ LEN_UKUPNO(99)
 radni_nalog(lStartPrint)
 
 return
-*}
 
 
 // stampa radnog naloga
 function radni_nalog(lStartPrint)
-*{
+
+
 local cBrDok
 local dDatDok
 local aRNaz

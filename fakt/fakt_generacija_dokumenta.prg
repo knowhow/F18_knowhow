@@ -367,12 +367,11 @@ Box(, 20, 75 )
         // ukini lock opcije
         set_metric( _lock_param, NIL, "" )
         
-        my_close_all_dbf()
-        o_fakt_edit()
-        select fakt_pripr
+        close_open_fakt_tabele()
+        select_fakt_pripr()
         BoxC()
 
-        MsgBeep( "Neuspjesno lokovanje tabele !!!" )
+        MsgBeep( "Neuspješno lokovanje tabele !!!" )
 
         return .t.
 
@@ -393,8 +392,7 @@ Box(, 20, 75 )
                 
                 set_metric( _lock_param, NIL, "" )
 
-                my_close_all_dbf()
-                o_fakt_edit()
+                close_open_fakt_tabele()
                 select fakt_pripr
 
                 BoxC()    
@@ -444,8 +442,7 @@ else
     set_metric( _lock_param, NIL, "" )
 endif 
 
-my_close_all_dbf()
-o_fakt_edit()
+close_open_fakt_tabele()
 select fakt_pripr
 
 return .t.

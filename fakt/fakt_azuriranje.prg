@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,269 +14,273 @@
 // --------------------------------------------------
 // centralna funkcija za azuriranje fakture
 // --------------------------------------------------
-function azur_fakt( lSilent )
-local _a_fakt_doks := {}
-local _id_firma
-local _br_dok
-local _id_tip_dok
-local _ok
-local _tbl_fakt  := "fakt_fakt"
-local _tbl_doks  := "fakt_doks"
-local _tbl_doks2 := "fakt_doks2"
-local _msg
-local oAtrib
+FUNCTION azur_fakt( lSilent )
 
-if ( lSilent == nil)
-    lSilent := .f.
-endif
+   LOCAL _a_fakt_doks := {}
+   LOCAL _id_firma
+   LOCAL _br_dok
+   LOCAL _id_tip_dok
+   LOCAL _ok
+   LOCAL _tbl_fakt  := "fakt_fakt"
+   LOCAL _tbl_doks  := "fakt_doks"
+   LOCAL _tbl_doks2 := "fakt_doks2"
+   LOCAL _msg
+   LOCAL oAtrib
 
-o_fakt_edit()
+   IF ( lSilent == nil )
+      lSilent := .F.
+   ENDIF
 
-if ( !lSilent .and. Pitanje( "FAKT_AZUR", "Sigurno zelite izvrsiti azuriranje (D/N) ?", "N" ) == "N" )
-    return _a_fakt_doks
-endif
+   close_open_fakt_tabele()
 
-select fakt_pripr
-use
+   IF ( !lSilent .AND. Pitanje( "FAKT_AZUR", "Sigurno želite izvrsiti azuriranje (D/N) ?", "N" ) == "N" )
+      RETURN _a_fakt_doks
+   ENDIF
 
-O_FAKT_PRIPR
-go top
+   SELECT fakt_pripr
+   USE
 
-// ubaci mi matricu sve dokumente iz pripreme
-_a_fakt_doks := fakt_dokumenti_u_pripremi()
+   O_FAKT_PRIPR
+   GO TOP
 
-if LEN( _a_fakt_doks ) == 0
-    MsgBeep( "Postojeci dokumenti u pripremi vec postoje azurirani u bazi !" )
-    return _a_fakt_doks
-endif
+   // ubaci mi matricu sve dokumente iz pripreme
+   _a_fakt_doks := fakt_dokumenti_u_pripremi()
 
-// ako je samo jedan dokument provjeri njegove redne brojeve
-if LEN( _a_fakt_doks ) == 1
-    select fakt_pripr
-    go top
-    // provjeri redne brojeve dokumenta
-    if !provjeri_redni_broj()
-        MsgBeep( "Redni brojevi u dokumentu nisu ispravni !!!" )
-        return _a_fakt_doks
-    endif
-endif
+   IF Len( _a_fakt_doks ) == 0
+      MsgBeep( "Postojeci dokumenti u pripremi vec postoje azurirani u bazi !" )
+      RETURN _a_fakt_doks
+   ENDIF
 
-// fiksiranje tabele atributa
-F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB):fix_atrib( F_FAKT_PRIPR, _a_fakt_doks )
+   // ako je samo jedan dokument provjeri njegove redne brojeve
+   IF Len( _a_fakt_doks ) == 1
+      SELECT fakt_pripr
+      GO TOP
+      // provjeri redne brojeve dokumenta
+      IF !provjeri_redni_broj()
+         MsgBeep( "Redni brojevi u dokumentu nisu ispravni !!!" )
+         RETURN _a_fakt_doks
+      ENDIF
+   ENDIF
 
-_ok := .t.
+   // fiksiranje tabele atributa
+   F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB ):fix_atrib( F_FAKT_PRIPR, _a_fakt_doks )
 
-MsgO( "Azuriranje dokumenata u toku ..." )
+   _ok := .T.
 
-// prodji kroz matricu sa dokumentima i azuriraj ih
-for _i := 1 to LEN( _a_fakt_doks )
+   MsgO( "Azuriranje dokumenata u toku ..." )
 
-    _id_firma   := _a_fakt_doks[ _i, 1 ]
-    _id_tip_dok := _a_fakt_doks[ _i, 2 ]
-    _br_dok     := _a_fakt_doks[ _i, 3 ]
-    
-    // provjeri da li postoji vec identican broj azuriran u bazi ?
-    if fakt_doks_exist( _id_firma, _id_tip_dok, _br_dok )
-        MsgBeep( "Dokument " + _id_firma + "-" + _id_tip_dok + "-" + ALLTRIM(_br_dok) + " vec postoji azuriran u bazi !" )
-        _ok := .f.
-    endif
-    
-    if _ok .and. fakt_azur_sql( _id_firma, _id_tip_dok, _br_dok  )
-    
-        if _ok .and. !fakt_azur_dbf( _id_firma, _id_tip_dok, _br_dok )
+   // prodji kroz matricu sa dokumentima i azuriraj ih
+   FOR _i := 1 TO Len( _a_fakt_doks )
+
+      _id_firma   := _a_fakt_doks[ _i, 1 ]
+      _id_tip_dok := _a_fakt_doks[ _i, 2 ]
+      _br_dok     := _a_fakt_doks[ _i, 3 ]
+
+      // provjeri da li postoji vec identican broj azuriran u bazi ?
+      IF fakt_doks_exist( _id_firma, _id_tip_dok, _br_dok )
+         MsgBeep( "Dokument " + _id_firma + "-" + _id_tip_dok + "-" + AllTrim( _br_dok ) + " vec postoji azuriran u bazi !" )
+         _ok := .F.
+      ENDIF
+
+      IF _ok .AND. fakt_azur_sql( _id_firma, _id_tip_dok, _br_dok  )
+
+         IF _ok .AND. !fakt_azur_dbf( _id_firma, _id_tip_dok, _br_dok )
             _msg := "ERROR DBF: Neuspjesno FAKT/DBF azuriranje: " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok
-            log_write(_msg, 1)
-            MsgBeep(_msg)
-            _ok := .f.
-        else
+            log_write( _msg, 1 )
+            MsgBeep( _msg )
+            _ok := .F.
+         ELSE
             log_write( "F18_DOK_OPER: azuriranje fakt dokumenta: " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok, 2 )
-        endif
+         ENDIF
 
-    else
-        _msg := "ERROR SQL: Neuspjesno SQL azuriranje: " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok
-        log_write(_msg, 1)
-        MsgBeep(_msg)
-        _ok := .f.
-    endif
+      ELSE
+         _msg := "ERROR SQL: Neuspjesno SQL azuriranje: " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok
+         log_write( _msg, 1 )
+         MsgBeep( _msg )
+         _ok := .F.
+      ENDIF
 
-next
+   NEXT
 
-MsgC()
+   MsgC()
 
-if !_ok
-   return _a_fakt_doks
-endif
+   IF !_ok
+      RETURN _a_fakt_doks
+   ENDIF
 
-select fakt_pripr
+   SELECT fakt_pripr
 
-MsgO("brisem pripremu....")
+   MsgO( "brisem pripremu...." )
 
-// provjeri sta treba pobrisati iz pripreme
-if LEN( _a_fakt_doks ) > 1
-    fakt_izbrisi_azurirane( _a_fakt_doks )
-else
-    // izbrisi pripremu
-    select fakt_pripr
-    my_dbf_zap()
-endif
+   // provjeri sta treba pobrisati iz pripreme
+   IF Len( _a_fakt_doks ) > 1
+      fakt_izbrisi_azurirane( _a_fakt_doks )
+   ELSE
+      // izbrisi pripremu
+      SELECT fakt_pripr
+      my_dbf_zap()
+   ENDIF
 
-// pobrisi mi fakt_atribute takodjer
-F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB):zapp_local_table()
+   // pobrisi mi fakt_atribute takodjer
+   F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB ):zapp_local_table()
 
-MsgC()
-    
-my_close_all_dbf()
+   MsgC()
 
-return _a_fakt_doks
+   my_close_all_dbf()
+
+   RETURN _a_fakt_doks
 
 
 // -----------------------------------------------------------------
 // seek dokumenta u pripremi
 // -----------------------------------------------------------------
-static function _seek_pripr_dok( idfirma, idtipdok, brdok )
-local _ret := .f.
+STATIC FUNCTION _seek_pripr_dok( idfirma, idtipdok, brdok )
 
-O_FAKT_PRIPR
+   LOCAL _ret := .F.
 
-select fakt_pripr
-set order to tag "1"
-go top
-seek idfirma + idtipdok + brdok
+   O_FAKT_PRIPR
 
-if FOUND()
-    _ret := .t.
-endif
+   SELECT fakt_pripr
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK idfirma + idtipdok + brdok
 
-return _ret
+   IF Found()
+      _ret := .T.
+   ENDIF
+
+   RETURN _ret
 
 
 
 // --------------------------------------------------------------
 // azuriranje u sql tabele
 // --------------------------------------------------------------
-static function fakt_azur_sql( id_firma, id_tip_dok, br_dok )
-local _ok
-local _tbl_fakt, _tbl_doks, _tbl_doks2
-local _i, _n
-local _tmp_id, _tmp_doc
-local _ids := {}
-local _ids_tmp := {}
-local _ids_doc := {}
-local _fakt_doks_data
-local _fakt_doks2_data
-local _fakt_totals
-local _record
-local _msg
-local _ids_fakt  := {}
-local _ids_doks  := {}
-local _ids_doks2 := {}
-local oAtrib
+STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
 
-my_close_all_dbf()
+   LOCAL _ok
+   LOCAL _tbl_fakt, _tbl_doks, _tbl_doks2
+   LOCAL _i, _n
+   LOCAL _tmp_id, _tmp_doc
+   LOCAL _ids := {}
+   LOCAL _ids_tmp := {}
+   LOCAL _ids_doc := {}
+   LOCAL _fakt_doks_data
+   LOCAL _fakt_doks2_data
+   LOCAL _fakt_totals
+   LOCAL _record
+   LOCAL _msg
+   LOCAL _ids_fakt  := {}
+   LOCAL _ids_doks  := {}
+   LOCAL _ids_doks2 := {}
+   LOCAL oAtrib
 
-_tbl_fakt  := "fakt_fakt"
-_tbl_doks  := "fakt_doks"
-_tbl_doks2 := "fakt_doks2"
+   my_close_all_dbf()
 
-Box(, 5, 60 )
+   _tbl_fakt  := "fakt_fakt"
+   _tbl_doks  := "fakt_doks"
+   _tbl_doks2 := "fakt_doks2"
 
-_ok := .t.
+   Box(, 5, 60 )
 
-O_FAKT_PRIPR
+   _ok := .T.
 
-// vidi ima li tog dokumenta u pripremi !
-// svakako mi se nastimaj na taj record
-if !_seek_pripr_dok( id_firma, id_tip_dok, br_dok )
-    Alert( "ne kontam u fakt_pripr nema: " + id_firma + "-" + id_tip_dok + "-" + br_dok )
-    return .f.
-endif
+   O_FAKT_PRIPR
 
-// lokuj prvo tabele
-if !f18_lock_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" } )
-    return .f.
-endif
+   // vidi ima li tog dokumenta u pripremi !
+   // svakako mi se nastimaj na taj record
+   IF !_seek_pripr_dok( id_firma, id_tip_dok, br_dok )
+      Alert( "ne kontam u fakt_pripr nema: " + id_firma + "-" + id_tip_dok + "-" + br_dok )
+      RETURN .F.
+   ENDIF
 
-o_fakt_edit()
-// opet se vrati na ovaj slog koji mi treba
-_seek_pripr_dok( id_firma, id_tip_dok, br_dok )
+   // lokuj prvo tabele
+   IF !f18_lock_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" } )
+      RETURN .F.
+   ENDIF
 
-// -----------------------------------------------------------------------------------------------------
-sql_table_update(nil, "BEGIN")
 
-// uzmi potrebni record
-_record := dbf_get_rec()
+   close_open_fakt_tabele()
+   // opet se vrati na ovaj slog koji mi treba
+   _seek_pripr_dok( id_firma, id_tip_dok, br_dok )
 
-// algoritam 2 - dokument nivo
-_tmp_id := _record["idfirma"] + _record["idtipdok"] + _record["brdok"]
-AADD( _ids_fakt, "#2" + _tmp_id )
+   // -----------------------------------------------------------------------------------------------------
+   sql_table_update( nil, "BEGIN" )
 
-@ m_x + 1, m_y + 2 SAY "fakt_fakt -> server: " + _tmp_id 
+   // uzmi potrebni record
+   _record := dbf_get_rec()
 
-do while !EOF() .and. field->idfirma == id_firma .and. field->idtipdok == id_tip_dok .and. field->brdok == br_dok
-    _record := dbf_get_rec()
-    if !sql_table_update("fakt_fakt", "ins", _record )
-        _ok := .f.
-        exit
-    endif
-    skip
-enddo
+   // algoritam 2 - dokument nivo
+   _tmp_id := _record[ "idfirma" ] + _record[ "idtipdok" ] + _record[ "brdok" ]
+   AAdd( _ids_fakt, "#2" + _tmp_id )
 
-if _ok == .t.
-    @ m_x + 2, m_y + 2 SAY "fakt_doks -> server: " + _tmp_id 
-    AADD( _ids_doks, _tmp_id )
-    SELECT fakt_pripr
-    _record := get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
-    if !sql_table_update( "fakt_doks", "ins", _record )
-        _ok := .f.
-    endif
-endif
+   @ m_x + 1, m_y + 2 SAY "fakt_fakt -> server: " + _tmp_id
 
-if _ok == .t.
-    @ m_x + 3, m_y + 2 SAY "fakt_doks2 -> server: " + _tmp_id 
-    AADD( _ids_doks2, _tmp_id )
-    _record := get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
-    SELECT fakt_pripr
-    if !sql_table_update("fakt_doks2", "ins", _record )
-        _ok := .f.
-    endif
-endif
+   DO WHILE !Eof() .AND. field->idfirma == id_firma .AND. field->idtipdok == id_tip_dok .AND. field->brdok == br_dok
+      _record := dbf_get_rec()
+      IF !sql_table_update( "fakt_fakt", "ins", _record )
+         _ok := .F.
+         EXIT
+      ENDIF
+      SKIP
+   ENDDO
 
-if _ok == .t.
-    @ m_x + 4, m_y + 2 SAY "fakt_atributi -> server "
-    oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
-    oAtrib:dok_hash["idfirma"] := id_firma
-    oAtrib:dok_hash["idtipdok"] := id_tip_dok
-    oAtrib:dok_hash["brdok"] := br_dok
-    _ok := oAtrib:atrib_dbf_to_server()
-endif
+   IF _ok == .T.
+      @ m_x + 2, m_y + 2 SAY "fakt_doks -> server: " + _tmp_id
+      AAdd( _ids_doks, _tmp_id )
+      SELECT fakt_pripr
+      _record := get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
+      IF !sql_table_update( "fakt_doks", "ins", _record )
+         _ok := .F.
+      ENDIF
+   ENDIF
 
-if !_ok
-    _msg := "FAKT sql azuriranje, trasakcija " + _tmp_id + " neuspjesna ?!"
-    log_write( _msg, 2 )
-    MsgBeep(_msg )
-    // transakcija neuspjesna
-    // server nije azuriran 
-    sql_table_update(nil, "ROLLBACK" )
+   IF _ok == .T.
+      @ m_x + 3, m_y + 2 SAY "fakt_doks2 -> server: " + _tmp_id
+      AAdd( _ids_doks2, _tmp_id )
+      _record := get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
+      SELECT fakt_pripr
+      IF !sql_table_update( "fakt_doks2", "ins", _record )
+         _ok := .F.
+      ENDIF
+   ENDIF
 
-    // ako je transakcja neuspjesna, svejedno trebas osloboditi tabele
-    f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
+   IF _ok == .T.
+      @ m_x + 4, m_y + 2 SAY "fakt_atributi -> server "
+      oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )
+      oAtrib:dok_hash[ "idfirma" ] := id_firma
+      oAtrib:dok_hash[ "idtipdok" ] := id_tip_dok
+      oAtrib:dok_hash[ "brdok" ] := br_dok
+      _ok := oAtrib:atrib_dbf_to_server()
+   ENDIF
 
-else
+   IF !_ok
+      _msg := "FAKT sql azuriranje, trasakcija " + _tmp_id + " neuspjesna ?!"
+      log_write( _msg, 2 )
+      MsgBeep( _msg )
+      // transakcija neuspjesna
+      // server nije azuriran
+      sql_table_update( nil, "ROLLBACK" )
 
-    @ m_x+4, m_y+2 SAY "push ids to semaphore: " + _tmp_id
+      // ako je transakcja neuspjesna, svejedno trebas osloboditi tabele
+      f18_free_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" } )
 
-    push_ids_to_semaphore( _tbl_fakt   , _ids_fakt   )
-    push_ids_to_semaphore( _tbl_doks   , _ids_doks   )
-    push_ids_to_semaphore( _tbl_doks2  , _ids_doks2  )
+   ELSE
 
-    f18_free_tables({"fakt_fakt", "fakt_doks", "fakt_doks2"})
-    sql_table_update(nil, "END")
+      @ m_x + 4, m_y + 2 SAY "push ids to semaphore: " + _tmp_id
 
-endif
+      push_ids_to_semaphore( _tbl_fakt, _ids_fakt   )
+      push_ids_to_semaphore( _tbl_doks, _ids_doks   )
+      push_ids_to_semaphore( _tbl_doks2, _ids_doks2  )
 
-BoxC()
+      f18_free_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" } )
+      sql_table_update( nil, "END" )
 
-return _ok
+   ENDIF
+
+   BoxC()
+
+   RETURN _ok
 
 
 
@@ -284,489 +288,422 @@ return _ok
 // -------------------------------------------------------------------
 // azuriranje u dbf tabele
 // -------------------------------------------------------------------
-static function fakt_azur_dbf( id_firma, id_tip_dok, br_dok, lSilent )
-local _a_memo
-local _rec
-local _fakt_totals
-local _fakt_doks_data
-local _fakt_doks2_data
+STATIC FUNCTION fakt_azur_dbf( id_firma, id_tip_dok, br_dok, lSilent )
 
-my_close_all_dbf()
-o_fakt_edit()
+   LOCAL _a_memo
+   LOCAL _rec
+   LOCAL _fakt_totals
+   LOCAL _fakt_doks_data
+   LOCAL _fakt_doks2_data
 
-Box( "#Proces azuriranja dbf-a u toku", 3, 60 )
+   close_open_fakt_tabele()
 
-    @ m_x + 1, m_y + 2 SAY "fakt_pripr -> fakt_fakt"
+   Box( "#Proces ažuriranja dbf-a u toku", 3, 60 )
 
-    // seekuj mi dokument u pripremi
-    _seek_pripr_dok( id_firma, id_tip_dok, br_dok )
-    
-    do while !EOF() .and. field->idfirma == id_firma .and. field->idtipdok == id_tip_dok .and. field->brdok == br_dok
+   @ m_x + 1, m_y + 2 SAY "fakt_pripr -> fakt_fakt"
 
-        select fakt_pripr
-        _rec := dbf_get_rec()
-        
-        select fakt
-        APPEND BLANK
-        dbf_update_rec( _rec, .t. )
+   _seek_pripr_dok( id_firma, id_tip_dok, br_dok )
 
-        select fakt_pripr
-        skip
+   DO WHILE !Eof() .AND. field->idfirma == id_firma .AND. field->idtipdok == id_tip_dok .AND. field->brdok == br_dok
 
-    enddo
+      SELECT fakt_pripr
+      _rec := dbf_get_rec()
 
-    @ m_x + 2, m_y + 2 SAY "fakt_doks " + id_firma + id_tip_dok + br_dok 
-  
-    select fakt_doks
-    set order to tag "1"
-    go top
-    seek id_firma + id_tip_dok + br_dok
+      SELECT fakt
+      APPEND BLANK
+      dbf_update_rec( _rec, .T. )
 
-    if !FOUND()
+      SELECT fakt_pripr
+      SKIP
 
-        _rec := get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
-        
-        // pobrisi sljedece clanove...
-        hb_hdel( _rec, "brisano" ) 
-        hb_hdel( _rec, "sifra" ) 
+   ENDDO
 
-        select fakt_doks
-        APPEND BLANK
+   @ m_x + 2, m_y + 2 SAY "fakt_doks " + id_firma + id_tip_dok + br_dok
 
-        dbf_update_rec( _rec, .t. )
+   SELECT fakt_doks
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK id_firma + id_tip_dok + br_dok
 
-    else
+   IF !Found()
 
-        _msg := "ERR: " + RECI_GDJE_SAM0 + " postoji zapis u fakt_doks : " + id_firma + id_tip_dok + br_dok 
-        Alert(_msg)
-        log_write( _msg, 5 )
+      _rec := get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
 
-    endif
+      // pobrisi sljedece clanove...
+      hb_HDel( _rec, "brisano" )
+      hb_HDel( _rec, "sifra" )
 
+      SELECT fakt_doks
+      APPEND BLANK
 
-    @ m_x + 3, m_y + 2 SAY "fakt_doks2 " + id_firma + id_tip_dok + br_dok
+      dbf_update_rec( _rec, .T. )
 
-    select fakt_doks2
-    set order to tag "1"
-    go top
-    seek id_firma + id_tip_dok + br_dok
+   ELSE
 
-    if !FOUND()
+      _msg := "ERR: " + RECI_GDJE_SAM0 + " postoji zapis u fakt_doks : " + id_firma + id_tip_dok + br_dok
+      Alert( _msg )
+      log_write( _msg, 5 )
 
-        _rec := get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
-
-        select fakt_doks2
-        APPEND BLANK
-
-        dbf_update_rec( _rec, .t. )
-
-    else
-        _msg := "ERR: " + RECI_GDJE_SAM0 + " postoji zapis u fakt_doks2 : " + id_firma + id_tip_dok + br_dok 
-        Alert(_msg)
-        log_write( _msg, 5 )
-    endif
-
-BoxC()
-
-// opet seekuj pripremu 
-_seek_pripr_dok( id_firma, id_tip_dok, br_dok )
-
-return .t.
+   ENDIF
 
 
+   @ m_x + 3, m_y + 2 SAY "fakt_doks2 " + id_firma + id_tip_dok + br_dok
+
+   SELECT fakt_doks2
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK id_firma + id_tip_dok + br_dok
+
+   IF !Found()
+
+      _rec := get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
+
+      SELECT fakt_doks2
+      APPEND BLANK
+
+      dbf_update_rec( _rec, .T. )
+
+   ELSE
+      _msg := "ERR: " + RECI_GDJE_SAM0 + " postoji zapis u fakt_doks2 : " + id_firma + id_tip_dok + br_dok
+      Alert( _msg )
+      log_write( _msg, 5 )
+   ENDIF
+
+   BoxC()
+
+   // opet seekuj pripremu
+   _seek_pripr_dok( id_firma, id_tip_dok, br_dok )
+
+   RETURN .T.
 
 
-// -----------------------------------------------
-// -----------------------------------------------
-static function _fakt_partner_naziv( id_partner )
-local _return := ""
-local _t_area := SELECT()
-    
-select ( F_PARTN )
-if !Used()
-    O_PARTN
-endif
+STATIC FUNCTION _fakt_partner_naziv( id_partner )
 
-select partn
-go top
-hseek id_partner
+   LOCAL _return := ""
+   LOCAL _t_area := Select()
 
-// priprema podatke za upis u polje "doks->partner"
-_return := ALLTRIM( partn->naz )
-_return += " "
-_return += ALLTRIM( partn->adresa )
-_return += ","
-_return += ALLTRIM( partn->ptt )
-_return += " "
-_return += ALLTRIM( partn->mjesto )
+   SELECT ( F_PARTN )
+   IF !Used()
+      O_PARTN
+   ENDIF
 
-_return := PADR( _return, FAKT_DOKS_PARTNER_LENGTH )
+   SELECT partn
+   GO TOP
+   hseek id_partner
 
-select ( _t_area )    
-return _return
+   // priprema podatke za upis u polje "doks->partner"
+   _return := AllTrim( partn->naz )
+   _return += " "
+   _return += AllTrim( partn->adresa )
+   _return += ","
+   _return += AllTrim( partn->ptt )
+   _return += " "
+   _return += AllTrim( partn->mjesto )
+
+   _return := PadR( _return, FAKT_DOKS_PARTNER_LENGTH )
+
+   SELECT ( _t_area )
+
+   RETURN _return
 
 
 // -------------------------------------------------------------
 // vraca hash matricu za fakt_doks2
 // -------------------------------------------------------------
-function get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
-local _fakt_data := hb_hash()
-local _memo 
+FUNCTION get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
 
-O_FAKT_PRIPR
-select fakt_pripr
-go top
-seek id_firma + id_tip_dok + br_dok
+   LOCAL _fakt_data := hb_Hash()
+   LOCAL _memo
 
-_fakt_data["idfirma"]  := field->idfirma
-_fakt_data["brdok"]    := field->brdok
-_fakt_data["idtipdok"] := field->idtipdok
+   O_FAKT_PRIPR
+   SELECT fakt_pripr
+   GO TOP
+   SEEK id_firma + id_tip_dok + br_dok
 
-_memo := ParsMemo( field->txt )
-    
-_fakt_data["k1"] := if( LEN( _memo ) >= 11, _memo[11], "" )
-_fakt_data["k2"] := if( LEN( _memo ) >= 12, _memo[12], "" )
-_fakt_data["k3"] := if( LEN( _memo ) >= 13, _memo[13], "" )
-_fakt_data["k4"] := if( LEN( _memo ) >= 14, _memo[14], "" )
-_fakt_data["k5"] := if( LEN( _memo ) >= 15, _memo[15], "" )
-_fakt_data["n1"] := if( LEN( _memo ) >= 16, VAL( ALLTRIM( _memo[16] ) ), 0 )
-_fakt_data["n2"] := if( LEN( _memo ) >= 17, VAL( ALLTRIM( _memo[17] ) ), 0 )
+   _fakt_data[ "idfirma" ]  := field->idfirma
+   _fakt_data[ "brdok" ]    := field->brdok
+   _fakt_data[ "idtipdok" ] := field->idtipdok
 
-return _fakt_data
+   _memo := ParsMemo( field->txt )
+
+   _fakt_data[ "k1" ] := if( Len( _memo ) >= 11, _memo[ 11 ], "" )
+   _fakt_data[ "k2" ] := if( Len( _memo ) >= 12, _memo[ 12 ], "" )
+   _fakt_data[ "k3" ] := if( Len( _memo ) >= 13, _memo[ 13 ], "" )
+   _fakt_data[ "k4" ] := if( Len( _memo ) >= 14, _memo[ 14 ], "" )
+   _fakt_data[ "k5" ] := if( Len( _memo ) >= 15, _memo[ 15 ], "" )
+   _fakt_data[ "n1" ] := if( Len( _memo ) >= 16, Val( AllTrim( _memo[ 16 ] ) ), 0 )
+   _fakt_data[ "n2" ] := if( Len( _memo ) >= 17, Val( AllTrim( _memo[ 17 ] ) ), 0 )
+
+   RETURN _fakt_data
 
 
 // -------------------------------------------------------------
 // -------------------------------------------------------------
-function get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
-local _fakt_totals
-local _fakt_data 
-local _memo 
+FUNCTION get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
 
-// definiši matricu za fakt_doks zapis
-_fakt_data := hb_hash()
-_fakt_data["idfirma"]  := id_firma
-_fakt_data["idtipdok"] := id_tip_dok
-_fakt_data["brdok"]    := br_dok
+   LOCAL _fakt_totals
+   LOCAL _fakt_data
+   LOCAL _memo
 
-O_FAKT_PRIPR
-// sljedeća polja ću uzeti iz pripreme
-select fakt_pripr
-HSEEK id_firma + id_tip_dok + br_dok
+   // definiši matricu za fakt_doks zapis
+   _fakt_data := hb_Hash()
+   _fakt_data[ "idfirma" ]  := id_firma
+   _fakt_data[ "idtipdok" ] := id_tip_dok
+   _fakt_data[ "brdok" ]    := br_dok
 
-_memo := ParsMemo( field->txt )
+   O_FAKT_PRIPR
+   // sljedeća polja ću uzeti iz pripreme
+   SELECT fakt_pripr
+   HSEEK id_firma + id_tip_dok + br_dok
 
-_fakt_data["datdok"]  := field->datdok
-_fakt_data["dindem"]  := field->dindem
-_fakt_data["rezerv"] := " "
-_fakt_data["m1"] := field->m1
-_fakt_data["idpartner"] := field->idpartner
-_fakt_data["partner"] := _fakt_partner_naziv( field->idpartner )
-_fakt_data["oper_id"] := getUserId()
-_fakt_data["sifra"] := SPACE(6)
-_fakt_data["brisano"] := SPACE(1)
-_fakt_data["idvrstep"] := field->idvrstep
-_fakt_data["datpl"] := field->datdok
-_fakt_data["idpm"] := field->idpm
-_fakt_data["dat_isp"]  := iif( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )
-_fakt_data["dat_otpr"] := iif( LEN( _memo ) >= 7, CToD( _memo[7] ), CToD("") )
-_fakt_data["dat_val"]  := iif( LEN( _memo ) >= 9, CToD( _memo[9] ), CToD("") )
+   _memo := ParsMemo( field->txt )
 
-//ovo nema nikakvog smisla. fisc_rn uvijek postoji u F18
-//takođe mi mije jasno zašto se ne uzmu oba polja onakva kakva jesu ?
-// ovdje uopšte mi nije jasna ova zbrka koja se pravi sa fisc_rn i fisc_st poljima
-// non stop se nešto gleda bez ikakve potrebe
-// u fisc_rn treba biti broj fiskalnog račun.
+   _fakt_data[ "datdok" ]  := field->datdok
+   _fakt_data[ "dindem" ]  := field->dindem
+   _fakt_data[ "rezerv" ] := " "
+   _fakt_data[ "m1" ] := field->m1
+   _fakt_data[ "idpartner" ] := field->idpartner
+   _fakt_data[ "partner" ] := _fakt_partner_naziv( field->idpartner )
+   _fakt_data[ "oper_id" ] := getUserId()
+   _fakt_data[ "sifra" ] := Space( 6 )
+   _fakt_data[ "brisano" ] := Space( 1 )
+   _fakt_data[ "idvrstep" ] := field->idvrstep
+   _fakt_data[ "datpl" ] := field->datdok
+   _fakt_data[ "idpm" ] := field->idpm
+   _fakt_data[ "dat_isp" ]  := iif( Len( _memo ) >= 7, CToD( _memo[ 7 ] ), CToD( "" ) )
+   _fakt_data[ "dat_otpr" ] := iif( Len( _memo ) >= 7, CToD( _memo[ 7 ] ), CToD( "" ) )
+   _fakt_data[ "dat_val" ]  := iif( Len( _memo ) >= 9, CToD( _memo[ 9 ] ), CToD( "" ) )
 
-// ako se radi o reklamoranom (storno računu) onda sadržan treba biti
-// fisc_rn - originalni račun koji se reklamira, fisc_st - broj reklamiranog računa
+   // ovo nema nikakvog smisla. fisc_rn uvijek postoji u F18
+   // takođe mi mije jasno zašto se ne uzmu oba polja onakva kakva jesu ?
+   // ovdje uopšte mi nije jasna ova zbrka koja se pravi sa fisc_rn i fisc_st poljima
+   // non stop se nešto gleda bez ikakve potrebe
+   // u fisc_rn treba biti broj fiskalnog račun.
 
-_fakt_data["fisc_rn"] := field->fisc_rn
-_fakt_data["fisc_st"] := 0
-_fakt_data["fisc_date"] := CTOD("")
-_fakt_data["fisc_time"] := PADR( "", 10 )
+   // ako se radi o reklamoranom (storno računu) onda sadržan treba biti
+   // fisc_rn - originalni račun koji se reklamira, fisc_st - broj reklamiranog računa
 
-// izracunaj totale za fakturu
-_fakt_totals := calculate_fakt_total( id_firma, id_tip_dok, br_dok )
-    
-// ubaci u fakt_doks totale
-_fakt_data["iznos"] := _fakt_totals["iznos"] 
-_fakt_data["rabat"] := _fakt_totals["rabat"]
+   _fakt_data[ "fisc_rn" ] := field->fisc_rn
+   _fakt_data[ "fisc_st" ] := 0
+   _fakt_data[ "fisc_date" ] := CToD( "" )
+   _fakt_data[ "fisc_time" ] := PadR( "", 10 )
 
-return _fakt_data
+   // izracunaj totale za fakturu
+   _fakt_totals := calculate_fakt_total( id_firma, id_tip_dok, br_dok )
+
+   // ubaci u fakt_doks totale
+   _fakt_data[ "iznos" ] := _fakt_totals[ "iznos" ]
+   _fakt_data[ "rabat" ] := _fakt_totals[ "rabat" ]
+
+   RETURN _fakt_data
 
 
 
 // ----------------------------------------------------------
 // kalkulise ukupno za fakturu
 // ----------------------------------------------------------
-function calculate_fakt_total( id_firma, id_tipdok, br_dok)
-local _fakt_total := hb_hash()
-local _cij_sa_por := 0
-local _rabat := 0
-local _uk_sa_rab := 0
-local _uk_rabat := 0 
-local _dod_por := 0
-local _din_dem
+FUNCTION calculate_fakt_total( id_firma, id_tipdok, br_dok )
 
-select fakt_pripr
-go top
-seek id_firma + id_tipdok + br_dok
-    
-_din_dem := field->dindem
+   LOCAL _fakt_total := hb_Hash()
+   LOCAL _cij_sa_por := 0
+   LOCAL _rabat := 0
+   LOCAL _uk_sa_rab := 0
+   LOCAL _uk_rabat := 0
+   LOCAL _dod_por := 0
+   LOCAL _din_dem
 
-do while !EOF() .and. field->idfirma == id_firma .and. field->idtipdok == id_tipdok .and. field->brdok == br_dok
-        
-    if _din_dem == LEFT( ValBazna(), 3 )
-        
-        _cij_sa_por := ROUND( field->kolicina * field->cijena * PrerCij() * ( 1 - field->rabat / 100), ZAOKRUZENJE )
-        
-        _rabat := ROUND( field->kolicina * field->cijena * PrerCij() * field->rabat / 100 , ZAOKRUZENJE )
-        
-        _dod_por := ROUND( _cij_sa_por * field->porez / 100, ZAOKRUZENJE )
-        
-    else
-        
-        _cij_sa_por := ROUND( field->kolicina * field->cijena * ;
-                        PrerCij() * ( 1 - field->Rabat / 100), ZAOKRUZENJE ) 
-        
-        _rabat := ROUND( field->kolicina * field->cijena * ;
-                        PrerCij() * field->rabat / 100 , ZAOKRUZENJE )
-        
-        _dod_por := ROUND( _cij_sa_por * field->porez / 100, ZAOKRUZENJE )
-        
-    endif
-        
-    _uk_sa_rab += _cij_sa_por + _dod_por
-    _uk_rabat += _rabat
+   SELECT fakt_pripr
+   GO TOP
+   SEEK id_firma + id_tipdok + br_dok
 
-    skip
+   _din_dem := field->dindem
 
-enddo
+   DO WHILE !Eof() .AND. field->idfirma == id_firma .AND. field->idtipdok == id_tipdok .AND. field->brdok == br_dok
 
-_fakt_total["iznos"] := _uk_sa_rab
-_fakt_total["rabat"] := _uk_rabat
- 
-return _fakt_total
+      IF _din_dem == Left( ValBazna(), 3 )
+
+         _cij_sa_por := Round( field->kolicina * field->cijena * PrerCij() * ( 1 - field->rabat / 100 ), ZAOKRUZENJE )
+         _rabat := Round( field->kolicina * field->cijena * PrerCij() * field->rabat / 100, ZAOKRUZENJE )
+         _dod_por := Round( _cij_sa_por * field->porez / 100, ZAOKRUZENJE )
+
+      ELSE
+
+         _cij_sa_por := Round( field->kolicina * field->cijena * ;
+            PrerCij() * ( 1 - field->Rabat / 100 ), ZAOKRUZENJE )
+
+         _rabat := Round( field->kolicina * field->cijena * ;
+            PrerCij() * field->rabat / 100, ZAOKRUZENJE )
+
+         _dod_por := Round( _cij_sa_por * field->porez / 100, ZAOKRUZENJE )
+
+      ENDIF
+
+      _uk_sa_rab += _cij_sa_por + _dod_por
+      _uk_rabat += _rabat
+
+      SKIP
+
+   ENDDO
+
+   _fakt_total[ "iznos" ] := _uk_sa_rab
+   _fakt_total[ "rabat" ] := _uk_rabat
+
+   RETURN _fakt_total
 
 
 
 // -----------------------------------------------------------
 // pravi fakt, protudokumente
 // -----------------------------------------------------------
-static function fakt_protu_dokumenti( cPrj )
-local lVecPostoji := .f.
-local cKontrol2Broj
-local lProtu := .f.
+STATIC FUNCTION fakt_protu_dokumenti( cPrj )
 
-if ( gProtu13 == "D" .and. ;
-    fakt_pripr->idtipdok == "13" .and. ;
-    Pitanje("AZUR PROD", "Napraviti protu-dokument zaduzenja prodavnice","D")=="D")
-    
-    if (gVar13 == "2" .and. gVarNum == "1")
-        cPRj := RJIzKonta(fakt_pripr->idpartner + " ")
-    else
-        O_RJ
-        Box(,2,50)
-            cPRj:=IzFMKIni("FAKT","ProtuDokument13kiIdeNaRJ","P1",KUMPATH)
-            @ m_x+1,m_y+2 SAY "RJ - objekat:" GET cPRj valid P_RJ(@cPRJ) pict "@!"
-            read
-        BoxC()
-        select rj
-        use
-    endif
-        
-    lVecPostoji := .f.
-    // prvo da provjerimo ima li isti broj dokumenta u DOKS
-    cKontrol2Broj := fakt_pripr->(cPRJ+"01"+TRIM(brdok)+"/13")
-    select fakt_doks
-    seek cKontrol2Broj
-        
-    if Found()
-        lVecPostoji:=.t.
-    else
-        // ako nema u DOKS, 
-        // provjerimo ima li isti broj dokumenta u FAKT
-        select fakt
-        seek cKontrol2Broj
-        if Found()
-            lVecPostoji:=.t.
-        endif
-    endif
-        
-    if lVecPostoji
-        Msg("Vec postoji dokument pod brojem "+fakt_pripr->(cPRJ+"-01-"+TRIM(brdok)+"/13"),4)
-        my_close_all_dbf()
-        return .f.
-    endif
+   LOCAL lVecPostoji := .F.
+   LOCAL cKontrol2Broj
+   LOCAL lProtu := .F.
 
-    lProtu := .t.
+   IF ( gProtu13 == "D" .AND. ;
+         fakt_pripr->idtipdok == "13" .AND. ;
+         Pitanje( "AZUR PROD", "Napraviti protu-dokument zaduženja prodavnice", "D" ) == "D" )
 
-endif
+      IF ( gVar13 == "2" .AND. gVarNum == "1" )
+         cPRj := RJIzKonta( fakt_pripr->idpartner + " " )
+      ELSE
+         O_RJ
+         Box(, 2, 50 )
+         cPRj := IzFMKIni( "FAKT", "ProtuDokument13kiIdeNaRJ", "P1", KUMPATH )
+         @ m_x + 1, m_y + 2 SAY "RJ - objekat:" GET cPRj VALID P_RJ( @cPRJ ) PICT "@!"
+         READ
+         BoxC()
+         SELECT rj
+         USE
+      ENDIF
 
-return lProtu
+      lVecPostoji := .F.
+      // prvo da provjerimo ima li isti broj dokumenta u DOKS
+      cKontrol2Broj := fakt_pripr->( cPRJ + "01" + Trim( brdok ) + "/13" )
+      SELECT fakt_doks
+      SEEK cKontrol2Broj
+
+      IF Found()
+         lVecPostoji := .T.
+      ELSE
+         // ako nema u DOKS,
+         // provjerimo ima li isti broj dokumenta u FAKT
+         SELECT fakt
+         SEEK cKontrol2Broj
+         IF Found()
+            lVecPostoji := .T.
+         ENDIF
+      ENDIF
+
+      IF lVecPostoji
+         Msg( "Vec postoji dokument pod brojem " + fakt_pripr->( cPRJ + "-01-" + Trim( brdok ) + "/13" ), 4 )
+         my_close_all_dbf()
+         RETURN .F.
+      ENDIF
+
+      lProtu := .T.
+
+   ENDIF
+
+   RETURN lProtu
 
 // -----------------------------------
 // vise dokumenata u pripremi
 // ----------------------------------
-function fakt_dokumenti_u_pripremi()
-local _fakt_doks := {}
-local _id_firma
-local _id_tip_dok
-local _br_dok
+FUNCTION fakt_dokumenti_u_pripremi()
 
-select fakt_pripr
-go top
+   LOCAL _fakt_doks := {}
+   LOCAL _id_firma
+   LOCAL _id_tip_dok
+   LOCAL _br_dok
 
-do while !EOF()
-    
-    _id_firma := field->idfirma
-    _id_tip_dok := field->idtipdok
-    _br_dok := field->brdok
-    
-    do while !EOF() .and. ( field->idfirma + field->idtipdok + field->brdok ) == ;
+   SELECT fakt_pripr
+   GO TOP
+
+   DO WHILE !Eof()
+
+      _id_firma := field->idfirma
+      _id_tip_dok := field->idtipdok
+      _br_dok := field->brdok
+
+      DO WHILE !Eof() .AND. ( field->idfirma + field->idtipdok + field->brdok ) == ;
             ( _id_firma + _id_tip_dok + _br_dok )
-        // preskoci sve stavke
-        skip
-    enddo
-    
-    // provjeri da li postoji vec identican broj azuriran u bazi ?
-    if !fakt_doks_exist( _id_firma, _id_tip_dok, _br_dok )
-        AADD( _fakt_doks, { _id_firma, _id_tip_dok, _br_dok } )
-    endif
+         // preskoci sve stavke
+         SKIP
+      ENDDO
 
-    select fakt_pripr
+      // provjeri da li postoji vec identican broj azuriran u bazi ?
+      IF !fakt_doks_exist( _id_firma, _id_tip_dok, _br_dok )
+         AAdd( _fakt_doks, { _id_firma, _id_tip_dok, _br_dok } )
+      ENDIF
 
-enddo
+      SELECT fakt_pripr
 
-return _fakt_doks
+   ENDDO
+
+   RETURN _fakt_doks
 
 
+/*
+   
 // -------------------------------------
 // -------------------------------------
-function o_fakt_edit( _open_pfakt )
+*/
+FUNCTION close_open_fakt_tabele( lOpenFaktAsPripr )
 
-select ( F_FAKT_PRIPR )
-if used()
-    USE
-endif
+   my_close_all_dbf()
 
-my_close_all_dbf()
+   IF lOpenFaktAsPripr == NIL
+      lOpenFaktAsPripr := .F.
+   ENDIF
 
-if _open_pfakt == NIL
-  _open_pfakt := .f.
-endif
+   SELECT ( F_FAKT_OBJEKTI )
+   IF !Used()
+      O_FAKT_OBJEKTI
+   ENDIF
 
-select ( F_FAKT_OBJEKTI )
-if !used()
-    O_FAKT_OBJEKTI
-endif
+   IF glDistrib = .T.
+      SELECT F_RELAC
+      IF !Used()
+         O_RELAC
+         O_VOZILA
+         O_KALPOS
+      ENDIF
+   ENDIF
 
-if glDistrib = .t.
-    select F_RELAC
-    if !used()
-        O_RELAC
-        O_VOZILA
-        O_KALPOS
-    endif
-endif
+   O_VRSTEP
+   O_OPS
+   O_KONTO
+   O_SAST
+   O_PARTN
+   O_ROBA
+   O_FTXT
+   O_TARIFA
+   O_VALUTE
+   O_FAKT_DOKS2
+   O_FAKT_DOKS
+   O_RJ
+   O_SIFK
+   O_SIFV
 
-select F_VRSTEP
-if !used()
-    O_VRSTEP
-endif
+   IF lOpenFaktAsPripr == .T.
 
-select F_OPS
-if !used()
-    O_OPS
-endif
+      SELECT F_FAKT
+      IF !Used()
+         O_PFAKT
+      ENDIF
 
-select F_KONTO
-if !used()
-    O_KONTO
-endif
+   ELSE
+      O_FAKT_PRIPR
+      O_FAKT
+   ENDIF
 
-select F_SAST
-if !used()
-    O_SAST
-endif
+   SELECT fakt_pripr
+   SET ORDER TO TAG "1"
+   GO TOP
 
-select F_PARTN
-if !used()
-    O_PARTN
-endif
-
-select F_ROBA
-if !used()
-    O_ROBA
-endif
-
-select F_FTXT
-if !used()
-    O_FTXT
-endif
-
-select F_TARIFA
-if !used()
-    O_TARIFA
-endif
-
-select F_VALUTE
-if !used()
-    O_VALUTE
-endif
-
-select F_FAKT_DOKS2
-if !used()
-    O_FAKT_DOKS2
-endif
-
-select F_FAKT_DOKS
-if !used()
-    O_FAKT_DOKS
-endif
-
-select F_RJ
-if !used()
-    O_RJ
-endif
-
-select F_SIFK
-if !used()
-    O_SIFK
-endif
-
-select F_SIFV
-if !used()
-    O_SIFV
-endif
-
-if _open_pfakt == .t.
-
-    // otvori fakt_fakt pod fakt_pripr aliasom
-    select F_FAKT
-    if !used()
-        O_PFAKT
-    endif
-
-else
-
-    select F_FAKT_PRIPR
-    if !used()
-        O_FAKT_PRIPR
-    endif
-
-    select F_FAKT
-    if !used()
-        O_FAKT
-    endif
-
-endif
-
-select fakt_pripr
-set order to tag "1"
-go top
-
-return nil
+   RETURN NIL
 
 
 
@@ -774,41 +711,42 @@ return nil
 /*! \fn SrediRbrFakt()
  *  \brief Sredi redni broj
  */
-function SrediRbrFakt()
-local _t_rec, _rec
-local _firma, _broj, _tdok
-local _cnt
+FUNCTION SrediRbrFakt()
 
-O_FAKT_PRIPR
-set order to tag "1"
-go top
+   LOCAL _t_rec, _rec
+   LOCAL _firma, _broj, _tdok
+   LOCAL _cnt
 
-do while !eof()
+   O_FAKT_PRIPR
+   SET ORDER TO TAG "1"
+   GO TOP
+
+   DO WHILE !Eof()
 	
-	_firma := field->idfirma
-	_tdok  := field->idtipdok
-	_broj  := field->brdok
-	_cnt   := 0
+      _firma := field->idfirma
+      _tdok  := field->idtipdok
+      _broj  := field->brdok
+      _cnt   := 0
 
-	do while !EOF() .and. field->idfirma == _firma .and. field->idtipdok == _tdok .and. field->brdok == _broj
+      DO WHILE !Eof() .AND. field->idfirma == _firma .AND. field->idtipdok == _tdok .AND. field->brdok == _broj
 					
-		skip 1
+         SKIP 1
 		
-		_t_rec := RECNO()
+         _t_rec := RecNo()
 
-		skip -1
+         SKIP -1
 
-        _rec := dbf_get_rec()
-		_rec["rbr"] := PADL( ALLTRIM(STR( ++ _cnt )), 3, 0 )
-	    dbf_update_rec( _rec )
+         _rec := dbf_get_rec()
+         _rec[ "rbr" ] := PadL( AllTrim( Str( ++_cnt ) ), 3, 0 )
+         dbf_update_rec( _rec )
 
-		go ( _t_rec )
+         GO ( _t_rec )
 	
-	enddo
+      ENDDO
 
-enddo
+   ENDDO
 
-return 0
+   RETURN 0
 
 
 
@@ -818,396 +756,405 @@ return 0
 // ---------------------------------------------------------------------------
 // izbrisi azurirane dokumente iz pripreme na osnovu matrice a_data
 // ---------------------------------------------------------------------------
-static function fakt_izbrisi_azurirane( a_data )
-local nRecNo
+STATIC FUNCTION fakt_izbrisi_azurirane( a_data )
 
-select fakt_pripr
-go top
-my_flock()
-do while !eof()
-    skip 1
-    nRecNo := RecNo()
-    skip -1
-    if ( ASCAN( a_data, field->idfirma + field->idtipdok + field->brdok ) = 0 )
-        delete
-    endif
-    go (nRecNo)
-enddo
-my_unlock()
+   LOCAL nRecNo
 
-my_dbf_pack()            
-            
-return
+   SELECT fakt_pripr
+   GO TOP
+   my_flock()
+   DO WHILE !Eof()
+      SKIP 1
+      nRecNo := RecNo()
+      SKIP -1
+      IF ( AScan( a_data, field->idfirma + field->idtipdok + field->brdok ) = 0 )
+         DELETE
+      ENDIF
+      GO ( nRecNo )
+   ENDDO
+   my_unlock()
+
+   my_dbf_pack()
+
+   RETURN
 
 
 
 // provjeri duple stavke u pripremi za vise dokumenata
-function prov_duple_stavke() 
-local cSeekDok
-local lDocExist:=.f.
+FUNCTION prov_duple_stavke()
 
-select fakt_pripr
-go top
+   LOCAL cSeekDok
+   LOCAL lDocExist := .F.
 
-// provjeri duple dokumente
-do while !EOF()
-    cSeekDok := fakt_pripr->(idfirma + idtipdok + brdok)
-    if dupli_dokument(cSeekDok)
-        lDocExist := .t.
-        exit
-    endif
-    select fakt_pripr
-    skip
-enddo
+   SELECT fakt_pripr
+   GO TOP
 
-// postoje dokumenti dupli
-if lDocExist
-    MsgBeep("U pripremi su se pojavili dupli dokumenti!")
-    if Pitanje("BRIS-DUP", "Pobrisati duple dokumente (D/N)?", "D")=="N"
-        MsgBeep("Dupli dokumenti ostavljeni u tabeli pripreme!#Prekidam operaciju azuriranja!")
-        return 1
-    else
-        Box(,1,60)
-            cKumPripr := "P"
-            @ m_x+1, m_y+2 SAY "Zelite brisati stavke iz kumulativa ili pripreme (K/P)" GET cKumPripr VALID !Empty(cKumPripr) .or. cKumPripr $ "KP" PICT "@!"
-            read
-        BoxC()
-        
-        if cKumPripr == "P"
+   // provjeri duple dokumente
+   DO WHILE !Eof()
+      cSeekDok := fakt_pripr->( idfirma + idtipdok + brdok )
+      IF dupli_dokument( cSeekDok )
+         lDocExist := .T.
+         EXIT
+      ENDIF
+      SELECT fakt_pripr
+      SKIP
+   ENDDO
+
+   // postoje dokumenti dupli
+   IF lDocExist
+      MsgBeep( "U pripremi su se pojavili dupli dokumenti!" )
+      IF Pitanje( "BRIS-DUP", "Pobrisati duple dokumente (D/N)?", "D" ) == "N"
+         MsgBeep( "Dupli dokumenti ostavljeni u tabeli pripreme!#Prekidam operaciju azuriranja!" )
+         RETURN 1
+      ELSE
+         Box(, 1, 60 )
+         cKumPripr := "P"
+         @ m_x + 1, m_y + 2 SAY "Zelite brisati stavke iz kumulativa ili pripreme (K/P)" GET cKumPripr VALID !Empty( cKumPripr ) .OR. cKumPripr $ "KP" PICT "@!"
+         READ
+         BoxC()
+
+         IF cKumPripr == "P"
             // brisi pripremu
-            return prip_brisi_duple()
-        else
+            RETURN prip_brisi_duple()
+         ELSE
             // brisi kumulativ
-            return kum_brisi_duple()
-        endif
-    endif
-endif
+            RETURN kum_brisi_duple()
+         ENDIF
+      ENDIF
+   ENDIF
 
-return 0
+   RETURN 0
 
 
 
 // brisi stavke iz pripreme koje se vec nalaze u kumulativu
-function prip_brisi_duple()
-local cSeek
-select fakt_pripr
-go top
-my_flock()
-do while !EOF()
-    cSeek := fakt_pripr->(idfirma + idtipdok + brdok)
-    
-    if dupli_dokument(cSeek)
-        // pobrisi stavku
-        select fakt_pripr
-        delete
-    endif
-    
-    select fakt_pripr
-    skip
-enddo
-my_unlock()
-return 0
+FUNCTION prip_brisi_duple()
+
+   LOCAL cSeek
+
+   SELECT fakt_pripr
+   GO TOP
+   my_flock()
+   DO WHILE !Eof()
+      cSeek := fakt_pripr->( idfirma + idtipdok + brdok )
+
+      IF dupli_dokument( cSeek )
+         // pobrisi stavku
+         SELECT fakt_pripr
+         DELETE
+      ENDIF
+
+      SELECT fakt_pripr
+      SKIP
+   ENDDO
+   my_unlock()
+
+   RETURN 0
 
 
 // ---------------------------------------------------------------------
 // brisi stavke iz kumulativa koje se vec nalaze u pripremi
 // ---------------------------------------------------------------------
-function kum_brisi_duple()
-local _seek
-local _ctrl_seek
-local _rec
+FUNCTION kum_brisi_duple()
 
-select fakt_pripr
-go top
+   LOCAL _seek
+   LOCAL _ctrl_seek
+   LOCAL _rec
 
-_ctrl_seek := "XXX"
+   SELECT fakt_pripr
+   GO TOP
 
-do while !EOF()
-    
-    _seek := fakt_pripr->(idfirma + idtipdok + brdok)
-    
-    if _seek == _ctrl_seek
-        skip
-        loop
-    endif
-    
-    if dupli_dokument( _seek )
-        
-        select fakt_doks
-        
-        MsgO("Brisem stavke iz kumulativa ... sacekajte trenutak!")
-        
-		// brisi doks
-        set order to tag "1"
-        go top
-        seek _seek
-        
-		if Found()
+   _ctrl_seek := "XXX"
 
-			_rec := dbf_get_rec()
-			delete_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )			
+   DO WHILE !Eof()
 
-        	// brisi iz fakt
-        	select fakt
-        	set order to tag "1"
-        	go top
-        	seek _seek
+      _seek := fakt_pripr->( idfirma + idtipdok + brdok )
+
+      IF _seek == _ctrl_seek
+         SKIP
+         LOOP
+      ENDIF
+
+      IF dupli_dokument( _seek )
+
+         SELECT fakt_doks
+
+         MsgO( "Brisem stavke iz kumulativa ... sacekajte trenutak!" )
+
+         // brisi doks
+         SET ORDER TO TAG "1"
+         GO TOP
+         SEEK _seek
+
+         IF Found()
+
+            _rec := dbf_get_rec()
+            delete_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
+
+            // brisi iz fakt
+            SELECT fakt
+            SET ORDER TO TAG "1"
+            GO TOP
+            SEEK _seek
         	
-			if Found()
-				_rec := dbf_get_rec()
-				delete_rec_server_and_dbf( "fakt_fakt", _rec, 2, "CONT" )
-            endif
-     	endif
+            IF Found()
+               _rec := dbf_get_rec()
+               delete_rec_server_and_dbf( "fakt_fakt", _rec, 2, "CONT" )
+            ENDIF
+         ENDIF
 
-        MsgC()
+         MsgC()
 
-    endif
-    
-    _ctrl_seek := _seek
-    
-    select fakt_pripr
-    skip
+      ENDIF
 
-enddo
+      _ctrl_seek := _seek
 
-return 0
+      SELECT fakt_pripr
+      SKIP
+
+   ENDDO
+
+   RETURN 0
 
 
 
 // ------------------------------------------
 // ------------------------------------------
-function dupli_dokument(cSeek)
-select fakt_doks
-set order to tag "1"
-go top
-seek cSeek
-if Found()
-    if gMreznoNum == "D"
-        if m1 == "Z"
-            return .f.
-        endif
-    endif
-    return .t.
-endif
-select fakt
-set order to tag "1"
-go top
-seek cSeek
-if Found()
-    return .t.
-endif
-return .f.
+FUNCTION dupli_dokument( cSeek )
+
+   SELECT fakt_doks
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK cSeek
+   IF Found()
+      IF gMreznoNum == "D"
+         IF m1 == "Z"
+            RETURN .F.
+         ENDIF
+      ENDIF
+      RETURN .T.
+   ENDIF
+   SELECT fakt
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK cSeek
+   IF Found()
+      RETURN .T.
+   ENDIF
+
+   RETURN .F.
 
 
 
 // ------------------------------------------------
 // ------------------------------------------------
-function fakt_brisanje_pripreme()
-local _id_firma, _tip_dok, _br_dok
-local oAtrib
+FUNCTION fakt_brisanje_pripreme()
 
-if !(ImaPravoPristupa(goModul:oDataBase:cName,"DOK","BRISANJE" ))
-    MsgBeep(cZabrana)
-    return DE_CONT
-endif
+   LOCAL _id_firma, _tip_dok, _br_dok
+   LOCAL oAtrib
 
-if Pitanje(, "Želite li izbrisati pripremu !!????","N") == "D"
- 
-    select fakt_pripr
-    go top
-    
-    _id_firma := IdFirma
-    _tip_dok := IdTipDok
-    _br_dok := BrDok
-    
-    oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
-    oAtrib:dok_hash["idfirma"] := _id_firma
-    oAtrib:dok_hash["idtipdok"] := _tip_dok
-    oAtrib:dok_hash["brdok"] := _br_dok
- 
-    if gcF9usmece == "D"
+   IF !( ImaPravoPristupa( goModul:oDataBase:cName, "DOK", "BRISANJE" ) )
+      MsgBeep( cZabrana )
+      RETURN DE_CONT
+   ENDIF
 
-        // pobrisi i atribute...
-        oAtrib:delete_atrib()
+   IF Pitanje(, "Želite li izbrisati pripremu !!????", "N" ) == "D"
 
-        // azuriraj dokument u smece 
-        azuriraj_smece( .t. )    
+      SELECT fakt_pripr
+      GO TOP
 
-        log_write( "F18_DOK_OPER: fakt, prenosa dokumenta iz pripreme u smece: " + _id_firma + "-" + _tip_dok + "-" + _br_dok, 2 )
+      _id_firma := IdFirma
+      _tip_dok := IdTipDok
+      _br_dok := BrDok
 
-        select fakt_pripr
+      oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )
+      oAtrib:dok_hash[ "idfirma" ] := _id_firma
+      oAtrib:dok_hash[ "idtipdok" ] := _tip_dok
+      oAtrib:dok_hash[ "brdok" ] := _br_dok
 
-    else
-        
-        // ponisti pripremu...
-        my_dbf_zap()
-        // ponisti i atribut        // ponisti i atributee
-        oAtrib:zapp_local_table() 
-        
-        log_write( "F18_DOK_OPER: fakt, brisanje dokumenta iz pripreme: " + _id_firma + "-" + _tip_dok + "-" + _br_dok, 2 )
+      IF gcF9usmece == "D"
 
-        // potreba za resetom brojaca ?
-        fakt_reset_broj_dokumenta( _id_firma, _tip_dok, _br_dok )
+         // pobrisi i atribute...
+         oAtrib:delete_atrib()
 
-   endif
+         // azuriraj dokument u smece
+         azuriraj_smece( .T. )
 
-endif
+         log_write( "F18_DOK_OPER: fakt, prenosa dokumenta iz pripreme u smece: " + _id_firma + "-" + _tip_dok + "-" + _br_dok, 2 )
 
-return
+         SELECT fakt_pripr
+
+      ELSE
+
+         // ponisti pripremu...
+         my_dbf_zap()
+         // ponisti i atribut        // ponisti i atributee
+         oAtrib:zapp_local_table()
+
+         log_write( "F18_DOK_OPER: fakt, brisanje dokumenta iz pripreme: " + _id_firma + "-" + _tip_dok + "-" + _br_dok, 2 )
+
+         // potreba za resetom brojaca ?
+         fakt_reset_broj_dokumenta( _id_firma, _tip_dok, _br_dok )
+
+      ENDIF
+
+   ENDIF
+
+   RETURN
 
 
 /*! \fn KomIznosFakt()
  *  \brief Kompletiranje iznosa fakture pomocu usluga
  */
- 
-function KomIznosFakt()
-local nIznos:=0
-local cIdRoba
 
-O_SIFK
-O_SIFV
-O_FAKT_S_PRIPR
-O_TARIFA
-O_ROBA
+FUNCTION KomIznosFakt()
 
-cIdRoba:=SPACE(LEN(id))
+   LOCAL nIznos := 0
+   LOCAL cIdRoba
 
-Box("#KOMPLETIRANJE IZNOSA FAKTURE POMOCU USLUGA",5,75)
-    @ m_x+2, m_y+2 SAY "Sifra usluge:" GET cIdRoba VALID P_Roba(@cIdRoba) PICT "@!"
-    @ m_x+3, m_y+2 SAY "Zeljeni iznos fakture:" GET nIznos PICT picdem
-    read
-    ESC_BCR
-BoxC()
+   O_SIFK
+   O_SIFV
+   O_FAKT_S_PRIPR
+   O_TARIFA
+   O_ROBA
 
-select roba
-hseek cIdRoba
-select tarifa
-hseek roba->idtarifa
-select fakt_pripr
+   cIdRoba := Space( Len( id ) )
 
-nDug2:=0
-nRab2:=0
-nPor2:=0
+   Box( "#KOMPLETIRANJE IZNOSA FAKTURE POMOCU USLUGA", 5, 75 )
+   @ m_x + 2, m_y + 2 SAY "Sifra usluge:" GET cIdRoba VALID P_Roba( @cIdRoba ) PICT "@!"
+   @ m_x + 3, m_y + 2 SAY "Zeljeni iznos fakture:" GET nIznos PICT picdem
+   READ
+   ESC_BCR
+   BoxC()
 
-//KonZbira(.f.)
+   SELECT roba
+   hseek cIdRoba
+   SELECT tarifa
+   hseek roba->idtarifa
+   SELECT fakt_pripr
 
-go bottom
+   nDug2 := 0
+   nRab2 := 0
+   nPor2 := 0
 
-Scatter()
+   // KonZbira(.f.)
 
-append blank
+   GO BOTTOM
 
-_idroba:=cIdRoba
-_kolicina:=IF(nDug2-nRab2+nPor2>nIznos,-1,1)
-_rbr := STR( RbrUnum(_Rbr) + 1, 3, 0)
-_cijena:=ABS(nDug2-nRab2+nPor2-nIznos)
-_rabat:=0 
-_porez:=0
+   Scatter()
 
-if !(_idtipdok $ "11#15#27")
-    _porez:=if( ROBA->tip=="U",tarifa->ppp,tarifa->opp)
-    _cijena:=_cijena/(1+_porez/100)
-endif
+   APPEND BLANK
 
-_txt:=Chr(16)+ROBA->naz+Chr(17)
+   _idroba := cIdRoba
+   _kolicina := IF( nDug2 - nRab2 + nPor2 > nIznos, -1, 1 )
+   _rbr := Str( RbrUnum( _Rbr ) + 1, 3, 0 )
+   _cijena := Abs( nDug2 - nRab2 + nPor2 - nIznos )
+   _rabat := 0
+   _porez := 0
 
-Gather()
+   IF !( _idtipdok $ "11#15#27" )
+      _porez := if( ROBA->tip == "U", tarifa->ppp, tarifa->opp )
+      _cijena := _cijena / ( 1 + _porez / 100 )
+   ENDIF
 
-MsgBeep("Formirana je dodatna stavka. Vratite se tipkom <Esc> u pripremu"+"#i prekontrolisite fakturu!")
+   _txt := Chr( 16 ) + ROBA->naz + Chr( 17 )
 
-my_close_all_dbf()
+   Gather()
 
-RETURN
+   MsgBeep( "Formirana je dodatna stavka. Vratite se tipkom <Esc> u pripremu" + "#i prekontrolisite fakturu!" )
+
+   my_close_all_dbf()
+
+   RETURN
 
 
 // ---------------------------------------------------
 // generisi storno dokument u pripremi
 // ---------------------------------------------------
-function storno_dok( id_firma, id_tip_dok, br_dok )
-local _novi_br_dok
-local _rec 
-local _count
-local _fiscal_no
-local _fiscal_use := fiscal_opt_active()
+FUNCTION storno_dok( id_firma, id_tip_dok, br_dok )
 
-if Pitanje("FORM_STORNO", "Formirati storno dokument ?","D") == "N"
-    return
-endif
+   LOCAL _novi_br_dok
+   LOCAL _rec
+   LOCAL _count
+   LOCAL _fiscal_no
+   LOCAL _fiscal_use := fiscal_opt_active()
 
-O_FAKT_PRIPR
-select fakt_pripr
+   IF Pitanje( "FORM_STORNO", "Formirati storno dokument ?", "D" ) == "N"
+      RETURN
+   ENDIF
 
-if fakt_pripr->(RECCOUNT2()) <> 0
-    msgbeep("Priprema nije prazna !!!")
-    return
-endif
+   O_FAKT_PRIPR
+   SELECT fakt_pripr
 
-O_FAKT
-O_FAKT_DOKS
-O_ROBA
-O_PARTN
+   IF fakt_pripr->( RECCOUNT2() ) <> 0
+      msgbeep( "Priprema nije prazna !!!" )
+      RETURN
+   ENDIF
 
-_novi_br_dok := ALLTRIM( br_dok ) + "/S"
+   O_FAKT
+   O_FAKT_DOKS
+   O_ROBA
+   O_PARTN
 
-if LEN( ALLTRIM( _novi_br_dok ) ) > 8
-    
-    // otkini prva dva karaktera
-    // da moze stati "/S"
-    _novi_br_dok := RIGHT( ALLTRIM( br_dok ), 6 ) + "/S"
+   _novi_br_dok := AllTrim( br_dok ) + "/S"
 
-endif
+   IF Len( AllTrim( _novi_br_dok ) ) > 8
 
-_count := 0
+      // otkini prva dva karaktera
+      // da moze stati "/S"
+      _novi_br_dok := Right( AllTrim( br_dok ), 6 ) + "/S"
 
-select fakt_doks
-set order to tag "1"
-go top
-seek id_firma + id_tip_dok + br_dok
+   ENDIF
 
-_fiscal_no := 0
+   _count := 0
 
-if _fiscal_use
-    _fiscal_no := field->fisc_rn
-endif
+   SELECT fakt_doks
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK id_firma + id_tip_dok + br_dok
 
-select fakt
-set order to tag "1"
-go top
-seek id_firma + id_tip_dok + br_dok
+   _fiscal_no := 0
 
-do while !EOF() .and. field->idfirma == id_firma  .and. field->idtipdok == id_tip_dok .and. field->brdok == br_dok
-    
-    _rec := dbf_get_rec()
+   IF _fiscal_use
+      _fiscal_no := field->fisc_rn
+   ENDIF
 
-    select fakt_pripr
-    append blank
+   SELECT fakt
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK id_firma + id_tip_dok + br_dok
 
-    _rec["kolicina"] := ( _rec["kolicina"] * -1 )
-    _rec["brdok"] := _novi_br_dok
-    _rec["datdok"] := DATE()
+   DO WHILE !Eof() .AND. field->idfirma == id_firma  .AND. field->idtipdok == id_tip_dok .AND. field->brdok == br_dok
 
-    // obavezno resetuj vrstu placanja na gotovina...
-    _rec["idvrstep"] := ""
- 
-    if _fiscal_use
-        _rec["fisc_rn"] := _fiscal_no
-    endif
+      _rec := dbf_get_rec()
 
-    dbf_update_rec( _rec )
+      SELECT fakt_pripr
+      APPEND BLANK
 
-    select fakt
-    skip
+      _rec[ "kolicina" ] := ( _rec[ "kolicina" ] * -1 )
+      _rec[ "brdok" ] := _novi_br_dok
+      _rec[ "datdok" ] := Date()
 
-    ++ _count
+      // obavezno resetuj vrstu placanja na gotovina...
+      _rec[ "idvrstep" ] := ""
 
-enddo
+      IF _fiscal_use
+         _rec[ "fisc_rn" ] := _fiscal_no
+      ENDIF
 
-if _count > 0
-    msgbeep("Formiran je dokument " + id_firma + "-" + ;
-        id_tip_dok + "-" + ALLTRIM( _novi_br_dok ) + ;
-        " u pripremi !")
-endif
+      dbf_update_rec( _rec )
 
-return
+      SELECT fakt
+      SKIP
 
+      ++ _count
 
+   ENDDO
+
+   IF _count > 0
+      msgbeep( "Formiran je dokument " + id_firma + "-" + ;
+         id_tip_dok + "-" + AllTrim( _novi_br_dok ) + ;
+         " u pripremi !" )
+   ENDIF
+
+   RETURN

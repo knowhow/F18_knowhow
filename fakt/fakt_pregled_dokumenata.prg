@@ -232,8 +232,7 @@ FUNCTION pr_nar( lOpcine )
    _cIdTipDok := idtipdok
    _cBrDok := brdok
 
-   my_close_all_dbf()
-   o_fakt_edit()
+   close_open_fakt_tabele()
    StampTXT( _cidfirma, _cIdTipdok, _cbrdok, .T. )
 
    nar_print( .T. )
@@ -252,19 +251,16 @@ FUNCTION pr_nar( lOpcine )
 
    RETURN DE_CONT
 
-// print radni nalog
-FUNCTION pr_rn()
+FUNCTION print_radni_nalog()
 
    SELECT fakt_doks
    nTrec := RecNo()
    _cIdFirma := idfirma
    _cIdTipDok := idtipdok
    _cBrDok := brdok
-   my_close_all_dbf()
-   o_fakt_edit()
+   close_open_fakt_tabele()
    StampTXT( _cidfirma, _cIdTipdok, _cbrdok, .T. )
 
-   // printaj radni nalog
    rnal_print( .T. )
    SELECT ( F_FAKT_DOKS )
    USE
@@ -281,9 +277,7 @@ FUNCTION pr_rn()
    RETURN DE_CONT
 
 
-
-// stampaj poresku fakturu
-FUNCTION pr_pf( lOpcine )
+FUNCTION print_porezna_faktura( lOpcine )
 
    LOCAL nTrec
 
@@ -294,9 +288,7 @@ FUNCTION pr_pf( lOpcine )
    _cIdTipDok := idtipdok
    _cBrDok := brdok
 
-   my_close_all_dbf()
-
-   o_fakt_edit()
+   close_open_fakt_tabele()
 
    StampTXT( _cidfirma, _cIdTipdok, _cbrdok )
 
@@ -330,7 +322,7 @@ FUNCTION pr_odt( lOpcine )
    StDokOdt( _cidfirma, _cIdTipdok, _cbrdok )
 
 
-   o_fakt_edit()
+   close_open_fakt_tabele()
    SELECT ( F_FAKT_DOKS )
    USE
    O_FAKT_DOKS
@@ -593,10 +585,9 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
 
    DO CASE
 
-      // stampa dokumenta
    CASE Ch == K_ENTER
 
-      nRet := pr_pf( lOpcine )
+      nRet := print_porezna_faktura( lOpcine )
       _refresh := .T.
 
       // odt stampa dokumenta
@@ -831,19 +822,16 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
          _refresh := .T.
       ENDIF
 
-      // printanje radnog naloga
    CASE Upper( Chr( Ch ) ) == "B"
 
-      nRet := pr_rn()
+      nRet := print_radni_nalog()
       _refresh := .T.
 
-      // printanje narudzbenice
    CASE Chr( Ch ) $ "nN"
 
       nRet := pr_nar( lOpcine )
       _refresh := .T.
 
-      // generisanje fakture na osnovu ponude
    CASE Chr( Ch ) $ "fF"
 
       IF _db_locked

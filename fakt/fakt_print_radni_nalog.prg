@@ -12,35 +12,20 @@
 #include "fmk.ch"
 
 
-FUNCTION fakt_print_narudzbenica( cIdFirma, cIdTipDok, cBrDok )
+FUNCTION print_radni_nalog( cIdFirma, cIdTipDok, cBrDok )
 
    PushWa()
-
    close_open_fakt_tabele()
+   StampTXT( cIdFirma, cIdTipdok, cBrDok, .T. )
 
-   // izgenerisi rn.dbf i drn.dbf, ali nemoj stampati poreznu fakturu
-   StampTXT( cIdfirma, cIdTipdok, cBrDok, .T. )
-
-   print_narudzbenica()
-
-   O_PARTN
+   rnal_print( .T. )
    SELECT ( F_FAKT_DOKS )
    USE
+
+   O_PARTN
    O_FAKT_DOKS
+
    PopWa()
 
    RETURN NIL
-
-
-FUNCTION fakt_print_narudzbenica_priprema()
-
-      stdokpdv( nil, nil, nil, .T. )
-      select_fakt_pripr()
-
-      print_narudzbenica()
-      close_open_fakt_tabele()
-      select_fakt_pripr()
-
-    RETURN NIL
-
 

@@ -756,8 +756,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
          RETURN DE_CONT
       ENDIF
 
-      // generisi storno dokument
-      storno_dok( field->idfirma, field->idtipdok, field->brdok )
+      storno_dok( field->idfirma, field->idtipdok, field->brDok )
 
       IF Pitanje(, "Preci u tabelu pripreme ?", "D" ) == "D"
          fUPripremu := .T.
@@ -769,7 +768,8 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
 
    CASE Upper( Chr( Ch ) ) == "B"
 
-      nRet := print_radni_nalog()
+      SELECT fakt_doks
+      nRet := print_radni_nalog( field->idFirma, field->idTipDok, field->brDok )
       _refresh := .T.
 
    CASE Chr( Ch ) $ "nN"
@@ -791,7 +791,6 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
          _refresh := .T.
       ENDIF
 
-      // povrat dokumenta u pripremu
    CASE Chr( Ch ) $ "pP"
 
       IF _db_locked

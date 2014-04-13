@@ -390,8 +390,8 @@ STATIC FUNCTION st_zagl_data()
 
    cRed1 := RAZMAK
    cRed1 += PadC( "R.br", LEN_RBR )
-   cRed1 += " " + PadR( lokal( "Trgovacki naziv dobra/usluge (sifra, naziv, jmj)" ), LEN_NAZIV )
-   cRed1 += " " + PadC( lokal( "kolicina" ), LEN_KOLICINA )
+   cRed1 += " " + PadR( lokal( "Trgovački naziv dobra/usluge (sifra, naziv, jmj)" ), LEN_NAZIV )
+   cRed1 += " " + PadC( lokal( "količina" ), LEN_KOLICINA )
    cRed1 += " " + PadC( lokal( "C.b.PDV" ), LEN_CIJENA )
    IF lShowPopust
       cRed1 += " " + PadC( lokal( "Pop.%" ), LEN_PROC2 )

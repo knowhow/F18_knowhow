@@ -199,7 +199,7 @@ STATIC FUNCTION generisi_rpt()
    RETURN .T.
 
 
-FUNCTION get_nar_vars( nLMargina, nGMargina, nDodRedova, nSlTxtRow, lSamoKol, lZaglStr, lStZagl, lDatOtp, cValuta, cPDVStavka )
+STATIC FUNCTION get_nar_vars( nLMargina, nGMargina, nDodRedova, nSlTxtRow, lSamoKol, lZaglStr, lStZagl, lDatOtp, cValuta, cPDVStavka )
 
    nLMargina := Val( get_dtxt_opis( "P01" ) )
    nGMargina := Val( get_dtxt_opis( "P07" ) )
@@ -556,7 +556,7 @@ STATIC FUNCTION nar_header()
    RETURN NIL
 
 
-FUNCTION nar_footer()
+STATIC FUNCTION nar_footer()
 
    LOCAL cPom
 

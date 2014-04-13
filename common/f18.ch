@@ -100,3 +100,5 @@
          @ Row(), Col() + 1 GET <get> [ <getexp>]
 
 
+#command ?U  [<explist,...>]         => QOut( hb_utf2Str( <explist> ) )
+#command ??U [<explist,...>]         => QQOut( hb_utf2Str( <explist> ) )

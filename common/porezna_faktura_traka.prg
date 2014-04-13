@@ -147,7 +147,7 @@ local nRedukcija
 local nSetCijene
 local lStRobaId
 
-START PRINT2 CRET gLocPort, SPACE(5)
+STARTPRINTPORT CRET gLocPort, SPACE(5)
 
 cLine := pf_traka_line(1)
 

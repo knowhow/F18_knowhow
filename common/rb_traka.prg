@@ -226,7 +226,7 @@ local nLen
 local cNum
 
 if lStartPrint
-	START PRINT2 CRET gLocPort, SPACE(5)
+	STARTPRINTPORT CRET gLocPort, SPACE(5)
 endif
 
 rb_traka_line(@cLine)

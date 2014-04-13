@@ -10,7 +10,6 @@
  */
 
 
-
 #include "fmk.ch"
 
 STATIC LEN_COLONA :=  42
@@ -25,12 +24,14 @@ STATIC nStr := 0
 // ako se koristi PTXT onda se ova korekcija primjenjuje
 // za prikaz vecih fontova
 STATIC nDuzStrKorekcija := 0
-
 // prikaz samo kolicine 0, cijena 1
 STATIC nSw6
 
+MEMVAR PicKol, PicDem, PicCDEM
+MEMVAR gFirma
+MEMVAR __print_opt
 
-FUNCTION narudzbenica_print()
+FUNCTION print_narudzbenica()
 
    PIC_KOLICINA( PadL( AllTrim( Right( PicKol, LEN_KOLICINA() ) ), LEN_KOLICINA(), "9" ) )
    PIC_VRIJEDNOST( PadL( AllTrim( Right( PicDem, LEN_VRIJEDNOST() ) ), LEN_VRIJEDNOST(), "9" ) )
@@ -42,7 +43,7 @@ FUNCTION narudzbenica_print()
    GO TOP
 
    IF EOF()
-       RETURN .F.
+      RETURN .F.
    ENDIF
 
    LEN_NAZIV( 53 )
@@ -54,19 +55,12 @@ FUNCTION narudzbenica_print()
       LEN_NAZIV( LEN_NAZIV() + LEN_PROC2() + LEN_CIJENA() + 2 )
    ENDIF
 
-   napravi_rpt()
-
-   RETURN
-
+   RETURN generisi_rpt()
 
 
 STATIC FUNCTION generisi_rpt()
 
-   LOCAL cBrDok
-   LOCAL dDatDok
-   LOCAL aRNaz
-   LOCAL cArtikal
-   LOCAL cSlovima
+   LOCAL cNazivDobra, aNazivDobra
    LOCAL nLMargina // lijeva margina
    LOCAL nDodRedova // broj dodatnih redova
    LOCAL nSlTxtRow // broj redova slobodnog text-a
@@ -77,7 +71,7 @@ STATIC FUNCTION generisi_rpt()
    LOCAL lStZagl // automatski formirati zaglavlje
    LOCAL nGMargina // gornja margina
 
-   START PRINT CRET
+   STARTPRINT CRET .F.
 
    nSw6 := Val( get_dtxt_opis( "X09" ) )
 
@@ -106,7 +100,6 @@ STATIC FUNCTION generisi_rpt()
    st_zagl_data()
 
    nStr := 1
-   aArtNaz := {}
 
    SELECT rn
    DO WHILE !Eof()
@@ -163,21 +156,20 @@ STATIC FUNCTION generisi_rpt()
       // provjeri za novu stranicu
       IF PRow() > ( nDodRedova + LEN_STRANICA() - DSTR_KOREKCIJA() )
          ++nStr
-         Nstr_a4( nStr, .T. )
+         Nstr_a4( nStr, .T., cValuta )
       endif
 
       SELECT rn
       SKIP
    ENDDO
 
-   // provjeri za novu stranicu
    IF PRow() > nDodRedova + ( LEN_STRANICA() - LEN_FOOTER )
       ++nStr
-      Nstr_a4( nStr, .T. )
+      Nstr_a4( nStr, .T., cValuta )
    endif
 
    IF nSw6 > 0
-      print_total()
+      print_total( cLine, cValuta )
       lPrintedTotal := .T.
 
       IF PRow() > nDodRedova + ( LEN_STRANICA() - LEN_FOOTER )
@@ -190,12 +182,11 @@ STATIC FUNCTION generisi_rpt()
    nar_footer()
 
 
-   IF lStartPrint
-      FF
-      ENDPRINT
-   ENDIF
+   FF
+   ENDPRINT
 
-   RETURN
+   RETURN .T.
+
 
 FUNCTION get_nar_vars( nLMargina, nGMargina, nDodRedova, nSlTxtRow, lSamoKol, lZaglStr, lStZagl, lDatOtp, cValuta, cPDVStavka )
 
@@ -232,15 +223,13 @@ FUNCTION get_nar_vars( nLMargina, nGMargina, nDodRedova, nSlTxtRow, lSamoKol, lZ
    // valuta dokuemnta
    cValuta := get_dtxt_opis( "D07" )
 
-   RETURN
+   RETURN NIL
 
 
 STATIC FUNCTION st_zagl_data()
 
 
    LOCAL cRed1 := ""
-   LOCAL cRed2 := ""
-   LOCAL cRed3 := ""
 
 
    ? cLine
@@ -264,7 +253,7 @@ STATIC FUNCTION st_zagl_data()
 
    ? cLine
 
-   RETURN
+   RETURN NIL
 
 STATIC FUNCTION nar_line()
 
@@ -293,9 +282,9 @@ STATIC FUNCTION nar_line()
 
    RETURN cLine
 
-// --------------------------------------------------
-// --------------------------------------------------
-STATIC FUNCTION print_total()
+STATIC FUNCTION print_total( cLine, cValuta )
+
+   LOCAL cSlovima
 
    ? cLine
 
@@ -361,7 +350,7 @@ STATIC FUNCTION print_total()
    B_OFF
    ? cLine
 
-   RETURN
+   RETURN NIL
 
 
 // ----------------------------------------
@@ -371,7 +360,6 @@ STATIC FUNCTION nar_header()
 
    LOCAL cPom, cPom2
    LOCAL cLin
-   LOCAL cPartMjesto
    LOCAL cPTT
    LOCAL cNaziv, cNaziv2
    LOCAL cAdresa, cAdresa2
@@ -380,12 +368,8 @@ STATIC FUNCTION nar_header()
    LOCAL cTelFax, cTelFax2
    LOCAL aKupac, aDobavljac
    LOCAL cDatDok
-   LOCAL cDatIsp
-   LOCAL cDatVal
-   LOCAL cBrDok
-   LOCAL cBrNar
-   LOCAL cBrOtp
    LOCAL nPRowsDelta
+   LOCAL cDestinacija
 
    nPRowsDelta := PRow()
 
@@ -393,22 +377,7 @@ STATIC FUNCTION nar_header()
    SELECT drn
    GO TOP
 
-   cDatDok := DToC( datdok )
-
-   IF Empty( datIsp )
-      // posto je ovo obavezno polje na racunu
-      // stavicemo ako nije uneseno da je datum isporuke
-      // jednak datumu dokumenta
-      cDatIsp := DToC( datDok )
-   ELSE
-      cDatIsp := DToC( datisp )
-   ENDIF
-
-   cDatVal := DToC( field->datval )
-   cBrDok := field->brdok
-
-   cBrNar := get_dtxt_opis( "D06" )
-   cBrOtp := get_dtxt_opis( "D05" )
+   cDatDok := DToC( field->datdok )
 
    cNaziv := get_dtxt_opis( "K01" )
    cAdresa := get_dtxt_opis( "K02" )
@@ -441,12 +410,10 @@ STATIC FUNCTION nar_header()
       O_PARTN
    ENDIF
 
-   // gFirma sadrzi podatke o maticnoj firmi
    SEEK gFirma
 
    cNaziv2  := AllTrim( partn->naz )
    cMjesto2 := AllTrim( partn->ptt ) + " " + AllTrim( partn->mjesto )
-   cAdresa2 := AllTrim( partn->adresa )
    cAdresa2 := get_dtxt_opis( "I02" )
    // idbroj
    cIdBroj2 := get_dtxt_opis( "I03" )
@@ -575,10 +542,9 @@ STATIC FUNCTION nar_header()
       nDuzStrKorekcija += nPRowsDelta * 7 / 100
    ENDIF
 
-   RETURN
+   RETURN NIL
 
-// -----------------------------------
-// -----------------------------------
+
 FUNCTION nar_footer()
 
    LOCAL cPom
@@ -610,12 +576,12 @@ FUNCTION nar_footer()
 
    ?
 
-   RETURN
+   RETURN NIL
 
 // -----------------------------------------
 // funkcija za novu stranu
 // -----------------------------------------
-STATIC FUNCTION NStr_a4( nStr, lShZagl )
+STATIC FUNCTION NStr_a4( nStr, lShZagl, cValuta )
 
    nDuzStrKorekcija := 0
 
@@ -639,13 +605,13 @@ STATIC FUNCTION NStr_a4( nStr, lShZagl )
       ELSE
          // vec je odstampan, znaci nema vise stavki
          // najbolje ga prenesi na ovu stranu koja je posljednja
-         print_total()
+         print_total( cLine, cValuta )
       ENDIF
    ELSE
       ? cLine
    ENDIF
 
-   RETURN
+   RETURN NIL
 
 
 // --------------------------------
@@ -662,4 +628,3 @@ STATIC FUNCTION DSTR_KOREKCIJA()
 
    RETURN nPom
 
-   RETURN

@@ -136,9 +136,9 @@ o_tables()
 
 if lTekuci
   IF fZaklj
-    START PRINT2 CRET gLocPort, .F.
+    STARTPRINTPORT CRET gLocPort, .F.
   Else
-    START PRINT CRET
+    STARTPRINT CRET
   EndIF
 
   ZagFirma()

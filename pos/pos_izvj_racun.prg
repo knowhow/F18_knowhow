@@ -112,7 +112,7 @@ next
 // Ispisi iznos racuna velikim slovima
 ispisi_iznos_racuna_box( nIznos - nNeplaca )
 
-START PRINT2 CRET gLocPort,SPACE(5)
+STARTPRINTPORT CRET gLocPort,SPACE(5)
 
 cBrDok := cCmnBrDok
 
@@ -528,7 +528,7 @@ if fEkran
   	endif
 else
   	ispisi_iznos_racuna_box( nIznos - nNeplaca )
-  	START PRINT2 CRET gLocPort, SPACE (5)
+  	STARTPRINTPORT CRET gLocPort, SPACE (5)
 endif
 
 RacHeder (cIdPos, cDatBrDok, cSto, .T., aVezani)

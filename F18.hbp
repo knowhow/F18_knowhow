@@ -1,4 +1,4 @@
-f18.hbc -DPROBA -DDEFINE2 -DDEBUG -inc
+f18.hbc -DDEFINE2 -DDEBUG -inc
 
 sddpg.hbc
 xhb.hbc
@@ -19,3 +19,6 @@ virm/*.prg
 kadev/*.prg
 reports/*.prg 
 common/*.prg
+
+libF18_narudzbenica.a
+

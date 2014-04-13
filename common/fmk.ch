@@ -117,41 +117,46 @@
                          ;endif
 
 
-#command START PRINT CRET <x> =>  ;private __print_opt := NIL ; 
-                                  ; if EMPTY(f18_start_print(NIL, @_print_opt))       ;
-                                  ;my_close_all_dbf()             ;
-                                  ;    return <x>            ;
+#xcommand START PRINT CRET <x>  => PRIVATE __print_opt := NIL ; 
+                                  ; if EMPTY(f18_start_print(NIL, @__print_opt))       ;
+                                  ;    my_close_all_dbf()             ;
+                                  ;    return <x>                     ;
                                   ;endif
 
-#command START PRINT CRET     =>  ;private __print_opt := NIL ; 
-                                  ;if EMPTY(f18_start_print(NIL, @__print_opt)) ;
-                                  ;my_close_all_dbf()             ;
-                                  ;return                ;
+#xcommand STARTPRINT CRET <x>  => PRIVATE __print_opt := NIL ; 
+                                  ; if EMPTY(f18_start_print(NIL, @__print_opt))       ;
+                                  ;    my_close_all_dbf()             ;
+                                  ;    return <x>                     ;
                                   ;endif
 
-#command START PRINT RET <x>  =>  ;private __print_opt := NIL ; 
+#xcommand STARTPRINT CRET       => PRIVATE __print_opt := NIL ; 
+                                  ; if EMPTY(f18_start_print(NIL, @__print_opt))       ;
+                                  ;    my_close_all_dbf()             ;
+                                  ;    return .F.                     ;
+                                  ;endif
+
+
+
+
+
+#xcommand START PRINT CRET  =>    private __print_opt := NIL ; 
+                                  ; if EMPTY(f18_start_print(NIL, @__print_opt))       ;
+                                  ;    my_close_all_dbf()             ;
+                                  ;    return .F.                     ;
+                                  ;endif
+
+#xcommand START PRINT RET <x>  =>  private __print_opt := NIL ; 
                                   ;if EMPTY(f18_start_print(NIL, @__print_opt))      ;
                                   ; return <x>            ;
                                   ;endif
 
-#command START PRINT RET      =>  ;private __print_opt := NIL ; 
+#xcommand START PRINT RET      =>  ;private __print_opt := NIL ; 
                                   ;if EMPTY(f18_start_print(NIL, @__print_opt))      ;
-                                  ;  return                ;
+                                  ;  return NIL             ;
                                   ;endif
 
-#command START PRINT2 CRET <p>, <x> =>  ;private __print_opt := NIL ;
-                                        ;IF !SPrint2(<p>)       ;
-                                        ;my_close_all_dbf()             ;
-                                        ;return <x>            ;
-                                        ;endif
 
-#command START PRINT2 CRET <p>   =>  ;private __print_opt := NIL ;
-                                     ;if !Sprint2(<p>)          ;
-                                     ;my_close_all_dbf()             ;
-                                     ;return                ;
-                                     ;endif
-
-#command START PRINT CRET DOCNAME <y>    =>  ;private __print_opt := NIL ;
+#command START PRINT CRET DOCNAME <y>    =>  PRIVATE __print_opt := NIL ;
                                              ;if !StartPrint(nil, nil, <y>)    ;
                                              ;my_close_all_dbf()             ;
                                              ;return                ;
@@ -163,6 +168,18 @@
                                   ;return <x>            ;
                                   ;endif
 
+
+#command STARTPRINTPORT CRET <p>, <x> =>  PRIVATE __print_opt := NIL ;
+                                        ;IF !SPrint2(<p>)       ;
+                                        ;my_close_all_dbf()             ;
+                                        ;return <x>            ;
+                                        ;endif
+
+#command STARTPRINTPORT CRET <p>   => PRIVATE __print_opt := NIL ;
+                                     ;if !Sprint2(<p>)          ;
+                                     ;my_close_all_dbf()        ;
+                                     ;return <p>               ;
+                                     ;endif
 
 #command END PRN2 <x> => Eprint2(<x>)
 
@@ -232,9 +249,6 @@
 #command DEL2                                                            ;
       => (nArr)->(DbDelete2())                                            ;
         ;(nTmpArr)->(DbDelete2())
-
-#define DE_ADD  5
-#define DE_DEL  6
 
 #define DBFBASEPATH "C:" + SLASH +  "SIGMA"
 

@@ -92,11 +92,11 @@ else
 endif
 
 if fZaklj
-	START PRINT2 CRET gLocPort,.f.
+	STARTPRINTPORT CRET gLocPort,.f.
 	ZagFirma()
 	ZaglZ(dDat0, dDat1, cIdPos, cSmjena, cIdDio, cRadnici, cVrsteP, cIdOdj)
 else
-	START PRINT CRET
+	STARTPRINT CRET
 	ZagFirma()
 	Zagl(dDat0, dDat1, cIdPos, cSmjena, cIdDio, cRadnici, cVrsteP, cIdOdj, cGotZir)
 endif // fZaklj

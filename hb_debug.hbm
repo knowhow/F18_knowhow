@@ -1,6 +1,7 @@
 sddpg.hbc
 f18.hbc
 
+-DDEBUG
 #debug
 -b
 

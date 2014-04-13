@@ -474,18 +474,8 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 
    CASE Ch == K_ALT_N
 
-      stdokpdv( nil, nil, nil, .T. )
-
-      select_fakt_pripr()
-
-      _t_rec := RecNo()
-      GO TOP
-      nar_print( .T. )
-      close_open_fakt_tabele()
-      select_fakt_pripr()
-      GO ( _t_rec )
-      RETURN DE_CONT
-
+      fakt_print_narudzbenica_priprema()
+      RETURN DE_REFRESH
 
    CASE Ch == K_CTRL_R
 

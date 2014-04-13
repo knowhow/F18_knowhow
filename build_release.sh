@@ -3,6 +3,7 @@ if [ "$HB_INC_INSTALL" == "" ]; then
     exit -1
 fi
 
+./build_lib_release.sh
 
 IS_DARWIN=`uname  -a | grep -c Darwin`
 

@@ -3,8 +3,6 @@ if [ "$HB_INC_INSTALL" == "" ]; then
     exit -1
 fi
 
-./build_lib.sh
-
 cp -av fin/*.ch  $HB_INC_INSTALL
 cp -av fakt/*.ch  $HB_INC_INSTALL
 cp -av kalk/*.ch  $HB_INC_INSTALL
@@ -17,7 +15,7 @@ cp -av mat/*.ch  $HB_INC_INSTALL
 cp -av virm/*.ch  $HB_INC_INSTALL
 cp -av common/*.ch $HB_INC_INSTALL
 
-cp hb_debug.hbm hbmk.hbm
+cp hb_release_lib.hbm hbmk.hbm
 
-hbmk2 -workdir=.h F18.hbp
+hbmk2 -workdir=.r F18_narudzbenica.hbp
 

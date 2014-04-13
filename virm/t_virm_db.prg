@@ -76,42 +76,6 @@ return
 // ----------------------------------------
 method obaza(i)
 
-local lIdIDalje
-local cDbfName
-
-lIdiDalje:=.f.
-
-if i==F_PARAMS .or. i==F_VIPRIPR .or. i==F_VIPRIP2 .or. i==F_IZLAZ  
-	lIdiDalje:=.t.
-endif
-
-if i==F_LDVIRM .or. i==F_KALVIR .or. i==F_VRPRIM  .or. i==F_VRPRIM2 
-	lIdiDalje:=.t.
-endif
-
-if i==F_JPRIH .or. i==F_PARTN .or. i==F_VALUTE .or. i==F_BANKE .or. i==F_OPS
-	lIdiDalje:=.t.
-endif
-
-if lIdiDalje
-	cDbfName:=DBFName(i,.t.)
-	if gAppSrv 
-		? "OPEN: " + cDbfName + ".DBF"
-		if !File(cDbfName + ".DBF")
-			? "Fajl " + cDbfName + ".dbf ne postoji!!!"
-			use
-			return
-		endif
-	endif
-	
-	select(i)
-	usex(cDbfName)
-else
-	use
-	return
-endif
-
-
 return
 
 

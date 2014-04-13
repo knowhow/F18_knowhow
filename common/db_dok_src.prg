@@ -406,10 +406,6 @@ function cre_p_update()
 local aDBF := {}
 local cDbfName := "P_UPDATE"
 
-//if goModul:oDataBase:cName <> "KALK"
-//	return
-//endif
-
 AADD(aDBf,{ "modul"               , "C" ,  10 ,  0 })
 AADD(aDBf,{ "idkonto"             , "C" ,   7 ,  0 })
 AADD(aDBf,{ "p_updated"           , "C" ,   1 ,  0 })

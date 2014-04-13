@@ -268,11 +268,7 @@ return
 static function OTblPPProd()
 local cTbl
 
-// kreiraj tabelu ppprod
-cTbl:=DbfName(F_PPPROD, .t.)
-SELECT(F_PPPROD)
-USE (cTbl)
-SET ORDER TO TAG "KONTO"
+Alert( "Ovo neko koristi OTblPPProd ?!")
 return
 
 

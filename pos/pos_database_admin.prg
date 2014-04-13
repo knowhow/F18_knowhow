@@ -49,18 +49,6 @@ return
 function ChkTblPromVp()
 local cTbl
 
-cTbl:=DbfName(F_PROMVP,.t.)+'.'+DBFEXT
-
-if (FILE(cTbl))
-    O_PROMVP
-    if (FIELDPOS("polog01")==0 .or. FIELDPOS("_SITE_")==0)
-        USE
-        goModul:oDatabase:kreiraj(F_PROMVP)
-        USE
-    endif
-    USE
-endif
-
 return
 
 

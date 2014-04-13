@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,15 +12,15 @@
 #include "fmk.ch"
 #include "fileio.ch"
 
-static aBoxStack:={}
-static nPos:=0
-static cPokPonovo:="Pokušati ponovo (D/N) ?"
-static nPreuseLevel:=0
+STATIC aBoxStack := {}
+STATIC nPos := 0
+STATIC cPokPonovo := "Pokušati ponovo (D/N) ?"
+STATIC nPreuseLevel := 0
 
 
 /*! \fn Scatter(cZn)
   * \brief vrijednosti field varijabli tekuceg sloga prebacuje u public varijable
-  * 
+  *
   * \param cZn - Default = "_"; odredjuje prefixs varijabli koje ce generisati
   *
   * \code
@@ -32,61 +32,62 @@ static nPreuseLevel:=0
   * \endcode
   *
   */
- 
-function Scatter(cZn)
-return set_global_vars_from_dbf(cZn)
+
+FUNCTION Scatter( cZn )
+   RETURN set_global_vars_from_dbf( cZn )
 
 
-function GatherR(cZn)
-local i,j,aStruct
+FUNCTION GatherR( cZn )
 
-if cZn==nil
-  cZn:="_"
-endif
-aStruct:=DBSTRUCT()
-SkratiAZaD(@aStruct)
-while .t.
+   LOCAL i, j, aStruct
 
-         for j:=1 to len(aRel)
-           if aRel[j,1]==ALIAS()  // {"K_0","ID","K_1","ID",1}
-              // matrica relacija
-              cVar:=cZn+aRel[j,2]
-              xField:=&(aRel[j,2])
-              if &cVar==xField // ako nije promjenjen broj
-                loop
-              endif
-              select (aRel[j,3]); set order to aRel[j,5]
-              do while .t.
-               if flock()
-                  seek xField
-                  do while &(aRel[j,4])==xField .and. !eof()
-                    skip
-                    nRec:=RECNO()
-                    skip -1
-                    field->&(aRel[j,4]):=&cVar
-                    go nRec
-                  enddo
+   IF cZn == nil
+      cZn := "_"
+   ENDIF
+   aStruct := dbStruct()
+   SkratiAZaD( @aStruct )
+   WHILE .T.
 
-               else
-                    inkey(0.4)
-                    loop
-               endif
-               exit
-              enddo // .t.
-              select (aRel[j,1])
-           endif
-        next    // j
+      FOR j := 1 TO Len( aRel )
+         IF aRel[ j, 1 ] == Alias()  // {"K_0","ID","K_1","ID",1}
+            // matrica relacija
+            cVar := cZn + aRel[ j, 2 ]
+            xField := &( aRel[ j, 2 ] )
+            if &cVar == xField // ako nije promjenjen broj
+               LOOP
+            ENDIF
+            SELECT ( aRel[ j, 3 ] ); SET ORDER TO aRel[ j, 5 ]
+            DO WHILE .T.
+               IF FLock()
+                  SEEK xField
+                  DO while &( aRel[ j, 4 ] ) == xField .AND. !Eof()
+                     SKIP
+                     nRec := RecNo()
+                     SKIP -1
+                     field->&( aRel[ j, 4 ] ) := &cVar
+                     GO nRec
+                  ENDDO
+
+               ELSE
+                  Inkey( 0.4 )
+                  LOOP
+               ENDIF
+               EXIT
+            ENDDO // .t.
+            SELECT ( aRel[ j, 1 ] )
+         ENDIF
+      NEXT    // j
 
 
-        for i:=1 to len(aStruct)
-          cImeP:=aStruct[i,1]
-          cVar:=cZn+cImeP
-          field->&cImeP:= &cVar
-        next
-  exit
-end
+      FOR i := 1 TO Len( aStruct )
+         cImeP := aStruct[ i, 1 ]
+         cVar := cZn + cImeP
+         field->&cImeP := &cVar
+      NEXT
+      EXIT
+   END
 
-return nil
+   RETURN NIL
 
 
 /*! \fn Gather2(cZn)
@@ -94,51 +95,57 @@ return nil
 *   \note Gather2 pretpostavlja zakljucan zapis !!
 */
 
-function Gather2(zn)
-local _i, _struct
-local _field_b, _var
- 
-if zn==nil
-  zn:="_"
-endif
+FUNCTION Gather2( zn )
 
-_struct:=DBSTRUCT()
+   LOCAL _i, _struct
+   LOCAL _field_b, _var
 
-for _i:=1 to len(_struct)
-  _ime_p := _struct[_i, 1]
-  _field_b := FIELDBLOCK(_ime_p)
-  _var :=  zn + _ime_p
+   IF zn == nil
+      zn := "_"
+   ENDIF
 
-  if  !("#" + _ime_p + "#"  $ "#BRISANO#_SITE_#_OID_#_USER_#_COMMIT_#_DATAZ_#_TIMEAZ_#")
-     EVAL(_field_b, EVAL(MEMVARBLOCK(_var)) )
-  endif
-next
-return
+   _struct := dbStruct()
 
+   FOR _i := 1 TO Len( _struct )
+      _ime_p := _struct[ _i, 1 ]
+      _field_b := FieldBlock( _ime_p )
+      _var :=  zn + _ime_p
 
-function delete2()
-local nRec
+      IF  !( "#" + _ime_p + "#"  $ "#BRISANO#_SITE_#_OID_#_USER_#_COMMIT_#_DATAZ_#_TIMEAZ_#" )
+         Eval( _field_b, Eval( MemVarBlock( _var ) ) )
+      ENDIF
+   NEXT
 
-do while .t.
-
-if my_rlock()
-  dbdelete2()
-  my_unlock()
-  exit
-else
-    inkey(0.4)
-    loop
-endif
-
-enddo
-return nil
+   RETURN
 
 
-function dbdelete2()
-if !eof() .or. !bof()
- Dbdelete()
-endif
-return nil
+FUNCTION delete2()
+
+   LOCAL nRec
+
+   DO WHILE .T.
+
+      IF my_rlock()
+         dbdelete2()
+         my_unlock()
+         EXIT
+      ELSE
+         Inkey( 0.4 )
+         LOOP
+      ENDIF
+
+   ENDDO
+
+   RETURN NIL
+
+
+FUNCTION dbdelete2()
+
+   IF !Eof() .OR. !Bof()
+      dbDelete()
+   ENDIF
+
+   RETURN NIL
 
 
 /*
@@ -149,39 +156,40 @@ return nil
 *           .f. - ne diraj (pretpostavlja se da je zapis vec zakljucan)
 */
 
-function appblank2(fcisti, funl)
-local aStruct,i, nPrevOrd
+FUNCTION appblank2( fcisti, funl )
 
-if fcisti==nil
-  fcisti:=.t.
-endif
+   LOCAL aStruct, i, nPrevOrd
 
-nPrevOrd:=indexord()
+   IF fcisti == nil
+      fcisti := .T.
+   ENDIF
 
-dbappend(.t.)
+   nPrevOrd := IndexOrd()
 
-if fcisti // ako zelis pocistiti stare vrijednosti
-	aStruct:=DBSTRUCT()
-	for i:=1 to len(aStruct)
-		cImeP:=aStruct[i,1]
-		if !("#"+cImeP+"#"  $ "#BRISANO#_OID_#_COMMIT_#")
-		do case
-		case aStruct[i,2]=='C'
-			field->&cImeP:=""
-		case aStruct[i,2]=='N'
-			field->&cImeP:=0
-		case aStruct[i,2]=='D'
-			field->&cImeP:=ctod("")
-		case aStruct[i,2]=='L'
-			field->&cImeP:=.f.
-		endcase
-		endif
-	next
-endif  // fcisti
+   dbAppend( .T. )
 
-ordsetfocus(nPrevOrd)
+   IF fcisti // ako zelis pocistiti stare vrijednosti
+      aStruct := dbStruct()
+      FOR i := 1 TO Len( aStruct )
+         cImeP := aStruct[ i, 1 ]
+         IF !( "#" + cImeP + "#"  $ "#BRISANO#_OID_#_COMMIT_#" )
+            DO CASE
+            CASE aStruct[ i, 2 ] == 'C'
+               field->&cImeP := ""
+            CASE aStruct[ i, 2 ] == 'N'
+               field->&cImeP := 0
+            CASE aStruct[ i, 2 ] == 'D'
+               field->&cImeP := CToD( "" )
+            CASE aStruct[ i, 2 ] == 'L'
+               field->&cImeP := .F.
+            ENDCASE
+         ENDIF
+      NEXT
+   ENDIF  // fcisti
 
-return nil
+   ordSetFocus( nPrevOrd )
+
+   RETURN NIL
 
 
 /*! \fn AppFrom(cFDbf, fOtvori)
@@ -190,152 +198,161 @@ return nil
 *  \param fOtvori - .t. - otvori DBF, .f. - vec je otvorena
 */
 
-function AppFrom(cFDbf,fOtvori)
-local nArr
-nArr:=SELECT()
+FUNCTION AppFrom( cFDbf, fOtvori )
 
-cFDBF:=ToUnix(cFDBF)
+   LOCAL nArr
 
-do while .t.
- if !flock()
-     inkey(0.4)
-     loop
- endif
- exit
-enddo
+   nArr := Select()
 
-if fotvori
- use (cFDbf) new
-else
- select (cFDbF)
-endif
+   cFDBF := ToUnix( cFDBF )
 
-go top
+   DO WHILE .T.
+      IF !FLock()
+         Inkey( 0.4 )
+         LOOP
+      ENDIF
+      EXIT
+   ENDDO
 
-do while !eof()
-  select (nArr)
-  Scatter("f")
+   IF fotvori
+      USE ( cFDbf ) new
+   ELSE
+      SELECT ( cFDbF )
+   ENDIF
 
-  select (cFDBF)
-  Scatter("f")
+   GO TOP
 
-  select (nArr)   // prebaci se u tekuci fajl-u koji zelis staviti zapise
-  appblank2(.f.,.f.)
-  Gather2("f") // pretpostavlja zakljucan zapis
+   DO WHILE !Eof()
+      SELECT ( nArr )
+      Scatter( "f" )
 
-  select (cFDBF)
-  skip
-enddo
-if fOtvori
-  use // zatvori from DBF
-endif
+      SELECT ( cFDBF )
+      Scatter( "f" )
 
-dbunlock()
-select (nArr)
+      SELECT ( nArr )   // prebaci se u tekuci fajl-u koji zelis staviti zapise
+      appblank2( .F., .F. )
+      Gather2( "f" ) // pretpostavlja zakljucan zapis
 
-return
+      SELECT ( cFDBF )
+      SKIP
+   ENDDO
+   IF fOtvori
+      USE // zatvori from DBF
+   ENDIF
+
+   dbUnlock()
+   SELECT ( nArr )
+
+   RETURN
 
 
 
-function PrazanDbf()
-return .f.
+FUNCTION PrazanDbf()
+   RETURN .F.
 
 
 
 /*! \fn reccount2()
  * \note COMIX - CDX verzija
  */
-function reccount2()
-local nRec, nPrevOrd
+FUNCTION reccount2()
 
-return reccount()
+   LOCAL nRec, nPrevOrd
+
+   RETURN RecCount()
 
 
-function seek2(cArg)
-dbseek(cArg)
-return nil
+FUNCTION seek2( cArg )
+
+   dbSeek( cArg )
+
+   RETURN NIL
 
 // -------------------------------------------------------------------
 // brise sve zapise - ako jmarkira za brisanje sve zapise u bazi
-// ako je exclusivno otvorena - __dbZap, ako je shared, 
+// ako je exclusivno otvorena - __dbZap, ako je shared,
 // markiraj za deleted sve zapise
 //
 // - pack - prepakuj zapise
 // -------------------------------------------------------------------
 
-function zapp( pack )
-local bErr
+FUNCTION zapp( pack )
 
-if pack == NIL
-  pack := .f.
-endif
+   LOCAL bErr
 
-bErr := ERRORBLOCK({|o| MyErrH(o)})
-begin sequence
+   IF pack == NIL
+      pack := .F.
+   ENDIF
 
-       log_write( "ZAP exclusive: " + ALIAS(), 5 )
-       __dbzap()
-       if pack
-          __dbpack()
-       endif
+   bErr := ErrorBlock( {| o| MyErrH( o ) } )
+   BEGIN SEQUENCE
 
-recover
+      log_write( "ZAP exclusive: " + Alias(), 5 )
+      __dbZap()
+      IF PACK
+         __dbPack()
+      ENDIF
 
-       log_write( "ZAP shared: " + ALIAS(), 5 )
-       PushWa()
-       do while .t.
+   recover
 
-          // neophodno, posto je index po kriteriju deleted() !!
-          set order to 0 
-          go top
-          do while !eof()
+      log_write( "ZAP shared: " + Alias(), 5 )
+      PushWa()
+      DO WHILE .T.
+
+         // neophodno, posto je index po kriteriju deleted() !!
+         SET ORDER TO 0
+         GO TOP
+         DO WHILE !Eof()
             delete_with_rlock()
-            skip
-          enddo
+            SKIP
+         ENDDO
 
-       exit
-       enddo
-       PopWa()
+         EXIT
+      ENDDO
+      PopWa()
 
-end sequence
-bErr := ERRORBLOCK(bErr)
+   END SEQUENCE
+   bErr := ErrorBlock( bErr )
 
-return nil
+   RETURN NIL
 
 
-function nerr(oe)
-break oe
+FUNCTION nerr( oe )
+
+   break oe
 
 /*  EofFndRet(ef, close)
  *  Daje poruku da ne postoje podaci
  *  param ef = .t.   gledaj eof();  ef == .f. gledaj found()
  *  return  .t. ako ne postoje podaci
  */
- 
-function EofFndRet(ef, close)
 
-local fRet:=.f., cStr := "Ne postoje traženi podaci.."
-if ef // eof()
-  if eof()
-    if !gAppSrv
-     Beep(1)
-     Msg(cStr,6)
-    endif
-    fRet:=.t.
-  endif
-else
-  if !found()
-     if !gAppSrv
-       Beep(1); Msg(cStr,6)
-     endif
-     fRet:=.t.
-  endif
-endif
+FUNCTION EofFndRet( ef, close )
 
-if close .and. fRet
-  my_close_all_dbf()
-endif
-return fRet
+   LOCAL fRet := .F., cStr := "Ne postoje traženi podaci.."
+
+   IF ef // eof()
+      IF Eof()
+         IF !gAppSrv
+            Beep( 1 )
+            Msg( cStr, 6 )
+         ENDIF
+         fRet := .T.
+      ENDIF
+   ELSE
+      IF !Found()
+         IF !gAppSrv
+            Beep( 1 ); Msg( cStr, 6 )
+         ENDIF
+         fRet := .T.
+      ENDIF
+   ENDIF
+
+   IF CLOSE .AND. fRet
+      my_close_all_dbf()
+   ENDIF
+
+   RETURN fRet
 
 
 /*! \fn SigmaSif(cSif)
@@ -350,32 +367,33 @@ return fRet
  * \return .t. kada je lozinka ispravna
 */
 
-function SigmaSif( cSif )
-local lGw_Status
+FUNCTION SigmaSif( cSif )
 
-lGw_Status := IF( "U" $ TYPE( "GW_STATUS" ) , "-", gw_status )
+   LOCAL lGw_Status
 
-GW_STATUS := "-"
+   lGw_Status := IF( "U" $ Type( "GW_STATUS" ), "-", gw_status )
 
-if cSif == NIL
-    cSif := "SIGMAXXX"
-else
-    cSif := PADR( cSif, 8 )
-endif
+   GW_STATUS := "-"
 
-Box(, 2, 70 )
-    cSifra := SPACE(8)
-    @ m_x + 1, m_y + 2 SAY "Sifra za koristenje specijalnih funkcija:"
-    cSifra := UPPER( GETSECRET( cSifra ) )
-BoxC()
+   IF cSif == NIL
+      cSif := "SIGMAXXX"
+   ELSE
+      cSif := PadR( cSif, 8 )
+   ENDIF
 
-GW_STATUS := lGW_Status
+   Box(, 2, 70 )
+   cSifra := Space( 8 )
+   @ m_x + 1, m_y + 2 SAY "Sifra za koristenje specijalnih funkcija:"
+   cSifra := Upper( GetSecret( cSifra ) )
+   BoxC()
 
-if ALLTRIM( cSifra ) == ALLTRIM( cSif )
-    return .t.
-else
-    return .f.
-endif
+   GW_STATUS := lGW_Status
+
+   IF AllTrim( cSifra ) == AllTrim( cSif )
+      RETURN .T.
+   ELSE
+      RETURN .F.
+   ENDIF
 
 
 
@@ -384,355 +402,160 @@ endif
  *   direktorij pa zapuje
  */
 
-function O_POMDB(nArea,cImeDBF)
-
-select (nArea)
-
-if right(upper(cImeDBF),4)<>"."+DBFEXT
-  cImeDBF:=cImeDBf+"."+DBFEXT
-endif
-cImeCDX:=strtran(UPPER(cImeDBF),"."+DBFEXT,"."+INDEXEXT)
-cImeCDX:=ToUnix(cImeCDX)
-
-#xcommand USEXX <(db)>                                                    ;
-             [VIA <rdd>]                                                ;
-             [ALIAS <a>]                                                ;
-             [<new: NEW>]                                               ;
-             [<ro: READONLY>]                                           ;
-             [INDEX <(index1)> [, <(indexn)>]]                          ;
-                                                                        ;
-      => dbUseArea(                                                     ;
-                    <.new.>, <rdd>, <(db)>, <(a)>,                      ;
-                     .f., .f.        ;
-                  )                                                     ;
-
-usex (PRIVPATH+cImeDBF)
-
-return
-
-
-function CheckROnly( cFileName )
-if FILEATTR(cFileName) == 1 
-	gReadOnly := .t.
-	@ 1, 55 SAY "READ ONLY" COLOR "W/R"
-else
-	gReadOnly := .f.
-	@ 1, 55 SAY "         "
-endif
-
-return
-
-
-function SetROnly(lSilent)
-if (lSilent == nil)
-	lSilent := .f.
-endif
-
-if lSilent
-	MsgO("Zakljucavam sezonu...")
-endif
-
-IF !lSilent .and. gReadOnly
-   	MsgBeep("Podrucje je vec zakljucano!")
-   	if Pitanje(,"Zelite otkljucati podrucje ?","N") == "D"
-		SetWOnly()
-		return
-	endif
-	RETURN
-ENDIF
-
-if !lSilent .and. !SigmaSif("ZAKSEZ")
-	return
-endif
-
-IF "U" $ TYPE("gGlBaza")
-	if !lSilent
-		MsgBeep("Nemoguce izvrsiti zakljucavanje##Varijabla gGlBaza nedefinisana!")
-   	endif
-	RETURN
-ENDIF
-
-IF EMPTY(gGlBaza)
-  	if !lSilent
-		MsgBeep("Nemoguce izvrsiti zakljucavanje##Varijabla gGlBaza prazna!")
-   	endif
-	RETURN
-ENDIF
-
-if !lSilent
-	MsgBeep("Izabrana opcija (Ctrl+F10) sluzi za zakljucavanje poslovne godine. #"+;
-         "To znaci da nakon ove opcije nikakve ispravke podataka u trenutno #"+;
-         "aktivnom podrucju nece biti moguce. Ukoliko ste sigurni da to zelite #"+;
-         "na sljedece pitanje odgovorite potvrdno!" )
-endif
-
-IF !lSilent .and. Pitanje(,"Jeste li sigurni da zelite zastititi trenutno podrucje od ispravki? (D/N)","N")=="D"
-
-   		IF SETFATTR(cDirRad + SLASH + gGlBaza, 1) == 0
-     			gReadOnly:=.t.
-			CheckROnly(cDirRad + SLASH + gGlBaza)
-		ELSE
- 			MsgBeep("Greska! F-ja zastite trenutno izabranog podrucja onemogucena! (SETFATTR)")
-   		ENDIF
-ELSE
-	IF SETFATTR(cDirRad + SLASH + gGlBaza, 1) == 0
-		gReadOnly:=.t.
-	ENDIF	
-ENDIF
-
-if lSilent
-	Sleep(3)
-	MsgC()
-	CheckROnly(cDirRad + SLASH + gGlBaza)
-endif
-
-return
-*}
-
-/*! \fn SetWOnly()
- *  \brief Set write atributa
- */
-function SetWOnly(lSilent)
-*{
-
-if (lSilent == nil)
-	lSilent := .f.
-endif
-
-if lSilent
-	MsgO("Otkljucavam sezonu...")
-endif
-
-if !lSilent .and. !SigmaSif("OTKSEZ")
-	return
-endif
-
-IF "U" $ TYPE("gGlBaza")
-	if !lSilent
-		MsgBeep("Nemoguce izvrsiti otljucavanje. Varijabla gGlBaza nedefinisana!")
-   	endif
-	RETURN
-ENDIF
-
-IF EMPTY(gGlBaza)
-  	if !lSilent
-		MsgBeep("Nemoguce izvrsiti otkljucavanje. Varijabla gGlBaza prazna!")
-   	endif
-	RETURN
-ENDIF
-
-IF !lSilent .and. Pitanje(,"Jeste li sigurni da zelite ukloniti zastitu? (D/N)","N")=="D"
-	#ifdef CLIP
-   		IF SETFATTR(goModul:oDatabase:cDirKum + SLASH + gGlBaza, 0) == 0
-	#else
-   		IF SETFATTR(cDirRad + SLASH + gGlBaza, 0) == 0
-	#endif
-     			gReadOnly:=.f.
-			CheckROnly(cDirRad + SLASH + gGlBaza)
-   		ELSE
-     			MsgBeep("Greska! F-ja ukidanje zastite onemogucena! (SETFATTR)")
-   		ENDIF
-ELSE
-   		IF SETFATTR(cDirRad + SLASH + gGlBaza, 0) == 0
-			gReadOnly:=.f.
-		ENDIF
-ENDIF
-
-if lSilent
-	Sleep(3)
-	MsgC()
-	CheckROnly(cDirRad + SLASH + gGlBaza)
-endif
-
-return
-
-
- 
-/*! \fn Append2()
- * \brief Dodavanje novog zapisa u (nArr) -
- * \note koristi se kod dodavanja zapisa u bazu nakon Izdvajanja zapisa funkcijom Izdvoji()
- */
-
-function Append2()
-local nRec
-select(nArr)
-DbAppend()
-nRec:=RECNO()
-select(nTmpArr)
-DbAppend()
-replace recno with nRec
-
-return nil
-
-/*! \fn DbfName(nArea, lFull)
- *  \param nArea
- *  \param lFull True - puno ime cPath + cDbfName; False - samo cDbfName; default=False
- *
- */
- 
-
-
-function DbfName( nArea, lFull )
-local nPos
-local cPrefix
-
-if lFull==nil
-	lFull:=.f.
-endif
-
-cPrefix:=""
-nPos := ASCAN( gaDbfs, {|x| x[1] == nArea } )
-
-if nPos<1
- nPos:=ASCAN(gaSDbfs,{|x| x[1]==nArea})
- if nPos<1
-   //MsgBeep("Ne postoji DBF Arrea "+STR(nArea)+" ?")
-   return ""
- endif
- if lFull
- 	cPrefix:=DbfPath(gaSDbfs[nPos,3])
- endif
- return cPrefix + gaSDbfs[nPos,2]
-else
- if lFull 
- 	cPrefix:=DbfPath(gaDbfs[nPos,3])
- endif
- return cPrefix+gaDbfs[nPos,2]
-endif
-return
+FUNCTION O_POMDB( nArea, cImeDBF )
 
+   SELECT ( nArea )
 
+   IF Right( Upper( cImeDBF ), 4 ) <> "." + DBFEXT
+      cImeDBF := cImeDBf + "." + DBFEXT
+   ENDIF
+   cImeCDX := StrTran( Upper( cImeDBF ), "." + DBFEXT, "." + INDEXEXT )
+   cImeCDX := ToUnix( cImeCDX )
 
-function DbfPath(nPath)
-do case
-	CASE nPath==P_PRIVPATH
-		return PRIVPATH
-	CASE nPath==P_KUMPATH
-		return KUMPATH
-	CASE nPath==P_SIFPATH
-		return SIFPATH
-	CASE nPath==P_EXEPATH
-		return EXEPATH
-	CASE nPath==P_MODULPATH
-		return DBFBASEPATH+SLASH+gModul+SLASH
-	CASE nPath==P_TEKPATH
-		return "."+SLASH
-	CASE nPath==P_ROOTPATH
-		return SLASH
-	CASE nPath==P_KUMSQLPATH
-		return KUMPATH+"SQL"+SLASH
-	CASE nPath==P_SECPATH
-		return goModul:oDatabase:cSigmaBD+SLASH+"SECURITY"+SLASH
-end case
-return 
-
-
-
-
-function DbfArea( tbl, var )
-local _rec
-local _only_basic_params := .t.
-
-if ( var == NIL )
-    var := 0
-endif
-
-_rec := get_a_dbf_rec( LOWER( tbl ), _only_basic_params )
-
-return _rec["wa"]
-
-
-
-
-function NDBF( tbl )
-return DbfArea( tbl ) 
-
-
-
-function NDBFPos( tbl )
-return DbfArea( tbl, 1 )
-
-
-
-function F_Baze( tbl )
-local _dbf_tbl 
-local _area := 0
-local _rec
-local _only_basic_params := .t.
-
-_rec := get_a_dbf_rec( LOWER( tbl ), _only_basic_params )
-
-// ovo je work area
-if _rec <> NIL
-    _area := _rec["wa"]
-endif
-
-if _area <= 0
-    my_close_all_dbf()
-    quit
-endif
-
-return _area
-
-
-
-function Sel_Bazu( tbl )
-local _area
- 
-_area := F_baze( tbl )
- 
-if _area > 0
-    select ( _area )
-else
-    my_close_all_dbf()
-    quit
-endif
-
-return
-
-
-function gaDBFDir( nPos )
-return my_home()
-
-
-
-function O_Bazu( tbl )
-my_use( LOWER( tbl ) )
-return
-
-
-
-function ExportBaze(cBaza)
-LOCAL nArr:=SELECT()
-  FERASE(cBaza+"."+INDEXEXT)
-  FERASE(cBaza+"."+DBFEXT)
-  cBaza+="."+DBFEXT
-  COPY STRUCTURE EXTENDED TO (PRIVPATH+"struct")
-  CREATE (cBaza) FROM (PRIVPATH+"struct") NEW
-  MsgO("apendujem...")
-  APPEND FROM (ALIAS(nArr))
-  MsgC()
-  USE
-  SELECT (nArr)
-return
-
-
-/* 
+   usex ( PRIVPATH + cImeDBF )
+
+   RETURN
+
+
+FUNCTION DbfPath( nPath )
+
+   DO CASE
+   CASE nPath == P_PRIVPATH
+      RETURN PRIVPATH
+   CASE nPath == P_KUMPATH
+      RETURN KUMPATH
+   CASE nPath == P_SIFPATH
+      RETURN SIFPATH
+   CASE nPath == P_EXEPATH
+      RETURN EXEPATH
+   CASE nPath == P_MODULPATH
+      RETURN DBFBASEPATH + SLASH + gModul + SLASH
+   CASE nPath == P_TEKPATH
+      RETURN "." + SLASH
+   CASE nPath == P_ROOTPATH
+      RETURN SLASH
+   CASE nPath == P_KUMSQLPATH
+      RETURN KUMPATH + "SQL" + SLASH
+   CASE nPath == P_SECPATH
+      RETURN goModul:oDatabase:cSigmaBD + SLASH + "SECURITY" + SLASH
+   END CASE
+
+   RETURN
+
+
+
+
+FUNCTION DbfArea( tbl, var )
+
+   LOCAL _rec
+   LOCAL _only_basic_params := .T.
+
+   IF ( var == NIL )
+      var := 0
+   ENDIF
+
+   _rec := get_a_dbf_rec( Lower( tbl ), _only_basic_params )
+
+   RETURN _rec[ "wa" ]
+
+
+
+
+FUNCTION NDBF( tbl )
+   RETURN DbfArea( tbl )
+
+
+
+FUNCTION NDBFPos( tbl )
+   RETURN DbfArea( tbl, 1 )
+
+
+
+FUNCTION F_Baze( tbl )
+
+   LOCAL _dbf_tbl
+   LOCAL _area := 0
+   LOCAL _rec
+   LOCAL _only_basic_params := .T.
+
+   _rec := get_a_dbf_rec( Lower( tbl ), _only_basic_params )
+
+   // ovo je work area
+   IF _rec <> NIL
+      _area := _rec[ "wa" ]
+   ENDIF
+
+   IF _area <= 0
+      my_close_all_dbf()
+      QUIT
+   ENDIF
+
+   RETURN _area
+
+
+
+FUNCTION Sel_Bazu( tbl )
+
+   LOCAL _area
+
+   _area := F_baze( tbl )
+
+   IF _area > 0
+      SELECT ( _area )
+   ELSE
+      my_close_all_dbf()
+      QUIT
+   ENDIF
+
+   RETURN
+
+
+FUNCTION gaDBFDir( nPos )
+   RETURN my_home()
+
+
+
+FUNCTION O_Bazu( tbl )
+
+   my_use( Lower( tbl ) )
+
+   RETURN
+
+
+
+FUNCTION ExportBaze( cBaza )
+
+   LOCAL nArr := Select()
+
+   FErase( cBaza + "." + INDEXEXT )
+   FErase( cBaza + "." + DBFEXT )
+   cBaza += "." + DBFEXT
+   COPY STRUCTURE EXTENDED TO ( PRIVPATH + "struct" )
+   CREATE ( cBaza ) FROM ( PRIVPATH + "struct" ) NEW
+   MsgO( "apendujem..." )
+   APPEND FROM ( Alias( nArr ) )
+   MsgC()
+   USE
+   SELECT ( nArr )
+
+   RETURN
+
+
+/*
   ImdDBFCDX(cIme)
     suban     -> suban.CDX
     suban.DBF -> suban.CDX
 */
-function ImeDBFCDX(cIme, ext)
+FUNCTION ImeDBFCDX( cIme, ext )
 
-if ext == NIL
-  ext := INDEXEXT
-endif
+   IF ext == NIL
+      ext := INDEXEXT
+   ENDIF
 
-cIme := TRIM(strtran(ToUnix(cIme), "." + DBFEXT, "." + ext))
+   cIme := Trim( StrTran( ToUnix( cIme ), "." + DBFEXT, "." + ext ) )
 
-if right (cIme, 4) <> "." + ext
-  cIme := cIme + "." + ext
-endif
+   IF Right ( cIme, 4 ) <> "." + ext
+      cIme := cIme + "." + ext
+   ENDIF
 
-return  cIme
-
+   RETURN  cIme

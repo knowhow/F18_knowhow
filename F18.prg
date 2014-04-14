@@ -103,7 +103,7 @@ FUNCTION module_menu( arg_v )
 
       _x := 1
 
-      @ _x, mnu_left + 1 SAY "Tekuca baza: " + AllTrim( _db_params[ "database" ] ) + " / db ver: " + _server_db_version
+      @ _x, mnu_left + 1 SAY "Tekuća baza: " + AllTrim( _db_params[ "database" ] ) + " / db ver: " + _server_db_version
 
       IF _lock_db
          _tmp := "[ srv lock " + oDb_lock:lock_params[ "server_lock" ] + " / cli lock " + oDb_lock:lock_params[ "client_lock" ]  + " ]"
@@ -114,11 +114,9 @@ FUNCTION module_menu( arg_v )
       @ _x, Col() + 1 SAY _tmp COLOR _color
 
       ++ _x
-
       @ _x, mnu_left + 1 SAY "   Korisnik: " + AllTrim( _db_params[ "user" ] ) + "   u grupama " + _user_roles
 
       ++ _x
-
       @ _x, mnu_left SAY Replicate( "-", 55 )
 
       // backup okidamo samo na prvom ulasku
@@ -143,7 +141,6 @@ FUNCTION module_menu( arg_v )
       // setuj odabir
       set_menu_choices( @menuop, @menuexec, arg_v[ "p3" ], arg_v[ "p4" ], arg_v[ "p5" ], arg_v[ "p6" ], arg_v[ "p7" ] )
 
-      // daj mi odabir
       // ubacio sam ACHOICE2 radi meni funkcija stadnardnih...
       mnu_choice := ACHOICE2( mnu_top, mnu_left, mnu_bottom, mnu_right, menuop, .T., "MenuFunc", 1 )
 
@@ -156,8 +153,10 @@ FUNCTION module_menu( arg_v )
             MsgBeep( oBackup:backup_in_progress_info() )
          ENDIF
 
-      CASE mnu_choice > 0
-         Eval( menuexec[ mnu_choice ] )
+      CASE mnu_choice > 0 
+         IF mnu_choice <= LEN( menuexec )
+            Eval( menuexec[ mnu_choice ] )
+         ENDIF
       ENDCASE
 
       LOOP

@@ -40,12 +40,10 @@ private ck7:="N"
 // N-nabavna
 private cCijena:="P" 
 private cVpRab:="N"
-if IsPlanika()
-	private cPlVrsta:=SPACE(1)
-	private cK9:=SPACE(3)
-	private cGrupeK1:=SPACE(45)
-	private cPrDatOd:="N"
-endif
+private cPlVrsta:=SPACE(1)
+private cK9:=SPACE(3)
+private cGrupeK1:=SPACE(45)
+private cPrDatOd:="N"
 private PREDOVA2:= 62
 
 O_SIFK

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,58 +14,59 @@
 
 // ---------------------------------
 // ---------------------------------
-function fakt_pregled_dokumenata()
-local _opc:={}
-local _opcexe:={}
-local _izbor:=1
+FUNCTION fakt_pregled_dokumenata()
 
-AADD(_opc,"1. štampa azuriranog dokumenta                               ")
-AADD(_opcexe, {|| fakt_stampa_azuriranog()})
-AADD(_opc,"2. pregled liste dokumenata")
-AADD(_opcexe, {|| fakt_pregled_liste_dokumenata()})
-AADD(_opc,"3. štampa txt dokumenata od broja do broja      ")
-AADD(_opcexe, {|| fakt_stampa_azuriranog_period()})
-AADD(_opc,"4. štampa/export odt dokumenata po zadanom uslovu")
-AADD(_opcexe, {|| stdokodt_grupno() })
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
 
-if IsUgovori()
-	AADD(_opc,"U. stampa fakt.na osnovu ugovora od-do")
-	AADD(_opcexe, {|| ug_za_period()})
-endif
+   AAdd( _opc, "1. štampa azuriranog dokumenta                               " )
+   AAdd( _opcexe, {|| fakt_stampa_azuriranog() } )
+   AAdd( _opc, "2. pregled liste dokumenata" )
+   AAdd( _opcexe, {|| fakt_pregled_liste_dokumenata() } )
+   AAdd( _opc, "3. štampa txt dokumenata od broja do broja      " )
+   AAdd( _opcexe, {|| fakt_stampa_azuriranog_period() } )
+   AAdd( _opc, "4. štampa/export odt dokumenata po zadanom uslovu" )
+   AAdd( _opcexe, {|| stdokodt_grupno() } )
 
-if fiscal_opt_active()
-	AADD( _opc,"F. stampa fiskalnih racuna od-do" )
-	AADD( _opcexe, {|| st_fisc_per()})
-endif
+   IF IsUgovori()
+      AAdd( _opc, "U. štampa faktura na osnovu ugovora za period" )
+      AAdd( _opcexe, {|| ug_za_period() } )
+   ENDIF
 
-f18_menu("stfak", .f., _izbor, _opc, _opcexe )
+   IF fiscal_opt_active()
+      AAdd( _opc, "F. štampa fiskalnih računa za period" )
+      AAdd( _opcexe, {|| fiskalni_racuni_za_period() } )
+   ENDIF
 
-my_close_all_dbf()
+   f18_menu( "stfak", .F., _izbor, _opc, _opcexe )
 
-return .f.
+   my_close_all_dbf()
 
- 
-function fakt_ostale_operacije_doks()
-local _opc:={}
-local _opcexe:={}
-local _izbor:=1
+   RETURN .F.
 
-AADD(_opc,"1. povrat dokumenta u pripremu       ")
-AADD(_opcexe,{|| Povrat_fakt_dokumenta()})
 
-AADD(_opc,"2. povrat dokumenata prema kriteriju ")
-AADD(_opcexe,{|| if(SigmaSif(), Povrat_fakt_po_kriteriju(), nil)})
+FUNCTION fakt_ostale_operacije_doks()
 
-AADD(_opc,"3. prekid rezervacije")
-AADD(_opcexe,{|| Povrat_fakt_dokumenta(.t.)})
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
 
-AADD( _opc, "A. administrativne opcije ")
-AADD( _opcexe, { || fakt_admin_menu() } )
+   AAdd( _opc, "1. povrat dokumenta u pripremu       " )
+   AAdd( _opcexe, {|| Povrat_fakt_dokumenta() } )
 
-AADD(_opc,"B. podesenje brojaca dokumenta")
-AADD(_opcexe,{|| fakt_set_param_broj_dokumenta()})
+   AAdd( _opc, "2. povrat dokumenata prema kriteriju " )
+   AAdd( _opcexe, {|| if( SigmaSif(), Povrat_fakt_po_kriteriju(), nil ) } )
 
-f18_menu("ostop", .f., _izbor, _opc, _opcexe )
+   AAdd( _opc, "3. prekid rezervacije" )
+   AAdd( _opcexe, {|| Povrat_fakt_dokumenta( .T. ) } )
 
-return .f.
+   AAdd( _opc, "A. administrativne opcije " )
+   AAdd( _opcexe, {|| fakt_admin_menu() } )
 
+   AAdd( _opc, "B. podesenje brojaca dokumenta" )
+   AAdd( _opcexe, {|| fakt_set_param_broj_dokumenta() } )
+
+   f18_menu( "ostop", .F., _izbor, _opc, _opcexe )
+
+   RETURN .F.

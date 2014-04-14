@@ -44,7 +44,7 @@ return __racun_na_email
 // --------------------------------------------------------------------
 // centralna funkcija za poziv stampe fiskalnog racuna
 // --------------------------------------------------------------------
-function fakt_fisc_rn( id_firma, tip_dok, br_dok, auto_print, dev_param )
+function fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
 local _err_level := 0
 local _dev_drv
 local _storno := .f.

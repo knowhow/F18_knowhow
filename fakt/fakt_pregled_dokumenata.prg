@@ -722,11 +722,11 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
 
             // da li je korisniku dozvoljeno da stampa racune ?
             IF _dev_params[ "print_fiscal" ] == "N"
-               MsgBeep( "Nije Vam dozvoljena opcija za stampu fiskalnih racuna !" )
+               MsgBeep( "Nije Vam dozvoljena opcija za štampu fiskalnih računa !" )
                RETURN DE_CONT
             ENDIF
 
-            fakt_fisc_rn( field->idfirma, field->idtipdok, field->brdok, .F., _dev_params )
+            fakt_fiskalni_racun( field->idfirma, field->idtipdok, field->brdok, .F., _dev_params )
 
             SELECT ( _t_area )
 

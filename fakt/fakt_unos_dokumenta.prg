@@ -194,8 +194,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 
       MsgO( "stampa na fiskalni printer u toku..." )
 
-      // posalji na fiskalni uredjaj
-      fakt_fisc_rn( __id_firma, __tip_dok, __br_dok, .F., _dev_params )
+      fakt_fiskalni_racun( __id_firma, __tip_dok, __br_dok, .F., _dev_params )
 
       MsgC()
 

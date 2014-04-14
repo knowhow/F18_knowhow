@@ -64,18 +64,16 @@ FUNCTION fiskalni_racuni_za_period( cIdFirma, cIdTipDok, cBrOd, cBrDo )
    hseek cIdFirma + cIdTipDok
 
    IF Found()
-      DO WHILE !Eof() .AND. fakt_doks->idfirma = cIdFirma ;
-            .AND. fakt_doks->idtipdok = cIdTipDok
+      DO WHILE !Eof() .AND. fakt_doks->idfirma == cIdFirma .AND. fakt_doks->idtipdok == cIdTipDok
 		
          nTRec := RecNo()
 		
-         IF AllTrim( fakt_doks->brdok ) >= AllTrim( cBrOd ) .AND. AllTrim( doks_doks->brdok ) <= AllTrim( cBrDo )
+         IF AllTrim( fakt_doks->brdok ) >= AllTrim( cBrOd ) .AND. AllTrim( fakt_doks->brdok ) <= AllTrim( cBrDo )
 			
-            // pozovi stampu fiskalnog racuna
-            nErr := fakt_fisc_rn( fakt_doks->idfirma, doks->idtipdok, doks->brdok, lAutoStampa, _dev_params )
+            nErr := fakt_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, lAutoStampa, _dev_params )
 		
             IF ( nErr > 0 )
-               msgbeep( "Prekidam operaciju stampe radi greske!" )
+               MsgBeep( "Prekidam operaciju štampe radi greske!" )
                EXIT
             ENDIF
 		

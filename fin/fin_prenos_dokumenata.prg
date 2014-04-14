@@ -661,7 +661,7 @@ FUNCTION fin_prekart()
    LOCAL _arr := {}
    LOCAL _usl_kto, _usl_part, _tmp_dbf
    PRIVATE _id_konto := fetch_metric( "fin_preb_kart_id_konto", my_user(), Space( 60 ) )
-   PRIVATE _id_partn := fetch_metric( "fin_preb_kart_id_partner", my_user(), Space( 60 ) )
+   PRIVATE _id_partner := fetch_metric( "fin_preb_kart_id_partner", my_user(), Space( 60 ) )
    PRIVATE _dat_od := fetch_metric( "fin_preb_kart_dat_od", my_user(), CToD( "" ) )
    PRIVATE _dat_do := fetch_metric( "fin_preb_kart_dat_do", my_user(), CToD( "" ) )
    PRIVATE _id_firma := gFirma
@@ -688,7 +688,7 @@ FUNCTION fin_prekart()
       ENDIF
 
       _usl_kto := Parsiraj( _id_konto, "idkonto" )
-      _usl_part := Parsiraj( _id_partn, "idpartner" )
+      _usl_part := Parsiraj( _id_partner, "idpartner" )
 
       IF _usl_kto <> NIL .AND. _usl_part <> NIL
          EXIT

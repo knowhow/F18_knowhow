@@ -1,3 +1,7 @@
+1.7.43  2014-04-14, vsasa
+
+  - DEBUG: #33269 fakt_barkod => barkod
+
 1.7.42  2014-04-14, hernad
 
   - DEBUG: #33258 _id_partn => _id_partner

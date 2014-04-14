@@ -152,7 +152,7 @@ AADD(aDBf,{ 'L2'                  , 'C' ,   40,   0 })
 AADD(aDBf,{ 'L3'                  , 'C' ,   40 ,  0})
 AADD(aDBf,{ 'VPC'                 , 'N' ,   12 ,  2 })
 AADD(aDBf,{ 'MPC'                 , 'N' ,   12 ,  2 })
-   
+
 IF_NOT_FILE_DBF_CREATE
 
 CREATE_INDEX("1","barkod+id", _alias )

@@ -15,7 +15,7 @@
 
 // sifrarnici
 #xcommand O_ROBA     => select (F_ROBA)    ;  my_use  ("roba")      ; set order to tag "ID"
-#xcommand O_BARKOD   => select (F_BARKOD)  ;  my_usex ("barkod")    ; set order to tag "1"
+#xcommand O_BARKOD   => select (F_BARKOD)  ;  my_use  ("barkod")    ; set order to tag "1"
 #xcommand O_KONTO    => select (F_KONTO)   ;  my_use  ("konto" )    ; set order to tag "ID"
 #xcommand O_PARTN    => select (F_PARTN)   ;  my_use  ("partn")     ; set order to tag "ID"
 #xcommand O_SAST     => select (F_SAST)    ;  my_use  ("sast")      ; set order to tag "ID"

@@ -184,7 +184,7 @@ FUNCTION reopen_exclusive_and_zap( dbf_table, open_index )
    _dbf := my_home() + _a_dbf_rec[ "table" ]
    _idx := ImeDbfCdx( _dbf )
 
-   BEGIN SEQUENCE
+   BEGIN SEQUENCE WITH { | err | Break( err ) } 
 
        dbUseArea( .F., DBFENGINE, _dbf, _a_dbf_rec[ "alias" ], .F., .F. )
 

@@ -1,3 +1,11 @@
+1.7.44  2014-04-11, hernad
+
+  - DEBUG: REOPEN_EXCLUSIVE_AND_ZAP ... RECOVER ... fali "WITH"
+
+1.7.40  2014-04-11, hernad
+
+  - DEBUG & REFACTOR: narudzbenice, Alias does not exists bugovi
+
 1.7.34  2014-04-11, vsasa
 
   - FAKT, lager lista - bugfix 

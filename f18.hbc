@@ -16,7 +16,7 @@ libs=hbtip
 
 libs=hbpgsql
 
-{unix|mingw}libs=pq
+{unix}libs=pq
 {win}libs=libpq
 
 {mingw}libpaths=/usr/i586-mingw32msvc/lib
@@ -24,13 +24,5 @@ libs=hbpgsql
 
 
 mt=yes
-#gui=yes
-
-#{!HB_QT_STATIC}gt=gtqtc
-#{HB_QT_STATIC}gt=gtqtcs
-
-
-# optional
-#mt=yes
 
 libs=sddpg

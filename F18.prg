@@ -9,6 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
+#include "fmk.ch"
 #include "inkey.ch"
 #include "hbthread.ch"
 
@@ -103,7 +104,7 @@ FUNCTION module_menu( arg_v )
 
       _x := 1
 
-      @ _x, mnu_left + 1 SAY "Tekuća baza: " + AllTrim( _db_params[ "database" ] ) + " / db ver: " + _server_db_version
+      @ _x, mnu_left + 1 SAY8 "Tekuća baza: " + AllTrim( _db_params[ "database" ] ) + " / db ver: " + _server_db_version
 
       IF _lock_db
          _tmp := "[ srv lock " + oDb_lock:lock_params[ "server_lock" ] + " / cli lock " + oDb_lock:lock_params[ "client_lock" ]  + " ]"

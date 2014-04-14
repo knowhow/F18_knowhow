@@ -58,13 +58,18 @@ FUNCTION Get1_PR()
       GO BOTTOM
 
       IF Val( rbr ) < 900 .OR. ( Val( rbr ) > 1 .AND. Pitanje(, "Zelite li izbrisati izgenerisane sirovine ?", "N" ) == "D" )
+
+         my_flock()
+
          DO WHILE !Bof() .AND. Val( rbr ) > 900
             SKIP -1
             nTrec := RecNo()
             SKIP
-            dbdelete2()
+            my_delete()
             GO nTrec
          ENDDO
+
+         my_unlock()
 
          SELECT ROBA
          hseek _idroba

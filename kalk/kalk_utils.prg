@@ -159,15 +159,15 @@ endif
 
 select kalk_pripr9
 seek cIdF+cIdVd+cBrDok
-
+my_flock()
 do while !eof() .and. cIdF==IdFirma .and. cIdVD==IdVD .and. cBrDok==BrDok
     skip 1
     nRec:=RecNo()
     skip -1
-    dbdelete2()
+    my_delete()
     go nRec
 enddo
-
+my_unlock()
 return
 
 

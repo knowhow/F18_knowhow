@@ -26,12 +26,12 @@ FUNCTION Ostav()
    AAdd( opcexe, {|| AutoZat() } )
    AAdd( opc, "3. kartica" )
    AAdd( opcexe, {|| SubKart( .T. ) } )
-   AAdd( opc, "4. kartica konto/konto2" )
+   AAdd( opc, "4. usporedna kartica dva konta" )
    AAdd( opcexe, {|| SubKart2( .T. ) } )
    AAdd( opc, "5. specifikacija" )
    AAdd( opcexe, {|| SpecOtSt() } )
    AAdd( opc, "6. ios" )
-   AAdd( opcexe, {|| IOS() } )
+   AAdd( opcexe, {|| IOS() } ) 
    AAdd( opc, "7. kartice grupisane po brojevima veze" )
    AAdd( opcexe, {|| StKart( .T. ) } )
    AAdd( opc, "8. kompenzacija" )
@@ -103,12 +103,9 @@ STATIC FUNCTION SpecOtSt()
 
    B := 0
 
-   //
-
    IF cPrelomljeno == "N"
       m += " --------------------"
    ENDIF
-
 
    nStr := 0
 
@@ -200,7 +197,6 @@ STATIC FUNCTION SpecOtSt()
             ENDIF
          ENDIF
 
-         // @ prow(),85      SAY nIznD PICTURE picBHD
          nKolTot := PCol() + 1
          @ PRow(), nKolTot      SAY nIznD PICTURE picBHD
 
@@ -289,9 +285,9 @@ FUNCTION ZaglSpK()
    nDSP := Len( PARTN->id )
 
    ? M
-   ? "*R. *" + PadC( "SIFRA", nDSP ) + "*       NAZIV POSLOVNOG PARTNERA      * PTT *      MJESTO     *  BROJ    *               IZNOS                      *" + iif( cPrelomljeno == "N", "                    *", "" )
-   ? "     " + Space( nDSP ) + "                                                                          ---------------------- --------------------" + iif( cPrelomljeno == "N", " --------------------", "" )
-   ? "*BR.*" + Space( nDSP ) + "*                                     * BROJ*                 *  VEZE    *         DUGUJE       *      POTRAZUJE    *" + iif( cPrelomljeno == "N", "       SALDO        *", "" )
+   ?U "*R. *" + PadC( "SIFRA", nDSP ) + "*       NAZIV POSLOVNOG PARTNERA      * PTT *      MJESTO     *  BROJ    *               IZNOS                      *" + iif( cPrelomljeno == "N", "                    *", "" )
+   ?U "     " + Space( nDSP ) + "                                                                          ---------------------- --------------------" + iif( cPrelomljeno == "N", " --------------------", "" )
+   ?U "*BR.*" + Space( nDSP ) + "*                                     * BROJ*                 *  VEZE    *         DUGUJE       *      POTRAZUJE    *" + iif( cPrelomljeno == "N", "       SALDO        *", "" )
    ? M
    SELECT SUBAN
 
@@ -441,7 +437,6 @@ FUNCTION AutoZat( lAuto, cKto, cPtn )
          ENDIF
          SKIP
       ENDDO
-      // partner, brdok
 
       IF Abs( Round( nDugBHD - nPotBHD, 3 ) ) <= gnLOSt .AND. cOtvSt == "1"
          SEEK cIdFirma + cIdKonto + cIdPartner + cBrDok
@@ -452,17 +447,17 @@ FUNCTION AutoZat( lAuto, cKto, cPtn )
             update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
             SKIP
          ENDDO
+
+         log_write( "F18_DOK_OPER, automatsko zatvaranje stavki, OASIST, duguje: " + AllTrim( Str( nDugBHD, 12, 2 ) ) + ", potrazuje: " + AllTrim( Str( nPotBHD, 12, 2 ) ) + " firma: " + cIdFirma + " konto: " + cIdKonto, 2 )
+
+
       ENDIF
    ENDDO
 
    f18_free_tables( { "fin_suban" } )
    sql_table_update( nil, "END" )
 
-   log_write( "F18_DOK_OPER, automatsko zatvaranje stavki, OASIST, duguje: " + AllTrim( Str( nDugBHD, 12, 2 ) ) + ;
-      ", potrazuje: " + AllTrim( Str( nPotBHD, 12, 2 ) ) + " firma: " + cIdFirma + " konto: " + cIdKonto, 2 )
-
    BoxC()
-   // counter zatvaranja
 
    my_close_all_dbf()
 

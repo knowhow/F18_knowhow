@@ -1,8 +1,12 @@
-1.7.41  2014-04-11, hernad
+1.7.42  2014-04-14, hernad
+
+  - DEBUG: #33258 _id_partn => _id_partner
+
+1.7.41  2014-04-14, hernad
 
   - DEBUG: REOPEN_EXCLUSIVE_AND_ZAP ... RECOVER ... fali "WITH"
 
-1.7.40  2014-04-11, hernad
+1.7.40  2014-04-14, hernad
 
   - DEBUG & REFACTOR: narudzbenice, Alias does not exists bugovi
 

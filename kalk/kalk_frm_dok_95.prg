@@ -303,7 +303,7 @@ FUNCTION Get1_95()
             SKIP
             PRIVATE nRRec2 := RecNo()
             SKIP -1
-            dbdelete2()
+            my_delete()
             GO nRRec2
             LOOP
          ENDIF

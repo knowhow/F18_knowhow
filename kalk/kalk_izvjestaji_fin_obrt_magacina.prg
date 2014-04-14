@@ -87,12 +87,10 @@ Box(, 17, 75)
   nKorekcija:= 12/(month(dDatDo)-month(dDatOd)+1)
   @ m_x+12,m_y+2 SAY "Korekcija (12/broj radnih mjeseci):" GET nKorekcija pict "999.99"
   @ m_x+13,m_y+2 SAY "Ostampati legendu za kolone " GET cLegenda PICT "@!" VALID cLegenda $ "DN"  
-  if IsPlanika()
-  	@ m_x+14,m_y+2 SAY "Uslov po pl.vrsta " GET cPlVrsta PICT "@!"  
-  	@ m_x+15,m_y+2 SAY "Izdvoji grupe: " GET cGrupeK1  
-  	@ m_x+16,m_y+2 SAY "(npr. 0001;0006;0019;)"  
-  	@ m_x+17,m_y+2 SAY "Uslov po K9 " GET cK9 PICT "@!"  
-  endif
+  @ m_x+14,m_y+2 SAY "Uslov po pl.vrsta " GET cPlVrsta PICT "@!"  
+  @ m_x+15,m_y+2 SAY "Izdvoji grupe: " GET cGrupeK1  
+  @ m_x+16,m_y+2 SAY "(npr. 0001;0006;0019;)"  
+  @ m_x+17,m_y+2 SAY "Uslov po K9 " GET cK9 PICT "@!"  
   READ
   ESC_BCR
   aUsl1:=Parsiraj(qqKonto,"pkonto")

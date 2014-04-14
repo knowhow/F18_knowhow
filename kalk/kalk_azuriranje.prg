@@ -1564,13 +1564,15 @@ enddo
 
 select kalk_pripr9
 seek cidfirma+cidvd+cBrDok
+my_flock()
 do while !eof() .and. cIdFirma==IdFirma .and. cIdVD==IdVD .and. cBrDok==BrDok
     skip 1
     nRec:=recno()
     skip -1
-    dbdelete2()
+    my_delete()
     go nRec
 enddo
+my_unlock()
 use
 MsgC()
 

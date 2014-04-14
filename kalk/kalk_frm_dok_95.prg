@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,326 +14,330 @@
 
 
 
-function Get1_95()
-pIzgSt:=.f.   // izgenerisane stavke jos ne postoje
+FUNCTION Get1_95()
+
+   pIzgSt := .F.   // izgenerisane stavke jos ne postoje
 
 
-set key K_ALT_K to KM2()
-if nRbr==1 .and. fnovi
-  _DatFaktP:=_datdok
-endif
+   SET KEY K_ALT_K TO KM2()
+   IF nRbr == 1 .AND. fnovi
+      _DatFaktP := _datdok
+   ENDIF
 
-if nRbr==1 .or. !fnovi .or. gMagacin=="1"
- @  m_x+5,m_y+2   SAY "Dokument Broj:" get _BrFaktP
- @  m_x+5,col()+1 SAY "Datum:" get _DatFaktP   ;
-    valid {|| .t.}
- 
- if is_uobrada()
-    @ m_x+5, col()+1 SAY "Odobrenje:" GET _odobr_no PICT "@S10"
- endif
- 
- _IdZaduz:=""
- @ m_x+8,m_y+2 SAY "Magacinski konto razduzuje"  GET _IdKonto2 ;
-            valid empty(_IdKonto2) .or. P_Konto(@_IdKonto2,21,5)
- if gNW<>"X"
-   @ m_x+8,m_y+40 SAY "Razduzuje:" GET _IdZaduz2   pict "@!"  valid empty(_idZaduz2) .or. P_Firma(@_IdZaduz2,21,5)
- else
-   if !empty(cRNT1) .and. _idvd $ "97#96#95"
-     if (IsRamaGlas())
-       @ m_x+8,m_y+40 SAY "Rad.nalog:" GET _IdZaduz2 pict "@!" valid RadNalOK()
-     else
-       @ m_x+8,m_y+40 SAY "Rad.nalog:" GET _IdZaduz2   pict "@!"
-     endif
-   endif
- endif
- if _idvd $ "97#96#95"    // ako je otprema, gdje to ide
-   
-   @ m_x+9,m_y+2   SAY "Konto zaduzuje            " GET _IdKonto valid  empty(_IdKonto) .or. P_Konto(@_IdKonto,21,5) pict "@!"
-   
-   if (_idvd=="95" .and. IsVindija())
-       
-       @ m_x+9,m_y+40 SAY "Sifra veze otpisa:" GET _IdPartner  valid empty(_idPartner) .or.P_Firma(@_IdPartner,21,5) pict "@!"
-   
-   elseif gMagacin=="1"
-       @ m_x+9,m_y+40 SAY "Partner zaduzuje:" GET _IdPartner  valid empty(_idPartner) .or.P_Firma(@_IdPartner,21,5) pict "@!"
-   
-   else
-      if _idvd == "96"
-          @ m_x+9,m_y+40 SAY "Partner zaduzuje:" GET _IdPartner  valid empty(_idPartner) .or.P_Firma(@_IdPartner,21,5) pict "@!"
-      endif
-   endif
- 
- else
-  _idkonto:=""
- endif
+   IF nRbr == 1 .OR. !fnovi .OR. gMagacin == "1"
+      @  m_x + 5, m_y + 2   SAY "Dokument Broj:" GET _BrFaktP
+      @  m_x + 5, Col() + 1 SAY "Datum:" GET _DatFaktP   ;
+         valid {|| .T. }
 
-else
- @  m_x+6,m_y+2   SAY "Dokument Broj: "; ?? _BrFaktP
- @  m_x+6,col()+2 SAY "Datum: "; ?? _DatFaktP
- _IdZaduz:=""
- @ m_x+8,m_y+2 SAY "Magacinski konto razduzuje "; ?? _IdKonto2
- @ m_x+9,m_y+2 SAY "Konto zaduzuje "; ?? _IdKonto
- if gNW<>"X"
-   @ m_x+9,m_y+40 SAY "Razduzuje: "; ?? _IdZaduz2
- endif
-endif
+      IF is_uobrada()
+         @ m_x + 5, Col() + 1 SAY "Odobrenje:" GET _odobr_no PICT "@S10"
+      ENDIF
 
- if !glEkonomat
-   @ m_x+10,m_y+66 SAY "Tarif.brÄ¿"
- endif
- if lKoristitiBK
-    @ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!S10" when {|| _idRoba:=PADR(_idRoba,VAL(gDuzSifIni)),.t.} valid  {|| P_Roba(@_IdRoba),Reci(11,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40),_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa),.t.}
- else
-    @ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!" valid  {|| P_Roba(@_IdRoba),Reci(11,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40),_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa),.t.}
- endif
- if !glEkonomat
-   @ m_x+11,m_y+70 GET _IdTarifa when gPromTar=="N" valid P_Tarifa(@_IdTarifa)
- endif
- 
- if IsDomZdr()
-    @ m_x + 12, m_y + 2 SAY "Tip sredstva (prazno-svi) " GET _Tip PICT "@!"
- endif
+      _IdZaduz := ""
+      @ m_x + 8, m_y + 2 SAY "Magacinski konto razduzuje"  GET _IdKonto2 ;
+         VALID Empty( _IdKonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 )
+      IF gNW <> "X"
+         @ m_x + 8, m_y + 40 SAY "Razduzuje:" GET _IdZaduz2   PICT "@!"  VALID Empty( _idZaduz2 ) .OR. P_Firma( @_IdZaduz2, 21, 5 )
+      ELSE
+         IF !Empty( cRNT1 ) .AND. _idvd $ "97#96#95"
+            IF ( IsRamaGlas() )
+               @ m_x + 8, m_y + 40 SAY "Rad.nalog:" GET _IdZaduz2 PICT "@!" VALID RadNalOK()
+            ELSE
+               @ m_x + 8, m_y + 40 SAY "Rad.nalog:" GET _IdZaduz2   PICT "@!"
+            ENDIF
+         ENDIF
+      ENDIF
+      IF _idvd $ "97#96#95"    // ako je otprema, gdje to ide
 
- if is_uobrada()
-    @ m_x+12,m_y+2 SAY "JCI br: " GET _jci_no PICT "@S10"
-    @ m_x+12,col()+2 SAY "EX3 br: " GET _ex_no PICT "@S10"
- endif
+         @ m_x + 9, m_y + 2   SAY "Konto zaduzuje            " GET _IdKonto VALID  Empty( _IdKonto ) .OR. P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
 
- read; ESC_RETURN K_ESC
- if lKoristitiBK
-    _idRoba:=Left(_idRoba, 10)
- endif
+         IF ( _idvd == "95" .AND. IsVindija() )
 
- _MKonto:=_Idkonto2
- DatPosljK()
- DuplRoba()
+            @ m_x + 9, m_y + 40 SAY "Sifra veze otpisa:" GET _IdPartner  VALID Empty( _idPartner ) .OR. P_Firma( @_IdPartner, 21, 5 ) PICT "@!"
 
- select koncij
- seek trim(_idkonto2)
- select TARIFA
- hseek _IdTarifa  // postavi TARIFA na pravu poziciju
- select kalk_pripr  // napuni tarifu
+         ELSEIF gMagacin == "1"
+            @ m_x + 9, m_y + 40 SAY "Partner zaduzuje:" GET _IdPartner  VALID Empty( _idPartner ) .OR. P_Firma( @_IdPartner, 21, 5 ) PICT "@!"
 
- @ m_x+13,m_y+2   SAY "Kolicina " GET _Kolicina PICTURE PicKol valid _Kolicina <> 0
+         ELSE
+            IF _idvd == "96"
+               @ m_x + 9, m_y + 40 SAY "Partner zaduzuje:" GET _IdPartner  VALID Empty( _idPartner ) .OR. P_Firma( @_IdPartner, 21, 5 ) PICT "@!"
+            ENDIF
+         ENDIF
 
- 
-IF gVarEv=="1"
+      ELSE
+         _idkonto := ""
+      ENDIF
 
- _GKolicina:=0
- if fNovi
-   
-   select ROBA; HSEEK _IdRoba
-   if koncij->naz=="P2"
-     _VPC:=PLC
-   else
-     _VPC:=KoncijVPC()
-   endif
-   
-   _NC:=NC
- endif
+   ELSE
+      @  m_x + 6, m_y + 2   SAY "Dokument Broj: "; ?? _BrFaktP
+      @  m_x + 6, Col() + 2 SAY "Datum: "; ?? _DatFaktP
+      _IdZaduz := ""
+      @ m_x + 8, m_y + 2 SAY "Magacinski konto razduzuje "; ?? _IdKonto2
+      @ m_x + 9, m_y + 2 SAY "Konto zaduzuje "; ?? _IdKonto
+      IF gNW <> "X"
+         @ m_x + 9, m_y + 40 SAY "Razduzuje: "; ?? _IdZaduz2
+      ENDIF
+   ENDIF
 
- if gCijene="2" .and. fNovi
-   /////// utvrdjivanje fakticke VPC
-    faktVPC(@_VPC, _idfirma + _idkonto2 + _idroba)
-    select kalk_pripr
- endif
+   IF !glEkonomat
+      @ m_x + 10, m_y + 66 SAY "Tarif.brÄ¿"
+   ENDIF
+   IF lKoristitiBK
+      @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _idRoba := PadR( _idRoba, Val( gDuzSifIni ) ), .T. } valid  {|| P_Roba( @_IdRoba ), Reci( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
+   ELSE
+      @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), Reci( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
+   ENDIF
+   IF !glEkonomat
+      @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+   ENDIF
+
+   IF IsDomZdr()
+      @ m_x + 12, m_y + 2 SAY "Tip sredstva (prazno-svi) " GET _Tip PICT "@!"
+   ENDIF
+
+   IF is_uobrada()
+      @ m_x + 12, m_y + 2 SAY "JCI br: " GET _jci_no PICT "@S10"
+      @ m_x + 12, Col() + 2 SAY "EX3 br: " GET _ex_no PICT "@S10"
+   ENDIF
+
+   read; ESC_RETURN K_ESC
+   IF lKoristitiBK
+      _idRoba := Left( _idRoba, 10 )
+   ENDIF
+
+   _MKonto := _Idkonto2
+   DatPosljK()
+   DuplRoba()
+
+   SELECT koncij
+   SEEK Trim( _idkonto2 )
+   SELECT TARIFA
+   hseek _IdTarifa  // postavi TARIFA na pravu poziciju
+   SELECT kalk_pripr  // napuni tarifu
+
+   @ m_x + 13, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 
 
- //////// kalkulacija nabavne cijene
- //////// nKolZN:=kolicina koja je na stanju a porijeklo je od zadnje nabavke
- nKolS:=0
- nKolZN:=0
- nc1:=nc2:=0
- dDatNab:=ctod("")
+   IF gVarEv == "1"
 
- lGenStavke:=.f.
- 
- if _TBankTr<>"X" 
- 
-   if !empty(gMetodaNC)  .and. !(roba->tip $ "UT")
+      _GKolicina := 0
+      IF fNovi
 
-     IF glEkonomat
+         SELECT ROBA; HSEEK _IdRoba
+         IF koncij->naz == "P2"
+            _VPC := PLC
+         ELSE
+            _VPC := KoncijVPC()
+         ENDIF
 
-       aNabavke:={}
-       IF !fNovi
-         AADD( aNabavke , {0,_nc,_kolicina} )
-       ENDIF
-       KalkNab2(_idfirma, _idroba, _idkonto2, aNabavke)
-       IF LEN(aNabavke)>1; lGenStavke:=.t.; ENDIF
+         _NC := NC
+      ENDIF
 
-     ELSE
+      IF gCijene = "2" .AND. fNovi
+         // ///// utvrdjivanje fakticke VPC
+         faktVPC( @_VPC, _idfirma + _idkonto2 + _idroba )
+         SELECT kalk_pripr
+      ENDIF
 
-       MsgO("Racunam stanje na skladistu")
-        KalkNab(_idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab)
-       MsgC()
 
-       @ m_x+12,m_y+30   SAY "Ukupno na stanju "; @ m_x+12,col()+2 SAY nKols pict pickol
-       @ m_x+13,m_y+30   SAY "Srednja nc "; @ m_x+13, col()+2 SAY nc2 pict pickol
+      // ////// kalkulacija nabavne cijene
+      // ////// nKolZN:=kolicina koja je na stanju a porijeklo je od zadnje nabavke
+      nKolS := 0
+      nKolZN := 0
+      nc1 := nc2 := 0
+      dDatNab := CToD( "" )
 
-     ENDIF
+      lGenStavke := .F.
 
-   endif
+      IF _TBankTr <> "X"
 
-   if !glEkonomat
+         IF !Empty( gMetodaNC )  .AND. !( roba->tip $ "UT" )
 
-     if dDatNab>_DatDok; Beep(1); Msg("Datum nabavke je "+dtoc(dDatNab),4); endif
+            IF glEkonomat
 
-     if !(roba->tip $ "UT")
+               aNabavke := {}
+               IF !fNovi
+                  AAdd( aNabavke, { 0, _nc, _kolicina } )
+               ENDIF
+               KalkNab2( _idfirma, _idroba, _idkonto2, aNabavke )
+               IF Len( aNabavke ) > 1; lGenStavke := .T. ; ENDIF
 
-       if gMetodaNC $ "13"
-            // prva ili zadnja
-            _nc := nc1 
-       elseif gMetodaNC == "2"
-            // srednja
-            _nc := nc2
-       endif
+            ELSE
 
-       if gMetodaNc == "2"
-         if _kolicina > 0
-          
-          select roba
-          _rec := dbf_get_rec()
-          _rec["nc"] := _nc
-          update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
-          select kalk_pripr // nafiluj sifrarnik robe sa nc sirovina, robe
-         endif
-       endif
+               MsgO( "Racunam stanje na skladistu" )
+               KalkNab( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+               MsgC()
 
-     endif
-   endif
+               @ m_x + 12, m_y + 30   SAY "Ukupno na stanju "; @ m_x + 12, Col() + 2 SAY nKols PICT pickol
+               @ m_x + 13, m_y + 30   SAY "Srednja nc "; @ m_x + 13, Col() + 2 SAY nc2 PICT pickol
 
- endif
+            ENDIF
 
- select kalk_pripr
- if !glEkonomat
-   @ m_x+14,m_y+2  SAY "NAB.CJ   "  GET _NC  picture gPicNC  valid V_KolMag()
-   private _vpcsappp:=0
-   if !IsMagPNab()
-     if _vpc=0
-        _vpc := KoncijVPC()        // MS 19.12.00
-     endif
-     if IsPDV()
-        @ m_x+15,m_y+2   SAY "PROD.CIJ " get _VPC    picture PicDEM
-     else
-        @ m_x+15,m_y+2   SAY "VPC      " get _VPC    picture PicDEM
-     endif
-     _PNAP:=0
-     
-     if gMagacin=="1" .and. !IsPDV() 
-     // ovu cijenu samo prikazati ako se vodi po nabavnim cijenama
-       _VPCSAPPP:=0
-     endif
-     
-     if IsPDV() .and. gPDVMagNab == "N"
-     
-        _mpcsapp:=roba->mpc
-    // VPC se izracunava pomocu MPC cijene !!
-    @ m_x+17,m_y+2 SAY "PROD.CJENA SA PDV:"
-    @ m_x+17,col()+2 GET _MPCSaPP  picture PicDEM ;
-                valid {|| _mpcsapp:=iif(_mpcsapp=0,round( _vpc * (1+TARIFA->opp/100),2),_mpcsapp),_mpc:=_mpcsapp/(1+TARIFA->opp/100),iif(_mpc<>0,_vpc:=round(_mpc,2),_vpc), ShowGets(),.t.}
-        read
-   else
-    read
-   endif    
-   
-   else // magacin po vpc
-     read
-     _Marza:=0; _TMarza:="A"; _VPC:=_NC
-   endif //magacin po nc
- endif
-ELSE    // ako je gVarEv=="2" tj. bez cijena
-  read
-ENDIF
+         ENDIF
 
-IF glEkonomat
-  _Marza:=0; _TMarza:="A"
-  if !IsPDV()
-    _mpcsapp:=0
-  endif
-  _MKonto:=_Idkonto2;_MU_I:="5"     // izlaz iz magacina
-  _PKonto:=""; _PU_I:=""
-  IF lGenStavke
-    pIzgSt:=.t.
-    // viçe od jedne stavke
-    FOR i:=1 TO LEN(aNabavke)-1
-      // generiçi sve izuzev posljednje
-      APPEND BLANK
-      _error    := IF(_error<>"1","0",_error)
-      _rbr      := RedniBroj(nRBr)
-      _nc       := aNabavke[i,2]
-      _kolicina := aNabavke[i,3]
-      _vpc      := _nc
-      Gather()
-      ++nRBr
-    NEXT
-    // posljednja je teku†a
-    _nc       := aNabavke[i,2]
-    _kolicina := aNabavke[i,3]
-    _vpc      := _nc
-  ELSE
-    // jedna ili nijedna
-    IF LEN(aNabavke)>0
-      // jedna
-      _nc       := aNabavke[1,2]
-      _kolicina := aNabavke[1,3]
-      _vpc      := _nc
-    ELSE
-      // nije izabrana koliŸina -> kao da je prekinut unos tipkom Esc
-      RETURN (K_ESC)
-    ENDIF
-  ENDIF
-ENDIF
+         IF !glEkonomat
 
-if !IsPDV()
-    _mpcsapp:=0
-endif
+            IF dDatNab > _DatDok; Beep( 1 ); Msg( "Datum nabavke je " + DToC( dDatNab ), 4 ); ENDIF
 
-nStrana:=2
-_marza:=_vpc-_nc
-_MKonto:=_Idkonto2;_MU_I:="5"     // izlaz iz magacina
-_PKonto:=""; _PU_I:=""
+            IF !( roba->tip $ "UT" )
 
-if pIzgSt  .and. _kolicina>0 .and.  lastkey()<>K_ESC // izgenerisane stavke postoje
- private nRRec:=recno()
- go top
- do while !eof()  // nafiluj izgenerisane stavke
-  if kolicina==0
-     skip
-     private nRRec2:=recno()
-     skip -1
-     dbdelete2()
-     go nRRec2
-     loop
-  endif
-  if brdok==_brdok .and. idvd==_idvd .and. val(Rbr)==nRbr
-    if IsMagPNab()
-      nmarza:=0
-      replace vpc with kalk_pripr->nc,;
-          vpcsap with  kalk_pripr->nc,;
-          rabatv with  0 ,;
-          marza with  0
-    else
-     nMarza:=_VPC*(1-_RabatV/100)-_NC
-     replace vpc with _vpc,;
-          vpcsap with _VPC*(1-_RABATV/100)+iif(nMarza<0,0,nMarza)*TARIFA->VPP/100,;
-          rabatv with _rabatv,;
-          marza  with _vpc-kalk_pripr->nc   // mora se uzeti nc iz ove stavke
-    endif
-    replace  mkonto with _mkonto,;
-             tmarza  with _tmarza,;
-             mpc     with  _MPC,;
-             mu_i with  _mu_i,;
-             pkonto with _pkonto,;
-             pu_i with  _pu_i ,;
-             error with "0"
-  endif
-  skip
- enddo
- go nRRec
-endif
+               IF gMetodaNC $ "13"
+                  // prva ili zadnja
+                  _nc := nc1
+               ELSEIF gMetodaNC == "2"
+                  // srednja
+                  _nc := nc2
+               ENDIF
 
-set key K_ALT_K to
-return lastkey()
+               IF gMetodaNc == "2"
+                  IF _kolicina > 0
+
+                     SELECT roba
+                     _rec := dbf_get_rec()
+                     _rec[ "nc" ] := _nc
+                     update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+                     SELECT kalk_pripr // nafiluj sifrarnik robe sa nc sirovina, robe
+                  ENDIF
+               ENDIF
+
+            ENDIF
+         ENDIF
+
+      ENDIF
+
+      SELECT kalk_pripr
+      IF !glEkonomat
+         @ m_x + 14, m_y + 2  SAY "NAB.CJ   "  GET _NC  PICTURE gPicNC  VALID V_KolMag()
+         PRIVATE _vpcsappp := 0
+         IF !IsMagPNab()
+            IF _vpc = 0
+               _vpc := KoncijVPC()        // MS 19.12.00
+            ENDIF
+            IF IsPDV()
+               @ m_x + 15, m_y + 2   SAY "PROD.CIJ " GET _VPC    PICTURE PicDEM
+            ELSE
+               @ m_x + 15, m_y + 2   SAY "VPC      " GET _VPC    PICTURE PicDEM
+            ENDIF
+            _PNAP := 0
+
+            IF gMagacin == "1" .AND. !IsPDV()
+               // ovu cijenu samo prikazati ako se vodi po nabavnim cijenama
+               _VPCSAPPP := 0
+            ENDIF
+
+            IF IsPDV() .AND. gPDVMagNab == "N"
+
+               _mpcsapp := roba->mpc
+               // VPC se izracunava pomocu MPC cijene !!
+               @ m_x + 17, m_y + 2 SAY "PROD.CJENA SA PDV:"
+               @ m_x + 17, Col() + 2 GET _MPCSaPP  PICTURE PicDEM ;
+                  valid {|| _mpcsapp := iif( _mpcsapp = 0, Round( _vpc * ( 1 + TARIFA->opp / 100 ), 2 ), _mpcsapp ), _mpc := _mpcsapp / ( 1 + TARIFA->opp / 100 ), iif( _mpc <> 0, _vpc := Round( _mpc, 2 ), _vpc ), ShowGets(), .T. }
+               READ
+            ELSE
+               READ
+            ENDIF
+
+         ELSE // magacin po vpc
+            READ
+            _Marza := 0; _TMarza := "A"; _VPC := _NC
+         ENDIF // magacin po nc
+      ENDIF
+   ELSE    // ako je gVarEv=="2" tj. bez cijena
+      READ
+   ENDIF
+
+   IF glEkonomat
+      _Marza := 0; _TMarza := "A"
+      IF !IsPDV()
+         _mpcsapp := 0
+      ENDIF
+      _MKonto := _Idkonto2;_MU_I := "5"     // izlaz iz magacina
+      _PKonto := ""; _PU_I := ""
+      IF lGenStavke
+         pIzgSt := .T.
+         // viçe od jedne stavke
+         FOR i := 1 TO Len( aNabavke ) -1
+            // generiçi sve izuzev posljednje
+            APPEND BLANK
+            _error    := IF( _error <> "1", "0", _error )
+            _rbr      := RedniBroj( nRBr )
+            _nc       := aNabavke[ i, 2 ]
+            _kolicina := aNabavke[ i, 3 ]
+            _vpc      := _nc
+            Gather()
+            ++nRBr
+         NEXT
+         // posljednja je teku†a
+         _nc       := aNabavke[ i, 2 ]
+         _kolicina := aNabavke[ i, 3 ]
+         _vpc      := _nc
+      ELSE
+         // jedna ili nijedna
+         IF Len( aNabavke ) > 0
+            // jedna
+            _nc       := aNabavke[ 1, 2 ]
+            _kolicina := aNabavke[ 1, 3 ]
+            _vpc      := _nc
+         ELSE
+            // nije izabrana koliŸina -> kao da je prekinut unos tipkom Esc
+            RETURN ( K_ESC )
+         ENDIF
+      ENDIF
+   ENDIF
+
+   IF !IsPDV()
+      _mpcsapp := 0
+   ENDIF
+
+   nStrana := 2
+   _marza := _vpc - _nc
+   _MKonto := _Idkonto2;_MU_I := "5"     // izlaz iz magacina
+   _PKonto := ""; _PU_I := ""
+
+   IF pIzgSt  .AND. _kolicina > 0 .AND.  LastKey() <> K_ESC // izgenerisane stavke postoje
+      PRIVATE nRRec := RecNo()
+      GO TOP
+      my_flock()
+      DO WHILE !Eof()  // nafiluj izgenerisane stavke
+         IF kolicina == 0
+            SKIP
+            PRIVATE nRRec2 := RecNo()
+            SKIP -1
+            my_delete()
+            GO nRRec2
+            LOOP
+         ENDIF
+         IF brdok == _brdok .AND. idvd == _idvd .AND. Val( Rbr ) == nRbr
+            IF IsMagPNab()
+               nmarza := 0
+               REPLACE vpc WITH kalk_pripr->nc, ;
+                  vpcsap WITH  kalk_pripr->nc, ;
+                  rabatv WITH  0,;
+                  marza WITH  0
+            ELSE
+               nMarza := _VPC * ( 1 -_RabatV / 100 ) -_NC
+               REPLACE vpc WITH _vpc, ;
+                  vpcsap WITH _VPC * ( 1 -_RABATV / 100 ) + iif( nMarza < 0, 0, nMarza ) * TARIFA->VPP / 100, ;
+                  rabatv WITH _rabatv, ;
+                  marza  WITH _vpc - kalk_pripr->nc   // mora se uzeti nc iz ove stavke
+            ENDIF
+            REPLACE  mkonto WITH _mkonto, ;
+               tmarza  WITH _tmarza, ;
+               mpc     WITH  _MPC, ;
+               mu_i WITH  _mu_i, ;
+               pkonto WITH _pkonto, ;
+               pu_i WITH  _pu_i,;
+               error WITH "0"
+         ENDIF
+         SKIP
+      ENDDO
+      my_unlock()
+      GO nRRec
+   ENDIF
+
+   SET KEY K_ALT_K TO
+
+   RETURN LastKey()
 
 
 
@@ -341,265 +345,268 @@ return lastkey()
  *  \brief Stampa kalkulacija tipa 16,95,96,97
  */
 
-function StKalk95()
+FUNCTION StKalk95()
 
-local nCol1:=nCol2:=0
-local nPom:=0, nLijevo:=8
+   LOCAL nCol1 := nCol2 := 0
+   LOCAL nPom := 0, nLijevo := 8
 
-Private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2
+   PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
 
-nStr:=0
-cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
+   nStr := 0
+   cIdPartner := IdPartner; cBrFaktP := BrFaktP; dDatFaktP := DatFaktP
 
-cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
+   cIdKonto := IdKonto; cIdKonto2 := IdKonto2
 
-P_10CPI
-B_ON; I_ON
-?? space(nLijevo), "KALK BR:",  cIdFirma+"-"+cIdVD+"-"+cBrDok,"  Datum:",DatDok
-B_OFF; I_OFF
+   P_10CPI
+   B_ON; I_ON
+   ?? Space( nLijevo ), "KALK BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, "  Datum:", DatDok
+   B_OFF; I_OFF
 
-P_COND
-@ prow()+1,125 SAY "Str:"+str(++nStr,3)
+   P_COND
+   @ PRow() + 1, 125 SAY "Str:" + Str( ++nStr, 3 )
 
-select PARTN; HSEEK cIdPartner
+   SELECT PARTN; HSEEK cIdPartner
 
-if cidvd=="16"  // doprema robe
- select konto; hseek cidkonto
- P_10CPI; B_ON
- ?
- ? space(nLijevo),"PRIJEM U MAGACIN"
- ?
- ? space(nLijevo),"KONTO zaduzuje:",cIdKonto,"-",naz
- B_OFF
-elseif cidvd$"96#97"
- P_10CPI; B_ON
- ?
- if cIdVd=="96"
-   ? space(nLijevo),"OTPREMA IZ MAGACINA (INTERNI DOKUMENT):"
- else
-   ? space(nLijevo),"PREBACIVANJE IZ MAGACINA U MAGACIN (INTERNI DOKUMENT):"
- endif
- ?
- if cidvd$"96#97"  // otprema iz magacina
-  select konto; hseek cidkonto2
-  ?  space(nLijevo),"KONTO razduzuje :",cIdKonto2,"-",naz
+   IF cidvd == "16"  // doprema robe
+      SELECT konto; hseek cidkonto
+      P_10CPI; B_ON
+      ?
+      ? Space( nLijevo ), "PRIJEM U MAGACIN"
+      ?
+      ? Space( nLijevo ), "KONTO zaduzuje:", cIdKonto, "-", naz
+      B_OFF
+   ELSEIF cidvd $ "96#97"
+      P_10CPI; B_ON
+      ?
+      IF cIdVd == "96"
+         ? Space( nLijevo ), "OTPREMA IZ MAGACINA (INTERNI DOKUMENT):"
+      ELSE
+         ? Space( nLijevo ), "PREBACIVANJE IZ MAGACINA U MAGACIN (INTERNI DOKUMENT):"
+      ENDIF
+      ?
+      IF cidvd $ "96#97"  // otprema iz magacina
+         SELECT konto; hseek cidkonto2
+         ?  Space( nLijevo ), "KONTO razduzuje :", cIdKonto2, "-", naz
 
-  select konto; hseek cidkonto
-  B_OFF
-  ?  space(nLijevo),"KONTO zaduzuje  :",cIdKonto,"-",naz
- endif
- B_OFF
-elseif cidvd=="95"
- P_10CPI; B_ON
- ?
- ? space(nLijevo),"OTPIS MAGACIN"
- if (!EMPTY(cIdPartner) .and. IsVindija())
-    B_OFF
-    ?? " -", RTRIM(cIdPartner), "("+PADR(partn->naz, 20)+")"
-    B_ON
- endif
- ?
-  select konto; hseek cidkonto2
- ? space(nLijevo),"KONTO razduzuje:",cIdKonto2,"-",naz
- B_OFF
-endif
+         SELECT konto; hseek cidkonto
+         B_OFF
+         ?  Space( nLijevo ), "KONTO zaduzuje  :", cIdKonto, "-", naz
+      ENDIF
+      B_OFF
+   ELSEIF cidvd == "95"
+      P_10CPI; B_ON
+      ?
+      ? Space( nLijevo ), "OTPIS MAGACIN"
+      IF ( !Empty( cIdPartner ) .AND. IsVindija() )
+         B_OFF
+         ?? " -", RTrim( cIdPartner ), "(" + PadR( partn->naz, 20 ) + ")"
+         B_ON
+      ENDIF
+      ?
+      SELECT konto; hseek cidkonto2
+      ? Space( nLijevo ), "KONTO razduzuje:", cIdKonto2, "-", naz
+      B_OFF
+   ENDIF
 
-///?  "PARTNER:",cIdPartner,"-",naz,SPACE(5),
+   // /?  "PARTNER:",cIdPartner,"-",naz,SPACE(5),
 
-? space(nLijevo),"DOKUMENT Broj:",cBrFaktP,"Datum:",dDatFaktP
+   ? Space( nLijevo ), "DOKUMENT Broj:", cBrFaktP, "Datum:", dDatFaktP
 
- if !empty(kalk_pripr->idzaduz2)
-    B_ON
-    ?? "      RAD.NALOG:",kalk_pripr->idzaduz2
-    B_OFF
- endif
+   IF !Empty( kalk_pripr->idzaduz2 )
+      B_ON
+      ?? "      RAD.NALOG:", kalk_pripr->idzaduz2
+      B_OFF
+   ENDIF
 
-P_COND
+   P_COND
 
-select kalk_pripr
-select koncij; seek trim(kalk_pripr->mkonto);select kalk_pripr
+   SELECT kalk_pripr
+   SELECT koncij; SEEK Trim( kalk_pripr->mkonto );SELECT kalk_pripr
 
-m:="--- ------------------------- ---------- ----------- ----------"
-if !IsMagPNab()
- m+=" ---------- ---------- --------- ---------- ----------"
-else  // nabavne cijene
- nLijevo+=2
- P_10CPI
-endif
-?
-?
-? space(nLijevo),m
-? space(nLijevo),"*R * ARTIKAL                 * Kolicina *  NABAV.  *    NV    *"
-if !IsMagPNab()
-  if koncij->naz=="P1"
-    ?? "   MARZA   *  MARZA  *   Iznos  *  Prod.C *  Prod.Vr *"
-  elseif koncij->naz=="P2"
-    ?? "   MARZA   *  MARZA  *   Iznos  *  Plan.C *  Plan.Vr *"
-  else
-    ?? "    RUC    *   RUC   *   Iznos  *   VPC   *   VPV    *"
-  endif
-endif
-? space(nLijevo),"*BR*                         *          *  CJENA   *          *"
-if !IsMagPNab()
-  if koncij->naz=="P1"
-   ?? "     %     *         *    marze *         *          *"
-  else
-   ?? "     %     *         *     RUC  *         *          *"
-  endif
-endif
-? space(nLijevo),m
-nTot4:=nTot5:=nTot6:=nTot7:=nTot8:=nTot9:=nTota:=ntotb:=ntotc:=nTotd:=0
+   m := "--- ------------------------- ---------- ----------- ----------"
+   IF !IsMagPNab()
+      m += " ---------- ---------- --------- ---------- ----------"
+   ELSE  // nabavne cijene
+      nLijevo += 2
+      P_10CPI
+   ENDIF
+   ?
+   ?
+   ? Space( nLijevo ), m
+   ? Space( nLijevo ), "*R * ARTIKAL                 * Kolicina *  NABAV.  *    NV    *"
+   IF !IsMagPNab()
+      IF koncij->naz == "P1"
+         ?? "   MARZA   *  MARZA  *   Iznos  *  Prod.C *  Prod.Vr *"
+      ELSEIF koncij->naz == "P2"
+         ?? "   MARZA   *  MARZA  *   Iznos  *  Plan.C *  Plan.Vr *"
+      ELSE
+         ?? "    RUC    *   RUC   *   Iznos  *   VPC   *   VPV    *"
+      ENDIF
+   ENDIF
+   ? Space( nLijevo ), "*BR*                         *          *  CJENA   *          *"
+   IF !IsMagPNab()
+      IF koncij->naz == "P1"
+         ?? "     %     *         *    marze *         *          *"
+      ELSE
+         ?? "     %     *         *     RUC  *         *          *"
+      ENDIF
+   ENDIF
+   ? Space( nLijevo ), m
+   nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := nTota := ntotb := ntotc := nTotd := 0
 
-private cIdd:=idpartner+brfaktp+idkonto+idkonto2
-if (!empty(idkonto2) .and. !empty(Idkonto)) .and. idvd $ "16"
-  cidkont:=idkonto
-  cIdkont2:=idkonto2
-  nProlaza:=2
-else
-  cidkont:=idkonto
-  nProlaza:=1
-endif
+   PRIVATE cIdd := idpartner + brfaktp + idkonto + idkonto2
+   IF ( !Empty( idkonto2 ) .AND. !Empty( Idkonto ) ) .AND. idvd $ "16"
+      cidkont := idkonto
+      cIdkont2 := idkonto2
+      nProlaza := 2
+   ELSE
+      cidkont := idkonto
+      nProlaza := 1
+   ENDIF
 
-select kalk_pripr
-nC1:=30
-nRec:=recno()
-unTot:=unTot1:=unTot2:=unTot3:=unTot4:=unTot5:=unTot6:=unTot7:=unTot8:=unTot9:=unTotA:=unTotb:=0
+   SELECT kalk_pripr
+   nC1 := 30
+   nRec := RecNo()
+   unTot := unTot1 := unTot2 := unTot3 := unTot4 := unTot5 := unTot6 := unTot7 := unTot8 := unTot9 := unTotA := unTotb := 0
 
-for i:=1 to nprolaza
-nTot:=nTot1:=nTot2:=nTot3:=nTot4:=nTot5:=nTot6:=nTot7:=nTot8:=nTot9:=nTotA:=nTotb:=0
-go nRec
-do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
+   FOR i := 1 TO nprolaza
+      nTot := nTot1 := nTot2 := nTot3 := nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := nTotA := nTotb := 0
+      GO nRec
+      DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVD == IdVD
 
-    if cIdVd $ "97" .and. tbanktr=="X"
-      skip 1; loop
-    endif
+         IF cIdVd $ "97" .AND. tbanktr == "X"
+            SKIP 1; LOOP
+         ENDIF
 
-    if empty(cidkonto2)
-     if idpartner+brfaktp+idkonto+idkonto2<>cidd
-      set device to screen
-      Beep(2)
-      Msg("Unutar kalkulacije se pojavilo vise dokumenata !",6)
-      set device to printer
-     endif
-    else
-      if (i==1 .and. left(idkonto2,3)<>"XXX") .or. ;
-         (i==2 .and. left(idkonto2,3)=="XXX")
-         // nastavi
-      else
-         skip; loop
-      endif
-    endif
+         IF Empty( cidkonto2 )
+            IF idpartner + brfaktp + idkonto + idkonto2 <> cidd
+               SET DEVICE TO SCREEN
+               Beep( 2 )
+               Msg( "Unutar kalkulacije se pojavilo vise dokumenata !", 6 )
+               SET DEVICE TO PRINTER
+            ENDIF
+         ELSE
+            IF ( i == 1 .AND. Left( idkonto2, 3 ) <> "XXX" ) .OR. ;
+                  ( i == 2 .AND. Left( idkonto2, 3 ) == "XXX" )
+               // nastavi
+            ELSE
+               skip; LOOP
+            ENDIF
+         ENDIF
 
-    select ROBA; HSEEK kalk_pripr->IdRoba
-    select TARIFA; HSEEK kalk_pripr->IdTarifa
-    select kalk_pripr
-    KTroskovi()
+         SELECT ROBA; HSEEK kalk_pripr->IdRoba
+         SELECT TARIFA; HSEEK kalk_pripr->IdTarifa
+         SELECT kalk_pripr
+         KTroskovi()
 
-    if prow() > ( RPT_PAGE_LEN + gPStranica )
-        FF
-        @ prow(), 125 SAY "Str:" + str(++nStr,3)
-    endif
+         IF PRow() > ( RPT_PAGE_LEN + gPStranica )
+            FF
+            @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
+         ENDIF
 
-    SKol:=Kolicina
+         SKol := Kolicina
 
-    nTot4+=  (nU4:=ROUND(NC*Kolicina    , gZaokr))  // nv
-    nTot5+=  (nU5:=ROUND(nMarza*Kolicina, gZaokr)) // ruc
-    nTot8+=  (nU8:=ROUND(VPC*Kolicina   , gZaokr))
+         nTot4 +=  ( nU4 := Round( NC * Kolicina, gZaokr ) )  // nv
+         nTot5 +=  ( nU5 := Round( nMarza * Kolicina, gZaokr ) ) // ruc
+         nTot8 +=  ( nU8 := Round( VPC * Kolicina, gZaokr ) )
 
-    @ prow()+1,1+nLijevo SAY  Rbr PICTURE "999"
-    @ prow(),5+nLijevo SAY  ""; ?? trim(LEFT(ROBA->naz,40))+"("+ROBA->jmj+")"
-    if roba->(fieldpos("KATBR"))<>0
-       ?? " KATBR:", roba->katbr
-    endif
-    IF lPoNarudzbi
-      IspisPoNar()
-    ENDIF
-    @ prow()+1,5+nLijevo SAY IdRoba
-    @ prow(),31+nLijevo SAY Kolicina  PICTURE PicKol
-    nC1:=pcol()+1
-    @ prow(),pcol()+1   SAY NC                          PICTURE PicCDEM
-    @ prow(),pcol()+1 SAY nU4  pict picdem
-    if !IsMagPNab()
-     @ prow(),pcol()+1 SAY IF(NC==0,0,nMarza/NC*100)    PICTURE PicProc
-     @ prow(),pcol()+1 SAY nmarza pict picdem
-     @ prow(),pcol()+1 SAY nu5   pict picdem
-     @ prow(),pcol()+1 SAY VPC                  PICTURE PiccDEM
-     @ prow(),pcol()+1 SAY nu8  pict picdem
-    endif
-    skip
+         @ PRow() + 1, 1 + nLijevo SAY  Rbr PICTURE "999"
+         @ PRow(), 5 + nLijevo SAY  ""; ?? Trim( Left( ROBA->naz, 40 ) ) + "(" + ROBA->jmj + ")"
+         IF roba->( FieldPos( "KATBR" ) ) <> 0
+            ?? " KATBR:", roba->katbr
+         ENDIF
+         IF lPoNarudzbi
+            IspisPoNar()
+         ENDIF
+         @ PRow() + 1, 5 + nLijevo SAY IdRoba
+         @ PRow(), 31 + nLijevo SAY Kolicina  PICTURE PicKol
+         nC1 := PCol() + 1
+         @ PRow(), PCol() + 1   SAY NC                          PICTURE PicCDEM
+         @ PRow(), PCol() + 1 SAY nU4  PICT picdem
+         IF !IsMagPNab()
+            @ PRow(), PCol() + 1 SAY IF( NC == 0, 0, nMarza / NC * 100 )    PICTURE PicProc
+            @ PRow(), PCol() + 1 SAY nmarza PICT picdem
+            @ PRow(), PCol() + 1 SAY nu5   PICT picdem
+            @ PRow(), PCol() + 1 SAY VPC                  PICTURE PiccDEM
+            @ PRow(), PCol() + 1 SAY nu8  PICT picdem
+         ENDIF
+         SKIP
 
-enddo
+      ENDDO
 
- if nprolaza==2
-   ? space(nLijevo),m
-   ? space(nLijevo),"Konto "
-   if i==1
-     ?? cidkont
-   else
-     ?? cidkont2
-   endif
-   @ prow(),nc1      SAY 0  pict "@Z "+picdem
-   @ prow(),pcol()+1 SAY nTot4  pict picdem
+      IF nprolaza == 2
+         ? Space( nLijevo ), m
+         ? Space( nLijevo ), "Konto "
+         IF i == 1
+            ?? cidkont
+         ELSE
+            ?? cidkont2
+         ENDIF
+         @ PRow(), nc1      SAY 0  PICT "@Z " + picdem
+         @ PRow(), PCol() + 1 SAY nTot4  PICT picdem
 
-   if !IsMagPNab()
-    @ prow(),pcol()+1 SAY 0  pict "@Z "+picdem
-    @ prow(),pcol()+1 SAY 0  pict "@Z "+picdem
-    @ prow(),pcol()+1 SAY ntot5  pict picdem
-    @ prow(),pcol()+1 SAY 0  pict "@Z "+picdem
-    @ prow(),pcol()+1 SAY ntot8  pict picdem
-   endif
-   ? space(nLijevo),m
- endif
- unTot4+=nTot4
- unTot5+=nTot5
- unTot8+=nTot8
-next
+         IF !IsMagPNab()
+            @ PRow(), PCol() + 1 SAY 0  PICT "@Z " + picdem
+            @ PRow(), PCol() + 1 SAY 0  PICT "@Z " + picdem
+            @ PRow(), PCol() + 1 SAY ntot5  PICT picdem
+            @ PRow(), PCol() + 1 SAY 0  PICT "@Z " + picdem
+            @ PRow(), PCol() + 1 SAY ntot8  PICT picdem
+         ENDIF
+         ? Space( nLijevo ), m
+      ENDIF
+      unTot4 += nTot4
+      unTot5 += nTot5
+      unTot8 += nTot8
+   NEXT
 
-if prow() > ( RPT_PAGE_LEN + gPStranica )
-    FF
-    @ prow(), 125 SAY "Str:"+str(++nStr,3)
-endif
+   IF PRow() > ( RPT_PAGE_LEN + gPStranica )
+      FF
+      @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
+   ENDIF
 
-? space(nLijevo),m
-@ prow()+1,1+nLijevo        SAY "Ukupno:"
-@ prow(),nc1      SAY 0  pict "@Z "+picdem
-@ prow(),pcol()+1 SAY unTot4  pict picdem
-if !IsMagPNab()
- @ prow(),pcol()+1 SAY 0  pict "@Z "+picdem
- @ prow(),pcol()+1 SAY 0  pict "@Z "+picdem
- @ prow(),pcol()+1 SAY untot5  pict picdem
- @ prow(),pcol()+1 SAY 0  pict "@Z "+picdem
- @ prow(),pcol()+1 SAY untot8  pict picdem
-endif
-? space(nLijevo),m
+   ? Space( nLijevo ), m
+   @ PRow() + 1, 1 + nLijevo        SAY "Ukupno:"
+   @ PRow(), nc1      SAY 0  PICT "@Z " + picdem
+   @ PRow(), PCol() + 1 SAY unTot4  PICT picdem
+   IF !IsMagPNab()
+      @ PRow(), PCol() + 1 SAY 0  PICT "@Z " + picdem
+      @ PRow(), PCol() + 1 SAY 0  PICT "@Z " + picdem
+      @ PRow(), PCol() + 1 SAY untot5  PICT picdem
+      @ PRow(), PCol() + 1 SAY 0  PICT "@Z " + picdem
+      @ PRow(), PCol() + 1 SAY untot8  PICT picdem
+   ENDIF
+   ? Space( nLijevo ), m
 
-if cidvd $ "95#96" .and. !empty(cidkonto)
- ?
- P_COND
- ? space(nLijevo+10),"Napomena: ovaj dokument ima SAMO efekat razduzenja ",cidkonto2
- ? space(nLijevo+10),"Ako zelite izvrsiti zaduzenje na ",cidkonto, "obradite odgovarajuci dokument tipa 16"
-endif
-return
+   IF cidvd $ "95#96" .AND. !Empty( cidkonto )
+      ?
+      P_COND
+      ? Space( nLijevo + 10 ), "Napomena: ovaj dokument ima SAMO efekat razduzenja ", cidkonto2
+      ? Space( nLijevo + 10 ), "Ako zelite izvrsiti zaduzenje na ", cidkonto, "obradite odgovarajuci dokument tipa 16"
+   ENDIF
+
+   RETURN
 
 
-function RadNalOK()
-local nArr
-local lOK
-local nLenBrDok
-if (!IsRamaGlas())
-    return .t.
-endif
-nArr:=SELECT()
-lOK:=.t.
-nLenBrDok:=LEN(_idZaduz2)
-select rnal
-hseek PADR(_idZaduz2,10)
-if !found()
-    MsgBeep("Unijeli ste nepostojeci broj radnog naloga. Otvaram sifrarnik radnih##naloga da biste mogli izabrati neki od postojecih!")
-    P_fakt_objekti(@_idZaduz2,8,60)
-    _idZaduz2:=PADR(_idZaduz2,nLenBrDok)
-    ShowGets()
-endif
-SELECT (nArr)
-return lOK
+FUNCTION RadNalOK()
 
+   LOCAL nArr
+   LOCAL lOK
+   LOCAL nLenBrDok
+
+   IF ( !IsRamaGlas() )
+      RETURN .T.
+   ENDIF
+   nArr := Select()
+   lOK := .T.
+   nLenBrDok := Len( _idZaduz2 )
+   SELECT rnal
+   hseek PadR( _idZaduz2, 10 )
+   IF !Found()
+      MsgBeep( "Unijeli ste nepostojeci broj radnog naloga. Otvaram sifrarnik radnih##naloga da biste mogli izabrati neki od postojecih!" )
+      P_fakt_objekti( @_idZaduz2, 8, 60 )
+      _idZaduz2 := PadR( _idZaduz2, nLenBrDok )
+      ShowGets()
+   ENDIF
+   SELECT ( nArr )
+
+   RETURN lOK

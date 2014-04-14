@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,32 +12,32 @@
 
 #include "kalk.ch"
 
-function VRoba( lSay )
+FUNCTION VRoba( lSay )
 
-P_Roba( @_IdRoba )
+   P_Roba( @_IdRoba )
 
-if lSay == NIL
-	lSay := .t.
-endif
+   IF lSay == NIL
+      lSay := .T.
+   ENDIF
 
-if lSay
-	Reci( 11, 23, TRIM( LEFT( roba->naz, 40 )) + " (" + ALLTRIM( roba->jmj ) + ")", 40 )
-endif
+   IF lSay
+      Reci( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + AllTrim( roba->jmj ) + ")", 40 )
+   ENDIF
 
-if fNovi
-	cTarifa := Tarifa( _idkonto, _idroba, @aPorezi )
-else
-	// za postojece dokumente uzmi u obzir unesenu tarifu
-	SELECT TARIFA
-	seek _idtarifa
-	SetAPorezi( @aPorezi )
-endif
+   IF fNovi
+      cTarifa := Tarifa( _idkonto, _idroba, @aPorezi )
+   ELSE
+      // za postojece dokumente uzmi u obzir unesenu tarifu
+      SELECT TARIFA
+      SEEK _idtarifa
+      SetAPorezi( @aPorezi )
+   ENDIF
 
-if fNovi .or. ( gVodiSamoTarife == "D" ) 
-	_idtarifa := cTarifa
-endif
+   IF fNovi .OR. ( gVodiSamoTarife == "D" )
+      _idtarifa := cTarifa
+   ENDIF
 
-return .t.
+   RETURN .T.
 
 
 
@@ -49,28 +49,28 @@ return .t.
  *  \param fMarza -
  */
 
-function WMpc(fRealizacija, fMarza)
+FUNCTION WMpc( fRealizacija, fMarza )
 
-if fRealizacija==nil
-	fRealizacija:=.f.
-endif
+   IF fRealizacija == nil
+      fRealizacija := .F.
+   ENDIF
 
-if fRealizacija
-	fMarza:=" "
-endif
+   IF fRealizacija
+      fMarza := " "
+   ENDIF
 
-if _mpcsapp <> 0
-	_marza2 := 0
-	_mpc := MpcBezPor( _mpcsapp, aPorezi, , _nc )
-endif
+   IF _mpcsapp <> 0
+      _marza2 := 0
+      _mpc := MpcBezPor( _mpcsapp, aPorezi, , _nc )
+   ENDIF
 
-if fRealizacija
-	if (_idvd=="47" )
-		_nc:=_mpc
-	endif
-endif
+   IF fRealizacija
+      IF ( _idvd == "47" )
+         _nc := _mpc
+      ENDIF
+   ENDIF
 
-return .t.
+   RETURN .T.
 
 
 
@@ -82,27 +82,27 @@ return .t.
  *  \param fMarza -
  */
 
-function VMpc(fRealizacija, fMarza)
+FUNCTION VMpc( fRealizacija, fMarza )
 
-if fRealizacija==NIL
-	fRealizacija:=.f.
-endif
+   IF fRealizacija == NIL
+      fRealizacija := .F.
+   ENDIF
 
-if fRealizacija
-	fMarza:=" "
-endif
+   IF fRealizacija
+      fMarza := " "
+   ENDIF
 
-if fMarza==NIL 
-	fMarza:=" "
-endif
+   IF fMarza == NIL
+      fMarza := " "
+   ENDIF
 
-Marza2(fMarza)
+   Marza2( fMarza )
 
-if _mpcsapp == 0
-	_MPCSaPP := round( MpcSaPor( _mpc, aPorezi ), 2 )
-endif
+   IF _mpcsapp == 0
+      _MPCSaPP := Round( MpcSaPor( _mpc, aPorezi ), 2 )
+   ENDIF
 
-return .t.
+   RETURN .T.
 
 
 
@@ -114,44 +114,46 @@ return .t.
  *  \param fMarza -
  */
 
-function VMpcSaPP(fRealizacija, fMarza)
-*{
-local nRabat
+FUNCTION VMpcSaPP( fRealizacija, fMarza )
 
-if fRealizacija==NIL
-	fRealizacija:=.f.
-endif
+   // {
+   LOCAL nRabat
 
-if fRealizacija
-	nRabat:=_rabatv
-else
-	nRabat:=0
-endif
+   IF fRealizacija == NIL
+      fRealizacija := .F.
+   ENDIF
 
-if fMarza==NIL 
-	fMarza:=" "
-endif
+   IF fRealizacija
+      nRabat := _rabatv
+   ELSE
+      nRabat := 0
+   ENDIF
 
-if _mpcsapp<>0 .and. empty(fMarza)
+   IF fMarza == NIL
+      fMarza := " "
+   ENDIF
+
+   IF _mpcsapp <> 0 .AND. Empty( fMarza )
 	
-	_mpc:=MpcBezPor(_mpcsapp, aPorezi, nRabat, _nc)
+      _mpc := MpcBezPor( _mpcsapp, aPorezi, nRabat, _nc )
 	
-	_marza2:=0
-	if fRealizacija
-		Marza2R()
-	else  
-		Marza2()
-	endif
-	ShowGets()
+      _marza2 := 0
+      IF fRealizacija
+         Marza2R()
+      ELSE
+         Marza2()
+      ENDIF
+      ShowGets()
 
-	if fRealizacija
-		DuplRoba()
-	endif
-endif
+      IF fRealizacija
+         DuplRoba()
+      ENDIF
+   ENDIF
 
-fMarza:=" "
-return .t.
-*}
+   fMarza := " "
+
+   RETURN .T.
+// }
 
 
 
@@ -161,25 +163,27 @@ return .t.
  *  \param nRow - relativna kooordinata reda u kojem se ispisuju porezi
  */
 
-function SayPorezi(nRow)
-*{
-if IsPDV()
-	@ m_x+nRow,m_y+2  SAY "PDV (%):"
-	@ row(),col()+2 SAY aPorezi[POR_PPP] PICTURE "99.99"
-	if glUgost
-	  @ m_x+nRow,col()+8  SAY "PP (%):"
-	   @ row(),col()+2  SAY aPorezi[POR_PP] PICTURE "99.99"
-	endif
-else
-	@ m_x+nRow,m_y+2  SAY "PPP (%):"
-	@ row(),col()+2 SAY  aPorezi[POR_PPP] PICTURE "99.99"
-	@ m_x+nRow,col()+8  SAY "PPU (%):"
-	@ row(),col()+2  SAY PrPPUMP() PICTURE "99.99"
-	@ m_x+nRow,col()+8  SAY "PP (%):"
-	@ row(),col()+2  SAY aPorezi[POR_PP] PICTURE "99.99"
-endif
-return
-*}
+FUNCTION SayPorezi( nRow )
+
+   // {
+   IF IsPDV()
+      @ m_x + nRow, m_y + 2  SAY "PDV (%):"
+      @ Row(), Col() + 2 SAY aPorezi[ POR_PPP ] PICTURE "99.99"
+      IF glUgost
+         @ m_x + nRow, Col() + 8  SAY "PP (%):"
+         @ Row(), Col() + 2  SAY aPorezi[ POR_PP ] PICTURE "99.99"
+      ENDIF
+   ELSE
+      @ m_x + nRow, m_y + 2  SAY "PPP (%):"
+      @ Row(), Col() + 2 SAY  aPorezi[ POR_PPP ] PICTURE "99.99"
+      @ m_x + nRow, Col() + 8  SAY "PPU (%):"
+      @ Row(), Col() + 2  SAY PrPPUMP() PICTURE "99.99"
+      @ m_x + nRow, Col() + 8  SAY "PP (%):"
+      @ Row(), Col() + 2  SAY aPorezi[ POR_PP ] PICTURE "99.99"
+   ENDIF
+
+   RETURN
+// }
 
 
 
@@ -189,44 +193,47 @@ return
  *  \param pIzgStavke - .f. ne puni, .t. puni
  */
 
-function FillIzgStavke(pIzgStavke)
-*{
-if pIzgSt .and. _kolicina>0 .and. lastkey()<>K_ESC // izgenerisane stavke postoje
- private nRRec:=recno()
- go top
- do while !eof()  // nafiluj izgenerisane stavke
-  if kolicina==0
-     skip
-     private nRRec2:=recno()
-     skip -1
-     dbdelete2()
-     go nRRec2
-     loop
-  endif
-  if brdok==_brdok .and. idvd==_idvd .and. val(Rbr)==nRbr
-    replace nc with kalk_pripr->fcj,;
-          vpc with _vpc,;
-          tprevoz with _tprevoz,;
-          prevoz with _prevoz,;
-          mpc    with _mpc,;
-          mpcsapp with _mpcsapp,;
-          tmarza  with _tmarza,;
-          marza  with _vpc/(1+_PORVT)-kalk_pripr->fcj,;      // konkretna vp marza
-          tmarza2  with _tmarza2,;
-          marza2  with _marza2,;
-          mkonto with _mkonto,;
-          mu_i with  _mu_i,;
-          pkonto with _pkonto,;
-          pu_i with  _pu_i ,;
-          error with "0"
-  endif
-  skip
- enddo
- go nRRec
-endif
+FUNCTION FillIzgStavke( pIzgStavke )
 
-return
-*}
+   // {
+   IF pIzgSt .AND. _kolicina > 0 .AND. LastKey() <> K_ESC // izgenerisane stavke postoje
+      PRIVATE nRRec := RecNo()
+      GO TOP
+      my_flock()
+      DO WHILE !Eof()  // nafiluj izgenerisane stavke
+         IF kolicina == 0
+            SKIP
+            PRIVATE nRRec2 := RecNo()
+            SKIP -1
+            my_delete()
+            GO nRRec2
+            LOOP
+         ENDIF
+         IF brdok == _brdok .AND. idvd == _idvd .AND. Val( Rbr ) == nRbr
+            REPLACE nc WITH kalk_pripr->fcj, ;
+               vpc WITH _vpc, ;
+               tprevoz WITH _tprevoz, ;
+               prevoz WITH _prevoz, ;
+               mpc    WITH _mpc, ;
+               mpcsapp WITH _mpcsapp, ;
+               tmarza  WITH _tmarza, ;
+               marza  WITH _vpc / ( 1 + _PORVT ) -kalk_pripr->fcj, ;      // konkretna vp marza
+            tmarza2  WITH _tmarza2, ;
+               marza2  WITH _marza2, ;
+               mkonto WITH _mkonto, ;
+               mu_i WITH  _mu_i, ;
+               pkonto WITH _pkonto, ;
+               pu_i WITH  _pu_i,;
+               error WITH "0"
+         ENDIF
+         SKIP
+      ENDDO
+      my_unlock()
+      GO nRRec
+   ENDIF
+
+   RETURN
+// }
 
 
 
@@ -235,70 +242,72 @@ return
  *  \note koristi lokalne varijable
  */
 
-function VRoba_lv( fNovi, aPorezi )
-local _tezina := 0
-local _ocitani_barkod := _idroba
+FUNCTION VRoba_lv( fNovi, aPorezi )
 
-P_Roba( @_IdRoba )
+   LOCAL _tezina := 0
+   LOCAL _ocitani_barkod := _idroba
 
-if fNovi
-    // nadji odgovarajucu tarifu regiona
-    cTarifa := Tarifa(_IdKonto,_IdRoba, @aPorezi)
-else
-    // za postojece dokumente uzmi u obzir unesenu tarifu
-    SELECT TARIFA
-    seek _IdTarifa
-    SetAPorezi( @aPorezi )
-endif
+   P_Roba( @_IdRoba )
 
-if fNovi .or. ( gVodiSamoTarife == "D" )
-   _IdTarifa := cTarifa
-endif
+   IF fNovi
+      // nadji odgovarajucu tarifu regiona
+      cTarifa := Tarifa( _IdKonto, _IdRoba, @aPorezi )
+   ELSE
+      // za postojece dokumente uzmi u obzir unesenu tarifu
+      SELECT TARIFA
+      SEEK _IdTarifa
+      SetAPorezi( @aPorezi )
+   ENDIF
 
-// momenat kada mozemo ocitati tezinu iz barkod-a ako se koristi...
-if tezinski_barkod_get_tezina( _ocitani_barkod, @_tezina ) .and. _tezina <> 0
-    
-    // ako je ocitan tezinski barkod...
-    _kolicina := _tezina
-    
-    // kod predispozicije kolicina treba biti negativna kod prvog ocitanja
-    if _idvd == "80" .and. ( !EMPTY( _idkonto2 ) .and. _idkonto2 <> "XXX" )
-        _kolicina := -_kolicina
-    endif
+   IF fNovi .OR. ( gVodiSamoTarife == "D" )
+      _IdTarifa := cTarifa
+   ENDIF
 
-endif
+   // momenat kada mozemo ocitati tezinu iz barkod-a ako se koristi...
+   IF tezinski_barkod_get_tezina( _ocitani_barkod, @_tezina ) .AND. _tezina <> 0
 
-return .t.
+      // ako je ocitan tezinski barkod...
+      _kolicina := _tezina
+
+      // kod predispozicije kolicina treba biti negativna kod prvog ocitanja
+      IF _idvd == "80" .AND. ( !Empty( _idkonto2 ) .AND. _idkonto2 <> "XXX" )
+         _kolicina := -_kolicina
+      ENDIF
+
+   ENDIF
+
+   RETURN .T.
 
 
 
 // -----------------------------------------------------------
 // WHEN validator na polju MPC
 // -----------------------------------------------------------
-function W_Mpc_( cIdVd, lNaprijed, aPorezi )
-local _st_popust
+FUNCTION W_Mpc_( cIdVd, lNaprijed, aPorezi )
 
-// formiraj cijenu naprijed
-if lNaprijed
-    // postavi _Mpc bez poreza
-    MarzaMP( cIdVd, .t. , aPorezi )  
-endif
+   LOCAL _st_popust
 
-if cIdVd $ "41#42#47"
-    nMpcSaPDV := _MpcSaPP
-    _st_popust := _rabatv
-else
-    nMpcSaPDV := _MpcSapp
-    _st_popust := 0
-endif
+   // formiraj cijenu naprijed
+   IF lNaprijed
+      // postavi _Mpc bez poreza
+      MarzaMP( cIdVd, .T., aPorezi )
+   ENDIF
 
-// postoji MPC, idi unazad
-if !lNaprijed .and. _MpcSapp <> 0
-    _Marza2 := 0
-    _Mpc := MpcBezPor( nMpcSaPDV, aPorezi, , _nc ) - _st_popust
-endif
+   IF cIdVd $ "41#42#47"
+      nMpcSaPDV := _MpcSaPP
+      _st_popust := _rabatv
+   ELSE
+      nMpcSaPDV := _MpcSapp
+      _st_popust := 0
+   ENDIF
 
-return .t.
+   // postoji MPC, idi unazad
+   IF !lNaprijed .AND. _MpcSapp <> 0
+      _Marza2 := 0
+      _Mpc := MpcBezPor( nMpcSaPDV, aPorezi, , _nc ) - _st_popust
+   ENDIF
+
+   RETURN .T.
 
 
 
@@ -309,32 +318,33 @@ return .t.
  *  \note koriste se lokalne varijable
  */
 
-function WMpc_lv(fRealizacija, fMarza, aPorezi)
-*{
+FUNCTION WMpc_lv( fRealizacija, fMarza, aPorezi )
 
-// legacy
+   // {
 
-if fRealizacija==nil
-  fRealizacija:=.f.
-endif
+   // legacy
 
-if fRealizacija
-   fMarza:=" "
-endif
+   IF fRealizacija == nil
+      fRealizacija := .F.
+   ENDIF
 
-if _MpcSapp<>0
-  _marza2:=0
-  _Mpc:=MpcBezPor(_MpcSaPP, aPorezi, , _nc)
-endif
+   IF fRealizacija
+      fMarza := " "
+   ENDIF
 
-if fRealizacija
-  if (_idvd=="47")
-     _nc:=_mpc
-  endif
-endif
+   IF _MpcSapp <> 0
+      _marza2 := 0
+      _Mpc := MpcBezPor( _MpcSaPP, aPorezi, , _nc )
+   ENDIF
 
-return .t.
-*}
+   IF fRealizacija
+      IF ( _idvd == "47" )
+         _nc := _mpc
+      ENDIF
+   ENDIF
+
+   RETURN .T.
+// }
 
 
 
@@ -346,43 +356,46 @@ return .t.
  *  \note koriste se lokalne varijable
  */
 
-function VMpc_lv(fRealizacija, fMarza, aPorezi)
-*{
-if fRealizacija==nil
-  fRealizacija:=.f.
-endif
-if fRealizacija
-  fMarza:=" "
-endif
-if fMarza==nil 
-  fMarza:=" "
-endif
+FUNCTION VMpc_lv( fRealizacija, fMarza, aPorezi )
 
-Marza2(fMarza)
-if (_mpcsapp == 0)
- _MPCSaPP:=round( MpcSaPor(_mpc, aPorezi), 2 )
-endif
-return .t.
-*}
+   // {
+   IF fRealizacija == nil
+      fRealizacija := .F.
+   ENDIF
+   IF fRealizacija
+      fMarza := " "
+   ENDIF
+   IF fMarza == nil
+      fMarza := " "
+   ENDIF
+
+   Marza2( fMarza )
+   IF ( _mpcsapp == 0 )
+      _MPCSaPP := Round( MpcSaPor( _mpc, aPorezi ), 2 )
+   ENDIF
+
+   RETURN .T.
+// }
 
 
 
-function V_Mpc_( cIdVd, lNaprijed, aPorezi)
-local nPopust
+FUNCTION V_Mpc_( cIdVd, lNaprijed, aPorezi )
 
-if cIdVd $ "41#42#47"
-     nPopust := _RabatV
-else
-     nPopust := 0
-endif
+   LOCAL nPopust
 
-MarzaMp(cIdVd, lNaprijed, aPorezi)
+   IF cIdVd $ "41#42#47"
+      nPopust := _RabatV
+   ELSE
+      nPopust := 0
+   ENDIF
 
-if ( _Mpcsapp == 0 )
-    _mpcsapp := ROUND( MpcSaPor( _mpc, aPorezi ), 2 ) + nPopust
-endif
+   MarzaMp( cIdVd, lNaprijed, aPorezi )
 
-return .t.
+   IF ( _Mpcsapp == 0 )
+      _mpcsapp := Round( MpcSaPor( _mpc, aPorezi ), 2 ) + nPopust
+   ENDIF
+
+   RETURN .T.
 
 
 
@@ -395,83 +408,86 @@ return .t.
  *  \note koriste se lokalne varijable
  */
 
-function VMpcSaPP_lv( fRealizacija, fMarza, aPorezi, lShowGets )
-local nPom
+FUNCTION VMpcSaPP_lv( fRealizacija, fMarza, aPorezi, lShowGets )
 
-if lShowGets == nil
-	lShowGets := .t.
-endif
+   LOCAL nPom
 
-if fRealizacija==NIL
-    fRealizacija:=.f.
-endif
+   IF lShowGets == nil
+      lShowGets := .T.
+   ENDIF
 
-if fRealizacija
-    nPom := _mpcsapp
-else
-    nPom := _mpcsapp
-endif
+   IF fRealizacija == NIL
+      fRealizacija := .F.
+   ENDIF
 
-if fMarza==nil 
-    fMarza := " "
-endif
+   IF fRealizacija
+      nPom := _mpcsapp
+   ELSE
+      nPom := _mpcsapp
+   ENDIF
 
-if _mpcsapp <> 0 .and. EMPTY( fMarza )
-  _mpc := MpcBezPor (nPom, aPorezi, , _nc) - _rabatv
-  _marza2 := 0
-  if fRealizacija
-    Marza2R()
-  else  
-    Marza2()
-  endif
-  if lShowGets
-  	ShowGets()
-  endif
-  if fRealizacija
-     DuplRoba()
-  endif
-endif
+   IF fMarza == nil
+      fMarza := " "
+   ENDIF
 
-fMarza:=" "
-return .t.
+   IF _mpcsapp <> 0 .AND. Empty( fMarza )
+      _mpc := MpcBezPor ( nPom, aPorezi, , _nc ) - _rabatv
+      _marza2 := 0
+      IF fRealizacija
+         Marza2R()
+      ELSE
+         Marza2()
+      ENDIF
+      IF lShowGets
+         ShowGets()
+      ENDIF
+      IF fRealizacija
+         DuplRoba()
+      ENDIF
+   ENDIF
+
+   fMarza := " "
+
+   RETURN .T.
 
 
 // ---------------------------------------------------------------
-// racuna mpc sa porezom 
+// racuna mpc sa porezom
 // ---------------------------------------------------------------
-function V_MpcSaPP_( cIdVd, lNaprijed, aPorezi, lShowGets)
-local nPom
+FUNCTION V_MpcSaPP_( cIdVd, lNaprijed, aPorezi, lShowGets )
 
-if lShowGets == nil
-	lShowGets := .t.
-endif
+   LOCAL nPom
 
-if cIdvd $ "41#42"
-    nPom := _mpcsapp
-else
-    nPom := _mpcsapp
-endif
+   IF lShowGets == nil
+      lShowGets := .T.
+   ENDIF
 
-if _Mpcsapp <> 0 .and. !lNaprijed
+   IF cIdvd $ "41#42"
+      nPom := _mpcsapp
+   ELSE
+      nPom := _mpcsapp
+   ENDIF
 
-    // mpc ce biti umanjena mpc sa pp - porez - rabat (ako postoji)  
-    _mpc := MpcBezPor( nPom, aPorezi, , _nc ) - _rabatv
+   IF _Mpcsapp <> 0 .AND. !lNaprijed
 
-    _marza2 := 0
-  
-    MarzaMP(cIdVd, lNaprijed, aPorezi)
-  
-    if lShowGets
-    	ShowGets()
-    endif
-  
-    if cIdVd $ "41#42"
-        DuplRoba()
-    endif
+      // mpc ce biti umanjena mpc sa pp - porez - rabat (ako postoji)
+      _mpc := MpcBezPor( nPom, aPorezi, , _nc ) - _rabatv
 
-endif
+      _marza2 := 0
 
-return .t.
+      MarzaMP( cIdVd, lNaprijed, aPorezi )
+
+      IF lShowGets
+         ShowGets()
+      ENDIF
+
+      IF cIdVd $ "41#42"
+         DuplRoba()
+      ENDIF
+
+   ENDIF
+
+   RETURN .T.
 
 
 
@@ -483,25 +499,25 @@ return .t.
  *  \aPorezi - koristi lokalne varijable
  */
 
-function SayPorezi_lv(nRow, aPorezi)
-*{
-if IsPDV()
-	@ m_x+nRow,m_y+2  SAY "PDV (%):"
-	@ row(),col()+2 SAY  aPorezi[POR_PPP] PICTURE "99.99"
+FUNCTION SayPorezi_lv( nRow, aPorezi )
+
+   // {
+   IF IsPDV()
+      @ m_x + nRow, m_y + 2  SAY "PDV (%):"
+      @ Row(), Col() + 2 SAY  aPorezi[ POR_PPP ] PICTURE "99.99"
 	
-	if glUgost
-	  @ m_x+nRow,col()+8  SAY "PP (%):"
-	  @ row(),col()+2  SAY aPorezi[POR_PP] PICTURE "99.99"
-	endif
-else
-	@ m_x+nRow,m_y+2  SAY "PPP (%):"
-	@ row(),col()+2 SAY  aPorezi[POR_PPP] PICTURE "99.99"
-	@ m_x+nRow,col()+8  SAY "PPU (%):"
-	@ row(),col()+2  SAY PrPPUMP() PICTURE "99.99"
-	@ m_x+nRow,col()+8  SAY "PP (%):"
-	@ row(),col()+2  SAY aPorezi[POR_PP] PICTURE "99.99"
-endif
-return
-*}
+      IF glUgost
+         @ m_x + nRow, Col() + 8  SAY "PP (%):"
+         @ Row(), Col() + 2  SAY aPorezi[ POR_PP ] PICTURE "99.99"
+      ENDIF
+   ELSE
+      @ m_x + nRow, m_y + 2  SAY "PPP (%):"
+      @ Row(), Col() + 2 SAY  aPorezi[ POR_PPP ] PICTURE "99.99"
+      @ m_x + nRow, Col() + 8  SAY "PPU (%):"
+      @ Row(), Col() + 2  SAY PrPPUMP() PICTURE "99.99"
+      @ m_x + nRow, Col() + 8  SAY "PP (%):"
+      @ Row(), Col() + 2  SAY aPorezi[ POR_PP ] PICTURE "99.99"
+   ENDIF
 
-
+   RETURN
+// }

@@ -300,7 +300,7 @@ RETURN
  */
 function AutoZat(lAuto, cKto, cPtn)
 local _rec
-
+local  nDugBHD :=0, nPotBHD := 0
 if lAuto == nil
     lAuto := .f.
 endif
@@ -419,11 +419,11 @@ Box("count",1,30,.f.)
                 loop
             endif
         endif
-        cIdPartner=IdPartner
-        cBrDok=BrDok
-        cOtvSt:=" "
-        nDugBHD:=nPotBHD:=0
-        DO WHILESC !eof() .AND. idfirma==cidfirma .AND. cIdKonto=IdKonto .AND. cIdPartner=IdPartner .AND. cBrDok==BrDok
+        cIdPartner := IdPartner
+        cBrDok := BrDok
+        cOtvSt := " "
+        nDugBHD := nPotBHD :=0
+        DO WHILESC !eof() .AND. idfirma==cidfirma .AND. cIdKonto == IdKonto .AND. cIdPartner == IdPartner .AND. cBrDok == BrDok
             // partner, brdok
             IF D_P="1"
                 nDugBHD+=IznosBHD

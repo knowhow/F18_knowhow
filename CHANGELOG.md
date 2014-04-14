@@ -1,3 +1,7 @@
+1.7.44  2014-04-14, vsasa
+
+  - KALK, unos dokumenata 14, 15, 94, 95, 96, PR, RN - bugfix lock required 
+
 1.7.43  2014-04-14, vsasa
 
   - DEBUG: #33269 fakt_barkod => barkod

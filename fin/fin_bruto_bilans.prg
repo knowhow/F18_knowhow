@@ -995,7 +995,7 @@ METHOD FinBrutoBilans:print_txt()
             @ PRow(), PCol() + 1 SAY _sint
 
             IF __sint == NIL
-               @ PRow(), PCol() + 1 SAY PadR( "Nema sintetičkog konta " + _sint, 40 )
+               @ PRow(), PCol() + 1 SAY PadR( hb_utf8tostr( "Nema sintetičkog konta " ) + _sint, 40 )
             ELSE
                @ PRow(), PCol() + 1 SAY PadR( __sint[ "naz" ], 40 )
             ENDIF
@@ -1034,7 +1034,7 @@ METHOD FinBrutoBilans:print_txt()
 
       if ::tip < 3
          IF __klasa == NIL
-            @ PRow(), PCol() + 1 SAY PadR( "Nepostojeća šifra klase " + _klasa, 40 )
+            @ PRow(), PCol() + 1 SAY PadR( hb_utf8tostr( "Nepostojeća šifra klase " ) + _klasa, 40 )
          ELSE
             @ PRow(), PCol() + 1 SAY PadR( __klasa[ "naz" ], 40 )
          ENDIF

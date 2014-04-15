@@ -21,7 +21,7 @@ AADD(opcexe, {|| KontrZb()})
 
 AADD(opc, "2. stampanje azuriranog dokumenta")
 if (ImaPravoPristupa(goModul:oDatabase:cName,"DOK","MNUSTAMPAAZURNALOGA"))
-	AADD(opcexe, {|| MnuStampaAzurNaloga()})
+	AADD(opcexe, {|| fin_stampa_azur_naloga_menu()})
 else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif

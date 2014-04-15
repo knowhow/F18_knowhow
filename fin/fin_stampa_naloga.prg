@@ -396,7 +396,7 @@ FUNCTION SintStav( lAuto )
       IF cDN == "D"
          SELECT panal
          SEEK cIdfirma + cIdvn + cBrnal
-         StOSNal( .F. )    // stampa se priprema
+         fin_stampa_sinteticki_nalog(.F.)    
       ENDIF
 
       _o_tables()

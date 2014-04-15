@@ -285,18 +285,18 @@ FUNCTION zap_racun_tbl()
 
 
 // otvori rn tabele
-FUNCTION close_open_racun_tbl( close_all )
+FUNCTION close_open_racun_tbl()
 
-   IF close_all == NIL
-       close_all := .T.
-   ENDIF
-
-   if close_all
-       my_close_all_dbf()
-   endif
-
+   SELECT ( F_DRN )
+   USE
    O_DRN
+
+   SELECT ( F_DRNTEXT )
+   USE
    O_DRNTEXT
+
+   SELECT ( F_RN )
+   USE
    O_RN
 
    RETURN

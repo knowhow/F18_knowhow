@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -15,149 +15,148 @@
 // -------------------------------------------------------
 // Setuj matricu sa poljima tabele dokumenata TERM
 // -------------------------------------------------------
-static function _sTblTerm(aDbf)
+STATIC FUNCTION _sTblTerm( aDbf )
 
-AADD(aDbf,{"barkod",  "C", 13, 0})
-AADD(aDbf,{"idroba",  "C", 10, 0})
-AADD(aDbf,{"kolicina", "N", 15, 5})
-AADD(aDbf,{"status", "N", 2, 0})
+   AAdd( aDbf, { "barkod",  "C", 13, 0 } )
+   AAdd( aDbf, { "idroba",  "C", 10, 0 } )
+   AAdd( aDbf, { "kolicina", "N", 15, 5 } )
+   AAdd( aDbf, { "status", "N", 2, 0 } )
 
-// status
-// 0 - nema robe u sifrarniku
-// 1 - roba je tu
+   // status
+   // 0 - nema robe u sifrarniku
+   // 1 - roba je tu
 
-return
+   RETURN
 
 
 // --------------------------------------------------------
-// Kreiranje temp tabele, te prenos zapisa iz text fajla 
-// "cTextFile" u tabelu 
-//  - param cTxtFile - txt fajl za import
+// Kreiranje temp tabele, te prenos zapisa iz text fajla
+// "cTextFile" u tabelu
+// - param cTxtFile - txt fajl za import
 // --------------------------------------------------------
-function Txt2TTerm( cTxtFile )
-local cDelimiter := ";"
-local aDbf := {}
-local _o_file
+FUNCTION Txt2TTerm( cTxtFile )
 
-cTxtFile := ALLTRIM( cTxtFile )
+   LOCAL cDelimiter := ";"
+   LOCAL aDbf := {}
+   LOCAL _o_file
 
-// prvo kreiraj tabelu temp
-my_close_all_dbf()
+   cTxtFile := AllTrim( cTxtFile )
 
-// polja tabele TEMP.DBF
-_sTblTerm( @aDbf )
+   // prvo kreiraj tabelu temp
+   my_close_all_dbf()
 
-// kreiraj tabelu
-_creTemp( aDbf, .t. )
+   // polja tabele TEMP.DBF
+   _sTblTerm( @aDbf )
 
-if !FILE( my_home() + "temp.dbf" )
-	MsgBeep("Ne mogu kreirati fajl TEMP.DBF!")
-	return
-endif
+   // kreiraj tabelu
+   _creTemp( aDbf, .T. )
 
-// otvori tabele
-O_ROBA
+   IF !File( my_home() + "temp.dbf" )
+      MsgBeep( "Ne mogu kreirati fajl TEMP.DBF!" )
+      RETURN
+   ENDIF
 
-select ( F_TMP_1 )
-use
-my_use_temp( "temp", my_home() + "temp.dbf" )
+   // otvori tabele
+   O_ROBA
 
-// zatim iscitaj fajl i ubaci podatke u tabelu
+   SELECT ( F_TMP_1 )
+   USE
+   my_use_temp( "temp", my_home() + "temp.dbf" )
 
-_o_file := TFileRead():New( cTxtFile )
-_o_file:Open()
+   // zatim iscitaj fajl i ubaci podatke u tabelu
 
-if _o_file:Error()
-	MsgBeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
-	return
-endif
+   _o_file := TFileRead():New( cTxtFile )
+   _o_file:Open()
 
-// prodji kroz svaku liniju i insertuj zapise u temp.dbf
+   IF _o_file:Error()
+      MsgBeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
+      RETURN
+   ENDIF
 
-while _o_file:MoreToRead()
+   // prodji kroz svaku liniju i insertuj zapise u temp.dbf
+
+   WHILE _o_file:MoreToRead()
 	
-	// uzmi u cText liniju fajla
-	cVar := hb_strtoutf8( _o_file:ReadLine() )
+      // uzmi u cText liniju fajla
+      cVar := hb_StrToUTF8( _o_file:ReadLine() )
 
-	if EMPTY(cVar)
-		loop
-	endif
+      IF Empty( cVar )
+         LOOP
+      ENDIF
 
-	aRow := csvrow2arr( cVar, cDelimiter ) 
+      aRow := csvrow2arr( cVar, cDelimiter )
 	
-	// struktura podataka u txt-u je
-	// [1] - barkod
-	// [2] - kolicina
+      // struktura podataka u txt-u je
+      // [1] - barkod
+      // [2] - kolicina
 	
-	// pa uzimamo samo sta nam treba
-	cTmp := PADR( ALLTRIM( aRow[1] ), 13 )
-	nTmp := VAL ( ALLTRIM( aRow[2] ) )
+      // pa uzimamo samo sta nam treba
+      cTmp := PadR( AllTrim( aRow[ 1 ] ), 13 )
+      nTmp := Val ( AllTrim( aRow[ 2 ] ) )
 	
-	select roba
-	set order to tag "BARKOD"
-	go top
-	seek cTmp
+      SELECT roba
+      SET ORDER TO TAG "BARKOD"
+      GO TOP
+      SEEK cTmp
 
-	if FOUND()
-		cRoba_id := field->id
-		nStatus := 1
-	else
-		cRoba_id := ""
-		nStatus := 0
-	endif
+      IF Found()
+         cRoba_id := field->id
+         nStatus := 1
+      ELSE
+         cRoba_id := ""
+         nStatus := 0
+      ENDIF
 
-	// selektuj temp tabelu
-	select temp
-	// dodaj novi zapis
-	append blank
+      // selektuj temp tabelu
+      SELECT temp
+      // dodaj novi zapis
+      APPEND BLANK
 
-	replace barkod with cTmp
-	replace idroba with cRoba_id
-	replace kolicina with nTmp
-	replace status with nStatus
+      REPLACE barkod WITH cTmp
+      REPLACE idroba WITH cRoba_id
+      REPLACE kolicina WITH nTmp
+      REPLACE status WITH nStatus
 
-enddo
+   ENDDO
 
-_o_file:Close()
+   _o_file:Close()
 
-select temp
+   SELECT temp
 
-MsgBeep( "Import txt => temp - OK" )
+   MsgBeep( "Import txt => temp - OK" )
 
-return
+   RETURN
 
 
 // ----------------------------------------------------------------
 // Kreira tabelu PRIVPATH\TEMP.DBF prema definiciji polja iz aDbf
 // ----------------------------------------------------------------
-static function _creTemp( aDbf, lIndex )
-local _table := "temp"
+STATIC FUNCTION _creTemp( aDbf, lIndex )
 
-if lIndex == NIL
-	lIndex := .t.
-endif
+   LOCAL _table := "temp"
 
-FERASE( my_home() + "temp.dbf" )
+   IF lIndex == NIL
+      lIndex := .T.
+   ENDIF
 
-DbCreate( my_home() + _table, aDbf )
+   FErase( my_home() + "temp.dbf" )
 
-if lIndex
+   dbCreate( my_home() + _table, aDbf )
 
-    select ( F_TMP_1 )
-    use
-    
-    my_use_temp( "temp", my_home() + "temp.dbf" )
+   IF lIndex
 
-    index on barkod tag "1"
-    index on idroba tag "2"
-    index on STR(status) tag "3"
+      SELECT ( F_TMP_1 )
+      USE
 
-    select ( F_TMP_1 )
-    use
+      my_use_temp( "temp", my_home() + "temp.dbf" )
 
-endif
+      INDEX ON barkod TAG "1"
+      INDEX ON idroba TAG "2"
+      INDEX ON Str( status ) TAG "3"
 
-return
+      SELECT ( F_TMP_1 )
+      USE
 
+   ENDIF
 
-
+   RETURN

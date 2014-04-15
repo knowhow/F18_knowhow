@@ -919,10 +919,7 @@ local cBrStola
 local nZakBr:=0
 local nFZaokr := 0
 
-drn_create()
-
 o_pos_tables()
-
 drn_open()
 drn_empty()
 
@@ -1110,8 +1107,7 @@ for i:=1 to LEN(aRacuni)
 		
 		++ nCSum
 
-		// dodaj stavku u rn.dbf
-		add_rn(cStalRac, STR(nCSum, 3), "", cIdRoba, cRobaNaz, cJmj, nKolicina, Round(nCjenPDV,3), Round(nCjenBPDV,3), Round(nCjen2PDV,3), Round(nCjen2BPDV,3), Round(nPopust,2), Round(nPPDV,2), Round(nVPDV,3), Round(nUkStavka,3), 0, 0)
+		dodaj_stavku_racuna(cStalRac, STR(nCSum, 3), "", cIdRoba, cRobaNaz, cJmj, nKolicina, Round(nCjenPDV,3), Round(nCjenBPDV,3), Round(nCjen2PDV,3), Round(nCjen2BPDV,3), Round(nPopust,2), Round(nPPDV,2), Round(nVPDV,3), Round(nUkStavka,3), 0, 0)
 	
 		if lPrepis == .t.
 			select pos

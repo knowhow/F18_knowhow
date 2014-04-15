@@ -264,6 +264,7 @@ F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB):create_local_atrib_table()
 // kreiraj relacije : RELATION
 cre_relation( ver )
 
+create_porezna_faktura_temp_dbfs()
 return .t.
 
 

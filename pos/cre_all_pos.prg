@@ -368,7 +368,7 @@ CREATE_INDEX ("2" , "ID+ID2" , _alias )
 
 // kreiraj tabele dok_src : DOK_SRC
 cre_doksrc( ver )
-
+create_porezna_faktura_temp_dbfs()
 
 return .t.
 

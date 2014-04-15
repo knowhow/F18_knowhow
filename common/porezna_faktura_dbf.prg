@@ -1,0 +1,502 @@
+/*
+ * This file is part of the bring.out FMK, a free and open source
+ * accounting software suite,
+ * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * It is licensed to you under the Common Public Attribution License
+ * version 1.0, the full text of which (including FMK specific Exhibits)
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * root directory of this source code archive.
+ * By using this software, you agree to be bound by its terms.
+ */
+
+
+#include "fmk.ch"
+
+
+// otvori tabele za stampu racuna
+FUNCTION o_dracun()
+
+   O_DRN
+   O_RN
+   O_DRNTEXT
+
+   RETURN
+
+
+FUNCTION create_porezna_faktura_temp_dbfs()
+
+   LOCAL cDRnName := "drn"
+   LOCAL cRnName := "rn"
+   LOCAL cDRTxtName := "drntext"
+   LOCAL aDRnField := {}
+   LOCAL aRnField := {}
+   LOCAL aDRTxtField := {}
+
+
+   IF !File( f18_ime_dbf( cDRnName ) )
+      // drn specifikacija polja
+      get_drn_fields( @aDRnField )
+      DbCreate2( cDRnName, aDRnField )
+   ENDIF
+
+   IF !File( f18_ime_dbf( cRnName ) )
+      // rn specifikacija polja
+      get_rn_fields( @aRnField )
+      DbCreate2( cRnName, aRnField )
+   ENDIF
+
+   IF !File( f18_ime_dbf( cDRTxtName ) )
+      get_dtxt_fields( @aDRTxtField )
+      DbCreate2( cDRTxtName, aDRTxtField )
+   ENDIF
+
+   // kreiraj indexe
+   CREATE_INDEX( "1", "brdok+DToS(datdok)", "drn" )
+   CREATE_INDEX( "1", "brdok+rbr+podbr", "rn" )
+   CREATE_INDEX( "IDROBA", "idroba", "rn" )
+
+   CREATE_INDEX( "1", "tip", "drntext" )
+
+   RETURN
+
+
+FUNCTION get_drn_fields( aArr )
+
+   AAdd( aArr, { "BRDOK",   "C",  8, 0 } )
+   AAdd( aArr, { "DATDOK",  "D",  8, 0 } )
+   AAdd( aArr, { "DATVAL",  "D",  8, 0 } )
+   AAdd( aArr, { "DATISP",  "D",  8, 0 } )
+   AAdd( aArr, { "VRIJEME", "C",  5, 0 } )
+   AAdd( aArr, { "ZAOKR",   "N", 10, 5 } )
+
+   // ukupno za stavku
+   AAdd( aArr, { "UKBEZPDV", "N", 15, 5 } )
+   AAdd( aArr, { "UKPOPUST", "N", 15, 5 } )
+   AAdd( aArr, { "UKPOPTP", "N", 15, 5 } )
+   AAdd( aArr, { "UKBPDVPOP", "N", 15, 5 } )
+   AAdd( aArr, { "UKPDV",   "N", 15, 5 } )
+   AAdd( aArr, { "UKUPNO",  "N", 15, 5 } )
+   AAdd( aArr, { "UKKOL",   "N", 14, 2 } )
+
+
+   AAdd( aArr, { "CSUMRN",  "N",  6, 0 } )
+
+   RETURN
+
+
+FUNCTION get_rn_fields( aArr )
+
+   AAdd( aArr, { "BRDOK",   "C",  8, 0 } )
+   AAdd( aArr, { "RBR",     "C",  3, 0 } )
+   AAdd( aArr, { "PODBR",   "C",  2, 0 } )
+   AAdd( aArr, { "IDROBA",  "C", 10, 0 } )
+   AAdd( aArr, { "ROBANAZ", "C", 200, 0 } )
+   AAdd( aArr, { "JMJ",     "C",  3, 0 } )
+   AAdd( aArr, { "KOLICINA", "N", 15, 5 } )
+   AAdd( aArr, { "CJENPDV", "N", 15, 5 } )
+   AAdd( aArr, { "CJENBPDV", "N", 15, 5 } )
+   AAdd( aArr, { "CJEN2PDV", "N", 15, 5 } )
+   AAdd( aArr, { "CJEN2BPDV", "N", 15, 5 } )
+   AAdd( aArr, { "POPUST",   "N", 8, 3 } )
+   AAdd( aArr, { "PPDV",     "N", 8, 3 } )
+   AAdd( aArr, { "VPDV",     "N", 15, 5 } )
+   AAdd( aArr, { "UKUPNO",    "N", 15, 5 } )
+   AAdd( aArr, { "POPTP",   "N", 8, 3 } )
+   AAdd( aArr, { "VPOPTP",   "N", 15, 5 } )
+   AAdd( aArr, { "C1",   "C", 100, 0 } )
+   AAdd( aArr, { "C2",   "C", 100, 0 } )
+   AAdd( aArr, { "C3",   "C", 100, 0 } )
+   AAdd( aArr, { "OPIS",   "C", 200, 0 } )
+
+   RETURN
+
+
+
+FUNCTION get_dtxt_fields( aArr )
+
+   AAdd( aArr, { "TIP",   "C",   3, 0 } )
+   AAdd( aArr, { "OPIS",  "C", 200, 0 } )
+
+   RETURN
+
+
+FUNCTION add_drntext( cTip, cOpis )
+
+   LOCAL lFound
+
+   IF !Used( F_DRNTEXT )
+      O_DRNTEXT
+      SET ORDER TO TAG "ID"
+   ENDIF
+
+   SELECT drntext
+   GO TOP
+
+
+   SEEK cTip
+
+   IF !Found()
+      APPEND BLANK
+   ENDIF
+
+   REPLACE tip WITH cTip
+   REPLACE opis WITH cOpis
+
+   RETURN
+
+
+FUNCTION add_drn( cBrDok, dDatDok, dDatVal, dDatIsp, cTime, nUBPDV, nUPopust, nUBPDVPopust, nUPDV, nUkupno, nCSum, nUPopTp, nZaokr, nUkkol )
+
+   LOCAL cnt1
+
+   IF !Used( F_DRN )
+      O_DRN
+   ENDIF
+
+   SELECT drn
+   APPEND BLANK
+
+   REPLACE brdok WITH cBrDok
+   REPLACE datdok WITH dDatDok
+   IF ( dDatVal <> nil )
+      REPLACE datval WITH dDatVal
+   ENDIF
+   IF ( dDatIsp <> nil )
+      REPLACE datisp WITH dDatIsp
+   ENDIF
+   REPLACE vrijeme WITH cTime
+   REPLACE ukbezpdv WITH nUBPDV
+   REPLACE ukpopust WITH nUPopust
+   REPLACE ukbpdvpop WITH nUBPDVPopust
+   REPLACE ukpdv WITH nUPDV
+   REPLACE ukupno WITH nUkupno
+   REPLACE csumrn WITH nCSum
+   REPLACE zaokr WITH nZaokr
+   REPLACE ukkol WITH nUkKol
+
+   IF FieldPos( "UKPOPTP" ) <> 0
+      // popust na teret prodavca
+      REPLACE ukpoptp WITH nUPopTp
+   ENDIF
+
+   IF glUgost
+
+      // poseban porez na potrosnju
+      IF ( aPP <> nil )
+         // primjer matrice za 3 stope poreza 5%, 7%, 10%
+         //
+         // aPP := { { 5, 7, 10}  , { 333.22, 15.19, 200.3 } }
+         FOR cnt1 := 1 TO Len( aPP[ 1 ] )
+
+            IF cnt1 == 1
+               REPLACE stpp1 WITH aPP[ 1, 1 ],;
+                  ukpp1 WITH aPP[ 2, 1 ]
+            ENDIF
+            IF cnt1 == 2
+               REPLACE stpp2 WITH aPP[ 1, 2 ],;
+                  ukpp2 WITH aPP[ 2, 2 ]
+            ENDIF
+            IF cnt1 == 3
+               REPLACE stpp3 WITH aPP[ 1, 3 ],;
+                  ukpp3 WITH aPP[ 2, 3 ]
+            ENDIF
+            IF cnt1 == 4
+               REPLACE stpp4 WITH aPP[ 1, 4 ],;
+                  ukpp4 WITH aPP[ 2, 4 ]
+            ENDIF
+            IF cnt1 == 5
+               REPLACE stpp5 WITH aPP[ 1, 5 ],;
+                  ukpp5 WITH aPP[ 2, 5 ]
+            ENDIF
+
+         NEXT
+
+      ENDIF
+
+   ENDIF
+
+   RETURN
+
+FUNCTION add_drn_datum_isporuke( dDatIsp )
+
+   IF !Used( F_DRN )
+      O_DRN
+   ENDIF
+
+   SELECT DRN
+   IF Empty( brdok )
+      APPEND BLANK
+   ENDIF
+
+   IF FieldPos( "datisp" ) <> 0
+      REPLACE datisp WITH dDatIsp
+   ENDIF
+
+   RETURN
+
+
+FUNCTION get_drn_datum_isporuke()
+
+   LOCAL xRet
+
+   PushWa()
+
+   IF !Used( F_DRN )
+      O_DRN
+   ENDIF
+
+   SELECT drn
+   IF Empty( drn->BrDok )
+      xRet := nil
+   ELSE
+
+         IF Empty( datisp )
+            xRet := datdok
+         ELSE
+            xRet := datisp
+         ENDIF
+   ENDIF
+
+   PopWa()
+
+   RETURN xRet
+
+
+FUNCTION dodaj_stavku_racuna( cBrDok, cRbr, cPodBr, cIdRoba, cRobaNaz, cJmj, nKol, nCjenPdv, nCjenBPdv, nCjen2Pdv, nCjen2BPdv, nPopust, nPPdv, nVPdv, nUkupno, nPopNaTeretProdavca, nVPopNaTeretProdavca, cC1, cC2, cC3, cOpis )
+
+   O_RN
+
+   IF cC1 == nil
+      cC1 := ""
+   ENDIF
+   IF cC2 == nil
+      cC2 := ""
+   ENDIF
+   IF cC3 == nil
+      cC3 := ""
+   ENDIF
+   IF cOpis == nil
+      cOpis := ""
+   ENDIF
+
+   SELECT rn
+   APPEND BLANK
+
+   REPLACE brdok WITH cBrDok
+   REPLACE rbr WITH cRbr
+   REPLACE podbr WITH cPodBr
+   REPLACE idroba WITH cIdRoba
+   REPLACE robanaz WITH cRobaNaz
+   REPLACE jmj WITH cJmj
+   REPLACE c1 WITH cC1
+   REPLACE c2 WITH cC2
+   REPLACE c3 WITH cC3
+   REPLACE opis WITH cOpis
+   REPLACE kolicina WITH nKol
+   REPLACE cjenpdv WITH nCjenPdv
+   REPLACE cjenbpdv WITH nCjenBPdv
+   REPLACE cjen2pdv WITH nCjen2Pdv
+   REPLACE cjen2bpdv WITH nCjen2BPdv
+   REPLACE popust WITH nPopust
+   REPLACE ppdv WITH nPPdv
+   REPLACE vpdv WITH nVPdv
+   REPLACE ukupno WITH nUkupno
+
+   IF ( Round( nPopNaTeretProdavca, 4 ) <> 0 )
+      // popust na teret prodavca
+      IF FieldPos( "poptp" ) <> 0
+         REPLACE poptp WITH nPopNaTeretProdavca
+         REPLACE vpoptp WITH nVPopNaTeretProdavca
+      ELSE
+         MsgBeep( "Tabela RN ne sadrzi POPTP - popust na teret prodavca" )
+      ENDIF
+   ENDIF
+
+   RETURN
+
+
+// isprazni drn tabele
+FUNCTION drn_empty()
+
+   O_DRN
+   SELECT drn
+   my_dbf_zap()
+
+   O_RN
+   SELECT rn
+   my_dbf_zap()
+
+   O_DRNTEXT
+   SELECT drntext
+   my_dbf_zap()
+
+   RETURN
+
+
+// otvori rn tabele
+FUNCTION drn_open()
+
+   O_DRN
+   O_DRNTEXT
+   O_RN
+
+   RETURN
+
+
+// provjera checksum-a
+FUNCTION drn_csum()
+
+   LOCAL nCSum
+   LOCAL nRNSum
+
+   // uzmi csumrn iz DRN
+   SELECT drn
+   GO TOP
+   nCSum := field->csumrn
+
+   // uzmi broj zapisa iz RN
+   SELECT rn
+   nRNSum := RecCount2()
+
+   IF nRNSum == nCSum
+      RETURN .T.
+   ENDIF
+
+   RETURN .F.
+
+
+// vrati vrijednost polja opis iz tabele drntext.dbf po id kljucu
+FUNCTION get_dtxt_opis( cTip )
+
+   LOCAL cRet
+
+   O_DRNTEXT
+   SELECT drntext
+   SET ORDER TO TAG "1"
+   hseek cTip
+
+   IF !Found()
+      RETURN "-"
+   ENDIF
+   cRet := RTrim( opis )
+
+   RETURN cRet
+
+// ---------------------------------------------
+// azuriranje podataka o kupcu
+// ---------------------------------------------
+FUNCTION AzurKupData( cIdPos )
+
+   LOCAL cKNaziv
+   LOCAL cKAdres
+   LOCAL cKIdBroj
+   LOCAL _rec
+   LOCAL _ok
+   LOCAL _tbl := "pos_dokspf"
+
+   O_DRN
+   O_DRNTEXT
+
+   cKNaziv := get_dtxt_opis( "K01" )
+   cKAdres := get_dtxt_opis( "K02" )
+   cKIdBroj := get_dtxt_opis( "K03" )
+   dDatIsp := get_drn_datum_isporuke()
+
+   // nema porezne fakture
+   IF cKNaziv == "???"
+      RETURN
+   ENDIF
+
+   O_DOKSPF
+
+   IF !f18_lock_tables( { _tbl } )
+      MsgBeep( "Ne mogu lock-ovati dokspf tabelu !!!" )
+   ENDIF
+
+   sql_table_update( nil, "BEGIN" )
+
+   SELECT drn
+   GO TOP
+
+   SELECT dokspf
+   SEEK cIdPos + "42" + DToS( drn->datdok ) + drn->brdok
+
+   IF !Found()
+      APPEND BLANK
+   ENDIF
+
+   _rec := dbf_get_rec()
+   _rec[ "idpos" ] := cIdPos
+   _rec[ "idvd" ] := "42"
+   _rec[ "brdok" ] := drn->brdok
+   _rec[ "datum" ] := drn->datdok
+
+   IF hb_HHasKey( _rec, "datisp" )
+      IF dDatIsp <> nil
+         _rec[ "datisp" ] := dDatIsp
+      ENDIF
+   ENDIF
+
+   _rec[ "knaz" ] := cKNaziv
+   _rec[ "kadr" ] := cKAdres
+   _rec[ "kidbr" ] := cKIdBroj
+
+   update_rec_server_and_dbf( _tbl, _rec, 1, "CONT" )
+
+   f18_free_tables( { _tbl } )
+   sql_table_update( nil, "END" )
+
+   RETURN
+
+// pretrazi tabelu kupaca i napuni matricu
+FUNCTION fnd_kup_data( cKupac )
+
+   LOCAL aRet := {}
+   LOCAL nArr
+   LOCAL cFilter := ""
+   LOCAL cPartData
+   LOCAL cTmp
+
+   IF Right( AllTrim( cKupac ), 2 ) <> ".."
+      RETURN aRet
+   ENDIF
+
+   // prvo ukini tacku sa kupca
+   cKupac := StrTran( AllTrim( cKupac ), "..", ";" )
+
+   nArr := Select()
+
+   O_DOKSPF
+   SELECT dokspf
+
+   cFilter := Parsiraj( Lower( cKupac ), "lower(knaz)" )
+
+   SET FILTER to &cFilter
+   SET ORDER TO TAG "2"
+   GO TOP
+
+   cTmp := "XXX"
+
+   IF !Eof()
+      DO WHILE !Eof()
+		
+         cPartData := field->knaz + field->kadr + field->kidbr
+		
+         IF cPartData == cTmp
+            SKIP
+            LOOP
+         ENDIF
+		
+         AAdd( aRet, { field->knaz, field->kadr, field->kidbr } )
+		
+         cTmp := cPartData
+		
+         SKIP
+      ENDDO
+   ENDIF
+
+   SET FILTER TO
+
+   SELECT ( nArr )
+
+   RETURN aRet

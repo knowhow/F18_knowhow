@@ -82,7 +82,7 @@ if read_kup_data()
 	cKNaziv:=PADR(get_dtxt_opis("K01"), 35)
 	cKAdres:=PADR(get_dtxt_opis("K02"), 35)
 	cKIdBroj:=PADR(get_dtxt_opis("K03"), 13)
-	dDatIsp:= get_drn_di()
+	dDatIsp:= get_drn_datum_isporuke()
 	if dDatIsp == nil
 		dDatIsp := CTOD("")
 	endif
@@ -94,7 +94,7 @@ Box(,7, 65)
 	nMY := m_y
 	
 	@ 1+m_x, 2+m_y SAY "Podaci o kupcu:" COLOR "I"
-	@ 2+m_x, 2+m_y SAY "Naziv (pravnog ili fizickog lica):" GET cKNaziv VALID !Empty(cKNaziv) .and. get_arr_kup_data(@cKNaziv, @cKAdres, @cKIdBroj) PICT "@S20"
+	@ 2+m_x, 2+m_y SAY8 "Naziv (pravnog ili fizičkog lica):" GET cKNaziv VALID !Empty(cKNaziv) .and. get_arr_kup_data(@cKNaziv, @cKAdres, @cKIdBroj) PICT "@S20"
 	read
 	
 	m_x := nMX
@@ -117,10 +117,9 @@ endif
 add_drntext("K01", cKNaziv)
 add_drntext("K02", cKAdres)
 add_drntext("K03", cKIdBroj)
-add_drn_di(dDatIsp)
+add_drn_datum_isporuke(dDatIsp)
 
 return .t.
-*}
 
 function pf_traka_line(nRazmak)
 local cPom
@@ -131,7 +130,6 @@ cPom += REPLICATE("-", LEN_VRIJEDNOST)
 return cPom
 
 function st_pf_traka()
-*{
 local cBrDok
 local dDatDok
 local aRNaz

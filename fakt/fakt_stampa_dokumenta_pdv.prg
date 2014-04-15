@@ -36,7 +36,6 @@ if lJFill == NIL
 	lJFill := .f.
 endif
 
-drn_create()
 drn_open()
 drn_empty()
 
@@ -497,7 +496,7 @@ do while !EOF() .and. field->idfirma == dok["idfirma"] .and. ;
 	
     nUkKol += nKol
 	
-	add_rn( dok["brdok"], cRbr, cPodBr, cIdRoba, cRobaNaz, cJmj, nKol, nCjPDV, nCjBPDV, nCj2PDV, nCj2BPDV, nPopust, nPPDV, nVPDV, nUkStavka, nPopNaTeretProdavca, nVPopNaTeretProdavca, "", "", "", cOpis )
+	dodaj_stavku_racuna( dok["brdok"], cRbr, cPodBr, cIdRoba, cRobaNaz, cJmj, nKol, nCjPDV, nCjBPDV, nCj2PDV, nCj2BPDV, nPopust, nPPDV, nVPDV, nUkStavka, nPopNaTeretProdavca, nVPopNaTeretProdavca, "", "", "", cOpis )
 
 	select fakt_pripr
 	skip

@@ -13,16 +13,6 @@
 #include "fmk.ch"
 
 
-// otvori tabele za stampu racuna
-FUNCTION o_dracun()
-
-   O_DRN
-   O_RN
-   O_DRNTEXT
-
-   RETURN
-
-
 FUNCTION create_porezna_faktura_temp_dbfs()
 
    LOCAL cDRnName := "drn"
@@ -280,17 +270,14 @@ FUNCTION dodaj_stavku_racuna( cBrDok, cRbr, cPodBr, cIdRoba, cRobaNaz, cJmj, nKo
 
 
 // isprazni drn tabele
-FUNCTION drn_empty()
+FUNCTION zap_racun_tbl()
 
-   O_DRN
    SELECT drn
    my_dbf_zap()
 
-   O_RN
    SELECT rn
    my_dbf_zap()
 
-   O_DRNTEXT
    SELECT drntext
    my_dbf_zap()
 
@@ -298,7 +285,15 @@ FUNCTION drn_empty()
 
 
 // otvori rn tabele
-FUNCTION drn_open()
+FUNCTION close_open_racun_tbl( close_all )
+
+   IF close_all == NIL
+       close_all := .T.
+   ENDIF
+
+   if close_all
+       my_close_all_dbf()
+   endif
 
    O_DRN
    O_DRNTEXT
@@ -308,7 +303,7 @@ FUNCTION drn_open()
 
 
 // provjera checksum-a
-FUNCTION drn_csum()
+FUNCTION racun_tbl_checksum()
 
    LOCAL nCSum
    LOCAL nRNSum

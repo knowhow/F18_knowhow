@@ -79,9 +79,9 @@
 #xcommand O_P_DOKSRC  => SELECT (F_P_DOKSRC); my_usex ("p_doksrc")  ; set order to tag "1"
 
 // stampa PDV racuna
-#xcommand O_DRN       => select(F_DRN)      ; my_usex ("drn")      ; set order to tag "1"
-#xcommand O_RN        => select(F_RN)       ; my_usex ("rn")       ; set order to tag "1"
-#xcommand O_DRNTEXT   => select(F_DRNTEXT)  ; my_usex ("drntext")  ; set order to tag "1"
+#xcommand O_DRN       => select(F_DRN)      ; my_use ("drn")      ; set order to tag "1"
+#xcommand O_RN        => select(F_RN)       ; my_use ("rn")       ; set order to tag "1"
+#xcommand O_DRNTEXT   => select(F_DRNTEXT)  ; my_use ("drntext")  ; set order to tag "1"
 
 // tabele provjere integriteta
 #xcommand O_DINTEG1 => SELECT (F_DINTEG1)   ; my_usex ("dinteg1")  ; set order to tag "1"

@@ -105,14 +105,7 @@ FUNCTION fin_stampa_sinteticki_nalog( kumulativ )
 
    IF kumulativ  
 
-      SELECT ( F_ANAL )
-      my_usex( "panal", "fin_anal" )
-      SET ORDER TO TAG "2"
-
-      O_KONTO
-      O_PARTN
-      O_TNAL
-      O_NALOG
+      close_open_tbl()
 
       cIdVN := SPACE( 2 )
       cIdFirma := gFirma
@@ -271,6 +264,22 @@ FUNCTION fin_stampa_sinteticki_nalog( kumulativ )
 
    RETURN
 
+
+
+STATIC FUNCTION close_open_tbl()
+
+   my_close_all_dbf()
+
+   SELECT ( F_ANAL )
+   my_usex( "panal", "fin_anal" )
+   SET ORDER TO TAG "2"
+
+   O_KONTO
+   O_PARTN
+   O_TNAL
+   O_NALOG
+
+   RETURN
 
 
 STATIC FUNCTION nova_strana()

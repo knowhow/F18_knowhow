@@ -182,26 +182,27 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
 
    _dbf := my_home() + table
 
-   BEGIN SEQUENCE WITH {|err| err:cargo := { ProcName( 1 ), ProcName( 2 ), ProcLine( 1 ), ProcLine( 2 ) }, Break( err ) }
+   BEGIN SEQUENCE WITH {|err| Break( err ) }
       dbUseArea( new_area, _rdd, _dbf, alias, !excl, .F. )
       IF File( ImeDbfCdx( _dbf ) )
          dbSetIndex( ImeDbfCDX( _dbf ) )
       ENDIF
 
-   recover using _err
+   recover using oError
 
-      _msg := "ERR-MYUSE: " + _err:description + ": tbl:" + my_home() + table + " alias:" + alias + " se ne moze otvoriti ?!"
+      _msg := "ERROR: my_use " + oError:description + ": tbl:" + my_home() + table + " alias:" + alias + " se ne moze otvoriti ?!"
       log_write( _msg, 2 )
-      Alert( _msg )
 
-      IF _err:description == "Read error"
+      IF oError:description == "Read error"
+
+          // Read error se dobije u slucaju ostecenog dbf-a
          _force_erase := .T.
-      ENDIF
 
-      if ferase_dbf( alias, _force_erase )
-           repair_dbfs()
-           QUIT_1
-      endif
+          IF ferase_dbf( alias, _force_erase )
+              repair_dbfs()
+          ENDIF
+
+      ENDIF
 
    END SEQUENCE
 

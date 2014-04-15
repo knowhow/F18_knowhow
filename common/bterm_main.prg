@@ -24,23 +24,19 @@ FUNCTION iBTerm_data( cI_File )
 
    cI_File := ""
 
-   // pronadji fajl za import u export direktoriju
-   _gExpPath( @cPath )
+   IF !_gExpPath( @cPath )
+      RETURN 0
+   ENDIF
 
    IF _gFList( cFilter, cPath, @cI_File ) = 0
       RETURN 0
    ENDIF
 
-   // prebaci iz TXT fajla u pomocnu tabelu
    Txt2TTerm( cI_File )
 
-   // podaci su sada importovani u TEMP.DBF
-
-   // provjeri nepostojece artikle
    aError := _cBarkod()
 
    IF Len( aError ) > 0
-      // ima spornih artikala...
       RETURN 0
    ENDIF
 
@@ -55,7 +51,6 @@ STATIC FUNCTION _gExpPath( path )
    LOCAL _path
 
    #ifdef __PLATFORM__WINDOWS
-
       _path := "c:" + SLASH + "import" + SLASH
    #else
       _path := SLASH + "home" + SLASH + my_user() + SLASH + "import" + SLASH
@@ -71,13 +66,13 @@ STATIC FUNCTION _gExpPath( path )
 
    IF LastKey() == K_ESC
       path := NIL
-      RETURN
+      RETURN .F.
    ENDIF
 
    path := AllTrim( _path )
    set_metric( "bterm_imp_exp_path", my_user(), path )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -93,11 +88,9 @@ STATIC FUNCTION _cBarkod()
    LOCAL nCnt
 
    SELECT temp
-   // STR(status)
    SET ORDER TO TAG "3"
    GO TOP
 
-   // stavke sa statusom 0 - nemaju svog para u ROBI
    DO WHILE !Eof() .AND. field->status = 0
 	
       cTmp := field->barkod
@@ -142,10 +135,7 @@ FUNCTION eBTerm_data()
    LOCAL nTArea := Select()
    LOCAL cSeparator := ";"
    LOCAL aData := {}
-
-   // trim podataka unutar niza
    LOCAL lTrimData := .T.
-   // zadnji slog sa separatorom
    LOCAL lLastSeparator := .F.
    LOCAL cFileName := ""
    LOCAL cFilePath := ""
@@ -159,7 +149,10 @@ FUNCTION eBTerm_data()
    // [3] kolicina
    // [4] cijena
 
-   // kreiraj pomocnu tabelu
+   IF !_gExpPath( @cFilePath )
+      RETURN 0
+   ENDIF
+
    cre_tmp()
 
    O_R_EXP
@@ -197,13 +190,11 @@ FUNCTION eBTerm_data()
       SKIP
    ENDDO
 
-   _gExpPath( @cFilePath )
    cFileName := "ARTIKLI.TXT"
 
    SELECT r_export
    USE
 
-   // dodaj u fajl
    _dbf_to_file( cFilePath, cFileName, aStruct, "r_export.dbf", ;
       cSeparator, lTrimData, lLastSeparator )
 

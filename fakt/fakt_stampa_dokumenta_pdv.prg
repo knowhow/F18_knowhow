@@ -36,9 +36,6 @@ if lJFill == NIL
 	lJFill := .f.
 endif
 
-drn_open()
-drn_empty()
-
 if PCount() == 4 .and. ( cIdtipDok <> nil )
     lPrepisDok := .t.
     _fill_params["from_server"] := .t.
@@ -48,7 +45,8 @@ else
     close_open_fakt_tabele()
 endif
 
-o_dracun()
+close_open_racun_tbl(.F.)
+zap_racun_tbl()
 
 select fakt_pripr
 
@@ -146,6 +144,8 @@ else
   endif
 
 endif
+
+my_close_all_dbf()
 
 return
 

@@ -81,7 +81,7 @@ FUNCTION pf_a4_print( lStartPrint, cDocumentName )
    PIC_VRIJEDNOST := PadL( AllTrim( Right( PicDem, LEN_VRIJEDNOST ) ), LEN_VRIJEDNOST, "9" )
    PIC_CIJENA := PadL( AllTrim( Right( PicCDem, LEN_CIJENA ) ), LEN_CIJENA, "9" )
 
-   drn_open()
+   close_open_racun_tbl()
 
    SELECT drn
    GO TOP
@@ -706,10 +706,9 @@ STATIC FUNCTION pf_a4_kupac()
       nShowRj := 0
    ENDIF
 
-   drn_open()
+   close_open_racun_tbl()
    SELECT drn
    GO TOP
-
 
    cDatDok := DToC( datdok )
 

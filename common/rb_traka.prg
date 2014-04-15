@@ -37,9 +37,9 @@ endif
 
 lJedanRacun := lStartPrint
 
-drn_open()
+close_open_racun_tbl()
 
-if !drn_csum()
+if !racun_tbl_checksum()
 	MsgBeep("Stampanje onemoguceno! checksum error!!!")
 	return .f.
 endif

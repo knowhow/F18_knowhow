@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,342 +12,355 @@
 
 #include "fmk.ch"
 
-static LEN_KOLICINA := 9
-static LEN_CIJENA := 12
-static LEN_VRIJEDNOST := 14
+STATIC LEN_KOLICINA := 9
+STATIC LEN_CIJENA := 12
+STATIC LEN_VRIJEDNOST := 14
 
-static DEC_KOLICINA := 2
-static DEC_CIJENA := 2 
-static DEC_VRIJEDNOST := 2
-
-
-function pf_traka_print()
-drn_open()
-// stampaj racun
-st_pf_traka()
-return
+STATIC DEC_KOLICINA := 2
+STATIC DEC_CIJENA := 2
+STATIC DEC_VRIJEDNOST := 2
 
 
-function f7_pf_traka(lSilent)
-local lPfTraka
+FUNCTION pf_traka_print()
 
-if lSilent == nil
-	lSilent := .f.
-endif
+   drn_open()
+   // stampaj racun
+   st_pf_traka()
 
-isPfTraka(@lPfTraka)
-
-if !lSilent .and. Pitanje(,"Stampati poresku fakturu za zadnji racun (D/N)?", "D") == "N"
-	return
-endif
-
-drn_open()
-
-if !lPfTraka
-	if !get_kup_data()
-		return
-	endif
-endif
-
-st_pf_traka()
-
-if !lPfTraka 
-	AzurKupData(gIdPos)
-endif
-
-return
+   RETURN
 
 
-function read_kup_data()
-local cKNaziv
-cKNaziv := get_dtxt_opis("K01")
-if cKNaziv == "-"
-	return .f.
-endif
-return .t.
+FUNCTION f7_pf_traka( lSilent )
+
+   LOCAL lPfTraka
+
+   IF lSilent == nil
+      lSilent := .F.
+   ENDIF
+
+   isPfTraka( @lPfTraka )
+
+   IF !lSilent .AND. Pitanje(, "Stampati poresku fakturu za zadnji racun (D/N)?", "D" ) == "N"
+      RETURN
+   ENDIF
+
+   drn_open()
+
+   IF !lPfTraka
+      IF !get_kup_data()
+         RETURN
+      ENDIF
+   ENDIF
+
+   st_pf_traka()
+
+   IF !lPfTraka
+      AzurKupData( gIdPos )
+   ENDIF
+
+   RETURN
 
 
-function get_kup_data()
-local cKNaziv := SPACE(35)
-local cKAdres := SPACE(35)
-local cKIdBroj := SPACE(13)
-local cUnosOk := "D"
-local dDatIsp := DATE()
-local GetList:={}
-local nMX
-local nMY
+FUNCTION read_kup_data()
 
-SET CURSOR ON
-if read_kup_data()
-	cKNaziv:=PADR(get_dtxt_opis("K01"), 35)
-	cKAdres:=PADR(get_dtxt_opis("K02"), 35)
-	cKIdBroj:=PADR(get_dtxt_opis("K03"), 13)
-	dDatIsp:= get_drn_datum_isporuke()
-	if dDatIsp == nil
-		dDatIsp := CTOD("")
-	endif
-endif
+   LOCAL cKNaziv
 
-Box(,7, 65)
+   cKNaziv := get_dtxt_opis( "K01" )
+   IF cKNaziv == "-"
+      RETURN .F.
+   ENDIF
+
+   RETURN .T.
+
+
+FUNCTION get_kup_data()
+
+   LOCAL cKNaziv := Space( 35 )
+   LOCAL cKAdres := Space( 35 )
+   LOCAL cKIdBroj := Space( 13 )
+   LOCAL cUnosOk := "D"
+   LOCAL dDatIsp := Date()
+   LOCAL GetList := {}
+   LOCAL nMX
+   LOCAL nMY
+
+   SET CURSOR ON
+   IF read_kup_data()
+      cKNaziv := PadR( get_dtxt_opis( "K01" ), 35 )
+      cKAdres := PadR( get_dtxt_opis( "K02" ), 35 )
+      cKIdBroj := PadR( get_dtxt_opis( "K03" ), 13 )
+      dDatIsp := get_drn_datum_isporuke()
+      IF dDatIsp == nil
+         dDatIsp := CToD( "" )
+      ENDIF
+   ENDIF
+
+   Box(, 7, 65 )
 	
-	nMX := m_x
-	nMY := m_y
+   nMX := m_x
+   nMY := m_y
 	
-	@ 1+m_x, 2+m_y SAY "Podaci o kupcu:" COLOR "I"
-	@ 2+m_x, 2+m_y SAY8 "Naziv (pravnog ili fizičkog lica):" GET cKNaziv VALID !Empty(cKNaziv) .and. get_arr_kup_data(@cKNaziv, @cKAdres, @cKIdBroj) PICT "@S20"
-	read
+   @ 1 + m_x, 2 + m_y SAY "Podaci o kupcu:" COLOR "I"
+   @ 2 + m_x, 2 + m_y SAY8 "Naziv (pravnog ili fizičkog lica):" GET cKNaziv VALID !Empty( cKNaziv ) .AND. get_arr_kup_data( @cKNaziv, @cKAdres, @cKIdBroj ) PICT "@S20"
+   READ
 	
-	m_x := nMX
-	m_y := nMY
+   m_x := nMX
+   m_y := nMY
 	
-	@ 3+m_x, 2+m_y SAY "Adresa:" GET cKAdres VALID !Empty(cKAdres)
-	@ 4+m_x, 2+m_y SAY "Identifikacijski broj:" GET cKIdBroj VALID !Empty(cKIdBroj)
-	@ 5+m_x, 2+m_y SAY "Datum isporuke " GET dDatIsp
+   @ 3 + m_x, 2 + m_y SAY "Adresa:" GET cKAdres VALID !Empty( cKAdres )
+   @ 4 + m_x, 2 + m_y SAY "Identifikacijski broj:" GET cKIdBroj VALID !Empty( cKIdBroj )
+   @ 5 + m_x, 2 + m_y SAY "Datum isporuke " GET dDatIsp
 
-	 @ 7+m_x, 2+m_y SAY "Unos podataka ispravan (D/N)?" GET cUnosOk VALID cUnosOk $ "DN" PICT "@!"
-	read
+   @ 7 + m_x, 2 + m_y SAY "Unos podataka ispravan (D/N)?" GET cUnosOk VALID cUnosOk $ "DN" PICT "@!"
+   READ
 	
-BoxC()
+   BoxC()
 
-if (cUnosOk <> "D") .or. (LASTKEY()==K_ESC)
-	return .f.
-endif
+   IF ( cUnosOk <> "D" ) .OR. ( LastKey() == K_ESC )
+      RETURN .F.
+   ENDIF
 	
-//dodaj parametre u drntext
-add_drntext("K01", cKNaziv)
-add_drntext("K02", cKAdres)
-add_drntext("K03", cKIdBroj)
-add_drn_datum_isporuke(dDatIsp)
+   // dodaj parametre u drntext
+   add_drntext( "K01", cKNaziv )
+   add_drntext( "K02", cKAdres )
+   add_drntext( "K03", cKIdBroj )
+   add_drn_datum_isporuke( dDatIsp )
 
-return .t.
+   RETURN .T.
 
-function pf_traka_line(nRazmak)
-local cPom
-cPom := SPACE(nRazmak)
-cPom += REPLICATE("-", LEN_KOLICINA) + " " 
-cPom += REPLICATE("-", LEN_CIJENA) + " " 
-cPom += REPLICATE("-", LEN_VRIJEDNOST)
-return cPom
+FUNCTION pf_traka_line( nRazmak )
 
-function st_pf_traka()
-local cBrDok
-local dDatDok
-local aRNaz
-local cArtikal
-local cRazmak := SPACE(1)
-local cLine
-local lViseRacuna := .f.
-local nPFeed
-local cSjeTraSkv
-local cOtvLadSkv
-local nLeft1 := 22
-local nRedukcija
-local nSetCijene
-local lStRobaId
+   LOCAL cPom
 
-STARTPRINTPORT CRET gLocPort, SPACE(5)
+   cPom := Space( nRazmak )
+   cPom += Replicate( "-", LEN_KOLICINA ) + " "
+   cPom += Replicate( "-", LEN_CIJENA ) + " "
+   cPom += Replicate( "-", LEN_VRIJEDNOST )
 
-cLine := pf_traka_line(1)
+   RETURN cPom
 
-get_rb_vars(@nPFeed, @cOtvLadSkv, @cSjeTraSkv, @nSetCijene, @lStRobaId, @nRedukcija)
+FUNCTION st_pf_traka()
 
-hd_rb_traka(nRedukcija)
+   LOCAL cBrDok
+   LOCAL dDatDok
+   LOCAL aRNaz
+   LOCAL cArtikal
+   LOCAL cRazmak := Space( 1 )
+   LOCAL cLine
+   LOCAL lViseRacuna := .F.
+   LOCAL nPFeed
+   LOCAL cSjeTraSkv
+   LOCAL cOtvLadSkv
+   LOCAL nLeft1 := 22
+   LOCAL nRedukcija
+   LOCAL nSetCijene
+   LOCAL lStRobaId
 
-kup_rb_traka()
+   STARTPRINTPORT CRET gLocPort, Space( 5 )
 
-select drn
-go top
-// ako postoji vise zapisa onda ima vise racuna
-if RecCount2() > 1
-	lViseRacuna := .t.
-endif
+   cLine := pf_traka_line( 1 )
 
-select rn
-set order to tag "1"
-go top
+   get_rb_vars( @nPFeed, @cOtvLadSkv, @cSjeTraSkv, @nSetCijene, @lStRobaId, @nRedukcija )
 
-// mjesto i datum racuna
-? cRazmak + drn->vrijeme + PADL(get_rn_mjesto() + "," + DToC(drn->datdok), 32)
-? cRazmak + "Datum isporuke: " + DTOC(drn->datisp)
+   hd_rb_traka( nRedukcija )
 
-? cLine
+   kup_rb_traka()
 
-// broj racuna
-? SPACE(12) + "FAKTURA br." + ALLTRIM(drn->brdok) 
+   SELECT drn
+   GO TOP
+   // ako postoji vise zapisa onda ima vise racuna
+   IF RecCount2() > 1
+      lViseRacuna := .T.
+   ENDIF
 
-? cLine
+   SELECT rn
+   SET ORDER TO TAG "1"
+   GO TOP
 
-// opis kolona
-? " R.br   Roba (sif - naziv, jmj)"
-? cLine
-? cRazmak + PADC("kolicina", LEN_KOLICINA)  + " " + PADC("C.bez PDV", LEN_CIJENA) + PADC(" Uk b.PDV  ", LEN_VRIJEDNOST)
-if ROUND(drn->ukpopust,3) <> 0
-? cRazmak + PADC("-popust", LEN_KOLICINA) + PADC("C.2.bez PDV", LEN_CIJENA)
-endif
-? cLine
+   // mjesto i datum racuna
+   ? cRazmak + drn->vrijeme + PadL( get_rn_mjesto() + "," + DToC( drn->datdok ), 32 )
+   ? cRazmak + "Datum isporuke: " + DToC( drn->datisp )
 
-select rn
+   ? cLine
 
-// data
-do while !EOF()
+   // broj racuna
+   ? Space( 12 ) + "FAKTURA br." + AllTrim( drn->brdok )
 
-	// rbr
-	? cRazmak + rn->rbr
+   ? cLine
 
-	// artikal
-	cArtikal := ALLTRIM(field->idroba) + " - " + ALLTRIM(field->robanaz) +  " (" + ALLTRIM(rn->jmj) + ")"
-	aRNaz := SjeciStr(cArtikal, 34)
-	for i:=1 to LEN(aRNaz)
-		if i == 1
-			?? cRazmak + aRNaz[i]
-		else
-			? SPACE(5) + aRNaz[i]
-		endif
-	next
+   // opis kolona
+   ? " R.br   Roba (sif - naziv, jmj)"
+   ? cLine
+   ? cRazmak + PadC( "kolicina", LEN_KOLICINA )  + " " + PadC( "C.bez PDV", LEN_CIJENA ) + PadC( " Uk b.PDV  ", LEN_VRIJEDNOST )
+   IF Round( drn->ukpopust, 3 ) <> 0
+      ? cRazmak + PadC( "-popust", LEN_KOLICINA ) + PadC( "C.2.bez PDV", LEN_CIJENA )
+   ENDIF
+   ? cLine
 
-	// kolicina, jmj, cjena sa pdv
-	? cRazmak + STR(rn->kolicina, LEN_KOLICINA, DEC_KOLICINA), STR(rn->cjenbpdv, LEN_CIJENA, DEC_CIJENA)
-	
-	
-	// ukupna vrijednost bez pdv-a je uvijek bez popusta iskazana
-	// jer se popust na dnu iskazuje
-	?? " "
-	nPom:= rn->cjenbpdv * rn->kolicina
-	?? STR( nPom,  LEN_VRIJEDNOST, DEC_VRIJEDNOST)
+   SELECT rn
 
-	// da li postoji popust
-	if Round(rn->cjen2pdv, 3) <> 0
-		? cRazmak 
-		?? PADL("-" + STR(rn->popust, 3) + "%", LEN_KOLICINA)
-		?? " "
-		?? STR(rn->cjen2bpdv, LEN_CIJENA, DEC_CIJENA)
+   // data
+   DO WHILE !Eof()
 
-	endif
+      // rbr
+      ? cRazmak + rn->rbr
+
+      // artikal
+      cArtikal := AllTrim( field->idroba ) + " - " + AllTrim( field->robanaz ) +  " (" + AllTrim( rn->jmj ) + ")"
+      aRNaz := SjeciStr( cArtikal, 34 )
+      FOR i := 1 TO Len( aRNaz )
+         IF i == 1
+            ?? cRazmak + aRNaz[ i ]
+         ELSE
+            ? Space( 5 ) + aRNaz[ i ]
+         ENDIF
+      NEXT
+
+      // kolicina, jmj, cjena sa pdv
+      ? cRazmak + Str( rn->kolicina, LEN_KOLICINA, DEC_KOLICINA ), Str( rn->cjenbpdv, LEN_CIJENA, DEC_CIJENA )
 	
 	
-	skip
-enddo
+      // ukupna vrijednost bez pdv-a je uvijek bez popusta iskazana
+      // jer se popust na dnu iskazuje
+      ?? " "
+      nPom := rn->cjenbpdv * rn->kolicina
+      ?? Str( nPom,  LEN_VRIJEDNOST, DEC_VRIJEDNOST )
 
-? cLine
+      // da li postoji popust
+      IF Round( rn->cjen2pdv, 3 ) <> 0
+         ? cRazmak
+         ?? PadL( "-" + Str( rn->popust, 3 ) + "%", LEN_KOLICINA )
+         ?? " "
+         ?? Str( rn->cjen2bpdv, LEN_CIJENA, DEC_CIJENA )
 
-? cRazmak + PADL("Ukupno bez PDV (KM):", nLeft1), STR(drn->ukbezpdv, LEN_VRIJEDNOST, DEC_VRIJEDNOST)
-// dodaj i popust
-if Round(drn->ukpopust, 2) <> 0
-	? cRazmak + PADL("Popust (KM):", nLeft1), STR(drn->ukpopust, LEN_VRIJEDNOST, DEC_VRIJEDNOST)
-	? cRazmak + PADL("Uk.bez.PDV-popust (KM):", nLeft1), STR(drn->ukbpdvpop, LEN_VRIJEDNOST, DEC_VRIJEDNOST)
-endif
-? cRazmak + PADL("PDV 17% :", nLeft1), STR(drn->ukpdv, LEN_VRIJEDNOST, DEC_VRIJEDNOST)
+      ENDIF
+	
+	
+      SKIP
+   ENDDO
 
-if ROUND(drn->zaokr, 2) <> 0
-	? cRazmak + PADL("zaokruzenje (+/-):", nLeft1), str(ABS(drn->zaokr), LEN_VRIJEDNOST, DEC_VRIJEDNOST )
-endif
+   ? cLine
 
-? cLine
-? cRazmak + PADL("UKUPNO ZA NAPLATU (KM):", nLeft1), PADL(TRANSFORM(drn->ukupno,"******9."+REPLICATE("9", DEC_VRIJEDNOST)), LEN_VRIJEDNOST)
-? cLine
+   ? cRazmak + PadL( "Ukupno bez PDV (KM):", nLeft1 ), Str( drn->ukbezpdv, LEN_VRIJEDNOST, DEC_VRIJEDNOST )
+   // dodaj i popust
+   IF Round( drn->ukpopust, 2 ) <> 0
+      ? cRazmak + PadL( "Popust (KM):", nLeft1 ), Str( drn->ukpopust, LEN_VRIJEDNOST, DEC_VRIJEDNOST )
+      ? cRazmak + PadL( "Uk.bez.PDV-popust (KM):", nLeft1 ), Str( drn->ukbpdvpop, LEN_VRIJEDNOST, DEC_VRIJEDNOST )
+   ENDIF
+   ? cRazmak + PadL( "PDV 17% :", nLeft1 ), Str( drn->ukpdv, LEN_VRIJEDNOST, DEC_VRIJEDNOST )
 
-ft_rb_traka()
+   IF Round( drn->zaokr, 2 ) <> 0
+      ? cRazmak + PadL( "zaokruzenje (+/-):", nLeft1 ), Str( Abs( drn->zaokr ), LEN_VRIJEDNOST, DEC_VRIJEDNOST )
+   ENDIF
 
-?
-? SPACE(3) + "Fakturisao: ______________________"
-?
+   ? cLine
+   ? cRazmak + PadL( "UKUPNO ZA NAPLATU (KM):", nLeft1 ), PadL( Transform( drn->ukupno, "******9." + Replicate( "9", DEC_VRIJEDNOST ) ), LEN_VRIJEDNOST )
+   ? cLine
 
-for i:=1 to nPFeed
-	?
-next
+   ft_rb_traka()
 
-sjeci_traku(cSjeTraSkv)
+   ?
+   ? Space( 3 ) + "Fakturisao: ______________________"
+   ?
 
-END PRN2 13
+   FOR i := 1 TO nPFeed
+      ?
+   NEXT
 
-return
+   sjeci_traku( cSjeTraSkv )
+
+   ENDPRN2 13
+
+   RETURN
 
 
 
-function kup_rb_traka()
-local cKNaziv
-local cKAdres
-local cKIdBroj
-local cRazmak := SPACE(2)
-local cDokVeza := ""
-local i
+FUNCTION kup_rb_traka()
 
-cKNaziv := get_dtxt_opis("K01")
-cKAdres := get_dtxt_opis("K02")
-cKIdBroj := get_dtxt_opis("K03")
-cDokVeza := get_dtxt_opis("D11")
+   LOCAL cKNaziv
+   LOCAL cKAdres
+   LOCAL cKIdBroj
+   LOCAL cRazmak := Space( 2 )
+   LOCAL cDokVeza := ""
+   LOCAL i
 
-? cRazmak + "Kupac:"
-? cRazmak + cKNaziv
-? cRazmak + cKAdres 
-? cRazmak + "Ident.br:" + cRazmak + cKIdBroj
+   cKNaziv := get_dtxt_opis( "K01" )
+   cKAdres := get_dtxt_opis( "K02" )
+   cKIdBroj := get_dtxt_opis( "K03" )
+   cDokVeza := get_dtxt_opis( "D11" )
 
-if !EMPTY(cDokVeza) .and. ALLTRIM(cDokVeza) <> "-"
+   ? cRazmak + "Kupac:"
+   ? cRazmak + cKNaziv
+   ? cRazmak + cKAdres
+   ? cRazmak + "Ident.br:" + cRazmak + cKIdBroj
 
-	cDokVeza := "veza: " + ALLTRIM( cDokVeza )
+   IF !Empty( cDokVeza ) .AND. AllTrim( cDokVeza ) <> "-"
 
-	aTmp := SjeciStr( cDokVeza, 34 )
+      cDokVeza := "veza: " + AllTrim( cDokVeza )
 
-	for i:=1 to LEN( aTmp )
-		? cRazmak + aTmp[ i ]
-	next
+      aTmp := SjeciStr( cDokVeza, 34 )
 
-endif
+      FOR i := 1 TO Len( aTmp )
+         ? cRazmak + aTmp[ i ]
+      NEXT
 
-?
+   ENDIF
 
-return
+   ?
+
+   RETURN
 
 
 // vraca matricu sa dostupnim kupcima koji pocinju sa cKupac
-function get_arr_kup_data(cKupac, cKAdr, cKIdBroj)
-local aKupci:={}
-local nKupIzbor
+FUNCTION get_arr_kup_data( cKupac, cKAdr, cKIdBroj )
 
-if RIGHT(ALLTRIM(cKupac), 2) <> ".."
-	return .t.
-endif
+   LOCAL aKupci := {}
+   LOCAL nKupIzbor
 
-aKupci := fnd_kup_data(cKupac)
+   IF Right( AllTrim( cKupac ), 2 ) <> ".."
+      RETURN .T.
+   ENDIF
 
-if LEN(aKupci) > 0
+   aKupci := fnd_kup_data( cKupac )
+
+   IF Len( aKupci ) > 0
 	
-	nKupIzbor := list_kup_data(aKupci)
+      nKupIzbor := list_kup_data( aKupci )
 	
-	// odabrano je ESC
-	if nKupIzbor == nil
-		return .f.
-	endif
+      // odabrano je ESC
+      IF nKupIzbor == nil
+         RETURN .F.
+      ENDIF
 
-	cKupac := aKupci[nKupIzbor, 1]
-	cKAdr := aKupci[nKupIzbor, 2]
-	cKIdBroj := aKupci[nKupIzbor, 3]
+      cKupac := aKupci[ nKupIzbor, 1 ]
+      cKAdr := aKupci[ nKupIzbor, 2 ]
+      cKIdBroj := aKupci[ nKupIzbor, 3 ]
 	
-	return .t.
-else
-	MsgBeep("Trazeni pojam ne postoji u tabeli kupaca !")
-endif
+      RETURN .T.
+   ELSE
+      MsgBeep( "Trazeni pojam ne postoji u tabeli kupaca !" )
+   ENDIF
 
-return .f.
+   RETURN .F.
 
 
-function list_kup_data(aKupci)
-local nIzbor
-local cPom
-private GetList:={}
-private Izbor := 1
-private opc:={}
-private opcexe:={}
+FUNCTION list_kup_data( aKupci )
 
-for i:=1 to LEN(aKupci)
-	cPom := STR(i, 2) + ". " + TRIM(aKupci[i, 1]) + " - " + TRIM(aKupci[i, 2]) 
-	cPom := PADR(cPom, 50)
-	AADD( opc, cPom )
-	AADD( opcexe, {|| nIzbor := Izbor, Izbor:=0} )
-next
+   LOCAL nIzbor
+   LOCAL cPom
+   PRIVATE GetList := {}
+   PRIVATE Izbor := 1
+   PRIVATE opc := {}
+   PRIVATE opcexe := {}
 
-Izbor:=1
-Menu_SC("kup")
+   FOR i := 1 TO Len( aKupci )
+      cPom := Str( i, 2 ) + ". " + Trim( aKupci[ i, 1 ] ) + " - " + Trim( aKupci[ i, 2 ] )
+      cPom := PadR( cPom, 50 )
+      AAdd( opc, cPom )
+      AAdd( opcexe, {|| nIzbor := Izbor, Izbor := 0 } )
+   NEXT
 
-return nIzbor
+   Izbor := 1
+   Menu_SC( "kup" )
 
+   RETURN nIzbor

@@ -182,8 +182,10 @@
                                      ;endif
 
 #command END PRN2 <x> => Eprint2(<x>)
+#command ENDPRN2 <x> => Eprint2(<x>)
 
 #command END PRN2     => Eprint2()
+#command ENDPRN2     => Eprint2()
 
 
 #command END PRINT => f18_end_print(NIL, __print_opt)

@@ -11,6 +11,7 @@
 
 #include "fmk.ch"
 
+static s_lInSync := .F.
 
 // ---------------------------------------------------------
 // napuni tablu sa servera
@@ -31,6 +32,11 @@ if f18_session()['id'] > 1
     log_write("full_synchro u child thread se ne radi, preskocena tabela: "  + dbf_table, 3 )  
     return .f.
 endif
+
+if s_lInSync
+    RETURN
+endif
+s_lInSync := .T.
 
 if step_size == NIL
     step_size := 20000
@@ -118,5 +124,6 @@ USE
 
 log_write( "END full_synchro tabela: " + dbf_table +  " cnt: " + ALLTRIM(STR(_count)), 3 )
 
+s_lInSync := .F.
 
 return .t.

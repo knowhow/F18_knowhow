@@ -32,10 +32,9 @@ PIC_KOLICINA(PADL(ALLTRIM(RIGHT(PicKol, LEN_KOLICINA())), LEN_KOLICINA(), "9"))
 PIC_VRIJEDNOST(PADL(ALLTRIM(RIGHT(PicDem, LEN_VRIJEDNOST())), LEN_VRIJEDNOST(), "9"))
 PIC_CIJENA(PADL(ALLTRIM(RIGHT(PicCDem, LEN_CIJENA())), LEN_CIJENA(), "9"))
 
-
 nDuzStrKorekcija := 0
 
-drn_open()
+close_open_racun_tbl()
 
 select drn
 go top
@@ -46,7 +45,7 @@ LEN_UKUPNO(80)
 otpr_mp(lStartPrint)
 
 return
-*}
+
 
 
 // stampa otpremnica maloprodaja
@@ -416,7 +415,7 @@ local nPRowsDelta
 
 nPRowsDelta := prow()
 
-drn_open()
+close_open_racun_tbl()
 select drn
 go top
 

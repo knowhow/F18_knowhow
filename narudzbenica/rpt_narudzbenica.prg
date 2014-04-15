@@ -47,7 +47,7 @@ FUNCTION print_narudzbenica()
    PIC_VRIJEDNOST( PadL( AllTrim( Right( PicDem, LEN_VRIJEDNOST() ) ), LEN_VRIJEDNOST(), "9" ) )
    PIC_CIJENA( PadL( AllTrim( Right( PicCDem, LEN_CIJENA() ) ), LEN_CIJENA(), "9" ) )
 
-   drn_open()
+   close_open_racun_tbl()
 
    SELECT drn
    GO TOP
@@ -384,7 +384,7 @@ STATIC FUNCTION nar_header()
 
    nPRowsDelta := PRow()
 
-   drn_open()
+   close_open_racun_tbl()
    SELECT drn
    GO TOP
 

@@ -421,7 +421,7 @@ local cBrNar
 local cBrOtp
 local cFiscal
 
-drn_open()
+close_open_racun_tbl()
 select drn
 go top
 

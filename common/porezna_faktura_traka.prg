@@ -23,8 +23,7 @@ STATIC DEC_VRIJEDNOST := 2
 
 FUNCTION pf_traka_print()
 
-   drn_open()
-   // stampaj racun
+   close_open_racun_tbl()
    st_pf_traka()
 
    RETURN
@@ -44,7 +43,7 @@ FUNCTION f7_pf_traka( lSilent )
       RETURN
    ENDIF
 
-   drn_open()
+   close_open_racun_tbl()
 
    IF !lPfTraka
       IF !get_kup_data()

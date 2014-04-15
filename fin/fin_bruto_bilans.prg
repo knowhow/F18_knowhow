@@ -845,11 +845,6 @@ METHOD FinBrutoBilans:print_txt()
       _klasa := Left( field->idkonto, _kl_len )
       __klasa := _set_sql_record_to_hash( "fmk.konto", _klasa )
 
-      IF __klasa == NIL
-         MsgBeep( "Ne postoji šifra klase " + _klasa + " u šifrarniku konta !" )
-         // return Self
-      ENDIF
-
       DO WHILE !Eof() .AND. Left( field->idkonto, _kl_len ) == _klasa
 
          _u_ps_dug := _u_ps_pot := _u_kum_pot := _u_kum_dug := _u_tek_dug := _u_tek_pot := _u_sld_dug := _u_sld_pot := 0
@@ -857,20 +852,13 @@ METHOD FinBrutoBilans:print_txt()
          _sint := Left( field->idkonto, _sint_len )
          __sint := _set_sql_record_to_hash( "fmk.konto", _sint )
 
-         IF __sint == NIL
-            MsgBeep( "Ne postoji šifra sintetike " + _sint + " u šifrarniku konta !" )
-            // return Self
-         ENDIF
-
          DO WHILE !Eof() .AND. Left( field->idkonto, _sint_len ) == _sint
 
-            // da li treba prikazivati ?
             IF !::params[ "saldo_nula" ] .AND. Round( field->kum_dug - field->kum_pot, 2 ) == 0
                SKIP
                LOOP
             ENDIF
 
-            // nova stranica i zaglavlje...
             IF PRow() > ::txt_rpt_len
                FF
                ::zaglavlje_txt()

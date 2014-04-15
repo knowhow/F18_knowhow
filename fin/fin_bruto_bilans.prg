@@ -893,7 +893,7 @@ METHOD FinBrutoBilans:print_txt()
                   IF __konto <> NIL
                      _opis := __konto[ "naz" ]
                   ELSE
-                     _opis := hb_utf8tostr( "Nepostojeći konto " ) + ALLTRIM( field->idkonto ) + " ERR"
+                     _opis := AllTrim( field->idkonto ) + " - " + hb_Utf8ToStr( "nepostojeći konto - ERR" )
                   ENDIF
                ENDIF
 

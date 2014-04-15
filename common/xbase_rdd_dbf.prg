@@ -24,6 +24,62 @@ FUNCTION f18_ime_dbf( alias )
 
    RETURN cFullName
 
+/*
+   uzima sva polja iz tekuceg dbf zapisa
+*/
+function dbf_get_rec()
+local _ime_polja, _i, _struct
+local _ret := hb_hash()
+
+_struct := DBSTRUCT()
+for _i := 1 to LEN(_struct)
+
+  _ime_polja := _struct[_i, 1]
+   
+  if !("#"+ _ime_polja + "#" $ "#BRISANO#_OID_#_COMMIT_#")
+      _ret[ LOWER(_ime_polja) ] := EVAL( FIELDBLOCK(_ime_polja) )
+  endif
+
+next
+
+return _ret
+
+
+/*
+     is_dbf_struktura_polja_identicna( "racun", "BRDOK", 8, 0)
+
+    => .T. ako je racun, brdok C(8, 0)
+
+    => .F.  ako je racun.brdok npr. C(6,0)
+    => .F.  ako je racun.brdok polje ne postoji
+*/
+FUNCTION is_dbf_struktura_polja_identicna( cTable, cPolje, nLen, nWidth )
+
+  my_use( cTable )
+
+  IF FIELDPOS( cPolje ) == 0
+      USE
+      RETURN .F.
+  ENDIF
+
+  SWITCH ValType( cPolje )
+
+     CASE "C"
+          IF LEN( EVAL( FIELDBLOCK( cPolje ) ) ) != nLen
+              USE
+              RETURN .F.
+          ENDIF
+          EXIT
+     OTHERWISE
+          USE
+          RaiseError( "implementirano samo za C polja" )
+
+  ENDSWITCH
+
+  USE
+  RETURN .T.
+ 
+
 FUNCTION my_reccount()
    RETURN RECCOUNT()
 

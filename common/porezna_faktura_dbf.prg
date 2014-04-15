@@ -33,16 +33,24 @@ FUNCTION create_porezna_faktura_temp_dbfs()
    LOCAL aDRTxtField := {}
 
 
+   get_drn_fields( @aDRnField )
    IF !File( f18_ime_dbf( cDRnName ) )
-      // drn specifikacija polja
-      get_drn_fields( @aDRnField )
       DbCreate2( cDRnName, aDRnField )
+   ELSE
+      IF !is_dbf_struktura_polja_identicna( cDRnName, "BRDOK", 8, 0 )
+          ferase_dbf( cDRnName, .T. )
+          DbCreate2( cDRnName, aDRnField )
+      ENDIF
    ENDIF
 
+   get_rn_fields( @aRnField )
    IF !File( f18_ime_dbf( cRnName ) )
-      // rn specifikacija polja
-      get_rn_fields( @aRnField )
       DbCreate2( cRnName, aRnField )
+   ELSE
+      IF !is_dbf_struktura_polja_identicna( cRnName, "BRDOK", 8, 0 )
+          ferase_dbf( cRnName, .T. )
+          DbCreate2( cRnName, aRnField )
+      ENDIF
    ENDIF
 
    IF !File( f18_ime_dbf( cDRTxtName ) )
@@ -50,11 +58,9 @@ FUNCTION create_porezna_faktura_temp_dbfs()
       DbCreate2( cDRTxtName, aDRTxtField )
    ENDIF
 
-   // kreiraj indexe
    CREATE_INDEX( "1", "brdok+DToS(datdok)", "drn" )
    CREATE_INDEX( "1", "brdok+rbr+podbr", "rn" )
    CREATE_INDEX( "IDROBA", "idroba", "rn" )
-
    CREATE_INDEX( "1", "tip", "drntext" )
 
    RETURN
@@ -68,8 +74,6 @@ FUNCTION get_drn_fields( aArr )
    AAdd( aArr, { "DATISP",  "D",  8, 0 } )
    AAdd( aArr, { "VRIJEME", "C",  5, 0 } )
    AAdd( aArr, { "ZAOKR",   "N", 10, 5 } )
-
-   // ukupno za stavku
    AAdd( aArr, { "UKBEZPDV", "N", 15, 5 } )
    AAdd( aArr, { "UKPOPUST", "N", 15, 5 } )
    AAdd( aArr, { "UKPOPTP", "N", 15, 5 } )
@@ -77,8 +81,6 @@ FUNCTION get_drn_fields( aArr )
    AAdd( aArr, { "UKPDV",   "N", 15, 5 } )
    AAdd( aArr, { "UKUPNO",  "N", 15, 5 } )
    AAdd( aArr, { "UKKOL",   "N", 14, 2 } )
-
-
    AAdd( aArr, { "CSUMRN",  "N",  6, 0 } )
 
    RETURN
@@ -174,46 +176,8 @@ FUNCTION add_drn( cBrDok, dDatDok, dDatVal, dDatIsp, cTime, nUBPDV, nUPopust, nU
    REPLACE zaokr WITH nZaokr
    REPLACE ukkol WITH nUkKol
 
-   IF FieldPos( "UKPOPTP" ) <> 0
-      // popust na teret prodavca
-      REPLACE ukpoptp WITH nUPopTp
-   ENDIF
-
-   IF glUgost
-
-      // poseban porez na potrosnju
-      IF ( aPP <> nil )
-         // primjer matrice za 3 stope poreza 5%, 7%, 10%
-         //
-         // aPP := { { 5, 7, 10}  , { 333.22, 15.19, 200.3 } }
-         FOR cnt1 := 1 TO Len( aPP[ 1 ] )
-
-            IF cnt1 == 1
-               REPLACE stpp1 WITH aPP[ 1, 1 ],;
-                  ukpp1 WITH aPP[ 2, 1 ]
-            ENDIF
-            IF cnt1 == 2
-               REPLACE stpp2 WITH aPP[ 1, 2 ],;
-                  ukpp2 WITH aPP[ 2, 2 ]
-            ENDIF
-            IF cnt1 == 3
-               REPLACE stpp3 WITH aPP[ 1, 3 ],;
-                  ukpp3 WITH aPP[ 2, 3 ]
-            ENDIF
-            IF cnt1 == 4
-               REPLACE stpp4 WITH aPP[ 1, 4 ],;
-                  ukpp4 WITH aPP[ 2, 4 ]
-            ENDIF
-            IF cnt1 == 5
-               REPLACE stpp5 WITH aPP[ 1, 5 ],;
-                  ukpp5 WITH aPP[ 2, 5 ]
-            ENDIF
-
-         NEXT
-
-      ENDIF
-
-   ENDIF
+   // popust na teret prodavca
+   REPLACE ukpoptp WITH nUPopTp
 
    RETURN
 

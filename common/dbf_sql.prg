@@ -11,26 +11,6 @@
 
 #include "fmk.ch"
 
-// --------------------------------------
-// uzima sva polja iz tekuceg dbf zapisa
-// --------------------------------------
-function dbf_get_rec()
-local _ime_polja, _i, _struct
-local _ret := hb_hash()
-
-_struct := DBSTRUCT()
-for _i := 1 to LEN(_struct)
-
-  _ime_polja := _struct[_i, 1]
-   
-  if !("#"+ _ime_polja + "#" $ "#BRISANO#_OID_#_COMMIT_#")
-      _ret[ LOWER(_ime_polja) ] := EVAL( FIELDBLOCK(_ime_polja) )
-  endif
-
-next
-
-return _ret
-
 // ------------------------------
 // no_lock - ne zakljucavaj
 // ------------------------------

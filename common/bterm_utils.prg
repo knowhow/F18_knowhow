@@ -193,3 +193,5 @@ FUNCTION TempArtExist( lSifraDob )
    ENDDO
 
    RETURN aRet
+
+

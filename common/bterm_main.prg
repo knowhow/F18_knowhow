@@ -16,7 +16,7 @@
 // -------------------------------------------------------
 // import barcode terminal data
 // -------------------------------------------------------
-FUNCTION iBTerm_data( cI_File )
+FUNCTION import_BTerm_data( cI_File )
 
    LOCAL cPath := ""
    LOCAL aError := {}
@@ -24,7 +24,7 @@ FUNCTION iBTerm_data( cI_File )
 
    cI_File := ""
 
-   IF !_gExpPath( @cPath )
+   IF !get_export_path( @cPath )
       RETURN 0
    ENDIF
 
@@ -32,9 +32,9 @@ FUNCTION iBTerm_data( cI_File )
       RETURN 0
    ENDIF
 
-   Txt2TTerm( cI_File )
+   bterm_txt_to_tbl( cI_File )
 
-   aError := _cBarkod()
+   aError := check_barkod_import()
 
    IF Len( aError ) > 0
       RETURN 0
@@ -46,7 +46,7 @@ FUNCTION iBTerm_data( cI_File )
 // -----------------------------------------------------
 // Vraca podesenje putanje do exportovanih fajlova
 // -----------------------------------------------------
-STATIC FUNCTION _gExpPath( path )
+STATIC FUNCTION get_export_path( path )
 
    LOCAL _path
 
@@ -80,7 +80,7 @@ STATIC FUNCTION _gExpPath( path )
 // ---------------------------------------
 // provjeri barkod
 // ---------------------------------------
-STATIC FUNCTION _cBarkod()
+STATIC FUNCTION check_barkod_import()
 
    LOCAL aErr := {}
    LOCAL nScan
@@ -129,9 +129,9 @@ STATIC FUNCTION _cBarkod()
 // ------------------------------------------------
 // generise txt fajl sa artiklima za terminal...
 // ------------------------------------------------
-FUNCTION eBTerm_data()
+FUNCTION export_BTerm_data()
 
-   LOCAL aStruct := _gAStruct()
+   LOCAL aStruct := get_article_tbl_struct()
    LOCAL nTArea := Select()
    LOCAL cSeparator := ";"
    LOCAL aData := {}
@@ -149,7 +149,7 @@ FUNCTION eBTerm_data()
    // [3] kolicina
    // [4] cijena
 
-   IF !_gExpPath( @cFilePath )
+   IF !get_export_path( @cFilePath )
       RETURN 0
    ENDIF
 
@@ -212,7 +212,7 @@ FUNCTION eBTerm_data()
 // ----------------------------------------
 // artikli.txt struktura txt fajla
 // ----------------------------------------
-STATIC FUNCTION _gAStruct()
+STATIC FUNCTION get_article_tbl_struct()
 
    LOCAL aRet := {}
 

@@ -15,7 +15,7 @@
 // -------------------------------------------------------
 // Setuj matricu sa poljima tabele dokumenata TERM
 // -------------------------------------------------------
-STATIC FUNCTION _sTblTerm( aDbf )
+STATIC FUNCTION get_term_tbl_struct( aDbf )
 
    AAdd( aDbf, { "barkod",  "C", 13, 0 } )
    AAdd( aDbf, { "idroba",  "C", 10, 0 } )
@@ -34,7 +34,7 @@ STATIC FUNCTION _sTblTerm( aDbf )
 // "cTextFile" u tabelu
 // - param cTxtFile - txt fajl za import
 // --------------------------------------------------------
-FUNCTION Txt2TTerm( cTxtFile )
+FUNCTION bterm_txt_to_tbl( cTxtFile )
 
    LOCAL cDelimiter := ";"
    LOCAL aDbf := {}
@@ -46,10 +46,10 @@ FUNCTION Txt2TTerm( cTxtFile )
    my_close_all_dbf()
 
    // polja tabele TEMP.DBF
-   _sTblTerm( @aDbf )
+   get_term_tbl_struct( @aDbf )
 
    // kreiraj tabelu
-   _creTemp( aDbf, .T. )
+   cre_temp_tbl( aDbf, .T. )
 
    IF !File( my_home() + "temp.dbf" )
       MsgBeep( "Ne mogu kreirati fajl TEMP.DBF!" )
@@ -131,7 +131,7 @@ FUNCTION Txt2TTerm( cTxtFile )
 // ----------------------------------------------------------------
 // Kreira tabelu PRIVPATH\TEMP.DBF prema definiciji polja iz aDbf
 // ----------------------------------------------------------------
-STATIC FUNCTION _creTemp( aDbf, lIndex )
+STATIC FUNCTION cre_temp_tbl( aDbf, lIndex )
 
    LOCAL _table := "temp"
 
@@ -160,3 +160,5 @@ STATIC FUNCTION _creTemp( aDbf, lIndex )
    ENDIF
 
    RETURN
+
+

@@ -1,6 +1,7 @@
 1.7.46  2014-04-15, vsasa
 
   - FAKT, štampanje faktura, otvaranje tabela DRN, RN - bugfix 
+  - semafori, dupli full sinhro - bugfix
 
 1.7.45  2014-04-14, hernad
 

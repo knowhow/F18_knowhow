@@ -164,6 +164,7 @@ FUNCTION sql_table_update( table, op, record, where_str, silent )
                _qry += _tmp_2
             ENDIF
          ELSE
+            altd()
             IF _sql_dbf
                 // sql tabela sadrzi utf-8 enkodirane podatke
                 _qry += _sql_quote_u( record[ _tmp ] )
@@ -345,7 +346,7 @@ FUNCTION _sql_quote( xVar )
 
    IF ValType( xVar ) == "C"
       cOut := StrTran( xVar, "'", "''" )
-      cOut := "'" + hb_StrToUTF8( cOut ) + "'"
+      cOut := "'" + hb_StrToUtf8( cOut ) + "'"
    ELSEIF ValType( xVar ) == "D"
       IF xVar == CToD( "" )
          cOut := "NULL"

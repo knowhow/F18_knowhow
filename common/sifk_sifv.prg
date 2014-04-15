@@ -393,10 +393,12 @@ FUNCTION USifk( dbf_name, ozna, id_sif, val, transaction )
 
 
    IF sifk->veza == "N"
+      altd()
       IF !update_sifv_n_relation( _sifk_rec, id_sif, val )
          RETURN .F.
       ENDIF
    ELSE
+      altd()
       IF !update_sifv_1_relation( _sifk_rec, id_sif, val )
          RETURN .F.
       ENDIF
@@ -434,8 +436,7 @@ STATIC FUNCTION update_sifv_n_relation( sifk_rec, id_sif, vals )
       _tmp := Token( vals, ",", _i )
       APPEND BLANK
 
-      _sifv_rec[ "naz" ] := get_sifv_naz( _tmp, sifk_rec )
-      _sifv_rec[ "naz" ] := PadR( _sifv_rec[ "naz" ], 50 )
+      _sifv_rec[ "naz" ] := PadR( get_sifv_naz( _tmp, sifk_rec ), 50 )
 
       // zakljucavanje se desava u nadfunkciji
       update_rec_server_and_dbf( "sifv", _sifv_rec, 1, "CONT" )
@@ -453,7 +454,8 @@ STATIC FUNCTION update_sifv_1_relation( sifk_rec, id_sif, value )
    _sifv_rec := hb_Hash()
    _sifv_rec[ "id" ] := sifk_rec[ "id" ]
    _sifv_rec[ "oznaka" ] := sifk_rec[ "oznaka" ]
-   _sifv_rec[ "idsif" ] := id_sif
+   altd()
+    _sifv_rec[ "idsif" ] := id_sif
 
    value := PadR( value, sifk_rec[ "duzina" ] )
 
@@ -478,6 +480,7 @@ STATIC FUNCTION brisi_sifv_item( dbf_name, ozn, id_sif )
 
    LOCAL _sifv_rec := hb_Hash()
 
+   altd()
    _sifv_rec[ "id" ]     := dbf_name
    _sifv_rec[ "oznaka" ] := ozn
    _sifv_rec[ "idsif" ]  := id_sif
@@ -539,9 +542,17 @@ FUNCTION update_sifk_na_osnovu_ime_kol_from_global_var( ime_kol, var_prefix, nov
    LOCAL _i
    LOCAL _alias
    LOCAL _field_b
+   LOCAL _a_dbf_rec
 
-   _alias := Alias()
+   _a_dbf_rec := get_a_dbf_rec( ALIAS() )
+   _alias := _a_dbf_rec[ "alias" ]
 
+   altd()
+   IF _a_dbf_rec[ "sql" ]
+        cId := ( _alias )->id
+   ELSE
+        cId := hb_utf8ToStr( ( _alias )->id )
+   ENDIF
    FOR _i := 1 TO Len( ime_kol )
       IF Left( ime_kol[ _i, 3 ], 6 ) == "SIFK->"
          _field_b :=  MemVarBlock( var_prefix + "SIFK_" + SubStr( ime_kol[ _i, 3 ], 7 ) )

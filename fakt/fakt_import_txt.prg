@@ -20,7 +20,7 @@ local nRet
 local cFile
 
 // importuj podatke u pomocnu tabelu TEMP.DBF
-nRet := iBTerm_data( @cFile )
+nRet := import_BTerm_data( @cFile )
 
 if nRet = 0
 	return
@@ -41,7 +41,7 @@ return
 function exp_bterm()
 local nRet
 
-nRet := eBTerm_data()
+nRet := export_BTerm_data()
 
 return
 

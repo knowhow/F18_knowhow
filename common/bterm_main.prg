@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,66 +16,63 @@
 // -------------------------------------------------------
 // import barcode terminal data
 // -------------------------------------------------------
-function iBTerm_data( cI_File )
-local cPath := ""
-local aError := {}
-local cFilter := "p*.txt"
+FUNCTION import_BTerm_data( cI_File )
 
-cI_File := ""
+   LOCAL cPath := ""
+   LOCAL aError := {}
+   LOCAL cFilter := "p*.txt"
 
-// pronadji fajl za import u export direktoriju
-_gExpPath( @cPath )
+   cI_File := ""
 
-if _gFList( cFilter, cPath, @cI_File ) = 0
-	return 0
-endif
+   IF !get_export_path( @cPath )
+      RETURN 0
+   ENDIF
 
-// prebaci iz TXT fajla u pomocnu tabelu
-Txt2TTerm( cI_File )
+   IF _gFList( cFilter, cPath, @cI_File ) = 0
+      RETURN 0
+   ENDIF
 
-// podaci su sada importovani u TEMP.DBF
+   bterm_txt_to_tbl( cI_File )
 
-// provjeri nepostojece artikle
-aError := _cBarkod()
+   aError := check_barkod_import()
 
-if LEN( aError ) > 0
-	// ima spornih artikala...
-	return 0
-endif
+   IF Len( aError ) > 0
+      RETURN 0
+   ENDIF
 
-
-return 1
+   RETURN 1
 
 
 // -----------------------------------------------------
 // Vraca podesenje putanje do exportovanih fajlova
 // -----------------------------------------------------
-static function _gExpPath( path )
-local _path 
+STATIC FUNCTION get_export_path( path )
 
-#ifdef __PLATFORM__WINDOWS
-    _path := "c:" + SLASH + "import" + SLASH
-#else
-    _path := SLASH + "home" + SLASH + my_user() + SLASH + "import" + SLASH
-#endif
+   LOCAL _path
 
-_path := PADR( fetch_metric( "bterm_imp_exp_path", my_user(), ALLTRIM( _path ) ), 500 )
+   #ifdef __PLATFORM__WINDOWS
+      _path := "c:" + SLASH + "import" + SLASH
+   #else
+      _path := SLASH + "home" + SLASH + my_user() + SLASH + "import" + SLASH
+   #endif
 
-Box(, 2, 70 )
-    @ m_x + 1, m_y + 2 SAY "Import / export lokacija:"
-    @ m_x + 2, m_y + 2 SAY "lokacija:" GET _path PICT "@S50"
-    read
-BoxC()
+   _path := PadR( fetch_metric( "bterm_imp_exp_path", my_user(), AllTrim( _path ) ), 500 )
 
-if LastKey() == K_ESC
-    path := NIL
-    return
-endif
+   Box(, 2, 70 )
+   @ m_x + 1, m_y + 2 SAY "Import / export lokacija:"
+   @ m_x + 2, m_y + 2 SAY "lokacija:" GET _path PICT "@S50"
+   READ
+   BoxC()
 
-path := ALLTRIM( _path )
-set_metric( "bterm_imp_exp_path", my_user(), path )
+   IF LastKey() == K_ESC
+      path := NIL
+      RETURN .F.
+   ENDIF
 
-return
+   path := AllTrim( _path )
+   set_metric( "bterm_imp_exp_path", my_user(), path )
+
+   RETURN .T.
 
 
 
@@ -83,165 +80,166 @@ return
 // ---------------------------------------
 // provjeri barkod
 // ---------------------------------------
-static function _cBarkod()
-local aErr := {}
-local nScan 
-local i
-local nCnt
+STATIC FUNCTION check_barkod_import()
 
-select temp
-// STR(status)
-set order to tag "3"
-go top
+   LOCAL aErr := {}
+   LOCAL nScan
+   LOCAL i
+   LOCAL nCnt
 
-// stavke sa statusom 0 - nemaju svog para u ROBI
-do while !EOF() .and. field->status = 0
+   SELECT temp
+   SET ORDER TO TAG "3"
+   GO TOP
+
+   DO WHILE !Eof() .AND. field->status = 0
 	
-	cTmp := field->barkod
+      cTmp := field->barkod
 	
-	nScan := ASCAN( aErr, {| xVal | xVal[1] == cTmp } )
+      nScan := AScan( aErr, {| xVal | xVal[ 1 ] == cTmp } )
 	
-	if nScan = 0
-		AADD( aErr, { field->barkod, field->kolicina } )
-	endif
+      IF nScan = 0
+         AAdd( aErr, { field->barkod, field->kolicina } )
+      ENDIF
 	
-	skip
-enddo
+      SKIP
+   ENDDO
 
-if LEN(aErr) = 0
-	return aErr
-endif
+   IF Len( aErr ) = 0
+      RETURN aErr
+   ENDIF
 
-START PRINT CRET
-?
-? "Lista nepostojecih artikala:"
-? "--------------------------------------------------------------"
-nCnt := 0
-for i:=1 to LEN( aErr )
-	? PADL( ALLTRIM(STR(++nCnt)), 3) + "."
-	@ prow(), pcol()+1 SAY "barkod: " + aErr[i,1]
-	@ prow(), pcol()+1 SAY "_________________________________"
-next
+   START PRINT CRET
+   ?
+   ? "Lista nepostojecih artikala:"
+   ? "--------------------------------------------------------------"
+   nCnt := 0
+   FOR i := 1 TO Len( aErr )
+      ? PadL( AllTrim( Str( ++nCnt ) ), 3 ) + "."
+      @ PRow(), PCol() + 1 SAY "barkod: " + aErr[ i, 1 ]
+      @ PRow(), PCol() + 1 SAY "_________________________________"
+   NEXT
 
-FF
-END PRINT
+   FF
+   END PRINT
 
-return aErr
+   RETURN aErr
 
 
 
 // ------------------------------------------------
 // generise txt fajl sa artiklima za terminal...
 // ------------------------------------------------
-function eBTerm_data()
-local aStruct := _gAStruct()
-local nTArea := SELECT()
-local cSeparator := ";"
-local aData := {}
-// trim podataka unutar niza
-local lTrimData := .t.
-// zadnji slog sa separatorom
-local lLastSeparator := .f.
-local cFileName := ""
-local cFilePath := ""
-local nScan 
-local cBK
-local nCnt := 0
+FUNCTION export_BTerm_data()
 
-// aData
-// [1] barkod
-// [2] naziv
-// [3] kolicina
-// [4] cijena
+   LOCAL aStruct := get_article_tbl_struct()
+   LOCAL nTArea := Select()
+   LOCAL cSeparator := ";"
+   LOCAL aData := {}
+   LOCAL lTrimData := .T.
+   LOCAL lLastSeparator := .F.
+   LOCAL cFileName := ""
+   LOCAL cFilePath := ""
+   LOCAL nScan
+   LOCAL cBK
+   LOCAL nCnt := 0
 
-// kreiraj pomocnu tabelu
-cre_tmp()
+   // aData
+   // [1] barkod
+   // [2] naziv
+   // [3] kolicina
+   // [4] cijena
 
-O_R_EXP
-index on barkod TAG "ID" 
+   IF !get_export_path( @cFilePath )
+      RETURN 0
+   ENDIF
 
-O_ROBA
-set order to tag "BARKOD"
-go top
+   cre_tmp()
 
-do while !EOF()
+   O_R_EXP
+   INDEX ON barkod TAG "ID"
+
+   O_ROBA
+   SET ORDER TO TAG "BARKOD"
+   GO TOP
+
+   DO WHILE !Eof()
 	
-	cBK := PADR( field->barkod, 20 )
+      cBK := PadR( field->barkod, 20 )
 
-	if EMPTY( cBK )
-		skip
-		loop
-	endif
+      IF Empty( cBK )
+         SKIP
+         LOOP
+      ENDIF
 	
-	select r_export
-	go top
-	seek cBK
+      SELECT r_export
+      GO TOP
+      SEEK cBK
 	
-	if !FOUND()
+      IF !Found()
 		
-		append blank
-		replace field->barkod with roba->barkod
-		replace field->naz with roba->naz
-		replace field->tk with 0
-		replace field->tc with roba->vpc
+         APPEND BLANK
+         REPLACE field->barkod WITH roba->barkod
+         REPLACE field->naz WITH roba->naz
+         REPLACE field->tk WITH 0
+         REPLACE field->tc WITH roba->vpc
 	
-		++ nCnt
-	endif
+         ++ nCnt
+      ENDIF
 
-	select roba
-	skip
-enddo
+      SELECT roba
+      SKIP
+   ENDDO
 
-_gExpPath( @cFilePath )
-cFileName := "ARTIKLI.TXT"
+   cFileName := "ARTIKLI.TXT"
 
-select r_export
-use
+   SELECT r_export
+   USE
 
-// dodaj u fajl
-_dbf_to_file( cFilePath, cFileName, aStruct, "r_export.dbf", ;
-	cSeparator, lTrimData, lLastSeparator )
+   _dbf_to_file( cFilePath, cFileName, aStruct, "r_export.dbf", ;
+      cSeparator, lTrimData, lLastSeparator )
 
-msgbeep("Exportovao " + ALLTRIM(STR(nCnt)) + " zapisa robe !")
+   msgbeep( "Exportovao " + AllTrim( Str( nCnt ) ) + " zapisa robe !" )
 
-select (249)
-use
+   SELECT ( 249 )
+   USE
 
-select (nTArea)
-return 1
+   SELECT ( nTArea )
+
+   RETURN 1
 
 
 
 // ----------------------------------------
 // artikli.txt struktura txt fajla
 // ----------------------------------------
-static function _gAStruct()
-local aRet := {}
+STATIC FUNCTION get_article_tbl_struct()
 
-// BARKOD
-AADD( aRet, { "C", 20, 0 } )
-// NAZIV
-AADD( aRet, { "C", 40, 0 } )
-// TRENUTNA KOLICINA
-AADD( aRet, { "N", 8, 2 } )
-// TRENUTNA CIJENA
-AADD( aRet, { "N", 8, 2 } )
+   LOCAL aRet := {}
 
-return aRet
+   // BARKOD
+   AAdd( aRet, { "C", 20, 0 } )
+   // NAZIV
+   AAdd( aRet, { "C", 40, 0 } )
+   // TRENUTNA KOLICINA
+   AAdd( aRet, { "N", 8, 2 } )
+   // TRENUTNA CIJENA
+   AAdd( aRet, { "N", 8, 2 } )
+
+   RETURN aRet
 
 
 // -------------------------------------------
 // kreiraj pomocnu tabelu
 // -------------------------------------------
-static function cre_tmp()
-local aFields := {}
+STATIC FUNCTION cre_tmp()
 
-AADD( aFields, { "barkod", "C", 20, 0 } )
-AADD( aFields, { "naz", "C", 40, 0 } )
-AADD( aFields, { "tk", "N", 8, 2 } )
-AADD( aFields, { "tc", "N", 8, 2 } )
+   LOCAL aFields := {}
 
-t_exp_create( aFields )
+   AAdd( aFields, { "barkod", "C", 20, 0 } )
+   AAdd( aFields, { "naz", "C", 40, 0 } )
+   AAdd( aFields, { "tk", "N", 8, 2 } )
+   AAdd( aFields, { "tc", "N", 8, 2 } )
 
-return
+   t_exp_create( aFields )
 
+   RETURN

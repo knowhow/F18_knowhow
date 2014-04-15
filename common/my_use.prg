@@ -58,6 +58,7 @@ FUNCTION my_usex( alias, table, new_area, _rdd, semaphore_param )
 // ---------------------------------------------------------------
 FUNCTION my_use_temp( alias, table, new_area, excl )
 
+   LOCAL nCnt
    LOCAL _force_erase
    LOCAL _err
 
@@ -73,26 +74,30 @@ FUNCTION my_use_temp( alias, table, new_area, excl )
       USE
    ENDIF
 
-   BEGIN SEQUENCE WITH {|err| err:cargo := { ProcName( 1 ), ProcName( 2 ), ProcLine( 1 ), ProcLine( 2 ) }, Break( err ) }
+   nCnt := 0
+   DO WHILE nCnt < 3
+      BEGIN SEQUENCE WITH {| err| Break( err ) }
 
-      dbUseArea( new_area, DBFENGINE, table, alias, !excl, .F. )
-      IF File( ImeDbfCdx( table ) )
-         dbSetIndex( ImeDbfCDX( table ) )
-      ENDIF
+         dbUseArea( new_area, DBFENGINE, table, alias, !excl, .F. )
+         IF File( ImeDbfCdx( table ) )
+            dbSetIndex( ImeDbfCDX( table ) )
+         ENDIF
+         nCnt := 3
+      RECOVER USING _err
 
-   recover using _err
+         _msg := "ERROR my_use_temp: " + _err:description + ": tbl:" + table + " alias:" + alias + " se ne moze otvoriti ?!"
+         log_write( _msg, 2 )
 
-      _msg := "ERROR-MYUTMP: " + _err:description + ": tbl:" + table + " alias:" + alias + " se ne moze otvoriti ?!"
-      log_write( _msg, 2 )
+         IF _err:description == "Read error"
+            _force_erase := .T.
+            RaiseError( _msg )
+         ENDIF
+         hb_idleSleep( 1 )
 
-      IF _err:description == "Read error"
-         _force_erase := .T.
-      ENDIF
-
-      RaiseError( _msg )
-      QUIT_1
-
-   END SEQUENCE
+      END SEQUENCE
+      
+      ++nCnt
+   ENDDO
 
    RETURN
 
@@ -101,6 +106,7 @@ FUNCTION my_use_temp( alias, table, new_area, excl )
 // ----------------------------------------------------------------
 FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa )
 
+   LOCAL nCnt
    LOCAL _msg
    LOCAL _err
    LOCAL _pos
@@ -164,8 +170,8 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
       IF ( _rdd != "SEMAPHORE" ) .AND. my_use_semaphore()
          dbf_semaphore_synchro( table )
          IF !_a_dbf_rec[ "chk0" ]
-             // nije nikada uradjena inicijalna kontrola ove tabele
-             refresh_me( _a_dbf_rec, .T., .T. )
+            // nije nikada uradjena inicijalna kontrola ove tabele
+            refresh_me( _a_dbf_rec, .T., .T. )
          ENDIF
       ELSE
          // rdd = "SEMAPHORE" poziv is update from sql server procedure
@@ -182,29 +188,35 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
 
    _dbf := my_home() + table
 
-   BEGIN SEQUENCE WITH {|err| Break( err ) }
-      dbUseArea( new_area, _rdd, _dbf, alias, !excl, .F. )
-      IF File( ImeDbfCdx( _dbf ) )
-         dbSetIndex( ImeDbfCDX( _dbf ) )
-      ENDIF
+   nCnt := 0
+   DO WHILE nCnt < 3
 
-   recover using oError
+      BEGIN SEQUENCE WITH {| err| Break( err ) }
+         dbUseArea( new_area, _rdd, _dbf, alias, !excl, .F. )
+         IF File( ImeDbfCdx( _dbf ) )
+            dbSetIndex( ImeDbfCDX( _dbf ) )
+         ENDIF
+         nCnt := 3
+      RECOVER USING oError
 
-      _msg := "ERROR: my_use " + oError:description + ": tbl:" + my_home() + table + " alias:" + alias + " se ne moze otvoriti ?!"
-      log_write( _msg, 2 )
+         _msg := "ERROR: my_use " + oError:description + ": tbl:" + my_home() + table + " alias:" + alias + " se ne moze otvoriti ?!"
+         log_write( _msg, 2 )
 
-      IF oError:description == "Read error"
+         IF oError:description == "Read error"
 
-          // Read error se dobije u slucaju ostecenog dbf-a
-         _force_erase := .T.
+            // Read error se dobije u slucaju ostecenog dbf-a
+            _force_erase := .T.
 
-          IF ferase_dbf( alias, _force_erase )
-              repair_dbfs()
-          ENDIF
+            IF ferase_dbf( alias, _force_erase )
+               repair_dbfs()
+            ENDIF
 
-      ENDIF
+         ENDIF
+         hb_idleSleep( 1 )
 
-   END SEQUENCE
+      END SEQUENCE
+      nCnt ++
+   ENDDO
 
    RETURN
 

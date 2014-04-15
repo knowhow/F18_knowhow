@@ -1,3 +1,8 @@
+1.7.47  2014-04-15, vsasa
+
+  - FIN, štampa bruto bilansa i nepostojeća konta
+  - FIN, štampa ažuriranog dokumenta - bugfix 
+
 1.7.46  2014-04-15, vsasa
 
   - FAKT, štampanje faktura, otvaranje tabela DRN, RN - bugfix 

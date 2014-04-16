@@ -90,7 +90,7 @@ FUNCTION push_ids_to_semaphore( table, ids, to_myself )
    LOCAL _sql_ids
    LOCAL _i
    LOCAL _set_1, _set_2
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
 
    IF Len( ids ) < 1
       RETURN .F.
@@ -163,11 +163,9 @@ FUNCTION push_ids_to_semaphore( table, ids, to_myself )
    ENDIF
 
 
-
-   // ---------------------------------------
-   // vrati matricu id-ova za dbf tabelu
-   // ---------------------------------------
-
+/*
+  vrati matricu id-ova za dbf tabelu
+*/
 FUNCTION get_ids_from_semaphore( table )
 
    LOCAL _tbl

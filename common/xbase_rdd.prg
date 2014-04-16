@@ -81,6 +81,10 @@ FUNCTION PopWA()
 
 FUNCTION index_tag_num( name )
 
+   IF !USED()
+      RETURN -1
+   ENDIF
+
    IF rddName() != "SQLMIX"
       RETURN ordNumber( name )
    ELSE
@@ -92,8 +96,10 @@ FUNCTION index_tag_num( name )
       RETURN 0
    ENDIF
 
-   // dbf lock / unlock
 
+/* 
+     dbf lock / unlock
+*/
 FUNCTION my_flock()
 
    IF rddName() != "SQLMIX"

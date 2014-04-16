@@ -440,11 +440,9 @@ FUNCTION field_in_blacklist( field_name, blacklist )
    RETURN _ok
 
 
-
-// --------------------------------------------------------------------------------------------
-// update_semaphore_version_after_push( "konto")
-//
-// --------------------------------------------------------------------------------------------
+/*
+   update_semaphore_version_after_push( "konto" )
+*/
 FUNCTION update_semaphore_version_after_push( table, to_myself )
 
    LOCAL _ret
@@ -453,7 +451,7 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
    LOCAL _tbl
    LOCAL _user := f18_user()
    LOCAL _last
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _ver_user, _last_ver, _id_full
    LOCAL _versions
    LOCAL _a_dbf_rec

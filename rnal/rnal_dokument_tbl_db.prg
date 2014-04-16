@@ -209,10 +209,7 @@ if !FOUND()
 	append blank
 endif
 
-my_rlock()
-replace id_par with cId_par
-replace opis with cOpis
-my_unlock()
+RREPLACE id_par with cId_par, opis with cOpis
 
 select (nArea)
 

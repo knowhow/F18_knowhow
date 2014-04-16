@@ -28,32 +28,21 @@ Box(, 6 + IF( _v_obr_unos, 1, 0 ), 50 )
 
     SET CURSOR ON
    
-    @ m_x + _x, m_y + 2 SAY PADC( "*** PRISTUPNI PODACI ZA OBRACUN ***", 50 )
+    @ m_x + _x, m_y + 2 SAY8 PADC( "*** PRISTUPNI PODACI ZA OBRAČUN ***", 50 )
  
-    ++ _x
-    ++ _x
-
-    @ m_x + _x, m_y + 2 SAY PADL( "Radna jedinica", _pad_l ) GET gRJ VALID P_LD_Rj( @gRj ) PICT "@!"
+    _x += 2
+    @ m_x + _x, m_y + 2 SAY8 PADL( "Radna jedinica", _pad_l ) GET gRJ VALID P_LD_Rj( @gRj ) PICT "@!"
     
     ++ _x
-
-    @ m_x + _x, m_y + 2 SAY PADL( "Mjesec", _pad_l ) GET gMjesec pict "99"
+    @ m_x + _x, m_y + 2 SAY8 PADL( "Mjesec", _pad_l ) GET gMjesec pict "99"
     
     ++ _x
-    
     @ m_x + _x, m_y + 2 SAY PADL( "Godina", _pad_l ) GET gGodina pict "9999"
     
-    // varijanta obracuna nam ne treba, imamo je u parametrima
-    //++ _x
-    //@ m_x + _x, m_y + 2 SAY PADL( "Varijanta obracuna", _pad_l ) GET gVarObracun
-
-    // samo ako treba odabirati obracune u parametrima onda prikazi i ovo
     if _v_obr_unos
 
         ++ _x
-        
-        @ m_x + _x, m_y + 2 SAY PADL( "Obracun broj", _pad_l ) GET gObracun ;
-                WHEN HelpObr( .f., gObracun ) VALID ValObr( .f., gObracun )
+        @ m_x + _x, m_y + 2 SAY8 PADL( "Obračun broj", _pad_l ) GET gObracun WHEN HelpObr( .f., gObracun ) VALID ValObr( .f., gObracun )
 
     endif
 

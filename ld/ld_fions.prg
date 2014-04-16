@@ -113,33 +113,6 @@ FUNCTION ParOBr( nMjesec, nGodina, cObr, cIdRj )
       ENDIF
    ENDIF
 
-   IF IzFMKINI( "LD", "VrBodaPoRJ", "N", KUMPATH ) == "D"
-
-      nRec1 := RecNo()
-
-      DO WHILE !Eof() .AND. id == cMj .AND. godina == cGod
-         IF lViseObr .AND. cObr <> obr
-            SKIP 1
-            LOOP
-         ENDIF
-         IF IDRJ == cIdRj
-            nRec3 := RecNo()
-            EXIT
-         ENDIF
-         IF Empty( IDRJ )
-            nRec2 := RecNo()
-         ENDIF
-         SKIP 1
-      ENDDO
-      IF nRec3 <> 0
-         GO ( nRec3 )
-      ELSEIF nRec2 <> 0
-         GO ( nRec2 )
-      ELSE
-         GO ( nRec1 )
-      ENDIF
-   ENDIF
-
    SELECT ( nArr )
 
    RETURN nRet
@@ -153,7 +126,6 @@ FUNCTION ParOBr( nMjesec, nGodina, cObr, cIdRj )
  */
 FUNCTION Izracunaj( ixx, fPrikaz )
 
-   // {
    PRIVATE cFormula
 
    IF PCount() == 1

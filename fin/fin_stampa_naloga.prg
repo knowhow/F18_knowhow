@@ -262,7 +262,7 @@ FUNCTION SintStav( lAuto )
 
    IF !zap_lock_fin_priprema()
        RETURN .F.
-   EDNIF
+   ENDIF
 
    GO TOP
    IF Empty( BrNal )

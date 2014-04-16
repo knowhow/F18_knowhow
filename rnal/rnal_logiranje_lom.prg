@@ -272,10 +272,12 @@ if field->art_marker == "*"
 	
 	if pitanje(,"Ukloniti marker sa ove stavke (D/N) ?", "D") == "D"
 		
+		my_rlock()
 		replace field->art_marker with SPACE(1)
 		replace field->art_desc with SPACE(150)
 		replace field->damage with 0
 		replace field->glass_no with 0
+		my_unlock()
 
 		Beep(1)
 		
@@ -288,12 +290,14 @@ else
 	
 	if _get_it_desc( @cDesc, field->doc_it_qtt, ;
 		@nDamage, @nGlass_no ) > 0
-	
+
+        my_rlock()	
 		replace field->art_marker with "*"
 		replace field->art_desc with cDesc
 		replace field->damage with nDamage
 		replace field->glass_no with nGlass_no
-	
+        my_unlock()	
+
 		beep(2)
 
 		return DE_REFRESH

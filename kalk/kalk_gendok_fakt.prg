@@ -289,7 +289,7 @@ do while .t.
                     hseek cFF97_2+kalk_pripr->(cIdFakt97_2+cBrFakt+rbr)
                 endif
             else
-                RREPLACE idfirma with IF(cFaktFirma!=cIdFirma.or.lRJKonto,cFaktFirma, kalk_pripr->idfirma ), rbr with kalk_pripr->Rbr, replace idtipdok with cIdFakt, replace brdok with cBrFakt
+                RREPLACE idfirma with IF(cFaktFirma!=cIdFirma.or.lRJKonto,cFaktFirma, kalk_pripr->idfirma ), rbr with kalk_pripr->Rbr, idtipdok with cIdFakt, brdok with cBrFakt
             endif
 
             my_rlock()

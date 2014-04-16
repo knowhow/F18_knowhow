@@ -209,7 +209,7 @@ do while !eof() .and. xpos->idpos == cIdPos
             			select kalk_pripr
             			locate for idroba==sast->id2
             			if found()
-              				replace kolicina with kolicina + xpos->kolicina * sast->kolicina
+              				RREPLACE kolicina with kolicina + xpos->kolicina * sast->kolicina
             			else
               				select kalk_pripr
               				append blank

@@ -399,6 +399,7 @@ function GenProIzvKalk()
       endif
 
       SELECT POM
+      my_flock()
       if lDrugiKonto
         APPEND BLANK
         REPLACE NRBR       WITH ++nPomRbr                        ,;
@@ -417,7 +418,7 @@ function GenProIzvKalk()
       elseif cTipK2=="S"
         REPLACE sint2 WITH "S"+ALLTRIM(STR(LEN(cUslov2)))
       endif
-
+      my_unlock()
       if cTK21!="A"
         EXIT
       else
@@ -540,7 +541,10 @@ function GenProIzvKalk()
       nTekSuma := nDug - nPot
       nKumSuma := nTekSuma + nPrDug - nPrPot
 
-      SELECT POM; SET ORDER TO TAG "1"; GO TOP
+      SELECT POM
+      SET ORDER TO TAG "1"
+      GO TOP
+      my_flock()
       DO WHILE !EOF() .and. EMPTY(konto)
         if EMPTY(uslov).or.LEFT(uslov,1)=="="; SKIP 1; LOOP; endif
         aUslov:=PARSIRAJ(uslov,"cIdKonto","C")
@@ -562,10 +566,12 @@ function GenProIzvKalk()
         endif
         SKIP 1
       ENDDO
+      my_unlock()
 
       if !lDvaKonta; Sel_KBaza(); LOOP; endif
 
       SELECT POM; SET ORDER TO TAG "2"; GO TOP
+      my_flock()
       DO WHILE !EOF() .and. EMPTY(konto2)
         if EMPTY(uslov2); SKIP 1; LOOP; endif
         aUslov:=PARSIRAJ(uslov2,"cIdKonto","C")
@@ -587,7 +593,7 @@ function GenProIzvKalk()
         endif
         SKIP 1
       ENDDO
-
+      my_unlock()
       Sel_KBaza()
     ENDDO                                      // uzimam podatke iz SUBAN.DBF
 

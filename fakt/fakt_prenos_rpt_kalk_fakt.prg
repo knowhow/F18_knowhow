@@ -375,7 +375,7 @@ if lFaktFakt
         APPEND BLANK
         REPLACE IdRoba WITH cIdRoba
       endif
-      REPLACE KST WITH nSt
+      RREPLACE KST WITH nSt
       SELECT KALK
     endif
   enddo
@@ -445,7 +445,7 @@ else
     		Append Blank
       		REPLACE IdRoba WITH cIdRoba
     	endif
-    	REPLACE KST WITH nSt, KVR WITH nVr
+    	RREPLACE KST WITH nSt, KVR WITH nVr
     	SELECT KALK
   	
 	enddo

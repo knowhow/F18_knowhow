@@ -241,6 +241,7 @@ do while !EOF() .and. IspitajPrekid()
                 npMPVP := KOLICINA*MPCSAPP
                 npPop  := KOLICINA*RABATV
                 SELECT POM
+                my_flock()
                 FOR i:=1 TO 3
                     DO CASE
                         CASE i==1 .and. KALK->idvd=="42" .and. KALK->kolicina>0
@@ -264,6 +265,7 @@ do while !EOF() .and. IspitajPrekid()
     
                     ENDCASE
                 NEXT
+                my_unlock()
                 SELECT KALK
             else
 
@@ -388,6 +390,7 @@ IF !lVoSaTa
 ELSE
 	SELECT POM
   	GO TOP
+    my_flock()
   	DO WHILE !EOF() .and. IspitajPrekid()
     	REPLACE PPP  WITH MPV*P_PPP/100
     	REPLACE PPU  WITH (MPV+PPP)*P_PPU/100
@@ -399,6 +402,7 @@ ELSE
     	REPLACE UPOR WITH PPP+PPU+PP
     	SKIP 1
   	ENDDO
+    my_unlock()
   	GO TOP
 
   	FOR i:=1 TO 3

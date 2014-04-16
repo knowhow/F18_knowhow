@@ -125,8 +125,7 @@ if gNC_ctrl > 0 .and. nC_nv <> 0 .and. nZC_nv <> 0
 
         if Pitanje(,"Upisati u CACHE novu NC (D/N)?", "D") == "D"
             
-            replace field->nv with field->z_nv
-            replace field->odst with 0
+            RREPLACE field->nv with field->z_nv, field->odst with 0
         
         endif
 

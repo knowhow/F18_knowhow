@@ -109,6 +109,8 @@ set order to tag "1"
 
 go top
 
+my_flock()
+
 do while !EOF()
 
 	// izracunaj stanje
@@ -123,6 +125,8 @@ do while !EOF()
 	skip
 
 enddo
+
+my_unlock()
 
 BoxC()
 
@@ -337,6 +341,8 @@ set order to tag "1"
 
 seek cSast
 
+my_flock()
+
 if !FOUND()
 	
 	append blank
@@ -355,6 +361,8 @@ if field->kol > 0 .and. field->stanje <= field->kol
 else
 	replace field->total with 0
 endif
+
+my_unlock()
 
 select (nTArea)
 return

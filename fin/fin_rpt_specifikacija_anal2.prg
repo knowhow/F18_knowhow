@@ -217,6 +217,8 @@ for i := nYearFrom to nYearTo
 			go top
 			seek cIdFirma + cIdKonto
 
+            my_flock()
+
 			if !FOUND()
 
 				append blank
@@ -229,6 +231,8 @@ for i := nYearFrom to nYearTo
 			replace field->dug with field->dug + nd
 			replace field->pot with field->pot + np
 			replace field->saldo with field->saldo + (nd - np)
+
+            my_unlock()
  	
 			select anal
 

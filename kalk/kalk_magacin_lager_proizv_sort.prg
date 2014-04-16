@@ -235,6 +235,8 @@ method addTmpRec(cIdRoba, cIdTarifa)
 SELECT rpt_tmp
 SEEK cIdRoba
 
+my_flock()
+
 if !FOUND()
 	APPEND BLANK
 	REPLACE idRoba WITH cIdRoba
@@ -257,8 +259,10 @@ endif
 REPLACE robaNaz WITH roba->naz
 REPLACE jmj WITH roba->jmj
 
+my_unlock()
+
 return
-*}
+
 
 method calcRec()
 local nKolicina

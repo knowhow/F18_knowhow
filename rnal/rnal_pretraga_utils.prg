@@ -136,7 +136,7 @@ endif
 do while !EOF()
     
     if lAlways == .t. 
-        replace field->fnd_val with ""
+        RREPLACE field->fnd_val with ""
     endif
     
     skip

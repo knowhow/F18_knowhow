@@ -166,7 +166,7 @@ do while .t.
             if lRJKon97
                 hseek cFF97+kalk_pripr->(cIdFakt97+cBrFakt+rbr)
                 if found()
-                    replace kolicina with kolicina+nkolicina
+                    RREPLACE kolicina with kolicina+nkolicina
                 else
                     APPEND BLANK
                     replace idfirma with cFF97
@@ -179,7 +179,7 @@ do while .t.
             if lRJKon97_2
                 hseek cFF97_2+kalk_pripr->(cIdFakt97_2+cBrFakt+rbr)
                 if found()
-                    replace kolicina with kolicina+nkolicina
+                    RREPLACE kolicina with kolicina+nkolicina
                 else
                     APPEND BLANK
                     replace idfirma with cFF97_2
@@ -199,7 +199,7 @@ do while .t.
             hseek cFaktFirma + kalk_pripr->(cIdFakt+cBrFakt+rbr)
 
             if found()
-                replace kolicina with kolicina+nkolicina
+                RREPLACE kolicina with kolicina+nkolicina
             else
                 APPEND BLANK
                 replace kolicina with nkolicina
@@ -223,7 +223,7 @@ do while .t.
                       Chr(16)+cTxta+ Chr(17)+ Chr(16)+cTxtb+Chr(17)+;
                       Chr(16)+cTxtc+Chr(17)
                     select fakt_pripr
-                    replace txt with ctxt
+                    RREPLACE txt with ctxt
                 endif
                 if lRJKon97_2
                     select fakt_pripr
@@ -238,7 +238,7 @@ do while .t.
                       Chr(16)+cTxta+ Chr(17)+ Chr(16)+cTxtb+Chr(17)+;
                       Chr(16)+cTxtc+Chr(17)
                     select fakt_pripr
-                    replace txt with ctxt
+                    RREPLACE txt with ctxt
                 endif
                 fFirst := .f.
 
@@ -269,7 +269,7 @@ do while .t.
                 fFirst:=.f.
 
                 select fakt_pripr
-                replace txt with cTxt
+                RREPLACE txt with cTxt
 
             endif
         endif
@@ -289,11 +289,10 @@ do while .t.
                     hseek cFF97_2+kalk_pripr->(cIdFakt97_2+cBrFakt+rbr)
                 endif
             else
-                replace idfirma with IF(cFaktFirma!=cIdFirma.or.lRJKonto,cFaktFirma, kalk_pripr->idfirma )
-                replace rbr with kalk_pripr->Rbr
-                replace idtipdok with cIdFakt   
-                replace brdok with cBrFakt
+                RREPLACE idfirma with IF(cFaktFirma!=cIdFirma.or.lRJKonto,cFaktFirma, kalk_pripr->idfirma ), rbr with kalk_pripr->Rbr, idtipdok with cIdFakt, brdok with cBrFakt
             endif
+
+            my_rlock()
 
             replace idpartner with kalk_pripr->idpartner
             replace datdok with kalk_pripr->datdok
@@ -319,6 +318,8 @@ do while .t.
             IF lPoNarudzbi .and. FIELDPOS("IDNAR")<>0
                 REPLACE idnar WITH kalk_pripr->idnar, brojnar WITH kalk_pripr->brojnar
             ENDIF
+
+            my_unlock()
 
             if kalk_pripr->idvd<>"97"
                 exit

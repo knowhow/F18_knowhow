@@ -27,6 +27,7 @@ CLASS RNALDamageDocument
     DATA damage_items
     DATA damage_data
     DATA doc_no
+    DATA multiglass
 
     PROTECTED:
 
@@ -55,6 +56,7 @@ METHOD RNALDamageDocument:New()
 ::damage_data := NIL
 ::damage_items := NIL
 ::doc_no := NIL
+::multiglass := NIL
 return SELF
 
 
@@ -200,6 +202,8 @@ do while !::damage_data:EOF()
 enddo
 
 ::damage_data:GoTo(1)
+
+::multiglass := _ok
 
 return _ok
 
@@ -349,6 +353,10 @@ METHOD RNALDamageDocument:get_damage_article( doc_no, item_no, art_orig )
 local _t_area := SELECT()
 local _ret := art_orig
 
+if !::multiglass
+	return _ret
+endif
+
 select _tmp1
 set order to tag "1"
 go top
@@ -382,8 +390,10 @@ local _count := 0
 cre_tmp1( _db_struct )
 o_tmp1()
 index on ( STR( doc_no, 10, 0 ) + STR( doc_it_no, 4, 0 ) + STR( art_id, 10, 0 ) ) TAG "1"
+
 select _tmp1
-my_dbf_zap()
+set order to tag "1"
+go top
 
 // 2) napuni mi podatke iz tabele ostecenih stavki
 ::damage_data:GoTo(1)

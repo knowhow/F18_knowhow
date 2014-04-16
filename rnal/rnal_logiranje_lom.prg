@@ -279,10 +279,7 @@ STATIC FUNCTION _mark_item()
 	
       IF pitanje(, "Ukloniti marker sa ove stavke (D/N) ?", "D" ) == "D"
 		
-         REPLACE field->art_marker WITH Space( 1 )
-         REPLACE field->art_desc WITH Space( 150 )
-         REPLACE field->damage WITH 0
-         REPLACE field->glass_no WITH 0
+		 RREPLACE field->art_marker with SPACE(1), field->art_desc with SPACE(150), field->damage with 0, field->glass_no with 0
 
          Beep( 1 )
 		

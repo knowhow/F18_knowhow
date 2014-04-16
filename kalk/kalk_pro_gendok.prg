@@ -99,7 +99,7 @@ do while .t.
             select kalk_pripr
             locate for idroba==sast->id2
             if found()
-              replace kolicina with kolicina + kalk2->kolicina*sast->kolicina
+              RREPLACE kolicina with kolicina + kalk2->kolicina*sast->kolicina
             else
               select kalk_pripr
               append blank

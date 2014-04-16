@@ -261,7 +261,7 @@ if pIzgSt  .and. _kolicina>0 .and. lastkey()<>K_ESC // izgenerisane stavke posto
   if brdok==_brdok .and. idvd==_idvd .and. val(Rbr)==nRbr
 
     nMarza:=_VPC/(1+_PORVT)*(1-_RabatV/100)-_NC  // ??????????
-    replace vpc with _vpc,;
+    RREPLACE vpc with _vpc,;
           rabatv with _rabatv,;
           mkonto with _mkonto,;
           tmarza  with _tmarza,;

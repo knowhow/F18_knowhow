@@ -209,8 +209,7 @@ if !FOUND()
 	append blank
 endif
 
-replace id_par with cId_par
-replace opis with cOpis
+RREPLACE id_par with cId_par, opis with cOpis
 
 select (nArea)
 

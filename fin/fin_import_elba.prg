@@ -225,12 +225,13 @@ _o_file:Close()
 select fin_pripr
 set order to tag "0"
 go top
+my_flock()
 do while !EOF()
 	replace brnal with __nalbr
 	replace brdok with __nalbr
 	skip
 enddo
-
+my_unlock()
 set order to tag "1"
 go top
 

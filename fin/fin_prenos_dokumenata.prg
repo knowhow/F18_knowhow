@@ -260,7 +260,7 @@ FUNCTION PrenosFin()
                   SELECT fin_pripr
                   APPEND BLANK
                   Gather()
-                  REPLACE rbr WITH Str( ++nRbr, 4 ), ;
+                  RREPLACE rbr WITH Str( ++nRbr, 4 ), ;
                      idvn WITH "00", ;
                      brnal WITH "00000001"
 

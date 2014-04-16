@@ -2157,6 +2157,8 @@ endif
 nWidth := mm_2_m( nWidth )
 nHeight := mm_2_m( nHeight )
 
+my_flock()
+
 replace field->width with ( field->width + ( nWidth * nQtty ) )
 replace field->height with ( field->height + ( nHeight * nQtty ) )
 replace field->qtty with ( field->qtty + nQtty )
@@ -2212,6 +2214,8 @@ if __op_12 <> 0 .and. nAop_12 <> nil
 	replace field->aop_12 with ( field->aop_12 + nAop_12 )
 endif
 
+my_unlock()
+
 select (nTArea)
 return
 
@@ -2232,7 +2236,7 @@ else
 	seek PADR( cArt_id, 30 ) + tick_str( nTick )
 endif
 
-replace field->dmg with ( field->dmg + nDmg )
+RREPLACE field->dmg with ( field->dmg + nDmg )
 
 select (nTArea)
 return
@@ -2260,6 +2264,8 @@ if __nvar2 = 1
 else
 	seek PADR( cArt_id, 30 ) + tick_str( nTick )
 endif
+
+my_flock()
 
 if __op_1 <> 0 .and. nAop_1 <> nil
 	replace field->aop_1 with ( field->aop_1 + nAop_1 )
@@ -2308,6 +2314,8 @@ endif
 if __op_12 <> 0 .and. nAop_12 <> nil
 	replace field->aop_12 with ( field->aop_12 + nAop_12 )
 endif
+
+my_unlock()
 
 select (nTArea)
 return

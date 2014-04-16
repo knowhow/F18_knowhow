@@ -168,7 +168,7 @@ go top
 // prodji kroz tabelu i napuni nazive
 do while !EOF()
 
-	replace field->op_desc with ;
+	RREPLACE field->op_desc with ;
 		ALLTRIM( getfullusername( field->operater) ) 
 
 	skip
@@ -312,16 +312,16 @@ endif
 
 do case
 	case nStatus == 0
-		replace field->o_count with ( field->o_count + 1 )
+		RREPLACE field->o_count with ( field->o_count + 1 )
 	case nStatus == 1
-		replace field->c_count with ( field->c_count + 1 )
+		RREPLACE field->c_count with ( field->c_count + 1 )
 	case nStatus == 2
-		replace field->r_count with ( field->r_count + 1 )
+		RREPLACE field->r_count with ( field->r_count + 1 )
 
 endcase
 
 // total uvijek saberi
-replace field->d_total with ( field->o_count + ;
+RREPLACE field->d_total with ( field->o_count + ;
 		field->c_count + field->r_count )
 
 select (nTArea)

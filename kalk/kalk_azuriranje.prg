@@ -613,7 +613,7 @@ do while !eof()
             if dDatDok <> field->datdok
                 Beep(2)
                 if Pitanje(,"Datum razlicit u odnosu na prvu stavku. Ispraviti ?", "D") == "D"
-                    replace field->datdok with dDatDok
+                    RREPLACE field->datdok with dDatDok
                 else
                     my_close_all_dbf()
                     return .f.

@@ -476,6 +476,7 @@ if lAFin
 // fpripr ******* zaokruzi
 
 select fin_pripr; go top
+my_flock()
 do while !eof()
   cPom:=right(trim(opis),1)
   // na desnu stranu opisa stavim npr "ZADUZ MAGACIN          0"
@@ -492,7 +493,7 @@ do while !eof()
   endif // cpom
   skip
 enddo //fpripr
-
+my_unlock()
 endif // lafin , lafin2
 
 MsgC()

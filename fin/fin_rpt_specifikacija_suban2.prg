@@ -497,6 +497,8 @@ for i := nYearFrom to nYearTo
 			go top
 			seek cIdKonto + cIdPartner + cRasclan
 
+            my_flock()
+
 			if !FOUND()
 				
 				append blank
@@ -521,6 +523,8 @@ for i := nYearFrom to nYearTo
 			replace field->saldo2 with ;
 				field->saldo2 + ( nD2 - nP2 )
 		
+            my_unlock()
+
 			select suban
 
 		endif

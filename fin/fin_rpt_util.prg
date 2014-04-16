@@ -107,7 +107,7 @@ ENDIF
              append blank
           endif
 
-          REPLACE IdFirma WITH cIdFirma,IdKonto WITH cIdKonto,IdVN WITH cIdVN,;
+          RREPLACE IdFirma WITH cIdFirma,IdKonto WITH cIdKonto,IdVN WITH cIdVN,;
                   BrNal with cBrNal,;
                   DatNal WITH max((nArr)->datdok,datnal),;
                   DugBHD WITH DugBHD+nDugBHD,PotBHD WITH PotBHD+nPotBHD,;
@@ -130,7 +130,7 @@ ENDIF
               append blank
           endif
 
-          REPLACE IdFirma WITH cIdFirma,IdKonto WITH left(cIdKonto,3),IdVN WITH cIdVN,;
+          RREPLACE IdFirma WITH cIdFirma,IdKonto WITH left(cIdKonto,3),IdVN WITH cIdVN,;
                BrNal WITH cBrNal,;
                DatNal WITH max((nArr)->datdok,datnal),;
                DugBHD WITH DugBHD+nDugBHD,PotBHD WITH PotBHD+nPotBHD,;

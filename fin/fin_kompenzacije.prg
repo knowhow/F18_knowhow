@@ -584,7 +584,7 @@ if ! ( (Ch==K_CTRL_T .or. Ch==K_ENTER) .and. reccount2()==0 )
 
         case Ch == ASC("K") .or. Ch==ASC("k")    
 
-            replace field->marker with if( field->marker == "K" , " " , "K" )
+            RREPLACE field->marker with if( field->marker == "K" , " " , "K" )
             nVrati := DE_REFRESH
 
         case Ch == K_CTRL_P   

@@ -576,11 +576,9 @@ STATIC FUNCTION EdKonsROS()
      	
       IF LastKey() <> K_ESC
          IF _uplaceno <> 0
-            REPLACE m2 WITH "3"
-            REPLACE uplaceno WITH _uplaceno
+            RREPLACE m2 WITH "3", uplaceno WITH _uplaceno
          ELSE
-            REPLACE m2 WITH ""
-            REPLACE uplaceno WITH 0
+            RREPLACE m2 WITH "", uplaceno WITH 0
          ENDIF
       ENDIF
 
@@ -597,7 +595,7 @@ STATIC FUNCTION EdKonsROS()
          // iznos uplate npr
 
          GO TOP
-
+         my_flock()
          DO WHILE !Eof()
             IF cDugPot <> d_p .AND. nPIznos > 0
                _Uplaceno := Min( field->iznosbhd, nPIznos )
@@ -609,7 +607,7 @@ STATIC FUNCTION EdKonsROS()
             ENDIF
             SKIP 1
          ENDDO
-
+         my_unlock()
          GO TOP
 
          IF nPIznos > 0

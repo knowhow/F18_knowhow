@@ -586,6 +586,7 @@ DO WHILE !EOF() .and. izv==cBrI
         ENDIF
 
         SELECT POM
+        my_flock()
         IF lDrugiKonto
             APPEND BLANK
             REPLACE NRBR       WITH ++nPomRbr                        ,;
@@ -606,6 +607,7 @@ DO WHILE !EOF() .and. izv==cBrI
         ELSEIF cTipK2=="S"
             REPLACE sint2 WITH "S"+ALLTRIM(STR(LEN(cUslov2)))
         ENDIF
+        my_unlock()
 
         IF cTK21!="A"
             EXIT

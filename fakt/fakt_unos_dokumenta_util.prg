@@ -1863,6 +1863,9 @@ endif
 
 nRbr := 999
 go bottom
+
+my_flock()
+
 do while !BOF()
     replace rbr with str( --nRbr, 3 )
     skip -1
@@ -1883,6 +1886,8 @@ do while !EOF()
     endif
     go nTrec
 enddo
+
+my_unlock()
 
 go top
 

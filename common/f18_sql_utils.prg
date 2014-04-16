@@ -39,7 +39,7 @@ FUNCTION sql_fields( fields )
 // -------------------------------------------------
 FUNCTION sql_table_update( table, op, record, where_str, silent )
 
-   LOCAL _i, _tmp, _tmp_2, _msg
+   LOCAL _i, _tmp, _tmp_2, _msg, lSqlTable
    LOCAL _ret := .F.
    LOCAL _result
    LOCAL _qry
@@ -78,7 +78,7 @@ FUNCTION sql_table_update( table, op, record, where_str, silent )
 
       _dbf_wa    := _a_dbf_rec[ "wa" ]
       _dbf_alias := _a_dbf_rec[ "alias" ]
-
+      lSqlTable := _a_dbf_rec[ "sql" ]
       _sql_tbl   := "fmk." + table
 
       // uvijek je algoritam 1 nivo recorda
@@ -86,7 +86,7 @@ FUNCTION sql_table_update( table, op, record, where_str, silent )
 
       IF where_str == NIL
          IF record <> NIL
-            where_str := sql_where_from_dbf_key_fields( _alg[ "dbf_key_fields" ], record )
+            where_str := sql_where_from_dbf_key_fields( _alg[ "dbf_key_fields" ], record, lSqlTable )
          ENDIF
       ENDIF
 
@@ -380,7 +380,7 @@ FUNCTION _sql_quote_u( xVar )
 
 // ---------------------------------------
 // ---------------------------------------
-FUNCTION sql_where_from_dbf_key_fields( dbf_key_fields, rec )
+FUNCTION sql_where_from_dbf_key_fields( dbf_key_fields, rec, lSqlTable )
 
    LOCAL _ret, _pos, _item, _key
 
@@ -401,7 +401,11 @@ FUNCTION sql_where_from_dbf_key_fields( dbf_key_fields, rec )
       ELSEIF ValType( _item ) == "C"
          _key := Lower( _item )
          check_hash_key( rec, _key )
-         _ret += _item + "=" + _sql_quote( rec[ _key ] )
+         IF lSqlTable
+            _ret += _item + "=" + _sql_quote_u( rec[ _key ] )
+         ELSE
+            _ret += _item + "=" + _sql_quote( rec[ _key ] )
+         ENDIF
 
       ELSE
          MsgBeep( ProcName( 1 ) + "valtype _item ?!" )

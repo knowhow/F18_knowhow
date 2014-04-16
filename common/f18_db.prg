@@ -176,7 +176,7 @@ local _a_dbf_rec, _alg
 local _msg
 local _alg_tag := ""
 local _ret
-local lSql_index := .T.
+local lIndex := .T.
 
 if lock == NIL
   if transaction == "FULL"
@@ -209,6 +209,9 @@ if transaction $ "FULL#BEGIN"
     sql_table_update(table, "BEGIN")
 endif
 
+if ALIAS() == "SIFV"
+    altd()
+endif
 
 if sql_table_update(table, "del", nil, _where_str) 
 
@@ -228,9 +231,10 @@ if sql_table_update(table, "del", nil, _where_str)
              lock_semaphore(table, "free")
              QUIT_1
           else
-             lSql_index := .F.
+             lIndex := .F.
           endif
     else
+          lIndex := .T.
           SET ORDER TO TAG (_alg["dbf_tag"])
     endif
 
@@ -238,7 +242,7 @@ if sql_table_update(table, "del", nil, _where_str)
         
         _count := 0
 
-        IF lSql_index
+        IF lIndex
            SEEK _full_id
 
            while FOUND()
@@ -248,7 +252,9 @@ if sql_table_update(table, "del", nil, _where_str)
               SEEK _full_id
            enddo
         else
+          IF ALIAS() != "SIFV"
             DELETE
+          ENDIF
         endif
 
         my_unlock()
@@ -351,6 +357,7 @@ local _key
 local _count := 0
 local _use_tag := .f.
 local _alias
+local lSqlTable
 
 if table == NIL
    table := ALIAS()
@@ -384,6 +391,7 @@ endif
 
 
 alg := a_dbf_rec["algoritam"][algoritam]
+lSqlTable := a_dbf_rec[ "sql" ]
 
 for each _key in alg["dbf_key_fields"]
 
@@ -419,7 +427,7 @@ for each _key in alg["dbf_key_fields"]
 next
 
 BEGIN SEQUENCE with { |err| err:cargo := { "var",  "values", values }, GlobalErrorHandler( err ) }
-   where_str := sql_where_from_dbf_key_fields(alg["dbf_key_fields"], values)
+   where_str := sql_where_from_dbf_key_fields(alg["dbf_key_fields"], values, lSqlTable )
 END SEQUENCE
 
 if algoritam > 1 .or. _use_tag == .t.

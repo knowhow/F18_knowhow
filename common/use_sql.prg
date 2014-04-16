@@ -337,10 +337,14 @@ function use_sql_sifk( cDbf, cOznaka )
    use_sql_sifv( "ROBA", "GR1", NIL, "G000000001" ) =>  filter na ROBA/GR1/grupa1=G0000000001
    use_sql_isfv( "ROBA", "GR1", "ROBA99", NIL )        =>  filter na ROBA/GR1/idroba=ROBA99
 */
-function use_sql_sifv( cDbf, cOznaka, cIdSif, cVrijednost )
+function use_sql_sifv( cDbf, cOznaka, cIdSif, xVrijednost )
 
    LOCAL cSql
    LOCAL cTable := "sifv"
+   LOCAL lSql //lSql := .T. - RDDSQL tabela
+   LOCAL oUtfString
+
+   oUtfString := String:New( xVrijednost )
 
    IF cDbf == NIL
       SELECT F_SIFK
@@ -352,8 +356,11 @@ function use_sql_sifv( cDbf, cOznaka, cIdSif, cVrijednost )
       cOznaka := field->oznaka
    ENDIF
 
+   lSql := get_a_dbf_rec( AllTrim( cDbf ) )[ 'sql' ]
+
+   altd()
    cSql := "SELECT * from fmk.sifv"
-   cSql += " WHERE id=" + _sql_quote( cDbf ) + " AND oznaka=" + _sql_quote( cOznaka )
+   cSql += " WHERE id=" + _sql_quote_u( cDbf ) + " AND oznaka=" + _sql_quote_u( cOznaka )
    
    IF cIdSif == NIL
       IF EMPTY( cDbf )
@@ -361,12 +368,16 @@ function use_sql_sifv( cDbf, cOznaka, cIdSif, cVrijednost )
         cIdSif := "MLFJUSX" + CHR(170)
       ELSE
         cIdSif := ( cDbf )->id
+        IF lSql
+            cIdSif := hb_Utf8ToStr( cIdSif )
+        ENDIF
       ENDIF
    ENDIF
+
    cSql += " AND idsif=" + _sql_quote( cIdSif )
 
-   IF cVrijednost != NIL
-      cSql += " AND naz=" + _sql_quote( cVrijednost )
+   IF xVrijednost != NIL
+      cSql += " AND naz=" + _sql_quote( xVrijednost )
    ENDIF
 
    cSQL += " ORDER BY id,oznaka,idsif,naz" 

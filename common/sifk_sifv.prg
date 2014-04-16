@@ -425,6 +425,7 @@ STATIC FUNCTION update_sifv_n_relation( sifk_rec, id_sif, vals )
    _sifv_rec[ "oznaka" ] := sifk_rec[ "oznaka" ]
    _sifv_rec[ "idsif" ] := id_sif
 
+   altd()
    // veza 1->N posebno se tretira !!
    SELECT sifv
    brisi_sifv_item( sifk_rec[ "id" ], sifk_rec[ "oznaka" ], id_sif )
@@ -451,10 +452,10 @@ STATIC FUNCTION update_sifv_1_relation( sifk_rec, id_sif, value )
 
    LOCAL _sifv_rec
 
+    altd()
    _sifv_rec := hb_Hash()
    _sifv_rec[ "id" ] := sifk_rec[ "id" ]
    _sifv_rec[ "oznaka" ] := sifk_rec[ "oznaka" ]
-   altd()
     _sifv_rec[ "idsif" ] := id_sif
 
    value := PadR( value, sifk_rec[ "duzina" ] )
@@ -539,7 +540,7 @@ FUNCTION ImaUSifv( cDBF, cOznaka, cVrijednost, cIdSif )
 
 FUNCTION update_sifk_na_osnovu_ime_kol_from_global_var( ime_kol, var_prefix, novi, transaction )
 
-   LOCAL _i
+   LOCAL _i, cId
    LOCAL _alias
    LOCAL _field_b
    LOCAL _a_dbf_rec
@@ -551,14 +552,15 @@ FUNCTION update_sifk_na_osnovu_ime_kol_from_global_var( ime_kol, var_prefix, nov
    IF _a_dbf_rec[ "sql" ]
         cId := ( _alias )->id
    ELSE
-        cId := hb_utf8ToStr( ( _alias )->id )
+        // DBFCDX je 852 enkodiran
+        cId := hb_StrToUtf8( ( _alias )->id )
    ENDIF
    FOR _i := 1 TO Len( ime_kol )
       IF Left( ime_kol[ _i, 3 ], 6 ) == "SIFK->"
          _field_b :=  MemVarBlock( var_prefix + "SIFK_" + SubStr( ime_kol[ _i, 3 ], 7 ) )
 
-         IF IzSifk( _alias, SubStr( ime_kol[ _i, 3 ], 7 ), ( _alias )->id ) <> NIL
-            USifk( _alias, SubStr( ImeKol[ _i, 3 ], 7 ), ( _alias )->id, Eval( _field_b ), transaction )
+         IF IzSifk( _alias, SubStr( ime_kol[ _i, 3 ], 7 ), cId ) <> NIL
+            USifk( _alias, SubStr( ImeKol[ _i, 3 ], 7 ), cId, Eval( _field_b ), transaction )
          ENDIF
       ENDIF
    NEXT
@@ -609,6 +611,4 @@ enddo
 select ( _t_area )
 
 return _arr
-
-
 

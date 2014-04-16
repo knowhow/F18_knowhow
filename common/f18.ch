@@ -102,3 +102,11 @@
 
 #command ?U  [<explist,...>]         => QOut( hb_utf8ToStr( <explist> ) )
 #command ??U [<explist,...>]         => QQOut( hb_utf8ToStr( <explist> ) )
+
+
+#command RREPLACE <f1> WITH <v1> [, <fN> WITH <vN> ]    ;
+      => my_rlock();
+         ;   _FIELD-><f1> := <v1> [; _FIELD-><fN> := <vN>];
+         ;my_unlock()
+
+

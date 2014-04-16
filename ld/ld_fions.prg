@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,53 +12,56 @@
 
 #include "ld.ch"
 
-function Unos2()
-return (nil)
+FUNCTION Unos2()
+   RETURN ( nil )
 
 // --------------------------------------------------------
 // Vraca oznaku obracuna ako se radi o vise obracuna
 // --------------------------------------------------------
-function BrojObracuna()
-private cOznObracuna
+FUNCTION BrojObracuna()
 
-if lViseObr
-    cOznObracuna:=cObracun
-else
-    cOznObracuna:=""
-endif
+   PRIVATE cOznObracuna
 
-return cOznObracuna
+   IF lViseObr
+      cOznObracuna := cObracun
+   ELSE
+      cOznObracuna := ""
+   ENDIF
+
+   RETURN cOznObracuna
 
 // ---------------------------------
 // ukupno radnik
 // ---------------------------------
-function UkRadnik()
-local i
-local nArr
+FUNCTION UkRadnik()
 
-nArr:=select()
+   LOCAL i
+   LOCAL nArr
 
-private cPom:=""
+   nArr := Select()
 
-for i:=1 to cLDPolja
-    cPom:=padl(alltrim(str(i)),2,"0")
-    select tippr
-    seek cPom
-    if tippr->(found()) .and. tippr->aktivan=="D"
-        if tippr->ufs=="D"
-                _USati+=_s&cPom
-        endif
-        _UIznos+=_i&cPom
-        if tippr->uneto=="D"
-                _Uneto+=_i&cPom
-        else
-                _UOdbici+=_i&cPom
-        endif
-    endif
-next
+   PRIVATE cPom := ""
 
-select(nArr)
-return (nil)
+   FOR i := 1 TO cLDPolja
+      cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
+      SELECT tippr
+      SEEK cPom
+      IF tippr->( Found() ) .AND. tippr->aktivan == "D"
+         IF tippr->ufs == "D"
+            _USati += _s&cPom
+         ENDIF
+         _UIznos += _i&cPom
+         IF tippr->uneto == "D"
+            _Uneto += _i&cPom
+         ELSE
+            _UOdbici += _i&cPom
+         ENDIF
+      ENDIF
+   NEXT
+
+   SELECT( nArr )
+
+   RETURN ( nil )
 
 
 
@@ -69,105 +72,79 @@ return (nil)
  *  \param cObr - broj obracuna
  *  \param cIdRj - id radna jedinica
  */
-function ParOBr(nMjesec,nGodina,cObr,cIdRj)
-local nNaz
-local nRec1:=0
-local nRec2:=0
-local nRec3:=0
-local nRet := 1
+FUNCTION ParOBr( nMjesec, nGodina, cObr, cIdRj )
 
-if cObr==nil
-    cObr:=""
-endif
+   LOCAL nNaz
+   LOCAL nRec1 := 0
+   LOCAL nRec2 := 0
+   LOCAL nRec3 := 0
+   LOCAL nRet := 1
 
-if cIDRJ==nil
-    cIDRJ:=""
-endif
+   IF cObr == nil
+      cObr := ""
+   ENDIF
 
-nArr := SELECT()
+   IF cIDRJ == nil
+      cIDRJ := ""
+   ENDIF
 
-cMj := STR(nMjesec, 2)
-cGod := STR(nGodina, 4)
+   nArr := Select()
 
-select parobr
-seek cMj + cGod + cObr
+   cMj := Str( nMjesec, 2 )
+   cGod := Str( nGodina, 4 )
 
-if !FOUND() .or. EOF()
+   SELECT parobr
+   SEEK cMj + cGod + cObr
 
-    // ponovo pretrazi ali bez godine
-    // ima godina = prazan zapis !!!
-    
-    nRet := 2
-    
-    select parobr
-    go top
-    seek cMj + SPACE(4) + cObr
-    
-    if field->id <> cMj
-        nRet := 0
-        skip -1
-    endif
-endif
+   IF !Found() .OR. Eof()
 
-if IzFMKINI("LD","VrBodaPoRJ","N",KUMPATH) == "D"
+      // ponovo pretrazi ali bez godine
+      // ima godina = prazan zapis !!!
 
-    nRec1:=RECNO()
-    
-    DO WHILE !EOF() .and. id==cMj .and. godina==cGod
-            IF lViseObr .and. cObr<>obr
-                SKIP 1
-            LOOP
-            ENDIF
-            IF IDRJ==cIdRj
-                nRec3:=RECNO()
-                EXIT
-            ENDIF
-            IF EMPTY(IDRJ)
-                nRec2:=RECNO()
-            ENDIF
-            SKIP 1
-    ENDDO
-    IF nRec3<>0
-            GO (nRec3)
-    ELSEIF nRec2<>0
-            GO (nRec2)
-    ELSE
-            GO (nRec1)
-    ENDIF
-ENDIF
+      nRet := 2
 
-SELECT (nArr)
+      SELECT parobr
+      GO TOP
+      SEEK cMj + Space( 4 ) + cObr
 
-return nRet
+      IF field->id <> cMj
+         nRet := 0
+         SKIP -1
+      ENDIF
+   ENDIF
+
+   SELECT ( nArr )
+
+   RETURN nRet
 
 
 
 /*! \fn Izracunaj(ixx, fPrikaz)
  *  \brief Izracunavanje formula
- *  \param ixx - 
+ *  \param ixx -
  *  \param fPrikaz - prikazi .t.
  */
-function Izracunaj(ixx,fPrikaz)
-*{
-private cFormula
+FUNCTION Izracunaj( ixx, fPrikaz )
 
-if PCount()==1
-    fPrikaz:=.t.
-endif
+   PRIVATE cFormula
 
-cFormula:=TRIM(tippr->formula)
+   IF PCount() == 1
+      fPrikaz := .T.
+   ENDIF
 
-if (tippr->fiksan<>"D") 
-    // ako je fiksan iznos nista ne izracunavaj!
-    if EMPTY(cFormula)
-        ixx:=0
-    else
-        ixx:=&cFormula
-    endif
-    ixx:=ROUND(ixx,gZaok)
-endif
-return .t.
-*}
+   cFormula := Trim( tippr->formula )
+
+   IF ( tippr->fiksan <> "D" )
+      // ako je fiksan iznos nista ne izracunavaj!
+      IF Empty( cFormula )
+         ixx := 0
+      ELSE
+         ixx := &cFormula
+      ENDIF
+      ixx := Round( ixx, gZaok )
+   ENDIF
+
+   RETURN .T.
 
 
 
@@ -176,232 +153,238 @@ return .t.
  *  \param cTip
  *  \param cTip2
  */
-function Prosj3(cTip, cTip2)
-*{
-// cTip1
-// "1"  -> prosjek neta/ satu
-// "2"  -> prosjek ukupnog primanja/satu
-// "3"  -> prosjek neta
-// "4"  -> prosjek ukupnog primanja
-// "5"  -> prosjek ukupnog primanja/ukupno sati
-// "6"  -> prosjek ukupnih "raznih" primanja/satu
-// "7"  -> prosjek ukupnih "raznih" primanja/ukupno sati
-// "8"  -> prosjek ukupnih "raznih" primanja
-//
-// cTip2
-// "1"  -> striktno predhodna 3 mjeseca
-// "2"  -> vracam se mjesec unazad u kome nije bilo godisnjeg
+FUNCTION Prosj3( cTip, cTip2 )
 
-local nMj1:=nMj2:=nMj3:=0,nDijeli:=0, cmj1:=cmj2:=cmj3:="",npomak:=0,i:=0
-local nss1:=0,nss2:=0,nss3:=0,nSumsat:=0
-local nsp1:=0, nsp2:=0, nsp3:=0
+   // {
+   // cTip1
+   // "1"  -> prosjek neta/ satu
+   // "2"  -> prosjek ukupnog primanja/satu
+   // "3"  -> prosjek neta
+   // "4"  -> prosjek ukupnog primanja
+   // "5"  -> prosjek ukupnog primanja/ukupno sati
+   // "6"  -> prosjek ukupnih "raznih" primanja/satu
+   // "7"  -> prosjek ukupnih "raznih" primanja/ukupno sati
+   // "8"  -> prosjek ukupnih "raznih" primanja
+   //
+   // cTip2
+   // "1"  -> striktno predhodna 3 mjeseca
+   // "2"  -> vracam se mjesec unazad u kome nije bilo godisnjeg
 
-PushWA()
+   LOCAL nMj1 := nMj2 := nMj3 := 0, nDijeli := 0, cmj1 := cmj2 := cmj3 := "", npomak := 0, i := 0
+   LOCAL nss1 := 0, nss2 := 0, nss3 := 0, nSumsat := 0
+   LOCAL nsp1 := 0, nsp2 := 0, nsp3 := 0
 
-//CREATE_INDEX("LDi1","str(godina)+idrj+str(mjesec)+idradn","LD")
-//CREATE_INDEX("LDi2","str(godina)+str(mjesec)+idradn","LD")
-set order to tag (TagVO("2","I"))
+   PushWA()
 
-i:=0
-if ctip2=="2"
-    do while .t.
-        ++i
-        if _Mjesec-i<1
-            seek str(_Godina-1,4)+str(12+_Mjesec-i,2)+_idradn
-            cMj1:=str(12+_mjesec-i,2)+"."+str(_godina-1,4)
-        else
-            seek str(_Godina,4)+str(_mjesec-i,2)+_idradn
-            cMj1:=str(_mjesec-i,2)+"."+str(_godina,4)
-        endif
-        if &gFUGod<>0
-                nPomak++
-        else
-                exit
-        endif
-        if i>12  // nema podataka
-                exit
-        endif
-    enddo
-endif
+   // CREATE_INDEX("LDi1","str(godina)+idrj+str(mjesec)+idradn","LD")
+   // CREATE_INDEX("LDi2","str(godina)+str(mjesec)+idradn","LD")
+   SET ORDER TO tag ( TagVO( "2", "I" ) )
 
-if _mjesec-1-npomak<1
-    seek str(_Godina-1,4)+str(12+_Mjesec-1-npomak,2)+_idradn
-    cMj1:=str(12+_mjesec-1-npomak,2)+"."+str(_godina-1,4)
-else
-    seek str(_Godina,4)+str(_Mjesec-1-npomak,2)+_idradn
-    cMj1:=str(_mjesec-1-npomak,2)+"."+str(_godina,4)
-endif
-if found()
-    if lViseObr
-            ScatterS(godina,mjesec,idrj,idradn,"w")
-    else
-            wuneto := uneto
-            wusati := usati
-    endif
-    if cTip $ "13"
-            nMj1:= wUNeto
-    elseif cTip $ "678"
-            nMj1:=URPrim()
-    else
-            nMj1:=UPrim()
-    endif
-    if cTip $ "126"
-            nSS1:=wUSati
-            nSP1:=nMj1
-            if wusati<>0
-                nMj1:=nMj1/wUSati
-            else
-                nMj1:=0
-            endif
-    elseif cTip $ "5"
-            nSS1:=USati()
-    elseif cTip $ "7"
-            nSS1:=URSati()
-    endif
-    if nMj1<>0
-        ++nDijeli
-    endif
-endif
-if _mjesec-2-npomak<1
-    seek str(_Godina-1,4)+str(12+_Mjesec-2-npomak,2)+_idradn
-    cMj2:=str(12+_mjesec-2-npomak,2)+"."+str(_godina-1,4)
-else
-    seek str(_Godina,4)+str(_Mjesec-2-npomak,2)+_idradn
-    cMj2:=str(_mjesec-2-npomak,2)+"."+str(_godina,4)
-endif
-if found()
-    if lViseObr
-            ScatterS(godina,mjesec,idrj,idradn,"w")
-    else
-            wuneto := uneto
-            wusati := usati
-    endif
-    if cTip $ "13"
-            nMj2:= wUNeto
-    elseif cTip $ "678"
-            nMj2:=URPrim()
-    else
-            nMj2:=UPrim()
-    endif
-    if cTip $ "126"
-            nSS2:=wUSati
-            nSP2:=nMj2
-            if wusati<>0
-                nMj2:=nMj2/wUSati
-            else
-                nMj2:=0
-            endif
-    elseif cTip $ "5"
-            nSS2:=USati()
-    elseif cTip $ "7"
-            nSS2:=URSati()
-    endif
-    if nMj2<>0
-        ++nDijeli
-    endif
-endif
+   i := 0
+   IF ctip2 == "2"
+      DO WHILE .T.
+         ++i
+         IF _Mjesec - i < 1
+            SEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - i, 2 ) + _idradn
+            cMj1 := Str( 12 + _mjesec - i, 2 ) + "." + Str( _godina - 1, 4 )
+         ELSE
+            SEEK Str( _Godina, 4 ) + Str( _mjesec - i, 2 ) + _idradn
+            cMj1 := Str( _mjesec - i, 2 ) + "." + Str( _godina, 4 )
+         ENDIF
+         if &gFUGod <> 0
+            nPomak++
+         ELSE
+            EXIT
+         ENDIF
+         IF i > 12  // nema podataka
+            EXIT
+         ENDIF
+      ENDDO
+   ENDIF
 
-if _mjesec-3-npomak<1
-    seek str(_Godina-1,4)+str(12+_Mjesec-3-npomak,2)+_idradn
-    cMj3:=str(12+_mjesec-3-npomak,2)+"."+str(_godina-1,4)
-else
-    seek str(_Godina,4)+str(_Mjesec-3-npomak,2)+_idradn
-    cMj3:=str(_mjesec-3-npomak,2)+"."+str(_godina,4)
-endif
-if found()
-    if lViseObr
-            ScatterS(godina,mjesec,idrj,idradn,"w")
-    else
-            wuneto := uneto
-            wusati := usati
-    endif
-    if cTip $ "13"
-            nMj3:= wUNeto
-    elseif cTip $ "678"
-            nMj3:=URPrim()
-    else
-            nMj3:=UPrim()
-    endif
-    if cTip $ "126"
-            nSS3:=wUSati
-            nSP3:=nMj3
-            if wusati<>0
-                nMj3:=nMj3/wUSati
-            else
-                nMj3:=0
-            endif
-    elseif cTip $ "5"
-            nSS3:=USati()
-    elseif cTip $ "7"
-            nSS3:=URSati()
-    endif
-    if nMj3<>0
-        ++nDijeli
-    endif
-endif
+   IF _mjesec - 1 -npomak < 1
+      SEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 1 -npomak, 2 ) + _idradn
+      cMj1 := Str( 12 + _mjesec - 1 -npomak, 2 ) + "." + Str( _godina - 1, 4 )
+   ELSE
+      SEEK Str( _Godina, 4 ) + Str( _Mjesec - 1 -npomak, 2 ) + _idradn
+      cMj1 := Str( _mjesec - 1 -npomak, 2 ) + "." + Str( _godina, 4 )
+   ENDIF
+   IF Found()
+      IF lViseObr
+         ScatterS( godina, mjesec, idrj, idradn, "w" )
+      ELSE
+         wuneto := uneto
+         wusati := usati
+      ENDIF
+      IF cTip $ "13"
+         nMj1 := wUNeto
+      ELSEIF cTip $ "678"
+         nMj1 := URPrim()
+      ELSE
+         nMj1 := UPrim()
+      ENDIF
+      IF cTip $ "126"
+         nSS1 := wUSati
+         nSP1 := nMj1
+         IF wusati <> 0
+            nMj1 := nMj1 / wUSati
+         ELSE
+            nMj1 := 0
+         ENDIF
+      ELSEIF cTip $ "5"
+         nSS1 := USati()
+      ELSEIF cTip $ "7"
+         nSS1 := URSati()
+      ENDIF
+      IF nMj1 <> 0
+         ++nDijeli
+      ENDIF
+   ENDIF
+   IF _mjesec - 2 -npomak < 1
+      SEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 2 -npomak, 2 ) + _idradn
+      cMj2 := Str( 12 + _mjesec - 2 -npomak, 2 ) + "." + Str( _godina - 1, 4 )
+   ELSE
+      SEEK Str( _Godina, 4 ) + Str( _Mjesec - 2 -npomak, 2 ) + _idradn
+      cMj2 := Str( _mjesec - 2 -npomak, 2 ) + "." + Str( _godina, 4 )
+   ENDIF
+   IF Found()
+      IF lViseObr
+         ScatterS( godina, mjesec, idrj, idradn, "w" )
+      ELSE
+         wuneto := uneto
+         wusati := usati
+      ENDIF
+      IF cTip $ "13"
+         nMj2 := wUNeto
+      ELSEIF cTip $ "678"
+         nMj2 := URPrim()
+      ELSE
+         nMj2 := UPrim()
+      ENDIF
+      IF cTip $ "126"
+         nSS2 := wUSati
+         nSP2 := nMj2
+         IF wusati <> 0
+            nMj2 := nMj2 / wUSati
+         ELSE
+            nMj2 := 0
+         ENDIF
+      ELSEIF cTip $ "5"
+         nSS2 := USati()
+      ELSEIF cTip $ "7"
+         nSS2 := URSati()
+      ENDIF
+      IF nMj2 <> 0
+         ++nDijeli
+      ENDIF
+   ENDIF
 
-if nDijeli==0
-    nDijeli:=99999999
-endif
+   IF _mjesec - 3 -npomak < 1
+      SEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 3 -npomak, 2 ) + _idradn
+      cMj3 := Str( 12 + _mjesec - 3 -npomak, 2 ) + "." + Str( _godina - 1, 4 )
+   ELSE
+      SEEK Str( _Godina, 4 ) + Str( _Mjesec - 3 -npomak, 2 ) + _idradn
+      cMj3 := Str( _mjesec - 3 -npomak, 2 ) + "." + Str( _godina, 4 )
+   ENDIF
+   IF Found()
+      IF lViseObr
+         ScatterS( godina, mjesec, idrj, idradn, "w" )
+      ELSE
+         wuneto := uneto
+         wusati := usati
+      ENDIF
+      IF cTip $ "13"
+         nMj3 := wUNeto
+      ELSEIF cTip $ "678"
+         nMj3 := URPrim()
+      ELSE
+         nMj3 := UPrim()
+      ENDIF
+      IF cTip $ "126"
+         nSS3 := wUSati
+         nSP3 := nMj3
+         IF wusati <> 0
+            nMj3 := nMj3 / wUSati
+         ELSE
+            nMj3 := 0
+         ENDIF
+      ELSEIF cTip $ "5"
+         nSS3 := USati()
+      ELSEIF cTip $ "7"
+         nSS3 := URSati()
+      ENDIF
+      IF nMj3 <> 0
+         ++nDijeli
+      ENDIF
+   ENDIF
 
-nSumsat:=IF(nSS1+nSS2+nSS3<>0,nSS1+nSS2+nSS3,99999999)
+   IF nDijeli == 0
+      nDijeli := 99999999
+   ENDIF
 
-Box("#"+IF(cTip$"57","UKUPNA PRIMANJA","Prosjek")+" ZA MJESECE UNAZAD:",6,60)
- @ m_x+2,m_y+2 SAY cmj1; @ row(),col()+2 SAY nMj1 pict "999999.999"
- IF cTip$"126"; ?? "  primanja/sati:"; ?? nsp1,"/",nss1; ENDIF
- IF cTip$"57"; ?? "  sati:"; ?? nss1; ENDIF
- @ m_x+3,m_y+2 SAY cmj2; @ row(),col()+2 SAY nMj2 pict "999999.999"
- IF cTip$"126"; ?? "  primanja/sati:"; ?? nsp2,"/",nss2; ENDIF
- IF cTip$"57"; ?? "  sati:"; ?? nss2; ENDIF
- @ m_x+4,m_y+2 SAY cmj3; @ row(),col()+2 SAY nMj3 pict "999999.999"
- IF cTip$"126"; ?? "  primanja/sati:"; ?? nsp3,"/",nss3; ENDIF
- IF cTip$"57"; ?? "  sati:"; ?? nss3; ENDIF
- @ m_x+6,m_y+2 SAY "Prosjek"; @ row(),col()+2 SAY (nMj3+nMj2+nMj1)/IF(cTip$"57",nSumsat,nDijeli) pict "999999.999"
- inkey(0)
-BoxC()
+   nSumsat := IF( nSS1 + nSS2 + nSS3 <> 0, nSS1 + nSS2 + nSS3, 99999999 )
 
-PopWa()
+   Box( "#" + IF( cTip $ "57", "UKUPNA PRIMANJA", "Prosjek" ) + " ZA MJESECE UNAZAD:", 6, 60 )
+   @ m_x + 2, m_y + 2 SAY cmj1; @ Row(), Col() + 2 SAY nMj1 PICT "999999.999"
+   IF cTip $ "126"; ?? "  primanja/sati:"; ?? nsp1, "/", nss1; ENDIF
+   IF cTip $ "57"; ?? "  sati:"; ?? nss1; ENDIF
+   @ m_x + 3, m_y + 2 SAY cmj2; @ Row(), Col() + 2 SAY nMj2 PICT "999999.999"
+   IF cTip $ "126"; ?? "  primanja/sati:"; ?? nsp2, "/", nss2; ENDIF
+   IF cTip $ "57"; ?? "  sati:"; ?? nss2; ENDIF
+   @ m_x + 4, m_y + 2 SAY cmj3; @ Row(), Col() + 2 SAY nMj3 PICT "999999.999"
+   IF cTip $ "126"; ?? "  primanja/sati:"; ?? nsp3, "/", nss3; ENDIF
+   IF cTip $ "57"; ?? "  sati:"; ?? nss3; ENDIF
+   @ m_x + 6, m_y + 2 SAY "Prosjek"; @ Row(), Col() + 2 SAY ( nMj3 + nMj2 + nMj1 ) / IF( cTip $ "57", nSumsat, nDijeli ) PICT "999999.999"
+   Inkey( 0 )
+   BoxC()
 
-return  (nMj3+nMj2+nMj1)/IF(cTip$"57",nSumsat,ndijeli)
-*}
+   PopWa()
+
+   RETURN  ( nMj3 + nMj2 + nMj1 ) / IF( cTip $ "57", nSumsat, ndijeli )
+// }
 
 
 /*! \fn UPrim()
  *  \brief Racuna ukupna primanja
  */
-function UPrim()
-*{
-IF lViseObr
-    c719:=UbaciPrefix(gFUPrim,"w")
-ELSE
-    c719:=gFUPrim
-ENDIF
-return &c719
-*}
+FUNCTION UPrim()
+
+   // {
+   IF lViseObr
+      c719 := UbaciPrefix( gFUPrim, "w" )
+   ELSE
+      c719 := gFUPrim
+   ENDIF
+
+   return &c719
+// }
 
 /*! \fn USati()
  *  \brief Racuna ukupne sate
  */
-function USati()
-if EMPTY( gFUSati )
-    return 0
-endif
-c719 := UbaciPrefix( gFUSati, "w" ) 
-return &c719
+FUNCTION USati()
+
+   IF Empty( gFUSati )
+      RETURN 0
+   ENDIF
+   c719 := UbaciPrefix( gFUSati, "w" )
+
+   return &c719
 
 
 
 /*! \fn URPrim()
  *  \brief Ukupna razna primanja
  */
-function URPrim()
+FUNCTION URPrim()
 
-if EMPTY( gFURaz )
-    return 0
-endif
+   IF Empty( gFURaz )
+      RETURN 0
+   ENDIF
 
-c719 := UbaciPrefix( gFURaz, "w" )
-return &c719
+   c719 := UbaciPrefix( gFURaz, "w" )
+
+   return &c719
 
 
 
@@ -409,549 +392,573 @@ return &c719
 // -----------------------------------------------
 // Ukupna razna primanja sati
 // -----------------------------------------------
-function URSati()
+FUNCTION URSati()
 
-if EMPTY( gFURSati )
-    return 0
-endif
+   IF Empty( gFURSati )
+      RETURN 0
+   ENDIF
 
-c719 := UbaciPrefix( gFURSati, "w" )
+   c719 := UbaciPrefix( gFURSati, "w" )
 
-return &c719
+   return &c719
 
 
-**********************************************
-function Prosj1(cTip,cTip2,cF0)
-* if cTip== "1"  -> prosjek neta/ satu
-* if ctip== "2"  -> prosjek ukupnog primanja/satu
-* if cTip=="3"  -> prosjek neta
-* if cTip=="4"  -> prosjek ukupnog primanja
-* if cTip=="5"  -> prosjek ukupnog primanja/ukupno sati
-* if cTip== "6"  -> prosjek ukupnih "raznih" primanja/satu
-* if cTip== "7"  -> prosjek ukupnih "raznih" primanja/ukupno sati
-* if cTip== "8"  -> prosjek ukupnih "raznih" primanja
+// *********************************************
+FUNCTION Prosj1( cTip, cTip2, cF0 )
 
-* if cTip2=="1"  -> prosli mjesec i  primanje <> 0
-* if ctip2=="2"  -> predhodni mjesec za koji je UNeto==UPrim() i primanje <> 0
-* if ctip2=="3"  -> predhodni mjesec za koji je UNeto==URPrim() i primanje <> 0
-*
-* cF0 = "_i18"  - ne uzimaj mjesec ako je _i18<>0
-*************************************************
-local nMj1:=0,i:=0
-private cFormula
-PushWA()
+   // if cTip== "1"  -> prosjek neta/ satu
+   // if ctip== "2"  -> prosjek ukupnog primanja/satu
+   // if cTip=="3"  -> prosjek neta
+   // if cTip=="4"  -> prosjek ukupnog primanja
+   // if cTip=="5"  -> prosjek ukupnog primanja/ukupno sati
+   // if cTip== "6"  -> prosjek ukupnih "raznih" primanja/satu
+   // if cTip== "7"  -> prosjek ukupnih "raznih" primanja/ukupno sati
+   // if cTip== "8"  -> prosjek ukupnih "raznih" primanja
 
-if cF0 = NIL
-   cFormula := "0"
-else
-   cFormula := cF0
-endif
+   // if cTip2=="1"  -> prosli mjesec i  primanje <> 0
+   // if ctip2=="2"  -> predhodni mjesec za koji je UNeto==UPrim() i primanje <> 0
+   // if ctip2=="3"  -> predhodni mjesec za koji je UNeto==URPrim() i primanje <> 0
+   //
+   // cF0 = "_i18"  - ne uzimaj mjesec ako je _i18<>0
+   // ************************************************
+   LOCAL nMj1 := 0, i := 0
+   PRIVATE cFormula
+   PushWA()
 
-//CREATE_INDEX("LDi1","str(godina)+idrj+str(mjesec)+idradn","LD")
-//CREATE_INDEX("LDi2","str(godina)+str(mjesec)+idradn","LD")
-set order to tag (TagVO("2","I"))
+   IF cF0 = NIL
+      cFormula := "0"
+   ELSE
+      cFormula := cF0
+   ENDIF
 
-i := 0
+   // CREATE_INDEX("LDi1","str(godina)+idrj+str(mjesec)+idradn","LD")
+   // CREATE_INDEX("LDi2","str(godina)+str(mjesec)+idradn","LD")
+   SET ORDER TO tag ( TagVO( "2", "I" ) )
 
-do while .t.
-    ++i
-    if _mjesec-i<1
-        seek STR(_godina-1,4) + STR(12 + _mjesec-i,2) + _idradn
-        cMj1 := STR( 12 + _mjesec-i,2) + "." + STR(_godina-1,4)
-    else
-        seek STR(_godina,4) + STR( _mjesec-i,2) + _idradn
-        cMj1 := STR( _mjesec-i,2) + "." + STR(_godina,4)
-    endif
+   i := 0
 
-    if found()
-        if lViseObr
-            ScatterS(godina,mjesec,idrj,idradn,"w")
-        else
+   DO WHILE .T.
+      ++i
+      IF _mjesec - i < 1
+         SEEK Str( _godina - 1, 4 ) + Str( 12 + _mjesec - i, 2 ) + _idradn
+         cMj1 := Str( 12 + _mjesec - i, 2 ) + "." + Str( _godina - 1, 4 )
+      ELSE
+         SEEK Str( _godina, 4 ) + Str( _mjesec - i, 2 ) + _idradn
+         cMj1 := Str( _mjesec - i, 2 ) + "." + Str( _godina, 4 )
+      ENDIF
+
+      IF Found()
+         IF lViseObr
+            ScatterS( godina, mjesec, idrj, idradn, "w" )
+         ELSE
             wuneto := uneto
             wusati := usati
-        endif
-        if cTip $ "13"
+         ENDIF
+         IF cTip $ "13"
             nMj1 := wUNeto
-        elseif cTip $ "678"
+         ELSEIF cTip $ "678"
             nMj1 := URPrim()
-        else
+         ELSE
             nMj1 := UPrim()
-        endif
-        if cTip $ "126"
-            if wusati<>0
-                nMj1:=nMj1/wUSati
-            else
-                nMj1:=0
-            endif
-        elseif cTip $ "5"
-            if USati()<>0
-                nMj1:=nMj1/USati()
-            else
-                nMj1:=0
-            endif
-        elseif cTip $ "7"
-            if URSati()<>0
-                nMj1:=nMj1/URSati()
-            else
-                nMj1:=0
-            endif
-        endif
-    else
-        MsgBeep(Lokal("Prosjek je uzet iz sifrarnika radnika - OSN.BOL. !"))
-        SELECT RADN
-        SET ORDER TO TAG "1"
-        GO TOP
-        HSEEK _IdRadn
-        nMj1 := osnbol
-        SELECT LD
-        exit
-    endif
+         ENDIF
+         IF cTip $ "126"
+            IF wusati <> 0
+               nMj1 := nMj1 / wUSati
+            ELSE
+               nMj1 := 0
+            ENDIF
+         ELSEIF cTip $ "5"
+            IF USati() <> 0
+               nMj1 := nMj1 / USati()
+            ELSE
+               nMj1 := 0
+            ENDIF
+         ELSEIF cTip $ "7"
+            IF URSati() <> 0
+               nMj1 := nMj1 / URSati()
+            ELSE
+               nMj1 := 0
+            ENDIF
+         ENDIF
+      ELSE
+         MsgBeep( Lokal( "Prosjek je uzet iz sifrarnika radnika - OSN.BOL. !" ) )
+         SELECT RADN
+         SET ORDER TO TAG "1"
+         GO TOP
+         HSEEK _IdRadn
+         nMj1 := osnbol
+         SELECT LD
+         EXIT
+      ENDIF
 
-    if nMj1==0
-        loop
-    endif
+      IF nMj1 == 0
+         LOOP
+      ENDIF
 
-    if &cFormula<>0
-        loop
-    endif
+      if &cFormula <> 0
+         LOOP
+      ENDIF
 
-    if cTip2=="1"  // gleda se prosli mjesec
-        exit
-    elseif cTip2=="3"
-        if round(wUNeto,2)==round(URPrim(),2)
-            exit
-        endif
-    else
-        if round(wUNeto,2)==round(UPrim(),2)
-            exit
-        endif
-    endif
+      IF cTip2 == "1"  // gleda se prosli mjesec
+         EXIT
+      ELSEIF cTip2 == "3"
+         IF Round( wUNeto, 2 ) == Round( URPrim(), 2 )
+            EXIT
+         ENDIF
+      ELSE
+         IF Round( wUNeto, 2 ) == Round( UPrim(), 2 )
+            EXIT
+         ENDIF
+      ENDIF
 
-enddo
+   ENDDO
 
-Box(,4,50)
-    @ m_x+1,m_y+2 SAY "PRIMANJE ZA PROSLI MJESEC:"
-    @ m_x+2,m_y+2 SAY  cmj1; @ row(),col()+2 SAY nMj1 pict "999999.999"
-    @ m_x+4,m_y+2 SAY "Prosjek"; @ row(),col()+2 SAY nMj1 pict "999999.999"
-    inkey(0)
-BoxC()
+   Box(, 4, 50 )
+   @ m_x + 1, m_y + 2 SAY "PRIMANJE ZA PROSLI MJESEC:"
+   @ m_x + 2, m_y + 2 SAY  cmj1; @ Row(), Col() + 2 SAY nMj1 PICT "999999.999"
+   @ m_x + 4, m_y + 2 SAY "Prosjek"; @ Row(), Col() + 2 SAY nMj1 PICT "999999.999"
+   Inkey( 0 )
+   BoxC()
 
-PopWa()
+   PopWa()
 
-return  nMj1
-
-
-
-function Predhodni(i,cVar,cObr)
-local cKljuc:=""
-
-if cObr == NIL
-    cObr := "1"
-endif
-
-private cpom:=""
+   RETURN  nMj1
 
 
-IF "U" $ TYPE("lRekalk"); lRekalk:=.f.; ENDIF
 
-IF lRekalk .and. !TPImaPO(SUBSTR(cVar,3))  
-    // pri rekalkulaciji ne racunaj
-    // predhodni ukoliko u formuli
-    // nema parametara obracuna
-    return 0                                 
-ENDIF                                      
+FUNCTION Predhodni( i, cVar, cObr )
 
-PushWa()
+   LOCAL cKljuc := ""
 
-//CREATE_INDEX("LDi1","str(godina)+idrj+str(mjesec)+idradn","LD")
-//CREATE_INDEX("LDi2","str(godina)+str(mjesec)+idradn","LD")
-set order to tag (TagVO("2","I"))
-
-if _Mjesec-i<1
-    hseek str(_Godina-1,4)+str(12+_Mjesec-1,2)+_idradn
-else
-    hseek str(_Godina,4)+str(_Mjesec-i,2)+_idradn
-endif
-
-cPom:=cVar
-cField=substr(cPom,2)
-
-if lViseObr
-   &cPom := 0
-   cKljuc := STR(godina,4)+STR(mjesec,2)+idradn
-   IF !EMPTY(cObr)
-     do while !eof() .and. STR(godina,4)+STR(mjesec,2)+idradn == cKljuc
-       IF obr==cObr
-         &cPom += &cField
-       ENDIF
-       skip 1
-     enddo
-   ELSE
-     do while !eof() .and. STR(godina,4)+STR(mjesec,2)+idradn == cKljuc
-       &cPom += &cField
-       skip 1
-     enddo
+   IF cObr == NIL
+      cObr := "1"
    ENDIF
-else
-    &cPom:=&cField
-endif
 
-PopWa()
-
-return 0
+   PRIVATE cpom := ""
 
 
-************************************
-function PrimSM(cOznaka,cTipPr)
-*
-* cOznaka - oznaka primanja u smecu
-* cTipPr  - "01, "02" , ...
-*           "NE" - neto
-* izlaz = primanje iz smeca
-************************************
-local nRez:=0
+   IF "U" $ Type( "lRekalk" ); lRekalk := .F. ; ENDIF
 
-private cTipa:=""
-//"LDSMi1","Obr+str(godina)+str(mjesec)+idradn+idrj",PRIVPATH+"LDSM")
+   IF lRekalk .AND. !TPImaPO( SubStr( cVar, 3 ) )
+      // pri rekalkulaciji ne racunaj
+      // predhodni ukoliko u formuli
+      // nema parametara obracuna
+      RETURN 0
+   ENDIF
 
-private cpom:=""
+   PushWa()
 
-PushWa()
+   // CREATE_INDEX("LDi1","str(godina)+idrj+str(mjesec)+idradn","LD")
+   // CREATE_INDEX("LDi2","str(godina)+str(mjesec)+idradn","LD")
+   SET ORDER TO tag ( TagVO( "2", "I" ) )
 
-select (F_LDSM)
-if !used()
-  O_LDSM
-endif
+   IF _Mjesec - i < 1
+      hseek Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 1, 2 ) + _idradn
+   ELSE
+      hseek Str( _Godina, 4 ) + Str( _Mjesec - i, 2 ) + _idradn
+   ENDIF
 
-seek cOznaka+str(_godina)+str(_mjesec)+_idradn+_idrj
-if cTippr=="NE"
-    nRez:=UNETO
-else
-    cTipa:="I"+cTipPr
-    nRez :=&cTipa
-endif
+   cPom := cVar
+   cField = SubStr( cPom, 2 )
 
-PopWa()
-return nRez
+   IF lViseObr
+      &cPom := 0
+      cKljuc := Str( godina, 4 ) + Str( mjesec, 2 ) + idradn
+      IF !Empty( cObr )
+         DO WHILE !Eof() .AND. Str( godina, 4 ) + Str( mjesec, 2 ) + idradn == cKljuc
+            IF obr == cObr
+               &cPom += &cField
+            ENDIF
+            SKIP 1
+         ENDDO
+      ELSE
+         DO WHILE !Eof() .AND. Str( godina, 4 ) + Str( mjesec, 2 ) + idradn == cKljuc
+            &cPom += &cField
+            SKIP 1
+         ENDDO
+      ENDIF
+   ELSE
+      &cPom := &cField
+   ENDIF
 
-**************************
-**************************
-function Fill(xValue,xIzn)
- if type(xIzn)<>"UI" .and. type(xIzn)<>"UE"
-   xVAlue:=&xIzn
-   ShowGets()
- endif
-return 0
+   PopWa()
 
-
-
-function FillR(xValue,xIzn)
-local _rec
-PushWa()
-select radn
-
-_rec := dbf_get_rec()
-_rec[LOWER(xValue)] := xIzn
-
-update_rec_server_and_dbf( "ld_radn", _rec, 1, "FULL" )
-
-PopWa()
-return xIzn
+   RETURN 0
 
 
-function GETR(cPrompt,xValue)
-local nRezult
-local _rec
-private Getlist:={}
+// ***********************************
+FUNCTION PrimSM( cOznaka, cTipPr )
 
-PushWa()
-select radn
+   //
+   // cOznaka - oznaka primanja u smecu
+   // cTipPr  - "01, "02" , ...
+   // "NE" - neto
+   // izlaz = primanje iz smeca
+   // ***********************************
+   LOCAL nRez := 0
 
-nRezult := &xValue
+   PRIVATE cTipa := ""
+   // "LDSMi1","Obr+str(godina)+str(mjesec)+idradn+idrj",PRIVPATH+"LDSM")
 
-Box(,2,60)
-    @ m_x+1,m_y+2 SAY cPrompt GET nRezult
-    READ
-BoxC()
- 
-if LastKey() == K_ESC
-    return &xValue
-endif
+   PRIVATE cpom := ""
 
-_rec := dbf_get_rec()
-_rec[ LOWER(xValue) ] := nRezult
+   PushWa()
 
-update_rec_server_and_dbf( "ld_radn", _rec, 1, "FULL" ) 
+   SELECT ( F_LDSM )
+   IF !Used()
+      O_LDSM
+   ENDIF
 
-PopWa()
+   SEEK cOznaka + Str( _godina ) + Str( _mjesec ) + _idradn + _idrj
+   IF cTippr == "NE"
+      nRez := UNETO
+   ELSE
+      cTipa := "I" + cTipPr
+      nRez := &cTipa
+   ENDIF
 
-return nRezult
+   PopWa()
+
+   RETURN nRez
+
+// *************************
+// *************************
+FUNCTION Fill( xValue, xIzn )
+
+   IF Type( xIzn ) <> "UI" .AND. Type( xIzn ) <> "UE"
+      xVAlue := &xIzn
+      ShowGets()
+   ENDIF
+
+   RETURN 0
+
+
+
+FUNCTION FillR( xValue, xIzn )
+
+   LOCAL _rec
+
+   PushWa()
+   SELECT radn
+
+   _rec := dbf_get_rec()
+   _rec[ Lower( xValue ) ] := xIzn
+
+   update_rec_server_and_dbf( "ld_radn", _rec, 1, "FULL" )
+
+   PopWa()
+
+   RETURN xIzn
+
+
+FUNCTION GETR( cPrompt, xValue )
+
+   LOCAL nRezult
+   LOCAL _rec
+   PRIVATE Getlist := {}
+
+   PushWa()
+   SELECT radn
+
+   nRezult := &xValue
+
+   Box(, 2, 60 )
+   @ m_x + 1, m_y + 2 SAY cPrompt GET nRezult
+   READ
+   BoxC()
+
+   IF LastKey() == K_ESC
+      return &xValue
+   ENDIF
+
+   _rec := dbf_get_rec()
+   _rec[ Lower( xValue ) ] := nRezult
+
+   update_rec_server_and_dbf( "ld_radn", _rec, 1, "FULL" )
+
+   PopWa()
+
+   RETURN nRezult
 
 
 
 // ------------------------
 // ------------------------
-function FillBrBod(_brbod)
-local _vars
+FUNCTION FillBrBod( _brbod )
 
-if (radn->brbod <> _brbod)
+   LOCAL _vars
 
-    if Pitanje(, Lokal("Staviti u sifrarnik radnika ovu vrijednost D/N?"),"N")=="D"
+   IF ( radn->brbod <> _brbod )
 
-            SELECT radn
-            _vars := dbf_get_rec()
-            _vars["brbod"] := _brbod
+      IF Pitanje(, Lokal( "Staviti u sifrarnik radnika ovu vrijednost D/N?" ), "N" ) == "D"
 
-            update_rec_server_and_dbf("ld_radn", _vars, 1, "FULL")
+         SELECT radn
+         _vars := dbf_get_rec()
+         _vars[ "brbod" ] := _brbod
 
-    endif
+         update_rec_server_and_dbf( "ld_radn", _vars, 1, "FULL" )
 
-endif
+      ENDIF
 
-SELECT ld
-return .t.
+   ENDIF
 
+   SELECT ld
 
-function FillKMinRad(k_min_rad)
-local _fields
-
-if radn->kminrad <> k_min_rad
-    if Pitanje( , Lokal("Staviti u sifrarnik radnika ovu vrijednost D/N?"),"N")=="D"
-
-            select radn
-            _fields := dbf_get_rec()     
-            _fields["kminrad"] := k_min_rad
-            update_rec_server_and_dbf("ld_radn", _vars, 1, "FULL")
-            select ld
-    endif
-endif
-return .t.
+   RETURN .T.
 
 
+FUNCTION FillKMinRad( k_min_rad )
+
+   LOCAL _fields
+
+   IF radn->kminrad <> k_min_rad
+      IF Pitanje( , Lokal( "Staviti u sifrarnik radnika ovu vrijednost D/N?" ), "N" ) == "D"
+
+         SELECT radn
+         _fields := dbf_get_rec()
+         _fields[ "kminrad" ] := k_min_rad
+         update_rec_server_and_dbf( "ld_radn", _vars, 1, "FULL" )
+         SELECT ld
+      ENDIF
+   ENDIF
+
+   RETURN .T.
 
 
 
-function FillVPosla()
-local _rec
 
-if radn->idvposla <> _idvposla
-    if Pitanje( , Lokal("Staviti u sifrarnik radnika ovu vrijednost D/N?"),"N")=="D"
 
-        select radn
-        _rec := dbf_get_rec()
-        _rec["idvposla"] := _idvposla
-        update_rec_server_and_dbf("ld_radn", _vars, 1, "FULL")
-        select ld
-    endif
-endif
-return .t.
+FUNCTION FillVPosla()
+
+   LOCAL _rec
+
+   IF radn->idvposla <> _idvposla
+      IF Pitanje( , Lokal( "Staviti u sifrarnik radnika ovu vrijednost D/N?" ), "N" ) == "D"
+
+         SELECT radn
+         _rec := dbf_get_rec()
+         _rec[ "idvposla" ] := _idvposla
+         update_rec_server_and_dbf( "ld_radn", _vars, 1, "FULL" )
+         SELECT ld
+      ENDIF
+   ENDIF
+
+   RETURN .T.
 
 
 
 // vraca naziv radnika
-function g_naziv( cRadn )
-local cStr := ""
-local nTArea := SELECT()
-select radn
-seek cRadn
-cStr := ALLTRIM(radn->ime) + " " + ALLTRIM(radn->naz)
-select (nTArea)
-return cStr
+FUNCTION g_naziv( cRadn )
+
+   LOCAL cStr := ""
+   LOCAL nTArea := Select()
+
+   SELECT radn
+   SEEK cRadn
+   cStr := AllTrim( radn->ime ) + " " + AllTrim( radn->naz )
+   SELECT ( nTArea )
+
+   RETURN cStr
 
 
-******************************
-* izracun bruto iznosa
-******************************
-function Bruto(nbruto,ndopr)
+// *****************************
+// izracun bruto iznosa
+// *****************************
+FUNCTION Bruto( nbruto, ndopr )
 
-nBruto:=_UNETO
-nPorDopr:=0
+   nBruto := _UNETO
+   nPorDopr := 0
 
-select (F_POR)
+   SELECT ( F_POR )
 
-if !used()
-    O_POR
-endif
+   IF !Used()
+      O_POR
+   ENDIF
 
-select (F_DOPR)
+   SELECT ( F_DOPR )
 
-if !used()
-    O_DOPR
-endif
+   IF !Used()
+      O_DOPR
+   ENDIF
 
-select (F_KBENEF)
+   SELECT ( F_KBENEF )
 
-if !used()
-    O_KBENEF
-endif
+   IF !Used()
+      O_KBENEF
+   ENDIF
 
-nBO:=0
-nBo:=parobr->k3/100*MAX(_UNeto,PAROBR->prosld*gPDLimit/100)
+   nBO := 0
+   nBo := parobr->k3 / 100 * Max( _UNeto, PAROBR->prosld * gPDLimit / 100 )
 
-select por
-go top
+   SELECT por
+   GO TOP
 
-nPom:=nPor:=0
-nC1:=30
-nPorOl:=0
+   nPom := nPor := 0
+   nC1 := 30
+   nPorOl := 0
 
-do while !eof()
-    nPom:=max(dlimit,round(iznos/100*MAX(_UNeto,PAROBR->prosld*gPDLimit/100),gZaok))
-    nPor+=nPom
-    skip
-enddo
+   DO WHILE !Eof()
+      nPom := Max( dlimit, Round( iznos / 100 * Max( _UNeto, PAROBR->prosld * gPDLimit / 100 ), gZaok ) )
+      nPor += nPom
+      SKIP
+   ENDDO
 
-nBruto+=nPor
-nPorDopr+=nPor
+   nBruto += nPor
+   nPorDopr += nPor
 
-if radn->porol<>0  // poreska olaksica
-    nPorOl:=parobr->prosld*radn->porol/100
-    if nPorOl>nPor // poreska olaksica ne moze biti veca od poreza
-            nPorOl:=nPor
-    endif
-    nBruto-=nPorol
-    nPorDopr-=nPorOl
-endif
-if radn->porol<>0
-  //? m
-  //? "Ukupno Porez"
-    //@ prow(),nC1 SAY space(len(gpici))
-    //@ prow(),39 SAY nPor-nPorOl pict gpici
-   //? m
-endif
+   IF radn->porol <> 0  // poreska olaksica
+      nPorOl := parobr->prosld * radn->porol / 100
+      IF nPorOl > nPor // poreska olaksica ne moze biti veca od poreza
+         nPorOl := nPor
+      ENDIF
+      nBruto -= nPorol
+      nPorDopr -= nPorOl
+   ENDIF
+   IF radn->porol <> 0
+      // ? m
+      // ? "Ukupno Porez"
+      // @ prow(),nC1 SAY space(len(gpici))
+      // @ prow(),39 SAY nPor-nPorOl pict gpici
+      // ? m
+   ENDIF
 
-select dopr
-go top
+   SELECT dopr
+   GO TOP
 
-nPom:=nDopr:=0
-nC1:=20
+   nPom := nDopr := 0
+   nC1 := 20
 
-do while !eof()  // DOPRINOSI
-    if right(id,1)<>"X"
-        SKIP
-        LOOP
-    endif
-    //? id,"-",naz
-    //@ prow(),pcol()+1 SAY iznos pict "99.99%"
-    if empty(idkbenef) // doprinos udara na neto
-        //@ prow(),pcol()+1 SAY nBO pict gpici
-        //nC1:=pcol()+1
-        nPom:=max(dlimit,round(iznos/100*nBO,gZaok))
-        nBruto+=nPom
-        nPorDopr+=nPom
-    else
-        nPom0:=ASCAN(aNeta,{|x| x[1]==idkbenef})
-        if nPom0<>0
-                nPom2:=parobr->k3/100*aNeta[nPom0,2]
-        else
-                nPom2:=0
-        endif
-        if round(nPom2,gZaok)<>0
-                //@ prow(),pcol()+1 SAY nPom2 pict gpici
-                //nC1:=pcol()+1
-                nPom:=max(dlimit,round(iznos/100*nPom2,gZaok))
-                nBruto+=nPom
-                nPorDopr+=nPom
-        endif
-    endif
+   DO WHILE !Eof()  // DOPRINOSI
+      IF Right( id, 1 ) <> "X"
+         SKIP
+         LOOP
+      ENDIF
+      // ? id,"-",naz
+      // @ prow(),pcol()+1 SAY iznos pict "99.99%"
+      IF Empty( idkbenef ) // doprinos udara na neto
+         // @ prow(),pcol()+1 SAY nBO pict gpici
+         // nC1:=pcol()+1
+         nPom := Max( dlimit, Round( iznos / 100 * nBO, gZaok ) )
+         nBruto += nPom
+         nPorDopr += nPom
+      ELSE
+         nPom0 := AScan( aNeta, {| x| x[ 1 ] == idkbenef } )
+         IF nPom0 <> 0
+            nPom2 := parobr->k3 / 100 * aNeta[ nPom0, 2 ]
+         ELSE
+            nPom2 := 0
+         ENDIF
+         IF Round( nPom2, gZaok ) <> 0
+            // @ prow(),pcol()+1 SAY nPom2 pict gpici
+            // nC1:=pcol()+1
+            nPom := Max( dlimit, Round( iznos / 100 * nPom2, gZaok ) )
+            nBruto += nPom
+            nPorDopr += nPom
+         ENDIF
+      ENDIF
 
-    skip
-enddo // doprinosi
-//? m
-//? "UKUPNO POREZ+DOPRINOSI"
-//@ prow(),39 SAY nPorDopr pict gpici
-//? m
-//? "BRUTO IZNOS"
-//@ prow(),60 SAY nBruto pict gpici
-//? m
-return (nBruto)
-*}
+      SKIP
+   ENDDO // doprinosi
+   // ? m
+   // ? "UKUPNO POREZ+DOPRINOSI"
+   // @ prow(),39 SAY nPorDopr pict gpici
+   // ? m
+   // ? "BRUTO IZNOS"
+   // @ prow(),60 SAY nBruto pict gpici
+   // ? m
+
+   RETURN ( nBruto )
+// }
 
 
 
-***********************************************
+// **********************************************
 // Provjerava ima li u formuli tipa
 // primanja cTP parametara obracuna ("PAROBR")
-***********************************************
-FUNCTION TPImaPO(cTP)
-  LOCAL lVrati:=.f., nObl:=SELECT()
-  SELECT TIPPR; PushWA()
-  SEEK cTP
-  IF ID==cTP .and. "PAROBR" $ UPPER(TIPPR->formula); lVrati:=.t.; ENDIF
-  PopWA(); SELECT (nObl)
-RETURN lVrati
+// **********************************************
+FUNCTION TPImaPO( cTP )
+
+   LOCAL lVrati := .F., nObl := Select()
+
+   SELECT TIPPR; PushWA()
+   SEEK cTP
+   IF ID == cTP .AND. "PAROBR" $ Upper( TIPPR->formula ); lVrati := .T. ; ENDIF
+   PopWA(); SELECT ( nObl )
+
+   RETURN lVrati
 
 // ---------------------------------------------------------------
 // ---------------------------------------------------------------
-function BodovaNaDan(ngodina,nmjesec,cidradn,cidrj,ndan,cDanDio)
-local _BrBod:=0
+FUNCTION BodovaNaDan( ngodina, nmjesec, cidradn, cidrj, ndan, cDanDio )
 
-select RADSIHT
-seek str(ngodina,4)+str(nmjesec,2)+cIdRadn+cIdRj+STR(nDan,2)+cDanDio
-//+"01"+str(ndan,2)
-// id na prvi slog
-ntRec:=Recno()   // ispisi broj bodova
-IF !FOUND()
-  _BrBod:=0
-ELSE
-   _brbod:=brbod
-ENDIF
+   LOCAL _BrBod := 0
 
-go nTRec
-return _BrBod
+   SELECT RADSIHT
+   SEEK Str( ngodina, 4 ) + Str( nmjesec, 2 ) + cIdRadn + cIdRj + Str( nDan, 2 ) + cDanDio
+   // +"01"+str(ndan,2)
+   // id na prvi slog
+   ntRec := RecNo()   // ispisi broj bodova
+   IF !Found()
+      _BrBod := 0
+   ELSE
+      _brbod := brbod
+   ENDIF
 
-function UbaciPrefix(cU,cP)
+   GO nTRec
 
-  cU := PADR(UPPER( cU ),250)
+   RETURN _BrBod
 
-  cU := STRTRAN( cU , "I0"      , cP+"I0"      )
-  cU := STRTRAN( cU , "I1"      , cP+"I1"      )
-  cU := STRTRAN( cU , "I2"      , cP+"I2"      )
-  cU := STRTRAN( cU , "I3"      , cP+"I3"      )
-  cU := STRTRAN( cU , "I4"      , cP+"I4"      )
+FUNCTION UbaciPrefix( cU, cP )
 
-  cU := STRTRAN( cU , "S0"      , cP+"S0"      )
-  cU := STRTRAN( cU , "S1"      , cP+"S1"      )
-  cU := STRTRAN( cU , "S2"      , cP+"S2"      )
-  cU := STRTRAN( cU , "S3"      , cP+"S3"      )
-  cU := STRTRAN( cU , "S4"      , cP+"S4"      )
+   cU := PadR( Upper( cU ), 250 )
 
-  cU := STRTRAN( cU , "USATI"   , cP+"USATI"   )
-  cU := STRTRAN( cU , "UNETO"   , cP+"UNETO"   )
-  cU := STRTRAN( cU , "UODBICI" , cP+"UODBICI" )
-  cU := STRTRAN( cU , "UIZNOS"  , cP+"UIZNOS"  )
+   cU := StrTran( cU, "I0", cP + "I0"      )
+   cU := StrTran( cU, "I1", cP + "I1"      )
+   cU := StrTran( cU, "I2", cP + "I2"      )
+   cU := StrTran( cU, "I3", cP + "I3"      )
+   cU := StrTran( cU, "I4", cP + "I4"      )
 
-RETURN TRIM(cU)
+   cU := StrTran( cU, "S0", cP + "S0"      )
+   cU := StrTran( cU, "S1", cP + "S1"      )
+   cU := StrTran( cU, "S2", cP + "S2"      )
+   cU := StrTran( cU, "S3", cP + "S3"      )
+   cU := StrTran( cU, "S4", cP + "S4"      )
 
+   cU := StrTran( cU, "USATI", cP + "USATI"   )
+   cU := StrTran( cU, "UNETO", cP + "UNETO"   )
+   cU := StrTran( cU, "UODBICI", cP + "UODBICI" )
+   cU := StrTran( cU, "UIZNOS", cP + "UIZNOS"  )
 
-function PrimLD(cOznaka,cTipPr)
-local nRez:=0, nArr:=SELECT()
-private cTipa:=""
-private cpom:=""
-
-select (F_LD)
-if !used()
-  O_LD
-endif
-
-PushWA()
-
-SET ORDER TO TAG "1"
-//  CREATE_INDEX("1","str(godina)+idrj+str(mjesec)+obr+idradn",KUMPATH+"LD")
-
-seek str(_godina,4)+_idrj+str(_mjesec,2)+cOznaka+_idradn
-
-if cTippr=="NE"
-    nRez:=UNETO
-else
-    cTipa:="I"+cTipPr
-    nRez :=&cTipa
-endif
-
-PopWa()
-
-SELECT (nArr)
-return nRez
+   RETURN Trim( cU )
 
 
+FUNCTION PrimLD( cOznaka, cTipPr )
 
+   LOCAL nRez := 0, nArr := Select()
+   PRIVATE cTipa := ""
+   PRIVATE cpom := ""
+
+   SELECT ( F_LD )
+   IF !Used()
+      O_LD
+   ENDIF
+
+   PushWA()
+
+   SET ORDER TO TAG "1"
+   // CREATE_INDEX("1","str(godina)+idrj+str(mjesec)+obr+idradn",KUMPATH+"LD")
+
+   SEEK Str( _godina, 4 ) + _idrj + Str( _mjesec, 2 ) + cOznaka + _idradn
+
+   IF cTippr == "NE"
+      nRez := UNETO
+   ELSE
+      cTipa := "I" + cTipPr
+      nRez := &cTipa
+   ENDIF
+
+   PopWa()
+
+   SELECT ( nArr )
+
+   RETURN nRez

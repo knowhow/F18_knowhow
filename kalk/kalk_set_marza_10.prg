@@ -34,12 +34,14 @@ endif
 nDif:=0
 nVPC:=0
 
+my_flock()
 do while !eof()
 	nVPC:=(kalk_pripr->NC+nMarza)
 	nDif:=nVPC-ROUND(nVPC,0)
 	replace TMarza with "A", Marza with nMarza-nDif, VPC with kalk_pripr->NC+nMarza-nDif
 	skip
 enddo
+my_unlock()
 
 return
 

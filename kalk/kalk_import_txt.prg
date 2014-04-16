@@ -602,6 +602,7 @@ select temp
 // ali samo ako je u pitanju racun tabela... !
 if temp->(fieldpos("idtipdok")) <> 0
 	go top
+    my_flock()
 	do while !EOF()
 		if field->idtipdok == "10" .and. field->kolicina < 0
 			replace field->dtype with "0"
@@ -610,6 +611,7 @@ if temp->(fieldpos("idtipdok")) <> 0
 		endif
 		skip
 	enddo
+    my_unlock()
 endif
 
 MsgBeep("Import txt => temp - OK")

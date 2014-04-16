@@ -657,7 +657,7 @@ DO WHILE .t.
         IF FOUND()
 
             // saberi ga sa prethodnim u pripremi
-            REPLACE kolicina with kolicina + fakt->kolicina        
+            RREPLACE kolicina with kolicina + fakt->kolicina        
         
         ELSE
             

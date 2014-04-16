@@ -224,7 +224,7 @@ do while .t.
             
         if found()
 
-              replace kolicina with kolicina + fakt->kolicina*sast->kolicina
+              RREPLACE kolicina with kolicina + fakt->kolicina*sast->kolicina
             
         else
               
@@ -489,7 +489,7 @@ do while .t.
                             select kalk_pripr
                             locate for idroba==sast->id2
                             if found()
-                                replace kolicina with kolicina + fakt->kolicina*sast->kolicina
+                                RREPLACE kolicina with kolicina + fakt->kolicina*sast->kolicina
                             else
                                 select kalk_pripr
                                 append blank
@@ -628,7 +628,7 @@ Box(,15,60)
                     select kalk_pripr
                     locate for idroba==fakt->idroba
                     if found()
-                        replace kolicina with kolicina + fakt->kolicina
+                        RREPLACE kolicina with kolicina + fakt->kolicina
                     else
                         select kalk_pripr
                         append blank
@@ -670,7 +670,7 @@ Box(,15,60)
                 select kalk_pripr
                 // roba->nc - nabavna cijena sirovine
                 // sast->kolicina - kolicina po jedinici mjera
-                replace fcj with fcj + (roba->nc*sast->kolicina)
+                RREPLACE fcj with fcj + (roba->nc*sast->kolicina)
        
                 select sast
                 skip

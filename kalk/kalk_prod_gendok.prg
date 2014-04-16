@@ -846,7 +846,7 @@ DO WHILE !EOF() .AND. cIdFirma==IdFirma .and. Pkonto==cPKonto
      Scatter()
      append blank
      gather()
-     replace rbr with str(val(rbr)+1,3), kolicina with -1, MPCSAPP with nMPVSapp,;
+     RREPLACE rbr with str(val(rbr)+1,3), kolicina with -1, MPCSAPP with nMPVSapp,;
              mpc with nMPV, nc with nMPV, marza2 with 0, TMarza with "A",;
              idtarifa with cIdTarifa,  idroba with cRIdRoba
 

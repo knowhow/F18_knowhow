@@ -136,6 +136,8 @@ endif
 
 seek cPKonto + cIdRoba
 
+my_flock()
+
 if !found()
 	APPEND BLANK
 	replace PKonto with cPKonto
@@ -146,6 +148,8 @@ replace IdVd with cIdVd
 replace BrDok with cBrDok
 replace DatDok with dDatDok
 replace Nc with nNc
+
+my_unlock()
 
 select (nArr)
 return

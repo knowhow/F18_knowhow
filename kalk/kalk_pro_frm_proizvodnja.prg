@@ -86,9 +86,7 @@ FUNCTION Get1_PR()
                SELECT kalk_pripr
                LOCATE FOR idroba == sast->id2
                IF Found()
-                  my_rlock()
-                  REPLACE kolicina WITH kolicina + kalk_pripr->kolicina * sast->kolicina
-                  my_unlock()
+                  RREPLACE kolicina WITH kolicina + kalk_pripr->kolicina * sast->kolicina
                ELSE
                   SELECT kalk_pripr
                   APPEND BLANK
@@ -268,9 +266,7 @@ FUNCTION Get1_PR()
       IF !fnovi
          GO TOP
          IF Val( rbr ) = 1
-            my_rlock()
-            REPLACE fcj WITH nNv / kolicina
-            my_unlock()
+            RREPLACE fcj WITH nNv / kolicina
          ENDIF
       ENDIF
    ENDIF

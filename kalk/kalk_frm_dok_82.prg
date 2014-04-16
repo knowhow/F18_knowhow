@@ -207,12 +207,13 @@ _PKonto:=""; _PU_I:=""
 if pIzgSt   .and. _kolicina>0 .and. lastkey()<>K_ESC // izgenerisane stavke postoje
  private nRRec:=recno()
  go top
+ my_flock()
  do while !eof()  // nafiluj izgenerisane stavke
   if kolicina==0
      skip
      private nRRec2:=recno()
      skip -1
-     dbdelete2()
+     my_delete()
      go nRRec2
      loop
   endif
@@ -231,6 +232,7 @@ if pIzgSt   .and. _kolicina>0 .and. lastkey()<>K_ESC // izgenerisane stavke post
   endif
   skip
  enddo
+ my_unlock()
  go nRRec
 endif
 

@@ -437,11 +437,13 @@ if nVar == 2
 	// sredi robu i partnere
 	select r_export
 	go top
+    my_flock()
 	do while !EOF()
 		replace field->r_naz with r_naz( field->idroba )
 		replace field->p_naz with p_naz( field->idpartner )
 		skip
 	enddo
+    my_unlock()
 	return
 endif
 
@@ -460,6 +462,8 @@ do while !EOF()
 	go top
 	seek cIdRoba
 
+    my_flock()
+
 	if !FOUND()
 		append blank
 		replace field->idroba with cIdRoba
@@ -474,6 +478,8 @@ do while !EOF()
 	
 	replace field->np_nvs with ( field->tp_nvu - ;
 		field->np_nvi )
+
+    my_unlock()
 
 	select kalk_pripr
 

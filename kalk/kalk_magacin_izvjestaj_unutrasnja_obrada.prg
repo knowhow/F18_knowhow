@@ -197,6 +197,8 @@ do while !EOF() .and. field->idfirma == gFirma .and. field->mkonto == cKonto
 	select r_export
 	set order to tag "2"
 	seek cOdobrenje + cJciNo + cExNo + cRobaId
+
+    my_flock()
 	
 	if !FOUND() .and. field->idroba <> cRobaId
 
@@ -214,6 +216,8 @@ do while !EOF() .and. field->idfirma == gFirma .and. field->mkonto == cKonto
 	replace field->kol_ul with field->kol_ul + nUlaz 
 	replace field->kol_iz with field->kol_iz + nIzlaz
 	replace field->stanje with field->stanje + (nUlaz - nIzlaz) 
+
+    my_unlock()
 
 	select kalk
 	skip

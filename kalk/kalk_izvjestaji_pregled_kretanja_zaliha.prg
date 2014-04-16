@@ -128,12 +128,14 @@ do while !eof()
 	select pobjekti    
 	// inicijalizuj polja
 	go top
+    my_flock()
 	do while !eof()
 		// prodaja grupa
 		replace prodg with 0   
 		REPLACE zalg  with 0
 		skip
 	enddo
+    my_unlock()
 	select rekap1
 
 	fFilGr:=.f.
@@ -142,12 +144,14 @@ do while !eof()
 
 		select pobjekti   
 		go top
+        my_flock()
 		do while !eof()
 			// prodaja tarifa,grupa
 			replace prodt with 0  
 			REPLACE zalt  with 0
 			skip
 		enddo
+        my_unlock()
 		select rekap1
 		cIdTarifa:=idtarifa
 		fFilovo:=.f.
@@ -260,7 +264,7 @@ do while !eof()
 				 select pobjekti
 				 if roba->k2<>"X"   
 					//samo u finansijski zbir
-					replace zalt  with zalt+rekap1->k2,;
+					RREPLACE zalt  with zalt+rekap1->k2,;
 						zalu  with zalu+rekap1->k2 ,;
 						zalg  with zalg+rekap1->k2
 				 endif
@@ -270,7 +274,7 @@ do while !eof()
 			// ovo je objekat 99
 			if roba->k2<>"X"   
 				// roba sa oznakom k2=X
-				replace zalt   with zalt+nk2 ,;
+				RREPLACE zalt   with zalt+nk2 ,;
 					zalu   with zalu+nk2 ,;
 					zalg   with zalg+nk2
 			endif
@@ -334,7 +338,7 @@ do while !eof()
 				select pobjekti
 				if roba->k2<>"X"
 					aUGArt[nITar,4+i,2]+=rekap1->k1
-					replace prodt  with  prodt+rekap1->k1,;
+					RREPLACE prodt  with  prodt+rekap1->k1,;
 						produ  with  produ+rekap1->k1,;
 						prodg  with  prodg+rekap1->k1
 				endif
@@ -344,9 +348,7 @@ do while !eof()
 
 			// skipuje na polje "99"
 			if roba->k2<>"X" 
-				REPLACE prodt with prodt+nk1 
-				REPLACE	produ with produ+nk1 
-				REPLACE	prodg with prodg+nk1
+				RREPLACE prodt with prodt+nk1, produ with produ+nk1, prodg with prodg+nk1
 			endif
 			
 			if (cPrikazDob=="D")

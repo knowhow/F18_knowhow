@@ -452,6 +452,9 @@ local nPari
 
 SELECT ppprod
 seek cIdKonto
+
+my_flock()
+
 if (!FOUND())
 	APPEND BLANK
 	REPLACE idKonto WITH cIdKonto
@@ -475,6 +478,8 @@ endif
 
 REPLACE bruto  WITH field->bruto+nCijena*nKolicina
 REPLACE neto WITH field->neto+nCijenaBp*nKolicina
+
+my_unlock()
 
 SELECT pos
 return
@@ -519,6 +524,9 @@ static function ARFPromVp(cIdKonto, nPolog01, nPolog02, nPolog03, nPolog04, nPol
 
 SELECT ppprod
 SEEK cIdKonto
+
+my_flock()
+
 if !FOUND()
 	APPEND BLANK
 	REPLACE idKonto WITH cIdKonto
@@ -536,5 +544,8 @@ REPLACE polog09 WITH field->polog09+nPolog09
 REPLACE polog10 WITH field->polog10+nPolog10
 REPLACE polog11 WITH field->polog11+nPolog11
 REPLACE polog12 WITH field->polog12+nPolog12
+
+my_unlock()
+
 return
 *}

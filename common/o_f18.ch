@@ -34,7 +34,7 @@
 #xcommand O_FAKT_OBJEKTI  => select (F_FAKT_OBJEKTI) ;  use_sql_sif ( "fakt_objekti" ) ; set order to tag "ID"
 // lokalizacija
 #xcommand O_LOKAL    => select (F_LOKAL)   ;  use_sql_lokalizacija()
-#xcommand O_RJ       => select (F_RJ)      ;  use_sql_sif  ("rj")        ; set order to tag "ID"
+#xcommand O_RJ       => select (F_RJ)      ;  use_sql_rj()        ; set order to tag "ID"
 #xcommand O_VRSTEP   => SELECT (F_VRSTEP)  ;  use_sql_sif  ("vrstep")    ; set order to tag "ID"
 #xcommand O_PKONTO       => select (F_PKONTO); use_sql_pkonto()  ; set order to tag "ID"
 #xcommand O_KS           => select (F_KS);     use_sql_ks() ; set order to tag "ID"

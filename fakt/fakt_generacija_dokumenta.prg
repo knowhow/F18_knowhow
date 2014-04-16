@@ -484,7 +484,9 @@ Box(, 5, 60 )
 
    	go top
     _t_rec := 0
-            
+        
+    my_flock()
+    
 	do while !EOF()
 
     	skip
@@ -507,6 +509,8 @@ Box(, 5, 60 )
 		go ( _t_rec )
    	
 	enddo
+
+    my_unlock()
             
 	PopWa()
                     

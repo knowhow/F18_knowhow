@@ -393,12 +393,7 @@ if !FOUND()
 	replace field->doc_no with nDoc_no
 endif
 
-replace field->customer with cCustomer
-replace field->doc_date with dDate
-replace field->dvr_date with dDel_date
-replace field->fakt_d1 with cFakt_dok1
-replace field->fakt_d2 with cFakt_dok2
-replace field->pos_d1 with cPos_dok1
+RREPLACE field->customer with cCustomer, field->doc_date with dDate, field->dvr_date with dDel_date, field->fakt_d1 with cFakt_dok1, field->fakt_d2 with cFakt_dok2, field->pos_d1 with cPos_dok1
 
 select (nTArea)
 return

@@ -1412,12 +1412,7 @@ local aZpoGn := {}
 local nTArea := SELECT()
 
 // ukupno mm -> m2
-replace field->doc_it_tot with ROUND( c_ukvadrat(field->doc_it_qtt, ;
-    field->doc_it_hei, field->doc_it_wid), 2)
-
-replace field->doc_it_tm with ROUND( c_duzinski(field->doc_it_qtt, ;
-    field->doc_it_hei, field->doc_it_wid), 2)
-
+RREPLACE field->doc_it_tot with ROUND( c_ukvadrat(field->doc_it_qtt, field->doc_it_hei, field->doc_it_wid), 2), field->doc_it_tm with ROUND( c_duzinski(field->doc_it_qtt, field->doc_it_hei, field->doc_it_wid), 2)
 
 aZpoGN := {}
         
@@ -1448,29 +1443,13 @@ if lBezZaokr == .f.
     lBezZaokr := is_plex( aZpoGN )
 endif
     
-replace field->doc_it_zhe with ;
-    obrl_zaok( field->doc_it_hei, aZpoGN, lBezZaokr )
-replace field->doc_it_zh2 with ;
-    obrl_zaok( field->doc_it_h2, aZpoGN, lBezZaokr )
-replace field->doc_it_zwi with ;
-    obrl_zaok( field->doc_it_wid, aZpoGN, lBezZaokr )
-replace field->doc_it_zw2 with ;
-    obrl_zaok( field->doc_it_w2, aZpoGN, lBezZaokr )
-        
-// ako se zaokruzuje onda total ide po zaokr.vrijednostima
-replace field->doc_it_tot with ROUND( c_ukvadrat( field->doc_it_qtt, ;
-    field->doc_it_zhe, ;
-    field->doc_it_zwi, ;
-    field->doc_it_zh2, ;
-    field->doc_it_zw2 ), 2)
-replace field->doc_it_tm with ROUND( c_duzinski( field->doc_it_qtt, ;
-    field->doc_it_zhe, ;
-    field->doc_it_zwi, ;
-    field->doc_it_zh2, ;
-    field->doc_it_zw2 ), 2)
-    
-// izracunaj neto
-replace field->doc_it_net with ROUND( obrl_neto( field->doc_it_tot, aZpoGN ), 2)
+RREPLACE field->doc_it_zhe with obrl_zaok( field->doc_it_hei, aZpoGN, lBezZaokr ), ;
+		field->doc_it_zh2 with obrl_zaok( field->doc_it_h2, aZpoGN, lBezZaokr ), ;
+		field->doc_it_zwi with obrl_zaok( field->doc_it_wid, aZpoGN, lBezZaokr ), ;
+		field->doc_it_zw2 with obrl_zaok( field->doc_it_w2, aZpoGN, lBezZaokr ), ;
+        field->doc_it_tot with ROUND( c_ukvadrat( field->doc_it_qtt, field->doc_it_zhe, field->doc_it_zwi, field->doc_it_zh2, field->doc_it_zw2 ), 2), ;	
+		field->doc_it_tm with ROUND( c_duzinski( field->doc_it_qtt, field->doc_it_zhe, field->doc_it_zwi, field->doc_it_zh2, field->doc_it_zw2 ), 2), ;
+    	field->doc_it_net with ROUND( obrl_neto( field->doc_it_tot, aZpoGN ), 2)
         
 return
 

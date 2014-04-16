@@ -1056,7 +1056,7 @@
 #command RREPLACE <f1> WITH <v1> [, <fN> WITH <vN> ]    ;
       => my_rlock();
          ;   _FIELD-><f1> := <v1> [; _FIELD-><fN> := <vN>];
-         ;my_unlock();
+         ;my_unlock()
 
 
 #command REPLSQL <f1> WITH <v1> [, <fN> WITH <vN> ]    ;

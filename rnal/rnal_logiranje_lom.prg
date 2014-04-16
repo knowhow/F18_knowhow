@@ -289,7 +289,7 @@ else
 	if _get_it_desc( @cDesc, field->doc_it_qtt, ;
 		@nDamage, @nGlass_no ) > 0
 	
-		rReplace field->art_marker with "*", field->art_desc with cDesc, field->damage with nDamage, field->glass_no with nGlass_no
+		RREPLACE field->art_marker with "*", field->art_desc with cDesc, field->damage with nDamage, field->glass_no with nGlass_no
 	
 		beep(2)
 

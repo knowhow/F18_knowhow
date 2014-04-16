@@ -1,3 +1,8 @@
+1.7.49  2014-04-16, vsasa
+
+  - masovna izmjena replace komandi sa RREPLACE komandom
+  - RNAL, korekcije bug-ova
+ 
 1.7.48  2014-04-16, vsasa
 
   - RJ se sada otvara sa use_sql_rj()

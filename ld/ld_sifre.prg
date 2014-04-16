@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,127 +12,128 @@
 
 #include "ld.ch"
 
-static __filter_radn := .f.
+STATIC __filter_radn := .F.
 
 
 // -------------------------
 // -------------------------
-function P_Radn(cId, dx, dy)
-local i
-private imekol
-private kol
-private cFooter := ""
-private lPInfo := .f.
+FUNCTION P_Radn( cId, dx, dy )
 
-if PCount() = 0
-    lPInfo := .t.
-endif
+   LOCAL i
+   PRIVATE imekol
+   PRIVATE kol
+   PRIVATE cFooter := ""
+   PRIVATE lPInfo := .F.
 
-// filterisanje tabele radnika
-_radn_filter( .t. )
+   IF PCount() = 0
+      lPInfo := .T.
+   ENDIF
 
-ImeKol:={}
-AADD(ImeKol, { Lokal(padr("Id",6))             , {|| id}, "id", {|| .t.}, {|| vpsifra(wId, "1") } })
-AADD(ImeKol, { Lokal(padr("Prezime", 20))      , {|| naz}, "naz" } )
-AADD(ImeKol, { Lokal(padr("Ime roditelja",15)) , {|| imerod}, "imerod" } )
-AADD(ImeKol, { Lokal(padr("Ime",15))           , {|| ime}, "ime" } )
-AADD(ImeKol, { padr( IIF(gBodK=="1", Lokal("Br.bodova"), Lokal("Koeficij.")), 10), {|| brbod}, "brbod" })
-AADD(ImeKol, { Lokal(padr("MinR%", 5))         , {|| kminrad}, "kminrad" })
+   // filterisanje tabele radnika
+   _radn_filter( .T. )
 
-if RADN->(FIELDPOS("KLO")) <> 0
-   
-   AADD(ImeKol, { Lokal(padr("Koef.l.odb.", 15)), {|| klo}, "klo" })
-   AADD(ImeKol, { Lokal(padr("Tip rada", 15)), {|| tiprada}, "tiprada", ;
-    {|| .t.}, {|| wtiprada $ " #I#A#S#N#P#U#R" .or. MsgTipRada() } })
-   
-   if RADN->(FIELDPOS("SP_KOEF")) <> 0
-    AADD(ImeKol, { Lokal(padr("prop.koef", 15)), {|| sp_koef}, "sp_koef" })
-   endif
-   
-   if RADN->(FIELDPOS("OPOR")) <> 0
-    AADD(ImeKol, { Lokal(padr("oporeziv", 15)), {|| opor}, "opor" })
-   endif
-   
-   if RADN->(FIELDPOS("TROSK")) <> 0
-    AADD(ImeKol, { Lokal(padr("koristi trosk.", 15)), {|| trosk}, "trosk" })
-   endif
-  
-endif
+   ImeKol := {}
+   AAdd( ImeKol, { Lokal( PadR( "Id", 6 ) ), {|| id }, "id", {|| .T. }, {|| vpsifra( wId, "1" ) } } )
+   AAdd( ImeKol, { Lokal( PadR( "Prezime", 20 ) ), {|| naz }, "naz" } )
+   AAdd( ImeKol, { Lokal( PadR( "Ime roditelja", 15 ) ), {|| imerod }, "imerod" } )
+   AAdd( ImeKol, { Lokal( PadR( "Ime", 15 ) ), {|| ime }, "ime" } )
+   AAdd( ImeKol, { PadR( iif( gBodK == "1", Lokal( "Br.bodova" ), Lokal( "Koeficij." ) ), 10 ), {|| brbod }, "brbod" } )
+   AAdd( ImeKol, { Lokal( PadR( "MinR%", 5 ) ), {|| kminrad }, "kminrad" } )
 
-AADD(ImeKol, { Lokal(padr("StrSpr",6)), {|| padc(Idstrspr,6)}, "idstrspr", {||.t.}, {|| P_StrSpr(@wIdStrSpr)} } )
-AADD(ImeKol, { Lokal(padr("V.Posla",6)), {|| padc(IdVPosla,6)}, "IdVPosla", {||.t.}, {|| empty(widvposla) .or. P_VPosla(@wIdVPosla)} })
-AADD(ImeKol, { Lokal(padr("Ops.Stan",8)),{|| padc(IdOpsSt,8)}, "IdOpsSt", {||.t.}, {|| P_Ops(@wIdOpsSt)} })
-AADD(ImeKol, { Lokal(padr("Ops.Rada",8)),{|| padc(IdOpsRad,8)}, "IdOpsRad", {||.t.}, {|| P_Ops(@wIdOpsRad)} })
-AADD(ImeKol, { Lokal(padr("Maticni Br.",13)),{|| padc(matbr,13)}, "MatBr", {||.t.}, {|| .t.} })
-AADD(ImeKol, { Lokal(padr("Dat.Od",8)), {|| datod}, "datod", {||.t.}, {|| .t.} })
-AADD(ImeKol, { Lokal(padr("POL",3)), {|| padc(pol,3)}, "POL", {||.t.}, {|| wPol $ "MZ"} })
-AADD(ImeKol, { padr("K1",2),{|| padc(k1,2)}, "K1", {||.t.}, {|| .t.} })
-AADD(ImeKol, { padr("K2",2),{|| padc(k2,2)}, "K2", {||.t.}, {|| .t.} })
-AADD(ImeKol, { padr("K3",2),{|| padc(k3,2)}, "K3", {||.t.}, {|| .t.} })
-AADD(ImeKol, { padr("K4",2),{|| padc(k4,2)}, "K4", {||.t.}, {|| .t.} })
-AADD(ImeKol, { Lokal(padr("PorOl",6)), {|| porol}, "POROL", {||.t.}, {|| .t.} })
+   IF RADN->( FieldPos( "KLO" ) ) <> 0
 
-AADD(ImeKol, { Lokal(padr("Radno mjesto",30)), {|| rmjesto}, "RMJESTO", {||.t.}, {|| .t.} })
+      AAdd( ImeKol, { Lokal( PadR( "Koef.l.odb.", 15 ) ), {|| klo }, "klo" } )
+      AAdd( ImeKol, { Lokal( PadR( "Tip rada", 15 ) ), {|| tiprada }, "tiprada", ;
+         {|| .T. }, {|| wtiprada $ " #I#A#S#N#P#U#R" .OR. MsgTipRada() } } )
 
-AADD(ImeKol, { Lokal(padr("Br. Knjizice ",12)), {|| padc(brknjiz,12)}, "brknjiz", {||.t.}, {|| .t.} })
+      IF RADN->( FieldPos( "SP_KOEF" ) ) <> 0
+         AAdd( ImeKol, { Lokal( PadR( "prop.koef", 15 ) ), {|| sp_koef }, "sp_koef" } )
+      ENDIF
 
-AADD(ImeKol, { Lokal(padr("Br. Tekuceg rac.",20)) , {|| padc(brtekr,20)}, "brtekr", {||.t.}, {|| .t.} })
+      IF RADN->( FieldPos( "OPOR" ) ) <> 0
+         AAdd( ImeKol, { Lokal( PadR( "oporeziv", 15 ) ), {|| opor }, "opor" } )
+      ENDIF
 
-AADD(ImeKol, { Lokal(padr("Isplata",7)), {|| padc(isplata,7)}, "isplata", {||.t.}, {|| wIsplata $ "  #TR#SK#BL" .or. MsgIspl()} })
-AADD(ImeKol, { Lokal(padr("Banka",6)), {|| padc(idbanka,6)}, "idbanka", {||.t.}, {|| EMPTY(WIDBANKA) .OR. P_Kred(@widbanka)} } )
+      IF RADN->( FieldPos( "TROSK" ) ) <> 0
+         AAdd( ImeKol, { Lokal( PadR( "koristi trosk.", 15 ) ), {|| trosk }, "trosk" } )
+      ENDIF
 
-AADD( ImeKol, { Lokal( padr("OSN.Bol", 11) ) , {|| osnbol}, "osnbol" } )
+   ENDIF
 
-if radn->(fieldpos("N1")<>0)
-    AADD(ImeKol,{padc("N1",12 ),{|| n1},"n1"})
-    AADD(ImeKol,{padc("N2",12 ),{|| n2},"n2"})
-    AADD(ImeKol,{padc("N3",12 ),{|| n3},"n3"})
-endif
+   AAdd( ImeKol, { Lokal( PadR( "StrSpr", 6 ) ), {|| PadC( Idstrspr, 6 ) }, "idstrspr", {|| .T. }, {|| P_StrSpr( @wIdStrSpr ) } } )
+   AAdd( ImeKol, { Lokal( PadR( "V.Posla", 6 ) ), {|| PadC( IdVPosla, 6 ) }, "IdVPosla", {|| .T. }, {|| Empty( widvposla ) .OR. P_VPosla( @wIdVPosla ) } } )
+   AAdd( ImeKol, { Lokal( PadR( "Ops.Stan", 8 ) ), {|| PadC( IdOpsSt, 8 ) }, "IdOpsSt", {|| .T. }, {|| P_Ops( @wIdOpsSt ) } } )
+   AAdd( ImeKol, { Lokal( PadR( "Ops.Rada", 8 ) ), {|| PadC( IdOpsRad, 8 ) }, "IdOpsRad", {|| .T. }, {|| P_Ops( @wIdOpsRad ) } } )
+   AAdd( ImeKol, { Lokal( PadR( "Maticni Br.", 13 ) ), {|| PadC( matbr, 13 ) }, "MatBr", {|| .T. }, {|| .T. } } )
+   AAdd( ImeKol, { Lokal( PadR( "Dat.Od", 8 ) ), {|| datod }, "datod", {|| .T. }, {|| .T. } } )
+   AAdd( ImeKol, { Lokal( PadR( "POL", 3 ) ), {|| PadC( pol, 3 ) }, "POL", {|| .T. }, {|| wPol $ "MZ" } } )
+   AAdd( ImeKol, { PadR( "K1", 2 ), {|| PadC( k1, 2 ) }, "K1", {|| .T. }, {|| .T. } } )
+   AAdd( ImeKol, { PadR( "K2", 2 ), {|| PadC( k2, 2 ) }, "K2", {|| .T. }, {|| .T. } } )
+   AAdd( ImeKol, { PadR( "K3", 2 ), {|| PadC( k3, 2 ) }, "K3", {|| .T. }, {|| .T. } } )
+   AAdd( ImeKol, { PadR( "K4", 2 ), {|| PadC( k4, 2 ) }, "K4", {|| .T. }, {|| .T. } } )
+   AAdd( ImeKol, { Lokal( PadR( "PorOl", 6 ) ), {|| porol }, "POROL", {|| .T. }, {|| .T. } } )
 
-if radn->(fieldpos("IDRJ")<>0)
-    AADD(ImeKol, { "ID RJ" , {|| idrj}, "idrj", {||.t.}, {|| EMPTY(wIdRj) .or. P_LD_Rj(@wIdRj)} } )
-endif
+   AAdd( ImeKol, { Lokal( PadR( "Radno mjesto", 30 ) ), {|| rmjesto }, "RMJESTO", {|| .T. }, {|| .T. } } )
 
-// Dodaj specificna polja za popunu obrasca DP
-if radn->(fieldpos("STREETNAME")<>0)
-    AADD(ImeKol,{Lokal(padc("Ime ul.",40 )), {|| streetname},"streetname"})
-    AADD(ImeKol,{Lokal(padc("Broj ul.",10 )),{|| streetnum},"streetnum"})
-    AADD(ImeKol,{Lokal(padc("Zaposl.od",12 )),{|| hiredfrom},"hiredfrom",{|| .t.},{|| P_HiredFrom(@wHiredfrom)}})
-    AADD(ImeKol,{Lokal(padc("Zaposl.do",12 )),{|| hiredto},"hiredto"})
-endif
+   AAdd( ImeKol, { Lokal( PadR( "Br. Knjizice ", 12 ) ), {|| PadC( brknjiz, 12 ) }, "brknjiz", {|| .T. }, {|| .T. } } )
+
+   AAdd( ImeKol, { Lokal( PadR( "Br. Tekuceg rac.", 20 ) ), {|| PadC( brtekr, 20 ) }, "brtekr", {|| .T. }, {|| .T. } } )
+
+   AAdd( ImeKol, { Lokal( PadR( "Isplata", 7 ) ), {|| PadC( isplata, 7 ) }, "isplata", {|| .T. }, {|| wIsplata $ "  #TR#SK#BL" .OR. MsgIspl() } } )
+   AAdd( ImeKol, { Lokal( PadR( "Banka", 6 ) ), {|| PadC( idbanka, 6 ) }, "idbanka", {|| .T. }, {|| Empty( WIDBANKA ) .OR. P_Kred( @widbanka ) } } )
+
+   AAdd( ImeKol, { Lokal( PadR( "OSN.Bol", 11 ) ), {|| osnbol }, "osnbol" } )
+
+   IF radn->( FieldPos( "N1" ) <> 0 )
+      AAdd( ImeKol, { PadC( "N1", 12 ), {|| n1 }, "n1" } )
+      AAdd( ImeKol, { PadC( "N2", 12 ), {|| n2 }, "n2" } )
+      AAdd( ImeKol, { PadC( "N3", 12 ), {|| n3 }, "n3" } )
+   ENDIF
+
+   IF radn->( FieldPos( "IDRJ" ) <> 0 )
+      AAdd( ImeKol, { "ID RJ", {|| idrj }, "idrj", {|| .T. }, {|| Empty( wIdRj ) .OR. P_LD_Rj( @wIdRj ) } } )
+   ENDIF
+
+   // Dodaj specificna polja za popunu obrasca DP
+   IF radn->( FieldPos( "STREETNAME" ) <> 0 )
+      AAdd( ImeKol, { Lokal( PadC( "Ime ul.", 40 ) ), {|| streetname }, "streetname" } )
+      AAdd( ImeKol, { Lokal( PadC( "Broj ul.", 10 ) ), {|| streetnum }, "streetnum" } )
+      AAdd( ImeKol, { Lokal( PadC( "Zaposl.od", 12 ) ), {|| hiredfrom }, "hiredfrom", {|| .T. }, {|| P_HiredFrom( @wHiredfrom ) } } )
+      AAdd( ImeKol, { Lokal( PadC( "Zaposl.do", 12 ) ), {|| hiredto }, "hiredto" } )
+   ENDIF
 
 
-if radn->(FIELDPOS("AKTIVAN")) <> 0
-    AADD(ImeKol, { "Aktivan?",{|| aktivan}, "aktivan" } )
-endif
+   IF radn->( FieldPos( "AKTIVAN" ) ) <> 0
+      AAdd( ImeKol, { "Aktivan?", {|| aktivan }, "aktivan" } )
+   ENDIF
 
-if radn->(FIELDPOS("BEN_SRMJ")) <> 0
-    AADD(ImeKol, { "Benef.sifra",{|| ben_srmj}, "ben_srmj" } )
-endif
+   IF radn->( FieldPos( "BEN_SRMJ" ) ) <> 0
+      AAdd( ImeKol, { "Benef.sifra", {|| ben_srmj }, "ben_srmj" } )
+   ENDIF
 
-Kol:={}
+   Kol := {}
 
-for i:=1 to LEN(ImeKol)
-    AADD(Kol,I)
-next
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, I )
+   NEXT
 
-if gMinR=="B"
-    ImeKol[6]:={Lokal(padr("MinR",7)), {|| transform(kminrad,"9999.99")},"kminrad"}
-endif
+   IF gMinR == "B"
+      ImeKol[ 6 ] := { Lokal( PadR( "MinR", 7 ) ), {|| Transform( kminrad, "9999.99" ) }, "kminrad" }
+   ENDIF
 
-for i:=1 to 9
-    cPom:="S"+ALLTRIM(STR(i))
-    nPom:=LEN(ImeKol)
-    if radn->(fieldpos(cPom)<>0)
-        cPom2:=IzFmkIni("LD","OpisRadn"+cPom,"KOEF_"+cPom,KUMPATH)
-        AADD(ImeKol,{ cPom+"("+cPom2+")", {|| &cPom.}, cPom })
-        AADD(Kol,nPom+1)
-    endif
-next
+   FOR i := 1 TO 9
+      cPom := "S" + AllTrim( Str( i ) )
+      nPom := Len( ImeKol )
+      IF radn->( FieldPos( cPom ) <> 0 )
+         cPom2 := IzFmkIni( "LD", "OpisRadn" + cPom, "KOEF_" + cPom, KUMPATH )
+         AAdd( ImeKol, { cPom + "(" + cPom2 + ")", {|| &cPom. }, cPom } )
+         AAdd( Kol, nPom + 1 )
+      ENDIF
+   NEXT
 
-return PostojiSifra(F_RADN, 1, MAXROWS()-15, MAXCOLS()-15, Lokal("Lista radnika") + SPACE(5) + "<S> filter radnika on/off", ;
-          @cId, dx, dy, ;
-      {|Ch| RadBl(Ch)},,,,,{"ID"})
+   RETURN PostojiSifra( F_RADN, 1, MAXROWS() -15, MAXCOLS() -15, Lokal( "Lista radnika" ) + Space( 5 ) + "<S> filter radnika on/off", ;
+      @cId, dx, dy, ;
+      {| Ch| RadBl( Ch ) },,,,, { "ID" } )
 
 
 
@@ -140,34 +141,35 @@ return PostojiSifra(F_RADN, 1, MAXROWS()-15, MAXCOLS()-15, Lokal("Lista radnika"
 // ------------------------------------------
 // filterisanje tabele radnika
 // ------------------------------------------
-static function _radn_filter( lFiltered )
-local cFilter := ""
-local _t_area := SELECT()
+STATIC FUNCTION _radn_filter( lFiltered )
 
-if radn->(FIELDPOS("aktivan")) = 0
-    return
-endif
+   LOCAL cFilter := ""
+   LOCAL _t_area := Select()
 
-if lFiltered == nil
-    lFiltered := .t.
-endif
+   IF radn->( FieldPos( "aktivan" ) ) = 0
+      RETURN
+   ENDIF
 
-cFilter := "aktivan $ ' #D'"
+   IF lFiltered == nil
+      lFiltered := .T.
+   ENDIF
 
-// pozicioniraj se na radnika
-select RADN
+   cFilter := "aktivan $ ' #D'"
 
-if lFiltered == .t. .and. gRadnFilter == "D"
-    set filter to &cFilter
-    go top
-else
-    set filter to
-    go top
-endif
+   // pozicioniraj se na radnika
+   SELECT RADN
 
-select ( _t_area )
+   IF lFiltered == .T. .AND. gRadnFilter == "D"
+      SET FILTER to &cFilter
+      GO TOP
+   ELSE
+      SET FILTER TO
+      GO TOP
+   ENDIF
 
-return
+   SELECT ( _t_area )
+
+   RETURN
 
 
 
@@ -175,380 +177,391 @@ return
  *  \brief
  *  \param dHiredFrom
  */
-function P_HiredFrom(dHiredFrom)
-if EMPTY(DToS(dHiredFrom)) .and. !EMPTY(DToS(field->datod)) .and. Pitanje(, Lokal("Popuni polje na osnovu polja Datum Od"), "D") == "D"
-    dHiredFrom:=field->datod
-endif
-return .t.
+FUNCTION P_HiredFrom( dHiredFrom )
+
+   IF Empty( DToS( dHiredFrom ) ) .AND. !Empty( DToS( field->datod ) ) .AND. Pitanje(, Lokal( "Popuni polje na osnovu polja Datum Od" ), "D" ) == "D"
+      dHiredFrom := field->datod
+   ENDIF
+
+   RETURN .T.
 
 /*! \fn P_StreetNum(cStreetNum)
  *  \brief
- *  \param cStreetNum - vrijednost polja streetnum 
+ *  \param cStreetNum - vrijednost polja streetnum
  */
-function P_StreetNum(cStreetNum)
+FUNCTION P_StreetNum( cStreetNum )
 
-if EMPTY(field->streetnum)
-    cStreetNum:=SPACE(5) + "0"
-endif
-return .t.
+   IF Empty( field->streetnum )
+      cStreetNum := Space( 5 ) + "0"
+   ENDIF
+
+   RETURN .T.
 
 
 // ---------------------------------------------
 // ispisuje info o poreskoj kartici
 // ---------------------------------------------
-static function p_pkartica( cIdRadn )
-local nTA := SELECT()
+STATIC FUNCTION p_pkartica( cIdRadn )
 
-if gVarObracun == "1"
-    return
-endif
+   LOCAL nTA := Select()
 
-O_PK_RADN
-select pk_radn
-seek cIdRadn
+   IF gVarObracun == "1"
+      RETURN
+   ENDIF
 
-if FOUND() .and. field->idradn == cIdRadn
-    @ prow() + 8, pcol() + 8 SAY "               " COLOR "W+/W"
-else
-    @ prow() + 8, pcol() + 8 SAY "pk: nepopunjena" COLOR "W+/R+"
-endif
+   O_PK_RADN
+   SELECT pk_radn
+   SEEK cIdRadn
 
-select (nTA)
+   IF Found() .AND. field->idradn == cIdRadn
+      @ PRow() + 8, PCol() + 8 SAY "               " COLOR "W+/W"
+   ELSE
+      @ PRow() + 8, PCol() + 8 SAY "pk: nepopunjena" COLOR "W+/R+"
+   ENDIF
 
-return
+   SELECT ( nTA )
+
+   RETURN
 
 
 
 // --------------------------------------------
 // radn. blok funkcije
 // --------------------------------------------
-function RadBl(Ch)
-local cMjesec := gMjesec
-local _rec
+FUNCTION RadBl( Ch )
 
-if lPInfo == .t.
-    // ispisi info o poreskoj kartici
-    p_pkartica( field->id )
-endif
+   LOCAL cMjesec := gMjesec
+   LOCAL _rec
 
-__filter_radn := .f.
+   IF lPInfo == .T.
+      // ispisi info o poreskoj kartici
+      p_pkartica( field->id )
+   ENDIF
 
-if ( Ch==K_ALT_M )
-    
-    Box(, 4, 60)
-        @ m_x+1,m_y+2 SAY "Postavljenje koef. minulog rada:"
-        @ m_x+2,m_y+2 SAY "Pazite da ovu opciju ne izvrsite vise puta za isti mjesec !"
-        @ m_x+4,m_y+2 SAY "Mjesec:" GET cmjesec pict "99"
-        read
-    BoxC()
+   __filter_radn := .F.
 
-    if (LastKey()==K_ESC)
-        return DE_CONT
-    endif
+   IF ( Ch == K_ALT_M )
 
-    MsgO(Lokal("Prolazim kroz tabelu radnika.."))
+      Box(, 4, 60 )
+      @ m_x + 1, m_y + 2 SAY "Postavljenje koef. minulog rada:"
+      @ m_x + 2, m_y + 2 SAY "Pazite da ovu opciju ne izvrsite vise puta za isti mjesec !"
+      @ m_x + 4, m_y + 2 SAY "Mjesec:" GET cmjesec PICT "99"
+      READ
+      BoxC()
 
-    select radn
-    go top
+      IF ( LastKey() == K_ESC )
+         RETURN DE_CONT
+      ENDIF
 
-    f18_lock_tables({"ld_radn"}) 
-    sql_table_update( nil, "BEGIN" )
+      MsgO( Lokal( "Prolazim kroz tabelu radnika.." ) )
 
-    do while !eof()
+      SELECT radn
+      GO TOP
 
-        _rec := dbf_get_rec()
-     
-        if Month( _rec["datod"] ) == cMjesec
-                
-            if _rec["pol"] == "M"
-                _rec["kminrad"] := _rec["kminrad"] + gMRM
-            elseif pol=="Z"
-                _rec["kminrad"] := _rec["kminrad"] + gMRZ
-            endif
-             
-        endif
-            
-        if _rec["kminrad"] > 20   
+      f18_lock_tables( { "ld_radn" } )
+      sql_table_update( nil, "BEGIN" )
+
+      DO WHILE !Eof()
+
+         _rec := dbf_get_rec()
+
+         IF Month( _rec[ "datod" ] ) == cMjesec
+
+            IF _rec[ "pol" ] == "M"
+               _rec[ "kminrad" ] := _rec[ "kminrad" ] + gMRM
+            ELSEIF pol == "Z"
+               _rec[ "kminrad" ] := _rec[ "kminrad" ] + gMRZ
+            ENDIF
+
+         ENDIF
+
+         IF _rec[ "kminrad" ] > 20
             // ogranicenje minulog rada
-            _rec["kminrad"] := 20
-        endif
-            
-        update_rec_server_and_dbf( "ld_radn", _rec, 1, "CONT" )
+            _rec[ "kminrad" ] := 20
+         ENDIF
 
-        skip
-    enddo
-   
-    f18_free_tables({"ld_radn"}) 
-    sql_table_update( nil, "END" )
-    MsgC()
+         update_rec_server_and_dbf( "ld_radn", _rec, 1, "CONT" )
 
-    go top
-    return DE_REFRESH
+         SKIP
+      ENDDO
 
-elseif ( Ch == K_CTRL_T )
+      f18_free_tables( { "ld_radn" } )
+      sql_table_update( nil, "END" )
+      MsgC()
 
-    if ImaURadKr(radn->id,"2")
-        Beep(1)
-        Msg(Lokal("Stavka radnika se ne moze brisati jer se vec nalazi u obracunu!"))
-        return 7
-    endif
+      GO TOP
+      RETURN DE_REFRESH
 
-elseif (Ch==K_F2)
+   ELSEIF ( Ch == K_CTRL_T )
 
-    if ImaURadKr(radn->id,"2")
-        return 99
-    endif
+      IF ImaURadKr( radn->id, "2" )
+         Beep( 1 )
+         Msg( Lokal( "Stavka radnika se ne moze brisati jer se vec nalazi u obracunu!" ) )
+         RETURN 7
+      ENDIF
 
-elseif ( UPPER(CHR(Ch)) == "P" )
-    
-    // poreska kartica, vraca faktor odbitka...
-    nFakt := p_kartica( field->id )
+   ELSEIF ( Ch == K_F2 )
 
-    select radn
-    
-    if nFakt >= 0 .and. nFakt <> radn->klo
-      if Pitanje(,"Postaviti novi faktor licnog odbitka ?", "D") == "D"
-        _rec := dbf_get_rec()
-        _rec["klo"] := nFakt
-        update_rec_server_and_dbf( "ld_radn", _rec, 1, "FULL" )
-      endif
-    endif
-    
-    return DE_CONT
+      IF ImaURadKr( radn->id, "2" )
+         RETURN 99
+      ENDIF
 
-elseif ( UPPER(CHR(Ch)) == "D" ) 
+   ELSEIF ( Upper( Chr( Ch ) ) == "P" )
 
-    pk_delete( field->id )
-    
-    select radn
-    return DE_CONT
+      // poreska kartica, vraca faktor odbitka...
+      nFakt := p_kartica( field->id )
 
-elseif Ch == K_CTRL_G
+      SELECT radn
 
-    // setovanje datuma u poreskim karticama
-    if pitanje(,"setovati datum poreskih kartica ?", "N") == "D"
-    
-        pk_set_date()
-        select radn
-        return DE_CONT
-    
-    endif
+      IF nFakt >= 0 .AND. nFakt <> radn->klo
+         IF Pitanje(, "Postaviti novi faktor licnog odbitka ?", "D" ) == "D"
+            _rec := dbf_get_rec()
+            _rec[ "klo" ] := nFakt
+            update_rec_server_and_dbf( "ld_radn", _rec, 1, "FULL" )
+         ENDIF
+      ENDIF
 
-elseif ( UPPER(CHR(Ch)) == "Q" )
+      RETURN DE_CONT
 
-    // filter po ime, prezime itd...
-    _filter_radn()
-    __filter_radn := .t.
-    return DE_REFRESH
+   ELSEIF ( Upper( Chr( Ch ) ) == "D" )
+
+      pk_delete( field->id )
+
+      SELECT radn
+      RETURN DE_CONT
+
+   ELSEIF Ch == K_CTRL_G
+
+      // setovanje datuma u poreskim karticama
+      IF pitanje(, "setovati datum poreskih kartica ?", "N" ) == "D"
+
+         pk_set_date()
+         SELECT radn
+         RETURN DE_CONT
+
+      ENDIF
+
+   ELSEIF ( Upper( Chr( Ch ) ) == "Q" )
+
+      // filter po ime, prezime itd...
+      _filter_radn()
+      __filter_radn := .T.
+      RETURN DE_REFRESH
 
 
-elseif ( UPPER(CHR(Ch))=="S" )
-    
-    // filter po radnicima
-    cTmp := DBFilter()
+   ELSEIF ( Upper( Chr( Ch ) ) == "S" )
 
-    if EMPTY(cTmp)
-        msgbeep("prikazuju se samo aktivni radnici ...")
-        _radn_filter( .t. )
-        return DE_REFRESH
-    else
-        msgbeep("vracam filter na sve radnike ....")
-        _radn_filter( .f. )
-        return DE_REFRESH
-    endif
+      // filter po radnicima
+      cTmp := dbFilter()
 
-endif
+      IF Empty( cTmp )
+         msgbeep( "prikazuju se samo aktivni radnici ..." )
+         _radn_filter( .T. )
+         RETURN DE_REFRESH
+      ELSE
+         msgbeep( "vracam filter na sve radnike ...." )
+         _radn_filter( .F. )
+         RETURN DE_REFRESH
+      ENDIF
 
-return DE_CONT
+   ENDIF
+
+   RETURN DE_CONT
 
 
 
 // ---------------------------------------------------------------
 // filter tabele radnika po pojedinim poljima
 // ---------------------------------------------------------------
-static function _filter_radn()
-local _ok := .f.
-local _filter := ""
-local _ime, _prezime, _imerod
-local _x := 1
-local _sort := 2
-private GetList := {}
+STATIC FUNCTION _filter_radn()
 
-_ime := SPACE( 200 )
-_prezime := _ime
-_imerod := _ime
+   LOCAL _ok := .F.
+   LOCAL _filter := ""
+   LOCAL _ime, _prezime, _imerod
+   LOCAL _x := 1
+   LOCAL _sort := 2
+   PRIVATE GetList := {}
 
-Box(, 6, 70 )
+   _ime := Space( 200 )
+   _prezime := _ime
+   _imerod := _ime
 
-    @ m_x + _x, m_y + 2 SAY "*** FILTER SIFRARNIKA RADNIKA"
-    
-    ++ _x
-    @ m_x + _x, m_y + 2 SAY "     IME:" GET _ime PICT "@S40"
-    
-    ++ _x
-    @ m_x + _x, m_y + 2 SAY " PREZIME:" GET _prezime PICT "@S40"
-    
-    ++ _x
-    @ m_x + _x, m_y + 2 SAY "RODITELJ:" GET _imerod PICT "@S40"
-    
-    ++ _x
-    ++ _x
+   Box(, 6, 70 )
 
-    @ m_x + _x, m_y + 2 SAY "Sortiranje: 1 - sifra, 2 - prezime:" GET _sort PICT "9" VALID _sort >= 1 .and. _sort <= 2
+   @ m_x + _x, m_y + 2 SAY "*** FILTER SIFRARNIKA RADNIKA"
 
-    read
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY "     IME:" GET _ime PICT "@S40"
 
-BoxC()
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY " PREZIME:" GET _prezime PICT "@S40"
 
-if LastKey() == K_ESC
-    return _ok
-endif
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY "RODITELJ:" GET _imerod PICT "@S40"
 
-if !EMPTY( _prezime )
-    if !EMPTY( _filter )
-        _filter += " .AND. "
-    endif
-    if RIGHT( ALLTRIM( _prezime ), 1 ) <> ";"
-        _prezime := ALLTRIM( _prezime ) + ";"
-    endif
-    _filter += parsiraj( UPPER(_prezime), "UPPER(naz)" )
-endif
+   ++ _x
+   ++ _x
 
-if !EMPTY( _ime )
-    if !EMPTY( _filter )
-        _filter += " .AND. "
-    endif
-    if RIGHT( ALLTRIM( _ime ), 1 ) <> ";"
-        _ime := ALLTRIM( _ime ) + ";"
-    endif
-    _filter += parsiraj( UPPER(_ime), "UPPER(ime)" )
-endif
+   @ m_x + _x, m_y + 2 SAY "Sortiranje: 1 - sifra, 2 - prezime:" GET _sort PICT "9" VALID _sort >= 1 .AND. _sort <= 2
 
-if !EMPTY( _imerod )
-    if !EMPTY( _filter )
-        _filter += " .AND. "
-    endif
-    if RIGHT( ALLTRIM( _imerod ), 1 ) <> ";"
-        _imerod := ALLTRIM( _imerod ) + ";"
-    endif
-    _filter += parsiraj( UPPER(_imerod), "UPPER(imerod)" )
-endif
+   READ
 
-if EMPTY( _filter )
+   BoxC()
 
-    // ukidam filter, setujem pravi sort...
-    set filter to
-    set order to tag "1"
-    go top
+   IF LastKey() == K_ESC
+      RETURN _ok
+   ENDIF
 
-    return _ok
+   IF !Empty( _prezime )
+      IF !Empty( _filter )
+         _filter += " .AND. "
+      ENDIF
+      IF Right( AllTrim( _prezime ), 1 ) <> ";"
+         _prezime := AllTrim( _prezime ) + ";"
+      ENDIF
+      _filter += parsiraj( Upper( _prezime ), "UPPER(naz)" )
+   ENDIF
 
-endif
+   IF !Empty( _ime )
+      IF !Empty( _filter )
+         _filter += " .AND. "
+      ENDIF
+      IF Right( AllTrim( _ime ), 1 ) <> ";"
+         _ime := AllTrim( _ime ) + ";"
+      ENDIF
+      _filter += parsiraj( Upper( _ime ), "UPPER(ime)" )
+   ENDIF
 
-// postavi filter
-set filter to &(_filter)
+   IF !Empty( _imerod )
+      IF !Empty( _filter )
+         _filter += " .AND. "
+      ENDIF
+      IF Right( AllTrim( _imerod ), 1 ) <> ";"
+         _imerod := AllTrim( _imerod ) + ";"
+      ENDIF
+      _filter += parsiraj( Upper( _imerod ), "UPPER(imerod)" )
+   ENDIF
 
-// kako da slozim podatke ?
-if _sort == 2
-    set order to tag "2"
-else
-    set order to tag "1"
-endif
+   IF Empty( _filter )
 
-go top
-_ok := .t.
+      // ukidam filter, setujem pravi sort...
+      SET FILTER TO
+      SET ORDER TO TAG "1"
+      GO TOP
 
-return _ok
+      RETURN _ok
 
+   ENDIF
 
+   // postavi filter
+   SET FILTER to &( _filter )
 
+   // kako da slozim podatke ?
+   IF _sort == 2
+      SET ORDER TO TAG "2"
+   ELSE
+      SET ORDER TO TAG "1"
+   ENDIF
+
+   GO TOP
+   _ok := .T.
+
+   RETURN _ok
 
 
 
 
-function MsgIspl()
-Box(, 3, 50)
-    @ m_x+1,m_y+2 SAY Lokal("Vazece sifre su: TR - tekuci racun   ")
-    @ m_x+2,m_y+2 SAY Lokal("                 SK - stedna knjizica")
-    @ m_x+3,m_y+2 SAY Lokal("                 BL - blagajna")
-    inkey(0)
-BoxC()
-return .f.
+
+
+
+FUNCTION MsgIspl()
+
+   Box(, 3, 50 )
+   @ m_x + 1, m_y + 2 SAY Lokal( "Vazece sifre su: TR - tekuci racun   " )
+   @ m_x + 2, m_y + 2 SAY Lokal( "                 SK - stedna knjizica" )
+   @ m_x + 3, m_y + 2 SAY Lokal( "                 BL - blagajna" )
+   Inkey( 0 )
+   BoxC()
+
+   RETURN .F.
 
 
 
 // ------------------------------
 // sifrarnik parametri obracuna
 // ------------------------------
-function P_ParObr(cId,dx,dy)
-local _tmp_id
-private imekol := {}
-private kol := {}
+FUNCTION P_ParObr( cId, dx, dy )
 
-AADD(ImeKol, { padr("mjesec", 8),  {|| id}, "id", {|| IIF(VALTYPE(wId) == "C", EVAL(MEMVARBLOCK("wId"), VAL(wId)), NIL), .t. } })
-AADD(ImeKol, { "godina" , {|| godina} , "godina", {|| IIF(VALTYPE(wId) == "N", EVAL(MEMVARBLOCK("wID"), STR(wId, 2)), NIL), .t. }  } )
-AADD(ImeKol, { padr("obracun",10) , {|| obr} , "obr" } )
+   LOCAL _tmp_id
+   PRIVATE imekol := {}
+   PRIVATE kol := {}
 
-if IzFMKINI( "LD", "VrBodaPoRJ", "N", KUMPATH ) == "D"
-    AADD(ImeKol, { "rj" , {|| IDRJ} , "IDRJ" } )
-endif
+   AAdd( ImeKol, { PadR( "mjesec", 8 ),  {|| id }, "id", {|| iif( ValType( wId ) == "C", Eval( MemVarBlock( "wId" ), Val( wId ) ), NIL ), .T. } } )
+   AAdd( ImeKol, { "godina", {|| godina }, "godina", {|| iif( ValType( wId ) == "N", Eval( MemVarBlock( "wID" ), Str( wId, 2 ) ), NIL ), .T. }  } )
+   AAdd( ImeKol, { PadR( "obracun", 10 ), {|| obr }, "obr" } )
 
-AADD(ImeKol, { padr("opis",10), {|| naz}, "naz" } )
-AADD(ImeKol, { padr( IIF(gBodK == "1", "vrijednost boda", "vr.koeficijenta"), 15),;
-    {|| vrbod}, "vrbod" } )
+   IF IzFMKINI( "LD", "VrBodaPoRJ", "N", KUMPATH ) == "D"
+      AAdd( ImeKol, { "rj", {|| IDRJ }, "IDRJ" } )
+   ENDIF
 
-// ako postoji polje i ako je nova varijanta obracuna
-if parobr->(FIELDPOS("K5")) <> 0 .and. gVarObracun == "2"
-    AADD(ImeKol, { padr("n.koef.1",8), {|| k5} , "k5"  } )
-    AADD(ImeKol, { padr("n.koef.2",8), {|| k6} , "k6"  } )
-endif
+   AAdd( ImeKol, { PadR( "opis", 10 ), {|| naz }, "naz" } )
+   AAdd( ImeKol, { PadR( iif( gBodK == "1", "vrijednost boda", "vr.koeficijenta" ), 15 ), ;
+      {|| vrbod }, "vrbod" } )
 
-if parobr->(FIELDPOS("K7")) <> 0 .and. gVarObracun == "2"
-    AADD(ImeKol, { padr("n.koef.3",8), {|| k7} , "k7"  } )
-    AADD(ImeKol, { padr("n.koef.4",8), {|| k8} , "k8"  } )
-endif
+   // ako postoji polje i ako je nova varijanta obracuna
+   IF parobr->( FieldPos( "K5" ) ) <> 0 .AND. gVarObracun == "2"
+      AAdd( ImeKol, { PadR( "n.koef.1", 8 ), {|| k5 }, "k5"  } )
+      AAdd( ImeKol, { PadR( "n.koef.2", 8 ), {|| k6 }, "k6"  } )
+   ENDIF
 
-AADD(ImeKol, { padr("br.sati",5), {|| k1} , "k1"  } )
+   IF parobr->( FieldPos( "K7" ) ) <> 0 .AND. gVarObracun == "2"
+      AAdd( ImeKol, { PadR( "n.koef.3", 8 ), {|| k7 }, "k7"  } )
+      AAdd( ImeKol, { PadR( "n.koef.4", 8 ), {|| k8 }, "k8"  } )
+   ENDIF
 
-if gVarObracun <> "2"
-    AADD(ImeKol, { padr("Koef2",5), {|| k2} , "k2"  } )
-    AADD(ImeKol, { padr("Bruto osn.",6), {|| k3} , "k3"  }  )
-    AADD(ImeKol, { padr("Koef4",6), {|| k4} , "k4"  } )
-endif
+   AAdd( ImeKol, { PadR( "br.sati", 5 ), {|| k1 }, "k1"  } )
 
-AADD(ImeKol, { padr("prosj.LD",12), {|| Prosld} , "PROSLD"  }  )
+   IF gVarObracun <> "2"
+      AAdd( ImeKol, { PadR( "Koef2", 5 ), {|| k2 }, "k2"  } )
+      AAdd( ImeKol, { PadR( "Bruto osn.", 6 ), {|| k3 }, "k3"  }  )
+      AAdd( ImeKol, { PadR( "Koef4", 6 ), {|| k4 }, "k4"  } )
+   ENDIF
 
-if parobr->(FIELDPOS("M_NET_SAT")) <> 0 .and. gVarObracun == "2"
-    AADD(ImeKol, { padr("mn sat.",12), {|| m_net_sat} , "m_net_sat"  } )
-endif
-if parobr->(FIELDPOS("M_BR_SAT")) <> 0 .and. gVarObracun == "2"
-    AADD(ImeKol, { padr("mb sat.",12), {|| m_br_sat} , "m_br_sat"  } )
-endif
+   AAdd( ImeKol, { PadR( "prosj.LD", 12 ), {|| Prosld }, "PROSLD"  }  )
 
-for i := 1 to LEN( ImeKol )
-    AADD( kol, i )
-next
+   IF parobr->( FieldPos( "M_NET_SAT" ) ) <> 0 .AND. gVarObracun == "2"
+      AAdd( ImeKol, { PadR( "mn sat.", 12 ), {|| m_net_sat }, "m_net_sat"  } )
+   ENDIF
+   IF parobr->( FieldPos( "M_BR_SAT" ) ) <> 0 .AND. gVarObracun == "2"
+      AAdd( ImeKol, { PadR( "mb sat.", 12 ), {|| m_br_sat }, "m_br_sat"  } )
+   ENDIF
 
-return PostojiSifra(F_PAROBR, 1, MAXROWS()-15, MAXCOLS()-20, Lokal("Parametri obracuna"), @cId, dx, dy)
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( kol, i )
+   NEXT
+
+   RETURN PostojiSifra( F_PAROBR, 1, MAXROWS() -15, MAXCOLS() -20, Lokal( "Parametri obracuna" ), @cId, dx, dy )
 
 
 // -----------------------------------------------
 // vraca naziv tipa primanja
 // -----------------------------------------------
-function g_tp_naz( cId )
-local nTArea := SELECT()
-local xRet := ""
+FUNCTION g_tp_naz( cId )
 
-O_TIPPR
-select tippr
-seek cId
+   LOCAL nTArea := Select()
+   LOCAL xRet := ""
 
-if FOUND()
-    xRet := ALLTRIM( tippr->naz )
-endif
+   O_TIPPR
+   SELECT tippr
+   SEEK cId
 
-select (nTArea)
-return xRet
+   IF Found()
+      xRet := AllTrim( tippr->naz )
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN xRet
 
 
 
@@ -556,824 +569,850 @@ return xRet
 
 // --------------------------------------------
 // --------------------------------------------
-function P_TipPr(cId,dx,dy)
-local i
-private imekol := {}
-private kol := {}
+FUNCTION P_TipPr( cId, dx, dy )
 
-AADD(ImeKol, { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} } )
-AADD(ImeKol, { padr("Naziv",20), {||  naz}, "naz" } )
-AADD(ImeKol, { "Aktivan", {||  padc(aktivan,7) }, "aktivan" } )
-AADD(ImeKol, { "Fiksan", {||  padc(fiksan,7) }, "fiksan" } )
-AADD(ImeKol, { padr("U fond s.",10), {||  padc(ufs,10) }, "ufs" } )
-AADD(ImeKol, { padr("U neto", 6), {||  padc(uneto,6 ) }, "uneto" } )
+   LOCAL i
+   PRIVATE imekol := {}
+   PRIVATE kol := {}
 
-if TIPPR->(FIELDPOS("TPR_TIP")) <> 0
-    AADD(ImeKol, { padr("tp.tip", 6), {||  tpr_tip }, "tpr_tip", {|| .t.}, {|| v_tpr_tip(wtpr_tip) } } )
-endif
+   AAdd( ImeKol, { PadR( "Id", 2 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } } )
+   AAdd( ImeKol, { PadR( "Naziv", 20 ), {||  naz }, "naz" } )
+   AAdd( ImeKol, { "Aktivan", {||  PadC( aktivan, 7 ) }, "aktivan" } )
+   AAdd( ImeKol, { "Fiksan", {||  PadC( fiksan, 7 ) }, "fiksan" } )
+   AAdd( ImeKol, { PadR( "U fond s.", 10 ), {||  PadC( ufs, 10 ) }, "ufs" } )
+   AAdd( ImeKol, { PadR( "U neto", 6 ), {||  PadC( uneto, 6 ) }, "uneto" } )
 
-AADD(ImeKol, { padr("Formula",200), {|| formula}, "formula"  } )
-AADD(ImeKol, { padr("Opis",8), {|| opis}, "opis"  } )
+   IF TIPPR->( FieldPos( "TPR_TIP" ) ) <> 0
+      AAdd( ImeKol, { PadR( "tp.tip", 6 ), {||  tpr_tip }, "tpr_tip", {|| .T. }, {|| v_tpr_tip( wtpr_tip ) } } )
+   ENDIF
 
-for i:=1 to LEN(ImeKol)
-    AADD(Kol, i)
-next
+   AAdd( ImeKol, { PadR( "Formula", 200 ), {|| formula }, "formula"  } )
+   AAdd( ImeKol, { PadR( "Opis", 8 ), {|| opis }, "opis"  } )
 
-return PostojiSifra(F_TIPPR, 1, MAXROWS()-15, MAXCOLS()-20, Lokal("Tipovi primanja"), @cId, dx, dy, {|Ch| TprBl(Ch)},,,,,{"ID"})
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
+
+   RETURN PostojiSifra( F_TIPPR, 1, MAXROWS() -15, MAXCOLS() -20, Lokal( "Tipovi primanja" ), @cId, dx, dy, {| Ch| TprBl( Ch ) },,,,, { "ID" } )
 
 
 // -----------------------------------------
 // valid tpr_tip
 // -----------------------------------------
-function v_tpr_tip( cTip )
-if EMPTY(cTip)
-    msgbeep("Tip moze biti:##prazno - standardno#N - neto#2 - naknade za rad#X - neoporezive stavke, krediti itd...")
-endif
-return .t.
+FUNCTION v_tpr_tip( cTip )
+
+   IF Empty( cTip )
+      msgbeep( "Tip moze biti:##prazno - standardno#N - neto#2 - naknade za rad#X - neoporezive stavke, krediti itd..." )
+   ENDIF
+
+   RETURN .T.
 
 
-// ---------------------------------------- 
+// ----------------------------------------
 // valid dop_tip
-// ---------------------------------------- 
-function v_dop_tip( cTip)
+// ----------------------------------------
+FUNCTION v_dop_tip( cTip )
 
-if EMPTY(cTip)
-    msgbeep("Tip moze biti:##prazno - standardno#N - neto#2 - ostale naknade#P - neto + ostale naknade#B - bruto#R - neto na ruke")
-endif
+   IF Empty( cTip )
+      msgbeep( "Tip moze biti:##prazno - standardno#N - neto#2 - ostale naknade#P - neto + ostale naknade#B - bruto#R - neto na ruke" )
+   ENDIF
 
-return .t.
+   RETURN .T.
 
 
 // ------------------------------------------
 // ------------------------------------------
-function TprBl(Ch)
-if Logirati(goModul:oDataBase:cName,"SIF","EDITTIPPR")
-    select tippr
-    if (Ch==K_F2)
-        MsgO("Evidentiram stanje sifrarnika...")
-        cStanje:=(tippr->id+"-"+tippr->aktivan+"-"+tippr->fiksan+"-"+tippr->uneto+"-"+tippr->ufs)
-        EventLog(nUser,goModul:oDataBase:cName,"SIF","EDITTIPPR",nil,nil,nil,nil,"","",cStanje,Date(),Date(),"F-"+ALLTRIM(tippr->formula),"Promjena stanja sifrarnika tippr")
-        select tippr
-        MsgC()
-        return DE_REFRESH
-    endif
-endif
+FUNCTION TprBl( Ch )
 
-return DE_CONT
+   IF Logirati( goModul:oDataBase:cName, "SIF", "EDITTIPPR" )
+      SELECT tippr
+      IF ( Ch == K_F2 )
+         MsgO( "Evidentiram stanje sifrarnika..." )
+         cStanje := ( tippr->id + "-" + tippr->aktivan + "-" + tippr->fiksan + "-" + tippr->uneto + "-" + tippr->ufs )
+         EventLog( nUser, goModul:oDataBase:cName, "SIF", "EDITTIPPR", nil, nil, nil, nil, "", "", cStanje, Date(), Date(), "F-" + AllTrim( tippr->formula ), "Promjena stanja sifrarnika tippr" )
+         SELECT tippr
+         MsgC()
+         RETURN DE_REFRESH
+      ENDIF
+   ENDIF
 
-
-
-
-function P_TipPr2(cId,dx,dy)
-private imekol
-private kol
-
-ImeKol:={ { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
-          { padr("Naziv",20), {||  naz}, "naz" }                       ,;
-          {      "Aktivan"  , {||  padc(aktivan,7) }, "aktivan" }      ,;
-          {      "Fiksan"  , {||  padc(fiksan,7) }, "fiksan" }         ,;
-          { padr("U fond s.",10), {||  padc(ufs,10) }, "ufs" } ,;
-          { padr("U neto", 6), {||  padc(uneto,6 ) }, "uneto" } ,;
-          { padr("Formula",200), {|| formula}, "formula"  }, ;
-          { padr("Opis",8), {|| opis}, "opis"  } ;
-       }
-Kol:={1,2,3,4,5,6,7,8}
-
-return PostojiSifra( F_TIPPR2, 1, MAXROWS()-15, MAXCOLS()-20, Lokal("Tipovi primanja za obracun 2"),  @cId, dx, dy, {|Ch| Tpr2Bl(Ch)},,,,,{"ID"})
+   RETURN DE_CONT
 
 
 
-// -----------------------------------------------
-// -----------------------------------------------
-function Tpr2Bl(Ch)
-if Logirati(goModul:oDataBase:cName,"SIF","EDITTIPPR2")
-    select tippr
-    if (Ch==K_F2)
-        MsgO("Evidentiram stanje sifrarnika...")
-        cStanje:=(tippr->id+"-"+tippr->aktivan+"-"+tippr->fiksan+"-"+tippr->uneto+"-"+tippr->ufs)
-        EventLog(nUser,goModul:oDataBase:cName,"SIF","EDITTIPPR2",nil,nil,nil,nil,"","",cStanje,Date(),Date(),"F-"+ALLTRIM(tippr->formula),"Promjena stanja sifranika tippr2")
-        select tippr
-        MsgC()
-        return DE_REFRESH
-    endif
-endif
 
-return DE_CONT
+FUNCTION P_TipPr2( cId, dx, dy )
 
+   PRIVATE imekol
+   PRIVATE kol
+
+   ImeKol := { { PadR( "Id", 2 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } }, ;
+      { PadR( "Naziv", 20 ), {||  naz }, "naz" },;
+      {      "Aktivan", {||  PadC( aktivan, 7 ) }, "aktivan" },;
+      {      "Fiksan", {||  PadC( fiksan, 7 ) }, "fiksan" },;
+      { PadR( "U fond s.", 10 ), {||  PadC( ufs, 10 ) }, "ufs" },;
+      { PadR( "U neto", 6 ), {||  PadC( uneto, 6 ) }, "uneto" },;
+      { PadR( "Formula", 200 ), {|| formula }, "formula"  }, ;
+      { PadR( "Opis", 8 ), {|| opis }, "opis"  } ;
+      }
+   Kol := { 1, 2, 3, 4, 5, 6, 7, 8 }
+
+   RETURN PostojiSifra( F_TIPPR2, 1, MAXROWS() -15, MAXCOLS() -20, Lokal( "Tipovi primanja za obracun 2" ),  @cId, dx, dy, {| Ch| Tpr2Bl( Ch ) },,,,, { "ID" } )
 
 
 
 // -----------------------------------------------
 // -----------------------------------------------
-function P_LD_RJ(cId,dx,dy)
-private imekol := {}
-private kol := {}
+FUNCTION Tpr2Bl( Ch )
 
-AADD(ImeKol, { padr("Id", 2),      {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} } )
-AADD(ImeKol, { padr("Naziv", 35), {||  naz}, "naz" } )
+   IF Logirati( goModul:oDataBase:cName, "SIF", "EDITTIPPR2" )
+      SELECT tippr
+      IF ( Ch == K_F2 )
+         MsgO( "Evidentiram stanje sifrarnika..." )
+         cStanje := ( tippr->id + "-" + tippr->aktivan + "-" + tippr->fiksan + "-" + tippr->uneto + "-" + tippr->ufs )
+         EventLog( nUser, goModul:oDataBase:cName, "SIF", "EDITTIPPR2", nil, nil, nil, nil, "", "", cStanje, Date(), Date(), "F-" + AllTrim( tippr->formula ), "Promjena stanja sifranika tippr2" )
+         SELECT tippr
+         MsgC()
+         RETURN DE_REFRESH
+      ENDIF
+   ENDIF
 
-if ld_rj->(FieldPos("TIPRADA")) <> 0
-    AADD(ImeKol, { "tip rada" , {||  tiprada }, "tiprada", {|| .t. }, {|| wtiprada $ " #I#A#S#N#P#U#R#" .or. MsgtipRada() }  } )
-endif
-if ld_rj->(FieldPos("OPOR")) <> 0
-    AADD(ImeKol, { "oporeziv" , {||  opor }, "opor"  } )
-endif
+   RETURN DE_CONT
 
-for i := 1 to LEN(ImeKol)
-    AADD(Kol, i)
-next
 
-return PostojiSifra( F_LD_RJ, 1, MAXROWS()-15, 60, Lokal("Lista radnih jedinica"), @cId, dx, dy)
+
+
+// -----------------------------------------------
+// -----------------------------------------------
+FUNCTION P_LD_RJ( cId, dx, dy )
+
+   PRIVATE imekol := {}
+   PRIVATE kol := {}
+
+   AAdd( ImeKol, { PadR( "Id", 2 ),      {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } } )
+   AAdd( ImeKol, { PadR( "Naziv", 35 ), {||  naz }, "naz" } )
+
+   IF ld_rj->( FieldPos( "TIPRADA" ) ) <> 0
+      AAdd( ImeKol, { "tip rada", {||  tiprada }, "tiprada", {|| .T. }, {|| wtiprada $ " #I#A#S#N#P#U#R#" .OR. MsgtipRada() }  } )
+   ENDIF
+   IF ld_rj->( FieldPos( "OPOR" ) ) <> 0
+      AAdd( ImeKol, { "oporeziv", {||  opor }, "opor"  } )
+   ENDIF
+
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
+
+   RETURN PostojiSifra( F_LD_RJ, 1, MAXROWS() -15, 60, Lokal( "Lista radnih jedinica" ), @cId, dx, dy )
 
 
 
 
 // vraca PU code opstine
-function g_ops_code( cId )
-local nTArea := SELECT()
-local cRet := ""
-O_OPS
-select ops
-go top
-seek cId
-if FOUND()
-    cRet := field->idj
-endif
+FUNCTION g_ops_code( cId )
 
-select (nTArea)
-return cRet
+   LOCAL nTArea := Select()
+   LOCAL cRet := ""
+
+   O_OPS
+   SELECT ops
+   GO TOP
+   SEEK cId
+   IF Found()
+      cRet := field->idj
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN cRet
 
 
 
-function P_Kred(cId,dx,dy)
-private imekol,kol
+FUNCTION P_Kred( cId, dx, dy )
 
-ImeKol:={ { padr("Id",6), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
-          { padr("Naziv",30), {||  naz}, "naz" }                       ,;
-          { padr("Adresa",30)  ,{||  adresa}, "adresa" }                     ,;
-          { padr("Mjesto",20)  ,{||  mjesto}, "mjesto" }                     ,;
-          { padr("PTT",5)  ,{||  ptt}, "ptt" }                     ,;
-          { padr("Filijala",30)  ,{||  fil}, "fil" }                     ,;
-          { padr("Racun",20)  ,{||  ziro}, "ziro" }                     ,;
-          { padr("Partija",20),{||  zirod}, "zirod" }                 ;
-       }
+   PRIVATE imekol, kol
 
-// Dorade 2001
-Kol:={1,2,3,4,5,6,7,8}
+   ImeKol := { { PadR( "Id", 6 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } }, ;
+      { PadR( "Naziv", 30 ), {||  naz }, "naz" },;
+      { PadR( "Adresa", 30 ),{||  adresa }, "adresa" },;
+      { PadR( "Mjesto", 20 ),{||  mjesto }, "mjesto" },;
+      { PadR( "PTT", 5 ),{||  ptt }, "ptt" },;
+      { PadR( "Filijala", 30 ),{||  fil }, "fil" },;
+      { PadR( "Racun", 20 ),{||  ziro }, "ziro" },;
+      { PadR( "Partija", 20 ), {||  zirod }, "zirod" }                 ;
+      }
 
-return PostojiSifra( F_KRED, 1, MAXROWS()-15, MAXCOLS()-20, Lokal("Lista kreditora"), @cId, dx, dy)
+   // Dorade 2001
+   Kol := { 1, 2, 3, 4, 5, 6, 7, 8 }
+
+   RETURN PostojiSifra( F_KRED, 1, MAXROWS() -15, MAXCOLS() -20, Lokal( "Lista kreditora" ), @cId, dx, dy )
 
 
 // -----------------------------
 // -----------------------------
-function KrBlok(Ch)
+FUNCTION KrBlok( Ch )
 
-if (Ch==K_CTRL_T)
-    if ImaURadKr(KRED->id,"3")
-        Beep(1)
-        Msg(Lokal("Firma se ne moze brisati jer je vec koristena u obracunu!"))
-        return 7
-    endif
-elseif (Ch==K_F2)
-    if ImaURadKr(KRED->id,"3")
-        return 99
-    endif
-endif
+   IF ( Ch == K_CTRL_T )
+      IF ImaURadKr( KRED->id, "3" )
+         Beep( 1 )
+         Msg( Lokal( "Firma se ne moze brisati jer je vec koristena u obracunu!" ) )
+         RETURN 7
+      ENDIF
+   ELSEIF ( Ch == K_F2 )
+      IF ImaURadKr( KRED->id, "3" )
+         RETURN 99
+      ENDIF
+   ENDIF
 
-return DE_CONT
+   RETURN DE_CONT
 
 
 // ------------------------------------------------
 // ------------------------------------------------
-function ImaURadKr(cKljuc,cTag)
+FUNCTION ImaURadKr( cKljuc, cTag )
 
-local lVrati:=.f.
-local lUsed:=.t.
-local nArr:=SELECT()
+   LOCAL lVrati := .F.
+   LOCAL lUsed := .T.
+   LOCAL nArr := Select()
 
-select (F_RADKR)
+   SELECT ( F_RADKR )
 
-if !USED()
-    lUsed:=.f.
-        O_RADKR
-else
-    PushWA()
-endif
+   IF !Used()
+      lUsed := .F.
+      O_RADKR
+   ELSE
+      PushWA()
+   ENDIF
 
-set order to tag (cTag)
-seek cKljuc
+   SET ORDER TO tag ( cTag )
+   SEEK cKljuc
 
-lVrati:=Found()
+   lVrati := Found()
 
-if !lUsed
-    use
-else
-    PopWA()
-endif
+   IF !lUsed
+      USE
+   ELSE
+      PopWA()
+   ENDIF
 
-select (nArr)
+   SELECT ( nArr )
 
-return lVrati
+   RETURN lVrati
 
 
-function ImaUObrac(cKljuc,cTag)
+FUNCTION ImaUObrac( cKljuc, cTag )
 
-local lVrati:=.f.
-local lUsed:=.t.
-local nArr:=SELECT()
+   LOCAL lVrati := .F.
+   LOCAL lUsed := .T.
+   LOCAL nArr := Select()
 
-select (F_LD)
+   SELECT ( F_LD )
 
-if !USED()
-    lUsed:=.f.
-        O_LD
-else
-    PushWA()
-endif
+   IF !Used()
+      lUsed := .F.
+      O_LD
+   ELSE
+      PushWA()
+   ENDIF
 
-set order to tag (cTag)
-seek cKljuc
+   SET ORDER TO tag ( cTag )
+   SEEK cKljuc
 
-lVrati:=found()
+   lVrati := Found()
 
-if !lUsed
-    use
-else
-        PopWA()
-endif
+   IF !lUsed
+      USE
+   ELSE
+      PopWA()
+   ENDIF
 
-if !lVrati  // ako nema u LD, provjerimo ima li u 1.dijelu obracuna (smece)
-    select (F_LDSM)
-        if !USED()
-            lUsed:=.f.
-            O_LDSM
-        else
-            PushWA()
-        endif
-        set order to tag (cTag)
-        seek cKljuc
-        lVrati:=Found()
-        if !lUsed
-            use
-        else
-            PopWA()
-        endif
-endif
-select (nArr)
+   IF !lVrati  // ako nema u LD, provjerimo ima li u 1.dijelu obracuna (smece)
+      SELECT ( F_LDSM )
+      IF !Used()
+         lUsed := .F.
+         O_LDSM
+      ELSE
+         PushWA()
+      ENDIF
+      SET ORDER TO tag ( cTag )
+      SEEK cKljuc
+      lVrati := Found()
+      IF !lUsed
+         USE
+      ELSE
+         PopWA()
+      ENDIF
+   ENDIF
+   SELECT ( nArr )
 
-return lVrati
+   RETURN lVrati
 
 
 // ---------------------------------
 // ---------------------------------
-function P_POR(cId,dx,dy)
-local i
-local _st_stopa := fetch_metric( "ld_porezi_stepenasta_stopa", NIL, "N" )
-private Imekol := {}
-private Kol := {}
+FUNCTION P_POR( cId, dx, dy )
 
-AADD(ImeKol, { padr("Id", 2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} } )
+   LOCAL i
+   LOCAL _st_stopa := fetch_metric( "ld_porezi_stepenasta_stopa", NIL, "N" )
+   PRIVATE Imekol := {}
+   PRIVATE Kol := {}
 
-if POR->(FIELDPOS("ALGORITAM")) <> 0 .and. _st_stopa == "D"
-    AADD(ImeKol, { "Algor.", {|| algoritam}, "algoritam" } )
-endif
+   AAdd( ImeKol, { PadR( "Id", 2 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } } )
 
-AADD(ImeKol, { padr("Naziv",20), {|| naz}, "naz" })
+   IF POR->( FieldPos( "ALGORITAM" ) ) <> 0 .AND. _st_stopa == "D"
+      AAdd( ImeKol, { "Algor.", {|| algoritam }, "algoritam" } )
+   ENDIF
 
-AADD(ImeKol, { padr("Iznos",20), {||  iznos}, "iznos", {|| IF( POR->(FIELDPOS("ALGORITAM")) <> 0 , wh_oldpor(walgoritam), .t. ) } })
+   AAdd( ImeKol, { PadR( "Naziv", 20 ), {|| naz }, "naz" } )
 
-AADD(ImeKol, { padr("Donji limit",12), {||  dlimit}, "dlimit" })
+   AAdd( ImeKol, { PadR( "Iznos", 20 ), {||  iznos }, "iznos", {|| IF( POR->( FieldPos( "ALGORITAM" ) ) <> 0, wh_oldpor( walgoritam ), .T. ) } } )
 
-AADD(ImeKol, { padr("PoOpst",6), {||  poopst}, "poopst" })
+   AAdd( ImeKol, { PadR( "Donji limit", 12 ), {||  dlimit }, "dlimit" } )
 
-AADD(ImeKol, { "p.tip", {|| por_tip}, "por_tip" } )
+   AAdd( ImeKol, { PadR( "PoOpst", 6 ), {||  poopst }, "poopst" } )
 
-// nove stope i iznosi....
-if POR->(FIELDPOS("ALGORITAM")) <> 0 .and. _st_stopa == "D"
+   AAdd( ImeKol, { "p.tip", {|| por_tip }, "por_tip" } )
 
-    AADD(ImeKol, { "St.1", {|| s_sto_1}, "s_sto_1", {|| wh_por(walgoritam)} } )
-    AADD(ImeKol, { "Izn.1", {|| s_izn_1}, "s_izn_1", {|| wh_por(walgoritam) } } )
-    AADD(ImeKol, { "St.2", {|| s_sto_2}, "s_sto_2", {|| wh_por(walgoritam)} } )
-    AADD(ImeKol, { "Izn.2", {|| s_izn_2}, "s_izn_2", {|| wh_por(walgoritam)} } )
-    AADD(ImeKol, { "St.3", {|| s_sto_3}, "s_sto_3", {|| wh_por(walgoritam)} } )
-    AADD(ImeKol, { "Izn.3", {|| s_izn_3}, "s_izn_3", {|| wh_por(walgoritam)} } )
-    AADD(ImeKol, { "St.4", {|| s_sto_4}, "s_sto_4", {|| wh_por(walgoritam)} } )
-    AADD(ImeKol, { "Izn.4", {|| s_izn_4}, "s_izn_4", {|| wh_por(walgoritam)} } )
-    AADD(ImeKol, { "St.5", {|| s_sto_5}, "s_sto_5", {|| wh_por(walgoritam)} } )
-    AADD(ImeKol, { "Izn.5", {|| s_izn_5}, "s_izn_5", {|| wh_por(walgoritam)} } )
-    
-endif
+   // nove stope i iznosi....
+   IF POR->( FieldPos( "ALGORITAM" ) ) <> 0 .AND. _st_stopa == "D"
 
-for i:=1 to LEN(ImeKol)
-    AADD(Kol, i)
-next
+      AAdd( ImeKol, { "St.1", {|| s_sto_1 }, "s_sto_1", {|| wh_por( walgoritam ) } } )
+      AAdd( ImeKol, { "Izn.1", {|| s_izn_1 }, "s_izn_1", {|| wh_por( walgoritam ) } } )
+      AAdd( ImeKol, { "St.2", {|| s_sto_2 }, "s_sto_2", {|| wh_por( walgoritam ) } } )
+      AAdd( ImeKol, { "Izn.2", {|| s_izn_2 }, "s_izn_2", {|| wh_por( walgoritam ) } } )
+      AAdd( ImeKol, { "St.3", {|| s_sto_3 }, "s_sto_3", {|| wh_por( walgoritam ) } } )
+      AAdd( ImeKol, { "Izn.3", {|| s_izn_3 }, "s_izn_3", {|| wh_por( walgoritam ) } } )
+      AAdd( ImeKol, { "St.4", {|| s_sto_4 }, "s_sto_4", {|| wh_por( walgoritam ) } } )
+      AAdd( ImeKol, { "Izn.4", {|| s_izn_4 }, "s_izn_4", {|| wh_por( walgoritam ) } } )
+      AAdd( ImeKol, { "St.5", {|| s_sto_5 }, "s_sto_5", {|| wh_por( walgoritam ) } } )
+      AAdd( ImeKol, { "Izn.5", {|| s_izn_5 }, "s_izn_5", {|| wh_por( walgoritam ) } } )
 
-PushWa()
+   ENDIF
 
-O_SIFK
-O_SIFV
-select sifk
-set order to tag "ID"
-seek "POR"
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
 
-do while !eof() .and. ID="POR"
-    AADD (ImeKol, {  IzSifKNaz("POR", SIFK->Oznaka) })
-    AADD (ImeKol[Len(ImeKol)], &( "{|| ToStr(IzSifk('POR','" + sifk->oznaka + "')) }" ) )
-    AADD (ImeKol[Len(ImeKol)], "SIFK->"+SIFK->Oznaka )
+   PushWa()
 
-    if (sifk->edkolona>0)
-        for ii:=4 to 9
-                AADD( ImeKol[Len(ImeKol)], NIL  )
-        next
-        AADD( ImeKol[Len(ImeKol)], sifk->edkolona  )
-    else
-        for ii:=4 to 10
-                AADD( ImeKol[Len(ImeKol)], NIL  )
-        next
-    endif
+   O_SIFK
+   O_SIFV
+   SELECT sifk
+   SET ORDER TO TAG "ID"
+   SEEK "POR"
 
-    // postavi picture za brojeve
-    if (sifk->Tip="N")
-        if (f_decimal>0)
-                ImeKol[Len(ImeKol),7] := replicate("9", sifk->duzina - sifk->f_decimal-1 )+"."+replicate("9",sifk->f_decimal)
-        else
-                ImeKol[Len(ImeKol),7] := replicate("9", sifk->duzina )
-        endif
-    endif
+   DO WHILE !Eof() .AND. ID = "POR"
+      AAdd ( ImeKol, {  IzSifKNaz( "POR", SIFK->Oznaka ) } )
+      AAdd ( ImeKol[ Len( ImeKol ) ], &( "{|| ToStr(IzSifk('POR','" + sifk->oznaka + "')) }" ) )
+      AAdd ( ImeKol[ Len( ImeKol ) ], "SIFK->" + SIFK->Oznaka )
 
-    AADD(Kol, iif( sifk->UBrowsu='1',++i, 0) )
-    skip
-enddo
+      IF ( sifk->edkolona > 0 )
+         FOR ii := 4 TO 9
+            AAdd( ImeKol[ Len( ImeKol ) ], NIL  )
+         NEXT
+         AAdd( ImeKol[ Len( ImeKol ) ], sifk->edkolona  )
+      ELSE
+         FOR ii := 4 TO 10
+            AAdd( ImeKol[ Len( ImeKol ) ], NIL  )
+         NEXT
+      ENDIF
 
-PopWa()
+      // postavi picture za brojeve
+      IF ( sifk->Tip = "N" )
+         IF ( f_decimal > 0 )
+            ImeKol[ Len( ImeKol ), 7 ] := Replicate( "9", sifk->duzina - sifk->f_decimal - 1 ) + "." + Replicate( "9", sifk->f_decimal )
+         ELSE
+            ImeKol[ Len( ImeKol ), 7 ] := Replicate( "9", sifk->duzina )
+         ENDIF
+      ENDIF
 
-return PostojiSifra(F_POR, 1, MAXROWS()-15, MAXCOLS()-20, ;
-        Lokal("Lista poreza na platu.....<F5> arhiviranje poreza, <F6> pregled"), ;
-    @cId,dx,dy,{|Ch| PorBl(Ch)})
+      AAdd( Kol, iif( sifk->UBrowsu = '1', ++i, 0 ) )
+      SKIP
+   ENDDO
+
+   PopWa()
+
+   RETURN PostojiSifra( F_POR, 1, MAXROWS() -15, MAXCOLS() -20, ;
+      Lokal( "Lista poreza na platu.....<F5> arhiviranje poreza, <F6> pregled" ), ;
+      @cId, dx, dy, {| Ch| PorBl( Ch ) } )
 
 
 
 // -------------------------------
 // when porez
 // -------------------------------
-function wh_por( cAlg )
-local lRet := .f.
+FUNCTION wh_por( cAlg )
 
-if cAlg == "S"
-    lRet := .t.
-endif
+   LOCAL lRet := .F.
 
-return lRet
+   IF cAlg == "S"
+      lRet := .T.
+   ENDIF
+
+   RETURN lRet
 
 
 // -------------------------------
 // when stari porez
 // -------------------------------
-function wh_oldpor( cAlg )
-local lRet := .f.
+FUNCTION wh_oldpor( cAlg )
 
-if EMPTY(cAlg) .or. cAlg <> "S"
-    lRet := .t.
-endif
+   LOCAL lRet := .F.
 
-return lRet
+   IF Empty( cAlg ) .OR. cAlg <> "S"
+      lRet := .T.
+   ENDIF
+
+   RETURN lRet
 
 
 
-function P_DOPR(cId,dx,dy)
-private imekol := {}
-private kol := {}
+FUNCTION P_DOPR( cId, dx, dy )
 
-AADD(ImeKol, { padr("Id",2), {|| id}, "id" } )
-AADD(ImeKol, { padr("Naziv",20), {||  naz}, "naz" } )
-AADD(ImeKol, { padr("Iznos",20), {||  iznos}, "iznos" } )
-AADD(ImeKol, { padr("d.tip", 6), {||  dop_tip}, "dop_tip", {|| .t.}, {|| v_dop_tip(wdop_tip) } }  )
-AADD(ImeKol, { padr("tip rada", 10), {|| tiprada}, "tiprada", {|| .t.}, {|| wtiprada $ " #I#S#N#P#U#A#R" .or. MsgTipRada() } }  )
-AADD(ImeKol, { padr("KBenef",5), {|| padc(idkbenef,5)}, "idkbenef", {|| .t.}, {|| empty(widkbenef) .or. P_KBenef(@widkbenef) } } )
-AADD(ImeKol, { padr("Donji limit",12), {||  dlimit}, "dlimit" } )
-AADD(ImeKol, { padr("PoOpst",6), {||  poopst}, "poopst" }  )
+   PRIVATE imekol := {}
+   PRIVATE kol := {}
 
-for i:=1 to LEN(ImeKol)
-    AADD(Kol, i)
-next
+   AAdd( ImeKol, { PadR( "Id", 2 ), {|| id }, "id" } )
+   AAdd( ImeKol, { PadR( "Naziv", 20 ), {||  naz }, "naz" } )
+   AAdd( ImeKol, { PadR( "Iznos", 20 ), {||  iznos }, "iznos" } )
+   AAdd( ImeKol, { PadR( "d.tip", 6 ), {||  dop_tip }, "dop_tip", {|| .T. }, {|| v_dop_tip( wdop_tip ) } }  )
+   AAdd( ImeKol, { PadR( "tip rada", 10 ), {|| tiprada }, "tiprada", {|| .T. }, {|| wtiprada $ " #I#S#N#P#U#A#R" .OR. MsgTipRada() } }  )
+   AAdd( ImeKol, { PadR( "KBenef", 5 ), {|| PadC( idkbenef, 5 ) }, "idkbenef", {|| .T. }, {|| Empty( widkbenef ) .OR. P_KBenef( @widkbenef ) } } )
+   AAdd( ImeKol, { PadR( "Donji limit", 12 ), {||  dlimit }, "dlimit" } )
+   AAdd( ImeKol, { PadR( "PoOpst", 6 ), {||  poopst }, "poopst" }  )
 
-PushWa()
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
 
-O_SIFK
-O_SIFV
+   PushWa()
 
-select sifk
-set order to tag "ID"
-seek "DOPR"
+   O_SIFK
+   O_SIFV
 
-do while !eof() .and. ID="DOPR"
-    AADD(ImeKol,{IzSifKNaz("DOPR", SIFK->Oznaka)})
-    AADD(ImeKol[Len(ImeKol)], &( "{|| ToStr(IzSifk('DOPR','" + sifk->oznaka + "')) }" ) )
-    AADD(ImeKol[Len(ImeKol)], "SIFK->"+SIFK->Oznaka )
-    if (sifk->edkolona>0)
-        for ii:=4 to 9
-                AADD( ImeKol[Len(ImeKol)], NIL  )
-        next
-        AADD( ImeKol[Len(ImeKol)], sifk->edkolona  )
-    else
-        for ii:=4 to 10
-                AADD( ImeKol[Len(ImeKol)], NIL  )
-        next
-    endif
-    // postavi picture za brojeve
-    if (sifk->tip="N")
-        if (f_decimal>0)
-                ImeKol[LEN(ImeKol),7] := replicate("9", sifk->duzina - sifk->f_decimal-1 )+"."+replicate("9",sifk->f_decimal)
-        else
-                ImeKol[LEN(ImeKol),7] := replicate("9", sifk->duzina )
-        endif
-    endif
-    AADD  (Kol, iif( sifk->UBrowsu='1',++i, 0) )
-    skip
-enddo
+   SELECT sifk
+   SET ORDER TO TAG "ID"
+   SEEK "DOPR"
 
-PopWa()
+   DO WHILE !Eof() .AND. ID = "DOPR"
+      AAdd( ImeKol, { IzSifKNaz( "DOPR", SIFK->Oznaka ) } )
+      AAdd( ImeKol[ Len( ImeKol ) ], &( "{|| ToStr(IzSifk('DOPR','" + sifk->oznaka + "')) }" ) )
+      AAdd( ImeKol[ Len( ImeKol ) ], "SIFK->" + SIFK->Oznaka )
+      IF ( sifk->edkolona > 0 )
+         FOR ii := 4 TO 9
+            AAdd( ImeKol[ Len( ImeKol ) ], NIL  )
+         NEXT
+         AAdd( ImeKol[ Len( ImeKol ) ], sifk->edkolona  )
+      ELSE
+         FOR ii := 4 TO 10
+            AAdd( ImeKol[ Len( ImeKol ) ], NIL  )
+         NEXT
+      ENDIF
+      // postavi picture za brojeve
+      IF ( sifk->tip = "N" )
+         IF ( f_decimal > 0 )
+            ImeKol[ Len( ImeKol ), 7 ] := Replicate( "9", sifk->duzina - sifk->f_decimal - 1 ) + "." + Replicate( "9", sifk->f_decimal )
+         ELSE
+            ImeKol[ Len( ImeKol ), 7 ] := Replicate( "9", sifk->duzina )
+         ENDIF
+      ENDIF
+      AAdd  ( Kol, iif( sifk->UBrowsu = '1', ++i, 0 ) )
+      SKIP
+   ENDDO
 
-select dopr
+   PopWa()
 
-return PostojiSifra(F_DOPR, 1, MAXROWS()-15, MAXCOLS()-20, ;
-    Lokal("Lista doprinosa na platu......<F5> arhiviranje doprinosa, <F6> pregled"), ;
-    @cId,dx,dy,{|Ch| DoprBl(Ch)})
+   SELECT dopr
+
+   RETURN PostojiSifra( F_DOPR, 1, MAXROWS() -15, MAXCOLS() -20, ;
+      Lokal( "Lista doprinosa na platu......<F5> arhiviranje doprinosa, <F6> pregled" ), ;
+      @cId, dx, dy, {| Ch| DoprBl( Ch ) } )
 
 
 
 // --------------------------------
 // --------------------------------
-function P_KBenef(cId,dx,dy)
-private imekol
-private kol
+FUNCTION P_KBenef( cId, dx, dy )
 
-ImeKol:={ { padr("Id",3), {|| padc(id,3)}, "id", {|| .t.}, {|| vpsifra(wid)} },;
-          { padr("Naziv",8), {||  naz}, "naz" }                      , ;
-          { padr("Iznos",5), {||  iznos}, "iznos" }                       ;
-       }
+   PRIVATE imekol
+   PRIVATE kol
 
-Kol:={1,2,3}
+   ImeKol := { { PadR( "Id", 3 ), {|| PadC( id, 3 ) }, "id", {|| .T. }, {|| vpsifra( wid ) } }, ;
+      { PadR( "Naziv", 8 ), {||  naz }, "naz" }, ;
+      { PadR( "Iznos", 5 ), {||  iznos }, "iznos" }                       ;
+      }
 
-return PostojiSifra(F_KBENEF, 1, MAXROWS()-15, MAXCOLS()-20, ;
-    Lokal("Lista koef.beneficiranog radnog staza"), ;
-    @cId,dx,dy)
+   Kol := { 1, 2, 3 }
 
-
-
-
-function P_StrSpr(cId,dx,dy)
-private imekol,kol
-
-ImeKol:={ { padr("Id",3), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
-          { padr("Naziv",20), {||  naz}, "naz" }                    , ;
-          { padr("naz2",6), {|| naz2}, "naz2" }                     ;
-       }
-Kol:={1,2,3}
-
-return PostojiSifra( F_STRSPR, 1, MAXROWS()-15, MAXCOLS()-15, ;
-    Lokal("Lista: strucne spreme"), ;
-    @cId,dx,dy)
+   RETURN PostojiSifra( F_KBENEF, 1, MAXROWS() -15, MAXCOLS() -20, ;
+      Lokal( "Lista koef.beneficiranog radnog staza" ), ;
+      @cId, dx, dy )
 
 
 
 
-function P_VPosla(cId,dx,dy)
-private imekol
-private kol
+FUNCTION P_StrSpr( cId, dx, dy )
 
-ImeKol:={ { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
-          { padr("Naziv",20), {||  naz}, "naz" }                    , ;
-          { padr("KBenef",5), {|| padc(idkbenef,5)}, "idkbenef", {|| .t.}, {|| P_KBenef(@widkbenef) }  }  ;
-       }
-Kol:={ 1,2,3}
-return PostojiSifra(F_VPOSLA, 1, 10, 55, Lokal("Lista: Vrste posla"), @cId,dx,dy)
+   PRIVATE imekol, kol
+
+   ImeKol := { { PadR( "Id", 3 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } }, ;
+      { PadR( "Naziv", 20 ), {||  naz }, "naz" }, ;
+      { PadR( "naz2", 6 ), {|| naz2 }, "naz2" }                     ;
+      }
+   Kol := { 1, 2, 3 }
+
+   RETURN PostojiSifra( F_STRSPR, 1, MAXROWS() -15, MAXCOLS() -15, ;
+      Lokal( "Lista: strucne spreme" ), ;
+      @cId, dx, dy )
 
 
-function P_NorSiht(cId,dx,dy)
-private imekol
-private kol
 
-ImeKol:={ { padr("Id",4), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
-          { padr("Naziv",20), {||  naz}, "naz" }                    , ;
-          { padr("JMJ",3), {|| padc(jmj,3)}, "jmj"  } , ;
-          { padr("Iznos",8), {|| Iznos}, "Iznos"  }  ;
-       }
-Kol:={1,2,3,4}
 
-return PostojiSifra( F_NORSIHT,1,MAXROWS()-15,MAXCOLS()-20,"Lista: Norme u sihtarici",@cId,dx,dy)
+FUNCTION P_VPosla( cId, dx, dy )
+
+   PRIVATE imekol
+   PRIVATE kol
+
+   ImeKol := { { PadR( "Id", 2 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } }, ;
+      { PadR( "Naziv", 20 ), {||  naz }, "naz" }, ;
+      { PadR( "KBenef", 5 ), {|| PadC( idkbenef, 5 ) }, "idkbenef", {|| .T. }, {|| P_KBenef( @widkbenef ) }  }  ;
+      }
+   Kol := { 1, 2, 3 }
+
+   RETURN PostojiSifra( F_VPOSLA, 1, 10, 55, Lokal( "Lista: Vrste posla" ), @cId, dx, dy )
+
+
+FUNCTION P_NorSiht( cId, dx, dy )
+
+   PRIVATE imekol
+   PRIVATE kol
+
+   ImeKol := { { PadR( "Id", 4 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } }, ;
+      { PadR( "Naziv", 20 ), {||  naz }, "naz" }, ;
+      { PadR( "JMJ", 3 ), {|| PadC( jmj, 3 ) }, "jmj"  }, ;
+      { PadR( "Iznos", 8 ), {|| Iznos }, "Iznos"  }  ;
+      }
+   Kol := { 1, 2, 3, 4 }
+
+   RETURN PostojiSifra( F_NORSIHT, 1, MAXROWS() -15, MAXCOLS() -20, "Lista: Norme u sihtarici", @cId, dx, dy )
 
 
 
 // -----------------------
 // -----------------------
-function TotBrisRadn()
-local cSigurno:="N"
-local nRec
-private cIdRadn:=SPACE(6)
+FUNCTION TotBrisRadn()
 
-if !SigmaSif("SIGMATB ")
-    return
-endif
+   LOCAL cSigurno := "N"
+   LOCAL nRec
+   PRIVATE cIdRadn := Space( 6 )
 
-O_RADN         // id, "1"
-O_RADKR        // idradn, "2"
-O_LD           // idradn, "RADN"
-O_LDSM         // idradn, "RADN"
+   IF !SigmaSif( "SIGMATB " )
+      RETURN
+   ENDIF
 
-Box(,7,75)
-    @ m_x+ 0, m_y+ 5 SAY Lokal("TOTALNO BRISANJE RADNIKA IZ EVIDENCIJE")
-    @ m_x+ 8, m_y+20 SAY Lokal("<F5> - trazenje radnika pomocu sifrarnika")
-    set key K_F5 TO TRUSif()
-    do while .t.
-        BoxCLS()
-        if cSigurno=="D"
-            cIdRadn:=SPACE(6)
-            cSigurno:="N"
-        endif
-                
-        @ m_x+2, m_y+2 SAY Lokal("Radnik") GET cIdRadn PICT "@!"
-        @ m_x+6, m_y+2 SAY "Sigurno ga zelite obrisati (D/N) ?" GET cSigurno WHEN PrTotBR(cIdRadn) VALID cSigurno$"DN" PICT "@!"
-                
-        READ
-                
-        if (LastKey()==K_ESC)
-            EXIT
-        endif
-                
-        if cSigurno!="D"
-            LOOP
-        endif
-        
-        f18_lock_tables({"ld_radn", "ld_radkr"})        
-        sql_table_update( nil, "BEGIN" )
+   O_RADN         // id, "1"
+   O_RADKR        // idradn, "2"
+   O_LD           // idradn, "RADN"
+   O_LDSM         // idradn, "RADN"
 
-        // brisem ga iz sifarnika radnika
-        // -------------------------------
-        select radn
-        set order to tag "1"
-        go top
-        seek cIdRadn
-        do while !eof() .and. id==cIdRadn
-            skip 1
-            nRec := RecNo()
-            skip -1
-            _rec := dbf_get_rec()            
-            delete_rec_server_and_dbf( "ld_radn", _rec, 1, "CONT" )
-            go (nRec)
-        enddo
-                
-        // brisem ga iz baze kredita
-        // -------------------------
-        select radkr
-        set order to tag "2"
-        go top
-        seek cIdRadn
-        do while !eof() .and. idradn==cIdRadn
-            skip 1
-            nRec:=RecNo()
-            skip -1
-            _rec := dbf_get_rec()
-            delete_rec_server_and_dbf( "ld_radkr", _rec, 1, "CONT" )
-            go (nRec)
-        enddo
-                
-        // brisem ga iz baze obracuna
-        // --------------------------
-        select ld
-        set order to tag "RADN"
-        go top
-        seek cIdRadn
-        do while !eof() .and. idradn==cIdRadn
-            skip 1
-            nRec:=RecNo()
-            skip -1
-            _rec := dbf_get_rec()
-            delete_rec_server_and_dbf( "ld_ld", _rec, 1, "CONT" )                
-            go (nRec)
-        enddo
-                
-   enddo
+   Box(, 7, 75 )
+   @ m_x + 0, m_y + 5 SAY Lokal( "TOTALNO BRISANJE RADNIKA IZ EVIDENCIJE" )
+   @ m_x + 8, m_y + 20 SAY Lokal( "<F5> - trazenje radnika pomocu sifrarnika" )
+   SET KEY K_F5 TO TRUSif()
+   DO WHILE .T.
+      BoxCLS()
+      IF cSigurno == "D"
+         cIdRadn := Space( 6 )
+         cSigurno := "N"
+      ENDIF
 
-    f18_free_tables({"ld_radn", "ld_radkr"})        
-    sql_table_update( nil, "END" )
+      @ m_x + 2, m_y + 2 SAY Lokal( "Radnik" ) GET cIdRadn PICT "@!"
+      @ m_x + 6, m_y + 2 SAY "Sigurno ga zelite obrisati (D/N) ?" GET cSigurno WHEN PrTotBR( cIdRadn ) VALID cSigurno $ "DN" PICT "@!"
 
-    set key K_F5 to
+      READ
 
-BoxC()
+      IF ( LastKey() == K_ESC )
+         EXIT
+      ENDIF
 
-my_close_all_dbf()
-return
+      IF cSigurno != "D"
+         LOOP
+      ENDIF
 
+      f18_lock_tables( { "ld_radn", "ld_radkr" } )
+      sql_table_update( nil, "BEGIN" )
 
-function PrTotBr(cIdRadn)
-local cBI:="W+/G"
+      // brisem ga iz sifarnika radnika
+      // -------------------------------
+      SELECT radn
+      SET ORDER TO TAG "1"
+      GO TOP
+      SEEK cIdRadn
+      DO WHILE !Eof() .AND. id == cIdRadn
+         SKIP 1
+         nRec := RecNo()
+         SKIP -1
+         _rec := dbf_get_rec()
+         delete_rec_server_and_dbf( "ld_radn", _rec, 1, "CONT" )
+         GO ( nRec )
+      ENDDO
 
-select (F_RADN)
-set order to tag "1" 
-go top
-seek cIdRadn
+      // brisem ga iz baze kredita
+      // -------------------------
+      SELECT radkr
+      SET ORDER TO TAG "2"
+      GO TOP
+      SEEK cIdRadn
+      DO WHILE !Eof() .AND. idradn == cIdRadn
+         SKIP 1
+         nRec := RecNo()
+         SKIP -1
+         _rec := dbf_get_rec()
+         delete_rec_server_and_dbf( "ld_radkr", _rec, 1, "CONT" )
+         GO ( nRec )
+      ENDDO
 
-select (F_RADKR)
-set order to tag "2"  
-go top
-seek cIdRadn
+      // brisem ga iz baze obracuna
+      // --------------------------
+      SELECT ld
+      SET ORDER TO TAG "RADN"
+      GO TOP
+      SEEK cIdRadn
+      DO WHILE !Eof() .AND. idradn == cIdRadn
+         SKIP 1
+         nRec := RecNo()
+         SKIP -1
+         _rec := dbf_get_rec()
+         delete_rec_server_and_dbf( "ld_ld", _rec, 1, "CONT" )
+         GO ( nRec )
+      ENDDO
 
-cKljuc:=STR(godina,4)+STR(mjesec,2)
+   ENDDO
 
-do while !eof() .and. idradn==cIdRadn
-    if (cKljuc<STR(godina,4)+STR(mjesec,2))
-            cKljuc:=STR(godina,4)+STR(mjesec,2)
-        endif
-        skip 1
-enddo
-skip -1
+   f18_free_tables( { "ld_radn", "ld_radkr" } )
+   sql_table_update( nil, "END" )
 
-SELECT (F_LD)
-SET ORDER TO TAG "RADN"
-GO TOP
-SEEK cIdRadn
+   SET KEY K_F5 TO
 
-cKljuc:=STR(godina,4)+STR(mjesec,2)
+   BoxC()
 
-DO WHILE !EOF() .and. idradn==cIdRadn
-    IF cKljuc < STR(godina,4)+STR(mjesec,2)
-            cKljuc:=STR(godina,4)+STR(mjesec,2)
-        ENDIF
-        SKIP 1
-ENDDO
-SKIP -1
+   my_close_all_dbf()
 
-SELECT (F_LDSM)
-SET ORDER TO TAG "RADN"
-GO TOP
-SEEK cIdRadn
-cKljuc:=STR(godina,4)+STR(mjesec,2)
-DO WHILE !EOF() .and. idradn==cIdRadn
-    IF cKljuc < STR(godina,4)+STR(mjesec,2)
-            cKljuc:=STR(godina,4)+STR(mjesec,2)
-        ENDIF
-        SKIP 1
-ENDDO
-SKIP -1
-
-@ m_x+3, m_y+1 CLEAR TO m_x+5, m_y+75
-@ m_x+3, m_y+ 2 SAY "PREZIME I IME:"
-@ m_x+3, m_y+17 SAY IF(RADN->id==cIdRadn,RADN->(TRIM(naz)+" ("+TRIM(imerod)+") "+TRIM(ime)),"nema podatka") COLOR cBI
-@ m_x+4, m_y+ 2 SAY "POSLJEDNJI OBRACUN:"
-@ m_x+4, m_y+22 SAY IF(LD->idradn==cIdRadn,STR(LD->mjesec,2)+"/"+STR(LD->godina,4),"nema podatka") COLOR cBI
-@ m_x+4, m_y+35 SAY "RJ:"
-@ m_x+4, m_y+39 SAY IF(LD->idradn==cIdRadn,LD->idrj,"nema podatka") COLOR cBI
-@ m_x+5, m_y+ 2 SAY "POSLJEDNJA RATA KREDITA:"
-@ m_x+5, m_y+27 SAY IF(RADKR->idradn==cIdRadn,STR(RADKR->mjesec,2)+"/"+STR(RADKR->godina,4),"nema podatka") COLOR cBI
-
-RETURN IF(RADN->id==cIdRadn.or.LD->idradn==cIdRadn.or.;
-          LDSM->idradn==cIdRadn.or.RADKR->idradn==cIdRadn,.t.,.f.)
+   RETURN
 
 
+FUNCTION PrTotBr( cIdRadn )
 
+   LOCAL cBI := "W+/G"
 
-function TRUSif()
-if READVAR() == "CIDRADN"
-    P_Radn(@cIdRadn)
-    KEYBOARD CHR(K_ENTER)+CHR(K_UP)
-endif
-return
+   SELECT ( F_RADN )
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK cIdRadn
+
+   SELECT ( F_RADKR )
+   SET ORDER TO TAG "2"
+   GO TOP
+   SEEK cIdRadn
+
+   cKljuc := Str( godina, 4 ) + Str( mjesec, 2 )
+
+   DO WHILE !Eof() .AND. idradn == cIdRadn
+      IF ( cKljuc < Str( godina, 4 ) + Str( mjesec, 2 ) )
+         cKljuc := Str( godina, 4 ) + Str( mjesec, 2 )
+      ENDIF
+      SKIP 1
+   ENDDO
+   SKIP -1
+
+   SELECT ( F_LD )
+   SET ORDER TO TAG "RADN"
+   GO TOP
+   SEEK cIdRadn
+
+   cKljuc := Str( godina, 4 ) + Str( mjesec, 2 )
+
+   DO WHILE !Eof() .AND. idradn == cIdRadn
+      IF cKljuc < Str( godina, 4 ) + Str( mjesec, 2 )
+         cKljuc := Str( godina, 4 ) + Str( mjesec, 2 )
+      ENDIF
+      SKIP 1
+   ENDDO
+   SKIP -1
+
+   SELECT ( F_LDSM )
+   SET ORDER TO TAG "RADN"
+   GO TOP
+   SEEK cIdRadn
+   cKljuc := Str( godina, 4 ) + Str( mjesec, 2 )
+   DO WHILE !Eof() .AND. idradn == cIdRadn
+      IF cKljuc < Str( godina, 4 ) + Str( mjesec, 2 )
+         cKljuc := Str( godina, 4 ) + Str( mjesec, 2 )
+      ENDIF
+      SKIP 1
+   ENDDO
+   SKIP -1
+
+   @ m_x + 3, m_y + 1 CLEAR TO m_x + 5, m_y + 75
+   @ m_x + 3, m_y + 2 SAY "PREZIME I IME:"
+   @ m_x + 3, m_y + 17 SAY IF( RADN->id == cIdRadn, RADN->( Trim( naz ) + " (" + Trim( imerod ) + ") " + Trim( ime ) ), "nema podatka" ) COLOR cBI
+   @ m_x + 4, m_y + 2 SAY "POSLJEDNJI OBRACUN:"
+   @ m_x + 4, m_y + 22 SAY IF( LD->idradn == cIdRadn, Str( LD->mjesec, 2 ) + "/" + Str( LD->godina, 4 ), "nema podatka" ) COLOR cBI
+   @ m_x + 4, m_y + 35 SAY "RJ:"
+   @ m_x + 4, m_y + 39 SAY IF( LD->idradn == cIdRadn, LD->idrj, "nema podatka" ) COLOR cBI
+   @ m_x + 5, m_y + 2 SAY "POSLJEDNJA RATA KREDITA:"
+   @ m_x + 5, m_y + 27 SAY IF( RADKR->idradn == cIdRadn, Str( RADKR->mjesec, 2 ) + "/" + Str( RADKR->godina, 4 ), "nema podatka" ) COLOR cBI
+
+   RETURN IF( RADN->id == cIdRadn .OR. LD->idradn == cIdRadn .OR. ;
+      LDSM->idradn == cIdRadn .OR. RADKR->idradn == cIdRadn, .T., .F. )
 
 
 
-function PorBl(Ch)
-local nVrati:=DE_CONT
-local nRec:=RecNo()
-private GetList:={}
 
-do case
-    case Ch==K_F5
-        // pitati za posljednji mjesec
-        cMj:=gMjesec
-        cGod:=gGodina
-        Box("#PROMJENA POREZA U TOKU GODINE",4,60)
-            @ m_x+2, m_y+2 SAY "Posljednji mjesec po starim porezima:" GET cMj VALID cMj>0 .and. cMj<13
-            @ m_x+3, m_y+2 SAY "Godina: "+STR(cGod)
-            read
-            if LastKey()==K_ESC
-            BoxC()
-            return nVrati
-        endif
-        BoxC()
-        
-    // formiraj imena direktorija
-        cPodDir:=PADL(ALLTRIM(STR(cMj)),2,"0")+STR(cGod,4)
-        cPath:=SIFPATH
-        aIme:={ "POR.DBF" , "POR.CDX" }
-        // zatvaram POR.DBF
-        select POR
-        use
-        // napraviti direktorij i iskopirati POR.* u njega
-        DirMake(cPath+cPodDir)
-        lKopirano:=.f.
-        for i:=1 to LEN(aIme)
-            if File(cPath+cPodDir+SLASH+aIme[i])
-                MsgBeep("Fajl "+aIme[i]+" vec postoji u "+cpath+cPodDir+" !"+"#Ukoliko ga sada zamijenite necete ga moci vratiti!")
-                if Pitanje(,"Zelite li ga zamijeniti?","N")=="N"
-                        LOOP
-                endif
-            endif
-            lKopirano:=.t.
-            FileCopy(cPath+aIme[i],cPath+cPodDir+SLASH+aIme[i])
-        next
-    // otvaram POR.DBF
-        O_POR
-        go (nRec)
+FUNCTION TRUSif()
 
-        // poruka: mozete definisati nove poreze
-        if lKopirano
-            MsgBeep("Stari porezi su smjesteni u podrucje "+cPodDir+"#Nakon ovoga mozete definisati nove poreze.")
-        endif
+   IF ReadVar() == "CIDRADN"
+      P_Radn( @cIdRadn )
+      KEYBOARD Chr( K_ENTER ) + Chr( K_UP )
+   ENDIF
 
-    case Ch==K_F6
-        // meni sezona
-        cPath:=SIFPATH
-        cGodina:=gGodina
-        Box(,3,30)
-            @ m_x+2, m_y+2 SAY "Godina:" GET cGodina PICT "9999"
-            READ
-        BoxC()
-        IF LASTKEY()==K_ESC
-        RETURN nVrati
-    ENDIF
-        cGodina:=STR(cGodina,4,0)
-        aSez := ASezona2(cPath,cGodina,"POR.DBF")
-        IF EMPTY(aSez)
-            MsgBeep("Ne postoje sezone promjena poreza u "+cGodina+". godini!")
-            RETURN nVrati
-        ELSE
-            // meni sezona - aSez
-            // ------------------
-            FOR i:=1 TO LEN(aSez)
-                aSez[i] := PADR( aSez[i,1]+" - "+ld_naziv_mjeseca(VAL(LEFT(aSez[i,1],2))) , 73)
-            NEXT
-            h:=ARRAY(LEN(aSez)); AFILL(h,"")
-            Box("#SEZONE PRED PROMJENU POREZA U "+cGodina+".GODINI: ÍÍÍÍÍ <Enter>-izbor ",MIN(LEN(aSez),16)+3,77)
-                @ m_x+1, m_y+2 SAY PADC("M J E S E C",75)
-                @ m_x+2, m_y+2 SAY REPL("Ä",75)
-                nPom := 1
-                @ row()-1, col()-6 SAY ""
-                nPom := Menu("SPME",aSez,nPom,.f.,,,{m_x+2,m_y+1})
-                IF nPom>0
-                    Menu("SPME",aSez,0,.f.)
-                ENDIF
-            BoxC()
-            IF nPom>0
-                cPorDir := LEFT( aSez[nPom] , 6 )
-            ELSE
-                RETURN nVrati
+   RETURN
+
+
+
+FUNCTION PorBl( Ch )
+
+   LOCAL nVrati := DE_CONT
+   LOCAL nRec := RecNo()
+   PRIVATE GetList := {}
+
+   DO CASE
+   CASE Ch == K_F5
+      // pitati za posljednji mjesec
+      cMj := gMjesec
+      cGod := gGodina
+      Box( "#PROMJENA POREZA U TOKU GODINE", 4, 60 )
+      @ m_x + 2, m_y + 2 SAY "Posljednji mjesec po starim porezima:" GET cMj VALID cMj > 0 .AND. cMj < 13
+      @ m_x + 3, m_y + 2 SAY "Godina: " + Str( cGod )
+      READ
+      IF LastKey() == K_ESC
+         BoxC()
+         RETURN nVrati
+      ENDIF
+      BoxC()
+
+      // formiraj imena direktorija
+      cPodDir := PadL( AllTrim( Str( cMj ) ), 2, "0" ) + Str( cGod, 4 )
+      cPath := SIFPATH
+      aIme := { "POR.DBF", "POR.CDX" }
+      // zatvaram POR.DBF
+      SELECT POR
+      USE
+      // napraviti direktorij i iskopirati POR.* u njega
+      DirMake( cPath + cPodDir )
+      lKopirano := .F.
+      FOR i := 1 TO Len( aIme )
+         IF File( cPath + cPodDir + SLASH + aIme[ i ] )
+            MsgBeep( "Fajl " + aIme[ i ] + " vec postoji u " + cpath + cPodDir + " !" + "#Ukoliko ga sada zamijenite necete ga moci vratiti!" )
+            IF Pitanje(, "Zelite li ga zamijeniti?", "N" ) == "N"
+               LOOP
             ENDIF
-        ENDIF
-        
-    // otvaranje sezonske baze
-        SELECT (F_POR)
-    USE
-        USE (cPath+cPorDir+SLASH+"POR") 
-    SET ORDER TO TAG "ID"
-        GO TOP
-        @ m_x+11, m_y+2 SAY "Porezi koji su vazili zakljucno sa (MMGGGG):"+cPorDir
-        KEYBOARD CHR(K_CTRL_PGUP)
-        nVrati:=DE_REFRESH
+         ENDIF
+         lKopirano := .T.
+         FileCopy( cPath + aIme[ i ], cPath + cPodDir + SLASH + aIme[ i ] )
+      NEXT
+      // otvaram POR.DBF
+      O_POR
+      GO ( nRec )
 
-endcase
+      // poruka: mozete definisati nove poreze
+      IF lKopirano
+         MsgBeep( "Stari porezi su smjesteni u podrucje " + cPodDir + "#Nakon ovoga mozete definisati nove poreze." )
+      ENDIF
 
-return nVrati
+   CASE Ch == K_F6
+      // meni sezona
+      cPath := SIFPATH
+      cGodina := gGodina
+      Box(, 3, 30 )
+      @ m_x + 2, m_y + 2 SAY "Godina:" GET cGodina PICT "9999"
+      READ
+      BoxC()
+      IF LastKey() == K_ESC
+         RETURN nVrati
+      ENDIF
+      cGodina := Str( cGodina, 4, 0 )
+      aSez := ASezona2( cPath, cGodina, "POR.DBF" )
+      IF Empty( aSez )
+         MsgBeep( "Ne postoje sezone promjena poreza u " + cGodina + ". godini!" )
+         RETURN nVrati
+      ELSE
+         // meni sezona - aSez
+         // ------------------
+         FOR i := 1 TO Len( aSez )
+            aSez[ i ] := PadR( aSez[ i, 1 ] + " - " + ld_naziv_mjeseca( Val( Left( aSez[ i, 1 ], 2 ) ) ), 73 )
+         NEXT
+         h := Array( Len( aSez ) ); AFill( h, "" )
+         Box( "#SEZONE PRED PROMJENU POREZA U " + cGodina + ".GODINI: ÍÍÍÍÍ <Enter>-izbor ", Min( Len( aSez ), 16 ) + 3, 77 )
+         @ m_x + 1, m_y + 2 SAY PadC( "M J E S E C", 75 )
+         @ m_x + 2, m_y + 2 SAY REPL( "Ä", 75 )
+         nPom := 1
+         @ Row() -1, Col() -6 SAY ""
+         nPom := Menu( "SPME", aSez, nPom, .F.,,, { m_x + 2, m_y + 1 } )
+         IF nPom > 0
+            MENU( "SPME", aSez, 0, .F. )
+         ENDIF
+         BoxC()
+         IF nPom > 0
+            cPorDir := Left( aSez[ nPom ], 6 )
+         ELSE
+            RETURN nVrati
+         ENDIF
+      ENDIF
+
+      // otvaranje sezonske baze
+      SELECT ( F_POR )
+      USE
+      USE ( cPath + cPorDir + SLASH + "POR" )
+      SET ORDER TO TAG "ID"
+      GO TOP
+      @ m_x + 11, m_y + 2 SAY "Porezi koji su vazili zakljucno sa (MMGGGG):" + cPorDir
+      KEYBOARD Chr( K_CTRL_PGUP )
+      nVrati := DE_REFRESH
+
+   ENDCASE
+
+   RETURN nVrati
 
 
 
 // ------------------------------------
 // ------------------------------------
-function DoprBl(Ch)
+FUNCTION DoprBl( Ch )
 
-local nVrati:=DE_CONT
-local nRec:=RECNO()
+   LOCAL nVrati := DE_CONT
+   LOCAL nRec := RecNo()
 
-DO CASE
-    CASE Ch==K_F5
+   DO CASE
+   CASE Ch == K_F5
 
       // pitati za posljednji mjesec
       // ---------------------------
       cMj  := gMjesec
       cGod := gGodina
-      private GetList:={}
-      Box( Lokal("#PROMJENA DOPRINOSA U TOKU GODINE"), 4, 60)
-        @ m_x+2, m_y+2 SAY Lokal("Posljednji mjesec po starim doprinosima:") GET cMj VALID cMj>0 .and. cMj<13
-        @ m_x+3, m_y+2 SAY "Godina: "+STR(cGod)
-        READ
-        IF LASTKEY()==K_ESC; BoxC(); RETURN nVrati; ENDIF
+      PRIVATE GetList := {}
+      Box( Lokal( "#PROMJENA DOPRINOSA U TOKU GODINE" ), 4, 60 )
+      @ m_x + 2, m_y + 2 SAY Lokal( "Posljednji mjesec po starim doprinosima:" ) GET cMj VALID cMj > 0 .AND. cMj < 13
+      @ m_x + 3, m_y + 2 SAY "Godina: " + Str( cGod )
+      READ
+      IF LastKey() == K_ESC; BoxC(); RETURN nVrati; ENDIF
       BoxC()
 
       // formiraj imena direktorija
       // --------------------------
-      cPodDir := PADL(ALLTRIM(STR(cMj)),2,"0")+STR(cGod,4)
-      cPath:=SIFPATH
-      aIme := { "DOPR.DBF" , "DOPR.CDX" }
+      cPodDir := PadL( AllTrim( Str( cMj ) ), 2, "0" ) + Str( cGod, 4 )
+      cPath := SIFPATH
+      aIme := { "DOPR.DBF", "DOPR.CDX" }
 
       // zatvaram DOPR.DBF
       // -----------------
@@ -1382,82 +1421,79 @@ DO CASE
 
       // napraviti direktorij i iskopirati DOPR.* u njega
       // -------------------------------------------------
-      DIRMAKE(cPath+cPodDir)
-      lKopirano:=.f.
-      FOR i:=1 TO LEN(aIme)
-        IF FILE(cpath+cPodDir+"\"+aIme[i])
-          MsgBeep("Fajl "+aIme[i]+" vec postoji u "+cpath+cPodDir+" !"+;
-                  "#Ukoliko ga sada zamijenite necete ga moci vratiti!")
-          IF Pitanje(,"Zelite li ga zamijeniti?","N")=="N"
-            LOOP
-          ENDIF
-        ENDIF
-        lKopirano:=.t.
-        FILECOPY( cPath+aIme[i] , cpath+cPodDir+"\"+aIme[i] )
+      DirMake( cPath + cPodDir )
+      lKopirano := .F.
+      FOR i := 1 TO Len( aIme )
+         IF File( cpath + cPodDir + "\" + aIme[ i ] )
+            MsgBeep( "Fajl " + aIme[ i ] + " vec postoji u " + cpath + cPodDir + " !" + ;
+               "#Ukoliko ga sada zamijenite necete ga moci vratiti!" )
+            IF Pitanje(, "Zelite li ga zamijeniti?", "N" ) == "N"
+               LOOP
+            ENDIF
+         ENDIF
+         lKopirano := .T.
+         FileCopy( cPath + aIme[ i ], cpath + cPodDir + "\" + aIme[ i ] )
       NEXT
 
       // otvaram DOPR.DBF
       // ----------------
       O_DOPR
-      GO (nRec)
+      GO ( nRec )
 
       // poruka: mozete definisati nove doprinose
       // ----------------------------------------
       IF lKopirano
-        MsgBeep("Stari doprinosi su smjesteni u podrucje "+cPodDir+"#Nakon ovoga "+;
-                "mozete definisati nove doprinose.")
+         MsgBeep( "Stari doprinosi su smjesteni u podrucje " + cPodDir + "#Nakon ovoga " + ;
+            "mozete definisati nove doprinose." )
       ENDIF
 
-    CASE Ch==K_F6
+   CASE Ch == K_F6
       // meni sezona
       cPath   := SIFPATH
       cGodina := gGodina
-      private GetList:={}
-      Box(,3,30)
-        @ m_x+2, m_y+2 SAY "Godina:" GET cGodina PICT "9999"
-        READ
+      PRIVATE GetList := {}
+      Box(, 3, 30 )
+      @ m_x + 2, m_y + 2 SAY "Godina:" GET cGodina PICT "9999"
+      READ
       BoxC()
-      IF LASTKEY()==K_ESC; RETURN nVrati; ENDIF
-      cGodina:=STR(cGodina,4,0)
-      aSez := ASezona2(cPath,cGodina,"DOPR.DBF")
-      IF EMPTY(aSez)
-        MsgBeep("Ne postoje sezone promjena doprinosa u "+cGodina+". godini!")
-        RETURN nVrati
+      IF LastKey() == K_ESC; RETURN nVrati; ENDIF
+      cGodina := Str( cGodina, 4, 0 )
+      aSez := ASezona2( cPath, cGodina, "DOPR.DBF" )
+      IF Empty( aSez )
+         MsgBeep( "Ne postoje sezone promjena doprinosa u " + cGodina + ". godini!" )
+         RETURN nVrati
       ELSE
-        // meni sezona - aSez
-        // ------------------
-        FOR i:=1 TO LEN(aSez)
-          aSez[i] := PADR( aSez[i,1]+" - "+ld_naziv_mjeseca(VAL(LEFT(aSez[i,1],2))) , 73)
-        NEXT
-        h:=ARRAY(LEN(aSez)); AFILL(h,"")
-        Box("#SEZONE PRED PROMJENU DOPRINOSA U "+cGodina+".GODINI: ||||| <Enter>-izbor ", MIN(LEN(aSez), 16) + 3, 77)
-         @ m_x+1, m_y+2 SAY PADC("M J E S E C",75)
-         @ m_x+2, m_y+2 SAY REPL("-",75)
+         // meni sezona - aSez
+         // ------------------
+         FOR i := 1 TO Len( aSez )
+            aSez[ i ] := PadR( aSez[ i, 1 ] + " - " + ld_naziv_mjeseca( Val( Left( aSez[ i, 1 ], 2 ) ) ), 73 )
+         NEXT
+         h := Array( Len( aSez ) ); AFill( h, "" )
+         Box( "#SEZONE PRED PROMJENU DOPRINOSA U " + cGodina + ".GODINI: ||||| <Enter>-izbor ", Min( Len( aSez ), 16 ) + 3, 77 )
+         @ m_x + 1, m_y + 2 SAY PadC( "M J E S E C", 75 )
+         @ m_x + 2, m_y + 2 SAY REPL( "-", 75 )
          nPom := 1
-         @ row()-1, col()-6 SAY ""
-         nPom := Menu("SDME",aSez,nPom,.f.,,,{m_x+2,m_y+1})
-         IF nPom>0
-           Menu("SDME",aSez,0,.f.)
+         @ Row() -1, Col() -6 SAY ""
+         nPom := Menu( "SDME", aSez, nPom, .F.,,, { m_x + 2, m_y + 1 } )
+         IF nPom > 0
+            MENU( "SDME", aSez, 0, .F. )
          ENDIF
-        BoxC()
-        IF nPom>0
-          cDoprDir := LEFT( aSez[nPom] , 6 )
-        ELSE
-          RETURN nVrati
-        ENDIF
+         BoxC()
+         IF nPom > 0
+            cDoprDir := Left( aSez[ nPom ], 6 )
+         ELSE
+            RETURN nVrati
+         ENDIF
       ENDIF
 
       // otvaranje sezonske baze
-      SELECT (F_DOPR); USE
-      USE (cPath+cDoprDir+"\DOPR") ; SET ORDER TO TAG "ID"
+      SELECT ( F_DOPR ); USE
+      USE ( cPath + cDoprDir + "\DOPR" ) ; SET ORDER TO TAG "ID"
       GO TOP
-      @ m_x+11, m_y+2 SAY "Doprinosi koji su vazili zakljucno sa (MMGGGG):"+cDoprDir
-      KEYBOARD CHR(K_CTRL_PGUP)
-      nVrati:=DE_REFRESH
+      @ m_x + 11, m_y + 2 SAY "Doprinosi koji su vazili zakljucno sa (MMGGGG):" + cDoprDir
+      KEYBOARD Chr( K_CTRL_PGUP )
+      nVrati := DE_REFRESH
 
-ENDCASE
+   ENDCASE
 
-return nVrati
-
-
-
+   RETURN nVrati

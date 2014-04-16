@@ -1,3 +1,8 @@
+1.7.48  2014-04-16, vsasa
+
+  - RJ se sada otvara sa use_sql_rj()
+  - VALUTE, casting select izraza u use_sql_valute()
+ 
 1.7.47  2014-04-15, vsasa
 
   - FIN, štampa bruto bilansa i nepostojeća konta

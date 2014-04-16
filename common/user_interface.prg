@@ -134,20 +134,18 @@ FUNCTION what_action( nItemNo )
 *   \note Maksimalna duzina jednog reda je 72 slova
 */
 
-FUNCTION Msg( text, sec, xPos )
+FUNCTION Msg( uText, sec, xPos )
 
    LOCAL l, msg_x1, msg_x2, msg_y1, msg_y2, cPom := Set( _SET_DEVICE )
 
    LOCAL nLen, nHashPos, aText := {}, nCnt, nBrRed := 0
+   LOCAL text
 
-   IF gAppSrv
-      ? text
-      RETURN
-   ENDIF
+   text := Unicode():New( uText, .T. ):getCpString()
 
    SET DEVICE TO SCREEN
 
-   WHILE ( nHashPos := At ( "#", Text ) ) > 0
+   DO WHILE ( nHashPos := At ( "#", Text ) ) > 0
       AAdd ( aText, Left ( Text, nHashPos - 1 ) )
       Text := SubStr ( Text, nHashPos + 1 )
       nBrRed ++
@@ -1227,11 +1225,7 @@ FUNCTION MsgBeep( cMsg )
 
    LOCAL _set
 
-   cMsg := hb_UTF8ToStr( cMsg )
-
-   IF !gAppSrv
-      Beep( 2 )
-   ENDIF
+   Beep( 2 )
 
 #ifndef TEST
    CLEAR TYPEAHEAD

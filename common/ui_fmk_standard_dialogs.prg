@@ -84,7 +84,7 @@ if cOdg $ cMogOdg
 else
 
 #ifndef TEST
-  MsgBeep("Uneseno: " + cOdg + "#Morate unijeti nesto od :" + cMogOdg)
+  MsgBeep("Unešeno: " + cOdg + "#Morate unijeti nešto od :" + cMogOdg)
 #endif
 
   return .f.

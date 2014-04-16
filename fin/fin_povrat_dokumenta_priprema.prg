@@ -137,7 +137,6 @@ FUNCTION povrat_fin_naloga( lStorno )
 
       sql_table_update( nil, "BEGIN" )
 
-      AltD()
       _tbl := "fin_suban"
       @ m_x + 1, m_y + 2 SAY "delete " + _tbl
       // algoritam 2  - nivo dokumenta

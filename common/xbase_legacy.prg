@@ -333,17 +333,14 @@ FUNCTION EofFndRet( ef, close )
 
    IF ef // eof()
       IF Eof()
-         IF !gAppSrv
             Beep( 1 )
             Msg( cStr, 6 )
-         ENDIF
          fRet := .T.
       ENDIF
    ELSE
       IF !Found()
-         IF !gAppSrv
-            Beep( 1 ); Msg( cStr, 6 )
-         ENDIF
+         Beep( 1 )
+         Msg( cStr, 6 )
          fRet := .T.
       ENDIF
    ENDIF

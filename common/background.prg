@@ -104,12 +104,6 @@ return
 // ----------------------------
 static function refresh_partn()
 
-/*
-SELECT (F_PARTN)
-use
-return  my_use("partn")
-*/
-
 return .t.
 
 

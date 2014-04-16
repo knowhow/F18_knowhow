@@ -18,4 +18,5 @@ cp -av common/*.ch $HB_INC_INSTALL
 cp hb_debug_lib.hbm hbmk.hbm
 
 hbmk2 -workdir=.h F18_narudzbenica.hbp
+hbmk2 -workdir=.h F18_string.hbp
 

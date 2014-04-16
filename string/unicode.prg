@@ -4,11 +4,13 @@
 
 CLASS Unicode
 
-  METHOD New()
-  METHOD set()
+  METHOD New( xVal, lUtf8 )
+  METHOD set( xVal, lUtf8 )
   METHOD getString()
   METHOD getCpString()
-  METHOD PadR()
+  METHOD PadR( nNum )
+  METHOD is_unicode()
+
   DATA lUtf8
   DATA cString
 
@@ -22,27 +24,35 @@ METHOD Unicode:New( xVal, lUtf8 )
 
   RETURN Self
 
-METHOD Unicode:is_utf8()
+METHOD Unicode:is_unicode()
 
   RETURN ::lUtf8
 
 
 METHOD Unicode:getString()
 
+  LOCAL cRet
   IF ::lUtf8
-    RETURN ::cString
+    cRet := ::cString
   ELSE
-    RETURN hb_StrToUtf8( ::cString )
+    cRet := hb_StrToUtf8( ::cString )
   ENDIF
 
- 
+  RETURN cRet
+
+   
 METHOD Unicode:getCpString()
 
+  LOCAL cRet
+
   IF ::lUtf8
-    RETURN hb_Utf8ToStr( ::cString )
+    cRet := hb_Utf8ToStr( ::cString )
   ELSE
-    RETURN ::cString
+    cRet := ::cString
   ENDIF
+
+  RETURN cRet
+
  
 METHOD Unicode:PadR( nNum )
 
@@ -50,13 +60,6 @@ METHOD Unicode:PadR( nNum )
 
   // pretvori u CP string, pa ga PadR-aj, pa ga vrati kao UTF-8
   RETURN hb_StrToUtf8( PadR( cStr, nNum ) )
-
-  IF ::lUtf8
-    RETURN ::cString
-  ELSE
-    RETURN hb_StrToUtf8( ::cString )
-  ENDIF
-
 
   
 METHOD Unicode:set( xVal, lUtf8 )

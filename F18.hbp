@@ -21,4 +21,5 @@ reports/*.prg
 common/*.prg
 
 libF18_narudzbenica.a
+libF18_string.a
 

@@ -1053,21 +1053,10 @@
 	  => Set( "PRINTER_CHARSET", <(csname)> )
 
 
-#command REPLACE <f1> WITH <v1> [, <fN> WITH <vN> ]    ;
-      => while .t.;
-         ; if rlock();
+#command RREPLACE <f1> WITH <v1> [, <fN> WITH <vN> ]    ;
+      => my_rlock();
          ;   _FIELD-><f1> := <v1> [; _FIELD-><fN> := <vN>];
-         ;   dbunlock();
-         ; else;
-         ;   Msg("Neko vec koristi zapis",10);
-         ;   if pitanje("pp","Pokusati ponovo (D/N) ?","D")=="D";
-         ;     loop;
-         ;   else;
-         ;     exit;
-         ;   end;
-         ; end;
-         ; exit;
-         ;end;
+         ;my_unlock();
 
 
 #command REPLSQL <f1> WITH <v1> [, <fN> WITH <vN> ]    ;

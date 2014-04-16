@@ -260,21 +260,9 @@ FUNCTION SintStav( lAuto )
 
    _o_tables()
 
-   SELECT PANAL
-   my_dbf_zap()
-   my_flock()
-
-   SELECT PSINT
-   my_dbf_zap()
-   my_flock()
-
-   SELECT PNALOG
-   my_dbf_zap()
-   my_flock()
-
-   SELECT PSUBAN
-   SET ORDER TO TAG "2"
-   my_flock()
+   IF !zap_lock_fin_priprema()
+       RETURN .F.
+   EDNIF
 
    GO TOP
    IF Empty( BrNal )
@@ -438,3 +426,62 @@ FUNCTION SintStav( lAuto )
    my_close_all_dbf()
 
    RETURN
+
+
+
+STATIC FUNCTION zap_lock_fin_priprema()
+
+   LOCAL nCnt
+   LOCAL lLock := .T.
+
+   nCnt := 0
+   DO WHILE .T.
+
+      ++nCnt
+
+      IF nCnt > 5
+           MsgBeep( "Neko već koristi tabele za pripreme finansijskog naloga !" )
+           RETURN .F.
+      ENDIF
+
+      SELECT PANAL
+      my_dbf_zap()
+      lLock := lLock .AND. my_flock()
+      IF !lLock
+           hb_idleSleep( 1 )
+           LOOP
+      ENDIF
+
+      SELECT PSINT
+      my_dbf_zap()
+      lLock := lLock .AND. my_flock()
+      IF !lLock
+           hb_idleSleep( 1 )
+           LOOP
+      ENDIF
+
+      SELECT PNALOG
+      my_dbf_zap()
+      lLock := lLock .AND. my_flock()
+      IF !lLock
+           hb_idleSleep( 1 )
+           LOOP
+      ENDIF
+
+
+      SELECT PSUBAN
+      SET ORDER TO TAG "2"
+      my_flock()
+      lLock := lLock .AND. my_flock()
+      IF !lLock
+           hb_idleSleep( 1 )
+           LOOP
+      ENDIF
+
+      // sve lock prepreke sam prebrodio :)
+      EXIT
+   ENDDO
+
+   RETURN .T.
+
+

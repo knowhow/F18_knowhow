@@ -145,7 +145,6 @@ FUNCTION Izracunaj( ixx, fPrikaz )
    ENDIF
 
    RETURN .T.
-// }
 
 
 

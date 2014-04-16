@@ -799,7 +799,7 @@ endif
 // dodaj konacno novu banku...
 cNewBank += cBank
 
-USifK( "PARTN", "BANK", cPartn, Unicode:New( cNewBank, .F. ) )
+USifK( "PARTN", "BANK", cPartn, Unicode():New( cNewBank, .F. ) )
 
 select (nTArea)
 

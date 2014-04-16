@@ -447,6 +447,25 @@ FUNCTION my_close_all_dbf()
   RETURN
 
 
+FUNCTION is_sql_table( cDbf )
+  
+   LOCAL lSql
+
+   IF cDbf == NIL
+       cDbf := ALIAS()
+   ENDIF
+
+   IF EMPTY( cDbf )
+      lSql := .F.
+   ELSE
+      lSql := get_a_dbf_rec( AllTrim( cDbf ) )[ 'sql' ]
+   ENDIF
+
+   RETURN lSql
+
+
+
+
 STATIC FUNCTION zatvori_dbf( value )
 
   SELECT( value[ 'wa' ]) 

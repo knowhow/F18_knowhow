@@ -55,7 +55,7 @@ do while !eof()
     loop
   endif
   if cUvijek=="D" .or. empty(IzSifkRoba( cRPolje, kalk->idroba, .f.))
-    USifk("ROBA", cRPolje, kalk->idroba, Unicode:New( cSezona, .F. ))
+    USifk("ROBA", cRPolje, kalk->idroba, Unicode():New( cSezona, .F. ))
   endif
   select kalk
   skip
@@ -104,7 +104,7 @@ go top
 do while !eof()
   ? idfirma, idvd, brdok, datdok, idroba, idpartner
   if cUvijek=="D" .or. empty(IzSifkRoba(cRPolje, kalk->idroba, .f.))
-    USifk("ROBA", cRPolje,kalk->idroba, Unicode:New( KALK->idpartner, .F. ))
+    USifk("ROBA", cRPolje,kalk->idroba, Unicode():New( KALK->idpartner, .F. ))
   endif
   select kalk
   skip

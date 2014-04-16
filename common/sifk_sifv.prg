@@ -64,7 +64,7 @@ FUNCTION copy_to_sifk()
 	
       cCpVal := ( Alias() )->&cFldFrom
       IF !Empty( cCpval )
-         USifK( Alias(), cFldTo,  Unicode:New( ( Alias() )->id, lSql ), cCpVal )
+         USifK( Alias(), cFldTo,  Unicode():New( ( Alias() )->id, lSql ), cCpVal )
       ENDIF
 	
       IF cEraseFld == "D"
@@ -90,7 +90,7 @@ FUNCTION repl_sifk_item()
    LOCAL cNewVal
    LOCAL cCurrVal
    LOCAL cPtnField
-   LOCAL lSql := get_a_dbf_rec( Alias() )['sql']
+   LOCAL lSql := is_sql_table()
 
    Box(, 3, 60, .F. )
    PRIVATE GetList := {}
@@ -129,7 +129,7 @@ FUNCTION repl_sifk_item()
    DO WHILE !Eof()
       &cCurrVal := IzSifK( Alias(), cField )
       if &cCurrVal == cOldVal
-         USifK( Alias(), cField, Unicode:New( ( Alias() )->id, lSql ), cNewVal )
+         USifK( Alias(), cField, Unicode():New( ( Alias() )->id, lSql ), cNewVal )
       ENDIF
       SKIP
    ENDDO
@@ -188,15 +188,15 @@ FUNCTION g_sk_flist( cField )
 
 FUNCTION IzSifkPartn( dbf_name, ozna, u_id_sif, return_nil )
 
-   RETURN  IzSifk( "PARTN", dbf_name, ozna, Unicode:New( u_id_sif, is_partn_sql() ), return_nil )
+   RETURN  IzSifk( "PARTN", dbf_name, ozna, Unicode():New( u_id_sif, is_partn_sql() ), return_nil )
 
 FUNCTION IzSifkKonto( dbf_name, ozna, u_id_sif, return_nil )
 
-   RETURN  IzSifk( "KONTO", dbf_name, ozna, Unicode:New( u_id_sif, is_konto_sql() ), return_nil )
+   RETURN  IzSifk( "KONTO", dbf_name, ozna, Unicode():New( u_id_sif, is_konto_sql() ), return_nil )
 
 FUNCTION IzSifkRoba( dbf_name, ozna, u_id_sif, return_nil )
 
-   RETURN  IzSifk( "ROBA", dbf_name, ozna, Unicode:New( u_id_sif, is_roba_sql() ), return_nil )
+   RETURN  IzSifk( "ROBA", dbf_name, ozna, Unicode():New( u_id_sif, is_roba_sql() ), return_nil )
 
 
 FUNCTION IzSifk( dbf_name, ozna, u_id_sif, return_nil )
@@ -232,19 +232,21 @@ FUNCTION IzSifk( dbf_name, ozna, u_id_sif, return_nil )
 FUNCTION get_sifk_value ( dbf_name, ozna, u_id_sif, return_nil )
 
    LOCAL _ret := ""
-   LOCAL _sifk_tip, _sifk_duzina, _sifk_veza, cIdSif
+   LOCAL _sifk_tip, _sifk_duzina, _sifk_veza, uIdSif
+   LOCAL lSql := .F.
 
    // ID default polje
-   IF id_sif == NIL
-      id_sif := ( dbf_name )->ID
+   IF u_id_sif == NIL
+      u_id_sif := ( dbf_name )->ID
+      IF !EMPTY( dbf_name )
+          lSql := is_sql_table( dbf_name )
+      ENDIF
    ENDIF
  
-   cIdSif := Unicode:New( u_id_sif ):getString()
-
+   u_id_sif := Unicode():New( u_id_sif, lSql )
    dbf_name := PadR( dbf_name, SIFK_LEN_DBF )
    ozna     := PadR( ozna, SIFK_LEN_OZNAKA )
-   id_sif   := PadR( cIdSif, SIFK_LEN_IDSIF )
-
+   uIdSif   := u_id_sif:PadR( SIFK_LEN_IDSIF )
 
    use_sql_sifk( dbf_name, ozna ) 
    _ret := NIL
@@ -265,7 +267,8 @@ FUNCTION get_sifk_value ( dbf_name, ozna, u_id_sif, return_nil )
    _sifk_veza   := sifk->veza
 
    SELECT F_SIFV
-   use_sql_sifv( dbf_name, ozna, cIdSif )
+   // proslijedi unicode objekat, to je najsigurnije
+   use_sql_sifv( dbf_name, ozna, u_id_sif )
    GO TOP
    IF EOF()
       _ret := get_sifv_value( _sifk_tip, _sifk_duzina, "" )
@@ -280,7 +283,7 @@ FUNCTION get_sifk_value ( dbf_name, ozna, u_id_sif, return_nil )
    IF _sifk_veza == "N"
       _ret := ToStr( _ret )
       SKIP
-      DO WHILE !Eof() .AND.  ( ( id + oznaka + idsif ) == ( dbf_name + ozna + cIdsif ) )
+      DO WHILE !Eof() .AND.  ( ( id + oznaka + idsif ) == ( dbf_name + ozna + uIdSif ) )
          _ret += "," + ToStr( get_sifv_value( _sifk_tip, _sifk_duzina, sifv->naz ) )
          SKIP
       ENDDO
@@ -387,7 +390,7 @@ FUNCTION USifk( dbf_name, ozna, u_id_sif, val, transaction )
       RETURN .F.
    ENDIF
 
-   cIdSif := Unicode:New( u_id_sif ):getString()
+   cIdSif := ( Unicode():New( u_id_sif ) ):getString()
    PushWa()
 
    dbf_name := PadR( dbf_name, SIFK_LEN_DBF )
@@ -415,12 +418,10 @@ FUNCTION USifk( dbf_name, ozna, u_id_sif, val, transaction )
 
 
    IF sifk->veza == "N"
-      altd()
       IF !update_sifv_n_relation( _sifk_rec, cIdSif, val )
          RETURN .F.
       ENDIF
    ELSE
-      altd()
       IF !update_sifv_1_relation( _sifk_rec, cIdSif, val )
          RETURN .F.
       ENDIF
@@ -447,7 +448,6 @@ STATIC FUNCTION update_sifv_n_relation( sifk_rec, id_sif, vals )
    _sifv_rec[ "oznaka" ] := sifk_rec[ "oznaka" ]
    _sifv_rec[ "idsif" ] := id_sif
 
-   altd()
    // veza 1->N posebno se tretira !!
    SELECT sifv
    brisi_sifv_item( sifk_rec[ "id" ], sifk_rec[ "oznaka" ], id_sif )
@@ -474,7 +474,6 @@ STATIC FUNCTION update_sifv_1_relation( sifk_rec, id_sif, value )
 
    LOCAL _sifv_rec
 
-    altd()
    _sifv_rec := hb_Hash()
    _sifv_rec[ "id" ] := sifk_rec[ "id" ]
    _sifv_rec[ "oznaka" ] := sifk_rec[ "oznaka" ]
@@ -503,7 +502,6 @@ STATIC FUNCTION brisi_sifv_item( dbf_name, ozn, id_sif )
 
    LOCAL _sifv_rec := hb_Hash()
 
-   altd()
    _sifv_rec[ "id" ]     := dbf_name
    _sifv_rec[ "oznaka" ] := ozn
    _sifv_rec[ "idsif" ]  := id_sif
@@ -566,11 +564,10 @@ FUNCTION update_sifk_na_osnovu_ime_kol_from_global_var( ime_kol, var_prefix, nov
    LOCAL _alias
    LOCAL _field_b
    LOCAL _a_dbf_rec
-   LOCAL lSql := get_a_dbf_rec( ALIAS() )[ 'sql' ]
-
+   LOCAL lSql := is_sql_table( ALIAS() )
    _alias := ALIAS()
    
-   uId := Unicode:New( ( _alias )->id,  lSql )
+   uId := Unicode():New( ( _alias )->id,  lSql )
 
    FOR _i := 1 TO Len( ime_kol )
       IF Left( ime_kol[ _i, 3 ], 6 ) == "SIFK->"

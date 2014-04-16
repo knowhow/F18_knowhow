@@ -376,14 +376,12 @@ function use_sql_sifk( cDbf, cOznaka )
    use_sql_sifv( "ROBA", "GR1", NIL, "G000000001" ) =>  filter na ROBA/GR1/grupa1=G0000000001
    use_sql_isfv( "ROBA", "GR1", "ROBA99", NIL )        =>  filter na ROBA/GR1/idroba=ROBA99
 */
-function use_sql_sifv( cDbf, cOznaka, cIdSif, xVrijednost )
+function use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
 
    LOCAL cSql
    LOCAL cTable := "sifv"
    LOCAL lSql //lSql := .T. - RDDSQL tabela
-   LOCAL oUtfString
-
-   oUtfString := String:New( xVrijednost )
+   LOCAL uIdSif, uVrijednost
 
    IF cDbf == NIL
       SELECT F_SIFK
@@ -395,27 +393,28 @@ function use_sql_sifv( cDbf, cOznaka, cIdSif, xVrijednost )
       cOznaka := field->oznaka
    ENDIF
 
-   lSql := get_a_dbf_rec( AllTrim( cDbf ) )[ 'sql' ]
+   lSql := is_sql_table( cDbf )
 
-   altd()
    cSql := "SELECT * from fmk.sifv"
    cSql += " WHERE id=" + _sql_quote_u( cDbf ) + " AND oznaka=" + _sql_quote_u( cOznaka )
    
-   IF cIdSif == NIL
+   IF xIdSif == NIL
       IF EMPTY( cDbf )
         // nepostojeca sifra
-        cIdSif := "MLFJUSX" + CHR(170)
+        uIdSif := "MLFJUSXX"
       ELSE
-        cIdSif := ( cDbf )->id
-        IF lSql
-            cIdSif := hb_Utf8ToStr( cIdSif )
-        ENDIF
+        xIdSif := ( cDbf )->id
+        uIdSif := ( Unicode():New( xIdSif, lSql ) ):getString()
       ENDIF
+   ELSE
+
+      uIdSif := ( Unicode():New( xIdSif, .F. ) ):getString()
    ENDIF
 
-   cSql += " AND idsif=" + _sql_quote( cIdSif )
+   cSql += " AND idsif=" + _sql_quote_u( uIdSif )
 
    IF xVrijednost != NIL
+      uVrijednost := ( Unicode():New( xVrijednost, lSql ) ):getString()
       cSql += " AND naz=" + _sql_quote( xVrijednost )
    ENDIF
 

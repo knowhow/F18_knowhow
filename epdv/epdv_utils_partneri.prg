@@ -107,7 +107,7 @@ if lNepopunjeno
 
         update_rec_server_and_dbf( nil, _fields, 1, "FULL" ) 
 
-		USifK("PARTN", "REGB", gFirma, Unicode:New( cIdBroj, .F. ) )
+		USifK("PARTN", "REGB", gFirma, Unicode():New( cIdBroj, .F. ) )
 
 	else
 		MsgBeep("Nepopunjeni podaci o matičnoj firmi !")
@@ -165,7 +165,7 @@ o_partn()
 go top
 seek gFirma
 
-cRejon := IzSifKPartn("REJO", Unicode:New( cIdPart, .F. ), .f.)
+cRejon := IzSifKPartn("REJO", Unicode():New( cIdPart, .F. ), .f.)
 
 PopWa()
 return cRejon

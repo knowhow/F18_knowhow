@@ -209,10 +209,6 @@ if transaction $ "FULL#BEGIN"
     sql_table_update(table, "BEGIN")
 endif
 
-if ALIAS() == "SIFV"
-    altd()
-endif
-
 if sql_table_update(table, "del", nil, _where_str) 
 
     _full_id := get_dbf_rec_primary_key(_alg["dbf_key_fields"], values)

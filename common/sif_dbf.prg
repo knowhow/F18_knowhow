@@ -811,7 +811,6 @@ do while .t.
         endif
              
         _vars := get_dbf_global_memvars("w")
-        altd()        
         _alias := LOWER(ALIAS())        
 
         if !f18_lock_tables( { _alias, "sifv", "sifk" } )

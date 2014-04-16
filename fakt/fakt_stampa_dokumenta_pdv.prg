@@ -45,7 +45,7 @@ else
     close_open_fakt_tabele()
 endif
 
-close_open_racun_tbl(.F.)
+close_open_racun_tbl()
 zap_racun_tbl()
 
 select fakt_pripr

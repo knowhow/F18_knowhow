@@ -920,7 +920,7 @@ local nZakBr:=0
 local nFZaokr := 0
 
 o_pos_tables()
-close_open_racun_tbl(.F.)
+close_open_racun_tbl()
 zap_racun_tbl()
 
 firma_params_fill()

@@ -160,7 +160,7 @@ local cVezRacuni
 nArr:=SELECT()
 
 o_pos_tables()
-close_open_racun_tbl(.F.)
+close_open_racun_tbl()
 zap_racun_tbl()
 
 select pos

@@ -41,7 +41,7 @@ endif
 
 cPom += ", " + cMjesto
 
-cIdBroj := IzSifK("PARTN", "REGB", cIdPartn, .f.)
+cIdBroj := IzSifKPartn("REGB", cIdPartn, .f.)
 if EMPTY(cIdBroj)
 	cIdBroj := "-NEP.ID-"
 endif
@@ -87,7 +87,7 @@ endif
 
 cNaziv := naz
 cMjesto := mjesto
-cIdBroj := IzSifK("PARTN", "REGB", gFirma, .f.)
+cIdBroj := IzSifKPartn( "REGB", gFirma, .f.)
 cAdresa := adresa
 cPtt := ptt
 
@@ -107,10 +107,10 @@ if lNepopunjeno
 
         update_rec_server_and_dbf( nil, _fields, 1, "FULL" ) 
 
-		USifK("PARTN", "REGB", gFirma, cIdBroj)
+		USifK("PARTN", "REGB", gFirma, Unicode:New( cIdBroj, .F. ) )
 
 	else
-		MsgBeep("Nepopunjeni podaci o maticnoj firmi !")
+		MsgBeep("Nepopunjeni podaci o matičnoj firmi !")
 	endif
 			
 endif
@@ -165,7 +165,7 @@ o_partn()
 go top
 seek gFirma
 
-cRejon := IzSifK("PARTN", "REJO", cIdPart, .f.)
+cRejon := IzSifKPartn("REJO", Unicode:New( cIdPart, .F. ), .f.)
 
 PopWa()
 return cRejon

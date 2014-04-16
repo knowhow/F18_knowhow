@@ -784,7 +784,7 @@ O_SIFV
 cNewBank := ""
 
 // stara banka
-cOldBank := ALLTRIM( IzSifK("PARTN", "BANK", cPartn ) )
+cOldBank := ALLTRIM( IzSifKPartn( "BANK", cPartn ) )
 
 // dodaj staru banku ako postoji
 if !EMPTY( cOldBank )
@@ -799,8 +799,7 @@ endif
 // dodaj konacno novu banku...
 cNewBank += cBank
 
-// sve to ubaci u SIFV
-USifK( "PARTN", "BANK", cPartn, cNewBank )
+USifK( "PARTN", "BANK", cPartn, Unicode:New( cNewBank, .F. ) )
 
 select (nTArea)
 

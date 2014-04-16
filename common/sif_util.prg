@@ -64,7 +64,7 @@ FUNCTION sif_sifk_fill_kol( cDbf, ImeKol, Kol )
    FOR EACH _rec in _recs
 
       AAdd ( ImeKol, {  IzSifKNaz( cDbf, _rec[ "oznaka" ] ) } )
-      AAdd ( ImeKol[ Len( ImeKol ) ], &( "{|| ToStr(IzSifk('PARTN','" + _rec[ "oznaka" ] + "')) }" ) )
+      AAdd ( ImeKol[ Len( ImeKol ) ], &( "{|| ToStr( IzSifkPartn('" + _rec[ "oznaka" ] + "')) }" ) )
       AAdd ( ImeKol[ Len( ImeKol ) ], "SIFK->" + _rec[ "oznaka" ] )
 
       IF _rec[ "edkolona" ] > 0

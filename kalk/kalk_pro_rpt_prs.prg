@@ -197,7 +197,7 @@ do while !EOF() .and. field->brfaktp == cBrFakt
 	
 	// carinski tarifni broj
 	// uzmi iz sifk ("ROBA", "TARB")
-	replace field->ctarbr with IzSifK( "ROBA", "TARB", cSastId , .f. )
+	replace field->ctarbr with IzSifkRoba("TARB", cSastId , .f. )
 	
 	// primarna jedinica mjere sastavnice
 	replace field->jmjprim with cJmjPrim

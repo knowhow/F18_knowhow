@@ -554,12 +554,12 @@ do while !eof() .and. IIF(fSint .and. lSabKon, idfirma, idfirma+mkonto ) = ;
 	// po vindija GRUPA
 	if IsVindija()
 	 if !Empty(cGr)
-		if ALLTRIM(cGr) <> IzSifK("ROBA", "GR1", cIdRoba, .f.)
+		if ALLTRIM(cGr) <> IzSifKRoba( "GR1", cIdRoba, .f.)
 			select kalk
 			skip
 			loop
 		else
-			if Empty(IzSifK("ROBA", "GR2", cIdRoba, .f.))
+			if Empty(IzSifKRoba("GR2", cIdRoba, .f.))
 				select kalk
 				skip
 				loop
@@ -1059,8 +1059,8 @@ if lKoristitiBK
 endif
 
 if lSignZal
-	?? SPACE(6) + "p.kol: " + STR(IzSifK("ROBA", "PKOL", roba->id, .f.))
-	?? ", p.cij: " + STR(IzSifK("ROBA", "PCIJ", roba->id, .f.))
+	?? SPACE(6) + "p.kol: " + STR(IzSifKRoba( "PKOL", roba->id, .f.))
+	?? ", p.cij: " + STR( IzSifKRoba("PCIJ", roba->id, .f.))
 endif
 
 
@@ -1560,7 +1560,7 @@ if Empty(cGr)
 	return .t.
 endif
 
-if ALLTRIM(IzSifK("ROBA", "GR1", cIdRoba, .f.)) $ ALLTRIM(cGr)
+if ALLTRIM(IzSifKRoba( "GR1", cIdRoba, .f.)) $ ALLTRIM(cGr)
 	bRet := .t.
 else
 	bRet := .f.
@@ -1568,7 +1568,7 @@ endif
 
 if bRet
 	if !Empty(cPodGr) 
-		if ALLTRIM(IzSifK("ROBA", "GR2", cIdRoba, .f.)) $ ALLTRIM(cPodGr)
+		if ALLTRIM(IzSifKRoba("GR2", cIdRoba, .f.)) $ ALLTRIM(cPodGr)
 			bRet := .t.
 		else
 			bRet := .f.

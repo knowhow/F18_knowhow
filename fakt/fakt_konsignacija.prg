@@ -101,7 +101,7 @@ RPar("c2",@dOd     )
       nKolicina += kolicina
       SKIP 1
     ENDDO
-    cPom := IzSifK("ROBA","CTAR",cIdRoba,.f.)
+    cPom := IzSifKRoba("CTAR", cIdRoba, .f.)
     AADD( aPrip , { cIdRoba , cPom , nKolicina , 0 , Ocitaj(F_ROBA, cIdRoba, "naz") } )
   ENDDO
 

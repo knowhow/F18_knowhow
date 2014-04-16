@@ -23,6 +23,7 @@ FUNCTION copy_to_sifk()
    LOCAL cRepl := "D"
    LOCAL nTekX
    LOCAL nTekY
+   LOCAL lSql
 
    Box(, 6, 65, .F. )
 	
@@ -41,6 +42,8 @@ FUNCTION copy_to_sifk()
    READ
 
    BoxC()
+
+   lSql := get_a_dbf_rec( Alias() )['sql']
 
    IF cRepl == "N"
       RETURN 0
@@ -61,7 +64,7 @@ FUNCTION copy_to_sifk()
 	
       cCpVal := ( Alias() )->&cFldFrom
       IF !Empty( cCpval )
-         USifK( Alias(), cFldTo, ( Alias() )->id, cCpVal )
+         USifK( Alias(), cFldTo,  Unicode:New( ( Alias() )->id, lSql ), cCpVal )
       ENDIF
 	
       IF cEraseFld == "D"
@@ -87,6 +90,7 @@ FUNCTION repl_sifk_item()
    LOCAL cNewVal
    LOCAL cCurrVal
    LOCAL cPtnField
+   LOCAL lSql := get_a_dbf_rec( Alias() )['sql']
 
    Box(, 3, 60, .F. )
    PRIVATE GetList := {}
@@ -125,7 +129,7 @@ FUNCTION repl_sifk_item()
    DO WHILE !Eof()
       &cCurrVal := IzSifK( Alias(), cField )
       if &cCurrVal == cOldVal
-         USifK( Alias(), cField, ( Alias() )->id, cNewVal )
+         USifK( Alias(), cField, Unicode:New( ( Alias() )->id, lSql ), cNewVal )
       ENDIF
       SKIP
    ENDDO
@@ -181,12 +185,26 @@ FUNCTION g_sk_flist( cField )
    RETURN .T.
 
 
-FUNCTION IzSifk( dbf_name, ozna, id_sif, return_nil )
+
+FUNCTION IzSifkPartn( dbf_name, ozna, u_id_sif, return_nil )
+
+   RETURN  IzSifk( "PARTN", dbf_name, ozna, Unicode:New( u_id_sif, is_partn_sql() ), return_nil )
+
+FUNCTION IzSifkKonto( dbf_name, ozna, u_id_sif, return_nil )
+
+   RETURN  IzSifk( "KONTO", dbf_name, ozna, Unicode:New( u_id_sif, is_konto_sql() ), return_nil )
+
+FUNCTION IzSifkRoba( dbf_name, ozna, u_id_sif, return_nil )
+
+   RETURN  IzSifk( "ROBA", dbf_name, ozna, Unicode:New( u_id_sif, is_roba_sql() ), return_nil )
+
+
+FUNCTION IzSifk( dbf_name, ozna, u_id_sif, return_nil )
 
    LOCAL _tmp
 
    PushWa()
-   _tmp := get_sifk_value( dbf_name, ozna, id_sif, return_nil )
+   _tmp := get_sifk_value( dbf_name, ozna, u_id_sif, return_nil )
    PopWa()
 
    RETURN _tmp
@@ -211,19 +229,21 @@ FUNCTION IzSifk( dbf_name, ozna, id_sif, return_nil )
                   .T. => ""  - "" za nedefinisanu vrijednost
 */
 
-FUNCTION get_sifk_value ( dbf_name, ozna, id_sif, return_nil )
+FUNCTION get_sifk_value ( dbf_name, ozna, u_id_sif, return_nil )
 
    LOCAL _ret := ""
-   LOCAL _sifk_tip, _sifk_duzina, _sifk_veza
+   LOCAL _sifk_tip, _sifk_duzina, _sifk_veza, cIdSif
 
    // ID default polje
    IF id_sif == NIL
       id_sif := ( dbf_name )->ID
    ENDIF
+ 
+   cIdSif := Unicode:New( u_id_sif ):getString()
 
    dbf_name := PadR( dbf_name, SIFK_LEN_DBF )
    ozna     := PadR( ozna, SIFK_LEN_OZNAKA )
-   id_sif   := PadR( id_sif, SIFK_LEN_IDSIF )
+   id_sif   := PadR( cIdSif, SIFK_LEN_IDSIF )
 
 
    use_sql_sifk( dbf_name, ozna ) 
@@ -245,7 +265,7 @@ FUNCTION get_sifk_value ( dbf_name, ozna, id_sif, return_nil )
    _sifk_veza   := sifk->veza
 
    SELECT F_SIFV
-   use_sql_sifv( dbf_name, ozna, id_sif )
+   use_sql_sifv( dbf_name, ozna, cIdSif )
    GO TOP
    IF EOF()
       _ret := get_sifv_value( _sifk_tip, _sifk_duzina, "" )
@@ -260,7 +280,7 @@ FUNCTION get_sifk_value ( dbf_name, ozna, id_sif, return_nil )
    IF _sifk_veza == "N"
       _ret := ToStr( _ret )
       SKIP
-      DO WHILE !Eof() .AND.  ( ( id + oznaka + idsif ) == ( dbf_name + ozna + id_sif ) )
+      DO WHILE !Eof() .AND.  ( ( id + oznaka + idsif ) == ( dbf_name + ozna + cIdsif ) )
          _ret += "," + ToStr( get_sifv_value( _sifk_tip, _sifk_duzina, sifv->naz ) )
          SKIP
       ENDDO
@@ -351,12 +371,13 @@ FUNCTION IzSifkWV( cDBF, cOznaka, cWhen, cValid )
 // iz ovoga se vidi da je "," nedozvoljen znak u ID-u
 // ------------------------------------------------------------------
 
-FUNCTION USifk( dbf_name, ozna, id_sif, val, transaction )
+FUNCTION USifk( dbf_name, ozna, u_id_sif, val, transaction )
 
    LOCAL _i
    LOCAL ntrec, numtok
    LOCAL _sifk_rec
    LOCAL _tran
+   LOCAL cIdSif
 
    IF transaction == NIL
       transaction := "FULL"
@@ -366,11 +387,12 @@ FUNCTION USifk( dbf_name, ozna, id_sif, val, transaction )
       RETURN .F.
    ENDIF
 
+   cIdSif := Unicode:New( u_id_sif ):getString()
    PushWa()
 
    dbf_name := PadR( dbf_name, SIFK_LEN_DBF )
    ozna     := PadR( ozna, SIFK_LEN_OZNAKA )
-   id_sif   := PadR( id_sif, SIFK_LEN_IDSIF )
+   cIdSif   := PadR( cIdSif, SIFK_LEN_IDSIF )
 
    SELECT F_SIFK
    use_sql_sifk( dbf_name, ozna )
@@ -381,7 +403,7 @@ FUNCTION USifk( dbf_name, ozna, id_sif, val, transaction )
    ENDIF
 
    SELECT F_SIFV
-   use_sql_sifv( dbf_name, ozna, id_sif )
+   use_sql_sifv( dbf_name, ozna, cIdSif )
 
    SELECT sifk
    _sifk_rec := dbf_get_rec()
@@ -394,12 +416,12 @@ FUNCTION USifk( dbf_name, ozna, id_sif, val, transaction )
 
    IF sifk->veza == "N"
       altd()
-      IF !update_sifv_n_relation( _sifk_rec, id_sif, val )
+      IF !update_sifv_n_relation( _sifk_rec, cIdSif, val )
          RETURN .F.
       ENDIF
    ELSE
       altd()
-      IF !update_sifv_1_relation( _sifk_rec, id_sif, val )
+      IF !update_sifv_1_relation( _sifk_rec, cIdSif, val )
          RETURN .F.
       ENDIF
    ENDIF
@@ -540,27 +562,22 @@ FUNCTION ImaUSifv( cDBF, cOznaka, cVrijednost, cIdSif )
 
 FUNCTION update_sifk_na_osnovu_ime_kol_from_global_var( ime_kol, var_prefix, novi, transaction )
 
-   LOCAL _i, cId
+   LOCAL _i, uId
    LOCAL _alias
    LOCAL _field_b
    LOCAL _a_dbf_rec
+   LOCAL lSql := get_a_dbf_rec( ALIAS() )[ 'sql' ]
 
-   _a_dbf_rec := get_a_dbf_rec( ALIAS() )
-   _alias := _a_dbf_rec[ "alias" ]
+   _alias := ALIAS()
+   
+   uId := Unicode:New( ( _alias )->id,  lSql )
 
-   altd()
-   IF _a_dbf_rec[ "sql" ]
-        cId := ( _alias )->id
-   ELSE
-        // DBFCDX je 852 enkodiran
-        cId := hb_StrToUtf8( ( _alias )->id )
-   ENDIF
    FOR _i := 1 TO Len( ime_kol )
       IF Left( ime_kol[ _i, 3 ], 6 ) == "SIFK->"
          _field_b :=  MemVarBlock( var_prefix + "SIFK_" + SubStr( ime_kol[ _i, 3 ], 7 ) )
 
-         IF IzSifk( _alias, SubStr( ime_kol[ _i, 3 ], 7 ), cId ) <> NIL
-            USifk( _alias, SubStr( ImeKol[ _i, 3 ], 7 ), cId, Eval( _field_b ), transaction )
+         IF IzSifk( _alias, SubStr( ime_kol[ _i, 3 ], 7 ), uId ) <> NIL
+            USifk( _alias, SubStr( ImeKol[ _i, 3 ], 7 ), uId, Eval( _field_b ), transaction )
          ENDIF
       ENDIF
    NEXT

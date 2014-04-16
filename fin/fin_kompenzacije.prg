@@ -910,8 +910,8 @@ xml_subnode( node_name, .f. )
     xml_node("ptt", ALLTRIM( field->ptt ) )
 
     // iz sifk nesto ...
-    xml_node("id_broj", ALLTRIM( izsifk( "PARTN", "REGB", part_id, .f. ) ) ) 
-    xml_node("por_broj", ALLTRIM( izsifk( "PARTN", "PORB", part_id, .f. ) ) ) 
+    xml_node("id_broj", ALLTRIM( IzsifkPartn( "REGB", part_id, .f. ) ) ) 
+    xml_node("por_broj", ALLTRIM( IzsifkPartn( "PORB", part_id, .f. ) ) ) 
   
 xml_subnode( node_name, .t. )
 

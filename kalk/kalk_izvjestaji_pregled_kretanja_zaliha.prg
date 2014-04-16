@@ -181,7 +181,7 @@ do while !eof()
 			fFilovo:=.t.
 			fFilGr:=.t.
 
-			cRSezona := IzSifK("ROBA", "SEZ", roba->id, .f.)
+			cRSezona := IzSifKRoba( "SEZ", roba->id, .f.)
 			
 			if !EMPTY(cRSezona)
 				cSezStr := PADR("sez: " + ALLTRIM(cRSezona), 10)

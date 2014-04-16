@@ -731,7 +731,7 @@ return cRet
 // -------------------------------------
 static function _val_gr( cId, cSifK )
 local cRet := ""
-cRet := IzSifK( "ROBA", cSifK, cId, .f. )
+cRet := IzSifKRoba( cSifK, cId, .f. )
 if cRet == nil
 	cRet := ""
 endif
@@ -1130,10 +1130,10 @@ endif
 
 if !lFromMemo .and. partn->id == cId
 	// uzmi podatke iz SIFK
-	cIdBroj := IzSifK( "PARTN", "REGB", cId, .f. )
-	cPorBroj := IzSifK( "PARTN", "PORB", cId, .f. )
-	cBrRjes := IzSifK( "PARTN", "BRJS", cId, .f. )
-	cBrUpisa := IzSifK( "PARTN", "BRUP", cId, .f. )
+	cIdBroj := IzSifKPartn("REGB", cId, .f. )
+	cPorBroj := IzSifKPartn("PORB", cId, .f. )
+	cBrRjes := IzSifKPartn("BRJS", cId, .f. )
+	cBrUpisa := IzSifKPartn("BRUP", cId, .f. )
 	cPartNaziv := partn->naz
 	cPartAdres := partn->adresa
 	cPartMjesto := partn->mjesto

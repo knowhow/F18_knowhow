@@ -196,7 +196,7 @@ do while .t.
 				
 				hseek cFaktPartn
 			
-				nRokPl := IzSifK("PARTN", "ROKP", cFaktPartn, .f.)
+				nRokPl := IzSifKPartn( "ROKP", cFaktPartn, .f.)
 				if VALTYPE(nRokPl) == "N" .and. nRokPl > 0
 					dDatPl := dDatDok + nRokPl
 				else
@@ -493,9 +493,9 @@ DO WHILE .T.
 		nRokPl := 0
 
 		if lToRacun == .t.
-			nRokPl := IzSifK("PARTN", "ROKP", cFaktPartn, .f. )
+			nRokPl := IzSifKPartn( "ROKP", cFaktPartn, .f. )
 		else
-			nRokPl := IzSifK("PARTN", "ROKP", cIdPartner, .f. )
+			nRokPl := IzSifKPartn( "ROKP", cIdPartner, .f. )
 		endif
 
 		if VALTYPE(nRokPl) == "N"

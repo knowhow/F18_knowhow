@@ -789,7 +789,7 @@ xml_subnode( subnode, .f. )
         xml_node( "ziror", to_xml_encoding( partn->ziror ) )
         xml_node( "tel", to_xml_encoding( partn->telefon ) )
 
-        _jib := IzSifK( "PARTN", "REGB", id_partner, .f. )
+        _jib := IzSifKPartn( "REGB", id_partner, .f. )
 
         xml_node( "jib", _jib )
     endif
@@ -1132,7 +1132,7 @@ hseek _id_firma
 @ prow()+1,5 SAY partn->Adresa
 @ prow()+1,5 SAY partn->ptt
 @ prow()+1,5 SAY partn->ZiroR
-@ prow()+1,5 SAY IzSifK( "PARTN", "REGB", _id_firma, .f. )
+@ prow()+1,5 SAY IzSifKPartn( "REGB", _id_firma, .f. )
 
 ?
 
@@ -1150,7 +1150,7 @@ if !empty( partn->telefon)
   @ prow()+1,45 SAY "Telefon: " + partn->telefon
 endif
 
-@ prow()+1,45 SAY IzSifK( "PARTN", "REGB", _id_partner, .f. )
+@ prow()+1,45 SAY IzSifKPartn( "REGB", _id_partner, .f. )
 
 _naz_partner := naz
 

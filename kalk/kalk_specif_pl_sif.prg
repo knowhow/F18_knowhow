@@ -30,11 +30,11 @@ if !used()
 	O_RVRSTA
 endif
 SELECT (nSelect)
-return PostojiSifra(F_RVRSTA, 1, 10, 75, "Planika vrste artikala", @cid, dx, dy)
+return PostojiSifra(F_RVRSTA, 1, 10, 75, "Vrste artikala", @cid, dx, dy)
 
 
 function P_PlSezona(cId) 
-cPom:=IzSifK("ROBA","SEZ",roba->id, .f.)
+cPom:=IzSifKRoba("SEZ",roba->id, .f.)
 if (EMPTY(cId) .and. !EMPTY(cPom) .and. Pitanje(,"Konverzija na osnovu polja SEZONA","D")=="D")
 	cId:=SubStr(cPom,3)
 endif
@@ -78,7 +78,7 @@ nI:=0
 	go top
 	Box(,3,60)
 	do while !eof()
-	 	cSez := IzSifK("ROBA", "SEZ", roba->id, .f.)
+	 	cSez := IzSifKRoba( "SEZ", roba->id, .f.)
 		@ m_x+1, m_y+2 SAY roba->id + " " + cSez
 		
 		cSezonaPf = cSez

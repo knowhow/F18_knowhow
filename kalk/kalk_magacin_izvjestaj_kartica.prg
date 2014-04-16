@@ -323,7 +323,7 @@ do while !eof() .and. iif(fVeci,idfirma+mkonto+idroba>=cIdFirma+cIdKonto+cIdR , 
     			IF !(cLastPar==idpartner)
       				cLastPar := idpartner
       				// uzmi iz sifk karakteristiku GRUP
-      				cSKGrup:=IzSifK("PARTN","GRUP",idpartner,.f.)
+      				cSKGrup:=IzSifKPartn( "GRUP",idpartner,.f.)
     			ENDIF
     			IF cSKGrup=="2"
       				SKIP 1

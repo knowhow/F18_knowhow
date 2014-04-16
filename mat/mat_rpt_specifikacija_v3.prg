@@ -368,7 +368,7 @@ do while !EOF()
         _roba_gr := PADR( _id_roba, 2 )
     else
         // ovdje cemo smjestiti grupaciju...
-        _roba_gr := IzSifK( "ROBA", "GR1", _id_roba, .f. )
+        _roba_gr := IzSifKRoba("GR1", _id_roba, .f. )
     endif
 
     select mat_suban

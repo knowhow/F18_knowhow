@@ -311,7 +311,7 @@ do while !EOF() .and. cIdFirma + cIdKonto == field->idfirma + field->pkonto .and
 
 	if IsVindija()
 		if !EMPTY(cGr)
-			if ALLTRIM(cGr) <> ALLTRIM(IzSifK("ROBA", "GR1", cIdRoba, .f.))
+			if ALLTRIM(cGr) <> ALLTRIM(IzSifKRoba("GR1", cIdRoba, .f.))
 				select kalk
 				skip
 				loop

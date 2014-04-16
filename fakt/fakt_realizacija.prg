@@ -331,8 +331,8 @@ do while !EOF()
         if _rasclaniti
 
             // odredi tip partnera
-            _id_broj := IzSifK( "PARTN", "REGB", cPart_id )
-            _pdv_clan := IzSifK( "PARTN", "REG0", cPart_id )
+            _id_broj := IzSifKPartn( "REGB", cPart_id )
+            _pdv_clan := IzSifKPartn( "REG0", cPart_id )
 
             if !EMPTY( _id_broj ) 
                 // pravna lica

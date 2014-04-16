@@ -119,7 +119,7 @@ select sifk; set order to tag "ID"; seek "PARTN"
 do while !eof() .and. ID="PARTN"
 
  AADD (ImeKol, {  IzSifKNaz("PARTN", SIFK->Oznaka) })
- AADD (ImeKol[Len(ImeKol)], &( "{|| ToStr(IzSifk('PARTN','" + sifk->oznaka + "')) }" ) )
+ AADD (ImeKol[Len(ImeKol)], &( "{|| ToStr(IzSifkPartn('" + sifk->oznaka + "')) }" ) )
  AADD (ImeKol[Len(ImeKol)], "SIFK->"+SIFK->Oznaka )
  if sifk->edkolona > 0
    for ii:=4 to 9

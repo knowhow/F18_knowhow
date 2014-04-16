@@ -666,9 +666,9 @@ endif
 __vrsta_pl := _v_plac
 
 // podaci partnera
-_partn_jib := ALLTRIM( IzSifK( "PARTN", "REGB", _partn_id, .f. ) )
+_partn_jib := ALLTRIM( IzSifKPartn( "REGB", _partn_id, .f. ) )
 // oslobadjanje po clanu
-_partn_clan := ALLTRIM( IzSifK( "PARTN" , "PDVO", _partn_id, .f. ) )
+_partn_clan := ALLTRIM( IzSifKPartn( "PDVO",  _partn_id, .f. ) )
 
 if !EMPTY( _partn_jib ) .and. ( LEN( _partn_jib ) < 12 .or. !EMPTY( _partn_clan ) )
 

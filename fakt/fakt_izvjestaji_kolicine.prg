@@ -325,9 +325,9 @@ do while !EOF() .and. field->idfirma == cIdFirma
         fill_exp_tbl( ;
             ALLTRIM(STR(++nCount)), ;
             cDistNaz, ;
-            IzSifK( "PARTN", "REGB", cPartner, .f.), ;
+            IzSifKPartn( "REGB", cPartner, .f.), ;
             partn->naz, ;
-            IzSifK( "PARTN", "TIP", cPartner, .f. ), ;
+            IzSifKPartn( "TIP", cPartner, .f. ), ;
             partn->mjesto, ;
             partn->ptt, ;
             partn->adresa, ;
@@ -352,7 +352,7 @@ static function _k_br( partner_id )
 local _tmp := "bb"
 local _ret := ""
 
-_ret := IzSifK("PARTN", "KBR", partner_id, .f. )
+_ret := IzSifKPartn( "KBR", partner_id, .f. )
 
 if EMPTY( _ret )
     _ret := _tmp

@@ -189,7 +189,7 @@ DO WHILE !EOF() .and. iif(fSint.and.lSabKon,;
     IF !(cLastPar==idpartner)
       cLastPar := idpartner
       // uzmi iz sifk karakteristiku GRUP
-      cSKGrup := IzSifK( "PARTN" , "GRUP" , idpartner , .f. )
+      cSKGrup := IzSifKRoba( "GRUP" , idpartner , .f. )
     ENDIF
     IF cSKGrup!=cGP
       SKIP 1; LOOP

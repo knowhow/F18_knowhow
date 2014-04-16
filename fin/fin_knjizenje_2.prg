@@ -187,7 +187,7 @@ return
 function ChkKtoMark(cIdKonto)
 
 bRet:=.t.
-cMark:=IzSifK("KONTO", "MARK", cIdKonto, NIL)
+cMark:=IzSifKKonto( "MARK", cIdKonto, NIL)
 do case
 	// ne postoji definicija...
 	case cMark==nil

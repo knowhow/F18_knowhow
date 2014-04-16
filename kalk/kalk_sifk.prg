@@ -54,8 +54,8 @@ do while !eof()
     skip 1
     loop
   endif
-  if cUvijek=="D" .or. empty(IzSifk("ROBA",cRPolje, kalk->idroba, .f.))
-    USifk("ROBA", cRPolje, kalk->idroba, cSezona)
+  if cUvijek=="D" .or. empty(IzSifkRoba( cRPolje, kalk->idroba, .f.))
+    USifk("ROBA", cRPolje, kalk->idroba, Unicode:New( cSezona, .F. ))
   endif
   select kalk
   skip
@@ -72,7 +72,6 @@ return
  */
 
 function DobUSifk()
-*{
 cUvijek:="N"
 qqIdVD:=padr("10;81;",20)
 
@@ -104,8 +103,8 @@ set filter to &cFilt1
 go top
 do while !eof()
   ? idfirma, idvd, brdok, datdok, idroba, idpartner
-  if cUvijek=="D" .or. empty(IzSifk("ROBA",cRPolje,kalk->idroba,.f.))
-    USifk("ROBA",cRPolje,kalk->idroba,KALK->idpartner)
+  if cUvijek=="D" .or. empty(IzSifkRoba(cRPolje, kalk->idroba, .f.))
+    USifk("ROBA", cRPolje,kalk->idroba, Unicode:New( KALK->idpartner, .F. ))
   endif
   select kalk
   skip
@@ -114,6 +113,5 @@ set filter to
 my_close_all_dbf()
 restore screen from cscr
 return
-*}
 
 

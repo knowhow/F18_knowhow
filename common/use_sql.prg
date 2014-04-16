@@ -424,3 +424,23 @@ function use_sql_rules()
    return .T.
 
 
+
+/*
+  da li je roba sql tabela
+*/
+FUNCTION is_roba_sql()
+
+  RETURN .F.
+
+
+FUNCTION is_partn_sql()
+
+  RETURN .F.
+
+
+FUNCTION is_konto_sql()
+
+  RETURN .F.
+
+
+

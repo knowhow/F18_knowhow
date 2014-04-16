@@ -269,7 +269,8 @@ function use_sql_tarifa( l_make_index )
    cSql += "  CAST( CASE WHEN zpp IS NULL THEN 0.00 ELSE zpp END AS float8 ) AS zpp, "
    cSql += "  CAST( CASE WHEN vpp IS NULL THEN 0.00 ELSE vpp END AS float8 ) AS vpp, "
    cSql += "  CAST( CASE WHEN mpp IS NULL THEN 0.00 ELSE mpp END AS float8 ) AS mpp, "
-   cSql += "  CAST( CASE WHEN dlruc IS NULL THEN 0.00 ELSE dlruc END AS float8 ) AS dlruc "
+   cSql += "  CAST( CASE WHEN dlruc IS NULL THEN 0.00 ELSE dlruc END AS float8 ) AS dlruc, "
+   cSql += "  ( CASE WHEN match_code IS NULL THEN rpad('',10) ELSE match_code END ) AS match_code "
    cSql += "FROM fmk.tarifa "
    cSQL += "ORDER BY id" 
 

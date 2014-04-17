@@ -25,7 +25,7 @@ AADD(opc, "1. lista otvorenih naloga          ")
 AADD(opcexe, {|| rnal_lista_dokumenata(1) })
 
 AADD(opc, "2. lista zatvorenih naloga  ")
-AADD(opcexe, {|| frm_lst_docs(2) })
+AADD(opcexe, {|| rnal_lista_dokumenata(2) })
 
 Menu_SC("lst")
 

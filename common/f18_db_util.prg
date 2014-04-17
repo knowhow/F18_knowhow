@@ -49,8 +49,6 @@ next
 
 return .t.
 
-// -------------------------------------
-// --------------------------------------
 function get_dbf_global_memvars( zn, rel, lUtf )
 local _ime_polja, _i, _struct
 local _ret := hb_hash()

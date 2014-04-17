@@ -235,14 +235,13 @@ STATIC FUNCTION _show_info()
    _x := ( MAXROWS() / 2 ) - 12
    _y := MAXCOLS()
 
-   // ocisti ekran...
    CLEAR SCREEN
 
-   _txt := PadC( hb_UTF8ToStr( ". . .  S A Č E K A J T E    T R E N U T A K  . . ." ), _y )
-   @ _x, 2 SAY _txt
+   _txt := PadC( ". . .  S A Č E K A J T E    T R E N U T A K  . . .", _y )
+   @ _x, 2 SAY8 _txt
 
    _txt := PadC( ". . . . . . k o n e k c i j a    n a    b a z u   u   t o k u . . . . . . .", _y )
-   @ _x + 1, 2 SAY _txt
+   @ _x + 1, 2 SAY8 _txt
 
    RETURN
 

@@ -18,6 +18,8 @@ cp -av mat/*.ch  $HB_INC_INSTALL
 cp -av virm/*.ch  $HB_INC_INSTALL
 cp -av common/*.ch $HB_INC_INSTALL
 
+rm F18*.a
+
 ./build_lib_release_mingw.sh
 
 cp hb_release.hbm hbmk.hbm

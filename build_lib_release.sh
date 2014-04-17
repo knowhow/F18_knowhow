@@ -15,6 +15,8 @@ cp -av mat/*.ch  $HB_INC_INSTALL
 cp -av virm/*.ch  $HB_INC_INSTALL
 cp -av common/*.ch $HB_INC_INSTALL
 
+rm libF18*.a
+
 cp hb_release_lib.hbm hbmk.hbm
 
 hbmk2 -workdir=.r F18_narudzbenica.hbp

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export KNOWHOW_ERP_ROOT=/opt/knowhowERP
-export HARBOUR_ROOT=$KNOWHOW_ERP_ROOT/hbout
+export HARBOUR_ROOT=$KNOWHOW_ERP_ROOT/hb32
 
 let KH_PATH=`echo $PATH | grep -c $KNOWHOW_ERP_ROOT/bin`
 

@@ -1,4 +1,8 @@
-1.7.51  2014-04-16, hernad
+1.7.52  2014-04-17, hernad
+
+  - #33381 nDopr1X nije definisana
+
+1.7.51  2014-04-17, hernad
 
   - exp_bank #33384 dijagnostika
 

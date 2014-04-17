@@ -105,19 +105,19 @@ endif
 
 AADD(opc, "2. lista otvorenih naloga ")
 if (ImaPravoPristupa(goModul:oDataBase:cName, "MAIN", "DOKLSTO"))
-	AADD(opcexe, {|| frm_lst_docs(1)})
+	AADD(opcexe, {|| rnal_lista_dokumenata(1)})
 else
 	AADD(opcexe, {|| oDb_lock:warrning() })
 endif
 
 AADD(opc, "3. lista zatorenih naloga ")
 if (ImaPravoPristupa(goModul:oDataBase:cName, "MAIN", "DOKLSTZ"))
-	AADD(opcexe, {|| frm_lst_docs(2)})
+	AADD(opcexe, {|| rnal_lista_dokumenata(2)})
 else
 	AADD(opcexe, {|| oDb_lock:warrning() })
 endif
 
-AADD(opc, "4. izvjestaji ")
+AADD(opc, "4. izvještaji ")
 if (ImaPravoPristupa(goModul:oDataBase:cName, "MAIN", "DOKRPT"))
 	AADD(opcexe, {|| m_rpt() })
 else

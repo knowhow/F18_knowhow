@@ -97,9 +97,8 @@ o_tmp1()
 
 index on STR(r_color, 8) tag "1"
 
-// otvori potrebne tabele
 O_RAL
-o_tables( .f. )
+rnal_o_tables( .f. )
 
 _main_filter( dD_f, dD_t, nOper )
 

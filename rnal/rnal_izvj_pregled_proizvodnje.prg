@@ -429,7 +429,7 @@ else
 endif
 
 // otvori potrebne tabele
-o_tables( .f. )
+rnal_o_tables( .f. )
 
 select docs
 go top
@@ -976,7 +976,7 @@ else
 endif
 
 // otvori potrebne tabele
-o_tables( .f. )
+rnal_o_tables( .f. )
 
 select elements
 set order to tag "1"
@@ -992,7 +992,7 @@ do while !EOF()
 
 	nDoc_no := field->doc_no
 	
-	@ m_x + 1, m_y + 2 SAY "... vrsim odabir stavki ... nalog: " + ALLTRIM( STR(nDoc_no) )
+	@ m_x + 1, m_y + 2 SAY8 "... vršim odabir stavki ... nalog: " + ALLTRIM( STR(nDoc_no) )
 	
 	nCust_id := field->cust_id
 	nCont_id := field->cont_id

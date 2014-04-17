@@ -1,6 +1,6 @@
 1.7.50  2014-04-16, hernad
 
-  - unicode 8
+  - unicode SIFV, povrat naloga dijagnostika
 
 1.7.49  2014-04-16, vsasa
 

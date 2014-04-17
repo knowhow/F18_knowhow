@@ -29,7 +29,7 @@ if cDesc == nil
     cDesc := ""
 endif
 
-o_tables( .t. )
+rnal_o_tables( .t. )
 
 // skloni filtere
 select _docs
@@ -169,7 +169,7 @@ else
 
     beep(3)
 
-    o_tables( .t. )
+    rnal_o_tables( .t. )
     
     MsgBeep( "Azuriranje naloga nije uspjesno !" )
     
@@ -196,7 +196,7 @@ use
 
 Beep(1)
 
-o_tables(.t.)
+rnal_o_tables(.t.)
 
 MsgC()
 
@@ -403,7 +403,7 @@ return _ok
 // -------------------------------------------
 function doc_2__doc( nDoc_no )
 
-o_tables(.t.)
+rnal_o_tables(.t.)
 
 select docs
 set filter to
@@ -453,7 +453,7 @@ _doc_op_erase( nDoc_no )
 select docs
 use
 
-o_tables(.t.)
+rnal_o_tables(.t.)
 
 MsgC()
 

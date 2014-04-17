@@ -34,9 +34,8 @@ t_rpt_create()
 // otvori tabele
 t_rpt_open()
 
-o_tables( __temp )
+rnal_o_tables( __temp )
 
-// osnovni podaci naloga
 _fill_main()
 // stavke naloga
 _fill_items()
@@ -63,7 +62,7 @@ endif
 
 my_close_all_dbf()
 
-o_tables( __temp )
+rnal_o_tables( __temp )
 
 return DE_REFRESH
 
@@ -106,7 +105,7 @@ t_rpt_create()
 // otvori tabele
 t_rpt_open()
 
-o_tables( __temp )
+rnal_o_tables( __temp )
 
 // prosetaj kroz stavke za stampu !
 for _i := 1 to LEN( a_docs ) 
@@ -159,7 +158,7 @@ endif
 
 my_close_all_dbf()
 
-o_tables( __temp )
+rnal_o_tables( __temp )
 
 return DE_REFRESH
 
@@ -196,7 +195,7 @@ t_rpt_create()
 // otvori tabele
 t_rpt_open()
 
-o_tables( __temp )
+rnal_o_tables( __temp )
 
 // prosetaj kroz stavke za stampu !
 for i:=1 to LEN( aOlDocs ) 
@@ -229,7 +228,7 @@ next
 
 my_close_all_dbf()
 
-o_tables( __temp )
+rnal_o_tables( __temp )
 
 return DE_REFRESH
 
@@ -249,7 +248,7 @@ t_rpt_create()
 // otvori tabele
 t_rpt_open()
 
-o_tables( __temp )
+rnal_o_tables( __temp )
 
 // osnovni podaci naloga
 _fill_main()
@@ -263,7 +262,7 @@ lab_print( lTemporary )
 
 my_close_all_dbf()
 
-o_tables( __temp )
+rnal_o_tables( __temp )
 
 return DE_REFRESH
 
@@ -1385,8 +1384,7 @@ if LastKey() == K_ESC .or. nDoc_no = 0
     return
 endif
 
-// sada stampaj nalog nDoc_no
-o_tables( )
+rnal_o_tables( )
 
 select docs
 set order to tag "1"

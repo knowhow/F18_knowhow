@@ -171,8 +171,7 @@ aField := _spec_fields()
 cre_tmp1( aField )
 o_tmp1()
 
-// otvori potrebne tabele
-o_tables( .f. )
+rnal_o_tables( .f. )
 
 _main_filter( params )
 

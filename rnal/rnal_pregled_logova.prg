@@ -27,7 +27,7 @@ nTArea := SELECT()
 
 __doc_no := nDoc_no
 
-o_tables(.f.)
+rnal_o_tables(.f.)
 
 tbl_list()
 

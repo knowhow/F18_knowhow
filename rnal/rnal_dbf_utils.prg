@@ -38,7 +38,7 @@ FUNCTION m_adm()
 // otvori tabele potrebne za rad sa RNAL
 // lTemporary - .t. i pripremne tabele
 // ------------------------------------------------
-FUNCTION o_tables( lTemporary )
+FUNCTION rnal_o_tables( lTemporary )
 
    IF lTemporary == nil
       lTemporary := .F.

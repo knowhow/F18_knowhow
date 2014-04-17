@@ -180,7 +180,7 @@ endif
 O_FAKT_DOKS
 
 // otvori potrebne tabele
-o_tables( .f. )
+rnal_o_tables( .f. )
 
 select fakt_doks
 go top
@@ -291,7 +291,7 @@ index on STR( doc_no, 10) tag "1"
 O_FAKT
 
 // otvori potrebne tabele
-o_tables( .f. )
+rnal_o_tables( .f. )
 
 _main_filter( dD_f, dD_t, nOper, cStatus )
 

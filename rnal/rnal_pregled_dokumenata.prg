@@ -22,11 +22,11 @@ static _operater
 // lista dokumenata....
 //  nStatus - "1" otoreni ili "2" zatvoreni
 // ------------------------------------------
-function frm_lst_docs( nStatus )
+function rnal_lista_dokumenata( nStatus )
 
 _status := nStatus
 
-o_tables( .f. )
+rnal_o_tables( .f. )
 
 tbl_list()
 
@@ -881,8 +881,7 @@ if LastKey() == K_ESC .or. nDoc_no = 0
 	return
 endif
 
-// otvori tabele
-o_tables(.t.)
+rnal_o_tables(.t.)
 
 select docs
 go top

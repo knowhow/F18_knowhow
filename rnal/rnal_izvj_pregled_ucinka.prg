@@ -234,8 +234,7 @@ o_tmp1()
 // kreiraj indekse
 index on STR( operater, 10 ) tag "1"
 
-// otvori potrebne tabele
-o_tables( .f. )
+rnal_o_tables( .f. )
 
 select docs
 go top

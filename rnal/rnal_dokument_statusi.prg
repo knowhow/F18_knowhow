@@ -183,7 +183,7 @@ if r_doc_no == NIL
     endif
 endif
 
-o_tables( .t. )
+rnal_o_tables( .t. )
 
 // prebaci sve iz kum u pripr
 if rnal_doc_ops_to_tmp( r_doc_no ) < 1

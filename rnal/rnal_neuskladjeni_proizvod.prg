@@ -711,7 +711,7 @@ return _qtty
 // otvaranje potrebnih tabela
 // -----------------------------------------------------
 METHOD RNALDamageDocument:open_tables()
-o_tables( .t. )
+rnal_o_tables( .t. )
 return
 
 

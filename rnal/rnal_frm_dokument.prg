@@ -33,7 +33,7 @@ endif
 
 l_new := lNewDoc
 // otvori radne i pripremne tabele...
-o_tables(.t.)
+rnal_o_tables(.t.)
 // otvori unos dokumenta
 _document()
 

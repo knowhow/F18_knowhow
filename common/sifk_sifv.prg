@@ -567,12 +567,12 @@ FUNCTION update_sifk_na_osnovu_ime_kol_from_global_var( ime_kol, var_prefix, nov
    LOCAL lSql := is_sql_table( ALIAS() )
    _alias := ALIAS()
    
-   uId := Unicode():New( ( _alias )->id,  lSql )
 
    FOR _i := 1 TO Len( ime_kol )
       IF Left( ime_kol[ _i, 3 ], 6 ) == "SIFK->"
          _field_b :=  MemVarBlock( var_prefix + "SIFK_" + SubStr( ime_kol[ _i, 3 ], 7 ) )
 
+         uId := Unicode():New( ( _alias )->id,  lSql )
          IF IzSifk( _alias, SubStr( ime_kol[ _i, 3 ], 7 ), uId ) <> NIL
             USifk( _alias, SubStr( ImeKol[ _i, 3 ], 7 ), uId, Eval( _field_b ), transaction )
          ENDIF

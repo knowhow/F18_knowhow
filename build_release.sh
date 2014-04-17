@@ -27,12 +27,15 @@ cp -av os/*.ch  $HB_INC_INSTALL
 cp -av pos/*.ch  $HB_INC_INSTALL
 cp -av common/*.ch $HB_INC_INSTALL
 
+echo "brisem .r direktorij"
+rm -r -f .r
+
+echo "pravim libs"
 ./build_lib_release.sh
 
 cp hb_release.hbm hbmk.hbm
-
-
 hbmk2 -workdir=.r F18.hbp
+
 #ne treba mi rebuild poseban je direktorij u odnosu debug -rebuildall
 
 #mkdir -p out/bin

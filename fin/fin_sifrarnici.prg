@@ -112,7 +112,8 @@ PushWa()
 
 select (F_SIFK)
 if !used()
-  O_SIFK; O_SIFV
+  O_SIFK
+  O_SIFV
 endif
 
 select sifk; set order to tag "ID"; seek "PARTN"

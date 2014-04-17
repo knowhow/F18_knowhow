@@ -149,7 +149,8 @@ O_KONCIJ
 O_KALK_PRIPR
 O_KALK_PRIPR2
 O_KALK
-O_SIFK;O_SIFV
+O_SIFK
+O_SIFV
 O_ROBA
 
 select kalk_pripr; go top

@@ -1055,7 +1055,9 @@ RETURN aVrati
  
 function VRobPoIzd()
 *{
-O_SIFK; O_SIFV
+
+  O_SIFK
+  O_SIFV
   O_RJ
   O_ROBA
   O_TARIFA
@@ -1228,8 +1230,9 @@ RETURN aVrati
  */
 
 function PorPoOps()
-*{
-O_SIFK; O_SIFV
+
+  O_SIFK
+  O_SIFV
   O_ROBA
   O_TARIFA
   O_RJ
@@ -1494,10 +1497,12 @@ local lpickol:="@Z "+pickol
 
 private m:=""
 
-O_SIFK; O_SIFV
-O_PARTN; O_ROBA
-O_SIFK; O_SIFV
-O_TARIFA; O_RJ
+O_SIFK
+O_SIFV
+O_PARTN
+O_ROBA
+O_TARIFA
+O_RJ
 O_FAKT_DOKS; O_FAKT
 if fId_J
   set order to tag "3J" // idroba_J+Idroba+dtos(datDok)

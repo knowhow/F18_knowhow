@@ -37,9 +37,8 @@ local PicCDEM:=gPicCDEM
  local Pickol:= "@Z "+gpickol
 
  O_TARIFA
- if IzFMKIni("Svi","Sifk")=="D"
-   O_SIFK; O_SIFV
- endif
+ O_SIFK
+ O_SIFV
  O_ROBA
  O_KONTO
 
@@ -251,15 +250,14 @@ return (nil)
  */
  
 function Kart412v2()
-*{
 local PicCDEM:=gPicCDEM
  local PicProc:=gPicProc
  local PicDEM:= gPicDem
  local Pickol:= "@Z "+gpickol
 
  O_TARIFA
- if IzFMKIni("Svi","Sifk")=="D"
-   O_SIFK; O_SIFV
+ O_SIFK
+ O_SIFV
  endif
  O_ROBA
  O_KONTO
@@ -462,7 +460,6 @@ local PicCDEM:=gPicCDEM
  FF
  END PRINT
 CLOSERET
-*}
 
 
 
@@ -471,7 +468,6 @@ CLOSERET
  */
  
 static function Zagl3()
-*{
 select konto; hseek cidkonto
 
 Preduzece()
@@ -485,6 +481,5 @@ P_COND
 ? " Datum     Dokument  Tarifa     Broj    Datum    Partn   (osnov)    POREZA    (POREZ)     UPL-OBAV"
 ? m
 return (nil)
-*}
 
 

@@ -26,7 +26,8 @@ function NaPrimPak()
   O_KALK_PRIPR
   O_KALK_DOKS
   O_KALK
-  O_SIFK; O_SIFV
+  O_SIFK
+  O_SIFV
 
   dDatKalk:=DATE()
   qqProd:=PADR("132;",80)
@@ -204,7 +205,8 @@ function NaPrPak2()
   O_KALK_PRIPR
   O_KALK_DOKS
   O_KALK
-  O_SIFK; O_SIFV
+  O_SIFK
+  O_SIFV
 
   dDatKalk:=kalk_pripr->datdok
 

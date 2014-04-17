@@ -1,3 +1,7 @@
+1.7.51  2014-04-16, hernad
+
+  - exp_bank #33384 dijagnostika
+
 1.7.50  2014-04-16, hernad
 
   - unicode SIFV, povrat naloga dijagnostika

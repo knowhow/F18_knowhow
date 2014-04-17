@@ -15,7 +15,8 @@ then
 fi
 
 
-WINDOWS=`uname -a | grep -c NT`
+#WINDOWS=`uname -a | grep -c NT`
+WINDOWS=`echo $HB_PLATFORM| grep -c win`
 
 if [[ "$WINDOWS" == "1" ]]
 then

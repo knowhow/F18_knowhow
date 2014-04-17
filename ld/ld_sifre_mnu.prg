@@ -20,9 +20,9 @@ local _izbor:=1
 
 o_ld_sif_tables()
 
-AADD(_opc,"1. opci sifrarnici                     ")
+AADD(_opc,"1. opći šifarnici                     ")
 AADD(_opcexe, {|| MnuOpSif()})
-AADD(_opc,"2. specijalni sifrarnici")
+AADD(_opc,"2. ostali šifrarnici")
 AADD(_opcexe, {|| MnuSpSif()})
 
 f18_menu("sif", .f., _izbor, _opc, _opcexe )

@@ -108,6 +108,13 @@ FUNCTION SpecPl2()
    LOCAL _proizv_ini
    LOCAL _a_benef := {}
    LOCAL _omjer_zdravstvo, _omjer_nezap
+   LOCAL nDopr1X
+   LOCAL nDopr2X 
+   LOCAL nDopr3X
+   LOCAL nDopr5X
+   LOCAL nDopr6X 
+   LOCAL nDopr7X
+   LOCAL nPojDoprI
 
    PRIVATE aSpec := {}
    PRIVATE cFNTZ := "D"
@@ -900,12 +907,19 @@ FUNCTION SpecPl2()
    UzmiIzIni( cIniName, 'Varijable', 'O14I', FormNum2( _ispl_p( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
 
    // ukupno za RS obaveze
+
    IF cIsplata == "A"
+
       nPom := nDopr1x + nDopr5x + nD21a + nD22a + nPorNaPlatu
+
    ELSEIF cIsplata == "B"
+
       nPom := nDopr1x + nDopr5x + nD21a + nD22a
+
    ELSEIF cIsplata == "C"
+
       nPom := nPorNaPlatu
+
    ENDIF
 
    UzmiIzIni( cIniName, 'Varijable', 'URSOB', FormNum2( nPom, 16, gPici2 ), 'WRITE' )

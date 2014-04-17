@@ -90,7 +90,7 @@ else
     AADD(opcexe, {|| oDb_lock:warrning() } )
 endif
 
-AADD(opc,   Lokal("4. izvjestaji"))
+AADD(opc,   Lokal("4. izvještaji"))
 AADD(opcexe, {|| ld_izvjestaji()})
 
 AADD(opc,   Lokal("5. krediti"))
@@ -102,7 +102,7 @@ AADD(opcexe, {|| ld_export_banke() })
 AADD(opc,"------------------------------------")
 AADD(opcexe, nil)
 
-AADD(opc,   Lokal("7. sifrarnici"))
+AADD(opc,   Lokal("7. šifrarnici"))
 AADD(opcexe, {|| ld_sifrarnici()})
 
 AADD(opc,   Lokal("9. administriranje baze podataka")) 

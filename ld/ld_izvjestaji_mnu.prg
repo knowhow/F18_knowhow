@@ -36,11 +36,11 @@ AADD( _opc,"4. specifikacije")
 AADD( _opcexe,{|| MnuIzvS() })
 
 if gVarObracun == "2"
-    AADD( _opc,"4i. specifikacije spec.tipovi rada")
+    AADD( _opc,"5. specifikacije specijalni tipovi rada")
     AADD( _opcexe,{|| m_spec_o() })
 endif
 
-AADD( _opc,"5. ostali izvjestaji")
+AADD( _opc,"6. ostali izvjestaji")
 AADD( _opcexe,{|| MnuIzvO() })
 
 if gVarObracun == "2"

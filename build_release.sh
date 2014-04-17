@@ -27,6 +27,8 @@ cp -av os/*.ch  $HB_INC_INSTALL
 cp -av pos/*.ch  $HB_INC_INSTALL
 cp -av common/*.ch $HB_INC_INSTALL
 
+./build_lib_release.sh
+
 cp hb_release.hbm hbmk.hbm
 
 

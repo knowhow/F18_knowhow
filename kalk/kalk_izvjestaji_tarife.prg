@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,235 +12,238 @@
 
 #include "kalk.ch"
 
- 
-function IzvjTar()
-private Opc:={}
-private opcexe:={}
 
-  AADD(Opc,"1. kartica                                ")
-  AADD(opcexe, {|| Kart41_42()})
-  AADD(Opc,"2. kartica v2 (uplata,obaveza,saldo)")
-  AADD(opcexe, {|| Kart412v2()})
-  AADD(Opc,"5. realizovani porez")
-  AADD(opcexe, {|| RekRPor})
+FUNCTION IzvjTar()
 
-private Izbor:=1
-Menu_SC("itar")
-return .f.
+   PRIVATE Opc := {}
+   PRIVATE opcexe := {}
 
+   AAdd( Opc, "1. kartica                                " )
+   AAdd( opcexe, {|| Kart41_42() } )
+   AAdd( Opc, "2. kartica v2 (uplata,obaveza,saldo)" )
+   AAdd( opcexe, {|| Kart412v2() } )
+   AAdd( Opc, "5. realizovani porez" )
+   AAdd( opcexe, {|| RekRPor } )
 
+   PRIVATE Izbor := 1
+   Menu_SC( "itar" )
 
-function Kart41_42()
-local PicCDEM:=gPicCDEM
- local PicProc:=gPicProc
- local PicDEM:= gPicDem
- local Pickol:= "@Z "+gpickol
-
- O_TARIFA
- O_SIFK
- O_SIFV
- O_ROBA
- O_KONTO
-
- dDatOd:=ctod("")
- dDatDo:=date()
-
- O_PARTN
-
- cIdFirma:=gFirma
- cIdRoba:=space(10)
- cidKonto:=padr("1320",7)
- cPredh:="N"
-
- 
- O_PARAMS
- cBrFDa:="N"
- Private cSection:="4",cHistory:=" ",aHistory:={}
- Params1()
- RPar("c1",@cidroba); RPar("c2",@cidkonto); RPar("c3",@cPredh)
- RPar("d1",@dDatOd); RPar("d2",@dDatDo)
- RPar("c4",@cBrFDa)
+   RETURN .F.
 
 
- Box(,6,50)
-  if gNW $ "DX"
-   @ m_x+1,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
-  else
-   @ m_x+1,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
-  endif
-  @ m_x+2,m_y+2 SAY "Konto " GET cIdKonto VALID P_Konto(@cIdKonto)
-  @ m_x+3,m_y+2 SAY "Roba  " GET cIdRoba  VALID EMPTY(cidroba) .or. P_Roba(@cIdRoba) PICT "@!"
-  @ m_x+5,m_y+2 SAY "Datum od " GET dDatOd
-  @ m_x+5,col()+2 SAY "do" GET dDatDo
-  @ m_x+6,m_y+2 SAY "sa prethodnim prometom (D/N)" GET cPredh pict "@!" valid cpredh $ "DN"
-  read; ESC_BCR
- BoxC()
 
- if empty(cidroba) .or. cIdroba=="SIGMAXXXXX"
-    if pitanje(,"Niste zadali sifru artikla, izlistati sve kartice ?","N")=="N"
-       closeret
-    else
-       if !empty(cidroba)
-           if Pitanje(,"Korekcija nabavnih cijena ???","N")=="D"
-              fKNabC:=.t.
-           endif
-       endif
-       cIdr:=""
-    endif
- else
-    cIdr:=cidroba
- endif
+FUNCTION Kart41_42()
 
- 
- if Params2()
-  WPar("c1",cidroba); WPar("c2",cidkonto); WPar("c3",cPredh)
-  WPar("d1",dDatOd); WPar("d2",dDatDo)
-  WPar("c4",@cBrFDa)
- endif
- select params; use
+   LOCAL PicCDEM := gPicCDEM
+   LOCAL PicProc := gPicProc
+   LOCAL PicDEM := gPicDem
+   LOCAL Pickol := "@Z " + gpickol
+
+   O_TARIFA
+   O_SIFK
+   O_SIFV
+   O_ROBA
+   O_KONTO
+
+   dDatOd := CToD( "" )
+   dDatDo := Date()
+
+   O_PARTN
+
+   cIdFirma := gFirma
+   cIdRoba := Space( 10 )
+   cidKonto := PadR( "1320", 7 )
+   cPredh := "N"
 
 
- O_KALK
- nKolicina:=0
- select kalk
- set order to tag "4"
- // idFirma+Pkonto+idroba+dtos(datdok)+podbr+PU_I+IdVD
- // hseek cidfirma+cidkonto+cidroba
- hseek cidfirma+cidkonto+cidr
- EOF CRET
+   O_PARAMS
+   cBrFDa := "N"
+   PRIVATE cSection := "4", cHistory := " ", aHistory := {}
+   Params1()
+   RPar( "c1", @cidroba ); RPar( "c2", @cidkonto ); RPar( "c3", @cPredh )
+   RPar( "d1", @dDatOd ); RPar( "d2", @dDatDo )
+   RPar( "c4", @cBrFDa )
 
- gaZagFix:={7,4}
- START PRINT CRET
 
- nLen:=1
+   Box(, 6, 50 )
+   IF gNW $ "DX"
+      @ m_x + 1, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+   ELSE
+      @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+   ENDIF
+   @ m_x + 2, m_y + 2 SAY "Konto " GET cIdKonto VALID P_Konto( @cIdKonto )
+   @ m_x + 3, m_y + 2 SAY "Roba  " GET cIdRoba  VALID Empty( cidroba ) .OR. P_Roba( @cIdRoba ) PICT "@!"
+   @ m_x + 5, m_y + 2 SAY "Datum od " GET dDatOd
+   @ m_x + 5, Col() + 2 SAY "do" GET dDatDo
+   @ m_x + 6, m_y + 2 SAY "sa prethodnim prometom (D/N)" GET cPredh PICT "@!" VALID cpredh $ "DN"
+   read; ESC_BCR
+   BoxC()
 
- m:="-------- ----------- ------ ------ ---------- ---------- ---------- ----------"
+   IF Empty( cidroba ) .OR. cIdroba == "SIGMAXXXXX"
+      IF pitanje(, "Niste zadali sifru artikla, izlistati sve kartice ?", "N" ) == "N"
+         closeret
+      ELSE
+         IF !Empty( cidroba )
+            IF Pitanje(, "Korekcija nabavnih cijena ???", "N" ) == "D"
+               fKNabC := .T.
+            ENDIF
+         ENDIF
+         cIdr := ""
+      ENDIF
+   ELSE
+      cIdr := cidroba
+   ENDIF
 
- nTStrana:=0
- Zagl2()
 
- nCol1:=10
- fPrviProl:=.t.
+   IF Params2()
+      WPar( "c1", cidroba ); WPar( "c2", cidkonto ); WPar( "c3", cPredh )
+      WPar( "d1", dDatOd ); WPar( "d2", dDatDo )
+      WPar( "c4", @cBrFDa )
+   ENDIF
+   SELECT params; USE
 
- DO WHILE !EOF() .and. idFirma+pkonto+idroba=cidfirma+cidkonto+cidr
 
-   cidroba:=idroba
-   select roba; hseek cidroba
-   select tarifa; hseek roba->idtarifa
-   ? m
-   ? "Artikal:",cidroba,"-",trim(LEFT(roba->naz,40))+" ("+roba->jmj+")"
-   ? m
-   select kalk
+   O_KALK
+   nKolicina := 0
+   SELECT kalk
+   SET ORDER TO TAG "4"
+   // idFirma+Pkonto+idroba+dtos(datdok)+podbr+PU_I+IdVD
+   // hseek cidfirma+cidkonto+cidroba
+   hseek cidfirma + cidkonto + cidr
+   EOF CRET
 
-   nAv:=nAvS:=nOb:=nObS:=0
+   gaZagFix := { 7, 4 }
+   START PRINT CRET
 
-   DO WHILE !EOF() .and. cidfirma+cidkonto+cidroba==idFirma+pkonto+idroba
+   nLen := 1
 
-     if datdok<ddatod .and. cPredh=="N"
-        skip; loop
-     endif
-     if datdok>ddatdo .or. ! ( idvd $ "41#42" )
-        skip; loop
-     endif
+   m := "-------- ----------- ------ ------ ---------- ---------- ---------- ----------"
 
-     if cPredh=="D" .and. datdok>=dDatod .and. fPrviProl
-       //********************* ispis prethodnog stanja ***************
-       fPrviprol:=.f.
-       ? "Stanje do ",ddatod
+   nTStrana := 0
+   Zagl2()
 
-       @ prow(),      35 SAY nAvS         pict picdem
-       @ prow(),pcol()+1 SAY nAvS         pict picdem
-       @ prow(),pcol()+1 SAY nObS         pict picdem
-       @ prow(),pcol()+1 SAY nObS         pict picdem
-       //********************* ispis prethodnog stanja ***************
-     endif
+   nCol1 := 10
+   fPrviProl := .T.
 
-     if prow()-gPStranica>62; FF; Zagl2();endif
+   DO WHILE !Eof() .AND. idFirma + pkonto + idroba = cidfirma + cidkonto + cidr
 
-     if idvd=="41"    // avans
-       nAv  := kolicina * MPCsaPP
-       nAvS += nAv
-       if datdok>=ddatod
-        ? datdok,idvd+"-"+brdok,idtarifa,idpartner
-        nCol1:=pcol()+1
-        @ prow(),pcol()+1 SAY nAv       pict picdem
-        @ prow(),pcol()+1 SAY nAvS      pict picdem
-       endif
-     else                          // 42 - obracun
-       nAv:=0; aOb:=0
-       cKalk:=idvd+brdok
-       DO WHILE !EOF() .and. cidfirma+cidkonto+cidroba==idFirma+pkonto+idroba .and.;
-                cKalk==idvd+brdok
-         if kolicina>0
-           nOb += kolicina * MPCsaPP
-         else
-           nAv += kolicina * MPCsaPP
-         endif
-         SKIP 1
-       ENDDO
-       SKIP -1
-       nObS += nOb
-       nAvS += nAv
-       if datdok>=ddatod
-         ? datdok,idvd+"-"+brdok,idtarifa,idpartner
-         nCol1:=pcol()+1
-         @ prow(),pcol()+1 SAY nAv       pict picdem
-         @ prow(),pcol()+1 SAY nAvS      pict picdem
-         @ prow(),pcol()+1 SAY nOb       pict picdem
-         @ prow(),pcol()+1 SAY nObS      pict picdem
-       endif
-     endif
+      cidroba := idroba
+      SELECT roba; hseek cidroba
+      SELECT tarifa; hseek roba->idtarifa
+      ? m
+      ? "Artikal:", cidroba, "-", Trim( Left( roba->naz, 40 ) ) + " (" + roba->jmj + ")"
+      ? m
+      SELECT kalk
 
-     SKIP 1    // KALK
+      nAv := nAvS := nOb := nObS := 0
+
+      DO WHILE !Eof() .AND. cidfirma + cidkonto + cidroba == idFirma + pkonto + idroba
+
+         IF datdok < ddatod .AND. cPredh == "N"
+            skip; LOOP
+         ENDIF
+         IF datdok > ddatdo .OR. ! ( idvd $ "41#42" )
+            skip; LOOP
+         ENDIF
+
+         IF cPredh == "D" .AND. datdok >= dDatod .AND. fPrviProl
+            // ********************* ispis prethodnog stanja ***************
+            fPrviprol := .F.
+            ? "Stanje do ", ddatod
+
+            @ PRow(),      35 SAY nAvS         PICT picdem
+            @ PRow(), PCol() + 1 SAY nAvS         PICT picdem
+            @ PRow(), PCol() + 1 SAY nObS         PICT picdem
+            @ PRow(), PCol() + 1 SAY nObS         PICT picdem
+            // ********************* ispis prethodnog stanja ***************
+         ENDIF
+
+         IF PRow() -gPStranica > 62; FF; Zagl2();ENDIF
+
+         IF idvd == "41"    // avans
+            nAv  := kolicina * MPCsaPP
+            nAvS += nAv
+            IF datdok >= ddatod
+               ? datdok, idvd + "-" + brdok, idtarifa, idpartner
+               nCol1 := PCol() + 1
+               @ PRow(), PCol() + 1 SAY nAv       PICT picdem
+               @ PRow(), PCol() + 1 SAY nAvS      PICT picdem
+            ENDIF
+         ELSE                          // 42 - obracun
+            nAv := 0; aOb := 0
+            cKalk := idvd + brdok
+            DO WHILE !Eof() .AND. cidfirma + cidkonto + cidroba == idFirma + pkonto + idroba .AND. ;
+                  cKalk == idvd + brdok
+               IF kolicina > 0
+                  nOb += kolicina * MPCsaPP
+               ELSE
+                  nAv += kolicina * MPCsaPP
+               ENDIF
+               SKIP 1
+            ENDDO
+            SKIP -1
+            nObS += nOb
+            nAvS += nAv
+            IF datdok >= ddatod
+               ? datdok, idvd + "-" + brdok, idtarifa, idpartner
+               nCol1 := PCol() + 1
+               @ PRow(), PCol() + 1 SAY nAv       PICT picdem
+               @ PRow(), PCol() + 1 SAY nAvS      PICT picdem
+               @ PRow(), PCol() + 1 SAY nOb       PICT picdem
+               @ PRow(), PCol() + 1 SAY nObS      PICT picdem
+            ENDIF
+         ENDIF
+
+         SKIP 1    // KALK
+      ENDDO
+
+      IF cPredh == "D" .AND. fPrviProl
+         // ********************* ispis prethodnog stanja ***************
+         ? "Stanje do ", ddatod
+
+         @ PRow(),      35 SAY nAvS         PICT picdem
+         @ PRow(), PCol() + 1 SAY nAvS         PICT picdem
+         @ PRow(), PCol() + 1 SAY nObS         PICT picdem
+         @ PRow(), PCol() + 1 SAY nObS         PICT picdem
+         // ********************* ispis prethodnog stanja ***************
+      ENDIF
+
+      ? m
+      ? "Iznosi predstavljaju maloprodajnu vrijednost sa ukalkulisanim porezima!"
+      ? m
+
+      ?
+      ?
+      fPrviProl := .T.
+
    ENDDO
-
-   if cPredh=="D" .and. fPrviProl
-     //********************* ispis prethodnog stanja ***************
-     ? "Stanje do ",ddatod
-
-     @ prow(),      35 SAY nAvS         pict picdem
-     @ prow(),pcol()+1 SAY nAvS         pict picdem
-     @ prow(),pcol()+1 SAY nObS         pict picdem
-     @ prow(),pcol()+1 SAY nObS         pict picdem
-     //********************* ispis prethodnog stanja ***************
-   endif
-
-   ? m
-   ? "Iznosi predstavljaju maloprodajnu vrijednost sa ukalkulisanim porezima!"
-   ? m
-
-   ?
-   ?
-   fPrviProl:=.t.
-
- ENDDO
- FF
- END PRINT
-CLOSERET
-*}
+   FF
+   ENDPRINT
+   CLOSERET
 
 
 
 /*! \fn Zagl2()
  *  \brief Zaglavlje izvjestaja
  */
- 
-static function Zagl2()
-*{
-select konto; hseek cidkonto
 
-Preduzece()
-P_12CPI
-?? "KARTICA za period",ddatod,"-",ddatdo,space(10),"Str:",str(++nTStrana,3)
-? "Konto: ",cidkonto,"-",konto->naz
-select kalk
-P_COND
-? m
-? "                                                SALDO                 SALDO   "
-? " Datum     Dokument  Tarifa  Partn   AVANS      AVANSA    OBRACUN    OBRACUNA "
-? m
-return (nil)
-*}
+STATIC FUNCTION Zagl2()
+
+   SELECT konto; hseek cidkonto
+
+   Preduzece()
+   P_12CPI
+   ?? "KARTICA za period", ddatod, "-", ddatdo, Space( 10 ), "Str:", Str( ++nTStrana, 3 )
+   ? "Konto: ", cidkonto, "-", konto->naz
+   SELECT kalk
+   P_COND
+   ? m
+   ? "                                                SALDO                 SALDO   "
+   ? " Datum     Dokument  Tarifa  Partn   AVANS      AVANSA    OBRACUN    OBRACUNA "
+   ? m
+
+   RETURN ( nil )
+// }
 
 
 
@@ -248,238 +251,238 @@ return (nil)
  *  \brief Kartica za varijantu "vodi samo tarife" varijanta 2
  *  \param
  */
- 
-function Kart412v2()
-local PicCDEM:=gPicCDEM
- local PicProc:=gPicProc
- local PicDEM:= gPicDem
- local Pickol:= "@Z "+gpickol
 
- O_TARIFA
- O_SIFK
- O_SIFV
- endif
- O_ROBA
- O_KONTO
+FUNCTION Kart412v2()
 
- dDatOd:=ctod("")
- dDatDo:=date()
+   LOCAL PicCDEM := gPicCDEM
+   LOCAL PicProc := gPicProc
+   LOCAL PicDEM := gPicDem
+   LOCAL Pickol := "@Z " + gpickol
+
+   O_TARIFA
+   O_SIFK
+   O_SIFV
+   O_ROBA
+   O_KONTO
+
+   dDatOd := CToD( "" )
+   dDatDo := Date()
 
 
- O_PARTN
+   O_PARTN
 
- cIdFirma:=gFirma
- cIdRoba:=space(10)
- cidKonto:=padr("1320",7)
- cPredh:="N"
+   cIdFirma := gFirma
+   cIdRoba := Space( 10 )
+   cidKonto := PadR( "1320", 7 )
+   cPredh := "N"
 
- O_PARAMS
- cBrFDa:="N"
- Private cSection:="4",cHistory:=" ",aHistory:={}
- Params1()
- RPar("c1",@cidroba); RPar("c2",@cidkonto); RPar("c3",@cPredh)
- RPar("d1",@dDatOd); RPar("d2",@dDatDo)
- RPar("c4",@cBrFDa)
+   O_PARAMS
+   cBrFDa := "N"
+   PRIVATE cSection := "4", cHistory := " ", aHistory := {}
+   Params1()
+   RPar( "c1", @cidroba ); RPar( "c2", @cidkonto ); RPar( "c3", @cPredh )
+   RPar( "d1", @dDatOd ); RPar( "d2", @dDatDo )
+   RPar( "c4", @cBrFDa )
 
- Box(,6,50)
-  if gNW $ "DX"
-   @ m_x+1,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
-  else
-   @ m_x+1,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
-  endif
-  @ m_x+2,m_y+2 SAY "Konto " GET cIdKonto VALID P_Konto(@cIdKonto)
-  @ m_x+3,m_y+2 SAY "Roba  " GET cIdRoba  VALID EMPTY(cidroba) .or. P_Roba(@cIdRoba) PICT "@!"
-  @ m_x+5,m_y+2 SAY "Datum od " GET dDatOd
-  @ m_x+5,col()+2 SAY "do" GET dDatDo
-  @ m_x+6,m_y+2 SAY "sa prethodnim prometom (D/N)" GET cPredh pict "@!" valid cpredh $ "DN"
-  read; ESC_BCR
- BoxC()
+   Box(, 6, 50 )
+   IF gNW $ "DX"
+      @ m_x + 1, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+   ELSE
+      @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+   ENDIF
+   @ m_x + 2, m_y + 2 SAY "Konto " GET cIdKonto VALID P_Konto( @cIdKonto )
+   @ m_x + 3, m_y + 2 SAY "Roba  " GET cIdRoba  VALID Empty( cidroba ) .OR. P_Roba( @cIdRoba ) PICT "@!"
+   @ m_x + 5, m_y + 2 SAY "Datum od " GET dDatOd
+   @ m_x + 5, Col() + 2 SAY "do" GET dDatDo
+   @ m_x + 6, m_y + 2 SAY "sa prethodnim prometom (D/N)" GET cPredh PICT "@!" VALID cpredh $ "DN"
+   read; ESC_BCR
+   BoxC()
 
- if empty(cidroba) .or. cIdroba=="SIGMAXXXXX"
-    if pitanje(,"Niste zadali sifru artikla, izlistati sve kartice ?","N")=="N"
-       closeret
-    else
-       if !empty(cidroba)
-           if Pitanje(,"Korekcija nabavnih cijena ???","N")=="D"
-              fKNabC:=.t.
-           endif
-       endif
-       cIdr:=""
-    endif
- else
-    cIdr:=cidroba
- endif
-
- if Params2()
-  WPar("c1",cidroba); WPar("c2",cidkonto); WPar("c3",cPredh)
-  WPar("d1",dDatOd); WPar("d2",dDatDo)
-  WPar("c4",@cBrFDa)
- endif
- select params; use
-
- O_KALK
- nKolicina:=0
- select kalk
- set order to tag "4"
- // idFirma+Pkonto+idroba+dtos(datdok)+podbr+PU_I+IdVD
- // hseek cidfirma+cidkonto+cidroba
- hseek cidfirma+cidkonto+cidr
- EOF CRET
-
- gaZagFix:={7,4}
- START PRINT CRET
-
- nLen:=1
-
- m:="-------- ----------- ------ ---------- -------- ------ ---------- ---------- ---------- ----------"
-
- nTStrana:=0
- Zagl3()
-
- nCol1:=10
- fPrviProl:=.t.
-
- do while !eof() .and. idFirma+pkonto+idroba=cidfirma+cidkonto+cidr
-
-   cidroba:=idroba
-   select roba; hseek cidroba
-   select tarifa; hseek roba->idtarifa
-   ? m
-   ? "Artikal:",cidroba,"-",trim(LEFT(roba->naz,40))+" ("+roba->jmj+")"
-   ? m
-   select kalk
-
-   // nAv:=nAvS:=nOb:=nObS:=0
-   nOsn:=nTotOsn:=0
-   nUpl:=nTotUpl:=0
-   nObv:=nTotObv:=0
-
-   do while !eof() .and. cidfirma+cidkonto+cidroba==idFirma+pkonto+idroba
-
-     if datdok<ddatod .and. cPredh=="N"
-        skip; loop
-     endif
-     if datdok>ddatdo .or. ! ( idvd $ "41#42" )
-        skip; loop
-     endif
-
-     if cPredh=="D" .and. datdok>=dDatod .and. fPrviProl
-       //********************* ispis prethodnog stanja ***************
-       fPrviprol:=.f.
-       ? "Stanje do ",ddatod
-
-       @ prow(),      55 SAY nTotOsn         pict picdem
-       @ prow(),pcol()+1 SAY nTotUpl         pict picdem
-       @ prow(),pcol()+1 SAY nTotObv         pict picdem
-       @ prow(),pcol()+1 SAY nTotUpl-nTotObv pict picdem
-       //********************* ispis prethodnog stanja ***************
-     endif
-
-     if prow()-gPStranica>62; FF; Zagl3();endif
-
-     if idvd=="41"    // avans
-       nOsn := kolicina * MPCsaPP
-       nTotOsn += nOsn
-       nUpl := kolicina*(mpcsapp-mpc)
-       nTotUpl += nUpl
-       if datdok>=ddatod
-        IF IzFMKIni("VodiSamoTarife","KarticaV2_KALK41_BezDatumaIBrojaFakture","N",KUMPATH)=="D"
-          ? datdok,idvd+"-"+brdok,idtarifa,SPACE(10),SPACE(8),idpartner
-        ELSE
-          ? datdok,idvd+"-"+brdok,idtarifa,brfaktp,datfaktp,idpartner
-        ENDIF
-        nCol1:=pcol()+1
-        @ prow(),pcol()+1 SAY nOsn            pict picdem
-        @ prow(),pcol()+1 SAY nUpl            pict picdem
-        @ prow(),pcol()+1 SAY 0               pict "@Z"+picdem
-        @ prow(),pcol()+1 SAY nTotUpl-nTotObv pict picdem
-       endif
-     else                          // 42 - obracun
-       nOsn:=nUpl:=nObv:=0
-       aStavke:={}
-       cKalk:=idvd+brdok
-       do while !eof() .and. cidfirma+cidkonto+cidroba==idFirma+pkonto+idroba .and.;
-                cKalk==idvd+brdok
-         if kolicina>0
-           nObv += kolicina*(MPCsaPP-MPC)
-           AADD(aStavke,{0,0,kolicina*(MPCsaPP-MPC),nTotUpl-nTotObv-nObv,brfaktp,datfaktp})
-         else
-           nUpl += kolicina*(MPCsaPP-MPC)
-         endif
-         nOsn += kolicina*MPCsaPP
-         skip 1
-       enddo
-       skip -1
-       nUpl := MAX(nObv+nUpl,0)     // ovdje se dobija stvarna uplata!
-       nTotUpl += nUpl
-       nOsn := MAX(nOsn,0)          // ovdje se dobija stvarna osnovica!
-       nTotOsn += nOsn
-       nTotObv += nObv
-       IF nUpl>0
-         AADD(aStavke,{nOsn,nUpl,0,nTotUpl-nTotObv,SPACE(10),SPACE(8)})
-       ENDIF
-       if datdok>=ddatod
-         IF IzFMKINI("VodiSamoTarife","SvakaStavkaNaKarticu","D",KUMPATH)=="D"
-           FOR i:=1 TO LEN(aStavke)
-             ? datdok,idvd+"-"+brdok,idtarifa,aStavke[i,5],aStavke[i,6],idpartner
-             nCol1:=pcol()+1
-             @ prow(),pcol()+1 SAY aStavke[i,1]    pict picdem
-             @ prow(),pcol()+1 SAY aStavke[i,2]    pict picdem
-             @ prow(),pcol()+1 SAY aStavke[i,3]    pict picdem
-             @ prow(),pcol()+1 SAY aStavke[i,4]    pict picdem
-           NEXT
-         ELSE
-           ? datdok,idvd+"-"+brdok,idtarifa,brfaktp,datfaktp,idpartner
-           nCol1:=pcol()+1
-           @ prow(),pcol()+1 SAY nOsn            pict picdem
-           @ prow(),pcol()+1 SAY nUpl            pict picdem
-           @ prow(),pcol()+1 SAY nObv            pict picdem
-           @ prow(),pcol()+1 SAY nTotUpl-nTotObv pict picdem
+   IF Empty( cidroba ) .OR. cIdroba == "SIGMAXXXXX"
+      IF pitanje(, "Niste zadali sifru artikla, izlistati sve kartice ?", "N" ) == "N"
+         closeret
+      ELSE
+         IF !Empty( cidroba )
+            IF Pitanje(, "Korekcija nabavnih cijena ???", "N" ) == "D"
+               fKNabC := .T.
+            ENDIF
          ENDIF
-       endif
-     endif
+         cIdr := ""
+      ENDIF
+   ELSE
+      cIdr := cidroba
+   ENDIF
 
-     skip 1    // kalk
-   enddo
+   IF Params2()
+      WPar( "c1", cidroba ); WPar( "c2", cidkonto ); WPar( "c3", cPredh )
+      WPar( "d1", dDatOd ); WPar( "d2", dDatDo )
+      WPar( "c4", @cBrFDa )
+   ENDIF
+   SELECT params; USE
 
-   if cPredh=="D" .and. fPrviProl  // nema prometa, ali ima prethodno stanje
-     ? "Stanje do ",ddatod
-   else  // total
-     ? m
-     ? "UKUPNO:"
-   endif
-   @ prow(),      55 SAY nTotOsn         pict picdem
-   @ prow(),pcol()+1 SAY nTotUpl         pict picdem
-   @ prow(),pcol()+1 SAY nTotObv         pict picdem
-   @ prow(),pcol()+1 SAY nTotUpl-nTotObv pict picdem
-   ? m; ?; ?
-   fPrviProl:=.t.
-   nTotOsn:=nTotUpl:=nTotObv:=0
+   O_KALK
+   nKolicina := 0
+   SELECT kalk
+   SET ORDER TO TAG "4"
+   // idFirma+Pkonto+idroba+dtos(datdok)+podbr+PU_I+IdVD
+   // hseek cidfirma+cidkonto+cidroba
+   hseek cidfirma + cidkonto + cidr
+   EOF CRET
 
- enddo
- FF
- END PRINT
-CLOSERET
+   gaZagFix := { 7, 4 }
+   START PRINT CRET
+
+   nLen := 1
+
+   m := "-------- ----------- ------ ---------- -------- ------ ---------- ---------- ---------- ----------"
+
+   nTStrana := 0
+   Zagl3()
+
+   nCol1 := 10
+   fPrviProl := .T.
+
+   DO WHILE !Eof() .AND. idFirma + pkonto + idroba = cidfirma + cidkonto + cidr
+
+      cidroba := idroba
+      SELECT roba; hseek cidroba
+      SELECT tarifa; hseek roba->idtarifa
+      ? m
+      ? "Artikal:", cidroba, "-", Trim( Left( roba->naz, 40 ) ) + " (" + roba->jmj + ")"
+      ? m
+      SELECT kalk
+
+      // nAv:=nAvS:=nOb:=nObS:=0
+      nOsn := nTotOsn := 0
+      nUpl := nTotUpl := 0
+      nObv := nTotObv := 0
+
+      DO WHILE !Eof() .AND. cidfirma + cidkonto + cidroba == idFirma + pkonto + idroba
+
+         IF datdok < ddatod .AND. cPredh == "N"
+            skip; LOOP
+         ENDIF
+         IF datdok > ddatdo .OR. ! ( idvd $ "41#42" )
+            skip; LOOP
+         ENDIF
+
+         IF cPredh == "D" .AND. datdok >= dDatod .AND. fPrviProl
+            // ********************* ispis prethodnog stanja ***************
+            fPrviprol := .F.
+            ? "Stanje do ", ddatod
+
+            @ PRow(),      55 SAY nTotOsn         PICT picdem
+            @ PRow(), PCol() + 1 SAY nTotUpl         PICT picdem
+            @ PRow(), PCol() + 1 SAY nTotObv         PICT picdem
+            @ PRow(), PCol() + 1 SAY nTotUpl - nTotObv PICT picdem
+            // ********************* ispis prethodnog stanja ***************
+         ENDIF
+
+         IF PRow() -gPStranica > 62; FF; Zagl3();ENDIF
+
+         IF idvd == "41"    // avans
+            nOsn := kolicina * MPCsaPP
+            nTotOsn += nOsn
+            nUpl := kolicina * ( mpcsapp - mpc )
+            nTotUpl += nUpl
+            IF datdok >= ddatod
+               IF IzFMKIni( "VodiSamoTarife", "KarticaV2_KALK41_BezDatumaIBrojaFakture", "N", KUMPATH ) == "D"
+                  ? datdok, idvd + "-" + brdok, idtarifa, Space( 10 ), Space( 8 ), idpartner
+               ELSE
+                  ? datdok, idvd + "-" + brdok, idtarifa, brfaktp, datfaktp, idpartner
+               ENDIF
+               nCol1 := PCol() + 1
+               @ PRow(), PCol() + 1 SAY nOsn            PICT picdem
+               @ PRow(), PCol() + 1 SAY nUpl            PICT picdem
+               @ PRow(), PCol() + 1 SAY 0               PICT "@Z" + picdem
+               @ PRow(), PCol() + 1 SAY nTotUpl - nTotObv PICT picdem
+            ENDIF
+         ELSE                          // 42 - obracun
+            nOsn := nUpl := nObv := 0
+            aStavke := {}
+            cKalk := idvd + brdok
+            DO WHILE !Eof() .AND. cidfirma + cidkonto + cidroba == idFirma + pkonto + idroba .AND. ;
+                  cKalk == idvd + brdok
+               IF kolicina > 0
+                  nObv += kolicina * ( MPCsaPP - MPC )
+                  AAdd( aStavke, { 0, 0, kolicina * ( MPCsaPP - MPC ), nTotUpl - nTotObv - nObv, brfaktp, datfaktp } )
+               ELSE
+                  nUpl += kolicina * ( MPCsaPP - MPC )
+               ENDIF
+               nOsn += kolicina * MPCsaPP
+               SKIP 1
+            ENDDO
+            SKIP -1
+            nUpl := Max( nObv + nUpl, 0 )     // ovdje se dobija stvarna uplata!
+            nTotUpl += nUpl
+            nOsn := Max( nOsn, 0 )          // ovdje se dobija stvarna osnovica!
+            nTotOsn += nOsn
+            nTotObv += nObv
+            IF nUpl > 0
+               AAdd( aStavke, { nOsn, nUpl, 0, nTotUpl - nTotObv, Space( 10 ), Space( 8 ) } )
+            ENDIF
+            IF datdok >= ddatod
+               IF IzFMKINI( "VodiSamoTarife", "SvakaStavkaNaKarticu", "D", KUMPATH ) == "D"
+                  FOR i := 1 TO Len( aStavke )
+                     ? datdok, idvd + "-" + brdok, idtarifa, aStavke[ i, 5 ], aStavke[ i, 6 ], idpartner
+                     nCol1 := PCol() + 1
+                     @ PRow(), PCol() + 1 SAY aStavke[ i, 1 ]    PICT picdem
+                     @ PRow(), PCol() + 1 SAY aStavke[ i, 2 ]    PICT picdem
+                     @ PRow(), PCol() + 1 SAY aStavke[ i, 3 ]    PICT picdem
+                     @ PRow(), PCol() + 1 SAY aStavke[ i, 4 ]    PICT picdem
+                  NEXT
+               ELSE
+                  ? datdok, idvd + "-" + brdok, idtarifa, brfaktp, datfaktp, idpartner
+                  nCol1 := PCol() + 1
+                  @ PRow(), PCol() + 1 SAY nOsn            PICT picdem
+                  @ PRow(), PCol() + 1 SAY nUpl            PICT picdem
+                  @ PRow(), PCol() + 1 SAY nObv            PICT picdem
+                  @ PRow(), PCol() + 1 SAY nTotUpl - nTotObv PICT picdem
+               ENDIF
+            ENDIF
+         ENDIF
+
+         SKIP 1    // kalk
+      ENDDO
+
+      IF cPredh == "D" .AND. fPrviProl  // nema prometa, ali ima prethodno stanje
+         ? "Stanje do ", ddatod
+      ELSE  // total
+         ? m
+         ? "UKUPNO:"
+      ENDIF
+      @ PRow(),      55 SAY nTotOsn         PICT picdem
+      @ PRow(), PCol() + 1 SAY nTotUpl         PICT picdem
+      @ PRow(), PCol() + 1 SAY nTotObv         PICT picdem
+      @ PRow(), PCol() + 1 SAY nTotUpl - nTotObv PICT picdem
+      ? m; ?; ?
+      fPrviProl := .T.
+      nTotOsn := nTotUpl := nTotObv := 0
+
+   ENDDO
+   FF
+   ENDPRINT
+   CLOSERET
 
 
 
 /*! \fn Zagl3()
  *  \brief Zaglavlje izvjestaja
  */
- 
-static function Zagl3()
-select konto; hseek cidkonto
 
-Preduzece()
-P_12CPI
-?? "KARTICA za period",ddatod,"-",ddatdo,space(10),"Str:",str(++nTStrana,3)
-? "Konto: ",cidkonto,"-",konto->naz
-select kalk
-P_COND
-? m
-? "                                F A K T U R A           MPV+POREZ   UPLATA    OBAVEZA      SALDO  "
-? " Datum     Dokument  Tarifa     Broj    Datum    Partn   (osnov)    POREZA    (POREZ)     UPL-OBAV"
-? m
-return (nil)
+STATIC FUNCTION Zagl3()
 
+   SELECT konto; hseek cidkonto
 
+   Preduzece()
+   P_12CPI
+   ?? "KARTICA za period", ddatod, "-", ddatdo, Space( 10 ), "Str:", Str( ++nTStrana, 3 )
+   ? "Konto: ", cidkonto, "-", konto->naz
+   SELECT kalk
+   P_COND
+   ? m
+   ? "                                F A K T U R A           MPV+POREZ   UPLATA    OBAVEZA      SALDO  "
+   ? " Datum     Dokument  Tarifa     Broj    Datum    Partn   (osnov)    POREZA    (POREZ)     UPL-OBAV"
+   ? m
+
+   RETURN ( nil )

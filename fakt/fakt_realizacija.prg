@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,753 +12,759 @@
 
 #include "fakt.ch"
 
-static PIC_IZN := "999999999.99"
-static _NUM := 12
-static _DEC := 2
-static _ZAOK := 2
-static _FNUM := 15
-static _FDEC := 4
+STATIC PIC_IZN := "999999999.99"
+STATIC _NUM := 12
+STATIC _DEC := 2
+STATIC _ZAOK := 2
+STATIC _FNUM := 15
+STATIC _FDEC := 4
 
 // --------------------------------------------
 // realizacija maloprodaje fakt
 // --------------------------------------------
-function fakt_real_maloprodaje()
-local nOperater
-local cFirma
-local dD_from
-local dD_to
-local cDocType
-local nVar
-local nT_uk := 0
-local nT_pdv := 0
-local nT_osn := 0
-local _params
+FUNCTION fakt_real_maloprodaje()
 
-// uslovi izvjestaja
-if g_vars( @_params ) == 0
-	return
-endif
+   LOCAL nOperater
+   LOCAL cFirma
+   LOCAL dD_from
+   LOCAL dD_to
+   LOCAL cDocType
+   LOCAL nVar
+   LOCAL nT_uk := 0
+   LOCAL nT_pdv := 0
+   LOCAL nT_osn := 0
+   LOCAL _params
 
-_cre_tbl()
-_gen_rekapitulacija_mp( _params )
+   // uslovi izvjestaja
+   IF g_vars( @_params ) == 0
+      RETURN
+   ENDIF
 
-// ima li podataka za prikaz ?
-select r_export
-if reccount2() == 0
+   _cre_tbl()
+   _gen_rekapitulacija_mp( _params )
+
+   // ima li podataka za prikaz ?
+   SELECT r_export
+   IF reccount2() == 0
 	
-	msgbeep("Nema podataka za prikaz !")
-	my_close_all_dbf()
-	return
+      msgbeep( "Nema podataka za prikaz !" )
+      my_close_all_dbf()
+      RETURN
 
-endif
+   ENDIF
 
-START PRINT CRET
+   START PRINT CRET
 
-?
-? "REALIZACIJA PRODAJE na dan: " + DTOC( DATE() )
-? "-----------------------------------------------"
-? "Period od:" + DTOC( _params["datum_od"] ) + " do:" + DTOC( _params["datum_do"] )
-?
+   ?
+   ? "REALIZACIJA PRODAJE na dan: " + DToC( Date() )
+   ? "-----------------------------------------------"
+   ? "Period od:" + DToC( _params[ "datum_od" ] ) + " do:" + DToC( _params[ "datum_do" ] )
+   ?
 
-P_COND
+   P_COND
 
-// uzmi totale
-_st_mp_dok( @nT_osn, @nT_pdv, @nT_uk, .t. )
+   // uzmi totale
+   _st_mp_dok( @nT_osn, @nT_pdv, @nT_uk, .T. )
 
-// stampaj po operateru
-_st_mp_oper()
+   // stampaj po operateru
+   _st_mp_oper()
 
-// stampaj po vrsti placanja
-_st_mp_vrstap()
+   // stampaj po vrsti placanja
+   _st_mp_vrstap()
 
-// rasclaniti...
-if _params["tip_partnera"] == "D"
-    // stampaj po tipu partnera
-    ?
-    _st_mp_tip_partnera()
-endif
+   // rasclaniti...
+   IF _params[ "tip_partnera" ] == "D"
+      // stampaj po tipu partnera
+      ?
+      _st_mp_tip_partnera()
+   ENDIF
 
-?
+   ?
 
-if _params["varijanta"] = 1
-	// odstampaj po robi
-	_st_mp_roba()
-elseif _params["varijanta"] = 2
-	// odstampaj po dokumentima
-	_st_mp_dok()
-endif
+   IF _params[ "varijanta" ] = 1
+      // odstampaj po robi
+      _st_mp_roba()
+   ELSEIF _params[ "varijanta" ] = 2
+      // odstampaj po dokumentima
+      _st_mp_dok()
+   ENDIF
 
-?
+   ?
 
-// rekapitulacija
-P_10CPI
+   // rekapitulacija
+   P_10CPI
 
-? "REKAPITULACIJA:"
-? "---------------------------"
-? "1) ukupno bez pdv-a:"
-@ prow(), pcol()+1 SAY STR( nT_osn, _NUM, _DEC ) PICT PIC_IZN
-? "2) vrijednost pdv-a:"
-@ prow(), pcol()+1 SAY STR( nT_pdv, _NUM, _DEC ) PICT PIC_IZN
-? "3)    ukupno sa pdv:"
-@ prow(), pcol()+1 SAY STR( nT_uk, _NUM, _DEC ) PICT PIC_IZN
+   ? "REKAPITULACIJA:"
+   ? "---------------------------"
+   ? "1) ukupno bez pdv-a:"
+   @ PRow(), PCol() + 1 SAY Str( nT_osn, _NUM, _DEC ) PICT PIC_IZN
+   ? "2) vrijednost pdv-a:"
+   @ PRow(), PCol() + 1 SAY Str( nT_pdv, _NUM, _DEC ) PICT PIC_IZN
+   ? "3)    ukupno sa pdv:"
+   @ PRow(), PCol() + 1 SAY Str( nT_uk, _NUM, _DEC ) PICT PIC_IZN
 
-FF
-END PRINT
+   FF
+   ENDPRINT
 
-return
+   RETURN
 
 
 // --------------------------------------------
 // uslovi izvjestaja
 // --------------------------------------------
-static function g_vars( params )
-local _ret := 1
-local _x := 1
-local _tip_partnera, _id_firma, _d_from, _d_to, _dok_tip, _operater, _varijanta
-local _partner, _vrsta_p
+STATIC FUNCTION g_vars( params )
 
-_id_firma := PADR( fetch_metric( "fakt_real_mp_firma", my_user(), "" ), 100 )
-_d_from := fetch_metric( "fakt_real_mp_datum_od", my_user(), DATE() )
-_d_to := fetch_metric( "fakt_real_mp_datum_do", my_user(), DATE() )
-_dok_tip := PADR( fetch_metric( "fakt_real_mp_tip_dok", my_user(), "11;" ), 100 )
-_operater := fetch_metric( "fakt_real_mp_operater", my_user(), 0 )
-_vrsta_p := fetch_metric( "fakt_real_mp_vrsta_p", my_user(), SPACE(2) )
-_varijanta := fetch_metric( "fakt_real_mp_varijanta", my_user(), 1 )
-_tip_partnera := fetch_metric( "fakt_real_mp_tip_partnera", my_user(), "D" )
-_partner := PADR( fetch_metric( "fakt_real_mp_partner", my_user(), "" ), 200 )
+   LOCAL _ret := 1
+   LOCAL _x := 1
+   LOCAL _tip_partnera, _id_firma, _d_from, _d_to, _dok_tip, _operater, _varijanta
+   LOCAL _partner, _vrsta_p
 
-Box( , 14, 66)
+   _id_firma := PadR( fetch_metric( "fakt_real_mp_firma", my_user(), "" ), 100 )
+   _d_from := fetch_metric( "fakt_real_mp_datum_od", my_user(), Date() )
+   _d_to := fetch_metric( "fakt_real_mp_datum_do", my_user(), Date() )
+   _dok_tip := PadR( fetch_metric( "fakt_real_mp_tip_dok", my_user(), "11;" ), 100 )
+   _operater := fetch_metric( "fakt_real_mp_operater", my_user(), 0 )
+   _vrsta_p := fetch_metric( "fakt_real_mp_vrsta_p", my_user(), Space( 2 ) )
+   _varijanta := fetch_metric( "fakt_real_mp_varijanta", my_user(), 1 )
+   _tip_partnera := fetch_metric( "fakt_real_mp_tip_partnera", my_user(), "D" )
+   _partner := PadR( fetch_metric( "fakt_real_mp_partner", my_user(), "" ), 200 )
 
-	@ m_x + _x, m_y + 2 SAY "**** REALIZACIJA PRODAJE ****"
+   Box( , 14, 66 )
 
-	++ _x
-	++ _x
+   @ m_x + _x, m_y + 2 SAY "**** REALIZACIJA PRODAJE ****"
+
+   ++ _x
+   ++ _x
 	
-	@ m_x + _x, m_y + 2 SAY "Firma (prazno-sve):" GET _id_firma PICT "@S20"
+   @ m_x + _x, m_y + 2 SAY "Firma (prazno-sve):" GET _id_firma PICT "@S20"
 	
-	++ _x
+   ++ _x
 
-	@ m_x + _x, m_y + 2 SAY "Obuhvatiti period od:" GET _d_from
-	@ m_x + _x, col() + 1 SAY "do:" GET _d_to
+   @ m_x + _x, m_y + 2 SAY "Obuhvatiti period od:" GET _d_from
+   @ m_x + _x, Col() + 1 SAY "do:" GET _d_to
 
-	++ _x
+   ++ _x
 
-	@ m_x + _x, m_y + 2 SAY "Vrste dokumenata:" GET _dok_tip PICT "@S30"
+   @ m_x + _x, m_y + 2 SAY "Vrste dokumenata:" GET _dok_tip PICT "@S30"
 
-	++ _x
+   ++ _x
 
-	@ m_x + _x, m_y + 2 SAY "Partner (prazno-svi):" GET _partner PICT "@S40"
+   @ m_x + _x, m_y + 2 SAY "Partner (prazno-svi):" GET _partner PICT "@S40"
 
-	++ _x
+   ++ _x
 
-	@ m_x + _x, m_y + 2 SAY "Vrsta placanja (prazno-svi):" GET _vrsta_p VALID EMPTY( _vrsta_p ) .or. P_VRSTEP( @_vrsta_p ) 
+   @ m_x + _x, m_y + 2 SAY "Vrsta placanja (prazno-svi):" GET _vrsta_p VALID Empty( _vrsta_p ) .OR. P_VRSTEP( @_vrsta_p )
 
-	++ _x
+   ++ _x
 
-	@ m_x + _x, m_y + 2 SAY "Operater (0-svi):" GET _operater ;
-		PICT "9999999999" ;
-        VALID {|| _operater == 0 , IIF( _operater == -99, choose_f18_user_from_list( @_operater ), .t. ) }
+   @ m_x + _x, m_y + 2 SAY "Operater (0-svi):" GET _operater ;
+      PICT "9999999999" ;
+      VALID {|| _operater == 0, iif( _operater == -99, choose_f18_user_from_list( @_operater ), .T. ) }
 
-	++ _x
-	++ _x
+   ++ _x
+   ++ _x
 
-	@ m_x + _x, m_y + 2 SAY "Razvrstati po tipu partnera (D/N)?" GET _tip_partnera ;
-                    VALID _tip_partnera $ "DN" PICT "@!" 
+   @ m_x + _x, m_y + 2 SAY "Razvrstati po tipu partnera (D/N)?" GET _tip_partnera ;
+      VALID _tip_partnera $ "DN" PICT "@!"
 	
-	++ _x
-    ++ _x
+   ++ _x
+   ++ _x
 
-	@ m_x + _x, m_y + 2 SAY "Varijanta prikaza 1-po robi 2-po dokumentima" 
+   @ m_x + _x, m_y + 2 SAY "Varijanta prikaza 1-po robi 2-po dokumentima"
 	
-	++ _x
+   ++ _x
 
-	@ m_x + _x, m_y + 2 SAY "                  3-samo total" GET _varijanta PICT "9"
+   @ m_x + _x, m_y + 2 SAY "                  3-samo total" GET _varijanta PICT "9"
 
-	read
-BoxC()
+   READ
+   BoxC()
 
-if LastKey() == K_ESC
-    return _ret
-endif
+   IF LastKey() == K_ESC
+      RETURN _ret
+   ENDIF
 
-set_metric( "fakt_real_mp_firma", my_user(), ALLTRIM( _id_firma ) )
-set_metric( "fakt_real_mp_datum_od", my_user(), _d_from )
-set_metric( "fakt_real_mp_datum_do", my_user(), _d_to )
-set_metric( "fakt_real_mp_tip_dok", my_user(), ALLTRIM( _dok_tip ) )
-set_metric( "fakt_real_mp_operater", my_user(), _operater )
-set_metric( "fakt_real_mp_vrsta_p", my_user(), _vrsta_p )
-set_metric( "fakt_real_mp_varijanta", my_user(), _varijanta )
-set_metric( "fakt_real_mp_tip_partnera", my_user(), _tip_partnera )
-set_metric( "fakt_real_mp_partner", my_user(), ALLTRIM( _partner ) )
+   set_metric( "fakt_real_mp_firma", my_user(), AllTrim( _id_firma ) )
+   set_metric( "fakt_real_mp_datum_od", my_user(), _d_from )
+   set_metric( "fakt_real_mp_datum_do", my_user(), _d_to )
+   set_metric( "fakt_real_mp_tip_dok", my_user(), AllTrim( _dok_tip ) )
+   set_metric( "fakt_real_mp_operater", my_user(), _operater )
+   set_metric( "fakt_real_mp_vrsta_p", my_user(), _vrsta_p )
+   set_metric( "fakt_real_mp_varijanta", my_user(), _varijanta )
+   set_metric( "fakt_real_mp_tip_partnera", my_user(), _tip_partnera )
+   set_metric( "fakt_real_mp_partner", my_user(), AllTrim( _partner ) )
 
-// snimi parametre i matricu
-params := hb_hash()
-params["datum_od"] := _d_from
-params["datum_do"] := _d_to
-params["varijanta"] := _varijanta
-params["tip_dok"] := ALLTRIM( _dok_tip )
-params["operater"] := _operater
-params["firma"] := ALLTRIM( _id_firma )
-params["tip_partnera"] := _tip_partnera
-params["partner"] := _partner
-params["vrstap"] := _vrsta_p
+   // snimi parametre i matricu
+   params := hb_Hash()
+   params[ "datum_od" ] := _d_from
+   params[ "datum_do" ] := _d_to
+   params[ "varijanta" ] := _varijanta
+   params[ "tip_dok" ] := AllTrim( _dok_tip )
+   params[ "operater" ] := _operater
+   params[ "firma" ] := AllTrim( _id_firma )
+   params[ "tip_partnera" ] := _tip_partnera
+   params[ "partner" ] := _partner
+   params[ "vrstap" ] := _vrsta_p
 
-_ret := 1
+   _ret := 1
 
-return _ret
+   RETURN _ret
 
 
 // --------------------------------------------------
 // generisi u pomocnu tabelu podatke iz FAKT-a
 // --------------------------------------------------
-static function _gen_rekapitulacija_mp( params )
-local _filter
-local cF_firma 
-local cF_tipdok
-local cF_brdok
-local nUkupno
-local _tip_partnera := "1"
-local _id_broj := ""
-local _pdv_clan := ""
-local _d_do, _d_od, _varijanta, _tip_dok, _operater, _id_firma, _rasclaniti
-local _vrsta_p
+STATIC FUNCTION _gen_rekapitulacija_mp( params )
 
-O_FAKT_DOKS
-O_FAKT
-O_ROBA
-O_SIFK
-O_SIFV
-O_VRSTEP
-O_TARIFA
-O_PARTN
+   LOCAL _filter
+   LOCAL cF_firma
+   LOCAL cF_tipdok
+   LOCAL cF_brdok
+   LOCAL nUkupno
+   LOCAL _tip_partnera := "1"
+   LOCAL _id_broj := ""
+   LOCAL _pdv_clan := ""
+   LOCAL _d_do, _d_od, _varijanta, _tip_dok, _operater, _id_firma, _rasclaniti
+   LOCAL _vrsta_p
 
-// parametri
-_d_od := params["datum_od"]
-_d_do := params["datum_do"]
-_varijanta := params["varijanta"]
-_tip_dok := params["tip_dok"]
-_operater := params["operater"]
-_id_firma := params["firma"]
-_rasclaniti := params["tip_partnera"] == "D"
-_partner := params["partner"]
-_vrsta_p := params["vrstap"]
+   O_FAKT_DOKS
+   O_FAKT
+   O_ROBA
+   O_SIFK
+   O_SIFV
+   O_VRSTEP
+   O_TARIFA
+   O_PARTN
 
-_filter := ""
+   // parametri
+   _d_od := params[ "datum_od" ]
+   _d_do := params[ "datum_do" ]
+   _varijanta := params[ "varijanta" ]
+   _tip_dok := params[ "tip_dok" ]
+   _operater := params[ "operater" ]
+   _id_firma := params[ "firma" ]
+   _rasclaniti := params[ "tip_partnera" ] == "D"
+   _partner := params[ "partner" ]
+   _vrsta_p := params[ "vrstap" ]
 
-if !EMPTY( _id_firma )
-	_filter += Parsiraj( ALLTRIM( _id_firma ), "idfirma" )
-endif
+   _filter := ""
 
-// vrsta placanja...
-if !EMPTY( _vrsta_p )
-    if !EMPTY( _filter )
-        _filter += ".and."
-    endif
-    _filter += "idvrstep = " + _filter_quote( _vrsta_p )
-endif
+   IF !Empty( _id_firma )
+      _filter += Parsiraj( AllTrim( _id_firma ), "idfirma" )
+   ENDIF
 
-// operater
-if _operater <> 0
-	if !EMPTY( _filter )
-		_filter += ".and."
-	endif
-	_filter += "oper_id = " + _filter_quote( _operater )
-endif
+   // vrsta placanja...
+   IF !Empty( _vrsta_p )
+      IF !Empty( _filter )
+         _filter += ".and."
+      ENDIF
+      _filter += "idvrstep = " + _filter_quote( _vrsta_p )
+   ENDIF
 
-// tipovi dokumenata
-if !EMPTY( _tip_dok )
-	if !EMPTY( _filter )
-		_filter += ".and."
-	endif
-	_filter += Parsiraj( ALLTRIM( _tip_dok ), "idtipdok" )
-endif
+   // operater
+   IF _operater <> 0
+      IF !Empty( _filter )
+         _filter += ".and."
+      ENDIF
+      _filter += "oper_id = " + _filter_quote( _operater )
+   ENDIF
 
-// partner
-if !EMPTY( _partner )
-	if !EMPTY( _filter )
-		_filter += ".and."
-	endif
-	_filter += Parsiraj( ALLTRIM( _partner ), "idpartner" )
-endif
+   // tipovi dokumenata
+   IF !Empty( _tip_dok )
+      IF !Empty( _filter )
+         _filter += ".and."
+      ENDIF
+      _filter += Parsiraj( AllTrim( _tip_dok ), "idtipdok" )
+   ENDIF
 
-// datumi od-do
-if !EMPTY( DTOS(_d_od) )
-	if !EMPTY( _filter )
-		_filter += ".and."
-	endif
-	_filter += "datdok >=" + _filter_quote( _d_od )
-endif
+   // partner
+   IF !Empty( _partner )
+      IF !Empty( _filter )
+         _filter += ".and."
+      ENDIF
+      _filter += Parsiraj( AllTrim( _partner ), "idpartner" )
+   ENDIF
 
-if !EMPTY( DTOS(_d_do) )
-	if !EMPTY( _filter )
-		_filter += ".and."
-	endif
-	_filter += "datdok <=" + _filter_quote( _d_do )
-endif
+   // datumi od-do
+   IF !Empty( DToS( _d_od ) )
+      IF !Empty( _filter )
+         _filter += ".and."
+      ENDIF
+      _filter += "datdok >=" + _filter_quote( _d_od )
+   ENDIF
 
-msgo("generisem podatke ...")
+   IF !Empty( DToS( _d_do ) )
+      IF !Empty( _filter )
+         _filter += ".and."
+      ENDIF
+      _filter += "datdok <=" + _filter_quote( _d_do )
+   ENDIF
 
-select fakt_doks
-set filter to &_filter
-go top
+   msgo( "generisem podatke ..." )
 
-do while !EOF()
+   SELECT fakt_doks
+   SET FILTER to &_filter
+   GO TOP
 
-	cF_firma := field->idfirma
-	cF_tipdok := field->idtipdok
-	cF_brdok := field->brdok
-	nUkupno := field->iznos
+   DO WHILE !Eof()
 
-	_oper_id := field->oper_id
+      cF_firma := field->idfirma
+      cF_tipdok := field->idtipdok
+      cF_brdok := field->brdok
+      nUkupno := field->iznos
 
-	select fakt
-	go top
-	seek cF_firma + cF_tipdok + cF_brdok
+      _oper_id := field->oper_id
 
-	do while !EOF() .and. field->idfirma == cF_firma ;
-		.and. field->idtipdok == cF_tipdok ;
-		.and. field->brdok == cF_brdok
+      SELECT fakt
+      GO TOP
+      SEEK cF_firma + cF_tipdok + cF_brdok
+
+      DO WHILE !Eof() .AND. field->idfirma == cF_firma ;
+            .AND. field->idtipdok == cF_tipdok ;
+            .AND. field->brdok == cF_brdok
 		
-		cRoba_id := field->idroba
-		cPart_id := field->idpartner
+         cRoba_id := field->idroba
+         cPart_id := field->idpartner
 	
-        // fizicka lica
-        _tip_partnera := "1"
-        
-        if _rasclaniti
+         // fizicka lica
+         _tip_partnera := "1"
+
+         IF _rasclaniti
 
             // odredi tip partnera
             _id_broj := IzSifKPartn( "REGB", cPart_id )
             _pdv_clan := IzSifKPartn( "REG0", cPart_id )
 
-            if !EMPTY( _id_broj ) 
-                // pravna lica
-                _tip_partnera := "2"
-            endif
+            IF !Empty( _id_broj )
+               // pravna lica
+               _tip_partnera := "2"
+            ENDIF
 
-        endif
+         ENDIF
 
-		select roba
-		seek cRoba_id
+         SELECT roba
+         SEEK cRoba_id
 
-		select tarifa
-		seek roba->idtarifa
+         SELECT tarifa
+         SEEK roba->idtarifa
 
-		select partn
-		seek cPart_id
+         SELECT partn
+         SEEK cPart_id
 
-		select fakt
+         SELECT fakt
 
-		nCjPDV := 0
-		nCj2PDV := 0
-		nCjBPDV := 0
-		nCj2BPDV := 0
-		nVPopust := 0
+         nCjPDV := 0
+         nCj2PDV := 0
+         nCjBPDV := 0
+         nCj2BPDV := 0
+         nVPopust := 0
 	
-		// procenat pdv-a
-		nPPDV := tarifa->opp
+         // procenat pdv-a
+         nPPDV := tarifa->opp
 
-		// kolicina
-		nKol := field->kolicina
-		nRCijen := field->cijena
+         // kolicina
+         nKol := field->kolicina
+         nRCijen := field->cijena
 
 	
-		if LEFT(field->dindem, 3) <> LEFT(ValBazna(), 3) 
-			// preracunaj u EUR
-			// omjer EUR / KM
-      			nRCijen := nRCijen / OmjerVal( ValBazna(), ;
-				field->dindem, field->datdok )
-			nRCijen := ROUND( nRCijen, DEC_CIJENA() )
-   		endif
+         IF Left( field->dindem, 3 ) <> Left( ValBazna(), 3 )
+            // preracunaj u EUR
+            // omjer EUR / KM
+            nRCijen := nRCijen / OmjerVal( ValBazna(), ;
+               field->dindem, field->datdok )
+            nRCijen := Round( nRCijen, DEC_CIJENA() )
+         ENDIF
 
-	    	// rabat - popust
-	    	nPopust := field->rabat
+         // rabat - popust
+         nPopust := field->rabat
 	
-		// ako je 13-ka ili 27-ca
-		// cijena bez pdv se utvrdjuje unazad 
-		if ( field->idtipdok == "13" .and. glCij13Mpc ) .or. ;
-			(field->idtipdok $ "11#27" .and. gMP $ "1234567") 
-			// cjena bez pdv-a
-			nCjPDV := nRCijen	
-			nCjBPDV := (nRCijen / (1 + nPPDV/100))
-		else
-			// cjena bez pdv-a
-			nCjBPDV := nRCijen
-			nCjPDV := (nRCijen * (1 + nPPDV/100))
-		endif
+         // ako je 13-ka ili 27-ca
+         // cijena bez pdv se utvrdjuje unazad
+         IF ( field->idtipdok == "13" .AND. glCij13Mpc ) .OR. ;
+               ( field->idtipdok $ "11#27" .AND. gMP $ "1234567" )
+            // cjena bez pdv-a
+            nCjPDV := nRCijen
+            nCjBPDV := ( nRCijen / ( 1 + nPPDV / 100 ) )
+         ELSE
+            // cjena bez pdv-a
+            nCjBPDV := nRCijen
+            nCjPDV := ( nRCijen * ( 1 + nPPDV / 100 ) )
+         ENDIF
 	
-		// izracunaj vrijednost popusta
-		if Round(nPopust,4) <> 0
-			// vrijednost popusta
-			nVPopust := (nCjBPDV * (nPopust/100))
-		endif
+         // izracunaj vrijednost popusta
+         IF Round( nPopust, 4 ) <> 0
+            // vrijednost popusta
+            nVPopust := ( nCjBPDV * ( nPopust / 100 ) )
+         ENDIF
 	
-		// cijena sa popustom bez pdv-a
-		nCj2BPDV := (nCjBPDV - nVPopust)
+         // cijena sa popustom bez pdv-a
+         nCj2BPDV := ( nCjBPDV - nVPopust )
 		
-		// izracuna PDV na cijenu sa popustom
-		nCj2PDV := (nCj2BPDV * (1 + nPPDV/100))
+         // izracuna PDV na cijenu sa popustom
+         nCj2PDV := ( nCj2BPDV * ( 1 + nPPDV / 100 ) )
 		
-		// preracunaj VPDV sa popustom
-		nVPDV := (nCj2BPDV * (nPPDV/100))
+         // preracunaj VPDV sa popustom
+         nVPDV := ( nCj2BPDV * ( nPPDV / 100 ) )
 
-		select r_export
-		append blank
+         SELECT r_export
+         APPEND BLANK
 
-        replace field->tip with _tip_partnera
-		replace field->idfirma with fakt->idfirma
-		replace field->idtipdok with fakt->idtipdok
-		replace field->brdok with fakt->brdok
-		replace field->datdok with fakt->datdok
-		replace field->operater with _oper_id
-        replace field->vrstap with _g_vrsta_p( fakt->idtipdok, fakt->idvrstep )
-		replace field->part_id with fakt->idpartner
-		replace field->part_naz with ALLTRIM( partn->naz )
-		replace field->roba_id with fakt->idroba
-		replace field->roba_naz with ALLTRIM( roba->naz )
-		replace field->kolicina with nKol
-		replace field->s_pdv with nPPDV
-		replace field->popust with nVPopust
-		replace field->c_bpdv with nCj2BPdv
-		replace field->pdv with nVPDV
-		replace field->c_pdv with nCj2PDV
-		replace field->uk_fakt with nUkupno
+         REPLACE field->tip WITH _tip_partnera
+         REPLACE field->idfirma WITH fakt->idfirma
+         REPLACE field->idtipdok WITH fakt->idtipdok
+         REPLACE field->brdok WITH fakt->brdok
+         REPLACE field->datdok WITH fakt->datdok
+         REPLACE field->operater WITH _oper_id
+         REPLACE field->vrstap WITH _g_vrsta_p( fakt->idtipdok, fakt->idvrstep )
+         REPLACE field->part_id WITH fakt->idpartner
+         REPLACE field->part_naz WITH AllTrim( partn->naz )
+         REPLACE field->roba_id WITH fakt->idroba
+         REPLACE field->roba_naz WITH AllTrim( roba->naz )
+         REPLACE field->kolicina WITH nKol
+         REPLACE field->s_pdv WITH nPPDV
+         REPLACE field->popust WITH nVPopust
+         REPLACE field->c_bpdv WITH nCj2BPdv
+         REPLACE field->pdv WITH nVPDV
+         REPLACE field->c_pdv WITH nCj2PDV
+         REPLACE field->uk_fakt WITH nUkupno
 
-		select fakt
-		skip
+         SELECT fakt
+         SKIP
 
-	enddo
+      ENDDO
 
-	select fakt_doks
-	skip
+      SELECT fakt_doks
+      SKIP
 
-enddo
+   ENDDO
 
-msgc()
+   msgc()
 
-return
+   RETURN
 
 
-static function _g_vrsta_p( tip_dok, vrsta_p )
-local _ret := "MP GOTOVINA"
+STATIC FUNCTION _g_vrsta_p( tip_dok, vrsta_p )
 
-do case 
+   LOCAL _ret := "MP GOTOVINA"
 
-    // maloprodaja
-    case tip_dok == "11"
+   DO CASE
 
-        if !EMPTY( vrsta_p )
-            if vrsta_p == "KT"
-                _ret := "MP KARTICA"
-            elseif vrsta_p == "AV"
-                _ret := "MP AVANSNA FAKTURA"
-            elseif vrsta_p == "VR"
-                _ret := "MP VIRMANSKO PLACANJE"
-            endif
-        endif        
+      // maloprodaja
+   CASE tip_dok == "11"
 
-    // vp
-    case tip_dok == "10"
-        _ret := "VP VIRMANSKO PLACANJE"
-        if !EMPTY( vrsta_p )
-            if vrsta_p == "G "
-                _ret := "VP GOTOVINA"
-            elseif vrsta_p == "KT"
-                _ret := "VP KARTICA"
-            elseif vrsta_p == "AV"
-                _ret := "VP AVANSNA FAKTURA"
-            endif
-        endif
+      IF !Empty( vrsta_p )
+         IF vrsta_p == "KT"
+            _ret := "MP KARTICA"
+         ELSEIF vrsta_p == "AV"
+            _ret := "MP AVANSNA FAKTURA"
+         ELSEIF vrsta_p == "VR"
+            _ret := "MP VIRMANSKO PLACANJE"
+         ENDIF
+      ENDIF
 
-endcase
+      // vp
+   CASE tip_dok == "10"
+      _ret := "VP VIRMANSKO PLACANJE"
+      IF !Empty( vrsta_p )
+         IF vrsta_p == "G "
+            _ret := "VP GOTOVINA"
+         ELSEIF vrsta_p == "KT"
+            _ret := "VP KARTICA"
+         ELSEIF vrsta_p == "AV"
+            _ret := "VP AVANSNA FAKTURA"
+         ENDIF
+      ENDIF
 
-return _ret
+   ENDCASE
+
+   RETURN _ret
 
 
 // -------------------------------------------
 // kreiranje pomocne tabele izvjestaja
 // -------------------------------------------
-static function _cre_tbl()
-local aDbf := {}
+STATIC FUNCTION _cre_tbl()
 
-AADD( aDbf, { "tip", "C", 1, 0 } )
-AADD( aDbf, { "idfirma", "C", 2, 0 } )
-AADD( aDbf, { "idtipdok", "C", 2, 0 } )
-AADD( aDbf, { "brdok", "C", 10, 0 } )
-AADD( aDbf, { "datdok", "D", 8, 0 } )
-AADD( aDbf, { "operater", "N", 10, 0 } )
-AADD( aDbf, { "vrstap", "C", 40, 0 } )
-AADD( aDbf, { "part_id", "C", 6, 0 } )
-AADD( aDbf, { "part_naz", "C", 100, 0 } )
-AADD( aDbf, { "roba_id", "C", 10, 0 } )
-AADD( aDbf, { "roba_naz", "C", 100, 0 } )
-AADD( aDbf, { "kolicina", "N", 15, 5 } )
-AADD( aDbf, { "popust", "N", 15, 5 } )
-AADD( aDbf, { "s_pdv", "N", 12, 2 } )
-AADD( aDbf, { "c_bpdv", "N", _FNUM, _FDEC } )
-AADD( aDbf, { "pdv", "N", _FNUM, _FDEC } )
-AADD( aDbf, { "c_pdv", "N", _FNUM, _FDEC } )
-AADD( aDbf, { "uk_fakt", "N", _FNUM, _FDEC } )
+   LOCAL aDbf := {}
 
-t_exp_create( aDbf )
-O_R_EXP
+   AAdd( aDbf, { "tip", "C", 1, 0 } )
+   AAdd( aDbf, { "idfirma", "C", 2, 0 } )
+   AAdd( aDbf, { "idtipdok", "C", 2, 0 } )
+   AAdd( aDbf, { "brdok", "C", 10, 0 } )
+   AAdd( aDbf, { "datdok", "D", 8, 0 } )
+   AAdd( aDbf, { "operater", "N", 10, 0 } )
+   AAdd( aDbf, { "vrstap", "C", 40, 0 } )
+   AAdd( aDbf, { "part_id", "C", 6, 0 } )
+   AAdd( aDbf, { "part_naz", "C", 100, 0 } )
+   AAdd( aDbf, { "roba_id", "C", 10, 0 } )
+   AAdd( aDbf, { "roba_naz", "C", 100, 0 } )
+   AAdd( aDbf, { "kolicina", "N", 15, 5 } )
+   AAdd( aDbf, { "popust", "N", 15, 5 } )
+   AAdd( aDbf, { "s_pdv", "N", 12, 2 } )
+   AAdd( aDbf, { "c_bpdv", "N", _FNUM, _FDEC } )
+   AAdd( aDbf, { "pdv", "N", _FNUM, _FDEC } )
+   AAdd( aDbf, { "c_pdv", "N", _FNUM, _FDEC } )
+   AAdd( aDbf, { "uk_fakt", "N", _FNUM, _FDEC } )
 
-index on idfirma + idtipdok + brdok tag "1"
-index on roba_id tag "2"
-index on STR( operater, 10 ) + idfirma + idtipdok + brdok tag "3"
-index on tip tag "4"
-index on vrstap tag "5"
+   t_exp_create( aDbf )
+   O_R_EXP
 
-return
+   INDEX ON idfirma + idtipdok + brdok TAG "1"
+   INDEX ON roba_id TAG "2"
+   INDEX ON Str( operater, 10 ) + idfirma + idtipdok + brdok TAG "3"
+   INDEX ON tip TAG "4"
+   INDEX ON vrstap TAG "5"
 
+   RETURN
 
 
 // ---------------------------------------------
 // stampa rekapitulacije
 // varijanta po dokumentima
 // ---------------------------------------------
-static function _st_mp_dok( nT_osnovica, nT_pdv, nT_ukupno, lCalc )
-local nOsnovica
-local nPDV
-local nUkupno
-local nRbr := 0
-local nRow := 35
-local cLine := ""
-local nOperater
-local cOper_Naz := ""
+STATIC FUNCTION _st_mp_dok( nT_osnovica, nT_pdv, nT_ukupno, lCalc )
 
-if lCalc == nil
-	lCalc := .f.
-endif
+   LOCAL nOsnovica
+   LOCAL nPDV
+   LOCAL nUkupno
+   LOCAL nRbr := 0
+   LOCAL nRow := 35
+   LOCAL cLine := ""
+   LOCAL nOperater
+   LOCAL cOper_Naz := ""
 
-nT_osnovica := 0
-nT_pdv := 0
-nT_ukupno := 0
+   IF lCalc == nil
+      lCalc := .F.
+   ENDIF
 
-if lCalc == .f.
-	// vraca liniju
-	g_l_mpdok( @cLine )
+   nT_osnovica := 0
+   nT_pdv := 0
+   nT_ukupno := 0
 
-	// zaglavlje pregled po robi
-	s_z_mpdok( cLine )
-endif
+   IF lCalc == .F.
+      // vraca liniju
+      g_l_mpdok( @cLine )
 
-select r_export
-// po dokumentima
-set order to tag "1"
-go top
+      // zaglavlje pregled po robi
+      s_z_mpdok( cLine )
+   ENDIF
 
-do while !EOF()
+   SELECT r_export
+   // po dokumentima
+   SET ORDER TO TAG "1"
+   GO TOP
 
-	cIdFirma := field->idfirma
-	cIdTipDok := field->idtipdok
-	cBrDok := field->brdok
-	cPart_id := field->part_id
-	cPart_naz := field->part_naz
-	nOperater := field->operater
-	cOper_naz := GetFullUserName( nOperater )
+   DO WHILE !Eof()
+
+      cIdFirma := field->idfirma
+      cIdTipDok := field->idtipdok
+      cBrDok := field->brdok
+      cPart_id := field->part_id
+      cPart_naz := field->part_naz
+      nOperater := field->operater
+      cOper_naz := GetFullUserName( nOperater )
 	
-	nOsnovica := 0
-	nPDV := 0
-	nUkupno := 0
-	nS_pdv := 0
-	nUk_fakt := 0
+      nOsnovica := 0
+      nPDV := 0
+      nUkupno := 0
+      nS_pdv := 0
+      nUk_fakt := 0
 
-	do while !EOF() .and. field->idfirma + field->idtipdok + ;
-		field->brdok == cIdFirma + cIdTipDok + cBrDok
+      DO WHILE !Eof() .AND. field->idfirma + field->idtipdok + ;
+            field->brdok == cIdFirma + cIdTipDok + cBrDok
 		
-		nOsnovica += field->kolicina * field->c_bpdv
-		nPDV += field->kolicina * field->pdv
-		nS_pdv := field->s_pdv
-		nUk_fakt := field->uk_fakt
+         nOsnovica += field->kolicina * field->c_bpdv
+         nPDV += field->kolicina * field->pdv
+         nS_pdv := field->s_pdv
+         nUk_fakt := field->uk_fakt
 
-		skip
-	enddo
+         SKIP
+      ENDDO
 
-	// zaokruzi
-	nOsnovica := ROUND( ( nUk_fakt / ( 1 + ( nS_pdv/100 )) ), ;
-		ZAO_VRIJEDNOST() )
-	nPDV := ROUND( ( nUk_fakt / ( 1 + ( nS_pdv/100 ) ) * ;
-		(nS_pdv/100)) , ZAO_VRIJEDNOST() )
-	nUkupno := ROUND( nUk_fakt , ZAO_VRIJEDNOST() )
+      // zaokruzi
+      nOsnovica := Round( ( nUk_fakt / ( 1 + ( nS_pdv / 100 ) ) ), ;
+         ZAO_VRIJEDNOST() )
+      nPDV := Round( ( nUk_fakt / ( 1 + ( nS_pdv / 100 ) ) * ;
+         ( nS_pdv / 100 ) ), ZAO_VRIJEDNOST() )
+      nUkupno := Round( nUk_fakt, ZAO_VRIJEDNOST() )
 
-	if lCalc == .f.
-		// pa ispisi tu stavku
+      IF lCalc == .F.
+         // pa ispisi tu stavku
 
-		// rbr
-		? PADL( ALLTRIM( STR( ++nRbr ) ), 4 ) + "."
+         // rbr
+         ? PadL( AllTrim( Str( ++nRbr ) ), 4 ) + "."
 
-		// dokument
-		@ prow(), pcol()+1 SAY PADR( ALLTRIM( cIdFirma + "-" + ;
-			cIdTipDok + "-" + cBrDok ), 16 )
+         // dokument
+         @ PRow(), PCol() + 1 SAY PadR( AllTrim( cIdFirma + "-" + ;
+            cIdTipDok + "-" + cBrDok ), 16 )
 
-		// partner
-		@ prow(), pcol()+1 SAY PADR( ALLTRIM( cPart_id ) + "-" + ;
-			ALLTRIM( cPart_naz ), 40 )
+         // partner
+         @ PRow(), PCol() + 1 SAY PadR( AllTrim( cPart_id ) + "-" + ;
+            AllTrim( cPart_naz ), 40 )
 	
-		// osnovica
-		@ prow(), nRow := pcol()+1 SAY STR( nOsnovica, _NUM, _DEC ) ;
-			PICT PIC_IZN
+         // osnovica
+         @ PRow(), nRow := PCol() + 1 SAY Str( nOsnovica, _NUM, _DEC ) ;
+            PICT PIC_IZN
 
-		// pdv
-		@ prow(), pcol()+1 SAY STR( nPDV, _NUM, _DEC ) PICT PIC_IZN
+         // pdv
+         @ PRow(), PCol() + 1 SAY Str( nPDV, _NUM, _DEC ) PICT PIC_IZN
 
-		// ukupno
-		@ prow(), pcol()+1 SAY STR( nUkupno, _NUM, _DEC ) PICT PIC_IZN
+         // ukupno
+         @ PRow(), PCol() + 1 SAY Str( nUkupno, _NUM, _DEC ) PICT PIC_IZN
 		
-		// operater
-		@ prow(), pcol()+1 SAY PADR( ALLTRIM( cOper_naz ), 20 )
+         // operater
+         @ PRow(), PCol() + 1 SAY PadR( AllTrim( cOper_naz ), 20 )
 
-	endif
+      ENDIF
 
-	// dodaj na total
+      // dodaj na total
 
-	nT_ukupno += nUkupno
-	nT_osnovica += nOsnovica
-	nT_pdv += nPDV
+      nT_ukupno += nUkupno
+      nT_osnovica += nOsnovica
+      nT_pdv += nPDV
 
-enddo
+   ENDDO
 
-if lCalc == .f.
+   IF lCalc == .F.
 	
-	// ispisi sada total
-	? cLine
+      // ispisi sada total
+      ? cLine
 
-	? "UKUPNO:"
-	@ prow(), nRow SAY STR( nT_osnovica, _NUM, _DEC ) PICT PIC_IZN
-	@ prow(), pcol()+1 SAY STR( nT_pdv, _NUM, _DEC ) PICT PIC_IZN
-	@ prow(), pcol()+1 SAY STR( nT_ukupno, _NUM, _DEC ) PICT PIC_IZN
+      ? "UKUPNO:"
+      @ PRow(), nRow SAY Str( nT_osnovica, _NUM, _DEC ) PICT PIC_IZN
+      @ PRow(), PCol() + 1 SAY Str( nT_pdv, _NUM, _DEC ) PICT PIC_IZN
+      @ PRow(), PCol() + 1 SAY Str( nT_ukupno, _NUM, _DEC ) PICT PIC_IZN
 
-	? cLine
-endif
+      ? cLine
+   ENDIF
 
-return
+   RETURN
 
 
 // ---------------------------------------------
 // stampa rekapitulacije
 // varijanta po tipu partnera
 // ---------------------------------------------
-static function _st_mp_tip_partnera( nT_osnovica, nT_pdv, nT_ukupno )
-local nOsnovica
-local nPDV
-local nUkupno
-local nRbr := 0
-local nRow := 35
-local cLine := ""
-local cF_tipdok
-local cF_firma
-local cF_brdok
-local _tip_partnera, _opis
-local __osn, __pdv, __total
+STATIC FUNCTION _st_mp_tip_partnera( nT_osnovica, nT_pdv, nT_ukupno )
 
-// 1 - nepdv
-// 2 - pdv
-// 3 - ino
+   LOCAL nOsnovica
+   LOCAL nPDV
+   LOCAL nUkupno
+   LOCAL nRbr := 0
+   LOCAL nRow := 35
+   LOCAL cLine := ""
+   LOCAL cF_tipdok
+   LOCAL cF_firma
+   LOCAL cF_brdok
+   LOCAL _tip_partnera, _opis
+   LOCAL __osn, __pdv, __total
 
-nT_osnovica := 0
-nT_pdv := 0
-nT_ukupno := 0
+   // 1 - nepdv
+   // 2 - pdv
+   // 3 - ino
 
-g_l_mptip( @cLine )
+   nT_osnovica := 0
+   nT_pdv := 0
+   nT_ukupno := 0
 
-s_z_mptip( cLine )
+   g_l_mptip( @cLine )
 
-select r_export
-// po operaterima
-set order to tag "4"
-go top
+   s_z_mptip( cLine )
 
-do while !EOF()
+   SELECT r_export
+   // po operaterima
+   SET ORDER TO TAG "4"
+   GO TOP
 
-    _tip_partnera := field->tip
+   DO WHILE !Eof()
 
-    // iznosi...
-    __osn := 0
-    __pdv := 0
-    __total := 0
+      _tip_partnera := field->tip
 
-    do while !EOF() .and. field->tip == _tip_partnera
+      // iznosi...
+      __osn := 0
+      __pdv := 0
+      __total := 0
 
-        _tip_partnera := field->tip
-        
-        _id_firma := field->idfirma
-        _tip_dok := field->idtipdok
-        _br_dok := field->brdok
+      DO WHILE !Eof() .AND. field->tip == _tip_partnera
 
-	    nOsnovica := 0
-	    nPDV := 0
-	    nUkupno := 0
-    	nS_pdv := 0
-	    nUk_fakt := 0
+         _tip_partnera := field->tip
 
-	    do while !EOF() .and. _tip_partnera == field->tip .and. field->idfirma + field->idtipdok + ;
-		    field->brdok == _id_firma + _tip_dok + _br_dok
+         _id_firma := field->idfirma
+         _tip_dok := field->idtipdok
+         _br_dok := field->brdok
+
+         nOsnovica := 0
+         nPDV := 0
+         nUkupno := 0
+         nS_pdv := 0
+         nUk_fakt := 0
+
+         DO WHILE !Eof() .AND. _tip_partnera == field->tip .AND. field->idfirma + field->idtipdok + ;
+               field->brdok == _id_firma + _tip_dok + _br_dok
 		
-		    nS_pdv := field->s_pdv
-		    nUk_fakt := field->uk_fakt
+            nS_pdv := field->s_pdv
+            nUk_fakt := field->uk_fakt
 
-		    skip
+            SKIP
 
-	    enddo
+         ENDDO
 
-	    // zaokruzi
-	    nOsnovica := ROUND( ( nUk_fakt / ( 1 + ( nS_pdv/100 )) ), ;
-		        ZAO_VRIJEDNOST() )
-    	nPDV := ROUND( ( nUk_fakt / ( 1 + ( nS_pdv/100 ) ) * ;
-		        (nS_pdv/100)) , ZAO_VRIJEDNOST() )
-	    nUkupno := ROUND( nUk_fakt , ZAO_VRIJEDNOST() )
+         // zaokruzi
+         nOsnovica := Round( ( nUk_fakt / ( 1 + ( nS_pdv / 100 ) ) ), ;
+            ZAO_VRIJEDNOST() )
+         nPDV := Round( ( nUk_fakt / ( 1 + ( nS_pdv / 100 ) ) * ;
+            ( nS_pdv / 100 ) ), ZAO_VRIJEDNOST() )
+         nUkupno := Round( nUk_fakt, ZAO_VRIJEDNOST() )
 
-        __osn += nOsnovica
-        __pdv += nPDV
-        __total += nUkupno
+         __osn += nOsnovica
+         __pdv += nPDV
+         __total += nUkupno
 
-    enddo
+      ENDDO
 
-	// pa ispisi tu stavku
+      // pa ispisi tu stavku
 
-	// rbr
-	? PADL( ALLTRIM( STR( ++nRbr ) ), 4 ) + "."
+      // rbr
+      ? PadL( AllTrim( Str( ++nRbr ) ), 4 ) + "."
 
-    _opis := "Fizicka lica"
+      _opis := "Fizicka lica"
 
-    if _tip_partnera == "2"
-        _opis := "Pravna lica"
-    endif
+      IF _tip_partnera == "2"
+         _opis := "Pravna lica"
+      ENDIF
 
-	// tip partnera
-	@ prow(), pcol()+1 SAY PADR( _opis, 40 )
+      // tip partnera
+      @ PRow(), PCol() + 1 SAY PadR( _opis, 40 )
 	
-	// total
-	@ prow(), nRow := pcol()+1 SAY STR( __osn, _NUM, _DEC ) ;
-		PICT PIC_IZN 
+      // total
+      @ PRow(), nRow := PCol() + 1 SAY Str( __osn, _NUM, _DEC ) ;
+         PICT PIC_IZN
 
-	// pdv
-	@ prow(), pcol()+1 SAY STR( __pdv, _NUM, _DEC ) PICT PIC_IZN
+      // pdv
+      @ PRow(), PCol() + 1 SAY Str( __pdv, _NUM, _DEC ) PICT PIC_IZN
 
-	// osnovica
-	@ prow(), pcol()+1 SAY STR( __total, _NUM, _DEC ) PICT PIC_IZN 
+      // osnovica
+      @ PRow(), PCol() + 1 SAY Str( __total, _NUM, _DEC ) PICT PIC_IZN
 
-	// dodaj na total
+      // dodaj na total
 
-	nT_ukupno += __total
-	nT_osnovica += __osn
-	nT_pdv += __pdv
+      nT_ukupno += __total
+      nT_osnovica += __osn
+      nT_pdv += __pdv
 
-enddo
+   ENDDO
 
-// ispisi sada total
-? cLine
+   // ispisi sada total
+   ? cLine
 
-? "UKUPNO:"
+   ? "UKUPNO:"
 
-@ prow(), nRow SAY STR( nT_osnovica, _NUM, _DEC ) PICT PIC_IZN
-@ prow(), pcol()+1 SAY STR( nT_pdv, _NUM, _DEC ) PICT PIC_IZN
-@ prow(), pcol()+1 SAY STR( nT_ukupno, _NUM, _DEC ) PICT PIC_IZN
+   @ PRow(), nRow SAY Str( nT_osnovica, _NUM, _DEC ) PICT PIC_IZN
+   @ PRow(), PCol() + 1 SAY Str( nT_pdv, _NUM, _DEC ) PICT PIC_IZN
+   @ PRow(), PCol() + 1 SAY Str( nT_ukupno, _NUM, _DEC ) PICT PIC_IZN
 
-? cLine
+   ? cLine
 
-return
+   RETURN
 
 
 
@@ -766,103 +772,104 @@ return
 // stampa rekapitulacije
 // varijanta po vrsti placanja
 // ---------------------------------------------
-static function _st_mp_vrstap( nT_osnovica, nT_pdv, nT_ukupno )
-local nOsnovica
-local nPDV
-local nUkupno
-local nRbr := 0
-local nRow := 35
-local cLine := ""
-local cF_tipdok
-local cF_firma
-local cF_brdok
-local _vrsta_p, _vrsta_p_naz
+STATIC FUNCTION _st_mp_vrstap( nT_osnovica, nT_pdv, nT_ukupno )
 
-nT_osnovica := 0
-nT_pdv := 0
-nT_ukupno := 0
+   LOCAL nOsnovica
+   LOCAL nPDV
+   LOCAL nUkupno
+   LOCAL nRbr := 0
+   LOCAL nRow := 35
+   LOCAL cLine := ""
+   LOCAL cF_tipdok
+   LOCAL cF_firma
+   LOCAL cF_brdok
+   LOCAL _vrsta_p, _vrsta_p_naz
 
-// vraca liniju
-g_l_mpop( @cLine )
+   nT_osnovica := 0
+   nT_pdv := 0
+   nT_ukupno := 0
 
-// zaglavlje pregled po robi
-s_z_mpvrstap( cLine )
+   // vraca liniju
+   g_l_mpop( @cLine )
 
-select r_export
-// po operaterima
-set order to tag "5"
-go top
+   // zaglavlje pregled po robi
+   s_z_mpvrstap( cLine )
 
-do while !EOF()
+   SELECT r_export
+   // po operaterima
+   SET ORDER TO TAG "5"
+   GO TOP
 
-	_vrsta_p := field->vrstap
+   DO WHILE !Eof()
 
-	nOsnovica := 0
-	nPDV := 0
-	nUkupno := 0
-	nS_pdv := 0
-	nU_fakt := 0
-	nUU_fakt := 0
+      _vrsta_p := field->vrstap
 
-	do while !EOF() .and. field->vrstap == _vrsta_p
+      nOsnovica := 0
+      nPDV := 0
+      nUkupno := 0
+      nS_pdv := 0
+      nU_fakt := 0
+      nUU_fakt := 0
+
+      DO WHILE !Eof() .AND. field->vrstap == _vrsta_p
 	
-		cF_brdok := field->brdok
-		cF_tipdok := field->idtipdok
-		cF_firma := field->idfirma
+         cF_brdok := field->brdok
+         cF_tipdok := field->idtipdok
+         cF_firma := field->idfirma
 
-		do while !EOF() .and. field->vrstap == _vrsta_p .and. ;
-			cF_firma + cF_tipdok + cF_brdok == field->idfirma + ;
-				field->idtipdok + field->brdok
+         DO WHILE !Eof() .AND. field->vrstap == _vrsta_p .AND. ;
+               cF_firma + cF_tipdok + cF_brdok == field->idfirma + ;
+               field->idtipdok + field->brdok
 		
-			nU_fakt := field->uk_fakt
-			nS_pdv := field->s_pdv
-			nOsnovica += field->kolicina * field->c_bpdv
-			nPDV += field->kolicina * field->pdv
+            nU_fakt := field->uk_fakt
+            nS_pdv := field->s_pdv
+            nOsnovica += field->kolicina * field->c_bpdv
+            nPDV += field->kolicina * field->pdv
 
-			skip
-		enddo
+            SKIP
+         ENDDO
 
-		nUU_fakt += nU_fakt
+         nUU_fakt += nU_fakt
 
-	enddo
+      ENDDO
 
-	// zaokruzi
-	nOsnovica := ROUND( ( nUU_fakt / ( 1 + ( nS_pdv/100 )) ), ;
-		ZAO_VRIJEDNOST() )
-	nPDV := ROUND( ( nUU_fakt / ( 1 + ( nS_pdv/100 ) ) * ;
-		(nS_pdv/100)) , ZAO_VRIJEDNOST() )
-	nUkupno := ROUND( nUU_fakt , ZAO_VRIJEDNOST() )
+      // zaokruzi
+      nOsnovica := Round( ( nUU_fakt / ( 1 + ( nS_pdv / 100 ) ) ), ;
+         ZAO_VRIJEDNOST() )
+      nPDV := Round( ( nUU_fakt / ( 1 + ( nS_pdv / 100 ) ) * ;
+         ( nS_pdv / 100 ) ), ZAO_VRIJEDNOST() )
+      nUkupno := Round( nUU_fakt, ZAO_VRIJEDNOST() )
 
 
-	// pa ispisi tu stavku
+      // pa ispisi tu stavku
 
-	// rbr
-	? PADL( ALLTRIM( STR( ++nRbr ) ), 4 ) + "."
+      // rbr
+      ? PadL( AllTrim( Str( ++nRbr ) ), 4 ) + "."
 
-	// operater
-	@ prow(), pcol()+1 SAY PADR( ALLTRIM( _vrsta_p ), 40 )
+      // operater
+      @ PRow(), PCol() + 1 SAY PadR( AllTrim( _vrsta_p ), 40 )
 	
-	// total
-	@ prow(), nRow := pcol()+1 SAY STR( nUkupno, _NUM, _DEC ) ;
-		PICT PIC_IZN 
+      // total
+      @ PRow(), nRow := PCol() + 1 SAY Str( nUkupno, _NUM, _DEC ) ;
+         PICT PIC_IZN
 
-	// dodaj na total
+      // dodaj na total
 
-	nT_ukupno += nUkupno
-	nT_osnovica += nOsnovica
-	nT_pdv += nPDV
+      nT_ukupno += nUkupno
+      nT_osnovica += nOsnovica
+      nT_pdv += nPDV
 
-enddo
+   ENDDO
 
-// ispisi sada total
-? cLine
+   // ispisi sada total
+   ? cLine
 
-? "UKUPNO:"
-@ prow(), nRow SAY STR( nT_Ukupno, _NUM, _DEC ) PICT PIC_IZN
+   ? "UKUPNO:"
+   @ PRow(), nRow SAY Str( nT_Ukupno, _NUM, _DEC ) PICT PIC_IZN
 
-? cLine
+   ? cLine
 
-return
+   RETURN
 
 
 
@@ -871,345 +878,347 @@ return
 // stampa rekapitulacije
 // varijanta po operaterima
 // ---------------------------------------------
-static function _st_mp_oper( nT_osnovica, nT_pdv, nT_ukupno )
-local nOperater
-local cOper_naz
-local nOsnovica
-local nPDV
-local nUkupno
-local nRbr := 0
-local nRow := 35
-local cLine := ""
-local cF_tipdok
-local cF_firma
-local cF_brdok
+STATIC FUNCTION _st_mp_oper( nT_osnovica, nT_pdv, nT_ukupno )
 
-nT_osnovica := 0
-nT_pdv := 0
-nT_ukupno := 0
+   LOCAL nOperater
+   LOCAL cOper_naz
+   LOCAL nOsnovica
+   LOCAL nPDV
+   LOCAL nUkupno
+   LOCAL nRbr := 0
+   LOCAL nRow := 35
+   LOCAL cLine := ""
+   LOCAL cF_tipdok
+   LOCAL cF_firma
+   LOCAL cF_brdok
 
-// vraca liniju
-g_l_mpop( @cLine )
+   nT_osnovica := 0
+   nT_pdv := 0
+   nT_ukupno := 0
 
-// zaglavlje pregled po robi
-s_z_mpop( cLine )
+   // vraca liniju
+   g_l_mpop( @cLine )
 
-select r_export
-// po operaterima
-set order to tag "3"
-go top
+   // zaglavlje pregled po robi
+   s_z_mpop( cLine )
 
-do while !EOF()
+   SELECT r_export
+   // po operaterima
+   SET ORDER TO TAG "3"
+   GO TOP
 
-	nOperater := field->operater
-	cOper_naz := ""
+   DO WHILE !Eof()
 
-	// ako postoji operater
-	if nOperater <> 0
+      nOperater := field->operater
+      cOper_naz := ""
 
-		nTArea := SELECT()
+      // ako postoji operater
+      IF nOperater <> 0
 
-		cOper_naz := GetFullUserName( nOperater )
-		cOper_naz := "(" + ALLTRIM( STR( nOperater ) ) + ") " + ;
-			cOper_naz
+         nTArea := Select()
 
-		select (nTArea)
-	endif
+         cOper_naz := GetFullUserName( nOperater )
+         cOper_naz := "(" + AllTrim( Str( nOperater ) ) + ") " + ;
+            cOper_naz
 
-	nOsnovica := 0
-	nPDV := 0
-	nUkupno := 0
-	nS_pdv := 0
-	nU_fakt := 0
-	nUU_fakt := 0
+         SELECT ( nTArea )
+      ENDIF
 
-	do while !EOF() .and. field->operater == nOperater 
+      nOsnovica := 0
+      nPDV := 0
+      nUkupno := 0
+      nS_pdv := 0
+      nU_fakt := 0
+      nUU_fakt := 0
+
+      DO WHILE !Eof() .AND. field->operater == nOperater
 	
-		cF_brdok := field->brdok
-		cF_tipdok := field->idtipdok
-		cF_firma := field->idfirma
+         cF_brdok := field->brdok
+         cF_tipdok := field->idtipdok
+         cF_firma := field->idfirma
 
-		do while !EOF() .and. field->operater == nOperater .and. ;
-			cF_firma + cF_tipdok + cF_brdok == field->idfirma + ;
-				field->idtipdok + field->brdok
+         DO WHILE !Eof() .AND. field->operater == nOperater .AND. ;
+               cF_firma + cF_tipdok + cF_brdok == field->idfirma + ;
+               field->idtipdok + field->brdok
 		
-			nU_fakt := field->uk_fakt
-			nS_pdv := field->s_pdv
-			nOsnovica += field->kolicina * field->c_bpdv
-			nPDV += field->kolicina * field->pdv
+            nU_fakt := field->uk_fakt
+            nS_pdv := field->s_pdv
+            nOsnovica += field->kolicina * field->c_bpdv
+            nPDV += field->kolicina * field->pdv
 
-			skip
-		enddo
+            SKIP
+         ENDDO
 
-		nUU_fakt += nU_fakt
+         nUU_fakt += nU_fakt
 
-	enddo
+      ENDDO
 
-	// zaokruzi
-	nOsnovica := ROUND( ( nUU_fakt / ( 1 + ( nS_pdv/100 )) ), ;
-		ZAO_VRIJEDNOST() )
-	nPDV := ROUND( ( nUU_fakt / ( 1 + ( nS_pdv/100 ) ) * ;
-		(nS_pdv/100)) , ZAO_VRIJEDNOST() )
-	nUkupno := ROUND( nUU_fakt , ZAO_VRIJEDNOST() )
+      // zaokruzi
+      nOsnovica := Round( ( nUU_fakt / ( 1 + ( nS_pdv / 100 ) ) ), ;
+         ZAO_VRIJEDNOST() )
+      nPDV := Round( ( nUU_fakt / ( 1 + ( nS_pdv / 100 ) ) * ;
+         ( nS_pdv / 100 ) ), ZAO_VRIJEDNOST() )
+      nUkupno := Round( nUU_fakt, ZAO_VRIJEDNOST() )
 
 
-	// pa ispisi tu stavku
+      // pa ispisi tu stavku
 
-	// rbr
-	? PADL( ALLTRIM( STR( ++nRbr ) ), 4 ) + "."
+      // rbr
+      ? PadL( AllTrim( Str( ++nRbr ) ), 4 ) + "."
 
-	// operater
-	@ prow(), pcol()+1 SAY PADR( ALLTRIM( cOper_naz ), 40 )
+      // operater
+      @ PRow(), PCol() + 1 SAY PadR( AllTrim( cOper_naz ), 40 )
 	
-	// total
-	@ prow(), nRow := pcol()+1 SAY STR( nUkupno, _NUM, _DEC ) ;
-		PICT PIC_IZN 
+      // total
+      @ PRow(), nRow := PCol() + 1 SAY Str( nUkupno, _NUM, _DEC ) ;
+         PICT PIC_IZN
 
-	// pdv
-	//@ prow(), pcol()+1 SAY STR( nPDV, _NUM, _DEC ) PICT PIC_IZN
+      // pdv
+      // @ prow(), pcol()+1 SAY STR( nPDV, _NUM, _DEC ) PICT PIC_IZN
 
-	// osnovica
-	//@ prow(), pcol()+1 SAY STR( nOsnovica, _NUM, _DEC ) PICT PIC_IZN 
+      // osnovica
+      // @ prow(), pcol()+1 SAY STR( nOsnovica, _NUM, _DEC ) PICT PIC_IZN
 
-	// dodaj na total
+      // dodaj na total
 
-	nT_ukupno += nUkupno
-	nT_osnovica += nOsnovica
-	nT_pdv += nPDV
+      nT_ukupno += nUkupno
+      nT_osnovica += nOsnovica
+      nT_pdv += nPDV
 
-enddo
+   ENDDO
 
-// ispisi sada total
-? cLine
+   // ispisi sada total
+   ? cLine
 
-? "UKUPNO:"
-@ prow(), nRow SAY STR( nT_Ukupno, _NUM, _DEC ) PICT PIC_IZN
-//@ prow(), pcol()+1 SAY STR( nT_pdv, _NUM, _DEC ) PICT PIC_IZN
-//@ prow(), pcol()+1 SAY STR( nT_ukupno, _NUM, _DEC ) PICT PIC_IZN
+   ? "UKUPNO:"
+   @ PRow(), nRow SAY Str( nT_Ukupno, _NUM, _DEC ) PICT PIC_IZN
+   // @ prow(), pcol()+1 SAY STR( nT_pdv, _NUM, _DEC ) PICT PIC_IZN
+   // @ prow(), pcol()+1 SAY STR( nT_ukupno, _NUM, _DEC ) PICT PIC_IZN
 
-? cLine
+   ? cLine
 
-return
+   RETURN
 
 
 // ---------------------------------------------
 // stampa rekapitulacije
 // varijanta po robama
 // ---------------------------------------------
-static function _st_mp_roba()
-local cRoba_id 
-local nOsnovica
-local nPDV
-local nUkupno
-local nKolicina
-local nT_kolicina := 0
-local nRbr := 0
-local nRow := 35
-local cLine := ""
-local nT_osnovica := 0
-local nT_pdv := 0
-local nT_ukupno := 0
+STATIC FUNCTION _st_mp_roba()
 
-// vraca liniju
-g_l_mproba( @cLine )
+   LOCAL cRoba_id
+   LOCAL nOsnovica
+   LOCAL nPDV
+   LOCAL nUkupno
+   LOCAL nKolicina
+   LOCAL nT_kolicina := 0
+   LOCAL nRbr := 0
+   LOCAL nRow := 35
+   LOCAL cLine := ""
+   LOCAL nT_osnovica := 0
+   LOCAL nT_pdv := 0
+   LOCAL nT_ukupno := 0
 
-// zaglavlje pregled po robi
-s_z_mproba( cLine )
+   // vraca liniju
+   g_l_mproba( @cLine )
 
-select r_export
-set order to tag "2"
-go top
+   // zaglavlje pregled po robi
+   s_z_mproba( cLine )
 
-do while !EOF()
+   SELECT r_export
+   SET ORDER TO TAG "2"
+   GO TOP
 
-	cRoba_id := field->roba_id
-	cRoba_naz := field->roba_naz
+   DO WHILE !Eof()
 
-	nOsnovica := 0
-	nPDV := 0
-	nS_pdv := 0
-	nUkupno := 0
-	nKolicina := 0
+      cRoba_id := field->roba_id
+      cRoba_naz := field->roba_naz
 
-	do while !EOF() .and. field->roba_id == cRoba_id
+      nOsnovica := 0
+      nPDV := 0
+      nS_pdv := 0
+      nUkupno := 0
+      nKolicina := 0
+
+      DO WHILE !Eof() .AND. field->roba_id == cRoba_id
 		
-		nS_pdv := field->s_pdv
-		nOsnovica += field->kolicina * field->c_bpdv
-		nPDV += field->kolicina * field->pdv
-		nKolicina += field->kolicina
+         nS_pdv := field->s_pdv
+         nOsnovica += field->kolicina * field->c_bpdv
+         nPDV += field->kolicina * field->pdv
+         nKolicina += field->kolicina
 
-		skip
-	enddo
+         SKIP
+      ENDDO
 
-	// zaokruzi
-	nOsnovica := ROUND(nOsnovica, ZAO_VRIJEDNOST() )
-	nPDV := ROUND( (nOsnovica * (nS_pdv/100)) , ZAO_VRIJEDNOST() + _ZAOK )
-	nUkupno := ROUND( nOsnovica + nPDV , ZAO_VRIJEDNOST() )
+      // zaokruzi
+      nOsnovica := Round( nOsnovica, ZAO_VRIJEDNOST() )
+      nPDV := Round( ( nOsnovica * ( nS_pdv / 100 ) ), ZAO_VRIJEDNOST() + _ZAOK )
+      nUkupno := Round( nOsnovica + nPDV, ZAO_VRIJEDNOST() )
 
 
-	// pa ispisi tu stavku
+      // pa ispisi tu stavku
 
-	? PADL( ALLTRIM( STR( ++nRbr ) ), 4 ) + "."
+      ? PadL( AllTrim( Str( ++nRbr ) ), 4 ) + "."
 
-	@ prow(), pcol()+1 SAY PADR( ALLTRIM( cRoba_id ) + ;
-		"-" + ALLTRIM( cRoba_naz ), 50 )
+      @ PRow(), PCol() + 1 SAY PadR( AllTrim( cRoba_id ) + ;
+         "-" + AllTrim( cRoba_naz ), 50 )
 	
-	@ prow(), nRow := pcol()+1 SAY STR( nKolicina, 12, 2 )
+      @ PRow(), nRow := PCol() + 1 SAY Str( nKolicina, 12, 2 )
 
 	
-	// dodaj na total
+      // dodaj na total
 
-	nT_kolicina += nKolicina
+      nT_kolicina += nKolicina
 
-enddo
+   ENDDO
 
-// ispisi sada total
-? cLine
+   // ispisi sada total
+   ? cLine
 
-? "UKUPNO:"
-@ prow(), nRow SAY STR( nT_kolicina, 12, 2 )
+   ? "UKUPNO:"
+   @ PRow(), nRow SAY Str( nT_kolicina, 12, 2 )
 
-? cLine
+   ? cLine
 
-return
+   RETURN
 
 
 // -----------------------------------------
 // vraca liniju za pregled po robi
 // -----------------------------------------
-static function g_l_mproba( cLine )
+STATIC FUNCTION g_l_mproba( cLine )
 
-cLine := ""
+   cLine := ""
 
-cLine += REPLICATE("-", 5)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 50)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
-//cLine += SPACE(1)
-//cLine += REPLICATE("-", 12)
-//cLine += SPACE(1)
-//cLine += REPLICATE("-", 12)
-//cLine += SPACE(1)
-//cLine += REPLICATE("-", 12)
+   cLine += Replicate( "-", 5 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 50 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   // cLine += SPACE(1)
+   // cLine += REPLICATE("-", 12)
+   // cLine += SPACE(1)
+   // cLine += REPLICATE("-", 12)
+   // cLine += SPACE(1)
+   // cLine += REPLICATE("-", 12)
 
-return
+   RETURN
 
 
 // -----------------------------------------
 // zaglavlje za pregled po robama
 // -----------------------------------------
-static function s_z_mproba( cLine )
+STATIC FUNCTION s_z_mproba( cLine )
 
-cTxt := ""
+   cTxt := ""
 
-cTxt += PADR("r.br", 5)
-cTxt += SPACE(1)
-cTxt += PADR("roba (id/naziv)", 50)
-cTxt += SPACE(1)
-cTxt += PADR("kolicina", 12)
-//cTxt += SPACE(1)
-//cTxt += PADR("osnovica", 12)
-//cTxt += SPACE(1)
-//cTxt += PADR("pdv", 12)
-//cTxt += SPACE(1)
-//cTxt += PADR("ukupno", 12)
+   cTxt += PadR( "r.br", 5 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "roba (id/naziv)", 50 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "kolicina", 12 )
+   // cTxt += SPACE(1)
+   // cTxt += PADR("osnovica", 12)
+   // cTxt += SPACE(1)
+   // cTxt += PADR("pdv", 12)
+   // cTxt += SPACE(1)
+   // cTxt += PADR("ukupno", 12)
 
-? "Realizacija po robi:"
-? cLine
-? cTxt
-? cLine
+   ? "Realizacija po robi:"
+   ? cLine
+   ? cTxt
+   ? cLine
 
-return
-
-// -----------------------------------------
-// vraca liniju za pregled po robi
-// -----------------------------------------
-static function g_l_mptip( cLine )
-
-cLine := ""
-
-cLine += REPLICATE("-", 5)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 40)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
-
-return
-
-
-
+   RETURN
 
 // -----------------------------------------
 // vraca liniju za pregled po robi
 // -----------------------------------------
-static function g_l_mpop( cLine )
+STATIC FUNCTION g_l_mptip( cLine )
 
-cLine := ""
+   cLine := ""
 
-cLine += REPLICATE("-", 5)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 40)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
-//cLine += SPACE(1)
-//cLine += REPLICATE("-", 12)
-//cLine += SPACE(1)
-//cLine += REPLICATE("-", 12)
+   cLine += Replicate( "-", 5 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 40 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
 
-return
+   RETURN
+
+
+
+
+// -----------------------------------------
+// vraca liniju za pregled po robi
+// -----------------------------------------
+STATIC FUNCTION g_l_mpop( cLine )
+
+   cLine := ""
+
+   cLine += Replicate( "-", 5 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 40 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   // cLine += SPACE(1)
+   // cLine += REPLICATE("-", 12)
+   // cLine += SPACE(1)
+   // cLine += REPLICATE("-", 12)
+
+   RETURN
 
 
 // -----------------------------------------
 // zaglavlje za pregled po robama
 // -----------------------------------------
-static function s_z_mptip( cLine )
+STATIC FUNCTION s_z_mptip( cLine )
 
-cTxt := ""
+   cTxt := ""
 
-cTxt += PADR("r.br", 5)
-cTxt += SPACE(1)
-cTxt += PADR("Tip partnera", 40)
-cTxt += SPACE(1)
-cTxt += PADR("osnovica", 12)
-cTxt += SPACE(1)
-cTxt += PADR("pdv", 12)
-cTxt += SPACE(1)
-cTxt += PADR("ukupno", 12)
+   cTxt += PadR( "r.br", 5 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "Tip partnera", 40 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "osnovica", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "pdv", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "ukupno", 12 )
 
-? "Realizacija po tipu partnera:"
-? cLine
-? cTxt
-? cLine
+   ? "Realizacija po tipu partnera:"
+   ? cLine
+   ? cTxt
+   ? cLine
 
-return
+   RETURN
 
 
 
 // -----------------------------------------
 // zaglavlje za pregled po vrsti placanja
 // -----------------------------------------
-static function s_z_mpvrstap( cLine )
+STATIC FUNCTION s_z_mpvrstap( cLine )
 
-cTxt := ""
+   cTxt := ""
 
-cTxt += PADR("r.br", 5)
-cTxt += SPACE(1)
-cTxt += PADR("vrsta placanja (id/naziv)", 40)
-cTxt += SPACE(1)
-cTxt += PADR("ukupno", 12)
+   cTxt += PadR( "r.br", 5 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "vrsta placanja (id/naziv)", 40 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "ukupno", 12 )
 
-?
-? "Realizacija po vrstama placanja:"
-? cLine
-? cTxt
-? cLine
+   ?
+   ? "Realizacija po vrstama placanja:"
+   ? cLine
+   ? cTxt
+   ? cLine
 
-return
+   RETURN
 
 
 
@@ -1217,79 +1226,76 @@ return
 // -----------------------------------------
 // zaglavlje za pregled po robama
 // -----------------------------------------
-static function s_z_mpop( cLine )
+STATIC FUNCTION s_z_mpop( cLine )
 
-cTxt := ""
+   cTxt := ""
 
-cTxt += PADR("r.br", 5)
-cTxt += SPACE(1)
-cTxt += PADR("operater (id/naziv)", 40)
-cTxt += SPACE(1)
-cTxt += PADR("ukupno", 12)
-//cTxt += SPACE(1)
-//cTxt += PADR("pdv", 12)
-//cTxt += SPACE(1)
-//cTxt += PADR("ukupno", 12)
+   cTxt += PadR( "r.br", 5 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "operater (id/naziv)", 40 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "ukupno", 12 )
+   // cTxt += SPACE(1)
+   // cTxt += PADR("pdv", 12)
+   // cTxt += SPACE(1)
+   // cTxt += PADR("ukupno", 12)
 
-? "Realizacija po opearterima:"
-? cLine
-? cTxt
-? cLine
+   ? "Realizacija po opearterima:"
+   ? cLine
+   ? cTxt
+   ? cLine
 
-return
+   RETURN
 
 
 // -----------------------------------------
 // vraca liniju za pregled po dokumentima
 // -----------------------------------------
-static function g_l_mpdok( cLine )
+STATIC FUNCTION g_l_mpdok( cLine )
 
-cLine := ""
+   cLine := ""
 
-cLine += REPLICATE("-", 5)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 16)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 40)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 20)
+   cLine += Replicate( "-", 5 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 16 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 40 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 20 )
 
-return
+   RETURN
 
 
 // -----------------------------------------
 // zaglavlje za pregled po robama
 // -----------------------------------------
-static function s_z_mpdok( cLine )
+STATIC FUNCTION s_z_mpdok( cLine )
 
-cTxt := ""
+   cTxt := ""
 
-cTxt += PADR("r.br", 5)
-cTxt += SPACE(1)
-cTxt += PADR("dokument", 16)
-cTxt += SPACE(1)
-cTxt += PADR("partner (id/naziv)", 40)
-cTxt += SPACE(1)
-cTxt += PADR("osnovica", 12)
-cTxt += SPACE(1)
-cTxt += PADR("pdv", 12)
-cTxt += SPACE(1)
-cTxt += PADR("ukupno", 12)
-cTxt += SPACE(1)
-cTxt += PADR("operater", 20)
+   cTxt += PadR( "r.br", 5 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "dokument", 16 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "partner (id/naziv)", 40 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "osnovica", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "pdv", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "ukupno", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "operater", 20 )
 
-? "Realizacija po dokumentima:"
-? cLine
-? cTxt
-? cLine
+   ? "Realizacija po dokumentima:"
+   ? cLine
+   ? cTxt
+   ? cLine
 
-return
-
-
-
+   RETURN

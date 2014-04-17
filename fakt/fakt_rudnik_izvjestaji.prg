@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,254 +16,259 @@
 // -------------------------------------------------
 // specificne rudnik opcije
 // -------------------------------------------------
-function mnu_sp_rudnik()
-local _opc := {}
-local _opcexe := {}
-local _izbor := 1
+FUNCTION mnu_sp_rudnik()
 
-AADD( _opc, "1. isporuceni asortiman po kupcima                " )
-AADD( _opcexe,{|| rpt_sp_isporuke_po_kup_asort()} )
-AADD( _opc, "2. fakture asortimana za kupca" )
-AADD( _opcexe,{|| rpt_sp_fakture_asort()} )
-AADD( _opc, "3. isporuceni asortiman za kupca po pogonima" )
-AADD( _opcexe,{|| rpt_sp_isporuke_pogon()} )
-AADD( _opc, "4. pregled faktura usluga za kupca" )
-AADD( _opcexe,{|| rpt_sp_fakture_usluga()})
-AADD( _opc, "5. pregled poreza" )
-AADD( _opcexe,{|| rpt_sp_pregled_poreza()})
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
 
-f18_menu("rizv", .f., _izbor, _opc, _opcexe )
+   AAdd( _opc, "1. isporučeni asortiman po kupcima                " )
+   AAdd( _opcexe, {|| rpt_sp_isporuke_po_kup_asort() } )
+   AAdd( _opc, "2. fakture asortimana za kupca" )
+   AAdd( _opcexe, {|| rpt_sp_fakture_asort() } )
+   AAdd( _opc, "3. isporučeni asortiman za kupca po pogonima" )
+   AAdd( _opcexe, {|| rpt_sp_isporuke_pogon() } )
+   AAdd( _opc, "4. pregled faktura usluga za kupca" )
+   AAdd( _opcexe, {|| rpt_sp_fakture_usluga() } )
+   AAdd( _opc, "5. pregled poreza" )
+   AAdd( _opcexe, {|| rpt_sp_pregled_poreza() } )
 
-return
+   f18_menu( "rizv", .F., _izbor, _opc, _opcexe )
+
+   RETURN
 
 
 // -------------------------------------------------
 // isporuceni asortiman po kupcima i asortimanu
 // -------------------------------------------------
-function rpt_sp_isporuke_po_kup_asort()
+FUNCTION rpt_sp_isporuke_po_kup_asort()
 
-O_PARTN
-O_FAKT
+   O_PARTN
+   O_FAKT
 
-qqRoba:=space(60)
-qqRoba1:=space(60); cRoba1:=SPACE(10)
-qqRoba2:=space(60); cRoba2:=SPACE(10)
-qqRoba3:=space(60); cRoba3:=SPACE(10)
-qqRoba4:=space(60); cRoba4:=SPACE(10)
-qqRoba5:=space(60); cRoba5:=SPACE(10)
-qqRoba6:=space(60); cRoba6:=SPACE(10)
-dDatOd:=ctod(""); dDatDo:=date(); gOstr:="D"
-cProsCij:="N"
+   qqRoba := Space( 60 )
+   qqRoba1 := Space( 60 ); cRoba1 := Space( 10 )
+   qqRoba2 := Space( 60 ); cRoba2 := Space( 10 )
+   qqRoba3 := Space( 60 ); cRoba3 := Space( 10 )
+   qqRoba4 := Space( 60 ); cRoba4 := Space( 10 )
+   qqRoba5 := Space( 60 ); cRoba5 := Space( 10 )
+   qqRoba6 := Space( 60 ); cRoba6 := Space( 10 )
+   dDatOd := CToD( "" ); dDatDo := Date(); gOstr := "D"
+   cProsCij := "N"
 
-O_PARAMS
-private cSection:="5",cHistory:=" "; aHistory:={}
+   O_PARAMS
+   PRIVATE cSection := "5", cHistory := " "; aHistory := {}
 
-Params1()
+   Params1()
 
-RPar("d1",@dDatOd); RPar("d2",@dDatDo)
-RPar("O1",@cRoba1); RPar("O2",@cRoba2); RPar("O3",@cRoba3)
-RPar("O4",@cRoba4); RPar("O5",@cRoba5); RPar("O6",@cRoba6)
-RPar("F0",@qqRoba)
-RPar("F1",@qqRoba1); RPar("F2",@qqRoba2); RPar("F3",@qqRoba3)
-RPar("F4",@qqRoba4); RPar("F5",@qqRoba5); RPar("F6",@qqRoba6)
-RPar("F9",@cProsCij)
+   RPar( "d1", @dDatOd ); RPar( "d2", @dDatDo )
+   RPar( "O1", @cRoba1 ); RPar( "O2", @cRoba2 ); RPar( "O3", @cRoba3 )
+   RPar( "O4", @cRoba4 ); RPar( "O5", @cRoba5 ); RPar( "O6", @cRoba6 )
+   RPar( "F0", @qqRoba )
+   RPar( "F1", @qqRoba1 ); RPar( "F2", @qqRoba2 ); RPar( "F3", @qqRoba3 )
+   RPar( "F4", @qqRoba4 ); RPar( "F5", @qqRoba5 ); RPar( "F6", @qqRoba6 )
+   RPar( "F9", @cProsCij )
 
-qqRoba:=PADR(qqRoba,60)
-qqRoba1:=PADR(qqRoba1,60); qqRoba2:=PADR(qqRoba2,60); qqRoba3:=PADR(qqRoba3,60)
-qqRoba4:=PADR(qqRoba4,60); qqRoba5:=PADR(qqRoba5,60); qqRoba6:=PADR(qqRoba6,60)
-
-
-Box(,12,70)
-do while .t.
-
- @ m_X+1,m_Y+15 SAY "NAZIV               USLOV"
-
- @ m_X+2,m_Y+ 2 SAY "Asortiman 1" GET cRoba1
- @ m_X+2,m_Y+26 GET qqRoba1    pict "@!S30"
- @ m_X+3,m_Y+ 2 SAY "Asortiman 2" GET cRoba2
- @ m_X+3,m_Y+26 GET qqRoba2    pict "@!S30"
- @ m_X+4,m_Y+ 2 SAY "Asortiman 3" GET cRoba3
- @ m_X+4,m_Y+26 GET qqRoba3    pict "@!S30"
- @ m_X+5,m_Y+ 2 SAY "Asortiman 4" GET cRoba4
- @ m_X+5,m_Y+26 GET qqRoba4    pict "@!S30"
- @ m_X+6,m_Y+ 2 SAY "Asortiman 5" GET cRoba5
- @ m_X+6,m_Y+26 GET qqRoba5    pict "@!S30"
- @ m_X+7,m_Y+ 2 SAY "Asortiman 6" GET cRoba6
- @ m_X+7,m_Y+26 GET qqRoba6    pict "@!S30"
-
- @ m_X+ 8,m_Y+2 SAY "USLOV ZA POGON (prazno-svi)" GET qqRoba pict "@!S30"
-
- @ m_X+ 9,m_Y+2 SAY "Za period od" GET dDatOD
- @ m_X+ 9,col()+2 SAY "do" GET dDatDo
-
- @ m_X+10,m_y+2 SAY "Ukljuceno ostranicavanje ? (D/N)" GET gOstr VALID gOstr$"DN" PICT "@!"
- @ m_X+11,m_y+2 SAY "Prikazati prosjecne cijene ? (D/N)" GET cProsCij VALID cProsCij$"DN" PICT "@!"
-
- read; ESC_BCR
- aUsl0:=Parsiraj(qqRoba,"IDROBA")
- aUsl1:=Parsiraj(qqRoba1,"IDROBA")
- aUsl2:=Parsiraj(qqRoba2,"IDROBA")
- aUsl3:=Parsiraj(qqRoba3,"IDROBA")
- aUsl4:=Parsiraj(qqRoba4,"IDROBA")
- aUsl5:=Parsiraj(qqRoba5,"IDROBA")
- aUsl6:=Parsiraj(qqRoba6,"IDROBA")
- if aUsl0<>NIL .and. aUsl1<>NIL .and. aUsl2<>NIL .and. aUsl3<>NIL .and. aUsl4<>NIL .and. aUsl5<>NIL .and. aUsl6<>NIL
-    exit
- endif
-enddo
-BoxC()
-
-Params2()
-qqRoba:=trim(qqRoba)
-qqRoba1:=trim(qqRoba1); qqRoba2:=trim(qqRoba2); qqRoba3:=trim(qqRoba3)
-qqRoba4:=trim(qqRoba4); qqRoba5:=trim(qqRoba5); qqRoba6:=trim(qqRoba6)
-
-WPar("d1",dDatOd) ; WPar("d2",dDatDo)
-WPar("O1",cRoba1) ; WPar("O2",cRoba2) ; WPar("O3",cRoba3)
-WPar("O4",cRoba4) ; WPar("O5",cRoba5) ; WPar("O6",cRoba6)
-WPar("F0",qqRoba)
-WPar("F1",qqRoba1); WPar("F2",qqRoba2); WPar("F3",qqRoba3)
-WPar("F4",qqRoba4); WPar("F5",qqRoba5); WPar("F6",qqRoba6)
-WPar("F9",cProsCij)
-
-select params
-use
-
-SELECT FAKT
-
-cTMPFAKT:=""
-cFilt  := "DATDOK>=dDatOd .and. DATDOK<=dDatDo .and. " + aUsl0
-//  INDEX ON &cSort1 TO ( cTMPFAKT := TMPFAKT() ) FOR &cFilt EVAL(TekRec()) EVERY 1
-
-set order to tag "IDPARTN"
-set filter to &cFilt 
-
-GO TOP
-
-if eof()
-	Msg("Ne postoje trazeni podaci...",6)
-	my_close_all_dbf()
-    return
-endif
-
-START PRINT CRET
-
-PRIVATE cIdPartner:="", cNPartnera:="", nUkRoba:=0, nUkIznos:=0
-PRIVATE nRoba1:=0, nRoba2:=0, nRoba3:=0, nRoba4:=0, nRoba5:=0, nRoba6:=0
-PRIVATE nPCR1:=nPCR2:=nPCR3:=nPCR4:=nPCR5:=nPCR6:=nPCRU:=0
-PRIVATE nIzR1:=nIzR2:=nIzR3:=nIzR4:=nIzR5:=nIzR6:=0
-
-IF cProsCij=="D"
-
-  aKol:={ { "SIFRA"       , {|| cIdPartner             }, .f., "C", 6, 0, 1, 1},;
-        { "KUPAC"       , {|| cNPartnera             }, .f., "C",50, 0, 1, 2},;
-        { cRoba1        , {|| nRoba1                 }, .t., "N",12, 2, 1, 3},;
-        { cRoba2        , {|| nRoba2                 }, .t., "N",12, 2, 1, 4},;
-        { cRoba3        , {|| nRoba3                 }, .t., "N",12, 2, 1, 5},;
-        { cRoba4        , {|| nRoba4                 }, .t., "N",12, 2, 1, 6},;
-        { cRoba5        , {|| nRoba5                 }, .t., "N",12, 2, 1, 7},;
-        { cRoba6        , {|| nRoba6                 }, .t., "N",12, 2, 1, 8},;
-        { "UKUPNO KOL." , {|| nUkRoba                }, .t., "N",12, 2, 1, 9},;
-        { "UKUPNO IZNOS", {|| ROUND(nUkIznos,gFZaok) }, .t., "N",12, 2, 3, 9} }
-
-  AADD(aKol, { "PROSJ.CIJ.", {|| nPCR1}, .f., "N",12,2,2,3 } )
-  AADD(aKol, { "IZNOS"     , {|| nIzR1}, .t., "N",12,2,3,3 } )
-  AADD(aKol, { "PROSJ.CIJ.", {|| nPCR2}, .f., "N",12,2,2,4 } )
-  AADD(aKol, { "IZNOS"     , {|| nIzR2}, .t., "N",12,2,3,4 } )
-  AADD(aKol, { "PROSJ.CIJ.", {|| nPCR3}, .f., "N",12,2,2,5 } )
-  AADD(aKol, { "IZNOS"     , {|| nIzR3}, .t., "N",12,2,3,5 } )
-  AADD(aKol, { "PROSJ.CIJ.", {|| nPCR4}, .f., "N",12,2,2,6 } )
-  AADD(aKol, { "IZNOS"     , {|| nIzR4}, .t., "N",12,2,3,6 } )
-  AADD(aKol, { "PROSJ.CIJ.", {|| nPCR5}, .f., "N",12,2,2,7 } )
-  AADD(aKol, { "IZNOS"     , {|| nIzR5}, .t., "N",12,2,3,7 } )
-  AADD(aKol, { "PROSJ.CIJ.", {|| nPCR6}, .f., "N",12,2,2,8 } )
-  AADD(aKol, { "IZNOS"     , {|| nIzR6}, .t., "N",12,2,3,8 } )
-  AADD(aKol, { "PROSJ.CIJ.", {|| nPCRU}, .f., "N",12,2,2,9 } )
-
-ELSE
-
-  aKol:={ { "SIFRA"       , {|| cIdPartner             }, .f., "C", 6, 0, 1, 1},;
-        { "KUPAC"       , {|| cNPartnera             }, .f., "C",50, 0, 1, 2},;
-        { cRoba1        , {|| nRoba1                 }, .t., "N",10, 2, 1, 3},;
-        { cRoba2        , {|| nRoba2                 }, .t., "N",10, 2, 1, 4},;
-        { cRoba3        , {|| nRoba3                 }, .t., "N",10, 2, 1, 5},;
-        { cRoba4        , {|| nRoba4                 }, .t., "N",10, 2, 1, 6},;
-        { cRoba5        , {|| nRoba5                 }, .t., "N",10, 2, 1, 7},;
-        { cRoba6        , {|| nRoba6                 }, .t., "N",10, 2, 1, 8},;
-        { "UKUPNO KOL." , {|| nUkRoba                }, .t., "N",11, 2, 1, 9},;
-        { "UKUPNO IZNOS", {|| ROUND(nUkIznos,gFZaok) }, .t., "N",12, 2, 1,10} }
-
-ENDIF
-
-?
-P_12CPI
-
-?? space(gnLMarg); ?? "FAKT: Izvjestaj na dan",date()
-? space(gnLMarg); IspisFirme("")
-? space(gnLMarg); ?? "POGONI: " + IF( EMPTY(qqRoba) , "SVI" , qqRoba )
-
-StampaTabele(aKol,{|| FSvaki1()},,gTabela,,;
-     ,"Isporuceni asortiman - pregled po kupcima za period od "+DTOC(ddatod)+" do "+DTOC(ddatdo),;
-                             {|| FFor1()},IF(gOstr=="D",,-1),,cProsCij=="D",,,)
-
-FF
-END PRINT
-
-my_close_all_dbf()
-return
+   qqRoba := PadR( qqRoba, 60 )
+   qqRoba1 := PadR( qqRoba1, 60 ); qqRoba2 := PadR( qqRoba2, 60 ); qqRoba3 := PadR( qqRoba3, 60 )
+   qqRoba4 := PadR( qqRoba4, 60 ); qqRoba5 := PadR( qqRoba5, 60 ); qqRoba6 := PadR( qqRoba6, 60 )
 
 
+   Box(, 12, 70 )
+   DO WHILE .T.
 
-static function FFor1()
+      @ m_X + 1, m_Y + 15 SAY "NAZIV               USLOV"
 
-cIdPartner:=idpartner
- nRoba1:=nRoba2:=nRoba3:=nRoba4:=nRoba5:=nRoba6:=nUkRoba:=nUkIznos:=0
- nIzR1:=nIzR2:=nIzR3:=nIzR4:=nIzR5:=nIzR6:=0
- cNPartnera:=Ocitaj(F_PARTN,idpartner,"TRIM(naz)+' '+TRIM(naz2)")
+      @ m_X + 2, m_Y + 2 SAY "Asortiman 1" GET cRoba1
+      @ m_X + 2, m_Y + 26 GET qqRoba1    PICT "@!S30"
+      @ m_X + 3, m_Y + 2 SAY "Asortiman 2" GET cRoba2
+      @ m_X + 3, m_Y + 26 GET qqRoba2    PICT "@!S30"
+      @ m_X + 4, m_Y + 2 SAY "Asortiman 3" GET cRoba3
+      @ m_X + 4, m_Y + 26 GET qqRoba3    PICT "@!S30"
+      @ m_X + 5, m_Y + 2 SAY "Asortiman 4" GET cRoba4
+      @ m_X + 5, m_Y + 26 GET qqRoba4    PICT "@!S30"
+      @ m_X + 6, m_Y + 2 SAY "Asortiman 5" GET cRoba5
+      @ m_X + 6, m_Y + 26 GET qqRoba5    PICT "@!S30"
+      @ m_X + 7, m_Y + 2 SAY "Asortiman 6" GET cRoba6
+      @ m_X + 7, m_Y + 26 GET qqRoba6    PICT "@!S30"
 
- DO WHILE !EOF() .and. idpartner==cIdPartner
+      @ m_X + 8, m_Y + 2 SAY "USLOV ZA POGON (prazno-svi)" GET qqRoba PICT "@!S30"
 
-   IF &aUsl1; nRoba1+=kolicina; nIzR1+=ROUND( kolicina*cijena*PrerCij()*(1-rabat/100)*(1+porez/100) , FIELD->zaokr ); ENDIF
-   IF &aUsl2; nRoba2+=kolicina; nIzR2+=ROUND( kolicina*cijena*PrerCij()*(1-rabat/100)*(1+porez/100) , FIELD->zaokr ); ENDIF
-   IF &aUsl3; nRoba3+=kolicina; nIzR3+=ROUND( kolicina*cijena*PrerCij()*(1-rabat/100)*(1+porez/100) , FIELD->zaokr ); ENDIF
-   IF &aUsl4; nRoba4+=kolicina; nIzR4+=ROUND( kolicina*cijena*PrerCij()*(1-rabat/100)*(1+porez/100) , FIELD->zaokr ); ENDIF
-   IF &aUsl5; nRoba5+=kolicina; nIzR5+=ROUND( kolicina*cijena*PrerCij()*(1-rabat/100)*(1+porez/100) , FIELD->zaokr ); ENDIF
-   IF &aUsl6; nRoba6+=kolicina; nIzR6+=ROUND( kolicina*cijena*PrerCij()*(1-rabat/100)*(1+porez/100) , FIELD->zaokr ); ENDIF
-   IF &(aUsl1+".or."+aUsl2+".or."+aUsl3+".or."+;
-      aUsl4+".or."+aUsl5+".or."+aUsl6)
-     nUkIznos += ROUND( kolicina*cijena*PrerCij()*(1-rabat/100)*(1+porez/100) , FIELD->zaokr )
+      @ m_X + 9, m_Y + 2 SAY "Za period od" GET dDatOD
+      @ m_X + 9, Col() + 2 SAY "do" GET dDatDo
+
+      @ m_X + 10, m_y + 2 SAY "Ukljuceno ostranicavanje ? (D/N)" GET gOstr VALID gOstr $ "DN" PICT "@!"
+      @ m_X + 11, m_y + 2 SAY "Prikazati prosjecne cijene ? (D/N)" GET cProsCij VALID cProsCij $ "DN" PICT "@!"
+
+      read; ESC_BCR
+      aUsl0 := Parsiraj( qqRoba, "IDROBA" )
+      aUsl1 := Parsiraj( qqRoba1, "IDROBA" )
+      aUsl2 := Parsiraj( qqRoba2, "IDROBA" )
+      aUsl3 := Parsiraj( qqRoba3, "IDROBA" )
+      aUsl4 := Parsiraj( qqRoba4, "IDROBA" )
+      aUsl5 := Parsiraj( qqRoba5, "IDROBA" )
+      aUsl6 := Parsiraj( qqRoba6, "IDROBA" )
+      IF aUsl0 <> NIL .AND. aUsl1 <> NIL .AND. aUsl2 <> NIL .AND. aUsl3 <> NIL .AND. aUsl4 <> NIL .AND. aUsl5 <> NIL .AND. aUsl6 <> NIL
+         EXIT
+      ENDIF
+   ENDDO
+   BoxC()
+
+   Params2()
+   qqRoba := Trim( qqRoba )
+   qqRoba1 := Trim( qqRoba1 ); qqRoba2 := Trim( qqRoba2 ); qqRoba3 := Trim( qqRoba3 )
+   qqRoba4 := Trim( qqRoba4 ); qqRoba5 := Trim( qqRoba5 ); qqRoba6 := Trim( qqRoba6 )
+
+   WPar( "d1", dDatOd ) ; WPar( "d2", dDatDo )
+   WPar( "O1", cRoba1 ) ; WPar( "O2", cRoba2 ) ; WPar( "O3", cRoba3 )
+   WPar( "O4", cRoba4 ) ; WPar( "O5", cRoba5 ) ; WPar( "O6", cRoba6 )
+   WPar( "F0", qqRoba )
+   WPar( "F1", qqRoba1 ); WPar( "F2", qqRoba2 ); WPar( "F3", qqRoba3 )
+   WPar( "F4", qqRoba4 ); WPar( "F5", qqRoba5 ); WPar( "F6", qqRoba6 )
+   WPar( "F9", cProsCij )
+
+   SELECT params
+   USE
+
+   SELECT FAKT
+
+   cTMPFAKT := ""
+   cFilt  := "DATDOK>=dDatOd .and. DATDOK<=dDatDo .and. " + aUsl0
+   // INDEX ON &cSort1 TO ( cTMPFAKT := TMPFAKT() ) FOR &cFilt EVAL(TekRec()) EVERY 1
+
+   SET ORDER TO TAG "IDPARTN"
+   SET FILTER to &cFilt
+
+   GO TOP
+
+   IF Eof()
+      Msg( "Ne postoje trazeni podaci...", 6 )
+      my_close_all_dbf()
+      RETURN
    ENDIF
 
-   SKIP 1
+   START PRINT CRET
 
- ENDDO
+   PRIVATE cIdPartner := "", cNPartnera := "", nUkRoba := 0, nUkIznos := 0
+   PRIVATE nRoba1 := 0, nRoba2 := 0, nRoba3 := 0, nRoba4 := 0, nRoba5 := 0, nRoba6 := 0
+   PRIVATE nPCR1 := nPCR2 := nPCR3 := nPCR4 := nPCR5 := nPCR6 := nPCRU := 0
+   PRIVATE nIzR1 := nIzR2 := nIzR3 := nIzR4 := nIzR5 := nIzR6 := 0
 
- nPCR1 := ROUND( IF( nRoba1<>0 , nIzR1/nRoba1 , 0 ) , 2 )
- nPCR2 := ROUND( IF( nRoba2<>0 , nIzR2/nRoba2 , 0 ) , 2 )
- nPCR3 := ROUND( IF( nRoba3<>0 , nIzR3/nRoba3 , 0 ) , 2 )
- nPCR4 := ROUND( IF( nRoba4<>0 , nIzR4/nRoba4 , 0 ) , 2 )
- nPCR5 := ROUND( IF( nRoba5<>0 , nIzR5/nRoba5 , 0 ) , 2 )
- nPCR6 := ROUND( IF( nRoba6<>0 , nIzR6/nRoba6 , 0 ) , 2 )
+   IF cProsCij == "D"
 
- nUkRoba := nRoba1+nRoba2+nRoba3+nRoba4+nRoba5+nRoba6
- nPCRU := ROUND( IF( nUkRoba<>0 , nUkIznos/nUkRoba , 0 ) , 2 )
+      aKol := { { "SIFRA", {|| cIdPartner             }, .F., "C", 6, 0, 1, 1 }, ;
+         { "KUPAC", {|| cNPartnera             }, .F., "C", 50, 0, 1, 2 }, ;
+         { cRoba1, {|| nRoba1                 }, .T., "N", 12, 2, 1, 3 }, ;
+         { cRoba2, {|| nRoba2                 }, .T., "N", 12, 2, 1, 4 }, ;
+         { cRoba3, {|| nRoba3                 }, .T., "N", 12, 2, 1, 5 }, ;
+         { cRoba4, {|| nRoba4                 }, .T., "N", 12, 2, 1, 6 }, ;
+         { cRoba5, {|| nRoba5                 }, .T., "N", 12, 2, 1, 7 }, ;
+         { cRoba6, {|| nRoba6                 }, .T., "N", 12, 2, 1, 8 }, ;
+         { "UKUPNO KOL.", {|| nUkRoba                }, .T., "N", 12, 2, 1, 9 }, ;
+         { "UKUPNO IZNOS", {|| Round( nUkIznos, gFZaok ) }, .T., "N", 12, 2, 3, 9 } }
 
- SKIP -1
-return .t.
+      AAdd( aKol, { "PROSJ.CIJ.", {|| nPCR1 }, .F., "N", 12, 2, 2, 3 } )
+      AAdd( aKol, { "IZNOS", {|| nIzR1 }, .T., "N", 12, 2, 3, 3 } )
+      AAdd( aKol, { "PROSJ.CIJ.", {|| nPCR2 }, .F., "N", 12, 2, 2, 4 } )
+      AAdd( aKol, { "IZNOS", {|| nIzR2 }, .T., "N", 12, 2, 3, 4 } )
+      AAdd( aKol, { "PROSJ.CIJ.", {|| nPCR3 }, .F., "N", 12, 2, 2, 5 } )
+      AAdd( aKol, { "IZNOS", {|| nIzR3 }, .T., "N", 12, 2, 3, 5 } )
+      AAdd( aKol, { "PROSJ.CIJ.", {|| nPCR4 }, .F., "N", 12, 2, 2, 6 } )
+      AAdd( aKol, { "IZNOS", {|| nIzR4 }, .T., "N", 12, 2, 3, 6 } )
+      AAdd( aKol, { "PROSJ.CIJ.", {|| nPCR5 }, .F., "N", 12, 2, 2, 7 } )
+      AAdd( aKol, { "IZNOS", {|| nIzR5 }, .T., "N", 12, 2, 3, 7 } )
+      AAdd( aKol, { "PROSJ.CIJ.", {|| nPCR6 }, .F., "N", 12, 2, 2, 8 } )
+      AAdd( aKol, { "IZNOS", {|| nIzR6 }, .T., "N", 12, 2, 3, 8 } )
+      AAdd( aKol, { "PROSJ.CIJ.", {|| nPCRU }, .F., "N", 12, 2, 2, 9 } )
+
+   ELSE
+
+      aKol := { { "SIFRA", {|| cIdPartner             }, .F., "C", 6, 0, 1, 1 }, ;
+         { "KUPAC", {|| cNPartnera             }, .F., "C", 50, 0, 1, 2 }, ;
+         { cRoba1, {|| nRoba1                 }, .T., "N", 10, 2, 1, 3 }, ;
+         { cRoba2, {|| nRoba2                 }, .T., "N", 10, 2, 1, 4 }, ;
+         { cRoba3, {|| nRoba3                 }, .T., "N", 10, 2, 1, 5 }, ;
+         { cRoba4, {|| nRoba4                 }, .T., "N", 10, 2, 1, 6 }, ;
+         { cRoba5, {|| nRoba5                 }, .T., "N", 10, 2, 1, 7 }, ;
+         { cRoba6, {|| nRoba6                 }, .T., "N", 10, 2, 1, 8 }, ;
+         { "UKUPNO KOL.", {|| nUkRoba                }, .T., "N", 11, 2, 1, 9 }, ;
+         { "UKUPNO IZNOS", {|| Round( nUkIznos, gFZaok ) }, .T., "N", 12, 2, 1, 10 } }
+
+   ENDIF
+
+   ?
+   P_12CPI
+
+   ?? Space( gnLMarg ); ?? "FAKT: Izvjestaj na dan", Date()
+   ? Space( gnLMarg ); IspisFirme( "" )
+   ? Space( gnLMarg ); ?? "POGONI: " + IF( Empty( qqRoba ), "SVI", qqRoba )
+
+   StampaTabele( aKol, {|| FSvaki1() },, gTabela,, ;
+      , "Isporuceni asortiman - pregled po kupcima za period od " + DToC( ddatod ) + " do " + DToC( ddatdo ), ;
+      {|| FFor1() }, IF( gOstr == "D",, -1 ),, cProsCij == "D",,, )
+
+   FF
+   ENDPRINT
+
+   my_close_all_dbf()
+
+   RETURN
 
 
 
-static function FSvaki1()
-RETURN
+STATIC FUNCTION FFor1()
+
+   cIdPartner := idpartner
+   nRoba1 := nRoba2 := nRoba3 := nRoba4 := nRoba5 := nRoba6 := nUkRoba := nUkIznos := 0
+   nIzR1 := nIzR2 := nIzR3 := nIzR4 := nIzR5 := nIzR6 := 0
+   cNPartnera := Ocitaj( F_PARTN, idpartner, "TRIM(naz)+' '+TRIM(naz2)" )
+
+   DO WHILE !Eof() .AND. idpartner == cIdPartner
+
+      IF &aUsl1; nRoba1 += kolicina; nIzR1 += Round( kolicina * cijena * PrerCij() * ( 1 -rabat / 100 ) * ( 1 + porez / 100 ), FIELD->zaokr ); ENDIF
+      IF &aUsl2; nRoba2 += kolicina; nIzR2 += Round( kolicina * cijena * PrerCij() * ( 1 -rabat / 100 ) * ( 1 + porez / 100 ), FIELD->zaokr ); ENDIF
+      IF &aUsl3; nRoba3 += kolicina; nIzR3 += Round( kolicina * cijena * PrerCij() * ( 1 -rabat / 100 ) * ( 1 + porez / 100 ), FIELD->zaokr ); ENDIF
+      IF &aUsl4; nRoba4 += kolicina; nIzR4 += Round( kolicina * cijena * PrerCij() * ( 1 -rabat / 100 ) * ( 1 + porez / 100 ), FIELD->zaokr ); ENDIF
+      IF &aUsl5; nRoba5 += kolicina; nIzR5 += Round( kolicina * cijena * PrerCij() * ( 1 -rabat / 100 ) * ( 1 + porez / 100 ), FIELD->zaokr ); ENDIF
+      IF &aUsl6; nRoba6 += kolicina; nIzR6 += Round( kolicina * cijena * PrerCij() * ( 1 -rabat / 100 ) * ( 1 + porez / 100 ), FIELD->zaokr ); ENDIF
+      IF &( aUsl1 + ".or." + aUsl2 + ".or." + aUsl3 + ".or." + ;
+            aUsl4 + ".or." + aUsl5 + ".or." + aUsl6 )
+         nUkIznos += Round( kolicina * cijena * PrerCij() * ( 1 -rabat / 100 ) * ( 1 + porez / 100 ), FIELD->zaokr )
+      ENDIF
+
+      SKIP 1
+
+   ENDDO
+
+   nPCR1 := Round( IF( nRoba1 <> 0, nIzR1 / nRoba1, 0 ), 2 )
+   nPCR2 := Round( IF( nRoba2 <> 0, nIzR2 / nRoba2, 0 ), 2 )
+   nPCR3 := Round( IF( nRoba3 <> 0, nIzR3 / nRoba3, 0 ), 2 )
+   nPCR4 := Round( IF( nRoba4 <> 0, nIzR4 / nRoba4, 0 ), 2 )
+   nPCR5 := Round( IF( nRoba5 <> 0, nIzR5 / nRoba5, 0 ), 2 )
+   nPCR6 := Round( IF( nRoba6 <> 0, nIzR6 / nRoba6, 0 ), 2 )
+
+   nUkRoba := nRoba1 + nRoba2 + nRoba3 + nRoba4 + nRoba5 + nRoba6
+   nPCRU := Round( IF( nUkRoba <> 0, nUkIznos / nUkRoba, 0 ), 2 )
+
+   SKIP -1
+
+   RETURN .T.
+
+
+
+STATIC FUNCTION FSvaki1()
+   RETURN
 
 
 
 
-static function TekRec()
-nSlog++
- @ m_x+1, m_y+2 SAY PADC(ALLTRIM(STR(nSlog))+"/"+ALLTRIM(STR(nUkupno)),20)
- @ m_x+2, m_y+2 SAY "Obuhvaceno: "+STR(nSlog)
-return (nil)
+STATIC FUNCTION TekRec()
+
+   nSlog++
+   @ m_x + 1, m_y + 2 SAY PadC( AllTrim( Str( nSlog ) ) + "/" + AllTrim( Str( nUkupno ) ), 20 )
+   @ m_x + 2, m_y + 2 SAY "Obuhvaceno: " + Str( nSlog )
+
+   RETURN ( nil )
 
 
 
@@ -272,155 +277,159 @@ return (nil)
  *  \brief Pregled faktura asortimana za kupca
  *  \brief Izvjestaj specificno radjen za Rudnik
  */
- 
-function rpt_sp_fakture_asort()
-*{
-O_PARTN
-O_FAKT
 
-cVarijanta:="1"               // 1 - sa porezom i rabatom
-                              // 2 - bez     - ll -
-cIdFirma:=space(6)
-qqRoba1:=space(60); cRoba1:=SPACE(10)
-qqRoba2:=space(60); cRoba2:=SPACE(10)
-qqRoba3:=space(60); cRoba3:=SPACE(10)
-qqRoba4:=space(60); cRoba4:=SPACE(10)
-qqRoba5:=space(60); cRoba5:=SPACE(10)
-qqRoba6:=space(60); cRoba6:=SPACE(10)
-dDatOd:=ctod(""); dDatDo:=date(); gOstr:="D"
+FUNCTION rpt_sp_fakture_asort()
 
-O_PARAMS
-private cSection:="5",cHistory:=" "; aHistory:={}
-Params1()
-RPar("d1",@dDatOd); RPar("d2",@dDatDo)
-RPar("O1",@cRoba1); RPar("O2",@cRoba2); RPar("O3",@cRoba3)
-RPar("O4",@cRoba4); RPar("O5",@cRoba5); RPar("O6",@cRoba6)
-RPar("F7",@cIdFirma)
-RPar("F1",@qqRoba1); RPar("F2",@qqRoba2); RPar("F3",@qqRoba3)
-RPar("F4",@qqRoba4); RPar("F5",@qqRoba5); RPar("F6",@qqRoba6)
+   // {
+   O_PARTN
+   O_FAKT
 
-cIdFirma:=PADR(cIdFirma,6)
-qqRoba1:=PADR(qqRoba1,60); qqRoba2:=PADR(qqRoba2,60); qqRoba3:=PADR(qqRoba3,60)
-qqRoba4:=PADR(qqRoba4,60); qqRoba5:=PADR(qqRoba5,60); qqRoba6:=PADR(qqRoba6,60)
+   cVarijanta := "1"               // 1 - sa porezom i rabatom
+   // 2 - bez     - ll -
+   cIdFirma := Space( 6 )
+   qqRoba1 := Space( 60 ); cRoba1 := Space( 10 )
+   qqRoba2 := Space( 60 ); cRoba2 := Space( 10 )
+   qqRoba3 := Space( 60 ); cRoba3 := Space( 10 )
+   qqRoba4 := Space( 60 ); cRoba4 := Space( 10 )
+   qqRoba5 := Space( 60 ); cRoba5 := Space( 10 )
+   qqRoba6 := Space( 60 ); cRoba6 := Space( 10 )
+   dDatOd := CToD( "" ); dDatDo := Date(); gOstr := "D"
+
+   O_PARAMS
+   PRIVATE cSection := "5", cHistory := " "; aHistory := {}
+   Params1()
+   RPar( "d1", @dDatOd ); RPar( "d2", @dDatDo )
+   RPar( "O1", @cRoba1 ); RPar( "O2", @cRoba2 ); RPar( "O3", @cRoba3 )
+   RPar( "O4", @cRoba4 ); RPar( "O5", @cRoba5 ); RPar( "O6", @cRoba6 )
+   RPar( "F7", @cIdFirma )
+   RPar( "F1", @qqRoba1 ); RPar( "F2", @qqRoba2 ); RPar( "F3", @qqRoba3 )
+   RPar( "F4", @qqRoba4 ); RPar( "F5", @qqRoba5 ); RPar( "F6", @qqRoba6 )
+
+   cIdFirma := PadR( cIdFirma, 6 )
+   qqRoba1 := PadR( qqRoba1, 60 ); qqRoba2 := PadR( qqRoba2, 60 ); qqRoba3 := PadR( qqRoba3, 60 )
+   qqRoba4 := PadR( qqRoba4, 60 ); qqRoba5 := PadR( qqRoba5, 60 ); qqRoba6 := PadR( qqRoba6, 60 )
 
 
-Box(,12,70)
-do while .t.
+   Box(, 12, 70 )
+   DO WHILE .T.
 
- @ m_X+1,m_Y+15 SAY "NAZIV               USLOV"
+      @ m_X + 1, m_Y + 15 SAY "NAZIV               USLOV"
 
- @ m_X+2,m_Y+ 2 SAY "Asortiman 1" GET cRoba1
- @ m_X+2,m_Y+26 GET qqRoba1    pict "@!S30"
- @ m_X+3,m_Y+ 2 SAY "Asortiman 2" GET cRoba2
- @ m_X+3,m_Y+26 GET qqRoba2    pict "@!S30"
- @ m_X+4,m_Y+ 2 SAY "Asortiman 3" GET cRoba3
- @ m_X+4,m_Y+26 GET qqRoba3    pict "@!S30"
- @ m_X+5,m_Y+ 2 SAY "Asortiman 4" GET cRoba4
- @ m_X+5,m_Y+26 GET qqRoba4    pict "@!S30"
- @ m_X+6,m_Y+ 2 SAY "Asortiman 5" GET cRoba5
- @ m_X+6,m_Y+26 GET qqRoba5    pict "@!S30"
- @ m_X+7,m_Y+ 2 SAY "Asortiman 6" GET cRoba6
- @ m_X+7,m_Y+26 GET qqRoba6    pict "@!S30"
+      @ m_X + 2, m_Y + 2 SAY "Asortiman 1" GET cRoba1
+      @ m_X + 2, m_Y + 26 GET qqRoba1    PICT "@!S30"
+      @ m_X + 3, m_Y + 2 SAY "Asortiman 2" GET cRoba2
+      @ m_X + 3, m_Y + 26 GET qqRoba2    PICT "@!S30"
+      @ m_X + 4, m_Y + 2 SAY "Asortiman 3" GET cRoba3
+      @ m_X + 4, m_Y + 26 GET qqRoba3    PICT "@!S30"
+      @ m_X + 5, m_Y + 2 SAY "Asortiman 4" GET cRoba4
+      @ m_X + 5, m_Y + 26 GET qqRoba4    PICT "@!S30"
+      @ m_X + 6, m_Y + 2 SAY "Asortiman 5" GET cRoba5
+      @ m_X + 6, m_Y + 26 GET qqRoba5    PICT "@!S30"
+      @ m_X + 7, m_Y + 2 SAY "Asortiman 6" GET cRoba6
+      @ m_X + 7, m_Y + 26 GET qqRoba6    PICT "@!S30"
 
- @ m_X+ 8,m_Y+2 SAY "KUPAC (prazno-svi)" GET cIdFirma VALID {|| EMPTY(cIdFirma) .or. P_Firma(@cIdFirma) } pict "@!S30"
+      @ m_X + 8, m_Y + 2 SAY "KUPAC (prazno-svi)" GET cIdFirma VALID {|| Empty( cIdFirma ) .OR. P_Firma( @cIdFirma ) } PICT "@!S30"
 
- @ m_X+ 9,m_Y+2 SAY "Za period od" GET dDatOD
- @ m_X+ 9,col()+2 SAY "do" GET dDatDo
+      @ m_X + 9, m_Y + 2 SAY "Za period od" GET dDatOD
+      @ m_X + 9, Col() + 2 SAY "do" GET dDatDo
 
- @ m_X+10,m_y+2 SAY "Varijanta ( 1-sa por.i rab. , 2-bez por.i rab. ) ? " GET cVarijanta VALID cVarijanta$"12" PICT "9"
- @ m_X+11,m_y+2 SAY "Ukljuceno ostranicavanje ? (D/N)" GET gOstr VALID gOstr$"DN" PICT "@!"
+      @ m_X + 10, m_y + 2 SAY "Varijanta ( 1-sa por.i rab. , 2-bez por.i rab. ) ? " GET cVarijanta VALID cVarijanta $ "12" PICT "9"
+      @ m_X + 11, m_y + 2 SAY "Ukljuceno ostranicavanje ? (D/N)" GET gOstr VALID gOstr $ "DN" PICT "@!"
 
- read; ESC_BCR
- aUsl1:=Parsiraj(qqRoba1,"IDROBA")
- aUsl2:=Parsiraj(qqRoba2,"IDROBA")
- aUsl3:=Parsiraj(qqRoba3,"IDROBA")
- aUsl4:=Parsiraj(qqRoba4,"IDROBA")
- aUsl5:=Parsiraj(qqRoba5,"IDROBA")
- aUsl6:=Parsiraj(qqRoba6,"IDROBA")
- if aUsl1<>NIL .and. aUsl2<>NIL .and. aUsl3<>NIL .and. aUsl4<>NIL .and. aUsl5<>NIL .and. aUsl6<>NIL
-    exit
- endif
-enddo
-BoxC()
+      read; ESC_BCR
+      aUsl1 := Parsiraj( qqRoba1, "IDROBA" )
+      aUsl2 := Parsiraj( qqRoba2, "IDROBA" )
+      aUsl3 := Parsiraj( qqRoba3, "IDROBA" )
+      aUsl4 := Parsiraj( qqRoba4, "IDROBA" )
+      aUsl5 := Parsiraj( qqRoba5, "IDROBA" )
+      aUsl6 := Parsiraj( qqRoba6, "IDROBA" )
+      IF aUsl1 <> NIL .AND. aUsl2 <> NIL .AND. aUsl3 <> NIL .AND. aUsl4 <> NIL .AND. aUsl5 <> NIL .AND. aUsl6 <> NIL
+         EXIT
+      ENDIF
+   ENDDO
+   BoxC()
 
-Params2()
-// qqKupac:=trim(qqKupac)
-qqRoba1:=trim(qqRoba1); qqRoba2:=trim(qqRoba2); qqRoba3:=trim(qqRoba3)
-qqRoba4:=trim(qqRoba4); qqRoba5:=trim(qqRoba5); qqRoba6:=trim(qqRoba6)
+   Params2()
+   // qqKupac:=trim(qqKupac)
+   qqRoba1 := Trim( qqRoba1 ); qqRoba2 := Trim( qqRoba2 ); qqRoba3 := Trim( qqRoba3 )
+   qqRoba4 := Trim( qqRoba4 ); qqRoba5 := Trim( qqRoba5 ); qqRoba6 := Trim( qqRoba6 )
 
-WPar("d1",dDatOd) ; WPar("d2",dDatDo)
-WPar("O1",cRoba1) ; WPar("O2",cRoba2) ; WPar("O3",cRoba3)
-WPar("O4",cRoba4) ; WPar("O5",cRoba5) ; WPar("O6",cRoba6)
-WPar("F7",cIdFirma)
-WPar("F1",qqRoba1); WPar("F2",qqRoba2); WPar("F3",qqRoba3)
-WPar("F4",qqRoba4); WPar("F5",qqRoba5); WPar("F6",qqRoba6)
+   WPar( "d1", dDatOd ) ; WPar( "d2", dDatDo )
+   WPar( "O1", cRoba1 ) ; WPar( "O2", cRoba2 ) ; WPar( "O3", cRoba3 )
+   WPar( "O4", cRoba4 ) ; WPar( "O5", cRoba5 ) ; WPar( "O6", cRoba6 )
+   WPar( "F7", cIdFirma )
+   WPar( "F1", qqRoba1 ); WPar( "F2", qqRoba2 ); WPar( "F3", qqRoba3 )
+   WPar( "F4", qqRoba4 ); WPar( "F5", qqRoba5 ); WPar( "F6", qqRoba6 )
 
-select params; use
+   SELECT params; USE
 
-SELECT FAKT
+   SELECT FAKT
 
-cTMPFAKT:=""
-Box(,2,30)
-  nSlog:=0; nUkupno:=RECCOUNT2()
-  cSort1 := "DTOS(DATDOK)+IDTIPDOK+BRDOK"
-  cFilt  := "DATDOK>="+cm2str(dDatOd)+".and. DATDOK<="+cm2str(dDatDo)
-  cFilt+=".and. (EMPTY("+cm2str(cIdFirma)+") .or. Idpartner=="+cm2str(cIdFirma)+")"
-  cFilt+=".and. ("+aUsl1+".or."+aUsl2+".or."+aUsl3+".or."+aUsl4+".or."+aUsl5+".or."+aUsl6+")"
-  INDEX ON &cSort1 TO (cTMPFAKT:=TMPFAKT()) FOR &cFilt EVAL(TekRec()) EVERY 1
-BoxC()
-GO TOP
-if eof(); Msg("Ne postoje trazeni podaci...",6); closeret; endif
+   cTMPFAKT := ""
+   Box(, 2, 30 )
+   nSlog := 0; nUkupno := RECCOUNT2()
+   cSort1 := "DTOS(DATDOK)+IDTIPDOK+BRDOK"
+   cFilt  := "DATDOK>=" + cm2str( dDatOd ) + ".and. DATDOK<=" + cm2str( dDatDo )
+   cFilt += ".and. (EMPTY(" + cm2str( cIdFirma ) + ") .or. Idpartner==" + cm2str( cIdFirma ) + ")"
+   cFilt += ".and. (" + aUsl1 + ".or." + aUsl2 + ".or." + aUsl3 + ".or." + aUsl4 + ".or." + aUsl5 + ".or." + aUsl6 + ")"
+   INDEX ON &cSort1 TO ( cTMPFAKT := TMPFAKT() ) FOR &cFilt Eval( TekRec() ) EVERY 1
+   BoxC()
+   GO TOP
+   IF Eof(); Msg( "Ne postoje trazeni podaci...", 6 ); closeret; ENDIF
 
-START PRINT CRET
+   START PRINT CRET
 
-PRIVATE nUkKol:=0, nUkIznos:=0
-PRIVATE cIdTipDok:="", cBrDok:="", dDatum:=CTOD("")
+   PRIVATE nUkKol := 0, nUkIznos := 0
+   PRIVATE cIdTipDok := "", cBrDok := "", dDatum := CToD( "" )
 
-aKol:={ { "DATUM"       ,   {|| dDatum                                        }, .f., "D", 8, 0, 1, 1},;
-        { "TIP DOKUM."  ,   {|| cIdTipDok                                     }, .f., "C",10, 0, 1, 2},;
-        { "BROJ DOKUMENTA", {|| cbrdok                                        }, .f., "C",14, 0, 1, 3},;
-        { "KOLICINA"    ,   {|| nUkKol                                        }, .t., "N",13, 2, 1, 4},;
-        { "CIJENA"      ,   {|| IF(nUkKol==0,0,ROUND(nUkIznos,gFZaok)/nUkKol) }, .f., "N",13, 2, 1, 5},;
-        { "VRIJEDNOST"  ,   {|| ROUND(nUkIznos,gFZaok)                        }, .t., "N",14, 2, 1, 6} }
+   aKol := { { "DATUM",   {|| dDatum                                        }, .F., "D", 8, 0, 1, 1 }, ;
+      { "TIP DOKUM.",   {|| cIdTipDok                                     }, .F., "C", 10, 0, 1, 2 }, ;
+      { "BROJ DOKUMENTA", {|| cbrdok                                        }, .F., "C", 14, 0, 1, 3 }, ;
+      { "KOLICINA",   {|| nUkKol                                        }, .T., "N", 13, 2, 1, 4 }, ;
+      { "CIJENA",   {|| IF( nUkKol == 0, 0, Round( nUkIznos, gFZaok ) / nUkKol ) }, .F., "N", 13, 2, 1, 5 }, ;
+      { "VRIJEDNOST",   {|| Round( nUkIznos, gFZaok )                        }, .T., "N", 14, 2, 1, 6 } }
 
-?
-P_12CPI
-?? space(gnLMarg); ?? "FAKT: Izvjestaj na dan",date()
-? space(gnLMarg); IspisFirme("")
-? space(gnLMarg); ?? "KUPAC: " + IF( EMPTY(cIdFirma) , "SVI" , cIdFirma+" "+Ocitaj(F_PARTN,cIdFirma,"naz") )
+   ?
+   P_12CPI
+   ?? Space( gnLMarg ); ?? "FAKT: Izvjestaj na dan", Date()
+   ? Space( gnLMarg ); IspisFirme( "" )
+   ? Space( gnLMarg ); ?? "KUPAC: " + IF( Empty( cIdFirma ), "SVI", cIdFirma + " " + Ocitaj( F_PARTN, cIdFirma, "naz" ) )
 
-StampaTabele(aKol,{|| FSvaki2()},,gTabela,,;
-     ,"Isporuceni asortiman - pregled po fakturama za period od "+DTOC(ddatod)+" do "+DTOC(ddatdo),;
-                             {|| FFor2()},IF(gOstr=="D",,-1),,,,,)
-FF
-END PRINT
-my_close_all_dbf(); MyFERASE(cTMPFAKT)
+   StampaTabele( aKol, {|| FSvaki2() },, gTabela,, ;
+      , "Isporuceni asortiman - pregled po fakturama za period od " + DToC( ddatod ) + " do " + DToC( ddatdo ), ;
+      {|| FFor2() }, IF( gOstr == "D",, -1 ),,,,, )
+   FF
+   ENDPRINT
+   my_close_all_dbf(); MyFERASE( cTMPFAKT )
 
-CLOSERET
-return
-*}
+   CLOSERET
+
+   RETURN
+// }
 
 
 /*! \fn FFor2()
  *  \brief
  */
- 
-static function FFor2()
-*{
-cIdTipDok:=idtipdok; cBrDok:=brdok; dDatum:=datdok
- nUkKol:=0; nUkIznos:=0
- DO WHILE !EOF() .and. datdok==dDatum .and. idtipdok==cIdTipDok .and. brdok==cBrDok
-   nUkKol+=kolicina
-   IF cVarijanta=="1"
-     nUkIznos += ROUND( kolicina*cijena*PrerCij()*(1-rabat/100)*(1+porez/100) , ZAOKRUZENJE)
-   ELSE
-     nUkIznos += ROUND( kolicina*cijena*PrerCij() , ZAOKRUZENJE)
-   ENDIF
-   SKIP 1
- ENDDO
- SKIP -1
-return .t.
-*}
+
+STATIC FUNCTION FFor2()
+
+   // {
+   cIdTipDok := idtipdok; cBrDok := brdok; dDatum := datdok
+   nUkKol := 0; nUkIznos := 0
+   DO WHILE !Eof() .AND. datdok == dDatum .AND. idtipdok == cIdTipDok .AND. brdok == cBrDok
+      nUkKol += kolicina
+      IF cVarijanta == "1"
+         nUkIznos += Round( kolicina * cijena * PrerCij() * ( 1 -rabat / 100 ) * ( 1 + porez / 100 ), ZAOKRUZENJE )
+      ELSE
+         nUkIznos += Round( kolicina * cijena * PrerCij(), ZAOKRUZENJE )
+      ENDIF
+      SKIP 1
+   ENDDO
+   SKIP -1
+
+   RETURN .T.
+// }
 
 
 
@@ -428,226 +437,232 @@ return .t.
  *  \brief Pregled isporucenog asortimana za kupca po pogonima
  *  \brief Izvjestaj specifican za rudnik
  */
- 
-function rpt_sp_isporuke_pogon()
-*{
-O_PARTN
-O_RJ
-O_FAKT
 
-cVarijanta:="1"               // 1 - sa porezom i rabatom
-                              // 2 - bez     - ll -
-cIdFirma:=space(6)
-qqRoba1:=space(60); cRoba1:=SPACE(10)
-qqRoba2:=space(60); cRoba2:=SPACE(10)
-qqRoba3:=space(60); cRoba3:=SPACE(10)
-qqRoba4:=space(60); cRoba4:=SPACE(10)
-qqRoba5:=space(60); cRoba5:=SPACE(10)
-qqRoba6:=space(60); cRoba6:=SPACE(10)
-dDatOd:=ctod(""); dDatDo:=date(); gOstr:="D"
-cProsCij:="N"
+FUNCTION rpt_sp_isporuke_pogon()
 
-O_PARAMS
-private cSection:="5",cHistory:=" "; aHistory:={}
-Params1()
-RPar("d1",@dDatOd); RPar("d2",@dDatDo)
-RPar("O1",@cRoba1); RPar("O2",@cRoba2); RPar("O3",@cRoba3)
-RPar("O4",@cRoba4); RPar("O5",@cRoba5); RPar("O6",@cRoba6)
-RPar("F7",@cIdFirma)
-RPar("F1",@qqRoba1); RPar("F2",@qqRoba2); RPar("F3",@qqRoba3)
-RPar("F4",@qqRoba4); RPar("F5",@qqRoba5); RPar("F6",@qqRoba6)
-RPar("F9",@cProsCij)
+   // {
+   O_PARTN
+   O_RJ
+   O_FAKT
 
-cIdFirma:=PADR(cIdFirma,6)
-qqRoba1:=PADR(qqRoba1,60); qqRoba2:=PADR(qqRoba2,60); qqRoba3:=PADR(qqRoba3,60)
-qqRoba4:=PADR(qqRoba4,60); qqRoba5:=PADR(qqRoba5,60); qqRoba6:=PADR(qqRoba6,60)
+   cVarijanta := "1"               // 1 - sa porezom i rabatom
+   // 2 - bez     - ll -
+   cIdFirma := Space( 6 )
+   qqRoba1 := Space( 60 ); cRoba1 := Space( 10 )
+   qqRoba2 := Space( 60 ); cRoba2 := Space( 10 )
+   qqRoba3 := Space( 60 ); cRoba3 := Space( 10 )
+   qqRoba4 := Space( 60 ); cRoba4 := Space( 10 )
+   qqRoba5 := Space( 60 ); cRoba5 := Space( 10 )
+   qqRoba6 := Space( 60 ); cRoba6 := Space( 10 )
+   dDatOd := CToD( "" ); dDatDo := Date(); gOstr := "D"
+   cProsCij := "N"
+
+   O_PARAMS
+   PRIVATE cSection := "5", cHistory := " "; aHistory := {}
+   Params1()
+   RPar( "d1", @dDatOd ); RPar( "d2", @dDatDo )
+   RPar( "O1", @cRoba1 ); RPar( "O2", @cRoba2 ); RPar( "O3", @cRoba3 )
+   RPar( "O4", @cRoba4 ); RPar( "O5", @cRoba5 ); RPar( "O6", @cRoba6 )
+   RPar( "F7", @cIdFirma )
+   RPar( "F1", @qqRoba1 ); RPar( "F2", @qqRoba2 ); RPar( "F3", @qqRoba3 )
+   RPar( "F4", @qqRoba4 ); RPar( "F5", @qqRoba5 ); RPar( "F6", @qqRoba6 )
+   RPar( "F9", @cProsCij )
+
+   cIdFirma := PadR( cIdFirma, 6 )
+   qqRoba1 := PadR( qqRoba1, 60 ); qqRoba2 := PadR( qqRoba2, 60 ); qqRoba3 := PadR( qqRoba3, 60 )
+   qqRoba4 := PadR( qqRoba4, 60 ); qqRoba5 := PadR( qqRoba5, 60 ); qqRoba6 := PadR( qqRoba6, 60 )
 
 
-Box(,13,70)
-do while .t.
+   Box(, 13, 70 )
+   DO WHILE .T.
 
- @ m_X+1,m_Y+15 SAY "NAZIV               USLOV"
+      @ m_X + 1, m_Y + 15 SAY "NAZIV               USLOV"
 
- @ m_X+2,m_Y+ 2 SAY "Asortiman 1" GET cRoba1
- @ m_X+2,m_Y+26 GET qqRoba1    pict "@!S30"
- @ m_X+3,m_Y+ 2 SAY "Asortiman 2" GET cRoba2
- @ m_X+3,m_Y+26 GET qqRoba2    pict "@!S30"
- @ m_X+4,m_Y+ 2 SAY "Asortiman 3" GET cRoba3
- @ m_X+4,m_Y+26 GET qqRoba3    pict "@!S30"
- @ m_X+5,m_Y+ 2 SAY "Asortiman 4" GET cRoba4
- @ m_X+5,m_Y+26 GET qqRoba4    pict "@!S30"
- @ m_X+6,m_Y+ 2 SAY "Asortiman 5" GET cRoba5
- @ m_X+6,m_Y+26 GET qqRoba5    pict "@!S30"
- @ m_X+7,m_Y+ 2 SAY "Asortiman 6" GET cRoba6
- @ m_X+7,m_Y+26 GET qqRoba6    pict "@!S30"
+      @ m_X + 2, m_Y + 2 SAY "Asortiman 1" GET cRoba1
+      @ m_X + 2, m_Y + 26 GET qqRoba1    PICT "@!S30"
+      @ m_X + 3, m_Y + 2 SAY "Asortiman 2" GET cRoba2
+      @ m_X + 3, m_Y + 26 GET qqRoba2    PICT "@!S30"
+      @ m_X + 4, m_Y + 2 SAY "Asortiman 3" GET cRoba3
+      @ m_X + 4, m_Y + 26 GET qqRoba3    PICT "@!S30"
+      @ m_X + 5, m_Y + 2 SAY "Asortiman 4" GET cRoba4
+      @ m_X + 5, m_Y + 26 GET qqRoba4    PICT "@!S30"
+      @ m_X + 6, m_Y + 2 SAY "Asortiman 5" GET cRoba5
+      @ m_X + 6, m_Y + 26 GET qqRoba5    PICT "@!S30"
+      @ m_X + 7, m_Y + 2 SAY "Asortiman 6" GET cRoba6
+      @ m_X + 7, m_Y + 26 GET qqRoba6    PICT "@!S30"
 
- @ m_X+ 8,m_Y+2 SAY "KUPAC (prazno-svi)" GET cIdFirma VALID {|| EMPTY(cIdFirma) .or. P_Firma(@cIdFirma) } pict "@!S30"
+      @ m_X + 8, m_Y + 2 SAY "KUPAC (prazno-svi)" GET cIdFirma VALID {|| Empty( cIdFirma ) .OR. P_Firma( @cIdFirma ) } PICT "@!S30"
 
- @ m_X+ 9,m_Y+2 SAY "Za period od" GET dDatOD
- @ m_X+ 9,col()+2 SAY "do" GET dDatDo
+      @ m_X + 9, m_Y + 2 SAY "Za period od" GET dDatOD
+      @ m_X + 9, Col() + 2 SAY "do" GET dDatDo
 
- @ m_X+10,m_y+2 SAY "Varijanta ( 1-sa por.i rab. , 2-bez por.i rab. ) ? " GET cVarijanta VALID cVarijanta$"12" PICT "9"
- @ m_X+11,m_y+2 SAY "Ukljuceno ostranicavanje ? (D/N)" GET gOstr VALID gOstr$"DN" PICT "@!"
- @ m_X+12,m_y+2 SAY "Prikazati prosjecne cijene ? (D/N)" GET cProsCij VALID cProsCij$"DN" PICT "@!"
+      @ m_X + 10, m_y + 2 SAY "Varijanta ( 1-sa por.i rab. , 2-bez por.i rab. ) ? " GET cVarijanta VALID cVarijanta $ "12" PICT "9"
+      @ m_X + 11, m_y + 2 SAY "Ukljuceno ostranicavanje ? (D/N)" GET gOstr VALID gOstr $ "DN" PICT "@!"
+      @ m_X + 12, m_y + 2 SAY "Prikazati prosjecne cijene ? (D/N)" GET cProsCij VALID cProsCij $ "DN" PICT "@!"
 
- read; ESC_BCR
- aUsl1:=Parsiraj(qqRoba1,"IDROBA")
- aUsl2:=Parsiraj(qqRoba2,"IDROBA")
- aUsl3:=Parsiraj(qqRoba3,"IDROBA")
- aUsl4:=Parsiraj(qqRoba4,"IDROBA")
- aUsl5:=Parsiraj(qqRoba5,"IDROBA")
- aUsl6:=Parsiraj(qqRoba6,"IDROBA")
- if aUsl1<>NIL .and. aUsl2<>NIL .and. aUsl3<>NIL .and. aUsl4<>NIL .and. aUsl5<>NIL .and. aUsl6<>NIL
-    exit
- endif
-enddo
-BoxC()
+      read; ESC_BCR
+      aUsl1 := Parsiraj( qqRoba1, "IDROBA" )
+      aUsl2 := Parsiraj( qqRoba2, "IDROBA" )
+      aUsl3 := Parsiraj( qqRoba3, "IDROBA" )
+      aUsl4 := Parsiraj( qqRoba4, "IDROBA" )
+      aUsl5 := Parsiraj( qqRoba5, "IDROBA" )
+      aUsl6 := Parsiraj( qqRoba6, "IDROBA" )
+      IF aUsl1 <> NIL .AND. aUsl2 <> NIL .AND. aUsl3 <> NIL .AND. aUsl4 <> NIL .AND. aUsl5 <> NIL .AND. aUsl6 <> NIL
+         EXIT
+      ENDIF
+   ENDDO
+   BoxC()
 
-Params2()
-// qqKupac:=trim(qqKupac)
-qqRoba1:=trim(qqRoba1); qqRoba2:=trim(qqRoba2); qqRoba3:=trim(qqRoba3)
-qqRoba4:=trim(qqRoba4); qqRoba5:=trim(qqRoba5); qqRoba6:=trim(qqRoba6)
+   Params2()
+   // qqKupac:=trim(qqKupac)
+   qqRoba1 := Trim( qqRoba1 ); qqRoba2 := Trim( qqRoba2 ); qqRoba3 := Trim( qqRoba3 )
+   qqRoba4 := Trim( qqRoba4 ); qqRoba5 := Trim( qqRoba5 ); qqRoba6 := Trim( qqRoba6 )
 
-WPar("d1",dDatOd) ; WPar("d2",dDatDo)
-WPar("O1",cRoba1) ; WPar("O2",cRoba2) ; WPar("O3",cRoba3)
-WPar("O4",cRoba4) ; WPar("O5",cRoba5) ; WPar("O6",cRoba6)
-WPar("F7",cIdFirma)
-WPar("F1",qqRoba1); WPar("F2",qqRoba2); WPar("F3",qqRoba3)
-WPar("F4",qqRoba4); WPar("F5",qqRoba5); WPar("F6",qqRoba6)
-WPar("F9",cProsCij)
+   WPar( "d1", dDatOd ) ; WPar( "d2", dDatDo )
+   WPar( "O1", cRoba1 ) ; WPar( "O2", cRoba2 ) ; WPar( "O3", cRoba3 )
+   WPar( "O4", cRoba4 ) ; WPar( "O5", cRoba5 ) ; WPar( "O6", cRoba6 )
+   WPar( "F7", cIdFirma )
+   WPar( "F1", qqRoba1 ); WPar( "F2", qqRoba2 ); WPar( "F3", qqRoba3 )
+   WPar( "F4", qqRoba4 ); WPar( "F5", qqRoba5 ); WPar( "F6", qqRoba6 )
+   WPar( "F9", cProsCij )
 
-select params; use
+   SELECT params; USE
 
-SELECT FAKT
+   SELECT FAKT
 
-cTMPFAKT:=""
-Box(,2,30)
-  nSlog:=0; nUkupno:=RECCOUNT2()
-  cSort1 := "IDROBA"
-  cFilt  := "DATDOK>=dDatOd .and. DATDOK<=dDatDo .and. ( EMPTY(cIdFirma) .or. cIdFirma==IDPARTNER ) .and. ( "+aUsl1+".or."+aUsl2+".or."+aUsl3+".or."+aUsl4+".or."+aUsl5+".or."+aUsl6+")"
-  INDEX ON &cSort1 TO (cTMPFAKT:=TMPFAKT()) FOR &cFilt EVAL(TekRec()) EVERY 1
-BoxC()
+   cTMPFAKT := ""
+   Box(, 2, 30 )
+   nSlog := 0; nUkupno := RECCOUNT2()
+   cSort1 := "IDROBA"
+   cFilt  := "DATDOK>=dDatOd .and. DATDOK<=dDatDo .and. ( EMPTY(cIdFirma) .or. cIdFirma==IDPARTNER ) .and. ( " + aUsl1 + ".or." + aUsl2 + ".or." + aUsl3 + ".or." + aUsl4 + ".or." + aUsl5 + ".or." + aUsl6 + ")"
+   INDEX ON &cSort1 TO ( cTMPFAKT := TMPFAKT() ) FOR &cFilt Eval( TekRec() ) EVERY 1
+   BoxC()
 
-GO TOP
-if eof(); Msg("Ne postoje trazeni podaci...",6); closeret; endif
+   GO TOP
+   IF Eof(); Msg( "Ne postoje trazeni podaci...", 6 ); closeret; ENDIF
 
-START PRINT CRET
+   START PRINT CRET
 
-PRIVATE cIdRj:="", cNazRj:="", nUkRoba:=0, nUkIznos:=0
-PRIVATE nRoba1:=0, nRoba2:=0, nRoba3:=0, nRoba4:=0, nRoba5:=0, nRoba6:=0
-PRIVATE nPCR1:=nPCR2:=nPCR3:=nPCR4:=nPCR5:=nPCR6:=nPCRU:=0
-PRIVATE nIzR1:=nIzR2:=nIzR3:=nIzR4:=nIzR5:=nIzR6:=0
+   PRIVATE cIdRj := "", cNazRj := "", nUkRoba := 0, nUkIznos := 0
+   PRIVATE nRoba1 := 0, nRoba2 := 0, nRoba3 := 0, nRoba4 := 0, nRoba5 := 0, nRoba6 := 0
+   PRIVATE nPCR1 := nPCR2 := nPCR3 := nPCR4 := nPCR5 := nPCR6 := nPCRU := 0
+   PRIVATE nIzR1 := nIzR2 := nIzR3 := nIzR4 := nIzR5 := nIzR6 := 0
 
-IF cProsCij=="D"
+   IF cProsCij == "D"
 
-aKol:={ { "SIFRA"          , {|| cIdRj                   }, .f., "C", 6, 0, 1, 1},;
-        { "POGON (R.JED.)" , {|| cNazRj                  }, .f., "C",30, 0, 1, 2},;
-        { cRoba1           , {|| nRoba1                  }, .t., "N",12, 2, 1, 3},;
-        { cRoba2           , {|| nRoba2                  }, .t., "N",12, 2, 1, 4},;
-        { cRoba3           , {|| nRoba3                  }, .t., "N",12, 2, 1, 5},;
-        { cRoba4           , {|| nRoba4                  }, .t., "N",12, 2, 1, 6},;
-        { cRoba5           , {|| nRoba5                  }, .t., "N",12, 2, 1, 7},;
-        { cRoba6           , {|| nRoba6                  }, .t., "N",12, 2, 1, 8},;
-        { "UKUPNO KOL."    , {|| nUkRoba                 }, .t., "N",12, 2, 1, 9},;
-        { "UKUPNO IZNOS"   , {|| ROUND(nUkIznos,gFZaok)  }, .t., "N",12, 2, 3, 9} }
+      aKol := { { "SIFRA", {|| cIdRj                   }, .F., "C", 6, 0, 1, 1 }, ;
+         { "POGON (R.JED.)", {|| cNazRj                  }, .F., "C", 30, 0, 1, 2 }, ;
+         { cRoba1, {|| nRoba1                  }, .T., "N", 12, 2, 1, 3 }, ;
+         { cRoba2, {|| nRoba2                  }, .T., "N", 12, 2, 1, 4 }, ;
+         { cRoba3, {|| nRoba3                  }, .T., "N", 12, 2, 1, 5 }, ;
+         { cRoba4, {|| nRoba4                  }, .T., "N", 12, 2, 1, 6 }, ;
+         { cRoba5, {|| nRoba5                  }, .T., "N", 12, 2, 1, 7 }, ;
+         { cRoba6, {|| nRoba6                  }, .T., "N", 12, 2, 1, 8 }, ;
+         { "UKUPNO KOL.", {|| nUkRoba                 }, .T., "N", 12, 2, 1, 9 }, ;
+         { "UKUPNO IZNOS", {|| Round( nUkIznos, gFZaok )  }, .T., "N", 12, 2, 3, 9 } }
 
-  AADD(aKol, { "PROSJ.CIJ.", {|| nPCR1}, .f., "N",12,2,2,3 } )
-  AADD(aKol, { "IZNOS"     , {|| nIzR1}, .t., "N",12,2,3,3 } )
-  AADD(aKol, { "PROSJ.CIJ.", {|| nPCR2}, .f., "N",12,2,2,4 } )
-  AADD(aKol, { "IZNOS"     , {|| nIzR2}, .t., "N",12,2,3,4 } )
-  AADD(aKol, { "PROSJ.CIJ.", {|| nPCR3}, .f., "N",12,2,2,5 } )
-  AADD(aKol, { "IZNOS"     , {|| nIzR3}, .t., "N",12,2,3,5 } )
-  AADD(aKol, { "PROSJ.CIJ.", {|| nPCR4}, .f., "N",12,2,2,6 } )
-  AADD(aKol, { "IZNOS"     , {|| nIzR4}, .t., "N",12,2,3,6 } )
-  AADD(aKol, { "PROSJ.CIJ.", {|| nPCR5}, .f., "N",12,2,2,7 } )
-  AADD(aKol, { "IZNOS"     , {|| nIzR5}, .t., "N",12,2,3,7 } )
-  AADD(aKol, { "PROSJ.CIJ.", {|| nPCR6}, .f., "N",12,2,2,8 } )
-  AADD(aKol, { "IZNOS"     , {|| nIzR6}, .t., "N",12,2,3,8 } )
-  AADD(aKol, { "PROSJ.CIJ.", {|| nPCRU}, .f., "N",12,2,2,9 } )
+      AAdd( aKol, { "PROSJ.CIJ.", {|| nPCR1 }, .F., "N", 12, 2, 2, 3 } )
+      AAdd( aKol, { "IZNOS", {|| nIzR1 }, .T., "N", 12, 2, 3, 3 } )
+      AAdd( aKol, { "PROSJ.CIJ.", {|| nPCR2 }, .F., "N", 12, 2, 2, 4 } )
+      AAdd( aKol, { "IZNOS", {|| nIzR2 }, .T., "N", 12, 2, 3, 4 } )
+      AAdd( aKol, { "PROSJ.CIJ.", {|| nPCR3 }, .F., "N", 12, 2, 2, 5 } )
+      AAdd( aKol, { "IZNOS", {|| nIzR3 }, .T., "N", 12, 2, 3, 5 } )
+      AAdd( aKol, { "PROSJ.CIJ.", {|| nPCR4 }, .F., "N", 12, 2, 2, 6 } )
+      AAdd( aKol, { "IZNOS", {|| nIzR4 }, .T., "N", 12, 2, 3, 6 } )
+      AAdd( aKol, { "PROSJ.CIJ.", {|| nPCR5 }, .F., "N", 12, 2, 2, 7 } )
+      AAdd( aKol, { "IZNOS", {|| nIzR5 }, .T., "N", 12, 2, 3, 7 } )
+      AAdd( aKol, { "PROSJ.CIJ.", {|| nPCR6 }, .F., "N", 12, 2, 2, 8 } )
+      AAdd( aKol, { "IZNOS", {|| nIzR6 }, .T., "N", 12, 2, 3, 8 } )
+      AAdd( aKol, { "PROSJ.CIJ.", {|| nPCRU }, .F., "N", 12, 2, 2, 9 } )
 
-ELSE
+   ELSE
 
-aKol:={ { "SIFRA"          , {|| cIdRj                   }, .f., "C", 6, 0, 1, 1},;
-        { "POGON (R.JED.)" , {|| cNazRj                  }, .f., "C",30, 0, 1, 2},;
-        { cRoba1           , {|| nRoba1                  }, .t., "N",10, 2, 1, 3},;
-        { cRoba2           , {|| nRoba2                  }, .t., "N",10, 2, 1, 4},;
-        { cRoba3           , {|| nRoba3                  }, .t., "N",10, 2, 1, 5},;
-        { cRoba4           , {|| nRoba4                  }, .t., "N",10, 2, 1, 6},;
-        { cRoba5           , {|| nRoba5                  }, .t., "N",10, 2, 1, 7},;
-        { cRoba6           , {|| nRoba6                  }, .t., "N",10, 2, 1, 8},;
-        { "UKUPNO KOL."    , {|| nUkRoba                 }, .t., "N",11, 2, 1, 9},;
-        { "UKUPNO IZNOS"   , {|| ROUND(nUkIznos,gFZaok)  }, .t., "N",12, 2, 1,10} }
+      aKol := { { "SIFRA", {|| cIdRj                   }, .F., "C", 6, 0, 1, 1 }, ;
+         { "POGON (R.JED.)", {|| cNazRj                  }, .F., "C", 30, 0, 1, 2 }, ;
+         { cRoba1, {|| nRoba1                  }, .T., "N", 10, 2, 1, 3 }, ;
+         { cRoba2, {|| nRoba2                  }, .T., "N", 10, 2, 1, 4 }, ;
+         { cRoba3, {|| nRoba3                  }, .T., "N", 10, 2, 1, 5 }, ;
+         { cRoba4, {|| nRoba4                  }, .T., "N", 10, 2, 1, 6 }, ;
+         { cRoba5, {|| nRoba5                  }, .T., "N", 10, 2, 1, 7 }, ;
+         { cRoba6, {|| nRoba6                  }, .T., "N", 10, 2, 1, 8 }, ;
+         { "UKUPNO KOL.", {|| nUkRoba                 }, .T., "N", 11, 2, 1, 9 }, ;
+         { "UKUPNO IZNOS", {|| Round( nUkIznos, gFZaok )  }, .T., "N", 12, 2, 1, 10 } }
 
-ENDIF
+   ENDIF
 
-P_12CPI
-?
-?? space(gnLMarg); ?? "FAKT: Izvjestaj na dan",date()
-? space(gnLMarg); IspisFirme("")
-? space(gnLMarg); ?? "KUPAC: " + IF( EMPTY(cIdFirma) , "SVI" , cIdFirma+" "+Ocitaj(F_PARTN,cIdFirma,"naz") )
+   P_12CPI
+   ?
+   ?? Space( gnLMarg ); ?? "FAKT: Izvjestaj na dan", Date()
+   ? Space( gnLMarg ); IspisFirme( "" )
+   ? Space( gnLMarg ); ?? "KUPAC: " + IF( Empty( cIdFirma ), "SVI", cIdFirma + " " + Ocitaj( F_PARTN, cIdFirma, "naz" ) )
 
-StampaTabele(aKol,{|| FSvaki3()},,gTabela,,;
-     ,"Isporuceni asortiman - pregled za kupca po pogonima od "+DTOC(ddatod)+" do "+DTOC(ddatdo),;
-                             {|| FFor3()},IF(gOstr=="D",,-1),,cProsCij=="D",,,)
-FF
-END PRINT
-my_close_all_dbf(); MyFERASE(cTMPFAKT)
+   StampaTabele( aKol, {|| FSvaki3() },, gTabela,, ;
+      , "Isporuceni asortiman - pregled za kupca po pogonima od " + DToC( ddatod ) + " do " + DToC( ddatdo ), ;
+      {|| FFor3() }, IF( gOstr == "D",, -1 ),, cProsCij == "D",,, )
+   FF
+   ENDPRINT
+   my_close_all_dbf(); MyFERASE( cTMPFAKT )
 
-CLOSERET
-return
-*}
+   CLOSERET
+
+   RETURN
+// }
 
 
 /*! \fn FFor3()
  *  \brief
  */
- 
-static function FFor3()
-*{
-cIdRj:=LEFT(IDROBA,2)
- nRoba1:=nRoba2:=nRoba3:=nRoba4:=nRoba5:=nRoba6:=nUkRoba:=nUkIznos:=0
- nIzR1:=nIzR2:=nIzR3:=nIzR4:=nIzR5:=nIzR6:=0
- cNazRJ:=Ocitaj(F_RJ,cIdRj,"TRIM(naz)")
 
- DO WHILE !EOF() .and. cIdRj==LEFT(IDROBA,2)
+STATIC FUNCTION FFor3()
 
-   IF &aUsl1; nRoba1+=kolicina; nIzR1+=ROUND( kolicina*cijena*PrerCij()*(1-rabat/100)*(1+porez/100) , ZAOKRUZENJE ); ENDIF
-   IF &aUsl2; nRoba2+=kolicina; nIzR2+=ROUND( kolicina*cijena*PrerCij()*(1-rabat/100)*(1+porez/100) , ZAOKRUZENJE ); ENDIF
-   IF &aUsl3; nRoba3+=kolicina; nIzR3+=ROUND( kolicina*cijena*PrerCij()*(1-rabat/100)*(1+porez/100) , ZAOKRUZENJE ); ENDIF
-   IF &aUsl4; nRoba4+=kolicina; nIzR4+=ROUND( kolicina*cijena*PrerCij()*(1-rabat/100)*(1+porez/100) , ZAOKRUZENJE ); ENDIF
-   IF &aUsl5; nRoba5+=kolicina; nIzR5+=ROUND( kolicina*cijena*PrerCij()*(1-rabat/100)*(1+porez/100) , ZAOKRUZENJE ); ENDIF
-   IF &aUsl6; nRoba6+=kolicina; nIzR6+=ROUND( kolicina*cijena*PrerCij()*(1-rabat/100)*(1+porez/100) , ZAOKRUZENJE ); ENDIF
-   IF &(aUsl1+".or."+aUsl2+".or."+aUsl3+".or."+;
-        aUsl4+".or."+aUsl5+".or."+aUsl6)
-     nUkIznos += ROUND( kolicina*cijena*PrerCij()*(1-rabat/100)*(1+porez/100) , ZAOKRUZENJE)
-   ENDIF
+   // {
+   cIdRj := Left( IDROBA, 2 )
+   nRoba1 := nRoba2 := nRoba3 := nRoba4 := nRoba5 := nRoba6 := nUkRoba := nUkIznos := 0
+   nIzR1 := nIzR2 := nIzR3 := nIzR4 := nIzR5 := nIzR6 := 0
+   cNazRJ := Ocitaj( F_RJ, cIdRj, "TRIM(naz)" )
 
-   SKIP 1
+   DO WHILE !Eof() .AND. cIdRj == Left( IDROBA, 2 )
 
- ENDDO
+      IF &aUsl1; nRoba1 += kolicina; nIzR1 += Round( kolicina * cijena * PrerCij() * ( 1 -rabat / 100 ) * ( 1 + porez / 100 ), ZAOKRUZENJE ); ENDIF
+      IF &aUsl2; nRoba2 += kolicina; nIzR2 += Round( kolicina * cijena * PrerCij() * ( 1 -rabat / 100 ) * ( 1 + porez / 100 ), ZAOKRUZENJE ); ENDIF
+      IF &aUsl3; nRoba3 += kolicina; nIzR3 += Round( kolicina * cijena * PrerCij() * ( 1 -rabat / 100 ) * ( 1 + porez / 100 ), ZAOKRUZENJE ); ENDIF
+      IF &aUsl4; nRoba4 += kolicina; nIzR4 += Round( kolicina * cijena * PrerCij() * ( 1 -rabat / 100 ) * ( 1 + porez / 100 ), ZAOKRUZENJE ); ENDIF
+      IF &aUsl5; nRoba5 += kolicina; nIzR5 += Round( kolicina * cijena * PrerCij() * ( 1 -rabat / 100 ) * ( 1 + porez / 100 ), ZAOKRUZENJE ); ENDIF
+      IF &aUsl6; nRoba6 += kolicina; nIzR6 += Round( kolicina * cijena * PrerCij() * ( 1 -rabat / 100 ) * ( 1 + porez / 100 ), ZAOKRUZENJE ); ENDIF
+      IF &( aUsl1 + ".or." + aUsl2 + ".or." + aUsl3 + ".or." + ;
+            aUsl4 + ".or." + aUsl5 + ".or." + aUsl6 )
+         nUkIznos += Round( kolicina * cijena * PrerCij() * ( 1 -rabat / 100 ) * ( 1 + porez / 100 ), ZAOKRUZENJE )
+      ENDIF
 
- nPCR1 := ROUND( IF( nRoba1<>0 , nIzR1/nRoba1 , 0 ) , 2 )
- nPCR2 := ROUND( IF( nRoba2<>0 , nIzR2/nRoba2 , 0 ) , 2 )
- nPCR3 := ROUND( IF( nRoba3<>0 , nIzR3/nRoba3 , 0 ) , 2 )
- nPCR4 := ROUND( IF( nRoba4<>0 , nIzR4/nRoba4 , 0 ) , 2 )
- nPCR5 := ROUND( IF( nRoba5<>0 , nIzR5/nRoba5 , 0 ) , 2 )
- nPCR6 := ROUND( IF( nRoba6<>0 , nIzR6/nRoba6 , 0 ) , 2 )
+      SKIP 1
 
- nUkRoba := nRoba1+nRoba2+nRoba3+nRoba4+nRoba5+nRoba6
- nPCRU := ROUND( IF( nUkRoba<>0 , nUkIznos/nUkRoba , 0 ) , 2 )
+   ENDDO
 
- SKIP -1
-return .t.
-*}
+   nPCR1 := Round( IF( nRoba1 <> 0, nIzR1 / nRoba1, 0 ), 2 )
+   nPCR2 := Round( IF( nRoba2 <> 0, nIzR2 / nRoba2, 0 ), 2 )
+   nPCR3 := Round( IF( nRoba3 <> 0, nIzR3 / nRoba3, 0 ), 2 )
+   nPCR4 := Round( IF( nRoba4 <> 0, nIzR4 / nRoba4, 0 ), 2 )
+   nPCR5 := Round( IF( nRoba5 <> 0, nIzR5 / nRoba5, 0 ), 2 )
+   nPCR6 := Round( IF( nRoba6 <> 0, nIzR6 / nRoba6, 0 ), 2 )
+
+   nUkRoba := nRoba1 + nRoba2 + nRoba3 + nRoba4 + nRoba5 + nRoba6
+   nPCRU := Round( IF( nUkRoba <> 0, nUkIznos / nUkRoba, 0 ), 2 )
+
+   SKIP -1
+
+   RETURN .T.
+// }
 
 
 /*! \fn FSvaki3()
  *  \brief
  */
-function FSvaki3()
-*{
-RETURN
-*}
+FUNCTION FSvaki3()
+
+   // {
+
+   RETURN
+// }
 
 
 
@@ -656,822 +671,849 @@ RETURN
  *  \brief Izvjestaj specifican za runik
  */
 
-function rpt_sp_fakture_usluga()
-*{
-O_PARTN
-O_FAKT
+FUNCTION rpt_sp_fakture_usluga()
 
-cVarijanta:="1"               // 1 - sa porezom i rabatom
-                              // 2 - bez     - ll -
-cIdFirma:=space(6)
-gZaokP4:=2
-qqUsluge:="U;"+SPACE(58)
-dDatOd:=ctod(""); dDatDo:=date(); gOstr:="D"
-private aUsl1
+   // {
+   O_PARTN
+   O_FAKT
 
-O_PARAMS
-private cSection:="5",cHistory:=" "; aHistory:={}
-Params1()
-RPar("d1",@dDatOd); RPar("d2",@dDatDo)
-RPar("F7",@cIdFirma)
-RPar("F8",@qqUsluge)
+   cVarijanta := "1"               // 1 - sa porezom i rabatom
+   // 2 - bez     - ll -
+   cIdFirma := Space( 6 )
+   gZaokP4 := 2
+   qqUsluge := "U;" + Space( 58 )
+   dDatOd := CToD( "" ); dDatDo := Date(); gOstr := "D"
+   PRIVATE aUsl1
 
-cIdFirma:=PADR(cIdFirma,6)
-qqUsluge:=PADR(qqUsluge,60)
+   O_PARAMS
+   PRIVATE cSection := "5", cHistory := " "; aHistory := {}
+   Params1()
+   RPar( "d1", @dDatOd ); RPar( "d2", @dDatDo )
+   RPar( "F7", @cIdFirma )
+   RPar( "F8", @qqUsluge )
 
-Box(,11,70)
-do while .t.
+   cIdFirma := PadR( cIdFirma, 6 )
+   qqUsluge := PadR( qqUsluge, 60 )
 
- @ m_X+ 2,m_Y+ 2 SAY "Uslov za usluge (po sifri)" GET qqUsluge PICT "@!S30"
+   Box(, 11, 70 )
+   DO WHILE .T.
 
- @ m_X+ 4,m_Y+2 SAY "KUPAC (prazno-svi)" GET cIdFirma VALID {|| EMPTY(cIdFirma) .or. P_Firma(@cIdFirma) } pict "@!S30"
+      @ m_X + 2, m_Y + 2 SAY "Uslov za usluge (po sifri)" GET qqUsluge PICT "@!S30"
 
- @ m_X+ 6,m_Y+2 SAY "Za period od" GET dDatOD
- @ m_X+ 6,col()+2 SAY "do" GET dDatDo
+      @ m_X + 4, m_Y + 2 SAY "KUPAC (prazno-svi)" GET cIdFirma VALID {|| Empty( cIdFirma ) .OR. P_Firma( @cIdFirma ) } PICT "@!S30"
 
- @ m_X+ 8,m_y+2 SAY "Varijanta ( 1-sa por.i rab. , 2-bez por.i rab. ) ? " GET cVarijanta VALID cVarijanta$"12" PICT "9"
- @ m_X+ 9,m_y+2 SAY "Ukljuceno ostranicavanje ? (D/N)" GET gOstr VALID gOstr$"DN" PICT "@!"
- @ m_X+10,m_y+2 SAY "Zaokruzivanje na (br.decimala)" GET gZaokP4  PICT "9"
+      @ m_X + 6, m_Y + 2 SAY "Za period od" GET dDatOD
+      @ m_X + 6, Col() + 2 SAY "do" GET dDatDo
 
- read; ESC_BCR
- aUsl1:=Parsiraj(qqUsluge,"IDROBA")
- if aUsl1<>NIL
-    exit
- endif
-enddo
-BoxC()
+      @ m_X + 8, m_y + 2 SAY "Varijanta ( 1-sa por.i rab. , 2-bez por.i rab. ) ? " GET cVarijanta VALID cVarijanta $ "12" PICT "9"
+      @ m_X + 9, m_y + 2 SAY "Ukljuceno ostranicavanje ? (D/N)" GET gOstr VALID gOstr $ "DN" PICT "@!"
+      @ m_X + 10, m_y + 2 SAY "Zaokruzivanje na (br.decimala)" GET gZaokP4  PICT "9"
 
-Params2()
-// qqKupac:=trim(qqKupac)
-qqUsluge:=trim(qqUsluge)
+      read; ESC_BCR
+      aUsl1 := Parsiraj( qqUsluge, "IDROBA" )
+      IF aUsl1 <> NIL
+         EXIT
+      ENDIF
+   ENDDO
+   BoxC()
 
-WPar("d1",dDatOd) ; WPar("d2",dDatDo)
-WPar("F7",cIdFirma)
-WPar("F8",qqUsluge)
+   Params2()
+   // qqKupac:=trim(qqKupac)
+   qqUsluge := Trim( qqUsluge )
 
-select params; use
+   WPar( "d1", dDatOd ) ; WPar( "d2", dDatDo )
+   WPar( "F7", cIdFirma )
+   WPar( "F8", qqUsluge )
 
-SELECT FAKT
-cTMPFAKT:=""
-Box(,2,30)
-  nSlog:=0; nUkupno:=RECCOUNT2()
-  cSort1 := "DTOS(DATDOK)+IDTIPDOK+BRDOK"
-  cFilt  := "DATDOK>=dDatOd .and. DATDOK<=dDatDo .and. ( EMPTY(cIdFirma) .or. cIdFirma==IDPARTNER ).and."+aUsl1
-  INDEX ON &cSort1 TO (cTMPFAKT:=TMPFAKT()) FOR &cFilt EVAL(TekRec()) EVERY 1
-BoxC()
+   SELECT params; USE
 
-GO TOP
-if eof(); Msg("Ne postoje trazeni podaci...",6); closeret; endif
+   SELECT FAKT
+   cTMPFAKT := ""
+   Box(, 2, 30 )
+   nSlog := 0; nUkupno := RECCOUNT2()
+   cSort1 := "DTOS(DATDOK)+IDTIPDOK+BRDOK"
+   cFilt  := "DATDOK>=dDatOd .and. DATDOK<=dDatDo .and. ( EMPTY(cIdFirma) .or. cIdFirma==IDPARTNER ).and." + aUsl1
+   INDEX ON &cSort1 TO ( cTMPFAKT := TMPFAKT() ) FOR &cFilt Eval( TekRec() ) EVERY 1
+   BoxC()
 
-START PRINT CRET
+   GO TOP
+   IF Eof(); Msg( "Ne postoje trazeni podaci...", 6 ); closeret; ENDIF
 
-PRIVATE nUkKol:=0, nUkIznos:=0
-PRIVATE cIdTipDok:="", cBrDok:="", dDatum:=CTOD("")
+   START PRINT CRET
 
-aKol:={ { "DATUM"       ,   {|| DTOC(dDatum)            }, .f., "C",12, 0, 1, 1},;
-        { "TIP DOKUM."  ,   {|| cIdTipDok               }, .f., "C",12, 0, 1, 2},;
-        { "BROJ DOKUMENTA", {|| cbrdok                  }, .f., "C",20, 0, 1, 3},;
-        { "VRIJEDNOST"  ,   {|| ROUND(nUkIznos,gZaokP4) }, .t., "N",20, 2, 1, 4} }
+   PRIVATE nUkKol := 0, nUkIznos := 0
+   PRIVATE cIdTipDok := "", cBrDok := "", dDatum := CToD( "" )
 
-P_12CPI
-?
-?? space(gnLMarg); ?? "FAKT: Izvjestaj na dan",date()
-? space(gnLMarg); IspisFirme("")
-? space(gnLMarg); ?? "KUPAC: " + IF( EMPTY(cIdFirma) , "SVI" , cIdFirma+" "+Ocitaj(F_PARTN,cIdFirma,"naz") )
+   aKol := { { "DATUM",   {|| DToC( dDatum )            }, .F., "C", 12, 0, 1, 1 }, ;
+      { "TIP DOKUM.",   {|| cIdTipDok               }, .F., "C", 12, 0, 1, 2 }, ;
+      { "BROJ DOKUMENTA", {|| cbrdok                  }, .F., "C", 20, 0, 1, 3 }, ;
+      { "VRIJEDNOST",   {|| Round( nUkIznos, gZaokP4 ) }, .T., "N", 20, 2, 1, 4 } }
 
-StampaTabele(aKol,{|| FSvaki4()},,gTabela,,;
-     ,"Fakture usluga - pregled za kupca za period od "+DTOC(ddatod)+" do "+DTOC(ddatdo),;
-                             {|| FFor4()},IF(gOstr=="D",,-1),,,,,)
-FF
-END PRINT
-my_close_all_dbf(); MyFERASE(cTMPFAKT)
+   P_12CPI
+   ?
+   ?? Space( gnLMarg ); ?? "FAKT: Izvjestaj na dan", Date()
+   ? Space( gnLMarg ); IspisFirme( "" )
+   ? Space( gnLMarg ); ?? "KUPAC: " + IF( Empty( cIdFirma ), "SVI", cIdFirma + " " + Ocitaj( F_PARTN, cIdFirma, "naz" ) )
 
-CLOSERET
-return
-*}
+   StampaTabele( aKol, {|| FSvaki4() },, gTabela,, ;
+      , "Fakture usluga - pregled za kupca za period od " + DToC( ddatod ) + " do " + DToC( ddatdo ), ;
+      {|| FFor4() }, IF( gOstr == "D",, -1 ),,,,, )
+   FF
+   ENDPRINT
+   my_close_all_dbf(); MyFERASE( cTMPFAKT )
+
+   CLOSERET
+
+   RETURN
+// }
 
 
 /*! \fn FFor4()
  *  \brief
  */
- 
-static function FFor4()
-*{
-cIdTipDok:=idtipdok; cBrDok:=brdok; dDatum:=datdok
- nUkKol:=0; nUkIznos:=0
- DO WHILE !EOF() .and. datdok==dDatum .and. idtipdok==cIdTipDok .and. brdok==cBrDok
-   nUkKol+=kolicina
-   IF cVarijanta=="1"
-     nUkIznos += ROUND( kolicina*cijena*PrerCij()*(1-rabat/100)*(1+porez/100) , ZAOKRUZENJE )
-   ELSE
-     nUkIznos += ROUND( kolicina*cijena*PrerCij() , ZAOKRUZENJE )
-   ENDIF
-   SKIP 1
- ENDDO
- SKIP -1
-return .t.
-*}
+
+STATIC FUNCTION FFor4()
+
+   // {
+   cIdTipDok := idtipdok; cBrDok := brdok; dDatum := datdok
+   nUkKol := 0; nUkIznos := 0
+   DO WHILE !Eof() .AND. datdok == dDatum .AND. idtipdok == cIdTipDok .AND. brdok == cBrDok
+      nUkKol += kolicina
+      IF cVarijanta == "1"
+         nUkIznos += Round( kolicina * cijena * PrerCij() * ( 1 -rabat / 100 ) * ( 1 + porez / 100 ), ZAOKRUZENJE )
+      ELSE
+         nUkIznos += Round( kolicina * cijena * PrerCij(), ZAOKRUZENJE )
+      ENDIF
+      SKIP 1
+   ENDDO
+   SKIP -1
+
+   RETURN .T.
+// }
 
 /*! \fn FSvaki4()
  */
- 
-static function FSvaki4()
-*{
-RETURN
-*}
+
+STATIC FUNCTION FSvaki4()
+
+   // {
+
+   RETURN
+// }
 
 
 /*! \fn rpt_sp_pregled_poreza()
  *  \brief Pregled poreza po fakturama
  *  \brief Izvjestaj specifican za rudnik
  */
-function rpt_sp_pregled_poreza()
-*{
-O_PARTN
-O_FAKT
+FUNCTION rpt_sp_pregled_poreza()
 
-cIdFirma:=space(6)
-qqPorez1:=10
-qqPorez2:=15
-qqPorez3:=20
-qqPorez4:=qqPorez5:=0
+   // {
+   O_PARTN
+   O_FAKT
 
-dDatOd:=ctod(""); dDatDo:=date(); gOstr:="D"
+   cIdFirma := Space( 6 )
+   qqPorez1 := 10
+   qqPorez2 := 15
+   qqPorez3 := 20
+   qqPorez4 := qqPorez5 := 0
 
-O_PARAMS
-private cSection:="5",cHistory:=" "; aHistory:={}
-Params1()
+   dDatOd := CToD( "" ); dDatDo := Date(); gOstr := "D"
 
-RPar("d1",@dDatOd); RPar("d2",@dDatDo); RPar("F7",@cIdFirma)
-RPar("o7",@qqPorez1); RPar("o8",@qqPorez2); RPar("o9",@qqPorez3)
-RPar("oA",@qqPorez4); RPar("oB",@qqPorez5)
+   O_PARAMS
+   PRIVATE cSection := "5", cHistory := " "; aHistory := {}
+   Params1()
 
-cIdFirma:=PADR(cIdFirma,6)
+   RPar( "d1", @dDatOd ); RPar( "d2", @dDatDo ); RPar( "F7", @cIdFirma )
+   RPar( "o7", @qqPorez1 ); RPar( "o8", @qqPorez2 ); RPar( "o9", @qqPorez3 )
+   RPar( "oA", @qqPorez4 ); RPar( "oB", @qqPorez5 )
 
-Box(,12,70)
-do while .t.
+   cIdFirma := PadR( cIdFirma, 6 )
 
- @ m_X+1,m_Y+19 SAY "(%)"
+   Box(, 12, 70 )
+   DO WHILE .T.
 
- @ m_X+2,m_Y+ 2 SAY "Iznos poreza 1" GET qqPorez1  PICT "999.99"
- @ m_X+3,m_Y+ 2 SAY "Iznos poreza 2" GET qqPorez2  PICT "999.99"
- @ m_X+4,m_Y+ 2 SAY "Iznos poreza 3" GET qqPorez3  PICT "999.99"
- @ m_X+5,m_Y+ 2 SAY "Iznos poreza 4" GET qqPorez4  PICT "999.99"
- @ m_X+6,m_Y+ 2 SAY "Iznos poreza 5" GET qqPorez5  PICT "999.99"
+      @ m_X + 1, m_Y + 19 SAY "(%)"
 
- @ m_X+ 8,m_Y+2 SAY "KUPAC (prazno-svi)" GET cIdFirma VALID {|| EMPTY(cIdFirma) .or. P_Firma(@cIdFirma) } pict "@!S30"
+      @ m_X + 2, m_Y + 2 SAY "Iznos poreza 1" GET qqPorez1  PICT "999.99"
+      @ m_X + 3, m_Y + 2 SAY "Iznos poreza 2" GET qqPorez2  PICT "999.99"
+      @ m_X + 4, m_Y + 2 SAY "Iznos poreza 3" GET qqPorez3  PICT "999.99"
+      @ m_X + 5, m_Y + 2 SAY "Iznos poreza 4" GET qqPorez4  PICT "999.99"
+      @ m_X + 6, m_Y + 2 SAY "Iznos poreza 5" GET qqPorez5  PICT "999.99"
 
- @ m_X+ 9,m_Y+2 SAY "Za period od" GET dDatOD
- @ m_X+ 9,col()+2 SAY "do" GET dDatDo
+      @ m_X + 8, m_Y + 2 SAY "KUPAC (prazno-svi)" GET cIdFirma VALID {|| Empty( cIdFirma ) .OR. P_Firma( @cIdFirma ) } PICT "@!S30"
 
- @ m_X+11,m_y+2 SAY "Ukljuceno ostranicavanje ? (D/N)" GET gOstr VALID gOstr$"DN" PICT "@!"
+      @ m_X + 9, m_Y + 2 SAY "Za period od" GET dDatOD
+      @ m_X + 9, Col() + 2 SAY "do" GET dDatDo
 
- read; ESC_BCR
- exit
-enddo
-BoxC()
+      @ m_X + 11, m_y + 2 SAY "Ukljuceno ostranicavanje ? (D/N)" GET gOstr VALID gOstr $ "DN" PICT "@!"
 
-Params2()
-// qqKupac:=trim(qqKupac)
+      read; ESC_BCR
+      EXIT
+   ENDDO
+   BoxC()
 
-WPar("d1",dDatOd) ; WPar("d2",dDatDo)
-WPar("F7",cIdFirma)
-WPar("o7",qqPorez1); WPar("o8",qqPorez2); WPar("o9",qqPorez3)
-WPar("oA",qqPorez4); WPar("oB",qqPorez5)
+   Params2()
+   // qqKupac:=trim(qqKupac)
 
-select params; use
+   WPar( "d1", dDatOd ) ; WPar( "d2", dDatDo )
+   WPar( "F7", cIdFirma )
+   WPar( "o7", qqPorez1 ); WPar( "o8", qqPorez2 ); WPar( "o9", qqPorez3 )
+   WPar( "oA", qqPorez4 ); WPar( "oB", qqPorez5 )
 
-SELECT FAKT
-cTMPFAKT:=""
+   SELECT params; USE
 
-Box(,2,30)
-  nSlog:=0; nUkupno:=RECCOUNT2()
-  cSort1 := "DTOS(DATDOK)+IDTIPDOK+BRDOK"
-  cFilt  := "DATDOK>=dDatOd .and. DATDOK<=dDatDo .and. ( EMPTY(cIdFirma) .or. cIdFirma==IDPARTNER ) .and. ( porez==qqPorez1.and.qqPorez1>0 .or. porez==qqPorez2.and.qqPorez2>0 .or. porez==qqPorez3.and.qqPorez3>0 .or. porez==qqPorez4.and.qqPorez4>0 .or. porez==qqPorez5.and.qqPorez5>0 )"
-  INDEX ON &cSort1 TO (cTMPFAKT:=TMPFAKT()) FOR &cFilt EVAL(TekRec()) EVERY 1
-BoxC()
+   SELECT FAKT
+   cTMPFAKT := ""
 
-GO TOP
-if eof(); Msg("Ne postoje trazeni podaci...",6); closeret; endif
+   Box(, 2, 30 )
+   nSlog := 0; nUkupno := RECCOUNT2()
+   cSort1 := "DTOS(DATDOK)+IDTIPDOK+BRDOK"
+   cFilt  := "DATDOK>=dDatOd .and. DATDOK<=dDatDo .and. ( EMPTY(cIdFirma) .or. cIdFirma==IDPARTNER ) .and. ( porez==qqPorez1.and.qqPorez1>0 .or. porez==qqPorez2.and.qqPorez2>0 .or. porez==qqPorez3.and.qqPorez3>0 .or. porez==qqPorez4.and.qqPorez4>0 .or. porez==qqPorez5.and.qqPorez5>0 )"
+   INDEX ON &cSort1 TO ( cTMPFAKT := TMPFAKT() ) FOR &cFilt Eval( TekRec() ) EVERY 1
+   BoxC()
 
-START PRINT CRET
+   GO TOP
+   IF Eof(); Msg( "Ne postoje trazeni podaci...", 6 ); closeret; ENDIF
 
-PRIVATE cIdTipDok:="", cBrDok:="", dDatum:=CTOD("")
-PRIVATE nPor1:=nPor2:=nPor3:=nPor4:=nPor5:=nUkPor:=0
-PRIVATE nKPor1:=nKPor2:=nKPor3:=nKPor4:=nKPor5:=nKUkPor:=0
+   START PRINT CRET
 
-aKol:={ { "DATUM"          , {|| dDatum       }, .f., "D", 8, 0, 1, 1},;
-        { "TIP DOKUM."     , {|| cIdTipDok    }, .f., "C",10, 0, 1, 2},;
-        { "BROJ DOKUMENTA" , {|| cbrdok       }, .f., "C",14, 0, 1, 3} }
+   PRIVATE cIdTipDok := "", cBrDok := "", dDatum := CToD( "" )
+   PRIVATE nPor1 := nPor2 := nPor3 := nPor4 := nPor5 := nUkPor := 0
+   PRIVATE nKPor1 := nKPor2 := nKPor3 := nKPor4 := nKPor5 := nKUkPor := 0
 
-i:=3
-IF qqPorez1>0
- AADD(aKol,{ "POREZ "+STR(qqPorez1,6,2)+"%" , {|| nPor1 }, .t., "N",13, 2, 1, ++i})
-ENDIF
-IF qqPorez2>0
- AADD(aKol,{ "POREZ "+STR(qqPorez2,6,2)+"%" , {|| nPor2 }, .t., "N",13, 2, 1, ++i})
-ENDIF
-IF qqPorez3>0
- AADD(aKol,{ "POREZ "+STR(qqPorez3,6,2)+"%" , {|| nPor3 }, .t., "N",13, 2, 1, ++i})
-ENDIF
-IF qqPorez4>0
- AADD(aKol,{ "POREZ "+STR(qqPorez4,6,2)+"%" , {|| nPor4 }, .t., "N",13, 2, 1, ++i})
-ENDIF
-IF qqPorez5>0
- AADD(aKol,{ "POREZ "+STR(qqPorez5,6,2)+"%" , {|| nPor5 }, .t., "N",13, 2, 1, ++i})
-ENDIF
-AADD(aKol,{ "UKUPNO POREZI", {|| nUkPor }, .t., "N",13, 2, 1, ++i})
+   aKol := { { "DATUM", {|| dDatum       }, .F., "D", 8, 0, 1, 1 }, ;
+      { "TIP DOKUM.", {|| cIdTipDok    }, .F., "C", 10, 0, 1, 2 }, ;
+      { "BROJ DOKUMENTA", {|| cbrdok       }, .F., "C", 14, 0, 1, 3 } }
 
-IF qqPorez1>0
- AADD(aKol,{ "POREZ "+STR(qqPorez1,6,2)+"%" , {|| nKPor1 }, .f., "N",13, 2, 1, ++i})
- AADD(aKol,{ "KUMULATIVNO" , {|| "#" }, .f., "N",13, 2, 2, i})
-ENDIF
-IF qqPorez2>0
- AADD(aKol,{ "POREZ "+STR(qqPorez2,6,2)+"%" , {|| nKPor2 }, .f., "N",13, 2, 1, ++i})
- AADD(aKol,{ "KUMULATIVNO" , {|| "#" }, .f., "N",13, 2, 2, i})
-ENDIF
-IF qqPorez3>0
- AADD(aKol,{ "POREZ "+STR(qqPorez3,6,2)+"%" , {|| nKPor3 }, .f., "N",13, 2, 1, ++i})
- AADD(aKol,{ "KUMULATIVNO" , {|| "#" }, .f., "N",13, 2, 2, i})
-ENDIF
-IF qqPorez4>0
- AADD(aKol,{ "POREZ "+STR(qqPorez4,6,2)+"%" , {|| nKPor4 }, .f., "N",13, 2, 1, ++i})
- AADD(aKol,{ "KUMULATIVNO" , {|| "#" }, .f., "N",13, 2, 2, i})
-ENDIF
-IF qqPorez5>0
- AADD(aKol,{ "POREZ "+STR(qqPorez5,6,2)+"%" , {|| nKPor5 }, .f., "N",13, 2, 1, ++i})
- AADD(aKol,{ "KUMULATIVNO" , {|| "#" }, .f., "N",13, 2, 2, i})
-ENDIF
-AADD(aKol,{ "UKUPNO POREZI", {|| nKUkPor }, .f., "N",13, 2, 1, ++i})
-AADD(aKol,{ "KUMULATIVNO" , {|| "#" }, .f., "N",13, 2, 2, i})
+   i := 3
+   IF qqPorez1 > 0
+      AAdd( aKol, { "POREZ " + Str( qqPorez1, 6, 2 ) + "%", {|| nPor1 }, .T., "N", 13, 2, 1, ++i } )
+   ENDIF
+   IF qqPorez2 > 0
+      AAdd( aKol, { "POREZ " + Str( qqPorez2, 6, 2 ) + "%", {|| nPor2 }, .T., "N", 13, 2, 1, ++i } )
+   ENDIF
+   IF qqPorez3 > 0
+      AAdd( aKol, { "POREZ " + Str( qqPorez3, 6, 2 ) + "%", {|| nPor3 }, .T., "N", 13, 2, 1, ++i } )
+   ENDIF
+   IF qqPorez4 > 0
+      AAdd( aKol, { "POREZ " + Str( qqPorez4, 6, 2 ) + "%", {|| nPor4 }, .T., "N", 13, 2, 1, ++i } )
+   ENDIF
+   IF qqPorez5 > 0
+      AAdd( aKol, { "POREZ " + Str( qqPorez5, 6, 2 ) + "%", {|| nPor5 }, .T., "N", 13, 2, 1, ++i } )
+   ENDIF
+   AAdd( aKol, { "UKUPNO POREZI", {|| nUkPor }, .T., "N", 13, 2, 1, ++i } )
 
-?
-P_12CPI
-?? space(gnLMarg); ?? "FAKT: Izvjestaj na dan",date()
-? space(gnLMarg)
-IspisFirme("")
-? space(gnLMarg); ?? "KUPAC: " + IF( EMPTY(cIdFirma) , "SVI" , cIdFirma+" "+Ocitaj(F_PARTN,cIdFirma,"naz") )
+   IF qqPorez1 > 0
+      AAdd( aKol, { "POREZ " + Str( qqPorez1, 6, 2 ) + "%", {|| nKPor1 }, .F., "N", 13, 2, 1, ++i } )
+      AAdd( aKol, { "KUMULATIVNO", {|| "#" }, .F., "N", 13, 2, 2, i } )
+   ENDIF
+   IF qqPorez2 > 0
+      AAdd( aKol, { "POREZ " + Str( qqPorez2, 6, 2 ) + "%", {|| nKPor2 }, .F., "N", 13, 2, 1, ++i } )
+      AAdd( aKol, { "KUMULATIVNO", {|| "#" }, .F., "N", 13, 2, 2, i } )
+   ENDIF
+   IF qqPorez3 > 0
+      AAdd( aKol, { "POREZ " + Str( qqPorez3, 6, 2 ) + "%", {|| nKPor3 }, .F., "N", 13, 2, 1, ++i } )
+      AAdd( aKol, { "KUMULATIVNO", {|| "#" }, .F., "N", 13, 2, 2, i } )
+   ENDIF
+   IF qqPorez4 > 0
+      AAdd( aKol, { "POREZ " + Str( qqPorez4, 6, 2 ) + "%", {|| nKPor4 }, .F., "N", 13, 2, 1, ++i } )
+      AAdd( aKol, { "KUMULATIVNO", {|| "#" }, .F., "N", 13, 2, 2, i } )
+   ENDIF
+   IF qqPorez5 > 0
+      AAdd( aKol, { "POREZ " + Str( qqPorez5, 6, 2 ) + "%", {|| nKPor5 }, .F., "N", 13, 2, 1, ++i } )
+      AAdd( aKol, { "KUMULATIVNO", {|| "#" }, .F., "N", 13, 2, 2, i } )
+   ENDIF
+   AAdd( aKol, { "UKUPNO POREZI", {|| nKUkPor }, .F., "N", 13, 2, 1, ++i } )
+   AAdd( aKol, { "KUMULATIVNO", {|| "#" }, .F., "N", 13, 2, 2, i } )
 
-StampaTabele(aKol,{|| FSvaki5()},,gTabela,,;
-     ,"Pregled poreza po fakturama za period od "+DTOC(ddatod)+" do "+DTOC(ddatdo),;
-                             {|| FFor5()},IF(gOstr=="D",,-1),,,,,)
-FF
-END PRINT
-my_close_all_dbf(); MyFERASE(cTMPFAKT)
+   ?
+   P_12CPI
+   ?? Space( gnLMarg ); ?? "FAKT: Izvjestaj na dan", Date()
+   ? Space( gnLMarg )
+   IspisFirme( "" )
+   ? Space( gnLMarg ); ?? "KUPAC: " + IF( Empty( cIdFirma ), "SVI", cIdFirma + " " + Ocitaj( F_PARTN, cIdFirma, "naz" ) )
 
-CLOSERET
-return
-*}
+   StampaTabele( aKol, {|| FSvaki5() },, gTabela,, ;
+      , "Pregled poreza po fakturama za period od " + DToC( ddatod ) + " do " + DToC( ddatdo ), ;
+      {|| FFor5() }, IF( gOstr == "D",, -1 ),,,,, )
+   FF
+   ENDPRINT
+   my_close_all_dbf(); MyFERASE( cTMPFAKT )
+
+   CLOSERET
+
+   RETURN
+// }
 
 
 /*! \fn FFor5()
  *  \brief
  */
- 
-static function FFor5()
-*{
-cIdTipDok:=IDTIPDOK; cBrDok:=BRDOK; dDatum:=DATDOK
- nPor1:=nPor2:=nPor3:=nPor4:=nPor5:=nUkPor:=0
- DO WHILE !EOF() .and. datdok==dDatum .and. idtipdok==cIdTipDok .and. brdok==cBrDok
-   IF qqPorez1==ROUND(porez,0)
-     nPor1 += round( CIJENA*KOLICINA*PrerCij()*(1-RABAT/100)*POREZ/100 ,ZAOKRUZENJE)
-   ENDIF
-   IF qqPorez2==ROUND(porez,0)
-     nPor2 += round( CIJENA*KOLICINA*PrerCij()*(1-RABAT/100)*POREZ/100 ,ZAOKRUZENJE)
-   ENDIF
-   IF qqPorez3==ROUND(porez,0)
-     nPor3 += round( CIJENA*KOLICINA*PrerCij()*(1-RABAT/100)*POREZ/100 ,ZAOKRUZENJE)
-   ENDIF
-   IF qqPorez4==ROUND(porez,0)
-     nPor4 += round( CIJENA*KOLICINA*PrerCij()*(1-RABAT/100)*POREZ/100 ,ZAOKRUZENJE)
-   ENDIF
-   IF qqPorez5==ROUND(porez,0)
-     nPor5 += round( CIJENA*KOLICINA*PrerCij()*(1-RABAT/100)*POREZ/100 ,ZAOKRUZENJE)
-   ENDIF
-   SKIP 1
- ENDDO
- SKIP -1
- nPor1 := ROUND( nPor1 , FIELD->zaokr )
- nPor2 := ROUND( nPor2 , FIELD->zaokr )
- nPor3 := ROUND( nPor3 , FIELD->zaokr )
- nPor4 := ROUND( nPor4 , FIELD->zaokr )
- nPor5 := ROUND( nPor5 , FIELD->zaokr )
- nUkPor := nPor1+nPor2+nPor3+nPor4+nPor5
- nKUkPor += nUkPor; nKPor1 += nPor1; nKPor2 += nPor2
- nKPor3  += nPor3;  nKPor4 += nPor4; nKPor5 += nPor5
-return .t.
-*}
+
+STATIC FUNCTION FFor5()
+
+   // {
+   cIdTipDok := IDTIPDOK; cBrDok := BRDOK; dDatum := DATDOK
+   nPor1 := nPor2 := nPor3 := nPor4 := nPor5 := nUkPor := 0
+   DO WHILE !Eof() .AND. datdok == dDatum .AND. idtipdok == cIdTipDok .AND. brdok == cBrDok
+      IF qqPorez1 == Round( porez, 0 )
+         nPor1 += Round( CIJENA * KOLICINA * PrerCij() * ( 1 -RABAT / 100 ) * POREZ / 100, ZAOKRUZENJE )
+      ENDIF
+      IF qqPorez2 == Round( porez, 0 )
+         nPor2 += Round( CIJENA * KOLICINA * PrerCij() * ( 1 -RABAT / 100 ) * POREZ / 100, ZAOKRUZENJE )
+      ENDIF
+      IF qqPorez3 == Round( porez, 0 )
+         nPor3 += Round( CIJENA * KOLICINA * PrerCij() * ( 1 -RABAT / 100 ) * POREZ / 100, ZAOKRUZENJE )
+      ENDIF
+      IF qqPorez4 == Round( porez, 0 )
+         nPor4 += Round( CIJENA * KOLICINA * PrerCij() * ( 1 -RABAT / 100 ) * POREZ / 100, ZAOKRUZENJE )
+      ENDIF
+      IF qqPorez5 == Round( porez, 0 )
+         nPor5 += Round( CIJENA * KOLICINA * PrerCij() * ( 1 -RABAT / 100 ) * POREZ / 100, ZAOKRUZENJE )
+      ENDIF
+      SKIP 1
+   ENDDO
+   SKIP -1
+   nPor1 := Round( nPor1, FIELD->zaokr )
+   nPor2 := Round( nPor2, FIELD->zaokr )
+   nPor3 := Round( nPor3, FIELD->zaokr )
+   nPor4 := Round( nPor4, FIELD->zaokr )
+   nPor5 := Round( nPor5, FIELD->zaokr )
+   nUkPor := nPor1 + nPor2 + nPor3 + nPor4 + nPor5
+   nKUkPor += nUkPor; nKPor1 += nPor1; nKPor2 += nPor2
+   nKPor3  += nPor3;  nKPor4 += nPor4; nKPor5 += nPor5
+
+   RETURN .T.
+// }
 
 
 /*! \fn FSvaki5()
  */
-static function FSvaki5()
-*{
-RETURN
-*}
+STATIC FUNCTION FSvaki5()
+
+   // {
+
+   RETURN
+// }
 
 
 /*! \fn FFor6()
  *  \brief
  */
- 
-static function FFor6()
-*{
-LOCAL nIznos:=0
- IF fSMark .and. SkLoNMark("ROBA",SiSiRo()) 
-   RETURN .f.
- ENDIF
- IF cVarSubTot=="1"
-   IF PARTN->idops <> cIdOps .and. LEN(cIdOps)>0
-     lSubTot6:=.t.
-     cSubTot6:=cIdOps
+
+STATIC FUNCTION FFor6()
+
+   // {
+   LOCAL nIznos := 0
+   IF fSMark .AND. SkLoNMark( "ROBA", SiSiRo() )
+      RETURN .F.
    ENDIF
- ELSE
-   IF SUBSTR(idpartner,2,2) <> SUBSTR(cIdPartner,2,2) .and. LEN(cIdPartner)>0
-     lSubTot6:=.t.
-     cSubTot6:=SUBSTR(cIdPartner,2,2)
-   ENDIF
- ENDIF
- cIdPartner:=idpartner
- cIdOps:=PARTN->idops
- nUkIznos:=0
- nOpor:=nNeOpor:=0
- IF cVarSubTot=="1"
-   cNPartnera:=PARTN->(TRIM(naz)+' '+TRIM(naz2))
- ELSE
-   cNPartnera:=Ocitaj(F_PARTN,idpartner,"TRIM(naz)+' '+TRIM(naz2)")
- ENDIF
- DO WHILE !EOF() .and. idpartner==cIdPartner
-   IF fSMark .and. SkLoNMark("ROBA",SiSiRo()) // skip+loop gdje je roba->_M1_ != "*"
-     SKIP 1; LOOP
-   ENDIF
-   nIznos := ROUND( kolicina*cijena*PrerCij()*(1-rabat/100)*(1+porez/100) , FIELD->zaokr )
-   nUkIznos += nIznos
-   SELECT ROBA; HSEEK PADR(LEFT(FAKT->idroba,gnDS),LEN(id))
-   SELECT TARIFA; HSEEK ROBA->idtarifa; SELECT FAKT
-   IF !Oporezovana()
-     nNeOpor += nIznos
+   IF cVarSubTot == "1"
+      IF PARTN->idops <> cIdOps .AND. Len( cIdOps ) > 0
+         lSubTot6 := .T.
+         cSubTot6 := cIdOps
+      ENDIF
    ELSE
-     nOpor   += nIznos
+      IF SubStr( idpartner, 2, 2 ) <> SubStr( cIdPartner, 2, 2 ) .AND. Len( cIdPartner ) > 0
+         lSubTot6 := .T.
+         cSubTot6 := SubStr( cIdPartner, 2, 2 )
+      ENDIF
    ENDIF
-   SKIP 1
- ENDDO
- SKIP -1
-RETURN .t.
-*}
+   cIdPartner := idpartner
+   cIdOps := PARTN->idops
+   nUkIznos := 0
+   nOpor := nNeOpor := 0
+   IF cVarSubTot == "1"
+      cNPartnera := PARTN->( Trim( naz ) + ' ' + Trim( naz2 ) )
+   ELSE
+      cNPartnera := Ocitaj( F_PARTN, idpartner, "TRIM(naz)+' '+TRIM(naz2)" )
+   ENDIF
+   DO WHILE !Eof() .AND. idpartner == cIdPartner
+      IF fSMark .AND. SkLoNMark( "ROBA", SiSiRo() ) // skip+loop gdje je roba->_M1_ != "*"
+         SKIP 1; LOOP
+      ENDIF
+      nIznos := Round( kolicina * cijena * PrerCij() * ( 1 -rabat / 100 ) * ( 1 + porez / 100 ), FIELD->zaokr )
+      nUkIznos += nIznos
+      SELECT ROBA; HSEEK PadR( Left( FAKT->idroba, gnDS ), Len( id ) )
+      SELECT TARIFA; HSEEK ROBA->idtarifa; SELECT FAKT
+      IF !Oporezovana()
+         nNeOpor += nIznos
+      ELSE
+         nOpor   += nIznos
+      ENDIF
+      SKIP 1
+   ENDDO
+   SKIP -1
+
+   RETURN .T.
+// }
 
 
 /*! \fn FSvaki6()
- *  \brief 
+ *  \brief
  */
- 
-static function FSvaki6()
-RETURN
+
+STATIC FUNCTION FSvaki6()
+   RETURN
 
 
 /*! \fn SubTot6()
  *  \brief
  */
- 
-static function SubTot6()
-LOCAL aVrati:={.f.,""}, cOps:="", cIdOpc:=""
-  IF lSubTot6 .or. EOF()
-    IF cVarSubTot=="1"
-      cIdOpc := IF(EOF(),cIdOps,cSubTot6)
-      cOps   := TRIM( Ocitaj(F_OPS,cIdOpc,"naz") )
-    ELSE
-      cIdOpc := IF(EOF(),SUBSTR(cIdPartner,2,2),cSubTot6)
-      cOps   := IzFMKINI("NOVINE","NazivOpstine"+cIdOpc,"-",KUMPATH)
-    ENDIF
-    aVrati := { .t. , "OPSTINA "+cIdOpc+"-"+cOps }
-    lSubTot6:=.f.
-  ENDIF
-RETURN aVrati
+
+STATIC FUNCTION SubTot6()
+
+   LOCAL aVrati := { .F., "" }, cOps := "", cIdOpc := ""
+
+   IF lSubTot6 .OR. Eof()
+      IF cVarSubTot == "1"
+         cIdOpc := IF( Eof(), cIdOps, cSubTot6 )
+         cOps   := Trim( Ocitaj( F_OPS, cIdOpc, "naz" ) )
+      ELSE
+         cIdOpc := IF( Eof(), SubStr( cIdPartner, 2, 2 ), cSubTot6 )
+         cOps   := IzFMKINI( "NOVINE", "NazivOpstine" + cIdOpc, "-", KUMPATH )
+      ENDIF
+      aVrati := { .T., "OPSTINA " + cIdOpc + "-" + cOps }
+      lSubTot6 := .F.
+   ENDIF
+
+   RETURN aVrati
 
 
 /*! \fn VRobPoIzd()
  *  \brief Vrijednost robe po izdavacima/dobavljacima
  */
- 
-function VRobPoIzd()
-*{
 
-  O_SIFK
-  O_SIFV
-  O_RJ
-  O_ROBA
-  O_TARIFA
-  O_FAKT
+FUNCTION VRobPoIzd()
 
-  cTMPFAKT:=""
+   // {
 
-  cIdfirma:=gFirma
-  qqRoba:=""
-  dDatOd:=ctod("")
-  dDatDo:=date()
-  qqTipdok:="  "
+   O_SIFK
+   O_SIFV
+   O_RJ
+   O_ROBA
+   O_TARIFA
+   O_FAKT
 
-  O_PARAMS
-  private cSection:="5",cHistory:=" "; aHistory:={}
-  Params1()
-  RPar("c1",@cIdFirma); RPar("c2",@qqRoba)
-  RPar("c8",@qqTipDok)
-  RPar("d1",@dDatOd) ; RPar("d2",@dDatDo)
-  qqRoba:=PADR(qqRoba,80)
+   cTMPFAKT := ""
 
-  Box(,5,75)
-  DO WHILE .t.
-   if gNW$"DR"
-     @ m_x+1,m_y+2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| empty(cIdFirma) .or. cidfirma==gFirma .or. P_RJ(@cIdFirma) }
-   else
-     @ m_x+1,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
-   endif
-   @ m_x+2,m_y+2 SAY "Roba   "  GET qqRoba   pict "@!S40"
-   @ m_x+4,m_y+2 SAY "Tip dokumenta (prazno - svi)"  GET qqTipdok
-   @ m_x+5,m_y+2 SAY "Od datuma "  get dDatOd
-   @ m_x+5,col()+1 SAY "do"  get dDatDo
-   READ; ESC_BCR
-   aUsl1:=Parsiraj(qqRoba,"IDROBA")
-   IF aUsl1<>NIL; EXIT; ENDIF
-  ENDDO
-  BoxC()
+   cIdfirma := gFirma
+   qqRoba := ""
+   dDatOd := CToD( "" )
+   dDatDo := Date()
+   qqTipdok := "  "
 
-  select params
-  qqRoba:=trim(qqRoba)
-  WPar("c1",cIdFirma); WPar("c2",qqRoba)
-  WPar("c8",qqTipDok)
-  WPar("d1",dDatOd); WPar("d2",dDatDo)
-  use
+   O_PARAMS
+   PRIVATE cSection := "5", cHistory := " "; aHistory := {}
+   Params1()
+   RPar( "c1", @cIdFirma ); RPar( "c2", @qqRoba )
+   RPar( "c8", @qqTipDok )
+   RPar( "d1", @dDatOd ) ; RPar( "d2", @dDatDo )
+   qqRoba := PadR( qqRoba, 80 )
 
-  fSMark:=.f.
-  if right(qqRoba,1)="*"
-    // izvrsena je markacija robe ..
-    fSMark:=.t.
-  endif
+   Box(, 5, 75 )
+   DO WHILE .T.
+      IF gNW $ "DR"
+         @ m_x + 1, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cidfirma == gFirma .OR. P_RJ( @cIdFirma ) }
+      ELSE
+         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      ENDIF
+      @ m_x + 2, m_y + 2 SAY "Roba   "  GET qqRoba   PICT "@!S40"
+      @ m_x + 4, m_y + 2 SAY "Tip dokumenta (prazno - svi)"  GET qqTipdok
+      @ m_x + 5, m_y + 2 SAY "Od datuma "  GET dDatOd
+      @ m_x + 5, Col() + 1 SAY "do"  GET dDatDo
+      READ; ESC_BCR
+      aUsl1 := Parsiraj( qqRoba, "IDROBA" )
+      IF aUsl1 <> NIL; EXIT; ENDIF
+   ENDDO
+   BoxC()
 
-  SELECT FAKT
+   SELECT params
+   qqRoba := Trim( qqRoba )
+   WPar( "c1", cIdFirma ); WPar( "c2", qqRoba )
+   WPar( "c8", qqTipDok )
+   WPar( "d1", dDatOd ); WPar( "d2", dDatDo )
+   USE
 
-  cSort1 := "idroba"
-  cFilt1 := aUsl1
-  if !empty(dDatOd) .or. !empty(dDatDo)
-    cFilt1 += ".and. DatDok>="+cm2str(dDatOd)+".and. DatDok<="+cm2str(dDatDo)
-  endif
-  IF !EMPTY(qqTipDok)
-    cFilt1 += ".and. IDTIPDOK=="+cm2str(qqTipDok)
-  ENDIF
-  IF !EMPTY(cIdFirma)
-    cFilt1 += ".and. IDFIRMA=="+cm2str(cIdFirma)
-  ENDIF
+   fSMark := .F.
+   IF Right( qqRoba, 1 ) = "*"
+      // izvrsena je markacija robe ..
+      fSMark := .T.
+   ENDIF
 
-  INDEX ON &cSort1 TO (cTMPFAKT:=TMPFAKT()) FOR &cFilt1
+   SELECT FAKT
 
-  START PRINT CRET
+   cSort1 := "idroba"
+   cFilt1 := aUsl1
+   IF !Empty( dDatOd ) .OR. !Empty( dDatDo )
+      cFilt1 += ".and. DatDok>=" + cm2str( dDatOd ) + ".and. DatDok<=" + cm2str( dDatDo )
+   ENDIF
+   IF !Empty( qqTipDok )
+      cFilt1 += ".and. IDTIPDOK==" + cm2str( qqTipDok )
+   ENDIF
+   IF !Empty( cIdFirma )
+      cFilt1 += ".and. IDFIRMA==" + cm2str( cIdFirma )
+   ENDIF
 
-  PRIVATE cIdRoba:="", cNRobe:="", nUkIznos:=0, lSubTot7:=.f., cSubTot7:=""
-  gOstr:="D"
-  nOpor:=nNeOpor:=0
+   INDEX ON &cSort1 TO ( cTMPFAKT := TMPFAKT() ) FOR &cFilt1
 
-  nPP7 := VAL( IzFMKINI("NOVINE","USifriRobe_PocPozSifIzdavaca","1",KUMPATH) )
-  nDS7 := VAL( IzFMKINI("NOVINE","USifriRobe_DuzinaSifIzdavaca","3",KUMPATH) )
+   START PRINT CRET
 
-aKol:={ { "SIFRA"        , {|| cIdRoba                }, .f., "C",10, 0, 1, 1},;
-        { "IZDANJE"      , {|| cNRobe                 }, .f., "C",50, 0, 1, 2},;
-        { "Neoporezovani", {|| ROUND(nNeOpor ,gFZaok) }, .t., "N",13, 2, 1, 3},;
-        { "iznos"        , {|| "#"                    }, .f., "C",13, 0, 2, 3},;
-        { "Oporezovani"  , {|| ROUND(nOpor ,gFZaok)   }, .t., "N",13, 2, 1, 4},;
-        { "iznos"        , {|| "#"                    }, .f., "C",13, 0, 2, 4},;
-        { "UKUPNO IZNOS" , {|| ROUND(nUkIznos,gFZaok) }, .t., "N",13, 2, 1, 5} }
+   PRIVATE cIdRoba := "", cNRobe := "", nUkIznos := 0, lSubTot7 := .F., cSubTot7 := ""
+   gOstr := "D"
+   nOpor := nNeOpor := 0
 
-  ?
-  P_12CPI
-  ?? space(gnLMarg)
-  ?? "FAKT: Izvjestaj na dan",date()
-  ? space(gnLMarg)
-  IspisFirme("")
-  ? space(gnLMarg)
-  ?? "RJ: " + IF( EMPTY(cIdFirma) , "SVE" , cIdFirma )
+   nPP7 := Val( IzFMKINI( "NOVINE", "USifriRobe_PocPozSifIzdavaca", "1", KUMPATH ) )
+   nDS7 := Val( IzFMKINI( "NOVINE", "USifriRobe_DuzinaSifIzdavaca", "3", KUMPATH ) )
 
-  StampaTabele(aKol,{|| FSvaki7()},,gTabela,,;
-       ,"Vrijednost isporuke robe po izdavacima za period od "+DTOC(ddatod)+" do "+DTOC(ddatdo),;
-                               {|| FFor7()},IF(gOstr=="D",,-1),,,{|| SubTot7()},,)
+   aKol := { { "SIFRA", {|| cIdRoba                }, .F., "C", 10, 0, 1, 1 }, ;
+      { "IZDANJE", {|| cNRobe                 }, .F., "C", 50, 0, 1, 2 }, ;
+      { "Neoporezovani", {|| Round( nNeOpor, gFZaok ) }, .T., "N", 13, 2, 1, 3 }, ;
+      { "iznos", {|| "#"                    }, .F., "C", 13, 0, 2, 3 }, ;
+      { "Oporezovani", {|| Round( nOpor, gFZaok )   }, .T., "N", 13, 2, 1, 4 }, ;
+      { "iznos", {|| "#"                    }, .F., "C", 13, 0, 2, 4 }, ;
+      { "UKUPNO IZNOS", {|| Round( nUkIznos, gFZaok ) }, .T., "N", 13, 2, 1, 5 } }
 
-  FF
-  END PRINT
-my_close_all_dbf(); MyFERASE(cTMPFAKT)
-CLOSERET
-return
-*}
+   ?
+   P_12CPI
+   ?? Space( gnLMarg )
+   ?? "FAKT: Izvjestaj na dan", Date()
+   ? Space( gnLMarg )
+   IspisFirme( "" )
+   ? Space( gnLMarg )
+   ?? "RJ: " + IF( Empty( cIdFirma ), "SVE", cIdFirma )
+
+   StampaTabele( aKol, {|| FSvaki7() },, gTabela,, ;
+      , "Vrijednost isporuke robe po izdavacima za period od " + DToC( ddatod ) + " do " + DToC( ddatdo ), ;
+      {|| FFor7() }, IF( gOstr == "D",, -1 ),,, {|| SubTot7() },, )
+
+   FF
+   ENDPRINT
+   my_close_all_dbf(); MyFERASE( cTMPFAKT )
+   CLOSERET
+
+   RETURN
 
 
 /*! \fn FFor7()
  *  \brief
  */
- 
-static function FFor7()
-*{
-LOCAL nIznos:=0
-IF fSMark .and. SkLoNMark("ROBA",SiSiRo()) //skip+loop gdje je roba->_M1_ != "*"
-   RETURN .f.
- ENDIF
- IF SUBSTR(idroba,nPP7,nDS7) <> SUBSTR(cIdRoba,nPP7,nDS7) .and. LEN(cIdRoba)>0
-   lSubTot7:=.t.
-   cSubTot7:=SUBSTR(cIdRoba,nPP7,nDS7)
- ENDIF
- cIdRoba:=LEFT(idroba,gnDS)
- nUkIznos:=0
- nOpor:=nNeOpor:=0
- cNRobe:=Ocitaj(F_ROBA,PADR(cidroba,LEN(idroba)),"TRIM(naz)")
- DO WHILE !EOF() .and. LEFT(idroba,gnDS)==cIdRoba
-   nIznos := ROUND( kolicina*cijena*PrerCij()*(1-rabat/100)*(1+porez/100) , FIELD->zaokr )
-   nUkIznos += nIznos
-   SELECT ROBA; HSEEK PADR(LEFT(FAKT->idroba,gnDS),LEN(id))
-   SELECT TARIFA; HSEEK ROBA->idtarifa; SELECT FAKT
-   IF TARIFA->opp=0 .and. TARIFA->ppp=0 .and. TARIFA->zpp=0
-     nNeOpor += nIznos
-   ELSE
-     nOpor   += nIznos
+
+STATIC FUNCTION FFor7()
+
+   // {
+   LOCAL nIznos := 0
+   IF fSMark .AND. SkLoNMark( "ROBA", SiSiRo() ) // skip+loop gdje je roba->_M1_ != "*"
+      RETURN .F.
    ENDIF
-   SKIP 1
- ENDDO
- SKIP -1
-RETURN .t.
-*}
+   IF SubStr( idroba, nPP7, nDS7 ) <> SubStr( cIdRoba, nPP7, nDS7 ) .AND. Len( cIdRoba ) > 0
+      lSubTot7 := .T.
+      cSubTot7 := SubStr( cIdRoba, nPP7, nDS7 )
+   ENDIF
+   cIdRoba := Left( idroba, gnDS )
+   nUkIznos := 0
+   nOpor := nNeOpor := 0
+   cNRobe := Ocitaj( F_ROBA, PadR( cidroba, Len( idroba ) ), "TRIM(naz)" )
+   DO WHILE !Eof() .AND. Left( idroba, gnDS ) == cIdRoba
+      nIznos := Round( kolicina * cijena * PrerCij() * ( 1 -rabat / 100 ) * ( 1 + porez / 100 ), FIELD->zaokr )
+      nUkIznos += nIznos
+      SELECT ROBA; HSEEK PadR( Left( FAKT->idroba, gnDS ), Len( id ) )
+      SELECT TARIFA; HSEEK ROBA->idtarifa; SELECT FAKT
+      IF TARIFA->opp = 0 .AND. TARIFA->ppp = 0 .AND. TARIFA->zpp = 0
+         nNeOpor += nIznos
+      ELSE
+         nOpor   += nIznos
+      ENDIF
+      SKIP 1
+   ENDDO
+   SKIP -1
+
+   RETURN .T.
+// }
 
 
 /*! \fn FSvaki7()
  */
- 
-static function FSvaki7()
-*{
-RETURN
-*}
+
+STATIC FUNCTION FSvaki7()
+
+   // {
+
+   RETURN
+// }
 
 
 
 /*! \fn SubTot7()
  *  \brief
  */
- 
-static function SubTot7()
-*{
-LOCAL aVrati:={.f.,""}, cIzd:="", cIdIzd:=""
-  IF lSubTot7 .or. EOF()
-    cIdIzd := IF(EOF(),SUBSTR(cIdRoba,nPP7,nDS7),cSubTot7)
-    cIzd := IzFMKINI("NOVINE","NazivIzdavaca"+cIdIzd,"-",KUMPATH)
-    aVrati := { .t. , "IZDAVAC "+cIdIzd+"-"+cIzd }
-    lSubTot7:=.f.
-  ENDIF
-RETURN aVrati
-*}
+
+STATIC FUNCTION SubTot7()
+
+   // {
+   LOCAL aVrati := { .F., "" }, cIzd := "", cIdIzd := ""
+   IF lSubTot7 .OR. Eof()
+      cIdIzd := IF( Eof(), SubStr( cIdRoba, nPP7, nDS7 ), cSubTot7 )
+      cIzd := IzFMKINI( "NOVINE", "NazivIzdavaca" + cIdIzd, "-", KUMPATH )
+      aVrati := { .T., "IZDAVAC " + cIdIzd + "-" + cIzd }
+      lSubTot7 := .F.
+   ENDIF
+
+   RETURN aVrati
+// }
 
 
 /*! \fn PorPoOps()
  *  \brief Porezi po tarifama i po opstinama
  */
 
-function PorPoOps()
+FUNCTION PorPoOps()
 
-  O_SIFK
-  O_SIFV
-  O_ROBA
-  O_TARIFA
-  O_RJ
-  O_PARTN
-  O_FAKT
+   O_SIFK
+   O_SIFV
+   O_ROBA
+   O_TARIFA
+   O_RJ
+   O_PARTN
+   O_FAKT
 
-  cTMPFAKT:=""
+   cTMPFAKT := ""
 
-  cIdfirma:=gFirma
-  qqRoba:=""
-  dDatOd:=ctod("")
-  dDatDo:=date()
-  qqTipdok:="  "
+   cIdfirma := gFirma
+   qqRoba := ""
+   dDatOd := CToD( "" )
+   dDatDo := Date()
+   qqTipdok := "  "
 
-  O_PARAMS
-  private cSection:="5",cHistory:=" "; aHistory:={}
-  Params1()
-  RPar("c1",@cIdFirma); RPar("c2",@qqRoba)
-  RPar("c8",@qqTipDok)
-  RPar("d1",@dDatOd) ; RPar("d2",@dDatDo)
-  qqRoba:=PADR(qqRoba,80)
+   O_PARAMS
+   PRIVATE cSection := "5", cHistory := " "; aHistory := {}
+   Params1()
+   RPar( "c1", @cIdFirma ); RPar( "c2", @qqRoba )
+   RPar( "c8", @qqTipDok )
+   RPar( "d1", @dDatOd ) ; RPar( "d2", @dDatDo )
+   qqRoba := PadR( qqRoba, 80 )
 
-  Box(,5,75)
-  DO WHILE .t.
-   if gNW$"DR"
-     @ m_x+1,m_y+2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| empty(cIdFirma) .or. cidfirma==gFirma .or. P_RJ(@cIdFirma) }
-   else
-     @ m_x+1,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
-   endif
-   @ m_x+2,m_y+2 SAY "Roba   "  GET qqRoba   pict "@!S40"
-   @ m_x+4,m_y+2 SAY "Tip dokumenta (prazno - svi)"  GET qqTipdok
-   @ m_x+5,m_y+2 SAY "Od datuma "  get dDatOd
-   @ m_x+5,col()+1 SAY "do"  get dDatDo
-   READ; ESC_BCR
-   aUsl1:=Parsiraj(qqRoba,"IDROBA")
-   IF aUsl1<>NIL; EXIT; ENDIF
-  ENDDO
-  BoxC()
-
-  select params
-  qqRoba:=trim(qqRoba)
-  WPar("c1",cIdFirma); WPar("c2",qqRoba)
-  WPar("c8",qqTipDok)
-  WPar("d1",dDatOd); WPar("d2",dDatDo)
-  use
-
-  fSMark:=.f.
-  if right(qqRoba,1)="*"
-    // izvrsena je markacija robe ..
-    fSMark:=.t.
-  endif
-
-  SELECT FAKT
-
-  cSort1 := "idpartner"
-  cFilt1 := aUsl1
-  if !empty(dDatOd) .or. !empty(dDatDo)
-    cFilt1 += ".and. DatDok>="+cm2str(dDatOd)+".and. DatDok<="+cm2str(dDatDo)
-  endif
-  IF !EMPTY(qqTipDok)
-    cFilt1 += ".and. IDTIPDOK=="+cm2str(qqTipDok)
-  ENDIF
-  IF !EMPTY(cIdFirma)
-    cFilt1 += ".and. IDFIRMA=="+cm2str(cIdFirma)
-  ENDIF
-
-  INDEX ON &cSort1 TO (cTMPFAKT:=TMPFAKT()) FOR &cFilt1
-
-  // kreiranje pomocne izvjestajne baze
-  // ----------------------------------
-  aDbf:={  { "OPS"   ,"C" , 10 , 0 },;
-           { "POR"   ,"C" , 10 , 0 },;
-           { "PPP"   ,"N" , 17 , 8 },;
-           { "PPU"   ,"N" , 17 , 8 },;
-           { "PP"    ,"N" , 17 , 8 },;
-           { "IZNOS" ,"N" , 17 , 8 } ;
-          }
-  dbcreate2(PRIVPATH+"por",aDbf)
-  O_POR   // select 95
-  index  on BRISANO TAG "BRISAN"
-  index  on OPS+POR  TAG "1" ;  set order to tag "1"
-  SELECT FAKT
-  GO TOP
-  DO WHILE !EOF()
-    IF fSMark .and. SkLoNMark("ROBA",SiSiRo()) // skip+loop gdje je roba->_M1_ != "*"
-      SKIP 1; LOOP
-    ENDIF
-    aPor := {}
-    cOps := SUBSTR(idpartner,2,2)
-    DO WHILE !EOF() .and. cOps==SUBSTR(idpartner,2,2)
-      IF fSMark .and. SkLoNMark("ROBA",SiSiRo()) // skip+loop gdje je roba->_M1_ != "*"
-        SKIP 1; LOOP
-      ENDIF
-      SELECT ROBA; HSEEK PADR(LEFT(FAKT->idroba,gnDS),LEN(id))
-      SELECT TARIFA; HSEEK ROBA->idtarifa; SELECT FAKT
-
-      IF IzFMKINI("POREZI","PPUgostKaoPPU","D")=="D"
-        n0 := (cijena*Koef(DinDem)*kolicina)/(1+tarifa->zpp/100+tarifa->ppp/100)/(1+tarifa->opp/100)
-        n1 := n0*tarifa->opp/100
-        n2 := n0*(1+tarifa->opp/100)*tarifa->ppp/100
-        n3 := n0*(1+tarifa->opp/100)*tarifa->zpp/100
+   Box(, 5, 75 )
+   DO WHILE .T.
+      IF gNW $ "DR"
+         @ m_x + 1, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cidfirma == gFirma .OR. P_RJ( @cIdFirma ) }
       ELSE
-        n0 := (cijena*Koef(DinDem)*kolicina)/((1+tarifa->opp/100)*(1+tarifa->ppp/100)+tarifa->zpp/100)
-        n1 := n0*tarifa->opp/100
-        n2 := n0*(1+tarifa->opp/100)*tarifa->ppp/100
-        n3 := n0*tarifa->zpp/100
+         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
+      @ m_x + 2, m_y + 2 SAY "Roba   "  GET qqRoba   PICT "@!S40"
+      @ m_x + 4, m_y + 2 SAY "Tip dokumenta (prazno - svi)"  GET qqTipdok
+      @ m_x + 5, m_y + 2 SAY "Od datuma "  GET dDatOd
+      @ m_x + 5, Col() + 1 SAY "do"  GET dDatDo
+      READ; ESC_BCR
+      aUsl1 := Parsiraj( qqRoba, "IDROBA" )
+      IF aUsl1 <> NIL; EXIT; ENDIF
+   ENDDO
+   BoxC()
 
-      IF LEN(aPor)<1
-        AADD(aPor, {TARIFA->id,kolicina*cijena,n1,n2,n3} )
-      ELSE
-        nPom:=ASCAN(aPor,{|x| x[1]==TARIFA->id})
-        IF nPom>0
-          aPor[nPom,2] += kolicina*cijena
-          aPor[nPom,3] += n1
-          aPor[nPom,4] += n2
-          aPor[nPom,5] += n3
-        ELSE
-          AADD(aPor, {TARIFA->id,kolicina*cijena,n1,n2,n3} )
-        ENDIF
+   SELECT params
+   qqRoba := Trim( qqRoba )
+   WPar( "c1", cIdFirma ); WPar( "c2", qqRoba )
+   WPar( "c8", qqTipDok )
+   WPar( "d1", dDatOd ); WPar( "d2", dDatDo )
+   USE
+
+   fSMark := .F.
+   IF Right( qqRoba, 1 ) = "*"
+      // izvrsena je markacija robe ..
+      fSMark := .T.
+   ENDIF
+
+   SELECT FAKT
+
+   cSort1 := "idpartner"
+   cFilt1 := aUsl1
+   IF !Empty( dDatOd ) .OR. !Empty( dDatDo )
+      cFilt1 += ".and. DatDok>=" + cm2str( dDatOd ) + ".and. DatDok<=" + cm2str( dDatDo )
+   ENDIF
+   IF !Empty( qqTipDok )
+      cFilt1 += ".and. IDTIPDOK==" + cm2str( qqTipDok )
+   ENDIF
+   IF !Empty( cIdFirma )
+      cFilt1 += ".and. IDFIRMA==" + cm2str( cIdFirma )
+   ENDIF
+
+   INDEX ON &cSort1 TO ( cTMPFAKT := TMPFAKT() ) FOR &cFilt1
+
+   // kreiranje pomocne izvjestajne baze
+   // ----------------------------------
+   aDbf := {  { "OPS", "C", 10, 0 }, ;
+      { "POR", "C", 10, 0 }, ;
+      { "PPP", "N", 17, 8 }, ;
+      { "PPU", "N", 17, 8 }, ;
+      { "PP", "N", 17, 8 }, ;
+      { "IZNOS", "N", 17, 8 } ;
+      }
+   dbcreate2( PRIVPATH + "por", aDbf )
+   O_POR   // select 95
+   INDEX  ON BRISANO TAG "BRISAN"
+   INDEX  ON OPS + POR  TAG "1" ;  SET ORDER TO TAG "1"
+   SELECT FAKT
+   GO TOP
+   DO WHILE !Eof()
+      IF fSMark .AND. SkLoNMark( "ROBA", SiSiRo() ) // skip+loop gdje je roba->_M1_ != "*"
+         SKIP 1; LOOP
       ENDIF
-      SKIP 1
-    ENDDO
-    SELECT POR
-    nU1:=0
-    nU2:=0
-    nU3:=0
-    nU4:=0
-    FOR i:=1 TO LEN(aPor)
-      nU1 += aPor[i,2]
-      nU2 += aPor[i,3]
-      nU3 += aPor[i,4]
-      nU4 += aPor[i,5]
+      aPor := {}
+      cOps := SubStr( idpartner, 2, 2 )
+      DO WHILE !Eof() .AND. cOps == SubStr( idpartner, 2, 2 )
+         IF fSMark .AND. SkLoNMark( "ROBA", SiSiRo() ) // skip+loop gdje je roba->_M1_ != "*"
+            SKIP 1; LOOP
+         ENDIF
+         SELECT ROBA; HSEEK PadR( Left( FAKT->idroba, gnDS ), Len( id ) )
+         SELECT TARIFA; HSEEK ROBA->idtarifa; SELECT FAKT
+
+         IF IzFMKINI( "POREZI", "PPUgostKaoPPU", "D" ) == "D"
+            n0 := ( cijena * Koef( DinDem ) * kolicina ) / ( 1 + tarifa->zpp / 100 + tarifa->ppp / 100 ) / ( 1 + tarifa->opp / 100 )
+            n1 := n0 * tarifa->opp / 100
+            n2 := n0 * ( 1 + tarifa->opp / 100 ) * tarifa->ppp / 100
+            n3 := n0 * ( 1 + tarifa->opp / 100 ) * tarifa->zpp / 100
+         ELSE
+            n0 := ( cijena * Koef( DinDem ) * kolicina ) / ( ( 1 + tarifa->opp / 100 ) * ( 1 + tarifa->ppp / 100 ) + tarifa->zpp / 100 )
+            n1 := n0 * tarifa->opp / 100
+            n2 := n0 * ( 1 + tarifa->opp / 100 ) * tarifa->ppp / 100
+            n3 := n0 * tarifa->zpp / 100
+         ENDIF
+
+         IF Len( aPor ) < 1
+            AAdd( aPor, { TARIFA->id, kolicina * cijena, n1, n2, n3 } )
+         ELSE
+            nPom := AScan( aPor, {| x| x[ 1 ] == TARIFA->id } )
+            IF nPom > 0
+               aPor[ nPom, 2 ] += kolicina * cijena
+               aPor[ nPom, 3 ] += n1
+               aPor[ nPom, 4 ] += n2
+               aPor[ nPom, 5 ] += n3
+            ELSE
+               AAdd( aPor, { TARIFA->id, kolicina * cijena, n1, n2, n3 } )
+            ENDIF
+         ENDIF
+         SKIP 1
+      ENDDO
+      SELECT POR
+      nU1 := 0
+      nU2 := 0
+      nU3 := 0
+      nU4 := 0
+      FOR i := 1 TO Len( aPor )
+         nU1 += aPor[ i, 2 ]
+         nU2 += aPor[ i, 3 ]
+         nU3 += aPor[ i, 4 ]
+         nU4 += aPor[ i, 5 ]
+         APPEND BLANK
+         REPLACE ops WITH cOps, por WITH aPor[ i, 1 ], iznos WITH aPor[ i, 2 ], ;
+            ppp WITH aPor[ i, 3 ], ppu WITH aPor[ i, 4 ], pp  WITH aPor[ i, 5 ]
+         HSEEK "UKUPNO  T." + aPor[ i, 1 ]
+         IF Found()
+            REPLACE iznos WITH iznos + aPor[ i, 2 ], ;
+               ppp   WITH ppp + aPor[ i, 3 ], ;
+               ppu   WITH ppu + aPor[ i, 4 ], ;
+               pp    WITH pp + aPor[ i, 5 ]
+         ELSE
+            APPEND BLANK
+            REPLACE ops WITH "UKUPNO  T.", por WITH aPor[ i, 1 ], iznos WITH aPor[ i, 2 ], ;
+               ppp WITH aPor[ i, 3 ], ppu WITH aPor[ i, 4 ], pp  WITH aPor[ i, 5 ]
+         ENDIF
+      NEXT
       APPEND BLANK
-      REPLACE ops WITH cOps, por WITH aPor[i,1], iznos WITH aPor[i,2],;
-              ppp WITH aPor[i,3], ppu WITH aPor[i,4], pp  WITH aPor[i,5]
-      HSEEK "UKUPNO  T."+aPor[i,1]
-      IF FOUND()
-        REPLACE iznos WITH iznos+aPor[i,2],;
-                ppp   WITH ppp+aPor[i,3],;
-                ppu   WITH ppu+aPor[i,4],;
-                pp    WITH pp+aPor[i,5]
+      REPLACE ops   WITH cOps, ;
+         por   WITH "ÄUKUPNO", ;
+         iznos WITH nU1, ;
+         ppp   WITH nU2, ;
+         ppu   WITH nU3, ;
+         pp    WITH nU4
+      HSEEK "UKUPNO SVE"
+      IF Found()
+         REPLACE iznos WITH iznos + nU1, ;
+            ppp   WITH ppp   + nU2, ;
+            ppu   WITH ppu   + nU3, ;
+            pp    WITH pp    + nU4
       ELSE
-        APPEND BLANK
-        REPLACE ops WITH "UKUPNO  T.", por WITH aPor[i,1], iznos WITH aPor[i,2],;
-              ppp WITH aPor[i,3], ppu WITH aPor[i,4], pp  WITH aPor[i,5]
-      ENDIF
-    NEXT
-    APPEND BLANK
-    REPLACE ops   WITH cOps,;
-            por   WITH "ÄUKUPNO",;
-            iznos WITH nU1 ,;
-            ppp   WITH nU2 ,;
-            ppu   WITH nU3 ,;
+         APPEND BLANK
+         REPLACE ops   WITH "UKUPNO SVE", ;
+            por   WITH "", ;
+            iznos WITH nU1, ;
+            ppp   WITH nU2, ;
+            ppu   WITH nU3, ;
             pp    WITH nU4
-    HSEEK "UKUPNO SVE"
-    IF FOUND()
-      REPLACE iznos WITH iznos + nU1 ,;
-              ppp   WITH ppp   + nU2 ,;
-              ppu   WITH ppu   + nU3 ,;
-              pp    WITH pp    + nU4
-    ELSE
-      APPEND BLANK
-      REPLACE ops   WITH "UKUPNO SVE",;
-              por   WITH "",;
-              iznos WITH nU1 ,;
-              ppp   WITH nU2 ,;
-              ppu   WITH nU3 ,;
-              pp    WITH nU4
-    ENDIF
-    SELECT FAKT
-  ENDDO
-  // -----------------------------------------------
+      ENDIF
+      SELECT FAKT
+   ENDDO
+   // -----------------------------------------------
 
-  SELECT POR
-  GO TOP
+   SELECT POR
+   GO TOP
 
-  START PRINT CRET
+   START PRINT CRET
 
-  PRIVATE cIdPartner:="", cNPartnera:="", nUkIznos:=0
-  gOstr:="D"
-  nOpor:=nNeOpor:=0
+   PRIVATE cIdPartner := "", cNPartnera := "", nUkIznos := 0
+   gOstr := "D"
+   nOpor := nNeOpor := 0
 
-aKol:={ { "OPSTINA"      , {|| ops                 }, .f., "C",10, 0, 1, 1},;
-        { "TARIFA"       , {|| por                 }, .f., "C",10, 0, 1, 2},;
-        { "PPP"          , {|| STR(ppp,13,2)       }, .f., "C",13, 0, 1, 3},;
-        { "PPU"          , {|| STR(ppu,13,2)       }, .f., "C",13, 0, 1, 4},;
-        { "PP"           , {|| STR(pp ,13,2)       }, .f., "C",13, 0, 1, 5},;
-        { "MPV"          , {|| STR(iznos,13,2)     }, .f., "C",13, 0, 1, 6} }
+   aKol := { { "OPSTINA", {|| ops                 }, .F., "C", 10, 0, 1, 1 }, ;
+      { "TARIFA", {|| por                 }, .F., "C", 10, 0, 1, 2 }, ;
+      { "PPP", {|| Str( ppp, 13, 2 )       }, .F., "C", 13, 0, 1, 3 }, ;
+      { "PPU", {|| Str( ppu, 13, 2 )       }, .F., "C", 13, 0, 1, 4 }, ;
+      { "PP", {|| Str( pp, 13, 2 )       }, .F., "C", 13, 0, 1, 5 }, ;
+      { "MPV", {|| Str( iznos, 13, 2 )     }, .F., "C", 13, 0, 1, 6 } }
 
-  ? 
-  P_12CPI
-  ?? space(gnLMarg)
-  ?? "FAKT: Izvjestaj na dan",date()
-  ? space(gnLMarg)
-  IspisFirme("")
-  ? space(gnLMarg)
-  ?? "RJ: " + IF( EMPTY(cIdFirma) , "SVE" , cIdFirma )
+   ?
+   P_12CPI
+   ?? Space( gnLMarg )
+   ?? "FAKT: Izvjestaj na dan", Date()
+   ? Space( gnLMarg )
+   IspisFirme( "" )
+   ? Space( gnLMarg )
+   ?? "RJ: " + IF( Empty( cIdFirma ), "SVE", cIdFirma )
 
-  SELECT POR
+   SELECT POR
 
-  StampaTabele(aKol,{|| FSvaki8()},,gTabela,,;
-       ,"Porezi po tarifama i opstinama za period od "+DTOC(ddatod)+" do "+DTOC(ddatdo),;
-                               {|| FFor8()},IF(gOstr=="D",,-1),,,,,)
+   StampaTabele( aKol, {|| FSvaki8() },, gTabela,, ;
+      , "Porezi po tarifama i opstinama za period od " + DToC( ddatod ) + " do " + DToC( ddatdo ), ;
+      {|| FFor8() }, IF( gOstr == "D",, -1 ),,,,, PRINT
+   my_close_all_dbf(); MyFERASE( cTMPFAKT )
+   CLOSERET
 
-  END PRINT
-my_close_all_dbf(); MyFERASE(cTMPFAKT)
-CLOSERET
-return
-*}
+   RETURN
+// }
 
 
 /*! \fn FFor8()
  */
 
-static function FFor8()
-*{
-RETURN .t.
-*}
+STATIC FUNCTION FFor8()
+
+   // {
+
+   RETURN .T.
+// }
 
 
 /*! \fn FSvaki8()
  *  \brief
  */
 
-static function FSvaki8()
-*{
-IF por="ÄUKUPNO"
-    RETURN "PODVUCI="
-  ENDIF
-  SKIP 1
-  IF por="ÄUKUPNO".or.ops="UKUPNO SVE"
-    SKIP -1
-    RETURN "PODVUCI "
-  ELSE
-    SKIP -1
-  ENDIF
-RETURN (NIL)
-*}
+STATIC FUNCTION FSvaki8()
+
+   // {
+   IF por = "ÄUKUPNO"
+      RETURN "PODVUCI="
+   ENDIF
+   SKIP 1
+   IF por = "ÄUKUPNO" .OR. ops = "UKUPNO SVE"
+      SKIP -1
+      RETURN "PODVUCI "
+   ELSE
+      SKIP -1
+   ENDIF
+
+   RETURN ( NIL )
+// }
 
 
 /*! \fn SiSiRo()
@@ -1479,417 +1521,425 @@ RETURN (NIL)
  *  \brief specificno za opresu - novine
  */
 
-function SiSiRo()
-LOCAL cSR:=FAKT->idroba
-RETURN cSR
+FUNCTION SiSiRo()
+
+   LOCAL cSR := FAKT->idroba
+
+   RETURN cSR
 
 
 
 /*! \fn KarticaKons()
  *  \brief Kartica konsignacije
  */
- 
-function KarticaKons()
-*{
-local cidfirma,nRezerv,nRevers
-local nul,nizl,nRbr,nCol1:=0,cKolona,cBrza:="N"
-local lpickol:="@Z "+pickol
 
-private m:=""
+FUNCTION KarticaKons()
 
-O_SIFK
-O_SIFV
-O_PARTN
-O_ROBA
-O_TARIFA
-O_RJ
-O_FAKT_DOKS; O_FAKT
-if fId_J
-  set order to tag "3J" // idroba_J+Idroba+dtos(datDok)
-else
-  set order to tag "3" // idroba+dtos(datDok)
-endif
+   // {
+   LOCAL cidfirma, nRezerv, nRevers
+   LOCAL nul, nizl, nRbr, nCol1 := 0, cKolona, cBrza := "N"
+   LOCAL lpickol := "@Z " + pickol
 
-cIdfirma:=gFirma
-PRIVATE qqRoba:=""
-PRIVATE dDatOd:=ctod("")
-PRIVATE dDatDo:=date()
-private qqPartn:=space(60)
+   PRIVATE m := ""
 
-Box("#KARTICA ISPORUCENE KONSIGNACIONE ROBE",17,60)
+   O_SIFK
+   O_SIFV
+   O_PARTN
+   O_ROBA
+   O_TARIFA
+   O_RJ
+   O_FAKT_DOKS; O_FAKT
+   IF fId_J
+      SET ORDER TO TAG "3J" // idroba_J+Idroba+dtos(datDok)
+   ELSE
+      SET ORDER TO TAG "3" // idroba+dtos(datDok)
+   ENDIF
 
-cOstran := IzFMKINI("FAKT","OstraniciKarticu","N",SIFPATH)
+   cIdfirma := gFirma
+   PRIVATE qqRoba := ""
+   PRIVATE dDatOd := CToD( "" )
+   PRIVATE dDatDo := Date()
+   PRIVATE qqPartn := Space( 60 )
 
-O_PARAMS
-private cSection:="5",cHistory:=" "; aHistory:={}
-Params1()
-RPar("c1",@cIdFirma)
-RPar("c9",@qqPartn)
-RPar("d1",@dDatOd)
-RPar("d2",@dDatDo)
+   Box( "#KARTICA ISPORUCENE KONSIGNACIONE ROBE", 17, 60 )
 
-qqPartn:=PADR(qqPartn,60)
+   cOstran := IzFMKINI( "FAKT", "OstraniciKarticu", "N", SIFPATH )
 
-private cTipVPC:="1"
+   O_PARAMS
+   PRIVATE cSection := "5", cHistory := " "; aHistory := {}
+   Params1()
+   RPar( "c1", @cIdFirma )
+   RPar( "c9", @qqPartn )
+   RPar( "d1", @dDatOd )
+   RPar( "d2", @dDatDo )
 
-private ck1:=cK2:=space(4)   // atributi
+   qqPartn := PadR( qqPartn, 60 )
 
-do while .t.
- @ m_x+1,m_y+2 SAY "Brza kartica (D/N)" GET cBrza pict "@!" valid cBrza $ "DN"
- read
- if gNW$"DR"
-   @ m_x+2,m_y+2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| empty(cIdFirma) .or. cidfirma==gFirma .or.P_RJ(@cIdFirma) }
- else
-   @ m_x+2,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
- endif
+   PRIVATE cTipVPC := "1"
 
-if cBrza=="D"
- RPar("c3",@qqRoba)
- qqRoba:=padr(qqRoba,10)
- if fID_J
-   @ m_x+3,m_y+2 SAY "Roba " GET qqRoba pict "@!" valid {|| P_Roba(@qqRoba), qqRoba:=roba->id_j, .t.}
- else
-   @ m_x+3,m_y+2 SAY "Roba " GET qqRoba pict "@!" valid P_Roba(@qqRoba)
- endif
-else
- RPar("c2",@qqRoba)
- qqRoba:=padr(qqRoba,60)
- @ m_x+3,m_y+2 SAY "Roba " GET qqRoba pict "@!S40"
-endif
+   PRIVATE ck1 := cK2 := Space( 4 )   // atributi
 
-@ m_x+4,m_y+2 SAY "Od datuma "  get dDatOd
-@ m_x+4,col()+1 SAY "do"  get dDatDo
-if gVarC $ "12"
- @ m_x+7,m_y+2 SAY "Stanje prikazati sa Cijenom 1/2 (1/2) "  get cTipVpc pict "@!" valid cTipVPC $ "12"
-endif
-@ m_x+8,m_y+2 SAY "Partneri kupci (prazno - svi)"  GET qqPartn   pict "@!S20"
-if fakt->(fieldpos("K1"))<>0 .and. gDK1=="D"
-  @ m_x+ 9,m_y+2 SAY "K1" GET  cK1 pict "@!"
-  @ m_x+10,m_y+2 SAY "K2" GET  cK2 pict "@!"
-endif
-
-if cBrza=="N"
-  @ m_x+15,m_y+2 SAY "Svaka kartica na novu stranicu? (D/N)"  get cOstran VALID cOstran$"DN" PICT "@!"
-else
-  cOstran:="N"
-endif
-
-read; ESC_BCR
-
-aUsl2:=Parsiraj(qqPartn,"IdPartner")
-
-if fID_J .and. cBrza=="D"
-  qqRoba:=roba->(ID_J+ID)
-endif
-
-cSintetika:=IzFmkIni("FAKT","Sintet","N")
-IF cSintetika=="D" .and.  IF(cBrza=="D",ROBA->tip=="S",.t.)
-  @ m_x+17,m_y+2 SAY "Sinteticki prikaz? (D/N) " GET  cSintetika pict "@!" valid cSintetika $ "DN"
-ELSE
-  cSintetika:="N"
-ENDIF
-read; ESC_BCR
-
- if cBrza=="N"
-   if fID_J
-    aUsl1:=Parsiraj(qqRoba,"IdRoba_J")
-   else
-    aUsl1:=Parsiraj(qqRoba,"IdRoba")
-   endif
- endif
- if IF(cBrza=="N",aUsl1<>NIL,.t.) .and. aUsl2<>NIL
-   exit
- endif
-enddo
-m:="---- ------------------ -------- ------ "+replicate("-",20)+;
-   " ----------- ----------- ----------- ----------- ----- -----------"
-Params2()
-qqPartn:=TRIM(qqPartn)
-WPar("c1",cIdFirma)
-WPar("c9",qqPartn); WPar("d1",dDatOd); WPar("d2",dDatDo)
-qqRoba:=TRIM(qqRoba)
-IF cBrza=="D"
- WPar("c3",qqRoba)
-ELSE
- WPar("c2",qqRoba)
-ENDIF
-select params; use
-
-BoxC()
-
-fSMark:=.f.
-if right(qqRoba,1)="*"
-  // izvrsena je markacija robe ..
-  fSMark:=.t.
-endif
-
-O_FAKT_DOKS  // otvori datoteku dokumenata
-
-select FAKT
-
-PRIVATE cFilt1:=""
-cFilt1 := IF(cBrza=="N",aUsl1,".t.")+IF(EMPTY(dDatOd),"",".and.DATDOK>="+cm2str(dDatOd))+;
-                IF(EMPTY(dDatDo),"",".and.DATDOK<="+cm2str(dDatDo))+".and. IDTIPDOK='1'"+;
-                ".and. left(serbr,1)<>'*'"
-
-IF !EMPTY(cIdFirma)
-  cFilt1 += ( ".and. IDFIRMA=="+cm2str(cIdFirma) )
-ENDIF
-IF !EMPTY(qqPartn)
-  cFilt1 += ( ".and."+aUsl2 )
-ENDIF
-
-cFilt1 := STRTRAN(cFilt1,".t..and.","")
-IF !(cFilt1==".t.")
-  SET FILTER TO &cFilt1
-ELSE
-  SET FILTER TO
-ENDIF
-
-IF cBrza=="N"
- go top
- EOF CRET
-ELSE
- seek qqRoba
-ENDIF
-
-START PRINT CRET
-?
-P_12CPI
-?? space(gnLMarg)
-?? "FAKT: Kartica isporuke robe na dan",  date(),  "      za period od", dDatOd, "-" , dDatDo
-? space(gnLMarg); IspisFirme(cidfirma)
-if !empty(qqRoba)
- ? space(gnLMarg)
- if !empty(qqRoba) .and. cBrza="N"
-   ?? "Uslov za artikal:",qqRoba
- endif
-endif
-?
-if cTipVPC=="2" .and.  roba->(fieldpos("vpc2")<>0)
-  ? space(gnlmarg); ?? "U CJENOVNIKU SU PRIKAZANE CIJENE: "+cTipVPC
-endif
-if !empty(cK1)
-  ?
-  ? space(gnlmarg),"- Roba sa osobinom K1:",ck1
-endif
-if !empty(cK2)
-  ?
-  ? space(gnlmarg),"- Roba sa osobinom K2:",ck2
-endif
-
-_cijena:=0
-_cijena2:=0
-nRezerv:=nRevers:=0
-
-qqPartn:=trim(qqPartn)
-if !empty(qqPartn)
-  ?
-  ? space(gnlmarg),"- Prikaz za partnere obuhvacene sljedecim uslovom (sifre):"
-  ? space(gnlmarg)," ",qqPartn
-  ?
-endif
-
-P_COND
-
-nStrana := 1
-lPrviProlaz:=.t.
- 
-do while !eof()
-  if cBrza=="D"
-    if qqRoba<>iif(fID_j,IdRoba_J+IdRoba,IdRoba) .and.;
-       IF(cSintetika=="D",LEFT(qqRoba,gnDS)!=LEFT(IdRoba,gnDS),.t.)
-      // tekuci slog nije zeljena kartica
-      exit
-    endif
-  endif
-  if fId_j
-   cIdRoba:=IdRoba_J+IdRoba
-  else
-   cIdRoba:=IdRoba
-  endif
-  nUl:=nIzl:=nIznos:=0
-  nRezerv:=nRevers:=0
-  nRbr:=0
-  nIzn:=0
-
-  if fId_j
-   NSRNPIdRoba(substr(cIdRoba,11), cSintetika=="D")
-  else
-   NSRNPIdRoba(cIdRoba, cSintetika=="D" )
-  endif
-  select FAKT
-
-  if fSMark .and. SkLoNMark("ROBA",SiSiRo()) // skip & loop gdje je roba->_M1_ != "*"
-    skip; loop
-  endif
-
-  if cTipVPC=="2" .and. roba->(fieldpos("vpc2")<>0)
-    _cijena := roba->vpc2
-  else
-    _cijena := if ( !EMPTY(cIdFirma) , fakt_mpc_iz_sifrarnika() , roba->vpc )
-  endif
-
-  if gVarC=="4" // uporedo vidi i mpc
-    _cijena2 := roba->mpc
-  endif
-
-  if prow()-gPStranica>50; FF; ++nStrana; endif
-
-  ZagKartKons(lPrviProlaz)
-  lPrviProlaz:=.f.
-
-  // GLAVNA DO-WHILE
-  aUkKol:={}
-  do while !eof() .and. IF(cSintetika=="D".and.ROBA->tip=="S",;
-                           LEFT(cIdRoba,gnDS)==LEFT(IdRoba,gnDS),;
-                           cIdRoba==iif(fID_J,IdRoba_J+IdRoba,IdRoba))
-    cKolona:="N"
-
-    if !empty(cidfirma); if idfirma<>cidfirma; skip; loop; end; end
-    if !empty(cK1); if ck1<>K1 ; skip; loop; end; end // uslov ck1
-    if !empty(cK2); if ck2<>K2; skip; loop; end; end // uslov ck2
-
-    // if !empty(qqPartn)
-    //   select fakt_doks; hseek fakt->(IdFirma+idtipdok+brdok)
-    //   select fakt; if !(doks->partner=qqPartn); skip; loop; endif
-    // endif
-
-    if !empty(cIdRoba)
-     if !(left(serbr,1)=="*" .and. idtipdok=="10")  // za fakture na osnovu otpremnice ne racunaj izlaz
-       nIzl+=kolicina
-       nIznos += kolicina*cijena*(1-Rabat/100)
-       cKolona:="I"
-     endif
-
-     if cKolona!="N"
-
-      if prow()-gPStranica>55; FF; ++nStrana; ZagKartKons(); endif
-
-      ? space(gnLMarg); ?? str(++nRbr,3)+".   "+idfirma+"-"+idtipdok+"-"+brdok+left(serbr,1)+"  "+DTOC(datdok)
-
-      select fakt_doks; hseek fakt->(IdFirma+idtipdok+brdok); select fakt
-      @ prow(),pcol()+1 SAY fakt_doks->idPartner
-      @ prow(),pcol()+1 SAY padr(fakt_doks->Partner,20)
-
-      @ prow(),pcol()+1 SAY kolicina pict lpickol
-
-      IF LEN(aUkKol)<1 .or.;
-         ( nPK := ASCAN(aUkKol,{|x| ROUND(x[1],4)==ROUND(cijena,4)}) ) <=0
-        AADD(aUkKol,{cijena,kolicina})
+   DO WHILE .T.
+      @ m_x + 1, m_y + 2 SAY "Brza kartica (D/N)" GET cBrza PICT "@!" VALID cBrza $ "DN"
+      READ
+      IF gNW $ "DR"
+         @ m_x + 2, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cidfirma == gFirma .OR. P_RJ( @cIdFirma ) }
       ELSE
-        aUkKol[nPK,2] += kolicina
+         @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
 
-      @ prow(),pcol()+1 SAY ROBA->nc pict picdem
-      @ prow(),pcol()+1 SAY _cijena pict picdem
-      @ prow(),pcol()+1 SAY Cijena pict picdem
-      @ prow(),pcol()+1 SAY Rabat  pict "99.99"
-      @ prow(),pcol()+1 SAY kolicina*Cijena*(1-Rabat/100) pict picdem
-     endif
+      IF cBrza == "D"
+         RPar( "c3", @qqRoba )
+         qqRoba := PadR( qqRoba, 10 )
+         IF fID_J
+            @ m_x + 3, m_y + 2 SAY "Roba " GET qqRoba PICT "@!" valid {|| P_Roba( @qqRoba ), qqRoba := roba->id_j, .T. }
+         ELSE
+            @ m_x + 3, m_y + 2 SAY "Roba " GET qqRoba PICT "@!" VALID P_Roba( @qqRoba )
+         ENDIF
+      ELSE
+         RPar( "c2", @qqRoba )
+         qqRoba := PadR( qqRoba, 60 )
+         @ m_x + 3, m_y + 2 SAY "Roba " GET qqRoba PICT "@!S40"
+      ENDIF
 
-     if fieldpos("k1")<>0  .and. gDK1=="D"
-       @ prow(),pcol()+1 SAY k1
-     endif
-     if fieldpos("k2")<>0  .and. gDK2=="D"
-       @ prow(),pcol()+1 SAY k2
-     endif
+      @ m_x + 4, m_y + 2 SAY "Od datuma "  GET dDatOd
+      @ m_x + 4, Col() + 1 SAY "do"  GET dDatDo
+      IF gVarC $ "12"
+         @ m_x + 7, m_y + 2 SAY "Stanje prikazati sa Cijenom 1/2 (1/2) "  GET cTipVpc PICT "@!" VALID cTipVPC $ "12"
+      ENDIF
+      @ m_x + 8, m_y + 2 SAY "Partneri kupci (prazno - svi)"  GET qqPartn   PICT "@!S20"
+      IF fakt->( FieldPos( "K1" ) ) <> 0 .AND. gDK1 == "D"
+         @ m_x + 9, m_y + 2 SAY "K1" GET  cK1 PICT "@!"
+         @ m_x + 10, m_y + 2 SAY "K2" GET  cK2 PICT "@!"
+      ENDIF
 
-     if roba->tip="U"
-       aMemo:=ParsMemo(txt)
-       aTxtR:=SjeciStr(aMemo[1],60)   // duzina naziva + serijski broj
-       for ui=1 to len(aTxtR)
-         ? space(gNLMarg)
-         @ prow(),pcol()+7 SAY aTxtR[ui]
-       next
-     endif
+      IF cBrza == "N"
+         @ m_x + 15, m_y + 2 SAY "Svaka kartica na novu stranicu? (D/N)"  GET cOstran VALID cOstran $ "DN" PICT "@!"
+      ELSE
+         cOstran := "N"
+      ENDIF
 
-    endif
+      read; ESC_BCR
 
-    skip
-  enddo
-  // GLAVNA DO-WHILE
+      aUsl2 := Parsiraj( qqPartn, "IdPartner" )
 
-  if prow()-gPStranica>55; FF; ++nStrana; ZagKartKons(); endif
+      IF fID_J .AND. cBrza == "D"
+         qqRoba := roba->( ID_J + ID )
+      ENDIF
 
-  ? space(gnLMarg); ?? m
-  ? space(gnLMarg)+PADL("UKUPNO IZNOS: ",115)+TRANS(nIznos,picdem)
-  ? space(gnLMarg); ?? m
-  FOR i:=1 TO LEN(aUkKol)
-    ? space(gnLMarg)
-    ?? PADL("UKUPNO KOLICINE PO CIJENAMA",60),TRANS(aUkKol[i,2],lPicKol)
-    ?? SPACE(24),TRANS(aUkKol[i,1],picdem)
-  NEXT
-  ? space(gnLMarg); ?? m
-  ?
-  if cOstran=="D"    // kraj kartice => zavrsavam stranicu
-    FF; ++nStrana
-  endif
-enddo
+      cSintetika := IzFmkIni( "FAKT", "Sintet", "N" )
+      IF cSintetika == "D" .AND.  IF( cBrza == "D", ROBA->tip == "S", .T. )
+         @ m_x + 17, m_y + 2 SAY "Sinteticki prikaz? (D/N) " GET  cSintetika PICT "@!" VALID cSintetika $ "DN"
+      ELSE
+         cSintetika := "N"
+      ENDIF
+      read; ESC_BCR
 
-if cOstran!="D"
-  FF
-endif
+      IF cBrza == "N"
+         IF fID_J
+            aUsl1 := Parsiraj( qqRoba, "IdRoba_J" )
+         ELSE
+            aUsl1 := Parsiraj( qqRoba, "IdRoba" )
+         ENDIF
+      ENDIF
+      IF IF( cBrza == "N", aUsl1 <> NIL, .T. ) .AND. aUsl2 <> NIL
+         EXIT
+      ENDIF
+   ENDDO
+   m := "---- ------------------ -------- ------ " + Replicate( "-", 20 ) + ;
+      " ----------- ----------- ----------- ----------- ----- -----------"
+   Params2()
+   qqPartn := Trim( qqPartn )
+   WPar( "c1", cIdFirma )
+   WPar( "c9", qqPartn ); WPar( "d1", dDatOd ); WPar( "d2", dDatDo )
+   qqRoba := Trim( qqRoba )
+   IF cBrza == "D"
+      WPar( "c3", qqRoba )
+   ELSE
+      WPar( "c2", qqRoba )
+   ENDIF
+   SELECT params; USE
 
-END PRINT
-closeret
-return
-*}
+   BoxC()
+
+   fSMark := .F.
+   IF Right( qqRoba, 1 ) = "*"
+      // izvrsena je markacija robe ..
+      fSMark := .T.
+   ENDIF
+
+   O_FAKT_DOKS  // otvori datoteku dokumenata
+
+   SELECT FAKT
+
+   PRIVATE cFilt1 := ""
+   cFilt1 := IF( cBrza == "N", aUsl1, ".t." ) + IF( Empty( dDatOd ), "", ".and.DATDOK>=" + cm2str( dDatOd ) ) + ;
+      IF( Empty( dDatDo ), "", ".and.DATDOK<=" + cm2str( dDatDo ) ) + ".and. IDTIPDOK='1'" + ;
+      ".and. left(serbr,1)<>'*'"
+
+   IF !Empty( cIdFirma )
+      cFilt1 += ( ".and. IDFIRMA==" + cm2str( cIdFirma ) )
+   ENDIF
+   IF !Empty( qqPartn )
+      cFilt1 += ( ".and." + aUsl2 )
+   ENDIF
+
+   cFilt1 := StrTran( cFilt1, ".t..and.", "" )
+   IF !( cFilt1 == ".t." )
+      SET FILTER TO &cFilt1
+   ELSE
+      SET FILTER TO
+   ENDIF
+
+   IF cBrza == "N"
+      GO TOP
+      EOF CRET
+   ELSE
+      SEEK qqRoba
+   ENDIF
+
+   START PRINT CRET
+   ?
+   P_12CPI
+   ?? Space( gnLMarg )
+   ?? "FAKT: Kartica isporuke robe na dan",  Date(),  "      za period od", dDatOd, "-", dDatDo
+   ? Space( gnLMarg ); IspisFirme( cidfirma )
+   IF !Empty( qqRoba )
+      ? Space( gnLMarg )
+      IF !Empty( qqRoba ) .AND. cBrza = "N"
+         ?? "Uslov za artikal:", qqRoba
+      ENDIF
+   ENDIF
+   ?
+   IF cTipVPC == "2" .AND.  roba->( FieldPos( "vpc2" ) <> 0 )
+      ? Space( gnlmarg ); ?? "U CJENOVNIKU SU PRIKAZANE CIJENE: " + cTipVPC
+   ENDIF
+   IF !Empty( cK1 )
+      ?
+      ? Space( gnlmarg ), "- Roba sa osobinom K1:", ck1
+   ENDIF
+   IF !Empty( cK2 )
+      ?
+      ? Space( gnlmarg ), "- Roba sa osobinom K2:", ck2
+   ENDIF
+
+   _cijena := 0
+   _cijena2 := 0
+   nRezerv := nRevers := 0
+
+   qqPartn := Trim( qqPartn )
+   IF !Empty( qqPartn )
+      ?
+      ? Space( gnlmarg ), "- Prikaz za partnere obuhvacene sljedecim uslovom (sifre):"
+      ? Space( gnlmarg ), " ", qqPartn
+      ?
+   ENDIF
+
+   P_COND
+
+   nStrana := 1
+   lPrviProlaz := .T.
+
+   DO WHILE !Eof()
+      IF cBrza == "D"
+         IF qqRoba <> iif( fID_j, IdRoba_J + IdRoba, IdRoba ) .AND. ;
+               IF( cSintetika == "D", Left( qqRoba, gnDS ) != Left( IdRoba, gnDS ), .T. )
+            // tekuci slog nije zeljena kartica
+            EXIT
+         ENDIF
+      ENDIF
+      IF fId_j
+         cIdRoba := IdRoba_J + IdRoba
+      ELSE
+         cIdRoba := IdRoba
+      ENDIF
+      nUl := nIzl := nIznos := 0
+      nRezerv := nRevers := 0
+      nRbr := 0
+      nIzn := 0
+
+      IF fId_j
+         NSRNPIdRoba( SubStr( cIdRoba, 11 ), cSintetika == "D" )
+      ELSE
+         NSRNPIdRoba( cIdRoba, cSintetika == "D" )
+      ENDIF
+      SELECT FAKT
+
+      IF fSMark .AND. SkLoNMark( "ROBA", SiSiRo() ) // skip & loop gdje je roba->_M1_ != "*"
+         skip; LOOP
+      ENDIF
+
+      IF cTipVPC == "2" .AND. roba->( FieldPos( "vpc2" ) <> 0 )
+         _cijena := roba->vpc2
+      ELSE
+         _cijena := if ( !Empty( cIdFirma ), fakt_mpc_iz_sifrarnika(), roba->vpc )
+      ENDIF
+
+      IF gVarC == "4" // uporedo vidi i mpc
+         _cijena2 := roba->mpc
+      ENDIF
+
+      IF PRow() -gPStranica > 50; FF; ++nStrana; ENDIF
+
+      ZagKartKons( lPrviProlaz )
+      lPrviProlaz := .F.
+
+      // GLAVNA DO-WHILE
+      aUkKol := {}
+      DO WHILE !Eof() .AND. IF( cSintetika == "D" .AND. ROBA->tip == "S", ;
+            Left( cIdRoba, gnDS ) == Left( IdRoba, gnDS ), ;
+            cIdRoba == iif( fID_J, IdRoba_J + IdRoba, IdRoba ) )
+         cKolona := "N"
+
+         IF !Empty( cidfirma ); IF idfirma <> cidfirma; skip; loop; end; END
+         IF !Empty( cK1 ); IF ck1 <> K1 ; skip; loop; end; END // uslov ck1
+            IF !Empty( cK2 ); IF ck2 <> K2; skip; loop; end; END // uslov ck2
+
+         // if !empty(qqPartn)
+         // select fakt_doks; hseek fakt->(IdFirma+idtipdok+brdok)
+         // select fakt; if !(doks->partner=qqPartn); skip; loop; endif
+         // endif
+
+         IF !Empty( cIdRoba )
+            IF !( Left( serbr, 1 ) == "*" .AND. idtipdok == "10" )  // za fakture na osnovu otpremnice ne racunaj izlaz
+               nIzl += kolicina
+               nIznos += kolicina * cijena * ( 1 -Rabat / 100 )
+               cKolona := "I"
+            ENDIF
+
+            IF cKolona != "N"
+
+               IF PRow() -gPStranica > 55; FF; ++nStrana; ZagKartKons(); ENDIF
+
+               ? Space( gnLMarg ); ?? Str( ++nRbr, 3 ) + ".   " + idfirma + "-" + idtipdok + "-" + brdok + Left( serbr, 1 ) + "  " + DToC( datdok )
+
+               SELECT fakt_doks; hseek fakt->( IdFirma + idtipdok + brdok ); SELECT fakt
+               @ PRow(), PCol() + 1 SAY fakt_doks->idPartner
+               @ PRow(), PCol() + 1 SAY PadR( fakt_doks->Partner, 20 )
+
+               @ PRow(), PCol() + 1 SAY kolicina PICT lpickol
+
+               IF Len( aUkKol ) < 1 .OR. ;
+                     ( nPK := AScan( aUkKol, {| x| Round( x[ 1 ], 4 ) == Round( cijena, 4 ) } ) ) <= 0
+                  AAdd( aUkKol, { cijena, kolicina } )
+               ELSE
+                  aUkKol[ nPK, 2 ] += kolicina
+               ENDIF
+
+               @ PRow(), PCol() + 1 SAY ROBA->nc PICT picdem
+               @ PRow(), PCol() + 1 SAY _cijena PICT picdem
+               @ PRow(), PCol() + 1 SAY Cijena PICT picdem
+               @ PRow(), PCol() + 1 SAY Rabat  PICT "99.99"
+               @ PRow(), PCol() + 1 SAY kolicina * Cijena * ( 1 -Rabat / 100 ) PICT picdem
+            ENDIF
+
+            IF FieldPos( "k1" ) <> 0  .AND. gDK1 == "D"
+               @ PRow(), PCol() + 1 SAY k1
+            ENDIF
+            IF FieldPos( "k2" ) <> 0  .AND. gDK2 == "D"
+               @ PRow(), PCol() + 1 SAY k2
+            ENDIF
+
+            IF roba->tip = "U"
+               aMemo := ParsMemo( txt )
+               aTxtR := SjeciStr( aMemo[ 1 ], 60 )   // duzina naziva + serijski broj
+               FOR ui = 1 TO Len( aTxtR )
+                  ? Space( gNLMarg )
+                  @ PRow(), PCol() + 7 SAY aTxtR[ ui ]
+               NEXT
+            ENDIF
+
+         ENDIF
+
+         SKIP
+      ENDDO
+      // GLAVNA DO-WHILE
+
+      IF PRow() -gPStranica > 55; FF; ++nStrana; ZagKartKons(); ENDIF
+
+      ? Space( gnLMarg ); ?? m
+      ? Space( gnLMarg ) + PadL( "UKUPNO IZNOS: ", 115 ) + TRANS( nIznos, picdem )
+      ? Space( gnLMarg ); ?? m
+      FOR i := 1 TO Len( aUkKol )
+         ? Space( gnLMarg )
+         ?? PadL( "UKUPNO KOLICINE PO CIJENAMA", 60 ), TRANS( aUkKol[ i, 2 ], lPicKol )
+         ?? Space( 24 ), TRANS( aUkKol[ i, 1 ], picdem )
+      NEXT
+      ? Space( gnLMarg ); ?? m
+      ?
+      IF cOstran == "D"    // kraj kartice => zavrsavam stranicu
+         FF; ++nStrana
+      ENDIF
+   ENDDO
+
+   IF cOstran != "D"
+      FF
+   ENDIF
+
+   ENDPRINT
+   closeret
+
+   RETURN
+// }
 
 
 /*! \fn ZagKartKons(lIniStrana)
  *  \brief Zaglavlje kartice konsignacije
  */
- 
-static function ZagKartKons(lIniStrana)
-*{
 
-*static integer
-static nZStrana:=0
-*;
+STATIC FUNCTION ZagKartKons( lIniStrana )
 
-IF lIniStrana=NIL; lIniStrana:=.f.; ENDIF
-  IF lIniStrana; nZStrana:=0; ENDIF
-  B_ON
-  IF nStrana>nZStrana
-    ?? SPACE(66)+"Strana: "+ALLTRIM(STR(nStrana))
-  ENDIF
-  ?
-  ? space(gnLMarg); ?? m
-  ? space(gnLMarg); ?? "SIFRA:"
-  if fID_J
-   ?? IF(cSintetika=="D".and.ROBA->tip=="S",ROBA->ID_J,left(cidroba,10)),PADR(ROBA->naz,40)
-  else
-   ?? IF(cSintetika=="D".and.ROBA->tip=="S",ROBA->id,cidroba),PADR(ROBA->naz,40)
-  endif
-  ? space(gnLMarg); ?? m
-  B_OFF
-  ? space(gnLMarg)
-  ?? "R.br  RJ Br.dokumenta   Dat.dok. "
-  ?? " Sifra "
-  ?? padc("i naziv partnera",21)
-  ?? "  Kolicina  "+PADC("NC(sifr.)",12)+PADC("VPC(sifr.)",12)+"  Cijena    Rab%     Iznos  "
+   // {
 
-  ? space(gnLMarg); ?? m
-  nZStrana=nStrana
-return
-*}
+   // static integer
+   STATIC nZStrana := 0
+   // ;
+
+   IF lIniStrana = NIL; lIniStrana := .F. ; ENDIF
+   IF lIniStrana; nZStrana := 0; ENDIF
+   B_ON
+   IF nStrana > nZStrana
+      ?? Space( 66 ) + "Strana: " + AllTrim( Str( nStrana ) )
+   ENDIF
+   ?
+   ? Space( gnLMarg ); ?? m
+   ? Space( gnLMarg ); ?? "SIFRA:"
+   IF fID_J
+      ?? IF( cSintetika == "D" .AND. ROBA->tip == "S", ROBA->ID_J, Left( cidroba, 10 ) ), PadR( ROBA->naz, 40 )
+   ELSE
+      ?? IF( cSintetika == "D" .AND. ROBA->tip == "S", ROBA->id, cidroba ), PadR( ROBA->naz, 40 )
+   ENDIF
+   ? Space( gnLMarg ); ?? m
+   B_OFF
+   ? Space( gnLMarg )
+   ?? "R.br  RJ Br.dokumenta   Dat.dok. "
+   ?? " Sifra "
+   ?? PadC( "i naziv partnera", 21 )
+   ?? "  Kolicina  " + PadC( "NC(sifr.)", 12 ) + PadC( "VPC(sifr.)", 12 ) + "  Cijena    Rab%     Iznos  "
+
+   ? Space( gnLMarg ); ?? m
+   nZStrana = nStrana
+
+   RETURN
+// }
 
 
 /*! \fn Oporezovana(cIdTarifa)
- *  \brief 
+ *  \brief
  */
- 
-function Oporezovana(cIdTarifa)
-*{
-LOCAL nArr
- IF cIdTarifa<>NIL
-   nArr:=SELECT()
-   SELECT TARIFA; HSEEK cIdTarifa
-   SELECT (nArr)
- ENDIF
-return (TARIFA->opp<>0 .or. TARIFA->ppp<>0 .or. TARIFA->zpp<>0)
-*}
+
+FUNCTION Oporezovana( cIdTarifa )
+
+   // {
+   LOCAL nArr
+   IF cIdTarifa <> NIL
+      nArr := Select()
+      SELECT TARIFA; HSEEK cIdTarifa
+      SELECT ( nArr )
+   ENDIF
+
+   RETURN ( TARIFA->opp <> 0 .OR. TARIFA->ppp <> 0 .OR. TARIFA->zpp <> 0 )
+// }
 
 
 
@@ -1899,33 +1949,37 @@ return (TARIFA->opp<>0 .or. TARIFA->ppp<>0 .or. TARIFA->zpp<>0)
  *  \param cId
  *  \param cSort
  */
- 
-function SortFakt(cId, cSort)
-*{
-LOCAL cVrati:="", nArr:=SELECT()
- SELECT ROBA
- HSEEK cId
- DO CASE
-   CASE cSort=="N"
-     cVrati := naz + id
-   CASE cSort=="T"
-     cVrati := idtarifa + id
-   CASE cSort=="J"
-     cVrati := jmj + id
- ENDCASE
- SELECT (nArr)
-RETURN cVrati
+
+FUNCTION SortFakt( cId, cSort )
+
+   // {
+   LOCAL cVrati := "", nArr := Select()
+   SELECT ROBA
+   HSEEK cId
+   DO CASE
+   CASE cSort == "N"
+      cVrati := naz + id
+   CASE cSort == "T"
+      cVrati := idtarifa + id
+   CASE cSort == "J"
+      cVrati := jmj + id
+   ENDCASE
+   SELECT ( nArr )
+
+   RETURN cVrati
 
 
 
-function TmpFakt()
-RETURN TEMPFILE(KUMPATH,"CDX",0)
+FUNCTION TmpFakt()
+   RETURN TempFile( KUMPATH, "CDX", 0 )
 
 
-function MyFErase()
-PARAMETERS cFajl
-  IF !(cFajl==NIL .or. "U" $ TYPE("cFajl") )
-    FERASE(cFajl)
-  ENDIF
-RETURN
+FUNCTION MyFErase()
 
+   PARAMETERS cFajl
+
+   IF !( cFajl == NIL .OR. "U" $ Type( "cFajl" ) )
+      FErase( cFajl )
+   ENDIF
+
+   RETURN

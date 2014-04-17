@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -17,19 +17,20 @@
 // P_KalPos(cId,dx,dy)
 // Otvara sifranik kalendar posjeta ako se u uslovu zada ID koji ne postoji
 // ------------------------------------------------------------------------
-function P_KalPos(cId,dx,dy)
+FUNCTION P_KalPos( cId, dx, dy )
 
-PRIVATE ImeKol,Kol:={}
-ImeKol:={ ;
-          { "DATUM"         , {|| datum}   , "datum"    },;
-          { "Relacija"      , {|| idrelac} , "idrelac"  , {|| .t.}, {|| P_Relac(@widrelac)  } },;
-          { "Distributer"   , {|| iddist } , "iddist"   , {|| .t.}, {|| P_Firma(@widdist)   } },;
-          { "Vozilo"        , {|| idvozila}, "idvozila" , {|| .t.}, {|| P_Vozila(@widvozila)} },;
-          { "Realizovano"   , {|| realiz  }, "realiz"   };
-        }
-FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
+   PRIVATE ImeKol, Kol := {}
 
-return PostojiSifra(F_KALPOS, 1, 10, 75, "Kalendar posjeta", @cId, dx, dy)
+   ImeKol := { ;
+      { "DATUM", {|| datum }, "datum"    }, ;
+      { "Relacija", {|| idrelac }, "idrelac", {|| .T. }, {|| P_Relac( @widrelac )  } }, ;
+      { "Distributer", {|| iddist }, "iddist", {|| .T. }, {|| P_Firma( @widdist )   } }, ;
+      { "Vozilo", {|| idvozila }, "idvozila", {|| .T. }, {|| P_Vozila( @widvozila ) } }, ;
+      { "Realizovano", {|| realiz  }, "realiz"   };
+      }
+   FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ); NEXT
+
+   RETURN PostojiSifra( F_KALPOS, 1, 10, 75, "Kalendar posjeta", @cId, dx, dy )
 
 
 
@@ -38,17 +39,19 @@ return PostojiSifra(F_KALPOS, 1, 10, 75, "Kalendar posjeta", @cId, dx, dy)
 // P_Relac(cId,dx,dy)
 // Otvara sifranik relacija
 // ---------------------------------------------
-function P_Relac(cId,dx,dy)
-PRIVATE ImeKol,Kol:={}
-ImeKol:={ ;
-          { "ID"                 , {|| id },       "id"  , {|| .t.}, {|| .t.}     },;
-          { "Naziv i sort(r.br.)", {|| naz},       "naz"       },;
-          { "Sifra kupca"        , {|| idpartner}, "idpartner" , {|| .t.}, {|| P_Firma(@widpartner)} },;
-          { "Prodajno mjesto"    , {|| idpm}     , "idpm"      , {|| .t.}, {|| P_IDPM(@widpm,widpartner)} };
-        }
-FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
+FUNCTION P_Relac( cId, dx, dy )
 
-return PostojiSifra(F_RELAC, 1, 10, 75, "Lista: Relacije",@cId,dx,dy)
+   PRIVATE ImeKol, Kol := {}
+
+   ImeKol := { ;
+      { "ID", {|| id },       "id", {|| .T. }, {|| .T. }     }, ;
+      { "Naziv i sort(r.br.)", {|| naz },       "naz"       }, ;
+      { "Sifra kupca", {|| idpartner }, "idpartner", {|| .T. }, {|| P_Firma( @widpartner ) } }, ;
+      { "Prodajno mjesto", {|| idpm }, "idpm", {|| .T. }, {|| P_IDPM( @widpm, widpartner ) } };
+      }
+   FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ); NEXT
+
+   RETURN PostojiSifra( F_RELAC, 1, 10, 75, "Lista: Relacije", @cId, dx, dy )
 
 
 
@@ -58,60 +61,62 @@ return PostojiSifra(F_RELAC, 1, 10, 75, "Lista: Relacije",@cId,dx,dy)
  *  \param dx
  *  \param dy
  */
- 
-function P_Vozila(cId,dx,dy)
 
-PRIVATE ImeKol,Kol:={}
-ImeKol:={ ;
-          { "ID"     , {|| id },     "id"  , {|| .t.}, {|| vpsifra(wId)}     },;
-          { "Naziv"  , {|| naz},     "naz"      },;
-          { "Tablice", {|| tablice}, "tablice"  };
-        }
-FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
+FUNCTION P_Vozila( cId, dx, dy )
 
-return PostojiSifra(F_VOZILA, 1, 10, 75,"Lista: Vozila",@cId,dx,dy)
+   PRIVATE ImeKol, Kol := {}
+
+   ImeKol := { ;
+      { "ID", {|| id },     "id", {|| .T. }, {|| vpsifra( wId ) }     }, ;
+      { "Naziv", {|| naz },     "naz"      }, ;
+      { "Tablice", {|| tablice }, "tablice"  };
+      }
+   FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ); NEXT
+
+   RETURN PostojiSifra( F_VOZILA, 1, 10, 75, "Lista: Vozila", @cId, dx, dy )
 
 
 /*! \fn FaPartnBlock(Ch)
  *  \brief
- *  \param 
+ *  \param
  */
-function FaPartnBlock(Ch)
+FUNCTION FaPartnBlock( Ch )
 
-LOCAL cSif:=PARTN->id, cSif2:=""
+   LOCAL cSif := PARTN->id, cSif2 := ""
 
-if Ch==K_F5
-  	IzfUgovor()
-  	return DE_REFRESH
-endif
+   IF Ch == K_F5
+      IzfUgovor()
+      RETURN DE_REFRESH
+   ENDIF
 
-return DE_CONT
+   RETURN DE_CONT
 
 
 
 // -----------------------------------------------
 // otvaranje tabele fakt_objekti
 // -----------------------------------------------
-function p_fakt_objekti(cId,dx,dy)
-local _t_area := SELECT()
-private ImeKol
-private Kol
+FUNCTION p_fakt_objekti( cId, dx, dy )
 
-ImeKol := {}
-Kol := {}
+   LOCAL _t_area := Select()
+   PRIVATE ImeKol
+   PRIVATE Kol
 
-O_FAKT_OBJEKTI
+   ImeKol := {}
+   Kol := {}
 
-AADD(ImeKol, { PADC("Id",10), {|| id}, "id", {|| .t.}, {|| vpsifra(wId)} })
-AADD(ImeKol, { PADC("Naziv",60), {|| naz}, "naz" })
+   O_FAKT_OBJEKTI
 
-for i:=1 to LEN(ImeKol)
-	AADD(Kol, i)
-next
+   AAdd( ImeKol, { PadC( "Id", 10 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wId ) } } )
+   AAdd( ImeKol, { PadC( "Naziv", 60 ), {|| naz }, "naz" } )
 
-select ( _t_area )
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
 
-return PostojiSifra( F_FAKT_OBJEKTI, 1, MAXROWS() - 15, MAXCOLS() - 20 ,"Lista objekata", @cId, dx, dy )
+   SELECT ( _t_area )
+
+   RETURN PostojiSifra( F_FAKT_OBJEKTI, 1, MAXROWS() - 15, MAXCOLS() - 20,"Lista objekata", @cId, dx, dy )
 
 
 
@@ -119,64 +124,63 @@ return PostojiSifra( F_FAKT_OBJEKTI, 1, MAXROWS() - 15, MAXCOLS() - 20 ,"Lista o
 
 
 /*! \fn RobaBlok(Ch)
- *  \brief 
- *  \param Ch 
+ *  \brief
+ *  \param Ch
  */
- 
-function FaRobaBlock(Ch)
 
-LOCAL cSif:=ROBA->id, cSif2:=""
-LOCAL nArr:=SELECT()
+FUNCTION FaRobaBlock( Ch )
 
+   LOCAL cSif := ROBA->id, cSif2 := ""
+   LOCAL nArr := Select()
 
-if UPPER(Chr(Ch)) == "K"
-    return 6  
+   IF Upper( Chr( Ch ) ) == "K"
+      RETURN 6
 
-elseif upper(Chr(Ch)) == "D"
-    // prikaz detalja sifre
-    roba_opis_edit( .t. )
-    return 6  
+   ELSEIF Upper( Chr( Ch ) ) == "D"
+      // prikaz detalja sifre
+      roba_opis_edit( .T. )
+      RETURN 6
 
-elseif upper(Chr(Ch))=="S"
-    TB:Stabilize()  
-    PushWa()
-    FaktStanje(roba->id)
-    PopWa()
-    return 6  
+   ELSEIF Upper( Chr( Ch ) ) == "S"
+      TB:Stabilize()
+      PushWa()
+      FaktStanje( roba->id )
+      PopWa()
+      RETURN 6
 
-elseif upper(CHR(ch)) == "P"
-    
-    if gen_all_plu()
-        return DE_REFRESH
-    endif
+   ELSEIF Upper( Chr( ch ) ) == "P"
 
-elseif Ch == K_CTRL_T .and. gSKSif=="D"
-    // provjerimo da li je sifra dupla
-    PushWA()
-    SET ORDER TO TAG "ID"
-    SEEK cSif
-    SKIP 1
-    cSif2:=ROBA->id
-    PopWA()
-    IF !(cSif==cSif2)
-        // ako nije dupla provjerimo da li postoji u kumulativu
-        if ima_u_fakt_kumulativ(cSif,"3")
-            Beep(1)
-            Msg("Stavka artikla/robe se ne moze brisati jer se vec nalazi u dokumentima!")
-            return 7
-        endif
-    ENDIF
+      IF gen_all_plu()
+         RETURN DE_REFRESH
+      ENDIF
 
-elseif Ch==K_F2 .and. gSKSif=="D"
-    if ima_u_fakt_kumulativ(cSif,"3")
-        return 99
-    endif
+   ELSEIF Ch == K_CTRL_T .AND. gSKSif == "D"
+      // provjerimo da li je sifra dupla
+      PushWA()
+      SET ORDER TO TAG "ID"
+      SEEK cSif
+      SKIP 1
+      cSif2 := ROBA->id
+      PopWA()
+      IF !( cSif == cSif2 )
+         // ako nije dupla provjerimo da li postoji u kumulativu
+         IF ima_u_fakt_kumulativ( cSif, "3" )
+            Beep( 1 )
+            Msg( "Stavka artikla/robe se ne moze brisati jer se vec nalazi u dokumentima!" )
+            RETURN 7
+         ENDIF
+      ENDIF
 
-else // nista od magicnih tipki
-    return DE_CONT
-endif
+   ELSEIF Ch == K_F2 .AND. gSKSif == "D"
+      IF ima_u_fakt_kumulativ( cSif, "3" )
+         RETURN 99
+      ENDIF
 
-RETURN DE_CONT
+   ELSE // nista od magicnih tipki
+      RETURN DE_CONT
+   ENDIF
+
+   RETURN DE_CONT
 
 
 
@@ -184,57 +188,59 @@ RETURN DE_CONT
  *  \brief Stanje robe fakt-a
  *  \param cIdRoba
  */
- 
-function FaktStanje(cIdRoba)
 
-local nUl,nIzl,nRezerv,nRevers,fOtv:=.f.,nIOrd,nFRec, aStanje
-select roba
-select (F_FAKT)
-if !used()
-   O_FAKT; fOtv:=.t.
-else
-  nIOrd:=indexord()
-  nFRec:=recno()
-endif
-// "3","Idroba+dtos(datDok)","FAKT")  // za karticu, specifikaciju
-set order to tag "3"
-SEEK cIdRoba
+FUNCTION FaktStanje( cIdRoba )
 
-aStanje:={}
-//{idfirma, nUl,nIzl,nRevers,nRezerv }
-nUl:=nIzl:=nRezerv:=nRevers:=0
-do while !eof()  .and. cIdRoba==IdRoba
-   nPos:=ASCAN (aStanje, {|x| x[1]==FAKT->IdFirma})
-   if nPos==0
-     AADD (aStanje, {IdFirma, 0, 0, 0, 0})
-     nPos := LEN (aStanje)
-   endif
-   if idtipdok="0"  // ulaz
-      aStanje[nPos][2] += kolicina
-   elseif idtipdok="1"   // izlaz faktura
-       if !(left(serbr,1)=="*" .and. idtipdok=="10")  // za fakture na osnovu optpremince ne ra~unaj izlaz
-         aStanje[nPos][3] += kolicina
-       endif
-   elseif idtipdok$"20#27"
-      if serbr="*"
-         aStanje[nPos][5] += kolicina
-      endif
-   elseif idtipdok=="21"
-      aStanje[nPos][4] += kolicina
-   endif
-   skip
-enddo
+   LOCAL nUl, nIzl, nRezerv, nRevers, fOtv := .F., nIOrd, nFRec, aStanje
 
-if fotv
- selec fakt; use
-else
-//  set order to (nIOrd)
-  dbsetorder(nIOrd)
-  go nFRec
-endif
-select roba
-fakt_box_stanje(aStanje, cIdRoba)      // nUl,nIzl,nRevers,nRezerv)
-return
+   SELECT roba
+   SELECT ( F_FAKT )
+   IF !Used()
+      O_FAKT; fOtv := .T.
+   ELSE
+      nIOrd := IndexOrd()
+      nFRec := RecNo()
+   ENDIF
+   // "3","Idroba+dtos(datDok)","FAKT")  // za karticu, specifikaciju
+   SET ORDER TO TAG "3"
+   SEEK cIdRoba
+
+   aStanje := {}
+   // {idfirma, nUl,nIzl,nRevers,nRezerv }
+   nUl := nIzl := nRezerv := nRevers := 0
+   DO WHILE !Eof()  .AND. cIdRoba == IdRoba
+      nPos := AScan ( aStanje, {| x| x[ 1 ] == FAKT->IdFirma } )
+      IF nPos == 0
+         AAdd ( aStanje, { IdFirma, 0, 0, 0, 0 } )
+         nPos := Len ( aStanje )
+      ENDIF
+      IF idtipdok = "0"  // ulaz
+         aStanje[ nPos ][ 2 ] += kolicina
+      ELSEIF idtipdok = "1"   // izlaz faktura
+         IF !( Left( serbr, 1 ) == "*" .AND. idtipdok == "10" )  // za fakture na osnovu optpremince ne ra~unaj izlaz
+            aStanje[ nPos ][ 3 ] += kolicina
+         ENDIF
+      ELSEIF idtipdok $ "20#27"
+         IF serbr = "*"
+            aStanje[ nPos ][ 5 ] += kolicina
+         ENDIF
+      ELSEIF idtipdok == "21"
+         aStanje[ nPos ][ 4 ] += kolicina
+      ENDIF
+      SKIP
+   ENDDO
+
+   IF fotv
+      SELEC fakt; USE
+   ELSE
+      // set order to (nIOrd)
+      dbSetOrder( nIOrd )
+      GO nFRec
+   ENDIF
+   SELECT roba
+   fakt_box_stanje( aStanje, cIdRoba )      // nUl,nIzl,nRevers,nRezerv)
+
+   RETURN
 
 
 
@@ -243,218 +249,221 @@ return
  *  \param aStanje
  *  \param cIdRoba
  */
- 
-function fakt_box_stanje(aStanje,cIdroba)
 
-local picdem:="9999999.999", nR, nC, nTSta := 0, nTRev := 0, nTRez := 0,;
+FUNCTION fakt_box_stanje( aStanje, cIdroba )
+
+   LOCAL picdem := "9999999.999", nR, nC, nTSta := 0, nTRev := 0, nTRez := 0, ;
       nTOst := 0, npd, cDiv := " ³ ", nLen
 
- npd := LEN (picdem)
- nLen := LEN (aStanje)
+   npd := Len ( picdem )
+   nLen := Len ( aStanje )
 
- // ucitajmo dodatne parametre stanja iz FMK.INI u aDodPar
- 
- aDodPar := {}
- FOR i:=1 TO 6
-   cI := ALLTRIM(STR(i))
-   cPomZ := IzFMKINI( "BoxStanje" , "ZaglavljeStanje"+cI , "" , KUMPATH )
-   cPomF := IzFMKINI( "BoxStanje" , "FormulaStanje"+cI   , "" , KUMPATH )
-   IF !EMPTY( cPomF )
-     AADD( aDodPar , { cPomZ , cPomF } )
-   ENDIF
- NEXT
- nLenDP := IF( LEN(aDodPar)>0 , LEN(aDodPar)+1 , 0 )
+   // ucitajmo dodatne parametre stanja iz FMK.INI u aDodPar
 
- select roba
- //PushWa()
- set order to tag "ID"; seek cIdRoba
- Box(,6+nLen+INT((nLenDP)/2),75)
-  Beep(1)
-  @ m_x+1,m_y+2 SAY "ARTIKAL: "
-  @ m_x+1,col() SAY PADR(AllTrim(cIdRoba) + " - " + LEFT(roba->naz,40), 51) COLOR "GR+/B"
-  @ m_x+3,m_y+2 SAY cDiv + "RJ" + cDiv + PADC ("Stanje", npd) + cDiv+ ;
-                    PADC ("Na reversu", npd) + cDiv + ;
-                    PADC ("Rezervisano", npd) + cDiv + PADC ("Ostalo", npd) ;
-                    + cDiv
-  nR := m_x+4
-  FOR nC := 1 TO nLen
-//{idfirma, nUl,nIzl,nRevers,nRezerv }
-    @ nR,m_y+2 SAY cDiv
-    @ nR,col() SAY aStanje [nC][1]
-    @ nR,col() SAY cDiv
-    nPom := aStanje [nC][2]-aStanje [nC][3]
-    @ nR,col() SAY nPom pict picdem
-    @ nR,col() SAY cDiv
-    nTSta += nPom
-    @ nR,col() SAY aStanje [nC][4] pict picdem
-    @ nR,col() SAY cDiv
-    nTRev += aStanje [nC][4]
-    nPom -= aStanje [nC][4]
-    @ nR,col() SAY aStanje [nC][5] pict picdem
-    @ nR,col() SAY cDiv
-    nTRez += aStanje [nC][5]
-    nPom -= aStanje [nC][5]
-    @ nR,col() SAY nPom pict picdem
-    @ nR,col() SAY cDiv
-    nTOst += nPom
-    nR ++
-  NEXT
-    @ nR,m_y+2 SAY cDiv + "--" + cDiv + REPL ("-", npd) + cDiv+ ;
-                   REPL ("-", npd) + cDiv + ;
-                   REPL ("-", npd) + cDiv + REPL ("-", npd) + cDiv
-    nR ++
-    @ nR,m_y+2 SAY " ³ UK.³ "
-    @ nR,col() SAY nTSta pict picdem
-    @ nR,col() SAY cDiv
-    @ nR,col() SAY nTRev pict picdem
-    @ nR,col() SAY cDiv
-    @ nR,col() SAY nTRez pict picdem
-    @ nR,col() SAY cDiv
-    @ nR,col() SAY nTOst pict picdem
-    @ nR,col() SAY cDiv
+   aDodPar := {}
+   FOR i := 1 TO 6
+      cI := AllTrim( Str( i ) )
+      cPomZ := IzFMKINI( "BoxStanje", "ZaglavljeStanje" + cI, "", KUMPATH )
+      cPomF := IzFMKINI( "BoxStanje", "FormulaStanje" + cI, "", KUMPATH )
+      IF !Empty( cPomF )
+         AAdd( aDodPar, { cPomZ, cPomF } )
+      ENDIF
+   NEXT
+   nLenDP := IF( Len( aDodPar ) > 0, Len( aDodPar ) + 1, 0 )
 
-    // ispis dodatnih parametara stanja
- 
-    IF nLenDP>0
+   SELECT roba
+   // PushWa()
+   SET ORDER TO TAG "ID"; SEEK cIdRoba
+   Box(, 6 + nLen + Int( ( nLenDP ) / 2 ), 75 )
+   Beep( 1 )
+   @ m_x + 1, m_y + 2 SAY "ARTIKAL: "
+   @ m_x + 1, Col() SAY PadR( AllTrim( cIdRoba ) + " - " + Left( roba->naz, 40 ), 51 ) COLOR "GR+/B"
+   @ m_x + 3, m_y + 2 SAY cDiv + "RJ" + cDiv + PadC ( "Stanje", npd ) + cDiv + ;
+      PadC ( "Na reversu", npd ) + cDiv + ;
+      PadC ( "Rezervisano", npd ) + cDiv + PadC ( "Ostalo", npd ) ;
+      + cDiv
+   nR := m_x + 4
+   FOR nC := 1 TO nLen
+      // {idfirma, nUl,nIzl,nRevers,nRezerv }
+      @ nR, m_y + 2 SAY cDiv
+      @ nR, Col() SAY aStanje[nC ][ 1 ]
+      @ nR, Col() SAY cDiv
+      nPom := aStanje[nC ][ 2 ] -aStanje[nC ][ 3 ]
+      @ nR, Col() SAY nPom PICT picdem
+      @ nR, Col() SAY cDiv
+      nTSta += nPom
+      @ nR, Col() SAY aStanje[nC ][ 4 ] PICT picdem
+      @ nR, Col() SAY cDiv
+      nTRev += aStanje[nC ][ 4 ]
+      nPom -= aStanje[nC ][ 4 ]
+      @ nR, Col() SAY aStanje[nC ][ 5 ] PICT picdem
+      @ nR, Col() SAY cDiv
+      nTRez += aStanje[nC ][ 5 ]
+      nPom -= aStanje[nC ][ 5 ]
+      @ nR, Col() SAY nPom PICT picdem
+      @ nR, Col() SAY cDiv
+      nTOst += nPom
+      nR ++
+   NEXT
+   @ nR, m_y + 2 SAY cDiv + "--" + cDiv + REPL ( "-", npd ) + cDiv + ;
+      REPL ( "-", npd ) + cDiv + ;
+      REPL ( "-", npd ) + cDiv + REPL ( "-", npd ) + cDiv
+   nR ++
+   @ nR, m_y + 2 SAY " ³ UK.³ "
+   @ nR, Col() SAY nTSta PICT picdem
+   @ nR, Col() SAY cDiv
+   @ nR, Col() SAY nTRev PICT picdem
+   @ nR, Col() SAY cDiv
+   @ nR, Col() SAY nTRez PICT picdem
+   @ nR, Col() SAY cDiv
+   @ nR, Col() SAY nTOst PICT picdem
+   @ nR, Col() SAY cDiv
+
+   // ispis dodatnih parametara stanja
+
+   IF nLenDP > 0
       ++nR
-      @ nR, m_y+2 SAY REPL("-",74)
-      FOR i:=1 TO nLenDP-1
+      @ nR, m_y + 2 SAY REPL( "-", 74 )
+      FOR i := 1 TO nLenDP - 1
 
-        cPom777 := aDodPar[i,2]
+         cPom777 := aDodPar[ i, 2 ]
 
-        IF "TARIFA->" $ UPPER(cPom777)
-          SELECT (F_TARIFA)
-          IF !USED(); O_TARIFA; ENDIF
-          SET ORDER TO TAG "ID"
-          HSEEK ROBA->idtarifa
-          SELECT ROBA
-        ENDIF
+         IF "TARIFA->" $ Upper( cPom777 )
+            SELECT ( F_TARIFA )
+            IF !Used(); O_TARIFA; ENDIF
+            SET ORDER TO TAG "ID"
+            HSEEK ROBA->idtarifa
+            SELECT ROBA
+         ENDIF
 
-        IF i%2!=0
-          ++nR
-          @ nR, m_y+2 SAY PADL( aDodPar[i,1] , 15 ) COLOR "W+/B"
-          @ nR, col()+2 SAY &cPom777 COLOR "R/W"
-        ELSE
-          @ nR, m_y+37 SAY PADL( aDodPar[i,1] , 15 ) COLOR "W+/B"
-          @ nR, col()+2 SAY &cPom777 COLOR "R/W"
-        ENDIF
+         IF i % 2 != 0
+            ++nR
+            @ nR, m_y + 2 SAY PadL( aDodPar[ i, 1 ], 15 ) COLOR "W+/B"
+            @ nR, Col() + 2 SAY &cPom777 COLOR "R/W"
+         ELSE
+            @ nR, m_y + 37 SAY PadL( aDodPar[ i, 1 ], 15 ) COLOR "W+/B"
+            @ nR, Col() + 2 SAY &cPom777 COLOR "R/W"
+         ENDIF
 
       NEXT
-    ENDIF
+   ENDIF
 
-  inkey(0)
- BoxC()
- 
-return
+   Inkey( 0 )
+   BoxC()
 
-
+   RETURN
 
 
-function P_FTxt(cId, dx, dy)
-local _vrati
-local _t_area := SELECT()
-local _p_bottom 
-local _p_top
-local _p_left
-local _p_right
-local _box_h := MAXROWS() - 20
-local _box_w := MAXCOLS() - 3
-private ImeKol
-private Kol
 
-O_FTXT
 
-ImeKol:={}
-Kol := {}
+FUNCTION P_FTxt( cId, dx, dy )
 
-AADD(ImeKol, { PADR("ID",2),   {|| id },     "id"   , {|| .t.}, {|| vpsifra(wid)}    } )
-add_mcode(@ImeKol)
-AADD(ImeKol,{ "Naziv",  {|| naz},  "naz" , { || .t. }, ;
-		{ || wnaz := strtran( wnaz, "##", hb_eol() ), .t. }, NIL, "@S50" } )
+   LOCAL _vrati
+   LOCAL _t_area := Select()
+   LOCAL _p_bottom
+   LOCAL _p_top
+   LOCAL _p_left
+   LOCAL _p_right
+   LOCAL _box_h := MAXROWS() - 20
+   LOCAL _box_w := MAXCOLS() - 3
+   PRIVATE ImeKol
+   PRIVATE Kol
 
-for i:=1 to LEN(ImeKol)
-	AADD(Kol, i)
-next
+   O_FTXT
 
-_p_bottom := 15
-_p_top := 3
-_p_left := 1
-_p_right := maxcols()-3
+   ImeKol := {}
+   Kol := {}
 
-Prozor1( _p_top, _p_left, _p_bottom, _p_right, "PREGLED TEKSTA" )
+   AAdd( ImeKol, { PadR( "ID", 2 ),   {|| id },     "id", {|| .T. }, {|| vpsifra( wid ) }    } )
+   add_mcode( @ImeKol )
+   AAdd( ImeKol, { "Naziv",  {|| naz },  "naz", {|| .T. }, ;
+      {|| wnaz := StrTran( wnaz, "##", hb_eol() ), .T. }, NIL, "@S50" } )
 
-@ _p_bottom, 0 SAY ""
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
 
-_vrati := PostojiSifra( F_FTXT, 1, _box_h, _box_w, "Faktura - tekst na kraju fakture", @cId , , , {|| PrikFTXT( _p_top, _p_left, 8, _p_right )})
+   _p_bottom := 15
+   _p_top := 3
+   _p_left := 1
+   _p_right := maxcols() -3
 
-Prozor0()
+   Prozor1( _p_top, _p_left, _p_bottom, _p_right, "PREGLED TEKSTA" )
 
-select ( _t_area )
-RETURN _vrati
+   @ _p_bottom, 0 SAY ""
+
+   _vrati := PostojiSifra( F_FTXT, 1, _box_h, _box_w, "Faktura - tekst na kraju fakture", @cId, , , {|| PrikFTXT( _p_top, _p_left, 8, _p_right ) } )
+
+   Prozor0()
+
+   SELECT ( _t_area )
+
+   RETURN _vrati
 
 
 
 /*! \fn PrikFTxt()
  *  \brief Prikazuje uzorak teksta
  */
- 
-function PrikFTxt( top_pos, left_pos, bott_pos, text_length )
-local _i := 0
-local _arr := {}
 
-@ top_pos, 6 SAY "uzorak teksta id: " + field->id
+FUNCTION PrikFTxt( top_pos, left_pos, bott_pos, text_length )
 
-_arr := TXTuNIZ( field->naz , text_length - 1 - left_pos )
- 
-FOR _i := 1 TO bott_pos
-    IF _i > LEN( _arr )
-        @ top_pos + _i, left_pos + 1 SAY SPACE( text_length - 1 - left_pos )
-    ELSE
-        @ top_pos + _i, left_pos + 1 SAY PADR( _arr[_i], text_length - 1 - left_pos )
-    ENDIF
-NEXT
+   LOCAL _i := 0
+   LOCAL _arr := {}
 
-return -1
+   @ top_pos, 6 SAY "uzorak teksta id: " + field->id
+
+   _arr := TXTuNIZ( field->naz, text_length - 1 - left_pos )
+
+   FOR _i := 1 TO bott_pos
+      IF _i > Len( _arr )
+         @ top_pos + _i, left_pos + 1 SAY Space( text_length - 1 - left_pos )
+      ELSE
+         @ top_pos + _i, left_pos + 1 SAY PadR( _arr[ _i ], text_length - 1 - left_pos )
+      ENDIF
+   NEXT
+
+   RETURN -1
 
 
 /*! \fn fn ObSif()
  *  \brief
  */
- 
-static function ObSif()
 
-IF glDistrib
-   O_RELAC
-   O_VOZILA
-   O_KALPOS
-ENDIF
+STATIC FUNCTION ObSif()
 
-O_SIFK
-O_SIFV
-O_KONTO
-O_PARTN
-O_ROBA
-O_FTXT
-O_TARIFA
-O_VALUTE
-O_RJ
-O_SAST
-O_UGOV
-O_RUGOV
+   IF glDistrib
+      O_RELAC
+      O_VOZILA
+      O_KALPOS
+   ENDIF
 
-IF RUGOV->(FIELDPOS("DEST"))<>0
-	O_DEST
-ENDIF
+   O_SIFK
+   O_SIFV
+   O_KONTO
+   O_PARTN
+   O_ROBA
+   O_FTXT
+   O_TARIFA
+   O_VALUTE
+   O_RJ
+   O_SAST
+   O_UGOV
+   O_RUGOV
 
-IF gNW=="T"
-	O_FADO
-   	O_FADE
-ENDIF
+   IF RUGOV->( FieldPos( "DEST" ) ) <> 0
+      O_DEST
+   ENDIF
 
-O_VRSTEP
-O_OPS
+   IF gNW == "T"
+      O_FADO
+      O_FADE
+   ENDIF
 
-return
+   O_VRSTEP
+   O_OPS
+
+   RETURN
 
 
 
@@ -463,32 +472,34 @@ return
  *  \param cKljuc
  *  \param cTag
  */
- 
-function ima_u_fakt_kumulativ(cKljuc,cTag)
 
-LOCAL lVrati:=.f., lUsed:=.t., nArr:=SELECT()
-SELECT (F_FAKT)
-  
-IF !USED()
-    lUsed:=.f.
-    O_FAKT
-ELSE
-    PushWA()
-ENDIF
-  
-IF !EMPTY(INDEXKEY(VAL(cTag)+1))
-    SET ORDER TO TAG (cTag)
-    seek cKljuc
-    lVrati:=found()
-ENDIF
+FUNCTION ima_u_fakt_kumulativ( cKljuc, cTag )
 
-IF !lUsed
-    USE
-ELSE
-    PopWA()
-ENDIF
-select (nArr)
-RETURN lVrati
+   LOCAL lVrati := .F., lUsed := .T., nArr := Select()
+
+   SELECT ( F_FAKT )
+
+   IF !Used()
+      lUsed := .F.
+      O_FAKT
+   ELSE
+      PushWA()
+   ENDIF
+
+   IF !Empty( IndexKey( Val( cTag ) + 1 ) )
+      SET ORDER TO TAG ( cTag )
+      SEEK cKljuc
+      lVrati := Found()
+   ENDIF
+
+   IF !lUsed
+      USE
+   ELSE
+      PopWA()
+   ENDIF
+   SELECT ( nArr )
+
+   RETURN lVrati
 
 
 
@@ -496,93 +507,95 @@ RETURN lVrati
 /*! \fn OsvjeziIdJ()
  *  \brief Osvjezavanje fakta javnim siframa
  */
- 
-function OsvjeziIdJ()
 
-if Pitanje(,"Osvjeziti FAKT javnim siframa ....","N")=="D"
-O_FAKT
-O_ROBA ; set order to tag "ID"
-O_SIFK
-O_SIFV
-select fakt
-set order to
-go top
-MsgO("Osvjezavam promjene sifarskog sistema u prometu ...")
-nCount:=0
-do while !eof()
-  select roba
-  hseek fakt->idroba
-  if fakt->idroba_J <> roba->id_j
-    select fakt
-    replace IdRoba_J with roba->ID_J
-  endif
-  select fakt
-  @ m_x+3,m_y+3 SAY str(++ncount,3)
-  skip
-enddo
-MsgC()
+FUNCTION OsvjeziIdJ()
+
+   IF Pitanje(, "Osvjeziti FAKT javnim siframa ....", "N" ) == "D"
+      O_FAKT
+      O_ROBA ; SET ORDER TO TAG "ID"
+      O_SIFK
+      O_SIFV
+      SELECT fakt
+      SET ORDER TO
+      GO TOP
+      MsgO( "Osvjezavam promjene sifarskog sistema u prometu ..." )
+      nCount := 0
+      DO WHILE !Eof()
+         SELECT roba
+         hseek fakt->idroba
+         IF fakt->idroba_J <> roba->id_j
+            SELECT fakt
+            REPLACE IdRoba_J WITH roba->ID_J
+         ENDIF
+         SELECT fakt
+         @ m_x + 3, m_y + 3 SAY Str( ++ncount, 3 )
+         SKIP
+      ENDDO
+      MsgC()
 
 
-if pitanje(,"Postaviti javne sifre za id_j prazno ?","N")=="D"
-  select roba ; set order to
-  go top
-  do while !eof()
-    if empty(id_j)
-       replace id_j with id
-    endif
-    skip
-  enddo
-endif
-endif
+      IF pitanje(, "Postaviti javne sifre za id_j prazno ?", "N" ) == "D"
+         SELECT roba ; SET ORDER TO
+         GO TOP
+         DO WHILE !Eof()
+            IF Empty( id_j )
+               REPLACE id_j WITH id
+            ENDIF
+            SKIP
+         ENDDO
+      ENDIF
+   ENDIF
 
-return
+   RETURN
 
 /*! \fn SMark(cNazPolja)
  *  \brief Vraca samo markiranu robu
  *  \param cNazPolja - ime polja koje sadrzi internu sifru artikla koji se trazi */
- 
-function SMark(cNazPolja)
 
-// izbor prodajnog mjesta
-function P_IDPM(cId,cIdPartner)
+FUNCTION SMark( cNazPolja )
 
-LOCAL lVrati:=.f.
-local nArr:=SELECT()
-local aNaz:={}
+   // izbor prodajnog mjesta
 
-  SELECT SIFV
-  SET ORDER TO TAG "ID"
+FUNCTION P_IDPM( cId, cIdPartner )
 
-  HSEEK "PARTN   "+"PRMJ"+PADR(cIdPartner,15)
-  DO WHILE !EOF() .and.;
-           id+oznaka+idsif=="PARTN   "+"PRMJ"+PADR(cIdPartner,15)
-    IF !EMPTY(naz)
-      AADD( aNaz , PADR( naz , LEN(cId) ) )
-    ENDIF
-    SKIP 1
-  ENDDO
-  IF LEN(aNaz)>0
-    nPom := ASCAN( aNaz , {|x| x=TRIM(cId)} )
-    IF nPom<1; nPom:=1; ENDIF
-    Box(,LEN(aNaz)+4,18)
-       @ m_x+1, m_y+2 SAY "POSTOJECA PRODAJNA"
-       @ m_x+2, m_y+2 SAY "      MJESTA      "
-       @ m_x+3, m_y+2 SAY "------------------"
+   LOCAL lVrati := .F.
+   LOCAL nArr := Select()
+   LOCAL aNaz := {}
+
+   SELECT SIFV
+   SET ORDER TO TAG "ID"
+
+   HSEEK "PARTN   " + "PRMJ" + PadR( cIdPartner, 15 )
+   DO WHILE !Eof() .AND. ;
+         id + oznaka + idsif == "PARTN   " + "PRMJ" + PadR( cIdPartner, 15 )
+      IF !Empty( naz )
+         AAdd( aNaz, PadR( naz, Len( cId ) ) )
+      ENDIF
+      SKIP 1
+   ENDDO
+   IF Len( aNaz ) > 0
+      nPom := AScan( aNaz, {| x| x = Trim( cId ) } )
+      IF nPom < 1; nPom := 1; ENDIF
+      Box(, Len( aNaz ) + 4, 18 )
+      @ m_x + 1, m_y + 2 SAY "POSTOJECA PRODAJNA"
+      @ m_x + 2, m_y + 2 SAY "      MJESTA      "
+      @ m_x + 3, m_y + 2 SAY "------------------"
 #ifndef TEST
-     CLEAR TYPEAHEAD
+      CLEAR TYPEAHEAD
 #endif
-     nPom := Menu2(m_x+3,m_y+3,aNaz,nPom)
-    BoxC()
-    IF nPom>0
-      lVrati:=.t.
-      cId := aNaz[nPom]
-    ENDIF
-  ELSE
-    lVrati:=.t.
-    cId := SPACE(LEN(cId))
-  ENDIF
-  SELECT (nArr)
-RETURN lVrati
+      nPom := Menu2( m_x + 3, m_y + 3, aNaz, nPom )
+      BoxC()
+      IF nPom > 0
+         lVrati := .T.
+         cId := aNaz[ nPom ]
+      ENDIF
+   ELSE
+      lVrati := .T.
+      cId := Space( Len( cId ) )
+   ENDIF
+   SELECT ( nArr )
+
+   RETURN lVrati
 
 
 
@@ -594,58 +607,57 @@ RETURN lVrati
  *  \param dDatum
  *  \param cMarsuta    - marsuta
  */
- 
-function IzborRelacije(cIdRelac,cIdDist,cIdVozila,dDatum,cMarsruta)
 
-LOCAL lVrati:=.t., aMogRel:={}, nArr:=SELECT(), aIzb:={}
- IF cIdRelac=="NN  "
-   cIdDist   := SPACE(LEN(cIdDist  ))
-   cIdVozila := SPACE(LEN(cIdVozila))
-   cMarsruta := SPACE(LEN(cMarsruta))
-   RETURN .t.
- ENDIF
- SELECT KALPOS; SET ORDER TO TAG "2"
- SELECT RELAC; SET ORDER TO TAG "1"
- GO TOP
- HSEEK _idpartner+_idpm
- DO WHILE !EOF() .and. idpartner+idpm==_idpartner+_idpm
-   SELECT KALPOS
-   SEEK RELAC->id+DTOS(dDatum)
-   DO WHILE !EOF() .and. idrelac==RELAC->id .and. DTOS(datum)>=DTOS(dDatum)
-     AADD( aMogRel , {DTOC(datum)+"³"+idrelac+"³"+iddist+"³"+idvozila,;
-                      idrelac,iddist,idvozila,datum,RELAC->naz} )
-     SKIP 1
-   ENDDO
-   SELECT RELAC
-   SKIP 1
- ENDDO
- IF LEN(aMogRel)>0
-   ASORT(aMogRel,,,{|x,y| DTOS(x[5])+x[2]<DTOS(y[5])+y[2]})
-   AEVAL(aMogRel,{|x| AADD(aIzb,x[1])})
-   nPom := ASCAN( aMogRel, {|x| x[2]+x[3]+x[4]+DTOS(x[5])==;
-                                cidrelac+ciddist+cidvozila+DTOS(ddatum)} )
-   Box(,LEN(aIzb)+4,28)
-      @ m_x+1, m_y+2 SAY "SLIJEDECE RELACIJE  "
-      @ m_x+2, m_y+2 SAY "PO KALENDARU POSJETA"
-      @ m_x+3, m_y+2 SAY "ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ"
-    nPom:=Menu2(m_x+3,m_y+3,aIzb,nPom)
-   BoxC()
-   IF nPom>0
-     cIdRelac  := aMogRel[nPom,2]
-     cIdDist   := aMogRel[nPom,3]
-     cIdVozila := aMogRel[nPom,4]
-     dDatum    := aMogRel[nPom,5]
-     cMarsruta := aMogRel[nPom,6]
-   ELSE
-     lVrati:=.f.
+FUNCTION IzborRelacije( cIdRelac, cIdDist, cIdVozila, dDatum, cMarsruta )
+
+   LOCAL lVrati := .T., aMogRel := {}, nArr := Select(), aIzb := {}
+
+   IF cIdRelac == "NN  "
+      cIdDist   := Space( Len( cIdDist  ) )
+      cIdVozila := Space( Len( cIdVozila ) )
+      cMarsruta := Space( Len( cMarsruta ) )
+      RETURN .T.
    ENDIF
- ELSE
-   MsgBeep("Za zadanog kupca i datum ne postoji planirana relacija u kalendaru posjeta!#"+;
-           "Ukoliko se radi npr. o skladiçnoj prodaji, kucajte NN u relaciju!")
-   lVrati:=.f.
- ENDIF
- SELECT (nArr)
-RETURN lVrati
+   SELECT KALPOS; SET ORDER TO TAG "2"
+   SELECT RELAC; SET ORDER TO TAG "1"
+   GO TOP
+   HSEEK _idpartner + _idpm
+   DO WHILE !Eof() .AND. idpartner + idpm == _idpartner + _idpm
+      SELECT KALPOS
+      SEEK RELAC->id + DToS( dDatum )
+      DO WHILE !Eof() .AND. idrelac == RELAC->id .AND. DToS( datum ) >= DToS( dDatum )
+         AAdd( aMogRel, { DToC( datum ) + "³" + idrelac + "³" + iddist + "³" + idvozila, ;
+            idrelac, iddist, idvozila, datum, RELAC->naz } )
+         SKIP 1
+      ENDDO
+      SELECT RELAC
+      SKIP 1
+   ENDDO
+   IF Len( aMogRel ) > 0
+      ASort( aMogRel,,, {| x, y| DToS( x[ 5 ] ) + x[ 2 ] < DToS( y[ 5 ] ) + y[ 2 ] } )
+      AEval( aMogRel, {| x| AAdd( aIzb, x[ 1 ] ) } )
+      nPom := AScan( aMogRel, {| x| x[ 2 ] + x[ 3 ] + x[ 4 ] + DToS( x[ 5 ] ) == ;
+         cidrelac + ciddist + cidvozila + DToS( ddatum ) } )
+      Box(, Len( aIzb ) + 4, 28 )
+      @ m_x + 1, m_y + 2 SAY "SLIJEDECE RELACIJE  "
+      @ m_x + 2, m_y + 2 SAY "PO KALENDARU POSJETA"
+      @ m_x + 3, m_y + 2 SAY "ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ"
+      nPom := Menu2( m_x + 3, m_y + 3, aIzb, nPom )
+      BoxC()
+      IF nPom > 0
+         cIdRelac  := aMogRel[ nPom, 2 ]
+         cIdDist   := aMogRel[ nPom, 3 ]
+         cIdVozila := aMogRel[ nPom, 4 ]
+         dDatum    := aMogRel[ nPom, 5 ]
+         cMarsruta := aMogRel[ nPom, 6 ]
+      ELSE
+         lVrati := .F.
+      ENDIF
+   ELSE
+      MsgBeep( "Za zadanog kupca i datum ne postoji planirana relacija u kalendaru posjeta!#" + ;
+         "Ukoliko se radi npr. o skladiçnoj prodaji, kucajte NN u relaciju!" )
+      lVrati := .F.
+   ENDIF
+   SELECT ( nArr )
 
-
-
+   RETURN lVrati

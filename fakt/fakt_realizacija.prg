@@ -39,11 +39,8 @@ if g_vars( @_params ) == 0
 	return
 endif
 
-// generisi pomocnu tabelu
 _cre_tbl()
-
-// generisi promet u pomocnu tabelu
-_gen_rek( _params )
+_gen_rekapitulacija_mp( _params )
 
 // ima li podataka za prikaz ?
 select r_export
@@ -214,7 +211,7 @@ return _ret
 // --------------------------------------------------
 // generisi u pomocnu tabelu podatke iz FAKT-a
 // --------------------------------------------------
-static function _gen_rek( params )
+static function _gen_rekapitulacija_mp( params )
 local _filter
 local cF_firma 
 local cF_tipdok
@@ -229,8 +226,8 @@ local _vrsta_p
 O_FAKT_DOKS
 O_FAKT
 O_ROBA
-O_SIFV
 O_SIFK
+O_SIFV
 O_VRSTEP
 O_TARIFA
 O_PARTN

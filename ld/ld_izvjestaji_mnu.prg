@@ -115,7 +115,7 @@ else
     AADD(opcexe,{|| Specif()})
 endif
 
-AADD(opc,"2. specifikacija po opstinama i RJ")
+AADD(opc,"2. specifikacija po opštinama i RJ")
 AADD(opcexe,{|| Specif2()})
 AADD(opc,"3. specifikacija po rasponima primanja")
 AADD(opcexe,{|| SpecifRasp()})
@@ -123,7 +123,7 @@ AADD(opc,"4. specifikacija primanja po mjesecima")
 AADD(opcexe,{|| SpecifPoMjes()})
 AADD(opc,"5. specif.novcanica potrebnih za isplatu plata")
 AADD(opcexe,{|| SpecNovcanica()})
-AADD(opc,"6. specif.prosjecnog neta po strucnoj spremi")
+AADD(opc,"6. spec. prosječnog neta po stručnoj spremi")
 AADD(opcexe,{|| Specif3()})
 AADD(opc,"7. specifikacija primanja po RJ")
 AADD(opcexe,{|| SpecPrimRj()})

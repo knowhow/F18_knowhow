@@ -1475,23 +1475,20 @@ FUNCTION PorPoOps()
 
    StampaTabele( aKol, {|| FSvaki8() },, gTabela,, ;
       , "Porezi po tarifama i opstinama za period od " + DToC( ddatod ) + " do " + DToC( ddatdo ), ;
-      {|| FFor8() }, IF( gOstr == "D",, -1 ),,,,, PRINT
-   my_close_all_dbf(); MyFERASE( cTMPFAKT )
+      {|| FFor8()},IF(gOstr=="D",,-1),,,,,)
+
+   ENDPRINT
+
+   my_close_all_dbf()
+   MyFERASE( cTMPFAKT )
    CLOSERET
 
    RETURN
-// }
 
-
-/*! \fn FFor8()
- */
 
 STATIC FUNCTION FFor8()
 
-   // {
-
    RETURN .T.
-// }
 
 
 /*! \fn FSvaki8()

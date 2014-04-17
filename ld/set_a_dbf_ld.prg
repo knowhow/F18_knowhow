@@ -45,15 +45,16 @@ set_a_dbf_ld_radsiht()
 set_a_dbf_ld_radn()
 
 // privatne temp tabele
-set_a_dbf_temp("_ld_radkr"   ,   "_RADKR"        , F__RADKR  )
-set_a_dbf_temp("_ld_ld"      ,   "_LD"           , F__LD  )
-set_a_dbf_temp("_ld_radn"    ,   "_RADN"         , F__RADN  )
-set_a_dbf_temp("_ld_kred"    ,   "_KRED"         , F__KRED  )
-set_a_dbf_temp("ld_ldsm"     ,   "LDSM"          , F_LDSM  )
-set_a_dbf_temp("ld_opsld"    ,   "OPSLD"         , F_OPSLD  )
-set_a_dbf_temp("ld_rekld"    ,   "REKLD"         , F_REKLD  )
-set_a_dbf_temp("ld_rekldp"   ,   "REKLDP"        , F_REKLDP  )
-set_a_dbf_temp("ldt22"       ,   "LDT22"         , F_LDT22  )
+set_a_dbf_temp( "_ld_radkr"   ,   "_RADKR"        , F__RADKR  )
+set_a_dbf_temp( "_ld_ld"      ,   "_LD"           , F__LD     )
+set_a_dbf_temp( "_ld_radn"    ,   "_RADN"         , F__RADN   )
+set_a_dbf_temp( "_ld_kred"    ,   "_KRED"         , F__KRED   )
+set_a_dbf_temp( "ld_ldsm"     ,   "LDSM"          , F_LDSM    )
+set_a_dbf_temp( "ld_opsld"    ,   "OPSLD"         , F_OPSLD   )
+set_a_dbf_temp( "ld_rekld"    ,   "REKLD"         , F_REKLD   )
+set_a_dbf_temp( "ld_rekldp"   ,   "REKLDP"        , F_REKLDP   )
+set_a_dbf_temp( "ldt22"       ,   "LDT22"         , F_LDT22    )
+set_a_dbf_temp( "exp_bank"    ,   "EXP_BANK"      , F_EXP_BANK  )
 
 
 // sif - sihtarice

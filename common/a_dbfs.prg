@@ -189,7 +189,9 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
    ENDIF
 
    if _dbf_tbl == "x"
-       Alert( "dbf alias " + tbl + " ne postoji u a_dbf_rec ?!")
+       _msg := "dbf alias " + tbl + " ne postoji u a_dbf_rec ?!"
+       Alert( _msg )
+       RaiseError( _msg )
        QUIT_1
    ENDIF
    IF hb_HHasKey( __f18_dbfs, _dbf_tbl )
@@ -208,6 +210,7 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
       _msg := RECI_GDJE_SAM + " set_a_dbf nije definisan za table= " + tbl
       Alert( _msg )
       log_write( _msg, 2 )
+      RaiseError( _msg )
       QUIT_1
    ENDIF
 

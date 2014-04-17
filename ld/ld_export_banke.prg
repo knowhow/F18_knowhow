@@ -114,7 +114,6 @@ select ( F_TMP_1 )
 use
 my_use_temp( "EXP_BANK", my_home() + _table_name + ".dbf", .f., .f. )
 
-// indeksi...
 index on ( punoime ) TAG "1"
 index on ( jmbg ) TAG "2"
 

@@ -44,7 +44,6 @@
 #define F__ROBA     33
 #define F_OBJEKTI   34
 
-
 // modul FIN (wa 50-80)
 #define F_FIN_PRIPR     50
 #define F_SUBAN    51
@@ -192,6 +191,7 @@
 #define F_PK_DATA  191
 #define F_LDT22    192
 #define F_LD_RJ    193
+#define F_EXP_BANK 194
 
 // modul OS (wa 200-206)
 #define F_OS       200
@@ -201,7 +201,6 @@
 #define F_INVENT   204
 #define F_SII      205
 #define F_SII_PROMJ 206
-
 
 // modul MAT (wa 207-220)
 #define F_MAT_SUBAN   207

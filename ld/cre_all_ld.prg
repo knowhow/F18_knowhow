@@ -16,7 +16,6 @@
 static __LD_FIELDS_COUNT := 60
 
 
-
 function cre_all_ld_sif(ver)
 local _table_name, _alias, _created
 local aDbf

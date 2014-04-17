@@ -1,3 +1,7 @@
+1.7.53  2014-04-17, hernad
+
+  - #33388 - dbPack zloupotreba
+
 1.7.52  2014-04-17, hernad
 
   - #33381 nDopr1X nije definisana

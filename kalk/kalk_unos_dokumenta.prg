@@ -1508,6 +1508,8 @@ FUNCTION ispisi_naziv_sifre( area, id, x, y, len )
    ENDIF
 
    SELECT ( area )
+   GO TOP
+   SEEK id
 
    IF ( area )->( FieldPos( "naz" ) ) <> 0
 

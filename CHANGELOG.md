@@ -1,3 +1,7 @@
+1.7.54  2014-04-18, vsasa
+
+  - #33397 - po nalogu da tagiram zatečeno stanje
+
 1.7.53  2014-04-17, hernad
 
   - #33388 - dbPack zloupotreba

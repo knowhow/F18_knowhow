@@ -22,6 +22,8 @@ local _params := fakt_params()
 
 private m:=""
 
+my_close_all_dbf()
+
 O_SIFK
 O_SIFV
 O_PARTN
@@ -501,11 +503,12 @@ if cOstran!="D"
 endif
 
 END PRINT
-my_close_all_dbf(); MyFERASE(cTMPFAKT)
-closeret
+my_close_all_dbf()
+MyFERASE(cTMPFAKT)
+return
 
 
-STAT PROC ZaglKart(lIniStrana)
+static function ZaglKart(lIniStrana)
   STATIC nZStrana:=0
   IF lIniStrana=NIL; lIniStrana:=.f.; ENDIF
   IF lIniStrana; nZStrana:=0; ENDIF
@@ -539,5 +542,5 @@ STAT PROC ZaglKart(lIniStrana)
   ? space(gnLMarg); ?? m
   nZStrana=nStrana
 return
-*}
+
 

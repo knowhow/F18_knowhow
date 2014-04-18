@@ -68,7 +68,8 @@ FUNCTION cre_partn( ver )
    p_partneri( @cId, 10, 5 ) => provjera šifre, ako ne postoji prikaze šifarnik
                                 ako postoji prikaže na m_x + 10, m_y + 5 naziv
 
-   lEmptIdOk := .F.
+   lEmptIdOk := .F.  // default je .T.
+
    p_partneri( @cId, 10, 5, lEmptyIdOk ) => ako je cId == "    ", 
                                  lEmptyIdOk == .T. - prihvata cId to kao validnu sifru,
                                  lEmptyIdOk == .F. - ne prihvata kao validnu sifru         

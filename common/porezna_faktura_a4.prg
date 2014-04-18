@@ -413,6 +413,8 @@ STATIC FUNCTION pf_a4_sltxt()
    LOCAL cLine
    LOCAL cTxt
    LOCAL nFTip
+   LOCAL aTxt
+   LOCAL n
 
    cLine := a4_line( "pf" )
 
@@ -427,11 +429,14 @@ STATIC FUNCTION pf_a4_sltxt()
    hseek "F20"
 
    DO WHILE !Eof() .AND. field->tip = "F"
+      n := 1
       nFTip := Val( Right( field->tip, 2 ) )
       IF nFTip < 51
          cTxt := AllTrim( field->opis )
-         // cTxt, 17cpi, bold = off, if empty() new line
-         p_line( cTxt, 17, .F., .T. )
+         aTxt := SjeciStr( cTxt, 120 )
+         FOR n := 1 TO LEN( aTxt )
+            p_line( aTxt[n], 17, .F., .T. )
+         NEXT
       ENDIF
 
       IF PRow() > nDodRedova + LEN_STRANICA - DSTR_KOREKCIJA() - PICT_KOREKCIJA( nStr )

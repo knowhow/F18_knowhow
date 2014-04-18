@@ -867,6 +867,7 @@ static function fill_dod_text( cTxt, cPartn )
 local aLines // matrica sa linijama teksta
 local nFId // polje Fnn counter od 20 pa nadalje
 local nCnt // counter upisa u DRNTEXT
+local aTxt, n, i
 
 // obradi djokere...
 _txt_djokeri( @cTxt, cPartn )
@@ -878,17 +879,19 @@ aLines := TokToNiz(cTxt, Chr(13) + Chr(10))
 
 nFId := 20
 nCnt := 0
-for i:=1 to LEN(aLines)
-	add_drntext("F" + ALLTRIM(STR(nFId)), aLines[i])
-	++ nFId
-	++ nCnt
+for i := 1 to LEN(aLines)
+    aTxt := SjeciStr( aLines[i], 250 )
+    for n := 1 to LEN( aTxt )
+	    add_drntext("F" + ALLTRIM(STR(nFId)), aTxt[n] )
+	    ++ nFId
+	    ++ nCnt
+    next
 next
 
 // dodaj i parametar koliko ima linija texta
 add_drntext("P02", ALLTRIM(STR(nCnt)))
 
 return
-*}
 
 
 

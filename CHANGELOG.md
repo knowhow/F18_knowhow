@@ -1,3 +1,9 @@
+1.7.55  2014-04-18, vsasa
+
+  - FAKT, štampa dodatnog teksta na fakturi - bugfix
+  - IOS, problem sa opcijom - bugfix
+  - FAKT, pregled kartice, ROBA alias - bugfix
+
 1.7.54  2014-04-18, vsasa
 
   - #33397 - po nalogu da tagiram zatečeno stanje

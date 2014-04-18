@@ -324,11 +324,11 @@ FUNCTION edit_fin_priprema()
 
    @ m_x + 14, m_y + 2 SAY "Partner:" GET _IdPartner PICT "@!" ;
       VALID ;
-      {|| if( Empty( _idpartner ), Reci( 14, 20, Space( 25 ) ), ), ;
-      ( Empty( _IdPartner ) .OR. P_Firma( @_IdPartner, 14, 20 ) ) .AND. _rule_partn_() .AND. ;
-      if( g_knjiz_help == "D" .AND. !Empty( _idpartner ), g_box_stanje( _idpartner, _idkonto, NIL ), .T. ) } ;
+      {|| IIF( Empty( _idpartner ), Reci( 14, 20, Space( 25 ) ), ), ;
+      ( P_Firma( @_IdPartner, 14, 20 ) ) .AND. _rule_partn_() .AND. ;
+      IIF( g_knjiz_help == "D" .AND. !Empty( _idpartner ), g_box_stanje( _idpartner, _idkonto, NIL ), .T. ) } ;
       WHEN ;
-      {|| iif( ChkKtoMark( _idkonto ), .T., .F. ) }
+      {|| IIF( ChkKtoMark( _idkonto ), .T., .F. ) }
 
 
    @ m_x + 16, m_y + 2  SAY "Duguje/Potrazuje (1/2):" GET _D_P VALID V_DP() .AND. _rule_d_p_() .AND. _rule_veza_()

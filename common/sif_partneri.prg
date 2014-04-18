@@ -63,20 +63,38 @@ FUNCTION cre_partn( ver )
    RETURN .T.
 
 
-// ---------------------------------
-// ---------------------------------
-FUNCTION p_partneri( cId, dx, dy )
+/*
+   cId := "00001"
+   p_partneri( @cId, 10, 5 ) => provjera šifre, ako ne postoji prikaze šifarnik
+                                ako postoji prikaže na m_x + 10, m_y + 5 naziv
+
+   lEmptIdOk := .F.
+   p_partneri( @cId, 10, 5, lEmptyIdOk ) => ako je cId == "    ", 
+                                 lEmptyIdOk == .T. - prihvata cId to kao validnu sifru,
+                                 lEmptyIdOk == .F. - ne prihvata kao validnu sifru         
+
+   funkcija vraća .T. kada šifra postoji
+
+*/
+FUNCTION p_partneri( cId, dx, dy, lEmptyIdOk )
 
    LOCAL cN2Fin
    LOCAL i
    LOCAL cRet
    LOCAL _standard_prof := f18_privgranted( "standard_profile" )
 
-   PushWa()
-
    PRIVATE ImeKol
    PRIVATE Kol
 
+   IF lEmptyIdOk == NIL
+         lEmptyIdOk := .T.
+   ENDIF
+
+   IF lEmptyIdOk .AND. ( ValType( cId ) == "C" .AND. EMPTY( cId ) )
+           return .T.
+   ENDIF
+ 
+   PushWa()
    SELECT ( F_PARTN )
 
    IF !Used()
@@ -98,21 +116,12 @@ FUNCTION p_partneri( cId, dx, dy )
 
    Kol := {}
 
-   IF partn->( FieldPos( "DZIROR" ) ) <> 0
-      AAdd ( ImeKol, { PadR( "Dev ZR", 22 ), {|| DZIROR }, "Dziror" } )
-   ENDIF
+   AAdd ( ImeKol, { PadR( "Dev ZR", 22 ), {|| DZIROR }, "Dziror" } )
 
 
    AAdd( Imekol, { PadR( "Telefon", 12 ),  {|| TELEFON }, "telefon"  } )
    AAdd ( ImeKol, { PadR( "Fax", 12 ), {|| fax }, "fax" } )
-   IF partn->( FieldPos( "MOBTEL" ) ) <> 0
-      AAdd ( ImeKol, { PadR( "MobTel", 20 ), {|| mobtel }, "mobtel" } )
-   ENDIF
-
-   IF partn->( FieldPos( "ID2" ) ) <> 0
-      AAdd ( ImeKol, { PadR( "Id2", 6 ), {|| id2 }, "id2" } )
-   ENDIF
-
+   AAdd ( ImeKol, { PadR( "MobTel", 20 ), {|| mobtel }, "mobtel" } )
    AAdd ( ImeKol, { PadR( "Opstina", 6 ), {|| idops }, "idops", {|| .T. }, {|| p_ops( @widops ) } } )
 
    IF !_standard_prof
@@ -121,20 +130,15 @@ FUNCTION p_partneri( cId, dx, dy )
 
    IF !_standard_prof
 	
-      AAdd( ImeKol, { "kup?", {|| _kup }, "_kup", ;
-         {|| .T. }, {|| _v_dn( w_kup ) } } )
+      AAdd( ImeKol, { "kup?", {|| _kup }, "_kup", {|| .T. }, {|| _v_dn( w_kup ) } } )
 
-      AAdd( ImeKol, { "dob?", {|| " " + _dob + " " }, "_dob", ;
-         {|| .T. }, {|| _v_dn( w_dob ) }, nil, nil, nil, nil, 20 } )
+      AAdd( ImeKol, { "dob?", {|| " " + _dob + " " }, "_dob", {|| .T. }, {|| _v_dn( w_dob ) }, nil, nil, nil, nil, 20 } )
 
-      AAdd( ImeKol, { "banka?", {|| " " + _banka + " " }, "_banka", ;
-         {|| .T. }, {|| _v_dn( w_banka ) }, nil, nil, nil, nil, 30 } )
+      AAdd( ImeKol, { "banka?", {|| " " + _banka + " " }, "_banka", {|| .T. }, {|| _v_dn( w_banka ) }, nil, nil, nil, nil, 30 } )
 
-      AAdd( ImeKol, { "radnik?", {|| " " + _radnik + " " }, "_radnik", ;
-         {|| .T. }, {|| _v_dn( w_radnik ) }, nil, nil, nil, nil, 40 } )
+      AAdd( ImeKol, { "radnik?", {|| " " + _radnik + " " }, "_radnik", {|| .T. }, {|| _v_dn( w_radnik ) }, nil, nil, nil, nil, 40 } )
 
    ENDIF
-
 
    FOR i := 1 TO Len( ImeKol )
       AAdd( Kol, i )
@@ -146,6 +150,7 @@ FUNCTION p_partneri( cId, dx, dy )
    SELECT PARTN
    SET ORDER TO TAG "ID"
 
+   
    cRet := PostojiSifra( F_PARTN, 1, maxrows() - 15, maxcols() - 15, "Lista Partnera", @cId, dx, dy, {| Ch| k_handler( Ch ) },,,,, { "ID" } )
 
    PopWa()

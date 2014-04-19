@@ -13,9 +13,6 @@
 #include "fmk.ch"
 
 
-// -----------------------------------------
-// otvaranje tabele roba - sifrarnik
-// -----------------------------------------
 function P_Roba(cId, dx, dy, cSeek )
 local cRet
 local bRoba
@@ -26,7 +23,7 @@ private ImeKol
 private Kol
 
 // pretraga po dobavljacu
-if cSeek == nil
+if cSeek == NIL
     cSeek := ""
 endif
 
@@ -45,11 +42,6 @@ AADD( ImeKol, { PADC( "PLU kod", 8 ), ;
         {|| PADR(fisc_plu, 10)}, ;
         "fisc_plu", {|| gen_plu(@wfisc_plu), .f.}, ;
         {|| .t. } })
-
-// kataloski broj
-if roba->(fieldpos("KATBR"))<>0
-    AADD( ImeKol, { PADC( "KATBR", 14 ), {|| PADR( katBr, 14 ) }, "katbr"   })
-endif
 
 // sifra dobavljaca
 if roba->(fieldpos( "SIFRADOB" )) <> 0
@@ -78,16 +70,11 @@ if roba->(fieldpos("STRINGS")) <> 0
     AADD(ImeKol, {padc("Strings", 10 ), {|| strings}, "strings", {|| .t.}, {|| .t. }})
 endif
 
-// VPC
-//if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","SHOWVPC"))
     AADD(ImeKol, {padc("VPC",10 ), {|| transform(VPC,"999999.999")}, "vpc" , nil, nil, nil, gPicCDEM  })
-//endif
 
 // VPC2
 if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","SHOWVPC2"))
-        if IzFMkIni('SifRoba',"VPC2",'D', SIFPATH)=="D"
-            AADD(ImeKol, {padc("VPC2",10 ), {|| transform(VPC2,"999999.999")}, "vpc2", NIL, NIL,NIL, gPicCDEM   })
-        endif
+       AADD(ImeKol, {padc("VPC2",10 ), {|| transform(VPC2,"999999.999")}, "vpc2", NIL, NIL,NIL, gPicCDEM   })
 endif
 
 if roba->(fieldpos("PLC"))<>0  .and. IzFMkIni("SifRoba","PlanC","N", SIFPATH)=="D"
@@ -127,24 +114,18 @@ else
     AADD (ImeKol,{ padc("BARKOD",14 ), {|| BARKOD}, "BarKod" , {|| .t. } , {|| DodajBK(@wBarkod), vpsifra( wbarkod, "BARKOD" ) }  })
 endif
 
-if roba->(fieldpos("mink"))<>0
     AADD (ImeKol,{ padc("MINK",10 ), {|| transform(MINK,"999999.99")}, "MINK"   })
-endif
 
-if roba->(fieldpos("K1"))<>0
     AADD (ImeKol,{ padc("K1",4 ), {|| k1 }, "k1"   })
     AADD (ImeKol,{ padc("K2",4 ), {|| k2 }, "k2", ;
         {|| .t.}, {|| .t.}, nil, nil, nil, nil, 35   })
     AADD (ImeKol,{ padc("N1",12), {|| N1 }, "N1"   })
     AADD (ImeKol,{ padc("N2",12 ), {|| N2 }, "N2", ;
         {|| .t.}, {|| .t.}, nil, nil, nil, nil, 35   })
-endif
 
-if roba->(fieldpos("K7"))<>0
     AADD (ImeKol,{ padc("K7",2 ), {|| k7 }, "k7"   })
     AADD (ImeKol,{ padc("K8",2 ), {|| k8 }, "k8"  })
     AADD (ImeKol,{ padc("K9",3 ), {|| k9 }, "k9" })
-endif
 
 // AUTOMATSKI TROSKOVI ROBE, samo za KALK
 if goModul:oDataBase:cName == "KALK" .and. roba->(fieldpos("TROSK1")) <> 0

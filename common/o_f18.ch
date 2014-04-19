@@ -9,11 +9,10 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-// sifk, sifv
 #xcommand O_SIFK     => select(F_SIFK)    ;  use_sql_sifk()
 #xcommand O_SIFV     => select(F_SIFV)    ;  use_sql_sifv()
 
-// sifrarnici
+// sifarnici
 #xcommand O_ROBA     => select (F_ROBA)    ;  my_use  ("roba")      ; set order to tag "ID"
 #xcommand O_BARKOD   => select (F_BARKOD)  ;  my_use  ("barkod")    ; set order to tag "1"
 #xcommand O_KONTO    => select (F_KONTO)   ;  my_use  ("konto" )    ; set order to tag "ID"
@@ -32,6 +31,7 @@
 #xcommand O_REFER    => select (F_REFER)   ;  use_sql_sif  ("refer" )     ; set order to tag "ID"
 #xcommand O_OPS      => select (F_OPS)     ;  use_sql_opstine()      ; set order to tag "ID"
 #xcommand O_FAKT_OBJEKTI  => select (F_FAKT_OBJEKTI) ;  use_sql_sif ( "fakt_objekti" ) ; set order to tag "ID"
+
 // lokalizacija
 #xcommand O_LOKAL    => select (F_LOKAL)   ;  use_sql_lokalizacija()
 #xcommand O_RJ       => select (F_RJ)      ;  use_sql_rj()        ; set order to tag "ID"
@@ -40,13 +40,8 @@
 #xcommand O_KS           => select (F_KS);     use_sql_ks() ; set order to tag "ID"
 #xcommand O_BANKE    => select (F_BANKE)   ;  use_sql_sif  ("banke")     ; set order to tag "ID"
 
-
-
 #xcommand O__ROBA    => select (F__ROBA)   ;  my_usex("_roba")
 #xcommand O__PARTN   => select (F__PARTN)  ;  my_use  ("_partn")
-
-
-
 
 #xcommand O_RELAC    => SELECT (F_RELAC)   ;  my_use  ("relac")     ; set order to tag "ID"
 #xcommand O_VOZILA   => SELECT (F_VOZILA)  ;  my_use  ("vozila")    ; set order to tag "ID"

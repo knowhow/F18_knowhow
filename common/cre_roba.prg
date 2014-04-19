@@ -19,10 +19,6 @@ local _table_name, _alias
 local _created
 
 
-// -------------------------------------------------
-// ROBA
-// -------------------------------------------------
-
 aDbf := {}
 AADD(aDBf,{ 'ID'                  , 'C' ,  10 ,  0 })
 AADD(aDBf,{ 'SIFRADOB'            , 'C' ,  20 ,  0 })
@@ -96,8 +92,6 @@ CREATE_INDEX("ID_VSD","SIFRADOB",  _alias)
 CREATE_INDEX("PLU","str(fisc_plu, 10)",  _alias)
 CREATE_INDEX("IDP", {"id+tip", 'tip=="P"'},  _alias)
 
-// ovog polja nema u dbf tabeli ?????
-//CREATE_INDEX("KATBR","KATBR", _alias ) 
 
 
 // -------------------------------------------------

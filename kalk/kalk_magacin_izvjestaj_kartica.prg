@@ -55,14 +55,6 @@ cPkN := "N"
 cBrFDa:="N"
 cPrikFCJ2:="N"
 
-if IsPlanika()
-	cPrikazDob:="N"
-	private cK9:=SPACE(3)
-endif
-
-if IsDomZdr()
-	private cKalkTip:=SPACE(1)
-endif
 
 if !Empty(cRNT1)
 	private cRNalBroj := PADR("", 40)
@@ -89,7 +81,7 @@ if cIdKonto == NIL
 
  	cIdKonto := PADR( cIdKonto, gDuzKonto )
  
- 	Box(,13+IF(lPoNarudzbi,2,0),60)
+ 	Box(,13, 60)
   	do while .t.
     		if gNW $ "DX"
      			@ m_x+1,m_y+2 SAY "Firma "
@@ -118,14 +110,14 @@ if cIdKonto == NIL
       			@ m_x+11,m_y+2 SAY "Prikaz vrijednosti samo u saldu ? (D/N)"  GET cPVSS valid cPVSS $ "DN" pict "@!"
     		endif
 		if lPoNarudzbi
-      			qqIdNar:=SPACE(60)
+      			qqIdNar := SPACE(60)
       			cPKN:="N"
       			@ row()+1,m_y+2 SAY "Uslov po sifri narucioca:" GET qqIdNar pict "@!S30"
       			@ row()+1,m_y+2 SAY "Prikazati kolone 'narucilac' i 'br.narudzbe' ? (D/N)" GET cPKN VALID cPKN$"DN" pict "@!"
     		endif
     
     		if IsPlanika()	
-    			@ m_x+12,m_y+2 SAY "Prikaz dobavljaca (D/N) ?" GET cPrikazDob VALID cPrikazDob $ "DN" PICT "@!"
+    			@ m_x+12,m_y+2 SAY "Prikaz dobavljača (D/N) ?" GET cPrikazDob VALID cPrikazDob $ "DN" PICT "@!"
     			@ m_x+13,m_y+2 SAY "Prikaz po K9 " GET cK9 PICT "@!"
     		endif
 		if IsDomZdr()
@@ -140,7 +132,7 @@ if cIdKonto == NIL
     		endif
 		
 		if !EMPTY(cRnT1) .and. !EMPTY(cRNalBroj)
-			private aUslRn:=Parsiraj(cRNalBroj, "idzaduz2")
+			private aUslRn:= Parsiraj(cRNalBroj, "idzaduz2")
 		endif
 		
     		if (!lPoNarudzbi.or.aUslN<>NIL) .and. (EMPTY(cRNT1) .or. EMPTY(cRNalBroj) .or. aUslRn<>NIL)

@@ -33,7 +33,7 @@ AADD(aDbf,{"IZNOS5"       , "N",  8, 2})
 AADD(aDbf,{"SKONTO"       , "N",  8, 2})
 
 if !File(f18_ime_dbf("rabat"))
-	DbCreate2(SIFPATH + "rabat.dbf", aDbf)
+	DbCreate2( "rabat", aDbf)
 endif
 
 CREATE_INDEX("1", "IDRABAT+TIPRABAT+IDROBA", SIFPATH + "rabat.dbf", .t.)

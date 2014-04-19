@@ -1,342 +1,346 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 #include "fmk.ch"
 #include "fileio.ch"
- 
-*static string
-static OID_ASK:="0"
-*;
 
-*static string
-static nSlogova:=0
-*;
+// static string
+STATIC OID_ASK := "0"
+// ;
+
+// static string
+STATIC nSlogova := 0
+// ;
 
 // -----------------------------------------------------
 // -----------------------------------------------------
-function create_index(cImeInd, xKljuc, alias, silent)
-local _force_erase := .f.
-local bErr
-local cFulDbf
-local nH
-local cImeCDXIz
-local cImeCDX
-local nOrder
-local nPos
-local cImeDbf
-local _a_dbf_rec
-local _wa
-local _dbf
-local _tag
-local cKljuc
-local _unique := .f.
+FUNCTION create_index( cImeInd, xKljuc, alias, silent )
 
-private cTag
-private cKljuciz
-private cFilter
+   LOCAL _force_erase := .F.
+   LOCAL bErr
+   LOCAL cFulDbf
+   LOCAL nH
+   LOCAL cImeCDXIz
+   LOCAL cImeCDX
+   LOCAL nOrder
+   LOCAL nPos
+   LOCAL cImeDbf
+   LOCAL _a_dbf_rec
+   LOCAL _wa
+   LOCAL _dbf
+   LOCAL _tag
+   LOCAL cKljuc
+   LOCAL _unique := .F.
 
-if silent == nil
-    silent := .f.
-endif
+   PRIVATE cTag
+   PRIVATE cKljuciz
+   PRIVATE cFilter
 
-if VALTYPE(xKljuc) == "C"
-   cKljuc := xKljuc
-   cFilter := NIL
-else
-   cKljuc := xKljuc[1]
-   cFilter := xKljuc[2]
-   if LEN(xKljuc) == 3
-      _unique := xKljuc[3]
-   endif   
-endif
+   IF silent == nil
+      silent := .F.
+   ENDIF
 
-CLOSE ALL
+   IF ValType( xKljuc ) == "C"
+      cKljuc := xKljuc
+      cFilter := NIL
+   ELSE
+      cKljuc := xKljuc[ 1 ]
+      cFilter := xKljuc[ 2 ]
+      IF Len( xKljuc ) == 3
+         _unique := xKljuc[ 3 ]
+      ENDIF
+   ENDIF
 
-alias := FILEBASE(alias)
- 
-_a_dbf_rec := get_a_dbf_rec(alias, .t.)
-_wa := _a_dbf_rec["wa"]
+   CLOSE ALL
 
+   alias := FILEBASE( alias )
 
-for each _tag in { cTag, "DEL" }
-
-cImeDbf := f18_ime_dbf(alias)
-cImeCdx := ImeDbfCdx(cImeDbf)
- 
-nPom := RAT(SLASH, cImeInd )
-cTag := ""
-
-cKljucIz := cKljuc
-
-if nPom <> 0
-   cTag := substr(cImeInd, nPom+1)
-else
-   cTag := cImeInd
-endif
+   _a_dbf_rec := get_a_dbf_rec( alias, .T. )
+   _wa := _a_dbf_rec[ "wa" ]
 
 
-if _tag == "DEL"
-     cTag    := "DEL"
-     cKljuc  := "deleted()"
-     cImeInd := cTag
-endif
+   FOR EACH _tag in { cTag, "DEL" }
 
+      cImeDbf := f18_ime_dbf( alias )
+      cImeCdx := ImeDbfCdx( cImeDbf )
 
-fPostoji := .t.
+      nPom := RAt( SLASH, cImeInd )
+      cTag := ""
 
-select (_wa)
+      cKljucIz := cKljuc
 
-_dbf := f18_ime_dbf(alias)
-
-begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1), ProcLine(2) }, Break( err ) }
-          dbUseArea( .f., DBFENGINE, _dbf , NIL, .t. , .f.)
-
-recover using _err
-
-          _msg := "ERR-CI: " + _err:description + ": tbl:" + alias + " se ne moze otvoriti ?!"
-          log_write( _msg, 2)
-          Alert(_msg)
-         
-          // _err:GenCode = 23 
-          if _err:description == "Read error"
-             _force_erase := .t.
-          endif
-
-          // kada imamo pokusaj duplog otvaranja onda je
-          // _err:GenCode = 21
-          // _err:description = "Open error"
- 
-          ferase_dbf(alias, _force_erase)
-
-          repair_dbfs()
-          QUIT_1
-end sequence
-
-
-// open index
-begin sequence with { |err| err:cargo := { ProcName(1), ProcName(2), ProcLine(1), ProcLine(2) }, Break( err ) }
-     if FILE( ImeDbfCdx(_dbf))
-            dbSetIndex(ImeDbfCdx(_dbf))
-     endif
-recover using _err
-     // ostecen index brisi ga
-     FERASE(ImeDbfCdx(_dbf))
-end sequence
-
-if  FILE(ImeDbfCdx(_dbf, OLD_INDEXEXT))
-    FERASE(ImeDbfCdx(_dbf, OLD_INDEXEXT))
-endif
-
-
-if USED()
-	nOrder := index_tag_num( cTag )
-	cOrdKey := ORDKEY(cTag)
-	select (_wa)
-	use
-else
-	log_write("create_index: Ne mogu otvoriti " + cImeDbf, 3 )
-	fPostoji := .f.
-endif
-
-if !fPostoji
-	return
-endif
-
-if !FILE(LOWER(cImeCdx)) .or. nOrder==0 .or. ALLTRIM(UPPER( cOrdKey )) <> ALLTRIM(UPPER( cKljuc ))
-
-     SELECT(_wa)
-     use
-     USE (f18_ime_dbf(alias)) EXCLUSIVE
- 
-     if !silent
-          MsgO("Baza:" + cImeDbf + ", Kreiram index-tag :" + cImeInd + "#" + ExFileName(cImeCdx))
-     endif
-   
-	 log_write("Kreiram indeks za tabelu " + cImeDbf + ", " + cImeInd, 7 )
-
-     nPom:=RAT( SLASH, cImeInd)
-    
-     private cTag :=""
-     private cKljuciz := cKljuc
-    
-     if nPom<>0
-         cTag := substr(cImeInd, nPom)
-     else
+      IF nPom <> 0
+         cTag := SubStr( cImeInd, nPom + 1 )
+      ELSE
          cTag := cImeInd
-     endif
-
-     //  provjeri indeksiranje na nepostojecim poljima ID_J, _M1_
-     if  !(LEFT(cTag, 4)=="ID_J" .and. fieldpos("ID_J")==0) .and. !(cTag=="_M1_" .and. FIELDPOS("_M1_")==0)
-
-     	cImeCdx := strtran(cImeCdx, "." + INDEXEXT, "")
-
-        log_write("index on " + cKljucIz + " / " + cTag + " / " + cImeCdx + " FILTER: " + IIF(cFilter != NIL, cFilter, "-") + " / alias=" + alias + " / used() = " + hb_valToStr(USED()), 5 ) 
-        if _tag == "DEL"
-              INDEX ON deleted() TAG "DEL" TO (cImeCdx) FOR deleted()
-        else
-            if cFilter != NIL
-              if _unique
-     	         INDEX ON &cKljucIz  TAG (cTag)  TO (cImeCdx) FOR &cFilter UNIQUE
-              else
-     	         INDEX ON &cKljucIz  TAG (cTag)  TO (cImeCdx) FOR &cFilter
-              endif
-     	    else
-              INDEX ON &cKljucIz  TAG (cTag)  TO (cImeCdx)
-            endif 
-        endif
-     	USE
+      ENDIF
 
 
-     endif
-
-     if !silent
-       MsgC()
-     endif
-     use
-
-endif
-
-next
-
-CLOSE ALL
-return
+      IF _tag == "DEL"
+         cTag    := "DEL"
+         cKljuc  := "deleted()"
+         cImeInd := cTag
+      ENDIF
 
 
-function IsFreeForReading(cFulDBF, fSilent)
+      fPostoji := .T.
 
-local nH
+      SELECT ( _wa )
 
-nH:=FOPEN(cFulDbf,2)  // za citanje i pisanje
-if FERROR()<>0
-      Beep(2)
-      if !fSilent
-       Msg("Ne mogu otvoriti "+cFulDBF+" - vjerovatno ga neko koristi#"+;
-              "na mrezi. Ponovite operaciju kada ovo rijesite !")
-       return .f.
-      else
-        cls
-        ? "Ne mogu otvoriti",cFulDbf
-        INKEY()
-      endif
-      FCLOSE(nH)
-      return .t.
-endif
-FCLOSE(nH)
-return .t.
+      _dbf := f18_ime_dbf( alias )
 
+      BEGIN SEQUENCE WITH {|err| err:cargo := { ProcName( 1 ), ProcName( 2 ), ProcLine( 1 ), ProcLine( 2 ) }, Break( err ) }
+         dbUseArea( .F., DBFENGINE, _dbf, NIL, .T., .F. )
 
-function AddFldBrisano(cImeDbf)
-use
-save screen to cScr
-CLS
-       Modstru(cImeDbf,"C H C 1 0  FH  C 1 0",.t.)
-       Modstru(cImeDbf,"C SEC C 1 0  FSEC C 1 0",.t.)
-       Modstru(cImeDbf,"C VAR C 2 0 FVAR C 2 0",.t.)
-       Modstru(cImeDbf,"C VAR C 15 0 FVAR C 15 0",.t.)
-       Modstru(cImeDbf,"C  V C 15 0  FV C 15 0",.t.)
-       Modstru(cImeDbf,"A BRISANO C 1 0",.t.)  // dodaj polje "BRISANO"
-inkey(3)
-restore screen from cScr
+      recover using _err
 
-select (F_TMP)
-usex (cImeDbf)
-return
+         _msg := "ERR-CI: " + _err:description + ": tbl:" + alias + " se ne moze otvoriti ?!"
+         log_write( _msg, 2 )
+         Alert( _msg )
 
-
-function KZNbaza(aPriv,aKum,aSif,cIz,cU, cSamoId)
-
-
-// cSamoId  "1"- konvertuj samo polja koja pocinju sa id
-//          "2"- konvertuj samo polja koja ne pocinju sa id
-//          "3" ili nil - konvertuj sva polja
-//      "B" - konvertuj samo IDRADN polja iz LD-a  
-
- LOCAL i:=0, j:=0, k:=0, aPom:={}, xVar:="", anPolja:={}
- CLOSE ALL
- SET EXCLUSIVE ON
- IF aPriv==nil; aPriv:={}; ENDIF
- IF aKum==nil ; aKum:={} ; ENDIF
- IF aSif==nil ; aSif:={} ; ENDIF
- if cSamoid==nil; cSamoid:="3"; endif
-private cPocStanjeSif
-private cKrajnjeStanjeSif
- if !gAppSrv
-   Box("xx",1,50,.f.,"Vrsi se konverzija znakova u bazama podataka")
-   @ m_x+1,m_y+1 say "Konvertujem:"
- else
-   ? "Vrsi se konverzija znakova u tabelama"
- endif
- FOR j:=1 TO 3
-   DO CASE
-     CASE j==1
-       aPom:=aPriv
-     CASE j==2
-       aPom:=aKum
-     CASE j==3
-       aPom:=aSif
-   ENDCASE
-   FOR i:=1 TO LEN(aPom)
-     nDbf:=aPom[i]
-     goModul:oDatabase:obaza(nDbf)
-     DBSELECTArea (nDbf)
-     if !gAppSrv
-       @ m_x+1,m_y+25 SAY SPACE(12)
-       @ m_x+1,m_y+25 SAY ALIAS(nDBF)
-     else
-        ? "Konvertujem: " + ALIAS(nDBF)
-     endif
-     if used()
-       beep(1)
-       ordsetfocus(0)
-       GO TOP
-       anPolja:={}
-       FOR k:=1 TO FCOUNT()
-        if (cSamoId=="3") .or. (cSamoId=="1" .and. upper(fieldname(k)) = "ID") .or. (cSamoId=="2"  .and. !(upper(fieldname(k)) = "ID")) .or. (cSamoId=="B" .and. ((UPPER(FieldName(k)) = "IDRADN") .or. ((UPPER(FieldName(k)) = "ID") .and. ALIAS(nDbf)=="RADN")))
-         xVar:=FIELDGET(k)
-         IF VALTYPE(xVar)$"CM"
-           AADD(anPolja,k)
+         // _err:GenCode = 23
+         IF _err:description == "Read error"
+            _force_erase := .T.
          ENDIF
-        endif  // csamoid
-       NEXT
-       DO WHILE !EOF()
-         FOR k:=1 TO LEN(anPolja)
-           xVar:=FIELDGET(anPolja[k])
-           FIELDPUT(anPolja[k],StrKZN(xVar,cIz,cU))
-           // uzmi za radnika ime i prezime
-     if (cSamoId=="B") .and. UPPER(FIELDNAME(1)) = "ID" .and. ALIAS(nDbf)=="RADN"
-    //AADD(aSifRev, {FIELDGET(4)+" "+FIELDGET(5), cPocStanjeSif, cKrajnjeStanjeSif})
-     endif
+
+         // kada imamo pokusaj duplog otvaranja onda je
+         // _err:GenCode = 21
+         // _err:description = "Open error"
+
+         ferase_dbf( alias, _force_erase )
+
+         repair_dbfs()
+         QUIT_1
+      END SEQUENCE
+
+
+      // open index
+      BEGIN SEQUENCE WITH {|err| err:cargo := { ProcName( 1 ), ProcName( 2 ), ProcLine( 1 ), ProcLine( 2 ) }, Break( err ) }
+         IF File( ImeDbfCdx( _dbf ) )
+            dbSetIndex( ImeDbfCdx( _dbf ) )
+         ENDIF
+      recover using _err
+         // ostecen index brisi ga
+         FErase( ImeDbfCdx( _dbf ) )
+      END SEQUENCE
+
+      IF  File( ImeDbfCdx( _dbf, OLD_INDEXEXT ) )
+         FErase( ImeDbfCdx( _dbf, OLD_INDEXEXT ) )
+      ENDIF
+
+
+      IF Used()
+         nOrder := index_tag_num( cTag )
+         cOrdKey := ordKey( cTag )
+         SELECT ( _wa )
+         USE
+      ELSE
+         log_write( "create_index: Ne mogu otvoriti " + cImeDbf, 3 )
+         fPostoji := .F.
+      ENDIF
+
+      IF !fPostoji
+         RETURN
+      ENDIF
+
+      IF !File( Lower( cImeCdx ) ) .OR. nOrder == 0 .OR. AllTrim( Upper( cOrdKey ) ) <> AllTrim( Upper( cKljuc ) )
+
+         SELECT( _wa )
+         USE
+         USE ( f18_ime_dbf( alias ) ) EXCLUSIVE
+
+         IF !silent
+            MsgO( "Baza:" + cImeDbf + ", Kreiram index-tag :" + cImeInd + "#" + ExFileName( cImeCdx ) )
+         ENDIF
+
+         log_write( "Kreiram indeks za tabelu " + cImeDbf + ", " + cImeInd, 7 )
+
+         nPom := RAt( SLASH, cImeInd )
+
+         PRIVATE cTag := ""
+         PRIVATE cKljuciz := cKljuc
+
+         IF nPom <> 0
+            cTag := SubStr( cImeInd, nPom )
+         ELSE
+            cTag := cImeInd
+         ENDIF
+
+         // provjeri indeksiranje na nepostojecim poljima ID_J, _M1_
+         IF  !( Left( cTag, 4 ) == "ID_J" .AND. FieldPos( "ID_J" ) == 0 ) .AND. !( cTag == "_M1_" .AND. FieldPos( "_M1_" ) == 0 )
+
+            cImeCdx := StrTran( cImeCdx, "." + INDEXEXT, "" )
+
+            log_write( "index on " + cKljucIz + " / " + cTag + " / " + cImeCdx + " FILTER: " + iif( cFilter != NIL, cFilter, "-" ) + " / alias=" + alias + " / used() = " + hb_ValToStr( Used() ), 5 )
+            IF _tag == "DEL"
+               INDEX ON Deleted() TAG "DEL" TO ( cImeCdx ) FOR Deleted()
+            ELSE
+               IF cFilter != NIL
+                  IF _unique
+                     INDEX ON &cKljucIz  TAG ( cTag )  TO ( cImeCdx ) FOR &cFilter UNIQUE
+                  ELSE
+                     INDEX ON &cKljucIz  TAG ( cTag )  TO ( cImeCdx ) FOR &cFilter
+                  ENDIF
+               ELSE
+                  INDEX ON &cKljucIz  TAG ( cTag )  TO ( cImeCdx )
+               ENDIF
+            ENDIF
+            USE
+
+
+         ENDIF
+
+         IF !silent
+            MsgC()
+         ENDIF
+         USE
+
+      ENDIF
+
    NEXT
-         SKIP 1
-       ENDDO
-       use
-     endif
+
+   CLOSE ALL
+
+   RETURN
+
+
+FUNCTION IsFreeForReading( cFulDBF, fSilent )
+
+   LOCAL nH
+
+   nH := FOpen( cFulDbf, 2 )  // za citanje i pisanje
+   IF FError() <> 0
+      Beep( 2 )
+      IF !fSilent
+         Msg( "Ne mogu otvoriti " + cFulDBF + " - vjerovatno ga neko koristi#" + ;
+            "na mrezi. Ponovite operaciju kada ovo rijesite !" )
+         RETURN .F.
+      ELSE
+         cls
+         ? "Ne mogu otvoriti", cFulDbf
+         Inkey()
+      ENDIF
+      FClose( nH )
+      RETURN .T.
+   ENDIF
+   FClose( nH )
+
+   RETURN .T.
+
+
+FUNCTION AddFldBrisano( cImeDbf )
+
+   USE
+   SAVE SCREEN TO cScr
+   CLS
+   Modstru( cImeDbf, "C H C 1 0  FH  C 1 0", .T. )
+   Modstru( cImeDbf, "C SEC C 1 0  FSEC C 1 0", .T. )
+   Modstru( cImeDbf, "C VAR C 2 0 FVAR C 2 0", .T. )
+   Modstru( cImeDbf, "C VAR C 15 0 FVAR C 15 0", .T. )
+   Modstru( cImeDbf, "C  V C 15 0  FV C 15 0", .T. )
+   Modstru( cImeDbf, "A BRISANO C 1 0", .T. )  // dodaj polje "BRISANO"
+   Inkey( 3 )
+   RESTORE SCREEN FROM cScr
+
+   SELECT ( F_TMP )
+   usex ( cImeDbf )
+
+   RETURN
+
+
+FUNCTION KZNbaza( aPriv, aKum, aSif, cIz, cU, cSamoId )
+
+   // cSamoId  "1"- konvertuj samo polja koja pocinju sa id
+   // "2"- konvertuj samo polja koja ne pocinju sa id
+   // "3" ili nil - konvertuj sva polja
+   // "B" - konvertuj samo IDRADN polja iz LD-a
+
+   LOCAL i := 0, j := 0, k := 0, aPom := {}, xVar := "", anPolja := {}
+   CLOSE ALL
+   SET EXCLUSIVE ON
+   IF aPriv == nil; aPriv := {}; ENDIF
+   IF aKum == nil ; aKum := {} ; ENDIF
+   IF aSif == nil ; aSif := {} ; ENDIF
+   IF cSamoid == nil; cSamoid := "3"; ENDIF
+   PRIVATE cPocStanjeSif
+   PRIVATE cKrajnjeStanjeSif
+   IF !gAppSrv
+      Box( "xx", 1, 50, .F., "Vrsi se konverzija znakova u bazama podataka" )
+      @ m_x + 1, m_y + 1 SAY "Konvertujem:"
+   ELSE
+      ? "Vrsi se konverzija znakova u tabelama"
+   ENDIF
+   FOR j := 1 TO 3
+      DO CASE
+      CASE j == 1
+         aPom := aPriv
+      CASE j == 2
+         aPom := aKum
+      CASE j == 3
+         aPom := aSif
+      ENDCASE
+      FOR i := 1 TO Len( aPom )
+         nDbf := aPom[ i ]
+         goModul:oDatabase:obaza( nDbf )
+         dbSelectArea ( nDbf )
+         IF !gAppSrv
+            @ m_x + 1, m_y + 25 SAY Space( 12 )
+            @ m_x + 1, m_y + 25 SAY Alias( nDBF )
+         ELSE
+            ? "Konvertujem: " + Alias( nDBF )
+         ENDIF
+         IF Used()
+            beep( 1 )
+            ordSetFocus( 0 )
+            GO TOP
+            anPolja := {}
+            FOR k := 1 TO FCount()
+               IF ( cSamoId == "3" ) .OR. ( cSamoId == "1" .AND. Upper( FieldName( k ) ) = "ID" ) .OR. ( cSamoId == "2"  .AND. !( Upper( FieldName( k ) ) = "ID" ) ) .OR. ( cSamoId == "B" .AND. ( ( Upper( FieldName( k ) ) = "IDRADN" ) .OR. ( ( Upper( FieldName( k ) ) = "ID" ) .AND. Alias( nDbf ) == "RADN" ) ) )
+                  xVar := FieldGet( k )
+                  IF ValType( xVar ) $ "CM"
+                     AAdd( anPolja, k )
+                  ENDIF
+               ENDIF  // csamoid
+            NEXT
+            DO WHILE !Eof()
+               FOR k := 1 TO Len( anPolja )
+                  xVar := FieldGet( anPolja[ k ] )
+                  FieldPut( anPolja[ k ], StrKZN( xVar, cIz, cU ) )
+                  // uzmi za radnika ime i prezime
+                  IF ( cSamoId == "B" ) .AND. Upper( FieldName( 1 ) ) = "ID" .AND. Alias( nDbf ) == "RADN"
+                     // AADD(aSifRev, {FIELDGET(4)+" "+FIELDGET(5), cPocStanjeSif, cKrajnjeStanjeSif})
+                  ENDIF
+               NEXT
+               SKIP 1
+            ENDDO
+            USE
+         ENDIF
+      NEXT
    NEXT
- NEXT
- if !gAppSrv
-   BoxC()
- endif
- SET EXCLUSIVE OFF
-return
+   IF !gAppSrv
+      BoxC()
+   ENDIF
+   SET EXCLUSIVE OFF
+
+   RETURN
 
 
-function MyErrHt(o)
+FUNCTION MyErrHt( o )
 
-BREAK o
-return .t.
+   BREAK o
 
-
-
-
-static function Every()
-return
+   RETURN .T.
 
 
+
+
+STATIC FUNCTION Every()
+   RETURN

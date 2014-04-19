@@ -61,11 +61,11 @@ FUNCTION Get1_14PDV()
    @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    IF !lPoNarudzbi
-      @ m_x + 12 + IF( lPoNarudzbi, 1, 0 ), m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
+      @ m_x, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
    ENDIF
 
    IF IsDomZdr()
-      @ m_x + 13 + IF( lPoNarudzbi, 1, 0 ), m_y + 2   SAY "Tip sredstva (prazno-svi) " GET _Tip PICT "@!"
+      @ m_x, m_y + 2   SAY "Tip sredstva (prazno-svi) " GET _Tip PICT "@!"
    ENDIF
 
    READ
@@ -152,11 +152,11 @@ FUNCTION Get1_14PDV()
 
    PRIVATE _vpcsappp := 0
 
-   @ m_x + 14 + IF( lPoNarudzbi, 1, 0 ), m_y + 2   SAY "PC BEZ PDV" GET _VPC  valid {|| iif( gVarVP == "2" .AND. ( _vpc - _nc ) > 0, cisMarza := ( _vpc - _nc ) / ( 1 + tarifa->vpp ), _vpc - _nc ), .T. }  PICTURE PicDEM
+   @ m_x, m_y + 2   SAY "PC BEZ PDV" GET _VPC  valid {|| iif( gVarVP == "2" .AND. ( _vpc - _nc ) > 0, cisMarza := ( _vpc - _nc ) / ( 1 + tarifa->vpp ), _vpc - _nc ), .T. }  PICTURE PicDEM
 
    PRIVATE cTRabat := "%"
-   @ m_x + 15 + IF( lPoNarudzbi, 1, 0 ), m_y + 2    SAY "RABAT    " GET  _RABATV PICT picdem
-   @ m_x + 15 + IF( lPoNarudzbi, 1, 0 ), Col() + 2  GET cTRabat  PICT "@!" ;
+   @ m_x, m_y + 2    SAY "RABAT    " GET  _RABATV PICT picdem
+   @ m_x, Col() + 2  GET cTRabat  PICT "@!" ;
       valid {|| PrerRab(), V_RabatV(), ctrabat $ "%AU" }
 
    _PNAP := 0
@@ -173,16 +173,16 @@ FUNCTION Get1_14PDV()
 
    IF gVarVP == "1"
       _VPCsaPP := 0
-      @ m_x + 19 + IF( lPoNarudzbi, 1, 0 ), m_y + 2  SAY "PC SA PDV "
-      @ m_x + 19 + IF( lPoNarudzbi, 1, 0 ), m_Y + 50 GET _vpcSaPP PICTURE picdem ;
+      @ m_x, m_y + 2  SAY "PC SA PDV "
+      @ m_x, m_Y + 50 GET _vpcSaPP PICTURE picdem ;
          when {|| _VPCSAPP := iif( _VPC <> 0, _VPC * ( 1 -_RabatV / 100 ) * ( 1 + _MPC / 100 ), 0 ), ShowGets(), .T. } ;
          valid {|| _vpcsappp := iif( _VPCsap <> 0, _vpcsap + _PNAP, _VPCSAPPP ), .T. }
 
    ELSE  // preracunate stope
 
       _VPCsaPP := 0
-      @ m_x + 19 + IF( lPoNarudzbi, 1, 0 ), m_y + 2  SAY "PC SA PDV "
-      @ m_x + 19 + IF( lPoNarudzbi, 1, 0 ), m_Y + 50 GET _vpcSaPP PICTURE picdem ;
+      @ m_x, m_y + 2  SAY "PC SA PDV "
+      @ m_x, m_Y + 50 GET _vpcSaPP PICTURE picdem ;
          when {|| _VPCSAPP := iif( _VPC <> 0, _VPC * ( 1 -_RabatV / 100 ) * ( 1 + _MPC / 100 ), 0 ), ShowGets(), .T. } ;
          valid {|| _vpcsappp := iif( _VPCsap <> 0, _vpcsap + _PNAP, _VPCSAPPP ), .T. }
    ENDIF
@@ -255,8 +255,7 @@ FUNCTION Get1_14PDV()
 
 FUNCTION pPDV14( fRet )
 
-   // {
-   DevPos( m_x + 16 + IF( lPoNarudzbi, 1, 0 ), m_y + 41 )
+   DevPos( m_x, m_y + 41 )
    IF roba->tip $ "VKX"
       // nista ppp
    ELSE
@@ -266,4 +265,3 @@ FUNCTION pPDV14( fRet )
    _VPCSaP := iif( _VPC <> 0, _VPC * ( 1 -_RABATV / 100 ) + iif( nMarza < 0, 0, nMarza ) * TARIFA->VPP / 100, 0 )
 
    RETURN fret
-// }

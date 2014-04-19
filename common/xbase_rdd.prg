@@ -25,8 +25,7 @@ STATIC __dbf_pack_v2 := 10
 */
 
 STATIC aWaStack := {}
-// --------------------------------
-// --------------------------------
+
 FUNCTION PushWA()
 
    LOCAL cFilter
@@ -45,8 +44,6 @@ FUNCTION PushWA()
    RETURN NIL
 
 
-// ---------------------------
-// ---------------------------
 FUNCTION PopWA()
 
    LOCAL aWa
@@ -125,11 +122,10 @@ FUNCTION my_unlock()
    ENDIF
 
 
-   // -------------------------------------------------------------
-   // provjeri da li je potrebno pakovati dbfcdx tabelu
-   // - da li se nakupilo deleted zapisa
-   // -------------------------------------------------------------
-
+/*
+   provjeri da li je potrebno pakovati dbfcdx tabelu
+   - da li se nakupilo deleted zapisa
+*/
 FUNCTION hocu_li_pakovati_dbf( cnt, del )
 
    LOCAL _pack_alg
@@ -171,10 +167,9 @@ FUNCTION hocu_li_pakovati_dbf( cnt, del )
    RETURN .F.
 
 
-
-// ------------------------------------------------------------
-// vraca informacije o dbf parametrima
-// ------------------------------------------------------------
+/*
+  vraca informacije o dbf parametrima
+*/
 FUNCTION get_dbf_params_from_config()
 
    LOCAL _var_name
@@ -204,18 +199,16 @@ FUNCTION get_dbf_params_from_config()
 
    RETURN .T.
 
-// --------------------------------------------------------------
-// --------------------------------------------------------------
+
+
 STATIC FUNCTION dbf_pack_algoritam()
    RETURN __dbf_pack_algoritam
 
-// --------------------------------------------------------------
-// --------------------------------------------------------------
+
+
 STATIC FUNCTION dbf_pack_v1()
    RETURN __dbf_pack_v1
 
 
-// --------------------------------------------------------------
-// --------------------------------------------------------------
 STATIC FUNCTION dbf_pack_v2()
    RETURN __dbf_pack_v2

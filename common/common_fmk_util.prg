@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,514 +13,524 @@
 #include "achoice.ch"
 #include "fileio.ch"
 
- 
+
 /*! \fn UBrojDok(nBroj,nNumDio,cOstatak)
  * \brief Pretvara Broj podbroj u string format "Broj dokumenta"
  * \code
  * UBrojDok ( 123,  5, "/99" )   =>   00123/99
  * \encode
  */
- 
-function UBrojDok(nBroj,nNumdio,cOstatak)
 
-return padl( alltrim(str(nBroj)), nNumDio, "0")+cOstatak
+FUNCTION UBrojDok( nBroj, nNumdio, cOstatak )
+
+   RETURN PadL( AllTrim( Str( nBroj ) ), nNumDio, "0" ) + cOstatak
 
 
 /*! \fn Calc()
  *  \brief Kalkulator
  */
-function Calc()
+FUNCTION Calc()
 
-local GetList:={}
-private cIzraz:=SPACE(40)
+   LOCAL GetList := {}
+   PRIVATE cIzraz := Space( 40 )
 
-bKeyOld1:=SETKEY(K_ALT_K,{|| Konv()})
-bKeyOld2:=SETKEY(K_ALT_V,{|| DefKonv()})
+   bKeyOld1 := SetKey( K_ALT_K, {|| Konv() } )
+   bKeyOld2 := SetKey( K_ALT_V, {|| DefKonv() } )
 
-Box(, 3, 60)
+   Box(, 3, 60 )
 	
-	set cursor on
+   SET CURSOR ON
 	
-	do while .t.
+   DO WHILE .T.
   		
-		@ m_x,m_y+42 SAY "<a-K> kursiranje"
-  		@ m_x+4,m_y+30 SAY "<a-V> programiranje kursiranja"
-  		@ m_x+1,m_y+2 SAY "KALKULATOR: unesite izraz, npr: '(1+33)*1.2' :"
-  		@ m_x+2,m_y+2 GET cIzraz
+      @ m_x, m_y + 42 SAY "<a-K> kursiranje"
+      @ m_x + 4, m_y + 30 SAY "<a-V> programiranje kursiranja"
+      @ m_x + 1, m_y + 2 SAY "KALKULATOR: unesite izraz, npr: '(1+33)*1.2' :"
+      @ m_x + 2, m_y + 2 GET cIzraz
   		
-		read
+      READ
   		
-		// ako je ukucan "," zamjeni sa tackom "."
-		cIzraz:=STRTRAN(cIzraz, ",",".")
+      // ako je ukucan "," zamjeni sa tackom "."
+      cIzraz := StrTran( cIzraz, ",", "." )
 		
-		@ m_x+3,m_y+2 SAY space(20)
-  		if type(cIzraz)<>"N"
+      @ m_x + 3, m_y + 2 SAY Space( 20 )
+      IF Type( cIzraz ) <> "N"
     			
-			if upper(left(cIzraz,1))<>"K"
-     				@ m_x+3,m_y+2 SAY "ERR"
-    			else
-     				@ m_x+3,m_y+2 SAY kbroj(substr(cizraz,2))
-    			endif
+         IF Upper( Left( cIzraz, 1 ) ) <> "K"
+            @ m_x + 3, m_y + 2 SAY "ERR"
+         ELSE
+            @ m_x + 3, m_y + 2 SAY kbroj( SubStr( cizraz, 2 ) )
+         ENDIF
 			
-    			//cIzraz:=space(40)
-  		else
-    			@ m_x+3,m_y+2 SAY &cIzraz pict "99999999.9999"
-    			cIzraz:=padr(alltrim(str(&cizraz,18,5)),40)
-  		endif
+         // cIzraz:=space(40)
+      ELSE
+         @ m_x + 3, m_y + 2 SAY &cIzraz PICT "99999999.9999"
+         cIzraz := PadR( AllTrim( Str( &cizraz, 18, 5 ) ), 40 )
+      ENDIF
 
-  		if lastkey()==27
-			exit
-		endif
+      IF LastKey() == 27
+         EXIT
+      ENDIF
   		
-		INKEY()
+      Inkey()
   		
-	enddo
-BoxC()
+   ENDDO
+   BoxC()
 
-if type(cIzraz)<>"N"
-	if upper(left(cIzraz,1))<>"K"
-    		SETKEY(K_ALT_K,bKeyOld1); SETKEY(K_ALT_V,bKeyOld2)
-    		return 0
-  	else
-    		private cVar:=readvar()
-    		INKEY()
-    		// inkey(0)
-    		if type(cVar) == "C" .or. (type("fUmemu")=="L" .and. fUMemu)
-      			Keyboard KBroj(substr(cIzraz,2))
-    		endif
-    		SETKEY(K_ALT_K,bKeyOld1)
-		SETKEY(K_ALT_V,bKeyOld2)
-    		return 0
-  	endif
-else
-	private cVar:=ReadVar()
-  	if type(cVar)=="N"
-     		&cVar:=&cIzraz
-  	endif
-  	SETKEY(K_ALT_K,bKeyOld1)
-	SETKEY(K_ALT_V,bKeyOld2)
-  	return &cizraz
-endif
+   IF Type( cIzraz ) <> "N"
+      IF Upper( Left( cIzraz, 1 ) ) <> "K"
+         SetKey( K_ALT_K, bKeyOld1 ); SetKey( K_ALT_V, bKeyOld2 )
+         RETURN 0
+      ELSE
+         PRIVATE cVar := ReadVar()
+         Inkey()
+         // inkey(0)
+         IF Type( cVar ) == "C" .OR. ( Type( "fUmemu" ) == "L" .AND. fUMemu )
+            KEYBOARD KBroj( SubStr( cIzraz, 2 ) )
+         ENDIF
+         SetKey( K_ALT_K, bKeyOld1 )
+         SetKey( K_ALT_V, bKeyOld2 )
+         RETURN 0
+      ENDIF
+   ELSE
+      PRIVATE cVar := ReadVar()
+      IF Type( cVar ) == "N"
+         &cVar := &cIzraz
+      ENDIF
+      SetKey( K_ALT_K, bKeyOld1 )
+      SetKey( K_ALT_V, bKeyOld2 )
+      return &cizraz
+   ENDIF
 
-return
+   RETURN
 
 
 
 // -----------------------------------
 // auto valute convert
 // -----------------------------------
-function a_val_convert( )
-private cVar := ReadVar()
-private nIzraz := &cVar
-private cIzraz
+FUNCTION a_val_convert()
 
-// samo ako je varijabla numericka....
-if type( cVar ) == "N"
+   PRIVATE cVar := ReadVar()
+   PRIVATE nIzraz := &cVar
+   PRIVATE cIzraz
+
+   // samo ako je varijabla numericka....
+   IF Type( cVar ) == "N"
 	
-	//cIzraz := ALLTRIM( STR( nIzraz ) )
+      // cIzraz := ALLTRIM( STR( nIzraz ) )
 	
-	nIzraz := ROUND(nIzraz * omjerval( ValDomaca(), ValPomocna(), DATE() ), 5)
-	// konvertuj ali bez ENTER-a
-	//konv( .f. )
+      nIzraz := Round( nIzraz * omjerval( ValDomaca(), ValPomocna(), Date() ), 5 )
+      // konvertuj ali bez ENTER-a
+      // konv( .f. )
 	
-	//nIzraz := VAL( cIzraz )
+      // nIzraz := VAL( cIzraz )
 	
-	&cVar := nIzraz
+      &cVar := nIzraz
 	
-endif
+   ENDIF
    	
-return
+   RETURN
 
 
 // ----------------------------------------
 // ----------------------------------------
-function kbroj(cSifra)
+FUNCTION kbroj( cSifra )
 
-local i,cPom,nPom,nKontrola, nPom3
+   LOCAL i, cPom, nPom, nKontrola, nPom3
 
-cSifra:=alltrim(cSifra)
-cSifra:=strtran(cSifra,"/","-")
-cPom:=""
-for i:=1 to len(cSifra)
-  if !isdigit(substr(cSifra,i,1))
-      ++i
-      do while .t.
-       if val(substr(cSifra,i,1))=0 .and. i<len(cSifra)
-         i++
-       else
-         cPom+=substr(cSifra,i,1)
-         exit // izadji iz izbijanja
-       endif
-      enddo
-  else
-    cPom+=substr(cSifra,i,1)
-  endif
-next
-nPom:=val(cPom)
-nP3:=0
-nKontrola:=0
-for i:=1 to 9
-   nPom3:= nPom % 10 // cifra pod rbr i
-   nPom:=int(nPom/10)
-   nKontrola+= nPom3* (i+1)
-next
-nKontrola:=nKontrola%11
-nKontrola:=11-nKontrola
-if round(nkontrola,2)>=10
-   nKontrola:=0
-endif
-return cSifra+alltrim(str(nKontrola,0))
+   cSifra := AllTrim( cSifra )
+   cSifra := StrTran( cSifra, "/", "-" )
+   cPom := ""
+   FOR i := 1 TO Len( cSifra )
+      IF !IsDigit( SubStr( cSifra, i, 1 ) )
+         ++i
+         DO WHILE .T.
+            IF Val( SubStr( cSifra, i, 1 ) ) = 0 .AND. i < Len( cSifra )
+               i++
+            ELSE
+               cPom += SubStr( cSifra, i, 1 )
+               EXIT // izadji iz izbijanja
+            ENDIF
+         ENDDO
+      ELSE
+         cPom += SubStr( cSifra, i, 1 )
+      ENDIF
+   NEXT
+   nPom := Val( cPom )
+   nP3 := 0
+   nKontrola := 0
+   FOR i := 1 TO 9
+      nPom3 := nPom % 10 // cifra pod rbr i
+      nPom := Int( nPom / 10 )
+      nKontrola += nPom3 * ( i + 1 )
+   NEXT
+   nKontrola := nKontrola % 11
+   nKontrola := 11 -nKontrola
+   IF Round( nkontrola, 2 ) >= 10
+      nKontrola := 0
+   ENDIF
+
+   RETURN cSifra + AllTrim( Str( nKontrola, 0 ) )
 
 
 
-function round2(nizraz,niznos)
+FUNCTION round2( nizraz, niznos )
 
-*
-* pretpostavlja definisanu globalnu varijablu g50F
-* za g50F="5" vrçi se zaokru§enje na 0.5
-*        =" " odraÐuje obini round()
+   //
+   // pretpostavlja definisanu globalnu varijablu g50F
+   // za g50F="5" vrçi se zaokru§enje na 0.5
+   // =" " odraÐuje obini round()
 
-local npom,npom2,nznak
-if g50f="5"
+   LOCAL npom, npom2, nznak
+   IF g50f = "5"
 
-   npom:=abs(nizraz-int(nizraz))
-   nznak=nizraz-int(nizraz)
-   if nznak>0
-     nznak:=1
-   else
-     nznak:=-1
-   endif
-   npom2:=int(nizraz)
-   if npom<=0.25
-     nizraz:=npom2
-   elseif npom>0.25 .and. npom<=0.75
-     nizraz:=npom2+0.5*nznak
-   else
-     nIzraz:=npom2+1*nznak
-   endif
-   return nizraz
-else
-   return round(nizraz,niznos)
-endif
-return
+      npom := Abs( nizraz - Int( nizraz ) )
+      nznak = nizraz - Int( nizraz )
+      IF nznak > 0
+         nznak := 1
+      ELSE
+         nznak := -1
+      ENDIF
+      npom2 := Int( nizraz )
+      IF npom <= 0.25
+         nizraz := npom2
+      ELSEIF npom > 0.25 .AND. npom <= 0.75
+         nizraz := npom2 + 0.5 * nznak
+      ELSE
+         nIzraz := npom2 + 1 * nznak
+      ENDIF
+      RETURN nizraz
+   ELSE
+      RETURN Round( nizraz, niznos )
+   ENDIF
+
+   RETURN
 
 
 
 // --------------------------------------
 // kovertuj valutu
 // --------------------------------------
-static function Konv( lEnter )
-local nDuz:=LEN(cIzraz)
-local lOtv:=.t.
-local nK1:=0
-local nK2:=0
+STATIC FUNCTION Konv( lEnter )
 
-if lEnter == nil
- 	lEnter := .t.
-endif
-  
-IF !FILE(ToUnix(SIFPATH+"VALUTE.DBF"))
-	RETURN
-ENDIF
+   LOCAL nDuz := Len( cIzraz )
+   LOCAL lOtv := .T.
+   LOCAL nK1 := 0
+   LOCAL nK2 := 0
 
-PushWA()
-
-SELECT VALUTE
-PushWA()
-SET ORDER TO TAG "ID"
-
-go top
-dbseek( gValIz , .f. )
-nK1:=VALUTE->&("kurs"+gKurs)
-go top
-dbseek( gValU  , .f. )
-nK2:=VALUTE->&("kurs"+gKurs)
-
-IF nK1==0 .or. type(cIzraz)<>"N"
-    IF !lOtv
-      USE
-    ELSE
-      PopWA()
-    ENDIF
-    PopWA()
-    RETURN
-  ENDIF
-  cIzraz:=&(cIzraz) * nK2 / nK1
-  cIzraz:=PADR(cIzraz,nDuz)
-  IF !lOtv
-    USE
-  ELSE
-    PopWA()
-  ENDIF
-  PopWA()
-  if lEnter == .t.
-  	KEYBOARD CHR(K_ENTER)
-  endif
-RETURN
-
-
-
-static function DefKonv()
-
- LOCAL GetList:={}, bKeyOld:=SETKEY(K_ALT_V,NIL)
- PushWA()
- select 99
- if used()
-   fUsed:=.t.
- else
-   fUsed:=.f.
-   O_PARAMS
- endif
-
- private cSection:="1",cHistory:=" "; aHistory:={}
- RPAR("vi",@gValIz)
- RPAR("vu",@gValU)
- RPAR("vk",@gKurs)
-
- Box(,5,65)
-   set cursor on
-   @ m_x,m_y+19 SAY "PROGRAMIRANJE KURSIRANJA"
-   @ m_x+2,m_y+2 SAY "Oznaka valute iz koje se vrsi konverzija:" GET gValIz
-   @ m_x+3,m_y+2 SAY "Oznaka valute u koju se vrsi konverzija :" GET gValU
-   @ m_x+4,m_y+2 SAY "Kurs po kome se vrsi konverzija (1/2/3) :" GET gKurs VALID gKurs$"123" PICT "9"
-   read
-   IF LASTKEY()<>K_ESC
-     WPAR("vi",gValIz)
-     WPAR("vu",gValU)
-     WPAR("vk",gKurs)
+   IF lEnter == nil
+      lEnter := .T.
    ENDIF
- BoxC()
 
- select params
- if !fUsed
-   select params; use
- endif
- PopWA()
- SETKEY(K_ALT_V,bKeyOld)
-RETURN
+   IF !File( ToUnix( SIFPATH + "VALUTE.DBF" ) )
+      RETURN
+   ENDIF
+
+   PushWA()
+
+   SELECT VALUTE
+   PushWA()
+   SET ORDER TO TAG "ID"
+
+   GO TOP
+   dbSeek( gValIz, .F. )
+   nK1 := VALUTE->&( "kurs" + gKurs )
+   GO TOP
+   dbSeek( gValU, .F. )
+   nK2 := VALUTE->&( "kurs" + gKurs )
+
+   IF nK1 == 0 .OR. Type( cIzraz ) <> "N"
+      IF !lOtv
+         USE
+      ELSE
+         PopWA()
+      ENDIF
+      PopWA()
+      RETURN
+   ENDIF
+   cIzraz := &( cIzraz ) * nK2 / nK1
+   cIzraz := PadR( cIzraz, nDuz )
+   IF !lOtv
+      USE
+   ELSE
+      PopWA()
+   ENDIF
+   PopWA()
+   IF lEnter == .T.
+      KEYBOARD Chr( K_ENTER )
+   ENDIF
+
+   RETURN
 
 
 
-function Adresar()
+STATIC FUNCTION DefKonv()
 
-PushWa()
+   LOCAL GetList := {}, bKeyOld := SetKey( K_ALT_V, NIL )
 
-select (F_ADRES)
-if !used()
-	O_ADRES
-endif
+   PushWA()
+   SELECT 99
+   IF Used()
+      fUsed := .T.
+   ELSE
+      fUsed := .F.
+      O_PARAMS
+   ENDIF
 
-SELECT(F_SIFK)
-if !USED()
-	O_SIFK
-endif
+   PRIVATE cSection := "1", cHistory := " "; aHistory := {}
+   RPAR( "vi", @gValIz )
+   RPAR( "vu", @gValU )
+   RPAR( "vk", @gKurs )
 
-SELECT(F_SIFV)
-if !USED()
-	use_sql_sifv( PADR( "ADRES", 8 ) )
-endif
- 
-P_Adres()
+   Box(, 5, 65 )
+   SET CURSOR ON
+   @ m_x, m_y + 19 SAY "PROGRAMIRANJE KURSIRANJA"
+   @ m_x + 2, m_y + 2 SAY "Oznaka valute iz koje se vrsi konverzija:" GET gValIz
+   @ m_x + 3, m_y + 2 SAY "Oznaka valute u koju se vrsi konverzija :" GET gValU
+   @ m_x + 4, m_y + 2 SAY "Kurs po kome se vrsi konverzija (1/2/3) :" GET gKurs VALID gKurs $ "123" PICT "9"
+   READ
+   IF LastKey() <> K_ESC
+      WPAR( "vi", gValIz )
+      WPAR( "vu", gValU )
+      WPAR( "vk", gKurs )
+   ENDIF
+   BoxC()
 
-USE
+   SELECT params
+   IF !fUsed
+      SELECT params; USE
+   ENDIF
+   PopWA()
+   SetKey( K_ALT_V, bKeyOld )
 
-PopWa()
+   RETURN
 
-return nil
+
+
+FUNCTION Adresar()
+
+   PushWa()
+
+   SELECT ( F_ADRES )
+   IF !Used()
+      O_ADRES
+   ENDIF
+
+   SELECT( F_SIFK )
+   IF !Used()
+      O_SIFK
+   ENDIF
+
+   SELECT( F_SIFV )
+   IF !Used()
+      use_sql_sifv( PadR( "ADRES", 8 ) )
+   ENDIF
+
+   P_Adres()
+
+   USE
+
+   PopWa()
+
+   RETURN NIL
 
 
 // --------------------------------
 // --------------------------------
-function P_Adres(cId,dx,dy)
-local fkontakt := .f.
-private ImeKol:={}
-private Kol:={}
+FUNCTION P_Adres( cId, dx, dy )
 
-if fieldpos("Kontakt") <> 0
-  fKontakt := .t.
-endif
+   LOCAL fkontakt := .F.
+   PRIVATE ImeKol := {}
+   PRIVATE Kol := {}
 
-AADD(ImeKol, { "Naziv firme", {|| id     } , "id" } )
-AADD(ImeKol, { "Telefon "  , {|| naz } , "naz" } )
-AADD(ImeKol, { "Telefon 2"  , {|| tel2} , "tel2" })
-AADD(ImeKol, { "FAX      "  , {|| tel3} , "tel3" })
-if fkontakt
-    AADD(ImeKol, { "RJ "  , {|| rj  } , "rj" } )
-endif
-AADD(ImeKol, { "Adresa"     , {|| adresa  } , "adresa"   } )
-AADD(ImeKol, { "Mjesto"     , {|| mjesto  } , "mjesto"   } )
-if fkontakt
-    AADD(ImeKol, { "PTT", {|| PTT } , "PTT"  } )
-    AADD(ImeKol, { "Drzava", {|| drzava     } , "drzava"  } )
-endif
-AADD(ImeKol, { "Dev.ziro-r.", {|| ziror   } , "ziror"   } )
-AADD(ImeKol, { "Din.ziro-r.", {|| zirod  } ,  "zirod"   } )
+   IF FieldPos( "Kontakt" ) <> 0
+      fKontakt := .T.
+   ENDIF
 
-if fkontakt
-    AADD(ImeKol, { "Kontakt", {|| kontakt     } , "kontakt"  } )
-    AADD(ImeKol, { "K7", {|| k7 } , "k7"  } )
-    AADD(ImeKol, { "K8", {|| k8 } , "k8"  } )
-    AADD(ImeKol, { "K9", {|| k9 } , "k9"  } )
-endif
+   AAdd( ImeKol, { "Naziv firme", {|| id     }, "id" } )
+   AAdd( ImeKol, { "Telefon ", {|| naz }, "naz" } )
+   AAdd( ImeKol, { "Telefon 2", {|| tel2 }, "tel2" } )
+   AAdd( ImeKol, { "FAX      ", {|| tel3 }, "tel3" } )
+   IF fkontakt
+      AAdd( ImeKol, { "RJ ", {|| rj  }, "rj" } )
+   ENDIF
+   AAdd( ImeKol, { "Adresa", {|| adresa  }, "adresa"   } )
+   AAdd( ImeKol, { "Mjesto", {|| mjesto  }, "mjesto"   } )
+   IF fkontakt
+      AAdd( ImeKol, { "PTT", {|| PTT }, "PTT"  } )
+      AAdd( ImeKol, { "Drzava", {|| drzava     }, "drzava"  } )
+   ENDIF
+   AAdd( ImeKol, { "Dev.ziro-r.", {|| ziror   }, "ziror"   } )
+   AAdd( ImeKol, { "Din.ziro-r.", {|| zirod  },  "zirod"   } )
 
-FOR i:=1 TO LEN(ImeKol)
-    AADD(Kol,i)
-NEXT
+   IF fkontakt
+      AAdd( ImeKol, { "Kontakt", {|| kontakt     }, "kontakt"  } )
+      AAdd( ImeKol, { "K7", {|| k7 }, "k7"  } )
+      AAdd( ImeKol, { "K8", {|| k8 }, "k8"  } )
+      AAdd( ImeKol, { "K9", {|| k9 }, "k9"  } )
+   ENDIF
 
-PushWa()
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
 
-sif_sifk_fill_kol( PADR( "ADRES", 8 ), @ImeKol, @Kol )
+   PushWa()
 
-PopWa()
+   sif_sifk_fill_kol( PadR( "ADRES", 8 ), @ImeKol, @Kol )
 
-return PostojiSifra( F_ADRES, 1, MAXROWS()-15, MAXCOLS()-3,"Adresar:",@cId,dx,dy, {|Ch| AdresBlok(Ch)} )
+   PopWa()
+
+   RETURN PostojiSifra( F_ADRES, 1, MAXROWS() -15, MAXCOLS() -3, "Adresar:", @cId, dx, dy, {| Ch| AdresBlok( Ch ) } )
 
 
 
 // ----------------------------------------------------
 // ----------------------------------------------------
-function Pkoverte()
+FUNCTION Pkoverte()
 
-if Pitanje(,"Stampati koverte ?","N")=="N"
-   return DE_CONT
-endif
+   IF Pitanje(, "Stampati koverte ?", "N" ) == "N"
+      RETURN DE_CONT
+   ENDIF
 
-aDBF:={}
-AADD(aDBf,{ 'ID'    , 'C' ,  50 ,   0 })
-AADD(aDBf,{ 'RJ'    , 'C' ,  30 ,   0 })
-AADD(aDBf,{ 'KONTAKT'    , 'C' ,  30 ,   0 })
-AADD(aDBf,{ 'NAZ'        , 'C' ,  15 ,   0 })
-AADD(aDBf,{ 'TEL2'       , 'C' ,  15 ,   0 })
-AADD(aDBf,{ 'TEL3'       , 'C' ,  15 ,   0 })
-AADD(aDBf,{ 'MJESTO'     , 'C' ,  15 ,   0 })
-AADD(aDBf,{ 'PTT'        , 'C' ,  6 ,   0 })
-AADD(aDBf,{ 'ADRESA'     , 'C' ,  50 ,   0 })
-AADD(aDBf,{ 'DRZAVA'     , 'C' ,  22 ,   0 })
-AADD(aDBf,{ 'ziror'     , 'C' ,  30 ,   0 })
-AADD(aDBf,{ 'zirod'     , 'C' ,  30 ,   0 })
-AADD(aDBf,{ 'K7'     , 'C' ,  1 ,   0 })
-AADD(aDBf,{ 'K8'     , 'C' ,  2 ,   0 })
-AADD(aDBf,{ 'K9'     , 'C' ,  3 ,   0 })
-DBCREATE2(PRIVPATH+"koverte.DBF",aDBf)
+   aDBF := {}
+   AAdd( aDBf, { 'ID', 'C',  50,   0 } )
+   AAdd( aDBf, { 'RJ', 'C',  30,   0 } )
+   AAdd( aDBf, { 'KONTAKT', 'C',  30,   0 } )
+   AAdd( aDBf, { 'NAZ', 'C',  15,   0 } )
+   AAdd( aDBf, { 'TEL2', 'C',  15,   0 } )
+   AAdd( aDBf, { 'TEL3', 'C',  15,   0 } )
+   AAdd( aDBf, { 'MJESTO', 'C',  15,   0 } )
+   AAdd( aDBf, { 'PTT', 'C',  6,   0 } )
+   AAdd( aDBf, { 'ADRESA', 'C',  50,   0 } )
+   AAdd( aDBf, { 'DRZAVA', 'C',  22,   0 } )
+   AAdd( aDBf, { 'ziror', 'C',  30,   0 } )
+   AAdd( aDBf, { 'zirod', 'C',  30,   0 } )
+   AAdd( aDBf, { 'K7', 'C',  1,   0 } )
+   AAdd( aDBf, { 'K8', 'C',  2,   0 } )
+   AAdd( aDBf, { 'K9', 'C',  3,   0 } )
+   DBCREATE2( "koverte", aDBf )
 
-usex (PRIVPATH+"koverte", NIL, .t.)
-my_dbf_zap()
+   usex ( "koverte", NIL, .T. )
+   my_dbf_zap()
 
-index on  "id+naz"  TAG "ID"
+   INDEX ON  "id+naz"  TAG "ID"
 
-SELECT adres
-GO TOP
-MsgO("Priprema koverte.dbf")
+   SELECT adres
+   GO TOP
+   MsgO( "Priprema koverte.dbf" )
 
-cIniName := my_home() + 'ProIzvj.ini'
+   cIniName := my_home() + 'ProIzvj.ini'
 
-cWinKonv:=IzFmkIni("DelphiRb","Konverzija","3")
-DO WHILE !EOF()
-  Scatter()
-  SELECT koverte
-  APPEND BLANK
-  KonvZnWin(@_Id,cWinKonv)
-  KonvZnWin(@_Adresa,cWinKonv)
-  KonvZnWin(@_Naz,cWinKonv)
-  KonvZnWin(@_RJ,cWinKonv)
-  KonvZnWin(@_KONTAKT,cWinKonv)
-  KonvZnWin(@_Mjesto,cWinKonv)
-  Gather()
-  select adres
-  skip
-ENDDO
+   cWinKonv := IzFmkIni( "DelphiRb", "Konverzija", "3" )
+   DO WHILE !Eof()
+      Scatter()
+      SELECT koverte
+      APPEND BLANK
+      KonvZnWin( @_Id, cWinKonv )
+      KonvZnWin( @_Adresa, cWinKonv )
+      KonvZnWin( @_Naz, cWinKonv )
+      KonvZnWin( @_RJ, cWinKonv )
+      KonvZnWin( @_KONTAKT, cWinKonv )
+      KonvZnWin( @_Mjesto, cWinKonv )
+      Gather()
+      SELECT adres
+      SKIP
+   ENDDO
 
-MsgC()
+   MsgC()
 
-select koverte
-use
+   SELECT koverte
+   USE
 
-f18_rtm_print( "adres", "koverte", "id" )
+   f18_rtm_print( "adres", "koverte", "id" )
 
-return DE_CONT
+   RETURN DE_CONT
 
 
-function AdresBlok(Ch)
+FUNCTION AdresBlok( Ch )
 
-if Ch==K_F8  // koverte
-    PKoverte()
-endif
+   IF Ch == K_F8  // koverte
+      PKoverte()
+   ENDIF
 
-RETURN DE_CONT
+   RETURN DE_CONT
 
 
 PROCEDURE DiskSezona ()
 
-LOCAL nSlobodno, pDirPriv, pDirRad, pDirSif, cSezBris
+   LOCAL nSlobodno, pDirPriv, pDirRad, pDirSif, cSezBris
 
-cSezBris:= SPACE (4)
-nSlobodno := DISKSPACE () / (1024*1024)
+   cSezBris := Space ( 4 )
+   nSlobodno := DiskSpace () / ( 1024 * 1024 )
 
-* nSlobodno se daje u MB
-MsgBeep ("Postoji jos "+STR (nSlobodno, 10, 2)+;
-         " MB slobodnog prostora na disku!"+;
-         IIF (nSlobodno<20, "#Preporucuje se brisanje najstarije sezone#"+;
-                            "kako bi se oslobodio prostor i ubrzao rad!";
-                          , ""))
-IF Pitanje ("bss","Želite li izbrisati staru sezonu?","N")=="D"
-  Box(,2,60)
-  @ m_x+1,m_y+1 SAY "Sezona koju zelite obrisati" GET cSezBris ;
-                    Valid NijeRTS (cSezBris)
-  READ
-  BoxC()
-  IF LastKey() == K_ESC
-    RETURN
-  EndIF
-  pDirPriv := cDirPriv
-  pDirRad  := cDirRad
-  pDirSif  := cDirSif
-  IF Empty (gSezonDir)
-    pDirPriv := pDirPriv+"\"+AllTrim (cSezBris)
-    pDirRad  := pDirRad+"\"+AllTrim (cSezBris)
-    pDirSif  := pDirSif+"\"+AllTrim (cSezBris)
-  Else
-    pDirPriv := strtran (pDirPriv, gSezonDir, "\"+AllTrim (cSezBris))
-    pDirRad  := strtran (pDirRad, gSezonDir, "\"+AllTrim (cSezBris))
-    pDirSif  := strtran (pDirSif, gSezonDir, "\"+AllTrim (cSezBris))
-  EndIF
-  BrisiIzDir (pDirPriv)
-  BrisiIzDir (pDirRad)
-  BrisiIzDir (pDirSif)
-  *
-  * vidjeti za removing directories
-  *
-EndIF
-RETURN
+   // nSlobodno se daje u MB
+   MsgBeep ( "Postoji jos " + Str ( nSlobodno, 10, 2 ) + ;
+      " MB slobodnog prostora na disku!" + ;
+      iif ( nSlobodno < 20, "#Preporucuje se brisanje najstarije sezone#" + ;
+      "kako bi se oslobodio prostor i ubrzao rad!";
+      , "" ) )
+   IF Pitanje ( "bss", "Želite li izbrisati staru sezonu?", "N" ) == "D"
+      Box(, 2, 60 )
+      @ m_x + 1, m_y + 1 SAY "Sezona koju zelite obrisati" GET cSezBris ;
+         VALID NijeRTS ( cSezBris )
+      READ
+      BoxC()
+      IF LastKey() == K_ESC
+         RETURN
+      ENDIF
+      pDirPriv := cDirPriv
+      pDirRad  := cDirRad
+      pDirSif  := cDirSif
+      IF Empty ( gSezonDir )
+         pDirPriv := pDirPriv + "\" + AllTrim ( cSezBris )
+         pDirRad  := pDirRad + "\" + AllTrim ( cSezBris )
+         pDirSif  := pDirSif + "\" + AllTrim ( cSezBris )
+      ELSE
+         pDirPriv := StrTran ( pDirPriv, gSezonDir, "\" + AllTrim ( cSezBris ) )
+         pDirRad  := StrTran ( pDirRad, gSezonDir, "\" + AllTrim ( cSezBris ) )
+         pDirSif  := StrTran ( pDirSif, gSezonDir, "\" + AllTrim ( cSezBris ) )
+      ENDIF
+      BrisiIzDir ( pDirPriv )
+      BrisiIzDir ( pDirRad )
+      BrisiIzDir ( pDirSif )
+      //
+      // vidjeti za removing directories
+      //
+   ENDIF
 
-FUNCTION NijeRTS (cSez)
+   RETURN
 
-  IF gSezona==cSez
-    MsgBeep ("Ne mozete obrisati tekucu sezonu!!!")
-    RETURN .F.
-  EndIF
-  IF gRadnoPodr==cSez
-    MsgBeep ("Ne mozete obrisati sezonu u kojoj radite!!!")
-    RETURN .F.
-  EndIF
-RETURN .T.
+FUNCTION NijeRTS ( cSez )
+
+   IF gSezona == cSez
+      MsgBeep ( "Ne mozete obrisati tekucu sezonu!!!" )
+      RETURN .F.
+   ENDIF
+   IF gRadnoPodr == cSez
+      MsgBeep ( "Ne mozete obrisati sezonu u kojoj radite!!!" )
+      RETURN .F.
+   ENDIF
+
+   RETURN .T.
 
 
-function BrisiIzDir (cDir)
+FUNCTION BrisiIzDir ( cDir )
 
-LOCAL aFiles, nCnt, nRes
-  Beep (4)
-  Box (,1,60)
-  @ m_x,m_y+1 SAY "Direktorij "+AllTrim (cDir) COLOR Invert
-  aFiles := Directory (cDir+SLASH+"*.*")
-  For nCnt := 1 To LEN (aFiles)
-    nRes := Ferase (cDir+SLASH+aFiles [nCnt][F_NAME])
-    IF nRes==0
-      @ m_x+1,m_y+1 SAY PADC ("Obrisana datoteka "+aFiles [nCnt][F_NAME], 60)
-    Else
-      @ m_x+1,m_y+1 SAY PADC ("NIJE OBRISANA "+aFiles [nCnt][F_NAME], 60)
-    EndIF
-  Next
-  BoxC()
+   LOCAL aFiles, nCnt, nRes
 
-return
+   Beep ( 4 )
+   Box (, 1, 60 )
+   @ m_x, m_y + 1 SAY "Direktorij " + AllTrim ( cDir ) COLOR Invert
+   aFiles := Directory ( cDir + SLASH + "*.*" )
+   FOR nCnt := 1 TO Len ( aFiles )
+      nRes := FErase ( cDir + SLASH + aFiles[nCnt ][ F_NAME ] )
+      IF nRes == 0
+         @ m_x + 1, m_y + 1 SAY PadC ( "Obrisana datoteka " + aFiles[nCnt ][ F_NAME ], 60 )
+      ELSE
+         @ m_x + 1, m_y + 1 SAY PadC ( "NIJE OBRISANA " + aFiles[nCnt ][ F_NAME ], 60 )
+      ENDIF
+   NEXT
+   BoxC()
 
+   RETURN

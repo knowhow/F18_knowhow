@@ -1021,8 +1021,8 @@ FUNCTION KomIznosFakt()
    cIdRoba := Space( Len( id ) )
 
    Box( "#KOMPLETIRANJE IZNOSA FAKTURE POMOCU USLUGA", 5, 75 )
-   @ m_x + 2, m_y + 2 SAY "Sifra usluge:" GET cIdRoba VALID P_Roba( @cIdRoba ) PICT "@!"
-   @ m_x + 3, m_y + 2 SAY "Zeljeni iznos fakture:" GET nIznos PICT picdem
+   @ m_x + 2, m_y + 2 SAY8 "Šifra usluge:" GET cIdRoba VALID P_Roba( @cIdRoba ) PICT "@!"
+   @ m_x + 3, m_y + 2 SAY8 "Željeni iznos fakture:" GET nIznos PICT picdem
    READ
    ESC_BCR
    BoxC()
@@ -1037,8 +1037,6 @@ FUNCTION KomIznosFakt()
    nRab2 := 0
    nPor2 := 0
 
-   // KonZbira(.f.)
-
    GO BOTTOM
 
    Scatter()
@@ -1046,7 +1044,7 @@ FUNCTION KomIznosFakt()
    APPEND BLANK
 
    _idroba := cIdRoba
-   _kolicina := IF( nDug2 - nRab2 + nPor2 > nIznos, -1, 1 )
+   _kolicina := IIF( nDug2 - nRab2 + nPor2 > nIznos, -1, 1 )
    _rbr := Str( RbrUnum( _Rbr ) + 1, 3, 0 )
    _cijena := Abs( nDug2 - nRab2 + nPor2 - nIznos )
    _rabat := 0

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,466 +16,432 @@
 // --------------------------------------------------
 // labeliranje adresa iz ugovora
 // --------------------------------------------------
-function kreiraj_adrese_iz_ugovora()
-local _id_roba, _partner, _ptt, _mjesto
-local _n_sort, _dat_do, _g_dat
-local _filter := ""
-local _index_sort := ""
-local _rec, _usl_partner, _usl_mjesto, _usl_ptt
-local _ima_destinacija
-local _count := 0
-local _total_kolicina := 0
+FUNCTION kreiraj_adrese_iz_ugovora()
 
-PushWA()
+   LOCAL _id_roba, _partner, _ptt, _mjesto
+   LOCAL _n_sort, _dat_do, _g_dat
+   LOCAL _filter := ""
+   LOCAL _index_sort := ""
+   LOCAL _rec, _usl_partner, _usl_mjesto, _usl_ptt
+   LOCAL _ima_destinacija
+   LOCAL _count := 0
+   LOCAL _total_kolicina := 0
 
-// otvori potrebne tabele
-_open_tables()
+   PushWA()
 
-// parametri izvjestaja - stampe
-_id_roba := PADR( fetch_metric( "ugovori_naljepnice_idroba", my_user(), SPACE(10) ), 10 )
-_partner := PADR( fetch_metric( "ugovori_naljepnice_partner", my_user(), SPACE(300) ), 300 )
-_ptt := PADR( fetch_metric( "ugovori_naljepnice_ptt", my_user(), SPACE(300) ), 300 )
-_mjesto := PADR( fetch_metric( "ugovori_naljepnice_mjesto", my_user(), SPACE(300) ), 300 )
-_n_sort := fetch_metric( "ugovori_naljepnice_sort", my_user(), "4" )
+   // otvori potrebne tabele
+   _open_tables()
 
-_dat_do := DATE()
-_g_dat := "N"
+   // parametri izvjestaja - stampe
+   _id_roba := PadR( fetch_metric( "ugovori_naljepnice_idroba", my_user(), Space( 10 ) ), 10 )
+   _partner := PadR( fetch_metric( "ugovori_naljepnice_partner", my_user(), Space( 300 ) ), 300 )
+   _ptt := PadR( fetch_metric( "ugovori_naljepnice_ptt", my_user(), Space( 300 ) ), 300 )
+   _mjesto := PadR( fetch_metric( "ugovori_naljepnice_mjesto", my_user(), Space( 300 ) ), 300 )
+   _n_sort := fetch_metric( "ugovori_naljepnice_sort", my_user(), "4" )
 
-Box(, 15, 77 )
+   _dat_do := Date()
+   _g_dat := "N"
 
-    do while .t.
+   Box(, 15, 77 )
 
-        @ m_x + 0, m_y + 5 SAY "POSTAVLJENJE USLOVA ZA PRAVLJENJE LABELA"
-        @ m_x + 2, m_y + 2 SAY "Artikal  :" GET _id_roba VALID P_Roba( @_id_roba ) PICT "@!"
-        @ m_x + 3, m_y + 2 SAY "Partner  :" GET _partner PICT "@S50!"
-        @ m_x + 4, m_y + 2 SAY "Mjesto   :" GET _mjesto PICT "@S50!"
-        @ m_x + 5, m_y + 2 SAY "PTT      :" GET _ptt PICT "@S50!"
-        @ m_x + 6, m_y + 2 SAY "Gledati tekuci datum (D/N):" GET _g_dat ;
-            VALID _g_dat $ "DN" PICT "@!"
-        @ m_x + 7, m_y + 2 SAY "**** Nacin sortiranja podataka u pregledu: "
-        @ m_x + 8, m_y + 2 SAY " 1 - kolicina + mjesto + naziv"
-        @ m_x + 9, m_y + 2 SAY " 2 - mjesto + naziv + kolicina"
-        @ m_x + 10, m_y + 2 SAY " 3 - PTT + mjesto + naziv + kolicina"
-        @ m_x + 11, m_y + 2 SAY " 4 - kolicina + PTT + mjesto + naziv" 
-        @ m_x + 12, m_y + 2 SAY " 5 - idpartner" 
-        @ m_x + 13, m_y + 2 SAY " 6 - kolicina"
-        @ m_x + 14, m_y + 2 SAY "odabrana vrijednost:" GET _n_sort VALID _n_sort $ "1234567" PICT "9"
-        READ
+   DO WHILE .T.
 
-        IF LASTKEY()==K_ESC
-            BoxC()
-            RETURN
-        ENDIF
- 
-        _usl_partner := Parsiraj( _partner, "IDPARTNER" )
-        _usl_ptt  := Parsiraj( _ptt, "PTT"       )
-        _usl_mjesto := Parsiraj( _mjesto, "MJESTO" )
+      @ m_x + 0, m_y + 5 SAY "POSTAVLJENJE USLOVA ZA PRAVLJENJE LABELA"
+      @ m_x + 2, m_y + 2 SAY "Artikal  :" GET _id_roba VALID P_Roba( @_id_roba ) PICT "@!"
+      @ m_x + 3, m_y + 2 SAY "Partner  :" GET _partner PICT "@S50!"
+      @ m_x + 4, m_y + 2 SAY "Mjesto   :" GET _mjesto PICT "@S50!"
+      @ m_x + 5, m_y + 2 SAY "PTT      :" GET _ptt PICT "@S50!"
+      @ m_x + 6, m_y + 2 SAY "Gledati tekuci datum (D/N):" GET _g_dat ;
+         VALID _g_dat $ "DN" PICT "@!"
+      @ m_x + 7, m_y + 2 SAY "**** Nacin sortiranja podataka u pregledu: "
+      @ m_x + 8, m_y + 2 SAY " 1 - kolicina + mjesto + naziv"
+      @ m_x + 9, m_y + 2 SAY " 2 - mjesto + naziv + kolicina"
+      @ m_x + 10, m_y + 2 SAY " 3 - PTT + mjesto + naziv + kolicina"
+      @ m_x + 11, m_y + 2 SAY " 4 - kolicina + PTT + mjesto + naziv"
+      @ m_x + 12, m_y + 2 SAY " 5 - idpartner"
+      @ m_x + 13, m_y + 2 SAY " 6 - kolicina"
+      @ m_x + 14, m_y + 2 SAY "odabrana vrijednost:" GET _n_sort VALID _n_sort $ "1234567" PICT "9"
+      READ
 
-        if _usl_partner <> NIL .and. _usl_mjesto <> NIL .and. _usl_ptt <> NIL
-            EXIT
-        endif
+      IF LastKey() == K_ESC
+         BoxC()
+         RETURN
+      ENDIF
 
-    ENDDO
+      _usl_partner := Parsiraj( _partner, "IDPARTNER" )
+      _usl_ptt  := Parsiraj( _ptt, "PTT"       )
+      _usl_mjesto := Parsiraj( _mjesto, "MJESTO" )
 
-BoxC()
+      IF _usl_partner <> NIL .AND. _usl_mjesto <> NIL .AND. _usl_ptt <> NIL
+         EXIT
+      ENDIF
 
-// snimi parametre
-set_metric( "ugovori_naljepnice_idroba", my_user(), _id_roba )
-set_metric( "ugovori_naljepnice_partner", my_user(), ALLTRIM( _partner ) )
-set_metric( "ugovori_naljepnice_ptt", my_user(), ALLTRIM( _ptt ) )
-set_metric( "ugovori_naljepnice_mjesto", my_user(), ALLTRIM( _mjesto ) )
-set_metric( "ugovori_naljepnice_sort", my_user(), _n_sort )
+   ENDDO
 
-// sredi index
-_index_sort := _index_sort + ALLTRIM( _n_sort )
+   BoxC()
 
-// kreiraj "labelu.dbf"
-_create_labelu_dbf()
+   // snimi parametre
+   set_metric( "ugovori_naljepnice_idroba", my_user(), _id_roba )
+   set_metric( "ugovori_naljepnice_partner", my_user(), AllTrim( _partner ) )
+   set_metric( "ugovori_naljepnice_ptt", my_user(), AllTrim( _ptt ) )
+   set_metric( "ugovori_naljepnice_mjesto", my_user(), AllTrim( _mjesto ) )
+   set_metric( "ugovori_naljepnice_sort", my_user(), _n_sort )
 
-// otvori potrebne tabele i postavi sortove...
-if is_dest()
-    select dest
-    set filter to
-endif
+   // sredi index
+   _index_sort := _index_sort + AllTrim( _n_sort )
 
-select ugov
-set filter to
+   // kreiraj "labelu.dbf"
+   _create_labelu_dbf()
 
-select rugov
-set filter to
+   // otvori potrebne tabele i postavi sortove...
+   IF is_dest()
+      SELECT dest
+      SET FILTER TO
+   ENDIF
 
-if !EMPTY( _id_roba )
-    set filter to idroba == _id_roba
-endif
+   SELECT ugov
+   SET FILTER TO
 
-go top
+   SELECT rugov
+   SET FILTER TO
 
-Box(, 3, 60 )
+   IF !Empty( _id_roba )
+      SET FILTER TO idroba == _id_roba
+   ENDIF
 
-// vrtim se kroz rugov
-do while !EOF()
+   GO TOP
 
-    // pronadji ugovor
-    select ugov
-    set order to tag "ID"
-    go top
-    seek rugov->id
+   Box(, 3, 60 )
 
-    @ m_x + 1, m_y + 2 SAY "Ugovor ID: " + PADR( rugov->id, 10 )
-    @ m_x + 2, m_y + 2 SAY PADR( "", 60 )
-    @ m_x + 3, m_y + 2 SAY PADR( "", 60 )
+   // vrtim se kroz rugov
+   DO WHILE !Eof()
 
-    // nema tog ugovora ... preskoci !!!
-    if !FOUND()
-        MsgBeep( "Ugovor " + rugov->id + " ne postoji !!! Preskacem..." )
-        select rugov
-        skip
-        loop
-    endif
-    
-    // dodatni uslovi za preskakanje...
+      // pronadji ugovor
+      SELECT ugov
+      SET ORDER TO TAG "ID"
+      GO TOP
+      SEEK rugov->id
 
-    // ugovor aktivan ?
-    if field->aktivan == "N"
-        select rugov
-        skip
-        loop
-    endif
+      @ m_x + 1, m_y + 2 SAY "Ugovor ID: " + PadR( rugov->id, 10 )
+      @ m_x + 2, m_y + 2 SAY PadR( "", 60 )
+      @ m_x + 3, m_y + 2 SAY PadR( "", 60 )
 
-    // printati labelu ??
-    if field->lab_prn == "N"
-        select rugov
-        skip
-        loop
-    endif
+      // nema tog ugovora ... preskoci !!!
+      IF !Found()
+         MsgBeep( "Ugovor " + rugov->id + " ne postoji !!! Preskacem..." )
+         SELECT rugov
+         SKIP
+         LOOP
+      ENDIF
 
-    // pogledaj i datum ugovora, ako je istekao 
-    // ne stampaj labelu
-    if _g_dat == "D" .and. ( _dat_do > ugov->datdo )
-        select rugov
-        skip 
-        loop
-    endif
+      // dodatni uslovi za preskakanje...
 
-    // partner ?
-    if !EMPTY( _partner )
-        if !(&_usl_partner)
-            select rugov
-            skip
-            loop
-        endif
-    endif
+      // ugovor aktivan ?
+      IF field->aktivan == "N"
+         SELECT rugov
+         SKIP
+         LOOP
+      ENDIF
 
-    // predji na partnere
-    select partn
-    seek ugov->idpartner
- 
-    if !FOUND()
-        Msgbeep( "Partner " + ugov->idpartner + " ne postoji, preskacem !!!" )
-        select rugov
-        skip
-        loop
-    endif
+      // printati labelu ??
+      IF field->lab_prn == "N"
+         SELECT rugov
+         SKIP
+         LOOP
+      ENDIF
 
-    // ptt ?
-    if !EMPTY( _ptt )
-        if !(&_usl_ptt)
-            select rugov
-            skip
-            loop
-        endif
-    endif
+      // pogledaj i datum ugovora, ako je istekao
+      // ne stampaj labelu
+      IF _g_dat == "D" .AND. ( _dat_do > ugov->datdo )
+         SELECT rugov
+         SKIP
+         LOOP
+      ENDIF
 
-    // mjesto ?
-    if !EMPTY( _mjesto )
-        if !(&_usl_mjesto)
-            select rugov
-            skip
-            loop
-        endif
-    endif
+      // partner ?
+      IF !Empty( _partner )
+         IF !( &_usl_partner )
+            SELECT rugov
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 
-    select labelu
-    append blank
+      // predji na partnere
+      SELECT partn
+      SEEK ugov->idpartner
 
-    _rec := dbf_get_rec()
+      IF !Found()
+         Msgbeep( "Partner " + ugov->idpartner + " ne postoji, preskacem !!!" )
+         SELECT rugov
+         SKIP
+         LOOP
+      ENDIF
 
-    _rec["idpartner"] := ugov->idpartner
-    _rec["kolicina"] := rugov->kolicina
-    _rec["idroba"] := rugov->idroba
-    _rec["kol_c"] := PADL( ALLTRIM( STR( rugov->kolicina, 12, 0 ) ), 5, "0" )
+      // ptt ?
+      IF !Empty( _ptt )
+         IF !( &_usl_ptt )
+            SELECT rugov
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 
-    _total_kolicina += rugov->kolicina
+      // mjesto ?
+      IF !Empty( _mjesto )
+         IF !( &_usl_mjesto )
+            SELECT rugov
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 
-    @ m_x + 2, m_y + 2 SAY "Partner: " + ugov->idpartner
-        
-    _ima_destinacija := .f.
+      SELECT labelu
+      APPEND BLANK
 
-    // vidi ima li ovaj ugovor destinacije ?
-    if is_dest() .and. !EMPTY( rugov->dest )
-            
-        select dest
-        set order to tag "ID"
-        go top
-        seek ( ugov->idpartner + rugov->dest )
+      _rec := dbf_get_rec()
 
-        if FOUND()
-            _ima_destinacija := .t.
-        endif
+      _rec[ "idpartner" ] := ugov->idpartner
+      _rec[ "kolicina" ] := rugov->kolicina
+      _rec[ "idroba" ] := rugov->idroba
+      _rec[ "kol_c" ] := PadL( AllTrim( Str( rugov->kolicina, 12, 0 ) ), 5, "0" )
 
-    endif
+      _total_kolicina += rugov->kolicina
 
-    select labelu
-    
-    // ako je destinacija, uzmi info iz tabele DEST
-    if _ima_destinacija
+      @ m_x + 2, m_y + 2 SAY "Partner: " + ugov->idpartner
 
-        _rec["destin"] := dest->id
-        _rec["naz"] := dest->naziv
-        _rec["naz2"] := dest->naziv2
-        _rec["ptt"] := UPPER( dest->ptt )
-        _rec["mjesto"] := UPPER( dest->mjesto )
-        _rec["telefon"] := dest->telefon
-        _rec["fax"] := dest->fax
-        _rec["adresa"] := dest->adresa
-        
-    else  
-        
-        // nije naznacena destinacija
-        // parametre uzimam iz tabele PARTN
+      _ima_destinacija := .F.
 
-        _rec["destin"] := ""
-        _rec["naz"] := partn->naz
-        _rec["naz2"] := partn->naz2
-        _rec["ptt"] := UPPER( partn->ptt )
-        _rec["mjesto"] := UPPER( partn->mjesto )
-        _rec["telefon"] := partn->telefon
-        _rec["fax"] := partn->fax
-        _rec["adresa"] := partn->adresa
-        
-    endif
-    
-    dbf_update_rec( _rec )
+      // vidi ima li ovaj ugovor destinacije ?
+      IF is_dest() .AND. !Empty( rugov->dest )
 
-    @ m_x + 3, m_y + 2 SAY "Ukupno prebaceno: " + ALLTRIM( STR( ++_count ) )
+         SELECT dest
+         SET ORDER TO TAG "ID"
+         GO TOP
+         SEEK ( ugov->idpartner + rugov->dest )
 
-    select rugov
-    skip
+         IF Found()
+            _ima_destinacija := .T.
+         ENDIF
 
-enddo
+      ENDIF
 
-BoxC()
+      SELECT labelu
 
-// nije nista generisano !!! mogu izaci
-if _count == 0
-    MsgBeep( "Nema generisanih adresa !!!" ) 
-    select ugov
-    return
-endif
+      // ako je destinacija, uzmi info iz tabele DEST
+      IF _ima_destinacija
 
-// prebaci naljenpnice za tabelu lab2
-label_to_lab2( _index_sort )
+         _rec[ "destin" ] := dest->id
+         _rec[ "naz" ] := dest->naziv
+         _rec[ "naz2" ] := dest->naziv2
+         _rec[ "ptt" ] := Upper( dest->ptt )
+         _rec[ "mjesto" ] := Upper( dest->mjesto )
+         _rec[ "telefon" ] := dest->telefon
+         _rec[ "fax" ] := dest->fax
+         _rec[ "adresa" ] := dest->adresa
+
+      ELSE
+
+         // nije naznacena destinacija
+         // parametre uzimam iz tabele PARTN
+
+         _rec[ "destin" ] := ""
+         _rec[ "naz" ] := partn->naz
+         _rec[ "naz2" ] := partn->naz2
+         _rec[ "ptt" ] := Upper( partn->ptt )
+         _rec[ "mjesto" ] := Upper( partn->mjesto )
+         _rec[ "telefon" ] := partn->telefon
+         _rec[ "fax" ] := partn->fax
+         _rec[ "adresa" ] := partn->adresa
+
+      ENDIF
+
+      dbf_update_rec( _rec )
+
+      @ m_x + 3, m_y + 2 SAY "Ukupno prebaceno: " + AllTrim( Str( ++_count ) )
+
+      SELECT rugov
+      SKIP
+
+   ENDDO
+
+   BoxC()
+
+   // nije nista generisano !!! mogu izaci
+   IF _count == 0
+      MsgBeep( "Nema generisanih adresa !!!" )
+      SELECT ugov
+      RETURN
+   ENDIF
+
+   // prebaci naljenpnice za tabelu lab2
+   label_to_lab2( _index_sort )
 
 
-MsgBeep( "Ukupno generisano " + ALLTRIM( STR( _count ) ) + ;
-        " naljepnica, kolicina: " + ALLTRIM( STR( _total_kolicina, 12, 0 ) ) )
+   MsgBeep( "Ukupno generisano " + AllTrim( Str( _count ) ) + ;
+      " naljepnica, kolicina: " + AllTrim( Str( _total_kolicina, 12, 0 ) ) )
 
-// stampaj pregled naljepnica...
-stampa_pregleda_naljepnica( _index_sort )
+   // stampaj pregled naljepnica...
+   stampa_pregleda_naljepnica( _index_sort )
 
-// stampaj labelu...
-// pozovi funkciju stampanja rtm fajla kroz labeliranje.exe
-f18_rtm_print( "labelu", "lab2", "1", NIL, "labeliranje" )
+   // stampaj labelu...
+   // pozovi funkciju stampanja rtm fajla kroz labeliranje.exe
+   f18_rtm_print( "labelu", "lab2", "1", NIL, "labeliranje" )
 
-// otvori ponovo tabele ugovora
-_open_tables()
+   // otvori ponovo tabele ugovora
+   _open_tables()
 
-PopWA()
+   PopWA()
 
-return
+   RETURN
 
 
 // -------------------------------------------------------------
-// prebacuje sve iz labelu u lab2 
+// prebacuje sve iz labelu u lab2
 // ali tu ima index samo po polju IDX (numerickom)
 // -------------------------------------------------------------
-static function label_to_lab2( index_sort )
-local _rec
-local _count := 0
+STATIC FUNCTION label_to_lab2( index_sort )
 
-select labelu
-set order to tag &index_sort
-go top
+   LOCAL _rec
+   LOCAL _count := 0
 
-do while !EOF()
-    
-    _rec := dbf_get_rec()
-    
-    select lab2
-    append blank
+   SELECT labelu
+   SET ORDER TO tag &index_sort
+   GO TOP
 
-    _rec["idx"] := ++_count
+   DO WHILE !Eof()
 
-    dbf_update_rec( _rec )
+      _rec := dbf_get_rec()
 
-    select labelu
-    skip
+      SELECT lab2
+      APPEND BLANK
 
-enddo
+      _rec[ "idx" ] := ++_count
 
-select lab2
-use
+      dbf_update_rec( _rec )
 
-return .t.
+      SELECT labelu
+      SKIP
+
+   ENDDO
+
+   SELECT lab2
+   USE
+
+   RETURN .T.
 
 
 
 // -----------------------------------------------------------------------
 // stampa pregleda naljepnica
 // -----------------------------------------------------------------------
-static function stampa_pregleda_naljepnica( index_sort )
-local _table_type := 1
-private _index := index_sort
+STATIC FUNCTION stampa_pregleda_naljepnica( index_sort )
 
-select labelu
-// (ovako ce indeks profercerati kako treba ...)
-set order to tag &_index
-go top
+   LOCAL _table_type := 1
+   PRIVATE _index := index_sort
 
-aKol := {}
+   SELECT labelu
+   // (ovako ce indeks profercerati kako treba ...)
+   SET ORDER TO tag &_index
+   GO TOP
 
-if lSpecifZips
-    AADD( aKol, { "Sifra izdanja", {|| IDROBA       }, .f., "C", 13, 0, 1, 1} )
-else
-    AADD( aKol, { "Artikal"      , {|| IDROBA       }, .f., "C", 10, 0, 1, 1} )
-endif
+   aKol := {}
 
-AADD( aKol, { "Partner"      , {|| IdPartner    }, .f., "C",  6, 0, 1, 2} )
-AADD( aKol, { "Dest."        , {|| Destin       }, .f., "C",  6, 0, 1, 3} )
-AADD( aKol, { "Kolicina"     , {|| Kolicina     }, .t., "N", 12, 0, 1, 4} )
-AADD( aKol, { "PTT"          , {|| PTT          }, .f., "C",  5, 0, 1, 5} )
-AADD( aKol, { "Mjesto"       , {|| MJESTO       }, .f., "C", 16, 0, 1, 6} )
-AADD( aKol, { "Naziv"        , {|| PADR( ALLTRIM( naz ) + ", " + ALLTRIM( naz2 ), 60 ) }, .f., "C", 60, 0, 1, 7} )
-AADD( aKol, { "Adresa"       , {|| ADRESA       }, .f., "C", 40, 0, 1, 8} )
-AADD( aKol, { "Telefon"      , {|| TELEFON      }, .f., "C", 12, 0, 1, 9} )
-AADD( aKol, { "Fax"          , {|| FAX          }, .f., "C", 12, 0, 1,10} )
+   IF lSpecifZips
+      AAdd( aKol, { "Sifra izdanja", {|| IDROBA       }, .F., "C", 13, 0, 1, 1 } )
+   ELSE
+      AAdd( aKol, { "Artikal", {|| IDROBA       }, .F., "C", 10, 0, 1, 1 } )
+   ENDIF
 
-START PRINT CRET
+   AAdd( aKol, { "Partner", {|| IdPartner    }, .F., "C",  6, 0, 1, 2 } )
+   AAdd( aKol, { "Dest.", {|| Destin       }, .F., "C",  6, 0, 1, 3 } )
+   AAdd( aKol, { "Kolicina", {|| Kolicina     }, .T., "N", 12, 0, 1, 4 } )
+   AAdd( aKol, { "PTT", {|| PTT          }, .F., "C",  5, 0, 1, 5 } )
+   AAdd( aKol, { "Mjesto", {|| MJESTO       }, .F., "C", 16, 0, 1, 6 } )
+   AAdd( aKol, { "Naziv", {|| PadR( AllTrim( naz ) + ", " + AllTrim( naz2 ), 60 ) }, .F., "C", 60, 0, 1, 7 } )
+   AAdd( aKol, { "Adresa", {|| ADRESA       }, .F., "C", 40, 0, 1, 8 } )
+   AAdd( aKol, { "Telefon", {|| TELEFON      }, .F., "C", 12, 0, 1, 9 } )
+   AAdd( aKol, { "Fax", {|| FAX          }, .F., "C", 12, 0, 1, 10 } )
 
-StampaTabele( aKol, NIL, NIL, _table_type, NIL, NIL, "PREGLED BAZE PRIPREMLJENIH NALJEPNICA", , , , , )
+   START PRINT CRET
 
-END PRINT
+   StampaTabele( aKol, NIL, NIL, _table_type, NIL, NIL, "PREGLED BAZE PRIPREMLJENIH NALJEPNICA", , , , , )
 
-my_close_all_dbf()
+   ENDPRINT
 
-return
+   my_close_all_dbf()
+
+   RETURN
 
 
 // otvori tabele bitne za ugovore
-static function _open_tables()
+STATIC FUNCTION _open_tables()
 
-select ( F_UGOV )
-if !USED()
-    O_UGOV
-endif
+   O_UGOV
+   O_RUGOV
+   O_DEST
+   O_PARTN
+   O_ROBA
+   O_SIFK
+   O_SIFV
 
-select ( F_RUGOV )
-if !USED()
-    O_RUGOV
-endif
+   SELECT ugov
 
-select ( F_DEST )
-if !USED()
-    O_DEST
-endif
-
-select ( F_PARTN )
-if !USED()
-    O_PARTN
-endif
-
-select ( F_ROBA )
-if !USED()
-    O_ROBA
-endif
-
-select ( F_SIFK )
-if !USED()
-    O_SIFK
-endif
-
-select ( F_SIFV )
-if !USED()
-    O_SIFV
-endif
-
-select ugov
-
-return
+   RETURN
 
 
 
-static function _create_labelu_dbf()
-local _dbf := {}
-local _table_label := "labelu"
-local _table_label_2 := "lab2"
+STATIC FUNCTION _create_labelu_dbf()
 
-AADD ( _dbf, { "idroba",    "C",     10, 0 })
-AADD ( _dbf, { "idpartner", "C",      6, 0 })
-AADD ( _dbf, { "destin"  ,  "C",      6, 0 })
-AADD ( _dbf, { "kol_c",     "C",      5, 0 })
-AADD ( _dbf, { "naz" ,      "C",     50, 0 })
-AADD ( _dbf, { "naz2",      "C",     50, 0 })
-AADD ( _dbf, { "ptt" ,      "C" ,    10, 0 })
-AADD ( _dbf, { "mjesto" ,   "C" ,    20, 0 })
-AADD ( _dbf, { "adresa" ,   "C" ,    50, 0 })
-AADD ( _dbf, { "telefon",   "C" ,    20, 0 })
-AADD ( _dbf, { "fax"    ,   "C" ,    20, 0 })
-AADD ( _dbf, { "kolicina",  "N",     12, 0 })
-AADD ( _dbf, { "idx",       "N",     12, 0 })
+   LOCAL _dbf := {}
+   LOCAL _table_label := "labelu"
+   LOCAL _table_label_2 := "lab2"
 
-select ( F_LABELU )
-use
+   AAdd ( _dbf, { "idroba",    "C",     10, 0 } )
+   AAdd ( _dbf, { "idpartner", "C",      6, 0 } )
+   AAdd ( _dbf, { "destin",  "C",      6, 0 } )
+   AAdd ( _dbf, { "kol_c",     "C",      5, 0 } )
+   AAdd ( _dbf, { "naz",      "C",     50, 0 } )
+   AAdd ( _dbf, { "naz2",      "C",     50, 0 } )
+   AAdd ( _dbf, { "ptt",      "C",    10, 0 } )
+   AAdd ( _dbf, { "mjesto",   "C",    20, 0 } )
+   AAdd ( _dbf, { "adresa",   "C",    50, 0 } )
+   AAdd ( _dbf, { "telefon",   "C",    20, 0 } )
+   AAdd ( _dbf, { "fax",   "C",    20, 0 } )
+   AAdd ( _dbf, { "kolicina",  "N",     12, 0 } )
+   AAdd ( _dbf, { "idx",       "N",     12, 0 } )
 
-// brisi tabelu i indeks
-// napravi ponovo
-FERASE( my_home() + _table_label + ".dbf" )
-FERASE( my_home() + _table_label + ".cdx" )
+   SELECT ( F_LABELU )
+   USE
 
-Dbcreate( my_home() + _table_label + ".dbf", _dbf )
+   FErase( my_home() + _table_label + ".dbf" )
+   FErase( my_home() + _table_label + ".cdx" )
 
-select ( F_LABELU )
-use
-my_use_temp( "labelu", my_home() + _table_label + ".dbf", .f., .f. )
+   dbCreate( my_home() + _table_label + ".dbf", _dbf )
 
-// indeksiraj tabelu
-index on ( kol_c + mjesto + naz ) tag "1"
-index on ( mjesto + naz + kol_c ) tag "2"
-index on ( ptt + mjesto + naz + kol_c ) tag "3"
-index on ( kol_c + ptt + mjesto + naz ) tag "4"
-index on ( idpartner ) tag "5"
-index on ( kol_c ) tag "6"
+   SELECT ( F_LABELU )
+   USE
+   my_use_temp( "labelu", my_home() + _table_label + ".dbf", .F., .F. )
 
-// sada mi kreiraj tabelu "lab2"
+   INDEX on ( kol_c + mjesto + naz ) TAG "1"
+   INDEX on ( mjesto + naz + kol_c ) TAG "2"
+   INDEX on ( ptt + mjesto + naz + kol_c ) TAG "3"
+   INDEX on ( kol_c + ptt + mjesto + naz ) TAG "4"
+   INDEX on ( idpartner ) TAG "5"
+   INDEX on ( kol_c ) TAG "6"
 
-FERASE( my_home() + _table_label_2 + ".dbf" )
-FERASE( my_home() + _table_label_2 + ".cdx" )
+   FErase( my_home() + _table_label_2 + ".dbf" )
+   FErase( my_home() + _table_label_2 + ".cdx" )
 
-SELECT ( F_TMP_1 )
-USE
+   SELECT ( F_TMP_1 )
+   USE
 
-Dbcreate( my_home() + _table_label_2 + ".dbf", _dbf )
+   dbCreate( my_home() + _table_label_2 + ".dbf", _dbf )
 
-select ( F_TMP_1 )
-use
-my_use_temp( "lab2", my_home() + _table_label_2 + ".dbf", .f., .f. )
+   SELECT ( F_TMP_1 )
+   USE
+   my_use_temp( "lab2", my_home() + _table_label_2 + ".dbf", .F., .F. )
 
-// indeksiraj tabelu
-index on ( STR( idx, 12, 0 ) ) tag "1"
+   INDEX on ( Str( idx, 12, 0 ) ) TAG "1"
 
-
-return
-
-
-
-
+   RETURN

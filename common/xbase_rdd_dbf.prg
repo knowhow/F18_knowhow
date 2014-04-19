@@ -100,15 +100,23 @@ FUNCTION delete_with_rlock()
       RETURN .F.
    ENDIF
 
-FUNCTION ferase_dbf( tbl_name, _silent )
+/* 
+   ferase_dbf( "konto", .T. ) => izbriši tabelu "konto.dbf" 
+                                 (kao i pripadajuće indekse)
+    
+   - lSilent (default .T.)
+     .F. => pitaj korisnika da li želi izbrisati tabelu
+     .T. => briši bez pitanja
+*/
+FUNCTION ferase_dbf( tbl_name, lSilent )
 
    LOCAL _tmp, _odg
 
-   IF _silent == NIL
-      _silent := .T.
+   IF lSilent == NIL
+      lSilent := .T.
    ENDIF
 
-   IF !_silent
+   IF !lSilent
 
       _odg := Pitanje(, "Izbrisati dbf tabelu " + tbl_name + " (L-quit) ?!", "N" )
 

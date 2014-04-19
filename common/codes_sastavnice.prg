@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,764 +16,775 @@
 // -----------------------------------------
 // otvaranje tabele sastavnica
 // -----------------------------------------
-function p_sast(cId, dx, dy)
-private ImeKol
-private Kol
+FUNCTION p_sast( cId, dx, dy )
 
-select roba
+   PRIVATE ImeKol
+   PRIVATE Kol
 
-set_a_kol(@ImeKol, @Kol)
+   SELECT roba
 
-go top
+   set_a_kol( @ImeKol, @Kol )
 
-return PostojiSifra(F_ROBA, "IDP", MAXROWS()-15, MAXCOLS()-3, "Gotovi proizvodi: <ENTER> Unos norme, <Ctrl-F4> Kopiraj normu, <F7>-lista norm.", @cId, dx, dy, {|Ch| key_handler(Ch)})
+   GO TOP
+
+   RETURN PostojiSifra( F_ROBA, "IDP", MAXROWS() -15, MAXCOLS() -3, "Gotovi proizvodi: <ENTER> Unos norme, <Ctrl-F4> Kopiraj normu, <F7>-lista norm.", @cId, dx, dy, {| Ch| key_handler( Ch ) } )
 
 
 // ---------------------------------
 // setovanje kolona tabele
 // ---------------------------------
-static function set_a_kol(aImeKol, aKol)
-local cPom
-local cPom2
+STATIC FUNCTION set_a_kol( aImeKol, aKol )
 
-aImeKol := {}
-aKol := {}
+   LOCAL cPom
+   LOCAL cPom2
 
-AADD(aImeKol, {PADC("ID", 10), {|| id}, "id", {|| .t.}, {|| vpsifra(wId)}})
-AADD(aImeKol, {PADC("Naziv", 20), {|| PADR(naz,20)}, "naz"})
-AADD(aImeKol, {PADC("JMJ", 3), {|| jmj}, "jmj"})
-AADD(aImeKol, {PADC("VPC", 10), {|| transform(VPC, "999999.999")}, "vpc"})
+   aImeKol := {}
+   aKol := {}
 
-// VPC2
-if (roba->(fieldpos("vpc2")) <> 0)
-    AADD(aImeKol, {PADC("VPC2", 10), {|| transform(VPC2,"999999.999")}, "vpc2"})
-endif
+   AAdd( aImeKol, { PadC( "ID", 10 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wId ) } } )
+   AAdd( aImeKol, { PadC( "Naziv", 20 ), {|| PadR( naz, 20 ) }, "naz" } )
+   AAdd( aImeKol, { PadC( "JMJ", 3 ), {|| jmj }, "jmj" } )
+   AAdd( aImeKol, { PadC( "VPC", 10 ), {|| Transform( VPC, "999999.999" ) }, "vpc" } )
 
-AADD(aImeKol, {PADC("MPC", 10), {|| transform(MPC, "999999.999")}, "mpc"})
+   // VPC2
+   IF ( roba->( FieldPos( "vpc2" ) ) <> 0 )
+      AAdd( aImeKol, { PadC( "VPC2", 10 ), {|| Transform( VPC2, "999999.999" ) }, "vpc2" } )
+   ENDIF
 
-for i := 2 to 10
-    cPom := "MPC" + ALLTRIM(STR(i))
-    cPom2 := '{|| transform(' + cPom + ',"999999.999")}'
-    if roba->(fieldpos(cPom))  <>  0
-            AADD (aImeKol, {PADC(cPom,10 ),;
-                  &(cPom2) ,;
-                  cPom })
-    endif
-next
+   AAdd( aImeKol, { PadC( "MPC", 10 ), {|| Transform( MPC, "999999.999" ) }, "mpc" } )
 
-AADD(aImeKol, { PADC("NC", 10), {|| transform(NC,"999999.999")}, "NC"})
+   FOR i := 2 TO 10
+      cPom := "MPC" + AllTrim( Str( i ) )
+      cPom2 := '{|| transform(' + cPom + ',"999999.999")}'
+      IF roba->( FieldPos( cPom ) )  <>  0
+         AAdd ( aImeKol, { PadC( cPom, 10 ), ;
+            &( cPom2 ),;
+            cPom } )
+      ENDIF
+   NEXT
 
-AADD(aImeKol, { "Tarifa", {|| IdTarifa}, "IdTarifa", {|| .t. }, {|| P_Tarifa(@wIdTarifa), roba_opis_edit() } } )
+   AAdd( aImeKol, { PadC( "NC", 10 ), {|| Transform( NC, "999999.999" ) }, "NC" } )
 
-AADD(aImeKol, { "K1", {|| K1 }, "K1", {|| .t.}, {|| .t.} })
-AADD(aImeKol, { "Tip", {|| " " + Tip + " "}, "Tip", {|| .t.}, {|| wTip $ "P"}})
+   AAdd( aImeKol, { "Tarifa", {|| IdTarifa }, "IdTarifa", {|| .T. }, {|| P_Tarifa( @wIdTarifa ), roba_opis_edit() } } )
 
-for i:=1 TO LEN(aImeKol)
-    AADD(aKol, i)
-next
+   AAdd( aImeKol, { "K1", {|| K1 }, "K1", {|| .T. }, {|| .T. } } )
+   AAdd( aImeKol, { "Tip", {|| " " + Tip + " " }, "Tip", {|| .T. }, {|| wTip $ "P" } } )
 
-return
+   FOR i := 1 TO Len( aImeKol )
+      AAdd( aKol, i )
+   NEXT
+
+   RETURN
 
 
 
 // -------------------------------
 // obrada tipki
 // -------------------------------
-static function key_handler(Ch)
-local nUl
-local nIzl
-local nRezerv
-local nRevers
-local nIOrd
-local nFRec
-local aStanje
+STATIC FUNCTION key_handler( Ch )
 
-nTRec := RecNo()
+   LOCAL nUl
+   LOCAL nIzl
+   LOCAL nRezerv
+   LOCAL nRevers
+   LOCAL nIOrd
+   LOCAL nFRec
+   LOCAL aStanje
 
-nReturn := DE_CONT
+   nTRec := RecNo()
 
-do case
+   nReturn := DE_CONT
 
-    case Ch == K_CTRL_F9
-        // brisanje sastavnica i proizvoda
-        bris_sast()
-        nReturn := 7
+   DO CASE
 
-    case Ch == K_ENTER 
-        // prikazi sastavnicu
-        show_sast()
-        nReturn := DE_REFRESH
-    
-    case Ch == K_CTRL_F4
-        // kopiranje sastavnica u drugi proizvod
-        copy_sast()
-        nReturn := DE_REFRESH
+   CASE Ch == K_CTRL_F9
+      // brisanje sastavnica i proizvoda
+      bris_sast()
+      nReturn := 7
 
-    case Ch == K_F7
-        // lista sastavnica
-        ISast()
-        nReturn := DE_REFRESH
+   CASE Ch == K_ENTER
+      // prikazi sastavnicu
+      show_sast()
+      nReturn := DE_REFRESH
 
-    case Ch == K_F10  
-        // ostale opcije
-        ost_opc_sast()
-        nReturn := DE_CONT
+   CASE Ch == K_CTRL_F4
+      // kopiranje sastavnica u drugi proizvod
+      copy_sast()
+      nReturn := DE_REFRESH
 
-endcase
+   CASE Ch == K_F7
+      // lista sastavnica
+      ISast()
+      nReturn := DE_REFRESH
 
-set order to tag "IDP"
-go (nTRec)
+   CASE Ch == K_F10
+      // ostale opcije
+      ost_opc_sast()
+      nReturn := DE_CONT
 
+   ENDCASE
 
-return nReturn
+   SET ORDER TO TAG "IDP"
+   GO ( nTRec )
+
+   RETURN nReturn
 
 // -----------------------------------------
 // zamjena sastavnice u svim proizvodima
 // -----------------------------------------
-static function sast_repl_all()
-local cOldS
-local cNewS
-local nKolic
-local _rec
+STATIC FUNCTION sast_repl_all()
 
-cOldS:=SPACE(10)
-cNewS:=SPACE(10)
-nKolic:=0
+   LOCAL cOldS
+   LOCAL cNewS
+   LOCAL nKolic
+   LOCAL _rec
 
-Box(,6,70)
-@ m_x + 1, m_y + 2 SAY "'Stara' sirovina :" GET cOldS PICT "@!" VALID P_Roba(@cOldS)
-@ m_x + 2, m_y + 2 SAY "'Nova'  sirovina :" GET cNewS PICT "@!" VALID cNewS <> cOldS .and. P_Roba(@cNewS)
-@ m_x + 4, m_y + 2 SAY "Kolicina u normama (0 - zamjeni bez obzira na kolicinu)" GET nKolic PICT "999999.99999"
-read
-BoxC()
+   cOldS := Space( 10 )
+   cNewS := Space( 10 )
+   nKolic := 0
 
-if ( LastKey() <> K_ESC )
+   Box(, 6, 70 )
+   @ m_x + 1, m_y + 2 SAY "'Stara' sirovina :" GET cOldS PICT "@!" VALID P_Roba( @cOldS )
+   @ m_x + 2, m_y + 2 SAY "'Nova'  sirovina :" GET cNewS PICT "@!" VALID cNewS <> cOldS .AND. P_Roba( @cNewS )
+   @ m_x + 4, m_y + 2 SAY "Kolicina u normama (0 - zamjeni bez obzira na kolicinu)" GET nKolic PICT "999999.99999"
+   READ
+   BoxC()
 
-    if !f18_lock_tables( { "sast" } )
-        MsgBeep( "Greska sa lock-om tabele sast !" )
-        return
-    endif
+   IF ( LastKey() <> K_ESC )
 
-    sql_table_update( nil, "BEGIN" )
+      IF !f18_lock_tables( { "sast" } )
+         MsgBeep( "Greska sa lock-om tabele sast !" )
+         RETURN
+      ENDIF
 
-    select sast
-    set order to
-    go top
+      sql_table_update( nil, "BEGIN" )
 
-    do while !eof()
-        if id2 == cOldS
-            if (nKolic = 0 .or. ROUND(nKolic - kolicina, 5) = 0)
-                _rec := dbf_get_rec()
-                _rec["id2"] := cNewS
-                update_rec_server_and_dbf( "sast", _rec, 1, "CONT" )
-            endif
-        endif
-        skip
-    enddo
- 
-    f18_free_tables( { "sast" } )
-    sql_table_update( nil, "END" )
-    
-    set order to tag "idrbr"
-       
-endif
+      SELECT sast
+      SET ORDER TO
+      GO TOP
 
-return
+      DO WHILE !Eof()
+         IF id2 == cOldS
+            IF ( nKolic = 0 .OR. Round( nKolic - kolicina, 5 ) = 0 )
+               _rec := dbf_get_rec()
+               _rec[ "id2" ] := cNewS
+               update_rec_server_and_dbf( "sast", _rec, 1, "CONT" )
+            ENDIF
+         ENDIF
+         SKIP
+      ENDDO
+
+      f18_free_tables( { "sast" } )
+      sql_table_update( nil, "END" )
+
+      SET ORDER TO TAG "idrbr"
+
+   ENDIF
+
+   RETURN
 
 
 // ------------------------
-// promjena ucesca 
+// promjena ucesca
 // ------------------------
-static function pr_uces_sast()
-local cOldS
-local cNewS
-local nKolic
-local nKolic2
-local _rec
+STATIC FUNCTION pr_uces_sast()
 
-cOldS:=SPACE(10)
-cNewS:=SPACE(10)
-nKolic:=0
-nKolic2:=0
+   LOCAL cOldS
+   LOCAL cNewS
+   LOCAL nKolic
+   LOCAL nKolic2
+   LOCAL _rec
 
-Box(,6,65)
-    @ m_x+1, m_y+2 SAY "Sirovina :" GET cOldS pict "@!" valid P_Roba(@cOldS)
-    @ m_x+4, m_y+2 SAY "postojeca kolicina u normama " GET nKolic pict "999999.99999"
-    @ m_x+5, m_y+2 SAY "nova kolicina u normama      " GET nKolic2 pict "999999.99999"   valid nKolic<>nKolic2
-    read
-BoxC()
+   cOldS := Space( 10 )
+   cNewS := Space( 10 )
+   nKolic := 0
+   nKolic2 := 0
 
-if (LastKey() <> K_ESC)
+   Box(, 6, 65 )
+   @ m_x + 1, m_y + 2 SAY "Sirovina :" GET cOldS PICT "@!" VALID P_Roba( @cOldS )
+   @ m_x + 4, m_y + 2 SAY "postojeca kolicina u normama " GET nKolic PICT "999999.99999"
+   @ m_x + 5, m_y + 2 SAY "nova kolicina u normama      " GET nKolic2 PICT "999999.99999"   VALID nKolic <> nKolic2
+   READ
+   BoxC()
 
-    if !f18_lock_tables( { "sast" } )
-        MsgBeep( "Greska sa lock-om tabele sast !" )
-        return
-    endif
+   IF ( LastKey() <> K_ESC )
 
-    sql_table_update( nil, "BEGIN" )
+      IF !f18_lock_tables( { "sast" } )
+         MsgBeep( "Greska sa lock-om tabele sast !" )
+         RETURN
+      ENDIF
 
-    select sast
-    set order to
-    go top
+      sql_table_update( nil, "BEGIN" )
 
-    do while !EOF()
+      SELECT sast
+      SET ORDER TO
+      GO TOP
 
-        if PADR( field->id2, 10 ) == PADR( cOldS, 10 )
-            if ROUND(nKolic - field->kolicina, 5) = 0
-                _rec := dbf_get_rec()
-                _rec["kolicina"] := nKolic2
-                update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-            endif
-        endif
+      DO WHILE !Eof()
 
-        skip
+         IF PadR( field->id2, 10 ) == PadR( cOldS, 10 )
+            IF Round( nKolic - field->kolicina, 5 ) = 0
+               _rec := dbf_get_rec()
+               _rec[ "kolicina" ] := nKolic2
+               update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+            ENDIF
+         ENDIF
 
-    enddo
+         SKIP
 
-    f18_free_tables( { "sast" } )
-    sql_table_update( nil, "END" )
- 
-    set order to tag "idrbr"
-endif
+      ENDDO
 
-return
+      f18_free_tables( { "sast" } )
+      sql_table_update( nil, "END" )
+
+      SET ORDER TO TAG "idrbr"
+   ENDIF
+
+   RETURN
 
 
 
 // ----------------------------------------
 // ostale opcije nad sastavnicama
 // ----------------------------------------
-static function ost_opc_sast()
-local _opc := {}
-local _opcexe := {}
-local _izbor := 1
-local _am_x := m_x
-local _am_y := m_y
+STATIC FUNCTION ost_opc_sast()
 
-AADD(_opc, "1. zamjena sirovine u svim sastavnicama                 ")
-AADD(_opcexe, {|| sast_repl_all() })
-AADD(_opc, "2. promjena ucesca pojedine sirovine u svim sastavnicama")
-AADD(_opcexe, {|| pr_uces_sast() })
-AADD(_opc, "------------------------------------")
-AADD(_opcexe, {|| notimp() })
-AADD(_opc, "L. pregled sastavnica sa pretpostavkama sirovina")
-AADD(_opcexe, {|| pr_pr_sast() })
-AADD(_opc, "M. lista sastavnica koje (ne)sadrze sirovinu x")
-AADD(_opcexe, {|| pr_ned_sast() })
-AADD(_opc, "D. sifre sa duplim sastavnicama")
-AADD(_opcexe, {|| pr_dupl_sast() })
-AADD(_opc, "P. pregled brojnog stanja sastavnica")
-AADD(_opcexe, {|| pr_br_sast() })
-AADD(_opc, "E. export sastavnice -> dbf")
-AADD(_opcexe, {|| _exp_sast_dbf() })
-AADD(_opc, "F. export roba -> dbf")
-AADD(_opcexe, {|| _exp_roba_dbf() })
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
+   LOCAL _am_x := m_x
+   LOCAL _am_y := m_y
 
-f18_menu("o_sast", .f., _izbor, _opc, _opcexe )
-                        
-m_x := _am_x
-m_y := _am_y
-  
-return
+   AAdd( _opc, "1. zamjena sirovine u svim sastavnicama                 " )
+   AAdd( _opcexe, {|| sast_repl_all() } )
+   AAdd( _opc, "2. promjena ucesca pojedine sirovine u svim sastavnicama" )
+   AAdd( _opcexe, {|| pr_uces_sast() } )
+   AAdd( _opc, "------------------------------------" )
+   AAdd( _opcexe, {|| notimp() } )
+   AAdd( _opc, "L. pregled sastavnica sa pretpostavkama sirovina" )
+   AAdd( _opcexe, {|| pr_pr_sast() } )
+   AAdd( _opc, "M. lista sastavnica koje (ne)sadrze sirovinu x" )
+   AAdd( _opcexe, {|| pr_ned_sast() } )
+   AAdd( _opc, "D. sifre sa duplim sastavnicama" )
+   AAdd( _opcexe, {|| pr_dupl_sast() } )
+   AAdd( _opc, "P. pregled brojnog stanja sastavnica" )
+   AAdd( _opcexe, {|| pr_br_sast() } )
+   AAdd( _opc, "E. export sastavnice -> dbf" )
+   AAdd( _opcexe, {|| _exp_sast_dbf() } )
+   AAdd( _opc, "F. export roba -> dbf" )
+   AAdd( _opcexe, {|| _exp_roba_dbf() } )
+
+   f18_menu( "o_sast", .F., _izbor, _opc, _opcexe )
+
+   m_x := _am_x
+   m_y := _am_y
+
+   RETURN
 
 
 // ---------------------------------
 // kopiranje sastavnica
 // ---------------------------------
-static function copy_sast()
-local nTRobaRec
-local cNoviProizvod
-local cIdTek
-local nTRec
-local nCnt := 0
-local _rec
+STATIC FUNCTION copy_sast()
 
-nTRobaRec := RECNO()
+   LOCAL nTRobaRec
+   LOCAL cNoviProizvod
+   LOCAL cIdTek
+   LOCAL nTRec
+   LOCAL nCnt := 0
+   LOCAL _rec
 
-if Pitanje(, "Kopirati postojece sastavnice u novi proizvod", "N") == "D"
-    
-    cNoviProizvod:=space(10)
-    cIdTek:=field->id
-            
-    Box(,2,60)
-        @ m_x+1, m_y+2 SAY "Kopirati u proizvod:" GET cNoviProizvod VALID cNoviProizvod <> cIdTek .and. p_roba(@cNoviProizvod) .and. roba->tip == "P"
-        read
-    BoxC()
-            
-    if ( LastKey() <> K_ESC )
+   nTRobaRec := RecNo()
 
-        if !f18_lock_tables( {"sast"} )
-             MsgBeep("lock sast neuspjesno !")
-             RETURN .f.
-        endif
+   IF Pitanje(, "Kopirati postojeće sastavnice u novi proizvod", "N" ) == "D"
+
+      cNoviProizvod := Space( 10 )
+      cIdTek := field->id
+
+      Box(, 2, 60 )
+      @ m_x + 1, m_y + 2 SAY "Kopirati u proizvod:" GET cNoviProizvod VALID cNoviProizvod <> cIdTek .AND. p_roba( @cNoviProizvod ) .AND. roba->tip == "P"
+      READ
+      BoxC()
+
+      IF ( LastKey() <> K_ESC )
+
+         IF !f18_lock_tables( { "sast" } )
+            MsgBeep( "lock sast neuspjesno !" )
+            RETURN .F.
+         ENDIF
 
 
-        select sast
-        set order to tag "idrbr"
-        seek cIdTek
-        nCnt := 0
+         SELECT sast
+         SET ORDER TO TAG "idrbr"
+         SEEK cIdTek
+         nCnt := 0
 
-        sql_table_update( nil, "BEGIN" )
+         sql_table_update( nil, "BEGIN" )
 
-        do while !eof() .and. (id == cIdTek)
+         DO WHILE !Eof() .AND. ( id == cIdTek )
             ++ nCnt
-            nTRec := recno()
+            nTRec := RecNo()
             _rec := dbf_get_rec()
-            _rec["id"] := cNoviProizvod
-            append blank
+            _rec[ "id" ] := cNoviProizvod
+            APPEND BLANK
 
-            update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+            update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
 
-            go (nTrec)
-            skip
-        enddo
+            GO ( nTrec )
+            SKIP
+         ENDDO
 
-        f18_free_tables({"sast"})     
-        sql_table_update( nil, "END" )
+         f18_free_tables( { "sast" } )
+         sql_table_update( nil, "END" )
 
-        select roba
-        set order to tag "idun"
+         SELECT roba
+         SET ORDER TO TAG "idun"
 
-    endif
-endif
+      ENDIF
+   ENDIF
 
-go (nTrobaRec)
+   GO ( nTrobaRec )
 
-if (nCnt > 0)
-    MsgBeep("Kopirano sastavnica: " + ALLTRIM(STR(nCnt)) )
-else
-    MsgBeep("Ne postoje sastavnice na uzorku za kopiranje!")
-endif
+   IF ( nCnt > 0 )
+      MsgBeep( "Kopirano sastavnica: " + AllTrim( Str( nCnt ) ) )
+   ELSE
+      MsgBeep( "Ne postoje sastavnice na uzorku za kopiranje!" )
+   ENDIF
 
-return
+   RETURN
 
 
 // --------------------------------
 // brisanje sastavnica
 // --------------------------------
-static function bris_sast()
-local _d_n
-local _t_rec
-local _rec
+STATIC FUNCTION bris_sast()
 
-_d_n := "0"
+   LOCAL _d_n
+   LOCAL _t_rec
+   LOCAL _rec
 
-Box(,5,40)
-    @ m_x+1,m_Y+2 SAY "Sta ustvari zelite:"
-    @ m_x+3,m_Y+2 SAY "0. Nista !"
-    @ m_x+4,m_Y+2 SAY "1. Izbrisati samo sastavnice ?"
-    @ m_x+5,m_Y+2 SAY "2. Izbrisati i artikle i sastavnice "
-    @ m_x+5,col()+2 GET _d_n VALID _d_n $ "012"
-    read
-BoxC()
+   _d_n := "0"
 
-if LastKey() == K_ESC
-    return 7
-endif
+   Box(, 5, 40 )
+   @ m_x + 1, m_Y + 2 SAY "Sta ustvari zelite:"
+   @ m_x + 3, m_Y + 2 SAY "0. Nista !"
+   @ m_x + 4, m_Y + 2 SAY "1. Izbrisati samo sastavnice ?"
+   @ m_x + 5, m_Y + 2 SAY "2. Izbrisati i artikle i sastavnice "
+   @ m_x + 5, Col() + 2 GET _d_n VALID _d_n $ "012"
+   READ
+   BoxC()
 
-if !f18_lock_tables({"roba", "sast"})
-  MsgBeep("lock roba, sast neuspjeno !")
-  return 7
-endif
+   IF LastKey() == K_ESC
+      RETURN 7
+   ENDIF
 
-sql_table_update( nil, "BEGIN" )
+   IF !f18_lock_tables( { "roba", "sast" } )
+      MsgBeep( "lock roba, sast neuspjeno !" )
+      RETURN 7
+   ENDIF
 
-if _d_n $ "12" .and. Pitanje(,"Sigurno zelite izbrisati definisane sastavnice ?","N")=="D"
+   sql_table_update( nil, "BEGIN" )
 
-    select sast
-    do while !EOF()
-        skip 1
-        _t_rec := RECNO()
-        skip -1
-        _rec := dbf_get_rec()
-        delete_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-        go (_t_rec)
-    enddo
+   IF _d_n $ "12" .AND. Pitanje(, "Sigurno zelite izbrisati definisane sastavnice ?", "N" ) == "D"
 
-endif
+      SELECT sast
+      DO WHILE !Eof()
+         SKIP 1
+         _t_rec := RecNo()
+         SKIP -1
+         _rec := dbf_get_rec()
+         delete_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+         GO ( _t_rec )
+      ENDDO
 
-if _d_n $ "2" .and. Pitanje(,"Sigurno zelite izbrisati proizvode ?","N")=="D"
+   ENDIF
 
-    select roba  
+   IF _d_n $ "2" .AND. Pitanje(, "Sigurno zelite izbrisati proizvode ?", "N" ) == "D"
 
-    // filter je na roba->tip = "P"
-    do while !eof()
-        skip
-        _t_rec := RecNo()
-        skip -1
-        
-        _rec := dbf_get_rec()
-        delete_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-        
-        go ( _t_rec )
+      SELECT roba
 
-    enddo
+      // filter je na roba->tip = "P"
+      DO WHILE !Eof()
+         SKIP
+         _t_rec := RecNo()
+         SKIP -1
 
-endif
+         _rec := dbf_get_rec()
+         delete_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
 
-f18_free_tables({"roba", "sast"})
-sql_table_update( nil, "END" )
+         GO ( _t_rec )
 
-return
+      ENDDO
+
+   ENDIF
+
+   f18_free_tables( { "roba", "sast" } )
+   sql_table_update( nil, "END" )
+
+   RETURN
 
 
 // ---------------------------
 // prikaz sastavnice
 // ---------------------------
-static function show_sast()
-local nTRobaRec
-private cIdTek
-private ImeKol
-private Kol
-    
-// roba->id
-cIdTek := field->id
-nTRobaRec := RecNo()
+STATIC FUNCTION show_sast()
 
-select sast
-set order to tag "idrbr"
-set filter to id = cIdTek
-go top
+   LOCAL nTRobaRec
+   PRIVATE cIdTek
+   PRIVATE ImeKol
+   PRIVATE Kol
 
-// setuj kolone sastavnice tabele
-sast_a_kol(@ImeKol, @Kol)
-    
-PostojiSifra( F_SAST, "IDRBR", MAXROWS() - 18, 80, cIdTek + "-" + LEFT( roba->naz, 40 ),,,,{|Char| EdSastBlok(Char)},,,,.f.)
+   // roba->id
+   cIdTek := field->id
+   nTRobaRec := RecNo()
 
-// ukini filter
-set filter to
-    
-select roba
-set order to tag "idun"
-    
-go nTrobaRec
-return
+   SELECT sast
+   SET ORDER TO TAG "idrbr"
+   SET FILTER TO id = cIdTek
+   GO TOP
+
+   // setuj kolone sastavnice tabele
+   sast_a_kol( @ImeKol, @Kol )
+
+   PostojiSifra( F_SAST, "IDRBR", MAXROWS() - 18, 80, cIdTek + "-" + Left( roba->naz, 40 ),,,, {| Char| EdSastBlok( Char ) },,,, .F. )
+
+   // ukini filter
+   SET FILTER TO
+
+   SELECT roba
+   SET ORDER TO TAG "idun"
+
+   GO nTrobaRec
+
+   RETURN
 
 
 
 // ------------------------------------
 // ispravka sastavnice
 // ------------------------------------
-static function EdSastBlok(char)
+STATIC FUNCTION EdSastBlok( char )
 
-do case
-    case char == K_CTRL_F9
-        MsgBeep("Nedozvoljena opcija !!!")
-        return 7  
-endcase
+   DO CASE
+   CASE char == K_CTRL_F9
+      MsgBeep( "Nedozvoljena opcija !!!" )
+      RETURN 7
+   ENDCASE
 
-return DE_CONT
+   RETURN DE_CONT
 
 
 // --------------------------------
 // sastavnice setovanje kolona
 // --------------------------------
-static function sast_a_kol(aImeKol, aKol)
+STATIC FUNCTION sast_a_kol( aImeKol, aKol )
 
-aImeKol := {}
-aKol := {}
+   aImeKol := {}
+   aKol := {}
 
-// redni broj
-AADD(aImeKol, { "R.Br", {|| r_br}, "r_br", {|| .t.}, {|| .t.} })
+   // redni broj
+   AAdd( aImeKol, { "R.Br", {|| r_br }, "r_br", {|| .T. }, {|| .T. } } )
 
-// id roba
-AADD(aImeKol, { PADC( "Sifra sirovine", 20 ), {|| id2}, "id2", {|| .t.}, {|| wId := cIdTek, p_roba(@wId2)} })
+   // id roba
+   AAdd( aImeKol, { PadC( "Sifra sirovine", 20 ), {|| id2 }, "id2", {|| .T. }, {|| wId := cIdTek, p_roba( @wId2 ) } } )
 
-// kolicina
-AADD(aImeKol, { "Kolicina", {|| kolicina}, "kolicina" })
+   // kolicina
+   AAdd( aImeKol, { "Kolicina", {|| kolicina }, "kolicina" } )
 
-for i:=1 to LEN(aImeKol)
-    AADD(aKol, i)
-next
+   FOR i := 1 TO Len( aImeKol )
+      AAdd( aKol, i )
+   NEXT
 
-return
+   RETURN
 
 
 
 // ----------------------------------------------------------
 // lista sastavnica sa pretpostavljenim sirovinama
 // ----------------------------------------------------------
-function pr_pr_sast()
-local cSirovine := SPACE(200)
-local cArtikli := SPACE(200)
-local cIdRoba
-local aSast := {}
-local i
-local nScan
-local aError := {}
-local aArt := {}
+FUNCTION pr_pr_sast()
 
-BOX(,2,65)
-    @ m_x + 1, m_y + 2 SAY "pr.sirovine:" GET cSirovine PICT "@S40" ;
-        VALID !EMPTY( cSirovine )
-    @ m_x + 2, m_y + 2 SAY "uslov za artikle:" GET cArtikli PICT "@S40"
-    read
-BOXC()
+   LOCAL cSirovine := Space( 200 )
+   LOCAL cArtikli := Space( 200 )
+   LOCAL cIdRoba
+   LOCAL aSast := {}
+   LOCAL i
+   LOCAL nScan
+   LOCAL aError := {}
+   LOCAL aArt := {}
 
-if lastkey() == K_ESC
-    return
-endif
+   BOX(, 2, 65 )
+   @ m_x + 1, m_y + 2 SAY "pr.sirovine:" GET cSirovine PICT "@S40" ;
+      VALID !Empty( cSirovine )
+   @ m_x + 2, m_y + 2 SAY "uslov za artikle:" GET cArtikli PICT "@S40"
+   READ
+   BOXC()
 
-// sastavnice u matricu...
-aSast := TokToNiz( ALLTRIM(cSirovine), ";" )
+   IF LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-if !EMPTY(cArtikli)
-    bUsl := PARSIRAJ( ALLTRIM(cArtikli), "ID" )
-endif
+   // sastavnice u matricu...
+   aSast := TokToNiz( AllTrim( cSirovine ), ";" )
 
-select roba
-set order to tag "ID"
-go top
+   IF !Empty( cArtikli )
+      bUsl := PARSIRAJ( AllTrim( cArtikli ), "ID" )
+   ENDIF
 
-do while !EOF()
+   SELECT roba
+   SET ORDER TO TAG "ID"
+   GO TOP
 
-    if field->tip <> "P"
-        skip
-        loop
-    endif
-    
-    if !EMPTY( cArtikli )
-        if &bUsl
+   DO WHILE !Eof()
+
+      IF field->tip <> "P"
+         SKIP
+         LOOP
+      ENDIF
+
+      IF !Empty( cArtikli )
+         if &bUsl
             // idi dalje...
-        else
-            skip
-            loop
-        endif
-    endif
-    
-    cIdRoba := field->id
-    cRobaNaz := ( field->naz )
+         ELSE
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 
-    select sast
-    set order to tag "ID"
-    go top
-    seek cIdRoba
+      cIdRoba := field->id
+      cRobaNaz := ( field->naz )
 
-    if !FOUND()
+      SELECT sast
+      SET ORDER TO TAG "ID"
+      GO TOP
+      SEEK cIdRoba
 
-        AADD( aError, { 1, cIdRoba, cRobaNaz, ;
+      IF !Found()
+
+         AAdd( aError, { 1, cIdRoba, cRobaNaz, ;
             "ne postoji sastavnica !!!" } )
 
-        select roba
-        skip
-        loop
-    
-    endif
-    
-    i := 0
+         SELECT roba
+         SKIP
+         LOOP
 
-    cUzorak := ""
-    lPostoji := .f.
+      ENDIF
 
-    do while !EOF() .and. field->id == cIdRoba
-        
-        // sirovina za 
-        cUzorak := alltrim( field->id2 )
+      i := 0
 
-        lPostoji := .f.
+      cUzorak := ""
+      lPostoji := .F.
 
-        for i := 1 to LEN( aSast )
-            
+      DO WHILE !Eof() .AND. field->id == cIdRoba
+
+         // sirovina za
+         cUzorak := AllTrim( field->id2 )
+
+         lPostoji := .F.
+
+         FOR i := 1 TO Len( aSast )
+
             cPretp := aSast[ i ]
 
-            if cPretp $ cUzorak
-                lPostoji := .t.
-                exit
-            endif
-        
-        next
+            IF cPretp $ cUzorak
+               lPostoji := .T.
+               EXIT
+            ENDIF
 
-        if lPostoji == .f.
-          AADD( aError, { 2, cIdRoba, roba->naz, "uzorak " + ;
-            "se ne poklapa !"  } )
-        endif
+         NEXT
 
-        skip
-    
-    enddo
+         IF lPostoji == .F.
+            AAdd( aError, { 2, cIdRoba, roba->naz, "uzorak " + ;
+               "se ne poklapa !"  } )
+         ENDIF
 
-    select roba
-    skip
+         SKIP
 
-enddo
+      ENDDO
 
-if LEN(aError) == 0
-    msgbeep( "sve ok :)" )
-    return
-endif
+      SELECT roba
+      SKIP
 
-START PRINT CRET
+   ENDDO
 
-i:=0
+   IF Len( aError ) == 0
+      msgbeep( "sve ok :)" )
+      RETURN
+   ENDIF
 
-?
+   START PRINT CRET
 
-cLine := REPLICATE("-", 5)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 15)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 50)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 50)
+   i := 0
 
-cTxt := PADR("rbr", 5)
-cTxt += SPACE(1)
-cTxt += PADR("uzrok", 15)
-cTxt += SPACE(1)
-cTxt += PADR("artikal / sirovina", 50)
-cTxt += SPACE(1)
-cTxt += PADR("opis", 50)
+   ?
 
-P_COND
-? cLine
-? cTxt
-? cLine
+   cLine := Replicate( "-", 5 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 15 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 50 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 50 )
 
-nCnt := 0
+   cTxt := PadR( "rbr", 5 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "uzrok", 15 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "artikal / sirovina", 50 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "opis", 50 )
 
-for i := 1 to LEN( aError )
-    
-    ? PADL( ALLTRIM( STR( ++nCnt ) ) + ")", 5 )
+   P_COND
+   ? cLine
+   ? cTxt
+   ? cLine
 
-    if aError[i, 1] == 1
-        cPom := "nema sastavnice"
-    else
-        cPom := "  fale sirovine"
-    endif
+   nCnt := 0
 
-    @ prow(), pcol()+1 SAY cPom
-    @ prow(), pcol()+1 SAY PADR( alltrim( aError[i, 2] ) + "-" + ;
-        alltrim( aError[i, 3] ), 50 )
-    @ prow(), pcol()+1 SAY PADR( aError[i, 4] , 50)
-    
-next
+   FOR i := 1 TO Len( aError )
 
-FF
-END PRINT
+      ? PadL( AllTrim( Str( ++nCnt ) ) + ")", 5 )
 
-return
+      IF aError[ i, 1 ] == 1
+         cPom := "nema sastavnice"
+      ELSE
+         cPom := "  fale sirovine"
+      ENDIF
+
+      @ PRow(), PCol() + 1 SAY cPom
+      @ PRow(), PCol() + 1 SAY PadR( AllTrim( aError[ i, 2 ] ) + "-" + ;
+         AllTrim( aError[ i, 3 ] ), 50 )
+      @ PRow(), PCol() + 1 SAY PadR( aError[ i, 4 ], 50 )
+
+   NEXT
+
+   FF
+   ENDPRINT
+
+   RETURN
 
 
 // -----------------------------------------------
 // pregled brojnog stanja sastavnica
 // -----------------------------------------------
-function pr_br_sast()
-local nMin := 5
-local nMax := 15
-local cArtikli := SPACE(200)
-local cIdRoba
-local i
-local aError := {}
+FUNCTION pr_br_sast()
 
-box(,3,65)
-    @ m_x + 1, m_y + 2 SAY "min.broj sastavnica:" GET nMin PICT "999" 
-    @ m_x + 2, m_y + 2 SAY "max.broj sastavnica:" GET nMax PICT "999"
-    @ m_x + 3, m_y + 2 SAY "uslov za artikle:" GET cArtikli PICT "@S40"
-    read
-boxc()
+   LOCAL nMin := 5
+   LOCAL nMax := 15
+   LOCAL cArtikli := Space( 200 )
+   LOCAL cIdRoba
+   LOCAL i
+   LOCAL aError := {}
 
-if lastkey() == K_ESC
-    return
-endif
+   box(, 3, 65 )
+   @ m_x + 1, m_y + 2 SAY "min.broj sastavnica:" GET nMin PICT "999"
+   @ m_x + 2, m_y + 2 SAY "max.broj sastavnica:" GET nMax PICT "999"
+   @ m_x + 3, m_y + 2 SAY "uslov za artikle:" GET cArtikli PICT "@S40"
+   READ
+   boxc()
 
-if !EMPTY(cArtikli)
-    bUsl := PARSIRAJ( ALLTRIM(cArtikli), "ID" )
-endif
+   IF LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-select roba
-set order to tag "ID"
-go top
+   IF !Empty( cArtikli )
+      bUsl := PARSIRAJ( AllTrim( cArtikli ), "ID" )
+   ENDIF
 
-do while !EOF()
+   SELECT roba
+   SET ORDER TO TAG "ID"
+   GO TOP
 
-    if field->tip <> "P"
-        skip
-        loop
-    endif
+   DO WHILE !Eof()
 
-    if !EMPTY(cArtikli)
-        if &bUsl
+      IF field->tip <> "P"
+         SKIP
+         LOOP
+      ENDIF
+
+      IF !Empty( cArtikli )
+         if &bUsl
             // idi dalje...
-        else
-            skip
-            loop
-        endif
-    endif
+         ELSE
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 
-    cIdRoba := field->id
+      cIdRoba := field->id
 
-    select sast
-    set order to tag "ID"
-    go top
-    seek cIdRoba
+      SELECT sast
+      SET ORDER TO TAG "ID"
+      GO TOP
+      SEEK cIdRoba
 
-    if !FOUND()
-        select roba
-        skip
-        loop
-    endif
+      IF !Found()
+         SELECT roba
+         SKIP
+         LOOP
+      ENDIF
 
-    nTmp := 0
+      nTmp := 0
 
-    // koliko ima sastavnica ?
-    do while !EOF() .and. field->id == cIdRoba
-        ++ nTmp
-        skip
-    enddo
+      // koliko ima sastavnica ?
+      DO WHILE !Eof() .AND. field->id == cIdRoba
+         ++ nTmp
+         SKIP
+      ENDDO
 
-    if (nTmp < nMin) .or. (nTmp > nMax)
+      IF ( nTmp < nMin ) .OR. ( nTmp > nMax )
 
-        AADD( aError, {  ALLTRIM( cIdRoba ) + " - " + ;
-            ALLTRIM( roba->naz ), nTmp  } )
-    endif
+         AAdd( aError, {  AllTrim( cIdRoba ) + " - " + ;
+            AllTrim( roba->naz ), nTmp  } )
+      ENDIF
 
-    select roba
-    skip
+      SELECT roba
+      SKIP
 
-enddo
+   ENDDO
 
-if LEN(aError) == 0
-    msgbeep( "sve ok :)" )
-    return
-endif
+   IF Len( aError ) == 0
+      msgbeep( "sve ok :)" )
+      RETURN
+   ENDIF
 
-START PRINT CRET
+   START PRINT CRET
 
-i:=0
+   i := 0
 
-?
+   ?
 
-cLine := REPLICATE("-", 5)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 5)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 50)
+   cLine := Replicate( "-", 5 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 5 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 50 )
 
-cTxt := PADR("rbr", 5)
-cTxt += SPACE(1)
-cTxt += PADR("broj", 5)
-cTxt += SPACE(1)
-cTxt += PADR("roba", 50)
+   cTxt := PadR( "rbr", 5 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "broj", 5 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "roba", 50 )
 
-P_COND
-? cLine
-? cTxt
-? cLine
+   P_COND
+   ? cLine
+   ? cTxt
+   ? cLine
 
-nCnt := 0
+   nCnt := 0
 
-for i := 1 to LEN( aError )
-    
-    ? PADL( ALLTRIM( STR( ++nCnt ) ) + ")", 5 )
-    @ prow(), pcol() + 1 SAY STR( aError[ i, 2 ], 5 )
-    @ prow(), pcol() + 1 SAY PADR( aError[ i, 1 ], 50 )
+   FOR i := 1 TO Len( aError )
 
-next
+      ? PadL( AllTrim( Str( ++nCnt ) ) + ")", 5 )
+      @ PRow(), PCol() + 1 SAY Str( aError[ i, 2 ], 5 )
+      @ PRow(), PCol() + 1 SAY PadR( aError[ i, 1 ], 50 )
 
-FF
-END PRINT
+   NEXT
 
-return
+   FF
+   ENDPRINT
+
+   RETURN
 
 
 
@@ -782,505 +793,500 @@ return
 // -----------------------------------------------
 // pregled sastavnica koje nedostaju
 // -----------------------------------------------
-function pr_ned_sast()
-local cSirovine := SPACE(200)
-local cArtikli := SPACE(200)
-local cPostoji := "P"
-local cIdRoba
-local aSast := {}
-local i
-local nScan
-local aError := {}
+FUNCTION pr_ned_sast()
 
-box(,3,65)
-    @ m_x + 1, m_y + 2 SAY "tr.sirovine:" GET cSirovine PICT "@S40" ;
-        VALID !EMPTY( cSirovine )
-    @ m_x + 2, m_y + 2 SAY "[P]ostoji / [N]epostoji" GET cPostoji ;
-        PICT "@!" ;
-        VALID cPostoji $ "PN" 
-    @ m_x + 3, m_y + 2 SAY "uslov za artikle:" GET cArtikli PICT "@S40"
+   LOCAL cSirovine := Space( 200 )
+   LOCAL cArtikli := Space( 200 )
+   LOCAL cPostoji := "P"
+   LOCAL cIdRoba
+   LOCAL aSast := {}
+   LOCAL i
+   LOCAL nScan
+   LOCAL aError := {}
 
-    read
-boxc()
+   box(, 3, 65 )
+   @ m_x + 1, m_y + 2 SAY "tr.sirovine:" GET cSirovine PICT "@S40" ;
+      VALID !Empty( cSirovine )
+   @ m_x + 2, m_y + 2 SAY "[P]ostoji / [N]epostoji" GET cPostoji ;
+      PICT "@!" ;
+      VALID cPostoji $ "PN"
+   @ m_x + 3, m_y + 2 SAY "uslov za artikle:" GET cArtikli PICT "@S40"
 
-if lastkey() == K_ESC
-    return
-endif
+   READ
+   boxc()
 
-// sastavnice u matricu...
-aSast := TokToNiz( cSirovine, ";" )
+   IF LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-if !EMPTY(cArtikli)
-    bUsl := PARSIRAJ( ALLTRIM(cArtikli), "ID" )
-endif
+   // sastavnice u matricu...
+   aSast := TokToNiz( cSirovine, ";" )
 
-select roba
-set order to tag "ID"
-go top
+   IF !Empty( cArtikli )
+      bUsl := PARSIRAJ( AllTrim( cArtikli ), "ID" )
+   ENDIF
 
-do while !EOF()
+   SELECT roba
+   SET ORDER TO TAG "ID"
+   GO TOP
 
-    if field->tip <> "P"
-        skip
-        loop
-    endif
+   DO WHILE !Eof()
 
-    if !EMPTY(cArtikli)
-        if &bUsl
-        else
-            skip
-            loop
-        endif
-    endif
+      IF field->tip <> "P"
+         SKIP
+         LOOP
+      ENDIF
 
-    cIdRoba := field->id
+      IF !Empty( cArtikli )
+         if &bUsl
+         ELSE
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 
-    select sast
-    set order to tag "ID"
-    go top
-    seek cIdRoba
+      cIdRoba := field->id
 
-    if !FOUND()
+      SELECT sast
+      SET ORDER TO TAG "ID"
+      GO TOP
+      SEEK cIdRoba
 
-        select roba
-        skip
-        loop
-    
-    endif
-    
-    i := 0
+      IF !Found()
 
-    lPostoji := .f.
+         SELECT roba
+         SKIP
+         LOOP
 
-    do while !EOF() .and. field->id == cIdRoba
-        
-        // sirovina za 
-        cUzorak := alltrim( field->id2 )
-        nScan := ASCAN( aSast, { |xVal| xVal $ cUzorak })
-        
-        if nScan <> 0
-            lPostoji := .t.         
-            exit
-        endif
+      ENDIF
 
-        skip
-    
-    enddo
+      i := 0
 
-    if cPostoji == "N" .and. lPostoji == .f.
-        AADD( aError, {  ALLTRIM( cIdRoba ) + " - " + ;
-            ALLTRIM( roba->naz )  } )
-    endif
-    
-    if cPostoji == "P" .and. lPostoji == .t.
-        AADD( aError, {  ALLTRIM( cIdRoba ) + " - " + ;
-            ALLTRIM( roba->naz )  } )
-    endif
+      lPostoji := .F.
 
+      DO WHILE !Eof() .AND. field->id == cIdRoba
 
-    select roba
-    skip
+         // sirovina za
+         cUzorak := AllTrim( field->id2 )
+         nScan := AScan( aSast, {|xVal| xVal $ cUzorak } )
 
-enddo
+         IF nScan <> 0
+            lPostoji := .T.
+            EXIT
+         ENDIF
 
-if LEN(aError) == 0
-    msgbeep( "sve ok :)" )
-    return
-endif
+         SKIP
 
-START PRINT CRET
+      ENDDO
 
-i:=0
+      IF cPostoji == "N" .AND. lPostoji == .F.
+         AAdd( aError, {  AllTrim( cIdRoba ) + " - " + ;
+            AllTrim( roba->naz )  } )
+      ENDIF
 
-?
-
-cLine := REPLICATE("-", 5)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 50)
-
-cTxt := PADR("rbr", 5)
-cTxt += SPACE(1)
-cTxt += PADR("roba", 50)
-
-P_COND
-? cLine
-? cTxt
-? cLine
-
-nCnt := 0
-
-for i := 1 to LEN( aError )
-    
-    ? PADL( ALLTRIM( STR( ++nCnt ) ) + ")", 5 )
-    @ prow(), pcol() + 1 SAY PADR( aError[ i, 1 ], 50 )
-
-next
-
-FF
-END PRINT
+      IF cPostoji == "P" .AND. lPostoji == .T.
+         AAdd( aError, {  AllTrim( cIdRoba ) + " - " + ;
+            AllTrim( roba->naz )  } )
+      ENDIF
 
 
-return
+      SELECT roba
+      SKIP
+
+   ENDDO
+
+   IF Len( aError ) == 0
+      msgbeep( "sve ok :)" )
+      RETURN
+   ENDIF
+
+   START PRINT CRET
+
+   i := 0
+
+   ?
+
+   cLine := Replicate( "-", 5 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 50 )
+
+   cTxt := PadR( "rbr", 5 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "roba", 50 )
+
+   P_COND
+   ? cLine
+   ? cTxt
+   ? cLine
+
+   nCnt := 0
+
+   FOR i := 1 TO Len( aError )
+
+      ? PadL( AllTrim( Str( ++nCnt ) ) + ")", 5 )
+      @ PRow(), PCol() + 1 SAY PadR( aError[ i, 1 ], 50 )
+
+   NEXT
+
+   FF
+   ENDPRINT
+
+   RETURN
 
 
 // ---------------------------------------------
 // pregled duplih sastavnica
 // ---------------------------------------------
-function pr_dupl_sast()
-local cIdRoba
-local cArtikli := SPACE(200)
-local aSast := {}
-local i
-local nScan
-local aError := {}
-local aDbf := {}
+FUNCTION pr_dupl_sast()
 
-box(,1,65)
-    @ m_x + 1, m_y + 2 SAY "uslov za artikle:" GET cArtikli PICT "@S40"
-    read
-boxc()
+   LOCAL cIdRoba
+   LOCAL cArtikli := Space( 200 )
+   LOCAL aSast := {}
+   LOCAL i
+   LOCAL nScan
+   LOCAL aError := {}
+   LOCAL aDbf := {}
 
-if lastkey() == K_ESC
-    return
-endif
+   box(, 1, 65 )
+   @ m_x + 1, m_y + 2 SAY "uslov za artikle:" GET cArtikli PICT "@S40"
+   READ
+   boxc()
 
-AADD(aDbf, { "IDROBA", "C", 10, 0 })
-AADD(aDbf, { "ROBANAZ", "C", 200, 0 })
-AADD(aDbf, { "SAST", "C", 150, 0 })
-AADD(aDbf, { "MARK", "C", 1, 0 })
+   IF LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-t_exp_create( aDbf )
-O_R_EXP
-index on sast tag "1"
+   AAdd( aDbf, { "IDROBA", "C", 10, 0 } )
+   AAdd( aDbf, { "ROBANAZ", "C", 200, 0 } )
+   AAdd( aDbf, { "SAST", "C", 150, 0 } )
+   AAdd( aDbf, { "MARK", "C", 1, 0 } )
 
-O_SAST
-O_ROBA
-select roba
-set order to tag "ID"
-go top
+   t_exp_create( aDbf )
+   O_R_EXP
+   INDEX ON sast TAG "1"
 
-if !EMPTY(cArtikli)
-    bUsl := PARSIRAJ( ALLTRIM(cArtikli), "ID" )
-endif
+   O_SAST
+   O_ROBA
+   SELECT roba
+   SET ORDER TO TAG "ID"
+   GO TOP
+
+   IF !Empty( cArtikli )
+      bUsl := PARSIRAJ( AllTrim( cArtikli ), "ID" )
+   ENDIF
 
 
-box(,1,50)
+   box(, 1, 50 )
 
-// prvo mi daj svu robu u p.tabelu sa sastavnicama
-do while !EOF()
+   // prvo mi daj svu robu u p.tabelu sa sastavnicama
+   DO WHILE !Eof()
 
-    if field->tip <> "P"
-        skip
-        loop
-    endif
+      IF field->tip <> "P"
+         SKIP
+         LOOP
+      ENDIF
 
-    if !EMPTY(cArtikli)
-        if &bUsl
-        else
-            skip
-            loop
-        endif
-    endif
+      IF !Empty( cArtikli )
+         if &bUsl
+         ELSE
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 
-    cIdRoba := field->id
-    cRobaNaz := ALLTRIM( field->naz )
+      cIdRoba := field->id
+      cRobaNaz := AllTrim( field->naz )
 
-    @ m_x + 1, m_y + 2 SAY "generisem uzorak: " + cIdRoba
+      @ m_x + 1, m_y + 2 SAY "generisem uzorak: " + cIdRoba
 
-    select sast
-    set order to tag "ID"
-    go top
-    seek cIdRoba
+      SELECT sast
+      SET ORDER TO TAG "ID"
+      GO TOP
+      SEEK cIdRoba
 
-    if !FOUND()
-        select roba
-        skip
-        loop
-    endif
-    
-    cUzorak := ""
+      IF !Found()
+         SELECT roba
+         SKIP
+         LOOP
+      ENDIF
 
-    do while !EOF() .and. field->id == cIdRoba
-        
-        cUzorak += ALLTRIM( field->id2 ) 
-    
-        skip
-    enddo
+      cUzorak := ""
 
-    // upisi u pomocnu tabelu
-    select r_export
-    append blank
-    replace field->idroba with cIdRoba
-    replace field->robanaz with cRobaNaz
-    replace field->sast with cUzorak
+      DO WHILE !Eof() .AND. field->id == cIdRoba
 
-    select roba
-    skip
+         cUzorak += AllTrim( field->id2 )
 
-enddo
+         SKIP
+      ENDDO
 
-// sada provjera na osnovu uzoraka
+      // upisi u pomocnu tabelu
+      SELECT r_export
+      APPEND BLANK
+      REPLACE field->idroba WITH cIdRoba
+      REPLACE field->robanaz WITH cRobaNaz
+      REPLACE field->sast WITH cUzorak
 
-select roba
-go top
-    
-do while !EOF()
+      SELECT roba
+      SKIP
 
-    cTmpRoba := field->id   
-    cTmpNaz := ALLTRIM( field->naz )
-    
-    if field->tip <> "P"
-        skip
-        loop
-    endif
+   ENDDO
 
-    if !EMPTY(cArtikli)
-        if &bUsl
-        else
-            skip
-            loop
-        endif
-    endif
+   // sada provjera na osnovu uzoraka
 
-    @ m_x + 1, m_y + 2 SAY "provjeravam uzorke: " + cTmpRoba
+   SELECT roba
+   GO TOP
 
-    select sast
-    set order to tag "ID"
-    go top
-    seek cTmpRoba
+   DO WHILE !Eof()
 
-    if !FOUND()
-        select roba
-        skip
-        loop
-    endif
-    
-    cTmp := ""
+      cTmpRoba := field->id
+      cTmpNaz := AllTrim( field->naz )
 
-    do while !EOF() .and. field->id == cTmpRoba
-        cTmp += ALLTRIM( field->id2 )
-        skip
-    enddo
+      IF field->tip <> "P"
+         SKIP
+         LOOP
+      ENDIF
 
-    select r_export
-    set order to tag "1"
-    go top
-    seek PADR( cTmp, 150 )
+      IF !Empty( cArtikli )
+         if &bUsl
+         ELSE
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 
-    do while !EOF() .and. field->sast == PADR(cTmp, 150)
-        
-        if field->mark == "1"
-            skip
-            loop
-        endif
+      @ m_x + 1, m_y + 2 SAY "provjeravam uzorke: " + cTmpRoba
 
-        if field->idroba == cTmpRoba 
+      SELECT sast
+      SET ORDER TO TAG "ID"
+      GO TOP
+      SEEK cTmpRoba
+
+      IF !Found()
+         SELECT roba
+         SKIP
+         LOOP
+      ENDIF
+
+      cTmp := ""
+
+      DO WHILE !Eof() .AND. field->id == cTmpRoba
+         cTmp += AllTrim( field->id2 )
+         SKIP
+      ENDDO
+
+      SELECT r_export
+      SET ORDER TO TAG "1"
+      GO TOP
+      SEEK PadR( cTmp, 150 )
+
+      DO WHILE !Eof() .AND. field->sast == PadR( cTmp, 150 )
+
+         IF field->mark == "1"
+            SKIP
+            LOOP
+         ENDIF
+
+         IF field->idroba == cTmpRoba
             // ovo je ta sifra, preskoci
-            replace field->mark with "1"
-            skip
-            loop
-        endif
-        
-        // markiraj da sam ovaj artikal prosao
-        replace field->mark with "1"
+            REPLACE field->mark WITH "1"
+            SKIP
+            LOOP
+         ENDIF
 
-        AADD( aError, { ALLTRIM(cTmpRoba) + " - " + ;
-            ALLTRIM( cTmpNaz ), ALLTRIM( r_export->idroba ) + ;
-            " - " + ALLTRIM( r_export->robanaz ) } )
-        skip
-    enddo
+         // markiraj da sam ovaj artikal prosao
+         REPLACE field->mark WITH "1"
 
-
-    select roba
-    skip
-enddo
-
-boxc()
-
-if LEN(aError) == 0
-    msgbeep( "sve ok :)" )
-    return
-endif
-
-START PRINT CRET
-
-i:=0
-
-?
-
-cLine := REPLICATE("-", 5)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 50)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 50)
-
-cTxt := PADR("rbr", 5)
-cTxt += SPACE(1)
-cTxt += PADR("roba uzorak", 50)
-cTxt += SPACE(1)
-cTxt += PADR("ima i u", 50)
-
-P_COND
-? cLine
-? cTxt
-? cLine
-
-nCnt := 0
-
-for i := 1 to LEN( aError )
-    
-    ? PADL( ALLTRIM( STR( ++nCnt ) ) + ")", 5 )
-    @ prow(), pcol() + 1 SAY PADR( aError[ i, 1 ], 50 )
-    @ prow(), pcol() + 1 SAY PADR( aError[ i, 2 ], 50 )
-    
-next
-
-FF
-END PRINT
+         AAdd( aError, { AllTrim( cTmpRoba ) + " - " + ;
+            AllTrim( cTmpNaz ), AllTrim( r_export->idroba ) + ;
+            " - " + AllTrim( r_export->robanaz ) } )
+         SKIP
+      ENDDO
 
 
-return
+      SELECT roba
+      SKIP
+   ENDDO
+
+   boxc()
+
+   IF Len( aError ) == 0
+      msgbeep( "sve ok :)" )
+      RETURN
+   ENDIF
+
+   START PRINT CRET
+
+   i := 0
+
+   ?
+
+   cLine := Replicate( "-", 5 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 50 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 50 )
+
+   cTxt := PadR( "rbr", 5 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "roba uzorak", 50 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "ima i u", 50 )
+
+   P_COND
+   ? cLine
+   ? cTxt
+   ? cLine
+
+   nCnt := 0
+
+   FOR i := 1 TO Len( aError )
+
+      ? PadL( AllTrim( Str( ++nCnt ) ) + ")", 5 )
+      @ PRow(), PCol() + 1 SAY PadR( aError[ i, 1 ], 50 )
+      @ PRow(), PCol() + 1 SAY PadR( aError[ i, 2 ], 50 )
+
+   NEXT
+
+   FF
+   ENDPRINT
+
+   RETURN
 
 // -----------------------------------------------
 // eksport sastavnica u dbf fajl
 // -----------------------------------------------
-function _exp_sast_dbf()
-local aDbf := {}
+FUNCTION _exp_sast_dbf()
 
-AADD(aDbf, {"R_ID", "C", 10, 0 })
-AADD(aDbf, {"R_NAZ", "C", 200, 0 })
-AADD(aDbf, {"R_JMJ", "C", 3, 0 })
-AADD(aDbf, {"S_ID", "C", 10, 0 })
-AADD(aDbf, {"S_NAZ", "C", 200, 0 })
-AADD(aDbf, {"S_JMJ", "C", 3, 0 })
-AADD(aDbf, {"KOL", "N", 12, 2 })
-AADD(aDbf, {"NC", "N", 12, 2 })
-AADD(aDbf, {"VPC", "N", 12, 2 })
-AADD(aDbf, {"MPC", "N", 12, 2 })
+   LOCAL aDbf := {}
 
-t_exp_create( aDbf )
+   AAdd( aDbf, { "R_ID", "C", 10, 0 } )
+   AAdd( aDbf, { "R_NAZ", "C", 200, 0 } )
+   AAdd( aDbf, { "R_JMJ", "C", 3, 0 } )
+   AAdd( aDbf, { "S_ID", "C", 10, 0 } )
+   AAdd( aDbf, { "S_NAZ", "C", 200, 0 } )
+   AAdd( aDbf, { "S_JMJ", "C", 3, 0 } )
+   AAdd( aDbf, { "KOL", "N", 12, 2 } )
+   AAdd( aDbf, { "NC", "N", 12, 2 } )
+   AAdd( aDbf, { "VPC", "N", 12, 2 } )
+   AAdd( aDbf, { "MPC", "N", 12, 2 } )
 
-O_R_EXP
-O_SAST
-O_ROBA
+   t_exp_create( aDbf )
 
-select sast
-set order to tag "ID"
-go top
+   O_R_EXP
+   O_SAST
+   O_ROBA
 
-box(,1,50)
-do while !EOF()
-    
-    cIdRoba := field->id
+   SELECT sast
+   SET ORDER TO TAG "ID"
+   GO TOP
 
-    if EMPTY(cIdROba)
-        skip
-        loop
-    endif
+   box(, 1, 50 )
+   DO WHILE !Eof()
 
-    select roba
-    go top
-    seek cIdRoba
+      cIdRoba := field->id
 
-    cR_naz := field->naz
-    cR_jmj := field->jmj
+      IF Empty( cIdROba )
+         SKIP
+         LOOP
+      ENDIF
 
-    select sast
-    
-    do while !EOF() .and. field->id == cIdRoba
+      SELECT roba
+      GO TOP
+      SEEK cIdRoba
 
-        cSast := field->id2
-        nKol := field->kolicina
+      cR_naz := field->naz
+      cR_jmj := field->jmj
 
-        select roba
-        go top
-        seek cSast
-            
-        cNaz := field->naz
-        nCjen := field->nc
+      SELECT sast
 
-        select sast
-        
-        @ m_x + 1, m_y + 2 SAY "upisujem: " + cIdRoba
-        
-        select r_export
-        append blank
+      DO WHILE !Eof() .AND. field->id == cIdRoba
 
-        replace field->r_id with cIdRoba
-        replace field->r_naz with cR_naz
-        replace field->r_jmj with cR_jmj
-        replace field->s_id with cSast
-        replace field->s_naz with cNaz
-        replace field->kol with nKol
-        replace field->nc with nCjen
-        
-        select sast
-        skip
+         cSast := field->id2
+         nKol := field->kolicina
 
-    enddo
+         SELECT roba
+         GO TOP
+         SEEK cSast
 
-enddo
+         cNaz := field->naz
+         nCjen := field->nc
 
-boxc()
+         SELECT sast
 
-msgbeep("Podaci se nalaze u " + PRIVPATH + "r_export.dbf tabeli !")
+         @ m_x + 1, m_y + 2 SAY "upisujem: " + cIdRoba
 
-select r_export
-use
+         SELECT r_export
+         APPEND BLANK
 
-return
+         REPLACE field->r_id WITH cIdRoba
+         REPLACE field->r_naz WITH cR_naz
+         REPLACE field->r_jmj WITH cR_jmj
+         REPLACE field->s_id WITH cSast
+         REPLACE field->s_naz WITH cNaz
+         REPLACE field->kol WITH nKol
+         REPLACE field->nc WITH nCjen
 
+         SELECT sast
+         SKIP
 
+      ENDDO
+
+   ENDDO
+
+   boxc()
+
+   msgbeep( "Podaci se nalaze u " + PRIVPATH + "r_export.dbf tabeli !" )
+
+   SELECT r_export
+   USE
+
+   RETURN
 
 // -----------------------------------------------
 // export robe u dbf
 // -----------------------------------------------
-function _exp_roba_dbf()
-local aDbf := {}
+FUNCTION _exp_roba_dbf()
 
-AADD(aDbf, {"ID", "C", 10, 0 })
-AADD(aDbf, {"NAZIV", "C", 200, 0 })
-AADD(aDbf, {"JMJ", "C", 3, 0 })
-AADD(aDbf, {"NC", "N", 12, 2 })
-AADD(aDbf, {"VPC", "N", 12, 2 })
-AADD(aDbf, {"MPC", "N", 12, 2 })
+   LOCAL aDbf := {}
 
-t_exp_create( aDbf )
-O_R_EXP
-O_ROBA
-select roba
-set order to tag "ID"
-go top
+   AAdd( aDbf, { "ID", "C", 10, 0 } )
+   AAdd( aDbf, { "NAZIV", "C", 200, 0 } )
+   AAdd( aDbf, { "JMJ", "C", 3, 0 } )
+   AAdd( aDbf, { "NC", "N", 12, 2 } )
+   AAdd( aDbf, { "VPC", "N", 12, 2 } )
+   AAdd( aDbf, { "MPC", "N", 12, 2 } )
 
-box(,1,50)
-do while !EOF()
-    
-    @ m_x + 1, m_y + 2 SAY "upisujem: " + roba->id
+   t_exp_create( aDbf )
+   O_R_EXP
+   O_ROBA
+   SELECT roba
+   SET ORDER TO TAG "ID"
+   GO TOP
 
-    select r_export
-    append blank
+   box(, 1, 50 )
+   DO WHILE !Eof()
 
-    replace field->id with roba->id
-    replace field->naziv with roba->naz
-    replace field->jmj with roba->jmj
-    replace field->nc with roba->nc
-    replace field->vpc with roba->vpc
-    replace field->mpc with roba->mpc
+      @ m_x + 1, m_y + 2 SAY "upisujem: " + roba->id
 
-    select roba
-    skip
-enddo
+      SELECT r_export
+      APPEND BLANK
 
-boxc()
+      REPLACE field->id WITH roba->id
+      REPLACE field->naziv WITH roba->naz
+      REPLACE field->jmj WITH roba->jmj
+      REPLACE field->nc WITH roba->nc
+      REPLACE field->vpc WITH roba->vpc
+      REPLACE field->mpc WITH roba->mpc
 
-msgbeep("Podaci se nalaze u " + PRIVPATH + "r_export.dbf tabeli !")
+      SELECT roba
+      SKIP
+   ENDDO
 
-select r_export
-use
+   boxc()
 
-return
+   msgbeep( "Podaci se nalaze u " + PRIVPATH + "r_export.dbf tabeli !" )
 
+   SELECT r_export
+   USE
 
-
-
-
+   RETURN

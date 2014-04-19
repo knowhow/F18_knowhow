@@ -61,11 +61,11 @@ FUNCTION fakt_kartica()
    _c1 := _c2 := _c3 := Space( 20 )
    _n1 := _n2 := 0
 
-   Box( "#IZVJESTAJ:KARTICA", 17 + IF( lPoNarudzbi, 2, 0 ), 63 )
+   Box( "#IZVJEŠTAJ:KARTICA", 17, 63 )
 
    cPPC := "N"
 
-   cOstran := IzFMKINI( "FAKT", "OstraniciKarticu", "N", SIFPATH )
+   cOstran := "N"
 
    O_PARAMS
    PRIVATE cSection := "5", cHistory := " "; aHistory := {}
@@ -137,13 +137,6 @@ FUNCTION fakt_kartica()
          @ m_x + 16, m_y + 2 SAY "Uslov po objektima (prazno-svi)" GET _objekat_id VALID Empty( _objekat_id ) .OR. P_fakt_objekti( @_objekat_id )
       ENDIF
 
-      IF lPoNarudzbi
-         qqIdNar := Space( 60 )
-         cPKN    := "N"
-         @ Row() + 1, m_y + 2 SAY8 "Uslov po šifri naručioca:" GET qqIdNar PICT "@!S30"
-         @ Row() + 1, m_y + 2 SAY8 "Prikazati kolone 'narucilac' i 'br.narudzbe' ? (D/N)" GET cPKN VALID cPKN $ "DN" PICT "@!"
-      ENDIF
-
       READ
 
       ESC_BCR
@@ -152,7 +145,7 @@ FUNCTION fakt_kartica()
          qqRoba := roba->( ID_J + ID )
       ENDIF
 
-      cSintetika := IzFmkIni( "FAKT", "Sintet", "N" )
+      cSintetika := "N"
       IF cSintetika == "D" .AND.  IF( cBrza == "D", ROBA->tip == "S", .T. )
          @ m_x + 17, m_y + 2 SAY "Sinteticki prikaz? (D/N) " GET  cSintetika PICT "@!" VALID cSintetika $ "DN"
       ELSE
@@ -168,12 +161,7 @@ FUNCTION fakt_kartica()
          ENDIF
       ENDIF
 
-      IF lPoNarudzbi
-         aUslN := Parsiraj( qqIdNar, "idnar" )
-      ENDIF
-
-      IF IF( cBrza == "N", aUsl1 <> NIL, .T. ) .AND. ;
-            ( !lPoNarudzbi .OR. aUslN <> NIL )
+      IF IIF( cBrza == "N", aUsl1 <> NIL, .T. )
          EXIT
       ENDIF
 
@@ -183,9 +171,6 @@ FUNCTION fakt_kartica()
       m += Replicate( "-", 20 ) + " "
    ENDIF
 
-   IF lPoNarudzbi .AND. cPKN == "D"
-      m += "------ ---------- "
-   ENDIF
 
    m += "----------- ----------- -----------"
    IF cPPC == "D"
@@ -204,7 +189,8 @@ FUNCTION fakt_kartica()
    ELSE
       WPar( "c2", Trim( qqRoba ) )
    ENDIF
-   SELECT params; USE
+   SELECT params
+   USE
 
    BoxC()
 
@@ -223,10 +209,6 @@ FUNCTION fakt_kartica()
    // hendliranje objekata
    IF _params[ "fakt_objekti" ] .AND. !Empty( _objekat_id )
       cFilt1 += ".and. fakt_objekat_id() == " + _filter_quote( _objekat_id )
-   ENDIF
-
-   IF lPoNarudzbi .AND. aUslN <> ".t."
-      cFilt1 += ".and." + aUslN
    ENDIF
 
    cFilt1 := StrTran( cFilt1, ".t..and.", "" )
@@ -275,10 +257,6 @@ FUNCTION fakt_kartica()
       ?
       ? Space( gnlmarg ), "- Roba sa osobinom K2:", ck2
    ENDIF
-   IF lPoNarudzbi .AND. !Empty( qqIdNar )
-      ?
-      ? "Prikaz za sljedece narucioce:", Trim( qqIdNar )
-   ENDIF
 
    _cijena := 0
    _cijena2 := 0
@@ -293,11 +271,7 @@ FUNCTION fakt_kartica()
       ?
    ENDIF
 
-   IF lPoNarudzbi .AND. cPKN == "D" .AND. cPPartn == "D" .AND. cPPC == "D"
-      P_COND2
-   ELSE
-      P_COND
-   ENDIF
+   P_COND
 
    nStrana := 1
    lPrviProlaz := .T.
@@ -439,11 +413,6 @@ FUNCTION fakt_kartica()
                   @ PRow(), PCol() + 1 SAY PadR( fakt_doks->Partner, 20 )
                ENDIF
 
-               IF lPoNarudzbi .AND. cPKN == "D"
-                  @ PRow(), PCol() + 1 SAY idnar
-                  @ PRow(), PCol() + 1 SAY brojnar
-               ENDIF
-
                @ PRow(), PCol() + 1 SAY IF( cKolona == "U", kolicina, 0 ) PICT lpickol
                @ PRow(), PCol() + 1 SAY IF( cKolona != "U", kolicina, 0 ) PICT lpickol
                @ PRow(), PCol() + 1 SAY nUl - ( nIzl + nRevers + nRezerv ) PICT lpickol
@@ -534,9 +503,6 @@ STATIC FUNCTION ZaglKart( lIniStrana )
    ?? "R.br  RJ Br.dokumenta   Dat.dok."
    IF cPPartn == "D"
       ?? PadC( "Partner", 21 )
-   ENDIF
-   IF lPoNarudzbi .AND. cPKN == "D"
-      ?? " Naruc." + " Br.narudz."
    ENDIF
    ?? "     Ulaz       Izlaz      Stanje  "
    IF cPPC == "D"

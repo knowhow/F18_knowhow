@@ -12,7 +12,9 @@
 
 #include "fmk.ch"
 
-
+/*
+   
+*/
 FUNCTION P_Roba( cId, dx, dy, cSeek )
 
    LOCAL lRet

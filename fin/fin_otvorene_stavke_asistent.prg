@@ -275,10 +275,11 @@ FUNCTION konsultos( xEdit )
       IF Round( nDug - nPot, 2 ) <> 0
         	
          SELECT ostav
-         
+        
+         my_flock() 
+
          APPEND BLANK
           	
-         // replace iznosbhd with (ndug-npot), datdok with dDatDok, brdok with cbrdok
          REPLACE field->iznosbhd with ( nDug - nPot )
          REPLACE field->datdok WITH aFaktura[ 1 ]
          REPLACE field->datval WITH aFaktura[ 2 ]
@@ -291,7 +292,9 @@ FUNCTION konsultos( xEdit )
             REPLACE field->d_p WITH "2"
             REPLACE field->iznosbhd WITH -iznosbhd
          ENDIF
-	
+
+	 my_unlock()
+
          SELECT suban
 	
       ENDIF

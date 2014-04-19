@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -15,40 +15,42 @@
 
 // ----------------------------------------
 // ----------------------------------------
-function cre_cache()
-local aFld := {}
-local cTbl := "cache.dbf"
+FUNCTION cre_cache()
 
-AADD( aFld, { "idkonto", "C", 7, 0 } )
-AADD( aFld, { "idroba", "C", 10, 0 } )
-AADD( aFld, { "ulaz", "N", 18, 8 } )
-AADD( aFld, { "izlaz", "N", 18, 8 } )
-AADD( aFld, { "stanje", "N", 18, 8 } )
-AADD( aFld, { "nvu", "N", 18, 8 } )
-AADD( aFld, { "nvi", "N", 18, 8 } )
-AADD( aFld, { "nv", "N", 18, 8 } )
-AADD( aFld, { "z_nv", "N", 18, 8 } )
-AADD( aFld, { "odst", "N", 18, 8 } )
+   LOCAL aFld := {}
+   LOCAL cTbl := "cache.dbf"
 
-if !if_cache()
-    DBCreate2( cTbl, aFld )
-    create_index("1","idkonto+idroba", cTbl )
-endif
+   AAdd( aFld, { "idkonto", "C", 7, 0 } )
+   AAdd( aFld, { "idroba", "C", 10, 0 } )
+   AAdd( aFld, { "ulaz", "N", 18, 8 } )
+   AAdd( aFld, { "izlaz", "N", 18, 8 } )
+   AAdd( aFld, { "stanje", "N", 18, 8 } )
+   AAdd( aFld, { "nvu", "N", 18, 8 } )
+   AAdd( aFld, { "nvi", "N", 18, 8 } )
+   AAdd( aFld, { "nv", "N", 18, 8 } )
+   AAdd( aFld, { "z_nv", "N", 18, 8 } )
+   AAdd( aFld, { "odst", "N", 18, 8 } )
 
-return 
+   IF !if_cache()
+      DBCreate2( cTbl, aFld )
+      create_index( "1", "idkonto+idroba", cTbl )
+   ENDIF
+
+   RETURN
 
 
 // -------------------------------
 // ima li cache tabele
 // -------------------------------
-function if_cache()
-local lRet := .f.
+FUNCTION if_cache()
 
-if FILE(f18_ime_dbf("cache"))
-    lRet := .t.
-endif
+   LOCAL lRet := .F.
 
-return lRet
+   IF File( f18_ime_dbf( "cache" ) )
+      lRet := .T.
+   ENDIF
+
+   RETURN lRet
 
 
 
@@ -56,812 +58,826 @@ return lRet
 // -------------------------------------------
 // vrati informacije iz cache tabele
 // -------------------------------------------
-function knab_cache( cC_Kto, cC_Roba, nC_Ulaz, nC_Izlaz, ;
-    nC_Stanje, nC_NVU, nC_NVI, nC_NV )
+FUNCTION knab_cache( cC_Kto, cC_Roba, nC_Ulaz, nC_Izlaz, ;
+      nC_Stanje, nC_NVU, nC_NVI, nC_NV )
 
-local nTArea := SELECT()
-local nZC_nv := 0
+   LOCAL nTArea := Select()
+   LOCAL nZC_nv := 0
 
-if !if_cache() .or. gCache == "N"
-    return 0
-endif
+   IF !if_cache() .OR. gCache == "N"
+      RETURN 0
+   ENDIF
 
-cC_Kto := PADR(cC_Kto, 7)
-cC_Roba := PADR(cC_Roba, 10)
+   cC_Kto := PadR( cC_Kto, 7 )
+   cC_Roba := PadR( cC_Roba, 10 )
 
-nC_ulaz := 0
-nC_izlaz := 0
-nC_stanje := 0
-nC_nvu := 0
-nC_nvi := 0
-nC_nv := 0
+   nC_ulaz := 0
+   nC_izlaz := 0
+   nC_stanje := 0
+   nC_nvu := 0
+   nC_nvi := 0
+   nC_nv := 0
 
-O_CACHE
-select cache
-set order to tag "1"
-go top
+   O_CACHE
+   SELECT cache
+   SET ORDER TO TAG "1"
+   GO TOP
 
-seek cC_Kto + cC_Roba
+   SEEK cC_Kto + cC_Roba
 
-if FOUND() .and. ( cC_kto == field->idkonto .and. cC_roba == field->idroba )
-    nC_Ulaz := field->ulaz
-    nC_Izlaz := field->izlaz
-    nC_Stanje := field->stanje
-    nC_NVU := field->nvu
-    nC_NVI := field->nvi
-    nC_Nv := field->nv
-    nZC_nv := field->z_nv
-endif
+   IF Found() .AND. ( cC_kto == field->idkonto .AND. cC_roba == field->idroba )
+      nC_Ulaz := field->ulaz
+      nC_Izlaz := field->izlaz
+      nC_Stanje := field->stanje
+      nC_NVU := field->nvu
+      nC_NVI := field->nvi
+      nC_Nv := field->nv
+      nZC_nv := field->z_nv
+   ENDIF
 
-// ako se koristi kontrola NC
-if gNC_ctrl > 0 .and. nC_nv <> 0 .and. nZC_nv <> 0
-    
-    nTmp := ROUND( nC_nv, 4 ) - ROUND( nZC_nv, 4 )
-    nOdst := ( nTmp / ROUND( nZC_nv, 4 )) * 100
+   // ako se koristi kontrola NC
+   IF gNC_ctrl > 0 .AND. nC_nv <> 0 .AND. nZC_nv <> 0
 
-    if ABS(nOdst) > gNC_ctrl
-        
-        Beep(4)
-        clear typeahead
+      nTmp := Round( nC_nv, 4 ) - Round( nZC_nv, 4 )
+      nOdst := ( nTmp / Round( nZC_nv, 4 ) ) * 100
 
-        msgbeep("Odstupanje u odnosu na zadnji ulaz je#" + ;
-            ALLTRIM(STR(ABS(nOdst))) + " %" + "#" + ;
-            "artikal: " + ALLTRIM(cC_roba) + " " + ;
-            PADR( roba->naz, 15 ) + " nc:" + ;
-            ALLTRIM(STR( nC_nv, 12, 2 )) )
-    
-        //a_nc_ctrl( @aNC_ctrl, field->idroba, field->stanje, ;
-        //  field->nv, field->z_nv )
+      IF Abs( nOdst ) > gNC_ctrl
 
-        if Pitanje(,"Napraviti korekciju NC (D/N)?", "N") == "D"
-            
+         Beep( 4 )
+         CLEAR TYPEAHEAD
+
+         msgbeep( "Odstupanje u odnosu na zadnji ulaz je#" + ;
+            AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;
+            "artikal: " + AllTrim( cC_roba ) + " " + ;
+            PadR( roba->naz, 15 ) + " nc:" + ;
+            AllTrim( Str( nC_nv, 12, 2 ) ) )
+
+         // a_nc_ctrl( @aNC_ctrl, field->idroba, field->stanje, ;
+         // field->nv, field->z_nv )
+
+         IF Pitanje(, "Napraviti korekciju NC (D/N)?", "N" ) == "D"
+
             nTmp_n_stanje := ( nC_stanje - _kolicina )
             nTmp_n_nv := ( nTmp_n_stanje * nZC_nv )
             nTmp_s_nv := ( nC_stanje * nC_nv )
-            
-            nC_nv := ( ( nTmp_s_nv - nTmp_n_nv ) / _kolicina ) 
 
-        endif
+            nC_nv := ( ( nTmp_s_nv - nTmp_n_nv ) / _kolicina )
 
-        if Pitanje(,"Upisati u CACHE novu NC (D/N)?", "D") == "D"
-            
-            RREPLACE field->nv with field->z_nv, field->odst with 0
-        
-        endif
+         ENDIF
 
-    endif
-endif
+         IF Pitanje(, "Upisati u CACHE novu NC (D/N)?", "D" ) == "D"
 
-select (nTArea)
+            RREPLACE field->nv WITH field->z_nv, field->odst WITH 0
 
-return 1
+         ENDIF
+
+      ENDIF
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN 1
 
 
 // ------------------------------------------------------------
 // lista konta
 // ------------------------------------------------------------
-static function _g_kto( cMList, cPList, dDatGen, cAppendSif, ;
-    nT_kol, nT_ncproc )
+STATIC FUNCTION _g_kto( cMList, cPList, dDatGen, cAppendSif, ;
+      nT_kol, nT_ncproc )
 
-local GetList:={}
-local nTArea := SELECT()
+   LOCAL GetList := {}
+   LOCAL nTArea := Select()
 
-cMList := PADR("1310;13101;", 250)
-cPList := PADR("1320;", 250)
-dDatGen := DATE()
-cAppendSif := "D"
-nT_kol := 100.00
-nT_ncproc := 17.00
+   cMList := PadR( "1310;13101;", 250 )
+   cPList := PadR( "1320;", 250 )
+   dDatGen := Date()
+   cAppendSif := "D"
+   nT_kol := 100.00
+   nT_ncproc := 17.00
 
-cMList := fetch_metric( "kalk_import_txt_magacin_konta", my_user(), cMList )
-cPList := fetch_metric( "kalk_import_txt_prodavnica_konta", my_user(), cPList )
-cAppendSif := fetch_metric( "kalk_import_txt_dodaj_sifru", my_user(), cAppendSif )
-nT_ncproc := fetch_metric( "kalk_import_txt_def_procenat", my_user(), nT_ncproc )
-nT_kol := fetch_metric( "kalk_import_txt_def_kolicina", my_user(), nT_kol )
-dDatGen := fetch_metric( "kalk_import_txt_datum", my_user(), dDatgen )
+   cMList := fetch_metric( "kalk_import_txt_magacin_konta", my_user(), cMList )
+   cPList := fetch_metric( "kalk_import_txt_prodavnica_konta", my_user(), cPList )
+   cAppendSif := fetch_metric( "kalk_import_txt_dodaj_sifru", my_user(), cAppendSif )
+   nT_ncproc := fetch_metric( "kalk_import_txt_def_procenat", my_user(), nT_ncproc )
+   nT_kol := fetch_metric( "kalk_import_txt_def_kolicina", my_user(), nT_kol )
+   dDatGen := fetch_metric( "kalk_import_txt_datum", my_user(), dDatgen )
 
-cMList := PADR( cMList, 250 )
-cPList := PADR( cPList, 250 )
+   cMList := PadR( cMList, 250 )
+   cPList := PadR( cPList, 250 )
 
-Box(,6,60)
+   Box(, 6, 60 )
 
-    @ m_x + 1, m_y + 2 SAY "Mag. konta:" GET cMList PICT "@S40"
-    @ m_x + 2, m_y + 2 SAY "Pro. konta:" GET cPList PICT "@S40"
-    @ m_x + 3, m_y + 2 SAY "Datum do:" GET dDatGen
-    @ m_x + 4, m_y + 2 SAY "Dodaj nepost.stavke iz sifrarnika (D/N):" GET cAppendSif
-    
-    read
+   @ m_x + 1, m_y + 2 SAY "Mag. konta:" GET cMList PICT "@S40"
+   @ m_x + 2, m_y + 2 SAY "Pro. konta:" GET cPList PICT "@S40"
+   @ m_x + 3, m_y + 2 SAY "Datum do:" GET dDatGen
+   @ m_x + 4, m_y + 2 SAY "Dodaj nepost.stavke iz sifrarnika (D/N):" GET cAppendSif
 
-    if cAppendSif == "D"
-        
-        @ m_x + 5, m_y + 2 SAY " -         default stanje:" ;
-            GET nT_kol VALID nT_kol > 0 PICT "999999.99"
-        @ m_x + 6, m_y + 2 SAY " - default procenat za nc:" ;
-            GET nT_ncproc PICT "9999999.99"
-        
-        read
-    endif
-BoxC()
+   READ
 
-if LastKey() == K_ESC
-    select (nTArea)
-    return 0
-endif
+   IF cAppendSif == "D"
 
-set_metric( "kalk_import_txt_magacin_konta", my_user(), cMList )
-set_metric( "kalk_import_txt_prodavnica_konta", my_user(), cPList )
-set_metric( "kalk_import_txt_dodaj_sifru", my_user(), cAppendSif )
-set_metric( "kalk_import_txt_def_procenat", my_user(), nT_ncproc )
-set_metric( "kalk_import_txt_def_kolicina", my_user(), nT_kol )
-set_metric( "kalk_import_txt_datum", my_user(), dDatgen )
+      @ m_x + 5, m_y + 2 SAY " -         default stanje:" ;
+         GET nT_kol VALID nT_kol > 0 PICT "999999.99"
+      @ m_x + 6, m_y + 2 SAY " - default procenat za nc:" ;
+         GET nT_ncproc PICT "9999999.99"
 
-select (nTArea)
+      READ
+   ENDIF
+   BoxC()
 
-return 1
+   IF LastKey() == K_ESC
+      SELECT ( nTArea )
+      RETURN 0
+   ENDIF
+
+   set_metric( "kalk_import_txt_magacin_konta", my_user(), cMList )
+   set_metric( "kalk_import_txt_prodavnica_konta", my_user(), cPList )
+   set_metric( "kalk_import_txt_dodaj_sifru", my_user(), cAppendSif )
+   set_metric( "kalk_import_txt_def_procenat", my_user(), nT_ncproc )
+   set_metric( "kalk_import_txt_def_kolicina", my_user(), nT_kol )
+   set_metric( "kalk_import_txt_datum", my_user(), dDatgen )
+
+   SELECT ( nTArea )
+
+   RETURN 1
 
 
 
 // --------------------------------------------------
 // generisi cache tabelu
 // --------------------------------------------------
-function gen_cache()
-
-local nIzlNV
-local nIzlKol
-local nUlNV
-local nUlKol
-local nKolNeto
-local cIdKonto
-local cIdFirma := gFirma
-local cIdRoba
-local cMKtoLst
-local cPKtoLst
-local dDatGen
-local cAppFSif
-local nT_kol
-local nT_ncproc
-local GetList:={}
-local i
-
-// posljednje pozitivno stanje
-local nKol_poz := 0
-local nUVr_poz, nIVr_poz
-local nUKol_poz, nIKol_poz
-local nZadnjaNC := 0
-local nOdstup := 0
-local _korek_dok := .f.
-
-if _g_kto( @cMKtoLst, @cPKtoLst, @dDatGen, @cAppFSif, ;
-    @nT_kol, @nT_ncproc ) == 0
-    return
-endif
-
-cre_cache()
-
-O_CACHE
-select cache
-my_dbf_zap()
-
-O_CACHE
-O_KALK_DOKS
-O_KALK
-
-Box(,1, 70)
-
-aKto := TokToNiz( cMKtoLst, ";" )
-
-for i := 1 to LEN( aKto )
-
-  cIdKonto := PADR( aKto[i], 7 )
-
-  if EMPTY(cIdKonto)
-    loop
-  endif
-
-  @ m_x + 1, m_y + 2 SAY "mag. konto: " + cIdKonto
-
-  select kalk
-  // mkonto
-  set order to tag "3"
-  go top
-
-  seek cIdFirma + cIdKonto
-
-  do while !EOF() .and. cIdFirma == field->idfirma ;
-    .and. cIdKonto == field->mkonto 
-    
-
-    cIdRoba := field->idroba
-
-    nKolicina := 0
-    nIzlNV:=0   
-    // ukupna izlazna nabavna vrijednost
-    nUlNV:=0
-    nIzlKol:=0   
-    // ukupna izlazna kolicina
-    nUlKol:=0  
-    // ulazna kolicina
-
-    nKol_poz := 0
-    nZadnjaNC := 0
-    nOdstup := 0
-
-    @ m_x + 1, m_y + 20 SAY cIdRoba
-
-    do while !EOF() .and. ( ( cIdFirma+cIdKonto+cIdRoba) == ( idFirma+mkonto+idroba ) ) 
-
-        // provjeri datum
-        if field->datdok > dDatGen
-            skip
-            loop
-        endif
-
-        select kalk_doks
-        set order to tag "1"
-        go top
-        seek kalk->idfirma + kalk->idvd + kalk->brdok
-        select kalk
-        
-        // provjera postojanja dokumenta korekcije
-        if LEFT( kalk_doks->brfaktp, 6 ) == "#KOREK"
-            _korek_dok := .t.
-        else
-            _korek_dok := .f.
-        endif
-
-        if field->mu_i == "1" .or. field->mu_i == "5"
-              
-            if idvd == "10"
-                nKolNeto := abs(kolicina-gkolicina-gkolicin2)
-            else
-                nKolNeto := abs(kolicina)
-            endif
-
-            if ( field->mu_i == "1" .and. field->kolicina > 0 ) ;
-                    .or. ( field->mu_i == "5" .and. field->kolicina < 0 )
-                
-                nKolicina += nKolNeto    
-                nUlKol += nKolNeto    
-                nUlNV += ( nKolNeto * field->nc )      
-                
-                // zadnja nabavna cijena ulaza
-                if idvd $ "10#16#96" .and. !_korek_dok
-                    nZadnjaNC := field->nc
-                endif
-          
-            else
-                
-                nKolicina -= nKolNeto
-                nIzlKol += nKolNeto
-                nIzlNV += ( nKolNeto * field->nc )
-
-                // zadnja nabavna cijena ulaza
-                if idvd == "16" .and. _korek_dok
-                    nZadnjaNC := field->nc
-                endif
- 
-            endif
-
-            // ako je stanje pozitivno zapamti ga
-            if round(nKolicina, 8) > 0
-                nKol_poz := nKolicina
-
-                nUKol_poz := nUlKol
-                nIKol_poz := nIzlKol
-
-                nUVr_poz := nUlNv
-                nIVr_poz := nIzlNv
-            endif
-        
-        endif
-        
-        skip
-    
-    enddo 
- 
-    // utvrdi srednju nabavnu cijenu na osnovu posljednjeg pozitivnog stanja
-    if round(nKol_poz, 8) == 0
-        nSNc:=0
-    else
-        // srednja nabavna cijena
-        nSNc:=(nUVr_poz - nIVr_poz) / nKol_poz
-    endif
-
-    nKolicina := round( nKolicina, 4 )
-        
-    if round(nKol_poz, 8) <> 0
-     
-        // upisi u cache
-        select cache
-        append blank
-
-        replace idkonto with cIdKonto
-        replace idroba with cIdRoba
-        replace ulaz with nUKol_poz + nT_kol
-        replace izlaz with nIKol_poz
-        replace stanje with nKol_poz + nT_kol
-        replace nvu with nUVr_poz
-        replace nvi with nIVr_poz
-        replace nv with nSnc
-        replace z_nv with nZadnjaNC
-     
-        if nSNC <> 0 .and. nZadnjaNC <> 0
-        
-            nTmp := ( ROUND(nSNC, 4) - ROUND(nZadnjaNC,4) )
-            nOdst := ( nTmp / ROUND( nZadnjaNC, 4 ) ) * 100
-        
-            replace odst with ROUND( nOdst, 2 )
-        else
-            replace odst with 0
-        endif
-
-    endif
-
-    select kalk
-
-  enddo
-
-next
-
-i := 1
-
-// a sada prodavnice
-
-aKto := TokToNiz( cPKtoLst, ";" )
-
-for i := 1 to LEN( aKto )
-
-  cIdKonto := PADR( aKto[i], 7 )
-
-  if EMPTY(cIdKonto)
-    loop
-  endif
-
-  @ m_x + 1, m_y + 2 SAY "prod.konto: " + cIdKonto
-
-  select kalk
-  // pkonto
-  set order to tag "4"
-  go top
-
-  seek cIdFirma + cIdKonto
-
-  do while !EOF() .and. cIdFirma == field->idfirma ;
-    .and. cIdKonto == field->pkonto 
-    
-
-    cIdRoba := field->idroba
-
-    nKolicina := 0
-    nIzlNV:=0   
-    // ukupna izlazna nabavna vrijednost
-    nUlNV:=0
-    nIzlKol:=0   
-    // ukupna izlazna kolicina
-    nUlKol:=0  
-    // ulazna kolicina
-
-    @ m_x + 1, m_y + 20 SAY cIdRoba
-
-    do while !EOF() .and. cIdFirma+cIdKonto+cIdRoba==idFirma+pkonto+idroba 
-
-      // provjeri datum
-      if field->datdok > dDatGen
-        skip
-        loop
-      endif
-
-      select kalk_doks
-      set order to tag "1"
-      go top
-      seek kalk->idfirma + kalk->idvd + kalk->brdok
-      select kalk
- 
-      // provjera postojanja dokumenta korekcije
-      if LEFT( kalk_doks->brfaktp, 6 ) == "#KOREK"
-            _korek_dok := .t.
-      else
-            _korek_dok := .f.
-      endif
-
-      if field->pu_i == "1" .or. field->pu_i == "5"
-
-        if ( field->pu_i == "1" .and. field->kolicina > 0 ) ;
-                    .or. ( field->pu_i == "5" .and. field->kolicina < 0 )
-            nKolicina += abs(field->kolicina)       
-            nUlKol    += abs(field->kolicina)       
-            nUlNV     += (abs(field->kolicina)*field->nc)  
-        else
-            nKolicina -= abs(field->kolicina)
-            nIzlKol   += abs(field->kolicina)
-            nIzlNV    += (abs(field->kolicina)*field->nc)
-        endif
-
-      elseif field->pu_i=="I"
-            nKolicina-=field->gkolicin2
-            nIzlKol+=field->gkolicin2
-            nIzlNV+=field->nc*field->gkolicin2
-      endif
-      skip
-
-    enddo 
-
-    if round( nKolicina, 5 ) == 0
-        nSNC := 0
-    else
-        nSNC := ( nUlNV - nIzlNV ) / nKolicina
-    endif
-
-    nKolicina := round( nKolicina, 4 )
-    
-    if nKolicina <> 0
-    
-     // upisi u cache
-     select cache
-     append blank
-
-     replace idkonto with cIdKonto
-     replace idroba with cIdRoba
-     replace ulaz with nUlKol + nT_kol
-     replace izlaz with nIzlkol
-     replace stanje with nKolicina + nT_kol
-     replace nvu with nUlNv
-     replace nvi with nIzlNv
-     replace nv with nSnc
-     replace z_nv with 0
-    
-    endif
-
-    select kalk
-
-  enddo
-
-next
-
-BoxC()
-
-if cAppFSif == "D"
-    // dodaj stavke iz sifrarnika robe koje ne postoje
-    _app_from_sif( cMKtoLst, cPKtoLst, nT_kol, nT_ncproc )
-endif
-
-
-return
+FUNCTION gen_cache()
+
+   LOCAL nIzlNV
+   LOCAL nIzlKol
+   LOCAL nUlNV
+   LOCAL nUlKol
+   LOCAL nKolNeto
+   LOCAL cIdKonto
+   LOCAL cIdFirma := gFirma
+   LOCAL cIdRoba
+   LOCAL cMKtoLst
+   LOCAL cPKtoLst
+   LOCAL dDatGen
+   LOCAL cAppFSif
+   LOCAL nT_kol
+   LOCAL nT_ncproc
+   LOCAL GetList := {}
+   LOCAL i
+
+   // posljednje pozitivno stanje
+   LOCAL nKol_poz := 0
+   LOCAL nUVr_poz, nIVr_poz
+   LOCAL nUKol_poz, nIKol_poz
+   LOCAL nZadnjaNC := 0
+   LOCAL nOdstup := 0
+   LOCAL _korek_dok := .F.
+
+   IF _g_kto( @cMKtoLst, @cPKtoLst, @dDatGen, @cAppFSif, ;
+         @nT_kol, @nT_ncproc ) == 0
+      RETURN
+   ENDIF
+
+   cre_cache()
+
+   O_CACHE
+
+   SELECT cache
+   my_dbf_zap()
+
+
+   O_KALK_DOKS
+   O_KALK
+
+   Box(, 1, 70 )
+
+   aKto := TokToNiz( cMKtoLst, ";" )
+
+   FOR i := 1 TO Len( aKto )
+
+      cIdKonto := PadR( aKto[ i ], 7 )
+
+      IF Empty( cIdKonto )
+         LOOP
+      ENDIF
+
+      @ m_x + 1, m_y + 2 SAY "mag. konto: " + cIdKonto
+
+      SELECT kalk
+      // mkonto
+      SET ORDER TO TAG "3"
+      GO TOP
+
+      SEEK cIdFirma + cIdKonto
+
+      DO WHILE !Eof() .AND. cIdFirma == field->idfirma ;
+            .AND. cIdKonto == field->mkonto
+
+
+         cIdRoba := field->idroba
+
+         nKolicina := 0
+         nIzlNV := 0
+         // ukupna izlazna nabavna vrijednost
+         nUlNV := 0
+         nIzlKol := 0
+         // ukupna izlazna kolicina
+         nUlKol := 0
+         // ulazna kolicina
+
+         nKol_poz := 0
+         nZadnjaNC := 0
+         nOdstup := 0
+
+         @ m_x + 1, m_y + 20 SAY cIdRoba
+
+         DO WHILE !Eof() .AND. ( ( cIdFirma + cIdKonto + cIdRoba ) == ( idFirma + mkonto + idroba ) )
+
+            // provjeri datum
+            IF field->datdok > dDatGen
+               SKIP
+               LOOP
+            ENDIF
+
+            SELECT kalk_doks
+            SET ORDER TO TAG "1"
+            GO TOP
+            SEEK kalk->idfirma + kalk->idvd + kalk->brdok
+            SELECT kalk
+
+            // provjera postojanja dokumenta korekcije
+            IF Left( kalk_doks->brfaktp, 6 ) == "#KOREK"
+               _korek_dok := .T.
+            ELSE
+               _korek_dok := .F.
+            ENDIF
+
+            IF field->mu_i == "1" .OR. field->mu_i == "5"
+
+               IF idvd == "10"
+                  nKolNeto := Abs( kolicina - gkolicina - gkolicin2 )
+               ELSE
+                  nKolNeto := Abs( kolicina )
+               ENDIF
+
+               IF ( field->mu_i == "1" .AND. field->kolicina > 0 ) ;
+                     .OR. ( field->mu_i == "5" .AND. field->kolicina < 0 )
+
+                  nKolicina += nKolNeto
+                  nUlKol += nKolNeto
+                  nUlNV += ( nKolNeto * field->nc )
+
+                  // zadnja nabavna cijena ulaza
+                  IF idvd $ "10#16#96" .AND. !_korek_dok
+                     nZadnjaNC := field->nc
+                  ENDIF
+
+               ELSE
+
+                  nKolicina -= nKolNeto
+                  nIzlKol += nKolNeto
+                  nIzlNV += ( nKolNeto * field->nc )
+
+                  // zadnja nabavna cijena ulaza
+                  IF idvd == "16" .AND. _korek_dok
+                     nZadnjaNC := field->nc
+                  ENDIF
+
+               ENDIF
+
+               // ako je stanje pozitivno zapamti ga
+               IF Round( nKolicina, 8 ) > 0
+                  nKol_poz := nKolicina
+
+                  nUKol_poz := nUlKol
+                  nIKol_poz := nIzlKol
+
+                  nUVr_poz := nUlNv
+                  nIVr_poz := nIzlNv
+               ENDIF
+
+            ENDIF
+
+            SKIP
+
+         ENDDO
+
+         // utvrdi srednju nabavnu cijenu na osnovu posljednjeg pozitivnog stanja
+         IF Round( nKol_poz, 8 ) == 0
+            nSNc := 0
+         ELSE
+            // srednja nabavna cijena
+            nSNc := ( nUVr_poz - nIVr_poz ) / nKol_poz
+         ENDIF
+
+         nKolicina := Round( nKolicina, 4 )
+
+         IF Round( nKol_poz, 8 ) <> 0
+
+            // upisi u cache
+            SELECT cache
+
+            my_flock()
+            APPEND BLANK
+
+            REPLACE idkonto WITH cIdKonto
+            REPLACE idroba WITH cIdRoba
+            REPLACE ulaz WITH nUKol_poz + nT_kol
+            REPLACE izlaz WITH nIKol_poz
+            REPLACE stanje WITH nKol_poz + nT_kol
+            REPLACE nvu WITH nUVr_poz
+            REPLACE nvi WITH nIVr_poz
+            REPLACE nv WITH nSnc
+            REPLACE z_nv WITH nZadnjaNC
+
+            IF nSNC <> 0 .AND. nZadnjaNC <> 0
+
+               nTmp := ( Round( nSNC, 4 ) - Round( nZadnjaNC, 4 ) )
+               nOdst := ( nTmp / Round( nZadnjaNC, 4 ) ) * 100
+
+               REPLACE odst WITH Round( nOdst, 2 )
+            ELSE
+               REPLACE odst WITH 0
+            ENDIF
+
+            my_unlock()
+
+         ENDIF
+
+         SELECT kalk
+
+      ENDDO
+
+   NEXT
+
+   i := 1
+
+   // a sada prodavnice
+
+   aKto := TokToNiz( cPKtoLst, ";" )
+
+   FOR i := 1 TO Len( aKto )
+
+      cIdKonto := PadR( aKto[ i ], 7 )
+
+      IF Empty( cIdKonto )
+         LOOP
+      ENDIF
+
+      @ m_x + 1, m_y + 2 SAY "prod.konto: " + cIdKonto
+
+      SELECT kalk
+      // pkonto
+      SET ORDER TO TAG "4"
+      GO TOP
+
+      SEEK cIdFirma + cIdKonto
+
+      DO WHILE !Eof() .AND. cIdFirma == field->idfirma ;
+            .AND. cIdKonto == field->pkonto
+
+
+         cIdRoba := field->idroba
+
+         nKolicina := 0
+         nIzlNV := 0
+         // ukupna izlazna nabavna vrijednost
+         nUlNV := 0
+         nIzlKol := 0
+         // ukupna izlazna kolicina
+         nUlKol := 0
+         // ulazna kolicina
+
+         @ m_x + 1, m_y + 20 SAY cIdRoba
+
+         DO WHILE !Eof() .AND. cIdFirma + cIdKonto + cIdRoba == idFirma + pkonto + idroba
+
+            // provjeri datum
+            IF field->datdok > dDatGen
+               SKIP
+               LOOP
+            ENDIF
+
+            SELECT kalk_doks
+            SET ORDER TO TAG "1"
+            GO TOP
+            SEEK kalk->idfirma + kalk->idvd + kalk->brdok
+            SELECT kalk
+
+            // provjera postojanja dokumenta korekcije
+            IF Left( kalk_doks->brfaktp, 6 ) == "#KOREK"
+               _korek_dok := .T.
+            ELSE
+               _korek_dok := .F.
+            ENDIF
+
+            IF field->pu_i == "1" .OR. field->pu_i == "5"
+
+               IF ( field->pu_i == "1" .AND. field->kolicina > 0 ) ;
+                     .OR. ( field->pu_i == "5" .AND. field->kolicina < 0 )
+                  nKolicina += Abs( field->kolicina )
+                  nUlKol    += Abs( field->kolicina )
+                  nUlNV     += ( Abs( field->kolicina ) * field->nc )
+               ELSE
+                  nKolicina -= Abs( field->kolicina )
+                  nIzlKol   += Abs( field->kolicina )
+                  nIzlNV    += ( Abs( field->kolicina ) * field->nc )
+               ENDIF
+
+            ELSEIF field->pu_i == "I"
+               nKolicina -= field->gkolicin2
+               nIzlKol += field->gkolicin2
+               nIzlNV += field->nc * field->gkolicin2
+            ENDIF
+            SKIP
+
+         ENDDO
+
+         IF Round( nKolicina, 5 ) == 0
+            nSNC := 0
+         ELSE
+            nSNC := ( nUlNV - nIzlNV ) / nKolicina
+         ENDIF
+
+         nKolicina := Round( nKolicina, 4 )
+
+         IF nKolicina <> 0
+
+            // upisi u cache
+            SELECT cache
+
+            my_flock()
+
+            APPEND BLANK
+
+            REPLACE idkonto WITH cIdKonto
+            REPLACE idroba WITH cIdRoba
+            REPLACE ulaz WITH nUlKol + nT_kol
+            REPLACE izlaz WITH nIzlkol
+            REPLACE stanje WITH nKolicina + nT_kol
+            REPLACE nvu WITH nUlNv
+            REPLACE nvi WITH nIzlNv
+            REPLACE nv WITH nSnc
+            REPLACE z_nv WITH 0
+
+            my_unlock()
+
+         ENDIF
+
+         SELECT kalk
+
+      ENDDO
+
+   NEXT
+
+   BoxC()
+
+   IF cAppFSif == "D"
+      // dodaj stavke iz sifrarnika robe koje ne postoje
+      _app_from_sif( cMKtoLst, cPKtoLst, nT_kol, nT_ncproc )
+   ENDIF
+
+   RETURN
 
 
 // ---------------------------------------------------------------
 // dodaj u cache tabelu stavke iz sifrarnika koje ne postoje
 // u cache
 // ---------------------------------------------------------------
-static function _app_from_sif( cM_list, cP_list, nT_kol, nT_ncproc )
-local nTArea := SELECT()
-local aKto := {}
-local i
+STATIC FUNCTION _app_from_sif( cM_list, cP_list, nT_kol, nT_ncproc )
 
-private GetList:={}
+   LOCAL nTArea := Select()
+   LOCAL aKto := {}
+   LOCAL i
 
-if nT_kol = nil .or. nT_kol <= 0
-    msgbeep("Default kolicina setovana na 0. Kako je to moguce :)")
-    return
-endif
+   PRIVATE GetList := {}
 
-if nT_ncproc = nil .or. nT_ncproc <= 0
-    msgbeep("Default procenat nc setovan na <= 0. Kako je to moguce :)")
-    return
-endif
+   IF nT_kol = NIL .OR. nT_kol <= 0
+      msgbeep( "Default kolicina setovana na 0. Kako je to moguce :)" )
+      RETURN
+   ENDIF
 
-Box(,3,60)
+   IF nT_ncproc = NIL .OR. nT_ncproc <= 0
+      msgbeep( "Default procenat nc setovan na <= 0. Kako je to moguce :)" )
+      RETURN
+   ENDIF
 
-if !EMPTY( cM_list )
-  // odradi magacine...
-  aKto := TokToNiz( cM_list, ";" )
-  i := 1
+   Box(, 3, 60 )
 
-  for i := 1 to LEN( aKto )
-    // magacin je aKto[i]
-    @ m_x + 1, m_y + 2 SAY PADR( "radim magacin: " + aKto[i], 60 )
-    _app_for_kto( aKto[i], nT_kol, nT_ncproc )
-  next
-endif
+   IF !Empty( cM_list )
+      // odradi magacine...
+      aKto := TokToNiz( cM_list, ";" )
+      i := 1
 
-if !EMPTY( cP_list )
-  // odradi prodavnice...
-  aKto := TokToNiz( cP_list, ";" )
-  i := 1
+      FOR i := 1 TO Len( aKto )
+         // magacin je aKto[i]
+         @ m_x + 1, m_y + 2 SAY PadR( "radim magacin: " + aKto[ i ], 60 )
+         _app_for_kto( aKto[ i ], nT_kol, nT_ncproc )
+      NEXT
+   ENDIF
 
-  for i := 1 to LEN( aKto )
-    // magacin je aKto[i]
-    @ m_x + 1, m_y + 2 SAY PADR( "radim prodavnicu: " + aKto[i], 60 )
-    _app_for_kto( aKto[i], nT_kol, nT_ncproc )
-  next
-endif
+   IF !Empty( cP_list )
+      // odradi prodavnice...
+      aKto := TokToNiz( cP_list, ";" )
+      i := 1
 
-BoxC()
+      FOR i := 1 TO Len( aKto )
+         // magacin je aKto[i]
+         @ m_x + 1, m_y + 2 SAY PadR( "radim prodavnicu: " + aKto[ i ], 60 )
+         _app_for_kto( aKto[ i ], nT_kol, nT_ncproc )
+      NEXT
+   ENDIF
 
-select (nTArea)
-return
+   BoxC()
+
+   SELECT ( nTArea )
+
+   RETURN
 
 
 // ------------------------------------------------
 // dodaj u cache tabelu robu za konto
 // ------------------------------------------------
-static function _app_for_kto( cKto, nKol, nNcProc, lSilent )
-local cRoba 
-local cRobaNaz
-local nVPC
+STATIC FUNCTION _app_for_kto( cKto, nKol, nNcProc, lSilent )
 
-if EMPTY( cKto )
-    return
-endif
+   LOCAL cRoba
+   LOCAL cRobaNaz
+   LOCAL nVPC
 
-cKto := PADR( cKto, 7 )
+   IF Empty( cKto )
+      RETURN
+   ENDIF
 
-if nKol = nil
-    nKol := 100
-endif
+   cKto := PadR( cKto, 7 )
 
-if nNcProc = nil
-    nNcProc := 17.00
-endif
+   IF nKol = nil
+      nKol := 100
+   ENDIF
 
-if lSilent == nil
-    lSilent := .f.
-endif
+   IF nNcProc = nil
+      nNcProc := 17.00
+   ENDIF
 
-O_ROBA
-go top
+   IF lSilent == nil
+      lSilent := .F.
+   ENDIF
 
-do while !EOF()
+   O_ROBA
+   GO TOP
 
-    // ako nema sifre dobavljaca, preskoci...
-    if EMPTY( field->sifradob ) .or. field->vpc = 0
-        skip
-        loop
-    endif
+   DO WHILE !Eof()
 
-    cRoba := field->id
-    cRobaNaz := field->naz
-    nVPC := field->vpc
+      // ako nema sifre dobavljaca, preskoci...
+      IF Empty( field->sifradob ) .OR. field->vpc = 0
+         SKIP
+         LOOP
+      ENDIF
 
-    // provjeri ima li u cache tabeli
-    select cache
-    set order to tag "1"
-    go top
-    seek cKto + cRoba
+      cRoba := field->id
+      cRobaNaz := field->naz
+      nVPC := field->vpc
 
-    if !FOUND()
-        
-        // nisam nasao upisi u cache
-        
-        if !lSilent
-            @ m_x + 2, m_y + 2 SAY "roba: " + PADR( cRoba, 10 ) ;
-                + "-" + PADR( cRobaNaz, 40 )
-        endif
+      // provjeri ima li u cache tabeli
+      SELECT cache
+      SET ORDER TO TAG "1"
+      GO TOP
+      SEEK cKto + cRoba
 
-        append blank
-        replace idkonto with cKto
-        replace idroba with cRoba
-        replace ulaz with nKol
-        replace izlaz with 0
-        replace stanje with nKol
-        replace nv with nVPC / (( nNcProc / 100) + 1)
-        replace nvu with nv * nKol
-        replace nvi with 0
-        replace z_nv with nv
-        replace odst with 0
+      IF !Found()
 
-    endif
+         // nisam nasao upisi u cache
 
-    select roba
-    skip
-enddo
+         IF !lSilent
+            @ m_x + 2, m_y + 2 SAY "roba: " + PadR( cRoba, 10 ) ;
+               + "-" + PadR( cRobaNaz, 40 )
+         ENDIF
 
-return
+         APPEND BLANK
+         REPLACE idkonto WITH cKto
+         REPLACE idroba WITH cRoba
+         REPLACE ulaz WITH nKol
+         REPLACE izlaz WITH 0
+         REPLACE stanje WITH nKol
+         REPLACE nv WITH nVPC / ( ( nNcProc / 100 ) + 1 )
+         REPLACE nvu WITH nv * nKol
+         REPLACE nvi WITH 0
+         REPLACE z_nv WITH nv
+         REPLACE odst WITH 0
+
+      ENDIF
+
+      SELECT roba
+      SKIP
+   ENDDO
+
+   RETURN
 
 
 // -------------------------------------------------------
 // konvertuje numericko polje u karakterno za prikaz
 // -------------------------------------------------------
-static function s_num( nNum )
-local cNum := STR( nNum, 12, 2 )
-return cNum
+STATIC FUNCTION s_num( nNum )
+
+   LOCAL cNum := Str( nNum, 12, 2 )
+
+   RETURN cNum
 
 
 // ----------------------------------------
 // browsanje tabele cache
 // ----------------------------------------
-function brow_cache()
-private ImeKol
-private Kol
+FUNCTION brow_cache()
 
-O_CACHE
-set order to tag "1"
+   PRIVATE ImeKol
+   PRIVATE Kol
 
-ImeKol:={{ PADR("Konto",15), {|| PADR( ALLTRIM(IdKonto) + ;
-    "-" + ALLTRIM(IDROBA), 13 ) }, "IdKonto" } ,;
-          { PADR("Stanje", 10 ), {|| s_num( Stanje ) }, "Stanje" } ,;
-          { PADR("NC", 10 ), {|| s_num( NV ) }, "Nab.cijena" }, ;
-      { PADR("Z_NC", 10 ), {|| s_num( Z_NV ) }, "Zadnja NC" }, ;
-      { PADR("odst", 10 ), {|| s_num( ODST ) }, "Odstupanje" } }
+   O_CACHE
+   SET ORDER TO TAG "1"
 
-Kol:={}
+   ImeKol := { { PadR( "Konto", 15 ), {|| PadR( AllTrim( IdKonto ) + ;
+      "-" + AllTrim( IDROBA ), 13 ) }, "IdKonto" }, ;
+      { PadR( "Stanje", 10 ), {|| s_num( Stanje ) }, "Stanje" }, ;
+      { PadR( "NC", 10 ), {|| s_num( NV ) }, "Nab.cijena" }, ;
+      { PadR( "Z_NC", 10 ), {|| s_num( Z_NV ) }, "Zadnja NC" }, ;
+      { PadR( "odst", 10 ), {|| s_num( ODST ) }, "Odstupanje" } }
 
-for i:=1 to LEN(ImeKol)
-    AADD(Kol,i)
-next
+   Kol := {}
 
-Box(,20,77)
-@ m_x+17,m_y+2 SAY "<c+N> novi zapis   <F2>  ispravka  <c+T> brisi stavku"
-@ m_x+18,m_y+2 SAY "<F>   filter odstupanja"
-@ m_x+19,m_y+2 SAY " "
-@ m_x+20,m_y+2 SAY " "
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
 
-ObjDbedit("CACHE",20,77,{|| key_handler()},"","pregled cache tabele", , , , ,4)
+   Box(, 20, 77 )
+   @ m_x + 17, m_y + 2 SAY "<c+N> novi zapis   <F2>  ispravka  <c+T> brisi stavku"
+   @ m_x + 18, m_y + 2 SAY "<F>   filter odstupanja"
+   @ m_x + 19, m_y + 2 SAY " "
+   @ m_x + 20, m_y + 2 SAY " "
 
-BoxC()
+   ObjDbedit( "CACHE", 20, 77, {|| key_handler() }, "", "pregled cache tabele", , , , , 4 )
 
-return
+   BoxC()
+
+   RETURN
 
 
 // ---------------------------------------
 // handler key event
 // ---------------------------------------
-static function key_handler()
-local nOdst := 0
-local cT_filter := DBFILTER()
+STATIC FUNCTION key_handler()
 
-do case
-    case ch == K_F2
-        if edit_item() == 1
+   LOCAL nOdst := 0
+   LOCAL cT_filter := dbFilter()
 
-            if !EMPTY( cT_filter )
-                set filter to &cT_filter
-                go top
-            endif
+   DO CASE
+   CASE ch == K_F2
+      IF edit_item() == 1
 
-            return DE_REFRESH
-        else
-            return DE_CONT
-        endif
-    
-    case ch == K_CTRL_N
-        
-        // dodaj novu stavku u tabelu
-        if edit_item( .t. ) == 1
+         IF !Empty( cT_filter )
+            SET FILTER to &cT_filter
+            GO TOP
+         ENDIF
 
-            if !EMPTY( cT_filter )
-                set filter to &cT_filter
-                go top
-            endif
+         RETURN DE_REFRESH
+      ELSE
+         RETURN DE_CONT
+      ENDIF
 
-            return DE_REFRESH
-        else
-            return DE_CONT
-        endif
-    
-    case ch == K_CTRL_T
+   CASE ch == K_CTRL_N
 
-        return browse_brisi_stavku()
-    
-    case UPPER(CHR(ch)) == "F"
-        
-        cSign := ">="
+      // dodaj novu stavku u tabelu
+      IF edit_item( .T. ) == 1
 
-        // filter
-        Box(,1,22)
-            @ m_x + 1, m_y + 2 SAY "Odstupanje" GET cSign ;
-                PICT "@S2"
-            @ m_x + 1, col() + 1 GET nOdst ;
-                PICT "9999.99"
-            read
-        BoxC()
+         IF !Empty( cT_filter )
+            SET FILTER to &cT_filter
+            GO TOP
+         ENDIF
 
-        if nOdst <> 0
-            
-            private cFilter := "odst " + ALLTRIM(cSign) ;
-                + _filter_quote( nOdst )
-            set filter to &cFilter
-            go top
+         RETURN DE_REFRESH
+      ELSE
+         RETURN DE_CONT
+      ENDIF
 
-            cT_filter := DBFILTER()
+   CASE ch == K_CTRL_T
 
-            return DE_REFRESH
-        endif
+      RETURN browse_brisi_stavku()
 
-endcase
+   CASE Upper( Chr( ch ) ) == "F"
 
-return DE_CONT
+      cSign := ">="
+
+      // filter
+      Box(, 1, 22 )
+      @ m_x + 1, m_y + 2 SAY "Odstupanje" GET cSign ;
+         PICT "@S2"
+      @ m_x + 1, Col() + 1 GET nOdst ;
+         PICT "9999.99"
+      READ
+      BoxC()
+
+      IF nOdst <> 0
+
+         PRIVATE cFilter := "odst " + AllTrim( cSign ) ;
+            + _filter_quote( nOdst )
+         SET FILTER to &cFilter
+         GO TOP
+
+         cT_filter := dbFilter()
+
+         RETURN DE_REFRESH
+      ENDIF
+
+   ENDCASE
+
+   RETURN DE_CONT
 
 
 // -------------------------------------
 // korekcija stavke
 // -------------------------------------
-static function edit_item( lNew )
-local GetList := {}
-local nTmp
-local nOdst
-local nL_nv
-local nL_znv
+STATIC FUNCTION edit_item( lNew )
 
-if lNew == nil
-    lNew := .f.
-endif
+   LOCAL GetList := {}
+   LOCAL nTmp
+   LOCAL nOdst
+   LOCAL nL_nv
+   LOCAL nL_znv
 
-Scatter()
+   IF lNew == nil
+      lNew := .F.
+   ENDIF
 
-// uzmi ovo radi daljnjeg analiziranja - postojece stanje
-nL_nv := _nv
-nL_znv := _z_nv
+   Scatter()
 
-if lNew 
-    
-    // resetuj varijable
-    _idroba := SPACE( LEN( _idroba ))
-    _ulaz := 0
-    _izlaz := 0
-    _stanje := 0
-    _nvu := 0
-    _nvi := 0
-    _nv := 0
-    _z_nv := 0
+   // uzmi ovo radi daljnjeg analiziranja - postojece stanje
+   nL_nv := _nv
+   nL_znv := _z_nv
 
-    append blank
+   IF lNew
 
-endif
+      // resetuj varijable
+      _idroba := Space( Len( _idroba ) )
+      _ulaz := 0
+      _izlaz := 0
+      _stanje := 0
+      _nvu := 0
+      _nvi := 0
+      _nv := 0
+      _z_nv := 0
 
-Box(,5,60)
-    
-    if lNew
-        
-        @ m_x + 1, m_y + 2 SAY "Id konto:" GET _idkonto
-        @ m_x + 1, col() + 2 SAY "Id roba:" GET _idroba
-        
-        @ m_x + 2, m_y + 2 SAY "ulaz:" GET _ulaz
-        @ m_x + 2, col() + 1 SAY "izlaz:" GET _izlaz
-        @ m_x + 2, col() + 1 SAY "stanje:" GET _stanje
-        
-        @ m_x + 3, m_y + 2 SAY "NV ulaz:" GET _nvu
-        @ m_x + 3, col() + 1 SAY "NV izlaz:" GET _nvi
+      APPEND BLANK
 
-    endif
-    
-    @ m_x + 4, m_y + 2 SAY "Srednja NC:" GET _nv
-    @ m_x + 4, col() + 2 SAY " Zadnja NC:" GET _z_nv
+   ENDIF
 
-    if lNew 
-        @ m_x + 5, m_y + 2 SAY "odstupanje:" GET _odst
-    endif
-    
-    read
-BoxC()
+   Box(, 5, 60 )
 
-if LastKey() == K_ESC
-    return 0
-endif
+   IF lNew
 
-my_rlock()
-Gather()
-my_unlock()
+      @ m_x + 1, m_y + 2 SAY "Id konto:" GET _idkonto
+      @ m_x + 1, Col() + 2 SAY "Id roba:" GET _idroba
 
-// izadji ako je dodavanje novog zapisa...
-if lNew 
-    return 1
-endif
+      @ m_x + 2, m_y + 2 SAY "ulaz:" GET _ulaz
+      @ m_x + 2, Col() + 1 SAY "izlaz:" GET _izlaz
+      @ m_x + 2, Col() + 1 SAY "stanje:" GET _stanje
 
-// kalkulisi odstupanje automatski ako su cijene promjenjene
+      @ m_x + 3, m_y + 2 SAY "NV ulaz:" GET _nvu
+      @ m_x + 3, Col() + 1 SAY "NV izlaz:" GET _nvi
 
-if ( nL_nv <> field->nv ) .or. ( nL_znv <> field->z_nv )
+   ENDIF
 
-    nTmp := ROUND( field->nv, 4 ) - ROUND( field->z_nv, 4 )
-    nOdst := ( nTmp / ROUND( field->z_nv, 4 )) * 100
+   @ m_x + 4, m_y + 2 SAY "Srednja NC:" GET _nv
+   @ m_x + 4, Col() + 2 SAY " Zadnja NC:" GET _z_nv
 
-    my_rlock()
-    replace field->odst with ROUND( nOdst, 2 )
-    my_unlock()
+   IF lNew
+      @ m_x + 5, m_y + 2 SAY "odstupanje:" GET _odst
+   ENDIF
 
-endif
+   READ
+   BoxC()
 
-return 1
+   IF LastKey() == K_ESC
+      RETURN 0
+   ENDIF
 
+   my_rlock()
+   Gather()
+   my_unlock()
 
+   // izadji ako je dodavanje novog zapisa...
+   IF lNew
+      RETURN 1
+   ENDIF
 
+   // kalkulisi odstupanje automatski ako su cijene promjenjene
+
+   IF ( nL_nv <> field->nv ) .OR. ( nL_znv <> field->z_nv )
+
+      nTmp := Round( field->nv, 4 ) - Round( field->z_nv, 4 )
+      nOdst := ( nTmp / Round( field->z_nv, 4 ) ) * 100
+
+      my_rlock()
+      REPLACE field->odst WITH Round( nOdst, 2 )
+      my_unlock()
+
+   ENDIF
+
+   RETURN 1

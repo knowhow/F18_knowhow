@@ -139,17 +139,12 @@ FUNCTION prenos_fin_kam()
                   // predhodnim danom
                   IF field->datod >= _dat_pocetka
                      // slijedeca promjena na isti datum
-                     my_rlock()
-                     REPLACE field->osnovica with ;
-                        field->osnovica + suban->( iif( d_p == "1", iznosbhd, -iznosbhd ) )
-                     my_unlock()
+                     RREPLACE field->osnovica with field->osnovica + suban->( iif( d_p == "1", iznosbhd, -iznosbhd ) )
                      SELECT suban
                      SKIP
                      LOOP
                   ELSE
-                     my_rlock()
-                     REPLACE field->datdo WITH _dat_pocetka - 1
-                     my_unlock()
+                     RREPLACE field->datdo WITH _dat_pocetka - 1
                   ENDIF
                ENDIF
 
@@ -160,14 +155,7 @@ FUNCTION prenos_fin_kam()
                ELSE
 
                   APPEND BLANK
-                  my_rlock()
-                  REPLACE idpartner WITH _id_partner
-                  REPLACE idkonto WITH _id_konto
-                  REPLACE osnovica WITH _duguje - _potrazuje
-                  REPLACE brdok WITH _br_dok
-                  REPLACE datod WITH _dat_pocetka
-                  REPLACE datdo WITH _dat_obr
-                  my_unlock()
+                  RREPLACE idpartner WITH _id_partner, idkonto WITH _id_konto, osnovica WITH _duguje - _potrazuje, brdok WITH _br_dok, datod WITH _dat_pocetka, datdo WITH _dat_obr
                ENDIF
             ENDIF
 			

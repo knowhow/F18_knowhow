@@ -81,7 +81,7 @@ FUNCTION p_partneri( cId, dx, dy, lEmptyIdOk )
 
    LOCAL cN2Fin
    LOCAL i
-   LOCAL cRet
+   LOCAL lRet
    LOCAL _standard_prof := f18_privgranted( "standard_profile" )
 
    PRIVATE ImeKol
@@ -96,13 +96,7 @@ FUNCTION p_partneri( cId, dx, dy, lEmptyIdOk )
    ENDIF
  
    PushWa()
-   SELECT ( F_PARTN )
-
-   IF !Used()
-      O_PARTN
-   ELSE
-      SET ORDER TO TAG "ID"
-   ENDIF
+   O_PARTN_NOT_USED
 
    ImeKol := {}
 
@@ -148,18 +142,14 @@ FUNCTION p_partneri( cId, dx, dy, lEmptyIdOk )
    SELECT PARTN
    sif_sifk_fill_kol( "PARTN", @ImeKol, @Kol )
 
-   SELECT PARTN
-   SET ORDER TO TAG "ID"
-
-   
-   cRet := PostojiSifra( F_PARTN, 1, maxrows() - 15, maxcols() - 15, "Lista Partnera", @cId, dx, dy, {| Ch| k_handler( Ch ) },,,,, { "ID" } )
+   lRet := PostojiSifra( F_PARTN, 1, maxrows() - 15, maxcols() - 15, "Lista Partnera", @cId, dx, dy, {| Ch| k_handler( Ch ) },,,,, { "ID" } )
 
    PopWa()
 
-   RETURN cRet
+   RETURN lRet
 
-// ----------------------------------
-// ----------------------------------
+
+
 STATIC FUNCTION k_handler( Ch )
 
    LOCAL cSif := PARTN->id, cSif2 := ""
@@ -178,8 +168,7 @@ STATIC FUNCTION k_handler( Ch )
 
    RETURN DE_CONT
 
-// ----------------------------------------------
-// ----------------------------------------------
+
 FUNCTION P_Firma( cId, dx, dy )
 
    RETURN P_Partneri( @cId, @dx, @dy )
@@ -243,7 +232,7 @@ FUNCTION p_set_group( set_field )
    AAdd( _opcexe, {|| set_field := "VP ", _izbor := 0 } )
    AAdd( _Opc, "AMB - ambulantna dostava  " )
    AAdd( _opcexe, {|| set_field := "AMB", _izbor := 0 } )
-   AAdd( _Opc, "SIS - sistemska kuca      " )
+   AAdd( _Opc, "SIS - sistemska kuća      " )
    AAdd( _opcexe, {|| set_field := "SIS", _izbor := 0 } )
    AAdd( _Opc, "OST - ostali      " )
    AAdd( _opcexe, {|| set_field := "OST", _izbor := 0 } )
@@ -256,7 +245,6 @@ FUNCTION p_set_group( set_field )
    RETURN .T.
 
 
-// vraca opis grupe
 FUNCTION gr_opis( cGroup )
 
    LOCAL cRet

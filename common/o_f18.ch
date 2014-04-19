@@ -14,9 +14,16 @@
 
 // sifarnici
 #xcommand O_ROBA     => select (F_ROBA)    ;  my_use  ("roba")      ; set order to tag "ID"
+#xcommand O_ROBA_NOT_USED  => select (F_ROBA) ;  IF !USED(); my_use("roba" ); ENDIF  ; set order to tag "ID"
+
 #xcommand O_BARKOD   => select (F_BARKOD)  ;  my_use  ("barkod")    ; set order to tag "1"
+
 #xcommand O_KONTO    => select (F_KONTO)   ;  my_use  ("konto" )    ; set order to tag "ID"
+#xcommand O_KONTO_NOT_USED  => select (F_KONTO) ;  IF !USED(); my_use("konto" ); ENDIF  ; set order to tag "ID"
+
 #xcommand O_PARTN    => select (F_PARTN)   ;  my_use  ("partn")     ; set order to tag "ID"
+#xcommand O_PARTN_NOT_USED  => select (F_PARTN) ;  IF !USED(); my_use("partn" ); ENDIF  ; set order to tag "ID"
+
 #xcommand O_SAST     => select (F_SAST)    ;  my_use  ("sast")      ; set order to tag "ID"
 
 #xcommand O_TARIFA   => select (F_TARIFA)  ;  use_sql_tarifa()    ; set order to tag "ID"

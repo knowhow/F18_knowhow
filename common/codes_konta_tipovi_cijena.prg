@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * ERP software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,142 +12,143 @@
 
 #include "fmk.ch"
 
-// ------------------------------ 
-// ------------------------------ 
-function P_KonCij(CId,dx,dy)
-local nTArea
-private ImeKol
-private Kol
+FUNCTION P_KonCij( CId, dx, dy )
 
-ImeKol := {}
-Kol := {}
+   LOCAL nTArea
+   PRIVATE ImeKol
+   PRIVATE Kol
 
-nTArea := SELECT()
-O_KONCIJ
+   ImeKol := {}
+   Kol := {}
+
+   nTArea := Select()
 
 
-AADD(ImeKol, { "ID", {|| id}, "id", {|| .t.}, {|| vpsifra(wId)} })
-AADD(ImeKol, { PADC("Shema",5), {|| PADC(shema,5)}, "shema"})
-AADD(ImeKol, { "Tip", {|| naz}, "naz"})
-AADD(ImeKol, { "PM", {|| idprodmjes}, "idprodmjes"})
+   O_KONCIJ
 
-IF KONCIJ->(FIELDPOS("IDRJ")<>0)
-  AADD (ImeKol,{ "RJ"     , {|| idrj }, "IDRJ" , {|| .t.}, {|| .t.} })
-  AADD (ImeKol,{ "Sint.RJ", {|| sidrj}, "SIDRJ", {|| .t.}, {|| .t.} })
-  AADD (ImeKol,{ "Banka"  , {|| banka}, "BANKA", {|| .t.}, {|| empty(wbanka) .or. P_Firma(@wbanka)} })
-ENDIF
+   AAdd( ImeKol, { "ID", {|| id }, "id", {|| .T. }, {|| vpsifra( wId ) } } )
+   AAdd( ImeKol, { PadC( "Shema", 5 ), {|| PadC( shema, 5 ) }, "shema" } )
+   AAdd( ImeKol, { "Tip", {|| naz }, "naz" } )
+   AAdd( ImeKol, { "PM", {|| idprodmjes }, "idprodmjes" } )
 
-IF KONCIJ->(FIELDPOS("M1")<>0)
-  AADD (ImeKol,{ "Marker"       , {|| m1  }, "m1"  , {|| .t.}, {|| .t.} })
-  AADD (ImeKol,{ "KALK14->FINxx", {|| fn14}, "fn14", {|| .t.}, {|| .t.} })
-ENDIF
+   IF KONCIJ->( FieldPos( "IDRJ" ) <> 0 )
+      AAdd ( ImeKol, { "RJ", {|| idrj }, "IDRJ", {|| .T. }, {|| .T. } } )
+      AAdd ( ImeKol, { "Sint.RJ", {|| sidrj }, "SIDRJ", {|| .T. }, {|| .T. } } )
+      AAdd ( ImeKol, { "Banka", {|| banka }, "BANKA", {|| .T. }, {|| Empty( wbanka ) .OR. P_Firma( @wbanka ) } } )
+   ENDIF
 
-if KONCIJ->(fieldpos("KK1"))<>0
-  AADD (ImeKol,{ padc("KK1",7 ), {|| KK1}, "KK1", {|| .t.}, {|| empty(wKK1) .or. P_Konto(@wKK1)} })
-  AADD (ImeKol,{ padc("KK2",7 ), {|| KK2}, "KK2", {|| .t.}, {|| empty(wKK2) .or. P_Konto(@wKK2)} })
-  AADD (ImeKol,{ padc("KK3",7 ), {|| KK3}, "KK3", {|| .t.}, {|| empty(wKK3) .or. P_Konto(@wKK3)} })
-  AADD (ImeKol,{ padc("KK4",7 ), {|| KK4}, "KK4", {|| .t.}, {|| empty(wKK4) .or. P_Konto(@wKK4)} })
-  AADD (ImeKol,{ padc("KK5",7 ), {|| KK5}, "KK5", {|| .t.}, {|| empty(wKK5) .or. P_Konto(@wKK5)} })
-  AADD (ImeKol,{ padc("KK6",7 ), {|| KK6}, "KK6", {|| .t.}, {|| empty(wKK6) .or. P_Konto(@wKK6)} })
-endif
+   IF KONCIJ->( FieldPos( "M1" ) <> 0 )
+      AAdd ( ImeKol, { "Marker", {|| m1  }, "m1", {|| .T. }, {|| .T. } } )
+      AAdd ( ImeKol, { "KALK14->FINxx", {|| fn14 }, "fn14", {|| .T. }, {|| .T. } } )
+   ENDIF
 
-if KONCIJ->(fieldpos("KP1"))<>0
-  AADD (ImeKol,{ padc("KP1",7 ), {|| KP1}, "KP1", {|| .t.}, {|| empty(wKP1) .or. P_Konto(@wKP1)} })
-  AADD (ImeKol,{ padc("KP2",7 ), {|| KP2}, "KP2", {|| .t.}, {|| empty(wKP2) .or. P_Konto(@wKP2)} })
-  AADD (ImeKol,{ padc("KP3",7 ), {|| KP3}, "KP3", {|| .t.}, {|| empty(wKP3) .or. P_Konto(@wKP3)} })
-  AADD (ImeKol,{ padc("KP4",7 ), {|| KP4}, "KP4", {|| .t.}, {|| empty(wKP4) .or. P_Konto(@wKP4)} })
-  AADD (ImeKol,{ padc("KP5",7 ), {|| KP5}, "KP5", {|| .t.}, {|| empty(wKP5) .or. P_Konto(@wKP5)} })
-endif
+   IF KONCIJ->( FieldPos( "KK1" ) ) <> 0
+      AAdd ( ImeKol, { PadC( "KK1", 7 ), {|| KK1 }, "KK1", {|| .T. }, {|| Empty( wKK1 ) .OR. P_Konto( @wKK1 ) } } )
+      AAdd ( ImeKol, { PadC( "KK2", 7 ), {|| KK2 }, "KK2", {|| .T. }, {|| Empty( wKK2 ) .OR. P_Konto( @wKK2 ) } } )
+      AAdd ( ImeKol, { PadC( "KK3", 7 ), {|| KK3 }, "KK3", {|| .T. }, {|| Empty( wKK3 ) .OR. P_Konto( @wKK3 ) } } )
+      AAdd ( ImeKol, { PadC( "KK4", 7 ), {|| KK4 }, "KK4", {|| .T. }, {|| Empty( wKK4 ) .OR. P_Konto( @wKK4 ) } } )
+      AAdd ( ImeKol, { PadC( "KK5", 7 ), {|| KK5 }, "KK5", {|| .T. }, {|| Empty( wKK5 ) .OR. P_Konto( @wKK5 ) } } )
+      AAdd ( ImeKol, { PadC( "KK6", 7 ), {|| KK6 }, "KK6", {|| .T. }, {|| Empty( wKK6 ) .OR. P_Konto( @wKK6 ) } } )
+   ENDIF
 
-if KONCIJ->(fieldpos("KO1"))<>0
-  AADD (ImeKol,{ padc("KO1",7 ), {|| KO1}, "KO1", {|| .t.}, {|| empty(wKO1) .or. P_Konto(@wKO1)} })
-  AADD (ImeKol,{ padc("KO2",7 ), {|| KO2}, "KO2", {|| .t.}, {|| empty(wKO2) .or. P_Konto(@wKO2)} })
-  AADD (ImeKol,{ padc("KO3",7 ), {|| KO3}, "KO3", {|| .t.}, {|| empty(wKO3) .or. P_Konto(@wKO3)} })
-  AADD (ImeKol,{ padc("KO4",7 ), {|| KO4}, "KO4", {|| .t.}, {|| empty(wKO4) .or. P_Konto(@wKO4)} })
-  AADD (ImeKol,{ padc("KO5",7 ), {|| KO5}, "KO5", {|| .t.}, {|| empty(wKO5) .or. P_Konto(@wKO5)} })
-endif
-if KONCIJ->(fieldpos("KUMTOPS"))<>0
-   AADD (ImeKol,{ "Kum.dir.TOPS-a", {|| KUMTOPS}, "KUMTOPS", {|| .t.}, {|| .t.} })
- AADD (ImeKol,{ "Sif.dir.TOPS-a", {|| SIFTOPS}, "SIFTOPS", {|| .t.}, {|| .t.} })
-endif
+   IF KONCIJ->( FieldPos( "KP1" ) ) <> 0
+      AAdd ( ImeKol, { PadC( "KP1", 7 ), {|| KP1 }, "KP1", {|| .T. }, {|| Empty( wKP1 ) .OR. P_Konto( @wKP1 ) } } )
+      AAdd ( ImeKol, { PadC( "KP2", 7 ), {|| KP2 }, "KP2", {|| .T. }, {|| Empty( wKP2 ) .OR. P_Konto( @wKP2 ) } } )
+      AAdd ( ImeKol, { PadC( "KP3", 7 ), {|| KP3 }, "KP3", {|| .T. }, {|| Empty( wKP3 ) .OR. P_Konto( @wKP3 ) } } )
+      AAdd ( ImeKol, { PadC( "KP4", 7 ), {|| KP4 }, "KP4", {|| .T. }, {|| Empty( wKP4 ) .OR. P_Konto( @wKP4 ) } } )
+      AAdd ( ImeKol, { PadC( "KP5", 7 ), {|| KP5 }, "KP5", {|| .T. }, {|| Empty( wKP5 ) .OR. P_Konto( @wKP5 ) } } )
+   ENDIF
 
-if KONCIJ->(fieldpos("REGION"))<>0
-  AADD (ImeKol,{ "Region", {|| Region}, "Region", {|| .t.}, {|| .t.} })
-endif
+   IF KONCIJ->( FieldPos( "KO1" ) ) <> 0
+      AAdd ( ImeKol, { PadC( "KO1", 7 ), {|| KO1 }, "KO1", {|| .T. }, {|| Empty( wKO1 ) .OR. P_Konto( @wKO1 ) } } )
+      AAdd ( ImeKol, { PadC( "KO2", 7 ), {|| KO2 }, "KO2", {|| .T. }, {|| Empty( wKO2 ) .OR. P_Konto( @wKO2 ) } } )
+      AAdd ( ImeKol, { PadC( "KO3", 7 ), {|| KO3 }, "KO3", {|| .T. }, {|| Empty( wKO3 ) .OR. P_Konto( @wKO3 ) } } )
+      AAdd ( ImeKol, { PadC( "KO4", 7 ), {|| KO4 }, "KO4", {|| .T. }, {|| Empty( wKO4 ) .OR. P_Konto( @wKO4 ) } } )
+      AAdd ( ImeKol, { PadC( "KO5", 7 ), {|| KO5 }, "KO5", {|| .T. }, {|| Empty( wKO5 ) .OR. P_Konto( @wKO5 ) } } )
+   ENDIF
+   IF KONCIJ->( FieldPos( "KUMTOPS" ) ) <> 0
+      AAdd ( ImeKol, { "Kum.dir.TOPS-a", {|| KUMTOPS }, "KUMTOPS", {|| .T. }, {|| .T. } } )
+      AAdd ( ImeKol, { "Sif.dir.TOPS-a", {|| SIFTOPS }, "SIFTOPS", {|| .T. }, {|| .T. } } )
+   ENDIF
 
-if KONCIJ->(fieldpos("SUFIKS"))<>0
-  AADD (ImeKol,{ "Sufiks BrKalk", {|| sufiks}, "sufiks", {|| .t.}, {|| .t.} })
-endif
+   IF KONCIJ->( FieldPos( "REGION" ) ) <> 0
+      AAdd ( ImeKol, { "Region", {|| Region }, "Region", {|| .T. }, {|| .T. } } )
+   ENDIF
 
-for i:=1 to LEN(ImeKol)
-	AADD(Kol, i)
-next
+   IF KONCIJ->( FieldPos( "SUFIKS" ) ) <> 0
+      AAdd ( ImeKol, { "Sufiks BrKalk", {|| sufiks }, "sufiks", {|| .T. }, {|| .T. } } )
+   ENDIF
 
-select (nTArea)
-return PostojiSifra(F_KONCIJ,1,10,60,"Lista: Konta - tipovi cijena",@cId,dx,dy)
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
 
+   SELECT ( nTArea )
 
-function P_KonCij2(CId,dx,dy)
-local nTArea
-private ImeKol
-private Kol
-
-ImeKol := {}
-Kol := {}
-
-nTArea := SELECT()
-O_KONCIJ
-
-AADD(ImeKol, { "ID", {|| id}, "id", {|| .t.}, {|| vpsifra(wId)} })
-AADD(ImeKol, { PADC("Shema",5), {|| PADC(shema,5)}, "shema"})
-AADD(ImeKol, { "Tip", {|| naz}, "naz"})
-AADD(ImeKol, { "PM", {|| idprodmjes}, "idprodmjes"})
-
-if KONCIJ->(fieldpos("KPD"))<>0
-  AADD (ImeKol,{ padc("KP6",7 ), {|| KP6}, "KP6", {|| .t.}, {|| empty(wKP6) .or. P_Konto(@wKP6)} })
-  AADD (ImeKol,{ padc("KP7",7 ), {|| KP7}, "KP7", {|| .t.}, {|| empty(wKP7) .or. P_Konto(@wKP7)} })
-  AADD (ImeKol,{ padc("KP8",7 ), {|| KP8}, "KP8", {|| .t.}, {|| empty(wKP8) .or. P_Konto(@wKP8)} })
-  AADD (ImeKol,{ padc("KP9",7 ), {|| KP9}, "KP9", {|| .t.}, {|| empty(wKP9) .or. P_Konto(@wKP9)} })
-  AADD (ImeKol,{ padc("KPA",7 ), {|| KPA}, "KPA", {|| .t.}, {|| empty(wKPA) .or. P_Konto(@wKPA)} })
-  AADD (ImeKol,{ padc("KPB",7 ), {|| KPB}, "KPB", {|| .t.}, {|| empty(wKPB) .or. P_Konto(@wKPB)} })
-  AADD (ImeKol,{ padc("KPC",7 ), {|| KPC}, "KPC", {|| .t.}, {|| empty(wKPC) .or. P_Konto(@wKPC)} })
-  AADD (ImeKol,{ padc("KPD",7 ), {|| KPD}, "KPD", {|| .t.}, {|| empty(wKPD) .or. P_Konto(@wKPD)} })
-endif
-
-if KONCIJ->(fieldpos("KPK"))<>0
-  AADD (ImeKol,{ padc("KPF",7 ), {|| KOF}, "KPF", {|| .t.}, {|| empty(wKPF) .or. P_Konto(@wKPF)} })
-  AADD (ImeKol,{ padc("KPG",7 ), {|| KOG}, "KPG", {|| .t.}, {|| empty(wKPG) .or. P_Konto(@wKPG)} })
-  AADD (ImeKol,{ padc("KPH",7 ), {|| KOH}, "KPH", {|| .t.}, {|| empty(wKPH) .or. P_Konto(@wKPH)} })
-  AADD (ImeKol,{ padc("KPI",7 ), {|| KOI}, "KPI", {|| .t.}, {|| empty(wKPI) .or. P_Konto(@wKPI)} })
-  AADD (ImeKol,{ padc("KPJ",7 ), {|| KOJ}, "KPJ", {|| .t.}, {|| empty(wKPJ) .or. P_Konto(@wKPJ)} })
-  AADD (ImeKol,{ padc("KPK",7 ), {|| KOK}, "KPK", {|| .t.}, {|| empty(wKPK) .or. P_Konto(@wKPK)} })
-endif
-
-if KONCIJ->(fieldpos("KOD"))<>0
-  AADD (ImeKol,{ padc("KO6",7 ), {|| KO6}, "KO6", {|| .t.}, {|| empty(wKO6) .or. P_Konto(@wKO6)} })
-  AADD (ImeKol,{ padc("KO7",7 ), {|| KO7}, "KO7", {|| .t.}, {|| empty(wKO7) .or. P_Konto(@wKO7)} })
-  AADD (ImeKol,{ padc("KO8",7 ), {|| KO8}, "KO8", {|| .t.}, {|| empty(wKO8) .or. P_Konto(@wKO8)} })
-  AADD (ImeKol,{ padc("KO9",7 ), {|| KO9}, "KO9", {|| .t.}, {|| empty(wKO9) .or. P_Konto(@wKO9)} })
-  AADD (ImeKol,{ padc("KOA",7 ), {|| KOA}, "KOA", {|| .t.}, {|| empty(wKOA) .or. P_Konto(@wKOA)} })
-  AADD (ImeKol,{ padc("KOB",7 ), {|| KOB}, "KOB", {|| .t.}, {|| empty(wKOB) .or. P_Konto(@wKOB)} })
-  AADD (ImeKol,{ padc("KOC",7 ), {|| KOC}, "KOC", {|| .t.}, {|| empty(wKOC) .or. P_Konto(@wKOC)} })
-  AADD (ImeKol,{ padc("KOD",7 ), {|| KOD}, "KOD", {|| .t.}, {|| empty(wKOD) .or. P_Konto(@wKOD)} })
-endif
-
-if KONCIJ->(fieldpos("KOK"))<>0
-  AADD (ImeKol,{ padc("KOF",7 ), {|| KOF}, "KOF", {|| .t.}, {|| empty(wKOF) .or. P_Konto(@wKOF)} })
-  AADD (ImeKol,{ padc("KOG",7 ), {|| KOG}, "KOG", {|| .t.}, {|| empty(wKOG) .or. P_Konto(@wKOG)} })
-  AADD (ImeKol,{ padc("KOH",7 ), {|| KOH}, "KOH", {|| .t.}, {|| empty(wKOH) .or. P_Konto(@wKOH)} })
-  AADD (ImeKol,{ padc("KOI",7 ), {|| KOI}, "KOI", {|| .t.}, {|| empty(wKOI) .or. P_Konto(@wKOI)} })
-  AADD (ImeKol,{ padc("KOJ",7 ), {|| KOJ}, "KOJ", {|| .t.}, {|| empty(wKOJ) .or. P_Konto(@wKOJ)} })
-  AADD (ImeKol,{ padc("KOK",7 ), {|| KOK}, "KOK", {|| .t.}, {|| empty(wKOK) .or. P_Konto(@wKOK)} })
-endif
-
-for i:=1 to LEN(ImeKol)
-	AADD(Kol, i)
-next
-
-select (nTArea)
-return PostojiSifra(F_KONCIJ,1,10,60,"Lista: Konta / Atributi / 2 ",@cId,dx,dy)
+   RETURN PostojiSifra( F_KONCIJ, 1, 10, 60, "Lista: Konta - tipovi cijena", @cId, dx, dy )
 
 
+FUNCTION P_KonCij2( CId, dx, dy )
+
+   LOCAL nTArea
+   PRIVATE ImeKol
+   PRIVATE Kol
+
+   ImeKol := {}
+   Kol := {}
+
+   nTArea := Select()
+   O_KONCIJ
+
+   AAdd( ImeKol, { "ID", {|| id }, "id", {|| .T. }, {|| vpsifra( wId ) } } )
+   AAdd( ImeKol, { PadC( "Shema", 5 ), {|| PadC( shema, 5 ) }, "shema" } )
+   AAdd( ImeKol, { "Tip", {|| naz }, "naz" } )
+   AAdd( ImeKol, { "PM", {|| idprodmjes }, "idprodmjes" } )
+
+   IF KONCIJ->( FieldPos( "KPD" ) ) <> 0
+      AAdd ( ImeKol, { PadC( "KP6", 7 ), {|| KP6 }, "KP6", {|| .T. }, {|| Empty( wKP6 ) .OR. P_Konto( @wKP6 ) } } )
+      AAdd ( ImeKol, { PadC( "KP7", 7 ), {|| KP7 }, "KP7", {|| .T. }, {|| Empty( wKP7 ) .OR. P_Konto( @wKP7 ) } } )
+      AAdd ( ImeKol, { PadC( "KP8", 7 ), {|| KP8 }, "KP8", {|| .T. }, {|| Empty( wKP8 ) .OR. P_Konto( @wKP8 ) } } )
+      AAdd ( ImeKol, { PadC( "KP9", 7 ), {|| KP9 }, "KP9", {|| .T. }, {|| Empty( wKP9 ) .OR. P_Konto( @wKP9 ) } } )
+      AAdd ( ImeKol, { PadC( "KPA", 7 ), {|| KPA }, "KPA", {|| .T. }, {|| Empty( wKPA ) .OR. P_Konto( @wKPA ) } } )
+      AAdd ( ImeKol, { PadC( "KPB", 7 ), {|| KPB }, "KPB", {|| .T. }, {|| Empty( wKPB ) .OR. P_Konto( @wKPB ) } } )
+      AAdd ( ImeKol, { PadC( "KPC", 7 ), {|| KPC }, "KPC", {|| .T. }, {|| Empty( wKPC ) .OR. P_Konto( @wKPC ) } } )
+      AAdd ( ImeKol, { PadC( "KPD", 7 ), {|| KPD }, "KPD", {|| .T. }, {|| Empty( wKPD ) .OR. P_Konto( @wKPD ) } } )
+   ENDIF
+
+   IF KONCIJ->( FieldPos( "KPK" ) ) <> 0
+      AAdd ( ImeKol, { PadC( "KPF", 7 ), {|| KOF }, "KPF", {|| .T. }, {|| Empty( wKPF ) .OR. P_Konto( @wKPF ) } } )
+      AAdd ( ImeKol, { PadC( "KPG", 7 ), {|| KOG }, "KPG", {|| .T. }, {|| Empty( wKPG ) .OR. P_Konto( @wKPG ) } } )
+      AAdd ( ImeKol, { PadC( "KPH", 7 ), {|| KOH }, "KPH", {|| .T. }, {|| Empty( wKPH ) .OR. P_Konto( @wKPH ) } } )
+      AAdd ( ImeKol, { PadC( "KPI", 7 ), {|| KOI }, "KPI", {|| .T. }, {|| Empty( wKPI ) .OR. P_Konto( @wKPI ) } } )
+      AAdd ( ImeKol, { PadC( "KPJ", 7 ), {|| KOJ }, "KPJ", {|| .T. }, {|| Empty( wKPJ ) .OR. P_Konto( @wKPJ ) } } )
+      AAdd ( ImeKol, { PadC( "KPK", 7 ), {|| KOK }, "KPK", {|| .T. }, {|| Empty( wKPK ) .OR. P_Konto( @wKPK ) } } )
+   ENDIF
+
+   IF KONCIJ->( FieldPos( "KOD" ) ) <> 0
+      AAdd ( ImeKol, { PadC( "KO6", 7 ), {|| KO6 }, "KO6", {|| .T. }, {|| Empty( wKO6 ) .OR. P_Konto( @wKO6 ) } } )
+      AAdd ( ImeKol, { PadC( "KO7", 7 ), {|| KO7 }, "KO7", {|| .T. }, {|| Empty( wKO7 ) .OR. P_Konto( @wKO7 ) } } )
+      AAdd ( ImeKol, { PadC( "KO8", 7 ), {|| KO8 }, "KO8", {|| .T. }, {|| Empty( wKO8 ) .OR. P_Konto( @wKO8 ) } } )
+      AAdd ( ImeKol, { PadC( "KO9", 7 ), {|| KO9 }, "KO9", {|| .T. }, {|| Empty( wKO9 ) .OR. P_Konto( @wKO9 ) } } )
+      AAdd ( ImeKol, { PadC( "KOA", 7 ), {|| KOA }, "KOA", {|| .T. }, {|| Empty( wKOA ) .OR. P_Konto( @wKOA ) } } )
+      AAdd ( ImeKol, { PadC( "KOB", 7 ), {|| KOB }, "KOB", {|| .T. }, {|| Empty( wKOB ) .OR. P_Konto( @wKOB ) } } )
+      AAdd ( ImeKol, { PadC( "KOC", 7 ), {|| KOC }, "KOC", {|| .T. }, {|| Empty( wKOC ) .OR. P_Konto( @wKOC ) } } )
+      AAdd ( ImeKol, { PadC( "KOD", 7 ), {|| KOD }, "KOD", {|| .T. }, {|| Empty( wKOD ) .OR. P_Konto( @wKOD ) } } )
+   ENDIF
+
+   IF KONCIJ->( FieldPos( "KOK" ) ) <> 0
+      AAdd ( ImeKol, { PadC( "KOF", 7 ), {|| KOF }, "KOF", {|| .T. }, {|| Empty( wKOF ) .OR. P_Konto( @wKOF ) } } )
+      AAdd ( ImeKol, { PadC( "KOG", 7 ), {|| KOG }, "KOG", {|| .T. }, {|| Empty( wKOG ) .OR. P_Konto( @wKOG ) } } )
+      AAdd ( ImeKol, { PadC( "KOH", 7 ), {|| KOH }, "KOH", {|| .T. }, {|| Empty( wKOH ) .OR. P_Konto( @wKOH ) } } )
+      AAdd ( ImeKol, { PadC( "KOI", 7 ), {|| KOI }, "KOI", {|| .T. }, {|| Empty( wKOI ) .OR. P_Konto( @wKOI ) } } )
+      AAdd ( ImeKol, { PadC( "KOJ", 7 ), {|| KOJ }, "KOJ", {|| .T. }, {|| Empty( wKOJ ) .OR. P_Konto( @wKOJ ) } } )
+      AAdd ( ImeKol, { PadC( "KOK", 7 ), {|| KOK }, "KOK", {|| .T. }, {|| Empty( wKOK ) .OR. P_Konto( @wKOK ) } } )
+   ENDIF
+
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
+
+   SELECT ( nTArea )
+
+   RETURN PostojiSifra( F_KONCIJ, 1, 10, 60, "Lista: Konta / Atributi / 2 ", @cId, dx, dy )

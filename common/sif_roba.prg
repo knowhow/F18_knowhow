@@ -15,9 +15,8 @@
 
 FUNCTION P_Roba( cId, dx, dy, cSeek )
 
-   LOCAL cRet
+   LOCAL lRet
    LOCAL bRoba
-   LOCAL nTArea
    LOCAL lArtGroup := .F.
    LOCAL _naz_len := 40
    PRIVATE ImeKol
@@ -28,17 +27,11 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
       cSeek := ""
    ENDIF
 
-   PushWa()
    ImeKol := {}
 
-   nTArea := Select()
+   PushWa()
 
-   IF !Used()
-      O_ROBA
-   ELSE
-      SET ORDER TO TAG "ID"
-   ENDIF
-
+   O_ROBA_NOT_USED
 
    AAdd( ImeKol, { PadC( "ID", 10 ),  {|| id }, "id", {|| .T. }, {|| vpsifra( wId ) } } )
 
@@ -48,12 +41,7 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
       AAdd( ImeKol, { PadC( "S.dobav.", 13 ), {|| PadR( sifraDob, 13 ) }, "sifradob"   } )
    ENDIF
 
-   // naziv
-   IF glProvNazRobe
-      AAdd( ImeKol, { PadC( "Naziv", _naz_len ), {|| Left( naz, _naz_len ) }, "naz", {|| .T. }, {|| VpNaziv( wNaz ) } } )
-   ELSE
-      AAdd( ImeKol, { PadC( "Naziv", _naz_len ), {|| Left( naz, _naz_len ) }, "naz", {|| .T. }, {|| .T. } } )
-   ENDIF
+   AAdd( ImeKol, { PadC( "Naziv", _naz_len ), {|| Left( naz, _naz_len ) }, "naz", {|| .T. }, {|| .T. } } )
 
    // jedinica mjere
    AAdd( ImeKol, { PadC( "JMJ", 3 ), {|| jmj },       "jmj"    } )
@@ -107,12 +95,7 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
    AAdd( ImeKol, { "Tarifa", {|| IdTarifa }, "IdTarifa", {|| .T. }, {|| P_Tarifa( @wIdTarifa ), roba_opis_edit()  }   } )
    AAdd( ImeKol, { "Tip", {|| " " + Tip + " " }, "Tip", {|| .T. }, {|| wTip $ " TUCKVPSXY" },NIL, NIL, NIL, NIL, 27 } )
 
-   // BARKOD
-   IF glAutoFillBK
-      AAdd ( ImeKol, { PadC( "BARKOD", 14 ), {|| BARKOD }, "BarKod", {|| WhenBK() }, {|| DodajBK( @wBarkod ) }  } )
-   ELSE
-      AAdd ( ImeKol, { PadC( "BARKOD", 14 ), {|| BARKOD }, "BarKod", {|| .T. }, {|| DodajBK( @wBarkod ), vpsifra( wbarkod, "BARKOD" ) }  } )
-   ENDIF
+   AAdd ( ImeKol, { PadC( "BARKOD", 14 ), {|| BARKOD }, "BarKod", {|| .T. }, {|| DodajBK( @wBarkod ), vpsifra( wbarkod, "BARKOD" ) }  } )
 
    AAdd ( ImeKol, { PadC( "MINK", 10 ), {|| Transform( MINK, "999999.99" ) }, "MINK"   } )
 
@@ -160,10 +143,8 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
       AAdd( Kol, i )
    NEXT
 
-
+   SELECT ROBA
    sif_sifk_fill_kol( "ROBA", @ImeKol, @Kol )
-
-   SELECT ( nTArea )
 
    bRoba := gRobaBlock
 
@@ -173,11 +154,11 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
       cPomTag := "ID"
    ENDIF
 
-   cRet := PostojiSifra( F_ROBA, ( cPomTag ), 15, MAXCOLS() - 5, "Lista artikala - robe", @cId, dx, dy, bRoba,,,,, { "ID" } )
+   lRet := PostojiSifra( F_ROBA, ( cPomTag ), 15, MAXCOLS() - 5, "Lista artikala - robe", @cId, dx, dy, bRoba,,,,, { "ID" } )
 
    PopWa()
 
-   RETURN cRet
+   RETURN lRet
 
 
 // ---------------------------------------------------
@@ -324,9 +305,6 @@ FUNCTION RobaZastCijena( cIdTarifa )
    RETURN lZasticena
 
 
-
-// ---------------------------------------------------
-// ---------------------------------------------------
 FUNCTION OFmkRoba()
 
    O_SIFK
@@ -357,7 +335,7 @@ FUNCTION sifre_artikli_provjera_mp_cijena()
       O_ROBA
    ENDIF
 
-   MsgO( "Provjera sifrarnika artikala u toku ..." )
+   MsgO( "Provjera šifarnika artikala u toku ..." )
    GO TOP
    DO WHILE !Eof()
 
@@ -720,22 +698,13 @@ STATIC FUNCTION _get_params( params )
 
    @ m_x + _x, m_y + 2 SAY "VPC -> MPC..."
 
-   ++ _x
-   ++ _x
-
+   _x += 2
    @ m_x + _x, m_y + 2 SAY "Setovati MPC (1/2/.../9)" GET _mpc_no VALID _mpc_no >= 1 .AND. _mpc_no < 10 PICT "9"
-
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Zaokruženje 0.5pf (D/N) ?" GET _zaok_5pf VALID _zaok_5pf $ "DN" PICT "@!"
-
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Setovati samo gdje je MPC = 0 (D/N) ?" GET _mpc_nula VALID _mpc_nula $ "DN" PICT "@!"
-
-   ++ _x
-   ++ _x
-
+   _x += 2
    @ m_x + _x, m_y + 2 SAY "Filter po polju ID:" GET _filter_id PICT "@S40"
 
    READ

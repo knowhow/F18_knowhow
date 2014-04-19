@@ -1,10 +1,10 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,545 +13,543 @@
 #include "fakt.ch"
 
 
-
 // -----------------------------------------------------
 // poredjenje fakt -> kalk
 // -----------------------------------------------------
-function uporedna_lista_fakt_kalk(lFaktFakt)
-local cIdFirma,qqRoba,nRezerv,nRevers
-local nul,nizl,nRbr,cRR,nCol1:=0
-local m:=""
-local cDirFakt, cDirKalk
-local cViseKonta
-private dDatOd, dDatDo
-private gDirKalk := ""
-private cOpis1:=PADR("F A K T",12)
-private cOpis2:="FAKT 2.FIRMA"
+FUNCTION uporedna_lista_fakt_kalk( lFaktFakt )
 
-if lFaktFakt==nil
-	lFaktFakt:=.f.
-endif
+   LOCAL cIdFirma, qqRoba, nRezerv, nRevers
+   LOCAL nul, nizl, nRbr, cRR, nCol1 := 0
+   LOCAL m := ""
+   LOCAL cDirFakt, cDirKalk
+   LOCAL cViseKonta
+   PRIVATE dDatOd, dDatDo
+   PRIVATE gDirKalk := ""
+   PRIVATE cOpis1 := PadR( "F A K T", 12 )
+   PRIVATE cOpis2 := "FAKT 2.FIRMA"
 
-O_FAKT_DOKS
-O_KALK
-O_KONTO
-O_TARIFA
-O_SIFK
-O_SIFV
-O_ROBA
-O_RJ
-O_FAKT
+   IF lFaktFakt == nil
+      lFaktFakt := .F.
+   ENDIF
 
-select fakt
-set order to tag "3"
-// idroba
+   O_FAKT_DOKS
+   O_KALK
+   O_KONTO
+   O_TARIFA
+   O_SIFK
+   O_SIFV
+   O_ROBA
+   O_RJ
+   O_FAKT
 
-cKalkFirma := gFirma
-cIdfirma := gFirma
-qqRoba:=""
-dDatOd:=ctod("")
-dDatDo:=date()
-cRazlKol := "D"
-cRazlVr  := "D"
-cMP := "M"
-cIdKonto := PADR( "1320", 7 )
-qqKonto := cIdKonto
+   SELECT fakt
+   SET ORDER TO TAG "3"
+   // idroba
 
-cViseKonta := ""
-lViseKonta := .f.
+   cKalkFirma := gFirma
+   cIdfirma := gFirma
+   qqRoba := ""
+   dDatOd := CToD( "" )
+   dDatDo := Date()
+   cRazlKol := "D"
+   cRazlVr  := "D"
+   cMP := "M"
+   cIdKonto := PadR( "1320", 7 )
+   qqKonto := cIdKonto
 
-qqPartn := space(20)
-private qqTipdok:="  "
+   cViseKonta := ""
+   lViseKonta := .F.
 
-Box(,16,66)
+   qqPartn := Space( 20 )
+   PRIVATE qqTipdok := "  "
 
-cIdFirma := fetch_metric("fakt_uporedna_lista_id_firma", my_user(), cIdFirma )
-qqRoba := fetch_metric( "fakt_uporedna_lista_roba", my_user(), qqRoba )
-dDatOd := fetch_metric( "fakt_uporedna_lista_datum_od", my_user(), dDatOd )
-dDatDo := fetch_metric( "fakt_uporedna_lista_datum_do", my_user(), dDatDo )
-cRazlKol := fetch_metric( "fakt_uporedna_lista_razlika_kolicina", my_user(), cRazlKol )
-cRazlVr := fetch_metric( "fakt_uporedna_lista_razlika_vrijednosti", my_user(), cRazlVr )
-cMp := fetch_metric( "fakt_uporedna_lista_mp", my_user(), cMP )
-qqKonto := fetch_metric( "fakt_uporedna_lista_konta", my_user(), qqKonto )
-cKalk_firma := fetch_metric( "fakt_uporedna_lista_kalk_id_firma", my_user(), cKalkFirma )
-cOpis1 := fetch_metric( "fakt_uporedna_lista_opis_1", my_user(), cOpis1 )
-cOpis2 := fetch_metric( "fakt_uporedna_lista_opis_2", my_user(), cOpis2 )
-cIdKonto := fetch_metric( "fakt_uporedna_lista_konto", my_user(), cIdKonto )
+   Box(, 16, 66 )
 
-cIdKonto := qqKonto
+   cIdFirma := fetch_metric( "fakt_uporedna_lista_id_firma", my_user(), cIdFirma )
+   qqRoba := fetch_metric( "fakt_uporedna_lista_roba", my_user(), qqRoba )
+   dDatOd := fetch_metric( "fakt_uporedna_lista_datum_od", my_user(), dDatOd )
+   dDatDo := fetch_metric( "fakt_uporedna_lista_datum_do", my_user(), dDatDo )
+   cRazlKol := fetch_metric( "fakt_uporedna_lista_razlika_kolicina", my_user(), cRazlKol )
+   cRazlVr := fetch_metric( "fakt_uporedna_lista_razlika_vrijednosti", my_user(), cRazlVr )
+   cMp := fetch_metric( "fakt_uporedna_lista_mp", my_user(), cMP )
+   qqKonto := fetch_metric( "fakt_uporedna_lista_konta", my_user(), qqKonto )
+   cKalk_firma := fetch_metric( "fakt_uporedna_lista_kalk_id_firma", my_user(), cKalkFirma )
+   cOpis1 := fetch_metric( "fakt_uporedna_lista_opis_1", my_user(), cOpis1 )
+   cOpis2 := fetch_metric( "fakt_uporedna_lista_opis_2", my_user(), cOpis2 )
+   cIdKonto := fetch_metric( "fakt_uporedna_lista_konto", my_user(), cIdKonto )
 
-if lFaktFakt
-    if Pitanje(,"Podesiti direktorij FAKT-a druge firme? (D/N)","N")=='D'
-        Box(,6,70)
-            @ m_x+1, m_y+2 SAY "Kum.dir.drugog FAKT-a:" GET cF2F  PICT "@!"
-            @ m_x+2, m_y+2 SAY "Sif.dir.drugog FAKT-a:" GET cF2FS PICT "@!"
-            @ m_x+3, m_y+2 SAY "Zaglavlje stanja u FAKT:" GET cOpis1 PICT "@!"
-            @ m_x+4, m_y+2 SAY "Zaglav.st.FAKT 2.firme :" GET cOpis2 PICT "@!"
-            READ
-        BoxC()
-    endif
-endif
+   cIdKonto := qqKonto
 
-qqRoba:=padr(qqRoba,60)
-qqKonto:=padr(qqKonto,IF(lViseKonta,60,7))
-qqPartn:=padr(qqPartn,20)
-qqTipDok:=padr(qqTipDok,2)
+   IF lFaktFakt
+      IF Pitanje(, "Podesiti direktorij FAKT-a druge firme? (D/N)", "N" ) == 'D'
+         Box(, 6, 70 )
+         @ m_x + 1, m_y + 2 SAY "Kum.dir.drugog FAKT-a:" GET cF2F  PICT "@!"
+         @ m_x + 2, m_y + 2 SAY "Sif.dir.drugog FAKT-a:" GET cF2FS PICT "@!"
+         @ m_x + 3, m_y + 2 SAY "Zaglavlje stanja u FAKT:" GET cOpis1 PICT "@!"
+         @ m_x + 4, m_y + 2 SAY "Zaglav.st.FAKT 2.firme :" GET cOpis2 PICT "@!"
+         READ
+         BoxC()
+      ENDIF
+   ENDIF
 
-cRR:="N"
+   qqRoba := PadR( qqRoba, 60 )
+   qqKonto := PadR( qqKonto, IF( lViseKonta, 60, 7 ) )
+   qqPartn := PadR( qqPartn, 20 )
+   qqTipDok := PadR( qqTipDok, 2 )
 
-private cTipVPC:="1"
+   cRR := "N"
 
-cK1:=cK2:=space(4)
+   PRIVATE cTipVPC := "1"
 
-do while .t.
-    
-	cIdFirma := LEFT( cIdFirma, 2 )
-    
-	if lFaktFakt
-        @ m_x+1,m_y+2 SAY "RJ" GET cIdFirma VALID {|| cIdFirma == gFirma .or. P_RJ( @cIdFirma ), cIdFirma := LEFT( cIdFirma, 2 ), .t.  }
-        @ m_x+3,m_y+2 SAY "RJ u FAKT druge firme"  GET cKalkFirma pict "@!S40"
-        @ m_x+4,m_y+2 SAY "Roba   "  GET qqRoba   pict "@!S40"
-        @ m_x+5,m_y+2 SAY "Od datuma"  get dDatOd
-        @ m_x+5,col()+1 SAY "do datuma"  get dDatDo
-        cRazlKol:="D"
-        cRazlVr:="N"
-    else
-        
-		@ m_x+1,m_y+2 SAY "RJ" GET cIdFirma VALID {|| cIdfirma == gFirma .or. P_RJ(@cIdFirma), cIdFirma := LEFT( cIdFirma, 2), .t. }
-        
-		if lViseKonta
-            @ m_x+2,m_y+2 SAY "Konto u KALK"  GET qqKonto ;
-                        WHEN  {|| qqKonto:=Iif (!Empty(cIdKonto),cIdKonto+" ;",qqKonto), .T.} PICT "@!S20"
-        else
-            @ m_x+2,m_y+2 SAY "Konto u KALK"  GET qqKonto ;
-                        WHEN  {|| qqKonto:=Iif (!Empty(cIdKonto),cIdKonto,qqKonto), .T.} ;
-                        VALID P_Konto (@qqKonto)
-        endif
-        @ m_x+3,m_y+2 SAY "Oznaka firme u KALK"  GET cKalkFirma pict "@!S40"
-        @ m_x+4,m_y+2 SAY "Roba   "  GET qqRoba   pict "@!S40"
-        @ m_x+5,m_y+2 SAY "Od datuma"  get dDatOd
-        @ m_x+5,col()+1 SAY "do datuma"  get dDatDo
-        @ m_x+6,m_y+2 SAY "Prikazi ako se razlikuju kolicine (D/N)" GET cRazlKol pict "@!" VALID cRazlKol $ "DN"
-        @ m_x+7,m_y+2 SAY "Prikazi ako se razlikuju vrijednosti (D/N)" GET cRazlVr pict "@!" VALID cRazlVr $ "DN"
-        
-        if gVarC $ "12"
-            @ m_x+9,m_y+2 SAY "Stanje u FAKT prikazati sa Cijenom 1/2 (1/2) "  get cTipVpc pict "@!" valid cTipVPC $ "12"
-        endif
+   cK1 := cK2 := Space( 4 )
 
-        @ m_x+10,m_y+2 SAY "K1" GET  cK1 pict "@!"
-        @ m_x+10,col()+1 SAY "K2" GET  cK2 pict "@!"
+   DO WHILE .T.
 
-	endif
+      cIdFirma := Left( cIdFirma, 2 )
 
-  	read
+      IF lFaktFakt
+         @ m_x + 1, m_y + 2 SAY "RJ" GET cIdFirma VALID {|| cIdFirma == gFirma .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T.  }
+         @ m_x + 3, m_y + 2 SAY "RJ u FAKT druge firme"  GET cKalkFirma PICT "@!S40"
+         @ m_x + 4, m_y + 2 SAY "Roba   "  GET qqRoba   PICT "@!S40"
+         @ m_x + 5, m_y + 2 SAY "Od datuma"  GET dDatOd
+         @ m_x + 5, Col() + 1 SAY "do datuma"  GET dDatDo
+         cRazlKol := "D"
+         cRazlVr := "N"
+      ELSE
 
-  	ESC_BCR
+         @ m_x + 1, m_y + 2 SAY "RJ" GET cIdFirma VALID {|| cIdfirma == gFirma .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
 
-  	aUsl1:=Parsiraj(qqRoba,"IdRoba")
+         IF lViseKonta
+            @ m_x + 2, m_y + 2 SAY "Konto u KALK"  GET qqKonto ;
+               WHEN  {|| qqKonto := iif ( !Empty( cIdKonto ), cIdKonto + " ;", qqKonto ), .T. } PICT "@!S20"
+         ELSE
+            @ m_x + 2, m_y + 2 SAY "Konto u KALK"  GET qqKonto ;
+               WHEN  {|| qqKonto := iif ( !Empty( cIdKonto ), cIdKonto, qqKonto ), .T. } ;
+               VALID P_Konto ( @qqKonto )
+         ENDIF
+         @ m_x + 3, m_y + 2 SAY "Oznaka firme u KALK"  GET cKalkFirma PICT "@!S40"
+         @ m_x + 4, m_y + 2 SAY "Roba   "  GET qqRoba   PICT "@!S40"
+         @ m_x + 5, m_y + 2 SAY "Od datuma"  GET dDatOd
+         @ m_x + 5, Col() + 1 SAY "do datuma"  GET dDatDo
+         @ m_x + 6, m_y + 2 SAY "Prikazi ako se razlikuju kolicine (D/N)" GET cRazlKol PICT "@!" VALID cRazlKol $ "DN"
+         @ m_x + 7, m_y + 2 SAY "Prikazi ako se razlikuju vrijednosti (D/N)" GET cRazlVr PICT "@!" VALID cRazlVr $ "DN"
 
- 	if lViseKonta
-    	aUsl2:=Parsiraj(qqKonto,"MKONTO")
-    	if aUsl1<>nil .and. (lFaktFakt .or. aUsl2<>nil)
-			exit
-		endif
-	else
-    	if aUsl1<>nil
-    		exit
-    	endif
-  	endif
-enddo
+         IF gVarC $ "12"
+            @ m_x + 9, m_y + 2 SAY "Stanje u FAKT prikazati sa Cijenom 1/2 (1/2) "  GET cTipVpc PICT "@!" VALID cTipVPC $ "12"
+         ENDIF
 
-cSintetika := "N"
+         @ m_x + 10, m_y + 2 SAY "K1" GET  cK1 PICT "@!"
+         @ m_x + 10, Col() + 1 SAY "K2" GET  cK2 PICT "@!"
 
-qqRoba := TRIM( qqRoba )
+      ENDIF
 
-// snimi parametre u sql/db
-set_metric("fakt_uporedna_lista_id_firma", my_user(), cIdFirma )
-set_metric( "fakt_uporedna_lista_roba", my_user(), qqRoba )
-set_metric( "fakt_uporedna_lista_datum_od", my_user(), dDatOd )
-set_metric( "fakt_uporedna_lista_datum_do", my_user(), dDatDo )
-set_metric( "fakt_uporedna_lista_razlika_kolicina", my_user(), cRazlKol )
-set_metric( "fakt_uporedna_lista_razlika_vrijednosti", my_user(), cRazlVr )
-set_metric( "fakt_uporedna_lista_mp", my_user(), cMP )
-set_metric( "fakt_uporedna_lista_konta", my_user(), qqKonto )
-set_metric( "fakt_uporedna_lista_kalk_id_firma", my_user(), cKalkFirma )
-set_metric( "fakt_uporedna_lista_opis_1", my_user(), cOpis1 )
-set_metric( "fakt_uporedna_lista_opis_2", my_user(), cOpis2 )
-set_metric( "fakt_uporedna_lista_konto", my_user(), cIdKonto )
+      READ
 
-select ( F_POM )
-if used()
-	use
-endif
+      ESC_BCR
 
-// pobrisi pom tabele
-FERASE( my_home() + "pom.dbf" )
-FERASE( my_home() + "pom.cdx")
-FERASE( my_home() + "pomi1.cdx")
+      aUsl1 := Parsiraj( qqRoba, "IdRoba" )
 
-aDbf := {}
-AADD (aDbf, {"IdRoba", "C", 10, 0})
-AADD (aDbf, {"FST",    "N", 15, 5})
-AADD (aDbf, {"FVR",    "N", 15, 5})
-AADD (aDbf, {"KST",    "N", 15, 5})
-AADD (aDbf, {"KVR",    "N", 15, 5})
-DBCREATE( my_home() + "pom", aDbf )
+      IF lViseKonta
+         aUsl2 := Parsiraj( qqKonto, "MKONTO" )
+         IF aUsl1 <> NIL .AND. ( lFaktFakt .OR. aUsl2 <> nil )
+            EXIT
+         ENDIF
+      ELSE
+         IF aUsl1 <> nil
+            EXIT
+         ENDIF
+      ENDIF
+   ENDDO
 
-select ( F_POM )
-if used()
-	use
-endif
+   cSintetika := "N"
 
-my_use_temp( "POM", my_home() + "pom", .f., .t. )
-index on IdRoba to (my_home() + "pomi1")
+   qqRoba := Trim( qqRoba )
 
-SET INDEX to (my_home() + "pomi1")
+   // snimi parametre u sql/db
+   set_metric( "fakt_uporedna_lista_id_firma", my_user(), cIdFirma )
+   set_metric( "fakt_uporedna_lista_roba", my_user(), qqRoba )
+   set_metric( "fakt_uporedna_lista_datum_od", my_user(), dDatOd )
+   set_metric( "fakt_uporedna_lista_datum_do", my_user(), dDatDo )
+   set_metric( "fakt_uporedna_lista_razlika_kolicina", my_user(), cRazlKol )
+   set_metric( "fakt_uporedna_lista_razlika_vrijednosti", my_user(), cRazlVr )
+   set_metric( "fakt_uporedna_lista_mp", my_user(), cMP )
+   set_metric( "fakt_uporedna_lista_konta", my_user(), qqKonto )
+   set_metric( "fakt_uporedna_lista_kalk_id_firma", my_user(), cKalkFirma )
+   set_metric( "fakt_uporedna_lista_opis_1", my_user(), cOpis1 )
+   set_metric( "fakt_uporedna_lista_opis_2", my_user(), cOpis2 )
+   set_metric( "fakt_uporedna_lista_konto", my_user(), cIdKonto )
 
-BoxC()
+   SELECT ( F_POM )
+   IF Used()
+      USE
+   ENDIF
 
-select fakt
+   // pobrisi pom tabele
+   FErase( my_home() + "pom.dbf" )
+   FErase( my_home() + "pom.cdx" )
+   FErase( my_home() + "pomi1.cdx" )
 
-private cFilt1:=""
-cFilt1 := aUsl1+IF(EMPTY(dDatOd),"",".and.DATDOK>="+cm2str(dDatOd))+;
-                IF(EMPTY(dDatDo),"",".and.DATDOK<="+cm2str(dDatDo))
-cFilt1 := STRTRAN(cFilt1,".t..and.","")
+   aDbf := {}
+   AAdd ( aDbf, { "IdRoba", "C", 10, 0 } )
+   AAdd ( aDbf, { "FST",    "N", 15, 5 } )
+   AAdd ( aDbf, { "FVR",    "N", 15, 5 } )
+   AAdd ( aDbf, { "KST",    "N", 15, 5 } )
+   AAdd ( aDbf, { "KVR",    "N", 15, 5 } )
+   dbCreate( my_home() + "pom", aDbf )
 
-if !(cFilt1==".t.")
-  SET FILTER to &cFilt1
-else
-  SET FILTER TO
-endif
+   SELECT ( F_POM )
+   IF Used()
+      USE
+   ENDIF
 
-SELECT RJ
-HSEEK cIdFirma
+   my_use_temp( "POM", my_home() + "pom", .F., .T. )
+   INDEX ON IdRoba to ( my_home() + "pomi1" )
 
-select KALK
+   SET INDEX to ( my_home() + "pomi1" )
 
-private cFilt2:=""
+   BoxC()
 
-if !lFaktFakt .and. lViseKonta
-  if ! RJ->(Found()) .or. Empty (RJ->Tip) .or. RJ->Tip="V"
-    // veleprodajna cijena u FAKT, uzimam MKONTO u KALK
-    cTipC := "V"
-  else
-    // u suprotnom, uzimam PKONTO
-    aUsl2:=Parsiraj(qqKonto,"PKONTO")
-    cTipC := "M"
-  endif
-endif
+   SELECT fakt
 
-cFilt2 := aUsl1+IF(EMPTY(dDatOd),"",".and.DATDOK>="+cm2str(dDatOd))+;
-                IF(EMPTY(dDatDo),"",".and.DATDOK<="+cm2str(dDatDo))
-if !lFaktFakt .and. lViseKonta
-  cFilt2 += ".and."+aUsl2+".and.IDFIRMA=="+cm2str(cKalkFirma)
-  set order to tag "7"
-endif
+   PRIVATE cFilt1 := ""
+   cFilt1 := aUsl1 + IF( Empty( dDatOd ), "", ".and.DATDOK>=" + cm2str( dDatOd ) ) + ;
+      IF( Empty( dDatDo ), "", ".and.DATDOK<=" + cm2str( dDatDo ) )
+   cFilt1 := StrTran( cFilt1, ".t..and.", "" )
 
-cFilt2 := STRTRAN(cFilt2,".t..and.","")
+   IF !( cFilt1 == ".t." )
+      SET FILTER to &cFilt1
+   ELSE
+      SET FILTER TO
+   ENDIF
 
-if !(cFilt2==".t.")
-  SET FILTER to &cFilt2
-else
-  SET FILTER TO
-endif
+   SELECT RJ
+   HSEEK cIdFirma
 
-SELECT FAKT
-go top
-FaktEof := EOF()
+   SELECT KALK
 
-SELECT KALK
-GO TOP
-KalkEof := EOF()
+   PRIVATE cFilt2 := ""
 
-if FaktEof .and. KalkEof
-  Beep (3)
-  Msg ("Ne postoje traženi podaci")
-  CLOSERET
-endif
+   IF !lFaktFakt .AND. lViseKonta
+      IF ! RJ->( Found() ) .OR. Empty ( RJ->Tip ) .OR. RJ->Tip = "V"
+         // veleprodajna cijena u FAKT, uzimam MKONTO u KALK
+         cTipC := "V"
+      ELSE
+         // u suprotnom, uzimam PKONTO
+         aUsl2 := Parsiraj( qqKonto, "PKONTO" )
+         cTipC := "M"
+      ENDIF
+   ENDIF
 
-START PRINT CRET
+   cFilt2 := aUsl1 + IF( Empty( dDatOd ), "", ".and.DATDOK>=" + cm2str( dDatOd ) ) + IIF( Empty( dDatDo ), "", ".and.DATDOK<=" + cm2str( dDatDo ) )
 
-SELECT FAKT
+   IF !lFaktFakt .AND. lViseKonta
+      cFilt2 += ".and." + aUsl2 + ".and.IDFIRMA==" + cm2str( cKalkFirma )
+      SET ORDER TO TAG "7"
+   ENDIF
 
-do while !EOF()
-  
-	cIdRoba:=IdRoba
-  	nSt := 0
-	nVr := 0
+   cFilt2 := StrTran( cFilt2, ".t..and.", "" )
+
+   IF !( cFilt2 == ".t." )
+      SET FILTER to &cFilt2
+   ELSE
+      SET FILTER TO
+   ENDIF
+
+   SELECT FAKT
+   GO TOP
+   FaktEof := Eof()
+
+   SELECT KALK
+   GO TOP
+   KalkEof := Eof()
+
+   IF FaktEof .AND. KalkEof
+      Beep ( 3 )
+      Msg ( "Ne postoje traženi podaci" )
+      CLOSERET
+   ENDIF
+
+   START PRINT CRET
+
+   SELECT FAKT
+
+   DO WHILE !Eof()
+
+      cIdRoba := IdRoba
+      nSt := 0
+      nVr := 0
   	
-	while !EOF() .and. cIdRoba == field->IdRoba
+      WHILE !Eof() .AND. cIdRoba == field->IdRoba
     	
-		if field->idfirma <> cIdfirma
-    		skip
-			loop
-    	endif
+         IF field->idfirma <> cIdfirma
+            SKIP
+            LOOP
+         ENDIF
     	
-		// atributi!!!!!!!!!!!!!
-    	if !empty(ALLTRIM( cK1 ))
-      		if ck1 <> K1
-      			skip
-				loop
-      		endif
-    	endif
+         // atributi!!!!!!!!!!!!!
+         IF !Empty( AllTrim( cK1 ) )
+            IF ck1 <> K1
+               SKIP
+               LOOP
+            ENDIF
+         ENDIF
     	
-		if !empty( ALLTRIM( cK2 ))
-      		if ck2<>K2
-      			skip
-				loop
-      		endif
-    	endif
+         IF !Empty( AllTrim( cK2 ) )
+            IF ck2 <> K2
+               SKIP
+               LOOP
+            ENDIF
+         ENDIF
 
-    	if !empty(cIdRoba)
-      		if idtipdok = "0"  
-				// ulaz
-         		nSt += kolicina
-         		nVr += Kolicina*Cijena
-      		elseif idtipdok = "1"   
-				// izlaz faktura
-        		if !(serbr="*" .and. idtipdok=="10") 
-					// za fakture na osnovu optpremince ne ra~unaj izlaz
-           			nSt -= kolicina
-           			nVr -= Kolicina*Cijena
-        		endif
-      		endif
-    	endif  
-    	skip
-  	enddo
-  
-	if !EMPTY( cIdRoba )
-    	NSRNPIdRoba( cIdRoba, cSintetika == "D" )
-    	SELECT ROBA
-   	 	if cTipVPC == "2" .and.  roba->( fieldpos("vpc2") <> 0 )
-        	_cijena:=roba->vpc2
-    	else
-     		_cijena := if ( !EMPTY(cIdFirma) , fakt_mpc_iz_sifrarnika(), roba->vpc )
-    	endif
-    	SELECT POM
-    	APPEND BLANK
-    	REPLACE IdRoba WITH cIdRoba, FST WITH nSt, FVR WITH nSt*_cijena
-    	SELECT FAKT
-  	endif
+         IF !Empty( cIdRoba )
+            IF idtipdok = "0"
+               // ulaz
+               nSt += kolicina
+               nVr += Kolicina * Cijena
+            ELSEIF idtipdok = "1"
+               // izlaz faktura
+               IF !( serbr = "*" .AND. idtipdok == "10" )
+                  // za fakture na osnovu optpremince ne ra~unaj izlaz
+                  nSt -= kolicina
+                  nVr -= Kolicina * Cijena
+               ENDIF
+            ENDIF
+         ENDIF
+         SKIP
+      ENDDO
 
-enddo
+      IF !Empty( cIdRoba )
+         NSRNPIdRoba( cIdRoba, cSintetika == "D" )
+         SELECT ROBA
+         IF cTipVPC == "2" .AND.  roba->( FieldPos( "vpc2" ) <> 0 )
+            _cijena := roba->vpc2
+         ELSE
+            _cijena := if ( !Empty( cIdFirma ), fakt_mpc_iz_sifrarnika(), roba->vpc )
+         ENDIF
+         SELECT POM
+         APPEND BLANK
+         REPLACE IdRoba WITH cIdRoba, FST WITH nSt, FVR WITH nSt * _cijena
+         SELECT FAKT
+      ENDIF
 
-//  zatim prodjem KALK (jer nesto moze biti samo u jednom)
-SELECT KALK
+   ENDDO
 
-if lFaktFakt
-	GO TOP
-  	While ! Eof()
-    cIdRoba:=IdRoba
-    nSt := nVr :=0
-    While !eof() .and. cIdRoba==IdRoba
-      	if idfirma<>cKalkFirma
-      		skip
-		loop
-	endif
-      // atributi!!!!!!!!!!!!!
-      if !empty(cK1)
-        if ck1<>K1; skip; loop; endif
-      endif
-      if !empty(cK2)
-        if ck2<>K2; skip; loop; endif
-      endif
+   // zatim prodjem KALK (jer nesto moze biti samo u jednom)
+   SELECT KALK
 
-      if !empty(cIdRoba)
-        if idtipdok="0"  // ulaz
-           nSt += kolicina
-           ** nVr += Kolicina*Cijena
-        elseif idtipdok="1"   // izlaz faktura
-          if !(serbr="*" .and. idtipdok=="10") // za fakture na osnovu otpremnice ne racunaj izlaz
-             nSt -= kolicina
-             ** nVr -= Kolicina*Cijena
-          endif
-        endif
-      endif  // empty(
-      skip
-    enddo
-    if !empty(cIdRoba)
-      SELECT POM
-      HSEEK cIdRoba
-      if ! Found()
-        APPEND BLANK
-        REPLACE IdRoba WITH cIdRoba
-      endif
-      RREPLACE KST WITH nSt
-      SELECT KALK
-    endif
-  enddo
+   IF lFaktFakt
+      GO TOP
+      WHILE ! Eof()
+         cIdRoba := IdRoba
+         nSt := nVr := 0
+         WHILE !Eof() .AND. cIdRoba == IdRoba
+            IF idfirma <> cKalkFirma
+               SKIP
+               LOOP
+            ENDIF
+            // atributi!!!!!!!!!!!!!
+            IF !Empty( cK1 )
+               IF ck1 <> K1; skip; loop; ENDIF
+            ENDIF
+            IF !Empty( cK2 )
+               IF ck2 <> K2; skip; loop; ENDIF
+            ENDIF
 
-else
+            IF !Empty( cIdRoba )
+               IF idtipdok = "0"  // ulaz
+                  nSt += kolicina
+                  // * nVr += Kolicina*Cijena
+               ELSEIF idtipdok = "1"   // izlaz faktura
+                  IF !( serbr = "*" .AND. idtipdok == "10" ) // za fakture na osnovu otpremnice ne racunaj izlaz
+                     nSt -= kolicina
+                     // * nVr -= Kolicina*Cijena
+                  ENDIF
+               ENDIF
+            ENDIF  // empty(
+            SKIP
+         ENDDO
+         IF !Empty( cIdRoba )
+            SELECT POM
+            HSEEK cIdRoba
+            IF ! Found()
+               APPEND BLANK
+               REPLACE IdRoba WITH cIdRoba
+            ENDIF
+            RREPLACE KST WITH nSt
+            SELECT KALK
+         ENDIF
+      ENDDO
 
-	if !lViseKonta
-   		//if ! RJ->(Found())
-     		// veleprodajna cijena u FAKT, uzimam MKONTO u KALK
-     		cTipC := "V"
-     		Set order to tag "3"
-   		//else
-     		// u suprotnom, uzimam PKONTO
-     	//	cTipC := "M"
-     	//	SET ORDER TO TAG "4"
-  	 	//endif
- 	endif
+   ELSE
 
-  	GO TOP
-  	if !lViseKonta
-   		Seek (cKalkFirma+qqKonto)
-  	endif
-  	do while !EOF() .and. IF(lViseKonta, .t., KALK->(IdFirma+Iif (cTipC=="V",MKonto,PKonto))==cKalkFirma+qqKonto)
-    	cIdRoba := KALK->IdRoba
-    	nSt := 0
-		nVr := 0
-    	do while !EOF() .and. KALK->IdRoba==cIdRoba .and. IF(lViseKonta, .t., KALK->(IdFirma+Iif (cTipC=="V",MKonto,PKonto))==cKalkFirma+qqKonto)
-      		if cTipC=="V"
-        		// magacin
-        		if mu_i=="1" .and. !(idvd $ "12#22#94")    // ulaz
-          			nSt += kolicina-gkolicina-gkolicin2
-          			nVr += vpc*(kolicina-gkolicina-gkolicin2)
-        		elseif mu_i=="5"                           // izlaz
-          			nSt -= kolicina
-          			nVr -= vpc*(kolicina)
-        		elseif mu_i=="1" .and. (idvd $ "12#22#94")    // povrat
-          			nSt += kolicina
-          			nVr += vpc*(kolicina)
-        		elseif mu_i=="3"    // nivelacija
-         			nVr += vpc*(kolicina)
-        		endif
-      		else  
-				// cTipC=="M"
-        		// prodavnica
-        		if pu_i=="1"
-          			nSt += kolicina-GKolicina-GKolicin2
-          			nVr += round(mpcsapp*kolicina,ZAOKRUZENJE)
-        		elseif pu_i=="5"  .and. !(idvd $ "12#13#22")
-          			nSt -= kolicina
-          			nVr -= ROUND(mpcsapp*kolicina,ZAOKRUZENJE)
-        		elseif pu_i=="I"
-          			nSt += gkolicin2
-          			nVr -= mpcsapp*gkolicin2
-        		elseif pu_i=="5"  .and. (idvd $ "12#13#22")    // povrat
-          			nSt -= kolicina
-          			nVr -= ROUND( mpcsapp*kolicina ,ZAOKRUZENJE)
-        		elseif pu_i=="3"    // nivelacija
-          			nVr += round( mpcsapp*kolicina ,ZAOKRUZENJE)
-        		endif
-      		endif // cTipC=="V"
-   			SKIP
-    	enddo
-    
-		SELECT POM
-   		HSEEK cIdRoba
-   		if ! Found()
-    		Append Blank
-      		REPLACE IdRoba WITH cIdRoba
-    	endif
-    	RREPLACE KST WITH nSt, KVR WITH nVr
-    	SELECT KALK
+      IF !lViseKonta
+         // if ! RJ->(Found())
+         // veleprodajna cijena u FAKT, uzimam MKONTO u KALK
+         cTipC := "V"
+         SET ORDER TO TAG "3"
+         // else
+         // u suprotnom, uzimam PKONTO
+         // cTipC := "M"
+         // SET ORDER TO TAG "4"
+         // endif
+      ENDIF
+
+      GO TOP
+      IF !lViseKonta
+         SEEK ( cKalkFirma + qqKonto )
+      ENDIF
+      DO WHILE !Eof() .AND. IF( lViseKonta, .T., KALK->( IdFirma + iif ( cTipC == "V", MKonto, PKonto ) ) == cKalkFirma + qqKonto )
+         cIdRoba := KALK->IdRoba
+         nSt := 0
+         nVr := 0
+         DO WHILE !Eof() .AND. KALK->IdRoba == cIdRoba .AND. IF( lViseKonta, .T., KALK->( IdFirma + iif ( cTipC == "V", MKonto, PKonto ) ) == cKalkFirma + qqKonto )
+            IF cTipC == "V"
+               // magacin
+               IF mu_i == "1" .AND. !( idvd $ "12#22#94" )    // ulaz
+                  nSt += kolicina - gkolicina - gkolicin2
+                  nVr += vpc * ( kolicina - gkolicina - gkolicin2 )
+               ELSEIF mu_i == "5"                           // izlaz
+                  nSt -= kolicina
+                  nVr -= vpc * ( kolicina )
+               ELSEIF mu_i == "1" .AND. ( idvd $ "12#22#94" )    // povrat
+                  nSt += kolicina
+                  nVr += vpc * ( kolicina )
+               ELSEIF mu_i == "3"    // nivelacija
+                  nVr += vpc * ( kolicina )
+               ENDIF
+            ELSE
+               // cTipC=="M"
+               // prodavnica
+               IF pu_i == "1"
+                  nSt += kolicina - GKolicina - GKolicin2
+                  nVr += Round( mpcsapp * kolicina, ZAOKRUZENJE )
+               ELSEIF pu_i == "5"  .AND. !( idvd $ "12#13#22" )
+                  nSt -= kolicina
+                  nVr -= Round( mpcsapp * kolicina, ZAOKRUZENJE )
+               ELSEIF pu_i == "I"
+                  nSt += gkolicin2
+                  nVr -= mpcsapp * gkolicin2
+               ELSEIF pu_i == "5"  .AND. ( idvd $ "12#13#22" )    // povrat
+                  nSt -= kolicina
+                  nVr -= Round( mpcsapp * kolicina, ZAOKRUZENJE )
+               ELSEIF pu_i == "3"    // nivelacija
+                  nVr += Round( mpcsapp * kolicina, ZAOKRUZENJE )
+               ENDIF
+            ENDIF // cTipC=="V"
+            SKIP
+         ENDDO
+
+         SELECT POM
+         HSEEK cIdRoba
+         IF ! Found()
+            APPEND BLANK
+            REPLACE IdRoba WITH cIdRoba
+         ENDIF
+         RREPLACE KST WITH nSt, KVR WITH nVr
+         SELECT KALK
   	
-	enddo
+      ENDDO
 
-endif
+   ENDIF
 
 
-// --------------------------------------------------
-// pocetak ispisa
-?
-P_COND
-?? space(gnLMarg); IspisFirme(cidfirma)
-if lFaktFakt
-  ? space(gnLMarg)
-  ?? "FAKT: Uporedna lager lista u FAKT i FAKT druge firme na dan",date(),"   za period od",dDatOd,"-",dDatDo
-else
-  ? space(gnLMarg); ?? "FAKT: Usporedna lager lista u FAKT i KALK na dan",date(),"   za period od",dDatOd,"-",dDatDo
-endif
-if !empty(qqRoba)
-  ?
-  ? space(gnLMarg)
-  ?? "Roba:",qqRoba
-endif
+   // --------------------------------------------------
+   // pocetak ispisa
+   ?
+   P_COND
+   ?? Space( gnLMarg ); IspisFirme( cidfirma )
+   IF lFaktFakt
+      ? Space( gnLMarg )
+      ?? "FAKT: Uporedna lager lista u FAKT i FAKT druge firme na dan", Date(), "   za period od", dDatOd, "-", dDatDo
+   ELSE
+      ? Space( gnLMarg ); ?? "FAKT: Usporedna lager lista u FAKT i KALK na dan", Date(), "   za period od", dDatOd, "-", dDatDo
+   ENDIF
+   IF !Empty( qqRoba )
+      ?
+      ? Space( gnLMarg )
+      ?? "Roba:", qqRoba
+   ENDIF
 
-if !empty(cK1) .and. !lFaktFakt
-  ?
-  ? space(gnlmarg), "- Roba sa osobinom K1:",ck1
-endif
-if !empty(cK2) .and. !lFaktFakt
-  ?
-  ? space(gnlmarg), "- Roba sa osobinom K2:",ck2
-endif
+   IF !Empty( cK1 ) .AND. !lFaktFakt
+      ?
+      ? Space( gnlmarg ), "- Roba sa osobinom K1:", ck1
+   ENDIF
+   IF !Empty( cK2 ) .AND. !lFaktFakt
+      ?
+      ? Space( gnlmarg ), "- Roba sa osobinom K2:", ck2
+   ENDIF
 
-?
-if cTipVPC=="2" .and.  roba->(fieldpos("vpc2")<>0) .and. !lFaktFakt
-  ? space(gnlmarg); ??"U IZVJESTAJU SU PRIKAZANE CIJENE: "+cTipVPC
-endif
-?
-if lFaktFakt
-  m:="----------------------------------------- --- ------------ ------------ ------------"
+   ?
+   IF cTipVPC == "2" .AND.  roba->( FieldPos( "vpc2" ) <> 0 ) .AND. ! lFaktFakt
+      ? Space( gnlmarg ); ?? "U IZVJEŠTAJU SU PRIKAZANE CIJENE: " + cTipVPC
+   ENDIF
+   ?
+   IF lFaktFakt
+      m := "----------------------------------------- --- ------------ ------------ ------------"
 
-  ? space(gnLMarg); ?? m
-  ? space(gnLMarg)
-  ?? "                                         *   *"+Padc(ALLTRIM(cOpis1),12)+"*"+Padc(ALLTRIM(cOpis2),12)+"*  RAZLIKA"
-  ? space(gnLMarg)
-  ?? "Sifra i naziv artikla                    *JMJ*   STANJE   *   STANJE   *  KOLICINA  "
-  ? space(gnLMarg); ?? m
+      ? Space( gnLMarg ); ?? m
+      ? Space( gnLMarg )
+      ?? "                                         *   *" + PadC( AllTrim( cOpis1 ), 12 ) + "*" + PadC( AllTrim( cOpis2 ), 12 ) + "*  RAZLIKA"
+      ? Space( gnLMarg )
+      ?? "Sifra i naziv artikla                    *JMJ*   STANJE   *   STANJE   *  KOLICINA  "
+      ? Space( gnLMarg ); ?? m
 
-  SELECT POM
-  GO TOP
-  do while !EOF()
-    if (cRazlKol=="D" .and. ROUND (FST,4) <> ROUND (KST, 4)) .or. ;
-       (cRazlVr=="D" .and. ROUND (FVR,4) <> ROUND (KVR, 4))
-      SELECT ROBA
-      HSEEK POM->IdRoba
-      if !FOUND() .and. TRIM(cF2FS)!=TRIM(goModul:oDataBase:cDirSif)
-        SELECT ROBA2
-        HSEEK POM->IdRoba
-        SELECT POM
-        ? SPACE (gnLMarg)
-        ?? ROBA2->Id, LEFT (ROBA2->Naz, 30), ROBA2->Jmj, ;
-           STR (FST, 12, 3), STR (KST, 12, 3), STR (FST-KST, 12, 3)
-      else
-        SELECT POM
-        ? SPACE (gnLMarg)
-        ?? ROBA->Id, LEFT (ROBA->Naz, 30), ROBA->Jmj, ;
-           STR (FST, 12, 3), STR (KST, 12, 3), STR (FST-KST, 12, 3)
-      endif
-    endif
-    SKIP
-  enddo
-  ? space(gnLMarg); ?? m
-else
-  m:="----------------------------------------- --- ------------ ------------ ------------ ------------ ------------ ------------"
-
-  ? space(gnLMarg); ?? m
-  ? space(gnLMarg)
-  ?? "                                         *   *      F   A   K   T      *      K   A   L   K      *      R A Z L I K A"
-  ? space(gnLMarg)
-  ?? "Sifra i naziv artikla                    *JMJ*   STANJE   * VRIJEDNOST *   STANJE   * VRIJEDNOST *  KOLICINA  * VRIJEDNOST"
-  ? space(gnLMarg); ?? m
-
-  SELECT POM
-  GO TOP
-  While !Eof()
-    if (cRazlKol=="D" .and. ROUND (FST,4) <> ROUND (KST, 4)) .or. ;
-       (cRazlVr=="D" .and. ROUND (FVR,4) <> ROUND (KVR, 4))
-      SELECT ROBA
-      HSEEK POM->IdRoba
       SELECT POM
-      ? SPACE (gnLMarg)
-      ?? ROBA->Id, LEFT (ROBA->Naz, 30), ROBA->Jmj, ;
-         STR (FST, 12, 3), STR (FVR, 12, 2),;
-         STR (KST, 12, 3), STR (KVR, 12, 2),;
-         STR (FST-KST, 12, 3), STR (FVR-KVR, 12, 2)
-    endif
-    SKIP
-  enddo
-  ? space(gnLMarg); ?? m
-endif
+      GO TOP
+      DO WHILE !Eof()
+         IF ( cRazlKol == "D" .AND. Round ( FST, 4 ) <> Round ( KST, 4 ) ) .OR. ;
+               ( cRazlVr == "D" .AND. Round ( FVR, 4 ) <> Round ( KVR, 4 ) )
+            SELECT ROBA
+            HSEEK POM->IdRoba
+            IF !Found() .AND. Trim( cF2FS ) != Trim( goModul:oDataBase:cDirSif )
+               SELECT ROBA2
+               HSEEK POM->IdRoba
+               SELECT POM
+               ? Space ( gnLMarg )
+               ?? ROBA2->Id, Left ( ROBA2->Naz, 30 ), ROBA2->Jmj, ;
+                  Str ( FST, 12, 3 ), Str ( KST, 12, 3 ), Str ( FST - KST, 12, 3 )
+            ELSE
+               SELECT POM
+               ? Space ( gnLMarg )
+               ?? ROBA->Id, Left ( ROBA->Naz, 30 ), ROBA->Jmj, ;
+                  Str ( FST, 12, 3 ), Str ( KST, 12, 3 ), Str ( FST - KST, 12, 3 )
+            ENDIF
+         ENDIF
+         SKIP
+      ENDDO
+      ? Space( gnLMarg ); ?? m
+   ELSE
+      m := "----------------------------------------- --- ------------ ------------ ------------ ------------ ------------ ------------"
 
-my_close_all_dbf()
+      ? Space( gnLMarg ); ?? m
+      ? Space( gnLMarg )
+      ?? "                                         *   *      F   A   K   T      *      K   A   L   K      *      R A Z L I K A"
+      ? Space( gnLMarg )
+      ??U "Šifra i naziv artikla                    *JMJ*   STANJE   * VRIJEDNOST *   STANJE   * VRIJEDNOST *  KOLIČINA  * VRIJEDNOST"
+      ? Space( gnLMarg ); ?? m
 
-FF
-END PRINT
+      SELECT POM
+      GO TOP
+      WHILE !Eof()
+         IF ( cRazlKol == "D" .AND. Round ( FST, 4 ) <> Round ( KST, 4 ) ) .OR. ;
+               ( cRazlVr == "D" .AND. Round ( FVR, 4 ) <> Round ( KVR, 4 ) )
+            SELECT ROBA
+            HSEEK POM->IdRoba
+            SELECT POM
+            ? Space ( gnLMarg )
+            ?? ROBA->Id, Left ( ROBA->Naz, 30 ), ROBA->Jmj, ;
+               Str ( FST, 12, 3 ), Str ( FVR, 12, 2 ), ;
+               Str ( KST, 12, 3 ), Str ( KVR, 12, 2 ), ;
+               Str ( FST - KST, 12, 3 ), Str ( FVR - KVR, 12, 2 )
+         ENDIF
+         SKIP
+      ENDDO
+      ? Space( gnLMarg ); ?? m
+   ENDIF
 
-return
+   my_close_all_dbf()
 
+   FF
+   ENDPRINT
 
+   RETURN

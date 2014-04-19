@@ -1,64 +1,54 @@
 /* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
+#include "fmk.ch"
 
-#include "fakt.ch"
+FUNCTION fakt_izvjestaji()
 
-// ------------------------------------------------------------
-// glavni menij izvjestaja
-// ------------------------------------------------------------
-function fakt_izvjestaji()
-local _opc:={}
-local _opcexe:={}
-local _izbor:=1
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
 
-// PTXT compatibility  sa ver < 1.52
-gPtxtC50 := .t.
+   // PTXT compatibility  sa ver < 1.52
+   gPtxtC50 := .T.
 
-AADD(_opc,"1. stanje robe                                          ") 
-AADD(_opcexe,{|| fakt_stanje_robe()})
-AADD(_opc,"2. lager lista - specifikacija   ")
-AADD(_opcexe,{|| fakt_lager_lista()})
-AADD(_opc,"3. kartica")
-AADD(_opcexe,{|| fakt_kartica()})
-AADD(_opc,"4. uporedna lager lista fakt1 <-> fakt2")
-AADD(_opcexe,{|| uporedna_lista_fakt_kalk(.t.)})
-AADD(_opc,"5. uporedna lager lista fakt <-> kalk")
-AADD(_opcexe,{|| uporedna_lista_fakt_kalk(.f.)})
-AADD(_opc,"6. realizacija kumulativno po partnerima")
-AADD(_opcexe,{|| fakt_real_partnera()})
-AADD(_opc,"7. specifikacija prodaje")
-AADD(_opcexe,{|| fakt_real_kolicina()})
-AADD(_opc,"8. kolicinski pregled isporuke robe po partnerima ")
-AADD(_opcexe,{|| spec_kol_partn()})
-AADD(_opc,"9. realizacija maloprodaje ")
-AADD(_opcexe,{|| fakt_real_maloprodaje()})
+   AAdd( _opc, "1. stanje robe                                          " )
+   AAdd( _opcexe, {|| fakt_stanje_robe() } )
+   AAdd( _opc, "2. lager lista - specifikacija   " )
+   AAdd( _opcexe, {|| fakt_lager_lista() } )
+   AAdd( _opc, "3. kartica" )
+   AAdd( _opcexe, {|| fakt_kartica() } )
+   AAdd( _opc, "4. uporedna lager lista fakt1 <-> fakt2" )
+   AAdd( _opcexe, {|| uporedna_lista_fakt_kalk( .T. ) } )
+   AAdd( _opc, "5. uporedna lager lista fakt <-> kalk" )
+   AAdd( _opcexe, {|| uporedna_lista_fakt_kalk( .F. ) } )
+   AAdd( _opc, "6. realizacija kumulativno po partnerima" )
+   AAdd( _opcexe, {|| fakt_real_partnera() } )
+   AAdd( _opc, "7. specifikacija prodaje" )
+   AAdd( _opcexe, {|| fakt_real_kolicina() } )
+   AAdd( _opc, "8. kolicinski pregled isporuke robe po partnerima " )
+   AAdd( _opcexe, {|| spec_kol_partn() } )
+   AAdd( _opc, "9. realizacija maloprodaje " )
+   AAdd( _opcexe, {|| fakt_real_maloprodaje() } )
 
-if fiscal_opt_active()
-    AADD(_opc,"10. fiskalni izvjestaji i komande ")
-    AADD(_opcexe,{|| fisc_rpt() })
-endif
+   IF fiscal_opt_active()
+      AAdd( _opc, "F. fiskalni izvjestaji i komande " )
+      AAdd( _opcexe, {|| fisc_rpt() } )
+   ENDIF
 
-AADD(_opc,"R. specificni izvjestaji (rmu)")
-AADD(_opcexe, {|| mnu_sp_rudnik() })
+   AAdd( _opc, "R. specificni izvjestaji (rmu)" )
+   AAdd( _opcexe, {|| mnu_sp_rudnik() } )
 
-private fID_J:=.f.
-if IzFmkIni('SifRoba','ID_J','N')=="D"
-	private fId_J:=.t.
-  	AADD(_opc,"C. osvjezi promjene sifarskog sistema u prometu")
-	AADD(_opcexe,{|| OsvjeziIdJ()})
-endif
+   PRIVATE fID_J := .F.
 
-f18_menu( "izvj", .f., _izbor, _opc, _opcexe )
+   f18_menu( "izvj", .F., _izbor, _opc, _opcexe )
 
-return
-
-
+   RETURN

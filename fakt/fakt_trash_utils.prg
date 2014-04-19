@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,375 +16,379 @@
 // opcija pregleda smeca
 // -------------------------------------
 
-function Pripr9View()
+FUNCTION Pripr9View()
 
-private aUslFirma := gFirma
-private aUslDok := SPACE(50)
-private dDat1 := CToD("")
-private dDat2 := DATE()
+   PRIVATE aUslFirma := gFirma
+   PRIVATE aUslDok := Space( 50 )
+   PRIVATE dDat1 := CToD( "" )
+   PRIVATE dDat2 := Date()
 
-Box(,10, 60)
-	@ 1+m_x, 2+m_y SAY "Uslovi pregleda smeca:" COLOR "I"
-	@ 3+m_x, 2+m_y SAY "Firma (prazno-sve)" GET aUslFirma PICT "@S40"
-	@ 4+m_x, 2+m_y SAY "Vrste dokumenta (prazno-sve)" GET aUslDok PICT "@S20"
-	@ 5+m_x, 2+m_y SAY "Datum od" GET dDat1 
-	@ 5+m_x, 20+m_y SAY "do" GET dDat2 
-	read
-BoxC()
+   Box(, 10, 60 )
+   @ 1 + m_x, 2 + m_y SAY "Uslovi pregleda smeca:" COLOR "I"
+   @ 3 + m_x, 2 + m_y SAY "Firma (prazno-sve)" GET aUslFirma PICT "@S40"
+   @ 4 + m_x, 2 + m_y SAY "Vrste dokumenta (prazno-sve)" GET aUslDok PICT "@S20"
+   @ 5 + m_x, 2 + m_y SAY "Datum od" GET dDat1
+   @ 5 + m_x, 20 + m_y SAY "do" GET dDat2
+   READ
+   BoxC()
 
-if LastKey()==K_ESC
-	return
-endif
+   IF LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-// postavi filter
-P9SetFilter(aUslFirma, aUslDok, dDat1, dDat2)
+   // postavi filter
+   P9SetFilter( aUslFirma, aUslDok, dDat1, dDat2 )
 
-private gVarijanta:="2"
+   PRIVATE gVarijanta := "2"
 
-private PicV:="99999999.9"
-ImeKol:={ ;
-    { "F."        , {|| IdFirma                  }, "IdFirma"     } ,;
-    { "VD"        , {|| IdTipDok                 }, "IdTipDok"    } ,;
-    { "BrDok"     , {|| BrDok                    }, "BrDok"       } ,;
-    { "Dat.dok"   , {|| DatDok                   }, "DatDok"      } ,;
-    { "Partner"   , {|| PADR(_get_partner(idpartner),50)  }, "idpartner" } ;
-        }
+   PRIVATE PicV := "99999999.9"
+   ImeKol := { ;
+      { "F.", {|| IdFirma                  }, "IdFirma"     },;
+      { "VD", {|| IdTipDok                 }, "IdTipDok"    },;
+      { "BrDok", {|| BrDok                    }, "BrDok"       },;
+      { "Dat.dok", {|| DatDok                   }, "DatDok"      },;
+      { "Partner", {|| PadR( _get_partner( idpartner ), 50 )  }, "idpartner" } ;
+      }
 
-Kol:={}
-for i:=1 to LEN(ImeKol)
-	AADD(Kol,i)
-next
+   Kol := {}
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
 
-Box(,20,77)
-@ m_x+17,m_y+2 SAY "<c-T>  Brisi stavku                              "
-@ m_x+18,m_y+2 SAY "<c-F9> Brisi sve     "
-@ m_x+19,m_y+2 SAY "<P> Povrat dokumenta u pripremu "
-@ m_x+20,m_y+2 SAY "               "
+   Box(, 20, 77 )
+   @ m_x + 17, m_y + 2 SAY "<c-T>  Brisi stavku                              "
+   @ m_x + 18, m_y + 2 SAY "<c-F9> Brisi sve     "
+   @ m_x + 19, m_y + 2 SAY "<P> Povrat dokumenta u pripremu "
+   @ m_x + 20, m_y + 2 SAY "               "
 
-ObjDbedit("PRIPR9",20,77,{|| fa_pripr9_key_handler()},"<P>-povrat dokumenta u pripremu","Pregled smeca...", , , , ,4)
-BoxC()
+   ObjDbedit( "PRIPR9", 20, 77, {|| fa_pripr9_key_handler() }, "<P>-povrat dokumenta u pripremu", "Pregled smeca...", , , , , 4 )
+   BoxC()
 
-return
-
-
-function fa_pripr9_key_handler()
-do case
-	case Ch==K_CTRL_T 
-		// brisanje dokumenta iz pripr9
-		bris_smece(idfirma, idtipdok, brdok)
-      	return DE_REFRESH
-	case Ch==K_CTRL_F9 
-		// brisanje kompletnog pripr9
-		bris_svo_smece()
-		return DE_REFRESH
-	case chr(Ch) $ "pP" // povrat dokumenta u pripremu
-		PovPr9()
-		P9SetFilter(aUslFirma, aUslDok, dDat1, dDat2)
-		return DE_REFRESH
-endcase
-return DE_CONT
-
-return
+   RETURN
 
 
-static function PovPr9()
-local nArr
-nArr:=SELECT()
+FUNCTION fa_pripr9_key_handler()
 
-povrat_smece( idfirma, idtipdok, brdok )
+   DO CASE
+   CASE Ch == K_CTRL_T
+      // brisanje dokumenta iz pripr9
+      bris_smece( idfirma, idtipdok, brdok )
+      RETURN DE_REFRESH
+   CASE Ch == K_CTRL_F9
+      // brisanje kompletnog pripr9
+      bris_svo_smece()
+      RETURN DE_REFRESH
+   CASE Chr( Ch ) $ "pP" // povrat dokumenta u pripremu
+      PovPr9()
+      P9SetFilter( aUslFirma, aUslDok, dDat1, dDat2 )
+      RETURN DE_REFRESH
+   ENDCASE
 
-select (nArr)
+   RETURN DE_CONT
 
-return DE_CONT
-
-
-
-static function P9SetFilter(aUslFirma, aUslDok, dDat1, dDat2)
-O_FAKT_PRIPR9
-set order to tag "1"
-
-// obavezno postavi filter po rbr
-cFilter:="rbr = '  1'"
-
-if !Empty(aUslFirma)
-	cFilter += " .and. idfirma='" + aUslFirma + "'"
-endif
-
-if !Empty(aUslDok)
-	aUslDok := Parsiraj(aUslDok, "idtipdok")
-	cFilter += " .and. " + aUslDok
-endif
-
-if !Empty(dDat1)
-	cFilter += " .and. datdok >= " + Cm2Str(dDat1)
-endif
-
-if !Empty(dDat2)
-	cFilter += " .and. datdok <= " + Cm2Str(dDat2)
-endif
-
-set filter to &cFilter
-
-go top
-
-return
+   RETURN
 
 
-static function _get_partner(cIdPartner)
-local nTArea
-local cPartner
-nTArea := SELECT()
-select partn
-go top
-seek cIdPartner
+STATIC FUNCTION PovPr9()
 
-if Found()
-	cPartner := field->naz
-else
-	cPartner := "????????"
-endif
+   LOCAL nArr
 
-select (nTArea)
-return cPartner
+   nArr := Select()
+
+   povrat_smece( idfirma, idtipdok, brdok )
+
+   SELECT ( nArr )
+
+   RETURN DE_CONT
+
+
+
+STATIC FUNCTION P9SetFilter( aUslFirma, aUslDok, dDat1, dDat2 )
+
+   O_FAKT_PRIPR9
+   SET ORDER TO TAG "1"
+
+   // obavezno postavi filter po rbr
+   cFilter := "rbr = '  1'"
+
+   IF !Empty( aUslFirma )
+      cFilter += " .and. idfirma='" + aUslFirma + "'"
+   ENDIF
+
+   IF !Empty( aUslDok )
+      aUslDok := Parsiraj( aUslDok, "idtipdok" )
+      cFilter += " .and. " + aUslDok
+   ENDIF
+
+   IF !Empty( dDat1 )
+      cFilter += " .and. datdok >= " + Cm2Str( dDat1 )
+   ENDIF
+
+   IF !Empty( dDat2 )
+      cFilter += " .and. datdok <= " + Cm2Str( dDat2 )
+   ENDIF
+
+   SET FILTER to &cFilter
+
+   GO TOP
+
+   RETURN
+
+
+STATIC FUNCTION _get_partner( cIdPartner )
+
+   LOCAL nTArea
+   LOCAL cPartner
+
+   nTArea := Select()
+   SELECT partn
+   GO TOP
+   SEEK cIdPartner
+
+   IF Found()
+      cPartner := field->naz
+   ELSE
+      cPartner := "????????"
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN cPartner
 
 
 
 // -------------------------------------------------
 // brisi dokument iz smeca
 // -------------------------------------------------
-function bris_smece(cIdF, cIdTipDok, cBrDok)
+FUNCTION bris_smece( cIdF, cIdTipDok, cBrDok )
 
-if Pitanje(,"Sigurno zelite izbrisati dokument?","N")=="N"
-	return
-endif
+   IF Pitanje(, "Sigurno zelite izbrisati dokument?", "N" ) == "N"
+      RETURN
+   ENDIF
 
-select fakt_pripr9
-seek cIdF+cIdTipDok+cBrDok
-my_flock()
-do while !eof() .and. cIdF==IdFirma .and. cIdTipDok==Idtipdok .and. cBrDok==BrDok
-	skip 1
-	nRec:=RecNo()
-	skip -1
-   	DELETE
-   	go nRec
-enddo
-my_unlock()
-my_dbf_pack()
+   SELECT fakt_pripr9
+   SEEK cIdF + cIdTipDok + cBrDok
+   my_flock()
+   DO WHILE !Eof() .AND. cIdF == IdFirma .AND. cIdTipDok == Idtipdok .AND. cBrDok == BrDok
+      SKIP 1
+      nRec := RecNo()
+      SKIP -1
+      DELETE
+      GO nRec
+   ENDDO
+   my_unlock()
+   my_dbf_pack()
 
-return
+   RETURN
 
 // -------------------------------------------
 // brisi sve iz smeca
 // -------------------------------------------
-function bris_svo_smece()
+FUNCTION bris_svo_smece()
 
-if Pitanje( , "Sigurno zelite izbrisati sve zapise?","N")=="N"
-	return
-endif
+   IF Pitanje( , "Sigurno zelite izbrisati sve zapise?", "N" ) == "N"
+      RETURN
+   ENDIF
 
-select fakt_pripr9
-go top
-my_dbf_zap()
+   SELECT fakt_pripr9
+   GO TOP
+   my_dbf_zap()
 
-nTArea := SELECT()
+   nTArea := Select()
 
-if Logirati(goModul:oDataBase:cName,"DOK","SMECE")
-	EventLog(nUser, goModul:oDataBase:cName, "DOK", "SMECE", ;
-		nil, nil, nil, nil, ;
-		"","", "", DATE(), DATE(), "", ;
-		"Brisanje kompletne tabele smeca")
-endif
+   IF Logirati( goModul:oDataBase:cName, "DOK", "SMECE" )
+      EventLog( nUser, goModul:oDataBase:cName, "DOK", "SMECE", ;
+         nil, nil, nil, nil, ;
+         "", "", "", Date(), Date(), "", ;
+         "Brisanje kompletne tabele smeca" )
+   ENDIF
 
-select (nTArea)
+   SELECT ( nTArea )
 
-return
+   RETURN
 
-// -------------------------------------------------------
-// opcija azuriranja dokumenta u smece
-// -------------------------------------------------------
-function azuriraj_smece( lSilent )
+FUNCTION azuriraj_smece( lSilent )
 
-if lSilent == nil
-	lSilent := .f.
-endif
+   IF lSilent == nil
+      lSilent := .F.
+   ENDIF
 
-if lSilent == .f. .and. Pitanje("p1", "Zelite li dokument prebaciti u smece (D/N) ?", "D" ) == "N"
-	return
-endif
+   IF lSilent == .F. .AND. Pitanje( "p1", "Želite li dokument prebaciti u smece (D/N) ?", "D" ) == "N"
+      RETURN
+   ENDIF
 
-O_FAKT_PRIPR9
-O_FAKT_PRIPR
+   O_FAKT_PRIPR9
+   O_FAKT_PRIPR
 
-lFound := .f.
-nCount := 0
+   lFound := .F.
+   nCount := 0
 
-do while !EOF()
+   DO WHILE !Eof()
 
-	++ nCount 
-	lFound := .f.
-	nRecNo := RECNO()
+      ++ nCount
+      lFound := .F.
+      nRecNo := RecNo()
 
-	cIdfirma := idfirma
-	cIdTipDok := idtipdok
-	cBrDok := brdok
+      cIdfirma := idfirma
+      cIdTipDok := idtipdok
+      cBrDok := brdok
 
-	do while !EOF() .and. idfirma == cIdFirma ;
-			.and. idtipdok == cIdtipdok ;
-			.and. brdok == cBrDok
-		skip
-	enddo
+      DO WHILE !Eof() .AND. idfirma == cIdFirma ;
+            .AND. idtipdok == cIdtipdok ;
+            .AND. brdok == cBrDok
+         SKIP
+      ENDDO
 
-	select fakt_pripr9
-	seek cIdFirma+cIdtipdok+cBrDok
+      SELECT fakt_pripr9
+      SEEK cIdFirma + cIdtipdok + cBrDok
 
-	if found()
-		// ima vec u smecu !
-		lFound := .t.
+      IF Found()
+         // ima vec u smecu !
+         lFound := .T.
 		
-		if lSilent == .f.
-			msgbeep("U smecu vec postoji isti dokument !")
-			closeret
-		endif
+         IF lSilent == .F.
+            msgbeep( "U smecu vec postoji isti dokument !" )
+            closeret
+         ENDIF
 
-	endif
+      ENDIF
 
-	select fakt_pripr
+      SELECT fakt_pripr
 	
-	if lFound == .t.
+      IF lFound == .T.
 		
-		go (nRecNO)
+         GO ( nRecNO )
 
-        my_flock()
-		// zamjeni brdok sa 00001-1
-		do while !EOF() .and. idfirma == cIdFirma ;
-				.and. idtipdok == cIdTipDok ;
-				.and. brdok == cBrDok
+         my_flock()
+         // zamjeni brdok sa 00001-1
+         DO WHILE !Eof() .AND. idfirma == cIdFirma ;
+               .AND. idtipdok == cIdTipDok ;
+               .AND. brdok == cBrDok
 
-			replace brdok with PADR(brdok, 5)+"-"+ALLTRIM(STR(nCount)) 
-			skip
-		enddo
-        my_unlock()
+            REPLACE brdok WITH PadR( brdok, 5 ) + "-" + AllTrim( Str( nCount ) )
+            SKIP
+         ENDDO
+         my_unlock()
 
-		go (nRecNo)
+         GO ( nRecNo )
 
-	endif
+      ENDIF
 
-enddo
+   ENDDO
 
-select fakt_pripr
-go top
+   SELECT fakt_pripr
+   GO TOP
 
-do while !EOF()
+   DO WHILE !Eof()
 
-	_rec := dbf_get_rec()
+      _rec := dbf_get_rec()
 
-	select fakt_pripr9
-	append blank
-	dbf_update_rec( _rec )
+      SELECT fakt_pripr9
+      APPEND BLANK
+      dbf_update_rec( _rec )
 
-	select fakt_pripr
-	skip
+      SELECT fakt_pripr
+      SKIP
 
-enddo
+   ENDDO
 
-select fakt_pripr
-my_dbf_zap()
+   SELECT fakt_pripr
+   my_dbf_zap()
 
-if lSilent == .f.
-	my_close_all_dbf()
-endif
+   IF lSilent == .F.
+      my_close_all_dbf()
+   ENDIF
 
-return
+   RETURN
 
 
 // ---------------------------------------------------
 // povrat dokumenta iz smeca
 // ---------------------------------------------------
-function povrat_smece( cIdFirma, cIdtipdok, cBrDok )
-local nRec
+FUNCTION povrat_smece( cIdFirma, cIdtipdok, cBrDok )
 
-lSilent := .t.
+   LOCAL nRec
 
-O_FAKT_PRIPR9
-O_FAKT_PRIPR
+   lSilent := .T.
 
-select fakt_pripr9
-set order to tag 1
+   O_FAKT_PRIPR9
+   O_FAKT_PRIPR
 
-// ako nema parametara funkcije
-if (PCount() == 0)
-	lSilent := .f.
-endif
+   SELECT fakt_pripr9
+   SET ORDER TO TAG 1
 
-if !lSilent
-   cIdFirma := gFirma
-   cIdtipdok := SPACE(LEN(field->idtipdok))
-   cBrDok := SPACE(LEN(field->brdok))
-endif
+   // ako nema parametara funkcije
+   IF ( PCount() == 0 )
+      lSilent := .F.
+   ENDIF
 
-if !lSilent
-   Box("",1,40)
-     @ m_x + 1, m_y + 2 SAY "Dokument:"
-     @ m_x + 1, col() + 1 GET cIdFirma
-     @ m_x + 1, col() + 1 SAY "-" GET cIdtipdok
-     @ m_x + 1, col() + 1 SAY "-" GET cBrdok
-     read
-     ESC_BCR
-   BoxC()
-endif
+   IF !lSilent
+      cIdFirma := gFirma
+      cIdtipdok := Space( Len( field->idtipdok ) )
+      cBrDok := Space( Len( field->brdok ) )
+   ENDIF
 
-if Pitanje("","Iz smeca "+cIdFirma+"-"+cIdtipdok+"-"+ALLTRIM(cBrDok)+" povuci u pripremu (D/N) ?","D")=="N"
+   IF !lSilent
+      Box( "", 1, 40 )
+      @ m_x + 1, m_y + 2 SAY "Dokument:"
+      @ m_x + 1, Col() + 1 GET cIdFirma
+      @ m_x + 1, Col() + 1 SAY "-" GET cIdtipdok
+      @ m_x + 1, Col() + 1 SAY "-" GET cBrdok
+      READ
+      ESC_BCR
+      BoxC()
+   ENDIF
+
+   IF Pitanje( "", "Iz smeca " + cIdFirma + "-" + cIdtipdok + "-" + AllTrim( cBrDok ) + " povuci u pripremu (D/N) ?", "D" ) == "N"
 	
-	if !lSilent
-		my_close_all_dbf()
-		return
-	else
-		return
-	endif
+      IF !lSilent
+         my_close_all_dbf()
+         RETURN
+      ELSE
+         RETURN
+      ENDIF
 
-endif
+   ENDIF
 
-select fakt_pripr9
+   SELECT fakt_pripr9
 
-hseek cIdFirma+cIdtipdok+cBrDok
+   hseek cIdFirma + cIdtipdok + cBrDok
 
-MsgO("PRIPREMA")
+   MsgO( "PRIPREMA" )
 
-do while !eof() .and. cIdFirma==IdFirma .and. cIdtipdok==Idtipdok .and. cBrDok==BrDok
-   select fakt_pripr9
-   Scatter()
-   select fakt_pripr
-   append blank
-   _ERROR:=""
-   Gather2()
-   select fakt_pripr9
-   skip
-enddo
+   DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdtipdok == Idtipdok .AND. cBrDok == BrDok
+      SELECT fakt_pripr9
+      Scatter()
+      SELECT fakt_pripr
+      APPEND BLANK
+      _ERROR := ""
+      Gather2()
+      SELECT fakt_pripr9
+      SKIP
+   ENDDO
 
-select fakt_pripr9
-seek cIdFirma+cIdTipDok+cBrDok
-my_flock()
-do while !eof() .and. cIdFirma==IdFirma .and. cIdtipdok==Idtipdok .and. cBrDok==BrDok
-   skip 1
-   nRec:=recno()
-   skip -1
-   DELETE
-   go nRec
-enddo
-my_unlock()
+   SELECT fakt_pripr9
+   SEEK cIdFirma + cIdTipDok + cBrDok
+   my_flock()
+   DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdtipdok == Idtipdok .AND. cBrDok == BrDok
+      SKIP 1
+      nRec := RecNo()
+      SKIP -1
+      DELETE
+      GO nRec
+   ENDDO
+   my_unlock()
 
-use
+   USE
 
-MsgC()
+   MsgC()
 
-if !lSilent
-	my_close_all_dbf()
-	return
-endif
+   IF !lSilent
+      my_close_all_dbf()
+      RETURN
+   ENDIF
 
-O_FAKT_PRIPR9
-select fakt_pripr9
+   O_FAKT_PRIPR9
+   SELECT fakt_pripr9
 
-return
-
-
+   RETURN

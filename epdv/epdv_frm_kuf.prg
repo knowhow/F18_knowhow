@@ -265,7 +265,7 @@ do case
     
    case (Ch  == K_CTRL_F9)
    
-        if Pitanje( ,"Zelite li izbrisati pripremu !!????","N") == "D"
+        if Pitanje( ,"Želite li izbrisati pripremu !!????","N") == "D"
             my_dbf_zap()
             return DE_REFRESH
     	endif

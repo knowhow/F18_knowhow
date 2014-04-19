@@ -47,7 +47,7 @@ endif
 
 my_close_all_dbf()
 
-KarticaM( cIdFirma, cIdRoba, cKonto )
+kartica_magacin( cIdFirma, cIdRoba, cKonto )
 
 o_kalk_edit()
 

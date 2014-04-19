@@ -31,7 +31,7 @@ FUNCTION Ostav()
    AAdd( opc, "5. specifikacija" )
    AAdd( opcexe, {|| SpecOtSt() } )
    AAdd( opc, "6. ios" )
-   AAdd( opcexe, {|| IOS() } ) 
+   AAdd( opcexe, {|| IOS() } )
    AAdd( opc, "7. kartice grupisane po brojevima veze" )
    AAdd( opcexe, {|| StKart( .T. ) } )
    AAdd( opc, "8. kompenzacija" )
@@ -368,12 +368,12 @@ FUNCTION AutoZat( lAuto, cKto, cPtn )
 
    SELECT SUBAN
    SET ORDER TO TAG "3"
-   // ORDER 3: SUBANi3: IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)
+   // IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)
    SEEK cIdFirma + cIdKonto
 
    EOF CRET
 
-   IF cPobSt == "D" .AND. Pitanje(, "Zelite li zaista pobrisati markere ??", "N" ) == "D"
+   IF cPobSt == "D" .AND. Pitanje(, "Želite li zaista pobrisati markere ??", "N" ) == "D"
 
       MsgO( "Brisem markere ..." )
 
@@ -625,7 +625,7 @@ FUNCTION RucnoZat()
    PRIVATE bZaglavlje := NIL
    // zaglavlje se edituje kada je kursor u prvoj koloni
    // prvog reda
-   PRIVATE TBSkipBlock := {|nSkip| SkipDBBK( nSkip ) }
+   PRIVATE TBSkipBlock := {| nSkip| SkipDBBK( nSkip ) }
    PRIVATE nTBLine := 1      // tekuca linija-kod viselinijskog browsa
    PRIVATE nTBLastLine := 1  // broj linija kod viselinijskog browsa
    PRIVATE TBPomjerise := "" // ako je ">2" pomjeri se lijevo dva
@@ -655,7 +655,7 @@ FUNCTION RucnoZat()
    OSt_StatLin()
 
    ObjDbEdit( "Ost", MAXROWS() - 10, MAXCOLS() - 10, {|| EdRos() }, ;
-      "", "", .F., NIL, 1, {|| otvst == "9" }, 6, 0, NIL, {|nSkip| SkipDBBK( nSkip ) } )
+      "", "", .F., NIL, 1, {|| otvst == "9" }, 6, 0, NIL, {| nSkip| SkipDBBK( nSkip ) } )
 
    BoxC()
 
@@ -701,8 +701,8 @@ FUNCTION EdROS( l_osuban )
       cDn := "N"
 
       Box(, 3, 50 )
-      @ m_x + 1, m_y + 2 SAY "Ne preporucuje se koristenje ove opcije !"
-      @ m_x + 3, m_y + 2 SAY "Zelite li ipak nastaviti D/N" GET cDN PICT "@!" VALID cDn $ "DN"
+      @ m_x + 1, m_y + 2 SAY8 "Ne preporučuje se koristenje ove opcije !"
+      @ m_x + 3, m_y + 2 SAY8 "Želite li ipak nastaviti D/N" GET cDN PICT "@!" VALID cDn $ "DN"
       READ
       BoxC()
 
@@ -792,7 +792,7 @@ FUNCTION EdROS( l_osuban )
 
 
       ELSE
-         IF Pitanje(, "Zelite li da vezni broj " + BrDok + " zamijenite brojem " + cPomBrDok + " ?", "D" ) == "D"
+         IF Pitanje(, "Želite li da vezni broj " + BrDok + " zamijenite brojem " + cPomBrDok + " ?", "D" ) == "D"
 
             _rec := dbf_get_rec()
             _rec[ "brdok" ] := cPomBrDok
@@ -876,7 +876,7 @@ FUNCTION StKart( fSolo, fTiho, bFilter )
    picBHD := FormPicL( gPicBHD, 14 )
    picDEM := FormPicL( gPicDEM, 10 )
 
-   IF fTiho .OR. Pitanje(, "Zelite li prikaz sa datumima dokumenta i valutiranja ? (D/N)", "D" ) == "D"
+   IF fTiho .OR. Pitanje(, "Želite li prikaz sa datumima dokumenta i valutiranja ? (D/N)", "D" ) == "D"
       lEx := .T.         // lEx=.t. > varijanta napravljena za EXCLUSIVE
    ENDIF
 
@@ -924,7 +924,7 @@ FUNCTION StKart( fSolo, fTiho, bFilter )
       ESC_BCR
       Boxc()
    ELSE
-      IF Pitanje(, "Zelite li napraviti ovaj izvjestaj za sve partnere ?", "N" ) == "D"
+      IF Pitanje(, "Želite li napraviti ovaj izvjestaj za sve partnere ?", "N" ) == "D"
          cSvi := "D"
       ENDIF
    ENDIF
@@ -2077,7 +2077,7 @@ FUNCTION fin_asistent_otv_st()
 
    SEEK Eval( bBkTrazi )
 
-   ObjDbEdit( "Ost", _max_rows, _max_cols, {|| EdRos( .T. ) }, "", "", .F.,NIL, 1, {|| brdok <> _obrdok }, 6, 0, ;  // zadnji par: nGPrazno
+   ObjDbEdit( "Ost", _max_rows, _max_cols, {|| EdRos( .T. ) }, "", "", .F., NIL, 1, {|| brdok <> _obrdok }, 6, 0, ;  // zadnji par: nGPrazno
    NIL, {| nSkip| SkipDBBK( nSkip ) } )
 
    BoxC()
@@ -2110,9 +2110,9 @@ FUNCTION fin_asistent_otv_st()
    SELECT ( F_SUBAN )
    USE
 
-   MsgBeep( "U slucaju da azurirate rezultate asistenta#program ce izmijeniti sadrzaj subanalitickih podataka !" )
+   MsgBeep( "U slucaju da azurirate rezultate asistenta#program će izmijeniti sadržaj subanalitičkih podataka !" )
 
-   IF pitanje(, "Zelite li izvrsiti azuriranje rezultata asistenta u bazu SUBAN !!", "N" ) == "D"
+   IF pitanje(, "Želite li izvrsiti azuriranje rezultata asistenta u bazu SUBAN !!", "N" ) == "D"
 
       // ekskluzivno otvori
       SELECT ( F_OSUBAN )

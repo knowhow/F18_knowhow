@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,100 +13,104 @@
 #include "kalk.ch"
 
 
-function kalk_izvjestaji_magacina()
-local _opc := {}
-local _opcexe := {}
-local _izbor := 1
+FUNCTION kalk_izvjestaji_magacina()
 
-AADD(_opc,"1. kartica - magacin                        ")
-AADD(_opcexe,{|| KarticaM()})
-AADD(_Opc,"2. lager lista - magacin")
-AADD(_opcexe,{|| LLM()})
-AADD(_Opc,"3. lager lista - proizvoljni sort")
-AADD(_opcexe,{|| KaLagM()})
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
 
-AADD(_Opc,"4. finansijsko stanje magacina")
-AADD(_opcexe, {|| FLLM()})
-AADD(_Opc,"5. realizacija po partnerima")
-AADD(_opcexe,{||  kalk_real_partnera()})
-AADD(_Opc,"6. promet grupe partnera")
-AADD(_opcexe,{|| PrometGP()})
-AADD(_opc,"7. pregled robe za dobavljaca")
-AADD(_opcexe, {|| ProbDob()})
-AADD(_Opc,"8. TKV")
-AADD(_opcexe, {|| kalk_tkv() })
-AADD(_Opc,"----------------------------------")
-AADD(_opcexe, nil)
-AADD(_Opc,"P. porezi")
-AADD(_opcexe,{|| MPoreziMag()})
-AADD(_Opc,"----------------------------------")
-AADD(_opcexe, nil)
+   AAdd( _opc, "1. kartica - magacin                        " )
+   AAdd( _opcexe, {|| Kartica_magacin() } )
+   AAdd( _Opc, "2. lager lista - magacin" )
+   AAdd( _opcexe, {|| LLM() } )
+   AAdd( _Opc, "3. lager lista - proizvoljni sort" )
+   AAdd( _opcexe, {|| KaLagM() } )
 
-if is_uobrada()
-    AADD(_Opc,"R. unutrasnja obrada - pregled ulaza i izlaza")
-    AADD(_opcexe, {|| r_uobrada() })
-endif
+   AAdd( _Opc, "4. finansijsko stanje magacina" )
+   AAdd( _opcexe, {|| FLLM() } )
+   AAdd( _Opc, "5. realizacija po partnerima" )
+   AAdd( _opcexe, {||  kalk_real_partnera() } )
+   AAdd( _Opc, "6. promet grupe partnera" )
+   AAdd( _opcexe, {|| PrometGP() } )
+   AAdd( _opc, "7. pregled robe za dobavljača" )
+   AAdd( _opcexe, {|| ProbDob() } )
+   AAdd( _Opc, "8. TKV" )
+   AAdd( _opcexe, {|| kalk_tkv() } )
+   AAdd( _Opc, "----------------------------------" )
+   AAdd( _opcexe, nil )
+   AAdd( _Opc, "P. porezi" )
+   AAdd( _opcexe, {|| MPoreziMag() } )
+   AAdd( _Opc, "----------------------------------" )
+   AAdd( _opcexe, nil )
 
-AADD(_Opc,"K. kontrolni izvjestaji")
-AADD(_opcexe, {|| m_ctrl_rpt() })
-AADD(_Opc,"S. pregledi za vise objekata")
-AADD(_opcexe, {|| MRekMag() })
-AADD(_Opc,"T. lista trebovanja po sastavnicama")
-AADD(_opcexe, {|| g_sast_list() })
-AADD(_Opc,"U. specifikacija izlaza po sastavnicama")
-AADD(_opcexe, {|| rpt_prspec() })
+   IF is_uobrada()
+      AAdd( _Opc, "R. unutrasnja obrada - pregled ulaza i izlaza" )
+      AAdd( _opcexe, {|| r_uobrada() } )
+   ENDIF
 
-f18_menu( "imag", .f., _izbor, _opc, _opcexe )
+   AAdd( _Opc, "K. kontrolni izvjestaji" )
+   AAdd( _opcexe, {|| m_ctrl_rpt() } )
+   AAdd( _Opc, "S. pregledi za vise objekata" )
+   AAdd( _opcexe, {|| MRekMag() } )
+   AAdd( _Opc, "T. lista trebovanja po sastavnicama" )
+   AAdd( _opcexe, {|| g_sast_list() } )
+   AAdd( _Opc, "U. specifikacija izlaza po sastavnicama" )
+   AAdd( _opcexe, {|| rpt_prspec() } )
 
-my_close_all_dbf()
-return
+   f18_menu( "imag", .F., _izbor, _opc, _opcexe )
+
+   my_close_all_dbf()
+
+   RETURN
 
 
 // ----------------------------------------------------
 // kontrolni izvjestaji
 // ----------------------------------------------------
-function m_ctrl_rpt()
-local _opc := {}
-local _opcexe := {}
-local _izbor := 1
+FUNCTION m_ctrl_rpt()
 
-AADD(_Opc,"1. kontrola sastavnica               ")
-AADD(_opcexe,{|| r_ct_sast()})
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
 
-f18_menu( "ctrl", .f., _izbor, _opc, _opcexe )
+   AAdd( _Opc, "1. kontrola sastavnica               " )
+   AAdd( _opcexe, {|| r_ct_sast() } )
 
-return
+   f18_menu( "ctrl", .F., _izbor, _opc, _opcexe )
 
-
-function MPoreziMag()
-local _opc := {}
-local _opcexe:={}
-local _izbor := 1
-
-AADD(_Opc,"1. realizacija - veleprodaja po tarifama")
-AADD(_opcexe,{|| RekPorMag()})
-AADD(_Opc,"2. porez na promet ")
-AADD(_opcexe,{|| RekPorNap()})
-AADD(_Opc,"3. rekapitulacija po tarifama")
-AADD(_opcexe,{|| RekmagTar()})
-
-f18_menu( "porm", .f., _izbor, _opc, _opcexe )
-
-my_close_all_dbf()
-return
+   RETURN
 
 
-function MRekMag()
-local _opc := {}
-local _opcexe := {}
-local _izbor := 1
+FUNCTION MPoreziMag()
 
-AADD(_opc,"1. rekapitulacija finansijskog stanja")
-AADD(_opcexe, {|| RFLLM() } )
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
 
-f18_menu( "rmag", .f., _izbor, _opc, _opcexe )
-my_close_all_dbf()
-return
+   AAdd( _Opc, "1. realizacija - veleprodaja po tarifama" )
+   AAdd( _opcexe, {|| RekPorMag() } )
+   AAdd( _Opc, "2. porez na promet " )
+   AAdd( _opcexe, {|| RekPorNap() } )
+   AAdd( _Opc, "3. rekapitulacija po tarifama" )
+   AAdd( _opcexe, {|| RekmagTar() } )
+
+   f18_menu( "porm", .F., _izbor, _opc, _opcexe )
+
+   my_close_all_dbf()
+
+   RETURN
 
 
+FUNCTION MRekMag()
 
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
+
+   AAdd( _opc, "1. rekapitulacija finansijskog stanja" )
+   AAdd( _opcexe, {|| RFLLM() } )
+
+   f18_menu( "rmag", .F., _izbor, _opc, _opcexe )
+   my_close_all_dbf()
+
+   RETURN

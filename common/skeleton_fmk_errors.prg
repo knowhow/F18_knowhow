@@ -63,7 +63,7 @@ nErr:=objErr:genCode
 
  MsgC()
 
-Odg:=Pitanje(,'Zelite li pokusati ponovo (D/N) ?',' ')=="D"
+Odg:=Pitanje(,'Želite li pokušati ponovo (D/N) ?',' ')=="D"
 
 
 if (Odg=='D')

@@ -315,7 +315,7 @@ return nCnt
 
 
 method deleteAll()
-if Pitanje(,"Zelite li zaista izbrisati cijeli dokument?","N")=="D"
+if Pitanje( ,"Želite li zaista izbrisati cijeli dokument?","N")=="D"
 	my_dbf_zap()
 endif
 return

@@ -270,8 +270,7 @@ do case
     
    case (Ch  == K_CTRL_F9)
    
-        if Pitanje( ,"Zelite li izbrisati pripremu !!????","N") == "D"
-            //EventLog(nUser, goModul:oDataBase:cName, "DOK", "EDIT", nil, nil, nil, nil, "", "", pripr->idfirma+"-"+pripr->idvn+"-"+pripr->brnal, Date(), Date(), "", " KIF Brisanje pripreme ....")
+        if Pitanje( ,"Želite li izbrisati pripremu !!????","N") == "D"
             my_dbf_zap()
             return DE_REFRESH
     	endif

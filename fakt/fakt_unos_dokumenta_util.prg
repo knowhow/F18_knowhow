@@ -1649,7 +1649,7 @@ FUNCTION edit_fakt_doks2()
 
    cPom := IzFMKINI( "FAKT", "Doks2opis", "dodatnih podataka", KUMPATH )
 
-   IF Pitanje( , "Zelite li unos/ispravku " + cPom + "? (D/N)", "N" ) == "N"
+   IF Pitanje( , "Želite li unos/ispravku " + cPom + "? (D/N)", "N" ) == "N"
       SELECT( nArr )
       RETURN
    ENDIF

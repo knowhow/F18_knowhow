@@ -13,8 +13,6 @@
 #include "epdv.ch"
 
 
-// -------------------------------
-// -------------------------------
 FUNCTION save_pdv_obracun( dDatOd, dDatDo )
 
    LOCAL _rec
@@ -27,7 +25,7 @@ FUNCTION save_pdv_obracun( dDatOd, dDatDo )
 
    set_global_vars_from_dbf()
 
-   IF Pitanje( , "Zelite li obracun pohraniti u bazu PDV prijava ?", " " ) == "D"
+   IF Pitanje( , "Želite li obracun pohraniti u bazu PDV prijava ?", " " ) == "D"
 
       SELECT F_PDV
       IF !Used()

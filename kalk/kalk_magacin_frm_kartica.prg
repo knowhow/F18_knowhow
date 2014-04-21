@@ -15,6 +15,11 @@
 
 
 FUNCTION kalk_analiza_kartica()
+   
+   // pogledati #33484
+   MsgBeep( "Opcija nije u upotrebi !" )
+
+   RETURN
 
    O_KONCIJ
    O_SIFK

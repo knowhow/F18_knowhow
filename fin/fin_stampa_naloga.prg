@@ -82,7 +82,7 @@ FUNCTION stampa_analitickog_naloga( lAuto, dDatNal )
          f18_start_print( NIL, @_print_opt )
       ENDIF
 
-      stampa_suban_dokument( "1", lAuto )
+      fin_subanaliticki_nalog( "1", lAuto )
 
       IF !lAuto
          my_close_all_dbf()
@@ -108,92 +108,6 @@ FUNCTION stampa_analitickog_naloga( lAuto, dDatNal )
    ENDIF
 
    my_close_all_dbf()
-
-   RETURN
-
-
-
-/*! \fn fin_zagl_11()
- *  \brief Zaglavlje analitickog naloga
- */
-
-FUNCTION fin_zagl_11()
-
-   LOCAL nArr, lDnevnik := .F.
-   LOCAL _fin_params := fin_params()
-
-   IF "DNEVNIKN" == PadR( Upper( ProcName( 1 ) ), 8 ) .OR. ;
-         "DNEVNIKN" == PadR( Upper( ProcName( 2 ) ), 8 )
-      lDnevnik := .T.
-   ENDIF
-
-   __par_len := Len( partn->id )
-
-   ?
-   IF _fin_params[ "fin_tip_dokumenta" ] .AND. gVar1 == "0"
-      P_COND2
-   ELSE
-      P_COND
-   ENDIF
-
-   B_ON
-
-   ?? Upper( gTS ) + ":", gNFirma
-   ?
-   nArr := Select()
-
-   IF _fin_params[ "fin_tip_dokumenta" ]
-      SELECT partn
-      hseek cIdfirma
-      SELECT ( nArr )
-      ? cidfirma, "-", AllTrim( partn->naz )
-   ENDIF
-
-   ?
-   IF lDnevnik
-      ?U "FIN.P:      D N E V N I K    K NJ I Ž E NJ A    Z A    " + ;
-         Upper( NazMjeseca( Month( dDatNal ) ) ) + " " + Str( Year( dDatNal ) ) + ". GODINE"
-   ELSE
-      ?U "FIN.P: NALOG ZA KNJIŽENJE BROJ :"
-      @ PRow(), PCol() + 2 SAY cIdFirma + " - " + cIdVn + " - " + cBrNal
-   ENDIF
-   B_OFF
-   IF gDatNal == "D" .AND. !lDnevnik
-      @ PRow(), PCol() + 4 SAY "DATUM: "
-      ?? dDatNal
-   ENDIF
-
-   IF !lDnevnik
-      SELECT TNAL; hseek cidvn
-      @ PRow(), PCol() + 4 SAY naz
-   ENDIF
-
-   @ PRow(), PCol() + 15 SAY "Str:" + Str( ++nStr, 3 )
-
-   lJerry := .F.
-
-   P_NRED
-
-   ?? M
-
-   IF !_fin_params[ "fin_tip_dokumenta" ]
-      P_NRED
-      ?? iif( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R. * KONTO *" + PadC( "PART", __par_len ) + "*" + IF( gVar1 == "1" .AND. lJerry, "       NAZIV PARTNERA         *                    ", "    NAZIV PARTNERA ILI      " ) + "*   D  O  K  U  M  E  N  T    *         IZNOS U  " + ValDomaca() + "         *" + IF( gVar1 == "1", "", "    IZNOS U " + ValPomocna() + "    *" )
-      P_NRED
-      ?? IF( lDnevnik, "U DNE-*  NALOGA  *   *", "" ) + "             " + PadC( "NER", __par_len ) + " " + IF( gVar1 == "1" .AND. lJerry, "            ILI                      O P I S       ", "                            " ) + " ----------------------------- ------------------------------- " + IF( gVar1 == "1", "", "---------------------" )
-      P_NRED; ?? IF( lDnevnik, "VNIKU *          *   *", "" ) + "*BR *       *" + REPL( " ", __par_len ) + "*" + IF( gVar1 == "1" .AND. lJerry, "        NAZIV KONTA           *                    ", "    NAZIV KONTA             " ) + "* BROJ VEZE * DATUM  * VALUTA *  DUGUJE " + ValDomaca() + "  * POTRAZUJE " + ValDomaca() + "*" + IF( gVar1 == "1", "", " DUG. " + ValPomocna() + "* POT." + ValPomocna() + "*" )
-   ELSE
-      P_NRED
-      ?? IF( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R. * KONTO *" + PadC( "PART", __par_len ) + "*" + IF( gVar1 == "1" .AND. lJerry, "       NAZIV PARTNERA         *                    ", "    NAZIV PARTNERA ILI      " ) + "*           D  O  K  U  M  E  N  T             *         IZNOS U  " + ValDomaca() + "         *" + IF( gVar1 == "1", "", "    IZNOS U " + ValPomocna() + "    *" )
-      P_NRED
-      ?? IF( lDnevnik, "U DNE-*  NALOGA  *   *", "" ) + "             " + PadC( "NER", __par_len ) + " " + IF( gVar1 == "1" .AND. lJerry, "            ILI                      O P I S       ", "                            " ) + " ---------------------------------------------- ------------------------------- " + IF( gVar1 == "1", "", "---------------------" )
-      P_NRED
-      ?? IF( lDnevnik, "VNIKU *          *   *", "" ) + "*BR *       *" + REPL( " ", __par_len ) + "*" + IF( gVar1 == "1" .AND. lJerry, "        NAZIV KONTA           *                    ", "    NAZIV KONTA             " ) + "*  TIP I NAZIV   * BROJ VEZE * DATUM  * VALUTA *  DUGUJE " + ValDomaca() + "  * POTRAZUJE " + ValDomaca() + "*" + IF( gVar1 == "1", "", " DUG. " + ValPomocna() + "* POT." + ValPomocna() + "*" )
-   ENDIF
-   P_NRED
-   ?? M
-
-   SELECT( nArr )
 
    RETURN
 

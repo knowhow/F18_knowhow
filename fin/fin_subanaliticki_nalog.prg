@@ -13,7 +13,7 @@
 
 
 
-FUNCTION stampa_suban_dokument( cInd, lAuto )
+FUNCTION fin_subanaliticki_nalog( cInd, lAuto )
 
    LOCAL nArr := Select()
    LOCAL aRez := {}
@@ -53,7 +53,7 @@ FUNCTION stampa_suban_dokument( cInd, lAuto )
    cBrNal := BrNal
 
    IF cInd $ "1#2" .AND. !lAuto
-      fin_zagl_11()
+      fin_zagl_analitika()
    ENDIF
 
    DO WHILE !Eof() .AND. Eval( b2 )
@@ -64,7 +64,7 @@ FUNCTION stampa_suban_dokument( cInd, lAuto )
             ELSE
                FF
             ENDIF
-            fin_zagl_11()
+            fin_zagl_analitika()
          ENDIF
          P_NRED
 
@@ -258,7 +258,7 @@ FUNCTION stampa_suban_dokument( cInd, lAuto )
    IF cInd $ "1#2" .AND. !lAuto
       IF PRow() > 58 + gPStranica
          FF
-         fin_zagl_11()
+         fin_zagl_analitika()
       ENDIF
       P_NRED
       ?? M
@@ -275,7 +275,7 @@ FUNCTION stampa_suban_dokument( cInd, lAuto )
       nUkDugBHD := nUKPotBHD := nUkDugDEM := nUKPotDEM := 0
 
       IF gPotpis == "D"
-         IF PRow() > 58 + gPStranica; FF; fin_zagl_11();  ENDIF
+         IF PRow() > 58 + gPStranica; FF; fin_zagl_analitika();  ENDIF
          P_NRED
          P_NRED
          F12CPI
@@ -293,6 +293,94 @@ FUNCTION stampa_suban_dokument( cInd, lAuto )
    ENDIF
 
    RETURN
+
+
+/*
+    fin_zagl_analitika()
+    Zaglavlje subanalitičkog/analitickog naloga
+*/
+
+FUNCTION fin_zagl_analitika()
+
+   LOCAL nArr, lDnevnik := .F.
+   LOCAL _fin_params := fin_params()
+
+   IF "DNEVNIKN" == PadR( Upper( ProcName( 1 ) ), 8 ) .OR. ;
+         "DNEVNIKN" == PadR( Upper( ProcName( 2 ) ), 8 )
+      lDnevnik := .T.
+   ENDIF
+
+   __par_len := Len( partn->id )
+
+   ?
+   IF _fin_params[ "fin_tip_dokumenta" ] .AND. gVar1 == "0"
+      P_COND2
+   ELSE
+      P_COND
+   ENDIF
+
+   B_ON
+
+   ?? Upper( gTS ) + ":", gNFirma
+   ?
+   nArr := Select()
+
+   IF _fin_params[ "fin_tip_dokumenta" ]
+      SELECT partn
+      hseek cIdfirma
+      SELECT ( nArr )
+      ? cidfirma, "-", AllTrim( partn->naz )
+   ENDIF
+
+   ?
+   IF lDnevnik
+      ?U "FIN:      D N E V N I K    K NJ I Ž E NJ A    Z A    " + ;
+         Upper( NazMjeseca( Month( dDatNal ) ) ) + " " + Str( Year( dDatNal ) ) + ". GODINE"
+   ELSE
+      ?U "FIN: NALOG ZA KNJIŽENJE BROJ :"
+      @ PRow(), PCol() + 2 SAY cIdFirma + " - " + cIdVn + " - " + cBrNal
+   ENDIF
+
+   B_OFF
+   IF gDatNal == "D" .AND. !lDnevnik
+      @ PRow(), PCol() + 4 SAY "DATUM: "
+      ?? dDatNal
+   ENDIF
+
+   IF !lDnevnik
+      SELECT TNAL; hseek cidvn
+      @ PRow(), PCol() + 4 SAY naz
+   ENDIF
+
+   @ PRow(), PCol() + 15 SAY "Str:" + Str( ++nStr, 3 )
+
+   lJerry := .F.
+
+   P_NRED
+
+   ?? M
+
+   IF !_fin_params[ "fin_tip_dokumenta" ]
+      P_NRED
+      ?? iif( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R. * KONTO *" + PadC( "PART", __par_len ) + "*" + IF( gVar1 == "1" .AND. lJerry, "       NAZIV PARTNERA         *                    ", "    NAZIV PARTNERA ILI      " ) + "*   D  O  K  U  M  E  N  T    *         IZNOS U  " + ValDomaca() + "         *" + IF( gVar1 == "1", "", "    IZNOS U " + ValPomocna() + "    *" )
+      P_NRED
+      ?? IF( lDnevnik, "U DNE-*  NALOGA  *   *", "" ) + "             " + PadC( "NER", __par_len ) + " " + IF( gVar1 == "1" .AND. lJerry, "            ILI                      O P I S       ", "                            " ) + " ----------------------------- ------------------------------- " + IF( gVar1 == "1", "", "---------------------" )
+      P_NRED; ?? IF( lDnevnik, "VNIKU *          *   *", "" ) + "*BR *       *" + REPL( " ", __par_len ) + "*" + IF( gVar1 == "1" .AND. lJerry, "        NAZIV KONTA           *                    ", "    NAZIV KONTA             " ) + "* BROJ VEZE * DATUM  * VALUTA *  DUGUJE " + ValDomaca() + "  * POTRAZUJE " + ValDomaca() + "*" + IF( gVar1 == "1", "", " DUG. " + ValPomocna() + "* POT." + ValPomocna() + "*" )
+   ELSE
+      P_NRED
+      ?? IF( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R. * KONTO *" + PadC( "PART", __par_len ) + "*" + IF( gVar1 == "1" .AND. lJerry, "       NAZIV PARTNERA         *                    ", "    NAZIV PARTNERA ILI      " ) + "*           D  O  K  U  M  E  N  T             *         IZNOS U  " + ValDomaca() + "         *" + IF( gVar1 == "1", "", "    IZNOS U " + ValPomocna() + "    *" )
+      P_NRED
+      ?? IF( lDnevnik, "U DNE-*  NALOGA  *   *", "" ) + "             " + PadC( "NER", __par_len ) + " " + IF( gVar1 == "1" .AND. lJerry, "            ILI                      O P I S       ", "                            " ) + " ---------------------------------------------- ------------------------------- " + IF( gVar1 == "1", "", "---------------------" )
+      P_NRED
+      ?? IF( lDnevnik, "VNIKU *          *   *", "" ) + "*BR *       *" + REPL( " ", __par_len ) + "*" + IF( gVar1 == "1" .AND. lJerry, "        NAZIV KONTA           *                    ", "    NAZIV KONTA             " ) + "*  TIP I NAZIV   * BROJ VEZE * DATUM  * VALUTA *  DUGUJE " + ValDomaca() + "  * POTRAZUJE " + ValDomaca() + "*" + IF( gVar1 == "1", "", " DUG. " + ValPomocna() + "* POT." + ValPomocna() + "*" )
+   ENDIF
+   P_NRED
+   ?? M
+
+   SELECT( nArr )
+
+   RETURN
+
 
 
 /*! \fn PrenosDNal()

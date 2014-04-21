@@ -62,7 +62,7 @@ FUNCTION fin_stampa_analiticki_nalog()
 
    START PRINT CRET
 
-   stampa_suban_dokument("2")
+   fin_subanaliticki_nalog( "2" )
 
    END PRINT
 

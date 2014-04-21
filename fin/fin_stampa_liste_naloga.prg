@@ -294,12 +294,12 @@ FUNCTION DnevnikNaloga()
 
    cMjGod := Str( Month( dDatNal ), 2 ) + Str( Year( dDatNal ), 4 )
 
-   fin_zagl_11()
+   fin_zagl_analitika()
 
    nTSDugBHD := nTSPotBHD := nTSDugDEM := nTSPotDEM := 0   // tekuca strana
 
    DO WHILE !Eof()
-      IF PRow() < 6; fin_zagl_11(); ENDIF    // prow()<6 => nije odstampano zaglavlje
+      IF PRow() < 6; fin_zagl_analitika(); ENDIF    // prow()<6 => nije odstampano zaglavlje
       cIdFirma := IDFIRMA
       cIdVN    := IDVN
       cBrNal   := BRNAL
@@ -308,13 +308,13 @@ FUNCTION DnevnikNaloga()
          // završi stranu
          PrenosDNal()
          // stampaj zaglavlje (nova stranica)
-         fin_zagl_11()
+         fin_zagl_analitika()
       ENDIF
       cMjGod := Str( Month( dDatNal ), 2 ) + Str( Year( dDatNal ), 4 )
       SELECT SUBAN
       HSEEK cIdFirma + cIdVN + cBrNal
 
-      stampa_suban_dokument( "3" )
+      fin_subanaliticki_nalog( "3" )
 
       SELECT NALOG
 

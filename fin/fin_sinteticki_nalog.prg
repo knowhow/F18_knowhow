@@ -43,30 +43,29 @@ FUNCTION fin_stampa_sinteticki_nalog( kumulativ )
       READ
       ESC_BCR
       BoxC()
+
       SELECT nalog
       SEEK cidfirma + cidvn + cbrnal
       NFOUND CRET  
       dDatNal := datnal
 
       SELECT PANAL
-      SEEK cidfirma + cidvn + cbrNal
-      START PRINT CRET
 
    ELSE
       cIdFirma := idfirma
       cidvn := idvn
       cBrNal := brnal
-      SEEK cidfirma + cidvn + cbrNal
-      START PRINT RET
    ENDIF
 
+   SEEK cIdfirma + cIdvn + cBrNal
+   START PRINT RET
    nStr := 0
 
    b1 := {|| !Eof() }
 
    nCol1 := 70
 
-   cIdFirma := IdFirma;cIDVn = IdVN;cBrNal := BrNal
+   cIdFirma := IdFirma; cIDVn = IdVN; cBrNal := BrNal
    b2 := {|| cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal }
    b3 := {|| cIdSinKon == Left( IdKonto, 3 ) }
    b4 := {|| cIdKonto == IdKonto }
@@ -260,6 +259,3 @@ STATIC FUNCTION close_open_panal()
    O_NALOG
 
    RETURN
-
-
-

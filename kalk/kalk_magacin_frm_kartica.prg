@@ -14,13 +14,14 @@
 
 
 
-FUNCTION AnaKart()
+FUNCTION kalk_analiza_kartica()
 
    O_KONCIJ
    O_SIFK
    O_SIFV
    O_ROBA
    O_KALK
+
    IF Pitanje(, "Prodji kroz neobradjene stavke", "N" ) = "D"
       SET ORDER TO
       GO TOP
@@ -159,3 +160,6 @@ FUNCTION EdLLM()
 
    RETURN nRet
 // }
+
+
+

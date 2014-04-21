@@ -1,3 +1,7 @@
+1.7.56  2014-04-21, hernad
+
+  - DEBUG fakt idops, kontiranje naloga
+
 1.7.55  2014-04-18, vsasa
 
   - FAKT, štampa dodatnog teksta na fakturi - bugfix

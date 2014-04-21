@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,85 +13,87 @@
 #include "rnal.ch"
 
 // variables
-static _status
-static __sort
-static __filter
-static _operater
+STATIC _status
+STATIC __sort
+STATIC __filter
+STATIC _operater
 
 // ------------------------------------------
 // lista dokumenata....
-//  nStatus - "1" otoreni ili "2" zatvoreni
+// nStatus - "1" otoreni ili "2" zatvoreni
 // ------------------------------------------
-function rnal_lista_dokumenata( nStatus )
+FUNCTION rnal_lista_dokumenata( nStatus )
 
-_status := nStatus
+   _status := nStatus
 
-rnal_o_tables( .f. )
+   rnal_o_tables( .F. )
 
-tbl_list()
+   tbl_list()
 
-return
+   RETURN
 
 
 
 // -------------------------------------------------
 // otvori tabelu pregleda
 // -------------------------------------------------
-static function tbl_list()
-local cFooter
-local cHeader
-local nSort := 3
-local nBoxX := maxrows() - 10
-local nBoxY := maxcols() - 10
+STATIC FUNCTION tbl_list()
 
-if lst_args( @nSort ) == 0
-	return 0
-endif
+   LOCAL cFooter
+   LOCAL cHeader
+   LOCAL nSort := 3
+   LOCAL nBoxX := maxrows() - 10
+   LOCAL nBoxY := maxcols() - 10
 
-private aDocs := {}
+   IF lst_args( @nSort ) == 0
+      RETURN 0
+   ENDIF
 
-private ImeKol
-private Kol
+   PRIVATE aDocs := {}
 
-cFooter := "Pregled azuriranih naloga..."
-cHeader := ""
+   PRIVATE ImeKol
+   PRIVATE Kol
 
-Box(, nBoxX, nBoxY)
+   cFooter := "Pregled azuriranih naloga..."
+   cHeader := ""
 
-// setuj box opis...
-_set_box( nBoxX, nBoxY )
+   Box(, nBoxX, nBoxY )
 
-// setuj sort...
-_set_sort()
+   // setuj box opis...
+   _set_box( nBoxX, nBoxY )
 
-go top
+   // setuj sort...
+   _set_sort()
 
-set_a_kol(@ImeKol, @Kol)
+   GO TOP
 
-select docs
+   set_a_kol( @ImeKol, @Kol )
 
-ObjDbedit("lstnal", nBoxX, nBoxY, {|| key_handler() }, cHeader, cFooter, , , , , 5)
+   SELECT docs
 
-BoxC()
+   ObjDbedit( "lstnal", nBoxX, nBoxY, {|| key_handler() }, cHeader, cFooter, , , , , 5 )
 
-my_close_all_dbf()
+   BoxC()
 
-return 1
+   my_close_all_dbf()
+
+   RETURN 1
 
 
 
 // ---------------------------------------------------
 // setovanje sorta prema static varijabli __sort
 // ---------------------------------------------------
-static function _set_sort()
-local cSort
+STATIC FUNCTION _set_sort()
 
-cSort := ALLTRIM(STR( __sort ))
+   LOCAL cSort
 
-select docs
-set order to tag &cSort
+   cSort := AllTrim( Str( __sort ) )
 
-return
+   SELECT docs
+   SET ORDER TO tag &cSort
+
+   RETURN
 
 
 
@@ -100,31 +102,32 @@ return
 // nBoxX - box x koord.
 // nBoxY - box y koord.
 // ------------------------------------------
-static function _set_box( nBoxX, nBoxY )
-local cLine1 := ""
-local cLine2 := ""
+STATIC FUNCTION _set_box( nBoxX, nBoxY )
 
-cLine1 := "(D) dorada nal. "
+   LOCAL cLine1 := ""
+   LOCAL cLine2 := ""
 
-if ( _status == 1 )
-	cLine1 += "(Z) zatv.nal. "
-	cLine1 += "(P) promjene "
-endif
+   cLine1 := "(D) dorada nal. "
 
-cLine1 += "(N) nadji.nal. "
-cLine1 += "(Q) nadji.opis"
+   IF ( _status == 1 )
+      cLine1 += "(Z) zatv.nal. "
+      cLine1 += "(P) promjene "
+   ENDIF
+
+   cLine1 += "(N) nadji.nal. "
+   cLine1 += "(Q) nadji.opis"
 
 
-// druga linija je zajednicka
-cLine2 := "(c-P) stamp.nal. "
-cLine2 += "(c-O) specif.    "
-cLine2 += "(K) kontakti "
-cLine2 += "(L) promjene"
+   // druga linija je zajednicka
+   cLine2 := "(c-P) stamp.nal. "
+   cLine2 += "(c-O) specif.    "
+   cLine2 += "(K) kontakti "
+   cLine2 += "(L) promjene"
 
-@ m_x + (nBoxX-1), m_y + 2 SAY cLine1
-@ m_x + (nBoxX), m_y + 2 SAY cLine2
+   @ m_x + ( nBoxX - 1 ), m_y + 2 SAY cLine1
+   @ m_x + ( nBoxX ), m_y + 2 SAY cLine2
 
-return
+   RETURN
 
 
 
@@ -132,709 +135,717 @@ return
 // otvori formu sa uslovima te postavi filtere
 // nSort - sort prikaza...
 // -------------------------------------------------
-static function lst_args( nSort )
-local nX := 1
-local nBoxX := 21
-local nBoxY := 70
-local dDateFrom := CToD("")
-local dDateTo := DATE()
-local dDvrDFrom := CTOD("")
-local dDvrDTo := CTOD("")
-local cCustomer := PADR("", 10)
-local nCustomer := VAL(STR(0, 10))
-local cContact := PADR("", 10)
-local cObject := PADR("", 10)
-local nObject := VAL(STR(0, 10))
-local nContact := VAL(STR(0, 10))
-local nOperater := VAL(STR(0, 10))
-local cOperater := PADR("", 10)
-local cShowRejected := "N"
-local nTip := 0
-local nRet := 1
-local cFilter
-// color header
-local cColor1 := "BG+/B"
-// color help
-local cHelpClr := "GR+/B"
+STATIC FUNCTION lst_args( nSort )
 
-dDateFrom := fetch_metric( "rnal_preg_nalog_datum_od", my_user(), dDateFrom )
-dDateTo := fetch_metric( "rnal_preg_nalog_datum_do", my_user(), dDateTo )
-dDvrDFrom := fetch_metric( "rnal_preg_nalog_isporuka_od", my_user(), dDvrDFrom )
-dDvrDTo := fetch_metric( "rnal_preg_nalog_isporuka_do", my_user(), dDvrDTo )
-cCustomer := fetch_metric( "rnal_preg_nalog_partner", my_user(), cCustomer )
-cContact := fetch_metric( "rnal_preg_nalog_kontakt", my_user(), cContact )
-cObject := fetch_metric( "rnal_preg_nalog_objekat", my_user(), cObject )
-nOperater := fetch_metric( "rnal_preg_nalog_operater", my_user(), nOperater )
-nSort := fetch_metric( "rnal_preg_nalog_sort", my_user(), nSort )
-cShowRejected := fetch_metric( "rnal_preg_nalog_odbaceni", my_user(), cShowRejected )
-nTip := fetch_metric( "rnal_preg_nalog_tip", my_user(), nTip )
+   LOCAL nX := 1
+   LOCAL nBoxX := 21
+   LOCAL nBoxY := 70
+   LOCAL dDateFrom := CToD( "" )
+   LOCAL dDateTo := Date()
+   LOCAL dDvrDFrom := CToD( "" )
+   LOCAL dDvrDTo := CToD( "" )
+   LOCAL cCustomer := PadR( "", 10 )
+   LOCAL nCustomer := Val( Str( 0, 10 ) )
+   LOCAL cContact := PadR( "", 10 )
+   LOCAL cObject := PadR( "", 10 )
+   LOCAL nObject := Val( Str( 0, 10 ) )
+   LOCAL nContact := Val( Str( 0, 10 ) )
+   LOCAL nOperater := Val( Str( 0, 10 ) )
+   LOCAL cOperater := PadR( "", 10 )
+   LOCAL cShowRejected := "N"
+   LOCAL nTip := 0
+   LOCAL nRet := 1
+   LOCAL cFilter
 
-Box( , nBoxX, nBoxY)
+   // color header
+   LOCAL cColor1 := "BG+/B"
+   // color help
+   LOCAL cHelpClr := "GR+/B"
 
-@ m_x + nX, m_y + 1 SAY PADL("**** uslovi pregleda dokumenata", nBoxY - 2 ) COLOR cColor1
+   dDateFrom := fetch_metric( "rnal_preg_nalog_datum_od", my_user(), dDateFrom )
+   dDateTo := fetch_metric( "rnal_preg_nalog_datum_do", my_user(), dDateTo )
+   dDvrDFrom := fetch_metric( "rnal_preg_nalog_isporuka_od", my_user(), dDvrDFrom )
+   dDvrDTo := fetch_metric( "rnal_preg_nalog_isporuka_do", my_user(), dDvrDTo )
+   cCustomer := fetch_metric( "rnal_preg_nalog_partner", my_user(), cCustomer )
+   cContact := fetch_metric( "rnal_preg_nalog_kontakt", my_user(), cContact )
+   cObject := fetch_metric( "rnal_preg_nalog_objekat", my_user(), cObject )
+   nOperater := fetch_metric( "rnal_preg_nalog_operater", my_user(), nOperater )
+   nSort := fetch_metric( "rnal_preg_nalog_sort", my_user(), nSort )
+   cShowRejected := fetch_metric( "rnal_preg_nalog_odbaceni", my_user(), cShowRejected )
+   nTip := fetch_metric( "rnal_preg_nalog_tip", my_user(), nTip )
 
-nX += 2
+   Box( , nBoxX, nBoxY )
 
-@ m_x + nX, m_y + 2 SAY PADL( "Naručioc (prazno-svi):", 25 ) GET cCustomer ;
-    VALID {|| EMPTY(cCustomer) .or. ;
-            s_customers( @cCustomer, cCustomer), ;
-            set_var(@nCustomer, @cCustomer),  ;
-            show_it( g_cust_desc(nCustomer) ) } ;
-    WHEN set_opc_box(nBoxX, 60, "narucioc naloga, pretrazi sifrarnik", nil, nil, cHelpClr )
+   @ m_x + nX, m_y + 1 SAY PadL( "**** uslovi pregleda dokumenata", nBoxY - 2 ) COLOR cColor1
 
-nX += 1
+   nX += 2
 
-@ m_x + nX, m_y + 2 SAY PADL("Kontakt (prazno-svi):", 25) GET cContact ;
-    VALID {|| EMPTY(cContact) .or. ;
-            s_contacts( @cContact, nCustomer, cContact ), ;
-            set_var(@nContact, @cContact), ;
-            show_it( g_cont_desc( nContact ) ) } ;
-    WHEN set_opc_box( nBoxX, 60, "kontakt osoba naloga, pretrazi sifrarnik", nil, nil, cHelpClr )
+   @ m_x + nX, m_y + 2 SAY PadL( "Naručioc (prazno-svi):", 25 ) GET cCustomer ;
+      VALID {|| Empty( cCustomer ) .OR. ;
+      s_customers( @cCustomer, cCustomer ), ;
+      set_var( @nCustomer, @cCustomer ),  ;
+      show_it( g_cust_desc( nCustomer ) ) } ;
+      WHEN set_opc_box( nBoxX, 60, "narucioc naloga, pretrazi sifrarnik", nil, nil, cHelpClr )
 
-nX += 1
+   nX += 1
 
-@ m_x + nX, m_y + 2 SAY PADL("Objekat isporuke:", 25) GET cObject VALID {|| EMPTY(cObject) .or. s_objects( @cObject, nCustomer, cObject ), set_var(@nObject, @cObject), show_it( g_obj_desc( nObject ) ) } WHEN set_opc_box( nBoxX, 60, "objekat isporuke, pretrazi sifrarnik", nil, nil, cHelpClr )
+   @ m_x + nX, m_y + 2 SAY PadL( "Kontakt (prazno-svi):", 25 ) GET cContact ;
+      VALID {|| Empty( cContact ) .OR. ;
+      s_contacts( @cContact, nCustomer, cContact ), ;
+      set_var( @nContact, @cContact ), ;
+      show_it( g_cont_desc( nContact ) ) } ;
+      WHEN set_opc_box( nBoxX, 60, "kontakt osoba naloga, pretrazi sifrarnik", nil, nil, cHelpClr )
 
-nX += 1
+   nX += 1
 
-@ m_x + nX, m_y + 2 SAY PADL( "Datum naloga od:", 18) GET dDateFrom WHEN set_opc_box( nBoxX, 60 )
-@ m_x + nX, col() + 1 SAY "do:" GET dDateTo WHEN set_opc_box( nBoxX, 60 )
+   @ m_x + nX, m_y + 2 SAY PadL( "Objekat isporuke:", 25 ) GET cObject VALID {|| Empty( cObject ) .OR. s_objects( @cObject, nCustomer, cObject ), set_var( @nObject, @cObject ), show_it( g_obj_desc( nObject ) ) } WHEN set_opc_box( nBoxX, 60, "objekat isporuke, pretrazi sifrarnik", nil, nil, cHelpClr )
 
-if _status == 1
+   nX += 1
+
+   @ m_x + nX, m_y + 2 SAY PadL( "Datum naloga od:", 18 ) GET dDateFrom WHEN set_opc_box( nBoxX, 60 )
+   @ m_x + nX, Col() + 1 SAY "do:" GET dDateTo WHEN set_opc_box( nBoxX, 60 )
+
+   IF _status == 1
 	
-	nX += 1
+      nX += 1
 	
-	@ m_x + nX, m_y + 2 SAY PADL( "Datum isporuke od:", 18 ) GET dDvrDFrom WHEN set_opc_box( nBoxX, 60 )
-	@ m_x + nX, col() + 1 SAY "do:" GET dDvrDTo WHEN set_opc_box( nBoxX, 60 )
+      @ m_x + nX, m_y + 2 SAY PadL( "Datum isporuke od:", 18 ) GET dDvrDFrom WHEN set_opc_box( nBoxX, 60 )
+      @ m_x + nX, Col() + 1 SAY "do:" GET dDvrDTo WHEN set_opc_box( nBoxX, 60 )
 
-endif
+   ENDIF
 
-nX += 2
+   nX += 2
 
-@ m_x + nX, m_y + 2 SAY "Operater (prazno-svi):" GET nOperater ;
-    PICT "9999999999" ;
-    VALID {|| nOperater == 0 , IIF( nOperater == -99, choose_f18_user_from_list( @nOperater ), .t. ), ;
-        show_it( getusername( nOperater ), 30 ) } ;
-    WHEN set_opc_box( nBoxX, 60, "pretraga po operateru", "-99 : odaberi iz liste", nil, cHelpClr )
+   @ m_x + nX, m_y + 2 SAY "Operater (prazno-svi):" GET nOperater ;
+      PICT "9999999999" ;
+      VALID {|| nOperater == 0, iif( nOperater == -99, choose_f18_user_from_list( @nOperater ), .T. ), ;
+      show_it( getusername( nOperater ), 30 ) } ;
+      WHEN set_opc_box( nBoxX, 60, "pretraga po operateru", "-99 : odaberi iz liste", nil, cHelpClr )
 
-nX += 1
+   nX += 1
 
-@ m_x + nX, m_y + 2 SAY PADL("Tip naloga:", 10 ) GET nTip ; 
-    VALID nTip >= 0 .and. nTip < 3 WHEN set_opc_box( nBoxX, 60, "0 - svi nalozi / 1 - samo regularni / 2 - samo NP", nil, nil, cHelpClr ) ;
-    PICT "9"
+   @ m_x + nX, m_y + 2 SAY PadL( "Tip naloga:", 10 ) GET nTip ;
+      VALID nTip >= 0 .AND. nTip < 3 WHEN set_opc_box( nBoxX, 60, "0 - svi nalozi / 1 - samo regularni / 2 - samo NP", nil, nil, cHelpClr ) ;
+      PICT "9"
 
-nX += 2
+   nX += 2
 
-@ m_x + nX, m_y + 2 SAY "***** sort pregleda:" GET nSort ;
-    VALID _val_sort( nSort ) ;
-    PICT "9" ;
-    WHEN set_opc_box( nBoxX, 60, "nacin sortiranja pregleda dokumenata", nil, nil, cHelpClr )
+   @ m_x + nX, m_y + 2 SAY "***** sort pregleda:" GET nSort ;
+      VALID _val_sort( nSort ) ;
+      PICT "9" ;
+      WHEN set_opc_box( nBoxX, 60, "nacin sortiranja pregleda dokumenata", nil, nil, cHelpClr )
 
-nX += 1
+   nX += 1
 
-@ m_x + nX, m_y + 2 SAY " * (1) broj dokumenta" COLOR cColor1
+   @ m_x + nX, m_y + 2 SAY " * (1) broj dokumenta" COLOR cColor1
 
-nX += 1
+   nX += 1
 
-@ m_x + nX, m_y + 2 SAY " * (2) prioritet + datum dokumenta + broj dokumenta" COLOR cColor1
+   @ m_x + nX, m_y + 2 SAY " * (2) prioritet + datum dokumenta + broj dokumenta" COLOR cColor1
 
-nX += 1
+   nX += 1
 
-@ m_x + nX, m_y + 2 SAY " * (3) prioritet + datum isporuke + broj dokumenta" COLOR cColor1
+   @ m_x + nX, m_y + 2 SAY " * (3) prioritet + datum isporuke + broj dokumenta" COLOR cColor1
 
-if _status == 2
+   IF _status == 2
 
-	nX += 2
+      nX += 2
 
-	@ m_x + nX, m_y + 2 SAY "Prikaz ponistenih dokumenata (D/N)?" GET cShowRejected VALID cShowRejected $ "DN" PICT "@!" WHEN set_opc_box( nBoxX, 60, "pored zatvorenih naloga", "prikazi i ponistene", nil, cHelpClr )
+      @ m_x + nX, m_y + 2 SAY "Prikaz ponistenih dokumenata (D/N)?" GET cShowRejected VALID cShowRejected $ "DN" PICT "@!" WHEN set_opc_box( nBoxX, 60, "pored zatvorenih naloga", "prikazi i ponistene", nil, cHelpClr )
 
-endif
+   ENDIF
 
-read
+   READ
 
-BoxC()
+   BoxC()
 
-__sort := nSort
+   __sort := nSort
 
-if LastKey() == K_ESC
-	return 0
-endif
+   IF LastKey() == K_ESC
+      RETURN 0
+   ENDIF
 
-_operater := nOperater
+   _operater := nOperater
 
-// snimi parametre
-set_metric( "rnal_preg_nalog_datum_od", my_user(), dDateFrom )
-set_metric( "rnal_preg_nalog_datum_do", my_user(), dDateTo )
-set_metric( "rnal_preg_nalog_isporuka_od", my_user(), dDvrDFrom )
-set_metric( "rnal_preg_nalog_isporuka_do", my_user(), dDvrDTo )
-set_metric( "rnal_preg_nalog_partner", my_user(), cCustomer )
-set_metric( "rnal_preg_nalog_kontakt", my_user(), cContact )
-set_metric( "rnal_preg_nalog_objekat", my_user(), cObject )
-set_metric( "rnal_preg_nalog_operater", my_user(), nOperater )
-set_metric( "rnal_preg_nalog_sort", my_user(), nSort )
-set_metric( "rnal_preg_nalog_odbaceni", my_user(), cShowRejected )
-set_metric( "rnal_preg_nalog_tip", my_user(), nTip )
+   // snimi parametre
+   set_metric( "rnal_preg_nalog_datum_od", my_user(), dDateFrom )
+   set_metric( "rnal_preg_nalog_datum_do", my_user(), dDateTo )
+   set_metric( "rnal_preg_nalog_isporuka_od", my_user(), dDvrDFrom )
+   set_metric( "rnal_preg_nalog_isporuka_do", my_user(), dDvrDTo )
+   set_metric( "rnal_preg_nalog_partner", my_user(), cCustomer )
+   set_metric( "rnal_preg_nalog_kontakt", my_user(), cContact )
+   set_metric( "rnal_preg_nalog_objekat", my_user(), cObject )
+   set_metric( "rnal_preg_nalog_operater", my_user(), nOperater )
+   set_metric( "rnal_preg_nalog_sort", my_user(), nSort )
+   set_metric( "rnal_preg_nalog_odbaceni", my_user(), cShowRejected )
+   set_metric( "rnal_preg_nalog_tip", my_user(), nTip )
 
-// generisi filter
-cFilter := gen_filter(dDateFrom, ;
-			dDateTo, ;
-			dDvrDFrom, ;
-			dDvrDTo, ;
-			nCustomer, ;
-			nContact, ;
-			nObject, ;
-			nOperater, ;
-			cShowRejected, ;
-            nTip )
+   // generisi filter
+   cFilter := gen_filter( dDateFrom, ;
+      dDateTo, ;
+      dDvrDFrom, ;
+      dDvrDTo, ;
+      nCustomer, ;
+      nContact, ;
+      nObject, ;
+      nOperater, ;
+      cShowRejected, ;
+      nTip )
 
 
-__filter := cFilter
+   __filter := cFilter
 
-// setuj filter
-set_f_kol(cFilter)
+   // setuj filter
+   set_f_kol( cFilter )
 
-return nRet
+   RETURN nRet
 
 
 
 // ------------------------------------------
 // validacija unosa sorta...
 // ------------------------------------------
-static function _val_sort( nSort )
-if nSort >= 1 .and. nSort <= 3
-	return .t.
-endif
-MsgBeep("Sort je u rangu od 1 do 3 !!!")
-return .f.
+STATIC FUNCTION _val_sort( nSort )
+
+   IF nSort >= 1 .AND. nSort <= 3
+      RETURN .T.
+   ENDIF
+   MsgBeep( "Sort je u rangu od 1 do 3 !!!" )
+
+   RETURN .F.
 
 
 
 // ---------------------------------
 // generise string filtera
 // ---------------------------------
-static function gen_filter( dDateFrom, dDateTo, dDvrDFrom, dDvrDTo, ;
-			nCustomer, nContact, nObject, nOper, cShReject, nTip )
-local nClosed := 1
-local cFilter := ""
+STATIC FUNCTION gen_filter( dDateFrom, dDateTo, dDvrDFrom, dDvrDTo, ;
+      nCustomer, nContact, nObject, nOper, cShReject, nTip )
 
-if _status == 1
-	// samo otvoreni nalozi
-	cFilter += "(doc_status == 0 .or. doc_status > 2)"
-else
-	// samo zatvoreni nalozi
-	cFilter += "doc_status == 1"
+   LOCAL nClosed := 1
+   LOCAL cFilter := ""
+
+   IF _status == 1
+      // samo otvoreni nalozi
+      cFilter += "(doc_status == 0 .or. doc_status > 2)"
+   ELSE
+      // samo zatvoreni nalozi
+      cFilter += "doc_status == 1"
 	
-	// prikazi i ponistene
-	if cShReject == "D"
-		cFilter := "( " + cFilter +  " .or. doc_status == 2 )"
-	endif
+      // prikazi i ponistene
+      IF cShReject == "D"
+         cFilter := "( " + cFilter +  " .or. doc_status == 2 )"
+      ENDIF
 	
-endif
+   ENDIF
 
-if nTip == 1
-    cFilter += ".and. doc_type = '  '"
-elseif nTip == 2
-    cFilter += ".and. doc_type = 'NP'"
-endif
+   IF nTip == 1
+      cFilter += ".and. doc_type = '  '"
+   ELSEIF nTip == 2
+      cFilter += ".and. doc_type = 'NP'"
+   ENDIF
 
-if !EMPTY(dDateFrom)
-	cFilter += " .and. DTOS(doc_date) >= " + Cm2Str( DTOS(dDateFrom) )
-endif
+   IF !Empty( dDateFrom )
+      cFilter += " .and. DTOS(doc_date) >= " + Cm2Str( DToS( dDateFrom ) )
+   ENDIF
 
-if !Empty(dDateTo)
-	cFilter += " .and. DTOS(doc_date) <= " + Cm2Str( DTOS(dDateTo) )
-endif
+   IF !Empty( dDateTo )
+      cFilter += " .and. DTOS(doc_date) <= " + Cm2Str( DToS( dDateTo ) )
+   ENDIF
 
-if !EMPTY(dDvrDFrom)
-	cFilter += " .and. DTOS(doc_dvr_da) >= " + Cm2Str( DTOS(dDvrDFrom) )
-endif
+   IF !Empty( dDvrDFrom )
+      cFilter += " .and. DTOS(doc_dvr_da) >= " + Cm2Str( DToS( dDvrDFrom ) )
+   ENDIF
 
-if !Empty(dDvrDTo)
-	cFilter += " .and. DTOS(doc_dvr_da) <= " + Cm2Str( DTOS(dDvrDTo) )
-endif
+   IF !Empty( dDvrDTo )
+      cFilter += " .and. DTOS(doc_dvr_da) <= " + Cm2Str( DToS( dDvrDTo ) )
+   ENDIF
 
-if nCustomer <> 0
-	cFilter += " .and. cust_id == " + custid_str(nCustomer)
-endif
+   IF nCustomer <> 0
+      cFilter += " .and. cust_id == " + custid_str( nCustomer )
+   ENDIF
 
-if nContact <> 0
-	cFilter += " .and. cont_id == " + contid_str(nContact)
-endif
+   IF nContact <> 0
+      cFilter += " .and. cont_id == " + contid_str( nContact )
+   ENDIF
 
-if nObject <> 0
-	cFilter += " .and. obj_id == " + objid_str(nObject)
-endif
+   IF nObject <> 0
+      cFilter += " .and. obj_id == " + objid_str( nObject )
+   ENDIF
 
-if nOper <> 0
-	cFilter += " .and. operater_i == " + ALLTRIM( STR( nOper, 10 ) )
-endif
+   IF nOper <> 0
+      cFilter += " .and. operater_i == " + AllTrim( Str( nOper, 10 ) )
+   ENDIF
 
-return cFilter
+   RETURN cFilter
 
 
 
 // ------------------------------------------------
 // setovanje filtera prema uslovima
 // ------------------------------------------------
-static function set_f_kol(cFilter)
+STATIC FUNCTION set_f_kol( cFilter )
 
-_set_sort()
-set filter to &cFilter
-go top
+   _set_sort()
+   SET FILTER to &cFilter
+   GO TOP
 
-return
+   RETURN
 
 
 
 // ---------------------------------------------
 // pregled - key handler
 // ---------------------------------------------
-static function key_handler()
-local nDoc_no
-local nDoc_status
-local cDesc
-local nTRec
-local cTmpFilter := DBFILTER()
+STATIC FUNCTION key_handler()
 
-if _status == 1
+   LOCAL nDoc_no
+   LOCAL nDoc_status
+   LOCAL cDesc
+   LOCAL nTRec
+   LOCAL cTmpFilter := dbFilter()
 
-	if doc_status == 5
-		// daj info o isporuci, ako je realizovan
-		// TODO: uzeti datum zatvaranja iz LOG-a ili ???
-		_sh_dvr_info( 0, 5 )
-	else
-		// daj info o kasnjenju
-		_sh_dvr_warr( _chk_date( doc_dvr_da ), _chk_time( doc_dvr_ti ), 5 )
-	endif
+   IF _status == 1
+
+      IF doc_status == 5
+         // daj info o isporuci, ako je realizovan
+         // TODO: uzeti datum zatvaranja iz LOG-a ili ???
+         _sh_dvr_info( 0, 5 )
+      ELSE
+         // daj info o kasnjenju
+         _sh_dvr_warr( _chk_date( doc_dvr_da ), _chk_time( doc_dvr_ti ), 5 )
+      ENDIF
 		
-endif
+   ENDIF
 
-// prikazi status dokumenta na pregledu
-_sh_doc_status( doc_status )
+   // prikazi status dokumenta na pregledu
+   _sh_doc_status( doc_status )
 
-// prikazi u dnu ostale informacije o nalogu...
-_sh_doc_info( )
+   // prikazi u dnu ostale informacije o nalogu...
+   _sh_doc_info()
 
-// ove opcije zabrani na statusu 2
-if ( _status == 2 )
-	if ( UPPER(CHR(Ch)) $ "ZP" )
-		return DE_CONT
-	endif
-endif
+   // ove opcije zabrani na statusu 2
+   IF ( _status == 2 )
+      IF ( Upper( Chr( Ch ) ) $ "ZP" )
+         RETURN DE_CONT
+      ENDIF
+   ENDIF
 	
-do case
-	// stampa naloga
-	case (Ch == K_CTRL_P)
+   DO CASE
+      // stampa naloga
+   CASE ( Ch == K_CTRL_P )
 		
-		if Pitanje(, "Stampati nalog (D/N) ?", "D") == "D"
+      IF Pitanje(, "Stampati nalog (D/N) ?", "D" ) == "D"
 			
-			nDoc_no := docs->doc_no
-			nTRec := RecNo()
+         nDoc_no := docs->doc_no
+         nTRec := RecNo()
 			
-			set filter to
+         SET FILTER TO
 			
-			st_nalpr( .f., nDoc_no )
+         st_nalpr( .F., nDoc_no )
 			
-			select docs
+         SELECT docs
 			
-			set_f_kol( cTmpFilter )
+         set_f_kol( cTmpFilter )
 			
-			go (nTRec)
+         GO ( nTRec )
 			
-			return DE_REFRESH
-		endif
+         RETURN DE_REFRESH
+      ENDIF
 		
-		select docs
-		return DE_CONT
+      SELECT docs
+      RETURN DE_CONT
 	
-	// stampa naloga
-	case (Ch == K_CTRL_O)
+      // stampa naloga
+   CASE ( Ch == K_CTRL_O )
 		
-		if Pitanje(, "Stampati specifikaciju (D/N) ?", "D") == "D"
+      IF Pitanje(, "Stampati specifikaciju (D/N) ?", "D" ) == "D"
 			
-			nDoc_no := docs->doc_no
-			nTRec := RecNo()
+         nDoc_no := docs->doc_no
+         nTRec := RecNo()
 			
-			set filter to
+         SET FILTER TO
 			
-			st_obr_list( .f., nDoc_no, aDocs )
+         st_obr_list( .F., nDoc_no, aDocs )
 			
-			select docs
+         SELECT docs
 			
-			set_f_kol( cTmpFilter )
+         set_f_kol( cTmpFilter )
 			
-			go (nTRec)
+         GO ( nTRec )
 			
-			return DE_REFRESH
-		endif
+         RETURN DE_REFRESH
+      ENDIF
 		
-		select docs
-		return DE_CONT
+      SELECT docs
+      RETURN DE_CONT
 	
-	// stampa labele
-	case (Ch == K_CTRL_L)
+      // stampa labele
+   CASE ( Ch == K_CTRL_L )
 		
-		if Pitanje(, "Stampati naljepnice (D/N) ?", "D") == "D"
+      IF Pitanje(, "Stampati naljepnice (D/N) ?", "D" ) == "D"
 			
-			nDoc_no := docs->doc_no
-			nTRec := RecNo()
+         nDoc_no := docs->doc_no
+         nTRec := RecNo()
 			
-			set filter to
+         SET FILTER TO
 			
-			st_label( .f., nDoc_no )
+         st_label( .F., nDoc_no )
 			
-			select docs
+         SELECT docs
 			
-			set_f_kol( cTmpFilter )
+         set_f_kol( cTmpFilter )
 			
-			go (nTRec)
+         GO ( nTRec )
 			
-			return DE_REFRESH
-		endif
+         RETURN DE_REFRESH
+      ENDIF
 		
-		select docs
-		return DE_CONT
+      SELECT docs
+      RETURN DE_CONT
 	
-	// pregled kontakata.... naloga
-	case ( UPPER(CHR(Ch)) == "K" )
+      // pregled kontakata.... naloga
+   CASE ( Upper( Chr( Ch ) ) == "K" )
 		
-		select docs 
+      SELECT docs
 		
-		doc_cont_view( docs->doc_no )
+      doc_cont_view( docs->doc_no )
 		
-		select docs
+      SELECT docs
 		
-		RETURN DE_CONT
+      RETURN DE_CONT
 		
-    case ( UPPER(CHR(Ch)) == "X" )
+   CASE ( Upper( Chr( Ch ) ) == "X" )
 	
-		select docs
-        nDoc_no := docs->doc_no
-		// promjena broja dokumenta
-		if ch_doc_no( nDoc_no )
-            log_write( "F18_DOK_OPER: rnal, promjena broja naloga, nalog broj: " + ALLTRIM( STR( nDoc_no ) ) , 2 )
-			select docs
-			RETURN DE_REFRESH
-		endif
+      SELECT docs
+      nDoc_no := docs->doc_no
+      // promjena broja dokumenta
+      IF ch_doc_no( nDoc_no )
+         log_write( "F18_DOK_OPER: rnal, promjena broja naloga, nalog broj: " + AllTrim( Str( nDoc_no ) ), 2 )
+         SELECT docs
+         RETURN DE_REFRESH
+      ENDIF
 
-		RETURN DE_CONT
+      RETURN DE_CONT
 
-	// ispravka veznih dokumenata
-	case ( UPPER(CHR(Ch)) == "O" )
+      // ispravka veznih dokumenata
+   CASE ( Upper( Chr( Ch ) ) == "O" )
 		
-		otpr_edit( docs->fmk_doc )
+      otpr_edit( docs->fmk_doc )
 		
-		RETURN DE_REFRESH
+      RETURN DE_REFRESH
 	
-	// brza pretraga naloga
-	case ( UPPER(CHR(Ch)) == "N" )
+      // brza pretraga naloga
+   CASE ( Upper( Chr( Ch ) ) == "N" )
 		
-		select docs 
+      SELECT docs
 	
-		nRet := qf_nalog()
+      nRet := qf_nalog()
 
-		select docs
+      SELECT docs
 		
-		RETURN nRet 
+      RETURN nRet
 	
-	// dodaj u listu za obracunske listove
-	case ( UPPER(CHR(Ch)) == "A" )
+      // dodaj u listu za obracunske listove
+   CASE ( Upper( Chr( Ch ) ) == "A" )
 
-		nScn := ASCAN( aDocs, { |xVar| xVar[1] == docs->doc_no } ) 
+      nScn := AScan( aDocs, {|xVar| xVar[ 1 ] == docs->doc_no } )
 
-		if nScn == 0
+      IF nScn == 0
 			
-			// dodaj u matricu
-			AADD( aDocs, { docs->doc_no, ALLTRIM( g_cust_desc( docs->cust_id ) ) + "/" + ;
-                            ALLTRIM( g_cont_desc( docs->cont_id ) ) })
+         // dodaj u matricu
+         AAdd( aDocs, { docs->doc_no, AllTrim( g_cust_desc( docs->cust_id ) ) + "/" + ;
+            AllTrim( g_cont_desc( docs->cont_id ) ) } )
 
-			Beep(2)
+         Beep( 2 )
 
-			s_ol_status( aDocs )
+         s_ol_status( aDocs )
 
-		endif
+      ENDIF
 
-		return DE_CONT
+      RETURN DE_CONT
 
-	// brisi iz liste za obracunske listove
-	case ( UPPER(CHR(Ch)) == "Y" )
+      // brisi iz liste za obracunske listove
+   CASE ( Upper( Chr( Ch ) ) == "Y" )
 
-		nScn := ASCAN( aDocs, { |xVar| xVar[1] == docs->doc_no } ) 
+      nScn := AScan( aDocs, {|xVar| xVar[ 1 ] == docs->doc_no } )
 
-		if nScn <> 0
+      IF nScn <> 0
 
-			// preimenuj broj.... 
-			aDocs[nScn, 1] := -99
+         // preimenuj broj....
+         aDocs[ nScn, 1 ] := -99
 
-			Beep(2)
+         Beep( 2 )
 
-			s_ol_status( aDocs )
-		endif
+         s_ol_status( aDocs )
+      ENDIF
 
-		return DE_CONT
+      RETURN DE_CONT
 
-	// otvaranje naloga za doradu
-	case (UPPER(CHR(Ch)) == "D")
+      // otvaranje naloga za doradu
+   CASE ( Upper( Chr( Ch ) ) == "D" )
 		
-		// provjeri da li je zauzet
-		if is_doc_busy()
-			msg_busy_doc()
-			select docs
-			return DE_CONT
-		endif
+      // provjeri da li je zauzet
+      IF is_doc_busy()
+         msg_busy_doc()
+         SELECT docs
+         RETURN DE_CONT
+      ENDIF
 		
-		if Pitanje(, "Otvoriti nalog radi dorade (D/N) ?", "N") == "D"
+      IF Pitanje(, "Otvoriti nalog radi dorade (D/N) ?", "N" ) == "D"
 			
-			nTRec := RecNo()
-			nDoc_no := docs->doc_no
+         nTRec := RecNo()
+         nDoc_no := docs->doc_no
 			
-			if doc_2__doc( nDoc_no ) == 1
-				MsgBeep("Nalog otvoren!#Prelazim u pripremu##Pritisni nesto za nastavak...")
-                log_write( "F18_DOK_OPER: rnal, dorada naloga broj: " + ALLTRIM( STR( nDoc_no ) ), 2 )
-			endif
+         IF doc_2__doc( nDoc_no ) == 1
+            MsgBeep( "Nalog otvoren!#Prelazim u pripremu##Pritisni nesto za nastavak..." )
+            log_write( "F18_DOK_OPER: rnal, dorada naloga broj: " + AllTrim( Str( nDoc_no ) ), 2 )
+         ENDIF
 			
-			select docs
-			go (nTRec)
+         SELECT docs
+         GO ( nTRec )
 			
-			// otvori i obradi pripremu
-			ed_document( .f. )
+         // otvori i obradi pripremu
+         ed_document( .F. )
 			
-			select docs
-			set_f_kol(cTmpFilter)
+         SELECT docs
+         set_f_kol( cTmpFilter )
 			
-			return DE_REFRESH
-		endif
+         RETURN DE_REFRESH
+      ENDIF
 		
-		select docs
-		return DE_CONT
+      SELECT docs
+      RETURN DE_CONT
 
-	// quick search......
-	case (UPPER(CHR(Ch)) == "Q")
+      // quick search......
+   CASE ( Upper( Chr( Ch ) ) == "Q" )
 
-		// ima li pravo pristupa...
-		if !ImaPravoPristupa(goModul:oDataBase:cName, "DOK", "QUICKSEARCH")
+      // ima li pravo pristupa...
+      IF !ImaPravoPristupa( goModul:oDataBase:cName, "DOK", "QUICKSEARCH" )
 			
-			MsgBeep( cZabrana )
+         MsgBeep( cZabrana )
 
-			select docs
-			return DE_CONT
+         SELECT docs
+         RETURN DE_CONT
 			
-		endif
+      ENDIF
 	
-		// filter za quick search
-		cFilt := _quick_srch_( )
+      // filter za quick search
+      cFilt := _quick_srch_()
 		
-		if !EMPTY( cFilt )
-			cFilt := __filter + cFilt
-			select docs
-			set_f_kol( cFilt )
-			select docs
-			return DE_REFRESH
-		else
-			return DE_CONT
-		endif
+      IF !Empty( cFilt )
+         cFilt := __filter + cFilt
+         SELECT docs
+         set_f_kol( cFilt )
+         SELECT docs
+         RETURN DE_REFRESH
+      ELSE
+         RETURN DE_CONT
+      ENDIF
 
-	// zatvaranje naloga
-	case (UPPER(CHR(Ch)) == "Z")
+      // zatvaranje naloga
+   CASE ( Upper( Chr( Ch ) ) == "Z" )
 		
-		// provjeri da li je zauzet
-		if is_doc_busy()
-			msg_busy_doc()
-			select docs
-			return DE_CONT
-		endif
+      // provjeri da li je zauzet
+      IF is_doc_busy()
+         msg_busy_doc()
+         SELECT docs
+         RETURN DE_CONT
+      ENDIF
 			
-		if Pitanje(, "Zatvoriti nalog (D/N) ?", "N") == "D"
+      IF Pitanje(, "Zatvoriti nalog (D/N) ?", "N" ) == "D"
 					
-			// uzmi status naloga
-			if _g_doc_status( @nDoc_status, @cDesc ) == 1
+         // uzmi status naloga
+         IF _g_doc_status( @nDoc_status, @cDesc ) == 1
 				
-				nTRec := RecNo()
-				nDoc_no := docs->doc_no
+            nTRec := RecNo()
+            nDoc_no := docs->doc_no
 			
-				set_doc_marker( nDoc_no, nDoc_status )
+            set_doc_marker( nDoc_no, nDoc_status )
 				
-				// logiraj zatvaranje...
-				log_closed( nDoc_no, cDesc, nDoc_status )
+            // logiraj zatvaranje...
+            log_closed( nDoc_no, cDesc, nDoc_status )
 				
-				MsgBeep("Nalog zatvoren !!!")
+            MsgBeep( "Nalog zatvoren !!!" )
 			
-				select docs
-				set_f_kol(cTmpFilter)
-				select docs
+            SELECT docs
+            set_f_kol( cTmpFilter )
+            SELECT docs
 				
-				return DE_REFRESH
+            RETURN DE_REFRESH
 				
-			else
+         ELSE
 			
-				MsgBeep("Setovanje statusa obavezno !!!")
-				select docs
-				return DE_CONT
+            MsgBeep( "Setovanje statusa obavezno !!!" )
+            SELECT docs
+            RETURN DE_CONT
 				
-			endif
-		endif
+         ENDIF
+      ENDIF
 		
-		select docs
-		return DE_CONT
+      SELECT docs
+      RETURN DE_CONT
 	
-	// fix - procedura ispravke statusa naloga
-	case (UPPER(CHR(Ch)) == "F")
+      // fix - procedura ispravke statusa naloga
+   CASE ( Upper( Chr( Ch ) ) == "F" )
 		
-		if Pitanje(,"Resetovati status dokumenta (D/N) ?", "N") == "N"
-			return DE_CONT
-		endif
+      IF Pitanje(, "Resetovati status dokumenta (D/N) ?", "N" ) == "N"
+         RETURN DE_CONT
+      ENDIF
 		
-		if !SigmaSif("FIXSTAT")
-			return DE_CONT
-		endif
+      IF !SigmaSif( "FIXSTAT" )
+         RETURN DE_CONT
+      ENDIF
 		
-		nDoc_no := docs->doc_no
-		nTRec := RECNO()
-		set filter to
+      nDoc_no := docs->doc_no
+      nTRec := RecNo()
+      SET FILTER TO
 		
-		set_doc_marker( nDoc_no, 0 )
+      set_doc_marker( nDoc_no, 0 )
 	
-        log_write( "F18_DOK_OPER: rnal, reset statusa naloga broj: " + ALLTRIM( STR( nDoc_no ) ) + " na status 0", 2 )
+      log_write( "F18_DOK_OPER: rnal, reset statusa naloga broj: " + AllTrim( Str( nDoc_no ) ) + " na status 0", 2 )
 	
-		set_f_kol( cTmpFilter )
+      set_f_kol( cTmpFilter )
 		
-		go (nTRec)
+      GO ( nTRec )
 		
-		return DE_CONT
+      RETURN DE_CONT
 
-	// lista promjena na nalogu
-	case (UPPER(CHR(Ch)) == "L")
+      // lista promjena na nalogu
+   CASE ( Upper( Chr( Ch ) ) == "L" )
 		
-		// ima li pravo pristupa
-		if !ImaPravoPristupa(goModul:oDataBase:cName, "DOK", "LOGVIEW")
+      // ima li pravo pristupa
+      IF !ImaPravoPristupa( goModul:oDataBase:cName, "DOK", "LOGVIEW" )
 			
-			MsgBeep( cZabrana )
-			select docs
-			return DE_CONT
+         MsgBeep( cZabrana )
+         SELECT docs
+         RETURN DE_CONT
 			
-		endif
+      ENDIF
 	
-		nDoc_no := docs->doc_no
+      nDoc_no := docs->doc_no
 		
-		frm_lst_log( nDoc_no )
+      frm_lst_log( nDoc_no )
 		
-		return DE_CONT
+      RETURN DE_CONT
 
-	case UPPER(CHR(Ch)) == "E"
+   CASE Upper( Chr( Ch ) ) == "E"
 
-		nTRec := RECNO()
+      nTRec := RecNo()
 		
-		nDoc_no := docs->doc_no
+      nDoc_no := docs->doc_no
 		
-		// export dokumenta
-		m_export( nDoc_no, aDocs, .f., .t. )
+      // export dokumenta
+      m_export( nDoc_no, aDocs, .F., .T. )
 		
-		select docs	
-		set_f_kol( cTmpFilter )
+      SELECT docs
+      set_f_kol( cTmpFilter )
 		
-		go (nTRec)
+      GO ( nTRec )
 		
-		return DE_REFRESH
+      RETURN DE_REFRESH
 
-	// promjene na nalogu
-	case (UPPER(CHR(Ch)) == "P" )
+      // promjene na nalogu
+   CASE ( Upper( Chr( Ch ) ) == "P" )
 		
-		nTRec := RECNO()
+      nTRec := RecNo()
 		
-		if is_doc_busy()
-			msg_busy_doc()
-			select docs
-			return DE_CONT
-		endif
+      IF is_doc_busy()
+         msg_busy_doc()
+         SELECT docs
+         RETURN DE_CONT
+      ENDIF
 		
-		nDoc_no := docs->doc_no
+      nDoc_no := docs->doc_no
 		
-		m_changes( nDoc_no )
+      m_changes( nDoc_no )
 		
-		if LastKey() == K_ESC
-			Ch := 0
-		endif
+      IF LastKey() == K_ESC
+         Ch := 0
+      ENDIF
 	
-		select docs
-		go (nTRec)
+      SELECT docs
+      GO ( nTRec )
 		
-		return DE_REFRESH
+      RETURN DE_REFRESH
 
-endcase
+   ENDCASE
 
-return DE_CONT
+   RETURN DE_CONT
 
 
 // ----------------------------------------------------
 // ispravka veznih dokumenata
 // ----------------------------------------------------
-static function otpr_edit( cValue )
-local GetList:={}
-local nX := m_x
-local nY := m_y
+STATIC FUNCTION otpr_edit( cValue )
 
-cValue := PADR( cValue, 150 )
+   LOCAL GetList := {}
+   LOCAL nX := m_x
+   LOCAL nY := m_y
 
-Box(,1, 50)
-	@ m_x + 1, m_y + 2 SAY "Vezni dokumenti:" GET cValue PICT "@S30"
-	read
-BoxC()
+   cValue := PadR( cValue, 150 )
 
-if LastKey() <> K_ESC
-    _rec := dbf_get_rec()
-    _rec["fmk_doc"] := cValue
-    update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
-endif
+   Box(, 1, 50 )
+   @ m_x + 1, m_y + 2 SAY "Vezni dokumenti:" GET cValue PICT "@S30"
+   READ
+   BoxC()
 
-m_x := nX
-m_y := nY
+   IF LastKey() <> K_ESC
+      _rec := dbf_get_rec()
+      _rec[ "fmk_doc" ] := cValue
+      update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+   ENDIF
 
-return
+   m_x := nX
+   m_y := nY
+
+   RETURN
 
 
 // --------------------------------------------------------------
 // ispisuje status naloga u kontejneru za obracunski list
 // --------------------------------------------------------------
-static function s_ol_status( aArr )
-local cStr := ""
-local i
-local n
-local aStr := {}
-local cOpt
+STATIC FUNCTION s_ol_status( aArr )
 
-if LEN(aArr) == 0
-	cStr := "! prazno !"
-else
+   LOCAL cStr := ""
+   LOCAL i
+   LOCAL n
+   LOCAL aStr := {}
+   LOCAL cOpt
 
-	// napuni string sa nalozima
-	for i:=1 to LEN(aArr)
+   IF Len( aArr ) == 0
+      cStr := "! prazno !"
+   ELSE
+
+      // napuni string sa nalozima
+      FOR i := 1 TO Len( aArr )
 		
-		if aArr[i, 1] < 0
-			loop
-		endif
+         IF aArr[ i, 1 ] < 0
+            LOOP
+         ENDIF
 		
-		if !EMPTY(cStr)
-			cStr += ","
-		endif
+         IF !Empty( cStr )
+            cStr += ","
+         ENDIF
 
-		cStr += ALLTRIM(STR(aArr[i, 1]))
-	next
-endif
+         cStr += AllTrim( Str( aArr[ i, 1 ] ) )
+      NEXT
+   ENDIF
 
-// dodaj u matricu tekst
-cOpt := "A-dodaj Y-brisi: "
-aStr := SjeciStr( cOpt + cStr, maxcols() - 20 )
+   // dodaj u matricu tekst
+   cOpt := "A-dodaj Y-brisi: "
+   aStr := SjeciStr( cOpt + cStr, maxcols() - 20 )
 
-// prikaz idi u 2-3 reda
+   // prikaz idi u 2-3 reda
 
-@ maxrows() - 7, 5 SAY PADR("", maxcols()-10) COLOR "W/G+"
-@ maxrows() - 6, 5 SAY PADR("", maxcols()-10) COLOR "W/G+"
+   @ maxrows() - 7, 5 SAY PadR( "", maxcols() -10 ) COLOR "W/G+"
+   @ maxrows() - 6, 5 SAY PadR( "", maxcols() -10 ) COLOR "W/G+"
 
-for n := 1 to LEN( aStr )	
-	@ maxrows() - 8  + n, 5 SAY aStr[n] COLOR "W/G+"
-next
+   FOR n := 1 TO Len( aStr )
+      @ maxrows() - 8  + n, 5 SAY aStr[ n ] COLOR "W/G+"
+   NEXT
 
-return
+   RETURN
 
 
 
@@ -843,354 +854,368 @@ return
 // --------------------------------------------------
 // brza pretraga naloga u listi
 // --------------------------------------------------
-function qf_nalog()
-local GetList := {}
-local nDoc_no := 0 
-local cFilter := ""
+FUNCTION qf_nalog()
 
-Box(,1, 30)
-	@ m_x+1, m_y+2 SAY8 "Želim pronaci nalog:" GET nDoc_no PICT "999999999" 
-	read
-BoxC()
+   LOCAL GetList := {}
+   LOCAL nDoc_no := 0
+   LOCAL cFilter := ""
 
-if LastKey() == K_ESC .or. nDoc_no = 0
-	return DE_CONT
-endif
+   Box(, 1, 30 )
+   @ m_x + 1, m_y + 2 SAY8 "Želim pronaci nalog:" GET nDoc_no PICT "999999999"
+   READ
+   BoxC()
 
-cFilter := "doc_no = " + docno_str( nDoc_no )
-select docs
-set filter to &cFilter
-go top
+   IF LastKey() == K_ESC .OR. nDoc_no = 0
+      RETURN DE_CONT
+   ENDIF
 
-return DE_REFRESH
+   cFilter := "doc_no = " + docno_str( nDoc_no )
+   SELECT docs
+   SET FILTER to &cFilter
+   GO TOP
+
+   RETURN DE_REFRESH
 
 
 // ----------------------------------------------
-// direktna dorada naloga, po zadatom broju 
+// direktna dorada naloga, po zadatom broju
 // ----------------------------------------------
-function ddor_nal()
-local GetList := {}
-local nDoc_no := 0 
+FUNCTION ddor_nal()
 
-Box(,1, 30)
-	@ m_x+1, m_y+2 SAY8 "Broj naloga:" GET nDoc_no PICT "999999999" 
-	read
-BoxC()
+   LOCAL GetList := {}
+   LOCAL nDoc_no := 0
 
-if LastKey() == K_ESC .or. nDoc_no = 0
-	return
-endif
+   Box(, 1, 30 )
+   @ m_x + 1, m_y + 2 SAY8 "Broj naloga:" GET nDoc_no PICT "999999999"
+   READ
+   BoxC()
 
-rnal_o_tables(.t.)
+   IF LastKey() == K_ESC .OR. nDoc_no = 0
+      RETURN
+   ENDIF
 
-select docs
-go top
-seek docno_str( nDoc_no )
+   rnal_o_tables( .T. )
 
-// provjeri da li je zauzet
-if is_doc_busy()
-	msg_busy_doc()
-	select docs
-	return
-endif
+   SELECT docs
+   GO TOP
+   SEEK docno_str( nDoc_no )
+
+   // provjeri da li je zauzet
+   IF is_doc_busy()
+      msg_busy_doc()
+      SELECT docs
+      RETURN
+   ENDIF
 		
-if Pitanje(, "Otvoriti nalog radi dorade (D/N) ?", "N") == "D"
+   IF Pitanje(, "Otvoriti nalog radi dorade (D/N) ?", "N" ) == "D"
 			
-	nDoc_no := docs->doc_no
+      nDoc_no := docs->doc_no
 			
-	if doc_2__doc( nDoc_no ) == 1
-		MsgBeep("Nalog otvoren!#Prelazim u pripremu##Pritisni nesto za nastavak...")
-        log_write( "F18_DOK_OPER: rnal, dorada naloga broj: " + ALLTRIM( STR( nDoc_no ) ), 2 )
-	endif
+      IF doc_2__doc( nDoc_no ) == 1
+         MsgBeep( "Nalog otvoren!#Prelazim u pripremu##Pritisni nesto za nastavak..." )
+         log_write( "F18_DOK_OPER: rnal, dorada naloga broj: " + AllTrim( Str( nDoc_no ) ), 2 )
+      ENDIF
 			
-	select docs
+      SELECT docs
 			
-	// otvori i obradi pripremu
-	ed_document( .f. )
+      // otvori i obradi pripremu
+      ed_document( .F. )
 		
-	return 
-endif
+      RETURN
+   ENDIF
 		
-return
+   RETURN
 
 
 
 // ------------------------------------------
 // box:: quick search
 // ------------------------------------------
-static function _quick_srch_()
-local GetList := {}
-local nX := 1
-local cDesc := SPACE(150)
+STATIC FUNCTION _quick_srch_()
 
-Box(, 5, 70, .t.)
-	
-	@ m_x + nX, m_y + 2 SAY "Brza pretraga naloga *******"
-	
-	nX += 2
-	
-	@ m_x + nX, m_y + 2 SAY "Unesi kratki opis naloga:" GET cDesc PICT "@S40" VALID !EMPTY( cDesc )
-	
-	@ m_x + nX, col() SAY ">" COLOR "I"
-	
-	read
-BoxC()
+   LOCAL GetList := {}
+   LOCAL nX := 1
+   LOCAL cDesc := Space( 150 )
 
-if LastKey() == K_ESC
-	xRet := ""
-else
-	// formiram filter
-	xRet := " .and. "
-	xRet += " ( " 
-	xRet += cm2str(UPPER(ALLTRIM(cDesc))) 
-	xRet += " $ UPPER(doc_sh_desc) " 
-	xRet += " .or. " 
-	xRet += cm2str(UPPER(ALLTRIM(cDesc))) 
-	xRet += " $ UPPER(doc_desc) " 
-	xRet += " ) " 
-endif
+   Box(, 5, 70, .T. )
+	
+   @ m_x + nX, m_y + 2 SAY "Brza pretraga naloga *******"
+	
+   nX += 2
+	
+   @ m_x + nX, m_y + 2 SAY "Unesi kratki opis naloga:" GET cDesc PICT "@S40" VALID !Empty( cDesc )
+	
+   @ m_x + nX, Col() SAY ">" COLOR "I"
+	
+   READ
+   BoxC()
 
-return xRet
+   IF LastKey() == K_ESC
+      xRet := ""
+   ELSE
+      // formiram filter
+      xRet := " .and. "
+      xRet += " ( "
+      xRet += cm2str( Upper( AllTrim( cDesc ) ) )
+      xRet += " $ UPPER(doc_sh_desc) "
+      xRet += " .or. "
+      xRet += cm2str( Upper( AllTrim( cDesc ) ) )
+      xRet += " $ UPPER(doc_desc) "
+      xRet += " ) "
+   ENDIF
+
+   RETURN xRet
 
 
 
 // -----------------------------------
 // info dokument zauzet
 // -----------------------------------
-static function msg_busy_doc()
-MsgBeep("Dokument je zauzet#Operacije onemogucene !!!")
-return
+STATIC FUNCTION msg_busy_doc()
+
+   MsgBeep( "Dokument je zauzet#Operacije onemogucene !!!" )
+
+   RETURN
 
 
 
 // ------------------------------------------------
 // setuj status naloga realizovan, ponisten, opis
 // ------------------------------------------------
-static function _g_doc_status( nDoc_status, cDesc )
-local cStat := "R"
-local nX := 1
-local nBoxX := 11
-local nBoxY := 60
-local cColor := "BG+/B"
+STATIC FUNCTION _g_doc_status( nDoc_status, cDesc )
 
-Beep(2)
+   LOCAL cStat := "R"
+   LOCAL nX := 1
+   LOCAL nBoxX := 11
+   LOCAL nBoxY := 60
+   LOCAL cColor := "BG+/B"
 
-Box(, nBoxX, nBoxY)
+   Beep( 2 )
 
-	cDesc := SPACE(150)
-	
-	nX += 1
-	
-	@ m_x + nX, m_y + 2 SAY " **** Trenutni status naloga je:" COLOR cColor
-	
-	nX += 2
-	
-	@ m_x + nX, m_y + 2 SAY SPACE(3) + "(R) realizovan" COLOR cColor
-	
-	nX += 1
-	
-	@ m_x + nX, m_y + 2 SAY SPACE(3) + "(N) realizovan, nije isporucen" COLOR cColor
-	nX += 1
-	
-	@ m_x + nX, m_y + 2 SAY SPACE(3) + "(D) djelimicno realizovan" COLOR cColor
-	
-	nX += 1
-	
-	@ m_x + nX, m_y + 2 SAY SPACE(3) + "(X) ponisten" COLOR cColor
-	
-	nX += 2
-	
-	@ m_x + nX, m_y + 2 SAY "postavi status na -------->" GET cStat VALID cStat $ "RXDN" PICT "@!"
-	
-	nX += 2
-	
-	@ m_x + nX, m_y + 2 SAY "Opis:" GET cDesc VALID !EMPTY(cDesc) PICT "@S50"
-	
-	read
-BoxC()
+   Box(, nBoxX, nBoxY )
 
-
-if cStat == "R"
-	// closed
-	nDoc_status := 1
-endif
-
-if cStat == "X"
-	// rejected
-	nDoc_status := 2
-endif
-
-if cStat == "D"
-	// partialy done
-	nDoc_status := 4
-endif
-
-if cStat == "N"
-	// closed but not delivered
-	nDoc_status := 5
-endif
+   cDesc := Space( 150 )
+	
+   nX += 1
+	
+   @ m_x + nX, m_y + 2 SAY " **** Trenutni status naloga je:" COLOR cColor
+	
+   nX += 2
+	
+   @ m_x + nX, m_y + 2 SAY Space( 3 ) + "(R) realizovan" COLOR cColor
+	
+   nX += 1
+	
+   @ m_x + nX, m_y + 2 SAY Space( 3 ) + "(N) realizovan, nije isporucen" COLOR cColor
+   nX += 1
+	
+   @ m_x + nX, m_y + 2 SAY Space( 3 ) + "(D) djelimicno realizovan" COLOR cColor
+	
+   nX += 1
+	
+   @ m_x + nX, m_y + 2 SAY Space( 3 ) + "(X) ponisten" COLOR cColor
+	
+   nX += 2
+	
+   @ m_x + nX, m_y + 2 SAY "postavi status na -------->" GET cStat VALID cStat $ "RXDN" PICT "@!"
+	
+   nX += 2
+	
+   @ m_x + nX, m_y + 2 SAY "Opis:" GET cDesc VALID !Empty( cDesc ) PICT "@S50"
+	
+   READ
+   BoxC()
 
 
-ESC_RETURN 0
+   IF cStat == "R"
+      // closed
+      nDoc_status := 1
+   ENDIF
 
-return 1
+   IF cStat == "X"
+      // rejected
+      nDoc_status := 2
+   ENDIF
+
+   IF cStat == "D"
+      // partialy done
+      nDoc_status := 4
+   ENDIF
+
+   IF cStat == "N"
+      // closed but not delivered
+      nDoc_status := 5
+   ENDIF
+
+
+   ESC_RETURN 0
+
+   RETURN 1
 
 
 
 // -------------------------------------------------------
 // ispisuje customer / contact u listi naloga
 // -------------------------------------------------------
-static function __sh_cust( cCust, cCont )
-local xRet := ""
-local cTmp
-local nPadR := 35
+STATIC FUNCTION __sh_cust( cCust, cCont )
 
-cTmp := ALLTRIM( cCust )
+   LOCAL xRet := ""
+   LOCAL cTmp
+   LOCAL nPadR := 35
 
-// ako je NN kupac
-if cTmp == "NN"
-	xRet := "(" + cTmp + ")"
-	xRet += " "
-	xRet += ALLTRIM( cCont )
-else
-	xRet := cTmp
-	xRet += "/"
-	xRet += ALLTRIM( cCont )
-endif
+   cTmp := AllTrim( cCust )
 
-return PADR( xRet, nPadR )
+   // ako je NN kupac
+   IF cTmp == "NN"
+      xRet := "(" + cTmp + ")"
+      xRet += " "
+      xRet += AllTrim( cCont )
+   ELSE
+      xRet := cTmp
+      xRet += "/"
+      xRet += AllTrim( cCont )
+   ENDIF
+
+   RETURN PadR( xRet, nPadR )
 
 
 
 // -------------------------------------------------------
 // setovanje kolona tabele za unos operacija
 // -------------------------------------------------------
-static function set_a_kol( aImeKol, aKol, nStatus )
-aImeKol := {}
+STATIC FUNCTION set_a_kol( aImeKol, aKol, nStatus )
 
-AADD(aImeKol, {"Narucioc / kontakt", ;
-	{|| __sh_cust( g_cust_desc(cust_id), g_cont_desc(cont_id)) }, ;
-	"cust_id", ;
-	{|| .t.}, ;
-	{|| .t.} })
+   aImeKol := {}
 
-AADD(aImeKol, {"Datum", ;
-	{|| doc_date }, ;
-	"doc_date", ;
-	{|| .t.}, ;
-	{|| .t.} })
+   AAdd( aImeKol, { "Narucioc / kontakt", ;
+      {|| __sh_cust( g_cust_desc( cust_id ), g_cont_desc( cont_id ) ) }, ;
+      "cust_id", ;
+      {|| .T. }, ;
+      {|| .T. } } )
 
-AADD(aImeKol, {"Dat.isp." , ;
-	{|| doc_dvr_da }, ;
-	"doc_dvr_da", ;
-	{|| .t.}, ;
-	{|| .t.} })
+   AAdd( aImeKol, { "Datum", ;
+      {|| doc_date }, ;
+      "doc_date", ;
+      {|| .T. }, ;
+      {|| .T. } } )
 
-AADD(aImeKol, {"Vr.isp." , ;
-	{|| doc_dvr_ti }, ;
-	"doc_dvr_ti", ;
-	{|| .t.}, ;
-	{|| .t.} })
+   AAdd( aImeKol, { "Dat.isp.", ;
+      {|| doc_dvr_da }, ;
+      "doc_dvr_da", ;
+      {|| .T. }, ;
+      {|| .T. } } )
 
-AADD(aImeKol, {PADC("Dok.br",10), ;
-	{|| doc_no }, ;
-	"doc_no", ;
-	{|| .t.}, ;
-	{|| .t.} })
+   AAdd( aImeKol, { "Vr.isp.", ;
+      {|| doc_dvr_ti }, ;
+      "doc_dvr_ti", ;
+      {|| .T. }, ;
+      {|| .T. } } )
 
-if _operater = 0
-   AADD(aImeKol, { "Operater", ;
-	{|| PADR( getusername(operater_i), 10) }, ;
-	"operater_i", ;
-	{|| .t.}, ;
-	{|| .t.} })
-endif
+   AAdd( aImeKol, { PadC( "Dok.br", 10 ), ;
+      {|| doc_no }, ;
+      "doc_no", ;
+      {|| .T. }, ;
+      {|| .T. } } )
 
-AADD(aImeKol, {"Prioritet" , ;
-	{|| PADR( s_priority(doc_priori) ,10) }, ;
-	"doc_priori", ;
-	{|| .t.}, ;
-	{|| .t.} })
+   IF _operater = 0
+      AAdd( aImeKol, { "Operater", ;
+         {|| PadR( getusername( operater_i ), 10 ) }, ;
+         "operater_i", ;
+         {|| .T. }, ;
+         {|| .T. } } )
+   ENDIF
 
-AADD(aImeKol, {"Vr.plac" , ;
-	{|| PADR( s_pay_id(doc_pay_id) ,10) }, ;
-	"doc_pay_id", ;
-	{|| .t.}, ;
-	{|| .t.} })
+   AAdd( aImeKol, { "Prioritet", ;
+      {|| PadR( s_priority( doc_priori ),10 ) }, ;
+      "doc_priori", ;
+      {|| .T. }, ;
+      {|| .T. } } )
 
-AADD(aImeKol, {"Plac." , ;
-	{|| PADR( doc_paid , 4) }, ;
-	"doc_paid", ;
-	{|| .t.}, ;
-	{|| .t.} })
+   AAdd( aImeKol, { "Vr.plac", ;
+      {|| PadR( s_pay_id( doc_pay_id ),10 ) }, ;
+      "doc_pay_id", ;
+      {|| .T. }, ;
+      {|| .T. } } )
 
-AADD(aImeKol, {"Tip" , ;
-	{|| PADR( doc_type , 2) }, ;
-	"doc_type", ;
-	{|| .t.}, ;
-	{|| .t.} })
+   AAdd( aImeKol, { "Plac.", ;
+      {|| PadR( doc_paid, 4 ) }, ;
+      "doc_paid", ;
+      {|| .T. }, ;
+      {|| .T. } } )
 
-AADD(aImeKol, {"FMK" , ;
-	{|| fmk_doc }, ;
-	"fmk_doc", ;
-	{|| .t.}, ;
-	{|| .t.} })
+   AAdd( aImeKol, { "Tip", ;
+      {|| PadR( doc_type, 2 ) }, ;
+      "doc_type", ;
+      {|| .T. }, ;
+      {|| .T. } } )
 
-aKol:={}
+   AAdd( aImeKol, { "FMK", ;
+      {|| fmk_doc }, ;
+      "fmk_doc", ;
+      {|| .T. }, ;
+      {|| .T. } } )
 
-for i:=1 to LEN(aImeKol)
-	AADD(aKol,i)
-next
+   aKol := {}
 
-return
+   FOR i := 1 TO Len( aImeKol )
+      AAdd( aKol, i )
+   NEXT
+
+   RETURN
 
 
 // ----------------------------------------
 // provjeri datum isporuke...
 // ----------------------------------------
-static function _chk_date( dD_dvr_date )
-local nDays := 0
-nDays := DATE() - dD_dvr_date
-return nDays
+STATIC FUNCTION _chk_date( dD_dvr_date )
+
+   LOCAL nDays := 0
+
+   nDays := Date() - dD_dvr_date
+
+   RETURN nDays
 
 
 // ----------------------------------------
 // provjeri vrijeme isporuke...
 // ----------------------------------------
-static function _chk_time( cDvr_time )
-local nMinutes := 0
-return nMinutes
+STATIC FUNCTION _chk_time( cDvr_time )
+
+   LOCAL nMinutes := 0
+
+   RETURN nMinutes
 
 
 // ------------------------------------------
 // prikazi upozorenje za istek roka
 // nDays - dana kasnjenja
 // ------------------------------------------
-static function _sh_dvr_warr( nDays, nMinutes, nX, nLen )
-local cColWarr := "W/R+"
-local cColOk := "GR+/B"
-local cColor
-local cTmp
+STATIC FUNCTION _sh_dvr_warr( nDays, nMinutes, nX, nLen )
 
-if nX == nil
-	nX := 2
-endif
+   LOCAL cColWarr := "W/R+"
+   LOCAL cColOk := "GR+/B"
+   LOCAL cColor
+   LOCAL cTmp
 
-if nLen == nil
-	nLen := 20 
-endif
+   IF nX == nil
+      nX := 2
+   ENDIF
 
-if nDays > 0
-	cTmp := " van roka " + ALLTRIM(STR(nDays)) + " dana"
-	cColor := cColWarr
-else
-	cTmp := " u roku"
-	cColor := cColOk
-endif
+   IF nLen == nil
+      nLen := 20
+   ENDIF
 
-@ nX, m_y + 1 SAY PADR(cTmp, nLen) COLOR cColor
+   IF nDays > 0
+      cTmp := " van roka " + AllTrim( Str( nDays ) ) + " dana"
+      cColor := cColWarr
+   ELSE
+      cTmp := " u roku"
+      cColor := cColOk
+   ENDIF
 
-return
+   @ nX, m_y + 1 SAY PadR( cTmp, nLen ) COLOR cColor
+
+   RETURN
 
 
 
@@ -1198,118 +1223,120 @@ return
 // prikazi info koliko dana nije preuzeta roba
 // nDays - dana kasnjenja
 // ------------------------------------------
-static function _sh_dvr_info( nDays, nX, nLen )
-local cColOk := "GR+/B"
-local cColor
-local cTmp := ""
+STATIC FUNCTION _sh_dvr_info( nDays, nX, nLen )
 
-if nX == NIL
-	nX := 2
-endif
+   LOCAL cColOk := "GR+/B"
+   LOCAL cColor
+   LOCAL cTmp := ""
 
-if nLen == NIL
-	nLen := 20 
-endif
+   IF nX == NIL
+      nX := 2
+   ENDIF
 
-if nDays > 0
-	cTmp := ALLTRIM( STR( nDays ) ) + " dana"
-	cColor := cColOk
-    @ nX, m_y + 1 SAY PADR( cTmp, nLen ) COLOR cColor
-else
-    @ nX, m_y + 1 SAY SPACE( nLen )
-endif
+   IF nLen == NIL
+      nLen := 20
+   ENDIF
 
+   IF nDays > 0
+      cTmp := AllTrim( Str( nDays ) ) + " dana"
+      cColor := cColOk
+      @ nX, m_y + 1 SAY PadR( cTmp, nLen ) COLOR cColor
+   ELSE
+      @ nX, m_y + 1 SAY Space( nLen )
+   ENDIF
 
-return
+   RETURN
 
 
 
 // ----------------------------------------------------
 // prikaz statusa dokumenta na pregledu
 // ----------------------------------------------------
-static function _sh_doc_status( doc_status, nX, nY )
-local cTmp
-local cDoc_stat
-local cColor := "GR+/B"
+STATIC FUNCTION _sh_doc_status( doc_status, nX, nY )
 
-if nX == nil
-	nX := 5
-endif
+   LOCAL cTmp
+   LOCAL cDoc_stat
+   LOCAL cColor := "GR+/B"
 
-if nY == nil
-	nY := 21
-endif
+   IF nX == nil
+      nX := 5
+   ENDIF
 
-// daj opis
-cTmp := g_doc_status( doc_status )
+   IF nY == nil
+      nY := 21
+   ENDIF
 
-do case
+   // daj opis
+   cTmp := g_doc_status( doc_status )
 
-	case doc_status == 0
-		
-		cColor := "GR+/B"
-		
-	case doc_status == 1
-		
-		cColor := "GB+/B"
-		
-	case doc_status == 2
-		
-		cColor := "W/R+"
-		
-	case doc_status == 3
-		
-		cColor := "GR+/G+"
-		
-	case doc_status == 4
-		
-		cColor := "W/G+"
-		
-	case doc_status == 5
-		
-		cColor := "W/G+"
+   DO CASE
 
-endcase
+   CASE doc_status == 0
+		
+      cColor := "GR+/B"
+		
+   CASE doc_status == 1
+		
+      cColor := "GB+/B"
+		
+   CASE doc_status == 2
+		
+      cColor := "W/R+"
+		
+   CASE doc_status == 3
+		
+      cColor := "GR+/G+"
+		
+   CASE doc_status == 4
+		
+      cColor := "W/G+"
+		
+   CASE doc_status == 5
+		
+      cColor := "W/G+"
 
-@ nX, nY SAY PADR( cTmp , 20 ) COLOR cColor
+   ENDCASE
 
-return
+   @ nX, nY SAY PadR( cTmp, 20 ) COLOR cColor
+
+   RETURN
 
 
 // --------------------------------------------
 // vraca staus dokumenta
 // --------------------------------------------
-function g_doc_status( doc_status ) 
-local cTmp := ""
+FUNCTION g_doc_status( doc_status )
 
-do case
+   LOCAL cTmp := ""
 
-	case doc_status == 0
-		
-		cTmp := " otvoren"
-		
-	case doc_status == 1
-		
-		cTmp := " realizovan"
-		
-	case doc_status == 2
-		
-		cTmp := " ponisten"
-		
-	case doc_status == 3
-		
-		cTmp := " zauzet"
-		
-	case doc_status == 4
-		
-		cTmp := " realizovan dio"
-		
-	case doc_status == 5
-		
-		cTmp := "real.nije isporucen"
-endcase
+   DO CASE
 
-return cTmp
+   CASE doc_status == 0
+		
+      cTmp := " otvoren"
+		
+   CASE doc_status == 1
+		
+      cTmp := " realizovan"
+		
+   CASE doc_status == 2
+		
+      cTmp := " ponisten"
+		
+   CASE doc_status == 3
+		
+      cTmp := " zauzet"
+		
+   CASE doc_status == 4
+		
+      cTmp := " realizovan dio"
+		
+   CASE doc_status == 5
+		
+      cTmp := "real.nije isporucen"
+   ENDCASE
+
+   RETURN cTmp
 
 
 
@@ -1317,173 +1344,174 @@ return cTmp
 // ------------------------------------------------
 // prikaz ostalih informacija o dokumentu
 // ------------------------------------------------
-static function _sh_doc_info( nX, nY )
-local cTmp
-local aTmp
-local nTxtLen := maxcols() - 12
-local cColor := "GR+/B"
+STATIC FUNCTION _sh_doc_info( nX, nY )
 
-if nX == nil
-	nX := maxrows() - 11
-endif
+   LOCAL cTmp
+   LOCAL aTmp
+   LOCAL nTxtLen := maxcols() - 12
+   LOCAL cColor := "GR+/B"
 
-if nY == nil
-	nY := 6
-endif
+   IF nX == nil
+      nX := maxrows() - 11
+   ENDIF
 
-// napuni string sa opisom
-cTmp := ""
+   IF nY == nil
+      nY := 6
+   ENDIF
 
-cTmp += ALLTRIM( g_obj_desc( obj_id ) )
-cTmp += ", "
-cTmp += ALLTRIM(doc_sh_des) 
+   // napuni string sa opisom
+   cTmp := ""
 
-if !EMPTY(cTmp)
-	cTmp += ", "
-endif
+   cTmp += AllTrim( g_obj_desc( obj_id ) )
+   cTmp += ", "
+   cTmp += AllTrim( doc_sh_des )
 
-cTmp += ALLTRIM(doc_desc)
+   IF !Empty( cTmp )
+      cTmp += ", "
+   ENDIF
 
-// pretvori string u matricu....
-aTmp := SjeciStr( cTmp, nTxtLen )
+   cTmp += AllTrim( doc_desc )
 
-// pocisti postojece linije
-@ nX + 1, nY SAY SPACE( nTxtLen ) COLOR cColor
-@ nX + 2, nY SAY SPACE( nTxtLen ) COLOR cColor
-@ nX + 3, nY SAY SPACE( nTxtLen ) COLOR cColor
+   // pretvori string u matricu....
+   aTmp := SjeciStr( cTmp, nTxtLen )
 
-// ispisi info
-for i := 1 to LEN( aTmp )
+   // pocisti postojece linije
+   @ nX + 1, nY SAY Space( nTxtLen ) COLOR cColor
+   @ nX + 2, nY SAY Space( nTxtLen ) COLOR cColor
+   @ nX + 3, nY SAY Space( nTxtLen ) COLOR cColor
+
+   // ispisi info
+   FOR i := 1 TO Len( aTmp )
 	
-	@ nX + i, nY SAY PADR( aTmp[i] , nTxtLen ) COLOR cColor
+      @ nX + i, nY SAY PadR( aTmp[ i ], nTxtLen ) COLOR cColor
 	
-next
+   NEXT
 
-return
+   RETURN
 
 
 // -----------------------------------------
 // daje listu kontakata naloga
 // -----------------------------------------
-function doc_cont_view( nDoc_no )
-local aCont := {}
+FUNCTION doc_cont_view( nDoc_no )
 
-if _get_doc_contacts( @aCont, nDoc_no ) > 0
-	show_c_list( aCont )
-else
-	MsgBeep("Dokument nema kontakata !!!")
-endif
+   LOCAL aCont := {}
 
-return
+   IF _get_doc_contacts( @aCont, nDoc_no ) > 0
+      show_c_list( aCont )
+   ELSE
+      MsgBeep( "Dokument nema kontakata !!!" )
+   ENDIF
+
+   RETURN
 
 
 // ----------------------------------------------
 // puni matricu aArr sa listom kontakata...
 // ----------------------------------------------
-static function _get_doc_contacts( aArr, nDoc_no )
-local nC_count := 0
-local nTArea := SELECT()
-local cLogType := PADR("12", 3)
-local nSrch := 0
-local nCont_id := 0
+STATIC FUNCTION _get_doc_contacts( aArr, nDoc_no )
 
-select doc_log
-set filter to
-select doc_lit
-set filter to
-select doc_log
-set order to tag "2"
-go top
+   LOCAL nC_count := 0
+   LOCAL nTArea := Select()
+   LOCAL cLogType := PadR( "12", 3 )
+   LOCAL nSrch := 0
+   LOCAL nCont_id := 0
 
-seek docno_str(nDoc_no) + cLogType
+   SELECT doc_log
+   SET FILTER TO
+   SELECT doc_lit
+   SET FILTER TO
+   SELECT doc_log
+   SET ORDER TO TAG "2"
+   GO TOP
 
-do while !EOF() .and. field->doc_no == nDoc_no ;
-		.and. field->doc_log_ty == cLogType
+   SEEK docno_str( nDoc_no ) + cLogType
 
-	nDoc_log_no := field->doc_log_no
+   DO WHILE !Eof() .AND. field->doc_no == nDoc_no ;
+         .AND. field->doc_log_ty == cLogType
+
+      nDoc_log_no := field->doc_log_no
 	
-	select doc_lit
-	set order to tag "1"
-	go top
-	seek docno_str(nDoc_no) + doclog_str(nDoc_log_no)
+      SELECT doc_lit
+      SET ORDER TO TAG "1"
+      GO TOP
+      SEEK docno_str( nDoc_no ) + doclog_str( nDoc_log_no )
 
-	do while !EOF() .and. field->doc_no == nDoc_no ;
-			.and. field->doc_log_no == nDoc_log_no
+      DO WHILE !Eof() .AND. field->doc_no == nDoc_no ;
+            .AND. field->doc_log_no == nDoc_log_no
 			
-			if field->int_1 <> 0
+         IF field->int_1 <> 0
 				
-				nCont_id := field->int_1
+            nCont_id := field->int_1
 				
-				nSrch := ASCAN(aArr, {|xVal| xVal[1] == nCont_id })
-				if nSrch == 0
+            nSrch := AScan( aArr, {| xVal| xVal[ 1 ] == nCont_id } )
+            IF nSrch == 0
 					
-					AADD(aArr, { field->int_1, g_cont_desc(field->int_1), g_cont_tel(field->int_1) })
+               AAdd( aArr, { field->int_1, g_cont_desc( field->int_1 ), g_cont_tel( field->int_1 ) } )
 				
-					++ nC_count
-				endif
-			endif
+               ++ nC_count
+            ENDIF
+         ENDIF
 		
-		skip
-	enddo
+         SKIP
+      ENDDO
 
-	select doc_log
-	skip
+      SELECT doc_log
+      SKIP
 	
-enddo
+   ENDDO
 
-select (nTArea)
-return nC_count
+   SELECT ( nTArea )
+
+   RETURN nC_count
 
 
 
 // ----------------------------------------------
 // prikazuje listu kontakata u box-u
 // ----------------------------------------------
-static function show_c_list( aArr )
-local nX := m_x
-local nY := m_y
-local nBoxX := LEN(aArr) + 2
-local nBoxY := 70
-local i
-local cGet := " "
-local lShow := .t.
+STATIC FUNCTION show_c_list( aArr )
 
-if LEN(aArr) == 0
-	return .f.
-endif
+   LOCAL nX := m_x
+   LOCAL nY := m_y
+   LOCAL nBoxX := Len( aArr ) + 2
+   LOCAL nBoxY := 70
+   LOCAL i
+   LOCAL cGet := " "
+   LOCAL lShow := .T.
 
-do while lShow == .t.
+   IF Len( aArr ) == 0
+      RETURN .F.
+   ENDIF
 
-	Box( , nBoxX, nBoxY ) 
+   DO WHILE lShow == .T.
+
+      Box( , nBoxX, nBoxY )
 		
-		for i:=1 to LEN(aArr)
+      FOR i := 1 TO Len( aArr )
 			
-			@ m_x + i, m_y + 2 SAY "(" + ALLTRIM(STR(aArr[i, 1])) + ")"
-			@ m_x + i, col() + 1 SAY ", " + ALLTRIM(aArr[i, 2])
+         @ m_x + i, m_y + 2 SAY "(" + AllTrim( Str( aArr[ i, 1 ] ) ) + ")"
+         @ m_x + i, Col() + 1 SAY ", " + AllTrim( aArr[ i, 2 ] )
 			
-			@ m_x + i, col() + 1 SAY ", " + ALLTRIM(aArr[i, 3])
+         @ m_x + i, Col() + 1 SAY ", " + AllTrim( aArr[ i, 3 ] )
 			
 			
-		next	
+      next
 		
-		@ m_x + LEN(aArr) + 1 , m_y + 2 GET cGet
+      @ m_x + Len( aArr ) + 1, m_y + 2 GET cGet
 		
-		read
+      READ
 		
 		
-	BoxC()
+      BoxC()
 	
-	if LastKey() == K_ENTER .or. LastKey() == K_ESC
-		lShow := .f.
-	endif
+      IF LastKey() == K_ENTER .OR. LastKey() == K_ESC
+         lShow := .F.
+      ENDIF
 
-enddo
+   ENDDO
 
-m_x := nX
-m_y := nY
+   m_x := nX
+   m_y := nY
 
-return .t.
-
-
-
-
+   RETURN .T.

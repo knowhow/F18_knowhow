@@ -448,8 +448,6 @@ METHOD F18AdminOpts:update_app_get_versions()
 
 
 
-// ------------------------------------------------
-// ------------------------------------------------
 METHOD F18AdminOpts:update_app_dl_scripts()
 
    LOCAL _ok := .F.
@@ -462,14 +460,12 @@ METHOD F18AdminOpts:update_app_dl_scripts()
 
    MsgO( "Vrsim download skripti za update ... sacekajte trenutak !" )
 
-   // skini mi info fajl o verzijama...
    _url := "https://raw.github.com/knowhow/F18_knowhow/master/"
    IF !::wget_download( _url, ::update_app_info_file, _path + ::update_app_info_file, _always_erase, _silent )
       MsgC()
       RETURN _ok
    ENDIF
 
-   // skini mi skriptu f18_upd.sh
    _url := "https://raw.github.com/knowhow/F18_knowhow/master/scripts/"
    IF !::wget_download( _url, ::update_app_script_file, _path + ::update_app_script_file, _always_erase, _silent )
       MsgC()
@@ -484,8 +480,6 @@ METHOD F18AdminOpts:update_app_dl_scripts()
 
 
 
-// ----------------------------------------------
-// ----------------------------------------------
 METHOD F18AdminOpts:get_os_name()
 
    LOCAL _os := "Ubuntu"

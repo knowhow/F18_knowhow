@@ -80,7 +80,8 @@ FUNCTION my_use_temp( alias, table, new_area, excl )
          IF File( ImeDbfCdx( table ) )
             dbSetIndex( ImeDbfCDX( table ) )
          ENDIF
-         nCnt := 3
+         nCnt := 100
+
       RECOVER USING _err
 
          _msg := "ERROR my_use_temp: " + _err:description + ": tbl:" + table + " alias:" + alias + " se ne moze otvoriti ?!"
@@ -96,6 +97,11 @@ FUNCTION my_use_temp( alias, table, new_area, excl )
       
       ++nCnt
    ENDDO
+
+   IF nCnt < 100
+      RaiseError( "ERROR: my_use " + table + " neusjesno !" )
+   ENDIF
+
 
    RETURN
 
@@ -219,13 +225,14 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
    ENDDO
 
    IF nCnt < 100
-      RaiseError( "ERROR: my_use" + table + "neusjesno !" )
+      RaiseError( "ERROR: my_use " + table + " neusjesno !" )
    ENDIF
 
    RETURN
 
-// -----------------------------------------------------
-// -----------------------------------------------------
+
+
+
 FUNCTION dbf_semaphore_synchro( table )
 
    LOCAL _version, _last_version

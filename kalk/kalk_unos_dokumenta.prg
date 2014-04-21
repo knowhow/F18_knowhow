@@ -167,65 +167,18 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
 
 FUNCTION o_kalk_edit()
 
-   SELECT F_KALK_DOKS
-   IF !Used()
-      O_KALK_DOKS
-   ENDIF
-
-   SELECT F_KALK_PRIPR
-   IF !Used()
-      O_KALK_PRIPR
-   ENDIF
-
-   SELECT F_SIFK
-   IF !Used()
-      O_SIFK
-   ENDIF
-
-   SELECT F_SIFV
-   IF !Used()
-      O_SIFV
-   ENDIF
-
-   SELECT F_ROBA
-   IF !Used()
-      O_ROBA
-   ENDIF
-
-   SELECT F_KALK
-   IF !Used()
-      O_KALK
-   ENDIF
-
-   SELECT F_KONTO
-   IF !Used()
-      O_KONTO
-   ENDIF
-
-   SELECT F_PARTN
-   IF !Used()
-      O_PARTN
-   ENDIF
-
-   SELECT F_TDOK
-   IF !Used()
-      O_TDOK
-   ENDIF
-
-   SELECT F_VALUTE
-   IF !Used()
-      O_VALUTE
-   ENDIF
-
-   SELECT F_TARIFA
-   IF !Used()
-      O_TARIFA
-   ENDIF
-
-   SELECT F_KONCIJ
-   IF !Used()
-      O_KONCIJ
-   ENDIF
+   O_KALK_DOKS
+   O_KALK_PRIPR
+   O_SIFK
+   O_SIFV
+   O_ROBA
+   O_KALK
+   O_KONTO
+   O_PARTN
+   O_TDOK
+   O_VALUTE
+   O_TARIFA
+   O_KONCIJ
 
    SELECT kalk_pripr
    SET ORDER TO TAG "1"
@@ -2858,7 +2811,6 @@ FUNCTION PopustKaoNivelacijaMP()
 
 FUNCTION StOLPPAz()
 
-   // {
    LOCAL nCol1
    LOCAL nCol2
    LOCAL nPom

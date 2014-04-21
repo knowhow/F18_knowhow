@@ -15,7 +15,7 @@
 
 FUNCTION Get1_14PDV()
 
-   pIzgSt := .F.   // izgenerisane stavke jos ne postoje
+   pIzgSt := .F.
 
    SET KEY K_ALT_K TO KM2()
 
@@ -50,7 +50,7 @@ FUNCTION Get1_14PDV()
       ENDIF
    ENDIF
 
-   @ m_x + 10, m_y + 66 SAY "Tarif.brĿ"
+   @ m_x + 10, m_y + 66 SAY "Tarif.br "
 
    IF lKoristitiBK
       @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _IdRoba := PadR( _idroba, Val( gDuzSifIni ) ), .T. } valid  {|| P_Roba( @_IdRoba ), Reci( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
@@ -60,13 +60,7 @@ FUNCTION Get1_14PDV()
 
    @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
-   IF !lPoNarudzbi
-      @ m_x, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
-   ENDIF
-
-   IF IsDomZdr()
-      @ m_x, m_y + 2   SAY "Tip sredstva (prazno-svi) " GET _Tip PICT "@!"
-   ENDIF
+   @ m_x + 12, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 
    READ
    ESC_RETURN K_ESC
@@ -84,7 +78,7 @@ FUNCTION Get1_14PDV()
    HSEEK _IdRoba
    SELECT koncij
    SEEK Trim( _idkonto2 )
-   SELECT kalk_pripr  // napuni tarifu
+   SELECT kalk_pripr
 
    IF koncij->naz = "P"
       _FCJ := roba->PlC
@@ -148,7 +142,7 @@ FUNCTION Get1_14PDV()
    SELECT kalk_pripr
 
 
-   @ m_x + 13, m_y + 2    SAY "NAB.CJ   "  GET _NC  PICTURE PicDEM      VALID V_KolMag()
+   @ m_x + 13, m_y + 2    SAY "Nab.Cjena "  GET _NC  PICTURE PicDEM      VALID V_KolMag()
 
    PRIVATE _vpcsappp := 0
 
@@ -161,9 +155,7 @@ FUNCTION Get1_14PDV()
 
    _PNAP := 0
 
-   IF IsPdv()
-      _MPC := tarifa->opp
-   ENDIF
+   _MPC := tarifa->opp
 
    IF gPDVMagNab == "D"
       @ m_x + 16, m_y + 2 SAY "PDV (%)  " + Transform( _MPC, "99.99" )
@@ -173,16 +165,15 @@ FUNCTION Get1_14PDV()
 
    IF gVarVP == "1"
       _VPCsaPP := 0
-      @ m_x, m_y + 2  SAY "PC SA PDV "
-      @ m_x, m_Y + 50 GET _vpcSaPP PICTURE picdem ;
+      @ m_x + 17, m_y + 2  SAY "PC SA PDV "
+      @ m_x + 17, m_Y + 50 GET _vpcSaPP PICTURE picdem ;
          when {|| _VPCSAPP := iif( _VPC <> 0, _VPC * ( 1 -_RabatV / 100 ) * ( 1 + _MPC / 100 ), 0 ), ShowGets(), .T. } ;
          valid {|| _vpcsappp := iif( _VPCsap <> 0, _vpcsap + _PNAP, _VPCSAPPP ), .T. }
 
-   ELSE  // preracunate stope
-
+   ELSE 
       _VPCsaPP := 0
-      @ m_x, m_y + 2  SAY "PC SA PDV "
-      @ m_x, m_Y + 50 GET _vpcSaPP PICTURE picdem ;
+      @ m_x + 17, m_y + 2  SAY "PC SA PDV "
+      @ m_x + 17, m_Y + 50 GET _vpcSaPP PICTURE picdem ;
          when {|| _VPCSAPP := iif( _VPC <> 0, _VPC * ( 1 -_RabatV / 100 ) * ( 1 + _MPC / 100 ), 0 ), ShowGets(), .T. } ;
          valid {|| _vpcsappp := iif( _VPCsap <> 0, _vpcsap + _PNAP, _VPCSAPPP ), .T. }
    ENDIF
@@ -223,14 +214,14 @@ FUNCTION Get1_14PDV()
          ENDIF
          IF brdok == _brdok .AND. idvd == _idvd .AND. Val( Rbr ) == nRbr
 
-            nMarza := _VPC / ( 1 + _PORVT ) * ( 1 -_RabatV / 100 ) -_NC  // ??????????
+            nMarza := _VPC / ( 1 + _PORVT ) * ( 1 -_RabatV / 100 ) -_NC
             REPLACE vpc WITH _vpc, ;
                rabatv WITH _rabatv, ;
                mkonto WITH _mkonto, ;
                tmarza  WITH _tmarza, ;
                mpc     WITH  _MPC, ;
                marza  WITH _vpc / ( 1 + _PORVT ) -kalk_pripr->nc, ;   // mora se uzeti nc iz ove stavke
-            vpcsap WITH _VPC / ( 1 + _PORVT ) * ( 1 -_RABATV / 100 ) + iif( nMarza < 0, 0, nMarza ) * TARIFA->VPP / 100, ;
+               vpcsap WITH _VPC / ( 1 + _PORVT ) * ( 1 -_RABATV / 100 ) + iif( nMarza < 0, 0, nMarza ) * TARIFA->VPP / 100, ;
                mu_i WITH  _mu_i, ;
                pkonto WITH "", ;
                pu_i WITH  "", ;

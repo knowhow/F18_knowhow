@@ -35,13 +35,7 @@ FUNCTION stampa_analitickog_naloga( lAuto, dDatNal )
       lAuto := .F.
    ENDIF
 
-   O_VRSTEP
-   O_FIN_PRIPR
-   O_KONTO
-   O_PARTN
-   O_TNAL
-   O_TDOK
-   O_PSUBAN
+   fin_open_psuban()
 
    __par_len := Len( partn->id )
 
@@ -75,7 +69,7 @@ FUNCTION stampa_analitickog_naloga( lAuto, dDatNal )
       HSEEK cIdFirma + cIdVN + cBrNal
       IF Eof()
          my_close_all_dbf()
-         RETURN
+         RETURN .F.
       ENDIF
 
       IF !lAuto
@@ -85,9 +79,13 @@ FUNCTION stampa_analitickog_naloga( lAuto, dDatNal )
       fin_subanaliticki_nalog( "1", lAuto )
 
       IF !lAuto
+         PushWa()
          my_close_all_dbf()
          f18_end_print( NIL, @_print_opt )
+         fin_open_psuban()
+         PopWa()
       ENDIF
+
 
       IF AScan( aNalozi, cIdFirma + cIdVN + cBrNal ) == 0
 
@@ -102,14 +100,11 @@ FUNCTION stampa_analitickog_naloga( lAuto, dDatNal )
 
    IF lAuto
       BoxC()
-   ELSE
-      Beep( 2 )
-      Msg( "Sve stavke su stavljene na stanje" )
    ENDIF
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION gen_sint_stavke( lAuto )
@@ -123,7 +118,7 @@ FUNCTION gen_sint_stavke( lAuto )
       lAuto := .F.
    ENDIF
 
-   IF !fin_open_lock_print_tables( .T. )
+   IF !fin_open_lock_panal( .T. )
       RETURN .F.
    ENDIF
 
@@ -166,7 +161,7 @@ FUNCTION gen_sint_stavke( lAuto )
       ENDIF
 
       my_close_all_dbf()
-      fin_open_lock_print_tables( .F. )
+      fin_open_lock_panal( .F. )
 
       PopWa()
 
@@ -337,8 +332,25 @@ FUNCTION box_fin_nalog( cIdFirma, cIdVn, cBrNal, dDatNal )
    RETURN .T.
 
 
+/*
+   otvori psuban i ostale potrebne ostale tabele
+*/
+STATIC FUNCTION fin_open_psuban()
 
-STATIC FUNCTION fin_open_lock_print_tables( lZap )
+   O_VRSTEP
+   O_KONTO
+   O_PARTN
+   O_TNAL
+   O_TDOK
+   O_PSUBAN
+
+   O_FIN_PRIPR
+   RETURN .T.
+
+/*
+    otvori psuban, panal, psint i ostale potrebne tabele 
+*/
+STATIC FUNCTION fin_open_lock_panal( lZap )
 
    O_PSUBAN
    O_PANAL

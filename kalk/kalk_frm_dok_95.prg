@@ -16,7 +16,8 @@
 
 FUNCTION Get1_95()
 
-   pIzgSt := .F.   // izgenerisane stavke jos ne postoje
+   // izgenerisane stavke jos ne postoje
+   pIzgSt := .F.   
 
 
    SET KEY K_ALT_K TO KM2()
@@ -34,10 +35,10 @@ FUNCTION Get1_95()
       ENDIF
 
       _IdZaduz := ""
-      @ m_x + 8, m_y + 2 SAY "Magacinski konto razduzuje"  GET _IdKonto2 ;
+      @ m_x + 8, m_y + 2 SAY8 "Magacinski konto razdužuje"  GET _IdKonto2 ;
          VALID Empty( _IdKonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 )
       IF gNW <> "X"
-         @ m_x + 8, m_y + 40 SAY "Razduzuje:" GET _IdZaduz2   PICT "@!"  VALID Empty( _idZaduz2 ) .OR. P_Firma( @_IdZaduz2, 21, 5 )
+         @ m_x + 8, m_y + 40 SAY "Razdužuje:" GET _IdZaduz2   PICT "@!"  VALID Empty( _idZaduz2 ) .OR. P_Firma( @_IdZaduz2, 21, 5 )
       ELSE
          IF !Empty( cRNT1 ) .AND. _idvd $ "97#96#95"
             IF ( IsRamaGlas() )
@@ -53,14 +54,14 @@ FUNCTION Get1_95()
 
          IF ( _idvd == "95" .AND. IsVindija() )
 
-            @ m_x + 9, m_y + 40 SAY "Sifra veze otpisa:" GET _IdPartner  VALID Empty( _idPartner ) .OR. P_Firma( @_IdPartner, 21, 5 ) PICT "@!"
+            @ m_x + 9, m_y + 40 SAY "Šifra veze otpisa:" GET _IdPartner  VALID Empty( _idPartner ) .OR. P_Firma( @_IdPartner, 21, 5 ) PICT "@!"
 
          ELSEIF gMagacin == "1"
-            @ m_x + 9, m_y + 40 SAY "Partner zaduzuje:" GET _IdPartner  VALID Empty( _idPartner ) .OR. P_Firma( @_IdPartner, 21, 5 ) PICT "@!"
+            @ m_x + 9, m_y + 40 SAY8 "Partner zadužuje:" GET _IdPartner  VALID Empty( _idPartner ) .OR. P_Firma( @_IdPartner, 21, 5 ) PICT "@!"
 
          ELSE
             IF _idvd == "96"
-               @ m_x + 9, m_y + 40 SAY "Partner zaduzuje:" GET _IdPartner  VALID Empty( _idPartner ) .OR. P_Firma( @_IdPartner, 21, 5 ) PICT "@!"
+               @ m_x + 9, m_y + 40 SAY8 "Partner zadužuje:" GET _IdPartner  VALID Empty( _idPartner ) .OR. P_Firma( @_IdPartner, 21, 5 ) PICT "@!"
             ENDIF
          ENDIF
 
@@ -80,7 +81,7 @@ FUNCTION Get1_95()
    ENDIF
 
    IF !glEkonomat
-      @ m_x + 10, m_y + 66 SAY "Tarif.brĿ"
+      @ m_x + 10, m_y + 66 SAY "Tarif.brÄ¿"
    ENDIF
    IF lKoristitiBK
       @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _idRoba := PadR( _idRoba, Val( gDuzSifIni ) ), .T. } valid  {|| P_Roba( @_IdRoba ), Reci( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
@@ -255,9 +256,9 @@ FUNCTION Get1_95()
       _PKonto := ""; _PU_I := ""
       IF lGenStavke
          pIzgSt := .T.
-         // vi�e od jedne stavke
+         // viçe od jedne stavke
          FOR i := 1 TO Len( aNabavke ) -1
-            // generi�i sve izuzev posljednje
+            // generiçi sve izuzev posljednje
             APPEND BLANK
             _error    := IF( _error <> "1", "0", _error )
             _rbr      := RedniBroj( nRBr )
@@ -267,7 +268,7 @@ FUNCTION Get1_95()
             Gather()
             ++nRBr
          NEXT
-         // posljednja je teku�a
+         // posljednja je tekua
          _nc       := aNabavke[ i, 2 ]
          _kolicina := aNabavke[ i, 3 ]
          _vpc      := _nc
@@ -279,7 +280,7 @@ FUNCTION Get1_95()
             _kolicina := aNabavke[ 1, 3 ]
             _vpc      := _nc
          ELSE
-            // nije izabrana koli�ina -> kao da je prekinut unos tipkom Esc
+            // nije izabrana koliina -> kao da je prekinut unos tipkom Esc
             RETURN ( K_ESC )
          ENDIF
       ENDIF

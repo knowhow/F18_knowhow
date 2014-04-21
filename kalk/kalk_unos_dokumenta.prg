@@ -597,7 +597,7 @@ FUNCTION EditStavka()
       _dok_hash[ "rbr" ] := field->rbr
 
       // ubaci mi atribute u fakt_atribute
-      oAtrib := F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB)
+      oAtrib := F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB )
       oAtrib:dok_hash := _dok_hash
       oAtrib:atrib_hash_to_dbf( _atributi )
 
@@ -923,7 +923,7 @@ FUNCTION EditAll()
       _oldval := _mpcsapp * _kolicina  // vrijednost prosle stavke
       _oldvaln := _nc * _kolicina
 
-	  my_rlock()
+      my_rlock()
       Gather()
       my_unlock()
 
@@ -1447,17 +1447,9 @@ FUNCTION Get1( fNovi, atrib )
    ELSEIF _idvd == "13"
       RETURN GET1_12()
    ELSEIF _idvd == "14"
-      IF IsPDV()
-         RETURN Get1_14PDV()
-      ELSE
-         RETURN GET1_14()
-      ENDIF
+      RETURN Get1_14PDV()
    ELSEIF _idvd == "KO"
       RETURN GET1_14PDV()
-   ELSEIF _idvd == "15"
-      IF !IsPDV()
-         RETURN GET1_15()
-      ENDIF
    ELSEIF _idvd == "16"
       RETURN GET1_16PDV()
    ELSEIF _idvd == "18"
@@ -1696,7 +1688,7 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
    ENDDO
    GO TOP
 
-   oAtrib := F18_DOK_ATRIB():new("kalk", F_KALK_ATRIB)
+   oAtrib := F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB )
    oAtrib:open_local_table()
 
    GO TOP
@@ -1850,7 +1842,7 @@ FUNCTION RaspTrosk( fSilent )
                   IF Round( nUkIzF, 4 ) == 0
                      _Prevoz := 0
                   ELSE
-                     _Prevoz := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkIzF * RPrevoz,gZaokr )
+                     _Prevoz := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkIzF * RPrevoz, gZaokr )
                      UPrevoz += _Prevoz
                      IF Abs( RPrevoz - UPrevoz ) < 0.1 // sitniç, baci ga na zadnju st.
                         SKIP
@@ -1866,7 +1858,7 @@ FUNCTION RaspTrosk( fSilent )
                   IF Round( nUkIzF, 4 ) == 0
                      _CarDaz := 0
                   ELSE
-                     _CarDaz := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkIzF * RCarDaz,gZaokr )
+                     _CarDaz := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkIzF * RCarDaz, gZaokr )
                      UCardaz += _Cardaz
                      IF Abs( RCardaz - UCardaz ) < 0.1 // sitniç, baci ga na zadnju st.
                         SKIP
@@ -1882,7 +1874,7 @@ FUNCTION RaspTrosk( fSilent )
                   IF Round( nUkIzF, 4 ) == 0
                      _BankTr := 0
                   ELSE
-                     _BankTr := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkIzF * RBankTr,gZaokr )
+                     _BankTr := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkIzF * RBankTr, gZaokr )
                      UBankTr += _BankTr
                      IF Abs( RBankTr - UBankTr ) < 0.1 // sitniç, baci ga na zadnju st.
                         SKIP
@@ -1914,7 +1906,7 @@ FUNCTION RaspTrosk( fSilent )
                   IF Round( nUkIzF, 4 ) == 0
                      _ZavTr := 0
                   ELSE
-                     _ZavTr := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkIzF * RZavTr,gZaokr )
+                     _ZavTr := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkIzF * RZavTr, gZaokr )
                      UZavTR += _ZavTR
                      IF Abs( RZavTR - UZavTR ) < 0.1 // sitniç, baci ga na zadnju st.
                         SKIP
@@ -2522,7 +2514,7 @@ FUNCTION kalk_centr_stampa_dokumenta()
          HSEEK cSeek
          cIdfirma := SubStr( cSeek, 1, 2 )
          cIdvd := SubStr( cSeek, 3, 2 )
-         cBrDok := PadR( SubStr( cSeek, 5, 8 ),8 )
+         cBrDok := PadR( SubStr( cSeek, 5, 8 ), 8 )
       ELSE
          HSEEK cIdFirma + cIdVD + cBrDok
       ENDIF
@@ -2627,19 +2619,19 @@ FUNCTION kalk_centr_stampa_dokumenta()
                Stkalk95()
             ENDIF
          ELSEIF ( cidvd $ "41#42#43#47#49" )
-               StKalk41()
+            StKalk41()
          ELSEIF ( cidvd == "18" )
             StKalk18()
          ELSEIF ( cidvd == "19" )
-               StKalk19()
+            StKalk19()
          ELSEIF ( cidvd == "80" )
             StKalk80()
          ELSEIF ( cidvd == "81" )
-               IF ( c10Var == "1" )
-                  StKalk81()
-               ELSE
-                  StKalk81_2()
-               ENDIF
+            IF ( c10Var == "1" )
+               StKalk81()
+            ELSE
+               StKalk81_2()
+            ENDIF
          ELSEIF ( cidvd == "82" )
             StKalk82()
          ELSEIF ( cidvd == "IM" )

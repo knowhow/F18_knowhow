@@ -1,3 +1,9 @@
+1.7.57  2014-04-21, vsasa
+
+  - F18 LOG, obrnuti poredak i modifikacija prikaza
+  - F18 BUG REPORT, server log se pravi bez filtera po useru i bez filtera za F18_DOK_OPER
+  - RNAL, export dijalog korekcija
+
 1.7.56  2014-04-21, hernad
 
   - DEBUG fakt idops, kontiranje naloga

@@ -122,7 +122,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
       aUslBFD := Parsiraj( cBrFakDok, "BRDOK", "C" )
       aUslSK := Parsiraj( qqPartn, "IDPARTNER", "C" )
       aUslVrsteP := Parsiraj( qqVrsteP, "IDVRSTEP", "C" )
-      aUslOpc := Parsiraj( cOpcina, "IDOPS", "C" )
+      aUslOpc := Parsiraj( cOpcina, "flt_fakt_part_opc()", "C" )
 
       IF ( !lOpcine .OR. aUslOpc <> NIL ) .AND. aUslBFD <> NIL .AND. aUslSK <> NIL .AND. ( !_vrste_pl .OR. aUslVrsteP <> NIL )
          EXIT
@@ -143,6 +143,10 @@ FUNCTION fakt_pregled_liste_dokumenata()
    set_metric( "fakt_stampa_liste_broj_dokumenta", f18_user(), cBrFakDok )
 
    BoxC()
+
+   SELECT partn
+   // radi filtera aUslOpc partneri trebaju biti na ID-u indeksirani
+   SET ORDER TO TAG "ID"
 
    SELECT fakt_doks
    SET ORDER TO TAG "1"
@@ -173,7 +177,8 @@ FUNCTION fakt_pregled_liste_dokumenata()
    ENDIF
 
    IF !Empty( cOpcina )
-      cFilter += ".and. PARTN->(" + aUslOpc + ")"
+      altd()
+      cFilter += ".and. " + aUslOpc 
    ENDIF
 
    IF _objekti .AND. !Empty( _objekat_id )
@@ -1096,3 +1101,23 @@ FUNCTION fakt_zagl_real_partnera()
    ? Space( gnLMarg ); ?? m
 
    RETURN
+
+
+/*
+   Filter fakt_doks->idpartner->idops
+
+   pretpostavlja:
+   1) da je glavna tabela FAKT_DOKS
+   2) da je tabela PARTN na ID indeksu
+*/
+FUNCTION flt_fakt_part_opc()
+
+  LOCAL cRet
+
+  SELECT partn
+  SEEK fakt_doks->idpartner
+  cRet := partn->idops
+  SELECT fakt_doks
+
+  RETURN cRet
+

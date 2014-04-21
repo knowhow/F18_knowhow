@@ -191,10 +191,6 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
    _ret := .T.
 
    set_table_values_algoritam_vars( @table, @values, @algoritam, @transaction, @_a_dbf_rec, @_alg, @_where_str, @_alg_tag )
-   IF !USED()
-       SELECT ( _a_dbf_rec[ "wa" ] )
-       my_use( _a_dbf_rec[ "table" ] )
-   ENDIF
 
    IF Alias() <> _a_dbf_rec[ "alias" ]
       _msg := "ERR "  + RECI_GDJE_SAM0 + " ALIAS() = " + Alias() + " <> " + _a_dbf_rec[ "alias" ]
@@ -222,6 +218,9 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
       push_ids_to_semaphore( table, _ids )
 
       SELECT ( _a_dbf_rec[ "wa" ] )
+      IF !USED()
+           my_use( _a_dbf_rec[ "table" ] )
+      ENDIF
 
       IF index_tag_num( _alg[ "dbf_tag" ] ) < 1
          IF !_a_dbf_rec[ "sql" ]
@@ -229,6 +228,7 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
             Alert( _msg )
             log_write( _msg, 1 )
             lock_semaphore( table, "free" )
+            sql_table_update( table, "ROLLBACK" )
             RaiseError( _msg )
             QUIT_1
          ELSE

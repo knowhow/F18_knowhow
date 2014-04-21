@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,122 +14,124 @@
 
 
 
-function AnaKart()
-O_KONCIJ
-O_SIFK
-O_SIFV
-O_ROBA
-O_KALK
-if Pitanje(,"Prodji kroz neobradjene stavke","N")="D"
-  set order to 
-  go top
-  MsgO("Prolaz#................")
-  nCnt:=0
-  do while !eof() .and. IspitajPrekid()
+FUNCTION AnaKart()
 
-     if empty(mu_i) .and. empty(pu_i)
-        @ m_x+2,m_y+4 SAY ++nCnt
-        if idvd=="10"
-           replace mu_i with "1", mkonto with idkonto
-        elseif idvd=="11"
-           replace mu_i with "5", mkonto with idkonto2,;
-                   pu_i with "1", pkonto with idkonto
-        elseif idvd $ "14#96"
-           replace mu_i with "5", mkonto with idkonto2
-        elseif idvd=="18"
-           replace mu_i with "3", mkonto with idkonto
-        elseif idvd=="19"
-           replace pu_i with "3", pkonto with idkonto
-        elseif idvd $ "41#42#43"
-           replace pu_i with "5", pkonto with idkonto
-        endif
-     endif
-     skip
-  enddo
-  Msgc()
-endif
+   O_KONCIJ
+   O_SIFK
+   O_SIFV
+   O_ROBA
+   O_KALK
+   IF Pitanje(, "Prodji kroz neobradjene stavke", "N" ) = "D"
+      SET ORDER TO
+      GO TOP
+      MsgO( "Prolaz#................" )
+      nCnt := 0
+      DO WHILE !Eof() .AND. IspitajPrekid()
 
-set order to tag "3"
-//CREATE_INDEX("3","idFirma+mkonto+idroba+dtos(datdok)+podbr+MU_I+IdVD",KUMPATH+"KALK")
-go top
-aDbf:={}
-AADD(aDbf, {"ID", "C", 10, 0 } )     // roba
-AADD(aDbf, {"stanje", "N", 15, 3 } )
-AADD(aDbf, {"VPV", "N", 15, 3 } )
-AADD(aDbf, {"NV", "N", 15, 3 } )
-AADD(aDbf, {"VPC", "N", 15, 3 } )
-AADD(aDbf, {"MPC", "N", 15, 3 } )
-AADD(aDbf, {"MPV", "N", 15, 3 } )
-AADD(aDbf, {"recno", "N", 6, 0 } )
-dbcreate2(PRIVPATH+"LLM",aDbf)
+         IF Empty( mu_i ) .AND. Empty( pu_i )
+            @ m_x + 2, m_y + 4 SAY ++nCnt
+            IF idvd == "10"
+               REPLACE mu_i WITH "1", mkonto WITH idkonto
+            ELSEIF idvd == "11"
+               REPLACE mu_i WITH "5", mkonto WITH idkonto2, ;
+                  pu_i WITH "1", pkonto WITH idkonto
+            ELSEIF idvd $ "14#96"
+               REPLACE mu_i WITH "5", mkonto WITH idkonto2
+            ELSEIF idvd == "18"
+               REPLACE mu_i WITH "3", mkonto WITH idkonto
+            ELSEIF idvd == "19"
+               REPLACE pu_i WITH "3", pkonto WITH idkonto
+            ELSEIF idvd $ "41#42#43"
+               REPLACE pu_i WITH "5", pkonto WITH idkonto
+            ENDIF
+         ENDIF
+         SKIP
+      ENDDO
+      Msgc()
+   ENDIF
 
-select 70
-usex (PRIVPATH+"llm")
-index on id tag "ID"
-index on brisano tag "BRISAN"
-set order to tag "ID"
+   SET ORDER TO TAG "3"
+   // CREATE_INDEX("3","idFirma+mkonto+idroba+dtos(datdok)+podbr+MU_I+IdVD",KUMPATH+"KALK")
+   GO TOP
+   aDbf := {}
+   AAdd( aDbf, { "ID", "C", 10, 0 } )     // roba
+   AAdd( aDbf, { "stanje", "N", 15, 3 } )
+   AAdd( aDbf, { "VPV", "N", 15, 3 } )
+   AAdd( aDbf, { "NV", "N", 15, 3 } )
+   AAdd( aDbf, { "VPC", "N", 15, 3 } )
+   AAdd( aDbf, { "MPC", "N", 15, 3 } )
+   AAdd( aDbf, { "MPV", "N", 15, 3 } )
+   AAdd( aDbf, { "recno", "N", 6, 0 } )
+   dbcreate2( PRIVPATH + "LLM", aDbf )
 
-private cIdFirma:=gFirma
-private cMkonto:=padr("1310",gDuzKonto)
-Box(,2,50)
-  @ m_x+1,m_y+2 SAY "Konto:" GET cMkonto
-  read
-BoxC()
-select kalk
-seek cidfirma+cmkonto
-do while !eof() .and. IspitajPrekid()
-    cIdroba:=idroba
-    cmkonto:=mkonto
-    cidfirma:=idfirma
-    select kalk
-    seek cidfirma+cmkonto+cidroba
-    nStanje:=nNV:=nVPV:=0
-    nReckalk:=0
-    do while !eof() .and. idfirma+mkonto+idroba==cidfirma+cmkonto+cidroba .and. IspitajPrekid()
-      nRecKalk:=recno()
-      cId:=idfirma+idvd+brdok+rbr
-      if mu_i=="1"
-          nStanje+=kolicina-gkolicina-gkolicin2
-          nVPV+=vpc*(kolicina-gkolicina-gkolicin2)
-          nNV+=nc*(kolicina-gkolicina-gkolicin2)
-       elseif mu_i=="3"
-          nVPV+=vpc*kolicina
-       elseif mu_i=="5"
-          nStanje-=kolicina
-          nVPV-=vpc*kolicina
-          nNV-=nc*kolicina
-       endif
-       skip
-    enddo    // cidroba
+   SELECT 70
+   usex ( PRIVPATH + "llm" )
+   INDEX ON id TAG "ID"
+   INDEX ON brisano TAG "BRISAN"
+   SET ORDER TO TAG "ID"
 
-     select llm
-     append blank
-     replace id with cidroba, stanje with nstanje, vpv with nVPV,;
-            recno with nRecKalk
-     if nStanje<>0
-        replace vpc with nVPV/nStanje
-     endif
-     select kalk
+   PRIVATE cIdFirma := gFirma
+   PRIVATE cMkonto := PadR( "1310", gDuzKonto )
+   Box(, 2, 50 )
+   @ m_x + 1, m_y + 2 SAY "Konto:" GET cMkonto
+   READ
+   BoxC()
+   SELECT kalk
+   SEEK cidfirma + cmkonto
+   DO WHILE !Eof() .AND. IspitajPrekid()
+      cIdroba := idroba
+      cmkonto := mkonto
+      cidfirma := idfirma
+      SELECT kalk
+      SEEK cidfirma + cmkonto + cidroba
+      nStanje := nNV := nVPV := 0
+      nReckalk := 0
+      DO WHILE !Eof() .AND. idfirma + mkonto + idroba == cidfirma + cmkonto + cidroba .AND. IspitajPrekid()
+         nRecKalk := RecNo()
+         cId := idfirma + idvd + brdok + rbr
+         IF mu_i == "1"
+            nStanje += kolicina - gkolicina - gkolicin2
+            nVPV += vpc * ( kolicina - gkolicina - gkolicin2 )
+            nNV += nc * ( kolicina - gkolicina - gkolicin2 )
+         ELSEIF mu_i == "3"
+            nVPV += vpc * kolicina
+         ELSEIF mu_i == "5"
+            nStanje -= kolicina
+            nVPV -= vpc * kolicina
+            nNV -= nc * kolicina
+         ENDIF
+         SKIP
+      ENDDO    // cidroba
 
-enddo
+      SELECT llm
+      APPEND BLANK
+      REPLACE id WITH cidroba, stanje WITH nstanje, vpv WITH nVPV, ;
+         recno WITH nRecKalk
+      IF nStanje <> 0
+         REPLACE vpc WITH nVPV / nStanje
+      ENDIF
+      SELECT kalk
 
-select llm
+   ENDDO
 
-ImeKol:={}
-AADD(ImeKol,{ "IdRoba",    {|| id}                         })
-AADD(ImeKol,{ "Stanje", {|| llm->stanje} })
-AADD(ImeKol,{ "VPC po Kartici", {|| llm->vpc} })
-AADD(ImeKol,{ "VPV po kartici", {|| llm->vpv} })
+   SELECT llm
+
+   ImeKol := {}
+   AAdd( ImeKol, { "IdRoba",    {|| id }                         } )
+   AAdd( ImeKol, { "Stanje", {|| llm->stanje } } )
+   AAdd( ImeKol, { "VPC po Kartici", {|| llm->vpc } } )
+   AAdd( ImeKol, { "VPV po kartici", {|| llm->vpv } } )
 
 
-Kol:={}; for i:=1 to len(Imekol); AADD(Kol,i); next
+   Kol := {}; FOR i := 1 TO Len( Imekol ); AAdd( Kol, i ); NEXT
 
-Box(,20,77)
-ObjDbedit("anm",20,77,{|| EdLLM()},"","...", , , , ,3)
-BoxC()
-closeret
-return
-*}
+   Box(, 20, 77 )
+   ObjDbedit( "anm", 20, 77, {|| EdLLM() }, "", "...", , , , , 3 )
+   BoxC()
+   closeret
+
+   RETURN
+// }
 
 
 
@@ -138,22 +140,22 @@ return
  *  \brief Obrada opcija u browse-u tabele LLM
  */
 
-function EdLLM()
-*{
-local cDn:="N",nTrecDok:=0,nRet:=DE_CONT
-do case
-  case Ch==K_ENTER
-         select kalk; set order to tag "3"
-         //CREATE_INDEX("3","idFirma+mkonto+idroba+dtos(datdok)+podbr+MU_I+IdVD",KUMPATH+"KALK")
-         go llm->recno
-         BrowseKart()
-         select llm
-     nRet:=DE_REFRESH
+FUNCTION EdLLM()
 
- case Ch==K_CTRL_P
-     nRet:=DE_REFRESH
-endcase
-return nRet
-*}
+   // {
+   LOCAL cDn := "N", nTrecDok := 0, nRet := DE_CONT
+   DO CASE
+   CASE Ch == K_ENTER
+      SELECT kalk; SET ORDER TO TAG "3"
+      // CREATE_INDEX("3","idFirma+mkonto+idroba+dtos(datdok)+podbr+MU_I+IdVD",KUMPATH+"KALK")
+      GO llm->recno
+      BrowseKart()
+      SELECT llm
+      nRet := DE_REFRESH
 
+   CASE Ch == K_CTRL_P
+      nRet := DE_REFRESH
+   ENDCASE
 
+   RETURN nRet
+// }

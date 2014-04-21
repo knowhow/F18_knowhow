@@ -17,11 +17,9 @@ STATIC __tbl_anal := "fin_anal"
 STATIC __tbl_sint := "fin_sint"
 
 
-// ---------------------------------------------------
-// ---------------------------------------------------
 FUNCTION fin_azur( automatic )
 
-   LOCAL oServer := pg_server()
+   LOCAL oServer := my_server()
    LOCAL _nalozi, _i
    LOCAL _id_firma, _id_vn, _br_nal
    LOCAL _vise_naloga := .F.
@@ -34,7 +32,7 @@ FUNCTION fin_azur( automatic )
    // otvori potrebne tabele
    o_fin_za_azuriranje()
 
-   IF fin_pripr->( RecCount() == 0 ) .OR. ( !automatic .AND. Pitanje( "pAz", "Izvrsiti azuriranje fin naloga ? (D/N)?", "N" ) == "N" )
+   IF fin_pripr->( RecCount() == 0 ) .OR. ( !automatic .AND. Pitanje( "pAz", "Izvršiti azuriranje fin naloga ? (D/N)?", "N" ) == "N" )
       RETURN _ok
    ENDIF
 

@@ -18,18 +18,17 @@ FUNCTION StNal( lAuto )
 
 FUNCTION stampa_fin_document( lAuto )
 
-   PRIVATE dDatNal := Date()
+   LOCAL dDatNal := Date()
 
-   StAnalNal( lAuto )
-   gen_sint_stavke( lAuto )
+   stampa_analitickog_naloga( lAuto, dDatNal )
+   gen_sint_stavke( lAuto, dDatNal )
 
    RETURN
 
 
-FUNCTION StAnalNal( lAuto )
+FUNCTION stampa_analitickog_naloga( lAuto, dDatNal )
 
    LOCAL _print_opt := "V"
-   LOCAL _izgenerisi := .F.
    PRIVATE aNalozi := {}
 
    IF lAuto == NIL
@@ -56,17 +55,9 @@ FUNCTION StAnalNal( lAuto )
 
    EOF CRET
 
-   _izgenerisi := .F.
-
-   IF lAuto
-      _izgenerisi := .T.
-   ENDIF
 
    IF lAuto
       _print_opt := "D"
-   ENDIF
-
-   IF lAuto
       Box(, 3, 75 )
       @ m_x + 0, m_y + 2 SAY "PROCES FORMIRANJA SINTETIKE I ANALITIKE"
    ENDIF
@@ -77,54 +68,29 @@ FUNCTION StAnalNal( lAuto )
       cIdVN := IdVN
       cBrNal := BrNal
 
-      IF !_izgenerisi
-
-         Box( "", 2, 50 )
-
-         SET CURSOR ON
-
-         @ m_x + 1, m_y + 2 SAY "Nalog broj:"
-
-         IF gNW == "D"
-            cIdFirma := gFirma
-            @ m_x + 1, Col() + 1 SAY cIdFirma
-         ELSE
-            @ m_x + 1, Col() + 1 GET cIdFirma
-         ENDIF
-
-         @ m_x + 1, Col() + 1 SAY "-" GET cIdVn
-         @ m_x + 1, Col() + 1 SAY "-" GET cBrNal
-
-         IF gDatNal == "D"
-            @ m_x + 2, m_y + 2 SAY "Datum naloga:" GET dDatNal
-         ENDIF
-
-         READ
-
-         ESC_BCR
-         BoxC()
-
+      IF !lAuto
+         box_fin_nalog( @cIdFirma, @cIdVn, @cBrNal, @dDatNal )
       ENDIF
 
       HSEEK cIdFirma + cIdVN + cBrNal
-
       IF Eof()
          my_close_all_dbf()
          RETURN
       ENDIF
 
-      IF !_izgenerisi
+      IF !lAuto
          f18_start_print( NIL, @_print_opt )
       ENDIF
 
       stampa_suban_dokument( "1", lAuto )
 
-      IF !_izgenerisi
+      IF !lAuto
          my_close_all_dbf()
          f18_end_print( NIL, @_print_opt )
       ENDIF
 
       IF AScan( aNalozi, cIdFirma + cIdVN + cBrNal ) == 0
+
          AAdd( aNalozi, cIdFirma + cIdVN + cBrNal )
          // lista naloga koji su otisli
          IF lAuto
@@ -136,9 +102,7 @@ FUNCTION StAnalNal( lAuto )
 
    IF lAuto
       BoxC()
-   ENDIF
-
-   IF _izgenerisi .AND. !lAuto
+   ELSE
       Beep( 2 )
       Msg( "Sve stavke su stavljene na stanje" )
    ENDIF
@@ -214,7 +178,7 @@ FUNCTION fin_zagl_11()
 
    IF !_fin_params[ "fin_tip_dokumenta" ]
       P_NRED
-      ?? IF( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R. * KONTO *" + PadC( "PART", __par_len ) + "*" + IF( gVar1 == "1" .AND. lJerry, "       NAZIV PARTNERA         *                    ", "    NAZIV PARTNERA ILI      " ) + "*   D  O  K  U  M  E  N  T    *         IZNOS U  " + ValDomaca() + "         *" + IF( gVar1 == "1", "", "    IZNOS U " + ValPomocna() + "    *" )
+      ?? iif( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R. * KONTO *" + PadC( "PART", __par_len ) + "*" + IF( gVar1 == "1" .AND. lJerry, "       NAZIV PARTNERA         *                    ", "    NAZIV PARTNERA ILI      " ) + "*   D  O  K  U  M  E  N  T    *         IZNOS U  " + ValDomaca() + "         *" + IF( gVar1 == "1", "", "    IZNOS U " + ValPomocna() + "    *" )
       P_NRED
       ?? IF( lDnevnik, "U DNE-*  NALOGA  *   *", "" ) + "             " + PadC( "NER", __par_len ) + " " + IF( gVar1 == "1" .AND. lJerry, "            ILI                      O P I S       ", "                            " ) + " ----------------------------- ------------------------------- " + IF( gVar1 == "1", "", "---------------------" )
       P_NRED; ?? IF( lDnevnik, "VNIKU *          *   *", "" ) + "*BR *       *" + REPL( " ", __par_len ) + "*" + IF( gVar1 == "1" .AND. lJerry, "        NAZIV KONTA           *                    ", "    NAZIV KONTA             " ) + "* BROJ VEZE * DATUM  * VALUTA *  DUGUJE " + ValDomaca() + "  * POTRAZUJE " + ValDomaca() + "*" + IF( gVar1 == "1", "", " DUG. " + ValPomocna() + "* POT." + ValPomocna() + "*" )
@@ -228,6 +192,7 @@ FUNCTION fin_zagl_11()
    ENDIF
    P_NRED
    ?? M
+
    SELECT( nArr )
 
    RETURN
@@ -235,20 +200,19 @@ FUNCTION fin_zagl_11()
 
 FUNCTION gen_sint_stavke( lAuto )
 
-   LOCAL A
+   LOCAL A, cDN := "N"
    LOCAL nStr, nD1, nD2, nP1, nP2
    LOCAL cIdFirma, cIDVn, cBrNal
    LOCAL nDugBHD, nDugDEM, nPotBHD, nPotDEM
-  
+
    IF lAuto == NIL
       lAuto := .F.
    ENDIF
 
    IF !fin_open_lock_print_tables( .T. )
-         RETURN .F.
+      RETURN .F.
    ENDIF
 
-   altd()
    SELECT PSUBAN
    SET ORDER TO TAG "2"
    GO TOP
@@ -261,98 +225,12 @@ FUNCTION gen_sint_stavke( lAuto )
    A := 0
    DO WHILE !Eof()
 
-      nStr := 0
-      nD1 := nD2 := nP1 := nP2 := 0
-      cIdFirma := IdFirma; cIDVn = IdVN;cBrNal := BrNal
 
-      DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal     // jedan nalog
+      cIdFirma := psuban->IdFirma
+      cIDVn = psuban->IdVN
+      cBrNal := psuban->BrNal
 
-         cIdkonto := idkonto
-
-         nDugBHD := nDugDEM := 0
-         nPotBHD := nPotDEM := 0
-         IF D_P = "1"
-            nDugBHD := IznosBHD; nDugDEM := IznosDEM
-         ELSE
-            nPotBHD := IznosBHD; nPotDEM := IznosDEM
-         ENDIF
-
-         SELECT PANAL
-
-         SEEK cIdfirma + cIdvn + cBrNal + cIdKonto
-         fNasao := .F.
-
-         DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal .AND. IdKonto == cIdKonto
-            IF gDatNal == "N"
-               IF Month( psuban->datdok ) == Month( datnal )
-                  fNasao := .T.
-                  EXIT
-               ENDIF
-            ELSE  
-               // sintetika se generise na osnovu datuma naloga
-               IF Month( dDatNal ) == Month( datnal )
-                  fNasao := .T.
-                  EXIT
-               ENDIF
-            ENDIF
-            SKIP
-         ENDDO
-
-         SELECT PANAL
-         IF !fNasao
-            APPEND BLANK
-         ENDIF
-
-         REPLACE IdFirma WITH cIdFirma, IdKonto WITH cIdKonto, IdVN WITH cIdVN, BrNal WITH cBrNal, ;
-            DatNal WITH IIF( gDatNal == "D", dDatNal, Max( psuban->datdok, datnal ) ), ;
-            DugBHD WITH DugBHD + nDugBHD, PotBHD WITH PotBHD + nPotBHD, ;
-            DugDEM WITH DugDEM + nDugDEM, PotDEM WITH PotDEM + nPotDEM
-
-
-         SELECT PSINT
-         SEEK cIdfirma + cIdvn + cBrNal + Left( cIdKonto, 3 )
-
-         fNasao := .F.
-
-         DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal .AND. Left( cIdkonto, 3 ) == idkonto
-            IF gDatNal == "N"
-               IF  Month( psuban->datdok ) == Month( datnal )
-                  fNasao := .T.
-                  EXIT
-               ENDIF
-            ELSE
-               IF Month( dDatNal ) == Month( datnal )
-                  fNasao := .T.
-                  EXIT
-               ENDIF
-            ENDIF
-
-            SKIP
-         ENDDO
-
-         SELECT PSINT
-         IF !fNasao
-            APPEND BLANK
-         ENDIF
-
-         REPLACE IdFirma WITH cIdFirma, IdKonto WITH Left( cIdKonto, 3 ), IdVN WITH cIdVN, BrNal WITH cBrNal, DatNal WITH iif( gDatNal == "D", dDatNal,  Max( psuban->datdok, datnal ) ), ;
-            DugBHD WITH DugBHD + nDugBHD, PotBHD WITH PotBHD + nPotBHD, ;
-            DugDEM WITH DugDEM + nDugDEM, PotDEM WITH PotDEM + nPotDEM
-
-         nD1 += nDugBHD; nD2 += nDugDEM; nP1 += nPotBHD; nP2 += nPotDEM
-
-         SELECT PSUBAN
-         SKIP
-
-      ENDDO
-
-      SELECT PNALOG
-      APPEND BLANK
-      REPLACE IdFirma WITH cIdFirma, IdVN WITH cIdVN, BrNal WITH cBrNal, DatNal WITH IIF( gDatNal == "D", dDatNal, Date() ), ;
-         DugBHD WITH nD1, PotBHD WITH nP1, ;
-         DugDEM WITH nD2, PotDEM WITH nP2
-
-      PRIVATE cDN := "N"
+      fill_panal_psint( cIdFirma, cIdVn, cBrNal )
 
       IF !lAuto
          Box(, 2, 58 )
@@ -370,12 +248,12 @@ FUNCTION gen_sint_stavke( lAuto )
       IF cDN == "D"
          SELECT PANAL
          SEEK cIdfirma + cIdvn + cBrnal
-         fin_stampa_sinteticki_nalog( .F. )    
+         fin_stampa_sinteticki_nalog( .F. )
       ENDIF
 
       my_close_all_dbf()
       fin_open_lock_print_tables( .F. )
- 
+
       PopWa()
 
    ENDDO
@@ -389,7 +267,7 @@ FUNCTION gen_sint_stavke( lAuto )
       cIdFirma := IdFirma
       cIDVn = IdVN
       cBrNal := BrNal
-      DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal     // jedan nalog
+      DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal
          REPLACE rbr WITH Str( ++nRbr, 3 )
          SKIP
       ENDDO
@@ -404,7 +282,7 @@ FUNCTION gen_sint_stavke( lAuto )
       cIdFirma := IdFirma
       cIDVn = IdVN
       cBrNal := BrNal
-      DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal     // jedan nalog
+      DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal
          REPLACE rbr WITH Str( ++nRbr, 3 )
          SKIP
       ENDDO
@@ -415,19 +293,150 @@ FUNCTION gen_sint_stavke( lAuto )
    RETURN
 
 
+FUNCTION fill_panal_psint( cIdFirma, cIdVn, cBrNal )
+
+   LOCAL fNasao, nStr, nD1, nD2, nP1, nP2
+   LOCAL nDugBhd, nPotBHD, nDugDEM, nPotDEM
+
+   nStr := 0
+   nD1 := nD2 := nP1 := nP2 := 0
+
+
+   DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal
+
+      cIdkonto := idkonto
+
+      nDugBHD := nDugDEM := 0
+      nPotBHD := nPotDEM := 0
+      IF D_P = "1"
+         nDugBHD := IznosBHD; nDugDEM := IznosDEM
+      ELSE
+         nPotBHD := IznosBHD; nPotDEM := IznosDEM
+      ENDIF
+
+      SELECT PANAL
+
+      SEEK cIdfirma + cIdvn + cBrNal + cIdKonto
+      fNasao := .F.
+
+      DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal .AND. IdKonto == cIdKonto
+         IF gDatNal == "N"
+            IF Month( psuban->datdok ) == Month( datnal )
+               fNasao := .T.
+               EXIT
+            ENDIF
+         ELSE
+            // sintetika se generise na osnovu datuma naloga
+            IF Month( dDatNal ) == Month( datnal )
+               fNasao := .T.
+               EXIT
+            ENDIF
+         ENDIF
+         SKIP
+      ENDDO
+
+      SELECT PANAL
+      IF !fNasao
+         APPEND BLANK
+      ENDIF
+
+      REPLACE IdFirma WITH cIdFirma, IdKonto WITH cIdKonto, IdVN WITH cIdVN, BrNal WITH cBrNal, ;
+         DatNal WITH iif( gDatNal == "D", dDatNal, Max( psuban->datdok, datnal ) ), ;
+         DugBHD WITH DugBHD + nDugBHD, PotBHD WITH PotBHD + nPotBHD, ;
+         DugDEM WITH DugDEM + nDugDEM, PotDEM WITH PotDEM + nPotDEM
+
+
+      SELECT PSINT
+      SEEK cIdfirma + cIdvn + cBrNal + Left( cIdKonto, 3 )
+
+      fNasao := .F.
+
+      DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal .AND. Left( cIdkonto, 3 ) == idkonto
+         IF gDatNal == "N"
+            IF  Month( psuban->datdok ) == Month( datnal )
+               fNasao := .T.
+               EXIT
+            ENDIF
+         ELSE
+            IF Month( dDatNal ) == Month( datnal )
+               fNasao := .T.
+               EXIT
+            ENDIF
+         ENDIF
+
+         SKIP
+      ENDDO
+
+      SELECT PSINT
+      IF !fNasao
+         APPEND BLANK
+      ENDIF
+
+      REPLACE IdFirma WITH cIdFirma, IdKonto WITH Left( cIdKonto, 3 ), IdVN WITH cIdVN, BrNal WITH cBrNal, DatNal WITH iif( gDatNal == "D", dDatNal,  Max( psuban->datdok, datnal ) ), ;
+         DugBHD WITH DugBHD + nDugBHD, PotBHD WITH PotBHD + nPotBHD, ;
+         DugDEM WITH DugDEM + nDugDEM, PotDEM WITH PotDEM + nPotDEM
+
+      nD1 += nDugBHD; nD2 += nDugDEM; nP1 += nPotBHD; nP2 += nPotDEM
+
+      SELECT PSUBAN
+      SKIP
+
+   ENDDO
+
+   SELECT PNALOG
+   APPEND BLANK
+   REPLACE IdFirma WITH cIdFirma, IdVN WITH cIdVN, BrNal WITH cBrNal, DatNal WITH iif( gDatNal == "D", dDatNal, Date() ), ;
+      DugBHD WITH nD1, PotBHD WITH nP1, ;
+      DugDEM WITH nD2, PotDEM WITH nP2
+
+   RETURN
+
+
+
+FUNCTION box_fin_nalog( cIdFirma, cIdVn, cBrNal, dDatNal )
+
+   Box( "", 2, 50 )
+
+   SET CURSOR ON
+
+   @ m_x + 1, m_y + 2 SAY "Nalog broj:"
+
+   IF gNW == "D"
+      cIdFirma := gFirma
+      @ m_x + 1, Col() + 1 SAY cIdFirma
+   ELSE
+      @ m_x + 1, Col() + 1 GET cIdFirma
+   ENDIF
+
+   @ m_x + 1, Col() + 1 SAY "-" GET cIdVn
+   @ m_x + 1, Col() + 1 SAY "-" GET cBrNal
+
+   IF gDatNal == "D"
+      @ m_x + 2, m_y + 2 SAY "Datum naloga:" GET dDatNal
+   ENDIF
+
+   READ
+
+   ESC_BCR
+   BoxC()
+
+   RETURN .T.
+
+
+
 STATIC FUNCTION fin_open_lock_print_tables( lZap )
 
    O_PSUBAN
    O_PANAL
    O_PSINT
    O_PNALOG
-   
+
    O_PARTN
    O_KONTO
    O_TNAL
 
    IF !lock_fin_priprema( lZap )
-       RETURN .F.
+      RETURN .F.
    ENDIF
 
    SELECT PSUBAN
@@ -455,43 +464,43 @@ STATIC FUNCTION lock_fin_priprema( lZap )
       ++nCnt
 
       IF nCnt > 5
-           MsgBeep( "Neko već koristi tabele za pripreme finansijskog naloga !" )
-           RETURN .F.
+         MsgBeep( "Neko već koristi tabele za pripreme finansijskog naloga !" )
+         RETURN .F.
       ENDIF
 
       SELECT PANAL
-      IIF( lZap, my_dbf_zap(), NIL)
+      iif( lZap, my_dbf_zap(), NIL )
 
       lLock := lLock .AND. my_flock()
       IF !lLock
-           hb_idleSleep( 1 )
-           LOOP
+         hb_idleSleep( 1 )
+         LOOP
       ENDIF
 
       SELECT PSINT
-      IIF( lZap, my_dbf_zap(), NIL)
+      iif( lZap, my_dbf_zap(), NIL )
 
       lLock := lLock .AND. my_flock()
       IF !lLock
-           hb_idleSleep( 1 )
-           LOOP
+         hb_idleSleep( 1 )
+         LOOP
       ENDIF
 
       SELECT PNALOG
-      IIF( lZap, my_dbf_zap(), NIL)
-   
+      iif( lZap, my_dbf_zap(), NIL )
+
       lLock := lLock .AND. my_flock()
       IF !lLock
-           hb_idleSleep( 1 )
-           LOOP
+         hb_idleSleep( 1 )
+         LOOP
       ENDIF
 
 
       SELECT PSUBAN
-       lLock := lLock .AND. my_flock()
+      lLock := lLock .AND. my_flock()
       IF !lLock
-           hb_idleSleep( 1 )
-           LOOP
+         hb_idleSleep( 1 )
+         LOOP
       ENDIF
 
       // sve lock prepreke prebrođene :)
@@ -499,4 +508,3 @@ STATIC FUNCTION lock_fin_priprema( lZap )
    ENDDO
 
    RETURN .T.
-

@@ -128,45 +128,6 @@ FUNCTION Get1_16()
             @ m_x + 15, m_y + 2   SAY "VPC      " GET _VPC    PICTURE PicDEM
          ENDIF
 
-         IF _IdVD $ "94"   // storno fakture
-
-            @ m_x + 16, m_y + 2    SAY "RABAT (%)" GET _RABATV    PICTURE picdem ;
-               VALID V_RabatV()
-
-            _PNAP := 0
-            @ m_x + 17, m_y + 2    SAY "PPP (%)  " GET _MPC PICT "99.99" ;
-               when {|| iif( roba->tip == "V", _mpc := 0, NIL ), iif( roba->tip == "V", ppp14( .F. ), .T. ) } ;
-               VALID ppp14( .T. )
-
-            @ m_x + 18, m_y + 2    SAY "PRUC (%) "; QQOut( Transform( TARIFA->VPP, "99.99" ) )
-
-
-            IF gVarVP == "1"
-               _VPCsaPP := 0
-               @ m_x + 19, m_y + 2  SAY "VPC + PPP  "
-               @ m_x + 19, m_Y + 50 GET _vpcSaPP PICTURE picdem ;
-                  when {|| _VPCSAPP := iif( _VPC <> 0, _VPC * ( 1 -_RabatV / 100 ) * ( 1 + _MPC / 100 ), 0 ), ShowGets(), .T. } ;
-                  valid {|| _vpcsappp := iif( _VPCsap <> 0, _vpcsap + _PNAP, _VPCSAPPP ), .T. }
-
-            ELSE  // preracunate stope
-
-               _VPCsaPP := 0
-               @ m_x + 19, m_y + 2  SAY "VPC + PPP  "
-               @ m_x + 19, m_Y + 50 GET _vpcSaPP PICTURE picdem ;
-                  when {|| _VPCSAPP := iif( _VPC <> 0, _VPC * ( 1 -_RabatV / 100 ) * ( 1 + _MPC / 100 ), 0 ), ShowGets(), .T. } ;
-                  valid {|| _vpcsappp := iif( _VPCsap <> 0, _vpcsap + _PNAP, _VPCSAPPP ), .T. }
-            ENDIF
-
-
-            IF gMagacin == "1"  // ovu cijenu samo prikazati ako se vodi po nabavnim cijenama
-               _VPCSAPPP := 0
-               @ m_x + 20, m_y + 2 SAY "VPC + PPP + PRUC:"
-               @ m_x + 20, m_Y + 50 GET _vpcSaPPP PICTURE picdem  ;
-                  VALID {||  VPCSAPPP() }
-            ENDIF
-
-         ENDIF // _idvd $ "94"
-
          READ // vodi se po vpc
 
       ELSE // vodi se po nc

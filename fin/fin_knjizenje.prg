@@ -688,8 +688,7 @@ FUNCTION edit_fin_pripr()
 
    CASE Ch == K_F5
 
-      // kontrola zbira za jedan nalog
-      KontrZbNal()
+      kontrola_zbira_naloga()
       RETURN DE_REFRESH
 
    CASE Ch == K_ENTER

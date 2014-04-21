@@ -11,10 +11,7 @@
 
 #include "fin.ch"
 
-/*! \fn KontrZbNal()
- *  \brief Kontrola zbira naloga
- */
-FUNCTION KontrZbNal()
+FUNCTION kontrola_zbira_naloga()
 
    PushWa()
 
@@ -111,9 +108,9 @@ FUNCTION KontrZbNal()
             my_unlock()
          ENDIF
 
-      ENDIF // cDN=="D"
+      ENDIF 
 
-   ENDIF  // dug-pot<>0
+   ENDIF
    BoxC()
 
    PopWA()

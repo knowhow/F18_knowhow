@@ -21,7 +21,7 @@ FUNCTION stampa_fin_document( lAuto )
    PRIVATE dDatNal := Date()
 
    StAnalNal( lAuto )
-   SintStav( lAuto )
+   gen_sint_stavke( lAuto )
 
    RETURN
 
@@ -234,34 +234,33 @@ FUNCTION fin_zagl_11()
 
 
 
-STATIC FUNCTION _o_tables()
+STATIC FUNCTION fin_open_lock_print_tables()
 
    O_PSUBAN
-   O_PARTN
    O_PANAL
    O_PSINT
    O_PNALOG
+   
+   O_PARTN
    O_KONTO
    O_TNAL
 
-   RETURN
+
+   IF !zap_lock_fin_priprema()
+       RETURN .F.
+   ENDIF
+
+   RETURN .F.
 
 
-/*! \fn SintStav(lAuto)
- *  \brief Formiranje sintetickih stavki
- *  \param lAuto
- */
-
-FUNCTION SintStav( lAuto )
+FUNCTION gen_sint_stavke( lAuto )
 
    IF lAuto == NIL
       lAuto := .F.
    ENDIF
 
-   _o_tables()
-
-   IF !zap_lock_fin_priprema()
-       RETURN .F.
+   IF !fin_open_lock_print_tables()
+         RETURN .F.
    ENDIF
 
    GO TOP
@@ -291,17 +290,17 @@ FUNCTION SintStav( lAuto )
 
          SELECT PANAL
 
-         SEEK cidfirma + cidvn + cbrnal + cidkonto
+         SEEK cIdfirma + cIdvn + cBrNal + cIdKonto
          fNasao := .F.
 
-         DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal ;
-               .AND. IdKonto == cIdKonto
+         DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal .AND. IdKonto == cIdKonto
             IF gDatNal == "N"
                IF Month( psuban->datdok ) == Month( datnal )
                   fNasao := .T.
                   EXIT
                ENDIF
-            ELSE  // sintetika se generise na osnovu datuma naloga
+            ELSE  
+               // sintetika se generise na osnovu datuma naloga
                IF Month( dDatNal ) == Month( datnal )
                   fNasao := .T.
                   EXIT
@@ -314,15 +313,14 @@ FUNCTION SintStav( lAuto )
             APPEND BLANK
          ENDIF
 
-         REPLACE IdFirma WITH cIdFirma, IdKonto WITH cIdKonto, IdVN WITH cIdVN, ;
-            BrNal WITH cBrNal, ;
-            DatNal WITH iif( gDatNal == "D", dDatNal, Max( psuban->datdok, datnal ) ), ;
+         REPLACE IdFirma WITH cIdFirma, IdKonto WITH cIdKonto, IdVN WITH cIdVN, BrNal WITH cBrNal, ;
+            DatNal WITH IIF( gDatNal == "D", dDatNal, Max( psuban->datdok, datnal ) ), ;
             DugBHD WITH DugBHD + nDugBHD, PotBHD WITH PotBHD + nPotBHD, ;
             DugDEM WITH DugDEM + nDugDEM, PotDEM WITH PotDEM + nPotDEM
 
 
          SELECT PSINT
-         SEEK cidfirma + cidvn + cbrnal + Left( cidkonto, 3 )
+         SEEK cIdfirma + cIdvn + cBrNal + Left( cIdKonto, 3 )
 
          fNasao := .F.
 
@@ -362,8 +360,7 @@ FUNCTION SintStav( lAuto )
 
       SELECT PNALOG
       APPEND BLANK
-      REPLACE IdFirma WITH cIdFirma, IdVN WITH cIdVN, BrNal WITH cBrNal, ;
-         DatNal WITH iif( gDatNal == "D", dDatNal, Date() ), ;
+      REPLACE IdFirma WITH cIdFirma, IdVN WITH cIdVN, BrNal WITH cBrNal, DatNal WITH IIF( gDatNal == "D", dDatNal, Date() ), ;
          DugBHD WITH nD1, PotBHD WITH nP1, ;
          DugDEM WITH nD2, PotDEM WITH nP2
 
@@ -382,12 +379,13 @@ FUNCTION SintStav( lAuto )
       _rec_suban := psuban->( RecNo() )
 
       IF cDN == "D"
-         SELECT panal
+         SELECT PANAL
          SEEK cIdfirma + cIdvn + cBrnal
          fin_stampa_sinteticki_nalog(.F.)    
       ENDIF
 
-      _o_tables()
+      fin_open_lock_print_tables()
+
       SELECT PSUBAN
       GO ( _rec_suban )
 
@@ -471,17 +469,16 @@ STATIC FUNCTION zap_lock_fin_priprema()
 
       SELECT PSUBAN
       SET ORDER TO TAG "2"
-      my_flock()
+      my_dbf_zap()
       lLock := lLock .AND. my_flock()
       IF !lLock
            hb_idleSleep( 1 )
            LOOP
       ENDIF
 
-      // sve lock prepreke sam prebrodio :)
+      // sve lock prepreke prebrođene :)
       EXIT
    ENDDO
 
    RETURN .T.
-
 

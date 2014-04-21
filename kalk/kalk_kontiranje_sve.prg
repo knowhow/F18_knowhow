@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -17,146 +17,143 @@
 // -----------------------------------------
 // kontiranje vise naloga od jednom
 // -----------------------------------------
-function kont_v_kalk()
-local dD_f := DATE()-30
-local dD_t := DATE()
-local cId_td := PADR( "14;", 100 )
-local cId_mkto := PADR( "", 100 )
-local cId_pkto := PADR( "", 100 )
-local cChBrNal := "N"
+FUNCTION kont_v_kalk()
 
-// uslovi...
-Box( , 5, 65 )
+   LOCAL dD_f := Date() -30
+   LOCAL dD_t := Date()
+   LOCAL cId_td := PadR( "14;", 100 )
+   LOCAL cId_mkto := PadR( "", 100 )
+   LOCAL cId_pkto := PadR( "", 100 )
+   LOCAL cChBrNal := "N"
+
+   // uslovi...
+   Box( , 5, 65 )
 	
-	@ m_x + 1, m_y + 2 SAY "Datum od:" GET dD_f
-	@ m_x + 1, col() + 1 SAY "do:" GET dD_t
+   @ m_x + 1, m_y + 2 SAY "Datum od:" GET dD_f
+   @ m_x + 1, Col() + 1 SAY "do:" GET dD_t
 
-	@ m_x + 2, m_y + 2 SAY "tipovi dok. (prazno-svi):" GET cId_td ;
-		PICT "@S20"
+   @ m_x + 2, m_y + 2 SAY "tipovi dok. (prazno-svi):" GET cId_td ;
+      PICT "@S20"
 	
-	@ m_x + 3, m_y + 2 SAY "mag.konta (prazno-sva):" GET cId_mkto ;
-		PICT "@S20"
-	@ m_x + 4, m_y + 2 SAY " pr.konta (prazno-sva):" GET cId_pkto ;
-		PICT "@S20"
+   @ m_x + 3, m_y + 2 SAY "mag.konta (prazno-sva):" GET cId_mkto ;
+      PICT "@S20"
+   @ m_x + 4, m_y + 2 SAY " pr.konta (prazno-sva):" GET cId_pkto ;
+      PICT "@S20"
 
-	@ m_x + 5, m_y + 2 SAY "koriguj broj naloga (D/N)" GET cChBrNal ;
-		PICT "@!" VALID cChBrNal $ "DN"
-	read
-BoxC()
+   @ m_x + 5, m_y + 2 SAY "koriguj broj naloga (D/N)" GET cChBrNal ;
+      PICT "@!" VALID cChBrNal $ "DN"
+   READ
+   BoxC()
 
-if LastKey() == K_ESC
-	return
-endif
+   IF LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-_kont_doks( dD_f, dD_t, cId_td, cId_mkto, cId_pkto, cChBrNal )
+   _kont_doks( dD_f, dD_t, cId_td, cId_mkto, cId_pkto, cChBrNal )
 
-return
+   RETURN
 
 // -----------------------------------------------------
 // kontiraj dokumente po uslovima
 // -----------------------------------------------------
-static function _kont_doks( dD_f, dD_t, cId_td, cId_mkto, ;
-	cId_pkto, cChBrNal )
-local nCount := 0
-local nTNRec
-local cNalog := ""
+STATIC FUNCTION _kont_doks( dD_f, dD_t, cId_td, cId_mkto, ;
+      cId_pkto, cChBrNal )
 
-// prvo u doks-u nadji dokumente i prema njima onda idi
-O_KALK_DOKS
+   LOCAL nCount := 0
+   LOCAL nTNRec
+   LOCAL cNalog := ""
 
-cId_td := ALLTRIM( cId_td )
-cId_mkto := ALLTRIM( cId_mkto )
-cId_pkto := ALLTRIM( cId_pkto )
+   // prvo u doks-u nadji dokumente i prema njima onda idi
+   O_KALK_DOKS
 
-select kalk_doks
-go top
+   cId_td := AllTrim( cId_td )
+   cId_mkto := AllTrim( cId_mkto )
+   cId_pkto := AllTrim( cId_pkto )
+
+   SELECT kalk_doks
+   GO TOP
 
 
-do while !EOF()
+   DO WHILE !Eof()
 
-	if ( field->datdok < dD_f .or. field->datdok > dD_t )
-		skip
-		loop
-	endif
+      IF ( field->datdok < dD_f .OR. field->datdok > dD_t )
+         SKIP
+         LOOP
+      ENDIF
 
-	if !EMPTY( cId_td ) 
-		if field->idvd $ cId_td
-			// idi dalje...
-		else
-			skip
-			loop
-		endif
-	endif
+      IF !Empty( cId_td )
+         IF field->idvd $ cId_td
+            // idi dalje...
+         ELSE
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 	
-	// provjeri magacinska konta
-	if !EMPTY( cId_mkto ) 
-		if ALLTRIM(field->mkonto) $ cId_mkto
-			// idi dalje...
-		else
-			skip
-			loop
-		endif
-	endif
+      // provjeri magacinska konta
+      IF !Empty( cId_mkto )
+         IF AllTrim( field->mkonto ) $ cId_mkto
+            // idi dalje...
+         ELSE
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 	
-	// provjeri prodavnicka konta
-	if !EMPTY( cId_pkto ) 
-		if ALLTRIM(field->pkonto) $ cId_pkto
-			// idi dalje...
-		else
-			skip
-			loop
-		endif
-	endif
+      // provjeri prodavnicka konta
+      IF !Empty( cId_pkto )
+         IF AllTrim( field->pkonto ) $ cId_pkto
+            // idi dalje...
+         ELSE
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 
-	nTNRec := RECNO()
-	cD_firma := field->idfirma
-	cD_tipd := field->idvd
-	cD_brdok := field->brdok
+      nTNRec := RecNo()
+      cD_firma := field->idfirma
+      cD_tipd := field->idvd
+      cD_brdok := field->brdok
 
-	// napuni FINMAT
-	RekapK( .t., cD_firma, cD_tipd, cD_brdok, .t. )
+      // napuni FINMAT
+      RekapK( .T., cD_firma, cD_tipd, cD_brdok, .T. )
 	
-	// uzmi drugi broj naloga
-	//_br_nal( cChBrNal, cD_brdok, @cNalog )
+      // uzmi drugi broj naloga
+      // _br_nal( cChBrNal, cD_brdok, @cNalog )
 
-	// kontiraj
-	kalk_kontiranje_naloga( .t., .t., .f., NIL, .f. )
+      // kontiraj
+      kalk_kontiranje_naloga( .T., .T., .F., NIL, .F. )
 
-	// azuriraj nalog
-	//p_fin( .t. )
+      ++ nCount
 
-	++ nCount
+      O_KALK_DOKS
 
-	O_KALK_DOKS
+      SELECT kalk_doks
+      GO ( nTNRec )
+      SKIP
 
-	select kalk_doks
-	go (nTNRec)
-	skip
+   ENDDO
 
-enddo
+   IF nCount > 0
+      msgbeep( "Kontirao " + AllTrim( Str( nCount ) ) + " dokumenata !" )
+   ENDIF
 
-if nCount > 0
-	msgbeep( "Kontirao " + ALLTRIM(STR(nCount)) + " dokumenata !" )
-endif
-
-return
+   RETURN
 
 
 
 // --------------------------------------------------------
 // uskladi broj naloga sa brojem kalkulacije
 // --------------------------------------------------------
-static function _br_nal( cChange, cBrKalk, cNalog )
+STATIC FUNCTION _br_nal( cChange, cBrKalk, cNalog )
 
-if cChange == "N"
-	return
-endif
+   IF cChange == "N"
+      RETURN
+   ENDIF
 
-if ( "/" $ cBrKalk )
-	// samo ako ima ovaj znak
-	cNalog := PADL( ALLTRIM( cBrKalk ), 8, "0" )
-endif
+   IF ( "/" $ cBrKalk )
+      // samo ako ima ovaj znak
+      cNalog := PadL( AllTrim( cBrKalk ), 8, "0" )
+   ENDIF
 
-return
-
-
+   RETURN

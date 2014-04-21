@@ -72,7 +72,7 @@ else
     AADD(opcexe, {|| oDB_lock:warrning() } )
 endif
 
-AADD(opc, "2. izvjestaji")
+AADD(opc, "2. izvještaji")
 if (ImaPravoPristupa(goModul:oDataBase:cName,"RPT","MNU"))
     AADD(opcexe, {|| mat_izvjestaji()})
 else
@@ -87,10 +87,10 @@ else
     AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc, "4. stampa datoteke naloga")
+AADD(opc, "4. štampa datoteke naloga")
 AADD(opcexe, {|| mat_dnevnik_naloga()})
 
-AADD(opc, "5. stampa proknjizenih naloga")
+AADD(opc, "5. štampa proknjizenih naloga")
 AADD(opcexe, {|| mat_stampa_naloga()})
 
 AADD(opc, "6. inventura")

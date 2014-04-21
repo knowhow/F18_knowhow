@@ -395,22 +395,18 @@ STATIC FUNCTION fakt_pripr_keyhandler()
       RETURN DE_REFRESH
 
 
-      // brisanje kompletne pripreme
    CASE Ch == K_CTRL_F9
 
       fakt_brisanje_pripreme()
       RETURN DE_REFRESH
 
 
-      // kontrola zbira podataka
    CASE Ch == K_F5
 
-      // ovo treba napraviti kako treba !!!!!
       fakt_kzb()
       RETURN DE_CONT
 
 
-      // generisanje racuna na osnovu otpremnice
    CASE Upper( Chr( Ch ) ) == "O"
 
       _t_area := Select()

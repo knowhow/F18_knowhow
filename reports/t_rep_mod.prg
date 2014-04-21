@@ -59,8 +59,8 @@ private izbor := 1
 private opc := {}
 private opcexe := {}
 
-AADD( opc, "1. finansijski izvjestaji                                  ")
-AADD( opcexe, {|| mod_rep_fin() })
+AADD( opc, "1. finansijski izvještaji                                  ")
+AADD( opcexe, {|| fin_suban_izvjestaji() })
 AADD( opc, "2. robni izvjestaji      ")
 AADD( opcexe, {|| NIL })
 

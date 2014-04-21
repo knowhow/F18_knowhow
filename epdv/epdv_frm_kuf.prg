@@ -211,7 +211,6 @@ do case
 
    case (Ch == K_F5)
    
-        // kontrola zbira KUF
         kzb_kuf()
         return DE_REFRESH
 
@@ -338,7 +337,6 @@ do case
 endcase
 
 return DE_CONT
-*}
 
 
 // ---------------------------------

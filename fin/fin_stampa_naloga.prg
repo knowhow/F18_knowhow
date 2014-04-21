@@ -187,10 +187,10 @@ FUNCTION fin_zagl_11()
 
    ?
    IF lDnevnik
-      ? "FIN.P:      D N E V N I K    K NJ I Z E NJ A    Z A    " + ;
+      ?U "FIN.P:      D N E V N I K    K NJ I Ž E NJ A    Z A    " + ;
          Upper( NazMjeseca( Month( dDatNal ) ) ) + " " + Str( Year( dDatNal ) ) + ". GODINE"
    ELSE
-      ? "FIN.P: NALOG ZA KNJIZENJE BROJ :"
+      ?U "FIN.P: NALOG ZA KNJIŽENJE BROJ :"
       @ PRow(), PCol() + 2 SAY cIdFirma + " - " + cIdVn + " - " + cBrNal
    ENDIF
    B_OFF
@@ -233,38 +233,27 @@ FUNCTION fin_zagl_11()
    RETURN
 
 
-
-STATIC FUNCTION fin_open_lock_print_tables()
-
-   O_PSUBAN
-   O_PANAL
-   O_PSINT
-   O_PNALOG
-   
-   O_PARTN
-   O_KONTO
-   O_TNAL
-
-
-   IF !zap_lock_fin_priprema()
-       RETURN .F.
-   ENDIF
-
-   RETURN .F.
-
-
 FUNCTION gen_sint_stavke( lAuto )
 
+   LOCAL A
+   LOCAL nStr, nD1, nD2, nP1, nP2
+   LOCAL cIdFirma, cIDVn, cBrNal
+   LOCAL nDugBHD, nDugDEM, nPotBHD, nPotDEM
+  
    IF lAuto == NIL
       lAuto := .F.
    ENDIF
 
-   IF !fin_open_lock_print_tables()
+   IF !fin_open_lock_print_tables( .T. )
          RETURN .F.
    ENDIF
 
+   altd()
+   SELECT PSUBAN
+   SET ORDER TO TAG "2"
    GO TOP
-   IF Empty( BrNal )
+   IF Empty( PSUBAN->BrNal )
+      MsgBeep( "subanalitika prazna" )
       my_close_all_dbf()
       RETURN
    ENDIF
@@ -274,7 +263,7 @@ FUNCTION gen_sint_stavke( lAuto )
 
       nStr := 0
       nD1 := nD2 := nP1 := nP2 := 0
-      cIdFirma := IdFirma;cIDVn = IdVN;cBrNal := BrNal
+      cIdFirma := IdFirma; cIDVn = IdVN;cBrNal := BrNal
 
       DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal     // jedan nalog
 
@@ -309,6 +298,7 @@ FUNCTION gen_sint_stavke( lAuto )
             SKIP
          ENDDO
 
+         SELECT PANAL
          IF !fNasao
             APPEND BLANK
          ENDIF
@@ -324,8 +314,7 @@ FUNCTION gen_sint_stavke( lAuto )
 
          fNasao := .F.
 
-         DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal ;
-               .AND. Left( cidkonto, 3 ) == idkonto
+         DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal .AND. Left( cIdkonto, 3 ) == idkonto
             IF gDatNal == "N"
                IF  Month( psuban->datdok ) == Month( datnal )
                   fNasao := .T.
@@ -341,13 +330,12 @@ FUNCTION gen_sint_stavke( lAuto )
             SKIP
          ENDDO
 
+         SELECT PSINT
          IF !fNasao
             APPEND BLANK
          ENDIF
 
-         REPLACE IdFirma WITH cIdFirma, IdKonto WITH Left( cIdKonto, 3 ), IdVN WITH cIdVN, ;
-            BrNal WITH cBrNal, ;
-            DatNal WITH iif( gDatNal == "D", dDatNal,  Max( psuban->datdok, datnal ) ), ;
+         REPLACE IdFirma WITH cIdFirma, IdKonto WITH Left( cIdKonto, 3 ), IdVN WITH cIdVN, BrNal WITH cBrNal, DatNal WITH iif( gDatNal == "D", dDatNal,  Max( psuban->datdok, datnal ) ), ;
             DugBHD WITH DugBHD + nDugBHD, PotBHD WITH PotBHD + nPotBHD, ;
             DugDEM WITH DugDEM + nDugDEM, PotDEM WITH PotDEM + nPotDEM
 
@@ -376,18 +364,19 @@ FUNCTION gen_sint_stavke( lAuto )
          BoxC()
       ENDIF
 
-      _rec_suban := psuban->( RecNo() )
+      SELECT PSUBAN
+      PushWa()
 
       IF cDN == "D"
          SELECT PANAL
          SEEK cIdfirma + cIdvn + cBrnal
-         fin_stampa_sinteticki_nalog(.F.)    
+         fin_stampa_sinteticki_nalog( .F. )    
       ENDIF
 
-      fin_open_lock_print_tables()
-
-      SELECT PSUBAN
-      GO ( _rec_suban )
+      my_close_all_dbf()
+      fin_open_lock_print_tables( .F. )
+ 
+      PopWa()
 
    ENDDO
 
@@ -426,8 +415,36 @@ FUNCTION gen_sint_stavke( lAuto )
    RETURN
 
 
+STATIC FUNCTION fin_open_lock_print_tables( lZap )
 
-STATIC FUNCTION zap_lock_fin_priprema()
+   O_PSUBAN
+   O_PANAL
+   O_PSINT
+   O_PNALOG
+   
+   O_PARTN
+   O_KONTO
+   O_TNAL
+
+   IF !lock_fin_priprema( lZap )
+       RETURN .F.
+   ENDIF
+
+   SELECT PSUBAN
+   SET ORDER TO TAG "2"
+
+   RETURN .T.
+
+
+/*
+   1) lZap := .T. => pobrisi tabele panal, psint, pnalog
+                     PSUBAN ne diraj !
+              .F. => ne brisi nista
+
+   3) lockuj sve tabele
+
+*/
+STATIC FUNCTION lock_fin_priprema( lZap )
 
    LOCAL nCnt
    LOCAL lLock := .T.
@@ -443,7 +460,8 @@ STATIC FUNCTION zap_lock_fin_priprema()
       ENDIF
 
       SELECT PANAL
-      my_dbf_zap()
+      IIF( lZap, my_dbf_zap(), NIL)
+
       lLock := lLock .AND. my_flock()
       IF !lLock
            hb_idleSleep( 1 )
@@ -451,7 +469,8 @@ STATIC FUNCTION zap_lock_fin_priprema()
       ENDIF
 
       SELECT PSINT
-      my_dbf_zap()
+      IIF( lZap, my_dbf_zap(), NIL)
+
       lLock := lLock .AND. my_flock()
       IF !lLock
            hb_idleSleep( 1 )
@@ -459,7 +478,8 @@ STATIC FUNCTION zap_lock_fin_priprema()
       ENDIF
 
       SELECT PNALOG
-      my_dbf_zap()
+      IIF( lZap, my_dbf_zap(), NIL)
+   
       lLock := lLock .AND. my_flock()
       IF !lLock
            hb_idleSleep( 1 )
@@ -468,9 +488,7 @@ STATIC FUNCTION zap_lock_fin_priprema()
 
 
       SELECT PSUBAN
-      SET ORDER TO TAG "2"
-      my_dbf_zap()
-      lLock := lLock .AND. my_flock()
+       lLock := lLock .AND. my_flock()
       IF !lLock
            hb_idleSleep( 1 )
            LOOP

@@ -79,8 +79,6 @@ METHOD F18AdminOpts:New()
 
 
 
-// ------------------------------------------------
-// ------------------------------------------------
 METHOD F18AdminOpts:update_app()
 
    LOCAL _ver_params := hb_Hash()
@@ -158,8 +156,6 @@ METHOD F18AdminOpts:update_app_run_templates_update( params )
 
 
 
-// -----------------------------------------------------------------------
-// -----------------------------------------------------------------------
 METHOD F18AdminOpts:update_app_unzip_templates( destination_path, location_path, filename )
 
    LOCAL _cmd
@@ -229,8 +225,6 @@ METHOD F18AdminOpts:update_app_run_app_update( params )
 
 
 
-// -----------------------------------------------------------
-// -----------------------------------------------------------
 METHOD F18AdminOpts:update_app_run_script( update_file )
 
    LOCAL _url := my_home_root() + ::update_app_script_file
@@ -539,7 +533,7 @@ METHOD F18AdminOpts:wget_download( url, filename, location, erase_file, silent, 
 #endif
 
    IF !silent
-      MsgO( "vrsim download ... sacekajte !" )
+      MsgO( "Vršim download ... sačekajte !" )
    ENDIF
 
    hb_run( _cmd )
@@ -564,7 +558,7 @@ METHOD F18AdminOpts:wget_download( url, filename, location, erase_file, silent, 
       FSeek( _h, 0 )
       FClose( _h )
       IF _length <= 0
-         MsgBeep( "Trazeni fajl ne postoji !!!" )
+         MsgBeep( "Traženi fajl ne postoji !!!" )
          RETURN _ok
       ENDIF
    ENDIF
@@ -594,20 +588,14 @@ METHOD F18AdminOpts:update_db()
    Box(, 10, 70 )
 
    @ m_x + _x, m_y + 2 SAY "**** upgrade db-a / unesite verziju ..."
-
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "     verzija db-a (npr. 4.6.1):" GET _version PICT "@S30" VALID !Empty( _version )
-
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "naziv baze / prazno update-sve:" GET _database PICT "@S30"
-
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Update template [empty] baza (D/N) ?" GET _upd_empty VALID _upd_empty $ "DN" PICT "@!"
 
    READ
@@ -659,8 +647,6 @@ METHOD F18AdminOpts:update_db()
 
 
 
-// ----------------------------------------------------------------
-// ----------------------------------------------------------------
 METHOD F18AdminOpts:update_db_download()
 
    LOCAL _ok := .F.
@@ -672,7 +658,7 @@ METHOD F18AdminOpts:update_db_download()
 
    IF File( AllTrim( _path ) + AllTrim( _file ) )
 
-      IF Pitanje(, "Izbrisati postojeci download file ?", "N" ) == "D"
+      IF Pitanje(, "Izbrisati postojeći download fajl ?", "N" ) == "D"
          FErase( AllTrim( _path ) + AllTrim( _file ) )
          Sleep( 1 )
       ELSE
@@ -868,11 +854,11 @@ METHOD F18AdminOpts:new_session()
    SET CONFIRM ON
 
    Box(, 7, 60 )
-   @ m_x + 1, m_y + 2 SAY "Otvaranje baze za novu sezonu ***" COLOR "I"
-   @ m_x + 3, m_y + 2 SAY "Vrsi se prenos sa godine:" GET _from_sess PICT "9999"
-   @ m_x + 3, Col() + 1 SAY "na godinu:" GET _to_sess PICT "9999" VALID ( _to_sess > _from_sess .AND. _to_sess - _from_sess == 1 )
-   @ m_x + 5, m_y + 2 SAY "Baza (prazno-sve):" GET _db PICT "@S30"
-   @ m_x + 6, m_y + 2 SAY "Ako baza postoji, pobrisi je ? (D/N)" GET _db_delete VALID _db_delete $ "DN" PICT "@!"
+   @ m_x + 1, m_y + 2 SAY8 "Otvaranje baze za novu sezonu ***" COLOR "I"
+   @ m_x + 3, m_y + 2 SAY8 "Vrsi se prenos sa godine:" GET _from_sess PICT "9999"
+   @ m_x + 3, Col() + 1 SAY8 "na godinu:" GET _to_sess PICT "9999" VALID ( _to_sess > _from_sess .AND. _to_sess - _from_sess == 1 )
+   @ m_x + 5, m_y + 2 SAY8 "Baza (prazno-sve):" GET _db PICT "@S30"
+   @ m_x + 6, m_y + 2 SAY8 "Ako baza postoji, pobriši je ? (D/N)" GET _db_delete VALID _db_delete $ "DN" PICT "@!"
    READ
    BoxC()
 
@@ -1348,35 +1334,28 @@ METHOD F18AdminOpts:create_new_db_params( params )
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Naziv nove baze:" GET _db_name VALID _new_db_valid( _db_name ) PICT "@S30"
    @ m_x + _x, Col() + 1 SAY "godina:" GET _db_year PICT "@S4" VALID !Empty( _db_year )
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Opis baze (*):" GET _db_comment PICT "@S50"
 
    ++ _x
    ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "Koristiti kao uzorak postojecu bazu (*):"
+   @ m_x + _x, m_y + 2 SAY "Koristiti kao uzorak postojeću bazu (*):"
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Naziv:" GET _db_template PICT "@S40"
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Brisi bazu ako vec postoji ! (D/N)" GET _db_drop VALID _db_drop $ "DN" PICT "@!"
 
    ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "Praznjenje podataka (1) pocetno stanje (2) sve" GET _db_type PICT "9"
+   @ m_x + _x, m_y + 2 SAY "Pražnjenje podataka (1) pocetno stanje (2) sve" GET _db_type PICT "9"
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "*** opcije markirane kao (*) nisu obavezne"
 
    READ
@@ -1455,7 +1434,7 @@ STATIC FUNCTION _new_db_valid( db_name )
    LOCAL _ok := .F.
 
    IF Empty( db_name )
-      MsgBeep( "Naziv baze ne moze biti prazno !" )
+      MsgBeep( "Naziv baze ne može biti prazno !" )
       RETURN _ok
    ENDIF
 
@@ -1465,7 +1444,7 @@ STATIC FUNCTION _new_db_valid( db_name )
          "," $ db_name .OR. ;
          "." $ db_name )
 
-      MsgBeep( "Naziv baze ne moze sadrzavati znakove .:- itd... !" )
+      MsgBeep( "Naziv baze ne moze sadržavati znakove .:- itd... !" )
       RETURN _ok
 
    ENDIF

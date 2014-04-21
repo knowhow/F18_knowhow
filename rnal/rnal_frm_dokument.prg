@@ -545,7 +545,7 @@ do case
 
     case UPPER(CHR(Ch)) == "E"
         // export dokumenta
-        m_export( _docs->doc_no, nil, .t., .t. )
+        rnal_export_menu( _docs->doc_no, nil, .t., .t. )
         return DE_CONT
 
     case UPPER( CHR( Ch )  ) == "R"

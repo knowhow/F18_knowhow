@@ -16,7 +16,7 @@
 // --------------------------------------------------------
 // meni exporta
 // --------------------------------------------------------
-FUNCTION m_export( nDoc_no, aDocList, lTemp, lWriteRel )
+FUNCTION rnal_export_menu( nDoc_no, aDocList, lTemp, lWriteRel )
 
    LOCAL mX := m_x
    LOCAL mY := m_y

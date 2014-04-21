@@ -736,7 +736,7 @@ STATIC FUNCTION key_handler()
       nDoc_no := docs->doc_no
 		
       // export dokumenta
-      m_export( nDoc_no, aDocs, .F., .T. )
+      rnal_export_menu( nDoc_no, aDocs, .F., .T. )
 		
       SELECT docs
       set_f_kol( cTmpFilter )

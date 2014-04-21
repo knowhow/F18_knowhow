@@ -343,11 +343,10 @@ STATIC FUNCTION send_email_attachment()
    _log_params := hb_hash()
    _log_params["date_from"] := DATE()
    _log_params["date_to"] := DATE()
-   _log_params["user"] := f18_user()
    _log_params["limit"] := 1000
    _log_params["conds_true"] := ""
    _log_params["conds_false"] := ""
-   _log_params["doc_oper"] := "D"
+   _log_params["doc_oper"] := "N"
    _log_file := f18_view_log( _log_params )
 
    // dodaj fajlove za zip kompresiju

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,26 +16,24 @@
 // --------------------------------------------------------
 // meni exporta
 // --------------------------------------------------------
-function m_export( nDoc_no, aDocList, lTemp, lWriteRel )
-local mX := m_x
-local mY := m_y
-private opc := {}
-private opcexe := {}
-private izbor := 1
+FUNCTION rnal_export_menu( nDoc_no, aDocList, lTemp, lWriteRel )
 
-AADD( opc, "1. rnal -> GPS.opt (Lisec)         ")
-AADD( opcexe, {|| exp_2_lisec( nDoc_no, lTemp, lWriteRel ), izbor := 0 } )
-AADD( opc, "2. rnal -> FMK    ")
-AADD( opcexe, {|| exp_2_fmk( lTemp, nDoc_no, aDocList ), izbor := 0 } )
-AADD( opc, "3. rnal -> FMK (zadnja otpremnica) ")
-AADD( opcexe, {|| exp_2_fmk( lTemp, nDoc_no, aDocList, .t. ), izbor := 0 } )
+   LOCAL mX := m_x
+   LOCAL mY := m_y
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
 
-Menu_SC("export")
+   AAdd( _opc, "1. rnal -> GPS.opt (Lisec)         " )
+   AAdd( _opcexe, {|| exp_2_lisec( nDoc_no, lTemp, lWriteRel ), _izbor := 0 } )
+   AAdd( _opc, "2. rnal -> FMK    " )
+   AAdd( _opcexe, {|| exp_2_fmk( lTemp, nDoc_no, aDocList ), _izbor := 0 } )
+   AAdd( _opc, "3. rnal -> FMK (zadnja otpremnica) " )
+   AAdd( _opcexe, {|| exp_2_fmk( lTemp, nDoc_no, aDocList, .T. ), _izbor := 0 } )
 
-m_x := mX
-m_y := mY
+   f18_menu( "export", .f., @_izbor, _opc, _opcexe )
 
-return
+   m_x := mX
+   m_y := mY
 
-
-
+   RETURN

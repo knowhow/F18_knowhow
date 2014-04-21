@@ -180,7 +180,7 @@ _qry += "FROM fmk.log "
 _qry += "WHERE " + _where 
 
 // postavi ORDER
-_qry += " ORDER BY id, l_time"
+_qry += " ORDER BY l_time DESC "
 
 // doaj limit ako treba...
 if _limit > 0
@@ -209,7 +209,7 @@ return _data
 // -----------------------------------------------------------
 static function _print_log_data( data, params, print_to_file )
 local _row
-local _user, _txt, _date, _id
+local _user, _txt, _date
 local _a_txt, _tmp, _i, _pos_y
 local _txt_len := 100
 local _log_file := DTOS( DATE() ) + "_" + STRTRAN( TIME(), ":", "" ) + "_log.txt"
@@ -235,21 +235,20 @@ P_COND
 
 ? "PREGLED LOG-a"
 ? REPLICATE( "-", 130 )
-? PADR("log id", 10 ), PADR( "user", 10 ), PADR( "datum", 10 ), "opis..." 
+? PADR("Datum / vrijeme", 19 ), PADR( "Korisnik", 10 ), "operacija" 
 ? REPLICATE( "-", 130 )
 
 do while !data:EOF()
 
     _row := data:GetRow()
 
-    _id := data:FieldGet( data:FieldPos( "id" ) )
     _date := data:FieldGet( data:FieldPos( "l_time" ) )
     _user := hb_utf8tostr( data:FieldGet( data:FieldPos( "user_code" ) ) )
     _txt := hb_utf8tostr( data:FieldGet( data:FieldPos( "msg" ) ) )
 
-    ? PADR( ALLTRIM( STR( _id ) ), 10 )
-    @ prow(), pcol() + 1 SAY PADR( _user, 10 )
-    @ prow(), _pos_y := pcol() + 1 SAY PADR( _date, 10 )
+    ?
+    @ prow(), pcol() + 1 SAY PADR( _date, 19 )
+    @ prow(), _pos_y := pcol() + 1 SAY PADR( _user, 10 )
 
     // razbij poruku u niz
     _a_txt := SjeciStr( _txt, _txt_len )

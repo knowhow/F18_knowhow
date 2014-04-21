@@ -20,18 +20,18 @@ FUNCTION m_export( nDoc_no, aDocList, lTemp, lWriteRel )
 
    LOCAL mX := m_x
    LOCAL mY := m_y
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
-   PRIVATE izbor := 1
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
 
-   AAdd( opc, "1. rnal -> GPS.opt (Lisec)         " )
-   AAdd( opcexe, {|| exp_2_lisec( nDoc_no, lTemp, lWriteRel ), izbor := 0 } )
-   AAdd( opc, "2. rnal -> FMK    " )
-   AAdd( opcexe, {|| exp_2_fmk( lTemp, nDoc_no, aDocList ), izbor := 0 } )
-   AAdd( opc, "3. rnal -> FMK (zadnja otpremnica) " )
-   AAdd( opcexe, {|| exp_2_fmk( lTemp, nDoc_no, aDocList, .T. ), izbor := 0 } )
+   AAdd( _opc, "1. rnal -> GPS.opt (Lisec)         " )
+   AAdd( _opcexe, {|| exp_2_lisec( nDoc_no, lTemp, lWriteRel ), _izbor := 0 } )
+   AAdd( _opc, "2. rnal -> FMK    " )
+   AAdd( _opcexe, {|| exp_2_fmk( lTemp, nDoc_no, aDocList ), _izbor := 0 } )
+   AAdd( _opc, "3. rnal -> FMK (zadnja otpremnica) " )
+   AAdd( _opcexe, {|| exp_2_fmk( lTemp, nDoc_no, aDocList, .T. ), _izbor := 0 } )
 
-   Menu_SC( "export" )
+   f18_menu( "export", .f., @_izbor, _opc, _opcexe )
 
    m_x := mX
    m_y := mY

@@ -19,9 +19,9 @@ FUNCTION kalk_pregled_dokumenata()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. stampa azuriranog dokumenta              " )
+   AAdd( _opc, "1. štampa ažuriranog dokumenta              " )
    AAdd( _opcexe, {|| kalk_centr_stampa_dokumenta( .T. ) } )
-   AAdd( _opc, "2. stampa liste dokumenata" )
+   AAdd( _opc, "2. štampa liste dokumenata" )
    AAdd( _opcexe, {|| StDoks() } )
    AAdd( _opc, "3. pregled dokumenata po hronologiji obrade" )
    AAdd( _opcexe, {|| BrowseHron() } )
@@ -55,23 +55,7 @@ FUNCTION kalk_ostale_operacije_doks()
       AAdd( _opcexe, {|| MsgBeep( cZabrana ) } )
    ENDIF
 
-   IF IsPlanika()
-      AAdd( _opc, "2. generacija tabele prodnc" )
-      IF ( ImaPravoPristupa( goModul:oDataBase:cName, "DOK", "GENPRODNC" ) )
-         AAdd( _opcexe, {|| GenProdNc() } )
-      ELSE
-         AAdd( _opcexe, {|| MsgBeep( cZabrana ) } )
-      ENDIF
-
-      AAdd( _opc, "3. Set roba.idPartner" )
-      IF ( ImaPravoPristupa( goModul:oDataBase:cName, "DOK", "SETIDPARTN" ) )
-         AAdd( _opcexe, {|| SetIdPartnerRoba() } )
-      ELSE
-         AAdd( _opcexe, {|| MsgBeep( cZabrana ) } )
-      ENDIF
-   ENDIF
-
-   AAdd( _opc, "4. pregled smeca " )
+   AAdd( _opc, "S. pregled smeca " )
    IF ( ImaPravoPristupa( goModul:oDataBase:cName, "DOK", "SMECEPREGLED" ) )
       AAdd( _opcexe, {|| kalk_pripr9view() } )
    ELSE

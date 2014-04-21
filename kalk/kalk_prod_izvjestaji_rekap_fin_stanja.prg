@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,418 +13,414 @@
 #include "kalk.ch"
 
 // rekapitulacija finansijskog stanja po objektima
-function RFLLP()
-local nKolUlaz
-local nKolIzlaz
+FUNCTION RFLLP()
 
-private aPorezi
-aPorezi:={}
+   LOCAL nKolUlaz
+   LOCAL nKolIzlaz
 
-PicDem:=REPLICATE("9", VAL(gFPicDem)) + gPicDem
-PicCDem:=REPLICATE("9", VAL(gFPicCDem)) + gPicCDem
+   PRIVATE aPorezi
 
-cIdFirma:=gFirma
-cIdKonto:=padr("132.",gDuzKonto)
+   aPorezi := {}
 
-O_SIFK
-O_SIFV
-O_ROBA
-O_TARIFA
-O_KONCIJ
-O_KONTO
-O_PARTN
+   PicDem := Replicate( "9", Val( gFPicDem ) ) + gPicDem
+   PicCDem := Replicate( "9", Val( gFPicCDem ) ) + gPicCDem
 
-dDatOd:=ctod("")
-dDatDo:=date()
-qqRoba:=space(60)
-qqTarifa:=qqidvd:=space(60)
-private cPNab:="N"
-private cNula:="D",cErr:="N"
-private cTU:="2"
-if IsPlanika()
-	private cK9:=SPACE(3)
-endif
+   cIdFirma := gFirma
+   cIdKonto := PadR( "132.", gDuzKonto )
 
-Box(,9,60)
-do while .t.
-	if gNW $ "DX"
-   		@ m_x+1,m_y+2 SAY "Firma "
-		?? gFirma,"-",gNFirma
- 	else
-  		@ m_x+1,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
- 	endif
- 	@ m_x+2,m_y+2 SAY "Konto   " GET cIdKonto valid "." $ cidkonto .or.P_Konto(@cIdKonto)
- 	@ m_x+4,m_y+2 SAY "Tarife  " GET qqTarifa pict "@!S50"
- 	@ m_x+5,m_y+2 SAY "Artikli " GET qqRoba   pict "@!S50"
- 	@ m_x+6,m_y+2 SAY "Vrste dokumenata  " GET qqIDVD pict "@!S30"
- 	@ m_x+7,m_y+2 SAY "Datum od " GET dDatOd
- 	@ m_x+7,col()+2 SAY "do" GET dDatDo
- 	@ m_x+8,m_y+2  SAY "Prikaz: roba tipa T / dokumenata IP (1/2)" GET cTU  valid cTU $ "12"
- 	if IsPlanika()
- 		@ m_x+9,m_y+2 SAY "Prikaz po K9" GET cK9 PICT "@!"
- 	endif
- 	read
- 	ESC_BCR
- 	private aUsl2:=Parsiraj(qqTarifa,"IdTarifa")
- 	private aUsl3:=Parsiraj(qqIDVD,"idvd")
- 	private aUslR:=Parsiraj(qqRoba,"idroba")
- 	if aUsl2<>NIL
-		exit
-	endif
- 	if aUsl3<>NIL
-		exit
-	endif
- 	if aUsl4<>NIL
-		exit
-	endif
-enddo
-BoxC()
+   O_SIFK
+   O_SIFV
+   O_ROBA
+   O_TARIFA
+   O_KONCIJ
+   O_KONTO
+   O_PARTN
 
-// sinteticki konto
-if len(trim(cIdKonto))<=3 .or. "." $ cIdKonto
-	if "." $ cIdKonto
-     		cIdKonto:=strtran(cIdKonto,".","")
-  	endif
-  	cIdkonto:=trim(cIdKonto)
-endif
+   dDatOd := CToD( "" )
+   dDatDo := Date()
+   qqRoba := Space( 60 )
+   qqTarifa := qqidvd := Space( 60 )
+   PRIVATE cPNab := "N"
+   PRIVATE cNula := "D", cErr := "N"
+   PRIVATE cTU := "2"
 
-O_KALKREP
-select kalk
-set order to tag "4"
-//"idFirma+Pkonto+idroba+dtos(datdok)+PU_I+IdVD"
+   Box(, 9, 60 )
+   DO WHILE .T.
+      IF gNW $ "DX"
+         @ m_x + 1, m_y + 2 SAY "Firma "
+         ?? gFirma, "-", gNFirma
+      ELSE
+         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      ENDIF
+      @ m_x + 2, m_y + 2 SAY "Konto   " GET cIdKonto VALID "." $ cidkonto .OR. P_Konto( @cIdKonto )
+      @ m_x + 4, m_y + 2 SAY "Tarife  " GET qqTarifa PICT "@!S50"
+      @ m_x + 5, m_y + 2 SAY "Artikli " GET qqRoba   PICT "@!S50"
+      @ m_x + 6, m_y + 2 SAY "Vrste dokumenata  " GET qqIDVD PICT "@!S30"
+      @ m_x + 7, m_y + 2 SAY "Datum od " GET dDatOd
+      @ m_x + 7, Col() + 2 SAY "do" GET dDatDo
+      @ m_x + 8, m_y + 2  SAY "Prikaz: roba tipa T / dokumenata IP (1/2)" GET cTU  VALID cTU $ "12"
+      READ
+      ESC_BCR
+      PRIVATE aUsl2 := Parsiraj( qqTarifa, "IdTarifa" )
+      PRIVATE aUsl3 := Parsiraj( qqIDVD, "idvd" )
+      PRIVATE aUslR := Parsiraj( qqRoba, "idroba" )
+      IF aUsl2 <> NIL
+         EXIT
+      ENDIF
+      IF aUsl3 <> NIL
+         EXIT
+      ENDIF
+      IF aUsl4 <> NIL
+         EXIT
+      ENDIF
+   ENDDO
+   BoxC()
 
-cFilt1:="Pkonto="+cm2Str(cIdkonto)
+   // sinteticki konto
+   IF Len( Trim( cIdKonto ) ) <= 3 .OR. "." $ cIdKonto
+      IF "." $ cIdKonto
+         cIdKonto := StrTran( cIdKonto, ".", "" )
+      ENDIF
+      cIdkonto := Trim( cIdKonto )
+   ENDIF
 
-if !empty(dDatOd) .or. !empty(dDatdo)
-	cFilt1+=".and.DATDOK>="+cm2str(dDatOd)+".and.DATDOK<="+cm2str(dDatDo)
-endif
+   O_KALKREP
+   SELECT kalk
+   SET ORDER TO TAG "4"
+   // "idFirma+Pkonto+idroba+dtos(datdok)+PU_I+IdVD"
 
-if aUsl2<>".t."
-	cFilt1+=".and."+aUsl2
-endif
-if aUsl3<>".t."
- 	cFilt1+=".and."+aUsl3
-endif
-if aUslR<>".t."
- 	cFilt1+=".and."+aUslR
-endif
+   cFilt1 := "Pkonto=" + cm2Str( cIdkonto )
 
-cFilt1:=strtran(cFilt1,".t..and.","")
-set filter to &cFilt1
+   IF !Empty( dDatOd ) .OR. !Empty( dDatdo )
+      cFilt1 += ".and.DATDOK>=" + cm2str( dDatOd ) + ".and.DATDOK<=" + cm2str( dDatDo )
+   ENDIF
 
-hseek cIdFirma
+   IF aUsl2 <> ".t."
+      cFilt1 += ".and." + aUsl2
+   ENDIF
+   IF aUsl3 <> ".t."
+      cFilt1 += ".and." + aUsl3
+   ENDIF
+   IF aUslR <> ".t."
+      cFilt1 += ".and." + aUslR
+   ENDIF
 
-select koncij
-seek trim(cIdKonto)
-select kalk
+   cFilt1 := StrTran( cFilt1, ".t..and.", "" )
+   SET FILTER to &cFilt1
 
-EOF CRET
+   hseek cIdFirma
 
-nLen:=1
+   SELECT koncij
+   SEEK Trim( cIdKonto )
+   SELECT kalk
 
-aZaglTxt:={}
-AADD(aZaglTxt, {5, "R.br",""})
-AADD(aZaglTxt, {11, " Konto",""})
-AADD(aZaglTxt, {LEN(PicDem), " MPV.Dug",""})
-AADD(aZaglTxt, {LEN(PicDem), " MPV.Pot",""})
-AADD(aZaglTxt, {LEN(PicDem), " MPV",""})
-AADD(aZaglTxt, {LEN(PicDem), " MPV sa PP","  Dug"})
-AADD(aZaglTxt, {LEN(PicDem), " MPV sa PP","  Pot"})
-AADD(aZaglTxt, {LEN(PicDem), " MPV sa PP",""})
+   EOF CRET
 
-private cLine:=SetRptLineAndText(aZaglTxt, 0)
-private cText1:=SetRptLineAndText(aZaglTxt, 1, "*")
-private cText2:=SetRptLineAndText(aZaglTxt, 2, "*")
+   nLen := 1
 
-start print cret
-?
+   aZaglTxt := {}
+   AAdd( aZaglTxt, { 5, "R.br", "" } )
+   AAdd( aZaglTxt, { 11, " Konto", "" } )
+   AAdd( aZaglTxt, { Len( PicDem ), " MPV.Dug", "" } )
+   AAdd( aZaglTxt, { Len( PicDem ), " MPV.Pot", "" } )
+   AAdd( aZaglTxt, { Len( PicDem ), " MPV", "" } )
+   AAdd( aZaglTxt, { Len( PicDem ), " MPV sa PP", "  Dug" } )
+   AAdd( aZaglTxt, { Len( PicDem ), " MPV sa PP", "  Pot" } )
+   AAdd( aZaglTxt, { Len( PicDem ), " MPV sa PP", "" } )
 
-private nTStrana:=0
-private bZagl:={|| ZaglRFLLP()}
+   PRIVATE cLine := SetRptLineAndText( aZaglTxt, 0 )
+   PRIVATE cText1 := SetRptLineAndText( aZaglTxt, 1, "*" )
+   PRIVATE cText2 := SetRptLineAndText( aZaglTxt, 2, "*" )
 
-Eval(bZagl)
-nTUlaz:=nTIzlaz:=0
-ntMPVU:=ntMPVI:=nTNVU:=nTNVI:=0
-ntMPVBU:=ntMPVBI:=0
-// nTRabat:=0
-nCol1:=nCol0:=50
-private nRbr:=0
+   start PRINT cret
+   ?
 
-nMPVBU:=nMPVBI:=0
-aRTar:={}
-nKolUlaz:=0
-nKolIzlaz:=0
+   PRIVATE nTStrana := 0
+   PRIVATE bZagl := {|| ZaglRFLLP() }
 
-do while !eof() .and. cIdFirma==idfirma .and. IspitajPrekid()
-	nUlaz:=nIzlaz:=0
-	nMPVU:=nMPVI:=nNVU:=nNVI:=0
-	nMPVBU:=nMPVBI:=0
-	dDatDok:=datdok
-	cBroj:=pkonto
-	do while !eof() .and. cIdFirma+cBroj==idFirma+pkonto .and. IspitajPrekid()
-		select roba
-  		hseek kalk->idroba
-		// uslov po K9, planika
-  		if (IsPlanika() .and. !EMPTY(cK9) .and. roba->k9 <> cK9)
-    			select kalk
-    			skip
-    			loop
-  		endif
+   Eval( bZagl )
+   nTUlaz := nTIzlaz := 0
+   ntMPVU := ntMPVI := nTNVU := nTNVI := 0
+   ntMPVBU := ntMPVBI := 0
+   // nTRabat:=0
+   nCol1 := nCol0 := 50
+   PRIVATE nRbr := 0
+
+   nMPVBU := nMPVBI := 0
+   aRTar := {}
+   nKolUlaz := 0
+   nKolIzlaz := 0
+
+   DO WHILE !Eof() .AND. cIdFirma == idfirma .AND. IspitajPrekid()
+      nUlaz := nIzlaz := 0
+      nMPVU := nMPVI := nNVU := nNVI := 0
+      nMPVBU := nMPVBI := 0
+      dDatDok := datdok
+      cBroj := pkonto
+      DO WHILE !Eof() .AND. cIdFirma + cBroj == idFirma + pkonto .AND. IspitajPrekid()
+         SELECT roba
+         hseek kalk->idroba
+         // uslov po K9, planika
+         IF ( IsPlanika() .AND. !Empty( cK9 ) .AND. roba->k9 <> cK9 )
+            SELECT kalk
+            SKIP
+            LOOP
+         ENDIF
   		
-		select kalk
-  		if cTU=="2" .and.  roba->tip $ "UT"  
-			// prikaz dokumenata IP, a ne robe tipa "T"
-     			skip
-			loop
-  		endif
-  		if cTU=="1" .and. idvd=="IP"
-     			skip
-			loop
-  		endif
+         SELECT kalk
+         IF cTU == "2" .AND.  roba->tip $ "UT"
+            // prikaz dokumenata IP, a ne robe tipa "T"
+            SKIP
+            LOOP
+         ENDIF
+         IF cTU == "1" .AND. idvd == "IP"
+            SKIP
+            LOOP
+         ENDIF
 
-		select roba
-		hseek kalk->idroba
-  		select tarifa
-		hseek kalk->idtarifa
-		select kalk
+         SELECT roba
+         hseek kalk->idroba
+         SELECT tarifa
+         hseek kalk->idtarifa
+         SELECT kalk
 
-  		Tarifa( pkonto, idroba, @aPorezi, idtarifa )
-  		VtPorezi()
+         Tarifa( pkonto, idroba, @aPorezi, idtarifa )
+         VtPorezi()
 
-  		nBezP:=0
-  		nSaP:=0
-  		nNV:=0
+         nBezP := 0
+         nSaP := 0
+         nNV := 0
 
-  		if pu_i=="1"
-    			nBezP:=mpc*kolicina
-    			nMPVBU+=nBezP
-    			nSaP:=mpcsapp*kolicina
-    			nMPVU+=nSaP
-    			nNVU+=nc*(kolicina)
-    			nNV+=nc*(kolicina)
-  		elseif pu_i=="5"
-    			nBezP:=-mpc*kolicina
-    			nSaP:=-mpcsapp*kolicina
-    			if idvd $ "12#13"
-     				nMPVBU+=nBezP
-     				nMPVU+=nSaP
-     				nNVU-=nc*kolicina
-     				nNV-=nc*kolicina
-    			else
-     				nMPVBI-=nBezP
-     				nMPVI-=nSaP
-     				nNVI+=nc*kolicina
-     				nNV-=nc*kolicina
-    			endif
-  		elseif pu_i=="3"    
-    			nBezP:=mpc*kolicina
-    			nMPVBU+=nBezP
-    			nSaP:=mpcsapp*kolicina
-    			nMPVU+=nSaP
-  		elseif pu_i=="I"
-    			nBezP:=-MpcBezPor(mpcsapp,aPorezi,,nc)*gkolicin2
-    			nMPVBI-=nBezP
-    			nSaP:=-mpcsapp*gkolicin2
-    			nMPVI+=-nSaP
-    			nNVI+=nc*gkolicin2
-    			nNV-=nc*gkolicin2
-  		endif
+         IF pu_i == "1"
+            nBezP := mpc * kolicina
+            nMPVBU += nBezP
+            nSaP := mpcsapp * kolicina
+            nMPVU += nSaP
+            nNVU += nc * ( kolicina )
+            nNV += nc * ( kolicina )
+         ELSEIF pu_i == "5"
+            nBezP := -mpc * kolicina
+            nSaP := -mpcsapp * kolicina
+            IF idvd $ "12#13"
+               nMPVBU += nBezP
+               nMPVU += nSaP
+               nNVU -= nc * kolicina
+               nNV -= nc * kolicina
+            ELSE
+               nMPVBI -= nBezP
+               nMPVI -= nSaP
+               nNVI += nc * kolicina
+               nNV -= nc * kolicina
+            ENDIF
+         ELSEIF pu_i == "3"
+            nBezP := mpc * kolicina
+            nMPVBU += nBezP
+            nSaP := mpcsapp * kolicina
+            nMPVU += nSaP
+         ELSEIF pu_i == "I"
+            nBezP := -MpcBezPor( mpcsapp, aPorezi,, nc ) * gkolicin2
+            nMPVBI -= nBezP
+            nSaP := -mpcsapp * gkolicin2
+            nMPVI += -nSaP
+            nNVI += nc * gkolicin2
+            nNV -= nc * gkolicin2
+         ENDIF
 
-  		if IsPlanika()
-  			UkupnoKolP(@nKolUlaz, @nKolIzlaz)
-  		endif
-  
-  		nElem := ASCAN( aRTar , {|x| x[1]==TARIFA->ID} )
+         IF IsPlanika()
+            UkupnoKolP( @nKolUlaz, @nKolIzlaz )
+         ENDIF
 
-  		if glUgost
-  			nP1:=Izn_P_PPP(nBezP,aPorezi,,nSaP)
-  			nP2:=Izn_P_PRugost(nSaP,nBezP,nNV,aPorezi)
-  			nP3:=Izn_P_PPUgost(nSaP,nP2,aPorezi)
-  		else
-  			nP1:=Izn_P_PPP(nBezP,aPorezi,,nSaP)
-  			nP2:=Izn_P_PPU(nBezP,aPorezi)
-  			nP3:=Izn_P_PP(nBezP,aPorezi)
-  		endif
+         nElem := AScan( aRTar, {| x| x[ 1 ] == TARIFA->ID } )
 
-  		if nElem>0
-    			aRTar[nElem, 2] += nBezP
-    			aRTar[nElem, 6] += nP1
-    			aRTar[nElem, 7] += nP2
-    			aRTar[nElem, 8] += nP3
-    			aRTar[nElem, 9] += nP1+nP2+nP3
-    			aRTar[nElem,10] += nSaP
-  		else
-    			AADD(aRTar, {TARIFA->ID, nBezP, _OPP*100, PrPPUMP(), _ZPP*100, nP1, nP2, nP3, nP1+nP2+nP3, nSaP })
-  		endif
-		skip
-	enddo
+         IF glUgost
+            nP1 := Izn_P_PPP( nBezP, aPorezi,, nSaP )
+            nP2 := Izn_P_PRugost( nSaP, nBezP, nNV, aPorezi )
+            nP3 := Izn_P_PPUgost( nSaP, nP2, aPorezi )
+         ELSE
+            nP1 := Izn_P_PPP( nBezP, aPorezi,, nSaP )
+            nP2 := Izn_P_PPU( nBezP, aPorezi )
+            nP3 := Izn_P_PP( nBezP, aPorezi )
+         ENDIF
+
+         IF nElem > 0
+            aRTar[ nElem, 2 ] += nBezP
+            aRTar[ nElem, 6 ] += nP1
+            aRTar[ nElem, 7 ] += nP2
+            aRTar[ nElem, 8 ] += nP3
+            aRTar[ nElem, 9 ] += nP1 + nP2 + nP3
+            aRTar[ nElem, 10 ] += nSaP
+         ELSE
+            AAdd( aRTar, { TARIFA->ID, nBezP, _OPP * 100, PrPPUMP(), _ZPP * 100, nP1, nP2, nP3, nP1 + nP2 + nP3, nSaP } )
+         ENDIF
+         SKIP
+      ENDDO
 	
-	if round(nNVU-nNVI,4)==0 .and. round(nMPVU-nMPVI,4)==0
-  		loop
-	endif
+      IF Round( nNVU - nNVI, 4 ) == 0 .AND. Round( nMPVU - nMPVI, 4 ) == 0
+         LOOP
+      ENDIF
 
-	if prow() > ( RPT_PAGE_LEN + gPStranica )
-		FF
-		eval(bZagl)
-	endif
+      IF PRow() > ( RPT_PAGE_LEN + gPStranica )
+         FF
+         Eval( bZagl )
+      ENDIF
 	
-	? str(++nRbr,4)+".",padr(cBroj,11)
-	nCol1:=pcol()+1
+      ? Str( ++nRbr, 4 ) + ".", PadR( cBroj, 11 )
+      nCol1 := PCol() + 1
 
-	nTMPVU+=nMPVU
-	nTMPVI+=nMPVI
-	nTMPVBU+=nMPVBU
-	nTMPVBI+=nMPVBI
-	nTNVU+=nNVU
-	nTNVI+=nNVI
+      nTMPVU += nMPVU
+      nTMPVI += nMPVI
+      nTMPVBU += nMPVBU
+      nTMPVBI += nMPVBI
+      nTNVU += nNVU
+      nTNVI += nNVI
 
-	@ prow(),pcol()+1 SAY nMPVBU pict picdem
- 	@ prow(),pcol()+1 SAY nMPVBI pict picdem
- 	@ prow(),pcol()+1 SAY nMPVBU-nMPVBI pict picdem
- 	@ prow(),pcol()+1 SAY nMPVU pict picdem
- 	@ prow(),pcol()+1 SAY nMPVI pict picdem
- 	@ prow(),pcol()+1 SAY nMPVU-nMPVI pict picdem
-enddo
+      @ PRow(), PCol() + 1 SAY nMPVBU PICT picdem
+      @ PRow(), PCol() + 1 SAY nMPVBI PICT picdem
+      @ PRow(), PCol() + 1 SAY nMPVBU - nMPVBI PICT picdem
+      @ PRow(), PCol() + 1 SAY nMPVU PICT picdem
+      @ PRow(), PCol() + 1 SAY nMPVI PICT picdem
+      @ PRow(), PCol() + 1 SAY nMPVU - nMPVI PICT picdem
+   ENDDO
 
-? cLine
-? "UKUPNO:"
+   ? cLine
+   ? "UKUPNO:"
 
-@ prow(),nCol1 SAY ntMPVBU pict picdem
-@ prow(),pcol()+1 SAY ntMPVBI pict picdem
-@ prow(),pcol()+1 SAY ntMPVBU-ntMPVBI pict picdem
-@ prow(),pcol()+1 SAY ntMPVU pict picdem
-@ prow(),pcol()+1 SAY ntMPVI pict picdem
-@ prow(),pcol()+1 SAY ntMPVU-ntMPVI pict picdem
+   @ PRow(), nCol1 SAY ntMPVBU PICT picdem
+   @ PRow(), PCol() + 1 SAY ntMPVBI PICT picdem
+   @ PRow(), PCol() + 1 SAY ntMPVBU - ntMPVBI PICT picdem
+   @ PRow(), PCol() + 1 SAY ntMPVU PICT picdem
+   @ PRow(), PCol() + 1 SAY ntMPVI PICT picdem
+   @ PRow(), PCol() + 1 SAY ntMPVU - ntMPVI PICT picdem
 
-? cLine
+   ? cLine
 
-aRptRTar:={}
-AADD(aRptRTar, {15, " TARIF", " BROJ"})
-AADD(aRptRTar, {LEN(PicDem), " MPV", " "})
-AADD(aRptRTar, {LEN(gPicProc), " PPP", "  %"})
-AADD(aRptRTar, {LEN(gPicProc), " PPU", "  %"})
-AADD(aRptRTar, {LEN(gPicProc), " PP", "  %"})
-AADD(aRptRTar, {LEN(PicDem), " PPP", ""})
-AADD(aRptRTar, {LEN(PicDem), " PPU", ""})
-AADD(aRptRTar, {LEN(PicDem), " PP", ""})
-AADD(aRptRTar, {LEN(PicDem), " UKUPNO", " POREZ"})
-AADD(aRptRTar, {LEN(PicDem), " MPV", " sa Por"})
+   aRptRTar := {}
+   AAdd( aRptRTar, { 15, " TARIF", " BROJ" } )
+   AAdd( aRptRTar, { Len( PicDem ), " MPV", " " } )
+   AAdd( aRptRTar, { Len( gPicProc ), " PPP", "  %" } )
+   AAdd( aRptRTar, { Len( gPicProc ), " PPU", "  %" } )
+   AAdd( aRptRTar, { Len( gPicProc ), " PP", "  %" } )
+   AAdd( aRptRTar, { Len( PicDem ), " PPP", "" } )
+   AAdd( aRptRTar, { Len( PicDem ), " PPU", "" } )
+   AAdd( aRptRTar, { Len( PicDem ), " PP", "" } )
+   AAdd( aRptRTar, { Len( PicDem ), " UKUPNO", " POREZ" } )
+   AAdd( aRptRTar, { Len( PicDem ), " MPV", " sa Por" } )
 
-cRTLine:=SetRptLineAndText(aRptRTar, 0)
-cRTTxt1:=SetRptLineAndText(aRptRTar, 1, "*")
-cRTTxt2:=SetRptLineAndText(aRptRTar, 2, "*")
+   cRTLine := SetRptLineAndText( aRptRTar, 0 )
+   cRTTxt1 := SetRptLineAndText( aRptRTar, 1, "*" )
+   cRTTxt2 := SetRptLineAndText( aRptRTar, 2, "*" )
 
-if VAL(gFPicDem) > 0
-	P_COND2
-else
-	P_COND
-endif
+   IF Val( gFPicDem ) > 0
+      P_COND2
+   ELSE
+      P_COND
+   ENDIF
 
-?
-?
-?
-? "REKAPITULACIJA PO TARIFAMA"
-? "--------------------------"
-? cRTLine
-? cRTTxt1
-? cRTTxt2
-? cRTLine
+   ?
+   ?
+   ?
+   ? "REKAPITULACIJA PO TARIFAMA"
+   ? "--------------------------"
+   ? cRTLine
+   ? cRTTxt1
+   ? cRTTxt2
+   ? cRTLine
 
-ASORT(aRTar,,,{|x,y| x[1]<y[1] })
+   ASort( aRTar,,, {| x, y| x[ 1 ] < y[ 1 ] } )
 
-nT1:=nT4:=nT5:=nT6:=nT7:=nT5a:=0
+   nT1 := nT4 := nT5 := nT6 := nT7 := nT5a := 0
 
-for i:=1 TO LEN(aRTar)
-	if prow() > ( RPT_PAGE_LEN + gPStranica )
-  		FF
-  	endif
-  	@ prow()+1,0        SAY space(6)+aRTar[i,1]
-  	nCol1:=pcol()+4
-  	@ prow(),pcol()+4   SAY aRTar[i, 2]  PICT  PicDEM
-  	@ prow(),pcol()+1   SAY aRTar[i, 3]  PICT  gPicProc
-  	@ prow(),pcol()+1   SAY aRTar[i, 4]  PICT  gPicProc
-  	@ prow(),pcol()+1   SAY aRTar[i, 5]  PICT  gPicProc
-  	@ prow(),pcol()+1   SAY aRTar[i, 6]  PICT  PicDEM
-  	@ prow(),pcol()+1   SAY aRTar[i, 7]  PICT  PicDEM
-  	@ prow(),pcol()+1   SAY aRTar[i, 8]  PICT  PicDEM
-  	@ prow(),pcol()+1   SAY aRTar[i, 9]  PICT  PicDEM
-  	@ prow(),pcol()+1   SAY aRTar[i,10]  PICT  PicDEM
-  	nT1+=aRTar[i,2]
-  	nT4+=aRTar[i,6]
-  	nT5+=aRTar[i,7]
-  	nT5a+=aRTar[i,8]
-  	nT6+=aRTar[i,9]
-  	nT7+=aRTar[i,10]
-next
+   FOR i := 1 TO Len( aRTar )
+      IF PRow() > ( RPT_PAGE_LEN + gPStranica )
+         FF
+      ENDIF
+      @ PRow() + 1, 0        SAY Space( 6 ) + aRTar[ i, 1 ]
+      nCol1 := PCol() + 4
+      @ PRow(), PCol() + 4   SAY aRTar[ i, 2 ]  PICT  PicDEM
+      @ PRow(), PCol() + 1   SAY aRTar[ i, 3 ]  PICT  gPicProc
+      @ PRow(), PCol() + 1   SAY aRTar[ i, 4 ]  PICT  gPicProc
+      @ PRow(), PCol() + 1   SAY aRTar[ i, 5 ]  PICT  gPicProc
+      @ PRow(), PCol() + 1   SAY aRTar[ i, 6 ]  PICT  PicDEM
+      @ PRow(), PCol() + 1   SAY aRTar[ i, 7 ]  PICT  PicDEM
+      @ PRow(), PCol() + 1   SAY aRTar[ i, 8 ]  PICT  PicDEM
+      @ PRow(), PCol() + 1   SAY aRTar[ i, 9 ]  PICT  PicDEM
+      @ PRow(), PCol() + 1   SAY aRTar[ i, 10 ]  PICT  PicDEM
+      nT1 += aRTar[ i, 2 ]
+      nT4 += aRTar[ i, 6 ]
+      nT5 += aRTar[ i, 7 ]
+      nT5a += aRTar[ i, 8 ]
+      nT6 += aRTar[ i, 9 ]
+      nT7 += aRTar[ i, 10 ]
+   NEXT
 
-if prow() > ( RPT_PAGE_LEN + gPStranica )
-	FF
-endif
-? cRTLine
-? "UKUPNO:"
-@ prow(),nCol1     SAY  nT1  pict picdem
-@ prow(),pcol()+1  SAY  0    pict "@Z "+gPicProc
-@ prow(),pcol()+1  SAY  0    pict "@Z "+gPicProc
-@ prow(),pcol()+1  SAY  0    pict "@Z "+gPicProc
-@ prow(),pcol()+1  SAY  nT4  pict picdem
-@ prow(),pcol()+1  SAY  nT5  pict picdem
-@ prow(),pcol()+1  SAY  nT5a pict picdem
-@ prow(),pcol()+1  SAY  nT6  pict picdem
-@ prow(),pcol()+1  SAY  nT7  pict picdem
-? cRTLine
+   IF PRow() > ( RPT_PAGE_LEN + gPStranica )
+      FF
+   ENDIF
+   ? cRTLine
+   ? "UKUPNO:"
+   @ PRow(), nCol1     SAY  nT1  PICT picdem
+   @ PRow(), PCol() + 1  SAY  0    PICT "@Z " + gPicProc
+   @ PRow(), PCol() + 1  SAY  0    PICT "@Z " + gPicProc
+   @ PRow(), PCol() + 1  SAY  0    PICT "@Z " + gPicProc
+   @ PRow(), PCol() + 1  SAY  nT4  PICT picdem
+   @ PRow(), PCol() + 1  SAY  nT5  PICT picdem
+   @ PRow(), PCol() + 1  SAY  nT5a PICT picdem
+   @ PRow(), PCol() + 1  SAY  nT6  PICT picdem
+   @ PRow(), PCol() + 1  SAY  nT7  PICT picdem
+   ? cRTLine
 
-if IsPlanika()
-	if (prow() > ( RPT_PAGE_LEN + gPStranica ) )
-		FF
-	endif
-	PrintParovno(nKolUlaz, nKolIzlaz)
-endif
+   IF IsPlanika()
+      IF ( PRow() > ( RPT_PAGE_LEN + gPStranica ) )
+         FF
+      ENDIF
+      PrintParovno( nKolUlaz, nKolIzlaz )
+   ENDIF
 
-FF
-end print
+   FF
+   endprint
 
-closeret
-return
+   closeret
+
+   RETURN
 
 
 // zaglavlje izvjestaja
-function ZaglRFLLP()
-Preduzece()
-P_12CPI
-select konto
-hseek cidkonto
-?? space(60)," DATUM "
-?? date(), space(5),"Str:",str(++nTStrana,3)
-IspisNaDan(5)
-?
-?
-? "KALK: Rekapitulacija fin. stanja po objektima za period",dDatOd,"-",dDatDo
-?
-?
-? "Kriterij za objekte:",cIdKonto,"-",konto->naz
-?
-if len(aUslR)<>0
-	? "Kriterij za artikle:",qqRoba
-endif
+FUNCTION ZaglRFLLP()
 
-if IsPlanika() .and. !EMPTY(cK9)
- 	? "Uslov po K9:", cK9
-endif
+   Preduzece()
+   P_12CPI
+   SELECT konto
+   hseek cidkonto
+   ?? Space( 60 ), " DATUM "
+   ?? Date(), Space( 5 ), "Str:", Str( ++nTStrana, 3 )
+   IspisNaDan( 5 )
+   ?
+   ?
+   ? "KALK: Rekapitulacija fin. stanja po objektima za period", dDatOd, "-", dDatDo
+   ?
+   ?
+   ? "Kriterij za objekte:", cIdKonto, "-", konto->naz
+   ?
+   IF Len( aUslR ) <> 0
+      ? "Kriterij za artikle:", qqRoba
+   ENDIF
 
-select kalk
+   IF IsPlanika() .AND. !Empty( cK9 )
+      ? "Uslov po K9:", cK9
+   ENDIF
 
-if VAL(gFPicDem) > 0
-	P_COND2
-else
-	P_COND
-endif
+   SELECT kalk
 
-?
-? cLine
-? cText1
-? cText2
-? cLine
+   IF Val( gFPicDem ) > 0
+      P_COND2
+   ELSE
+      P_COND
+   ENDIF
 
-return
+   ?
+   ? cLine
+   ? cText1
+   ? cText2
+   ? cLine
 
-
+   RETURN

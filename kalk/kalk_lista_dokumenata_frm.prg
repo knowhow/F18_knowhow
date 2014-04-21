@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -17,399 +17,405 @@
 // --------------------------------------------
 // browse dokumenata - tabelarni pregled
 // --------------------------------------------
-function browse_kalk_dok()
-local cFirma := gFirma
-local cIdVd := PADR("80;", 30)
-local dDatOd := DATE() - 7
-local dDatDo := DATE()
-local cProdKto := PADR("", 50)
-local cMagKto := PADR("", 50)
-local cPartner := PADR("", 6)
-local cFooter := ""
-local cHeader := "Pregled dokumenata - tabelarni pregled"
-private ImeKol
-private Kol
+FUNCTION browse_kalk_dok()
 
-if usl_browse_kalk_dok(@cFirma, @cIdVd, @dDatOd, @dDatDo, ;
-			@cMagKto, @cProdKto, @cPartner) == 0
-	return
-endif
+   LOCAL cFirma := gFirma
+   LOCAL cIdVd := PadR( "80;", 30 )
+   LOCAL dDatOd := Date() - 7
+   LOCAL dDatDo := Date()
+   LOCAL cProdKto := PadR( "", 50 )
+   LOCAL cMagKto := PadR( "", 50 )
+   LOCAL cPartner := PadR( "", 6 )
+   LOCAL cFooter := ""
+   LOCAL cHeader := "Pregled dokumenata - tabelarni pregled"
+   PRIVATE ImeKol
+   PRIVATE Kol
 
-O_ROBA
-O_KONCIJ
-O_KALK
-O_KONTO
-O_KALK_DOKS
+   IF usl_browse_kalk_dok( @cFirma, @cIdVd, @dDatOd, @dDatDo, ;
+         @cMagKto, @cProdKto, @cPartner ) == 0
+      RETURN
+   ENDIF
 
-select kalk
-select kalk_doks
-set order to tag "1"
-// setuj filter na tabeli
-set_f_tbl(cFirma, cIdVd, dDatOd, dDatDo, cMagKto, cProdKto, cPartner)
+   O_ROBA
+   O_KONCIJ
+   O_KALK
+   O_KONTO
+   O_KALK_DOKS
 
-Box(, 20, 77)
+   SELECT kalk
+   SELECT kalk_doks
+   SET ORDER TO TAG "1"
+   // setuj filter na tabeli
+   set_f_tbl( cFirma, cIdVd, dDatOd, dDatDo, cMagKto, cProdKto, cPartner )
 
-@ m_x + 18 , m_y + 2 SAY ""
-@ m_x + 19 , m_y + 2 SAY ""
+   Box(, 20, 77 )
 
-if IsPlanika()
-	@ m_x + 20 , m_y + 2 SAY "<S> dokument u procesu staviti na stanje "
-else
-	@ m_x + 20 , m_y + 2 SAY ""
-endif
+   @ m_x + 18, m_y + 2 SAY ""
+   @ m_x + 19, m_y + 2 SAY ""
+   @ m_x + 20, m_y + 2 SAY ""
 
-set_a_kol(@ImeKol, @Kol)
+   set_a_kol( @ImeKol, @Kol )
 
-ObjDbedit("pregl", 20, 77, {|| brow_keyhandler(Ch) }, cFooter, cHeader,,,,, 3)
+   ObjDbedit( "pregl", 20, 77, {|| brow_keyhandler( Ch ) }, cFooter, cHeader,,,,, 3 )
 
-BoxC()
+   BoxC()
 
-closeret
-return
+   closeret
+
+   RETURN
 
 
 // --------------------------------------------------------
 // setovanje filtera na tabeli..
 // --------------------------------------------------------
-static function set_f_tbl(cFirma, cIdVd, dDatOd, dDatDo, ;
-			cMagKto, cProdKto, cPartner)
-local cFilter := ".t."
+STATIC FUNCTION set_f_tbl( cFirma, cIdVd, dDatOd, dDatDo, ;
+      cMagKto, cProdKto, cPartner )
 
-if !EMPTY(cFirma)
-	cFilter += " .and. idfirma == " + cm2str(cFirma) 
-endif
+   LOCAL cFilter := ".t."
 
-if !EMPTY(cIdVd)
-	cFilter += " .and. " + cIdVd 
-endif
+   IF !Empty( cFirma )
+      cFilter += " .and. idfirma == " + cm2str( cFirma )
+   ENDIF
 
-if !EMPTY(DTOS(dDatOd))
-	cFilter += " .and. DTOS(datdok) >= " + cm2str(DTOS(dDatOd))
-endif
+   IF !Empty( cIdVd )
+      cFilter += " .and. " + cIdVd
+   ENDIF
 
-if !EMPTY(DTOS(dDatDo))
-	cFilter += " .and. DTOS(datdok) <= " + cm2str(DTOS(dDatDo))
-endif
+   IF !Empty( DToS( dDatOd ) )
+      cFilter += " .and. DTOS(datdok) >= " + cm2str( DToS( dDatOd ) )
+   ENDIF
 
-if !EMPTY(cMagKto)
-	cFilter += " .and. " + cMagKto 
-endif
+   IF !Empty( DToS( dDatDo ) )
+      cFilter += " .and. DTOS(datdok) <= " + cm2str( DToS( dDatDo ) )
+   ENDIF
 
-if !EMPTY(cProdKto)
-	cFilter += " .and. " + cProdKto 
-endif
+   IF !Empty( cMagKto )
+      cFilter += " .and. " + cMagKto
+   ENDIF
 
-if !EMPTY(cPartner)
-	cFilter += " .and. idpartner == " + cm2str(cPartner) 
-endif
+   IF !Empty( cProdKto )
+      cFilter += " .and. " + cProdKto
+   ENDIF
 
-MsgO("pripremam pregled ... sacekajte trenutak !")
-select kalk_doks
-set filter to &cFilter
-go top
-MsgC()
+   IF !Empty( cPartner )
+      cFilter += " .and. idpartner == " + cm2str( cPartner )
+   ENDIF
 
-return
+   MsgO( "pripremam pregled ... sacekajte trenutak !" )
+   SELECT kalk_doks
+   SET FILTER to &cFilter
+   GO TOP
+   MsgC()
+
+   RETURN
 
 
 
 // -------------------------------------------
 // setovanje kolona za browse
 // -------------------------------------------
-static function set_a_kol(aImeKol, aKol)
-aImeKol := {}
-aKol := {}
+STATIC FUNCTION set_a_kol( aImeKol, aKol )
 
-AADD(aImeKol, { "F.",    {|| idfirma } })
-AADD(aImeKol, { "Tip", {|| idvd } })
-AADD(aImeKol, { "Broj",     {|| brdok } })
-AADD(aImeKol, { "Datum",    {|| datdok } })
-AADD(aImeKol, { "M.Konto",  {|| mkonto} })
-AADD(aImeKol, { "P.Konto",  {|| pkonto} })
-AADD(aImeKol, { "Partner",  {|| idpartner} })
-if IsPlanika()
-	AADD(aImeKol, { "Status",   {|| st_dok_status(kalk_doks->idfirma, kalk_doks->idvd, kalk_doks->brdok ) } })
-endif
-AADD(aImeKol, { "NV",       {|| TRANSFORM(nv, gPicDem)} })
-AADD(aImeKol, { "VPV",      {|| TRANSFORM(vpv,gPicDem)} })
-AADD(aImeKol, { "MPV",      {|| TRANSFORM(mpv,gPicDem)} })
-AADD(aImeKol, { "Dokument",   {|| Brfaktp }                           })
+   aImeKol := {}
+   aKol := {}
 
-for i:=1 to LEN(aImeKol)
-	AADD(aKol, i)
-next
+   AAdd( aImeKol, { "F.",    {|| idfirma } } )
+   AAdd( aImeKol, { "Tip", {|| idvd } } )
+   AAdd( aImeKol, { "Broj",     {|| brdok } } )
+   AAdd( aImeKol, { "Datum",    {|| datdok } } )
+   AAdd( aImeKol, { "M.Konto",  {|| mkonto } } )
+   AAdd( aImeKol, { "P.Konto",  {|| pkonto } } )
+   AAdd( aImeKol, { "Partner",  {|| idpartner } } )
+   AAdd( aImeKol, { "NV",       {|| Transform( nv, gPicDem ) } } )
+   AAdd( aImeKol, { "VPV",      {|| Transform( vpv, gPicDem ) } } )
+   AAdd( aImeKol, { "MPV",      {|| Transform( mpv, gPicDem ) } } )
+   AAdd( aImeKol, { "Dokument",   {|| Brfaktp }                           } )
 
-return
+   FOR i := 1 TO Len( aImeKol )
+      AAdd( aKol, i )
+   NEXT
+
+   RETURN
 
 // -------------------------------------------------------------
 // prikazi status dokumenata
 // -------------------------------------------------------------
-function st_dok_status(cFirma, cIdVd, cBrDok)
-local nTArea := SELECT()
-local cStatus := "na stanju"
+FUNCTION st_dok_status( cFirma, cIdVd, cBrDok )
 
-if cIdVd == "80" .and. dok_u_procesu(cFirma, cIdVd, cBrDok)
-	cStatus := "u procesu"
-endif
+   LOCAL nTArea := Select()
+   LOCAL cStatus := "na stanju"
 
-cStatus := PADR(cStatus, 10)
+   IF cIdVd == "80" .AND. dok_u_procesu( cFirma, cIdVd, cBrDok )
+      cStatus := "u procesu"
+   ENDIF
 
-select (nTArea)
-return cStatus
+   cStatus := PadR( cStatus, 10 )
+
+   SELECT ( nTArea )
+
+   RETURN cStatus
 
 // ----------------------------------------
-// key handler za browse_dok 
+// key handler za browse_dok
 // ----------------------------------------
-static function brow_keyhandler(Ch)
-local _rec
-local _br_fakt
+STATIC FUNCTION brow_keyhandler( Ch )
 
-do case
+   LOCAL _rec
+   LOCAL _br_fakt
 
-    case Ch == K_F2
+   DO CASE
 
-        _rec := dbf_get_rec()
-        _br_fakt := _rec["brfaktp"]
+   CASE Ch == K_F2
 
-        Box(, 3, 60 )
-            @ m_x + 1, m_y + 2 SAY "Ispravka podataka dokumenta ***"
-            @ m_x + 3, m_y + 2 SAY "Broj fakture:" GET _br_fakt
-            read
-        BoxC()
+      _rec := dbf_get_rec()
+      _br_fakt := _rec[ "brfaktp" ]
 
-        if LastKey() == K_ESC
-            return DE_CONT
-        endif
+      Box(, 3, 60 )
+      @ m_x + 1, m_y + 2 SAY "Ispravka podataka dokumenta ***"
+      @ m_x + 3, m_y + 2 SAY "Broj fakture:" GET _br_fakt
+      READ
+      BoxC()
 
-        _rec["brfaktp"] := _br_fakt
-        update_rec_server_and_dbf( "kalk_doks", _rec, 1, "FULL" )
-        return DE_REFRESH
+      IF LastKey() == K_ESC
+         RETURN DE_CONT
+      ENDIF
 
-	case Ch == K_CTRL_P
-		// stampa dokumenta
-		return DE_CONT
+      _rec[ "brfaktp" ] := _br_fakt
+      update_rec_server_and_dbf( "kalk_doks", _rec, 1, "FULL" )
+      RETURN DE_REFRESH
+
+   CASE Ch == K_CTRL_P
+      // stampa dokumenta
+      RETURN DE_CONT
 		
-	case UPPER(CHR(Ch)) ==  "P"
-		// povrat dokumenta u pripremu
-		return DE_CONT
-endcase
+   CASE Upper( Chr( Ch ) ) ==  "P"
+      // povrat dokumenta u pripremu
+      RETURN DE_CONT
+   ENDCASE
 
-return DE_CONT
+   RETURN DE_CONT
 
 
 // ----------------------------------------
 // uslovi browse-a dokumenata
 // ----------------------------------------
-static function usl_browse_kalk_dok( cFirma, cIdVd, dDatOd, dDatDo, ;
-			cMagKto, cProdKto, cPartner )
-local nX := 1
-private GetList:={}
+STATIC FUNCTION usl_browse_kalk_dok( cFirma, cIdVd, dDatOd, dDatDo, ;
+      cMagKto, cProdKto, cPartner )
 
-Box(, 10, 65)
-	
-	set cursor on
-	
-	@ nX + m_x, 2 + m_y SAY "Firma" GET cFirma
-	
-	++ nX
-	
-	@ nX + m_x, 2 + m_y SAY "Datumski period od" GET dDatOd 
-	
-	@ nX + m_x, col() + 1 SAY "do" GET dDatDo
+   LOCAL nX := 1
+   PRIVATE GetList := {}
 
-	nX := nX + 2
+   Box(, 10, 65 )
 	
-	@ nX + m_x, 2 + m_y SAY "Vrsta dokumenta (prazno-svi)" GET cIdVd PICT "@S30"
-
-	++ nX
-
-	@ nX + m_x, 2 + m_y SAY "Magacinski konto (prazno-svi)" GET cMagKto PICT "@S30"
+   SET CURSOR ON
 	
-	++ nX
-
-	@ nX + m_x, 2 + m_y SAY "Prodavnicki konto (prazno-svi)" GET cProdKto PICT "@S30"
-
-	nX := nX + 2
+   @ nX + m_x, 2 + m_y SAY "Firma" GET cFirma
 	
-	@ nX + m_x, 2 + m_y SAY "Partner:" GET cPartner VALID EMPTY( cPartner ) .or. p_firma(@cPartner)
+   ++ nX
 	
-	read
-BoxC()
+   @ nX + m_x, 2 + m_y SAY "Datumski period od" GET dDatOd
+	
+   @ nX + m_x, Col() + 1 SAY "do" GET dDatDo
 
-if LastKey() == K_ESC
-	return 0
-endif
+   nX := nX + 2
+	
+   @ nX + m_x, 2 + m_y SAY "Vrsta dokumenta (prazno-svi)" GET cIdVd PICT "@S30"
 
-cIdVd := Parsiraj( cIdVd, "idvd" )
-cMagKto := Parsiraj( cMagKto, "mkonto" )
-cProdKto := Parsiraj( cProdKto, "pkonto" )
+   ++ nX
 
-return 1
+   @ nX + m_x, 2 + m_y SAY "Magacinski konto (prazno-svi)" GET cMagKto PICT "@S30"
+	
+   ++ nX
+
+   @ nX + m_x, 2 + m_y SAY "Prodavnicki konto (prazno-svi)" GET cProdKto PICT "@S30"
+
+   nX := nX + 2
+	
+   @ nX + m_x, 2 + m_y SAY "Partner:" GET cPartner VALID Empty( cPartner ) .OR. p_firma( @cPartner )
+	
+   READ
+   BoxC()
+
+   IF LastKey() == K_ESC
+      RETURN 0
+   ENDIF
+
+   cIdVd := Parsiraj( cIdVd, "idvd" )
+   cMagKto := Parsiraj( cMagKto, "mkonto" )
+   cProdKto := Parsiraj( cProdKto, "pkonto" )
+
+   RETURN 1
 
 
 // --------------------------------------------
 // browse dokumenata hronoloski
 // --------------------------------------------
-function BrowseHron()
-O_ROBA
-O_KONCIJ
-O_KALK
-O_KONTO
-cIdFirma:=gFirma
-cIdFirma:=left(cIdFirma,2)
+FUNCTION BrowseHron()
 
-O_KALK_DOKS
-select kalk
-select kalk_doks
-set order to tag "3"
-//CREATE_INDEX("DOKSi3","IdFirma+dtos(datdok)+podbr","DOKS")
+   O_ROBA
+   O_KONCIJ
+   O_KALK
+   O_KONTO
+   cIdFirma := gFirma
+   cIdFirma := Left( cIdFirma, 2 )
 
-Box(,19,77)
+   O_KALK_DOKS
+   SELECT kalk
+   SELECT kalk_doks
+   SET ORDER TO TAG "3"
+   // CREATE_INDEX("DOKSi3","IdFirma+dtos(datdok)+podbr","DOKS")
 
-ImeKol:={}
-AADD(ImeKol,{ "Dat.Dok.",   {|| DatDok}                          })
-AADD(ImeKol,{ "Podbr",      {|| IF(LEN(podbr)>1,str(asc256(podbr),5),str(asc(podbr),3)) }                          })
-AADD(ImeKol,{ "VD  ",       {|| IdVD}                           })
-AADD(ImeKol,{ "Broj  ",     {|| BrDok}                           })
-AADD(ImeKol,{ "M.Konto",    {|| mkonto}                    })
-AADD(ImeKol,{ "P.Konto",    {|| pkonto}                    })
-AADD(ImeKol,{ "Nab.Vr",     {|| transform(nv,gpicdem)}                          })
-AADD(ImeKol,{ "VPV",        {|| transform(vpv,gpicdem)}                          })
-AADD(ImeKol,{ "MPV",        {|| transform(mpv,gpicdem)}                          })
-AADD(ImeKol,{ "Dokument",   {|| Brfaktp }                           })
-Kol:={}
-for i:=1 to len(ImeKol); AADD(Kol,i); next
+   Box(, 19, 77 )
 
-set cursor on
-@ m_x+2,m_y+1 SAY "<SPACE> pomjeri dokument nagore"
-BrowseKey(m_x+4,m_y+1,m_x+19,m_y+77,ImeKol,{|Ch| EdHron(Ch)},"idFirma=cidFirma",cidFirma,2,,,{|| .f.})
+   ImeKol := {}
+   AAdd( ImeKol, { "Dat.Dok.",   {|| DatDok }                          } )
+   AAdd( ImeKol, { "Podbr",      {|| IF( Len( podbr ) > 1, Str( asc256( podbr ), 5 ), Str( Asc( podbr ), 3 ) ) }                          } )
+   AAdd( ImeKol, { "VD  ",       {|| IdVD }                           } )
+   AAdd( ImeKol, { "Broj  ",     {|| BrDok }                           } )
+   AAdd( ImeKol, { "M.Konto",    {|| mkonto }                    } )
+   AAdd( ImeKol, { "P.Konto",    {|| pkonto }                    } )
+   AAdd( ImeKol, { "Nab.Vr",     {|| Transform( nv, gpicdem ) }                          } )
+   AAdd( ImeKol, { "VPV",        {|| Transform( vpv, gpicdem ) }                          } )
+   AAdd( ImeKol, { "MPV",        {|| Transform( mpv, gpicdem ) }                          } )
+   AAdd( ImeKol, { "Dokument",   {|| Brfaktp }                           } )
+   Kol := {}
+   FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ); NEXT
 
-BoxC()
+   SET CURSOR ON
+   @ m_x + 2, m_y + 1 SAY "<SPACE> pomjeri dokument nagore"
+   BrowseKey( m_x + 4, m_y + 1, m_x + 19, m_y + 77, ImeKol, {| Ch| EdHron( Ch ) }, "idFirma=cidFirma", cidFirma, 2,,, {|| .F. } )
 
-closeret
-return
+   BoxC()
+
+   closeret
+
+   RETURN
 
 
 // ---------------------------------------------
 // key handler za hronoloski pregled
 // ---------------------------------------------
-function EdHron(Ch)
-local cDn:="N",nTrecDok:=0,nRet:=DE_CONT
-do case
-  CASE Ch==K_CTRL_PGUP
-     Tb:GoTop()
-    nRet:=DE_REFRESH
-  CASE Ch==K_CTRL_PGDN
-     Tb:GoBottom()
-    nRet:=DE_REFRESH
-  case Ch==K_ESC
-    nRet:=DE_ABORT
-  case Ch==ASC(" ")
+FUNCTION EdHron( Ch )
 
-     select kalk_doks
-     cPodbr:=podbr
-     cIdvd:=idvd
-     cBrdok:=brdok
-     nTrecDok:=recno()
-     dDatdok:=datdok
-     skip -1
-     if bof() .or. datdok<>dDatDok
-        Msgbeep("Dokument je prvi unutar zadatog datuma")
-        go nTrecDok; return DE_CONT
-     endif
-     cGPodbr:=PodBr
-     cGIdvd:=idvd
-     cGBrdok:=brdok
+   LOCAL cDn := "N", nTrecDok := 0, nRet := DE_CONT
 
-     if cGPodbr==cPodbr
-       if len(podbr)>1
-         if (asc(cPodbr)-1)>5
-           cPodbr  := chr256(asc256(cPodbr)-1)
-         else
-           cGPodbr := chr256(asc256(cPodbr)+1)
-         endif
-       else
-         if (asc(cPodbr)-1)>5
-           cPodbr:=chr(asc(cPodbr)-1)
-         else
-           cGPodbr:=chr( asc(cPodbr)+1)
-         endif
-       endif
-     endif
+   DO CASE
+   CASE Ch == K_CTRL_PGUP
+      Tb:GoTop()
+      nRet := DE_REFRESH
+   CASE Ch == K_CTRL_PGDN
+      Tb:GoBottom()
+      nRet := DE_REFRESH
+   CASE Ch == K_ESC
+      nRet := DE_ABORT
+   CASE Ch == Asc( " " )
 
-     go nTrecDok
+      SELECT kalk_doks
+      cPodbr := podbr
+      cIdvd := idvd
+      cBrdok := brdok
+      nTrecDok := RecNo()
+      dDatdok := datdok
+      SKIP -1
+      IF Bof() .OR. datdok <> dDatDok
+         Msgbeep( "Dokument je prvi unutar zadatog datuma" )
+         GO nTrecDok; RETURN DE_CONT
+      ENDIF
+      cGPodbr := PodBr
+      cGIdvd := idvd
+      cGBrdok := brdok
 
-     select kalk_doks;  set order to tag "1"
-     seek cidfirma+cidvd+cbrdok
-     replace podbr with cGPodbr
+      IF cGPodbr == cPodbr
+         IF Len( podbr ) > 1
+            IF ( Asc( cPodbr ) -1 ) > 5
+               cPodbr  := chr256( asc256( cPodbr ) -1 )
+            ELSE
+               cGPodbr := chr256( asc256( cPodbr ) + 1 )
+            ENDIF
+         ELSE
+            IF ( Asc( cPodbr ) -1 ) > 5
+               cPodbr := Chr( Asc( cPodbr ) -1 )
+            ELSE
+               cGPodbr := Chr( Asc( cPodbr ) + 1 )
+            ENDIF
+         ENDIF
+      ENDIF
 
-     seek cidfirma+cgidvd+cgbrdok
-     replace podbr with cPodbr
+      GO nTrecDok
 
-     select kalk; set order to tag "1"
-     seek cidfirma+cidvd+cbrdok
-     do while !eof() .and. cIdFirma+cidvd+cbrdok=idfirma+idvd+brdok
-       replace podbr with cGPodbr
-       skip
-     enddo
-     seek cidfirma+cgidvd+cgbrdok
-     do while !eof() .and. cIdFirma+cgidvd+cgbrdok=idfirma+idvd+brdok
-       replace podbr with cPodbr
-       skip
-     enddo
+      SELECT kalk_doks;  SET ORDER TO TAG "1"
+      SEEK cidfirma + cidvd + cbrdok
+      REPLACE podbr WITH cGPodbr
 
-     select kalk_doks; set order to tag "3"
-     go nTrecDok
+      SEEK cidfirma + cgidvd + cgbrdok
+      REPLACE podbr WITH cPodbr
 
-     nRet:=DE_REFRESH
+      SELECT kalk; SET ORDER TO TAG "1"
+      SEEK cidfirma + cidvd + cbrdok
+      DO WHILE !Eof() .AND. cIdFirma + cidvd + cbrdok = idfirma + idvd + brdok
+         REPLACE podbr WITH cGPodbr
+         SKIP
+      ENDDO
+      SEEK cidfirma + cgidvd + cgbrdok
+      DO WHILE !Eof() .AND. cIdFirma + cgidvd + cgbrdok = idfirma + idvd + brdok
+         REPLACE podbr WITH cPodbr
+         SKIP
+      ENDDO
 
- case Ch==K_ENTER
-     BrowseDok()
-     select kalk_doks
-     nRet:=DE_CONT
- case Ch==K_CTRL_P
-     PushWa()
-     cSeek:=idfirma+idvd+brdok
-     my_close_all_dbf()
-     kalk_centr_stampa_dokumenta(.t.,cSeek)
-     O_KALK
-     O_KALK_DOKS
-     PopWA()
-     nRet:=DE_REFRESH
-endcase
-return nRet
-*}
+      SELECT kalk_doks; SET ORDER TO TAG "3"
+      GO nTrecDok
+
+      nRet := DE_REFRESH
+
+   CASE Ch == K_ENTER
+      BrowseDok()
+      SELECT kalk_doks
+      nRet := DE_CONT
+   CASE Ch == K_CTRL_P
+      PushWa()
+      cSeek := idfirma + idvd + brdok
+      my_close_all_dbf()
+      kalk_centr_stampa_dokumenta( .T., cSeek )
+      O_KALK
+      O_KALK_DOKS
+      PopWA()
+      nRet := DE_REFRESH
+   ENDCASE
+
+   RETURN nRet
+// }
 
 
 /*! \fn BrowseDok()
  *  \brief Pregled dokumenta u vidu browse tabele
  */
 
-function BrowseDok()
-*{
-select kalk; set order to tag "1"
+FUNCTION BrowseDok()
 
-Box(,15,77,.t.,"Pregled dokumenta")
+   // {
+   SELECT kalk; SET ORDER TO TAG "1"
 
-ImeKol:={}
-AADD(ImeKol,{ "Rbr",       {|| Rbr}                         })
-AADD(ImeKol,{ "M.Konto",    {|| mkonto}                     })
-AADD(ImeKol,{ "P.Konto",    {|| pkonto}                     })
-AADD(ImeKol,{ "Roba",       {|| IdRoba}                     })
-AADD(ImeKol,{ "Kolicina",   {|| transform(Kolicina,gpickol)} })
-AADD(ImeKol,{ "Nc",         {|| transform(nc,gpicdem)}  })
-AADD(ImeKol,{ "VPC",        {|| transform(vpc,gpicdem)}  })
-AADD(ImeKol,{ "MPCSAPP",    {|| transform(mpcsapp,gpicdem)} })
+   Box(, 15, 77, .T., "Pregled dokumenta" )
 
-Kol:={}
-for i:=1 to len(ImeKol); AADD(Kol,i); next
+   ImeKol := {}
+   AAdd( ImeKol, { "Rbr",       {|| Rbr }                         } )
+   AAdd( ImeKol, { "M.Konto",    {|| mkonto }                     } )
+   AAdd( ImeKol, { "P.Konto",    {|| pkonto }                     } )
+   AAdd( ImeKol, { "Roba",       {|| IdRoba }                     } )
+   AAdd( ImeKol, { "Kolicina",   {|| Transform( Kolicina, gpickol ) } } )
+   AAdd( ImeKol, { "Nc",         {|| Transform( nc, gpicdem ) }  } )
+   AAdd( ImeKol, { "VPC",        {|| Transform( vpc, gpicdem ) }  } )
+   AAdd( ImeKol, { "MPCSAPP",    {|| Transform( mpcsapp, gpicdem ) } } )
 
-set cursor on
-@ m_x+2,m_y+1 SAY "Pregled dokumenta: "; ?? kalk_doks->idfirma,"-",kalk_doks->idvd,"-",kalk_doks->brdok," od",kalk_doks->datdok
-BrowseKey(m_x+4,m_y+1,m_x+15,m_y+77,ImeKol,{|Ch| EdDok(Ch)},"idFirma+idvd+brdok=kalk_doks->(idFirma+idvd+brdok)",kalk_doks->(idFirma+idvd+brdok),2,,,{|| .f.})
+   Kol := {}
+   FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ); NEXT
 
-BoxC()
-*}
+   SET CURSOR ON
+   @ m_x + 2, m_y + 1 SAY "Pregled dokumenta: "; ?? kalk_doks->idfirma, "-", kalk_doks->idvd, "-", kalk_doks->brdok, " od", kalk_doks->datdok
+   BrowseKey( m_x + 4, m_y + 1, m_x + 15, m_y + 77, ImeKol, {| Ch| EdDok( Ch ) }, "idFirma+idvd+brdok=kalk_doks->(idFirma+idvd+brdok)", kalk_doks->( idFirma + idvd + brdok ), 2,,, {|| .F. } )
+
+   BoxC()
+   // }
 
 
 
@@ -417,182 +423,186 @@ BoxC()
  *  \brief Obrada opcija u browsu odredjenog dokumenta
  */
 
-function EdDOK(Ch)
-*{
-local cDn:="N",nTrecDok:=0,nRet:=DE_CONT
-do case
-  case Ch==K_ENTER
-     BrowseKart()
-     nRet:=DE_CONT
+FUNCTION EdDOK( Ch )
 
- case Ch==K_CTRL_P
-     nRet:=DE_REFRESH
-endcase
-return nRet
-*}
+   // {
+   LOCAL cDn := "N", nTrecDok := 0, nRet := DE_CONT
+   DO CASE
+   CASE Ch == K_ENTER
+      BrowseKart()
+      nRet := DE_CONT
+
+   CASE Ch == K_CTRL_P
+      nRet := DE_REFRESH
+   ENDCASE
+
+   RETURN nRet
+// }
 
 
 
 /*! \fn BrowseKart()
- *  \brief Browse prikaz kartice artikla 
+ *  \brief Browse prikaz kartice artikla
  */
 
-function BrowseKart()
-*{
-// tekuca baza: KALK
-// prikaz kartice koja je odredjena tekucim zapisom u KALK
+FUNCTION BrowseKart()
 
-nTreckalk:=recno()
+   // {
+   // tekuca baza: KALK
+   // prikaz kartice koja je odredjena tekucim zapisom u KALK
 
-cId:=idfirma+idvd+brdok+rbr
+   nTreckalk := RecNo()
 
-cIDFirma:=idfirma
-cIdRoba:=idroba
-cMkonto:=mkonto
-cPkonto:=pkonto
+   cId := idfirma + idvd + brdok + rbr
 
-if !empty(cpkonto)
-   if !empty(cMkonto) .and. Pitanje(,"Pregled magacina - D, prodavnica - N")=="D"
-       cPKonto:=""
-   else
-       cMkonto:=""
-   endif
-endif
-if empty(cPkonto)
-   set order to tag "3"
-else
-   set order to tag "4"
-endif
+   cIDFirma := idfirma
+   cIdRoba := idroba
+   cMkonto := mkonto
+   cPkonto := pkonto
 
-Box(,15,77,.t.,"Pregled  kartice "+iif(empty(cPkonto),cMKonto,cPKonto))
+   IF !Empty( cpkonto )
+      IF !Empty( cMkonto ) .AND. Pitanje(, "Pregled magacina - D, prodavnica - N" ) == "D"
+         cPKonto := ""
+      ELSE
+         cMkonto := ""
+      ENDIF
+   ENDIF
+   IF Empty( cPkonto )
+      SET ORDER TO TAG "3"
+   ELSE
+      SET ORDER TO TAG "4"
+   ENDIF
 
-nArr:=select()
+   Box(, 15, 77, .T., "Pregled  kartice " + iif( Empty( cPkonto ), cMKonto, cPKonto ) )
 
-aDbf:={}
-AADD(aDbf, {"ID", "C", 15, 0 } )
-AADD(aDbf, {"stanje", "N", 15, 3 } )
-AADD(aDbf, {"VPV", "N", 15, 3 } )
-AADD(aDbf, {"NV", "N", 15, 3 } )
-AADD(aDbf, {"VPC", "N", 15, 3 } )
-AADD(aDbf, {"MPC", "N", 15, 3 } )
-AADD(aDbf, {"MPV", "N", 15, 3 } )
-dbcreate2(PRIVPATH+"Kartica",aDbf)
+   nArr := Select()
 
-select 66
-usex (PRIVPATH+"kartica")
-index on id tag "ID"
-index on brisano tag "BRISAN"
-set order to tag "ID"
+   aDbf := {}
+   AAdd( aDbf, { "ID", "C", 15, 0 } )
+   AAdd( aDbf, { "stanje", "N", 15, 3 } )
+   AAdd( aDbf, { "VPV", "N", 15, 3 } )
+   AAdd( aDbf, { "NV", "N", 15, 3 } )
+   AAdd( aDbf, { "VPC", "N", 15, 3 } )
+   AAdd( aDbf, { "MPC", "N", 15, 3 } )
+   AAdd( aDbf, { "MPV", "N", 15, 3 } )
+   dbcreate2( PRIVPATH + "Kartica", aDbf )
 
-if !empty(cMkonto)
-    select kalk
-    seek cidfirma+cmkonto+cidroba
-    nStanje:=nNV:=nVPV:=0
-    do while !eof() .and. idfirma+mkonto+idroba==cidfirma+cmkonto+cidroba
-      cId:=idfirma+idvd+brdok+rbr
-      if mu_i=="1"
-          nStanje+=(kolicina-gkolicina-gkolicin2)
-          nVPV+=vpc*(kolicina-gkolicina-gkolicin2)
-          nNV+=nc*(kolicina-gkolicina-gkolicin2)
-       elseif mu_i=="3"
-          nVPV+=vpc*kolicina
-       elseif mu_i=="5"
-          nStanje-=kolicina
-          nVPV-=vpc*kolicina
-          nNV-=nc*kolicina
-       endif
-       select kartica
-       append blank
-       replace id with cid, stanje with nStanje , VPV with nVPV, NV with nNV
-       if nStanje<>0
-         replace VPC with nVPV/nStanje
-       endif
-       select kalk
-       skip
-    enddo
-else
-    select kalk
-    seek cidfirma+cpkonto+cidroba
-    nStanje:=nNV:=nMPV:=0
-    do while !eof() .and. idfirma+pkonto+idroba==cidfirma+cpkonto+cidroba
-      cId:=idfirma+idvd+brdok+rbr
-      if pu_i=="1"
-          nStanje+=(kolicina-gkolicina-gkolicin2)
-          nMPV+=mpcsapp*(kolicina-gkolicina-gkolicin2)
-          nNV+=nc*(kolicina-gkolicina-gkolicin2)
-       elseif pu_i=="3"
-          nMPV+=mpcsapp*kolicina
-       elseif pu_i=="5"
-          nStanje-=kolicina
-          nMPV-=Mpcsapp*kolicina
-          nNV-=nc*kolicina
-       elseif pu_i=="I"
-          nStanje-=gkolicin2
-          nMPV-=Mpcsapp*gkolicin2
-          nNV-=nc*gkolicin2
-       endif
-       select kartica
-       append blank
-       replace id with cid, stanje with nStanje , MPV with nMPV, NV with nNV
-       if nStanje<>0
-         replace MPC with nMPV/nStanje
-       endif
-       select kalk
-       skip
-    enddo
+   SELECT 66
+   usex ( PRIVPATH + "kartica" )
+   INDEX ON id TAG "ID"
+   INDEX ON brisano TAG "BRISAN"
+   SET ORDER TO TAG "ID"
 
-endif
+   IF !Empty( cMkonto )
+      SELECT kalk
+      SEEK cidfirma + cmkonto + cidroba
+      nStanje := nNV := nVPV := 0
+      DO WHILE !Eof() .AND. idfirma + mkonto + idroba == cidfirma + cmkonto + cidroba
+         cId := idfirma + idvd + brdok + rbr
+         IF mu_i == "1"
+            nStanje += ( kolicina - gkolicina - gkolicin2 )
+            nVPV += vpc * ( kolicina - gkolicina - gkolicin2 )
+            nNV += nc * ( kolicina - gkolicina - gkolicin2 )
+         ELSEIF mu_i == "3"
+            nVPV += vpc * kolicina
+         ELSEIF mu_i == "5"
+            nStanje -= kolicina
+            nVPV -= vpc * kolicina
+            nNV -= nc * kolicina
+         ENDIF
+         SELECT kartica
+         APPEND BLANK
+         REPLACE id WITH cid, stanje WITH nStanje, VPV WITH nVPV, NV WITH nNV
+         IF nStanje <> 0
+            REPLACE VPC WITH nVPV / nStanje
+         ENDIF
+         SELECT kalk
+         SKIP
+      ENDDO
+   ELSE
+      SELECT kalk
+      SEEK cidfirma + cpkonto + cidroba
+      nStanje := nNV := nMPV := 0
+      DO WHILE !Eof() .AND. idfirma + pkonto + idroba == cidfirma + cpkonto + cidroba
+         cId := idfirma + idvd + brdok + rbr
+         IF pu_i == "1"
+            nStanje += ( kolicina - gkolicina - gkolicin2 )
+            nMPV += mpcsapp * ( kolicina - gkolicina - gkolicin2 )
+            nNV += nc * ( kolicina - gkolicina - gkolicin2 )
+         ELSEIF pu_i == "3"
+            nMPV += mpcsapp * kolicina
+         ELSEIF pu_i == "5"
+            nStanje -= kolicina
+            nMPV -= Mpcsapp * kolicina
+            nNV -= nc * kolicina
+         ELSEIF pu_i == "I"
+            nStanje -= gkolicin2
+            nMPV -= Mpcsapp * gkolicin2
+            nNV -= nc * gkolicin2
+         ENDIF
+         SELECT kartica
+         APPEND BLANK
+         REPLACE id WITH cid, stanje WITH nStanje, MPV WITH nMPV, NV WITH nNV
+         IF nStanje <> 0
+            REPLACE MPC WITH nMPV / nStanje
+         ENDIF
+         SELECT kalk
+         SKIP
+      ENDDO
 
-set relation to idfirma+idvd+brdok+rbr into kartica
+   ENDIF
 
-ImeKol:={}
-AADD(ImeKol,{ "VD",       {|| idvd}                         })
-AADD(ImeKol,{ "Brdok",    {|| brdok}                         })
-AADD(ImeKol,{ "Rbr",      {|| Rbr}                         })
-AADD(ImeKol,{ "Kolicina", {|| transform(Kolicina,gpickol)} })
-AADD(ImeKol,{ "Nc",       {|| transform(nc,gpicdem)}  })
-AADD(ImeKol,{ "VPC",      {|| transform(vpc,gpicdem)}  })
-if !empty(cPKonto)
- AADD(ImeKol,{ "MPV",    {|| transform(mpcsapp*kolicina,gpicdem)} })
- AADD(ImeKol,{ "NV po kartici", {|| kartica->nv} })
- AADD(ImeKol,{ "Stanje", {|| kartica->stanje} })
- AADD(ImeKol,{ "MPC po Kartici", {|| kartica->mpc} })
- AADD(ImeKol,{ "MPV po kartici", {|| kartica->mpv} })
-else
- AADD(ImeKol,{ "VPV",    {|| transform(vpc*kolicina,gpicdem)} })
- AADD(ImeKol,{ "NV po kartici", {|| kartica->nv} })
- AADD(ImeKol,{ "Stanje", {|| kartica->stanje} })
- AADD(ImeKol,{ "VPC po Kartici", {|| kartica->vpc} })
- AADD(ImeKol,{ "VPV po kartici", {|| kartica->vpv} })
-endif
+   SET RELATION TO idfirma + idvd + brdok + rbr into kartica
 
-Kol:={}
-for i:=1 to len(ImeKol); AADD(Kol,i); next
+   ImeKol := {}
+   AAdd( ImeKol, { "VD",       {|| idvd }                         } )
+   AAdd( ImeKol, { "Brdok",    {|| brdok }                         } )
+   AAdd( ImeKol, { "Rbr",      {|| Rbr }                         } )
+   AAdd( ImeKol, { "Kolicina", {|| Transform( Kolicina, gpickol ) } } )
+   AAdd( ImeKol, { "Nc",       {|| Transform( nc, gpicdem ) }  } )
+   AAdd( ImeKol, { "VPC",      {|| Transform( vpc, gpicdem ) }  } )
+   IF !Empty( cPKonto )
+      AAdd( ImeKol, { "MPV",    {|| Transform( mpcsapp * kolicina, gpicdem ) } } )
+      AAdd( ImeKol, { "NV po kartici", {|| kartica->nv } } )
+      AAdd( ImeKol, { "Stanje", {|| kartica->stanje } } )
+      AAdd( ImeKol, { "MPC po Kartici", {|| kartica->mpc } } )
+      AAdd( ImeKol, { "MPV po kartici", {|| kartica->mpv } } )
+   ELSE
+      AAdd( ImeKol, { "VPV",    {|| Transform( vpc * kolicina, gpicdem ) } } )
+      AAdd( ImeKol, { "NV po kartici", {|| kartica->nv } } )
+      AAdd( ImeKol, { "Stanje", {|| kartica->stanje } } )
+      AAdd( ImeKol, { "VPC po Kartici", {|| kartica->vpc } } )
+      AAdd( ImeKol, { "VPV po kartici", {|| kartica->vpv } } )
+   ENDIF
 
-set cursor on
+   Kol := {}
+   FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ); NEXT
 
-select roba; hseek cidroba; select kalk
-if empty(cPkonto)
- select koncij; seek trim(cmkonto); select kalk
- @ m_x+2,m_y+1 SAY "Pregled kartice magacin: "; ?? cMkonto, "-", cidroba ,"-",LEFT(roba->naz, 40)
- BrowseKey(m_x+4,m_y+1,m_x+15,m_y+77,ImeKol,{|Ch| EdKart(Ch)},;
-          "idFirma+mkonto+idroba=cidFirma+cmkonto+cidroba",;
-           cidFirma+cmkonto+cidroba,2,,,{|| OznaciMag(.t.)})
-else
- select koncij; seek trim(cpkonto) ; select kalk
- @ m_x+2,m_y+1 SAY "Pregled kartice prodavnica: "; ?? cPkonto, "-", cidroba,"-",LEFT(roba->naz, 40)
- BrowseKey(m_x+4,m_y+1,m_x+15,m_y+77,ImeKol,{|Ch| EdKart(Ch)},;
-         "idFirma+pkonto+idroba=cidFirma+cpkonto+cidroba",;
-         cidFirma+cpkonto+cidroba,2,,,{|| OznaciPro(.t.)})
-endif
+   SET CURSOR ON
 
-select kartica; use  // kartica
-select kalk; set order to tag "1"
-go nTreckalk
+   SELECT roba; hseek cidroba; SELECT kalk
+   IF Empty( cPkonto )
+      SELECT koncij; SEEK Trim( cmkonto ); SELECT kalk
+      @ m_x + 2, m_y + 1 SAY "Pregled kartice magacin: "; ?? cMkonto, "-", cidroba,"-", Left( roba->naz, 40 )
+      BrowseKey( m_x + 4, m_y + 1, m_x + 15, m_y + 77, ImeKol, {| Ch| EdKart( Ch ) }, ;
+         "idFirma+mkonto+idroba=cidFirma+cmkonto+cidroba", ;
+         cidFirma + cmkonto + cidroba, 2,,, {|| OznaciMag( .T. ) } )
+   ELSE
+      SELECT koncij; SEEK Trim( cpkonto ) ; SELECT kalk
+      @ m_x + 2, m_y + 1 SAY "Pregled kartice prodavnica: "; ?? cPkonto, "-", cidroba, "-", Left( roba->naz, 40 )
+      BrowseKey( m_x + 4, m_y + 1, m_x + 15, m_y + 77, ImeKol, {| Ch| EdKart( Ch ) }, ;
+         "idFirma+pkonto+idroba=cidFirma+cpkonto+cidroba", ;
+         cidFirma + cpkonto + cidroba, 2,,, {|| OznaciPro( .T. ) } )
+   ENDIF
 
-BoxC()
-return
-*}
+   SELECT kartica; USE  // kartica
+   SELECT kalk; SET ORDER TO TAG "1"
+   GO nTreckalk
+
+   BoxC()
+
+   RETURN
+// }
 
 
 
@@ -600,73 +610,74 @@ return
  *  \brief Markira sumnjive stavke na magac.kartici i daje poruku o indikacijama
  */
 
-function OznaciMag(fsilent)
-*{
-// oznaci markiraj stavke koje su
-// vjerovatno neispravne
+FUNCTION OznaciMag( fsilent )
 
-if round(kartica->stanje,4)<>0
+   // {
+   // oznaci markiraj stavke koje su
+   // vjerovatno neispravne
 
-   if idvd <> "18"
-     if koncij->naz<>"N1" .and. round(VPC-kartica->vpc,2)<>0  // po kartici i po stavci razlika
-        if !fsilent
-           MsgBeep("vpc stavke <> vpc kumulativno po kartici ??")
-        endif
-        return .t.
-     endif
-   else
-     if round(mpcsapp+vpc - kartica->vpc,4) <> 0  // vpc iz nivelacije
-        if !fsilent
-          MsgBeep("vpc stavke <> vpc kumulativno po kartici ??")
-        endif
-        return .t.
-     endif
+   IF Round( kartica->stanje, 4 ) <> 0
 
-     if mpcsapp<>0  .and. abs(vpc+MPCSAPP)/mpcsapp * 100 > 80
-        if !fsilent
-          MSgBeep("Promjena cijene za "+str(abs(vpc+MPCSAPP)/mpcsapp * 100,5,0)+"??")
-        endif
-     endif
+      IF idvd <> "18"
+         IF koncij->naz <> "N1" .AND. Round( VPC - kartica->vpc, 2 ) <> 0  // po kartici i po stavci razlika
+            IF !fsilent
+               MsgBeep( "vpc stavke <> vpc kumulativno po kartici ??" )
+            ENDIF
+            RETURN .T.
+         ENDIF
+      ELSE
+         IF Round( mpcsapp + vpc - kartica->vpc, 4 ) <> 0  // vpc iz nivelacije
+            IF !fsilent
+               MsgBeep( "vpc stavke <> vpc kumulativno po kartici ??" )
+            ENDIF
+            RETURN .T.
+         ENDIF
 
-   endif
+         IF mpcsapp <> 0  .AND. Abs( vpc + MPCSAPP ) / mpcsapp * 100 > 80
+            IF !fsilent
+               MSgBeep( "Promjena cijene za " + Str( Abs( vpc + MPCSAPP ) / mpcsapp * 100, 5, 0 ) + "??" )
+            ENDIF
+         ENDIF
 
-else
-  if round(kartica->vpv,4)<>0
-      if !fsilent
-       MsgBeep("kolicina 0 , vpv <> 0 ??")
-      endif
-      return .t.
-  endif
-  if round(kartica->nv,4)<>0
-      if !fsilent
-       MsgBeep("kolicina 0 , NV <> 0 ??")
-      endif
-      return .t.
-  endif
-endif
+      ENDIF
 
-if kartica->nv<0
-  if !fsilent
-    MsgBeep("Nabavna cijena < 0 ???")
-  endif
-  return .t.
-endif
+   ELSE
+      IF Round( kartica->vpv, 4 ) <> 0
+         IF !fsilent
+            MsgBeep( "kolicina 0 , vpv <> 0 ??" )
+         ENDIF
+         RETURN .T.
+      ENDIF
+      IF Round( kartica->nv, 4 ) <> 0
+         IF !fsilent
+            MsgBeep( "kolicina 0 , NV <> 0 ??" )
+         ENDIF
+         RETURN .T.
+      ENDIF
+   ENDIF
 
-if kartica->vpv<>0 .and. kartica->(nv/vpv)*100 > 150
-   if !fsilent
-    MsgBeep("VPV za "+str(kartica->(nv/vpv)*100,4,0)+" veca od nabavne ??")
-   endif
-endif
+   IF kartica->nv < 0
+      IF !fsilent
+         MsgBeep( "Nabavna cijena < 0 ???" )
+      ENDIF
+      RETURN .T.
+   ENDIF
 
-if kartica->stanje<0
-  if !fsilent
-    MsgBeep("Stanje negativno ????? ")
-  endif
-  return .t.
-endif
+   IF kartica->vpv <> 0 .AND. kartica->( nv / vpv ) * 100 > 150
+      IF !fsilent
+         MsgBeep( "VPV za " + Str( kartica->( nv / vpv ) * 100, 4, 0 ) + " veca od nabavne ??" )
+      ENDIF
+   ENDIF
 
-return .f.
-*}
+   IF kartica->stanje < 0
+      IF !fsilent
+         MsgBeep( "Stanje negativno ????? " )
+      ENDIF
+      RETURN .T.
+   ENDIF
+
+   RETURN .F.
+// }
 
 
 
@@ -674,68 +685,69 @@ return .f.
  *  \brief Markira sumnjive stavke na prod.kartici i daje poruku o indikacijama
  */
 
-function OznaciPro(fsilent)
-*{
-// oznaci markiraj stavke koje su
-// vjerovatno neispravne
+FUNCTION OznaciPro( fsilent )
 
-if round(kartica->stanje,4)<>0
+   // {
+   // oznaci markiraj stavke koje su
+   // vjerovatno neispravne
 
-   if idvd <> "19"
-     if koncij->naz<>"N1" .and. round(MPCSAPP-kartica->mpc,2)<>0  // po kartici i po stavci razlika
-        if !fsilent
-           MsgBeep("vpc stavke <> vpc kumulativno po kartici ??")
-        endif
-        return .t.
-     endif
-   else
-     if round(fcj+mpcsapp - kartica->mpc,4) <> 0  // vpc iz nivelacije
-        if !fsilent
-          MsgBeep("mpc stavke <> mpc kumulativno po kartici ??")
-        endif
-        return .t.
-     endif
+   IF Round( kartica->stanje, 4 ) <> 0
 
-     if fcj<>0  .and. abs(mpcsapp+fcj)/fcj * 100 > 80
-        if !fsilent
-          MSgBeep("Promjena cijene za "+str(abs(mpcsapp+fcj)/fcj * 100,5,0)+"??")
-        endif
-     endif
+      IF idvd <> "19"
+         IF koncij->naz <> "N1" .AND. Round( MPCSAPP - kartica->mpc, 2 ) <> 0  // po kartici i po stavci razlika
+            IF !fsilent
+               MsgBeep( "vpc stavke <> vpc kumulativno po kartici ??" )
+            ENDIF
+            RETURN .T.
+         ENDIF
+      ELSE
+         IF Round( fcj + mpcsapp - kartica->mpc, 4 ) <> 0  // vpc iz nivelacije
+            IF !fsilent
+               MsgBeep( "mpc stavke <> mpc kumulativno po kartici ??" )
+            ENDIF
+            RETURN .T.
+         ENDIF
 
-   endif
+         IF fcj <> 0  .AND. Abs( mpcsapp + fcj ) / fcj * 100 > 80
+            IF !fsilent
+               MSgBeep( "Promjena cijene za " + Str( Abs( mpcsapp + fcj ) / fcj * 100, 5, 0 ) + "??" )
+            ENDIF
+         ENDIF
 
-else
-  if round(kartica->mpv,4)<>0
-      if !fsilent
-       MsgBeep("kolicina 0 , mpv <> 0 ??")
-      endif
-      return .t.
-  endif
-  if round(kartica->nv,4)<>0
-      if !fsilent
-       MsgBeep("kolicina 0 , NV <> 0 ??")
-      endif
-      return .t.
-  endif
-endif
+      ENDIF
 
-if kartica->nv<0
-  if !fsilent
-    MsgBeep("Nabavna cijena < 0 ???")
-  endif
-  return .t.
-endif
+   ELSE
+      IF Round( kartica->mpv, 4 ) <> 0
+         IF !fsilent
+            MsgBeep( "kolicina 0 , mpv <> 0 ??" )
+         ENDIF
+         RETURN .T.
+      ENDIF
+      IF Round( kartica->nv, 4 ) <> 0
+         IF !fsilent
+            MsgBeep( "kolicina 0 , NV <> 0 ??" )
+         ENDIF
+         RETURN .T.
+      ENDIF
+   ENDIF
+
+   IF kartica->nv < 0
+      IF !fsilent
+         MsgBeep( "Nabavna cijena < 0 ???" )
+      ENDIF
+      RETURN .T.
+   ENDIF
 
 
-if kartica->stanje<0
-  if !fsilent
-    MsgBeep("Stanje negativno ????? ")
-  endif
-  return .t.
-endif
+   IF kartica->stanje < 0
+      IF !fsilent
+         MsgBeep( "Stanje negativno ????? " )
+      ENDIF
+      RETURN .T.
+   ENDIF
 
-return .f.
-*}
+   RETURN .F.
+// }
 
 
 
@@ -743,23 +755,23 @@ return .f.
  *  \brief Obrada opcija u browsu kartice
  */
 
-function EdKart(Ch)
-*{
-local cDn:="N",nTrecDok:=0,nRet:=DE_CONT
-do case
-  case Ch==K_ENTER
-     if !empty(cPkonto)
-       OznaciPro(.f.)
-     else
-       OznaciMag(.f.)
-     endif
+FUNCTION EdKart( Ch )
 
-     nRet:=DE_REFRESH
+   // {
+   LOCAL cDn := "N", nTrecDok := 0, nRet := DE_CONT
+   DO CASE
+   CASE Ch == K_ENTER
+      IF !Empty( cPkonto )
+         OznaciPro( .F. )
+      ELSE
+         OznaciMag( .F. )
+      ENDIF
 
-  case Ch==K_CTRL_P
-     nRet:=DE_REFRESH
-endcase
-return nRet
-*}
+      nRet := DE_REFRESH
 
+   CASE Ch == K_CTRL_P
+      nRet := DE_REFRESH
+   ENDCASE
 
+   RETURN nRet
+// }

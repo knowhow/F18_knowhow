@@ -50,13 +50,6 @@ AADD(_opcexe, {|| NPArtikli()})
 AADD(_opc, "O. stanje artikala po objektima ")
 AADD(_opcexe, {|| StanjePoObjektima()})
 
-if IsPlanika()
-    AADD(_opc, "Z. pregled kretanja zaliha mag/prod     ")
-    AADD(_opcexe, {|| PreglKret()})
-    AADD(_opc, "M. mjesecni iskazi prodavnice/magacin")
-    AADD(_opcexe, {|| ObrazInv()})
-endif
-
 if IsVindija()
     AADD(_opc, "V. pregled prodaje")
     AADD(_opcexe, {|| PregProdaje()})

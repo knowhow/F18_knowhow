@@ -115,14 +115,6 @@ FUNCTION kartica_magacin()
             @ Row() + 1, m_y + 2 SAY "Prikazati kolone 'narucilac' i 'br.narudzbe' ? (D/N)" GET cPKN VALID cPKN $ "DN" PICT "@!"
          ENDIF
 
-         IF IsPlanika()
-            @ m_x + 12, m_y + 2 SAY "Prikaz dobavljača (D/N) ?" GET cPrikazDob VALID cPrikazDob $ "DN" PICT "@!"
-            @ m_x + 13, m_y + 2 SAY "Prikaz po K9 " GET cK9 PICT "@!"
-         ENDIF
-         IF IsDomZdr()
-            @ m_x + 12, m_y + 2 SAY "Prikaz po tip-u " GET cKalkTip PICT "@!"
-         ENDIF
-		
          READ
          ESC_BCR
     		
@@ -279,21 +271,10 @@ FUNCTION kartica_magacin()
       SELECT roba
       hseek cIdRoba
 
-      // uslov po roba->k9
-      IF ( IsPlanika() .AND. Empty( cIdR ) .AND. !Empty( cK9 ) .AND. roba->k9 <> cK9 )
-         SELECT kalk
-         SKIP
-         LOOP
-      ENDIF
-
       SELECT tarifa
       hseek roba->idtarifa
       ? __line
       ? "Artikal:", cIdRoba, "-", Trim( Left( roba->naz, 40 ) ) + iif( lKoristitiBK, " BK:" + roba->barkod, "" ) + " (" + roba->jmj + ")"
-
-      IF ( IsPlanika() .AND. cPrikazDob == "D" )
-         ?? PrikaziDobavljaca( cIdRoba, 3 )
-      ENDIF
 
       ? __line
       SELECT kalk
@@ -912,13 +893,6 @@ STATIC FUNCTION ZaglPDV()
       ? "Obuhvaceni sljedeci narucioci:", Trim( qqIdNar )
       ?
    ENDIF
-   IF IsPlanika() .AND. !Empty( cK9 )
-      ? "Uslov po K9:", cK9
-   ENDIF
-
-   IF IsDomZdr() .AND. !Empty( cKalkTip )
-      PrikTipSredstva( cKalkTip )
-   ENDIF
 
    ? "Konto: ", cIdKonto, "-", konto->naz
 
@@ -958,21 +932,12 @@ STATIC FUNCTION ZaglPDV()
 
 STATIC FUNCTION Zagl()
 
-   // {
    SELECT konto
    hseek cIdKonto
    Preduzece()
    P_12CPI
    ?? "KARTICA MAGACIN za period", ddatod, "-", ddatdo, Space( 10 ), "Str:", Str( ++nTStrana, 3 )
    IspisNaDan( 5 )
-   IF lPoNarudzbi .AND. !Empty( qqIdNar )
-      ?
-      ? "Obuhvaceni sljedeci narucioci:", Trim( qqIdNar )
-      ?
-   ENDIF
-   IF IsPlanika() .AND. !Empty( cK9 )
-      ? "Uslov po K9:", cK9
-   ENDIF
 
    IF IsDomZdr() .AND. !Empty( cKalkTip )
       PrikTipSredstva( cKalkTip )

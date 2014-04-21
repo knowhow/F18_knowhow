@@ -271,10 +271,6 @@ do while CMNEOF .and. cidfirma==idfirma .and.  IspitajPrekid()
 
         endif
 
-        if IsPlanika()
-  	        UkupnoKolP( @nKolUlaz, @nKolIzlaz )
-        endif
-        
         CMSKIP
 
     enddo  
@@ -339,12 +335,6 @@ endif
 
 ? cLine
 
-if IsPlanika()
-	if ( prow() > ( RPT_PAGE_LEN + gPStranica ) )
-		FF
-	endif
-	PrintParovno(nKolUlaz, nKolIzlaz)
-endif
 
 FF
 END PRINT

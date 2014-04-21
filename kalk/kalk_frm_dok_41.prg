@@ -57,8 +57,6 @@ _idzaduz2:=""
 
 read
 
-// planika - skeniraj dok.u procesu....
-pl_scan_dok_u_procesu(_idKonto)
 
 select kalk_pripr
 

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,583 +12,585 @@
 
 #include "kalk.ch"
 
-static nCol1:=0
-static cPicCDem
-static cPicProc
-static cPicDem
-static cPicKol
-static cStrRedova2:=62
-static cPrikProd:="N"
-static qqKonto
-static qqRoba
-static cUslov1
-static cUslov2
-static cObjUsl
-static cUslovRoba
-static cK9
-static cNObjekat
-static cLinija
-static cPrikazDob
+STATIC nCol1 := 0
+STATIC cPicCDem
+STATIC cPicProc
+STATIC cPicDem
+STATIC cPicKol
+STATIC cStrRedova2 := 62
+STATIC cPrikProd := "N"
+STATIC qqKonto
+STATIC qqRoba
+STATIC cUslov1
+STATIC cUslov2
+STATIC cObjUsl
+STATIC cUslovRoba
+STATIC cK9
+STATIC cNObjekat
+STATIC cLinija
+STATIC cPrikazDob
 
 #define ROBAN_LEN 40
 #define KOLICINA_LEN 10
 
-function StanjePoObjektima()
-// kao djon cu iskoristiti pregled kretanja zaliha
-local i
-local nT1
-local nT4
-local nT5
-local nT6
-local nT7
-local nTT1
-local nTT4
-local nTT5
-local nTT6
-local nTT7
-local n1
-local n4
-local n5
-local n6
-local n7
-local nRecno, _rec
-local cPodvuci
-local lMarkiranaRoba
-private dDatOd
-private dDatDo
-private aUTar:={}
-private nUkObj:=0
-private nITar:=0
-private aUGArt:={}
-private cPrSort:="SUBSTR(cIdRoba,3,3)"
+FUNCTION StanjePoObjektima()
 
-cPodvuci:="N"
+   // kao djon cu iskoristiti pregled kretanja zaliha
+   LOCAL i
+   LOCAL nT1
+   LOCAL nT4
+   LOCAL nT5
+   LOCAL nT6
+   LOCAL nT7
+   LOCAL nTT1
+   LOCAL nTT4
+   LOCAL nTT5
+   LOCAL nTT6
+   LOCAL nTT7
+   LOCAL n1
+   LOCAL n4
+   LOCAL n5
+   LOCAL n6
+   LOCAL n7
+   LOCAL nRecno, _rec
+   LOCAL cPodvuci
+   LOCAL lMarkiranaRoba
+   PRIVATE dDatOd
+   PRIVATE dDatDo
+   PRIVATE aUTar := {}
+   PRIVATE nUkObj := 0
+   PRIVATE nITar := 0
+   PRIVATE aUGArt := {}
+   PRIVATE cPrSort := "SUBSTR(cIdRoba,3,3)"
 
-O_SIFK
-O_SIFV
-O_ROBA
-O_K1
-O_OBJEKTI
+   cPodvuci := "N"
 
-lMarkiranaRoba:=.f.
-cPicCDem:="999999.999"
-cPicProc:="999999.99%"
-cPicDem:= "9999999.99"
-cPicKol:= gPicKol
-qqKonto:=PADR("13;",60)
-qqRoba:=SPACE(60)
+   O_SIFK
+   O_SIFV
+   O_ROBA
+   O_K1
+   O_OBJEKTI
 
-if (GetVars(@cNObjekat)==0)
-	return
-endiF
+   lMarkiranaRoba := .F.
+   cPicCDem := "999999.999"
+   cPicProc := "999999.99%"
+   cPicDem := "9999999.99"
+   cPicKol := gPicKol
+   qqKonto := PadR( "13;", 60 )
+   qqRoba := Space( 60 )
 
-if RIGHT(TRIM(qqRoba),1)="*"
-  lMarkiranaRoba:=.t.
-endif
+   IF ( GetVars( @cNObjekat ) == 0 )
+      RETURN
+   ENDIF
 
-CreTblPobjekti()
-CreTblRek1("1")
+   IF Right( Trim( qqRoba ), 1 ) = "*"
+      lMarkiranaRoba := .T.
+   ENDIF
 
-O_POBJEKTI
-O_KONCIJ
-O_ROBA
-O_KONTO 
-O_TARIFA
-O_K1
-O_OBJEKTI
-O_KALK
-O_REKAP1
+   CreTblPobjekti()
+   CreTblRek1( "1" )
 
-GenRekap1(cUslov1, cUslov2, cUslovRoba, "N", "1", "N", lMarkiranaRoba, nil, cK9)
+   O_POBJEKTI
+   O_KONCIJ
+   O_ROBA
+   O_KONTO
+   O_TARIFA
+   O_K1
+   O_OBJEKTI
+   O_KALK
+   O_REKAP1
 
-SetLinSpo()
+   GenRekap1( cUslov1, cUslov2, cUslovRoba, "N", "1", "N", lMarkiranaRoba, nil, cK9 )
 
-select rekap1
-SET ORDER TO TAG "2"
-go top
+   SetLinSpo()
 
-SetGaZagSpo()
+   SELECT rekap1
+   SET ORDER TO TAG "2"
+   GO TOP
 
-START PRINT CRET
-?
+   SetGaZagSpo()
 
-if (gPrinter="R")
-	cStrRedova2:=40
-	?? "#%LANDS#"
-endif
+   START PRINT CRET
+   ?
 
-nStr:=0
+   IF ( gPrinter = "R" )
+      cStrRedova2 := 40
+      ?? "#%LANDS#"
+   ENDIF
 
-ZaglSPo(@nStr)
+   nStr := 0
 
-nCol1:=43
+   ZaglSPo( @nStr )
 
-// inicijalizuj pomocna polja
-FillPObjekti()
+   nCol1 := 43
 
-select rekap1
-nRbr:=0
-nRecno:=0
-fFilovo:=.f.
+   // inicijalizuj pomocna polja
+   FillPObjekti()
 
-do while !eof()
+   SELECT rekap1
+   nRbr := 0
+   nRecno := 0
+   fFilovo := .F.
+
+   DO WHILE !Eof()
 	
-	cG1:=rekap1->g1
+      cG1 := rekap1->g1
 
-	select pobjekti    
+      SELECT pobjekti
 
-	// inicijalizuj polja
-	go top
-	do while !eof()
-        _rec := dbf_get_rec()
-		// nivo grupe
-		_rec["prodg"] := 0   
-		_rec["zalg"] := 0
-        dbf_update_rec( _rec )
-		skip
-	enddo
+      // inicijalizuj polja
+      GO TOP
+      DO WHILE !Eof()
+         _rec := dbf_get_rec()
+         // nivo grupe
+         _rec[ "prodg" ] := 0
+         _rec[ "zalg" ] := 0
+         dbf_update_rec( _rec )
+         SKIP
+      ENDDO
 
-	select rekap1
+      SELECT rekap1
 
-	fFilGr:=.f.
-	fFilovo:=.f.
+      fFilGr := .F.
+      fFilovo := .F.
 	
-	do while (!EOF() .and. cG1==field->g1)
-		++nRecno
+      DO WHILE ( !Eof() .AND. cG1 == field->g1 )
+         ++nRecno
 
-		ShowKorner(nRecno,100)
-		cIdroba:=rekap1->idRoba
+         ShowKorner( nRecno, 100 )
+         cIdroba := rekap1->idRoba
 		
-		SELECT roba
-		HSEEK cIdRoba
-		cIdTarifa:=roba->idTarifa
+         SELECT roba
+         HSEEK cIdRoba
+         cIdTarifa := roba->idTarifa
 
-		SELECT rekap1
+         SELECT rekap1
 		
-		nK2:=nK1:=0
-		SetK1K2(cG1, cIdTarifa, cIdRoba, @nK1, @nK2)
+         nK2 := nK1 := 0
+         SetK1K2( cG1, cIdTarifa, cIdRoba, @nK1, @nK2 )
 		
-		if ((ROUND(nK2,3)==0 .and. ROUND(nK1,2)==0))
-			// stanje nula, skoci na sljedecu robu
-			select rekap1
-			SEEK cG1+cIdTarifa+cIdroba+CHR(254)
-			loop
-		endif
+         IF ( ( Round( nK2, 3 ) == 0 .AND. Round( nK1, 2 ) == 0 ) )
+            // stanje nula, skoci na sljedecu robu
+            SELECT rekap1
+            SEEK cG1 + cIdTarifa + cIdroba + Chr( 254 )
+            LOOP
+         ENDIF
 
-		fFilovo:=.t.
-		fFilGr:=.t.
+         fFilovo := .T.
+         fFilGr := .T.
 		
-		aStrRoba:=SjeciStr(trim(roba->naz), ROBAN_LEN)
+         aStrRoba := SjeciStr( Trim( roba->naz ), ROBAN_LEN )
 		
-		if (PROW()>cStrRedova2)
-			FF
-			ZaglSPo(@nStr)
-		endif
+         IF ( PRow() > cStrRedova2 )
+            FF
+            ZaglSPo( @nStr )
+         ENDIF
 		
-		++nRBr
-		? str(nRBr,4)+"."+PADR(cIdRoba,10)
-		nColR:=pcol()+1
-		@ prow(),nColR  SAY PADR(aStrRoba[1], ROBAN_LEN)
-		nCol1:=PCOL()
+         ++nRBr
+         ? Str( nRBr, 4 ) + "." + PadR( cIdRoba, 10 )
+         nColR := PCol() + 1
+         @ PRow(), nColR  SAY PadR( aStrRoba[ 1 ], ROBAN_LEN )
+         nCol1 := PCol()
 
-		PrintZal(cG1, cIdTarifa, cIdRoba, cObjUsl )
+         PrintZal( cG1, cIdTarifa, cIdRoba, cObjUsl )
 		
-		// drugi red  prodaja  u mjesecu  k1
-		nK1:=0
-		if ((cPrikProd=="D") .or. LEN(aStrRoba)>1)
-			?
-			if LEN(aStrRoba)>1
-				@ prow(),nColR SAY PADR(aStrRoba[2], ROBAN_LEN)
-			endif
-			@ prow(),nCol1 SAY ""
-			if (cPrikProd=="D")
-				PrintProd(cG1, cIdTarifa, cIdRoba, cObjUsl )
-			endif
-		endif
+         // drugi red  prodaja  u mjesecu  k1
+         nK1 := 0
+         IF ( ( cPrikProd == "D" ) .OR. Len( aStrRoba ) > 1 )
+            ?
+            IF Len( aStrRoba ) > 1
+               @ PRow(), nColR SAY PadR( aStrRoba[ 2 ], ROBAN_LEN )
+            ENDIF
+            @ PRow(), nCol1 SAY ""
+            IF ( cPrikProd == "D" )
+               PrintProd( cG1, cIdTarifa, cIdRoba, cObjUsl )
+            ENDIF
+         ENDIF
 		
-		if (IsPlanika() .and. cPrikazDob=="D")
-			? PrikaziDobavljaca(cIdRoba, 5)
-		endif
-		
-		if cPodvuci=="D"
-			? cLinija
-		endif
+         IF cPodvuci == "D"
+            ? cLinija
+         ENDIF
 
-		SELECT rekap1
-		// pozicioniraj se na sljedeci artikal
-		SEEK cG1+cIdTarifa+cIdroba+CHR(255) 
-	enddo
+         SELECT rekap1
+         // pozicioniraj se na sljedeci artikal
+         SEEK cG1 + cIdTarifa + cIdroba + Chr( 255 )
+      ENDDO
 
-	if !fFilGr
-		loop
-	endif
+      IF !fFilGr
+         LOOP
+      ENDIF
 	
-	if (PROW()>cStrRedova2)
-		FF
-		ZaglSPo(@nStr)
-	endif
+      IF ( PRow() > cStrRedova2 )
+         FF
+         ZaglSPo( @nStr )
+      ENDIF
 
-	? STRTRAN(cLinija, "-", "=")
+      ? StrTran( cLinija, "-", "=" )
 
-	SELECT k1
-	HSEEK cG1
-	SELECT rekap1
-	STRTRAN(cLinija,"-","=")
-enddo                        
+      SELECT k1
+      HSEEK cG1
+      SELECT rekap1
+      StrTran( cLinija, "-", "=" )
+   ENDDO
 
-if (PROW()>cStrRedova2)
-	FF
-	ZaglSPo(@nStr)
-endif
+   IF ( PRow() > cStrRedova2 )
+      FF
+      ZaglSPo( @nStr )
+   ENDIF
 
-FF
-end print
+   FF
+   endprint
 
-my_close_all_dbf()
-return
+   my_close_all_dbf()
+
+   RETURN
 
 
 
-function SetK1K2(cG1, cIdTarifa, cIdRoba, nK1, nK2)
-nK2:=0
-nK1:=0
-select pobjekti
-go top
-do while (!EOF()  .and. field->id<"99")
-	select rekap1
-	hseek  cG1+cIdtarifa+cIdroba+pobjekti->idobj
-	nK2+=field->k2
-	nK1+=field->k1
-	select pobjekti
-	skip
-enddo
+FUNCTION SetK1K2( cG1, cIdTarifa, cIdRoba, nK1, nK2 )
 
-return
+   nK2 := 0
+   nK1 := 0
+   SELECT pobjekti
+   GO TOP
+   DO WHILE ( !Eof()  .AND. field->id < "99" )
+      SELECT rekap1
+      hseek  cG1 + cIdtarifa + cIdroba + pobjekti->idobj
+      nK2 += field->k2
+      nK1 += field->k1
+      SELECT pobjekti
+      SKIP
+   ENDDO
+
+   RETURN
 
 
 // ----------------------------------------------------
 // setovanje linije za izvjestaj
 // ----------------------------------------------------
-static function SetLinSpo()
-local nObjekata
+STATIC FUNCTION SetLinSpo()
 
-cLinija := REPLICATE( "-", 4 ) + " " + REPLICATE( "-", 10 ) + " " + REPLICATE( "-", ROBAN_LEN )
+   LOCAL nObjekata
 
-select pobjekti
-go top
+   cLinija := Replicate( "-", 4 ) + " " + Replicate( "-", 10 ) + " " + Replicate( "-", ROBAN_LEN )
 
-nObjekata := 0
+   SELECT pobjekti
+   GO TOP
 
-do while !EOF()
+   nObjekata := 0
 
-	if field->id <> "99" .and. !EMPTY( cObjUsl ) .and. !( &cObjUsl )
-		skip
-		loop
-	endif
+   DO WHILE !Eof()
 
-	cLinija := cLinija + " " + REPLICATE( "-", KOLICINA_LEN )
+      IF field->id <> "99" .AND. !Empty( cObjUsl ) .AND. !( &cObjUsl )
+         SKIP
+         LOOP
+      ENDIF
 
-	++ nObjekata
+      cLinija := cLinija + " " + Replicate( "-", KOLICINA_LEN )
 
-	skip
+      ++ nObjekata
 
-enddo
+      SKIP
 
-return
+   ENDDO
+
+   RETURN
 
 
 
 
-static function ZaglSPo(nStr) 
-local nObjekata
+STATIC FUNCTION ZaglSPo( nStr )
 
-? gTS+":",gNFirma,space(40),"Strana:"+str(++nStr,3)
-?
-?  "Stanje artikala po objektima za period:",dDatOd,"-",dDatDo
-?
-if (qqRoba==nil)
-	qqRoba:=""
-endif
-? "Kriterij za Objekat:",trim(qqKonto), "Robu:",TRIM(qqRoba)
-?
+   LOCAL nObjekata
 
-P_COND  
+   ? gTS + ":", gNFirma, Space( 40 ), "Strana:" + Str( ++nStr, 3 )
+   ?
+   ?  "Stanje artikala po objektima za period:", dDatOd, "-", dDatDo
+   ?
+   IF ( qqRoba == nil )
+      qqRoba := ""
+   ENDIF
+   ? "Kriterij za Objekat:", Trim( qqKonto ), "Robu:", Trim( qqRoba )
+   ?
 
-? cLinija
+   P_COND
 
-? PADC("Rbr",4)+" "+PADC("Sifra",10)+" "+PADC("NAZIV  ARTIKLA", ROBAN_LEN)
-select objekti
-go bottom
-?? " "+PADC(ALLTRIM(objekti->naz), KOLICINA_LEN)
-go top
-do while (!EOF() .and. objekti->id<"99")
+   ? cLinija
+
+   ? PadC( "Rbr", 4 ) + " " + PadC( "Sifra", 10 ) + " " + PadC( "NAZIV  ARTIKLA", ROBAN_LEN )
+   SELECT objekti
+   GO BOTTOM
+   ?? " " + PadC( AllTrim( objekti->naz ), KOLICINA_LEN )
+   GO TOP
+   DO WHILE ( !Eof() .AND. objekti->id < "99" )
 	
-	if !EMPTY(cObjUsl) .and. !( &cObjUsl )
-		skip
-		loop
-	endif
+      IF !Empty( cObjUsl ) .AND. !( &cObjUsl )
+         SKIP
+         LOOP
+      ENDIF
 
-	?? " "+PADC(ALLTRIM(objekti->naz), KOLICINA_LEN)
+      ?? " " + PadC( AllTrim( objekti->naz ), KOLICINA_LEN )
 	
-	skip
+      SKIP
 
-enddo
+   ENDDO
 
-// drugi red zaglavlja
-? PADC(" ",4)+" "+PADC(" ",10)+" "+PADC(" ", ROBAN_LEN)
-?? " "+padc("za/pr", KOLICINA_LEN)
-select pobjekti
-go top
-do while (!EOF() .and. field->id<"99")
+   // drugi red zaglavlja
+   ? PadC( " ", 4 ) + " " + PadC( " ", 10 ) + " " + PadC( " ", ROBAN_LEN )
+   ?? " " + PadC( "za/pr", KOLICINA_LEN )
+   SELECT pobjekti
+   GO TOP
+   DO WHILE ( !Eof() .AND. field->id < "99" )
 	
-	if !EMPTY(cObjUsl) .and. !( &cObjUsl )
-		skip
-		loop
-	endif
+      IF !Empty( cObjUsl ) .AND. !( &cObjUsl )
+         SKIP
+         LOOP
+      ENDIF
 
-	?? " "+padc("zal/pr", KOLICINA_LEN)
-	skip
-enddo
+      ?? " " + PadC( "zal/pr", KOLICINA_LEN )
+      SKIP
+   ENDDO
 
-? cLinija
+   ? cLinija
 
-return nil
+   RETURN NIL
 
-static function GetVars(cNObjekat)
-cUslov1:=""
-cUslov2:=""
-cObjUsl:=""
-cUslovR:=""
-dDatOd:=DATE()
-dDatDo:=DATE()
+STATIC FUNCTION GetVars( cNObjekat )
 
-O_PARAMS
-private cSection:="F",cHistory:=" ",aHistory:={}
-cPrikazDob:="N"
-if IsPlanika()
-	cK9:=SPACE(3)
-endif
+   cUslov1 := ""
+   cUslov2 := ""
+   cObjUsl := ""
+   cUslovR := ""
+   dDatOd := Date()
+   dDatDo := Date()
 
-Params1()
-RPar("c2",@qqKonto)
-RPar("c3",@cPrSort)
-RPar("d1",@dDatOd)
-RPar("d2",@dDatDo)
-RPar("cR",@qqRoba)
- 
-cKartica:="N" 
-cNObjekat:=space(20)
+   O_PARAMS
+   PRIVATE cSection := "F", cHistory := " ", aHistory := {}
+   cPrikazDob := "N"
 
-cPrikProd:="N"
+   Params1()
+   RPar( "c2", @qqKonto )
+   RPar( "c3", @cPrSort )
+   RPar( "d1", @dDatOd )
+   RPar( "d2", @dDatDo )
+   RPar( "cR", @qqRoba )
 
-Box(,10,70)
-set cursor on
+   cKartica := "N"
+   cNObjekat := Space( 20 )
 
-do while .t.
-	@ m_x+1,m_y+2 SAY "Konta objekata:" GET qqKonto pict "@!S50"
-	@ m_x+3,m_y+2 SAY "tekuci promet je period:" GET dDatOd
-	@ m_x+3,col()+2 SAY "do" GET dDatDo
-	@ m_x+4,m_y+2 SAY "Kriterij za robu :" GET qqRoba pict "@!S50"
-	@ m_x+5,m_y+2 SAY "Prikaz prodaje (D/N)" GET cPrikProd pict "@!" valid cPrikProd $ "DN"
-	if IsPlanika()
-		@ m_x+6,m_y+2 SAY "Prikaz dobavljaca (D/N)" GET cPrikazDob pict "@!" valid cPrikazDob $ "DN"
-		@ m_x+7,m_y+2 SAY "Prikaz po K9" GET cK9 pict "@!"
-	endif
-	READ
+   cPrikProd := "N"
 
-	if (LASTKEY()==K_ESC)
-		BoxC()
-		return 0
-	endif
-	cUslov1:=Parsiraj(qqKonto,"PKonto")
-	cUslov2:=Parsiraj(qqKonto,"MKonto")
-	cObjUsl:=Parsiraj(qqKonto,"IDOBJ")
-	cUslovRoba:=Parsiraj(qqRoba,"IdRoba")
+   Box(, 10, 70 )
+   SET CURSOR ON
+
+   DO WHILE .T.
+      @ m_x + 1, m_y + 2 SAY "Konta objekata:" GET qqKonto PICT "@!S50"
+      @ m_x + 3, m_y + 2 SAY "tekuci promet je period:" GET dDatOd
+      @ m_x + 3, Col() + 2 SAY "do" GET dDatDo
+      @ m_x + 4, m_y + 2 SAY "Kriterij za robu :" GET qqRoba PICT "@!S50"
+      @ m_x + 5, m_y + 2 SAY "Prikaz prodaje (D/N)" GET cPrikProd PICT "@!" VALID cPrikProd $ "DN"
+      IF IsPlanika()
+         @ m_x + 6, m_y + 2 SAY "Prikaz dobavljaca (D/N)" GET cPrikazDob PICT "@!" VALID cPrikazDob $ "DN"
+         @ m_x + 7, m_y + 2 SAY "Prikaz po K9" GET cK9 PICT "@!"
+      ENDIF
+      READ
+
+      IF ( LastKey() == K_ESC )
+         BoxC()
+         RETURN 0
+      ENDIF
+      cUslov1 := Parsiraj( qqKonto, "PKonto" )
+      cUslov2 := Parsiraj( qqKonto, "MKonto" )
+      cObjUsl := Parsiraj( qqKonto, "IDOBJ" )
+      cUslovRoba := Parsiraj( qqRoba, "IdRoba" )
 	
-	if (cUslov1<>nil .and. cUslovRoba<>nil)
-		exit
-	endif
-enddo
-BoxC()
+      IF ( cUslov1 <> NIL .AND. cUslovRoba <> nil )
+         EXIT
+      ENDIF
+   ENDDO
+   BoxC()
 
-select roba
-use
+   SELECT roba
+   USE
 
-select params
-if Params2()
-	WPar("c2",qqKonto)
-	WPar("c3",cPrSort)
-	WPar("d1",dDatOd)
-	WPar("d2",dDatDo)
-	WPar("cR",@qqRoba)
-endif
-select params
-use
+   SELECT params
+   IF Params2()
+      WPar( "c2", qqKonto )
+      WPar( "c3", cPrSort )
+      WPar( "d1", dDatOd )
+      WPar( "d2", dDatDo )
+      WPar( "cR", @qqRoba )
+   ENDIF
+   SELECT params
+   USE
 
-return 1
+   RETURN 1
 
-static function SetGaZagSpo()
-return
+STATIC FUNCTION SetGaZagSpo()
+   RETURN
 
 
 // ---------------------------------------------
 // printanje stavki reporta po kontima
 // ---------------------------------------------
-static function PrintZal(cG1, cIdTarifa, cIdRoba, cDUslov )
-local nK2
+STATIC FUNCTION PrintZal( cG1, cIdTarifa, cIdRoba, cDUslov )
 
-// prvi red zalihe
-nK2:=0
-// izracunajmo prvo ukupno (kolona "SVI")
-select pobjekti    
-go top
-do while (!eof() .and. field->id<"99")
-	 select rekap1
-	 HSEEK cG1+cIdTarifa+cIdRoba+pobjekti->idobj
-	 nK2+=field->k2
-	 select pobjekti
-	 skip
-enddo
+   LOCAL nK2
 
-// ispis kolone "SVI"
-@ prow(),pcol()+1 SAY nK2 pict cPicKol
+   // prvi red zalihe
+   nK2 := 0
+   // izracunajmo prvo ukupno (kolona "SVI")
+   SELECT pobjekti
+   GO TOP
+   DO WHILE ( !Eof() .AND. field->id < "99" )
+      SELECT rekap1
+      HSEEK cG1 + cIdTarifa + cIdRoba + pobjekti->idobj
+      nK2 += field->k2
+      SELECT pobjekti
+      SKIP
+   ENDDO
 
-// ispisi kolone za pojedine objekte
-select pobjekti    
-go top
-do while (!EOF() .and. pobjekti->id<"99")
-	 
-	 select pobjekti
+   // ispis kolone "SVI"
+   @ PRow(), PCol() + 1 SAY nK2 PICT cPicKol
 
-	 if !EMPTY(cDUslov) .and. !( &cDUslov )
-		skip
-		loop
-	 endif
-	 
-	 SELECT rekap1
-	 HSEEK cG1+cIdTarifa+cIdRoba+pobjekti->idobj
-	 if k4pp<>0
-		@ prow(),pcol()+1 SAY STRTRAN(TRANS(k2,cPicKol)," ","*")
-	 else
-		@ prow(),pcol()+1 SAY k2 pict cPicKol
-	 endif
-	 select pobjekti
-	 if roba->k2<>"X"   
-		//samo u finansijski zbir
-		_rec := dbf_get_rec()
-        _rec["zalt"] := _rec["zalt"]+rekap1->k2
-        _rec["zalu"] := _rec["zalu"]+rekap1->k2
-        _rec["zalg"] := _rec["zalg"]+rekap1->k2
-	    dbf_update_rec( _rec ) 
-    endif
-	 skip
-enddo
-
-// ovo je objekat 99
-if (roba->k2<>"X")   
-	// roba sa oznakom k2=X
-	_rec := dbf_get_rec()
-    _rec["zalt"] := _rec["zalt"]+nK2
-    _rec["zalu"] := _rec["zalu"]+nK2
-    _rec["zalg"] := _rec["zalg"]+nK2
-	dbf_update_rec( _rec ) 
-endif
-
-return
-
-
-static function PrintProd(cG1, cIdTarifa, cIdRoba, cDUslov )
-local nK1
-
-select pobjekti    
-// ispisi kolone za pojedine objekte
-nK1:=0
-go top
-do while (!EOF() .and. pobjekti->id<"99")
-	 select rekap1
-	 HSEEK cG1+cIdTarifa+cIdRoba+pobjekti->idobj
-	 nK1+=field->k1
-	 select pobjekti
-	 skip
-enddo
-
-// sumarno prodaja
-@ prow(),pcol()+1 SAY nK1 pict cPicKol
-
-select pobjekti
-go top
-lIzaProc:=.t.
-i:=0
-do while (!eof() .and. pobjekti->id<"99")
+   // ispisi kolone za pojedine objekte
+   SELECT pobjekti
+   GO TOP
+   DO WHILE ( !Eof() .AND. pobjekti->id < "99" )
 	
-	select pobjekti
-	if !EMPTY(cDUslov) .and. !( &cDUslov )
-		skip
-		loop
-	endif
+      SELECT pobjekti
+
+      IF !Empty( cDUslov ) .AND. !( &cDUslov )
+         SKIP
+         LOOP
+      ENDIF
 	
-	select rekap1
-	hseek cG1+cIdTarifa+cIdRoba+pobjekti->idobj
-	if k4pp<>0
-		@ prow(),pcol()+1 SAY STRTRAN(TRANS(k1,cPicKol)," ","*")
-	else
-		@ prow(),pcol()+1 SAY k1 pict cPicKol
-	endif
-	++i
+      SELECT rekap1
+      HSEEK cG1 + cIdTarifa + cIdRoba + pobjekti->idobj
+      IF k4pp <> 0
+         @ PRow(), PCol() + 1 SAY StrTran( TRANS( k2, cPicKol ), " ", "*" )
+      ELSE
+         @ PRow(), PCol() + 1 SAY k2 PICT cPicKol
+      ENDIF
+      SELECT pobjekti
+      IF roba->k2 <> "X"
+         // samo u finansijski zbir
+         _rec := dbf_get_rec()
+         _rec[ "zalt" ] := _rec[ "zalt" ] + rekap1->k2
+         _rec[ "zalu" ] := _rec[ "zalu" ] + rekap1->k2
+         _rec[ "zalg" ] := _rec[ "zalg" ] + rekap1->k2
+         dbf_update_rec( _rec )
+      ENDIF
+      SKIP
+   ENDDO
+
+   // ovo je objekat 99
+   IF ( roba->k2 <> "X" )
+      // roba sa oznakom k2=X
+      _rec := dbf_get_rec()
+      _rec[ "zalt" ] := _rec[ "zalt" ] + nK2
+      _rec[ "zalu" ] := _rec[ "zalu" ] + nK2
+      _rec[ "zalg" ] := _rec[ "zalg" ] + nK2
+      dbf_update_rec( _rec )
+   ENDIF
+
+   RETURN
+
+
+STATIC FUNCTION PrintProd( cG1, cIdTarifa, cIdRoba, cDUslov )
+
+   LOCAL nK1
+
+   SELECT pobjekti
+   // ispisi kolone za pojedine objekte
+   nK1 := 0
+   GO TOP
+   DO WHILE ( !Eof() .AND. pobjekti->id < "99" )
+      SELECT rekap1
+      HSEEK cG1 + cIdTarifa + cIdRoba + pobjekti->idobj
+      nK1 += field->k1
+      SELECT pobjekti
+      SKIP
+   ENDDO
+
+   // sumarno prodaja
+   @ PRow(), PCol() + 1 SAY nK1 PICT cPicKol
+
+   SELECT pobjekti
+   GO TOP
+   lIzaProc := .T.
+   i := 0
+   DO WHILE ( !Eof() .AND. pobjekti->id < "99" )
 	
-	select pobjekti
-	if (roba->k2<>"X")
+      SELECT pobjekti
+      IF !Empty( cDUslov ) .AND. !( &cDUslov )
+         SKIP
+         LOOP
+      ENDIF
+	
+      SELECT rekap1
+      hseek cG1 + cIdTarifa + cIdRoba + pobjekti->idobj
+      IF k4pp <> 0
+         @ PRow(), PCol() + 1 SAY StrTran( TRANS( k1, cPicKol ), " ", "*" )
+      ELSE
+         @ PRow(), PCol() + 1 SAY k1 PICT cPicKol
+      ENDIF
+      ++i
+	
+      SELECT pobjekti
+      IF ( roba->k2 <> "X" )
 
-		_rec := dbf_get_rec()
-        _rec["prodt"] := _rec["prodt"]+rekap1->k1
-        _rec["produ"] := _rec["produ"]+rekap1->k1
-        _rec["prodg"] := _rec["prodg"]+rekap1->k1
-	    dbf_update_rec( _rec ) 
-    
-	endif
-	skip
-enddo
+         _rec := dbf_get_rec()
+         _rec[ "prodt" ] := _rec[ "prodt" ] + rekap1->k1
+         _rec[ "produ" ] := _rec[ "produ" ] + rekap1->k1
+         _rec[ "prodg" ] := _rec[ "prodg" ] + rekap1->k1
+         dbf_update_rec( _rec )
 
-// skipuje na polje "99"
-if roba->k2<>"X" 
+      ENDIF
+      SKIP
+   ENDDO
 
-	_rec := dbf_get_rec()
-    _rec["prodt"] := _rec["prodt"]+nK1
-    _rec["produ"] := _rec["produ"]+nK1
-    _rec["prodg"] := _rec["prodg"]+nK1
-	dbf_update_rec( _rec ) 
-  
-endif
+   // skipuje na polje "99"
+   IF roba->k2 <> "X"
 
-return
+      _rec := dbf_get_rec()
+      _rec[ "prodt" ] := _rec[ "prodt" ] + nK1
+      _rec[ "produ" ] := _rec[ "produ" ] + nK1
+      _rec[ "prodg" ] := _rec[ "prodg" ] + nK1
+      dbf_update_rec( _rec )
 
-static function PrintZalGr()
-select pobjekti
-// idi na "objekat" 99 (SVI)
-go bottom 
-@ prow(),nCol1+1 SAY zalg PICT cPicKol
-select pobjekti 
-go top
-i:=0
-do while (!eof() .and. pobjekti->id<"99")
-	@ prow(),pcol()+1 SAY zalg pict cPicKol
-	++i
-	skip
-enddo
-return
+   ENDIF
 
-static function PrintProdGr()	
-select pobjekti
-go bottom 
-// idi na "objekat" 99 (SVI)
-@ prow()+1, nCol1+1 SAY prodg pict cPicKol
-select pobjekti
-go top
-i:=0
-do while (!eof()  .and. field->id<"99")
-	@ prow(),pcol()+1 SAY prodg pict cPicKol
-	++i
-	skip
-enddo
+   RETURN
 
+STATIC FUNCTION PrintZalGr()
 
+   SELECT pobjekti
+   // idi na "objekat" 99 (SVI)
+   GO BOTTOM
+   @ PRow(), nCol1 + 1 SAY zalg PICT cPicKol
+   SELECT pobjekti
+   GO TOP
+   i := 0
+   DO WHILE ( !Eof() .AND. pobjekti->id < "99" )
+      @ PRow(), PCol() + 1 SAY zalg PICT cPicKol
+      ++i
+      SKIP
+   ENDDO
+
+   RETURN
+
+STATIC FUNCTION PrintProdGr()
+
+   SELECT pobjekti
+   GO BOTTOM
+   // idi na "objekat" 99 (SVI)
+   @ PRow() + 1, nCol1 + 1 SAY prodg PICT cPicKol
+   SELECT pobjekti
+   GO TOP
+   i := 0
+   DO WHILE ( !Eof()  .AND. field->id < "99" )
+      @ PRow(), PCol() + 1 SAY prodg PICT cPicKol
+      ++i
+      SKIP
+   ENDDO

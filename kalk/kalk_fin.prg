@@ -24,7 +24,7 @@ FUNCTION P_Fin( lAuto )
 
    IF gaFin == "D"
 	
-      kontrola_zbira_naloga( lAuto )
+      kontrola_zbira_naloga_kalk( lAuto )
 	
       IF lAuto == .F. .OR. ( lAuto == .T. .AND. gAImpPrint == "D" )
          stampa_fin_document( lAuto )

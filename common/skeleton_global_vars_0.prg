@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,160 +16,167 @@
 // --------------------------------------------
 // postavi globalne varijable
 // --------------------------------------------
-function set_global_vars_0()
-public ZGwPoruka:=""
-public GW_STATUS:="-"
-public GW_HANDLE:=0
-public gModul:=""
-public gVerzija:=""
-public gAppSrv:=.f.
-public gSQL := "N"
-public gSQLLogBase := ""
-public ZGwPoruka:=""
-public GW_STATUS:="-"
-public GW_HANDLE:=0
-public gReadOnly:=.f.
-public gProcPrenos:="N"
-public gInstall:=.f.
-public gfKolor:="D"
-public gPrinter := "R"
-public gPtxtSw := nil
-public gPDFSw := nil
-public gMeniSif:=.f.
-public gValIz:="280 "
-public gValU:="000 "
-public gKurs:="1"
-public gPTKONV:="0 "
-public gPicSif:="V"
-public gcDirekt:="V"
-public gSKSif:="D"
-public gSezona:="    "
-public gShemaVF:="B5"
-//counter - za testiranje
-public gCnt1:=0
-PUBLIC m_x
-PUBLIC m_y
-PUBLIC h[20]
-PUBLIC lInstal:=.f.
-//  .t. - korisnik je SYSTEM
-PUBLIC System   
-PUBLIC aRel:={}
-PUBLIC cDirRad
-PUBLIC cDirSif
-PUBLIC cDirPriv
-PUBLIC gNaslov
-public gSezonDir:=""
-public gRadnoPodr:="RADP"
-public ImeKorisn:="" 
-public SifraKorisn:=""
-public KLevel:="9"
-public gArhDir := ""
-public gPFont := "Arial"
-public gKodnaS:="8"
-public gWord97:="N"
-public g50f:=" "
-PUBLIC StaraBoja := SETCOLOR()
-public System:=.f.
-public gGlBaza:=""
-public gSQL
-public gSqlLogBase
-PUBLIC Invert:="N/W,R/N+,,,R/B+"
-PUBLIC Normal:="GR+/N,R/N+,,,N/W"
-PUBLIC Blink:="R****/W,W/B,,,W/RB"
-PUBLIC Nevid:="W/W,N/N"
-PUBLIC gVeryBusyInterval
-PUBLIC gKonvertPath := "N"
-PUBLIC gHostOS
+FUNCTION set_global_vars_0()
+
+   PUBLIC ZGwPoruka := ""
+   PUBLIC GW_STATUS := "-"
+   PUBLIC GW_HANDLE := 0
+   PUBLIC gModul := ""
+   PUBLIC gVerzija := ""
+   PUBLIC gAppSrv := .F.
+   PUBLIC gSQL := "N"
+   PUBLIC gSQLLogBase := ""
+   PUBLIC ZGwPoruka := ""
+   PUBLIC GW_STATUS := "-"
+   PUBLIC GW_HANDLE := 0
+   PUBLIC gReadOnly := .F.
+   PUBLIC gProcPrenos := "N"
+   PUBLIC gInstall := .F.
+   PUBLIC gfKolor := "D"
+   PUBLIC gPrinter := "R"
+   PUBLIC gPtxtSw := nil
+   PUBLIC gPDFSw := nil
+   PUBLIC gMeniSif := .F.
+   PUBLIC gValIz := "280 "
+   PUBLIC gValU := "000 "
+   PUBLIC gKurs := "1"
+   PUBLIC gPTKONV := "0 "
+   PUBLIC gPicSif := "V"
+   PUBLIC gcDirekt := "V"
+   PUBLIC gSKSif := "D"
+   PUBLIC gSezona := "    "
+   PUBLIC gShemaVF := "B5"
+
+   // counter - za testiranje
+   PUBLIC gCnt1 := 0
+   PUBLIC m_x
+   PUBLIC m_y
+   PUBLIC h[ 20 ]
+   PUBLIC lInstal := .F.
+   // .t. - korisnik je SYSTEM
+   PUBLIC System
+   PUBLIC aRel := {}
+   PUBLIC cDirRad
+   PUBLIC cDirSif
+   PUBLIC cDirPriv
+   PUBLIC gNaslov
+   PUBLIC gSezonDir := ""
+   PUBLIC gRadnoPodr := "RADP"
+   PUBLIC ImeKorisn := ""
+   PUBLIC SifraKorisn := ""
+   PUBLIC KLevel := "9"
+   PUBLIC gArhDir := ""
+   PUBLIC gPFont := "Arial"
+   PUBLIC gKodnaS := "8"
+   PUBLIC gWord97 := "N"
+   PUBLIC g50f := " "
+   PUBLIC StaraBoja := SetColor()
+   PUBLIC System := .F.
+   PUBLIC gGlBaza := ""
+   PUBLIC gSQL
+   PUBLIC gSqlLogBase
+   PUBLIC Invert := "N/W,R/N+,,,R/B+"
+   PUBLIC Normal := "GR+/N,R/N+,,,N/W"
+   PUBLIC Blink := "R****/W,W/B,,,W/RB"
+   PUBLIC Nevid := "W/W,N/N"
+   PUBLIC gVeryBusyInterval
+   PUBLIC gKonvertPath := "N"
+   PUBLIC gHostOS
 
 #ifdef __WINDOWS
-    gHostOS:="Linux"
+   gHostOS := "Linux"
 #else
-    gHostOS:="WindowsXP"
+   gHostOS := "WindowsXP"
 #endif
 
-public cBteksta
-public cBokvira
-public cBnaslova
-public cBshema:="B1"
-public gCekaScreenSaver := 5
-// ne koristi lokale
-public gLokal:="0"
-// pdf stampa
-public gPDFPrint := "N"
-public gPDFPAuto := "D"
-public gPDFViewer := SPACE(150)
-public gDefPrinter := SPACE(150)
+   PUBLIC cBteksta
+   PUBLIC cBokvira
+   PUBLIC cBnaslova
+   PUBLIC cBshema := "B1"
+   PUBLIC gCekaScreenSaver := 5
+   // ne koristi lokale
+   PUBLIC gLokal := "0"
+   // pdf stampa
+   PUBLIC gPDFPrint := "N"
+   PUBLIC gPDFPAuto := "D"
+   PUBLIC gPDFViewer := Space( 150 )
+   PUBLIC gDefPrinter := Space( 150 )
 
-// setuje globalne varijable printera
-init_print_variables()
+   PUBLIC gPicDEM := "9999999.99"
+   PUBLIC gPicBHD := "999999999999.99"
+ 
+   // setuje globalne varijable printera
+   init_print_variables()
 
-return
+   RETURN
 
 
 
 // -------------------------------------------------------------
 // -------------------------------------------------------------
-function set_global_vars_0_prije_prijave(fSve)
+FUNCTION set_global_vars_0_prije_prijave( fSve )
 
-local cImeDbf
+   LOCAL cImeDbf
 
-if fsve == nil
-    fSve := .t.
-endif
+   IF fsve == nil
+      fSve := .T.
+   ENDIF
 
-if fSve
-    public gSezonDir:=""
-    public gRadnoPodr:="RADP"
-    public ImeKorisn:="" 
-    public SifraKorisn:=""
-    public KLevel:="9"
-    public gPTKONV:="0 "
-    public gPicSif:="V", gcDirekt:="V", gShemaVF:="B5", gSKSif:="D"
+   IF fSve
+      PUBLIC gSezonDir := ""
+      PUBLIC gRadnoPodr := "RADP"
+      PUBLIC ImeKorisn := ""
+      PUBLIC SifraKorisn := ""
+      PUBLIC KLevel := "9"
+      PUBLIC gPTKONV := "0 "
+      PUBLIC gPicSif := "V", gcDirekt := "V", gShemaVF := "B5", gSKSif := "D"
 
-    //public gPFont:="Arial"
+      // public gPFont:="Arial"
 
-    public gKodnaS:="8"
-    public gWord97:="N"
-    public g50f:=" "
+      PUBLIC gKodnaS := "8"
+      PUBLIC gWord97 := "N"
+      PUBLIC g50f := " "
 
-endif 
+   ENDIF
 
-public gFKolor:="D"
+   PUBLIC gFKolor := "D"
 
-O_GPARAMS
-private cSection:="1",cHistory:=" "; aHistory:={}
+   O_GPARAMS
+   PRIVATE cSection := "1", cHistory := " "; aHistory := {}
 
-if fsve
-  Rpar("pt",@gPTKonv)
-  Rpar("pS",@gPicSif)
-  Rpar("SK",@gSKSif)
-  Rpar("DO",@gcDirekt)
-  Rpar("SB",@gShemaVF)
-  Rpar("Ad",@gArhDir)
-  Rpar("FO",@gPFont)
-  Rpar("KS",@gKodnaS)
-  Rpar("W7",@gWord97)
-  Rpar("5f",@g50f)
-  Rpar("L8",@gLokal)
-  Rpar("pR",@gPDFPrint)
-  Rpar("pV",@gPDFViewer)
-  Rpar("pA",@gPDFPAuto)
-  Rpar("dP",@gDefPrinter)
-endif
+   IF fsve
+      Rpar( "pt", @gPTKonv )
+      Rpar( "pS", @gPicSif )
+      Rpar( "SK", @gSKSif )
+      Rpar( "DO", @gcDirekt )
+      Rpar( "SB", @gShemaVF )
+      Rpar( "Ad", @gArhDir )
+      Rpar( "FO", @gPFont )
+      Rpar( "KS", @gKodnaS )
+      Rpar( "W7", @gWord97 )
+      Rpar( "5f", @g50f )
+      Rpar( "L8", @gLokal )
+      Rpar( "pR", @gPDFPrint )
+      Rpar( "pV", @gPDFViewer )
+      Rpar( "pA", @gPDFPAuto )
+      Rpar( "dP", @gDefPrinter )
+   ENDIF
 
-Rpar("FK",@gFKolor)
+   Rpar( "FK", @gFKolor )
 
-select (F_GPARAMS)
-use
+   SELECT ( F_GPARAMS )
+   USE
 
-return nil
+   RETURN NIL
 
 
 
-function set_global_vars_0_nakon_prijave()
-gSql := "N"
-gSqlLogBase:=""
-return
+FUNCTION set_global_vars_0_nakon_prijave()
+
+   gSql := "N"
+   gSqlLogBase := ""
+
+   RETURN
 
 
 
@@ -178,89 +185,88 @@ return
  *  Prvo ucitava "p?" koji je D ako zelimo ucitavati globalne parametre iz PRIVDIR
  *  \todo Ocigledno da je ovo funkcija za eliminaciju ...
  */
- 
-function IniGParam2()
 
-local cPosebno:="N"
+FUNCTION IniGParam2()
 
-O_PARAMS
-public gMeniSif:=.f.
-private cSection:="1"
-private cHistory:=" "
-private aHistory:={}
-RPar("p?", @cPosebno)
+   LOCAL cPosebno := "N"
 
-SELECT params
-USE
+   O_PARAMS
+   PUBLIC gMeniSif := .F.
+   PRIVATE cSection := "1"
+   PRIVATE cHistory := " "
+   PRIVATE aHistory := {}
+   RPar( "p?", @cPosebno )
 
-if (cPosebno=="D")
+   SELECT params
+   USE
 
-  bErr := ERRORBLOCK({|o| MyErrH(o)})
-  O_GPARAMSP
-  SEEK "1"
+   IF ( cPosebno == "D" )
 
-  bErr := ERRORBLOCK(bErr)
+      bErr := ErrorBlock( {| o| MyErrH( o ) } )
+      O_GPARAMSP
+      SEEK "1"
 
-    Rpar("pt",@gPTKonv)
-    Rpar("pS",@gPicSif)
-    Rpar("SK",@gSKSif)
-    Rpar("DO",@gcDirekt)
-    Rpar("FK",@gFKolor)
-    Rpar("S9",@gSQL)
-    gSQL:=IzFmkIni("Svi","SQLLog","N",KUMPATH)
-    Rpar("SB",@gShemaVF)
-    Rpar("Ad",@gArhDir)
-    Rpar("FO",@gPFont)
-    Rpar("KS",@gKodnaS)
-    Rpar("W7",@gWord97)
-    Rpar("5f",@g50f)
-    Rpar("L8",@gLokal)
-    Rpar("pR",@gPDFPrint)
-    Rpar("pV",@gPDFViewer)
-    Rpar("pA",@gPDFPAuto)
-    Rpar("dP",@gDefPrinter)
-	Rpar("oP",@gOOPath)
-	Rpar("oW",@gOOWriter)
-	Rpar("oS",@gOOSpread)
-	Rpar("oJ",@gJavaPath)
-	Rpar("jS",@gJavaStart)
-	Rpar("jR",@gJODRep)
-  SELECT (F_GPARAMSP)
-  USE
-endif
+      bErr := ErrorBlock( bErr )
 
-return
+      Rpar( "pt", @gPTKonv )
+      Rpar( "pS", @gPicSif )
+      Rpar( "SK", @gSKSif )
+      Rpar( "DO", @gcDirekt )
+      Rpar( "FK", @gFKolor )
+      Rpar( "S9", @gSQL )
+      gSQL := IzFmkIni( "Svi", "SQLLog", "N", KUMPATH )
+      Rpar( "SB", @gShemaVF )
+      Rpar( "Ad", @gArhDir )
+      Rpar( "FO", @gPFont )
+      Rpar( "KS", @gKodnaS )
+      Rpar( "W7", @gWord97 )
+      Rpar( "5f", @g50f )
+      Rpar( "L8", @gLokal )
+      Rpar( "pR", @gPDFPrint )
+      Rpar( "pV", @gPDFViewer )
+      Rpar( "pA", @gPDFPAuto )
+      Rpar( "dP", @gDefPrinter )
+      Rpar( "oP", @gOOPath )
+      Rpar( "oW", @gOOWriter )
+      Rpar( "oS", @gOOSpread )
+      Rpar( "oJ", @gJavaPath )
+      Rpar( "jS", @gJavaStart )
+      Rpar( "jR", @gJODRep )
+      SELECT ( F_GPARAMSP )
+      USE
+   ENDIF
+
+   RETURN
 
 
 // ------------------------------------
 // ------------------------------------
-function IniPrinter()
-// procitaj gPrinter, gpini, itd..
-// postavi shift F2 kao hotkey
+FUNCTION IniPrinter()
 
-if gModul $ "EPDV"
-	gPrinter := "R"
-endif
+   // procitaj gPrinter, gpini, itd..
+   // postavi shift F2 kao hotkey
 
-if gPrinter == "E"
-    set_epson_print_codes()
-else
-    PtxtSekvence()
-endif
+   IF gModul $ "EPDV"
+      gPrinter := "R"
+   ENDIF
 
-if gPicSif == "8"
-    SETKEY( K_CTRL_F2, {|| PPrint()} )
-else
-    SETKEY( K_SH_F2, {|| PPrint()} )
-endif
+   IF gPrinter == "E"
+      set_epson_print_codes()
+   ELSE
+      PtxtSekvence()
+   ENDIF
 
-return
+   IF gPicSif == "8"
+      SetKey( K_CTRL_F2, {|| PPrint() } )
+   ELSE
+      SetKey( K_SH_F2, {|| PPrint() } )
+   ENDIF
+
+   RETURN
 
 
 // ---------------------------------
 // FMK_LIB_VER - defined in fmk.ch
 // ---------------------------------
-function fmklibver()
-return FMK_LIB_VER
-
-
+FUNCTION fmklibver()
+   RETURN FMK_LIB_VER

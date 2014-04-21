@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,1200 +13,1202 @@
 #include "pos.ch"
 
 
-function pos_stampa_racuna(cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezani)
-local cDbf
-local cIdRadnik
-local aPom:={}
-local cPom
-private nIznos
-private nSumaPor:=0
+FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezani )
 
-if lPrepis==NIL
-	lPrepis:=.f.
-endif
+   LOCAL cDbf
+   LOCAL cIdRadnik
+   LOCAL aPom := {}
+   LOCAL cPom
+   PRIVATE nIznos
+   PRIVATE nSumaPor := 0
 
-if cIdVrsteP==NIL
-	cIdVrsteP:=""
-endif
+   IF lPrepis == NIL
+      lPrepis := .F.
+   ENDIF
 
-if dDatumRn==NIL
-	dDatumRn:=gDatum
-endif
+   IF cIdVrsteP == NIL
+      cIdVrsteP := ""
+   ENDIF
 
-SELECT (F_ODJ)
+   IF dDatumRn == NIL
+      dDatumRn := gDatum
+   ENDIF
 
-if !used()
-	O_ODJ  
-	// otvori odjeljenje radi APOTEKA....
-endif
+   SELECT ( F_ODJ )
 
-if lPrepis
-	cPosDB:="POS"
-else
-	cPosDB:="_POS"
-endif
+   IF !Used()
+      O_ODJ
+      // otvori odjeljenje radi APOTEKA....
+   ENDIF
 
-SELECT &cPosDB
+   IF lPrepis
+      cPosDB := "POS"
+   ELSE
+      cPosDB := "_POS"
+   ENDIF
 
-cCmnBrDok := cBrDok
-nIznos:=0
-nNeplaca:=0
+   SELECT &cPosDB
 
-for i:=1 to LEN(aVezani)
+   cCmnBrDok := cBrDok
+   nIznos := 0
+   nNeplaca := 0
 
-// 
-dDatumRn :=aVezani[i, 4]
-cBrDok := aVezani[i, 2]
+   FOR i := 1 TO Len( aVezani )
 
-Seek2(cIdPos+VD_RN+dtos(dDatumRn)+cBrDok)
+      //
+      dDatumRn := aVezani[ i, 4 ]
+      cBrDok := aVezani[ i, 2 ]
 
-if !lPrepis
-	cSto:=&cPosDB->Sto
-	cIdRadnik:=&cPosDB->IdRadnik
-	cSmjena:=&cPosDB->Smjena
-else
-	select pos_doks
-	Seek2 (cIdPos+VD_RN+DToS(dDatumRn)+cBrDok)
-	cSto      := pos_doks->Sto
-	cIdRadnik := pos_doks->IdRadnik
-	cSmjena   := pos_doks->Smjena
-endif
+      Seek2( cIdPos + VD_RN + DToS( dDatumRn ) + cBrDok )
 
-SELECT &cPosDB
+      IF !lPrepis
+         cSto := &cPosDB->Sto
+         cIdRadnik := &cPosDB->IdRadnik
+         cSmjena := &cPosDB->Smjena
+      ELSE
+         SELECT pos_doks
+         Seek2 ( cIdPos + VD_RN + DToS( dDatumRn ) + cBrDok )
+         cSto      := pos_doks->Sto
+         cIdRadnik := pos_doks->IdRadnik
+         cSmjena   := pos_doks->Smjena
+      ENDIF
 
-if VarPopPrekoOdrIzn()
-	gIsPopust:=.f.
-endif
+      SELECT &cPosDB
 
-do while !eof().and. &cPosDB->(IdPos+IdVd+dtos(Datum)+BrDok)==(cIdPos+VD_RN+dtos(dDatumRn)+cBrDok)
+      IF VarPopPrekoOdrIzn()
+         gIsPopust := .F.
+      ENDIF
+
+      DO WHILE !Eof() .AND. &cPosDB->( IdPos + IdVd + DToS( Datum ) + BrDok ) == ( cIdPos + VD_RN + DToS( dDatumRn ) + cBrDok )
 	
-	nIznos += Kolicina*Cijena
+         nIznos += Kolicina * Cijena
 	
-	select odj
-	seek &cPosDB->idodj
-	select &cPosDB
+         SELECT odj
+         seek &cPosDB->idodj
+         select &cPosDB
   	
-	if right(odj->naz,5)=="#1#0#"
-     		nNeplaca+=Kolicina*Cijena - ncijena*Kolicina
-  	elseif right(odj->naz,6)=="#1#50#"
-     		nNeplaca+=Kolicina*Cijena/2 - ncijena
-  	endif
+         IF Right( odj->naz, 5 ) == "#1#0#"
+            nNeplaca += Kolicina * Cijena - ncijena * Kolicina
+         ELSEIF Right( odj->naz, 6 ) == "#1#50#"
+            nNeplaca += Kolicina * Cijena / 2 - ncijena
+         ENDIF
 	
-  	if (gPopVar="P" .and. gClanPopust) 
-		if !EMPTY(cPartner)
-			nNeplaca+=kolicina*NCijena
-		endif
-	endif
+         IF ( gPopVar = "P" .AND. gClanPopust )
+            IF !Empty( cPartner )
+               nNeplaca += kolicina * NCijena
+            ENDIF
+         ENDIF
 	
-	if (gPopVar="P" .and. !gClanPopust)
-		nNeplaca+=kolicina*NCijena
-	endif
+         IF ( gPopVar = "P" .AND. !gClanPopust )
+            nNeplaca += kolicina * NCijena
+         ENDIF
 	
-  	SKIP
-enddo
+         SKIP
+      ENDDO
 
-//
-next
-//
+      //
+   NEXT
+   //
 
-// Ispisi iznos racuna velikim slovima
-ispisi_iznos_racuna_box( nIznos - nNeplaca )
+   // Ispisi iznos racuna velikim slovima
+   ispisi_iznos_racuna_box( nIznos - nNeplaca )
 
-STARTPRINTPORT CRET gLocPort,SPACE(5)
+   STARTPRINTPORT CRET gLocPort, Space( 5 )
 
-cBrDok := cCmnBrDok
+   cBrDok := cCmnBrDok
 
-if lPrepis
-	cTime:=RacHeder(cIdPos,DToS(dDatumRn)+cBrDok,cSto,.t., aVezani)
-else
-	cTime:=RacHeder(cIdPos,DTOS(dDatumRn)+cStalRac,cSto,.f., aVezani)
-endif
+   IF lPrepis
+      cTime := RacHeder( cIdPos, DToS( dDatumRn ) + cBrDok, cSto, .T., aVezani )
+   ELSE
+      cTime := RacHeder( cIdPos, DToS( dDatumRn ) + cStalRac, cSto, .F., aVezani )
+   ENDIF
 
-SELECT &cPosDB
+   SELECT &cPosDB
 
-seek cIdPos+"42"+dtos(dDatumRn)+cBrDok
+   SEEK cIdPos + "42" + DToS( dDatumRn ) + cBrDok
 
-aPorezi:={}
-aRekPor:={}
+   aPorezi := {}
+   aRekPor := {}
 
-do while !eof().and.(IdPos+IdVd+DTOS(datum))==(cIdPos+VD_RN+dtos(dDatumRn))
-	if ASCAN(aVezani, {|aVal| aVal[2] == &cPosDB->brdok}) == 0
-		skip
-		loop
-	else
-		cBrDok := &cPosDB->brdok
-	endif
+   DO WHILE !Eof() .AND. ( IdPos + IdVd + DToS( datum ) ) == ( cIdPos + VD_RN + DToS( dDatumRn ) )
+      IF AScan( aVezani, {| aVal| aVal[ 2 ] == &cPosDB->brdok } ) == 0
+         SKIP
+         LOOP
+      ELSE
+         cBrDok := &cPosDB->brdok
+      ENDIF
 	
-	cPom:=" * "
-  	Scatter()
-  	_Kolicina := 0
-  	do while !eof().and.&cPosDB->(IdPos+IdVd+dtos(datum)+BrDok)==(cIdPos+"42"+dtos(dDatumRn)+cBrDok).and.&cPosDB->(IdRoba+IdCijena)==(_IdRoba+IdCijena).and.&cPosDB->Cijena==_Cijena
-    		_Kolicina += &cPosDB->Kolicina
-    		SKIP
-  	enddo
-  	nIznosST:=0
-  	if round(_kolicina,4)<>0
-		if !lPrepis
-			cPom+=TRIM(_IdRoba)+" - "+TRIM(_RobaNaz)
-		else
-			select roba
-			seek TRIM(_idRoba)
-			cPom+=TRIM(_idRoba)+" - "+TRIM(roba->naz)
-			select pos
-		endif
-		aPom:=SjeciStr(cPom,38)
-		for i:=1 to len(aPom)
-			? aPom[i]
-		next
-   		SELECT &cPosDB
+      cPom := " * "
+      Scatter()
+      _Kolicina := 0
+      DO WHILE !Eof() .AND. &cPosDB->( IdPos + IdVd + DToS( datum ) + BrDok ) == ( cIdPos + "42" + DToS( dDatumRn ) + cBrDok ) .AND. &cPosDB->( IdRoba + IdCijena ) == ( _IdRoba + IdCijena ) .AND. &cPosDB->Cijena == _Cijena
+         _Kolicina += &cPosDB->Kolicina
+         SKIP
+      ENDDO
+      nIznosST := 0
+      IF Round( _kolicina, 4 ) <> 0
+         IF !lPrepis
+            cPom += Trim( _IdRoba ) + " - " + Trim( _RobaNaz )
+         ELSE
+            SELECT roba
+            SEEK Trim( _idRoba )
+            cPom += Trim( _idRoba ) + " - " + Trim( roba->naz )
+            SELECT pos
+         ENDIF
+         aPom := SjeciStr( cPom, 38 )
+         FOR i := 1 TO Len( aPom )
+            ? aPom[ i ]
+         NEXT
+         SELECT &cPosDB
 		
-   		nIznosSt:=_Kolicina*(_Cijena-_NCijena)
+         nIznosSt := _Kolicina * ( _Cijena - _NCijena )
    		
-		if gKolDec==N_ROUNDTO
-	   		? SPACE(1)+PADR("(T" + ALLTRIM(_IdTarifa)+")",6)+STR(_Kolicina,9,N_ROUNDTO),if(!lPrepis,_Jmj,roba->jmj),"x "
-		else
-	   		? SPACE(1)+PADR("(T" + ALLTRIM(_IdTarifa)+")",6)+STR(_Kolicina,9,gKolDec),if(!lPrepis,_Jmj,roba->jmj),"x "
-		endif
-		if gCijDec==N_ROUNDTO
-	   		?? PADR(ALLTRIM(STR(_Cijena,8,N_ROUNDTO)),8)+STR(nIznosSt,8,N_ROUNDTO)
-		else
-	   		?? PADR(ALLTRIM(STR(_Cijena,8,gCijDec)),8)+STR(nIznosSt,8,N_ROUNDTO)
-		endif
-  	endif
+         IF gKolDec == N_ROUNDTO
+            ? Space( 1 ) + PadR( "(T" + AllTrim( _IdTarifa ) + ")", 6 ) + Str( _Kolicina, 9, N_ROUNDTO ), if( !lPrepis, _Jmj, roba->jmj ), "x "
+         ELSE
+            ? Space( 1 ) + PadR( "(T" + AllTrim( _IdTarifa ) + ")", 6 ) + Str( _Kolicina, 9, gKolDec ), if( !lPrepis, _Jmj, roba->jmj ), "x "
+         ENDIF
+         IF gCijDec == N_ROUNDTO
+            ?? PadR( AllTrim( Str( _Cijena, 8, N_ROUNDTO ) ), 8 ) + Str( nIznosSt, 8, N_ROUNDTO )
+         ELSE
+            ?? PadR( AllTrim( Str( _Cijena, 8, gCijDec ) ), 8 ) + Str( nIznosSt, 8, N_ROUNDTO )
+         ENDIF
+      ENDIF
   	
-	// obracun poreza
-	SELECT TARIFA
-  	Seek2(_IdTarifa)
+      // obracun poreza
+      SELECT TARIFA
+      Seek2( _IdTarifa )
 		
-	if glPorezNaSvakuStavku
-		nPPP:=tarifa->opp
-		nPPU:=tarifa->ppp
-		nPP:=tarifa->zpp
-	endif
-	// Izracunaj MPC bez poreza
-    	nMPVBP:=nIznosSt/(1+zpp/100+ppp/100)/(1+opp/100)
-        
-	// varijanta starog obracuna poreza
-        if gStariObrPor
-  		if IzFMKINI("POREZI","PPUgostKaoPPU","N")=="D"
-    			nMpVBP:=nIznosSt/(1+zpp/100+ppp/100)/(1+opp/100)
-    			nPPPIznos:=nMPVBP*opp/100
-    			nPPIznos:=(nMPVBP+nPPPIznos)*zpp/100
-  		else
-    			nMpVBP:=nIznosSt/(zpp/100+(1+opp/100)*(1+ppp/100))
-    			nPPPIznos:=nMPVBP*opp/100
-    			nPPIznos:=nMPVBP*zpp/100
-  		endif
+      IF glPorezNaSvakuStavku
+         nPPP := tarifa->opp
+         nPPU := tarifa->ppp
+         nPP := tarifa->zpp
+      ENDIF
+      // Izracunaj MPC bez poreza
+      nMPVBP := nIznosSt / ( 1 + zpp / 100 + ppp / 100 ) / ( 1 + opp / 100 )
 
-		if glPorezNaSvakuStavku  	
-			? SPACE(1) + "PPP(" + ALLTRIM(STR(nPPP)) + "%) " + ALLTRIM(STR(nPPPIznos))	
-		endif
+      // varijanta starog obracuna poreza
+      IF gStariObrPor
+         IF IzFMKINI( "POREZI", "PPUgostKaoPPU", "N" ) == "D"
+            nMpVBP := nIznosSt / ( 1 + zpp / 100 + ppp / 100 ) / ( 1 + opp / 100 )
+            nPPPIznos := nMPVBP * opp / 100
+            nPPIznos := ( nMPVBP + nPPPIznos ) * zpp / 100
+         ELSE
+            nMpVBP := nIznosSt / ( zpp / 100 + ( 1 + opp / 100 ) * ( 1 + ppp / 100 ) )
+            nPPPIznos := nMPVBP * opp / 100
+            nPPIznos := nMPVBP * zpp / 100
+         ENDIF
 
-		nPPUIznos:=(nMPVBP+nPPPIznos)*ppp/100
+         IF glPorezNaSvakuStavku
+            ? Space( 1 ) + "PPP(" + AllTrim( Str( nPPP ) ) + "%) " + AllTrim( Str( nPPPIznos ) )
+         ENDIF
 
-		if glPorezNaSvakuStavku
-			?? " PPU(" + ALLTRIM(STR(nPPU)) + "%) " + ALLTRIM(STR(nPPUIznos))
-		endif
+         nPPUIznos := ( nMPVBP + nPPPIznos ) * ppp / 100
 
-		nSumaPor+=nPPPiznos+nPPUiznos+nPPIznos
-		nPoz:=ASCAN(aPorezi,{|x| x[1]==_IdTarifa})
-  		if nPoz==0
-     			AADD(aPorezi,{_IdTarifa,nPPPiznos,nPPUiznos,nPPIznos,{opp,ppp,zpp}})
-  		else
-     			aPorezi[nPoz][2]+=nPPPiznos
-     			aPorezi[nPoz][3]+=nPPUiznos
-     			aPorezi[nPoz][4]+=nPPiznos
-  		endif
-    	else // stara varijanta
-   		SetAPorezi(@aPorezi)
-		aIPor:=RacPorezeMP(aPorezi, nMPVBP, nIznosSt, 0)
-		? " PPP(" + STR(nPPP,2,0) + "%)" + ALLTRIM(STR(ROUND(aIPor[1],2)))
-		?? " PPU(" + STR(nPPU,2,0) + "%)" + ALLTRIM(STR(ROUND(aIPor[2],2)))
-		?? " PP(" + STR(nPP,2,0) + "%)" + ALLTRIM(STR(ROUND(aIPor[3],2)))
-		nSumaPor+=aIPor[1]+aIPor[2]+aIPor[3]
-		nPoz:=ASCAN(aRekPor,{|x| x[1]==_IdTarifa})
-  		if nPoz==0
-    			AADD(aRekPor, {_idtarifa, aIPor[1], aIPor[2], aIPor[3], aIPor[1]+aIPor[2]+aIPor[3]})
-  		else
-     			aRekPor[nPoz][2]+=aIPor[1]
-     			aRekPor[nPoz][3]+=aIPor[2]
-     			aRekPor[nPoz][4]+=aIPor[3]
-  		endif
+         IF glPorezNaSvakuStavku
+            ?? " PPU(" + AllTrim( Str( nPPU ) ) + "%) " + AllTrim( Str( nPPUIznos ) )
+         ENDIF
+
+         nSumaPor += nPPPiznos + nPPUiznos + nPPIznos
+         nPoz := AScan( aPorezi, {| x| x[ 1 ] == _IdTarifa } )
+         IF nPoz == 0
+            AAdd( aPorezi, { _IdTarifa, nPPPiznos, nPPUiznos, nPPIznos, { opp, ppp, zpp } } )
+         ELSE
+            aPorezi[ nPoz ][ 2 ] += nPPPiznos
+            aPorezi[ nPoz ][ 3 ] += nPPUiznos
+            aPorezi[ nPoz ][ 4 ] += nPPiznos
+         ENDIF
+      ELSE // stara varijanta
+         SetAPorezi( @aPorezi )
+         aIPor := RacPorezeMP( aPorezi, nMPVBP, nIznosSt, 0 )
+         ? " PPP(" + Str( nPPP, 2, 0 ) + "%)" + AllTrim( Str( Round( aIPor[ 1 ], 2 ) ) )
+         ?? " PPU(" + Str( nPPU, 2, 0 ) + "%)" + AllTrim( Str( Round( aIPor[ 2 ], 2 ) ) )
+         ?? " PP(" + Str( nPP, 2, 0 ) + "%)" + AllTrim( Str( Round( aIPor[ 3 ], 2 ) ) )
+         nSumaPor += aIPor[ 1 ] + aIPor[ 2 ] + aIPor[ 3 ]
+         nPoz := AScan( aRekPor, {| x| x[ 1 ] == _IdTarifa } )
+         IF nPoz == 0
+            AAdd( aRekPor, { _idtarifa, aIPor[ 1 ], aIPor[ 2 ], aIPor[ 3 ], aIPor[ 1 ] + aIPor[ 2 ] + aIPor[ 3 ] } )
+         ELSE
+            aRekPor[ nPoz ][ 2 ] += aIPor[ 1 ]
+            aRekPor[ nPoz ][ 3 ] += aIPor[ 2 ]
+            aRekPor[ nPoz ][ 4 ] += aIPor[ 3 ]
+         ENDIF
 	
-    	endif
-   	SELECT &cPosDB
-enddo
+      ENDIF
+      SELECT &cPosDB
+   ENDDO
 
-SEEK cIdPos+"42"+dtos(dDatumRn)+cBrDok
-do while !eof().and.&cPosDB->(IdPos+IdVd+dtos(datum)+BrDok)==(cIdPos+VD_RN+dtos(dDatumRn)+cBrDok)
-	replace m1 with "S" // odstampano
-  	skip
-enddo
-// iznos racuna
-? " " + REPLICATE("=", 38)
-? PADL("UKUPNO (" + gDomValuta + ")", 30),IIF(nIznos >= 0, TRANSFORM(nIznos, "****9.99"),TRANSFORM(nIznos,"99999.99"))
+   SEEK cIdPos + "42" + DToS( dDatumRn ) + cBrDok
+   DO WHILE !Eof() .AND. &cPosDB->( IdPos + IdVd + DToS( datum ) + BrDok ) == ( cIdPos + VD_RN + DToS( dDatumRn ) + cBrDok )
+      REPLACE m1 WITH "S" // odstampano
+      SKIP
+   ENDDO
+   // iznos racuna
+   ? " " + Replicate( "=", 38 )
+   ? PadL( "UKUPNO (" + gDomValuta + ")", 30 ), iif( nIznos >= 0, Transform( nIznos, "****9.99" ), Transform( nIznos, "99999.99" ) )
 
-if nNeplaca<>0 // postoji oslobadjanje
-	?
- 	? " " + REPLICATE ("-", 38)
- 	? PADL ("  POPUST: (" + gDomValuta + ")", 30), TRANSFORM (nNeplaca, "99999.99")
- 	? " " + REPLICATE ("=", 38)
- 	? PADL ("NAPLATITI (" + gDomValuta + ")", 30),IIF(nIznos-nNePlaca >= 0,TRANSFORM (nIznos-nNeplaca, "****9.99"),TRANSFORM(nIznos-nNePlaca, "99999.99"))
-endif
-? " " + REPLICATE ("=", 38)
-if !empty(gStrValuta)
-	?
-  	? PADL ("UKUPNO (" + gStrValuta + ")", 30),IIF (nIznos >= 0, TRANSFORM (StrValuta(gStrValuta,pos_doks->datum)*nIznos, "****9.99"),TRANSFORM(StrValuta(gStrValuta,pos_doks->datum)*nIznos, "99999.99"))
-  	? " " + REPLICATE ("=", 38)
-endif
+   IF nNeplaca <> 0 // postoji oslobadjanje
+      ?
+      ? " " + Replicate ( "-", 38 )
+      ? PadL ( "  POPUST: (" + gDomValuta + ")", 30 ), Transform ( nNeplaca, "99999.99" )
+      ? " " + Replicate ( "=", 38 )
+      ? PadL ( "NAPLATITI (" + gDomValuta + ")", 30 ), iif( nIznos - nNePlaca >= 0, Transform ( nIznos - nNeplaca, "****9.99" ), Transform( nIznos - nNePlaca, "99999.99" ) )
+   ENDIF
+   ? " " + Replicate ( "=", 38 )
+   IF !Empty( gStrValuta )
+      ?
+      ? PadL ( "UKUPNO (" + gStrValuta + ")", 30 ), iif ( nIznos >= 0, Transform ( StrValuta( gStrValuta, pos_doks->datum ) * nIznos, "****9.99" ), Transform( StrValuta( gStrValuta, pos_doks->datum ) * nIznos, "99999.99" ) )
+      ? " " + Replicate ( "=", 38 )
+   ENDIF
 
-// porezi
-// stari obracun poreza
+   // porezi
+   // stari obracun poreza
 
-if gStariObrPor
-	? " U iznos uracunati porezi "
-	if gPoreziRaster=="D"
-		ASORT(aPorezi,,, {|x, y| x[1] < y[1]})
-   		fPP:=.f. // ima posebnog poreza
-   		for i:=1 to len(aPorezi)
-     			if round(aPorezi[i,4],4)<>0
-        			fPP:=.t.
-        			exit
-     			endif
-   		next
-   		? " T.br.        PPP       PPU      Iznos"
-   		if fPP
-      			? "               PP"
-   		endif
-   		nPPP:=nPPU:=0
-   		nPP:=0
-   		for nCnt:=1 to len(aPorezi)
-      			if IzFMKIni("TOPS","NaRacunuPrikazatiProcentePoreza","D",KUMPATH)=="D"
-        			? " T" + PADR(aPorezi[nCnt][1],4)
-        			?? " (PPP "+STR(aPorezi[nCnt][5][1],2,0)+"%, PPU "+STR(aPorezi[nCnt][5][2],2,0)+IF(!fPP,"%)   ","%, PP "+STR(aPorezi[nCnt][5][3],2,0)+"%)")
-				? SPACE(10)
-      			else
-        			? " T" + PADR (aPorezi[nCnt][1], 4) + "    "
-      			endif
-      			?? STR ( aPorezi[nCnt][2], 7, N_ROUNDTO) + "   " +STR(aPorezi[nCnt][3], 7, N_ROUNDTO) + "    " + STR(round(aPorezi[nCnt][2],N_ROUNDTO)+round(aPorezi[nCnt][3],N_ROUNDTO)+round(aPorezi[nCnt][4],N_ROUNDTO), 7, N_ROUNDTO)
-      			if round(aPorezi[nCnt][4],4)<>0
-        			? space(10)+STR ( aPorezi[nCnt][4], 7, N_ROUNDTO)
-      			endif
+   IF gStariObrPor
+      ? " U iznos uracunati porezi "
+      IF gPoreziRaster == "D"
+         ASort( aPorezi,,, {| x, y| x[ 1 ] < y[ 1 ] } )
+         fPP := .F. // ima posebnog poreza
+         FOR i := 1 TO Len( aPorezi )
+            IF Round( aPorezi[ i, 4 ], 4 ) <> 0
+               fPP := .T.
+               EXIT
+            ENDIF
+         NEXT
+         ? " T.br.        PPP       PPU      Iznos"
+         IF fPP
+            ? "               PP"
+         ENDIF
+         nPPP := nPPU := 0
+         nPP := 0
+         FOR nCnt := 1 TO Len( aPorezi )
+            IF IzFMKIni( "TOPS", "NaRacunuPrikazatiProcentePoreza", "D", KUMPATH ) == "D"
+               ? " T" + PadR( aPorezi[ nCnt ][ 1 ], 4 )
+               ?? " (PPP " + Str( aPorezi[ nCnt ][ 5 ][ 1 ], 2, 0 ) + "%, PPU " + Str( aPorezi[ nCnt ][ 5 ][ 2 ], 2, 0 ) + IF( !fPP, "%)   ", "%, PP " + Str( aPorezi[ nCnt ][ 5 ][ 3 ], 2, 0 ) + "%)" )
+               ? Space( 10 )
+            ELSE
+               ? " T" + PadR ( aPorezi[ nCnt ][ 1 ], 4 ) + "    "
+            ENDIF
+            ?? Str ( aPorezi[ nCnt ][ 2 ], 7, N_ROUNDTO ) + "   " + Str( aPorezi[ nCnt ][ 3 ], 7, N_ROUNDTO ) + "    " + Str( Round( aPorezi[ nCnt ][ 2 ], N_ROUNDTO ) + Round( aPorezi[ nCnt ][ 3 ], N_ROUNDTO ) + Round( aPorezi[ nCnt ][ 4 ], N_ROUNDTO ), 7, N_ROUNDTO )
+            IF Round( aPorezi[ nCnt ][ 4 ], 4 ) <> 0
+               ? Space( 10 ) + Str ( aPorezi[ nCnt ][ 4 ], 7, N_ROUNDTO )
+            ENDIF
 
-      			nPPP+=round(aPorezi[nCnt][2],N_ROUNDTO)
-      			nPPU+=round(aPorezi[nCnt][3],N_ROUNDTO)
-      			nPP+=round(aPorezi[nCnt][4],N_ROUNDTO)
-   		next
-   		? " " + REPLICATE ("-", 38)
-   		? " UKUPNO   " + STR(nPPP,7,N_ROUNDTO) + "   " +STR(nPPU,7,N_ROUNDTO) + "    " + STR(nPPP+nPPU+nPP,7,N_ROUNDTO)
-   		if fPP
-      			? "          " +STR(nPP,7,N_ROUNDTO)
-   		endif
-	else
-		?? LTRIM (STR (nSumaPor, 8, N_ROUNDTO)), gDomValuta
-	endif
+            nPPP += Round( aPorezi[ nCnt ][ 2 ], N_ROUNDTO )
+            nPPU += Round( aPorezi[ nCnt ][ 3 ], N_ROUNDTO )
+            nPP += Round( aPorezi[ nCnt ][ 4 ], N_ROUNDTO )
+         NEXT
+         ? " " + Replicate ( "-", 38 )
+         ? " UKUPNO   " + Str( nPPP, 7, N_ROUNDTO ) + "   " + Str( nPPU, 7, N_ROUNDTO ) + "    " + Str( nPPP + nPPU + nPP, 7, N_ROUNDTO )
+         IF fPP
+            ? "          " + Str( nPP, 7, N_ROUNDTO )
+         ENDIF
+      ELSE
+         ?? LTrim ( Str ( nSumaPor, 8, N_ROUNDTO ) ), gDomValuta
+      ENDIF
 
-else // stari obracun poreza
-	if gPoreziRaster=="D"
-		POSRekapTar(aRekPor)
-	endif
-endif
+   ELSE // stari obracun poreza
+      IF gPoreziRaster == "D"
+         POSRekapTar( aRekPor )
+      ENDIF
+   ENDIF
 
-RacFuter(cIdRadnik, cSmjena)
-END PRN2 13
-SkloniIznRac()
-return (cTime)
-*}
+   RacFuter( cIdRadnik, cSmjena )
+   ENDPRN2 13
+   SkloniIznRac()
+
+   RETURN ( cTime )
 
 
 /*! \fn RacHeder(cIdPos,cDatBrDok,cSto,fPrepis, aVezani)
  */
- 
-function RacHeder(cIdPos,cDatBrDok,cSto,fPrepis, aVezani)
-//
-//                    1            2               3              4
-//  aVezani : {pos_doks->IdPos, pos_doks->(BrDok), pos_doks->IdVrsteP, pos_doks->Datum})
-//  fprepis - .t. - vrsi se prepis racuna
 
-local cStr
-local cTime
-local nCnt
-local cJedan
-local dDat
+FUNCTION RacHeder( cIdPos, cDatBrDok, cSto, fPrepis, aVezani )
 
-cStr:=MEMOREAD(PRIVPATH+AllTrim(gRnHeder))
+   //
+   // 1            2               3              4
+   // aVezani : {pos_doks->IdPos, pos_doks->(BrDok), pos_doks->IdVrsteP, pos_doks->Datum})
+   // fprepis - .t. - vrsi se prepis racuna
 
-IF ! EMPTY (cStr)
-	QQOUT (cStr)
-  	?
-ENDIF
- 
-?? PADC ("RACUN br. "+ALLTRIM (cIdPos)+"-"+ALLTRIM (substr(cDatBrDok,9)), 40)
+   LOCAL cStr
+   LOCAL cTime
+   LOCAL nCnt
+   LOCAL cJedan
+   LOCAL dDat
 
-IF fPrepis
-  	if !glRetroakt
-  		? PADC ("PREPIS", 40)
-  	endif
-  	if LEN(aVezani)>1
-		? PADC("ZBIRNI", 40)
-	endif
-	cStr := Space(16)
-  	FOR nCnt := 2 TO LEN (aVezani)
-    		cJedan := ALLTRIM (aVezani [nCnt][1])+"-"+ALLTRIM (aVezani [nCnt][2])
-    		IF LEN (cStr) + LEN (cJedan) < 38
-      			cStr += cJedan + ", "
-    		ELSE
-      			cStr += CHR (13)+CHR(10)+SPACE (16)+cJedan
-    		ENDIF
-  	NEXT
-  	IF !Empty (cStr)
-    		? " Vezani racuni: " + LTrim (cStr)
-  	ENDIF
-  	nPrev := SELECT ()
-  	select pos_doks
-  	// HSEEK (cIdPos+VD_RN+cDatBrDok)
-  	cTime := pos_doks->Vrijeme
-  	cDat  := DTOC (pos_doks->Datum)
-  	SELECT (nPrev)
-ELSE
-	cTime := LEFT (TIME(), 5)
-  	cDat := DTOC (gDatum)
-ENDIF
+   cStr := MemoRead( PRIVPATH + AllTrim( gRnHeder ) )
 
-if gModul=="HOPS"
-	cStoStr := "Sto: " + cSto
-else
-  	cStoStr := SPACE (8)
-endif
+   IF ! Empty ( cStr )
+      QQOut ( cStr )
+      ?
+   ENDIF
 
-? " " + cDat + "." + SPACE (8) + cStoStr + SPACE (8) + cTime
-? " " + REPLICATE ("-", 38)
+   ?? PadC ( "RACUN br. " + AllTrim ( cIdPos ) + "-" + AllTrim ( SubStr( cDatBrDok, 9 ) ), 40 )
 
-RETURN (cTime)
-*}
+   IF fPrepis
+      IF !glRetroakt
+         ? PadC ( "PREPIS", 40 )
+      ENDIF
+      IF Len( aVezani ) > 1
+         ? PadC( "ZBIRNI", 40 )
+      ENDIF
+      cStr := Space( 16 )
+      FOR nCnt := 2 TO Len ( aVezani )
+         cJedan := AllTrim ( aVezani[ nCnt ][ 1 ] ) + "-" + AllTrim ( aVezani[ nCnt ][ 2 ] )
+         IF Len ( cStr ) + Len ( cJedan ) < 38
+            cStr += cJedan + ", "
+         ELSE
+            cStr += Chr ( 13 ) + Chr( 10 ) + Space ( 16 ) + cJedan
+         ENDIF
+      NEXT
+      IF !Empty ( cStr )
+         ? " Vezani racuni: " + LTrim ( cStr )
+      ENDIF
+      nPrev := Select ()
+      SELECT pos_doks
+      // HSEEK (cIdPos+VD_RN+cDatBrDok)
+      cTime := pos_doks->Vrijeme
+      cDat  := DToC ( pos_doks->Datum )
+      SELECT ( nPrev )
+   ELSE
+      cTime := Left ( Time(), 5 )
+      cDat := DToC ( gDatum )
+   ENDIF
+
+   IF gModul == "HOPS"
+      cStoStr := "Sto: " + cSto
+   ELSE
+      cStoStr := Space ( 8 )
+   ENDIF
+
+   ? " " + cDat + "." + Space ( 8 ) + cStoStr + Space ( 8 ) + cTime
+   ? " " + Replicate ( "-", 38 )
+
+   RETURN ( cTime )
+// }
 
 /*! \fn RacFuter(cIdRadnik,cSmjena)
  */
- 
-function RacFuter(cIdRadnik,cSmjena)
-*{
-LOCAL cStr
 
-? " " + REPLICATE ("-", 38)
-SELECT OSOB
-set order to tag "NAZ"
-HSEEK cIdRadnik
-? " " + PADR (ALLTRIM (OSOB->Naz), 29), "Smjena " + cSmjena
-cStr := MEMOREAD (PRIVPATH+AllTrim (gRnFuter))
-IF !EMPTY(cStr)
-	QOUT(cStr)
-ENDIF
-PaperFeed ()
-gOtvorStr()
-RETURN
-*}
+FUNCTION RacFuter( cIdRadnik, cSmjena )
+
+   // {
+   LOCAL cStr
+
+   ? " " + Replicate ( "-", 38 )
+   SELECT OSOB
+   SET ORDER TO TAG "NAZ"
+   HSEEK cIdRadnik
+   ? " " + PadR ( AllTrim ( OSOB->Naz ), 29 ), "Smjena " + cSmjena
+   cStr := MemoRead ( PRIVPATH + AllTrim ( gRnFuter ) )
+   IF !Empty( cStr )
+      QOut( cStr )
+   ENDIF
+   PaperFeed ()
+   gOtvorStr()
+
+   RETURN
+// }
 
 
-function StampaPrep(cIdPos, cDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFill)
-*{
-local cDbf
-local cIdRadnik
-local nCnt
-local aPom:={}
-local cPom
+FUNCTION StampaPrep( cIdPos, cDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFill )
 
-//
-//                    1            2               3              4
-//  aVezani : {pos_doks->IdPos, pos_doks->(BrDok), pos_doks->IdVrsteP, pos_doks->Datum})
-//
-// Napomena: cDatBrDok sadrzi DTOS(DATUM)+BRDOK  !!
+   // {
+   LOCAL cDbf
+   LOCAL cIdRadnik
+   LOCAL nCnt
+   LOCAL aPom := {}
+   LOCAL cPom
 
-private nIznos:=0
-private nSumaPor:=0
-private aPorezi:={}
+   //
+   // 1            2               3              4
+   // aVezani : {pos_doks->IdPos, pos_doks->(BrDok), pos_doks->IdVrsteP, pos_doks->Datum})
+   //
+   // Napomena: cDatBrDok sadrzi DTOS(DATUM)+BRDOK  !!
 
-if fEkran==NIL
-	fEkran:=.f.
-else
-	fEkran:=.t.
-endif
+   PRIVATE nIznos := 0
+   PRIVATE nSumaPor := 0
+   PRIVATE aPorezi := {}
 
-if lOnlyFill == nil
-	lOnlyFill := .f.
-endif
+   IF fEkran == NIL
+      fEkran := .F.
+   ELSE
+      fEkran := .T.
+   ENDIF
 
-if lViseOdjednom==nil
-	lViseOdjednom:=.f.
-endif
+   IF lOnlyFill == nil
+      lOnlyFill := .F.
+   ENDIF
 
-select pos_doks
-set order to tag "1"
+   IF lViseOdjednom == nil
+      lViseOdjednom := .F.
+   ENDIF
 
-Seek2(cIdPos + VD_RN + cDatBrDok)
+   SELECT pos_doks
+   SET ORDER TO TAG "1"
 
-nTRk:=RecNo()
+   Seek2( cIdPos + VD_RN + cDatBrDok )
 
-cSto:=pos_doks->Sto
-cIdRadnik:=pos_doks->IdRadnik
-cSmjena:=pos_doks->Smjena
+   nTRk := RecNo()
 
-if gBrojSto=="D" .and. !glUgostOpc
-	cZakljucen:=pos_doks->zakljucen
-endif
+   cSto := pos_doks->Sto
+   cIdRadnik := pos_doks->IdRadnik
+   cSmjena := pos_doks->Smjena
 
-select pos
+   IF gBrojSto == "D" .AND. !glUgostOpc
+      cZakljucen := pos_doks->zakljucen
+   ENDIF
 
-nIznos := 0
-nNeplaca:=0
+   SELECT pos
 
-for nCnt:=1 to LEN(aVezani)
-	select pos_doks
-	seek (aVezani[nCnt][1]+VD_RN+dtos(aVezani[nCnt][4])+aVezani[nCnt][2])
-	select pos
-	seek (aVezani[nCnt][1]+VD_RN+dtos(aVezani[nCnt][4])+aVezani[nCnt][2])
-  	do while !EOF() .and. pos->(IdPos+IdVd+dtos(datum)+BrDok)==(aVezani[nCnt][1]+VD_RN+dtos(aVezani[nCnt][4])+aVezani[nCnt][2])
-    		if gBrojSto == "D"
-			//
-		endif
+   nIznos := 0
+   nNeplaca := 0
+
+   FOR nCnt := 1 TO Len( aVezani )
+      SELECT pos_doks
+      SEEK ( aVezani[ nCnt ][ 1 ] + VD_RN + DToS( aVezani[ nCnt ][ 4 ] ) + aVezani[ nCnt ][ 2 ] )
+      SELECT pos
+      SEEK ( aVezani[ nCnt ][ 1 ] + VD_RN + DToS( aVezani[ nCnt ][ 4 ] ) + aVezani[ nCnt ][ 2 ] )
+      DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + BrDok ) == ( aVezani[ nCnt ][ 1 ] + VD_RN + DToS( aVezani[ nCnt ][ 4 ] ) + aVezani[ nCnt ][ 2 ] )
+         IF gBrojSto == "D"
+            //
+         ENDIF
 		
-		//select pom
-    		//seek POS->IdRoba+POS->IdCijena+STR (POS->Cijena, 10, 3)
-    		//if Found()
-      		//	replace Kolicina WITH Kolicina+POS->Kolicina
-    		//else
-      		//	Append Blank  
-      		//	replace IdRoba WITH POS->IdRoba
-		//	replace IdCijena WITH POS->IdCijena
-		//	replace Cijena WITH POS->Cijena
-		//	replace Kolicina WITH POS->Kolicina
-              	//	replace NCijena WITH pos->ncijena
-              	//	replace datum WITH pos->datum
-    		//endif
-   		//select pos
+         // select pom
+         // seek POS->IdRoba+POS->IdCijena+STR (POS->Cijena, 10, 3)
+         // if Found()
+         // replace Kolicina WITH Kolicina+POS->Kolicina
+         // else
+         // Append Blank
+         // replace IdRoba WITH POS->IdRoba
+         // replace IdCijena WITH POS->IdCijena
+         // replace Cijena WITH POS->Cijena
+         // replace Kolicina WITH POS->Kolicina
+         // replace NCijena WITH pos->ncijena
+         // replace datum WITH pos->datum
+         // endif
+         // select pos
     		
-		nIznos+=pos->(kolicina*cijena)
-    		select odj
-		seek pos->idodj
-		select POS
-    		if right(odj->naz,5)=="#1#0#"
-       			nNeplaca+=pos->(Kolicina*Cijena - ncijena*Kolicina)
-    		elseif right(odj->naz,6)=="#1#50#"
-       			nNeplaca+=pos->(Kolicina*Cijena/2 - ncijena)
-    		endif
-    		if gPopVar="P"
-			nNeplaca+=pos->(kolicina*ncijena)
-		endif
-    		skip
-  	enddo
-next
-
-// Varijanta ugostiteljstvo
-// Iskoristena funkcija StampaRac()
-// Mislim da ovo i jeste najbolja varijanta, razlika je samo u _POS i POS
-
-select pos_doks
-go nTrk
-select pos
-
-if !gStariObrPor
-	if IsPDV()
-		pos_stampa_racuna_pdv(cIdPos, pos_doks->brdok, .t., pos_doks->idvrstep, pos_doks->datum, aVezani, lViseOdjednom, lOnlyFill)
-	else
-		pos_stampa_racuna(cIdPos, pos_doks->brdok, .t., pos_doks->idvrstep, pos_doks->datum, aVezani)
-	endif
-	
-	return
-endif
-
-// TODO: ovu funkciju izbaciti
-// napraviti sve kroz StampaRac() kao sto je slucaj sa novim obracunom poreza
-// Ostavljeno trenutno samo u ovoj varijanti (Ugostiteljstvo)
-
-if fEkran
-	if !lViseOdjednom
-  		START PRINT CRET
-  	endif
-else
-  	ispisi_iznos_racuna_box( nIznos - nNeplaca )
-  	STARTPRINTPORT CRET gLocPort, SPACE (5)
-endif
-
-RacHeder (cIdPos, cDatBrDok, cSto, .T., aVezani)
-
-SELECT POM
-GO TOP
-DO WHILE ! EOF()
-  cPom:=" * "
-  select roba
-  HSEEK POM->IdRoba
-
-  cPom+=trim(POM->IdRoba)+" - "+TRIM(roba->Naz)
-  aPom:=SjeciStr(cPom,38)
-  for i:=1 to len(aPom)
-  	? aPom[i]
-  next
-
-  _idTarifa := roba->IdTarifa
-  cJmj := roba->JMJ
-
-  SELECT POM
-  nIznosSt := POM->(Kolicina * (Cijena-NCijena))
-  // uzeti u obzir popust !!!!
-
-  if gKolDec==N_ROUNDTO
-  	? SPACE (1)+PADR ("(T" + ALLTRIM (_IdTarifa) + ")", 6)+STR (POM->Kolicina, 9, N_ROUNDTO), cJmj, "x "
-  else
-  	? SPACE (1)+PADR ("(T" + ALLTRIM (_IdTarifa) + ")", 6)+STR (POM->Kolicina, 9, gKolDec), cJmj, "x "
-  endif
-
-  if gCijDec==N_ROUNDTO
-  	?? PADR (ALLTRIM (STR (POM->Cijena, 8, N_ROUNDTO)), 8) + STR (nIznosSt, 8, N_ROUNDTO)
-  else
-  	?? PADR (ALLTRIM (STR (POM->Cijena, 8, gCijDec)), 8) + STR (nIznosSt, 8, N_ROUNDTO)
-  endif
-
-  // obracun poreza
-  SELECT TARIFA
-  Seek2 (_IdTarifa)
-
-  if glPorezNaSvakuStavku
-  	nPPP:=tarifa->opp
-  	nPPU:=tarifa->ppp
-  endif
-
-  IF IzFMKINI("POREZI","PPUgostKaoPPU","N")=="D"
-    nMpVBP:=nIznosSt/(1+zpp/100+ppp/100)/(1+opp/100)
-    nPPPIznos:=nMPVBP*opp/100
-    nPPIznos:=(nMPVBP+nPPPIznos)*zpp/100
-  ELSE
-    nMpVBP:=nIznosSt/(zpp/100+(1+opp/100)*(1+ppp/100))
-    nPPPIznos:=nMPVBP*opp/100
-    nPPIznos:=nMPVBP*zpp/100
-  ENDIF
-
-  if glPorezNaSvakuStavku  	
-  	? SPACE(1) + "PPP(" + ALLTRIM(STR(nPPP)) + "%) " + ALLTRIM(STR(nPPPIznos))	
-  endif
-
-  nPPUIznos:=(nMPVBP+nPPPIznos)*ppp/100
-
-  if glPorezNaSvakuStavku
-  	?? " PPU(" + ALLTRIM(STR(nPPU)) + "%) " + ALLTRIM(STR(nPPUIznos))
-  endif
-
-  nSumaPor += nPPPiznos + nPPUiznos + nPPIznos
-
-  nPoz := ASCAN (aPorezi, {|x| x[1] == _IdTarifa})
-  	if nPoz==0
-     		AADD(aPorezi,{_IdTarifa,nPPPiznos,nPPUiznos,nPPIznos,{opp,ppp,zpp}})
-  	else
-     		aPorezi[nPoz][2]+=nPPPiznos
-     		aPorezi[nPoz][3]+=nPPUiznos
-     		aPorezi[nPoz][4]+=nPPiznos
-  	endif
-
-  SELECT POM
-  SKIP
-ENDDO
-// iznos racuna
-? " " + REPLICATE ("=", 38)
-? PADL ("UKUPNO (" + gDomValuta + ")", 30), ;
-  IIF (nIznos >= 0, TRANSFORM (nIznos, "****9.99"), ;
-                    TRANSFORM (nIznos, "99999.99"))
-
-
-if nNeplaca<>0 // postoji oslobadjanje
- ?
- ? " " + REPLICATE ("-", 38)
- ? PADL ("  POPUST: (" + gDomValuta + ")", 30), TRANSFORM (nNeplaca, "99999.99")
- ? " " + REPLICATE ("=", 38)
- ? PADL ("NAPLATITI (" + gDomValuta + ")", 30), ;
-  IIF (nIznos-nNePlaca >= 0, TRANSFORM (nIznos-nNeplaca, "****9.99"), ;
-                    TRANSFORM (nIznos-nNePlaca, "99999.99"))
-endif
-
-? " " + REPLICATE ("=", 38)
-if !empty(gStrValuta)
-  ?
-  ? PADL ("UKUPNO (" + gStrValuta + ")", 30), ;
-   IIF (nIznos >= 0, TRANSFORM (StrValuta(gStrValuta,pos_doks->datum)*nIznos, "****9.99"), ;
-                     TRANSFORM (StrValuta(gStrValuta,pos_doks->datum)*nIznos, "99999.99"))
-  ? " " + REPLICATE ("=", 38)
-endif
-
-// porezi
-? " U iznos uracunati porezi "
-IF gPoreziRaster == "D"
-   ASORT (aPorezi,,, {|x, y| x[1] < y[1]})
-   fPP:=.f. // ima posebnog poreza
-   for i:=1 to len (aPorezi)
-     if round(aPorezi[i,4],4)<>0
-        fPP:=.t.
-        exit
-     endif
-   next
-   ? " T.br.        PPP       PPU      Iznos"
-   if fPP
-      ? "               PP"
-   endif
-   nPPP:=nPPU:=0
-   nPP:=0
-   FOR nCnt := 1 TO LEN (aPorezi)
-      		if IzFMKIni("TOPS","NaRacunuPrikazatiProcentePoreza","D",KUMPATH)=="D"
-        		? " T" + PADR(aPorezi[nCnt][1],4)
-        		?? " (PPP "+STR(aPorezi[nCnt][5][1],2,0)+"%, PPU "+STR(aPorezi[nCnt][5][2],2,0)+IF(!fPP,"%)   ","%, PP "+STR(aPorezi[nCnt][5][3],2,0)+"%)")
-        		? SPACE(10)
-      		else
-		        ? " T" + PADR (aPorezi[nCnt][1], 4) + "    "
-		endif	
-      ?? STR ( aPorezi[nCnt][2], 7, N_ROUNDTO) + "   " + ;
-        STR ( aPorezi[nCnt][3], 7, N_ROUNDTO) + "    " + ;
-        STR ( round(aPorezi[nCnt][2],N_ROUNDTO)+;
-              round(aPorezi[nCnt][3],N_ROUNDTO)+;
-              round(aPorezi[nCnt][4],N_ROUNDTO), 7, N_ROUNDTO)
-      if round(aPorezi[nCnt][4],4)<>0
-        ? space(10)+STR ( aPorezi[nCnt][4], 7, N_ROUNDTO)
-      endif
-      nPPP+=round(aPorezi[nCnt][2],N_ROUNDTO)
-      nPPU+=round(aPorezi[nCnt][3],N_ROUNDTO)
-      nPP +=round(aPorezi[nCnt][4],N_ROUNDTO)
+         nIznos += pos->( kolicina * cijena )
+         SELECT odj
+         SEEK pos->idodj
+         SELECT POS
+         IF Right( odj->naz, 5 ) == "#1#0#"
+            nNeplaca += pos->( Kolicina * Cijena - ncijena * Kolicina )
+         ELSEIF Right( odj->naz, 6 ) == "#1#50#"
+            nNeplaca += pos->( Kolicina * Cijena / 2 - ncijena )
+         ENDIF
+         IF gPopVar = "P"
+            nNeplaca += pos->( kolicina * ncijena )
+         ENDIF
+         SKIP
+      ENDDO
    NEXT
-   ? " " + REPLICATE ("-", 38)
-   ? " UKUPNO   " + ;
-     STR ( nPPP            , 7, N_ROUNDTO) + "   " + ;
-     STR ( nPPU            , 7, N_ROUNDTO) + "    " + ;
-     STR ( nPPP+nPPU+nPP   , 7, N_ROUNDTO)
-   if fPP
-      ? "          " + ;
-       STR ( nPP             , 7, N_ROUNDTO)
-   endif
-ELSE
-   ?? LTRIM (STR (nSumaPor, 8, N_ROUNDTO)), gDomValuta
-ENDIF
+
+   // Varijanta ugostiteljstvo
+   // Iskoristena funkcija StampaRac()
+   // Mislim da ovo i jeste najbolja varijanta, razlika je samo u _POS i POS
+
+   SELECT pos_doks
+   GO nTrk
+   SELECT pos
+
+   IF !gStariObrPor
+      IF IsPDV()
+         pos_stampa_racuna_pdv( cIdPos, pos_doks->brdok, .T., pos_doks->idvrstep, pos_doks->datum, aVezani, lViseOdjednom, lOnlyFill )
+      ELSE
+         pos_stampa_racuna( cIdPos, pos_doks->brdok, .T., pos_doks->idvrstep, pos_doks->datum, aVezani )
+      ENDIF
+	
+      RETURN
+   ENDIF
+
+   // TODO: ovu funkciju izbaciti
+   // napraviti sve kroz StampaRac() kao sto je slucaj sa novim obracunom poreza
+   // Ostavljeno trenutno samo u ovoj varijanti (Ugostiteljstvo)
+
+   IF fEkran
+      IF !lViseOdjednom
+         START PRINT CRET
+      ENDIF
+   ELSE
+      ispisi_iznos_racuna_box( nIznos - nNeplaca )
+      STARTPRINTPORT CRET gLocPort, Space ( 5 )
+   ENDIF
+
+   RacHeder ( cIdPos, cDatBrDok, cSto, .T., aVezani )
+
+   SELECT POM
+   GO TOP
+   DO WHILE ! Eof()
+      cPom := " * "
+      SELECT roba
+      HSEEK POM->IdRoba
+
+      cPom += Trim( POM->IdRoba ) + " - " + Trim( roba->Naz )
+      aPom := SjeciStr( cPom, 38 )
+      FOR i := 1 TO Len( aPom )
+         ? aPom[ i ]
+      NEXT
+
+      _idTarifa := roba->IdTarifa
+      cJmj := roba->JMJ
+
+      SELECT POM
+      nIznosSt := POM->( Kolicina * ( Cijena - NCijena ) )
+      // uzeti u obzir popust !!!!
+
+      IF gKolDec == N_ROUNDTO
+         ? Space ( 1 ) + PadR ( "(T" + AllTrim ( _IdTarifa ) + ")", 6 ) + Str ( POM->Kolicina, 9, N_ROUNDTO ), cJmj, "x "
+      ELSE
+         ? Space ( 1 ) + PadR ( "(T" + AllTrim ( _IdTarifa ) + ")", 6 ) + Str ( POM->Kolicina, 9, gKolDec ), cJmj, "x "
+      ENDIF
+
+      IF gCijDec == N_ROUNDTO
+         ?? PadR ( AllTrim ( Str ( POM->Cijena, 8, N_ROUNDTO ) ), 8 ) + Str ( nIznosSt, 8, N_ROUNDTO )
+      ELSE
+         ?? PadR ( AllTrim ( Str ( POM->Cijena, 8, gCijDec ) ), 8 ) + Str ( nIznosSt, 8, N_ROUNDTO )
+      ENDIF
+
+      // obracun poreza
+      SELECT TARIFA
+      Seek2 ( _IdTarifa )
+
+      IF glPorezNaSvakuStavku
+         nPPP := tarifa->opp
+         nPPU := tarifa->ppp
+      ENDIF
+
+      IF IzFMKINI( "POREZI", "PPUgostKaoPPU", "N" ) == "D"
+         nMpVBP := nIznosSt / ( 1 + zpp / 100 + ppp / 100 ) / ( 1 + opp / 100 )
+         nPPPIznos := nMPVBP * opp / 100
+         nPPIznos := ( nMPVBP + nPPPIznos ) * zpp / 100
+      ELSE
+         nMpVBP := nIznosSt / ( zpp / 100 + ( 1 + opp / 100 ) * ( 1 + ppp / 100 ) )
+         nPPPIznos := nMPVBP * opp / 100
+         nPPIznos := nMPVBP * zpp / 100
+      ENDIF
+
+      IF glPorezNaSvakuStavku
+         ? Space( 1 ) + "PPP(" + AllTrim( Str( nPPP ) ) + "%) " + AllTrim( Str( nPPPIznos ) )
+      ENDIF
+
+      nPPUIznos := ( nMPVBP + nPPPIznos ) * ppp / 100
+
+      IF glPorezNaSvakuStavku
+         ?? " PPU(" + AllTrim( Str( nPPU ) ) + "%) " + AllTrim( Str( nPPUIznos ) )
+      ENDIF
+
+      nSumaPor += nPPPiznos + nPPUiznos + nPPIznos
+
+      nPoz := AScan ( aPorezi, {| x| x[ 1 ] == _IdTarifa } )
+      IF nPoz == 0
+         AAdd( aPorezi, { _IdTarifa, nPPPiznos, nPPUiznos, nPPIznos, { opp, ppp, zpp } } )
+      ELSE
+         aPorezi[ nPoz ][ 2 ] += nPPPiznos
+         aPorezi[ nPoz ][ 3 ] += nPPUiznos
+         aPorezi[ nPoz ][ 4 ] += nPPiznos
+      ENDIF
+
+      SELECT POM
+      SKIP
+   ENDDO
+   // iznos racuna
+   ? " " + Replicate ( "=", 38 )
+   ? PadL ( "UKUPNO (" + gDomValuta + ")", 30 ), ;
+      iif ( nIznos >= 0, Transform ( nIznos, "****9.99" ), ;
+      Transform ( nIznos, "99999.99" ) )
 
 
-RacFuter(cIdRadnik,cSmjena)
+   IF nNeplaca <> 0 // postoji oslobadjanje
+      ?
+      ? " " + Replicate ( "-", 38 )
+      ? PadL ( "  POPUST: (" + gDomValuta + ")", 30 ), Transform ( nNeplaca, "99999.99" )
+      ? " " + Replicate ( "=", 38 )
+      ? PadL ( "NAPLATITI (" + gDomValuta + ")", 30 ), ;
+         iif ( nIznos - nNePlaca >= 0, Transform ( nIznos - nNeplaca, "****9.99" ), ;
+         Transform ( nIznos - nNePlaca, "99999.99" ) )
+   ENDIF
 
-if fEkran
-	if !lViseOdjednom
-		END PRINT
-	endif
-else
-  	END PRN2 13
-  	SkloniIznRac()
-endif
+   ? " " + Replicate ( "=", 38 )
+   IF !Empty( gStrValuta )
+      ?
+      ? PadL ( "UKUPNO (" + gStrValuta + ")", 30 ), ;
+         iif ( nIznos >= 0, Transform ( StrValuta( gStrValuta, pos_doks->datum ) * nIznos, "****9.99" ), ;
+         Transform ( StrValuta( gStrValuta, pos_doks->datum ) * nIznos, "99999.99" ) )
+      ? " " + Replicate ( "=", 38 )
+   ENDIF
 
-select pos_doks
+   // porezi
+   ? " U iznos uracunati porezi "
+   IF gPoreziRaster == "D"
+      ASort ( aPorezi,,, {| x, y| x[ 1 ] < y[ 1 ] } )
+      fPP := .F. // ima posebnog poreza
+      FOR i := 1 TO Len ( aPorezi )
+         IF Round( aPorezi[ i, 4 ], 4 ) <> 0
+            fPP := .T.
+            EXIT
+         ENDIF
+      NEXT
+      ? " T.br.        PPP       PPU      Iznos"
+      IF fPP
+         ? "               PP"
+      ENDIF
+      nPPP := nPPU := 0
+      nPP := 0
+      FOR nCnt := 1 TO Len ( aPorezi )
+         IF IzFMKIni( "TOPS", "NaRacunuPrikazatiProcentePoreza", "D", KUMPATH ) == "D"
+            ? " T" + PadR( aPorezi[ nCnt ][ 1 ], 4 )
+            ?? " (PPP " + Str( aPorezi[ nCnt ][ 5 ][ 1 ], 2, 0 ) + "%, PPU " + Str( aPorezi[ nCnt ][ 5 ][ 2 ], 2, 0 ) + IF( !fPP, "%)   ", "%, PP " + Str( aPorezi[ nCnt ][ 5 ][ 3 ], 2, 0 ) + "%)" )
+            ? Space( 10 )
+         ELSE
+            ? " T" + PadR ( aPorezi[ nCnt ][ 1 ], 4 ) + "    "
+         ENDIF
+         ?? Str ( aPorezi[ nCnt ][ 2 ], 7, N_ROUNDTO ) + "   " + ;
+            Str ( aPorezi[ nCnt ][ 3 ], 7, N_ROUNDTO ) + "    " + ;
+            Str ( Round( aPorezi[ nCnt ][ 2 ], N_ROUNDTO ) + ;
+            Round( aPorezi[ nCnt ][ 3 ], N_ROUNDTO ) + ;
+            Round( aPorezi[ nCnt ][ 4 ], N_ROUNDTO ), 7, N_ROUNDTO )
+         IF Round( aPorezi[ nCnt ][ 4 ], 4 ) <> 0
+            ? Space( 10 ) + Str ( aPorezi[ nCnt ][ 4 ], 7, N_ROUNDTO )
+         ENDIF
+         nPPP += Round( aPorezi[ nCnt ][ 2 ], N_ROUNDTO )
+         nPPU += Round( aPorezi[ nCnt ][ 3 ], N_ROUNDTO )
+         nPP += Round( aPorezi[ nCnt ][ 4 ], N_ROUNDTO )
+      NEXT
+      ? " " + Replicate ( "-", 38 )
+      ? " UKUPNO   " + ;
+         Str ( nPPP, 7, N_ROUNDTO ) + "   " + ;
+         Str ( nPPU, 7, N_ROUNDTO ) + "    " + ;
+         Str ( nPPP + nPPU + nPP, 7, N_ROUNDTO )
+      IF fPP
+         ? "          " + ;
+            Str ( nPP, 7, N_ROUNDTO )
+      ENDIF
+   ELSE
+      ?? LTrim ( Str ( nSumaPor, 8, N_ROUNDTO ) ), gDomValuta
+   ENDIF
 
-return
+
+   RacFuter( cIdRadnik, cSmjena )
+
+   IF fEkran
+      IF !lViseOdjednom
+         ENDPRINT
+      ENDIF
+   ELSE
+      ENDPRN2 13
+      SkloniIznRac()
+   ENDIF
+
+   SELECT pos_doks
+
+   RETURN
 
 
 // -------------------------------------------------
 // prikaz informacija o racunu
 // -------------------------------------------------
-function _sh_rn_info( cBrRn )
+FUNCTION _sh_rn_info( cBrRn )
 
-MsgBeep("Formiran je racun broj: " + cBrRN )
+   MsgBeep( "Formiran je racun broj: " + cBrRN )
 
-return
+   RETURN
 
 
 
 /*! \fn StampaRekap(cIdRadnik, cBrojStola)
  *  \brief Stampa rekapitulacije racuna
  */
- 
-function StampaRekap(cIdRadnik, cBrojStola, dDatumOd, dDatumDo)
-*{
-local nRecNoTrenutni
-local nRecNoNext
-private aGrupni
 
-cZakljucen:="N"
+FUNCTION StampaRekap( cIdRadnik, cBrojStola, dDatumOd, dDatumDo )
 
-select pos_doks
-set order to tag "8"
-go top
-seek gIdPos + cIdRadnik + cZakljucen
+   LOCAL nRecNoTrenutni
+   LOCAL nRecNoNext
+   PRIVATE aGrupni
 
-aGrupni:={}
+   cZakljucen := "N"
 
-nTek:=0
-nCnt:=0
+   SELECT pos_doks
+   SET ORDER TO TAG "8"
+   GO TOP
+   SEEK gIdPos + cIdRadnik + cZakljucen
 
-do while !EOF() .and. field->idpos==gIdPos .and. field->idradnik==cIdRadnik .and. field->datum<=dDatumDo .and. field->datum>=dDatumOd 
+   aGrupni := {}
+
+   nTek := 0
+   nCnt := 0
+
+   DO WHILE !Eof() .AND. field->idpos == gIdPos .AND. field->idradnik == cIdRadnik .AND. field->datum <= dDatumDo .AND. field->datum >= dDatumOd
 	
-	if field->zakljucen <> "N"
-		skip
-		loop
-	endif
+      IF field->zakljucen <> "N"
+         SKIP
+         LOOP
+      ENDIF
 	
-	if (field->sto<>cBrojStola)
-		skip
-		loop
-	endif
-	// markiraj ga kao zakljucen sa Z
-	if (field->zakljucen=="N")
+      IF ( field->sto <> cBrojStola )
+         SKIP
+         LOOP
+      ENDIF
+      // markiraj ga kao zakljucen sa Z
+      IF ( field->zakljucen == "N" )
 		
-		++nCnt
+         ++nCnt
 		
-		if nTek==0
-			nTek := RecNo()
-		endif
+         IF nTek == 0
+            nTek := RecNo()
+         ENDIF
 		
-		AADD(aGrupni, {pos_doks->idpos, pos_doks->brdok, pos_doks->idvrstep, pos_doks->datum})
+         AAdd( aGrupni, { pos_doks->idpos, pos_doks->brdok, pos_doks->idvrstep, pos_doks->datum } )
 		
-		nTRec:=RecNo()
-		skip
-		nNNRec:=RecNo()
-		skip -1
-		replace field->zakljucen with "Z"
+         nTRec := RecNo()
+         SKIP
+         nNNRec := RecNo()
+         SKIP -1
+         REPLACE field->zakljucen WITH "Z"
 		
-		go nNNRec	
-	endif
-enddo
+         GO nNNRec
+      ENDIF
+   ENDDO
 
-go nTek
+   GO nTek
 
-if nCnt==0
-	MsgBeep("Ne postoje otvoreni racuni za stol br." + cBrojStola)
-	return
-endif
+   IF nCnt == 0
+      MsgBeep( "Ne postoje otvoreni racuni za stol br." + cBrojStola )
+      RETURN
+   ENDIF
 
-StampaPrep(gIdPos, DTOS(aGrupni[1, 4]) + aGrupni[1, 2], aGrupni, .f., .f.)
+   StampaPrep( gIdPos, DToS( aGrupni[ 1, 4 ] ) + aGrupni[ 1, 2 ], aGrupni, .F., .F. )
 
-return
-*}
-
-
-function StampaNezakljRN(cIdRadnik, dDatumOd, dDatumDo)
-*{
-
-START PRINT CRET
-
-cZaklj:="N"
-
-select pos_doks
-set order to tag "8"
-go top
-
-seek gIdPos + cIdRadnik + cZaklj
-
-? SPACE(2),  Date()
-? SPACE(2) + "Nezakljuceni racuni:"
-? SPACE(2) + "----------------------"
-?
-? SPACE(2) + "Rn.Br.       Sto"
-? SPACE(2) + "----------------"
+   RETURN
+// }
 
 
-do while !EOF() .and. field->idpos==gIdPos .and. field->idradnik==cIdRadnik .and. field->datum<=dDatumDo .and. field->datum>=dDatumOd
-	if field->zakljucen <> "N"
-		skip
-		loop
-	endif
-	cBrDok:=pos_doks->brdok
-	cIdPos:=pos_doks->idpos
-	cBrojStola:=pos_doks->sto
+FUNCTION StampaNezakljRN( cIdRadnik, dDatumOd, dDatumDo )
 
-	? SPACE(2) + ALLTRIM(cIdPos) + "-" + ALLTRIM(cBrDok) + "  -> " + ALLTRIM(cBrojStola) 	
-	skip
-enddo
+   // {
 
-FF
-END PRINT
+   START PRINT CRET
 
-select pos_doks
-set order to tag "1"
+   cZaklj := "N"
 
-return
-*}
+   SELECT pos_doks
+   SET ORDER TO TAG "8"
+   GO TOP
 
+   SEEK gIdPos + cIdRadnik + cZaklj
 
-function SetujZakljuceno()
-*{
-local nCounter
-
-if !SigmaSif("RNZAK")
-	MsgBeep("Nemate ovlastenja za koristenje opcije!!!")
-	return
-endif
-
-if Pitanje(,"Setovati sve racune na zakljuceno (D/N) ?","N")=="N"
-	return
-endif
-
-if Pitanje(,"Sto posto sigurni da zelite (D/N) ?","N")=="N"
-	return
-endif
-
-select pos_doks
-set order to tag 0
-go top
-
-nCounter:=0
-
-do while !EOF()
-	replace field->zakljucen with "Z"
-	++ nCounter
-	skip
-enddo
-
-MsgBeep("Setovano ukupno " + ALLTRIM(STR(nCounter)) + " racuna!!!")
-
-return
-*}
+   ? Space( 2 ),  Date()
+   ? Space( 2 ) + "Nezakljuceni racuni:"
+   ? Space( 2 ) + "----------------------"
+   ?
+   ? Space( 2 ) + "Rn.Br.       Sto"
+   ? Space( 2 ) + "----------------"
 
 
-function gvars_fill()
-*{
-// snimanje defaultnih postavki
+   DO WHILE !Eof() .AND. field->idpos == gIdPos .AND. field->idradnik == cIdRadnik .AND. field->datum <= dDatumDo .AND. field->datum >= dDatumOd
+      IF field->zakljucen <> "N"
+         SKIP
+         LOOP
+      ENDIF
+      cBrDok := pos_doks->brdok
+      cIdPos := pos_doks->idpos
+      cBrojStola := pos_doks->sto
 
-// prikaz cijene sa pdv, bez pdv
-add_drntext("P20", ALLTRIM(STR(grbCjen)) )
-// stampa id robe na racunu
-add_drntext("P21", grbStId )
-// redukcija trake
-add_drntext("P22", ALLTRIM(STR(grbReduk)) )
+      ? Space( 2 ) + AllTrim( cIdPos ) + "-" + AllTrim( cBrDok ) + "  -> " + AllTrim( cBrojStola )
+      SKIP
+   ENDDO
 
-return
-*}
+   FF
+   ENDPRINT
 
-function firma_params_fill()
-*{
-// podaci firme
-add_drntext("I01", gFirNaziv)
-add_drntext("I02", gFirAdres)
-add_drntext("I03", gFirIdBroj)
-add_drntext("I04", gFirPM)
-add_drntext("I05", gFirTel)
+   SELECT pos_doks
+   SET ORDER TO TAG "1"
 
-return
+   RETURN
+// }
+
+
+FUNCTION SetujZakljuceno()
+
+   // {
+   LOCAL nCounter
+
+   IF !SigmaSif( "RNZAK" )
+      MsgBeep( "Nemate ovlastenja za koristenje opcije!!!" )
+      RETURN
+   ENDIF
+
+   IF Pitanje(, "Setovati sve racune na zakljuceno (D/N) ?", "N" ) == "N"
+      RETURN
+   ENDIF
+
+   IF Pitanje(, "Sto posto sigurni da zelite (D/N) ?", "N" ) == "N"
+      RETURN
+   ENDIF
+
+   SELECT pos_doks
+   SET ORDER TO TAG 0
+   GO TOP
+
+   nCounter := 0
+
+   DO WHILE !Eof()
+      REPLACE field->zakljucen WITH "Z"
+      ++ nCounter
+      SKIP
+   ENDDO
+
+   MsgBeep( "Setovano ukupno " + AllTrim( Str( nCounter ) ) + " racuna!!!" )
+
+   RETURN
+// }
+
+
+FUNCTION gvars_fill()
+
+   // prikaz cijene sa pdv, bez pdv
+   add_drntext( "P20", AllTrim( Str( grbCjen ) ) )
+   // stampa id robe na racunu
+   add_drntext( "P21", grbStId )
+   // redukcija trake
+   add_drntext( "P22", AllTrim( Str( grbReduk ) ) )
+
+   RETURN
+
+FUNCTION firma_params_fill()
+
+   add_drntext( "I01", gFirNaziv )
+   add_drntext( "I02", gFirAdres )
+   add_drntext( "I03", gFirIdBroj )
+   add_drntext( "I04", gFirPM )
+   add_drntext( "I05", gFirTel )
+
+   RETURN
 
 
 
-function fill_rb_traka(cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime)
-local cPosDB
-local dDatumRn
-local cSto
-local cIdRadnik
-local cSmjena
-local cIdRoba
-local cIdTarifa
-local cRobaNaz
-local nRbr
-// rn vars
-local nCjenBPDV
-local nCjenPDV
-local nKolicina
-local nPopust
-local nCjen2BPDV
-local nCjen2PDV
-local nVPDV
-local nPPDV
-local nUkupno
-local cJmj
-// drn vars
-local nUBPDV
-local nUPDV
-local nUPopust
-local nUBPDVPopust
-local nUTotal
-local nCSum
-local cRdnkNaz := ""
-local aPPs
-local cBrStola
-local nZakBr:=0
-local nFZaokr := 0
+FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
 
-o_pos_tables()
-close_open_racun_tbl()
-zap_racun_tbl()
+   LOCAL cPosDB
+   LOCAL dDatumRn
+   LOCAL cSto
+   LOCAL cIdRadnik
+   LOCAL cSmjena
+   LOCAL cIdRoba
+   LOCAL cIdTarifa
+   LOCAL cRobaNaz
+   LOCAL nRbr
 
-firma_params_fill()
+   // rn vars
+   LOCAL nCjenBPDV
+   LOCAL nCjenPDV
+   LOCAL nKolicina
+   LOCAL nPopust
+   LOCAL nCjen2BPDV
+   LOCAL nCjen2PDV
+   LOCAL nVPDV
+   LOCAL nPPDV
+   LOCAL nUkupno
+   LOCAL cJmj
+   // drn vars
+   LOCAL nUBPDV
+   LOCAL nUPDV
+   LOCAL nUPopust
+   LOCAL nUBPDVPopust
+   LOCAL nUTotal
+   LOCAL nCSum
+   LOCAL cRdnkNaz := ""
+   LOCAL aPPs
+   LOCAL cBrStola
+   LOCAL nZakBr := 0
+   LOCAL nFZaokr := 0
 
-gvars_fill()
+   o_pos_tables()
+   close_open_racun_tbl()
+   zap_racun_tbl()
 
-if lPrepis == .t.
-	select pos
-else
-	select _pos
-endif
+   firma_params_fill()
 
-// checksum
-nCSum := 0
+   gvars_fill()
 
-// matrica aRacuni moze da sadrzi vise racuna, u svakom slucaju sadrzi 1 racun
-// aRacuni : {pos_doks->IdPos, pos_doks->(BrDok), pos_doks->IdVrsteP, pos_doks->Datum})
+   IF lPrepis == .T.
+      SELECT pos
+   ELSE
+      SELECT _pos
+   ENDIF
 
-nUkupno := 0
-nUkStavka := 0
-nUBPDV := 0
-nUPDV := 0
-nUPopust := 0
-nUBPDVPopust := 0
-nUTotal := 0
+   // checksum
+   nCSum := 0
 
-for i:=1 to LEN(aRacuni)
+   // matrica aRacuni moze da sadrzi vise racuna, u svakom slucaju sadrzi 1 racun
+   // aRacuni : {pos_doks->IdPos, pos_doks->(BrDok), pos_doks->IdVrsteP, pos_doks->Datum})
 
-	dDatRn := aRacuni[i, 4]
-	cBrDok := aRacuni[i, 2]
+   nUkupno := 0
+   nUkStavka := 0
+   nUBPDV := 0
+   nUPDV := 0
+   nUPopust := 0
+   nUBPDVPopust := 0
+   nUTotal := 0
+
+   FOR i := 1 TO Len( aRacuni )
+
+      dDatRn := aRacuni[ i, 4 ]
+      cBrDok := aRacuni[ i, 2 ]
 	
-	if lPrepis == .t.
-		cStalRac := cBrDok
-	endif
+      IF lPrepis == .T.
+         cStalRac := cBrDok
+      ENDIF
 
-	if lPrepis == .t.
-		select pos
-	else
-		select _pos
-	endif
+      IF lPrepis == .T.
+         SELECT pos
+      ELSE
+         SELECT _pos
+      ENDIF
 
-	set order to tag "1"
-	go top
-	seek cIdPos + VD_RN + DToS(dDatRn) + cBrDok
+      SET ORDER TO TAG "1"
+      GO TOP
+      SEEK cIdPos + VD_RN + DToS( dDatRn ) + cBrDok
 	
-	//msgbeep( _pos->brdok + "," + cIdPos + "," + VD_RN + "," + cBrDok + "," + DTOS( dDatRn ) )
+      // msgbeep( _pos->brdok + "," + cIdPos + "," + VD_RN + "," + cBrDok + "," + DTOS( dDatRn ) )
 
-	if !lPrepis
-		cSto := _pos->sto
-		cIdRadnik := _pos->idradnik
-		cSmjena := _pos->smjena
-		cTime := LEFT(TIME(), 5)
-		cVrstaP := _pos->idvrstep
-		if gStolovi == "D"
-			cBrStola := ALLTRIM(STR(_pos->sto_br))
-		endif
-	else
-		// nadji parametre kupca
-		select dokspf
-		set order to tag "1"
-		hseek cIdPos + VD_RN + DToS(dDatRn) + cBrDok
+      IF !lPrepis
+         cSto := _pos->sto
+         cIdRadnik := _pos->idradnik
+         cSmjena := _pos->smjena
+         cTime := Left( Time(), 5 )
+         cVrstaP := _pos->idvrstep
+         IF gStolovi == "D"
+            cBrStola := AllTrim( Str( _pos->sto_br ) )
+         ENDIF
+      ELSE
+         // nadji parametre kupca
+         SELECT dokspf
+         SET ORDER TO TAG "1"
+         hseek cIdPos + VD_RN + DToS( dDatRn ) + cBrDok
 		
-    select pos_doks
-		Seek2(cIdPos + VD_RN + DToS(dDatRn) + cBrDok)
-		cSto := pos_doks->sto
-		cIdRadnik := pos_doks->idRadnik
-		cSmjena := pos_doks->smjena
-		cTime := pos_doks->vrijeme
-		cVrstaP := pos_doks->idvrstep
-		if gStolovi == "D"
-			cBrStola := ALLTRIM(STR(pos_doks->sto_br))
-		endif
-	endif
+         SELECT pos_doks
+         Seek2( cIdPos + VD_RN + DToS( dDatRn ) + cBrDok )
+         cSto := pos_doks->sto
+         cIdRadnik := pos_doks->idRadnik
+         cSmjena := pos_doks->smjena
+         cTime := pos_doks->vrijeme
+         cVrstaP := pos_doks->idvrstep
+         IF gStolovi == "D"
+            cBrStola := AllTrim( Str( pos_doks->sto_br ) )
+         ENDIF
+      ENDIF
 	
-	select osob
-	set order to tag "NAZ"
-	hseek cIdRadnik
-	cRdnkNaz := osob->naz
+      SELECT osob
+      SET ORDER TO TAG "NAZ"
+      hseek cIdRadnik
+      cRdnkNaz := osob->naz
 	
-	select vrstep
-	set order to tag "ID"
-	hseek cVrstaP
+      SELECT vrstep
+      SET ORDER TO TAG "ID"
+      hseek cVrstaP
 	
-	if !Found()
-		cNazVrstaP := "GOTOVINA"
-	else
-		cNazVrstaP := ALLTRIM(vrstep->naz)
-	endif
+      IF !Found()
+         cNazVrstaP := "GOTOVINA"
+      ELSE
+         cNazVrstaP := AllTrim( vrstep->naz )
+      ENDIF
 	
-	if lPrepis == .t.
-		select pos
-	else
-		select _pos
-	endif
+      IF lPrepis == .T.
+         SELECT pos
+      ELSE
+         SELECT _pos
+      ENDIF
 
-	do while !eof() .and. iif( lPrepis == .t., pos->(idpos + idvd + DToS(datum) + brdok) == (cIdPos + VD_RN + DToS(dDatRn) + cBrDok), ;
-						_pos->(idpos + idvd + DToS(datum) + brdok) == (cIdPos + VD_RN + DToS(dDatRn) + cBrDok) )
+      DO WHILE !Eof() .AND. iif( lPrepis == .T., pos->( idpos + idvd + DToS( datum ) + brdok ) == ( cIdPos + VD_RN + DToS( dDatRn ) + cBrDok ), ;
+            _pos->( idpos + idvd + DToS( datum ) + brdok ) == ( cIdPos + VD_RN + DToS( dDatRn ) + cBrDok ) )
 			
-		nCjenBPDV := 0
-		nCjenPDV := 0
-		nKolicina := 0
- 		nPopust := 0
-		nCjen2BPDV := 0
-		nCjen2PDV := 0
- 		nPDV := 0
-		nIznPop := 0
+         nCjenBPDV := 0
+         nCjenPDV := 0
+         nKolicina := 0
+         nPopust := 0
+         nCjen2BPDV := 0
+         nCjen2PDV := 0
+         nPDV := 0
+         nIznPop := 0
 			
-		cIdRoba := field->idroba
-		cIdTarifa := field->idtarifa
+         cIdRoba := field->idroba
+         cIdTarifa := field->idtarifa
 		
-		select roba
-		hseek cIdRoba
-		cJmj := roba->jmj
-		cRobaNaz := ALLTRIM(roba->naz)
+         SELECT roba
+         hseek cIdRoba
+         cJmj := roba->jmj
+         cRobaNaz := AllTrim( roba->naz )
 	
-		// seek-uj tarifu
-		select tarifa
-		hseek cIdTarifa
-		nPPDV := tarifa->opp
+         // seek-uj tarifu
+         SELECT tarifa
+         hseek cIdTarifa
+         nPPDV := tarifa->opp
 
-		nStPP := 0
+         nStPP := 0
 	
-		if lPrepis == .t.
-			select pos
-		else
-			select _pos
-		endif
+         IF lPrepis == .T.
+            SELECT pos
+         ELSE
+            SELECT _pos
+         ENDIF
 
-		nKolicina := kolicina
- 		nCjenPDV :=  cijena
-		nCjenBPDV := nCjenPDV / ( 1 + (nPPDV + nStPP)/100)	
+         nKolicina := kolicina
+         nCjenPDV :=  cijena
+         nCjenBPDV := nCjenPDV / ( 1 + ( nPPDV + nStPP ) / 100 )
 
-		// popust - ovo treba jos dobro pregledati
-		do case
-			case gPopVar="P" .and. gClanPopust 
-				if !EMPTY(cPartner)
-					nIznPop := field->ncijena
-				endif
-			case gPopVar="P" .and. !gClanPopust
-				nIznPop := field->ncijena
-		endcase
+         // popust - ovo treba jos dobro pregledati
+         DO CASE
+         CASE gPopVar = "P" .AND. gClanPopust
+            IF !Empty( cPartner )
+               nIznPop := field->ncijena
+            ENDIF
+         CASE gPopVar = "P" .AND. !gClanPopust
+            nIznPop := field->ncijena
+         ENDCASE
 
-		nPopust := 0
+         nPopust := 0
 		
-		if Round(nIznPop, 4) <> 0
+         IF Round( nIznPop, 4 ) <> 0
 		
-			// cjena 2 : cjena sa pdv - iznos popusta
-			nCjen2PDV := nCjenPDV - nIznPop
+            // cjena 2 : cjena sa pdv - iznos popusta
+            nCjen2PDV := nCjenPDV - nIznPop
 			
-			// cjena 2 : cjena bez pdv - iznos popusta bez pdv
-			nCjen2BPDV := nCjenBPDV - (nIznPop / (1 + nPPDV/100))
+            // cjena 2 : cjena bez pdv - iznos popusta bez pdv
+            nCjen2BPDV := nCjenBPDV - ( nIznPop / ( 1 + nPPDV / 100 ) )
 			
-			// procenat popusta
-			nPopust := ((nIznPop / (1 + nPPDV/100)) / nCjenBPDV) * 100
+            // procenat popusta
+            nPopust := ( ( nIznPop / ( 1 + nPPDV / 100 ) ) / nCjenBPDV ) * 100
 			
-		endif
+         ENDIF
 		
-		// izracunaj ukupno za stavku
-		nUkupno := (nKolicina * nCjenPDV) - (nKolicina * nIznPop)
+         // izracunaj ukupno za stavku
+         nUkupno := ( nKolicina * nCjenPDV ) - ( nKolicina * nIznPop )
 		
-		// izracunaj ukupnu vrijednost pdv-a
-		nVPDV := ((nKolicina * nCjenBPDV) - (nKolicina * (nIznPop / (1 + nPPDV/100)))) * (nPPDV/100)
+         // izracunaj ukupnu vrijednost pdv-a
+         nVPDV := ( ( nKolicina * nCjenBPDV ) - ( nKolicina * ( nIznPop / ( 1 + nPPDV / 100 ) ) ) ) * ( nPPDV / 100 )
 
-		// ukupno bez pdv-a
-		nUBPDV += nKolicina * nCjenBPDV
-		// ukupno pdv
-		nUPDV += nVPDV
-		// total racuna
-		nUTotal += nUkupno
+         // ukupno bez pdv-a
+         nUBPDV += nKolicina * nCjenBPDV
+         // ukupno pdv
+         nUPDV += nVPDV
+         // total racuna
+         nUTotal += nUkupno
 
-		if Round(nCjen2BPDV,2)<>0
-			// ukupno popust
-			nUPopust += (nCjenBPDV - nCjen2BPDV) * nKolicina
-		endif
+         IF Round( nCjen2BPDV, 2 ) <> 0
+            // ukupno popust
+            nUPopust += ( nCjenBPDV - nCjen2BPDV ) * nKolicina
+         ENDIF
 		
-		// ukupno bez pdv-a - popust
-		nUBPDVPopust := nUBPDV - nUPopust
+         // ukupno bez pdv-a - popust
+         nUBPDVPopust := nUBPDV - nUPopust
 
-		if grbCjen == 2
-			nUkStavka := nUkupno
-		else
-			nUkStavka := nUBPDVPopust
-		endif
+         IF grbCjen == 2
+            nUkStavka := nUkupno
+         ELSE
+            nUkStavka := nUBPDVPopust
+         ENDIF
 		
-		++ nCSum
+         ++ nCSum
 
-		dodaj_stavku_racuna(cStalRac, STR(nCSum, 3), "", cIdRoba, cRobaNaz, cJmj, nKolicina, Round(nCjenPDV,3), Round(nCjenBPDV,3), Round(nCjen2PDV,3), Round(nCjen2BPDV,3), Round(nPopust,2), Round(nPPDV,2), Round(nVPDV,3), Round(nUkStavka,3), 0, 0)
+         dodaj_stavku_racuna( cStalRac, Str( nCSum, 3 ), "", cIdRoba, cRobaNaz, cJmj, nKolicina, Round( nCjenPDV, 3 ), Round( nCjenBPDV, 3 ), Round( nCjen2PDV, 3 ), Round( nCjen2BPDV, 3 ), Round( nPopust, 2 ), Round( nPPDV, 2 ), Round( nVPDV, 3 ), Round( nUkStavka, 3 ), 0, 0 )
 	
-		if lPrepis == .t.
-			select pos
-		else
-			select _pos
-		endif
+         IF lPrepis == .T.
+            SELECT pos
+         ELSE
+            SELECT _pos
+         ENDIF
 
-  		skip
+         SKIP
 
-	enddo
+      ENDDO
 
-next
+   NEXT
 
-aPPs := nil
+   aPPs := nil
 
-// dodaj zapis u drn.dbf
-add_drn(cStalRac, dDatRn, nil, nil, cTime, Round(nUBPDV,2), Round(nUPopust,2), Round(nUBPDVPopust,2), Round(nUPDV,2), Round(nUTotal - nFZaokr,2), nCSum, 0, nFZaokr, 0)
+   // dodaj zapis u drn.dbf
+   add_drn( cStalRac, dDatRn, nil, nil, cTime, Round( nUBPDV, 2 ), Round( nUPopust, 2 ), Round( nUBPDVPopust, 2 ), Round( nUPDV, 2 ), Round( nUTotal - nFZaokr, 2 ), nCSum, 0, nFZaokr, 0 )
 	
-// mjesto nastanka racuna
-add_drntext("R01", gRnMjesto)
-// dodaj naziv radnika
-add_drntext("R02", cRdnkNaz)
-// dodaj podatak o smjeni
-add_drntext("R03", cSmjena)
-// vrsta placanja
-add_drntext("R05", cNazVrstaP)
-// dodatni text na racunu 3 linije
-add_drntext("R06", gRnPTxt1)
-add_drntext("R07", gRnPTxt2)
-add_drntext("R08", gRnPTxt3)
-// Broj linija potrebnih da se ocjepi traka
-add_drntext("P12", ALLTRIM(STR(nFeedLines)))
-// sekv.za otvaranje ladice
-add_drntext("P13", gOtvorStr)
-// sekv.za cjepanje trake
-add_drntext("P14", gSjeciStr)
+   // mjesto nastanka racuna
+   add_drntext( "R01", gRnMjesto )
+   // dodaj naziv radnika
+   add_drntext( "R02", cRdnkNaz )
+   // dodaj podatak o smjeni
+   add_drntext( "R03", cSmjena )
+   // vrsta placanja
+   add_drntext( "R05", cNazVrstaP )
+   // dodatni text na racunu 3 linije
+   add_drntext( "R06", gRnPTxt1 )
+   add_drntext( "R07", gRnPTxt2 )
+   add_drntext( "R08", gRnPTxt3 )
+   // Broj linija potrebnih da se ocjepi traka
+   add_drntext( "P12", AllTrim( Str( nFeedLines ) ) )
+   // sekv.za otvaranje ladice
+   add_drntext( "P13", gOtvorStr )
+   // sekv.za cjepanje trake
+   add_drntext( "P14", gSjeciStr )
 
-if gStolovi == "D"
-	add_drntext("R11", cBrStola)
-endif
+   IF gStolovi == "D"
+      add_drntext( "R11", cBrStola )
+   ENDIF
 
-// ako je prepis
-if lPrepis == .t.
-	// podaci o kupcu
-	add_drntext("K01", dokspf->knaz)
-	add_drntext("K02", dokspf->kadr)
-	add_drntext("K03", dokspf->kidbr)
-	add_drntext("D01", "A")
-else
-	// dodaj D01 - P - priprema
-	add_drntext("D01", "P")
-endif
+   // ako je prepis
+   IF lPrepis == .T.
+      // podaci o kupcu
+      add_drntext( "K01", dokspf->knaz )
+      add_drntext( "K02", dokspf->kadr )
+      add_drntext( "K03", dokspf->kidbr )
+      add_drntext( "D01", "A" )
+   ELSE
+      // dodaj D01 - P - priprema
+      add_drntext( "D01", "P" )
+   ENDIF
 
-return
-
-
-
-
-function pos_stampa_racuna_pdv(cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aRacuni, lViseOdjednom, lOnlyFill)
-local cTime
-
-if (lOnlyFill == nil)
-	lOnlyFill := .f.
-endif
-
-if (lPrepis == nil)
-	lPrepis := .f.
-endif
-
-if (cIdVrsteP == nil)
-	cIdVrsteP := ""
-endif
-
-if (dDatumRn == nil)
-	dDatumRn := gDatum
-endif
-
-// napuni tabele podacima
-fill_rb_traka(cIdPos, cBrDok, dDatumRn, lPrepis, aRacuni, @cTime)
-
-lStartPrint := .t.
-if lViseOdjednom == .t.
-	lStartPrint := .f.
-endif
-
-// ako je samo punjenje tabela - ovdje se zaustavi
-if lOnlyFill
-	return 
-endif
-
-if fiscal_opt_active()
-	// fiskalni racun - ne stampati !
-else
-	// ispisi racun
-	rb_print(lStartPrint)
-endif
-
-return cTime
+   RETURN
 
 
 
 
+FUNCTION pos_stampa_racuna_pdv( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aRacuni, lViseOdjednom, lOnlyFill )
+
+   LOCAL cTime
+
+   IF ( lOnlyFill == nil )
+      lOnlyFill := .F.
+   ENDIF
+
+   IF ( lPrepis == nil )
+      lPrepis := .F.
+   ENDIF
+
+   IF ( cIdVrsteP == nil )
+      cIdVrsteP := ""
+   ENDIF
+
+   IF ( dDatumRn == nil )
+      dDatumRn := gDatum
+   ENDIF
+
+   // napuni tabele podacima
+   fill_rb_traka( cIdPos, cBrDok, dDatumRn, lPrepis, aRacuni, @cTime )
+
+   lStartPrint := .T.
+   IF lViseOdjednom == .T.
+      lStartPrint := .F.
+   ENDIF
+
+   // ako je samo punjenje tabela - ovdje se zaustavi
+   IF lOnlyFill
+      RETURN
+   ENDIF
+
+   IF fiscal_opt_active()
+      // fiskalni racun - ne stampati !
+   ELSE
+      // ispisi racun
+      rb_print( lStartPrint )
+   ENDIF
+
+   RETURN cTime

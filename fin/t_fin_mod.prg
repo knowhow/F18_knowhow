@@ -43,14 +43,10 @@ METHOD initdb()
    RETURN NIL
 
 
-// ----------------------------------------
-// ----------------------------------------
 METHOD dummy()
    RETURN
 
 
-// ----------------------------------------
-// ----------------------------------------
 METHOD mMenu()
 
    set_hot_keys()
@@ -170,8 +166,6 @@ METHOD setGVars()
    PUBLIC gSAKrIz := "N"
    PUBLIC gBezVracanja := "N"
    PUBLIC gBuIz := "N"
-   PUBLIC gPicDEM := "9999999.99"
-   PUBLIC gPicBHD := "999999999999.99"
    PUBLIC gVar1 := "1"
    PUBLIC gRj := "N"
    PUBLIC gTroskovi := "N"
@@ -195,7 +189,6 @@ METHOD setGVars()
 
    ::super:setTGVars()
 
-   // procitaj parametre fin modula
    fin_read_params()
 
    PUBLIC gModul

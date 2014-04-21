@@ -46,8 +46,6 @@ FUNCTION my_use_semaphore()
 
 
 
-// --------------------------------------------------------------
-// --------------------------------------------------------------
 FUNCTION my_usex( alias, table, new_area, _rdd, semaphore_param )
    RETURN my_use( alias, table, new_area, _rdd, semaphore_param, .T. )
 
@@ -196,7 +194,9 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
          IF File( ImeDbfCdx( _dbf ) )
             dbSetIndex( ImeDbfCDX( _dbf ) )
          ENDIF
-         nCnt := 3
+         // uspješno otvorena tabela
+         nCnt := 100
+
       RECOVER USING oError
 
          _msg := "ERROR: my_use " + oError:description + ": tbl:" + my_home() + table + " alias:" + alias + " se ne moze otvoriti ?!"
@@ -217,6 +217,10 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
       END SEQUENCE
       nCnt ++
    ENDDO
+
+   IF nCnt < 100
+      RaiseError( "ERROR: my_use" + table + "neusjesno !" )
+   ENDIF
 
    RETURN
 

@@ -1006,14 +1006,16 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
       // tip dokumenta je
       _idtipdok := Left( _a_tipdok[ _n_menu ], 2 )
 
+      altd()
       ++ _x
+      @ m_x + _x, m_y + 2 SAY PadR( fakt_naziv_dokumenta( @_a_tipdok, _idtipdok ), 40 )
 
-      @ m_x + _x, m_y + 2 SAY PadR( _a_tipdok[ AScan( _a_tipdok, {| x| _idtipdok == Left( x, 2 ) } ) ], 40 )
+
 
       // ako treba resetovati broj dokumenta !
       IF !fNovi .AND. __redni_broj == 1
          IF _idtipdok <> _old_tip_dok .AND. !Empty( field->brdok ) .AND. AllTrim( field->brdok ) <> "00000"
-            MsgBeep( "Vrsite promjenu vrste dokumenta. Obratiti paznju na broj !" )
+            MsgBeep( "Vršite promjenu vrste dokumenta. Obratiti pažnju na broj !" )
             IF Pitanje(, "Resetovati broj dokumenta na 00000 (D/N) ?", "D" ) == "D"
                _brdok := PadR( Replicate( "0", gNumDio ), 8 )
             ENDIF
@@ -1050,18 +1052,14 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
          @  m_x + _x, m_y + 45 SAY "Datum:" GET _datdok
          @  m_x + _x, Col() + 1 SAY "Broj:" GET _brdok VALID !Empty( _brdok )
 
-         ++ _x
-         ++ _x
-
+         _x += 2
          // partner
          @ _part_x := m_x + _x, _part_y := m_y + 2 SAY "Partner:" GET _idpartner ;
             PICT "@!" ;
             VALID {|| P_Firma( @_idpartner ), ;
             IzSifre(), ispisi_partn( _idpartner, _part_x, _part_y + 18 ) }
 
-         ++ _x
-         ++ _x
-
+         _x += 2
          IF _params[ "fakt_prodajna_mjesta" ]
             // prodajno mjesto, PM
             @ m_x + _x, m_y + 2 SAY "P.M.:" GET _idpm ;
@@ -1094,15 +1092,13 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
          // sada ide desna strana i podaci isporuke...
          IF _idtipdok $ "10#11"
 
-            @ m_x + _x2, m_y + 51 SAY "Otpremnica broj:" GET _brotp PICT "@S20" WHEN W_BrOtp( fNovi )
+            @ m_x + _x2, m_y + 51 SAY8 "Otpremnica broj:" GET _brotp PICT "@S20" WHEN W_BrOtp( fNovi )
 
             ++ _x2
-
-            @ m_x + _x2, m_y + 51 SAY "          datum:" GET _datotp
+            @ m_x + _x2, m_y + 51 SAY8 "          datum:" GET _datotp
 
             ++ _x2
-
-            @ m_x + _x2, m_y + 51 SAY "Ugovor/narudzba:" GET _brnar PICT "@S20"
+            @ m_x + _x2, m_y + 51 SAY8 "Ugovor/narudzba:" GET _brnar PICT "@S20"
 
             IF fNovi .AND. gRokPl > 0
                // uzmi default vrijednost za rok placanja
@@ -1110,30 +1106,23 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
             ENDIF
 
             ++ _x2
-
-            @ m_x + _x2, m_y + 51 SAY "Rok plac.(dana):" GET _rok_placanja PICT "999" ;
-               WHEN valid_rok_placanja( @_rok_placanja, "0", fNovi ) ;
-               VALID valid_rok_placanja( _rok_placanja, "1", fNovi )
+            @ m_x + _x2, m_y + 51 SAY8 "Rok plać.(dana):" GET _rok_placanja PICT "999" ;
+               WHEN valid_rok_placanja( @_rok_placanja, "0", fNovi ) VALID valid_rok_placanja( _rok_placanja, "1", fNovi )
 
             ++ _x2
-
-            @ m_x + _x2, m_y + 51 SAY "Datum placanja :" GET _datpl ;
-               VALID valid_rok_placanja( _rok_placanja, "2", fNovi )
+            @ m_x + _x2, m_y + 51 SAY "Datum placanja :" GET _datpl VALID valid_rok_placanja( _rok_placanja, "2", fNovi )
 
             IF _params[ "fakt_vrste_placanja" ]
 
                ++ _x
-               @ m_x + _x, m_y + 2  SAY "Nacin placanja" GET _idvrstep PICT "@!" ;
-                  VALID Empty( _idvrstep ) .OR. P_VRSTEP( @_idvrstep, 9, 20 )
+               @ m_x + _x, m_y + 2  SAY "Nacin placanja" GET _idvrstep PICT "@!" VALID Empty( _idvrstep ) .OR. P_VRSTEP( @_idvrstep, 9, 20 )
 
             ENDIF
 
 
-            // za dokument tipa "06"
          ELSEIF ( _idtipdok == "06" )
 
             ++ _x2
-
             @ m_x + _x2, m_y + 51 SAY "Po ul.fakt.broj:" GET _brotp PICT "@S20" WHEN W_BrOtp( fNovi )
 
             ++ _x2
@@ -1142,7 +1131,6 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
          ELSE
 
-            // dodaj i za ostale dokumente
             _datotp := _datdok
             ++ _x2
             @ m_x + _x2,m_y + 51 SAY " datum isporuke:" GET _datotp
@@ -1155,9 +1143,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
             @ m_x + _x, m_y + 50  SAY "Relacija   :" GET _idrelac PICT "@S10"
          ENDIF
 
-         ++ _x
-         ++ _x
-         ++ _x
+         _x += 3
 
          // valuta
          IF _idTipDok $ "10#11#12#19#20#25#26#27"
@@ -1200,9 +1186,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
       ?? "  RJ:", _idfirma
 
-      ++ _x
-      ++ _x
-
+      _x += 2
       @ m_x + _x, m_y + 2 SAY PadR( _a_tipdok[ AScan( _a_tipdok, {|x| _idtipdok == Left( x, 2 ) } ) ], 35 )
 
       @ m_x + _x, m_y + 45 SAY "Datum: "
@@ -1223,9 +1207,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
    // unos stavki dokumenta
    @ m_x + _x, m_y + 2 SAY "R.br: " GET __redni_broj PICT "9999"
 
-   ++ _x
-   ++ _x
-
+   _x += 2
    // artikal
    @ m_x + _x, m_y + 2  SAY "Artikal: " GET _IdRoba PICT "@!S10" ;
       WHEN {|| _idroba := PadR( _idroba, Val( gDuzSifIni ) ), W_Roba() } ;
@@ -1240,7 +1222,6 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
 
    ++ _x
-
    // serijski broj
    IF ( gSamokol != "D" .AND. !glDistrib )
       @ m_x + _x, m_y + 2 SAY get_serbr_opis() + " " GET _serbr PICT "@S15" WHEN _podbr <> " ."
@@ -1265,12 +1246,9 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
       @ m_x + _x, m_y + 2 SAY "/ LOT:" GET _lot_broj PICT "@S10"
    ENDIF
 
-   ++ _x
-   ++ _x
-   ++ _x
-
+   _x += 3
    // kolicina
-   @ m_x + _x, m_y + 2 SAY "Kolicina "  GET _kolicina PICT pickol VALID V_Kolicina( _tip_cijene )
+   @ m_x + _x, m_y + 2 SAY8 "Količina "  GET _kolicina PICT pickol VALID V_Kolicina( _tip_cijene )
 
 
    IF gSamokol != "D"
@@ -1355,8 +1333,6 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
    ENDIF
 
    RETURN 1
-
-
 
 
 

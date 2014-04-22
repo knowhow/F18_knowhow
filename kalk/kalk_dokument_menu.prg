@@ -53,7 +53,7 @@ FUNCTION kalk_ostale_operacije_doks()
       AAdd( _opcexe, {|| MsgBeep( cZabrana ) } )
    ENDIF
 
-   AAdd( _opc, "S. pregled smeca " )
+   AAdd( _opc, "S. pregled smeća " )
    IF ( ImaPravoPristupa( goModul:oDataBase:cName, "DOK", "SMECEPREGLED" ) )
       AAdd( _opcexe, {|| kalk_pripr9view() } )
    ELSE

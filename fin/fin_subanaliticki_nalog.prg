@@ -13,7 +13,7 @@
 
 
 
-FUNCTION fin_subanaliticki_nalog( cInd, lAuto )
+FUNCTION fin_subanaliticki_nalog( cInd, lAuto, dDatNal )
 
    LOCAL nArr := Select()
    LOCAL aRez := {}
@@ -53,7 +53,7 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto )
    cBrNal := BrNal
 
    IF cInd $ "1#2" .AND. !lAuto
-      fin_zagl_analitika()
+      fin_zagl_analitika( dDatNal )
    ENDIF
 
    DO WHILE !Eof() .AND. Eval( b2 )
@@ -64,7 +64,7 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto )
             ELSE
                FF
             ENDIF
-            fin_zagl_analitika()
+            fin_zagl_analitika( dDatnal )
          ENDIF
          P_NRED
 
@@ -144,7 +144,6 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto )
          nColStr := PCol() + 1
 
          @  PRow(), PCol() + 1 SAY PadR( aRez[ 1 ], 28 + IF( gVar1 == "1" .AND. lJerry, 2, 0 ) )
-         // -DifIdP(idpartner)) // dole cu nastaviti
 
          nColDok := PCol() + 1
 
@@ -258,7 +257,7 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto )
    IF cInd $ "1#2" .AND. !lAuto
       IF PRow() > 58 + gPStranica
          FF
-         fin_zagl_analitika()
+         fin_zagl_analitika( dDatNal )
       ENDIF
       P_NRED
       ?? M
@@ -275,7 +274,7 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto )
       nUkDugBHD := nUKPotBHD := nUkDugDEM := nUKPotDEM := 0
 
       IF gPotpis == "D"
-         IF PRow() > 58 + gPStranica; FF; fin_zagl_analitika();  ENDIF
+         IF PRow() > 58 + gPStranica; FF; fin_zagl_analitika( dDatNal );  ENDIF
          P_NRED
          P_NRED
          F12CPI
@@ -300,7 +299,7 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto )
     Zaglavlje subanalitičkog/analitickog naloga
 */
 
-FUNCTION fin_zagl_analitika()
+FUNCTION fin_zagl_analitika( dDatNal )
 
    LOCAL nArr, lDnevnik := .F.
    LOCAL _fin_params := fin_params()

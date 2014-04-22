@@ -55,6 +55,7 @@ FUNCTION fin_stampa_sinteticki_nalog( kumulativ )
       cIdFirma := idfirma
       cidvn := idvn
       cBrNal := brnal
+      dDatNal := datnal
    ENDIF
 
    SEEK cIdfirma + cIdvn + cBrNal
@@ -74,11 +75,11 @@ FUNCTION fin_stampa_sinteticki_nalog( kumulativ )
    nRbr := 0
    nUkUkDugBHD := nUkUkPotBHD := nUkUkDugDEM := nUkUkPotDEM := 0
 
-   zagl_sinteticki_nalog()
+   zagl_sinteticki_nalog( dDatNal )
 
    DO WHILE Eval( b1 ) .AND. Eval( b2 )     
 
-      nova_strana()
+      nova_strana( dDatNal )
 
       cIdSinKon := Left( IdKonto, 3 )
       nUkDugBHD := nUkPotBHD := nUkDugDEM := nUkPotDEM := 0
@@ -88,7 +89,7 @@ FUNCTION fin_stampa_sinteticki_nalog( kumulativ )
          cIdKonto := IdKonto
          nDugBHD := nPotBHD := nDugDEM := nPotDEM := 0
 
-         nova_strana()
+         nova_strana( dDatNal )
          
          DO WHILE  Eval( b1 ) .AND. Eval( b2 ) .AND. Eval( b4 )  
             SELECT KONTO
@@ -120,7 +121,7 @@ FUNCTION fin_stampa_sinteticki_nalog( kumulativ )
 
       ENDDO  
 
-      nova_strana()
+      nova_strana( dDatNal )
       
       P_NRED
       ?? M
@@ -154,7 +155,7 @@ FUNCTION fin_stampa_sinteticki_nalog( kumulativ )
 
    ENDDO
 
-   nova_strana()
+   nova_strana( dDatnal )
 
    P_NRED
    ?? M
@@ -185,7 +186,7 @@ FUNCTION fin_stampa_sinteticki_nalog( kumulativ )
 
 
 
-FUNCTION zagl_sinteticki_nalog()
+FUNCTION zagl_sinteticki_nalog( dDatNal )
 
    LOCAL nArr
 
@@ -233,11 +234,11 @@ FUNCTION zagl_sinteticki_nalog()
 
 
 
-STATIC FUNCTION nova_strana()
+STATIC FUNCTION nova_strana( dDatNal )
 
    IF PRow() > ( 61 + gPStranica )
        FF
-       zagl_sinteticki_nalog()
+       zagl_sinteticki_nalog( dDatnal )
    ENDIF
 
    RETURN 

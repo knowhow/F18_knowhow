@@ -18,9 +18,9 @@ FUNCTION StNal( lAuto )
 
 FUNCTION stampa_fin_document( lAuto )
 
-   PRIVATE dDatNal := Date()
+   LOCAL dDatNal := Date()
 
-   IF stampa_analitickog_naloga( lAuto, dDatNal )
+   IF stampa_analitickog_naloga( lAuto, @dDatNal )
        gen_sint_stavke( lAuto, dDatNal )
    ENDIF
 
@@ -79,7 +79,7 @@ FUNCTION stampa_analitickog_naloga( lAuto, dDatNal )
          f18_start_print( NIL, @_print_opt )
       ENDIF
 
-      fin_subanaliticki_nalog( "1", lAuto )
+      fin_subanaliticki_nalog( "1", lAuto, dDatNal )
 
       IF !lAuto
          PushWa()
@@ -110,7 +110,7 @@ FUNCTION stampa_analitickog_naloga( lAuto, dDatNal )
    RETURN .T.
 
 
-FUNCTION gen_sint_stavke( lAuto )
+FUNCTION gen_sint_stavke( lAuto, dDatNal )
 
    LOCAL A, cDN := "N"
    LOCAL nStr, nD1, nD2, nP1, nP2
@@ -137,19 +137,15 @@ FUNCTION gen_sint_stavke( lAuto )
    A := 0
    DO WHILE !Eof()
 
-
       cIdFirma := psuban->IdFirma
       cIDVn = psuban->IdVN
       cBrNal := psuban->BrNal
 
-      fill_panal_psint( cIdFirma, cIdVn, cBrNal )
+      fill_panal_psint( cIdFirma, cIdVn, cBrNal, dDatNal )
 
       IF !lAuto
          Box(, 2, 58 )
          @ m_x + 1, m_y + 2 SAY8 "Štampanje analitike/sintetike za nalog " + cIdfirma + "-" + cIdvn + "-" + cBrnal + " ?"  GET cDN PICT "@!" VALID cDN $ "DN"
-         IF gDatNal == "D"
-            @ m_x + 2, m_y + 2 SAY "Datum naloga:" GET dDatNal
-         ENDIF
          READ
          BoxC()
       ENDIF
@@ -205,7 +201,7 @@ FUNCTION gen_sint_stavke( lAuto )
    RETURN
 
 
-FUNCTION fill_panal_psint( cIdFirma, cIdVn, cBrNal )
+FUNCTION fill_panal_psint( cIdFirma, cIdVn, cBrNal, dDatNal )
 
    LOCAL fNasao, nStr, nD1, nD2, nP1, nP2
    LOCAL nDugBhd, nPotBHD, nDugDEM, nPotDEM

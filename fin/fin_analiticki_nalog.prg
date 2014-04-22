@@ -13,8 +13,8 @@
 
 FUNCTION fin_stampa_analiticki_nalog()
 
+   LOCAL dDatNal
    PRIVATE fK1 := fk2 := fk3 := fk4 := "N", gnLOst := 0, gPotpis := "N"
-   PRIVATE dDatNal := Date()
 
    fin_read_params()
 
@@ -41,10 +41,6 @@ FUNCTION fin_stampa_analiticki_nalog()
    @ m_x + 1, Col() + 1 SAY "-" GET cIdVN PICT "@!"
    @ m_x + 1, Col() + 1 SAY "-" GET cBrNal VALID _f_brnal( @cBrNal )
 
-   IF gDatNal == "D"
-      @ m_x + 2, m_y + 2 SAY "Datum naloga:" GET dDatNal
-   ENDIF
-
    READ
 
    ESC_BCR
@@ -62,11 +58,11 @@ FUNCTION fin_stampa_analiticki_nalog()
 
    START PRINT CRET
 
-   fin_subanaliticki_nalog( "2" )
+   fin_subanaliticki_nalog( "2", NIL, dDatNal )
 
    END PRINT
 
-   closeret
+   my_close_all_dbf()
 
    RETURN
 

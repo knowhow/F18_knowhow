@@ -330,22 +330,6 @@ STATIC FUNCTION fakt_pripr_keyhandler()
       label_bkod()
       close_open_fakt_tabele()
 
-   CASE Ch == K_ALT_P
-
-      fakt_set_broj_dokumenta()
-
-      IF !CijeneOK( "Stampanje" )
-         RETURN DE_REFRESH
-      ENDIF
-
-      IF field->idtipdok == "13"
-         FaktStOLPP()
-      ELSE
-         StDokOdt( nil, nil, nil )
-      ENDIF
-
-      close_open_fakt_tabele()
-
 #ifdef TEST
       push_test_tag( "FAKT_ALTP_END" )
 #endif

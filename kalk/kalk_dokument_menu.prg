@@ -29,8 +29,6 @@ FUNCTION kalk_pregled_dokumenata()
    AAdd( _opcexe, {|| browse_kalk_dok() } )
    AAdd( _opc, "5. radni nalozi " )
    AAdd( _opcexe, {|| BrowseRn() } )
-   AAdd( _opc, "7. stampa OLPP-a za azurirani dokument" )
-   AAdd( _opcexe, {|| StOLPPAz() } )
    AAdd( _opc, "8. kalkulacija cijena" )
    AAdd( _opcexe, {|| kalkulacija_cijena() } )
 

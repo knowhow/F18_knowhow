@@ -354,15 +354,6 @@ FUNCTION kalk_pripr_key_handler()
          RETURN DE_REFRESH
       ENDIF
 
-   CASE Ch == K_ALT_P
-
-      my_close_all_dbf()
-      IzbDokOLPP()
-      // StPripr()
-      o_kalk_edit()
-
-      RETURN DE_REFRESH
-
    CASE Ch == K_ALT_L
 
       my_close_all_dbf()
@@ -2144,54 +2135,6 @@ STATIC FUNCTION NazProdObj()
 
 
 
-FUNCTION IzbDokOLPP()
-
-   DO WHILE .T.
-
-      o_kalk_edit()
-
-      SELECT kalk_pripr
-      SET ORDER TO TAG "1"
-      GO TOP
-
-      cIdFirma := field->IdFirma
-      cBrDok := field->BrDok
-      cIdVD := field->IdVD
-
-      IF Eof()
-         EXIT
-      ENDIF
-
-      IF Empty( cidvd + cbrdok + cidfirma ) .OR. ! ( cIdVd $ "11#19#81#80" )
-         skip; LOOP
-      ENDIF
-
-      Box( "", 2, 50 )
-      SET CURSOR ON
-      @ m_x + 1, m_y + 2 SAY "Dokument broj:"
-      IF gNW $ "DX"
-         @ m_x + 1, Col() + 2  SAY cIdFirma
-      ELSE
-         @ m_x + 1, Col() + 2 GET cIdFirma
-      ENDIF
-      @ m_x + 1, Col() + 1 SAY "-" GET cIdVD  VALID cIdVd $ "11#19#81#80"  PICT "@!"
-      @ m_x + 1, Col() + 1 SAY "-" GET cBrDok
-      read; ESC_BCR
-
-      BoxC()
-
-      HSEEK cIdFirma + cIdVD + cBrDok
-      EOF CRET
-
-      KalkStOLPP()
-
-   ENDDO
-
-   my_close_all_dbf()
-
-   RETURN
-
-
 
 
 /*! \fn PlusMinusKol()
@@ -2840,84 +2783,5 @@ FUNCTION PopustKaoNivelacijaMP()
    CLOSERET
 
    RETURN
-// }
 
 
-
-/*! \fn StOLPPAz()
- *  \brief Funkcija za stampu OLPP-a za azurirani KALK dokument
- */
-
-FUNCTION StOLPPAz()
-
-   // {
-   LOCAL nCol1
-   LOCAL nCol2
-   LOCAL nPom
-
-   nCol1 := 0
-   nCol2 := 0
-   nPom := 0
-
-   PRIVATE PicCDEM := gPICCDEM
-   PRIVATE PicProc := gPICPROC
-   PRIVATE PicDEM := gPICDEM
-   PRIVATE Pickol := gPICKOL
-
-   PRIVATE nStr := 0
-
-   O_KONCIJ
-   O_ROBA
-   O_TARIFA
-   O_PARTN
-   O_KONTO
-   O_TDOK
-   O_SKALK
-   // alias kalk_pripr
-
-   SELECT kalk_pripr
-   SET ORDER TO TAG "1"
-   GO TOP
-
-   DO WHILE .T.
-
-      cIdFirma := IdFirma
-      cBrDok := BrDok
-      cIdVD := IdVD
-
-      IF Eof()
-         EXIT
-      ENDIF
-
-      IF Empty( cIdVd + cBrDok + cIdFirma )
-         SKIP
-         LOOP
-      ENDIF
-
-      Box( "", 2, 50 )
-      SET CURSOR ON
-      @ m_x + 1, m_y + 2 SAY "Dokument broj:"
-      IF ( gNW $ "DX" )
-         @ m_x + 1, Col() + 2  SAY cIdFirma
-      ELSE
-         @ m_x + 1, Col() + 2 GET cIdFirma
-      ENDIF
-      @ m_x + 1, Col() + 1 SAY "-" GET cIdVD  VALID cIdVd $ "11#19#80#81" PICT "@!"
-      @ m_x + 1, Col() + 1 SAY "-" GET cBrDok
-      @ m_x + 2, m_y + 2 SAY "(moguce vrste KALK dok.su: 11,19,80,81)"
-      READ
-      ESC_BCR
-      BoxC()
-
-      HSEEK cIdFirma + cIdVD + cBrDok
-
-      EOF CRET
-
-      KalkStOlpp()
-
-
-   ENDDO  // vrti kroz kalkulacije
-
-   my_close_all_dbf()
-
-   RETURN NIL

@@ -20,8 +20,9 @@ FUNCTION stampa_fin_document( lAuto )
 
    PRIVATE dDatNal := Date()
 
-   stampa_analitickog_naloga( lAuto, dDatNal )
-   gen_sint_stavke( lAuto, dDatNal )
+   IF stampa_analitickog_naloga( lAuto, dDatNal )
+       gen_sint_stavke( lAuto, dDatNal )
+   ENDIF
 
    RETURN
 

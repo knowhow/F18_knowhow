@@ -137,7 +137,6 @@ FUNCTION gen_sint_stavke( lAuto, dDatNal )
    A := 0
    DO WHILE !Eof()
 
-
       cIdFirma := psuban->IdFirma
       cIDVn = psuban->IdVN
       cBrNal := psuban->BrNal

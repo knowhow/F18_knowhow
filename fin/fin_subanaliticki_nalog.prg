@@ -144,7 +144,6 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto, dDatNal )
          nColStr := PCol() + 1
 
          @  PRow(), PCol() + 1 SAY PadR( aRez[ 1 ], 28 + IF( gVar1 == "1" .AND. lJerry, 2, 0 ) )
-         // -DifIdP(idpartner)) // dole cu nastaviti
 
          nColDok := PCol() + 1
 

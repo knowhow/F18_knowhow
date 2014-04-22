@@ -1,3 +1,7 @@
+1.7.58  2014-04-22, hernad
+
+  - hernad radio svašta (oko funkcija kontiranja i štampe finansijskog naloga te neke druge bugove ispravljao)
+ 
 1.7.57  2014-04-21, vsasa
 
   - F18 LOG, obrnuti poredak i modifikacija prikaza

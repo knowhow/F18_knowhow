@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,227 +12,215 @@
 
 #include "fmk.ch"
 
-function SifFmkSvi()
+FUNCTION SifFmkSvi()
 
-private Opc:={}
-private opcexe:={}
+   PRIVATE Opc := {}
+   PRIVATE opcexe := {}
 
-AADD(opc,"1. partneri                          ")
-if (ImaPravoPristupa("FMK","SIF","PARTNOPEN"))
-	AADD(opcexe, {|| P_Firma()})
-else
-	AADD(opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
-endif
+   AAdd( opc, "1. partneri                          " )
+   IF ( ImaPravoPristupa( "FMK", "SIF", "PARTNOPEN" ) )
+      AAdd( opcexe, {|| P_Firma() } )
+   ELSE
+      AAdd( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
+   ENDIF
 
-if (goModul:oDataBase:cName <> "FIN")
-	AADD(opc,"2. konta")
-	if (ImaPravoPristupa("FMK","SIF","KONTOOPEN"))
-		AADD(opcexe, {|| P_Konto() } )
-	else
-		AADD(opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
-	endif
-else
-	AADD(opc, "2. ----------------- ")
-	AADD(opcexe, {|| NotImp()})
-endif
+   IF ( goModul:oDataBase:cName <> "FIN" )
+      AAdd( opc, "2. konta" )
+      IF ( ImaPravoPristupa( "FMK", "SIF", "KONTOOPEN" ) )
+         AAdd( opcexe, {|| P_Konto() } )
+      ELSE
+         AAdd( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
+      ENDIF
+   ELSE
+      AAdd( opc, "2. ----------------- " )
+      AAdd( opcexe, {|| NotImp() } )
+   ENDIF
 
-AADD(opc,"3. tipovi naloga")
-if (ImaPravoPristupa("FMK","SIF","TIPNALOPEN"))
-	AADD(opcexe, {|| browse_tnal() } )
-else
-	AADD(opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
-endif
+   AAdd( opc, "3. tipovi naloga" )
+   IF ( ImaPravoPristupa( "FMK", "SIF", "TIPNALOPEN" ) )
+      AAdd( opcexe, {|| browse_tnal() } )
+   ELSE
+      AAdd( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
+   ENDIF
 
-AADD(opc,"4. tipovi dokumenata")
-if (ImaPravoPristupa("FMK","SIF","TIPDOKOPEN"))
-	AADD(opcexe, {|| browse_tdok() } )
-else
-	AADD(opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
-endif
+   AAdd( opc, "4. tipovi dokumenata" )
+   IF ( ImaPravoPristupa( "FMK", "SIF", "TIPDOKOPEN" ) )
+      AAdd( opcexe, {|| browse_tdok() } )
+   ELSE
+      AAdd( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
+   ENDIF
 
-AADD(opc,"5. valute")
-if (ImaPravoPristupa("FMK","SIF","VALUTEOPEN"))
-	AADD(opcexe, {|| P_Valuta() } )
-else
-	AADD(opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
-endif
+   AAdd( opc, "5. valute" )
+   IF ( ImaPravoPristupa( "FMK", "SIF", "VALUTEOPEN" ) )
+      AAdd( opcexe, {|| P_Valuta() } )
+   ELSE
+      AAdd( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
+   ENDIF
 
-AADD(opc,"6. radne jedinice")
-if (ImaPravoPristupa("FMK","SIF","RJOPEN"))
-	AADD(opcexe, {|| P_RJ() } )
-else
-	AADD(opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
-endif
+   AAdd( opc, "6. radne jedinice" )
+   IF ( ImaPravoPristupa( "FMK", "SIF", "RJOPEN" ) )
+      AAdd( opcexe, {|| P_RJ() } )
+   ELSE
+      AAdd( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
+   ENDIF
 
-AADD(opc,"7. općine")
-if (ImaPravoPristupa("FMK","SIF","OPCINEOPEN"))
-	AADD(opcexe, {|| P_Ops() } )
-else
-	AADD(opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
-endif
+   AAdd( opc, "7. općine" )
+   IF ( ImaPravoPristupa( "FMK", "SIF", "OPCINEOPEN" ) )
+      AAdd( opcexe, {|| P_Ops() } )
+   ELSE
+      AAdd( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
+   ENDIF
 
-AADD(opc,"8. banke")
-if (ImaPravoPristupa("FMK","SIF","BANKEOPEN"))
-	AADD(opcexe, {|| P_Banke() } )
-else
-	AADD(opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
-endif
+   AAdd( opc, "8. banke" )
+   IF ( ImaPravoPristupa( "FMK", "SIF", "BANKEOPEN" ) )
+      AAdd( opcexe, {|| P_Banke() } )
+   ELSE
+      AAdd( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
+   ENDIF
 
-AADD(opc,"9. sifk - karakteristike")  
-if (ImaPravoPristupa("FMK","SIF","SIFKOPEN"))
-	AADD(opcexe, {|| P_SifK() } )
-else
-	AADD(opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
-endif
+   AAdd( opc, "9. sifk - karakteristike" )
+   IF ( ImaPravoPristupa( "FMK", "SIF", "SIFKOPEN" ) )
+      AAdd( opcexe, {|| P_SifK() } )
+   ELSE
+      AAdd( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
+   ENDIF
 
-AADD(opc,"A. vrste plaćanja")  
-if (ImaPravoPristupa("FMK","SIF","SIFKOPEN"))
-	AADD(opcexe, {|| P_VrsteP() } )
-else
-	AADD(opcexe, {|| MsgBeep(F18_SECUR_WARRNING)})
-endif
+   AAdd( opc, "A. vrste plaćanja" )
+   IF ( ImaPravoPristupa( "FMK", "SIF", "SIFKOPEN" ) )
+      AAdd( opcexe, {|| P_VrsteP() } )
+   ELSE
+      AAdd( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
+   ENDIF
 
-if (IsRamaGlas() .or.  gModul=="FAKT".and. glRadNal )
-	AADD(opc, "R. objekti")  
-	AADD(opcexe, {|| P_fakt_objekti() } )
-endif
+   IF ( IsRamaGlas() .OR.  gModul == "FAKT" .AND. glRadNal )
+      AAdd( opc, "R. objekti" )
+      AAdd( opcexe, {|| P_fakt_objekti() } )
+   ENDIF
 
-// lokalizacija
-gLokal := ALLTRIM(gLokal)
+   // lokalizacija
+   gLokal := AllTrim( gLokal )
 
-if gLokal <> "0"
-	AADD(opc, "L. lokalizacija")
-	AADD(opcexe, {|| P_Lokal() } )
-endif
+   IF gLokal <> "0"
+      AAdd( opc, "L. lokalizacija" )
+      AAdd( opcexe, {|| P_Lokal() } )
+   ENDIF
 
-OFmkSvi()
+   OFmkSvi()
 
-private Izbor:=1
-gMeniSif:=.t.
-Menu_SC("ssvi")
-gMeniSif:=.f.
+   PRIVATE Izbor := 1
+   gMeniSif := .T.
+   Menu_SC( "ssvi" )
+   gMeniSif := .F.
 
-my_close_all_dbf()
+   my_close_all_dbf()
 
-return
-
-
-function IsPdvObveznik( cIdPartner )
-local cIdBroj
-
-cIdBroj := IzSifKPartn("REGB", cIdPartner, .f.)
-
-if !EMPTY(cIdBroj)
-  if LEN(ALLTRIM(cIdBroj)) == 12
-     
-     return .t.
-  else
-     return .f.
-  endif
-else
-  return .f.
-endif
-
-function IsIno(cIdPartner, lShow)
-// isti je algoritam za utvrdjivanje
-// ino partnera bio dobavljac ili kupac
-return IsInoDob(cIdPartner, lShow)
+   RETURN
 
 
-function IsInoDob(cIdPartner, lShow)
-local cIdBroj
+FUNCTION IsPdvObveznik( cIdPartner )
 
-cIdBroj := IzSifKPartn( "REGB", cIdPartner, .f. )
+   LOCAL cIdBroj
 
-if !EMPTY(cIdBroj)
-  if LEN(ALLTRIM(cIdBroj)) < 12
-     //MsgBeep("Partner " + cIdPartner + " ima iden broj " + cIdBroj + "##" +;
-     //    "< 12, znaci ovo je ino partner")
-     return .t.
-  else
-     return .f.
-  endif
-else
-  return .f.
-endif
+   cIdBroj := IzSifKPartn( "REGB", cIdPartner, .F. )
 
-// primjer: PdvParIIIF ( cIdPartner, 1.17, 1, 0)
-//         ako je partner pdv obvezinik return 1.17
-//         ako je no pdv return 1
-//         ako je ino return 0
-function PdvParIIIF(cIdPartner, nPdvObv, nNoPdv, nIno, nUndefined)
-local cIdBroj
+   IF !Empty( cIdBroj )
+      IF Len( AllTrim( cIdBroj ) ) == 12
 
-cIdBroj := IzSifKPartn( "REGB", cIdPartner, .f. )
-cIdBroj := ALLTRIM(cIdBroj)
+         RETURN .T.
+      ELSE
+         RETURN .F.
+      ENDIF
+   ELSE
+      RETURN .F.
+   ENDIF
 
-if !EMPTY(cIdBroj)
-  if (LEN(cIdBroj) == 12)
-  	return nPdvObv
-  elseif (LEN(cIdBroj) == 13)
-  	return nNoPdv
-  else
-  	return nIno
-  endif
-else
-  return nUndefined
-endif
 
-// u ovo polje se stavlja clan zakona o pdv-u ako postoji 
-// osnova za oslobadjanje
-//
-function PdvOslobadjanje(cIdPartner)
-local cIdBroj
-return cIdBroj := IzSifKPartn( "PDVO", cIdPartner, .f. )
+/*
+    primjer: PdvParIIIF ( cIdPartner, 1.17, 1, 0)
+    ako je partner pdv obvezinik return 1.17
+    ako je no pdv return 1
+    ako je ino return 0
+*/
+FUNCTION PdvParIIIF( cIdPartner, nPdvObv, nNoPdv, nIno, nUndefined )
+
+   LOCAL cIdBroj
+
+   cIdBroj := IzSifKPartn( "REGB", cIdPartner, .F. )
+   cIdBroj := AllTrim( cIdBroj )
+
+   IF !Empty( cIdBroj )
+      IF ( Len( cIdBroj ) == 12 )
+         RETURN nPdvObv
+      ELSEIF ( Len( cIdBroj ) == 13 )
+         RETURN nNoPdv
+      ELSE
+         RETURN nIno
+      ENDIF
+   ELSE
+      RETURN nUndefined
+   ENDIF
+
+   // u ovo polje se stavlja clan zakona o pdv-u ako postoji
+   // osnova za oslobadjanje
+   //
+
+FUNCTION PdvOslobadjanje( cIdPartner )
+
+   LOCAL cIdBroj
+
+   RETURN cIdBroj := IzSifKPartn( "PDVO", cIdPartner, .F. )
 
 // ---------------------------------------------
 // da li je partner oslobodjen po clanu
 // ---------------------------------------------
-function IsOslClan(cIdPartner)
-local lRet := .f.
-local cClan
+FUNCTION IsOslClan( cIdPartner )
 
-cClan := PdvOslobadjanje(cIdPartner)
+   LOCAL lRet := .F.
+   LOCAL cClan
 
-if cClan <> nil .and. !EMPTY(cClan)
-	lRet := .t.
-endif
+   cClan := PdvOslobadjanje( cIdPartner )
 
-return lRet
+   IF cClan <> NIL .AND. !Empty( cClan )
+      lRet := .T.
+   ENDIF
+
+   RETURN lRet
 
 
 // -------------------------------------------------------------------------
-// profili 
+// profili
 // primjer: Profil partnera = "KUP,KMS"
-//          KUP - kupac
-//          DOB - dobavljac
-//          KMS - komisionar
-//          KMT - komintent u konsignacionoj prodaji
-//          INO - ino partner
-//          UIO - radi se o specificnom partneru - uprava za indirektno
-//                oporezivanje
-//          SPE - partner koji obavlja poslove spediciji kod uvoza robe
-//          TRA - obavlja transport
-//    
-//  Napomena: partner moze biti i kupac i dobavljac - stavlja se KUP,DOB
-//            znaci moze imati vise funkcija
+// KUP - kupac
+// DOB - dobavljac
+// KMS - komisionar
+// KMT - komintent u konsignacionoj prodaji
+// INO - ino partner
+// UIO - radi se o specificnom partneru - uprava za indirektno
+// oporezivanje
+// SPE - partner koji obavlja poslove spediciji kod uvoza robe
+// TRA - obavlja transport
 //
-//  profil partnera = SVI atributi koji odgovaraju ovom partneru
-//  ------------------------------------------------------------------------
-function IsProfil(cIdPartner, cProfId)
-local cProfili
-cProfili := IzSifKPartn( "PROF", cIdPartner, .f. )
+// Napomena: partner moze biti i kupac i dobavljac - stavlja se KUP,DOB
+// znaci moze imati vise funkcija
+//
+// profil partnera = SVI atributi koji odgovaraju ovom partneru
+// ------------------------------------------------------------------------
+FUNCTION IsProfil( cIdPartner, cProfId )
 
-if cProfId $ UPPER(cProfili)
-	return .t.
-else
-	return .f.
-endif
+   LOCAL cProfili
 
-// -----------------------------------
-// partner je komisionar
-// -----------------------------------
-function IsKomision(cIdPartner)
+   cProfili := IzSifKPartn( "PROF", cIdPartner, .F. )
 
-return IsProfil(cIdPartner, "KMS")
+   IF cProfId $ Upper( cProfili )
+      RETURN .T.
+   ELSE
+      RETURN .F.
+   ENDIF
 
+   // -----------------------------------
+   // partner je komisionar
+   // -----------------------------------
+
+FUNCTION IsKomision( cIdPartner )
+
+   RETURN IsProfil( cIdPartner, "KMS" )

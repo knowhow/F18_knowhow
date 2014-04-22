@@ -38,9 +38,6 @@ FUNCTION kalk_unos_dokumenta()
 
 
 
-// ----------------------------------------------------------------
-// unos stavki kalkulacije
-// ----------------------------------------------------------------
 FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
 
    LOCAL nMaxCol := MAXCOLS() - 3
@@ -1370,58 +1367,62 @@ FUNCTION Get1( fNovi, atrib )
 
    IF _idvd == "10"
 
-      IF nRbr == 1 .AND. !IsPDV()
-         IF gVarEv == "2" .OR. glEkonomat .OR. Pitanje(, "Skracena varijanta (bez troskova) D/N ?", "D" ) == "D"
-            gVarijanta := "1"
-         ELSE
-            gVarijanta := "2"
-         ENDIF
-      ENDIF
-
-      IF IsPDV()
-         RETURN Get1_10PDV()
-      ELSE
-         RETURN IF( gVarijanta == "1", Get1_10s(), Get1_10() )
-      ENDIF
+      RETURN Get1_10PDV()
 
    ELSEIF _idvd == "11"
       RETURN GET1_11()
+
    ELSEIF _idvd == "12"
       RETURN GET1_12()
+
    ELSEIF _idvd == "13"
       RETURN GET1_12()
+
    ELSEIF _idvd == "14"
       RETURN Get1_14PDV()
+
    ELSEIF _idvd == "KO"
       RETURN GET1_14PDV()
+
    ELSEIF _idvd == "16"
       RETURN GET1_16PDV()
+
    ELSEIF _idvd == "18"
       RETURN GET1_18()
+
    ELSEIF _idvd == "19"
       RETURN GET1_19()
+
    ELSEIF _idvd $ "41#42#43#47#49"
       RETURN GET1_41()
+
    ELSEIF _idvd == "81"
       RETURN get1_81( @atrib )
+
    ELSEIF _idvd == "80"
       RETURN GET1_80( @atrib )
+
    ELSEIF _idvd == "24"
       RETURN GET1_24PDV()
+
    ELSEIF _idvd $ "95#96#97"
       RETURN GET1_95()
 
    ELSEIF _idvd $  "94#16"    // storno fakture, storno otpreme, doprema
-
       RETURN GET1_94()
+
    ELSEIF _idvd == "82"
       RETURN GET1_82()
+
    ELSEIF _idvd == "IM"
       RETURN GET1_IM()
+
    ELSEIF _idvd == "IP"
       RETURN GET1_IP()
+
    ELSEIF _idvd == "RN"
       RETURN GET1_RN()
+
    ELSEIF _idvd == "PR"
       RETURN GET1_PR()
    ELSE
@@ -2736,5 +2737,3 @@ FUNCTION PopustKaoNivelacijaMP()
    CLOSERET
 
    RETURN
-
-

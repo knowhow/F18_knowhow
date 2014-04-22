@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,720 +12,718 @@
 
 #include "kalk.ch"
 
- 
-function ObrazInv()
-local nRec
-private nCnt:=i:=nT1:=nT4:=nT5:=nT6:=nT7:=0
-private nTT1:=nTT4:=nTT5:=nTT6:=nTT7:=0
-private n1:=n4:=n5:=n6:=n7:=0
-private nCol1:=0
-private PicCDEM:="999999.999"
-private PicProc:="999999.99%"
-private PicDEM:= "@Z 9999999.99"
-private Pickol:= "@Z 999999"
-private dDatOd:=date()
-private dDatDo:=date()
-private qqKonto:=padr("132;",60)
-private qqRoba:=space(60)
-private cIdKPovrata:=space(7)
-private ck7:="N"
-cPrikKol:="D"
-O_PARAMS
-Private cSection:="F",cHistory:=" ",aHistory:={}
-Params1()
-RPar("c1",@cIdKPovrata)
-RPar("c2",@qqKonto)
-RPar("d1",@dDatOd); RPar("d2",@dDatDo)
 
-cPoc:="D"
-cSNule:="N"
-cProredPC:="D"
-cObrNivelacije:="N"
-Box(,15,77)
-	set cursor on
- 	cNObjekat:=space(20)
- 	cKartica:="D"
- 	do while .t.
-  	@ m_x+1,m_y+2 SAY "Kriterij za objekte:" GET qqKonto pict "@!S50"
-  	@ m_x+3,m_y+2 SAY "tekuci promet je period:" GET dDatOd
-  	@ m_x+3,col()+2 SAY "do" GET dDatDo
-  	@ m_x+4,m_y+2 SAY "Naziv objekta:" GET cNObjekat pict "@!"
-  	@ m_x+5,m_y+2 SAY "Kriterij za robu :" GET qqRoba pict "@!S50"
-  	@ m_x+6,m_y+2 SAY "Prikaz samo pocetnog stanja:" GET cPOC pict "@!" valid cPoc$"DN"
-  	@ m_x+7,m_y+2 SAY "Prikaz starih artikala sa stanjem 0:" GET cSNule pict "@!" valid cSNule$"DN"
-  	@ m_x+9,m_y+2 SAY "Magacin u koji se vrsi povrat rekl. robe:" GET cIdKPovrata pict "@!"
-  	@ m_x+10,m_Y+2 SAY "Prikazi kolicine na obrascu"  GET cPrikKol pict "@!" valid cPrikkol $ "DN"
-  	@ m_x+11,m_Y+2 SAY "Atribut K2=X ne vrsi se  zbrajanje kolicina"
-  	@ m_x+12,m_Y+2 SAY "Cijene ocitavati sa kartica D/N" GET  cKartica pict "@!" valid ckartica $ "DN"
-	@ m_x+14,m_Y+2 SAY "Prikazati obrazac promjene cijena D/N/2" GET  cObrNivelacije pict "@!" valid cObrNivelacije $ "DN2"
-  	@ m_x+15,m_Y+2 SAY "Prikazati sa proredom D/N" GET  cProredPC pict "@!" valid cProredPC $ "DN"
-  	read
-  	ESC_BCR
-  	aUsl1:=Parsiraj(qqKonto,"MKonto")
-  	aUsl2:=Parsiraj(qqKonto,"PKonto")
-  	aUslR:=Parsiraj(qqRoba,"IdRoba")
-  	if aUsl1<>NIL .and. aUslR<>NIL
-  		exit
-  	endif
- 	enddo
-BoxC()
+FUNCTION ObrazInv()
 
-if Params2()
-	WPar("c1", cIdKPovrata)
-  	WPar("c2", @qqKonto)
-  	WPar("d1", dDatOd)
-	WPar("d2", dDatDo)
-endif
-select params
-use
+   LOCAL nRec
+   PRIVATE nCnt := i := nT1 := nT4 := nT5 := nT6 := nT7 := 0
+   PRIVATE nTT1 := nTT4 := nTT5 := nTT6 := nTT7 := 0
+   PRIVATE n1 := n4 := n5 := n6 := n7 := 0
+   PRIVATE nCol1 := 0
+   PRIVATE PicCDEM := "999999.999"
+   PRIVATE PicProc := "999999.99%"
+   PRIVATE PicDEM := "@Z 9999999.99"
+   PRIVATE Pickol := "@Z 999999"
+   PRIVATE dDatOd := Date()
+   PRIVATE dDatDo := Date()
+   PRIVATE qqKonto := PadR( "132;", 60 )
+   PRIVATE qqRoba := Space( 60 )
+   PRIVATE cIdKPovrata := Space( 7 )
+   PRIVATE ck7 := "N"
 
-#IFDEF PROBA
-	?? aUslr
-	Inkey(0)
-#ENDIF
+   cPrikKol := "D"
+   O_PARAMS
+   PRIVATE cSection := "F", cHistory := " ", aHistory := {}
+   Params1()
+   RPar( "c1", @cIdKPovrata )
+   RPar( "c2", @qqKonto )
+   RPar( "d1", @dDatOd ); RPar( "d2", @dDatDo )
 
-CreTblPobjekti()
-CreTblRek1("2")
+   cPoc := "D"
+   cSNule := "N"
+   cProredPC := "D"
+   cObrNivelacije := "N"
+   Box(, 15, 77 )
+   SET CURSOR ON
+   cNObjekat := Space( 20 )
+   cKartica := "D"
+   DO WHILE .T.
+      @ m_x + 1, m_y + 2 SAY "Kriterij za objekte:" GET qqKonto PICT "@!S50"
+      @ m_x + 3, m_y + 2 SAY "tekuci promet je period:" GET dDatOd
+      @ m_x + 3, Col() + 2 SAY "do" GET dDatDo
+      @ m_x + 4, m_y + 2 SAY "Naziv objekta:" GET cNObjekat PICT "@!"
+      @ m_x + 5, m_y + 2 SAY "Kriterij za robu :" GET qqRoba PICT "@!S50"
+      @ m_x + 6, m_y + 2 SAY "Prikaz samo pocetnog stanja:" GET cPOC PICT "@!" VALID cPoc $ "DN"
+      @ m_x + 7, m_y + 2 SAY "Prikaz starih artikala sa stanjem 0:" GET cSNule PICT "@!" VALID cSNule $ "DN"
+      @ m_x + 9, m_y + 2 SAY "Magacin u koji se vrsi povrat rekl. robe:" GET cIdKPovrata PICT "@!"
+      @ m_x + 10, m_Y + 2 SAY "Prikazi kolicine na obrascu"  GET cPrikKol PICT "@!" VALID cPrikkol $ "DN"
+      @ m_x + 11, m_Y + 2 SAY "Atribut K2=X ne vrsi se  zbrajanje kolicina"
+      @ m_x + 12, m_Y + 2 SAY "Cijene ocitavati sa kartica D/N" GET  cKartica PICT "@!" VALID ckartica $ "DN"
+      @ m_x + 14, m_Y + 2 SAY "Prikazati obrazac promjene cijena D/N/2" GET  cObrNivelacije PICT "@!" VALID cObrNivelacije $ "DN2"
+      @ m_x + 15, m_Y + 2 SAY "Prikazati sa proredom D/N" GET  cProredPC PICT "@!" VALID cProredPC $ "DN"
+      READ
+      ESC_BCR
+      aUsl1 := Parsiraj( qqKonto, "MKonto" )
+      aUsl2 := Parsiraj( qqKonto, "PKonto" )
+      aUslR := Parsiraj( qqRoba, "IdRoba" )
+      IF aUsl1 <> NIL .AND. aUslR <> NIL
+         EXIT
+      ENDIF
+   ENDDO
+   BoxC()
 
-O_POBJEKTI
-O_KONCIJ
-O_ROBA
-O_KONTO 
-O_TARIFA
-O_K1
-O_OBJEKTI
-O_KALK
-O_REKAP1
+   IF Params2()
+      WPar( "c1", cIdKPovrata )
+      WPar( "c2", @qqKonto )
+      WPar( "d1", dDatOd )
+      WPar( "d2", dDatDo )
+   ENDIF
+   SELECT params
+   USE
 
-GenRekap1(aUsl1, aUsl2, aUslR, cKartica, "2", nil, nil, nil, nil, cIdKPovrata)
+#ifdef PROBA
+   ?? aUslr
+   Inkey( 0 )
+#endif
 
-select rekap1
-//g1+idtarifa+idroba+objekat
-set order to tag "2" 
-aUsl3:=Parsiraj(qqKonto,"Objekat")
+   CreTblPobjekti()
+   CreTblRek1( "2" )
 
-PRIVATE cFilt2:=""
+   O_POBJEKTI
+   O_KONCIJ
+   O_ROBA
+   O_KONTO
+   O_TARIFA
+   O_K1
+   O_OBJEKTI
+   O_KALK
+   O_REKAP1
 
-cFilt2 := aUsl3+".and."+aUslR
+   GenRekap1( aUsl1, aUsl2, aUslR, cKartica, "2", nil, nil, nil, nil, cIdKPovrata )
 
-// postavi filter samo na zeljeni objekat
-set filter to &cFilt2 
+   SELECT rekap1
+   // g1+idtarifa+idroba+objekat
+   SET ORDER TO TAG "2"
+   aUsl3 := Parsiraj( qqKonto, "Objekat" )
 
-private xxx:=0
+   PRIVATE cFilt2 := ""
 
-for xxx:=1 to 3  // obrazac nivelacije
-	cVarPC:="1"
-	if cOBrNivelacije=="2"
-  		if xxx==2
-     			cVarPc:="2"
-  		else
-     			cVarPc:="3"
-  		endif
-	endif
-	select rekap1
-	go top
-	start print cret
-	?
+   cFilt2 := aUsl3 + ".and." + aUslR
 
-	private PREDOVA:=62
-	private  aTarife:={}
-	private  aTarGr:={}
-	private nStr:=0
-	if xxx==1
-  		kalk_zagl_inventura()
-  		nCol1:=10
-  		m:="----- ---------------------------------------------------- --- ------- ------- ------ ---------- ------ ---------- ---------- ---------- ------ ---------- ------ ---------- ------ ---------- ------ ---------- ------ ----------"
-else
-	private PREDOVA:= 61
-  	m:="----- ---------------------------------------------------- --- --------- --------- --------- ------------ ------------ ------------"
-  	ZaglObrPC(cVarPC)
-  	nCol1:=10
-endif
-nT10:=nT11:=nT20:=nT21:=nT30:=nT31:=nT40:=nT41:=nT50:=nT51:=nT60:=nT61:=nT70:=nT71:=nT80:=nT81:=nT90:=nT91:=nT100:=nT101:=0
+   // postavi filter samo na zeljeni objekat
+   SET FILTER to &cFilt2
 
-fFilovo:=.f.
-nRec:=0
-do while !eof()
-	cG1:=g1
-  	nTT10:=nTT11:=nTT20:=nTT21:=nTT30:=nTT31:=nTT40:=nTT41:=nTT50:=nTT51:=nTT60:=nTT61:=nTT70:=nTT71:=nTT80:=nTT81:=nTT90:=nTT91:=nTT100:=nTT101:=0
-  	nRbr:=0
-  	do while !eof() .and. cG1==g1
-		cIdTarifa:=idtarifa
-   		nTTT10:=nTTT11:=nTTT20:=nTTT21:=nTTT30:=nTTT31:=nTTT40:=nTTT41:=nTTT50:=nTTT51:=nTTT60:=nTTT61:=nTTT70:=nTTT71:=nTTT80:=nTTT81:=nTTT90:=nTTT91:=nTTT100:=nTTT101:=0
-   		fFilovo:=.f.
-  		do while !eof() .and. cG1==g1  .and. idtarifa==cIdTarifa
-    			cIdroba:=idroba
-    			select roba
-    			hseek cIdRoba
-    			select rekap1
-			nK0:=0 // u sluceju da je vise objekata u prikazu inventure, saberi
-    			nK1:=nK2:=nK3:=nK4:=nK5:=nK6:=nK7:=nK8:=0
-    			nMPC:=nNovaMPC:=0
-    			do while  !eof() .and. cG1==field->g1  .and. field->idtarifa==cIdTarifa .and. cIdRoba==field->idroba
-       				nK0+=k0
-       				nK1+=k1
-       				nK2+=k2
-       				nK3+=k3
-       				nK4+=k4
-       				nK5+=k5
-       				nK6+=k6
-       				nK7+=k7
-       				nK8+=k8
-       				nMPC:=mpc
-       				// nadji prvu novu mpc
-       				if ((nNovaMpc==0) .and. (field->novaMpc<>0))
-       					nNovaMPC:=field->novaMpc
-				endif
-       				++nRec
-       				ShowKorner(nRec,10)
-      				skip
-    			enddo
+   PRIVATE xxx := 0
 
-			if xxx=1
-     				// ako je pocetno stanje nula i prijem u mjesecu  je nula
-     				if cSNule=="N" .and. roba->tip<>"N" .and. round(nk0,4)=0 .and. round(nk4,4)=0
-        				// nk0 - pocetno stanje, nk4 - prijem u toku mjeseca
-        				loop
-     				endif
-    			else  
-       				// nivelacije
-       				if round(nNovaMPC,4)=0
-        				loop
-       				endif
-       				if cObrNivelacije=="2"
-          				if xxx==2 .and. (nNovampc-field->nmpc)<0
-            					loop
-          				endif
-          				if xxx==3 .and. (nNovampc-field->nmpc)>0
-            					loop
-          				endif
-       				endif
-			endif
-			fFilovo:=.t.
-    			if xxx>=2  // obrazac nivelacije
-     				if prow()>PREDOVA
-     					FF
-					ZaglObrPC(cVarPC)
-     				endif
-     				if cProredPC="D"
-      					?
-     				endif
-     				? str(++nRbr,4)," ", cidroba; ??  " "; ?? LEFT(roba->naz,40); ??  " "
-     				// grupa artikla - atvibut N1 - numericki
-     				@ prow(),pcol() SAY roba->N1 pict  "999"; ??  " "
-     				// tekuca cijena
-     				@ prow(),pcol() SAY nmpc pict  "999999.99"; ??  " "
-     				// nova cijena
-     				@ prow(),pcol() SAY nnovampc pict  "@Z 999999.99"; ??  " "
-     				if cObrNivelacije=="2" .and. xxx==3
-       					@ prow(),pcol() SAY nMPC-nNovampc pict  "999999.99"
-       					??  " "
-     				else
-       					@ prow(),pcol() SAY nNovampc-nmpc pict  "999999.99"
-       					??  " "
-     				endif
-     				?? "____________ ____________ ____________"
-    			endif
-			if xxx=1
-     				if prow()>PREDOVA
-					FF
-					kalk_zagl_inventura()
-				endif
-     				? str(++nRbr,4),"³", cidroba
-				??  "³"
-				?? LEFT(roba->naz,40)
-				??  "³"
-     				// grupa artikla - atvibut N1 - numericki
-     				@ prow(),pcol() SAY roba->N1 pict "999"
-				??  "³"
-     				// tekuca cijena
-     				@ prow(),pcol() SAY nmpc pict "9999.99"
-				??  "³"
-     				// nova cijena
-     				@ prow(),pcol() SAY nnovampc pict "@Z 9999.99"
-				??  "³"
-    			endif
-			nCol1:=pcol()
-			if cPrikKol=="D"
-      				nPom:=nk0
-    			else
-      				nPom:=0
-    			endif
+   FOR xxx := 1 TO 3  // obrazac nivelacije
+      cVarPC := "1"
+      IF cOBrNivelacije == "2"
+         IF xxx == 2
+            cVarPc := "2"
+         ELSE
+            cVarPc := "3"
+         ENDIF
+      ENDIF
+      SELECT rekap1
+      GO TOP
+      start PRINT cret
+      ?
 
-    			if roba->k2<>"X"
-     				nTTT10+=nPom
-    			endif
+      PRIVATE PREDOVA := 62
+      PRIVATE  aTarife := {}
+      PRIVATE  aTarGr := {}
+      PRIVATE nStr := 0
+      IF xxx == 1
+         kalk_zagl_inventura()
+         nCol1 := 10
+         m := "----- ---------------------------------------------------- --- ------- ------- ------ ---------- ------ ---------- ---------- ---------- ------ ---------- ------ ---------- ------ ---------- ------ ---------- ------ ----------"
+      ELSE
+         PRIVATE PREDOVA := 61
+         m := "----- ---------------------------------------------------- --- --------- --------- --------- ------------ ------------ ------------"
+         ZaglObrPC( cVarPC )
+         nCol1 := 10
+      ENDIF
+      nT10 := nT11 := nT20 := nT21 := nT30 := nT31 := nT40 := nT41 := nT50 := nT51 := nT60 := nT61 := nT70 := nT71 := nT80 := nT81 := nT90 := nT91 := nT100 := nT101 := 0
 
-    			nTTT11+=nPom*nmpc
+      fFilovo := .F.
+      nRec := 0
+      DO WHILE !Eof()
+         cG1 := g1
+         nTT10 := nTT11 := nTT20 := nTT21 := nTT30 := nTT31 := nTT40 := nTT41 := nTT50 := nTT51 := nTT60 := nTT61 := nTT70 := nTT71 := nTT80 := nTT81 := nTT90 := nTT91 := nTT100 := nTT101 := 0
+         nRbr := 0
+         DO WHILE !Eof() .AND. cG1 == g1
+            cIdTarifa := idtarifa
+            nTTT10 := nTTT11 := nTTT20 := nTTT21 := nTTT30 := nTTT31 := nTTT40 := nTTT41 := nTTT50 := nTTT51 := nTTT60 := nTTT61 := nTTT70 := nTTT71 := nTTT80 := nTTT81 := nTTT90 := nTTT91 := nTTT100 := nTTT101 := 0
+            fFilovo := .F.
+            DO WHILE !Eof() .AND. cG1 == g1  .AND. idtarifa == cIdTarifa
+               cIdroba := idroba
+               SELECT roba
+               hseek cIdRoba
+               SELECT rekap1
+               nK0 := 0 // u sluceju da je vise objekata u prikazu inventure, saberi
+               nK1 := nK2 := nK3 := nK4 := nK5 := nK6 := nK7 := nK8 := 0
+               nMPC := nNovaMPC := 0
+               DO WHILE  !Eof() .AND. cG1 == field->g1  .AND. field->idtarifa == cIdTarifa .AND. cIdRoba == field->idroba
+                  nK0 += k0
+                  nK1 += k1
+                  nK2 += k2
+                  nK3 += k3
+                  nK4 += k4
+                  nK5 += k5
+                  nK6 += k6
+                  nK7 += k7
+                  nK8 += k8
+                  nMPC := mpc
+                  // nadji prvu novu mpc
+                  IF ( ( nNovaMpc == 0 ) .AND. ( field->novaMpc <> 0 ) )
+                     nNovaMPC := field->novaMpc
+                  ENDIF
+                  ++nRec
+                  ShowKorner( nRec, 10 )
+                  SKIP
+               ENDDO
 
-    			if xxx==1
-     				// predhodno stanje
-     				@ prow(),pcol() SAY nPom pict pickol
-				??  "³"
-     				@ prow(),pcol() SAY nPom*nmpc pict picdem
-				??  "³"
-				// prijem u mjesecu
-     				if cPoc=="D"
-       					nPom:=0
-     				else
-       					nPom:=nK4 // prijem u mjesecu
-     				endif
-     				@ prow(),pcol() SAY nPom pict pickol; ??  "³"
-     				@ prow(),pcol() SAY nPom*nmpc pict picdem; ??  "³"
-     				if roba->k2<>"X"
-       					nTTT20+=nPom
-     				endif
-     				nTTT21+=nPom*nmpc
+               IF xxx = 1
+                  // ako je pocetno stanje nula i prijem u mjesecu  je nula
+                  IF cSNule == "N" .AND. roba->tip <> "N" .AND. Round( nk0, 4 ) = 0 .AND. Round( nk4, 4 ) = 0
+                     // nk0 - pocetno stanje, nk4 - prijem u toku mjeseca
+                     LOOP
+                  ENDIF
+               ELSE
+                  // nivelacije
+                  IF Round( nNovaMPC, 4 ) = 0
+                     LOOP
+                  ENDIF
+                  IF cObrNivelacije == "2"
+                     IF xxx == 2 .AND. ( nNovampc - field->nmpc ) < 0
+                        LOOP
+                     ENDIF
+                     IF xxx == 3 .AND. ( nNovampc - field->nmpc ) > 0
+                        LOOP
+                     ENDIF
+                  ENDIF
+               ENDIF
+               fFilovo := .T.
+               IF xxx >= 2  // obrazac nivelacije
+                  IF PRow() > PREDOVA
+                     FF
+                     ZaglObrPC( cVarPC )
+                  ENDIF
+                  IF cProredPC = "D"
+                     ?
+                  ENDIF
+                  ? Str( ++nRbr, 4 ), " ", cidroba; ??  " "; ?? Left( roba->naz, 40 ); ??  " "
+                  // grupa artikla - atvibut N1 - numericki
+                  @ PRow(), PCol() SAY roba->N1 PICT  "999"; ??  " "
+                  // tekuca cijena
+                  @ PRow(), PCol() SAY nmpc PICT  "999999.99"; ??  " "
+                  // nova cijena
+                  @ PRow(), PCol() SAY nnovampc PICT  "@Z 999999.99"; ??  " "
+                  IF cObrNivelacije == "2" .AND. xxx == 3
+                     @ PRow(), PCol() SAY nMPC - nNovampc PICT  "999999.99"
+                     ??  " "
+                  ELSE
+                     @ PRow(), PCol() SAY nNovampc - nmpc PICT  "999999.99"
+                     ??  " "
+                  ENDIF
+                  ?? "____________ ____________ ____________"
+               ENDIF
+               IF xxx = 1
+                  IF PRow() > PREDOVA
+                     FF
+                     kalk_zagl_inventura()
+                  ENDIF
+                  ? Str( ++nRbr, 4 ), "Â³", cidroba
+                  ??  "Â³"
+                  ?? Left( roba->naz, 40 )
+                  ??  "Â³"
+                  // grupa artikla - atvibut N1 - numericki
+                  @ PRow(), PCol() SAY roba->N1 PICT "999"
+                  ??  "Â³"
+                  // tekuca cijena
+                  @ PRow(), PCol() SAY nmpc PICT "9999.99"
+                  ??  "Â³"
+                  // nova cijena
+                  @ PRow(), PCol() SAY nnovampc PICT "@Z 9999.99"
+                  ??  "Â³"
+               ENDIF
+               nCol1 := PCol()
+               IF cPrikKol == "D"
+                  nPom := nk0
+               ELSE
+                  nPom := 0
+               ENDIF
 
-     				// iznos povisenja
-     				if cPoc=="D"
-        				nPom:=0
-     				else
-       					if (nnovampc-nmpc)>0 .and. round(nnovampc,3)<>0
-          					nPom:=(nnovampc-nmpc)*nk2
-      					else
-          					nPom:=0
-       					endif
-     				endif
-     				@ prow(),pcol() SAY nPom pict picdem; ??  "³"
-     				nTTT30+=nPom
-				// iznos snizenje
-     				if cPoc=="D"
-        				nPom:=0
-     				else
-       					if (nNovampc-nmpc)<0 .and. round(nnovampc,3)<>0
-         					nPom:=-(nnovampc-nMPC)*nk2
-       					else
-          					nPom:=0
-       					endif
-     				endif
-     				@ prow(),pcol() SAY nPom pict picdem; ??  "³"
-     				nTTT31+=nPom
+               IF roba->k2 <> "X"
+                  nTTT10 += nPom
+               ENDIF
 
-     				// otpremljeno u mjesecu
-     				if cPoc=="D"
-        				nPom:=0
-     				else
-        				nPom:=nK6 // izlaz iz prodavnice po ostalim osnovama
-     				endif
-     				@ prow(),pcol() SAY nPom pict pickol; ??  "³"
-     				@ prow(),pcol() SAY nPom*nmpc pict picdem; ??  "³"
-     				if roba->k2<>"X"
-       					nTTT40+=nPom
-     				endif
-     				nTTT41+=nPom*nmpc
-				// reklamacija
-     				if cPoc=="D"
-        				nPom:=0
-     				else
-        				nPom:=nK5 // reklamacije u mjesecu
-     				endif
-     				@ prow(),pcol() SAY nPom pict pickol; ??  "³"
-     				@ prow(),pcol() SAY nPom*nmpc pict picdem; ??  "³"
-     				if roba->k2<>"X"
-       					nTTT50+=nPom
-     				endif
-     				nTTT51+=nPom*nmpc
-				// prodaja
-     				if cPoc=="D"
-        				nPom:=0
-     				else
-        				nPom:=nK1 // prodaja mjesecu
-     				endif
-     				@ prow(),pcol() SAY nPom pict pickol; ??  "³"
-     				@ prow(),pcol() SAY nPom*nmpc pict picdem; ??  "³"
-     				if roba->k2<>"X"
-      					nTTT60+=nPom
-     				endif
-     				nTTT61+=nPom*nmpc
+               nTTT11 += nPom * nmpc
 
-     				// zaliha
-     				if cPoc=="D"
-        				nPom:=0
-     				else
-       					nPom:=nk2
-     				endif
+               IF xxx == 1
+                  // predhodno stanje
+                  @ PRow(), PCol() SAY nPom PICT pickol
+                  ??  "Â³"
+                  @ PRow(), PCol() SAY nPom * nmpc PICT picdem
+                  ??  "Â³"
+                  // prijem u mjesecu
+                  IF cPoc == "D"
+                     nPom := 0
+                  ELSE
+                     nPom := nK4 // prijem u mjesecu
+                  ENDIF
+                  @ PRow(), PCol() SAY nPom PICT pickol; ??  "Â³"
+                  @ PRow(), PCol() SAY nPom * nmpc PICT picdem; ??  "Â³"
+                  IF roba->k2 <> "X"
+                     nTTT20 += nPom
+                  ENDIF
+                  nTTT21 += nPom * nmpc
 
-     				@ prow(),pcol() SAY nPom pict pickol; ??  "³"
-     				if round(nNovaMPC,3)==0
-       					@ prow(),pcol() SAY nPom*nMPC pict picdem; ??  "³"
-       					if roba->k2<>"X"
-         					nTTT70+=nPom
-       					endif
-       					nTTT71+=nPom*nmpc
-     				else
-       					@ prow(),pcol() SAY nPom*nNovaMPC pict picdem; ??  "³"
-       					if roba->k2<>"X"
-        					nTTT70+=nPom
-       					endif
-       					nTTT71+=nPom*nNovampc
-     				endif
+                  // iznos povisenja
+                  IF cPoc == "D"
+                     nPom := 0
+                  ELSE
+                     IF ( nnovampc - nmpc ) > 0 .AND. Round( nnovampc, 3 ) <> 0
+                        nPom := ( nnovampc - nmpc ) * nk2
+                     ELSE
+                        nPom := 0
+                     ENDIF
+                  ENDIF
+                  @ PRow(), PCol() SAY nPom PICT picdem; ??  "Â³"
+                  nTTT30 += nPom
+                  // iznos snizenje
+                  IF cPoc == "D"
+                     nPom := 0
+                  ELSE
+                     IF ( nNovampc - nmpc ) < 0 .AND. Round( nnovampc, 3 ) <> 0
+                        nPom := -( nnovampc - nMPC ) * nk2
+                     ELSE
+                        nPom := 0
+                     ENDIF
+                  ENDIF
+                  @ PRow(), PCol() SAY nPom PICT picdem; ??  "Â³"
+                  nTTT31 += nPom
 
-     				// kumulativno prodaja
-     				if cPoc=="D"
-        				nPom:=0
-     				else
-       					nPom:=nk3
-     				endif
+                  // otpremljeno u mjesecu
+                  IF cPoc == "D"
+                     nPom := 0
+                  ELSE
+                     nPom := nK6 // izlaz iz prodavnice po ostalim osnovama
+                  ENDIF
+                  @ PRow(), PCol() SAY nPom PICT pickol; ??  "Â³"
+                  @ PRow(), PCol() SAY nPom * nmpc PICT picdem; ??  "Â³"
+                  IF roba->k2 <> "X"
+                     nTTT40 += nPom
+                  ENDIF
+                  nTTT41 += nPom * nmpc
+                  // reklamacija
+                  IF cPoc == "D"
+                     nPom := 0
+                  ELSE
+                     nPom := nK5 // reklamacije u mjesecu
+                  ENDIF
+                  @ PRow(), PCol() SAY nPom PICT pickol; ??  "Â³"
+                  @ PRow(), PCol() SAY nPom * nmpc PICT picdem; ??  "Â³"
+                  IF roba->k2 <> "X"
+                     nTTT50 += nPom
+                  ENDIF
+                  nTTT51 += nPom * nmpc
+                  // prodaja
+                  IF cPoc == "D"
+                     nPom := 0
+                  ELSE
+                     nPom := nK1 // prodaja mjesecu
+                  ENDIF
+                  @ PRow(), PCol() SAY nPom PICT pickol; ??  "Â³"
+                  @ PRow(), PCol() SAY nPom * nmpc PICT picdem; ??  "Â³"
+                  IF roba->k2 <> "X"
+                     nTTT60 += nPom
+                  ENDIF
+                  nTTT61 += nPom * nmpc
 
-     				@ prow(),pcol() SAY nPom pict pickol; ??  "³"
-     				@ prow(),pcol() SAY nPom*nMPC pict picdem; ??  "³"
-     				if roba->k2<>"X"
-       					nTTT80+=nPom
-     				endif
-     				nTTT81+=nPom*nmpc
+                  // zaliha
+                  IF cPoc == "D"
+                     nPom := 0
+                  ELSE
+                     nPom := nk2
+                  ENDIF
 
-     				?  m
-    			endif//xxx=1
-    			select rekap1
-   		enddo // cidtarifa
-  		if !fFilovo
-     			loop
-   		endif
-		if xxx>=2  // obrazac nivelacije
-    			if prow()>PREDOVA
-    				FF
-				ZaglObrPC(cVarPC)
-    			endif
-    			? m
-    			? "Ukupno tarifa", cidtarifa
-    			? m
-   		endif
-		if xxx=1
-    			if prow()>PREDOVA
-    				FF
-				kalk_zagl_inventura()
-			endif
-    			//I_ON
-    			? m
-    			? "Ukupno tarifa", cidtarifa
-    			@ prow(),nCol1 SAY nTTT10 pict pickol; ??  "³"
-    			@ prow(),pcol() SAY nTTT11 pict picdem; ??  "³"
-    			@ prow(),pcol() SAY nTTT20 pict pickol; ??  "³"
-    			@ prow(),pcol() SAY nTTT21 pict picdem; ??  "³"
-    			@ prow(),pcol() SAY nTTT30 pict picdem; ??  "³"
-    			@ prow(),pcol() SAY nTTT31 pict picdem; ??  "³"
-    			@ prow(),pcol() SAY nTTT40 pict pickol; ??  "³"
-    			@ prow(),pcol() SAY nTTT41 pict picdem; ??  "³"
-    			@ prow(),pcol() SAY nTTT50 pict pickol; ??  "³"
-    			@ prow(),pcol() SAY nTTT51 pict picdem; ??  "³"
-    			@ prow(),pcol() SAY nTTT60 pict pickol; ??  "³"
-    			@ prow(),pcol() SAY nTTT61 pict picdem; ??  "³"
-    			@ prow(),pcol() SAY nTTT70 pict pickol; ??  "³"
-    			@ prow(),pcol() SAY nTTT71 pict picdem; ??  "³"
-    			@ prow(),pcol() SAY nTTT80 pict pickol; ??  "³"
-    			@ prow(),pcol() SAY nTTT81 pict picdem; ??  "³"
-   		endif //xxx=1
-   		nInd:=ascan(aTarife,{|x| x[1]=cIdTarifa})
-   		if nInd=0
-     			AADD(aTarife,{ cIdTarifa, nTTT10,nTTT11,nTTT20,nTTT21,nTTT30,nTTT31,nTTT40,nTTT41,nTTT50,nTTT51,nTTT60,nTTT61,nTTT70,nTTT71,nTTT80,nTTT81})
-   		else
-     			aTarife[nInd,2]+=nTTT10 
-			aTarife[nInd,3]+=nTTT11
-     			aTarife[nInd,4]+=nTTT20 
-			aTarife[nInd,5]+=nTTT21
-     			aTarife[nInd,6]+=nTTT30 
-			aTarife[nInd,7]+=nTTT31
-     			aTarife[nInd,8]+=nTTT40
-			aTarife[nInd,9]+=nTTT41
-     			aTarife[nInd,10]+=nTTT50
-			aTarife[nInd,11]+=nTTT51
-     			aTarife[nInd,12]+=nTTT60
-			aTarife[nInd,13]+=nTTT61
-     			aTarife[nInd,14]+=nTTT70
-			aTarife[nInd,15]+=nTTT71
-     			aTarife[nInd,16]+=nTTT80
-			aTarife[nInd,17]+=nTTT81
-   		endif
-   		nInd:=ascan(aTarGr,{|x| x[1]=cG1 .and. x[2]=cIdTarifa})
-   		if nInd=0
-     			AADD(aTarGr, ;
-             			{ cG1, cIdTarifa, ;
-                		nTTT10,nTTT11,;
-                		nTTT20,nTTT21,;
-                		nTTT30,nTTT31,;
-                		nTTT40,nTTT41,;
-                		nTTT50,nTTT51,;
-                		nTTT60,nTTT61,;
-                		nTTT70,nTTT71,;
-                		nTTT80,nTTT81;
-              			};
-        			)
-   		else
-     			aTarGr[nInd,3]+=nTTT10 ;      aTarGr[nInd,4]+=nTTT11
-     			aTarGr[nInd,5]+=nTTT20 ;      aTarGr[nInd,6]+=nTTT21
-     			aTarGr[nInd,7]+=nTTT30 ;      aTarGr[nInd,8]+=nTTT31
-     			aTarGr[nInd,9]+=nTTT40 ;      aTarGr[nInd,10]+=nTTT41
-     			aTarGr[nInd,11]+=nTTT50;      aTarGr[nInd,12]+=nTTT51
-     			aTarGr[nInd,13]+=nTTT60;      aTarGr[nInd,14]+=nTTT61
-     			aTarGr[nInd,15]+=nTTT70;      aTarGr[nInd,16]+=nTTT71
-     			aTarGr[nInd,17]+=nTTT80;      aTarGr[nInd,18]+=nTTT81
-   		endif
+                  @ PRow(), PCol() SAY nPom PICT pickol; ??  "Â³"
+                  IF Round( nNovaMPC, 3 ) == 0
+                     @ PRow(), PCol() SAY nPom * nMPC PICT picdem; ??  "Â³"
+                     IF roba->k2 <> "X"
+                        nTTT70 += nPom
+                     ENDIF
+                     nTTT71 += nPom * nmpc
+                  ELSE
+                     @ PRow(), PCol() SAY nPom * nNovaMPC PICT picdem; ??  "Â³"
+                     IF roba->k2 <> "X"
+                        nTTT70 += nPom
+                     ENDIF
+                     nTTT71 += nPom * nNovampc
+                  ENDIF
 
-		nTT10+=nTTT10; nTT11+=nTTT11
-   		nTT20+=nTTT20; nTT21+=nTTT21
-   		nTT30+=nTTT30; nTT31+=nTTT31
-   		nTT40+=nTTT40; nTT41+=nTTT41
-   		nTT50+=nTTT50; nTT51+=nTTT51
-   		nTT60+=nTTT60; nTT61+=nTTT61
-   		nTT70+=nTTT70; nTT71+=nTTT71
-   		nTT80+=nTTT80; nTT81+=nTTT81
-   		if xxx=1
-    			? m
-    			I_OFF
-   		endif
-  	enddo // cg1
-  
-	IF !fFilovo
-     		LOOP
-  	ENDIF
+                  // kumulativno prodaja
+                  IF cPoc == "D"
+                     nPom := 0
+                  ELSE
+                     nPom := nk3
+                  ENDIF
 
-  	// obrazac nivelacije
-  	if (xxx>=2)  
-    		if prow()>PREDOVA
-    			FF
-			ZaglObrPC(cVarPC)
-    		endif
-    		? m
-    		select k1
-		hseek cG1
-		select rekap1
-    		? "Ukupno grupa", cG1, "-", k1->naz
-    		? m
-  	endif
+                  @ PRow(), PCol() SAY nPom PICT pickol; ??  "Â³"
+                  @ PRow(), PCol() SAY nPom * nMPC PICT picdem; ??  "Â³"
+                  IF roba->k2 <> "X"
+                     nTTT80 += nPom
+                  ENDIF
+                  nTTT81 += nPom * nmpc
 
-  	if xxx=1
-   		if prow()>PREDOVA
-			FF
-			kalk_zagl_inventura()
-		endif
-   		//B_ON
-   		? m
-   		select k1
-   		hseek cG1
-   		select rekap1
-   		? "Ukupno grupa", cG1, "-", k1->naz
-   		@ prow(),nCol1 SAY  nTT10 pict pickol; ??  "³"
-   		@ prow(),pcol() SAY nTT11 pict picdem; ??  "³"
-   		@ prow(),pcol() SAY nTT20 pict pickol; ??  "³"
-   		@ prow(),pcol() SAY nTT21 pict picdem; ??  "³"
-   		@ prow(),pcol() SAY nTT30 pict picdem; ??  "³"
-   		@ prow(),pcol() SAY nTT31 pict picdem; ??  "³"
-   		@ prow(),pcol() SAY nTT40 pict pickol; ??  "³"
-   		@ prow(),pcol() SAY nTT41 pict picdem; ??  "³"
-   		@ prow(),pcol() SAY nTT50 pict pickol; ??  "³"
-   		@ prow(),pcol() SAY nTT51 pict picdem; ??  "³"
-   		@ prow(),pcol() SAY nTT60 pict pickol; ??  "³"
-   		@ prow(),pcol() SAY nTT61 pict picdem; ??  "³"
-   		@ prow(),pcol() SAY nTT70 pict pickol; ??  "³"
-   		@ prow(),pcol() SAY nTT71 pict picdem; ??  "³"
-   		@ prow(),pcol() SAY nTT80 pict pickol; ??  "³"
-   		@ prow(),pcol() SAY nTT81 pict picdem; ??  "³"
-  	endif //XXX
-  	nT10+=nTT10
-  	nT11+=nTT11
-  	nT20+=nTT20
-  	nT21+=nTT21
-  	nT30+=nTT30
-  	nT31+=nTT31
-  	nT40+=nTT40
-  	nT41+=nTT41
-  	nT50+=nTT50
-  	nT51+=nTT51
-  	nT60+=nTT60
-  	nT61+=nTT61
-  	nT70+=nTT70
-  	nT71+=nTT71
-  	nT80+=nTT80
-  	nT81+=nTT81
+                  ?  m
+               ENDIF// xxx=1
+               SELECT rekap1
+            ENDDO // cidtarifa
+            IF !fFilovo
+               LOOP
+            ENDIF
+            IF xxx >= 2  // obrazac nivelacije
+               IF PRow() > PREDOVA
+                  FF
+                  ZaglObrPC( cVarPC )
+               ENDIF
+               ? m
+               ? "Ukupno tarifa", cidtarifa
+               ? m
+            ENDIF
+            IF xxx = 1
+               IF PRow() > PREDOVA
+                  FF
+                  kalk_zagl_inventura()
+               ENDIF
+               // I_ON
+               ? m
+               ? "Ukupno tarifa", cidtarifa
+               @ PRow(), nCol1 SAY nTTT10 PICT pickol; ??  "Â³"
+               @ PRow(), PCol() SAY nTTT11 PICT picdem; ??  "Â³"
+               @ PRow(), PCol() SAY nTTT20 PICT pickol; ??  "Â³"
+               @ PRow(), PCol() SAY nTTT21 PICT picdem; ??  "Â³"
+               @ PRow(), PCol() SAY nTTT30 PICT picdem; ??  "Â³"
+               @ PRow(), PCol() SAY nTTT31 PICT picdem; ??  "Â³"
+               @ PRow(), PCol() SAY nTTT40 PICT pickol; ??  "Â³"
+               @ PRow(), PCol() SAY nTTT41 PICT picdem; ??  "Â³"
+               @ PRow(), PCol() SAY nTTT50 PICT pickol; ??  "Â³"
+               @ PRow(), PCol() SAY nTTT51 PICT picdem; ??  "Â³"
+               @ PRow(), PCol() SAY nTTT60 PICT pickol; ??  "Â³"
+               @ PRow(), PCol() SAY nTTT61 PICT picdem; ??  "Â³"
+               @ PRow(), PCol() SAY nTTT70 PICT pickol; ??  "Â³"
+               @ PRow(), PCol() SAY nTTT71 PICT picdem; ??  "Â³"
+               @ PRow(), PCol() SAY nTTT80 PICT pickol; ??  "Â³"
+               @ PRow(), PCol() SAY nTTT81 PICT picdem; ??  "Â³"
+            ENDIF // xxx=1
+            nInd := AScan( aTarife, {| x| x[ 1 ] = cIdTarifa } )
+            IF nInd = 0
+               AAdd( aTarife, { cIdTarifa, nTTT10, nTTT11, nTTT20, nTTT21, nTTT30, nTTT31, nTTT40, nTTT41, nTTT50, nTTT51, nTTT60, nTTT61, nTTT70, nTTT71, nTTT80, nTTT81 } )
+            ELSE
+               aTarife[ nInd, 2 ] += nTTT10
+               aTarife[ nInd, 3 ] += nTTT11
+               aTarife[ nInd, 4 ] += nTTT20
+               aTarife[ nInd, 5 ] += nTTT21
+               aTarife[ nInd, 6 ] += nTTT30
+               aTarife[ nInd, 7 ] += nTTT31
+               aTarife[ nInd, 8 ] += nTTT40
+               aTarife[ nInd, 9 ] += nTTT41
+               aTarife[ nInd, 10 ] += nTTT50
+               aTarife[ nInd, 11 ] += nTTT51
+               aTarife[ nInd, 12 ] += nTTT60
+               aTarife[ nInd, 13 ] += nTTT61
+               aTarife[ nInd, 14 ] += nTTT70
+               aTarife[ nInd, 15 ] += nTTT71
+               aTarife[ nInd, 16 ] += nTTT80
+               aTarife[ nInd, 17 ] += nTTT81
+            ENDIF
+            nInd := AScan( aTarGr, {| x| x[ 1 ] = cG1 .AND. x[ 2 ] = cIdTarifa } )
+            IF nInd = 0
+               AAdd( aTarGr, ;
+                  { cG1, cIdTarifa, ;
+                  nTTT10, nTTT11, ;
+                  nTTT20, nTTT21, ;
+                  nTTT30, nTTT31, ;
+                  nTTT40, nTTT41, ;
+                  nTTT50, nTTT51, ;
+                  nTTT60, nTTT61, ;
+                  nTTT70, nTTT71, ;
+                  nTTT80, nTTT81;
+                  };
+                  )
+            ELSE
+               aTarGr[ nInd, 3 ] += nTTT10 ;      aTarGr[ nInd, 4 ] += nTTT11
+               aTarGr[ nInd, 5 ] += nTTT20 ;      aTarGr[ nInd, 6 ] += nTTT21
+               aTarGr[ nInd, 7 ] += nTTT30 ;      aTarGr[ nInd, 8 ] += nTTT31
+               aTarGr[ nInd, 9 ] += nTTT40 ;      aTarGr[ nInd, 10 ] += nTTT41
+               aTarGr[ nInd, 11 ] += nTTT50;      aTarGr[ nInd, 12 ] += nTTT51
+               aTarGr[ nInd, 13 ] += nTTT60;      aTarGr[ nInd, 14 ] += nTTT61
+               aTarGr[ nInd, 15 ] += nTTT70;      aTarGr[ nInd, 16 ] += nTTT71
+               aTarGr[ nInd, 17 ] += nTTT80;      aTarGr[ nInd, 18 ] += nTTT81
+            ENDIF
 
-  	? m
-  	//B_OFF
-enddo //eof()
+            nTT10 += nTTT10; nTT11 += nTTT11
+            nTT20 += nTTT20; nTT21 += nTTT21
+            nTT30 += nTTT30; nTT31 += nTTT31
+            nTT40 += nTTT40; nTT41 += nTTT41
+            nTT50 += nTTT50; nTT51 += nTTT51
+            nTT60 += nTTT60; nTT61 += nTTT61
+            nTT70 += nTTT70; nTT71 += nTTT71
+            nTT80 += nTTT80; nTT81 += nTTT81
+            IF xxx = 1
+               ? m
+               I_OFF
+            ENDIF
+         ENDDO // cg1
+
+         IF !fFilovo
+            LOOP
+         ENDIF
+
+         // obrazac nivelacije
+         IF ( xxx >= 2 )
+            IF PRow() > PREDOVA
+               FF
+               ZaglObrPC( cVarPC )
+            ENDIF
+            ? m
+            SELECT k1
+            hseek cG1
+            SELECT rekap1
+            ? "Ukupno grupa", cG1, "-", k1->naz
+            ? m
+         ENDIF
+
+         IF xxx = 1
+            IF PRow() > PREDOVA
+               FF
+               kalk_zagl_inventura()
+            ENDIF
+            // B_ON
+            ? m
+            SELECT k1
+            hseek cG1
+            SELECT rekap1
+            ? "Ukupno grupa", cG1, "-", k1->naz
+            @ PRow(), nCol1 SAY  nTT10 PICT pickol; ??  "Â³"
+            @ PRow(), PCol() SAY nTT11 PICT picdem; ??  "Â³"
+            @ PRow(), PCol() SAY nTT20 PICT pickol; ??  "Â³"
+            @ PRow(), PCol() SAY nTT21 PICT picdem; ??  "Â³"
+            @ PRow(), PCol() SAY nTT30 PICT picdem; ??  "Â³"
+            @ PRow(), PCol() SAY nTT31 PICT picdem; ??  "Â³"
+            @ PRow(), PCol() SAY nTT40 PICT pickol; ??  "Â³"
+            @ PRow(), PCol() SAY nTT41 PICT picdem; ??  "Â³"
+            @ PRow(), PCol() SAY nTT50 PICT pickol; ??  "Â³"
+            @ PRow(), PCol() SAY nTT51 PICT picdem; ??  "Â³"
+            @ PRow(), PCol() SAY nTT60 PICT pickol; ??  "Â³"
+            @ PRow(), PCol() SAY nTT61 PICT picdem; ??  "Â³"
+            @ PRow(), PCol() SAY nTT70 PICT pickol; ??  "Â³"
+            @ PRow(), PCol() SAY nTT71 PICT picdem; ??  "Â³"
+            @ PRow(), PCol() SAY nTT80 PICT pickol; ??  "Â³"
+            @ PRow(), PCol() SAY nTT81 PICT picdem; ??  "Â³"
+         ENDIF // XXX
+         nT10 += nTT10
+         nT11 += nTT11
+         nT20 += nTT20
+         nT21 += nTT21
+         nT30 += nTT30
+         nT31 += nTT31
+         nT40 += nTT40
+         nT41 += nTT41
+         nT50 += nTT50
+         nT51 += nTT51
+         nT60 += nTT60
+         nT61 += nTT61
+         nT70 += nTT70
+         nT71 += nTT71
+         nT80 += nTT80
+         nT81 += nTT81
+
+         ? m
+         // B_OFF
+      ENDDO // eof()
 
 
-if xxx>=2  // obrazac nivelacije
-	if prow()>PREDOVA
-		FF
-		ZaglObrPC(cVarPC)
-	endif
-	? m
-	? "U K U P N O"
-	? m
-endif
+      IF xxx >= 2  // obrazac nivelacije
+         IF PRow() > PREDOVA
+            FF
+            ZaglObrPC( cVarPC )
+         ENDIF
+         ? m
+         ? "U K U P N O"
+         ? m
+      ENDIF
 
-if xxx=1
-	if prow()>PREDOVA
-		FF
-		kalk_zagl_inventura()
-	endif
-	//B_ON
-	? strtran(m,"-","=")
-	? "U K U P N O"
-  	@ prow(),nCol1 SAY  nT10 pict pickol; ??  "³"
-  	@ prow(),pcol() SAY nT11 pict picdem; ??  "³"
-  	@ prow(),pcol() SAY nT20 pict pickol; ??  "³"
-  	@ prow(),pcol() SAY nT21 pict picdem; ??  "³"
- 	@ prow(),pcol() SAY nT30 pict picdem; ??  "³"
-  	@ prow(),pcol() SAY nT31 pict picdem; ??  "³"
-  	@ prow(),pcol() SAY nT40 pict pickol; ??  "³"
-  	@ prow(),pcol() SAY nT41 pict picdem; ??  "³"
-  	@ prow(),pcol() SAY nT50 pict pickol; ??  "³"
-  	@ prow(),pcol() SAY nT51 pict picdem; ??  "³"
-  	@ prow(),pcol() SAY nT60 pict pickol; ??  "³"
-  	@ prow(),pcol() SAY nT61 pict picdem; ??  "³"
-  	@ prow(),pcol() SAY nT70 pict pickol; ??  "³"
-  	@ prow(),pcol() SAY nT71 pict picdem; ??  "³"
-  	@ prow(),pcol() SAY nT80 pict pickol; ??  "³"
-  	@ prow(),pcol() SAY nT81 pict picdem; ??  "³"
+      IF xxx = 1
+         IF PRow() > PREDOVA
+            FF
+            kalk_zagl_inventura()
+         ENDIF
+         // B_ON
+         ? StrTran( m, "-", "=" )
+         ? "U K U P N O"
+         @ PRow(), nCol1 SAY  nT10 PICT pickol; ??  "Â³"
+         @ PRow(), PCol() SAY nT11 PICT picdem; ??  "Â³"
+         @ PRow(), PCol() SAY nT20 PICT pickol; ??  "Â³"
+         @ PRow(), PCol() SAY nT21 PICT picdem; ??  "Â³"
+         @ PRow(), PCol() SAY nT30 PICT picdem; ??  "Â³"
+         @ PRow(), PCol() SAY nT31 PICT picdem; ??  "Â³"
+         @ PRow(), PCol() SAY nT40 PICT pickol; ??  "Â³"
+         @ PRow(), PCol() SAY nT41 PICT picdem; ??  "Â³"
+         @ PRow(), PCol() SAY nT50 PICT pickol; ??  "Â³"
+         @ PRow(), PCol() SAY nT51 PICT picdem; ??  "Â³"
+         @ PRow(), PCol() SAY nT60 PICT pickol; ??  "Â³"
+         @ PRow(), PCol() SAY nT61 PICT picdem; ??  "Â³"
+         @ PRow(), PCol() SAY nT70 PICT pickol; ??  "Â³"
+         @ PRow(), PCol() SAY nT71 PICT picdem; ??  "Â³"
+         @ PRow(), PCol() SAY nT80 PICT pickol; ??  "Â³"
+         @ PRow(), PCol() SAY nT81 PICT picdem; ??  "Â³"
 
-	? strtran(m,"-","=")
-	//B_OFF
+         ? StrTran( m, "-", "=" )
+         // B_OFF
 
-	if prow()>PREDOVA-8
-		FF
-		kalk_zagl_inventura()
-	endif
-endif//xxx=1
+         IF PRow() > PREDOVA - 8
+            FF
+            kalk_zagl_inventura()
+         ENDIF
+      ENDIF// xxx=1
 
-IF XXX=1
-	?
-	?
-	? "UKUPNO TARIFE / GRUPE:"
-	?
-ENDIF
-ASORT(aTarGr,,,{|x,y| x[2]+x[1]<y[2]+y[1]})
-IF XXX==1
-	? strtran(m,"-","=")
-	? len(aTarGr)
-ENDIF
-IF XXX=1
-	for nCnt:=1 to len(aTarGr)
-		if prow()>PREDOVA; FF; kalk_zagl_inventura(); endif
-			select k1
-			hseek aTarGr[nCnt,1]
-			? aTarGr[nCnt,1],k1->naz,"(",trim(aTarGr[nCnt,2]),")"
-  			@ prow(),nCol1 SAY aTarGr[nCnt,3] pict pickol; ??  "³"
-  			@ prow(),pcol() SAY aTarGr[nCnt,4] pict picdem; ??  "³"
-  			@ prow(),pcol() SAY aTarGr[nCnt,5] pict pickol; ??  "³"
-  			@ prow(),pcol() SAY aTarGr[nCnt,6] pict picdem; ??  "³"
-  			@ prow(),pcol() SAY aTarGr[nCnt,7] pict picdem; ??  "³"
-  			@ prow(),pcol() SAY aTarGr[nCnt,8] pict picdem; ??  "³"
-  			@ prow(),pcol() SAY aTarGr[nCnt,9] pict pickol; ??  "³"
-  			@ prow(),pcol() SAY aTarGr[nCnt,10] pict picdem; ??  "³"
-  			@ prow(),pcol() SAY aTarGr[nCnt,11] pict pickol; ??  "³"
-  			@ prow(),pcol() SAY aTarGr[nCnt,12] pict picdem; ??  "³"
-  			@ prow(),pcol() SAY aTarGr[nCnt,13] pict pickol; ??  "³"
-  			@ prow(),pcol() SAY aTarGr[nCnt,14] pict picdem; ??  "³"
-  			@ prow(),pcol() SAY aTarGr[nCnt,15] pict pickol; ??  "³"
-  			@ prow(),pcol() SAY aTarGr[nCnt,16] pict picdem; ??  "³"
-  			@ prow(),pcol() SAY aTarGr[nCnt,17] pict pickol; ??  "³"
-  			@ prow(),pcol() SAY aTarGr[nCnt,18] pict picdem; ??  "³"
-  			? m
-		next
-		? strtran(m,"-","=")
-	ENDIF//XXX=1
-	IF XXX=1
-		if prow()>PREDOVA-4; FF; kalk_zagl_inventura(); endif
-			?
-			?
-			? "UKUPNO PO TARIFAMA:"
-			?
-			ASORT(aTarife,,,{|x,y| x[1]<y[1]})
-			? strtran(m,"-","=")
-			for nCnt:=1 to len(aTarife)
-				if prow() > PREDOVA
-					FF
-					kalk_zagl_inventura()
-				endif
-				? aTarife[nCnt,1]
-  				@ prow(),nCol1 SAY  aTarife[nCnt,2] pict pickol; ??  "³"
-  				@ prow(),pcol() SAY aTarife[nCnt,3] pict picdem; ??  "³"
-  				@ prow(),pcol() SAY aTarife[nCnt,4] pict pickol; ??  "³"
-  				@ prow(),pcol() SAY aTarife[nCnt,5] pict picdem; ??  "³"
-  				@ prow(),pcol() SAY aTarife[nCnt,6] pict picdem; ??  "³"
-  				@ prow(),pcol() SAY aTarife[nCnt,7] pict picdem; ??  "³"
-  				@ prow(),pcol() SAY aTarife[nCnt,8] pict pickol; ??  "³"
-  				@ prow(),pcol() SAY aTarife[nCnt,9] pict picdem; ??  "³"
-  				@ prow(),pcol() SAY aTarife[nCnt,10] pict pickol; ??  "³"
-  				@ prow(),pcol() SAY aTarife[nCnt,11] pict picdem; ??  "³"
-  				@ prow(),pcol() SAY aTarife[nCnt,12] pict pickol; ??  "³"
-  				@ prow(),pcol() SAY aTarife[nCnt,13] pict picdem; ??  "³"
-  				@ prow(),pcol() SAY aTarife[nCnt,14] pict pickol; ??  "³"
-  				@ prow(),pcol() SAY aTarife[nCnt,15] pict picdem; ??  "³"
-  				@ prow(),pcol() SAY aTarife[nCnt,16] pict pickol; ??  "³"
-  				@ prow(),pcol() SAY aTarife[nCnt,17] pict picdem; ??  "³"
-				? m
-			next
-			? strtran(m,"-","=")
-		ENDIF XXX=1
-		FF
-		//if gPrinter<>"R"
-		// ?? chr(27)+"2"
-		//endif
-		end print
-		if cObrnivelacije=="N" .and. xxx=1
-   			exit
-		endif
-		if cObrNivelacije=="D" .and. xxx==2
-   			exit
-		endif
-	next //xxxx
-	#ifdef CAX
-  		my_close_all_dbf()
-	#endif
-	closeret
-return
-*}
+      IF XXX = 1
+         ?
+         ?
+         ? "UKUPNO TARIFE / GRUPE:"
+         ?
+      ENDIF
+      ASort( aTarGr,,, {| x, y| x[ 2 ] + x[ 1 ] < y[ 2 ] + y[ 1 ] } )
+      IF XXX == 1
+         ? StrTran( m, "-", "=" )
+         ? Len( aTarGr )
+      ENDIF
+      IF XXX = 1
+         FOR nCnt := 1 TO Len( aTarGr )
+            IF PRow() > PREDOVA; FF; kalk_zagl_inventura(); ENDIF
+            SELECT k1
+            hseek aTarGr[ nCnt, 1 ]
+            ? aTarGr[ nCnt, 1 ], k1->naz, "(", Trim( aTarGr[ nCnt, 2 ] ), ")"
+            @ PRow(), nCol1 SAY aTarGr[ nCnt, 3 ] PICT pickol; ??  "Â³"
+            @ PRow(), PCol() SAY aTarGr[ nCnt, 4 ] PICT picdem; ??  "Â³"
+            @ PRow(), PCol() SAY aTarGr[ nCnt, 5 ] PICT pickol; ??  "Â³"
+            @ PRow(), PCol() SAY aTarGr[ nCnt, 6 ] PICT picdem; ??  "Â³"
+            @ PRow(), PCol() SAY aTarGr[ nCnt, 7 ] PICT picdem; ??  "Â³"
+            @ PRow(), PCol() SAY aTarGr[ nCnt, 8 ] PICT picdem; ??  "Â³"
+            @ PRow(), PCol() SAY aTarGr[ nCnt, 9 ] PICT pickol; ??  "Â³"
+            @ PRow(), PCol() SAY aTarGr[ nCnt, 10 ] PICT picdem; ??  "Â³"
+            @ PRow(), PCol() SAY aTarGr[ nCnt, 11 ] PICT pickol; ??  "Â³"
+            @ PRow(), PCol() SAY aTarGr[ nCnt, 12 ] PICT picdem; ??  "Â³"
+            @ PRow(), PCol() SAY aTarGr[ nCnt, 13 ] PICT pickol; ??  "Â³"
+            @ PRow(), PCol() SAY aTarGr[ nCnt, 14 ] PICT picdem; ??  "Â³"
+            @ PRow(), PCol() SAY aTarGr[ nCnt, 15 ] PICT pickol; ??  "Â³"
+            @ PRow(), PCol() SAY aTarGr[ nCnt, 16 ] PICT picdem; ??  "Â³"
+            @ PRow(), PCol() SAY aTarGr[ nCnt, 17 ] PICT pickol; ??  "Â³"
+            @ PRow(), PCol() SAY aTarGr[ nCnt, 18 ] PICT picdem; ??  "Â³"
+            ? m
+         NEXT
+         ? StrTran( m, "-", "=" )
+      ENDIF// XXX=1
+      IF XXX = 1
+         IF PRow() > PREDOVA - 4; FF; kalk_zagl_inventura(); ENDIF
+         ?
+         ?
+         ? "UKUPNO PO TARIFAMA:"
+         ?
+         ASort( aTarife,,, {| x, y| x[ 1 ] < y[ 1 ] } )
+         ? StrTran( m, "-", "=" )
+         FOR nCnt := 1 TO Len( aTarife )
+            IF PRow() > PREDOVA
+               FF
+               kalk_zagl_inventura()
+            ENDIF
+            ? aTarife[ nCnt, 1 ]
+            @ PRow(), nCol1 SAY  aTarife[ nCnt, 2 ] PICT pickol; ??  "Â³"
+            @ PRow(), PCol() SAY aTarife[ nCnt, 3 ] PICT picdem; ??  "Â³"
+            @ PRow(), PCol() SAY aTarife[ nCnt, 4 ] PICT pickol; ??  "Â³"
+            @ PRow(), PCol() SAY aTarife[ nCnt, 5 ] PICT picdem; ??  "Â³"
+            @ PRow(), PCol() SAY aTarife[ nCnt, 6 ] PICT picdem; ??  "Â³"
+            @ PRow(), PCol() SAY aTarife[ nCnt, 7 ] PICT picdem; ??  "Â³"
+            @ PRow(), PCol() SAY aTarife[ nCnt, 8 ] PICT pickol; ??  "Â³"
+            @ PRow(), PCol() SAY aTarife[ nCnt, 9 ] PICT picdem; ??  "Â³"
+            @ PRow(), PCol() SAY aTarife[ nCnt, 10 ] PICT pickol; ??  "Â³"
+            @ PRow(), PCol() SAY aTarife[ nCnt, 11 ] PICT picdem; ??  "Â³"
+            @ PRow(), PCol() SAY aTarife[ nCnt, 12 ] PICT pickol; ??  "Â³"
+            @ PRow(), PCol() SAY aTarife[ nCnt, 13 ] PICT picdem; ??  "Â³"
+            @ PRow(), PCol() SAY aTarife[ nCnt, 14 ] PICT pickol; ??  "Â³"
+            @ PRow(), PCol() SAY aTarife[ nCnt, 15 ] PICT picdem; ??  "Â³"
+            @ PRow(), PCol() SAY aTarife[ nCnt, 16 ] PICT pickol; ??  "Â³"
+            @ PRow(), PCol() SAY aTarife[ nCnt, 17 ] PICT picdem; ??  "Â³"
+            ? m
+         NEXT
+         ? StrTran( m, "-", "=" )
+      ENDIF XXX = 1
+      FF
+      endprint
+      IF cObrnivelacije == "N" .AND. xxx = 1
+         EXIT
+      ENDIF
+      IF cObrNivelacije == "D" .AND. xxx == 2
+         EXIT
+      ENDIF
+   NEXT
+   my_close_all_dbf()
+
+   RETURN
 
 
 /*! \fn ZaglObrPC(cKako)
  *  \brief Zaglavlje obrasca inventure za prodavnicu
  *  \param cKako
  */
- 
-function ZaglObrPC(cKako)
-*{
-local cString:="NALOG ZA PROMJENU CIJENA"
-local cString2:="promjena"
-Preduzece()
-IspisNaDan(10)
-P_10CPI
-if cKako<>nil
-   if cKako=="2"
-      cString:="POVECANJE CIJENA"
-      cString2:="povecanj"
-   elseif cKako=="3"
-      cString:="SNIZENJE CIJENA"
-      cString2:="snizenje"
-   endif
-endif
-?
-? "NAZIV OBJEKTA ",cNObjekat
-?
-? PADC(cString+" U PRODAVNICI:_________________"+"  ,  Datum "+dtoc(dDatDo),80)
-?
-P_COND
-? m
-? "* R  *  Sifra    *        Naziv                           *   *   STARA *   NOVA  * "+cString2+"*  zaliha    *   iznos    *  ukupno   *"
-? "* BR *           *                                        *   *  cijena *  cijena *  cijene * (kolicina) *   poreza   * promjena  *"
-? m
-return
-*}
+
+FUNCTION ZaglObrPC( cKako )
+
+   LOCAL cString := "NALOG ZA PROMJENU CIJENA"
+   LOCAL cString2 := "promjena"
+   Preduzece()
+   IspisNaDan( 10 )
+   P_10CPI
+   IF cKako <> nil
+      IF cKako == "2"
+         cString := "POVECANJE CIJENA"
+         cString2 := "povecanj"
+      ELSEIF cKako == "3"
+         cString := "SNIZENJE CIJENA"
+         cString2 := "snizenje"
+      ENDIF
+   ENDIF
+   ?
+   ? "NAZIV OBJEKTA ", cNObjekat
+   ?
+   ? PadC( cString + " U PRODAVNICI:_________________" + "  ,  Datum " + DToC( dDatDo ), 80 )
+   ?
+   P_COND
+   ? m
+   ? "* R  *  Sifra    *        Naziv                           *   *   STARA *   NOVA  * " + cString2 + "*  zaliha    *   iznos    *  ukupno   *"
+   ? "* BR *           *                                        *   *  cijena *  cijena *  cijene * (kolicina) *   poreza   * promjena  *"
+   ? m
+
+   RETURN
 
 
-/*! \fn kalk_zagl_inventura()
- *  \brief Zaglavlje inventure
- */
- 
-function kalk_zagl_inventura()
-P_10CPI
-?? gTS+":",gNFirma,space(40),"Strana:"+str(++nStr,3)
-?
-?  "Obrazac obracuna inventure za period:",dDatOd,"-",dDAtDo
-?
-?  "NAZIV OBJEKTA ",cNObjekat,space(30),"Kriterij za Objekat:",trim(qqKonto)
-?
-P_COND 
-return
+/*
+  kalk_zagl_inventura()
+  Zaglavlje inventure
+*/
 
+FUNCTION kalk_zagl_inventura()
+
+   P_10CPI
+   ??U gTS + ":", gNFirma, Space( 40 ), "Strana:" + Str( ++nStr, 3 )
+   ?U
+   ?U  "Obrazac obracuna inventure za period:", dDatOd, "-", dDAtDo
+   ?U
+   ?U  "NAZIV OBJEKTA ", cNObjekat, Space( 30 ), "Kriterij za Objekat:", Trim( qqKonto )
+   ?U
+   P_COND
+
+   RETURN

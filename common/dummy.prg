@@ -1,59 +1,61 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 
-function send2comport(cStr)
+FUNCTION send2comport( cStr )
 
-? "dummy send2commport"
+   ? "dummy send2commport"
 
-return
+   RETURN
 
-function sql_azur()
-return .t.
+FUNCTION sql_azur()
+   RETURN .T.
 
-function GathSQL()
-return .t.
+FUNCTION GathSQL()
+   RETURN .T.
 
-function prnkod_on()
-return 
+FUNCTION prnkod_on()
+   RETURN
 
-function prnkod_off()
-return
+FUNCTION prnkod_off()
+   RETURN
 
-function rloptlevel()
-return 0
+FUNCTION rloptlevel()
+   RETURN 0
 
-function isRudnik()
-return .f.
+FUNCTION isRudnik()
+   RETURN .F.
 
-function isPlanika()
-return .f.
+FUNCTION isPlanika()
+   RETURN .F.
 
-function isPlNs()
-return .f.
+FUNCTION isPlNs()
+   RETURN .F.
 
-function isKonsig()
-return .f.
+FUNCTION isKonsig()
+   RETURN .F.
 
-function isStampa()
-return .f.
-
-
-function PosTest()
-? "Pos test (pos/main/2g/app.prg)"
-return
+FUNCTION isStampa()
+   RETURN .F.
 
 
-function replsql_dummy()
-return
+FUNCTION PosTest()
+
+   ? "Pos test (pos/main/2g/app.prg)"
+
+   RETURN
+
+
+FUNCTION replsql_dummy()
+   RETURN
 
 
 /*! \fn UpisiURF(cTekst,cFajl,lNoviRed,lNoviFajl)
@@ -63,61 +65,54 @@ return
  *  \param lNoviRed  - da li prelaziti u novi red
  *  \param lNoviFajl - da li snimati u novi fajl
  */
- 
-function UpisiURF(cTekst,cFajl,lNoviRed,lNoviFajl)
-*{
-StrFile(IF(lNoviRed,CHR(13)+CHR(10),"") + cTekst, cFajl, !lNoviFajl)
-return
-*}
+
+FUNCTION UpisiURF( cTekst, cFajl, lNoviRed, lNoviFajl )
+
+   StrFile( IF( lNoviRed, Chr( 13 ) + Chr( 10 ), "" ) + cTekst, cFajl, !lNoviFajl )
+
+   RETURN
 
 /*! \fn DiffMFV(cZn,cDiff)
  *  \brief differences: memo vs field variable
- *  \param cZn 
+ *  \param cZn
  *  \param cdiff
  */
- 
-function DiffMFV(cZN,cDiff)
-*{
-local lVrati:=.f.
-local i
-local aStruct
 
-if cZn==NIL
-	cZn:="_"
-endif
+FUNCTION DiffMFV( cZN, cDiff )
 
-aStruct:=DBSTRUCT()
+   LOCAL lVrati := .F.
+   LOCAL i
+   LOCAL aStruct
 
-FOR i:=1 TO LEN(aStruct)
-	cImeP := aStruct[i,1]
-    	IF !(cImeP=="BRISANO")
-     		cVar := cZn+cImeP
-      		IF "U" $ TYPE(cVar)
-			    MsgBeep("Greska:neuskladjene strukture baza!#"+;
-			      	"Pozovite servis bring.out !#"+;
-				    "Funkcija: GATHER(), Alias: "+ALIAS()+", Polje: "+cImeP)
-      		ELSE
-			IF field->&cImeP <> &cVar
-	  			lVrati:=.t.
-          			cDiff += hb_eol() + "     "
-          			cDiff += cImeP+": bilo="+TRANS(field->&cImeP,"")+", sada="+TRANS(&cVar,"")
-			ENDIF
-      		ENDIF
-    	ENDIF
-NEXT
-return lVrati
+   IF cZn == NIL
+      cZn := "_"
+   ENDIF
 
-/*! \fn O_Log()
- *  \brief Ucitavanje SQL log fajla
- */
- 
-function O_Log()
-return
+   aStruct := dbStruct()
+
+   FOR i := 1 TO Len( aStruct )
+      cImeP := aStruct[ i, 1 ]
+      IF !( cImeP == "BRISANO" )
+         cVar := cZn + cImeP
+         IF "U" $ Type( cVar )
+            MsgBeep( "Greska:neuskladjene strukture baza!#" + ;
+               "Pozovite servis bring.out !#" + ;
+               "Funkcija: GATHER(), Alias: " + Alias() + ", Polje: " + cImeP )
+         ELSE
+            IF field->&cImeP <> &cVar
+               lVrati := .T.
+               cDiff += hb_eol() + "     "
+               cDiff += cImeP + ": bilo=" + TRANS( field->&cImeP, "" ) + ", sada=" + TRANS( &cVar, "" )
+            ENDIF
+         ENDIF
+      ENDIF
+   NEXT
+
+   RETURN lVrati
 
 
-function addoidfields()
-return
+FUNCTION addoidfields()
+   RETURN
 
-function OL_YIELD()
-return
-
+FUNCTION OL_Yield()
+   RETURN

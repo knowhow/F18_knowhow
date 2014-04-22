@@ -13,8 +13,8 @@
 
 FUNCTION fin_stampa_analiticki_nalog()
 
+   LOCAL dDatNal := Date()
    PRIVATE fK1 := fk2 := fk3 := fk4 := "N", gnLOst := 0, gPotpis := "N"
-   PRIVATE dDatNal := Date()
 
    fin_read_params()
 
@@ -62,7 +62,7 @@ FUNCTION fin_stampa_analiticki_nalog()
 
    START PRINT CRET
 
-   fin_subanaliticki_nalog( "2" )
+   fin_subanaliticki_nalog( "2", NIL, dDatNal )
 
    END PRINT
 

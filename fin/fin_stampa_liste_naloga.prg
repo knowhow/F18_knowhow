@@ -314,7 +314,7 @@ FUNCTION DnevnikNaloga()
       SELECT SUBAN
       HSEEK cIdFirma + cIdVN + cBrNal
 
-      fin_subanaliticki_nalog( "3" )
+      fin_subanaliticki_nalog( "3", NIL, dDatNal )
 
       SELECT NALOG
 

@@ -4,6 +4,8 @@
   - čišćenje RREPLACE
   - isplanika(), isplns() izbrisani
   - log bug report error - bugfix
+  - FIN, štampa naloga ESC - bugfix
+  - FIN, štampa naloga sa datumom - dDatNal 
  
 1.7.58  2014-04-22, hernad
 

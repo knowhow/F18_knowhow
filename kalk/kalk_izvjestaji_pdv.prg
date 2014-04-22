@@ -192,6 +192,7 @@ cIdRoba := IdRoba
 @ m_x+1, m_y+2 SAY "Krug " + STR(nKrug,1) + " " + STR(nCount, 6)
 @ m_x+2, m_y+2 SAY cIdRoba + "/" + cIdTarifa
 SELECT r_uio
+my_flock()
 SEEK cIdRoba
 if !found()
 	APPEND BLANK
@@ -228,6 +229,7 @@ if (nKrug == 2)  .and. (kalk->kolicina > 0)
 	replace razlika with zad_ppp - zad_pdv
 endif
 
+my_unlock()
 
 SELECT KALK
 skip

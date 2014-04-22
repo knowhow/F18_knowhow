@@ -1199,6 +1199,7 @@ FUNCTION PodijeliN()
    MsgO( "Drugi krug..." )
    SET ORDER TO
    GO TOP
+   my_flock()
    DO WHILE !Eof()
       IF nRbr1 <> 0 .AND. Val( fin_pripr->Rbr ) <= nRbr1
          IF opis = ">prenos iz p.n.<"   .AND. idkonto = cPomKTO
@@ -1241,6 +1242,7 @@ FUNCTION PodijeliN()
       ENDIF
       SKIP
    ENDDO
+   my_unlock()
    MsgC()
 
    my_close_all_dbf()

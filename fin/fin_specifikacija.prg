@@ -4235,67 +4235,6 @@ return fRet
 
 
 
-/*! \fn TraziUPGod(cKrit,cDP)
- *  \brief
- *  \param cKrit
- *  \param cDP
- */
- 
-function TraziUPGod(cKrit,cDP)
-
-FOR i:=2 TO LEN(aGod)
-    cKrit:=STUFF(cKrit,3,7,aGod[i,2])    // mozda je stari konto
-    IF SELECT("PG"+aGod[i,1])==0
-      select 0
-      use (KUMPATH+(aGod[i,1])+"\SUBAN.DBF") ALIAS ("PG"+aGod[i,1])
-      set order to tag "3"
-    ELSE
-      SELECT ("PG"+aGod[i,1])
-    ENDIF
-    SEEK cKrit
-    DO WHILE !EOF() .and. IdFirma+IdKonto+IdPartner+BrDok==cKrit
-      IF idvn=="00"
-        lTraziDalje:=.t.
-        IF i==LEN(aGod)
-          cPom77 := "GOD"+STR(VAL(aGod[i,1])-1,4)
-          dDatVal:=CTOD("31.12."+SUBSTR(cPom77,4))
-          SELECT (F_POM)
-          REPLACE &cPom77 WITH dug-pot
-          lTraziDalje:=.f.
-        ENDIF
-        EXIT
-      ELSE
-        IF D_P==cDP .and. iznosbhd>0
-          cPom77 := "GOD"+STR(YEAR(datdok),4)
-          IF STR(YEAR(datdok),4) < STR(VAL(aGod[LEN(aGod),1])-2,4)
-            cPom77 := "GOD"+STR(VAL(aGod[LEN(aGod),1])-2,4)
-          ENDIF
-          dDatVal:=datdok
-          SELECT (F_POM)
-          REPLACE &cPom77 WITH dug-pot
-          lTraziDalje:=.f.
-          EXIT
-        ENDIF
-      ENDIF
-      SKIP 1
-    ENDDO
-    IF !lTraziDalje
-      EXIT
-    ENDIF
-  NEXT
-  IF lTraziDalje
-    // stavi 01.01.(cGodina-2) ?
-    cPom77 := "GOD"+STR(VAL(aGod[i-1,1])-2,4)
-    dDatVal:=CTOD("01.01."+SUBSTR(cPom77,4))
-    //dDatVal:=CTOD("01.01.1980")
-    SELECT (F_POM)
-    REPLACE &cPom77 WITH dug-pot
-  ENDIF
-RETURN
-
-
-
-
 /*! \fn P_VKSG(cId,dx,dy)
  *  \brief
  *  \param cId

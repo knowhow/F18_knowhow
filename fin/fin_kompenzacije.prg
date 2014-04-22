@@ -484,29 +484,29 @@ STATIC FUNCTION _gen_kompen( vars )
             IF _t_id_konto == _usl_kto
                SELECT TEMP12
                IF _d_bhd > 0
-                  REPLACE field->iznosbhd WITH _d_bhd
+                  RREPLACE field->iznosbhd WITH _d_bhd
                   IF _p_bhd > 0
                      _rec := dbf_get_rec()
                      APPEND BLANK
                      dbf_update_rec( _rec )
-                     REPLACE field->iznosbhd WITH -_p_bhd
+                     RREPLACE field->iznosbhd WITH -_p_bhd
                   ENDIF
                ELSE
-                  REPLACE field->iznosbhd WITH -_p_bhd
+                  RREPLACE field->iznosbhd WITH -_p_bhd
                ENDIF
             ELSE
 
                SELECT TEMP60
                IF _p_bhd > 0
-                  REPLACE field->iznosbhd WITH _p_bhd
+                  RREPLACE field->iznosbhd WITH _p_bhd
                   IF _d_bhd > 0
                      _rec := dbf_get_rec()
                      APPEND BLANK
                      dbf_update_rec( _rec )
-                     REPLACE field->iznosbhd WITH -_d_bhd
+                     RREPLACE field->iznosbhd WITH -_d_bhd
                   ENDIF
                ELSE
-                  REPLACE field->iznosbhd WITH -_d_bhd
+                  RREPLACE field->iznosbhd WITH -_d_bhd
                ENDIF
             ENDIF
 

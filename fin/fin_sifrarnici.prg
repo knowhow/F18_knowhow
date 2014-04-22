@@ -13,47 +13,6 @@
 #include "fin.ch"
 
 
-FUNCTION fin_serv_functions()
-
-   Box(, 4, 60 )
-   cOdg := "1"
-   @ m_x + 1, m_y + 2 SAY "1. zamjeni u prometu sifru partnera:"
-   @ m_x + 2, m_y + 2 SAY "2. zamjeni u prometu sifru konta   :"
-   @ m_x + 3, m_y + 2 SAY "                                    " GET cOdg VALID codg $ "12"
-   READ
-   BoxC()
-
-   IF cOdg == "1"
-      Box(, 4, 60 )
-      cStSif := Space( 6 )
-      cNSif := Space( 6 )
-      @ m_x + 1, m_y + 2 SAY "Stara sifra:"  GET cStSif VALID !Empty( cStSif )
-      @ m_x + 2, m_y + 2 SAY "Nova  sifra:"  GET cNSif  VALID !Empty( cStSif )
-      read; ESC_BCR
-      BoxC()
-
-      O_SUBAN
-      SELECT suban
-
-      // CREATE_INDEX("SUBANi2","IdFirma+IdPartner+IdKonto","SUBAN")
-      SET ORDER TO TAG "2"
-      SEEK  gFirma + cNSif
-      IF !Found() .OR. Pitanje(, "Vec postoji u prometu sifra ?. Nastaviti ??", "N" ) == "D"
-         SELECT suban ; SET ORDER TO 0
-         GO TOP
-         DO WHILE !Eof()
-            IF idpartner == cStSif
-               REPLACE idpartner WITH cNSif
-            ENDIF
-            SKIP
-         ENDDO
-      ENDIF
-   ENDIF
-   closeret
-
-   RETURN
-
-
 
 /*! \fn P_KontoFin(cId,dx,dy,lBlag)
  *  \brief Otvara sifrarnik konta spec. za FIN

@@ -762,7 +762,7 @@ ELSEIF !lFunkcija
             ENDIF
             aUslov:=PARSIRAJ(uslov,"cIdKonto","C")
             IF &aUslov
-                REPLACE kumsuma    WITH predznak * nKumSuma + kumsuma     ,;
+                RREPLACE kumsuma    WITH predznak * nKumSuma + kumsuma     ,;
                    teksuma    WITH predznak * nTekSuma + teksuma     ,;
                    duguje     WITH nDug + duguje                     ,;
                    potrazuje  WITH nPot + potrazuje
@@ -773,7 +773,7 @@ ELSEIF !lFunkcija
         SEEK LEFT(cIdKonto,1)
         DO WHILE !EOF() .and. cIdKonto>=konto
             IF LEFT(sint,1)=="S" .and. LEFT(cIdKonto,VAL(RIGHT(sint,1))) == LEFT(konto,VAL(RIGHT(sint,1))) .or. cIdKonto==konto .and. EMPTY(uslov)
-                REPLACE kumsuma    WITH predznak * nKumSuma + kumsuma     ,;
+                RREPLACE kumsuma    WITH predznak * nKumSuma + kumsuma     ,;
                    teksuma    WITH predznak * nTekSuma + teksuma     ,;
                    duguje     WITH nDug + duguje                     ,;
                    potrazuje  WITH nPot + potrazuje
@@ -797,7 +797,7 @@ ELSEIF !lFunkcija
             ENDIF
             aUslov:=PARSIRAJ(uslov2,"cIdKonto","C")
             IF &aUslov
-                REPLACE kumsuma2    WITH predznak2 * nKumSuma + kumsuma2     ,;
+                RREPLACE kumsuma2    WITH predznak2 * nKumSuma + kumsuma2     ,;
                    teksuma2    WITH predznak2 * nTekSuma + teksuma2     ,;
                    duguje2     WITH nDug + duguje2                      ,;
                    potrazuje2  WITH nPot + potrazuje2
@@ -808,7 +808,7 @@ ELSEIF !lFunkcija
         SEEK LEFT(cIdKonto,1)
         DO WHILE !EOF() .and. cIdKonto>=konto2
             IF LEFT(sint2,1)=="S" .and. LEFT(cIdKonto,VAL(RIGHT(sint2,1))) == LEFT(konto2,VAL(RIGHT(sint2,1))) .or. cIdKonto==konto2 .and. EMPTY(uslov2)
-                REPLACE kumsuma2    WITH predznak2 * nKumSuma + kumsuma2     ,;
+                RREPLACE kumsuma2    WITH predznak2 * nKumSuma + kumsuma2     ,;
                    teksuma2    WITH predznak2 * nTekSuma + teksuma2     ,;
                    duguje2     WITH nDug + duguje2                      ,;
                    potrazuje2  WITH nPot + potrazuje2
@@ -863,7 +863,7 @@ ELSE                // ako jeste lFunkcija   tj.   KONIZ->K="F"
                 cPom2:="KOL"+ALLTRIM(STR(i))
                 aUslov2:=PARSIRAJ(&cPom,"SUBAN->IDKONTO","C")
                 IF &aUslov1 .and. &aUslov2
-                    REPLACE &cPom2     WITH &cPom2 + PREDZNAK * nTekSuma     ,;
+                    RREPLACE &cPom2     WITH &cPom2 + PREDZNAK * nTekSuma     ,;
                         kumsuma    WITH predznak * nKumSuma + kumsuma    ,;
                         duguje     WITH nDug + duguje                    ,;
                         potrazuje  WITH nPot + potrazuje

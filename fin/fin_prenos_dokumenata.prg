@@ -702,9 +702,6 @@ FUNCTION fin_prekart()
 
    ENDDO
 
-   // otvaranje potrebnih baza
-   // /////////////////////////
-
    O_KONTO
    O_PARTN
    O_SINT
@@ -713,7 +710,6 @@ FUNCTION fin_prekart()
    SET ORDER TO TAG "2"
    O_SUBAN
 
-   // kreriraj i otvori temp77 na osnovu tabele suban
    _cre_temp77()
 
    SELECT ( F_SUBAN )

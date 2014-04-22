@@ -112,7 +112,6 @@ else
     _conds_false := ""
 endif
 
-// snimi parametre...
 params := hb_hash()
 params["date_from"] := _datum_od
 params["date_to"] := _datum_do
@@ -132,7 +131,7 @@ return _ok
 // vraca podatke prema zadanom sql upitu
 // -----------------------------------------------------------
 static function _log_get_data( params )
-local _user := params["user"]
+local _user := ""
 local _dat_from := params["date_from"]
 local _dat_to := params["date_to"]
 local _limit := params["limit"]
@@ -143,28 +142,24 @@ local _qry, _where
 local _server := pg_server()
 local _data
 
-// WHERE uslov
-// ==========================
+IF hb_hhaskey( params, "user" )
+    _user := params["user"]
+ENDIF
 
-// datumski uslov
 _where := _sql_date_parse( "l_time", _dat_from, _dat_to )
 
-// user
 if !EMPTY( _user )
     _where += " AND " + _sql_cond_parse( "user_code", _user )
 endif
 
-// dodatni uslovi, sadrzi
 if !EMPTY( _conds_true )
     _where += " AND (" + _sql_cond_parse( "msg", _conds_true ) + ")"
 endif
 
-// dodatni uslovi, ne-sadrzi
 if !EMPTY( _conds_false )
     _where += " AND (" + _sql_cond_parse( "msg", _conds_false, .t. ) + ")"
 endif
 
-// samo pregledaj dokument operacije F18
 if _is_doc_oper
     _where += " AND ( msg LIKE '%F18_DOK_OPER%' ) " 
 endif
@@ -172,22 +167,13 @@ endif
 
 // GLAVNI UPIT
 // ==========================
-// glavni dio upita...
 _qry := "SELECT id, user_code, l_time, msg "
 _qry += "FROM fmk.log "
-
-// dodaj WHERE
 _qry += "WHERE " + _where 
-
-// postavi ORDER
 _qry += " ORDER BY l_time DESC "
-
-// doaj limit ako treba...
 if _limit > 0
     _qry += " LIMIT " + ALLTRIM(STR( _limit )) 
 endif
-
-// izvrsi upit
 MsgO( "Vrsim upit prema serveru..." )
 
 _data := _sql_query( _server, _qry )

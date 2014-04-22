@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,303 +12,304 @@
 
 #include "kalk.ch"
 
-static __line
-static __txt1
-static __txt2
-static __txt3
+STATIC __line
+STATIC __txt1
+STATIC __txt2
+STATIC __txt3
 
 // ------------------------------------
 // kartica prodavnice
 // ------------------------------------
-function KarticaP()
-parameters cIdFirma, cIdRoba, cIdKonto
+FUNCTION KarticaP()
 
-local cLine
-local cTxt1
-local cTxt2
-local cTxt3
-local _is_rok, _dok_hash, _item_istek_roka
+   PARAMETERS cIdFirma, cIdRoba, cIdKonto
 
-private PicCDEM := REPLICATE("9", VAL(gFPicCDem)) + gPicCDEM 
-private PicProc := gPicProc
-private PicDEM := REPLICATE("9", VAL(gFPicDem)) + gPicDem
-private Pickol :="@Z " + REPLICATE("9", VAL(gFPicKol)) + gPickol
-private nMarza, nMarza2, nPRUC, aPorezi
+   LOCAL cLine
+   LOCAL cTxt1
+   LOCAL cTxt2
+   LOCAL cTxt3
+   LOCAL _is_rok, _dok_hash, _item_istek_roka
 
-_is_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
+   PRIVATE PicCDEM := Replicate( "9", Val( gFPicCDem ) ) + gPicCDEM
+   PRIVATE PicProc := gPicProc
+   PRIVATE PicDEM := Replicate( "9", Val( gFPicDem ) ) + gPicDem
+   PRIVATE Pickol := "@Z " + Replicate( "9", Val( gFPicKol ) ) + gPickol
+   PRIVATE nMarza, nMarza2, nPRUC, aPorezi
 
-O_TARIFA
-O_SIFK
-O_SIFV
-O_ROBA
-O_KONTO
-O_PARTN
+   _is_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
 
-cPredh := "N"
-dDatOd := DATE()
-dDatDo := DATE()
-cPKN := "N"
-aPorezi := {}
-nMarza := nMarza2 := nPRUC := 0
+   O_TARIFA
+   O_SIFK
+   O_SIFV
+   O_ROBA
+   O_KONTO
+   O_PARTN
 
-if PCount() == 0
-    
-    cIdFirma := gFirma
-    cIdRoba := space(10)
-    cIdKonto := padr( "1330", 7 )
-    cPredh := "N"
-    cIdRoba := fetch_metric( "kalk_kartica_prod_id_roba", my_user(), cIdRoba )
-    cIdKonto := fetch_metric( "kalk_kartica_prod_id_konto", my_user(), cIdKonto )
-    dDatOd := fetch_metric( "kalk_kartica_prod_datum_od", my_user(), dDatOd )
-    dDatDo := fetch_metric( "kalk_kartica_prod_datum_do", my_user(), dDatDo )
-    cPredh := fetch_metric( "kalk_kartica_prod_prethodni_promet", my_user(), cPredh )
+   cPredh := "N"
+   dDatOd := Date()
+   dDatDo := Date()
+   cPKN := "N"
+   aPorezi := {}
+   nMarza := nMarza2 := nPRUC := 0
 
-    Box(, 8 + IF( lPoNarudzbi, 2, 0 ), 60 )
+   IF PCount() == 0
 
-    DO WHILE .t.
-        
-        if gNW $ "DX"
+      cIdFirma := gFirma
+      cIdRoba := Space( 10 )
+      cIdKonto := PadR( "1330", 7 )
+      cPredh := "N"
+      cIdRoba := fetch_metric( "kalk_kartica_prod_id_roba", my_user(), cIdRoba )
+      cIdKonto := fetch_metric( "kalk_kartica_prod_id_konto", my_user(), cIdKonto )
+      dDatOd := fetch_metric( "kalk_kartica_prod_datum_od", my_user(), dDatOd )
+      dDatDo := fetch_metric( "kalk_kartica_prod_datum_do", my_user(), dDatDo )
+      cPredh := fetch_metric( "kalk_kartica_prod_prethodni_promet", my_user(), cPredh )
+
+      Box(, 8 + IF( lPoNarudzbi, 2, 0 ), 60 )
+
+      DO WHILE .T.
+
+         IF gNW $ "DX"
             @ m_x + 1, m_y + 2 SAY "Firma "
             ?? gFirma, "-", gNFirma
-        else
-            @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| P_Firma( @cIdFirma ), cIdFirma := LEFT( cIdFirma, 2 ), .t. }
-        endif
-        
-        @ m_x + 2, m_y + 2 SAY "Konto " GET cIdKonto VALID P_Konto(@cIdKonto)
-    
-        if lKoristitiBK
-            @ m_x+3,m_y+2 SAY "Roba  " GET cIdRoba WHEN {|| cIdRoba:=PADR(cIdRoba,VAL(gDuzSifIni)),.t.} VALID {|| Empty(cIdRoba), cIdRoba:=iif(LEN(TRIM(cIdRoba))<=10,Left(cIdRoba,10),cIdRoba), P_Roba(@cIdRoba)} PICT "@!"
-        else
-            @ m_x+3,m_y+2 SAY "Roba  " GET cIdRoba VALID EMPTY(cidroba) .or. P_Roba(@cIdRoba) PICT "@!"
-        endif
+         ELSE
+            @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma VALID {|| P_Firma( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+         ENDIF
 
-        @ m_x+5, m_y+2 SAY "Datum od " GET dDatOd
-        @ m_x+5, col()+2 SAY "do" GET dDatDo
-        @ m_x+6, m_y+2 SAY "sa prethodnim prometom (D/N)" GET cPredh pict "@!" valid cpredh $ "DN"
+         @ m_x + 2, m_y + 2 SAY "Konto " GET cIdKonto VALID P_Konto( @cIdKonto )
 
-        IF lPoNarudzbi
-            qqIdNar := SPACE(60)
+         IF lKoristitiBK
+            @ m_x + 3, m_y + 2 SAY "Roba  " GET cIdRoba WHEN {|| cIdRoba := PadR( cIdRoba, Val( gDuzSifIni ) ), .T. } VALID {|| Empty( cIdRoba ), cIdRoba := iif( Len( Trim( cIdRoba ) ) <= 10, Left( cIdRoba, 10 ), cIdRoba ), P_Roba( @cIdRoba ) } PICT "@!"
+         ELSE
+            @ m_x + 3, m_y + 2 SAY "Roba  " GET cIdRoba VALID Empty( cidroba ) .OR. P_Roba( @cIdRoba ) PICT "@!"
+         ENDIF
+
+         @ m_x + 5, m_y + 2 SAY "Datum od " GET dDatOd
+         @ m_x + 5, Col() + 2 SAY "do" GET dDatDo
+         @ m_x + 6, m_y + 2 SAY "sa prethodnim prometom (D/N)" GET cPredh PICT "@!" VALID cpredh $ "DN"
+
+         IF lPoNarudzbi
+            qqIdNar := Space( 60 )
             cPKN    := "N"
-            @ row()+1,m_y+2 SAY "Uslov po sifri narucioca:" GET qqIdNar pict "@!S30"
-            @ row()+1,m_y+2 SAY "Prikazati kolone 'narucilac' i 'br.narudzbe' ? (D/N)" GET cPKN VALID cPKN$"DN" pict "@!"
-        ENDIF
-    
-        read
-        ESC_BCR
+            @ Row() + 1, m_y + 2 SAY "Uslov po sifri narucioca:" GET qqIdNar PICT "@!S30"
+            @ Row() + 1, m_y + 2 SAY "Prikazati kolone 'narucilac' i 'br.narudzbe' ? (D/N)" GET cPKN VALID cPKN $ "DN" PICT "@!"
+         ENDIF
 
-        IF lPoNarudzbi
-            aUslN := Parsiraj(qqIdNar,"idnar")
-        ENDIF
+         READ
+         ESC_BCR
 
-        if ( !lPoNarudzbi .or. aUslN <> NIL )
-            exit
-        endif
+         IF lPoNarudzbi
+            aUslN := Parsiraj( qqIdNar, "idnar" )
+         ENDIF
 
-    ENDDO
+         IF ( !lPoNarudzbi .OR. aUslN <> NIL )
+            EXIT
+         ENDIF
 
-    BoxC()
+      ENDDO
 
-    if LastKey() != K_ESC
+      BoxC()
 
-        set_metric( "kalk_kartica_prod_id_roba", my_user(), cIdRoba )
-        set_metric( "kalk_kartica_prod_id_konto", my_user(), cIdKonto )
-        set_metric( "kalk_kartica_prod_datum_od", my_user(), dDatOd )
-        set_metric( "kalk_kartica_prod_datum_do", my_user(), dDatDo )
-        set_metric( "kalk_kartica_prod_prethodni_promet", my_user(), cPredh )
+      IF LastKey() != K_ESC
 
-    endif
+         set_metric( "kalk_kartica_prod_id_roba", my_user(), cIdRoba )
+         set_metric( "kalk_kartica_prod_id_konto", my_user(), cIdKonto )
+         set_metric( "kalk_kartica_prod_datum_od", my_user(), dDatOd )
+         set_metric( "kalk_kartica_prod_datum_do", my_user(), dDatDo )
+         set_metric( "kalk_kartica_prod_prethodni_promet", my_user(), cPredh )
 
-    if EMPTY(cIdRoba)
-        if Pitanje(,"Niste zadali sifru artikla, izlistati sve kartice ?","N")=="N"
+      ENDIF
+
+      IF Empty( cIdRoba )
+         IF Pitanje(, "Niste zadali sifru artikla, izlistati sve kartice ?", "N" ) == "N"
             my_close_all_dbf()
-            return
-        else
-            if !EMPTY(cIdroba)
-                if Pitanje(,"Korekcija nabavnih cijena ???","N") == "D"
-                    fKNabC := .t.
-                endif
-            endif
+            RETURN
+         ELSE
+            IF !Empty( cIdroba )
+               IF Pitanje(, "Korekcija nabavnih cijena ???", "N" ) == "D"
+                  fKNabC := .T.
+               ENDIF
+            ENDIF
             cIdr := ""
-        endif
-    else
-        cIdr := cIdRoba
-    endif
+         ENDIF
+      ELSE
+         cIdr := cIdRoba
+      ENDIF
 
-else
+   ELSE
 
-    cIdR := cIdRoba
-    dDatOd := CTOD("")
+      cIdR := cIdRoba
+      dDatOd := CToD( "" )
 
-endif
+   ENDIF
 
-O_KALK
+   O_KALK
 
-nKolicina := 0
+   nKolicina := 0
 
-select kalk
-set order to tag "4"
-// hseek cidfirma+cidkonto+cidroba
+   SELECT kalk
+   SET ORDER TO TAG "4"
+   // hseek cidfirma+cidkonto+cidroba
 
-private cFilt := ".t."
+   PRIVATE cFilt := ".t."
 
-if lPoNarudzbi .and. aUslN <> ".t."
-    cFilt += ".and." + aUslN
-endif
+   IF lPoNarudzbi .AND. aUslN <> ".t."
+      cFilt += ".and." + aUslN
+   ENDIF
 
-IF !(cFilt==".t.")
-    set filter to &cFilt
-ENDIF
+   IF !( cFilt == ".t." )
+      SET FILTER to &cFilt
+   ENDIF
 
-hseek cIdFirma + cIdKonto + cIdR
+   hseek cIdFirma + cIdKonto + cIdR
 
-EOF CRET
+   EOF CRET
 
-gaZagFix := { 7 + IF( lPoNarudzbi .and. !EMPTY( qqIdNar ), 3, 0 ), 3 }
+   gaZagFix := { 7 + IF( lPoNarudzbi .AND. !Empty( qqIdNar ), 3, 0 ), 3 }
 
-START PRINT CRET
+   START PRINT CRET
 
-?
+   ?
 
-nLen := 1
+   nLen := 1
 
-if IsPDV()
+   IF IsPDV()
 
-    _set_zagl( @cLine, @cTxt1, ;
-            lPoNarudzbi, cPKN )
-    __line := cLine
-    __txt1 := cTxt1
-    
-else
-    
-    m:="-------- ----------- ------ ------ "+IF(lPoNarudzbi.and.cPKN=="D","------ ---------- ","")+"---------- ---------- ---------- ---------- ---------- ---------- ----------"
-    __line := m
-    
-endif
+      _set_zagl( @cLine, @cTxt1, ;
+         lPoNarudzbi, cPKN )
+      __line := cLine
+      __txt1 := cTxt1
 
-nTStrana := 0
+   ELSE
 
-Zagl()
+      m := "-------- ----------- ------ ------ " + IF( lPoNarudzbi .AND. cPKN == "D", "------ ---------- ", "" ) + "---------- ---------- ---------- ---------- ---------- ---------- ----------"
+      __line := m
 
-nCol1 := 10
-nUlaz := nIzlaz := 0
-nMPV := nNV := 0
-nMPVP := 0
-fPrviProl := .t.
+   ENDIF
 
-do while !EOF() .and. field->idfirma + field->pkonto + field->idroba = cIdFirma + cIdKonto + cIdR
+   nTStrana := 0
 
-    cIdRoba := idroba
+   Zagl()
 
-    select roba
-    hseek cIdRoba
-    
-    select tarifa
-    hseek roba->idtarifa
+   nCol1 := 10
+   nUlaz := nIzlaz := 0
+   nMPV := nNV := 0
+   nMPVP := 0
+   fPrviProl := .T.
 
-    ? __line
+   DO WHILE !Eof() .AND. field->idfirma + field->pkonto + field->idroba = cIdFirma + cIdKonto + cIdR
 
-    ? "Artikal:", cIdRoba, "-", TRIM( LEFT( roba->naz, 40)) + ; 
-        iif( lKoristitiBK, " BK: " + roba->barkod, "" ) + " (" + ALLTRIM( roba->jmj ) + ")"
+      cIdRoba := idroba
 
-    ? __line
+      SELECT roba
+      hseek cIdRoba
 
-    select kalk
+      SELECT tarifa
+      hseek roba->idtarifa
 
-    nCol1 := 10
-    nUlaz := nIzlaz := 0
-    nNV := nMPV := 0
-    fPrviProl := .t.
-    nRabat := 0                
-    nColDok := 9                
-    nColFCJ2 := 68           
+      ? __line
 
-    do while !EOF() .and. cIdfirma + cIdkonto + cIdroba == field->idFirma + field->pkonto + field->idroba
+      ? "Artikal:", cIdRoba, "-", Trim( Left( roba->naz, 40 ) ) + ;
+         iif( lKoristitiBK, " BK: " + roba->barkod, "" ) + " (" + AllTrim( roba->jmj ) + ")"
 
-        if field->datdok < dDatOd .and. cPredh == "N"
-            skip
-            loop
-        endif
+      ? __line
 
-        if field->datdok > dDatDo
-            skip
-            loop
-        endif
+      SELECT kalk
 
-        if cPredh == "D" .and. field->datdok >= dDatod .and. fPrviProl
+      nCol1 := 10
+      nUlaz := nIzlaz := 0
+      nNV := nMPV := 0
+      fPrviProl := .T.
+      nRabat := 0
+      nColDok := 9
+      nColFCJ2 := 68
+
+      DO WHILE !Eof() .AND. cIdfirma + cIdkonto + cIdroba == field->idFirma + field->pkonto + field->idroba
+
+         IF field->datdok < dDatOd .AND. cPredh == "N"
+            SKIP
+            LOOP
+         ENDIF
+
+         IF field->datdok > dDatDo
+            SKIP
+            LOOP
+         ENDIF
+
+         IF cPredh == "D" .AND. field->datdok >= dDatod .AND. fPrviProl
 
             // ispis predhodnog stanja
 
-            fPrviprol := .f.
+            fPrviprol := .F.
 
             ? "Stanje do ", dDatOd
 
-            @ prow(), 35 SAY nUlaz pict pickol
-            @ prow(), pcol()+1 SAY nIzlaz       pict pickol
-            @ prow(), pcol()+1 SAY nUlaz - nIzlaz pict pickol
-            
-            if ROUND( nUlaz - nIzlaz, 4 ) <> 0
-                @ prow(), pcol()+1 SAY nNV/(nUlaz - nIzlaz) pict piccdem
-                @ prow(), pcol()+1 SAY 0            pict pickol
-                @ prow(), pcol()+1 SAY nMPV/(nUlaz - nIzlaz) pict piccdem
-            elseif ROUND( nMpv, 3 ) <> 0
-                @ prow(), pcol()+1 SAY 0            pict pickol
-                @ prow(), pcol()+1 SAY 0            pict pickol
-                @ prow(), pcol()+1 SAY PADC( "ERR", LEN( piccdem ) ) 
-            else
-                @ prow(), pcol()+1 SAY 0            pict pickol
-            endif
-        endif
+            @ PRow(), 35 SAY nUlaz PICT pickol
+            @ PRow(), PCol() + 1 SAY nIzlaz       PICT pickol
+            @ PRow(), PCol() + 1 SAY nUlaz - nIzlaz PICT pickol
 
-        if ( prow() - gPStranica ) > 62
+            IF Round( nUlaz - nIzlaz, 4 ) <> 0
+               @ PRow(), PCol() + 1 SAY nNV / ( nUlaz - nIzlaz ) PICT piccdem
+               @ PRow(), PCol() + 1 SAY 0            PICT pickol
+               @ PRow(), PCol() + 1 SAY nMPV / ( nUlaz - nIzlaz ) PICT piccdem
+            ELSEIF Round( nMpv, 3 ) <> 0
+               @ PRow(), PCol() + 1 SAY 0            PICT pickol
+               @ PRow(), PCol() + 1 SAY 0            PICT pickol
+               @ PRow(), PCol() + 1 SAY PadC( "ERR", Len( piccdem ) )
+            ELSE
+               @ PRow(), PCol() + 1 SAY 0            PICT pickol
+            ENDIF
+         ENDIF
+
+         IF ( PRow() - gPStranica ) > 62
             FF
             Zagl()
-        endif
-  
-        if field->pu_i == "1"
+         ENDIF
+
+         IF field->pu_i == "1"
 
             nUlaz += field->kolicina - field->GKolicina - field->GKolicin2
 
-            if field->datdok >= dDatod
+            IF field->datdok >= dDatod
 
-                ? field->datdok, field->idvd + "-" + field->brdok, field->idtarifa, field->idpartner
+               ? field->datdok, field->idvd + "-" + field->brdok, field->idtarifa, field->idpartner
 
-                IF lPoNarudzbi .and. cPKN=="D"
-                    ?? "", field->idnar, field->brojnar
-                ENDIF
+               IF lPoNarudzbi .AND. cPKN == "D"
+                  ?? "", field->idnar, field->brojnar
+               ENDIF
 
-                nCol1 := pcol() + 1
+               nCol1 := PCol() + 1
 
-                @ prow(), pcol()+1 SAY field->kolicina pict pickol
-                @ prow(), pcol()+1 SAY 0 pict pickol
-                @ prow(), pcol()+1 SAY nUlaz - nIzlaz pict pickol
-                @ prow(), pcol()+1 SAY field->nc pict piccdem
-                @ prow(), pcol()+1 SAY field->vpc pict piccdem
-                @ prow(), pcol()+1 SAY field->mpcsapp pict piccdem
+               @ PRow(), PCol() + 1 SAY field->kolicina PICT pickol
+               @ PRow(), PCol() + 1 SAY 0 PICT pickol
+               @ PRow(), PCol() + 1 SAY nUlaz - nIzlaz PICT pickol
+               @ PRow(), PCol() + 1 SAY field->nc PICT piccdem
+               @ PRow(), PCol() + 1 SAY field->vpc PICT piccdem
+               @ PRow(), PCol() + 1 SAY field->mpcsapp PICT piccdem
 
-            endif   
+            ENDIF
 
             nMPVP += field->mpcsapp * field->kolicina
             nMPV += field->mpcsapp * field->kolicina
             nNV += field->nc * field->kolicina
 
-            if field->datdok >= dDatOd
-                @ prow(), pcol()+1 SAY nMpv pict picdem
-            endif
+            IF field->datdok >= dDatOd
+               @ PRow(), PCol() + 1 SAY nMpv PICT picdem
+            ENDIF
 
-            if _is_rok
-                _dok_hash := hb_hash()
-                _dok_hash["idfirma"] := field->idfirma   
-                _dok_hash["idtipdok"] := field->idvd
-                _dok_hash["brdok"] := field->brdok   
-                _dok_hash["rbr"] := field->rbr   
-                _item_istek_roka := CTOD( get_kalk_atribut_rok( _dok_hash, .t. ) )
-                if DTOC( _item_istek_roka ) <> DTOC( CTOD("") )
-                    @ prow(), pcol() + 1 SAY  "rok: " + DTOC( _item_istek_roka )
-                endif
-            endif
+            IF _is_rok
+               _dok_hash := hb_Hash()
+               _dok_hash[ "idfirma" ] := field->idfirma
+               _dok_hash[ "idtipdok" ] := field->idvd
+               _dok_hash[ "brdok" ] := field->brdok
+               _dok_hash[ "rbr" ] := field->rbr
+               _item_istek_roka := CToD( get_kalk_atribut_rok( _dok_hash, .T. ) )
+               IF DToC( _item_istek_roka ) <> DToC( CToD( "" ) )
+                  @ PRow(), PCol() + 1 SAY  "rok: " + DToC( _item_istek_roka )
+               ENDIF
+            ENDIF
 
 
-        elseif field->pu_i == "5" .and. !( field->idvd $ "12#13#22" )
+         ELSEIF field->pu_i == "5" .AND. !( field->idvd $ "12#13#22" )
 
             aPorezi := {}
 
@@ -316,432 +317,437 @@ do while !EOF() .and. field->idfirma + field->pkonto + field->idroba = cIdFirma 
 
             Tarifa( field->pkonto, field->idroba, @aPorezi, field->idtarifa )
             aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
-            nPor1 := aIPor[1]
+            nPor1 := aIPor[ 1 ]
             VtPorezi()
 
-            if field->datdok >= dDatod
+            IF field->datdok >= dDatod
 
-                ? field->datdok, field->idvd + "-" + field->brdok, field->idtarifa, field->idpartner
+               ? field->datdok, field->idvd + "-" + field->brdok, field->idtarifa, field->idpartner
 
-                IF lPoNarudzbi .and. cPKN == "D"
-                    ?? "", field->idnar, field->brojnar
-                ENDIF
+               IF lPoNarudzbi .AND. cPKN == "D"
+                  ?? "", field->idnar, field->brojnar
+               ENDIF
 
-                nCol1 := pcol()+1
+               nCol1 := PCol() + 1
 
-                @ prow(), pcol()+1 SAY 0 pict pickol
-                @ prow(), pcol()+1 SAY field->kolicina pict pickol
-                @ prow(), pcol()+1 SAY nUlaz - nIzlaz pict pickol
-                @ prow(), pcol()+1 SAY field->nc pict piccdem
+               @ PRow(), PCol() + 1 SAY 0 PICT pickol
+               @ PRow(), PCol() + 1 SAY field->kolicina PICT pickol
+               @ PRow(), PCol() + 1 SAY nUlaz - nIzlaz PICT pickol
+               @ PRow(), PCol() + 1 SAY field->nc PICT piccdem
 
-                // bilo ranije
-                //@ prow(), pcol()+1 SAY field->vpc * ( 1 - field->rabatv / 100 )  pict piccdem
+               // bilo ranije
+               // @ prow(), pcol()+1 SAY field->vpc * ( 1 - field->rabatv / 100 )  pict piccdem
 
-                // cista pc sa popustom
-                @ prow(), pcol()+1 SAY field->mpc pict piccdem
-                
-                // cista mpc sa popustom
-                //@ prow(), pcol()+1 SAY field->mpc + nPor1 pict piccdem
+               // cista pc sa popustom
+               @ PRow(), PCol() + 1 SAY field->mpc PICT piccdem
 
-                @ prow(), pcol()+1 SAY field->mpcsapp pict piccdem
+               // cista mpc sa popustom
+               // @ prow(), pcol()+1 SAY field->mpc + nPor1 pict piccdem
 
-            endif
-            
-            nMPVP -= ( field->mpc + nPor1 ) * field->kolicina 
+               @ PRow(), PCol() + 1 SAY field->mpcsapp PICT piccdem
+
+            ENDIF
+
+            nMPVP -= ( field->mpc + nPor1 ) * field->kolicina
             nMPV -= field->mpcsapp * field->kolicina
             nNV -= field->nc * field->kolicina
 
-            if field->datdok >= dDatOd
-                @ prow(), pcol()+1 SAY nMpv pict picdem
-            endif
+            IF field->datdok >= dDatOd
+               @ PRow(), PCol() + 1 SAY nMpv PICT picdem
+            ENDIF
 
-        elseif field->pu_i == "I"
+         ELSEIF field->pu_i == "I"
             nIzlaz += field->gkolicin2
 
-            if field->datdok >= dDatod
-                ? field->datdok, field->idvd + "-" + field->brdok, field->idtarifa, field->idpartner
-                IF lPoNarudzbi .and. cPKN=="D"
-                    ?? "", field->idnar, field->brojnar
-                ENDIF
-                nCol1 := pcol()+1
-                @ prow(), pcol()+1 SAY 0 pict pickol
-                @ prow(), pcol()+1 SAY field->gkolicin2 pict pickol
-                @ prow(), pcol()+1 SAY nUlaz - nIzlaz pict pickol
-                @ prow(), pcol()+1 SAY field->nc pict piccdem
-                @ prow(), pcol()+1 SAY 0 pict piccdem
-                @ prow(), pcol()+1 SAY field->mpcsapp pict piccdem
-            endif
+            IF field->datdok >= dDatod
+               ? field->datdok, field->idvd + "-" + field->brdok, field->idtarifa, field->idpartner
+               IF lPoNarudzbi .AND. cPKN == "D"
+                  ?? "", field->idnar, field->brojnar
+               ENDIF
+               nCol1 := PCol() + 1
+               @ PRow(), PCol() + 1 SAY 0 PICT pickol
+               @ PRow(), PCol() + 1 SAY field->gkolicin2 PICT pickol
+               @ PRow(), PCol() + 1 SAY nUlaz - nIzlaz PICT pickol
+               @ PRow(), PCol() + 1 SAY field->nc PICT piccdem
+               @ PRow(), PCol() + 1 SAY 0 PICT piccdem
+               @ PRow(), PCol() + 1 SAY field->mpcsapp PICT piccdem
+            ENDIF
 
             nMPVP -= field->mpcsapp * field->gkolicin2
             nMPV -= field->mpcsapp * field->gkolicin2
             nNV -= field->nc * field->gkolicin2
 
-            if field->datdok >= dDatod
-                @ prow(), pcol()+1 SAY nMpv pict picdem
-            endif
+            IF field->datdok >= dDatod
+               @ PRow(), PCol() + 1 SAY nMpv PICT picdem
+            ENDIF
 
-        elseif field->pu_i == "5" .and. ( field->idvd $ "12#13#22" )    
+         ELSEIF field->pu_i == "5" .AND. ( field->idvd $ "12#13#22" )
 
             // povrati
 
             nUlaz -= field->kolicina
 
-            if field->datdok >= dDatod
-                ? field->datdok, field->idvd + "-" + field->brdok, field->idtarifa, field->idpartner
-                IF lPoNarudzbi .and. cPKN=="D"
-                    ?? "", field->idnar, field->brojnar
-                ENDIF
-                nCol1 := pcol()+1
-                @ prow(), pcol()+1 SAY -(field->kolicina) pict pickol
-                @ prow(), pcol()+1 SAY 0 pict pickol
-                @ prow(), pcol()+1 SAY nUlaz - nIzlaz pict pickol
-                @ prow(), pcol()+1 SAY field->nc pict piccdem
-                @ prow(), pcol()+1 SAY field->vpc pict piccdem
-                @ prow(), pcol()+1 SAY field->mpcsapp pict piccdem
-            endif
+            IF field->datdok >= dDatod
+               ? field->datdok, field->idvd + "-" + field->brdok, field->idtarifa, field->idpartner
+               IF lPoNarudzbi .AND. cPKN == "D"
+                  ?? "", field->idnar, field->brojnar
+               ENDIF
+               nCol1 := PCol() + 1
+               @ PRow(), PCol() + 1 SAY -( field->kolicina ) PICT pickol
+               @ PRow(), PCol() + 1 SAY 0 PICT pickol
+               @ PRow(), PCol() + 1 SAY nUlaz - nIzlaz PICT pickol
+               @ PRow(), PCol() + 1 SAY field->nc PICT piccdem
+               @ PRow(), PCol() + 1 SAY field->vpc PICT piccdem
+               @ PRow(), PCol() + 1 SAY field->mpcsapp PICT piccdem
+            ENDIF
 
             nMPVP -= field->mpcsapp * field->kolicina
             nMPV -= field->mpcsapp * field->kolicina
             nNV -= field->nc * field->kolicina
 
-            if field->datdok >= dDatod
-                @ prow(),pcol()+1 SAY nMpv pict picdem
-            endif
+            IF field->datdok >= dDatod
+               @ PRow(), PCol() + 1 SAY nMpv PICT picdem
+            ENDIF
 
-        elseif field->pu_i == "3"    
+         ELSEIF field->pu_i == "3"
 
             // nivelacija
 
-            if field->datdok >= dDatod
-                ? field->datdok, field->idvd + "-" + field->brdok, field->idtarifa, field->idpartner
-                IF lPoNarudzbi .and. cPKN=="D"
-                    ?? "", field->idnar, field->brojnar
-                ENDIF
-                nCol1 := pcol()+1
-                @ prow(), pcol()+1 SAY field->kolicina pict pickol
-                @ prow(), pcol()+1 SAY 0 pict pickol
-                @ prow(), pcol()+1 SAY nUlaz - nIzlaz pict pickol
-                // kod ove kalk fcj predstavlja staru vpc
-                @ prow(), pcol()+1 SAY field->fcj pict piccdem  
-                @ prow(), pcol()+1 SAY field->mpcsapp pict piccdem
-                @ prow(), pcol()+1 SAY field->fcj + field->mpcsapp pict piccdem
-            endif
+            IF field->datdok >= dDatod
+               ? field->datdok, field->idvd + "-" + field->brdok, field->idtarifa, field->idpartner
+               IF lPoNarudzbi .AND. cPKN == "D"
+                  ?? "", field->idnar, field->brojnar
+               ENDIF
+               nCol1 := PCol() + 1
+               @ PRow(), PCol() + 1 SAY field->kolicina PICT pickol
+               @ PRow(), PCol() + 1 SAY 0 PICT pickol
+               @ PRow(), PCol() + 1 SAY nUlaz - nIzlaz PICT pickol
+               // kod ove kalk fcj predstavlja staru vpc
+               @ PRow(), PCol() + 1 SAY field->fcj PICT piccdem
+               @ PRow(), PCol() + 1 SAY field->mpcsapp PICT piccdem
+               @ PRow(), PCol() + 1 SAY field->fcj + field->mpcsapp PICT piccdem
+            ENDIF
 
             nMPVP += field->mpcsapp * field->kolicina
             nMPV += field->mpcsapp * field->kolicina
 
-            if field->datdok >= dDatod
-                @ prow(), pcol()+1 SAY nMpv pict picdem
-            endif
+            IF field->datdok >= dDatod
+               @ PRow(), PCol() + 1 SAY nMpv PICT picdem
+            ENDIF
 
-        endif
+         ENDIF
 
-        skip    
+         SKIP
 
-    enddo
+      ENDDO
 
-    ? __line
-    ? "Ukupno:"
+      ? __line
+      ? "Ukupno:"
 
-    @ prow(), nCol1 SAY nUlaz pict pickol
-    @ prow(), pcol()+1 SAY nIzlaz pict pickol
-    @ prow(), pcol()+1 SAY nUlaz - nIzlaz pict pickol
-    if ROUND( nUlaz - nIzlaz, 4 ) <> 0
-        @ prow(), pcol()+1 SAY nNV/(nUlaz-nIzlaz) pict piccdem
-        @ prow(), pcol()+1 SAY 0 pict pickol
-        @ prow(), pcol()+1 SAY nMPV/(nUlaz-nIzlaz) pict piccdem
-    elseif ROUND( nMpv, 3 ) <> 0
-        @ prow(), pcol()+1 SAY 0 pict pickol
-        @ prow(), pcol()+1 SAY 0 pict pickol
-        @ prow(), pcol()+1 SAY PADC( "ERR", LEN( piccdem ) )
-    else
-        @ prow(),pcol()+1 SAY 0 pict pickol
-    endif
-    
-    @ prow(), pcol()+1 SAY nMpv pict picdem
+      @ PRow(), nCol1 SAY nUlaz PICT pickol
+      @ PRow(), PCol() + 1 SAY nIzlaz PICT pickol
+      @ PRow(), PCol() + 1 SAY nUlaz - nIzlaz PICT pickol
+      IF Round( nUlaz - nIzlaz, 4 ) <> 0
+         @ PRow(), PCol() + 1 SAY nNV / ( nUlaz - nIzlaz ) PICT piccdem
+         @ PRow(), PCol() + 1 SAY 0 PICT pickol
+         @ PRow(), PCol() + 1 SAY nMPV / ( nUlaz - nIzlaz ) PICT piccdem
+      ELSEIF Round( nMpv, 3 ) <> 0
+         @ PRow(), PCol() + 1 SAY 0 PICT pickol
+         @ PRow(), PCol() + 1 SAY 0 PICT pickol
+         @ PRow(), PCol() + 1 SAY PadC( "ERR", Len( piccdem ) )
+      ELSE
+         @ PRow(), PCol() + 1 SAY 0 PICT pickol
+      ENDIF
 
-    ? __line
-    ?
-    ? REPLICATE( "-", 60 )
-    ? "     Ukupna vrijednost popusta u mp:", STR( ABS( nMPVP - nMPV ), 12, 2 )
-    ? "Ukupna prodajna vrijednost - popust:", STR( nMPVP, 12, 2 )
-    ? REPLICATE( "-", 60 )
-    ?
+      @ PRow(), PCol() + 1 SAY nMpv PICT picdem
 
-enddo
+      ? __line
+      ?
+      ? Replicate( "-", 60 )
+      ? "     Ukupna vrijednost popusta u mp:", Str( Abs( nMPVP - nMPV ), 12, 2 )
+      ? "Ukupna prodajna vrijednost - popust:", Str( nMPVP, 12, 2 )
+      ? Replicate( "-", 60 )
+      ?
 
-my_close_all_dbf()
+   ENDDO
 
-FF
-END PRINT
+   my_close_all_dbf()
 
-return
+   FF
+   END PRINT
+
+   RETURN
 
 
 
 // ---------------------------------------------------------
 // setovanje zaglavlja
 // ---------------------------------------------------------
-static function _set_zagl( cLine, cTxt1, ;
-            lPoNarudzbi, cPKN )
-local aKProd := {}
-local nPom
+STATIC FUNCTION _set_zagl( cLine, cTxt1, ;
+      lPoNarudzbi, cPKN )
 
-nPom := 8
-AADD(aKProd, {nPom, PADC("Datum", nPom) })
-nPom := 11
-AADD(aKProd, {nPom, PADC("Dokument", nPom) })
-nPom := 6
-AADD(aKProd, {nPom, PADC("Tarifa", nPom) })
-nPom := 6
-AADD(aKProd, {nPom, PADC("Partn", nPom) })
+   LOCAL aKProd := {}
+   LOCAL nPom
 
-if lPoNarudzbi .and. cPKN == "D"
-    
-    nPom := 6
-    AADD(aKProd, {nPom, PADC("Naruc.", nPom) })
-    nPom := 10
-    AADD(aKProd, {nPom, PADC("Broj nar.", nPom) })
+   nPom := 8
+   AAdd( aKProd, { nPom, PadC( "Datum", nPom ) } )
+   nPom := 11
+   AAdd( aKProd, { nPom, PadC( "Dokument", nPom ) } )
+   nPom := 6
+   AAdd( aKProd, { nPom, PadC( "Tarifa", nPom ) } )
+   nPom := 6
+   AAdd( aKProd, { nPom, PadC( "Partn", nPom ) } )
 
-endif
+   IF lPoNarudzbi .AND. cPKN == "D"
 
-nPom := LEN(gPicKol)
-AADD(aKProd, {nPom, PADC("Ulaz", nPom) })
-AADD(aKProd, {nPom, PADC("Izlaz", nPom) })
-AADD(aKProd, {nPom, PADC("Stanje", nPom) })
+      nPom := 6
+      AAdd( aKProd, { nPom, PadC( "Naruc.", nPom ) } )
+      nPom := 10
+      AAdd( aKProd, { nPom, PadC( "Broj nar.", nPom ) } )
 
-nPom := LEN(gPicCDem)
-AADD(aKProd, {nPom, PADC("NC", nPom) })
-AADD(aKProd, {nPom, PADC("PC", nPom) })
-AADD(aKProd, {nPom, PADC("PC sa PDV", nPom) })
-AADD(aKProd, {nPom, PADC("PV", nPom) })
+   ENDIF
 
-cLine := SetRptLineAndText(aKProd, 0)
-cTxt1 := SetRptLineAndText(aKProd, 1, "*")
+   nPom := Len( gPicKol )
+   AAdd( aKProd, { nPom, PadC( "Ulaz", nPom ) } )
+   AAdd( aKProd, { nPom, PadC( "Izlaz", nPom ) } )
+   AAdd( aKProd, { nPom, PadC( "Stanje", nPom ) } )
 
-return
+   nPom := Len( gPicCDem )
+   AAdd( aKProd, { nPom, PadC( "NC", nPom ) } )
+   AAdd( aKProd, { nPom, PadC( "PC", nPom ) } )
+   AAdd( aKProd, { nPom, PadC( "PC sa PDV", nPom ) } )
+   AAdd( aKProd, { nPom, PadC( "PV", nPom ) } )
+
+   cLine := SetRptLineAndText( aKProd, 0 )
+   cTxt1 := SetRptLineAndText( aKProd, 1, "*" )
+
+   RETURN
 
 
-function Test(cIdRoba)
-if LEN(Trim(cIdRoba))<=10
-    cIdRoba:=Left(cIdRoba,10)
-else
-    cIdRoba:=cIdRoba
-endif
-return cIdRoba
+FUNCTION Test( cIdRoba )
+
+   IF Len( Trim( cIdRoba ) ) <= 10
+      cIdRoba := Left( cIdRoba, 10 )
+   ELSE
+      cIdRoba := cIdRoba
+   ENDIF
+
+   RETURN cIdRoba
 
 
 
 // --------------------------------------
 // zaglavlje kartice
 // --------------------------------------
-static function Zagl()
-select konto
-hseek cIdKonto
+STATIC FUNCTION Zagl()
 
-Preduzece()
-P_12CPI
-?? "KARTICA PRODAVNICA za period",ddatod,"-",ddatdo,space(10),"Str:",str(++nTStrana,3)
-IspisNaDan(10)
-IF lPoNarudzbi .and. !EMPTY(qqIdNar)
-  ?
-  ? "Obuhvaceni sljedeci narucioci:",TRIM(qqIdNar)
-  ?
-ENDIF
+   SELECT konto
+   hseek cIdKonto
 
-? "Konto: ",cidkonto,"-",konto->naz
-// select roba; hseek cidroba
-// select tarifa; hseek roba->idtarifa
-// ? "Artikal:",cidroba,"-",trim(roba->naz)+" ("+roba->jmj+")"
-select kalk
-IF lPoNarudzbi .and. cPKN=="D"
-  P_COND2
-ELSE
-  P_COND
-ENDIF
-? __line
-if IsPDV()
-    ? __txt1
-else
-    ? " Datum     Dokument  Tarifa  Partn "+IF(lPoNarudzbi.and.cPKN=="D","Naruc.  Broj nar. ","")+"    Ulaz      Izlaz     Stanje      NC         VPC       MPCSAPP        MPV"
-endif
-? __line
-return
+   Preduzece()
+   P_12CPI
+   ?? "KARTICA PRODAVNICA za period", ddatod, "-", ddatdo, Space( 10 ), "Str:", Str( ++nTStrana, 3 )
+   IspisNaDan( 10 )
+   IF lPoNarudzbi .AND. !Empty( qqIdNar )
+      ?
+      ? "Obuhvaceni sljedeci narucioci:", Trim( qqIdNar )
+      ?
+   ENDIF
+
+   ? "Konto: ", cidkonto, "-", konto->naz
+   // select roba; hseek cidroba
+   // select tarifa; hseek roba->idtarifa
+   // ? "Artikal:",cidroba,"-",trim(roba->naz)+" ("+roba->jmj+")"
+   SELECT kalk
+   IF lPoNarudzbi .AND. cPKN == "D"
+      P_COND2
+   ELSE
+      P_COND
+   ENDIF
+   ? __line
+   IF IsPDV()
+      ? __txt1
+   ELSE
+      ? " Datum     Dokument  Tarifa  Partn " + IF( lPoNarudzbi .AND. cPKN == "D", "Naruc.  Broj nar. ", "" ) + "    Ulaz      Izlaz     Stanje      NC         VPC       MPCSAPP        MPV"
+   ENDIF
+   ? __line
+
+   RETURN
 
 
 // izvjestaj najprometniji artikli
-function NPArtikli()
- local PicDEM:= gPicDem
- local Pickol:= "@Z "+gpickol
-  qqKonto := "132;"
-  qqRoba  := ""
-  cSta    := "O"
-  dDat0   := DATE()
-  dDat1   := DATE()
-  nTop    := 20
-  aNiz := {   { "Uslov za prodavnice (prazno-sve)"         , "qqKonto" ,              , "@!S30" , } }
-  AADD (aNiz, { "Uslov za robu/artikle (prazno-sve)"       , "qqRoba"  ,              , "@!S30" , })
-  AADD (aNiz, { "Pregled po Iznosu/Kolicini/Oboje (I/K/O)" , "cSta"    , "cSta$'IKO'" , "@!"    , })
-  AADD (aNiz, { "Izvjestaj se pravi od datuma"             , "dDat0"   ,              ,         , })
-  AADD (aNiz, { "                   do datuma"             , "dDat1"   ,              ,         , })
-  AADD (aNiz, { "Koliko artikala ispisati?"                , "nTop"    , "nTop > 0"   , "999"   , })
+FUNCTION NPArtikli()
 
-  O_PARAMS
-  Private cSection:="F",cHistory:=" ",aHistory:={}
-  Params1()
-  RPar("c2",@qqKonto)
-  RPar("c5",@qqRoba )
-  RPar("d1",@dDat0); RPar("d2",@dDat1)
+   LOCAL PicDEM := gPicDem
+   LOCAL Pickol := "@Z " + gpickol
 
-  qqKonto := PADR(qqKonto,60)
-  qqRoba  := PADR(qqRoba ,60)
+   qqKonto := "132;"
+   qqRoba  := ""
+   cSta    := "O"
+   dDat0   := Date()
+   dDat1   := Date()
+   nTop    := 20
+   aNiz := {   { "Uslov za prodavnice (prazno-sve)", "qqKonto",              , "@!S30", } }
+   AAdd ( aNiz, { "Uslov za robu/artikle (prazno-sve)", "qqRoba",              , "@!S30", } )
+   AAdd ( aNiz, { "Pregled po Iznosu/Kolicini/Oboje (I/K/O)", "cSta", "cSta$'IKO'", "@!", } )
+   AAdd ( aNiz, { "Izvjestaj se pravi od datuma", "dDat0",              ,         , } )
+   AAdd ( aNiz, { "                   do datuma", "dDat1",              ,         , } )
+   AAdd ( aNiz, { "Koliko artikala ispisati?", "nTop", "nTop > 0", "999", } )
 
-  DO WHILE .t.
-    IF !VarEdit(aNiz, 9,1,19,78,;
-                'USLOVI ZA IZVJESTAJ "NAJPROMETNIJI ARTIKLI"',;
-                "B1")
-      CLOSERET
-    ENDIF
-    aUsl1 := Parsiraj( qqRoba  , "IDROBA" , "C" )
-    aUsl2 := Parsiraj( qqKonto , "PKONTO" , "C" )
-    if aUsl1<>NIL .and. aUsl2<>NIL .and. dDat0<=dDat1
-      exit
-    elseif aUsl2==NIL
-      Msg("Kriterij za prodavnice nije korektno postavljen!")
-    elseif aUsl1==NIL
-      Msg("Kriterij za robu nije korektno postavljen!")
-    else
-      Msg("'Datum do' ne smije biti stariji nego 'datum od'!")
-    endif
-  ENDDO 
+   O_PARAMS
+   PRIVATE cSection := "F", cHistory := " ", aHistory := {}
+   Params1()
+   RPar( "c2", @qqKonto )
+   RPar( "c5", @qqRoba )
+   RPar( "d1", @dDat0 ); RPar( "d2", @dDat1 )
 
-  if Params2()
-   WPar("c2",qqKonto)
-   WPar("c5",qqRoba )
-   WPar("d1",dDat0)
-   WPar("d2",dDat1)
-  endif
-  select params
-  use
+   qqKonto := PadR( qqKonto, 60 )
+   qqRoba  := PadR( qqRoba, 60 )
 
-  O_KALK
-
-  cFilt := aUsl1 + " .and. " + aUsl2 + " .and. DATDOK>=" + cm2str(dDat0) + ;
-                                       " .and. DATDOK<=" + cm2str(dDat1) + ;
-                                       ' .and. PU_I=="5"' +;
-                                       ' .and. !(IDVD $ "12#13#22")'
-
-  SET ORDER TO TAG "7"   
-  SET FILTER TO &cFilt
-
-  nMinI:=999999999999
-  nMinK:=999999999999
-  aTopI:={}
-  aTopK:={}
-
-  MsgO("Priprema izvjestaja...")
-
-  GO TOP
-  DO WHILE !EOF()
-    cIdRoba   := IDROBA
-    nKolicina := 0
-    nIznos    := 0
-    DO WHILE !EOF() .and. IDROBA==cIdRoba
-      nKolicina += kolicina
-      nIznos    += kolicina*mpcsapp
-      SKIP 1
-    ENDDO
-    IF LEN(aTopI) < nTop
-      AADD( aTopI , { cIdRoba , nIznos } )
-      nMinI := MIN( nIznos , nMinI )
-    ELSEIF nIznos > nMinI
-      nPom := ASCAN( aTopI , { |x| x[2]<=nMinI } )
-      IF nPom<1 .or. nPom>LEN(aTopI)
-        MsgBeep("nPom="+STR(nPom)+" ?!")
+   DO WHILE .T.
+      IF !VarEdit( aNiz, 9, 1, 19, 78, ;
+            'USLOVI ZA IZVJESTAJ "NAJPROMETNIJI ARTIKLI"', ;
+            "B1" )
+         CLOSERET
       ENDIF
-      aTopI[nPom] := { cIdRoba , nIznos }
-      nMinI := nIznos
-      AEVAL( aTopI , { |x| nMinI := MIN( nMinI , x[2] ) } )
-    ENDIF
-    IF LEN(aTopK) < nTop
-      AADD( aTopK , { cIdRoba , nKolicina } )
-      nMinK := MIN( nKolicina , nMinK )
-    ELSEIF nKolicina > nMinK
-      nPom := ASCAN( aTopK , { |x| x[2] <= nMinK } )
-      IF nPom<1 .or. nPom>LEN(aTopK)
-        MsgBeep("nPom="+STR(nPom)+" ?!")
+      aUsl1 := Parsiraj( qqRoba, "IDROBA", "C" )
+      aUsl2 := Parsiraj( qqKonto, "PKONTO", "C" )
+      IF aUsl1 <> NIL .AND. aUsl2 <> NIL .AND. dDat0 <= dDat1
+         EXIT
+      ELSEIF aUsl2 == NIL
+         Msg( "Kriterij za prodavnice nije korektno postavljen!" )
+      ELSEIF aUsl1 == NIL
+         Msg( "Kriterij za robu nije korektno postavljen!" )
+      ELSE
+         Msg( "'Datum do' ne smije biti stariji nego 'datum od'!" )
       ENDIF
-      aTopK[nPom] := { cIdRoba , nKolicina }
-      nMinK := nKolicina
-      AEVAL( aTopK , { |x| nMinK := MIN( nMinK , x[2] ) } )
-    ENDIF
-  ENDDO
+   ENDDO
 
-  MsgC()
+   IF Params2()
+      WPar( "c2", qqKonto )
+      WPar( "c5", qqRoba )
+      WPar( "d1", dDat0 )
+      WPar( "d2", dDat1 )
+   ENDIF
+   SELECT params
+   USE
 
-  ASORT( aTopI ,,, { |x,y| x[2] > y[2] } )
-  ASORT( aTopK ,,, { |x,y| x[2] > y[2] } )
+   O_KALK
 
-  O_ROBA
-  SELECT ROBA
+   cFilt := aUsl1 + " .and. " + aUsl2 + " .and. DATDOK>=" + cm2str( dDat0 ) + ;
+      " .and. DATDOK<=" + cm2str( dDat1 ) + ;
+      ' .and. PU_I=="5"' + ;
+      ' .and. !(IDVD $ "12#13#22")'
 
-  START PRINT CRET
-  ?
-    // zaglavlje
-    Preduzece()
-    ?? "Najprometniji artikli za period",ddat0,"-",ddat1
-    ? "Obuhvacene prodavnice:",IF(EMPTY(qqKonto),"SVE","'"+TRIM(qqKonto)+"'")
-    ? "Obuhvaceni artikli   :",IF(EMPTY(qqRoba ),"SVI","'"+TRIM(qqRoba )+"'")
-    ?
+   SET ORDER TO TAG "7"
+   SET FILTER TO &cFilt
 
-    // top lista po iznosima
-    IF cSta$"IO"
-      m:=ALLTRIM(STR(MIN(nTop,LEN(aTopI))))+" NAJPROMETNIJIH ARTIKALA POSMATRANO PO IZNOSIMA:"
+   nMinI := 999999999999
+   nMinK := 999999999999
+   aTopI := {}
+   aTopK := {}
+
+   MsgO( "Priprema izvjestaja..." )
+
+   GO TOP
+   DO WHILE !Eof()
+      cIdRoba   := IDROBA
+      nKolicina := 0
+      nIznos    := 0
+      DO WHILE !Eof() .AND. IDROBA == cIdRoba
+         nKolicina += kolicina
+         nIznos    += kolicina * mpcsapp
+         SKIP 1
+      ENDDO
+      IF Len( aTopI ) < nTop
+         AAdd( aTopI, { cIdRoba, nIznos } )
+         nMinI := Min( nIznos, nMinI )
+      ELSEIF nIznos > nMinI
+         nPom := AScan( aTopI, {| x| x[ 2 ] <= nMinI } )
+         IF nPom < 1 .OR. nPom > Len( aTopI )
+            MsgBeep( "nPom=" + Str( nPom ) + " ?!" )
+         ENDIF
+         aTopI[ nPom ] := { cIdRoba, nIznos }
+         nMinI := nIznos
+         AEval( aTopI, {| x| nMinI := Min( nMinI, x[ 2 ] ) } )
+      ENDIF
+      IF Len( aTopK ) < nTop
+         AAdd( aTopK, { cIdRoba, nKolicina } )
+         nMinK := Min( nKolicina, nMinK )
+      ELSEIF nKolicina > nMinK
+         nPom := AScan( aTopK, {| x| x[ 2 ] <= nMinK } )
+         IF nPom < 1 .OR. nPom > Len( aTopK )
+            MsgBeep( "nPom=" + Str( nPom ) + " ?!" )
+         ENDIF
+         aTopK[ nPom ] := { cIdRoba, nKolicina }
+         nMinK := nKolicina
+         AEval( aTopK, {| x| nMinK := Min( nMinK, x[ 2 ] ) } )
+      ENDIF
+   ENDDO
+
+   MsgC()
+
+   ASort( aTopI,,, {| x, y| x[ 2 ] > y[ 2 ] } )
+   ASort( aTopK,,, {| x, y| x[ 2 ] > y[ 2 ] } )
+
+   O_ROBA
+   SELECT ROBA
+
+   START PRINT CRET
+   ?
+   // zaglavlje
+   Preduzece()
+   ?? "Najprometniji artikli za period", ddat0, "-", ddat1
+   ? "Obuhvacene prodavnice:", IF( Empty( qqKonto ), "SVE", "'" + Trim( qqKonto ) + "'" )
+   ? "Obuhvaceni artikli   :", IF( Empty( qqRoba ), "SVI", "'" + Trim( qqRoba ) + "'" )
+   ?
+
+   // top lista po iznosima
+   IF cSta $ "IO"
+      m := AllTrim( Str( Min( nTop, Len( aTopI ) ) ) ) + " NAJPROMETNIJIH ARTIKALA POSMATRANO PO IZNOSIMA:"
       ? __line
-      ? REPL("-",LEN(m))
+      ? REPL( "-", Len( m ) )
       ?
-      ? PADC("SIFRA",LEN(id))+" "+PADC("NAZIV",LEN(naz))+" "+PADC("IZNOS",20)
-      ? REPL("-",LEN(id))+" "+REPL("-",LEN(naz))+" "+REPL("-",20)
-      FOR i:=1 TO LEN(aTopI)
-        cIdRoba := aTopI[i,1]
-        SEEK cIdRoba
-    ? cIdRoba, LEFT(ROBA->naz, 40), PADC(TRANSFORM(aTopI[i,2],picdem),20)
-       
+      ? PadC( "SIFRA", Len( id ) ) + " " + PadC( "NAZIV", Len( naz ) ) + " " + PadC( "IZNOS", 20 )
+      ? REPL( "-", Len( id ) ) + " " + REPL( "-", Len( naz ) ) + " " + REPL( "-", 20 )
+      FOR i := 1 TO Len( aTopI )
+         cIdRoba := aTopI[ i, 1 ]
+         SEEK cIdRoba
+         ? cIdRoba, Left( ROBA->naz, 40 ), PadC( Transform( aTopI[ i, 2 ], picdem ), 20 )
+
       NEXT
-      ? REPL("-",LEN(id))+" "+REPL("-",LEN(naz))+" "+REPL("-",20)
+      ? REPL( "-", Len( id ) ) + " " + REPL( "-", Len( naz ) ) + " " + REPL( "-", 20 )
 
-    ENDIF
+   ENDIF
 
-    // top lista po kolicinama
-    IF cSta$"KO"
-      IF cSta=="O"
+   // top lista po kolicinama
+   IF cSta $ "KO"
+      IF cSta == "O"
          ?
-     ?
-     ?
+         ?
+         ?
       ENDIF
-      m:=ALLTRIM(STR(MIN(nTop,LEN(aTopK))))+" NAJPROMETNIJIH ARTIKALA POSMATRANO PO KOLICINAMA:"
+      m := AllTrim( Str( Min( nTop, Len( aTopK ) ) ) ) + " NAJPROMETNIJIH ARTIKALA POSMATRANO PO KOLICINAMA:"
       ? __line
-      ? REPL("-",LEN(m))
+      ? REPL( "-", Len( m ) )
       ?
-      ? PADC("SIFRA",LEN(id))+" "+PADC("NAZIV",LEN(naz))+" "+PADC("KOLICINA",20)
-      ? REPL("-",LEN(id))+" "+REPL("-",LEN(naz))+" "+REPL("-",20)
+      ? PadC( "SIFRA", Len( id ) ) + " " + PadC( "NAZIV", Len( naz ) ) + " " + PadC( "KOLICINA", 20 )
+      ? REPL( "-", Len( id ) ) + " " + REPL( "-", Len( naz ) ) + " " + REPL( "-", 20 )
 
-      FOR i:=1 TO LEN(aTopK)
-        cIdRoba := aTopK[i,1]
-        SEEK cIdRoba
-        ? cIdRoba, LEFT(ROBA->naz, 40), PADC(TRANSFORM(aTopK[i,2],pickol),20)
+      FOR i := 1 TO Len( aTopK )
+         cIdRoba := aTopK[ i, 1 ]
+         SEEK cIdRoba
+         ? cIdRoba, Left( ROBA->naz, 40 ), PadC( Transform( aTopK[ i, 2 ], pickol ), 20 )
 
       NEXT
-      ? REPL("-",LEN(id))+" "+REPL("-",LEN(naz))+" "+REPL("-",20)
+      ? REPL( "-", Len( id ) ) + " " + REPL( "-", Len( naz ) ) + " " + REPL( "-", 20 )
 
-    ENDIF
+   ENDIF
 
-    FF
+   FF
 
-  END PRINT
+   END PRINT
 
-CLOSERET
-return
+   CLOSERET
 
-
-
+   RETURN

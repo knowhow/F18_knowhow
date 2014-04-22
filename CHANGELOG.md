@@ -1,3 +1,7 @@
+1.7.59  2014-04-22, vsasa
+
+  - FAKT/KALK, obračunski listovi poreza izbrisani 
+ 
 1.7.58  2014-04-22, hernad
 
   - hernad radio svašta (oko funkcija kontiranja i štampe finansijskog naloga te neke druge bugove ispravljao)

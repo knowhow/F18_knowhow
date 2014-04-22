@@ -146,9 +146,6 @@ FUNCTION gen_sint_stavke( lAuto, dDatNal )
       IF !lAuto
          Box(, 2, 58 )
          @ m_x + 1, m_y + 2 SAY8 "Štampanje analitike/sintetike za nalog " + cIdfirma + "-" + cIdvn + "-" + cBrnal + " ?"  GET cDN PICT "@!" VALID cDN $ "DN"
-         IF gDatNal == "D"
-            @ m_x + 2, m_y + 2 SAY "Datum naloga:" GET dDatNal
-         ENDIF
          READ
          BoxC()
       ENDIF

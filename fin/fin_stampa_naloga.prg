@@ -18,7 +18,7 @@ FUNCTION StNal( lAuto )
 
 FUNCTION stampa_fin_document( lAuto )
 
-   LOCAL dDatNal := Date()
+   PRIVATE dDatNal := Date()
 
    stampa_analitickog_naloga( lAuto, dDatNal )
    gen_sint_stavke( lAuto, dDatNal )
@@ -63,7 +63,9 @@ FUNCTION stampa_analitickog_naloga( lAuto, dDatNal )
       cBrNal := BrNal
 
       IF !lAuto
-         box_fin_nalog( @cIdFirma, @cIdVn, @cBrNal, @dDatNal )
+         IF !box_fin_nalog( @cIdFirma, @cIdVn, @cBrNal, @dDatNal )
+             RETURN .F.
+         ENDIF
       ENDIF
 
       HSEEK cIdFirma + cIdVN + cBrNal
@@ -326,8 +328,11 @@ FUNCTION box_fin_nalog( cIdFirma, cIdVn, cBrNal, dDatNal )
 
    READ
 
-   ESC_BCR
    BoxC()
+
+   IF LastKey() == K_ESC
+      RETURN .F.
+   ENDIF
 
    RETURN .T.
 

@@ -1,6 +1,9 @@
 1.7.59  2014-04-22, vsasa
 
   - FAKT/KALK, obračunski listovi poreza izbrisani 
+  - čišćenje RREPLACE
+  - isplanika(), isplns() izbrisani
+  - log bug report error - bugfix
  
 1.7.58  2014-04-22, hernad
 

@@ -177,7 +177,6 @@ FUNCTION fakt_pregled_liste_dokumenata()
    ENDIF
 
    IF !Empty( cOpcina )
-      altd()
       cFilter += ".and. " + aUslOpc 
    ENDIF
 

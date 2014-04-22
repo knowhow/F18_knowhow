@@ -767,7 +767,7 @@ STATIC FUNCTION fakt_izbrisi_azurirane( a_data )
       SKIP 1
       nRecNo := RecNo()
       SKIP -1
-      IF ( AScan( a_data, field->idfirma + field->idtipdok + field->brdok ) = 0 )
+      IF ( AScan( a_data, field->idfirma + field->idtipdok + field->brdok ) == 0 )
          DELETE
       ENDIF
       GO ( nRecNo )

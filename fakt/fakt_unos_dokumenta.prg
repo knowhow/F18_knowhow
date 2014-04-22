@@ -1006,10 +1006,8 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
       // tip dokumenta je
       _idtipdok := Left( _a_tipdok[ _n_menu ], 2 )
 
-      altd()
       ++ _x
       @ m_x + _x, m_y + 2 SAY PadR( fakt_naziv_dokumenta( @_a_tipdok, _idtipdok ), 40 )
-
 
 
       // ako treba resetovati broj dokumenta !
@@ -1187,7 +1185,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
       ?? "  RJ:", _idfirma
 
       _x += 2
-      @ m_x + _x, m_y + 2 SAY PadR( _a_tipdok[ AScan( _a_tipdok, {|x| _idtipdok == Left( x, 2 ) } ) ], 35 )
+      @ m_x + _x, m_y + 2 SAY PadR( fakt_naziv_dokumenta( @_a_tipdok, _idtipdok ), 35 )
 
       @ m_x + _x, m_y + 45 SAY "Datum: "
       ?? _datdok

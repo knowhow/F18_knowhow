@@ -75,7 +75,7 @@ FUNCTION fin_stampa_sinteticki_nalog( kumulativ )
    nRbr := 0
    nUkUkDugBHD := nUkUkPotBHD := nUkUkDugDEM := nUkUkPotDEM := 0
 
-   zagl_sinteticki_nalog()
+   zagl_sinteticki_nalog( dDatNal )
 
    DO WHILE Eval( b1 ) .AND. Eval( b2 )     
 

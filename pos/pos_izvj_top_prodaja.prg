@@ -30,10 +30,6 @@ local aNiz := {}, cPor, cZaduz, aVrsteP
 PRIVATE cIdPos, cRoba:=SPACE(60), dDat0, dDat1, nTop := 10, cSta := "I"
 dDat0 := dDat1 := DATE ()
 
-if IsPlanika()
-	cPrikOnlyPar:="D"
-endif
-
 aDbf := {}
 AADD (aDbf, {"IdRoba",   "C", 10, 0})
 AADD (aDbf, {"Kolicina", "N", 15, 3})
@@ -66,9 +62,6 @@ AADD (aNiz, {"Pregled po Iznosu/Kolicini/Oboje (I/K/O)","cSta","cSta$'IKO'","@!"
 AADD (aNiz, {"Izvjestaj se pravi od datuma","dDat0",,,})
 AADD (aNiz, {"                   do datuma","dDat1",,,})
 AADD (aNiz, {"Koliko artikala ispisati?","nTop","nTop > 0",,})
-if IsPlanika()
-	AADD (aNiz, {"Prikazati samo artikle sa JMJ='PAR' (D/N) ?","cPrikOnlyPar","cPrikOnlyPar$'DN'","@!",})
-endif
 DO WHILE .t.
   IF !VarEdit(aNiz, 10,5,19,74,;
               'USLOVI ZA IZVJESTAJ "NAJPROMETNIJI ARTIKLI"',;
@@ -105,9 +98,6 @@ ZagFirma()
 ? padc ("NA DAN: "+FormDat1 (gDatum), 40)
 ?
 ? PADC ("Za period od "+FormDat1 (dDat0)+ " do "+FormDat1 (dDat1), 40)
-if IsPlanika() .and. cPrikOnlyPar=="D"
-	? "Artikli kod kojih je JMJ='PAR'"
-endif
 ?
 
 TopNizvuci (VD_RN, dDat0)
@@ -127,11 +117,6 @@ IF cSta $ "IO"
   DO WHILE !BOF() .and. nCnt <= nTop
     select roba
     HSEEK POM->IdRoba
-    if IsPlanika() .and. cPrikOnlyPar=="D" .and. roba->jmj<>"PAR" 
-    	select POM
-	    skip -1
-	    loop
-    endif
     ? roba->Id, LEFT (roba->Naz, 20), STR (POM->Iznos, 19, 2)
     SELECT POM
     nCnt ++
@@ -156,11 +141,6 @@ IF cSta $ "KO"
     DO WHILE !BOF() .and. nCnt <= nTop
         select roba
         HSEEK POM->IdRoba
-        if IsPlanika() .and. cPrikOnlyPar=="D" .and. roba->jmj<>"PAR" 
-    	    select POM
-	        skip -1
-	        loop
-        endif
         ? roba->Id, LEFT (roba->Naz, 20), STR (POM->Kolicina, 15, 3)
         SELECT POM
         nCnt ++

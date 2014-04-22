@@ -302,7 +302,7 @@ do while .t.
     @ m_x+3,col()+2 SAY "Razduzuje:" GET cIdZaduz2  pict "@!"      valid empty(cidzaduz2) .or. P_Firma(@cIdZaduz2)
   endif
   
-  if IsPlanika() .or. gVar13u11=="1"
+  if gVar13u11=="1"
     @ m_x+4,m_y+2   SAY "Prodavn. konto zaduzuje :" GET cIdKonto  pict "@!" valid P_Konto(@cIdKonto)
   endif
   

@@ -214,11 +214,6 @@ FUNCTION fakt_real_kolicina()
    WPar( "vi", cPrikaz )
    WPar( "td", qqTipDok )
 	
-   IF IsPlanika()
-      RPar( "pK", cK2X )
-      RPar( "pJ", cJmjPar )
-   ENDIF
-	
    SELECT params
    USE
    BoxC()

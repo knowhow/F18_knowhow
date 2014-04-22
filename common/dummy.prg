@@ -34,12 +34,6 @@ FUNCTION rloptlevel()
 FUNCTION isRudnik()
    RETURN .F.
 
-FUNCTION isPlanika()
-   RETURN .F.
-
-FUNCTION isPlNs()
-   RETURN .F.
-
 FUNCTION isKonsig()
    RETURN .F.
 

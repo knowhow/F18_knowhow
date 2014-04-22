@@ -214,16 +214,8 @@ if KLevel=="0"
 endif
 
 AADD (aNiz, {"Ako je Bar Cod generisi <ENTER> " , "gEntBarCod", "gEntBarCod$'DN'", "@!", })
-
-If (!IsPlanika())
-    // generisao bug pri unosu reklamacije
-    AADD (aNiz, {"Pri unosu zaduzenja azurirati i cijene (D/N)? " , "gZadCij", "gZadCij$'DN'", "@!", })
-else
-    gZadCij := "N"
-endif
-
+AADD (aNiz, {"Pri unosu zaduzenja azurirati i cijene (D/N)? " , "gZadCij", "gZadCij$'DN'", "@!", })
 AADD (aNiz, {"Pri azuriranju pitati za nacin placanja (D/N)? " , "gUpitNP", "gUpitNP$'DN'", "@!", })
-
 AADD (aNiz, {"Voditi po stolovima (D/N)? " , "gStolovi", "gStolovi$'DN'", "@!", })
 AADD (aNiz, {"Kod unosa racuna uvijek pretraga art.po nazivu (D/N)? " , "gSifUvPoNaz", "gSifUvPoNaz$'DN'", "@!", })
 AADD (aNiz, {"Maksimalna kolicina pri unosu racuna (0 - bez provjere) " , "_max_qtty", "_max_qtty >= 0", "999999", })
@@ -237,11 +229,7 @@ if LASTKEY() <> K_ESC
     MsgO("Azuriram parametre")
 
     set_metric( "VodiTrebovanja", nil, gVodiTreb )
-
-    if (!IsPlanika())
-        set_metric("AzuriranjeCijena", nil, gZadCij )
-    endif
-
+    set_metric("AzuriranjeCijena", nil, gZadCij )
     set_metric("VodiOdjeljenja", nil, gVodiOdj)
     set_metric("Stolovi", nil, gStolovi)
     set_metric("DirektnoZakljucivanjeRacuna", nil, gDirZaklj)

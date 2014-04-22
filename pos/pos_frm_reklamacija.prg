@@ -58,7 +58,7 @@ return
 function AzurRekOpis(cBrDok, cIdVd)
 
 // pri uslov za ispitivanje
-if !IsPlanika() .and. cIdVd<>VD_REK
+if cIdVd <> VD_REK
     return
 endif
 

@@ -91,7 +91,7 @@ AADD(ImeKol, { IIF(gStolovi == "D", "Sto", "Smj"), ;
     {|| IIF(gStolovi == "D", sto_br , smjena)}})
 AADD(ImeKol, { "Datum",{|| datum}} )
 AADD(ImeKol, { "Vr.Pl",{|| idvrstep} } )
-AADD(ImeKol, { IIF(IsPlNs(), "Broj NI", "Partner"),{|| idgost} })
+AADD(ImeKol, { "Partner", {|| idgost} })
 AADD(ImeKol, { "Vrijeme",{|| vrijeme} })
 AADD(ImeKol,{ "Placen",     {|| IIF (Placen==PLAC_NIJE,"  NE","  DA")} })
 

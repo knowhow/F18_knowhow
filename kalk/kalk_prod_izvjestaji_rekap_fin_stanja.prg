@@ -160,13 +160,7 @@ FUNCTION RFLLP()
       DO WHILE !Eof() .AND. cIdFirma + cBroj == idFirma + pkonto .AND. IspitajPrekid()
          SELECT roba
          hseek kalk->idroba
-         // uslov po K9, planika
-         IF ( IsPlanika() .AND. !Empty( cK9 ) .AND. roba->k9 <> cK9 )
-            SELECT kalk
-            SKIP
-            LOOP
-         ENDIF
-  		
+ 		
          SELECT kalk
          IF cTU == "2" .AND.  roba->tip $ "UT"
             // prikaz dokumenata IP, a ne robe tipa "T"
@@ -224,10 +218,6 @@ FUNCTION RFLLP()
             nMPVI += -nSaP
             nNVI += nc * gkolicin2
             nNV -= nc * gkolicin2
-         ENDIF
-
-         IF IsPlanika()
-            UkupnoKolP( @nKolUlaz, @nKolIzlaz )
          ENDIF
 
          nElem := AScan( aRTar, {| x| x[ 1 ] == TARIFA->ID } )
@@ -369,17 +359,10 @@ FUNCTION RFLLP()
    @ PRow(), PCol() + 1  SAY  nT7  PICT picdem
    ? cRTLine
 
-   IF IsPlanika()
-      IF ( PRow() > ( RPT_PAGE_LEN + gPStranica ) )
-         FF
-      ENDIF
-      PrintParovno( nKolUlaz, nKolIzlaz )
-   ENDIF
-
    FF
-   endprint
+   END PRINT
 
-   closeret
+   my_close_all_dbf()
 
    RETURN
 
@@ -403,10 +386,6 @@ FUNCTION ZaglRFLLP()
    ?
    IF Len( aUslR ) <> 0
       ? "Kriterij za artikle:", qqRoba
-   ENDIF
-
-   IF IsPlanika() .AND. !Empty( cK9 )
-      ? "Uslov po K9:", cK9
    ENDIF
 
    SELECT kalk

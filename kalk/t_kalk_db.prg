@@ -67,33 +67,4 @@ METHOD kreiraj( nArea )
       CreSystemDb( nArea )
    ENDIF
 
-   IF IsPlanika()
-
-      aDbf := {}
-      AAdd( aDBf, { 'PKONTO', 'C',   7,  0 } )
-      AAdd( aDBf, { 'IDROBA', 'C',  10,  0 } )
-      AAdd( aDBf, { 'IDTARIFA', 'C',   6,  0 } )
-      AAdd( aDBf, { 'IDVD', 'C',   2,  0 } )
-      AAdd( aDBf, { 'BRDOK', 'C',   8,  0 } )
-      AAdd( aDBf, { 'DATDOK', 'D',   8,  0 } )
-      AAdd( aDBf, { 'NC', 'N',  20,  8 } )
-      // kolicina kod posljednje nabavke
-      AAdd( aDBf, { 'KOLICINA', 'N',  12,  2 } )
-      IF !File( f18_ime_dbf( "prodnc" ) )
-         DBcreate2( 'PRODNC.DBF', aDbf )
-      ENDIF
-      CREATE_INDEX( "PRODROBA", "PKONTO+IDROBA", "PRODNC" )
-
-      // RVrsta.Dbf
-      aDbf := {}
-      AAdd( aDBf, { 'ID', 'C',  1,  0 } )
-      AAdd( aDBf, { 'NAZ', 'C', 30,  0 } )
-      IF !File( f18_ime_dbf( "rvrsta" ) )
-         DBcreate2( 'RVRSTA.DBF', aDbf )
-      ENDIF
-      CREATE_INDEX( "ID", "ID", "RVRSTA" )
-      CREATE_INDEX( "NAZ", "NAZ", "RVRSTA" )
-
-   ENDIF
-
    RETURN

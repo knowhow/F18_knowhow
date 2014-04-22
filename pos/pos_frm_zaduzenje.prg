@@ -60,15 +60,6 @@ private bPrevZv
 private bPrevUp
 private bPrevDn
 
-// dodatni podaci o reklamaciji
-if ( IsPlanika() .and. cIdVd == VD_REK )
-    private cRekOp1
-    private cRekOp2
-    private cRekOp3
-    // postavi odmah da je "R" - realizovana radi odustajanja
-    private cRekOp4:="R"
-endif
-
 // koristim ga kod sirovinskog zaduzenja odjeljenja
 // ma kako se ono vodilo
 

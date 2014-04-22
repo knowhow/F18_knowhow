@@ -322,11 +322,7 @@ endif
 
 Preduzece()
 
-if IsPlNS()
-	P_COND2
-else
-	P_COND
-endif
+P_COND
 
 ?? "KALK: SINTETICKA LAGER LISTA PRODAVNICA ZA PERIOD",dDatOd,"-",dDatDo," NA DAN "
 ?? date(), space(12),"Str:",str(++nTStrana,3)

@@ -28,7 +28,6 @@ STATIC cUslovRoba
 STATIC cK9
 STATIC cNObjekat
 STATIC cLinija
-STATIC cPrikazDob
 
 #define ROBAN_LEN 40
 #define KOLICINA_LEN 10
@@ -366,7 +365,6 @@ STATIC FUNCTION GetVars( cNObjekat )
 
    O_PARAMS
    PRIVATE cSection := "F", cHistory := " ", aHistory := {}
-   cPrikazDob := "N"
 
    Params1()
    RPar( "c2", @qqKonto )
@@ -389,10 +387,6 @@ STATIC FUNCTION GetVars( cNObjekat )
       @ m_x + 3, Col() + 2 SAY "do" GET dDatDo
       @ m_x + 4, m_y + 2 SAY "Kriterij za robu :" GET qqRoba PICT "@!S50"
       @ m_x + 5, m_y + 2 SAY "Prikaz prodaje (D/N)" GET cPrikProd PICT "@!" VALID cPrikProd $ "DN"
-      IF IsPlanika()
-         @ m_x + 6, m_y + 2 SAY "Prikaz dobavljaca (D/N)" GET cPrikazDob PICT "@!" VALID cPrikazDob $ "DN"
-         @ m_x + 7, m_y + 2 SAY "Prikaz po K9" GET cK9 PICT "@!"
-      ENDIF
       READ
 
       IF ( LastKey() == K_ESC )

@@ -24,20 +24,8 @@ if lPrikazK2 == nil
 	lPrikazK2 := .f.
 endif
 
-if (IsPlanika() .and. !fPocStanje)
-	if lPrikazK2
-		nTotalUlaz+=nUlaz
-		nTotalIzlaz+=nIzlaz
-	else
-		if roba->k2<>PADR("X",4)
-			nTotalUlaz+=nUlaz
-			nTotalIzlaz+=nIzlaz
-		endif
-	endif
-else
-	nTotalUlaz+=nUlaz
-	nTotalIzlaz+=nIzlaz
-endif
+nTotalUlaz+=nUlaz
+nTotalIzlaz+=nIzlaz
 
 return
 

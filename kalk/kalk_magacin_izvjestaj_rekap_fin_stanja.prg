@@ -219,17 +219,10 @@ FUNCTION RFLLM()
 
    ? cLine
 
-   IF IsPlanika()
-      IF ( PRow() > ( RPT_PAGE_LEN + gPStranica ) )
-         FF
-      ENDIF
-      PrintParovno( nKolUlaz, nKolIzlaz )
-   ENDIF
-
    FF
-   endprint
+   END PRINT
 
-   closeret
+   my_close_all_dbf()
 
    RETURN
 

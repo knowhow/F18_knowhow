@@ -57,18 +57,6 @@ do while !EOF()
 	SELECT roba
 	HSEEK kalk->idRoba
 	
-	if IsPlanika() .and. !EMPTY(cPlVrsta) .and. roba->vrsta <> cPlVrsta
-		select kalk
-		skip
-		loop
-	endif
-	
-	if IsPlanika() .and. !EMPTY(cK9) .and. roba->k9 <> cK9
-		select kalk
-		skip
-		loop
-	endif	
-	
 	lMagacin:=.t.
 	SELECT rekap2
 

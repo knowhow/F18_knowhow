@@ -39,17 +39,7 @@ FUNCTION refresh_me( a_dbf_rec, lSilent, lFromMyUse )
       @ m_x + 1, m_y + 2 SAY _msg_1
    ENDIF
 
-   // 1) sracunaj broj aktivnih zapisa u tabeli, koji su izbrisani
-   dbf_open_temp( a_dbf_rec, @_cnt, @_del )
-   USE
-
-   _msg_2 := "cnt = "  + AllTrim( Str( _cnt, 0 ) ) + " / " + AllTrim( Str( _del, 0 ) )
-   IF ! lSilent
-      @ m_x + 2, m_y + 2 SAY _msg_2
-   ENDIF
-
-
-   log_write( "stanje dbf " +  _msg_1 + " " + _msg_2, 8 )
+   log_write( "stanje dbf " +  _msg_1, 8 )
 
    IF ! lFromMyUse
       // 2) synchro
@@ -72,6 +62,10 @@ FUNCTION refresh_me( a_dbf_rec, lSilent, lFromMyUse )
 
    log_write( "stanje nakon sync " + _msg_1 + " " + _msg_2, 8 )
 
+   if a_dbf_rec[ "alias" ] == "SUBAN"
+        altd()
+   ENDIF
+
    // 4) uradi check i fix ako treba
    //
    // _cnt - _del je broj aktivnih dbf zapisa, dajemo taj info check_recno funkciji
@@ -92,9 +86,9 @@ FUNCTION refresh_me( a_dbf_rec, lSilent, lFromMyUse )
 
    log_write( "END refresh_me " +  _msg_1 + " " + _msg_2, 8 )
 
-   // if hocu_li_pakovati_dbf(_cnt, _del)
-   pakuj_dbf( a_dbf_rec, .T. )
-   // endif
+   if hocu_li_pakovati_dbf(_cnt, _del)
+     pakuj_dbf( a_dbf_rec, .T. )
+   endif
 
    IF ! lSilent
       BoxC()

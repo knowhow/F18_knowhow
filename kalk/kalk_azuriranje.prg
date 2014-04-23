@@ -250,11 +250,11 @@ STATIC FUNCTION kalk_zavisni_nakon_azuriranja( lGenerisi, lAuto )
 
       RekapK()
 
-      IF ( gafin == "D" .OR. gaMat == "D" )
+      IF ( gaFin == "D" .OR. gaMat == "D" )
          kalk_kontiranje_naloga( .T., lAuto )
       ENDIF
 
-      P_Fin( lAuto )
+      fin_nalog_priprema_kalk( lAuto )
 
       gAFin := lgAFin
       gAMat := lgAMat

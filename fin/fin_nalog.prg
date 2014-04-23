@@ -73,10 +73,161 @@ FUNCTION fin_nalog_azurirani()
    RETURN
 
 
+FUNCTION fin_nalog_priprema()
+
+    my_close_all_dbf()
+    fin_gen_ptabele_stampa_nalozi()
+
+    RETURN NIL
+
+/*
+   Koristi se u KALK za štampu finansijskog naloga
+
+*/
+
+FUNCTION fin_nalog_priprema_kalk( lAuto )
+
+   PRIVATE gDatNal := "N"
+   PRIVATE gRavnot := "D"
+   PRIVATE cDatVal := "D"
+
+   IF ( lAuto == NIL )
+      lAuto := .F.
+   ENDIF
+
+   IF gaFin == "D"
+	
+      kontrola_zbira_naloga_kalk( lAuto )
+	
+      IF lAuto == .F. .OR. ( lAuto == .T. .AND. gAImpPrint == "D" )
+         fin_gen_ptabele_stampa_nalozi( lAuto )
+      ELSE
+         fin_gen_psuban_stavke_kalk()
+         fin_gen_sint_stavke_kalk()
+      ENDIF
+	
+      fin_azur( lAuto )
+
+   ENDIF
+
+   RETURN
+
+
+/*
+   generisi psuban, psint, pnalog, štampaj sve naloge
+*/
+FUNCTION fin_gen_ptabele_stampa_nalozi( lAuto )
+
+   LOCAL dDatNal := Date()
+
+   IF fin_gen_psuban_stampa_nalozi( lAuto, @dDatNal )
+       fin_gen_sint_stavke( lAuto, dDatNal )
+   ENDIF
+
+   RETURN
+
+
+
+/*
+   Generiše psuban, pa štampa sve naloge 
+*/
+FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
+
+   LOCAL _print_opt := "V"
+   LOCAL oNalog, oNalozi := FinNalozi():New()
+
+   PRIVATE aNalozi := {}
+
+   IF lAuto == NIL
+      lAuto := .F.
+   ENDIF
+
+   fin_open_psuban()
+
+   __par_len := Len( partn->id )
+
+   SELECT PSUBAN
+   my_dbf_zap()
+
+   SELECT fin_pripr
+   SET ORDER TO TAG "1"
+
+   GO TOP
+
+   EOF CRET
+
+
+   IF lAuto
+      _print_opt := "D"
+      Box(, 3, 75 )
+      @ m_x + 0, m_y + 2 SAY "PROCES FORMIRANJA SINTETIKE I ANALITIKE"
+   ENDIF
+
+   DO WHILE !Eof()
+
+      cIdFirma := IdFirma
+      cIdVN := IdVN
+      cBrNal := BrNal
+
+      IF !lAuto
+         IF !box_fin_nalog( @cIdFirma, @cIdVn, @cBrNal, @dDatNal )
+             RETURN .F.
+         ENDIF
+      ENDIF
+
+      HSEEK cIdFirma + cIdVN + cBrNal
+      IF Eof()
+         my_close_all_dbf()
+         RETURN .F.
+      ENDIF
+
+      oNalog := FinNalog():New( cIdFirma, cIdVn, cBrNal ) 
+
+      IF !lAuto
+         f18_start_print( NIL, @_print_opt )
+      ENDIF
+
+      fin_nalog( "1", lAuto, dDatNal, @oNalog )
+      oNalozi:addNalog( oNalog )
+
+      IF !lAuto
+         PushWa()
+         my_close_all_dbf()
+         f18_end_print( NIL, @_print_opt )
+         fin_open_psuban()
+         PopWa()
+      ENDIF
+
+
+      IF AScan( aNalozi, cIdFirma + cIdVN + cBrNal ) == 0
+
+         AAdd( aNalozi, cIdFirma + cIdVN + cBrNal )
+         // lista naloga koji su otisli
+         IF lAuto
+            @ m_x + 2, m_y + 2 SAY "Formirana sintetika i analitika za nalog:" + cIdFirma + "-" + cIdVN + "-" + cBrNal
+         ENDIF
+      ENDIF
+
+   ENDDO
+
+   
+   IF lAuto
+      BoxC()
+   ENDIF
+
+   my_close_all_dbf()
+
+   IF !oNalozi:valid()
+        oNalozi:showErrors()
+   ENDIF
+
+   RETURN .T.
+
+
+
 /*
    Štampa (su)banalitičkog finansijski nalog
-   ako smo na fin_pripr => psuban
-
+   - ako smo na fin_pripr onda puni psuban sa sadržajem fin_pripr
 */
 
 FUNCTION fin_nalog( cInd, lAuto, dDatNal, oNalog )
@@ -91,6 +242,10 @@ FUNCTION fin_nalog( cInd, lAuto, dDatNal, oNalog )
       lAuto := .F.
    ENDIF
 
+   IF dDatNal == NIL
+         dDatNal := DATE()
+   ENDIF
+
    _vrste_placanja := .F.
 
    O_PARTN
@@ -101,20 +256,19 @@ FUNCTION fin_nalog( cInd, lAuto, dDatNal, oNalog )
    PicBHD := "@Z " + FormPicL( gPicBHD, 15 )
    PicDEM := "@Z " + FormPicL( gPicDEM, 10 )
 
+   M := IIF( cInd == "3", "------ -------------- --- ", "" ) 
    IF _fin_params[ "fin_tip_dokumenta" ]
 
-      M := IIF( cInd == "3", "------ -------------- --- ", "" ) 
       M +=  + "---- ------- " + REPL( "-", __par_len ) + " ----------------------------" 
       M +=  " -- ------------- ----------- -------- -------- --------------- ---------------" 
 
    ELSE
 
-      M := IIF( cInd == "3", "------ -------------- --- ", "" ) 
       M +=  "---- ------- " 
       M += REPL( "-", __par_len ) + " ----------------------------" 
       M += " ----------- -------- -------- --------------- ---------------"
+
    ENDIF
-   
    M +=  IIF( gVar1 == "1", "-", " ---------- ----------" )
 
    IF cInd $ "1#2"
@@ -122,9 +276,9 @@ FUNCTION fin_nalog( cInd, lAuto, dDatNal, oNalog )
       nStr := 0
    ENDIF
 
-   cIdFirma := IdFirma
-   cIdVN := IdVN
-   cBrNal := BrNal
+   cIdFirma := field->IdFirma
+   cIdVN := field->IdVN
+   cBrNal := field->BrNal
 
    b2 := {|| cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal }
 
@@ -221,9 +375,7 @@ FUNCTION fin_nalog( cInd, lAuto, dDatNal, oNalog )
          @  PRow(), PCol() + 1 SAY PadR( aRez[ 1 ], 28 )
 
          nColDok := PCol() + 1
-         IF gVar1 == "1"
-            @ PRow(), PCol() + 1 SAY aOpis[ 1 ]
-         ENDIF
+         @ PRow(), PCol() + 1 SAY aOpis[ 1 ]
 
          IF _fin_params[ "fin_tip_dokumenta" ]
 
@@ -311,7 +463,7 @@ FUNCTION fin_nalog( cInd, lAuto, dDatNal, oNalog )
                pok := 1
             ENDIF
                
-            @ PRow() + pok, nColDok SAY IF( i - 1 <= Len( aOpis ), aOpis[ i - 1 ], Space( 20 ) )
+            @ PRow() + pok, nColDok SAY IIF( i - 1 <= Len( aOpis ), aOpis[ i - 1 ], Space( 20 ) )
             IF i == 2 .AND. ( !Empty( k1 + k2 + k3 + k4 ) .OR. grj == "D" .OR. gtroskovi == "D" )
                ?? " " + k1 + "-" + k2 + "-" + K3Iz256( k3 ) + "-" + k4
                IF _vrste_placanja
@@ -389,6 +541,100 @@ FUNCTION fin_nalog( cInd, lAuto, dDatNal, oNalog )
          PrenosDNal()
       ENDIF
    ENDIF
+
+   RETURN
+
+
+
+    
+
+FUNCTION fin_gen_sint_stavke( lAuto, dDatNal )
+
+   LOCAL A, cDN := "N"
+   LOCAL nStr, nD1, nD2, nP1, nP2
+   LOCAL cIdFirma, cIDVn, cBrNal
+   LOCAL nDugBHD, nDugDEM, nPotBHD, nPotDEM
+
+   IF lAuto == NIL
+      lAuto := .F.
+   ENDIF
+
+   IF !fin_open_lock_panal( .T. )
+      RETURN .F.
+   ENDIF
+
+   SELECT PSUBAN
+   SET ORDER TO TAG "2"
+   GO TOP
+   IF Empty( PSUBAN->BrNal )
+      MsgBeep( "subanalitika prazna" )
+      my_close_all_dbf()
+      RETURN
+   ENDIF
+
+   A := 0
+   DO WHILE !Eof()
+
+      cIdFirma := psuban->IdFirma
+      cIDVn = psuban->IdVN
+      cBrNal := psuban->BrNal
+
+      fin_gen_panal_psint( cIdFirma, cIdVn, cBrNal, dDatNal )
+
+      IF !lAuto
+         Box(, 2, 58 )
+         @ m_x + 1, m_y + 2 SAY8 "Štampanje analitike/sintetike za nalog " + cIdfirma + "-" + cIdvn + "-" + cBrnal + " ?"  GET cDN PICT "@!" VALID cDN $ "DN"
+         READ
+         BoxC()
+      ENDIF
+
+      SELECT PSUBAN
+      PushWa()
+
+      IF cDN == "D"
+         SELECT PANAL
+         SEEK cIdfirma + cIdvn + cBrnal
+         fin_sinteticki_nalog( .F. )
+      ENDIF
+
+      my_close_all_dbf()
+      fin_open_lock_panal( .F. )
+
+      PopWa()
+
+   ENDDO
+
+   SELECT PANAL
+   my_flock()
+
+   GO TOP
+   DO WHILE !Eof()
+      nRbr := 0
+      cIdFirma := IdFirma
+      cIDVn = IdVN
+      cBrNal := BrNal
+      DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal
+         REPLACE rbr WITH Str( ++nRbr, 3 )
+         SKIP
+      ENDDO
+   ENDDO
+
+   SELECT PSINT
+   my_flock()
+
+   GO TOP
+   DO WHILE !Eof()
+      nRbr := 0
+      cIdFirma := IdFirma
+      cIDVn = IdVN
+      cBrNal := BrNal
+      DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal
+         REPLACE rbr WITH Str( ++nRbr, 3 )
+         SKIP
+      ENDDO
+   ENDDO
+
+   my_close_all_dbf()
 
    RETURN
 

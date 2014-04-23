@@ -21,6 +21,7 @@ CLASS FinNalozi
    METHOD addNalog( oFinNalog )                // dodaj FinNalog
    METHOD getNalog( cIdFirma, cIdVn, cBrNal )  // nađi FinNalog na osnovu broja
    METHOD valid()
+   METHOD showErrors()
  
    DATA aNalozi // ARRAY OF FinNalog
    DATA cErrors // sve poruke o gresci
@@ -30,7 +31,7 @@ ENDCLASS
 METHOD FinNalozi:New()
 
    ::aNalozi := {}
-
+   ::cErrors := ""
    RETURN Self
 
 
@@ -58,7 +59,8 @@ METHOD FinNalozi:valid()
    LOCAL cError, nPos
    
    ::cErrors := ""
-   nPos := ASCAN( ::aNalozi, { | oNalog |  IIF( oNalog:lError, ::cErrors += " ## " + oNalog:cError, .F. ), oNalog:lError } )
+   AEVAL( ::aNalozi, { | oNalog | oNalog:valid(), IIF( oNalog:lError, ::cErrors += "#" + oNalog:cError + "#", .F. ) } )
+   nPos := AScan( ::aNalozi, { | oNalog | oNalog:lError } )
 
    IF nPos > 0
          RETURN .F.
@@ -66,7 +68,12 @@ METHOD FinNalozi:valid()
 
    RETURN .T.
        
-       
+
+METHOD FinNalozi:showErrors()
+
+   MsgBeep( ::cErrors )
+   
+   RETURN NIL       
 
 /* ---------------------------------------- CLASS FinNalog ------------------------------------------------------- */
 
@@ -76,6 +83,7 @@ CLASS FinNalog
    METHOD addStavka( dDatDok ) // dodaj stavku u FIN nalog, interesuje nas sao datum dokumenta
    METHOD setDatumNaloga()
    METHOD cBroj()
+   METHOD validDatumi()
    METHOD valid()
 
 
@@ -148,7 +156,7 @@ METHOD FinNalog:setDatumNaloga()
    RETURN .T.
 
 
-METHOD FinNalog:validDatum()
+METHOD FinNalog:validDatumi()
 
    ::cError := ""
 
@@ -159,8 +167,11 @@ METHOD FinNalog:validDatum()
    ENDIF
 
    // sve stavke naloga moraju pripadati jednom mjesecu
-   IF MONTH( ::dMinDatDok ) != YEAR( ::dMaxDatDok )
-        ::cError += "## stavke " + ::cBroj() + " se odnose na više mjeseci"
+   IF MONTH( ::dMinDatDok ) != MONTH( ::dMaxDatDok )
+        IF !EMPTY( ::cError )
+             ::cError += "#"
+        ENDIF
+        ::cError += "stavke " + ::cBroj() + " se odnose na više mjeseci"
         RETURN .F.
    ENDIF
         
@@ -171,7 +182,8 @@ METHOD FinNalog:valid()
 
    LOCAL lRet
 
-   lRet := ::validDatum()
+   lRet := ::validDatumi()
+   ::lError := !lRet
 
    RETURN lRet
 

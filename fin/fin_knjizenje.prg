@@ -848,10 +848,9 @@ FUNCTION edit_fin_pripr()
 
 
       fin_set_broj_dokumenta()
-
-      my_close_all_dbf()
-      fin_gen_ptabele_stampa_naloga()
+      fin_nalog_priprema()
       o_fin_edit()
+
 
       RETURN DE_REFRESH
 
@@ -862,7 +861,7 @@ FUNCTION edit_fin_pripr()
       fin_set_broj_dokumenta()
 
       my_close_all_dbf()
-      fin_gen_ptabele_stampa_naloga( .T. )
+      fin_gen_ptabele_stampa_nalozi( .T. )
       my_close_all_dbf()
 
       fin_azur( .T. )

@@ -161,29 +161,6 @@ METHOD setGVars()
    PRIVATE cHistory := " "
    PRIVATE aHistory := {}
 
-   PUBLIC gRavnot := "D"
-   PUBLIC gDatNal := "N"
-   PUBLIC gSAKrIz := "N"
-   PUBLIC gBezVracanja := "N"
-   PUBLIC gBuIz := "N"
-   PUBLIC gVar1 := "1"
-   PUBLIC gRj := "N"
-   PUBLIC gTroskovi := "N"
-   PUBLIC gnRazRed := 3
-   PUBLIC gVSubOp := "N"
-   PUBLIC gnLMONI := 120
-   PUBLIC gKtoLimit := "N"
-   PUBLIC gnKtoLimit := 3
-   PUBLIC gDUFRJ := "N"
-   PUBLIC gBrojac := "1"
-   PUBLIC gDatVal := "D"
-   PUBLIC gnLOSt := 0
-   PUBLIC gPotpis := "N"
-   PUBLIC gnKZBDana := 0
-   PUBLIC gOAsDuPartn := "N"
-   PUBLIC gAzurTimeOut := 120
-   PUBLIC g_knjiz_help := "N"
-   PUBLIC gMjRj := "N"
    PUBLIC aRuleCols := g_rule_cols_fin()
    PUBLIC bRuleBlock := g_rule_block_fin()
 

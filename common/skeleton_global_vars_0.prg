@@ -104,7 +104,31 @@ FUNCTION set_global_vars_0()
 
    PUBLIC gPicDEM := "9999999.99"
    PUBLIC gPicBHD := "999999999999.99"
- 
+
+   PUBLIC gRavnot := "D"
+   PUBLIC gDatNal := "N"
+   PUBLIC gSAKrIz := "N"
+   PUBLIC gBezVracanja := "N"
+   PUBLIC gBuIz := "N"
+   PUBLIC gVar1 := "1"
+   PUBLIC gRj := "N"
+   PUBLIC gTroskovi := "N"
+   PUBLIC gnRazRed := 3
+   PUBLIC gVSubOp := "N"
+   PUBLIC gnLMONI := 120
+   PUBLIC gKtoLimit := "N"
+   PUBLIC gnKtoLimit := 3
+   PUBLIC gDUFRJ := "N"
+   PUBLIC gBrojac := "1"
+   PUBLIC gDatVal := "D"
+   PUBLIC gnLOSt := 0
+   PUBLIC gPotpis := "N"
+   PUBLIC gnKZBDana := 0
+   PUBLIC gOAsDuPartn := "N"
+   PUBLIC gAzurTimeOut := 120
+   PUBLIC g_knjiz_help := "N"
+   PUBLIC gMjRj := "N"
+
    // setuje globalne varijable printera
    init_print_variables()
 
@@ -112,8 +136,6 @@ FUNCTION set_global_vars_0()
 
 
 
-// -------------------------------------------------------------
-// -------------------------------------------------------------
 FUNCTION set_global_vars_0_prije_prijave( fSve )
 
    LOCAL cImeDbf

@@ -136,9 +136,10 @@ endif
 fin_set_broj_dokumenta()
 
 my_close_all_dbf()
-fin_gen_ptabele_stampa_naloga( .T. )
-
+fin_gen_ptabele_stampa_nalozi( .T. )
 my_close_all_dbf()
+
+
 fin_azur( .t. ) 
 
 MsgBeep( "Dokument formiran i automatski azuriran..." )

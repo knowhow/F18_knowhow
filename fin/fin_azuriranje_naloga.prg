@@ -47,7 +47,7 @@ FUNCTION fin_azur( automatic )
 
    IF _vise_naloga
 
-      fin_gen_ptabele_stampa_naloga( .T. )
+      fin_gen_ptabele_stampa_nalozi( .T. )
 
       // otvori ponovo tabele
       o_fin_za_azuriranje()

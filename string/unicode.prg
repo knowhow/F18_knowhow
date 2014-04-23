@@ -10,7 +10,7 @@ CLASS Unicode
    METHOD getCpString()
    METHOD PadR( nNum )
    METHOD is_unicode()
-
+   METHOD toScreen()
    DATA lUtf8
    DATA cString
 
@@ -53,6 +53,15 @@ METHOD Unicode:getCpString()
    ENDIF
 
    RETURN cRet
+
+
+/*
+   oUnicode:toScreen() => prikazuje naša slova na ekran
+*/
+
+METHOD Unicode:toScreen()
+
+   RETURN ::getCpString()
 
 
 METHOD Unicode:PadR( nNum )

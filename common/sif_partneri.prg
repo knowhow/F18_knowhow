@@ -117,7 +117,7 @@ FUNCTION p_partneri( cId, dx, dy, lEmptyIdOk )
    AAdd( Imekol, { PadR( "Telefon", 12 ),  {|| TELEFON }, "telefon"  } )
    AAdd ( ImeKol, { PadR( "Fax", 12 ), {|| fax }, "fax" } )
    AAdd ( ImeKol, { PadR( "MobTel", 20 ), {|| mobtel }, "mobtel" } )
-   AAdd ( ImeKol, { PadR( "Opstina", 6 ), {|| idops }, "idops", {|| .T. }, {|| p_ops( @widops ) } } )
+   AAdd ( ImeKol, { PadR( ToStrU( "Općina"), 6 ), {|| idOps }, "idops", {|| .T. }, {|| p_ops( @wIdops ) } } )
 
    IF !_standard_prof
       AAdd ( ImeKol, { PadR( "Referent", 10 ), {|| idrefer }, "idrefer", {|| .T. }, {|| p_refer( @widrefer ) } } )
@@ -343,9 +343,6 @@ FUNCTION g_part_name( cIdPartner )
    RETURN cRet
 
 
-// ------------------------------------
-// da li je partner kupac ???
-// ------------------------------------
 FUNCTION is_kupac( cId )
 
    LOCAL cFld := "_KUP"
@@ -356,9 +353,7 @@ FUNCTION is_kupac( cId )
 
    RETURN .F.
 
-// ------------------------------------
-// da li je partner dobavljac ???
-// ------------------------------------
+
 FUNCTION is_dobavljac( cId )
 
    LOCAL cFld := "_DOB"
@@ -369,9 +364,8 @@ FUNCTION is_dobavljac( cId )
 
    RETURN .F.
 
-// ------------------------------------
-// da li je partner banka ???
-// ------------------------------------
+
+
 FUNCTION is_banka( cId )
 
    LOCAL cFld := "_BANKA"
@@ -383,9 +377,6 @@ FUNCTION is_banka( cId )
    RETURN .F.
 
 
-// ------------------------------------
-// da li je partner radnik ???
-// ------------------------------------
 FUNCTION is_radnik( cId )
 
    LOCAL cFld := "_RADNIK"
@@ -397,9 +388,12 @@ FUNCTION is_radnik( cId )
    RETURN .F.
 
 
-// --------------------------------------------
-// provjerava status polja cFld
-// --------------------------------------------
+/*
+
+   Usage: _ck_status( "01", "_RADNIK" )
+   Ako je: partn->_RADNIK == "dD" => .T.
+
+*/
 STATIC FUNCTION _ck_status( cId, cFld )
 
    LOCAL lRet := .F.
@@ -422,8 +416,6 @@ STATIC FUNCTION _ck_status( cId, cFld )
    RETURN lRet
 
 
-// ----------------------------
-// ----------------------------
 FUNCTION set_sifk_partn_bank()
 
    LOCAL lFound
@@ -467,8 +459,6 @@ FUNCTION set_sifk_partn_bank()
 
 
 
-// ----------------------------
-// ----------------------------
 FUNCTION set_sifk_id_broj()
 
    LOCAL lFound
@@ -511,9 +501,6 @@ FUNCTION set_sifk_id_broj()
 
 
 
-// ------------------------------------------
-// ispisi partnera
-// ------------------------------------------
 FUNCTION ispisi_partn( cPartn, nX, nY )
 
    LOCAL nTArea := Select()

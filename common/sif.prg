@@ -20,7 +20,7 @@ STATIC _LOG_PROMJENE := .F.
 
 STATIC __A_SIFV__ := { { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL } }
 
-FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aPoredak, bPodvuci, aZabrane, invert, aZabIsp )
+FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aPoredak, bPodvuci, aZabrane, lInvert, aZabIsp )
 
    LOCAL cRet, cIdBK
    LOCAL _i
@@ -52,8 +52,8 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
    PushWa()
    PushSifV()
 
-   IF invert == NIL
-      invert := .T.
+   IF lInvert == NIL
+      lInvert := .T.
    ENDIF
 
    SELECT ( nDbf )
@@ -61,9 +61,6 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
       MsgBeep( "USED FALSE ?!" )
       RETURN .F.
    ENDIF
-
-   // setuj match_code polje...
-   set_mc_imekol( nDbf )
 
    cOrderTag := ordName( 1 )
 
@@ -106,7 +103,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
          GO TOP
       ENDIF
 
-      browse_table_sql(, nVisina, nSirina,  {|| ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, ToStrU( cNaslov ) , "", invert, _komande, 1, bPodvuci, , , aPoredak )
+      browse_table_sql(, nVisina, nSirina,  {|| ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, ToStrU( cNaslov ) , "", lInvert, _komande, 1, bPodvuci, , , aPoredak )
 
       IF Type( "id" ) $ "U#UE"
          cID := ( nDbf )->( FieldGet( 1 ) )
@@ -141,12 +138,15 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
 
    SET FILTER TO
    PopSifV()
+
    PopWa()
 
    RETURN .T.
 
-// ------------------------------------------------
-// ------------------------------------------------
+
+
+
+
 STATIC FUNCTION sif_set_order( xIndex, cOrderTag, fID_j )
 
    LOCAL nPos

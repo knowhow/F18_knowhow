@@ -20,9 +20,10 @@ CLASS FinNalozi
    METHOD New()
    METHOD addNalog( oFinNalog )                // dodaj FinNalog
    METHOD getNalog( cIdFirma, cIdVn, cBrNal )  // nađi FinNalog na osnovu broja
-
+   METHOD valid()
+ 
    DATA aNalozi // ARRAY OF FinNalog
-
+   DATA cErrors // sve poruke o gresci
 ENDCLASS
 
 
@@ -52,6 +53,20 @@ METHOD FinNalozi:getNalog( cIdFirma, cIdVn, cBrNal )
     RETURN NIL
 
 
+METHOD FinNalozi:valid()
+
+   LOCAL cError, nPos
+   
+   ::cErrors := ""
+   nPos := ASCAN( ::aNalozi, { | oNalog |  IIF( oNalog:lError, ::cErrors += " ## " + oNalog:cError, .F. ), oNalog:lError } )
+
+   IF nPos > 0
+         RETURN .F.
+   ENDIF
+
+   RETURN .T.
+       
+       
 
 /* ---------------------------------------- CLASS FinNalog ------------------------------------------------------- */
 
@@ -60,11 +75,17 @@ CLASS FinNalog
    Method New( cIdFirma, cIdVn, cBrNal )
    METHOD addStavka( dDatDok ) // dodaj stavku u FIN nalog, interesuje nas sao datum dokumenta
    METHOD setDatumNaloga()
+   METHOD cBroj()
+   METHOD valid()
+
+
    DATA cIdFirma
    DATA cIdVN
    DATA cBrNal
    DATA dDatumNaloga
 
+   DATA lError
+   DATA cError
 
    DATA dMinDatDok  // najmanji datum dokumenta unutar naloga
    DATA dMaxDatDok  // najveći datum dokumenta
@@ -81,9 +102,15 @@ METHOD FinNalog:New( cIdFirma, cIdVN, cBrNal )
    ::cIdVN := cIdVN
    ::cBrNal := cBrNal
 
+   ::lError := .F.
+   ::cError := ""
    
    RETURN Self
 
+
+METHOD FinNalog:cBroj()
+
+   RETURN ::cIdFirma + " - " + ::cIdVn + " - " + ::cBrNal
 
 /*
    dodajemo stavku finansijskog naloga
@@ -123,14 +150,28 @@ METHOD FinNalog:setDatumNaloga()
 
 METHOD FinNalog:validDatum()
 
+   ::cError := ""
+
    // godina za sve stavke mora biti ista
    IF YEAR( ::dMinDatDok ) != YEAR( ::dMaxDatDok )
+        ::cError += "stavke " + ::cBroj() + " obuhvataju više od jedne godine" 
         RETURN .F.
    ENDIF
 
    // sve stavke naloga moraju pripadati jednom mjesecu
    IF MONTH( ::dMinDatDok ) != YEAR( ::dMaxDatDok )
+        ::cError += "## stavke " + ::cBroj() + " se odnose na više mjeseci"
         RETURN .F.
    ENDIF
         
    RETURN .T.
+
+
+METHOD FinNalog:valid()
+
+   LOCAL lRet
+
+   lRet := ::validDatum()
+
+   RETURN lRet
+

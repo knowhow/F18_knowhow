@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,500 +12,502 @@
 
 #include "epdv.ch"
 
-static dDatOd
-static dDatDo
-static cKalkPath
-static cSifPath
-static cTDSrc
-static nZaok
-static nZaok2
-static cIdTar
-static cIdPart
+STATIC dDatOd
+STATIC dDatDo
+STATIC cKalkPath
+STATIC cSifPath
+STATIC cTDSrc
+STATIC nZaok
+STATIC nZaok2
+STATIC cIdTar
+STATIC cIdPart
 // setuj broj dokumenta
-static cSBRdok 
-static cOpis
+STATIC cSBRdok
+STATIC cOpis
 
 // kategorija partnera
 // 1-pdv obv
 // 2-ne pdv obvz
-static cKatP
+STATIC cKatP
 
 // kategorija partnera 2
 // 1-fed
 // 2-rs
 // 3-bd
-static cKatP2
+STATIC cKatP2
 
 // razbij po danima
-static cRazbDan
+STATIC cRazbDan
 
-function kalk_kif(dD1, dD2, cSezona)
-*{
-local nCount
-local cIdfirma
+FUNCTION kalk_kif( dD1, dD2, cSezona )
 
-if cSezona == nil
-	cSezona := ""
-endif
+   // {
+   LOCAL nCount
+   LOCAL cIdfirma
 
-dDatOd := dD1
-dDatDo := dD2
-o_kif(.t.)
+   IF cSezona == nil
+      cSezona := ""
+   ENDIF
 
-SELECT F_SG_KIF
-if !used()
-	O_SG_KIF
-endif
+   dDatOd := dD1
+   dDatDo := dD2
+   o_kif( .T. )
 
-SELECT F_ROBA
-if !used()
-	O_ROBA
-endif
+   SELECT F_SG_KIF
+   IF !Used()
+      O_SG_KIF
+   ENDIF
 
-SELECT sg_kif
-GO TOP
-nCount := 0
-do while !eof()
+   SELECT F_ROBA
+   IF !Used()
+      O_ROBA
+   ENDIF
 
-	nCount ++
+   SELECT sg_kif
+   GO TOP
+   nCount := 0
+   DO WHILE !Eof()
 
-	if upper(aktivan) == "N"
-		skip
-		LOOP
-	endif
+      nCount ++
+
+      IF Upper( aktivan ) == "N"
+         SKIP
+         LOOP
+      ENDIF
 	
-	@ m_x + 1, m_y+2 SAY "SG_KIF : " + STR(nCount)
+      @ m_x + 1, m_y + 2 SAY "SG_KIF : " + Str( nCount )
 	
-	if g_src_modul(src) == "KALK"
+      IF g_src_modul( src ) == "KALK"
 		
-		cTdSrc := td_src
+         cTdSrc := td_src
 		
-		// set id tarifu u kif dokumentu
-		cIdTar := s_id_tar
-		cIdPart := s_id_part
+         // set id tarifu u kif dokumentu
+         cIdTar := s_id_tar
+         cIdPart := s_id_part
 		
-		cKatP := kat_p
-		cKatP2 := kat_p_2
+         cKatP := kat_p
+         cKatP2 := kat_p_2
 	
-		cOpis := naz
+         cOpis := naz
 	
-		cRazbDan := razb_dan
+         cRazbDan := razb_dan
 
-		// setuj broj dokumenta
-		cSBRdok := s_br_dok
+         // setuj broj dokumenta
+         cSBRdok := s_br_dok
 
-		PRIVATE cFormBPdv := form_b_pdv
-		PRIVATE cFormPdv := form_pdv
+         PRIVATE cFormBPdv := form_b_pdv
+         PRIVATE cFormPdv := form_pdv
 
 		
-		PRIVATE cTarFormula := ""
-		PRIVATE cTarFilter := ""
+         PRIVATE cTarFormula := ""
+         PRIVATE cTarFilter := ""
 		
-		PRIVATE cKtoFormula := ""
-		PRIVATE cKtoFilter := ""
+         PRIVATE cKtoFormula := ""
+         PRIVATE cKtoFilter := ""
 	
 
-		if ";" $ id_tar 
-			cTarFilter := Parsiraj(id_tar, "IdTarifa")
-			cTarFormula := ""
+         IF ";" $ id_tar
+            cTarFilter := Parsiraj( id_tar, "IdTarifa" )
+            cTarFormula := ""
 			
-		elseif ( "(" $ id_tar ) .and. ( ")" $ id_tar )
-			// zadaje se formula
-			cTarFormula := id_tar
-			cTarFilter := ""
-		else
-			cTarFilter := ""
-			cTarFormula := ""
-		endif
+         ELSEIF ( "(" $ id_tar ) .AND. ( ")" $ id_tar )
+            // zadaje se formula
+            cTarFormula := id_tar
+            cTarFilter := ""
+         ELSE
+            cTarFilter := ""
+            cTarFormula := ""
+         ENDIF
 		
-		if ";" $ id_kto
-			cKtoFilter := Parsiraj(id_kto, ALLTRIM(id_kto_naz))
-			cKtoFormula := ""
+         IF ";" $ id_kto
+            cKtoFilter := Parsiraj( id_kto, AllTrim( id_kto_naz ) )
+            cKtoFormula := ""
 			
-		elseif ( "(" $ id_kto ) .and. ( ")" $ id_kto )
-			// zadaje se formula
-			cKtoFormula := id_kto
-			cKtoFilter := ""
-		else
-			cKtoFilter := ""
-			cKtoFormula := ""
-		endif
+         ELSEIF ( "(" $ id_kto ) .AND. ( ")" $ id_kto )
+            // zadaje se formula
+            cKtoFormula := id_kto
+            cKtoFilter := ""
+         ELSE
+            cKtoFilter := ""
+            cKtoFormula := ""
+         ENDIF
 	
-		nZaok := zaok
-		nZaok2 := zaok2
+         nZaok := zaok
+         nZaok2 := zaok2
 	
-		// za jednu shema gen stavku formiraj kif
-		gen_sg_item(cSezona)
+         // za jednu shema gen stavku formiraj kif
+         gen_sg_item( cSezona )
 		
-	endif
+      ENDIF
 	
-	SELECT sg_kif
-	skip
+      SELECT sg_kif
+      SKIP
 
-enddo
-
-
-// ------------------------------------------
-// ------------------------------------------
-static function  gen_sg_item( cSezona )
-local cPomPath
-local cPomSPath
-
-local cDokTar
-local xDummy
-local nCount
-local cPom
-local cPartRejon
-local lPdvObveznik
-local lIno
-local dDMin
-local dDMax
-
-// za jedan dokument
-local dDMinD
-local dDMaxD
-
-local lSkip
-local nCijena
-local cBrFaktP
-
-// otvori kalk tabelu
-// ------------------------------------------
+   ENDDO
 
 
-cPomPath :=  "KALK"
-cPomSPath :=  ""
+   // ------------------------------------------
+   // ------------------------------------------
 
-select (F_KALK)
+STATIC FUNCTION  gen_sg_item( cSezona )
+
+   LOCAL cPomPath
+   LOCAL cPomSPath
+
+   LOCAL cDokTar
+   LOCAL xDummy
+   LOCAL nCount
+   LOCAL cPom
+   LOCAL cPartRejon
+   LOCAL lPdvObveznik
+   LOCAL lIno
+   LOCAL dDMin
+   LOCAL dDMax
+
+   // za jedan dokument
+   LOCAL dDMinD
+   LOCAL dDMaxD
+
+   LOCAL lSkip
+   LOCAL nCijena
+   LOCAL cBrFaktP
+
+   // otvori kalk tabelu
+   // ------------------------------------------
+
+
+   cPomPath :=  "KALK"
+   cPomSPath :=  ""
+
+   SELECT ( F_KALK )
 	
-cKalkPath := cPomPath
+   cKalkPath := cPomPath
 	
-if used()
-	use
-endif
-my_use (cPomPath)
+   IF Used()
+      USE
+   ENDIF
+   my_use ( cPomPath )
 
 
 
-	SELECT F_PARTN
-	if used()
-		use
-	endif
-	my_use ( "PARTN")
-	SET ORDER TO TAG "ID"
+   SELECT F_PARTN
+   IF Used()
+      USE
+   ENDIF
+   my_use ( "PARTN" )
+   SET ORDER TO TAG "ID"
 	
-	SELECT F_ROBA
-	if used()
-		use
-	endif
-	my_use ( "ROBA")
-	SET ORDER TO TAG "ID"
+   SELECT F_ROBA
+   IF Used()
+      USE
+   ENDIF
+   my_use ( "ROBA" )
+   SET ORDER TO TAG "ID"
 
-	SELECT F_TARIFA
-	if used()
-		use
-	endif
-	my_use ( "TARIFA")
-	SET ORDER TO TAG "ID"
+   SELECT F_TARIFA
+   IF Used()
+      USE
+   ENDIF
+   my_use ( "TARIFA" )
+   SET ORDER TO TAG "ID"
 
-	SELECT F_SIFK
-	if used()
-		use
-	endif
-	my_use ( "SIFK")
-	SET ORDER TO TAG "ID"
+   SELECT F_SIFK
+   IF Used()
+      USE
+   ENDIF
+   my_use ( "SIFK" )
+   SET ORDER TO TAG "ID"
 
-	SELECT F_SIFV
-	if used()
-		use
-	endif
-	my_use ( "SIFV")
-	SET ORDER TO TAG "ID"
-
-
-SELECT KALK
-PRIVATE cFilter := ""
-
-cFilter :=  cm2str(dDatOd) + " <= datdok .and. " + cm2str(dDatDo) + ">= datdok" 
-
-// setuj tip dokumenta
-cFilter :=  cFilter + ".and. IdVD == " + cm2str(cTdSrc)
-
-if !EMPTY(cTarFilter)
-	cFilter += ".and. " + cTarFilter
-endif
-
-if !EMPTY(cKtoFilter)
-	cFilter +=  ".and. " + cKtoFilter
-endif
+   SELECT F_SIFV
+   IF Used()
+      USE
+   ENDIF
+   my_use ( "SIFV" )
+   SET ORDER TO TAG "ID"
 
 
+   SELECT KALK
+   PRIVATE cFilter := ""
 
-// "1","IdFirma+idtipdok+brdok+rbr+podbr"
-SET ORDER TO TAG "1"
-SET FILTER TO &cFilter
+   cFilter :=  cm2str( dDatOd ) + " <= datdok .and. " + cm2str( dDatDo ) + ">= datdok"
 
-GO TOP
+   // setuj tip dokumenta
+   cFilter :=  cFilter + ".and. IdVD == " + cm2str( cTdSrc )
 
-// prosetajmo kroz kalk tabelu
-nCount := 0
-do while !eof()
+   IF !Empty( cTarFilter )
+      cFilter += ".and. " + cTarFilter
+   ENDIF
 
-	// napuni P_KIF i setuj mem vars
-	// ----------------------------------------------
-	SELECT p_kif
-	Scatter()
-	// ----------------------------------------------
+   IF !Empty( cKtoFilter )
+      cFilter +=  ".and. " + cKtoFilter
+   ENDIF
+
+
+
+   // "1","IdFirma+idtipdok+brdok+rbr+podbr"
+   SET ORDER TO TAG "1"
+   SET FILTER TO &cFilter
+
+   GO TOP
+
+   // prosetajmo kroz kalk tabelu
+   nCount := 0
+   DO WHILE !Eof()
+
+      // napuni P_KIF i setuj mem vars
+      // ----------------------------------------------
+      SELECT p_kif
+      Scatter()
+      // ----------------------------------------------
 	
-	SELECT KALK
+      SELECT KALK
 
-	dDMin := datdok
-	dDMax := datdok
+      dDMin := datdok
+      dDMax := datdok
 	
-	// ove var moraju biti private da bi se mogle macro-om evaluirati
-	PRIVATE _uk_b_pdv := 0
-	PRIVATE _popust := 0
+      // ove var moraju biti private da bi se mogle macro-om evaluirati
+      PRIVATE _uk_b_pdv := 0
+      PRIVATE _popust := 0
 
-	// datumski period
-	do while !eof() .and.  (datdok == dDMax)
+      // datumski period
+      DO WHILE !Eof() .AND.  ( datdok == dDMax )
 
-	SELECT kalk
+         SELECT kalk
 
-	cBrdok := kalk->brdok
+         cBrdok := kalk->brdok
 	
-	cIdTipDok := kalk->idvd
-	cIdFirma := kalk->IdFirma
+         cIdTipDok := kalk->idvd
+         cIdFirma := kalk->IdFirma
 
-	// datum kif-a
-	_datum := kalk->datdok
-	_id_part := kalk->idpartner
-	_opis := cOpis
+         // datum kif-a
+         _datum := kalk->datdok
+         _id_part := kalk->idpartner
+         _opis := cOpis
 
-	if !empty(cIdPart)
-		_id_part := cIdPart
-	endif
+         IF !Empty( cIdPart )
+            _id_part := cIdPart
+         ENDIF
 
-	lIno := IsIno(_id_part)
-	lPdvObveznik := IsPdvObveznik(_id_part)
+         lIno := IsIno( _id_part )
+         lPdvObveznik := IsPdvObveznik( _id_part )
 	
-	lSkip := .f.
-	do case
+         lSkip := .F.
+         DO CASE
 	
-	  case cKatP == "1" 
-	  
-	  	// samo pdv obveznici
-		if lIno
-			lSkip := .t.
-		endif
+         CASE cKatP == "1"
+	
+            // samo pdv obveznici
+            IF lIno
+               lSkip := .T.
+            ENDIF
 
-		if !lPdvObveznik
-			lSkip := .t.
-		endif
+            IF !lPdvObveznik
+               lSkip := .T.
+            ENDIF
 		
-	  case cKatP == "2"
+         CASE cKatP == "2"
 	
-		if lPdvObveznik
-			lSkip := .t.
-		endif
-  
-	  	// samo ne-pdv obveznici, ako je ino preskoci
-		if lIno
-			lSkip := .t.
-		endif
+            IF lPdvObveznik
+               lSkip := .T.
+            ENDIF
+
+            // samo ne-pdv obveznici, ako je ino preskoci
+            IF lIno
+               lSkip := .T.
+            ENDIF
 		
-	  case cKatP == "3"
-	  	// ino
-		if !lIno
-			lSkip := .t.
-		endif
+         CASE cKatP == "3"
+            // ino
+            IF !lIno
+               lSkip := .T.
+            ENDIF
 
-	endcase
+         ENDCASE
 
-	cPartRejon := part_rejon(_id_part)
+         cPartRejon := part_rejon( _id_part )
 	
-	do case
+         DO CASE
 	
-		case cKatP2 == "1"
-			// samo federacija
-			if !((cPartRejon == " ") .or. (cPartRejon == "1"))
-				lSkip :=.t.
-			endif
+         CASE cKatP2 == "1"
+            // samo federacija
+            IF !( ( cPartRejon == " " ) .OR. ( cPartRejon == "1" ) )
+               lSkip := .T.
+            ENDIF
 				
-		case cKatP2 == "2"
-			// nije rs, preskoci
-			if !(cPartRejon == "2")
-				lSkip := .t.
-			endif
+         CASE cKatP2 == "2"
+            // nije rs, preskoci
+            IF !( cPartRejon == "2" )
+               lSkip := .T.
+            ENDIF
 			
-		case cKatP2 == "3"
-			// nije bd, preskoci
-			if !(cPartRejon == "3")
-				lSkip := .t.
-			endif
-	endcase
+         CASE cKatP2 == "3"
+            // nije bd, preskoci
+            IF !( cPartRejon == "3" )
+               lSkip := .T.
+            ENDIF
+         ENDCASE
 		
 			
 	
 
 	
 	
-	nCount ++
+         nCount ++
 
-	cPom := "KALK : " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok
-	@ m_x+3, m_y+2 SAY cPom 
+         cPom := "KALK : " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok
+         @ m_x + 3, m_y + 2 SAY cPom
 	
- 	cPom :="KALK cnt : " + STR(nCount, 6)
-	@ m_x+4, m_y+2 SAY cPom
-	
-	
-	
-	// tarifa koja se nalazi unutar dokumenta
-	cDokTar := ""
+         cPom := "KALK cnt : " + Str( nCount, 6 )
+         @ m_x + 4, m_y + 2 SAY cPom
 	
 	
-	dDMinD := datdok
-	dDMaxD := datdok
+	
+         // tarifa koja se nalazi unutar dokumenta
+         cDokTar := ""
+	
+	
+         dDMinD := datdok
+         dDMaxD := datdok
 
 	
-	// broj fakture partnera
-	cBrFaktP := kalk->brfaktp
+         // broj fakture partnera
+         cBrFaktP := kalk->brfaktp
 
-	do while !eof() .and. cBrDok == brdok .and. cIdTipDok == IdVd .and. cIdFirma == IdFirma
-		if lSkip
-			SKIP
-			LOOP
-		endif
+         DO WHILE !Eof() .AND. cBrDok == brdok .AND. cIdTipDok == IdVd .AND. cIdFirma == IdFirma
+            IF lSkip
+               SKIP
+               LOOP
+            ENDIF
 
-		// na nivou dokumenta utvrdi min max datum
-		if dDMinD > datdok
-			dDMinD := datdok
-		endif
+            // na nivou dokumenta utvrdi min max datum
+            IF dDMinD > datdok
+               dDMinD := datdok
+            ENDIF
 
-		if dDMaxD < datdok
-			dDMaxD := datdok
-		endif
+            IF dDMaxD < datdok
+               dDMaxD := datdok
+            ENDIF
 		
-		// na nivou dat opsega utvrdi min max datum
-		if dDMin > datdok
-			dDMinD := datdok
-		endif
+            // na nivou dat opsega utvrdi min max datum
+            IF dDMin > datdok
+               dDMinD := datdok
+            ENDIF
 
-		if dDMax < datdok
-			dDMax := datdok
-		endif
+            IF dDMax < datdok
+               dDMax := datdok
+            ENDIF
 		
 
-		// pozicioniraj se na artikal u sifranriku robe
-		SELECT ROBA
-		seek kalk->idroba
-		SELECT KALK
-		cDokTar := roba->idTarifa
+            // pozicioniraj se na artikal u sifranriku robe
+            SELECT ROBA
+            SEEK kalk->idroba
+            SELECT KALK
+            cDokTar := roba->idTarifa
 		
-		_id_tar := kalk->idTarifa
+            _id_tar := kalk->idTarifa
 		
 		
-		if cTDSrc $ "41#42"
-			nCijena := mpc
-			// u gornjoj cijeni je uracunat popust
-			nPopust := 0
+            IF cTDSrc $ "41#42"
+               nCijena := mpc
+               // u gornjoj cijeni je uracunat popust
+               nPopust := 0
 			
-		elseif cTdSrc $ "14#11"
-			nCijena := vpc
-			nPopust := rabatv
+            ELSEIF cTdSrc $ "14#11"
+               nCijena := vpc
+               nPopust := rabatv
 			
-		else
-			nCijena := vpc
-			nPopust := rabatv
-		endif
+            ELSE
+               nCijena := vpc
+               nPopust := rabatv
+            ENDIF
 
 		
 
-		_uk_b_pdv += round( kolicina * (nCijena * (1 - nPopust/100)) , nZaok)
-		_popust +=  round( kolicina * ( nCijena *  nPopust/100 ) , nZaok)
+            _uk_b_pdv += Round( kolicina * ( nCijena * ( 1 - nPopust / 100 ) ), nZaok )
+            _popust +=  Round( kolicina * ( nCijena *  nPopust / 100 ), nZaok )
 		
-		SELECT KALK
-		skip
-	enddo
+            SELECT KALK
+            SKIP
+         ENDDO
 
 	
-	if (cRazbDan == "D")
-		// razbij po danima
-		if dDMinD <> dDMaxD
-			MsgBeep("U dokumentu " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok + "  se nalaze datumi " + DTOC(dDMaxD) + "-" + DTOC(dDMaxD) + "##" + ;
-			"To nije uredu je se promet razbija po danima !!!")
-		endif
+         IF ( cRazbDan == "D" )
+            // razbij po danima
+            IF dDMinD <> dDMaxD
+               MsgBeep( "U dokumentu " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok + "  se nalaze datumi " + DToC( dDMaxD ) + "-" + DToC( dDMaxD ) + "##" + ;
+                  "To nije uredu je se promet razbija po danima !!!" )
+            ENDIF
 		
-	endif
+         ENDIF
 
-	if cRazbDan <> "D"
-		// nije po danima
-		// za jedan dokument se uzima 
-		exit
-		// ako pak jeste "D" onda se vrti u petlji
-	endif
+         IF cRazbDan <> "D"
+            // nije po danima
+            // za jedan dokument se uzima
+            EXIT
+            // ako pak jeste "D" onda se vrti u petlji
+         ENDIF
 
-	// datumski interval
-	enddo
+         // datumski interval
+      ENDDO
 
-	// za datum uzmi datum dokumenta ili najveci datum gore pronadjen
-	_datum := dDMax
+      // za datum uzmi datum dokumenta ili najveci datum gore pronadjen
+      _datum := dDMax
 	
-	if lSkip
-		// vrati se gore
-		SELECT KALK
-		LOOP
-	endif
+      IF lSkip
+         // vrati se gore
+         SELECT KALK
+         LOOP
+      ENDIF
 	
 	
-	_uk_b_pdv := round(_uk_b_pdv, nZaok2)
-	_uk_popust := round(_popust, nZaok2)
+      _uk_b_pdv := Round( _uk_b_pdv, nZaok2 )
+      _uk_popust := Round( _popust, nZaok2 )
 
-	if !empty(cIdTar)
-		// uzmi iz sg sifrarnika tarifu kojom treba setovati
-		_id_tar := cIdTar
-	else
-		// uzmi iz dokumenta
-		_id_tar := cDokTar
-	endif
+      IF !Empty( cIdTar )
+         // uzmi iz sg sifrarnika tarifu kojom treba setovati
+         _id_tar := cIdTar
+      ELSE
+         // uzmi iz dokumenta
+         _id_tar := cDokTar
+      ENDIF
 
-	if !EMPTY(cSBrDok)
-		_src_br := cSBrDok
-		_src_br_2 := cSBrDok
-	else
+      IF !Empty( cSBrDok )
+         _src_br := cSBrDok
+         _src_br_2 := cSBrDok
+      ELSE
 			
-		// broj dokumenta
-		_src_br := cBrFaktP
-		_src_br_2 := cBrFaktP
-	endif
+         // broj dokumenta
+         _src_br := cBrFaktP
+         _src_br_2 := cBrFaktP
+      ENDIF
 	
 
 	
-	PRIVATE _uk_pdv :=  _uk_b_pdv * (  g_pdv_stopa(_id_tar) / 100 )
+      PRIVATE _uk_pdv :=  _uk_b_pdv * (  g_pdv_stopa( _id_tar ) / 100 )
 	
-	if !EMPTY(cFormBPDV)
-		_i_b_pdv := &cFormBPdv
-	else
-		// nema formule koristi ukupan iznos bez pdv-a
-		_i_b_pdv := _uk_b_pdv
-	endif
-	_i_b_pdv := round(_i_b_pdv, nZaok)
+      IF !Empty( cFormBPDV )
+         _i_b_pdv := &cFormBPdv
+      ELSE
+         // nema formule koristi ukupan iznos bez pdv-a
+         _i_b_pdv := _uk_b_pdv
+      ENDIF
+      _i_b_pdv := Round( _i_b_pdv, nZaok )
 	
-	if !EMPTY(cFormPDV)
-		_i_pdv := &cFormPdv
-	else
-		// nema formule koristi ukupan iznos bez pdv-a
-		_i_pdv :=  _uk_pdv
-	endif
-	_i_pdv := round(_i_pdv, nZaok)
+      IF !Empty( cFormPDV )
+         _i_pdv := &cFormPdv
+      ELSE
+         // nema formule koristi ukupan iznos bez pdv-a
+         _i_pdv :=  _uk_pdv
+      ENDIF
+      _i_pdv := Round( _i_pdv, nZaok )
 
-	// snimi gornje podatke
-	SELECT P_KIF
-	APPEND BLANK
-	Gather()
+      // snimi gornje podatke
+      SELECT P_KIF
+      APPEND BLANK
+      Gather()
 	
 
-	select KALK
-enddo
+      SELECT KALK
+   ENDDO
 
-
-return
+   RETURN

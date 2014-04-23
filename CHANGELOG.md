@@ -1,3 +1,9 @@
+1.7.60  2014-04-23, vsasa
+
+  - FIN, štampa naloga
+  - ePDV, generisanje kuf/kif korekcija - otvaranje tabela
+  - FAKT, lager lista - bugfix
+ 
 1.7.59  2014-04-22, vsasa
 
   - FAKT/KALK, obračunski listovi poreza izbrisani 

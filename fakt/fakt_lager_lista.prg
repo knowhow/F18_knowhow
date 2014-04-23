@@ -17,7 +17,7 @@ FUNCTION fakt_lager_lista()
 
    PARAMETERS lPocStanje, cIdFirma, qqRoba, dDatOd, dDatDo
 
-   LOCAL nKU, nKI, fSaberiKol
+   LOCAL nKU, nKI, lSaberiKol
    LOCAL aPorezi := {}, cPoTar := "N"
 
    PRIVATE nRezerv, nRevers
@@ -73,8 +73,7 @@ FUNCTION fakt_lager_lista()
       SET ORDER TO TAG "3"
    ENDIF
 
-
-   fSaberikol := "N"
+   lSaberikol := .F.
    nKU := nKI := 0
 
    IF !gAppSrv
@@ -373,7 +372,7 @@ FUNCTION fakt_lager_lista()
                // ulaz
                IF idtipdok = "0"
                   nUl += kolicina
-                  IF fSaberikol .AND. !( roba->K2 = 'X' )
+                  IF lSaberikol .AND. !( roba->K2 = 'X' )
                      nKU += kolicina
                   ENDIF
                   // izlaz faktura
@@ -382,7 +381,7 @@ FUNCTION fakt_lager_lista()
                      nIzl += kolicina
                      nReal1 += Round( kolicina * Cijena, ZAOKRUZENJE )
                      nReal2 += Round( kolicina * Cijena * ( Rabat / 100 ), ZAOKRUZENJE )
-                     IF fSaberikol .AND. !( roba->K2 = 'X' )
+                     IF lSaberikol .AND. !( roba->K2 = 'X' )
                         nKI += kolicina
                      ENDIF
                   ENDIF
@@ -392,7 +391,7 @@ FUNCTION fakt_lager_lista()
                   ENDIF
                ELSEIF idtipdok == "21"
                   nRevers += kolicina
-                  IF fSaberikol .AND. !( roba->K2 = 'X' )
+                  IF lSaberikol .AND. !( roba->K2 = 'X' )
                      nKI += kolicina
                   ENDIF
                ENDIF
@@ -403,7 +402,7 @@ FUNCTION fakt_lager_lista()
                   // finansijski da !
                   nReal1 += Round( kolicina * Cijena, ZAOKRUZENJE )
                   nReal2 += Round( kolicina * Cijena * ( Rabat / 100 ), ZAOKRUZENJE )
-                  IF fSaberikol .AND. !( roba->K2 = 'X' )
+                  IF lSaberikol .AND. !( roba->K2 = 'X' )
                      nKI += kolicina
                   ENDIF
                ENDIF
@@ -585,7 +584,7 @@ FUNCTION fakt_lager_lista()
    ? Space( gnLMarg )
    ?? m
 
-   IF fSaberikol
+   IF lSaberikol
       ? Space( gnLMarg ); ?? " Ukupno (kolicine):"
       IF lBezUlaza
          @ PRow(), nCol1 SAY nKU - nKI PICTURE iif( cPopis == "N", pickol, Replicate( "_", Len( PicKol ) ) )

@@ -304,6 +304,7 @@ METHOD FinBrutoBilans:get_data()
    _where += " AND " + _sql_date_parse( _date_field, _dat_od, _dat_do )
 
    IF !Empty( _konto )
+       altd()
       _where += " AND " + _sql_cond_parse( "sub.idkonto", _konto + " " )
    ENDIF
 

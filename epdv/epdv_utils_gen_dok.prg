@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,117 +12,134 @@
 
 #include "epdv.ch"
 
+
+FUNCTION close_open_kuf_kif_sif()
+
+   O_PARTN
+   O_ROBA
+   O_TARIFA
+   O_SIFK
+   O_SIFV
+
+   RETURN
+
+
+
 // -------------------------------------------
 // sezonski direktorij
 // -------------------------------------------
-function sez_fill(cSezona)
-local cRet := ""
-if !EMPTY(cSezona)
-	cRet := cSezona + "\"
-endif
-return cRet
+FUNCTION sez_fill( cSezona )
+
+   LOCAL cRet := ""
+
+   IF !Empty( cSezona )
+      cRet := cSezona + "\"
+   ENDIF
+
+   RETURN cRet
 
 
 // ----------------------------------
 // ----------------------------------
-function g_src_modul(cSrc, lShow)
-local cPom := ""
+FUNCTION g_src_modul( cSrc, lShow )
 
-// 1 - FIN
-// 2 - KALK
-// 3 - FAKT
-// 4 - OS
-// 5 - SII
-// 6 - TOPS
+   LOCAL cPom := ""
 
-if lShow == nil
-	lShow := .f.
-endif
+   // 1 - FIN
+   // 2 - KALK
+   // 3 - FAKT
+   // 4 - OS
+   // 5 - SII
+   // 6 - TOPS
 
-do case
-	case cSrc == "1"
-		cPom := "FIN"
-	case cSrc == "2"
-		cPom := "KALK"
-	case cSrc == "3"
-		cPom := "FAKT"
-	case cSrc == "4"
-		cPom := "OS"
-	case cSrc == "5"
-		cPom := "SII"
-	case cSrc == "6"
-		cPom := "TOPS"
+   IF lShow == nil
+      lShow := .F.
+   ENDIF
 
-	otherwise
-		if lShow
-			MsgBeep("odaberite: 1-FIN, 2-KALK,#" + ;
-			   "3-FAKT, 4-OS, 5-SII, 6-TOPS")
-		endif
-endcase
+   DO CASE
+   CASE cSrc == "1"
+      cPom := "FIN"
+   CASE cSrc == "2"
+      cPom := "KALK"
+   CASE cSrc == "3"
+      cPom := "FAKT"
+   CASE cSrc == "4"
+      cPom := "OS"
+   CASE cSrc == "5"
+      cPom := "SII"
+   CASE cSrc == "6"
+      cPom := "TOPS"
 
-if lShow
-	MsgBeep("Source = " + cPom)
-endif
+   OTHERWISE
+      IF lShow
+         MsgBeep( "odaberite: 1-FIN, 2-KALK,#" + ;
+            "3-FAKT, 4-OS, 5-SII, 6-TOPS" )
+      ENDIF
+   ENDCASE
 
-return cPom
+   IF lShow
+      MsgBeep( "Source = " + cPom )
+   ENDIF
+
+   RETURN cPom
 
 // ---------------------------------
 // ---------------------------------
-function g_kat_p(cKat, lShow)
-local cPom := ""
+FUNCTION g_kat_p( cKat, lShow )
 
-if lShow == nil
-	lShow := .f.
-endif
+   LOCAL cPom := ""
 
-// kategorija partnera
-// 1-pdv obveznik
-// 2-ne pdv obvezink
-// 3-ino partner
+   IF lShow == nil
+      lShow := .F.
+   ENDIF
 
-do case
-	case cKat == "1"
-		cPom := "PDV Obveznik"
-	case cKat == "2"
-		cPom := "Ne-PDV obvezik"
-	case cKat == "3"
-		cPom := "Ino partner"
-	otherwise
-		cPom := "Sve kategorije"
-endcase
-if lShow
-	MsgBeep("Partner kat. = " + cPom)
-endif
+   // kategorija partnera
+   // 1-pdv obveznik
+   // 2-ne pdv obvezink
+   // 3-ino partner
 
+   DO CASE
+   CASE cKat == "1"
+      cPom := "PDV Obveznik"
+   CASE cKat == "2"
+      cPom := "Ne-PDV obvezik"
+   CASE cKat == "3"
+      cPom := "Ino partner"
+   OTHERWISE
+      cPom := "Sve kategorije"
+   ENDCASE
+   IF lShow
+      MsgBeep( "Partner kat. = " + cPom )
+   ENDIF
 
-return cPom
+   RETURN cPom
 
 // ----------------------------------
 // ----------------------------------
-function g_kat_p_2(cKat, lShow)
-local cPom
+FUNCTION g_kat_p_2( cKat, lShow )
 
-cPom := ""
+   LOCAL cPom
 
-if lShow == nil
-	lShow := .f.
-endif
+   cPom := ""
 
-do case
-	case cKat == "1"
-		cPom := "Federacija"
-	case cKat == "2"
-		cPom := "Republika Srpska"
-	case cKat == "3"
-		cPom := "Distrikt Brcko"
-	otherwise
-		cPom := "Sve kategorije"
+   IF lShow == nil
+      lShow := .F.
+   ENDIF
 
-endcase
+   DO CASE
+   CASE cKat == "1"
+      cPom := "Federacija"
+   CASE cKat == "2"
+      cPom := "Republika Srpska"
+   CASE cKat == "3"
+      cPom := "Distrikt Brcko"
+   OTHERWISE
+      cPom := "Sve kategorije"
 
-if lShow
-	MsgBeep("Partner kat.2 = " + cPom)
-endif
+   ENDCASE
 
-return cPom
+   IF lShow
+      MsgBeep( "Partner kat.2 = " + cPom )
+   ENDIF
 
+   RETURN cPom

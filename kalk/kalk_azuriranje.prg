@@ -30,7 +30,7 @@ FUNCTION azur_kalk( lAuto )
       lAuto := .F.
    ENDIF
 
-   IF !lAuto .AND. Pitanje(, "Zelite li izvrsiti azuriranje KALK dokumenta (D/N) ?", "N" ) == "N"
+   IF !lAuto .AND. Pitanje(, "Želite li izvrsiti ažuriranje KALK dokumenta (D/N) ?", "N" ) == "N"
       RETURN
    ENDIF
 

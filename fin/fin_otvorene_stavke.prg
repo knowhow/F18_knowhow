@@ -2112,7 +2112,7 @@ FUNCTION fin_asistent_otv_st()
 
    MsgBeep( "U slucaju da azurirate rezultate asistenta#program će izmijeniti sadržaj subanalitičkih podataka !" )
 
-   IF pitanje(, "Želite li izvrsiti azuriranje rezultata asistenta u bazu SUBAN !!", "N" ) == "D"
+   IF pitanje(, "Želite li izvrsiti ažuriranje rezultata asistenta u bazu SUBAN !!", "N" ) == "D"
 
       // ekskluzivno otvori
       SELECT ( F_OSUBAN )

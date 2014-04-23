@@ -141,7 +141,7 @@ return _valid
 // ----------------------------------------------------
 function azur_mat()
 
-if Pitanje(,"Sigurno zelite izvrsiti azuriranje (D/N)?","N")=="N"
+if Pitanje(,"Sigurno želite izvršiti ažuriranje (D/N)?","N")=="N"
     return
 endif
 

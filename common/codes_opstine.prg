@@ -27,10 +27,10 @@ O_OPS
 ImeKol := {}
 Kol := {}
 
-AADD( ImeKol, { PADR( "Id", 2 ), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} })
+AADD( ImeKol, { PADR( "Id", 2 ),  {|| PadR( ToStrU( field->id), 2 ) }, "id", {|| .t.}, {|| vpsifra(wid)} })
 AADD( ImeKol, { PADR( "IDJ", 3 ), {|| idj }, "idj" })
 AADD( ImeKol, { PADR( "Kan", 3 ), {|| idkan }, "idkan" })
-AADD( ImeKol, { PADR( "N0", 3 ), {|| idN0 }, "idN0" })
+AADD( ImeKol, { PADR( "N0", 3 ),  {|| idN0 }, "idN0" })
 AADD( ImeKol, { PADR( "Naziv", 25 ), {|| Padr( ToStrU( naz ), 25 ) }, "naz" })
 AADD( ImeKol, { PADR( "Reg", 3 ), {|| reg }, "reg" })
 
@@ -39,7 +39,7 @@ for _i := 1 to LEN( ImeKol )
 next
 
 select ( _arr )
-return p_sifra( F_OPS, 1, MAXROWS() - 10, MAXCOLS() - 10, "Lista općina", @cId, dx, dy )
+return p_sifra( F_OPS, 1, MAXROWS() - 10, MAXCOLS() - 10, "MP: Lista općina", @cId, dx, dy )
 
 
 // ---------------------------------

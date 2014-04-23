@@ -598,7 +598,7 @@ _o_file:Close()
 
 select temp
 
-// pro�i kroz temp i napuni da li je dtype pozitivno ili negativno
+// proði kroz temp i napuni da li je dtype pozitivno ili negativno
 // ali samo ako je u pitanju racun tabela... !
 if temp->(fieldpos("idtipdok")) <> 0
 	go top
@@ -1642,7 +1642,7 @@ if nPocniOd == nil
 endif
 
 lAutom := .f.
-if Pitanje(,"Automatski asistent i azuriranje naloga (D/N)?", "D") == "D"
+if Pitanje(, "Automatski asistent i ažuriranje naloga (D/N)?", "D") == "D"
 	lAutom := .t. 
 endif
 

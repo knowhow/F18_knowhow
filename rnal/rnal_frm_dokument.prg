@@ -634,7 +634,7 @@ do case
         nRet := DE_CONT
 
         if ALIAS() == "_DOCS" .and. RECCOUNT2() <> 0 .and. ;
-            Pitanje(,"Izvrsiti azuriranje dokumenta (D/N) ?", "D") == "D"
+            Pitanje(,"Izvršiti ažuriranje dokumenta (D/N) ?", "D") == "D"
             
             // ima li stavki u nalogu
             if _doc_integ() == 0

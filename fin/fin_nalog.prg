@@ -365,35 +365,35 @@ FUNCTION fin_nalog( cInd, lAuto, dDatNal, oNalog )
 
          SELECT ( nArr )
 
+         // konto partner
          aRez := SjeciStr( cStr, 28 )
          cStr := opis
          aOpis := SjeciStr( cStr, 20 )
 
+         // šifra partnera
          @ PRow(), PCol() + 1 SAY Idpartner( idpartner )
-
          nColStr := PCol() + 1
-         @  PRow(), PCol() + 1 SAY PadR( aRez[ 1 ], 28 )
 
+         
+         @  PRow(), PCol() + 1 SAY PadR( aRez[ 1 ], 28 )
          nColDok := PCol() + 1
-         @ PRow(), PCol() + 1 SAY aOpis[ 1 ]
 
          IF _fin_params[ "fin_tip_dokumenta" ]
 
             @ PRow(), PCol() + 1 SAY IdTipDok
+
             SELECT TDOK
             hseek ( nArr )->idtipdok
             @ PRow(), PCol() + 1 SAY PadR( naz, 13 )
+
             SELECT ( nArr )
             @ PRow(), PCol() + 1 SAY PadR( BrDok, 11 )
 
          ELSE
-
             @ PRow(), PCol() + 1 SAY PadR( BrDok, 11 )
-
          ENDIF
 
          @ PRow(), PCol() + 1 SAY DatDok
-
          IF gDatVal == "D"
             @ PRow(), PCol() + 1 SAY DatVal
          ELSE

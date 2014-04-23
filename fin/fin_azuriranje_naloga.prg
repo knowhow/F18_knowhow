@@ -32,7 +32,7 @@ FUNCTION fin_azur( automatic )
    // otvori potrebne tabele
    o_fin_za_azuriranje()
 
-   IF fin_pripr->( RecCount() == 0 ) .OR. ( !automatic .AND. Pitanje( "pAz", "Izvršiti azuriranje fin naloga ? (D/N)?", "N" ) == "N" )
+   IF fin_pripr->( RecCount() == 0 ) .OR. ( !automatic .AND. Pitanje( "pAz", "Izvršiti ažuriranje fin naloga ? (D/N)?", "N" ) == "N" )
       RETURN _ok
    ENDIF
 

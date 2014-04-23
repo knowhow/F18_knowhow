@@ -174,44 +174,38 @@ METHOD FinBrutoBilans:get_vars()
    ++ _x
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "**** USLOVI IZVJESTAJA:"
+   @ m_x + _x, m_y + 2 SAY8 "**** USLOVI IZVJEŠTAJA:"
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Firma "
    ?? gFirma, "-", AllTrim( gNFirma )
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Konta (prazno-sva):" GET _konto PICT "@!S40"
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Za period od:" GET _dat_od
    @ m_x + _x, Col() + 1 SAY "do:" GET _dat_do
 
    ++ _x
    ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "Varijanta stampe TXT/ODT (1/2):" GET _txt PICT "9" WHEN .F.
-
-   ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "Prikaz stavki sa saldom 0 (D/N) ?" GET _saldo_nula VALID _saldo_nula $ "DN" PICT "@!"
+   @ m_x + _x, m_y + 2 SAY8 "Varijanta stampe TXT/ODT (1/2):" GET _txt PICT "9" WHEN .F.
 
    ++ _x
+   @ m_x + _x, m_y + 2 SAY8 "Prikaz stavki sa saldom 0 (D/N) ?" GET _saldo_nula VALID _saldo_nula $ "DN" PICT "@!"
 
-   @ m_x + _x, m_y + 2 SAY "Prikaz kolone tekuci promet (D/N) ?" GET _tek_prom VALID _tek_prom $ "DN" PICT "@!"
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY8 "Prikaz kolone tekući promet (D/N) ?" GET _tek_prom VALID _tek_prom $ "DN" PICT "@!"
 
    IF _tip == 1 .AND. gRJ == "D"
       ++ _x
       _id_rj := "999999"
-      @ m_x + _x, m_y + 2 SAY "Radna jedinica ( 999999-sve ): " GET _id_rj
+      @ m_x + _x, m_y + 2 SAY8 "Radna jedinica ( 999999-sve ): " GET _id_rj
    ENDIF
  	
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Export izvjestaja u DBF (D/N) ?" GET _export_dbf VALID _export_dbf $ "DN" PICT "@!"
+   @ m_x + _x, m_y + 2 SAY8 "Export izvještaja u DBF (D/N) ?" GET _export_dbf VALID _export_dbf $ "DN" PICT "@!"
 
    READ
 
@@ -243,7 +237,6 @@ METHOD FinBrutoBilans:get_vars()
 
    ::tip := _tip
 
-   // setuj dodatne parametre
    ::set_bb_params()
 
    _ok := .T.
@@ -253,9 +246,6 @@ METHOD FinBrutoBilans:get_vars()
 
 
 
-
-// ---------------------------------------------------------------
-// ---------------------------------------------------------------
 METHOD FinBrutoBilans:get_data()
 
    LOCAL _qry, _data
@@ -304,7 +294,6 @@ METHOD FinBrutoBilans:get_data()
    _where += " AND " + _sql_date_parse( _date_field, _dat_od, _dat_do )
 
    IF !Empty( _konto )
-       altd()
       _where += " AND " + _sql_cond_parse( "sub.idkonto", _konto + " " )
    ENDIF
 

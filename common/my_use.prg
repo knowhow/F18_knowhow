@@ -145,7 +145,6 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
 
    nSelect := SELECT( _a_dbf_rec[ "alias" ] )
    IF nSelect > 0 .and. ( nSelect <> _a_dbf_rec["wa"] )
-      altd()
       log_write( "WARNING: " + _a_dbf_rec[ "table" ] + " na WA=" + STR( nSelect ) + " ?", 3 )
       SELECT( nSelect )
       USE

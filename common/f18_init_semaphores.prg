@@ -62,10 +62,6 @@ FUNCTION refresh_me( a_dbf_rec, lSilent, lFromMyUse )
 
    log_write( "stanje nakon sync " + _msg_1 + " " + _msg_2, 8 )
 
-   if a_dbf_rec[ "alias" ] == "SUBAN"
-        altd()
-   ENDIF
-
    // 4) uradi check i fix ako treba
    //
    // _cnt - _del je broj aktivnih dbf zapisa, dajemo taj info check_recno funkciji

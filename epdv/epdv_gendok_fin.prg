@@ -158,10 +158,7 @@ STATIC FUNCTION close_open_fin_kif_tables()
    SELECT suban_2
    SET ORDER TO TAG "4"
 
-   O_PARTN
-   O_TARIFA
-   O_SIFK
-   O_SIFV
+   close_open_kuf_kif_sif()
 
    RETURN
 

@@ -132,11 +132,7 @@ FUNCTION fakt_kif( dD1, dD2, cSezona )
 STATIC FUNCTION close_open_fakt_kif_tables()
 
    O_FAKT
-   O_PARTN
-   O_ROBA
-   O_TARIFA
-   O_SIFK
-   O_SIFV
+   close_open_kuf_kif_sif()
 
    RETURN
 

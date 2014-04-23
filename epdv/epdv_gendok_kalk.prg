@@ -21,27 +21,14 @@ STATIC nZaok
 STATIC nZaok2
 STATIC cIdTar
 STATIC cIdPart
-// setuj broj dokumenta
 STATIC cSBRdok
 STATIC cOpis
-
-// kategorija partnera
-// 1-pdv obv
-// 2-ne pdv obvz
 STATIC cKatP
-
-// kategorija partnera 2
-// 1-fed
-// 2-rs
-// 3-bd
 STATIC cKatP2
-
-// razbij po danima
 STATIC cRazbDan
 
 FUNCTION kalk_kif( dD1, dD2, cSezona )
 
-   // {
    LOCAL nCount
    LOCAL cIdfirma
 
@@ -51,6 +38,7 @@ FUNCTION kalk_kif( dD1, dD2, cSezona )
 
    dDatOd := dD1
    dDatDo := dD2
+
    o_kif( .T. )
 
    SELECT F_SG_KIF
@@ -65,7 +53,9 @@ FUNCTION kalk_kif( dD1, dD2, cSezona )
 
    SELECT sg_kif
    GO TOP
+
    nCount := 0
+
    DO WHILE !Eof()
 
       nCount ++
@@ -135,8 +125,7 @@ FUNCTION kalk_kif( dD1, dD2, cSezona )
          nZaok := zaok
          nZaok2 := zaok2
 	
-         // za jednu shema gen stavku formiraj kif
-         gen_sg_item( cSezona )
+         gen_kalk_kif_item( cSezona )
 		
       ENDIF
 	
@@ -146,10 +135,17 @@ FUNCTION kalk_kif( dD1, dD2, cSezona )
    ENDDO
 
 
-   // ------------------------------------------
-   // ------------------------------------------
 
-STATIC FUNCTION  gen_sg_item( cSezona )
+STATIC FUNCTION close_open_kalk_kif_tables()
+
+   O_KALK
+   close_open_kuf_kif_sif()
+
+   RETURN
+
+
+
+STATIC FUNCTION gen_kalk_kif_item( cSezona )
 
    LOCAL cPomPath
    LOCAL cPomSPath
@@ -172,59 +168,7 @@ STATIC FUNCTION  gen_sg_item( cSezona )
    LOCAL nCijena
    LOCAL cBrFaktP
 
-   // otvori kalk tabelu
-   // ------------------------------------------
-
-
-   cPomPath :=  "KALK"
-   cPomSPath :=  ""
-
-   SELECT ( F_KALK )
-	
-   cKalkPath := cPomPath
-	
-   IF Used()
-      USE
-   ENDIF
-   my_use ( cPomPath )
-
-
-
-   SELECT F_PARTN
-   IF Used()
-      USE
-   ENDIF
-   my_use ( "PARTN" )
-   SET ORDER TO TAG "ID"
-	
-   SELECT F_ROBA
-   IF Used()
-      USE
-   ENDIF
-   my_use ( "ROBA" )
-   SET ORDER TO TAG "ID"
-
-   SELECT F_TARIFA
-   IF Used()
-      USE
-   ENDIF
-   my_use ( "TARIFA" )
-   SET ORDER TO TAG "ID"
-
-   SELECT F_SIFK
-   IF Used()
-      USE
-   ENDIF
-   my_use ( "SIFK" )
-   SET ORDER TO TAG "ID"
-
-   SELECT F_SIFV
-   IF Used()
-      USE
-   ENDIF
-   my_use ( "SIFV" )
-   SET ORDER TO TAG "ID"
-
+   close_open_kalk_kif_tables()
 
    SELECT KALK
    PRIVATE cFilter := ""

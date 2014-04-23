@@ -129,7 +129,7 @@ FUNCTION fakt_kif( dD1, dD2, cSezona )
 
 
 
-STATIC FUNCTION close_open_fakt_kif_tables()
+FUNCTION close_open_fakt_epdv_tables()
 
    O_FAKT
    close_open_kuf_kif_sif()
@@ -158,7 +158,7 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
    LOCAL dDMaxD
    LOCAL nF_rabat := 0
 
-   close_open_fakt_kif_tables()
+   close_open_fakt_epdv_tables()
 
    SELECT FAKT
    PRIVATE cFilter := ""

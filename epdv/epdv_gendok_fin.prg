@@ -146,7 +146,7 @@ FUNCTION fin_kif( dD1, dD2, cSezona )
 
 
 
-STATIC FUNCTION close_open_fin_kif_tables()
+FUNCTION close_open_fin_epdv_tables()
 
    O_SUBAN
 
@@ -163,7 +163,7 @@ STATIC FUNCTION close_open_fin_kif_tables()
    RETURN
 
 
-STATIC FUNCTION  gen_fin_kif_item( cSezona )
+STATIC FUNCTION gen_fin_kif_item( cSezona )
 
    LOCAL cPomPath
    LOCAL cPomSPath
@@ -189,7 +189,7 @@ STATIC FUNCTION  gen_fin_kif_item( cSezona )
    LOCAL cOpisSuban
    LOCAL nRecNoSuban
 
-   close_open_fin_kif_tables()
+   close_open_fin_epdv_tables()
 
    SELECT SUBAN
    PRIVATE cFilter := ""

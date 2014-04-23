@@ -136,7 +136,7 @@ FUNCTION kalk_kif( dD1, dD2, cSezona )
 
 
 
-STATIC FUNCTION close_open_kalk_kif_tables()
+FUNCTION close_open_kalk_epdv_tables()
 
    O_KALK
    close_open_kuf_kif_sif()
@@ -168,7 +168,7 @@ STATIC FUNCTION gen_kalk_kif_item( cSezona )
    LOCAL nCijena
    LOCAL cBrFaktP
 
-   close_open_kalk_kif_tables()
+   close_open_kalk_epdv_tables()
 
    SELECT KALK
    PRIVATE cFilter := ""

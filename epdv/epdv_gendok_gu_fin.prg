@@ -136,7 +136,7 @@ do while !eof()
 		nZaok2 := zaok2
 	
 		// za jednu shema gen stavku formiraj kuf
-		gen_sg_item(cSezona)
+		gen_fin_kuf_item(cSezona)
 		
 	endif
 	
@@ -148,9 +148,7 @@ enddo
 
 
 
-// ------------------------------------------
-// ------------------------------------------
-static function gen_sg_item(cSezona)
+static function gen_fin_kuf_item(cSezona)
 local cPomPath
 local cPomSPath
 

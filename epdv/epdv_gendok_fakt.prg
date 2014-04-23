@@ -38,7 +38,6 @@ STATIC cSBrDok
 
 FUNCTION fakt_kif( dD1, dD2, cSezona )
 
-   // {
    LOCAL nCount
    LOCAL cIdfirma
 
@@ -63,7 +62,9 @@ FUNCTION fakt_kif( dD1, dD2, cSezona )
 
    SELECT sg_kif
    GO TOP
+
    nCount := 0
+
    DO WHILE !Eof()
 
       nCount ++
@@ -117,7 +118,7 @@ FUNCTION fakt_kif( dD1, dD2, cSezona )
          nZaok2 := zaok2
 	
          // za jednu shema gen stavku formiraj kif
-         gen_sg_item( cSezona )
+         gen_fakt_kif_item( cSezona )
 		
       ENDIF
 	
@@ -127,14 +128,24 @@ FUNCTION fakt_kif( dD1, dD2, cSezona )
    ENDDO
 
 
-   // ------------------------------------------
-   // ------------------------------------------
 
-STATIC FUNCTION gen_sg_item( cSezona )
+STATIC FUNCTION close_open_fakt_kif_tables()
+
+   O_FAKT
+   O_PARTN
+   O_ROBA
+   O_TARIFA
+   O_SIFK
+   O_SIFV
+
+   RETURN
+
+
+
+STATIC FUNCTION gen_fakt_kif_item( cSezona )
 
    LOCAL cPomPath
    LOCAL cPomSPath
-
    LOCAL xDummy
    LOCAL nCount
    LOCAL cPom
@@ -142,68 +153,16 @@ STATIC FUNCTION gen_sg_item( cSezona )
    LOCAL lPdvObveznik
    LOCAL lIno
    LOCAL lOslPoClanu
-
    LOCAL lSkip
    LOCAL lRet
    LOCAL nCijena
-
    LOCAL dDMin
    LOCAL dDMax
-
    LOCAL dDMinD
    LOCAL dDMaxD
-
    LOCAL nF_rabat := 0
 
-   // otvori fakt tabelu
-   // ------------------------------------------
-
-   cPomPath := "FAKT"
-   cPomSPath :=  ""
-
-   SELECT ( F_FAKT )
-   cFaktPath := cPomPath
-   IF Used()
-      USE
-   ENDIF
-   my_use ( cPomPath )
-
-
-   SELECT F_PARTN
-   IF Used()
-      USE
-   ENDIF
-   my_use ( "PARTN" )
-   SET ORDER TO TAG "ID"
-	
-   SELECT F_ROBA
-   IF Used()
-      USE
-   ENDIF
-   my_use ( "ROBA" )
-   SET ORDER TO TAG "ID"
-
-   SELECT F_TARIFA
-   IF Used()
-      USE
-   ENDIF
-   my_use ( "TARIFA" )
-   SET ORDER TO TAG "ID"
-
-   SELECT F_SIFK
-   IF Used()
-      USE
-   ENDIF
-   my_use ( "SIFK" )
-   SET ORDER TO TAG "ID"
-
-   SELECT F_SIFV
-   IF Used()
-      USE
-   ENDIF
-   my_use ( "SIFV" )
-   SET ORDER TO TAG "ID"
-
+   close_open_fakt_kif_tables()
 
    SELECT FAKT
    PRIVATE cFilter := ""
@@ -224,13 +183,12 @@ STATIC FUNCTION gen_sg_item( cSezona )
    nCount := 0
    DO WHILE !Eof()
 
-      // napuni P_KIF i setuj mem vars
-      // ----------------------------------------------
       SELECT p_kif
+
       Scatter()
-      // ----------------------------------------------
 	
       SELECT fakt
+
       dDMin := datdok
       dDMax := datdok
 
@@ -322,11 +280,6 @@ STATIC FUNCTION gen_sg_item( cSezona )
          cPom := "FAKT cnt : " + Str( nCount, 6 )
          @ m_x + 4, m_y + 2 SAY cPom
 	
-         // ove var moraju biti private da bi se mogle macro-om evaluirati
-         // PRIVATE _uk_b_pdv := 0
-         // PRIVATE _popust := 0
-	
-         // tarifa koja se nalazi unutar dokumenta
          cDokTar := ""
 	
          SELECT FAKT
@@ -491,10 +444,11 @@ STATIC FUNCTION gen_sg_item( cSezona )
       // snimi gornje podatke
       SELECT P_KIF
       APPEND BLANK
+
       Gather()
 	
-
       SELECT fakt
+
    ENDDO
 
    RETURN

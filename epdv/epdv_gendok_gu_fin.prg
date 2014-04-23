@@ -145,6 +145,8 @@ FUNCTION fin_kuf( dD1, dD2, cSezona )
 
    ENDDO
 
+
+
 STATIC FUNCTION gen_fin_kuf_item( cSezona )
 
    LOCAL cPomPath
@@ -178,50 +180,8 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
    LOCAL cOpisSuban
    LOCAL nRecNoSuban
 
-   // otvori suban tabelu
-   // ------------------------------------------
+   close_open_fin_epdv_tables()
 
-   cPomPath := "SUBAN"
-   cPomSPath := ""
-   cFinPath := cPomPath
-
-   SELECT ( F_SUBAN )
-   IF !Used()
-      O_SUBAN
-   ENDIF
-
-   // suban_2 tabelu koristicu za pretragu naloga
-   // otvaramo je kroz temp podrucje
-
-   SELECT ( F_TMP_1 )
-   IF !Used()
-      my_use_temp( "SUBAN_2", my_home() + "fin_suban", .F., .F. )
-   ENDIF
-
-   SELECT suban_2
-   // "4","idFirma+IdVN+BrNal+Rbr
-   SET ORDER TO TAG "4"
-	
-   SELECT F_PARTN
-   IF !Used()
-      O_PARTN
-   ENDIF
-
-   SELECT F_TARIFA
-   IF !Used()
-      O_TARIFA
-   ENDIF
-
-   SELECT F_SIFK
-   IF !Used()
-      O_SIFK
-   ENDIF
-
-   SELECT F_SIFV
-   IF !Used()
-      O_SIFV
-   ENDIF
-	
    SELECT SUBAN
    PRIVATE cFilter := ""
 
@@ -246,10 +206,6 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
       cFilter +=  ".and. " + cKtoFilter
    ENDIF
 
-
-
-
-   // "4","idFirma+IdVN+BrNal+Rbr",KUMPATH+"SUBAN"
    SET ORDER TO TAG "4"
    SET FILTER TO &cFilter
 
@@ -259,11 +215,8 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
    nCount := 0
    DO WHILE !Eof()
 
-      // napuni P_KUF i setuj mem vars
-      // ----------------------------------------------
       SELECT p_kuf
       Scatter()
-      // ----------------------------------------------
 	
       SELECT SUBAN
 

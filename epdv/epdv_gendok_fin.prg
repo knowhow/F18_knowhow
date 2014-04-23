@@ -49,6 +49,7 @@ FUNCTION fin_kif( dD1, dD2, cSezona )
 
    dDatOd := dD1
    dDatDo := dD2
+
    o_kif( .T. )
 
    SELECT F_SG_KIF
@@ -64,6 +65,7 @@ FUNCTION fin_kif( dD1, dD2, cSezona )
    SELECT sg_kif
    GO TOP
    nCount := 0
+
    DO WHILE !Eof()
 
       nCount ++
@@ -133,8 +135,7 @@ FUNCTION fin_kif( dD1, dD2, cSezona )
          nZaok := zaok
          nZaok2 := zaok2
 	
-         // za jednu shema gen stavku formiraj kif
-         gen_sg_item( cSezona )
+         gen_fin_kif_item( cSezona )
 		
       ENDIF
 	
@@ -144,14 +145,31 @@ FUNCTION fin_kif( dD1, dD2, cSezona )
    ENDDO
 
 
-   // ------------------------------------------
-   // ------------------------------------------
 
-STATIC FUNCTION  gen_sg_item( cSezona )
+STATIC FUNCTION close_open_fin_kif_tables()
+
+   O_SUBAN
+
+   // radi manipulacije kod generisanja kif-a tabela SUBAN se otvara i kao drugi ALIAS
+   SELECT ( F_TMP_1 )
+   IF !Used()
+      my_use_temp( "SUBAN_2", my_home() + "fin_suban", .F., .F. )
+   ENDIF
+   SELECT suban_2
+   SET ORDER TO TAG "4"
+
+   O_PARTN
+   O_TARIFA
+   O_SIFK
+   O_SIFV
+
+   RETURN
+
+
+STATIC FUNCTION  gen_fin_kif_item( cSezona )
 
    LOCAL cPomPath
    LOCAL cPomSPath
-
    LOCAL cDokTar
    LOCAL xDummy
    LOCAL nCount
@@ -161,67 +179,21 @@ STATIC FUNCTION  gen_sg_item( cSezona )
    LOCAL lIno
    LOCAL dDMin
    LOCAL dDMax
-
-   // za jedan dokument
    LOCAL dDMinD
    LOCAL dDMaxD
-
-
-   // zavisni troskovi
    LOCAL nZ1
    LOCAL nZ2
    LOCAL nZ3
    LOCAL nZ4
    LOCAL nZ5
-
    LOCAL lSkip
    LOCAL lSkip2
    LOCAL nIznos
-
    LOCAL cOpisSuban
    LOCAL nRecNoSuban
 
-   // otvori suban tabelu
-   // ------------------------------------------
+   close_open_fin_kif_tables()
 
-   cPomPath := "SUBAN"
-   cPomSPath :=  ""
-   cFinPath := cPomPath
-
-   SELECT ( F_SUBAN )
-   IF !Used()
-      O_SUBAN
-   ENDIF
-
-   SELECT ( F_TMP_1 )
-   IF !Used()
-      my_use_temp( "SUBAN_2", my_home() + "fin_suban", .F., .F. )
-   ENDIF
-
-   SELECT suban_2
-   // "4","idFirma+IdVN+BrNal+Rbr
-   SET ORDER TO TAG "4"
-
-   SELECT F_PARTN
-   IF !Used()
-      O_PARTN
-   ENDIF
-
-   SELECT F_TARIFA
-   IF !Used()
-      O_TARIFA
-   ENDIF
-
-   SELECT F_SIFK
-   IF !Used()
-      O_SIFK
-   ENDIF
-
-   SELECT F_SIFV
-   IF !Used()
-      O_SIFV
-   ENDIF
-	
    SELECT SUBAN
    PRIVATE cFilter := ""
 

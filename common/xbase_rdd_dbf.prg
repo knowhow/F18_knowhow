@@ -187,8 +187,8 @@ FUNCTION reopen_shared( dbf_table, open_index )
 FUNCTION reopen_exclusive( dbf_table, open_index )
    RETURN reopen_dbf( .T., dbf_table, open_index )
 
-// ----------------------------------------------------
-// ----------------------------------------------------
+
+
 FUNCTION reopen_dbf( excl, dbf_table, open_index )
 
    LOCAL _a_dbf_rec
@@ -206,7 +206,6 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
 
    _dbf := my_home() + _a_dbf_rec[ "table" ]
 
-   // finalno otvaranje tabele
    SELECT ( _a_dbf_rec[ "wa" ] )
    USE
 
@@ -299,16 +298,24 @@ FUNCTION pakuj_dbf( a_dbf_rec, lSilent )
    BEGIN SEQUENCE WITH {| err| Break( err ) }
  
       SELECT ( a_dbf_rec[ "wa" ] )
-      my_use_temp( a_dbf_rec[ "alias" ], my_home() + a_dbf_rec[ "table" ], .T., .T. )
+      my_use_temp( a_dbf_rec[ "alias" ], my_home() + a_dbf_rec[ "table" ], .F., .T. )
 
 
       IF ! lSilent
-         Box( "#Molimo sacekajte...", 7, 60 )
+         Box( "#Molimo sačekajte...", 7, 60 )
          @ m_x + 7, m_y + 2 SAY8 "Pakujem tabelu radi brzine, molim sačekajte ..."
       ENDIF
 
       PACK
-      USE
+
+      DO WHILE .T.
+         USE
+         IF Used()
+            hb_idleSleep(2)
+         ELSE
+            EXIT
+         ENDIF
+      ENDDO
 
       IF ! lSilent
          BoxC()
@@ -322,8 +329,6 @@ FUNCTION pakuj_dbf( a_dbf_rec, lSilent )
    RETURN
 
 
-// -----------------------------
-// -----------------------------
 FUNCTION full_table_synchro()
 
    LOCAL _sifra := Space( 6 ), _full_table_name, _alias := PadR( "PAROBR", 30 )

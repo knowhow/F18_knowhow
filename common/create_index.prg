@@ -97,7 +97,8 @@ FUNCTION create_index( cImeInd, xKljuc, alias, silent )
 
       _dbf := f18_ime_dbf( alias )
 
-      BEGIN SEQUENCE WITH {|err| err:cargo := { ProcName( 1 ), ProcName( 2 ), ProcLine( 1 ), ProcLine( 2 ) }, Break( err ) }
+      BEGIN SEQUENCE WITH { | err | Break( err ) }
+
          dbUseArea( .F., DBFENGINE, _dbf, NIL, .T., .F. )
 
       recover using _err
@@ -119,11 +120,12 @@ FUNCTION create_index( cImeInd, xKljuc, alias, silent )
 
          repair_dbfs()
          QUIT_1
+
       END SEQUENCE
 
 
       // open index
-      BEGIN SEQUENCE WITH {|err| err:cargo := { ProcName( 1 ), ProcName( 2 ), ProcLine( 1 ), ProcLine( 2 ) }, Break( err ) }
+      BEGIN SEQUENCE WITH { | err | Break( err ) }
          IF File( ImeDbfCdx( _dbf ) )
             dbSetIndex( ImeDbfCdx( _dbf ) )
          ENDIF
@@ -154,8 +156,7 @@ FUNCTION create_index( cImeInd, xKljuc, alias, silent )
       IF !File( Lower( cImeCdx ) ) .OR. nOrder == 0 .OR. AllTrim( Upper( cOrdKey ) ) <> AllTrim( Upper( cKljuc ) )
 
          SELECT( _wa )
-         USE
-         USE ( f18_ime_dbf( alias ) ) EXCLUSIVE
+         my_use_temp( alias, f18_ime_dbf( alias) , .F. , .T. )
 
          IF !silent
             MsgO( "Baza:" + cImeDbf + ", Kreiram index-tag :" + cImeInd + "#" + ExFileName( cImeCdx ) )

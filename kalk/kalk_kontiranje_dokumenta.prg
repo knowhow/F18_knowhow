@@ -116,6 +116,10 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
 
    ENDIF
 
+   IF !lAFin
+      RETURN .F.
+   ENDIF 
+
    lAFin2 := ( !fAuto .AND. gAFin <> "0" )
    lAMat := ( fAuto .AND. gAMat == "D" )
 
@@ -696,10 +700,10 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
    // ako je vise kalkulacija ne zatvaraj tabele
    IF !lViseKalk
       my_close_all_dbf()
-      RETURN
+      RETURN .T.
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

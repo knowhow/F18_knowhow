@@ -1,128 +1,114 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 #include "fmk.ch"
 
-// ----------------------------------------------------
-// ----------------------------------------------------
-function refresh_me(a_dbf_rec, lSilent, lFromMyUse)
-local _wa, _del, _cnt, _msg_1, _msg_2
-local _dbf_pack_algoritam
 
-if lSilent == NIL
-  lSilent := .t.
-endif
+FUNCTION refresh_me( a_dbf_rec, lSilent, lFromMyUse )
 
-if lFromMyUse == NIL
-  lFromMyUse := .f.
-endif
+   LOCAL _wa, _del, _cnt, _msg_1, _msg_2
+   LOCAL _dbf_pack_algoritam
 
-if a_dbf_rec["chk0"] 
-   return .f.
-endif
+   IF lSilent == NIL
+      lSilent := .T.
+   ENDIF
 
-_wa := a_dbf_rec[ "wa" ]
-set_a_dbf_rec_chk0( a_dbf_rec["table"] )
+   IF lFromMyUse == NIL
+      lFromMyUse := .F.
+   ENDIF
 
+   IF a_dbf_rec[ "chk0" ]
+      RETURN .F.
+   ENDIF
 
-_msg_1 := "START refresh_me: " + a_dbf_rec["alias"] + " / " + a_dbf_rec["table"]
-if ! lSilent
-    Box( "#Molimo sacekajte...", 7, 60)
-    @ m_x + 1, m_y + 2 SAY _msg_1
-endif
-
-// 1) sracunaj broj aktivnih zapisa u tabeli, koji su izbrisani
-dbf_open_temp(a_dbf_rec, @_cnt, @_del)
-USE
-
-_msg_2 := "cnt = "  + ALLTRIM(STR(_cnt, 0)) + " / " + ALLTRIM(STR(_del, 0))
-if ! lSilent
-  @ m_x + 2, m_y + 2 SAY _msg_2
-endif
+   _wa := a_dbf_rec[ "wa" ]
+   set_a_dbf_rec_chk0( a_dbf_rec[ "table" ] )
 
 
-log_write( "stanje dbf " +  _msg_1 + " " + _msg_2, 8 )
+   _msg_1 := "START refresh_me: " + a_dbf_rec[ "alias" ] + " / " + a_dbf_rec[ "table" ]
+   IF ! lSilent
+      Box( "#Molimo sačekajte...", 7, 60 )
+      @ m_x + 1, m_y + 2 SAY _msg_1
+   ENDIF
 
-if ! lFromMyUse
-   // 2) synchro
-   SELECT (_wa)
-   my_use(a_dbf_rec["alias"], a_dbf_rec["alias"])
+   log_write( "stanje dbf " +  _msg_1, 8 )
+
+   IF ! lFromMyUse
+      // 2) synchro
+      SELECT ( _wa )
+      my_use( a_dbf_rec[ "alias" ], a_dbf_rec[ "alias" ] )
+      USE
+   ENDIF
+
+   // 3) ponovo otvori nakon sinhronizacije
+   dbf_open_temp( a_dbf_rec, @_cnt, @_del )
    USE
-endif
 
-// 3) ponovo otvori nakon sinhronizacije
-dbf_open_temp(a_dbf_rec, @_cnt, @_del)
-USE
+   _msg_1 := "nakon sync: " +  a_dbf_rec[ "alias" ] + " / " + a_dbf_rec[ "table" ]
+   _msg_2 := "cnt = " + AllTrim( Str( _cnt, 0 ) ) + " / " + AllTrim( Str( _del, 0 ) )
 
-_msg_1 := "nakon sync: " +  a_dbf_rec["alias"] + " / " + a_dbf_rec["table"]
-_msg_2 := "cnt = " + ALLTRIM(STR(_cnt, 0)) + " / " + ALLTRIM(STR(_del, 0))
+   IF ! lSilent
+      @ m_x + 4, m_y + 2 SAY _msg_1
+      @ m_x + 5, m_y + 2 SAY _msg_2
+   ENDIF
 
-if ! lSilent
-  @ m_x + 4, m_y + 2 SAY _msg_1
-  @ m_x + 5, m_y + 2 SAY _msg_2
-endif
+   log_write( "stanje nakon sync " + _msg_1 + " " + _msg_2, 8 )
 
-log_write("stanje nakon sync " + _msg_1 + " " + _msg_2, 8 )
+   if a_dbf_rec[ "alias" ] == "SUBAN"
+        altd()
+   ENDIF
 
-// 4) uradi check i fix ako treba
-//
-// _cnt - _del je broj aktivnih dbf zapisa, dajemo taj info check_recno funkciji
-// ako se utvrti greska uradi full sync
-check_recno_and_fix(a_dbf_rec["table"], _cnt - _del, .t.)
-USE
-_msg_1 := a_dbf_rec["alias"] + " / " + a_dbf_rec["table"]
-_msg_2 := "cnt = "  + ALLTRIM(STR(_cnt, 0)) + " / " + ALLTRIM(STR(_del, 0))
+   // 4) uradi check i fix ako treba
+   //
+   // _cnt - _del je broj aktivnih dbf zapisa, dajemo taj info check_recno funkciji
+   // ako se utvrti greska uradi full sync
+   check_recno_and_fix( a_dbf_rec[ "table" ], _cnt - _del, .T. )
 
-
-if ! lSilent
-   @ m_x + 4, m_y + 2 SAY _msg_1
-   @ m_x + 5, m_y + 2 SAY _msg_2
-
-   BoxC()
-endif
-
-log_write("END refresh_me " +  _msg_1 + " " + _msg_2, 8 )
-
-if hocu_li_pakovati_dbf(_cnt, _del)
-   
-    pakuj_dbf( a_dbf_rec, .T. )
-    RETURN
-
-endif
-
-if ! lSilent
-    BoxC()
-endif
-
-return .T.
+   USE
+   _msg_1 := a_dbf_rec[ "alias" ] + " / " + a_dbf_rec[ "table" ]
+   _msg_2 := "cnt = "  + AllTrim( Str( _cnt, 0 ) ) + " / " + AllTrim( Str( _del, 0 ) )
 
 
-// ---------------------------------------------------------------------
-// ---------------------------------------------------------------------
-static function dbf_open_temp(a_dbf_rec, cnt, del)
+   IF ! lSilent
+      @ m_x + 4, m_y + 2 SAY _msg_1
+      @ m_x + 5, m_y + 2 SAY _msg_2
 
-SELECT (a_dbf_rec["wa"])
-my_use_temp(a_dbf_rec["alias"], my_home() + a_dbf_rec["table"], .f., .F.)
+      BoxC()
+   ENDIF
 
-set deleted off
+   log_write( "END refresh_me " +  _msg_1 + " " + _msg_2, 8 )
 
-SET ORDER TO TAG "DEL"
-count to del
-cnt := reccount()
+   if hocu_li_pakovati_dbf(_cnt, _del)
+     pakuj_dbf( a_dbf_rec, .T. )
+   endif
 
-USE
-set deleted on
+   IF ! lSilent
+      BoxC()
+   ENDIF
 
-return
+   RETURN .T.
 
 
+STATIC FUNCTION dbf_open_temp( a_dbf_rec, cnt, del )
 
+   SELECT ( a_dbf_rec[ "wa" ] )
+   my_use_temp( a_dbf_rec[ "alias" ], my_home() + a_dbf_rec[ "table" ], .F., .F. )
 
+   SET DELETED OFF
+
+   SET ORDER TO TAG "DEL"
+   COUNT TO del
+   cnt := RecCount()
+
+   USE
+   SET DELETED ON
+
+   RETURN

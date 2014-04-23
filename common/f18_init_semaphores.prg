@@ -91,12 +91,9 @@ endif
 
 log_write("END refresh_me " +  _msg_1 + " " + _msg_2, 8 )
 
-if hocu_li_pakovati_dbf(_cnt, _del)
-   
+//if hocu_li_pakovati_dbf(_cnt, _del)
     pakuj_dbf( a_dbf_rec, .T. )
-    RETURN
-
-endif
+//endif
 
 if ! lSilent
     BoxC()

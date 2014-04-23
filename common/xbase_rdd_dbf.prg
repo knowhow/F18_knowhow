@@ -308,7 +308,19 @@ FUNCTION pakuj_dbf( a_dbf_rec, lSilent )
       ENDIF
 
       PACK
-      USE
+
+      DO WHILE .T.
+         
+         USE
+         
+         IF Used()
+            hb_idleSleep(2)
+            ? "spavam"
+         ELSE
+            EXIT
+         ENDIF
+
+      ENDDO
 
       IF ! lSilent
          BoxC()

@@ -119,13 +119,14 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
    LOCAL _force_erase := .F.
    LOCAL _dbf
    LOCAL _tmp
+   LOCAL nSelect
 
    IF excl == NIL
       excl := .F.
    ENDIF
 
    IF select_wa == NIL
-      select_wa = .F.
+      select_wa = .T.
    ENDIF
 
    IF table == NIL
@@ -138,16 +139,25 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
    // trebam samo osnovne parametre
    _a_dbf_rec := get_a_dbf_rec( _tmp, .T. )
 
+   if LOWER( alias ) $ "suban"
+   //  altd()
+   endif
 
    IF new_area == NIL
       new_area := .F.
    ENDIF
 
+   nSelect := SELECT( _a_dbf_rec[ "alias" ] )
+   IF nSelect > 0 .and. ( nSelect <> _a_dbf_rec["wa"] )
+      altd()
+      log_write( "WARNING: " + _a_dbf_rec[ "table" ] + " na WA=" + STR( nSelect ) + " ?", 3 )
+      SELECT( nSelect )
+      USE
+   ENDIF
    // pozicioniraj se na WA rezervisanu za ovu tabelu
    IF select_wa
       SELECT ( _a_dbf_rec[ "wa" ] )
    ENDIF
-
 
    IF ( alias == NIL ) .OR. ( table == NIL )
       // za specificne primjene kada "varamo" sa aliasom
@@ -193,13 +203,15 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
    _dbf := my_home() + table
 
    nCnt := 0
-   DO WHILE nCnt < 3
+
+   DO WHILE nCnt < 10
 
       BEGIN SEQUENCE WITH {| err| Break( err ) }
          dbUseArea( new_area, _rdd, _dbf, alias, !excl, .F. )
          IF File( ImeDbfCdx( _dbf ) )
             dbSetIndex( ImeDbfCDX( _dbf ) )
          ENDIF
+
          // uspješno otvorena tabela
          nCnt := 100
 
@@ -221,7 +233,9 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
          hb_idleSleep( 1 )
 
       END SEQUENCE
+
       nCnt ++
+
    ENDDO
 
    IF nCnt < 100

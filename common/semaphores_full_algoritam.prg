@@ -60,7 +60,7 @@ _sql_order  := _a_dbf_rec["sql_order"]
 
 // .t. - brisi indeksni fajl tako da se full sinchro obavlja bez azuriranja indeksa
 // .f. - otvori indeks
-reopen_exclusive_and_zap(_a_dbf_rec["table"], .t., .f.)
+reopen_exclusive_and_zap( _a_dbf_rec["table"], .t., .f.)
 
 Box(, 6, 70)
 

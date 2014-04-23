@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -19,78 +19,76 @@
 
 REQUEST SDDPG, SQLMIX
 
-// -----------------------------------------
-// -----------------------------------------
-function use_sql_sif( table, l_make_index )
-LOCAL oConn
+FUNCTION use_sql_sif( table, l_make_index )
 
+   LOCAL oConn
 
-if USED()
-   USE
-endif
+   IF Used()
+      USE
+   ENDIF
 
-if l_make_index == NIL
-   l_make_index = .t.
-endif
+   IF l_make_index == NIL
+      l_make_index = .T.
+   ENDIF
 
-//AEval( rddList(), {| x | QOut( x ) } )
-//inkey(0)
+   // AEval( rddList(), {| x | QOut( x ) } )
+   // inkey(0)
 
-oConn := my_server():pDB 
-//? PQHOST(oConn)
+   oConn := my_server():pDB
+   // ? PQHOST(oConn)
 
-rddSetDefault( "SQLMIX" )
+   rddSetDefault( "SQLMIX" )
 
-IF rddInfo( RDDI_CONNECT, { "POSTGRESQL", oConn } ) == 0
+   IF rddInfo( RDDI_CONNECT, { "POSTGRESQL", oConn } ) == 0
       ? "Unable connect to the server"
       RETURN
-ENDIF
+   ENDIF
 
-dbUseArea( .f., "SQLMIX", "SELECT * FROM fmk." + table + " ORDER BY ID",  table )
+   dbUseArea( .F., "SQLMIX", "SELECT * FROM fmk." + table + " ORDER BY ID",  table )
 
-if l_make_index
-     INDEX ON ID TAG ID TO (table)
-     IF FIELDPOS( "NAZ" ) > 0
-       INDEX ON NAZ TAG NAZ TO (table)
-     ENDIF
-endif
+   IF l_make_index
+      INDEX ON ID TAG ID TO ( table )
+      IF FieldPos( "NAZ" ) > 0
+         INDEX ON NAZ TAG NAZ TO ( table )
+      ENDIF
+   ENDIF
 
-rddSetDefault( "DBFCDX" )
+   rddSetDefault( "DBFCDX" )
 
-return .T.
+   RETURN .T.
 
 
 // -----------------------------------------
 // -----------------------------------------
-function use_sql( table, sql_query )
-LOCAL oConn
+FUNCTION use_sql( table, sql_query )
 
+   LOCAL oConn
 
-if USED()
-   USE
-endif
+   IF Used()
+      USE
+   ENDIF
 
-oConn := my_server():pDB 
-//? PQHOST(oConn)
+   oConn := my_server():pDB
+   // ? PQHOST(oConn)
 
-rddSetDefault( "SQLMIX" )
+   rddSetDefault( "SQLMIX" )
 
-IF rddInfo( RDDI_CONNECT, { "POSTGRESQL", oConn } ) == 0
+   IF rddInfo( RDDI_CONNECT, { "POSTGRESQL", oConn } ) == 0
       ? "Unable connect to the server"
       RETURN
-ENDIF
+   ENDIF
 
-dbUseArea( .f., "SQLMIX", sql_query,  table )
+   dbUseArea( .F., "SQLMIX", sql_query,  table )
 
-rddSetDefault( "DBFCDX" )
+   rddSetDefault( "DBFCDX" )
 
-return .T.
+   RETURN .T.
 
 
 /*
    use_sql_opstine() => otvori šifarnik tarifa sa prilagođenim poljima
 */
-function use_sql_opstine()
+FUNCTION use_sql_opstine()
 
    LOCAL cSql
    LOCAL cTable := "ops"
@@ -111,7 +109,7 @@ function use_sql_opstine()
 /*
    use_sql_rj() => otvori šifarnik radnih jedinica sa prilagođenim poljima
 */
-function use_sql_rj()
+FUNCTION use_sql_rj()
 
    LOCAL cSql
    LOCAL cTable := "rj"
@@ -139,7 +137,7 @@ function use_sql_rj()
 /*
    use_sql_valute() => otvori šifarnik valuta sa prilagođenim poljima
 */
-function use_sql_valute()
+FUNCTION use_sql_valute()
 
    LOCAL cSql
    LOCAL cTable := "valute"
@@ -160,8 +158,8 @@ function use_sql_valute()
    use_sql( cTable, cSql )
 
    INDEX ON ID TAG ID TO ( cTable )
-   INDEX ON TIP+ID+DTOS(DATUM) TAG NAZ TO ( cTable )
-   INDEX ON ID+DTOS(DATUM) TAG ID2 TO ( cTable )
+   INDEX ON TIP + ID + DToS( DATUM ) TAG NAZ TO ( cTable )
+   INDEX ON ID + DToS( DATUM ) TAG ID2 TO ( cTable )
 
    SET ORDER TO TAG ID
 
@@ -171,7 +169,7 @@ function use_sql_valute()
 /*
    use_sql_ks() => otvori šifarnik kamatnih stopa sa prilagođenim poljima
 */
-function use_sql_ks()
+FUNCTION use_sql_ks()
 
    LOCAL cSql
    LOCAL cTable := "ks"
@@ -187,14 +185,14 @@ function use_sql_ks()
    cSql += "  tip, "
    cSql += "  CAST( CASE WHEN duz IS NULL THEN 0 ELSE duz END AS float8 ) AS duz "
    cSql += "FROM fmk.ks "
-   cSQL += "ORDER BY id" 
+   cSQL += "ORDER BY id"
 
 
    SELECT ( F_KS )
    use_sql( cTable, cSql )
 
    INDEX ON ID TAG ID TO ( cTable )
-   INDEX ON DTOS(DATOD) TAG "2" TO ( cTable )
+   INDEX ON DToS( DATOD ) TAG "2" TO ( cTable )
 
    SET ORDER TO TAG ID
 
@@ -205,7 +203,7 @@ function use_sql_ks()
 /*
    use_sql_pkonto() => otvori šifarnik pkonto sa prilagođenim poljima
 */
-function use_sql_pkonto()
+FUNCTION use_sql_pkonto()
 
    LOCAL cSql
    LOCAL cTable := "pkonto"
@@ -226,7 +224,7 @@ function use_sql_pkonto()
 /*
    use_sql_lokal() => otvori šifarnik lokalizacije sa prilagođenim poljima
 */
-function use_sql_lokalizacija()
+FUNCTION use_sql_lokalizacija()
 
    LOCAL cSql
    LOCAL cTable := "lokal"
@@ -236,10 +234,10 @@ function use_sql_lokalizacija()
    SELECT F_LOKAL
    use_sql( cTable, cSql )
 
-   INDEX ON ID+STR(ID_STR,6)+NAZ TAG ID TO ( cTable )
-   INDEX ON ID+NAZ TAG IDNAZ TO ( cTable )
-   INDEX ON STR(ID_STR,6)+NAZ+ID TAG ID_STR TO ( cTable )
-   INDEX ON NAZ+STR(ID_STR,6) TAG NAZ TO ( cTable )
+   INDEX ON ID + Str( ID_STR, 6 ) + NAZ TAG ID TO ( cTable )
+   INDEX ON ID + NAZ TAG IDNAZ TO ( cTable )
+   INDEX ON Str( ID_STR, 6 ) + NAZ + ID TAG ID_STR TO ( cTable )
+   INDEX ON NAZ + Str( ID_STR, 6 ) TAG NAZ TO ( cTable )
 
    SET ORDER TO TAG ID
 
@@ -252,14 +250,14 @@ function use_sql_lokalizacija()
 /*
    use_sql_tarifa() => otvori šifarnik tarifa sa prilagođenim poljima
 */
-function use_sql_tarifa( l_make_index )
+FUNCTION use_sql_tarifa( l_make_index )
 
    LOCAL cSql
    LOCAL cTable := "tarifa"
 
-   if l_make_index == NIL
-         l_make_index := .t.
-   endif
+   IF l_make_index == NIL
+      l_make_index := .T.
+   ENDIF
 
    cSql := "SELECT "
    cSql += "  id, "
@@ -272,15 +270,15 @@ function use_sql_tarifa( l_make_index )
    cSql += "  CAST( CASE WHEN dlruc IS NULL THEN 0.00 ELSE dlruc END AS float8 ) AS dlruc, "
    cSql += "  ( CASE WHEN match_code IS NULL THEN rpad('',10) ELSE match_code END ) AS match_code "
    cSql += "FROM fmk.tarifa "
-   cSQL += "ORDER BY id" 
+   cSQL += "ORDER BY id"
 
    SELECT F_TARIFA
    use_sql( cTable, cSql )
 
-   if l_make_index
-         INDEX ON ID TAG ID TO ( cTable )
-         INDEX ON NAZ TAG NAZ TO ( cTable )
-   endif
+   IF l_make_index
+      INDEX ON ID TAG ID TO ( cTable )
+      INDEX ON NAZ TAG NAZ TO ( cTable )
+   ENDIF
 
    SET ORDER TO TAG ID
 
@@ -290,48 +288,48 @@ function use_sql_tarifa( l_make_index )
 /*
    use_sql_trfp() => otvori šifarnik šema kontiranja kalk->fin sa uslovima
 */
-function use_sql_trfp( cShema, cDok )
-return _use_sql_trfp( "trfp", F_TRFP, cShema, cDok )
+FUNCTION use_sql_trfp( cShema, cDok )
+   RETURN _use_sql_trfp( "trfp", F_TRFP, cShema, cDok )
 
 
 /*
    use_sql_trfp2() => otvori šifarnik šema kontiranja fakt->fin sa uslovima
 */
-function use_sql_trfp2( cShema, cDok )
-return _use_sql_trfp( "trfp2", F_TRFP2, cShema, cDok )
+FUNCTION use_sql_trfp2( cShema, cDok )
+   RETURN _use_sql_trfp( "trfp2", F_TRFP2, cShema, cDok )
 
 
 
 /*
    use_sql_trfp() => otvori šifarnik šema kontiranja sa uslovima
 */
-static function _use_sql_trfp( cTable, nWa, cShema, cDok )
+STATIC FUNCTION _use_sql_trfp( cTable, nWa, cShema, cDok )
 
    LOCAL cSql
    LOCAL cWhere := ""
 
-   cSql := "SELECT * FROM fmk." + cTable 
+   cSql := "SELECT * FROM fmk." + cTable
 
-   if cShema <> NIL
-         cWhere += " shema = " + _sql_quote( cShema )
-   endif
+   IF cShema <> NIL
+      cWhere += " shema = " + _sql_quote( cShema )
+   ENDIF
 
-   if cDok <> NIL .and. !EMPTY( cDok )
-         if !EMPTY( cWhere )
-               cWhere += " AND "
-         endif
-         cWhere += " idvd = " + _sql_quote( cDok )
-   endif
+   IF cDok <> NIL .AND. !Empty( cDok )
+      IF !Empty( cWhere )
+         cWhere += " AND "
+      ENDIF
+      cWhere += " idvd = " + _sql_quote( cDok )
+   ENDIF
 
-   if !EMPTY( cWhere )
-         cSql += " WHERE " + cWhere
-   endif
+   IF !Empty( cWhere )
+      cSql += " WHERE " + cWhere
+   ENDIF
 
    cSql += " ORDER BY idvd, shema, idkonto, id, idtarifa, idvn, naz"
 
    SELECT ( nWa )
    use_sql( cTable, cSql )
-   
+
    INDEX ON ( field->idvd + field->shema + field->idkonto + field->id + field->idtarifa + field->idvn + field->naz )  TAG ID TO ( cTable )
 
    SET ORDER TO TAG "ID"
@@ -345,30 +343,30 @@ static function _use_sql_trfp( cTable, nWa, cShema, cDok )
    use_sql_sifk() => otvori citavu tabelu
    use_sql_sifk( "ROBA", "GR1  " ) =>  filter na ROBA/GR1
 */
-function use_sql_sifk( cDbf, cOznaka )
+FUNCTION use_sql_sifk( cDbf, cOznaka )
 
    LOCAL cSql
    LOCAL cTable := "sifk"
 
    cSql := "SELECT * from fmk.sifk"
-   IF cDbf != NIL 
-       cSql += " WHERE id=" + _sql_quote( cDbf ) 
+   IF cDbf != NIL
+      cSql += " WHERE id=" + _sql_quote( cDbf )
    ENDIF
    IF cOznaka != NIL
-       cSql += " AND oznaka=" + _sql_quote( cOznaka )
+      cSql += " AND oznaka=" + _sql_quote( cOznaka )
    ENDIF
-    
-   cSQL += " ORDER BY id,oznaka,sort" 
+
+   cSQL += " ORDER BY id,oznaka,sort"
    SELECT F_SIFK
    use_sql( cTable, cSql )
 
 
-   if cDbf == NIL .and. cOznaka == NIL
-      INDEX ON ID+SORT+NAZ TAG ID  TO ( cTable )
-      INDEX ON ID+OZNAKA TAG ID2  TO ( cTable )
+   IF cDbf == NIL .AND. cOznaka == NIL
+      INDEX ON ID + SORT + NAZ TAG ID  TO ( cTable )
+      INDEX ON ID + OZNAKA TAG ID2  TO ( cTable )
       INDEX ON NAZ             TAG NAZ TO ( cTable )
       SET ORDER TO TAG ID
-   endif
+   ENDIF
 
    RETURN .T.
 
@@ -377,17 +375,17 @@ function use_sql_sifk( cDbf, cOznaka )
    use_sql_sifv( "ROBA", "GR1", NIL, "G000000001" ) =>  filter na ROBA/GR1/grupa1=G0000000001
    use_sql_isfv( "ROBA", "GR1", "ROBA99", NIL )        =>  filter na ROBA/GR1/idroba=ROBA99
 */
-function use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
+FUNCTION use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
 
    LOCAL cSql
    LOCAL cTable := "sifv"
-   LOCAL lSql //lSql := .T. - RDDSQL tabela
+   LOCAL lSql // lSql := .T. - RDDSQL tabela
    LOCAL uIdSif, uVrijednost
 
    IF cDbf == NIL
       SELECT F_SIFK
-      IF !USED()
-         Alert("USE_SQL Prije SIFV mora se otvoriti SIFK !")
+      IF !Used()
+         Alert( "USE_SQL Prije SIFV mora se otvoriti SIFK !" )
          QUIT_1
       ENDIF
       cDbf := field->id
@@ -398,14 +396,14 @@ function use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
 
    cSql := "SELECT * from fmk.sifv"
    cSql += " WHERE id=" + _sql_quote_u( cDbf ) + " AND oznaka=" + _sql_quote_u( cOznaka )
-   
+
    IF xIdSif == NIL
-      IF EMPTY( cDbf )
-        // nepostojeca sifra
-        uIdSif := "MLFJUSXX"
+      IF Empty( cDbf )
+         // nepostojeca sifra
+         uIdSif := "MLFJUSXX"
       ELSE
-        xIdSif := ( cDbf )->id
-        uIdSif := ( Unicode():New( xIdSif, lSql ) ):getString()
+         xIdSif := ( cDbf )->id
+         uIdSif := ( Unicode():New( xIdSif, lSql ) ):getString()
       ENDIF
    ELSE
 
@@ -419,12 +417,12 @@ function use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
       cSql += " AND naz=" + _sql_quote( xVrijednost )
    ENDIF
 
-   cSQL += " ORDER BY id,oznaka,idsif,naz" 
+   cSQL += " ORDER BY id,oznaka,idsif,naz"
    SELECT F_SIFV
    use_sql( "sifv", cSql )
 
-   INDEX ON ID+OZNAKA+IDSIF+NAZ TAG ID  TO ( cTable )
-   INDEX ON ID+IDSIF TAG IDIDSIF  TO ( cTable )
+   INDEX ON ID + OZNAKA + IDSIF + NAZ TAG ID  TO ( cTable )
+   INDEX ON ID + IDSIF TAG IDIDSIF  TO ( cTable )
    GO TOP
    SET ORDER TO TAG "ID"
 
@@ -434,33 +432,33 @@ function use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
 // ----------------------------------
 // kreiranje tabela "rules"
 // ----------------------------------
-function use_sql_rules()
+FUNCTION use_sql_rules()
 
-   local _table_name, _alias
-   LOCAL cSql 
+   LOCAL _table_name, _alias
+   LOCAL cSql
 
    _alias := "FMKRULES"
    _table_name := "f18_rules"
 
 
    cSql := "SELECT * FROM fmk." + _table_name
-   
+
    SELECT F_FMKRULES
    use_sql( _alias, cSql )
 
-   INDEX ON STR(RULE_ID,10)                                       TAG 1 TO (_table_name)
-   INDEX ON MODUL_NAME+RULE_OBJ+STR(RULE_NO,10)                   TAG 2 TO (_table_name)
-   INDEX ON MODUL_NAME+RULE_OBJ+STR(RULE_LEVEL,2)+STR(RULE_NO,10) TAG 3 TO (_table_name)
-   INDEX ON MODUL_NAME+RULE_OBJ+RULE_C1+RULE_C2                   TAG 4 TO (_table_name)
+   INDEX ON Str( RULE_ID, 10 )                                       TAG 1 TO ( _table_name )
+   INDEX ON MODUL_NAME + RULE_OBJ + Str( RULE_NO, 10 )                   TAG 2 TO ( _table_name )
+   INDEX ON MODUL_NAME + RULE_OBJ + Str( RULE_LEVEL, 2 ) + Str( RULE_NO, 10 ) TAG 3 TO ( _table_name )
+   INDEX ON MODUL_NAME + RULE_OBJ + RULE_C1 + RULE_C2                   TAG 4 TO ( _table_name )
    // kreiranje rules index-a specificnih za rnal
-   INDEX ON MODUL_NAME+RULE_OBJ+RULE_C3+RULE_C4                   TAG ELCODE TO (_table_name)
-   INDEX ON MODUL_NAME+RULE_OBJ+RULE_C3+STR(RULE_NO,5)            TAG RNART1 TO (_table_name)
-   INDEX ON MODUL_NAME+RULE_OBJ+RULE_C5+STR(RULE_NO,5)            TAG ITEM1  TO (_table_name)
+   INDEX ON MODUL_NAME + RULE_OBJ + RULE_C3 + RULE_C4                   TAG ELCODE TO ( _table_name )
+   INDEX ON MODUL_NAME + RULE_OBJ + RULE_C3 + Str( RULE_NO, 5 )            TAG RNART1 TO ( _table_name )
+   INDEX ON MODUL_NAME + RULE_OBJ + RULE_C5 + Str( RULE_NO, 5 )            TAG ITEM1  TO ( _table_name )
    // kreiranje rules index-a specificnih za fin
-   INDEX ON MODUL_NAME+RULE_OBJ+STR(RULE_NO,5)                    TAG FINKNJ1 TO (_table_name)
-   INDEX ON MODUL_NAME+RULE_OBJ+RULE_C3                           TAG ELBA1 TO (_table_name)
+   INDEX ON MODUL_NAME + RULE_OBJ + Str( RULE_NO, 5 )                    TAG FINKNJ1 TO ( _table_name )
+   INDEX ON MODUL_NAME + RULE_OBJ + RULE_C3                           TAG ELBA1 TO ( _table_name )
 
-   return .T.
+   RETURN .T.
 
 
 
@@ -469,17 +467,14 @@ function use_sql_rules()
 */
 FUNCTION is_roba_sql()
 
-  RETURN .F.
+   RETURN .F.
 
 
 FUNCTION is_partn_sql()
 
-  RETURN .F.
+   RETURN .F.
 
 
 FUNCTION is_konto_sql()
 
-  RETURN .F.
-
-
-
+   RETURN .F.

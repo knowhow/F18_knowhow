@@ -56,18 +56,18 @@ FUNCTION PopWA()
       // select
       SELECT( aWa[ 1 ] )
 
-      ordSetFocus( aWa[ 2 ] )
+      IF USED()
+         ordSetFocus( aWa[ 2 ] )
 
-      // filter
-      IF !Empty( aWa[ 3 ] )
-         SET FILTER to &( aWa[ 3 ] )
-      ELSE
-         IF !Empty( dbFilter() )
-            SET FILTER TO
+         // filter
+         IF !Empty( aWa[ 3 ] )
+             SET FILTER to &( aWa[ 3 ] )
+         ELSE
+            IF !Empty( dbFilter() )
+                SET FILTER TO
+             ENDIF
          ENDIF
-      ENDIF
 
-      IF Used()
          GO aWa[ 4 ]
       ENDIF
 

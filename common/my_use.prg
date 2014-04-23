@@ -74,7 +74,7 @@ FUNCTION my_use_temp( alias, table, new_area, excl )
 
    nCnt := 0
    DO WHILE nCnt < 3
-      BEGIN SEQUENCE WITH {| err| Break( err ) }
+      BEGIN SEQUENCE WITH { | err | Break( err ) }
 
          dbUseArea( new_area, DBFENGINE, table, alias, !excl, .F. )
          IF File( ImeDbfCdx( table ) )
@@ -138,10 +138,6 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
 
    // trebam samo osnovne parametre
    _a_dbf_rec := get_a_dbf_rec( _tmp, .T. )
-
-   if LOWER( alias ) $ "suban"
-   //  altd()
-   endif
 
    IF new_area == NIL
       new_area := .F.

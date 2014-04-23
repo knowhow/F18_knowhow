@@ -188,11 +188,11 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
       NEXT
    ENDIF
 
-   if _dbf_tbl == "x"
-       _msg := "dbf alias " + tbl + " ne postoji u a_dbf_rec ?!"
-       Alert( _msg )
-       RaiseError( _msg )
-       QUIT_1
+   IF _dbf_tbl == "x"
+      _msg := "dbf alias " + tbl + " ne postoji u a_dbf_rec ?!"
+      Alert( _msg )
+      RaiseError( _msg )
+      QUIT_1
    ENDIF
    IF hb_HHasKey( __f18_dbfs, _dbf_tbl )
       // preferirani set parametara
@@ -343,45 +343,40 @@ FUNCTION set_dbf_fields_from_struct( rec )
    LOCAL _opened := .T.
    LOCAL _dbf
 
-#ifdef NODE
+   IF rec[ "temp" ]
+      // ovi mi podaci ne trebaju za temp tabele
+      RETURN .F.
+   ENDIF
 
-   RETURN .F.
-#endif
+   SELECT ( rec[ "wa" ] )
 
-IF rec[ "temp" ]
-// ovi mi podaci ne trebaju za temp tabele
-RETURN .F.
-ENDIF
+   IF !Used()
 
-SELECT ( rec[ "wa" ] )
+      _dbf := my_home() + rec[ "table" ]
+      BEGIN SEQUENCE WITH {| err| err:cargo :=  Break( err ) }
 
-IF !Used()
+         dbUseArea( .F., DBFENGINE, _dbf, rec[ "alias" ], .T., .F. )
 
-_dbf := my_home() + rec[ "table" ]
-BEGIN SEQUENCE WITH {| err| err:cargo := { ProcName( 1 ), ProcName( 2 ), ProcLine( 1 ), ProcLine( 2 ) }, Break( err ) }
+      RECOVER using _err
 
-   dbUseArea( .F., DBFENGINE, _dbf, rec[ "alias" ], .T., .F. )
+         // tabele ocigledno nema, tako da se struktura ne moze utvrditi
+         rec[ "dbf_fields" ]     := NIL
+         rec[ "dbf_fields_len" ] := NIL
 
-RECOVER using _err
+         _msg := "ERR-DBF: " + _err:description + ": tbl:" + my_home() + rec[ "table" ] + " alias:" + rec[ "alias" ] + " se ne moze otvoriti ?!"
+         log_write( _msg, 5 )
+         RETURN .T.
 
-// tabele ocigledno nema, tako da se struktura ne moze utvrditi
-rec[ "dbf_fields" ]     := NIL
-rec[ "dbf_fields_len" ] := NIL
+      END SEQUENCE
+      _opened := .T.
+   ENDIF
 
-_msg := "ERR-DBF: " + _err:description + ": tbl:" + my_home() + rec[ "table" ] + " alias:" + rec[ "alias" ] + " se ne moze otvoriti ?!"
-log_write( _msg, 5 )
-RETURN .T.
+   rec[ "dbf_fields" ] := NIL
+   set_rec_from_dbstruct( @rec )
 
-END SEQUENCE
-_opened := .T.
-ENDIF
-
-rec[ "dbf_fields" ] := NIL
-set_rec_from_dbstruct( @rec )
-
-IF _opened
-USE
-ENDIF
+   IF _opened
+      USE
+   ENDIF
 
    RETURN .T.
 
@@ -430,35 +425,35 @@ FUNCTION set_rec_from_dbstruct( rec )
 
 FUNCTION my_close_all_dbf()
 
-  LOCAL nPos := 100
+   LOCAL nPos := 100
 
-  CLOSE ALL
+   CLOSE ALL
 
-  WHILE nPos > 0
+   WHILE nPos > 0
 
-      // ako je neki dbf ostao otvoren nPos ce vratiti poziciju tog a_dbf_recorda 
-      nPos := hb_hScan( __f18_dbfs, { | key, rec | zatvori_dbf( rec ) == .F.  } )
+      // ako je neki dbf ostao otvoren nPos ce vratiti poziciju tog a_dbf_recorda
+      nPos := hb_HScan( __f18_dbfs, {| key, rec | zatvori_dbf( rec ) == .F.  } )
       IF nPos > 0
-        hb_IdleSleep( 0.1 )
+         hb_idleSleep( 0.1 )
       ELSE
-        // svi dbf-ovi su zatvoreni
-        EXIT
+         // svi dbf-ovi su zatvoreni
+         EXIT
       ENDIF
 
-  ENDDO
+   ENDDO
 
-  RETURN
+   RETURN
 
 
 FUNCTION is_sql_table( cDbf )
-  
+
    LOCAL lSql
 
    IF cDbf == NIL
-       cDbf := ALIAS()
+      cDbf := Alias()
    ENDIF
 
-   IF EMPTY( cDbf )
+   IF Empty( cDbf )
       lSql := .F.
    ELSE
       lSql := get_a_dbf_rec( AllTrim( cDbf ) )[ 'sql' ]
@@ -471,15 +466,12 @@ FUNCTION is_sql_table( cDbf )
 
 STATIC FUNCTION zatvori_dbf( value )
 
-  SELECT( value[ 'wa' ]) 
+   SELECT( value[ 'wa' ] )
 
-  IF USED()
-     // ostalo je još otvorenih DBF-ova
-     USE
-     RETURN .F.
-  ELSE
-     RETURN .T.
-  ENDIF
-
-
-
+   IF Used()
+      // ostalo je još otvorenih DBF-ova
+      USE
+      RETURN .F.
+   ELSE
+      RETURN .T.
+   ENDIF

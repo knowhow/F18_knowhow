@@ -9,8 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "fin.ch"
-
+#include "fmk.ch"
 
      
 /*
@@ -147,7 +146,7 @@ FUNCTION fin_gen_sint_stavke( lAuto, dDatNal )
       cIDVn = psuban->IdVN
       cBrNal := psuban->BrNal
 
-      gen_panal_psint( cIdFirma, cIdVn, cBrNal, dDatNal )
+      fin_gen_panal_psint( cIdFirma, cIdVn, cBrNal, dDatNal )
 
       IF !lAuto
          Box(, 2, 58 )

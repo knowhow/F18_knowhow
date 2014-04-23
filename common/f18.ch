@@ -110,3 +110,5 @@
          ;my_unlock()
 
 
+#include "hbclass.ch"
+

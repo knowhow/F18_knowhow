@@ -18,7 +18,7 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto, dDatNal )
    LOCAL nArr := Select()
    LOCAL aRez := {}
    LOCAL aOpis := {}
-   LOCAL _vrste_placanja, lJerry
+   LOCAL _vrste_placanja
    LOCAL _fin_params := fin_params()
 
    IF lAuto = NIL
@@ -31,15 +31,14 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto, dDatNal )
    __par_len := Len( partn->id )
    SELECT ( nArr )
 
-   lJerry := .F.
 
    PicBHD := "@Z " + FormPicL( gPicBHD, 15 )
    PicDEM := "@Z " + FormPicL( gPicDEM, 10 )
 
    IF _fin_params[ "fin_tip_dokumenta" ]
-      M := iif( cInd == "3", "------ -------------- --- ", "" ) + "---- ------- " + REPL( "-", __par_len ) + " ----------------------------" + iif( gVar1 == "1" .AND. lJerry, "-- " + REPL( "-", 20 ), "" ) + " -- ------------- ----------- -------- -------- --------------- ---------------" + IF( gVar1 == "1", "-", " ---------- ----------" )
+      M := iif( cInd == "3", "------ -------------- --- ", "" ) + "---- ------- " + REPL( "-", __par_len ) + " ----------------------------" + " -- ------------- ----------- -------- -------- --------------- ---------------" + IF( gVar1 == "1", "-", " ---------- ----------" )
    ELSE
-      M := iif( cInd == "3", "------ -------------- --- ", "" ) + "---- ------- " + REPL( "-", __par_len ) + " ----------------------------" + IF( gVar1 == "1" .AND. lJerry, "-- " + REPL( "-", 20 ), "" ) + " ----------- -------- -------- --------------- ---------------" + IF( gVar1 == "1", "-", " ---------- ----------" )
+      M := iif( cInd == "3", "------ -------------- --- ", "" ) + "---- ------- " + REPL( "-", __par_len ) + " ----------------------------" + " ----------- -------- -------- --------------- ---------------" + IF( gVar1 == "1", "-", " ---------- ----------" )
    ENDIF
 
    IF cInd $ "1#2"
@@ -47,10 +46,10 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto, dDatNal )
       nStr := 0
    ENDIF
 
-   b2 := {|| cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal }
    cIdFirma := IdFirma
    cIdVN := IdVN
    cBrNal := BrNal
+   b2 := {|| cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal }
 
    IF cInd $ "1#2" .AND. !lAuto
       fin_zagl_analitika( dDatNal )
@@ -129,25 +128,19 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto, dDatNal )
 
          SELECT ( nArr )
 
-         IF gVar1 == "1" .AND. lJerry
-            aRez := { PadR( cStr, 30 ) }
-            cStr := opis
-            aOpis := SjeciStr( cStr, 20 )
-         ELSE
-            aRez := SjeciStr( cStr, 28 )
-            cStr := opis
-            aOpis := SjeciStr( cStr, 20 )
-         ENDIF
+         aRez := SjeciStr( cStr, 28 )
+         cStr := opis
+         aOpis := SjeciStr( cStr, 20 )
 
          @ PRow(), PCol() + 1 SAY Idpartner( idpartner )
 
          nColStr := PCol() + 1
 
-         @  PRow(), PCol() + 1 SAY PadR( aRez[ 1 ], 28 + IF( gVar1 == "1" .AND. lJerry, 2, 0 ) )
+         @  PRow(), PCol() + 1 SAY PadR( aRez[ 1 ], 28 )
 
          nColDok := PCol() + 1
 
-         IF gVar1 == "1" .AND. lJerry
+         IF gVar1 == "1"
             @ PRow(), PCol() + 1 SAY aOpis[ 1 ]
          ENDIF
 
@@ -161,6 +154,7 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto, dDatNal )
          ELSE
             @ PRow(), PCol() + 1 SAY PadR( BrDok, 11 )
          ENDIF
+
          @ PRow(), PCol() + 1 SAY DatDok
          IF gDatVal == "D"
             @ PRow(), PCol() + 1 SAY DatVal
@@ -214,17 +208,14 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto, dDatNal )
 
       IF !lAuto
          Pok := 0
-         FOR i := 2 TO Max( Len( aRez ), Len( aOpis ) + IF( gVar1 == "1" .AND. lJerry, 0, 1 ) )
+         FOR i := 2 TO Max( Len( aRez ), Len( aOpis ) + 1 )
             IF i <= Len( aRez )
                @ PRow() + 1, nColStr SAY aRez[ i ]
             ELSE
                pok := 1
             ENDIF
-            IF gVar1 == "1" .AND. lJerry
-               @ PRow() + pok, nColDok SAY IF( i <= Len( aOpis ), aOpis[ i ], Space( 20 ) )
-            ELSE
-               @ PRow() + pok, nColDok SAY IF( i - 1 <= Len( aOpis ), aOpis[ i - 1 ], Space( 20 ) )
-            ENDIF
+               
+            @ PRow() + pok, nColDok SAY IF( i - 1 <= Len( aOpis ), aOpis[ i - 1 ], Space( 20 ) )
             IF i == 2 .AND. ( !Empty( k1 + k2 + k3 + k4 ) .OR. grj == "D" .OR. gtroskovi == "D" )
                ?? " " + k1 + "-" + k2 + "-" + K3Iz256( k3 ) + "-" + k4
                IF _vrste_placanja
@@ -250,18 +241,22 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto, dDatNal )
          APPEND BLANK
          Gather()
       ENDIF
+
       SELECT ( nArr )
       SKIP 1
    ENDDO
 
    IF cInd $ "1#2" .AND. !lAuto
+
       IF PRow() > 58 + gPStranica
          FF
          fin_zagl_analitika( dDatNal )
       ENDIF
+
       P_NRED
       ?? M
       P_NRED
+
       ?? "Z B I R   N A L O G A:"
       @ PRow(), nColIzn  SAY nUkDugBHD PICTURE picBHD
       @ PRow(), PCol() + 1 SAY nUkPotBHD PICTURE picBHD
@@ -274,7 +269,10 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto, dDatNal )
       nUkDugBHD := nUKPotBHD := nUkDugDEM := nUKPotDEM := 0
 
       IF gPotpis == "D"
-         IF PRow() > 58 + gPStranica; FF; fin_zagl_analitika( dDatNal );  ENDIF
+         IF PRow() > 58 + gPStranica
+               FF
+               fin_zagl_analitika( dDatNal )
+         ENDIF
          P_NRED
          P_NRED
          F12CPI
@@ -303,9 +301,9 @@ FUNCTION fin_zagl_analitika( dDatNal )
 
    LOCAL nArr, lDnevnik := .F.
    LOCAL _fin_params := fin_params()
+   LOCAL cTmp
 
-   IF "DNEVNIKN" == PadR( Upper( ProcName( 1 ) ), 8 ) .OR. ;
-         "DNEVNIKN" == PadR( Upper( ProcName( 2 ) ), 8 )
+   IF "DNEVNIKN" == PadR( Upper( ProcName( 1 ) ), 8 ) .OR. "DNEVNIKN" == PadR( Upper( ProcName( 2 ) ), 8 )
       lDnevnik := .T.
    ENDIF
 
@@ -353,33 +351,59 @@ FUNCTION fin_zagl_analitika( dDatNal )
 
    @ PRow(), PCol() + 15 SAY "Str:" + Str( ++nStr, 3 )
 
-   lJerry := .F.
-
    P_NRED
 
    ?? M
 
    IF !_fin_params[ "fin_tip_dokumenta" ]
       P_NRED
-      ?? iif( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R. * KONTO *" + PadC( "PART", __par_len ) + "*" + IF( gVar1 == "1" .AND. lJerry, "       NAZIV PARTNERA         *                    ", "    NAZIV PARTNERA ILI      " ) + "*   D  O  K  U  M  E  N  T    *         IZNOS U  " + ValDomaca() + "         *" + IF( gVar1 == "1", "", "    IZNOS U " + ValPomocna() + "    *" )
+
+      cTmp := iif( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R. * KONTO *" + PadC( "PART", __par_len ) 
+      cTmp +=  "*" + "    NAZIV PARTNERA ILI      "  + "*   D  O  K  U  M  E  N  T    *         IZNOS U  " + ValDomaca() + "         *" 
+      cTmp += IIF( gVar1 == "1", "", "    IZNOS U " + ValPomocna() + "    *" )
+      ??U cTmp
       P_NRED
-      ?? IF( lDnevnik, "U DNE-*  NALOGA  *   *", "" ) + "             " + PadC( "NER", __par_len ) + " " + IF( gVar1 == "1" .AND. lJerry, "            ILI                      O P I S       ", "                            " ) + " ----------------------------- ------------------------------- " + IF( gVar1 == "1", "", "---------------------" )
-      P_NRED; ?? IF( lDnevnik, "VNIKU *          *   *", "" ) + "*BR *       *" + REPL( " ", __par_len ) + "*" + IF( gVar1 == "1" .AND. lJerry, "        NAZIV KONTA           *                    ", "    NAZIV KONTA             " ) + "* BROJ VEZE * DATUM  * VALUTA *  DUGUJE " + ValDomaca() + "  * POTRAZUJE " + ValDomaca() + "*" + IF( gVar1 == "1", "", " DUG. " + ValPomocna() + "* POT." + ValPomocna() + "*" )
+
+      cTmp := IIF( lDnevnik, "U DNE-*  NALOGA  *   *", "" ) + "             " + PadC( "NER", __par_len ) + " " 
+      cTmp += "                            " + " ----------------------------- ------------------------------- " 
+      cTmp += IIF( gVar1 == "1", "", "---------------------" )
+      ??U cTmp
+      P_NRED
+
+      cTmp := IIF( lDnevnik, "VNIKU *          *   *", "" ) + "*BR *       *" + REPL( " ", __par_len ) + "*" 
+      cTmp += "    NAZIV KONTA             "  + "* BROJ VEZE * DATUM  * VALUTA *  DUGUJE " + ValDomaca() + "  * POTRAŽUJE " + ValDomaca() + "*" 
+      cTmp += IIF( gVar1 == "1", "", " DUG. " + ValPomocna() + "* POT." + ValPomocna() + "*" )
+      ??U cTmp
+
    ELSE
       P_NRED
-      ?? IF( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R. * KONTO *" + PadC( "PART", __par_len ) + "*" + IF( gVar1 == "1" .AND. lJerry, "       NAZIV PARTNERA         *                    ", "    NAZIV PARTNERA ILI      " ) + "*           D  O  K  U  M  E  N  T             *         IZNOS U  " + ValDomaca() + "         *" + IF( gVar1 == "1", "", "    IZNOS U " + ValPomocna() + "    *" )
+
+      cTmp := IIF( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R. * KONTO *" + PadC( "PART", __par_len ) + "*" 
+      cTmp += "    NAZIV PARTNERA ILI      "  + "*           D  O  K  U  M  E  N  T             *         IZNOS U  " + ValDomaca() + "         *" 
+      cTmp += IIF( gVar1 == "1", "", "    IZNOS U " + ValPomocna() + "    *" )
+      ??U cTmp
       P_NRED
-      ?? IF( lDnevnik, "U DNE-*  NALOGA  *   *", "" ) + "             " + PadC( "NER", __par_len ) + " " + IF( gVar1 == "1" .AND. lJerry, "            ILI                      O P I S       ", "                            " ) + " ---------------------------------------------- ------------------------------- " + IF( gVar1 == "1", "", "---------------------" )
+
+      cTmp := IIF( lDnevnik, "U DNE-*  NALOGA  *   *", "" ) + "             " + PadC( "NER", __par_len ) + " " 
+      cTmp += "                            " + " ---------------------------------------------- ------------------------------- "
+      cTmp += IIF( gVar1 == "1", "", "---------------------" )
+      ??U cTmp
       P_NRED
-      ?? IF( lDnevnik, "VNIKU *          *   *", "" ) + "*BR *       *" + REPL( " ", __par_len ) + "*" + IF( gVar1 == "1" .AND. lJerry, "        NAZIV KONTA           *                    ", "    NAZIV KONTA             " ) + "*  TIP I NAZIV   * BROJ VEZE * DATUM  * VALUTA *  DUGUJE " + ValDomaca() + "  * POTRAZUJE " + ValDomaca() + "*" + IF( gVar1 == "1", "", " DUG. " + ValPomocna() + "* POT." + ValPomocna() + "*" )
+
+      
+      cTmp := IIF( lDnevnik, "VNIKU *          *   *", "" ) + "*BR *       *" + REPL( " ", __par_len ) + "*" 
+      cTmp += "    NAZIV KONTA             " + "*  TIP I NAZIV   * BROJ VEZE * DATUM  * VALUTA *  DUGUJE " + ValDomaca() + "  * POTRAŽUJE " + ValDomaca() + "*" 
+      cTmp +=  IIF( gVar1 == "1", "", " DUG. " + ValPomocna() + "* POT." + ValPomocna() + "*" )
+      ??U cTmp
+
    ENDIF
+
    P_NRED
    ?? M
 
    SELECT( nArr )
 
    RETURN
-
 
 
 /*! \fn PrenosDNal()

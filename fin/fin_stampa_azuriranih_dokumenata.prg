@@ -21,9 +21,9 @@ FUNCTION fin_stampa_azur_naloga_menu()
    LOCAL _opcexe := {} 
 
    AADD( _opc, "1. subanalitika                 ")
-   AADD( _opcexe, {|| fin_stampa_analiticki_nalog() } )
+   AADD( _opcexe, {|| fin_nalog_azurirani() } )
    AADD( _opc, "2. sintetika  ")
-   AADD( _opcexe, {|| fin_stampa_sinteticki_nalog() } )
+   AADD( _opcexe, {|| fin_sinteticki_nalog() } )
 
    f18_menu( "fst", .f., _izbor, _opc, _opcexe  )
 

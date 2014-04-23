@@ -12,24 +12,27 @@
 #include "fin.ch"
 
 
-FUNCTION StNal( lAuto )
-   RETURN stampa_fin_document( lAuto )
+     
+/*
+   generisi psuban, psint, pnalog
+*/
 
-
-FUNCTION stampa_fin_document( lAuto )
+FUNCTION fin_gen_ptabele_stampa_naloga( lAuto )
 
    LOCAL dDatNal := Date()
 
-   IF stampa_analitickog_naloga( lAuto, @dDatNal )
-       gen_sint_stavke( lAuto, dDatNal )
+   IF fin_gen_psuban_stampa_naloga( lAuto, @dDatNal )
+       fin_gen_sint_stavke( lAuto, dDatNal )
    ENDIF
 
    RETURN
 
 
-FUNCTION stampa_analitickog_naloga( lAuto, dDatNal )
+FUNCTION fin_gen_psuban_stampa_naloga( lAuto, dDatNal )
 
    LOCAL _print_opt := "V"
+   LOCAL oNalog, oNalozi := FinNalozi():New()
+
    PRIVATE aNalozi := {}
 
    IF lAuto == NIL
@@ -75,11 +78,14 @@ FUNCTION stampa_analitickog_naloga( lAuto, dDatNal )
          RETURN .F.
       ENDIF
 
+      oNalog := FinNalog():New( cIdFirma, cIdVn, cBrNal ) 
+
       IF !lAuto
          f18_start_print( NIL, @_print_opt )
       ENDIF
 
-      fin_subanaliticki_nalog( "1", lAuto, dDatNal )
+      fin_nalog( "1", lAuto, dDatNal, @oNalog )
+      oNalozi:addStavka( oNalog )
 
       IF !lAuto
          PushWa()
@@ -110,7 +116,7 @@ FUNCTION stampa_analitickog_naloga( lAuto, dDatNal )
    RETURN .T.
 
 
-FUNCTION gen_sint_stavke( lAuto, dDatNal )
+FUNCTION fin_gen_sint_stavke( lAuto, dDatNal )
 
    LOCAL A, cDN := "N"
    LOCAL nStr, nD1, nD2, nP1, nP2
@@ -141,7 +147,7 @@ FUNCTION gen_sint_stavke( lAuto, dDatNal )
       cIDVn = psuban->IdVN
       cBrNal := psuban->BrNal
 
-      fill_panal_psint( cIdFirma, cIdVn, cBrNal, dDatNal )
+      gen_panal_psint( cIdFirma, cIdVn, cBrNal, dDatNal )
 
       IF !lAuto
          Box(, 2, 58 )
@@ -156,7 +162,7 @@ FUNCTION gen_sint_stavke( lAuto, dDatNal )
       IF cDN == "D"
          SELECT PANAL
          SEEK cIdfirma + cIdvn + cBrnal
-         fin_stampa_sinteticki_nalog( .F. )
+         fin_sinteticki_nalog( .F. )
       ENDIF
 
       my_close_all_dbf()
@@ -201,7 +207,7 @@ FUNCTION gen_sint_stavke( lAuto, dDatNal )
    RETURN
 
 
-FUNCTION fill_panal_psint( cIdFirma, cIdVn, cBrNal, dDatNal )
+FUNCTION fin_gen_panal_psint( cIdFirma, cIdVn, cBrNal, dDatNal )
 
    LOCAL fNasao, nStr, nD1, nD2, nP1, nP2
    LOCAL nDugBhd, nPotBHD, nDugDEM, nPotDEM

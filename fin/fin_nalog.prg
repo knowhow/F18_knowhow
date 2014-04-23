@@ -11,9 +11,75 @@
 
 #include "fin.ch"
 
+MEMVAR M // linija - crtice koja se štampaju na izvještaju
+
+/*
+   Štampa ažuriranog finansijskog naloga
+*/
+
+FUNCTION fin_nalog_azurirani()
+
+   LOCAL dDatNal
+   PRIVATE fK1 := fk2 := fk3 := fk4 := "N", gnLOst := 0, gPotpis := "N"
+
+   fin_read_params()
+
+   O_NALOG
+   O_SUBAN
+   O_KONTO
+   O_PARTN
+   O_TNAL
+   O_TDOK
+
+   SELECT SUBAN
+   SET ORDER TO TAG "4"
+
+   cIdVN := SPACE( 2 )
+   cIdFirma := gFirma
+   cBrNal := SPACE( 8 )
+
+   Box( "", 2, 35 )
+
+   SET CURSOR ON
+
+   @ m_x + 1, m_y + 2 SAY "Nalog:"
+   @ m_x + 1, Col() + 1 SAY cIdFirma
+   @ m_x + 1, Col() + 1 SAY "-" GET cIdVN PICT "@!"
+   @ m_x + 1, Col() + 1 SAY "-" GET cBrNal VALID _f_brnal( @cBrNal )
+
+   READ
+
+   ESC_BCR
+
+   BoxC()
+
+   SELECT nalog
+   SEEK cIdfirma + cIdvn + cBrnal
+
+   NFOUND CRET
+   dDatNal := datnal
+
+   SELECT SUBAN
+   SEEK cIdfirma + cIdvn + cBrNal
+
+   START PRINT CRET
+
+   fin_nalog( "2", NIL, dDatNal )
+   my_close_all_dbf()
+
+   END PRINT
 
 
-FUNCTION fin_subanaliticki_nalog( cInd, lAuto, dDatNal )
+   RETURN
+
+
+/*
+   Štampa (su)banalitičkog finansijski nalog
+   ako smo na fin_pripr => psuban
+
+*/
+
+FUNCTION fin_nalog( cInd, lAuto, dDatNal, oNalog )
 
    LOCAL nArr := Select()
    LOCAL aRez := {}
@@ -36,10 +102,20 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto, dDatNal )
    PicDEM := "@Z " + FormPicL( gPicDEM, 10 )
 
    IF _fin_params[ "fin_tip_dokumenta" ]
-      M := iif( cInd == "3", "------ -------------- --- ", "" ) + "---- ------- " + REPL( "-", __par_len ) + " ----------------------------" + " -- ------------- ----------- -------- -------- --------------- ---------------" + IF( gVar1 == "1", "-", " ---------- ----------" )
+
+      M := IIF( cInd == "3", "------ -------------- --- ", "" ) 
+      M +=  + "---- ------- " + REPL( "-", __par_len ) + " ----------------------------" 
+      M +=  " -- ------------- ----------- -------- -------- --------------- ---------------" 
+
    ELSE
-      M := iif( cInd == "3", "------ -------------- --- ", "" ) + "---- ------- " + REPL( "-", __par_len ) + " ----------------------------" + " ----------- -------- -------- --------------- ---------------" + IF( gVar1 == "1", "-", " ---------- ----------" )
+
+      M := IIF( cInd == "3", "------ -------------- --- ", "" ) 
+      M +=  "---- ------- " 
+      M += REPL( "-", __par_len ) + " ----------------------------" 
+      M += " ----------- -------- -------- --------------- ---------------"
    ENDIF
+   
+   M +=  IIF( gVar1 == "1", "-", " ---------- ----------" )
 
    IF cInd $ "1#2"
       nUkDugBHD := nUkPotBHD := nUkDugDEM := nUkPotDEM := 0
@@ -49,21 +125,28 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto, dDatNal )
    cIdFirma := IdFirma
    cIdVN := IdVN
    cBrNal := BrNal
+
    b2 := {|| cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal }
 
    IF cInd $ "1#2" .AND. !lAuto
-      fin_zagl_analitika( dDatNal )
+      fin_nalog_zaglavlje( dDatNal )
    ENDIF
 
    DO WHILE !Eof() .AND. Eval( b2 )
+
+      IF oNalog != NIL
+           oNalog:addStavka( field->datDok )
+      ENDIF
+
       IF !lAuto
-         IF PRow() > 61 + iif( cInd == "3", -7, 0 ) + gPStranica
+
+         IF PRow() > 61 + IIF( cInd == "3", -7, 0 ) + gPStranica
             IF cInd == "3"
                PrenosDNal()
             ELSE
                FF
             ENDIF
-            fin_zagl_analitika( dDatnal )
+            fin_nalog_zaglavlje( dDatnal )
          ENDIF
          P_NRED
 
@@ -135,36 +218,41 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto, dDatNal )
          @ PRow(), PCol() + 1 SAY Idpartner( idpartner )
 
          nColStr := PCol() + 1
-
          @  PRow(), PCol() + 1 SAY PadR( aRez[ 1 ], 28 )
 
          nColDok := PCol() + 1
-
          IF gVar1 == "1"
             @ PRow(), PCol() + 1 SAY aOpis[ 1 ]
          ENDIF
 
          IF _fin_params[ "fin_tip_dokumenta" ]
+
             @ PRow(), PCol() + 1 SAY IdTipDok
             SELECT TDOK
             hseek ( nArr )->idtipdok
             @ PRow(), PCol() + 1 SAY PadR( naz, 13 )
             SELECT ( nArr )
             @ PRow(), PCol() + 1 SAY PadR( BrDok, 11 )
+
          ELSE
+
             @ PRow(), PCol() + 1 SAY PadR( BrDok, 11 )
+
          ENDIF
 
          @ PRow(), PCol() + 1 SAY DatDok
+
          IF gDatVal == "D"
             @ PRow(), PCol() + 1 SAY DatVal
          ELSE
             @ PRow(), PCol() + 1 SAY Space( 8 )
          ENDIF
          nColIzn := PCol() + 1
+
       ENDIF
 
       IF D_P == "1"
+
          IF !lAuto
             @ PRow(), PCol() + 1 SAY IznosBHD PICTURE PicBHD
             @ PRow(), PCol() + 1 SAY 0 PICTURE PicBHD
@@ -173,7 +261,9 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto, dDatNal )
          IF cInd == "3"
             nTSDugBHD += IznosBHD
          ENDIF
+
       ELSE
+
          IF !lAuto
             @ PRow(), PCol() + 1 SAY 0 PICTURE PicBHD
             @ PRow(), PCol() + 1 SAY IznosBHD PICTURE PicBHD
@@ -182,9 +272,11 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto, dDatNal )
          IF cInd == "3"
             nTSPotBHD += IznosBHD
          ENDIF
+
       ENDIF
 
       IF gVar1 != "1"
+
          IF D_P == "1"
             IF !lAuto
                @ PRow(), PCol() + 1 SAY IznosDEM PICTURE PicDEM
@@ -194,7 +286,9 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto, dDatNal )
             IF cInd == "3"
                nTSDugDEM += IznosDEM
             ENDIF
+
          ELSE
+
             IF !lAuto
                @ PRow(), PCol() + 1 SAY 0 PICTURE PicDEM
                @ PRow(), PCol() + 1 SAY IznosDEM PICTURE PicDEM
@@ -204,9 +298,11 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto, dDatNal )
                nTSPotDEM += IznosDEM
             ENDIF
          ENDIF
+
       ENDIF
 
       IF !lAuto
+
          Pok := 0
          FOR i := 2 TO Max( Len( aRez ), Len( aOpis ) + 1 )
             IF i <= Len( aRez )
@@ -230,15 +326,17 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto, dDatNal )
                ENDIF
             ENDIF
          NEXT
+
       ENDIF
 
-      IF cInd == "1" .AND. AScan( aNalozi, cIdFirma + cIdVN + cBrNal ) == 0  // samo ako se ne nalazi u psuban
-         SELECT PSUBAN
-         Scatter()
+      IF cInd == "1" .AND. AScan( aNalozi, cIdFirma + cIdVN + cBrNal ) == 0 
+
+         // priprema
          SELECT ( nArr )
          Scatter()
          SELECT PSUBAN
          APPEND BLANK
+
          Gather()
       ENDIF
 
@@ -250,7 +348,7 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto, dDatNal )
 
       IF PRow() > 58 + gPStranica
          FF
-         fin_zagl_analitika( dDatNal )
+         fin_nalog_zaglavlje( dDatNal )
       ENDIF
 
       P_NRED
@@ -260,18 +358,21 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto, dDatNal )
       ?? "Z B I R   N A L O G A:"
       @ PRow(), nColIzn  SAY nUkDugBHD PICTURE picBHD
       @ PRow(), PCol() + 1 SAY nUkPotBHD PICTURE picBHD
+
       IF gVar1 != "1"
          @ PRow(), PCol() + 1 SAY nUkDugDEM PICTURE picDEM
          @ PRow(), PCol() + 1 SAY nUkPotDEM PICTURE picDEM
       ENDIF
+
       P_NRED
       ?? M
+
       nUkDugBHD := nUKPotBHD := nUkDugDEM := nUKPotDEM := 0
 
       IF gPotpis == "D"
          IF PRow() > 58 + gPStranica
                FF
-               fin_zagl_analitika( dDatNal )
+               fin_nalog_zaglavlje( dDatNal )
          ENDIF
          P_NRED
          P_NRED
@@ -293,11 +394,11 @@ FUNCTION fin_subanaliticki_nalog( cInd, lAuto, dDatNal )
 
 
 /*
-    fin_zagl_analitika()
-    Zaglavlje subanalitičkog/analitickog naloga
+    fin_nalog_zaglavlje()
+    Zaglavlje (sub)analitickog naloga
 */
 
-FUNCTION fin_zagl_analitika( dDatNal )
+FUNCTION fin_nalog_zaglavlje( dDatNal )
 
    LOCAL nArr, lDnevnik := .F.
    LOCAL _fin_params := fin_params()

@@ -847,13 +847,10 @@ FUNCTION edit_fin_pripr()
    CASE Ch == K_CTRL_P
 
 
-      // setuj mi broj dokumenta
       fin_set_broj_dokumenta()
 
       my_close_all_dbf()
-      // stampaj stavke
-      StNal()
-      // otvori ponovo tabele
+      fin_gen_ptabele_stampa_naloga()
       o_fin_edit()
 
       RETURN DE_REFRESH
@@ -865,10 +862,9 @@ FUNCTION edit_fin_pripr()
       fin_set_broj_dokumenta()
 
       my_close_all_dbf()
-
-      // stampaj dokument
-      stampa_fin_document( .T. )
+      fin_gen_ptabele_stampa_naloga( .T. )
       my_close_all_dbf()
+
       fin_azur( .T. )
       o_fin_edit()
       RETURN DE_REFRESH

@@ -136,7 +136,7 @@ endif
 fin_set_broj_dokumenta()
 
 my_close_all_dbf()
-stampa_fin_document( .t. )
+fin_gen_ptabele_stampa_naloga( .T. )
 
 my_close_all_dbf()
 fin_azur( .t. ) 

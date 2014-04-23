@@ -191,8 +191,8 @@ FUNCTION set_a_dbf_fin_sint()
    RETURN .T.
 
 
-// ------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------
+
+
 FUNCTION set_a_dbf_fin_nalog()
 
    LOCAL _alg, _tbl
@@ -205,8 +205,6 @@ FUNCTION set_a_dbf_fin_nalog()
    _item[ "alias" ] := "NALOG"
    _item[ "wa" ]    := F_NALOG
    _item[ "table" ] := _tbl
-
-   // temporary tabela - nema semafora
    _item[ "temp" ]  := .F.
 
 

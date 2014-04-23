@@ -12,7 +12,7 @@
 #include "fmk.ch"
 
 
-FUNCTION fin_stampa_sinteticki_nalog( kumulativ )
+FUNCTION fin_sinteticki_nalog( kumulativ )
 
    IF kumulativ == NIL
       kumulativ := .T.
@@ -53,7 +53,7 @@ FUNCTION fin_stampa_sinteticki_nalog( kumulativ )
 
    ELSE
       cIdFirma := idfirma
-      cidvn := idvn
+      cIdvn := idvn
       cBrNal := brnal
       dDatNal := datnal
    ENDIF

@@ -45,11 +45,10 @@ FUNCTION fin_azur( automatic )
       _vise_naloga := .T.
    ENDIF
 
-   // napuni mi pomocne tabele
-   // ako je u pripremi vise naloga...
    IF _vise_naloga
-      // napuni mi pomocne tabele
-      StNal( .T. )
+
+      fin_gen_ptabele_stampa_naloga( .T. )
+
       // otvori ponovo tabele
       o_fin_za_azuriranje()
    ENDIF

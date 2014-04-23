@@ -27,7 +27,7 @@ FUNCTION P_Fin( lAuto )
       kontrola_zbira_naloga_kalk( lAuto )
 	
       IF lAuto == .F. .OR. ( lAuto == .T. .AND. gAImpPrint == "D" )
-         stampa_fin_document( lAuto )
+         fin_nalog( lAuto )
       ELSE
          gen_psuban_stavke()
          gen_sint_stavke()

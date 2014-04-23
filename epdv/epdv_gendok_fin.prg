@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,653 +12,656 @@
 
 #include "epdv.ch"
 
-static dDatOd
-static dDatDo
-static cFinPath
-static cSifPath
-static cTDSrc
-static nZaok
-static nZaok2
-static cIdTar
-static cIdPart
-// setuj broj dokumenta
-static cSBRdok 
-static cOpis
+STATIC dDatOd
+STATIC dDatDo
+STATIC cFinPath
+STATIC cSifPath
+STATIC cTDSrc
+STATIC nZaok
+STATIC nZaok2
+STATIC cIdTar
+STATIC cIdPart
+STATIC cSBRdok
+STATIC cOpis
 
 // kategorija partnera
 // 1-pdv obv
 // 2-ne pdv obvz
-static cKatP
+STATIC cKatP
 
 // kategorija partnera 2
 // 1-fed
 // 2-rs
 // 3-bd
-static cKatP2
+STATIC cKatP2
 
 // razbij po danima
-static cRazbDan
+STATIC cRazbDan
 
-function fin_kif(dD1, dD2, cSezona)
-*{
-local nCount
-local cIdfirma
+FUNCTION fin_kif( dD1, dD2, cSezona )
 
-if cSezona == nil
-	cSezona := ""
-endif
+   LOCAL nCount
+   LOCAL cIdfirma
 
-dDatOd := dD1
-dDatDo := dD2
-o_kif(.t.)
+   IF cSezona == nil
+      cSezona := ""
+   ENDIF
 
-SELECT F_SG_KIF
-if !used()
-	O_SG_KIF
-endif
+   dDatOd := dD1
+   dDatDo := dD2
+   o_kif( .T. )
 
-SELECT F_ROBA
-if !used()
-	O_ROBA
-endif
+   SELECT F_SG_KIF
+   IF !Used()
+      O_SG_KIF
+   ENDIF
 
-SELECT sg_kif
-GO TOP
-nCount := 0
-do while !eof()
+   SELECT F_ROBA
+   IF !Used()
+      O_ROBA
+   ENDIF
 
-	nCount ++
+   SELECT sg_kif
+   GO TOP
+   nCount := 0
+   DO WHILE !Eof()
 
-	if upper(aktivan) == "N"
-		skip
-		LOOP
-	endif
+      nCount ++
+
+      IF Upper( aktivan ) == "N"
+         SKIP
+         LOOP
+      ENDIF
 	
-	@ m_x + 1, m_y+2 SAY "SG_KIF : " + STR(nCount)
+      @ m_x + 1, m_y + 2 SAY "SG_KIF : " + Str( nCount )
 	
-	if g_src_modul(src) == "FIN"
+      IF g_src_modul( src ) == "FIN"
 		
-		cTdSrc := td_src
+         cTdSrc := td_src
 		
-		// set id tarifu u kif dokumentu
-		cIdTar := s_id_tar
-		cIdPart := s_id_part
+         // set id tarifu u kif dokumentu
+         cIdTar := s_id_tar
+         cIdPart := s_id_part
 		
-		cKatP := kat_p
-		cKatP2 := kat_p_2
+         cKatP := kat_p
+         cKatP2 := kat_p_2
 	
-		cOpis := naz
+         cOpis := naz
 	
-		cRazbDan := razb_dan
+         cRazbDan := razb_dan
 
-		// setuj broj dokumenta
-		cSBRdok := s_br_dok
+         // setuj broj dokumenta
+         cSBRdok := s_br_dok
 
-		PRIVATE cFormBPdv := form_b_pdv
-		PRIVATE cFormPdv := form_pdv
+         PRIVATE cFormBPdv := form_b_pdv
+         PRIVATE cFormPdv := form_pdv
 
 		
-		PRIVATE cTarFormula := ""
-		PRIVATE cTarFilter := ""
+         PRIVATE cTarFormula := ""
+         PRIVATE cTarFilter := ""
 		
-		PRIVATE cKtoFormula := ""
-		PRIVATE cKtoFilter := ""
+         PRIVATE cKtoFormula := ""
+         PRIVATE cKtoFilter := ""
 	
 
-		if ";" $ id_tar 
-			cTarFilter := Parsiraj(id_tar, "IdTarifa")
-			cTarFormula := ""
+         IF ";" $ id_tar
+            cTarFilter := Parsiraj( id_tar, "IdTarifa" )
+            cTarFormula := ""
 			
-		elseif ( "(" $ id_tar ) .and. ( ")" $ id_tar )
-			// zadaje se formula
-			cTarFormula := id_tar
-			cTarFilter := ""
-		else
-			cTarFilter := ""
-			cTarFormula := ""
-		endif
+         ELSEIF ( "(" $ id_tar ) .AND. ( ")" $ id_tar )
+            // zadaje se formula
+            cTarFormula := id_tar
+            cTarFilter := ""
+         ELSE
+            cTarFilter := ""
+            cTarFormula := ""
+         ENDIF
 		
-		if ";" $ id_kto
-			cKtoFilter := Parsiraj(id_kto, ALLTRIM(id_kto_naz))
-			cKtoFormula := ""
+         IF ";" $ id_kto
+            cKtoFilter := Parsiraj( id_kto, AllTrim( id_kto_naz ) )
+            cKtoFormula := ""
 			
-		elseif ( "(" $ id_kto ) .and. ( ")" $ id_kto )
-			// zadaje se formula
-			cKtoFormula := id_kto
-			cKtoFilter := ""
-		else
-			cKtoFilter := ""
-			cKtoFormula := ""
-		endif
+         ELSEIF ( "(" $ id_kto ) .AND. ( ")" $ id_kto )
+            // zadaje se formula
+            cKtoFormula := id_kto
+            cKtoFilter := ""
+         ELSE
+            cKtoFilter := ""
+            cKtoFormula := ""
+         ENDIF
 	
-		nZaok := zaok
-		nZaok2 := zaok2
+         nZaok := zaok
+         nZaok2 := zaok2
 	
-		// za jednu shema gen stavku formiraj kif
-		gen_sg_item(cSezona)
+         // za jednu shema gen stavku formiraj kif
+         gen_sg_item( cSezona )
 		
-	endif
+      ENDIF
 	
-	SELECT sg_kif
-	skip
+      SELECT sg_kif
+      SKIP
 
-enddo
-
-
-// ------------------------------------------
-// ------------------------------------------
-static function  gen_sg_item(cSezona)
-local cPomPath
-local cPomSPath
-
-local cDokTar
-local xDummy
-local nCount
-local cPom
-local cPartRejon
-local lPdvObveznik
-local lIno
-local dDMin
-local dDMax
-
-// za jedan dokument
-local dDMinD
-local dDMaxD
+   ENDDO
 
 
-// zavisni troskovi
-local nZ1
-local nZ2
-local nZ3
-local nZ4
-local nZ5
+   // ------------------------------------------
+   // ------------------------------------------
 
-local lSkip
-local lSkip2
-local nIznos
+STATIC FUNCTION  gen_sg_item( cSezona )
 
-local cOpisSuban
-local nRecNoSuban
+   LOCAL cPomPath
+   LOCAL cPomSPath
 
-// otvori suban tabelu
-// ------------------------------------------
+   LOCAL cDokTar
+   LOCAL xDummy
+   LOCAL nCount
+   LOCAL cPom
+   LOCAL cPartRejon
+   LOCAL lPdvObveznik
+   LOCAL lIno
+   LOCAL dDMin
+   LOCAL dDMax
 
-cPomPath := "SUBAN"
-cPomSPath :=  "" 
-cFinPath := cPomPath
+   // za jedan dokument
+   LOCAL dDMinD
+   LOCAL dDMaxD
 
-select ( F_SUBAN )
-if !used()
-	O_SUBAN
-endif
 
-select ( F_TMP_1 )
-if !used()
-	my_use_temp( "SUBAN_2", my_home() + "fin_suban", .f., .f. )
-endif
+   // zavisni troskovi
+   LOCAL nZ1
+   LOCAL nZ2
+   LOCAL nZ3
+   LOCAL nZ4
+   LOCAL nZ5
 
-select suban_2
-// "4","idFirma+IdVN+BrNal+Rbr
-SET ORDER TO TAG "4"
+   LOCAL lSkip
+   LOCAL lSkip2
+   LOCAL nIznos
 
-SELECT F_PARTN
-if !used()
-	O_PARTN
-endif
+   LOCAL cOpisSuban
+   LOCAL nRecNoSuban
 
-SELECT F_TARIFA
-if !used()
-	O_TARIFA
-endif
+   // otvori suban tabelu
+   // ------------------------------------------
 
-SELECT F_SIFK
-if !used()
-	O_SIFK
-endif
+   cPomPath := "SUBAN"
+   cPomSPath :=  ""
+   cFinPath := cPomPath
 
-SELECT F_SIFV
-if !used()
-	O_SIFV
-endif
+   SELECT ( F_SUBAN )
+   IF !Used()
+      O_SUBAN
+   ENDIF
+
+   SELECT ( F_TMP_1 )
+   IF !Used()
+      my_use_temp( "SUBAN_2", my_home() + "fin_suban", .F., .F. )
+   ENDIF
+
+   SELECT suban_2
+   // "4","idFirma+IdVN+BrNal+Rbr
+   SET ORDER TO TAG "4"
+
+   SELECT F_PARTN
+   IF !Used()
+      O_PARTN
+   ENDIF
+
+   SELECT F_TARIFA
+   IF !Used()
+      O_TARIFA
+   ENDIF
+
+   SELECT F_SIFK
+   IF !Used()
+      O_SIFK
+   ENDIF
+
+   SELECT F_SIFV
+   IF !Used()
+      O_SIFV
+   ENDIF
 	
-SELECT SUBAN
-PRIVATE cFilter := ""
+   SELECT SUBAN
+   PRIVATE cFilter := ""
 
-cFilter :=  cm2str(dDatOd) + " <= datdok .and. " + cm2str(dDatDo) + ">= datdok" 
+   cFilter :=  cm2str( dDatOd ) + " <= datdok .and. " + cm2str( dDatDo ) + ">= datdok"
 
-// setuj tip dokumenta
-if !empty(cTdSrc)
-	if LEN(TRIM(cTdSrc)) == 1
-		// ako se stavi "B " onda se uzimaju svi nalozi koji pocinju
-		// sa B
-		cFilter :=  cFilter + ".and. IdVN = " + cm2str(TRIM(cTdSrc))
-	else
-		cFilter :=  cFilter + ".and. IdVN == " + cm2str(cTdSrc)
-	endif
-endif
+   // setuj tip dokumenta
+   IF !Empty( cTdSrc )
+      IF Len( Trim( cTdSrc ) ) == 1
+         // ako se stavi "B " onda se uzimaju svi nalozi koji pocinju
+         // sa B
+         cFilter :=  cFilter + ".and. IdVN = " + cm2str( Trim( cTdSrc ) )
+      ELSE
+         cFilter :=  cFilter + ".and. IdVN == " + cm2str( cTdSrc )
+      ENDIF
+   ENDIF
 
-if !EMPTY(cTarFilter)
-	cFilter += ".and. " + cTarFilter
-endif
+   IF !Empty( cTarFilter )
+      cFilter += ".and. " + cTarFilter
+   ENDIF
 
-if !EMPTY(cKtoFilter)
-	cFilter +=  ".and. " + cKtoFilter
-endif
+   IF !Empty( cKtoFilter )
+      cFilter +=  ".and. " + cKtoFilter
+   ENDIF
 
-// "4","idFirma+IdVN+BrNal+Rbr",KUMPATH+"SUBAN"
-SET ORDER TO TAG "4"
-SET FILTER TO &cFilter
+   // "4","idFirma+IdVN+BrNal+Rbr",KUMPATH+"SUBAN"
+   SET ORDER TO TAG "4"
+   SET FILTER TO &cFilter
 
-GO TOP
+   GO TOP
 
-// prosetajmo kroz suban tabelu
-nCount := 0
-do while !eof()
+   // prosetajmo kroz suban tabelu
+   nCount := 0
+   DO WHILE !Eof()
 
-	// napuni P_KIF i setuj mem vars
-	// ----------------------------------------------
-	SELECT p_kif
-	Scatter()
-	// ----------------------------------------------
+      // napuni P_KIF i setuj mem vars
+      // ----------------------------------------------
+      SELECT p_kif
+      Scatter()
+      // ----------------------------------------------
 	
-	SELECT SUBAN
+      SELECT SUBAN
 
-	dDMin := datdok
-	dDMax := datdok
+      dDMin := datdok
+      dDMax := datdok
 	
-	// ove var moraju biti private da bi se mogle macro-om evaluirati
-	PRIVATE _iznos := 0
+      // ove var moraju biti private da bi se mogle macro-om evaluirati
+      PRIVATE _iznos := 0
 
-	// datumski period
-	do while !eof() .and.  (datdok == dDMax)
+      // datumski period
+      DO WHILE !Eof() .AND.  ( datdok == dDMax )
 
-	SELECT suban
+         SELECT suban
 
-	cBrdok := suban->brnal
-	cIdTipDok := suban->IdVn
-	cIdFirma := suban->IdFirma
+         cBrdok := suban->brnal
+         cIdTipDok := suban->IdVn
+         cIdFirma := suban->IdFirma
 
-	nRecnoSuban := suban->(recno())
-	// datum kif-a
-	_datum := suban->datdok
-	_id_part := suban->idpartner
-	_opis := cOpis
+         nRecnoSuban := suban->( RecNo() )
+         // datum kif-a
+         _datum := suban->datdok
+         _id_part := suban->idpartner
+         _opis := cOpis
 	
-	// ##opis## je djoker - zamjenjuje se sa opisom koji se nalazi u 
-	// stavci
-	cOpisSuban:= ALLTRIM(suban->opis) 
-	_opis := STRTRAN(_opis, "##opis##", cOpisSuban )
+         // ##opis## je djoker - zamjenjuje se sa opisom koji se nalazi u
+         // stavci
+         cOpisSuban := AllTrim( suban->opis )
+         _opis := StrTran( _opis, "##opis##", cOpisSuban )
 	
-	if !empty(cIdPart)
-		if (ALLTRIM(UPPER(cIdPart)) == "#TD#")
-			// trazi dobavljaca
-			_id_part := trazi_dob (suban->(recno()), ;
-					suban->idfirma, suban->idvn, suban->brnal, ;
-				suban->brdok, suban->rbr)
-		else
-			_id_part := cIdPart
-		endif
-	endif
+         IF !Empty( cIdPart )
+            IF ( AllTrim( Upper( cIdPart ) ) == "#TD#" )
+               // trazi dobavljaca
+               _id_part := trazi_dob ( suban->( RecNo() ), ;
+                  suban->idfirma, suban->idvn, suban->brnal, ;
+                  suban->brdok, suban->rbr )
+            ELSE
+               _id_part := cIdPart
+            ENDIF
+         ENDIF
 
-	lIno := IsIno(_id_part)
-	lPdvObveznik := IsPdvObveznik(_id_part)
+         lIno := IsIno( _id_part )
+         lPdvObveznik := IsPdvObveznik( _id_part )
 	
-	lSkip := .f.
-	do case
+         lSkip := .F.
+         DO CASE
 	
-	  case cKatP == "1" 
-	  
-		// samo pdv obveznici
-		if lIno
-			lSkip := .t.
-		endif
+         CASE cKatP == "1"
+	
+            // samo pdv obveznici
+            IF lIno
+               lSkip := .T.
+            ENDIF
 
-		if !lPdvObveznik
-			lSkip := .t.
-		endif
+            IF !lPdvObveznik
+               lSkip := .T.
+            ENDIF
 		
-	  case cKatP == "2"
+         CASE cKatP == "2"
 	
-		if lPdvObveznik
-			lSkip := .t.
-		endif
-  
-		// samo ne-pdv obveznici, ako je ino preskoci
-		if lIno
-			lSkip := .t.
-		endif
+            IF lPdvObveznik
+               lSkip := .T.
+            ENDIF
+
+            // samo ne-pdv obveznici, ako je ino preskoci
+            IF lIno
+               lSkip := .T.
+            ENDIF
 		
-	  case cKatP == "3"
-		// ino
-		if !lIno
-			lSkip := .t.
-		endif
+         CASE cKatP == "3"
+            // ino
+            IF !lIno
+               lSkip := .T.
+            ENDIF
 
-	endcase
+         ENDCASE
 
-	cPartRejon := part_rejon(_id_part)
+         cPartRejon := part_rejon( _id_part )
 	
-	do case
+         DO CASE
 	
-		case cKatP2 == "1"
-			// samo federacija
-			if !((cPartRejon == " ") .or. (cPartRejon == "1"))
-				lSkip :=.t.
-			endif
+         CASE cKatP2 == "1"
+            // samo federacija
+            IF !( ( cPartRejon == " " ) .OR. ( cPartRejon == "1" ) )
+               lSkip := .T.
+            ENDIF
 				
-		case cKatP2 == "2"
-			// nije rs, preskoci
-			if !(cPartRejon == "2")
-				lSkip := .t.
-			endif
+         CASE cKatP2 == "2"
+            // nije rs, preskoci
+            IF !( cPartRejon == "2" )
+               lSkip := .T.
+            ENDIF
 			
-		case cKatP2 == "3"
-			// nije bd, preskoci
-			if !(cPartRejon == "3")
-				lSkip := .t.
-			endif
-	endcase
+         CASE cKatP2 == "3"
+            // nije bd, preskoci
+            IF !( cPartRejon == "3" )
+               lSkip := .T.
+            ENDIF
+         ENDCASE
 	
-	nCount ++
+         nCount ++
 
-	cPom := "SUBAN : " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok
-	@ m_x+3, m_y+2 SAY cPom 
+         cPom := "SUBAN : " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok
+         @ m_x + 3, m_y + 2 SAY cPom
 	
-	cPom :="SUBAN cnt : " + STR(nCount, 6)
-	@ m_x+4, m_y+2 SAY cPom
+         cPom := "SUBAN cnt : " + Str( nCount, 6 )
+         @ m_x + 4, m_y + 2 SAY cPom
 	
 	
 	
-	// tarifa koja se nalazi unutar dokumenta
-	cDokTar := ""
+         // tarifa koja se nalazi unutar dokumenta
+         cDokTar := ""
 	
-	dDMinD := datdok
-	dDMaxD := datdok
+         dDMinD := datdok
+         dDMaxD := datdok
 	
-	//do while !eof() .and. cBrDok == brnal .and. cIdTipDok == IdVN .and. cIdFirma == IdFirma
+         // do while !eof() .and. cBrDok == brnal .and. cIdTipDok == IdVN .and. cIdFirma == IdFirma
 
-		// zadaje se formula za tarifu
-		lSkip2 := .f.
-		if !EMPTY(cTarFormula)
-			if ! &(cTarFormula)
-				// npr. ABS(trazi_kto("5431")>0)
-				lSkip2 := .t.
-				SKIP 
-				LOOP
-			endif
+         // zadaje se formula za tarifu
+         lSkip2 := .F.
+         IF !Empty( cTarFormula )
+            IF ! &( cTarFormula )
+               // npr. ABS(trazi_kto("5431")>0)
+               lSkip2 := .T.
+               SKIP
+               LOOP
+            ENDIF
 			
-		endif
+         ENDIF
 
-		if lSkip
-			SKIP
-			LOOP
-		endif
+         IF lSkip
+            SKIP
+            LOOP
+         ENDIF
 
-		// na nivou dokumenta utvrdi min max datum
-		if dDMinD > datdok
-			dDMinD := datdok
-		endif
+         // na nivou dokumenta utvrdi min max datum
+         IF dDMinD > datdok
+            dDMinD := datdok
+         ENDIF
 
-		if dDMaxD < datdok
-			dDMaxD := datdok
-		endif
+         IF dDMaxD < datdok
+            dDMaxD := datdok
+         ENDIF
 		
-		// na nivou dat opsega utvrdi min max datum
-		if dDMin > datdok
-			dDMinD := datdok
-		endif
+         // na nivou dat opsega utvrdi min max datum
+         IF dDMin > datdok
+            dDMinD := datdok
+         ENDIF
 
-		if dDMax < datdok
-			dDMax := datdok
-		endif
+         IF dDMax < datdok
+            dDMax := datdok
+         ENDIF
 		
 
-		if d_p=="1"
-			nIznos := iznosbhd
-		else
-			nIznos := -iznosbhd
-		endif
+         IF d_p == "1"
+            nIznos := iznosbhd
+         ELSE
+            nIznos := -iznosbhd
+         ENDIF
 		
-		// broj veze
-		cBrDok := brdok
+         // broj veze
+         cBrDok := brdok
 		
-		_iznos += nIznos 
+         _iznos += nIznos
 
-		SELECT SUBAN
-		skip
+         SELECT SUBAN
+         SKIP
 		
-	//enddo
+         // enddo
 
 	
-	if (cRazbDan == "D")
-		// razbij po danima
-		if dDMinD <> dDMaxD
-			MsgBeep("U dokumentu " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok + "  se nalaze datumi " + DTOC(dDMaxD) + "-" + DTOC(dDMaxD) + "##" + ;
-			"To nije uredu je se promet razbija po danima !!!")
-		endif
+         IF ( cRazbDan == "D" )
+            // razbij po danima
+            IF dDMinD <> dDMaxD
+               MsgBeep( "U dokumentu " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok + "  se nalaze datumi " + DToC( dDMaxD ) + "-" + DToC( dDMaxD ) + "##" + ;
+                  "To nije uredu je se promet razbija po danima !!!" )
+            ENDIF
 		
-	endif
+         ENDIF
 
-	if cRazbDan <> "D"
-		// nije po danima
-		// za jedan dokument se uzima 
-		exit
-		// ako pak jeste "D" onda se vrti u petlji
-	endif
+         IF cRazbDan <> "D"
+            // nije po danima
+            // za jedan dokument se uzima
+            EXIT
+            // ako pak jeste "D" onda se vrti u petlji
+         ENDIF
 
-	// datumski interval
-	enddo
+         // datumski interval
+      ENDDO
 
-	// za datum uzmi datum dokumenta ili najveci datum gore pronadjen
-	_datum := dDMax
+      // za datum uzmi datum dokumenta ili najveci datum gore pronadjen
+      _datum := dDMax
 	
-	if lSkip .or. lSkip2
-		// vrati se gore
-		SELECT SUBAN
-		LOOP
-	endif
+      IF lSkip .OR. lSkip2
+         // vrati se gore
+         SELECT SUBAN
+         LOOP
+      ENDIF
 	
-	PRIVATE _uk_pdv :=  0
-	PushWa()
-	// --------------------------------------------------------------
-	SELECT SUBAN
-	go (nRecNoSuban)
+      PRIVATE _uk_pdv :=  0
+      PushWa()
+      // --------------------------------------------------------------
+      SELECT SUBAN
+      GO ( nRecNoSuban )
 
-	_iznos := round(_iznos, nZaok2)
+      _iznos := Round( _iznos, nZaok2 )
 	
-	if !empty(cIdTar)
-		// uzmi iz sg sifrarnika tarifu kojom treba setovati
-		_id_tar := cIdTar
-	else
-		// uzmi iz dokumenta
-		_id_tar := cDokTar
-	endif
+      IF !Empty( cIdTar )
+         // uzmi iz sg sifrarnika tarifu kojom treba setovati
+         _id_tar := cIdTar
+      ELSE
+         // uzmi iz dokumenta
+         _id_tar := cDokTar
+      ENDIF
 
-	do case
-	   case ALLTRIM(cSBrDok) == "#EXT#"
-		// extractuj ako je empty cBrDok
-		if EMPTY(cBrDok)
-			// ako nije stavljen broj dokumenta
-			// izvuci oznaku iz opisa
-			_src_br := extract_oznaka(cOpisSuban)
-			_src_br_2 := _src_br
-		else
-			_src_br := cBrDok
-			_src_br_2 := cBrDok
-		endif
+      DO CASE
+      CASE AllTrim( cSBrDok ) == "#EXT#"
+         // extractuj ako je empty cBrDok
+         IF Empty( cBrDok )
+            // ako nije stavljen broj dokumenta
+            // izvuci oznaku iz opisa
+            _src_br := extract_oznaka( cOpisSuban )
+            _src_br_2 := _src_br
+         ELSE
+            _src_br := cBrDok
+            _src_br_2 := cBrDok
+         ENDIF
 		
-	   case !EMPTY(cSBrDok)
-		_src_br := cSBrDok
-		_src_br_2 := cSBrDok
-	   otherwise
+      CASE !Empty( cSBrDok )
+         _src_br := cSBrDok
+         _src_br_2 := cSBrDok
+      OTHERWISE
 	
-		// broj dokumenta
-		_src_br := cBrDok
-		_src_br_2 := cBrDok
-	endcase
+         // broj dokumenta
+         _src_br := cBrDok
+         _src_br_2 := cBrDok
+      ENDCASE
 
 	
-	if !EMPTY(cFormBPDV)
-		_i_b_pdv := &cFormBPdv
-	else
-		// nema formule koristi ukupan iznos bez pdv-a
-		_i_b_pdv := _iznos/1.17
-	endif
-	_i_b_pdv := round(_i_b_pdv, nZaok)
+      IF !Empty( cFormBPDV )
+         _i_b_pdv := &cFormBPdv
+      ELSE
+         // nema formule koristi ukupan iznos bez pdv-a
+         _i_b_pdv := _iznos / 1.17
+      ENDIF
+      _i_b_pdv := Round( _i_b_pdv, nZaok )
 	
-	if !EMPTY(cFormPDV)
-		_i_pdv := &cFormPdv
-	else
-		// nema formule koristi ukupan iznos bez pdv-a
-		_i_pdv :=  _iznos/1.17*0.17
-	endif
-	_i_pdv := round(_i_pdv, nZaok)
-	// ----------------------------------------------------------
-	PopWa()
+      IF !Empty( cFormPDV )
+         _i_pdv := &cFormPdv
+      ELSE
+         // nema formule koristi ukupan iznos bez pdv-a
+         _i_pdv :=  _iznos / 1.17 * 0.17
+      ENDIF
+      _i_pdv := Round( _i_pdv, nZaok )
+      // ----------------------------------------------------------
+      PopWa()
 	
-	// snimi gornje podatke
-	SELECT P_KIF
-	APPEND BLANK
-	Gather()
+      // snimi gornje podatke
+      SELECT P_KIF
+      APPEND BLANK
+      Gather()
 	
-	select SUBAN
+      SELECT SUBAN
 
-enddo
+   ENDDO
 
-
-return
+   RETURN
 
 
 // ----------------------------------------------
 // ----------------------------------------------
-static function zav_tr(nZ1, nZ2, nZ3, nZ4, nZ5)
-local Skol:=0
-local nPPP:=0
-local gKalo:="0"
+STATIC FUNCTION zav_tr( nZ1, nZ2, nZ3, nZ4, nZ5 )
 
-SELECT SUBAN
+   LOCAL Skol := 0
+   LOCAL nPPP := 0
+   LOCAL gKalo := "0"
 
-if gKalo=="1"
-  Skol:=Kolicina-GKolicina-GKolicin2
-else
-  Skol:=Kolicina
-endif
+   SELECT SUBAN
 
-nPPP:=1
+   IF gKalo == "1"
+      Skol := Kolicina - GKolicina - GKolicin2
+   ELSE
+      Skol := Kolicina
+   ENDIF
 
-if TPrevoz=="%"
-  nPrevoz:=Prevoz/100*FCj2
-elseif TPrevoz=="A"
-  nPrevoz:=Prevoz
-elseif TPrevoz=="U"
-  if skol<>0
-   nPrevoz:=Prevoz/SKol
-  else
-   nPrevoz:=0
-  endif
-else
-  nPrevoz:=0
-endif
-nZ1 := nPrevoz
+   nPPP := 1
 
-if TCarDaz=="%"
-  nCarDaz:=CarDaz/100*FCj2
-elseif TCarDaz=="A"
-  nCarDaz:=CarDaz
-elseif TCarDaz=="U"
-  if skol<>0
-   nCarDaz:=CarDaz/SKol
-  else
-   nCarDaz:=0
-  endif
-else
-  nCarDaz:=0
-endif
-nZ2 := nCarDaz
+   IF TPrevoz == "%"
+      nPrevoz := Prevoz / 100 * FCj2
+   ELSEIF TPrevoz == "A"
+      nPrevoz := Prevoz
+   ELSEIF TPrevoz == "U"
+      IF skol <> 0
+         nPrevoz := Prevoz / SKol
+      ELSE
+         nPrevoz := 0
+      ENDIF
+   ELSE
+      nPrevoz := 0
+   ENDIF
+   nZ1 := nPrevoz
 
-if TZavTr=="%"
-  nZavTr:=ZavTr/100*FCj2
-elseif TZavTr=="A"
-  nZavTr:=ZavTr
-elseif TZavTr=="U"
-  if skol<>0
-   nZavTr:=ZavTr/SKol
-  else
-   nZavTr:=0
-  endif
-else
-  nZavTr:=0
-endif
-nZ3 := nZavTr
+   IF TCarDaz == "%"
+      nCarDaz := CarDaz / 100 * FCj2
+   ELSEIF TCarDaz == "A"
+      nCarDaz := CarDaz
+   ELSEIF TCarDaz == "U"
+      IF skol <> 0
+         nCarDaz := CarDaz / SKol
+      ELSE
+         nCarDaz := 0
+      ENDIF
+   ELSE
+      nCarDaz := 0
+   ENDIF
+   nZ2 := nCarDaz
+
+   IF TZavTr == "%"
+      nZavTr := ZavTr / 100 * FCj2
+   ELSEIF TZavTr == "A"
+      nZavTr := ZavTr
+   ELSEIF TZavTr == "U"
+      IF skol <> 0
+         nZavTr := ZavTr / SKol
+      ELSE
+         nZavTr := 0
+      ENDIF
+   ELSE
+      nZavTr := 0
+   ENDIF
+   nZ3 := nZavTr
 
 
-if TBankTr=="%"
-  nBankTr:=BankTr/100*FCj2
-elseif TBankTr=="A"
-  nBankTr:=BankTr
-elseif TBankTr=="U"
-  if skol<>0
-   nBankTr:=BankTr/SKol
-  else
-   nBankTr:=0
-  endif
-else
-  nBankTr:=0
-endif
-nZ4 := nBankTr
+   IF TBankTr == "%"
+      nBankTr := BankTr / 100 * FCj2
+   ELSEIF TBankTr == "A"
+      nBankTr := BankTr
+   ELSEIF TBankTr == "U"
+      IF skol <> 0
+         nBankTr := BankTr / SKol
+      ELSE
+         nBankTr := 0
+      ENDIF
+   ELSE
+      nBankTr := 0
+   ENDIF
+   nZ4 := nBankTr
 
-if TSpedTr=="%"
-  nSpedTr:=SpedTr/100*FCj2
-elseif TSpedTr=="A"
-  nSpedTr:=SpedTr
-elseif TSpedTr=="U"
-  if skol<>0
-   nSpedTr:=SpedTr/SKol
-  else
-   nSpedTr:=0
-  endif
-else
-  nSpedTr:=0
-endif
-nZ5 := nSpedTr
+   IF TSpedTr == "%"
+      nSpedTr := SpedTr / 100 * FCj2
+   ELSEIF TSpedTr == "A"
+      nSpedTr := SpedTr
+   ELSEIF TSpedTr == "U"
+      IF skol <> 0
+         nSpedTr := SpedTr / SKol
+      ELSE
+         nSpedTr := 0
+      ENDIF
+   ELSE
+      nSpedTr := 0
+   ENDIF
+   nZ5 := nSpedTr
 
-return
+   RETURN
 
 // -----------------------------------------------------------
 // trazi dobavljaca za trosak - mora biti u blizini - iznad ili
 // ispod samog troska
 // -----------------------------------------------------------
-static function trazi_dob(nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr)
-local i
+STATIC FUNCTION trazi_dob( nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr )
 
-PushWa()
+   LOCAL i
 
-select suban_2
+   PushWa()
 
-for i:=-2 to 2
+   SELECT suban_2
 
-//idi na zadati slog ...
-GO (nRecNo)
-// pa onda skoci dva unazad i dva unaprijed ...
-SKIP i
+   FOR i := -2 TO 2
+
+      // idi na zadati slog ...
+      GO ( nRecNo )
+      // pa onda skoci dva unazad i dva unaprijed ...
+      SKIP i
 
 
-cKto := LEFT(idkonto, 3 ) 
+      cKto := Left( idkonto, 3 )
 
-if (cKto $ ALLTRIM(gL_kto_dob) ) .and. (IdFirma ==  cIdFirma) .and. (IdVn == cIdVn) .and. (BrNal == cBrNal) .and. (BrDok == cBrDok)
-	// dobavljac
-	// ili kreditor
-	cIdPartner := idpartner
+      IF ( cKto $ AllTrim( gL_kto_dob ) ) .AND. ( IdFirma ==  cIdFirma ) .AND. ( IdVn == cIdVn ) .AND. ( BrNal == cBrNal ) .AND. ( BrDok == cBrDok )
+         // dobavljac
+         // ili kreditor
+         cIdPartner := idpartner
 
-	PopWa()
-	return cIdPartner
-endif
+         PopWa()
+         RETURN cIdPartner
+      ENDIF
 
-next
+   NEXT
 
-// nema nista - nisam nista nasao
-PopWa()
-return ""
+   // nema nista - nisam nista nasao
+   PopWa()
+
+   RETURN ""
 
 
 // ---------------------------------
@@ -667,21 +670,21 @@ return ""
 // "SPEDITER 16/06 => "16/06"
 // "FAKT.DOB.16/06 => "16/06"
 // ---------------------------------
-static function extract_oznaka(cOpis)
-local i, nLen, cPom, cChar
+STATIC FUNCTION extract_oznaka( cOpis )
 
-cPom:=""
+   LOCAL i, nLen, cPom, cChar
 
-cOpis := TRIM(cOpis)
-nLen := LEN(cOpis)
-for i:=nLen to 1 step -1
-   cChar := SUBSTR(cOpis, i, 1)
-   if cChar $ " ."
-	exit
-   else
-	cPom := cChar + cPom 
-   endif
-next
+   cPom := ""
 
-return cPom
+   cOpis := Trim( cOpis )
+   nLen := Len( cOpis )
+   FOR i := nLen TO 1 STEP -1
+      cChar := SubStr( cOpis, i, 1 )
+      IF cChar $ " ."
+         EXIT
+      ELSE
+         cPom := cChar + cPom
+      ENDIF
+   NEXT
 
+   RETURN cPom

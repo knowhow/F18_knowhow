@@ -240,8 +240,6 @@ STATIC FUNCTION sif_sql_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j, cOrderTag
 
 
 
-// ----------------------------------------------------
-// ----------------------------------------------------
 STATIC FUNCTION sif_katbr_zvjezdica( cId, cIdBK, fId_j )
 
    cId := PadR( cId, 10 )
@@ -335,8 +333,8 @@ FUNCTION sif_point_or_slash( cId, fPoNaz, cOrderTag, cUslovSrch, cNazSrch )
 
    RETURN .T.
 
-// ------------------------------------------------------------
-// -----------------------------------------------------------
+
+
 STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
    LOCAL i
@@ -386,8 +384,9 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    lZabIsp := .F.
 
    IF bBlok <> NIL
+
       nRet := Eval( bBlok, Ch )
-      IF nret > 4
+      IF nRet > 4
          IF nRet == 5
             RETURN DE_ABORT
          ELSEIF nRet == 6
@@ -399,6 +398,7 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
             nRet := -1
          ENDIF
       ENDIF
+
    ENDIF
 
    IF AScan( aZabrane, Ch ) <> 0
@@ -422,8 +422,9 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    DO CASE
 
    CASE Ch == K_ENTER
-      // ako sam u sifrarniku a ne u unosu dokumenta
+
       IF gMeniSif
+         // ako sam u sifrarniku a ne u unosu dokumenta
          RETURN DE_CONT
       ELSE
          // u unosu sam dokumenta
@@ -507,8 +508,8 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
    RETURN
 
-// ------------------------------------------
-// ------------------------------------------
+
+
 STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp )
 
    LOCAL i
@@ -790,8 +791,8 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp )
    ordSetFocus( cOrderTag)
    RETURN 1
 
-// ----------------------------------------------------
-// ----------------------------------------------------
+
+
 STATIC FUNCTION set_w_var( ImeKol, _i, show_grup )
 
    LOCAL _tmp, _var_name
@@ -926,15 +927,14 @@ STATIC FUNCTION sif_getlist( var_name, GetList, lZabIsp, aZabIsp, lShowGrup, Ch,
       &var_name = hb_UTF8ToStr( &var_name )
    ENDIF
 
-   AAdd( GetList, _GET_( &var_name, var_name,  cPic, _valid_block, _when_block ) ) ;;
-
-      ATail( GetList ):display()
+    AAdd( GetList, _GET_( &var_name, var_name,  cPic, _valid_block, _when_block ) ) ;;
+    ATail( GetList ):display()
 
    RETURN .T.
 
 
-// -----------------------------------------
-// -----------------------------------------
+
+
 STATIC FUNCTION add_match_code( ImeKol, Kol )
 
    LOCAL  _pos, cMCField := Alias()
@@ -955,9 +955,9 @@ STATIC FUNCTION add_match_code( ImeKol, Kol )
    ENDIF
 
 
-   // --------------------------------------------------
-   // kod sifarnika partnera se mora potvrditi ma
-   // --------------------------------------------------
+/*
+   kod sifarnika partnera se mora potvrditi ma
+*/
 
 STATIC FUNCTION _chk_sif( cMarker )
 
@@ -995,10 +995,11 @@ STATIC FUNCTION _chk_sif( cMarker )
    RETURN nRet
 
 
-// --------------------------------------------------
-// vraca naziv polja + vrijednost za tekuci alias
-// cMarker = "w" ako je Scatter("w")
-// --------------------------------------------------
+/*
+   vraca naziv polja + vrijednost za tekuci alias
+   cMarker = "w" ako je Scatter("w")
+*/
+
 STATIC FUNCTION _g_fld_desc( cMarker )
 
    LOCAL cRet := ""
@@ -1065,8 +1066,8 @@ STATIC FUNCTION _g_fld_changes( cOld, cNew )
 
    RETURN cChanges
 
-// -----------------------
-// -----------------------
+
+
 STATIC FUNCTION set_sif_vars()
 
    LOCAL _i, _struct
@@ -1096,15 +1097,12 @@ STATIC FUNCTION set_roba_defaults()
       RETURN
    ENDIF
 
-   // set tarifa uvijek PDV17
    widtarifa := PadR( "PDV17", 6 )
 
    RETURN
 
 
 
-// -------------------------------------------------------
-// -------------------------------------------------------
 STATIC FUNCTION Popup( cOrderTag )
 
    LOCAL opc := {}
@@ -1149,8 +1147,7 @@ STATIC FUNCTION _fix_usl( xUsl )
    RETURN xRet
 
 
-// -------------------------------
-// -------------------------------
+
 STATIC FUNCTION sif_brisi_stavku()
 
    LOCAL _rec_dbf, _rec, _alias
@@ -1195,8 +1192,8 @@ STATIC FUNCTION sif_brisi_stavku()
 
    RETURN DE_REFRESH
 
-// -------------------------------
-// -------------------------------
+
+
 STATIC FUNCTION sif_brisi_sve()
 
    IF Pitanje( , "Želite li sigurno izbrisati SVE zapise ??", "N" ) == "N"
@@ -1224,8 +1221,7 @@ STATIC FUNCTION sif_brisi_sve()
    RETURN DE_REFRESH
 
 
-// ---------------------------------------------------
-// ---------------------------------------------------
+
 STATIC FUNCTION PushSifV()
 
    __PSIF_NIVO__ ++
@@ -1235,8 +1231,8 @@ STATIC FUNCTION PushSifV()
 
    RETURN
 
-// ------------------------------
-// ------------------------------
+
+
 STATIC FUNCTION PopSifV()
 
    --__PSIF_NIVO__

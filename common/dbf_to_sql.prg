@@ -361,7 +361,7 @@ STATIC FUNCTION set_table_values_algoritam_vars( table, values, algoritam, trans
    LOCAL _count := 0
    LOCAL _use_tag := .F.
    LOCAL _alias
-   LOCAL lSqlTable
+   LOCAL lSqlTable, uValue
 
    IF table == NIL
       table := Alias()
@@ -404,18 +404,26 @@ STATIC FUNCTION set_table_values_algoritam_vars( table, values, algoritam, trans
 
          // ne gledaj numericke kljuceve, koji su array stavke
          IF !hb_HHasKey( values, _key )
-            _msg := RECI_GDJE_SAM + "# tabela:" + table + "#bug - nepostojeci kljuc:" + _key +  "#values:" + pp( values )
+            _msg := RECI_GDJE_SAM + "# tabela:" + table + "#bug - nepostojeći kljuc:" + _key +  "#values:" + pp( values )
             log_write( _msg, 1 )
             MsgBeep( _msg )
             QUIT_1
          ENDIF
 
          IF ValType( values[ _key ] ) == "C"
+
             // ako je dbf_fields_len['id'][2] = 6
             // karakterna polja se moraju PADR-ovati
             // values['id'] = '0' => '0     '
             set_rec_from_dbstruct( @a_dbf_rec )
-            values[ _key ] := PadR( values[ _key ], a_dbf_rec[ "dbf_fields_len" ][ _key ][ 2 ] )
+
+            uValue := Unicode():New( values[ _key ], lSqlTable )
+            values[ _key ] := uValue:padr( a_dbf_rec[ "dbf_fields_len" ][ _key ][ 2 ] )
+            IF !lSqlTable
+               // DBFCDX tabela mora sadržati CP 852 string
+               values[ _key ] := hb_Utf8ToStr( values[ _key ] )
+            ENDIF
+
             // provjeri prvi dio kljuca
             // ako je # onda obavezno setuj tag
             IF _count == 1

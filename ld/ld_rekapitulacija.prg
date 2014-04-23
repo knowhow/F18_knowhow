@@ -348,17 +348,17 @@ ELSE
     // ali se moze dobiti bruto osnova i prosjecni neto po satu
     ASORT(aNetoMj,,,{|x,y| x[1]<y[1]})
     ?
-    ?     Lokal("MJESEC³  UK.NETO  ³UK.SATI³KOEF.BRUTO³FOND SATI³BRUTO OSNOV³PROSJ.NETO ")
-    ?     " (A)  ³    (B)    ³  (C)  ³   (D)    ³   (E)   ³(B)*(D)/100³(E)*(B)/(C)"
-    ? ms:="ÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄ"
+    ?     Lokal("MJESECÂ³  UK.NETO  Â³UK.SATIÂ³KOEF.BRUTOÂ³FOND SATIÂ³BRUTO OSNOVÂ³PROSJ.NETO ")
+    ?     " (A)  Â³    (B)    Â³  (C)  Â³   (D)    Â³   (E)   Â³(B)*(D)/100Â³(E)*(B)/(C)"
+    ? ms:="Ã„Ã„Ã„Ã„Ã„Ã„Ã…Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã…Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã…Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã…Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã…Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã…Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„Ã„"
     nT1:=nT2:=nT3:=nT4:=nT5:=0
     FOR i:=1 TO LEN(aNetoMj)
-            ? STR(aNetoMj[i,1],4,0) +". ³"+;
-            TRANS(aNetoMj[i,2],gPicI) +"³"+;
-            STR(aNetoMj[i,3],7) +"³"+;
-            TRANS(aNetoMj[i,4],"999.99999%") +"³"+;
-            STR(aNetoMj[i,5],9) +"³"+;
-            TRANS(ROUND2(aNetoMj[i,2]*aNetoMj[i,4]/100,gZaok2),gPicI) +"³"+;
+            ? STR(aNetoMj[i,1],4,0) +". Â³"+;
+            TRANS(aNetoMj[i,2],gPicI) +"Â³"+;
+            STR(aNetoMj[i,3],7) +"Â³"+;
+            TRANS(aNetoMj[i,4],"999.99999%") +"Â³"+;
+            STR(aNetoMj[i,5],9) +"Â³"+;
+            TRANS(ROUND2(aNetoMj[i,2]*aNetoMj[i,4]/100,gZaok2),gPicI) +"Â³"+;
             TRANS(aNetoMj[i,5]*aNetoMj[i,2]/aNetoMj[i,3],gPicI)
             nT1 += aNetoMj[i,2]
             nT2 += aNetoMj[i,3]
@@ -369,12 +369,12 @@ ELSE
   
     nT5 := nT5/LEN(aNetoMj)
     ? ms
-    ?     "UKUPNO³"+;
-            TRANS(nT1,gPicI) +"³"+;
-            STR(nT2,7) +"³"+;
-            "          "+"³"+;
-            STR(nT3,9) +"³"+;
-            TRANS(nT4,gPicI) +"³"+;
+    ?     "UKUPNOÂ³"+;
+            TRANS(nT1,gPicI) +"Â³"+;
+            STR(nT2,7) +"Â³"+;
+            "          "+"Â³"+;
+            STR(nT3,9) +"Â³"+;
+            TRANS(nT4,gPicI) +"Â³"+;
             TRANS(nT5,gPicI)
 
 ENDIF
@@ -609,7 +609,7 @@ if FILE(PRIVPATH + "OPSLD.DBF")
     FERASE(PRIVPATH + "OPSLD.CDX")
 endif
 
-DBCreate2(PRIVPATH + "opsld", aDbf)
+DBCreate2( "opsld", aDbf)
 select(F_OPSLD)
 my_usex("opsld")
 
@@ -1453,7 +1453,7 @@ do while !eof() .and. eval(bUSlov)
             nTObl:=SELECT()
             nTRec := PAROBR->(RECNO())
             ParObr(mjesec,godina,IF(lViseObr,cObracun,),IF(!lSvi,cIdRj,))
-            // samo pozicionira bazu PAROBR na odgovaraju†i zapis
+            // samo pozicionira bazu PAROBR na odgovarajuÂ†i zapis
             AADD(aNetoMj,{mjesec,_uneto,_usati,PAROBR->k3,PAROBR->k1})
             SELECT PAROBR
             GO (nTRec)

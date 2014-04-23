@@ -244,12 +244,10 @@ FUNCTION CreGparam( nArea )
    ENDIF
 
    RETURN
-// }
 
 
 FUNCTION KonvParams( cImeDBF )
 
-   // {
    cImeDBF := f18_ime_dbf( cImeDBF )
    CLOSE  ALL
    IF File( cImeDBF ) // ako postoji

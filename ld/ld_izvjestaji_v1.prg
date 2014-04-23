@@ -312,7 +312,7 @@ aDbf:={   {"ID"    ,"C", 1,0},;
 
 //id- 1 opsstan
 //id- 2 opsrad
-DBCREATE2(PRIVPATH+"opsld",aDbf)
+DBCREATE2( "opsld", aDbf)
 
 
 select(F_OPSLD) ; usex (PRIVPATH+"opsld")

@@ -97,3 +97,14 @@ METHOD Unicode:Set( xVal, lUtf8 )
    END SWITCH
 
    RETURN .T.
+
+
+FUNCTION PadrU( xStr, nNum )
+
+  LOCAL uStr
+
+  // utf8 string vraća padr 
+  uStr := Unicode():New( xStr ):padr( nNum )
+
+  RETURN hb_Utf8ToStr( uStr )
+

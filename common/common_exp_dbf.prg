@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,144 +12,147 @@
 
 #include "fmk.ch"
 
-static __table := "r_export"
-static cij_decimala:=3
-static izn_decimala:=2
-static kol_decimala:=3
-static lZaokruziti := .t.
-static cLauncher1 := '"C:\Program Files\LibreOffice 3.4\program\scalc.exe"'
+STATIC __table := "r_export"
+STATIC cij_decimala := 3
+STATIC izn_decimala := 2
+STATIC kol_decimala := 3
+STATIC lZaokruziti := .T.
+STATIC cLauncher1 := '"C:\Program Files\LibreOffice 3.4\program\scalc.exe"'
 // zamjeniti tarabu sa brojem
-static cLauncher2 := ""
-static cLauncher := "oo"
+STATIC cLauncher2 := ""
+STATIC cLauncher := "oo"
 // 4 : 852 => US ASCII
-static cKonverzija := "4"
+STATIC cKonverzija := "4"
 
 
 
 // kreiraj tabelu u home direktoriju
-function t_exp_create( field_list )
+FUNCTION t_exp_create( field_list )
 
-my_close_all_dbf()
+   my_close_all_dbf()
 
-ferase( my_home() + __table + ".dbf" )
+   FErase( my_home() + __table + ".dbf" )
 
-// kreiraj tabelu
-dbcreate2( my_home() + __table, field_list )
+   // kreiraj tabelu
+   dbcreate2( my_home() + __table, field_list )
 
-return
+   RETURN
 
 
 // export tabele
-function tbl_export( launch )
-local _cmd
+FUNCTION tbl_export( launch )
 
-my_close_all_dbf()
+   LOCAL _cmd
 
-_cmd := ALLTRIM( launch )
-_cmd += " "
-_cmd += __table + ".dbf"
+   my_close_all_dbf()
 
-log_write( "Export " + __table + " cmd: " + _cmd, 9 )
+   _cmd := AllTrim( launch )
+   _cmd += " "
+   _cmd += __table + ".dbf"
 
-MsgBeep("Tabela " + my_home() + __table + ".dbf" + "je formirana##" +;
-        "Sa opcijom Open file se ova tabela ubacuje u excel #" +;
-    "Nakon importa uradite Save as, i odaberite format fajla XLS ! ##" +;
-    "Tako dobijeni xls fajl mozete mijenjati #"+;
-    "prema svojim potrebama ...")
-    
-if Pitanje(, "Odmah pokrenuti spreadsheet aplikaciju ?", "D") == "D"    
-    DirChange( my_home() )
-    if f18_run( _cmd ) <> 0
-        MsgBeep( "Problem sa pokretanjem ?!!!" )
-    endif
-endif
+   log_write( "Export " + __table + " cmd: " + _cmd, 9 )
 
-return
+   MsgBeep( "Tabela " + my_home() + __table + ".dbf" + "je formirana##" + ;
+      "Sa opcijom Open file se ova tabela ubacuje u excel #" + ;
+      "Nakon importa uradite Save as, i odaberite format fajla XLS ! ##" + ;
+      "Tako dobijeni xls fajl mozete mijenjati #" + ;
+      "prema svojim potrebama ..." )
+
+   IF Pitanje(, "Odmah pokrenuti spreadsheet aplikaciju ?", "D" ) == "D"
+      DirChange( my_home() )
+      IF f18_run( _cmd ) <> 0
+         MsgBeep( "Problem sa pokretanjem ?!!!" )
+      ENDIF
+   ENDIF
+
+   RETURN
 
 
 // -----------------------------------------------------
 // setovanje pokretaca za dbf tabelu
 // -----------------------------------------------------
-function set_launcher( launch )
-local _tmp
+FUNCTION set_launcher( launch )
 
-_tmp = UPPER(ALLTRIM( launch ))
+   LOCAL _tmp
 
-if ( _tmp == "OO" ) .or.  ( _tmp == "OOO" ) .or.  ( _tmp == "OPENOFFICE" )
-	launch := cLauncher1
-    return .f.
-    
-elseif ( LEFT( _tmp, 6 ) == "OFFICE" )
-    // OFFICEXP, OFFICE97, OFFICE2003
-    launch := msoff_start( SUBSTR( _tmp, 7 ))
-    return .f.
-elseif (LEFT( _tmp, 5 ) == "EXCEL") 
-    // EXCELXP, EXCEL97 
-    launch := msoff_start(SUBSTR( _tmp, 6))
-    return .f.
-endif
+   _tmp = Upper( AllTrim( launch ) )
 
-return .t.
+   IF ( _tmp == "OO" ) .OR.  ( _tmp == "OOO" ) .OR.  ( _tmp == "OPENOFFICE" )
+      launch := cLauncher1
+      RETURN .F.
+
+   ELSEIF ( Left( _tmp, 6 ) == "OFFICE" )
+      // OFFICEXP, OFFICE97, OFFICE2003
+      launch := msoff_start( SubStr( _tmp, 7 ) )
+      RETURN .F.
+   ELSEIF ( Left( _tmp, 5 ) == "EXCEL" )
+      // EXCELXP, EXCEL97
+      launch := msoff_start( SubStr( _tmp, 6 ) )
+      RETURN .F.
+   ENDIF
+
+   RETURN .T.
 
 
 
 
-static function msoff_start( ver )
-local _tmp :=  '"C:\Program Files\Microsoft Office\Office#\excel.exe"'
+STATIC FUNCTION msoff_start( ver )
 
-if (ver == "XP")
-  // office XP
-  return STRTRAN(_tmp,  "#", "10")
-elseif (ver == "2000")
-  // office 2000
-  return STRTRAN(_tmp, "#", "9")
-elseif (EMPTY(ver))
-  // instalacija office u /office/ direktoriju
-  return STRTRAN(_tmp, "#", "")
-elseif (ver == "2003")
-  // office 2003
-  return STRTRAN(_tmp, "#", "11")
-elseif (ver == "97")
-  // office 97
-  return STRTRAN(_tmp, "#", "8")
-else
-  // office najnoviji 2005?2006
-  return STRTRAN(_tmp, "#", "12")
-endif
+   LOCAL _tmp :=  '"C:\Program Files\Microsoft Office\Office#\excel.exe"'
 
-return
+   IF ( ver == "XP" )
+      // office XP
+      RETURN StrTran( _tmp,  "#", "10" )
+   ELSEIF ( ver == "2000" )
+      // office 2000
+      RETURN StrTran( _tmp, "#", "9" )
+   ELSEIF ( Empty( ver ) )
+      // instalacija office u /office/ direktoriju
+      RETURN StrTran( _tmp, "#", "" )
+   ELSEIF ( ver == "2003" )
+      // office 2003
+      RETURN StrTran( _tmp, "#", "11" )
+   ELSEIF ( ver == "97" )
+      // office 97
+      RETURN StrTran( _tmp, "#", "8" )
+   ELSE
+      // office najnoviji 2005?2006
+      RETURN StrTran( _tmp, "#", "12" )
+   ENDIF
+
+   RETURN
 
 
 
 
 // export funkcija
-function exp_report()
-local nTArea := SELECT()
+FUNCTION exp_report()
 
-cKonverzija := fetch_metric("export_dbf_konverzija", my_user(), cKonverzija)
-cLauncher := fetch_metric("export_dbf_launcher", my_user(), cLauncher)
-cLauncher := PADR(cLauncher, 70)
+   LOCAL nTArea := Select()
 
-Box(, 10, 70)
-    @ m_x+1, m_y+2 SAY "Parametri exporta:" COLOR "I"
-    
-    @ m_x+2, m_y+2  SAY "Konverzija slova (0-8) " GET cKonverzija PICT "9"
-    
-    @ m_x+3, m_y+2 SAY "Pokreni oo/office97/officexp/office2003 ?" GET cLauncher PICT "@S26" VALID set_launcher(@cLauncher)
-  
-    read
-BoxC()
+   cKonverzija := fetch_metric( "export_dbf_konverzija", my_user(), cKonverzija )
+   cLauncher := fetch_metric( "export_dbf_launcher", my_user(), cLauncher )
+   cLauncher := PadR( cLauncher, 70 )
 
-if LastKey()==K_ESC
-    select (nTArea)
-    closeret
-endif
+   Box(, 10, 70 )
+   @ m_x + 1, m_y + 2 SAY "Parametri exporta:" COLOR "I"
 
-// snimi parametre
-set_metric("export_dbf_konverzija", my_user(), cKonverzija)
-set_metric("export_dbf_launcher", my_user(), cLauncher)
+   @ m_x + 2, m_y + 2  SAY "Konverzija slova (0-8) " GET cKonverzija PICT "9"
 
-select (nTArea)
-return cLauncher
+   @ m_x + 3, m_y + 2 SAY "Pokreni oo/office97/officexp/office2003 ?" GET cLauncher PICT "@S26" VALID set_launcher( @cLauncher )
 
+   READ
+   BoxC()
 
+   IF LastKey() == K_ESC
+      SELECT ( nTArea )
+      closeret
+   ENDIF
+
+   // snimi parametre
+   set_metric( "export_dbf_konverzija", my_user(), cKonverzija )
+   set_metric( "export_dbf_launcher", my_user(), cLauncher )
+
+   SELECT ( nTArea )
+
+   RETURN cLauncher

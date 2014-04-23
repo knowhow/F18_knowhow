@@ -136,7 +136,7 @@ FUNCTION kalk_kuf( dD1, dD2, cSezona )
          nZaok2 := zaok2
 	
          // za jednu shema gen stavku formiraj kuf
-         gen_sg_item( cSezona )
+         gen_kalk_kuf_item( cSezona )
 		
       ENDIF
 	
@@ -146,10 +146,8 @@ FUNCTION kalk_kuf( dD1, dD2, cSezona )
    ENDDO
 
 
-   // ------------------------------------------
-   // ------------------------------------------
 
-STATIC FUNCTION  gen_sg_item( cSezona )
+STATIC FUNCTION gen_kalk_kuf_item( cSezona )
 
    LOCAL cPomPath
    LOCAL cPomSPath
@@ -179,56 +177,8 @@ STATIC FUNCTION  gen_sg_item( cSezona )
    LOCAL lSkip
    LOCAL nCijena
 
-   // otvori kalk tabelu
-   // ------------------------------------------
+   close_open_kalk_epdv_tables()
 
-
-   cPomPath := "KALK"
-   cPomSPath := ""
-
-   SELECT ( F_KALK )
-   cKalkPath := cPomPath
-   IF Used()
-      USE
-   ENDIF
-   my_use ( cPomPath )
-
-   SELECT F_PARTN
-   IF Used()
-      USE
-   ENDIF
-   my_use ( "PARTN" )
-   SET ORDER TO TAG "ID"
-	
-   SELECT F_ROBA
-   IF Used()
-      USE
-   ENDIF
-   my_use ( "ROBA" )
-   SET ORDER TO TAG "ID"
-
-   SELECT F_TARIFA
-   IF Used()
-      USE
-   ENDIF
-   my_use ( "TARIFA" )
-   SET ORDER TO TAG "ID"
-
-   SELECT F_SIFK
-   IF Used()
-      USE
-   ENDIF
-   my_use ( "SIFK" )
-   SET ORDER TO TAG "ID"
-
-   SELECT F_SIFV
-   IF Used()
-      USE
-   ENDIF
-   my_use ( "SIFV" )
-   SET ORDER TO TAG "ID"
-
-	
    SELECT KALK
    PRIVATE cFilter := ""
 
@@ -245,9 +195,6 @@ STATIC FUNCTION  gen_sg_item( cSezona )
       cFilter +=  ".and. " + cKtoFilter
    ENDIF
 
-
-
-   // "1","IdFirma+idtipdok+brdok+rbr+podbr"
    SET ORDER TO TAG "1"
    SET FILTER TO &cFilter
 
@@ -257,11 +204,8 @@ STATIC FUNCTION  gen_sg_item( cSezona )
    nCount := 0
    DO WHILE !Eof()
 
-      // napuni P_KUF i setuj mem vars
-      // ----------------------------------------------
       SELECT p_kuf
       Scatter()
-      // ----------------------------------------------
 	
       SELECT KALK
 

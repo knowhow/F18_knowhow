@@ -12,6 +12,19 @@
 
 #include "epdv.ch"
 
+
+FUNCTION close_open_kuf_kif_sif()
+
+   O_PARTN
+   O_ROBA
+   O_TARIFA
+   O_SIFK
+   O_SIFV
+
+   RETURN
+
+
+
 // -------------------------------------------
 // sezonski direktorij
 // -------------------------------------------

@@ -83,8 +83,9 @@ FUNCTION fin_gen_psuban_stampa_naloga( lAuto, dDatNal )
          f18_start_print( NIL, @_print_opt )
       ENDIF
 
+      altd()
       fin_nalog( "1", lAuto, dDatNal, @oNalog )
-      oNalozi:addStavka( oNalog )
+      oNalozi:addNalog( oNalog )
 
       IF !lAuto
          PushWa()

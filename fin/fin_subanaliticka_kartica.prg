@@ -53,7 +53,6 @@ FUNCTION SubKart( lOtvst )
    PRIVATE picBHD := FormPicL( gPicBHD, 16 )
    PRIVATE picDEM := FormPicL( gPicDEM, 12 )
 
-   o_kart_tbl()
 
    PRIVATE cSazeta := "N"
    PRIVATE cK14 := "1"
@@ -107,20 +106,25 @@ FUNCTION SubKart( lOtvst )
    PRIVATE cRasclaniti := "N"
    PRIVATE cIdVN := Space( 40 )
 
-   cBoxName := "SUBANALITICKA KARTICA"
+   cBoxName := "SUBANALITIČKA KARTICA"
 
    IF fOtvSt
       cBoxName += " - OTVORENE STAVKE"
    ENDIF
 
    Box( "#" + cBoxName, 23, 65 )
-   SET CURSOR ON
-   @ m_x + 2, m_y + 2 SAY "BEZ/SA kumulativnim prometom  (1/2):" GET cKumul
-   @ m_x + 3, m_y + 2 SAY "BEZ/SA prethodnim prometom (1/2):" GET cPredh
-   @ m_x + 4, m_y + 2 SAY "Brza kartica (D/N)" GET cBrza PICT "@!" VALID cBrza $ "DN"
-   @ m_x + 4, Col() + 2 SAY8 "Sažeta kartica (bez opisa) D/N" GET cSazeta  PICT "@!" VALID cSazeta $ "DN"
+
+    SET CURSOR ON
+    @ m_x + 2, m_y + 2 SAY "BEZ/SA kumulativnim prometom  (1/2):" GET cKumul
+    @ m_x + 3, m_y + 2 SAY "BEZ/SA prethodnim prometom (1/2):" GET cPredh
+    @ m_x + 4, m_y + 2 SAY "Brza kartica (D/N)" GET cBrza PICT "@!" VALID cBrza $ "DN"
+    @ m_x + 4, Col() + 2 SAY8 "Sažeta kartica (bez opisa) D/N" GET cSazeta  PICT "@!" VALID cSazeta $ "DN"
    READ
+
    DO WHILE .T.
+
+      close_open_kartica_tbl()
+
       IF gDUFRJ == "D"
          cIdFirma := PadR( gFirma + ";", 30 )
          @ m_x + 5, m_y + 2 SAY "Firma: " GET cIdFirma PICT "@!S20"
@@ -129,10 +133,11 @@ FUNCTION SubKart( lOtvst )
             @ m_x + 5, m_y + 2 SAY "Firma "
             ?? gFirma, "-", gNFirma
          ELSE
-            @ m_x + 5, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+            @ m_x + 5, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. P_Firma( @cIdFirma ), cIdfirma := Left( cIdFirma, 2 ), .T. }
          ENDIF
       ENDIF
-      IF cBrza = "D"
+
+      IF cBrza == "D"
          qqKonto := PadR( qqKonto, 7 )
          qqPartner := PadR( qqPartner, Len( partn->id ) )
          @ m_x + 6, m_y + 2 SAY "Konto  " GET qqKonto  VALID P_KontoFin( @qqKonto )
@@ -143,9 +148,11 @@ FUNCTION SubKart( lOtvst )
          @ m_x + 6, m_y + 2 SAY "Konto  " GET qqKonto  PICTURE "@!S50"
          @ m_x + 7, m_y + 2 SAY "Partner" GET qqPartner PICTURE "@!S50"
       ENDIF
+
       @ m_x + 8, m_y + 2 SAY "Datum dokumenta od:" GET dDatod
       @ m_x + 8, Col() + 2 SAY "do" GET dDatDo   VALID dDatOd <= dDatDo
       @ m_x + 10, m_y + 2 SAY "Uslov za vrstu naloga (prazno-sve)" GET cIdVN PICT "@!S20"
+
       IF gVar1 == "0"
          @ m_x + 11, m_y + 2 SAY "Kartica za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + "/" + AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() ) + " (1/2/3)"  GET cDinDem VALID cDinDem $ "123"
       ELSE
@@ -191,10 +198,12 @@ FUNCTION SubKart( lOtvst )
       ENDIF
 	
       aUsl3 := parsiraj( cIdVN, "IDVN", "C" )
+
       IF gDUFRJ == "D"
          aUsl4 := Parsiraj( cIdFirma, "IdFirma" )
          aUsl5 := Parsiraj( cIdRJ, "IdRj" )
       ENDIF
+
       aBV := Parsiraj( qqBrDok, "UPPER(BRDOK)", "C" )
       aNK := Parsiraj( qqNazKonta, "UPPER(naz)", "C" )
 
@@ -212,6 +221,7 @@ FUNCTION SubKart( lOtvst )
             EXIT
          ENDIF
       ENDIF
+
    ENDDO
    BoxC()
 
@@ -280,8 +290,8 @@ FUNCTION SubKart( lOtvst )
 
    lVrsteP := .F.
 
-   o_kart_tbl()
-
+   close_open_kartica_tbl()
+   
    IF _fakt_params[ "fakt_vrste_placanja" ]
       lVrsteP := .T.
       O_VRSTEP
@@ -1218,7 +1228,7 @@ FUNCTION Prelomi( nDugX, nPotX )
 
    RETURN
 
-STATIC FUNCTION o_kart_tbl()
+STATIC FUNCTION close_open_kartica_tbl()
 
    my_close_all_dbf()
 

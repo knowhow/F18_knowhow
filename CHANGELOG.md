@@ -1,3 +1,7 @@
+1.7.61  2014-04-24, hernad
+
+  - F18, my_use ne može otvoriti tabelu nakon pakovanja - bugfix
+ 
 1.7.60  2014-04-23, vsasa
 
   - FIN, štampa naloga

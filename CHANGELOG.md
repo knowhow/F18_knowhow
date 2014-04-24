@@ -1,3 +1,7 @@
+1.7.63  2014-04-24, hernad
+
+  - FIN, problem subanalitičke kartice i my_use
+ 
 1.7.62  2014-04-24, hernad
 
   - F18, my_use ne može otvoriti tabelu

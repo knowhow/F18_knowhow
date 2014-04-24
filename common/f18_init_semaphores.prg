@@ -93,10 +93,11 @@ FUNCTION refresh_me( a_dbf_rec, lSilent, lFromMyUse )
    RETURN .T.
 
 
+
 STATIC FUNCTION dbf_open_temp( a_dbf_rec, cnt, del )
 
    SELECT ( a_dbf_rec[ "wa" ] )
-   my_use_temp( a_dbf_rec[ "alias" ], my_home() + a_dbf_rec[ "table" ], .F., .F. )
+   my_use_temp( a_dbf_rec[ "alias" ], my_home() + a_dbf_rec[ "table" ], .F., .F. ) // new_area = .F. , eksluzivno = .F.
 
    SET DELETED OFF
 

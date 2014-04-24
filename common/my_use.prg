@@ -68,10 +68,11 @@ FUNCTION my_use_temp( alias, table, new_area, excl )
       new_area := .F.
    ENDIF
 
-   IF table == NIL
-      _tmp := alias
-   ELSE
+   // prvo pokušati iskoristiti alias
+   IF alias == NIL
       _tmp := table
+   ELSE
+      _tmp := alias
    ENDIF
 
    BEGIN SEQUENCE WITH { |err| Break( err ) } 

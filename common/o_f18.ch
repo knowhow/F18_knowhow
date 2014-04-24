@@ -244,6 +244,9 @@
 
 // modul LD
 #xcommand O_RADN    => select (F_RADN)    ;  my_use ("radn")     ; set order to tag "1"
+#xcommand O_RADN_NOT_USED  => select (F_RADN) ;  IF !USED(); my_use( "radn" ); ENDIF  ; set order to tag "1"
+
+#xcommand O_RADN_NOT    => select (F_RADN)    ;  my_use ("radn")     ; set order to tag "1"
 #xcommand O__RADN   => select (F__RADN)   ;  my_use ("_radn")
 #xcommand O_TPRSIHT => select (F_TPRSIHT) ;  my_use ("tprsiht")  ; set order to tag "ID"
 #xcommand O_NORSIHT => select (F_NORSIHT) ;  my_use ("norsiht")  ; set order to tag "ID"

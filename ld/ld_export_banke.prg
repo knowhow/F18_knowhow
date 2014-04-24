@@ -864,7 +864,7 @@ FUNCTION ld_export_banke()
    AAdd( _opcexe, {|| ld_export_txt_banka()  } )
    AAdd( _opc, "2. postavke formula exporta   " )
    AAdd( _opcexe, {|| ld_export_txt_setup()  } )
-   AAdd( _opc, "3. dupliciranje podesenja eksporta   " )
+   AAdd( _opc, "3. dupliciranje podešenja eksporta   " )
    AAdd( _opcexe, {|| LDExportTxt():New():export_setup_duplicate()  } )
 
    f18_menu( "el", .F., _izbor, _opc, _opcexe )

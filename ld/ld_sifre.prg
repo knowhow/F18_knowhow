@@ -19,15 +19,20 @@ STATIC __filter_radn := .F.
 // -------------------------
 FUNCTION P_Radn( cId, dx, dy )
 
-   LOCAL i
+   LOCAL i, lRet
+
+
    PRIVATE imekol
    PRIVATE kol
    PRIVATE cFooter := ""
    PRIVATE lPInfo := .F.
-
    IF PCount() = 0
       lPInfo := .T.
    ENDIF
+
+   PushWa()
+   O_RADN_NOT_USED
+
 
    // filterisanje tabele radnika
    _radn_filter( .T. )
@@ -131,11 +136,11 @@ FUNCTION P_Radn( cId, dx, dy )
       ENDIF
    NEXT
 
-   RETURN PostojiSifra( F_RADN, 1, MAXROWS() -15, MAXCOLS() -15, Lokal( "Lista radnika" ) + Space( 5 ) + "<S> filter radnika on/off", ;
-      @cId, dx, dy, ;
-      {| Ch| RadBl( Ch ) },,,,, { "ID" } )
+   lRet := PostojiSifra( F_RADN, 1, MAXROWS() - 15, MAXCOLS() - 15, Lokal( "Lista radnika" ) + Space( 5 ) + "<S> filter radnika on/off", @cId, dx, dy, {| Ch| RadBl( Ch ) },,,,, { "ID" } )
 
+   PopWa()
 
+   RETURN lRet
 
 
 // ------------------------------------------

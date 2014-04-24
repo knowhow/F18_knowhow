@@ -110,10 +110,10 @@
 #xcommand CLOSERET       => my_close_all_dbf(); return
 
 
-#xcommand ESC_BCR   =>  if lastkey() == K_ESC;
-                         ; my_close_all_dbf()        ;
-                         ; BoxC()           ;
-                         ;return            ;
+#xcommand ESC_BCR   =>  if LastKey() == K_ESC     ;
+                         ; my_close_all_dbf()     ;
+                         ; BoxC()                 ;
+                         ;return .F.              ;
                          ;endif
 
 

@@ -697,7 +697,7 @@ FUNCTION P_LD_RJ( cId, dx, dy )
 
    PushWa()
 
-   O_LD_RJ
+   O_LD_RJ_NOT_USED
 
    AAdd( ImeKol, { PadR( "Id", 2 ),      {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } } )
    AAdd( ImeKol, { PadR( "Naziv", 35 ), {||  naz }, "naz" } )

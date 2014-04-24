@@ -246,7 +246,9 @@
 #xcommand O_RADN    => select (F_RADN)    ;  my_use ("radn")     ; set order to tag "1"
 #xcommand O_RADN_NOT_USED  => select (F_RADN) ;  IF !USED(); my_use( "radn" ); ENDIF  ; set order to tag "1"
 
-#xcommand O_RADN_NOT    => select (F_RADN)    ;  my_use ("radn")     ; set order to tag "1"
+#xcommand O_LD_RJ   => select (F_LD_RJ)   ;  my_use ("ld_rj")    ; set order to tag "ID"
+#xcommand O_LD_RJ_NOT_USED   => select (F_LD_RJ)   ; IF !Used();  my_use ("ld_rj") ; ENDIF;   ; set order to tag "ID"
+
 #xcommand O__RADN   => select (F__RADN)   ;  my_use ("_radn")
 #xcommand O_TPRSIHT => select (F_TPRSIHT) ;  my_use ("tprsiht")  ; set order to tag "ID"
 #xcommand O_NORSIHT => select (F_NORSIHT) ;  my_use ("norsiht")  ; set order to tag "ID"
@@ -263,7 +265,7 @@
 #xcommand O_REKLD0  => select (F_REKLD)   ;  my_usex ("rekld")
 #xcommand O_REKLD   => select (F_REKLD)   ;  my_usex ("rekld")   ; set order to tag "1"
 #xcommand O_REKLDP  => select (F_REKLDP)  ;  my_usex ("rekldp")  ; set order to tag "1"
-#xcommand O_LD_RJ   => select (F_LD_RJ)   ;  my_use ("ld_rj")    ; set order to tag "ID"
+
 #xcommand O_KBENEF  => select (F_KBENEF)  ;  my_use ("kbenef")   ; set order to tag "ID"
 #xcommand O_POR     => select (F_POR)     ;  my_use ("por")      ; set order to tag "ID"
 #xcommand O_DOPR    => select (F_DOPR)    ;  my_use ("dopr")     ; set order to tag "ID"

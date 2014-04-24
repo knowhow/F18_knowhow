@@ -13,8 +13,7 @@
 
 STATIC __f18_dbfs := nil
 
-// -------------------------------
-// -------------------------------
+
 FUNCTION set_a_dbfs()
 
    LOCAL _dbf_fields, _sql_order
@@ -102,11 +101,10 @@ FUNCTION set_a_dbf_temp( table, alias, wa )
    RETURN .T.
 
 
-// ---------------------------------------------------------
-// ---------------------------------------------------------
 FUNCTION set_a_sql_sifarnik( dbf_table, alias, wa, rec )
 
    set_a_dbf_sifarnik( dbf_table, alias, wa, rec, .T. )
+
 
 FUNCTION set_a_dbf_sifarnik( dbf_table, alias, wa, rec, lSql )
 
@@ -190,10 +188,9 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
 
    IF _dbf_tbl == "x"
       _msg := "dbf alias " + tbl + " ne postoji u a_dbf_rec ?!"
-      Alert( _msg )
       RaiseError( _msg )
-      QUIT_1
    ENDIF
+
    IF hb_HHasKey( __f18_dbfs, _dbf_tbl )
       // preferirani set parametara
       _rec := __f18_dbfs[ _dbf_tbl ]

@@ -56,7 +56,7 @@ FUNCTION my_usex( alias, table, new_area, _rdd, semaphore_param )
 // ---------------------------------------------------------------
 FUNCTION my_use_temp( alias, table, new_area, excl )
 
-   LOCAL nCnt
+   LOCAL nCnt, nSelect, _a_dbf_rec, _tmp
    LOCAL _force_erase
    LOCAL _err
 
@@ -67,6 +67,33 @@ FUNCTION my_use_temp( alias, table, new_area, excl )
    IF new_area == NIL
       new_area := .F.
    ENDIF
+
+   IF table == NIL
+      _tmp := alias
+   ELSE
+      _tmp := table
+   ENDIF
+
+   BEGIN SEQUENCE WITH { |err| Break( err ) } 
+
+       // trebam samo osnovne parametre
+       _a_dbf_rec := get_a_dbf_rec( _tmp, .T. )
+       nSelect := SELECT( _a_dbf_rec[ "alias" ] )
+       IF nSelect > 0 .and. ( nSelect <> _a_dbf_rec["wa"] )
+          log_write( "WARNING: " + _a_dbf_rec[ "table" ] + " na WA=" + STR( nSelect ) + " ?", 3 )
+          SELECT( nSelect )
+          USE
+       ENDIF
+
+       // pozicioniraj se na WA rezervisanu za ovu tabelu
+       IF select_wa
+          SELECT ( _a_dbf_rec[ "wa" ] )
+       ENDIF
+
+    RECOVER
+         log_write( "ERROR: " + _tmp + " nema a_dbf_rec !", 2 )
+    END SEQUENCE
+
 
    IF Used()
       USE
@@ -132,7 +159,6 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
    IF table == NIL
       _tmp := alias
    ELSE
-      // uvijek atribute utvrdjujemo prema table atributu
       _tmp := table
    ENDIF
 

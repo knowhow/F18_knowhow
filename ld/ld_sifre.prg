@@ -691,10 +691,13 @@ FUNCTION Tpr2Bl( Ch )
 // -----------------------------------------------
 FUNCTION P_LD_RJ( cId, dx, dy )
 
+   LOCAL lRet
    PRIVATE imekol := {}
    PRIVATE kol := {}
 
-   O_LD_RJ
+   PushWa()
+
+   O_LD_RJ_NOT_USED
 
    AAdd( ImeKol, { PadR( "Id", 2 ),      {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } } )
    AAdd( ImeKol, { PadR( "Naziv", 35 ), {||  naz }, "naz" } )
@@ -710,7 +713,11 @@ FUNCTION P_LD_RJ( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   RETURN PostojiSifra( F_LD_RJ, 1, MAXROWS() -15, 60, Lokal( "Lista radnih jedinica" ), @cId, dx, dy )
+   lRet := PostojiSifra( F_LD_RJ, 1, MAXROWS() -15, 60, Lokal( "Lista radnih jedinica" ), @cId, dx, dy )
+
+   PopWa()
+
+   RETURN lRet
 
 
 

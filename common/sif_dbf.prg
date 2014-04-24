@@ -59,7 +59,7 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
 
    SELECT ( nDbf )
 
-   IF rddName() ==  "SQLMIX"
+   IF USED() .AND. (rddName() ==  "SQLMIX")
 
       PopSifV()
       PopWa()

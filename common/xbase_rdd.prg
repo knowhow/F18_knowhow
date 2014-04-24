@@ -99,7 +99,7 @@ FUNCTION index_tag_num( name )
 */
 FUNCTION my_flock()
 
-   IF rddName() != "SQLMIX"
+   IF USED() .AND.  ( rddName() != "SQLMIX" )
       RETURN FLock()
    ELSE
       RETURN .T.
@@ -107,7 +107,7 @@ FUNCTION my_flock()
 
 FUNCTION my_rlock()
 
-   IF rddName() != "SQLMIX"
+   IF USED() .AND. ( rddName() != "SQLMIX" )
       RETURN RLock()
    ELSE
       RETURN .T.
@@ -115,7 +115,7 @@ FUNCTION my_rlock()
 
 FUNCTION my_unlock()
 
-   IF rddName() != "SQLMIX"
+   IF USED() .AND. ( rddName() != "SQLMIX" )
       RETURN dbUnlock()
    ELSE
       RETURN .T.

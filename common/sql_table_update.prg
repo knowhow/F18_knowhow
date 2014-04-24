@@ -39,7 +39,7 @@ FUNCTION sql_table_update( table, op, record, where_str, silent )
          table := Alias()
       ENDIF
 
-      IF rddName() == "SQLMIX"
+      IF USED() .AND. ( rddName() == "SQLMIX" )
            // u sql tabeli su utf enkodirani stringovi
            _sql_dbf := .T.
       ENDIF

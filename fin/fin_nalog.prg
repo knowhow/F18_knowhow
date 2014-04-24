@@ -154,7 +154,8 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
 
    GO TOP
 
-   EOF CRET
+   
+   EOF CRET .F. 
 
 
    IF lAuto

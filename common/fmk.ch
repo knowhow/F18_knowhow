@@ -193,27 +193,27 @@
 #command ENDPRINT => f18_end_print(NIL, __print_opt)
 
 #command EOF CRET <x> =>  if EofFndret(.T., .T.)       ;
-                          ;return <x>                 ;
+                          ;return <x>                  ;
                           ;endif
 
-#command EOF CRET     =>  if EofFndret(.T., .T.)       ;
-                          ;return                     ;
+#command EOF CRET     =>  if EofFndret(.T., .T.)         ;
+                          ;return .F.                     ;
                           ;endif
 
 #command EOF RET <x> =>   if EofFndret(.T., .F.)    ;
                           ; return <x>               ;
                           ;endif
 
-#command EOF RET     =>   if EofFndret(.T., .F.)      ;
-                          ;    return                 ;
+#command EOF RET     =>   if EofFndret(.T., .F.)          ;
+                          ;    return .F.                 ;
                           ;endif
 
 #command NFOUND CRET <x> =>  if EofFndret(.F., .T.)      ;
                              ;    return <x>             ;
                              ;endif
 
-#command NFOUND CRET     =>  if EofFndret(.F., .T.)      ;
-                             ;   return                  ;
+#command NFOUND CRET     =>  if EofFndret(.F., .T.)        ;
+                             ;   return .F.                ;
                              ;endif
 
 #command NFOUND RET <x> =>  if EofFndret(.F., .F.)       ;
@@ -221,7 +221,7 @@
                             ;endif
 
 #command NFOUND RET     =>  if EofFndret(.F., .F.)       ;
-                            ;   return                  ;
+                            ;   return  .F.              ;
                             ;endif
 
 #define SLASH  HB_OSPATHSEPARATOR()

@@ -1623,7 +1623,7 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
          _rec[ "idkonto" ] := _tek_dok[ "idkonto" ]
          _rec[ "idkonto2" ] := _tek_dok[ "idkonto2" ]
          _rec[ "pkonto" ] := _tek_dok[ "pkonto" ]
-         _rec[ "mkonot" ] := _tek_dok[ "mkonto" ]
+         _rec[ "mkonto" ] := _tek_dok[ "mkonto" ]
       ENDIF
 
       dbf_update_rec( _rec )

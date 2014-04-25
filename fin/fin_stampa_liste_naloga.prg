@@ -294,14 +294,14 @@ FUNCTION DnevnikNaloga()
 
    cMjGod := Str( Month( dDatNal ), 2 ) + Str( Year( dDatNal ), 4 )
 
-   fin_nalog_zaglavlje()
+   fin_nalog_zaglavlje( dDatNal )
 
    nTSDugBHD := nTSPotBHD := nTSDugDEM := nTSPotDEM := 0   // tekuca strana
 
    DO WHILE !Eof()
 
       IF PRow() < 6  // nije odstampano zaglavlje
-            fin_nalog_zaglavlje()
+            fin_nalog_zaglavlje( dDatNal )
       ENDIF
 
       cIdFirma := IDFIRMA
@@ -313,7 +313,7 @@ FUNCTION DnevnikNaloga()
          // završi stranu
          PrenosDNal()
          // stampaj zaglavlje (nova stranica)
-         fin_nalog_zaglavlje()
+         fin_nalog_zaglavlje( dDatNal )
       ENDIF
 
       cMjGod := Str( Month( dDatNal ), 2 ) + Str( Year( dDatNal ), 4 )

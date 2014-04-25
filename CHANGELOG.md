@@ -1,3 +1,9 @@
+1.7.64  2014-04-25, vsasa
+
+  - KALK, promjena cijena, setovanje cijene u šifrarnik - bugfix
+  - FAKT, alt+P iz pripreme vraćeno
+  - KALK, gTopsDest, čitanje parametra bugfix
+
 1.7.63  2014-04-24, hernad
 
   - FIN, problem subanalitičke kartice i my_use

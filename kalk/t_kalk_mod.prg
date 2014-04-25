@@ -237,7 +237,7 @@ METHOD setGVars()
    // Koristim TOPS - 0 - ne prenosi se podaci,"1 " - prod mjes 1
    PUBLIC gFakt := "0 "
    // Koristim FAKT - 0 - ne prenosi se podaci,"1 " - prod mjes 1
-   PUBLIC gTopsDEST := Space( 300 )
+   PUBLIC gTopsDEST := ""
    PUBLIC gSetForm := "1"
 
    PUBLIC c10Var := "2"  // 1-stara varijanta izvjestaja, nova varijanta izvj
@@ -395,7 +395,7 @@ METHOD setGVars()
 
    gTops := fetch_metric( "kalk_prenos_pos", f18_user(), gTops )
    gFakt := fetch_metric( "kalk_prenos_fakt", f18_user(), gFakt )
-   gTopsDest := fetch_metric( "kalk_destinacija_topska", f18_user(), gTopsDest )
+   gTopsDest := PADR( fetch_metric( "kalk_destinacija_topska", f18_user(), gTopsDest ), 100 )
    gMultiPM := fetch_metric( "kalk_tops_prenos_vise_prodajnih_mjesta", f18_user(), gMultiPM )
    gMPCPomoc := fetch_metric( "kalk_pomoc_sa_mpc", nil, gMPCPomoc )
    gKolicFakt := fetch_metric( "kalk_kolicina_kod_nivelacije_fakt", nil, gKolicFakt )

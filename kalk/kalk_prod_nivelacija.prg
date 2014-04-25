@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -15,163 +15,161 @@
 // ---------------------------------------------------------------------
 // automatsko formiranje nivelacije na osnovu ulaznog dokumenta
 // ---------------------------------------------------------------------
-function Niv_11()
-local _sufix, _rec
+FUNCTION Niv_11()
 
-O_TARIFA
-O_KONCIJ
-O_KALK_PRIPR2
-O_KALK_PRIPR
-O_KALK_DOKS
-O_KALK
-O_SIFK
-O_SIFV
-O_ROBA
+   LOCAL _sufix, _rec
 
-select kalk_pripr
-go top
+   O_TARIFA
+   O_KONCIJ
+   O_KALK_PRIPR2
+   O_KALK_PRIPR
+   O_KALK_DOKS
+   O_KALK
+   O_SIFK
+   O_SIFV
+   O_ROBA
 
-private cIdFirma := field->idfirma
-private cIdVD := field->idvd
-private cBrDok := field->brdok
+   SELECT kalk_pripr
+   GO TOP
 
-if !( cIdvd $ "11#81" ) .and. !EMPTY( gMetodaNC )
-	my_close_all_dbf()
-	return
-endif
+   PRIVATE cIdFirma := field->idfirma
+   PRIVATE cIdVD := field->idvd
+   PRIVATE cBrDok := field->brdok
 
-private cBrNiv := "0"
+   IF !( cIdvd $ "11#81" ) .AND. !Empty( gMetodaNC )
+      my_close_all_dbf()
+      RETURN
+   ENDIF
 
-select kalk
-seek cIdFirma + "19" + CHR(254)
-skip -1
+   PRIVATE cBrNiv := "0"
 
-if idvd<>"19"
-     cBrNiv := space(8)
-else
-     cBrNiv := brdok
-endif
-                
-_sufix := SufBrKalk( kalk_pripr->idkonto )
-select kalk_pripr
+   SELECT kalk
+   SEEK cIdFirma + "19" + Chr( 254 )
+   SKIP -1
 
-cBrNiv := SljBrKalk( "19", gFirma, _sufix )
-// cBrNiv := UBrojDok(val(left(cBrNiv,5))+1,5,right(cBrNiv,3))
+   IF idvd <> "19"
+      cBrNiv := Space( 8 )
+   ELSE
+      cBrNiv := brdok
+   ENDIF
 
-select kalk_pripr
-go top
-private nRBr := 0
-cPromCj := "D"
-fNivelacija := .f.
+   _sufix := SufBrKalk( kalk_pripr->idkonto )
+   SELECT kalk_pripr
 
-do while !EOF() .and. cIdFirma == idfirma .and. cIdvd == idvd .and. cBrdok == brdok
+   cBrNiv := SljBrKalk( "19", gFirma, _sufix )
+   // cBrNiv := UBrojDok(val(left(cBrNiv,5))+1,5,right(cBrNiv,3))
 
-    _rec := dbf_get_rec()
+   SELECT kalk_pripr
+   GO TOP
+   PRIVATE nRBr := 0
+   cPromCj := "D"
+   fNivelacija := .F.
 
-    scatter()
+   DO WHILE !Eof() .AND. cIdFirma == idfirma .AND. cIdvd == idvd .AND. cBrdok == brdok
 
-  	select koncij
-	seek TRIM( _rec["idkonto"] )
+      _rec := dbf_get_rec()
 
-  	select roba
-	hseek _rec["idroba"]
+      scatter()
 
-  	select tarifa
-	hseek roba->idtarifa
+      SELECT koncij
+      SEEK Trim( _rec[ "idkonto" ] )
 
-  	select roba
+      SELECT roba
+      hseek _rec[ "idroba" ]
 
-  	private nMPC := 0
-  	nMPC := UzmiMPCSif()
-  
-    if gCijene = "2"
-   		faktMPC( @nMPC, _rec["idfirma"] + _rec["pkonto"] + _rec["idroba"] )
-   		select kalk_pripr
-  	endif
+      SELECT tarifa
+      hseek roba->idtarifa
 
-  	if _rec["mpcsapp"] <> nMPC 
-        // izvrsiti nivelaciju
+      SELECT roba
 
-        if !fNivelacija   
+      PRIVATE nMPC := 0
+      nMPC := UzmiMPCSif()
+
+      IF gCijene = "2"
+         faktMPC( @nMPC, _rec[ "idfirma" ] + _rec[ "pkonto" ] + _rec[ "idroba" ] )
+         SELECT kalk_pripr
+      ENDIF
+
+      IF _rec[ "mpcsapp" ] <> nMPC
+         // izvrsiti nivelaciju
+
+         IF !fNivelacija
             // prva stavka za nivelaciju
-            cPromCj := Pitanje(,"Postoje promjene cijena. Staviti nove cijene u sifrarnik ?","D")
-        endif
-        fNivelacija:=.t.
+            cPromCj := Pitanje(, "Postoje promjene cijena. Staviti nove cijene u sifrarnik ?", "D" )
+         ENDIF
+         fNivelacija := .T.
 
-        private nKolZn := nKols := nc1 := nc2 := 0
-        private dDatNab := CTOD("")
+         PRIVATE nKolZn := nKols := nc1 := nc2 := 0
+         PRIVATE dDatNab := CToD( "" )
 
-        KalkNabP( _rec["idfirma"], _rec["idroba"], _rec["idkonto"], @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
-        
-        if dDatNab > _rec["datdok"]
-            Beep(1)
-            Msg( "Datum nabavke je " + DTOC( dDatNab ), 4 )
-            _rec["error"] := "1"
-        endif
+         KalkNabP( _rec[ "idfirma" ], _rec[ "idroba" ], _rec[ "idkonto" ], @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
 
-        select kalk_pripr2
-        //append blank
+         IF dDatNab > _rec[ "datdok" ]
+            Beep( 1 )
+            Msg( "Datum nabavke je " + DToC( dDatNab ), 4 )
+            _rec[ "error" ] := "1"
+         ENDIF
 
-        _rec["idpartner"] := ""
-        _rec["vpc"]:=0
-        _rec["gkolicina"] := 0
-        _rec["gkolicin2"] := 0
-        _rec["marza2"] := 0
-        _rec["tmarza2"] := "A"
-            
-        private cOsn := "2", nStCj := nNCJ := 0
+         SELECT kalk_pripr2
+         // append blank
 
-        nStCj := nMPC
+         _rec[ "idpartner" ] := ""
+         _rec[ "vpc" ] := 0
+         _rec[ "gkolicina" ] := 0
+         _rec[ "gkolicin2" ] := 0
+         _rec[ "marza2" ] := 0
+         _rec[ "tmarza2" ] := "A"
 
-        nNCJ := kalk_pripr->MPCSaPP
+         PRIVATE cOsn := "2", nStCj := nNCJ := 0
 
-        _rec["mpcsapp"] := nNCj - nStCj
-        _rec["mpc"] := 0
-        _rec["fcj"] := nStCj
+         nStCj := nMPC
 
-        if _rec["mpc"] <> 0
-            _rec["mpcsapp"] := (1 + tarifa->opp/100) * _rec["mpc"] * ( 1 + tarifa->ppp/100 )
-        else
-            _rec["mpc"] := _rec["mpcsapp"] / ( 1 + tarifa->opp/100) / ( 1 + tarifa->ppp/100 )
-        endif
+         nNCJ := kalk_pripr->MPCSaPP
 
-        if cPromCj == "D"
-            select koncij
-            seek TRIM( _rec["idkonto"] ) 
-            select roba
-            StaviMPCSif( _rec["fcj"] + _rec["mpcsapp"] ) 
-        endif
+         _rec[ "mpcsapp" ] := nNCj - nStCj
+         _rec[ "mpc" ] := 0
+         _rec[ "fcj" ] := nStCj
 
-        select kalk_pripr2
+         IF _rec[ "mpc" ] <> 0
+            _rec[ "mpcsapp" ] := ( 1 + tarifa->opp / 100 ) * _rec[ "mpc" ] * ( 1 + tarifa->ppp / 100 )
+         ELSE
+            _rec[ "mpc" ] := _rec[ "mpcsapp" ] / ( 1 + tarifa->opp / 100 ) / ( 1 + tarifa->ppp / 100 )
+         ENDIF
 
-        _rec["pkonto"] := _rec["idkonto"]
-        _rec["pu_i"] := "3"     
-        _rec["mkonto"] := ""
-        _rec["mu_i"] := ""
+         IF cPromCj == "D"
+            SELECT koncij
+            SEEK Trim( _rec[ "idkonto" ] )
+            SELECT roba
+            StaviMPCSif( _rec[ "fcj" ] + _rec[ "mpcsapp" ] )
+         ENDIF
 
-        _rec["kolicina"] := nKolS
-        _rec["brdok"] := cBrniv
-        _rec["idvd"] := "19"
+         SELECT kalk_pripr2
 
-        _rec["tbanktr"] := "X"    
-        _rec["error"] := ""
-    
-        if ROUND( _rec["kolicina"], 3 ) <> 0
-            append ncnl
-            _rec["rbr"] := STR( ++ nRbr, 3 )
-            dbf_update_rec( _rec ) 
-        endif
-  
-    endif
+         _rec[ "pkonto" ] := _rec[ "idkonto" ]
+         _rec[ "pu_i" ] := "3"
+         _rec[ "mkonto" ] := ""
+         _rec[ "mu_i" ] := ""
 
-    select kalk_pripr
-    skip
+         _rec[ "kolicina" ] := nKolS
+         _rec[ "brdok" ] := cBrniv
+         _rec[ "idvd" ] := "19"
 
-enddo
+         _rec[ "tbanktr" ] := "X"
+         _rec[ "error" ] := ""
 
-my_close_all_dbf()
-return
+         IF Round( _rec[ "kolicina" ], 3 ) <> 0
+            APPEND ncnl
+            _rec[ "rbr" ] := Str( ++nRbr, 3 )
+            dbf_update_rec( _rec )
+         ENDIF
 
+      ENDIF
 
+      SELECT kalk_pripr
+      SKIP
 
+   ENDDO
 
+   my_close_all_dbf()
+
+   RETURN

@@ -13,8 +13,7 @@
 
 STATIC aMenuStack:={}    
 
-// -----------------------------------------------------
-// -----------------------------------------------------
+
 FUNCTION f18_menu( cIzp, main_menu, izbor, opc, opcexe )
 
    LOCAL cOdgovor
@@ -219,16 +218,19 @@ FUNCTION MENU( MenuId, Items, ItemNo, Inv, cHelpT, nPovratak, aFixKoo, nMaxVR )
    RETURN ItemNo
 
 
-// ------------------------------------
-// ------------------------------------
+
 FUNCTION Menu2( x1, y1, aNiz, nIzb )
 
    LOCAL xM := 0, yM := 0
 
-   xM := Len( aNiz ); AEval( aNiz, {| x| IF( Len( x ) > yM, yM := Len( x ), ) } )
+   xM := Len( aNiz )
+   AEval( aNiz, {| x| IF( Len( x ) > yM, yM := Len( x ), ) } )
+ 
    Prozor1( x1, y1, x1 + xM + 1, y1 + yM + 1,,,,,, 0 )
-   nIzb := ACHOICE2( x1 + 1, y1 + 1, x1 + xM, y1 + yM, aNiz,, "KorMenu2", nIzb )
-   Prozor0()
+  
+      nIzb := ACHOICE2( x1 + 1, y1 + 1, x1 + xM, y1 + yM, aNiz,, "KorMenu2", nIzb )
+ 
+    Prozor0()
 
    RETURN nIzb
 
@@ -245,3 +247,245 @@ FUNCTION KorMenu2
    ENDCASE
 
    RETURN nVrati
+
+
+
+FUNCTION AChoice2( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
+
+   LOCAL i
+   LOCAL ii
+   LOCAL nWidth
+   LOCAL nLen
+   LOCAL fExit
+   LOCAL fFirst
+   LOCAL nOldCurs
+   LOCAL cOldColor
+   LOCAL nOldItemNo
+   LOCAL cSavC
+   LOCAL nCtrlKeyVal := 0
+
+   IF nItemNo == 0
+      RETURN 0
+   ENDIF
+
+   fExit := .F.
+
+   nOldCurs := iif( SetCursor() == 0, 0, iif( ReadInsert(), 2, 1 ) )
+   cOldColor := SetColor()
+   SET CURSOR OFF
+
+   nWidth := y2 - y1
+   nLen := Len( Items )
+
+   @ x1, y1 CLEAR TO x2 - 1, y2
+
+   FOR i := 1 TO nLen
+      IF i == nItemNo
+         IF Left( cOldColor, 3 ) == Left( Normal, 3 )
+            SetColor( Invert )
+         ELSE
+            SetColor( Normal )
+         ENDIF
+      ELSE
+         SetColor( cOldColor )
+      ENDIF
+      @ x1 + i - 1, y1 SAY8 PadR( Items[ i ], nWidth )
+   NEXT
+
+   fFirst := .T.
+
+   DO WHILE .T.
+
+      SetColor( Invert )
+      SetColor( cOldColor )
+      IF !fFirst
+         SetColor( cOldColor )
+         @ x1 + nOldItemNo - 1, y1 SAY8 PadR( Items[ nOldItemNo ], nWidth )
+         IF Left( cOldColor, 3 ) == Left( Normal, 3 )
+            SetColor( Invert )
+         ELSE
+            SetColor( Normal )
+         ENDIF
+         @ x1 + nItemNo - 1, y1 SAY8 PadR( Items[ nItemNo ], nWidth )
+      ENDIF
+      fFirst := .F.
+
+      IF fExit
+         EXIT
+      ENDIF
+
+      nChar := WaitScrSav()
+      nOldItemNo := nItemNo
+      DO CASE
+      CASE nChar == K_ESC
+         nItemNo := 0
+         EXIT
+      CASE nChar == K_HOME
+         nItemNo := 1
+      CASE nChar == K_END
+         nItemNo := nLen
+      CASE nChar == K_DOWN
+         nItemNo++
+      CASE nChar == K_UP
+         nItemNo--
+      CASE nChar == K_ENTER
+         EXIT
+
+      CASE IsAlpha( Chr( nChar ) ) .OR. IsDigit( Chr( nChar ) )
+         FOR ii := 1 TO nLen
+            // cifra
+            IF IsDigit( Chr( nChar ) )
+               IF Chr( nChar ) $ Left( Items[ ii ], 3 )
+                  // provjera postojanja
+                  nItemNo := ii
+                  // broja u stavki samo
+                  // u prva 3 karaktera
+                  fexit := .T.
+               ENDIF
+            ELSE
+               // veliko slovo se trazi
+               // po citavom stringu
+               IF Upper( Chr( nChar ) ) $ Items[ ii ]
+                  nItemNo := ii
+                  fexit := .T.
+               ENDIF
+            ENDIF
+         NEXT
+
+      CASE nChar == K_CTRL_N
+         nCtrlKeyVal := 10000
+         EXIT
+      CASE nChar == K_F2
+         nCtrlKeyVal := 20000
+         EXIT
+      CASE nChar == K_CTRL_T
+         nCtrlKeyVal := 30000
+         EXIT
+      OTHERWISE
+
+         IF ValType( goModul ) == "O"
+            goModul:GProc( nChar )
+         ENDIF
+
+      ENDCASE
+
+      IF nItemNo > nLen
+         nItemNo--
+      ENDIF
+
+      IF nItemNo < 1
+         nItemNo++
+      ENDIF
+   ENDDO
+
+   SetCursor( iif( nOldCurs == 0, 0, iif( ReadInsert(), 2, 1 ) ) )
+   SetColor( cOldColor )
+
+   RETURN nItemNo + nCtrlKeyVal
+
+
+/*! \fn AChoice3(x1,y1,x2,y2,Items,f1,cFunc,nItemNo)
+ *  \brief AChoice za broj stavki > 16
+ *  \todo Ugasiti stari Achoice ??, ne trebaju nam dva
+ */
+
+FUNCTION AChoice3( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
+
+   LOCAL i, ii, nWidth, nLen, fExit, fFirst, nOldCurs, cOldColor, nOldItemNo, cSavC
+   LOCAL nGornja
+   LOCAL nVisina
+   LOCAL nCtrlKeyVal := 0
+
+   IF nItemNo == 0
+      RETURN nItemNo
+   ENDIF
+
+   fExit := .F.
+
+   nOldCurs := iif( SetCursor() == 0, 0, iif( ReadInsert(), 2, 1 ) )
+   cOldColor := SetColor()
+   SET CURSOR OFF
+
+   nWidth := y2 - y1
+   nLen := Len( Items )
+   nVisina := x2 - x1
+   nGornja := iif( nItemNo > nVisina, nItemNo - nVisina + 1, 1 )
+
+   @ x1, y1 CLEAR TO x2 - 1, y2
+
+   DO WHILE .T. // ovu liniju sam premjestio odozdo radi korektnog ispisa
+
+      IF nVisina < nLen
+         @   x2, y1 + Int( ( y2 - y1 ) / 2 ) SAY iif( nGornja == 1, " ^ ", iif( nItemNo == nLen, " v ", " v " ) )
+         @   x1 - 1, y1 + Int( ( y2 - y1 ) / 2 ) SAY iif( nGornja == 1, " v ", iif( nItemNo == nLen, " ^ ", " ^ " ) )
+      ENDIF
+
+      FOR i := nGornja TO nVisina + nGornja - 1
+         IF i == nItemNo
+            IF Left( cOldColor, 3 ) == Left( Normal, 3 );  SetColor( Invert ); else; SetColor( Normal ); ENDIF
+         ELSE
+            SetColor( cOldColor )
+         ENDIF
+         @ x1 + i - nGornja, y1 SAY8 PadR( Items[ i ], nWidth )
+      NEXT
+
+
+      SetColor( Invert )
+      SetColor( cOldColor )
+
+      IF fExit; exit; ENDIF
+
+      nChar := WaitScrSav()
+
+      nOldItemNo := nItemNo
+      DO CASE
+      CASE nChar == K_ESC
+         nItemNo := 0
+         EXIT
+      CASE nChar == K_HOME
+         nItemNo := 1
+      CASE nChar == K_END
+         nItemNo := nLen
+      CASE nChar == K_DOWN
+         nItemNo++
+      CASE nChar == K_UP
+         nItemNo--
+      CASE nChar == K_ENTER
+         EXIT
+      CASE IsAlpha( Chr( nChar ) ) .OR. IsDigit( Chr( nChar ) )
+         FOR ii := 1 TO nLen
+            IF IsDigit( Chr( nChar ) ) // cifra
+               IF Chr( nChar ) $ Left( Items[ ii ], 3 ) // provjera postojanja
+                  nItemNo := ii          // broja u stavki samo u prva 3 karaktera
+                  fexit := .T.
+               ENDIF
+            ELSE // veliko slovo se trazi po citavom stringu - promijenjeno
+               IF ( Items[ ii ] <> NIL ) .AND. Upper( Chr( nChar ) ) $ Left( Items[ ii ], 3 )
+                  nItemNo := ii
+                  fexit := .T.
+               ENDIF
+            ENDIF
+         NEXT
+
+      CASE nChar == K_CTRL_N
+         nCtrlKeyVal := 10000
+         EXIT
+      CASE nChar == K_F2
+         nCtrlKeyVal := 20000
+         EXIT
+      CASE nChar == K_CTRL_T
+         nCtrlKeyVal := 30000
+         EXIT
+      OTHERWISE
+         goModul:GProc( nChar )
+      ENDCASE
+      IF nItemNo > nLen; nItemNo--; ENDIF
+      IF nItemNo < 1; nItemNo++; ENDIF
+      nGornja := iif( nItemNo > nVisina, nItemNo - nVisina + 1, 1 )
+   ENDDO
+   SetCursor( iif( nOldCurs == 0, 0, iif( ReadInsert(), 2, 1 ) ) )
+   SetColor( cOldColor )
+
+   RETURN nItemNo + nCtrlKeyVal
+
+

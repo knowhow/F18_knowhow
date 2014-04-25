@@ -1,53 +1,54 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
+#include "fmk.ch"
 #include "set.ch"
 #include "inkey.ch"
 #include "getexit.ch"
 
-thread static  __get_list
+THREAD STATIC  __get_list
 
 #define K_UNDO          K_CTRL_U
 
 // state variables for active READ
-static Format
-static Updated := .f.
-static KillReadSC
-static BumpTop
-static BumpBot
-static LastExit
-static LastPos
-static ActiveGet
-static ReadProcName
-static ReadProcLine
+STATIC FORMAT
+STATIC Updated := .F.
+STATIC KillReadSC
+STATIC BumpTop
+STATIC BumpBot
+STATIC LastExit
+STATIC LastPos
+STATIC ActiveGet
+STATIC ReadProcName
+STATIC ReadProcLine
 
 
 // format of array used to preserve state variables
-#define GSV_KILLREAD		1
-#define GSV_BUMPTOP		2
-#define GSV_BUMPBOT		3
-#define GSV_LASTEXIT		4
-#define GSV_LASTPOS		5
-#define GSV_ACTIVEGET		6
-#define GSV_READVAR 		7
-#define GSV_READPROCNAME	8
-#define GSV_READPROCLINE	9
+#define GSV_KILLREAD  1
+#define GSV_BUMPTOP  2
+#define GSV_BUMPBOT  3
+#define GSV_LASTEXIT  4
+#define GSV_LASTPOS  5
+#define GSV_ACTIVEGET  6
+#define GSV_READVAR   7
+#define GSV_READPROCNAME 8
+#define GSV_READPROCLINE 9
 
-#define GSV_COUNT		9
+#define GSV_COUNT  9
 
 // Modifications
 #ifndef NOCHANGES
 
 // Time-out variable
-STATIC lTimedOut := .f.
+STATIC lTimedOut := .F.
 STATIC nTimeOut
 
 // GOTOGET and START AT get variable
@@ -59,773 +60,768 @@ STATIC nAtGet
 #endif
 
 /***
-*	ReadModal()
-*	Standard modal READ on an array of GETs.
+* ReadModal()
+* Standard modal READ on an array of GETs.
 */
 
-function ReadModSC( GetList, nTime, nStartAt )
+FUNCTION ReadModSC( GetList, nTime, nStartAt )
 
-local get
-local pos
-local savedGetSysVars
+   LOCAL GET
+   LOCAL pos
+   LOCAL savedGetSysVars
 
-nTimeOut:=IIF(nTime == NIL, 0, nTime)
-lTimedOut := .f.
-
-
-if ( ValType(Format) == "B" )
-	Eval(Format)
-endif
-
-if ( Empty(getList) )
-	// S87 compat.
-	SetPos( MaxRow()-1, 0 )
-	// NOTE
-	return (.f.)			
-endif
+   nTimeOut := iif( nTime == NIL, 0, nTime )
+   lTimedOut := .F.
 
 
-// preserve state vars
-savedGetSysVars := ClrGetSysVarSC()
+   IF ( ValType( Format ) == "B" )
+      Eval( Format )
+   ENDIF
 
-// set these for use in SET KEYs
-ReadProcName := ProcName(1)
-ReadProcLine := ProcLine(1)
-
-
-IF (nStartAt != NIL)
-	pos := nStartAt
-ELSE
-	// set initial GET to be read
-	pos := SettleSC( Getlist, 0 )
-
-ENDIF
-
-do while ( pos <> 0 )
+   IF ( Empty( getList ) )
+      // S87 compat.
+      SetPos( MaxRow() -1, 0 )
+      // NOTE
+      RETURN ( .F. )
+   ENDIF
 
 
-	// get next GET from list and post it as the active GET
-	get := GetList[pos]
-	PstActGetSc( get )
+   // preserve state vars
+   savedGetSysVars := ClrGetSysVarSC()
+
+   // set these for use in SET KEYs
+   ReadProcName := ProcName( 1 )
+   ReadProcLine := ProcLine( 1 )
 
 
-	// read the GET
-	if ( ValType( get:reader ) == "B" )
-		// use custom reader block
-		Eval( get:reader, get ) 		
-	else
+   IF ( nStartAt != NIL )
+      pos := nStartAt
+   ELSE
+      // set initial GET to be read
+      pos := SettleSC( Getlist, 0 )
+
+   ENDIF
+
+   DO WHILE ( pos <> 0 )
+
+
+      // get next GET from list and post it as the active GET
+      get := GetList[ pos ]
+      PstActGetSc( get )
+
+
+      // read the GET
+      IF ( ValType( get:reader ) == "B" )
+         // use custom reader block
+         Eval( get:reader, get )
+      ELSE
 		
-		GetReadSC( get )				
-	endif
+         GetReadSC( get )
+      ENDIF
 
 
-  	nAtGet := pos
+      nAtGet := pos
 
-      	// move to next GET based on exit condition
-	pos := SettleSC( GetList, pos )
+      // move to next GET based on exit condition
+      pos := SettleSC( GetList, pos )
 
-enddo
+   ENDDO
 
 
-// restore state vars
-RstGetSysVarSC(savedGetSysVars)
+   // restore state vars
+   RstGetSysVarSC( savedGetSysVars )
 
-// S87 compat.
-SetPos( MaxRow()-1, 0 )
+   // S87 compat.
+   SetPos( MaxRow() -1, 0 )
 
-return (Updated)
+   RETURN ( Updated )
 
 
 
 /***
-*	GetReadSC()
-*	Standard modal read of a single GET.
+* GetReadSC()
+* Standard modal read of a single GET.
 */
-procedure getReadSC(get)
+PROCEDURE getReadSC( get )
 		
-// read the GET if the WHEN condition is satisfied
-if ( GetPreValSC(get) )
+   // read the GET if the WHEN condition is satisfied
+   IF ( GetPreValSC( get ) )
 
-		// activate the GET for reading
-		get:SetFocus()
+      // activate the GET for reading
+      get:SetFocus()
 
 		
-		do while ( get:exitState == GE_NOEXIT )
+      DO WHILE ( get:exitState == GE_NOEXIT )
 			
 
-			// check for initial typeout (no editable positions)
-			if ( get:typeOut )
-				get:exitState := GE_ENTER
-			endif
+         // check for initial typeout (no editable positions)
+         IF ( get:typeOut )
+            get:exitState := GE_ENTER
+         ENDIF
 
-			// apply keystrokes until exit
-			do while ( get:exitState == GE_NOEXIT )
-				GetApplyKSC( get, MyInKeySC() )
-			enddo
+         // apply keystrokes until exit
+         DO WHILE ( get:exitState == GE_NOEXIT )
+            GetApplyKSC( get, MyInKeySC() )
+         ENDDO
 
-			// disallow exit if the VALID condition is not satisfied
-			if ( !GetPstValSC(get) )
-				get:exitState := GE_NOEXIT
-			endif
+         // disallow exit if the VALID condition is not satisfied
+         IF ( !GetPstValSC( get ) )
+            get:exitState := GE_NOEXIT
+         ENDIF
 
-		end
+      END
 
-		// de-activate the GET
-		get:KillFocus()
+      // de-activate the GET
+      get:KillFocus()
 
-endif
+   ENDIF
 
-return
+   RETURN
 
 
 
 /***
-*	GetApplyKSC()
-*	Apply a single Inkey() keystroke to a GET.
+* GetApplyKSC()
+* Apply a single Inkey() keystroke to a GET.
 *
-*	NOTE: GET must have focus.
+* NOTE: GET must have focus.
 */
-procedure GetApplyKSC(get, key)
+PROCEDURE GetApplyKSC( get, key )
 
-local cKey
-local bKeyBlock
+   LOCAL cKey
+   LOCAL bKeyBlock
+
+   // check for SET KEY first
+   IF ( ( bKeyBlock := SetKey( key ) ) <> NIL )
+
+      GetDoSetKSC( bKeyBlock, get )
+      RETURN         // NOTE
+
+   ENDIF
 
 
-// check for SET KEY first
-if ( (bKeyBlock := SetKey(key)) <> NIL )
-
-	GetDoSetKSC(bKeyBlock, get)
-	return									// NOTE
-
-endif
-
-
-do case
+   DO CASE
 
 	
-//
-// Time-out
-//
-CASE ( lTimedOut )
-	//MsgBeep("lTimedOut=True")
-	get:undo()
-	get:exitState := GE_ESCAPE
+      //
+      // Time-out
+      //
+   CASE ( lTimedOut )
+      // MsgBeep("lTimedOut=True")
+      get:undo()
+      get:exitState := GE_ESCAPE
 
-case (key == K_UP )
-	get:exitState := GE_UP
+   CASE ( key == K_UP )
+      get:exitState := GE_UP
 
-case (key == K_SH_TAB )
-	get:exitState := GE_UP
+   CASE ( key == K_SH_TAB )
+      get:exitState := GE_UP
 
-case (key == K_DOWN )
-	get:exitState := GE_DOWN
+   CASE ( key == K_DOWN )
+      get:exitState := GE_DOWN
 
-case (key == K_TAB )
-	get:exitState := GE_DOWN
+   CASE ( key == K_TAB )
+      get:exitState := GE_DOWN
 
-case (key == K_ENTER )
-	get:exitState := GE_ENTER
+   CASE ( key == K_ENTER )
+      get:exitState := GE_ENTER
 
-case (key == K_ESC )
+   CASE ( key == K_ESC )
 	
-	//MsgBeep("pritisnut ESCAPE")
-	if ( Set(_SET_ESCAPE) )
-		get:undo()
-		get:exitState := GE_ESCAPE
-	endif
+      // MsgBeep("pritisnut ESCAPE")
+      IF ( Set( _SET_ESCAPE ) )
+         get:undo()
+         get:exitState := GE_ESCAPE
+      ENDIF
 
-case ( key == K_PGUP )
-	get:exitState := GE_WRITE
+   CASE ( key == K_PGUP )
+      get:exitState := GE_WRITE
 
-case ( key == K_PGDN )
-	get:exitState := GE_WRITE
+   CASE ( key == K_PGDN )
+      get:exitState := GE_WRITE
 
-case ( key == K_CTRL_HOME )
-	get:exitState := GE_TOP
+   CASE ( key == K_CTRL_HOME )
+      get:exitState := GE_TOP
 
 
 #ifdef CTRL_END_SPECIAL
 
-	// both ^W and ^End go to the last GET
-	case (key == K_CTRL_END)
-		get:exitState := GE_BOTTOM
+      // both ^W and ^End go to the last GET
+   CASE ( key == K_CTRL_END )
+      get:exitState := GE_BOTTOM
 
 #else
 
-	// both ^W and ^End terminate the READ (the default)
-	case (key == K_CTRL_W)
-		get:exitState := GE_WRITE
+      // both ^W and ^End terminate the READ (the default)
+   CASE ( key == K_CTRL_W )
+      get:exitState := GE_WRITE
 
 #endif
 
 
-case (key == K_INS)
-	Set( _SET_INSERT, !Set(_SET_INSERT) )
-	ShowScoreboard()
+   CASE ( key == K_INS )
+      SET( _SET_INSERT, !Set( _SET_INSERT ) )
+      ShowScoreboard()
 
-case (key == K_UNDO)
-	get:Undo()
+   CASE ( key == K_UNDO )
+      get:Undo()
 
-case (key == K_HOME)
-	get:Home()
+   CASE ( key == K_HOME )
+      get:Home()
 
-case (key == K_END)
-	get:End()
+   CASE ( key == K_END )
+      get:End()
 
-case (key == K_RIGHT)
-	get:Right()
+   CASE ( key == K_RIGHT )
+      get:Right()
 
-case (key == K_LEFT)
-	get:Left()
+   CASE ( key == K_LEFT )
+      get:Left()
 
-case (key == K_CTRL_RIGHT)
-	get:WordRight()
+   CASE ( key == K_CTRL_RIGHT )
+      get:WordRight()
 
-case (key == K_CTRL_LEFT)
-	get:WordLeft()
+   CASE ( key == K_CTRL_LEFT )
+      get:WordLeft()
 
-case (key == K_BS)
-	get:BackSpace()
+   CASE ( key == K_BS )
+      get:BackSpace()
 
-case (key == K_DEL)
-	get:Delete()
+   CASE ( key == K_DEL )
+      get:Delete()
 
-case (key == K_CTRL_T)
-	get:DelWordRight()
+   CASE ( key == K_CTRL_T )
+      get:DelWordRight()
 
-case (key == K_CTRL_Y)
-	get:DelEnd()
+   CASE ( key == K_CTRL_Y )
+      get:DelEnd()
 
-case (key == K_CTRL_BS)
-	get:DelWordLeft()
+   CASE ( key == K_CTRL_BS )
+      get:DelWordLeft()
 
-otherwise
+   OTHERWISE
 
-if (key >= 32 .and. key <= 255)
+      IF ( key >= 32 .AND. key <= 255 )
 
-	cKey := Chr(key)
+         cKey := Chr( key )
 
-	if (get:type == "N" .and. (cKey == "." .or. cKey == ","))
-		get:ToDecPos()
+         IF ( get:type == "N" .AND. ( cKey == "." .OR. cKey == "," ) )
+            get:ToDecPos()
 
-	else
-		if ( Set(_SET_INSERT) )
-			get:Insert(cKey)
-		else
-			get:Overstrike(cKey)
-		endif
+         ELSE
+            IF ( Set( _SET_INSERT ) )
+               get:Insert( cKey )
+            ELSE
+               get:Overstrike( cKey )
+            ENDIF
 
-		if (get:typeOut .and. !Set(_SET_CONFIRM) )
-			if ( Set(_SET_BELL) )
-				?? Chr(7)
-			end
+            IF ( get:typeOut .AND. !Set( _SET_CONFIRM ) )
+               IF ( Set( _SET_BELL ) )
+                  ?? Chr( 7 )
+               END
 
-			get:exitState := GE_ENTER
-		endif
+               get:exitState := GE_ENTER
+            ENDIF
 
-	endif
+         ENDIF
 
-endif
+      ENDIF
 
-endcase
+   ENDCASE
 
-return
+   RETURN
 
 
 
 /***
-*	GetPreValidate()
-*	Test entry condition (WHEN clause) for a GET.
+* GetPreValidate()
+* Test entry condition (WHEN clause) for a GET.
 */
-function GetPreValSC(get)
+FUNCTION GetPreValSC( get )
 
-local saveUpdated
-local lWhen := .t.
+   LOCAL saveUpdated
+   LOCAL lWhen := .T.
+
+   IF ( get:preBlock <> NIL )
+
+      saveUpdated := Updated
+
+      lWhen := Eval( get:preBlock, get )
+
+      get:Display()
+
+      ShowScoreBoard()
+      Updated := saveUpdated
+
+   ENDIF
 
 
-if ( get:preBlock <> NIL )
+   IF ( KillReadSC )
+      // MsgBeep("KillreadSC=.t./1")
+      lWhen := .F.
+      get:exitState := GE_ESCAPE
+      // provokes ReadModal() exit
 
-	saveUpdated := Updated
+   ELSEIF ( !lWhen )
+      get:exitState := GE_WHEN
+      // indicates failure
 
-	lWhen := Eval(get:preBlock, get)
+   ELSE
+      get:exitState := GE_NOEXIT
+      // prepares for editing
 
-	get:Display()
+   ENDIF
 
-	ShowScoreBoard()
-	Updated := saveUpdated
-
-endif
-
-
-if (KillReadSC)
-		//MsgBeep("KillreadSC=.t./1")
-		lWhen := .f.
-		get:exitState := GE_ESCAPE		
-		// provokes ReadModal() exit
-
-elseif ( !lWhen )
-		get:exitState := GE_WHEN		
-		// indicates failure
-
-else
-		get:exitState := GE_NOEXIT		
-		// prepares for editing
-
-endif
-
-return (lWhen)
+   RETURN ( lWhen )
 
 
 
 /***
-*	GetPstValSC()
-*	Test exit condition (VALID clause) for a GET.
+* GetPstValSC()
+* Test exit condition (VALID clause) for a GET.
 *
-*	NOTE: bad dates are rejected in such a way as to preserve edit buffer.
+* NOTE: bad dates are rejected in such a way as to preserve edit buffer.
 */
-function GetPstValSC(get)
+FUNCTION GetPstValSC( get )
 
-local saveUpdated
-local changed, valid := .t.
+   LOCAL saveUpdated
+   LOCAL changed, valid := .T.
 
+   IF ( get:exitState == GE_ESCAPE )
+      RETURN ( .T. )
+      // NOTE
+   ENDIF
 
-if ( get:exitState == GE_ESCAPE )
-		return (.t.)					
-		// NOTE
-endif
-
-if ( get:BadDate() )
-		get:Home()
-		DateMsg()
-		ShowScoreboard()
-		return (.f.)					// NOTE
-endif
-
-
-// if editing occurred, assign the new value to the variable
-if ( get:changed )
-	get:Assign()
-	Updated := .t.
-endif
+   IF ( get:BadDate() )
+      get:Home()
+      DateMsg()
+      ShowScoreboard()
+      RETURN ( .F. )     // NOTE
+   ENDIF
 
 
-// reform edit buffer, set cursor to home position, redisplay
-get:Reset()
+   // if editing occurred, assign the new value to the variable
+   IF ( get:changed )
+      get:Assign()
+      Updated := .T.
+   ENDIF
 
 
-// check VALID condition if specified
-if ( get:postBlock <> NIL )
+   // reform edit buffer, set cursor to home position, redisplay
+   get:Reset()
 
-	saveUpdated := Updated
 
-	// S87 compat.
-	SetPos( get:row, get:col + Len(get:buffer) )
+   // check VALID condition if specified
+   IF ( get:postBlock <> NIL )
 
-	valid := Eval(get:postBlock, get)
+      saveUpdated := Updated
 
-	// reset compat. pos
-	SetPos( get:row, get:col )
+      // S87 compat.
+      SetPos( get:row, get:col + Len( get:buffer ) )
 
-	ShowScoreBoard()
-	get:UpdateBuffer()
+      valid := Eval( get:postBlock, get )
 
-	Updated := saveUpdated
+      // reset compat. pos
+      SetPos( get:row, get:col )
 
-	if (KillReadSC)
+      ShowScoreBoard()
+      get:UpdateBuffer()
+
+      Updated := saveUpdated
+
+      IF ( KillReadSC )
 		
-		//MsgBeep("KillreadSC=.t./2")
+         // MsgBeep("KillreadSC=.t./2")
 		
-		// provokes ReadModal() exit
-		get:exitState := GE_ESCAPE	
-		valid := .t.
-	end
+         // provokes ReadModal() exit
+         get:exitState := GE_ESCAPE
+         valid := .T.
+      END
 
-endif
+   ENDIF
 
-return (valid)
+   RETURN ( valid )
 
 
 
 
 /***
-*	GetDoSetKSC()
-*	Process SET KEY during editing.
+* GetDoSetKSC()
+* Process SET KEY during editing.
 */
-function GetDoSetKSC(keyBlock, get)
+FUNCTION GetDoSetKSC( keyBlock, get )
 
-local saveUpdated
+   LOCAL saveUpdated
 
-
-	// if editing has occurred, assign variable
-	if ( get:changed )
-		get:Assign()
-		Updated := .t.
-	end
-
-
-	saveUpdated := Updated
-
-	Eval(keyBlock, ReadProcName, ReadProcLine, ReadVar())
-
-	ShowScoreboard()
-	get:UpdateBuffer()
-
-	Updated := saveUpdated
+   // if editing has occurred, assign variable
+   IF ( get:changed )
+      get:Assign()
+      Updated := .T.
+   END
 
 
-	if (KillReadSC)
+   saveUpdated := Updated
+
+   Eval( keyBlock, ReadProcName, ReadProcLine, ReadVar() )
+
+   ShowScoreboard()
+   get:UpdateBuffer()
+
+   Updated := saveUpdated
+
+
+   IF ( KillReadSC )
 		
-		//MsgBeep("KillreadSC=.t. / 3")
-		get:exitState := GE_ESCAPE		// provokes ReadModal() exit
-	end
+      // MsgBeep("KillreadSC=.t. / 3")
+      get:exitState := GE_ESCAPE  // provokes ReadModal() exit
+   END
 
-return
+   RETURN
 
 
 
 /*
 *
-*	READ services
+* READ services
 *
 */
 
 
 /***
-*	SettleSC()
+* SettleSC()
 *
-*	Returns new position in array of Get objects, based on
+* Returns new position in array of Get objects, based on
 *
-*		- current position
-*		- exitState of Get object at current position
+*  - current position
+*  - exitState of Get object at current position
 *
-*	NOTE return value of 0 indicates termination of READ
-*	NOTE exitState of old Get is transferred to new Get
+* NOTE return value of 0 indicates termination of READ
+* NOTE exitState of old Get is transferred to new Get
 */
-static function SettleSC(GetList, pos)
+STATIC FUNCTION SettleSC( GetList, pos )
 
-local lExitState
+   LOCAL lExitState
 
-//MsgBeep(STR(Len(GetList)))
-
-
-if (pos == 0)
-	lExitState := GE_DOWN
-else
-	lExitState := GetList[pos]:exitState
-endif
+   // MsgBeep(STR(Len(GetList)))
 
 
-if (lExitState == GE_ESCAPE)
-	//MsgBeep("escape ...")
-	return 0
-endif
-
-if (lExitState == GE_WRITE )
-	//MsgBeep("pg_down")
-	return 0					
-endif
+   IF ( pos == 0 )
+      lExitState := GE_DOWN
+   ELSE
+      lExitState := GetList[ pos ]:exitState
+   ENDIF
 
 
-if ( lExitState <> GE_WHEN )
-	// reset state info
-	LastPos := pos
-	BumpTop := .f.
-	BumpBot := .f.
+   IF ( lExitState == GE_ESCAPE )
+      // MsgBeep("escape ...")
+      RETURN 0
+   ENDIF
 
-else
-	// re-use last exitState, do not disturb state info
-	lExitState := LastExit
+   IF ( lExitState == GE_WRITE )
+      // MsgBeep("pg_down")
+      RETURN 0
+   ENDIF
 
-endif
+
+   IF ( lExitState <> GE_WHEN )
+      // reset state info
+      LastPos := pos
+      BumpTop := .F.
+      BumpBot := .F.
+
+   ELSE
+      // re-use last exitState, do not disturb state info
+      lExitState := LastExit
+
+   ENDIF
 
 
 /***
-*	move
+* move
 */
-do case
-	case ( lExitState == GE_UP )
-		pos --
+   DO CASE
+   CASE ( lExitState == GE_UP )
+      pos --
 
-	case ( lExitState == GE_DOWN )
-		pos ++
+   CASE ( lExitState == GE_DOWN )
+      pos ++
 
-	case ( lExitState == GE_TOP )
-		pos := 1
-		BumpTop := .T.
-		exitState := GE_DOWN
+   CASE ( lExitState == GE_TOP )
+      pos := 1
+      BumpTop := .T.
+      exitState := GE_DOWN
 
-	case ( lExitState == GE_BOTTOM )
-		pos := Len(GetList)
-		BumpBot := .T.
-		lExitState := GE_UP
+   CASE ( lExitState == GE_BOTTOM )
+      pos := Len( GetList )
+      BumpBot := .T.
+      lExitState := GE_UP
 
-	case ( lExitState == GE_ENTER )
-		pos ++
+   CASE ( lExitState == GE_ENTER )
+      pos ++
 
-   CASE ( lExitState < 0 .AND. -lExitState <= LEN(GetList))
+   CASE ( lExitState < 0 .AND. -lExitState <= Len( GetList ) )
       pos := -lExitState
       lExitState := GE_NOEXIT
 
 
-endcase
+   ENDCASE
 
 
 /**
-	*	bounce
+ * bounce
 */
-if ( pos == 0 ) 						
-// bumped top
+   IF ( pos == 0 )
+      // bumped top
 
-	if ( !ReadExitSC() .and. !BumpBot )
-		BumpTop := .T.
-		pos := LastPos
-		lExitState := GE_DOWN
-	endif
+      IF ( !ReadExitSC() .AND. !BumpBot )
+         BumpTop := .T.
+         pos := LastPos
+         lExitState := GE_DOWN
+      ENDIF
 
-elseif ( pos == Len(GetList) + 1 )		
-// bumped bottom
+   ELSEIF ( pos == Len( GetList ) + 1 )
+      // bumped bottom
 
-	if ( !ReadExitSC() .and. lExitState <> GE_ENTER .and. !BumpTop )
-		BumpBot := .T.
-		pos := LastPos
-		lExitState := GE_UP
-	else
+      IF ( !ReadExitSC() .AND. lExitState <> GE_ENTER .AND. !BumpTop )
+         BumpBot := .T.
+         pos := LastPos
+         lExitState := GE_UP
+      ELSE
 
-		//MsgBeep("settle 0-2")
-		pos := 0
-	endif
-endif
+         // MsgBeep("settle 0-2")
+         pos := 0
+      ENDIF
+   ENDIF
 
 
-// record exit state
-LastExit := lExitState
+   // record exit state
+   LastExit := lExitState
 
-if (pos <> 0)
-	GetList[pos]:exitState := lExitState
-endif
+   IF ( pos <> 0 )
+      GetList[ pos ]:exitState := lExitState
+   ENDIF
 
-return (pos)
+   RETURN ( pos )
 
 
 
 /***
-*	PstActGetSc()
-*	Post active GET for ReadVar(), GetActive().
+* PstActGetSc()
+* Post active GET for ReadVar(), GetActive().
 */
-static procedure PstActGetSC(get)
+STATIC PROCEDURE PstActGetSC( get )
 
-	GetActive( get )
-	ReadVar( GetReadVSC(get) )
+   GetActive( get )
+   ReadVar( GetReadVSC( get ) )
 
-	ShowScoreBoard()
+   ShowScoreBoard()
 
-return
+   RETURN
 
 
 
 /***
-*	ClrGetSysVarSC()
-*	Save and clear READ state variables. Return array of saved values.
+* ClrGetSysVarSC()
+* Save and clear READ state variables. Return array of saved values.
 *
-*	NOTE: 'Updated' status is cleared but not saved (S87 compat.).
+* NOTE: 'Updated' status is cleared but not saved (S87 compat.).
 */
-static function ClrGetSysVarSC()
+STATIC FUNCTION ClrGetSysVarSC()
 
-local saved[ GSV_COUNT ]
+   LOCAL saved[ GSV_COUNT ]
 
+   saved[ GSV_KILLREAD ] := KillReadSC
+   KillReadSC := .F.
 
-	saved[ GSV_KILLREAD ] := KillReadSC
-	KillReadSC := .f.
+   saved[ GSV_BUMPTOP ] := BumpTop
+   BumpTop := .F.
 
-	saved[ GSV_BUMPTOP ] := BumpTop
-	BumpTop := .f.
+   saved[ GSV_BUMPBOT ] := BumpBot
+   BumpBot := .F.
 
-	saved[ GSV_BUMPBOT ] := BumpBot
-	BumpBot := .f.
+   saved[ GSV_LASTEXIT ] := LastExit
+   LastExit := 0
 
-	saved[ GSV_LASTEXIT ] := LastExit
-	LastExit := 0
+   saved[ GSV_LASTPOS ] := LastPos
+   LastPos := 0
 
-	saved[ GSV_LASTPOS ] := LastPos
-	LastPos := 0
+   saved[ GSV_ACTIVEGET ] := GetActive( NIL )
 
-	saved[ GSV_ACTIVEGET ] := GetActive( NIL )
+   saved[ GSV_READVAR ] := ReadVar( "" )
 
-	saved[ GSV_READVAR ] := ReadVar( "" )
+   saved[ GSV_READPROCNAME ] := ReadProcName
+   ReadProcName := ""
 
-	saved[ GSV_READPROCNAME ] := ReadProcName
-	ReadProcName := ""
+   saved[ GSV_READPROCLINE ] := ReadProcLine
+   ReadProcLine := 0
 
-	saved[ GSV_READPROCLINE ] := ReadProcLine
-	ReadProcLine := 0
+   Updated := .F.
 
-	Updated := .f.
-
-return (saved)
+   RETURN ( saved )
 
 
 
 /***
 *   RstGetSysVarSC()
-*	Restore READ state variables from array of saved values.
+* Restore READ state variables from array of saved values.
 *
-*	NOTE: 'Updated' status is not restored (S87 compat.).
+* NOTE: 'Updated' status is not restored (S87 compat.).
 */
-static function RstGetSysVarSC(saved)
+STATIC FUNCTION RstGetSysVarSC( saved )
 
-	KillReadSC := saved[ GSV_KILLREAD ]
+   KillReadSC := saved[ GSV_KILLREAD ]
 
-	BumpTop := saved[ GSV_BUMPTOP ]
+   BumpTop := saved[ GSV_BUMPTOP ]
 
-	BumpBot := saved[ GSV_BUMPBOT ]
+   BumpBot := saved[ GSV_BUMPBOT ]
 
-	LastExit := saved[ GSV_LASTEXIT ]
+   LastExit := saved[ GSV_LASTEXIT ]
 
-	LastPos := saved[ GSV_LASTPOS ]
+   LastPos := saved[ GSV_LASTPOS ]
 
-	GetActive( saved[ GSV_ACTIVEGET ] )
+   GetActive( saved[ GSV_ACTIVEGET ] )
 
-	ReadVar( saved[ GSV_READVAR ] )
+   ReadVar( saved[ GSV_READVAR ] )
 
-	ReadProcName := saved[ GSV_READPROCNAME ]
+   ReadProcName := saved[ GSV_READPROCNAME ]
 
-	ReadProcLine := saved[ GSV_READPROCLINE ]
+   ReadProcLine := saved[ GSV_READPROCLINE ]
 
-return
+   RETURN
 
 
 
 /***
-*	GetReadVSC()
-*	Set READVAR() value from a GET.
+* GetReadVSC()
+* Set READVAR() value from a GET.
 */
-static function GetReadVSC(get)
+STATIC FUNCTION GetReadVSC( get )
 
-local name := Upper(get:name)
-local i
+   LOCAL name := Upper( get:name )
+   LOCAL i
 
-//#ifdef SUBSCRIPT_IN_READVAR
+   // #ifdef SUBSCRIPT_IN_READVAR
 
-	/***
-	*	The following code includes subscripts in the name returned by
-	*	this function, if the get variable is an array element.
-	*
-	*	Subscripts are retrieved from the get:subscript instance variable.
-	*
-	*	NOTE: incompatible with Summer 87
-	*/
+ /***
+ * The following code includes subscripts in the name returned by
+ * this function, if the get variable is an array element.
+ *
+ * Subscripts are retrieved from the get:subscript instance variable.
+ *
+ * NOTE: incompatible with Summer 87
+ */
 
-	if ( get:subscript <> NIL )
-		for i := 1 to len(get:subscript)
-			name += "[" + ltrim(str(get:subscript[i])) + "]"
-		next
-	end
+   IF ( get:subscript <> NIL )
+      FOR i := 1 TO Len( get:subscript )
+         name += "[" + LTrim( Str( get:subscript[ i ] ) ) + "]"
+      NEXT
+   END
 
-//#endif
+   // #endif
 
-return (name)
+   RETURN ( name )
 
 
 
 /*
 *
-*	system services
+* system services
 *
 */
 
 
 
 /***
-*	__KillReadSC()
+* __KillReadSC()
 *   CLEAR GETS service
 */
-function __KillReadSC()
-	KillReadSC := .t.
+FUNCTION __KillReadSC()
 
-	//MsgBeep("KillreadSC=.t./4")
-return
+   KillReadSC := .T.
+
+   // MsgBeep("KillreadSC=.t./4")
+
+   RETURN
 
 
 
 
 
 /***
-*	ReadExitSC()
+* ReadExitSC()
 */
-function ReadExitSC(lNew)
-return ( Set(_SET_EXIT, lNew) )
+FUNCTION ReadExitSC( lNew )
+   RETURN ( Set( _SET_EXIT, lNew ) )
 
 
 
 /*
 *
-*	wacky compatibility services
+* wacky compatibility services
 *
 */
 
 
 // display coordinates for SCOREBOARD
-#define SCORE_ROW		0
-#define SCORE_COL		60
+#define SCORE_ROW  0
+#define SCORE_COL  60
 
 
 /***
 *   ShowScoreboard()
 */
-static procedure ShowScoreboard()
+STATIC PROCEDURE ShowScoreboard()
 
-local nRow, nCol
+   LOCAL nRow, nCol
 
+   IF ( Set( _SET_SCOREBOARD ) )
+      nRow := Row()
+      nCol := Col()
 
-if ( Set(_SET_SCOREBOARD) )
-        nRow := Row()
-        nCol := Col()
+      SetPos( SCORE_ROW, SCORE_COL )
+      DispOut( if( Set( _SET_INSERT ), "Ins", "   " ) )
+      SetPos( nRow, nCol )
+   ENDIF
 
-		SetPos(SCORE_ROW, SCORE_COL)
-		DispOut( if(Set(_SET_INSERT), "Ins", "   ") )
-       SetPos(nRow, nCol)
-endif
-
-return
+   RETURN
 
 
 
 /***
-*	DateMsg()
+* DateMsg()
 */
-static procedure DateMsg()
+STATIC PROCEDURE DateMsg()
 
-local nRow, nCol
+   LOCAL nRow, nCol
 
+   IF ( Set( _SET_SCOREBOARD ) )
+      nRow := Row()
+      nCol := Col()
 
-    if ( Set(_SET_SCOREBOARD) )
-		nRow := Row()
-		nCol := Col()
+      SetPos( SCORE_ROW, SCORE_COL )
+      DispOut( "Invalid Date" )
+      SetPos( nRow, nCol )
 
-		SetPos(SCORE_ROW, SCORE_COL)
-		DispOut("Invalid Date")
-        SetPos(nRow, nCol)
+      WHILE ( NextKey() == 0 )
+      END
 
-		while ( Nextkey() == 0 )
-		end
+      SetPos( SCORE_ROW, SCORE_COL )
+      DispOut( "            " )
+      SetPos( nRow, nCol )
 
-		SetPos(SCORE_ROW, SCORE_COL)
-		DispOut("            ")
-        SetPos(nRow, nCol)
+   END
 
-	end
-
-return
-
+   RETURN
 
 
- *
- * Time-Out?
- *
- */
+
+//
+// Time-Out?
+//
+// /
 
 FUNCTION TimedOut()
-RETURN (lTimedOut)
+   RETURN ( lTimedOut )
 
 /**
  *
@@ -833,37 +829,39 @@ RETURN (lTimedOut)
  *
  */
 
-static function MyInKeySc()
-local nKey
-local nBroji2
-local nCursor
+STATIC FUNCTION MyInKeySc()
 
-nBroji2:=seconds()
-nTimeout:=seconds()
+   LOCAL nKey
+   LOCAL nBroji2
+   LOCAL nCursor
 
-nKey:=INKEY()
+   nBroji2 := Seconds()
+   nTimeout := Seconds()
 
-if (gSQL=="D")
-	do while .t.
-		GwStaMai(@nBroji2)
-		if !(GW_STATUS == "NA_CEKI_K_SQL")
-			Exit
-		endif
-	enddo
-endif
+   nKey := Inkey()
 
-RETURN (nKey)
+   IF ( gSQL == "D" )
+      DO WHILE .T.
+         GwStaMai( @nBroji2 )
+         IF !( GW_STATUS == "NA_CEKI_K_SQL" )
+            EXIT
+         ENDIF
+      ENDDO
+   ENDIF
+
+   RETURN ( nKey )
 
 /*
  * Go to a particular get
  */
 
-FUNCTION GoToGet(nGet)
-   
-GetActive():exitState := -nGet
+FUNCTION GoToGet( nGet )
 
-// !!!!NOTE!!!!
-RETURN (.T.)
+   GetActive():exitState := -nGet
+
+   // !!!!NOTE!!!!
+
+   RETURN ( .T. )
 
 /*
  *
@@ -872,67 +870,74 @@ RETURN (.T.)
  */
 
 FUNCTION ExitAtGet()
-RETURN (nAtGet)
+   RETURN ( nAtGet )
 
 
-function ShowGets()
-AEVAL(GetList,{|oE|  oE:Display() })
-return .t.
+FUNCTION ShowGets()
 
-function RefreshGets()
-AEVAL(MGetList,{|oE|  oE:Display() })
-return .t.
+   AEval( GetList, {| oE|  oE:Display() } )
+
+   RETURN .T.
+
+FUNCTION RefreshGets()
+
+   AEval( MGetList, {| oE|  oE:Display() } )
+
+   RETURN .T.
 
 
 // -----------------------------
 // -----------------------------
-function InkeySc(nSec)
-if (nSec==0) 
-	return INKEY()
-else
-	return INKEY(nSec)
-endif
+FUNCTION InkeySc( nSec )
+
+   IF ( nSec == 0 )
+      RETURN Inkey()
+   ELSE
+      RETURN Inkey( nSec )
+   ENDIF
 
 
-// --------------------------------------------------------------------
-// sva polja disableujemo osim onoga na koje zelimo "skociti"
-// -------------------------------------------------------------------
-function get_field_set_focus(f_name)
-local _i
+   // --------------------------------------------------------------------
+   // sva polja disableujemo osim onoga na koje zelimo "skociti"
+   // -------------------------------------------------------------------
 
-__get_list := {}
+FUNCTION get_field_set_focus( f_name )
 
-for _i:=1 TO LEN(GetList)
-   AADD(__get_list, GetList[_i]:PreBlock)
+   LOCAL _i
 
-   if GetList[_i]:name() == f_name
-      GetList[_i]:PreBlock := {|| restore_get_list(), .t.}
-   else
-      GetList[_i]:PreBlock := {|| .f.}
-   endif
-next
+   __get_list := {}
 
-// -----------------------------------------------------------------
-// -----------------------------------------------------------------
-function restore_get_list()
-local _i
+   FOR _i := 1 TO Len( GetList )
+      AAdd( __get_list, GetList[ _i ]:PreBlock )
 
-  for _i := 1 TO LEN(GetList)
-     GetList[_i]:PreBlock := __get_list[_i]
-  next
-
-  for _i := LEN(GetList) TO 1 STEP -1
-     ADEL(__get_list, _i)
-  next
-
-  __get_list := NIL
-  
-return .t. 
-
-function read_dn_parametar(caption, xpos, ypos, value)
-
-  @ xpos, ypos SAY caption + " (D/N) ?" GET value valid value $ "DN" pict "@!"
-
-return value
+      IF GetList[ _i ]:name() == f_name
+         GetList[ _i ]:PreBlock := {|| restore_get_list(), .T. }
+      ELSE
+         GetList[ _i ]:PreBlock := {|| .F. }
+      ENDIF
+   NEXT
 
 
+FUNCTION restore_get_list()
+
+   LOCAL _i
+
+   FOR _i := 1 TO Len( GetList )
+      GetList[ _i ]:PreBlock := __get_list[ _i ]
+   NEXT
+
+   FOR _i := Len( GetList ) TO 1 STEP -1
+      ADel( __get_list, _i )
+   NEXT
+
+   __get_list := NIL
+
+   RETURN .T.
+
+
+
+FUNCTION read_dn_parametar( caption, xpos, ypos, value )
+
+   @ xpos, ypos SAY8 caption + " (D/N) ?" GET value VALID value $ "DN" PICT "@!"
+
+   RETURN value

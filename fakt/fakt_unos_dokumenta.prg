@@ -829,7 +829,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
    LOCAL _rok_placanja := 0
    LOCAL _avansni_racun
    LOCAL _opis := ""
-   LOCAL _n_menu := iif( Val( gIMenu ) < 1, Asc( gIMenu ) - 55, Val( gIMenu ) )
+   LOCAL _n_menu := fakt_tip_dokumenta_default_menu()
    LOCAL _convert := "N"
    LOCAL _x := 1
    LOCAL _odabir_txt := .F.

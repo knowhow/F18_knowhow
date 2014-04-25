@@ -14,8 +14,8 @@
 #include "hbclass.ch"
 #include "common.ch"
 
-// ------------------------------------------------
-// ------------------------------------------------
+
+
 CLASS FaktDokument
 
     ACCESS     idfirma         METHOD get_idfirma()

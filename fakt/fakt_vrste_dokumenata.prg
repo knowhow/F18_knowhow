@@ -12,6 +12,21 @@
 #include "fakt.ch"
 
 
+
+FUNCTION fakt_tip_dokumenta_default_menu()
+
+   LOCAL nRet
+  
+   // gIMenu := "3" 
+   nRet := VAL( gIMenu )
+   IF nRet < 1
+       nRet := 1
+   ENDIF
+
+   RETURN nRet   
+
+
+
 FUNCTION fakt_naziv_dokumenta( aTipDok, cIdtipDok)
 
    LOCAL nPos, cRet

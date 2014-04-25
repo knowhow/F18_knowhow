@@ -321,7 +321,7 @@ public g13dcij:="1"
 public gVar13:="1"
 public gFormatA5:="0"
 public gMreznoNum:="N"
-public gIMenu:="3"
+public gIMenu := "3"
 public gOdvT2:=0
 public gV12Por:="N"
 

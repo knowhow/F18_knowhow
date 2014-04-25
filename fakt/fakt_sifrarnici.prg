@@ -641,7 +641,7 @@ FUNCTION IzborRelacije( cIdRelac, cIdDist, cIdVozila, dDatum, cMarsruta )
       Box(, Len( aIzb ) + 4, 28 )
       @ m_x + 1, m_y + 2 SAY "SLIJEDECE RELACIJE  "
       @ m_x + 2, m_y + 2 SAY "PO KALENDARU POSJETA"
-      @ m_x + 3, m_y + 2 SAY "ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ"
+      @ m_x + 3, m_y + 2 SAY "--------------------"
       nPom := Menu2( m_x + 3, m_y + 3, aIzb, nPom )
       BoxC()
       IF nPom > 0

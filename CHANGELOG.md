@@ -1,3 +1,8 @@
+1.7.66  2014-04-25, vsasa, hernad
+
+  - vsasa: FIN - dnevnik naloga MONTH()  
+  - hernad: FAKT, menu funkcija odabira dokumenta - greška
+ 
 1.7.65  2014-04-25, vsasa
 
   - FAKT, artikal kao usluga setuje polje fakt_fakt->porez - bugfix

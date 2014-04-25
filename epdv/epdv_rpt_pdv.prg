@@ -468,8 +468,7 @@ SEEK DTOS(dDatOd) + DTOS(dDatDo)
 
 if !found()
 	Beep(2)
-	MsgBeep("Ne postoji pohranjen PDV obracun #"+;
-	   "za period " + CTOD(dDatOd) + "-" + CTOD(dDatDo) )
+	MsgBeep("Ne postoji pohranjen PDV obračun #za period " + DTOC(dDatOd) + "-" + DTOC(dDatDo) )
 	use
 	return
 endif

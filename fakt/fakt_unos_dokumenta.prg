@@ -323,6 +323,25 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 
       RETURN DE_REFRESH
 
+   CASE Ch == K_ALT_P
+        
+        // setuj broj dokumenta u pripremi ako vec nije
+        fakt_set_broj_dokumenta()
+
+        IF !CijeneOK( "Stampanje" )
+            RETURN DE_REFRESH
+        ENDIF
+            
+        StDokOdt( nil, nil, nil )
+            
+        close_open_fakt_tabele()
+           
+        #ifdef TEST
+            push_test_tag("FAKT_ALTP_END") 
+        #endif
+        
+        RETURN DE_REFRESH
+
 
    CASE Ch == K_ALT_L
 

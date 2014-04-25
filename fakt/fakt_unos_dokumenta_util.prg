@@ -943,9 +943,6 @@ FUNCTION artikal_kao_usluga( fNovi )
 
       IF fNovi
          _cijena := roba->vpc
-         IF !( _idtipdok $ "11#15#27" )
-            _porez := tarifa->opp
-         ENDIF
       ENDIF
 
       @ Row() - 1, m_y + 25 SAY "opis usl.:" GET _txt1 PICT "@S50"

@@ -88,7 +88,7 @@ FUNCTION azur_kalk( lAuto )
    // treba li generisati šta-god ?
    lGenerisiZavisne := kalk_generisati_zavisne_dokumente( lAuto )
 
-   IF lGenerisiZavisne = .T.
+   IF lGenerisiZavisne == .T.
       // generiši, 11-ke, 96-ce itd...
       kalk_zavisni_dokumenti()
    ENDIF
@@ -124,7 +124,7 @@ FUNCTION azur_kalk( lAuto )
 
    ENDIF
 
-   IF lGenerisiZavisne = .T.
+   IF lGenerisiZavisne == .T.
       // vrati iz pripr2 dokumente, ako postoje !
       kalk_vrati_iz_pripr2()
    ENDIF

@@ -671,7 +671,7 @@ STATIC FUNCTION arr_fiscal_choice( arr )
       _tmp := ""
       _tmp += PadL( AllTrim( Str( _i ) ) + ")", 3 )
       _tmp += " uredjaj " + PadL( AllTrim( Str( arr[ _i, 1 ] ) ), 2, "0" )
-      _tmp += " : " + PadR( arr[ _i, 2 ], 40 )
+      _tmp += " : " + PadR( hb_strtoutf8( arr[ _i, 2 ] ), 40 )
 
       AAdd( _opc, _tmp )
       AAdd( _opcexe, {|| "" } )

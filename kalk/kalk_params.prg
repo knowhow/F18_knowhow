@@ -440,7 +440,7 @@ if lastkey() <> K_ESC
   	set_metric("kalk_generisi_16_nakon_96", f18_user(), gGen16)
   	set_metric("kalk_prenos_pos", f18_user(), gTops)
   	set_metric("kalk_prenos_fakt", f18_user(), gFakt)
-  	set_metric("kalk_destinacija_topska", f18_user(), gTopsDest )
+  	set_metric("kalk_destinacija_topska", f18_user(), ALLTRIM( gTopsDest ) )
   	set_metric("kalk_tops_prenos_vise_prodajnih_mjesta", f18_user(), gMultiPM )
     set_metric( "kalk_tops_prenos_auto_razduzenje", my_user(), _auto_razduzenje )
 

@@ -61,7 +61,7 @@ cBrNiv := SljBrKalk( "19", gFirma, _sufix )
 select kalk_pripr
 go top
 private nRBr := 0
-cPromjCj := "D"
+cPromCj := "D"
 fNivelacija := .f.
 
 do while !EOF() .and. cIdFirma == idfirma .and. cIdvd == idvd .and. cBrdok == brdok

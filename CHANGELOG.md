@@ -1,3 +1,7 @@
+1.7.65  2014-04-25, vsasa
+
+  - FAKT, artikal kao usluga setuje polje fakt_fakt->porez - bugfix
+ 
 1.7.64  2014-04-25, vsasa
 
   - KALK, promjena cijena, setovanje cijene u šifrarnik - bugfix

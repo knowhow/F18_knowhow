@@ -12,7 +12,6 @@
 #xcommand O_SIFK     => select(F_SIFK)    ;  use_sql_sifk()
 #xcommand O_SIFV     => select(F_SIFV)    ;  use_sql_sifv()
 
-// sifarnici
 #xcommand O_ROBA     => select (F_ROBA)    ;  my_use  ("roba")      ; set order to tag "ID"
 #xcommand O_ROBA_NOT_USED  => select (F_ROBA) ;  IF !USED(); my_use("roba" ); ENDIF  ; set order to tag "ID"
 

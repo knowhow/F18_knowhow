@@ -19,9 +19,7 @@ STATIC _ZAOK := 2
 STATIC _FNUM := 15
 STATIC _FDEC := 4
 
-// --------------------------------------------
-// realizacija maloprodaje fakt
-// --------------------------------------------
+
 FUNCTION fakt_real_maloprodaje()
 
    LOCAL nOperater
@@ -35,22 +33,18 @@ FUNCTION fakt_real_maloprodaje()
    LOCAL nT_osn := 0
    LOCAL _params
 
-   // uslovi izvjestaja
-   IF g_vars( @_params ) == 0
-      RETURN
+   IF ! fakt_mp_uzmi_parametre_izvjestaja( @_params )
+      RETURN .F.
    ENDIF
 
    _cre_tbl()
-   _gen_rekapitulacija_mp( _params )
+   fakt_gen_rekapitulacija_mp( _params )
 
-   // ima li podataka za prikaz ?
    SELECT r_export
    IF reccount2() == 0
-	
-      msgbeep( "Nema podataka za prikaz !" )
+      MsgBeep( "Nema podataka za prikaz !" )
       my_close_all_dbf()
       RETURN
-
    ENDIF
 
    START PRINT CRET
@@ -66,27 +60,20 @@ FUNCTION fakt_real_maloprodaje()
    // uzmi totale
    _st_mp_dok( @nT_osn, @nT_pdv, @nT_uk, .T. )
 
-   // stampaj po operateru
-   _st_mp_oper()
-
-   // stampaj po vrsti placanja
-   _st_mp_vrstap()
-
-   // rasclaniti...
-   IF _params[ "tip_partnera" ] == "D"
-      // stampaj po tipu partnera
+   
+   _st_mp_oper() // stampaj po operateru
+   _st_mp_vrstap() // stampaj po vrsti placanja
+   
+   IF _params[ "tip_partnera" ] == "D"   // rasclaniti...
       ?
-      _st_mp_tip_partnera()
+      _st_mp_tip_partnera() // stampaj po tipu partnera
    ENDIF
 
    ?
-
    IF _params[ "varijanta" ] = 1
-      // odstampaj po robi
-      _st_mp_roba()
+      _st_mp_roba()  // odstampaj po robi
    ELSEIF _params[ "varijanta" ] = 2
-      // odstampaj po dokumentima
-      _st_mp_dok()
+      _st_mp_dok() // odstampaj po dokumentima
    ENDIF
 
    ?
@@ -109,12 +96,8 @@ FUNCTION fakt_real_maloprodaje()
    RETURN
 
 
-// --------------------------------------------
-// uslovi izvjestaja
-// --------------------------------------------
-STATIC FUNCTION g_vars( params )
+STATIC FUNCTION fakt_mp_uzmi_parametre_izvjestaja( params )
 
-   LOCAL _ret := 1
    LOCAL _x := 1
    LOCAL _tip_partnera, _id_firma, _d_from, _d_to, _dok_tip, _operater, _varijanta
    LOCAL _partner, _vrsta_p
@@ -132,55 +115,32 @@ STATIC FUNCTION g_vars( params )
    Box( , 14, 66 )
 
    @ m_x + _x, m_y + 2 SAY "**** REALIZACIJA PRODAJE ****"
-
-   ++ _x
-   ++ _x
-	
+   _x += 2
    @ m_x + _x, m_y + 2 SAY "Firma (prazno-sve):" GET _id_firma PICT "@S20"
-	
    ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "Obuhvatiti period od:" GET _d_from
+   @ m_x + _x, m_y + 2 SAY8 "Obuhvatiti period od:" GET _d_from
    @ m_x + _x, Col() + 1 SAY "do:" GET _d_to
-
    ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "Vrste dokumenata:" GET _dok_tip PICT "@S30"
-
+   @ m_x + _x, m_y + 2 SAY8 "Vrste dokumenata:" GET _dok_tip PICT "@S30"
    ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "Partner (prazno-svi):" GET _partner PICT "@S40"
-
+   @ m_x + _x, m_y + 2 SAY8 "Partner (prazno-svi):" GET _partner PICT "@S40"
    ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "Vrsta placanja (prazno-svi):" GET _vrsta_p VALID Empty( _vrsta_p ) .OR. P_VRSTEP( @_vrsta_p )
-
+   @ m_x + _x, m_y + 2 SAY8 "Vrsta plaćanja (prazno-svi):" GET _vrsta_p VALID Empty( _vrsta_p ) .OR. P_VRSTEP( @_vrsta_p )
    ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "Operater (0-svi):" GET _operater ;
-      PICT "9999999999" ;
+   @ m_x + _x, m_y + 2 SAY8 "Operater (0-svi):" GET _operater PICT "9999999999" ;
       VALID {|| _operater == 0, iif( _operater == -99, choose_f18_user_from_list( @_operater ), .T. ) }
-
+   _x += 2
+   @ m_x + _x, m_y + 2 SAY8 "Razvrstati po tipu partnera (D/N)?" GET _tip_partnera VALID _tip_partnera $ "DN" PICT "@!"
+   _x += 2
+   @ m_x + _x, m_y + 2 SAY8 "Varijanta prikaza 1-po robi 2-po dokumentima"
    ++ _x
-   ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "Razvrstati po tipu partnera (D/N)?" GET _tip_partnera ;
-      VALID _tip_partnera $ "DN" PICT "@!"
-	
-   ++ _x
-   ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "Varijanta prikaza 1-po robi 2-po dokumentima"
-	
-   ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "                  3-samo total" GET _varijanta PICT "9"
+   @ m_x + _x, m_y + 2 SAY8 "                  3-samo total" GET _varijanta PICT "9"
 
    READ
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN _ret
+      RETURN .F.
    ENDIF
 
    set_metric( "fakt_real_mp_firma", my_user(), AllTrim( _id_firma ) )
@@ -205,15 +165,14 @@ STATIC FUNCTION g_vars( params )
    params[ "partner" ] := _partner
    params[ "vrstap" ] := _vrsta_p
 
-   _ret := 1
 
-   RETURN _ret
+   RETURN .T.
 
 
 // --------------------------------------------------
 // generisi u pomocnu tabelu podatke iz FAKT-a
 // --------------------------------------------------
-STATIC FUNCTION _gen_rekapitulacija_mp( params )
+STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
 
    LOCAL _filter
    LOCAL cF_firma

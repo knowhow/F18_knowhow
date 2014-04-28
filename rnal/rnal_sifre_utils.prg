@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,63 +14,65 @@
 // -------------------------------------------------
 // vrati match_code za stavku sifrarnika
 // -------------------------------------------------
-function say_item_mc(nArea, cTable, nId)
-local nTArea := SELECT()
-local xRet := "-----"
+FUNCTION say_item_mc( nArea, cTable, nId )
 
-if !USED(nArea)
-	use (nArea)
-endif
-select &cTable
+   LOCAL nTArea := Select()
+   LOCAL xRet := "-----"
 
-set order to tag "1"
-go top
+   IF !Used( nArea )
+      USE ( nArea )
+   ENDIF
+   select &cTable
 
-seek STR(nId)
+   SET ORDER TO TAG "1"
+   GO TOP
 
-if FOUND()
-	xRet := ALLTRIM(field->match_code)
-endif
+   SEEK Str( nId )
 
-select (nTArea)
-return xRet
+   IF Found()
+      xRet := AllTrim( field->match_code )
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN xRet
 
 
 // ---------------------------------------------
 // prikaz id/mc za stavku u browse-u sifrarnika
 // nFieldId - vrijednost id polja
 // ---------------------------------------------
-function sif_idmc(nFieldId, lOnlyMc, nRpad )
+FUNCTION sif_idmc( nFieldId, lOnlyMc, nRpad )
 
-local cId := STR(nFieldId)
+   LOCAL cId := Str( nFieldId )
 
-local cMCode := IIF(FIELDPOS("MATCH_CODE") <> 0, ALLTRIM(field->match_code), "")
-local xRet := ""
+   LOCAL cMCode := iif( FieldPos( "MATCH_CODE" ) <> 0, AllTrim( field->match_code ), "" )
+   LOCAL xRet := ""
 
-if nRpad == nil
-    nRPad := 10
-endif
+   IF nRpad == nil
+      nRPad := 10
+   ENDIF
 
-if lOnlyMC == nil
-	lOnlyMC := .f.
-endif
+   IF lOnlyMC == nil
+      lOnlyMC := .F.
+   ENDIF
 
-if lOnlyMC <> .t.
-	xRet += ALLTRIM(cId)
-else
-	xRet += "--"
-endif
+   IF lOnlyMC <> .T.
+      xRet += AllTrim( cId )
+   ELSE
+      xRet += "--"
+   ENDIF
 
-if !EMPTY(cMCode)
-	xRet += "/"
-	if LEN(cMCode) > 4
-		xRet += LEFT(cMCode, 4) + ".."
-	else
-		xRet += cMCode
-	endif
-endif
+   IF !Empty( cMCode )
+      xRet += "/"
+      IF Len( cMCode ) > 4
+         xRet += Left( cMCode, 4 ) + ".."
+      ELSE
+         xRet += cMCode
+      ENDIF
+   ENDIF
 
-return PADR(xRet,nRPad)
+   RETURN PadR( xRet, nRPad )
 
 
 // ------------------------------------------------
@@ -78,30 +80,31 @@ return PADR(xRet,nRPad)
 // cItem - string za prikazati
 // nPadR - n vrijednost pad-a
 // ------------------------------------------------
-function show_it(cItem, nPadR)
+FUNCTION show_it( cItem, nPadR )
 
-if nPadR <> nil
-	cItem := PADR( cItem, nPadR )
-endif
+   IF nPadR <> nil
+      cItem := PadR( cItem, nPadR )
+   ENDIF
 
-@ row(), col() + 3 SAY cItem
+   @ Row(), Col() + 3 SAY cItem
 
-return .t.
+   RETURN .T.
 
 
 
 // ---------------------------------------------
 // increase id sql
 // ---------------------------------------------
-function _inc_id_sql( value )
-local _alias := LOWER( ALIAS() )
-local _param := "rnal_" + _alias + "_no" 
-local _t_area := SELECT()
+FUNCTION _inc_id_sql( value )
 
-// daj mi zadnju vrijednosti i uvecaj za 1
-value := ( fetch_metric( _param, NIL, 0 ) + 1 )
+   LOCAL _alias := Lower( Alias() )
+   LOCAL _param := "rnal_" + _alias + "_no"
+   LOCAL _t_area := Select()
 
-return .t.
+   // daj mi zadnju vrijednosti i uvecaj za 1
+   value := ( fetch_metric( _param, NIL, 0 ) + 1 )
+
+   RETURN .T.
 
 
 
@@ -110,68 +113,70 @@ return .t.
 // wId - polje id proslijedjeno po ref.
 // cFieldName - ime id polja
 // --------------------------------------
-function _inc_id( wid, cFieldName, cIndexTag, lAuto )
-local nTRec
-local _t_rec := RECNO()
-local cTBFilter := DBFILTER()
-local _alias := ALLTRIM( LOWER( ALIAS() ) )
-local _param := "rnal_" + _alias + "_no" 
-local _t_area := SELECT()
-local _value := 0
+FUNCTION _inc_id( wid, cFieldName, cIndexTag, lAuto )
 
-if cIndexTag == nil
-	cIndexTag := "1"
-endif
+   LOCAL nTRec
+   LOCAL _t_rec := RecNo()
+   LOCAL cTBFilter := dbFilter()
+   LOCAL _alias := AllTrim( Lower( Alias() ) )
+   LOCAL _param := "rnal_" + _alias + "_no"
+   LOCAL _t_area := Select()
+   LOCAL _value := 0
 
-if lAuto == nil
-	lAuto := .f.
-endif
+   IF cIndexTag == nil
+      cIndexTag := "1"
+   ENDIF
 
-if ((Ch == K_CTRL_N) .or. (Ch == K_F4)) .or. lAuto == .t.
+   IF lAuto == nil
+      lAuto := .F.
+   ENDIF
+
+   IF ( ( Ch == K_CTRL_N ) .OR. ( Ch == K_F4 ) ) .OR. lAuto == .T.
 	
-	if (LastKey() == K_ESC)
-		return .f.
-	endif
+      IF ( LastKey() == K_ESC )
+         RETURN .F.
+      ENDIF
 	
-	set filter to
-	set order to tag &cIndexTag
+      SET FILTER TO
+      SET ORDER TO tag &cIndexTag
 	
-    // daj mi zadnju vrijednosti i uvecaj za 1
-    _value := ( fetch_metric( _param, NIL, 0 ) + 1 )
+      // daj mi zadnju vrijednosti i uvecaj za 1
+      _value := ( fetch_metric( _param, NIL, 0 ) + 1 )
 
-	wid := _last_id( cFieldName ) + 1
+      wid := _last_id( cFieldName ) + 1
 
-    // odabrat ce vecu vrijednost
-    wid := MAX( _value, wid )
+      // odabrat ce vecu vrijednost
+      wid := Max( _value, wid )
 	
-    // snimi parametar u sql
-    set_metric( _param, NIL, wid ) 
+      // snimi parametar u sql
+      set_metric( _param, NIL, wid )
 
-	set filter to &cTBFilter
-	set order to tag "1"
-	go (_t_rec)
+      SET FILTER to &cTBFilter
+      SET ORDER TO TAG "1"
+      GO ( _t_rec )
 
-	AEVAL(GetList,{|o| o:display()})
+      AEval( GetList, {| o| o:display() } )
 
-endif
+   ENDIF
 
-return .t.
+   RETURN .T.
 
 
 // ----------------------------------------
 // vraca posljednji id zapis iz tabele
 // cFieldName - ime id polja
 // ----------------------------------------
-static function _last_id( cFieldName )
-local nLast_rec := 0
+STATIC FUNCTION _last_id( cFieldName )
 
-go top
-seek STR(9999999999, 10)
-skip -1
+   LOCAL nLast_rec := 0
 
-nLast_rec := field->&cFieldName
+   GO TOP
+   SEEK Str( 9999999999, 10 )
+   SKIP -1
 
-return nLast_rec
+   nLast_rec := field->&cFieldName
+
+   RETURN nLast_rec
 
 
 
@@ -180,155 +185,154 @@ return nLast_rec
 // wId - polje id proslijedjeno po ref.
 // cFieldName - ime id polja
 // --------------------------------------
-function _chk_id( wid, cFieldName, cIndexTag  )
-local nTRec
-local _t_rec := RECNO()
-local cTBFilter := DBFILTER()
-local lSeek := .t.
-local nIndexOrd := INDEXORD()
+FUNCTION _chk_id( wid, cFieldName, cIndexTag  )
 
-if cIndexTag == nil
-	cIndexTag := "1"
-endif
+   LOCAL nTRec
+   LOCAL _t_rec := RecNo()
+   LOCAL cTBFilter := dbFilter()
+   LOCAL lSeek := .T.
+   LOCAL nIndexOrd := IndexOrd()
 
-set filter to
-set order to tag &cIndexTag
-go top
+   IF cIndexTag == nil
+      cIndexTag := "1"
+   ENDIF
 
-seek STR( wid, 10 )
+   SET FILTER TO
+   SET ORDER TO tag &cIndexTag
+   GO TOP
 
-if FOUND()
-	lSeek := .f.
-endif
+   SEEK Str( wid, 10 )
+
+   IF Found()
+      lSeek := .F.
+   ENDIF
 	
-set filter to &cTBFilter
-set order to tag ALLTRIM(STR(nIndexOrd))
-go ( _t_rec )
+   SET FILTER to &cTBFilter
+   SET ORDER TO TAG AllTrim( Str( nIndexOrd ) )
+   GO ( _t_rec )
 
-if lSeek == .f.
-	// dodaj novi id
-	lSeek := _inc_id( @wid, cFieldName )
-endif
+   IF lSeek == .F.
+      // dodaj novi id
+      lSeek := _inc_id( @wid, cFieldName )
+   ENDIF
 
-return lSeek
+   RETURN lSeek
 
 
 // --------------------------------
 // edit sifre u sifraniku
 // --------------------------------
-function wid_edit( cField )
-local nRet := DE_CONT
-local nId
+FUNCTION wid_edit( cField )
 
-nId := field->&(cField)
+   LOCAL nRet := DE_CONT
+   LOCAL nId
 
-nId += 1
+   nId := field->&( cField )
 
-Box(, 1, 50) 
-	@ m_x + 1, m_y + 2 SAY "Ispravi sifru na:" GET nId PICT REPLICATE("9",10)
-	read
-BoxC()
+   nId += 1
 
-if LastKey() <> K_ESC
+   Box(, 1, 50 )
+   @ m_x + 1, m_y + 2 SAY "Ispravi sifru na:" GET nId PICT Replicate( "9", 10 )
+   READ
+   BoxC()
 
-    _rec := dbf_get_rec()
-    _rec[LOWER(cField)] := nId
-    update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
-	nRet := DE_REFRESH
+   IF LastKey() <> K_ESC
 
-endif
+      _rec := dbf_get_rec()
+      _rec[ Lower( cField ) ] := nId
+      update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+      nRet := DE_REFRESH
 
-return nRet
+   ENDIF
+
+   RETURN nRet
 
 
 // --------------------------------------------------
 // vraca shemu artikla na osnovu matrice aArtArr
 // --------------------------------------------------
-function arr_schema( aArtArr )
-local cSchema := ""
-local i
-local ii
-local aTmp := {}
-local nScan
-local nElem
-local nElemNo
-local cCode
-local nSrch
+FUNCTION arr_schema( aArtArr )
 
-// aArtArr[ element_no, gr_code, gr_desc, att_joker, att_valcode, att_val ]
-// example:    
-//        [     1     ,   G    , staklo ,  <GL_TICK>,     6     ,  6mm    ]
-//        [     1     ,   G    , staklo ,  <GL_TYPE>,     F     ,  FLOAT  ]
-//        [     2     , .....
+   LOCAL cSchema := ""
+   LOCAL i
+   LOCAL ii
+   LOCAL aTmp := {}
+   LOCAL nScan
+   LOCAL nElem
+   LOCAL nElemNo
+   LOCAL cCode
+   LOCAL nSrch
 
-if LEN(aArtArr) == 0
-	return cSchema
-endif
+   // aArtArr[ element_no, gr_code, gr_desc, att_joker, att_valcode, att_val ]
+   // example:
+   // [     1     ,   G    , staklo ,  <GL_TICK>,     6     ,  6mm    ]
+   // [     1     ,   G    , staklo ,  <GL_TYPE>,     F     ,  FLOAT  ]
+   // [     2     , .....
 
-// koliko ima elemenata artikala ???
-nElemNo := aArtArr[ LEN(aArtArr), 1 ]
+   IF Len( aArtArr ) == 0
+      RETURN cSchema
+   ENDIF
 
-for i := 1 to nElemNo
+   // koliko ima elemenata artikala ???
+   nElemNo := aArtArr[ Len( aArtArr ), 1 ]
 
-	// prvo potrazi coating ako ima
-	nSrch := ASCAN( aArtArr, {|xVal| xVal[1] == i ;
-				.and. xVal[4] == "<GL_COAT>"  } )
+   FOR i := 1 TO nElemNo
 
-	if nSrch <> 0
+      // prvo potrazi coating ako ima
+      nSrch := AScan( aArtArr, {| xVal| xVal[ 1 ] == i ;
+         .AND. xVal[ 4 ] == "<GL_COAT>"  } )
+
+      IF nSrch <> 0
 	
-		nElem := aArtArr[ nScan, 1 ]
-		cCode := aArtArr[ nScan, 2 ]
+         nElem := aArtArr[ nScan, 1 ]
+         cCode := aArtArr[ nScan, 2 ]
 		
-	else
+      ELSE
 		
-		// trazi bilo koji element
-		nSrch := ASCAN( aTmp, {|xVal| xVal[1] == i } )
+         // trazi bilo koji element
+         nSrch := AScan( aTmp, {| xVal| xVal[ 1 ] == i } )
 		
-		nElem := aArtArr[ nScan, 1 ]
-		cCode := aArtArr[ nScan, 2 ]
+         nElem := aArtArr[ nScan, 1 ]
+         cCode := aArtArr[ nScan, 2 ]
 	
-	endif
+      ENDIF
 	
 
-	nScan := ASCAN( aTmp, {|xVal| xVal[1] == nElem ;
-				.and. xVal[2] == cCode })
+      nScan := AScan( aTmp, {| xVal| xVal[ 1 ] == nElem ;
+         .AND. xVal[ 2 ] == cCode } )
 
-	if nScan == 0
-		AADD( aTmp, { nElem, cCode })
-	endif
+      IF nScan == 0
+         AAdd( aTmp, { nElem, cCode } )
+      ENDIF
 	
-next
+   NEXT
 
-// sada to razbij u string
+   // sada to razbij u string
 
-for ii := 1 to LEN( aTmp )
+   FOR ii := 1 TO Len( aTmp )
 
-	if ii <> 1
-		cSchema += "#"
-	endif
+      IF ii <> 1
+         cSchema += "#"
+      ENDIF
 	
-	cSchema += ALLTRIM( aTmp[ ii, 2 ] )
+      cSchema += AllTrim( aTmp[ ii, 2 ] )
 
-next
+   NEXT
 
-
-return cSchema
+   RETURN cSchema
 
 
 
 // --------------------------------------------------
 // vraca picture code za artikal prema schemi
 // --------------------------------------------------
-function g_a_piccode( cSchema )
-local cPicCode := cSchema
+FUNCTION g_a_piccode( cSchema )
 
-cPicCode := STRTRAN( cPicCode, "FL", CHR(177) )
-cPicCode := STRTRAN( cPicCode, "G", CHR(219) )
-cPicCode := STRTRAN( cPicCode, "F", " " )
-cPicCode := STRTRAN( cPicCode, "-", "" )
+   LOCAL cPicCode := cSchema
 
-return cPicCode
+   cPicCode := StrTran( cPicCode, "FL", Chr( 177 ) )
+   cPicCode := StrTran( cPicCode, "G", Chr( 219 ) )
+   cPicCode := StrTran( cPicCode, "F", " " )
+   cPicCode := StrTran( cPicCode, "-", "" )
 
-
-
-
+   RETURN cPicCode

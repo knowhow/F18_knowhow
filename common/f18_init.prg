@@ -494,31 +494,9 @@ FUNCTION _write_server_params_to_config()
 FUNCTION post_login( gVars )
 
    LOCAL _ver
-   LOCAL oDB_lock := F18_DB_LOCK():New()
-   LOCAL _need_lock_synchro := .F.
 
    IF gVars == NIL
       gVars := .T.
-   ENDIF
-
-   // da li treba zakljucati bazu
-   // ovo provjeri uvijek, ako naleti da treba zakljucat ce je odmah...
-   IF oDb_lock:db_must_be_locked()
-      // i ako ja zakljucam bazu, potrebno je napraviti sinhronizaciju podataka
-      // postoji mogucnost da nikada nije napravljen...
-      _need_lock_synchro := .T.
-   ENDIF
-
-   // provjeri moj db_lock parametar
-   // ako je zakljucana na serveru
-   IF oDB_lock:is_locked()
-      IF oDB_lock:run_synchro()
-         MsgBeep( "Baza je zakljucana ali postoji mogucnost da je neko mjenjao podatake#Pokrecem sinhro." )
-         _need_lock_synchro := .T.
-      ENDIF
-   ELSE
-      // resetuj moj lock param ako treba
-      oDb_lock:reset_my_lock_params()
    ENDIF
 
    // ~/.F18/empty38/
@@ -548,11 +526,6 @@ FUNCTION post_login( gVars )
 
    check_server_db_version()
    server_log_enable()
-
-   IF _need_lock_synchro
-      // setuj tekuci klijentski lock parametar
-      oDB_lock:set_my_lock_params( .T. )
-   ENDIF
 
    set_init_fiscal_params()
 

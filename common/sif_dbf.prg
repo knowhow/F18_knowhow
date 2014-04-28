@@ -476,9 +476,6 @@ STATIC FUNCTION EdSif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    LOCAL nTrebaRedova
    LOCAL cUslovSrch
    LOCAL lNovi
-   LOCAL oDb_lock := F18_DB_LOCK():New
-   LOCAL _db_locked := oDb_lock:is_locked()
-
    PRIVATE cPom
    PRIVATE aQQ
    PRIVATE aUsl
@@ -536,9 +533,8 @@ STATIC FUNCTION EdSif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    // provjeri pristup opcijama koje mjenjaju podatke
    IF ( Ch == K_CTRL_N .OR. Ch == K_CTRL_A .OR. Ch == K_F2 .OR. ;
          Ch == K_CTRL_T .OR. Ch == K_F4 .OR. Ch == K_CTRL_F9 .OR. Ch == K_F10 ) .AND. ;
-         ( !ImaPravoPristupa( goModul:oDatabase:cName, "SIF", "EDSIF" ) .OR. _db_locked )
+         ( !ImaPravoPristupa( goModul:oDatabase:cName, "SIF", "EDSIF" ) )
 
-      oDb_lock:warrning()
       RETURN DE_CONT
 
    ENDIF

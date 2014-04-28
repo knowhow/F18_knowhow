@@ -64,40 +64,25 @@ method mMenuStandard
 local _opc := {}
 local _opcexe := {}
 local _izbor := 1
-local oDb_lock := F18_DB_LOCK():New()
-local _db_locked := oDb_lock:is_locked()
 
 AADD( _opc, "1. podaci                                 ")
 AADD( _opcexe, {|| kadev_data() })
-
 AADD( _opc, "2. pretrazivanje" )
 AADD( _opcexe, {|| kadev_search() })
-
 AADD( _opc, "3. rekalkulacija" )
-if !_db_locked
-    AADD( _opcexe, {|| kadev_recalc() })
-else
-    AADD( _opcexe, {|| oDb_lock:warrning() })
-endif
-
+AADD( _opcexe, {|| kadev_recalc() })
 AADD( _opc, "4. izvjestaji")
 AADD( _opcexe, {|| kadev_rpt_menu() })
-
 AADD( _opc, "5. obrasci")
 AADD( _opcexe, {|| kadev_form() })
-
 AADD( _opc, "6. radna karta")
 AADD( _opcexe, {|| kadev_work_card() })
-
 AADD( _opc, "------------------------------------")
 AADD( _opcexe, {|| nil })
-
 AADD( _opc, "S. sifrarnici" )
 AADD( _opcexe, {|| kadev_sifre_menu() })
-
 AADD( _opc, "------------------------------------")
 AADD( _opcexe, {|| nil })
-
 AADD( _opc, "X. parametri" )
 AADD( _opcexe, {|| kadev_params_menu() } )
 

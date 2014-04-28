@@ -1400,15 +1400,6 @@ METHOD F18AdminOpts:create_new_db_params( params )
 METHOD F18AdminOpts:force_synchro_db()
 
    LOCAL _var
-   LOCAL oDb_lock := F18_DB_LOCK():New()
-   LOCAL _is_locked := oDb_lock:is_locked()
-   LOCAL _curr_lock_str
-
-   IF _is_locked
-      // privremeno moramo iskljuciti lock
-      _curr_lock_str := oDb_lock:lock_params[ "server_lock" ]
-      oDb_lock:set_lock_params( .F. )
-   ENDIF
 
    _ver := read_dbf_version_from_config()
    set_a_dbfs()
@@ -1416,11 +1407,6 @@ METHOD F18AdminOpts:force_synchro_db()
    set_a_dbfs_key_fields()
    write_dbf_version_to_config()
    check_server_db_version()
-
-   IF _is_locked
-      // ponovo vrati lock
-      oDb_lock:set_lock_params( .T., _curr_lock_str )
-   ENDIF
 
    RETURN
 

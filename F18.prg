@@ -79,10 +79,8 @@ FUNCTION module_menu( arg_v )
    LOCAL _db_params
    LOCAL _count := 0
    LOCAL oBackup := F18Backup():New()
-   LOCAL oDb_lock
    LOCAL _user_roles := f18_user_roles_info()
    LOCAL _server_db_version := get_version_str( server_db_version() )
-   LOCAL _lock_db
    LOCAL _tmp
    LOCAL _color := "BG+/B"
 
@@ -99,20 +97,9 @@ FUNCTION module_menu( arg_v )
 
       _db_params := my_server_params()
 
-      oDb_lock := F18_DB_LOCK():New()
-      _lock_db := oDb_lock:is_locked()
-
       _x := 1
 
       @ _x, mnu_left + 1 SAY8 "Tekuća baza: " + AllTrim( _db_params[ "database" ] ) + " / db ver: " + _server_db_version
-
-      IF _lock_db
-         _tmp := "[ srv lock " + oDb_lock:lock_params[ "server_lock" ] + " / cli lock " + oDb_lock:lock_params[ "client_lock" ]  + " ]"
-      ELSE
-         _tmp := ""
-      ENDIF
-
-      @ _x, Col() + 1 SAY _tmp COLOR _color
 
       ++ _x
       @ _x, mnu_left + 1 SAY "   Korisnik: " + AllTrim( _db_params[ "user" ] ) + "   u grupama " + _user_roles
@@ -255,8 +242,6 @@ STATIC FUNCTION set_menu_choices( menuop, menuexec, p3, p4, p5, p6, p7 )
    AAdd( menuexec, {|| f18_backup_data() } )
    AAdd( menuop, " F. Forsirana sinhronizacija podataka" )
    AAdd( menuexec, {|| F18AdminOpts():New():force_synchro_db() } )
-   AAdd( menuop, " L. Zakljucavanje/otkljucavanje baze" )
-   AAdd( menuexec, {|| f18_database_lock_menu() } )
    AAdd( menuop, " P. Parametri aplikacije" )
    AAdd( menuexec, {|| f18_app_parameters() } )
    AAdd( menuop, " W. Pregled log-a" )

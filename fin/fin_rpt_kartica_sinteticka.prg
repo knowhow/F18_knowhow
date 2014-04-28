@@ -368,11 +368,7 @@ IF !(cFilt1==".t.")
 ENDIF
 
 hseek cidfirma
-#ifndef CAX
 EOF RET
-#else
-EOF CRET
-#endif
 
 nStr:=0
 START PRINT CRET
@@ -481,9 +477,7 @@ ENDIF
 FF
 END PRINT
 
-#ifndef CAX
-closeret
-#endif
+my_close_all_dbf()
 return
 
 

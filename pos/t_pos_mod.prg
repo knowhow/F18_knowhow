@@ -43,8 +43,6 @@ return nil
 method mMenu()
 local Fx
 local Fy
-local oDB_lock := F18_DB_LOCK():new()
-local _db_locked := oDB_lock:is_locked()
 
 gPrevPos:=gIdPos
 
@@ -106,7 +104,7 @@ do while (.t.)
 
     SETPOS( Fx, Fy )
 
-    pos_main_menu_level( KLevel, Fx, Fy, oDb_lock )
+    pos_main_menu_level( KLevel, Fx, Fy )
 
     if self:lTerminate
         // zavrsi run!
@@ -120,28 +118,18 @@ close all
 return
 
 
-function pos_main_menu_level( KLevel, Fx, Fy, db_lock )
+function pos_main_menu_level( KLevel, Fx, Fy )
 
 do case
 
     case ( ( KLevel == L_ADMIN ) .or. ( KLevel == L_SYSTEM ) )
-        // nivo administrator
         pos_main_menu_admin()
-
     case ( KLevel == L_UPRAVN )
-        // nivo upravnik
         SETPOS( Fx, Fy )
         pos_main_menu_upravnik()
-
     case ( KLevel == L_PRODAVAC )
-
-        if db_lock:is_locked()
-            db_lock:warrning()
-        else
-            // nivo prodavac
-            SETPOS( Fx, Fy )
-            pos_main_menu_prodavac()
-        endif
+        SETPOS( Fx, Fy )
+        pos_main_menu_prodavac()
 
 endcase
 

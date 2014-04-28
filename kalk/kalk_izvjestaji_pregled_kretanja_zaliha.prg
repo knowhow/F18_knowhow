@@ -559,20 +559,12 @@ FF
 
 gvim_end()
 
-//end print
-
-#ifdef CAX
 my_close_all_dbf()
-#endif
-
-closeret
 
 return
-*}
 
 
 static function NadjiPMpc()
-*{
 local nMpc
 local nTRec
 select rekap1

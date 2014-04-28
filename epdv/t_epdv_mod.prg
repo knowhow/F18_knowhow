@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -17,118 +17,125 @@
 // -----------------------------------------------
 // -----------------------------------------------
 CLASS TEpdvMod FROM TAppMod
-	method New
-	method setGVars
-	method mMenu
-	method mMenuStandard
-	method initdb
-	method srv
+
+   METHOD NEW
+   METHOD setGVars
+   METHOD mMenu
+   METHOD mMenuStandard
+   METHOD initdb
+   METHOD srv
+
 END CLASS
 
 // -----------------------------------------------
 // -----------------------------------------------
-method new(p1, p2, p3, p4, p5, p6, p7, p8, p9)
-::super:new(p1, p2, p3, p4, p5, p6, p7, p8, p9)
-return self
+METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
+
+   ::super:new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
+
+   RETURN self
 
 
 // -----------------------------------------------
 // -----------------------------------------------
-method initdb()
-::oDatabase:=TDbEpdv():new()
-return nil
+METHOD initdb()
 
+   ::oDatabase := TDbEpdv():new()
 
-
-// -----------------------------------------------
-// -----------------------------------------------
-method mMenu()
-
-my_close_all_dbf()
-
-set_hot_keys()
-
-@ 1,2 SAY padc( gNFirma, 50, "*")
-@ 4,5 SAY ""
-
-
-::mMenuStandard()
-
-return nil
+   RETURN NIL
 
 
 
 // -----------------------------------------------
 // -----------------------------------------------
-method mMenuStandard()
-private Izbor:=1
-private opc:={}
-private opcexe:={}
+METHOD mMenu()
 
-AADD(opc, "1. KUF unos/ispravka           ")
-AADD(opcexe, {|| ed_kuf()})
-AADD(opc, "2. KIF unos/ispravka")
-AADD(opcexe, {|| ed_kif()})
-AADD(opc, "3. generacija dokumenata")
-AADD(opcexe, {|| epdv_generisanje()})
-AADD(opc, "4. izvještaji")
-AADD(opcexe, {|| epdv_izvjestaji()})
-AADD(opc, "------------------------------------")
-AADD(opcexe, {|| nil})
-AADD(opc, "S. šifarnici")
-AADD(opcexe, {|| epdv_sifrarnici()})
-AADD(opc, "------------------------------------")
-AADD(opcexe, {|| nil})
-AADD(opc, "9. administracija baze podataka")
-AADD(opcexe, {|| epdv_admin_menu()})
-AADD(opc, "------------------------------------")
-AADD(opcexe, {|| nil})
-AADD(opc, "X. parametri")
-AADD(opcexe, {|| epdv_parametri()})
+   my_close_all_dbf()
 
-Menu_SC("gpdv",.t., .f.)
+   set_hot_keys()
 
-return
+   @ 1, 2 SAY PadC( gNFirma, 50, "*" )
+   @ 4, 5 SAY ""
+
+
+   ::mMenuStandard()
+
+   RETURN NIL
+
+
+
+// -----------------------------------------------
+// -----------------------------------------------
+METHOD mMenuStandard()
+
+   PRIVATE Izbor := 1
+   PRIVATE opc := {}
+   PRIVATE opcexe := {}
+
+   AAdd( opc, "1. KUF unos/ispravka           " )
+   AAdd( opcexe, {|| ed_kuf() } )
+   AAdd( opc, "2. KIF unos/ispravka" )
+   AAdd( opcexe, {|| ed_kif() } )
+   AAdd( opc, "3. generacija dokumenata" )
+   AAdd( opcexe, {|| epdv_generisanje() } )
+   AAdd( opc, "4. izvještaji" )
+   AAdd( opcexe, {|| epdv_izvjestaji() } )
+   AAdd( opc, "------------------------------------" )
+   AAdd( opcexe, {|| nil } )
+   AAdd( opc, "S. šifarnici" )
+   AAdd( opcexe, {|| epdv_sifrarnici() } )
+   AAdd( opc, "------------------------------------" )
+   AAdd( opcexe, {|| nil } )
+   AAdd( opc, "9. administracija baze podataka" )
+   AAdd( opcexe, {|| epdv_admin_menu() } )
+   AAdd( opc, "------------------------------------" )
+   AAdd( opcexe, {|| nil } )
+   AAdd( opc, "X. parametri" )
+   AAdd( opcexe, {|| epdv_parametri() } )
+
+   Menu_SC( "gpdv", .T., .F. )
+
+   RETURN
 
 // ---------------------------------------------
 // ---------------------------------------------
-method srv()
-return
+METHOD srv()
+   RETURN
 
 
 // ---------------------------------------------
 // ---------------------------------------------
-method setGVars()
+METHOD setGVars()
 
-set_global_vars()
-set_roba_global_vars()
+   set_global_vars()
+   set_roba_global_vars()
 
-private cSection:="1"
-private cHistory:=" "
-private aHistory:={}
-public gPicVrijednost := "9999999.99"
-public gL_kto_dob := PADR("541;", 100)
-public gL_kto_kup := PADR("211;", 100)
-public gKt_updv := PADR("260;", 100)
-public gKt_ipdv := PADR("560;", 100)
+   PRIVATE cSection := "1"
+   PRIVATE cHistory := " "
+   PRIVATE aHistory := {}
+   PUBLIC gPicVrijednost := "9999999.99"
+   PUBLIC gL_kto_dob := PadR( "541;", 100 )
+   PUBLIC gL_kto_kup := PadR( "211;", 100 )
+   PUBLIC gKt_updv := PadR( "260;", 100 )
+   PUBLIC gKt_ipdv := PadR( "560;", 100 )
 
-// iscitaj parametre
-epdv_set_params()
+   // iscitaj parametre
+   epdv_set_params()
 
-O_PARAMS
-Rpar("p1", @gPicVrijednost)
+   O_PARAMS
+   Rpar( "p1", @gPicVrijednost )
 
-select (F_PARAMS)
-use
+   SELECT ( F_PARAMS )
+   USE
 
-public gModul
-public gTema
-public gGlBaza
+   PUBLIC gModul
+   PUBLIC gTema
+   PUBLIC gGlBaza
 
-gModul:="EPDV"
-gTema:="OSN_MENI"
-gGlBaza:="PDV.DBF"
+   gModul := "EPDV"
+   gTema := "OSN_MENI"
+   gGlBaza := "PDV.DBF"
 
-public cZabrana:="Opcija nedostupna za ovaj nivo !!!"
+   PUBLIC cZabrana := "Opcija nedostupna za ovaj nivo !!!"
 
-return
+   RETURN

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,214 +12,213 @@
 
 #include "rnal.ch"
 #include "hbclass.ch"
- 
+
 
 // -----------------------------------------------
 // -----------------------------------------------
 CLASS TRnalMod FROM TAppMod
-	var oSqlLog
-	method New
-	method setGVars
-	method mMenu
-	method mStartUp
-	method mMenuStandard
-	method initdb
-	method srv
+
+   VAR oSqlLog
+   METHOD NEW
+   METHOD setGVars
+   METHOD mMenu
+   METHOD mStartUp
+   METHOD mMenuStandard
+   METHOD initdb
+   METHOD srv
+
 END CLASS
 
 // -----------------------------------------------
 // -----------------------------------------------
-method new(p1, p2, p3, p4, p5, p6, p7, p8, p9)
-::super:new(p1, p2, p3, p4, p5, p6, p7, p8, p9)
-return self
+METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
+
+   ::super:new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
+
+   RETURN self
 
 
 // -----------------------------------------------
 // -----------------------------------------------
-method initdb()
-::oDatabase:=TDbRnal():new()
-return nil
+METHOD initdb()
+
+   ::oDatabase := TDbRnal():new()
+
+   RETURN NIL
 
 
 // -----------------------------------------------
 // -----------------------------------------------
-method mMenu()
+METHOD mMenu()
 
-// security mora biti aktivan
-//if gSecurity == "N"
-//	MsgBeep("Security nije aktivan!#Prekidam rad...")
-//	return
-//endif
+   my_close_all_dbf()
 
-my_close_all_dbf()
+   set_hot_keys()
 
-set_hot_keys()
+   O_DOCS
+   SELECT docs
+   USE
 
-O_DOCS
-select docs 
-use
+   my_close_all_dbf()
 
-my_close_all_dbf()
+   @ 1, 2 SAY PadC( gNFirma, 50, "*" )
+   @ 4, 5 SAY ""
 
-@ 1,2 SAY padc( gNFirma, 50, "*")
-@ 4,5 SAY ""
+   rnal_set_params()
 
-rnal_set_params()
+   ::mStartUp()
 
-::mStartUp()
+   ::mMenuStandard()
 
-::mMenuStandard()
-
-return nil
+   RETURN NIL
 
 
 // ------------------------------------------
 // startup metoda
 // ------------------------------------------
-method mStartUp()
+METHOD mStartUp()
 
-if is_fmkrules()
-	// generisi standarne rnal rules
-	gen_rnal_rules()
-endif
+   IF is_fmkrules()
+      // generisi standarne rnal rules
+      gen_rnal_rules()
+   ENDIF
 
-return nil
+   RETURN NIL
 
 
 
-method mMenuStandard()
-private Izbor:=1
-private opc:={}
-private opcexe:={}
+METHOD mMenuStandard()
 
-AADD(opc, "1. unos/dorada naloga za proizvodnju  ")
-AADD(opcexe, {|| ed_document( .t. )})
-AADD(opc, "2. lista otvorenih naloga ")
-AADD(opcexe, {|| rnal_lista_dokumenata(1)})
-AADD(opc, "3. lista zatorenih naloga ")
-AADD(opcexe, {|| rnal_lista_dokumenata(2)})
-AADD(opc, "4. izvještaji ")
-AADD(opcexe, {|| m_rpt() })
-AADD(opc, "D. direktna dorada naloga  ")
-AADD(opcexe, {|| ddor_nal()})
-AADD(opc, "S. stampa azuriranog naloga  ")
-AADD(opcexe, {|| prn_nal()})
-AADD( opc, "T. unos/obrada statusa naloga  " )
-AADD( opcexe, {|| rnal_pregled_statusa_operacija() } )
-AADD(opc, "------------------------------------")
-AADD(opcexe, {|| nil})
-AADD(opc, "S. sifrarnici")
-AADD(opcexe, {|| m_sif()})
-AADD(opc, "------------------------------------")
-AADD(opcexe, {|| nil})
-AADD(opc, "9. administracija")
-AADD(opcexe, {|| rnal_mnu_admin()})
-AADD(opc, "------------------------------------")
-AADD(opcexe, {|| nil})
-AADD(opc, "X. parametri")
-AADD(opcexe, {|| m_par()})
+   PRIVATE Izbor := 1
+   PRIVATE opc := {}
+   PRIVATE opcexe := {}
 
-Menu_SC("grn", .t. )
+   AAdd( opc, "1. unos/dorada naloga za proizvodnju  " )
+   AAdd( opcexe, {|| ed_document( .T. ) } )
+   AAdd( opc, "2. lista otvorenih naloga " )
+   AAdd( opcexe, {|| rnal_lista_dokumenata( 1 ) } )
+   AAdd( opc, "3. lista zatorenih naloga " )
+   AAdd( opcexe, {|| rnal_lista_dokumenata( 2 ) } )
+   AAdd( opc, "4. izvještaji " )
+   AAdd( opcexe, {|| m_rpt() } )
+   AAdd( opc, "D. direktna dorada naloga  " )
+   AAdd( opcexe, {|| ddor_nal() } )
+   AAdd( opc, "S. stampa azuriranog naloga  " )
+   AAdd( opcexe, {|| prn_nal() } )
+   AAdd( opc, "T. unos/obrada statusa naloga  " )
+   AAdd( opcexe, {|| rnal_pregled_statusa_operacija() } )
+   AAdd( opc, "------------------------------------" )
+   AAdd( opcexe, {|| nil } )
+   AAdd( opc, "S. sifrarnici" )
+   AAdd( opcexe, {|| m_sif() } )
+   AAdd( opc, "------------------------------------" )
+   AAdd( opcexe, {|| nil } )
+   AAdd( opc, "9. administracija" )
+   AAdd( opcexe, {|| rnal_mnu_admin() } )
+   AAdd( opc, "------------------------------------" )
+   AAdd( opcexe, {|| nil } )
+   AAdd( opc, "X. parametri" )
+   AAdd( opcexe, {|| m_par() } )
 
-return
+   Menu_SC( "grn", .T. )
+
+   RETURN
 
 
 // -------------------------------------------------
 // -------------------------------------------------
-method srv()
-return
+METHOD srv()
+   RETURN
 
 // -------------------------------------------------
 // -------------------------------------------------
-method setGVars()
+METHOD setGVars()
 
-set_global_vars()
-set_roba_global_vars()
+   set_global_vars()
+   set_roba_global_vars()
 
-public gPicVrijednost := "9999999.99"
-// rnal - specif params section
-// firma podaci
-public gFNaziv:=SPACE(40)
-public gFAdresa:=SPACE(40)
-public gFIdBroj:=SPACE(13)
-public gFTelefon:=SPACE(40)
-public gFEmail:=SPACE(40)
-public gFBanka1:=SPACE(50)
-public gFBanka2:=SPACE(50)
-public gFBanka3:=SPACE(50)
-public gFBanka4:=SPACE(50)
-public gFBanka5:=SPACE(50)
-public gFPrRed1:=SPACE(50)
-public gFPrRed2:=SPACE(50)
+   PUBLIC gPicVrijednost := "9999999.99"
+   // rnal - specif params section
+   // firma podaci
+   PUBLIC gFNaziv := Space( 40 )
+   PUBLIC gFAdresa := Space( 40 )
+   PUBLIC gFIdBroj := Space( 13 )
+   PUBLIC gFTelefon := Space( 40 )
+   PUBLIC gFEmail := Space( 40 )
+   PUBLIC gFBanka1 := Space( 50 )
+   PUBLIC gFBanka2 := Space( 50 )
+   PUBLIC gFBanka3 := Space( 50 )
+   PUBLIC gFBanka4 := Space( 50 )
+   PUBLIC gFBanka5 := Space( 50 )
+   PUBLIC gFPrRed1 := Space( 50 )
+   PUBLIC gFPrRed2 := Space( 50 )
 
-// izgled dokumenta
-public gDl_margina := 5
-public gDd_redovi := 11
-public gDg_margina := 0
+   // izgled dokumenta
+   PUBLIC gDl_margina := 5
+   PUBLIC gDd_redovi := 11
+   PUBLIC gDg_margina := 0
 
-// ostali parametri
-public gFnd_reset := 0
-public gMaxHeigh := 3600
-public gMaxWidth := 3600
-public gDefNVM := 560
-public gDefCity := "Sarajevo"
+   // ostali parametri
+   PUBLIC gFnd_reset := 0
+   PUBLIC gMaxHeigh := 3600
+   PUBLIC gMaxWidth := 3600
+   PUBLIC gDefNVM := 560
+   PUBLIC gDefCity := "Sarajevo"
 
-// export parametri
-public gExpOutDir := PADR( my_home(), 300 )
-public gExpAlwOvWrite := "N"
-public gFaKumDir := SPACE(300)
-public gFaPrivDir := SPACE(300)
-public gPoKumDir := SPACE(300)
-public gPoPrivDir := SPACE(300)
-public gAddToDim := 3
+   // export parametri
+   PUBLIC gExpOutDir := PadR( my_home(), 300 )
+   PUBLIC gExpAlwOvWrite := "N"
+   PUBLIC gFaKumDir := Space( 300 )
+   PUBLIC gFaPrivDir := Space( 300 )
+   PUBLIC gPoKumDir := Space( 300 )
+   PUBLIC gPoPrivDir := Space( 300 )
+   PUBLIC gAddToDim := 3
 
-// default joker glass type
-public gDefGlType
-// default joker glass tick
-public gDefGlTick
-// default joker glass
-public gGlassJoker
-// default frame joker
-public gFrameJoker
-// joker glass LAMI
-public gGlLamiJoker
+   // default joker glass type
+   PUBLIC gDefGlType
+   // default joker glass tick
+   PUBLIC gDefGlTick
+   // default joker glass
+   PUBLIC gGlassJoker
+   // default frame joker
+   PUBLIC gFrameJoker
+   // joker glass LAMI
+   PUBLIC gGlLamiJoker
 
-// joker brusenje
-public gAopBrusenje
-// joker kaljenje
-public gAopKaljenje
+   // joker brusenje
+   PUBLIC gAopBrusenje
+   // joker kaljenje
+   PUBLIC gAopKaljenje
 
-// timeout kod azuriranja
-public gInsTimeOut := 150
+   // timeout kod azuriranja
+   PUBLIC gInsTimeOut := 150
 
-// gn.zaok min/max
-public gGnMin := 20
-public gGnMax := 6000
-public gGnStep := 30
-public gGnUse := "D"
-public gRnalOdt := "N"
+   // gn.zaok min/max
+   PUBLIC gGnMin := 20
+   PUBLIC gGnMax := 6000
+   PUBLIC gGnStep := 30
+   PUBLIC gGnUse := "D"
+   PUBLIC gRnalOdt := "N"
 
-public g3mmZaokUse := "D"
-public gProfZaokUse := "D"
+   PUBLIC g3mmZaokUse := "D"
+   PUBLIC gProfZaokUse := "D"
 
-rnal_set_params()
+   rnal_set_params()
 
-::super:setTGVars()
+   ::super:setTGVars()
 
-public gModul
-public gTema
-public gGlBaza
+   PUBLIC gModul
+   PUBLIC gTema
+   PUBLIC gGlBaza
 
-gModul:="RNAL"
-gTema:="OSN_MENI"
-gGlBaza:="DOCS.DBF"
+   gModul := "RNAL"
+   gTema := "OSN_MENI"
+   gGlBaza := "DOCS.DBF"
 
-public cZabrana:="Opcija nedostupna za ovaj nivo !!!"
+   PUBLIC cZabrana := "Opcija nedostupna za ovaj nivo !!!"
 
-// rules block i cols
-public aRuleSpec := g_rule_cols_rnal()
-public bRuleBlock := g_rule_block_rnal()
+   // rules block i cols
+   PUBLIC aRuleSpec := g_rule_cols_rnal()
+   PUBLIC bRuleBlock := g_rule_block_rnal()
 
-return
-
-
+   RETURN

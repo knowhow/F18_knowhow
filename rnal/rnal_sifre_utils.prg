@@ -123,15 +123,15 @@ FUNCTION _inc_id( wid, cFieldName, cIndexTag, lAuto )
    LOCAL _t_area := Select()
    LOCAL _value := 0
 
-   IF cIndexTag == nil
+   IF cIndexTag == NIL
       cIndexTag := "1"
    ENDIF
 
-   IF lAuto == nil
+   IF lAuto == NIL
       lAuto := .F.
    ENDIF
 
-   IF ( ( Ch == K_CTRL_N ) .OR. ( Ch == K_F4 ) ) .OR. lAuto == .T.
+   IF ( Ch == K_CTRL_N .OR. Ch == K_F4 .OR. lAuto )
 	
       IF ( LastKey() == K_ESC )
          RETURN .F.
@@ -140,15 +140,12 @@ FUNCTION _inc_id( wid, cFieldName, cIndexTag, lAuto )
       SET FILTER TO
       SET ORDER TO tag &cIndexTag
 	
-      // daj mi zadnju vrijednosti i uvecaj za 1
       _value := ( fetch_metric( _param, NIL, 0 ) + 1 )
 
       wid := _last_id( cFieldName ) + 1
 
-      // odabrat ce vecu vrijednost
       wid := Max( _value, wid )
 	
-      // snimi parametar u sql
       set_metric( _param, NIL, wid )
 
       SET FILTER to &cTBFilter
@@ -192,6 +189,7 @@ FUNCTION _chk_id( wid, cFieldName, cIndexTag  )
    LOCAL cTBFilter := dbFilter()
    LOCAL lSeek := .T.
    LOCAL nIndexOrd := IndexOrd()
+   LOCAL cTag
 
    IF cIndexTag == nil
       cIndexTag := "1"
@@ -207,12 +205,13 @@ FUNCTION _chk_id( wid, cFieldName, cIndexTag  )
       lSeek := .F.
    ENDIF
 	
+   cTag := AllTrim( Str( nIndexOrd ) )
+
    SET FILTER to &cTBFilter
-   SET ORDER TO TAG AllTrim( Str( nIndexOrd ) )
+   SET ORDER TO TAG cTag
    GO ( _t_rec )
 
    IF lSeek == .F.
-      // dodaj novi id
       lSeek := _inc_id( @wid, cFieldName )
    ENDIF
 

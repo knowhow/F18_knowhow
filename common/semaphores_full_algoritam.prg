@@ -28,11 +28,6 @@ local _sql_order
 local _opened
 local _sql_fetch_time, _dbf_write_time
 
-if f18_session()['id'] > 1
-    log_write("full_synchro u child thread se ne radi, preskocena tabela: "  + dbf_table, 3 )  
-    return .f.
-endif
-
 if s_lInSync
     RETURN
 endif

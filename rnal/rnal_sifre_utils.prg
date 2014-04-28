@@ -131,6 +131,10 @@ FUNCTION _inc_id( wid, cFieldName, cIndexTag, lAuto )
       lAuto := .F.
    ENDIF
 
+   IF ( VALTYPE( wid ) == "N" .AND. wid <> 0 ) .or. ( VALTYPE( wid ) == "C" .AND. !EMPTY( wid ) )
+      RETURN .F.
+   ENDIF
+
    IF ( Ch == K_CTRL_N .OR. Ch == K_F4 .OR. lAuto )
 	
       IF ( LastKey() == K_ESC )

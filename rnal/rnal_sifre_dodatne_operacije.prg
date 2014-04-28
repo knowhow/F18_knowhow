@@ -167,7 +167,6 @@ do case
 		return DE_CONT
 
 	case Ch == K_CTRL_N .or. Ch == K_F4
-		
 		__wo_id := .f.
 		set_a_kol(@ImeKol, @Kol)
 		return DE_CONT

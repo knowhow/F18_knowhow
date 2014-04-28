@@ -68,83 +68,40 @@ METHOD mMenu()
 
 METHOD mMenuStandard
 
-   LOCAL _priv_pr := f18_privgranted( "ld_pregled_podataka" )
-   LOCAL oDb_lock := F18_DB_LOCK():New()
-   LOCAL _db_locked := oDb_lock:is_locked()
+   PRIVATE Izbor := 1
    PRIVATE opc := {}
    PRIVATE opcexe := {}
 
    AAdd( opc, "1. obračun (unos, ispravka...)              " )
-   IF !_db_locked
-      AAdd( opcexe, {|| ld_obracun() } )
-   ELSE
-      AAdd( opcexe, {|| oDb_lock:warrning() } )
-   ENDIF
-
+   AAdd( opcexe, {|| ld_obracun() } )
    AAdd( opc,  "2. brisanje" )
-   IF !_db_locked
-      AAdd( opcexe, {|| ld_brisanje_obr() } )
-   ELSE
-      AAdd( opcexe, {|| oDb_lock:warrning() } )
-   ENDIF
-
+   AAdd( opcexe, {|| ld_brisanje_obr() } )
    AAdd( opc, "3. rekalkulacija" )
-   IF !_db_locked
-      AAdd( opcexe, {|| ld_rekalkulacija() } )
-   ELSE
-      AAdd( opcexe, {|| oDb_lock:warrning() } )
-   ENDIF
-
+   AAdd( opcexe, {|| ld_rekalkulacija() } )
    AAdd( opc,    "4. izvještaji" )
    AAdd( opcexe, {|| ld_izvjestaji() } )
-
    AAdd( opc,   "5. krediti" )
    AAdd( opcexe, {|| ld_krediti() } )
-
    AAdd( opc,   "6. export podataka za banke " )
    AAdd( opcexe, {|| ld_export_banke() } )
-
    AAdd( opc, "------------------------------------" )
    AAdd( opcexe, nil )
-
    AAdd( opc,   "7. šifrarnici" )
    AAdd( opcexe, {|| ld_sifrarnici() } )
-
    AAdd( opc,   "9. administriranje baze podataka" )
    AAdd( opcexe, {|| ld_administracija() } )
-
    AAdd( opc, "------------------------------------" )
    AAdd( opcexe, nil )
-
-   // najcesece koristenje opcije
    AAdd( opc,  "A. rekapitulacija" )
-   IF _priv_pr
-      IF gVarObracun == "2"
-         AAdd( opcexe, {|| Rekap2( .T. ) } )
-      ELSE
-         AAdd( opcexe, {|| Rekap( .T. ) } )
-      ENDIF
-   ELSE
-      AAdd( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
-   ENDIF
-
+   AAdd( opcexe, {|| Rekap2( .T. ) } )
    AAdd( opc,  "B. kartica plate" )
-   IF _priv_pr
-      AAdd( opcexe, {|| KartPl() } )
-   ELSE
-      AAdd( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
-   ENDIF
-
+   AAdd( opcexe, {|| KartPl() } )
    AAdd( opc,   "V. generisanje virmana " )
    AAdd( opcexe, {|| ld_gen_virm() } )
-
    AAdd( opc, "------------------------------------" )
    AAdd( opcexe, nil )
-
    AAdd( opc,  "X. parametri     " )
    AAdd( opcexe, {|| ld_parametri() } )
-
-   PRIVATE Izbor := 1
 
    Menu_SC( "gld", .T. )
 

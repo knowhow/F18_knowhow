@@ -61,67 +61,30 @@ return nil
 // -----------------------------------------------
 // -----------------------------------------------
 method mMenuStandard()
-local oDb_lock := F18_DB_LOCK():New()
-local _db_locked := oDb_lock:is_locked()
-
 private Izbor:=1
 private opc:={}
 private opcexe:={}
 
 AADD(opc, "1. KUF unos/ispravka           ")
-
-if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","EDIT")) .and. !_db_locked
-	AADD(opcexe, {|| ed_kuf()})
-else
-	AADD(opcexe, {|| oDb_lock:warrning() } )
-endif
-
+AADD(opcexe, {|| ed_kuf()})
 AADD(opc, "2. KIF unos/ispravka")
-if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","EDIT")) .and. !_db_locked
-	AADD(opcexe, {|| ed_kif()})
-else
-	AADD(opcexe, {|| oDb_lock:warrning() } )
-endif
-
-
+AADD(opcexe, {|| ed_kif()})
 AADD(opc, "3. generacija dokumenata")
-if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","GENDOK")) .and. !_db_locked
-	AADD(opcexe, {|| epdv_generisanje()})
-else
-	AADD(opcexe, {|| oDb_lock:warrning() } )
-endif
-
+AADD(opcexe, {|| epdv_generisanje()})
 AADD(opc, "4. izvještaji")
 AADD(opcexe, {|| epdv_izvjestaji()})
-
-
 AADD(opc, "------------------------------------")
 AADD(opcexe, {|| nil})
-
 AADD(opc, "S. šifarnici")
 AADD(opcexe, {|| epdv_sifrarnici()})
-
 AADD(opc, "------------------------------------")
 AADD(opcexe, {|| nil})
-
 AADD(opc, "9. administracija baze podataka")
-if (ImaPravoPristupa(goModul:oDataBase:cName, "DB", "ADMIN")) .and. !_db_locked
-	AADD(opcexe, {|| epdv_admin_menu()})
-else
-	AADD(opcexe, {|| oDb_lock:warrning() } )
-endif
-
+AADD(opcexe, {|| epdv_admin_menu()})
 AADD(opc, "------------------------------------")
 AADD(opcexe, {|| nil})
-
-
 AADD(opc, "X. parametri")
-
-if (ImaPravoPristupa(goModul:oDataBase:cName,"PARAM","ALL"))
-	AADD(opcexe, {|| epdv_parametri()})
-else
-	AADD(opcexe, {|| oDb_lock:warrning() } )
-endif
+AADD(opcexe, {|| epdv_parametri()})
 
 Menu_SC("gpdv",.t., .f.)
 

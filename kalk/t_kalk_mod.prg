@@ -71,89 +71,40 @@ METHOD mMenu()
 // -----------------------------------------------
 METHOD mMenuStandard
 
-   LOCAL oDb_lock := F18_DB_LOCK():New()
-   LOCAL _db_locked := oDb_lock:is_locked()
    LOCAL opc := {}
    LOCAL opcexe := {}
    LOCAL Izbor := 1
 
    AAdd( opc,   "1. unos/ispravka dokumenata                " )
-   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "DOK", "UNOSDOK" ) ) .AND. !F18_DB_LOCK():new():is_locked()
-      AAdd( opcexe, {|| kalk_unos_dokumenta() } )
-   ELSE
-      AAdd( opcexe, {|| oDb_lock:warrning() } )
-   ENDIF
-
+   AAdd( opcexe, {|| kalk_unos_dokumenta() } )
    AAdd( opc,   "2. izvjestaji" )
    AAdd( opcexe, {|| MIzvjestaji() } )
-
    AAdd( opc,   "3. pregled dokumenata" )
    AAdd( opcexe, {|| kalk_pregled_dokumenata() } )
-
    AAdd( opc,   "4. generacija dokumenata" )
-   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "DOK", "GENDOK" ) ) .AND. !F18_DB_LOCK():new():is_locked()
-      AAdd( opcexe, {|| kalk_mnu_generacija_dokumenta() } )
-   ELSE
-      AAdd( opcexe, {|| oDb_lock:warrning() } )
-   ENDIF
-
+   AAdd( opcexe, {|| kalk_mnu_generacija_dokumenta() } )
    AAdd( opc,   "5. moduli - razmjena podataka " )
-   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "RAZDB", "MODULIRAZMJENA" ) ) .AND. !F18_DB_LOCK():new():is_locked()
-      AAdd( opcexe, {|| kalk_razmjena_podataka() } )
-   ELSE
-      AAdd( opcexe, {|| oDb_lock:warrning() } )
-   ENDIF
-
+   AAdd( opcexe, {|| kalk_razmjena_podataka() } )
    AAdd( opc,   "6. udaljene lokacije  - razmjena podataka" )
-   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "RAZDB", "PRENOSDISKETE" ) ) .AND. !F18_DB_LOCK():new():is_locked()
-      AAdd( opcexe, {|| kalk_udaljena_razmjena_podataka() } )
-   ELSE
-      AAdd( opcexe, {|| oDb_lock:warrning() } )
-   ENDIF
-
+   AAdd( opcexe, {|| kalk_udaljena_razmjena_podataka() } )
    AAdd( opc,   "7. ostale operacije nad dokumentima" )
-   IF !_db_locked
-      AAdd( opcexe, {|| kalk_ostale_operacije_doks() } )
-   ELSE
-      AAdd( opcexe, {|| oDb_lock:warrning() } )
-   ENDIF
-
+   AAdd( opcexe, {|| kalk_ostale_operacije_doks() } )
    AAdd( opc, "------------------------------------" )
    AAdd( opcexe, nil )
-
    AAdd( opc,   "8. šifarnici" )
    AAdd( opcexe, {|| kalk_sifrarnik() } )
-
    AAdd( opc,   "9. administriranje baze podataka" )
-   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "MAIN", "DBADMIN" ) ) .AND. !F18_DB_LOCK():new():is_locked()
-      AAdd( opcexe, {|| MAdminKalk() } )
-   ELSE
-      AAdd( opcexe, {|| oDb_lock:warrning() } )
-   ENDIF
-
+   AAdd( opcexe, {|| MAdminKalk() } )
    AAdd( opc, "------------------------------------" )
    AAdd( opcexe, nil )
-
-   // najcesece koristenje opcije
    AAdd( opc,   "A. štampa ažuriranog dokumenta" )
    AAdd( opcexe, {|| kalk_centr_stampa_dokumenta( .T. ) } )
-
    AAdd( opc,   "P. povrat dokumenta u pripremu" )
-   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "DOK", "POVRATDOK" ) ) .AND. !F18_DB_LOCK():new():is_locked()
-      AAdd( opcexe, {|| Povrat_kalk_dokumenta() } )
-   ELSE
-      AAdd( opcexe, {|| oDb_lock:warrning() } )
-   ENDIF
-
+   AAdd( opcexe, {|| Povrat_kalk_dokumenta() } )
    AAdd( opc, "------------------------------------" )
    AAdd( opcexe, nil )
-
    AAdd( opc,   "X. parametri" )
-   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "PARAM", "PARAMETRI" ) )
-      AAdd( opcexe, {|| kalk_params() } )
-   ELSE
-      AAdd( opcexe, {|| oDb_lock:warrning() } )
-   ENDIF
+   AAdd( opcexe, {|| kalk_params() } )
 
    f18_menu( "gkas", .T.,  izbor, opc, opcexe )
 

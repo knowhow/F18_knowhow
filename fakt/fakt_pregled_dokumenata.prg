@@ -522,8 +522,6 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
    LOCAL _refresh
    LOCAL _t_rec := RecNo()
    LOCAL _t_area := Select()
-   LOCAL oDB_lock := F18_DB_LOCK():New()
-   LOCAL _db_locked := oDb_lock:is_locked()
 
    _filter := dbFilter()
 
@@ -561,12 +559,6 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
       // setovanje broja veze fiskalnog racuna
    CASE CH == K_CTRL_V
 
-      IF _db_locked
-         oDb_lock:warrning()
-         RETURN DE_CONT
-      ENDIF
-
-      // setovanje broj fiskalnog isjecka
       SELECT fakt_doks
 
       IF field->fisc_rn <> 0
@@ -620,11 +612,6 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
       // korekcija podataka dokumenta
    CASE Chr( Ch ) $ "kK"
 
-      IF _db_locked
-         oDb_lock:warrning()
-         RETURN DE_CONT
-      ENDIF
-
       // korekcija podataka na dokumentu
       IF fakt_edit_data( field->idfirma, field->idtipdok, field->brdok )
          nRet := DE_REFRESH
@@ -640,11 +627,6 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
       ENDIF
 
       IF !fiscal_opt_active()
-         RETURN DE_CONT
-      ENDIF
-
-      IF _db_locked
-         oDb_lock:warrning()
          RETURN DE_CONT
       ENDIF
 
@@ -688,11 +670,6 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
    CASE Upper( Chr( Ch ) ) == "R"
 
       IF !fiscal_opt_active()
-         RETURN DE_CONT
-      ENDIF
-
-      IF _db_locked
-         oDb_lock:warrning()
          RETURN DE_CONT
       ENDIF
 
@@ -744,21 +721,11 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
       // duplikat dokumenta
    CASE Chr( ch ) $ "wW"
 
-      IF _db_locked
-         oDb_lock:warrning()
-         RETURN DE_CONT
-      ENDIF
-
       fakt_napravi_duplikat( field->idfirma, field->idtipdok, field->brdok )
       SELECT fakt_doks
 
       // generisanje storno dokumenta
    CASE Chr( Ch ) $ "sS"
-
-      IF _db_locked
-         oDb_lock:warrning()
-         RETURN DE_CONT
-      ENDIF
 
       storno_dok( field->idfirma, field->idtipdok, field->brDok )
 
@@ -785,11 +752,6 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
 
    CASE Chr( Ch ) $ "fF"
 
-      IF _db_locked
-         oDb_lock:warrning()
-         RETURN DE_CONT
-      ENDIF
-
       IF idtipdok $ "20"
          nRet := generisi_fakturu( lOpcine )
          _refresh := .T.
@@ -797,10 +759,6 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
 
    CASE Chr( Ch ) $ "pP"
 
-      IF _db_locked
-         oDb_lock:warrning()
-         RETURN DE_CONT
-      ENDIF
       _tmp := povrat_fakt_dokumenta( .F., field->idfirma, field->idtipdok, field->brdok )
 
       O_FAKT_DOKS

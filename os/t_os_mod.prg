@@ -77,44 +77,23 @@ method mMenuStandard
 local _izbor := 1
 local _opc := {}
 local _opcexe := {}
-local oDb_lock := F18_DB_LOCK():New()
-local _db_locked := oDb_lock:is_locked()
 
 AADD(_opc, "1. unos promjena na postojecem sredstvu                     ")
-if !_db_locked
-    AADD(_opcexe, {|| unos_osnovnih_sredstava()})
-else
-    AADD(_opcexe, {|| oDb_lock:warrning() })
-endif
-
+AADD(_opcexe, {|| unos_osnovnih_sredstava()})
 AADD(_opc, "2. obracuni")
-if !_db_locked
-    AADD(_opcexe, {|| os_obracuni() })
-else
-    AADD(_opcexe, {|| oDb_lock:warrning() })
-endif
-
+AADD(_opcexe, {|| os_obracuni() })
 AADD(_opc, "3. izvjestaji")
 AADD(_opcexe, {|| os_izvjestaji() })
-
 AADD(_opc, "------------------------------------------------------------")
 AADD(_opcexe, {|| nil })
-
 AADD(_opc, "5. sifrarnici")
 AADD(_opcexe, {|| os_sifrarnici()})
-
 AADD(_opc, "6. parametri")
 AADD(_opcexe, {|| os_parametri()})
-
 AADD(_opc, "------------------------------------------------------------")
 AADD(_opcexe, {|| nil })
-
 AADD(_opc, "8. prenos pocetnog stanja ")
-if !_db_locked
-    AADD(_opcexe, {|| os_generacija_pocetnog_stanja() })
-else
-    AADD(_opcexe, {|| oDb_lock:warrning() })
-endif
+AADD(_opcexe, {|| os_generacija_pocetnog_stanja() })
 
 f18_menu( "gos", .f., _izbor, _opc, _opcexe )
 

@@ -166,14 +166,9 @@ endif
 @ _ver_pos, 1 SAY PADC( gNaslov + ' Ver.' + gVerzija, MAXCOLS() - 8 ) COLOR NORMAL
 
 // dodatni ispisi na glavnoj formi
-// LOG level
 f18_ispisi_status_log_levela()
-// podrucje
 f18_ispisi_status_podrucja( _ver_pos )
-// ispisi status modula
 f18_ispisi_status_modula()
-// ispisi status baze
-f18_ispisi_status_baze()
 
 return
 
@@ -225,20 +220,6 @@ endif
 
 return
 
-
-function f18_ispisi_status_baze()
-local _color := "GR+/B" 
-local _db_lock := F18_DB_LOCK():New():is_locked()
-
-if _db_lock
-    _color := "W/R+"
-	@ MAXROWS()-1, 27 SAY "DB LOCK" COLOR _color
-else
-	@ MAXROWS()-1, 27 SAY "       " COLOR _color
-endif
-
-
-return
 
 
 

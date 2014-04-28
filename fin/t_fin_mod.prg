@@ -68,83 +68,37 @@ METHOD mMenuStandard()
    LOCAL _izbor := 1
    LOCAL _opc := {}
    LOCAL _opcexe := {}
-   LOCAL oDb_lock := F18_DB_LOCK():New()
-   LOCAL _locked := oDb_lock:is_locked()
 
    AAdd( _opc, "1. unos/ispravka dokumenta                   " )
-   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "DOK", "KNJIZNALOGA" ) ) .AND. !_locked
-      AAdd( _opcexe, {|| fin_unos_naloga() } )
-   ELSE
-      AAdd( _opcexe, {|| oDb_lock:warrning() } )
-   ENDIF
-
+   AAdd( _opcexe, {|| fin_unos_naloga() } )
    AAdd( _opc, "2. izvjestaji" )
    AAdd( _opcexe, {|| Izvjestaji() } )
-
    AAdd( _opc, "3. pregled dokumenata" )
    AAdd( _opcexe, {|| MnuPregledDokumenata() } )
-
    AAdd( _opc, "4. generacija dokumenata" )
-   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "DOK", "GENDOK" ) ) .AND. !_locked
-      AAdd( _opcexe, {|| MnuGenDok() } )
-   ELSE
-      AAdd( _opcexe, {|| oDb_lock:warrning() } )
-   ENDIF
-
+   AAdd( _opcexe, {|| MnuGenDok() } )
    AAdd( _opc, "5. moduli - razmjena podataka" )
-   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "RAZDB", "MODULIRAZMJENA" ) ) .AND. !_locked
-      AAdd( _opcexe, {|| MnuRazmjenaPodataka() } )
-   ELSE
-      AAdd( _opcexe, {|| oDb_lock:warrning() } )
-   ENDIF
-
+   AAdd( _opcexe, {|| MnuRazmjenaPodataka() } )
    AAdd( _opc, "6. ostale operacije nad dokumentima" )
    AAdd( _opcexe, {|| MnuOstOperacije() } )
-
    AAdd( _opc, "7. udaljene lokacije - razmjena podataka " )
-   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "RAZDB", "UDLOKRAZMJENA" ) ) .AND. !_locked
-      AAdd( _opcexe, {|| fin_udaljena_razmjena_podataka() } )
-   ELSE
-      AAdd( _opcexe, {|| oDb_lock:warrning() } )
-   ENDIF
-
+   AAdd( _opcexe, {|| fin_udaljena_razmjena_podataka() } )
    AAdd( _opc, "------------------------------------" )
    AAdd( _opcexe, {|| nil } )
-
    AAdd( _opc, "8. matični podaci - šifarnici" )
    AAdd( _opcexe, {|| MnuSifrarnik() } )
-
    AAdd( _opc, "9. administracija baze podataka" )
-
-   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "MAIN", "DBADMIN" ) ) .AND. !_locked
-      AAdd( _opcexe, {|| MnuAdminDB() } )
-   ELSE
-      AAdd( _opcexe, {|| oDb_lock:warrning() } )
-   ENDIF
-
+   AAdd( _opcexe, {|| MnuAdminDB() } )
    AAdd( _opc, "------------------------------------" )
    AAdd( _opcexe, {|| nil } )
-
    AAdd( _opc, "K. kontrola zbira datoteka" )
    AAdd( _opcexe, {|| KontrZb() } )
-
    AAdd( _opc, "P. povrat dokumenta u pripremu" )
-   IF ( ImaPravoPristupa( goModul:oDatabase:cName, "UT", "POVRATNALOGA" ) ) .AND. !_locked
-      AAdd( _opcexe, {|| povrat_fin_naloga() } )
-   ELSE
-      AAdd( _opcexe, {|| oDb_lock:warrning() } )
-   ENDIF
-
+   AAdd( _opcexe, {|| povrat_fin_naloga() } )
    AAdd( _opc, "------------------------------------" )
    AAdd( _opcexe, {|| nil } )
-
    AAdd( _opc, "X. parametri" )
-   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "PARAM", "PARAMETRI" ) )
-      AAdd( _opcexe, {|| mnu_fin_params() } )
-   ELSE
-      AAdd( _opcexe, {|| oDb_lock:warrning() } )
-   ENDIF
-
+   AAdd( _opcexe, {|| mnu_fin_params() } )
 
    f18_menu( "gfin", .T., _izbor, _opc, _opcexe )
 

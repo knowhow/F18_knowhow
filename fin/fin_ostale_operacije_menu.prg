@@ -12,40 +12,18 @@
 #include "fin.ch"
 
 function MnuOstOperacije()
-local oDB_lock := F18_DB_LOCK():New()
-local _db_locked := oDB_lock:is_locked()
 local _opc := {}
 local _opcexe := {}
 local _izbor := 1
 
 AADD( _opc, "1. povrat dokumenta u pripremu                " )
-if (ImaPravoPristupa(goModul:oDatabase:cName,"UT", "POVRATNALOGA")) .and. !_db_locked
-	AADD( _opcexe, {|| povrat_fin_naloga() })
-else
-    AADD( _opcexe, { || oDb_lock:warrning() } )
-endif
-
+AADD( _opcexe, {|| povrat_fin_naloga() })
 AADD( _opc, "2. preknjizenje     ")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"UT","PREKNJIZENJE")) .and. !_db_locked
-	AADD( _opcexe, {|| Preknjizenje()})
-else
-    AADD( _opcexe, { || oDb_lock:warrning() } )
-endif
-
+AADD( _opcexe, {|| Preknjizenje()})
 AADD( _opc, "3. prebacivanje kartica")
-if (ImaPravoPristupa(goModul:oDatabase:cName,"UT","PREBKARTICA")) .and. !_db_locked
-	AADD( _opcexe, {|| Prebfin_kartica()})
-else
-    AADD( _opcexe, { || oDb_lock:warrning() } )
-endif
-
+AADD( _opcexe, {|| Prebfin_kartica()})
 AADD( _opc, "4. otvorene stavke")
-if !_db_locked
-    AADD( _opcexe, { || OStav() } )
-else
-    AADD(_opcexe, { || oDb_lock:warrning() } )
-endif
-
+AADD( _opcexe, { || OStav() } )
 AADD( _opc, "5. obrada kamata ")
 AADD( _opcexe, {|| fin_kamate_menu() })
 

@@ -57,98 +57,40 @@ return nil
 // -----------------------------------------------
 // -----------------------------------------------
 method mMenuStandard()
-local oDB_lock := F18_DB_LOCK():New()
-local _db_locked := oDB_lock:is_locked()
-
 private Izbor:=1
 private opc:={}
 private opcexe:={}
 
 AADD(opc, "1. unos/ispravka dokumenata                       ")
-
-if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","EDIT")) .or. !_db_locked
-    AADD(opcexe, {|| mat_knjizenje_naloga()})
-else
-    AADD(opcexe, {|| oDB_lock:warrning() } )
-endif
-
+AADD(opcexe, {|| mat_knjizenje_naloga()})
 AADD(opc, "2. izvještaji")
-if (ImaPravoPristupa(goModul:oDataBase:cName,"RPT","MNU"))
-    AADD(opcexe, {|| mat_izvjestaji()})
-else
-    AADD(opcexe, {|| oDB_lock:warrning() } )
-endif
-
-
+AADD(opcexe, {|| mat_izvjestaji()})
 AADD(opc, "3. kontrola zbira datoteka")
-if (ImaPravoPristupa(goModul:oDataBase:cName,"DOK","KZB"))
-    AADD(opcexe, {|| mat_kzb()})
-else
-    AADD(opcexe, {|| MsgBeep(cZabrana)})
-endif
-
+AADD(opcexe, {|| mat_kzb()})
 AADD(opc, "4. štampa datoteke naloga")
 AADD(opcexe, {|| mat_dnevnik_naloga()})
-
 AADD(opc, "5. štampa proknjizenih naloga")
 AADD(opcexe, {|| mat_stampa_naloga()})
-
 AADD(opc, "6. inventura")
-if !_db_locked
-    AADD(opcexe, {|| mat_inventura() } )
-else
-    AADD(opcexe, {|| oDB_lock:warrning() } )
-endif
-
+AADD(opcexe, {|| mat_inventura() } )
 AADD(opc, "F. prenos fakt->mat")
-if !_db_locked
-    AADD(opcexe, {|| mat_prenos_fakmat()})
-else
-    AADD(opcexe, {|| oDB_lock:warrning() } )
-endif
-
+AADD(opcexe, {|| mat_prenos_fakmat()})
 AADD(opc, "G. generacija dokumenta pocetnog stanja")
-if !_db_locked
-    AADD(opcexe, {|| mat_prenos_podataka()})
-else
-    AADD(opcexe, {|| oDB_lock:warrning() } )
-endif
-
+AADD(opcexe, {|| mat_prenos_podataka()})
 AADD(opc, "------------------------------------")
 AADD(opcexe, {|| nil})
-
 AADD(opc, "S. sifrarnici")
 AADD(opcexe, {|| mat_sifrarnik()})
-
 AADD(opc, "------------------------------------")
 AADD(opcexe, {|| nil})
-
 AADD(opc, "P. povrat naloga u pripremu")
-if (ImaPravoPristupa(goModul:oDataBase:cName, "DB", "POVRAT")) .or. !_db_locked
-    AADD(opcexe, {|| mat_povrat_naloga()})
-else
-    AADD(opcexe, {|| oDB_lock:warrning() } )
-endif
-
-
+AADD(opcexe, {|| mat_povrat_naloga()})
 AADD(opc, "9. administracija baze podataka")
-if (ImaPravoPristupa(goModul:oDataBase:cName, "DB", "ADMIN"))
-    AADD(opcexe, {|| mat_admin_menu()})
-else
-    AADD(opcexe, {|| oDB_lock:warrning() } )
-endif
-
+AADD(opcexe, {|| mat_admin_menu()})
 AADD(opc, "------------------------------------")
 AADD(opcexe, {|| nil})
-
-
 AADD(opc, "X. parametri")
-
-if (ImaPravoPristupa(goModul:oDataBase:cName,"PARAM","ALL"))
-    AADD(opcexe, {|| mat_parametri()})
-else
-    AADD(opcexe, {|| MsgBeep(cZabrana)})
-endif
+AADD(opcexe, {|| mat_parametri()})
 
 Menu_SC("gmat", .t. )
 

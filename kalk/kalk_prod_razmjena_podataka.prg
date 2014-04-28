@@ -1432,8 +1432,6 @@ FUNCTION FaKaPrenosRacunMPParagon()
 
       ELSE
 			
-         // zbirni prenos faktura
-		
          cFaktFirma := cIdFirma
          cIdTipDok := "11"
          dOdDatFakt := Date()
@@ -1455,7 +1453,7 @@ FUNCTION FaKaPrenosRacunMPParagon()
 
          SELECT fakt
          GO TOP
-			
+		 	
          DO WHILE !Eof()
 				
             IF ( field->idfirma == cFaktFirma .AND. ;
@@ -1482,18 +1480,10 @@ FUNCTION FaKaPrenosRacunMPParagon()
                SELECT kalk_pripr
                LOCATE FOR idroba == fakt->idroba
 
-               IF ( Found() ;
-                     .AND. mpcsapp = fakt->cijena ) ;
-                     .OR. ( Found() ;
-                     .AND. mpcsapp <> fakt->cijena ;
-                     .AND. _razl_cijene == "N" )
+               IF Found() .AND. ROUND( fakt->rabat, 2 ) == 0 .AND. ( _razl_cijene == "N" .OR. ( _razl_cijene == "D" .AND. mpcsapp == fakt->cijena ) )
 
-                  // samo odradi append kolicine
-                  my_rlock()
-                  REPLACE field->kolicina with ;
-                     field->kolicina + ;
-                     fakt->kolicina
-                  my_unlock()
+                  RREPLACE field->kolicina with field->kolicina + fakt->kolicina
+
                ELSE
 					
                   PRIVATE aPorezi := {}
@@ -1515,11 +1505,9 @@ FUNCTION FaKaPrenosRacunMPParagon()
                   REPLACE datfaktp WITH fakt->datdok
 						
                   IF _auto_razd == 1
-                     // 11-ka
                      REPLACE idkonto WITH cIdKtoZad
                      REPLACE idkonto2 WITH cIdKonto
                   ELSE
-                     // 42-ka
                      REPLACE idkonto WITH cIdKonto
                   ENDIF
 

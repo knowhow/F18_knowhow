@@ -23,7 +23,6 @@ STATIC __A_SIFV__ := { { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL }, 
 
 FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aPoredak, bPodvuci, aZabrane, invert, aZabIsp )
 
-   LOCAL lIdenticnaWa := .F.
    LOCAL cRet, cIdBK
    LOCAL _i
    LOCAL _komande := { "<c-N> Novi", "<F2>  Ispravka", "<ENT> Odabir", _to_str( "<c-T> Briši" ), "<c-P> Print", ;
@@ -97,9 +96,7 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
       ENDIF
 
       PopSifV()
-      IF ! lIdenticnaWa
-         PopWa()
-      ENDIF
+      PopWa( nDbf )
       RETURN cRet
 
    ENDIF

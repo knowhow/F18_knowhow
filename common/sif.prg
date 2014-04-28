@@ -81,7 +81,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
       ENDIF
 
       PopSifV()
-      PopWa()
+      PopWa( nDbf )
 
       RETURN cRet
 

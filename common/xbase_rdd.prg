@@ -44,14 +44,26 @@ FUNCTION PushWA()
    RETURN NIL
 
 
-FUNCTION PopWA()
+/*
+
+    PopWa() - pozicioniraj se na WA sa stacka
+ 
+    PopWa( F_KONTO ) - pozicioniraj se na WA sa stack-a,
+                       ALI SAMO AKO NA stacku nije pohranjena F_KONTO WA
+
+*/
+FUNCTION PopWA( nWANeDiraj )
 
    LOCAL aWa
    LOCAL i
 
+   IF nWaNeDiraj == NIL
+     nWaNeDiraj := -1
+   ENDIF
+
    aWa := StackPop( aWaStack )
 
-   IF aWa[ 1 ] <> NIL
+   IF aWa[ 1 ] <> NIL  .AND. ( aWa[ 1 ] != nWaNeDiraj )
 
       // select
       SELECT( aWa[ 1 ] )

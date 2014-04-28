@@ -23,6 +23,7 @@ STATIC __A_SIFV__ := { { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL }, 
 
 FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aPoredak, bPodvuci, aZabrane, invert, aZabIsp )
 
+   LOCAL lIdenticnaWa := .F.
    LOCAL cRet, cIdBK
    LOCAL _i
    LOCAL _komande := { "<c-N> Novi", "<F2>  Ispravka", "<ENT> Odabir", _to_str( "<c-T> Briši" ), "<c-P> Print", ;
@@ -96,8 +97,9 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
       ENDIF
 
       PopSifV()
-      PopWa()
-
+      IF ! lIdenticnaWa
+         PopWa()
+      ENDIF
       RETURN cRet
 
    ENDIF
@@ -159,12 +161,12 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
 
    SET FILTER TO
    PopSifV()
-   PopWa()
+   PopWa( nDbf )
 
    RETURN .T.
 
-// ------------------------------------------------
-// ------------------------------------------------
+
+
 STATIC FUNCTION sif_set_order( nNTX, nOrdId, fID_j )
 
    LOCAL nPos

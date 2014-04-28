@@ -15,8 +15,6 @@
 STATIC __filter_radn := .F.
 
 
-// -------------------------
-// -------------------------
 FUNCTION P_Radn( cId, dx, dy )
 
    LOCAL i, lRet
@@ -138,7 +136,7 @@ FUNCTION P_Radn( cId, dx, dy )
 
    lRet := PostojiSifra( F_RADN, 1, MAXROWS() - 15, MAXCOLS() - 15, Lokal( "Lista radnika" ) + Space( 5 ) + "<S> filter radnika on/off", @cId, dx, dy, {| Ch| RadBl( Ch ) },,,,, { "ID" } )
 
-   PopWa()
+   PopWa( F_RADN )
 
    RETURN lRet
 
@@ -687,13 +685,12 @@ FUNCTION Tpr2Bl( Ch )
 
 
 
-// -----------------------------------------------
-// -----------------------------------------------
 FUNCTION P_LD_RJ( cId, dx, dy )
 
    LOCAL lRet
    PRIVATE imekol := {}
    PRIVATE kol := {}
+
 
    PushWa()
 
@@ -715,7 +712,7 @@ FUNCTION P_LD_RJ( cId, dx, dy )
 
    lRet := PostojiSifra( F_LD_RJ, 1, MAXROWS() -15, 60, Lokal( "Lista radnih jedinica" ), @cId, dx, dy )
 
-   PopWa()
+   PopWa( F_LD_RJ )
 
    RETURN lRet
 

@@ -138,8 +138,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
 
    SET FILTER TO
    PopSifV()
-
-   PopWa()
+   PopWa( nDbf )
 
    RETURN .T.
 

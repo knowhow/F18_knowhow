@@ -100,8 +100,8 @@
          @ Row(), Col() + 1 GET <get> [ <getexp>]
 
 
-#command ?U  [<explist,...>]         => QOut( hb_utf8ToStr( <explist> ) )
-#command ??U [<explist,...>]         => QQOut( hb_utf8ToStr( <explist> ) )
+#command ?U  [<explist,...>]         => QOutU( <explist> ) 
+#command ??U [<explist,...>]         => QQOutU( <explist> )
 
 
 #command RREPLACE <f1> WITH <v1> [, <fN> WITH <vN> ]    ;

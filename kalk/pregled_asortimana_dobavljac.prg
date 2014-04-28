@@ -434,6 +434,7 @@ _line := _get_line()
 START PRINT CRET
 ?
 
+altd()
 ?U "SPECIFIKACIJA ASORTIMANA PO DOBAVLJAČIMA NA DAN", DTOC( DATE() )
 ?U "Za period od", DTOC( vars["datum_od"]), "do", DTOC(vars["datum_do"])
 ?U "Prodavnički konto:", vars["p_konto"]

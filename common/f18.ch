@@ -83,10 +83,10 @@
 #endif
 
 // F18.log, F18_2.log, F18_3.log ...
-#define F18_LOG_FILE "F18" + IIF(f18_session()['id'] == 1, "", "_" + ALLTRIM(STR(f18_session()['id']))) + ".log"
-#define OUTF_FILE "outf" + IIF(f18_session()['id'] == 1, "", "_" + ALLTRIM(STR(f18_session()['id']))) + ".txt"
-#define OUT_ODT_FILE "out" + IIF(f18_session()['id'] == 1, "", "_" + ALLTRIM(STR(f18_session()['id']))) + ".odt"
-#define DATA_XML_FILE "data" + IIF(f18_session()['id'] == 1, "", "_" + ALLTRIM(STR(f18_session()['id']))) + ".xml"
+#define F18_LOG_FILE "F18.log"
+#define OUTF_FILE "outf.txt"
+#define OUT_ODT_FILE "out.odt"
+#define DATA_XML_FILE "data.xml"
 
 #command QUIT_1                    => ErrorLevel(1); __Quit()
 

@@ -16,7 +16,7 @@
 // -----------------------------------------------------
 // poredjenje fakt -> kalk
 // -----------------------------------------------------
-FUNCTION uporedna_lista_fakt_kalk( lFaktFakt )
+FUNCTION usporedna_lista_fakt_kalk( lFaktFakt )
 
    LOCAL cIdFirma, qqRoba, nRezerv, nRevers
    LOCAL nul, nizl, nRbr, cRR, nCol1 := 0
@@ -460,7 +460,7 @@ FUNCTION uporedna_lista_fakt_kalk( lFaktFakt )
    ?? Space( gnLMarg ); IspisFirme( cidfirma )
    IF lFaktFakt
       ? Space( gnLMarg )
-      ?? "FAKT: Uporedna lager lista u FAKT i FAKT druge firme na dan", Date(), "   za period od", dDatOd, "-", dDatDo
+      ?? "FAKT: Usporedna lager lista u FAKT i FAKT druge firme na dan", Date(), "   za period od", dDatOd, "-", dDatDo
    ELSE
       ? Space( gnLMarg ); ?? "FAKT: Usporedna lager lista u FAKT i KALK na dan", Date(), "   za period od", dDatOd, "-", dDatDo
    ENDIF

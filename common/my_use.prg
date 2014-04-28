@@ -86,8 +86,7 @@ FUNCTION my_use_temp( alias, table, new_area, excl )
           USE
        ENDIF
 
-       // pozicioniraj se na WA rezervisanu za ovu tabelu
-       IF select_wa
+       IF ! new_area
           SELECT ( _a_dbf_rec[ "wa" ] )
        ENDIF
 

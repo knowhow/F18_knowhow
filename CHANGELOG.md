@@ -1,3 +1,7 @@
+1.7.67  2014-04-28, hernad
+
+  - F18, popwa, pushwa
+ 
 1.7.66  2014-04-25, vsasa, hernad
 
   - vsasa: FIN - dnevnik naloga MONTH()  

@@ -16,9 +16,16 @@ FUNCTION QOutU( ... )
    
    LOCAL i
   
-   FOR  i := 1 TO PCount()
-        QOUT( hb_Utf8ToStr( hb_PValue( i ) ) )
+   IF PCount() == 0
+       QOut()
+       RETURN NIL
+   ENDIF
 
+   QOUT( hb_Utf8ToStr( hb_PValue( 1 ) ) )
+   FOR  i := 2 TO PCount()
+
+        QQOUT( " " )
+        QQOUT( hb_Utf8ToStr( hb_PValue( i ) ) )
    NEXT
 
    RETURN NIL
@@ -30,6 +37,9 @@ FUNCTION QQOutU( ... )
   
    FOR  i := 1 TO PCount()
         QQOUT( hb_Utf8ToStr( hb_PValue( i ) ) )
+        IF i > 1 .AND. i < PCount()
+           QQOUT( " " )
+        ENDIF
    NEXT
 
    RETURN NIL

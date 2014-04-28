@@ -1282,7 +1282,6 @@ FUNCTION view_log()
 FUNCTION set_hot_keys()
 
    SetKey( K_SH_F1, {|| Calc() } )
-   SetKey( K_F3, {|| new_f18_session_thread() } )
    SetKey( K_SH_F6, {|| f18_old_session() } )
 
    RETURN

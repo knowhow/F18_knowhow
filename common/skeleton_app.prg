@@ -163,9 +163,6 @@ do case
     case (Ch==K_SH_F1)
         Calc()
  
-    case (Ch==K_F3)
-        new_f18_session_thread()
-    
     case (Ch == K_SH_F6 )
         f18_old_session()
 

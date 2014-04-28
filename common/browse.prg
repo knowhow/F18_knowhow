@@ -339,9 +339,6 @@ STATIC FUNCTION standardne_browse_komande( TB, Ch, nRez, nPored, aPoredak )
    CASE Ch == K_SH_F1
       calc()
 
-   CASE ( Ch == K_F3 )
-      new_f18_session_thread()
-
    CASE Ch == K_CTRL_F
 
       bTekCol := ( TB:getColumn( TB:colPos ) ):Block

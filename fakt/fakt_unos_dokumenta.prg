@@ -498,6 +498,7 @@ STATIC FUNCTION fakt_prodji_kroz_stavke()
 STATIC FUNCTION fakt_dodaj_ispravi_stavku( novi, item_hash, items_atrib )
 
    LOCAL oAtrib, _rec, _item_after_hash
+   LOCAL new_hash := hb_Hash()
 
    IF novi == .T.
        APPEND BLANK
@@ -507,20 +508,15 @@ STATIC FUNCTION fakt_dodaj_ispravi_stavku( novi, item_hash, items_atrib )
    _rec := get_dbf_global_memvars( "_" )
    dbf_update_rec( _rec, .F. )
 
-   // u slučaju da dodajemo novi zapis te nemamo postojeću hash matricu sa definicijom 
-   // dokumenta, ovom prilikom je pravimo
-   // to nam treba radi ažuriranja atributa
-   IF item_hash == NIL
-      item_hash := hb_Hash()
-      item_hash["idfirma"] := fakt_pripr->idfirma
-      item_hash["idtipdok"] := fakt_pripr->idtipdok
-      item_hash["brdok"] := fakt_pripr->brdok
-      item_hash["rbr"] := fakt_pripr->rbr
-   ENDIF
+   // hash matrica koja sadrži update-ovan zapis 
+   new_hash["idfirma"] := fakt_pripr->idfirma
+   new_hash["idtipdok"] := fakt_pripr->idtipdok
+   new_hash["brdok"] := fakt_pripr->brdok
+   new_hash["rbr"] := fakt_pripr->rbr
 
    // ažuriraj atribute u FAKT_FAKT_ATRIBUTI
    oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )
-   oAtrib:dok_hash := item_hash
+   oAtrib:dok_hash := new_hash
    oAtrib:atrib_hash_to_dbf( items_atrib )
 
    fakt_promjena_cijene_u_sif()
@@ -528,8 +524,7 @@ STATIC FUNCTION fakt_dodaj_ispravi_stavku( novi, item_hash, items_atrib )
    // nešto što mjenja sve stavke dokumenta u pripremi ako se promjeni prva stavka
    // promjena broja dokumenta i slično
    IF __redni_broj == 1 .and. !novi
-      _item_after := dbf_get_rec()
-      izmjeni_sve_stavke_dokumenta( item_hash, _item_after )
+      izmjeni_sve_stavke_dokumenta( item_hash, new_hash )
    ENDIF
 
    RETURN

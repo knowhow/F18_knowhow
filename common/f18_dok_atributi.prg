@@ -463,6 +463,10 @@ METHOD F18_DOK_ATRIB:update_atrib_rbr()
    LOCAL _idfirma, _idtipdok, _brdok, _rbr, _atribut, _update_rbr
    LOCAL _rec, _t_rec
 
+   IF !hb_hHasKey( ::dok_hash, "update_rbr" )
+       RETURN .F.
+   ENDIF
+
    _idfirma := ::dok_hash[ "idfirma" ]
    _idtipdok := ::dok_hash[ "idtipdok" ]
    _brdok := ::dok_hash[ "brdok" ]

@@ -517,6 +517,12 @@ STATIC FUNCTION fakt_dodaj_ispravi_stavku( novi, item_hash, items_atrib )
    // ažuriraj atribute u FAKT_FAKT_ATRIBUTI
    oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )
    oAtrib:dok_hash := new_hash
+
+   IF !novi .AND. ( item_hash["rbr"] <> new_hash["rbr"] )
+      oAtrib:dok_hash["update_rbr"] := item_hash["rbr"]
+      oAtrib:update_atrib_rbr()
+   ENDIF
+
    oAtrib:atrib_hash_to_dbf( items_atrib )
 
    fakt_promjena_cijene_u_sif()

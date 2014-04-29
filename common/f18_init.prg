@@ -120,19 +120,17 @@ __global_error_handler := ErrorBlock( __my_error_handler )
 
 set_screen_dimensions()
 
-_get_log_level_from_config()
-
 init_gui()
 
 IF no_sql_mode()
-set_f18_home( "f18_test" )
-RETURN .T.
+   set_f18_home( "f18_test" )
+   RETURN .T.
 ENDIF
 
 // iniciraj logiranje
 f18_init_app_login( NIL, arg_v )
 
-   RETURN .T.
+RETURN .T.
 
 
 
@@ -212,6 +210,7 @@ FUNCTION f18_init_app_login( force_connect, arg_v )
             post_login()
             f18_app_parameters( .T. )
             set_hot_keys()
+			get_log_level_from_params()
 
             module_menu( arg_v )
 
@@ -538,10 +537,9 @@ FUNCTION post_login( gVars )
 
 
 #ifdef NODE
-STATIC FUNCTION _get_log_level_from_config()
+STATIC FUNCTION _get_log_level_from_params()
 
    log_level( 7 )
-
    RETURN .T.
 
 #else
@@ -549,24 +547,9 @@ STATIC FUNCTION _get_log_level_from_config()
 // -----------------------------------------------------------
 // vraca informaciju o nivou logiranja aplikcije
 // -----------------------------------------------------------
-STATIC FUNCTION _get_log_level_from_config()
+STATIC FUNCTION get_log_level_from_params()
 
-   LOCAL _var_name
-   LOCAL _ini_params := hb_Hash()
-   LOCAL _section := "Logging"
-
-   _ini_params[ "log_level" ] := nil
-
-   IF !f18_ini_read( _section, @_ini_params, .T. )
-      MsgBeep( "logging: problem sa ini read" )
-      RETURN
-   ENDIF
-
-   // setuj varijable iz inija
-   IF _ini_params[ "log_level" ] != nil
-      log_level( Val( _ini_params[ "log_level" ] ) )
-   ENDIF
-
+   log_level( fetch_metric( "log_level", NIL, 3 ) )
    RETURN .T.
 
 #endif

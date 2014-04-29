@@ -27,8 +27,8 @@ local _log_delete_interval
 local _backup_company, _backup_server
 local _backup_removable, _backup_ping_time
 local _rpt_page_len, _bug_report
+local _log_level
 
-// parametri modula koristenih na glavnom meniju...
 _fin := fetch_metric( "main_menu_fin", my_user(), "D" )
 _kalk := fetch_metric( "main_menu_kalk", my_user(), "D" )
 _fakt := fetch_metric( "main_menu_fakt", my_user(), "D" )
@@ -42,7 +42,6 @@ _pos := fetch_metric( "main_menu_pos", my_user(), "N" )
 _reports := fetch_metric( "main_menu_reports", my_user(), "N" )
 _kadev := fetch_metric( "main_menu_kadev", my_user(), "N" )
 
-// email parametri
 _email_server := PADR( fetch_metric( "email_server", my_user(), "" ), 100 )
 _email_port := fetch_metric( "email_port", my_user(), 25 )
 _email_username := PADR( fetch_metric( "email_user_name", my_user(), "" ), 100 )
@@ -51,29 +50,23 @@ _email_from := PADR( fetch_metric( "email_from", my_user(), "" ), 100 )
 _email_to := PADR( fetch_metric( "email_to_default", my_user(), "" ), 500 )
 _email_cc := PADR( fetch_metric( "email_cc_default", my_user(), "" ), 500 )
 
-// maticni podaci
 _proper_name := PADR( fetch_metric( "my_proper_name", my_user(), "" ), 50 )
 
-// log podaci
 _log_delete_interval := fetch_metric( "log_delete_level", NIL, 30 )
 
-// backup podaci
 _backup_company := fetch_metric( "backup_company_interval", my_user(), 0 )
 _backup_server := fetch_metric( "backup_server_interval", my_user(), 0 )
 _backup_removable := PADR( fetch_metric( "backup_removable_drive", my_user(), "" ), 300 )
 
 #ifdef __PLATFORM__WINDOWS
-    // samo za windows interesantno
     _backup_ping_time := fetch_metric( "backup_windows_ping_time", my_user(), 0 )
 #else
     _backup_ping_time := 0
 #endif
 
-// duzina stranice
 _rpt_page_len := fetch_metric( "rpt_duzina_stranice", my_user(), RPT_PAGE_LEN )
-
-// bug report email
 _bug_report := fetch_metric( "bug_report_email", my_user(), "A" )
+_log_level := fetch_metric( "log_level", NIL, 3 )
 
 if just_set == nil
 	just_set := .f.
@@ -180,13 +173,14 @@ if !just_set
 
 	@ _pos_x + _x, _pos_y SAY "BUG report na email (D/N/A/0):" GET _bug_report PICT "!@" VALID _bug_report $ "DNA0"
 
+    @ _pos_x + _x, Col() + 2 SAY "Nivo logiranja (0..9)" GET _log_level PICT "9" VALID _log_level >= 0 .AND. _log_level < 10    
+
 	read
 
 	if LastKey() == K_ESC
     	return
 	endif
 
-    // parametri modula...
     set_metric( "main_menu_fin", my_user(), _fin )
     set_metric( "main_menu_kalk", my_user(), _kalk )
     set_metric( "main_menu_fakt", my_user(), _fakt )
@@ -199,8 +193,6 @@ if !just_set
     set_metric( "main_menu_pos", my_user(), _pos )
     set_metric( "main_menu_kadev", my_user(), _kadev )
     set_metric( "main_menu_reports", my_user(), _reports )
-
-    // email parametri
     set_metric( "email_server", my_user(), ALLTRIM( _email_server ) )
     set_metric( "email_port", my_user(), _email_port )
     set_metric( "email_user_name", my_user(), ALLTRIM( _email_username ) )
@@ -208,23 +200,16 @@ if !just_set
     set_metric( "email_from", my_user(), ALLTRIM( _email_from ) )
     set_metric( "email_to_default", my_user(), ALLTRIM( _email_to ) )
     set_metric( "email_cc_default", my_user(), ALLTRIM( _email_cc ) )
-
-    // maticni podaci
     set_metric( "my_proper_name", my_user(), ALLTRIM( _proper_name ) )
-
-    // log podaci
     set_metric( "log_delete_level", NIL, _log_delete_interval )
-
-    // backup podaci
     set_metric( "backup_company_interval", my_user(), _backup_company )
     set_metric( "backup_server_interval", my_user(), _backup_server )
     set_metric( "backup_removable_drive", my_user(), ALLTRIM( _backup_removable ) )
-
-    // duzina stranice
     set_metric( "rpt_duzina_stranice", my_user(), _rpt_page_len )
-
-    // bug report email
     set_metric( "bug_report_email", my_user(), _bug_report )
+
+    set_metric( "log_level", NIL, _log_level )
+    log_level( _log_level )
 
     #ifdef __PLATFORM__WINDOWS
         set_metric( "backup_windows_ping_time", my_user(), _backup_ping_time )

@@ -102,7 +102,7 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
       fAuto := .F.
    ENDIF
 
-   lAFin := ( fauto .AND. gAFin == "D" )
+   lAFin := ( gAFin == "D" )
 
    IF lAFin
 
@@ -1230,7 +1230,7 @@ FUNCTION RekapK()
 
       nStr := 0
       nTot1 := nTot2 := nTot3 := nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := nTota := nTotb := nTotC := 0
-
+      
       DO WHILE !Eof() .AND. cIdFirma == idfirma .AND. cidvd == idvd
 
          cBrDok := BrDok

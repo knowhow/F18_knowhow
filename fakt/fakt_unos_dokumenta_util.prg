@@ -945,6 +945,8 @@ FUNCTION artikal_kao_usluga( fNovi )
          _cijena := roba->vpc
       ENDIF
 
+      _porez := 0
+
       @ Row() - 1, m_y + 25 SAY "opis usl.:" GET _txt1 PICT "@S50"
 
       READ

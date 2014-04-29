@@ -1,3 +1,10 @@
+1.7.68  2014-04-29, vsasa
+
+  - log_level prebačen u SQL parametre
+  - FAKT, brisanje stavke iz pripreme - atributi bugfix
+  - FAKT, promjena rednog broja stavke - atributi bugfix
+  - RNAL, kontrola unosa repromaterijala, F18 ROBA
+ 
 1.7.67  2014-04-28, hernad
 
   - F18, popwa, pushwa

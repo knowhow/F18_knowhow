@@ -11,8 +11,8 @@
 
 #define F18_VER_DEFINED
 
-#define F18_VER       "1.7.67"
-#define F18_VER_DATE  "28.04.2014"
+#define F18_VER       "1.7.68"
+#define F18_VER_DATE  "29.04.2014"
 
 #define FMK_LIB_VER   "4.3.4"
 

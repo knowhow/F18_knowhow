@@ -491,9 +491,44 @@ STATIC FUNCTION fakt_prodji_kroz_stavke()
 
 
 
+
+
+STATIC FUNCTION fakt_dodaj_zapis( novi, item_hash, items_atrib )
+
+   LOCAL oAtrib, _rec, _item_after
+
+   IF novi == .T.
+       APPEND BLANK
+   ENDIF
+
+   _rec := get_dbf_global_memvars( "_" )
+   dbf_update_rec( _rec, .F. )
+
+   IF item_hash == NIL
+      item_hash := hb_Hash()
+      item_hash["idfirma"] := fakt_pripr->idfirma
+      item_hash["idtipdok"] := fakt_pripr->idtipdok
+      item_hash["brdok"] := fakt_pripr->brdok
+      item_hash["rbr"] := fakt_pripr->rbr
+   ENDIF
+
+   oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )
+   oAtrib:dok_hash := item_hash
+   oAtrib:atrib_hash_to_dbf( items_atrib )
+
+   PrCijSif()
+
+   IF __redni_broj == 1 .and. !novi
+      _item_after := dbf_get_rec()
+      izmjeni_sve_stavke_dokumenta( item_hash, _item_after )
+   ENDIF
+
+   RETURN
+
+
+
 STATIC FUNCTION fakt_edit_dokument( fakt_params )
 
-   LOCAL oAtrib
    LOCAL _ret := .T.
    LOCAL _items_atrib := hb_Hash()
    LOCAL _item_before, _item_after
@@ -522,24 +557,8 @@ STATIC FUNCTION fakt_edit_dokument( fakt_params )
    IF edit_fakt_priprema( .F., @_items_atrib ) == 0
       _ret := .F.
    ELSE
-
-      oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )
-      oAtrib:dok_hash := _item_before
-      oAtrib:atrib_hash_to_dbf( _items_atrib )
-
-      _rec := get_dbf_global_memvars( "_" )
-
-      dbf_update_rec( _rec, .F. )
-
-      PrCijSif()
-
-      IF __redni_broj == 1
-         _item_after := dbf_get_rec()
-         izmjeni_sve_stavke_dokumenta( _item_before, _item_after )
-      ENDIF
-
+      fakt_dodaj_zapis( .F., _item_before, _items_atrib )
       _ret := .T.
-
    ENDIF
 
    BoxC()
@@ -616,24 +635,7 @@ STATIC FUNCTION fakt_unos_nove_stavke()
       InkeySc( 10 )
 
       select_fakt_pripr()
-      APPEND BLANK
-
-      _rec := get_dbf_global_memvars( "_" )
-      dbf_update_rec( _rec, .F. )
-
-      _dok_hash := hb_Hash()
-      _dok_hash[ "idfirma" ] := field->idfirma
-      _dok_hash[ "idtipdok" ] := field->idtipdok
-      _dok_hash[ "brdok" ] := field->brdok
-      _dok_hash[ "rbr" ] := field->rbr
-
-      // ubaci mi atribute u fakt_atribute
-      oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )
-      oAtrib:dok_hash := _dok_hash
-      oAtrib:atrib_hash_to_dbf( _items_atrib )
-
-      // promijeni cijenu u sifrarniku ako treba
-      PrCijSif()
+      fakt_dodaj_zapis( .T., NIL, _items_atrib )
 
    ENDDO
 

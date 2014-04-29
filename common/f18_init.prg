@@ -120,19 +120,17 @@ __global_error_handler := ErrorBlock( __my_error_handler )
 
 set_screen_dimensions()
 
-_get_log_level_from_config()
-
 init_gui()
 
 IF no_sql_mode()
-set_f18_home( "f18_test" )
-RETURN .T.
+   set_f18_home( "f18_test" )
+   RETURN .T.
 ENDIF
 
 // iniciraj logiranje
 f18_init_app_login( NIL, arg_v )
 
-   RETURN .T.
+RETURN .T.
 
 
 
@@ -212,6 +210,7 @@ FUNCTION f18_init_app_login( force_connect, arg_v )
             post_login()
             f18_app_parameters( .T. )
             set_hot_keys()
+			get_log_level_from_params()
 
             module_menu( arg_v )
 
@@ -269,19 +268,18 @@ FUNCTION init_harbour()
    // epoha je u stvari 1999, 2000 itd
    SET EPOCH TO 1960
    SET DATE TO GERMAN
-REQUEST HB_CODEPAGE_SL852
-REQUEST HB_CODEPAGE_SLISO
+   REQUEST HB_CODEPAGE_SL852
+   REQUEST HB_CODEPAGE_SLISO
 
-hb_cdpSelect( "SL852" )
-hb_SetTermCP( "SLISO" )
+   hb_cdpSelect( "SL852" )
+   hb_SetTermCP( "SLISO" )
+ 
+   SET DELETED ON
 
+   SetCancel( .F. )
 
-SET DELETED ON
-
-SetCancel( .F. )
-
-SET( _SET_EVENTMASK, INKEY_ALL )
-MSetCursor( .T. )
+   SET( _SET_EVENTMASK, INKEY_ALL )
+   MSetCursor( .T. )
 
    RETURN .T.
 
@@ -356,16 +354,6 @@ maxcols( 100 )
 log_write( _msg + "3" )
 
 OTHERWISE
-
-// case _pix_width >= 800 .and. _pix_height >= 600
-
-    /*
-    font_size(18)
-    font_width(9)
-
-    maxrows(31)
-    maxcols(80)
-    */
 
 font_size( 16 )
 font_width( 8 )
@@ -538,10 +526,9 @@ FUNCTION post_login( gVars )
 
 
 #ifdef NODE
-STATIC FUNCTION _get_log_level_from_config()
+STATIC FUNCTION _get_log_level_from_params()
 
    log_level( 7 )
-
    RETURN .T.
 
 #else
@@ -549,24 +536,9 @@ STATIC FUNCTION _get_log_level_from_config()
 // -----------------------------------------------------------
 // vraca informaciju o nivou logiranja aplikcije
 // -----------------------------------------------------------
-STATIC FUNCTION _get_log_level_from_config()
+STATIC FUNCTION get_log_level_from_params()
 
-   LOCAL _var_name
-   LOCAL _ini_params := hb_Hash()
-   LOCAL _section := "Logging"
-
-   _ini_params[ "log_level" ] := nil
-
-   IF !f18_ini_read( _section, @_ini_params, .T. )
-      MsgBeep( "logging: problem sa ini read" )
-      RETURN
-   ENDIF
-
-   // setuj varijable iz inija
-   IF _ini_params[ "log_level" ] != nil
-      log_level( Val( _ini_params[ "log_level" ] ) )
-   ENDIF
-
+   log_level( fetch_metric( "log_level", NIL, 3 ) )
    RETURN .T.
 
 #endif

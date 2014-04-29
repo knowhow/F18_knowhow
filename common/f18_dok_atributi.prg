@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -17,39 +17,39 @@
 
 CLASS F18_DOK_ATRIB
 
-    DATA modul
-    DATA from_dbf
-    DATA dok_hash
-    DATA atrib
-    DATA workarea
+   DATA modul
+   DATA from_dbf
+   DATA dok_hash
+   DATA atrib
+   DATA workarea
 
-    METHOD New()
-    METHOD get_atrib()
-    METHOD set_atrib()
-    METHOD delete_atrib()
-    METHOD create_local_atrib_table()
-    METHOD fix_atrib()
-    METHOD zapp_local_table()
-    METHOD atrib_dbf_to_server()
-    METHOD atrib_server_to_dbf()
-    METHOD atrib_hash_to_dbf()
-    METHOD update_atrib_from_server()
-    METHOD delete_atrib_from_server()
-    METHOD open_local_table()
+   METHOD New()
+   METHOD get_atrib()
+   METHOD set_atrib()
+   METHOD delete_atrib()
+   METHOD create_local_atrib_table()
+   METHOD fix_atrib()
+   METHOD zapp_local_table()
+   METHOD atrib_dbf_to_server()
+   METHOD atrib_server_to_dbf()
+   METHOD atrib_hash_to_dbf()
+   METHOD update_atrib_from_server()
+   METHOD delete_atrib_from_server()
+   METHOD open_local_table()
 
-    PROTECTED:
+   PROTECTED:
 
-        VAR table_name_server
-        VAR table_name_local
-        VAR alias
+   VAR table_name_server
+   VAR table_name_local
+   VAR ALIAS
 
-        METHOD get_atrib_from_server()
-        METHOD get_atrib_from_dbf()
-        METHOD get_atrib_list_from_server()
-        METHOD set_table_name()
-        METHOD set_dbf_alias()
-        METHOD atrib_delete_duplicate()
-        METHOD atrib_delete_rest()
+   METHOD get_atrib_from_server()
+   METHOD get_atrib_from_dbf()
+   METHOD get_atrib_list_from_server()
+   METHOD set_table_name()
+   METHOD set_dbf_alias()
+   METHOD atrib_delete_duplicate()
+   METHOD atrib_delete_rest()
 
 ENDCLASS
 
@@ -59,17 +59,17 @@ ENDCLASS
 // --------------------------------------------------
 METHOD F18_DOK_ATRIB:New( _modul_, _wa_ )
 
-::dok_hash := hb_hash()
+   ::dok_hash := hb_Hash()
 
-if _modul_ <> NIL
-    ::modul := _modul_
-endif
+   IF _modul_ <> NIL
+      ::modul := _modul_
+   ENDIF
 
-if _wa_ <> NIL
-    ::workarea := _wa_
-endif
+   IF _wa_ <> NIL
+      ::workarea := _wa_
+   ENDIF
 
-return SELF
+   RETURN SELF
 
 
 
@@ -77,8 +77,10 @@ return SELF
 // --------------------------------------------------
 // --------------------------------------------------
 METHOD F18_DOK_ATRIB:set_dbf_alias()
-::alias := ALLTRIM( LOWER( ::modul ) ) + "_atrib" 
-return SELF
+
+   ::alias := AllTrim( Lower( ::modul ) ) + "_atrib"
+
+   RETURN SELF
 
 
 
@@ -86,20 +88,21 @@ return SELF
 // --------------------------------------------------
 // --------------------------------------------------
 METHOD F18_DOK_ATRIB:open_local_table()
-local _alias 
 
-// setuj naziv tabele
-::set_table_name()
-// setuj alijas
-::set_dbf_alias()
+   LOCAL _alias
 
-SELECT ( ::workarea )
+   // setuj naziv tabele
+   ::set_table_name()
+   // setuj alijas
+   ::set_dbf_alias()
 
-my_use( ::table_name_local )
+   SELECT ( ::workarea )
 
-SET ORDER TO TAG "1"
+   my_use( ::table_name_local )
 
-return SELF
+   SET ORDER TO TAG "1"
+
+   RETURN SELF
 
 
 
@@ -109,37 +112,38 @@ return SELF
 // kreira se pomocna tabela atributa...
 // ----------------------------------------------------------------
 METHOD F18_DOK_ATRIB:create_local_atrib_table( force )
-local _dbf := {}
-local _ind_key := "idfirma + idtipdok + brdok + rbr + atribut"
-local _ind_uniq := ".t."
 
-if force == NIL
-    force := .f.
-endif
+   LOCAL _dbf := {}
+   LOCAL _ind_key := "idfirma + idtipdok + brdok + rbr + atribut"
+   LOCAL _ind_uniq := ".t."
 
-AADD( _dbf, { 'IDFIRMA'   , 'C' ,   2 ,  0 } )
-AADD( _dbf, { 'IDTIPDOK'  , 'C' ,   2 ,  0 } )
-AADD( _dbf, { 'BRDOK'     , 'C' ,   8 ,  0 } )
-AADD( _dbf, { 'RBR'       , 'C' ,   3 ,  0 } ) 
-AADD( _dbf, { 'ATRIBUT'   , 'C' ,  50 ,  0 } )
-AADD( _dbf, { 'VALUE'     , 'C' , 250 ,  0 } )
+   IF force == NIL
+      force := .F.
+   ENDIF
 
-::set_table_name()
+   AAdd( _dbf, { 'IDFIRMA', 'C',   2,  0 } )
+   AAdd( _dbf, { 'IDTIPDOK', 'C',   2,  0 } )
+   AAdd( _dbf, { 'BRDOK', 'C',   8,  0 } )
+   AAdd( _dbf, { 'RBR', 'C',   3,  0 } )
+   AAdd( _dbf, { 'ATRIBUT', 'C',  50,  0 } )
+   AAdd( _dbf, { 'VALUE', 'C', 250,  0 } )
 
-if force .or. !FILE( my_home() + ::table_name_local + ".dbf" )
-    DBCreate( my_home() + ::table_name_local + ".dbf", _dbf )
-endif
+   ::set_table_name()
 
-// otvori tabelu...
-::open_local_table()
+   IF force .OR. !File( my_home() + ::table_name_local + ".dbf" )
+      dbCreate( my_home() + ::table_name_local + ".dbf", _dbf )
+   ENDIF
 
-//INDEX ON &cKljucIz  TAG (cTag)  TO (cImeCdx) FOR &cFilter UNIQUE
-INDEX ON &_ind_key TAG "1" FOR &_ind_uniq UNIQUE
+   // otvori tabelu...
+   ::open_local_table()
 
-SELECT ( ::workarea )
-USE
-     	         
-return SELF
+   // INDEX ON &cKljucIz  TAG (cTag)  TO (cImeCdx) FOR &cFilter UNIQUE
+   INDEX ON &_ind_key TAG "1" FOR &_ind_uniq UNIQUE
+
+   SELECT ( ::workarea )
+   USE
+     	
+   RETURN SELF
 
 
 
@@ -147,46 +151,47 @@ return SELF
 // --------------------------------------------------
 METHOD F18_DOK_ATRIB:set_table_name()
 
-if !EMPTY( ::modul )
-    ::table_name_local := ALLTRIM( LOWER( ::modul ) ) + "_pripr_atrib"
-    ::table_name_server := "fmk." + ALLTRIM( LOWER( ::modul ) ) + "_" + ;
-                                ALLTRIM( LOWER( ::modul ) ) + "_atributi"
-else 
-    MsgBeep( "DATA:modul nije setovano !" )
-endif
+   IF !Empty( ::modul )
+      ::table_name_local := AllTrim( Lower( ::modul ) ) + "_pripr_atrib"
+      ::table_name_server := "fmk." + AllTrim( Lower( ::modul ) ) + "_" + ;
+         AllTrim( Lower( ::modul ) ) + "_atributi"
+   ELSE
+      MsgBeep( "DATA:modul nije setovano !" )
+   ENDIF
 
-return SELF
+   RETURN SELF
 
 
 // ----------------------------------------------------------------------
 // vraca atribut
 // ----------------------------------------------------------------------
 METHOD F18_DOK_ATRIB:get_atrib( _dok, _atribut )
-local _ret
 
-// postoji mogucnost i setovanja kroz poziv metode
-if PCOUNT() > 0
+   LOCAL _ret
 
-    if _dok <> NIL
-        ::dok_hash := _dok    
-    endif
+   // postoji mogucnost i setovanja kroz poziv metode
+   IF PCount() > 0
 
-    if _atribut <> NIL
-        ::atrib := _atribut
-    endif
+      IF _dok <> NIL
+         ::dok_hash := _dok
+      ENDIF
 
-endif
+      IF _atribut <> NIL
+         ::atrib := _atribut
+      ENDIF
 
-// setuj naziv tabele
-::set_table_name()
+   ENDIF
 
-if !::from_dbf
-    _ret := ::get_atrib_from_server()
-else
-    _ret := ::get_atrib_from_dbf()
-endif
+   // setuj naziv tabele
+   ::set_table_name()
 
-return _ret
+   IF !::from_dbf
+      _ret := ::get_atrib_from_server()
+   ELSE
+      _ret := ::get_atrib_from_dbf()
+   ENDIF
+
+   RETURN _ret
 
 
 
@@ -194,26 +199,27 @@ return _ret
 // vraca atribut iz pomocne tabele
 // --------------------------------------------------------------------
 METHOD F18_DOK_ATRIB:get_atrib_from_dbf()
-local _ret := ""
-local _t_area := SELECT()
 
-// otvori mi tabelu atributa...
-::open_local_table()
+   LOCAL _ret := ""
+   LOCAL _t_area := Select()
 
-set order to tag "1"
-go top
+   // otvori mi tabelu atributa...
+   ::open_local_table()
 
-seek ( ::dok_hash["idfirma"] + ::dok_hash["idtipdok"] + ::dok_hash["brdok"] + ::dok_hash["rbr"] + ::atrib )
+   SET ORDER TO TAG "1"
+   GO TOP
 
-if FOUND()
-    _ret := ALLTRIM( field->value )
-endif
+   SEEK ( ::dok_hash[ "idfirma" ] + ::dok_hash[ "idtipdok" ] + ::dok_hash[ "brdok" ] + ::dok_hash[ "rbr" ] + ::atrib )
 
-USE
+   IF Found()
+      _ret := AllTrim( field->value )
+   ENDIF
 
-select ( _t_area )
+   USE
 
-return _ret
+   SELECT ( _t_area )
+
+   RETURN _ret
 
 
 
@@ -221,84 +227,86 @@ return _ret
 // vraca odredjeni atribut sa servera
 // -------------------------------------------------------------------------
 METHOD F18_DOK_ATRIB:get_atrib_from_server()
-local _val := ""
-local _attr := ::get_atrib_list_from_server()
 
-if _attr != NIL .and. LEN( _attr ) <> 0
-    _val := _attr[ 1, 3 ]
-endif
+   LOCAL _val := ""
+   LOCAL _attr := ::get_atrib_list_from_server()
 
-return _val
+   IF _attr != NIL .AND. Len( _attr ) <> 0
+      _val := _attr[ 1, 3 ]
+   ENDIF
+
+   RETURN _val
 
 
 // ----------------------------------------------------------------------------
 // vraca listu atributa sa servera za pojedini dokument
-// 
+//
 // ako zadamo id_firma + tip_dok + br_dok -> dobijamo sve za taj dokument
 // ako zadamo id_firma + tip_dok + br_dok + r_br -> dobijamo za tu stavku
-// ako zadamo id_firma + tip_dok + br_dok + r_br + atribut -> dobijamo 
-//                                                   samo trazeni atribut
+// ako zadamo id_firma + tip_dok + br_dok + r_br + atribut -> dobijamo
+// samo trazeni atribut
 //
 // vraca se matrica { "rbr", "value", "atribut" }
 // ----------------------------------------------------------------------------
 METHOD F18_DOK_ATRIB:get_atrib_list_from_server()
-local _a_atrib := {}
-local _qry, _table, oItem
-local _idfirma, _idtipdok, _brdok, _rbr, _atrib
-local _where
 
-_idfirma := ::dok_hash["idfirma"]
-_idtipdok := ::dok_hash["idtipdok"]
-_brdok := ::dok_hash["brdok"]
+   LOCAL _a_atrib := {}
+   LOCAL _qry, _table, oItem
+   LOCAL _idfirma, _idtipdok, _brdok, _rbr, _atrib
+   LOCAL _where
 
-if ::atrib == NIL
-    _atrib := ""
-else
-    _atrib := ::atrib
-endif
+   _idfirma := ::dok_hash[ "idfirma" ]
+   _idtipdok := ::dok_hash[ "idtipdok" ]
+   _brdok := ::dok_hash[ "brdok" ]
 
-if hb_hhaskey( ::dok_hash, "rbr" )
-    if ::dok_hash["rbr"] == NIL
-        _rbr := ""
-    else
-        _rbr := ::dok_hash["rbr"]
-    endif
-else
-    _rbr := ""
-endif
+   if ::atrib == NIL
+      _atrib := ""
+   ELSE
+      _atrib := ::atrib
+   ENDIF
 
-_where := "idfirma = " + _sql_quote( _idfirma )
-_where += " AND "
-_where += "brdok = " + _sql_quote( _brdok )
-_where += " AND "
-_where += "idtipdok = " + _sql_quote( _idtipdok )
+   IF hb_HHasKey( ::dok_hash, "rbr" )
+      if ::dok_hash[ "rbr" ] == NIL
+         _rbr := ""
+      ELSE
+         _rbr := ::dok_hash[ "rbr" ]
+      ENDIF
+   ELSE
+      _rbr := ""
+   ENDIF
 
-if !EMPTY( _rbr )
-    _where += " AND rbr = " + _sql_quote( _rbr )
-endif
+   _where := "idfirma = " + _sql_quote( _idfirma )
+   _where += " AND "
+   _where += "brdok = " + _sql_quote( _brdok )
+   _where += " AND "
+   _where += "idtipdok = " + _sql_quote( _idtipdok )
 
-if !EMPTY( _atrib )
-    _where += " AND atribut = " + _sql_quote( _atrib )
-endif
- 
-_table := _select_all_from_table( ::table_name_server, NIL, { _where }, { "atribut" } )
+   IF !Empty( _rbr )
+      _where += " AND rbr = " + _sql_quote( _rbr )
+   ENDIF
 
-if _table == NIL
-    return NIL
-endif
+   IF !Empty( _atrib )
+      _where += " AND atribut = " + _sql_quote( _atrib )
+   ENDIF
 
-_table:Refresh()
+   _table := _select_all_from_table( ::table_name_server, NIL, { _where }, { "atribut" } )
 
-// napuni mi matricu sa rezultatom...
-do while !_table:EOF()
-    oItem := _table:GetRow()
-    AADD( _a_atrib, { oItem:FieldGet( oItem:FieldPos( "rbr") ), ;
-                    oItem:FieldGet( oItem:FieldPos( "atribut" ) ), ;
-                    hb_utf8tostr( oItem:FieldGet( oItem:FieldPos( "value" ) ) ) } )    
-    _table:Skip()
-enddo
+   IF _table == NIL
+      RETURN NIL
+   ENDIF
 
-return _a_atrib
+   _table:Refresh()
+
+   // napuni mi matricu sa rezultatom...
+   DO WHILE !_table:Eof()
+      oItem := _table:GetRow()
+      AAdd( _a_atrib, { oItem:FieldGet( oItem:FieldPos( "rbr" ) ), ;
+         oItem:FieldGet( oItem:FieldPos( "atribut" ) ), ;
+         hb_UTF8ToStr( oItem:FieldGet( oItem:FieldPos( "value" ) ) ) } )
+      _table:Skip()
+   ENDDO
+
+   RETURN _a_atrib
 
 
 
@@ -308,51 +316,52 @@ return _a_atrib
 // setovanje atributa u pomocnu tabelu
 // ---------------------------------------------------------------------------
 METHOD F18_DOK_ATRIB:set_atrib( atrib_key, value )
-local _ok := .t.
-local _rec, _t_area 
 
-_t_area := SELECT()
+   LOCAL _ok := .T.
+   LOCAL _rec, _t_area
 
-::open_local_table()
+   _t_area := Select()
 
-set order to tag "1"
-go top
-seek ( ::dok_hash["idfirma"] + ::dok_hash["idtipdok"] + ::dok_hash["brdok"] + ::dok_hash["rbr"] + atrib_key )
+   ::open_local_table()
 
-if !FOUND() 
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK ( ::dok_hash[ "idfirma" ] + ::dok_hash[ "idtipdok" ] + ::dok_hash[ "brdok" ] + ::dok_hash[ "rbr" ] + atrib_key )
 
-    if EMPTY( value )
-        use
-        select ( _t_area )
-        return _ok
-    endif
+   IF !Found()
 
-    append blank
+      IF Empty( value )
+         USE
+         SELECT ( _t_area )
+         RETURN _ok
+      ENDIF
 
-    _rec := dbf_get_rec()
+      APPEND BLANK
 
-    _rec["idfirma"] := ::dok_hash["idfirma"]
-    _rec["idtipdok"] := ::dok_hash["idtipdok"]
-    _rec["brdok"] := ::dok_hash["brdok"]
-    _rec["rbr"] := ::dok_hash["rbr"]
-    _rec["atribut"] := atrib_key
-    _rec["value"] := value
+      _rec := dbf_get_rec()
 
-    dbf_update_rec( _rec )
+      _rec[ "idfirma" ] := ::dok_hash[ "idfirma" ]
+      _rec[ "idtipdok" ] := ::dok_hash[ "idtipdok" ]
+      _rec[ "brdok" ] := ::dok_hash[ "brdok" ]
+      _rec[ "rbr" ] := ::dok_hash[ "rbr" ]
+      _rec[ "atribut" ] := atrib_key
+      _rec[ "value" ] := value
 
-else
-    
-    _rec := dbf_get_rec()
-    _rec["value"] := value
-    dbf_update_rec( _rec )
+      dbf_update_rec( _rec )
 
-endif
+   ELSE
 
-use
+      _rec := dbf_get_rec()
+      _rec[ "value" ] := value
+      dbf_update_rec( _rec )
 
-select ( _t_area )
+   ENDIF
 
-return _ok
+   USE
+
+   SELECT ( _t_area )
+
+   RETURN _ok
 
 
 
@@ -360,14 +369,15 @@ return _ok
 // ubaci atribute iz hash matrice u dbf atribute
 // --------------------------------------------------------------------------
 METHOD F18_DOK_ATRIB:atrib_hash_to_dbf( hash )
-local _rec, _key
 
-// prodji kroz atribute i napuni dbf
-for each _key in hash:keys()    
-    ::set_atrib( _key, hash[ _key ] )
-next
+   LOCAL _rec, _key
 
-return
+   // prodji kroz atribute i napuni dbf
+   FOR EACH _key in hash:keys()
+      ::set_atrib( _key, hash[ _key ] )
+   NEXT
+
+   RETURN
 
 
 
@@ -376,15 +386,17 @@ return
 // zapuje fakt atribute
 // ---------------------------------------------------------
 METHOD F18_DOK_ATRIB:zapp_local_table()
-local _t_area := SELECT()
 
-::open_local_table()
+   LOCAL _t_area := Select()
 
-reopen_exclusive_and_zap( ALIAS() , .T. )
-use
+   ::open_local_table()
 
-select ( _t_area )
-return
+   reopen_exclusive_and_zap( Alias(), .T. )
+   USE
+
+   SELECT ( _t_area )
+
+   RETURN
 
 
 
@@ -392,49 +404,51 @@ return
 // brisanje atributa iz lokalnog dbf-a
 // ---------------------------------------------------------------------------
 METHOD F18_DOK_ATRIB:delete_atrib()
-local _ok := .t.
-local _t_area := SELECT()
-local _idfirma, _idtipdok, _brdok, _rbr, _atribut
 
-_idfirma := ::dok_hash["idfirma"]
-_idtipdok := ::dok_hash["idtipdok"]
-_brdok := ::dok_hash["brdok"]
-_rbr := ::dok_hash["rbr"]
+   LOCAL _ok := .T.
+   LOCAL _t_area := Select()
+   LOCAL _idfirma, _idtipdok, _brdok, _rbr, _atribut
 
-if hb_hhaskey( ::dok_hash, "atribut" )
-    _atribut := ::dok_hash["atribut"]
-else
-    _atribut := NIL
-endif
+   _idfirma := ::dok_hash[ "idfirma" ]
+   _idtipdok := ::dok_hash[ "idtipdok" ]
+   _brdok := ::dok_hash[ "brdok" ]
+   _rbr := ::dok_hash[ "rbr" ]
 
-if _rbr == NIL
-    _rbr := ""
-endif
+   IF hb_HHasKey( ::dok_hash, "atribut" )
+      _atribut := ::dok_hash[ "atribut" ]
+   ELSE
+      _atribut := NIL
+   ENDIF
 
-if _atribut == NIL
-    _atribut := ""
-endif
+   IF _rbr == NIL
+      _rbr := ""
+   ENDIF
 
-::open_local_table()
-my_flock()
-go top
-seek ( _idfirma + _idtipdok + _brdok + _rbr + _atribut ) 
+   IF _atribut == NIL
+      _atribut := ""
+   ENDIF
 
-do while !EOF() .and. field->idfirma == _idfirma .and. field->idtipdok == _idtipdok ;
-                .and. field->brdok == _brdok ;
-                .and. IF( !EMPTY( _rbr ), field->rbr == _rbr, .t. ) ;
-                .and. IF( !EMPTY( _atribut ), field->atribut == _atribut, .t. )
-    delete
-    skip
-enddo
-my_unlock()
+   ::open_local_table()
+   my_flock()
+   GO TOP
+   SEEK ( _idfirma + _idtipdok + _brdok + _rbr + _atribut )
+
+   DO WHILE !Eof() .AND. field->idfirma == _idfirma .AND. field->idtipdok == _idtipdok ;
+         .AND. field->brdok == _brdok ;
+         .AND. IF( !Empty( _rbr ), field->rbr == _rbr, .T. ) ;
+         .AND. IF( !Empty( _atribut ), field->atribut == _atribut, .T. )
+      DELETE
+      SKIP
+   ENDDO
+   my_unlock()
 
 
-reopen_exclusive_and_zap( ALIAS() , .T. )
-use
+   reopen_exclusive_and_zap( Alias(), .T. )
+   USE
 
-select ( _t_area )
-return _ok
+   SELECT ( _t_area )
+
+   RETURN _ok
 
 
 
@@ -442,34 +456,35 @@ return _ok
 // update atributa na serveru
 // ------------------------------------------------------------------------
 METHOD F18_DOK_ATRIB:update_atrib_from_server( params )
-local _ok := .t.
-local _qry
-local _server := pg_server()
-local _old_firma := params["old_firma"]
-local _old_tipdok := params["old_tipdok"]
-local _old_brdok := params["old_brdok"]
-local _new_firma := params["new_firma"]
-local _new_tipdok := params["new_tipdok"]
-local _new_brdok := params["new_brdok"]
 
-// prvo pobrisi sa servera
-_qry := "UPDATE " + ::table_name_server + " " 
-_qry += "SET "
-_qry += "idfirma = " + _sql_quote( _new_firma ) 
-_qry += ", idtipdok = " + _sql_quote( _new_tipdok )
-_qry += ", brdok = " + _sql_quote( _new_brdok )
-_qry += " WHERE "
-_qry += " idfirma = " + _sql_quote( _old_firma ) 
-_qry += " AND idtipdok = " + _sql_quote( _old_tipdok ) 
-_qry += " AND brdok = " + _sql_quote( _old_brdok ) 
+   LOCAL _ok := .T.
+   LOCAL _qry
+   LOCAL _server := pg_server()
+   LOCAL _old_firma := params[ "old_firma" ]
+   LOCAL _old_tipdok := params[ "old_tipdok" ]
+   LOCAL _old_brdok := params[ "old_brdok" ]
+   LOCAL _new_firma := params[ "new_firma" ]
+   LOCAL _new_tipdok := params[ "new_tipdok" ]
+   LOCAL _new_brdok := params[ "new_brdok" ]
 
-_ret := _sql_query( _server, _qry )
+   // prvo pobrisi sa servera
+   _qry := "UPDATE " + ::table_name_server + " "
+   _qry += "SET "
+   _qry += "idfirma = " + _sql_quote( _new_firma )
+   _qry += ", idtipdok = " + _sql_quote( _new_tipdok )
+   _qry += ", brdok = " + _sql_quote( _new_brdok )
+   _qry += " WHERE "
+   _qry += " idfirma = " + _sql_quote( _old_firma )
+   _qry += " AND idtipdok = " + _sql_quote( _old_tipdok )
+   _qry += " AND brdok = " + _sql_quote( _old_brdok )
 
-if VALTYPE( _ret ) == "L"
-    _ok := .f.
-endif
+   _ret := _sql_query( _server, _qry )
 
-return _ok
+   IF ValType( _ret ) == "L"
+      _ok := .F.
+   ENDIF
+
+   RETURN _ok
 
 
 
@@ -477,26 +492,27 @@ return _ok
 // brisanje atributa sa servera
 // ------------------------------------------------------------------------
 METHOD F18_DOK_ATRIB:delete_atrib_from_server()
-local _ok := .t.
-local _qry
-local _server := pg_server()
 
-::set_table_name()
+   LOCAL _ok := .T.
+   LOCAL _qry
+   LOCAL _server := pg_server()
 
-// prvo pobrisi sa servera
-_qry := "DELETE FROM " + ::table_name_server
-_qry += " WHERE "
-_qry += "idfirma = " + _sql_quote( ::dok_hash["idfirma"] ) 
-_qry += " AND idtipdok = " + _sql_quote( ::dok_hash["idtipdok"] )
-_qry += " AND brdok = " + _sql_quote( ::dok_hash["brdok"] )
- 
-_ret := _sql_query( _server, _qry )
+   ::set_table_name()
 
-if VALTYPE( _ret ) == "L"
-    _ok := .f.
-endif
+   // prvo pobrisi sa servera
+   _qry := "DELETE FROM " + ::table_name_server
+   _qry += " WHERE "
+   _qry += "idfirma = " + _sql_quote( ::dok_hash[ "idfirma" ] )
+   _qry += " AND idtipdok = " + _sql_quote( ::dok_hash[ "idtipdok" ] )
+   _qry += " AND brdok = " + _sql_quote( ::dok_hash[ "brdok" ] )
 
-return _ok
+   _ret := _sql_query( _server, _qry )
+
+   IF ValType( _ret ) == "L"
+      _ok := .F.
+   ENDIF
+
+   RETURN _ok
 
 
 
@@ -504,72 +520,74 @@ return _ok
 // pusiranje atributa na server
 // -------------------------------------------------------------------------
 METHOD F18_DOK_ATRIB:atrib_dbf_to_server()
-local _ok := .t.
-local _t_area := SELECT()
-local _qry, _table
-local _server := pg_server()
-local _res
 
-::open_local_table()
+   LOCAL _ok := .T.
+   LOCAL _t_area := Select()
+   LOCAL _qry, _table
+   LOCAL _server := pg_server()
+   LOCAL _res
 
-if RECCOUNT() == 0
-    USE
-    select ( _t_area )
-    return _ok
-endif
+   ::open_local_table()
 
-if !::delete_atrib_from_server()
-    USE
-    _ok := .f.
-    select ( _t_area )
-    return _ok
-endif
+   IF RecCount() == 0
+      USE
+      SELECT ( _t_area )
+      RETURN _ok
+   ENDIF
 
-select ALIAS( ::workarea )
-set order to tag "1"
-go top
+   IF !::delete_atrib_from_server()
+      USE
+      _ok := .F.
+      SELECT ( _t_area )
+      RETURN _ok
+   ENDIF
 
-do while !EOF()
+   SELECT Alias( ::workarea )
+   SET ORDER TO TAG "1"
+   GO TOP
 
-    if EMPTY( field->value )
-        skip
-        loop
-    endif
+   DO WHILE !Eof()
 
-    if ( ::dok_hash["idfirma"] != field->idfirma ) .or. ;
-            ( ::dok_hash["idtipdok"] != field->idtipdok ) .or. ;
-            ( ::dok_hash["brdok"] != field->brdok )
-        skip
-        loop
-    endif
+      IF Empty( field->value )
+         SKIP
+         LOOP
+      ENDIF
 
-    _qry := "INSERT INTO " + ::table_name_server + " "
-    _qry += "( idfirma, idtipdok, brdok, rbr, atribut, value ) "
-    _qry += "VALUES (" 
-    _qry += _sql_quote( ::dok_hash["idfirma"] ) + ", " 
-    _qry += _sql_quote( ::dok_hash["idtipdok"] ) + ", " 
-    _qry += _sql_quote( ::dok_hash["brdok"] ) + ", " 
-    _qry += _sql_quote( field->rbr ) + ", " 
-    _qry += _sql_quote( field->atribut ) + ", " 
-    _qry += _sql_quote( field->value ) 
-    _qry += ")"
+      IF ( ::dok_hash[ "idfirma" ] != field->idfirma ) .OR. ;
+            ( ::dok_hash[ "idtipdok" ] != field->idtipdok ) .OR. ;
+            ( ::dok_hash[ "brdok" ] != field->brdok )
+         SKIP
+         LOOP
+      ENDIF
 
-    _res := _sql_query( _server, _qry )
+      _qry := "INSERT INTO " + ::table_name_server + " "
+      _qry += "( idfirma, idtipdok, brdok, rbr, atribut, value ) "
+      _qry += "VALUES ("
+      _qry += _sql_quote( ::dok_hash[ "idfirma" ] ) + ", "
+      _qry += _sql_quote( ::dok_hash[ "idtipdok" ] ) + ", "
+      _qry += _sql_quote( ::dok_hash[ "brdok" ] ) + ", "
+      _qry += _sql_quote( field->rbr ) + ", "
+      _qry += _sql_quote( field->atribut ) + ", "
+      _qry += _sql_quote( field->value )
+      _qry += ")"
 
-    if VALTYPE( _res ) == "L"
-        _ok := .f.
-        exit
-    endif 
+      _res := _sql_query( _server, _qry )
 
-    skip
+      IF ValType( _res ) == "L"
+         _ok := .F.
+         EXIT
+      ENDIF
 
-enddo
+      SKIP
 
-select ALIAS( ::workarea )
-use
+   ENDDO
 
-select ( _t_area )
-return _ok
+   SELECT Alias( ::workarea )
+   USE
+
+   SELECT ( _t_area )
+
+   RETURN _ok
 
 
 
@@ -578,190 +596,193 @@ return _ok
 // puni lokalni dbf sa podacima iz matrice
 // ------------------------------------------------------------------------
 METHOD F18_DOK_ATRIB:atrib_server_to_dbf()
-local _atrib
-local _i, _rec
-local _t_area := SELECT()
 
-::set_table_name()
+   LOCAL _atrib
+   LOCAL _i, _rec
+   LOCAL _t_area := Select()
 
-_atrib := ::get_atrib_list_from_server()
+   ::set_table_name()
 
-if _atrib == NIL
-    return .f.
-endif
+   _atrib := ::get_atrib_list_from_server()
 
-::open_local_table()
-go top
+   IF _atrib == NIL
+      RETURN .F.
+   ENDIF
 
-for _i := 1 to LEN( _atrib )
+   ::open_local_table()
+   GO TOP
 
-    append blank
+   FOR _i := 1 TO Len( _atrib )
 
-    _rec := dbf_get_rec()
-    _rec["idfirma"] := ::dok_hash["idfirma"]
-    _rec["idtipdok"] := ::dok_hash["idtipdok"]
-    _rec["brdok"] := ::dok_hash["brdok"]
-    _rec["rbr"] := _atrib[ _i, 1 ]
-    _rec["atribut"] := _atrib[ _i, 2 ]
-    _rec["value"] := _atrib[ _i, 3 ]
-    
-    dbf_update_rec( _rec )
+      APPEND BLANK
 
-next
+      _rec := dbf_get_rec()
+      _rec[ "idfirma" ] := ::dok_hash[ "idfirma" ]
+      _rec[ "idtipdok" ] := ::dok_hash[ "idtipdok" ]
+      _rec[ "brdok" ] := ::dok_hash[ "brdok" ]
+      _rec[ "rbr" ] := _atrib[ _i, 1 ]
+      _rec[ "atribut" ] := _atrib[ _i, 2 ]
+      _rec[ "value" ] := _atrib[ _i, 3 ]
 
-select ( ::workarea )
-use
+      dbf_update_rec( _rec )
 
-select ( _t_area )
+   NEXT
 
-return .t.
+   SELECT ( ::workarea )
+   USE
+
+   SELECT ( _t_area )
+
+   RETURN .T.
 
 
 // -----------------------------------------------------
 // ova funkcija treba da uradi:
 // - provjeri ima li viska atributa
-// - provjeri ima li duplih atributa 
+// - provjeri ima li duplih atributa
 // -----------------------------------------------------
 METHOD F18_DOK_ATRIB:fix_atrib( area, dok_arr )
-local _dok_params
-local _i
 
-::set_table_name()
+   LOCAL _dok_params
+   LOCAL _i
 
-for _i := 1 to LEN( dok_arr )
+   ::set_table_name()
 
-    _dok_params := hb_hash()
-    _dok_params["idfirma"] := dok_arr[ _i, 1 ]
-    _dok_params["idtipdok"] := dok_arr[ _i, 2 ]
-    _dok_params["brdok"] := dok_arr[ _i, 3 ]
-    
-    ::atrib_delete_duplicate( _dok_params )
+   FOR _i := 1 TO Len( dok_arr )
 
-next
-    
-::atrib_delete_rest( area )
+      _dok_params := hb_Hash()
+      _dok_params[ "idfirma" ] := dok_arr[ _i, 1 ]
+      _dok_params[ "idtipdok" ] := dok_arr[ _i, 2 ]
+      _dok_params[ "brdok" ] := dok_arr[ _i, 3 ]
 
-return
+      ::atrib_delete_duplicate( _dok_params )
+
+   NEXT
+
+   ::atrib_delete_rest( area )
+
+   RETURN
 
 
 // -----------------------------------------------------
-// brisi visak atributa ako postoji 
+// brisi visak atributa ako postoji
 // -----------------------------------------------------
 METHOD F18_DOK_ATRIB:atrib_delete_rest( area )
-local _id_firma, _tip_dok, _br_dok
-local _t_area := SELECT()
-local _ok := .t.
-local _deleted := .f.
-local _alias := ::alias
-local _tmp := ALLTRIM( LOWER( ::modul ) ) + "_pripr"
 
-select ALIAS( area )
-set order to tag "1"
+   LOCAL _id_firma, _tip_dok, _br_dok
+   LOCAL _t_area := Select()
+   LOCAL _ok := .T.
+   LOCAL _deleted := .F.
+   LOCAL _alias := ::alias
+   LOCAL _tmp := AllTrim( Lower( ::modul ) ) + "_pripr"
 
-::open_local_table()
+   SELECT Alias( area )
+   SET ORDER TO TAG "1"
 
-my_flock()
+   ::open_local_table()
 
-set order to tag "1"
-go top
+   my_flock()
 
-do while !EOF()
-    
-    skip 1
-    _t_rec := RECNO()
-    skip -1
+   SET ORDER TO TAG "1"
+   GO TOP
 
-    select ALIAS( area )
+   DO WHILE !Eof()
 
-    seek &(_alias)->idfirma + &(_alias)->idtipdok + &(_alias)->brdok + &(_alias)->rbr
+      SKIP 1
+      _t_rec := RecNo()
+      SKIP -1
 
-    if !FOUND()
-        select ALIAS( ::workarea )
-        delete
-        _deleted := .t.
-    else
-        select ALIAS( ::workarea )
-    endif
+      SELECT Alias( area )
 
-    go ( _t_rec )
+      seek &( _alias )->idfirma + &( _alias )->idtipdok + &( _alias )->brdok + &( _alias )->rbr
 
-enddo
-my_unlock()
+      IF !Found()
+         SELECT Alias( ::workarea )
+         DELETE
+         _deleted := .T.
+      ELSE
+         SELECT Alias( ::workarea )
+      ENDIF
 
-if _deleted
-    my_dbf_pack()
-endif
+      GO ( _t_rec )
 
-use
+   ENDDO
+   my_unlock()
 
-select ( _t_area )
+   IF _deleted
+      my_dbf_pack()
+   ENDIF
 
-return _ok
+   USE
+
+   SELECT ( _t_area )
+
+   RETURN _ok
 
 
 
 
 
 // -----------------------------------------------------
-// provjera ispravnosti atributa za dokument 
+// provjera ispravnosti atributa za dokument
 // -----------------------------------------------------
 METHOD F18_DOK_ATRIB:atrib_delete_duplicate( param )
-local _id_firma, _tip_dok, _br_dok, _b1
-local _t_area := SELECT()
-local _ok := .t.
-local _r_br, _atrib, _r_br_2, _atrib_2, _eof := .f.
-local _deleted := .f.
 
-_id_firma := param["idfirma"]
-_tip_dok := param["idtipdok"]
-_br_dok := param["brdok"]
+   LOCAL _id_firma, _tip_dok, _br_dok, _b1
+   LOCAL _t_area := Select()
+   LOCAL _ok := .T.
+   LOCAL _r_br, _atrib, _r_br_2, _atrib_2, _eof := .F.
+   LOCAL _deleted := .F.
 
-::open_local_table()
+   _id_firma := PARAM[ "idfirma" ]
+   _tip_dok := PARAM[ "idtipdok" ]
+   _br_dok := PARAM[ "brdok" ]
 
-my_flock()
+   ::open_local_table()
 
-set order to tag "1"
-go top
-seek _id_firma + _tip_dok + _br_dok
+   my_flock()
 
-_b1 := {|| field->idfirma == _id_firma .and. field->idtipdok == _tip_dok .and. field->brdok == _br_dok }
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK _id_firma + _tip_dok + _br_dok
 
-do while !eof() .and. EVAL(_b1)
+   _b1 := {|| field->idfirma == _id_firma .AND. field->idtipdok == _tip_dok .AND. field->brdok == _br_dok }
 
-    _r_br := field->rbr
-    _atrib := field->atribut
-    skip 1
-    _t_rec := RECNO()
-    _r_br_2 := field->rbr
-    _atrib_2 := field->atribut
+   DO WHILE !Eof() .AND. Eval( _b1 )
 
-    if EOF()
-       _eof := .t.
-    else
-       _eof := .f.
-    endif
+      _r_br := field->rbr
+      _atrib := field->atribut
+      SKIP 1
+      _t_rec := RecNo()
+      _r_br_2 := field->rbr
+      _atrib_2 := field->atribut
 
-    if !_eof .and. EVAL(_b1) .and. (_r_br_2 == _r_br) .and. (_atrib_2 == _atrib)
-        delete
-        _deleted := .t.
-    endif
+      IF Eof()
+         _eof := .T.
+      ELSE
+         _eof := .F.
+      ENDIF
 
-    if _eof
-        exit
-    endif
-    
-    go _t_rec
-enddo
+      IF !_eof .AND. Eval( _b1 ) .AND. ( _r_br_2 == _r_br ) .AND. ( _atrib_2 == _atrib )
+         DELETE
+         _deleted := .T.
+      ENDIF
 
-my_unlock()
+      IF _eof
+         EXIT
+      ENDIF
 
-if _deleted
-    my_dbf_pack( .F. )
-endif
+      GO _t_rec
+   ENDDO
 
-use
+   my_unlock()
 
-select ( _t_area )
+   IF _deleted
+      my_dbf_pack( .F. )
+   ENDIF
 
-return _ok
+   USE
 
+   SELECT ( _t_area )
+
+   RETURN _ok

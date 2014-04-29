@@ -229,7 +229,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 
    CASE Ch == K_ENTER
 
-      IF fakt_edit_dokument( _params )
+      IF fakt_ispravi_dokument( _params )
           RETURN DE_REFRESH
       ELSE
           RETURN DE_CONT
@@ -493,7 +493,7 @@ STATIC FUNCTION fakt_prodji_kroz_stavke()
 
 
 
-STATIC FUNCTION fakt_dodaj_zapis( novi, item_hash, items_atrib )
+STATIC FUNCTION fakt_dodaj_ispravi_stavku( novi, item_hash, items_atrib )
 
    LOCAL oAtrib, _rec, _item_after
 
@@ -527,7 +527,7 @@ STATIC FUNCTION fakt_dodaj_zapis( novi, item_hash, items_atrib )
 
 
 
-STATIC FUNCTION fakt_edit_dokument( fakt_params )
+STATIC FUNCTION fakt_ispravi_dokument( fakt_params )
 
    LOCAL _ret := .T.
    LOCAL _items_atrib := hb_Hash()
@@ -557,7 +557,7 @@ STATIC FUNCTION fakt_edit_dokument( fakt_params )
    IF edit_fakt_priprema( .F., @_items_atrib ) == 0
       _ret := .F.
    ELSE
-      fakt_dodaj_zapis( .F., _item_before, _items_atrib )
+      fakt_dodaj_ispravi_stavku( .F., _item_before, _items_atrib )
       _ret := .T.
    ENDIF
 
@@ -635,7 +635,7 @@ STATIC FUNCTION fakt_unos_nove_stavke()
       InkeySc( 10 )
 
       select_fakt_pripr()
-      fakt_dodaj_zapis( .T., NIL, _items_atrib )
+      fakt_dodaj_ispravi_stavku( .T., NIL, _items_atrib )
 
    ENDDO
 

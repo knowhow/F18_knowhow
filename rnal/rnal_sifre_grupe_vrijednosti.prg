@@ -79,9 +79,7 @@ aKol := {}
 aImeKol := {}
 
 if __wo_id == .f.
-
-	AADD(aImeKol, {PADC("ID/MC", 10), {|| PADR(sif_idmc(e_gr_vl_id),10)}, "e_gr_vl_id", {|| _inc_id(@we_gr_vl_id, "E_GR_VL_ID"), .f.}, {|| .t.}})
-
+	AADD(aImeKol, {PADC("ID/MC", 10), {|| PADR(sif_idmc(e_gr_vl_id),10)}, "e_gr_vl_id", {|| rnal_inc_id(@wE_gr_vl_id, "E_GR_VL_ID"), .f.}, {|| .t.}})
 endif
 
 AADD(aImeKol, {PADC("Grupa/atribut", 15), {|| "(" + ALLTRIM(g_egr_by_att(e_gr_at_id)) + ") / " + PADR(g_gr_at_desc(e_gr_at_id), 15)}, "e_gr_at_id", {|| set_e_gr_at(@we_gr_at_id) }, {|| s_e_gr_att( @we_gr_at_id ), show_it( g_gr_at_desc( we_gr_at_id ) ) }})

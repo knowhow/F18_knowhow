@@ -122,7 +122,7 @@ aImeKol := {}
 
 if __wo_id == .f.
 	
-	AADD(aImeKol, {PADC("ID/MC", 10), {|| sif_idmc(aop_att_id)}, "aop_att_id", {|| _inc_id(@waop_att_id, "AOP_ATT_ID"), .f.}, {|| .t.}})
+	AADD(aImeKol, {PADC("ID/MC", 10), {|| sif_idmc(aop_att_id)}, "aop_att_id", {|| rnal_inc_id(@wAop_att_id, "AOP_ATT_ID"), .f.}, {|| .t.}})
 
 endif
 

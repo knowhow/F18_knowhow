@@ -144,7 +144,7 @@ static function set_a_kol(aImeKol, aKol)
 aKol := {}
 aImeKol := {}
 
-AADD(aImeKol, {PADC("ID/MC", 10), {|| sif_idmc(art_id)}, "art_id", {|| _inc_id(@wart_id, "ART_ID"), .f.}, {|| .t.}})
+AADD(aImeKol, {PADC("ID/MC", 10), {|| sif_idmc(art_id)}, "art_id", {|| rnal_inc_id(@wArt_id, "ART_ID"), .f.}, {|| .t.}})
 AADD(aImeKol, { "sifra :: puni naziv", {|| ALLTRIM(art_desc) + " :: " + UPPER(art_full_d) }, "art_desc" })
 AADD(aImeKol, { "labela opis", {|| ALLTRIM(art_lab_de) }, "art_desc" })
 

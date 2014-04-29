@@ -106,11 +106,11 @@ static function set_a_kol(aImeKol, aKol)
 aKol := {}
 aImeKol := {}
 
-AADD(aImeKol, {PADC("ID/MC", 20), {|| sif_idmc(cust_id, .f., 20)}, "cust_id", {|| _inc_id(@wcust_id, "CUST_ID"), .f.}, {|| .t.}})
+AADD(aImeKol, {PADC("ID/MC", 20), {|| sif_idmc(cust_id, .f., 20)}, "cust_id", {|| rnal_inc_id(@wCust_id, "CUST_ID"), .f.}, {|| .t.}})
 AADD(aImeKol, {PADC("Naziv", 40), {|| PADR(cust_desc, 40)}, "cust_desc"})
 AADD(aImeKol, {PADC("Adresa", 20), {|| PADR(cust_addr, 20)}, "cust_addr"})
 AADD(aImeKol, {PADC("Telefon", 20), {|| PADR(cust_tel, 20)}, "cust_tel"})
-AADD(aImeKol, { "ID broj", {|| cust_ident } , "cust_ident", {|| set_cust_mc(@wmatch_code, @wcust_desc) }, {|| _chk_id(@wcust_id, "CUST_ID") } })
+AADD(aImeKol, { "ID broj", {|| cust_ident } , "cust_ident", {|| set_cust_mc(@wMatch_code, @wCust_desc) }, {|| _chk_id(@wCust_id, "CUST_ID") } })
 
 
 for i:=1 to LEN(aImeKol)

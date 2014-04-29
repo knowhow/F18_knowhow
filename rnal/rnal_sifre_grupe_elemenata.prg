@@ -59,7 +59,7 @@ aImeKol := {}
 
 if _wo_id == .f.
 
-	AADD(aImeKol, {PADC("ID/MC", 10), {|| sif_idmc(e_gr_id)}, "e_gr_id", {|| _inc_id(@we_gr_id, "E_GR_ID"), .f.}, {|| .t.}})
+	AADD(aImeKol, {PADC("ID/MC", 10), {|| sif_idmc(e_gr_id)}, "e_gr_id", {|| rnal_inc_id(@wE_gr_id, "E_GR_ID"), .f.}, {|| .t.}})
 
 endif
 

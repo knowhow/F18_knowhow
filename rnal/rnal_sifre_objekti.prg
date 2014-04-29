@@ -101,8 +101,8 @@ static function set_a_kol(aImeKol, aKol, nCust_id)
 aKol := {}
 aImeKol := {}
 
-AADD(aImeKol, {PADC("ID/MC", 10), {|| sif_idmc(obj_id)}, "obj_id", {|| _inc_id(@wobj_id, "OBJ_ID"), .f.}, {|| .t.}})
-AADD(aImeKol, {PADC("Narucioc", 10), {|| g_cust_desc( cust_id ) }, "cust_id", {|| set_cust_id(@wcust_id) }, {|| s_customers(@wcust_id), show_it( g_cust_desc(wcust_id)) }})
+AADD(aImeKol, {PADC("ID/MC", 10), {|| sif_idmc(obj_id)}, "obj_id", {|| rnal_inc_id(@wObj_id, "OBJ_ID"), .f.}, {|| .t.}})
+AADD(aImeKol, {PADC("Narucioc", 10), {|| g_cust_desc( cust_id ) }, "cust_id", {|| set_cust_id(@wCust_id) }, {|| s_customers(@wCust_id), show_it( g_cust_desc(wcust_id)) }})
 AADD(aImeKol, {PADC("Naziv objekta", 20), {|| PADR(obj_desc, 30)}, "obj_desc", {|| .t.}, {|| _chk_id(@wobj_id, "OBJ_ID") } })
 
 for i:=1 to LEN(aImeKol)

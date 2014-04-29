@@ -381,7 +381,7 @@ static function elem_kol(aImeKol, aKol, nArt_id)
 aKol := {}
 aImeKol := {}
 
-AADD(aImeKol, { "rb", {|| el_no }, "el_no", {|| _inc_id(@wel_id, "EL_ID"), .f.}, {|| .t.}} )
+AADD(aImeKol, { "rb", {|| el_no }, "el_no", {|| rnal_inc_id(@wEl_id, "EL_ID"), .f.}, {|| .t.}} )
 AADD(aImeKol, { PADC("el.grupa", __box_x), {|| PADR(g_e_gr_desc( e_gr_id ), __box_x ) }, "e_gr_id" })
 
 for i:=1 to LEN(aImeKol)

@@ -92,28 +92,7 @@ FUNCTION show_it( cItem, nPadR )
 
 
 
-// ---------------------------------------------
-// increase id sql
-// ---------------------------------------------
-FUNCTION _inc_id_sql( value )
-
-   LOCAL _alias := Lower( Alias() )
-   LOCAL _param := "rnal_" + _alias + "_no"
-   LOCAL _t_area := Select()
-
-   // daj mi zadnju vrijednosti i uvecaj za 1
-   value := ( fetch_metric( _param, NIL, 0 ) + 1 )
-
-   RETURN .T.
-
-
-
-// --------------------------------------
-// increment id u sifrarniku
-// wId - polje id proslijedjeno po ref.
-// cFieldName - ime id polja
-// --------------------------------------
-FUNCTION _inc_id( wid, cFieldName, cIndexTag, lAuto )
+FUNCTION rnal_inc_id( wId, cFieldName, cIndexTag, lAuto )
 
    LOCAL nTRec
    LOCAL _t_rec := RecNo()
@@ -131,7 +110,7 @@ FUNCTION _inc_id( wid, cFieldName, cIndexTag, lAuto )
       lAuto := .F.
    ENDIF
 
-   IF ( Ch == K_CTRL_N .OR. Ch == K_F4 ) .AND. ( VALTYPE( wid ) == "N" .AND. wid <> 0 ) .or. ( VALTYPE( wid ) == "C" .AND. !EMPTY( wid ) )
+   IF ( Ch == K_CTRL_N .OR. Ch == K_F4 ) .AND. ( VALTYPE( wId ) == "N" .AND. wId <> 0 ) .or. ( VALTYPE( wId ) == "C" .AND. !EMPTY( wId ) )
       RETURN .F.
    ENDIF
 
@@ -146,11 +125,11 @@ FUNCTION _inc_id( wid, cFieldName, cIndexTag, lAuto )
 	
       _value := ( fetch_metric( _param, NIL, 0 ) + 1 )
 
-      wid := _last_id( cFieldName ) + 1
+      wId := rnal_last_id( cFieldName ) + 1
 
       wid := Max( _value, wid )
 	
-      set_metric( _param, NIL, wid )
+      set_metric( _param, NIL, wId )
 
       SET FILTER to &cTBFilter
       SET ORDER TO TAG "1"
@@ -167,7 +146,7 @@ FUNCTION _inc_id( wid, cFieldName, cIndexTag, lAuto )
 // vraca posljednji id zapis iz tabele
 // cFieldName - ime id polja
 // ----------------------------------------
-STATIC FUNCTION _last_id( cFieldName )
+STATIC FUNCTION rnal_last_id( cFieldName )
 
    LOCAL nLast_rec := 0
 
@@ -186,7 +165,7 @@ STATIC FUNCTION _last_id( cFieldName )
 // wId - polje id proslijedjeno po ref.
 // cFieldName - ime id polja
 // --------------------------------------
-FUNCTION _chk_id( wid, cFieldName, cIndexTag  )
+FUNCTION rnal_chk_id( wId, cFieldName, cIndexTag  )
 
    LOCAL nTRec
    LOCAL _t_rec := RecNo()
@@ -203,7 +182,7 @@ FUNCTION _chk_id( wid, cFieldName, cIndexTag  )
    SET ORDER TO tag &cIndexTag
    GO TOP
 
-   SEEK Str( wid, 10 )
+   SEEK Str( wId, 10 )
 
    IF Found()
       lSeek := .F.
@@ -216,7 +195,7 @@ FUNCTION _chk_id( wid, cFieldName, cIndexTag  )
    GO ( _t_rec )
 
    IF lSeek == .F.
-      lSeek := _inc_id( @wid, cFieldName )
+      lSeek := rnal_inc_id( @wId, cFieldName )
    ENDIF
 
    RETURN lSeek
@@ -225,7 +204,7 @@ FUNCTION _chk_id( wid, cFieldName, cIndexTag  )
 // --------------------------------
 // edit sifre u sifraniku
 // --------------------------------
-FUNCTION wid_edit( cField )
+FUNCTION rnal_wid_edit( cField )
 
    LOCAL nRet := DE_CONT
    LOCAL nId

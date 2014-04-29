@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,267 +12,275 @@
 
 #include "rnal.ch"
 
-static _tb_direkt
-static __wo_id
+STATIC _tb_direkt
+STATIC __wo_id
 
 
 // -----------------------------------------
 // otvara sifrarnik dodatnih operacija
 // -----------------------------------------
-function s_aops( cId, cDesc, lwo_ID, dx, dy )
-local nTArea
-local cHeader
-private ImeKol
-private Kol
+FUNCTION s_aops( cId, cDesc, lwo_ID, dx, dy )
 
-nTArea := SELECT()
+   LOCAL nTArea
+   LOCAL cHeader
+   PRIVATE ImeKol
+   PRIVATE Kol
 
-O_AOPS
+   nTArea := Select()
 
-cHeader := "Dodatne operacije /  'A' - pregled atributa"
+   O_AOPS
 
-if cDesc == nil
-	cDesc := ""
-endif
+   cHeader := "Dodatne operacije /  'A' - pregled atributa"
 
-if lwo_ID == nil
-	lwo_ID := .f.
-endif
+   IF cDesc == nil
+      cDesc := ""
+   ENDIF
 
-__wo_id := lwo_ID
+   IF lwo_ID == nil
+      lwo_ID := .F.
+   ENDIF
 
-select aops
-set filter to
-set order to tag "1"
+   __wo_id := lwo_ID
 
-set_a_kol(@ImeKol, @Kol)
+   SELECT aops
+   SET FILTER TO
+   SET ORDER TO TAG "1"
 
-if VALTYPE(cId) == "C"
-	//try to validate
-	if VAL(cId) <> 0
+   set_a_kol( @ImeKol, @Kol )
+
+   IF ValType( cId ) == "C"
+      // try to validate
+      IF Val( cId ) <> 0
 		
-		cId := VAL(cId)
-		cDesc := ""
+         cId := Val( cId )
+         cDesc := ""
 		
-	endif
-endif
+      ENDIF
+   ENDIF
 
-set_f_kol(cDesc)
+   set_f_kol( cDesc )
 
 
-cRet := PostojiSifra(F_AOPS, 1, 12, 70, cHeader, @cId, dx, dy, {|Ch| key_handler(Ch) } )
+   cRet := PostojiSifra( F_AOPS, 1, 12, 70, cHeader, @cId, dx, dy, {| Ch| key_handler( Ch ) } )
 
-if VALTYPE(cDesc) == "N"
-	cDesc := STR(cDesc, 10)
-endif
+   IF ValType( cDesc ) == "N"
+      cDesc := Str( cDesc, 10 )
+   ENDIF
 
-if cDesc <> ""
-	set filter to
-endif
+   IF cDesc <> ""
+      SET FILTER TO
+   ENDIF
 
-if LastKey() == K_ESC
-	cId := 0
-endif
+   IF LastKey() == K_ESC
+      cId := 0
+   ENDIF
 
-select (nTArea)
+   SELECT ( nTArea )
 
-return cRet
+   RETURN cRet
 
 
 // ---------------------------------------------------
 // setuje filter na sifraniku
 // ---------------------------------------------------
-static function set_f_kol(cDesc)
-local cFilter := ""
+STATIC FUNCTION set_f_kol( cDesc )
 
-if !EMPTY(cDesc)
+   LOCAL cFilter := ""
 
-	cFilter += 'ALLTRIM(UPPER(aop_desc)) = ' + cm2str(UPPER(ALLTRIM(cDesc))) 
-endif
+   IF !Empty( cDesc )
 
-if !EMPTY(cFilter)
-	set filter to &cFilter
-	go top
-endif
+      cFilter += 'ALLTRIM(UPPER(aop_desc)) = ' + cm2str( Upper( AllTrim( cDesc ) ) )
+   ENDIF
 
-return
+   IF !Empty( cFilter )
+      SET FILTER to &cFilter
+      GO TOP
+   ENDIF
+
+   RETURN
 
 
 // -----------------------------------------
 // setovanje kolona tabele
 // -----------------------------------------
-static function set_a_kol(aImeKol, aKol)
-aKol := {}
-aImeKol := {}
+STATIC FUNCTION set_a_kol( aImeKol, aKol )
 
-if __wo_id == .f.
+   aKol := {}
+   aImeKol := {}
 
-	AADD(aImeKol, {PADC("ID/MC", 10), {|| sif_idmc(aop_id)}, "aop_id", {|| rnal_inc_id(@wAop_id, "AOP_ID"), .f.}, {|| .t.}})
+   IF __wo_id == .F.
 
-endif
+      AAdd( aImeKol, { PadC( "ID/MC", 10 ), {|| sif_idmc( aop_id ) }, "aop_id", {|| rnal_inc_id( @wAop_id, "AOP_ID" ), .F. }, {|| .T. } } )
 
-AADD(aImeKol, {PADC("Opis", 40), {|| PADR(aop_full_d, 40)}, "aop_full_d"})
-AADD(aImeKol, {PADC("Skr.opis (sifra)", 20), {|| PADR(aop_desc, 20)}, "aop_desc"})
-AADD(aImeKol, {PADC("Joker", 20), {|| PADR(aop_joker, 20)}, "aop_joker"})
-AADD(aImeKol, {PADC("u art.naz ( /*)", 15), {|| PADR(in_art_des, 15)}, "in_art_des"})
+   ENDIF
 
-if aops->(FIELDPOS("AOP_UNIT")) <> 0
-	AADD(aImeKol, {PADC("jed.mjere", 10), {|| aop_unit}, "aop_unit"})
-endif
+   AAdd( aImeKol, { PadC( "Opis", 40 ), {|| PadR( aop_full_d, 40 ) }, "aop_full_d" } )
+   AAdd( aImeKol, { PadC( "Skr.opis (sifra)", 20 ), {|| PadR( aop_desc, 20 ) }, "aop_desc" } )
+   AAdd( aImeKol, { PadC( "Joker", 20 ), {|| PadR( aop_joker, 20 ) }, "aop_joker" } )
+   AAdd( aImeKol, { PadC( "u art.naz ( /*)", 15 ), {|| PadR( in_art_des, 15 ) }, "in_art_des" } )
 
-for i:=1 to LEN(aImeKol)
-	AADD(aKol, i)
-next
+   IF aops->( FieldPos( "AOP_UNIT" ) ) <> 0
+      AAdd( aImeKol, { PadC( "jed.mjere", 10 ), {|| aop_unit }, "aop_unit" } )
+   ENDIF
 
-return
+   FOR i := 1 TO Len( aImeKol )
+      AAdd( aKol, i )
+   NEXT
+
+   RETURN
 
 
 
 // -----------------------------------------------
 // dodatna operacija u naziv artikla ???
 // -----------------------------------------------
-function aop_in_desc( nAop_id )
-local lRet := .f.
-local nTArea := SELECT()
+FUNCTION aop_in_desc( nAop_id )
 
-select aops
-set order to tag "1"
-go top
-seek aopid_str( nAop_id )
+   LOCAL lRet := .F.
+   LOCAL nTArea := Select()
 
-if FOUND()
-	if field->in_art_des == "*"
-		lRet := .t.
-	endif
-endif
+   SELECT aops
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK aopid_str( nAop_id )
 
-select (nTArea)
-return lRet
+   IF Found()
+      IF field->in_art_des == "*"
+         lRet := .T.
+      ENDIF
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN lRet
 
 
 
 // -----------------------------------------
 // key handler funkcija
 // -----------------------------------------
-static function key_handler(Ch)
-local nAop_id := aops->aop_id
-local nTRec := RecNo()
+STATIC FUNCTION key_handler( Ch )
 
-do case
-	case UPPER(CHR(Ch)) == "A"
-		// pregled atributa
-		s_aops_att(nil, nAop_id)
-		go (nTRec)
+   LOCAL nAop_id := aops->aop_id
+   LOCAL nTRec := RecNo()
+
+   DO CASE
+   CASE Upper( Chr( Ch ) ) == "A"
+      // pregled atributa
+      s_aops_att( nil, nAop_id )
+      GO ( nTRec )
 		
-		return DE_CONT
+      RETURN DE_CONT
 
-	case Ch == K_CTRL_N .or. Ch == K_F4
-		__wo_id := .f.
-		set_a_kol(@ImeKol, @Kol)
-		return DE_CONT
+   CASE Ch == K_CTRL_N .OR. Ch == K_F4
+      __wo_id := .F.
+      set_a_kol( @ImeKol, @Kol )
+      RETURN DE_CONT
 	
-endcase
-return DE_CONT
+   ENDCASE
+
+   RETURN DE_CONT
 
 
 // -------------------------------
 // convert aop_id to string
 // -------------------------------
-function aopid_str(nId)
-return STR(nId, 10)
+FUNCTION aopid_str( nId )
+   RETURN Str( nId, 10 )
 
 
 // -------------------------------
 // get aop_desc by aop_id
 // -------------------------------
-function g_aop_desc( nAop_id, lEmpty, lFullDesc )
-local cAopDesc := "?????"
-local nTArea := SELECT()
+FUNCTION g_aop_desc( nAop_id, lEmpty, lFullDesc )
 
-if lEmpty == nil
-	lEmpty := .f.
-endif
+   LOCAL cAopDesc := "?????"
+   LOCAL nTArea := Select()
 
-if lEmpty == .t.
-	cAopDesc := ""
-endif
+   IF lEmpty == nil
+      lEmpty := .F.
+   ENDIF
 
-if lFullDesc == nil
-	lFullDesc := .t.
-endif
+   IF lEmpty == .T.
+      cAopDesc := ""
+   ENDIF
 
-O_AOPS
-select aops
-set order to tag "1"
-go top
-seek aopid_str(nAop_id)
+   IF lFullDesc == nil
+      lFullDesc := .T.
+   ENDIF
 
-if FOUND()
-	if lFullDesc == .t.
-		if !EMPTY(field->aop_full_d)
-			cAopDesc := ALLTRIM(field->aop_full_d)
-		endif
-	else
-		if !EMPTY(field->aop_desc)
-			cAopDesc := ALLTRIM(field->aop_desc)
-		endif
-	endif
-endif
+   O_AOPS
+   SELECT aops
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK aopid_str( nAop_id )
 
-select (nTArea)
+   IF Found()
+      IF lFullDesc == .T.
+         IF !Empty( field->aop_full_d )
+            cAopDesc := AllTrim( field->aop_full_d )
+         ENDIF
+      ELSE
+         IF !Empty( field->aop_desc )
+            cAopDesc := AllTrim( field->aop_desc )
+         ENDIF
+      ENDIF
+   ENDIF
 
-return cAopDesc
+   SELECT ( nTArea )
+
+   RETURN cAopDesc
 
 
 // -------------------------------
 // get aop_joker by aop_id
 // -------------------------------
-function g_aop_joker( nAop_id )
-local cAopJoker := ""
-local nTArea := SELECT()
+FUNCTION g_aop_joker( nAop_id )
 
-O_AOPS
-select aops
-set order to tag "1"
-go top
-seek aopid_str(nAop_id)
+   LOCAL cAopJoker := ""
+   LOCAL nTArea := Select()
 
-if FOUND()
-	if !EMPTY(field->aop_joker)
-		cAopJoker := ALLTRIM(field->aop_joker)
-	endif
-endif
+   O_AOPS
+   SELECT aops
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK aopid_str( nAop_id )
 
-select (nTArea)
+   IF Found()
+      IF !Empty( field->aop_joker )
+         cAopJoker := AllTrim( field->aop_joker )
+      ENDIF
+   ENDIF
 
-return cAopJoker
+   SELECT ( nTArea )
+
+   RETURN cAopJoker
 
 
 // -------------------------------
 // get aop_unit by aop_id
 // -------------------------------
-function g_aop_unit( nAop_id )
-local cAopUnit := ""
-local nTArea := SELECT()
+FUNCTION g_aop_unit( nAop_id )
 
-if nAop_id = 0
-	return cAopUnit
-endif
+   LOCAL cAopUnit := ""
+   LOCAL nTArea := Select()
 
-O_AOPS
-select aops
-set order to tag "1"
-go top
-seek aopid_str(nAop_id)
+   IF nAop_id = 0
+      RETURN cAopUnit
+   ENDIF
 
-if FOUND()
-	if aops->(FIELDPOS("AOP_UNIT")) <> 0 .and. !EMPTY(field->aop_unit)
-		cAopUnit := ALLTRIM(field->aop_unit)
-	endif
-endif
+   O_AOPS
+   SELECT aops
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK aopid_str( nAop_id )
 
-select (nTArea)
+   IF Found()
+      IF aops->( FieldPos( "AOP_UNIT" ) ) <> 0 .AND. !Empty( field->aop_unit )
+         cAopUnit := AllTrim( field->aop_unit )
+      ENDIF
+   ENDIF
 
-return cAopUnit
+   SELECT ( nTArea )
 
-
+   RETURN cAopUnit

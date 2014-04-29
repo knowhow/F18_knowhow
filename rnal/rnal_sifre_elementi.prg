@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,12 +12,12 @@
 
 #include "rnal.ch"
 
-static art_id
-static el_gr_id
-static l_auto_tab
-static __el_schema
-static __box_x
-static __box_y
+STATIC art_id
+STATIC el_gr_id
+STATIC l_auto_tab
+STATIC __el_schema
+STATIC __box_x
+STATIC __box_y
 
 // ----------------------------------------------
 // otvara formu za definisanje elemenata
@@ -26,206 +26,207 @@ static __box_y
 // input: cSchema - shema artikla
 // output: art_desc update u articles
 // ----------------------------------------------
-function s_elements( nArt_id, lNew, nArtType, cSchema )
-local i
-local nX
-local nY
-local nRet := 1
-local cCol2 := "W+/G"
-local cLineClr := "GR+/B"
-local cSchClr := "GR+/B"
-local lRuleRet := .t.
-private nEl_id := 0
-private nEl_gr_id := 0
-private ImeKol
-private Kol
+FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
 
-_o_tables()
+   LOCAL i
+   LOCAL nX
+   LOCAL nY
+   LOCAL nRet := 1
+   LOCAL cCol2 := "W+/G"
+   LOCAL cLineClr := "GR+/B"
+   LOCAL cSchClr := "GR+/B"
+   LOCAL lRuleRet := .T.
+   PRIVATE nEl_id := 0
+   PRIVATE nEl_gr_id := 0
+   PRIVATE ImeKol
+   PRIVATE Kol
 
-__box_x := MAXROWS() - 5
-__box_y := MAXCOLS() - 5
+   _o_tables()
 
-if lNew == nil
-	lNew := .f.
-endif
+   __box_x := MAXROWS() - 5
+   __box_y := MAXCOLS() - 5
 
-// ako ga nema definisanog ili ako je OSTALO onda je 0 - sve ide po starom
-if nArtType == nil
-	nArtType := 0
-endif
+   IF lNew == nil
+      lNew := .F.
+   ENDIF
 
-art_id := nArt_id
-l_auto_tab := .f.
+   // ako ga nema definisanog ili ako je OSTALO onda je 0 - sve ide po starom
+   IF nArtType == nil
+      nArtType := 0
+   ENDIF
 
-__el_schema := "----"
+   art_id := nArt_id
+   l_auto_tab := .F.
 
-if nArtType <> 0
+   __el_schema := "----"
+
+   IF nArtType <> 0
 	
-	__el_schema := cSchema 
+      __el_schema := cSchema
 	
-	// dodaj atribute automatski prema shemi
-	auto_el_gen( nArt_id, nArtType, cSchema )
+      // dodaj atribute automatski prema shemi
+      auto_el_gen( nArt_id, nArtType, cSchema )
 	
-endif
+   ENDIF
 
-// bilo x = 21
-// bilo y = 77
+   // bilo x = 21
+   // bilo y = 77
 
-Box(, __box_x, __box_y )
+   Box(, __box_x, __box_y )
 
-@ m_x, m_y + 15 SAY " DEFINISANJE ELEMENATA ARTIKLA: " + artid_str(art_id) + " "
+   @ m_x, m_y + 15 SAY " DEFINISANJE ELEMENATA ARTIKLA: " + artid_str( art_id ) + " "
 
-@ m_x + __box_x - 1, m_y + 1 SAY REPLICATE( "Í", __box_y + 1 ) COLOR cLineClr
+   @ m_x + __box_x - 1, m_y + 1 SAY Replicate( "Í", __box_y + 1 ) COLOR cLineClr
 
-@ m_x + __box_x - 4, m_y + 1 SAY "<c+N> nova"
-@ m_x + __box_x - 3, m_y + 1 SAY "<F2> ispravka"
-@ m_x + __box_x - 2, m_y + 1 SAY "<c+T> brisi"
-@ m_x + __box_x, m_y + 1 SAY "<TAB>-brow.tabela | <ESC> snimi "
+   @ m_x + __box_x - 4, m_y + 1 SAY "<c+N> nova"
+   @ m_x + __box_x - 3, m_y + 1 SAY "<F2> ispravka"
+   @ m_x + __box_x - 2, m_y + 1 SAY "<c+T> brisi"
+   @ m_x + __box_x, m_y + 1 SAY "<TAB>-brow.tabela | <ESC> snimi "
 
-// na dnu dodaj i schemu da se zna sta se pravi...
+   // na dnu dodaj i schemu da se zna sta se pravi...
 
-_sh_piccode( __el_schema ) 
+   _sh_piccode( __el_schema )
 
-// vertikalna crta
-for i := 1 to ( __box_x - 2 )
-	@ m_x + i, m_y + __box_x SAY "º" COLOR cLineClr
-next
+   // vertikalna crta
+   FOR i := 1 to ( __box_x - 2 )
+      @ m_x + i, m_y + __box_x SAY "º" COLOR cLineClr
+   NEXT
 
-// horizontalna crta
-@ m_x + ( __box_x / 2 ), m_y + __box_x + 1 SAY REPLICATE( "Í", ( __box_y - __box_x ) + 1 ) COLOR cLineClr
+   // horizontalna crta
+   @ m_x + ( __box_x / 2 ), m_y + __box_x + 1 SAY Replicate( "Í", ( __box_y - __box_x ) + 1 ) COLOR cLineClr
 
-select e_att
-go top
-select e_aops
-go top
-select elements
-go top
+   SELECT e_att
+   GO TOP
+   SELECT e_aops
+   GO TOP
+   SELECT elements
+   GO TOP
 
-m_y += __box_x
+   m_y += __box_x
 
-do while .t.
+   DO WHILE .T.
 	
-	if ALIAS() == "ELEMENTS"
+      IF Alias() == "ELEMENTS"
 		
-        // bilo: 16
-		nX := __box_x - 5
-        // bilo: 20
-		nY := __box_x - 1
+         // bilo: 16
+         nX := __box_x - 5
+         // bilo: 20
+         nY := __box_x - 1
 
-        // bilo: 21
-		m_y -= __box_x
+         // bilo: 21
+         m_y -= __box_x
 		
-		_say_tbl_desc( m_x + 1, m_y + 1, cCol2, "** elementi", 11 )
+         _say_tbl_desc( m_x + 1, m_y + 1, cCol2, "** elementi", 11 )
 		
-        elem_kol( @ImeKol, @Kol )
+         elem_kol( @ImeKol, @Kol )
 
-		elem_filter( art_id )
+         elem_filter( art_id )
 
-	elseif ALIAS() == "E_ATT"
+      ELSEIF Alias() == "E_ATT"
 		
-        // bilo: 10
-		nX := (  __box_x / 2 )
-        // bilo: 56
-		nY := ( __box_y - __box_x ) + 1
+         // bilo: 10
+         nX := (  __box_x / 2 )
+         // bilo: 56
+         nY := ( __box_y - __box_x ) + 1
 
-        // bilo: 21
-		m_y += __box_x
+         // bilo: 21
+         m_y += __box_x
 		
-		_say_tbl_desc( m_x + 1, m_y + 1, cCol2, "** atributi", 20 )
+         _say_tbl_desc( m_x + 1, m_y + 1, cCol2, "** atributi", 20 )
 	
-		e_att_kol( @ImeKol, @Kol )
+         e_att_kol( @ImeKol, @Kol )
 
-		e_att_filter( nEl_id )
+         e_att_filter( nEl_id )
 	
-	elseif ALIAS() == "E_AOPS"
+      ELSEIF Alias() == "E_AOPS"
 
-        // bilo: 10	
-		nX := ( __box_x / 2 ) - 1
+         // bilo: 10
+         nX := ( __box_x / 2 ) - 1
 
-        // bilo: 56
-		nY := ( __box_y - __box_x ) + 1
-        
-        // bilo: 10
-		m_x += (  __box_x / 2 )
+         // bilo: 56
+         nY := ( __box_y - __box_x ) + 1
+
+         // bilo: 10
+         m_x += (  __box_x / 2 )
 		
-		_say_tbl_desc( m_x + 1, ;
-				m_y + 1, ;
-				cCol2, ;
-				"** dod.operacije", ; 
-				20 )
+         _say_tbl_desc( m_x + 1, ;
+            m_y + 1, ;
+            cCol2, ;
+            "** dod.operacije", ;
+            20 )
 		
-		e_aops_kol(@ImeKol, @Kol)
-		e_aops_filter(nEl_id)
+         e_aops_kol( @ImeKol, @Kol )
+         e_aops_filter( nEl_id )
 	
-	endif
+      ENDIF
 
 
-	ObjDbedit("elem", nX, nY, {|Ch| elem_hand(Ch)}, "", "",,,,,1)
+      ObjDbedit( "elem", nX, nY, {| Ch| elem_hand( Ch ) }, "", "",,,,, 1 )
 
 	
-	// uzmi matricu artikla......
-	// te provjeri pravilo......
+      // uzmi matricu artikla......
+      // te provjeri pravilo......
 	
-	// pomocna matrica...
-	aTmp := {}
-	nTmpArea := SELECT()
+      // pomocna matrica...
+      aTmp := {}
+      nTmpArea := Select()
 
-	// uzmi podatke u matricu....
-	_art_set_descr( art_id , lNew, .f., @aTmp, .t. )
+      // uzmi podatke u matricu....
+      _art_set_descr( art_id, lNew, .F., @aTmp, .T. )
 
-	select (nTmpArea)
+      SELECT ( nTmpArea )
 
 
-	// provjeri pravilo....
-	// Samo na <> ESC, problem sa TBrowse...
-	if LastKey() <> K_ESC
+      // provjeri pravilo....
+      // Samo na <> ESC, problem sa TBrowse...
+      IF LastKey() <> K_ESC
 		
-		nTmpX := m_x
+         nTmpX := m_x
 	
-		lRuleRet := rule_articles( aTmp )
+         lRuleRet := rule_articles( aTmp )
 	
-		m_x := nTmpX
+         m_x := nTmpX
 	
-		select ( nTmpArea )
+         SELECT ( nTmpArea )
 		
-	endif
+      ENDIF
 	
-	// pomjeri koordinatu
-	if ALIAS() == "ELEMENTS"
-        // bilo: 10
-		m_x -= ( __box_x / 2 )
-	endif
+      // pomjeri koordinatu
+      IF Alias() == "ELEMENTS"
+         // bilo: 10
+         m_x -= ( __box_x / 2 )
+      ENDIF
 
 	
-	if LastKey() == K_ESC 
-        
-		// generisi naziv artikla i update-uj artikal art_id
-		select articles
-		nRet := _art_set_descr( art_id, lNew )
-		select articles
+      IF LastKey() == K_ESC
+
+         // generisi naziv artikla i update-uj artikal art_id
+         SELECT articles
+         nRet := _art_set_descr( art_id, lNew )
+         SELECT articles
 		
-		exit
+         EXIT
 	
-	endif
+      ENDIF
 
-enddo
+   ENDDO
 
-BoxC()
+   BoxC()
 
-return nRet
+   RETURN nRet
 
 
 // -----------------------------------------------
 // otvaranje grupe tabela za sifrarnik
 // -----------------------------------------------
-static function _o_tables()
+STATIC FUNCTION _o_tables()
 
-O_E_ATT
-O_E_AOPS
-O_E_GROUPS
-O_ELEMENTS
+   O_E_ATT
+   O_E_AOPS
+   O_E_GROUPS
+   O_ELEMENTS
 
-return
+   RETURN
 
 
 
@@ -233,43 +234,44 @@ return
 // ------------------------------------------------
 // automatska shema elemenata prema tip artikla
 // ------------------------------------------------
-function auto_el_gen( nArt_id, nArtType, cSchema, nStartFrom )
-local nTArea := SELECT()
-local aSchema
-local cSep := "-"
-local nRbr
+FUNCTION auto_el_gen( nArt_id, nArtType, cSchema, nStartFrom )
 
-if nStartFrom == nil
-	nStartFrom := 0
-endif
+   LOCAL nTArea := Select()
+   LOCAL aSchema
+   LOCAL cSep := "-"
+   LOCAL nRbr
 
-// aschema[1] = G
-// aschema[2] = F
-// aschema[3] = G
-// ......
+   IF nStartFrom == nil
+      nStartFrom := 0
+   ENDIF
 
-aSchema := TokToNiz( cSchema, cSep )
+   // aschema[1] = G
+   // aschema[2] = F
+   // aschema[3] = G
+   // ......
+
+   aSchema := TokToNiz( cSchema, cSep )
 
 
-for i := 1 to LEN(aSchema)
+   FOR i := 1 TO Len( aSchema )
 
-	// dodaj element...
-	// tipa = aSchema[i] = G ili F ili ????
-	select elements
+      // dodaj element...
+      // tipa = aSchema[i] = G ili F ili ????
+      SELECT elements
 	
-	nRbr := i
+      nRbr := i
 	
-	if nStartFrom > 0
-		nRbr += nStartFrom
-	endif
+      IF nStartFrom > 0
+         nRbr += nStartFrom
+      ENDIF
 	
-	elem_edit( nArt_id, .t., ALLTRIM( aSchema[i] ), nRbr )
+      elem_edit( nArt_id, .T., AllTrim( aSchema[ i ] ), nRbr )
 	
-next
+   NEXT
 
-select (nTArea)
+   SELECT ( nTArea )
 
-return cSchema
+   RETURN cSchema
 
 
 
@@ -277,66 +279,70 @@ return cSchema
 // provjeri da li su svi atributi elementa uneseni...
 // vraca 0 ili 1
 // ------------------------------------------------------
-static function _chk_elements( nArt_id )
-local nRet := 1
-local nTArea := SELECT()
-local nEl_id := 0
+STATIC FUNCTION _chk_elements( nArt_id )
 
-select elements
-set order to tag "1"
-go top
-seek artid_str( art_id )
+   LOCAL nRet := 1
+   LOCAL nTArea := Select()
+   LOCAL nEl_id := 0
 
-do while !EOF() .and. field->art_id == nArt_id
+   SELECT elements
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK artid_str( art_id )
+
+   DO WHILE !Eof() .AND. field->art_id == nArt_id
 	
-	nEl_id := field->el_id
+      nEl_id := field->el_id
 
-	select e_att
-	set order to tag "1"
-	go top
-	seek elid_str( nEl_id )
+      SELECT e_att
+      SET ORDER TO TAG "1"
+      GO TOP
+      SEEK elid_str( nEl_id )
 
-	do while !EOF() .and. field->el_id == nEl_id
+      DO WHILE !Eof() .AND. field->el_id == nEl_id
 		
-		// ako postoji vrijednost ok
-		if field->e_gr_vl_id <> 0
+         // ako postoji vrijednost ok
+         IF field->e_gr_vl_id <> 0
 		
-			select e_att
-			skip
-			loop
+            SELECT e_att
+            SKIP
+            LOOP
 			
-		endif
+         ENDIF
 	
-		// inace izbaci da nije sve ok.
+         // inace izbaci da nije sve ok.
 		
-		nRet := 0
+         nRet := 0
 		
-		MsgBeep("Atribut: '" + ;
-			ALLTRIM(g_gr_at_desc(field->e_gr_at_id)) + ;
-			"' nije definisan !!!" )
+         MsgBeep( "Atribut: '" + ;
+            AllTrim( g_gr_at_desc( field->e_gr_at_id ) ) + ;
+            "' nije definisan !!!" )
 		
-		select (nTArea)
-		return nRet
+         SELECT ( nTArea )
+         RETURN nRet
 	
-	enddo
+      ENDDO
 
-	select elements
-	skip
-enddo
+      SELECT elements
+      SKIP
+   ENDDO
 
-select (nTArea)
-return nRet
+   SELECT ( nTArea )
+
+   RETURN nRet
 
 
 // ------------------------------------
 // automatski pozovi TAB
 // ------------------------------------
-static function auto_tab()
-if l_auto_tab == .t.
-	KEYBOARD K_TAB
-	l_auto_tab := .f.
-endif
-return
+STATIC FUNCTION auto_tab()
+
+   IF l_auto_tab == .T.
+      KEYBOARD K_TAB
+      l_auto_tab := .F.
+   ENDIF
+
+   RETURN
 
 
 
@@ -344,106 +350,119 @@ return
 // postavlja filter na tabelu ELEMENTS po polju ART_ID
 // nArt_id - artikal id
 // ----------------------------------------------------
-static function elem_filter( nArt_id ) 
-local cFilter
-cFilter := "art_id == " + artid_str( nArt_id )
-set filter to &cFilter
-go top
-return
+STATIC FUNCTION elem_filter( nArt_id )
+
+   LOCAL cFilter
+
+   cFilter := "art_id == " + artid_str( nArt_id )
+   SET FILTER to &cFilter
+   GO TOP
+
+   RETURN
 
 
 // ---------------------------------------------------
 // postavlja filter na tabelu E_ATT po polju EL_ID
-//  nEl_id - element id
+// nEl_id - element id
 // ---------------------------------------------------
-static function e_att_filter(nEl_id)
-local cFilter := "el_id == " + elid_str(nEl_id)
-set filter to &cFilter
-go top
-return
+STATIC FUNCTION e_att_filter( nEl_id )
+
+   LOCAL cFilter := "el_id == " + elid_str( nEl_id )
+
+   SET FILTER to &cFilter
+   GO TOP
+
+   RETURN
 
 
 // ---------------------------------------------------
 // postavlja filter na tabelu E_AOPS po polju EL_ID
-//  nEl_id - element id
+// nEl_id - element id
 // ---------------------------------------------------
-static function e_aops_filter(nEl_id)
-local cFilter := "el_id == " + elid_str(nEl_id)
-set filter to &cFilter
-go top
-return
+STATIC FUNCTION e_aops_filter( nEl_id )
+
+   LOCAL cFilter := "el_id == " + elid_str( nEl_id )
+
+   SET FILTER to &cFilter
+   GO TOP
+
+   RETURN
 
 
 // -----------------------------------------
 // kolone tabele "elements"
 // -----------------------------------------
-static function elem_kol(aImeKol, aKol, nArt_id)
-aKol := {}
-aImeKol := {}
+STATIC FUNCTION elem_kol( aImeKol, aKol, nArt_id )
 
-AADD(aImeKol, { "rb", {|| el_no }, "el_no", {|| rnal_inc_id(@wEl_id, "EL_ID"), .f.}, {|| .t.}} )
-AADD(aImeKol, { PADC("el.grupa", __box_x), {|| PADR(g_e_gr_desc( e_gr_id ), __box_x ) }, "e_gr_id" })
+   aKol := {}
+   aImeKol := {}
 
-for i:=1 to LEN(aImeKol)
-	AADD(aKol, i)
-next
+   AAdd( aImeKol, { "rb", {|| el_no }, "el_no", {|| rnal_inc_id( @wEl_id, "EL_ID" ), .F. }, {|| .T. } } )
+   AAdd( aImeKol, { PadC( "el.grupa", __box_x ), {|| PadR( g_e_gr_desc( e_gr_id ), __box_x ) }, "e_gr_id" } )
 
-return
+   FOR i := 1 TO Len( aImeKol )
+      AAdd( aKol, i )
+   NEXT
+
+   RETURN
 
 
 // -----------------------------------------------
 // uvecaj el_no, za elemente artikla
 // -----------------------------------------------
-static function _inc_el_no( wel_no, nArt_id )
-local nTRec
-local cTBFilter := DBFILTER()
+STATIC FUNCTION _inc_el_no( wel_no, nArt_id )
 
-set filter to
-set order to tag "1"
-	
-wel_no := _last_elno( nArt_id ) + 1
-	
-set filter to &cTBFilter
-set order to tag "1"
+   LOCAL nTRec
+   LOCAL cTBFilter := dbFilter()
 
-return .t.
+   SET FILTER TO
+   SET ORDER TO TAG "1"
+	
+   wel_no := _last_elno( nArt_id ) + 1
+	
+   SET FILTER to &cTBFilter
+   SET ORDER TO TAG "1"
+
+   RETURN .T.
 
 
 // -------------------------------------------
 // vraca posljednji zapis za artikal
 // -------------------------------------------
-static function _last_elno( nArtId )
-local nLast_rec := 0
+STATIC FUNCTION _last_elno( nArtId )
 
-go top
-seek artid_str( nArtId ) + STR( 9999, 4 )
+   LOCAL nLast_rec := 0
 
-skip -1
+   GO TOP
+   SEEK artid_str( nArtId ) + Str( 9999, 4 )
 
-if field->art_id <> nArtId
-	nLast_rec := 0	
-else
-	nLast_rec := field->el_no
-endif
+   SKIP -1
 
-return nLast_rec
+   IF field->art_id <> nArtId
+      nLast_rec := 0
+   ELSE
+      nLast_rec := field->el_no
+   ENDIF
+
+   RETURN nLast_rec
 
 
 // -----------------------------------------
 // kolone tabele "e_att"
 // -----------------------------------------
-static function e_att_kol(aImeKol, aKol)
-aKol := {}
-aImeKol := {}
+STATIC FUNCTION e_att_kol( aImeKol, aKol )
 
-AADD(aImeKol, {PADC("atribut", 10), {|| PADR(g_gr_at_desc( e_gr_at_id, .t. ), 20) }, "e_gr_at_id" })
-AADD(aImeKol, {PADC("vrijedost atributa", 30), {|| PADR(g_e_gr_vl_desc( e_gr_vl_id ), 30) }, "e_gr_vl_id"})
+   aKol := {}
+   aImeKol := {}
 
-for i:=1 to LEN(aImeKol)
-	AADD(aKol, i)
-next
+   AAdd( aImeKol, { PadC( "atribut", 10 ), {|| PadR( g_gr_at_desc( e_gr_at_id, .T. ), 20 ) }, "e_gr_at_id" } )
+   AAdd( aImeKol, { PadC( "vrijedost atributa", 30 ), {|| PadR( g_e_gr_vl_desc( e_gr_vl_id ), 30 ) }, "e_gr_vl_id" } )
 
-return
+   FOR i := 1 TO Len( aImeKol )
+      AAdd( aKol, i )
+   NEXT
+
+   RETURN
 
 
 
@@ -451,25 +470,26 @@ return
 // -----------------------------------------
 // kolone tabele "e_aops"
 // -----------------------------------------
-static function e_aops_kol(aImeKol, aKol)
-aKol := {}
-aImeKol := {}
+STATIC FUNCTION e_aops_kol( aImeKol, aKol )
 
-AADD(aImeKol, {PADC("dod.operacija", 15), {|| PADR(g_aop_desc( aop_id ), 18) }, "aop_id"})
-AADD(aImeKol, {PADC("atr.dod.operacije", 20), {|| PADR(g_aop_att_desc( aop_att_id ), 32) }, "aop_att_id"})
+   aKol := {}
+   aImeKol := {}
 
-for i:=1 to LEN(aImeKol)
-	AADD(aKol, i)
-next
+   AAdd( aImeKol, { PadC( "dod.operacija", 15 ), {|| PadR( g_aop_desc( aop_id ), 18 ) }, "aop_id" } )
+   AAdd( aImeKol, { PadC( "atr.dod.operacije", 20 ), {|| PadR( g_aop_att_desc( aop_att_id ), 32 ) }, "aop_att_id" } )
 
-return
+   FOR i := 1 TO Len( aImeKol )
+      AAdd( aKol, i )
+   NEXT
+
+   RETURN
 
 
 // -------------------------------
 // convert el_id to string
 // -------------------------------
-function elid_str(nId)
-return STR(nId, 10)
+FUNCTION elid_str( nId )
+   RETURN Str( nId, 10 )
 
 
 
@@ -477,223 +497,224 @@ return STR(nId, 10)
 // -----------------------------------------
 // key handler funkcija
 // -----------------------------------------
-static function elem_hand()
-local nX := m_x
-local nY := m_y
-local GetList:={}
-local nRec := RecNo()
-local nTRec := 0
-local nRet := DE_CONT
+STATIC FUNCTION elem_hand()
 
-do case
-	
-	case l_auto_tab == .t.
-	
-		KEYBOARD CHR(K_TAB)
-		l_auto_tab := .f.
-		return DE_REFRESH
+   LOCAL nX := m_x
+   LOCAL nY := m_y
+   LOCAL GetList := {}
+   LOCAL nRec := RecNo()
+   LOCAL nTRec := 0
+   LOCAL nRet := DE_CONT
 
-	case Ch == K_TAB
+   DO CASE
+	
+   CASE l_auto_tab == .T.
+	
+      KEYBOARD Chr( K_TAB )
+      l_auto_tab := .F.
+      RETURN DE_REFRESH
+
+   CASE Ch == K_TAB
 		
-		// browse kroz tabele
+      // browse kroz tabele
 		
-		if ALIAS() == "E_ATT"
+      IF Alias() == "E_ATT"
 			
-			_say_tbl_desc( m_x + 1, ;
-				m_y + 1, ;
-				nil, ;
-				"** atributi", ;
-				20 )
+         _say_tbl_desc( m_x + 1, ;
+            m_y + 1, ;
+            nil, ;
+            "** atributi", ;
+            20 )
 		
-			select e_aops
-			nRet := DE_ABORT
+         SELECT e_aops
+         nRet := DE_ABORT
 			
-		elseif ALIAS() == "ELEMENTS"
+      ELSEIF Alias() == "ELEMENTS"
 			
-			if field->el_id == 0
+         IF field->el_id == 0
 				
-				MsgBeep("Nema unesenih elemenata !!!!")
+            MsgBeep( "Nema unesenih elemenata !!!!" )
 
-				nRet := DE_CONT
+            nRet := DE_CONT
 				
-			else
+         ELSE
 
-				_say_tbl_desc( m_x + 1, ;
-					m_y + 1, ;
-					nil, ;
-					"** elementi", ;
-					11 )
+            _say_tbl_desc( m_x + 1, ;
+               m_y + 1, ;
+               nil, ;
+               "** elementi", ;
+               11 )
 		
 			
-				nEl_id := field->el_id
-				el_gr_id := field->e_gr_id
+            nEl_id := field->el_id
+            el_gr_id := field->e_gr_id
 			
-				select e_att
-				nRet := DE_ABORT
+            SELECT e_att
+            nRet := DE_ABORT
 				
-			endif
+         ENDIF
 			
-		elseif ALIAS() == "E_AOPS"
+      ELSEIF Alias() == "E_AOPS"
 			
-			_say_tbl_desc( m_x + 1, ;
-				m_y + 1, ;
-				nil, ;
-				"** dod.operacije", ;
-				20 )
+         _say_tbl_desc( m_x + 1, ;
+            m_y + 1, ;
+            nil, ;
+            "** dod.operacije", ;
+            20 )
 		
-			select elements
+         SELECT elements
 
-			nRet := DE_ABORT
+         nRet := DE_ABORT
 			
-		endif
+      ENDIF
 	
-	case Ch == K_CTRL_N
+   CASE Ch == K_CTRL_N
 	
-		// nove stavke
+      // nove stavke
 
-		cTBFilter := DBFILTER()
+      cTBFilter := dbFilter()
 
-		if ALIAS() == "ELEMENTS"
+      IF Alias() == "ELEMENTS"
 			
-			nRet := DE_REFRESH
+         nRet := DE_REFRESH
 		
-            go bottom
+         GO BOTTOM
 	
-			if elem_edit( art_id , .t. ) == 1
-				l_auto_tab := .t.
-			else
-				go top
-			endif
-			 
-		elseif ALIAS() == "E_ATT"
-
-			nRet := DE_REFRESH
+         IF elem_edit( art_id, .T. ) == 1
+            l_auto_tab := .T.
+         ELSE
+            GO TOP
+         ENDIF
 			
-			if e_att_edit( nEl_id, .t. ) == 1
-			    //
-            else
-				go top
-			endif
+      ELSEIF Alias() == "E_ATT"
+
+         nRet := DE_REFRESH
+			
+         IF e_att_edit( nEl_id, .T. ) == 1
+            //
+         ELSE
+            GO TOP
+         ENDIF
 		
-		elseif ALIAS() == "E_AOPS"
+      ELSEIF Alias() == "E_AOPS"
 		
-			nRet := DE_REFRESH
+         nRet := DE_REFRESH
 		
-			if e_aops_edit( nEl_id, .t. ) == 1
-				//
-			else
-				go top
-			endif
+         IF e_aops_edit( nEl_id, .T. ) == 1
+            //
+         ELSE
+            GO TOP
+         ENDIF
 	
-		endif
+      ENDIF
 
-	case Ch == K_F2 .or. Ch == K_ENTER
+   CASE Ch == K_F2 .OR. Ch == K_ENTER
 	
-		// ispravka stavki
+      // ispravka stavki
 		
-		cTBFilter := DBFILTER()
+      cTBFilter := dbFilter()
 
-		if ALIAS() == "ELEMENTS"
+      IF Alias() == "ELEMENTS"
 			
-			if Ch == K_ENTER	
+         IF Ch == K_ENTER
 			
-				Msgbeep("Opcija onemogucena##Koristiti F2")
-				nRet := DE_CONT
+            Msgbeep( "Opcija onemogucena##Koristiti F2" )
+            nRet := DE_CONT
 				
-			else
-				// ispravka rednog broja elementa...
+         ELSE
+            // ispravka rednog broja elementa...
 				
-				nRet := DE_REFRESH
+            nRet := DE_REFRESH
 				
-				e_no_edit()
+            e_no_edit()
 				
-				set filter to &cTbFilter
-				go top
+            SET FILTER to &cTbFilter
+            GO TOP
 				
-			endif
+         ENDIF
 			
-		elseif ALIAS() == "E_ATT"
+      ELSEIF Alias() == "E_ATT"
 			
-			nRet := DE_REFRESH
-			e_att_edit( nEl_id, .f. )
-			set filter to &cTbFilter
-			go top
+         nRet := DE_REFRESH
+         e_att_edit( nEl_id, .F. )
+         SET FILTER to &cTbFilter
+         GO TOP
 		
-		elseif ALIAS() == "E_AOPS"
+      ELSEIF Alias() == "E_AOPS"
 		
-			nRet := DE_REFRESH
-			e_aops_edit( nEl_id, .f. )
-			set filter to &cTbFilter
-			go top
+         nRet := DE_REFRESH
+         e_aops_edit( nEl_id, .F. )
+         SET FILTER to &cTbFilter
+         GO TOP
 		
-		endif
+      ENDIF
 
 	
-	case Ch == K_CTRL_T
+   CASE Ch == K_CTRL_T
 	
-		// brisanje stavki
+      // brisanje stavki
 
-		if ALIAS() == "ELEMENTS"
+      IF Alias() == "ELEMENTS"
 			
-			nRet := elem_del()
+         nRet := elem_del()
 			
-		elseif ALIAS() == "E_ATT"
+      ELSEIF Alias() == "E_ATT"
 
-			nRet := e_att_del()
+         nRet := e_att_del()
 		
-		elseif ALIAS() == "E_AOPS"
+      ELSEIF Alias() == "E_AOPS"
 		
-			nRet := e_aops_del()
+         nRet := e_aops_del()
 			
-		endif
+      ENDIF
 
-	case UPPER(CHR(Ch)) == "C"
+   CASE Upper( Chr( Ch ) ) == "C"
 		
-		// convert element...
+      // convert element...
 		
-		if ALIAS() <> "ELEMENTS"
+      IF Alias() <> "ELEMENTS"
 			
-			return DE_CONT
+         RETURN DE_CONT
 		
-		endif
+      ENDIF
 
-		// convert only elements...
+      // convert only elements...
 
-		nEl_id := field->el_id
-		nEl_gr_id := field->e_gr_id
+      nEl_id := field->el_id
+      nEl_gr_id := field->e_gr_id
 		
-		nRet := el_convert( nEl_id, nEl_gr_id, art_id )
+      nRet := el_convert( nEl_id, nEl_gr_id, art_id )
 
 	
-	case UPPER(CHR(Ch)) == "U"
+   CASE Upper( Chr( Ch ) ) == "U"
 		
-		// restore element...
+      // restore element...
 		
-		if ALIAS() <> "ELEMENTS"
+      IF Alias() <> "ELEMENTS"
 			
-			return DE_CONT
+         RETURN DE_CONT
 		
-		endif
+      ENDIF
 
-		// restore only elements...
+      // restore only elements...
 
-		nEl_id := field->el_id
-		nEl_gr_id := field->e_gr_id
+      nEl_id := field->el_id
+      nEl_gr_id := field->e_gr_id
 		
-		nRet := el_restore( nEl_id, nEl_gr_id, art_id )
+      nRet := el_restore( nEl_id, nEl_gr_id, art_id )
 
-endcase
-
-
-if ALIAS() == "ELEMENTS"
-	upd_el_piccode( art_id )
-endif
+   ENDCASE
 
 
-m_x := nX
-m_y := nY
+   IF Alias() == "ELEMENTS"
+      upd_el_piccode( art_id )
+   ENDIF
 
-return nRet
+
+   m_x := nX
+   m_y := nY
+
+   RETURN nRet
 
 
 
@@ -701,275 +722,280 @@ return nRet
 // -------------------------------------------
 // update piccode of article
 // -------------------------------------------
-static function upd_el_piccode( nArt_id )
-local nTRec := RECNO()
-local cSchema := ""
-local cTmp 
-local i := 0
-local cSep := "-"
+STATIC FUNCTION upd_el_piccode( nArt_id )
 
-go top
-do while !EOF() .and. field->art_id == nArt_id 
+   LOCAL nTRec := RecNo()
+   LOCAL cSchema := ""
+   LOCAL cTmp
+   LOCAL i := 0
+   LOCAL cSep := "-"
+
+   GO TOP
+   DO WHILE !Eof() .AND. field->art_id == nArt_id
 	
-	i += 1
+      i += 1
 	
-	cTmp := ALLTRIM( g_e_gr_desc( field->e_gr_id, nil, .f. ) )
+      cTmp := AllTrim( g_e_gr_desc( field->e_gr_id, nil, .F. ) )
 	
-	if i <> 1
-		cSchema += cSep
-	endif
+      IF i <> 1
+         cSchema += cSep
+      ENDIF
 	
-	cSchema += cTmp
+      cSchema += cTmp
 
-	skip
-enddo
+      SKIP
+   ENDDO
 
-_sh_piccode( cSchema )
+   _sh_piccode( cSchema )
 
-go (nTRec)
+   GO ( nTRec )
 
-return
+   RETURN
 
 
 // ---------------------------------------------
 // prikazi piccode na formi unosa
 // ---------------------------------------------
-static function _sh_piccode( cSchema )
-local _desc_len := 35
-local nX := __box_x + 1
-local nY := __box_y - _desc_len
-local cSchClr := "GR+/B"
+STATIC FUNCTION _sh_piccode( cSchema )
 
-// prvo ocisti
-@ nX, nY SAY SPACE( _desc_len )
+   LOCAL _desc_len := 35
+   LOCAL nX := __box_x + 1
+   LOCAL nY := __box_y - _desc_len
+   LOCAL cSchClr := "GR+/B"
 
-// ispisi
-@ nX, nY SAY "|"
-@ nX, col() + 1 SAY "shema: "
-@ nX, col() + 1 SAY PADR( g_a_piccode( cSchema ), 25 ) ;
-			COLOR cSchClr
+   // prvo ocisti
+   @ nX, nY SAY Space( _desc_len )
 
-return
+   // ispisi
+   @ nX, nY SAY "|"
+   @ nX, Col() + 1 SAY "shema: "
+   @ nX, Col() + 1 SAY PadR( g_a_piccode( cSchema ), 25 ) ;
+      COLOR cSchClr
+
+   RETURN
 
 
 // -----------------------------------------------------------
 // configure element...
 // -----------------------------------------------------------
-static function el_convert( nEl_id, nEl_gr_id, nArt_id )
-local nRet := DE_CONT
-local nEl_no := field->el_no
-local nX := 1
-local cSelect := "1"
-local nFolNr := 1
-local cGr_code
+STATIC FUNCTION el_convert( nEl_id, nEl_gr_id, nArt_id )
 
-// uzmi "kod" grupe
-cGr_code := ALLTRIM( g_e_gr_desc( nEl_gr_id, nil, .f. ) )
+   LOCAL nRet := DE_CONT
+   LOCAL nEl_no := field->el_no
+   LOCAL nX := 1
+   LOCAL cSelect := "1"
+   LOCAL nFolNr := 1
+   LOCAL cGr_code
 
-if cGr_code <> ALLTRIM( gGlassJoker )
+   // uzmi "kod" grupe
+   cGr_code := AllTrim( g_e_gr_desc( nEl_gr_id, nil, .F. ) )
 
-	// ako nije staklo ... 
+   IF cGr_code <> AllTrim( gGlassJoker )
+
+      // ako nije staklo ...
 	
-	msgbeep("Konverzija se vrsi samo na elementu tipa staklo !!!")
+      msgbeep( "Konverzija se vrsi samo na elementu tipa staklo !!!" )
 	
-	return nRet
+      RETURN nRet
 
-endif
+   ENDIF
 
-Box(, 10, 60)
+   Box(, 10, 60 )
 
-	@ m_x + nX, m_y + 2 SAY "***** konvertovanje stavke artikla"
+   @ m_x + nX, m_y + 2 SAY "***** konvertovanje stavke artikla"
 	
-	nX += 2
+   nX += 2
 
-	@ m_x + nX, m_y + 2 SAY "(1) staklo -> lami staklo sa folijom"
+   @ m_x + nX, m_y + 2 SAY "(1) staklo -> lami staklo sa folijom"
 	
-	nX += 2 
+   nX += 2
 
-	@ m_x + nX, m_y + 2 SAY "selekcija:" GET cSelect VALID cSelect $ "1"
+   @ m_x + nX, m_y + 2 SAY "selekcija:" GET cSelect VALID cSelect $ "1"
 
-	read
+   READ
 
-	if cSelect == "1"
+   IF cSelect == "1"
 		
-		nX += 2
+      nX += 2
 
-		@ m_x + nX, m_y + 2 SAY "broj folija lami stakla:" GET nFolNr PICT "9"
+      @ m_x + nX, m_y + 2 SAY "broj folija lami stakla:" GET nFolNr PICT "9"
 		
-		read
+      READ
 		
-	endif
+   ENDIF
 	
-BoxC()
+   BoxC()
 
-if LastKey() == K_ESC
-	return DE_CONT
-endif
+   IF LastKey() == K_ESC
+      RETURN DE_CONT
+   ENDIF
 
 
-if cSelect == "1"
+   IF cSelect == "1"
 	
-	// lami staklo
-	a_lami_gen( field->el_no, nFolNr, nArt_id )
+      // lami staklo
+      a_lami_gen( field->el_no, nFolNr, nArt_id )
 	
-	nRet := DE_REFRESH 
+      nRet := DE_REFRESH
 	
-endif
+   ENDIF
 
-return nRet
+   RETURN nRet
 
 
 // -----------------------------------------------------------
 // unconfigure element
 // -----------------------------------------------------------
-static function el_restore( )
-local nRet := DE_CONT
+STATIC FUNCTION el_restore()
 
-return nRet
+   LOCAL nRet := DE_CONT
+
+   RETURN nRet
 
 
 
 
 // ----------------------------------------------
 // ispravka elementa, unos novog elementa
-//   nArt_id - artikal id
-//   lNewRec - novi zapis .t. or .f.
-//   cType - tip elementa, ako postoji automatski 
-//           ga dodaje
-//   nEl_no - brojac elementa
+// nArt_id - artikal id
+// lNewRec - novi zapis .t. or .f.
+// cType - tip elementa, ako postoji automatski
+// ga dodaje
+// nEl_no - brojac elementa
 // ----------------------------------------------
-static function elem_edit( nArt_id, lNewRec, cType, nEl_no )
-local nEl_id := 0
-local nLeft := 30
-local lAuto := .f.
-local nRet := DE_CONT
-local cColor := "BG+/B"
-local lCoat := .f.
-local _rec
-private GetList:={}
+STATIC FUNCTION elem_edit( nArt_id, lNewRec, cType, nEl_no )
 
-if cType == nil
-	cType := ""
-endif
+   LOCAL nEl_id := 0
+   LOCAL nLeft := 30
+   LOCAL lAuto := .F.
+   LOCAL nRet := DE_CONT
+   LOCAL cColor := "BG+/B"
+   LOCAL lCoat := .F.
+   LOCAL _rec
+   PRIVATE GetList := {}
 
-if !lNewRec .and. field->el_id == 0
-	MsgBeep("Stavka ne postoji !!!#Koristite c-N da dodate novu!")
-	return DE_REFRESH
-endif
+   IF cType == nil
+      cType := ""
+   ENDIF
 
-if lNewRec
+   IF !lNewRec .AND. field->el_id == 0
+      MsgBeep( "Stavka ne postoji !!!#Koristite c-N da dodate novu!" )
+      RETURN DE_REFRESH
+   ENDIF
+
+   IF lNewRec
 	
-	if !EMPTY(cType)
-		lAuto := .t.
-	endif
+      IF !Empty( cType )
+         lAuto := .T.
+      ENDIF
 	
-	if _set_sif_id( @nEl_id, "EL_ID", lAuto, "FULL" ) == 0
-		return 0
-	endif
+      IF _set_sif_id( @nEl_id, "EL_ID", lAuto, "FULL" ) == 0
+         RETURN 0
+      ENDIF
 
-endif
+   ENDIF
 
-set_global_memvars_from_dbf()
+   set_global_memvars_from_dbf()
 
-if lNewRec
+   IF lNewRec
 
-	_art_id := nArt_id
+      _art_id := nArt_id
 
-	if EMPTY( cType )
-		// uvecaj redni broj elementa...
-		// brojac dbf + sql/par
-		_inc_el_no( @_el_no, nArt_id )
-	else
-		// auto kreiranje zna za brojac
-		// necemo koristiti iz baze, da ne opterecujemo rad
-		// radi filtera
-		_el_no := nEl_no
-	endif
+      IF Empty( cType )
+         // uvecaj redni broj elementa...
+         // brojac dbf + sql/par
+         _inc_el_no( @_el_no, nArt_id )
+      ELSE
+         // auto kreiranje zna za brojac
+         // necemo koristiti iz baze, da ne opterecujemo rad
+         // radi filtera
+         _el_no := nEl_no
+      ENDIF
 	
-	_e_gr_id := 0
+      _e_gr_id := 0
 
-endif
+   ENDIF
 
-if EMPTY( cType )
-    
-    Box(, 7, 60)
+   IF Empty( cType )
 
-	if lNewRec
-		@ m_x + 1, m_y + 2 SAY "Unos novog elementa *******" COLOR cColor
-	else
-		@ m_x + 1, m_y + 2 SAY "Ispravka elementa *******" COLOR cColor
-	endif
+      Box(, 7, 60 )
+
+      IF lNewRec
+         @ m_x + 1, m_y + 2 SAY "Unos novog elementa *******" COLOR cColor
+      ELSE
+         @ m_x + 1, m_y + 2 SAY "Ispravka elementa *******" COLOR cColor
+      ENDIF
 	
-	@ m_x + 3, m_y + 2 SAY PADL("pozicija (rbr) elementa:", nLeft) GET _el_no VALID _el_no > 0
+      @ m_x + 3, m_y + 2 SAY PadL( "pozicija (rbr) elementa:", nLeft ) GET _el_no VALID _el_no > 0
 	
-	@ m_x + 5, m_y + 2 SAY PADL("element pripada grupi:", nLeft) GET _e_gr_id VALID s_e_groups( @_e_gr_id, .t. )
+      @ m_x + 5, m_y + 2 SAY PadL( "element pripada grupi:", nLeft ) GET _e_gr_id VALID s_e_groups( @_e_gr_id, .T. )
 	
-	@ m_x + 6, m_y + 2 SAY PADL("(0 - otvori sifrarnik)", nLeft)
+      @ m_x + 6, m_y + 2 SAY PadL( "(0 - otvori sifrarnik)", nLeft )
 	
-	read
-    
-    BoxC()
+      READ
 
-endif
+      BoxC()
 
-if EMPTY(cType) .and. LastKey() == K_ESC .and. lNewRec
+   ENDIF
 
-    _rec := get_dbf_global_memvars( NIL, .f. )
-    delete_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+   IF Empty( cType ) .AND. LastKey() == K_ESC .AND. lNewRec
+
+      _rec := get_dbf_global_memvars( NIL, .F. )
+      delete_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
 	
-	return 0
+      RETURN 0
 	
-endif
+   ENDIF
 
-if !EMPTY(cType)
+   IF !Empty( cType )
 
-	// coating postoji... obrati na to paznju
-	if "*" $ cType
-		lCoat := .t.
-	endif
+      // coating postoji... obrati na to paznju
+      IF "*" $ cType
+         lCoat := .T.
+      ENDIF
 
-	// ukloni "*" ako postoji...
-	cType := STRTRAN( cType, "*", "" )
+      // ukloni "*" ako postoji...
+      cType := StrTran( cType, "*", "" )
 	
-	// upenduj tip elementa
-	_e_gr_id := g_gr_by_type( cType )
+      // upenduj tip elementa
+      _e_gr_id := g_gr_by_type( cType )
 
-endif
+   ENDIF
 
-_rec := get_dbf_global_memvars( NIL, .f. )
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+   _rec := get_dbf_global_memvars( NIL, .F. )
+   update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
 
-if lNewRec
-	// nafiluj odmah atribute za ovu grupu...
-	__fill_att__( e_gr_id, nEl_id )
-	select elements
-endif
+   IF lNewRec
+      // nafiluj odmah atribute za ovu grupu...
+      __fill_att__( e_gr_id, nEl_id )
+      SELECT elements
+   ENDIF
 
-return 1
+   RETURN 1
 
 
 // ---------------------------------------------
 // ispravka rednog broja elementa
 // ---------------------------------------------
-static function e_no_edit()
+STATIC FUNCTION e_no_edit()
 
-set_global_memvars_from_dbf()
+   set_global_memvars_from_dbf()
 
-Box(,1,40)
+   Box(, 1, 40 )
 
-	@ m_x + 1, m_y + 2 SAY "postavi na:" GET _el_no VALID _el_no > 0 PICT "99"	
-	read
-    
-BoxC()
+   @ m_x + 1, m_y + 2 SAY "postavi na:" GET _el_no VALID _el_no > 0 PICT "99"
+   READ
 
-if LastKey() <> K_ESC
-    
-    _rec := get_dbf_global_memvars( NIL, .f. )
-    update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
-    
-endif
+   BoxC()
 
-return 1
+   IF LastKey() <> K_ESC
+
+      _rec := get_dbf_global_memvars( NIL, .F. )
+      update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+
+   ENDIF
+
+   RETURN 1
 
 
 
@@ -977,179 +1003,182 @@ return 1
 // ----------------------------------------------------
 // filovanje tabele e_att sa atributima grupe
 // ----------------------------------------------------
-static function __fill_att__( __gr_id, __el_id )
-local nTArea := SELECT()
-local nEl_att_id := 0
-local _rec 
+STATIC FUNCTION __fill_att__( __gr_id, __el_id )
 
-if !f18_lock_tables( { "e_att" } )
-    MsgBeep("Problem sa lockom tabele e_att !!!!")
-    return
-endif
+   LOCAL nTArea := Select()
+   LOCAL nEl_att_id := 0
+   LOCAL _rec
 
-sql_table_update( nil, "BEGIN" )
+   IF !f18_lock_tables( { "e_att" } )
+      MsgBeep( "Problem sa lockom tabele e_att !!!!" )
+      RETURN
+   ENDIF
 
-select e_gr_att
-set order to tag "2"
-go top
-seek e_gr_id_str( __gr_id ) + "*"
+   sql_table_update( nil, "BEGIN" )
 
-do while !EOF() .and. field->e_gr_id == __gr_id ;	
-		.and. field->e_gr_at_re == "*"
+   SELECT e_gr_att
+   SET ORDER TO TAG "2"
+   GO TOP
+   SEEK e_gr_id_str( __gr_id ) + "*"
 
-	select e_att
+   DO WHILE !Eof() .AND. field->e_gr_id == __gr_id ;
+      .AND. field->e_gr_at_re == "*"
+
+      SELECT e_att
 	
-	if _set_sif_id( @nEl_att_id, "EL_ATT_ID" ) == 0
-		select e_gr_att
-		loop
-	endif
+      IF _set_sif_id( @nEl_att_id, "EL_ATT_ID" ) == 0
+         SELECT e_gr_att
+         LOOP
+      ENDIF
 
-    _rec := dbf_get_rec()	
+      _rec := dbf_get_rec()
 
-    _rec["el_id"] := __el_id
-	_rec["el_att_id"] := nEl_att_id
-	_rec["e_gr_at_id"] := e_gr_att->e_gr_at_id
-	_rec["e_gr_vl_id"] := 0
+      _rec[ "el_id" ] := __el_id
+      _rec[ "el_att_id" ] := nEl_att_id
+      _rec[ "e_gr_at_id" ] := e_gr_att->e_gr_at_id
+      _rec[ "e_gr_vl_id" ] := 0
 
-    update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+      update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
 	
-    select e_gr_att
-	skip
+      SELECT e_gr_att
+      SKIP
 
-enddo
+   ENDDO
 
-f18_free_tables( { "e_att" } )
-sql_table_update( nil, "END" )
+   f18_free_tables( { "e_att" } )
+   sql_table_update( nil, "END" )
 
-select (nTArea)
-return
+   SELECT ( nTArea )
+
+   RETURN
 
 
 
 // ----------------------------------------------
 // ispravka atributa elementa, unos novog
-//   nEl_id - element id
-//   lNewRec - novi zapis .t. or .f.
+// nEl_id - element id
+// lNewRec - novi zapis .t. or .f.
 // ----------------------------------------------
-static function e_att_edit( nEl_id, lNewRec )
-local nLeft := 25
-local nEl_att_id := 0
-local cColor := "BG+/B"
-local cElGrVal := SPACE(10)
-local _rec
-private GetList:={}
+STATIC FUNCTION e_att_edit( nEl_id, lNewRec )
 
-if !lNewRec .and. field->el_id == 0
+   LOCAL nLeft := 25
+   LOCAL nEl_att_id := 0
+   LOCAL cColor := "BG+/B"
+   LOCAL cElGrVal := Space( 10 )
+   LOCAL _rec
+   PRIVATE GetList := {}
 
-	MsgBeep("Stavka ne postoji !!!#Koristite c-N da dodate novu!")
-	return DE_REFRESH
+   IF !lNewRec .AND. field->el_id == 0
+
+      MsgBeep( "Stavka ne postoji !!!#Koristite c-N da dodate novu!" )
+      RETURN DE_REFRESH
 	
-endif
+   ENDIF
 
-if lNewRec
-	if _set_sif_id(@nEl_att_id, "EL_ATT_ID", NIL, "FULL" ) == 0
-		return 0
-	endif
-endif
+   IF lNewRec
+      IF _set_sif_id( @nEl_att_id, "EL_ATT_ID", NIL, "FULL" ) == 0
+         RETURN 0
+      ENDIF
+   ENDIF
 
-set_global_memvars_from_dbf()
+   set_global_memvars_from_dbf()
 
-if lNewRec
-	_el_id := nEl_id
-	_e_gr_vl_id := 0
-	_e_gr_at_id := 0
-endif
+   IF lNewRec
+      _el_id := nEl_id
+      _e_gr_vl_id := 0
+      _e_gr_at_id := 0
+   ENDIF
 
-Box(,6,65)
+   Box(, 6, 65 )
 
-	if lNewRec
-		@ m_x + 1, m_y + 2 SAY "Unos novog atributa elementa *******" COLOR cColor
-	else
-		@ m_x + 1, m_y + 2 SAY "Ispravka atributa elementa *******" COLOR cColor
-	endif
+   IF lNewRec
+      @ m_x + 1, m_y + 2 SAY "Unos novog atributa elementa *******" COLOR cColor
+   ELSE
+      @ m_x + 1, m_y + 2 SAY "Ispravka atributa elementa *******" COLOR cColor
+   ENDIF
 
-	@ m_x + 3, m_y + 2 SAY PADL("izaberi atribut elementa", nLeft) GET _e_gr_at_id VALID {|| s_e_gr_att( @_e_gr_at_id, el_gr_id, nil, .t. ), show_it( g_gr_at_desc( _e_gr_at_id ) ) } WHEN lNewRec == .t.
+   @ m_x + 3, m_y + 2 SAY PadL( "izaberi atribut elementa", nLeft ) GET _e_gr_at_id VALID {|| s_e_gr_att( @_e_gr_at_id, el_gr_id, nil, .T. ), show_it( g_gr_at_desc( _e_gr_at_id ) ) } WHEN lNewRec == .T.
 		
-	@ m_x + 4, m_y + 2 SAY PADL("izaberi vrijednost atributa", nLeft) GET cElGrVal VALID {|| s_e_gr_val( @cElGrVal, _e_gr_at_id, cElGrVal, .t. ), set_var( @_e_gr_vl_id, @cElGrVal ) }
+   @ m_x + 4, m_y + 2 SAY PadL( "izaberi vrijednost atributa", nLeft ) GET cElGrVal VALID {|| s_e_gr_val( @cElGrVal, _e_gr_at_id, cElGrVal, .T. ), set_var( @_e_gr_vl_id, @cElGrVal ) }
 
-	@ m_x + 5, m_y + 2 SAY PADL("0 - otvori sifrarnik", nLeft)
+   @ m_x + 5, m_y + 2 SAY PadL( "0 - otvori sifrarnik", nLeft )
 	
-	read
-BoxC()
+   READ
+   BoxC()
 
-if LastKey() == K_ESC .and. lNewRec
-    _rec := get_dbf_global_memvars( NIL, .f. )
-    delete_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
-	return 0
-endif
+   IF LastKey() == K_ESC .AND. lNewRec
+      _rec := get_dbf_global_memvars( NIL, .F. )
+      delete_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+      RETURN 0
+   ENDIF
 
-_rec := get_dbf_global_memvars( NIL, .f. )
-// update zapisa
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+   _rec := get_dbf_global_memvars( NIL, .F. )
+   // update zapisa
+   update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
 
-
-return 1
+   RETURN 1
 
 
 
 // ----------------------------------------------
 // ispravka operacija elementa, unos novih
-//   nEl_id - element id
-//   lNewRec - novi zapis .t. or .f.
+// nEl_id - element id
+// lNewRec - novi zapis .t. or .f.
 // ----------------------------------------------
-static function e_aops_edit( nEl_id, lNewRec )
-local nLeft := 25
-local nEl_op_id := 0
-local cColor := "BG+/B"
-local _rec
-private GetList:={}
+STATIC FUNCTION e_aops_edit( nEl_id, lNewRec )
 
-if !lNewRec .and. field->el_id == 0
-	Msgbeep("Stavka ne postoji !!!#Koristite c-N da bi dodali novu!")
-	return DE_REFRESH
-endif
+   LOCAL nLeft := 25
+   LOCAL nEl_op_id := 0
+   LOCAL cColor := "BG+/B"
+   LOCAL _rec
+   PRIVATE GetList := {}
 
-if lNewRec
-	if _set_sif_id( @nEl_op_id, "EL_OP_ID", NIL, "FULL" ) == 0
-		return 0
-	endif
-endif
+   IF !lNewRec .AND. field->el_id == 0
+      Msgbeep( "Stavka ne postoji !!!#Koristite c-N da bi dodali novu!" )
+      RETURN DE_REFRESH
+   ENDIF
 
-set_global_memvars_from_dbf()
+   IF lNewRec
+      IF _set_sif_id( @nEl_op_id, "EL_OP_ID", NIL, "FULL" ) == 0
+         RETURN 0
+      ENDIF
+   ENDIF
 
-if lNewRec
-	_el_id := nEl_id
-	_aop_id := 0
-	_aop_att_id := 0
-endif
+   set_global_memvars_from_dbf()
 
-Box(,6,65)
+   IF lNewRec
+      _el_id := nEl_id
+      _aop_id := 0
+      _aop_att_id := 0
+   ENDIF
 
-	if lNewRec
-		@ m_x + 1, m_y + 2 SAY "Unos dodatnih operacija elementa *******" COLOR cColor
-	else
-		@ m_x + 1, m_y + 2 SAY "Ispravka dodatnih operacija elementa *******" COLOR cColor
-	endif
+   Box(, 6, 65 )
+
+   IF lNewRec
+      @ m_x + 1, m_y + 2 SAY "Unos dodatnih operacija elementa *******" COLOR cColor
+   ELSE
+      @ m_x + 1, m_y + 2 SAY "Ispravka dodatnih operacija elementa *******" COLOR cColor
+   ENDIF
 	
-	@ m_x + 3, m_y + 2 SAY PADL("izaberi dodatnu operaciju", nLeft) GET _aop_id VALID {|| s_aops(@_aop_id, nil, .t.), show_it( g_aop_desc( _aop_id ) ) }
+   @ m_x + 3, m_y + 2 SAY PadL( "izaberi dodatnu operaciju", nLeft ) GET _aop_id VALID {|| s_aops( @_aop_id, nil, .T. ), show_it( g_aop_desc( _aop_id ) ) }
 		
-	@ m_x + 4, m_y + 2 SAY PADL("izaberi atribut operacije", nLeft) GET _aop_att_id VALID {|| s_aops_att( @_aop_att_id, _aop_id, nil, .t. ), show_it( g_aop_att_desc( _aop_att_id ) )  }
+   @ m_x + 4, m_y + 2 SAY PadL( "izaberi atribut operacije", nLeft ) GET _aop_att_id VALID {|| s_aops_att( @_aop_att_id, _aop_id, nil, .T. ), show_it( g_aop_att_desc( _aop_att_id ) )  }
 	
-	@ m_x + 5, m_y + 2 SAY PADL("0 - otvori sifrarnik", nLeft)
+   @ m_x + 5, m_y + 2 SAY PadL( "0 - otvori sifrarnik", nLeft )
 	
-	read
-BoxC()
+   READ
+   BoxC()
 
-if LastKey() == K_ESC .and. lNewRec
-    _rec := get_dbf_global_memvars( NIL, .f. )
-	delete_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
-	return 0
-endif
+   IF LastKey() == K_ESC .AND. lNewRec
+      _rec := get_dbf_global_memvars( NIL, .F. )
+      delete_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+      RETURN 0
+   ENDIF
 
-_rec := get_dbf_global_memvars( NIL, .f. )
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+   _rec := get_dbf_global_memvars( NIL, .F. )
+   update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
 	
-return 1
+   RETURN 1
 
 
 
@@ -1157,52 +1186,51 @@ return 1
 // ----------------------------------------------
 // brisanje elementa
 // ----------------------------------------------
-static function elem_del()
-local _rec
+STATIC FUNCTION elem_del()
 
-if Pitanje(,"Izbrisati stavku ???", "N") == "N"
-	return DE_CONT
-endif
+   LOCAL _rec
 
-_rec := dbf_get_rec()
-delete_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+   IF Pitanje(, "Izbrisati stavku ???", "N" ) == "N"
+      RETURN DE_CONT
+   ENDIF
 
-return DE_REFRESH
+   _rec := dbf_get_rec()
+   delete_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+
+   RETURN DE_REFRESH
 
 
 
 // ----------------------------------------------
 // brisanje atributa elementa
 // ----------------------------------------------
-static function e_att_del()
-local _rec
+STATIC FUNCTION e_att_del()
 
-if Pitanje(,"Izbrisati stavku ???", "N") == "N"
-	return DE_CONT
-endif
+   LOCAL _rec
 
-_rec := dbf_get_rec()
-delete_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+   IF Pitanje(, "Izbrisati stavku ???", "N" ) == "N"
+      RETURN DE_CONT
+   ENDIF
 
-return DE_REFRESH
+   _rec := dbf_get_rec()
+   delete_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+
+   RETURN DE_REFRESH
 
 
 
 // ----------------------------------------------
 // brisanje dodatne operacije elementa
 // ----------------------------------------------
-static function e_aops_del()
-local _rec
+STATIC FUNCTION e_aops_del()
 
-if Pitanje(,"Izbrisati stavku ???", "N") == "N"
-	return DE_CONT
-endif
+   LOCAL _rec
 
-_rec := dbf_get_rec()
-delete_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+   IF Pitanje(, "Izbrisati stavku ???", "N" ) == "N"
+      RETURN DE_CONT
+   ENDIF
 
-return DE_REFRESH
+   _rec := dbf_get_rec()
+   delete_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
 
-
-
-
+   RETURN DE_REFRESH

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,195 +13,200 @@
 #include "rnal.ch"
 
 
-static _wo_id
+STATIC _wo_id
 
 
 // -----------------------------------------
 // otvara sifrarnik artikala
 // -----------------------------------------
-function s_e_groups(cId, lwo_ID, dx, dy)
-local nTArea
-local cHeader
-private ImeKol
-private Kol
-private GetList:={}
+FUNCTION s_e_groups( cId, lwo_ID, dx, dy )
 
-nTArea := SELECT()
+   LOCAL nTArea
+   LOCAL cHeader
+   PRIVATE ImeKol
+   PRIVATE Kol
+   PRIVATE GetList := {}
 
-O_E_GROUPS
+   nTArea := Select()
 
-cHeader := "Elementi - grupe /"
-cHeader += SPACE(5)
-cHeader += "'A' - pregled atributa grupe"
+   O_E_GROUPS
 
-if lwo_ID == nil
-	_wo_id := .f.
-endif
+   cHeader := "Elementi - grupe /"
+   cHeader += Space( 5 )
+   cHeader += "'A' - pregled atributa grupe"
 
-select e_groups
-set order to tag "1"
+   IF lwo_ID == nil
+      _wo_id := .F.
+   ENDIF
 
-set_a_kol(@ImeKol, @Kol)
+   SELECT e_groups
+   SET ORDER TO TAG "1"
+
+   set_a_kol( @ImeKol, @Kol )
 	
-cRet := PostojiSifra(F_E_GROUPS, 1, MAXROWS()-10, MAXCOLS()-5, cHeader, @cId, dx, dy, {|| key_handler(Ch) })
+   cRet := PostojiSifra( F_E_GROUPS, 1, MAXROWS() -10, MAXCOLS() -5, cHeader, @cId, dx, dy, {|| key_handler( Ch ) } )
 
-select (nTArea)
+   SELECT ( nTArea )
 
-return cRet
+   RETURN cRet
 
 
 // -----------------------------------------
 // setovanje kolona tabele
 // -----------------------------------------
-static function set_a_kol(aImeKol, aKol)
-aKol := {}
-aImeKol := {}
+STATIC FUNCTION set_a_kol( aImeKol, aKol )
 
-if _wo_id == .f.
+   aKol := {}
+   aImeKol := {}
 
-	AADD(aImeKol, {PADC("ID/MC", 10), {|| sif_idmc(e_gr_id)}, "e_gr_id", {|| rnal_inc_id(@wE_gr_id, "E_GR_ID"), .f.}, {|| .t.}})
+   IF _wo_id == .F.
 
-endif
+      AAdd( aImeKol, { PadC( "ID/MC", 10 ), {|| sif_idmc( e_gr_id ) }, "e_gr_id", {|| rnal_inc_id( @wE_gr_id, "E_GR_ID" ), .F. }, {|| .T. } } )
 
-AADD(aImeKol, {PADC("Puni naziv grupe", 30), {|| PADR(e_gr_full_, 30)}, "e_gr_full_"})
-AADD(aImeKol, {PADC("Skr. opis (sifra)", 15), {|| PADR(e_gr_desc, 15)}, "e_gr_desc"})
+   ENDIF
 
-for i:=1 to LEN(aImeKol)
-	AADD(aKol, i)
-next
+   AAdd( aImeKol, { PadC( "Puni naziv grupe", 30 ), {|| PadR( e_gr_full_, 30 ) }, "e_gr_full_" } )
+   AAdd( aImeKol, { PadC( "Skr. opis (sifra)", 15 ), {|| PadR( e_gr_desc, 15 ) }, "e_gr_desc" } )
 
-return
+   FOR i := 1 TO Len( aImeKol )
+      AAdd( aKol, i )
+   NEXT
+
+   RETURN
 
 
 // -----------------------------------------
 // key handler funkcija
 // -----------------------------------------
-static function key_handler(Ch)
-local nTRec := RecNo()
-local nE_gr_id := field->e_gr_id
+STATIC FUNCTION key_handler( Ch )
 
-do case
+   LOCAL nTRec := RecNo()
+   LOCAL nE_gr_id := field->e_gr_id
 
-	case UPPER(CHR(Ch)) == "A"
-		// pregled atributa
-		s_e_gr_att(nil, nE_gr_id)
-		go (nTRec)
-		return DE_CONT
+   DO CASE
 
-	case Ch == K_CTRL_N .or. Ch == K_F4
+   CASE Upper( Chr( Ch ) ) == "A"
+      // pregled atributa
+      s_e_gr_att( nil, nE_gr_id )
+      GO ( nTRec )
+      RETURN DE_CONT
+
+   CASE Ch == K_CTRL_N .OR. Ch == K_F4
 	
-		_wo_id := .f.
-		set_a_kol(@ImeKol, @Kol)
-		return DE_CONT
+      _wo_id := .F.
+      set_a_kol( @ImeKol, @Kol )
+      RETURN DE_CONT
 		
-endcase
+   ENDCASE
 
-return DE_CONT
+   RETURN DE_CONT
 
 
 // -------------------------------
 // convert e_gr_id to string
 // -------------------------------
-function e_gr_id_str(nId)
-return STR(nId, 10)
+FUNCTION e_gr_id_str( nId )
+   RETURN Str( nId, 10 )
 
 
 
 // -------------------------------
 // get e_gr_desc by e_gr_id
 // -------------------------------
-function g_e_gr_desc(nE_gr_id, lEmpty, lFullDesc )
-local cEGrDesc := "?????"
-local nTArea := SELECT()
-local cVal := ""
+FUNCTION g_e_gr_desc( nE_gr_id, lEmpty, lFullDesc )
 
-if lEmpty == nil
-	lEmpty := .f.
-endif
+   LOCAL cEGrDesc := "?????"
+   LOCAL nTArea := Select()
+   LOCAL cVal := ""
 
-if lEmpty == .t.
-	cEGrDesc := ""
-endif
+   IF lEmpty == nil
+      lEmpty := .F.
+   ENDIF
 
-if lFullDesc == nil
-	lFullDesc := .t.
-endif
+   IF lEmpty == .T.
+      cEGrDesc := ""
+   ENDIF
 
-O_E_GROUPS
-select e_groups
-set order to tag "1"
-go top
-seek e_gr_id_str(nE_gr_id)
+   IF lFullDesc == nil
+      lFullDesc := .T.
+   ENDIF
 
-if FOUND()
+   O_E_GROUPS
+   SELECT e_groups
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK e_gr_id_str( nE_gr_id )
 
-	if lFullDesc == .t.
-		if !EMPTY(field->e_gr_full_)
-			cEGrDesc := ALLTRIM(field->e_gr_full_)
-		endif
-	else
-		if !EMPTY(field->e_gr_desc)
-			cEGrDesc := ALLTRIM(field->e_gr_desc)
-		endif
-	endif
+   IF Found()
+
+      IF lFullDesc == .T.
+         IF !Empty( field->e_gr_full_ )
+            cEGrDesc := AllTrim( field->e_gr_full_ )
+         ENDIF
+      ELSE
+         IF !Empty( field->e_gr_desc )
+            cEGrDesc := AllTrim( field->e_gr_desc )
+         ENDIF
+      ENDIF
 	
-endif
+   ENDIF
 
-select (nTArea)
+   SELECT ( nTArea )
 
-if !EMPTY(cEGrDesc)
-	cEGrDesc := PADR(cEGrDesc, 6)
-endif
+   IF !Empty( cEGrDesc )
+      cEGrDesc := PadR( cEGrDesc, 6 )
+   ENDIF
 
-return cEGrDesc
+   RETURN cEGrDesc
 
 
 // ----------------------------------------------
 // vraca grupu, trazeci po e_gr_desc
 // ----------------------------------------------
-function g_gr_by_type( cType )
-local nTArea := SELECT()
-local nGroup := 0
+FUNCTION g_gr_by_type( cType )
 
-O_E_GROUPS
-select e_groups
-set order to tag "2"
+   LOCAL nTArea := Select()
+   LOCAL nGroup := 0
 
-go top
+   O_E_GROUPS
+   SELECT e_groups
+   SET ORDER TO TAG "2"
 
-seek PADR(cType, 20)
+   GO TOP
 
-if FOUND() .and. ALLTRIM( field->e_gr_desc ) == cType
+   SEEK PadR( cType, 20 )
+
+   IF Found() .AND. AllTrim( field->e_gr_desc ) == cType
 	
-	nGroup := field->e_gr_id
+      nGroup := field->e_gr_id
 	
-endif
+   ENDIF
 
-set order to tag "1"
-select (nTArea)
+   SET ORDER TO TAG "1"
+   SELECT ( nTArea )
 
-return nGroup
+   RETURN nGroup
 
 
 // ----------------------------------------------------
 // vraca group_description by element id
 // ----------------------------------------------------
-function g_grd_by_elid( nEl_id )
-local nTArea := SELECT()
-local cGrDesc := ""
+FUNCTION g_grd_by_elid( nEl_id )
 
-O_ELEMENTS
-select elements 
-set order to tag "2"
-go top
+   LOCAL nTArea := Select()
+   LOCAL cGrDesc := ""
 
-seek elid_str( nEl_id )
+   O_ELEMENTS
+   SELECT elements
+   SET ORDER TO TAG "2"
+   GO TOP
 
-if FOUND() .and. field->el_id == nEl_id
-	cGrDesc := g_e_gr_desc( field->e_gr_id, .t., .f. )
-endif
+   SEEK elid_str( nEl_id )
 
-select (nTArea)
+   IF Found() .AND. field->el_id == nEl_id
+      cGrDesc := g_e_gr_desc( field->e_gr_id, .T., .F. )
+   ENDIF
 
-return cGrDesc
+   SELECT ( nTArea )
 
+   RETURN cGrDesc

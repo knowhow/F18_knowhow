@@ -2153,6 +2153,7 @@ FUNCTION fakt_brisi_stavku_pripreme()
    LOCAL _tek, _prva
    LOCAL _id_tip_dok, _id_firma, _br_dok, _r_br
    LOCAL oAtrib
+   LOCAL _update_rbr
 
    IF Pitanje(, "Želite izbrisati ovu stavku ?", "D" ) == "N"
       RETURN 0
@@ -2166,21 +2167,27 @@ FUNCTION fakt_brisi_stavku_pripreme()
    log_write( "F18_DOK_OPER: fakt, brisanje stavke iz pripreme: " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok + " stavka br: " + _r_br, 5 )
 
    IF ( RecCount2() == 1 ) .OR. JedinaStavka()
-      // potreba za resetom brojaca na prethodnu vrijednost ?
       fakt_reset_broj_dokumenta( _id_firma, _id_tip_dok, _br_dok )
    ENDIF
 
-   // ako je prva stavka...
    IF _r_br == PadL( "1", 3 ) .AND. ( RecCount() > 1 )
+
       _prva := dbf_get_rec()
+
       SKIP
+
       _tek := dbf_get_rec()
+
+      _update_rbr := _tek["rbr"]
+
       _tek[ "txt" ] := _prva[ "txt" ]
       _tek[ "rbr" ] := _prva[ "rbr" ]
-      dbf_update_rec( _tek )
-      SKIP -1
-   ENDIF
 
+      dbf_update_rec( _tek )
+
+      SKIP -1
+
+   ENDIF
 
    PushWa()
 
@@ -2190,7 +2197,12 @@ FUNCTION fakt_brisi_stavku_pripreme()
    oAtrib:dok_hash[ "idtipdok" ] := _id_tip_dok
    oAtrib:dok_hash[ "brdok" ] := _br_dok
    oAtrib:dok_hash[ "rbr" ] := _r_br
+   oAtrib:dok_hash[ "update_rbr" ] := _update_rbr
    oAtrib:delete_atrib()
+   
+   IF _update_rbr <> NIL
+       oAtrib:update_atrib_rbr()   
+   ENDIF
 
    PopWa()
 

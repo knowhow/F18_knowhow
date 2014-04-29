@@ -27,6 +27,7 @@ CLASS F18_DOK_ATRIB
    METHOD get_atrib()
    METHOD set_atrib()
    METHOD delete_atrib()
+   METHOD update_atrib_rbr()
    METHOD create_local_atrib_table()
    METHOD fix_atrib()
    METHOD zapp_local_table()
@@ -429,7 +430,9 @@ METHOD F18_DOK_ATRIB:delete_atrib()
    ENDIF
 
    ::open_local_table()
+
    my_flock()
+
    GO TOP
    SEEK ( _idfirma + _idtipdok + _brdok + _rbr + _atribut )
 
@@ -440,10 +443,53 @@ METHOD F18_DOK_ATRIB:delete_atrib()
       DELETE
       SKIP
    ENDDO
+
    my_unlock()
 
+   my_dbf_pack()
 
-   reopen_exclusive_and_zap( Alias(), .T. )
+   USE
+
+   SELECT ( _t_area )
+
+   RETURN _ok
+
+
+
+METHOD F18_DOK_ATRIB:update_atrib_rbr()
+
+   LOCAL _ok := .T.
+   LOCAL _t_area := Select()
+   LOCAL _idfirma, _idtipdok, _brdok, _rbr, _atribut, _update_rbr
+   LOCAL _rec, _t_rec
+
+   _idfirma := ::dok_hash[ "idfirma" ]
+   _idtipdok := ::dok_hash[ "idtipdok" ]
+   _brdok := ::dok_hash[ "brdok" ]
+   _rbr := ::dok_hash[ "rbr" ]
+   _update_rbr := ::dok_hash[ "update_rbr" ]
+
+   ::open_local_table()
+
+   GO TOP
+   SEEK ( _idfirma + _idtipdok + _brdok + _update_rbr )
+
+   DO WHILE !Eof() .AND. field->idfirma == _idfirma .AND. field->idtipdok == _idtipdok ;
+         .AND. field->brdok == _brdok ;
+         .AND. field->rbr == _update_rbr
+
+      SKIP 1
+      _t_rec := RecNo()
+      SKIP -1
+
+      _rec := dbf_get_rec()
+      _rec["rbr"] := _rbr
+      dbf_update_rec( _rec )
+
+      GO ( _t_rec )
+
+   ENDDO
+
    USE
 
    SELECT ( _t_area )

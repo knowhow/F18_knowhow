@@ -1,3 +1,7 @@
+1.7.69  2014-04-29, vsasa
+
+  - KALK, kontiranje sa menija - bugfix
+ 
 1.7.68  2014-04-29, vsasa
 
   - log_level prebačen u SQL parametre

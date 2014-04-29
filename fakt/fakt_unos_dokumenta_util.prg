@@ -1361,11 +1361,10 @@ FUNCTION TarifaR( cRegion, cIdRoba, aPorezi )
 
 
 // ----------------------------------------
-// PrCijSif()
 // Promjena cijene u sifrarniku
 // ----------------------------------------
 
-FUNCTION PrCijSif()
+FUNCTION fakt_promjena_cijene_u_sif()
 
    NSRNPIdRoba()
    SELECT fakt_pripr

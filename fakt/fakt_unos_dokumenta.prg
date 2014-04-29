@@ -477,8 +477,7 @@ STATIC FUNCTION fakt_prodji_kroz_stavke()
       _rec := get_dbf_global_memvars( "_" )
       dbf_update_rec( _rec, .F. )
 
-      // ako treba, promijeni cijenu u sifrarniku
-      PrCijSif()
+      fakt_promjena_cijene_u_sif()
 
       GO _rec_no
 
@@ -490,20 +489,27 @@ STATIC FUNCTION fakt_prodji_kroz_stavke()
    RETURN
 
 
-
-
-
+// -------------------------------------------------------------------------------------------------------
+// dodaje ili ispravlja stavku u tabeli FAKT_PRIPR
+// novi - logički uslov nova stavka .T. ili .F.
+// item_hash - hash matrica sa podacima stavke ( idfirma, idtipdok, brdok, rbr ) prije upisivanja u DBF
+// items_atrib - hash matrica sa atributima definisanim na stavci kod unosa
+// -------------------------------------------------------------------------------------------------------
 STATIC FUNCTION fakt_dodaj_ispravi_stavku( novi, item_hash, items_atrib )
 
-   LOCAL oAtrib, _rec, _item_after
+   LOCAL oAtrib, _rec, _item_after_hash
 
    IF novi == .T.
        APPEND BLANK
    ENDIF
 
+   // dodaj zapis u tabelu FAKT_PRIPR
    _rec := get_dbf_global_memvars( "_" )
    dbf_update_rec( _rec, .F. )
 
+   // u slučaju da dodajemo novi zapis te nemamo postojeću hash matricu sa definicijom 
+   // dokumenta, ovom prilikom je pravimo
+   // to nam treba radi ažuriranja atributa
    IF item_hash == NIL
       item_hash := hb_Hash()
       item_hash["idfirma"] := fakt_pripr->idfirma
@@ -512,12 +518,15 @@ STATIC FUNCTION fakt_dodaj_ispravi_stavku( novi, item_hash, items_atrib )
       item_hash["rbr"] := fakt_pripr->rbr
    ENDIF
 
+   // ažuriraj atribute u FAKT_FAKT_ATRIBUTI
    oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )
    oAtrib:dok_hash := item_hash
    oAtrib:atrib_hash_to_dbf( items_atrib )
 
-   PrCijSif()
+   fakt_promjena_cijene_u_sif()
 
+   // nešto što mjenja sve stavke dokumenta u pripremi ako se promjeni prva stavka
+   // promjena broja dokumenta i slično
    IF __redni_broj == 1 .and. !novi
       _item_after := dbf_get_rec()
       izmjeni_sve_stavke_dokumenta( item_hash, _item_after )

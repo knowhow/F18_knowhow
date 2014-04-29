@@ -249,7 +249,8 @@ STATIC FUNCTION _e_box_it2( nBoxX, nBoxY )
    @ m_x + nX, m_y + 2 SAY PadL( "F18 ARTIKAL (*):", nLeft ) GET _art_id ;
       VALID {|| p_roba( @_art_id ), __roba := g_roba_hash( _art_id ), ;
       _doc_it_pri := get_hash_value( __roba, "vpc", 0 ), ;
-      show_it( g_roba_desc( _art_id ) + ".." + "[" + AllTrim( Upper( get_hash_value( __roba, "jmj", "" ) ) ) + "]", 35 ) } ;
+      show_it( g_roba_desc( _art_id ) + ".." + "[" + AllTrim( Upper( get_hash_value( __roba, "jmj", "" ) ) ) + "]", 35 ), ;
+      IF( __roba == NIL, .F., .T. ) } ;
       WHEN set_opc_box( nBoxX, 50, "uzmi sifru iz F18/roba" )
 
    nX += 2
@@ -416,9 +417,11 @@ FUNCTION g_roba_hash( id_roba )
    LOCAL _hash
 
    _hash := _set_sql_record_to_hash( "fmk.roba", id_roba )
-
-   IF VALTYPE( _hash ) == "L" .AND. _hash == NIL
-       RETURN .F.
+   
+   IF VALTYPE( _hash ) $ "U" .AND. _hash == NIL
+       RETURN NIL
    ENDIF
 
    RETURN _hash
+
+

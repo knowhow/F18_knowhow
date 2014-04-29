@@ -268,19 +268,18 @@ FUNCTION init_harbour()
    // epoha je u stvari 1999, 2000 itd
    SET EPOCH TO 1960
    SET DATE TO GERMAN
-REQUEST HB_CODEPAGE_SL852
-REQUEST HB_CODEPAGE_SLISO
+   REQUEST HB_CODEPAGE_SL852
+   REQUEST HB_CODEPAGE_SLISO
 
-hb_cdpSelect( "SL852" )
-hb_SetTermCP( "SLISO" )
+   hb_cdpSelect( "SL852" )
+   hb_SetTermCP( "SLISO" )
+ 
+   SET DELETED ON
 
+   SetCancel( .F. )
 
-SET DELETED ON
-
-SetCancel( .F. )
-
-SET( _SET_EVENTMASK, INKEY_ALL )
-MSetCursor( .T. )
+   SET( _SET_EVENTMASK, INKEY_ALL )
+   MSetCursor( .T. )
 
    RETURN .T.
 
@@ -355,16 +354,6 @@ maxcols( 100 )
 log_write( _msg + "3" )
 
 OTHERWISE
-
-// case _pix_width >= 800 .and. _pix_height >= 600
-
-    /*
-    font_size(18)
-    font_width(9)
-
-    maxrows(31)
-    maxcols(80)
-    */
 
 font_size( 16 )
 font_width( 8 )

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,233 +14,235 @@
 // -----------------------------------------
 // otvara sifrarnik narucioca
 // -----------------------------------------
-function s_customers(cId, cCustDesc, dx, dy)
-local nTArea
-local cHeader
-local cTag := "1"
-private ImeKol
-private Kol
+FUNCTION s_customers( cId, cCustDesc, dx, dy )
 
-nTArea := SELECT()
+   LOCAL nTArea
+   LOCAL cHeader
+   LOCAL cTag := "1"
+   PRIVATE ImeKol
+   PRIVATE Kol
 
-O_CUSTOMS
+   nTArea := Select()
 
-cHeader := "Narucioci"
-cHeader += SPACE(5)
-cHeader += "/ 'K' - pr.kontakata  / 'O' - pr.objekata"
+   O_CUSTOMS
 
-select customs
-set order to tag cTag
+   cHeader := "Narucioci"
+   cHeader += Space( 5 )
+   cHeader += "/ 'K' - pr.kontakata  / 'O' - pr.objekata"
 
-if cCustDesc == nil
-	cCustDesc := ""
-endif
+   SELECT customs
+   SET ORDER TO TAG cTag
 
-set_a_kol(@ImeKol, @Kol)
+   IF cCustDesc == nil
+      cCustDesc := ""
+   ENDIF
 
-if VALTYPE(cId) == "C"
-	//try to validate
-	if VAL(cId) <> 0
-		cId := VAL(cId)
-		cCustDesc := ""
-	endif
-endif
+   set_a_kol( @ImeKol, @Kol )
 
-// postavi filter...
-set_f_kol( cCustDesc, @cId )	
+   IF ValType( cId ) == "C"
+      // try to validate
+      IF Val( cId ) <> 0
+         cId := Val( cId )
+         cCustDesc := ""
+      ENDIF
+   ENDIF
 
-cRet := PostojiSifra(F_CUSTOMS, cTag, maxrows() - 15, maxcols() - 5, cHeader, @cId, dx, dy, {|| key_handler(Ch) })
+   // postavi filter...
+   set_f_kol( cCustDesc, @cId )
 
-if !EMPTY(cCustDesc)
-	set filter to
-	go top
-endif
+   cRet := PostojiSifra( F_CUSTOMS, cTag, maxrows() - 15, maxcols() - 5, cHeader, @cId, dx, dy, {|| key_handler( Ch ) } )
 
-if LastKey() == K_ESC
-	cId := 0
-endif
+   IF !Empty( cCustDesc )
+      SET FILTER TO
+      GO TOP
+   ENDIF
 
-select (nTArea)
+   IF LastKey() == K_ESC
+      cId := 0
+   ENDIF
 
-return cRet
+   SELECT ( nTArea )
+
+   RETURN cRet
 
 
 // --------------------------------------------------
 // setovanje filtera nad tabelom customers
 // --------------------------------------------------
-static function set_f_kol( cCustDesc, cId )
-local cFilter := ""
+STATIC FUNCTION set_f_kol( cCustDesc, cId )
 
-if !EMPTY(cCustDesc)
+   LOCAL cFilter := ""
+
+   IF !Empty( cCustDesc )
 	
-	cCustDesc := ALLTRIM(cCustDesc)
+      cCustDesc := AllTrim( cCustDesc )
 
-    if RIGHT( cCustDesc ) == "$"
+      IF Right( cCustDesc ) == "$"
 
-        // vrati uslov u normalno stanje
-        cCustDesc := LEFT( cCustDesc, LEN( cCustDesc ) - 1 )
-        // vrati i id u normalno stanje
-        cId := cCustDesc
+         // vrati uslov u normalno stanje
+         cCustDesc := Left( cCustDesc, Len( cCustDesc ) - 1 )
+         // vrati i id u normalno stanje
+         cId := cCustDesc
 
-        // pretrazi po dijelu naziva	
-	    cFilter += _filter_quote( UPPER( cCustDesc ) ) + " $ ALLTRIM(UPPER(cust_desc))" 
-    else
-	    cFilter += "ALLTRIM(UPPER(cust_desc)) = " + _filter_quote( UPPER(cCustDesc) )
-	endif
+         // pretrazi po dijelu naziva
+         cFilter += _filter_quote( Upper( cCustDesc ) ) + " $ ALLTRIM(UPPER(cust_desc))"
+      ELSE
+         cFilter += "ALLTRIM(UPPER(cust_desc)) = " + _filter_quote( Upper( cCustDesc ) )
+      ENDIF
 
-endif
+   ENDIF
 
-if !EMPTY(cFilter)
-	set filter to &cFilter
-	go top
-endif
+   IF !Empty( cFilter )
+      SET FILTER to &cFilter
+      GO TOP
+   ENDIF
 
-return .t.
+   RETURN .T.
 
 
 
 // -----------------------------------------
 // setovanje kolona tabele
 // -----------------------------------------
-static function set_a_kol(aImeKol, aKol)
-aKol := {}
-aImeKol := {}
+STATIC FUNCTION set_a_kol( aImeKol, aKol )
 
-AADD(aImeKol, {PADC("ID/MC", 20), {|| sif_idmc(cust_id, .f., 20)}, "cust_id", {|| _inc_id(@wcust_id, "CUST_ID"), .f.}, {|| .t.}})
-AADD(aImeKol, {PADC("Naziv", 40), {|| PADR(cust_desc, 40)}, "cust_desc"})
-AADD(aImeKol, {PADC("Adresa", 20), {|| PADR(cust_addr, 20)}, "cust_addr"})
-AADD(aImeKol, {PADC("Telefon", 20), {|| PADR(cust_tel, 20)}, "cust_tel"})
-AADD(aImeKol, { "ID broj", {|| cust_ident } , "cust_ident", {|| set_cust_mc(@wmatch_code, @wcust_desc) }, {|| _chk_id(@wcust_id, "CUST_ID") } })
+   aKol := {}
+   aImeKol := {}
 
+   AAdd( aImeKol, { PadC( "ID/MC", 20 ), {|| sif_idmc( cust_id, .F., 20 ) }, "cust_id", {|| rnal_inc_id( @wCust_id, "CUST_ID" ), .F. }, {|| .T. } } )
+   AAdd( aImeKol, { PadC( "Naziv", 40 ), {|| PadR( cust_desc, 40 ) }, "cust_desc" } )
+   AAdd( aImeKol, { PadC( "Adresa", 20 ), {|| PadR( cust_addr, 20 ) }, "cust_addr" } )
+   AAdd( aImeKol, { PadC( "Telefon", 20 ), {|| PadR( cust_tel, 20 ) }, "cust_tel" } )
+   AAdd( aImeKol, { "ID broj", {|| cust_ident }, "cust_ident", {|| set_cust_mc( @wMatch_code, @wCust_desc ) }, {|| rnal_chk_id( @wCust_id, "CUST_ID" ) } } )
 
-for i:=1 to LEN(aImeKol)
-	AADD(aKol, i)
-next
+   FOR i := 1 TO Len( aImeKol )
+      AAdd( aKol, i )
+   NEXT
 
-return
+   RETURN
 
 
 // --------------------------------------------------
 // generisi match code za contakt...
 // --------------------------------------------------
-static function set_cust_mc( m_code, cust_desc )
+STATIC FUNCTION set_cust_mc( m_code, cust_desc )
 
-if !EMPTY(m_code)
-	return .t.
-endif
+   IF !Empty( m_code )
+      RETURN .T.
+   ENDIF
 
-m_code := UPPER( PADR( cust_desc, 5 ) )
-m_code := PADR( m_code, 10 )
+   m_code := Upper( PadR( cust_desc, 5 ) )
+   m_code := PadR( m_code, 10 )
 
-return .t.
+   RETURN .T.
 
 
 // -----------------------------------------
 // key handler funkcija
 // -----------------------------------------
-static function key_handler(Ch)
-local cTblFilter := DBFILTER()
-local nRec := RECNO()
-local nRet := DE_CONT
+STATIC FUNCTION key_handler( Ch )
 
-do case
-	case UPPER(CHR(Ch)) == "K"
+   LOCAL cTblFilter := dbFilter()
+   LOCAL nRec := RecNo()
+   LOCAL nRet := DE_CONT
+
+   DO CASE
+   CASE Upper( Chr( Ch ) ) == "K"
 	
-		// pregled kontakata
-		s_contacts(nil, field->cust_id)
-		nRet := DE_CONT
+      // pregled kontakata
+      s_contacts( nil, field->cust_id )
+      nRet := DE_CONT
 		
-	case UPPER(CHR(Ch)) == "O"
+   CASE Upper( Chr( Ch ) ) == "O"
 	
-		// pregled objekata
-		s_objects(nil, field->cust_id)
-		nRet := DE_CONT
+      // pregled objekata
+      s_objects( nil, field->cust_id )
+      nRet := DE_CONT
 	
-	case CH == K_F3
+   CASE CH == K_F3
 		
-		// ispravka sifre 
-		nRet := wid_edit( "CUST_ID" )
-endcase
+      // ispravka sifre
+      nRet := rnal_wid_edit( "CUST_ID" )
+   ENDCASE
 
-select customs
-//set filter to cTblFilter
-go (nRec)
+   SELECT customs
+   // set filter to cTblFilter
+   GO ( nRec )
 
-return nRet
+   RETURN nRet
 
 
 // -------------------------------
 // convert cust_id to string
 // -------------------------------
-function custid_str(nId)
-return STR(nId, 10)
+FUNCTION custid_str( nId )
+   RETURN Str( nId, 10 )
 
 
 
 // -------------------------------
 // get cust_id_desc by cust_id
 // -------------------------------
-function g_cust_desc(nCust_id, lEmpty)
-local cCustDesc := "?????"
-local nTArea := SELECT()
+FUNCTION g_cust_desc( nCust_id, lEmpty )
 
-if lEmpty == nil
-	lEmpty := .f.
-endif
+   LOCAL cCustDesc := "?????"
+   LOCAL nTArea := Select()
 
-if lEmpty == .t.
-	cCustDesc := ""
-endif
+   IF lEmpty == nil
+      lEmpty := .F.
+   ENDIF
 
-O_CUSTOMS
-select customs
-set order to tag "1"
-go top
-seek custid_str(nCust_id)
+   IF lEmpty == .T.
+      cCustDesc := ""
+   ENDIF
 
-if FOUND()
-	if !EMPTY(field->cust_desc)
-		cCustDesc := ALLTRIM(field->cust_desc)
-	endif
-endif
+   O_CUSTOMS
+   SELECT customs
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK custid_str( nCust_id )
 
-select (nTArea)
+   IF Found()
+      IF !Empty( field->cust_desc )
+         cCustDesc := AllTrim( field->cust_desc )
+      ENDIF
+   ENDIF
 
-return cCustDesc
+   SELECT ( nTArea )
+
+   RETURN cCustDesc
 
 
 // ----------------------------------------------------
 // vraca ime kupca, ako je NN onda kontakt
 // ----------------------------------------------------
-function _cust_cont( nCust_id, nCont_id )
-local xRet := ""
-local nTArea := SELECT()
-local cTmp := ""
+FUNCTION _cust_cont( nCust_id, nCont_id )
 
-select customs
-seek custid_str( nCust_id )
+   LOCAL xRet := ""
+   LOCAL nTArea := Select()
+   LOCAL cTmp := ""
 
-if FOUND()
-	cTmp := ALLTRIM( field->cust_desc )
-endif
+   SELECT customs
+   SEEK custid_str( nCust_id )
 
-// ako je NN onda potrazi kontakt
-if cTmp == "NN"
+   IF Found()
+      cTmp := AllTrim( field->cust_desc )
+   ENDIF
+
+   // ako je NN onda potrazi kontakt
+   IF cTmp == "NN"
 	
-	select contacts
-	seek contid_str( nCont_id )
+      SELECT contacts
+      SEEK contid_str( nCont_id )
 	
-	if FOUND()
-		cTmp := ALLTRIM( field->cont_desc )
-	endif
+      IF Found()
+         cTmp := AllTrim( field->cont_desc )
+      ENDIF
 
-endif
+   ENDIF
 
-xRet := cTmp
+   xRet := cTmp
 
-select (nTArea)
+   SELECT ( nTArea )
 
-return xRet
-
-
-
+   RETURN xRet

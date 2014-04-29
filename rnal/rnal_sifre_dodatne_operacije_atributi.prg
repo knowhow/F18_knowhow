@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,224 +13,232 @@
 #include "rnal.ch"
 
 
-static _tb_direkt
-static _aop_id
-static __wo_id
+STATIC _tb_direkt
+STATIC _aop_id
+STATIC __wo_id
 
 // ------------------------------------------------
 // otvara sifrarnik dodatnih operacija, atributa
 // ------------------------------------------------
-function s_aops_att(cId, nAop_id, cAop_desc, lwo_ID, dx, dy)
-local nTArea
-local cHeader
-private ImeKol
-private Kol
+FUNCTION s_aops_att( cId, nAop_id, cAop_desc, lwo_ID, dx, dy )
 
-if nAop_id == nil
-	nAop_id := -1
-endif
+   LOCAL nTArea
+   LOCAL cHeader
+   PRIVATE ImeKol
+   PRIVATE Kol
 
-if cAop_desc == nil
-	cAop_desc := ""
-endif
+   IF nAop_id == nil
+      nAop_id := -1
+   ENDIF
 
-if lwo_ID == nil
-	lwo_ID := .f.
-endif
+   IF cAop_desc == nil
+      cAop_desc := ""
+   ENDIF
 
-_aop_id := nAop_id
-__wo_id := lwo_ID
+   IF lwo_ID == nil
+      lwo_ID := .F.
+   ENDIF
 
-nTArea := SELECT()
+   _aop_id := nAop_id
+   __wo_id := lwo_ID
 
-O_AOPS_ATT
+   nTArea := Select()
 
-cHeader := "Dodatne operacije, atributi /"
+   O_AOPS_ATT
 
-select aops_att
-set order to tag "1"
+   cHeader := "Dodatne operacije, atributi /"
 
-set_a_kol(@ImeKol, @Kol)
+   SELECT aops_att
+   SET ORDER TO TAG "1"
 
-if VALTYPE(cId) == "C"
-	//try to validate
-	if VAL(cId) <> 0
+   set_a_kol( @ImeKol, @Kol )
+
+   IF ValType( cId ) == "C"
+      // try to validate
+      IF Val( cId ) <> 0
 		
-		cId := VAL(cId)
-		nAop_id := -1
-		cAop_Desc := ""
+         cId := Val( cId )
+         nAop_id := -1
+         cAop_Desc := ""
 		
-	endif
-endif
+      ENDIF
+   ENDIF
 
-aop_filter(nAop_id, cAop_desc)
+   aop_filter( nAop_id, cAop_desc )
 
 
-cRet := PostojiSifra(F_AOPS_ATT, 1, 10, 70, cHeader, @cId, dx, dy, {|Ch| key_handler(Ch) })
+   cRet := PostojiSifra( F_AOPS_ATT, 1, 10, 70, cHeader, @cId, dx, dy, {| Ch| key_handler( Ch ) } )
 
-if VALTYPE(cAop_desc) == "N"
-	cAop_desc := STR(cAop_desc, 10)
-endif
+   IF ValType( cAop_desc ) == "N"
+      cAop_desc := Str( cAop_desc, 10 )
+   ENDIF
 
-if nAop_id > 0 .or. cAop_desc <> ""
-	set filter to
-endif
+   IF nAop_id > 0 .OR. cAop_desc <> ""
+      SET FILTER TO
+   ENDIF
 
-if LastKey() == K_ESC
-	cId := 0
-endif
+   IF LastKey() == K_ESC
+      cId := 0
+   ENDIF
 
-select (nTArea)
+   SELECT ( nTArea )
 
-return cRet
+   RETURN cRet
 
 
 // ---------------------------------------------------
 // setuje filter na sifraniku
 // ---------------------------------------------------
-static function aop_filter( nAop_id, cAop_desc )
-local cFilter := ""
+STATIC FUNCTION aop_filter( nAop_id, cAop_desc )
 
-if nAop_id > 0
-	cFilter += 'aop_id == ' + aopid_str(nAop_id)
-endif
+   LOCAL cFilter := ""
 
-if !EMPTY(cAop_desc)
+   IF nAop_id > 0
+      cFilter += 'aop_id == ' + aopid_str( nAop_id )
+   ENDIF
 
-	if !EMPTY(cFilter)
-		cFilter += ' .and. '
-	endif
+   IF !Empty( cAop_desc )
 
-	cFilter += 'ALLTRIM(UPPER(aop_att_d)) = ' + cm2str(UPPER(ALLTRIM(cAop_desc))) 
-endif
+      IF !Empty( cFilter )
+         cFilter += ' .and. '
+      ENDIF
 
-if !EMPTY(cFilter)
-	set filter to &cFilter
-	go top
-endif
+      cFilter += 'ALLTRIM(UPPER(aop_att_d)) = ' + cm2str( Upper( AllTrim( cAop_desc ) ) )
+   ENDIF
 
-return
+   IF !Empty( cFilter )
+      SET FILTER to &cFilter
+      GO TOP
+   ENDIF
+
+   RETURN
 
 
 
 // -----------------------------------------
 // setovanje kolona tabele
 // -----------------------------------------
-static function set_a_kol(aImeKol, aKol)
-aKol := {}
-aImeKol := {}
+STATIC FUNCTION set_a_kol( aImeKol, aKol )
 
-if __wo_id == .f.
-	
-	AADD(aImeKol, {PADC("ID/MC", 10), {|| sif_idmc(aop_att_id)}, "aop_att_id", {|| _inc_id(@waop_att_id, "AOP_ATT_ID"), .f.}, {|| .t.}})
+   aKol := {}
+   aImeKol := {}
 
-endif
+   IF __wo_id == .F.
+      AAdd( aImeKol, { PadC( "ID/MC", 10 ), {|| sif_idmc( aop_att_id ) }, "aop_att_id", {|| rnal_inc_id( @wAop_att_id, "AOP_ATT_ID" ), .F. }, {|| .T. } } )
+   ENDIF
 
-AADD(aImeKol, {PADR("Dod.op.ID", 15), {|| PADR(g_aop_desc( aop_id ), 15) }, "aop_id", {|| set_aop_id(@waop_id) }, {|| s_aops( @waop_id ), show_it(g_aop_desc(waop_id))  }})
-AADD(aImeKol, {PADR("Opis", 40), {|| PADR(aop_att_fu, 40)}, "aop_att_fu"})
-AADD(aImeKol, {PADR("Skr. opis (sifra)", 20), {|| PADR(aop_att_de, 20)}, "aop_att_de"})
+   AAdd( aImeKol, { PadR( "Dod.op.ID", 15 ), {|| PadR( g_aop_desc( aop_id ), 15 ) }, "aop_id", {|| set_aop_id( @waop_id ) }, {|| s_aops( @waop_id ), show_it( g_aop_desc( waop_id ) )  } } )
+   AAdd( aImeKol, { PadR( "Opis", 40 ), {|| PadR( aop_att_fu, 40 ) }, "aop_att_fu" } )
+   AAdd( aImeKol, { PadR( "Skr. opis (sifra)", 20 ), {|| PadR( aop_att_de, 20 ) }, "aop_att_de" } )
 
-if aops_att->(fieldpos("AOP_ATT_JO")) <> 0
-	AADD(aImeKol, { PADR("Joker", 20), {|| aop_att_jo }, "aop_att_jo"})
-endif
+   IF aops_att->( FieldPos( "AOP_ATT_JO" ) ) <> 0
+      AAdd( aImeKol, { PadR( "Joker", 20 ), {|| aop_att_jo }, "aop_att_jo" } )
+   ENDIF
 
-AADD(aImeKol, {PADC("u art.naz ( /*)", 15), {|| PADR(in_art_des, 15)}, "in_art_des"})
+   AAdd( aImeKol, { PadC( "u art.naz ( /*)", 15 ), {|| PadR( in_art_des, 15 ) }, "in_art_des" } )
 
-for i:=1 to LEN(aImeKol)
-	AADD(aKol, i)
-next
+   FOR i := 1 TO Len( aImeKol )
+      AAdd( aKol, i )
+   NEXT
 
-return
+   RETURN
 
 // ---------------------------------------------------
 // setuje polje aop_id pri unosu automatski
 // ---------------------------------------------------
-static function set_aop_id( nAop_id )
-if _aop_id > 0
-	nAop_id := _aop_id
-	return .f.
-else
-	return .t.
-endif
-return 
+STATIC FUNCTION set_aop_id( nAop_id )
+
+   IF _aop_id > 0
+      nAop_id := _aop_id
+      RETURN .F.
+   ELSE
+      RETURN .T.
+   ENDIF
+
+   RETURN
 
 
 // -----------------------------------------
 // key handler funkcija
 // -----------------------------------------
-static function key_handler(Ch)
-do case
-	case Ch == K_CTRL_N .or. Ch == K_F4
-		__wo_id := .f.
-		set_a_kol(@ImeKol, @Kol)
-		return DE_CONT
+STATIC FUNCTION key_handler( Ch )
 
-endcase
-return DE_CONT
+   DO CASE
+   CASE Ch == K_CTRL_N .OR. Ch == K_F4
+      __wo_id := .F.
+      set_a_kol( @ImeKol, @Kol )
+      RETURN DE_CONT
+
+   ENDCASE
+
+   RETURN DE_CONT
 
 
 // -------------------------------
 // convert aop_att_id to string
 // -------------------------------
-function aop_att_str(nId)
-return STR(nId, 10)
+FUNCTION aop_att_str( nId )
+   RETURN Str( nId, 10 )
 
 
 // -----------------------------------------------
 // dodatna operacija atribut u naziv artikla ???
 // -----------------------------------------------
-function aop_att_in_desc( nAop_att_id )
-local lRet := .f.
-local nTArea := SELECT()
+FUNCTION aop_att_in_desc( nAop_att_id )
 
-select aops_att
-set order to tag "1"
-go top
-seek aop_att_str( nAop_att_id )
+   LOCAL lRet := .F.
+   LOCAL nTArea := Select()
 
-if FOUND()
-	if field->in_art_des == "*"
-		lRet := .t.
-	endif
-endif
+   SELECT aops_att
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK aop_att_str( nAop_att_id )
 
-select (nTArea)
-return lRet
+   IF Found()
+      IF field->in_art_des == "*"
+         lRet := .T.
+      ENDIF
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN lRet
 
 
 
 // -------------------------------
 // get aop_att_joker by aopatt_id
 // -------------------------------
-function g_aatt_joker( nAopatt_id )
-local cAttJoker := ""
-local nTArea := SELECT()
+FUNCTION g_aatt_joker( nAopatt_id )
 
-O_AOPS_ATT
-select aops_att
-set order to tag "1"
-go top
-seek aop_att_str(nAopatt_id)
+   LOCAL cAttJoker := ""
+   LOCAL nTArea := Select()
 
-if FOUND()
+   O_AOPS_ATT
+   SELECT aops_att
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK aop_att_str( nAopatt_id )
 
-	// ako ima polja ?
-	if aops_att->( fieldpos("AOP_ATT_JO") ) == 0
+   IF Found()
+
+      // ako ima polja ?
+      IF aops_att->( FieldPos( "AOP_ATT_JO" ) ) == 0
 		
-		// uzmi iz opisa
-		cAttJoker := ALLTRIM( g_aop_att_desc( nAopatt_id, .t., .f. ) )
-		return cAttJoker
+         // uzmi iz opisa
+         cAttJoker := AllTrim( g_aop_att_desc( nAopatt_id, .T., .F. ) )
+         RETURN cAttJoker
 		
-	endif
+      ENDIF
 	
-	if !EMPTY(field->aop_att_jo)
-		cAttJoker := ALLTRIM(field->aop_att_jo)
-	endif
-endif
+      IF !Empty( field->aop_att_jo )
+         cAttJoker := AllTrim( field->aop_att_jo )
+      ENDIF
+   ENDIF
 
-select (nTArea)
+   SELECT ( nTArea )
 
-return cAttJoker
+   RETURN cAttJoker
 
 
 
@@ -238,50 +246,51 @@ return cAttJoker
 // -------------------------------
 // get aop_desc by aop_id
 // -------------------------------
-function g_aop_att_desc( nAop_att_id, lEmpty, lFullDesc )
-local cAopAttDesc := "?????"
-local nTArea := SELECT()
+FUNCTION g_aop_att_desc( nAop_att_id, lEmpty, lFullDesc )
 
-if lEmpty == nil
-	lEmpty := .f.
-endif
+   LOCAL cAopAttDesc := "?????"
+   LOCAL nTArea := Select()
 
-if lEmpty == .t.
-	cAopAttDesc := ""
-endif
+   IF lEmpty == nil
+      lEmpty := .F.
+   ENDIF
 
-if lFullDesc == nil
-	lFullDesc := .t.
-endif
+   IF lEmpty == .T.
+      cAopAttDesc := ""
+   ENDIF
 
-O_AOPS_ATT
-select aops_att
-set order to tag "1"
-go top
-seek aop_att_str(nAop_att_id)
+   IF lFullDesc == nil
+      lFullDesc := .T.
+   ENDIF
 
-if FOUND()
-	if lFullDesc == .t.
-		if !EMPTY(field->aop_att_fu)
-			cAopAttDesc := ALLTRIM(field->aop_att_fu)
-		endif
-	else
-		if !EMPTY(field->aop_att_de)
-			cAopAttDesc := ALLTRIM(field->aop_att_de)
-		endif
-	endif
-endif
+   O_AOPS_ATT
+   SELECT aops_att
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK aop_att_str( nAop_att_id )
 
-// izbaci konfiguratore ako postoje
-rem_jokers( @cAopAttDesc )
-//cAopAttDesc := STRTRAN( cAopAttDesc, "#G_CONFIG#", "" )
-//cAopAttDesc := STRTRAN( cAopAttDesc, "#HOLE_CONFIG#", "" )
-//cAopAttDesc := STRTRAN( cAopAttDesc, "#STAMP_CONFIG#", "" )
-//cAopAttDesc := STRTRAN( cAopAttDesc, "#PREP_CONFIG#", "" )
+   IF Found()
+      IF lFullDesc == .T.
+         IF !Empty( field->aop_att_fu )
+            cAopAttDesc := AllTrim( field->aop_att_fu )
+         ENDIF
+      ELSE
+         IF !Empty( field->aop_att_de )
+            cAopAttDesc := AllTrim( field->aop_att_de )
+         ENDIF
+      ENDIF
+   ENDIF
 
-select (nTArea)
+   // izbaci konfiguratore ako postoje
+   rem_jokers( @cAopAttDesc )
+   // cAopAttDesc := STRTRAN( cAopAttDesc, "#G_CONFIG#", "" )
+   // cAopAttDesc := STRTRAN( cAopAttDesc, "#HOLE_CONFIG#", "" )
+   // cAopAttDesc := STRTRAN( cAopAttDesc, "#STAMP_CONFIG#", "" )
+   // cAopAttDesc := STRTRAN( cAopAttDesc, "#PREP_CONFIG#", "" )
 
-return cAopAttDesc
+   SELECT ( nTArea )
+
+   RETURN cAopAttDesc
 
 
 
@@ -289,280 +298,276 @@ return cAopAttDesc
 // da li se koristi konfigurator stranica
 // ako se koristi setuj cVal
 // ---------------------------------------------
-function is_g_config( cVal, nAop_att_id, ;
-		nHeigh, nWidth, nTick )
+FUNCTION is_g_config( cVal, nAop_att_id, ;
+      nHeigh, nWidth, nTick )
 
-local nTArea := SELECT()
-local lGConf := .f.
-local lHConf := .f.
-local lStConf := .f.
-local lPrepConf := .f.
-local lRalConf := .f.
+   LOCAL nTArea := Select()
+   LOCAL lGConf := .F.
+   LOCAL lHConf := .F.
+   LOCAL lStConf := .F.
+   LOCAL lPrepConf := .F.
+   LOCAL lRalConf := .F.
 
-local cConf := ""
+   LOCAL cConf := ""
 
-local cJoker
+   LOCAL cJoker
 
-// dimension from 1 to 4
-local cV1
-local cV2
-local cV3
-local cV4
+   // dimension from 1 to 4
+   LOCAL cV1
+   LOCAL cV2
+   LOCAL cV3
+   LOCAL cV4
 
-// radijusi....
-local nR1 := 0 
-local nR2 := 0
-local nR3 := 0
-local nR4 := 0
+   // radijusi....
+   LOCAL nR1 := 0
+   LOCAL nR2 := 0
+   LOCAL nR3 := 0
+   LOCAL nR4 := 0
 
-// ako vec postoji vrijednost nista....
-// preskoci...
-if !EMPTY( cVal )
-	return .t.
-endif
+   // ako vec postoji vrijednost nista....
+   // preskoci...
+   IF !Empty( cVal )
+      RETURN .T.
+   ENDIF
 
-O_AOPS_ATT
-select aops_att
-set order to tag "1"
-go top
-seek aop_att_str(nAop_att_id)
+   O_AOPS_ATT
+   SELECT aops_att
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK aop_att_str( nAop_att_id )
 
-if FOUND()
+   IF Found()
 	
-	// standarni konfigurator
-	if "#G_CONFIG#" $ field->aop_att_fu
+      // standarni konfigurator
+      IF "#G_CONFIG#" $ field->aop_att_fu
 		
-		lGConf := .t.
+         lGConf := .T.
 	
-	// konfigurator busenja rupa
-	elseif "#HOLE_CONFIG#" $ field->aop_att_fu
+         // konfigurator busenja rupa
+      ELSEIF "#HOLE_CONFIG#" $ field->aop_att_fu
 		
-		lHConf := .t.
+         lHConf := .T.
 	
-	// RAL - konfigurator
-	elseif "#RAL_CONFIG#" $ field->aop_att_fu
+         // RAL - konfigurator
+      ELSEIF "#RAL_CONFIG#" $ field->aop_att_fu
 		
-		lRalConf := .t.
+         lRalConf := .T.
 
-	// konfigurator pozicije pecata
-	elseif "#STAMP_CONFIG#" $ field->aop_att_fu
+         // konfigurator pozicije pecata
+      ELSEIF "#STAMP_CONFIG#" $ field->aop_att_fu
 		
-		lStConf := .t.
+         lStConf := .T.
 	
-	elseif "#PREP_CONFIG#" $ field->aop_att_fu
+      ELSEIF "#PREP_CONFIG#" $ field->aop_att_fu
 		
-		lPrepConf := .t.
+         lPrepConf := .T.
 
-	elseif "#" $ field->aop_att_fu
+      ELSEIF "#" $ field->aop_att_fu
 	
-		lGConf := .f.
+         lGConf := .F.
 
-		aTmp := TokToNiz( field->aop_att_fu, "#" )
-		cVal := PADR(  ALLTRIM(aTmp[2]) , 150 )
+         aTmp := TokToNiz( field->aop_att_fu, "#" )
+         cVal := PadR(  AllTrim( aTmp[ 2 ] ), 150 )
 		
-		return .t.
+         RETURN .T.
 		
-	endif
+      ENDIF
 	
-	// find joker
-	if aops_att->(FieldPos("AOP_ATT_JO")) <> 0
-		// uzmi iz polja joker
-		cJoker := ALLTRIM( field->aop_att_jo )
-	else
-		// uzmi iz opisa
-		cJoker := ALLTRIM( field->aop_att_de )
-	endif
+      // find joker
+      IF aops_att->( FieldPos( "AOP_ATT_JO" ) ) <> 0
+         // uzmi iz polja joker
+         cJoker := AllTrim( field->aop_att_jo )
+      ELSE
+         // uzmi iz opisa
+         cJoker := AllTrim( field->aop_att_de )
+      ENDIF
 	
-endif
+   ENDIF
 
-// show glass config
-if lGConf == .t.
+   // show glass config
+   IF lGConf == .T.
 
-	if glass_config( nWidth, nHeigh, @cV1, @cV2, @cV3, @cV4, ;
-			@nR1, @nR2, @nR3, @nR4 ) == .t.
+      IF glass_config( nWidth, nHeigh, @cV1, @cV2, @cV3, @cV4, ;
+            @nR1, @nR2, @nR3, @nR4 ) == .T.
 		
-		// shema za G_CONFIG
-		// 
-		//            val1
-		//   val2               val3
-		//            val4
-		//
-		// val 1/4 - sirine stakla (gornja/donja)
-		// val 2/3 - visine stakla (gornja/donja)
+         // shema za G_CONFIG
+         //
+         // val1
+         // val2               val3
+         // val4
+         //
+         // val 1/4 - sirine stakla (gornja/donja)
+         // val 2/3 - visine stakla (gornja/donja)
 		
 		
-		// get string...
-		cVal := "#"
+         // get string...
+         cVal := "#"
 		
-		// prvo stranice
-		if cV1 == "D"	
-			cVal += "D1#" 
-		endif
+         // prvo stranice
+         IF cV1 == "D"
+            cVal += "D1#"
+         ENDIF
 	
-		if cV2 == "D"
-			cVal += "D2#"
-		endif
+         IF cV2 == "D"
+            cVal += "D2#"
+         ENDIF
 		
-		if cV3 == "D"
-			cVal += "D3#"
-		endif
+         IF cV3 == "D"
+            cVal += "D3#"
+         ENDIF
 	
-		if cV4 == "D"
-			cVal += "D4#"
-		endif
+         IF cV4 == "D"
+            cVal += "D4#"
+         ENDIF
 
-		// zatim radijusi
+         // zatim radijusi
 
-		if nR1 <> 0
-			cVal += "R1=" + ALLTRIM(STR(nR1)) + "#"
-		endif
+         IF nR1 <> 0
+            cVal += "R1=" + AllTrim( Str( nR1 ) ) + "#"
+         ENDIF
 
-		if nR2 <> 0
-			cVal += "R2=" + ALLTRIM(STR(nR2)) + "#"
-		endif
+         IF nR2 <> 0
+            cVal += "R2=" + AllTrim( Str( nR2 ) ) + "#"
+         ENDIF
 
-		if nR3 <> 0
-			cVal += "R3=" + ALLTRIM(STR(nR3)) + "#"
-		endif
+         IF nR3 <> 0
+            cVal += "R3=" + AllTrim( Str( nR3 ) ) + "#"
+         ENDIF
 		
-		if nR4 <> 0
-			cVal += "R4=" + ALLTRIM(STR(nR4)) + "#"
-		endif
+         IF nR4 <> 0
+            cVal += "R4=" + AllTrim( Str( nR4 ) ) + "#"
+         ENDIF
 
 
-		// formira string
-		// 
-		// npr: kod brusenja stranica gornje i donje stranice
-		// i obrade 1 radijusa
-		//
-		// joker + ":" + string vrijednosti 
-		// 
-		// <AOP_B_STR>:#D1#D4#R1=200#
+         // formira string
+         //
+         // npr: kod brusenja stranica gornje i donje stranice
+         // i obrade 1 radijusa
+         //
+         // joker + ":" + string vrijednosti
+         //
+         // <AOP_B_STR>:#D1#D4#R1=200#
 		
-		cVal := PADR( cJoker + ":" + cVal, 150 )
-	endif
+         cVal := PadR( cJoker + ":" + cVal, 150 )
+      ENDIF
 	
-endif
+   ENDIF
 
-if lHConf == .t.
+   IF lHConf == .T.
 
-	// konfigurator busenja rupa
-	cVal := hole_config( cJoker )
+      // konfigurator busenja rupa
+      cVal := hole_config( cJoker )
 	
-endif
+   ENDIF
 
-if lRalConf == .t.
-	cVal := PADR( get_ral( nTick ), 150 )
-endif
+   IF lRalConf == .T.
+      cVal := PadR( get_ral( nTick ), 150 )
+   ENDIF
 
-if lStConf == .t. .and. ;
-	pitanje(,"Unjeti pozicije pecata (D/N) ?", "D") == "D"
+   IF lStConf == .T. .AND. ;
+         pitanje(, "Unjeti pozicije pecata (D/N) ?", "D" ) == "D"
 	
-	// konfigurator pozicije pecata
-	cVal := stamp_config( cJoker, nWidth, nHeigh )
+      // konfigurator pozicije pecata
+      cVal := stamp_config( cJoker, nWidth, nHeigh )
 
-endif
+   ENDIF
 
-if lPrepConf == .t.
+   IF lPrepConf == .T.
 	
-	// konfigurator prepusta
-	cVal := prepust_config( cJoker, nWidth, nHeigh, 0, 0, 0, 0 )
+      // konfigurator prepusta
+      cVal := prepust_config( cJoker, nWidth, nHeigh, 0, 0, 0, 0 )
 
-endif
+   ENDIF
 
-select (nTArea)
+   SELECT ( nTArea )
 
-return .t.
+   RETURN .T.
 
 
 // ---------------------------------------------------
 // vraca formiran string za vrijednost operacije
 // ---------------------------------------------------
-function g_aop_value( cVal )
-local cRet := ""
-local aTmp := {}
-local aRal := {}
+FUNCTION g_aop_value( cVal )
 
-if EMPTY(cVal)
-	return ""
-endif
+   LOCAL cRet := ""
+   LOCAL aTmp := {}
+   LOCAL aRal := {}
 
-cVal := ALLTRIM( cVal )
+   IF Empty( cVal )
+      RETURN ""
+   ENDIF
 
-// "<AOP_B_STR>:#D1#D2#"
-// "<AOP_B_STR>" + "#D1#D2#"
+   cVal := AllTrim( cVal )
 
-aTmp := TokToNiz( cVal, ":" )
+   // "<AOP_B_STR>:#D1#D2#"
+   // "<AOP_B_STR>" + "#D1#D2#"
 
-if aTmp == nil .or. LEN(aTmp) == 0 .or. LEN(aTmp) == 1 
-	return cVal
-endif
+   aTmp := TokToNiz( cVal, ":" )
 
-do case
+   IF aTmp == NIL .OR. Len( aTmp ) == 0 .OR. Len( aTmp ) == 1
+      RETURN cVal
+   ENDIF
+
+   DO CASE
 	
-	// brusenje stranica
-	case aTmp[1] == "<A_B>" 
+      // brusenje stranica
+   CASE aTmp[ 1 ] == "<A_B>"
 	
-		cRet := _cre_aop_str( aTmp[2] )	
+      cRet := _cre_aop_str( aTmp[ 2 ] )
 		
-	// zaobljavanje
-	case aTmp[1] == "<A_Z>"
+      // zaobljavanje
+   CASE aTmp[ 1 ] == "<A_Z>"
 		
-		cRet := _cre_aop_Str( aTmp[2] )
+      cRet := _cre_aop_Str( aTmp[ 2 ] )
 
-	// pozicija peèata
-	case aTmp[1] == "STAMP"
+      // pozicija peèata
+   CASE aTmp[ 1 ] == "STAMP"
 		
-		cRet := stamp_read( cVal )
+      cRet := stamp_read( cVal )
 		
-	// rupe i dimenzije
-	case aTmp[1] == "<A_BU>"
+      // rupe i dimenzije
+   CASE aTmp[ 1 ] == "<A_BU>"
 
-		cRet := hole_read( cVal )
+      cRet := hole_read( cVal )
 	
-	// prepust
-	case aTmp[1] == "<A_PREP>"
+      // prepust
+   CASE aTmp[ 1 ] == "<A_PREP>"
 
-		cRet := prep_read( cVal )
+      cRet := prep_read( cVal )
 
-	case aTmp[1] == "RAL"
+   CASE aTmp[ 1 ] == "RAL"
 
-		aRal := TokToNiz( aTmp[2], "#" )
-		cRet := g_ral_value( VAL(aRal[1]), ;
-				VAL(aRal[2]), VAL(aRal[3]) )
-endcase
+      aRal := TokToNiz( aTmp[ 2 ], "#" )
+      cRet := g_ral_value( Val( aRal[ 1 ] ), ;
+         Val( aRal[ 2 ] ), Val( aRal[ 3 ] ) )
+   ENDCASE
 
-
-return cRet
-
-
-
-static function _cre_aop_str( cStr )
-local cRet := ""
-local aTmp := {}
-
-cStr := ALLTRIM( cStr )
-
-
-aTmp := TokToNiz( cStr, "#" )
-
-if aTmp == nil .or. LEN(aTmp) == 0
-	return ""
-endif
-
-
-if LEN(aTmp) == 4 .and. ;
-	( aTmp[1] + aTmp[2] + aTmp[3] + aTmp[4] == "D1D2D3D4" )
-	cRet := "kompletno staklo"
-elseif LEN(aTmp) < 4 
-	cRet := "pogledaj skicu"
-else
-	cRet := "-"
-endif
-
-return cRet
+   RETURN cRet
 
 
 
+STATIC FUNCTION _cre_aop_str( cStr )
+
+   LOCAL cRet := ""
+   LOCAL aTmp := {}
+
+   cStr := AllTrim( cStr )
 
 
+   aTmp := TokToNiz( cStr, "#" )
+
+   IF aTmp == NIL .OR. Len( aTmp ) == 0
+      RETURN ""
+   ENDIF
+
+
+   IF Len( aTmp ) == 4 .AND. ;
+         ( aTmp[ 1 ] + aTmp[ 2 ] + aTmp[ 3 ] + aTmp[ 4 ] == "D1D2D3D4" )
+      cRet := "kompletno staklo"
+   ELSEIF Len( aTmp ) < 4
+      cRet := "pogledaj skicu"
+   ELSE
+      cRet := "-"
+   ENDIF
+
+   RETURN cRet

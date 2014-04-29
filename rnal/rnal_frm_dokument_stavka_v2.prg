@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,287 +14,294 @@
 
 // variables
 
-static l_new_it
-static __doc
-static __doc_it_no
+STATIC l_new_it
+STATIC __doc
+STATIC __doc_it_no
 
 
 // --------------------------------------------
 // pregled dodatni stavki naloga
 // --------------------------------------------
-function box_it2( nDoc_no, nDoc_it_no )
-local nX := m_x
-local nY := m_y
-local GetList := {}
-local nTArea := SELECT()
+FUNCTION box_it2( nDoc_no, nDoc_it_no )
 
-private kol
-private imekol
+   LOCAL nX := m_x
+   LOCAL nY := m_y
+   LOCAL GetList := {}
+   LOCAL nTArea := Select()
 
-docit2_kol(@imekol, @kol)
+   PRIVATE kol
+   PRIVATE imekol
 
-select _doc_it2
+   docit2_kol( @imekol, @kol )
 
-__doc := nDoc_no
-__doc_it_no := nDoc_it_no
+   SELECT _doc_it2
 
-Box(,17,70)
+   __doc := nDoc_no
+   __doc_it_no := nDoc_it_no
 
-// opcije
-@ m_x + 16, m_y + 2 SAY "<c+N> nova stavka  <F2> ispravka  <c+T> brisi stavku "
-@ m_x + 17, m_y + 2 SAY "<c+F9> brisi sve "
+   Box(, 17, 70 )
 
-ObjDBedit("it2", 15, 70, {|Ch| it2_handler() },"Unos dodatni stavki naloga","",,,,,1)
+   // opcije
+   @ m_x + 16, m_y + 2 SAY "<c+N> nova stavka  <F2> ispravka  <c+T> brisi stavku "
+   @ m_x + 17, m_y + 2 SAY "<c+F9> brisi sve "
 
-BoxC()
+   ObjDBedit( "it2", 15, 70, {| Ch| it2_handler() }, "Unos dodatni stavki naloga", "",,,,, 1 )
 
-select (nTArea)
+   BoxC()
 
-m_x := nX
-m_y := nY
+   SELECT ( nTArea )
 
-return
+   m_x := nX
+   m_y := nY
+
+   RETURN
 
 
 // -----------------------------------------------------
 // key handler
 // -----------------------------------------------------
-static function it2_handler()
-local nRet := DE_CONT
+STATIC FUNCTION it2_handler()
 
-do case 
-    case (Ch == K_F2)
-    
-        if field->doc_it_no <> 0 .and. ;
-            e_doc_it2( __doc, __doc_it_no, .f. ) <> 0
+   LOCAL nRet := DE_CONT
+
+   DO CASE
+   CASE ( Ch == K_F2 )
+
+      IF field->doc_it_no <> 0 .AND. ;
+            e_doc_it2( __doc, __doc_it_no, .F. ) <> 0
+         nRet := DE_REFRESH
+      ENDIF
+
+   CASE ( Ch == K_CTRL_N )
+
+      IF e_doc_it2( __doc, __doc_it_no, .T. ) <> 0
+         nRet := DE_REFRESH
+      ENDIF
+
+   CASE ( Ch == K_CTRL_T )
+
+      IF Pitanje(, "Izbrisati stavku ?", "N" ) == "D"
+         SELECT _doc_it2
+         my_rlock()
+         DELETE
+         my_unlock()
+         my_dbf_pack()
+         nRet := DE_REFRESH
+      ENDIF
+
+   CASE ( Ch == K_CTRL_F9 )
+
+      IF Pitanje(, "Izbrisati kompletnu tabelu ?", "N" ) == "D"
+         IF Pitanje(, "Sigurni 100% ?", "N" ) == "D"
+            SELECT _doc_it2
+            my_dbf_zap()
             nRet := DE_REFRESH
-        endif
+         ENDIF
+      ENDIF
 
-    case (Ch == K_CTRL_N)
-        
-        if e_doc_it2( __doc, __doc_it_no, .t. ) <> 0
-            nRet := DE_REFRESH
-        endif
+   ENDCASE
 
-    case (Ch == K_CTRL_T)
-        
-        if Pitanje(, "Izbrisati stavku ?", "N") == "D"
-            select _doc_it2
-			my_rlock()
-            delete
-			my_unlock()
-			my_dbf_pack()
-            nRet := DE_REFRESH
-        endif
-    
-    case (Ch == K_CTRL_F9)
-        
-        if Pitanje(,"Izbrisati kompletnu tabelu ?", "N") == "D"
-            if Pitanje(,"Sigurni 100% ?", "N") == "D"
-                select _doc_it2
-                my_dbf_zap()
-                nRet := DE_REFRESH
-            endif
-        endif
-
-endcase
-
-return nRet
+   RETURN nRet
 
 
 // ---------------------------------------------
 // setuje matricu kolona tabele _DOC_IT2
 // ---------------------------------------------
-static function docit2_kol( aImeKol, aKol )
-local i
-aImeKol := {}
-aKol:={}
+STATIC FUNCTION docit2_kol( aImeKol, aKol )
 
-AADD(aImeKol, {"Stavka", {|| doc_it_no }, "it_no" })
-AADD(aImeKol, {"R.br", {|| it_no }, "it_no" })
-AADD(aImeKol, {"Artikal", {|| art_id }, "art_id" })
-AADD(aImeKol, {"Kol.", {|| doc_it_qtt }, "doc_it_qtt" })
-AADD(aImeKol, {"Duzina", {|| doc_it_q2 }, "doc_it_q2" })
-AADD(aImeKol, {"JMJ", {|| jmj }, "jmj" })
-AADD(aImeKol, {"RJM", {|| jmj_art }, "jmj_art" })
-AADD(aImeKol, {"Cijena", {|| doc_it_pri }, "doc_it_pri" })
-AADD(aImeKol, {"Opis", {|| sh_desc }, "sh_desc" })
-AADD(aImeKol, {"Napomene", {|| descr }, "descr" })
+   LOCAL i
 
-for i:=1 to LEN(aImeKol)
-    AADD(aKol,i)
-next
+   aImeKol := {}
+   aKol := {}
 
-return
+   AAdd( aImeKol, { "Stavka", {|| doc_it_no }, "it_no" } )
+   AAdd( aImeKol, { "R.br", {|| it_no }, "it_no" } )
+   AAdd( aImeKol, { "Artikal", {|| art_id }, "art_id" } )
+   AAdd( aImeKol, { "Kol.", {|| doc_it_qtt }, "doc_it_qtt" } )
+   AAdd( aImeKol, { "Duzina", {|| doc_it_q2 }, "doc_it_q2" } )
+   AAdd( aImeKol, { "JMJ", {|| jmj }, "jmj" } )
+   AAdd( aImeKol, { "RJM", {|| jmj_art }, "jmj_art" } )
+   AAdd( aImeKol, { "Cijena", {|| doc_it_pri }, "doc_it_pri" } )
+   AAdd( aImeKol, { "Opis", {|| sh_desc }, "sh_desc" } )
+   AAdd( aImeKol, { "Napomene", {|| descr }, "descr" } )
+
+   FOR i := 1 TO Len( aImeKol )
+      AAdd( aKol, i )
+   NEXT
+
+   RETURN
 
 
 // ------------------------------------------
-// unos ispravka dodatni stavki naloga.... 
+// unos ispravka dodatni stavki naloga....
 // nDoc_no - dokument broj
 // lNew - nova stavka .t. or .f.
 // ------------------------------------------
-function e_doc_it2( nDoc_no, nDoc_it_no, lNew )
-local nX := m_x
-local nY := m_y
-local nGetBoxX := 18
-local nGetBoxY := 70
-local cBoxNaz := "unos nove stavke"
-local nRet := 0
-local nFuncRet := 0
-local _rec
-private GetList:={}
+FUNCTION e_doc_it2( nDoc_no, nDoc_it_no, lNew )
 
-__doc := nDoc_no
-__doc_it_no := nDoc_it_no
+   LOCAL nX := m_x
+   LOCAL nY := m_y
+   LOCAL nGetBoxX := 18
+   LOCAL nGetBoxY := 70
+   LOCAL cBoxNaz := "unos nove stavke"
+   LOCAL nRet := 0
+   LOCAL nFuncRet := 0
+   LOCAL _rec
+   PRIVATE GetList := {}
 
-if lNew == nil
-    lNew := .t.
-endif
+   __doc := nDoc_no
+   __doc_it_no := nDoc_it_no
 
-l_new_it := lNew
+   IF lNew == nil
+      lNew := .T.
+   ENDIF
 
-if l_new_it == .f.
-    cBoxNaz := "ispravka stavke"
-endif
+   l_new_it := lNew
 
-select _doc_it2
+   IF l_new_it == .F.
+      cBoxNaz := "ispravka stavke"
+   ENDIF
 
-Box(, nGetBoxX, nGetBoxY, .f., "Unos stavki naloga")
+   SELECT _doc_it2
 
-set_opc_box(nGetBoxX, 50)
+   Box(, nGetBoxX, nGetBoxY, .F., "Unos stavki naloga" )
 
-// say top, bottom
-@ m_x + 1, m_y + 2 SAY PADL("***** " + cBoxNaz , nGetBoxY - 2)
-@ m_x + nGetBoxX, m_y + 2 SAY PADL("(*) popuna obavezna", nGetBoxY - 2) COLOR "BG+/B"
+   set_opc_box( nGetBoxX, 50 )
 
-do while .t.
+   // say top, bottom
+   @ m_x + 1, m_y + 2 SAY PadL( "***** " + cBoxNaz, nGetBoxY - 2 )
+   @ m_x + nGetBoxX, m_y + 2 SAY PadL( "(*) popuna obavezna", nGetBoxY - 2 ) COLOR "BG+/B"
 
-    set_global_memvars_from_dbf()
-    
-    nFuncRet := _e_box_it2( nGetBoxX, nGetBoxY )
-    
-    if nFuncRet == 1
-        
-        select _doc_it2
-        
-        if l_new_it
-            append blank
-        endif
- 
-        _rec := get_dbf_global_memvars( NIL, .f. )
-        
-        dbf_update_rec( _rec )
-               
-        if l_new_it
-            loop
-        endif
-        
-    endif
-    
-    BoxC()
-    select _doc_it2
-    
-    nRet := RECCOUNT2()
-    
-    exit
+   DO WHILE .T.
 
-enddo
+      set_global_memvars_from_dbf()
 
-select _doc_it2
+      nFuncRet := _e_box_it2( nGetBoxX, nGetBoxY )
 
-m_x := nX
-m_y := nY
+      IF nFuncRet == 1
 
-return nRet
+         SELECT _doc_it2
+
+         IF l_new_it
+            APPEND BLANK
+         ENDIF
+
+         _rec := get_dbf_global_memvars( NIL, .F. )
+
+         dbf_update_rec( _rec )
+
+         IF l_new_it
+            LOOP
+         ENDIF
+
+      ENDIF
+
+      BoxC()
+      SELECT _doc_it2
+
+      nRet := RECCOUNT2()
+
+      EXIT
+
+   ENDDO
+
+   SELECT _doc_it2
+
+   m_x := nX
+   m_y := nY
+
+   RETURN nRet
 
 
 // -------------------------------------------------
-// forma za unos podataka 
+// forma za unos podataka
 // cGetDOper , D - unesi dodatne operacije...
 // -------------------------------------------------
-static function _e_box_it2( nBoxX, nBoxY )
-local nX := 1
-local nLeft := 21
-local cPicQtty := "999999.999"
-local cPicPrice := "999999.99"
-local __roba
+STATIC FUNCTION _e_box_it2( nBoxX, nBoxY )
 
-if l_new_it
-    _doc_no := __doc
-    _doc_it_no := __doc_it_no
-    _it_no := inc_docit2( __doc, __doc_it_no )
-	_jmj := "KOM"
-	_jmj_art := ""
-	_doc_it_q2 := 0
-	_doc_it_qtt := 0
-endif
+   LOCAL nX := 1
+   LOCAL nLeft := 21
+   LOCAL cPicQtty := "999999.999"
+   LOCAL cPicPrice := "999999.99"
+   LOCAL __roba
 
-nX += 2
+   IF l_new_it
+      _doc_no := __doc
+      _doc_it_no := __doc_it_no
+      _it_no := inc_docit2( __doc, __doc_it_no )
+      _jmj := "KOM"
+      _jmj_art := ""
+      _doc_it_q2 := 0
+      _doc_it_qtt := 0
+   ENDIF
 
-@ m_x + nX, m_y + 2 SAY PADL("Stavka naloga (*)", nLeft) GET _doc_it_no ;
-    VALID {|| if(l_new_it, _it_no := inc_docit2( _doc_no, _doc_it_no ), .t.), .t. }
+   nX += 2
 
-nX += 1
+   @ m_x + nX, m_y + 2 SAY PadL( "Stavka naloga (*)", nLeft ) GET _doc_it_no ;
+      VALID {|| if( l_new_it, _it_no := inc_docit2( _doc_no, _doc_it_no ), .T. ), .T. }
 
-@ m_x + nX, m_y + 2 SAY PADL("r.br stavke (*)", nLeft) GET _it_no PICT "9999"
+   nX += 1
 
-nX += 2
+   @ m_x + nX, m_y + 2 SAY PadL( "r.br stavke (*)", nLeft ) GET _it_no PICT "9999"
 
-@ m_x + nX, m_y + 2 SAY PADL("F18 ARTIKAL (*):", nLeft) GET _art_id ;
-    VALID {|| p_roba( @_art_id ), __roba := g_roba_hash( _art_id ), ;
-            _doc_it_pri := __roba["vpc"], ;
-            show_it( g_roba_desc( _art_id ) + ".." + "[" + ALLTRIM( UPPER( __roba["jmj"] ) )+ "]" , 35 ) } ;
-    WHEN set_opc_box( nBoxX, 50, "uzmi sifru iz F18/roba" )
+   nX += 2
 
-nX += 2
-    
-@ m_x + nX, m_y + 2 SAY PADL( "Jedinica mjere (*):", nLeft + 3 ) GET _jmj ;
-	PICT "@!S3" ;
-	VALID {|| _jmj_art := UPPER( __roba["jmj"] ), !EMPTY( _jmj ), valid_repro_jmj( _jmj, _jmj_art ) } ;
-	WHEN set_opc_box( nBoxX, 50, "Unositi komadno ili u originalnoj jmj ?" )
+   @ m_x + nX, m_y + 2 SAY PadL( "F18 ARTIKAL (*):", nLeft ) GET _art_id ;
+      VALID {|| p_roba( @_art_id ), __roba := g_roba_hash( _art_id ), ;
+      _doc_it_pri := get_hash_value( __roba, "vpc", 0 ), ;
+      show_it( g_roba_desc( _art_id ) + ".." + "[" + AllTrim( Upper( get_hash_value( __roba, "jmj", "" ) ) ) + "]", 35 ), ;
+      IF( __roba == NIL, .F., .T. ) } ;
+      WHEN set_opc_box( nBoxX, 50, "uzmi sifru iz F18/roba" )
 
-READ
-ESC_RETURN 0
+   nX += 2
 
-nX += 1
+   @ m_x + nX, m_y + 2 SAY PadL( "Jedinica mjere (*):", nLeft + 3 ) GET _jmj ;
+      PICT "@!S3" ;
+      VALID {|| _jmj_art := Upper( get_hash_value( __roba, "jmj", "" ) ), !Empty( _jmj ), valid_repro_jmj( _jmj, _jmj_art ) } ;
+      WHEN set_opc_box( nBoxX, 50, "Unositi komadno ili u originalnoj jmj ?" )
 
-@ m_x + nX, m_y + 2 SAY PADL("kolicina (*):", nLeft + 3) GET _doc_it_qtt ;
-    PICT cPicQtty ;
-	WHEN set_opc_box( nBoxX, 50, "koliko komada se isporučuje ?" )
+   READ
+   ESC_RETURN 0
 
-// provjeriti da li je jedinica mjere artikla metrička
-// ako jeste otključaj polje za unos dužine
-// u slučaju da je 
-if jmj_is_metric( _jmj_art ) .and. ( _jmj == "KOM" )
-	@ m_x + nX, col() + 1 SAY hb_utf8tostr( "dužina [mm] (*):" ) GET _doc_it_q2 ;
-    	PICT cPicQtty ;
-		WHEN set_opc_box( nBoxX, 50, "repromaterijal je metrički, unesi dužinu u mm" )
-else
-	@ m_x + nX, col() + 1 SAY PADR("", 28 )
-endif
+   nX += 1
 
-nX += 1
+   @ m_x + nX, m_y + 2 SAY PadL( "kolicina (*):", nLeft + 3 ) GET _doc_it_qtt ;
+      PICT cPicQtty ;
+      WHEN set_opc_box( nBoxX, 50, "koliko komada se isporučuje ?" )
 
-@ m_x + nX, m_y + 2 SAY PADL("cijena:", nLeft + 3) GET _doc_it_pri ;
-    PICT cPicPrice WHEN set_opc_box( nBoxX, 50, "opciono cijena" )
+   // provjeriti da li je jedinica mjere artikla metrička
+   // ako jeste otključaj polje za unos dužine
+   // u slučaju da je
+   IF jmj_is_metric( _jmj_art ) .AND. ( _jmj == "KOM" )
+      @ m_x + nX, Col() + 1 SAY hb_UTF8ToStr( "dužina [mm] (*):" ) GET _doc_it_q2 ;
+         PICT cPicQtty ;
+         WHEN set_opc_box( nBoxX, 50, "repromaterijal je metrički, unesi dužinu u mm" )
+   ELSE
+      @ m_x + nX, Col() + 1 SAY PadR( "", 28 )
+   ENDIF
 
-nX += 2
+   nX += 1
 
-@ m_x + nX, m_y + 2 SAY PADL("opis:", nLeft) GET _sh_desc ;
-    PICT "@S40" ;
-    WHEN set_opc_box( nBoxX, 50, "opis vezan za samu stavku")
+   @ m_x + nX, m_y + 2 SAY PadL( "cijena:", nLeft + 3 ) GET _doc_it_pri ;
+      PICT cPicPrice WHEN set_opc_box( nBoxX, 50, "opciono cijena" )
 
-nX += 1
+   nX += 2
 
-@ m_x + nX, m_y + 2 SAY PADL("napomena:", nLeft) GET _descr ;
-    PICT "@S40" ;
-    WHEN set_opc_box( nBoxX, 50, "dodatne napomene vezane za samu stavku")
+   @ m_x + nX, m_y + 2 SAY PadL( "opis:", nLeft ) GET _sh_desc ;
+      PICT "@S40" ;
+      WHEN set_opc_box( nBoxX, 50, "opis vezan za samu stavku" )
+
+   nX += 1
+
+   @ m_x + nX, m_y + 2 SAY PadL( "napomena:", nLeft ) GET _descr ;
+      PICT "@S40" ;
+      WHEN set_opc_box( nBoxX, 50, "dodatne napomene vezane za samu stavku" )
 
 
-READ
-ESC_RETURN 0
+   READ
+   ESC_RETURN 0
 
-return 1
+   RETURN 1
 
 
 
@@ -302,51 +309,54 @@ return 1
 // -------------------------------------------
 // uvecaj broj stavke naloga
 // -------------------------------------------
-static function inc_docit2( nDoc_no, nDoc_it_no )
-local nTArea := SELECT()
-local nTRec := RECNO()
-local nRet := 0
+STATIC FUNCTION inc_docit2( nDoc_no, nDoc_it_no )
 
-select _doc_it2
-go top
-set order to tag "1"
-seek doc_str( nDoc_no ) + docit_str( nDoc_it_no )
+   LOCAL nTArea := Select()
+   LOCAL nTRec := RecNo()
+   LOCAL nRet := 0
 
-do while !EOF() .and. field->doc_no == nDoc_no .and. ;
-    field->doc_it_no == nDoc_it_no
-    nRet := field->it_no
-    skip
-enddo
+   SELECT _doc_it2
+   GO TOP
+   SET ORDER TO TAG "1"
+   SEEK doc_str( nDoc_no ) + docit_str( nDoc_it_no )
 
-nRet += 1
+   DO WHILE !Eof() .AND. field->doc_no == nDoc_no .AND. ;
+         field->doc_it_no == nDoc_it_no
+      nRet := field->it_no
+      SKIP
+   ENDDO
 
-select (nTArea)
-go (nTRec)
+   nRet += 1
 
-return nRet
+   SELECT ( nTArea )
+   GO ( nTRec )
+
+   RETURN nRet
 
 
 // ----------------------------------------------
 // vraca opis robe
 // ----------------------------------------------
-function g_roba_desc( cId )
-local cDescr := ""
-local nTArea := SELECT()
+FUNCTION g_roba_desc( cId )
 
-select ( F_ROBA )
-if !Used()
-    O_ROBA
-endif
+   LOCAL cDescr := ""
+   LOCAL nTArea := Select()
 
-select roba
-seek cId
+   SELECT ( F_ROBA )
+   IF !Used()
+      O_ROBA
+   ENDIF
 
-if FOUND()
-    cDescr := ALLTRIM( roba->naz )
-endif
+   SELECT roba
+   SEEK cId
 
-select (nTArea)
-return cDescr
+   IF Found()
+      cDescr := AllTrim( roba->naz )
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN cDescr
 
 
 
@@ -354,34 +364,64 @@ return cDescr
 // ----------------------------------------------
 // vraca cijenu robe
 // ----------------------------------------------
-function g_roba_price( cId )
-local nPrice
-local nTArea := SELECT()
+FUNCTION g_roba_price( cId )
 
-select ( F_ROBA )
-if !Used()
-    O_ROBA
-endif
+   LOCAL nPrice
+   LOCAL nTArea := Select()
 
-select roba
-seek cId
+   SELECT ( F_ROBA )
+   IF !Used()
+      O_ROBA
+   ENDIF
 
-if FOUND()
-    nPrice := roba->vpc
-endif
+   SELECT roba
+   SEEK cId
 
-select (nTArea)
-return nPrice
+   IF Found()
+      nPrice := roba->vpc
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN nPrice
+
+
+// ---------------------------------------------------------------
+// vraca vrijednosti iz hash matrice
+// 
+// primjer:
+//      hash["test"] := 1
+//      get_hash_value( hash, "test", 0 ) => 1
+//      get_hash_value( hash, "xzxx", 0 ) => 0
+// ---------------------------------------------------------------
+STATIC FUNCTION get_hash_value( hash, key, default_value )
+
+   IF hash == NIL
+      RETURN default_value
+   ENDIF
+
+   IF hb_hHasKey( hash, key )
+       RETURN hash[ key ]
+   ELSE
+       RETURN default_value
+   ENDIF
+
 
 
 
 // ---------------------------------------------------------------
 // vraca hash matricu sa podacima iz tabele roba
 // ---------------------------------------------------------------
-function g_roba_hash( id_roba )
-local _hash
-_hash := _set_sql_record_to_hash( "fmk.roba", id_roba )
-return _hash
+FUNCTION g_roba_hash( id_roba )
 
+   LOCAL _hash
+
+   _hash := _set_sql_record_to_hash( "fmk.roba", id_roba )
+   
+   IF VALTYPE( _hash ) $ "U" .AND. _hash == NIL
+       RETURN NIL
+   ENDIF
+
+   RETURN _hash
 
 

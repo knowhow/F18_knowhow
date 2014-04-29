@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,100 +13,102 @@
 #include "rnal.ch"
 
 
-static _e_gr_at
-static __wo_id
+STATIC _e_gr_at
+STATIC __wo_id
 
 // -------------------------------------------------------------
 // otvara sifrarnik artikala
 // -------------------------------------------------------------
-function s_e_gr_val( cId, nE_gr_at_id, cE_gr_vl_desc, lwo_ID, dx, dy )
-local nTArea
-local cHeader
-local nCdx := 1
-private ImeKol
-private Kol
-private GetList:={}
+FUNCTION s_e_gr_val( cId, nE_gr_at_id, cE_gr_vl_desc, lwo_ID, dx, dy )
 
-nTArea := SELECT()
+   LOCAL nTArea
+   LOCAL cHeader
+   LOCAL nCdx := 1
+   PRIVATE ImeKol
+   PRIVATE Kol
+   PRIVATE GetList := {}
 
-O_E_GR_VAL
+   nTArea := Select()
 
-cHeader := "Elementi - atributi, vrijednosti atributa /"
+   O_E_GR_VAL
 
-if nE_gr_at_id == nil
-	nE_gr_at_id := -1
-endif
+   cHeader := "Elementi - atributi, vrijednosti atributa /"
 
-if cE_gr_vl_desc == nil
-	cE_gr_vl_desc := ""
-endif
+   IF nE_gr_at_id == nil
+      nE_gr_at_id := -1
+   ENDIF
 
-if lwo_ID == nil
-	lwo_ID := .f.
-endif
+   IF cE_gr_vl_desc == nil
+      cE_gr_vl_desc := ""
+   ENDIF
 
-_e_gr_at := nE_gr_at_id
-__wo_id := lwo_ID
+   IF lwo_ID == nil
+      lwo_ID := .F.
+   ENDIF
 
-select e_gr_val
-set order to tag "1"
+   _e_gr_at := nE_gr_at_id
+   __wo_id := lwo_ID
 
-set_a_kol( @ImeKol, @Kol )
-gr_att_filter( nE_gr_at_id, cE_gr_vl_desc )
+   SELECT e_gr_val
+   SET ORDER TO TAG "1"
 
-go top
+   set_a_kol( @ImeKol, @Kol )
+   gr_att_filter( nE_gr_at_id, cE_gr_vl_desc )
 
-cRet := PostojiSifra( F_E_GR_VAL, 1, MAXROWS()-10, MAXCOLS()-5, cHeader, @cId, dx, dy, {|| key_handler(Ch) } )
+   GO TOP
 
-if VALTYPE(cE_gr_vl_desc) == "N"
-	cE_gr_vl_desc := STR(cE_gr_vl_desc, 10)
-endif
+   cRet := PostojiSifra( F_E_GR_VAL, 1, MAXROWS() -10, MAXCOLS() -5, cHeader, @cId, dx, dy, {|| key_handler( Ch ) } )
 
-if nE_gr_at_id > 0 .or. cE_gr_vl_desc <> ""
-	set filter to
-endif
+   IF ValType( cE_gr_vl_desc ) == "N"
+      cE_gr_vl_desc := Str( cE_gr_vl_desc, 10 )
+   ENDIF
 
-select (nTArea)
+   IF nE_gr_at_id > 0 .OR. cE_gr_vl_desc <> ""
+      SET FILTER TO
+   ENDIF
 
-return cRet
+   SELECT ( nTArea )
+
+   RETURN cRet
 
 
 // -----------------------------------------
 // setovanje kolona tabele
 // -----------------------------------------
-static function set_a_kol(aImeKol, aKol)
-aKol := {}
-aImeKol := {}
+STATIC FUNCTION set_a_kol( aImeKol, aKol )
 
-if __wo_id == .f.
+   aKol := {}
+   aImeKol := {}
 
-	AADD(aImeKol, {PADC("ID/MC", 10), {|| PADR(sif_idmc(e_gr_vl_id),10)}, "e_gr_vl_id", {|| _inc_id(@we_gr_vl_id, "E_GR_VL_ID"), .f.}, {|| .t.}})
+   IF __wo_id == .F.
+      AAdd( aImeKol, { PadC( "ID/MC", 10 ), {|| PadR( sif_idmc( e_gr_vl_id ), 10 ) }, "e_gr_vl_id", {|| rnal_inc_id( @wE_gr_vl_id, "E_GR_VL_ID" ), .F. }, {|| .T. } } )
+   ENDIF
 
-endif
+   AAdd( aImeKol, { PadC( "Grupa/atribut", 15 ), {|| "(" + AllTrim( g_egr_by_att( e_gr_at_id ) ) + ") / " + PadR( g_gr_at_desc( e_gr_at_id ), 15 ) }, "e_gr_at_id", {|| set_e_gr_at( @we_gr_at_id ) }, {|| s_e_gr_att( @we_gr_at_id ), show_it( g_gr_at_desc( we_gr_at_id ) ) } } )
 
-AADD(aImeKol, {PADC("Grupa/atribut", 15), {|| "(" + ALLTRIM(g_egr_by_att(e_gr_at_id)) + ") / " + PADR(g_gr_at_desc(e_gr_at_id), 15)}, "e_gr_at_id", {|| set_e_gr_at(@we_gr_at_id) }, {|| s_e_gr_att( @we_gr_at_id ), show_it( g_gr_at_desc( we_gr_at_id ) ) }})
+   AAdd( aImeKol, { PadC( "Vrijednost", 20 ), {|| PadR( e_gr_vl_fu, 28 ) + ".." }, "e_gr_vl_fu" } )
 
-AADD(aImeKol, {PADC("Vrijednost", 20), {|| PADR(e_gr_vl_fu, 28) + ".." }, "e_gr_vl_fu"})
+   AAdd( aImeKol, { PadC( "Skr. opis (sifra)", 20 ), {|| PadR( e_gr_vl_de, 10 ) }, "e_gr_vl_de" } )
 
-AADD(aImeKol, {PADC("Skr. opis (sifra)", 20), {|| PADR(e_gr_vl_de, 10) }, "e_gr_vl_de"})
+   FOR i := 1 TO Len( aImeKol )
+      AAdd( aKol, i )
+   NEXT
 
-for i:=1 to LEN(aImeKol)
-	AADD(aKol, i)
-next
-
-return
+   RETURN
 
 // ---------------------------------------------------
 // setuje polje e_gr_at_id pri unosu automatski
 // ---------------------------------------------------
-static function set_e_gr_at( nE_gr_at )
-if _e_gr_at > 0
-	nE_gr_at := _e_gr_at
-	return .f.
-else
-	return .t.
-endif
-return 
+STATIC FUNCTION set_e_gr_at( nE_gr_at )
+
+   IF _e_gr_at > 0
+      nE_gr_at := _e_gr_at
+      RETURN .F.
+   ELSE
+      RETURN .T.
+   ENDIF
+
+   RETURN
 
 
 
@@ -117,148 +119,149 @@ return
 // nE_gr_at_id - id atributa grupe
 // nE_gr_vl_desc - description vrijednosti...
 // ------------------------------------------------------
-static function gr_att_filter( nE_gr_at_id, cE_gr_vl_desc )
-local cFilter := ""
+STATIC FUNCTION gr_att_filter( nE_gr_at_id, cE_gr_vl_desc )
 
-if nE_gr_at_id > 0
-	cFilter += "e_gr_at_id == " + e_gr_at_str( nE_gr_at_id )
-endif
+   LOCAL cFilter := ""
 
-if !EMPTY( cE_gr_vl_desc )
+   IF nE_gr_at_id > 0
+      cFilter += "e_gr_at_id == " + e_gr_at_str( nE_gr_at_id )
+   ENDIF
+
+   IF !Empty( cE_gr_vl_desc )
 	
-	if !EMPTY(cFilter)
-		cFilter += " .and. "
-	endif
+      IF !Empty( cFilter )
+         cFilter += " .and. "
+      ENDIF
 
-	cFilter += "UPPER( e_gr_vl_fu ) = " + _filter_quote( UPPER( ALLTRIM( cE_gr_vl_desc ) ) )
-endif
+      cFilter += "UPPER( e_gr_vl_fu ) = " + _filter_quote( Upper( AllTrim( cE_gr_vl_desc ) ) )
+   ENDIF
 
-if !EMPTY(cFilter)
-	set filter to
-	set filter to &cFilter
-	go top
-endif
+   IF !Empty( cFilter )
+      SET FILTER TO
+      SET FILTER to &cFilter
+      GO TOP
+   ENDIF
 
-return
+   RETURN
 
 
 // -----------------------------------------
 // key handler funkcija
 // -----------------------------------------
-static function key_handler(Ch)
+STATIC FUNCTION key_handler( Ch )
 
-do case
+   DO CASE
 
-	case Ch == K_CTRL_N .or. Ch == K_F4
-		__wo_ID := .f.
-		set_a_kol(@ImeKol, @Kol)
-		return DE_CONT
+   CASE Ch == K_CTRL_N .OR. Ch == K_F4
+      __wo_ID := .F.
+      set_a_kol( @ImeKol, @Kol )
+      RETURN DE_CONT
 
-endcase
+   ENDCASE
 
-return DE_CONT
+   RETURN DE_CONT
 
 
 // -------------------------------
 // convert e_gr_val_id to string
 // -------------------------------
-function e_gr_vl_str(nId)
-return STR(nId, 10)
+FUNCTION e_gr_vl_str( nId )
+   RETURN Str( nId, 10 )
 
 
 // -------------------------------
 // get e_gr_desc by e_gr_id
 // -------------------------------
-function g_e_gr_vl_desc( nE_gr_vl_id, lEmpty, lFullDesc )
-local cEGrValDesc := "?????"
-local nTArea := SELECT()
+FUNCTION g_e_gr_vl_desc( nE_gr_vl_id, lEmpty, lFullDesc )
 
-if lEmpty == nil
-	lEmpty := .f.
-endif
+   LOCAL cEGrValDesc := "?????"
+   LOCAL nTArea := Select()
 
-if lEmpty == .t.
-	cEGrValDesc := ""
-endif
+   IF lEmpty == nil
+      lEmpty := .F.
+   ENDIF
 
-if lFullDesc == nil
-	lFullDesc := .t.
-endif
+   IF lEmpty == .T.
+      cEGrValDesc := ""
+   ENDIF
 
-O_E_GR_VAL
-select e_gr_val
-set order to tag "1"
-go top
-seek e_gr_vl_str(nE_gr_vl_id)
+   IF lFullDesc == nil
+      lFullDesc := .T.
+   ENDIF
 
-if FOUND()
-	if lFullDesc == .t.
-		if !EMPTY(field->e_gr_vl_fu)
-			cEGrValDesc := ALLTRIM(field->e_gr_vl_fu)
-		endif
-	else
-		if !EMPTY(field->e_gr_vl_de)
-			cEGrValDesc := ALLTRIM(field->e_gr_vl_de)
-		endif
-	endif
-endif
+   O_E_GR_VAL
+   SELECT e_gr_val
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK e_gr_vl_str( nE_gr_vl_id )
 
-select (nTArea)
+   IF Found()
+      IF lFullDesc == .T.
+         IF !Empty( field->e_gr_vl_fu )
+            cEGrValDesc := AllTrim( field->e_gr_vl_fu )
+         ENDIF
+      ELSE
+         IF !Empty( field->e_gr_vl_de )
+            cEGrValDesc := AllTrim( field->e_gr_vl_de )
+         ENDIF
+      ENDIF
+   ENDIF
 
-return cEGrValDesc
+   SELECT ( nTArea )
+
+   RETURN cEGrValDesc
 
 
 // --------------------------------------------------
 // vraæa grupu elementa po vrijednosti atributa
 // --------------------------------------------------
-function g_egr_by_att( nE_gr_att, lEmpty, lFullDesc )
-local cGr := "?????"
-local nTArea := SELECT()
-local nTRec := RecNo()
+FUNCTION g_egr_by_att( nE_gr_att, lEmpty, lFullDesc )
 
-if lEmpty == nil
-	lEmpty := .f.
-endif
+   LOCAL cGr := "?????"
+   LOCAL nTArea := Select()
+   LOCAL nTRec := RecNo()
 
-if lEmpty == .t.
-	cGr := ""
-endif
+   IF lEmpty == nil
+      lEmpty := .F.
+   ENDIF
 
-select e_gr_att
-set order to tag "1"
-go top
-seek e_gr_at_str(nE_gr_att)
+   IF lEmpty == .T.
+      cGr := ""
+   ENDIF
 
-if FOUND()
-	cGr := ALLTRIM( g_e_gr_desc( field->e_gr_id, lEmpty, lFullDesc ) )
-endif
+   SELECT e_gr_att
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK e_gr_at_str( nE_gr_att )
 
-select (nTArea)
-go (nTRec)
+   IF Found()
+      cGr := AllTrim( g_e_gr_desc( field->e_gr_id, lEmpty, lFullDesc ) )
+   ENDIF
 
-return cGr
+   SELECT ( nTArea )
+   GO ( nTRec )
+
+   RETURN cGr
 
 
 
 // -------------------------------------------------
-// vraca atribut grupe elementa iz tabele e_gr_val 
+// vraca atribut grupe elementa iz tabele e_gr_val
 // -------------------------------------------------
-function g_gr_att_val( nE_gr_val )
-local nE_gr_att := 0
-local nTArea := SELECT()
+FUNCTION g_gr_att_val( nE_gr_val )
 
-select e_gr_val
-set order to tag "1"
-go top
-seek e_gr_vl_str(nE_gr_val)
+   LOCAL nE_gr_att := 0
+   LOCAL nTArea := Select()
 
-if FOUND()
-	nE_gr_att := field->e_gr_at_id
-endif
+   SELECT e_gr_val
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK e_gr_vl_str( nE_gr_val )
 
-select (nTArea)
-return nE_gr_att
+   IF Found()
+      nE_gr_att := field->e_gr_at_id
+   ENDIF
 
+   SELECT ( nTArea )
 
-
-
+   RETURN nE_gr_att

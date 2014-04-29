@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,184 +12,190 @@
 
 #include "rnal.ch"
 
-static __cust_id
+STATIC __cust_id
 
 
 // -------------------------------------
 // otvara tabelu objekata
 // -------------------------------------
-function s_objects( cId, nCust_id, cObjDesc, dx, dy )
-local nTArea
-local cHeader
-local cTag := "4"
-private ImeKol
-private Kol
+FUNCTION s_objects( cId, nCust_id, cObjDesc, dx, dy )
 
-if nCust_id == nil
-	nCust_id := -1
-endif
+   LOCAL nTArea
+   LOCAL cHeader
+   LOCAL cTag := "4"
+   PRIVATE ImeKol
+   PRIVATE Kol
 
-if cObjDesc == nil
-	cObjDesc := ""
-endif
+   IF nCust_id == nil
+      nCust_id := -1
+   ENDIF
 
-__cust_id := nCust_id
+   IF cObjDesc == nil
+      cObjDesc := ""
+   ENDIF
 
-nTArea := SELECT()
+   __cust_id := nCust_id
 
-cHeader := "Objekti /"
+   nTArea := Select()
 
-O_OBJECTS
+   cHeader := "Objekti /"
 
-select objects
+   O_OBJECTS
 
-if cID == nil
-	// obj_desc
-	cTag := "4"
-else
-	// cust_id + obj_desc
-	cTag := "3"
-endif
+   SELECT objects
 
-set_a_kol(@ImeKol, @Kol, nCust_id)
+   IF cID == nil
+      // obj_desc
+      cTag := "4"
+   ELSE
+      // cust_id + obj_desc
+      cTag := "3"
+   ENDIF
 
-if VALTYPE(cId) == "C"
-	//try to validate
-	if VAL(cId) <> 0
+   set_a_kol( @ImeKol, @Kol, nCust_id )
+
+   IF ValType( cId ) == "C"
+      // try to validate
+      IF Val( cId ) <> 0
 	
-		cId := VAL(cId)
-		nCust_id := -1
-		cObjDesc := ""
-		cTag := "1"
-	endif
-endif
+         cId := Val( cId )
+         nCust_id := -1
+         cObjDesc := ""
+         cTag := "1"
+      ENDIF
+   ENDIF
 
-set order to tag cTag
+   SET ORDER TO TAG cTag
 
-set filter to
-obj_filter(nCust_id, cObjDesc)
+   SET FILTER TO
+   obj_filter( nCust_id, cObjDesc )
 
-cRet := PostojiSifra(F_OBJECTS, cTag, MAXROWS()-15, MAXCOLS()-5, cHeader, @cId, dx, dy, {|| key_handler( Ch ) })
+   cRet := PostojiSifra( F_OBJECTS, cTag, MAXROWS() -15, MAXCOLS() -5, cHeader, @cId, dx, dy, {|| key_handler( Ch ) } )
 
-if LastKey() == K_ESC
-	cId := 0
-endif
+   IF LastKey() == K_ESC
+      cId := 0
+   ENDIF
 
-select (nTArea)
+   SELECT ( nTArea )
 
-return cRet
+   RETURN cRet
 
 
 // --------------------------------------
 // obrada tipki u sifrarniku
 // --------------------------------------
-static function key_handler()
-local nRet := DE_CONT
+STATIC FUNCTION key_handler()
 
-do case
-	case Ch == K_F3
-		nRet := wid_edit( "OBJ_ID" )
-endcase
+   LOCAL nRet := DE_CONT
 
+   DO CASE
+   CASE Ch == K_F3
+      nRet := rnal_wid_edit( "OBJ_ID" )
+   ENDCASE
 
-return nRet
+   RETURN nRet
 
 // -----------------------------------------
 // setovanje kolona tabele
 // -----------------------------------------
-static function set_a_kol(aImeKol, aKol, nCust_id)
-aKol := {}
-aImeKol := {}
+STATIC FUNCTION set_a_kol( aImeKol, aKol, nCust_id )
 
-AADD(aImeKol, {PADC("ID/MC", 10), {|| sif_idmc(obj_id)}, "obj_id", {|| _inc_id(@wobj_id, "OBJ_ID"), .f.}, {|| .t.}})
-AADD(aImeKol, {PADC("Narucioc", 10), {|| g_cust_desc( cust_id ) }, "cust_id", {|| set_cust_id(@wcust_id) }, {|| s_customers(@wcust_id), show_it( g_cust_desc(wcust_id)) }})
-AADD(aImeKol, {PADC("Naziv objekta", 20), {|| PADR(obj_desc, 30)}, "obj_desc", {|| .t.}, {|| _chk_id(@wobj_id, "OBJ_ID") } })
+   aKol := {}
+   aImeKol := {}
 
-for i:=1 to LEN(aImeKol)
-	AADD(aKol, i)
-next
+   AAdd( aImeKol, { PadC( "ID/MC", 10 ), {|| sif_idmc( obj_id ) }, "obj_id", {|| rnal_inc_id( @wObj_id, "OBJ_ID" ), .F. }, {|| .T. } } )
+   AAdd( aImeKol, { PadC( "Narucioc", 10 ), {|| g_cust_desc( cust_id ) }, "cust_id", {|| set_cust_id( @wCust_id ) }, {|| s_customers( @wCust_id ), show_it( g_cust_desc( wcust_id ) ) } } )
+   AAdd( aImeKol, { PadC( "Naziv objekta", 20 ), {|| PadR( obj_desc, 30 ) }, "obj_desc", {|| .T. }, {|| rnal_chk_id( @wObj_id, "OBJ_ID" ) } } )
 
-return
+   FOR i := 1 TO Len( aImeKol )
+      AAdd( aKol, i )
+   NEXT
+
+   RETURN
 
 
 // ----------------------------------------------
 // setuje cust_id pri unosu automatski
 // ----------------------------------------------
-static function set_cust_id( nCust_id )
-if __cust_id > 0
-	nCust_id := __cust_id
-	return .f.
-else
-	return .t.
-endif
-return
+STATIC FUNCTION set_cust_id( nCust_id )
+
+   IF __cust_id > 0
+      nCust_id := __cust_id
+      RETURN .F.
+   ELSE
+      RETURN .T.
+   ENDIF
+
+   RETURN
 
 
 // -------------------------------------------
 // filter po cust_id
 // nCust_id - id customer
 // -------------------------------------------
-static function obj_filter(nCust_id, cObjDesc)
-local cFilter := ""
+STATIC FUNCTION obj_filter( nCust_id, cObjDesc )
 
-if nCust_id > 0
-	cFilter += "cust_id == " + custid_str(nCust_id)
-endif
+   LOCAL cFilter := ""
 
-if !EMPTY(cObjDesc)
+   IF nCust_id > 0
+      cFilter += "cust_id == " + custid_str( nCust_id )
+   ENDIF
+
+   IF !Empty( cObjDesc )
 	
-	if !EMPTY(cFilter)
-		cFilter += " .and. "
-	endif
+      IF !Empty( cFilter )
+         cFilter += " .and. "
+      ENDIF
 	
-	cObjDesc := ALLTRIM(cObjDesc)
-	cFilter += " ALLTRIM(UPPER(obj_desc)) = " + cm2str(UPPER(cObjDesc))
+      cObjDesc := AllTrim( cObjDesc )
+      cFilter += " ALLTRIM(UPPER(obj_desc)) = " + cm2str( Upper( cObjDesc ) )
 	
-endif
+   ENDIF
 
-if !EMPTY(cFilter)
-	set filter to &cFilter
-	go top
-endif
+   IF !Empty( cFilter )
+      SET FILTER to &cFilter
+      GO TOP
+   ENDIF
 
-return
+   RETURN
 
 
 
 // -------------------------------
 // convert obj_id to string
 // -------------------------------
-function objid_str(nId)
-return STR(nId, 10)
+FUNCTION objid_str( nId )
+   RETURN Str( nId, 10 )
 
 
 // -------------------------------
 // get obj_id_desc by obj_id
 // -------------------------------
-function g_obj_desc(nObj_id, lEmpty)
-local cObjDesc := "?????"
-local nTArea := SELECT()
+FUNCTION g_obj_desc( nObj_id, lEmpty )
 
-if lEmpty == nil
-	lEmpty := .f.
-endif
+   LOCAL cObjDesc := "?????"
+   LOCAL nTArea := Select()
 
-if lEmpty == .t.
-	cObjDesc := ""
-endif
+   IF lEmpty == nil
+      lEmpty := .F.
+   ENDIF
 
-O_OBJECTS
-select objects
-set order to tag "1"
-go top
-seek objid_str(nObj_id)
+   IF lEmpty == .T.
+      cObjDesc := ""
+   ENDIF
 
-if FOUND()
-	if !EMPTY(field->obj_desc)
-		cObjDesc := ALLTRIM(field->obj_desc)
-	endif
-endif
+   O_OBJECTS
+   SELECT objects
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK objid_str( nObj_id )
 
-select (nTArea)
+   IF Found()
+      IF !Empty( field->obj_desc )
+         cObjDesc := AllTrim( field->obj_desc )
+      ENDIF
+   ENDIF
 
-return cObjDesc
+   SELECT ( nTArea )
+
+   RETURN cObjDesc

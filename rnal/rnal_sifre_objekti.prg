@@ -90,7 +90,7 @@ STATIC FUNCTION key_handler()
 
    DO CASE
    CASE Ch == K_F3
-      nRet := wid_edit( "OBJ_ID" )
+      nRet := rnal_wid_edit( "OBJ_ID" )
    ENDCASE
 
    RETURN nRet
@@ -105,7 +105,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol, nCust_id )
 
    AAdd( aImeKol, { PadC( "ID/MC", 10 ), {|| sif_idmc( obj_id ) }, "obj_id", {|| rnal_inc_id( @wObj_id, "OBJ_ID" ), .F. }, {|| .T. } } )
    AAdd( aImeKol, { PadC( "Narucioc", 10 ), {|| g_cust_desc( cust_id ) }, "cust_id", {|| set_cust_id( @wCust_id ) }, {|| s_customers( @wCust_id ), show_it( g_cust_desc( wcust_id ) ) } } )
-   AAdd( aImeKol, { PadC( "Naziv objekta", 20 ), {|| PadR( obj_desc, 30 ) }, "obj_desc", {|| .T. }, {|| _chk_id( @wobj_id, "OBJ_ID" ) } } )
+   AAdd( aImeKol, { PadC( "Naziv objekta", 20 ), {|| PadR( obj_desc, 30 ) }, "obj_desc", {|| .T. }, {|| rnal_chk_id( @wObj_id, "OBJ_ID" ) } } )
 
    FOR i := 1 TO Len( aImeKol )
       AAdd( aKol, i )

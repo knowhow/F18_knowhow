@@ -113,8 +113,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
    AAdd( aImeKol, { PadC( "Naziv", 40 ), {|| PadR( cust_desc, 40 ) }, "cust_desc" } )
    AAdd( aImeKol, { PadC( "Adresa", 20 ), {|| PadR( cust_addr, 20 ) }, "cust_addr" } )
    AAdd( aImeKol, { PadC( "Telefon", 20 ), {|| PadR( cust_tel, 20 ) }, "cust_tel" } )
-   AAdd( aImeKol, { "ID broj", {|| cust_ident }, "cust_ident", {|| set_cust_mc( @wMatch_code, @wCust_desc ) }, {|| _chk_id( @wCust_id, "CUST_ID" ) } } )
-
+   AAdd( aImeKol, { "ID broj", {|| cust_ident }, "cust_ident", {|| set_cust_mc( @wMatch_code, @wCust_desc ) }, {|| rnal_chk_id( @wCust_id, "CUST_ID" ) } } )
 
    FOR i := 1 TO Len( aImeKol )
       AAdd( aKol, i )
@@ -163,7 +162,7 @@ STATIC FUNCTION key_handler( Ch )
    CASE CH == K_F3
 		
       // ispravka sifre
-      nRet := wid_edit( "CUST_ID" )
+      nRet := rnal_wid_edit( "CUST_ID" )
    ENDCASE
 
    SELECT customs

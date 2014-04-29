@@ -93,7 +93,7 @@ STATIC FUNCTION key_handler()
 
    DO CASE
    CASE Ch == K_F3
-      nRet := wid_edit( "CONT_ID" )
+      nRet := rnal_wid_edit( "CONT_ID" )
    ENDCASE
 
    RETURN nRet
@@ -112,7 +112,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol, nCust_id )
    AAdd( aImeKol, { PadC( "Naručioc", 10 ), {|| g_cust_desc( cust_id ) }, "cust_id", {|| set_cust_id( @wCust_id ) }, {|| s_customers( @wCust_id ), show_it( g_cust_desc( wcust_id ) ) } } )
    AAdd( aImeKol, { PadC( "Ime i prezime", 20 ), {|| PadR( cont_desc, 20 ) }, "cont_desc", {|| .T. }, {|| val_cont_name( wcont_desc ) } } )
    AAdd( aImeKol, { PadC( "Telefon", 20 ), {|| PadR( cont_tel, 20 ) }, "cont_tel" } )
-   AAdd( aImeKol, { PadC( "Dodatni opis", 20 ), {|| PadR( cont_add_d, 20 ) }, "cont_add_d", {|| set_cont_mc( @wmatch_code, @wcont_desc ) }, {|| _chk_id( @wcont_id, "CONT_ID" ) } } )
+   AAdd( aImeKol, { PadC( "Dodatni opis", 20 ), {|| PadR( cont_add_d, 20 ) }, "cont_add_d", {|| set_cont_mc( @wMatch_code, @wCont_desc ) }, {|| rnal_chk_id( @wCont_id, "CONT_ID" ) } } )
 
    FOR i := 1 TO Len( aImeKol )
       AAdd( aKol, i )

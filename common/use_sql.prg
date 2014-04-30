@@ -58,8 +58,7 @@ FUNCTION use_sql_sif( table, l_make_index )
    RETURN .T.
 
 
-// -----------------------------------------
-// -----------------------------------------
+
 FUNCTION use_sql( table, sql_query )
 
    LOCAL oConn
@@ -88,6 +87,7 @@ FUNCTION use_sql( table, sql_query )
 /*
    use_sql_opstine() => otvori šifarnik tarifa sa prilagođenim poljima
 */
+
 FUNCTION use_sql_opstine()
 
    LOCAL cSql
@@ -109,6 +109,7 @@ FUNCTION use_sql_opstine()
 /*
    use_sql_rj() => otvori šifarnik radnih jedinica sa prilagođenim poljima
 */
+
 FUNCTION use_sql_rj()
 
    LOCAL cSql
@@ -137,6 +138,7 @@ FUNCTION use_sql_rj()
 /*
    use_sql_valute() => otvori šifarnik valuta sa prilagođenim poljima
 */
+
 FUNCTION use_sql_valute()
 
    LOCAL cSql
@@ -169,6 +171,7 @@ FUNCTION use_sql_valute()
 /*
    use_sql_ks() => otvori šifarnik kamatnih stopa sa prilagođenim poljima
 */
+
 FUNCTION use_sql_ks()
 
    LOCAL cSql
@@ -203,6 +206,7 @@ FUNCTION use_sql_ks()
 /*
    use_sql_pkonto() => otvori šifarnik pkonto sa prilagođenim poljima
 */
+
 FUNCTION use_sql_pkonto()
 
    LOCAL cSql
@@ -224,6 +228,7 @@ FUNCTION use_sql_pkonto()
 /*
    use_sql_lokal() => otvori šifarnik lokalizacije sa prilagođenim poljima
 */
+
 FUNCTION use_sql_lokalizacija()
 
    LOCAL cSql
@@ -250,6 +255,7 @@ FUNCTION use_sql_lokalizacija()
 /*
    use_sql_tarifa() => otvori šifarnik tarifa sa prilagođenim poljima
 */
+
 FUNCTION use_sql_tarifa( l_make_index )
 
    LOCAL cSql
@@ -303,6 +309,7 @@ FUNCTION use_sql_trfp2( cShema, cDok )
 /*
    use_sql_trfp() => otvori šifarnik šema kontiranja sa uslovima
 */
+
 STATIC FUNCTION _use_sql_trfp( cTable, nWa, cShema, cDok )
 
    LOCAL cSql
@@ -343,6 +350,7 @@ STATIC FUNCTION _use_sql_trfp( cTable, nWa, cShema, cDok )
    use_sql_sifk() => otvori citavu tabelu
    use_sql_sifk( "ROBA", "GR1  " ) =>  filter na ROBA/GR1
 */
+
 FUNCTION use_sql_sifk( cDbf, cOznaka )
 
    LOCAL cSql
@@ -375,6 +383,7 @@ FUNCTION use_sql_sifk( cDbf, cOznaka )
    use_sql_sifv( "ROBA", "GR1", NIL, "G000000001" ) =>  filter na ROBA/GR1/grupa1=G0000000001
    use_sql_isfv( "ROBA", "GR1", "ROBA99", NIL )        =>  filter na ROBA/GR1/idroba=ROBA99
 */
+
 FUNCTION use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
 
    LOCAL cSql
@@ -429,9 +438,10 @@ FUNCTION use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
    RETURN .T.
 
 
-// ----------------------------------
-// kreiranje tabela "rules"
-// ----------------------------------
+/*
+  kreiranje tabela "rules"
+*/
+
 FUNCTION use_sql_rules()
 
    LOCAL _table_name, _alias
@@ -465,6 +475,7 @@ FUNCTION use_sql_rules()
 /*
   da li je roba sql tabela
 */
+
 FUNCTION is_roba_sql()
 
    RETURN .F.

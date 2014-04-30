@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -23,104 +23,105 @@
  *
  *  \return f-ja vraca protuvrijednost jedinice valute cValIz u valuti cValU
  */
-function Kurs( datum, val_iz, val_u )
-local _data, _qry, _tmp_1, _tmp_2, oRow
+FUNCTION Kurs( datum, val_iz, val_u )
 
-_tmp_1 := 1
-_tmp_2 := 1
+   LOCAL _data, _qry, _tmp_1, _tmp_2, oRow
 
-if val_iz == NIL
-	val_iz := "P"
-endif
+   _tmp_1 := 1
+   _tmp_2 := 1
 
-if val_u == NIL
-	if val_iz == "P"
-	    val_u := "D"
-	else
-	    val_u := "P"
-	endif 
-endif
+   IF val_iz == NIL
+      val_iz := "P"
+   ENDIF
 
-if ( val_iz == "P" .or. val_iz == "D" )
-    _where := " tip = " + _sql_quote( val_iz )
-else
-    _where := " id = " + _sql_quote( val_iz )
-endif
+   IF val_u == NIL
+      IF val_iz == "P"
+         val_u := "D"
+      ELSE
+         val_u := "P"
+      ENDIF
+   ENDIF
 
-if !EMPTY( datum )
-    _where += " AND ( " + _sql_date_parse( "datum", NIL, datum ) + ") "
-endif
+   IF ( val_iz == "P" .OR. val_iz == "D" )
+      _where := " tip = " + _sql_quote( val_iz )
+   ELSE
+      _where := " id = " + _sql_quote( val_iz )
+   ENDIF
 
-_qry := "SELECT * FROM fmk.valute "
-_qry += "WHERE " + _where
-_qry += " ORDER BY id, datum"
+   IF !Empty( datum )
+      _where += " AND ( " + _sql_date_parse( "datum", NIL, datum ) + ") "
+   ENDIF
 
-_data := _sql_query( my_server(), _qry )
-_data:Refresh()
-_data:GoTo(1)
-oRow := _data:GetRow(1)
+   _qry := "SELECT * FROM fmk.valute "
+   _qry += "WHERE " + _where
+   _qry += " ORDER BY id, datum"
 
-if _data:LastRec() == 0
-	Msg( "Nepostojeca valuta iz koje se pretvara iznos:## '" + val_iz + "' !" )
-  	_tmp_1 := 1
-elseif !EMPTY( datum ) .and. ( DTOS( datum ) < DTOS( oRow:FieldGet( oRow:FieldPos( "datum" )))) 
-  	Msg( "Nepostojeci kurs valute iz koje se pretvara iznos:## '" + val_iz + "'. Provjeriti datum !" )
-  	_tmp_1 := 1
-else
-  	_id := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "id" ) ) )
-    do while !_data:EOF() .and. _id == hb_utf8tostr( _data:FieldGet( _data:FieldPos( "id" ) ) )
-        oRow := _data:GetRow()
-        _tmp_1 := oRow:FieldGet( oRow:FieldPos("kurs1") )
-        if !EMPTY( datum ) .and. ( DTOS( datum ) >= DTOS( oRow:FieldGet( oRow:FieldPos( "datum" ) ) ) )
+   _data := _sql_query( my_server(), _qry )
+   _data:Refresh()
+   _data:GoTo( 1 )
+   oRow := _data:GetRow( 1 )
+
+   IF _data:LastRec() == 0
+      Msg( "Nepostojeca valuta iz koje se pretvara iznos:## '" + val_iz + "' !" )
+      _tmp_1 := 1
+   ELSEIF !Empty( datum ) .AND. ( DToS( datum ) < DToS( oRow:FieldGet( oRow:FieldPos( "datum" ) ) ) )
+      Msg( "Nepostojeci kurs valute iz koje se pretvara iznos:## '" + val_iz + "'. Provjeriti datum !" )
+      _tmp_1 := 1
+   ELSE
+      _id := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "id" ) ) )
+      DO WHILE !_data:Eof() .AND. _id == hb_UTF8ToStr( _data:FieldGet( _data:FieldPos( "id" ) ) )
+         oRow := _data:GetRow()
+         _tmp_1 := oRow:FieldGet( oRow:FieldPos( "kurs1" ) )
+         IF !Empty( datum ) .AND. ( DToS( datum ) >= DToS( oRow:FieldGet( oRow:FieldPos( "datum" ) ) ) )
             _data:Skip()
-        else
-            exit
-        endif
-    enddo
-endif
+         ELSE
+            EXIT
+         ENDIF
+      ENDDO
+   ENDIF
 
-// valuta u
-if ( val_u == "P" .or. val_u == "D" )
-    _where := " tip = " + _sql_quote( val_u )
-else
-    _where := " id = " + _sql_quote( val_u )
-endif
+   // valuta u
+   IF ( val_u == "P" .OR. val_u == "D" )
+      _where := " tip = " + _sql_quote( val_u )
+   ELSE
+      _where := " id = " + _sql_quote( val_u )
+   ENDIF
 
-if !EMPTY( datum )
-    _where += " AND ( " + _sql_date_parse( "datum", NIL, datum ) + ") "
-endif
+   IF !Empty( datum )
+      _where += " AND ( " + _sql_date_parse( "datum", NIL, datum ) + ") "
+   ENDIF
 
-_qry := "SELECT * FROM fmk.valute "
-_qry += "WHERE " + _where
-_qry += " ORDER BY id, datum"
+   _qry := "SELECT * FROM fmk.valute "
+   _qry += "WHERE " + _where
+   _qry += " ORDER BY id, datum"
 
-_data := _sql_query( my_server(), _qry )
-_data:Refresh()
-_data:GoTo(1)
-oRow := _data:GetRow(1)
+   _data := _sql_query( my_server(), _qry )
+   _data:Refresh()
+   _data:GoTo( 1 )
+   oRow := _data:GetRow( 1 )
 
-if _data:LastRec() == 0
-	Msg( "Nepostojeca valuta u koju se pretvara iznos:## '" + val_u + "' !" )
-  	_tmp_1 := 1
-    _tmp_2 := 1
-elseif !EMPTY( datum ) .and. ( DTOS( datum ) < DTOS( oRow:FieldGet( oRow:FieldPos( "datum" ))))
-  	Msg( "Nepostojeci kurs valute u koju se pretvara iznos:## '" + val_u + "'. Provjeriti datum !" )
-  	_tmp_1 := 1
-    _tmp_2 := 1
-else
-  	_id := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "id" ) ) )
-    do while !_data:EOF() .and. _id == hb_utf8tostr( _data:FieldGet( _data:FieldPos( "id" ) ) )
-        oRow := _data:GetRow()
-        _tmp_2 := oRow:FieldGet( oRow:FieldPos("kurs1") )
-        if !EMPTY( datum ) .and. ( DTOS( datum ) >= DTOS( oRow:FieldGet( oRow:FieldPos( "datum" ) ) ) )
+   IF _data:LastRec() == 0
+      Msg( "Nepostojeca valuta u koju se pretvara iznos:## '" + val_u + "' !" )
+      _tmp_1 := 1
+      _tmp_2 := 1
+   ELSEIF !Empty( datum ) .AND. ( DToS( datum ) < DToS( oRow:FieldGet( oRow:FieldPos( "datum" ) ) ) )
+      Msg( "Nepostojeci kurs valute u koju se pretvara iznos:## '" + val_u + "'. Provjeriti datum !" )
+      _tmp_1 := 1
+      _tmp_2 := 1
+   ELSE
+      _id := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "id" ) ) )
+      DO WHILE !_data:Eof() .AND. _id == hb_UTF8ToStr( _data:FieldGet( _data:FieldPos( "id" ) ) )
+         oRow := _data:GetRow()
+         _tmp_2 := oRow:FieldGet( oRow:FieldPos( "kurs1" ) )
+         IF !Empty( datum ) .AND. ( DToS( datum ) >= DToS( oRow:FieldGet( oRow:FieldPos( "datum" ) ) ) )
             _data:Skip()
-        else
-            exit
-        endif
-    enddo
-endif
+         ELSE
+            EXIT
+         ENDIF
+      ENDDO
+   ENDIF
 
-return ( _tmp_2 / _tmp_1 )
+   RETURN ( _tmp_2 / _tmp_1 )
 
 
 
@@ -128,122 +129,128 @@ return ( _tmp_2 / _tmp_1 )
 // -----------------------------------------------
 // vraca skraceni naziv domace valute
 // -----------------------------------------------
-function ValDomaca()     
-local _ret
-_ret := hb_utf8tostr( _sql_get_value( "fmk.valute", "naz2", { { "tip", "D" } } ) )
-return _ret
+FUNCTION ValDomaca()
+
+   LOCAL _ret
+
+   _ret := hb_UTF8ToStr( _sql_get_value( "fmk.valute", "naz2", { { "tip", "D" } } ) )
+
+   RETURN _ret
 
 
 
-// ------------------------------------------------
-// vraca skraceni naziv pomocne (strane) valute
-// -----------------------------------------------
-function ValPomocna()    
-local _ret
-_ret := hb_utf8tostr( _sql_get_value( "fmk.valute", "naz2", { { "tip", "P" } } ) )
-return _ret
+FUNCTION ValPomocna()
+
+   LOCAL _ret
+
+   _ret := hb_UTF8ToStr( _sql_get_value( "fmk.valute", "naz2", { { "tip", "P" } } ) )
+
+   RETURN _ret
 
 
 
-// -----------------------------------
-// -----------------------------------
-function P_Valuta(cid,dx,dy)
-local nTArea
-private ImeKol
-private Kol
+FUNCTION P_Valuta( cid, dx, dy )
 
-ImeKol := {}
-Kol := {}
+   LOCAL i, lRet
+   PRIVATE ImeKol
+   PRIVATE Kol
 
-nTArea := SELECT()
+   ImeKol := {}
+   Kol := {}
 
-O_VALUTE
+   PushWa()
 
-AADD(ImeKol,   { "ID "       , {|| id }   , "id"        })
-AADD(ImeKol,   { "Naziv"     , {|| naz}   , "naz"       })
-AADD(ImeKol,   { "Skrac."    , {|| naz2}  , "naz2"      })
-AADD(ImeKol,   { "Datum"     , {|| datum} , "datum"     })
-AADD(ImeKol,   { "Kurs"      , {|| kurs1} , "kurs1"     })
-AADD(ImeKol,   { "Tip(D/P/O)", {|| tip}   , "tip"    , ;
-                 {|| .t.}, ;
-		 {|| wtip$"DPO"}})
-
-for i:=1 to LEN(ImeKol)
-	AADD(Kol, i)
-next
-
-
-select (nTArea)
-
-return p_sifra( F_VALUTE, 2, 10, 77, "Valute", @cid, dx, dy)
-
-// -------------------------------------
-// sekundarna valuta
-// -------------------------------------
-function ValSekund()
-if gBaznaV=="D"
-  return ValPomocna()
-else
-  return ValDomaca()
-endif
-
-
-// --------------------------------------
-// omjer valuta
-// --------------------------------------
-function OmjerVal( ckU, ckIz, dD )
-local nU:=0
-local nIz:=0
-local nArr:=SELECT()
-   SELECT (F_VALUTE)
-   IF !USED()
    O_VALUTE
+
+   AAdd( ImeKol,   { "ID ",    {|| id }, "id"        } )
+   AAdd( ImeKol,   { "Naziv",  {|| naz }, "naz"       } )
+   AAdd( ImeKol,   { ToStrU( "Skrać." ), {|| naz2 }, "naz2"      } )
+   AAdd( ImeKol,   { "Datum",  {|| datum }, "datum"     } )
+   AAdd( ImeKol,   { "Kurs",   {|| kurs1 }, "kurs1"     } )
+   AAdd( ImeKol,   { "Tip(D/P/O)", {|| tip }, "tip", ;
+      {|| .T. }, ;
+      {|| wtip $ "DPO" } } )
+
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
+
+   lRet := p_sifra( F_VALUTE, 2, 10, 77, "Valute", @cid, dx, dy )
+
+   PopWa( F_VALUTE )
+
+   RETURN lRet
+
+
+
+
+FUNCTION ValSekund()
+
+   IF gBaznaV == "D"
+      RETURN ValPomocna()
+   ELSE
+      RETURN ValDomaca()
    ENDIF
 
-   PRIVATE cFiltV := "( naz2=="+cm2str( PADR(ckU,4) )+" .or. naz2=="+cm2str(PADR(ckIz,4))+" ) .and. DTOS(datum)<="+cm2str(DTOS(dD))
+
+
+FUNCTION OmjerVal( ckU, ckIz, dD )
+
+   LOCAL nU := 0
+   LOCAL nIz := 0
+   LOCAL nArr := Select()
+
+   SELECT ( F_VALUTE )
+   IF !Used()
+      O_VALUTE
+   ENDIF
+
+   PRIVATE cFiltV := "( naz2==" + cm2str( PadR( ckU, 4 ) ) + " .or. naz2==" + cm2str( PadR( ckIz, 4 ) ) + " ) .and. DTOS(datum)<=" + cm2str( DToS( dD ) )
    SET FILTER TO &cFiltV
    SET ORDER TO TAG "ID2"
    GO TOP
-   DO WHILE !EOF()
-     IF naz2==PADR(ckU,4)
-       nU  := IF(kurslis=="1", kurs1, IF(kurslis=="2", kurs2, kurs3))
-     ELSEIF naz2==PADR(ckIz,4)
-       nIz := IF(kurslis=="1",kurs1, IF(kurslis=="2", kurs2, kurs3))
-     ENDIF
-     SKIP 1
+   DO WHILE !Eof()
+      IF naz2 == PadR( ckU, 4 )
+         nU  := IF( kurslis == "1", kurs1, IF( kurslis == "2", kurs2, kurs3 ) )
+      ELSEIF naz2 == PadR( ckIz, 4 )
+         nIz := IF( kurslis == "1", kurs1, IF( kurslis == "2", kurs2, kurs3 ) )
+      ENDIF
+      SKIP 1
    ENDDO
    SET FILTER TO
-   
-   SELECT (nArr)
-   IF nIz==0
-     MsgBeep("Greska! Za valutu "+ ckIz + " na dan "+DTOC(dD)+" nemoguce utvrditi kurs!")
+
+   SELECT ( nArr )
+   IF nIz == 0
+      MsgBeep( "Greska! Za valutu " + ckIz + " na dan " + DToC( dD ) + " nemoguce utvrditi kurs!" )
    ENDIF
-   IF nU==0
-     MsgBeep("Greska! Za valutu "+ckU+" na dan "+DTOC(dD)+" nemoguce utvrditi kurs!")
+   IF nU == 0
+      MsgBeep( "Greska! Za valutu " + ckU + " na dan " + DToC( dD ) + " nemoguce utvrditi kurs!" )
    ENDIF
-RETURN IF( nIz==0 .or. nU==0 , 0 , (nU/nIz) )
+
+   RETURN IF( nIz == 0 .OR. nU == 0, 0, ( nU / nIz ) )
 
 
 
 
-// --------------------------------------------
-// --------------------------------------------
-function ImaUSifVal(cKratica)
-LOCAL lIma:=.f., nArr:=SELECT()
-   SELECT (F_VALUTE)
-   IF !USED()
-   	O_VALUTE
+FUNCTION ImaUSifVal( cKratica )
+
+   LOCAL lIma := .F., nArr := Select()
+
+   SELECT ( F_VALUTE )
+   IF !Used()
+      O_VALUTE
    ENDIF
    GO TOP
-   DO WHILE !EOF()
-     IF naz2==PADR(cKratica,4)
-       lIma:=.t.
-       EXIT
-     ENDIF
-     SKIP 1
+   DO WHILE !Eof()
+      IF naz2 == PadR( cKratica, 4 )
+         lIma := .T.
+         EXIT
+      ENDIF
+      SKIP 1
    ENDDO
-   SELECT (nArr)
-RETURN lIma
+   SELECT ( nArr )
+
+   RETURN lIma
 
 
 
@@ -251,44 +258,49 @@ RETURN lIma
 // -------------------------------------
 // pretvori u baznu valutu
 // -------------------------------------
-function UBaznuValutu(dDatdok)
-local  cIz
-if gBaznaV == "P"
-    cIz := "D"
-else
-    cIz := "P"
-endif
-return Kurs(dDatdok, cIz, gBaznaV)
+FUNCTION UBaznuValutu( dDatdok )
+
+   LOCAL  cIz
+
+   IF gBaznaV == "P"
+      cIz := "D"
+   ELSE
+      cIz := "P"
+   ENDIF
+
+   RETURN Kurs( dDatdok, cIz, gBaznaV )
 
 
 
 
-function ValBazna()
-if gBaznaV=="P"
-  return ValPomocna()
-else
-  return ValDomaca()
-endif
+FUNCTION ValBazna()
+
+   IF gBaznaV == "P"
+      RETURN ValPomocna()
+   ELSE
+      RETURN ValDomaca()
+   ENDIF
 
 
-/*! \fn OmjerVal(v1,v2)
- *  \brief Omjer valuta 
- *  \param v1  - valuta 1
- *  \param v2  - valuta 2
+/* 
+    OmjerVal(v1,v2)
+    Omjer valuta
+    v1  - valuta 1
+    v2  - valuta 2
  */
 
-function OmjerVal2(v1,v2)
-LOCAL nArr:=SELECT(), n1:=1, n2:=1, lv1:=.f., lv2:=.f.
-  SELECT VALUTE
-  SET ORDER TO TAG "ID2"
-  GO BOTTOM
-  DO WHILE !BOF() .and. (!lv1.or.!lv2)
-    IF !lv1 .and. naz2==v1; n1:=kurs1; lv1:=.t.; ENDIF
-    IF !lv2 .and. naz2==v2; n2:=kurs1; lv2:=.t.; ENDIF
-    SKIP -1
-  ENDDO
- SELECT (nArr)
-RETURN (n1/n2)
+FUNCTION OmjerVal2( v1, v2 )
 
+   LOCAL nArr := Select(), n1 := 1, n2 := 1, lv1 := .F., lv2 := .F.
 
+   SELECT VALUTE
+   SET ORDER TO TAG "ID2"
+   GO BOTTOM
+   DO WHILE !Bof() .AND. ( !lv1 .OR. !lv2 )
+      IF !lv1 .AND. naz2 == v1; n1 := kurs1; lv1 := .T. ; ENDIF
+      IF !lv2 .AND. naz2 == v2; n2 := kurs1; lv2 := .T. ; ENDIF
+      SKIP -1
+   ENDDO
+   SELECT ( nArr )
 
+   RETURN ( n1 / n2 )

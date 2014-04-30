@@ -99,7 +99,7 @@ FUNCTION module_menu( arg_v )
 
       _x := 1
 
-      @ _x, mnu_left + 1 SAY8 "Tekuća baza: " + AllTrim( _db_params[ "database" ] ) + " / db ver: " + _server_db_version
+      @ _x, mnu_left + 1 SAY8 "Tekuća baza: " + AllTrim( _db_params[ "database" ] ) + " / db ver: " + _server_db_version + " / nivo logiranja: " + AllTrim( Str( log_level() ) )
 
       ++ _x
       @ _x, mnu_left + 1 SAY "   Korisnik: " + AllTrim( _db_params[ "user" ] ) + "   u grupama " + _user_roles

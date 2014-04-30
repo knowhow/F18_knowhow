@@ -136,7 +136,6 @@ STATIC FUNCTION fakt_pripr_keyhandler()
    LOCAL _dev_id := 0
    LOCAL _dev_params
    LOCAL _fiscal_use := fiscal_opt_active()
-   LOCAL _items_atrib := hb_Hash()
    LOCAL _params := fakt_params()
    LOCAL _dok := hb_Hash()
    LOCAL oAtrib
@@ -159,7 +158,6 @@ STATIC FUNCTION fakt_pripr_keyhandler()
       ENDIF
 
       IF fakt_pripr->( RecCount() ) <> 0
-         // priprema nije prazna, nema stampanja racuna
          MsgBeep( "Priprema nije prazna, stampa fisk.racuna nije moguca!" )
          RETURN DE_CONT
       ENDIF
@@ -168,15 +166,12 @@ STATIC FUNCTION fakt_pripr_keyhandler()
          RETURN DE_CONT
       ENDIF
 
-      // pronadji mi device_id
       _dev_id := get_fiscal_device( my_user(), __tip_dok )
 
       IF _dev_id > 0
 
-         // setuj parametre za stampu
          _dev_params := get_fiscal_device_params( _dev_id, my_user() )
 
-         // nesto nije ok sa parametrima
          IF _dev_params == NIL
             RETURN DE_CONT
          ENDIF
@@ -186,7 +181,6 @@ STATIC FUNCTION fakt_pripr_keyhandler()
          RETURN DE_CONT
       ENDIF
 
-      // da li je korisniku dozvoljeno da stampa racune ?
       IF _dev_params[ "print_fiscal" ] == "N"
          MsgBeep( "Nije Vam dozvoljena opcija za stampu fiskalnih racuna !" )
          RETURN DE_CONT
@@ -203,7 +197,6 @@ STATIC FUNCTION fakt_pripr_keyhandler()
       IF _dev_params[ "print_a4" ] $ "D#G#X"
 
          IF _dev_params[ "print_a4" ] $ "D#X" .AND. Pitanje(, "Štampati fakturu ?", "N" ) == "D"
-            // stampaj dokument odmah nakon fiskalnog racuna
             StampTXT( __id_firma, __tip_dok, __br_dok )
             close_open_fakt_tabele()
             select_fakt_pripr()
@@ -223,7 +216,6 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 
    CASE Upper( Chr( Ch ) ) == "T"
 
-      // total dokumenta box
       _total_dokumenta()
       RETURN DE_REFRESH
 
@@ -237,84 +229,24 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 
    CASE Ch == K_ENTER
 
-      Box( "ist", MAXROWS() - 10, MAXCOLS() - 10, .F. )
-
-      set_global_vars_from_dbf( "_" )
-
-      _dok[ "idfirma" ] := _idfirma
-      _dok[ "idtipdok" ] := _idtipdok
-      _dok[ "brdok" ] := _brdok
-      _dok[ "rbr" ] := _rbr
-
-      __redni_broj := RbrUnum( _rbr )
-
-      IF _params[ "fakt_opis_stavke" ]
-         _items_atrib[ "opis" ] := get_fakt_atribut_opis( _dok, .F. )
-      ENDIF
-
-      IF _params[ "ref_lot" ]
-         _items_atrib[ "ref" ] := get_fakt_atribut_ref( _dok, .F. )
-         _items_atrib[ "lot" ] := get_fakt_atribut_lot( _dok, .F. )
-      ENDIF
-
-      IF edit_fakt_priprema( .F., @_items_atrib ) == 0
-         _ret := DE_CONT
+      IF fakt_ispravi_dokument( _params )
+          RETURN DE_REFRESH
       ELSE
-
-         _dok_hash := hb_Hash()
-         _dok_hash[ "idfirma" ] := _idfirma
-         _dok_hash[ "idtipdok" ] := _idtipdok
-         _dok_hash[ "brdok" ] := _brdok
-         _dok_hash[ "rbr" ] := _rbr
-
-         oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )
-         oAtrib:dok_hash := _dok_hash
-         // ubaci mi atribute u fakt_atribute
-         oAtrib:atrib_hash_to_dbf( _items_atrib )
-
-         _rec := get_dbf_global_memvars( "_" )
-
-         dbf_update_rec( _rec, .F. )
-
-         PrCijSif()
-
-         // izmjeni sve stavke dokumenta na osnovu prve stavke
-         IF __redni_broj == 1
-            // todo: cim prije i ovo zavrsiti, za sada gasim opciju
-            _new_dok := dbf_get_rec()
-            izmjeni_sve_stavke_dokumenta( _dok, _new_dok )
-         ENDIF
-
-         _ret := DE_REFRESH
-
+          RETURN DE_CONT
       ENDIF
 
-      BoxC()
-
-      TB:RefreshAll()
-      DO WHILE !TB:stable
-         Tb:stabilize()
-      ENDDO
-
-      RETURN _ret
-
-
-      // cirkularna ispravka stavki....
    CASE Ch == K_CTRL_A
 
       fakt_prodji_kroz_stavke()
       RETURN DE_REFRESH
 
-      // unos nove stavke
    CASE Ch == K_CTRL_N
 
       fakt_unos_nove_stavke()
       RETURN DE_REFRESH
 
-      // stampanje dokumenta
    CASE Ch == K_CTRL_P
 
-      // printaj dokument
       fakt_print_dokument()
 
 #ifdef TEST
@@ -325,7 +257,6 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 
    CASE Ch == K_ALT_P
         
-        // setuj broj dokumenta u pripremi ako vec nije
         fakt_set_broj_dokumenta()
 
         IF !CijeneOK( "Stampanje" )
@@ -355,18 +286,14 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 
       RETURN DE_REFRESH
 
-      // azuriranje dokumenta
    CASE Ch == K_ALT_A
 
-      // setuj prvo broj dokumenta u pripremi...
       fakt_set_broj_dokumenta()
 
-      // ima li kakvih rupa na server strani ?
       IF fakt_postoji_li_rupa_u_brojacu( field->idfirma, field->idtipdok, field->brdok ) > 0
          RETURN DE_REFRESH
       ENDIF
 
-      // setuj podatke za fiskalni racun
       __id_firma  := field->idfirma
       __tip_dok := field->idtipdok
       __br_dok  := field->brdok
@@ -414,8 +341,6 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 
       _t_area := Select()
 
-
-      // stari parametar...
       IF !_params[ "fakt_otpr_gen" ]
          fakt_generisi_racun_iz_otpremnice()
       ELSE
@@ -430,7 +355,6 @@ STATIC FUNCTION fakt_pripr_keyhandler()
       SELECT ( _t_area )
       RETURN DE_REFRESH
 
-      // asistent
    CASE Upper( Chr( Ch ) ) == "A"
 
       PRIVATE _broj_entera := 30
@@ -457,13 +381,9 @@ STATIC FUNCTION fakt_pripr_keyhandler()
       SetLastKey( K_CTRL_PGDN )
       RETURN DE_REFRESH
 
-
-      // pregled smeca
    CASE Ch == K_F11
 
-      // pregled smeca
       Pripr9View()
-
       select_fakt_pripr()
       GO TOP
 
@@ -557,8 +477,7 @@ STATIC FUNCTION fakt_prodji_kroz_stavke()
       _rec := get_dbf_global_memvars( "_" )
       dbf_update_rec( _rec, .F. )
 
-      // ako treba, promijeni cijenu u sifrarniku
-      PrCijSif()
+      fakt_promjena_cijene_u_sif()
 
       GO _rec_no
 
@@ -568,6 +487,99 @@ STATIC FUNCTION fakt_prodji_kroz_stavke()
    BoxC()
 
    RETURN
+
+
+// -------------------------------------------------------------------------------------------------------
+// dodaje ili ispravlja stavku u tabeli FAKT_PRIPR
+// novi - logički uslov nova stavka .T. ili .F.
+// item_hash - hash matrica sa podacima stavke ( idfirma, idtipdok, brdok, rbr ) prije upisivanja u DBF
+// items_atrib - hash matrica sa atributima definisanim na stavci kod unosa
+// -------------------------------------------------------------------------------------------------------
+STATIC FUNCTION fakt_dodaj_ispravi_stavku( novi, item_hash, items_atrib )
+
+   LOCAL oAtrib, _rec, _item_after_hash
+   LOCAL new_hash := hb_Hash()
+
+   IF novi == .T.
+       APPEND BLANK
+   ENDIF
+
+   // dodaj zapis u tabelu FAKT_PRIPR
+   _rec := get_dbf_global_memvars( "_" )
+   dbf_update_rec( _rec, .F. )
+
+   // hash matrica koja sadrži update-ovan zapis 
+   new_hash["idfirma"] := fakt_pripr->idfirma
+   new_hash["idtipdok"] := fakt_pripr->idtipdok
+   new_hash["brdok"] := fakt_pripr->brdok
+   new_hash["rbr"] := fakt_pripr->rbr
+
+   // ažuriraj atribute u FAKT_FAKT_ATRIBUTI
+   oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )
+   oAtrib:dok_hash := new_hash
+
+   IF !novi .AND. ( item_hash["rbr"] <> new_hash["rbr"] )
+      oAtrib:dok_hash["update_rbr"] := item_hash["rbr"]
+      oAtrib:update_atrib_rbr()
+   ENDIF
+
+   oAtrib:atrib_hash_to_dbf( items_atrib )
+
+   fakt_promjena_cijene_u_sif()
+
+   // nešto što mjenja sve stavke dokumenta u pripremi ako se promjeni prva stavka
+   // promjena broja dokumenta i slično
+   IF __redni_broj == 1 .and. !novi
+      izmjeni_sve_stavke_dokumenta( item_hash, new_hash )
+   ENDIF
+
+   RETURN
+
+
+
+STATIC FUNCTION fakt_ispravi_dokument( fakt_params )
+
+   LOCAL _ret := .T.
+   LOCAL _items_atrib := hb_Hash()
+   LOCAL _item_before, _item_after
+
+   Box( "ist", MAXROWS() - 10, MAXCOLS() - 10, .F. )
+
+   set_global_vars_from_dbf( "_" )
+
+   _item_before := hb_Hash()
+   _item_before[ "idfirma" ] := _idfirma
+   _item_before[ "idtipdok" ] := _idtipdok
+   _item_before[ "brdok" ] := _brdok
+   _item_before[ "rbr" ] := _rbr
+
+   __redni_broj := RbrUnum( _rbr )
+
+   IF fakt_params[ "fakt_opis_stavke" ]
+      _items_atrib[ "opis" ] := get_fakt_atribut_opis( _item_before, .F. )
+   ENDIF
+
+   IF fakt_params[ "ref_lot" ]
+      _items_atrib[ "ref" ] := get_fakt_atribut_ref( _item_before, .F. )
+      _items_atrib[ "lot" ] := get_fakt_atribut_lot( _item_before, .F. )
+   ENDIF
+
+   IF edit_fakt_priprema( .F., @_items_atrib ) == 0
+      _ret := .F.
+   ELSE
+      fakt_dodaj_ispravi_stavku( .F., _item_before, _items_atrib )
+      _ret := .T.
+   ENDIF
+
+   BoxC()
+
+   TB:RefreshAll()
+   DO WHILE !TB:stable
+     Tb:stabilize()
+   ENDDO
+
+   RETURN _ret
+
 
 
 
@@ -633,24 +645,7 @@ STATIC FUNCTION fakt_unos_nove_stavke()
       InkeySc( 10 )
 
       select_fakt_pripr()
-      APPEND BLANK
-
-      _rec := get_dbf_global_memvars( "_" )
-      dbf_update_rec( _rec, .F. )
-
-      _dok_hash := hb_Hash()
-      _dok_hash[ "idfirma" ] := field->idfirma
-      _dok_hash[ "idtipdok" ] := field->idtipdok
-      _dok_hash[ "brdok" ] := field->brdok
-      _dok_hash[ "rbr" ] := field->rbr
-
-      // ubaci mi atribute u fakt_atribute
-      oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )
-      oAtrib:dok_hash := _dok_hash
-      oAtrib:atrib_hash_to_dbf( _items_atrib )
-
-      // promijeni cijenu u sifrarniku ako treba
-      PrCijSif()
+      fakt_dodaj_ispravi_stavku( .T., NIL, _items_atrib )
 
    ENDDO
 

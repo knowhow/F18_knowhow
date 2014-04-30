@@ -174,7 +174,7 @@ FUNCTION _set_sif_id( nId, cIdField, lAuto, cont )
       cont := "CONT"
    ENDIF
 
-   _inc_id( @nId, cIdField, cIndex, lAuto )
+   rnal_inc_id( @nId, cIdField, cIndex, lAuto )
 
    set_global_memvars_from_dbf()
 

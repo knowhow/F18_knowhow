@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,913 +14,905 @@
 
 
 // staticke varijable
-static __device_id := 0
-static __device_params
-static __auto := .f.
-static __racun_na_email := NIL
-static __partn_ino
-static __partn_pdv
-static __vrsta_pl
-static __prikazi_partnera
-static __DRV_TREMOL := "TREMOL"
-static __DRV_FPRINT := "FPRINT"
-static __DRV_FLINK := "FLINK"
-static __DRV_HCP := "HCP"
-static __DRV_TRING := "TRING"
-static __DRV_CURRENT
+STATIC __device_id := 0
+STATIC __device_params
+STATIC __auto := .F.
+STATIC __racun_na_email := NIL
+STATIC __partn_ino
+STATIC __partn_pdv
+STATIC __vrsta_pl
+STATIC __prikazi_partnera
+STATIC __DRV_TREMOL := "TREMOL"
+STATIC __DRV_FPRINT := "FPRINT"
+STATIC __DRV_FLINK := "FLINK"
+STATIC __DRV_HCP := "HCP"
+STATIC __DRV_TRING := "TRING"
+STATIC __DRV_CURRENT
 
 
-// --------------------------------------------------------------------------
-// param: slati racun na email
-// --------------------------------------------------------------------------
-function param_racun_na_email(read_par)
-if read_par != NIL
-    __racun_na_email := fetch_metric( "fakt_dokument_na_email", my_user(), "" )
-endif   
-return __racun_na_email
+FUNCTION param_racun_na_email( read_par )
 
+   IF read_par != NIL
+      __racun_na_email := fetch_metric( "fakt_dokument_na_email", my_user(), "" )
+   ENDIF
 
-
-// --------------------------------------------------------------------
-// centralna funkcija za poziv stampe fiskalnog racuna
-// --------------------------------------------------------------------
-function fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
-local _err_level := 0
-local _dev_drv
-local _storno := .f.
-local _items_data, _partn_data
-local _cont := "1"
-
-// koriste li se fiskalne opcije uopste ?
-if !fiscal_opt_active()
-    return _err_level
-endif
-
-if ( auto_print == NIL )
-    auto_print := .f.
-endif
-
-// set automatsko stampanje, bez informacija
-if auto_print
-    __auto := .t.
-endif
-
-if dev_param == NIL
-    return _err_level
-endif
-
-__device_params := dev_param
-
-// drajver ??
-_dev_drv := ALLTRIM( dev_param["drv"] )
-__DRV_CURRENT := _dev_drv
-
-// priprema podatak za racun....
-select fakt_doks
-set filter to
-
-select fakt
-set filter to
-
-select partn
-set filter to
-
-select fakt_doks
-
-// da li je racun storno ????
-_storno := fakt_dok_is_storno( id_firma, tip_dok, br_dok )
-
-if VALTYPE( _storno ) == "N" .and. _storno == -1
-	return _err_level
-endif
-
-// pripremi matricu sa podacima partnera itd....
-_partn_data := fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, _storno )
-
-if VALTYPE( _partn_data ) == "L"
-    // nesto nije dobro, zatvaram opciju
-    return 1
-endif
-
-// pripremi mi matricu sa stavkama racuna
-_items_data := fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, _storno, _partn_data )
-
-// da nije slucajno NIL ???
-if VALTYPE( _items_data ) == "L" .or. _items_data == NIL
-    return 1
-endif
-
-do case
-
-    case _dev_drv == "TEST"
-        // test uredjaj, propusta opciju fiskalnog racuna
-        // azurira racun i prakticno ne uradi nista...
-        _err_level := 0
-
-    case _dev_drv == __DRV_FPRINT
-        _err_level := fakt_to_fprint( id_firma, tip_dok, br_dok, _items_data, _partn_data, _storno )
-
-    case _dev_drv == __DRV_TREMOL
-        _cont := "1"
-        _err_level := fakt_to_tremol( id_firma, tip_dok, br_dok, _items_data, _partn_data, _storno, _cont )
-
-    case _dev_drv == __DRV_HCP
-        _err_level := fakt_to_hcp( id_firma, tip_dok, br_dok, _items_data, _partn_data, _storno )
-
-    case _dev_drv == __DRV_TRING
-        _err_level := fakt_to_tring( id_firma, tip_dok, br_dok, _items_data, _partn_data, _storno )
-
-    //case _dev_drv == __DRV_FLINK
-      //  _err_level := fakt_to_flink( id_firma, tip_dok, br_dok, _items_data, _partn_data, _storno )
-
-endcase
-
-// vrati se na my_home()
-// da ne bi ostao tekuci direktorij na lokaciji izlaznog racuna
-DirChange( my_home() )
-
-// logiraj operaciju...
-log_write( "fiskalni racun " + _dev_drv + " za dokument: " + ;
-            ALLTRIM( id_firma ) + "-" + ALLTRIM( tip_dok ) + "-" + ALLTRIM( br_dok ) + ;
-            " err level: " + ALLTRIM(STR( _err_level )) + ;
-            " partner: " + IF( _partn_data <> NIL, ALLTRIM( _partn_data[ 1, 1 ] ) + ;
-                            " - " + ALLTRIM( _partn_data[ 1, 2 ] ), "NIL" ), 3 )
-
-// drugi pokusaj u slucaju greske !
-if _err_level > 0
-    
-    if _dev_drv == __DRV_TREMOL
-        
-        // posalji drugi put za ponistavanje komande racuna
-        // parametar continue = 2
-        _cont := "2"
-        _err_level := fakt_to_tremol( id_firma, tip_dok, br_dok, _items_data, _partn_data, _storno, _cont )
-
-        if _err_level > 0
-            msgbeep("Problem sa stampanjem na fiskalni stampac !!!")
-        endif
-
-    endif
-
-endif
-
-return _err_level
+   RETURN __racun_na_email
 
 
 
-// ---------------------------------------------------------------
-// box reklamni racun
-// ---------------------------------------------------------------
-function reklamni_rn_box( rekl_rn )
 
-Box(, 1, 60 )
-    @ m_x + 1, m_y + 2 SAY "Reklamiramo fiskalni racun broj:" ;
-            GET rekl_rn PICT "999999999" VALID ( rekl_rn > 0 )
-    read
-BoxC()
+FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
 
-if LastKey() == K_ESC .and. rekl_rn == 0
-    rekl_rn := -1
-endif
+   LOCAL _err_level := 0
+   LOCAL _dev_drv
+   LOCAL _storno := .F.
+   LOCAL _items_data, _partn_data
+   LOCAL _cont := "1"
 
-return rekl_rn
+   // koriste li se fiskalne opcije uopste ?
+   IF !fiscal_opt_active()
+      RETURN _err_level
+   ENDIF
+
+   IF ( auto_print == NIL )
+      auto_print := .F.
+   ENDIF
+
+   // set automatsko stampanje, bez informacija
+   IF auto_print
+      __auto := .T.
+   ENDIF
+
+   IF dev_param == NIL
+      RETURN _err_level
+   ENDIF
+
+   __device_params := dev_param
+
+   // drajver ??
+   _dev_drv := AllTrim( dev_param[ "drv" ] )
+   __DRV_CURRENT := _dev_drv
+
+   // priprema podatak za racun....
+   SELECT fakt_doks
+   SET FILTER TO
+
+   SELECT fakt
+   SET FILTER TO
+
+   SELECT partn
+   SET FILTER TO
+
+   SELECT fakt_doks
+
+   // da li je racun storno ????
+   _storno := fakt_dok_is_storno( id_firma, tip_dok, br_dok )
+
+   IF ValType( _storno ) == "N" .AND. _storno == -1
+      RETURN _err_level
+   ENDIF
+
+   // pripremi matricu sa podacima partnera itd....
+   _partn_data := fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, _storno )
+
+   IF ValType( _partn_data ) == "L"
+      // nesto nije dobro, zatvaram opciju
+      RETURN 1
+   ENDIF
+
+   // pripremi mi matricu sa stavkama racuna
+   _items_data := fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, _storno, _partn_data )
+
+   // da nije slucajno NIL ???
+   IF ValType( _items_data ) == "L" .OR. _items_data == NIL
+      RETURN 1
+   ENDIF
+
+   DO CASE
+
+   CASE _dev_drv == "TEST"
+      // test uredjaj, propusta opciju fiskalnog racuna
+      // azurira racun i prakticno ne uradi nista...
+      _err_level := 0
+
+   CASE _dev_drv == __DRV_FPRINT
+      _err_level := fakt_to_fprint( id_firma, tip_dok, br_dok, _items_data, _partn_data, _storno )
+
+   CASE _dev_drv == __DRV_TREMOL
+      _cont := "1"
+      _err_level := fakt_to_tremol( id_firma, tip_dok, br_dok, _items_data, _partn_data, _storno, _cont )
+
+   CASE _dev_drv == __DRV_HCP
+      _err_level := fakt_to_hcp( id_firma, tip_dok, br_dok, _items_data, _partn_data, _storno )
+
+   CASE _dev_drv == __DRV_TRING
+      _err_level := fakt_to_tring( id_firma, tip_dok, br_dok, _items_data, _partn_data, _storno )
+
+   ENDCASE
+
+   // vrati se na my_home()
+   // da ne bi ostao tekuci direktorij na lokaciji izlaznog racuna
+   DirChange( my_home() )
+
+   // logiraj operaciju...
+   log_write( "fiskalni racun " + _dev_drv + " za dokument: " + ;
+      AllTrim( id_firma ) + "-" + AllTrim( tip_dok ) + "-" + AllTrim( br_dok ) + ;
+      " err level: " + AllTrim( Str( _err_level ) ) + ;
+      " partner: " + IF( _partn_data <> NIL, AllTrim( _partn_data[ 1, 1 ] ) + ;
+      " - " + AllTrim( _partn_data[ 1, 2 ] ), "NIL" ), 3 )
+
+   // drugi pokusaj u slucaju greske !
+   IF _err_level > 0
+
+      IF _dev_drv == __DRV_TREMOL
+
+         // posalji drugi put za ponistavanje komande racuna
+         // parametar continue = 2
+         _cont := "2"
+         _err_level := fakt_to_tremol( id_firma, tip_dok, br_dok, _items_data, _partn_data, _storno, _cont )
+
+         IF _err_level > 0
+            msgbeep( "Problem sa stampanjem na fiskalni stampac !!!" )
+         ENDIF
+
+      ENDIF
+
+   ENDIF
+
+   RETURN _err_level
 
 
 
-// --------------------------------------------------------------------
-// provjerava da li je racun storno
-// --------------------------------------------------------------------
-static function fakt_dok_is_storno( id_firma, tip_dok, br_dok )
-local _storno := .t.
-local _t_rec
+FUNCTION reklamni_rn_box( rekl_rn )
 
-select fakt
-set order to tag "1"
-go top
-seek ( id_firma + tip_dok + br_dok )
+   Box(, 1, 60 )
+   @ m_x + 1, m_y + 2 SAY "Reklamiramo fiskalni racun broj:" ;
+      GET rekl_rn PICT "999999999" VALID ( rekl_rn > 0 )
+   READ
+   BoxC()
 
-if !FOUND()
-	MsgBeep( "Ne mogu locirati dokument - is storno !" )
-	return -1
-endif
+   IF LastKey() == K_ESC .AND. rekl_rn == 0
+      rekl_rn := -1
+   ENDIF
 
-_t_rec := RECNO()
-
-do while !EOF() .and. field->idfirma == id_firma ;
-                .and. field->idtipdok == tip_dok ;
-                .and. field->brdok == br_dok
-
-    if field->kolicina > 0
-        _storno := .f.
-        exit
-    endif
-    
-    skip
-
-enddo
-
-go ( _t_rec )
-
-return _storno
+   RETURN rekl_rn
 
 
 
-// --------------------------------------------------
-// otvaranje potrebnih tabela
-// --------------------------------------------------
-static function _o_tables()
-O_TARIFA
-O_FAKT_DOKS
-O_FAKT
-O_ROBA
-O_SIFK
-O_SIFV
-return
+STATIC FUNCTION fakt_dok_is_storno( id_firma, tip_dok, br_dok )
+
+   LOCAL _storno := .T.
+   LOCAL _t_rec
+
+   SELECT fakt
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK ( id_firma + tip_dok + br_dok )
+
+   IF !Found()
+      MsgBeep( "Ne mogu locirati dokument - is storno !" )
+      RETURN -1
+   ENDIF
+
+   _t_rec := RecNo()
+
+   DO WHILE !Eof() .AND. field->idfirma == id_firma ;
+         .AND. field->idtipdok == tip_dok ;
+         .AND. field->brdok == br_dok
+
+      IF field->kolicina > 0
+         _storno := .F.
+         EXIT
+      ENDIF
+
+      SKIP
+
+   ENDDO
+
+   GO ( _t_rec )
+
+   RETURN _storno
+
+
+
+STATIC FUNCTION fakt_fiscal_o_tables()
+
+   O_TARIFA
+   O_FAKT_DOKS
+   O_FAKT
+   O_ROBA
+   O_SIFK
+   O_SIFV
+
+   RETURN
 
 
 
 // ----------------------------------------------------------
 // kalkulise iznose na osnovu datih parametara
 // ----------------------------------------------------------
-static function fakt_izracunaj_total( arr, partner, tip_dok )
-local _calc := hb_hash()
-local _tar, _i, _iznos
-local _t_area := SELECT()
+STATIC FUNCTION fakt_izracunaj_total( arr, partner, tip_dok )
 
-_calc["ukupno"] := 0
-_calc["pdv"] := 0
-_calc["osnovica"] := 0
+   LOCAL _calc := hb_Hash()
+   LOCAL _tar, _i, _iznos
+   LOCAL _t_area := Select()
 
-// prodji kroz matricu sa porezima i iznosima
-for _i := 1 to LEN( arr )
+   _calc[ "ukupno" ] := 0
+   _calc[ "pdv" ] := 0
+   _calc[ "osnovica" ] := 0
 
-    _tar := PADR( arr[ _i, 1 ], 6 )
-    _iznos := arr[ _i, 2 ]
+   // prodji kroz matricu sa porezima i iznosima
+   FOR _i := 1 TO Len( arr )
 
-    select tarifa
-    hseek _tar
+      _tar := PadR( arr[ _i, 1 ], 6 )
+      _iznos := arr[ _i, 2 ]
 
-    if tip_dok $ "11#13#23"
-        // MP dokumenti, kod njih je ovo iznos sa porezom
-        if !IsIno( partner ) .and. !IsOslClan( partner ) .and. tarifa->opp > 0
-            _calc["ukupno"] := _calc["ukupno"] + _iznos
-            _calc["osnovica"] := _calc["osnovica"] + ( _iznos / ( 1 + tarifa->opp / 100 ) )
-            _calc["pdv"] := _calc["pdv"] + ( ( _iznos / ( 1 + tarifa->opp / 100 ) ) * ( tarifa->opp / 100 ) )
-        else
-            _calc["ukupno"] := _calc["ukupno"] + _iznos
-            _calc["osnovica"] := _calc["osnovica"] + _iznos
-        endif
-    else
-        // VP dokumenti, kod njih je ovo iznos bez poreza
-        if !IsIno( partner ) .and. !IsOslClan( partner ) .and. tarifa->opp > 0
-            _calc["ukupno"] := _calc["ukupno"] + ( _iznos * ( 1 + tarifa->opp / 100 ) )
-            _calc["osnovica"] := _calc["osnovica"] + _iznos
-            _calc["pdv"] := _calc["pdv"] + ( _iznos * ( tarifa->opp / 100 ) )
-        else
-            _calc["ukupno"] := _calc["ukupno"] + _iznos
-            _calc["osnovica"] := _calc["osnovica"] + _iznos
-        endif
-    endif
+      SELECT tarifa
+      hseek _tar
 
-next
+      IF tip_dok $ "11#13#23"
+         // MP dokumenti, kod njih je ovo iznos sa porezom
+         IF !IsIno( partner ) .AND. !IsOslClan( partner ) .AND. tarifa->opp > 0
+            _calc[ "ukupno" ] := _calc[ "ukupno" ] + _iznos
+            _calc[ "osnovica" ] := _calc[ "osnovica" ] + ( _iznos / ( 1 + tarifa->opp / 100 ) )
+            _calc[ "pdv" ] := _calc[ "pdv" ] + ( ( _iznos / ( 1 + tarifa->opp / 100 ) ) * ( tarifa->opp / 100 ) )
+         ELSE
+            _calc[ "ukupno" ] := _calc[ "ukupno" ] + _iznos
+            _calc[ "osnovica" ] := _calc[ "osnovica" ] + _iznos
+         ENDIF
+      ELSE
+         // VP dokumenti, kod njih je ovo iznos bez poreza
+         IF !IsIno( partner ) .AND. !IsOslClan( partner ) .AND. tarifa->opp > 0
+            _calc[ "ukupno" ] := _calc[ "ukupno" ] + ( _iznos * ( 1 + tarifa->opp / 100 ) )
+            _calc[ "osnovica" ] := _calc[ "osnovica" ] + _iznos
+            _calc[ "pdv" ] := _calc[ "pdv" ] + ( _iznos * ( tarifa->opp / 100 ) )
+         ELSE
+            _calc[ "ukupno" ] := _calc[ "ukupno" ] + _iznos
+            _calc[ "osnovica" ] := _calc[ "osnovica" ] + _iznos
+         ENDIF
+      ENDIF
 
-select ( _t_area )
+   NEXT
 
-return _calc
+   SELECT ( _t_area )
 
-
-
-// -------------------------------------------------
-// -------------------------------------------------
-static function get_a_iznos( idfirma, idtipdok, brdok )
-local _a_iznos := {}
-local _tar, _roba, _scan
-
-select fakt
-go top
-seek idfirma + idtipdok + brdok
-do while !EOF() .and. field->idfirma == idfirma .and. ;
-                    field->idtipdok == idtipdok .and. ;
-                    field->brdok == brdok
-
-    _roba := field->idroba
-    _cijena := field->cijena
-    _kol := field->kolicina 
-    _rab := field->rabat
-
-    select roba
-    hseek _roba
-
-    select tarifa
-    hseek roba->idtarifa
-
-    _tar := tarifa->id
-
-    select fakt
-
-    if field->dindem == LEFT( ValBazna(), 3 )
-        _iznos := Round( _kol * _cijena * PrerCij() * ( 1 - _rab / 100), ZAOKRUZENJE )
-    else
-        _iznos := round( _kol * _cijena * PrerCij() * ( 1 - _rab / 100), ZAOKRUZENJE )
-    endif
-
-    // roba zasticena cijena !
-    // ove tarife cemo tretirati u kalkulaciji kao PDV17 takodjer
-    if RobaZastCijena( _tar )
-        _tar := PADR( "PDV17", 6 )
-    endif
-   
-    _scan := ASCAN( _a_iznos, { |var| var[1] == _tar } )
-
-    if _scan == 0
-        AADD( _a_iznos, { PADR( _tar, 6 ), _iznos } )
-    else
-        _a_iznos[ _scan, 2 ] := _a_iznos[ _scan, 2 ] + _iznos
-    endif
-
-    skip
-
-enddo
-
-return _a_iznos
+   RETURN _calc
 
 
 
-// -----------------------------------------------------------------------------
-// pripremi podatke u matricu
-// -----------------------------------------------------------------------------
-static function fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, storno, partn_arr )
-local _data := {}
-local _n_rn_broj, _rn_iznos, _rn_rabat, _rn_datum, _rekl_rn_broj
-local _vrsta_pl, _partn_id, _rn_total, _rn_f_total
-local _art_id, _art_plu, _art_naz, _art_jmj, _v_plac
-local _art_barkod, _rn_rbr, _memo
-local _pop_na_teret_prod := .f.
-local _partn_ino := .f.
-local _partn_pdv := .t.
-local _a_iznosi := {}
-local _data_item, _data_total, _arr
 
-// 0 - gotovina
-// 3 - ziralno / virman
+STATIC FUNCTION get_a_iznos( idfirma, idtipdok, brdok )
 
-_v_plac := "0"
+   LOCAL _a_iznos := {}
+   LOCAL _tar, _roba, _scan
 
-if partn_arr <> NIL
-    // u ovim clanovima matrice su mi podaci 
-    // o partneru
-    _v_plac := partn_arr[ 1, 6 ]
-    _partn_ino := partn_arr[ 1, 7 ]
-    _partn_pdv := partn_arr[ 1, 8 ]
-else
-    // uzmi na osnovu statickih varijabli
-    _v_plac := __vrsta_pl
-    _partn_ino := __partn_ino
-    _partn_pdv := __partn_pdv
-endif
+   SELECT fakt
+   GO TOP
+   SEEK idfirma + idtipdok + brdok
+   DO WHILE !Eof() .AND. field->idfirma == idfirma .AND. field->idtipdok == idtipdok .AND. field->brdok == brdok
 
-if storno == NIL
-    storno := .f.
-endif
+      _roba := field->idroba
+      _cijena := field->cijena
+      _kol := field->kolicina
+      _rab := field->rabat
 
-// otvori mi potrebne tabele
-_o_tables()
+      SELECT roba
+      hseek _roba
 
-// nastimaj me na fakt_doks
-select fakt_doks
-go top
-seek ( id_firma + tip_dok + br_dok )
+      SELECT tarifa
+      hseek roba->idtarifa
 
-_n_rn_broj := VAL(ALLTRIM(field->brdok))
-_rekl_rn_broj := field->fisc_rn
+      _tar := tarifa->id
 
-_rn_iznos := field->iznos
-_rn_rabat := field->rabat
-_rn_datum := field->datdok
-_partn_id := field->idpartner
+      SELECT fakt
 
-// matrica sa tarifama i iznosima ukupnim sa dokumenta...
-_a_iznosi := get_a_iznos( id_firma, tip_dok, br_dok )
-_data_total := fakt_izracunaj_total( _a_iznosi, _partn_id, tip_dok )
+      IF field->dindem == Left( ValBazna(), 3 )
+         _iznos := Round( _kol * _cijena * PrerCij() * ( 1 - _rab / 100 ), ZAOKRUZENJE )
+      ELSE
+         _iznos := Round( _kol * _cijena * PrerCij() * ( 1 - _rab / 100 ), ZAOKRUZENJE )
+      ENDIF
 
-// nastimaj me na fakt_fakt
-select fakt
-go top
-seek ( id_firma + tip_dok + br_dok )
+      // roba zasticena cijena !
+      // ove tarife cemo tretirati u kalkulaciji kao PDV17 takodjer
+      IF RobaZastCijena( _tar )
+         _tar := PadR( "PDV17", 6 )
+      ENDIF
 
-if !FOUND()
-    // ovaj racun nema stavki !!!!
-    MsgBeep( "Racun ne posjeduje niti jednu stavku#Stampanje onemoguceno !!!" )
-    return NIL
-endif
+      _scan := AScan( _a_iznos, {|var| VAR[ 1 ] == _tar } )
 
-// koji je broj racuna koji storniramo
-if storno 
-    _rekl_rn_broj := reklamni_rn_box( _rekl_rn_broj )
-endif
+      IF _scan == 0
+         AAdd( _a_iznos, { PadR( _tar, 6 ), _iznos } )
+      ELSE
+         _a_iznos[ _scan, 2 ] := _a_iznos[ _scan, 2 ] + _iznos
+      ENDIF
 
-// ESC na unosu veze racuna
-if _rekl_rn_broj == -1
-    MsgBeep( "Broj veze racuna mora biti setovan" )
-    return NIL
-endif
+      SKIP
 
-// i total sracunaj sa pdv
-// upisat cemo ga u svaku stavku matrice
-// to je total koji je bitan kod regularnih racuna
-// pdv, ne pdv obveznici itd...
-//_rn_total := _uk_sa_pdv( tip_dok, _partn_id, _rn_iznos )
+   ENDDO
 
-_rn_total := _data_total["ukupno"]
+   RETURN _a_iznos
 
-// total za sracunavanje kod samaranja po stavkama racuna
-_rn_f_total := 0
 
-// upisi u matricu stavke
-do while !EOF() .and. field->idfirma == id_firma ;
-                .and. field->idtipdok == tip_dok ;
-                .and. field->brdok == br_dok
 
-    select roba
-    seek fakt->idroba
-   
-    select fakt
+/*
+    pripremi podatke u matricu
+*/
 
-    // storno identifikator
-    _storno_ident := 0
+STATIC FUNCTION fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, storno, partn_arr )
 
-    if ( field->kolicina < 0 ) .and. !storno
-        _storno_ident := 1
-    endif
-    
-    _rn_broj := fakt->brdok
-    _rn_rbr := fakt->rbr
+   LOCAL _data := {}
+   LOCAL _n_rn_broj, _rn_iznos, _rn_rabat, _rn_datum, _rekl_rn_broj
+   LOCAL _vrsta_pl, _partn_id, _rn_total, _rn_f_total
+   LOCAL _art_id, _art_plu, _art_naz, _art_jmj, _v_plac
+   LOCAL _art_barkod, _rn_rbr, _memo
+   LOCAL _pop_na_teret_prod := .F.
+   LOCAL _partn_ino := .F.
+   LOCAL _partn_pdv := .T.
+   LOCAL _a_iznosi := {}
+   LOCAL _data_item, _data_total, _arr
 
-    // memo polje    
-    _memo := ParsMemo( fakt->txt )
+   // 0 - gotovina
+   // 3 - ziralno / virman
 
-    _art_id := fakt->idroba
-    _art_barkod := ALLTRIM( roba->barkod )
+   _v_plac := "0"
 
-    if roba->tip == "U" .and. EMPTY( ALLTRIM( roba->naz ) )
+   IF partn_arr <> NIL
+      // u ovim clanovima matrice su mi podaci
+      // o partneru
+      _v_plac := partn_arr[ 1, 6 ]
+      _partn_ino := partn_arr[ 1, 7 ]
+      _partn_pdv := partn_arr[ 1, 8 ]
+   ELSE
+      // uzmi na osnovu statickih varijabli
+      _v_plac := __vrsta_pl
+      _partn_ino := __partn_ino
+      _partn_pdv := __partn_pdv
+   ENDIF
 
-        _memo_opis := ALLTRIM( _memo[1] )
+   IF storno == NIL
+      storno := .F.
+   ENDIF
 
-        if EMPTY( _memo_opis )
+   fakt_fiscal_o_tables()
+
+   // nastimaj me na fakt_doks
+   SELECT fakt_doks
+   GO TOP
+   SEEK ( id_firma + tip_dok + br_dok )
+
+   _n_rn_broj := Val( AllTrim( field->brdok ) )
+   _rekl_rn_broj := field->fisc_rn
+
+   _rn_iznos := field->iznos
+   _rn_rabat := field->rabat
+   _rn_datum := field->datdok
+   _partn_id := field->idpartner
+
+   // matrica sa tarifama i iznosima ukupnim sa dokumenta...
+   _a_iznosi := get_a_iznos( id_firma, tip_dok, br_dok )
+   _data_total := fakt_izracunaj_total( _a_iznosi, _partn_id, tip_dok )
+
+   // nastimaj me na fakt_fakt
+   SELECT fakt
+   GO TOP
+   SEEK ( id_firma + tip_dok + br_dok )
+
+   IF !Found()
+      // ovaj racun nema stavki !!!!
+      MsgBeep( "Racun ne posjeduje niti jednu stavku#Stampanje onemoguceno !!!" )
+      RETURN NIL
+   ENDIF
+
+   // koji je broj racuna koji storniramo
+   IF storno
+      _rekl_rn_broj := reklamni_rn_box( _rekl_rn_broj )
+   ENDIF
+
+   // ESC na unosu veze racuna
+   IF _rekl_rn_broj == -1
+      MsgBeep( "Broj veze racuna mora biti setovan" )
+      RETURN NIL
+   ENDIF
+
+   // i total sracunaj sa pdv
+   // upisat cemo ga u svaku stavku matrice
+   // to je total koji je bitan kod regularnih racuna
+   // pdv, ne pdv obveznici itd...
+   // _rn_total := _uk_sa_pdv( tip_dok, _partn_id, _rn_iznos )
+
+   _rn_total := _data_total[ "ukupno" ]
+
+   // total za sracunavanje kod samaranja po stavkama racuna
+   _rn_f_total := 0
+
+   // upisi u matricu stavke
+   DO WHILE !Eof() .AND. field->idfirma == id_firma ;
+         .AND. field->idtipdok == tip_dok ;
+         .AND. field->brdok == br_dok
+
+      SELECT roba
+      SEEK fakt->idroba
+
+      SELECT fakt
+
+      // storno identifikator
+      _storno_ident := 0
+
+      IF ( field->kolicina < 0 ) .AND. !storno
+         _storno_ident := 1
+      ENDIF
+
+      _rn_broj := fakt->brdok
+      _rn_rbr := fakt->rbr
+
+      // memo polje
+      _memo := ParsMemo( fakt->txt )
+
+      _art_id := fakt->idroba
+      _art_barkod := AllTrim( roba->barkod )
+
+      IF roba->tip == "U" .AND. Empty( AllTrim( roba->naz ) )
+
+         _memo_opis := AllTrim( _memo[ 1 ] )
+
+         IF Empty( _memo_opis )
             _memo_opis := "artikal bez naziva"
-        endif
+         ENDIF
 
-        _art_naz := ALLTRIM( fiscal_art_naz_fix( _memo_opis, __device_params["drv"] ) )
-    else
-        _art_naz := ALLTRIM( fiscal_art_naz_fix( roba->naz, __device_params["drv"] ) )
-    endif
+         _art_naz := AllTrim( fiscal_art_naz_fix( _memo_opis, __device_params[ "drv" ] ) )
+      ELSE
+         _art_naz := AllTrim( fiscal_art_naz_fix( roba->naz, __device_params[ "drv" ] ) )
+      ENDIF
 
-    _art_jmj := ALLTRIM( roba->jmj )
-    _art_plu := roba->fisc_plu
+      _art_jmj := AllTrim( roba->jmj )
+      _art_plu := roba->fisc_plu
 
-    // generisi automatski plu ako treba
-    if __device_params["plu_type"] == "D" .and. ;
-        ( __device_params["vp_sum"] <> 1 .or. tip_dok $ "11" .or. LEN( _a_iznosi ) > 1 )
+      // generisi automatski plu ako treba
+      IF __device_params[ "plu_type" ] == "D" .AND. ;
+            ( __device_params[ "vp_sum" ] <> 1 .OR. tip_dok $ "11" .OR. Len( _a_iznosi ) > 1 )
 
-        _art_plu := auto_plu( nil, nil,  __device_params )
-        
-        if __DRV_CURRENT == "FPRINT" .and. _art_plu == 0
+         _art_plu := auto_plu( nil, nil,  __device_params )
+
+         IF __DRV_CURRENT == "FPRINT" .AND. _art_plu == 0
             MsgBeep( "PLU artikla = 0, to nije moguce !" )
-            return NIL
-        endif
+            RETURN NIL
+         ENDIF
 
-    endif
+      ENDIF
 
-    _cijena := roba->mpc
+      _cijena := roba->mpc
 
-    _tarifa_id := ALLTRIM( roba->idtarifa )
-    
-    // hash_matrica sa iznosima po stavci...
-    _arr := {}
-    AADD( _arr, { _tarifa_id, field->cijena } )
-    _data_item := fakt_izracunaj_total( _arr, _partn_id, tip_dok )
+      _tarifa_id := AllTrim( roba->idtarifa )
 
-    _cijena := _data_item["ukupno"]
+      // hash_matrica sa iznosima po stavci...
+      _arr := {}
+      AAdd( _arr, { _tarifa_id, field->cijena } )
+      _data_item := fakt_izracunaj_total( _arr, _partn_id, tip_dok )
 
-    // izracunaj cijenu
-    if tip_dok == "10"
-        _vr_plac := "3"
-    endif
-    
-    _kolicina := ABS( field->kolicina )
-    
-    // ako korisnik nije PDV obveznik
-    // i radi se o robi sa zasticenom cijenom
-    // rabat preskoci
-    if !_partn_ino .and. !_partn_pdv .and. RobaZastCijena( roba->idtarifa )
-        _pop_na_teret_prod := .t.
-        _rn_rabat := 0
-    else
-        _rn_rabat := ABS ( field->rabat ) 
-    endif
+      _cijena := _data_item[ "ukupno" ]
 
-    // ako je za ino kupca onda ide nulta stopa
-    // oslobodi ga poreza
-    if _partn_ino == .t.
-        _tarifa_id := "PDV0"
-    endif
+      // izracunaj cijenu
+      IF tip_dok == "10"
+         _vr_plac := "3"
+      ENDIF
 
-    _storno_rn_opis := ""
+      _kolicina := Abs( field->kolicina )
 
-    if _rekl_rn_broj > 0
-        // ovo ce biti racun koji reklamiramo !
-        _storno_rn_opis := ALLTRIM( STR( _rekl_rn_broj ))
-    endif
+      // ako korisnik nije PDV obveznik
+      // i radi se o robi sa zasticenom cijenom
+      // rabat preskoci
+      IF !_partn_ino .AND. !_partn_pdv .AND. RobaZastCijena( roba->idtarifa )
+         _pop_na_teret_prod := .T.
+         _rn_rabat := 0
+      ELSE
+         _rn_rabat := Abs ( field->rabat )
+      ENDIF
 
-    // izracunaj total po stavci 
-    // ako se radi o robi sa zasticenom cijenom
-    // ovaj total ce se napuniti u matricu
+      // ako je za ino kupca onda ide nulta stopa
+      // oslobodi ga poreza
+      IF _partn_ino == .T.
+         _tarifa_id := "PDV0"
+      ENDIF
 
-    if field->dindem == LEFT( ValBazna(), 3)
-        _rn_f_total += Round( _kolicina * _cijena * PrerCij() * ( 1 - _rn_rabat / 100), ZAOKRUZENJE )
-    else
-        _rn_f_total += round( _kolicina * _cijena * PrerCij() * ( 1 - _rn_rabat / 100), ZAOKRUZENJE )
-    endif
+      _storno_rn_opis := ""
 
-    // 1 - broj racuna
-    // 2 - redni broj
-    // 3 - id roba
-    // 4 - roba naziv
-    // 5 - cijena
-    // 6 - kolicina
-    // 7 - tarifa
-    // 8 - broj racuna za storniranje
-    // 9 - roba plu
-    // 10 - plu cijena
-    // 11 - popust
-    // 12 - barkod
-    // 13 - vrsta placanja
-    // 14 - total racuna
-    // 15 - datum racuna
-    // 16 - roba jmj
+      IF _rekl_rn_broj > 0
+         // ovo ce biti racun koji reklamiramo !
+         _storno_rn_opis := AllTrim( Str( _rekl_rn_broj ) )
+      ENDIF
 
-    AADD( _data, { _rn_broj , ;
-            _rn_rbr, ;
-            _art_id, ;
-            _art_naz, ;
-            _cijena, ;
-            _kolicina, ;
-            _tarifa_id, ;
-            _storno_rn_opis, ;
-            _art_plu, ;
-            _cijena, ;
-            _rn_rabat, ;
-            _art_barkod, ;
-            _v_plac, ;
-            _rn_total, ;
-            _rn_datum, ;
-            _art_jmj } )
+      // izracunaj total po stavci
+      // ako se radi o robi sa zasticenom cijenom
+      // ovaj total ce se napuniti u matricu
 
-    skip
+      IF field->dindem == Left( ValBazna(), 3 )
+         _rn_f_total += Round( _kolicina * _cijena * PrerCij() * ( 1 - _rn_rabat / 100 ), ZAOKRUZENJE )
+      ELSE
+         _rn_f_total += Round( _kolicina * _cijena * PrerCij() * ( 1 - _rn_rabat / 100 ), ZAOKRUZENJE )
+      ENDIF
 
-enddo
+      // 1 - broj racuna
+      // 2 - redni broj
+      // 3 - id roba
+      // 4 - roba naziv
+      // 5 - cijena
+      // 6 - kolicina
+      // 7 - tarifa
+      // 8 - broj racuna za storniranje
+      // 9 - roba plu
+      // 10 - plu cijena
+      // 11 - popust
+      // 12 - barkod
+      // 13 - vrsta placanja
+      // 14 - total racuna
+      // 15 - datum racuna
+      // 16 - roba jmj
 
-// setuj total za pojedine opcije
-if _pop_na_teret_prod .or. _partn_ino
-    // ako ima popusta na teret prodavaca
-    // sredi total, ukljuci i rabat koji je dat
-    // uzmi sada onaj nF_total
-    for _n := 1 to LEN( _data )
-        _data[ _n, 14 ] := _rn_f_total 
-    next
-endif
+      AAdd( _data, { _rn_broj, ;
+         _rn_rbr, ;
+         _art_id, ;
+         _art_naz, ;
+         _cijena, ;
+         _kolicina, ;
+         _tarifa_id, ;
+         _storno_rn_opis, ;
+         _art_plu, ;
+         _cijena, ;
+         _rn_rabat, ;
+         _art_barkod, ;
+         _v_plac, ;
+         _rn_total, ;
+         _rn_datum, ;
+         _art_jmj } )
 
-// zbirni racun
-if tip_dok $ "10" .and. LEN( _a_iznosi ) < 2
-    set_fiscal_rn_zbirni( @_data )
-endif
+      SKIP
 
-// level validacije kolicine, cijene i decimalnih separatora 
-// kod ovog levela, desit ce se prepakivanje artikla na x100 metodu
-_item_level_check := 2
+   ENDDO
 
-if fiscal_items_check( @_data, storno, _item_level_check, __device_params["drv"] ) < 0
-    return NIL    
-endif
+   // setuj total za pojedine opcije
+   IF _pop_na_teret_prod .OR. _partn_ino
+      // ako ima popusta na teret prodavaca
+      // sredi total, ukljuci i rabat koji je dat
+      // uzmi sada onaj nF_total
+      FOR _n := 1 TO Len( _data )
+         _data[ _n, 14 ] := _rn_f_total
+      NEXT
+   ENDIF
 
-return _data
+   // zbirni racun
+   IF tip_dok $ "10" .AND. Len( _a_iznosi ) < 2
+      set_fiscal_rn_zbirni( @_data )
+   ENDIF
 
+   // level validacije kolicine, cijene i decimalnih separatora
+   // kod ovog levela, desit ce se prepakivanje artikla na x100 metodu
+   _item_level_check := 2
 
+   IF fiscal_items_check( @_data, storno, _item_level_check, __device_params[ "drv" ] ) < 0
+      RETURN NIL
+   ENDIF
+
+   RETURN _data
 
 
 
-// ---------------------------------------------------------------------
-// pripremi podatke, partner itd...
-// ---------------------------------------------------------------------
-static function fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, storno )
-local _head := {}
-local _partn_id
-local _vrsta_p 
-local _v_plac := "0"
-local _partn_clan, _partn_jib
-local _prikazi_partnera := .t.
-local _partn_ino := .f.
-local _partn_pdv := .t.
+/*
+   pripremi podatke, partner itd...
+*/
 
-__partn_ino := _partn_ino
-__partn_pdv := _partn_pdv
-__vrsta_pl := _v_plac
+STATIC FUNCTION fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, storno )
 
-select fakt_doks
-set order to tag "1"
-go top
-seek ( id_firma + tip_dok + br_dok )
+   LOCAL _head := {}
+   LOCAL _partn_id
+   LOCAL _vrsta_p
+   LOCAL _v_plac := "0"
+   LOCAL _partn_clan, _partn_jib
+   LOCAL _prikazi_partnera := .T.
+   LOCAL _partn_ino := .F.
+   LOCAL _partn_pdv := .T.
 
-_partn_id := field->idpartner
-_vrsta_p := field->idvrstep
+   __partn_ino := _partn_ino
+   __partn_pdv := _partn_pdv
+   __vrsta_pl := _v_plac
 
-// head matrica
-// =============================
-// 1 - id broj kupca
-// 2 - naziv
-// 3 - adresa
-// 4 - ptt
-// 5 - grad
-// 6 - vrsta placanja
-// 7 - ino partner
-// 8 - pdv obveznik
+   SELECT fakt_doks
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK ( id_firma + tip_dok + br_dok )
 
-if ! ( tip_dok $ "#10#11#" ) .or. EMPTY( _partn_id ) 
-   return NIL
-endif
+   _partn_id := field->idpartner
+   _vrsta_p := field->idvrstep
 
-if ( tip_dok $ "#10#" .and. !_vrsta_p == "G " ) .or. ( tip_dok == "11" .and. _vrsta_p == "VR" )
-    // virmansko placanje
-    // tip dokumenta: 10
-    // tip dokumenta: 11 i vrsta placanja "VR"
-    _v_plac := "3"
-elseif ( tip_dok == "10" .and. _vrsta_p == "G " )
-    _v_plac := "0"
-endif
+   // head matrica
+   // =============================
+   // 1 - id broj kupca
+   // 2 - naziv
+   // 3 - adresa
+   // 4 - ptt
+   // 5 - grad
+   // 6 - vrsta placanja
+   // 7 - ino partner
+   // 8 - pdv obveznik
 
-if tip_dok $ "#11#" .and. _vrsta_p == "KT"
-    // karticno placanje
-    _v_plac := "1"
-endif
+   IF ! ( tip_dok $ "#10#11#" ) .OR. Empty( _partn_id )
+      RETURN NIL
+   ENDIF
 
-__vrsta_pl := _v_plac
+   IF ( tip_dok $ "#10#" .AND. !_vrsta_p == "G " ) .OR. ( tip_dok == "11" .AND. _vrsta_p == "VR" )
+      // virmansko placanje
+      // tip dokumenta: 10
+      // tip dokumenta: 11 i vrsta placanja "VR"
+      _v_plac := "3"
+   ELSEIF ( tip_dok == "10" .AND. _vrsta_p == "G " )
+      _v_plac := "0"
+   ENDIF
 
-// podaci partnera
-_partn_jib := ALLTRIM( IzSifKPartn( "REGB", _partn_id, .f. ) )
-// oslobadjanje po clanu
-_partn_clan := ALLTRIM( IzSifKPartn( "PDVO",  _partn_id, .f. ) )
+   IF tip_dok $ "#11#" .AND. _vrsta_p == "KT"
+      // karticno placanje
+      _v_plac := "1"
+   ENDIF
 
-if !EMPTY( _partn_jib ) .and. ( LEN( _partn_jib ) < 12 .or. !EMPTY( _partn_clan ) )
+   __vrsta_pl := _v_plac
 
-    // kod info faktura ne prikazuj partnera
-    _partn_ino := .t.
-    _prikazi_partnera := .f.
+   // podaci partnera
+   _partn_jib := AllTrim( IzSifKPartn( "REGB", _partn_id, .F. ) )
+   // oslobadjanje po clanu
+   _partn_clan := AllTrim( IzSifKPartn( "PDVO",  _partn_id, .F. ) )
 
-    // ako je samo oslobadjanje po clanu onda prikazi
-    if !EMPTY( _partn_clan )
-        _prikazi_partnera := .t.
-    endif
-    
-elseif LEN( _partn_jib ) == 12
-                
-    _partn_ino := .f.
-    _partn_pdv := .t.
-    _prikazi_partnera := .t.
+   IF !Empty( _partn_jib ) .AND. ( Len( _partn_jib ) < 12 .OR. !Empty( _partn_clan ) )
 
-elseif LEN( _partn_jib ) > 12
+      // kod info faktura ne prikazuj partnera
+      _partn_ino := .T.
+      _prikazi_partnera := .F.
 
-    _partn_ino := .f.
-    _partn_pdv := .f.
-    _prikazi_partnera := .t.
+      // ako je samo oslobadjanje po clanu onda prikazi
+      IF !Empty( _partn_clan )
+         _prikazi_partnera := .T.
+      ENDIF
 
-endif
+   ELSEIF Len( _partn_jib ) == 12
 
-// u ovoj varijanti nam partner ne treba !
-// dokument 10, vrsta placanja "G "
-// dokuemnt 11, vrsta placanja gotovina
-// nema ID broja
+      _partn_ino := .F.
+      _partn_pdv := .T.
+      _prikazi_partnera := .T.
 
-if ( tip_dok == "10" .and. _vrsta_p == "G " ) .or. ;
-        ( tip_dok == "11" .and. ! ( _vrsta_p $ "#VR#" ) ) .or. ;
-        EMPTY( _partn_jib )
-    _prikazi_partnera := .f.
-endif
+   ELSEIF Len( _partn_jib ) > 12
 
-// setuj staticke
-__vrsta_pl := _v_plac
-__partn_ino := _partn_ino
-__partn_pdv := _partn_pdv
-__prikazi_partnera := _prikazi_partnera
+      _partn_ino := .F.
+      _partn_pdv := .F.
+      _prikazi_partnera := .T.
 
-// ako ga ne treba prikazivti 
-// nista nemoj vracati...
-if !_prikazi_partnera
-    return NIL
-endif
+   ENDIF
 
-select partn
-go top
-seek _partn_id
-      
-if !FOUND()
-	MsgBeep( "Partnera nisam pronasao u sifrarniku - head prepare !" )
-	return .f.
-endif
- 
-// ako je pdv obveznik
-// dodaj "4" ispred id broja
-if LEN( ALLTRIM( _partn_jib ) ) == 12        
-    _partn_jib := "4" + ALLTRIM( _partn_jib )
-endif
+   // u ovoj varijanti nam partner ne treba !
+   // dokument 10, vrsta placanja "G "
+   // dokuemnt 11, vrsta placanja gotovina
+   // nema ID broja
 
-// provjeri podatke partnera
-_ok := .t.
-if EMPTY( _partn_jib )
-    _ok := .f.
-endif
-if _ok .and. EMPTY( partn->naz )
-    _ok := .f.
-endif
-if _ok .and. EMPTY( partn->adresa )
-    _ok := .f.
-endif
-if _ok .and. EMPTY( partn->ptt )
-    _ok := .f.
-endif
-if _ok .and. EMPTY( partn->mjesto )
-    _ok := .f.
-endif     
+   IF ( tip_dok == "10" .AND. _vrsta_p == "G " ) .OR. ;
+         ( tip_dok == "11" .AND. ! ( _vrsta_p $ "#VR#" ) ) .OR. ;
+         Empty( _partn_jib )
+      _prikazi_partnera := .F.
+   ENDIF
 
-if !_ok
-    MsgBeep("!!! Podaci partnera nisu kompletirani !!!#(id, naziv, adresa, ptt, mjesto)#Prekidam operaciju")
-    return .f.
-endif
+   // setuj staticke
+   __vrsta_pl := _v_plac
+   __partn_ino := _partn_ino
+   __partn_pdv := _partn_pdv
+   __prikazi_partnera := _prikazi_partnera
 
-if !EMPTY( ALLTRIM( _partn_jib ) ) .and. LEN( ALLTRIM( _partn_jib ) ) < 12 .and. !EMPTY( _partn_clan )
-    _ok := .f.
-    MsgBeep( "INO partner sadrzi clan o oslobodjenju od PDV-a, to je nedozvoljeno !!!" )
-    return _ok
-endif
+   // ako ga ne treba prikazivti
+   // nista nemoj vracati...
+   IF !_prikazi_partnera
+      RETURN NIL
+   ENDIF
 
-// ubaci u matricu podatke o partneru
-AADD( _head, { _partn_jib, partn->naz, partn->adresa, ;
-         partn->ptt, partn->mjesto, _v_plac, _partn_ino, _partn_pdv } )
+   SELECT partn
+   GO TOP
+   SEEK _partn_id
 
-return _head
+   IF !Found()
+      MsgBeep( "Partnera nisam pronasao u sifrarniku - head prepare !" )
+      RETURN .F.
+   ENDIF
+
+   // ako je pdv obveznik
+   // dodaj "4" ispred id broja
+   IF Len( AllTrim( _partn_jib ) ) == 12
+      _partn_jib := "4" + AllTrim( _partn_jib )
+   ENDIF
+
+   // provjeri podatke partnera
+   _ok := .T.
+   IF Empty( _partn_jib )
+      _ok := .F.
+   ENDIF
+   IF _ok .AND. Empty( partn->naz )
+      _ok := .F.
+   ENDIF
+   IF _ok .AND. Empty( partn->adresa )
+      _ok := .F.
+   ENDIF
+   IF _ok .AND. Empty( partn->ptt )
+      _ok := .F.
+   ENDIF
+   IF _ok .AND. Empty( partn->mjesto )
+      _ok := .F.
+   ENDIF
+
+   IF !_ok
+      MsgBeep( "!!! Podaci partnera nisu kompletirani !!!#(id, naziv, adresa, ptt, mjesto)#Prekidam operaciju" )
+      RETURN .F.
+   ENDIF
+
+   IF !Empty( AllTrim( _partn_jib ) ) .AND. Len( AllTrim( _partn_jib ) ) < 12 .AND. !Empty( _partn_clan )
+      _ok := .F.
+      MsgBeep( "INO partner sadrzi clan o oslobodjenju od PDV-a, to je nedozvoljeno !!!" )
+      RETURN _ok
+   ENDIF
+
+   // ubaci u matricu podatke o partneru
+   AAdd( _head, { _partn_jib, partn->naz, partn->adresa, ;
+      partn->ptt, partn->mjesto, _v_plac, _partn_ino, _partn_pdv } )
+
+   RETURN _head
 
 
 
 // -------------------------------------------------------------
 // obradi izlaz fiskalnog racuna na FPRINT uredjaj
 // -------------------------------------------------------------
-static function fakt_to_fprint( id_firma, tip_dok, br_dok, items, head, storno )
-local _path := __device_params["out_dir"]
-local _filename := __device_params["out_file"]
-local _fiscal_no := 0
-local _total := items[ 1, 14 ]
-local _partn_naz
+STATIC FUNCTION fakt_to_fprint( id_firma, tip_dok, br_dok, items, head, storno )
 
-// pobrisi fajl odgovora
-fprint_delete_answer( __device_params )
+   LOCAL _path := __device_params[ "out_dir" ]
+   LOCAL _filename := __device_params[ "out_file" ]
+   LOCAL _fiscal_no := 0
+   LOCAL _total := items[ 1, 14 ]
+   LOCAL _partn_naz
 
-// posalji fajl prema FPRINT drajveru
-fprint_rn( __device_params, items, head, storno )
+   // pobrisi fajl odgovora
+   fprint_delete_answer( __device_params )
 
-// procitaj gresku!
-_err_level := fprint_read_error( __device_params, @_fiscal_no, storno )
+   // posalji fajl prema FPRINT drajveru
+   fprint_rn( __device_params, items, head, storno )
 
-if _err_level = -9
-    // nestanak trake ?
-    if Pitanje(,"Da li je nestalo trake ?", "N") == "D"
-        if Pitanje(,"Ubacite traku i pritisnite 'D'","D") == "D"
+   // procitaj gresku!
+   _err_level := fprint_read_error( __device_params, @_fiscal_no, storno )
+
+   IF _err_level = -9
+      // nestanak trake ?
+      IF Pitanje(, "Da li je nestalo trake ?", "N" ) == "D"
+         IF Pitanje(, "Ubacite traku i pritisnite 'D'", "D" ) == "D"
             // procitaj gresku opet !
             _err_level := fprint_read_error( __device_params, @_fiscal_no, storno )
-        endif
-    endif
-endif
+         ENDIF
+      ENDIF
+   ENDIF
 
-if _fiscal_no <= 0
-    _err_level := 1
-endif
+   IF _fiscal_no <= 0
+      _err_level := 1
+   ENDIF
 
-if _err_level <> 0
+   IF _err_level <> 0
 
-    // pobrisi izlazni fajl ako je ostao !
-    fprint_delete_out( _path + _filename )
+      // pobrisi izlazni fajl ako je ostao !
+      fprint_delete_out( _path + _filename )
 
-    _msg := "ERR FISC: stampa racuna err:" + ALLTRIM(STR(_err_level)) + ;
-            "##" + _path + _filename
+      _msg := "ERR FISC: stampa racuna err:" + AllTrim( Str( _err_level ) ) + ;
+         "##" + _path + _filename
 
-    log_write( _msg, 2 )
-    
-    MsgBeep( _msg )
+      log_write( _msg, 2 )
 
-    return _err_level
+      MsgBeep( _msg )
 
-endif
+      RETURN _err_level
 
-// post operacije....
+   ENDIF
 
-// racun na email ?    
-if !EMPTY( param_racun_na_email() ) .and. tip_dok $ "#11#"
-        
-    // posalji email...
-    // ako se radi o racunu tipa "11"
-    _partn_naz := _get_partner_for_email( id_firma, tip_dok, br_dok )
-    _snd_eml( _fiscal_no, tip_dok + "-" + ALLTRIM( br_dok ), _partn_naz, nil, _total )
-    
-endif
+   // post operacije....
 
-// ubaci broj fiskalnog racuna u fakturu
-set_fiscal_no_to_fakt_doks( id_firma, tip_dok, br_dok, _fiscal_no, storno )
+   // racun na email ?
+   IF !Empty( param_racun_na_email() ) .AND. tip_dok $ "#11#"
 
-// samo ako se zadaje direktna stampa ispisi
-if __auto = .f.
-    MsgBeep( "Kreiran fiskalni racun broj: " + ALLTRIM( STR( _fiscal_no ) ) )
-endif
+      // posalji email...
+      // ako se radi o racunu tipa "11"
+      _partn_naz := _get_partner_for_email( id_firma, tip_dok, br_dok )
+      _snd_eml( _fiscal_no, tip_dok + "-" + AllTrim( br_dok ), _partn_naz, nil, _total )
 
-return _err_level
+   ENDIF
+
+   // ubaci broj fiskalnog racuna u fakturu
+   set_fiscal_no_to_fakt_doks( id_firma, tip_dok, br_dok, _fiscal_no, storno )
+
+   // samo ako se zadaje direktna stampa ispisi
+   IF __auto = .F.
+      MsgBeep( "Kreiran fiskalni racun broj: " + AllTrim( Str( _fiscal_no ) ) )
+   ENDIF
+
+   RETURN _err_level
 
 
 // -----------------------------------------------------------------------
 // vrati partnera za email
 // -----------------------------------------------------------------------
-static function _get_partner_for_email( id_firma, tip_dok, br_dok )
-local _ret := ""
-local _t_area := SELECT()
-local _partn
+STATIC FUNCTION _get_partner_for_email( id_firma, tip_dok, br_dok )
 
-select fakt_doks
-go top
-seek id_firma + tip_dok + br_dok
+   LOCAL _ret := ""
+   LOCAL _t_area := Select()
+   LOCAL _partn
 
-_partn := field->idpartner
-_id_vrste_p := field->idvrstep
+   SELECT fakt_doks
+   GO TOP
+   SEEK id_firma + tip_dok + br_dok
 
-select partn
-hseek _partn
+   _partn := field->idpartner
+   _id_vrste_p := field->idvrstep
 
-if FOUND()
-    _ret := ALLTRIM( field->naz )
-endif
+   SELECT partn
+   hseek _partn
 
-if !EMPTY( _id_vrste_p )
-    _ret += ", v.pl: " + _id_vrste_p
-endif
+   IF Found()
+      _ret := AllTrim( field->naz )
+   ENDIF
 
-select ( _t_area )
+   IF !Empty( _id_vrste_p )
+      _ret += ", v.pl: " + _id_vrste_p
+   ENDIF
 
-return _ret
+   SELECT ( _t_area )
+
+   RETURN _ret
 
 
 
 // -------------------------------------------------------------
 // izdavanje fiskalnog isjecka na TREMOL uredjaj
 // -------------------------------------------------------------
-static function fakt_to_tremol( id_firma, tip_dok, br_dok, items, head, storno, cont )
-local _err_level := 0
-local _f_name 
-local _fiscal_no := 0
+STATIC FUNCTION fakt_to_tremol( id_firma, tip_dok, br_dok, items, head, storno, cont )
 
-// identifikator CONTINUE
-// nesto imamo mogucnost ako racun zapne da kazemo drugi identifikator
-// pa on navodno nastavi
-if cont == NIL
-    cont := "0"
-endif
+   LOCAL _err_level := 0
+   LOCAL _f_name
+   LOCAL _fiscal_no := 0
 
-// stampaj racun !
-_err_level := tremol_rn( __device_params, items, head, storno, cont )
+   // identifikator CONTINUE
+   // nesto imamo mogucnost ako racun zapne da kazemo drugi identifikator
+   // pa on navodno nastavi
+   IF cont == NIL
+      cont := "0"
+   ENDIF
 
-_f_name := ALLTRIM( fiscal_out_filename( __device_params["out_file"], br_dok ) )
+   // stampaj racun !
+   _err_level := tremol_rn( __device_params, items, head, storno, cont )
 
-// da li postoji ista na izlazu ?
-if tremol_read_out( __device_params, _f_name, __device_params["timeout"] )
-    // procitaj sada gresku
-    _err_level := tremol_read_error( __device_params, _f_name, @_fiscal_no ) 
-        
-else
-    _err_level := -99
-endif
+   _f_name := AllTrim( fiscal_out_filename( __device_params[ "out_file" ], br_dok ) )
 
-if _err_level = 0 .and. !storno .and. cont <> "2"
-    // vrati broj fiskalnog racuna
-    if _fiscal_no > 0
-        // prikazi poruku samo u direktnoj stampi
-        if __auto = .f. 
-           msgbeep( "Kreiran fiskalni racun broj: " + ALLTRIM( STR( _fiscal_no ) ) )
-        endif
+   // da li postoji ista na izlazu ?
+   IF tremol_read_out( __device_params, _f_name, __device_params[ "timeout" ] )
+      // procitaj sada gresku
+      _err_level := tremol_read_error( __device_params, _f_name, @_fiscal_no )
 
-        // ubaci broj fiskalnog racuna u fakturu
-        set_fiscal_no_to_fakt_doks( id_firma, tip_dok, br_dok, _fiscal_no )
-    
-    endif
+   ELSE
+      _err_level := -99
+   ENDIF
 
-    FERASE( __device_params["out_dir"] + _f_name )
+   IF _err_level = 0 .AND. !storno .AND. cont <> "2"
+      // vrati broj fiskalnog racuna
+      IF _fiscal_no > 0
+         // prikazi poruku samo u direktnoj stampi
+         IF __auto = .F.
+            msgbeep( "Kreiran fiskalni racun broj: " + AllTrim( Str( _fiscal_no ) ) )
+         ENDIF
 
-endif
+         // ubaci broj fiskalnog racuna u fakturu
+         set_fiscal_no_to_fakt_doks( id_firma, tip_dok, br_dok, _fiscal_no )
 
-return _err_level
+      ENDIF
+
+      FErase( __device_params[ "out_dir" ] + _f_name )
+
+   ENDIF
+
+   RETURN _err_level
 
 
 
@@ -928,454 +920,464 @@ return _err_level
 // -------------------------------------------------------------
 // izdavanje fiskalnog isjecka na HCP uredjaj
 // -------------------------------------------------------------
-static function fakt_to_hcp( id_firma, tip_dok, br_dok, items, head, storno )
-local _err_level := 0
-local _fiscal_no := 0
+STATIC FUNCTION fakt_to_hcp( id_firma, tip_dok, br_dok, items, head, storno )
 
-_err_level := hcp_rn( __device_params, items, head, storno, items[ 1, 14 ] )
+   LOCAL _err_level := 0
+   LOCAL _fiscal_no := 0
 
-if _err_level = 0
+   _err_level := hcp_rn( __device_params, items, head, storno, items[ 1, 14 ] )
 
-    _fiscal_no := hcp_fisc_no( __device_params, storno )
+   IF _err_level = 0
 
-    if _fiscal_no > 0
-    
-        // ubaci broj fiskalnog racuna u fakturu
-        set_fiscal_no_to_fakt_doks( id_firma, tip_dok, br_dok, _fiscal_no )
-    
-    endif
+      _fiscal_no := hcp_fisc_no( __device_params, storno )
 
-endif
+      IF _fiscal_no > 0
 
-return _err_level
+         // ubaci broj fiskalnog racuna u fakturu
+         set_fiscal_no_to_fakt_doks( id_firma, tip_dok, br_dok, _fiscal_no )
+
+      ENDIF
+
+   ENDIF
+
+   RETURN _err_level
 
 
 
 // --------------------------------------------------
 // napravi zbirni racun ako je potrebno
 // --------------------------------------------------
-static function set_fiscal_rn_zbirni( data )
-local _tmp := {}
-local _total := 0
-local _kolicina := 1
-local _art_naz := ""
-local _len := LEN( data )
+STATIC FUNCTION set_fiscal_rn_zbirni( data )
 
-if __device_params["vp_sum"] < 1 .or. ;
-    __device_params["plu_type"] == "P" .or. ;
-    ( __device_params["vp_sum"] > 1 .and. __device_params["vp_sum"] < _len )
-    // ova opcija se ne koristi
-    // ako je iskljucena opcija
-    // ili ako je sifra artikla genericki PLU
-    // ili ako je zadato da ide iznad neke vrijednosti stavki na racunu
-    return
-endif
+   LOCAL _tmp := {}
+   LOCAL _total := 0
+   LOCAL _kolicina := 1
+   LOCAL _art_naz := ""
+   LOCAL _len := Len( data )
 
-_art_naz := "St.rn."
+   IF __device_params[ "vp_sum" ] < 1 .OR. ;
+         __device_params[ "plu_type" ] == "P" .OR. ;
+         ( __device_params[ "vp_sum" ] > 1 .AND. __device_params[ "vp_sum" ] < _len )
+      // ova opcija se ne koristi
+      // ako je iskljucena opcija
+      // ili ako je sifra artikla genericki PLU
+      // ili ako je zadato da ide iznad neke vrijednosti stavki na racunu
+      RETURN
+   ENDIF
 
-if __DRV_CURRENT  $ "#FPRINT#HCP#TRING#"
-    _art_naz += " " + ALLTRIM( data[1, 1] )
-endif
+   _art_naz := "St.rn."
 
-// ukupna vrijednost racuna za sve stavke matrice je ista popunjena
-_total := ROUND2( data[ 1, 14 ], 2 )
+   IF __DRV_CURRENT  $ "#FPRINT#HCP#TRING#"
+      _art_naz += " " + AllTrim( DATA[ 1, 1 ] )
+   ENDIF
 
-if !EMPTY( data[ 1, 8 ] )
-    // ako je storno racun
-    // napravi korekciju da je iznos pozitivan
-    _total := ABS( _total )
-endif
+   // ukupna vrijednost racuna za sve stavke matrice je ista popunjena
+   _total := ROUND2( DATA[ 1, 14 ], 2 )
 
-// dodaj u _tmp zbirnu stavku...
-AADD( _tmp, { data[1, 1] , ;
-    data[1, 2], ;
-    "", ;
-    _art_naz, ;
-    _total, ;
-    _kolicina, ;
-    data[1, 7], ;
-    data[1, 8], ;
-    auto_plu( nil, nil, __device_params ), ;
-    _total, ;
-    0, ;
-    "", ;
-    data[1, 13], ;
-    _total, ;
-    data[1, 15], ;
-    data[1, 16] } )
+   IF !Empty( DATA[ 1, 8 ] )
+      // ako je storno racun
+      // napravi korekciju da je iznos pozitivan
+      _total := Abs( _total )
+   ENDIF
+
+   // dodaj u _tmp zbirnu stavku...
+   AAdd( _tmp, { DATA[ 1, 1 ], ;
+      DATA[ 1, 2 ], ;
+      "", ;
+      _art_naz, ;
+      _total, ;
+      _kolicina, ;
+      DATA[ 1, 7 ], ;
+      DATA[ 1, 8 ], ;
+      auto_plu( nil, nil, __device_params ), ;
+      _total, ;
+      0, ;
+      "", ;
+      DATA[ 1, 13 ], ;
+      _total, ;
+      DATA[ 1, 15 ], ;
+      DATA[ 1, 16 ] } )
 
 
-data := _tmp
+   data := _tmp
 
-return
+   RETURN
 
 
 
 // -------------------------------------------------------------------
-// setovanje broja fiskalnog racuna u dokumentu 
+// setovanje broja fiskalnog racuna u dokumentu
 // -------------------------------------------------------------------
-static function set_fiscal_no_to_fakt_doks( cFirma, cTD, cBroj, nFiscal, lStorno )
-local nTArea := SELECT()
-local _rec
+STATIC FUNCTION set_fiscal_no_to_fakt_doks( cFirma, cTD, cBroj, nFiscal, lStorno )
 
-if lStorno == nil
-    lStorno := .f.
-endif
+   LOCAL nTArea := Select()
+   LOCAL _rec
 
-select fakt_doks
-set order to tag "1"
-seek cFirma + cTD + cBroj
+   IF lStorno == nil
+      lStorno := .F.
+   ENDIF
 
-_rec := dbf_get_rec()
+   SELECT fakt_doks
+   SET ORDER TO TAG "1"
+   SEEK cFirma + cTD + cBroj
 
-// privremeno, dok ne uvedem polje ovo iskljucujem
-if lStorno == .t.
-    _rec["fisc_st"] := nFiscal
-else
-    _rec["fisc_rn"] := nFiscal
-endif
+   _rec := dbf_get_rec()
 
-// datum i vrijeme...
-_rec["fisc_date"] := DATE()
-_rec["fisc_time"] := PADR( TIME(), 10 )
+   // privremeno, dok ne uvedem polje ovo iskljucujem
+   IF lStorno == .T.
+      _rec[ "fisc_st" ] := nFiscal
+   ELSE
+      _rec[ "fisc_rn" ] := nFiscal
+   ENDIF
 
-update_rec_server_and_dbf( "fakt_doks", _rec, 1, "FULL" )
+   // datum i vrijeme...
+   _rec[ "fisc_date" ] := Date()
+   _rec[ "fisc_time" ] := PadR( Time(), 10 )
 
-select (nTArea)
-return
+   update_rec_server_and_dbf( "fakt_doks", _rec, 1, "FULL" )
+
+   SELECT ( nTArea )
+
+   RETURN
 
 
 
 // -------------------------------------------------------------
 // izdavanje fiskalnog isjecka na TFP uredjaj - tring
 // -------------------------------------------------------------
-static function fakt_to_tring( id_firma, tip_dok, br_dok, items, head, storno )
-local _err_level := 0
-local _trig := 1
-local _fiscal_no := 0
+STATIC FUNCTION fakt_to_tring( id_firma, tip_dok, br_dok, items, head, storno )
 
-if storno
-    _trig := 2
-endif
+   LOCAL _err_level := 0
+   LOCAL _trig := 1
+   LOCAL _fiscal_no := 0
 
-// brisi ulazne fajlove, ako postoje
-tring_delete_out( __device_params, _trig )
+   IF storno
+      _trig := 2
+   ENDIF
 
-// ispisi racun
-tring_rn( __device_params, items, head, storno )
+   // brisi ulazne fajlove, ako postoje
+   tring_delete_out( __device_params, _trig )
 
-// procitaj gresku
-_err_level := tring_read_error( __device_params, @_fiscal_no, _trig )
+   // ispisi racun
+   tring_rn( __device_params, items, head, storno )
 
-if _fiscal_no <= 0
-    _err_level := 1
-endif
+   // procitaj gresku
+   _err_level := tring_read_error( __device_params, @_fiscal_no, _trig )
 
-// pobrisi izlazni fajl
-tring_delete_out( __device_params, _trig )
+   IF _fiscal_no <= 0
+      _err_level := 1
+   ENDIF
 
-if _err_level <> 0
-    // ostavit cu answer fajl za svaki slucaj!
-    // pobrisi izlazni fajl ako je ostao !
-    msgbeep("Postoji greska sa stampanjem !!!")
-else
-    tring_delete_answer( __device_params, _trig )
-    // ubaci broj fiskalnog racuna u fakturu
-    set_fiscal_no_to_fakt_doks( id_firma, tip_dok, br_dok, _fiscal_no )
-    msgbeep("Kreiran fiskalni racun broj: " + ALLTRIM(STR( _fiscal_no )))
-endif
+   // pobrisi izlazni fajl
+   tring_delete_out( __device_params, _trig )
 
-return _err_level
+   IF _err_level <> 0
+      // ostavit cu answer fajl za svaki slucaj!
+      // pobrisi izlazni fajl ako je ostao !
+      msgbeep( "Postoji greska sa stampanjem !!!" )
+   ELSE
+      tring_delete_answer( __device_params, _trig )
+      // ubaci broj fiskalnog racuna u fakturu
+      set_fiscal_no_to_fakt_doks( id_firma, tip_dok, br_dok, _fiscal_no )
+      msgbeep( "Kreiran fiskalni racun broj: " + AllTrim( Str( _fiscal_no ) ) )
+   ENDIF
+
+   RETURN _err_level
 
 
 
 // ------------------------------------------------------
 // posalji racun na fiskalni stampac
 // ------------------------------------------------------
-static function fakt_to_flink( cFirma, cTipDok, cBrDok )
-local aItems := {}
-local aTxt := {}
-local aPla_data := {}
-local aSem_data := {}
-local lStorno := .t.
-local aMemo := {}
-local nBrDok
-local nReklRn := 0
-local cStPatt := "/S"
-local GetList := {}
+STATIC FUNCTION fakt_to_flink( cFirma, cTipDok, cBrDok )
 
-select fakt_doks
-seek cFirma + cTipDok + cBrDok
+   LOCAL aItems := {}
+   LOCAL aTxt := {}
+   LOCAL aPla_data := {}
+   LOCAL aSem_data := {}
+   LOCAL lStorno := .T.
+   LOCAL aMemo := {}
+   LOCAL nBrDok
+   LOCAL nReklRn := 0
+   LOCAL cStPatt := "/S"
+   LOCAL GetList := {}
 
-// ako je storno racun ...
-if cStPatt $ ALLTRIM(field->brdok)
-    nReklRn := VAL( STRTRAN( ALLTRIM(field->brdok), cStPatt, "" ))  
-endif
+   SELECT fakt_doks
+   SEEK cFirma + cTipDok + cBrDok
 
-nBrDok := VAL(ALLTRIM(field->brdok))
-nTotal := field->iznos
-nNRekRn := 0
+   // ako je storno racun ...
+   IF cStPatt $ AllTrim( field->brdok )
+      nReklRn := Val( StrTran( AllTrim( field->brdok ), cStPatt, "" ) )
+   ENDIF
 
-if nReklRn <> 0
-    Box( , 1, 60)
-        @ m_x + 1, m_y + 2 SAY "Broj rekl.fiskalnog racuna:" ;
-            GET nNRekRn PICT "99999" VALID ( nNRekRn > 0 )
-        read
-    BoxC()
-endif
+   nBrDok := Val( AllTrim( field->brdok ) )
+   nTotal := field->iznos
+   nNRekRn := 0
 
-select fakt
-seek cFirma+cTipDok+cBrDok
+   IF nReklRn <> 0
+      Box( , 1, 60 )
+      @ m_x + 1, m_y + 2 SAY "Broj rekl.fiskalnog racuna:" ;
+         GET nNRekRn PICT "99999" VALID ( nNRekRn > 0 )
+      READ
+      BoxC()
+   ENDIF
 
-nTRec := RECNO()
+   SELECT fakt
+   SEEK cFirma + cTipDok + cBrDok
 
-// da li se radi o storno racunu ?
-do while !EOF() .and. field->idfirma == cFirma ;
-    .and. field->idtipdok == cTipDok ;
-    .and. field->brdok == cBrDok
+   nTRec := RecNo()
 
-    if field->kolicina > 0
-        lStorno := .f.
-        exit
-    endif
-    
-    skip
+   // da li se radi o storno racunu ?
+   DO WHILE !Eof() .AND. field->idfirma == cFirma ;
+         .AND. field->idtipdok == cTipDok ;
+         .AND. field->brdok == cBrDok
 
-enddo
+      IF field->kolicina > 0
+         lStorno := .F.
+         EXIT
+      ENDIF
 
-// nTipRac = 1 - maloprodaja
-// nTipRac = 2 - veleprodaja
+      SKIP
 
-// nSemCmd = semafor komanda
-//           0 - stampa mp racuna
-//           1 - stampa storno mp racuna
-//           20 - stampa vp racuna
-//           21 - stampa storno vp racuna
+   ENDDO
 
-nSemCmd := 0
-nPartnId := 0
+   // nTipRac = 1 - maloprodaja
+   // nTipRac = 2 - veleprodaja
 
-if cTipDok $ "10#"
+   // nSemCmd = semafor komanda
+   // 0 - stampa mp racuna
+   // 1 - stampa storno mp racuna
+   // 20 - stampa vp racuna
+   // 21 - stampa storno vp racuna
 
-    // veleprodajni racun
+   nSemCmd := 0
+   nPartnId := 0
 
-    nTipRac := 2
-    
-    // daj mi partnera za ovu fakturu
-    nPartnId := _g_spart( fakt_doks->idpartner )
-    
-    // stampa vp racuna
-    nSemCmd := 20
+   IF cTipDok $ "10#"
 
-    if lStorno == .t.
-        // stampa storno vp racuna
-        nSemCmd := 21
-    endif
+      // veleprodajni racun
 
-elseif cTipDok $ "11#"
-    
-    // maloprodajni racun
+      nTipRac := 2
 
-    nTipRac := 1
+      // daj mi partnera za ovu fakturu
+      nPartnId := _g_spart( fakt_doks->idpartner )
 
-    // nema parnera
-    nPartnId := 0
+      // stampa vp racuna
+      nSemCmd := 20
 
-    // stampa mp racuna
-    nSemCmd := 0
+      IF lStorno == .T.
+         // stampa storno vp racuna
+         nSemCmd := 21
+      ENDIF
 
-    if lStorno == .t.
-        // stampa storno mp racuna
-        nSemCmd := 1
-    endif
+   ELSEIF cTipDok $ "11#"
 
-endif
+      // maloprodajni racun
 
-// vrati se opet na pocetak
-go (nTRec)
+      nTipRac := 1
 
-// upisi u [items] stavke
-do while !EOF() .and. field->idfirma == cFirma ;
-    .and. field->idtipdok == cTipDok ;
-    .and. field->brdok == cBrDok
+      // nema parnera
+      nPartnId := 0
 
-    // nastimaj se na robu ...
-    select roba
-    seek fakt->idroba
-    
-    select fakt
+      // stampa mp racuna
+      nSemCmd := 0
 
-    // storno identifikator
-    nSt_Id := 0
+      IF lStorno == .T.
+         // stampa storno mp racuna
+         nSemCmd := 1
+      ENDIF
 
-    if ( field->kolicina < 0 ) .and. lStorno == .f.
-        nSt_id := 1
-    endif
-    
-    nSifRoba := _g_sdob( field->idroba )
-    cNazRoba := ALLTRIM( to_xml_encoding( roba->naz ) )
-    cBarKod := ALLTRIM( roba->barkod )
-    nGrRoba := 1
-    nPorStopa := 1
-    nR_cijena := ABS( field->cijena )
-    nR_kolicina := ABS( field->kolicina )
+   ENDIF
 
-    AADD( aItems, { nBrDok , ;
-            nTipRac, ;
-            nSt_id, ;
-            nSifRoba, ;
-            cNazRoba, ;
-            cBarKod, ;
-            nGrRoba, ;
-            nPorStopa, ;
-            nR_cijena, ;
-            nR_kolicina } )
+   // vrati se opet na pocetak
+   GO ( nTRec )
 
-    skip
-enddo
+   // upisi u [items] stavke
+   DO WHILE !Eof() .AND. field->idfirma == cFirma ;
+         .AND. field->idtipdok == cTipDok ;
+         .AND. field->brdok == cBrDok
 
-// tip placanja
-// --------------------
-// 0 - gotovina
-// 1 - cek
-// 2 - kartica
-// 3 - virman
+      // nastimaj se na robu ...
+      SELECT roba
+      SEEK fakt->idroba
 
-nTipPla := 0
+      SELECT fakt
 
-if lStorno == .f.
-    // povrat novca
-    nPovrat := 0    
-    // uplaceno novca
-    nUplaceno := nTotal
-else
-    // povrat novca
-    nPovrat := nTotal   
-    // uplaceno novca
-    nUplaceno := 0
-endif
+      // storno identifikator
+      nSt_Id := 0
 
-// upisi u [pla_data] stavke
-AADD( aPla_data, { nBrDok, ;
-        nTipRac, ;
-        nTipPla, ;
-        ABS(nUplaceno), ;
-        ABS(nTotal), ;
-        ABS(nPovrat) })
+      IF ( field->kolicina < 0 ) .AND. lStorno == .F.
+         nSt_id := 1
+      ENDIF
 
-// RACUN.MEM data
-AADD( aTxt, { "fakt: " + cTipDok + "-" + cBrDok } )
+      nSifRoba := _g_sdob( field->idroba )
+      cNazRoba := AllTrim( to_xml_encoding( roba->naz ) )
+      cBarKod := AllTrim( roba->barkod )
+      nGrRoba := 1
+      nPorStopa := 1
+      nR_cijena := Abs( field->cijena )
+      nR_kolicina := Abs( field->kolicina )
 
-// reklamni racun uzmi sa box-a
-nReklRn := nNRekRn
-// print memo od - do
-nPrMemoOd := 1
-nPrMemoDo := 1
+      AAdd( aItems, { nBrDok, ;
+         nTipRac, ;
+         nSt_id, ;
+         nSifRoba, ;
+         cNazRoba, ;
+         cBarKod, ;
+         nGrRoba, ;
+         nPorStopa, ;
+         nR_cijena, ;
+         nR_kolicina } )
 
-// upisi stavke za [semafor]
-AADD( aSem_data, { nBrDok, ;
-        nSemCmd, ;
-        nPrMemoOd, ;
-        nPrMemoDo, ;
-        nPartnId, ;
-        nReklRn })
+      SKIP
+   ENDDO
+
+   // tip placanja
+   // --------------------
+   // 0 - gotovina
+   // 1 - cek
+   // 2 - kartica
+   // 3 - virman
+
+   nTipPla := 0
+
+   IF lStorno == .F.
+      // povrat novca
+      nPovrat := 0
+      // uplaceno novca
+      nUplaceno := nTotal
+   ELSE
+      // povrat novca
+      nPovrat := nTotal
+      // uplaceno novca
+      nUplaceno := 0
+   ENDIF
+
+   // upisi u [pla_data] stavke
+   AAdd( aPla_data, { nBrDok, ;
+      nTipRac, ;
+      nTipPla, ;
+      Abs( nUplaceno ), ;
+      Abs( nTotal ), ;
+      Abs( nPovrat ) } )
+
+   // RACUN.MEM data
+   AAdd( aTxt, { "fakt: " + cTipDok + "-" + cBrDok } )
+
+   // reklamni racun uzmi sa box-a
+   nReklRn := nNRekRn
+   // print memo od - do
+   nPrMemoOd := 1
+   nPrMemoDo := 1
+
+   // upisi stavke za [semafor]
+   AAdd( aSem_data, { nBrDok, ;
+      nSemCmd, ;
+      nPrMemoOd, ;
+      nPrMemoDo, ;
+      nPartnId, ;
+      nReklRn } )
 
 
-if nTipRac = 2
-    
-    // veleprodaja
-    // posalji na fiskalni stampac...
-    
-    fisc_v_rn( gFC_path, aItems, aTxt, aPla_data, aSem_data )
+   IF nTipRac = 2
 
-elseif nTipRac = 1
-    
-    // maloprodaja
-    // posalji na fiskalni stampac
-    
-    fisc_m_rn( gFC_path, aItems, aTxt, aPla_data, aSem_data )
+      // veleprodaja
+      // posalji na fiskalni stampac...
 
-endif
+      fisc_v_rn( gFC_path, aItems, aTxt, aPla_data, aSem_data )
 
-return
+   ELSEIF nTipRac = 1
+
+      // maloprodaja
+      // posalji na fiskalni stampac
+
+      fisc_m_rn( gFC_path, aItems, aTxt, aPla_data, aSem_data )
+
+   ENDIF
+
+   RETURN
 
 
 // --------------------------------------------------------
 // vraca broj fiskalnog isjecka
 // --------------------------------------------------------
-function fisc_isjecak( cFirma, cTipDok, cBrDok )
-local nTArea   := SELECT()
-local nFisc_no := 0
+FUNCTION fisc_isjecak( cFirma, cTipDok, cBrDok )
 
-select fakt_doks
-go top
-seek cFirma + cTipDok + cBrDok
+   LOCAL nTArea   := Select()
+   LOCAL nFisc_no := 0
 
-if  FOUND() 
-    // ako postoji broj reklamnog racuna, onda uzmi taj
-    if field->fisc_st <> 0
-        nFisc_no := field->fisc_st
-    else
-        nFisc_no := field->fisc_rn
-    endif
-endif
+   SELECT fakt_doks
+   GO TOP
+   SEEK cFirma + cTipDok + cBrDok
 
-select (nTArea)
-return ALLTRIM( STR( nFisc_no ) )
+   IF  Found()
+      // ako postoji broj reklamnog racuna, onda uzmi taj
+      IF field->fisc_st <> 0
+         nFisc_no := field->fisc_st
+      ELSE
+         nFisc_no := field->fisc_rn
+      ENDIF
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN AllTrim( Str( nFisc_no ) )
 
 
 // ------------------------------------------------------
-// posalji email 
+// posalji email
 // ------------------------------------------------------
-static function _snd_eml( fisc_rn, fakt_dok, kupac, eml_file, u_total )
-local _subject, _body
-local _mail_param
-local _to := ALLTRIM( param_racun_na_email() )
+STATIC FUNCTION _snd_eml( fisc_rn, fakt_dok, kupac, eml_file, u_total )
 
-_subject := "Racun: "
-_subject += ALLTRIM(STR(fisc_rn))
-_subject += ", " + fakt_dok 
-_subject += ", " + to_xml_encoding( kupac ) 
-_subject += ", iznos: " + ALLTRIM(STR(u_total,12,2))
-_subject += " KM" 
+   LOCAL _subject, _body
+   LOCAL _mail_param
+   LOCAL _to := AllTrim( param_racun_na_email() )
 
-_body := "podaci kupca i racuna"
+   _subject := "Racun: "
+   _subject += AllTrim( Str( fisc_rn ) )
+   _subject += ", " + fakt_dok
+   _subject += ", " + to_xml_encoding( kupac )
+   _subject += ", iznos: " + AllTrim( Str( u_total, 12, 2 ) )
+   _subject += " KM"
 
-_mail_param := f18_email_prepare( _subject, _body, nil, _to )
+   _body := "podaci kupca i racuna"
 
-f18_email_send( _mail_param, nil )
+   _mail_param := f18_email_prepare( _subject, _body, nil, _to )
 
-return nil
+   f18_email_send( _mail_param, nil )
+
+   RETURN NIL
 
 
 // ------------------------------------------------
 // vraca sifru dobavljaca
 // ------------------------------------------------
-static function _g_sdob( id_roba )
-local _ret := 0
-local _t_area := SELECT()
-select roba
-seek id_roba
+STATIC FUNCTION _g_sdob( id_roba )
 
-if FOUND()
-    _ret := VAL( ALLTRIM( field->sifradob ) )
-endif
+   LOCAL _ret := 0
+   LOCAL _t_area := Select()
 
-select (_t_area)
-return _ret
+   SELECT roba
+   SEEK id_roba
+
+   IF Found()
+      _ret := Val( AllTrim( field->sifradob ) )
+   ENDIF
+
+   SELECT ( _t_area )
+
+   RETURN _ret
 
 
 // ------------------------------------------------
 // vraca sifru partnera
 // ------------------------------------------------
-static function _g_spart( id_partner )
-local _ret := 0
-local _tmp
+STATIC FUNCTION _g_spart( id_partner )
 
-_tmp := RIGHT( ALLTRIM( id_partner ), 5 )
-_ret := VAL( _tmp )
+   LOCAL _ret := 0
+   LOCAL _tmp
 
-return _ret
+   _tmp := Right( AllTrim( id_partner ), 5 )
+   _ret := Val( _tmp )
 
-
-
+   RETURN _ret

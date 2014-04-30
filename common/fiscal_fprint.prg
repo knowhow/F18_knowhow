@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,9 +14,9 @@
 
 
 // pos komande
-static F_POS_RN := "POS_RN"
-static ANSW_DIR := "answer"
-static POLOG_LIMIT := 100
+STATIC F_POS_RN := "POS_RN"
+STATIC ANSW_DIR := "answer"
+STATIC POLOG_LIMIT := 100
 
 // ocekivana matrica
 // aData
@@ -42,25 +42,26 @@ static POLOG_LIMIT := 100
 // aData - podaci racuna
 // lStorno - da li se stampa storno ili ne (.T. ili .F. )
 // --------------------------------------------------------
-function fprint_rn( dev_params, items, head, storno )
-local _sep := ";"
-local _data := {}
-local _struct := {}
-local _err := 0
+FUNCTION fprint_rn( dev_params, items, head, storno )
 
-if storno == NIL
-	storno := .f.
-endif
+   LOCAL _sep := ";"
+   LOCAL _data := {}
+   LOCAL _struct := {}
+   LOCAL _err := 0
 
-// uzmi strukturu tabele za pos racun
-_struct := _g_f_struct( F_POS_RN )
+   IF storno == NIL
+      storno := .F.
+   ENDIF
 
-// iscitaj pos matricu
-_data := _fprint_rn( items, head, storno, dev_params )
+   // uzmi strukturu tabele za pos racun
+   _struct := _g_f_struct( F_POS_RN )
 
-_a_to_file( dev_params["out_dir"], dev_params["out_file"], _struct, _data )
+   // iscitaj pos matricu
+   _data := _fprint_rn( items, head, storno, dev_params )
 
-return _err
+   _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], _struct, _data )
+
+   RETURN _err
 
 
 
@@ -68,541 +69,552 @@ return _err
 
 
 // --------------------------------------------------
-// provjerava unos pologa, maksimalnu vrijednost 
+// provjerava unos pologa, maksimalnu vrijednost
 // --------------------------------------------------
-static function _max_polog( polog )
-local _ok := .t.
+STATIC FUNCTION _max_polog( polog )
 
-if polog > POLOG_LIMIT
-    if Pitanje(, "Polog je > " + ALLTRIM( STR( POLOG_LIMIT) ) + "! Da li je ovo ispravan unos ?", "N" ) == "N"
-        _ok := .f.
-    endif
-endif
+   LOCAL _ok := .T.
 
-return _ok
+   IF polog > POLOG_LIMIT
+      IF Pitanje(, "Polog je > " + AllTrim( Str( POLOG_LIMIT ) ) + "! Da li je ovo ispravan unos ?", "N" ) == "N"
+         _ok := .F.
+      ENDIF
+   ENDIF
+
+   RETURN _ok
 
 
 
 // ----------------------------------------------------
 // fprint: unos pologa u printer
 // ----------------------------------------------------
-function fprint_polog( dev_params, nPolog )
-local cSep := ";"
-local aPolog := {}
-local aStruct := {}
+FUNCTION fprint_polog( dev_params, nPolog )
 
-if nPolog == nil
-	nPolog := 0
-endif
+   LOCAL cSep := ";"
+   LOCAL aPolog := {}
+   LOCAL aStruct := {}
 
-// ako je polog 0, pozovi formu za unos
-if nPolog = 0
+   IF nPolog == nil
+      nPolog := 0
+   ENDIF
 
-   Box(,1,60)
-	@ m_x + 1, m_y + 2 SAY "Zaduzujem kasu za:" GET nPolog ;
-		PICT "999999.99" VALID _max_polog( nPolog )
-	read
-   BoxC()
+   // ako je polog 0, pozovi formu za unos
+   IF nPolog = 0
 
-   if nPolog = 0
-	msgbeep("Polog mora biti <> 0 !")
-	return
-   endif
+      Box(, 1, 60 )
+      @ m_x + 1, m_y + 2 SAY "Zaduzujem kasu za:" GET nPolog ;
+         PICT "999999.99" VALID _max_polog( nPolog )
+      READ
+      BoxC()
 
-   if LastKey() == K_ESC
-	return
-   endif
+      IF nPolog = 0
+         msgbeep( "Polog mora biti <> 0 !" )
+         RETURN
+      ENDIF
 
-endif
+      IF LastKey() == K_ESC
+         RETURN
+      ENDIF
 
-// uzmi strukturu tabele za pos racun
-aStruct := _g_f_struct( F_POS_RN )
+   ENDIF
 
-// iscitaj pos matricu
-aPolog := _fp_polog( nPolog )
+   // uzmi strukturu tabele za pos racun
+   aStruct := _g_f_struct( F_POS_RN )
 
-_a_to_file( dev_params["out_dir"], dev_params["out_file"], aStruct, aPolog )
+   // iscitaj pos matricu
+   aPolog := _fp_polog( nPolog )
 
-return
+   _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aPolog )
+
+   RETURN
 
 
 
 // ----------------------------------------------------
 // fprint: dupliciranje racuna
 // ----------------------------------------------------
-function fprint_double( dev_params, rn_params )
-local cSep := ";"
-local aDouble := {}
-local aStruct := {}
-local dD_from := DATE()
-local dD_to := dD_from
-local cTH_from := "12"
-local cTM_from := "30"
-local cTH_to := "12"
-local cTM_to := "31"
-local cT_from
-local cT_to
-local cType := "F"
-local _box := .f.
+FUNCTION fprint_double( dev_params, rn_params )
 
-if rn_params == NIL
-    _box := .t.
-endif
+   LOCAL cSep := ";"
+   LOCAL aDouble := {}
+   LOCAL aStruct := {}
+   LOCAL dD_from := Date()
+   LOCAL dD_to := dD_from
+   LOCAL cTH_from := "12"
+   LOCAL cTM_from := "30"
+   LOCAL cTH_to := "12"
+   LOCAL cTM_to := "31"
+   LOCAL cT_from
+   LOCAL cT_to
+   LOCAL cType := "F"
+   LOCAL _box := .F.
 
-if _box
+   IF rn_params == NIL
+      _box := .T.
+   ENDIF
 
-   Box(,10,60)
+   IF _box
 
-    SET CURSOR ON
+      Box(, 10, 60 )
+
+      SET CURSOR ON
 	
-	@ m_x + 1, m_y + 2 SAY "Za datum od:" GET dD_from 
-	@ m_x + 1, col() + 1 SAY "vrijeme od (hh:mm):" GET cTH_from
-	@ m_x + 1, col() SAY ":" GET cTM_from
+      @ m_x + 1, m_y + 2 SAY "Za datum od:" GET dD_from
+      @ m_x + 1, Col() + 1 SAY "vrijeme od (hh:mm):" GET cTH_from
+      @ m_x + 1, Col() SAY ":" GET cTM_from
 	
-	@ m_x + 2, m_y + 2 SAY "         do:" GET dD_to
-	@ m_x + 2, col() + 1 SAY "vrijeme do (hh:mm):" GET cTH_to
-	@ m_x + 2, col() SAY ":" GET cTM_to
+      @ m_x + 2, m_y + 2 SAY "         do:" GET dD_to
+      @ m_x + 2, Col() + 1 SAY "vrijeme do (hh:mm):" GET cTH_to
+      @ m_x + 2, Col() SAY ":" GET cTM_to
 
-	@ m_x + 3, m_y + 2 SAY "--------------------------------------"
+      @ m_x + 3, m_y + 2 SAY "--------------------------------------"
 
-	@ m_x + 4, m_y + 2 SAY "A - duplikat svih dokumenata"
-	@ m_x + 5, m_y + 2 SAY "F - duplikat fiskalnog racuna"
-	@ m_x + 6, m_y + 2 SAY "R - duplikat reklamnog racuna"
-	@ m_x + 7, m_y + 2 SAY "Z - duplikat Z izvjestaja"
-	@ m_x + 8, m_y + 2 SAY "X - duplikat X izvjestaja"
-	@ m_x + 9, m_y + 2 SAY "P - duplikat periodicnog izvjestaja" ;
-		GET cType ;
-		VALID cType $ "AFRZXP" PICT "@!"
+      @ m_x + 4, m_y + 2 SAY "A - duplikat svih dokumenata"
+      @ m_x + 5, m_y + 2 SAY "F - duplikat fiskalnog racuna"
+      @ m_x + 6, m_y + 2 SAY "R - duplikat reklamnog racuna"
+      @ m_x + 7, m_y + 2 SAY "Z - duplikat Z izvjestaja"
+      @ m_x + 8, m_y + 2 SAY "X - duplikat X izvjestaja"
+      @ m_x + 9, m_y + 2 SAY "P - duplikat periodicnog izvjestaja" ;
+         GET cType ;
+         VALID cType $ "AFRZXP" PICT "@!"
 
-	read
-  BoxC()
+      READ
+      BoxC()
 
-  if LastKey() == K_ESC
-	return
-  endif
+      IF LastKey() == K_ESC
+         RETURN
+      ENDIF
 
-  // dodaj i sekunde na kraju
-  cT_from := cTH_from + cTM_from + "00"
-  cT_to := cTH_to + cTM_to + "00"
+      // dodaj i sekunde na kraju
+      cT_from := cTH_from + cTM_from + "00"
+      cT_to := cTH_to + cTM_to + "00"
 
-else
+   ELSE
 
-    if EMPTY( rn_params["vrijeme"] )
-        MsgBeep( "Opcija je nemoguca bez parametra vremena !" )
-        return 
-    endif
+      IF Empty( rn_params[ "vrijeme" ] )
+         MsgBeep( "Opcija je nemoguca bez parametra vremena !" )
+         RETURN
+      ENDIF
 
-    if rn_params["datum"] == CTOD( "" )
-        MsgBeep( "Opcija je nemoguca bez parametra datuma !" )
-        return
-    endif
+      IF rn_params[ "datum" ] == CToD( "" )
+         MsgBeep( "Opcija je nemoguca bez parametra datuma !" )
+         RETURN
+      ENDIF
 
-    // imamo parametre racuna...
-    if rn_params["storno"]
-        cType := "R"
-    else
-        cType := "F"
-    endif
-    
-    // datum   
-    dD_from := rn_params["datum"]
-    dD_to := rn_params["datum"]
+      // imamo parametre racuna...
+      IF rn_params[ "storno" ]
+         cType := "R"
+      ELSE
+         cType := "F"
+      ENDIF
 
-    // vrijeme 15:34
-    cT_from := _fix_time( rn_params["vrijeme"], -.5 )
-    cT_to := _fix_time( rn_params["vrijeme"], 1 )
+      // datum
+      dD_from := rn_params[ "datum" ]
+      dD_to := rn_params[ "datum" ]
 
-endif
+      // vrijeme 15:34
+      cT_from := _fix_time( rn_params[ "vrijeme" ], -.5 )
+      cT_to := _fix_time( rn_params[ "vrijeme" ], 1 )
 
-// uzmi strukturu tabele za pos racun
-aStruct := _g_f_struct( F_POS_RN )
+   ENDIF
 
-// iscitaj pos matricu
-aDouble := _fp_double( cType, dD_from, dD_to, cT_from, cT_to )
+   // uzmi strukturu tabele za pos racun
+   aStruct := _g_f_struct( F_POS_RN )
 
-_a_to_file( dev_params["out_dir"], dev_params["out_file"], aStruct, aDouble )
+   // iscitaj pos matricu
+   aDouble := _fp_double( cType, dD_from, dD_to, cT_from, cT_to )
 
-return
+   _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aDouble )
+
+   RETURN
 
 
 // -----------------------------------------------
 // sredi vrijeme +/-
 // -----------------------------------------------
-static function _fix_time( time, fix )
-local _time := ""
-local _a_tmp := TokToNiz( time, ":" )
-local _hour := _a_tmp[1]
-local _minutes := _a_tmp[2]
+STATIC FUNCTION _fix_time( time, fix )
 
-_time := hb_datetime( 0, 0, 0, VAL( _hour ), VAL( _minutes ) + fix , 0 )
-_time := RIGHT( ALLTRIM( hb_ttoc( _time ) ), 12 )
-_time := PADR( _time, 5 ) + "00"
-_time := STRTRAN( _time, ":", "" )
+   LOCAL _time := ""
+   LOCAL _a_tmp := TokToNiz( time, ":" )
+   LOCAL _hour := _a_tmp[ 1 ]
+   LOCAL _minutes := _a_tmp[ 2 ]
 
-return _time
+   _time := hb_DateTime( 0, 0, 0, Val( _hour ), Val( _minutes ) + fix, 0 )
+   _time := Right( AllTrim( hb_TToC( _time ) ), 12 )
+   _time := PadR( _time, 5 ) + "00"
+   _time := StrTran( _time, ":", "" )
+
+   RETURN _time
 
 
 // ----------------------------------------------------
 // zatvori nasilno racun sa 0.0 KM iznosom
 // ----------------------------------------------------
-function fprint_void( dev_params )
-local cSep := ";"
-local aVoid := {}
-local aStruct := {}
+FUNCTION fprint_void( dev_params )
 
-// uzmi strukturu tabele za pos racun
-aStruct := _g_f_struct( F_POS_RN )
+   LOCAL cSep := ";"
+   LOCAL aVoid := {}
+   LOCAL aStruct := {}
 
-// iscitaj pos matricu
-aVoid := _fp_void_rn()
+   // uzmi strukturu tabele za pos racun
+   aStruct := _g_f_struct( F_POS_RN )
 
-_a_to_file( dev_params["out_dir"], dev_params["out_file"], aStruct, aVoid )
+   // iscitaj pos matricu
+   aVoid := _fp_void_rn()
 
-return
+   _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aVoid )
+
+   RETURN
 
 
 
 // ----------------------------------------------------
 // print non-fiscal tekst
 // ----------------------------------------------------
-function fprint_nf_txt( dev_params, cTxt )
-local cSep := ";"
-local aTxt := {}
-local aStruct := {}
+FUNCTION fprint_nf_txt( dev_params, cTxt )
 
-// uzmi strukturu tabele za pos racun
-aStruct := _g_f_struct( F_POS_RN )
+   LOCAL cSep := ";"
+   LOCAL aTxt := {}
+   LOCAL aStruct := {}
 
-// iscitaj pos matricu
-aTxt := _fp_nf_txt( to_win1250_encoding( cTxt ) )
+   // uzmi strukturu tabele za pos racun
+   aStruct := _g_f_struct( F_POS_RN )
 
-_a_to_file( dev_params["out_dir"], dev_params["out_file"], aStruct, aTxt )
+   // iscitaj pos matricu
+   aTxt := _fp_nf_txt( to_win1250_encoding( cTxt ) )
 
-return
+   _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aTxt )
+
+   RETURN
 
 
 // ----------------------------------------------------
 // brisanje PLU iz uredjaja
 // ----------------------------------------------------
-function fprint_delete_plu( dev_params, silent )
-local cSep := ";"
-local aDel := {}
-local aStruct := {}
-local nMaxPlu := 0
+FUNCTION fprint_delete_plu( dev_params, silent )
 
-if silent == NIL
-	silent := .t.
-endif
+   LOCAL cSep := ";"
+   LOCAL aDel := {}
+   LOCAL aStruct := {}
+   LOCAL nMaxPlu := 0
 
-if !silent 
+   IF silent == NIL
+      silent := .T.
+   ENDIF
+
+   IF !silent
 	
-	if !SIGMASIF("RESET")
-		return
-	endif
+      IF !SIGMASIF( "RESET" )
+         RETURN
+      ENDIF
 
-	// daj mi vrijednost plu do koje cu resetovati...
-	Box(,1,50)
-		@ m_x + 1, m_y + 2 SAY "Unesi max.plu vrijednost:" GET nMaxPlu PICT "9999999999"
-		read
-	BoxC()
+      // daj mi vrijednost plu do koje cu resetovati...
+      Box(, 1, 50 )
+      @ m_x + 1, m_y + 2 SAY "Unesi max.plu vrijednost:" GET nMaxPlu PICT "9999999999"
+      READ
+      BoxC()
 
-	if LastKey() == K_ESC
-		return
-	endif
+      IF LastKey() == K_ESC
+         RETURN
+      ENDIF
 
-endif
+   ENDIF
 
-// uzmi strukturu tabele za pos racun
-aStruct := _g_f_struct( F_POS_RN )
+   // uzmi strukturu tabele za pos racun
+   aStruct := _g_f_struct( F_POS_RN )
 
-// iscitaj pos matricu
-aDel := _fp_del_plu( nMaxPlu, dev_params )
+   // iscitaj pos matricu
+   aDel := _fp_del_plu( nMaxPlu, dev_params )
 
-_a_to_file( dev_params["out_dir"], dev_params["out_file"], aStruct, aDel )
+   _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aDel )
 
-return
+   RETURN
 
 
 
 // ----------------------------------------------------
 // zatvori racun
 // ----------------------------------------------------
-function fprint_rn_close( dev_params )
-local cSep := ";"
-local aClose := {}
-local aStruct := {}
+FUNCTION fprint_rn_close( dev_params )
 
-// uzmi strukturu tabele za pos racun
-aStruct := _g_f_struct( F_POS_RN )
+   LOCAL cSep := ";"
+   LOCAL aClose := {}
+   LOCAL aStruct := {}
 
-// iscitaj pos matricu
-aClose := _fp_close_rn()
+   // uzmi strukturu tabele za pos racun
+   aStruct := _g_f_struct( F_POS_RN )
 
-_a_to_file( dev_params["out_dir"], dev_params["out_file"], aStruct, aClose )
+   // iscitaj pos matricu
+   aClose := _fp_close_rn()
 
-return
+   _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aClose )
+
+   RETURN
 
 
 // ----------------------------------------------------
 // manualno zadavanje komandi
 // ----------------------------------------------------
-function fprint_manual_cmd( dev_params )
-local cSep := ";"
-local aManCmd := {}
-local aStruct := {}
-local nCmd := 0
-local cCond := SPACE(150)
-local cErr := "N"
-local nErr := 0
-private GetList:={}
+FUNCTION fprint_manual_cmd( dev_params )
 
-Box(,4, 65)
+   LOCAL cSep := ";"
+   LOCAL aManCmd := {}
+   LOCAL aStruct := {}
+   LOCAL nCmd := 0
+   LOCAL cCond := Space( 150 )
+   LOCAL cErr := "N"
+   LOCAL nErr := 0
+   PRIVATE GetList := {}
+
+   Box(, 4, 65 )
 	
-	@ m_x+1, m_y+2 SAY "**** manuelno zadavanje komandi ****" 
+   @ m_x + 1, m_y + 2 SAY "**** manuelno zadavanje komandi ****"
 	
-	@ m_x+2, m_y+2 SAY "   broj komande:" GET nCmd PICT "999" ;
-		VALID nCmd > 0
-	@ m_x+3, m_y+2 SAY "        komanda:" GET cCond PICT "@S40"
+   @ m_x + 2, m_y + 2 SAY "   broj komande:" GET nCmd PICT "999" ;
+      VALID nCmd > 0
+   @ m_x + 3, m_y + 2 SAY "        komanda:" GET cCond PICT "@S40"
 	
-	@ m_x+4, m_y+2 SAY "provjera greske:" GET cErr PICT "@!" ;
-		VALID cErr $ "DN"
-	read
-BoxC()
+   @ m_x + 4, m_y + 2 SAY "provjera greske:" GET cErr PICT "@!" ;
+      VALID cErr $ "DN"
+   READ
+   BoxC()
 
-if LastKey() == K_ESC
-	return
-endif
+   IF LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-// uzmi strukturu tabele za pos racun
-aStruct := _g_f_struct( F_POS_RN )
+   // uzmi strukturu tabele za pos racun
+   aStruct := _g_f_struct( F_POS_RN )
 
-// iscitaj pos matricu
-aManCmd := _fp_man_cmd( nCmd, cCond )
+   // iscitaj pos matricu
+   aManCmd := _fp_man_cmd( nCmd, cCond )
 
-_a_to_file( dev_params["out_dir"], dev_params["out_file"], aStruct, aManCmd )
+   _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aManCmd )
 
-if cErr == "D"
+   IF cErr == "D"
 	
-	// provjeri gresku
-	nErr := fprint_read_error( dev_params, 0 )
+      // provjeri gresku
+      nErr := fprint_read_error( dev_params, 0 )
 
-	if nErr <> 0
-		msgbeep("Postoji greska !!!")
-	endif
+      IF nErr <> 0
+         msgbeep( "Postoji greska !!!" )
+      ENDIF
 
-endif
+   ENDIF
 
-return
+   RETURN
 
 
 
 // ----------------------------------------------------
 // izvjestaj o prodanim PLU
 // ----------------------------------------------------
-function fprint_sold_plu( dev_params )
-local cSep := ";"
-local aPlu := {}
-local aStruct := {}
-local nErr := 0
-local cType := "0"
+FUNCTION fprint_sold_plu( dev_params )
 
-Box(,4,50)
-	@ m_x + 1, m_y + 2 SAY "**** pregled artikala ****" COLOR "I"
-	@ m_x + 3, m_y + 2 SAY "0 - samo u danasnjem prometu "
-	@ m_x + 4, m_y + 2 SAY "1 - svi programirani          -> " GET cType ;
-		VALID cType $ "01"
-	read
-BoxC()
+   LOCAL cSep := ";"
+   LOCAL aPlu := {}
+   LOCAL aStruct := {}
+   LOCAL nErr := 0
+   LOCAL cType := "0"
 
-if LastKey() == K_ESC
-	return
-endif
+   Box(, 4, 50 )
+   @ m_x + 1, m_y + 2 SAY "**** pregled artikala ****" COLOR "I"
+   @ m_x + 3, m_y + 2 SAY "0 - samo u danasnjem prometu "
+   @ m_x + 4, m_y + 2 SAY "1 - svi programirani          -> " GET cType ;
+      VALID cType $ "01"
+   READ
+   BoxC()
 
-// pobrisi answer fajl
-fprint_delete_answer( dev_params )
+   IF LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-// uzmi strukturu tabele za pos racun
-aStruct := _g_f_struct( F_POS_RN )
+   // pobrisi answer fajl
+   fprint_delete_answer( dev_params )
 
-// iscitaj pos matricu
-aPlu := _fp_sold_plu( cType )
+   // uzmi strukturu tabele za pos racun
+   aStruct := _g_f_struct( F_POS_RN )
 
-_a_to_file( dev_params["out_dir"], dev_params["out_file"], aStruct, aPlu )
+   // iscitaj pos matricu
+   aPlu := _fp_sold_plu( cType )
 
+   _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aPlu )
 
-return
+   RETURN
 
 
 
 // ----------------------------------------------------
 // dnevni fiskalni izvjestaj
 // ----------------------------------------------------
-function fprint_daily_rpt( dev_params )
-local cSep := ";"
-local aDaily := {}
-local aStruct := {}
-local nErr := 0
-local cType := "0"
-local _rpt_type := "Z"
-local _param_date, _param_time
-local _last_date, _last_time
+FUNCTION fprint_daily_rpt( dev_params )
 
-cType := fetch_metric( "fiscal_fprint_daily_type", my_user(), cType )
+   LOCAL cSep := ";"
+   LOCAL aDaily := {}
+   LOCAL aStruct := {}
+   LOCAL nErr := 0
+   LOCAL cType := "0"
+   LOCAL _rpt_type := "Z"
+   LOCAL _param_date, _param_time
+   LOCAL _last_date, _last_time
 
-// uslovi
-Box(,4,50)
-	@ m_x + 1, m_y + 2 SAY "**** dnevni izvjestaj ****" COLOR "I"
-	@ m_x + 3, m_y + 2 SAY "0 - z-report"
-	@ m_x + 4, m_y + 2 SAY "2 - x-report  -> " GET cType ;
-		VALID cType $ "02"
-	read
-BoxC()
+   cType := fetch_metric( "fiscal_fprint_daily_type", my_user(), cType )
 
-if LastKey() == K_ESC
-	return
-endif
+   // uslovi
+   Box(, 4, 50 )
+   @ m_x + 1, m_y + 2 SAY "**** dnevni izvjestaj ****" COLOR "I"
+   @ m_x + 3, m_y + 2 SAY "0 - z-report"
+   @ m_x + 4, m_y + 2 SAY "2 - x-report  -> " GET cType ;
+      VALID cType $ "02"
+   READ
+   BoxC()
 
-// snimi parametar za naredni put
-set_metric( "fiscal_fprint_daily_type", my_user(), cType )
+   IF LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-if cType == "2"
-    _rpt_type := "X"
-endif
+   // snimi parametar za naredni put
+   set_metric( "fiscal_fprint_daily_type", my_user(), cType )
 
-_param_date := "zadnji_" + _rpt_type + "_izvjestaj_datum"
-_param_time := "zadnji_" + _rpt_type + "_izvjestaj_vrijeme"
+   IF cType == "2"
+      _rpt_type := "X"
+   ENDIF
 
-// iscitaj zadnje formirane izvjestaje...
-_last_date := fetch_metric( _param_date, nil, CTOD("") )
-_last_time := PADR( fetch_metric( _param_time, nil, "" ), 5 )
+   _param_date := "zadnji_" + _rpt_type + "_izvjestaj_datum"
+   _param_time := "zadnji_" + _rpt_type + "_izvjestaj_vrijeme"
 
-if _rpt_type == "Z" .and. _last_date == DATE()
-    MsgBeep( "Zadnji Z izvjestaj radjen: " + DTOC( _last_date ) + ", u " + _last_time )
-endif
+   // iscitaj zadnje formirane izvjestaje...
+   _last_date := fetch_metric( _param_date, nil, CToD( "" ) )
+   _last_time := PadR( fetch_metric( _param_time, nil, "" ), 5 )
 
-if Pitanje(,"Stampati dnevni izvjestaj ?", "D") == "N"
-	return
-endif
+   IF _rpt_type == "Z" .AND. _last_date == Date()
+      MsgBeep( "Zadnji Z izvjestaj radjen: " + DToC( _last_date ) + ", u " + _last_time )
+   ENDIF
 
-// pobrisi answer fajl
-fprint_delete_answer( dev_params )
+   IF Pitanje(, "Stampati dnevni izvjestaj ?", "D" ) == "N"
+      RETURN
+   ENDIF
 
-// uzmi strukturu tabele za pos racun
-aStruct := _g_f_struct( F_POS_RN )
+   // pobrisi answer fajl
+   fprint_delete_answer( dev_params )
 
-// iscitaj pos matricu
-aDaily := _fp_daily_rpt( cType )
+   // uzmi strukturu tabele za pos racun
+   aStruct := _g_f_struct( F_POS_RN )
 
-_a_to_file( dev_params["out_dir"], dev_params["out_file"], aStruct, aDaily )
+   // iscitaj pos matricu
+   aDaily := _fp_daily_rpt( cType )
 
-// procitaj error
-nErr := fprint_read_error( dev_params, 0 )
+   _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aDaily )
 
-if nErr <> 0
-	msgbeep("Postoji greska !!!")
-	return
-endif
+   // procitaj error
+   nErr := fprint_read_error( dev_params, 0 )
 
-// upisi u sql/db datum i vrijeme formiranja dnevnog izvjestaja
-set_metric( _param_date, nil, DATE() )
-set_metric( _param_time, nil, TIME() )
+   IF nErr <> 0
+      msgbeep( "Postoji greska !!!" )
+      RETURN
+   ENDIF
 
-// pokrecem komandu za brisanje artikala iz uredjaja
-// ovo je bitno za FP550 uredjaj
-// MP55LD ce ignorisati, nece se nista desiti!
+   // upisi u sql/db datum i vrijeme formiranja dnevnog izvjestaja
+   set_metric( _param_date, nil, Date() )
+   set_metric( _param_time, nil, Time() )
 
-// ako je dinamicki PLU i tip izvjestaja "Z"
-if dev_params["plu_type"] == "D" .and. _rpt_type == "Z"
+   // pokrecem komandu za brisanje artikala iz uredjaja
+   // ovo je bitno za FP550 uredjaj
+   // MP55LD ce ignorisati, nece se nista desiti!
 
-	msgo("Nuliram stanje uredjaja ...")
+   // ako je dinamicki PLU i tip izvjestaja "Z"
+   IF dev_params[ "plu_type" ] == "D" .AND. _rpt_type == "Z"
 
-	// ako je printer onda posalji ovu komandu !
-	if dev_params["type"] == "P"
+      msgo( "Nuliram stanje uredjaja ..." )
 
-		// pobrisi answer fajl
-		fprint_delete_answer( dev_params )
+      // ako je printer onda posalji ovu komandu !
+      IF dev_params[ "type" ] == "P"
 
-		// daj mu malo prostora
-		sleep(10)
+         // pobrisi answer fajl
+         fprint_delete_answer( dev_params )
 
-		// posalji komandu za reset PLU u uredjaju
-		fprint_delete_plu( dev_params, .t. )
+         // daj mu malo prostora
+         Sleep( 10 )
 
-		// prekontrolisi gresku
-		// ovdje cemo koristiti veci timeout
-		nErr := fprint_read_error( dev_params, 0, NIL, 500 )
+         // posalji komandu za reset PLU u uredjaju
+         fprint_delete_plu( dev_params, .T. )
 
-		if nErr <> 0
-			msgbeep("Postoji greska !!!")
-			return
-		endif
-	endif
+         // prekontrolisi gresku
+         // ovdje cemo koristiti veci timeout
+         nErr := fprint_read_error( dev_params, 0, NIL, 500 )
+
+         IF nErr <> 0
+            msgbeep( "Postoji greska !!!" )
+            RETURN
+         ENDIF
+      ENDIF
 	
-	msgc()
+      msgc()
 
-	// setuj brojac PLU na 0 u parametrima !
-	auto_plu( .t., .t., dev_params )
+      // setuj brojac PLU na 0 u parametrima !
+      auto_plu( .T., .T., dev_params )
 
-	msgbeep("Stanje fiskalnog uredjaju je nulirano.")
+      msgbeep( "Stanje fiskalnog uredjaju je nulirano." )
 
-endif
+   ENDIF
 
-// ako se koristi opcija automatskog pologa u ureðaj
-if dev_params["auto_avans"] <> 0
+   // ako se koristi opcija automatskog pologa u ureðaj
+   IF dev_params[ "auto_avans" ] <> 0
 	
-	msgo("Automatski unos pologa u uredjaj... sacekajte.")
+      msgo( "Automatski unos pologa u uredjaj... sacekajte." )
 	
-	// daj malo prostora
-	sleep(10)
+      // daj malo prostora
+      Sleep( 10 )
 	
-	// odmah pozovi i automatski polog
-	fprint_polog( dev_params, dev_params["auto_avans"] )
+      // odmah pozovi i automatski polog
+      fprint_polog( dev_params, dev_params[ "auto_avans" ] )
 	
-	msgc()
+      msgc()
 
-endif
+   ENDIF
 
-return
+   RETURN
 
 
 // ----------------------------------------------------
 // fiskalni izvjestaj za period
 // ----------------------------------------------------
-function fprint_per_rpt( dev_params )
-local cSep := ";"
-local aPer := {}
-local aStruct := {}
-local _err_level := 0
-local dD_from := DATE() - 30
-local dD_to := DATE()
-private GetList:={}
+FUNCTION fprint_per_rpt( dev_params )
 
-Box(,1,50)
-	@ m_x + 1, m_y + 2 SAY "Za period od" GET dD_from 
-	@ m_x + 1, col() + 1 SAY "do" GET dD_to
-	read
-BoxC()
+   LOCAL cSep := ";"
+   LOCAL aPer := {}
+   LOCAL aStruct := {}
+   LOCAL _err_level := 0
+   LOCAL dD_from := Date() - 30
+   LOCAL dD_to := Date()
+   PRIVATE GetList := {}
 
-if LastKey() == K_ESC
-	return
-endif
+   Box(, 1, 50 )
+   @ m_x + 1, m_y + 2 SAY "Za period od" GET dD_from
+   @ m_x + 1, Col() + 1 SAY "do" GET dD_to
+   READ
+   BoxC()
 
-// uzmi strukturu tabele za pos racun
-aStruct := _g_f_struct( F_POS_RN )
+   IF LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-// iscitaj pos matricu
-aPer := _fp_per_rpt( dD_from, dD_to )
+   // uzmi strukturu tabele za pos racun
+   aStruct := _g_f_struct( F_POS_RN )
 
-_a_to_file( dev_params["out_dir"], dev_params["out_file"], aStruct, aPer )
+   // iscitaj pos matricu
+   aPer := _fp_per_rpt( dD_from, dD_to )
 
-// procitaj error
-_err_level := fprint_read_error( dev_params, 0 )
+   _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aPer )
 
-if _err_level <> 0
-	msgbeep("Postoji greska !!!")
-endif
+   // procitaj error
+   _err_level := fprint_read_error( dev_params, 0 )
 
-return _err_level
+   IF _err_level <> 0
+      msgbeep( "Postoji greska !!!" )
+   ENDIF
+
+   RETURN _err_level
 
 
 
@@ -611,535 +623,544 @@ return _err_level
 // vraca popunjenu matricu za ispis racuna
 // FPRINT driver
 // ----------------------------------------
-static function _fprint_rn( aData, aKupac, lStorno, params )
-local aArr := {}
-local cTmp := ""
-local cLogic
-local cLogSep := ","
-local cSep := ";"
-local i
-local cRek_rn := ""
-local cRnBroj
-local cOperator := "1"
-local cOp_pwd := "000000"
-local nTotal := 0
-local cVr_placanja := "0"
-local _convert_852 := .t.
+STATIC FUNCTION _fprint_rn( aData, aKupac, lStorno, params )
 
-// provjeri operatera i lozinku iz podesenja...
-if !EMPTY( params["op_id"] )
-    cOperater := params["op_id"]
-endif
+   LOCAL aArr := {}
+   LOCAL cTmp := ""
+   LOCAL cLogic
+   LOCAL cLogSep := ","
+   LOCAL cSep := ";"
+   LOCAL i
+   LOCAL cRek_rn := ""
+   LOCAL cRnBroj
+   LOCAL cOperator := "1"
+   LOCAL cOp_pwd := "000000"
+   LOCAL nTotal := 0
+   LOCAL cVr_placanja := "0"
+   LOCAL _convert_852 := .T.
 
-if !EMPTY( params["op_pwd"] )
-    cOp_pwd := params["op_pwd"]
-endif
+   // provjeri operatera i lozinku iz podesenja...
+   IF !Empty( params[ "op_id" ] )
+      cOperater := params[ "op_id" ]
+   ENDIF
 
-cVr_placanja := ALLTRIM( aData[1, 13] )
-nTotal := aData[1, 14]
+   IF !Empty( params[ "op_pwd" ] )
+      cOp_pwd := params[ "op_pwd" ]
+   ENDIF
 
-if nTotal == NIL
-    nTotal := 0
-endif
+   cVr_placanja := AllTrim( aData[ 1, 13 ] )
+   nTotal := aData[ 1, 14 ]
 
-// ocekuje se matrica formata
-// aData { brrn, rbr, idroba, nazroba, cijena, kolicina, porstopa, 
-//         rek_rn, plu, plu_cijena, popust, barkod, vrsta plac, total racuna }
+   IF nTotal == NIL
+      nTotal := 0
+   ENDIF
 
-// prvo dodaj artikle za prodaju...
-_a_fp_articles( @aArr, aData, lStorno, params )
+   // ocekuje se matrica formata
+   // aData { brrn, rbr, idroba, nazroba, cijena, kolicina, porstopa,
+   // rek_rn, plu, plu_cijena, popust, barkod, vrsta plac, total racuna }
 
-// broj racuna
-cRnBroj := ALLTRIM( aData[1,1] )
+   // prvo dodaj artikle za prodaju...
+   _a_fp_articles( @aArr, aData, lStorno, params )
 
-// logic je uvijek "1"
-cLogic := "1"
+   // broj racuna
+   cRnBroj := AllTrim( aData[ 1, 1 ] )
 
-// 1) otvaranje fiskalnog racuna
+   // logic je uvijek "1"
+   cLogic := "1"
 
-cTmp := "48"
-cTmp += cLogSep
-cTmp += cLogic
-cTmp += cLogSep
-cTmp += REPLICATE("_", 6) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 1) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 2)
-cTmp += cSep
-cTmp += params["iosa"]
-cTmp += cSep
-cTmp += cOperator
-cTmp += cSep
-cTmp += cOp_pwd
-cTmp += cSep
+   // 1) otvaranje fiskalnog racuna
 
-if lStorno == .t.
+   cTmp := "48"
+   cTmp += cLogSep
+   cTmp += cLogic
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 6 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 1 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 2 )
+   cTmp += cSep
+   cTmp += params[ "iosa" ]
+   cTmp += cSep
+   cTmp += cOperator
+   cTmp += cSep
+   cTmp += cOp_pwd
+   cTmp += cSep
+
+   IF lStorno == .T.
 	
-	cRek_rn := ALLTRIM( aData[ 1, 8 ] )
-	cTmp += cSep
-	cTmp += cRek_rn
-	cTmp += cSep
-else
-	cTmp += cSep
-endif
+      cRek_rn := AllTrim( aData[ 1, 8 ] )
+      cTmp += cSep
+      cTmp += cRek_rn
+      cTmp += cSep
+   ELSE
+      cTmp += cSep
+   ENDIF
 
-// dodaj ovu stavku u matricu...
-AADD( aArr, { cTmp } )
+   // dodaj ovu stavku u matricu...
+   AAdd( aArr, { cTmp } )
 
-// 2. prodaja stavki
+   // 2. prodaja stavki
 
-for i := 1 to LEN( aData )
+   FOR i := 1 TO Len( aData )
 
-	cTmp := "52"
-	cTmp += cLogSep
-	cTmp += cLogic
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 6) 
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 1) 
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 2)
-	cTmp += cSep
+      cTmp := "52"
+      cTmp += cLogSep
+      cTmp += cLogic
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 6 )
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 1 )
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 2 )
+      cTmp += cSep
 	
-	// kod PLU
-	cTmp += ALLTRIM( STR( aData[i, 9] ) )
-	cTmp += cSep
+      // kod PLU
+      cTmp += AllTrim( Str( aData[ i, 9 ] ) )
+      cTmp += cSep
 	
-	// kolicina 0-99999.999
-	cTmp += ALLTRIM(STR( aData[i, 6], 12, 3 ))
-	cTmp += cSep
+      // kolicina 0-99999.999
+      cTmp += AllTrim( Str( aData[ i, 6 ], 12, 3 ) )
+      cTmp += cSep
 
-	// popust 0-99.99%
-	if aData[i, 10] > 0
-		cTmp += "-" + ALLTRIM(STR( aData[i, 11], 10, 2 ))
-	endif
-	cTmp += cSep
+      // popust 0-99.99%
+      IF aData[ i, 10 ] > 0
+         cTmp += "-" + AllTrim( Str( aData[ i, 11 ], 10, 2 ) )
+      ENDIF
+      cTmp += cSep
 
-	// dodaj u matricu prodaju...
-	AADD( aArr, { cTmp } )
+      // dodaj u matricu prodaju...
+      AAdd( aArr, { cTmp } )
 	
-next
+   NEXT
 
-// 3. subtotal
+   // 3. subtotal
 
-cTmp := "51"
-cTmp += cLogSep
-cTmp += cLogic
-cTmp += cLogSep
-cTmp += REPLICATE("_", 6) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 1) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 2)
-cTmp += cSep
+   cTmp := "51"
+   cTmp += cLogSep
+   cTmp += cLogic
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 6 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 1 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 2 )
+   cTmp += cSep
 
-AADD( aArr, { cTmp } )
+   AAdd( aArr, { cTmp } )
 
 
-// 4. nacin placanja
-cTmp := "53"
-cTmp += cLogSep
-cTmp += cLogic
-cTmp += cLogSep
-cTmp += REPLICATE("_", 6) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 1) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 2)
-cTmp += cSep
+   // 4. nacin placanja
+   cTmp := "53"
+   cTmp += cLogSep
+   cTmp += cLogic
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 6 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 1 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 2 )
+   cTmp += cSep
 
-// 0 - cash
-// 1 - card
-// 2 - chek
-// 3 - virman
+   // 0 - cash
+   // 1 - card
+   // 2 - chek
+   // 3 - virman
 
-if ( cVr_placanja <> "0" .and. !lStorno ) .or. ( cVr_placanja == "0" .and. nTotal <> 0 .and. !lStorno )
+   IF ( cVr_placanja <> "0" .AND. !lStorno ) .OR. ( cVr_placanja == "0" .AND. nTotal <> 0 .AND. !lStorno )
  	
-	// imamo drugu vrstu placanja...
-	cTmp += cVr_placanja
-	cTmp += cSep
-	cTmp += ALLTRIM( STR( nTotal, 12, 2 ) )
-	cTmp += cSep
+      // imamo drugu vrstu placanja...
+      cTmp += cVr_placanja
+      cTmp += cSep
+      cTmp += AllTrim( Str( nTotal, 12, 2 ) )
+      cTmp += cSep
 
-else
+   ELSE
 
-	cTmp += cSep
-	cTmp += cSep
+      cTmp += cSep
+      cTmp += cSep
 
-endif
+   ENDIF
 
-AADD( aArr, { cTmp } )
+   AAdd( aArr, { cTmp } )
 
-// radi zaokruzenja kod virmanskog placanja 
-// salje se jos jedna linija 53 ali prazna
-if cVr_placanja <> "0" .and. !lStorno 
+   // radi zaokruzenja kod virmanskog placanja
+   // salje se jos jedna linija 53 ali prazna
+   IF cVr_placanja <> "0" .AND. !lStorno
 	
-	cTmp := "53"
-	cTmp += cLogSep
-	cTmp += cLogic
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 6) 
-	cTmp += cLogSep	
-	cTmp += REPLICATE("_", 1) 
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 2)
-	cTmp += cSep
-	cTmp += cSep
-	cTmp += cSep
+      cTmp := "53"
+      cTmp += cLogSep
+      cTmp += cLogic
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 6 )
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 1 )
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 2 )
+      cTmp += cSep
+      cTmp += cSep
+      cTmp += cSep
 
-	AADD( aArr, { cTmp } )
+      AAdd( aArr, { cTmp } )
 
-endif
+   ENDIF
 
-// 5. kupac - podaci
-if aKupac <> NIL .and. LEN( aKupac ) > 0
+   // 5. kupac - podaci
+   IF aKupac <> NIL .AND. Len( aKupac ) > 0
 
-	// aKupac = { idbroj, naziv, adresa, ptt, mjesto }
+      // aKupac = { idbroj, naziv, adresa, ptt, mjesto }
 
-	// postoje podaci...
-	cTmp := "55"
-	cTmp += cLogSep
-	cTmp += cLogic
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 6) 
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 1) 
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 2)
-	cTmp += cSep
+      // postoje podaci...
+      cTmp := "55"
+      cTmp += cLogSep
+      cTmp += cLogic
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 6 )
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 1 )
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 2 )
+      cTmp += cSep
 	
-	// 1. id broj
-	cTmp += ALLTRIM( aKupac[ 1, 1 ] )
-	cTmp += cSep
+      // 1. id broj
+      cTmp += AllTrim( aKupac[ 1, 1 ] )
+      cTmp += cSep
 	
-    // 2. naziv
-	cTmp += ALLTRIM( PADR( to_win1250_encoding( hb_strtoutf8( aKupac[ 1, 2 ]), _convert_852 ), 36 ) )
-	cTmp += cSep
+      // 2. naziv
+      cTmp += AllTrim( PadR( to_win1250_encoding( hb_StrToUTF8( aKupac[ 1, 2 ] ), _convert_852 ), 36 ) )
+      cTmp += cSep
 
-	// 3. adresa
-	cTmp += ALLTRIM( PADR( to_win1250_encoding( hb_strtoutf8(aKupac[ 1, 3 ]), _convert_852 ), 36 ) ) 
-	cTmp += cSep
+      // 3. adresa
+      cTmp += AllTrim( PadR( to_win1250_encoding( hb_StrToUTF8( aKupac[ 1, 3 ] ), _convert_852 ), 36 ) )
+      cTmp += cSep
 	
-	// 4. ptt, mjesto
-	cTmp += ALLTRIM( to_win1250_encoding( hb_strtoutf8(aKupac[ 1, 4 ]), _convert_852 ) ) + " " + ;
-		ALLTRIM( to_win1250_encoding( hb_strtoutf8(aKupac[ 1, 5 ]), _convert_852 ) )
+      // 4. ptt, mjesto
+      cTmp += AllTrim( to_win1250_encoding( hb_StrToUTF8( aKupac[ 1, 4 ] ), _convert_852 ) ) + " " + ;
+         AllTrim( to_win1250_encoding( hb_StrToUTF8( aKupac[ 1, 5 ] ), _convert_852 ) )
 
-	cTmp += cSep
-	cTmp += cSep
-	cTmp += cSep
+      cTmp += cSep
+      cTmp += cSep
+      cTmp += cSep
 
-	AADD( aArr, { cTmp } )
+      AAdd( aArr, { cTmp } )
 
-endif
+   ENDIF
 
-// 6. otvaranje ladice
-cTmp := "106"
-cTmp += cLogSep
-cTmp += cLogic
-cTmp += cLogSep
-cTmp += REPLICATE("_", 6) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 1) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 2)
-cTmp += cSep
+   // 6. otvaranje ladice
+   cTmp := "106"
+   cTmp += cLogSep
+   cTmp += cLogic
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 6 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 1 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 2 )
+   cTmp += cSep
 
-AADD( aArr, { cTmp } )
+   AAdd( aArr, { cTmp } )
 
 
 
-// 7. zatvaranje racuna
-cTmp := "56"
-cTmp += cLogSep
-cTmp += cLogic
-cTmp += cLogSep
-cTmp += REPLICATE("_", 6) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 1) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 2)
-cTmp += cSep
+   // 7. zatvaranje racuna
+   cTmp := "56"
+   cTmp += cLogSep
+   cTmp += cLogic
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 6 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 1 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 2 )
+   cTmp += cSep
 
-AADD( aArr, { cTmp } )
+   AAdd( aArr, { cTmp } )
 
-return aArr
+   RETURN aArr
 
 
 
 // ---------------------------------------------------
 // manualno zadavanje komandi
 // ---------------------------------------------------
-static function _fp_man_cmd( nCmd, cCond )
-local cTmp := ""
-local cLogic
-local cLogSep := ","
-local cSep := ";"
-local aArr := {}
+STATIC FUNCTION _fp_man_cmd( nCmd, cCond )
 
-cLogic := "1"
+   LOCAL cTmp := ""
+   LOCAL cLogic
+   LOCAL cLogSep := ","
+   LOCAL cSep := ";"
+   LOCAL aArr := {}
 
-// broj komande
-cTmp := ALLTRIM(STR(nCmd))
+   cLogic := "1"
 
-// ostali regularni dio
-cTmp += cLogSep
-cTmp += cLogic
-cTmp += cLogSep
-cTmp += REPLICATE("_", 6) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 1) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 2)
-cTmp += cSep
+   // broj komande
+   cTmp := AllTrim( Str( nCmd ) )
 
-if !EMPTY( cCond )
-	// ostatak komande
-	cTmp += ALLTRIM(cCond)
-endif
+   // ostali regularni dio
+   cTmp += cLogSep
+   cTmp += cLogic
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 6 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 1 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 2 )
+   cTmp += cSep
 
-AADD( aArr, { cTmp } )
+   IF !Empty( cCond )
+      // ostatak komande
+      cTmp += AllTrim( cCond )
+   ENDIF
 
-return aArr
+   AAdd( aArr, { cTmp } )
+
+   RETURN aArr
 
 
 
 // ---------------------------------------------------
 // printanje non-fiscal teksta na uredjaj
 // ---------------------------------------------------
-static function _fp_nf_txt( cTxt )
-local cTmp := ""
-local cLogic
-local cLogSep := ","
-local cSep := ";"
-local aArr := {}
+STATIC FUNCTION _fp_nf_txt( cTxt )
 
-cLogic := "1"
+   LOCAL cTmp := ""
+   LOCAL cLogic
+   LOCAL cLogSep := ","
+   LOCAL cSep := ";"
+   LOCAL aArr := {}
 
-// otvori non-fiscal racun
-cTmp := "38"
-cTmp += cLogSep
-cTmp += cLogic
-cTmp += cLogSep
-cTmp += REPLICATE("_", 6) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 1) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 2)
-cTmp += cSep
+   cLogic := "1"
 
-AADD( aArr, { cTmp } )
+   // otvori non-fiscal racun
+   cTmp := "38"
+   cTmp += cLogSep
+   cTmp += cLogic
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 6 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 1 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 2 )
+   cTmp += cSep
 
-
-// ispisi tekst
-cTmp := "42"
-cTmp += cLogSep
-cTmp += cLogic
-cTmp += cLogSep
-cTmp += REPLICATE("_", 6) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 1) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 2)
-cTmp += cSep
-cTmp += ALLTRIM( PADR( cTxt, 30 ) )
-cTmp += cSep
-
-AADD( aArr, { cTmp } )
+   AAdd( aArr, { cTmp } )
 
 
-// zatvori non-fiscal racun
-cTmp := "39"
-cTmp += cLogSep
-cTmp += cLogic
-cTmp += cLogSep
-cTmp += REPLICATE("_", 6) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 1) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 2)
-cTmp += cSep
+   // ispisi tekst
+   cTmp := "42"
+   cTmp += cLogSep
+   cTmp += cLogic
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 6 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 1 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 2 )
+   cTmp += cSep
+   cTmp += AllTrim( PadR( cTxt, 30 ) )
+   cTmp += cSep
 
-AADD( aArr, { cTmp } )
+   AAdd( aArr, { cTmp } )
 
-return aArr
+
+   // zatvori non-fiscal racun
+   cTmp := "39"
+   cTmp += cLogSep
+   cTmp += cLogic
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 6 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 1 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 2 )
+   cTmp += cSep
+
+   AAdd( aArr, { cTmp } )
+
+   RETURN aArr
 
 
 
 // ---------------------------------------------------
 // brisi artikle iz uredjaja
 // ---------------------------------------------------
-static function _fp_del_plu( nMaxPlu, dev_params )
-local cTmp := ""
-local cLogic
-local cLogSep := ","
-local cSep := ";"
-local aArr := {}
-// komanda za brisanje artikala je 3
-local cCmd := "3"
-local cCmdType := ""
-local nTArea := SELECT()
-local nLastPlu := 0
+STATIC FUNCTION _fp_del_plu( nMaxPlu, dev_params )
 
-if nMaxPlu <> 0
-	// ovo ce biti granicni PLU za reset
-	nLastPlu := nMaxPlu
-else
-	// uzmi zadnji PLU iz parametara
-	nLastPlu := last_plu( dev_params["id"] )
-endif
+   LOCAL cTmp := ""
+   LOCAL cLogic
+   LOCAL cLogSep := ","
+   LOCAL cSep := ";"
+   LOCAL aArr := {}
 
-select (nTArea)
+   // komanda za brisanje artikala je 3
+   LOCAL cCmd := "3"
+   LOCAL cCmdType := ""
+   LOCAL nTArea := Select()
+   LOCAL nLastPlu := 0
 
-// brisat ces sve od plu = 1 do zadnji plu
-cCmdType := "1;" + ALLTRIM( STR( nLastPlu ) )
+   IF nMaxPlu <> 0
+      // ovo ce biti granicni PLU za reset
+      nLastPlu := nMaxPlu
+   ELSE
+      // uzmi zadnji PLU iz parametara
+      nLastPlu := last_plu( dev_params[ "id" ] )
+   ENDIF
 
-cLogic := "1"
+   SELECT ( nTArea )
 
-// brisanje PLU kodova iz uredjaja
-cTmp := "107"
-cTmp += cLogSep
-cTmp += cLogic
-cTmp += cLogSep
-cTmp += REPLICATE("_", 6) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 1) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 2)
-cTmp += cSep
-cTmp += cCmd
-cTmp += cSep
-cTmp += cCmdType
-cTmp += cSep
+   // brisat ces sve od plu = 1 do zadnji plu
+   cCmdType := "1;" + AllTrim( Str( nLastPlu ) )
 
-AADD( aArr, { cTmp } )
+   cLogic := "1"
 
-return aArr
+   // brisanje PLU kodova iz uredjaja
+   cTmp := "107"
+   cTmp += cLogSep
+   cTmp += cLogic
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 6 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 1 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 2 )
+   cTmp += cSep
+   cTmp += cCmd
+   cTmp += cSep
+   cTmp += cCmdType
+   cTmp += cSep
+
+   AAdd( aArr, { cTmp } )
+
+   RETURN aArr
 
 
 
 // ---------------------------------------------------
 // zatvori racun
 // ---------------------------------------------------
-static function _fp_close_rn()
-local cTmp := ""
-local cLogic
-local cLogSep := ","
-local cSep := ";"
-local aArr := {}
+STATIC FUNCTION _fp_close_rn()
 
-cLogic := "1"
+   LOCAL cTmp := ""
+   LOCAL cLogic
+   LOCAL cLogSep := ","
+   LOCAL cSep := ";"
+   LOCAL aArr := {}
 
-// 7. zatvaranje racuna
-cTmp := "56"
-cTmp += cLogSep
-cTmp += cLogic
-cTmp += cLogSep
-cTmp += REPLICATE("_", 6) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 1) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 2)
-cTmp += cSep
+   cLogic := "1"
 
-AADD( aArr, { cTmp } )
+   // 7. zatvaranje racuna
+   cTmp := "56"
+   cTmp += cLogSep
+   cTmp += cLogic
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 6 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 1 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 2 )
+   cTmp += cSep
 
-return aArr
+   AAdd( aArr, { cTmp } )
+
+   RETURN aArr
 
 
 // --------------------------------------------------------
 // vraca formatiran datum za opcije izvjestaja
 // --------------------------------------------------------
-function _fix_date( dDate )
-local cRet := ""
-local nM := MONTH( dDate )
-local nD := DAY( dDate )
-local nY := YEAR( dDate )
+FUNCTION _fix_date( dDate )
 
-// format datuma treba da bude DDMMYY
-cRet := PADL( ALLTRIM(STR(nD)), 2, "0" )
-cRet += PADL( ALLTRIM(STR(nM)), 2, "0" )
-cRet += RIGHT( ALLTRIM(STR(nY)), 2 )
+   LOCAL cRet := ""
+   LOCAL nM := Month( dDate )
+   LOCAL nD := Day( dDate )
+   LOCAL nY := Year( dDate )
 
-return cRet
+   // format datuma treba da bude DDMMYY
+   cRet := PadL( AllTrim( Str( nD ) ), 2, "0" )
+   cRet += PadL( AllTrim( Str( nM ) ), 2, "0" )
+   cRet += Right( AllTrim( Str( nY ) ), 2 )
+
+   RETURN cRet
 
 
 // ---------------------------------------------------
 // dnevni fiskalni izvjestaj
 // ---------------------------------------------------
-static function _fp_per_rpt( dD_from, dD_to )
-local cTmp := ""
-local cLogic
-local cLogSep := ","
-local cSep := ";"
-local cD_from
-local cD_to
-local aArr := {}
+STATIC FUNCTION _fp_per_rpt( dD_from, dD_to )
 
-// konvertuj datum
-cD_from := _fix_date( dD_from )
-cD_to := _fix_date( dD_to )
+   LOCAL cTmp := ""
+   LOCAL cLogic
+   LOCAL cLogSep := ","
+   LOCAL cSep := ";"
+   LOCAL cD_from
+   LOCAL cD_to
+   LOCAL aArr := {}
 
-cLogic := "1"
+   // konvertuj datum
+   cD_from := _fix_date( dD_from )
+   cD_to := _fix_date( dD_to )
 
-cTmp := "79"
-cTmp += cLogSep
-cTmp += cLogic
-cTmp += cLogSep
-cTmp += REPLICATE("_", 6) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 1) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 2)
-cTmp += cSep
-cTmp += cD_from
-cTmp += cSep
-cTmp += cD_to
-cTmp += cSep
-cTmp += cSep
-cTmp += cSep
+   cLogic := "1"
+
+   cTmp := "79"
+   cTmp += cLogSep
+   cTmp += cLogic
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 6 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 1 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 2 )
+   cTmp += cSep
+   cTmp += cD_from
+   cTmp += cSep
+   cTmp += cD_to
+   cTmp += cSep
+   cTmp += cSep
+   cTmp += cSep
 	
-AADD( aArr, { cTmp } )
+   AAdd( aArr, { cTmp } )
 
-return aArr
+   RETURN aArr
 
 
 
 // ---------------------------------------------------
 // izvjestaj o prodanim PLU-ovima
 // ---------------------------------------------------
-static function _fp_sold_plu( cType )
-local cTmp := ""
-local cLogic
-local cLogSep := ","
-local cSep := ";"
-local aArr := {}
+STATIC FUNCTION _fp_sold_plu( cType )
 
-// 0 - samo u toku dana
-// 1 - svi programirani
+   LOCAL cTmp := ""
+   LOCAL cLogic
+   LOCAL cLogSep := ","
+   LOCAL cSep := ";"
+   LOCAL aArr := {}
 
-if cType == nil
-	cType := "0"
-endif
+   // 0 - samo u toku dana
+   // 1 - svi programirani
 
-cLogic := "1"
+   IF cType == nil
+      cType := "0"
+   ENDIF
 
-cTmp := "111"
-cTmp += cLogSep
-cTmp += cLogic
-cTmp += cLogSep
-cTmp += REPLICATE("_", 6) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 1) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 2)
-cTmp += cSep
-cTmp += cType
-cTmp += cSep
+   cLogic := "1"
+
+   cTmp := "111"
+   cTmp += cLogSep
+   cTmp += cLogic
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 6 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 1 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 2 )
+   cTmp += cSep
+   cTmp += cType
+   cTmp += cSep
 	
-AADD( aArr, { cTmp } )
+   AAdd( aArr, { cTmp } )
 
-return aArr
+   RETURN aArr
 
 
 
@@ -1147,51 +1168,53 @@ return aArr
 // ---------------------------------------------------
 // dnevni fiskalni izvjestaj
 // ---------------------------------------------------
-static function _fp_daily_rpt( cType )
-local cTmp := ""
-local cLogic
-local cLogSep := ","
-local cSep := ";"
-local aArr := {}
-// "N" - bez ciscenja prodaje
-// "A" - sa ciscenjem prodaje
-local cOper := "A"
+STATIC FUNCTION _fp_daily_rpt( cType )
 
-// 0 - "Z"
-// 2 - "X"
-if cType == nil
-	cType := "0"
-endif
+   LOCAL cTmp := ""
+   LOCAL cLogic
+   LOCAL cLogSep := ","
+   LOCAL cSep := ";"
+   LOCAL aArr := {}
 
-if cType == "2"
-    // kod X reporta ne treba zadnji parametar
-    cOper := ""
-endif
+   // "N" - bez ciscenja prodaje
+   // "A" - sa ciscenjem prodaje
+   LOCAL cOper := "A"
 
-cLogic := "1"
+   // 0 - "Z"
+   // 2 - "X"
+   IF cType == nil
+      cType := "0"
+   ENDIF
 
-cTmp := "69"
-cTmp += cLogSep
-cTmp += cLogic
-cTmp += cLogSep
-cTmp += REPLICATE("_", 6) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 1) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 2)
-cTmp += cSep
-cTmp += cType
-cTmp += cSep
+   IF cType == "2"
+      // kod X reporta ne treba zadnji parametar
+      cOper := ""
+   ENDIF
 
-// ovo se dodaje samo kod Z reporta
-if !EMPTY ( cOper )
-    cTmp += cOper
-    cTmp += cSep
-endif
+   cLogic := "1"
+
+   cTmp := "69"
+   cTmp += cLogSep
+   cTmp += cLogic
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 6 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 1 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 2 )
+   cTmp += cSep
+   cTmp += cType
+   cTmp += cSep
+
+   // ovo se dodaje samo kod Z reporta
+   IF !Empty ( cOper )
+      cTmp += cOper
+      cTmp += cSep
+   ENDIF
 	
-AADD( aArr, { cTmp } )
+   AAdd( aArr, { cTmp } )
 
-return aArr
+   RETURN aArr
 
 
 
@@ -1199,198 +1222,203 @@ return aArr
 // ------------------------------------------------------------------
 // dupliciranje dokumenta
 // ------------------------------------------------------------------
-static function _fp_double( cType, dD_from, dD_to, cT_from, cT_to )
-local cTmp := ""
-local cLogic
-local cLogSep := ","
-local cSep := ";"
-local aArr := {}
-local cStart := ""
-local cEnd := ""
-local cParam := "0"
+STATIC FUNCTION _fp_double( cType, dD_from, dD_to, cT_from, cT_to )
 
-// sredi start i end linije
-cStart := _fix_date(dD_from) + cT_from
-cEnd := _fix_date(dD_to) + cT_to
+   LOCAL cTmp := ""
+   LOCAL cLogic
+   LOCAL cLogSep := ","
+   LOCAL cSep := ";"
+   LOCAL aArr := {}
+   LOCAL cStart := ""
+   LOCAL cEnd := ""
+   LOCAL cParam := "0"
 
-cLogic := "1"
+   // sredi start i end linije
+   cStart := _fix_date( dD_from ) + cT_from
+   cEnd := _fix_date( dD_to ) + cT_to
 
-cTmp := "109"
-cTmp += cLogSep
-cTmp += cLogic
-cTmp += cLogSep
-cTmp += REPLICATE("_", 6) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 1) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 2)
-cTmp += cSep
-cTmp += cType
-cTmp += cSep
-cTmp += cStart
-cTmp += cSep
-cTmp += cEnd
-cTmp += cSep
-cTmp += cParam
-cTmp += cSep
+   cLogic := "1"
+
+   cTmp := "109"
+   cTmp += cLogSep
+   cTmp += cLogic
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 6 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 1 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 2 )
+   cTmp += cSep
+   cTmp += cType
+   cTmp += cSep
+   cTmp += cStart
+   cTmp += cSep
+   cTmp += cEnd
+   cTmp += cSep
+   cTmp += cParam
+   cTmp += cSep
 	
-AADD( aArr, { cTmp } )
+   AAdd( aArr, { cTmp } )
 
-return aArr
+   RETURN aArr
 
 // ---------------------------------------------------
 // unos pologa u printer
 // ---------------------------------------------------
-static function _fp_polog( nIznos )
-local cTmp := ""
-local cLogic
-local cLogSep := ","
-local cSep := ";"
-local aArr := {}
-local cZnak := "+"
+STATIC FUNCTION _fp_polog( nIznos )
 
-if nIznos < 0
-	cZnak := ""
-endif
+   LOCAL cTmp := ""
+   LOCAL cLogic
+   LOCAL cLogSep := ","
+   LOCAL cSep := ";"
+   LOCAL aArr := {}
+   LOCAL cZnak := "+"
 
-cLogic := "1"
+   IF nIznos < 0
+      cZnak := ""
+   ENDIF
 
-cTmp := "70"
-cTmp += cLogSep
-cTmp += cLogic
-cTmp += cLogSep
-cTmp += REPLICATE("_", 6) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 1) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 2)
-cTmp += cSep
-cTmp += cZnak + ALLTRIM(STR( nIznos ))
-cTmp += cSep
+   cLogic := "1"
+
+   cTmp := "70"
+   cTmp += cLogSep
+   cTmp += cLogic
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 6 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 1 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 2 )
+   cTmp += cSep
+   cTmp += cZnak + AllTrim( Str( nIznos ) )
+   cTmp += cSep
 	
-AADD( aArr, { cTmp } )
+   AAdd( aArr, { cTmp } )
 
-return aArr
+   RETURN aArr
 
 
 // ---------------------------------------------------
 // zatvori nasilno racun sa 0.0 iznosom
 // ---------------------------------------------------
-static function _fp_void_rn()
-local cTmp := ""
-local cLogic
-local cLogSep := ","
-local cSep := ";"
-local aArr := {}
+STATIC FUNCTION _fp_void_rn()
 
-cLogic := "1"
+   LOCAL cTmp := ""
+   LOCAL cLogic
+   LOCAL cLogSep := ","
+   LOCAL cSep := ";"
+   LOCAL aArr := {}
 
-cTmp := "301"
-cTmp += cLogSep
-cTmp += cLogic
-cTmp += cLogSep
-cTmp += REPLICATE("_", 6) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 1) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 2)
-cTmp += cSep
+   cLogic := "1"
+
+   cTmp := "301"
+   cTmp += cLogSep
+   cTmp += cLogic
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 6 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 1 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 2 )
+   cTmp += cSep
 	
-AADD( aArr, { cTmp } )
+   AAdd( aArr, { cTmp } )
 
-return aArr
+   RETURN aArr
 
 
 // ----------------------------------------------------
 // dodaj artikle za racun
 // ----------------------------------------------------
-static function _a_fp_articles( aArr, aData, lStorno, dev_params )
-local i
-local cTmp := ""
-// opcija dodavanja artikla u printer <1|2> 
-// 1 - dodaj samo jednom
-// 2 - mozemo dodavati vise puta
-local cOp_add := "2"
-// opcija promjene cijene u printeru
-local cOp_ch := "4"
-local cLogic
-local cLogSep := ","
-local cSep := ";"
-local _convert_852 := .t.
+STATIC FUNCTION _a_fp_articles( aArr, aData, lStorno, dev_params )
 
-// ocekuje se matrica formata
-// aData { brrn, rbr, idroba, nazroba, cijena, kolicina, porstopa, 
-//         rek_rn, plu, plu_cijena, popust }
+   LOCAL i
+   LOCAL cTmp := ""
 
-cLogic := "1"
+   // opcija dodavanja artikla u printer <1|2>
+   // 1 - dodaj samo jednom
+   // 2 - mozemo dodavati vise puta
+   LOCAL cOp_add := "2"
+   // opcija promjene cijene u printeru
+   LOCAL cOp_ch := "4"
+   LOCAL cLogic
+   LOCAL cLogSep := ","
+   LOCAL cSep := ";"
+   LOCAL _convert_852 := .T.
 
-for i:=1 to LEN( aData )
-	
-	// 1. dodavanje artikla u printer
-	
-	cTmp := "107"
-	cTmp += cLogSep
-	cTmp += cLogic
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 6) 
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 1) 
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 2)
-	cTmp += cSep
-	
-	// opcija dodavanja "2"
-	cTmp += cOp_add
-	cTmp += cSep
-	
-	// poreska stopa
-	cTmp += fiscal_txt_get_tarifa( aData[ i, 7 ], dev_params["pdv"], "FPRINT" )
-	cTmp += cSep
-	
-	// plu kod 
-	cTmp += ALLTRIM( STR( aData[ i, 9 ]) )
-	cTmp += cSep
+   // ocekuje se matrica formata
+   // aData { brrn, rbr, idroba, nazroba, cijena, kolicina, porstopa,
+   // rek_rn, plu, plu_cijena, popust }
 
-	// plu cijena
-	cTmp += ALLTRIM(STR( aData[ i, 10 ], 12, 2 ))
-	cTmp += cSep
-	
-	// plu naziv
-	cTmp += to_win1250_encoding( ALLTRIM( PADR( hb_strtoutf8(aData[ i, 4 ]), 32 ) ), _convert_852 )
-	cTmp += cSep
+   cLogic := "1"
 
-	AADD( aArr, { cTmp } )
+   FOR i := 1 TO Len( aData )
 	
-	// 2. dodavanje stavke promjena cijene - ako postoji
+      // 1. dodavanje artikla u printer
 	
-	cTmp := "107"
-	cTmp += cLogSep
-	cTmp += cLogic
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 6) 
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 1) 
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 2)
-	cTmp += cSep
+      cTmp := "107"
+      cTmp += cLogSep
+      cTmp += cLogic
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 6 )
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 1 )
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 2 )
+      cTmp += cSep
 	
-	// opcija dodavanja "4"
-	cTmp += cOp_ch
-	cTmp += cSep
+      // opcija dodavanja "2"
+      cTmp += cOp_add
+      cTmp += cSep
 	
-	// plu kod 
-	cTmp += ALLTRIM( STR( aData[ i, 9 ]) )
-	cTmp += cSep
+      // poreska stopa
+      cTmp += fiscal_txt_get_tarifa( aData[ i, 7 ], dev_params[ "pdv" ], "FPRINT" )
+      cTmp += cSep
 	
-	// plu cijena
-	cTmp += ALLTRIM(STR( aData[ i, 10 ], 12, 2 ))
-	cTmp += cSep
+      // plu kod
+      cTmp += AllTrim( Str( aData[ i, 9 ] ) )
+      cTmp += cSep
 
-	AADD( aArr, { cTmp } )
+      // plu cijena
+      cTmp += AllTrim( Str( aData[ i, 10 ], 12, 2 ) )
+      cTmp += cSep
+	
+      // plu naziv
+      cTmp += to_win1250_encoding( AllTrim( PadR( hb_StrToUTF8( aData[ i, 4 ] ), 32 ) ), _convert_852 )
+      cTmp += cSep
 
-next
+      AAdd( aArr, { cTmp } )
+	
+      // 2. dodavanje stavke promjena cijene - ako postoji
+	
+      cTmp := "107"
+      cTmp += cLogSep
+      cTmp += cLogic
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 6 )
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 1 )
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 2 )
+      cTmp += cSep
+	
+      // opcija dodavanja "4"
+      cTmp += cOp_ch
+      cTmp += cSep
+	
+      // plu kod
+      cTmp += AllTrim( Str( aData[ i, 9 ] ) )
+      cTmp += cSep
+	
+      // plu cijena
+      cTmp += AllTrim( Str( aData[ i, 10 ], 12, 2 ) )
+      cTmp += cSep
 
-return
+      AAdd( aArr, { cTmp } )
+
+   NEXT
+
+   RETURN
 
 
 
@@ -1398,37 +1426,38 @@ return
 // ----------------------------------------------
 // pobrisi answer fajl
 // ----------------------------------------------
-function fprint_delete_answer( params )
-local _f_name
+FUNCTION fprint_delete_answer( params )
 
-_f_name := params["out_dir"] + ANSW_DIR + SLASH + params["out_answer"]
+   LOCAL _f_name
 
-if EMPTY( params["out_answer"] )
-	_f_name := params["out_dir"] + ANSW_DIR + SLASH + params["out_file"]
-endif
+   _f_name := params[ "out_dir" ] + ANSW_DIR + SLASH + params[ "out_answer" ]
 
-// ako postoji fajl obrisi ga
-if FILE( _f_name )
-	if FERASE( _f_name ) = -1
-		msgbeep("Greska sa brisanjem fajla odgovora !")
-	endif
-endif
+   IF Empty( params[ "out_answer" ] )
+      _f_name := params[ "out_dir" ] + ANSW_DIR + SLASH + params[ "out_file" ]
+   ENDIF
 
-return
+   // ako postoji fajl obrisi ga
+   IF File( _f_name )
+      IF FErase( _f_name ) = -1
+         msgbeep( "Greska sa brisanjem fajla odgovora !" )
+      ENDIF
+   ENDIF
+
+   RETURN
 
 
 // ----------------------------------------------
 // pobrisi out fajl
 // ----------------------------------------------
-function fprint_delete_out( file_path )
+FUNCTION fprint_delete_out( file_path )
 
-if FILE( file_path )
-    if FERASE( file_path ) = -1
-	    msgbeep("Greska sa brisanjem izlaznog fajla !")
-    endif
-endif
+   IF File( file_path )
+      IF FErase( file_path ) = -1
+         msgbeep( "Greska sa brisanjem izlaznog fajla !" )
+      ENDIF
+   ENDIF
 
-return
+   RETURN
 
 
 // ------------------------------------------------
@@ -1436,160 +1465,160 @@ return
 // vraca broj
 // 0 - sve ok
 // -9 - ne postoji answer fajl
-// 
+//
 // nFisc_no - broj fiskalnog isjecka
 // ------------------------------------------------
-function fprint_read_error( dev_params, fiscal_no, storno, time_out )
-local _err_level := 0
-local _f_name
-local _i
-local _err_tmp
-local _err_line
-local _time
-local _serial := dev_params["serial"]
-local _o_file, _msg, _tmp
+FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
 
-if storno == NIL
-    storno := .f.
-endif
+   LOCAL _err_level := 0
+   LOCAL _f_name
+   LOCAL _i
+   LOCAL _err_tmp
+   LOCAL _err_line
+   LOCAL _time
+   LOCAL _serial := dev_params[ "serial" ]
+   LOCAL _o_file, _msg, _tmp
 
-if time_out == NIL
-    time_out := dev_params["timeout"]
-endif
+   IF storno == NIL
+      storno := .F.
+   ENDIF
 
-// TEST rezim
-if dev_params["print_fiscal"] == "T"
-    // sacekaj malo, vrati fiskalni broj 100 i izadji...
-    MsgO( "TEST: emulacija stampe na fiskalni uredjaj..." )
-    sleep(4)
-    MsgC()
-    fiscal_no := 100
-    return _err_level
-endif
+   IF time_out == NIL
+      time_out := dev_params[ "timeout" ]
+   ENDIF
 
-_time := time_out
+   // TEST rezim
+   IF dev_params[ "print_fiscal" ] == "T"
+      // sacekaj malo, vrati fiskalni broj 100 i izadji...
+      MsgO( "TEST: emulacija stampe na fiskalni uredjaj..." )
+      Sleep( 4 )
+      MsgC()
+      fiscal_no := 100
+      RETURN _err_level
+   ENDIF
 
-// primjer: c:\fprint\answer\answer.txt
-_f_name := dev_params["out_dir"] + ANSW_DIR + SLASH + dev_params["out_answer"]
+   _time := time_out
 
-// ako se koristi isti answer kao i input fajl
-if EMPTY( ALLTRIM( dev_params["out_answer"] ) )
-	_f_name := dev_params["out_dir"] + ANSW_DIR + SLASH + dev_params["out_file"]
-endif
+   // primjer: c:\fprint\answer\answer.txt
+   _f_name := dev_params[ "out_dir" ] + ANSW_DIR + SLASH + dev_params[ "out_answer" ]
 
-Box( , 3, 60 ) 
+   // ako se koristi isti answer kao i input fajl
+   IF Empty( AllTrim( dev_params[ "out_answer" ] ) )
+      _f_name := dev_params[ "out_dir" ] + ANSW_DIR + SLASH + dev_params[ "out_file" ]
+   ENDIF
 
-@ m_x + 1, m_y + 2 SAY hb_utf8tostr("Uređaj ID:") + ALLTRIM( STR( dev_params["id"] ) ) + ;
-    " : " + PADR( dev_params["name"], 40 )
+   Box( , 3, 60 )
 
-do while _time > 0
+   @ m_x + 1, m_y + 2 SAY hb_UTF8ToStr( "Uređaj ID:" ) + AllTrim( Str( dev_params[ "id" ] ) ) + ;
+      " : " + PadR( dev_params[ "name" ], 40 )
+
+   DO WHILE _time > 0
 	
-	-- _time
-    
-	@ m_x + 3, m_y + 2 SAY PADR( hb_Utf8ToStr("Čekam odgovor fiskalnog uređaja: ") + ;
-		ALLTRIM( STR( _time ) ), 48)
+      -- _time
 
-	sleep(1)
+      @ m_x + 3, m_y + 2 SAY PadR( hb_UTF8ToStr( "Čekam odgovor fiskalnog uređaja: " ) + ;
+         AllTrim( Str( _time ) ), 48 )
 
-#ifdef TEST
-    if .t.
+      Sleep( 1 )
+
+#ifdef TEST 
+      IF .T.
 #else
-    if FILE( _f_name )
+      IF File( _f_name )
 #endif
-		// fajl se pojavio - izadji iz petlje !
-        log_write("FISC: fajl odgovora se pojavio", 7)
-		exit
-	endif
+         log_write( "FISC: fajl odgovora se pojavio", 7 )
+         EXIT
+      ENDIF
 
-    if _time == 0 .or. LastKey() == K_ALT_Q
-        log_write("FISC ERR: timeout !", 2)
-        BoxC()
+      IF _time == 0 .OR. LastKey() == K_ALT_Q
+         log_write( "FISC ERR: timeout !", 2 )
+         BoxC()
 
-        fiscal_no := 0
-        return -9
-    endif
+         fiscal_no := 0
+         RETURN -9
+      ENDIF
 
-enddo
+   ENDDO
 
-BoxC()
+   BoxC()
 
 #ifndef TEST
-if !FILE( _f_name )
+   IF !File( _f_name )
 
-	msgbeep("Fajl " + _f_name + " ne postoji !!!")
-	fiscal_no := 0
-	_err_level := -9
-	return _err_level
+      msgbeep( "Fajl " + _f_name + " ne postoji !!!" )
+      fiscal_no := 0
+      _err_level := -9
+      RETURN _err_level
 
-endif
+   ENDIF
 #endif
 
-fiscal_no := 0
-_fiscal_txt := ""
+   fiscal_no := 0
+   _fiscal_txt := ""
 
-_f_name := ALLTRIM( _f_name )
+   _f_name := AllTrim( _f_name )
 
-_o_file := TFileRead():New( _f_name )
-_o_file:Open()
+   _o_file := TFileRead():New( _f_name )
+   _o_file:Open()
 
-if _o_file:Error()
+   IF _o_file:Error()
 
-	_err_tmp := "FISC ERR: " + _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " )
-    log_write( _err_tmp, 2 )
-    MsgBeep( _err_tmp )
-    _err_level := -9
-	return _err_level
+      _err_tmp := "FISC ERR: " + _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " )
+      log_write( _err_tmp, 2 )
+      MsgBeep( _err_tmp )
+      _err_level := -9
+      RETURN _err_level
 
-endif
+   ENDIF
 
-_tmp := ""
+   _tmp := ""
 
-// prodji kroz svaku liniju i procitaj zapise
-while _o_file:MoreToRead()
+   // prodji kroz svaku liniju i procitaj zapise
+   WHILE _o_file:MoreToRead()
 	
-	// uzmi u cErr liniju fajla
-	_err_line := hb_strtoutf8( _o_file:ReadLine() )
+      // uzmi u cErr liniju fajla
+      _err_line := hb_StrToUTF8( _o_file:ReadLine() )
 
-    _tmp += _err_line + " ## "
+      _tmp += _err_line + " ## "
 
-	// ovo je dodavanje artikla
-	if ( "107,1," + _serial ) $ _err_line
-		// preskoci
-		loop
-	endif
+      // ovo je dodavanje artikla
+      IF ( "107,1," + _serial ) $ _err_line
+         // preskoci
+         LOOP
+      ENDIF
 	
-	// ovu liniju zapamti, sadrzi fiskalni racun broj
-	// komanda 56, zatvaranje racuna
-	if ( "56,1," + _serial ) $ _err_line
-		_fiscal_txt := _err_line
-	endif
+      // ovu liniju zapamti, sadrzi fiskalni racun broj
+      // komanda 56, zatvaranje racuna
+      IF ( "56,1," + _serial ) $ _err_line
+         _fiscal_txt := _err_line
+      ENDIF
 
-	// ima neka greska !
-	if "Er;" $ _err_line
+      // ima neka greska !
+      IF "Er;" $ _err_line
 
-		_err_tmp := "FISC ERR:" + ALLTRIM( _err_line )
-        log_write( _err_tmp, 2 )
-        MsgBeep( _err_tmp )
+         _err_tmp := "FISC ERR:" + AllTrim( _err_line )
+         log_write( _err_tmp, 2 )
+         MsgBeep( _err_tmp )
 
-		_err_level := 1
-		return _err_level
+         _err_level := 1
+         RETURN _err_level
 
-	endif
+      ENDIF
 	
-enddo
+   ENDDO
 
-_o_file:Close()
+   _o_file:Close()
 
-log_write( "FISC ANSWER fajl sadrzaj: " + _tmp, 3 )
+   log_write( "FISC ANSWER fajl sadrzaj: " + _tmp, 3 )
 
-if EMPTY( _fiscal_txt )
-    log_write( "ERR FISC nema komande 56,1," + _serial + " - broj fiskalnog racuna, mozda vam nije dobar serijski broj !", 1)
-else
-    // ako je sve ok, uzmi broj fiskalnog isjecka 
-    fiscal_no := _g_fisc_no( _fiscal_txt, storno )
-endif
+   IF Empty( _fiscal_txt )
+      log_write( "ERR FISC nema komande 56,1," + _serial + " - broj fiskalnog racuna, mozda vam nije dobar serijski broj !", 1 )
+   ELSE
+      // ako je sve ok, uzmi broj fiskalnog isjecka
+      fiscal_no := _g_fisc_no( _fiscal_txt, storno )
+   ENDIF
 
-return _err_level
+   RETURN _err_level
 
 
 
@@ -1597,44 +1626,40 @@ return _err_level
 // ------------------------------------------------
 // vraca broj fiskalnog isjecka
 // ------------------------------------------------
-static function _g_fisc_no( txt, storno )
-local _fiscal_no := 0
-local _a_tmp := {}
-local _a_fisc := {}
-local _fisc_txt := ""
-local _n_pos := 2
+STATIC FUNCTION _g_fisc_no( txt, storno )
 
+   LOCAL _fiscal_no := 0
+   LOCAL _a_tmp := {}
+   LOCAL _a_fisc := {}
+   LOCAL _fisc_txt := ""
+   LOCAL _n_pos := 2
 
-if storno == NIL
-    storno := .f.
-endif
+   IF storno == NIL
+      storno := .F.
+   ENDIF
 
-// pozicija u odgovoru
-// 3 - regularni racun
-// 4 - storno racun
+   // pozicija u odgovoru
+   // 3 - regularni racun
+   // 4 - storno racun
 
-if storno
-    _n_pos := 3
-endif
+   IF storno
+      _n_pos := 3
+   ENDIF
 
-_a_tmp := toktoniz( txt, ";" )
-_fisc_txt := _a_tmp[2]
+   _a_tmp := toktoniz( txt, ";" )
+   _fisc_txt := _a_tmp[ 2 ]
 
-_a_fisc := toktoniz( _fisc_txt, "," )
+   _a_fisc := toktoniz( _fisc_txt, "," )
 
-if LEN( _a_fisc ) < 2
-    // nesto nije ok !
-    MsgBeep( "Izlazni fajl nije kompletan !#Pozovite servis." )
-    log_write( "ERROR fiscal out, nema elemenata !", 3 )
-    return _fiscal_no
-endif
+   IF Len( _a_fisc ) < 2
+      // nesto nije ok !
+      MsgBeep( "Izlazni fajl nije kompletan !#Pozovite servis." )
+      log_write( "ERROR fiscal out, nema elemenata !", 3 )
+      RETURN _fiscal_no
+   ENDIF
 
-_fiscal_no := VAL( _a_fisc[ _n_pos ] )
+   _fiscal_no := Val( _a_fisc[ _n_pos ] )
 
-log_write( "FISC RN: " + ALLTRIM( STR( _fiscal_no ) ), 3 )
+   log_write( "FISC RN: " + AllTrim( Str( _fiscal_no ) ), 3 )
 
-return _fiscal_no
-
-
-
-
+   RETURN _fiscal_no

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,258 +12,257 @@
 
 #include "fmk.ch"
 
-static __device_id
-static __device_params
+STATIC __device_id
+STATIC __device_params
 
 
 // ---------------------------------------------------------
 // fiskalni izvjestaji i komande
 // ---------------------------------------------------------
-function fisc_rpt( low_level, from_pos )
-local _dev_id := 0
-local _dev_drv
-local _m_x
-local _m_y
+FUNCTION fisc_rpt( low_level, from_pos )
 
-private izbor := 1
-private opc := {}
-private opcexe := {}
+   LOCAL _dev_id := 0
+   LOCAL _dev_drv
+   LOCAL _m_x
+   LOCAL _m_y
 
-if low_level == NIL
-	low_level := .f.
-endif
+   PRIVATE izbor := 1
+   PRIVATE opc := {}
+   PRIVATE opcexe := {}
 
-if from_pos == NIL
-    from_pos := .f.
-endif
+   IF low_level == NIL
+      low_level := .F.
+   ENDIF
 
-// vrati mi fiskalni uredjaj....
-__device_id := get_fiscal_device( my_user(), NIL, from_pos )
+   IF from_pos == NIL
+      from_pos := .F.
+   ENDIF
 
-if __device_id == 0
-    return
-endif
+   // vrati mi fiskalni uredjaj....
+   __device_id := get_fiscal_device( my_user(), NIL, from_pos )
 
-// setuj parametre uredjaja
-__device_params := get_fiscal_device_params( __device_id, my_user() )
+   IF __device_id == 0
+      RETURN
+   ENDIF
 
-// nesto nije uredu, nema parametara !!!
-if __device_params == NIL
-    MsgBeep( "Nesto nije uredu sa ocitanjem parametara !!!" )
-    return
-endif
+   // setuj parametre uredjaja
+   __device_params := get_fiscal_device_params( __device_id, my_user() )
 
-_dev_drv := __device_params["drv"]
+   // nesto nije uredu, nema parametara !!!
+   IF __device_params == NIL
+      MsgBeep( "Nesto nije uredu sa očitanjem parametara !!!" )
+      RETURN
+   ENDIF
 
-do case 
+   _dev_drv := __device_params[ "drv" ]
 
-  // FLINK opcije
-  case _dev_drv == "FLINK"
+   DO CASE
 
-    AADD(opc,"------ izvjestaji ---------------------------------")
-    AADD(opcexe,{|| .f. })
-    AADD(opc,"1. dnevni izvjestaj  (Z-rep / X-rep)          ")
-    AADD(opcexe,{|| fl_daily( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
-    	nDevice ) })
-    AADD(opc,"------ ostale komande --------------------")
-    AADD(opcexe,{|| .f. })
-    AADD(opc,"5. unos pologa u uredjaj       ")
-    AADD(opcexe,{|| fl_polog( ALLTRIM(gFC_path), ALLTRIM(gFC_name) ) })
-    AADD(opc,"6. ponisti otvoren racun      ")
-    AADD(opcexe,{|| fl_reset( ALLTRIM(gFC_path), ALLTRIM(gFC_name) ) })
+      // FLINK opcije
+   CASE _dev_drv == "FLINK"
 
-  // za FPRINT uredjaje (NSC)
-  case _dev_drv == "FPRINT"
+      AAdd( opc, "------ izvještaji ---------------------------------" )
+      AAdd( opcexe, {|| .F. } )
+      AAdd( opc, "1. dnevni izvještaj  (Z-rep / X-rep)          " )
+      AAdd( opcexe, {|| fl_daily( AllTrim( gFC_path ), AllTrim( gFC_name ), ;
+         nDevice ) } )
+      AAdd( opc, "------ ostale komande --------------------" )
+      AAdd( opcexe, {|| .F. } )
+      AAdd( opc, "5. unos pologa u uređaj       " )
+      AAdd( opcexe, {|| fl_polog( AllTrim( gFC_path ), AllTrim( gFC_name ) ) } )
+      AAdd( opc, "6. poništi otvoren racun      " )
+      AAdd( opcexe, {|| fl_reset( AllTrim( gFC_path ), AllTrim( gFC_name ) ) } )
 
-    if !low_level
+      // za FPRINT uredjaje (NSC)
+   CASE _dev_drv == "FPRINT"
 
-    	AADD(opc,"------ izvjestaji ---------------------------------")
-    	AADD(opcexe,{|| nil })
+      IF !low_level
 
-    	AADD(opc,"1. dnevni izvjestaj  (Z-rep / X-rep)          ")
-    	AADD(opcexe,{|| fprint_daily_rpt( __device_params ) })
+         AAdd( opc, "------ izvjestaji ---------------------------------" )
+         AAdd( opcexe, {|| nil } )
 
-    	AADD(opc,"2. periodicni izvjestaj")
-    	AADD(opcexe,{|| fprint_per_rpt( __device_params ) })
+         AAdd( opc, "1. dnevni izvještaj  (Z-rep / X-rep)          " )
+         AAdd( opcexe, {|| fprint_daily_rpt( __device_params ) } )
 
-    	AADD(opc,"3. pregled artikala ")
-    	AADD(opcexe,{|| fprint_sold_plu( __device_params ) })
-   
-    endif
-    
-	AADD(opc,"------ ostale komande --------------------")
-    AADD(opcexe,{|| nil })
+         AAdd( opc, "2. periodični izvještaj" )
+         AAdd( opcexe, {|| fprint_per_rpt( __device_params ) } )
 
-    AADD(opc,"5. unos pologa u uredjaj       ")
-    AADD(opcexe,{|| fprint_polog( __device_params ) })
+         AAdd( opc, "3. pregled artikala " )
+         AAdd( opcexe, {|| fprint_sold_plu( __device_params ) } )
 
-    AADD(opc,"6. stampanje duplikata       ")
-    AADD(opcexe,{|| fprint_double( __device_params ) })
+      ENDIF
 
-    AADD(opc,"7. zatvori racun (cmd 56)       ")
-    AADD(opcexe,{|| fprint_rn_close( __device_params ) })
+      AAdd( opc, "------ ostale komande --------------------" )
+      AAdd( opcexe, {|| nil } )
 
-    AADD(opc,"8. zatvori nasilno racun (cmd 301) ")
-    AADD(opcexe,{|| fprint_void( __device_params ) })
+      AAdd( opc, "5. unos pologa u uredjaj       " )
+      AAdd( opcexe, {|| fprint_polog( __device_params ) } )
 
-    if !low_level
+      AAdd( opc, "6. stampanje duplikata       " )
+      AAdd( opcexe, {|| fprint_double( __device_params ) } )
 
-    	AADD(opc,"9. proizvoljna komanda ")
-    	AADD(opcexe,{|| fprint_manual_cmd( __device_params ) })
-    
-    	if __device_params["type"] == "P"
+      AAdd( opc, "7. zatvori racun (cmd 56)       " )
+      AAdd( opcexe, {|| fprint_rn_close( __device_params ) } )
 
-    		AADD(opc,"10. brisanje artikala iz uredjaja (cmd 107)")
-    		AADD(opcexe, {|| fprint_delete_plu( __device_params, .f. ) })
-    	endif
+      AAdd( opc, "8. zatvori nasilno racun (cmd 301) " )
+      AAdd( opcexe, {|| fprint_void( __device_params ) } )
 
-    	AADD(opc,"11. reset PLU ")
-    	AADD(opcexe,{|| auto_plu( .t., nil, __device_params ) })
+      IF !low_level
 
-    	AADD(opc,"12. non-fiscal racun - test")
-   	 	AADD(opcexe,{|| fprint_nf_txt( __device_params, "ČčĆćŽžĐđŠš") })
+         AAdd( opc, "9. proizvoljna komanda " )
+         AAdd( opcexe, {|| fprint_manual_cmd( __device_params ) } )
 
-    	AADD(opc,"13. test email")
-    	AADD(opcexe,{|| f18_email_test() })
+         IF __device_params[ "type" ] == "P"
 
-    endif
+            AAdd( opc, "10. brisanje artikala iz uredjaja (cmd 107)" )
+            AAdd( opcexe, {|| fprint_delete_plu( __device_params, .F. ) } )
+         ENDIF
 
-  // za HCP uredjaje
-  case _dev_drv == "HCP" 
-   
-   	if !low_level 
+         AAdd( opc, "11. reset PLU " )
+         AAdd( opcexe, {|| auto_plu( .T., nil, __device_params ) } )
+
+         AAdd( opc, "12. non-fiscal racun - test" )
+         AAdd( opcexe, {|| fprint_nf_txt( __device_params, "ČčĆćŽžĐđŠš" ) } )
+
+         AAdd( opc, "13. test email" )
+         AAdd( opcexe, {|| f18_email_test() } )
+
+      ENDIF
+
+      // za HCP uredjaje
+   CASE _dev_drv == "HCP"
+
+      IF !low_level
     	
-		AADD(opc,"------ izvjestaji -----------------------")
-    	AADD(opcexe,{|| .f. })
-    	AADD(opc,"1. dnevni fiskalni izvjestaj (Z rep.)    ")
-    	AADD(opcexe,{|| hcp_z_rpt( __device_params ) })
-    	AADD(opc,"2. presjek stanja (X rep.)    ")
-    	AADD(opcexe,{|| hcp_x_rpt( __device_params ) })
-    
-    	AADD(opc,"3. periodicni izvjestaj (Z rep.)    ")
-   	 	AADD(opcexe,{|| hcp_s_rpt( __device_params ) })
+         AAdd( opc, "------ izvjestaji -----------------------" )
+         AAdd( opcexe, {|| .F. } )
+         AAdd( opc, "1. dnevni fiskalni izvještaj (Z rep.)    " )
+         AAdd( opcexe, {|| hcp_z_rpt( __device_params ) } )
+         AAdd( opc, "2. presjek stanja (X rep.)    " )
+         AAdd( opcexe, {|| hcp_x_rpt( __device_params ) } )
 
-   	endif
-  
-    AADD(opc,"------ ostale komande --------------------")
-    AADD(opcexe,{|| .f. })
-    
-    AADD(opc,"5. kopija računa    ")
-    AADD(opcexe,{|| hcp_rn_copy( __device_params ) })
-    AADD(opc,"6. polog u uređaj    ")
-    AADD(opcexe,{|| hcp_polog( __device_params ) })
-    AADD(opc,"7. pošalji cmd.ok    ")
-    AADD(opcexe,{|| hcp_create_cmd_ok( __device_params ) })
+         AAdd( opc, "3. periodični izvjestaj (Z rep.)    " )
+         AAdd( opcexe, {|| hcp_s_rpt( __device_params ) } )
 
-   	if !low_level
-    
-    	AADD(opc,"8. izbaci stanje računa    ")
-    	AADD(opcexe,{|| hcp_fisc_no( __device_params ) })
-    	AADD(opc,"P. reset PLU ")
-    	AADD(opcexe,{|| auto_plu( .t., nil, __device_params ) })
-   
-   	endif
+      ENDIF
 
-    // za TREMOL uredjaje
-  case _dev_drv == "TREMOL" 
-    
-	if !low_level
+      AAdd( opc, "------ ostale komande --------------------" )
+      AAdd( opcexe, {|| .F. } )
 
-    	AADD(opc,"------ izvjestaji -----------------------")
-    	AADD(opcexe,{|| .f. })
-    
-    	AADD(opc,"1. dnevni fiskalni izvještaj (Z rep.)    ")
-   	 	AADD(opcexe,{|| tremol_z_rpt( __device_params ) })
-    
-    	AADD(opc,"2. izvještaj po artiklima (Z rep.)    ")
-   	 	AADD(opcexe,{|| tremol_z_item( __device_params ) })
-   
-    	AADD(opc,"3. presjek stanja (X rep.)    ")
-   	 	AADD(opcexe,{|| tremol_x_rpt( __device_params ) })
- 
-   	 	AADD(opc,"4. izvještaj po artiklima (X rep.)    ")
-    	AADD(opcexe,{|| tremol_x_item( __device_params ) })
-    
-    	AADD(opc,"5. periodični izvjestaj (Z rep.)    ")
-    	AADD(opcexe,{|| tremol_per_rpt( __device_params ) })
-   
-	endif
+      AAdd( opc, "5. kopija računa    " )
+      AAdd( opcexe, {|| hcp_rn_copy( __device_params ) } )
+      AAdd( opc, "6. polog u uređaj    " )
+      AAdd( opcexe, {|| hcp_polog( __device_params ) } )
+      AAdd( opc, "7. pošalji cmd.ok    " )
+      AAdd( opcexe, {|| hcp_create_cmd_ok( __device_params ) } )
 
-    AADD(opc,"------ ostale komande --------------------")
-    AADD(opcexe,{|| .f. })
+      IF !low_level
 
-    AADD(opc,"K. kopija računa    ")
-    AADD(opcexe,{|| tremol_rn_copy( __device_params ) })
+         AAdd( opc, "8. izbaci stanje računa    " )
+         AAdd( opcexe, {|| hcp_fisc_no( __device_params ) } )
+         AAdd( opc, "P. reset PLU " )
+         AAdd( opcexe, {|| auto_plu( .T., nil, __device_params ) } )
 
-	if !low_level
+      ENDIF
 
-    	AADD(opc,"R. reset artikala    ")
-    	AADD(opcexe,{|| tremol_reset_plu( __device_params ) })
+      // za TREMOL uredjaje
+   CASE _dev_drv == "TREMOL"
 
-	endif
+      IF !low_level
 
-    AADD(opc,"P. polog u uređaj    ")
-    AADD(opcexe,{|| tremol_polog( __device_params ) })
+         AAdd( opc, "------ izvjestaji -----------------------" )
+         AAdd( opcexe, {|| .F. } )
 
-	if !low_level    
-    	AADD(opc,"R. reset PLU ")
-    	AADD(opcexe,{|| auto_plu( .t., nil, __device_params ) })
-	endif
+         AAdd( opc, "1. dnevni fiskalni izvještaj (Z rep.)    " )
+         AAdd( opcexe, {|| tremol_z_rpt( __device_params ) } )
 
+         AAdd( opc, "2. izvještaj po artiklima (Z rep.)    " )
+         AAdd( opcexe, {|| tremol_z_item( __device_params ) } )
 
+         AAdd( opc, "3. presjek stanja (X rep.)    " )
+         AAdd( opcexe, {|| tremol_x_rpt( __device_params ) } )
 
-  case _dev_drv == "TRING" 
-    
-	if !low_level
-    
-		AADD(opc,"------ izvjestaji ---------------------------------")
-    	AADD(opcexe,{|| .f. })
-    	AADD(opc,"1. dnevni izvjestaj                               ")
-    	AADD(opcexe,{|| tring_daily_rpt( __device_params ) })
-    	AADD(opc,"2. periodicni izvjestaj")
-    	AADD(opcexe,{|| tring_per_rpt( __device_params ) })
-    	AADD(opc,"3. presjek stanja")
-    	AADD(opcexe,{|| tring_x_rpt( __device_params ) })
+         AAdd( opc, "4. izvještaj po artiklima (X rep.)    " )
+         AAdd( opcexe, {|| tremol_x_item( __device_params ) } )
 
-	endif
+         AAdd( opc, "5. periodični izvjestaj (Z rep.)    " )
+         AAdd( opcexe, {|| tremol_per_rpt( __device_params ) } )
 
-    AADD(opc,"------ ostale komande --------------------")
-    AADD(opcexe,{|| .f. })
-    AADD(opc,"5. unos pologa u uredjaj       ")
-    AADD(opcexe,{|| tring_polog( __device_params ) })
-    AADD(opc,"6. stampanje duplikata       ")
-    AADD(opcexe,{|| tring_double( __device_params ) })
-    AADD(opc,"7. zatvori (ponisti) racun ")
-    AADD(opcexe,{|| tring_close_rn( __device_params ) })
+      ENDIF
 
-	if !low_level
+      AAdd( opc, "------ ostale komande --------------------" )
+      AAdd( opcexe, {|| .F. } )
 
-    	AADD(opc,"8. inicijalizacija ")
-    	AADD(opcexe,{|| tring_init( __device_params, "1", "" ) })
-    	AADD(opc,"S. reset zahtjeva na PU serveru ")
-    	AADD(opcexe,{|| tring_reset( __device_params ) })
-     
-    	AADD(opc,"R. reset PLU ")
-    	AADD(opcexe,{|| auto_plu( .t., nil, __device_params ) })
+      AAdd( opc, "K. kopija računa    " )
+      AAdd( opcexe, {|| tremol_rn_copy( __device_params ) } )
 
-	endif
+      IF !low_level
 
-  // ostali uredjaji
-  otherwise
-   
-   AADD(opc," ---- nema dostupnih opcija ------ ")
-   AADD(opcexe,{|| .f. })
+         AAdd( opc, "R. reset artikala    " )
+         AAdd( opcexe, {|| tremol_reset_plu( __device_params ) } )
 
-endcase
+      ENDIF
 
-_m_x := m_x
-_m_y := m_y
+      AAdd( opc, "P. polog u uređaj    " )
+      AAdd( opcexe, {|| tremol_polog( __device_params ) } )
 
-Menu_SC("izvf")
-
-m_x := _m_x
-m_y := _m_y
-
-return
+      IF !low_level
+         AAdd( opc, "R. reset PLU " )
+         AAdd( opcexe, {|| auto_plu( .T., nil, __device_params ) } )
+      ENDIF
 
 
+
+   CASE _dev_drv == "TRING"
+
+      IF !low_level
+
+         AAdd( opc, "------ izvjestaji ---------------------------------" )
+         AAdd( opcexe, {|| .F. } )
+         AAdd( opc, "1. dnevni izvjestaj                               " )
+         AAdd( opcexe, {|| tring_daily_rpt( __device_params ) } )
+         AAdd( opc, "2. periodicni izvjestaj" )
+         AAdd( opcexe, {|| tring_per_rpt( __device_params ) } )
+         AAdd( opc, "3. presjek stanja" )
+         AAdd( opcexe, {|| tring_x_rpt( __device_params ) } )
+
+      ENDIF
+
+      AAdd( opc, "------ ostale komande --------------------" )
+      AAdd( opcexe, {|| .F. } )
+      AAdd( opc, "5. unos pologa u uredjaj       " )
+      AAdd( opcexe, {|| tring_polog( __device_params ) } )
+      AAdd( opc, "6. stampanje duplikata       " )
+      AAdd( opcexe, {|| tring_double( __device_params ) } )
+      AAdd( opc, "7. zatvori (ponisti) racun " )
+      AAdd( opcexe, {|| tring_close_rn( __device_params ) } )
+
+      IF !low_level
+
+         AAdd( opc, "8. inicijalizacija " )
+         AAdd( opcexe, {|| tring_init( __device_params, "1", "" ) } )
+         AAdd( opc, "S. reset zahtjeva na PU serveru " )
+         AAdd( opcexe, {|| tring_reset( __device_params ) } )
+
+         AAdd( opc, "R. reset PLU " )
+         AAdd( opcexe, {|| auto_plu( .T., nil, __device_params ) } )
+
+      ENDIF
+
+      // ostali uredjaji
+   OTHERWISE
+
+      AAdd( opc, " ---- nema dostupnih opcija ------ " )
+      AAdd( opcexe, {|| .F. } )
+
+   ENDCASE
+
+   _m_x := m_x
+   _m_y := m_y
+
+   Menu_SC( "izvf" )
+
+   m_x := _m_x
+   m_y := _m_y
+
+   RETURN

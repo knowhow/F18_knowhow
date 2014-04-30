@@ -34,11 +34,6 @@ FUNCTION fakt_pregled_dokumenata()
       AAdd( _opcexe, {|| ug_za_period() } )
    ENDIF
 
-   IF fiscal_opt_active()
-      AAdd( _opc, "F. štampa fiskalnih računa za period" )
-      AAdd( _opcexe, {|| fiskalni_racuni_za_period() } )
-   ENDIF
-
    f18_menu( "stfak", .F., _izbor, _opc, _opcexe )
 
    my_close_all_dbf()

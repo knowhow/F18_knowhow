@@ -166,7 +166,7 @@ FUNCTION P_Valuta( cid, dx, dy )
    AAdd( ImeKol,   { "Naziv",  {|| naz }, "naz"       } )
    AAdd( ImeKol,   { ToStrU( "Skrać." ), {|| naz2 }, "naz2"      } )
    AAdd( ImeKol,   { "Datum",  {|| datum }, "datum"     } )
-   AAdd( ImeKol,   { "Kurs",   {|| kurs1 }, "kurs1"     } )
+   AAdd( ImeKol,   { "Kurs",   {|| kurs1 }, "kurs1", NIL, NIL, NIL, "9999.99999999"   } )
    AAdd( ImeKol,   { "Tip(D/P/O)", {|| tip }, "tip", ;
       {|| .T. }, ;
       {|| wtip $ "DPO" } } )

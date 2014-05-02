@@ -261,10 +261,11 @@ FUNCTION reopen_exclusive_and_zap( dbf_table, open_index )
 
    RECOVER USING _err
 
+       log_write( "ERROR exclusive dbf: " + _dbf + " alias: " + _a_dbf_rec[ "alias" ], 2 )
        my_use( _a_dbf_rec["table"] )
        zapp()
 
-   END SEQUENCE
+   END SEQUENCEi
 
   
    RETURN .T.

@@ -145,16 +145,16 @@ FUNCTION use_sql_valute()
    LOCAL cTable := "valute"
 
    cSql := "SELECT "
-   cSql += " id, "
-   cSql += " ( CASE WHEN match_code IS NULL THEN rpad( '', 10 ) ELSE match_code END ) AS match_code, "
-   cSql += " ( CASE WHEN naz IS NULL THEN rpad( '', 30 ) ELSE naz END ) AS naz, "
-   cSql += " ( CASE WHEN naz2 IS NULL THEN rpad( '', 4 ) ELSE naz2 END ) AS naz2, "
-   cSql += " ( CASE WHEN datum IS NULL THEN '1960-01-01'::date ELSE datum END ) AS datum, "
-   cSql += " CAST( CASE WHEN kurs1 IS NULL THEN 0 ELSE kurs1 END AS numeric(18,8) ) AS kurs1, "
-   cSql += " CAST( CASE WHEN kurs2 IS NULL THEN 0 ELSE kurs2 END AS numeric(18,8) ) AS kurs2, "
-   cSql += " CAST( CASE WHEN kurs3 IS NULL THEN 0 ELSE kurs3 END AS numeric(18,8) ) AS kurs3, "
-   cSql += " ( CASE WHEN tip IS NULL THEN ' ' ELSE tip END ) AS tip "
-   cSql += "FROM fmk.valute ORDER BY id"
+   cSql += "id, "
+   cSql += "match_code::char(10),"
+   cSql += "naz::char(30),"
+   cSql += "naz2::char(4),"
+   cSql += "(CASE WHEN datum IS NULL THEN '1960-01-01'::date ELSE datum END) AS datum,"
+   cSql += "kurs1::numeric(18,8),"
+   cSql += "kurs2::numeric(18,8),"
+   cSql += "kurs3::numeric(18,8),"
+   cSql += "tip::char(1) "
+   cSql += " FROM fmk.valute ORDER BY id"
 
    SELECT F_VALUTE
    use_sql( cTable, cSql )

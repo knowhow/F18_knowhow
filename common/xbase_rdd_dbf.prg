@@ -265,7 +265,7 @@ FUNCTION reopen_exclusive_and_zap( dbf_table, open_index )
        my_use( _a_dbf_rec["table"] )
        zapp()
 
-   END SEQUENCEi
+   END SEQUENCE
 
   
    RETURN .T.

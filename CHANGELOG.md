@@ -1,3 +1,7 @@
+1.7.70  2014-05-05, hernad
+
+  - FAKT, izbačena opcija štampe fiskalnih računa za period
+ 
 1.7.69  2014-04-29, vsasa
 
   - KALK, kontiranje sa menija - bugfix

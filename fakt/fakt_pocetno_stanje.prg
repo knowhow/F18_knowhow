@@ -43,7 +43,7 @@ FUNCTION fakt_pocetno_stanje()
 
    _n_br_dok := PadR( "00000", 8 )
 
-   MsgO( "Formiranje dokumenta pocetnog stanja u toku... " )
+   MsgO( "Formiranje dokumenta početnog stanja u toku... " )
 
    DO WHILE !_data:Eof()
 
@@ -80,7 +80,7 @@ FUNCTION fakt_pocetno_stanje()
       _rec[ "dindem" ] := "KM "
       _rec[ "idpartner" ] := _partn_id
       _memo[ 2 ] := AllTrim( partn->naz ) + ", " + AllTrim( partn->mjesto )
-      _memo[ 3 ] := "Pocetno stanje"
+      _memo[ 3 ] := "Početno stanje"
       _rec[ "txt" ] := fakt_memo_field_to_txt( _memo )
       _rec[ "idroba" ] := _id_roba
       _rec[ "kolicina" ] := _stanje
@@ -95,7 +95,7 @@ FUNCTION fakt_pocetno_stanje()
    MsgC()
 
    IF _count > 0
-      MsgBeep( "Formiran dokument pocetnog stanja i nalazi se u pripremi !!!" )
+      MsgBeep( "Formiran dokument početnog stanja i nalazi se u pripremi !!!" )
    ENDIF
 
    RETURN

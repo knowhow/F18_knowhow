@@ -183,9 +183,6 @@ FUNCTION fakt_stanje_robe()
 
    ENDIF
 
-
-   cTMPFAKT := ""
-
    IF cFilt == ".t."
       SET FILTER TO
    ELSE
@@ -435,11 +432,7 @@ FUNCTION fakt_stanje_robe()
    ENDIF
    ? Space( gnLMarg ); ?? m
    FF
-
    ENDPRINT
-   my_close_all_dbf()
-   MyFERASE( cTMPFAKT )
-
 
    my_close_all_dbf()
 

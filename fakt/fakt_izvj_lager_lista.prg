@@ -251,7 +251,6 @@ FUNCTION fakt_lager_lista()
       cFilt += ".and. DatDok>=" + cm2str( dDatOd ) + ".and. DatDok<=" + cm2str( dDatDo )
    ENDIF
 
-   cTMPFAKT := ""
    IF cFilt == ".t."
       SET FILTER TO
    ELSE
@@ -640,12 +639,7 @@ FUNCTION fakt_lager_lista()
    FF
    ENDPRINT
 
-
    my_close_all_dbf()
-   MyFERASE( cTMPFAKT )
-
-
-   CLOSERET
 
    RETURN
 

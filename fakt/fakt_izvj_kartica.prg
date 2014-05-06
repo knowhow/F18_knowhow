@@ -213,8 +213,6 @@ FUNCTION fakt_kartica()
 
    cFilt1 := StrTran( cFilt1, ".t..and.", "" )
 
-   cTMPFAKT := ""
-
    IF cFilt1 == ".t."
       SET FILTER TO
    ELSE
@@ -474,7 +472,6 @@ FUNCTION fakt_kartica()
 
    END PRINT
    my_close_all_dbf()
-   MyFERASE( cTMPFAKT )
 
    RETURN
 
@@ -515,15 +512,5 @@ STATIC FUNCTION ZaglKart( lIniStrana )
    RETURN
 
 
-
-FUNCTION MyFErase()
-
-   PARAMETERS cFajl
-
-   IF !( cFajl == NIL .OR. "U" $ Type( "cFajl" ) )
-      FErase( cFajl )
-   ENDIF
-
-   RETURN
 
 

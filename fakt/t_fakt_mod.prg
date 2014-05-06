@@ -588,8 +588,8 @@ gSQL:="N"
 public gModul:="FAKT"
 gGlBaza:="FAKT.DBF"
 
-gRobaBlock:={|Ch| FaRobaBlock(Ch)}
-gPartnBlock:={|Ch| FaPartnBlock(Ch)}
+gRobaBlock := {|Ch| FaRobaBlock(Ch)}
+gPartnBlock := NIL
 
 public glCij13Mpc:=(IzFmkIni("FAKT","Cijena13MPC","D", KUMPATH)=="D")
 

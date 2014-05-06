@@ -107,8 +107,8 @@ FUNCTION fakt_unos_dokumenta()
 
    @ m_x + _x - 2, m_y + 2 SAY _opt_row
 
-   _opt_row := PadR( "<R> Rezervacija", _opt_d ) + _sep
-   _opt_row += PadR( "<X> Prekid rez.", _opt_d ) + _sep
+   _opt_row := PadR( "", _opt_d ) + _sep
+   _opt_row += PadR( "", _opt_d ) + _sep
    _opt_row += PadR( "<F10> Ostale opcije", _opt_d ) + _sep
    _opt_row += "<O> Konverzije"
 
@@ -1037,16 +1037,10 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
             IzSifre(), ispisi_partn( _idpartner, _part_x, _part_y + 18 ) }
 
          _x += 2
-         IF _params[ "fakt_prodajna_mjesta" ]
-            // prodajno mjesto, PM
-            @ m_x + _x, m_y + 2 SAY "P.M.:" GET _idpm ;
-               VALID {|| P_IDPM( @_idpm, _idpartner ) } ;
-               PICT "@S10"
-         ENDIF
 
          IF _params[ "fakt_dok_veze" ]
             // veza dokumenti
-            @ m_x + _x, Col() + 1 SAY "Vezni dok.:" GET _dokument_veza ;
+            @ m_x + _x, m_y + 2 SAY "Vezni dok.:" GET _dokument_veza ;
                PICT "@S20"
          ENDIF
 

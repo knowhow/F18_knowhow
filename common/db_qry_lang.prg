@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,9 +13,9 @@
 #include "fmk.ch"
 
 
-static aOperators:={"#",">=",">","<",">","<>","!=","$","--","*","?"}
-static aTokens:={ ";"    , ".I."   , ".ILI."}
-static aToken2:={ ".or." , ".and." , ".or." }
+STATIC aOperators := { "#", ">=", ">", "<", ">", "<>", "!=", "$", "--", "*", "?" }
+STATIC aTokens := { ";", ".I.", ".ILI." }
+STATIC aToken2 := { ".or.", ".and.", ".or." }
 
 /*!
  @function   Parsiraj
@@ -25,375 +25,376 @@ static aToken2:={ ".or." , ".and." , ".or." }
  @param      cImeSifre "Idroba"
 */
 
-function Parsiraj(cSifra,cImeSifre,cTip,fR, nSifWA)
-* fR - rekurzivni poziv
-* cizraz vraca karakterni izraz za navedeno
-* nSifWA: npr. F_ROBA
-local cStartSifra,cOperator,nPoz1,nPos,nPoz1End, nsiflen
+FUNCTION Parsiraj( cSifra, cImeSifre, cTip, fR, nSifWA )
 
-local cVeznik:="",cToken:="", cIddd
+   // fR - rekurzivni poziv
+   // cizraz vraca karakterni izraz za navedeno
+   // nSifWA: npr. F_ROBA
+   LOCAL cStartSifra, cOperator, nPoz1, nPos, nPoz1End, nsiflen
 
-if fr=NIL; fR:=.f.; endif  // rekurzivni poziv
+   LOCAL cVeznik := "", cToken := "", cIddd
 
-if !fr
- cStartSifra:=cSifra
-endif
+   IF fr == NIL
+      fR := .F.
+   ENDIF
 
-if  nSifWA<>NIL .and. right(trim(csifra),1)<>";" .and. !fr
- if !empty(cSifra) 
-  nPos:=ATToken(cSifra,";")  //  12121;21212;1A -> 1A
-  nsiflen:=len(cSifra)
-  pushwa()
-  select (nSifWA)
-  if nPos<>0
-    cIddd:=padr(substr(cSifra,nPos), len(id))
-    cSifra:=left(cSifra,nPos-1)
-  else
-    cIddd:=padr(cSifra,len(id))
-    cSifra:=""
-  endif
-  set order to tag "ID"
-  private ImeKol:={ { "ID  ",  {|| id},    "id"    },;
-                   { "Naziv:", {|| naz},  "naz"     } }
-  private Kol:={1,2}
-  PostojiSifra(nsifWA,1,10,77,"Odredi sifru:",@cIddd)
-  cSifra:= cSifra + cIddd+";"
-  csifra:=padr(cSifra,nSiflen)
-  PopWa()
-  return NIL
- else
-  return NIL
- endif
-endif
+   IF !fr
+      cStartSifra := cSifra
+   ENDIF
 
-cIzraz:=""
-if cTip==NIL;  cTip:="C";  endif
-cSifra:=TRIM(cSifra)
-nLen:=LEN(cSifra)
+   IF  nSifWA <> NIL .AND. Right( Trim( csifra ), 1 ) <> ";" .AND. !fr
+      IF !Empty( cSifra )
+         nPos := AtToken( cSifra, ";" )  // 12121;21212;1A -> 1A
+         nsiflen := Len( cSifra )
+         pushwa()
+         SELECT ( nSifWA )
+         IF nPos <> 0
+            cIddd := PadR( SubStr( cSifra, nPos ), Len( id ) )
+            cSifra := Left( cSifra, nPos - 1 )
+         ELSE
+            cIddd := PadR( cSifra, Len( id ) )
+            cSifra := ""
+         ENDIF
+         SET ORDER TO TAG "ID"
+         PRIVATE ImeKol := { { "ID  ",  {|| id },    "id"    }, ;
+            { "Naziv:", {|| naz },  "naz"     } }
+         PRIVATE Kol := { 1, 2 }
+         PostojiSifra( nsifWA, 1, 10, 77, "Odredi sifru:", @cIddd )
+         cSifra := cSifra + cIddd + ";"
+         csifra := PadR( cSifra, nSiflen )
+         PopWa()
+         RETURN NIL
+      ELSE
+         RETURN NIL
+      ENDIF
+   ENDIF
 
- do while nLen>0
-    cProlaz:=""
-    if left(cSifra,1)<>"#"  // ove izraze ne razbijaj
-     Zagrade(@cSifra,@nPoz1,@nPoz1end)
-    else
-     nPoz1:=0
-     nPoz1End:=0
-    endif
-    // (>10.I.<11);
-    if nPoz1>0 .and. nPoz1End>nPoz1
+   cIzraz := ""
+   IF cTip == NIL;  cTip := "C";  ENDIF
+   cSifra := Trim( cSifra )
+   nLen := Len( cSifra )
 
-      cLijevo:=substr(cSifra,1,nPoz1-1)
-      cDesno:= Substr(cSifra,nPoz1+1,nPoz1end-nPoz1-1)
-      cIza:=   substr(cSifra,nPoz1end+1)
+   DO WHILE nLen > 0
+      cProlaz := ""
+      IF Left( cSifra, 1 ) <> "#"  // ove izraze ne razbijaj
+         Zagrade( @cSifra, @nPoz1, @nPoz1end )
+      ELSE
+         nPoz1 := 0
+         nPoz1End := 0
+      ENDIF
+      // (>10.I.<11);
+      IF nPoz1 > 0 .AND. nPoz1End > nPoz1
 
-      if !empty(clijevo)
-         VeznikRight(@cLijevo,@cVeznik)
-         cIzraz+=Parsiraj(cLijevo,cImeSifre,cTip,.t.) + cVeznik
-      endif
-      cIzraz+="("
+         cLijevo := SubStr( cSifra, 1, nPoz1 - 1 )
+         cDesno := SubStr( cSifra, nPoz1 + 1, nPoz1end - nPoz1 - 1 )
+         cIza :=   SubStr( cSifra, nPoz1end + 1 )
 
-      VeznikRight(@cDesno,@cVeznik)
-      cIzraz+=Parsiraj(cDesno,cImeSifre,cTip,.t.)
-      cIzraz+=")"
+         IF !Empty( clijevo )
+            VeznikRight( @cLijevo, @cVeznik )
+            cIzraz += Parsiraj( cLijevo, cImeSifre, cTip, .T. ) + cVeznik
+         ENDIF
+         cIzraz += "("
 
-      if !empty(cIza)
-       VeznikLeft(@cIza,@cVeznik)
-       cIzraz+=cVeznik
-       cIzraz+=Parsiraj(cIza,cImeSifre,cTip,.t.)
-      endif
+         VeznikRight( @cDesno, @cVeznik )
+         cIzraz += Parsiraj( cDesno, cImeSifre, cTip, .T. )
+         cIzraz += ")"
 
-      cSifra:="" // sve je rijeseno
-      cProlaz:="("
-    endif
+         IF !Empty( cIza )
+            VeznikLeft( @cIza, @cVeznik )
+            cIzraz += cVeznik
+            cIzraz += Parsiraj( cIza, cImeSifre, cTip, .T. )
+         ENDIF
 
-    if npoz1=-999
-       cProlaz:="DE"
-    endif
+         cSifra := "" // sve je rijeseno
+         cProlaz := "("
+      ENDIF
 
-    cOperator := PrviOperator( cSifra, @nPoz1 )
+      IF npoz1 =- 999
+         cProlaz := "DE"
+      ENDIF
 
-    if cOperator=="#"
-      if empty(cProlaz) .and. nPoz1>0
-        nPoz1end:=Nexttoken(@cSifra,@cToken)
-        cDesno:=Substr(cSifra,nPoz1+1,nPoz1end-nPoz1-1)
-        cSifra:=substr(cSifra,nPoz1End+1)
-        cIzraz+= cDesno
-        cProlaz+="#"
-      endif
-    endif
+      cOperator := PrviOperator( cSifra, @nPoz1 )
 
-    if cOperator $ "< > >= <= <> !=" .and. empty(cProlaz) .and. npoz1>0
-      nPoz1end:=NextToken(@cSifra,@cToken)
-      cDesno := Substr( cSifra, nPoz1 + LEN( cOperator ) , nPoz1end - nPoz1 - LEN(cOperator) )
-      do case
-       case cTip=="C"
-        cIzraz+=cImeSifre+cOperator+"'"+cDesno+"'"
-       case cTip=="N"
-        cIzraz+=cImeSifre+cOperator+cDesno
-       case cTip=="D"
-        cIzraz+=cImeSifre+cOperator+"CTOD('"+cDesno+"')"
-//        cIzraz+="DTOS("+cImeSifre+")"+cOperator+"DTOS(CTOD('"+cDesno+"'))"
-      endcase
-      cSifra:=substr(cSifra,nPoz1End+len(cOperator))
-      cProlaz+=cOperator
-    endif
+      IF cOperator == "#"
+         IF Empty( cProlaz ) .AND. nPoz1 > 0
+            nPoz1end := Nexttoken( @cSifra, @cToken )
+            cDesno := SubStr( cSifra, nPoz1 + 1, nPoz1end - nPoz1 - 1 )
+            cSifra := SubStr( cSifra, nPoz1End + 1 )
+            cIzraz += cDesno
+            cProlaz += "#"
+         ENDIF
+      ENDIF
 
-    if cOperator=="--" .and. empty(cProlaz) .and. npoz1>0
-      nPoz1end:=NextToken(@cSifra,@cToken)
-      cLijevo:=LEFT(cSifra,nPoz1-1)
-      cDesno:=Substr(cSifra,nPoz1+2,nPoz1end-nPoz1-2)
-      do case
-       case cTip=="C"
-        cIzraz+="("+cImeSifre+">='"+cLijevo+"'.and."+cImeSifre+"<='"+cDesno+"')"
-      case cTip=="N"
-        cIzraz+="("+cImeSifre+">="+cLijevo+".and."+cImeSifre+"<="+cDesno+")"
-       case cTip=="D"
-        cIzraz+="("+cImeSifre+">=CTOD('"+cLijevo+"').and."+cImeSifre+"<=CTOD('"+cDesno+"'))"
-//        cIzraz+="(DTOS("+cImeSifre+")>=DTOS(CTOD('"+cLijevo+"')).and.DTOS("+cImeSifre+")<=DTOS(CTOD('"+cDesno+"')))"
-      endcase
-//      cSifra:=substr(cSifra,nPoz1End+2)  // BUG otkl.6.7.99.
-      cSifra:=substr(cSifra,nPoz1End+1)
-      cProlaz+="O"
-    endif
+      IF cOperator $ "< > >= <= <> !=" .AND. Empty( cProlaz ) .AND. npoz1 > 0
+         nPoz1end := NextToken( @cSifra, @cToken )
+         cDesno := SubStr( cSifra, nPoz1 + Len( cOperator ), nPoz1end - nPoz1 - Len( cOperator ) )
+         DO CASE
+         CASE cTip == "C"
+            cIzraz += cImeSifre + cOperator + "'" + cDesno + "'"
+         CASE cTip == "N"
+            cIzraz += cImeSifre + cOperator + cDesno
+         CASE cTip == "D"
+            cIzraz += cImeSifre + cOperator + "CTOD('" + cDesno + "')"
+            // cIzraz+="DTOS("+cImeSifre+")"+cOperator+"DTOS(CTOD('"+cDesno+"'))"
+         ENDCASE
+         cSifra := SubStr( cSifra, nPoz1End + Len( cOperator ) )
+         cProlaz += cOperator
+      ENDIF
 
-    if cOperator=="$" .and. empty(cProlaz) .and. npoz1>0
-      nPoz1end:=NextToken(@cSifra,@cToken)
-      cLijevo:=LEFT(cSifra,nPoz1-1)
-      cDesno:=Substr(cSifra,nPoz1+1,nPoz1end-nPoz1-1)
-      if cTip=="C"
-        cIzraz+="'"+ cDesno+"'$"+cImeSifre
-      else
-        cProlaz:="DE"  // Data error
-      endif
-      cSifra:=substr(cSifra,nPoz1End+1)
-      cProlaz+="$"
-    endif
+      IF cOperator == "--" .AND. Empty( cProlaz ) .AND. npoz1 > 0
+         nPoz1end := NextToken( @cSifra, @cToken )
+         cLijevo := Left( cSifra, nPoz1 - 1 )
+         cDesno := SubStr( cSifra, nPoz1 + 2, nPoz1end - nPoz1 - 2 )
+         DO CASE
+         CASE cTip == "C"
+            cIzraz += "(" + cImeSifre + ">='" + cLijevo + "'.and." + cImeSifre + "<='" + cDesno + "')"
+         CASE cTip == "N"
+            cIzraz += "(" + cImeSifre + ">=" + cLijevo + ".and." + cImeSifre + "<=" + cDesno + ")"
+         CASE cTip == "D"
+            cIzraz += "(" + cImeSifre + ">=CTOD('" + cLijevo + "').and." + cImeSifre + "<=CTOD('" + cDesno + "'))"
+            // cIzraz+="(DTOS("+cImeSifre+")>=DTOS(CTOD('"+cLijevo+"')).and.DTOS("+cImeSifre+")<=DTOS(CTOD('"+cDesno+"')))"
+         ENDCASE
+         // cSifra:=substr(cSifra,nPoz1End+2)  // BUG otkl.6.7.99.
+         cSifra := SubStr( cSifra, nPoz1End + 1 )
+         cProlaz += "O"
+      ENDIF
 
-    if cOperator $ "*?" .and. empty(cProlaz) .and. npoz1>0
-      nPoz1:=1
-      nPoz1end:=NextToken(@cSifra,@cToken)
-      cLijevo:=LEFT(cSifra,nPoz1End-1)
-      if cTip=="C"
-        cIzraz+="LIKE('"+cLijevo+"',"+cImeSifre+")"
-      else
-        cProlaz:="DE"  // Data error
-      endif
-      cSifra:=substr(cSifra,nPoz1End+1)
-      cProlaz+="?"
-    endif
+      IF cOperator == "$" .AND. Empty( cProlaz ) .AND. npoz1 > 0
+         nPoz1end := NextToken( @cSifra, @cToken )
+         cLijevo := Left( cSifra, nPoz1 - 1 )
+         cDesno := SubStr( cSifra, nPoz1 + 1, nPoz1end - nPoz1 - 1 )
+         IF cTip == "C"
+            cIzraz += "'" + cDesno + "'$" + cImeSifre
+         ELSE
+            cProlaz := "DE"  // Data error
+         ENDIF
+         cSifra := SubStr( cSifra, nPoz1End + 1 )
+         cProlaz += "$"
+      ENDIF
 
-    if cOperator=="" .and. cProlaz=="" // nista od gornjih operatora
-     nPoz1:=NextToken(@cSifra,@cToken)
-     if nPoz1>0
-       cLijevo:=LEFT(cSifra,nPoz1-1)
-       do case
-        case cTip=="C"
-         cIzraz+=cImeSifre+"='"+clijevo+"'"
-        case cTip=="N"
-         cIzraz+=cImeSifre+"=="+clijevo
-        case cTip=="D"
-         cIzraz+=cImeSifre+"==CTOD('"+clijevo+"')"
-       endcase
-       cSifra:=substr(cSifra,nPoz1+1)
-       cProlaz:="V"
-     endif
-    endif
+      IF cOperator $ "*?" .AND. Empty( cProlaz ) .AND. npoz1 > 0
+         nPoz1 := 1
+         nPoz1end := NextToken( @cSifra, @cToken )
+         cLijevo := Left( cSifra, nPoz1End - 1 )
+         IF cTip == "C"
+            cIzraz += "LIKE('" + cLijevo + "'," + cImeSifre + ")"
+         ELSE
+            cProlaz := "DE"  // Data error
+         ENDIF
+         cSifra := SubStr( cSifra, nPoz1End + 1 )
+         cProlaz += "?"
+      ENDIF
 
-    if cProlaz=="" .or. left(cProlaz,2)="DE"
-      MsgO("Greska u sintaksi !!!")
-      Beep(4)
-      INKEY()
-      MsgC()
-      return NIL
-    else
-     if !empty(cSifra) // vezni izraz
-         cIzraz+=cToken
-     endif
-     nLen:=LEN(cSifra)
-    endif
+      IF cOperator == "" .AND. cProlaz == "" // nista od gornjih operatora
+         nPoz1 := NextToken( @cSifra, @cToken )
+         IF nPoz1 > 0
+            cLijevo := Left( cSifra, nPoz1 - 1 )
+            DO CASE
+            CASE cTip == "C"
+               cIzraz += cImeSifre + "='" + clijevo + "'"
+            CASE cTip == "N"
+               cIzraz += cImeSifre + "==" + clijevo
+            CASE cTip == "D"
+               cIzraz += cImeSifre + "==CTOD('" + clijevo + "')"
+            ENDCASE
+            cSifra := SubStr( cSifra, nPoz1 + 1 )
+            cProlaz := "V"
+         ENDIF
+      ENDIF
 
- enddo
+      IF cProlaz == "" .OR. Left( cProlaz, 2 ) = "DE"
+         MsgO( "Greska u sintaksi !!!" )
+         Beep( 4 )
+         Inkey()
+         MsgC()
+         RETURN NIL
+      ELSE
+         IF !Empty( cSifra ) // vezni izraz
+            cIzraz += cToken
+         ENDIF
+         nLen := Len( cSifra )
+      ENDIF
 
-if !empty(cizraz)
- if !fr // nije rekurzivni poziv
-   cIzraz:="("+cizraz+")"
-   cSifra:=cStartSifra
-   return cizraz
- endif
-else
- return ".t."
-endif
+   ENDDO
 
+   IF !Empty( cizraz )
+      IF !fr // nije rekurzivni poziv
+         cIzraz := "(" + cizraz + ")"
+         cSifra := cStartSifra
+         RETURN cizraz
+      ENDIF
+   ELSE
+      RETURN ".t."
+   ENDIF
 
-function PrviOperator(cSifra,nPoz1)
+FUNCTION PrviOperator( cSifra, nPoz1 )
 
-local i
-local cRet:=""
-nPoz1:=999
-for i:=1 to len(aOperators)
- nPom:=at(aOperators[i],cSifra)
- if npom>0 .and. nPom<nPoz1
-   nPoz1:=nPom
-   cRet:=aOperators[i]
-  endif
-next
-for i:=1 to len(aTokens) // veznici
- nPom:=at(aTokens[i],cSifra)
- if npom>0 .and. nPom<nPoz1
-   nPoz1:=1  // ispred svih operatora nalazi se veznik .i. .ili ;
-   cRet:=""
-  endif
-next
-return cRet  // npr "$"
+   LOCAL i
+   LOCAL cRet := ""
 
+   nPoz1 := 999
+   FOR i := 1 TO Len( aOperators )
+      nPom := At( aOperators[ i ], cSifra )
+      IF npom > 0 .AND. nPom < nPoz1
+         nPoz1 := nPom
+         cRet := aOperators[ i ]
+      ENDIF
+   NEXT
+   FOR i := 1 TO Len( aTokens ) // veznici
+      nPom := At( aTokens[ i ], cSifra )
+      IF npom > 0 .AND. nPom < nPoz1
+         nPoz1 := 1  // ispred svih operatora nalazi se veznik .i. .ili ;
+         cRet := ""
+      ENDIF
+   NEXT
 
-
-
-function  Zagrade(cSifra,nPoz1,nPoz1end)
-*
-*  cSifra = 930239(3332('3232323))
-
-local i,nBracket
-nPoz1:=AT("(",cSifra)
-if nPoz1=0
-  nPoz1End:=0
-  return
-endif
-nBracket:=1
-for i:=npoz1+1 to len(cSifra)
-  if substr(cSifra,i,1)==")"
-     nBracket--
-  endif
-  if nBracket==0
-     nPoz1End:=i
-     exit
-  endif
-  if substr(cSifra,i,1)=="("
-     nBracket++
-  endif
-next
-if nBracket<>0  //greska u sintaksi
-  nPoz1   :=999
-  nPoz1End:=999
-endif
-if substr(cSifra,nPoz1End+1)=";" 
-   cSifra:=left(cSifra,npoz1End)+substr(cSifra,npoz1End+2)
-endif
-return NIL
+   RETURN cRet  // npr "$"
 
 
 
-function VeznikRight(cLijevo,cVeznik)
-*  456.I. -> 456;  cVeznik:=".and."
+FUNCTION  Zagrade( cSifra, nPoz1, nPoz1end )
+   
+   // cSifra = 930239(3332('3232323))
 
-if right(cLijevo,1)==";"
-   cVeznik:=".or."
-endif
-if right(cLijevo,3)==".I."
-   cVeznik:=".and."
-   cLijevo:=left(cLijevo,len(clijevo)-3)+";"
-endif
-if right(cLijevo,5)==".ILI."
-   cVeznik:=".or."
-   cLijevo:=left(cLijevo,len(clijevo)-5)+";"
-endif
-if right(cLijevo,1)<>";" .and. right(cLijevo,1)<>")"
-   cLijevo+=";"  // dodaj ; da izraz bude regularan
-endif
-if right(clijevo,2)==");"
-  cLijevo:=left(clijevo,len(clijevo-1))
-endif
+   LOCAL i, nBracket
+   nPoz1 := At( "(", cSifra )
+   IF nPoz1 = 0
+      nPoz1End := 0
+      RETURN
+   ENDIF
+   nBracket := 1
+   FOR i := npoz1 + 1 TO Len( cSifra )
+      IF SubStr( cSifra, i, 1 ) == ")"
+         nBracket--
+      ENDIF
+      IF nBracket == 0
+         nPoz1End := i
+         EXIT
+      ENDIF
+      IF SubStr( cSifra, i, 1 ) == "("
+         nBracket++
+      ENDIF
+   NEXT
+   IF nBracket <> 0  // greska u sintaksi
+      nPoz1   := 999
+      nPoz1End := 999
+   ENDIF
+   IF SubStr( cSifra, nPoz1End + 1 ) = ";"
+      cSifra := Left( cSifra, npoz1End ) + SubStr( cSifra, npoz1End + 2 )
+   ENDIF
 
-
-function VeznikLeft(cIza,cVeznik)
-*
-*  .I.456;  ->  456;   cVeznik:=".and."
-
-if left(cIza,1)==";"
-   cVeznik:=".or."
-   cIza:=substr(cIza,2)
-endif
-if left(cIza,3)==".I."
-   cVeznik:=".and."
-   cIza:=substr(cIza,4)
-endif
-if left(cIza,5)==".ILI."
-   cVeznik:=".or."
-   cIza:=substr(cIza,6)
-endif
-if right(cIza,1)<>";" .and. right(cIza,1)<>")"
-   cIza+=";"  // dodaj ; da izraz bude regularan
-endif
-if right(ciza,2)==");"
-  ciza:=left(ciza,len(ciza-1))
-endif
-
-
-function NextToken(cSif,cVeznik)
-*
-*
-
-local i:=0, npoz:=9999, npom:=0, iTek
-
-for i:=1 to len(aTokens)
- nPom:=AT(aTokens[i],upper(cSif))
- if nPom>0 .and. nPom<nPoz
-  nPoz:=nPom
-  cVeznik:=aToken2[i]
-  itek:=i
- endif
-next
-
-if nPoz=9999;  nPoz:=0; endif
-
-if nPoz<>0
- cSif:=left(cSif,nPoz-1)+";"+substr(cSif,nPoz+len(aTokens[itek]))
-endif
-return nPoz
+   RETURN NIL
 
 
 
+FUNCTION VeznikRight( cLijevo, cVeznik )
 
-function Tacno(cizraz)
-*
+   // 456.I. -> 456;  cVeznik:=".and."
 
-private cPom
-cPom:=cIzraz
-return &cPom
+   IF Right( cLijevo, 1 ) == ";"
+      cVeznik := ".or."
+   ENDIF
+   IF Right( cLijevo, 3 ) == ".I."
+      cVeznik := ".and."
+      cLijevo := Left( cLijevo, Len( clijevo ) -3 ) + ";"
+   ENDIF
+   IF Right( cLijevo, 5 ) == ".ILI."
+      cVeznik := ".or."
+      cLijevo := Left( cLijevo, Len( clijevo ) -5 ) + ";"
+   ENDIF
+   IF Right( cLijevo, 1 ) <> ";" .AND. Right( cLijevo, 1 ) <> ")"
+      cLijevo += ";"  // dodaj ; da izraz bude regularan
+   ENDIF
+   IF Right( clijevo, 2 ) == ");"
+      cLijevo := Left( clijevo, Len( clijevo - 1 ) )
+   ENDIF
+
+FUNCTION VeznikLeft( cIza, cVeznik )
+
+   //
+   // .I.456;  ->  456;   cVeznik:=".and."
+
+   IF Left( cIza, 1 ) == ";"
+      cVeznik := ".or."
+      cIza := SubStr( cIza, 2 )
+   ENDIF
+   IF Left( cIza, 3 ) == ".I."
+      cVeznik := ".and."
+      cIza := SubStr( cIza, 4 )
+   ENDIF
+   IF Left( cIza, 5 ) == ".ILI."
+      cVeznik := ".or."
+      cIza := SubStr( cIza, 6 )
+   ENDIF
+   IF Right( cIza, 1 ) <> ";" .AND. Right( cIza, 1 ) <> ")"
+      cIza += ";"  // dodaj ; da izraz bude regularan
+   ENDIF
+   IF Right( ciza, 2 ) == ");"
+      ciza := Left( ciza, Len( ciza - 1 ) )
+   ENDIF
+
+FUNCTION NextToken( cSif, cVeznik )
+
+   LOCAL i := 0, npoz := 9999, npom := 0, iTek
+
+   FOR i := 1 TO Len( aTokens )
+      nPom := At( aTokens[ i ], Upper( cSif ) )
+      IF nPom > 0 .AND. nPom < nPoz
+         nPoz := nPom
+         cVeznik := aToken2[ i ]
+         itek := i
+      ENDIF
+   NEXT
+
+   IF nPoz = 9999;  nPoz := 0; ENDIF
+
+   IF nPoz <> 0
+      cSif := Left( cSif, nPoz - 1 ) + ";" + SubStr( cSif, nPoz + Len( aTokens[ itek ] ) )
+   ENDIF
+
+   RETURN nPoz
 
 
 
-function TacnoN(cIzraz,bIni,bWhile,bSkip,bEnd)
-*
-*
+FUNCTION Tacno( cizraz )
 
-local i,fRez:=.f.
+   PRIVATE cPom
+   cPom := cIzraz
 
-private cPom
-
-if cizraz=".t."
-  return .t.
-endif
-
-EVAL(bIni)
-
-do while EVAL(bWhile)
- fRez:=&cIzraz
- EVAL(bSkip)
-enddo
-
-Eval(bEnd)
-return fRez
+   return &cPom
 
 
-function SkLoNMark(cSifDBF, cId)
-*{
-nArea:= select()
-select (cSifDBF)
-HSEEK cID
-select (nArea)
-if ((cSifDBF)->_M1_ <> "*")
-  return .t.
-endif
-return .f.
-*}
+
+FUNCTION TacnoN( cIzraz, bIni, bWhile, bSkip, bEnd )
+
+   LOCAL i, fRez := .F.
+
+   PRIVATE cPom
+
+   IF cizraz = ".t."
+      RETURN .T.
+   ENDIF
+
+   Eval( bIni )
+
+   DO WHILE Eval( bWhile )
+      fRez := &cIzraz
+      Eval( bSkip )
+   ENDDO
+
+   Eval( bEnd )
+
+   RETURN fRez
+
+
+FUNCTION SkLoNMark( cSifDBF, cId )
+
+   nArea := Select()
+   SELECT ( cSifDBF )
+   HSEEK cID
+   SELECT ( nArea )
+   IF ( ( cSifDBF )->_M1_ <> "*" )
+      RETURN .T.
+   ENDIF
+
+   RETURN .F.

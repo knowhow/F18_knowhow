@@ -238,12 +238,6 @@ FUNCTION fakt_stanje_robe()
          SELECT fakt
       ENDIF
 
-      // skip & loop gdje je roba->_M1_ != "*"
-      IF fSMark .AND. SkLoNMark( "ROBA", SiSiRo() )
-         SKIP
-         LOOP
-      ENDIF
-
       cIdRoba := IdRoba
 
       nStanjeCR := nUl := nIzl := 0
@@ -272,11 +266,6 @@ FUNCTION fakt_stanje_robe()
                LOOP
             ENDIF
             SELECT fakt
-         ENDIF
-
-         // skip & loop gdje je roba->_M1_ != "*"
-         IF fSMark .AND. SkLoNMark( "ROBA", SiSiRo() )
-            skip; LOOP
          ENDIF
 
          IF !Empty( qqTipDok )

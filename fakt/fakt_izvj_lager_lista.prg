@@ -322,20 +322,7 @@ FUNCTION fakt_lager_lista()
          ENDIF
       ENDIF
 
-      // skip & loop gdje je roba->_M1_ != "*"
-      IF fSMark .AND. SkLoNMark( "ROBA", SiSiRo() )
-         skip; LOOP
-      ENDIF
-
-
       DO WHILE Eval( bWhile1 )
-
-
-         // skip & loop gdje je roba->_M1_ != "*"
-         IF fSMark .AND. SkLoNMark( "ROBA", SiSiRo() )
-            SKIP
-            LOOP
-         ENDIF
 
          IF !Empty( qqTipDok )
             IF idtipdok <> qqTipDok

@@ -513,3 +513,17 @@ STATIC FUNCTION ZaglKart( lIniStrana )
    nZStrana = nStrana
 
    RETURN
+
+
+
+FUNCTION MyFErase()
+
+   PARAMETERS cFajl
+
+   IF !( cFajl == NIL .OR. "U" $ Type( "cFajl" ) )
+      FErase( cFajl )
+   ENDIF
+
+   RETURN
+
+

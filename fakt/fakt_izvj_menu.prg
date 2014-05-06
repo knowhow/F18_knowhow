@@ -41,9 +41,6 @@ FUNCTION fakt_izvjestaji()
       AAdd( _opcexe, {|| fisc_rpt() } )
    ENDIF
 
-   AAdd( _opc, "R. specificni izvjestaji (rmu)" )
-   AAdd( _opcexe, {|| mnu_sp_rudnik() } )
-
    PRIVATE fID_J := .F.
 
    f18_menu( "izvj", .F., _izbor, _opc, _opcexe )

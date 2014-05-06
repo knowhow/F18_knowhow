@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,452 +16,463 @@
 
 
 // ------------------
-//  Uplate
+// Uplate
 // -----------------
-function Uplate()
+FUNCTION Uplate()
 
-O_FAKT_DOKS
+   O_FAKT_DOKS
 
-//"6","IdFirma+idpartner+idtipdok", "DOKS"
-set order to tag "6"
+   // "6","IdFirma+idpartner+idtipdok", "DOKS"
+   SET ORDER TO TAG "6"
 
-O_PARTN
-O_UPL
+   O_PARTN
+   O_UPL
 
-cIdPartner:=SPACE(6)
-dDatOd:=ctod("")
-dDatDo:=date()
-qqTipDok:=padr("10;",40)
+   cIdPartner := Space( 6 )
+   dDatOd := CToD( "" )
+   dDatDo := Date()
+   qqTipDok := PadR( "10;", 40 )
 
-ImeKol:={}
-Kol:={}
+   ImeKol := {}
+   Kol := {}
 
-AADD(ImeKol,{ "DATUM UPLATE"    ,    {|| DATUPL   }   })
-AADD(ImeKol,{ PADC("OPIS",30)   ,    {|| OPIS     }   })
-AADD(ImeKol,{ PADC("IZNOS",12)  ,    {|| IZNOS    }   })
+   AAdd( ImeKol, { "DATUM UPLATE",    {|| DATUPL   }   } )
+   AAdd( ImeKol, { PadC( "OPIS", 30 ),    {|| OPIS     }   } )
+   AAdd( ImeKol, { PadC( "IZNOS", 12 ),    {|| IZNOS    }   } )
 
-for i:=1 to len(ImeKol)
-	AADD(Kol,i)
-next
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
 
-private bBKUslov:={|| idpartner=cidpartner}
-private bBkTrazi:={|| cIdPartner}
-// Brows ekey uslova
+   PRIVATE bBKUslov := {|| idpartner = cidpartner }
+   PRIVATE bBkTrazi := {|| cIdPartner }
+   // Brows ekey uslova
 
-Box(, MAXROWS()-5, MAXCOLS()-10 )
-do while .t.
+   Box(, MAXROWS() -5, MAXCOLS() -10 )
+   DO WHILE .T.
 
-	@ m_x+0, m_y+20 SAY PADC(" EVIDENCIJA UPLATA - KUPCI ",35,CHR(205))
-	@ m_x+1, m_y+ 2 SAY "Sifra partnera:" GET cIdPartner VALID P_Firma(@cIdPartner,1,26)
-	@ m_x+2, m_y+ 2 SAY "Tip dokumenta zaduzenja:" GET qqTipDok pict "@!S20"
-	@ m_x+3, m_y+ 2 SAY "Zaduzenja od datuma    :"  get dDatOd
-	@ m_x+3,col()+1 SAY "do:"  get dDatDo
-	read
-	ESC_BCR
-  
-	aUslTD:=Parsiraj(qqTipdok,"IdTipdok","C")
-	if aUslTD==nil
-		MsgBeep("Provjerite uslov za tip dokumenta !")
-		loop
-	endif
+      @ m_x + 0, m_y + 20 SAY PadC( " EVIDENCIJA UPLATA - KUPCI ", 35, Chr( 205 ) )
+      @ m_x + 1, m_y + 2 SAY "Sifra partnera:" GET cIdPartner VALID P_Firma( @cIdPartner, 1, 26 )
+      @ m_x + 2, m_y + 2 SAY "Tip dokumenta zaduzenja:" GET qqTipDok PICT "@!S20"
+      @ m_x + 3, m_y + 2 SAY "Zaduzenja od datuma    :"  GET dDatOd
+      @ m_x + 3, Col() + 1 SAY "do:"  GET dDatDo
+      READ
+      ESC_BCR
 
-	// utvrdimo ukupno zaduzenje
-	nUkZaduz:=UkZaduz()
+      aUslTD := Parsiraj( qqTipdok, "IdTipdok", "C" )
+      IF aUslTD == nil
+         MsgBeep( "Provjerite uslov za tip dokumenta !" )
+         LOOP
+      ENDIF
 
-	set cursor on
+      // utvrdimo ukupno zaduzenje
+      nUkZaduz := UkZaduz()
 
-	// utvrdimo ukupan iznos uplata
-	nUkUplata:=UkUplata()
+      SET CURSOR ON
 
-	select (F_UPL)
-	go top
+      // utvrdimo ukupan iznos uplata
+      nUkUplata := UkUplata()
 
-	@ m_x + X_POS_STANJE - 2, m_y + 1        SAY REPL("=", 70)
-	@ m_x + X_POS_STANJE - 1, m_y + Y_POS_STANJE SAY " (+)     ZADUZENJE:"
-	@ m_x + X_POS_STANJE - 0, m_y + Y_POS_STANJE SAY " (-)       UPLATIO:"
-	@ m_x + X_POS_STANJE + 1, m_y + Y_POS_STANJE SAY " ------------------"
-	@ m_x + X_POS_STANJE + 2, m_y + Y_POS_STANJE SAY " (=) PREOSTALI DUG:"
+      SELECT ( F_UPL )
+      GO TOP
 
-	DajStanjeKupca()
+      @ m_x + X_POS_STANJE - 2, m_y + 1        SAY REPL( "=", 70 )
+      @ m_x + X_POS_STANJE - 1, m_y + Y_POS_STANJE SAY " (+)     ZADUZENJE:"
+      @ m_x + X_POS_STANJE - 0, m_y + Y_POS_STANJE SAY " (-)       UPLATIO:"
+      @ m_x + X_POS_STANJE + 1, m_y + Y_POS_STANJE SAY " ------------------"
+      @ m_x + X_POS_STANJE + 2, m_y + Y_POS_STANJE SAY " (=) PREOSTALI DUG:"
 
-	@ m_x + 4, m_y+ 1 SAY REPL("=", 70)
+      DajStanjeKupca()
 
-	seek cIdPartner  // pozicioniraj se na pocetak !!
-	ObjDbEdit("EvUpl", MAXROWS()-5, MAXCOLS()-10, {|| EdUplata()} ,"", "<c-N> nova uplata  <F2> ispravka  <c-T> brisanje  <c-P> stampanje", ;
-               .f. , NIL, 1, NIL, 4, 3, NIL, {|nSkip| SkipDBBK(nSkip)} )
+      @ m_x + 4, m_y + 1 SAY REPL( "=", 70 )
 
-enddo
-BoxC()
+      SEEK cIdPartner  // pozicioniraj se na pocetak !!
+      ObjDbEdit( "EvUpl", MAXROWS() -5, MAXCOLS() -10, {|| EdUplata() },"", "<c-N> nova uplata  <F2> ispravka  <c-T> brisanje  <c-P> stampanje", ;
+         .F., NIL, 1, NIL, 4, 3, NIL, {| nSkip| SkipDBBK( nSkip ) } )
 
-CLOSERET
-return nil
+   ENDDO
+   BoxC()
+
+   CLOSERET
+
+   RETURN NIL
 
 // --------------------
 // EdUplata
 // --------------------
-function EdUplata()
-local fK1:=.f.
-local nRet:=DE_CONT
+FUNCTION EdUplata()
 
-do case
-	case Ch==K_F2  .or. Ch==K_CTRL_N
+   LOCAL fK1 := .F.
+   LOCAL nRet := DE_CONT
 
-		dDatUpl := IF( Ch==K_F2 , DATUPL , DATE()           )
-		cOpis   := IF( Ch==K_F2 , OPIS   , SPACE(LEN(OPIS)) )
-		nIznos  := IF( Ch==K_F2 , IZNOS  , 0                )
+   DO CASE
+   CASE Ch == K_F2  .OR. Ch == K_CTRL_N
 
-		Box( ,3, 60, .f.)
-			@ m_x+0,m_y+10 SAY PADC(IF(Ch==K_F2,"ISPRAVKA EVIDENTIRANE","EVIDENTIRANJE NOVE")+" STAVKE",40,CHR(205))
-			@ m_x+1,m_y+ 2 SAY "Datum uplate" GET dDatUpl
-			@ m_x+2,m_y+ 2 SAY "Opis        " GET cOpis
-			@ m_x+3,m_y+ 2 SAY "Iznos       " GET nIznos pict picdem
-			read
-		BoxC()
+      dDatUpl := IF( Ch == K_F2, DATUPL, Date()           )
+      cOpis   := IF( Ch == K_F2, OPIS, Space( Len( OPIS ) ) )
+      nIznos  := IF( Ch == K_F2, IZNOS, 0                )
 
-		if Ch==K_CTRL_N .and. lastkey()<>K_ESC
-			append blank
-			replace idpartner with cidpartner
-		endif
+      Box( , 3, 60, .F. )
+      @ m_x + 0, m_y + 10 SAY PadC( IF( Ch == K_F2, "ISPRAVKA EVIDENTIRANE", "EVIDENTIRANJE NOVE" ) + " STAVKE", 40, Chr( 205 ) )
+      @ m_x + 1, m_y + 2 SAY "Datum uplate" GET dDatUpl
+      @ m_x + 2, m_y + 2 SAY "Opis        " GET cOpis
+      @ m_x + 3, m_y + 2 SAY "Iznos       " GET nIznos PICT picdem
+      READ
+      BoxC()
 
-		if lastkey()<>K_ESC
-			replace Datupl WITH dDatUpl, opis WITH cOpis, iznos WITH nIznos
-			nUkUplata:=UkUplata()
-			DajStanjeKupca()
-			nRet:=DE_REFRESH
-		endif
+      IF Ch == K_CTRL_N .AND. LastKey() <> K_ESC
+         APPEND BLANK
+         REPLACE idpartner WITH cidpartner
+      ENDIF
 
-	case Ch==K_CTRL_T
+      IF LastKey() <> K_ESC
+         REPLACE Datupl WITH dDatUpl, opis WITH cOpis, iznos WITH nIznos
+         nUkUplata := UkUplata()
+         DajStanjeKupca()
+         nRet := DE_REFRESH
+      ENDIF
 
-		if Pitanje(,"Izbrisati stavku ?","N") == "D"
+   CASE Ch == K_CTRL_T
 
-			delete_with_rlock()
-                        my_dbf_pack()
-			nUkUplata := UkUplata()
-			DajStanjeKupca()
-			nRet := DE_REFRESH
+      IF Pitanje(, "Izbrisati stavku ?", "N" ) == "D"
 
-		endif
+         delete_with_rlock()
+         my_dbf_pack()
+         nUkUplata := UkUplata()
+         DajStanjeKupca()
+         nRet := DE_REFRESH
 
-	case Ch==K_CTRL_P
+      ENDIF
 
-		StKartKup()
-		nRet:=DE_REFRESH
+   CASE Ch == K_CTRL_P
 
-endcase
+      StKartKup()
+      nRet := DE_REFRESH
 
-return nRet
+   ENDCASE
+
+   RETURN nRet
 
 // ------------------------------------
 // DajStanjeKupca()
 // Vraca stanje kupca
 // ------------------------------------
-function DajStanjeKupca()
-	@ m_x + X_POS_STANJE - 1, m_y + Y_POS_STANJE + 20 SAY STR(nUkZaduz, 15, 2) COLOR "N/W"
-	@ m_x + X_POS_STANJE    , m_y + Y_POS_STANJE + 20 SAY STR(nUkUplata, 15, 2) COLOR "N/W"
-	@ m_x + X_POS_STANJE + 2, m_y + Y_POS_STANJE + 20 SAY STR(nUkZaduz - nUkUplata, 15, 2) COLOR "N/W"
-return nil
+FUNCTION DajStanjeKupca()
+
+   @ m_x + X_POS_STANJE - 1, m_y + Y_POS_STANJE + 20 SAY Str( nUkZaduz, 15, 2 ) COLOR "N/W"
+   @ m_x + X_POS_STANJE, m_y + Y_POS_STANJE + 20 SAY Str( nUkUplata, 15, 2 ) COLOR "N/W"
+   @ m_x + X_POS_STANJE + 2, m_y + Y_POS_STANJE + 20 SAY Str( nUkZaduz - nUkUplata, 15, 2 ) COLOR "N/W"
+
+   RETURN NIL
 
 // --------------------------------
 // UkZaduz()
 // Ukupno zaduzenje
 // --------------------------------
-function UkZaduz()
-local nArr:=SELECT(), nVrati:=0
+FUNCTION UkZaduz()
 
-select (F_FAKT_DOKS)
-seek gFirma+cIdPartner
+   LOCAL nArr := Select(), nVrati := 0
 
-do while !eof() .and. idpartner==cIdPartner
-	if datdok>=dDatOd .and. datdok<=dDatDo .and. &aUslTD
-		nVrati += ROUND(iznos,ZAOKRUZENJE)
-	endif
-	skip 1
-enddo
+   SELECT ( F_FAKT_DOKS )
+   SEEK gFirma + cIdPartner
 
-select (nArr)
+   DO WHILE !Eof() .AND. idpartner == cIdPartner
+      IF datdok >= dDatOd .AND. datdok <= dDatDo .AND. &aUslTD
+         nVrati += Round( iznos, ZAOKRUZENJE )
+      ENDIF
+      SKIP 1
+   ENDDO
 
-return nVrati
+   SELECT ( nArr )
+
+   RETURN nVrati
 
 
 /*! \fn UkUplata(lPushWA)
  *  \brief Ukupno uplata
  *  \param lPushWA - .t.-skeniraj pa vrati stanje baze uplata, .f.-ne radi to
  */
- 
-function UkUplata(lPushWA)
-local nArr:=SELECT(), nVrati:=0
 
-if lPushWA==nil
-	lPushWA:=.t.
-endif
+FUNCTION UkUplata( lPushWA )
 
-select (F_UPL)
+   LOCAL nArr := Select(), nVrati := 0
 
-if lPushWA
-	PushWA()
-	set order to tag "2"
-endif
+   IF lPushWA == nil
+      lPushWA := .T.
+   ENDIF
 
-seek cIdPartner
+   SELECT ( F_UPL )
 
-do while !eof() .and. idpartner==cIdPartner
-	if datupl>=dDatOd .and. datupl<=dDatDo
-		nVrati += iznos
-	endif
-	skip 1
-enddo
+   IF lPushWA
+      PushWA()
+      SET ORDER TO TAG "2"
+   ENDIF
 
-if lPushWA
-	PopWA()
-endif
+   SEEK cIdPartner
 
-select (nArr)
+   DO WHILE !Eof() .AND. idpartner == cIdPartner
+      IF datupl >= dDatOd .AND. datupl <= dDatDo
+         nVrati += iznos
+      ENDIF
+      SKIP 1
+   ENDDO
 
-return nVrati
+   IF lPushWA
+      PopWA()
+   ENDIF
+
+   SELECT ( nArr )
+
+   RETURN nVrati
 
 
 /*! \fn SkipDBBK(nRequest)
  *  \brief
  *  \param nRequest
  */
- 
-static function SkipDBBK(nRequest)
-*{
-local nCount
-nCount := 0
-if LASTREC()!=0
-	if .not. EVAL(bBKUslov)
-		seek EVAL(bBkTrazi)
-		if .not. EVAL(bBKUslov)
-			go bottom
-			skip 1
-		endif
-		nRequest=0
-	endif
-	if nRequest>0
-		do while nCount<nRequest .and. EVAL(bBKUslov)
-			skip 1
-			if eof() .or. !EVAL(bBKUslov)
-				skip -1
-				exit
-			endif
-			nCount++
-		enddo
-	elseif nRequest<0
-		do while nCount>nRequest .and. EVAL(bBKUslov)
-			skip -1
-			if (Bof())
-				exit
-			endif
-			nCount--
-		enddo
-		if (!EVAL(bBKUslov))
-			skip 1
-			nCount++
-		endif
-	endif
-endif
-return (nCount)
+
+STATIC FUNCTION SkipDBBK( nRequest )
+
+   // {
+   LOCAL nCount
+   nCount := 0
+   IF LastRec() != 0
+      IF ! Eval( bBKUslov )
+         SEEK Eval( bBkTrazi )
+         IF ! Eval( bBKUslov )
+            GO BOTTOM
+            SKIP 1
+         ENDIF
+         nRequest = 0
+      ENDIF
+      IF nRequest > 0
+         DO WHILE nCount < nRequest .AND. Eval( bBKUslov )
+            SKIP 1
+            IF Eof() .OR. !Eval( bBKUslov )
+               SKIP -1
+               EXIT
+            ENDIF
+            nCount++
+         ENDDO
+      ELSEIF nRequest < 0
+         DO WHILE nCount > nRequest .AND. Eval( bBKUslov )
+            SKIP -1
+            IF ( Bof() )
+               EXIT
+            ENDIF
+            nCount--
+         ENDDO
+         IF ( !Eval( bBKUslov ) )
+            SKIP 1
+            nCount++
+         ENDIF
+      ENDIF
+   ENDIF
+
+   RETURN ( nCount )
 
 
 /*! \fn StKartKup()
  *  \brief Stanje na kartici kupca
  */
- 
-static function StKartKup()
-*{
-local nRec:=0
 
-START PRINT CRET
-?
-nRec:=RECNO()
-go top
+STATIC FUNCTION StKartKup()
 
-P_10CPI
-? "FAKT, " + DTOC(date()) + ", KARTICA KUPCA"
-? "-----------------------------"
-?
-? "ZA PERIOD: OD "+DTOC(dDatOd)+" DO "+DTOC(dDatDo)
-? "KUPAC:",cIdPartner,"-",PARTN->naz
-?
-? "-------- "+REPL("-",LEN(opis))+" "+REPL("-",10)
-? "DAT.UPL.�"+PADC("OPIS",LEN(opis))+"�"+PADC("IZNOS",10)
-? "-------- "+REPL("-",LEN(opis))+" "+REPL("-",10)
+   // {
+   LOCAL nRec := 0
 
-seek cIdPartner
-do while !eof() .and. idpartner==cIdPartner
-	? datupl
-	?? "�"+opis+"�"
-	?? TRANS(iznos,"9999999.99")
-	skip 1
-enddo
+   START PRINT CRET
+   ?
+   nRec := RecNo()
+   GO TOP
 
-? "-------- "+REPL("-",LEN(opis))+" "+REPL("-",10)
-?
-? " UKUPNO ZADUZENJE",TRANS(nUkZaduz,"9999999.99")
-? "  - UKUPNO UPLATE",TRANS(nUkUplata,"9999999.99")
-? "-----------------","----------"
-? "  = PREOSTALI DUG",TRANS(nUkZaduz-nUkUplata,"9999999.99")
-?
+   P_10CPI
+   ? "FAKT, " + DToC( Date() ) + ", KARTICA KUPCA"
+   ? "-----------------------------"
+   ?
+   ? "ZA PERIOD: OD " + DToC( dDatOd ) + " DO " + DToC( dDatDo )
+   ? "KUPAC:", cIdPartner, "-", PARTN->naz
+   ?
+   ? "-------- " + REPL( "-", Len( opis ) ) + " " + REPL( "-", 10 )
+   ? "DAT.UPL.�" + PadC( "OPIS", Len( opis ) ) + "�" + PadC( "IZNOS", 10 )
+   ? "-------- " + REPL( "-", Len( opis ) ) + " " + REPL( "-", 10 )
 
-go (nRec)
+   SEEK cIdPartner
+   DO WHILE !Eof() .AND. idpartner == cIdPartner
+      ? datupl
+      ?? "�" + opis + "�"
+      ?? TRANS( iznos, "9999999.99" )
+      SKIP 1
+   ENDDO
 
-FF
-END PRINT
+   ? "-------- " + REPL( "-", Len( opis ) ) + " " + REPL( "-", 10 )
+   ?
+   ? " UKUPNO ZADUZENJE", TRANS( nUkZaduz, "9999999.99" )
+   ? "  - UKUPNO UPLATE", TRANS( nUkUplata, "9999999.99" )
+   ? "-----------------", "----------"
+   ? "  = PREOSTALI DUG", TRANS( nUkZaduz - nUkUplata, "9999999.99" )
+   ?
 
-return nil
+   GO ( nRec )
+
+   FF
+   END PRINT
+
+   RETURN NIL
 
 // -----------------------------------------------------------------------
 // SaldaKupaca(lPocStanje)
 // Izvjestaj koji aje salda svih kupaca
 // lPocStanje - .t.-generisi i pocetno stanje, .f.-daj samo pregled
 // -----------------------------------------------------------------------
-function SaldaKupaca(lPocStanje)
-local nUkZaduz
-local nUkUplata
-local nStrana
-local gSezonDir
-local cDirKum
+FUNCTION SaldaKupaca( lPocStanje )
 
-gSezonDir:=goModul:oDatabase:cSezonDir
-cDirKum:=goModul:oDatabase:cDirKum
+   LOCAL nUkZaduz
+   LOCAL nUkUplata
+   LOCAL nStrana
+   LOCAL gSezonDir
+   LOCAL cDirKum
 
-if lPocStanje==nil
-	lPocStanje:=.f.
-endif
+   gSezonDir := goModul:oDatabase:cSezonDir
+   cDirKum := goModul:oDatabase:cDirKum
 
-nStrana:=1
+   IF lPocStanje == nil
+      lPocStanje := .F.
+   ENDIF
 
-O_FAKT_DOKS
+   nStrana := 1
 
-//"6","IdFirma+idpartner+idtipdok", "DOKS"
-set order to tag "6"
-O_PARTN
-O_UPL 
-set order to tag "2"
+   O_FAKT_DOKS
 
-if lPocStanje
-	select 0
-	usex (STRTRAN(cDirKum,gSezonDir,SLASH)+"UPL", "UPLRP")
-endif
+   // "6","IdFirma+idpartner+idtipdok", "DOKS"
+   SET ORDER TO TAG "6"
+   O_PARTN
+   O_UPL
+   SET ORDER TO TAG "2"
 
-cIdPartner := SPACE(6)
-dDatOd     := ctod("")
-dDatDo     := date()
-qqTipDok   := padr("10;",40)
+   IF lPocStanje
+      SELECT 0
+      usex ( StrTran( cDirKum, gSezonDir, SLASH ) + "UPL", "UPLRP" )
+   ENDIF
 
-Box(, 6, 70)
-do while .t.
-	if lPocStanje
-		@ m_x+0, m_y+10 SAY PADC(" GENERISANJE POCETNOG STANJA ZA EVIDENCIJU UPLATA KUPACA ",55,CHR(205))
-	else
-		@ m_x+0, m_y+20 SAY PADC(" LISTA SALDA KUPACA ",35,CHR(205))
-	endif
-	@ m_x+2, m_y+ 2 SAY "Tip dokumenta zaduzenja:" GET qqTipDok pict "@!S20"
-	@ m_x+3, m_y+ 2 SAY "Zaduzenja od datuma    :"  get dDatOd
-	@ m_x+3,col()+1 SAY "do:"  get dDatDo
-	read
-	ESC_BCR
-  
-	aUslTD:=Parsiraj(qqTipdok,"IdTipdok","C")
-	if aUslTD==nil
-		MsgBeep("Provjerite uslov za tip dokumenta !")
-		loop
-	endif
+   cIdPartner := Space( 6 )
+   dDatOd     := CToD( "" )
+   dDatDo     := Date()
+   qqTipDok   := PadR( "10;", 40 )
 
-	set cursor on
+   Box(, 6, 70 )
+   DO WHILE .T.
+      IF lPocStanje
+         @ m_x + 0, m_y + 10 SAY PadC( " GENERISANJE POCETNOG STANJA ZA EVIDENCIJU UPLATA KUPACA ", 55, Chr( 205 ) )
+      ELSE
+         @ m_x + 0, m_y + 20 SAY PadC( " LISTA SALDA KUPACA ", 35, Chr( 205 ) )
+      ENDIF
+      @ m_x + 2, m_y + 2 SAY "Tip dokumenta zaduzenja:" GET qqTipDok PICT "@!S20"
+      @ m_x + 3, m_y + 2 SAY "Zaduzenja od datuma    :"  GET dDatOd
+      @ m_x + 3, Col() + 1 SAY "do:"  GET dDatDo
+      READ
+      ESC_BCR
+
+      aUslTD := Parsiraj( qqTipdok, "IdTipdok", "C" )
+      IF aUslTD == nil
+         MsgBeep( "Provjerite uslov za tip dokumenta !" )
+         LOOP
+      ENDIF
+
+      SET CURSOR ON
 	
-	exit
+      EXIT
 
-enddo
-BoxC()
+   ENDDO
+   BoxC()
 
-select (F_PARTN)
-set order to tag "ID"
-go top
+   SELECT ( F_PARTN )
+   SET ORDER TO TAG "ID"
+   GO TOP
 
-START PRINT CRET
-?
-P_10CPI
+   START PRINT CRET
+   ?
+   P_10CPI
 
-? "SALDA KUPACA"
-? "------------"
-? "Za period:", dDatOd, "-", dDatDo
-? "Tipovi dokumenata zaduzenja kupaca:", TRIM(qqTipDok)
+   ? "SALDA KUPACA"
+   ? "------------"
+   ? "Za period:", dDatOd, "-", dDatDo
+   ? "Tipovi dokumenata zaduzenja kupaca:", Trim( qqTipDok )
 
-m1 := PADC("SIFRA I NAZIV KUPCA", LEN(field->id+field->naz)+1) + " " + PADC("ZADUZENJA", 12)+" " + PADC("UPLATE", 12) + " " + PADC("SALDO", 12)
-m2 := REPL("-",LEN(field->id)) +" " + REPL("-", LEN(field->naz))+" " + REPL("-",12) +" " + REPL("-", 12) + " " + REPL("-",12)
+   m1 := PadC( "SIFRA I NAZIV KUPCA", Len( field->id + field->naz ) + 1 ) + " " + PadC( "ZADUZENJA", 12 ) + " " + PadC( "UPLATE", 12 ) + " " + PadC( "SALDO", 12 )
+   m2 := REPL( "-", Len( field->id ) ) + " " + REPL( "-", Len( field->naz ) ) + " " + REPL( "-", 12 ) + " " + REPL( "-", 12 ) + " " + REPL( "-", 12 )
 
-? m2
-? m1
-? m2
+   ? m2
+   ? m1
+   ? m2
 
-nUkSaldo:=0
-nUUZaduz:=0
-nUUUplata:=0
+   nUkSaldo := 0
+   nUUZaduz := 0
+   nUUUplata := 0
 
-do while !eof()
+   DO WHILE !Eof()
 
-	cIdPartner:=field->id
+      cIdPartner := field->id
 
-	// utvrdimo ukupno zaduzenje
-	nUkZaduz:=UkZaduz()
+      // utvrdimo ukupno zaduzenje
+      nUkZaduz := UkZaduz()
 
-	// utvrdimo ukupan iznos uplata
-	nUkUplata:=UkUplata(.f.)
+      // utvrdimo ukupan iznos uplata
+      nUkUplata := UkUplata( .F. )
 
-	if (nUkZaduz<>0 .or. nUkUplata<>0)
-		if (prow()>61+gPStranica)
-			? m2
-			?
-			? " "+PADC(ALLTRIM(STR(nStrana))+". strana",78)
-			FF
-			? m2
-			? m1
-			? m2
-			++nStrana
-		endif
-		? cIdPartner, field->naz, STR(nUkZaduz,12,2), STR(nUkUplata,12,2), STR(nUkZaduz-nUkUplata, 12, 2)
-		nUUZaduz  += nUkZaduz
-		nUUUplata += nUkUplata
-		nUkSaldo  += nUkZaduz - nUkUplata
-		if (lPocStanje .and. nUkZaduz - nUkUplata <> 0)
-			select UPLRP
-			append blank
-			replace field->datupl with CTOD("01.01."+STR(VAL(RIGHT(gSezonDir,4))+1,4)), field->idpartner with cIdPartner, field->opis with "#POCETNO STANJE#", field->iznos with -(nUkZaduz-nUkUplata)
-			select partn
-		endif
-	endif
+      IF ( nUkZaduz <> 0 .OR. nUkUplata <> 0 )
+         IF ( PRow() > 61 + gPStranica )
+            ? m2
+            ?
+            ? " " + PadC( AllTrim( Str( nStrana ) ) + ". strana", 78 )
+            FF
+            ? m2
+            ? m1
+            ? m2
+            ++nStrana
+         ENDIF
+         ? cIdPartner, field->naz, Str( nUkZaduz, 12, 2 ), Str( nUkUplata, 12, 2 ), Str( nUkZaduz - nUkUplata, 12, 2 )
+         nUUZaduz  += nUkZaduz
+         nUUUplata += nUkUplata
+         nUkSaldo  += nUkZaduz - nUkUplata
+         IF ( lPocStanje .AND. nUkZaduz - nUkUplata <> 0 )
+            SELECT UPLRP
+            APPEND BLANK
+            REPLACE field->datupl WITH CToD( "01.01." + Str( Val( Right( gSezonDir, 4 ) ) + 1, 4 ) ), field->idpartner WITH cIdPartner, field->opis WITH "#POCETNO STANJE#", field->iznos WITH -( nUkZaduz - nUkUplata )
+            SELECT partn
+         ENDIF
+      ENDIF
 	
-	skip 1
+      SKIP 1
 	
-enddo
+   ENDDO
 
-? m2
-? "UKUPNO:   " + SPACE(23) + STR(nUUZaduz,12, 2) + " " + STR(nUUUplata,12, 2) + " " + STR(nUkSaldo,12, 2)
-?
-? " "+PADC(ALLTRIM(STR(nStrana)) + ". i posljednja strana",78)
-FF
-END PRINT
+   ? m2
+   ? "UKUPNO:   " + Space( 23 ) + Str( nUUZaduz, 12, 2 ) + " " + Str( nUUUplata, 12, 2 ) + " " + Str( nUkSaldo, 12, 2 )
+   ?
+   ? " " + PadC( AllTrim( Str( nStrana ) ) + ". i posljednja strana", 78 )
+   FF
+   END PRINT
 
-CLOSERET
-return nil
+   CLOSERET
+
+   RETURN NIL
 
 
 /*! \fn GPSUplata()
  *  \brief Generisanje pocetnog stanja za evidenciju uplata
  */
-function GPSUplata()
-local gSezonDir
+FUNCTION GPSUplata()
 
-gSezonDir:=goModul:oDatabase:cSezonDir
+   LOCAL gSezonDir
 
-if EMPTY(gSezonDir)
-	MsgBeep("Morate uci u sezonsko podrucje prosle godine!")
-elseif Pitanje(,"Generisati pocetno stanje za evidenciju uplata? (D/N)","N")=="D"
-	SaldaKupaca(.t.)
-	MsgBeep("Generisanje pocetnog stanja za evidenciju uplata zavrseno!#Provjerite salda kupaca u tekucoj godini!")
-endif
-return nil
+   gSezonDir := goModul:oDatabase:cSezonDir
 
+   IF Empty( gSezonDir )
+      MsgBeep( "Morate uci u sezonsko podrucje prosle godine!" )
+   ELSEIF Pitanje(, "Generisati pocetno stanje za evidenciju uplata? (D/N)", "N" ) == "D"
+      SaldaKupaca( .T. )
+      MsgBeep( "Generisanje pocetnog stanja za evidenciju uplata zavrseno!#Provjerite salda kupaca u tekucoj godini!" )
+   ENDIF
 
+   RETURN NIL

@@ -1052,3 +1052,28 @@ STATIC FUNCTION fakt_lager_lista_get_data( params, ps )
    ENDIF
 
    RETURN _table
+
+
+
+
+FUNCTION fakt_vt_porezi()
+
+   PUBLIC _ZPP := 0
+
+   IF roba->tip == "V"
+      PUBLIC _OPP := 0, _PPP := tarifa->ppp / 100
+      PUBLIC _PORVT := tarifa->opp / 100
+   ELSEIF roba->tip == "K"
+      PUBLIC _OPP := tarifa->opp / 100, _PPP := tarifa->ppp / 100
+      PUBLIC _PORVT := tarifa->opp / 100
+   ELSE
+      PUBLIC _OPP := tarifa->opp / 100
+      PUBLIC _PPP := tarifa->ppp / 100
+      PUBLIC _ZPP := tarifa->zpp / 100
+      PUBLIC _PORVT := 0
+   ENDIF
+
+   RETURN
+
+
+

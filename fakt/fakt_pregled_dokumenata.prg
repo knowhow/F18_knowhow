@@ -603,12 +603,6 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
 
       ENDIF
 
-      // informacije o dokumentu
-   CASE Chr( Ch ) $ "iI"
-
-      // info dokument
-      msgbeep( getfullusername( field->oper_id ) )
-
       // korekcija podataka dokumenta
    CASE Chr( Ch ) $ "kK"
 
@@ -809,25 +803,6 @@ FUNCTION refresh_fakt_tbl_dbfs( tbl_filter )
 
 
 
-
-FUNCTION fakt_vt_porezi()
-
-   PUBLIC _ZPP := 0
-
-   IF roba->tip == "V"
-      PUBLIC _OPP := 0, _PPP := tarifa->ppp / 100
-      PUBLIC _PORVT := tarifa->opp / 100
-   ELSEIF roba->tip == "K"
-      PUBLIC _OPP := tarifa->opp / 100, _PPP := tarifa->ppp / 100
-      PUBLIC _PORVT := tarifa->opp / 100
-   ELSE
-      PUBLIC _OPP := tarifa->opp / 100
-      PUBLIC _PPP := tarifa->ppp / 100
-      PUBLIC _ZPP := tarifa->zpp / 100
-      PUBLIC _PORVT := 0
-   ENDIF
-
-   RETURN
 
 
 

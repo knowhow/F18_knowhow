@@ -737,12 +737,6 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
          _refresh := .T.
       ENDIF
 
-   CASE Upper( Chr( Ch ) ) == "B"
-
-      SELECT fakt_doks
-      nRet := print_radni_nalog( field->idFirma, field->idTipDok, field->brDok )
-      _refresh := .T.
-
    CASE Chr( Ch ) $ "nN"
 
       SELECT fakt_doks

@@ -595,7 +595,7 @@ DO WHILE .T.
 				select fakt_pripr
           			
 				HSEEK cIdFirma+KALK->idroba
-          			IF FOUND() .and. ROUND(nKalkCijena-cijena,5)==0 .and.( cTipFakt="0" .or. ROUND(nKalkRabat-rabat,5)==0 ) .and.( !lPoNarudzbi .or. idnar==cIdNar.and.brojnar==cBrojNar )
+          			IF FOUND() .and. ROUND(nKalkCijena-cijena,5)==0 .and.( cTipFakt="0" .or. ROUND(nKalkRabat-rabat,5)==0 )
             				Scatter()
             				_kolicina += nKolicina
                             my_rlock()

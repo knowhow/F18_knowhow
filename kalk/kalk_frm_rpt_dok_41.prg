@@ -119,9 +119,6 @@ nPRUC:=nPor2
     @ prow()+1,0 SAY  Rbr PICTURE "999"
     @ prow(),4 SAY  ""
     ?? trim(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
-    IF lPoNarudzbi
-        IspisPoNar(IF(cIdVd=="41",.f.,))
-    ENDIF
     @ prow()+1,4 SAY IdRoba
     @ prow(),pcol()+1 SAY Kolicina PICTURE PicKol
 

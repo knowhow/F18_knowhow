@@ -50,7 +50,6 @@ FUNCTION kartica_magacin()
 
    PRIVATE cIdR := cIdRoba
 
-   cPkN := "N"
    cBrFDa := "N"
    cPrikFCJ2 := "N"
 
@@ -108,25 +107,15 @@ FUNCTION kartica_magacin()
          IF !gVarEv == "2"
             @ m_x + 11, m_y + 2 SAY "Prikaz vrijednosti samo u saldu ? (D/N)"  GET cPVSS VALID cPVSS $ "DN" PICT "@!"
          ENDIF
-         IF lPoNarudzbi
-            qqIdNar := Space( 60 )
-            cPKN := "N"
-            @ Row() + 1, m_y + 2 SAY "Uslov po sifri narucioca:" GET qqIdNar PICT "@!S30"
-            @ Row() + 1, m_y + 2 SAY "Prikazati kolone 'narucilac' i 'br.narudzbe' ? (D/N)" GET cPKN VALID cPKN $ "DN" PICT "@!"
-         ENDIF
 
          READ
          ESC_BCR
     		
-         IF lPoNarudzbi
-            aUslN := Parsiraj( qqIdNar, "idnar" )
-         ENDIF
-		
          IF !Empty( cRnT1 ) .AND. !Empty( cRNalBroj )
             PRIVATE aUslRn := Parsiraj( cRNalBroj, "idzaduz2" )
          ENDIF
 		
-         IF ( !lPoNarudzbi .OR. aUslN <> NIL ) .AND. ( Empty( cRNT1 ) .OR. Empty( cRNalBroj ) .OR. aUslRn <> NIL )
+         IF ( Empty( cRNT1 ) .OR. Empty( cRNalBroj ) .OR. aUslRn <> NIL )
             EXIT
          ENDIF
       ENDDO
@@ -184,10 +173,6 @@ FUNCTION kartica_magacin()
 
    PRIVATE cFilt := ".t."
 
-   IF lPoNarudzbi .AND. aUslN <> ".t."
-      cFilt += ".and." + aUslN
-   ENDIF
-
    IF !Empty( cIdPartner )
       cFilt += ".and.IdPartner==" + Cm2Str( cIdPartner )
    ENDIF
@@ -212,7 +197,7 @@ FUNCTION kartica_magacin()
 
    SELECT kalk
 
-   gaZagFix := { 7 + IF( lPoNarudzbi .AND. !Empty( qqIdNar ), 3, 0 ), 4 }
+   gaZagFix := { 7, 4 }
 
    START PRINT CRET
 
@@ -220,7 +205,7 @@ FUNCTION kartica_magacin()
 
    IF IsPDV()
 
-      _set_zagl( @cLine, @cTxt1, @cTxt2, cPvSS, lPoNarudzbi, cPKN )
+      _set_zagl( @cLine, @cTxt1, @cTxt2, cPvSS )
       __line := cLine
       __txt1 := cTxt1
       __txt2 := cTxt2
@@ -318,7 +303,7 @@ FUNCTION kartica_magacin()
         		
             ? "Stanje do ", dDatOd
 			
-            @ PRow(), 35 + IF( lPoNarudzbi .AND. cPKN == "D", 18, 0 )   SAY nulaz        PICT pickol
+            @ PRow(), 35 SAY nulaz        PICT pickol
             @ PRow(), PCol() + 1 SAY nIzlaz       PICT pickol
             @ PRow(), PCol() + 1 SAY nUlaz - nIzlaz PICT pickol
         		
@@ -386,9 +371,6 @@ FUNCTION kartica_magacin()
             nUlaz += kolicina - gkolicina - gkolicin2
             IF datdok >= ddatod
                ? datdok, idvd + "-" + brdok, idtarifa
-               IF lPoNarudzbi .AND. cPKN == "D"
-                  ?? "", idnar, brojnar
-               ENDIF
                ?? "", idpartner
                nCol1 := PCol() + 1
                @ PRow(), PCol() + 1 SAY kolicina - gkolicina - gkolicin2 PICT pickol
@@ -481,9 +463,6 @@ FUNCTION kartica_magacin()
             nIzlaz += kolicina
             IF datdok >= ddatod
                ? datdok, idvd + "-" + brdok, idtarifa
-               IF lPoNarudzbi .AND. cPKN == "D"
-                  ?? "", idnar, brojnar
-               ENDIF
                ?? "", idpartner
                nCol1 := PCol() + 1
                @ PRow(), PCol() + 1 SAY 0         PICT pickol
@@ -561,9 +540,6 @@ FUNCTION kartica_magacin()
             nIzlaz -= kolicina
             IF datdok >= ddatod
                ? datdok, idvd + "-" + brdok, idtarifa
-               IF lPoNarudzbi .AND. cPKN == "D"
-                  ?? "", idnar, brojnar
-               ENDIF
                ?? "", idpartner
                nCol1 := PCol() + 1
                @ PRow(), PCol() + 1 SAY 0          PICT pickol
@@ -638,9 +614,6 @@ FUNCTION kartica_magacin()
 
             IF datdok >= ddatod
                ? datdok, idvd + "-" + brdok, idtarifa
-               IF lPoNarudzbi .AND. cPKN == "D"
-                  ?? "", idnar, brojnar
-               ENDIF
             ENDIF // cpredh
 
             nVPVd := vpc * ( kolicina )
@@ -679,9 +652,6 @@ FUNCTION kartica_magacin()
             nUlaz +=  - kolicina
             IF datdok >= ddatod
                ? datdok, idvd + "-" + brdok, idtarifa
-               IF lPoNarudzbi .AND. cPKN == "D"
-                  ?? "", idnar, brojnar
-               ENDIF
                ?? "", idpartner
                nCol1 := PCol() + 1
                @ PRow(), PCol() + 1 SAY -kolicina  PICT pickol
@@ -789,8 +759,7 @@ FUNCTION kartica_magacin()
 // -----------------------------------------------
 // setovanje zaglavlja
 // -----------------------------------------------
-STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cPVSS, ;
-      lPoNarudzbi, cPKN, cPicKol, cPicCDem )
+STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cPVSS, cPicKol, cPicCDem )
 
    LOCAL nPom
    LOCAL aKMag := {}
@@ -806,14 +775,6 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cPVSS, ;
    nPom := 6
    // tarifa
    AAdd( aKMag, { nPom, PadC( "Tarifa", nPom ), PadC( "", nPom ) } )
-
-   // narucilac
-   IF ( lPoNarudzbi .AND. cPKN == "D" )
-
-      nPom := 7
-      AAdd( aKMag, { nPom, PadC( "Naru-", nPom ), PadC( "cilac", nPom ) } )
-
-   ENDIF
 
    // partner
    AAdd( aKMag, { nPom, PadC( "Part-", nPom ), PadC( "ner", nPom ) } )
@@ -888,29 +849,19 @@ STATIC FUNCTION ZaglPDV()
    P_12CPI
    ?? "KARTICA MAGACIN za period", ddatod, "-", ddatdo, Space( 10 ), "Str:", Str( ++nTStrana, 3 )
    IspisNaDan( 5 )
-   IF lPoNarudzbi .AND. !Empty( qqIdNar )
-      ?
-      ? "Obuhvaceni sljedeci narucioci:", Trim( qqIdNar )
-      ?
-   ENDIF
-
    ? "Konto: ", cIdKonto, "-", konto->naz
 
    SELECT kalk
    IF gVarEv == "2"
-      IF lPoNarudzbi .AND. cPKN == "D"
-         P_COND
-      ELSE
-         P_12CPI
-      ENDIF
+      P_12CPI
    ELSEIF !IsMagPNab()
-      IF lPoNarudzbi .AND. cPKN == "D" .OR. cPVSS == "N"
+      IF cPVSS == "N"
          P_COND2
       ELSE
          P_COND
       ENDIF
    ELSE
-      IF lPoNarudzbi .AND. cPKN == "D" .OR. cPVSS == "N"
+      IF cPVSS == "N"
          P_COND2
       ELSE
          P_COND
@@ -946,19 +897,15 @@ STATIC FUNCTION Zagl()
    ? "Konto: ", cIdKonto, "-", konto->naz
    SELECT kalk
    IF gVarEv == "2"
-      IF lPoNarudzbi .AND. cPKN == "D"
-         P_COND
-      ELSE
-         P_12CPI
-      ENDIF
+      P_12CPI
    ELSEIF !IsMagPNab()
-      IF lPoNarudzbi .AND. cPKN == "D" .OR. cPVSS == "N"
+      IF cPVSS == "N"
          P_COND2
       ELSE
          P_COND
       ENDIF
    ELSE
-      IF lPoNarudzbi .AND. cPKN == "D" .OR. cPVSS == "N"
+      IF cPVSS == "N"
          P_COND
       ELSE
          P_12CPI
@@ -968,10 +915,10 @@ STATIC FUNCTION Zagl()
 
 
    IF gVarEv == "2"
-      ? "*Datum  *  Dokument *Tarifa*" + IF( lPoNarudzbi .AND. cPKN == "D", "Naru- *   Broj   *", "" ) + " Partn *   Ulaz   *  Izlaz   * Stanje   "
-      ? "*       *           *      *" + IF( lPoNarudzbi .AND. cPKN == "D", "cilac * narudzbe *", "" ) + "       *          *          *          "
+      ? "*Datum  *  Dokument *Tarifa*" + " Partn *   Ulaz   *  Izlaz   * Stanje   "
+      ? "*       *           *      *" + "       *          *          *          "
    ELSE
-      ? "*Datum  *  Dokument *Tarifa*" + IF( lPoNarudzbi .AND. cPKN == "D", "Naru- *   Broj   *", "" ) + " Partn *   Ulaz   *  Izlaz   * Stanje   *   NC     *" + IF( cPVSS == "N" .AND. IsMagPNab(), "  NV dug. *  NV pot. *", "" ) + "   NV    *"
+      ? "*Datum  *  Dokument *Tarifa*" + " Partn *   Ulaz   *  Izlaz   * Stanje   *   NC     *" + IF( cPVSS == "N" .AND. IsMagPNab(), "  NV dug. *  NV pot. *", "" ) + "   NV    *"
       IF !IsMagPNab()
          IF koncij->naz == "P2"
             ?? "  RABAT   *  Plan.C  *" + IF( cPVSS == "N", " PlVr dug.* PlVr pot.*", "" ) + " Plan.Vr *  MPCSAPP *"
@@ -979,7 +926,7 @@ STATIC FUNCTION Zagl()
             ?? "  RABAT   *   VPC    *" + IF( cPVSS == "N", " VPV dug. * VPV pot. *", "" ) + "   VPV   *  MPCSAPP *"
          ENDIF
       ENDIF
-      ? "*       *           *      *" + IF( lPoNarudzbi .AND. cPKN == "D", "cilac * narudzbe *", "" ) + "       *          *          *          *" + IF( cPrikFCJ2 == "D", PadC( "FCJ", 10 ), Space( 10 ) ) + "*" + IF( cPVSS == "N" .AND. IsMagPNab(), "          *          *", "" ) + "         *"
+      ? "*       *           *      *" + "       *          *          *          *" + IF( cPrikFCJ2 == "D", PadC( "FCJ", 10 ), Space( 10 ) ) + "*" + IF( cPVSS == "N" .AND. IsMagPNab(), "          *          *", "" ) + "         *"
       IF !IsMagPNab()
          ?? "          *          *" + IF( cPVSS == "N", "          *          *", "" ) + "         *          *"
       ENDIF
@@ -988,3 +935,5 @@ STATIC FUNCTION Zagl()
    ? __line
 
    RETURN ( nil )
+
+

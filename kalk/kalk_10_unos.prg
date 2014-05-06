@@ -135,7 +135,7 @@ FUNCTION Get1_10PDV()
 
    ++ _x
 
-   @ m_x + _x + IF( lPoNarudzbi, 1, 0 ), m_y + 2 SAY "Kolicina " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
+   @ m_x + _x, m_y + 2 SAY "Kolicina " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
 
    IF fNovi
       SELECT ROBA
@@ -156,19 +156,17 @@ FUNCTION Get1_10PDV()
 
       ++ _x
 
-      // FCJ
-      @ m_x + _x + IF( lPoNarudzbi, 1, 0 ), m_y + 2 SAY "Fakturna cijena:"
+      @ m_x + _x, m_y + 2 SAY "Fakturna cijena:"
 
       IF gDokKVal == "D"
          @ m_x + _x, Col() + 1 SAY "pr.->" GET __k_val VALID _val_konv( __k_val ) PICT "@!"
       ENDIF
 	
-      @ m_x + _x + IF( lPoNarudzbi, 1, 0 ), m_y + _unos_left GET _fcj PICT gPicNC VALID {|| _fcj > 0 .AND. _set_konv( @_fcj, @__k_val ) } WHEN V_kol10()
+      @ m_x + _x, m_y + _unos_left GET _fcj PICT gPicNC VALID {|| _fcj > 0 .AND. _set_konv( @_fcj, @__k_val ) } WHEN V_kol10()
 
-      // KASA - SKONTO
       ++ _x
-      @ m_x + _x + IF( lPoNarudzbi, 1, 0 ), m_y + 2 SAY "Rabat (%):"
-      @ m_x + _x + IF( lPoNarudzbi, 1, 0 ), m_y + _unos_left GET _Rabat PICT PicDEM WHEN DuplRoba()
+      @ m_x + _x, m_y + 2 SAY "Rabat (%):"
+      @ m_x + _x, m_y + _unos_left GET _Rabat PICT PicDEM WHEN DuplRoba()
 
       IF gNW <> "X" .OR. gVodiKalo == "D"
          ++ _x
@@ -187,7 +185,6 @@ FUNCTION Get1_10PDV()
 
    _FCJ2 := _FCJ * ( 1 - _Rabat / 100 )
 
-   // obracun kalkulacije tip-a 10
    obracun_kalkulacija_tip_10_pdv( _x )
 
    RETURN LastKey()

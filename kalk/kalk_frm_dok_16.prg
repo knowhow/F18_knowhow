@@ -71,18 +71,7 @@ FUNCTION Get1_16()
    ENDIF
    @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
-   IF lPoNarudzbi
-      @ m_x + 12, m_y + 2 SAY "Po narudzbi br." GET _brojnar
-      @ m_x + 12, Col() + 2 SAY "za narucioca" GET _idnar PICT "@!" VALID Empty( _idnar ) .OR. P_Firma( @_idnar, 12, 50 )
-   ENDIF
-
-   // IF !lPoNarudzbi
    @ m_x + 12, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
-   // ENDIF
-
-   IF IsDomZdr()
-      @ m_x + 13, m_y + 2   SAY "Tip sredstva (prazno-svi) " GET _Tip PICT "@!"
-   ENDIF
 
    read; ESC_RETURN K_ESC
    IF lKoristitiBK

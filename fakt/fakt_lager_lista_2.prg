@@ -246,10 +246,6 @@ FUNCTION fakt_stanje_robe()
 
       cIdRoba := IdRoba
 
-      IF lPoNarudzbi .AND. cPKN == "D"
-         cIdNar := idnar
-      ENDIF
-
       nStanjeCR := nUl := nIzl := 0
       nRezerv := nRevers := 0
 
@@ -394,14 +390,7 @@ FUNCTION fakt_stanje_robe()
                B_ON
             ENDIF
 
-            //
-            // pocetak reda...
-            //
             ? Space( gnLMarg ); ?? Str( ++nRbr, 4 ), cidroba, PadR( ROBA->naz, 40 )
-
-            IF lPoNarudzbi .AND. cPKN == "D"
-               ?? "", cIdNar
-            ENDIF
 
             nCol0 := PCol() -11
 
@@ -510,11 +499,6 @@ FUNCTION ZaglSRobe()
    IF glDistrib .AND. !Empty( cIdDist )
       ?
       ? Space( gnlmarg ), "- kontrola distributera:", cIdDist
-   ENDIF
-
-   IF lPoNarudzbi .AND. !Empty( qqIdNar )
-      ?
-      ? "Prikaz za sljedece narucioce:", Trim( qqIdNar )
    ENDIF
 
    ?

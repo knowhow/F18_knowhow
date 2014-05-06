@@ -232,7 +232,6 @@ METHOD setGVars()
    // limit za otvorene stavke
    PUBLIC gnLOst := -99
 
-   PUBLIC lPoNarudzbi := .F.
    PUBLIC glEkonomat := .F.
 
    // KALK: auto import
@@ -369,7 +368,6 @@ METHOD setGVars()
    // iz FMK inija...
 
    glEkonomat := fetch_metric( "kalk_voditi_samo_ekonomat", nil, glEkonomat )
-   lPoNarudzbi := fetch_metric( "kalk_dokument_10_po_narudzbi", nil, lPoNarudzbi )
    gVodiSamoTarife := fetch_metric( "kalk_vodi_samo_tarife", nil, gVodiSamoTarife )
    lKoristitiBK := fetch_metric( "kalk_koristiti_barkod_pri_unosu", my_user(), lKoristitiBK )
 

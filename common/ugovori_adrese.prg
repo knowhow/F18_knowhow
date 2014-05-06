@@ -347,12 +347,7 @@ STATIC FUNCTION stampa_pregleda_naljepnica( index_sort )
 
    aKol := {}
 
-   IF lSpecifZips
-      AAdd( aKol, { "Sifra izdanja", {|| IDROBA       }, .F., "C", 13, 0, 1, 1 } )
-   ELSE
-      AAdd( aKol, { "Artikal", {|| IDROBA       }, .F., "C", 10, 0, 1, 1 } )
-   ENDIF
-
+   AAdd( aKol, { "Artikal", {|| IDROBA       }, .F., "C", 10, 0, 1, 1 } )
    AAdd( aKol, { "Partner", {|| IdPartner    }, .F., "C",  6, 0, 1, 2 } )
    AAdd( aKol, { "Dest.", {|| Destin       }, .F., "C",  6, 0, 1, 3 } )
    AAdd( aKol, { "Kolicina", {|| Kolicina     }, .T., "N", 12, 0, 1, 4 } )

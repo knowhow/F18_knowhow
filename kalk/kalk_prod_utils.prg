@@ -467,9 +467,9 @@ FUNCTION V_KolPro()
    // {
    LOCAL ppKolicina
 
-   IF Empty( gMetodaNC ) .OR. _TBankTr == "X" // .or. lPoNarudzbi
+   IF Empty( gMetodaNC ) .OR. _TBankTr == "X"
       RETURN .T.
-   ENDIF  // bez ograde
+   ENDIF
 
    IF roba->tip $ "UTY"; RETURN .T. ; ENDIF
 
@@ -485,7 +485,6 @@ FUNCTION V_KolPro()
    ENDIF
 
    RETURN .T.
-// }
 
 
 

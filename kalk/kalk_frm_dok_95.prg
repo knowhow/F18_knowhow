@@ -516,9 +516,6 @@ FUNCTION StKalk95()
          IF roba->( FieldPos( "KATBR" ) ) <> 0
             ?? " KATBR:", roba->katbr
          ENDIF
-         IF lPoNarudzbi
-            IspisPoNar()
-         ENDIF
          @ PRow() + 1, 5 + nLijevo SAY IdRoba
          @ PRow(), 31 + nLijevo SAY Kolicina  PICTURE PicKol
          nC1 := PCol() + 1

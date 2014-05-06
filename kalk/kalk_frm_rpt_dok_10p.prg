@@ -141,9 +141,6 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 			?? ", BK: " + roba->barkod
 		endif
 
-        IF lPoNarudzbi
-            IspisPoNar()
-        ENDIF
         @ prow()+1,4 SAY IdRoba
         nCol1:=pcol()+1
         @ prow(),pcol()+1 SAY FCJ                   PICTURE PicCDEM

@@ -128,7 +128,6 @@ FUNCTION LLM()
    PRIVATE cNCSif := "N"
    PRIVATE cMink := "N"
    PRIVATE cSredCij := "N"
-   PRIVATE cPKN := "N"
    PRIVATE cFaBrDok := Space( 40 )
 
    IF !Empty( cRNT1 )
@@ -149,7 +148,7 @@ FUNCTION LLM()
 
    cArtikalNaz := Space( 30 )
 
-   Box(, 21 + IF( lPoNarudzbi, 2, 0 ), 70 )
+   Box(, 21, 70 )
 	
    DO WHILE .T.
       IF gNW $ "DX"
@@ -226,15 +225,11 @@ FUNCTION LLM()
       qqRGr := AllTrim( qqRGr )
       qqRGr2 := AllTrim( qqRGr2 )
 		
-      IF lPoNarudzbi
-         aUslN := Parsiraj( qqIdNar, "idnar" )
-      ENDIF
- 		
       IF !Empty( cRnT1 ) .AND. !Empty( cRNalBroj )
          PRIVATE aUslRn := Parsiraj( cRNalBroj, "idzaduz2" )
       ENDIF
 		
-      IF aUsl1 <> NIL .AND. aUsl2 <> NIL .AND. aUsl3 <> NIL .AND. aUsl4 <> NIL .AND. ( !lPoNarudzbi .OR. aUslN <> NIL ) .AND. ( Empty( cRnT1 ) .OR. Empty( cRNalBroj ) .OR. aUslRn <> NIL ) .AND. aUsl5 <> nil
+      IF aUsl1 <> NIL .AND. aUsl2 <> NIL .AND. aUsl3 <> NIL .AND. aUsl4 <> NIL .AND. ( Empty( cRnT1 ) .OR. Empty( cRNalBroj ) .OR. aUslRn <> NIL ) .AND. aUsl5 <> nil
          EXIT
       ENDIF
    ENDDO
@@ -313,9 +308,6 @@ FUNCTION LLM()
    IF !Empty( dDatOd ) .OR. !Empty( dDatDo )
       cFilt += ".and. DatDok>=" + cm2str( dDatOd ) + ".and. DatDok<=" + cm2str( dDatDo )
    ENDIF
-   IF lPoNarudzbi .AND. aUslN <> ".t."
-      cFilt += ".and." + aUslN
-   ENDIF
    IF fSint .AND. lSabKon
       cFilt += ".and. MKonto=" + cm2str( cSintK )
       cSintK := ""
@@ -337,19 +329,10 @@ FUNCTION LLM()
    SELECT kalk
 
    IF fSint .AND. lSabKon
-      IF lPoNarudzbi .AND. cPKN == "D"
-         SET ORDER TO TAG "6N"
-      ELSE
-         SET ORDER TO TAG "6"
-         // "6","idFirma+IdTarifa+idroba",KUMPATH+"KALK"
-      ENDIF
+      SET ORDER TO TAG "6"
       hseek cIdFirma
    ELSE
-      IF lPoNarudzbi .AND. cPKN == "D"
-         SET ORDER TO TAG "3N"
-      ELSE
-         SET ORDER TO TAG "3"
-      ENDIF
+      SET ORDER TO TAG "3"
       hseek cIdFirma + cIdKonto
    ENDIF
 
@@ -380,8 +363,7 @@ FUNCTION LLM()
 
    IF IsPDV()
 	
-      _set_zagl( @cLine, @cTxt1, @cTxt2, @cTxt3, ;
-         lPoNarudzbi, cPkn, cSredCij )
+      _set_zagl( @cLine, @cTxt1, @cTxt2, @cTxt3, cSredCij )
 
       __line := cLine
       __txt1 := cTxt1
@@ -389,7 +371,7 @@ FUNCTION LLM()
       __txt3 := cTxt3
 
    ELSE
-      m := "------ ---------- -------------------- ---" + IF( lPoNarudzbi .AND. cPKN == "D", " ------", "" ) + " ---------- ---------- ---------- ---------- ---------- ----------"
+      m := "------ ---------- -------------------- --- ---------- ---------- ---------- ---------- ---------- ----------"
 
       IF gVarEv == "2"
          m := "----- ---------- -------------------- --- ---------- ---------- ----------"
@@ -417,9 +399,9 @@ FUNCTION LLM()
    ENDIF
 
    IF !IsMagPNab() .AND. cPNab == "D"
-      gaZagFix := { 7 + IF( lPoNarudzbi .AND. !Empty( qqIdNar ), 3, 0 ), 6 }
+      gaZagFix := { 7, 6 }
    ELSE
-      gaZagFix := { 7 + IF( lPoNarudzbi .AND. !Empty( qqIdNar ), 3, 0 ), 5 }
+      gaZagFix := { 7, 5 }
    ENDIF
 
    start PRINT cret
@@ -455,10 +437,6 @@ FUNCTION LLM()
 	
       cIdRoba := Idroba
 	
-      IF lPoNarudzbi .AND. cPKN == "D"
-         cIdNar := idnar
-      ENDIF
-
       nUlaz := 0
       nIzlaz := 0
 
@@ -560,7 +538,7 @@ FUNCTION LLM()
 
       aNabavke := {}
 
-      DO WHILE !Eof() .AND. iif( fSint .AND. lSabKon, cIdFirma + IF( lPoNarudzbi .AND. cPKN == "D", cIdNar, "" ) + cIdRoba == idFirma + IF( lPoNarudzbi .AND. cPKN == "D", IdNar, "" ) + idroba, cIdFirma + cIdKonto + IF( lPoNarudzbi .AND. cPKN == "D", cIdNar, "" ) + cIdRoba == idFirma + mkonto + IF( lPoNarudzbi .AND. cPKN == "D", IdNar, "" ) + idroba ) .AND. IspitajPrekid()
+      DO WHILE !Eof() .AND. iif( fSint .AND. lSabKon, cIdFirma + cIdRoba == idFirma + idroba, cIdFirma + cIdKonto + cIdRoba == idFirma + mkonto + idroba ) .AND. IspitajPrekid()
 
          IF roba->tip $ "TU"
             SKIP
@@ -685,10 +663,6 @@ FUNCTION LLM()
          ENDIF
 
          @ PRow(), PCol() + 1 SAY cJMJ
-
-         IF lPoNarudzbi .AND. cPKN == "D"
-            @ PRow(), PCol() + 1 SAY cIdNar
-         ENDIF
 
          nCol0 := PCol() + 1
 
@@ -1227,8 +1201,7 @@ STATIC FUNCTION fill_exp_tbl( nVar, cIdRoba, cSifDob, cNazRoba, cTarifa, ;
 // -------------------------------------------------------------
 // setovanje linije i teksta
 // -------------------------------------------------------------
-STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3,  ;
-      lPoNarudzbi, cPKN, cSredCij )
+STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
 
    LOCAL aLLM := {}
    LOCAL nPom
@@ -1248,14 +1221,6 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3,  ;
    // jmj
    nPom := 3
    AAdd( aLLM, { nPom, PadC( "jmj", nPom ), PadC( "", nPom ), PadC( "3", nPom ) } )
-
-   IF ( lPoNarudzbi .AND. cPKN == "D" )
-
-      // narudzba
-      nPom := 6
-      AAdd( aLLM, { nPom, PadC( "Naru-", nPom ), PadC( "cilac", nPom ), PadC( "", nPom ) } )
-	
-   ENDIF
 
    nPom := Len( gPicKol )
    // ulaz
@@ -1391,12 +1356,6 @@ STATIC FUNCTION Zagl()
    SET CENTURY ON
    ?? "KALK: LAGER LISTA  ZA PERIOD", dDatOd, "-", dDatdo, "  na dan", Date(), Space( 12 ), "Str:", Str( ++nTStrana, 3 )
 
-   IF lPoNarudzbi .AND. !Empty( qqIdNar )
-      ?
-      ? "Obuhvaceni sljedeci narucioci:", Trim( qqIdNar )
-      ?
-   ENDIF
-
    SET CENTURY OFF
 
    ? "Magacin:", cIdkonto, "-", AllTrim( konto->naz )
@@ -1415,36 +1374,36 @@ STATIC FUNCTION Zagl()
    SELECT kalk
    IF gVarEv == "2"
       ? __line
-      ? " R.  *  SIFRA   *                    *J. *" + IF( lPoNarudzbi .AND. cPKN == "D", "Naru- *", "" ) + "   ULAZ      IZLAZ   *          " + cSC2
-      ? " BR. * ARTIKLA  *   NAZIV ARTIKLA    *MJ.*" + IF( lPoNarudzbi .AND. cPKN == "D", "cilac *", "" ) + "                     *  STANJE  " + cSC1
-      ? "     *    1     *        2           * 3 *" + IF( lPoNarudzbi .AND. cPKN == "D", "      *", "" ) + "     4          5    *  4 - 5   " + cSC2
+      ? " R.  *  SIFRA   *                    *J. *" + "   ULAZ      IZLAZ   *          " + cSC2
+      ? " BR. * ARTIKLA  *   NAZIV ARTIKLA    *MJ.*" + "                     *  STANJE  " + cSC1
+      ? "     *    1     *        2           * 3 *" + "     4          5    *  4 - 5   " + cSC2
       ? __line
 
    ELSEIF !IsMagSNab()
 
       ? __line
       IF koncij->naz == "P1"
-         ? " R.  * Artikal  *   Naziv            *jmj*" + IF( lPoNarudzbi .AND. cPKN == "D", "Naru- *", "" ) + "  ulaz       izlaz   * STANJE   *Prod.vr D *   Rabat  *Prod.vr P*  Prod.vr *  Prod.Cj *" + cSC1
+         ? " R.  * Artikal  *   Naziv            *jmj*" + "  ulaz       izlaz   * STANJE   *Prod.vr D *   Rabat  *Prod.vr P*  Prod.vr *  Prod.Cj *" + cSC1
       ELSEIF koncij->naz == "P2"
-         ? " R.  * Artikal  *   Naziv            *jmj*" + IF( lPoNarudzbi .AND. cPKN == "D", "Naru- *", "" ) + "  ulaz       izlaz   * STANJE   *Plan.vr D *   Rabat  *Plan.vr P*  Plan.vr *  Plan.Cj *" + cSC1
+         ? " R.  * Artikal  *   Naziv            *jmj*" + "  ulaz       izlaz   * STANJE   *Plan.vr D *   Rabat  *Plan.vr P*  Plan.vr *  Plan.Cj *" + cSC1
       ELSE
-         ? " R.  * Artikal  *   Naziv            *jmj*" + IF( lPoNarudzbi .AND. cPKN == "D", "Naru- *", "" ) + "  ulaz       izlaz   * STANJE   *  VPV.Dug.*   Rabat  * VPV.Pot *   VPV    *   VPC    *" + cSC1
+         ? " R.  * Artikal  *   Naziv            *jmj*" + "  ulaz       izlaz   * STANJE   *  VPV.Dug.*   Rabat  * VPV.Pot *   VPV    *   VPC    *" + cSC1
       ENDIF
-      ? " br. *          *                    *   *" + IF( lPoNarudzbi .AND. cPKN == "D", "cilac *", "" ) + "                     *          *          *          *         *          *          *" + cSC2
+      ? " br. *          *                    *   *" + "                     *          *          *          *         *          *          *" + cSC2
       IF cPNab == "D"
          IF koncij->naz == "P1"
-            ? "     *          *                    *   *" + IF( lPoNarudzbi .AND. cPKN == "D", "      *", "" ) + "                     * Cij.Kost * V.Kost. D*          * V.Kost.P* Vr.Kost. *          *" + cSC2
+            ? "     *          *                    *   *" + "                     * Cij.Kost * V.Kost. D*          * V.Kost.P* Vr.Kost. *          *" + cSC2
          ELSE
-            ? "     *          *                    *   *" + IF( lPoNarudzbi .AND. cPKN == "D", "      *", "" ) + "                     * SR.NAB.C *   NV.Dug.*          *  NV.Pot *    NV    *          *" + cSC2
+            ? "     *          *                    *   *" + "                     * SR.NAB.C *   NV.Dug.*          *  NV.Pot *    NV    *          *" + cSC2
          ENDIF
       ENDIF
-      ? "     *    1     *        2           * 3 *" + IF( lPoNarudzbi .AND. cPKN == "D", "      *", "" ) + "     4          5    *  4 - 5   *     6    *     7    *     8   *   6 - 8  *     9    *" + cSC2
+      ? "     *    1     *        2           * 3 *" + "     4          5    *  4 - 5   *     6    *     7    *     8   *   6 - 8  *     9    *" + cSC2
       ? __line
    ELSE
       ? __line
-      ? " R.  * Artikal  *   Naziv            *jmj*" + IF( lPoNarudzbi .AND. cPKN == "D", "Naru- *", "" ) + "  ulaz       izlaz   * STANJE   *  NV.Dug. * NV.Pot.  *    NV    *" + cSC1
-      ? " br. *          *                    *   *" + IF( lPoNarudzbi .AND. cPKN == "D", "cilac *", "" ) + "                     *          *          *          *    NC    *" + cSC2
-      ? "     *    1     *        2           * 3 *" + IF( lPoNarudzbi .AND. cPKN == "D", "      *", "" ) + "     4          5    *  4 - 5   *     6    *     7    *   6 - 7  *" + cSC2
+      ? " R.  * Artikal  *   Naziv            *jmj*" + "  ulaz       izlaz   * STANJE   *  NV.Dug. * NV.Pot.  *    NV    *" + cSC1
+      ? " br. *          *                    *   *" + "                     *          *          *          *    NC    *" + cSC2
+      ? "     *    1     *        2           * 3 *" + "     4          5    *  4 - 5   *     6    *     7    *   6 - 7  *" + cSC2
       ? __line
    ENDIF
 
@@ -1472,12 +1431,6 @@ STATIC FUNCTION ZaglPDV()
    SET CENTURY ON
 
    ?? "KALK: LAGER LISTA  ZA PERIOD", dDatOd, "-", dDatdo, "  na dan", Date(), Space( 12 ), "Str:", Str( ++nTStrana, 3 )
-
-   IF lPoNarudzbi .AND. !Empty( qqIdNar )
-      ?
-      ? "Obuhvaceni sljedeci narucioci:", Trim( qqIdNar )
-      ?
-   ENDIF
 
    SET CENTURY OFF
 

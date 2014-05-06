@@ -335,9 +335,6 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     if roba->(fieldpos("KATBR"))<>0
        ?? " KATBR:", roba->katbr
     endif
-    IF lPoNarudzbi
-      IspisPoNar()
-    ENDIF
     @ prow()+1,4 SAY IdRoba
     nCol1:=pcol()+1
     if !lBezNC

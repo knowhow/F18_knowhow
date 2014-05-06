@@ -142,11 +142,8 @@ FUNCTION gen_ug()
       @ m_X + 4, m_y + 2 SAY "Parametar N3 " GET nn3 PICT "999999.999"
    ENDIF
 
-   IF lSpecifZips
-      // nn3 varijablu koristim kao indikator konverzije 20->10
-      @ m_x + 5, m_y + 2 SAY "Predracun ili racun (0/1) ? " GET nn3  PICT "@!"
-      @ m_x + 6, m_y + 2 SAY "Artikal (prazno-svi)" GET cFUArtikal VALID Empty( cFUArtikal ) .OR. P_Roba( @cFUArtikal ) PICT "@!"
-   ENDIF
+   @ m_x + 5, m_y + 2 SAY "Predracun ili racun (0/1) ? " GET nn3  PICT "@!"
+   @ m_x + 6, m_y + 2 SAY "Artikal (prazno-svi)" GET cFUArtikal VALID Empty( cFUArtikal ) .OR. P_Roba( @cFUArtikal ) PICT "@!"
    @ m_x + 7, m_y + 2 SAY "Generisati fakture samo na osnovu aktivnih ugovora? (D/N)" GET cSamoAktivni VALID cSamoAktivni $ "DN" PICT "@!"
 
    READ
@@ -193,7 +190,6 @@ FUNCTION gen_ug()
          RETURN
       ENDIF
 
-      // ****** snimi promjene u params.........
       O_PARAMS
       PRIVATE cSection := "U", cHistory := " "; aHistory := {}
       WPar( "uP", cUPartner )
@@ -206,14 +202,11 @@ FUNCTION gen_ug()
       USE
 
       SELECT fakt_pripr
-      // ******** utvrdjivanje broja dokumenta **************
 
       cIdTipdok := ugov->idtipdok
 
-      IF lSpecifZips
-         IF nn3 = 1 .AND. ugov->idtipdok = "20" // konverzija 20->10
-            cIdTipDok := "10"
-         ENDIF
+      IF nn3 = 1 .AND. ugov->idtipdok = "20" // konverzija 20->10
+         cIdTipDok := "10"
       ENDIF
 
       SELECT fakt_pripr
@@ -280,7 +273,7 @@ FUNCTION gen_ug()
       // ---------
       DO WHILE !Eof() .AND. id == cidugov
 
-         IF lSpecifZips .AND. !( Empty( cFUArtikal ) .OR. idroba == cFUArtikal )
+         IF !( Empty( cFUArtikal ) .OR. idroba == cFUArtikal )
             SKIP 1; LOOP
          ENDIF
 

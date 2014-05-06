@@ -585,9 +585,6 @@ public gPovDob := "0"
 public gUVarPP := "M"
 gSQL:="N"
 
-public lPoNarudzbi := .f.
-public lSpecifZips := .f. 
-
 public gModul:="FAKT"
 gGlBaza:="FAKT.DBF"
 

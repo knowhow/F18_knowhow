@@ -98,9 +98,6 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVd==IdVd
       @ prow()+1,0 SAY  Rbr PICTURE "999"
       @ prow(),4 SAY  ""
       ?? trim(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
-      IF lPoNarudzbi
-        IspisPoNar()
-      ENDIF
       @ prow()+1,4 SAY IdRoba
       @ prow(),pcol()+1 SAY Kolicina             PICTURE PicKol
       @ prow(),pcol()+1 SAY FCJ                  PICTURE PicCDEM

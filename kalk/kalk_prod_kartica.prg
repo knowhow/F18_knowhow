@@ -48,7 +48,6 @@ FUNCTION KarticaP()
    cPredh := "N"
    dDatOd := Date()
    dDatDo := Date()
-   cPKN := "N"
    aPorezi := {}
    nMarza := nMarza2 := nPRUC := 0
 
@@ -64,7 +63,7 @@ FUNCTION KarticaP()
       dDatDo := fetch_metric( "kalk_kartica_prod_datum_do", my_user(), dDatDo )
       cPredh := fetch_metric( "kalk_kartica_prod_prethodni_promet", my_user(), cPredh )
 
-      Box(, 8 + IF( lPoNarudzbi, 2, 0 ), 60 )
+      Box(, 8, 60 )
 
       DO WHILE .T.
 
@@ -87,23 +86,8 @@ FUNCTION KarticaP()
          @ m_x + 5, Col() + 2 SAY "do" GET dDatDo
          @ m_x + 6, m_y + 2 SAY "sa prethodnim prometom (D/N)" GET cPredh PICT "@!" VALID cpredh $ "DN"
 
-         IF lPoNarudzbi
-            qqIdNar := Space( 60 )
-            cPKN    := "N"
-            @ Row() + 1, m_y + 2 SAY "Uslov po sifri narucioca:" GET qqIdNar PICT "@!S30"
-            @ Row() + 1, m_y + 2 SAY "Prikazati kolone 'narucilac' i 'br.narudzbe' ? (D/N)" GET cPKN VALID cPKN $ "DN" PICT "@!"
-         ENDIF
-
          READ
          ESC_BCR
-
-         IF lPoNarudzbi
-            aUslN := Parsiraj( qqIdNar, "idnar" )
-         ENDIF
-
-         IF ( !lPoNarudzbi .OR. aUslN <> NIL )
-            EXIT
-         ENDIF
 
       ENDDO
 
@@ -152,10 +136,6 @@ FUNCTION KarticaP()
 
    PRIVATE cFilt := ".t."
 
-   IF lPoNarudzbi .AND. aUslN <> ".t."
-      cFilt += ".and." + aUslN
-   ENDIF
-
    IF !( cFilt == ".t." )
       SET FILTER to &cFilt
    ENDIF
@@ -164,7 +144,7 @@ FUNCTION KarticaP()
 
    EOF CRET
 
-   gaZagFix := { 7 + IF( lPoNarudzbi .AND. !Empty( qqIdNar ), 3, 0 ), 3 }
+   gaZagFix := { 7, 3 }
 
    START PRINT CRET
 
@@ -174,14 +154,13 @@ FUNCTION KarticaP()
 
    IF IsPDV()
 
-      _set_zagl( @cLine, @cTxt1, ;
-         lPoNarudzbi, cPKN )
+      _set_zagl( @cLine, @cTxt1 )
       __line := cLine
       __txt1 := cTxt1
 
    ELSE
 
-      m := "-------- ----------- ------ ------ " + IF( lPoNarudzbi .AND. cPKN == "D", "------ ---------- ", "" ) + "---------- ---------- ---------- ---------- ---------- ---------- ----------"
+      m := "-------- ----------- ------ ------ " + "---------- ---------- ---------- ---------- ---------- ---------- ----------"
       __line := m
 
    ENDIF
@@ -273,10 +252,6 @@ FUNCTION KarticaP()
 
                ? field->datdok, field->idvd + "-" + field->brdok, field->idtarifa, field->idpartner
 
-               IF lPoNarudzbi .AND. cPKN == "D"
-                  ?? "", field->idnar, field->brojnar
-               ENDIF
-
                nCol1 := PCol() + 1
 
                @ PRow(), PCol() + 1 SAY field->kolicina PICT pickol
@@ -324,26 +299,13 @@ FUNCTION KarticaP()
 
                ? field->datdok, field->idvd + "-" + field->brdok, field->idtarifa, field->idpartner
 
-               IF lPoNarudzbi .AND. cPKN == "D"
-                  ?? "", field->idnar, field->brojnar
-               ENDIF
-
                nCol1 := PCol() + 1
 
                @ PRow(), PCol() + 1 SAY 0 PICT pickol
                @ PRow(), PCol() + 1 SAY field->kolicina PICT pickol
                @ PRow(), PCol() + 1 SAY nUlaz - nIzlaz PICT pickol
                @ PRow(), PCol() + 1 SAY field->nc PICT piccdem
-
-               // bilo ranije
-               // @ prow(), pcol()+1 SAY field->vpc * ( 1 - field->rabatv / 100 )  pict piccdem
-
-               // cista pc sa popustom
                @ PRow(), PCol() + 1 SAY field->mpc PICT piccdem
-
-               // cista mpc sa popustom
-               // @ prow(), pcol()+1 SAY field->mpc + nPor1 pict piccdem
-
                @ PRow(), PCol() + 1 SAY field->mpcsapp PICT piccdem
 
             ENDIF
@@ -361,9 +323,6 @@ FUNCTION KarticaP()
 
             IF field->datdok >= dDatod
                ? field->datdok, field->idvd + "-" + field->brdok, field->idtarifa, field->idpartner
-               IF lPoNarudzbi .AND. cPKN == "D"
-                  ?? "", field->idnar, field->brojnar
-               ENDIF
                nCol1 := PCol() + 1
                @ PRow(), PCol() + 1 SAY 0 PICT pickol
                @ PRow(), PCol() + 1 SAY field->gkolicin2 PICT pickol
@@ -389,9 +348,6 @@ FUNCTION KarticaP()
 
             IF field->datdok >= dDatod
                ? field->datdok, field->idvd + "-" + field->brdok, field->idtarifa, field->idpartner
-               IF lPoNarudzbi .AND. cPKN == "D"
-                  ?? "", field->idnar, field->brojnar
-               ENDIF
                nCol1 := PCol() + 1
                @ PRow(), PCol() + 1 SAY -( field->kolicina ) PICT pickol
                @ PRow(), PCol() + 1 SAY 0 PICT pickol
@@ -415,9 +371,6 @@ FUNCTION KarticaP()
 
             IF field->datdok >= dDatod
                ? field->datdok, field->idvd + "-" + field->brdok, field->idtarifa, field->idpartner
-               IF lPoNarudzbi .AND. cPKN == "D"
-                  ?? "", field->idnar, field->brojnar
-               ENDIF
                nCol1 := PCol() + 1
                @ PRow(), PCol() + 1 SAY field->kolicina PICT pickol
                @ PRow(), PCol() + 1 SAY 0 PICT pickol
@@ -483,8 +436,7 @@ FUNCTION KarticaP()
 // ---------------------------------------------------------
 // setovanje zaglavlja
 // ---------------------------------------------------------
-STATIC FUNCTION _set_zagl( cLine, cTxt1, ;
-      lPoNarudzbi, cPKN )
+STATIC FUNCTION _set_zagl( cLine, cTxt1 )
 
    LOCAL aKProd := {}
    LOCAL nPom
@@ -497,15 +449,6 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, ;
    AAdd( aKProd, { nPom, PadC( "Tarifa", nPom ) } )
    nPom := 6
    AAdd( aKProd, { nPom, PadC( "Partn", nPom ) } )
-
-   IF lPoNarudzbi .AND. cPKN == "D"
-
-      nPom := 6
-      AAdd( aKProd, { nPom, PadC( "Naruc.", nPom ) } )
-      nPom := 10
-      AAdd( aKProd, { nPom, PadC( "Broj nar.", nPom ) } )
-
-   ENDIF
 
    nPom := Len( gPicKol )
    AAdd( aKProd, { nPom, PadC( "Ulaz", nPom ) } )
@@ -548,27 +491,15 @@ STATIC FUNCTION Zagl()
    P_12CPI
    ?? "KARTICA PRODAVNICA za period", ddatod, "-", ddatdo, Space( 10 ), "Str:", Str( ++nTStrana, 3 )
    IspisNaDan( 10 )
-   IF lPoNarudzbi .AND. !Empty( qqIdNar )
-      ?
-      ? "Obuhvaceni sljedeci narucioci:", Trim( qqIdNar )
-      ?
-   ENDIF
 
    ? "Konto: ", cidkonto, "-", konto->naz
-   // select roba; hseek cidroba
-   // select tarifa; hseek roba->idtarifa
-   // ? "Artikal:",cidroba,"-",trim(roba->naz)+" ("+roba->jmj+")"
    SELECT kalk
-   IF lPoNarudzbi .AND. cPKN == "D"
-      P_COND2
-   ELSE
-      P_COND
-   ENDIF
+   P_COND
    ? __line
    IF IsPDV()
       ? __txt1
    ELSE
-      ? " Datum     Dokument  Tarifa  Partn " + IF( lPoNarudzbi .AND. cPKN == "D", "Naruc.  Broj nar. ", "" ) + "    Ulaz      Izlaz     Stanje      NC         VPC       MPCSAPP        MPV"
+      ? " Datum     Dokument  Tarifa  Partn " + "    Ulaz      Izlaz     Stanje      NC         VPC       MPCSAPP        MPV"
    ENDIF
    ? __line
 

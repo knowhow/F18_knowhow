@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,228 +14,156 @@
 
 
 
-function Get1_82()
+FUNCTION Get1_82()
 
-pIzgSt:=.f.  
- 
-// izgenerisane stavke jos ne postoje
-//private cisMarza:=0
+   pIzgSt := .F.
 
-set key K_ALT_K to KM2()
+   // izgenerisane stavke jos ne postoje
+   // private cisMarza:=0
 
-if nRbr==1 .or. !fnovi
- @  m_x+7,m_y+2   SAY "Faktura Broj:" get _BrFaktP
- @  m_x+7,col()+2 SAY "Datum:" get _DatFaktP   ;
-    valid {|| .t.}
- _IdZaduz:=""
- 
- _Idkonto2:=""
+   SET KEY K_ALT_K TO KM2()
 
- @ m_x+9,m_y+2 SAY "Magacinski konto razduzuje"  GET _IdKonto ;
-            valid empty(_IdKonto) .or. P_Konto(@_IdKonto,21,5)
- if gNW<>"X"
-   @ m_x+9,m_y+40 SAY "Razduzuje:" GET _IdZaduz   pict "@!"  valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,21,5)
- endif
-else
- //@  m_x+6,m_y+2   SAY "KUPAC: "; ?? _IdPartner
- @  m_x+7,m_y+2   SAY "Faktura Broj: "; ?? _BrFaktP
- @  m_x+7,col()+2 SAY "Datum: "; ?? _DatFaktP
- _IdZaduz:=""
- _Idkonto2:=""
- @ m_x+9,m_y+2 SAY "Magacinski konto razduzuje "; ?? _IdKonto
- if gNW<>"X"
-   @ m_x+9,m_y+40 SAY "Razduzuje: "; ?? _IdZaduz
- endif
-endif
+   IF nRbr == 1 .OR. !fnovi
+      @  m_x + 7, m_y + 2   SAY "Faktura Broj:" GET _BrFaktP
+      @  m_x + 7, Col() + 2 SAY "Datum:" GET _DatFaktP   ;
+         valid {|| .T. }
+      _IdZaduz := ""
 
- @ m_x+10,m_y+66 SAY "Tarif.brÄ¿"
- 
- if lKoristitiBK
-    @ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!S10" when {|| _idRoba:=PADR(_idRoba,VAL(gDuzSifIni)),.t.} valid  {|| P_Roba(@_IdRoba),Reci(11,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40),_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa),.t.}
- else
-    @ m_x+11,m_y+2   SAY "Artikal  " GET _IdRoba pict "@!" valid  {|| P_Roba(@_IdRoba),Reci(11,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40),_IdTarifa:=iif(fnovi,ROBA->idtarifa,_IdTarifa),.t.}
- endif
- @ m_x+11,m_y+70 GET _IdTarifa when gPromTar=="N" valid P_Tarifa(@_IdTarifa)
+      _Idkonto2 := ""
 
- read; ESC_RETURN K_ESC
- if lKoristitiBK
-    _idRoba:=Left(_idRoba, 10)
- endif
-
- select TARIFA; hseek _IdTarifa  // postavi TARIFA na pravu poziciju
- select koncij; seek trim(_idkonto)
- select kalk_pripr  // napuni tarifu
-
- _MKonto:=_Idkonto2
- DuplRoba()
- DatPosljK()
-
- IF !lPoNarudzbi
-   @ m_x+12,m_y+2   SAY "Kolicina " GET _Kolicina PICTURE PicKol valid _Kolicina<>0
- ENDIF
-
- IF IsDomZdr()
-   @ m_x+13+IF(lPoNarudzbi,1,0),m_y+2   SAY "Tip sredstva (prazno-svi) " GET _Tip PICT "@!"
- ENDIF
-
-
-_GKolicina:=0
-if fNovi
- select ROBA; HSEEK _IdRoba
- _VPC:=KoncijVPC()
- _NC:=NC
-endif
-if gCijene="2" .and. fNovi
-  /////// utvrdjivanje fakticke VPC
-   faktVPC(@_VPC,_idfirma+_idkonto+_idroba)
-   select kalk_pripr
-endif
-VtPorezi()
-
-///////////// kalkulacija nabavne cijene
-//////// nKolZN:=kolicina koja je na stanju a porijeklo je od zadnje nabavke
-nKolS:=0
-nKolZN:=0
-nc1:=nc2:=0
-dDatNab:=ctod("")
-
-lGenStavke:=.f.
-if _TBankTr<>"X" .or. lPoNarudzbi   // ako je X onda su stavke vec izgenerisane
- IF lPoNarudzbi
-   aNabavke:={}
-   IF !fNovi
-     AADD( aNabavke , {0,_nc,_kolicina,_idnar,_brojnar} )
+      @ m_x + 9, m_y + 2 SAY "Magacinski konto razduzuje"  GET _IdKonto ;
+         VALID Empty( _IdKonto ) .OR. P_Konto( @_IdKonto, 21, 5 )
+      IF gNW <> "X"
+         @ m_x + 9, m_y + 40 SAY "Razduzuje:" GET _IdZaduz   PICT "@!"  VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 21, 5 )
+      ENDIF
+   ELSE
+      // @  m_x+6,m_y+2   SAY "KUPAC: "; ?? _IdPartner
+      @  m_x + 7, m_y + 2   SAY "Faktura Broj: "; ?? _BrFaktP
+      @  m_x + 7, Col() + 2 SAY "Datum: "; ?? _DatFaktP
+      _IdZaduz := ""
+      _Idkonto2 := ""
+      @ m_x + 9, m_y + 2 SAY "Magacinski konto razduzuje "; ?? _IdKonto
+      IF gNW <> "X"
+         @ m_x + 9, m_y + 40 SAY "Razduzuje: "; ?? _IdZaduz
+      ENDIF
    ENDIF
-   KalkNab3m(_idfirma,_idroba,_idkonto,aNabavke)
-   IF LEN(aNabavke)>1; lGenStavke:=.t.; ENDIF
-   IF LEN(aNabavke)>0
-     // - teku†a -
-     i:=LEN(aNabavke)
-     _nc := aNabavke[i,2]
-     _kolicina := aNabavke[i,3]
-     _idnar    := aNabavke[i,4]
-     _brojnar  := aNabavke[i,5]
-     // ----------
+
+   @ m_x + 10, m_y + 66 SAY "Tarif.brÄ¿"
+
+   IF lKoristitiBK
+      @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _idRoba := PadR( _idRoba, Val( gDuzSifIni ) ), .T. } valid  {|| P_Roba( @_IdRoba ), Reci( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
+   ELSE
+      @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), Reci( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
    ENDIF
-   @ m_x+12,m_y+2   SAY "Kolicina " GET _Kolicina PICTURE PicKol when .f.
-   @ row(),col()+2 SAY IspisPoNar(,,.t.)
- ELSE
-   if !empty(gMetodaNC)
-    MsgO("Racunam stanje na skladistu")
-    KalkNab(_idfirma,_idroba,_idkonto,@nKolS,@nKolZN,@nc1,@nc2,@dDatNab)
-    MsgC()
-   endif
-   if dDatNab>_DatDok; Beep(1);Msg("Datum nabavke je "+dtoc(dDatNab),4);endif
-   if gMetodaNC $ "13"; _nc:=nc1; elseif gMetodaNC=="2"; _nc:=nc2; endif
- ENDIF
-endif
-select kalk_pripr
+   @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
-IF !lPoNarudzbi
-  @ m_x+12,m_y+30   SAY "Ukupno na stanju "; @ m_x+12,col()+2 SAY nkols pict pickol
-ENDIF
+   read; ESC_RETURN K_ESC
+   IF lKoristitiBK
+      _idRoba := Left( _idRoba, 10 )
+   ENDIF
 
-@ m_x+13,m_y+2    SAY "NAB.CJ   "  GET _NC  picture PicDEM      valid V_KolMag()
+   SELECT TARIFA; hseek _IdTarifa  // postavi TARIFA na pravu poziciju
+   SELECT koncij; SEEK Trim( _idkonto )
+   SELECT kalk_pripr  // napuni tarifu
 
-private _vpcsappp:=0
+   _MKonto := _Idkonto2
+   DuplRoba()
+   DatPosljK()
 
- @ m_x+14,m_y+2   SAY "VPC      " get _VPC    picture PicDEM ;
-                 valid {|| iif(gVarVP=="2" .and. (_vpc-_nc)>0,cisMarza:=(_vpc-_nc)/(1+tarifa->vpp),_vpc-_nc),;
-                _mpcsapp:=_MPCSaPP:=(1+_OPP)*_VPC*(1-_Rabatv/100)*(1+_PPP),;
-                _mpcsapp:=round(_mpcsapp,2),.t.}
+   @ m_x + 12, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 
-_RabatV:=0
+   _GKolicina := 0
 
-@ m_x+19,m_y+2  SAY "PPP (%):"; @ row(),col()+2 SAY  _OPP*100 PICTURE "99.99"
-@ m_x+19,col()+8  SAY "PPU (%):"; @ row(),col()+2  SAY _PPP*100 PICTURE "99.99"
+   IF fNovi
+      SELECT ROBA; HSEEK _IdRoba
+      _VPC := KoncijVPC()
+      _NC := NC
+   ENDIF
+   IF gCijene = "2" .AND. fNovi
+      faktVPC( @_VPC, _idfirma + _idkonto + _idroba )
+      SELECT kalk_pripr
+   ENDIF
+   VtPorezi()
 
-@ m_x+20,m_y+2 SAY "MPC SA POREZOM:"
-@ m_x+20,m_y+50 GET _MPCSaPP  picture PicDEM ;
-            valid {|| _mpc:=iif(_mpcsapp<>0 ,_mpcsapp/(1+_opp)/(1+_PPP),_mpc),;
-                      _marza2:=0,;
-                      Marza2R(),ShowGets(),.t.}
-read; ESC_RETURN K_ESC
+   nKolS := 0
+   nKolZN := 0
+   nc1 := nc2 := 0
+   dDatNab := CToD( "" )
 
+   lGenStavke := .F.
+   IF _TBankTr <> "X" 
+      IF !Empty( gMetodaNC )
+         MsgO( "Racunam stanje na skladistu" )
+         KalkNab( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+         MsgC()
+      ENDIF
+      IF dDatNab > _DatDok; Beep( 1 );Msg( "Datum nabavke je " + DToC( dDatNab ), 4 );ENDIF
+      IF gMetodaNC $ "13"; _nc := nc1; ELSEIF gMetodaNC == "2"; _nc := nc2; ENDIF
+   ENDIF
+   SELECT kalk_pripr
 
-nStrana:=2
-_marza:=_vpc-_nc
+   @ m_x + 12, m_y + 30   SAY "Ukupno na stanju "; @ m_x + 12, Col() + 2 SAY nkols PICT pickol
+   @ m_x + 13, m_y + 2    SAY "NAB.CJ   "  GET _NC  PICTURE PicDEM      VALID V_KolMag()
 
-IF lPoNarudzbi
-  _MKonto:=_Idkonto;_MU_I:="5"     // izlaz iz magacina
-  _PKonto:=""; _PU_I:=""
-  IF lGenStavke
-    pIzgSt:=.t.
-    // viçe od jedne stavke
-    FOR i:=1 TO LEN(aNabavke)-1
-      // generiçi sve izuzev posljednje
-      APPEND BLANK
-      _error    := IF(_error<>"1","0",_error)
-      _rbr      := RedniBroj(nRBr)
-      _nc       := aNabavke[i,2]
-      _kolicina := aNabavke[i,3]
-      _idnar    := aNabavke[i,4]
-      _brojnar  := aNabavke[i,5]
-      // _vpc      := _nc
-      Gather()
-      ++nRBr
-    NEXT
-    // posljednja je teku†a
-    _nc       := aNabavke[i,2]
-    _kolicina := aNabavke[i,3]
-    _idnar    := aNabavke[i,4]
-    _brojnar  := aNabavke[i,5]
-    // _vpc      := _nc
-  ELSE
-    // jedna ili nijedna
-    IF LEN(aNabavke)>0
-      // jedna
-      _nc       := aNabavke[1,2]
-      _kolicina := aNabavke[1,3]
-      _idnar    := aNabavke[1,4]
-      _brojnar  := aNabavke[1,5]
-      // _vpc      := _nc
-    ELSE
-      // nije izabrana koliŸina -> kao da je prekinut unos tipkom Esc
-      RETURN (K_ESC)
-    ENDIF
-  ENDIF
-ENDIF
+   PRIVATE _vpcsappp := 0
 
-_MKonto:=_Idkonto;_MU_I:="5"     // izlaz iz magacina
-_PKonto:=""; _PU_I:=""
+   @ m_x + 14, m_y + 2   SAY "VPC      " GET _VPC    PICTURE PicDEM ;
+      valid {|| iif( gVarVP == "2" .AND. ( _vpc - _nc ) > 0, cisMarza := ( _vpc - _nc ) / ( 1 + tarifa->vpp ), _vpc - _nc ), ;
+      _mpcsapp := _MPCSaPP := ( 1 + _OPP ) * _VPC * ( 1 -_Rabatv / 100 ) * ( 1 + _PPP ), ;
+      _mpcsapp := Round( _mpcsapp, 2 ), .T. }
 
-if pIzgSt   .and. _kolicina>0 .and. lastkey()<>K_ESC // izgenerisane stavke postoje
- private nRRec:=recno()
- go top
- my_flock()
- do while !eof()  // nafiluj izgenerisane stavke
-  if kolicina==0
-     skip
-     private nRRec2:=recno()
-     skip -1
-     my_delete()
-     go nRRec2
-     loop
-  endif
-  if brdok==_brdok .and. idvd==_idvd .and. val(Rbr)==nRbr
-    nMarza:=_VPC*(1-_RabatV/100)-_NC
-    replace vpc with _vpc,;
-          rabatv with _rabatv,;
-          mkonto with _mkonto,;
-          tmarza  with _tmarza,;
-          mpc     with  _MPC,;
-          marza  with _vpc-kalk_pripr->nc,;   // mora se uzeti nc iz ove stavke
-          mu_i with  _mu_i,;
-          pkonto with _pkonto,;
-          pu_i with  _pu_i ,;
-          error with "0"
-  endif
-  skip
- enddo
- my_unlock()
- go nRRec
-endif
+   _RabatV := 0
 
-set key K_ALT_K to
-return lastkey()
-*}
+   @ m_x + 19, m_y + 2  SAY "PPP (%):"; @ Row(), Col() + 2 SAY  _OPP * 100 PICTURE "99.99"
+   @ m_x + 19, Col() + 8  SAY "PPU (%):"; @ Row(), Col() + 2  SAY _PPP * 100 PICTURE "99.99"
+
+   @ m_x + 20, m_y + 2 SAY "MPC SA POREZOM:"
+   @ m_x + 20, m_y + 50 GET _MPCSaPP  PICTURE PicDEM ;
+      valid {|| _mpc := iif( _mpcsapp <> 0,_mpcsapp / ( 1 + _opp ) / ( 1 + _PPP ), _mpc ), ;
+      _marza2 := 0, ;
+      Marza2R(), ShowGets(), .T. }
+   read; ESC_RETURN K_ESC
+
+   nStrana := 2
+   _marza := _vpc - _nc
+
+   _MKonto := _Idkonto;_MU_I := "5"     // izlaz iz magacina
+   _PKonto := ""; _PU_I := ""
+
+   IF pIzgSt   .AND. _kolicina > 0 .AND. LastKey() <> K_ESC 
+      // izgenerisane stavke postoje
+      PRIVATE nRRec := RecNo()
+      GO TOP
+      my_flock()
+      DO WHILE !Eof()  // nafiluj izgenerisane stavke
+         IF kolicina == 0
+            SKIP
+            PRIVATE nRRec2 := RecNo()
+            SKIP -1
+            my_delete()
+            GO nRRec2
+            LOOP
+         ENDIF
+         IF brdok == _brdok .AND. idvd == _idvd .AND. Val( Rbr ) == nRbr
+            nMarza := _VPC * ( 1 -_RabatV / 100 ) -_NC
+            REPLACE vpc WITH _vpc, ;
+               rabatv WITH _rabatv, ;
+               mkonto WITH _mkonto, ;
+               tmarza  WITH _tmarza, ;
+               mpc     WITH  _MPC, ;
+               marza  WITH _vpc - kalk_pripr->nc, ;   // mora se uzeti nc iz ove stavke
+            mu_i WITH  _mu_i, ;
+               pkonto WITH _pkonto, ;
+               pu_i WITH  _pu_i,;
+               error WITH "0"
+         ENDIF
+         SKIP
+      ENDDO
+      my_unlock()
+      GO nRRec
+   ENDIF
+
+   SET KEY K_ALT_K TO
+
+   RETURN LastKey()
+

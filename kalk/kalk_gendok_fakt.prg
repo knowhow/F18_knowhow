@@ -315,10 +315,6 @@ do while .t.
                 replace cijena with kalk_pripr->vpc       // i ovdje je bila nc pa sam stavio vpc
             endif
 
-            IF lPoNarudzbi .and. FIELDPOS("IDNAR")<>0
-                REPLACE idnar WITH kalk_pripr->idnar, brojnar WITH kalk_pripr->brojnar
-            ENDIF
-
             my_unlock()
 
             if kalk_pripr->idvd<>"97"

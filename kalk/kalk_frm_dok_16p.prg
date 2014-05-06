@@ -73,18 +73,7 @@ FUNCTION Get1_16PDV()
    ENDIF
    @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
-   IF lPoNarudzbi
-      @ m_x + 12, m_y + 2 SAY "Po narudzbi br." GET _brojnar
-      @ m_x + 12, Col() + 2 SAY "za narucioca" GET _idnar PICT "@!" VALID Empty( _idnar ) .OR. P_Firma( @_idnar, 12, 50 )
-   ENDIF
-
-   // IF !lPoNarudzbi
-   @ m_x + 12 + IF( lPoNarudzbi, 1, 0 ), m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
-   // ENDIF
-
-   IF IsDomZdr()
-      @ m_x + 13 + IF( lPoNarudzbi, 1, 0 ), m_y + 2   SAY "Tip sredstva (prazno-svi) " GET _Tip PICT "@!"
-   ENDIF
+   @ m_x + 12, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 
    read; ESC_RETURN K_ESC
    IF lKoristitiBK
@@ -100,7 +89,7 @@ FUNCTION Get1_16PDV()
    SELECT kalk_pripr
    _MKonto := _Idkonto; _MU_I := "1"
 
-   IF gVarEv == "1"          // /////////////////////////// sa cijenama
+   IF gVarEv == "1"          
       DatPosljK()
       DuplRoba()
       _GKolicina := 0
@@ -117,7 +106,7 @@ FUNCTION Get1_16PDV()
       VTPorezi()
       SELECT kalk_pripr
 
-      @ m_x + 14 + IF( lPoNarudzbi, 1, 0 ), m_y + 2    SAY "NAB.CJ   "  GET _NC  PICTURE gPicNC  WHEN V_kol10()
+      @ m_x + 14, m_y + 2    SAY "NAB.CJ   "  GET _NC  PICTURE gPicNC  WHEN V_kol10()
 
       PRIVATE _vpcsappp := 0
 
@@ -132,7 +121,6 @@ FUNCTION Get1_16PDV()
             VALID {|| Marza( fMarza ), .T. }
          IF !IsMagPNab()
             _mpcsapp := roba->mpc
-            // VPC se izracunava pomocu MPC cijene !!
             @ m_x + 20, m_y + 2 SAY "PROD.CJENA SA PDV:"
             @ m_x + 20, Col() + 2 GET _MPCSaPP  PICTURE PicDEM ;
                valid {|| _mpcsapp := iif( _mpcsapp = 0, Round( _vpc * ( 1 + TARIFA->opp / 100 ), 2 ), _mpcsapp ), _mpc := _mpcsapp / ( 1 + TARIFA->opp / 100 ), iif( _mpc <> 0, _vpc := Round( _mpc, 2 ), _vpc ), ShowGets(), .T. }
@@ -152,7 +140,7 @@ FUNCTION Get1_16PDV()
 
          ENDIF
 
-      ELSE // vodi se po nc
+      ELSE 
          READ
          _VPC := _nc; marza := 0
       ENDIF

@@ -105,11 +105,6 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
    AAdd( ImeKol, { "Marza 2", {|| tmarza2                  }, "tmarza2"   } )
    AAdd( ImeKol, { "E", {|| error                    }, "error"       } )
 
-   IF lPoNarudzbi
-      AAdd( ImeKol, { "Br.nar.", {|| brojnar   }, "brojnar"   } )
-      AAdd( ImeKol, { "Narucioc", {|| idnar   }, "idnar"   } )
-   ENDIF
-
    FOR i := 1 TO Len( ImeKol )
       AAdd( Kol, i )
    NEXT

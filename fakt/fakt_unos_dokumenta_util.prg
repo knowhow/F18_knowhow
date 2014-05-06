@@ -354,11 +354,6 @@ FUNCTION V_Kolicina( tip_vpc )
       ENDIF
    ENDIF
 
-   IF lPoNarudzbi = .T.
-      SELECT fakt_pripr
-      RETURN .T.
-   ENDIF
-
    SELECT fakt
    SET ORDER TO TAG "3"
 

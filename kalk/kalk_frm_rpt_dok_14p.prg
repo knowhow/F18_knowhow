@@ -185,9 +185,6 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     if lKoristitiBK .and. !EMPTY( roba->barkod )
 		?? ", BK: " + roba->barkod
 	endif
-	IF lPoNarudzbi
-      IspisPoNar(.f.)
-    ENDIF
     @ prow()+1,4 SAY IdRoba
     @ prow(),pcol()+1 SAY Kolicina*iif(idvd="15",-1,1)  PICTURE PicKol
     nC1:=pcol()+1

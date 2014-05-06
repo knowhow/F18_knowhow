@@ -103,8 +103,7 @@ nTotB+=vpc/(1+_PORVT)*_PORVT*kolicina
 
 @ prow()+1,0 SAY  Rbr PICTURE "999"
 @ prow(),pcol()+1 SAY IdRoba
-aNaz:=SjeciStr(trim(ROBA->naz)+" ( "+ROBA->jmj+" )"+;
-               IF(lPoNarudzbi,IspisPoNar(,.t.),""),37)
+aNaz:=SjeciStr(trim(ROBA->naz)+" ( "+ROBA->jmj+" )",37)
 @ prow(),(nCR:=pcol()+1) SAY  ""; ?? aNaz[1]
 @ prow(),52 SAY Kolicina
 @ prow(),pcol()+1 SAY MPCSAPP  PICTURE PicCDEM

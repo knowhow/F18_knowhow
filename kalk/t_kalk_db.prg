@@ -51,7 +51,6 @@ METHOD install( cKorisn, cSifra, p3, p4, p5, p6, p7 )
 // -------------------------------------------------------
 METHOD kreiraj( nArea )
 
-   LOCAL lPoNarudzbi := .F.
    LOCAL glBrojacPoKontima := .F.
    LOCAL gVodiSamoTarife := "N"
 

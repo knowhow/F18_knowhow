@@ -42,7 +42,6 @@ return
 
 
 method Kreiraj(nArea)
-local lPoNarudzbi := .f.
 local glDistrib := .f.
 
 cDirRad := my_home()

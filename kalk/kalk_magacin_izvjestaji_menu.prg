@@ -42,12 +42,6 @@ FUNCTION kalk_izvjestaji_magacina()
    AAdd( _opcexe, {|| MPoreziMag() } )
    AAdd( _Opc, "----------------------------------" )
    AAdd( _opcexe, nil )
-
-   IF is_uobrada()
-      AAdd( _Opc, "R. unutrasnja obrada - pregled ulaza i izlaza" )
-      AAdd( _opcexe, {|| r_uobrada() } )
-   ENDIF
-
    AAdd( _Opc, "K. kontrolni izvjestaji" )
    AAdd( _opcexe, {|| m_ctrl_rpt() } )
    AAdd( _Opc, "S. pregledi za vise objekata" )

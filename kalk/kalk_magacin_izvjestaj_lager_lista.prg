@@ -41,7 +41,6 @@ FUNCTION LLM()
 
    PARAMETERS fPocStanje
    LOCAL fimagresaka := .F.
-   LOCAL aNabavke := {}
    LOCAL _curr_user := "<>"
    LOCAL lExpDbf := .F.
    LOCAL cExpDbf := "N"
@@ -255,10 +254,6 @@ FUNCTION LLM()
 
    lSvodi := .F.
 
-   IF IsDomZdr() .AND. cSzDN == "D"
-      lSignZal := .T.
-   ENDIF
-
    IF IzFMKIni( "KALK_LLM", "SvodiNaJMJ", "N", KUMPATH ) == "D"
       lSvodi := ( Pitanje(, "Svesti kolicine na osnovne jedinice mjere? (D/N)", "N" ) == "D" )
    ENDIF
@@ -311,9 +306,6 @@ FUNCTION LLM()
    IF fSint .AND. lSabKon
       cFilt += ".and. MKonto=" + cm2str( cSintK )
       cSintK := ""
-   ENDIF
-   IF IsDomZdr() .AND. !Empty( cKalkTip )
-      cFilt += ".and. tip=" + Cm2Str( cKalkTip )
    ENDIF
 
    IF !Empty( cRNT1 ) .AND. !Empty( cRNalBroj )
@@ -536,7 +528,6 @@ FUNCTION LLM()
       // ako zelim oznaciti sve kriticne zalihe onda mi trebaju i artikli
       // sa stanjem 0 !!
 
-      aNabavke := {}
 
       DO WHILE !Eof() .AND. iif( fSint .AND. lSabKon, cIdFirma + cIdRoba == idFirma + idroba, cIdFirma + cIdKonto + cIdRoba == idFirma + mkonto + idroba ) .AND. IspitajPrekid()
 
@@ -622,11 +613,6 @@ FUNCTION LLM()
             nNVU += Round( -nc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
          ENDIF
 
-         IF fPocStanje .AND. glEkonomat
-            KreDetNC( aNabavke )
-         ENDIF
-
-         // more info, set variables
          cMIPart := field->idpartner
          dMIDate := field->datfaktp
          cMINumber := field->brfaktp
@@ -674,27 +660,7 @@ FUNCTION LLM()
          IF fPocStanje
 
             SELECT kalk_pripr
-            IF glEkonomat
-               FOR i := Len( aNabavke ) TO 1 STEP -1
-                  IF !( Round( aNabavke[ i, 1 ], 8 ) <> 0 )
-                     ADel( aNabavke, i )
-                     ASize( aNabavke, Len( aNabavke ) -1 )
-                  ENDIF
-               NEXT
-               FOR i := 1 TO Len( aNabavke )
-                  APPEND BLANK
-                  REPLACE idfirma WITH cidfirma, idroba WITH cIdRoba, ;
-                     idkonto WITH cIdKonto, ;
-                     datdok WITH dDatDo + 1, ;
-                     idtarifa WITH roba->idtarifa, ;
-                     datfaktp WITH dDatDo + 1, ;
-                     idvd WITH "16", brdok WITH cBRPST,;
-                     kolicina WITH aNabavke[ i, 1 ], ;
-                     nc WITH aNabavke[ i, 2 ]
-                  REPLACE vpc WITH nc
-               NEXT
-            ELSE
-               IF Round( nUlaz - nIzlaz, 4 ) <> 0 .AND. cSrKolNula $ "01"
+              IF Round( nUlaz - nIzlaz, 4 ) <> 0 .AND. cSrKolNula $ "01"
        				
                   APPEND BLANK
        				
@@ -763,7 +729,6 @@ FUNCTION LLM()
                   ENDIF
 
                ENDIF
-            ENDIF
 
             SELECT kalk
 

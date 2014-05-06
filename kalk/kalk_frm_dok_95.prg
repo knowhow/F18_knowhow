@@ -30,10 +30,6 @@ FUNCTION Get1_95()
       @  m_x + 5, Col() + 1 SAY "Datum:" GET _DatFaktP   ;
          valid {|| .T. }
 
-      IF is_uobrada()
-         @ m_x + 5, Col() + 1 SAY "Odobrenje:" GET _odobr_no PICT "@S10"
-      ENDIF
-
       _IdZaduz := ""
       @ m_x + 8, m_y + 2 SAY8 "Magacinski konto razdužuje"  GET _IdKonto2 ;
          VALID Empty( _IdKonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 )
@@ -80,26 +76,14 @@ FUNCTION Get1_95()
       ENDIF
    ENDIF
 
-   IF !glEkonomat
-      @ m_x + 10, m_y + 66 SAY "Tarif.brÄ¿"
-   ENDIF
+   @ m_x + 10, m_y + 66 SAY "Tarif.brÄ¿"
+
    IF lKoristitiBK
       @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _idRoba := PadR( _idRoba, Val( gDuzSifIni ) ), .T. } valid  {|| P_Roba( @_IdRoba ), Reci( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
    ELSE
       @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), Reci( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
    ENDIF
-   IF !glEkonomat
-      @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
-   ENDIF
-
-   IF IsDomZdr()
-      @ m_x + 12, m_y + 2 SAY "Tip sredstva (prazno-svi) " GET _Tip PICT "@!"
-   ENDIF
-
-   IF is_uobrada()
-      @ m_x + 12, m_y + 2 SAY "JCI br: " GET _jci_no PICT "@S10"
-      @ m_x + 12, Col() + 2 SAY "EX3 br: " GET _ex_no PICT "@S10"
-   ENDIF
+   @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    read; ESC_RETURN K_ESC
    IF lKoristitiBK
@@ -154,17 +138,6 @@ FUNCTION Get1_95()
 
          IF !Empty( gMetodaNC )  .AND. !( roba->tip $ "UT" )
 
-            IF glEkonomat
-
-               aNabavke := {}
-               IF !fNovi
-                  AAdd( aNabavke, { 0, _nc, _kolicina } )
-               ENDIF
-               KalkNab2( _idfirma, _idroba, _idkonto2, aNabavke )
-               IF Len( aNabavke ) > 1; lGenStavke := .T. ; ENDIF
-
-            ELSE
-
                MsgO( "Racunam stanje na skladistu" )
                KalkNab( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
                MsgC()
@@ -172,26 +145,20 @@ FUNCTION Get1_95()
                @ m_x + 12, m_y + 30   SAY "Ukupno na stanju "; @ m_x + 12, Col() + 2 SAY nKols PICT pickol
                @ m_x + 13, m_y + 30   SAY "Srednja nc "; @ m_x + 13, Col() + 2 SAY nc2 PICT pickol
 
-            ENDIF
-
          ENDIF
 
-         IF !glEkonomat
+         IF dDatNab > _DatDok; Beep( 1 ); Msg( "Datum nabavke je " + DToC( dDatNab ), 4 ); ENDIF
 
-            IF dDatNab > _DatDok; Beep( 1 ); Msg( "Datum nabavke je " + DToC( dDatNab ), 4 ); ENDIF
+         IF !( roba->tip $ "UT" )
 
-            IF !( roba->tip $ "UT" )
+            IF gMetodaNC $ "13"
+               _nc := nc1
+            ELSEIF gMetodaNC == "2"
+               _nc := nc2
+            ENDIF
 
-               IF gMetodaNC $ "13"
-                  // prva ili zadnja
-                  _nc := nc1
-               ELSEIF gMetodaNC == "2"
-                  // srednja
-                  _nc := nc2
-               ENDIF
-
-               IF gMetodaNc == "2"
-                  IF _kolicina > 0
+            IF gMetodaNc == "2"
+               IF _kolicina > 0
 
                      SELECT roba
                      _rec := dbf_get_rec()
@@ -201,13 +168,10 @@ FUNCTION Get1_95()
                   ENDIF
                ENDIF
 
-            ENDIF
-         ENDIF
-
+           ENDIF
       ENDIF
 
       SELECT kalk_pripr
-      IF !glEkonomat
          @ m_x + 14, m_y + 2  SAY "NAB.CJ   "  GET _NC  PICTURE gPicNC  VALID V_KolMag()
          PRIVATE _vpcsappp := 0
          IF !IsMagPNab()
@@ -242,48 +206,8 @@ FUNCTION Get1_95()
             READ
             _Marza := 0; _TMarza := "A"; _VPC := _NC
          ENDIF // magacin po nc
-      ENDIF
    ELSE    // ako je gVarEv=="2" tj. bez cijena
       READ
-   ENDIF
-
-   IF glEkonomat
-      _Marza := 0; _TMarza := "A"
-      IF !IsPDV()
-         _mpcsapp := 0
-      ENDIF
-      _MKonto := _Idkonto2;_MU_I := "5"     // izlaz iz magacina
-      _PKonto := ""; _PU_I := ""
-      IF lGenStavke
-         pIzgSt := .T.
-         // viçe od jedne stavke
-         FOR i := 1 TO Len( aNabavke ) -1
-            // generiçi sve izuzev posljednje
-            APPEND BLANK
-            _error    := IF( _error <> "1", "0", _error )
-            _rbr      := RedniBroj( nRBr )
-            _nc       := aNabavke[ i, 2 ]
-            _kolicina := aNabavke[ i, 3 ]
-            _vpc      := _nc
-            Gather()
-            ++nRBr
-         NEXT
-         // posljednja je tekua
-         _nc       := aNabavke[ i, 2 ]
-         _kolicina := aNabavke[ i, 3 ]
-         _vpc      := _nc
-      ELSE
-         // jedna ili nijedna
-         IF Len( aNabavke ) > 0
-            // jedna
-            _nc       := aNabavke[ 1, 2 ]
-            _kolicina := aNabavke[ 1, 3 ]
-            _vpc      := _nc
-         ELSE
-            // nije izabrana koliina -> kao da je prekinut unos tipkom Esc
-            RETURN ( K_ESC )
-         ENDIF
-      ENDIF
    ENDIF
 
    IF !IsPDV()

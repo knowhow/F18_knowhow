@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,342 +14,347 @@
 
 
 
-function KalkNabP( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNC, nSNC, dDatNab )
-local npom,fproso
-local nIzlNV
-local nIzlKol
-local nUlNV
-local nUlKol
-local nSkiniKol
-local nZadnjaUNC
+FUNCTION KalkNabP( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNC, nSNC, dDatNab )
 
-nKolicina := 0
+   LOCAL npom, fproso
+   LOCAL nIzlNV
+   LOCAL nIzlKol
+   LOCAL nUlNV
+   LOCAL nUlKol
+   LOCAL nSkiniKol
+   LOCAL nZadnjaUNC
 
-if lAutoObr == .t.
-	// uzmi stanje iz cache tabele
-	if knab_cache( cIdKonto, cIdroba, @nUlKol, @nIzlKol, @nKolicina, ;
-		@nUlNv, @nIzlNv, @nNc ) == 1
-		select kalk_pripr
-		return
-	endif
-endif
+   nKolicina := 0
 
-select kalk
-set order to tag "4"  //idFirma+pkonto+idroba+pu_i+IdVD
-seek cIdFirma+cIdKonto+cIdRoba+chr(254)
-skip -1
+   IF lAutoObr == .T.
+      // uzmi stanje iz cache tabele
+      IF knab_cache( cIdKonto, cIdroba, @nUlKol, @nIzlKol, @nKolicina, ;
+            @nUlNv, @nIzlNv, @nNc ) == 1
+         SELECT kalk_pripr
+         RETURN
+      ENDIF
+   ENDIF
 
-if cIdfirma + cIdkonto + cIdroba == idfirma + pkonto + idroba .and. _datdok < datdok
-    Beep(2)
-    Msg("Postoji dokument "+idfirma+"-"+idvd+"-"+brdok+" na datum: "+dtoc(datdok),4)
-    _ERROR:="1"
-endif
+   SELECT kalk
+   SET ORDER TO TAG "4"  // idFirma+pkonto+idroba+pu_i+IdVD
+   SEEK cIdFirma + cIdKonto + cIdRoba + Chr( 254 )
+   SKIP -1
 
-nLen:=1
+   IF cIdfirma + cIdkonto + cIdroba == idfirma + pkonto + idroba .AND. _datdok < datdok
+      Beep( 2 )
+      Msg( "Postoji dokument " + idfirma + "-" + idvd + "-" + brdok + " na datum: " + DToC( datdok ), 4 )
+      _ERROR := "1"
+   ENDIF
 
-nKolicina:=0
+   nLen := 1
 
-// ukupna izlazna nabavna vrijednost
-nIzlNV:=0  
+   nKolicina := 0
 
-// ukupna izlazna kolicina
-nIzlKol:=0  
-nUlNV:=0
+   // ukupna izlazna nabavna vrijednost
+   nIzlNV := 0
 
-// ulazna kolicina
-nUlKol:=0  
-nZadnjaUNC := 0
+   // ukupna izlazna kolicina
+   nIzlKol := 0
+   nUlNV := 0
 
-//  ovo je prvi prolaz
-hseek cIdFirma+cIdKonto+cIdRoba
+   // ulazna kolicina
+   nUlKol := 0
+   nZadnjaUNC := 0
 
-do while !eof() .and. cIdFirma+cIdKonto+cIdroba==idFirma+pkonto+idroba .and. _datdok >= datdok
+   // ovo je prvi prolaz
+   hseek cIdFirma + cIdKonto + cIdRoba
 
-  if pu_i=="1" .or. pu_i=="5"
-    if (pu_i=="1" .and. kolicina>0) .or. (pu_i=="5" .and. kolicina<0)
-      nKolicina += abs(kolicina)       // rad metode prve i zadnje nc moramo
-      nUlKol    += abs(kolicina)       // sve sto udje u magacin strpati pod
-      nUlNV     += (abs(kolicina)*nc)  // ulaznom kolicinom
+   DO WHILE !Eof() .AND. cIdFirma + cIdKonto + cIdroba == idFirma + pkonto + idroba .AND. _datdok >= datdok
 
-      if idvd $ "10#16#96"
-      	nZadnjaUNC := nc
-      endif
+      IF pu_i == "1" .OR. pu_i == "5"
+         IF ( pu_i == "1" .AND. kolicina > 0 ) .OR. ( pu_i == "5" .AND. kolicina < 0 )
+            nKolicina += Abs( kolicina )       // rad metode prve i zadnje nc moramo
+            nUlKol    += Abs( kolicina )       // sve sto udje u magacin strpati pod
+            nUlNV     += ( Abs( kolicina ) * nc )  // ulaznom kolicinom
 
-    else
-      nKolicina -= abs(kolicina)
-      nIzlKol   += abs(kolicina)
-      nIzlNV    += (abs(kolicina)*nc)
-    endif
-  elseif pu_i=="I"
-     nKolicina-=gkolicin2
-     nIzlKol+=gkolicin2
-     nIzlNV+=nc*gkolicin2
-  endif
-  skip
+            IF idvd $ "10#16#96"
+               nZadnjaUNC := nc
+            ENDIF
 
-enddo //  ovo je prvi prolaz
+         ELSE
+            nKolicina -= Abs( kolicina )
+            nIzlKol   += Abs( kolicina )
+            nIzlNV    += ( Abs( kolicina ) * nc )
+         ENDIF
+      ELSEIF pu_i == "I"
+         nKolicina -= gkolicin2
+         nIzlKol += gkolicin2
+         nIzlNV += nc * gkolicin2
+      ENDIF
+      SKIP
 
-// prva nabavka  se prva skida sa stanja
-if gMetodaNc=="3"
-  hseek cIdFirma+cIdKonto+cIdRoba
-  nSkiniKol:=nIzlKol+_Kolicina // skini sa stanja ukupnu izlaznu kolicinu+tekucu kolicinu
-  nNabVr:=0  // stanje nabavne vrijednosti
-  do while !eof() .and. cIdFirma+cIdKonto+cIdRoba==idFirma+pkonto+idroba .and. _datdok >= datdok
+   ENDDO // ovo je prvi prolaz
 
-    if pu_i=="1" .or. pu_i=="5"
-      if (pu_i=="1" .and. kolicina>0) .or. (pu_i=="5" .and. kolicina<0)
-           if nSkiniKol>abs(kolicina)
-             nNabVr   +=abs(kolicina*nc)
-             nSkinikol-=abs(kolicina)
-           else
-             nNabVr   +=abs(nSkiniKol*nc)
-             nSkinikol:=0
-             dDatNab:=datdok
-             nKolZN:=nSkiniKol
-             exit // uzeta je potrebna nabavka, izadji iz do while
-           endif
-       endif
-    elseif pu_i=="I" .and.  gkolicin2<0   // IP - storno izlaz
+   // prva nabavka  se prva skida sa stanja
+   IF gMetodaNc == "3"
+      hseek cIdFirma + cIdKonto + cIdRoba
+      nSkiniKol := nIzlKol + _Kolicina // skini sa stanja ukupnu izlaznu kolicinu+tekucu kolicinu
+      nNabVr := 0  // stanje nabavne vrijednosti
+      DO WHILE !Eof() .AND. cIdFirma + cIdKonto + cIdRoba == idFirma + pkonto + idroba .AND. _datdok >= datdok
 
-           if nSkiniKol>abs(gKolicin2)
-             nNabVr   +=abs(gkolicin2*nc)
-             nSkinikol-=abs(gkolicin2)
-           else
-             nNabVr   +=abs(nSkiniKol*nc)
-             nSkinikol:=0
-             dDatNab:=datdok
-             nKolZN:=nSkiniKol
-             exit // uzeta je potrebna nabavka, izadji iz do while
-           endif
+         IF pu_i == "1" .OR. pu_i == "5"
+            IF ( pu_i == "1" .AND. kolicina > 0 ) .OR. ( pu_i == "5" .AND. kolicina < 0 )
+               IF nSkiniKol > Abs( kolicina )
+                  nNabVr   += Abs( kolicina * nc )
+                  nSkinikol -= Abs( kolicina )
+               ELSE
+                  nNabVr   += Abs( nSkiniKol * nc )
+                  nSkinikol := 0
+                  dDatNab := datdok
+                  nKolZN := nSkiniKol
+                  EXIT // uzeta je potrebna nabavka, izadji iz do while
+               ENDIF
+            ENDIF
+         ELSEIF pu_i == "I" .AND.  gkolicin2 < 0   // IP - storno izlaz
 
-    endif
-    skip
-  enddo //  ovo je drugi prolaz , metoda "3"
+            IF nSkiniKol > Abs( gKolicin2 )
+               nNabVr   += Abs( gkolicin2 * nc )
+               nSkinikol -= Abs( gkolicin2 )
+            ELSE
+               nNabVr   += Abs( nSkiniKol * nc )
+               nSkinikol := 0
+               dDatNab := datdok
+               nKolZN := nSkiniKol
+               EXIT // uzeta je potrebna nabavka, izadji iz do while
+            ENDIF
 
-  if _kolicina<>0
-    nNC:=(nNabVr-nIzlNV)/_kolicina   // nabavna cijena po metodi prve
-  else
-    nNC:=0
-  endif
-endif
+         ENDIF
+         SKIP
+      ENDDO // ovo je drugi prolaz , metoda "3"
 
-// metoda zadnje nabavne cijene: zadnja nabavka se prva skida sa stanja
+      IF _kolicina <> 0
+         nNC := ( nNabVr - nIzlNV ) / _kolicina   // nabavna cijena po metodi prve
+      ELSE
+         nNC := 0
+      ENDIF
+   ENDIF
 
-if gMetodaNc == "1"
+   // metoda zadnje nabavne cijene: zadnja nabavka se prva skida sa stanja
 
-  seek cIdFirma+cIdKonto+cIdRoba+chr(254)
-  nSkiniKol:=nIzlKol+_Kolicina // skini sa stanja ukupnu izlaznu kolicinu+tekucu kolicinu
-  nNabVr:=0  // stanje nabavne vrijednosti
-  skip -1
-  do while !bof() .and. cIdFirma+cIdKonto+cIdRoba==idFirma+pkonto+idroba
+   IF gMetodaNc == "1"
 
-    if _datdok<=datdok // preskaci novije datume
-      skip -1
-      loop
-    endif
+      SEEK cIdFirma + cIdKonto + cIdRoba + Chr( 254 )
+      nSkiniKol := nIzlKol + _Kolicina // skini sa stanja ukupnu izlaznu kolicinu+tekucu kolicinu
+      nNabVr := 0  // stanje nabavne vrijednosti
+      SKIP -1
+      DO WHILE !Bof() .AND. cIdFirma + cIdKonto + cIdRoba == idFirma + pkonto + idroba
 
-    if pu_i=="1" .or. pu_i=="5"
-      if (pu_i=="1" .and. kolicina>0) .or. (pu_i=="5" .and. kolicina<0) // ulaz
-           if nSkiniKol>abs(kolicina)
-             nNabVr   +=abs(kolicina*nc)
-             nSkinikol-=abs(kolicina)
-           else
-             nNabVr   +=abs(nSkiniKol*nc)
-             nSkinikol:=0
-             dDatNab:=datdok
-             nKolZN:=nSkiniKol
-             exit // uzeta je potrebna nabavka, izadji iz do while
-           endif
-      endif
-    elseif (pu_i=="I"  .and. gkolicin2<0)
-           if nSkiniKol>abs(gkolicin2)
-             nNabVr   +=abs(gkolicin2*nc)
-             nSkinikol-=abs(gkolicin2)
-           else
-             nNabVr   +=abs(nSkiniKol*nc)
-             nSkinikol:=0
-             dDatNab:=datdok
-             nKolZN:=nSkiniKol
-             exit // uzeta je potrebna nabavka, izadji iz do while
-           endif
-    endif
-    skip -1
-  enddo //  ovo je drugi prolaz , metoda "1"
+         IF _datdok <= datdok // preskaci novije datume
+            SKIP -1
+            LOOP
+         ENDIF
 
-  if _kolicina<>0
-    nNC:=(nNabVr-nIzlNV)/_kolicina   // nabavna cijena po metodi zadnje
-  else
-    nNC:=0
-  endif
-endif
+         IF pu_i == "1" .OR. pu_i == "5"
+            IF ( pu_i == "1" .AND. kolicina > 0 ) .OR. ( pu_i == "5" .AND. kolicina < 0 ) // ulaz
+               IF nSkiniKol > Abs( kolicina )
+                  nNabVr   += Abs( kolicina * nc )
+                  nSkinikol -= Abs( kolicina )
+               ELSE
+                  nNabVr   += Abs( nSkiniKol * nc )
+                  nSkinikol := 0
+                  dDatNab := datdok
+                  nKolZN := nSkiniKol
+                  EXIT // uzeta je potrebna nabavka, izadji iz do while
+               ENDIF
+            ENDIF
+         ELSEIF ( pu_i == "I"  .AND. gkolicin2 < 0 )
+            IF nSkiniKol > Abs( gkolicin2 )
+               nNabVr   += Abs( gkolicin2 * nc )
+               nSkinikol -= Abs( gkolicin2 )
+            ELSE
+               nNabVr   += Abs( nSkiniKol * nc )
+               nSkinikol := 0
+               dDatNab := datdok
+               nKolZN := nSkiniKol
+               EXIT // uzeta je potrebna nabavka, izadji iz do while
+            ENDIF
+         ENDIF
+         SKIP -1
+      ENDDO // ovo je drugi prolaz , metoda "1"
 
-if round(nKolicina, 5)==0
- nSNC:=0
-else
- nSNC:=(nUlNV-nIzlNV)/nKolicina
-endif
+      IF _kolicina <> 0
+         nNC := ( nNabVr - nIzlNV ) / _kolicina   // nabavna cijena po metodi zadnje
+      ELSE
+         nNC := 0
+      ENDIF
+   ENDIF
 
-// ako se koristi kontrola NC
-if gNC_ctrl > 0 .and. nSNC <> 0 .and. nZadnjaUNC <> 0
+   IF Round( nKolicina, 5 ) == 0
+      nSNC := 0
+   ELSE
+      nSNC := ( nUlNV - nIzlNV ) / nKolicina
+   ENDIF
+
+   // ako se koristi kontrola NC
+   IF gNC_ctrl > 0 .AND. nSNC <> 0 .AND. nZadnjaUNC <> 0
 	
-	nTmp := ROUND( nSNC, 4 ) - ROUND( nZadnjaUNC, 4 )
-	nOdst := ( nTmp / ROUND( nZadnjaUNC, 4 )) * 100
+      nTmp := Round( nSNC, 4 ) - Round( nZadnjaUNC, 4 )
+      nOdst := ( nTmp / Round( nZadnjaUNC, 4 ) ) * 100
 
-	if ABS(nOdst) > gNC_ctrl
+      IF Abs( nOdst ) > gNC_ctrl
 		
-		Beep(4)
- 		clear typeahead
+         Beep( 4 )
+         CLEAR TYPEAHEAD
 
-		msgbeep("Odstupanje u odnosu na zadnji ulaz je#" + ;
-			ALLTRIM(STR(ABS(nOdst))) + " %" + "#" + ;
-			"artikal: " + ALLTRIM(_idroba) + " " + ;
-			PADR( roba->naz, 15 ) + " nc:" + ;
-			ALLTRIM(STR( nSNC, 12, 2 )) )
+         msgbeep( "Odstupanje u odnosu na zadnji ulaz je#" + ;
+            AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;
+            "artikal: " + AllTrim( _idroba ) + " " + ;
+            PadR( roba->naz, 15 ) + " nc:" + ;
+            AllTrim( Str( nSNC, 12, 2 ) ) )
 		
-		//a_nc_ctrl( @aNC_ctrl, idroba, nKolicina, ;
-		//	nSNC, nZadnjaUNC )
+         // a_nc_ctrl( @aNC_ctrl, idroba, nKolicina, ;
+         // nSNC, nZadnjaUNC )
 		
-		if Pitanje(,"Napraviti korekciju NC (D/N)?", "N") == "D"
+         IF Pitanje(, "Napraviti korekciju NC (D/N)?", "N" ) == "D"
 			
-			nTmp_n_stanje := ( nKolicina - _kolicina )
-			nTmp_n_nv := ( nTmp_n_stanje * nZadnjaUNC )
-			nTmp_s_nv := ( nKolicina * nSNC )
+            nTmp_n_stanje := ( nKolicina - _kolicina )
+            nTmp_n_nv := ( nTmp_n_stanje * nZadnjaUNC )
+            nTmp_s_nv := ( nKolicina * nSNC )
 			
-			nSNC := ( ( nTmp_s_nv - nTmp_n_nv ) / _kolicina ) 
+            nSNC := ( ( nTmp_s_nv - nTmp_n_nv ) / _kolicina )
 
-		endif
+         ENDIF
 
-	endif
-endif
+      ENDIF
+   ENDIF
 
-nKolicina:=round(nKolicina,4)
-select kalk_pripr
-return
+   nKolicina := Round( nKolicina, 4 )
+   SELECT kalk_pripr
 
-
-
-
-function MarzaVP(cIdVd, lNaprijed)
-local SKol:=0
+   RETURN
 
 
-if (_nc==0)
-  _nc:=9999
-endif
 
-if gKalo=="1" .and. cIdvd=="10"
- Skol:=_Kolicina-_GKolicina-_GKolicin2
-else
- Skol:=_Kolicina
-endif
 
-if  _Marza==0 .or. _VPC<>0 .and. !lNaprijed
-  // unazad formiraj marzu
-  nMarza:=_VPC - _NC
-  if _TMarza=="%"
-     _Marza:=100*(_VPC/_NC-1)
-  elseif _TMarza=="A"
-    _Marza:=nMarza
-  elseif _TMarza=="U"
-    _Marza:=nMarza*SKol
-  endif
+FUNCTION MarzaVP( cIdVd, lNaprijed )
 
-elseif round(_VPC,4)==0  .or. lNaprijed
-  // formiraj marzu "unaprijed" od nc do vpc
-  if _TMarza=="%"
-     nMarza:=_Marza/100*_NC
-  elseif _TMarza=="A"
-     nMarza:=_Marza
-  elseif _TMarza=="U"
-     nMarza:=_Marza/SKol
-  endif
-  _VPC:=round((nMarza+_NC), 2)
-  
-else
-  if cIdvd $ "14#94"
-     nMarza:=_VPC * (1-_Rabatv/100) - _NC
-  else
-   nMarza:=_VPC - _NC
-  endif
-endif
-AEVAL(GetList,{|o| o:display()})
-return
-*}
+   LOCAL SKol := 0
+
+   IF ( _nc == 0 )
+      _nc := 9999
+   ENDIF
+
+   IF gKalo == "1" .AND. cIdvd == "10"
+      Skol := _Kolicina - _GKolicina - _GKolicin2
+   ELSE
+      Skol := _Kolicina
+   ENDIF
+
+   IF  _Marza == 0 .OR. _VPC <> 0 .AND. !lNaprijed
+      // unazad formiraj marzu
+      nMarza := _VPC - _NC
+      IF _TMarza == "%"
+         _Marza := 100 * ( _VPC / _NC - 1 )
+      ELSEIF _TMarza == "A"
+         _Marza := nMarza
+      ELSEIF _TMarza == "U"
+         _Marza := nMarza * SKol
+      ENDIF
+
+   ELSEIF Round( _VPC, 4 ) == 0  .OR. lNaprijed
+      // formiraj marzu "unaprijed" od nc do vpc
+      IF _TMarza == "%"
+         nMarza := _Marza / 100 * _NC
+      ELSEIF _TMarza == "A"
+         nMarza := _Marza
+      ELSEIF _TMarza == "U"
+         nMarza := _Marza / SKol
+      ENDIF
+      _VPC := Round( ( nMarza + _NC ), 2 )
+
+   ELSE
+      IF cIdvd $ "14#94"
+         nMarza := _VPC * ( 1 -_Rabatv / 100 ) - _NC
+      ELSE
+         nMarza := _VPC - _NC
+      ENDIF
+   ENDIF
+   AEval( GetList, {| o| o:display() } )
+
+   RETURN
+// }
 
 
 /*! \fn Marza(fmarza)
  *  \brief Proracun veleprodajne marze
  */
 
-function Marza(fmarza)
-*{
-local SKol:=0,nPPP
+FUNCTION Marza( fmarza )
 
-if fmarza==NIL
-  fMarza:=" "
-endif
+   // {
+   LOCAL SKol := 0, nPPP
 
-if _nc==0
-  _nc:=9999
-endif
+   IF fmarza == NIL
+      fMarza := " "
+   ENDIF
 
-if roba->tip $ "VKX"
-  nPPP:=1/(1+tarifa->opp/100)
-  if roba->tip="X"; nPPP:=nPPP*_mpcsapp/_vpc; endif
-else
-  nPPP:=1
-endif
+   IF _nc == 0
+      _nc := 9999
+   ENDIF
+
+   IF roba->tip $ "VKX"
+      nPPP := 1 / ( 1 + tarifa->opp / 100 )
+      IF roba->tip = "X"; nPPP := nPPP * _mpcsapp / _vpc; ENDIF
+   ELSE
+      nPPP := 1
+   ENDIF
 
 
-if gKalo=="1" .and. _idvd=="10"
- Skol:=_Kolicina-_GKolicina-_GKolicin2
-else
- Skol:=_Kolicina
-endif
+   IF gKalo == "1" .AND. _idvd == "10"
+      Skol := _Kolicina - _GKolicina - _GKolicin2
+   ELSE
+      Skol := _Kolicina
+   ENDIF
 
-if  _Marza==0 .or. _VPC<>0 .and. empty(fMarza)
-  nMarza:=_VPC*nPPP-_NC
-  if roba->tip="X"
-    nMarza -= roba->mpc-_VPC
-    // nmarza:= _vpc*npp-_nc - (roba->mpc-_vpc)
-    // nmarza/_nc := (_vpc*nppp/nc-1 - (roba->mpc-_Vpc)/nc)
-    // nmarza/_nc := ( (_vpc*nppp - roba->mpc -_vpc)/_nc-1)
-  endif
-  if _TMarza=="%"
-     if roba->tip="X"
-      _Marza:=100*( (_VPC*nPPP - roba->mpc - _vpc)/_NC-1)
-     else
-      _Marza:=100*(_VPC*nPPP/_NC-1)
-     endif
-  elseif _TMarza=="A"
-    _Marza:=nMarza
-  elseif _TMarza=="U"
-    _Marza:=nMarza*SKol
-  endif
+   IF  _Marza == 0 .OR. _VPC <> 0 .AND. Empty( fMarza )
+      nMarza := _VPC * nPPP - _NC
+      IF roba->tip = "X"
+         nMarza -= roba->mpc - _VPC
+         // nmarza:= _vpc*npp-_nc - (roba->mpc-_vpc)
+         // nmarza/_nc := (_vpc*nppp/nc-1 - (roba->mpc-_Vpc)/nc)
+         // nmarza/_nc := ( (_vpc*nppp - roba->mpc -_vpc)/_nc-1)
+      ENDIF
+      IF _TMarza == "%"
+         IF roba->tip = "X"
+            _Marza := 100 * ( ( _VPC * nPPP - roba->mpc - _vpc ) / _NC - 1 )
+         ELSE
+            _Marza := 100 * ( _VPC * nPPP / _NC - 1 )
+         ENDIF
+      ELSEIF _TMarza == "A"
+         _Marza := nMarza
+      ELSEIF _TMarza == "U"
+         _Marza := nMarza * SKol
+      ENDIF
 
-elseif round(_VPC,4)==0  .or. !empty(fMarza)
-  if _TMarza=="%"
-     nMarza:=_Marza/100*_NC
-  elseif _TMarza=="A"
-     nMarza:=_Marza
-  elseif _TMarza=="U"
-     nMarza:=_Marza/SKol
-  endif
-  _VPC:=round((nMarza+_NC)/nPPP,2)
-else
-  if _idvd $ "14#94"
-   if roba->tip=="V"
-     nMarza:=_VPC*nPPP-_VPC*_Rabatv/100-_NC
-   else
-     nMarza:=_VPC*nPPP*(1-_Rabatv/100)-_NC
-   endif
-  else
-   nMarza:=_VPC*nPPP-_NC
-  endif
-endif
-AEVAL(GetList,{|o| o:display()})
-return
-*}
+   ELSEIF Round( _VPC, 4 ) == 0  .OR. !Empty( fMarza )
+      IF _TMarza == "%"
+         nMarza := _Marza / 100 * _NC
+      ELSEIF _TMarza == "A"
+         nMarza := _Marza
+      ELSEIF _TMarza == "U"
+         nMarza := _Marza / SKol
+      ENDIF
+      _VPC := Round( ( nMarza + _NC ) / nPPP, 2 )
+   ELSE
+      IF _idvd $ "14#94"
+         IF roba->tip == "V"
+            nMarza := _VPC * nPPP - _VPC * _Rabatv / 100 -_NC
+         ELSE
+            nMarza := _VPC * nPPP * ( 1 -_Rabatv / 100 ) -_NC
+         ENDIF
+      ELSE
+         nMarza := _VPC * nPPP - _NC
+      ENDIF
+   ENDIF
+   AEval( GetList, {| o| o:display() } )
+
+   RETURN
+// }
 
 
 
@@ -357,101 +362,105 @@ return
  *  \brief Fakticka veleprodajna cijena
  */
 
-function FaktVPC(nVPC,cseek,dDatum)
-*{
-local nOrder
+FUNCTION FaktVPC( nVPC, cseek, dDatum )
 
-if koncij->naz=="V2" .and. roba->(fieldpos("vpc2"))<>0
-	nVPC:=roba->vpc2
-elseif koncij->naz=="P2"
-	nVPC:=roba->plc
-elseif roba->(fieldpos("vpc"))<>0
-	nVPC:=roba->vpc
-else
-	nVPC:=0
-endif
+   // {
+   LOCAL nOrder
 
-select kalk
-PushWa()
-set filter to
-//nOrder:=indexord()
-set order to tag "3" //idFirma+mkonto+idroba+dtos(datdok)
-seek cseek+"X"
-skip -1
+   IF koncij->naz == "V2" .AND. roba->( FieldPos( "vpc2" ) ) <> 0
+      nVPC := roba->vpc2
+   ELSEIF koncij->naz == "P2"
+      nVPC := roba->plc
+   ELSEIF roba->( FieldPos( "vpc" ) ) <> 0
+      nVPC := roba->vpc
+   ELSE
+      nVPC := 0
+   ENDIF
+
+   SELECT kalk
+   PushWa()
+   SET FILTER TO
+   // nOrder:=indexord()
+   SET ORDER TO TAG "3" // idFirma+mkonto+idroba+dtos(datdok)
+   SEEK cseek + "X"
+   SKIP -1
 
 
-do while !bof() .and. idfirma+mkonto+idroba==cseek
+   DO WHILE !Bof() .AND. idfirma + mkonto + idroba == cseek
 
-if dDatum<>NIL .and. dDatum<datdok
-	skip -1
-	loop
-endif
+      IF dDatum <> NIL .AND. dDatum < datdok
+         SKIP -1
+         LOOP
+      ENDIF
 
-//if mu_i=="1" //.or. mu_i=="5"
-if idvd $ "RN#10#16#12#13"
-	if koncij->naz<>"P2"
-        	nVPC:=vpc
-      	endif
-      	exit
-elseif idvd=="18"
-	nVPC:=mpcsapp+vpc
-      	exit
-endif
-skip -1
-enddo
-PopWa()
-//dbsetorder(nOrder)
-return
-*}
+      // if mu_i=="1" //.or. mu_i=="5"
+      IF idvd $ "RN#10#16#12#13"
+         IF koncij->naz <> "P2"
+            nVPC := vpc
+         ENDIF
+         EXIT
+      ELSEIF idvd == "18"
+         nVPC := mpcsapp + vpc
+         EXIT
+      ENDIF
+      SKIP -1
+   ENDDO
+   PopWa()
+   // dbsetorder(nOrder)
+
+   RETURN
+// }
 
 
 
 /*! \fn PratiKMag(cIdFirma,cIdKonto,cIdRoba)
  *  \brief Prati karticu magacina
  */
- 
-function PratiKMag(cIdFirma,cIdKonto,cIdRoba)
-*{
-local nPom
-select kalk ; set order to tag "3"
-hseek cIdFirma+cIdKonto+cIdRoba
-//"KALKi3","idFirma+mkonto+idroba+dtos(datdok)+PODBR+MU_I+IdVD",KUMPATH+"KALK")
 
-nVPV:=0
-nKolicina:=0
-do while !eof() .and.  cIdFirma+cIdKonto+cIdRoba==idfirma+idkonto+idroba
+FUNCTION PratiKMag( cIdFirma, cIdKonto, cIdRoba )
 
-   dDatDok:=datdok
-   do while !eof() .and.  cIdFirma+cIdKonto+cIdRoba==idfirma+idkonto+idroba ;
-                   .and. datdok==dDatDok
+   // {
+   LOCAL nPom
+   SELECT kalk ; SET ORDER TO TAG "3"
+   hseek cIdFirma + cIdKonto + cIdRoba
+   // "KALKi3","idFirma+mkonto+idroba+dtos(datdok)+PODBR+MU_I+IdVD",KUMPATH+"KALK")
+
+   nVPV := 0
+   nKolicina := 0
+   DO WHILE !Eof() .AND.  cIdFirma + cIdKonto + cIdRoba == idfirma + idkonto + idroba
+
+      dDatDok := datdok
+      DO WHILE !Eof() .AND.  cIdFirma + cIdKonto + cIdRoba == idfirma + idkonto + idroba ;
+            .AND. datdok == dDatDok
 
 
-       nVPC:=vpc   // veleprodajna cijena
-       if mu_i=="1"
-          nPom:=kolicina-gkolicina-gkolicin2
-          nKolicina+= nPom
-          nVPV+=nPom*vpc
-       elseif mu_i=="3"
-          nPom:=kolicina
-          nVPV+=nPom*vpc
-          // kod ove kalk mpcsapp predstavlja staru vpc
-          nVPC:=vpc+mpcsapp
-       elseif mu_i=="5"
-          nPom:=kolicina
-          nVPV-=nPom*VPC
-       endif
+         nVPC := vpc   // veleprodajna cijena
+         IF mu_i == "1"
+            nPom := kolicina - gkolicina - gkolicin2
+            nKolicina += nPom
+            nVPV += nPom * vpc
+         ELSEIF mu_i == "3"
+            nPom := kolicina
+            nVPV += nPom * vpc
+            // kod ove kalk mpcsapp predstavlja staru vpc
+            nVPC := vpc + mpcsapp
+         ELSEIF mu_i == "5"
+            nPom := kolicina
+            nVPV -= nPom * VPC
+         ENDIF
 
-       if round(nKolicina,4)<>0
-          if round(nVPV/nKolicina,2) <> round(nVPC,2)
+         IF Round( nKolicina, 4 ) <> 0
+            IF Round( nVPV / nKolicina, 2 ) <> Round( nVPC, 2 )
 
-          endif
-       endif
+            ENDIF
+         ENDIF
 
-   enddo
+      ENDDO
 
-enddo
-return
-*}
+   ENDDO
+
+   RETURN
+// }
 
 
 
@@ -459,28 +468,30 @@ return
  *  \brief Obavezno setuj VPC
  */
 
-function ObSetVPC(nNovaVrijednost)
-local nArr := SELECT()
-local _rec
-private cPom:="VPC"
-  
-if koncij->naz=="P2"
-	cPom:="PLC"
-elseif koncij->naz=="V2"
-    cPom:="VPC2"
-else
-    cPom:="VPC"
-endif
-  
-select roba
-_rec := dbf_get_rec()
+FUNCTION ObSetVPC( nNovaVrijednost )
 
-_rec[ LOWER( cPom ) ] := nNovaVrijednost
+   LOCAL nArr := Select()
+   LOCAL _rec
+   PRIVATE cPom := "VPC"
 
-update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
+   IF koncij->naz == "P2"
+      cPom := "PLC"
+   ELSEIF koncij->naz == "V2"
+      cPom := "VPC2"
+   ELSE
+      cPom := "VPC"
+   ENDIF
 
-select (nArr)
-return .t.
+   SELECT roba
+   _rec := dbf_get_rec()
+
+   _rec[ Lower( cPom ) ] := nNovaVrijednost
+
+   update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
+
+   SELECT ( nArr )
+
+   RETURN .T.
 
 
 
@@ -489,20 +500,22 @@ return .t.
  *  \brief Za zadani magacinski konto daje odgovarajucu VPC iz sifrarnika robe
  */
 
-function UzmiVPCSif(cMKonto,lKoncij)
-*{
- LOCAL nCV:=0, nArr:=SELECT()
- IF lKoncij=NIL; lKoncij:=.f.; ENDIF
-  SELECT KONCIJ
-   nRec:=RECNO()
-    SEEK TRIM(cMKonto)
-    nCV:=KoncijVPC()
+FUNCTION UzmiVPCSif( cMKonto, lKoncij )
+
+   // {
+   LOCAL nCV := 0, nArr := Select()
+   IF lKoncij = NIL; lKoncij := .F. ; ENDIF
+   SELECT KONCIJ
+   nRec := RecNo()
+   SEEK Trim( cMKonto )
+   nCV := KoncijVPC()
    IF !lKoncij
-     GO (nRec)
+      GO ( nRec )
    ENDIF
-  SELECT (nArr)
-return nCV
-*}
+   SELECT ( nArr )
+
+   RETURN nCV
+// }
 
 
 
@@ -510,103 +523,100 @@ return nCV
  *  \brief Proracun nabavne cijene za ulaznu kalkulaciju 10
  */
 
-function NabCj()
-*{
-local Skol
+FUNCTION NabCj()
 
-if gKalo=="1"
- Skol:=_Kolicina-_GKolicina-_GKolicin2
-else
- Skol:=_Kolicina
-endif
+   // {
+   LOCAL Skol
 
-
-if _TPrevoz=="%"
-  nPrevoz:=_Prevoz/100*_FCj2
-elseif _TPrevoz=="A"
-  nPrevoz:=_Prevoz
-elseif _TPrevoz=="U"
-  nPrevoz:=_Prevoz/SKol
-elseif _TPrevoz=="R"
-  nPrevoz:=0
-else
-  nPrevoz:=0
-endif
-if _TCarDaz=="%"
-  nCarDaz:=_CarDaz/100*_FCj2
-elseif _TCarDaZ=="A"
- nCarDaz:=_CarDaz
-elseif _TCArDaz=="U"
- nCarDaz:=_CarDaz/SKol
-elseif _TCArDaz=="R"
- nCarDaz:=0
-else
- nCardaz:=0
-endif
-if _TZavTr=="%"
-  nZavTr:=_ZavTr/100*_FCj2
-elseif _TZavTr=="A"
-  nZavTr:=_ZavTr
-elseif _TZavTr=="U"
-  nZavTr:=_ZavTr/SKol
-elseif _TZavTr=="R"
-  nZavTr:=0
-else
-  nZavTr:=0
-endif
-if _TBankTr=="%"
-   nBankTr:=_BankTr/100*_FCj2
-elseif _TBankTr=="A"
-   nBankTr:=_BankTr
-elseif _TBankTr=="U"
-   nBankTr:=_BankTr/SKol
-else
-   nBankTr:=0
-endif
-if _TSpedTr=="%"
-   nSpedTr:=_SpedTr/100*_FCj2
-elseif _TSpedTr=="A"
-   nSpedTr:=_SpedTr
-elseif _TSpedTr=="U"
-   nSpedTr:=_SpedTr/SKol
-else
-   nSpedTr:=0
-endif
-
-_NC:=_FCj2+nPrevoz+nCarDaz+nBanktr+nSpedTr+nZavTr
-
-return
-*}
+   IF gKalo == "1"
+      Skol := _Kolicina - _GKolicina - _GKolicin2
+   ELSE
+      Skol := _Kolicina
+   ENDIF
 
 
+   IF _TPrevoz == "%"
+      nPrevoz := _Prevoz / 100 * _FCj2
+   ELSEIF _TPrevoz == "A"
+      nPrevoz := _Prevoz
+   ELSEIF _TPrevoz == "U"
+      nPrevoz := _Prevoz / SKol
+   ELSEIF _TPrevoz == "R"
+      nPrevoz := 0
+   ELSE
+      nPrevoz := 0
+   ENDIF
+   IF _TCarDaz == "%"
+      nCarDaz := _CarDaz / 100 * _FCj2
+   ELSEIF _TCarDaZ == "A"
+      nCarDaz := _CarDaz
+   ELSEIF _TCArDaz == "U"
+      nCarDaz := _CarDaz / SKol
+   ELSEIF _TCArDaz == "R"
+      nCarDaz := 0
+   ELSE
+      nCardaz := 0
+   ENDIF
+   IF _TZavTr == "%"
+      nZavTr := _ZavTr / 100 * _FCj2
+   ELSEIF _TZavTr == "A"
+      nZavTr := _ZavTr
+   ELSEIF _TZavTr == "U"
+      nZavTr := _ZavTr / SKol
+   ELSEIF _TZavTr == "R"
+      nZavTr := 0
+   ELSE
+      nZavTr := 0
+   ENDIF
+   IF _TBankTr == "%"
+      nBankTr := _BankTr / 100 * _FCj2
+   ELSEIF _TBankTr == "A"
+      nBankTr := _BankTr
+   ELSEIF _TBankTr == "U"
+      nBankTr := _BankTr / SKol
+   ELSE
+      nBankTr := 0
+   ENDIF
+   IF _TSpedTr == "%"
+      nSpedTr := _SpedTr / 100 * _FCj2
+   ELSEIF _TSpedTr == "A"
+      nSpedTr := _SpedTr
+   ELSEIF _TSpedTr == "U"
+      nSpedTr := _SpedTr / SKol
+   ELSE
+      nSpedTr := 0
+   ENDIF
 
-/*! \fn NabCj2(n1,n2)  
+   _NC := _FCj2 + nPrevoz + nCarDaz + nBanktr + nSpedTr + nZavTr
+
+   RETURN
+// }
+
+
+
+/*! \fn NabCj2(n1,n2)
  *  \param n1 - ukucana NC
  *  \param n2 - izracunata NC
  *  \brief Ova se f-ja koristi samo za 10-ku bez troskova (gVarijanta="1")
  */
 
-function NabCj2(n1,n2)  
+FUNCTION NabCj2( n1, n2 )
 
-IF ROUND(_FCJ, 6)  == 0
-   Alert("Fakturna cijene ne moze biti 0")
-   _FCJ := 1
-   return .f.
-endif
+   IF Round( _FCJ, 6 )  == 0
+      Alert( "Fakturna cijene ne moze biti 0" )
+      _FCJ := 1
+      RETURN .F.
+   ENDIF
 
- IF glEkonomat
+   IF Abs( n1 - n2 ) > 0.00001
+      // tj. ako je ukucana drugacija NC
 
-   _fcj   := _fcj2 := _nc
-   _rabat := 0
+      _rabat := 100 -100 * _NC / _FCJ
+      _FCJ2 := _NC
+      ShowGets()
+   ENDIF
 
- ELSEIF ABS(n1-n2)>0.00001   // tj. ako je ukucana drugacija NC
- 
-   _rabat:=100-100*_NC/_FCJ
-   _FCJ2:=_NC
-   ShowGets()
- ENDIF
-
-return .t.
+   RETURN .T.
 
 
 
@@ -615,42 +625,43 @@ return .t.
  *  \brief Utvrdi varijablu VPC. U sifrarnik staviti novu vrijednost
  */
 
-function SetujVPC(nNovaVrijednost, lUvijek)
-local nVal
-local _vars
+FUNCTION SetujVPC( nNovaVrijednost, lUvijek )
 
-if lUvijek == nil
-	lUvijek := .f.
-endif
+   LOCAL nVal
+   LOCAL _vars
 
-private cPom:="VPC" 
+   IF lUvijek == nil
+      lUvijek := .F.
+   ENDIF
 
-if koncij->naz=="P2"
-   cPom:="plc"
-   nVal:=roba->plc
-elseif koncij->naz=="V2"
-   cPom:="vpc2"
-   nVal:=roba->VPC2
-else
-   cPom:="vpc"
-   nVal:=roba->VPC
-endif
+   PRIVATE cPom := "VPC"
 
-if nVal==0  .or. ABS(round(nVal-nNovaVrijednost, 2)) > 0 .or. lUvijek
- 
-   if gAutoCjen == "D" .and. Pitanje( , "Staviti Cijenu (" + cPom + ")" + " u sifrarnik ?", "D") == "D"
-     select roba
-     
-     _vars := dbf_get_rec()
-     _vars[cPom] := nNovaVrijednost
+   IF koncij->naz == "P2"
+      cPom := "plc"
+      nVal := roba->plc
+   ELSEIF koncij->naz == "V2"
+      cPom := "vpc2"
+      nVal := roba->VPC2
+   ELSE
+      cPom := "vpc"
+      nVal := roba->VPC
+   ENDIF
 
-     update_rec_server_and_dbf("roba", _vars, 1, "FULL" )
+   IF nVal == 0  .OR. Abs( Round( nVal - nNovaVrijednost, 2 ) ) > 0 .OR. lUvijek
 
-     select kalk_pripr
-   endif
- endif
+      IF gAutoCjen == "D" .AND. Pitanje( , "Staviti Cijenu (" + cPom + ")" + " u sifrarnik ?", "D" ) == "D"
+         SELECT roba
 
-return .t.
+         _vars := dbf_get_rec()
+         _vars[ cPom ] := nNovaVrijednost
+
+         update_rec_server_and_dbf( "roba", _vars, 1, "FULL" )
+
+         SELECT kalk_pripr
+      ENDIF
+   ENDIF
+
+   RETURN .T.
 
 
 
@@ -658,22 +669,23 @@ return .t.
  *  \brief Daje odgovarajucu VPC iz sifrarnika robe
  */
 
-function KoncijVPC()
-*{
-// podrazumjeva da je nastimana tabela koncij
-// ------------------------------------------
-if koncij->naz=="P2"
-	return roba->plc
-elseif koncij->naz=="V2"
-	return roba->VPC2
-elseif koncij->naz=="V3"
-	return roba->VPC3
-else
-	return roba->VPC
-endif
+FUNCTION KoncijVPC()
 
-return (nil)
-*}
+   // {
+   // podrazumjeva da je nastimana tabela koncij
+   // ------------------------------------------
+   IF koncij->naz == "P2"
+      RETURN roba->plc
+   ELSEIF koncij->naz == "V2"
+      RETURN roba->VPC2
+   ELSEIF koncij->naz == "V3"
+      RETURN roba->VPC3
+   ELSE
+      RETURN roba->VPC
+   ENDIF
+
+   RETURN ( nil )
+// }
 
 
 
@@ -681,19 +693,21 @@ return (nil)
  *  \brief Preracunava iznos veleprodajne marze
  */
 
-function MMarza()
-*{
-local SKol:=0
-Skol:=Kolicina-GKolicina-GKolicin2
-  if TMarza=="%".or.empty(tmarza)
-     nMarza:=Skol*Marza/100*NC
-  elseif TMarza=="A"
-     nMarza:=Marza*Skol
-  elseif TMarza=="U"
-     nMarza:=Marza
-  endif
-return nMarza
-*}
+FUNCTION MMarza()
+
+   // {
+   LOCAL SKol := 0
+   Skol := Kolicina - GKolicina - GKolicin2
+   IF TMarza == "%" .OR. Empty( tmarza )
+      nMarza := Skol * Marza / 100 * NC
+   ELSEIF TMarza == "A"
+      nMarza := Marza * Skol
+   ELSEIF TMarza == "U"
+      nMarza := Marza
+   ENDIF
+
+   RETURN nMarza
+// }
 
 
 
@@ -701,37 +715,39 @@ return nMarza
  *  \brief Rabat veleprodaje - 14
  */
 
-function PrerRab()
-*{
-local nPrRab
-if cTRabat=="%"
-   nPrRab:=_rabatv
-elseif cTRabat=="A"
-  if _VPC<>0
-   nPrRab:=_RABATV/_VPC*100
-  else
-   nPrRab:=0
-  endif
-elseif cTRabat=="U"
- if _vpc*_kolicina<>0
-   nprRab:=_rabatV/(_vpc*_kolicina)*100
- else
-   nPrRab:=0
- endif
-else
-  return .f.
-endif
-_rabatv:=nPrRab
-cTrabat:="%"
-showgets()
-return .t.
-*}
+FUNCTION PrerRab()
+
+   // {
+   LOCAL nPrRab
+   IF cTRabat == "%"
+      nPrRab := _rabatv
+   ELSEIF cTRabat == "A"
+      IF _VPC <> 0
+         nPrRab := _RABATV / _VPC * 100
+      ELSE
+         nPrRab := 0
+      ENDIF
+   ELSEIF cTRabat == "U"
+      IF _vpc * _kolicina <> 0
+         nprRab := _rabatV / ( _vpc * _kolicina ) * 100
+      ELSE
+         nPrRab := 0
+      ENDIF
+   ELSE
+      RETURN .F.
+   ENDIF
+   _rabatv := nPrRab
+   cTrabat := "%"
+   showgets()
+
+   RETURN .T.
+// }
 
 
 // Validacija u prilikom knjizenja (knjiz.prg) - VALID funkcija u get-u
 
 // Koristi sljedece privatne varijable:
-// nKols   
+// nKols
 // gMetodaNC
 // _TBankTr - "X"  - ne provjeravaj - vrati .t.
 // ---------------------------------------------
@@ -739,105 +755,106 @@ return .t.
 // Nabavna cijena manja od 0 ??
 // Ukupno na stanju samo XX robe !!
 
-function V_KolMag()
+FUNCTION V_KolMag()
 
-if (_nc < 0) .and. !(_idvd $ "11#12#13#22") .or.  _fcj<0 .and. _idvd $ "11#12#13#22"
+   IF ( _nc < 0 ) .AND. !( _idvd $ "11#12#13#22" ) .OR.  _fcj < 0 .AND. _idvd $ "11#12#13#22"
 
- Msg("Nabavna cijena manja od 0 ??")
- _ERROR:="1"
+      Msg( "Nabavna cijena manja od 0 ??" )
+      _ERROR := "1"
 
-endif
+   ENDIF
 
-// usluge
-if roba->tip $ "UTY"; return .t. ; endif
+   // usluge
+   IF roba->tip $ "UTY"; RETURN .T. ; ENDIF
 
-if empty(gMetodaNC) .or. _TBankTR=="X"
-	return .t.
-endif  // bez ograde
+   IF Empty( gMetodaNC ) .OR. _TBankTR == "X"
+      RETURN .T.
+   ENDIF  // bez ograde
 
-if nKolS < _Kolicina
- Beep(4)
- clear typeahead
- Msg("Ukupno na stanju je samo" + str(nKolS, 10, 4) + " robe !!", 6)
- _ERROR:="1"
-endif
+   IF nKolS < _Kolicina
+      Beep( 4 )
+      CLEAR TYPEAHEAD
+      Msg( "Ukupno na stanju je samo" + Str( nKolS, 10, 4 ) + " robe !!", 6 )
+      _ERROR := "1"
+   ENDIF
 
-return .t.
+   RETURN .T.
 
 
 
 /*! \fn V_RabatV()
  *  \brief Ispisuje vrijednost rabata u VP
  */
- 
+
 // Trenutna pozicija u tabeli KONCIJ (na osnovu koncij->naz ispituje cijene)
 // Trenutan pozicija u tabeli ROBA (roba->tip)
 
-function V_RabatV()
-local nPom, nMPCVT
-local nRVPC:=0
-private getlist:={}, cPom:="VPC"
+FUNCTION V_RabatV()
 
-if koncij->naz=="P2"
-   cPom:="PLC"
-elseif koncij->naz=="V2"
-   cPom:="VPC2"
-else
-   cPom:="VPC"
-endif
+   LOCAL nPom, nMPCVT
+   LOCAL nRVPC := 0
+   PRIVATE getlist := {}, cPom := "VPC"
 
-if roba->tip $ "UTY"
-    return .t.
-endif
+   IF koncij->naz == "P2"
+      cPom := "PLC"
+   ELSEIF koncij->naz == "V2"
+      cPom := "VPC2"
+   ELSE
+      cPom := "VPC"
+   ENDIF
 
-nRVPC := KoncijVPC()
-if round(nRVPC-_vpc,4)<>0  .and. gMagacin=="2"
-	if nRVPC==0
-    	Beep(1)
-      	Box(,3,60)
-      	@ m_x+1,m_Y+2 SAY "Roba u sifrarniku ima "+cPom+" = 0 !??"
-      	@ m_x+3,m_y+2 SAY "Unesi "+cPom+" u sifrarnik:" GET _vpc pict picdem
+   IF roba->tip $ "UTY"
+      RETURN .T.
+   ENDIF
 
-      	read
+   nRVPC := KoncijVPC()
+   IF Round( nRVPC - _vpc, 4 ) <> 0  .AND. gMagacin == "2"
+      IF nRVPC == 0
+         Beep( 1 )
+         Box(, 3, 60 )
+         @ m_x + 1, m_Y + 2 SAY "Roba u sifrarniku ima " + cPom + " = 0 !??"
+         @ m_x + 3, m_y + 2 SAY "Unesi " + cPom + " u sifrarnik:" GET _vpc PICT picdem
 
-      	select roba
-		_rec := dbf_get_rec()
+         READ
 
-		_rec[LOWER(cPom)] := _vpc
-		update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
+         SELECT roba
+         _rec := dbf_get_rec()
 
-      	select kalk_pripr
-      	BoxC()
+         _rec[ Lower( cPom ) ] := _vpc
+         update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
 
-   	endif
-endif
- 
-// roba tarife
-if roba->tip=="V" 
-   nMarza:=_VPC/(1+_PORVT)-_VPC*_RabatV/100-_NC
-elseif roba->tip="X"
-   nMarza:=_VPC*(1-_RabatV/100)-_NC- _MPCSAPP/(1+_PORVT)*_porvt
-else
-   nMarza:=_VPC/(1+_PORVT)*(1-_RabatV/100)-_NC
-endif
- 
-if IsPDV()
- 	@ m_x+15,m_y+41  SAY "PC b.pdv.-RAB:"
-else
- 	@ m_x+15,m_y+41  SAY "VPC b.p.-RAB:"
-endif
- 
-if roba->tip=="V"
-   @ m_x+15,col()+1 SAY _Vpc/(1+_PORVT)-_VPC*_RabatV/100 pict picdem
-elseif roba->tip=="X"
-   @ m_x+15,col()+1 SAY _Vpc*(1-_RabatV/100) - _MPCSAPP/(1+_PORVT)*_PORVT pict picdem
-else
-   @ m_x+15,col()+1 SAY _Vpc/(1+_PORVT)*(1-_RabatV/100) pict picdem
-endif
- 
-ShowGets()
+         SELECT kalk_pripr
+         BoxC()
 
-return .t.
+      ENDIF
+   ENDIF
+
+   // roba tarife
+   IF roba->tip == "V"
+      nMarza := _VPC / ( 1 + _PORVT ) -_VPC * _RabatV / 100 -_NC
+   ELSEIF roba->tip = "X"
+      nMarza := _VPC * ( 1 -_RabatV / 100 ) -_NC - _MPCSAPP / ( 1 + _PORVT ) * _porvt
+   ELSE
+      nMarza := _VPC / ( 1 + _PORVT ) * ( 1 -_RabatV / 100 ) -_NC
+   ENDIF
+
+   IF IsPDV()
+      @ m_x + 15, m_y + 41  SAY "PC b.pdv.-RAB:"
+   ELSE
+      @ m_x + 15, m_y + 41  SAY "VPC b.p.-RAB:"
+   ENDIF
+
+   IF roba->tip == "V"
+      @ m_x + 15, Col() + 1 SAY _Vpc / ( 1 + _PORVT ) -_VPC * _RabatV / 100 PICT picdem
+   ELSEIF roba->tip == "X"
+      @ m_x + 15, Col() + 1 SAY _Vpc * ( 1 -_RabatV / 100 ) - _MPCSAPP / ( 1 + _PORVT ) * _PORVT PICT picdem
+   ELSE
+      @ m_x + 15, Col() + 1 SAY _Vpc / ( 1 + _PORVT ) * ( 1 -_RabatV / 100 ) PICT picdem
+   ENDIF
+
+   ShowGets()
+
+   RETURN .T.
 
 
 
@@ -847,396 +864,402 @@ return .t.
 // param nSNC - srednja nabavna cijena
 // param nKolZN - kolicina koja je na stanju od zadnje nabavke
 // param dDatNab - datum nabavke
-//  Racuna nabavnu cijenu i stanje robe u magacinu
+// Racuna nabavnu cijenu i stanje robe u magacinu
 
 
-function KalkNab(cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, nNC, nSNc, dDatNab)
+FUNCTION KalkNab( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, nNC, nSNc, dDatNab )
 
-local nPom
-local fProso
-local nIzlNV
-local nIzlKol
-local nUlNV
-local nUlKol
-local nSkiniKol
-local nKolNeto
-local nZadnjaUNC
+   LOCAL nPom
+   LOCAL fProso
+   LOCAL nIzlNV
+   LOCAL nIzlKol
+   LOCAL nUlNV
+   LOCAL nUlKol
+   LOCAL nSkiniKol
+   LOCAL nKolNeto
+   LOCAL nZadnjaUNC
 
-// posljednje pozitivno stanje
-local nKol_poz := 0
-local nUVr_poz, nIVr_poz
-local nUKol_poz, nIKol_poz
+   // posljednje pozitivno stanje
+   LOCAL nKol_poz := 0
+   LOCAL nUVr_poz, nIVr_poz
+   LOCAL nUKol_poz, nIKol_poz
 
-nKolicina := 0
+   nKolicina := 0
 
-if lAutoObr == .t.
-	// uzmi stanje iz cache tabele
-	if knab_cache( cIdKonto, cIdroba, @nUlKol, @nIzlKol, @nKolicina, ;
-		@nUlNv, @nIzlNv, @nSNC ) == 1
-		select kalk_pripr
-		return
-	endif
-endif
+   IF lAutoObr == .T.
+      // uzmi stanje iz cache tabele
+      IF knab_cache( cIdKonto, cIdroba, @nUlKol, @nIzlKol, @nKolicina, ;
+            @nUlNv, @nIzlNv, @nSNC ) == 1
+         SELECT kalk_pripr
+         RETURN
+      ENDIF
+   ENDIF
 
-select kalk
+   SELECT kalk
 
-set order to TAG "3"
-seek cIdFirma + cIdKonto + cIdRoba+"X"
+   SET ORDER TO TAG "3"
+   SEEK cIdFirma + cIdKonto + cIdRoba + "X"
 
-skip -1
-if ((cIdFirma+cIdKonto+cIdRoba) == (idfirma+mkonto+idroba)) .and. _datdok<datdok
-	Beep(2)
-  	Msg("Postoji dokument " + idfirma + "-" + idvd + "-" + brdok + " na datum: " + dtoc(datdok), 4)
-  	_ERROR:="1"
-endif
+   SKIP -1
+   IF ( ( cIdFirma + cIdKonto + cIdRoba ) == ( idfirma + mkonto + idroba ) ) .AND. _datdok < datdok
+      Beep( 2 )
+      Msg( "Postoji dokument " + idfirma + "-" + idvd + "-" + brdok + " na datum: " + DToC( datdok ), 4 )
+      _ERROR := "1"
+   ENDIF
 
-nLen:=1
+   nLen := 1
 
-nKolicina := 0
-nIzlNV := 0   
-// ukupna izlazna nabavna vrijednost
-nUlNV := 0
-nIzlKol := 0  
-// ukupna izlazna kolicina
-nUlKol := 0  
-// ulazna kolicina
-nZadnjaUNC := 0
-
-
-//  ovo je prvi prolaz
-//  u njemu se proracunava totali za jednu karticu
-hseek cIdFirma+cIdKonto+cIdRoba
-do while !eof() .and. ((cIdFirma+cIdKonto+cIdRoba)==(idFirma+mkonto+idroba)) .and. _datdok>=datdok
-
-  if mu_i=="1" .or. mu_i=="5"
-
-    if IdVd=="10"
-      // kod 10-ki je originalno predvidjeno gubitak kolicine (kalo i rastur)
-      // mislim da ovo niko i ne koristi, ali eto neka stoji
-      nKolNeto := ABS(kolicina-gKolicina-gKolicin2)
-    else
-      nKolNeto := ABS(kolicina)
-    endif
-
-    if (mu_i=="1" .and.  kolicina>0) .or. (mu_i=="5" .and. kolicina<0)
-
-         // ulazi plus, storno izlaza
-         nKolicina += nKolNeto
-         nUlKol    += nKolNeto
-         nUlNV     += (nKolNeto * nc)
-
-	 // zapamti uvijek zadnju ulaznu NC
-	 if idvd $ "10#16#96"
-	 	nZadnjaUNC := nc
-	 endif
-
-    else
-
-         nKolicina -= nKolNeto
-
-         nIzlKol   += nKolNeto
-         nIzlNV    += (nKolNeto * nc)
-
-    endif
-
-    // ako je stanje pozitivno zapamti ga
-    if round(nKolicina, 8) > 0
-        nKol_poz := nKolicina
-
-        nUKol_poz := nUlKol
-        nIKol_poz := nIzlKol
-
-        nUVr_poz := nUlNv
-        nIVr_poz := nIzlNv
-    endif
+   nKolicina := 0
+   nIzlNV := 0
+   // ukupna izlazna nabavna vrijednost
+   nUlNV := 0
+   nIzlKol := 0
+   // ukupna izlazna kolicina
+   nUlKol := 0
+   // ulazna kolicina
+   nZadnjaUNC := 0
 
 
-  endif
-  skip
+   // ovo je prvi prolaz
+   // u njemu se proracunava totali za jednu karticu
+   hseek cIdFirma + cIdKonto + cIdRoba
+   DO WHILE !Eof() .AND. ( ( cIdFirma + cIdKonto + cIdRoba ) == ( idFirma + mkonto + idroba ) ) .AND. _datdok >= datdok
 
-enddo 
-//  ovo je bio prvi prolaz
+      IF mu_i == "1" .OR. mu_i == "5"
+
+         IF IdVd == "10"
+            // kod 10-ki je originalno predvidjeno gubitak kolicine (kalo i rastur)
+            // mislim da ovo niko i ne koristi, ali eto neka stoji
+            nKolNeto := Abs( kolicina - gKolicina - gKolicin2 )
+         ELSE
+            nKolNeto := Abs( kolicina )
+         ENDIF
+
+         IF ( mu_i == "1" .AND.  kolicina > 0 ) .OR. ( mu_i == "5" .AND. kolicina < 0 )
+
+            // ulazi plus, storno izlaza
+            nKolicina += nKolNeto
+            nUlKol    += nKolNeto
+            nUlNV     += ( nKolNeto * nc )
+
+            // zapamti uvijek zadnju ulaznu NC
+            IF idvd $ "10#16#96"
+               nZadnjaUNC := nc
+            ENDIF
+
+         ELSE
+
+            nKolicina -= nKolNeto
+
+            nIzlKol   += nKolNeto
+            nIzlNV    += ( nKolNeto * nc )
+
+         ENDIF
+
+         // ako je stanje pozitivno zapamti ga
+         IF Round( nKolicina, 8 ) > 0
+            nKol_poz := nKolicina
+
+            nUKol_poz := nUlKol
+            nIKol_poz := nIzlKol
+
+            nUVr_poz := nUlNv
+            nIVr_poz := nIzlNv
+         ENDIF
 
 
-// koliko znam i ovo niko ne koristi svi koriste srednju nabavnu
-//gMetodaNC=="3"  // prva nabavka  se prva skida sa stanja
-if gMetodaNc=="3"
-  hseek cIdFirma+cIdKonto+cIdRoba
-  nSkiniKol:=nIzlKol+_Kolicina // skini sa stanja ukupnu izlaznu kolicinu+tekucu kolicinu
-  nNabVr:=0  // stanje nabavne vrijednosti
-  do while !eof() .and. cIdFirma+cIdKonto+cIdRoba==idFirma+mkonto+idroba .and. _datdok>=datdok
+      ENDIF
+      SKIP
 
-    if mu_i=="1" .or. mu_i=="5"
-      if (mu_i=="1" .and. kolicina>0) .or. (mu_i=="5" .and. kolicina<0) // ulaz
-           if nSkiniKol>abs(kolicina)
-             nNabVr   +=abs(kolicina*nc)
-             nSkinikol-=abs(kolicina)
-           else
-             nNabVr   +=abs(nSkiniKol*nc)
-             nSkinikol:=0
-             dDatNab:=datdok
-             nKolZN:=nSkiniKol
-             exit // uzeta je potrebna nabavka, izadji iz do while
-           endif
-      endif
-    endif
-    skip
-  enddo //  ovo je drugi prolaz , metoda "3"
+   ENDDO
+   // ovo je bio prvi prolaz
 
-  if _kolicina <> 0
-    nNC:=(nNabVr-nIzlNV) /_kolicina   
-  else
-    nNC:=0
-  endif
-endif
 
-// koliko znam i ovo niko ne koristi svi koriste srednju nabavnu
-// gMetodaNC=="1"  // zadnja nabavka se prva skida sa stanja
-if gMetodaNc=="1"
-  seek cIdFirma+cIdKonto+cIdRoba+chr(254)
-  nSkiniKol:=nIzlKol+_Kolicina // skini sa stanja ukupnu izlaznu kolicinu+tekucu kolicinu
-  nNabVr:=0  // stanje nabavne vrijednosti
-  skip -1
-  do while !bof() .and. cIdFirma+cIdKonto+cIdRoba==idFirma+mkonto+idroba
+   // koliko znam i ovo niko ne koristi svi koriste srednju nabavnu
+   // gMetodaNC=="3"  // prva nabavka  se prva skida sa stanja
+   IF gMetodaNc == "3"
+      hseek cIdFirma + cIdKonto + cIdRoba
+      nSkiniKol := nIzlKol + _Kolicina // skini sa stanja ukupnu izlaznu kolicinu+tekucu kolicinu
+      nNabVr := 0  // stanje nabavne vrijednosti
+      DO WHILE !Eof() .AND. cIdFirma + cIdKonto + cIdRoba == idFirma + mkonto + idroba .AND. _datdok >= datdok
 
-    if _datdok<=datdok // preskaci novije datume
-      skip -1; loop
-    endif
+         IF mu_i == "1" .OR. mu_i == "5"
+            IF ( mu_i == "1" .AND. kolicina > 0 ) .OR. ( mu_i == "5" .AND. kolicina < 0 ) // ulaz
+               IF nSkiniKol > Abs( kolicina )
+                  nNabVr   += Abs( kolicina * nc )
+                  nSkinikol -= Abs( kolicina )
+               ELSE
+                  nNabVr   += Abs( nSkiniKol * nc )
+                  nSkinikol := 0
+                  dDatNab := datdok
+                  nKolZN := nSkiniKol
+                  EXIT // uzeta je potrebna nabavka, izadji iz do while
+               ENDIF
+            ENDIF
+         ENDIF
+         SKIP
+      ENDDO // ovo je drugi prolaz , metoda "3"
 
-    if mu_i=="1" .or. mu_i=="5"
-      if (mu_i=="1" .and. kolicina>0) .or. (mu_i=="5" .and. kolicina<0) // ulaz
-           if nSkiniKol>abs(kolicina)
-             nNabVr   +=abs(kolicina*nc)
-             nSkinikol-=abs(kolicina)
-           else
-             nNabVr   +=abs(nSkiniKol*nc)
-             nSkinikol:=0
-             dDatNab:=datdok
-             nKolZN:=nSkiniKol
-             exit // uzeta je potrebna nabavka, izadji iz do while
-           endif
-      endif
-    endif
-    skip -1
-  enddo //  ovo je drugi prolaz , metoda "1"
+      IF _kolicina <> 0
+         nNC := ( nNabVr - nIzlNV ) / _kolicina
+      ELSE
+         nNC := 0
+      ENDIF
+   ENDIF
 
-  if _kolicina<>0
-    nNC:=(nNabVr-nIzlNV)/_kolicina   // nabavna cijena po metodi zadnje
-  else
-    nNC:=0
-  endif
-endif
+   // koliko znam i ovo niko ne koristi svi koriste srednju nabavnu
+   // gMetodaNC=="1"  // zadnja nabavka se prva skida sa stanja
+   IF gMetodaNc == "1"
+      SEEK cIdFirma + cIdKonto + cIdRoba + Chr( 254 )
+      nSkiniKol := nIzlKol + _Kolicina // skini sa stanja ukupnu izlaznu kolicinu+tekucu kolicinu
+      nNabVr := 0  // stanje nabavne vrijednosti
+      SKIP -1
+      DO WHILE !Bof() .AND. cIdFirma + cIdKonto + cIdRoba == idFirma + mkonto + idroba
 
-// utvrdi srednju nabavnu cijenu na osnovu posljednjeg pozitivnog stanja
-if round(nKol_poz, 8) == 0
-	nSNc:=0
-else
- 	// srednja nabavna cijena
- 	nSNc:=(nUVr_poz - nIVr_poz) / nKol_poz
-endif
+         IF _datdok <= datdok // preskaci novije datume
+            SKIP -1; LOOP
+         ENDIF
 
-// ako se koristi kontrola NC
-if gNC_ctrl > 0 .and. nSNC <> 0 .and. nZadnjaUNC <> 0
+         IF mu_i == "1" .OR. mu_i == "5"
+            IF ( mu_i == "1" .AND. kolicina > 0 ) .OR. ( mu_i == "5" .AND. kolicina < 0 ) // ulaz
+               IF nSkiniKol > Abs( kolicina )
+                  nNabVr   += Abs( kolicina * nc )
+                  nSkinikol -= Abs( kolicina )
+               ELSE
+                  nNabVr   += Abs( nSkiniKol * nc )
+                  nSkinikol := 0
+                  dDatNab := datdok
+                  nKolZN := nSkiniKol
+                  EXIT // uzeta je potrebna nabavka, izadji iz do while
+               ENDIF
+            ENDIF
+         ENDIF
+         SKIP -1
+      ENDDO // ovo je drugi prolaz , metoda "1"
+
+      IF _kolicina <> 0
+         nNC := ( nNabVr - nIzlNV ) / _kolicina   // nabavna cijena po metodi zadnje
+      ELSE
+         nNC := 0
+      ENDIF
+   ENDIF
+
+   // utvrdi srednju nabavnu cijenu na osnovu posljednjeg pozitivnog stanja
+   IF Round( nKol_poz, 8 ) == 0
+      nSNc := 0
+   ELSE
+      // srednja nabavna cijena
+      nSNc := ( nUVr_poz - nIVr_poz ) / nKol_poz
+   ENDIF
+
+   // ako se koristi kontrola NC
+   IF gNC_ctrl > 0 .AND. nSNC <> 0 .AND. nZadnjaUNC <> 0
 	
-	nTmp := ROUND( nSNC, 4 ) - ROUND( nZadnjaUNC, 4 )
-	nOdst := ( nTmp / ROUND( nZadnjaUNC, 4 )) * 100
+      nTmp := Round( nSNC, 4 ) - Round( nZadnjaUNC, 4 )
+      nOdst := ( nTmp / Round( nZadnjaUNC, 4 ) ) * 100
 
-	if ABS(nOdst) > gNC_ctrl
+      IF Abs( nOdst ) > gNC_ctrl
 		
-		Beep(4)
- 		clear typeahead
+         Beep( 4 )
+         CLEAR TYPEAHEAD
 
-		msgbeep("Odstupanje u odnosu na zadnji ulaz je#" + ;
-			ALLTRIM(STR(ABS(nOdst))) + " %" + "#" + ;
-			"artikal: " + ALLTRIM(_idroba) + " " + ;
-			PADR( roba->naz, 15 ) + " nc:" + ;
-			ALLTRIM(STR( nSNC, 12, 2 )) )
+         msgbeep( "Odstupanje u odnosu na zadnji ulaz je#" + ;
+            AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;
+            "artikal: " + AllTrim( _idroba ) + " " + ;
+            PadR( roba->naz, 15 ) + " nc:" + ;
+            AllTrim( Str( nSNC, 12, 2 ) ) )
 	
-		//a_nc_ctrl( @aNC_ctrl, idroba, nKolicina, ;
-		//	nSNC, nZadnjaUNC )
+         // a_nc_ctrl( @aNC_ctrl, idroba, nKolicina, ;
+         // nSNC, nZadnjaUNC )
 
-		if Pitanje(,"Napraviti korekciju NC (D/N)?", "N") == "D"
+         IF Pitanje(, "Napraviti korekciju NC (D/N)?", "N" ) == "D"
 			
-			nTmp_n_stanje := ( nKolicina - _kolicina )
-			nTmp_n_nv := ( nTmp_n_stanje * nZadnjaUNC )
-			nTmp_s_nv := ( nKolicina * nSNC )
+            nTmp_n_stanje := ( nKolicina - _kolicina )
+            nTmp_n_nv := ( nTmp_n_stanje * nZadnjaUNC )
+            nTmp_s_nv := ( nKolicina * nSNC )
 			
-			nSNC := ( ( nTmp_s_nv - nTmp_n_nv ) / _kolicina ) 
+            nSNC := ( ( nTmp_s_nv - nTmp_n_nv ) / _kolicina )
 
-		endif
-	endif
-endif
+         ENDIF
+      ENDIF
+   ENDIF
 
-// daj posljednje stanje kakvo i jeste 
-nKolicina := round(nKolicina, 4)
+   // daj posljednje stanje kakvo i jeste
+   nKolicina := Round( nKolicina, 4 )
 
-select kalk_pripr
+   SELECT kalk_pripr
 
-return
+   RETURN
 
 
 // ---------------------------------------------------------
 // dodaj u matricu robu koja je problematicna
 // ---------------------------------------------------------
-function a_nc_ctrl( aCtrl, cIdRoba, nKol, nSnc, nZadnjaNC )
-local nScan := 0
-local nOdst := 0
+FUNCTION a_nc_ctrl( aCtrl, cIdRoba, nKol, nSnc, nZadnjaNC )
 
-if nSNC <> 0 .and. nZadnjaNC <> 0
-	nTmp := ROUND( nSNC, 4 ) - ROUND( nZadnjaNC, 4 )
-	nOdst := ( nTmp / ROUND( nZadnjaNC, 4 )) * 100
-endif
+   LOCAL nScan := 0
+   LOCAL nOdst := 0
 
-nScan := ASCAN( aCtrl, {|xVal| xVal[1] == cIdRoba } )
+   IF nSNC <> 0 .AND. nZadnjaNC <> 0
+      nTmp := Round( nSNC, 4 ) - Round( nZadnjaNC, 4 )
+      nOdst := ( nTmp / Round( nZadnjaNC, 4 ) ) * 100
+   ENDIF
 
-if nScan = 0
-	// dodaj novi zapis
-	AADD( aCtrl, { cIdRoba, nKol, nSNC, nZadnjaNC, nOdst } )
-else
-	// ispravi tekuce zapise
-	aCtrl[ nScan, 2 ] := nKol
-	aCtrl[ nScan, 3 ] := nSNC
-	aCtrl[ nScan, 4 ] := nZadnjaNC
-	aCtrl[ nScan, 5 ] := nOdst
+   nScan := AScan( aCtrl, {| xVal| xVal[ 1 ] == cIdRoba } )
 
-endif
+   IF nScan = 0
+      // dodaj novi zapis
+      AAdd( aCtrl, { cIdRoba, nKol, nSNC, nZadnjaNC, nOdst } )
+   ELSE
+      // ispravi tekuce zapise
+      aCtrl[ nScan, 2 ] := nKol
+      aCtrl[ nScan, 3 ] := nSNC
+      aCtrl[ nScan, 4 ] := nZadnjaNC
+      aCtrl[ nScan, 5 ] := nOdst
 
-return
+   ENDIF
+
+   RETURN
 
 // ------------------------------------------------
 // popup kod nabavne cijene
 // ------------------------------------------------
-function p_nc_popup( cIdRoba )
-local nScan
+FUNCTION p_nc_popup( cIdRoba )
 
-nScan := ASCAN( aNC_ctrl, {|xVal| xVal[1] == cIdRoba } )
+   LOCAL nScan
 
-if nScan <> 0
+   nScan := AScan( aNC_ctrl, {| xVal| xVal[ 1 ] == cIdRoba } )
+
+   IF nScan <> 0
 	
-	// daj mi odstupanje !
-	nOdstupanje := ROUND( aNC_ctrl[ nScan, 5 ], 2 )
-	msgbeep( "Odstupanje u odnosu na zadnji ulaz je#" + ;
-		ALLTRIM(STR(nOdstupanje)) + " %" )
+      // daj mi odstupanje !
+      nOdstupanje := Round( aNC_ctrl[ nScan, 5 ], 2 )
+      msgbeep( "Odstupanje u odnosu na zadnji ulaz je#" + ;
+         AllTrim( Str( nOdstupanje ) ) + " %" )
 
-endif
+   ENDIF
 
-return
+   RETURN
 
 
 // ------------------------------------------------
 // stampanje stanja iz kontrolne tabele
 // ------------------------------------------------
-function p_nc_ctrl( aCtrl )
-local nTArea := SELECT()
-local i
-local cLine := ""
-local cTxt := ""
-local nCnt := 0
+FUNCTION p_nc_ctrl( aCtrl )
 
-if LEN( aCtrl ) = 0
-	return
-endif
+   LOCAL nTArea := Select()
+   LOCAL i
+   LOCAL cLine := ""
+   LOCAL cTxt := ""
+   LOCAL nCnt := 0
 
-START PRINT CRET
+   IF Len( aCtrl ) = 0
+      RETURN
+   ENDIF
 
-?
-? "Kontrola odstupanja nabavne cijene"
-? "- kontrolna tacka = " + ALLTRIM(STR(gNC_ctrl)) + "%"
-? 
+   START PRINT CRET
 
-cLine += REPLICATE("-", 5)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 10)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
+   ?
+   ? "Kontrola odstupanja nabavne cijene"
+   ? "- kontrolna tacka = " + AllTrim( Str( gNC_ctrl ) ) + "%"
+   ?
 
-cTxt += PADR("r.br", 5)
-cTxt += SPACE(1)
-cTxt += PADR("artikal", 10)
-cTxt += SPACE(1)
-cTxt += PADR("kolicina", 12)
-cTxt += SPACE(1)
-cTxt += PADR("zadnja NC", 12)
-cTxt += SPACE(1)
-cTxt += PADR("nova NC", 12)
-cTxt += SPACE(1)
-cTxt += PADR("odstupanje", 12)
+   cLine += Replicate( "-", 5 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 10 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
 
-? cLine
-? cTxt
-? cLine
+   cTxt += PadR( "r.br", 5 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "artikal", 10 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "kolicina", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "zadnja NC", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "nova NC", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "odstupanje", 12 )
 
-for i:=1 to LEN( aCtrl )
+   ? cLine
+   ? cTxt
+   ? cLine
 
-	// rbr
-	? PADL( ALLTRIM( STR( ++nCnt ) ), 4 ) + "."
-	// idroba
-	@ prow(), pcol() + 1 SAY aCtrl[i, 1 ]
-	// kolicina
-	@ prow(), pcol() + 1 SAY aCtrl[i, 2 ]
-	// zadnja nc
-	@ prow(), pcol() + 1 SAY aCtrl[i, 4 ]
-	// nova nc
-	@ prow(), pcol() + 1 SAY aCtrl[i, 3 ]
-	// odstupanje
-	@ prow(), pcol() + 1 SAY aCtrl[i, 5 ] PICT "9999%"
+   FOR i := 1 TO Len( aCtrl )
 
-next
+      // rbr
+      ? PadL( AllTrim( Str( ++nCnt ) ), 4 ) + "."
+      // idroba
+      @ PRow(), PCol() + 1 SAY aCtrl[ i, 1 ]
+      // kolicina
+      @ PRow(), PCol() + 1 SAY aCtrl[ i, 2 ]
+      // zadnja nc
+      @ PRow(), PCol() + 1 SAY aCtrl[ i, 4 ]
+      // nova nc
+      @ PRow(), PCol() + 1 SAY aCtrl[ i, 3 ]
+      // odstupanje
+      @ PRow(), PCol() + 1 SAY aCtrl[ i, 5 ] PICT "9999%"
 
-FF
-END PRINT
+   NEXT
 
-select (nTArea)
-return
+   FF
+   END PRINT
+
+   SELECT ( nTArea )
+
+   RETURN
 
 
 
 
-function IsMagPNab()
+FUNCTION IsMagPNab()
 
-if (IsPDV() .and. gPDVMagNab == "D") 
-	return .t.
-else
-	return .f.
-endif
-return
-*}
+   IF ( IsPDV() .AND. gPDVMagNab == "D" )
+      RETURN .T.
+   ELSE
+      RETURN .F.
+   ENDIF
+
+   RETURN
+
 
 // -------------------------------------
 // magacin samo po nabavnim cijenama
 // -------------------------------------
-function IsMagSNab()
-local lN1 := .f.
+FUNCTION IsMagSNab()
 
-PushWa()
+   LOCAL lN1 := .F.
 
-// da li je uopste otvoren koncij
-SELECT F_KONCIJ
-if used()
-	if koncij->naz == "N1"
-		lN1 := .t.
-	endif
-endif
-PopWa()
+   PushWa()
 
-if (gMagacin == "1") .or. lN1
-	return .t.
-else
-	return .f.
-endif
+   // da li je uopste otvoren koncij
+   SELECT F_KONCIJ
+   IF Used()
+      IF koncij->naz == "N1"
+         lN1 := .T.
+      ENDIF
+   ENDIF
+   PopWa()
 
-// znaci magacin robe - PDV je po nab cjenama
-function IsPDVMagNab()
+   IF ( gMagacin == "1" ) .OR. lN1
+      RETURN .T.
+   ELSE
+      RETURN .F.
+   ENDIF
 
-if (IsPDV() .and. gPDVMagNab == "D")
-   return .t.
-else
-   return .f.
-endif
+   // znaci magacin robe - PDV je po nab cjenama
 
+FUNCTION IsPDVMagNab()
+
+   IF ( IsPDV() .AND. gPDVMagNab == "D" )
+      RETURN .T.
+   ELSE
+      RETURN .F.
+   ENDIF

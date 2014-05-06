@@ -177,10 +177,6 @@ FUNCTION kartica_magacin()
       cFilt += ".and.IdPartner==" + Cm2Str( cIdPartner )
    ENDIF
 
-   IF IsDomZdr() .AND. !Empty( cKalkTip )
-      cFilt += ".and. tip==" + Cm2Str( cKalkTip )
-   ENDIF
-
    IF !Empty( cRNT1 ) .AND. !Empty( cRNalBroj )
       cFilt += ".and." + aUslRn
    ENDIF
@@ -889,10 +885,6 @@ STATIC FUNCTION Zagl()
    P_12CPI
    ?? "KARTICA MAGACIN za period", ddatod, "-", ddatdo, Space( 10 ), "Str:", Str( ++nTStrana, 3 )
    IspisNaDan( 5 )
-
-   IF IsDomZdr() .AND. !Empty( cKalkTip )
-      PrikTipSredstva( cKalkTip )
-   ENDIF
 
    ? "Konto: ", cIdKonto, "-", konto->naz
    SELECT kalk

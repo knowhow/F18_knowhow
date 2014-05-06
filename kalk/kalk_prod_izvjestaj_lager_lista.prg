@@ -84,10 +84,6 @@ FUNCTION LLP()
    PRIVATE cPrikK2 := "N"
    PRIVATE aPorezi
 
-   IF IsDomZdr()
-      PRIVATE cKalkTip := Space( 1 )
-   ENDIF
-
    Box(, 18, 68 )
 
    cGrupacija := Space( 4 )
@@ -209,10 +205,6 @@ FUNCTION LLP()
    ENDIF
    IF aUsl4 <> ".t."
       cFilter += ".and." + aUsl4   // partner
-   ENDIF
-   // po tipu sredstva
-   IF IsDomZdr() .AND. !Empty( cKalkTip )
-      cFilter += ".and. tip=" + Cm2Str( cKalkTip )
    ENDIF
 
    SELECT KALK
@@ -776,10 +768,6 @@ FUNCTION ZaglLLP( lSint )
       SELECT konto
       hseek cidkonto
       ? "Prodavnica:", cIdKonto, "-", konto->naz
-   ENDIF
-
-   IF IsDomZdr() .AND. !Empty( cKalkTip )
-      PrikTipSredstva( cKalkTip )
    ENDIF
 
    cSC1 := ""

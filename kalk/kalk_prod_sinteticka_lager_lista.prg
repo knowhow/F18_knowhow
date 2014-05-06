@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,340 +13,337 @@
 #include "kalk.ch"
 
 // sinteticka lager lista prodavnice
-function LLPS()
+FUNCTION LLPS()
 
-PicCDem:=REPLICATE("9", VAL(gFPicCDem)) + gPicCDem
-PicDem:=REPLICATE("9", VAL(gFPicDem)) + gPicDem
+   PicCDem := Replicate( "9", Val( gFPicCDem ) ) + gPicCDem
+   PicDem := Replicate( "9", Val( gFPicDem ) ) + gPicDem
 
-cIdFirma:=gFirma
-qqKonto:=padr("132;",60)
-O_SIFK
-O_SIFV
-O_ROBA
-O_KONTO
-O_PARTN
+   cIdFirma := gFirma
+   qqKonto := PadR( "132;", 60 )
+   O_SIFK
+   O_SIFV
+   O_ROBA
+   O_KONTO
+   O_PARTN
 
-dDatOd:=ctod("")
-dDatDo:=date()
-qqRoba:=SPACE(60)
-qqTarifa:=SPACE(60)
-qqidvd:=SPACE(60)
-private cERR:="D"
-private cPNab:="N"
-private cNula:="D"
-private cTU:="N"
-private cPredhStanje:="N"
+   dDatOd := CToD( "" )
+   dDatDo := Date()
+   qqRoba := Space( 60 )
+   qqTarifa := Space( 60 )
+   qqidvd := Space( 60 )
+   PRIVATE cERR := "D"
+   PRIVATE cPNab := "N"
+   PRIVATE cNula := "D"
+   PRIVATE cTU := "N"
+   PRIVATE cPredhStanje := "N"
 
-Box(,12,66)
-	cGrupacija:=space(4)
-	do while .t.
- 		if gNW $ "DX"
-   			@ m_x+1,m_y+2 SAY "Firma "
-			?? gFirma,"-",gNFirma
- 		else
-  			@ m_x+1,m_y+2 SAY "Firma  " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
- 		endif
- 		@ m_x+2,m_y+2 SAY "Prodavnice" GET qqKonto  pict "@!S50"
- 		@ m_x+3,m_y+2 SAY "Artikli   " GET qqRoba pict "@!S50"
- 		@ m_x+4,m_y+2 SAY "Tarife    " GET qqTarifa pict "@!S50"
- 		@ m_x+5,m_y+2 SAY "Vrste dokumenata  " GET qqIDVD pict "@!S30"
- 		@ m_x+6,m_y+2 SAY "Prikaz Nab.vrijednosti D/N" GET cPNab  valid cpnab $ "DN" pict "@!"
- 		@ m_x+7,m_y+2 SAY "Prikaz stavki kojima je MPV 0 D/N" GET cNula  valid cNula $ "DN" pict "@!"
- 		@ m_x+8,m_y+2 SAY "Prikaz ERR D/N" GET cERR  valid cERR $ "DN" pict "@!"
- 		@ m_x+9,m_y+2 SAY "Datum od " GET dDatOd
- 		@ m_x+9,col()+2 SAY "do" GET dDatDo
- 		@ m_x+10,m_y+2 SAY "Prikaz robe tipa T/U  (D/N)" GET cTU valid cTU $ "DN" pict "@!"
- 		@ m_x+12,m_y+2 SAY "Odabir grupacije (prazno-svi) GET" GET cGrupacija pict "@!"
- 		read
-		ESC_BCR
- 
- 		private aUsl1:=Parsiraj(qqRoba,"IdRoba")
- 		private aUsl2:=Parsiraj(qqTarifa,"IdTarifa")
- 		private aUsl3:=Parsiraj(qqIDVD,"idvd")
- 		private aUsl4:=Parsiraj(qqkonto,"pkonto")
- 		if aUsl1<>NIL
- 			exit
- 		endif
- 		if aUsl2<>NIL
- 			exit
- 		endif
- 		if aUsl3<>NIL
- 			exit
- 		endif
-	enddo
-BoxC()
+   Box(, 12, 66 )
+   cGrupacija := Space( 4 )
+   DO WHILE .T.
+      IF gNW $ "DX"
+         @ m_x + 1, m_y + 2 SAY "Firma "
+         ?? gFirma, "-", gNFirma
+      ELSE
+         @ m_x + 1, m_y + 2 SAY "Firma  " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      ENDIF
+      @ m_x + 2, m_y + 2 SAY "Prodavnice" GET qqKonto  PICT "@!S50"
+      @ m_x + 3, m_y + 2 SAY "Artikli   " GET qqRoba PICT "@!S50"
+      @ m_x + 4, m_y + 2 SAY "Tarife    " GET qqTarifa PICT "@!S50"
+      @ m_x + 5, m_y + 2 SAY "Vrste dokumenata  " GET qqIDVD PICT "@!S30"
+      @ m_x + 6, m_y + 2 SAY "Prikaz Nab.vrijednosti D/N" GET cPNab  VALID cpnab $ "DN" PICT "@!"
+      @ m_x + 7, m_y + 2 SAY "Prikaz stavki kojima je MPV 0 D/N" GET cNula  VALID cNula $ "DN" PICT "@!"
+      @ m_x + 8, m_y + 2 SAY "Prikaz ERR D/N" GET cERR  VALID cERR $ "DN" PICT "@!"
+      @ m_x + 9, m_y + 2 SAY "Datum od " GET dDatOd
+      @ m_x + 9, Col() + 2 SAY "do" GET dDatDo
+      @ m_x + 10, m_y + 2 SAY "Prikaz robe tipa T/U  (D/N)" GET cTU VALID cTU $ "DN" PICT "@!"
+      @ m_x + 12, m_y + 2 SAY "Odabir grupacije (prazno-svi) GET" GET cGrupacija PICT "@!"
+      READ
+      ESC_BCR
 
-O_KONCIJ
-O_KALKREP
+      PRIVATE aUsl1 := Parsiraj( qqRoba, "IdRoba" )
+      PRIVATE aUsl2 := Parsiraj( qqTarifa, "IdTarifa" )
+      PRIVATE aUsl3 := Parsiraj( qqIDVD, "idvd" )
+      PRIVATE aUsl4 := Parsiraj( qqkonto, "pkonto" )
+      IF aUsl1 <> NIL
+         EXIT
+      ENDIF
+      IF aUsl2 <> NIL
+         EXIT
+      ENDIF
+      IF aUsl3 <> NIL
+         EXIT
+      ENDIF
+   ENDDO
+   BoxC()
 
-private cFilt1:=""
-cFilt1:="!EMPTY(pu_i).and."+aUsl1+".and."+aUsl4
-cFilt1:=STRTRAN(cFilt1,".t..and.","")
-if !(cFilt1==".t.")
-	set filter to &cFilt1
-endif
+   O_KONCIJ
+   O_KALKREP
 
-select kalk
-set order to tag "6"
-//CREATE_INDEX("6","idFirma+IdTarifa+idroba",KUMPATH+"KALK")
-hseek cidfirma
-EOF CRET
+   PRIVATE cFilt1 := ""
+   cFilt1 := "!EMPTY(pu_i).and." + aUsl1 + ".and." + aUsl4
+   cFilt1 := StrTran( cFilt1, ".t..and.", "" )
+   IF !( cFilt1 == ".t." )
+      SET FILTER to &cFilt1
+   ENDIF
 
-nLen:=1
+   SELECT kalk
+   SET ORDER TO TAG "6"
+   // CREATE_INDEX("6","idFirma+IdTarifa+idroba",KUMPATH+"KALK")
+   hseek cidfirma
+   EOF CRET
 
-aRptText:={}
-AADD(aRptText, {5, "R.", "br."})
-AADD(aRptText, {10, " Artikal"," 1 "})
-AADD(aRptText, {20, " Naziv", " 2 "})
-AADD(aRptText, {3, "jmj", " 3 "})
-if cPredhStanje=="D"
-	AADD(aRptText, {10, " Predh.st", " kol/MPV "})
-endif
-AADD(aRptText, {LEN(gPicKol), " ulaz", " 4 "})
-AADD(aRptText, {LEN(gPicKol), " izlaz", " 5 "})
-AADD(aRptText, {LEN(gPicKol), " STANJE", " 4-5 "})
-AADD(aRptText, {LEN(PicDem), " MPV.Dug", " 6 "})
-AADD(aRptText, {LEN(PicDem), " MPV.Pot", " 7 "})
-AADD(aRptText, {LEN(PicDem), " MPV", " 6-7 "})
-AADD(aRptText, {LEN(PicDem), " MPCSAPP", " 8 "})
+   nLen := 1
 
-private cLine:=SetRptLineAndText(aRptText, 0)
-private cText1:=SetRptLineAndText(aRptText, 1, "*")
-private cText2:=SetRptLineAndText(aRptText, 2, "*")
+   aRptText := {}
+   AAdd( aRptText, { 5, "R.", "br." } )
+   AAdd( aRptText, { 10, " Artikal", " 1 " } )
+   AAdd( aRptText, { 20, " Naziv", " 2 " } )
+   AAdd( aRptText, { 3, "jmj", " 3 " } )
+   IF cPredhStanje == "D"
+      AAdd( aRptText, { 10, " Predh.st", " kol/MPV " } )
+   ENDIF
+   AAdd( aRptText, { Len( gPicKol ), " ulaz", " 4 " } )
+   AAdd( aRptText, { Len( gPicKol ), " izlaz", " 5 " } )
+   AAdd( aRptText, { Len( gPicKol ), " STANJE", " 4-5 " } )
+   AAdd( aRptText, { Len( PicDem ), " MPV.Dug", " 6 " } )
+   AAdd( aRptText, { Len( PicDem ), " MPV.Pot", " 7 " } )
+   AAdd( aRptText, { Len( PicDem ), " MPV", " 6-7 " } )
+   AAdd( aRptText, { Len( PicDem ), " MPCSAPP", " 8 " } )
 
-start print cret
-?
+   PRIVATE cLine := SetRptLineAndText( aRptText, 0 )
+   PRIVATE cText1 := SetRptLineAndText( aRptText, 1, "*" )
+   PRIVATE cText2 := SetRptLineAndText( aRptText, 2, "*" )
 
-select kalk
+   start PRINT cret
+   ?
 
-private nTStrana:=0
-private bZagl:={|| ZaglLLPS(.t.)}
+   SELECT kalk
 
-nTUlaz:=nTIzlaz:=0
-nTMPVU:=nTMPVI:=nTNVU:=nTNVI:=0
-nTRabat:=0
-nCol1:=nCol0:=50
-nRbr:=0
+   PRIVATE nTStrana := 0
+   PRIVATE bZagl := {|| ZaglLLPS( .T. ) }
 
-private lSMark:=.f.
-if right(trim(qqRoba),1)="*"
-	lSMark:=.t.
-endif
+   nTUlaz := nTIzlaz := 0
+   nTMPVU := nTMPVI := nTNVU := nTNVI := 0
+   nTRabat := 0
+   nCol1 := nCol0 := 50
+   nRbr := 0
 
-Eval(bZagl)
+   PRIVATE lSMark := .F.
+   IF Right( Trim( qqRoba ), 1 ) = "*"
+      lSMark := .T.
+   ENDIF
 
-do while !eof() .and. cidfirma==idfirma .and.  IspitajPrekid()
-	cIdRoba:=Idroba
-	select roba
-	hseek cIdRoba
-	select kalk
-	nUlaz:=nIzlaz:=0
-	nMPVU:=nMPVI:=nNVU:=nNVI:=0
-	nRabat:=0
+   Eval( bZagl )
 
-	if lSMark .and. SkLoNMark("ROBA",cIdroba)
-   		skip
-   		loop
-	endif
+   DO WHILE !Eof() .AND. cidfirma == idfirma .AND.  IspitajPrekid()
+      cIdRoba := Idroba
+      SELECT roba
+      hseek cIdRoba
+      SELECT kalk
+      nUlaz := nIzlaz := 0
+      nMPVU := nMPVI := nNVU := nNVI := 0
+      nRabat := 0
 
-	if len(aUsl2)<>0
-    		if !Tacno(aUsl2)
-       			skip
-       			loop
-    		endif
-	endif
+      IF lSMark .AND. SkLoNMark( "ROBA", cIdroba )
+         SKIP
+         LOOP
+      ENDIF
 
-	if cTU=="N" .and. roba->tip $ "TU"
-		skip
-		loop
-	endif
+      IF Len( aUsl2 ) <> 0
+         IF !Tacno( aUsl2 )
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
+
+      IF cTU == "N" .AND. roba->tip $ "TU"
+         SKIP
+         LOOP
+      ENDIF
 	
-	if !empty(cGrupacija)
-  		if cGrupacija<>roba->k1
-    			skip
-    			loop
-  		endif
-	endif
+      IF !Empty( cGrupacija )
+         IF cGrupacija <> roba->k1
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 
-	do while !eof() .and. cIdFirma+cIdRoba==idFirma+idroba .and. IspitajPrekid()
-		if !empty(cGrupacija)
-    			if cGrupacija<>roba->k1
-      				skip
-      				loop
-    			endif
-  		endif
+      DO WHILE !Eof() .AND. cIdFirma + cIdRoba == idFirma + idroba .AND. IspitajPrekid()
+         IF !Empty( cGrupacija )
+            IF cGrupacija <> roba->k1
+               SKIP
+               LOOP
+            ENDIF
+         ENDIF
 		
-		if lSMark .and. SkLoNMark("ROBA",cIdroba)
-			skip
-   			loop
-		endif
+         IF lSMark .AND. SkLoNMark( "ROBA", cIdroba )
+            SKIP
+            LOOP
+         ENDIF
 
-  		if datdok<dDatOd .or. datdok>dDatDo
-     			skip
-     			loop
-  		endif
+         IF datdok < dDatOd .OR. datdok > dDatDo
+            SKIP
+            LOOP
+         ENDIF
   		
-		if cTU=="N" .and. roba->tip $ "TU"
-  			skip
-			loop
-  		endif
+         IF cTU == "N" .AND. roba->tip $ "TU"
+            SKIP
+            LOOP
+         ENDIF
 
-  		if len(aUsl3)<>0
-    			if !Tacno(aUsl3)
-       				skip
-       				loop
-    			endif
-  		endif
+         IF Len( aUsl3 ) <> 0
+            IF !Tacno( aUsl3 )
+               SKIP
+               LOOP
+            ENDIF
+         ENDIF
   		
-		if pu_i=="1"
-    			SumirajKolicinu(field->kolicina,0, @nUlaz, 0)
-    			nCol1:=pcol()+1
-    			nMPVU+=mpcsapp*kolicina
-    			nNVU+=nc*(kolicina)
-  		elseif pu_i=="5"
-    			if idvd $ "12#13"
-     				SumirajKolicinu(-field->kolicina,0, @nUlaz, 0)
-     				nMPVU-=mpcsapp*kolicina
-     				nNVU-=nc*kolicina
-    			else
-    				SumirajKolicinu(0, field->kolicina, 0, @nIzlaz)
-     				nMPVI+=mpcsapp*kolicina
-     				nNVI+=nc*kolicina
-    			endif
-		elseif pu_i=="3"    
-    			// nivelacija
-    			nMPVU+=mpcsapp*kolicina
-  		elseif pu_i=="I"
-    			SumirajKolicinu(0, field->gkolicin2, 0, @nIzlaz)
-    			nMPVI+=mpcsapp*gkolicin2
-    			nNVI+=nc*gkolicin2
-		endif
-		skip
-	enddo
+         IF pu_i == "1"
+            SumirajKolicinu( field->kolicina, 0, @nUlaz, 0 )
+            nCol1 := PCol() + 1
+            nMPVU += mpcsapp * kolicina
+            nNVU += nc * ( kolicina )
+         ELSEIF pu_i == "5"
+            IF idvd $ "12#13"
+               SumirajKolicinu( -field->kolicina, 0, @nUlaz, 0 )
+               nMPVU -= mpcsapp * kolicina
+               nNVU -= nc * kolicina
+            ELSE
+               SumirajKolicinu( 0, field->kolicina, 0, @nIzlaz )
+               nMPVI += mpcsapp * kolicina
+               nNVI += nc * kolicina
+            ENDIF
+         ELSEIF pu_i == "3"
+            // nivelacija
+            nMPVU += mpcsapp * kolicina
+         ELSEIF pu_i == "I"
+            SumirajKolicinu( 0, field->gkolicin2, 0, @nIzlaz )
+            nMPVI += mpcsapp * gkolicin2
+            nNVI += nc * gkolicin2
+         ENDIF
+         SKIP
+      ENDDO
 
-	NovaStrana(bZagl)
-	select roba
-	hseek cidroba
-	select kalk
-	aNaz:=Sjecistr(roba->naz,20)
+      NovaStrana( bZagl )
+      SELECT roba
+      hseek cidroba
+      SELECT kalk
+      aNaz := Sjecistr( roba->naz, 20 )
 
-	? str(++nrbr,4) + ".", cIdRoba
-	nCr:=pcol()+1
-	@ prow(),pcol()+1 SAY aNaz[1]
-	@ prow(),pcol()+1 SAY roba->jmj
-	nCol0:=pcol()+1
-	@ prow(),pcol()+1 SAY nUlaz pict gpickol
-	@ prow(),pcol()+1 SAY nIzlaz pict gpickol
-	@ prow(),pcol()+1 SAY nUlaz-nIzlaz pict gpickol
+      ? Str( ++nrbr, 4 ) + ".", cIdRoba
+      nCr := PCol() + 1
+      @ PRow(), PCol() + 1 SAY aNaz[ 1 ]
+      @ PRow(), PCol() + 1 SAY roba->jmj
+      nCol0 := PCol() + 1
+      @ PRow(), PCol() + 1 SAY nUlaz PICT gpickol
+      @ PRow(), PCol() + 1 SAY nIzlaz PICT gpickol
+      @ PRow(), PCol() + 1 SAY nUlaz - nIzlaz PICT gpickol
 
-	nCol1:=pcol()+1
-	@ prow(),pcol()+1 SAY nMPVU pict picdem
-	@ prow(),pcol()+1 SAY nMPVI pict picdem
-	@ prow(),pcol()+1 SAY nMPVU-NMPVI pict picdem
+      nCol1 := PCol() + 1
+      @ PRow(), PCol() + 1 SAY nMPVU PICT picdem
+      @ PRow(), PCol() + 1 SAY nMPVI PICT picdem
+      @ PRow(), PCol() + 1 SAY nMPVU - NMPVI PICT picdem
 
-	select roba
-	hseek cIdRoba
-	_mpc:=UzmiMPCSif()
-	select kalk
+      SELECT roba
+      hseek cIdRoba
+      _mpc := UzmiMPCSif()
+      SELECT kalk
 
-	if round(nUlaz-nIzlaz,4)<>0
-		@ prow(),pcol()+1 SAY (nMPVU-nMPVI)/(nUlaz-nIzlaz) pict piccdem
- 		if round((nMPVU-nMPVI)/(nUlaz-nIzlaz),4)<>round(_mpc,4)
-   			if (cERR=="D")
-				?? " ERR"
-			endif
- 		endif
-	else
-		@ prow(),pcol()+1 SAY 0 pict picdem
- 		if round((nMPVU-nMPVI),4)<>0
-   			?? " ERR"
- 		endif
-	endif
+      IF Round( nUlaz - nIzlaz, 4 ) <> 0
+         @ PRow(), PCol() + 1 SAY ( nMPVU - nMPVI ) / ( nUlaz - nIzlaz ) PICT piccdem
+         IF Round( ( nMPVU - nMPVI ) / ( nUlaz - nIzlaz ), 4 ) <> Round( _mpc, 4 )
+            IF ( cERR == "D" )
+               ?? " ERR"
+            ENDIF
+         ENDIF
+      ELSE
+         @ PRow(), PCol() + 1 SAY 0 PICT picdem
+         IF Round( ( nMPVU - nMPVI ), 4 ) <> 0
+            ?? " ERR"
+         ENDIF
+      ENDIF
 
-	@ prow()+1,0 SAY ""
-	if len(aNaz)==2
- 		@ prow(),nCR  SAY aNaz[2]
-	endif
-	if cPnab=="D"
- 		@ prow(), nCol0 SAY space(len(gpickol))
- 		@ prow(), pcol()+1 SAY space(len(gpickol))
- 		if round(nulaz-nizlaz,4)<>0
-  			@ prow(),pcol()+1 SAY (nNVU-nNVI)/(nUlaz-nIzlaz) pict picdem
- 		endif
- 		@ prow(),nCol1 SAY nNVU pict picdem
- 		@ prow(),pcol()+1 SAY nNVI pict picdem
- 		@ prow(),pcol()+1 SAY nNVU-nNVI pict picdem
- 		@ prow(),pcol()+1 SAY _MPC pict piccdem
-	endif
-	nTULaz+=nUlaz
-	nTIzlaz+=nIzlaz
-	nTMPVU+=nMPVU
-	nTMPVI+=nMPVI
-	nTNVU+=nNVU
-	nTNVI+=nNVI
-	nTRabat+=nRabat
-enddo
+      @ PRow() + 1, 0 SAY ""
+      IF Len( aNaz ) == 2
+         @ PRow(), nCR  SAY aNaz[ 2 ]
+      ENDIF
+      IF cPnab == "D"
+         @ PRow(), nCol0 SAY Space( Len( gpickol ) )
+         @ PRow(), PCol() + 1 SAY Space( Len( gpickol ) )
+         IF Round( nulaz - nizlaz, 4 ) <> 0
+            @ PRow(), PCol() + 1 SAY ( nNVU - nNVI ) / ( nUlaz - nIzlaz ) PICT picdem
+         ENDIF
+         @ PRow(), nCol1 SAY nNVU PICT picdem
+         @ PRow(), PCol() + 1 SAY nNVI PICT picdem
+         @ PRow(), PCol() + 1 SAY nNVU - nNVI PICT picdem
+         @ PRow(), PCol() + 1 SAY _MPC PICT piccdem
+      ENDIF
+      nTULaz += nUlaz
+      nTIzlaz += nIzlaz
+      nTMPVU += nMPVU
+      nTMPVI += nMPVI
+      nTNVU += nNVU
+      nTNVI += nNVI
+      nTRabat += nRabat
+   ENDDO
 
-NovaStrana(bZagl, 3)
+   NovaStrana( bZagl, 3 )
 
-? cLine
-? "UKUPNO:"
-@ prow(),nCol0 SAY ntUlaz pict gpickol
-@ prow(),pcol()+1 SAY ntIzlaz pict gpickol
-@ prow(),pcol()+1 SAY ntUlaz-ntIzlaz pict gpickol
-nCol1:=pcol()+1
-@ prow(),pcol()+1 SAY ntMPVU pict picdem
-@ prow(),pcol()+1 SAY ntMPVI pict picdem
-@ prow(),pcol()+1 SAY ntMPVU-NtMPVI pict picdem
+   ? cLine
+   ? "UKUPNO:"
+   @ PRow(), nCol0 SAY ntUlaz PICT gpickol
+   @ PRow(), PCol() + 1 SAY ntIzlaz PICT gpickol
+   @ PRow(), PCol() + 1 SAY ntUlaz - ntIzlaz PICT gpickol
+   nCol1 := PCol() + 1
+   @ PRow(), PCol() + 1 SAY ntMPVU PICT picdem
+   @ PRow(), PCol() + 1 SAY ntMPVI PICT picdem
+   @ PRow(), PCol() + 1 SAY ntMPVU - NtMPVI PICT picdem
 
-if cpnab=="D"
-	@ prow()+1,nCol1 SAY ntNVU pict picdem
-	@ prow(),pcol()+1 SAY ntNVI pict picdem
-	@ prow(),pcol()+1 SAY ntNVU-ntNVI pict picdem
-endif
+   IF cpnab == "D"
+      @ PRow() + 1, nCol1 SAY ntNVU PICT picdem
+      @ PRow(), PCol() + 1 SAY ntNVI PICT picdem
+      @ PRow(), PCol() + 1 SAY ntNVU - ntNVI PICT picdem
+   ENDIF
 
-? cLine
+   ? cLine
 
-FF
-end print
+   FF
+   END PRINT
 
-closeret
-return
+   my_close_all_dbf()
+
+   RETURN
 
 
 // zaglavlje sint.lager lista
-function ZaglLLPS(lSint)
-if lSint==NIL
-	lSint:=.f.
-endif
+FUNCTION ZaglLLPS( lSint )
 
-Preduzece()
+   IF lSint == NIL
+      lSint := .F.
+   ENDIF
 
-P_COND
+   Preduzece()
 
-?? "KALK: SINTETICKA LAGER LISTA PRODAVNICA ZA PERIOD",dDatOd,"-",dDatDo," NA DAN "
-?? date(), space(12),"Str:",str(++nTStrana,3)
+   P_COND
 
-if !lSint .and. !EMPTY(qqIdPartn)
-	? "Obuhvaceni sljedeci partneri:", TRIM(qqIdPartn)
-endif
+   ?? "KALK: SINTETICKA LAGER LISTA PRODAVNICA ZA PERIOD", dDatOd, "-", dDatDo, " NA DAN "
+   ?? Date(), Space( 12 ), "Str:", Str( ++nTStrana, 3 )
 
-if lSint
-	? "Kriterij za prodavnice:", qqKonto
-else
- 	select konto
-	hseek cIdKonto
- 	? "Prodavnica:", cIdKonto, "-", konto->naz
-endif
+   IF !lSint .AND. !Empty( qqIdPartn )
+      ? "Obuhvaceni sljedeci partneri:", Trim( qqIdPartn )
+   ENDIF
 
-if IsDomZdr() .and. !Empty(cKalkTip)
-	PrikTipSredstva(cKalkTip)
-endif
+   IF lSint
+      ? "Kriterij za prodavnice:", qqKonto
+   ELSE
+      SELECT konto
+      hseek cIdKonto
+      ? "Prodavnica:", cIdKonto, "-", konto->naz
+   ENDIF
 
-? cLine
-? cText1
-? cText2
-? cLine
+   ? cLine
+   ? cText1
+   ? cText2
+   ? cLine
 
-return
-
+   RETURN

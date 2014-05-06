@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,442 +14,470 @@
 #include "hbclass.ch"
 
 
-function TFrmInvItNew(oOwner)
-local oObj
+FUNCTION TFrmInvItNew( oOwner )
 
-oObj:=TFrmInvIt():new()
-oObj:oOwner:=oOwner
-oObj:self:=oObj
-oObj:lSilent:=.f.
-oObj:lNovaStavka:=.f.
+   LOCAL oObj
 
-oObj:oOwner:lPartnerLoaded:=.f.
-return oObj
+   oObj := TFrmInvIt():new()
+   oObj:oOwner := oOwner
+   oObj:self := oObj
+   oObj:lSilent := .F.
+   oObj:lNovaStavka := .F.
+
+   oObj:oOwner:lPartnerLoaded := .F.
+
+   RETURN oObj
 
 
 
 
 
 CREATE CLASS TFrmInvIt
-	EXPORTED:
-	var self
-	var oOwner
-	var lNovaStavka
+
+   EXPORTED:
+   VAR self
+   VAR oOwner
+   VAR lNovaStavka
 	
-	var nActionType
-	var nCh
-	var lSilent
+   VAR nActionType
+   VAR nCh
+   VAR lSilent
 	
-	// form varijable
-	var cIdRj
-	var cIdVd
-	var dDatDok
-	var cBrDok
-	var cValuta
-	var cPartner
-	var cMjesto
-	var cAdresa
-	var cValuta
-	var nRbr
-	var cIdRoba
-	var nPKolicina
-	var nKKolicina
-	var nKKolPrijeEdita
-	var nPKolicina
-	var nCijena
-	var nUkupno	
+   // form varijable
+   VAR cIdRj
+   VAR cIdVd
+   VAR dDatDok
+   VAR cBrDok
+   VAR cValuta
+   VAR cPartner
+   VAR cMjesto
+   VAR cAdresa
+   VAR cValuta
+   VAR nRbr
+   VAR cIdRoba
+   VAR nPKolicina
+   VAR nKKolicina
+   VAR nKKolPrijeEdita
+   VAR nPKolicina
+   VAR nCijena
+   VAR nUkupno
 	
-	//caclulated values
-	var nNaStanju
+   // caclulated values
+   VAR nNaStanju
 	
-	method newItem
-	method deleteItem
-	method open
-	method close
-	method nextItem
-	method loadFromTbl
-	method saveToTbl
+   METHOD newItem
+   METHOD deleteItem
+   METHOD open
+   METHOD CLOSE
+   METHOD nextItem
+   METHOD loadFromTbl
+   METHOD saveToTbl
 	
-	// when, validacija polja
-	method wheIdRoba
-	method vldIdRoba
-	method vldKKolicina
-	method wheKKolicina
-	method vldPKolicina
-	method vldRbr
-	method vldRj
-	method vldBrDok
-	method wheBrDok
-	method vldPartner
-	method whePartner
-	method getPartner
-	method sayPartner
-	method showArtikal
+   // when, validacija polja
+   METHOD wheIdRoba
+   METHOD vldIdRoba
+   METHOD vldKKolicina
+   METHOD wheKKolicina
+   METHOD vldPKolicina
+   METHOD vldRbr
+   METHOD vldRj
+   METHOD vldBrDok
+   METHOD wheBrDok
+   METHOD vldPartner
+   METHOD whePartner
+   METHOD getPartner
+   METHOD sayPartner
+   METHOD showArtikal
 
 END CLASS
 
 
 
-method open()
+METHOD open()
 
-Box(,20,77)
-SET CURSOR ON
+   Box(, 20, 77 )
+   SET CURSOR ON
 
-if ::lNovaStavka
-	::newItem()
-else
-	::loadFromTbl()
-endif	
- 
-@ m_x+1,col()+2   SAY " RJ:" GET ::cIdRj  pict "@!" VALID ::vldRj()
-READ
+   if ::lNovaStavka
+      ::newItem()
+   ELSE
+      ::loadFromTbl()
+   endif
 
-do while .t.
-	@  m_x+3,m_y+40  SAY "Datum:"   GET ::dDatDok
-	@  m_x+3,m_y+col()+2  SAY "Broj:" GET ::cBrDok WHEN ::wheBrDok() VALID ::vldBrDok()
+   @ m_x + 1, Col() + 2   SAY " RJ:" GET ::cIdRj  PICT "@!" VALID ::vldRj()
+   READ
 
-	if ::nRbr>1
-		::sayPartner(5)
-	else
-		::getPartner(5)
-	endif
+   DO WHILE .T.
+      @  m_x + 3, m_y + 40  SAY "Datum:"   GET ::dDatDok
+      @  m_x + 3, m_y + Col() + 2  SAY "Broj:" GET ::cBrDok WHEN ::wheBrDok() VALID ::vldBrDok()
+
+      if ::nRbr > 1
+         ::sayPartner( 5 )
+      ELSE
+         ::getPartner( 5 )
+      ENDIF
 	
-	@ m_x+9, m_y+2  SAY Valdomaca()+"/"+VAlPomocna() GET ::cValuta PICT "@!" VALID ::cValuta $ ValDomaca()+"#"+ValPomocna()
+      @ m_x + 9, m_y + 2  SAY Valdomaca() + "/" + VAlPomocna() GET ::cValuta PICT "@!" VALID ::cValuta $ ValDomaca() + "#" + ValPomocna()
 
-	READ
-	ESC_RETURN 0
-	if fakt_doks_exist(::cIdRj, ::cIdVd, ::cBrDok)
-		MsgBeep("Dokument vec postoji !!??")
-	else
-		exit
-	endif
+      READ
+      ESC_RETURN 0
+      IF fakt_doks_exist( ::cIdRj, ::cIdVd, ::cBrDok )
+         MsgBeep( "Dokument vec postoji !!??" )
+      ELSE
+         EXIT
+      ENDIF
 
-enddo
+   ENDDO
 
-@  m_x+11,m_y+2  SAY "R.br:" get ::nRbr picture "9999"
-@  m_x+11, col()+2  SAY "Artikal  " get ::cIdRoba pict "@!S10" WHEN ::wheIdRoba() VALID ::vldIdRoba()
-@  m_x+13, m_y+2 SAY "Knjizna kolicina " GET ::nKKolicina PICT pickol WHEN ::wheKKolicina() VALID ::vldKKolicina()
-@  m_x+13, col()+2 SAY "popisana kolicina " GET ::nPKolicina PICT pickol VALID ::vldPKolicina()
+   @  m_x + 11, m_y + 2  SAY "R.br:" get ::nRbr PICTURE "9999"
+   @  m_x + 11, Col() + 2  SAY "Artikal  " get ::cIdRoba PICT "@!S10" WHEN ::wheIdRoba() VALID ::vldIdRoba()
+   @  m_x + 13, m_y + 2 SAY "Knjizna kolicina " GET ::nKKolicina PICT pickol WHEN ::wheKKolicina() VALID ::vldKKolicina()
+   @  m_x + 13, Col() + 2 SAY "popisana kolicina " GET ::nPKolicina PICT pickol VALID ::vldPKolicina()
 
-READ
+   READ
 
-if (LASTKEY()==K_ESC)
-	return 0
-endif
+   IF ( LastKey() == K_ESC )
+      RETURN 0
+   ENDIF
 
-::saveToTbl()
- 
-return 1
+   ::saveToTbl()
 
- 
-method close
-BoxC()
-return
+   RETURN 1
 
 
-method newItem()
+METHOD CLOSE
 
-SET ORDER TO TAG "1"
-SELECT fakt_pripr
+   BoxC()
 
-GO BOTTOM
-::loadFromTbl()
-
-APPEND BLANK
-++::nRbr
-
-::cIdRoba:=SPACE(LEN(::cIdRoba))
-::nKKolicina:=0
-::nPKolicina:=0
-::nCijena:=0
-::cIdVd:="IM"
-::cIdRj:=gFirma
-
-if ::nRbr==nil
-	::nRbr:=1
-endif
-if ::nRbr<2
-	::dDatDok:=DATE()
-endif
-
-return
+   RETURN
 
 
-method deleteItem()
-my_delete_with_pack()
-return
+METHOD newItem()
+
+   SET ORDER TO TAG "1"
+   SELECT fakt_pripr
+
+   GO BOTTOM
+   ::loadFromTbl()
+
+   APPEND BLANK
+   ++::nRbr
+
+   ::cIdRoba := Space( Len( ::cIdRoba ) )
+   ::nKKolicina := 0
+   ::nPKolicina := 0
+   ::nCijena := 0
+   ::cIdVd := "IM"
+   ::cIdRj := gFirma
+
+   if ::nRbr == nil
+      ::nRbr := 1
+   ENDIF
+   if ::nRbr < 2
+      ::dDatDok := Date()
+   ENDIF
+
+   RETURN
 
 
-method nextItem()
+METHOD deleteItem()
 
-SELECT fakt_pripr
-SKIP
+   my_delete_with_pack()
 
-if EOF()
-	SKIP -1
-	return 0
-endif
-::loadFromTbl()
-
-return 1
+   RETURN
 
 
+METHOD nextItem()
 
-method loadFromTbl()
-local aMemo
+   SELECT fakt_pripr
+   SKIP
 
-SELECT fakt_pripr
+   IF Eof()
+      SKIP -1
+      RETURN 0
+   ENDIF
+   ::loadFromTbl()
 
-::cIdRj:=field->idFirma
-::cIdVd:=field->idTipDok
-::cBrDok:=field->brDok
-::nRbr:=RbrUNum(field->rBr)
-::nPKolicina:=field->kolicina
-::cIdRoba:=field->idRoba
-::cValuta:=field->dinDem
-::dDatDok:=field->datDok
-::nKKolicina:=VAL(field->serBr)
-
-// partner nije ucitan
-if !::oOwner:lPartnerLoaded
-	if ::nRbr>1 
-		// memo polje sa podacima partnera je popunjeno samo u prvoj stavci
-		PushWa()
-		GO TOP
-	endif
-	aMemo:=ParsMemo(field->txt)
-	::cPartner:=""
-	::cMjesto:=""
-	::cAdresa:=""
-	if LEN(aMemo)>=5
-	  ::cPartner:=aMemo[3]
-	  ::cAdresa:=aMemo[4]
-	  ::cMjesto:=aMemo[5]
-	endif
-	::oOwner:lPartnerLoaded:=.t.
-	if ::nRbr>1
-		PopWa()
-	endif
-endif
-return
+   RETURN 1
 
 
 
-method saveToTbl()
-local cTxt
+METHOD loadFromTbl()
 
-SELECT fakt_pripr
+   LOCAL aMemo
 
-REPLACE idFirma WITH ::cIdRj
-REPLACE idTipDok WITH ::cIdVd
-REPLACE rBr WITH RedniBroj(::nRbr,3)
-REPLACE kolicina WITH ::nPKolicina
-REPLACE idRoba WITH ::cIdRoba
-REPLACE brDok WITH ::cBrDok
-REPLACE dinDem WITH ::cValuta
-cTxt:=""
-AddTxt(@cTxt, "")
-AddTxt(@cTxt, "")
-AddTxt(@cTxt, ::cPartner)
-AddTxt(@cTxt, ::cAdresa)
-AddTxt(@cTxt, ::cMjesto)
-REPLACE txt WITH cTxt
-REPLACE serBr WITH STR(::nKKolicina,15,4) 
-REPLACE datDok WITH ::dDatDok
-return
+   SELECT fakt_pripr
 
-static function AddTxt(cTxt, cStr)
-cTxt:=cTxt+Chr(16)+cStr+Chr(17)
-return nil
+   ::cIdRj := field->idFirma
+   ::cIdVd := field->idTipDok
+   ::cBrDok := field->brDok
+   ::nRbr := RbrUNum( field->rBr )
+   ::nPKolicina := field->kolicina
+   ::cIdRoba := field->idRoba
+   ::cValuta := field->dinDem
+   ::dDatDok := field->datDok
+   ::nKKolicina := Val( field->serBr )
+
+   // partner nije ucitan
+   IF !::oOwner:lPartnerLoaded
+      if ::nRbr > 1
+         // memo polje sa podacima partnera je popunjeno samo u prvoj stavci
+         PushWa()
+         GO TOP
+      ENDIF
+      aMemo := ParsMemo( field->txt )
+      ::cPartner := ""
+      ::cMjesto := ""
+      ::cAdresa := ""
+      IF Len( aMemo ) >= 5
+         ::cPartner := aMemo[ 3 ]
+         ::cAdresa := aMemo[ 4 ]
+         ::cMjesto := aMemo[ 5 ]
+      ENDIF
+      ::oOwner:lPartnerLoaded := .T.
+      if ::nRbr > 1
+         PopWa()
+      ENDIF
+   ENDIF
+
+   RETURN
+
+
+
+METHOD saveToTbl()
+
+   LOCAL cTxt
+
+   SELECT fakt_pripr
+
+   REPLACE idFirma WITH ::cIdRj
+   REPLACE idTipDok WITH ::cIdVd
+   REPLACE rBr WITH RedniBroj( ::nRbr, 3 )
+   REPLACE kolicina WITH ::nPKolicina
+   REPLACE idRoba WITH ::cIdRoba
+   REPLACE brDok WITH ::cBrDok
+   REPLACE dinDem WITH ::cValuta
+   cTxt := ""
+   AddTxt( @cTxt, "" )
+   AddTxt( @cTxt, "" )
+   AddTxt( @cTxt, ::cPartner )
+   AddTxt( @cTxt, ::cAdresa )
+   AddTxt( @cTxt, ::cMjesto )
+   REPLACE txt WITH cTxt
+   REPLACE serBr WITH Str( ::nKKolicina, 15, 4 )
+   REPLACE datDok WITH ::dDatDok
+
+   RETURN
+
+STATIC FUNCTION AddTxt( cTxt, cStr )
+
+   cTxt := cTxt + Chr( 16 ) + cStr + Chr( 17 )
+
+   RETURN NIL
 
 /*! \fn TFrmInvIt::vIdRj()
  *  \brief Validacija radne jedinice
  */
-method vldRj()
-local cPom
+METHOD vldRj()
 
-if EMPTY(::cIdRj)
-	return .f.
-endif
-if ::cIdRj==gFirma 
-	return .t.
-endif
+   LOCAL cPom
 
-cPom:=::cIdRj
-P_RJ(@cPom)
-::cIdRj:=cPom
+   IF Empty( ::cIdRj )
+      RETURN .F.
+   ENDIF
+   if ::cIdRj == gFirma
+      RETURN .T.
+   ENDIF
 
-return .t.
+   cPom := ::cIdRj
+   P_RJ( @cPom )
+   ::cIdRj := cPom
 
-method wheBrDok()
-return .t.
+   RETURN .T.
 
-
-method vldRbr()
-return .f.
+METHOD wheBrDok()
+   RETURN .T.
 
 
-method vldBrDok()
-if !EMPTY(::cBrDok)
-	return .t.
-else
-	return .f.
-endif
+METHOD vldRbr()
+   RETURN .F.
+
+
+METHOD vldBrDok()
+
+   IF !Empty( ::cBrDok )
+      RETURN .T.
+   ELSE
+      RETURN .F.
+   ENDIF
 
 /*! \fn TFrmInvIt::vldIdRoba()
  *  \brief validacija IdRoba
  */
-method vldIdRoba()
-*{
-local cPom
 
-if LEN(TRIM(::cIdRoba))<10
-	::cIdroba:=LEFT(::cIdRoba,10)
-endif
+METHOD vldIdRoba()
 
-cPom:=::cIdRoba
-P_Roba(@cPom)
-::cIdRoba:=cPom
+   // {
+   LOCAL cPom
 
-if ::lSilent
-	@ m_x+14,m_y+28 SAY "TBr: "
-	?? roba->idtarifa, "PPP", str(tarifa->opp,7,2)+"%", "PPU", str(tarifa->ppp,7,2)
-endif
+   IF Len( Trim( ::cIdRoba ) ) < 10
+      ::cIdroba := Left( ::cIdRoba, 10 )
+   ENDIF
 
-SELECT fakt_pripr
-return .t.
-*}
+   cPom := ::cIdRoba
+   P_Roba( @cPom )
+   ::cIdRoba := cPom
+
+   if ::lSilent
+      @ m_x + 14, m_y + 28 SAY "TBr: "
+      ?? roba->idtarifa, "PPP", Str( tarifa->opp, 7, 2 ) + "%", "PPU", Str( tarifa->ppp, 7, 2 )
+   ENDIF
+
+   SELECT fakt_pripr
+
+   RETURN .T.
+// }
 
 
 /*! \fn TFrmInvIt::wheIdRoba()
  *  \brief When (pred ulazak u) IdRoba
  */
-method wheIdRoba()
-private GetList
-::cIdRoba:=PADR(::cIdroba, goModul:nDuzinaSifre)
-return .t.
+METHOD wheIdRoba()
+
+   PRIVATE GetList
+
+   ::cIdRoba := PadR( ::cIdroba, goModul:nDuzinaSifre )
+
+   RETURN .T.
 
 
 /*! \fn TFrmInvIt::getPartner(int nRow)
  *  \brief Uzmi Podatke partnera
  */
-method getPartner(nRow)
-@  m_x+nRow, m_y+2  SAY "Partner " get ::cPartner  picture "@S30" WHEN ::whePartner() VALID ::vldPartner()
-@  m_x+nRow+1,m_y+2  SAY "        " get ::cAdresa  picture "@"
-@  m_x+nRow+2,m_y+2  SAY "Mjesto  " get ::cMjesto  picture "@"
-return
+METHOD getPartner( nRow )
+
+   @  m_x + nRow, m_y + 2  SAY "Partner " get ::cPartner  PICTURE "@S30" WHEN ::whePartner() VALID ::vldPartner()
+   @  m_x + nRow + 1, m_y + 2  SAY "        " get ::cAdresa  PICTURE "@"
+   @  m_x + nRow + 2, m_y + 2  SAY "Mjesto  " get ::cMjesto  PICTURE "@"
+
+   RETURN
 
 /*! \fn TFrmInvIt::sayPartner(int nRow)
  *  \brief Odstampaj podatke o partneru
  */
 
-*void TFrmInvIt::sayPartner(int nRow)
-*{
-method sayPartner(nRow)
+// void TFrmInvIt::sayPartner(int nRow)
+// {
+METHOD sayPartner( nRow )
 
-@  m_x+nRow, m_y+2  SAY "Partner " 
-??::cPartner
-@  m_x+nRow+1,m_y+2  SAY "        "
-?? ::cAdresa 
-@  m_x+nRow+2,m_y+2  SAY "Mjesto  " 
-?? ::cMjesto
+   @  m_x + nRow, m_y + 2  SAY "Partner "
+   ??::cPartner
+   @  m_x + nRow + 1, m_y + 2  SAY "        "
+   ?? ::cAdresa
+   @  m_x + nRow + 2, m_y + 2  SAY "Mjesto  "
+   ?? ::cMjesto
 
-return
-*}
+   RETURN
+// }
 
 /*! \fn TFrmInvIt::whePartner()
  *  \brief When Partner polja
  */
-method whePartner()
-*{
+METHOD whePartner()
 
-::cPartner:=PADR(::cPartner, 30)
-::cAdresa:=PADR(::cAdresa, 30)
-::cMjesto:=PADR(::cMjesto, 30)
+   // {
 
-return .t.
-*}
+   ::cPartner := PadR( ::cPartner, 30 )
+   ::cAdresa := PadR( ::cAdresa, 30 )
+   ::cMjesto := PadR( ::cMjesto, 30 )
+
+   RETURN .T.
+// }
 
 /*! \fn TFrmInvIt::vldPartner()
  *  \brief Validacija nakon unosa Partner polja - vidi je li sifra
  */
-method vldPartner()
-*{
-local cSif
-local nPos
+METHOD vldPartner()
 
-cSif:=TRIM(::cPartner)
+   // {
+   LOCAL cSif
+   LOCAL nPos
 
-if (RIGHT(cSif,1)="." .and. LEN(csif)<=7)
-	nPos:=RAT(".",cSif)
-	cSif:=LEFT(cSif,nPos-1)
-	P_Firma(PADR(cSif,6))
-	::cPartner:=PADR(partn->naz, 30)
+   cSif := Trim( ::cPartner )
 
-	if IzFmkIni('FAKT','NaslovPartnTelefon','D')=="D"
-		::cMjesto:=::cMjesto+", Tel:"+trim(partn->telefon)
-	endif
+   IF ( Right( cSif, 1 ) = "." .AND. Len( csif ) <= 7 )
+      nPos := RAt( ".", cSif )
+      cSif := Left( cSif, nPos - 1 )
+      P_Firma( PadR( cSif, 6 ) )
+      ::cPartner := PadR( partn->naz, 30 )
 
-	::cAdresa:=PADR(partn->adresa,30)
-	::cMjesto:=PADR(partn->mjesto,30)
+      IF IzFmkIni( 'FAKT', 'NaslovPartnTelefon', 'D' ) == "D"
+         ::cMjesto := ::cMjesto + ", Tel:" + Trim( partn->telefon )
+      ENDIF
 
-endif
-return  .t.
-*}
+      ::cAdresa := PadR( partn->adresa, 30 )
+      ::cMjesto := PadR( partn->mjesto, 30 )
+
+   ENDIF
+
+   RETURN  .T.
+// }
 
 
 /*! \fn TFrmInvIt::vldPKolicina()
  *  \brief Validacija Popisane Kolicine
  */
 
-method vldPKolicina()
-*{
-local cRjTip
-local nUl
-local nIzl
-local nRezerv
-local nRevers
-return .t.
+METHOD vldPKolicina()
+
+   // {
+   LOCAL cRjTip
+   LOCAL nUl
+   LOCAL nIzl
+   LOCAL nRezerv
+   LOCAL nRevers
+
+   RETURN .T.
 
 
 /*! \fn TFrmInvIt::vldKKolicina()
  *  \brief Validacija Knjizne Kolicine
  */
-method vldKKolicina()
+METHOD vldKKolicina()
 
-if ::nKKolPrijeEdita<>::nKKolicina
-	MsgBeep("Zasto mjenjate knjiznu kolicinu ??")
-	if Pitanje(,"Ipak to zelite uciniti ?","N")=="N"
-		::nKKolicina:=::nKKolPrijeEdita
-	endif
-endif
-return .t.
+   if ::nKKolPrijeEdita <> ::nKKolicina
+      MsgBeep( "Zasto mjenjate knjiznu kolicinu ??" )
+      IF Pitanje(, "Ipak to zelite uciniti ?", "N" ) == "N"
+         ::nKKolicina := ::nKKolPrijeEdita
+      ENDIF
+   ENDIF
+
+   RETURN .T.
 
 
 /*! \fn TFrmInvIt::wheKKolicina()
  *  \brief Prije ulaska u polje Knjizne Kolicine
  */
-method wheKKolicina()
-::nKKolPrijeEdita:=::nKKolicina
-return .t.
+METHOD wheKKolicina()
+
+   ::nKKolPrijeEdita := ::nKKolicina
+
+   RETURN .T.
 
 /*! \fn TFrmInvIt::showArtikal()
  *  \brief Pokazi podatke o artiklu na formi ItemInventure
  */
 
-method showArtikal()
+METHOD showArtikal()
 
-@ m_x+17, m_y+1   SAY "Artikal: "
-?? ::cIdRoba 
-?? "("+roba->jmj+")"
+   @ m_x + 17, m_y + 1   SAY "Artikal: "
+   ?? ::cIdRoba
+   ?? "(" + roba->jmj + ")"
 
-@ m_x+18, m_y+1   SAY "Stanje :"
-@ m_x+18, col()+1 SAY ::nNaStanju PICTURE pickol
+   @ m_x + 18, m_y + 1   SAY "Stanje :"
+   @ m_x + 18, Col() + 1 SAY ::nNaStanju PICTURE pickol
 
-@ m_x+19, m_y+1   SAY "Tarifa : " 
-?? roba->idtarifa
+   @ m_x + 19, m_y + 1   SAY "Tarifa : "
+   ?? roba->idtarifa
 
-
-return
-
-
+   RETURN

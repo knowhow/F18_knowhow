@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,436 +14,465 @@
 #include "hbclass.ch"
 #include "f18_separator.ch"
 
- 
-
-function TFrmInvNew()
-local oObj
-oObj:=TFrmInv():new()
-oObj:self:=oObj
-oObj:lTerminate:=.f.
-return oObj
 
 
+FUNCTION TFrmInvNew()
 
-function FaUnosInv()
-local oMainFrm
-oMainFrm:=TFrmInvNew()
-oMainFrm:open()
-oMainFrm:close()
-return
+   LOCAL oObj
+
+   oObj := TFrmInv():new()
+   oObj:self := oObj
+   oObj:lTerminate := .F.
+
+   RETURN oObj
 
 
-CREATE CLASS TFrmInv 
-	EXPORTED:
-	var self
+
+FUNCTION FaUnosInv()
+
+   LOCAL oMainFrm
+
+   oMainFrm := TFrmInvNew()
+   oMainFrm:open()
+   oMainFrm:close()
+
+   RETURN
+
+
+CREATE CLASS TFrmInv
+
+   EXPORTED:
+   VAR self
 	
-	//is partner field loaded
-	var lPartnerLoaded
-	var lTerminate
+   // is partner field loaded
+   VAR lPartnerLoaded
+   VAR lTerminate
 
-	var nActionType
-	var nCh
-	var oApp
-	var aImeKol
-	var aKol
-	var nStatus
+   VAR nActionType
+   VAR nCh
+   VAR oApp
+   VAR aImeKol
+   VAR aKol
+   VAR nStatus
 
-	method open
-	method close
-	method print
-	method printOPop
-	method deleteItem
-	method deleteAll
-	method itemsCount
-	method setColumns
-	method onKeyboard
+   METHOD open
+   METHOD CLOSE
+   METHOD PRINT
+   METHOD printOPop
+   METHOD deleteItem
+   METHOD deleteAll
+   METHOD itemsCount
+   METHOD setColumns
+   METHOD onKeyboard
 
-	method walk
-	method noveStavke
-	method popup
-	method sayKomande
+   METHOD walk
+   METHOD noveStavke
+   METHOD popup
+   METHOD sayKomande
 	
-	method genDok
-	method genDokManjak
-	method genDokVisak
+   METHOD genDok
+   METHOD genDokManjak
+   METHOD genDokVisak
 
-    method open_tables
+   METHOD open_tables
 
 END CLASS
 
 
-method open_tables()
-O_FAKT_DOKS
-O_FAKT
-O_SIFK
-O_SIFV
-O_PARTN
-O_ROBA
-O_TARIFA
-O_FAKT_PRIPR
-return .t.
+METHOD open_tables()
+
+   O_FAKT_DOKS
+   O_FAKT
+   O_SIFK
+   O_SIFV
+   O_PARTN
+   O_ROBA
+   O_TARIFA
+   O_FAKT_PRIPR
+
+   RETURN .T.
 
 
-method open()
-private imekol
-private kol
+METHOD open()
 
-close_open_fakt_tabele()
+   PRIVATE imekol
+   PRIVATE kol
 
-select fakt_pripr
-set order to tag "1"
+   close_open_fakt_tabele()
 
-if ::lTerminate
-    return
-endif
+   SELECT fakt_pripr
+   SET ORDER TO TAG "1"
 
-::setColumns()
+   if ::lTerminate
+      RETURN
+   ENDIF
 
-Box(,21,77)
-    TekDokument()
-    ::sayKomande()
-    ObjDbedit( "FInv", 21, 77, {|| ::onKeyBoard() }, "", "Priprema inventure", , , , ,4)
+   ::setColumns()
 
-return
+   Box(, 21, 77 )
+   TekDokument()
+   ::sayKomande()
+   ObjDbedit( "FInv", 21, 77, {|| ::onKeyBoard() }, "", "Priprema inventure", , , , , 4 )
+
+   RETURN
 
 
 
-method onKeyboard()
-local nRet
-local oFrmItem
+METHOD onKeyboard()
 
-::nCh := Ch
+   LOCAL nRet
+   LOCAL oFrmItem
 
-if ::lTerminate
-    return DE_ABORT
-endif
+   ::nCh := Ch
 
-select fakt_pripr
+   if ::lTerminate
+      RETURN DE_ABORT
+   ENDIF
 
-if ( ::nCh == K_ENTER  .and. EMPTY( field->brdok ) .and. EMPTY( field->rbr ) )
-    return DE_CONT
-endif
+   SELECT fakt_pripr
 
-do case
+   IF ( ::nCh == K_ENTER  .AND. Empty( field->brdok ) .AND. Empty( field->rbr ) )
+      RETURN DE_CONT
+   ENDIF
 
-    case ::nCh == K_CTRL_T
-     	if ::deleteItem() == 1
-     		return DE_REFRESH
-		else
-			return DE_CONT
-		endif
+   DO CASE
 
-   	case ::nCh == K_ENTER
-	    oFrmItem := TFrmInvItNew( self )
-		nRet := oFrmItem:open()
-		oFrmItem:close()
+   case ::nCh == K_CTRL_T
+      if ::deleteItem() == 1
+         RETURN DE_REFRESH
+      ELSE
+         RETURN DE_CONT
+      ENDIF
 
-		if nRet == 1
-			return DE_REFRESH
-		else
-			return DE_CONT   
-		endif
+   case ::nCh == K_ENTER
+      oFrmItem := TFrmInvItNew( self )
+      nRet := oFrmItem:open()
+      oFrmItem:close()
 
-	case ::nCh == K_CTRL_A
-		::walk()
-		return DE_REFRESH
+      IF nRet == 1
+         RETURN DE_REFRESH
+      ELSE
+         RETURN DE_CONT
+      ENDIF
 
-	case ::nCh == K_CTRL_N
-		::noveStavke()
-		return DE_REFRESH
+   case ::nCh == K_CTRL_A
+      ::walk()
+      RETURN DE_REFRESH
 
-	case ::nCh == K_CTRL_P
-        ::print()
-        return DE_REFRESH
+   case ::nCh == K_CTRL_N
+      ::noveStavke()
+      RETURN DE_REFRESH
+
+   case ::nCh == K_CTRL_P
+      ::print()
+      RETURN DE_REFRESH
 	
-	case ::nCh == K_ALT_P
-        ::printOPop()
-        return DE_REFRESH
+   case ::nCh == K_ALT_P
+      ::printOPop()
+      RETURN DE_REFRESH
 
-	case ::nCh == K_ALT_A
-		my_close_all_dbf()
-		azur_fakt()
-                close_open_fakt_tabele()
-		return DE_REFRESH
+   case ::nCh == K_ALT_A
+      my_close_all_dbf()
+      azur_fakt()
+      close_open_fakt_tabele()
+      RETURN DE_REFRESH
 
-   	case ::nCh == K_CTRL_F9
-		::deleteAll()
-        return DE_REFRESH
+   case ::nCh == K_CTRL_F9
+      ::deleteAll()
+      RETURN DE_REFRESH
 
-   	case ::nCh == K_F10
-       	::popup()
-		if ::lTerminate
-			return DE_ABORT
-		endif
-       	return DE_REFRESH
+   case ::nCh == K_F10
+      ::Popup()
+      if ::lTerminate
+         RETURN DE_ABORT
+      ENDIF
+      RETURN DE_REFRESH
 
-	case ::nCh == K_ALT_F10
+   case ::nCh == K_ALT_F10
 	
-	case ::nCh == K_ESC
-	    return DE_ABORT
-endcase
+   case ::nCh == K_ESC
+      RETURN DE_ABORT
+   ENDCASE
 	
-return DE_CONT
+   RETURN DE_CONT
 
 
 
-method walk()
-local oFrmItem
+METHOD walk()
 
-oFrmItem := TFrmInvItNew( self )
+   LOCAL oFrmItem
 
-do while .t.
+   oFrmItem := TFrmInvItNew( self )
 
-	oFrmItem:lNovaStavka := .f.
-	oFrmItem:open()
-	oFrmItem:close()
+   DO WHILE .T.
 
-	if LASTKEY() == K_ESC
-		exit
-	endif
+      oFrmItem:lNovaStavka := .F.
+      oFrmItem:open()
+      oFrmItem:close()
 
-	if oFrmItem:nextItem() == 0
-		exit
-	endif
+      IF LastKey() == K_ESC
+         EXIT
+      ENDIF
 
-enddo
+      IF oFrmItem:nextItem() == 0
+         EXIT
+      ENDIF
 
-oFrmItem := nil
+   ENDDO
 
-return
+   oFrmItem := nil
 
+   RETURN
 
- 
-method noveStavke()
-local oFrmItem
 
-oFrmItem := TFrmInvItNew( self )
 
-do while .t.
-	oFrmItem:lNovaStavka := .t.
-	oFrmItem:open()
-	oFrmItem:close()
-	if LASTKEY() == K_ESC
-		oFrmItem:deleteItem()
-		exit
-	endif
-enddo
-oFrmItem := NIL
+METHOD noveStavke()
 
-return
+   LOCAL oFrmItem
 
+   oFrmItem := TFrmInvItNew( self )
 
+   DO WHILE .T.
+      oFrmItem:lNovaStavka := .T.
+      oFrmItem:open()
+      oFrmItem:close()
+      IF LastKey() == K_ESC
+         oFrmItem:deleteItem()
+         EXIT
+      ENDIF
+   ENDDO
+   oFrmItem := NIL
 
-method sayKomande()
+   RETURN
 
-@ m_x + 18, m_y+2 SAY " <c-N> Nove Stavke       " + BROWSE_COL_SEP + "<ENT> Ispravi stavku      " + BROWSE_COL_SEP + "<c-T> Brisi Stavku "
-@ m_x + 19, m_y+2 SAY " <c-A> Ispravka Dokumenta" + BROWSE_COL_SEP + "<c-P> Stampa dokumenta    " + BROWSE_COL_SEP + "<a-P> Stampa obr. popisa"
-@ m_x + 20, m_y+2 SAY " <a-A> Azuriranje dok.   " + BROWSE_COL_SEP + "<c-F9> Brisi pripremu     " + BROWSE_COL_SEP + ""
-@ m_x + 21, m_y+2 SAY " <F10>  Ostale opcije    " + BROWSE_COL_SEP + "<a-F10> Asistent  "
 
-return
 
+METHOD sayKomande()
 
-method setColumns()
-local i
+   @ m_x + 18, m_y + 2 SAY " <c-N> Nove Stavke       " + BROWSE_COL_SEP + "<ENT> Ispravi stavku      " + BROWSE_COL_SEP + "<c-T> Brisi Stavku "
+   @ m_x + 19, m_y + 2 SAY " <c-A> Ispravka Dokumenta" + BROWSE_COL_SEP + "<c-P> Stampa dokumenta    " + BROWSE_COL_SEP + "<a-P> Stampa obr. popisa"
+   @ m_x + 20, m_y + 2 SAY " <a-A> Azuriranje dok.   " + BROWSE_COL_SEP + "<c-F9> Brisi pripremu     " + BROWSE_COL_SEP + ""
+   @ m_x + 21, m_y + 2 SAY " <F10>  Ostale opcije    " + BROWSE_COL_SEP + "<a-F10> Asistent  "
 
-::aImeKol:={}
-AADD(::aImeKol, {"Red.br",        {|| STR(RbrUNum(field->rBr),4) } })
-AADD(::aImeKol, {"Roba",          {|| Roba()} })
-AADD(::aImeKol, {"Knjiz. kol",    {|| field->serBr} })
-AADD(::aImeKol, {"Popis. kol",    {|| field->kolicina} })
-AADD(::aImeKol, {"Cijena",        {|| field->cijena} , "cijena" })
-AADD(::aImeKol, {"Rabat",         {|| field->rabat} ,"rabat"})
-AADD(::aImeKol, {"Porez",         {|| field->porez} ,"porez"})
-AADD(::aImeKol, {"RJ",            {|| field->idFirma}, "idFirma" })
-AADD(::aImeKol, {"Partn",         {|| field->idPartner}, "idPartner" })
-AADD(::aImeKol, {"IdTipDok",      {|| field->idTipDok}, "idtipdok" })
-AADD(::aImeKol, {"Brdok",         {|| field->brDok}, "brdok" })
-AADD(::aImeKol, {"DatDok",        {|| field->datDok}, "datDok" })
-       
-if fakt_pripr->(fieldpos("k1"))<>0 .and. gDK1=="D"
-  	AADD(::aImeKol,{ "K1",{|| field->k1}, "k1" })
-  	AADD(::aImeKol,{ "K2",{|| field->k2}, "k2" })
-endif
+   RETURN
 
 
-::aKol:={}
-for i:=1 to LEN(::aImeKol)
-	AADD(::aKol,i)
-next
+METHOD setColumns()
 
-ImeKol:=::aImeKol
-Kol:=::aKol
-return
+   LOCAL i
 
+   ::aImeKol := {}
+   AAdd( ::aImeKol, { "Red.br",        {|| Str( RbrUNum( field->rBr ), 4 ) } } )
+   AAdd( ::aImeKol, { "Roba",          {|| Roba() } } )
+   AAdd( ::aImeKol, { "Knjiz. kol",    {|| field->serBr } } )
+   AAdd( ::aImeKol, { "Popis. kol",    {|| field->kolicina } } )
+   AAdd( ::aImeKol, { "Cijena",        {|| field->cijena }, "cijena" } )
+   AAdd( ::aImeKol, { "Rabat",         {|| field->rabat }, "rabat" } )
+   AAdd( ::aImeKol, { "Porez",         {|| field->porez }, "porez" } )
+   AAdd( ::aImeKol, { "RJ",            {|| field->idFirma }, "idFirma" } )
+   AAdd( ::aImeKol, { "Partn",         {|| field->idPartner }, "idPartner" } )
+   AAdd( ::aImeKol, { "IdTipDok",      {|| field->idTipDok }, "idtipdok" } )
+   AAdd( ::aImeKol, { "Brdok",         {|| field->brDok }, "brdok" } )
+   AAdd( ::aImeKol, { "DatDok",        {|| field->datDok }, "datDok" } )
 
+   IF fakt_pripr->( FieldPos( "k1" ) ) <> 0 .AND. gDK1 == "D"
+      AAdd( ::aImeKol, { "K1", {|| field->k1 }, "k1" } )
+      AAdd( ::aImeKol, { "K2", {|| field->k2 }, "k2" } )
+   ENDIF
 
-method print()
 
-PushWA()
-RptInv()
-::open_tables()
-PopWA()
+   ::aKol := {}
+   FOR i := 1 TO Len( ::aImeKol )
+      AAdd( ::aKol, i )
+   NEXT
 
-return
+   ImeKol := ::aImeKol
+   Kol := ::aKol
 
+   RETURN
 
-method printOPop()
-PushWA()
-RptInvObrPopisa()
-::open_tables()
-PopWA()
-return
 
-method close
-BoxC()
-CLOSERET
-return
 
-method itemsCount()
-local nCnt
+METHOD PRINT()
 
-PushWa()
-SELECT fakt_pripr
-nCnt:=0
-do while !EOF()
-	nCnt++
-	skip
-enddo
-PopWa()
-return nCnt
+   PushWA()
+   RptInv()
+   ::open_tables()
+   PopWA()
 
+   RETURN
 
-method deleteAll()
-if Pitanje( ,"Želite li zaista izbrisati cijeli dokument?","N")=="D"
-	my_dbf_zap()
-endif
-return
 
+METHOD printOPop()
 
+   PushWA()
+   RptInvObrPopisa()
+   ::open_tables()
+   PopWA()
 
-method deleteItem()
-my_delete_with_pack()
-return 1
+   RETURN
 
+METHOD CLOSE
 
+   BoxC()
+   CLOSERET
 
-method popup
-private opc
-private opcexe
-private Izbor
+   RETURN
 
-opc:={}
-opcexe:={}
-Izbor:=1
-AADD(opc,"1. generacija dokumenta inventure      ")
-AADD(opcexe, {|| ::genDok() })
+METHOD itemsCount()
 
-AADD(opc,"2. generisi otpremu za kolicinu manjka")
-AADD(opcexe, {|| ::genDokManjak() })
-AADD(opc,"3. generisi dopremu za kolicinu viska")
-AADD(opcexe, {|| ::genDokVisak() })
+   LOCAL nCnt
 
-Menu_SC("ppin")
+   PushWa()
+   SELECT fakt_pripr
+   nCnt := 0
+   DO WHILE !Eof()
+      nCnt++
+      SKIP
+   ENDDO
+   PopWa()
 
-return nil
+   RETURN nCnt
 
 
-method genDok()
-local cIdRj
+METHOD deleteAll()
 
-cIdRj:=gFirma
-Box(,2,40)
-	@ m_x+1,m_y+2 SAY "RJ:" GET cIdRj
-	READ
-BoxC()
+   IF Pitanje( , "Želite li zaista izbrisati cijeli dokument?", "N" ) == "D"
+      my_dbf_zap()
+   ENDIF
 
-if Pitanje(,"Generisati dokument inventure za RJ "+cIdRj,"N")=="D"
-	my_close_all_dbf()
-	GDokInv(cIdRj)
-        close_open_fakt_tabele()
-endif
+   RETURN
 
-return
 
 
+METHOD deleteItem()
 
-method genDokManjak()
-local cIdRj
-local cBrDok
+   my_delete_with_pack()
 
-cIdRj:=gFirma
-cBrDok:=SPACE(LEN(field->brDok))
-do while .t.
-	Box(,4,60)
-	@ m_x+1, m_y+2 SAY "Broj (azuriranog) dokumenta za koji generisete"
-	@ m_x+2, m_y+2 SAY "otpremu po osnovu manjka"
+   RETURN 1
 
-	@ m_x+4, m_y+2 SAY "RJ:" GET cIdRJ
-	@ m_x+4, COL()+2 SAY "- IM -" GET cBrDok
 
-	READ
-	BoxC()
-	if LASTKEY()==K_ESC
-		return
-	endif
 
-	if !fakt_doks_exist(cIdRj, "IM", cBrDok)
-		MsgBeep("Dokument ne postoji ?!")
-	else
-		exit
-	endif
-enddo
+METHOD popup
 
-MsgBeep("Not imp: GDokInvManjak")
+   PRIVATE opc
+   PRIVATE opcexe
+   PRIVATE Izbor
 
-// generisem dokumenat 19 - izlaz po ostalim osnovama
-GDokInvManjak(cIdRj, cBrDok)
+   opc := {}
+   opcexe := {}
+   Izbor := 1
+   AAdd( opc, "1. generacija dokumenta inventure      " )
+   AAdd( opcexe, {|| ::genDok() } )
 
-// obrada "obicnih" dokumenata
-fakt_unos_dokumenta()
+   AAdd( opc, "2. generisi otpremu za kolicinu manjka" )
+   AAdd( opcexe, {|| ::genDokManjak() } )
+   AAdd( opc, "3. generisi dopremu za kolicinu viska" )
+   AAdd( opcexe, {|| ::genDokVisak() } )
 
-::lTerminate:=.t.
+   Menu_SC( "ppin" )
 
-return
+   RETURN NIL
 
 
+METHOD genDok()
 
-method genDokVisak 
-local cIdRj
-local cBrDok
+   LOCAL cIdRj
 
-cIdRj:=gFirma
-cBrDok:=SPACE(LEN(field->brDok))
+   cIdRj := gFirma
+   Box(, 2, 40 )
+   @ m_x + 1, m_y + 2 SAY "RJ:" GET cIdRj
+   READ
+   BoxC()
 
-do while .t.
-	Box(,4,60)
-	@ m_x+1, m_y+2 SAY "Broj (azuriranog) dokumenta za koji generisete"
-	@ m_x+2, m_y+2 SAY "prijem po osnovu viska"
+   IF Pitanje(, "Generisati dokument inventure za RJ " + cIdRj, "N" ) == "D"
+      my_close_all_dbf()
+      GDokInv( cIdRj )
+      close_open_fakt_tabele()
+   ENDIF
 
-	@ m_x+4, m_y+2 SAY "RJ:" GET cIdRJ
-	@ m_x+4, COL()+2 SAY "- IM -" GET cBrDok
+   RETURN
 
-	READ
-	BoxC()
-	if LASTKEY()==K_ESC
-		return
-	endif
 
-	if !fakt_doks_exist(cIdRj, "IM", cBrDok)
-		MsgBeep("Dokument "+cIdRj+"-IM-"+cBrDok+"ne postoji ?!")
-	else
-		exit
-	endif
-enddo
 
-MsgBeep("Not imp: GDokInvVisak")
-// generisem dokumenat 01 - prijem
-GDokInvVisak(cIdRj, cBrDok)
+METHOD genDokManjak()
 
-// obrada "obicnih" dokumenata
-fakt_unos_dokumenta()
+   LOCAL cIdRj
+   LOCAL cBrDok
 
-::lTerminate:=.t.
-return
+   cIdRj := gFirma
+   cBrDok := Space( Len( field->brDok ) )
+   DO WHILE .T.
+      Box(, 4, 60 )
+      @ m_x + 1, m_y + 2 SAY "Broj (azuriranog) dokumenta za koji generisete"
+      @ m_x + 2, m_y + 2 SAY "otpremu po osnovu manjka"
 
+      @ m_x + 4, m_y + 2 SAY "RJ:" GET cIdRJ
+      @ m_x + 4, Col() + 2 SAY "- IM -" GET cBrDok
+
+      READ
+      BoxC()
+      IF LastKey() == K_ESC
+         RETURN
+      ENDIF
+
+      IF !fakt_doks_exist( cIdRj, "IM", cBrDok )
+         MsgBeep( "Dokument ne postoji ?!" )
+      ELSE
+         EXIT
+      ENDIF
+   ENDDO
+
+   MsgBeep( "Not imp: GDokInvManjak" )
+
+   // generisem dokumenat 19 - izlaz po ostalim osnovama
+   GDokInvManjak( cIdRj, cBrDok )
+
+   // obrada "obicnih" dokumenata
+   fakt_unos_dokumenta()
+
+   ::lTerminate := .T.
+
+   RETURN
+
+
+
+METHOD genDokVisak
+
+   LOCAL cIdRj
+   LOCAL cBrDok
+
+   cIdRj := gFirma
+   cBrDok := Space( Len( field->brDok ) )
+
+   DO WHILE .T.
+      Box(, 4, 60 )
+      @ m_x + 1, m_y + 2 SAY "Broj (azuriranog) dokumenta za koji generisete"
+      @ m_x + 2, m_y + 2 SAY "prijem po osnovu viska"
+
+      @ m_x + 4, m_y + 2 SAY "RJ:" GET cIdRJ
+      @ m_x + 4, Col() + 2 SAY "- IM -" GET cBrDok
+
+      READ
+      BoxC()
+      IF LastKey() == K_ESC
+         RETURN
+      ENDIF
+
+      IF !fakt_doks_exist( cIdRj, "IM", cBrDok )
+         MsgBeep( "Dokument " + cIdRj + "-IM-" + cBrDok + "ne postoji ?!" )
+      ELSE
+         EXIT
+      ENDIF
+   ENDDO
+
+   MsgBeep( "Not imp: GDokInvVisak" )
+   // generisem dokumenat 01 - prijem
+   GDokInvVisak( cIdRj, cBrDok )
+
+   // obrada "obicnih" dokumenata
+   fakt_unos_dokumenta()
+
+   ::lTerminate := .T.
+
+   RETURN

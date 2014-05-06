@@ -240,9 +240,6 @@ METHOD setGVars()
    // kod provjere prebacenih dokumenata odrezi sa desne strane broj karaktera
    PUBLIC gAImpRight := 0
    PUBLIC gKalks := .F.
-   PUBLIC lPodBugom := .F.
-   PUBLIC gVodiSamoTarife := "N"
-   PUBLIC lSyncon47 := .F.
    PUBLIC lKoristitiBK := .F.
    PUBLIC lPrikPRUC := .F.
    PUBLIC gDuzKonto
@@ -365,7 +362,6 @@ METHOD setGVars()
 
    // iz FMK inija...
 
-   gVodiSamoTarife := fetch_metric( "kalk_vodi_samo_tarife", nil, gVodiSamoTarife )
    lKoristitiBK := fetch_metric( "kalk_koristiti_barkod_pri_unosu", my_user(), lKoristitiBK )
 
    IF lKoristitiBK

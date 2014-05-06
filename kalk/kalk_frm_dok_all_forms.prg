@@ -33,7 +33,7 @@ FUNCTION VRoba( lSay )
       SetAPorezi( @aPorezi )
    ENDIF
 
-   IF fNovi .OR. ( gVodiSamoTarife == "D" )
+   IF fNovi
       _idtarifa := cTarifa
    ENDIF
 
@@ -259,7 +259,7 @@ FUNCTION VRoba_lv( fNovi, aPorezi )
       SetAPorezi( @aPorezi )
    ENDIF
 
-   IF fNovi .OR. ( gVodiSamoTarife == "D" )
+   IF fNovi
       _IdTarifa := cTarifa
    ENDIF
 

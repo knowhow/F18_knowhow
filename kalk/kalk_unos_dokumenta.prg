@@ -1007,11 +1007,7 @@ FUNCTION MeniF10()
       CASE Izbor == 0
          EXIT
       CASE izbor == 1
-         IF gVodiSamoTarife == "D"
-            Gen41S()
-         ELSE
-            FaktKalk()
-         ENDIF
+         FaktKalk()
       CASE izbor == 2
          Povrat_kalk_dokumenta()
       CASE izbor == 3
@@ -1020,7 +1016,6 @@ FUNCTION MeniF10()
          Povrat9()
       CASE izbor == 5
          P9najst()
-
       CASE izbor == 6
          im()
       CASE izbor == 7

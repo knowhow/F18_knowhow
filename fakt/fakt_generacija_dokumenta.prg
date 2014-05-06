@@ -54,7 +54,7 @@ FUNCTION GDokInv( cIdRj )
       SELECT fakt
       PushWa()
       IF !( lFoundUPripremi )
-         FaStanje( cIdRj, cIdroba, @nUl, @nIzl, @nRezerv, @nRevers, .T. )
+         fakt_stanje_artikla( cIdRj, cIdroba, @nUl, @nIzl, @nRezerv, @nRevers, .T. )
          IF ( nUl - nIzl - nRevers ) <> 0
             SELECT fakt_pripr
             nRbr++

@@ -388,7 +388,7 @@ do while .t.
 		return
 	endif
 
-	if !IsDocExists(cIdRj, "IM", cBrDok)
+	if !fakt_doks_exist(cIdRj, "IM", cBrDok)
 		MsgBeep("Dokument ne postoji ?!")
 	else
 		exit
@@ -430,7 +430,7 @@ do while .t.
 		return
 	endif
 
-	if !IsDocExists(cIdRj, "IM", cBrDok)
+	if !fakt_doks_exist(cIdRj, "IM", cBrDok)
 		MsgBeep("Dokument "+cIdRj+"-IM-"+cBrDok+"ne postoji ?!")
 	else
 		exit

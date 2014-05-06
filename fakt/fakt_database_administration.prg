@@ -19,9 +19,9 @@ FUNCTION fakt_admin_menu()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "6. podesavanje brojaca dokumenta " )
+   AAdd( _opc, "1. podesavanje brojaca dokumenta " )
    AAdd( _opcexe, {|| fakt_set_param_broj_dokumenta() } )
-   AAdd( _opc, "E. fakt export (r_exp) " )
+   AAdd( _opc, "2. fakt export (r_exp) " )
    AAdd( _opcexe, {|| fkt_export() } )
 
    f18_menu( "fain", .F., _izbor, _opc, _opcexe )

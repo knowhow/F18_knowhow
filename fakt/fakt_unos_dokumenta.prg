@@ -1720,9 +1720,6 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
       CASE izbor == 9 .AND. lKonsig
          GKRacun()
 
-      CASE izbor == 10
-         KomIznosFakt()
-
       CASE izbor == 13
          ug_za_period()
       ENDCASE

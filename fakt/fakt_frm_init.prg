@@ -118,7 +118,7 @@ do while .t.
 
 	READ
 	ESC_RETURN 0
-	if IsDocExists(::cIdRj, ::cIdVd, ::cBrDok)
+	if fakt_doks_exist(::cIdRj, ::cIdVd, ::cBrDok)
 		MsgBeep("Dokument vec postoji !!??")
 	else
 		exit

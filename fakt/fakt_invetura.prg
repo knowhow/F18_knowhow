@@ -28,7 +28,7 @@ FUNCTION TFrmInvNew()
 
 
 
-FUNCTION FaUnosInv()
+FUNCTION fakt_unos_inventure()
 
    LOCAL oMainFrm
 

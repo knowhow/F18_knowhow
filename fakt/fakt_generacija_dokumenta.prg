@@ -17,6 +17,25 @@ STATIC __generisati := .F.
 
 
 
+
+FUNCTION fakt_mnu_generacija_dokumenta()
+
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
+
+   AAdd( _opc, "1. pocetno stanje                    " )
+   AAdd( _opcexe, {|| fakt_pocetno_stanje() } )
+   AAdd( _opc, "2. dokument inventure     " )
+   AAdd( _opcexe, {|| fakt_unos_inventure() } )
+
+   f18_menu( "mgdok", .F., _izbor, _opc, _opcexe )
+
+   my_close_all_dbf()
+
+   RETURN
+
+
 FUNCTION fakt_generisi_inventuru( cIdRj )
 
    LOCAL cIdRoba
@@ -335,5 +354,3 @@ FUNCTION fakt_generisi_racun_iz_pripreme()
    IsprUzorTxt()
 
    RETURN .T.
-
-

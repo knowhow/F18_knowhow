@@ -43,7 +43,7 @@ FUNCTION fakt_unos_dokumenta()
    // unos inventure
    IF field->idtipdok == "IM"
       my_close_all_dbf()
-      FaUnosInv()
+      fakt_unos_inventure()
       RETURN
    ENDIF
 

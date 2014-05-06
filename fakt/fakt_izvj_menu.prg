@@ -17,9 +17,6 @@ FUNCTION fakt_izvjestaji()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   // PTXT compatibility  sa ver < 1.52
-   gPtxtC50 := .T.
-
    AAdd( _opc, "1. stanje robe                                          " )
    AAdd( _opcexe, {|| fakt_stanje_robe() } )
    AAdd( _opc, "2. lager lista - specifikacija   " )

@@ -17,7 +17,7 @@ STATIC __generisati := .F.
 
 
 
-FUNCTION GDokInv( cIdRj )
+FUNCTION fakt_generisi_inventuru( cIdRj )
 
    LOCAL cIdRoba
    LOCAL cBrDok
@@ -60,7 +60,7 @@ FUNCTION GDokInv( cIdRj )
             nRbr++
             ShowKorner( nRbr, 10 )
             cRbr := RedniBroj( nRbr )
-            ApndInvItem( cIdRj, cIdRoba, cBrDok, nUl - nIzl - nRevers, cRbr )
+            dodaj_stavku_inventure( cIdRj, cIdRoba, cBrDok, nUl - nIzl - nRevers, cRbr )
          ENDIF
       ENDIF
       PopWa()
@@ -75,7 +75,7 @@ FUNCTION GDokInv( cIdRj )
 
 
 
-STATIC FUNCTION ApndInvItem( cIdRj, cIdRoba, cBrDok, nKolicina, cRbr )
+STATIC FUNCTION dodaj_stavku_inventure( cIdRj, cIdRoba, cBrDok, nKolicina, cRbr )
 
    APPEND BLANK
    REPLACE idFirma WITH cIdRj
@@ -116,14 +116,7 @@ STATIC FUNCTION AddTxt( cTxt, cStr )
 
 
 
-
-
-/*! \fn GDokInvManjak(cIdRj, cBrDok)
- *  \param cIdRj - oznaka firme dokumenta IM na osnovu kojeg se generise dok.19
- *  \param cBrDok - broj dokumenta IM na osnovu kojeg se generise dok.19
- *  \brief Generacija dokumenta 19 tj. otpreme iz mag na osnovu dok. IM
- */
-FUNCTION GDokInvManjak( cIdRj, cBrDok )
+FUNCTION fakt_inventura_manjak( cIdRj, cBrDok )
 
    LOCAL nRBr
    LOCAL nRazlikaKol
@@ -150,7 +143,7 @@ FUNCTION GDokInvManjak( cIdRj, cBrDok )
          SELECT fakt_pripr
          nRBr++
          cRBr := RedniBroj( nRBr )
-         ApndInvMItem( cIdRj, fakt->idRoba, cNoviBrDok, nRazlikaKol, cRBr )
+         dodaj_stavku_inventure_manjka( cIdRj, fakt->idRoba, cNoviBrDok, nRazlikaKol, cRBr )
       ENDIF
       SELECT fakt
       SKIP 1
@@ -168,17 +161,7 @@ FUNCTION GDokInvManjak( cIdRj, cBrDok )
 
 
 
-
-/*! \fn ApndInvMItem(cIdRj, cIdRoba, cBrDok, nKolicina, cRbr)
- *  \param cIdRj - oznaka firme dokumenta
- *  \param cIdRoba - sifra robe
- *  \param cBrDok - broj dokumenta
- *  \param nKolicina - kolicina tj.manjak
- *  \param cRbr - redni broj stavke
- *  \brief Dodavanje stavke dokumenta 19 za evidentiranje manjka po osnovu inventure
- */
-
-STATIC FUNCTION ApndInvMItem( cIdRj, cIdRoba, cBrDok, nKolicina, cRbr )
+STATIC FUNCTION dodaj_stavku_inventure_manjka( cIdRj, cIdRoba, cBrDok, nKolicina, cRbr )
 
    APPEND BLANK
    REPLACE idFirma WITH cIdRj
@@ -207,14 +190,7 @@ STATIC FUNCTION ApndInvMItem( cIdRj, cIdRoba, cBrDok, nKolicina, cRbr )
 
 
 
-
-
-/*! \fn GDokInvVisak(cIdRj, cBrDok)
- *  \param cIdRj - oznaka firme dokumenta IM na osnovu kojeg se generise dok.19
- *  \param cBrDok - broj dokumenta IM na osnovu kojeg se generise dok.19
- *  \brief Generacija dokumenta 01 tj.primke u magacin na osnovu dok. IM
- */
-FUNCTION GDokInvVisak( cIdRj, cBrDok )
+FUNCTION fakt_inventura_visak( cIdRj, cBrDok )
 
    LOCAL nRBr
    LOCAL nRazlikaKol
@@ -240,7 +216,7 @@ FUNCTION GDokInvVisak( cIdRj, cBrDok )
          SELECT fakt_pripr
          nRBr++
          cRBr := RedniBroj( nRBr )
-         ApndInvVItem( cIdRj, fakt->idRoba, cNoviBrDok, -nRazlikaKol, cRBr )
+         dodaj_stavku_inventure_viska( cIdRj, fakt->idRoba, cNoviBrDok, -nRazlikaKol, cRBr )
       ENDIF
       SELECT fakt
       SKIP 1
@@ -258,18 +234,7 @@ FUNCTION GDokInvVisak( cIdRj, cBrDok )
 
 
 
-
-
-/*! \fn ApndInvVItem(cIdRj, cIdRoba, cBrDok, nKolicina, cRbr)
- *  \param cIdRj - oznaka firme dokumenta
- *  \param cIdRoba - sifra robe
- *  \param cBrDok - broj dokumenta
- *  \param nKolicina - kolicina tj.visak
- *  \param cRbr - redni broj stavke
- *  \brief Dodavanje stavke dokumenta 01 za evidentiranje viska po osnovu inventure
- */
-
-STATIC FUNCTION ApndInvVItem( cIdRj, cIdRoba, cBrDok, nKolicina, cRbr )
+STATIC FUNCTION dodaj_stavku_inventure_viska( cIdRj, cIdRoba, cBrDok, nKolicina, cRbr )
 
    APPEND BLANK
    REPLACE idFirma WITH cIdRj

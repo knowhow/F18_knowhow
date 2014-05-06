@@ -387,7 +387,7 @@ METHOD genDok()
 
    IF Pitanje(, "Generisati dokument inventure za RJ " + cIdRj, "N" ) == "D"
       my_close_all_dbf()
-      GDokInv( cIdRj )
+      fakt_generisi_inventuru( cIdRj )
       close_open_fakt_tabele()
    ENDIF
 
@@ -426,7 +426,7 @@ METHOD genDokManjak()
    MsgBeep( "Not imp: GDokInvManjak" )
 
    // generisem dokumenat 19 - izlaz po ostalim osnovama
-   GDokInvManjak( cIdRj, cBrDok )
+   fakt_inventura_manjak( cIdRj, cBrDok )
 
    // obrada "obicnih" dokumenata
    fakt_unos_dokumenta()
@@ -468,7 +468,7 @@ METHOD genDokVisak
 
    MsgBeep( "Not imp: GDokInvVisak" )
    // generisem dokumenat 01 - prijem
-   GDokInvVisak( cIdRj, cBrDok )
+   fakt_inventura_visak( cIdRj, cBrDok )
 
    // obrada "obicnih" dokumenata
    fakt_unos_dokumenta()
@@ -476,3 +476,4 @@ METHOD genDokVisak
    ::lTerminate := .T.
 
    RETURN
+

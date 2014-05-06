@@ -112,14 +112,8 @@ FUNCTION azur_fakt( lSilent )
 
    MsgO( "brisem pripremu...." )
 
-   // provjeri sta treba pobrisati iz pripreme
-   IF Len( _a_fakt_doks ) > 1
-      fakt_izbrisi_azurirane( _a_fakt_doks )
-   ELSE
-      // izbrisi pripremu
-      SELECT fakt_pripr
-      my_dbf_zap()
-   ENDIF
+   SELECT fakt_pripr
+   my_dbf_zap()
 
    // pobrisi mi fakt_atribute takodjer
    F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB ):zapp_local_table()

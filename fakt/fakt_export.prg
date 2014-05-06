@@ -45,7 +45,7 @@ STATIC FUNCTION cre_export_table()
 
    LOCAL aDbf
 
-   aDbf := get_fakt_fields()
+   aDbf := get_export_fields()
    t_exp_create( aDbf )
 
    RETURN

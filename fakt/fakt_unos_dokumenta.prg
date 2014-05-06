@@ -341,15 +341,11 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 
       _t_area := Select()
 
-      IF !_params[ "fakt_otpr_gen" ]
-         fakt_generisi_racun_iz_otpremnice()
+      IF reccount2() <> 0
+         fakt_generisi_racun_iz_pripreme()
       ELSE
-         IF reccount2() <> 0
-            fakt_generisi_racun_iz_pripreme()
-         ELSE
-            _fakt_doks := FaktDokumenti():New()
-            _fakt_doks:pretvori_otpremnice_u_racun()
-         ENDIF
+         _fakt_doks := FaktDokumenti():New()
+         _fakt_doks:pretvori_otpremnice_u_racun()
       ENDIF
 
       SELECT ( _t_area )

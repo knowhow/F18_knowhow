@@ -411,7 +411,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 
       IF Pitanje(, "Exportovati dokument u LibreOffice ?", "D" ) == "D"
 
-         exp_dok2dbf()
+         fakt_export_dokument_lo()
          close_open_fakt_tabele()
          select_fakt_pripr()
          GO TOP

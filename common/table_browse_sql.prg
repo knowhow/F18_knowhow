@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -17,29 +17,29 @@
 
 CLASS F18TableBrowse
 
-    METHOD New()
-    METHOD initialize()
-    METHOD show()
+   METHOD New()
+   METHOD initialize()
+   METHOD show()
 
-    DATA pos_x
-    DATA pos_y
-    DATA browse_params
-    DATA browse_columns
-    DATA browse_return_value
-    DATA browse_codes_commands
-    DATA current_row
-    DATA select_all_query
-    DATA select_filtered_query
+   DATA pos_x
+   DATA pos_y
+   DATA browse_params
+   DATA browse_columns
+   DATA browse_return_value
+   DATA browse_codes_commands
+   DATA current_row
+   DATA select_all_query
+   DATA select_filtered_query
 
-    PROTECTED:
+   PROTECTED:
 
-        METHOD box_desc_text_print()
-        METHOD box_desc_options_print()
-        METHOD select_all_rec()
-        METHOD select_filtered()
-        METHOD table_order_by()
-        METHOD field_list_from_array()
-        METHOD get_option_box_lines()
+   METHOD box_desc_text_print()
+   METHOD box_desc_options_print()
+   METHOD select_all_rec()
+   METHOD select_filtered()
+   METHOD table_order_by()
+   METHOD field_list_from_array()
+   METHOD get_option_box_lines()
 
 ENDCLASS
 
@@ -47,21 +47,21 @@ ENDCLASS
 
 METHOD F18TableBrowse:New()
 
-// incijalizacija browse parametara
-// setuj default vrijednosti...
-::browse_params := hb_hash()
-::initialize()
-::browse_columns := {}
+   // incijalizacija browse parametara
+   // setuj default vrijednosti...
+   ::browse_params := hb_Hash()
+   ::initialize()
+   ::browse_columns := {}
 
-// koordinate ispisa naziva
-::pos_x := NIL
-::pos_y := NIL
+   // koordinate ispisa naziva
+   ::pos_x := NIL
+   ::pos_y := NIL
 
-// ostalo
-::browse_return_value := NIL
-::browse_codes_commands := ::browse_params["codes_commands"]
+   // ostalo
+   ::browse_return_value := NIL
+   ::browse_codes_commands := ::browse_params[ "codes_commands" ]
 
-return SELF
+   RETURN SELF
 
 
 
@@ -70,31 +70,31 @@ return SELF
 // -----------------------------------------------------------
 METHOD F18TableBrowse:initialize()
 
-::browse_params["table_name"] := ""
-::browse_params["table_order_fields"] := { "id" }
-::browse_params["table_browse_return_field"] := "id"
-::browse_params["key_fields"] := { "id" }
-::browse_params["table_browse_fields"] := NIL
-::browse_params["form_width"] := MAXCOLS() - 15
-::browse_params["form_height"] := MAXROWS() - 15
-::browse_params["table_filter"] := NIL
-::browse_params["direct_sql"] := NIL
-::browse_params["codes_type"] := .t.
-::browse_params["read_sifv"] := .f.
-::browse_params["key_options"] := NIL
-::browse_params["key_options_column_count"] := NIL
-::browse_params["user_functions"] := NIL
-::browse_params["header_text"] := ""
-::browse_params["footer_text"] := ""
-::browse_params["restricted_keys"] := NIL
-::browse_params["invert_row_block"] := NIL
-::browse_params["codes_commands"] := ;
-        { "<c+N> Novi", "<F2>  Ispravka", "<ENT> Odabir", ;
-        _to_str("<c-T> Briši"), "<c-P> Print", ;
-        "<F4>  Dupliciraj", _to_str("<c-F9> Briši SVE"), ;
-        _to_str("<F> Traži"), "<a-R> Zamjena vrij.", "<F5> Refresh" }
+   ::browse_params[ "table_name" ] := ""
+   ::browse_params[ "table_order_fields" ] := { "id" }
+   ::browse_params[ "table_browse_return_field" ] := "id"
+   ::browse_params[ "key_fields" ] := { "id" }
+   ::browse_params[ "table_browse_fields" ] := NIL
+   ::browse_params[ "form_width" ] := MAXCOLS() - 15
+   ::browse_params[ "form_height" ] := MAXROWS() - 15
+   ::browse_params[ "table_filter" ] := NIL
+   ::browse_params[ "direct_sql" ] := NIL
+   ::browse_params[ "codes_type" ] := .T.
+   ::browse_params[ "read_sifv" ] := .F.
+   ::browse_params[ "key_options" ] := NIL
+   ::browse_params[ "key_options_column_count" ] := NIL
+   ::browse_params[ "user_functions" ] := NIL
+   ::browse_params[ "header_text" ] := ""
+   ::browse_params[ "footer_text" ] := ""
+   ::browse_params[ "restricted_keys" ] := NIL
+   ::browse_params[ "invert_row_block" ] := NIL
+   ::browse_params[ "codes_commands" ] := ;
+      { "<c+N> Novi", "<F2>  Ispravka", "<ENT> Odabir", ;
+      _to_str( "<c-T> Briši" ), "<c-P> Print", ;
+      "<F4>  Dupliciraj", _to_str( "<c-F9> Briši SVE" ), ;
+      _to_str( "<F> Traži" ), "<a-R> Zamjena vrij.", "<F5> Refresh" }
 
-return
+   RETURN
 
 
 
@@ -106,23 +106,24 @@ return
 // vraca ORDER BY strukturu po trazenom polju
 // ---------------------------------------------------------
 METHOD F18TableBrowse:table_order_by( order_field )
-local _order
-local _i
 
-_order := " ORDER BY " 
+   LOCAL _order
+   LOCAL _i
 
-if VALTYPE( order_field ) == "A"
-    for _i := 1 to LEN( order_field )
-        _order += order_field[ _i ]
-        if _i < LEN( order_field )
+   _order := " ORDER BY "
+
+   IF ValType( order_field ) == "A"
+      FOR _i := 1 TO Len( order_field )
+         _order += order_field[ _i ]
+         IF _i < Len( order_field )
             _order += ", "
-        endif
-    next
-else
-    _order += order_field
-endif
+         ENDIF
+      NEXT
+   ELSE
+      _order += order_field
+   ENDIF
 
-return _order
+   RETURN _order
 
 
 
@@ -131,32 +132,33 @@ return _order
 // select svih podataka baze
 // -----------------------------------------------------------
 METHOD F18TableBrowse:select_all_rec()
-local _qry, _i
 
-_qry := "SELECT " + ::field_list_from_array() 
-_qry += " FROM " + ::browse_params["table_name"] 
+   LOCAL _qry, _i
 
-// ima li dodatnih where uslova ?
-if ::browse_params["table_filter"] <> NIL .and. LEN( ::browse_params["table_filter"] ) > 0
-    _qry += " WHERE " 
-    for _i := 1 to LEN( ::browse_params["table_filter"] )
-        _qry += " " + ::browse_params["table_filter"][ _i ] + " "
-        if _i < LEN( ::browse_params["table_filter"] )
+   _qry := "SELECT " + ::field_list_from_array()
+   _qry += " FROM " + ::browse_params[ "table_name" ]
+
+   // ima li dodatnih where uslova ?
+   if ::browse_params[ "table_filter" ] <> NIL .AND. Len( ::browse_params[ "table_filter" ] ) > 0
+      _qry += " WHERE "
+      FOR _i := 1 TO Len( ::browse_params[ "table_filter" ] )
+         _qry += " " + ::browse_params[ "table_filter" ][ _i ] + " "
+         IF _i < Len( ::browse_params[ "table_filter" ] )
             _qry += " OR "
-        endif
-    next
-endif
+         ENDIF
+      NEXT
+   ENDIF
 
-_qry += ::table_order_by( ::browse_params["table_order_fields"] )
+   _qry += ::table_order_by( ::browse_params[ "table_order_fields" ] )
 
-// imamo li direktni upit ? ako imamo onda cemo koristiti taj !
-if ::browse_params["direct_sql"] <> NIL .and. !EMPTY( ::browse_params["direct_sql"] )
-    _qry := ::browse_params["direct_sql"]
-endif
+   // imamo li direktni upit ? ako imamo onda cemo koristiti taj !
+   if ::browse_params[ "direct_sql" ] <> NIL .AND. !Empty( ::browse_params[ "direct_sql" ] )
+      _qry := ::browse_params[ "direct_sql" ]
+   ENDIF
 
-::select_all_query := _qry
+   ::select_all_query := _qry
 
-return Self
+   RETURN Self
 
 
 
@@ -165,59 +167,60 @@ return Self
 // select sa where klauzulom
 // -----------------------------------------------------------
 METHOD F18TableBrowse:select_filtered( search_value )
-local _qry 
-local _where := ""
-local _order_field := ::browse_params["table_order_fields"]
 
-if !EMPTY( search_value )
+   LOCAL _qry
+   LOCAL _where := ""
+   LOCAL _order_field := ::browse_params[ "table_order_fields" ]
 
-    if RIGHT( ALLTRIM( search_value ), 2 ) == ".."
-        // pretraga po nazivu
-        search_value := ALLTRIM( STRTRAN( search_value, "..", "" ) )
-        _where += ::browse_params["key_fields"][2] + " LIKE " + _sql_quote( search_value + "%" )        
-        _order_field := ::browse_params["key_fields"][2]
+   IF !Empty( search_value )
 
-    elseif RIGHT( ALLTRIM( search_value ), 1 ) == "."
-        // pretraga po sifri
-        search_value := ALLTRIM( STRTRAN( search_value, ".", "" ) )
-        _where += ::browse_params["key_fields"][1] + " LIKE " + _sql_quote( search_value + "%" )        
-    else
-        // klasicna pretraga po iskljucivoj sifri
-        _where += ::browse_params["key_fields"][1] + " = " + _sql_quote( search_value )        
-    endif
+      IF Right( AllTrim( search_value ), 2 ) == ".."
+         // pretraga po nazivu
+         search_value := AllTrim( StrTran( search_value, "..", "" ) )
+         _where += ::browse_params[ "key_fields" ][ 2 ] + " LIKE " + _sql_quote( search_value + "%" )
+         _order_field := ::browse_params[ "key_fields" ][ 2 ]
 
-endif
+      ELSEIF Right( AllTrim( search_value ), 1 ) == "."
+         // pretraga po sifri
+         search_value := AllTrim( StrTran( search_value, ".", "" ) )
+         _where += ::browse_params[ "key_fields" ][ 1 ] + " LIKE " + _sql_quote( search_value + "%" )
+      ELSE
+         // klasicna pretraga po iskljucivoj sifri
+         _where += ::browse_params[ "key_fields" ][ 1 ] + " = " + _sql_quote( search_value )
+      ENDIF
 
-// ima li dodatnih where uslova ?
-if ::browse_params["table_filter"] <> NIL .and. LEN( ::browse_params["table_filter"] ) > 0
+   ENDIF
 
-    if !EMPTY( _where )
-        _where += " AND "
-    endif
+   // ima li dodatnih where uslova ?
+   if ::browse_params[ "table_filter" ] <> NIL .AND. Len( ::browse_params[ "table_filter" ] ) > 0
 
-    for _i := 1 to LEN( ::browse_params["table_filter"] )
-        _where += " " + ::browse_params["table_filter"][ _i ] + " "
-        if _i < LEN( ::browse_params["table_filter"] )
+      IF !Empty( _where )
+         _where += " AND "
+      ENDIF
+
+      FOR _i := 1 TO Len( ::browse_params[ "table_filter" ] )
+         _where += " " + ::browse_params[ "table_filter" ][ _i ] + " "
+         IF _i < Len( ::browse_params[ "table_filter" ] )
             _where += " OR "
-        endif
-    next
+         ENDIF
+      NEXT
 
-endif
+   ENDIF
 
-_qry := "SELECT " + ::field_list_from_array() 
-_qry += " FROM " + ::browse_params["table_name"] 
-_qry += " WHERE " + _where
+   _qry := "SELECT " + ::field_list_from_array()
+   _qry += " FROM " + ::browse_params[ "table_name" ]
+   _qry += " WHERE " + _where
 
-_qry += ::table_order_by( _order_field )
+   _qry += ::table_order_by( _order_field )
 
-// imamo li direktni upit ? ako imamo onda cemo koristiti taj !
-if ::browse_params["direct_sql"] <> NIL .and. !EMPTY( ::browse_params["direct_sql"] )
-    _qry := ::browse_params["direct_sql"]
-endif
+   // imamo li direktni upit ? ako imamo onda cemo koristiti taj !
+   if ::browse_params[ "direct_sql" ] <> NIL .AND. !Empty( ::browse_params[ "direct_sql" ] )
+      _qry := ::browse_params[ "direct_sql" ]
+   ENDIF
 
-::select_filtered_query := _qry
+   ::select_filtered_query := _qry
 
-return Self
+   RETURN Self
 
 
 // ----------------------------------------------------------
@@ -225,23 +228,23 @@ return Self
 // ----------------------------------------------------------
 METHOD F18TableBrowse:box_desc_text_print()
 
-// tip browse-a i naziv tabele
-@ m_x + 0, m_y + 2 SAY "SQLBrowse [" + ::browse_params["table_name"] + "]" COLOR "I" 
+   // tip browse-a i naziv tabele
+   @ m_x + 0, m_y + 2 SAY "SQLBrowse [" + ::browse_params[ "table_name" ] + "]" COLOR "I"
 
-// header
-if !EMPTY( ::browse_params["header_text"] )
-    @ m_x + 2, m_y + 2 SAY ALLTRIM( ::browse_params["header_text"] )
-endif
+   // header
+   IF !Empty( ::browse_params[ "header_text" ] )
+      @ m_x + 2, m_y + 2 SAY AllTrim( ::browse_params[ "header_text" ] )
+   ENDIF
 
-// footer
-if !EMPTY( ::browse_params["footer_text"] )
-    @ m_x + ::browse_params["form_height"], m_y + 2 SAY ALLTRIM( ::browse_params["footer_text"] )
-endif
+   // footer
+   IF !Empty( ::browse_params[ "footer_text" ] )
+      @ m_x + ::browse_params[ "form_height" ], m_y + 2 SAY AllTrim( ::browse_params[ "footer_text" ] )
+   ENDIF
 
-// broj zapisa
-@ m_x + 1, m_y + ::browse_params["form_width"] - 20 SAY "broj zapisa: " + ALLTRIM( STR( table_count( ::browse_params["table_name"] ) ) )
+   // broj zapisa
+   @ m_x + 1, m_y + ::browse_params[ "form_width" ] - 20 SAY "broj zapisa: " + AllTrim( Str( table_count( ::browse_params[ "table_name" ] ) ) )
 
-return Self
+   RETURN Self
 
 
 
@@ -250,73 +253,74 @@ return Self
 // prikazi tabelu u box-u
 // -----------------------------------------------------------
 METHOD F18TableBrowse:show( return_value, pos_x, pos_y )
-local _srv := pg_server()
-local _data
-local _qry
-local _brw
-local _found
-local _value
-local _ret := 0
-local _x_pos, _y_pos
-local _opt_key_rows := 0
 
-// postojeca pozicija
-_x_pos := m_x
-_y_pos := m_y
-// setuj koordinate ispisa...
-if pos_x <> NIL
-    ::pos_x := pos_x
-endif
-if pos_y <> NIL
-    ::pos_y := pos_y
-endif
+   LOCAL _srv := pg_server()
+   LOCAL _data
+   LOCAL _qry
+   LOCAL _brw
+   LOCAL _found
+   LOCAL _value
+   LOCAL _ret := 0
+   LOCAL _x_pos, _y_pos
+   LOCAL _opt_key_rows := 0
 
-if ::browse_params["table_browse_fields"] == NIL
-    ::browse_params["table_browse_fields"] := ::browse_columns
-endif
+   // postojeca pozicija
+   _x_pos := m_x
+   _y_pos := m_y
+   // setuj koordinate ispisa...
+   IF pos_x <> NIL
+      ::pos_x := pos_x
+   ENDIF
+   IF pos_y <> NIL
+      ::pos_y := pos_y
+   ENDIF
 
-if ::browse_params["key_options"] <> NIL
-    _opt_key_rows := ::get_option_box_lines()
-endif
+   if ::browse_params[ "table_browse_fields" ] == NIL
+      ::browse_params[ "table_browse_fields" ] := ::browse_columns
+   ENDIF
 
-// 1) postavi mi querije...
+   if ::browse_params[ "key_options" ] <> NIL
+      _opt_key_rows := ::get_option_box_lines()
+   ENDIF
 
-// SELECT ( bez WHERE ) 
-::select_all_rec()
-_qry := ::select_all_query
+   // 1) postavi mi querije...
 
-// SELECT ( sa WHERE ) 
-// ovo samo za tip - sifrarnik
-if !EMPTY( return_value ) .and. ::browse_params["codes_type"]
-    ::select_filtered( @return_value )
-    _qry := ::select_filtered_query
-endif
+   // SELECT ( bez WHERE )
+   ::select_all_rec()
+   _qry := ::select_all_query
 
-// 2) postavi upit
-_data := _sql_query( _srv, _qry )
+   // SELECT ( sa WHERE )
+   // ovo samo za tip - sifrarnik
+   IF !Empty( return_value ) .AND. ::browse_params[ "codes_type" ]
+      ::select_filtered( @return_value )
+      _qry := ::select_filtered_query
+   ENDIF
 
-// 3) provjeri rezultat
-if VALTYPE( _data ) == "L"
-    MsgBeep( "Postoji problem sa upitom !" )
-    _ret := -1
-    return _ret
-endif
+   // 2) postavi upit
+   _data := _sql_query( _srv, _qry )
 
-// 4) refresh podataka i pozicioniranje na prvi zapis
-_data:Refresh()
-_data:GoTo(1)
+   // 3) provjeri rezultat
+   IF ValType( _data ) == "L"
+      MsgBeep( "Postoji problem sa upitom !" )
+      _ret := -1
+      RETURN _ret
+   ENDIF
 
-// 5) ako su sifrarnici u pitanju provjeri da li treba raditi browse kompletan 
-//    ili si pronasao zapis...
-if ::browse_params["codes_type"]
+   // 4) refresh podataka i pozicioniranje na prvi zapis
+   _data:Refresh()
+   _data:GoTo( 1 )
 
-    // pronasao sam samo jedan zapis
-    if _data:LastRec() == 1 
+   // 5) ako su sifrarnici u pitanju provjeri da li treba raditi browse kompletan
+   // ili si pronasao zapis...
+   if ::browse_params[ "codes_type" ]
 
-        oRow := _data:GetRow(1)
-        _value := oRow:FieldGet( oRow:FieldPos( ::browse_params["key_fields"][1] ) )
+      // pronasao sam samo jedan zapis
+      IF _data:LastRec() == 1
 
-        if _value == return_value
+         oRow := _data:GetRow( 1 )
+         _value := oRow:FieldGet( oRow:FieldPos( ::browse_params[ "key_fields" ][ 1 ] ) )
+
+         IF _value == return_value
 
             // pronasao sam taj zapis... nemam sta traziti to je to
             // ne moram raditi browse...
@@ -324,65 +328,65 @@ if ::browse_params["codes_type"]
 
             // imamo li ispisati sta ?
             if ::pos_x <> NIL
-                if LEN( ::browse_params["key_fields"] ) > 1
-                    @ m_x + ::pos_x, m_y + ::pos_y SAY ;
-                                PADR( hb_utf8tostr( ;
-                                    oRow:FieldGet( oRow:FieldPos( ::browse_params["key_fields"][2] ) ) ) , ;
-                                 30 )
-                endif
-            endif
+               IF Len( ::browse_params[ "key_fields" ] ) > 1
+                  @ m_x + ::pos_x, m_y + ::pos_y SAY ;
+                     PadR( hb_UTF8ToStr( ;
+                     oRow:FieldGet( oRow:FieldPos( ::browse_params[ "key_fields" ][ 2 ] ) ) ), ;
+                     30 )
+               ENDIF
+            ENDIF
 
-            return _ret
+            RETURN _ret
 
-        endif
+         ENDIF
 
-    elseif _data:LastRec() == 0
+      ELSEIF _data:LastRec() == 0
 
-        // napravi upit za listu kompletnog sifrarnika....
-        _qry := ::select_all_query
-        _data := _sql_query( _srv, _qry )
-        _data:Refresh()
-        _data:GoTo(1)
+         // napravi upit za listu kompletnog sifrarnika....
+         _qry := ::select_all_query
+         _data := _sql_query( _srv, _qry )
+         _data:Refresh()
+         _data:GoTo( 1 )
 
-    endif
+      ENDIF
 
-endif
+   ENDIF
 
-Box(, ::browse_params["form_height"], ;
-        ::browse_params["form_width"], ;
-        if( ::browse_params["codes_type"], .t., .f. ), ;
-        if( ::browse_params["codes_type"], ::browse_codes_commands, NIL ) )
+   Box(, ::browse_params[ "form_height" ], ;
+      ::browse_params[ "form_width" ], ;
+      if( ::browse_params[ "codes_type" ], .T., .F. ), ;
+      if( ::browse_params[ "codes_type" ], ::browse_codes_commands, NIL ) )
 
-// 6) linija za podvlacenje
-if ::browse_params["key_options"] <> NIL
-    @ m_x + ( ::browse_params["form_height"] - ( _opt_key_rows - 1 ) ) , m_y + 1 SAY REPLICATE( BROWSE_PODVUCI, ::browse_params["form_width"] )
-endif
+   // 6) linija za podvlacenje
+   if ::browse_params[ "key_options" ] <> NIL
+      @ m_x + ( ::browse_params[ "form_height" ] - ( _opt_key_rows - 1 ) ), m_y + 1 SAY Replicate( BROWSE_PODVUCI, ::browse_params[ "form_width" ] )
+   ENDIF
 
-// 7) ispis dodatni/pomocni tekst na sifrarniku...
-::box_desc_text_print()
-::box_desc_options_print( _opt_key_rows )
+   // 7) ispis dodatni/pomocni tekst na sifrarniku...
+   ::box_desc_text_print()
+   ::box_desc_options_print( _opt_key_rows )
 
-// 8) idemo na pregled tabele
-_brw := TBrowseSQL():new( ;
-        m_x + 2, ;
-        m_y + 1, ;
-        m_x + ::browse_params["form_height"] - IF( ::browse_params["key_options"] <> NIL, _opt_key_rows, 0 ), ;
-        m_y + ::browse_params["form_width"], ;
-        _srv, ;
-        _data, ;
-        ::browse_params )
+   // 8) idemo na pregled tabele
+   _brw := TBrowseSQL():new( ;
+      m_x + 2, ;
+      m_y + 1, ;
+      m_x + ::browse_params[ "form_height" ] - IF( ::browse_params[ "key_options" ] <> NIL, _opt_key_rows, 0 ), ;
+      m_y + ::browse_params[ "form_width" ], ;
+      _srv, ;
+      _data, ;
+      ::browse_params )
 
-_brw:BrowseTable( .f., NIL, @return_value, @::current_row, ::pos_x, ::pos_y )
+   _brw:BrowseTable( .F., NIL, @return_value, @::current_row, ::pos_x, ::pos_y )
 
-BoxC()
+   BoxC()
 
-// vrati koordinate
-m_x := _x_pos
-m_y := _y_pos
+   // vrati koordinate
+   m_x := _x_pos
+   m_y := _y_pos
 
-_ret := 1
+   _ret := 1
 
-return _ret
+   RETURN _ret
 
 
 
@@ -391,50 +395,51 @@ return _ret
 // ispis opcija na box-u
 // -------------------------------------------------------
 METHOD F18TableBrowse:box_desc_options_print( lines_count )
-local _opt_in_row
-local _opt_space 
-local _i, _n, _tmp
-local _a_opts := {}
 
-if ::browse_params["key_options"] == NIL
-    return Self
-endif
+   LOCAL _opt_in_row
+   LOCAL _opt_space
+   LOCAL _i, _n, _tmp
+   LOCAL _a_opts := {}
 
-// predvidjamo 3 kolone za opcije... ali moze biti i vise...
-_opt_in_row := 3
+   if ::browse_params[ "key_options" ] == NIL
+      RETURN Self
+   ENDIF
 
-if ::browse_params["key_options_column_count"] <> NIL
-    // imamo zadato parametrom
-    _opt_in_row := ::browse_params["key_options_column_count"]
-endif
+   // predvidjamo 3 kolone za opcije... ali moze biti i vise...
+   _opt_in_row := 3
 
-_opt_space := ( MAXCOLS() / _opt_in_row ) - 2
+   if ::browse_params[ "key_options_column_count" ] <> NIL
+      // imamo zadato parametrom
+      _opt_in_row := ::browse_params[ "key_options_column_count" ]
+   ENDIF
 
-_tmp := ""
+   _opt_space := ( MAXCOLS() / _opt_in_row ) - 2
 
-// napravi mi prvo pomocnu matricu po 4 opcije u redu
-for _i := 1 to LEN( ::browse_params["key_options"] )
+   _tmp := ""
 
-    // dodaj uspravnu crtu
-    if !EMPTY( _tmp )
-        _tmp += BROWSE_COL_SEP
-    endif
-    
-    _tmp += PADR( ::browse_params["key_options"][_i], _opt_space )
+   // napravi mi prvo pomocnu matricu po 4 opcije u redu
+   FOR _i := 1 TO Len( ::browse_params[ "key_options" ] )
 
-    if _i%_opt_in_row = 0 .or. _i == LEN( ::browse_params["key_options"] )
-        AADD( _a_opts, _tmp )
-        _tmp := ""
-    endif   
+      // dodaj uspravnu crtu
+      IF !Empty( _tmp )
+         _tmp += BROWSE_COL_SEP
+      ENDIF
 
-next
+      _tmp += PadR( ::browse_params[ "key_options" ][ _i ], _opt_space )
 
-// ispisi red po red !
-for _n := 1 to LEN( _a_opts )
-    @ m_x + ( ::browse_params["form_height"] - ( lines_count - 1 ) + _n ) , m_y + 2 SAY _a_opts[ _n ] 
-next
+      IF _i % _opt_in_row = 0 .OR. _i == Len( ::browse_params[ "key_options" ] )
+         AAdd( _a_opts, _tmp )
+         _tmp := ""
+      ENDIF
 
-return Self
+   NEXT
+
+   // ispisi red po red !
+   FOR _n := 1 TO Len( _a_opts )
+      @ m_x + ( ::browse_params[ "form_height" ] - ( lines_count - 1 ) + _n ), m_y + 2 SAY _a_opts[ _n ]
+   NEXT
+
+   RETURN Self
 
 
 
@@ -443,30 +448,31 @@ return Self
 // kalkulise broj linija za opcije unutar box-a
 // -------------------------------------------------------
 METHOD F18TableBrowse:get_option_box_lines()
-local _lines := 1
-local _opt_in_row := 4
-local _len
 
-_len := LEN( ::browse_params["key_options"] ) 
+   LOCAL _lines := 1
+   LOCAL _opt_in_row := 4
+   LOCAL _len
 
-do case
+   _len := Len( ::browse_params[ "key_options" ] )
 
-    case _len <= _opt_in_row
-        _lines := 1
-    case ( _len > _opt_in_row ) .and. ( _len <= ( _opt_in_row * 2 ) )
-        _lines := 2
-    case ( _len > _opt_in_row * 2 ) .and. ( _len <= ( _opt_in_row * 3 ) )
-        _lines := 3
-    case ( _len > _opt_in_row * 3 ) .and. ( _len <= ( _opt_in_row * 4 ) )
-        _lines := 4
-    case ( _len > _opt_in_row * 4 ) .and. ( _len <= ( _opt_in_row * 5 ) )
-        _lines := 5
+   DO CASE
 
-endcase
+   CASE _len <= _opt_in_row
+      _lines := 1
+   CASE ( _len > _opt_in_row ) .AND. ( _len <= ( _opt_in_row * 2 ) )
+      _lines := 2
+   CASE ( _len > _opt_in_row * 2 ) .AND. ( _len <= ( _opt_in_row * 3 ) )
+      _lines := 3
+   CASE ( _len > _opt_in_row * 3 ) .AND. ( _len <= ( _opt_in_row * 4 ) )
+      _lines := 4
+   CASE ( _len > _opt_in_row * 4 ) .AND. ( _len <= ( _opt_in_row * 5 ) )
+      _lines := 5
 
-++ _lines
+   ENDCASE
 
-return _lines
+   ++ _lines
+
+   RETURN _lines
 
 
 
@@ -476,151 +482,24 @@ return _lines
 // vraca listu polja na osnovu matrice
 // -------------------------------------------------------
 METHOD F18TableBrowse:field_list_from_array()
-local _ret := ""
-local _i
-local _arr := ::browse_params["table_browse_fields"]
 
-if _arr == NIL
-    _ret := "*"
-    return _ret
-endif
+   LOCAL _ret := ""
+   LOCAL _i
+   LOCAL _arr := ::browse_params[ "table_browse_fields" ]
 
-for _i := 1 to LEN( _arr )
+   IF _arr == NIL
+      _ret := "*"
+      RETURN _ret
+   ENDIF
 
-    _ret += _arr[ _i, 3 ]
+   FOR _i := 1 TO Len( _arr )
 
-    if _i <> LEN( _arr )
-        _ret += ","
-    endif
+      _ret += _arr[ _i, 3 ]
 
-next
+      IF _i <> Len( _arr )
+         _ret += ","
+      ENDIF
 
-return _ret
+   NEXT
 
-
-function test_fakt_doks_table_browse()
-local oTBr := F18TableBrowse():New()
-local _qry, _a_keys
-
-_qry := "SELECT idfirma, idtipdok, brdok, idpartner, idvrstep, iznos "
-_qry += "FROM fmk.fakt_doks "
-_qry += "ORDER BY idfirma, idtipdok, brdok " 
-
-_a_keys := { "<CTRL+K> test", "<CTRL+J> test", "<F0> test" }
-
-// definisi kolone
-AADD( oTbr:browse_columns, { "F", 2, "idfirma" } )
-AADD( oTbr:browse_columns, { "TD", 2, "idtipdok" } )
-AADD( oTbr:browse_columns, { "Broj", 10, "brdok" } )
-AADD( oTbr:browse_columns, { "Partner", 6, "idpartner" } )
-AADD( oTbr:browse_columns, { "VP", 2, "idvrstep" } )
-AADD( oTbr:browse_columns, { "Ukupno", 15, "iznos" } )
-
-// parametri
-oTBr:browse_params["table_name"] := "fmk.fakt_doks"
-oTBr:browse_params["table_order_fields"] := { "idfirma", "idtipdok", "brdok" }
-oTBr:browse_params["table_browse_return_field"] := NIL
-oTBr:browse_params["key_fields"] := { "idfirma", "idtipdok", "brdok" }
-oTBr:browse_params["form_width"] := MAXCOLS() - 5
-oTBr:browse_params["form_height"] := MAXROWS() - 20
-oTBr:browse_params["table_filter"] := NIL
-oTBr:browse_params["codes_type"] := .f.
-oTBr:browse_params["direct_sql"] := _qry
-oTBr:browse_params["user_functions"] := { || _key_handler( @oTBr:current_row ) }
-oTBr:browse_params["key_options"] := _a_keys 
-oTBr:browse_params["key_options_column_count"] := 5
-
-// prikazi box
-oTBr:show()
- 
-return
-
-
-
-// ---------------------------------------------------------
-// test funkcija sifrarnika robe u uslovima i GET listi
-// ---------------------------------------------------------
-function test_get_box_table_browse()
-local _id_roba := SPACE(10)
-local _test := SPACE(20)
-local _x_pos, _y_pos
-private GetList := {}
-
-
-Box(, 6, 70 )
-
-    @ m_x + 1, m_y + 2 SAY "TEST RADA SQL TABLE BROWSE ....."
-    @ m_x + 3, m_y + 2 SAY "IDROBA (prazno-sve):" GET _id_roba ;
-                        VALID EMPTY( _id_roba ) .or. test_sql_table_browse( @_id_roba, 3, 25 )
-
-    @ m_x + 4, m_y + 2 SAY "TEST" GET _test 
-
-    read
-
-BoxC()
-
-if LastKey( ) == K_ESC
-    return
-endif
-
-return
-
-
-
-
-
-// ---------------------------------------------------------
-// test funkcija... kao P_ROBA()
-// ---------------------------------------------------------
-function test_sql_table_browse( return_value, kord_x, kord_y )
-local _ok := .t.
-local _height := MAXROWS() - 15
-local _width := MAXCOLS() - 15
-local _a_columns := {}
-local _a_filter := NIL
-local oTBr := F18TableBrowse():New()
-
-// definisi kolone browse-a
-//                  ISPIS, LEN, field_name, when, valid
-//                   1    2    3       4          5          6
-AADD( oTBr:browse_columns, { "ID", 10, "id", {|| id }, {|| .t. }, {|| .t. } } )
-AADD( oTBr:browse_columns, { "NAZIV", 40, "naz" } )
-AADD( oTBr:browse_columns, { "JMJ", 3, "jmj" } )
-AADD( oTBr:browse_columns, { "TARIFA", 6, "idtarifa" } )
-AADD( oTBr:browse_columns, { "NC", 12, "nc" } )
-AADD( oTBr:browse_columns, { "VPC", 12, "vpc" } )
-
-
-// definisi parametre browse-a
-oTBr:browse_params["table_name"] := "fmk.roba"
-oTBr:browse_params["table_order_fields"] := { "id" }
-oTBr:browse_params["table_browse_return_field"] := "id"
-oTBr:browse_params["key_fields"] := { "id", "naz" }
-oTBr:browse_params["form_width"] := _width
-oTBr:browse_params["form_height"] := _height
-oTBr:browse_params["table_filter"] := NIL
-oTBr:browse_params["direct_sql"] := NIL
-oTBr:browse_params["codes_type"] := .t.
-oTBr:browse_params["read_sifv"] := .t.
- 
-// prikazi sifrarnik
-oTBr:show( @return_value, kord_x, kord_y )
-
-return _ok
-
-
-static function _key_handler( curr_row )
-
-do case
-
-    case Ch == K_CTRL_K
-
-        MsgBeep( curr_row:FieldGet(1) )
-
-        return DE_CONT
-
-endcase
-
-return DE_CONT
-
-
+   RETURN _ret

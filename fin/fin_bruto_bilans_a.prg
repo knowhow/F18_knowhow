@@ -93,6 +93,7 @@ METHOD FinBrutoBilans:init_params()
    ::params[ "odt_template" ] := ""
    ::params[ "varijanta" ] := "B"
    ::params[ "podklase" ] := .F.
+   ::params[ "format" ] := "2"
 
    ::pict_iznos := AllTrim( gPicBHD )
 
@@ -154,6 +155,7 @@ METHOD FinBrutoBilans:get_vars()
    LOCAL _tek_prom := fetch_metric( "fin_bb_kol_tek_promet", _user, "D" )
    LOCAL _saldo_nula := fetch_metric( "fin_bb_saldo_nula", _user, "D" )
    LOCAL _podklase := fetch_metric( "fin_bb_pod_klase", _user, "N" )
+   LOCAL _format := fetch_metric( "fin_bb_format", _user, "2" )
    LOCAL _id_rj := Space( 6 )
    LOCAL _export_dbf := "N"
    LOCAL _tip := 1
@@ -162,7 +164,7 @@ METHOD FinBrutoBilans:get_vars()
       _tip := ::tip
    ENDIF
 
-   Box(, 17, 70 )
+   Box(, 18, 75 )
 
    @ m_x + _x, m_y + 2 SAY "***** BRUTO BILANS *****"
 
@@ -218,6 +220,9 @@ METHOD FinBrutoBilans:get_vars()
    ENDIF
  	
    ++ _x
+   @ m_x + _x, m_y + 2 SAY8 "Format izvještaja (1 - A3, 2 - A4, 3 - A4L) ?" GET _format PICT "@S1" VALID _format $ "123"
+
+   ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Export izvještaja u DBF (D/N) ?" GET _export_dbf VALID _export_dbf $ "DN" PICT "@!"
 
    READ
@@ -233,10 +238,10 @@ METHOD FinBrutoBilans:get_vars()
    set_metric( "fin_bb_dat_od", _user, _dat_od )
    set_metric( "fin_bb_dat_do", _user, _dat_do )
    set_metric( "fin_bb_saldo_nula", _user, _saldo_nula )
-   set_metric( "fin_bb_txt_odt", _user, _txt )
    set_metric( "fin_bb_kol_tek_promet", _user, _tek_prom )
    set_metric( "fin_bb_var_ab", _user, _var_ab )
    set_metric( "fin_bb_pod_klase", _user, _podklase )
+   set_metric( "fin_bb_format", _user, _format )
 
    ::params[ "idfirma" ] := gFirma
    ::params[ "konto" ] := AllTrim( _konto )
@@ -249,6 +254,7 @@ METHOD FinBrutoBilans:get_vars()
    ::params[ "kolona_tek_prom" ] := ( _tek_prom == "D" )
    ::params[ "varijanta" ] := _var_ab
    ::params[ "podklase" ] := ( _podklase == "D" )
+   ::params[ "format" ] := _format
 
    ::tip := _tip
 

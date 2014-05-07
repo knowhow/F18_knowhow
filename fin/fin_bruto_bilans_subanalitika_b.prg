@@ -14,95 +14,52 @@
 #include "fin.ch"
 
 
-STATIC __par_len
-
-
-
+STATIC __par_len := 6
+STATIC REP1_LEN
+STATIC PICD
+STATIC M6, M7, M8, M9, M10
 
 FUNCTION fin_bb_subanalitika_b( params )
 
-   cIdFirma := gFirma
+   LOCAL cIdFirma := params[ "idfirma" ]
+   LOCAL dDatOd := params[ "datum_od" ]
+   LOCAL dDatDo := params[ "datum_do" ]
+   LOCAL qqKonto := params[ "konto" ]
+   LOCAL cIdRj := params[ "id_rj" ]
+   LOCAL lExpRpt := params[ "export_dbf" ]
+   LOCAL lNule := params[ "saldo_nula" ]
+   LOCAL lPodKlas := params[ "podklase" ]
+   LOCAL cFormat := params["format"]
+   LOCAL aExpFields, cLaunch, cKlKonto, cSinKonto, cIdKonto, cIdPartner
+   LOCAL cFilter, aUsl1, nStr := 0
+   LOCAL b, b1, b2
+   LOCAL nValuta := params[ "valuta" ]
+   LOCAL nBBK := 1
+   //::params[ "kolona_tek_prom" ] := .T.
+ 
+   PICD := FormPicL( gPicBHD, 15 )
 
-   O_KONTO
-   O_PARTN
-
-   __par_len := Len( partn->id )
-
-   qqKonto := Space( 100 )
-   dDatOd := dDatDo := CToD( "" )
-   PRIVATE cFormat := "2"
-   PRIVATE cPodKlas := "N"
-   PRIVATE cNule := "D"
-   PRIVATE cExpRptDN := "N"
-   PRIVATE cBBSkrDN := "N"
-   PRIVATE cPrikaz := "1"
-
-   Box( "sanb", 13, 60 )
-   SET CURSOR ON
-
-   DO WHILE .T.
-      @ m_x + 1, m_y + 2 SAY "SUBANALITICKI BRUTO BILANS"
-      IF gNW == "D"
-         @ m_x + 2, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
-      ELSE
-         @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
-      ENDIF
-      @ m_x + 3, m_y + 2 SAY "Konto " GET qqKonto    PICT "@!S50"
-      @ m_x + 4, m_y + 2 SAY "Od datuma :" GET dDatOD
-      @ m_x + 4, Col() + 2 SAY "do" GET dDatDo
-      @ m_x + 6, m_y + 2 SAY "Format izvjestaja A3/A4/A4L (1/2/3)" GET cFormat
-      @ m_x + 7, m_y + 2 SAY "Klase unutar glavnog izvjestaja (D/N)" GET cPodKlas VALID cPodKlas $ "DN" PICT "@!"
-      @ m_x + 8, m_y + 2 SAY "Prikaz stavki sa saldom 0 D/N " GET cNule VALID cnule $ "DN" PICT "@!"
-      cIdRJ := ""
-      IF gRJ == "D"
-         cIdRJ := "999999"
-         @ m_x + 9, m_y + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
-      ENDIF
- 	
-      @ m_x + 10, m_y + 2 SAY "Export izvjestaja u dbf (D/N)? " GET cExpRptDN VALID cExpRptDN $ "DN" PICT "@!"
-      @ m_x + 11, m_y + 2 SAY "Export skraceni bruto bilans (D/N)? " GET cBBSkrDN VALID cBBSkrDN $ "DN" PICT "@!"
-	
-      @ m_x + 12, m_y + 2 SAY "Prikaz suban (1) / suban+anal (2) / anal (3)" GET cPrikaz VALID cPrikaz $ "123" PICT "@!"
-	
-      READ
-      ESC_BCR
- 	
-      aUsl1 := Parsiraj( qqKonto, "IdKonto" )
-      IF aUsl1 <> NIL
-         EXIT
-      ENDIF
-   ENDDO
-
-   BoxC()
-
-   cIdFirma := Trim( cIdFirma )
-
-   IF cIdRj == "999999"
-      cIdRj := ""
-   ENDIF
-
-   IF gRJ == "D" .AND. "." $ cIdRj
+   IF gRJ == "D" .AND. ( "." $ cIdRj )
       cIdRj := Trim( StrTran( cIdRj, ".", "" ) )
    ENDIF
 
    IF cFormat $ "1#3"
-      PRIVATE REP1_LEN := 236
+      REP1_LEN := 236
       th1 := "---- ------- -------- --------------------------------------------------- -------------- ----------------- --------------------------------- ------------------------------- ------------------------------- -------------------------------"
-      th2 := "*R. * KONTO *PARTNER *     NAZIV KONTA ILI PARTNERA                      *    MJESTO    *      ADRESA     *        PO¬ETNO STANJE           *         TEKUI PROMET         *       KUMULATIVNI PROMET      *            SALDO             *"
+      th2 := "*R. * KONTO *PARTNER *     NAZIV KONTA ILI PARTNERA                      *    MJESTO    *      ADRESA     *        POČETNO STANJE           *         TEKUĆI PROMET         *       KUMULATIVNI PROMET      *            SALDO             *"
       th3 := "                                                                                                           --------------------------------- ------------------------------- ------------------------------- -------------------------------"
-      th4 := "*BR.*       *        *                                                   *              *                 *    DUGUJE       *   POTRA¦UJE   *    DUGUJE     *   POTRA¦UJE   *    DUGUJE     *   POTRA¦UJE   *     DUGUJE    *   POTRA¦UJE  *"
+      th4 := "*BR.*       *        *                                                   *              *                 *    DUGUJE       *   POTRAŽUJE   *    DUGUJE     *   POTRAŽUJE   *    DUGUJE     *   POTRAŽUJE   *     DUGUJE    *   POTRAŽUJE  *"
       th5 := "---- ------- -------- --------------------------------------------------- -------------- ----------------- ----------------- --------------- --------------- --------------- --------------- --------------- --------------- ---------------"
    ELSE
-      PRIVATE REP1_LEN := 158
+      REP1_LEN := 158
       th1 := "---- ------- -------- -------------------------------------- --------------------------------- ------------------------------- -------------------------------"
-      th2 := "*R. * KONTO *PARTNER *    NAZIV KONTA ILI PARTNERA          *        PO¬ETNO STANJE           *       KUMULATIVNI PROMET      *            SALDO             *"
+      th2 := "*R. * KONTO *PARTNER *    NAZIV KONTA ILI PARTNERA          *        POČETNO STANJE           *       KUMULATIVNI PROMET      *            SALDO             *"
       th3 := "                                                             --------------------------------- ------------------------------- -------------------------------"
-      th4 := "*BR.*       *        *                                      *    DUGUJE       *   POTRA¦UJE   *    DUGUJE     *   POTRA¦UJE   *     DUGUJE    *   POTRA¦UJE  *"
+      th4 := "*BR.*       *        *                                      *    DUGUJE       *   POTRAŽUJE   *    DUGUJE     *   POTRAŽUJE   *     DUGUJE    *   POTRAŽUJE  *"
       th5 := "---- ------- -------- -------------------------------------- ----------------- --------------- --------------- --------------- --------------- ---------------"
    ENDIF
 
-   PRIVATE lExpRpt := ( cExpRptDN == "D" )
-   PRIVATE lBBSkraceni := ( cBBSkrDN == "D" )
+   fin_bb_txt_header()
 
    IF lExpRpt
       aExpFields := get_sbb_fields( lBBSkraceni, __par_len )
@@ -117,31 +74,36 @@ FUNCTION fin_bb_subanalitika_b( params )
    O_BBKLAS
 
    SELECT BBKLAS
-   ZAPP()
+   my_dbf_zap()
 
-   PRIVATE cFilter := ""
+   cFilter := ""
 
    SELECT SUBAN
 
    IF gRj == "D" .AND. Len( cIdrj ) <> 0
-      cFilter += iif( Empty( cFilter ), "", ".and." ) + "idrj=" + cm2str( cidrj )
+      cFilter += iif( Empty( cFilter ), "", ".and." ) + "idrj=" + cm2str( cIdRj )
    ENDIF
 
-   IF aUsl1 <> ".t."
-      cFilter += iif( Empty( cFilter ), "", ".and." ) + aUsl1
+   IF !EMPTY( qqKonto )
+      aUsl1 := Parsiraj( qqKonto, "idkonto" )
+      IF aUsl1 <> ".t."
+          cFilter += iif( Empty( cFilter ), "", ".and." ) + aUsl1
+      ENDIF
    ENDIF
+
    IF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
       cFilter += iif( Empty( cFilter ), "", ".and." ) + "DATDOK>=CTOD('" + DToC( dDatOd ) + "') .and. DATDOK<=CTOD('" + DToC( dDatDo ) + "')"
    ENDIF
 
    IF !Empty( cFilter ) .AND. Len( cIdFirma ) == 2
-      SET FILTER to &cFilter
+      SET FILTER TO &cFilter
    ENDIF
 
    IF Len( cIdFirma ) < 2
       SELECT SUBAN
       Box(, 2, 30 )
-      nSlog := 0; nUkupno := RECCOUNT2()
+      nSlog := 0
+      nUkupno := RECCOUNT2()
       cFilt := IF( Empty( cFilter ), "IDFIRMA=" + cm2str( cIdFirma ), cFilter + ".and.IDFIRMA=" + cm2str( cIdFirma ) )
       cSort1 := "IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr"
       INDEX ON &cSort1 TO "SUBTMP" FOR &cFilt Eval( fin_tek_rec_2() ) EVERY 1
@@ -155,12 +117,11 @@ FUNCTION fin_bb_subanalitika_b( params )
 
    nStr := 0
 
-   BBMnoziSaK()
-
    START PRINT CRET
 
-
-   B := B1 := B2 := 0  // brojaci
+   B := 0
+   B1 := 0
+   B2 := 0
 
    SELECT SUBAN
 
@@ -168,11 +129,13 @@ FUNCTION fin_bb_subanalitika_b( params )
    P1S := P2S := P3S := P4S := 0
 
    D4PS := P4PS := D4TP := P4TP := D4KP := P4KP := 0
+
    nCol1 := 50
-   DO WHILE !Eof() .AND. IdFirma = cIdFirma   // idfirma
+
+   DO WHILE !Eof() .AND. IdFirma = cIdFirma
 
       IF PRow() == 0
-         ZaglSan( cFormat )
+         zagl_bb_suban( params, @nStr )
       ENDIF
 
       // PS - pocetno stanje
@@ -199,7 +162,7 @@ FUNCTION fin_bb_subanalitika_b( params )
 
                DO WHILE !Eof() .AND. IdFirma = cIdFirma .AND. cIdKonto == IdKonto .AND. cIdPartner == IdPartner
 	
-                  IF cTip == ValDomaca()
+                  IF nValuta == 1
                      IF D_P = "1"
                         D0KP += IznosBHD * nBBK
                      ELSE
@@ -213,103 +176,122 @@ FUNCTION fin_bb_subanalitika_b( params )
                      ENDIF
                   ENDIF
 
-                  IF cTip == ValDomaca()
+                  IF nValuta == 1
                      IF IdVN = "00"
-                        IF D_P == "1"; D0PS += IznosBHD * nBBK; ELSE; P0PS += IznosBHD * nBBK; ENDIF
+                        IF D_P == "1"
+                            D0PS += IznosBHD * nBBK
+                        ELSE
+                            P0PS += IznosBHD * nBBK
+                        ENDIF
                      ELSE
-                        IF D_P == "1"; D0TP += IznosBHD * nBBK; ELSE; P0TP += IznosBHD * nBBK; ENDIF
+                        IF D_P == "1"
+                            D0TP += IznosBHD * nBBK
+                        ELSE
+                            P0TP += IznosBHD * nBBK
+                        ENDIF
                      ENDIF
                   ELSE
 
                      IF IdVN = "00"
-                        IF D_P == "1"; D0PS += IznosDEM; ELSE; P0PS += IznosDEM; ENDIF
+                        IF D_P == "1"
+                           D0PS += IznosDEM
+                        ELSE
+                           P0PS += IznosDEM
+                        ENDIF
                      ELSE
-                        IF D_P == "1"; D0TP += IznosDEM; ELSE; P0TP += IznosDEM; ENDIF
+                        IF D_P == "1"
+                           D0TP += IznosDEM
+                        ELSE
+                           P0TP += IznosDEM
+                        ENDIF
                      ENDIF
                   ENDIF
 
                   SKIP
                ENDDO
 
-               IF PRow() > 61 + gpStranica
-                  FF
-                  ZaglSan( cFormat )
-               ENDIF
+               nova_strana( params, @nStr, 61 )
 
-               IF ( cNule == "N" .AND. Round( D0KP - P0KP, 2 ) == 0 )
-                  // ne prikazuj
+               IF ( !lNule .AND. Round( D0KP - P0KP, 2 ) == 0 )
+                  
                ELSE
 
-                  @ PRow() + 1, 0 SAY  ++B  PICTURE '9999'    // ; ?? "."
+                  @ PRow() + 1, 0 SAY  ++B  PICTURE '9999'
                   @ PRow(), PCol() + 1 SAY cIdKonto
-                  @ PRow(), PCol() + 1 SAY cIdPartner       // IdPartner(cIdPartner)
+                  @ PRow(), PCol() + 1 SAY cIdPartner
                   SELECT PARTN
                   HSEEK cIdPartner
 
                   IF cFormat == "2"
-                     @ PRow(), PCol() + 1 SAY PadR( naz, 48 -Len ( cidpartner ) )   // difidp
+                     @ PRow(), PCol() + 1 SAY PadR( naz, 48 -Len ( cIdPartner ) )
                   ELSE
                      @ PRow(), PCol() + 1 SAY PadR( naz, 20 )
                      @ PRow(), PCol() + 1 SAY PadR( naz2, 20 )
                      @ PRow(), PCol() + 1 SAY Mjesto
                      @ PRow(), PCol() + 1 SAY Adresa PICTURE 'XXXXXXXXXXXXXXXXX'
                   ENDIF
+
                   SELECT SUBAN
+
                   nCol1 := PCol() + 1
+
                   @ PRow(), PCol() + 1 SAY D0PS PICTURE PicD
                   @ PRow(), PCol() + 1 SAY P0PS PICTURE PicD
+
                   IF cFormat == "1"
                      @ PRow(), PCol() + 1 SAY D0TP PICTURE PicD
                      @ PRow(), PCol() + 1 SAY P0TP PICTURE PicD
                   ENDIF
+
                   @ PRow(), PCol() + 1 SAY D0KP PICTURE PicD
                   @ PRow(), PCol() + 1 SAY P0KP PICTURE PicD
+
                   D0S := D0KP - P0KP
+
                   IF D0S >= 0
                      P0S := 0
                   ELSE
                      P0S := -D0S
                      D0S := 0
                   ENDIF
+
                   @ PRow(), PCol() + 1 SAY D0S PICTURE PicD
                   @ PRow(), PCol() + 1 SAY P0S PICTURE PicD
 	
                   D1PS += D0PS;P1PS += P0PS;D1TP += D0TP;P1TP += P0TP;D1KP += D0KP;P1KP += P0KP
 
-                  IF lExpRpt .AND. !Empty( cIdPartner ) .AND. cPrikaz $ "12"
-                     IF lBBSkraceni
-                        fill_ssbb_tbl( cIdKonto, cIdPartner, partn->naz, D0KP, P0KP, D0KP - P0KP )
-                     ELSE
-                        fill_sbb_tbl( cIdKonto, cIdPartner, partn->naz, D0PS, P0PS, D0KP, P0KP, D0S, P0S )
-                     ENDIF
+                  IF lExpRpt .AND. !Empty( cIdPartner )
+                     fill_sbb_tbl( cIdKonto, cIdPartner, partn->naz, D0PS, P0PS, D0KP, P0KP, D0S, P0S )
                   ENDIF
                ENDIF
 	
-            ENDDO // konto
+            ENDDO
 
-            IF PRow() > 59 + gpStranica
-               FF
-               ZaglSan( cFormat )
-            ENDIF
+            nova_strana( params, @nStr )
 
             @ PRow() + 1, 2 SAY Replicate( "-", REP1_LEN - 2 )
-            @ PRow() + 1, 2 SAY ++B1 PICTURE '9999'      // ; ?? "."
+            @ PRow() + 1, 2 SAY ++B1 PICTURE '9999' 
             @ PRow(), PCol() + 1 SAY cIdKonto
+
             SELECT KONTO
             HSEEK cIdKonto
+
             IF cFormat == "1"
                @ PRow(), PCol() + 1 SAY naz
             ELSE
-               @ PRow(), PCol() + 1 SAY Left ( naz, 47 )  // 40
+               @ PRow(), PCol() + 1 SAY Left ( naz, 47 )
             ENDIF
+
             SELECT SUBAN
 
             @ PRow(), nCol1     SAY D1PS PICTURE PicD
             @ PRow(), PCol() + 1  SAY P1PS PICTURE PicD
+
             IF cFormat == "1"
                @ PRow(), PCol() + 1  SAY D1TP PICTURE PicD
                @ PRow(), PCol() + 1  SAY P1TP PICTURE PicD
             ENDIF
+
             @ PRow(), PCol() + 1  SAY D1KP PICTURE PicD
             @ PRow(), PCol() + 1  SAY P1KP PICTURE PicD
 	
@@ -317,10 +299,15 @@ FUNCTION fin_bb_subanalitika_b( params )
 
             IF D1S >= 0
                P1S := 0
-               D2S += D1S;D3S += D1S;D4S += D1S
+               D2S += D1S
+               D3S += D1S
+               D4S += D1S
             ELSE
-               P1S := -D1S; D1S := 0
-               P2S += P1S;P3S += P1S;P4S += P1S
+               P1S := -D1S
+               D1S := 0
+               P2S += P1S
+               P3S += P1S
+               P4S += P1S
             ENDIF
 
             @ PRow(), PCol() + 1 SAY D1S PICTURE PicD
@@ -328,39 +315,44 @@ FUNCTION fin_bb_subanalitika_b( params )
             @ PRow() + 1, 2 SAY Replicate( "-", REP1_LEN - 2 )
 	
             SELECT SUBAN
-            D2PS += D1PS;P2PS += P1PS;D2TP += D1TP;P2TP += P1TP;D2KP += D1KP;P2KP += P1KP
+            D2PS += D1PS
+            P2PS += P1PS
+            D2TP += D1TP
+            P2TP += P1TP
+            D2KP += D1KP
+            P2KP += P1KP
 
-            IF lExpRpt .AND. ( ( cPrikaz == "1" .AND. Empty( cIdPartner ) ) .OR. cPrikaz $ "23" )
-               IF lBBSkraceni
-                  fill_ssbb_tbl( cIdKonto, "", konto->naz, D1KP, P1KP, D1KP - P1KP )
-               ELSE
-                  fill_sbb_tbl( cIdKonto, "", konto->naz, D1PS, P1PS, D1KP, P1KP, D1S, P1S )
-               ENDIF
+            IF lExpRpt 
+               fill_sbb_tbl( cIdKonto, "", konto->naz, D1PS, P1PS, D1KP, P1KP, D1S, P1S )
             ENDIF
 
-         ENDDO  // sin konto
+         ENDDO
 
-         IF PRow() > 61 + gpStranica
-            FF
-            ZaglSan( cFormat )
-         ENDIF
+         nova_strana( params, @nStr, 61 )
 
          @ PRow() + 1, 4 SAY Replicate( "=", REP1_LEN - 4 )
          @ PRow() + 1, 4 SAY ++B2 PICTURE '9999';?? "."
          @ PRow(), PCol() + 1 SAY cSinKonto
-         SELECT KONTO; hseek cSinKonto
+
+         SELECT KONTO
+         hseek cSinKonto
+
          IF cFormat == "1"
             @ PRow(), PCol() + 1 SAY Left( naz, 50 )
          ELSE
-            @ PRow(), PCol() + 1 SAY Left( naz, 44 )       // 45
+            @ PRow(), PCol() + 1 SAY Left( naz, 44 )
          ENDIF
+
          SELECT SUBAN
+
          @ PRow(), nCol1    SAY D2PS PICTURE PicD
          @ PRow(), PCol() + 1 SAY P2PS PICTURE PicD
+
          IF cFormat == "1"
             @ PRow(), PCol() + 1 SAY D2TP PICTURE PicD
             @ PRow(), PCol() + 1 SAY P2TP PICTURE PicD
          ENDIF
+
          @ PRow(), PCol() + 1 SAY D2KP PICTURE PicD
          @ PRow(), PCol() + 1 SAY P2KP PICTURE PicD
          @ PRow(), PCol() + 1 SAY D2S PICTURE PicD
@@ -369,21 +361,23 @@ FUNCTION fin_bb_subanalitika_b( params )
 
          SELECT SUBAN
 
-         D3PS += D2PS;P3PS += P2PS;D3TP += D2TP;P3TP += P2TP;D3KP += D2KP;P3KP += P2KP
+         D3PS += D2PS
+         P3PS += P2PS
+         D3TP += D2TP
+         P3TP += P2TP
+         D3KP += D2KP
+         P3KP += P2KP
 
          IF lExpRpt
-            IF lBBSkraceni
-               fill_ssbb_tbl( cSinKonto, "", konto->naz, D2KP, P2KP, D2KP - P2KP )
-            ELSE
-               fill_sbb_tbl( cSinKonto, "", konto->naz, D2PS, P2PS, D2KP, P2KP, D2S, P2S )
-            ENDIF
+             fill_sbb_tbl( cSinKonto, "", konto->naz, D2PS, P2PS, D2KP, P2KP, D2S, P2S )
          ENDIF
 	
-      ENDDO  // klasa konto
+      ENDDO 
 
       SELECT BBKLAS
       APPEND BLANK
-      REPLACE IdKlasa WITH cKlKonto, ;
+
+      RREPLACE IdKlasa WITH cKlKonto, ;
          PocDug  WITH D3PS, ;
          PocPot  WITH P3PS, ;
          TekPDug WITH D3TP, ;
@@ -392,11 +386,12 @@ FUNCTION fin_bb_subanalitika_b( params )
          KumPPot WITH P3KP, ;
          SalPDug WITH D3S, ;
          SalPPot WITH P3S
+
       SELECT SUBAN
 
-      IF cPodKlas == "D"
-         ? th5
-         ? "UKUPNO KLASA " + cklkonto
+      IF lPodKlas
+         ?U th5
+         ? "UKUPNO KLASA " + cKlKonto
          @ PRow(), nCol1    SAY D3PS PICTURE PicD
          @ PRow(), PCol() + 1 SAY P3PS PICTURE PicD
          IF cFormat == "1"
@@ -407,27 +402,25 @@ FUNCTION fin_bb_subanalitika_b( params )
          @ PRow(), PCol() + 1 SAY P3KP PICTURE PicD
          @ PRow(), PCol() + 1 SAY D3S PICTURE PicD
          @ PRow(), PCol() + 1 SAY P3S PICTURE PicD
-         ? th5
+         ?U th5
       ENDIF
 
-      D4PS += D3PS;P4PS += P3PS;D4TP += D3TP;P4TP += P3TP;D4KP += D3KP;P4KP += P3KP
+      D4PS += D3PS
+      P4PS += P3PS
+      D4TP += D3TP
+      P4TP += P3TP
+      D4KP += D3KP
+      P4KP += P3KP
 
       IF lExpRpt
-         IF lBBSkraceni
-            fill_ssbb_tbl( cKlKonto, "", konto->naz, D3KP, P3KP, D3KP - P3KP )
-         ELSE
-            fill_sbb_tbl( cKlKonto, "", konto->naz, D3PS, P3PS, D3KP, P3KP, D3S, P3S )
-         ENDIF
+         fill_sbb_tbl( cKlKonto, "", konto->naz, D3PS, P3PS, D3KP, P3KP, D3S, P3S )
       ENDIF
 	
    ENDDO
 
-   IF PRow() > 59 + gpStranica
-      FF
-      ZaglSan( cFormat )
-   ENDIF
+   nova_strana( params, @nStr )
 
-   ? th5
+   ?U th5
    @ PRow() + 1, 6 SAY "UKUPNO:"
    @ PRow(), nCol1 SAY D4PS PICTURE PicD
    @ PRow(), PCol() + 1 SAY P4PS PICTURE PicD
@@ -439,33 +432,39 @@ FUNCTION fin_bb_subanalitika_b( params )
    @ PRow(), PCol() + 1 SAY P4KP PICTURE PicD
    @ PRow(), PCol() + 1 SAY D4S PICTURE PicD
    @ PRow(), PCol() + 1 SAY P4S PICTURE PicD
-   ? th5
+   ?U th5
 
    IF lExpRpt
-      IF lBBSkraceni
-         fill_ssbb_tbl( "UKUPNO", "", "", D4KP, P4KP, D4KP - P4KP )
-      ELSE
-         fill_sbb_tbl( "UKUPNO", "", "", D4PS, P4PS, D4KP, P4KP, D4S, P4S )
-      ENDIF
+      fill_sbb_tbl( "UKUPNO", "", "", D4PS, P4PS, D4KP, P4KP, D4S, P4S )
    ENDIF
 
-   IF PRow() > 55 + gpStranica; FF; ELSE; ?;?; ENDIF
+   IF PRow() > 55 + gpStranica
+      FF
+   ELSE
+      ?
+      ?
+   ENDIF
 
-   ?? "REKAPITULACIJA PO KLASAMA NA DAN:"; @ PRow(), PCol() + 2 SAY Date()
-   ? M6
-   ? M7
-   ? M8
-   ? M9
-   ? M10
+   ?? "REKAPITULACIJA PO KLASAMA NA DAN:"
+   @ PRow(), PCol() + 2 SAY Date()
+
+   ?U M6
+   ?U M7
+   ?U M8
+   ?U M9
+   ?U M10
 
    SELECT BBKLAS
    GO TOP
    nPocDug := nPocPot := nTekPDug := nTekPPot := nKumPDug := nKumPPot := nSalPDug := nSalPPot := 0
 
    DO WHILE !Eof()
-      IF PRow() > 63 + gpStranica; FF; ENDIF
+
+      IF PRow() > 63 + gpStranica
+         FF
+      ENDIF
       @ PRow() + 1, 4      SAY IdKlasa
-      @ PRow(), 10       SAY PocDug               PICTURE PicD
+      @ PRow(), 10         SAY PocDug               PICTURE PicD
       @ PRow(), PCol() + 1 SAY PocPot               PICTURE PicD
       @ PRow(), PCol() + 1 SAY TekPDug              PICTURE PicD
       @ PRow(), PCol() + 1 SAY TekPPot              PICTURE PicD
@@ -482,12 +481,18 @@ FUNCTION fin_bb_subanalitika_b( params )
       nKumPPot  += KumPPot
       nSalPDug  += SalPDug
       nSalPPot  += SalPPot
+
       SKIP
+
    ENDDO
 
-   IF PRow() > 59 + gpStranica; FF; ENDIF
-   ? M10
+   IF PRow() > 59 + gpStranica
+      FF
+   ENDIF
+
+   ?U M10
    ? "UKUPNO:"
+
    @ PRow(), 10 SAY  nPocDug    PICTURE PicD
    @ PRow(), PCol() + 1 SAY  nPocPot    PICTURE PicD
    @ PRow(), PCol() + 1 SAY  nTekPDug   PICTURE PicD
@@ -496,7 +501,7 @@ FUNCTION fin_bb_subanalitika_b( params )
    @ PRow(), PCol() + 1 SAY  nKumPPot   PICTURE PicD
    @ PRow(), PCol() + 1 SAY  nSalPDug   PICTURE PicD
    @ PRow(), PCol() + 1 SAY  nSalPPot   PICTURE PicD
-   ? M10
+   ?U M10
 
    FF
    END PRINT
@@ -510,27 +515,34 @@ FUNCTION fin_bb_subanalitika_b( params )
 
 
 
-/*! \fn ZaglSan()
- *  \brief Zaglavlje strane subanalitickog bruto bilansa
- */
+STATIC FUNCTION nova_strana( params, nStr, duz )
 
-FUNCTION ZaglSan( cFormat )
-
-   IF cFormat == nil
-      cFormat := "2"
+   IF duz == NIL
+      duz := 59
    ENDIF
+
+   IF PRow() > ( duz + gpStranica )
+      FF
+      zagl_bb_suban( params, @nStr )
+   ENDIF
+
+   RETURN
+
+
+
+STATIC FUNCTION zagl_bb_suban( params, nStr )
 
    ?
 
-   IF cFormat $ "1#3"
+   IF params["format"] $ "1#3"
       ? "#%LANDS#"
    ENDIF
 
    P_COND2
 
-   ?? "FIN: SUBANALITI¬KI BRUTO BILANS U VALUTI '" + Trim( cBBV ) + "'"
-   IF !( Empty( dDatod ) .AND. Empty( dDatDo ) )
-      ?? " ZA PERIOD OD", dDatOd, "-", dDatDo
+   ??U "FIN: SUBANALITIČKI BRUTO BILANS U VALUTI '" + IF( params[ "valuta" ] == 1, ValDomaca(), ValPomocna() )
+   IF !( Empty( params["datum_od"] ) .AND. Empty( params["datum_do"] ) )
+      ?? " ZA PERIOD OD", params["datum_od"], "-", params["datum_do"]
    ENDIF
    ?? " NA DAN: "; ?? Date()
    @ PRow(), REP1_LEN - 15 SAY "Str:" + Str( ++nStr, 3 )
@@ -539,47 +551,27 @@ FUNCTION ZaglSan( cFormat )
       ? "Firma:", gFirma, gNFirma
    ELSE
       ? "Firma:"
-      @ PRow(), PCol() + 2 SAY cIdFirma
+      @ PRow(), PCol() + 2 SAY params["idfirma"]
       SELECT PARTN
-      HSEEK cIdFirma
-      @ PRow(), PCol() + 2 SAY Naz; @ PRow(), PCol() + 2 SAY Naz2
+      HSEEK params["idfirma"]
+      @ PRow(), PCol() + 2 SAY Naz
+      @ PRow(), PCol() + 2 SAY Naz2
    ENDIF
 
-   IF gRJ == "D" .AND. Len( cIdRJ ) <> 0
-      ? "Radna jedinica ='" + cIdRj + "'"
+   IF gRJ == "D" .AND. Len( params["idrj"] ) <> 0
+      ? "Radna jedinica ='" + params["idrj"] + "'"
    ENDIF
 
-   ? th1
-   ? th2
-   ? th3
-   ? th4
-   ? th5
+   ?U th1
+   ?U th2
+   ?U th3
+   ?U th4
+   ?U th5
 
    SELECT SUBAN
 
    RETURN
 
-
-
-STATIC FUNCTION fill_ssbb_tbl( cKonto, cIdPart, cNaziv, ;
-      nFDug, nFPot, nFSaldo )
-
-   LOCAL nArr
-
-   nArr := Select()
-
-   O_R_EXP
-   APPEND BLANK
-   REPLACE field->konto WITH cKonto
-   REPLACE field->idpart WITH cIdPart
-   REPLACE field->naziv WITH cNaziv
-   REPLACE field->duguje WITH nFDug
-   REPLACE field->potrazuje WITH nFPot
-   REPLACE field->saldo WITH nFSaldo
-
-   SELECT ( nArr )
-
-   RETURN
 
 
 STATIC FUNCTION fill_sbb_tbl( cKonto, cIdPart, cNaziv, ;
@@ -639,9 +631,9 @@ STATIC FUNCTION get_sbb_fields( lBBSkraceni, nPartLen )
 FUNCTION fin_bb_txt_header()
 
    M6 := "--------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- ---------------"
-   M7 := "*        *          PO¬ETNO STANJE       *         TEKUI PROMET         *        KUMULATIVNI PROMET     *            SALDO             *"
+   M7 := "*        *          POČETNO STANJE       *         TEKUĆI PROMET         *        KUMULATIVNI PROMET     *            SALDO             *"
    M8 := "  KLASA   ------------------------------- ------------------------------- ------------------------------- -------------------------------"
-   M9 := "*        *    DUGUJE     *   POTRA¦UJE   *     DUGUJE    *   POTRA¦UJE   *    DUGUJE     *   POTRA¦UJE   *     DUGUJE    *    POTRA¦UJE *"
+   M9 := "*        *    DUGUJE     *   POTRAŽUJE   *     DUGUJE    *   POTRAŽUJE   *    DUGUJE     *   POTRAŽUJE   *     DUGUJE    *    POTRAŽUJE *"
    M10 := "--------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- ---------------"
 
    RETURN

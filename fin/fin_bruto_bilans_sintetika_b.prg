@@ -23,16 +23,15 @@ FUNCTION fin_bb_sintetika_b( params )
    LOCAL dDatDo := params[ "datum_do" ]
    LOCAL qqKonto := params[ "konto" ]
    LOCAL cIdRj := params[ "id_rj" ]
-   LOCAL lExpRpt := params[ "export_dbf" ]
    LOCAL lNule := params[ "saldo_nula" ]
    LOCAL lPodKlas := params[ "podklase" ]
    LOCAL cFormat := params["format"]
-   LOCAL aExpFields, cLaunch, cKlKonto, cSinKonto, cIdKonto, cIdPartner
+   LOCAL cKlKonto, cSinKonto, cIdKonto, cIdPartner
    LOCAL cFilter, aUsl1, nStr := 0
    LOCAL b, b1, b2
    LOCAL nValuta := params[ "valuta" ]
    LOCAL nBBK := 1
-   //::params[ "kolona_tek_prom" ] := .T.
+   LOCAL aNaziv, nColNaz
  
    PICD := FormPicL( gPicBHD, 15 )
 
@@ -187,10 +186,10 @@ FUNCTION fin_bb_sintetika_b( params )
             SELECT KONTO
             HSEEK cIdKonto
 
-            PRIVATE aRez := SjeciStr( naz, 30 )
-            PRIVATE nColNaz := PCol() + 1
+            aNaziv := SjeciStr( naz, 30 )
+            nColNaz := PCol() + 1
 
-            @ PRow(), PCol() + 1 SAY PadR( aRez[ 1 ], 30 )
+            @ PRow(), PCol() + 1 SAY PadR( aNaziv[ 1 ], 30 )
             nCol1 := PCol() + 1
             @ PRow(), PCol() + 1 SAY D1PS PICTURE PicD
             @ PRow(), PCol() + 1 SAY P1PS PICTURE PicD
@@ -210,8 +209,8 @@ FUNCTION fin_bb_sintetika_b( params )
             @ PRow(), PCol() + 1 SAY D1S PICTURE PicD
             @ PRow(), PCol() + 1 SAY P1S PICTURE PicD
 
-            IF Len( aRez ) == 2
-               @ PRow() + 1, nColNaz SAY PadR( aRez[ 2 ], 30 )
+            IF Len( aNaziv ) == 2
+               @ PRow() + 1, nColNaz SAY PadR( aNaziv[ 2 ], 30 )
             ENDIF
 
          ENDIF

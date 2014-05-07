@@ -330,8 +330,6 @@ IF_C_RESET_SEMAPHORE
 CREATE_INDEX("1", "STR(id,5)+STR(gl_tick,2)", _alias )
 CREATE_INDEX("2", "descr", _alias )
 
-// kreiranje tabele pretraga parametri
-_cre_fnd_par( ver, .t. )
 // kreiraj relacije
 cre_relation( ver )
 

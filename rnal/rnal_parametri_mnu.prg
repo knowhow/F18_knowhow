@@ -13,14 +13,10 @@
 #include "rnal.ch"
 
 
-// ------------------------------
-// meni parametara
-// ------------------------------
 function m_par()
-*{
-private opc:={}
-private opcexe:={}
-private Izbor:=1
+local opc:={}
+local opcexe:={}
+local Izbor:=1
 
 AADD(opc, "1. podaci firme - zaglavlje            ")
 AADD(opcexe, {|| ed_fi_params() })
@@ -37,7 +33,7 @@ AADD(opcexe, {|| nil } )
 AADD(opc, "O. ostalo  ")
 AADD(opcexe, {|| ed_ost_params() } )
 
-Menu_SC("par")
+f18_menu("par", .F., izbor, opc, opcexe )
 
 return
 

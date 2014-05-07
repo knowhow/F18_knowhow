@@ -13,28 +13,22 @@
 #include "rnal.ch"
 
 
-// ------------------------------------------
-// administrativni menij modula RNAL
-// ------------------------------------------
 function rnal_mnu_admin()
-private opc := {}
-private opcexe := {}
-private izbor := 1
+local opc := {}
+local opcexe := {}
+local izbor := 1
 
 AADD(opc, "1. administracija db-a            ")
 AADD(opcexe, {|| m_adm() })
 AADD(opc, "2. regeneracija naziva artikala   ")
 AADD(opcexe, {|| _a_gen_art() })
 
-Menu_SC("administracija")
+f18_menu("administracija", .F., izbor, opc, opcexe )
 
 return
 
 
 
-// --------------------------------------------
-// automatska generacija naziva artikala
-// --------------------------------------------
 function _a_gen_art()
 local nCnt := 0
 
@@ -45,7 +39,6 @@ endif
 
 rnal_o_sif_tables()
 
-// obradi sifrarnik...
 nCnt := auto_gen_art()
 
 MsgBeep("Obradjeno " + ALLTRIM(STR(nCnt)) + " stavki !")

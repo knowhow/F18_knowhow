@@ -17,9 +17,9 @@
 // menij pregled naloga
 // ------------------------------
 function m_lst_rnal()
-private opc:={}
-private opcexe:={}
-private Izbor:=1
+local opc:={}
+local opcexe:={}
+local Izbor:=1
 
 AADD(opc, "1. lista otvorenih naloga          ")
 AADD(opcexe, {|| rnal_lista_dokumenata(1) })
@@ -27,7 +27,7 @@ AADD(opcexe, {|| rnal_lista_dokumenata(1) })
 AADD(opc, "2. lista zatvorenih naloga  ")
 AADD(opcexe, {|| rnal_lista_dokumenata(2) })
 
-Menu_SC("lst")
+f18_menu("lst", .F., izbor, opc, opcexe )
 
 return
 

@@ -15,13 +15,14 @@
 static __doc_no
 static __oper_id
 
-// --------------------------
-// meni promjena
-// --------------------------
+
+
 function m_changes( nDoc_no )
-private opc:={}
-private opcexe:={}
-private izbor:=1
+local opc:={}
+local opcexe:={}
+local izbor:=1
+local _x := m_x
+local _y := m_y
 
 __doc_no := nDoc_no
 __oper_id := GetUserID( f18_user() )
@@ -43,15 +44,15 @@ AADD(opcexe, {|| _ch_damage( __oper_id ) })
 AADD(opc, "napravi neuskladjeni proizvod ")
 AADD(opcexe, {|| rnal_damage_doc_generate( __doc_no ) })
 
-Menu_sc("changes")
+f18_menu("changes", .F., izbor, opc, opcexe )
+
+m_x := _x
+m_y := _y
 
 return
 
 
 
-// ---------------------------------
-// promjena osnovnih podataka 
-// ---------------------------------
 function _ch_main()
 local nTRec := RecNo()
 local nCustId
@@ -101,9 +102,6 @@ go (nTRec)
 return
 
 
-// --------------------------------------
-// box sa unosom podataka osnovnih
-// --------------------------------------
 static function _box_main(nCust, nPrior, cDesc)
 local cCust := SPACE(10)
 
@@ -122,9 +120,6 @@ return 1
 
 
 
-// ---------------------------------
-// promjena podataka o isporuci
-// ---------------------------------
 function _ch_ship()
 local nTRec := RecNo()
 local cShipPlace
@@ -190,9 +185,6 @@ go (nTRec)
 return
 
 
-// --------------------------------------
-// box sa unosom podataka o isporuci
-// --------------------------------------
 static function _box_ship(nObj_id, cShip, cTime, dDate, cDesc, nCust_id )
 local cObj_id := PADR(STR(nObj_id, 10), 10)
 
@@ -213,9 +205,6 @@ ESC_RETURN 0
 return 1
 
 
-// ---------------------------------
-// promjena podataka o placanju
-// ---------------------------------
 function _ch_pay()
 local nTRec := RecNo()
 local cDoc_paid
@@ -271,9 +260,6 @@ select docs
 return
 
 
-// --------------------------------------
-// box sa unosom podataka o placanju
-// --------------------------------------
 static function _box_pay(nPay_id, cPaid, cPayDesc, cDesc)
 
 Box(, 7, 65)
@@ -291,9 +277,6 @@ ESC_RETURN 0
 return 1
 
 
-// ---------------------------------
-// promjeni kontakt naloga
-// ---------------------------------
 function _ch_cont( lNew )
 local nTRec := RecNo()
 local cDesc
@@ -355,9 +338,6 @@ go (nTRec)
 return
 
 
-// ------------------------------------
-// box sa podatkom o kontaktu
-// ------------------------------------
 static function _box_cont(nCust, nCont, cContdesc, cDesc)
 local lNew := .f.
 local cCont := SPACE(10)
@@ -392,9 +372,6 @@ return 1
 
 
 
-// ---------------------------------
-// promjeni kontakt naloga
-// ---------------------------------
 function _ch_description()
 local _t_rec := RecNo()
 local _add_desc 
@@ -439,9 +416,6 @@ go ( _t_rec )
 return
 
 
-// ------------------------------------
-// box sa podatkom o kontaktu
-// ------------------------------------
 static function _box_descr( sh_desc, add_desc, ch_desc )
 
 Box(, 7, 65 )

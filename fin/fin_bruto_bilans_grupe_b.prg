@@ -10,7 +10,10 @@
  */
 
 
-function GrupBB()
+#include "fin.ch"
+
+
+function fin_bb_grupe_b( params )
 
 local nPom
 

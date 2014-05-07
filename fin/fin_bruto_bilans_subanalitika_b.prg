@@ -13,66 +13,13 @@
 
 #include "fin.ch"
 
+
 static __par_len
 
 
-function Bilans()
-
-private opc[4],Izbor
-
-cTip:=ValDomaca()
-
-M6:= "--------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- ---------------"
-M7:= "*        *          PO¬ETNO STANJE       *         TEKUI PROMET         *        KUMULATIVNI PROMET     *            SALDO             *"
-M8:= "  KLASA   ------------------------------- ------------------------------- ------------------------------- -------------------------------"
-M9:= "*        *    DUGUJE     *   POTRA¦UJE   *     DUGUJE    *   POTRA¦UJE   *    DUGUJE     *   POTRA¦UJE   *     DUGUJE    *    POTRA¦UJE *"
-M10:="--------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- ---------------"
-
-opc[1]:="1. po grupama       "
-opc[2]:="2. sintetika"
-opc[3]:="3. analitika"
-opc[4]:="4. subanalitika"
-IF gVar1=="0"; opc[5]:="5. obracun: "+cTip; h[5]:=""; ENDIF
-h[1]:=h[2]:=h[3]:=h[4]:=""
 
 
-Izbor:=1
-private PicD:=FormPicL(gPicBHD,15)
-DO WHILE .T.
-   Izbor:=Menu("bb",opc,Izbor,.f.)
-   DO CASE
-      CASE Izbor==0
-         EXIT
-
-      CASE izbor=1
-         cBBV:=cTip; nBBK:=1
-         GrupBB()
-
-      CASE izbor=2
-         cBBV:=cTip; nBBK:=1
-         SintBB()
-
-      CASE izbor=3
-         cBBV:=cTip; nBBK:=1
-         AnalBB()
-
-      CASE izbor=4
-         cBBV:=cTip; nBBK:=1
-         SubAnBB()
-
-   ENDCASE
-ENDDO
-
-
-return
-
-
-
-
-// -----------------------------------------------
-// Subanaliticki bruto bilans
-// -----------------------------------------------
-function SubAnBB()
+function fin_bb_subanalitika_b( params )
 cIdFirma:=gFirma
 
 O_KONTO
@@ -613,28 +560,6 @@ RETURN
 
 
 
-
-
-function BBMnoziSaK()
-
-LOCAL nArr:=SELECT()
-  IF cTip==ValDomaca().and.;
-     IzFMKIni("FIN","BrutoBilansUDrugojValuti","N",KUMPATH)=="D"
-    Box(,5,70)
-      @ m_x+2, m_y+2 SAY "Pomocna valuta      " GET cBBV pict "@!" valid ImaUSifVal(cBBV)
-      @ m_x+3, m_y+2 SAY "Omjer pomocna/domaca" GET nBBK WHEN {|| nBBK:=OmjerVal2(cBBV,cTip),.t.} PICT "999999999.999999999"
-      READ
-    BoxC()
-  ELSE
-    cBBV:=cTip
-    nBBK:=1
-  ENDIF
- SELECT (nArr)
-RETURN
-
-
-
-
 static function fill_ssbb_tbl(cKonto, cIdPart, cNaziv, ;
 			nFDug, nFPot, nFSaldo )
 local nArr
@@ -703,5 +628,18 @@ endif
 
 
 return aFields
+
+
+
+function fin_bb_txt_header()
+
+M6:= "--------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- ---------------"
+M7:= "*        *          PO¬ETNO STANJE       *         TEKUI PROMET         *        KUMULATIVNI PROMET     *            SALDO             *"
+M8:= "  KLASA   ------------------------------- ------------------------------- ------------------------------- -------------------------------"
+M9:= "*        *    DUGUJE     *   POTRA¦UJE   *     DUGUJE    *   POTRA¦UJE   *    DUGUJE     *   POTRA¦UJE   *     DUGUJE    *    POTRA¦UJE *"
+M10:="--------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- ---------------"
+
+return
+
 
 

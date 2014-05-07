@@ -9,9 +9,9 @@
  * By using this software, you agree to be bound by its terms.
  */
 
+#include "fin.ch"
 
-
-function SintBB()
+function fin_bb_sintetika_b( params )
 
 local nPom
 

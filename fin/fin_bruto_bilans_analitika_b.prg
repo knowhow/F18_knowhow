@@ -10,8 +10,9 @@
  */
 
 
+#include "fin.ch"
  
-function AnalBB()
+function fin_bb_analitika_b( params )
 
 private A1,D4PS,P4PS,D4TP,P4TP,D4KP,P4KP,D4S,P4S
 

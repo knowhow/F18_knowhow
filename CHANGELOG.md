@@ -1,3 +1,7 @@
+1.7.72  2014-05-07, vsasa
+
+  - RNAL, dodavanje novog artikla - bugfix
+ 
 1.7.71  2014-05-07, vsasa
 
   - FAKT, refactor-out

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,189 +13,199 @@
 #include "epdv.ch"
 
 
-function s_partner(cIdPartn)
+FUNCTION s_partner( cIdPartn )
 
-local cPom
-local cIdBroj
+   LOCAL cPom
+   LOCAL cIdBroj
 
-PushWa()
+   PushWa()
 
-o_partn()
-select PARTN
-SET ORDER TO TAG "ID"
-seek cIdPartn
+   o_partn()
 
-cPom := ""
+   SELECT PARTN
+   SET ORDER TO TAG "ID"
+   SEEK cIdPartn
 
-cPom += ALLTRIM(naz) 
+   cPom := ""
+
+   cPom += AllTrim( naz )
 
 
-cMjesto := ALLTRIM(mjesto)
-if EMPTY(cMjesto)
-	cMjesto := "-NEP.MJ-"
-endif
+   cMjesto := AllTrim( mjesto )
+   IF Empty( cMjesto )
+      cMjesto := "-NEP.MJ-"
+   ENDIF
 
-if !EMPTY(ptt)
-	cMjesto := ALLTRIM(ptt) + " " + cMjesto
-endif
+   IF !Empty( ptt )
+      cMjesto := AllTrim( ptt ) + " " + cMjesto
+   ENDIF
 
-cPom += ", " + cMjesto
+   cPom += ", " + cMjesto
 
-cIdBroj := IzSifKPartn("REGB", cIdPartn, .f.)
-if EMPTY(cIdBroj)
-	cIdBroj := "-NEP.ID-"
-endif
+   cIdBroj := IzSifKPartn( "REGB", cIdPartn, .F. )
+   IF Empty( cIdBroj )
+      cIdBroj := "-NEP.ID-"
+   ENDIF
 
-cPom += ", " + cIdBroj
+   cPom += ", " + cIdBroj
 
-PopWa()
-return cPom
+   PopWa()
+
+   RETURN cPom
 
 // -----------------------------------------------
 // podaci o mojoj firmi ubaceni u partnera "10"
 
-//  lRetArray - .t. - vrati matricu
-//              .f. - vrati string, default
+// lRetArray - .t. - vrati matricu
+// .f. - vrati string, default
 // -----------------------------------------------
-function my_firma(lRetArray)
-local lNepopunjeno :=.f.
-local cNaziv
-local cMjesto
-local cIdBroj
-local cPtt
-local cPom := gNFirma
-local _fields
+FUNCTION my_firma( lRetArray )
 
-PushWa()
+   LOCAL lNepopunjeno := .F.
+   LOCAL cNaziv
+   LOCAL cMjesto
+   LOCAL cIdBroj
+   LOCAL cPtt
+   LOCAL cPom := gNFirma
+   LOCAL _fields
 
-if lRetArray == nil
-	lRetArray := .f.
-endif
+   PushWa()
 
-o_partn()
+   IF lRetArray == nil
+      lRetArray := .F.
+   ENDIF
 
-SELECT partn
-SET ORDER TO TAG "ID"
-seek gFirma
+   my_close_all_dbf()
 
-if !found()
-	APPEND BLANK
-    _fields := dbf_get_rec()
-    _fields["id"] := gFirma
-    update_rec_server_and_dbf( "partn", _fields, 1, "FULL") 
-endif
+   o_partn()
 
-cNaziv := naz
-cMjesto := mjesto
-cIdBroj := IzSifKPartn( "REGB", gFirma, .f.)
-cAdresa := adresa
-cPtt := ptt
+   SELECT partn
+   SET ORDER TO TAG "ID"
+   SEEK gFirma
 
-if  EMPTY(cNaziv) .or. EMPTY(cMjesto) .or. EMPTY(cIdBroj) .or. EMPTY(cPTT) .or. EMPTY(cAdresa)
-	lNepopunjeno:=.t.
-endif
+   IF !Found()
+      APPEND BLANK
+      _fields := dbf_get_rec()
+      _fields[ "id" ] := gFirma
+      update_rec_server_and_dbf( "partn", _fields, 1, "FULL" )
+   ENDIF
+
+   cNaziv := naz
+   cMjesto := mjesto
+   cIdBroj := IzSifKPartn( "REGB", gFirma, .F. )
+   cAdresa := adresa
+   cPtt := ptt
+
+   IF  Empty( cNaziv ) .OR. Empty( cMjesto ) .OR. Empty( cIdBroj ) .OR. Empty( cPTT ) .OR. Empty( cAdresa )
+      lNepopunjeno := .T.
+   ENDIF
 
 
-if lNepopunjeno
-	if get_my_firma( @cNaziv, @cIdBroj, @cMjesto, @cAdresa, @cPtt )
+   IF lNepopunjeno
+      IF get_my_firma( @cNaziv, @cIdBroj, @cMjesto, @cAdresa, @cPtt )
 
-        _fields           := dbf_get_rec()
-        _fields["naz"]    := cNaziv
-        _fields["mjesto"] := cMjesto
-        _fields["adresa"] := cAdresa
-        _fields["ptt"]    := cPTT
+         _fields           := dbf_get_rec()
+         _fields[ "naz" ]    := cNaziv
+         _fields[ "mjesto" ] := cMjesto
+         _fields[ "adresa" ] := cAdresa
+         _fields[ "ptt" ]    := cPTT
 
-        update_rec_server_and_dbf( nil, _fields, 1, "FULL" ) 
+         update_rec_server_and_dbf( nil, _fields, 1, "FULL" )
 
-		USifK("PARTN", "REGB", gFirma, Unicode():New( cIdBroj, .F. ) )
+         USifK( "PARTN", "REGB", gFirma, Unicode():New( cIdBroj, .F. ) )
 
-	else
-		MsgBeep("Nepopunjeni podaci o matičnoj firmi !")
-	endif
+      ELSE
+         MsgBeep( "Nepopunjeni podaci o matičnoj firmi !" )
+      ENDIF
 			
-endif
+   ENDIF
 
-cPom := TRIM(cNaziv) + ", Id.br: " + cIdBroj + " , " + cPtt + " " + ALLTRIM(cMjesto)
-cPom += " , " + ALLTRIM(cAdresa)
+   cPom := Trim( cNaziv ) + ", Id.br: " + cIdBroj + " , " + cPtt + " " + AllTrim( cMjesto )
+   cPom += " , " + AllTrim( cAdresa )
 
-PopWa()
+   PopWa()
 
-if lRetArray 
-	return { cNaziv, cIdBroj, cPtt, cMjesto, cAdresa }
-else
-	return cPom
-endif
+   IF lRetArray
+      RETURN { cNaziv, cIdBroj, cPtt, cMjesto, cAdresa }
+   ELSE
+      RETURN cPom
+   ENDIF
 
 
-// --------------------------------
-// --------------------------------
-function get_my_firma(cNaziv, cIdBroj, cMjesto, cAdresa, cPtt)
+   // --------------------------------
+   // --------------------------------
 
-Box (,7, 60)
+FUNCTION get_my_firma( cNaziv, cIdBroj, cMjesto, cAdresa, cPtt )
 
-    @ m_x+1, m_y+2 SAY "Podaci o maticnooj firmi: "
-    @ m_x+2, m_y+2 SAY REPLICATE("-", 40)
-    @ m_x+3, m_y+2 SAY "Naziv   " GET cNaziv PICT "@S40"
-    @ m_x+4, m_y+2 SAY "Id.broj " GET cIdBroj
-    @ m_x+5, m_y+2 SAY "Mjesto  " GET cMjesto
-    @ m_x+6, m_y+2 SAY "Adresa  " GET cAdresa
-    @ m_x+7, m_y+2 SAY "PTT     " GET cPtt
+   Box (, 7, 60 )
 
-    READ
+   @ m_x + 1, m_y + 2 SAY "Podaci o maticnooj firmi: "
+   @ m_x + 2, m_y + 2 SAY Replicate( "-", 40 )
+   @ m_x + 3, m_y + 2 SAY "Naziv   " GET cNaziv PICT "@S40"
+   @ m_x + 4, m_y + 2 SAY "Id.broj " GET cIdBroj
+   @ m_x + 5, m_y + 2 SAY "Mjesto  " GET cMjesto
+   @ m_x + 6, m_y + 2 SAY "Adresa  " GET cAdresa
+   @ m_x + 7, m_y + 2 SAY "PTT     " GET cPtt
 
-BoxC()
+   READ
 
-if LASTKEY() == K_ESC
-	return .f.
-else
-	return .t.
-endif
+   BoxC()
 
-// -----------------------------------------------
-// ger rejon partnera
-//  - 1 ili " " federacija
-//  - 2 - rs
-//  - 3 - brcko district
-// -----------------------------------------------
-function part_rejon(cIdPart)
-local cRejon
-PushWa()
+   IF LastKey() == K_ESC
+      RETURN .F.
+   ELSE
+      RETURN .T.
+   ENDIF
 
-o_partn()
-go top
-seek gFirma
+   // -----------------------------------------------
+   // ger rejon partnera
+   // - 1 ili " " federacija
+   // - 2 - rs
+   // - 3 - brcko district
+   // -----------------------------------------------
 
-cRejon := IzSifKPartn("REJO", Unicode():New( cIdPart, .F. ), .f.)
+FUNCTION part_rejon( cIdPart )
 
-PopWa()
-return cRejon
+   LOCAL cRejon
+
+   PushWa()
+
+   o_partn()
+   GO TOP
+   SEEK gFirma
+
+   cRejon := IzSifKPartn( "REJO", Unicode():New( cIdPart, .F. ), .F. )
+
+   PopWa()
+
+   RETURN cRejon
 
 
 // -------------------------------------
 // sifrarnik partnera sa sifk/sifv
 // -------------------------------------
-function o_partn()
+FUNCTION o_partn()
 
-select F_SIFK
-if !used()
-	O_SIFK
-endif
+   SELECT F_SIFK
+   IF !Used()
+      O_SIFK
+   ENDIF
 
-select F_SIFV
-if !used()
-	O_SIFV
-endif
+   SELECT F_SIFV
+   IF !Used()
+      O_SIFV
+   ENDIF
 
-select F_PARTN
-if !used()
-	O_PARTN
-endif
+   SELECT F_PARTN
+   IF !Used()
+      O_PARTN
+   ENDIF
 
-return
+   RETURN
 
 // ---------------------------------------------
 // da li se radi o specijalnom partneru
-//   - upravi za indirektno oporezivanje
+// - upravi za indirektno oporezivanje
 // ---------------------------------------------
-function IsUIO(cIdPartner)
-return IsProfil(cIdPartner, "UIO")
+FUNCTION IsUIO( cIdPartner )
+   RETURN IsProfil( cIdPartner, "UIO" )

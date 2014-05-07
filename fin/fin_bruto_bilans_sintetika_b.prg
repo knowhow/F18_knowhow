@@ -408,6 +408,10 @@ STATIC FUNCTION zagl_bb_sint( params, nStr )
       @ PRow(), PCol() + 2 SAY Naz2
    ENDIF
 
+   IF !EMPTY( params["konto"] )
+      ? "Odabrana konta: " + ALLTRIM( params["konto"] )
+   ENDIF
+
    IF gRJ == "D" .AND. Len( params["idrj"] ) <> 0
       ? "Radna jedinica ='" + params["idrj"] + "'"
    ENDIF

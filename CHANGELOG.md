@@ -1,7 +1,8 @@
-1.7.71  2014-05-06, vsasa
+1.7.71  2014-05-07, vsasa
 
   - FAKT, refactor-out
- 
+  - FIN, stari izvještaji bilansa verzija B
+
 1.7.70  2014-05-05, hernad
 
   - FAKT, izbačena opcija štampe fiskalnih računa za period

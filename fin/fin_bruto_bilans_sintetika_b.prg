@@ -379,7 +379,7 @@ FUNCTION fin_bb_sintetika_b( params )
 
 
 
-FUNCTION zagl_bb_sint( params, nStr )
+STATIC FUNCTION zagl_bb_sint( params, nStr )
 
    ?
  

@@ -380,10 +380,9 @@ STATIC FUNCTION __g_sch( cSchema, nType )
    LOCAL aSch
    LOCAL i
    LOCAL nSelect := 0
-
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
-   PRIVATE izbor := 1
+   LOCAL opc := {}
+   LOCAL opcexe := {}
+   LOCAL izbor := 1
 
    aSch := r_el_schema( nType )
 
@@ -419,7 +418,7 @@ STATIC FUNCTION __g_sch( cSchema, nType )
 
    NEXT
 
-   Menu_SC( "schema" )
+   f18_menu( "schema", .F., @izbor, opc, opcexe )
 
    cSchema := AllTrim( aSch[ nSelect, 1 ] )
 

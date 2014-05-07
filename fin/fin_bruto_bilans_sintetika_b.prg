@@ -12,7 +12,6 @@
 #include "fin.ch"
 
 STATIC PICD
-STATIC M6, M7, M8, M9, M10
 STATIC REP1_LEN := 158 
 
 FUNCTION fin_bb_sintetika_b( params )
@@ -32,6 +31,7 @@ FUNCTION fin_bb_sintetika_b( params )
    LOCAL nValuta := params[ "valuta" ]
    LOCAL nBBK := 1
    LOCAL aNaziv, nColNaz
+   PRIVATE M6, M7, M8, M9, M10
  
    PICD := FormPicL( gPicBHD, 15 )
 
@@ -382,13 +382,19 @@ FUNCTION fin_bb_sintetika_b( params )
 FUNCTION zagl_bb_sint( params, nStr )
 
    ?
+ 
    P_COND2
-   ?? "FIN: SINTETICKI BRUTO BILANS (B) U VALUTI '" + IF( params[ "valuta" ] == 1, ValDomaca(), ValPomocna() ) + "'"
+
+   ??U "FIN: SINTETIČKI BRUTO BILANS U VALUTI '" + IF( params[ "valuta" ] == 1, ValDomaca(), ValPomocna() ) + "'"
 
    IF !( Empty( params["datum_od"] ) .AND. Empty( params["datum_do"] ) )
       ?? " ZA PERIOD OD", params["datum_od"], "-", params["datum_do"]
    ENDIF
-   ?? " NA DAN: "; ?? Date()
+
+   ?? " NA DAN: "
+   ?? Date()
+   ?? " (v.B)"
+
    @ PRow(), REP1_LEN - 15 SAY "Str:" + Str( ++nStr, 3 )
 
    IF gNW == "D"

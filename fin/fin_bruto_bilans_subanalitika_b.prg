@@ -17,7 +17,6 @@
 STATIC __par_len := 6
 STATIC REP1_LEN
 STATIC PICD
-STATIC M6, M7, M8, M9, M10
 
 FUNCTION fin_bb_subanalitika_b( params )
 
@@ -35,7 +34,7 @@ FUNCTION fin_bb_subanalitika_b( params )
    LOCAL b, b1, b2
    LOCAL nValuta := params[ "valuta" ]
    LOCAL nBBK := 1
-   //::params[ "kolona_tek_prom" ] := .T.
+   PRIVATE M6, M7, M8, M9, M10
  
    PICD := FormPicL( gPicBHD, 15 )
 
@@ -506,6 +505,8 @@ FUNCTION fin_bb_subanalitika_b( params )
    FF
    END PRINT
 
+   my_close_all_dbf()
+
    IF lExpRpt
       tbl_export( cLaunch )
    ENDIF
@@ -540,11 +541,13 @@ STATIC FUNCTION zagl_bb_suban( params, nStr )
 
    P_COND2
 
-   ??U "FIN: SUBANALITIČKI BRUTO BILANS (B) U VALUTI '" + IF( params[ "valuta" ] == 1, ValDomaca(), ValPomocna() ) + "'"
+   ??U "FIN: SUBANALITIČKI BRUTO BILANS U VALUTI '" + IF( params[ "valuta" ] == 1, ValDomaca(), ValPomocna() ) + "'"
    IF !( Empty( params["datum_od"] ) .AND. Empty( params["datum_do"] ) )
       ?? " ZA PERIOD OD", params["datum_od"], "-", params["datum_do"]
    ENDIF
-   ?? " NA DAN: "; ?? Date()
+   ?? " NA DAN: "
+   ?? Date()
+   ?? " (v.B)"
    @ PRow(), REP1_LEN - 15 SAY "Str:" + Str( ++nStr, 3 )
 
    IF gNW == "D"
@@ -637,3 +640,5 @@ FUNCTION fin_bb_txt_header()
    M10 := "--------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- ---------------"
 
    RETURN
+
+

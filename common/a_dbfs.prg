@@ -339,15 +339,17 @@ FUNCTION set_dbf_fields_from_struct( rec )
 
    LOCAL _opened := .T.
    LOCAL _dbf
+   LOCAL lSql
 
-   IF rec[ "temp" ]
-      // ovi mi podaci ne trebaju za temp tabele
+   lSql := hb_hHasKey( rec, "sql") .AND. ValType( rec[ "sql" ] ) == "L"  .AND. rec[ "sql" ]
+
+   IF rec[ "temp" ]  // ovi podaci ne trebaju za temp tabele
       RETURN .F.
    ENDIF
 
    SELECT ( rec[ "wa" ] )
 
-   IF !Used()
+   IF !Used() .AND. !lSql
 
       _dbf := my_home() + rec[ "table" ]
       BEGIN SEQUENCE WITH {| err| err:cargo :=  Break( err ) }
@@ -368,8 +370,14 @@ FUNCTION set_dbf_fields_from_struct( rec )
       _opened := .T.
    ENDIF
 
-   rec[ "dbf_fields" ] := NIL
-   set_rec_from_dbstruct( @rec )
+  
+   IF !USED() .AND. lSql
+         rec[ "dbf_fields" ]     := NIL
+         rec[ "dbf_fields_len" ] := NIL
+   ELSE
+         rec[ "dbf_fields" ] := NIL
+         set_rec_from_dbstruct( @rec )
+   ENDIF
 
    IF _opened
       USE

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,27 +13,27 @@
 #include "rnal.ch"
 
 
-function m_par()
-local opc:={}
-local opcexe:={}
-local Izbor:=1
+FUNCTION m_par()
 
-AADD(opc, "1. podaci firme - zaglavlje            ")
-AADD(opcexe, {|| ed_fi_params() })
-AADD(opc, "2. izgled dokumenta  ")
-AADD(opcexe, {|| ed_doc_params() } )
-AADD(opc, "3. zaokruzenja, format prikaza  ")
-AADD(opcexe, {|| ed_zf_params() } )
-AADD(opc, "4. parametri exporta  ")
-AADD(opcexe, {|| ed_ex_params() } )
-AADD(opc, "5. parametri elemenata i atributa  ")
-AADD(opcexe, {|| ed_elat_params() } )
-AADD(opc, "---------------------------------")
-AADD(opcexe, {|| nil } )
-AADD(opc, "O. ostalo  ")
-AADD(opcexe, {|| ed_ost_params() } )
+   LOCAL opc := {}
+   LOCAL opcexe := {}
+   LOCAL Izbor := 1
 
-f18_menu("par", .F., izbor, opc, opcexe )
+   AAdd( opc, "1. podaci firme - zaglavlje            " )
+   AAdd( opcexe, {|| ed_fi_params() } )
+   AAdd( opc, "2. izgled dokumenta  " )
+   AAdd( opcexe, {|| ed_doc_params() } )
+   AAdd( opc, "3. zaokruzenja, format prikaza  " )
+   AAdd( opcexe, {|| ed_zf_params() } )
+   AAdd( opc, "4. parametri exporta  " )
+   AAdd( opcexe, {|| ed_ex_params() } )
+   AAdd( opc, "5. parametri elemenata i atributa  " )
+   AAdd( opcexe, {|| ed_elat_params() } )
+   AAdd( opc, "---------------------------------" )
+   AAdd( opcexe, {|| nil } )
+   AAdd( opc, "O. ostalo  " )
+   AAdd( opcexe, {|| ed_ost_params() } )
 
-return
+   f18_menu( "par", .F., izbor, opc, opcexe )
 
+   RETURN

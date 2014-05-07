@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,14 +12,14 @@
 
 #include "rnal.ch"
 
-static l_new_ops
-static _doc
-static __item_no
-static __art_id
-static __art_type
-static _form_article
-static _a_elem
-static _a_arr
+STATIC l_new_ops
+STATIC _doc
+STATIC __item_no
+STATIC __art_id
+STATIC __art_type
+STATIC _form_article
+STATIC _a_elem
+STATIC _a_arr
 
 // ------------------------------------------
 // unos ispravka operacija naloga
@@ -28,304 +28,310 @@ static _a_arr
 // nItem_no - stavka broj
 // nArt_id - artikal id
 // ------------------------------------------
-function e_doc_ops( nDoc_no, lNew, nArt_id, nItem_no )
-local nX := m_x
-local nY := m_y
-local nGetBoxX := 16
-local nGetBoxY := 70
-local cBoxNaz := "unos dodatnih operacija stavke"
-local nRet := 0
-local nFuncRet := 0
-local _rec
-private GetList:={}
+FUNCTION e_doc_ops( nDoc_no, lNew, nArt_id, nItem_no )
 
-if nItem_no == nil
-    nItem_no := 0
-endif
+   LOCAL nX := m_x
+   LOCAL nY := m_y
+   LOCAL nGetBoxX := 16
+   LOCAL nGetBoxY := 70
+   LOCAL cBoxNaz := "unos dodatnih operacija stavke"
+   LOCAL nRet := 0
+   LOCAL nFuncRet := 0
+   LOCAL _rec
+   PRIVATE GetList := {}
 
-_doc := nDoc_no
-__item_no := nItem_no
-__art_id := nArt_id
-_from_article := .f.
+   IF nItem_no == nil
+      nItem_no := 0
+   ENDIF
 
-if nItem_no > 0
-    _from_article := .t.
-endif
+   _doc := nDoc_no
+   __item_no := nItem_no
+   __art_id := nArt_id
+   _from_article := .F.
 
-_a_arr := {}
+   IF nItem_no > 0
+      _from_article := .T.
+   ENDIF
 
-// napuni matricu sa artiklom
-_art_set_descr( __art_id, nil, nil, @_a_arr, .t. )
+   _a_arr := {}
 
-// napuni matricu sa elementima artikla
-_g_art_elements( @_a_elem, __art_id )
+   // napuni matricu sa artiklom
+   _art_set_descr( __art_id, nil, nil, @_a_arr, .T. )
 
-__art_type := LEN(_a_elem)
+   // napuni matricu sa elementima artikla
+   _g_art_elements( @_a_elem, __art_id )
 
-if lNew == nil
-    lNew := .t.
-endif
+   __art_type := Len( _a_elem )
 
-l_new_ops := lNew
+   IF lNew == nil
+      lNew := .T.
+   ENDIF
 
-if l_new_ops == .f.
-    cBoxNaz := "ispravka dodatne operacije stavke"
-endif
+   l_new_ops := lNew
 
-select _doc_ops
+   IF l_new_ops == .F.
+      cBoxNaz := "ispravka dodatne operacije stavke"
+   ENDIF
 
-Box(, nGetBoxX, nGetBoxY, .f., "Unos dodatnih operacija naloga")
+   SELECT _doc_ops
 
-set_opc_box( nGetBoxX, 50 )
+   Box(, nGetBoxX, nGetBoxY, .F., "Unos dodatnih operacija naloga" )
 
-@ m_x + 1, m_y + 2 SAY PADL("***** " + cBoxNaz, nGetBoxY - 2)
-@ m_x + nGetBoxX, m_y + 2 SAY PADL("(*) popuna obavezna", nGetBoxY - 2) COLOR "BG+/B"
+   set_opc_box( nGetBoxX, 50 )
 
-do while .t.
+   @ m_x + 1, m_y + 2 SAY PadL( "***** " + cBoxNaz, nGetBoxY - 2 )
+   @ m_x + nGetBoxX, m_y + 2 SAY PadL( "(*) popuna obavezna", nGetBoxY - 2 ) COLOR "BG+/B"
 
-    set_global_memvars_from_dbf()
-    
-    nFuncRet := _e_box_item( nGetBoxX, nGetBoxY )
-    
-    if nFuncRet == 1
-        
-        select _doc_ops
-        
-        if l_new_ops
-            append blank
-        endif
-       
-        _rec := get_dbf_global_memvars( NIL, .f. )
-        
-        dbf_update_rec( _rec )
-            
-        if l_new_ops
-            loop
-        endif
-        
-    endif
-    
-    BoxC()
-    select _doc_ops
-    
-    nRet := RECCOUNT2()
-    
-    exit
+   DO WHILE .T.
 
-enddo
+      set_global_memvars_from_dbf()
 
-select _docs
+      nFuncRet := _e_box_item( nGetBoxX, nGetBoxY )
 
-m_x := nX
-m_y := nY
+      IF nFuncRet == 1
 
-return nRet
+         SELECT _doc_ops
+
+         IF l_new_ops
+            APPEND BLANK
+         ENDIF
+
+         _rec := get_dbf_global_memvars( NIL, .F. )
+
+         dbf_update_rec( _rec )
+
+         IF l_new_ops
+            LOOP
+         ENDIF
+
+      ENDIF
+
+      BoxC()
+      SELECT _doc_ops
+
+      nRet := RECCOUNT2()
+
+      EXIT
+
+   ENDDO
+
+   SELECT _docs
+
+   m_x := nX
+   m_y := nY
+
+   RETURN nRet
 
 
 // -------------------------------------------------------
 // kopiranje operacija sa prethodne stavke
 // -------------------------------------------------------
-function _cp_oper( nDoc_no, nArt_id, nDoc_it_no )
-local nTArea := SELECT()
-local nTRec := RECNO()
-local nRec 
-local nSrchItem := nDoc_it_no - 1
-local nCnt := 0
+FUNCTION _cp_oper( nDoc_no, nArt_id, nDoc_it_no )
 
-select _doc_ops
-set order to tag "1"
-go top
-seek docno_str( nDoc_no ) + docit_str( nSrchItem )
+   LOCAL nTArea := Select()
+   LOCAL nTRec := RecNo()
+   LOCAL nRec
+   LOCAL nSrchItem := nDoc_it_no - 1
+   LOCAL nCnt := 0
 
-do while !EOF() .and. field->doc_no == nDoc_no ;
-        .and. field->doc_it_no == nSrchItem
+   SELECT _doc_ops
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK docno_str( nDoc_no ) + docit_str( nSrchItem )
 
-    skip 1
-    
-    nRec := RECNO()
-    
-    skip -1
-    
-    _rec := dbf_get_rec()
-    
-    append blank
-    
-    _rec["doc_it_no"] := nDoc_it_no
-    
-    dbf_update_rec( _rec )
-    
-    ++ nCnt
-    
-    go (nRec)
+   DO WHILE !Eof() .AND. field->doc_no == nDoc_no ;
+         .AND. field->doc_it_no == nSrchItem
 
-enddo
+      SKIP 1
 
-select (nTArea)
-go (nTRec)
+      nRec := RecNo()
 
-if nCnt > 0
-    msgbeep("Kopirano: " + ALLTRIM(STR(nCnt)) + " operacija !")
-endif
+      SKIP -1
 
-return
+      _rec := dbf_get_rec()
+
+      APPEND BLANK
+
+      _rec[ "doc_it_no" ] := nDoc_it_no
+
+      dbf_update_rec( _rec )
+
+      ++ nCnt
+
+      GO ( nRec )
+
+   ENDDO
+
+   SELECT ( nTArea )
+   GO ( nTRec )
+
+   IF nCnt > 0
+      msgbeep( "Kopirano: " + AllTrim( Str( nCnt ) ) + " operacija !" )
+   ENDIF
+
+   RETURN
 
 
 
 // -------------------------------------------------
-// forma za unos podataka 
+// forma za unos podataka
 // -------------------------------------------------
-static function _e_box_item( nBoxX, nBoxY )
-local nX := 1
-local nLeft := 27
-local cAop := ""
-local cAopAtt := ""
-local nH
-local nW
-local nElement := 0
-local nTick := 0
+STATIC FUNCTION _e_box_item( nBoxX, nBoxY )
 
-if l_new_ops
+   LOCAL nX := 1
+   LOCAL nLeft := 27
+   LOCAL cAop := ""
+   LOCAL cAopAtt := ""
+   LOCAL nH
+   LOCAL nW
+   LOCAL nElement := 0
+   LOCAL nTick := 0
 
-    _doc_no := _doc
-    _doc_op_no := inc_docop( _doc )
-    _doc_it_el_ := 0
-    _aop_id := 0
-    _aop_att_id := 0
-    _doc_op_des := PADR("", LEN( field->doc_op_des ))
-    _doc_it_no := __item_no
-    _aop_value := PADR("", LEN( field->aop_value ))
-    
-    cAop := PADR("", 10)
-    cAopAtt := PADR("", 10)
+   IF l_new_ops
 
-else
-    
-    cAop := PADL( STR(_aop_id, 10), 10 )
-    cAopAtt := PADL( STR(_aop_att_id, 10), 10 )
-    
-endif
+      _doc_no := _doc
+      _doc_op_no := inc_docop( _doc )
+      _doc_it_el_ := 0
+      _aop_id := 0
+      _aop_att_id := 0
+      _doc_op_des := PadR( "", Len( field->doc_op_des ) )
+      _doc_it_no := __item_no
+      _aop_value := PadR( "", Len( field->aop_value ) )
+
+      cAop := PadR( "", 10 )
+      cAopAtt := PadR( "", 10 )
+
+   ELSE
+
+      cAop := PadL( Str( _aop_id, 10 ), 10 )
+      cAopAtt := PadL( Str( _aop_att_id, 10 ), 10 )
+
+   ENDIF
 
 
-nX += 2
+   nX += 2
 
-@ m_x + nX, m_y + 2 SAY PADL("r.br operacije (*):", nLeft) GET _doc_op_no ;
-    WHEN {|| set_opc_box( nBoxX, 50 ), _doc_op_no == 0 }
+   @ m_x + nX, m_y + 2 SAY PadL( "r.br operacije (*):", nLeft ) GET _doc_op_no ;
+      WHEN {|| set_opc_box( nBoxX, 50 ), _doc_op_no == 0 }
 
-nX += 2
+   nX += 2
 
-@ m_x + nX, m_y + 2 SAY PADL("odnosi se na stavku (*):", nLeft) GET _doc_it_no ;
-    VALID {|| _item_range( _doc_it_no ) .and. ;
-            show_it( g_item_desc( _doc_it_no ), 26 )} ;
-    WHEN {|| set_opc_box( nBoxX, 50, "ova operacija ce se odnositi", "eksplicitno na unesenu stavku"), ;
-        _from_article == .f. }
-    
-nX += 1
-    
-@ m_x + nX, m_y + 2 SAY PADL(" -> element stavke (*):", nLeft) GET _doc_it_el_ ;
-    VALID {|| get_it_element( @_doc_it_el_, @nElement ), ;
-        show_it( get_elem_desc( _a_elem, _doc_it_el_ ), 26 ) } ;
-    WHEN {|| _g_art_elements( @_a_elem, _g_art_it_no( _doc_it_no ) ), ;
-        set_opc_box( nBoxX, 50, "odnosi se na odredjeni element stavke", "" ) }
+   @ m_x + nX, m_y + 2 SAY PadL( "odnosi se na stavku (*):", nLeft ) GET _doc_it_no ;
+      VALID {|| _item_range( _doc_it_no ) .AND. ;
+      show_it( g_item_desc( _doc_it_no ), 26 ) } ;
+      WHEN {|| set_opc_box( nBoxX, 50, "ova operacija ce se odnositi", "eksplicitno na unesenu stavku" ), ;
+      _from_article == .F. }
 
-nX += 2
+   nX += 1
 
-@ m_x + nX, m_y + 2 SAY PADL("dodatna operacija (*):", nLeft) GET cAop ;
-    VALID {|| s_aops( @cAop, cAop ), ;
-        set_var( @_aop_id, @cAop ) , ;
-        show_it( g_aop_desc( _aop_id ), 20 ), ;
-        rule_aop(g_aop_joker(_aop_id), _a_arr ) } ;
-    WHEN set_opc_box( nBoxX, 50, "odaberi dodatnu operaciju", "0 - otvori sifrarnik" )
+   @ m_x + nX, m_y + 2 SAY PadL( " -> element stavke (*):", nLeft ) GET _doc_it_el_ ;
+      VALID {|| get_it_element( @_doc_it_el_, @nElement ), ;
+      show_it( get_elem_desc( _a_elem, _doc_it_el_ ), 26 ) } ;
+      WHEN {|| _g_art_elements( @_a_elem, _g_art_it_no( _doc_it_no ) ), ;
+      set_opc_box( nBoxX, 50, "odnosi se na odredjeni element stavke", "" ) }
 
-nX += 1
+   nX += 2
 
-@ m_x + nX, m_y + 2 SAY PADL("atribut dod. operacije:", nLeft) GET cAopAtt ;
-    VALID {|| s_aops_att( @cAopAtt, _aop_id, cAopAtt ), ;
-        set_var( @_aop_att_id, @cAopAtt ), ;
-        show_it( g_aop_att_desc( _aop_att_id ), 20 ), ;
-        rule_aop( g_aatt_joker( _aop_att_id ), _a_arr ) } ;
-    WHEN set_opc_box( nBoxX, 50, "odaberi atribut dodatne operacije", "99 - otvori sifrarnik")
+   @ m_x + nX, m_y + 2 SAY PadL( "dodatna operacija (*):", nLeft ) GET cAop ;
+      VALID {|| s_aops( @cAop, cAop ), ;
+      set_var( @_aop_id, @cAop ), ;
+      show_it( g_aop_desc( _aop_id ), 20 ), ;
+      rule_aop( g_aop_joker( _aop_id ), _a_arr ) } ;
+      WHEN set_opc_box( nBoxX, 50, "odaberi dodatnu operaciju", "0 - otvori sifrarnik" )
 
-nX += 1
+   nX += 1
 
-@ m_x + nX, m_y + 2 SAY PADL( "vrijednost:", nLeft ) GET _aop_value ;
-    VALID {|| _g_dim_it_no( _doc_it_no, nElement, @nH, @nW, @nTick ) .and. ;
-        is_g_config( @_aop_value, _aop_att_id, nH, nW, nTick ) } ;
-    PICT "@S40" ;
-    WHEN set_opc_box( nBoxX, 50, "vrijednost operacije ako postoji", "kod brusenja, poliranja..." )
+   @ m_x + nX, m_y + 2 SAY PadL( "atribut dod. operacije:", nLeft ) GET cAopAtt ;
+      VALID {|| s_aops_att( @cAopAtt, _aop_id, cAopAtt ), ;
+      set_var( @_aop_att_id, @cAopAtt ), ;
+      show_it( g_aop_att_desc( _aop_att_id ), 20 ), ;
+      rule_aop( g_aatt_joker( _aop_att_id ), _a_arr ) } ;
+      WHEN set_opc_box( nBoxX, 50, "odaberi atribut dodatne operacije", "99 - otvori sifrarnik" )
 
-nX += 2
+   nX += 1
 
-@ m_x + nX, m_y + 2 SAY PADL("dodatni opis:", nLeft) GET _doc_op_des ;
-    PICT "@S40" ;
-    WHEN set_opc_box( nBoxX, 50, "dodatni opis vezan uz navedene", "operacije" )
+   @ m_x + nX, m_y + 2 SAY PadL( "vrijednost:", nLeft ) GET _aop_value ;
+      VALID {|| _g_dim_it_no( _doc_it_no, nElement, @nH, @nW, @nTick ) .AND. ;
+      is_g_config( @_aop_value, _aop_att_id, nH, nW, nTick ) } ;
+      PICT "@S40" ;
+      WHEN set_opc_box( nBoxX, 50, "vrijednost operacije ako postoji", "kod brusenja, poliranja..." )
 
-read
+   nX += 2
 
-ESC_RETURN 0
+   @ m_x + nX, m_y + 2 SAY PadL( "dodatni opis:", nLeft ) GET _doc_op_des ;
+      PICT "@S40" ;
+      WHEN set_opc_box( nBoxX, 50, "dodatni opis vezan uz navedene", "operacije" )
 
-return 1
+   READ
+
+   ESC_RETURN 0
+
+   RETURN 1
 
 
 
 // --------------------------------------------
 // vraca opis iz matrice - opis elementa
 // --------------------------------------------
-function get_elem_desc( aElem, nVal, nLen )
-local xRet := ""
-local nChoice
+FUNCTION get_elem_desc( aElem, nVal, nLen )
 
-if nLen == nil
-    nLen := 17
-endif
+   LOCAL xRet := ""
+   LOCAL nChoice
 
-nChoice := ASCAN( aElem, {|xVal| xVal[1] == nVal } )
+   IF nLen == nil
+      nLen := 17
+   ENDIF
 
-if nChoice > 0
-    xRet := aElem[ nChoice, 2 ]
-endif
+   nChoice := AScan( aElem, {| xVal| xVal[ 1 ] == nVal } )
 
-xRet := PADR(xRet, nLen)
+   IF nChoice > 0
+      xRet := aElem[ nChoice, 2 ]
+   ENDIF
 
-return xRet
+   xRet := PadR( xRet, nLen )
+
+   RETURN xRet
 
 
 
 // --------------------------------------------------
 // vraca arr sa elementima artikla...
 // --------------------------------------------------
-function get_it_element( nDoc_it_e_id, nElement )
-local nXX := m_x
-local nYY := m_y
+FUNCTION get_it_element( nDoc_it_e_id, nElement )
 
-if nDoc_it_e_id > 0
-    nElement := _get_a_element( _a_elem, nDoc_it_e_id )
-    return .t.
-endif
+   LOCAL nXX := m_x
+   LOCAL nYY := m_y
 
-// odaberi element
-nDoc_it_e_id := _pick_element( _a_elem, @nElement )
+   IF nDoc_it_e_id > 0
+      nElement := _get_a_element( _a_elem, nDoc_it_e_id )
+      RETURN .T.
+   ENDIF
 
-m_x := nXX
-m_y := nYY
+   // odaberi element
+   nDoc_it_e_id := _pick_element( _a_elem, @nElement )
 
-return .t.
+   m_x := nXX
+   m_y := nYY
+
+   RETURN .T.
 
 
 
 // ------------------------------------------------
 // vraca element iz matrice
 // ------------------------------------------------
-static function _get_a_element( aElem, nEl_no )
-local nTmp 
-local nElement := 0
+STATIC FUNCTION _get_a_element( aElem, nEl_no )
 
-nTmp := ASCAN( aElem, { |xVal| xVal[1] = nEl_no })
+   LOCAL nTmp
+   LOCAL nElement := 0
 
-if nTmp <> 0
-    nElement := aElem[ nTmp, 3 ]
-endif
+   nTmp := AScan( aElem, {|xVal| xVal[ 1 ] = nEl_no } )
 
-return nElement
+   IF nTmp <> 0
+      nElement := aElem[ nTmp, 3 ]
+   ENDIF
+
+   RETURN nElement
 
 
 
@@ -333,36 +339,37 @@ return nElement
 // -----------------------------------------
 // uzmi element...
 // -----------------------------------------
-static function _pick_element( aElem, nChoice )
-local nRet
-local i
-local cPom
-local _izbor := 1
-local _opc := {}
-local _opcexe := {}
-private GetList:={}
+STATIC FUNCTION _pick_element( aElem, nChoice )
 
-nChoice := 1
+   LOCAL nRet
+   LOCAL i
+   LOCAL cPom
+   LOCAL _izbor := 1
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   PRIVATE GetList := {}
 
-for i := 1 to LEN(aElem)
+   nChoice := 1
 
-    cPom := PADL( ALLTRIM(STR(i)) + ")", 3 ) + " " + PADR( aElem[i, 2] , 40 )
-    
-    AADD( _opc, cPom )
-    AADD( _opcexe, {|| nChoice := _izbor, _izbor := 0 })
-    
-next
+   FOR i := 1 TO Len( aElem )
 
-f18_menu( "izbor", .f., @_izbor, _opc, _opcexe )
+      cPom := PadL( AllTrim( Str( i ) ) + ")", 3 ) + " " + PadR( aElem[ i, 2 ], 40 )
 
-if LastKey() == K_ESC
-    nChoice := 0
-    nRet := 0    
-else
-    nRet := aElem[ nChoice, 1 ]
-endif
+      AAdd( _opc, cPom )
+      AAdd( _opcexe, {|| nChoice := _izbor, _izbor := 0 } )
 
-return nRet
+   NEXT
+
+   f18_menu( "izbor", .F., @_izbor, _opc, _opcexe )
+
+   IF LastKey() == K_ESC
+      nChoice := 0
+      nRet := 0
+   ELSE
+      nRet := aElem[ nChoice, 1 ]
+   ENDIF
+
+   RETURN nRet
 
 
 
@@ -370,118 +377,125 @@ return nRet
 // ---------------------------------------------
 // da li je stavka u rangu stavki tabele
 // ---------------------------------------------
-static function _item_range( nItemNo )
-local lRet := .t.
-local nTArea := SELECT()
-local nDocItRec, _t_rec
+STATIC FUNCTION _item_range( nItemNo )
 
-select _doc_it
-_t_rec := RECNO()
-go top
-seek docno_str( _doc ) + docit_str( nItemNo )
+   LOCAL lRet := .T.
+   LOCAL nTArea := Select()
+   LOCAL nDocItRec, _t_rec
 
-if nItemNo <= 0 .or. !FOUND()
-    lRet := .f.
-endif
+   SELECT _doc_it
+   _t_rec := RecNo()
+   GO TOP
+   SEEK docno_str( _doc ) + docit_str( nItemNo )
 
-go ( _t_rec )
+   IF nItemNo <= 0 .OR. !Found()
+      lRet := .F.
+   ENDIF
 
-select ( nTArea )
+   GO ( _t_rec )
 
-if lRet == .f.
-    MsgBeep( "Nepostojeca stavka naloga !!!" )
-endif
+   SELECT ( nTArea )
 
-return lRet
+   IF lRet == .F.
+      MsgBeep( "Nepostojeca stavka naloga !!!" )
+   ENDIF
+
+   RETURN lRet
 
 
 // --------------------------------------------
 // vrati opis odnosi se na stavku
 // --------------------------------------------
-static function g_item_desc( doc_it_no )
-local xRet := ""
-xRet := "na " + ALLTRIM(STR(doc_it_no)) + " stavku naloga"
-return xRet
+STATIC FUNCTION g_item_desc( doc_it_no )
+
+   LOCAL xRet := ""
+
+   xRet := "na " + AllTrim( Str( doc_it_no ) ) + " stavku naloga"
+
+   RETURN xRet
 
 
 // ----------------------------------------------------
-// vraca dimenzije stavke 
+// vraca dimenzije stavke
 // ----------------------------------------------------
-static function _g_dim_it_no( nDoc_it_no, nElement, nH, nW, nTick )
-local nArt_id := 0
-local nTArea := SELECT()
-local nTRec := RECNO()
-local aArr := {}
+STATIC FUNCTION _g_dim_it_no( nDoc_it_no, nElement, nH, nW, nTick )
 
-nH := 0
-nW := 0
-nTick := 0
+   LOCAL nArt_id := 0
+   LOCAL nTArea := Select()
+   LOCAL nTRec := RecNo()
+   LOCAL aArr := {}
 
-select _doc_it
-set order to tag "1"
-seek docno_str( _doc) + docit_str( nDoc_it_no )
+   nH := 0
+   nW := 0
+   nTick := 0
 
-if FOUND()
-    
-    nH := field->doc_it_hei
-    nW := field->doc_it_wid
+   SELECT _doc_it
+   SET ORDER TO TAG "1"
+   SEEK docno_str( _doc ) + docit_str( nDoc_it_no )
 
-    // uzmi debljinu...
+   IF Found()
 
-    nTick := g_gl_tickness( _a_arr, nElement )
+      nH := field->doc_it_hei
+      nW := field->doc_it_wid
 
-endif
+      // uzmi debljinu...
 
-select (nTArea)
-go (nTRec)
+      nTick := g_gl_tickness( _a_arr, nElement )
 
-return .t.
+   ENDIF
+
+   SELECT ( nTArea )
+   GO ( nTRec )
+
+   RETURN .T.
 
 
 // ---------------------------------------------
 // vraca artikal za stavku
 // ---------------------------------------------
-static function _g_art_it_no( nDoc_it_no )
-local nArt_id := 0
-local nTArea := SELECT()
-local nTRec := RECNO()
+STATIC FUNCTION _g_art_it_no( nDoc_it_no )
 
-select _doc_it
-set order to tag "1"
-seek docno_str( _doc) + docit_str( nDoc_it_no )
+   LOCAL nArt_id := 0
+   LOCAL nTArea := Select()
+   LOCAL nTRec := RecNo()
 
-if FOUND()
-    nArt_id  := field->art_id
-endif
+   SELECT _doc_it
+   SET ORDER TO TAG "1"
+   SEEK docno_str( _doc ) + docit_str( nDoc_it_no )
 
-select (nTArea)
-go (nTRec)
+   IF Found()
+      nArt_id  := field->art_id
+   ENDIF
 
-return nArt_id
+   SELECT ( nTArea )
+   GO ( nTRec )
+
+   RETURN nArt_id
 
 
 
 // -------------------------------------------
 // uvecaj broj stavke naloga
 // -------------------------------------------
-function inc_docop( nDoc_no )
-local nTArea := SELECT()
-local nTRec := RECNO()
-local nRet := 0
+FUNCTION inc_docop( nDoc_no )
 
-select _doc_ops
-go top
-set order to tag "1"
-seek docno_str( nDoc_no )
+   LOCAL nTArea := Select()
+   LOCAL nTRec := RecNo()
+   LOCAL nRet := 0
 
-do while !EOF() .and. field->doc_no == nDoc_no
-    nRet := field->doc_op_no
-    skip
-enddo
+   SELECT _doc_ops
+   GO TOP
+   SET ORDER TO TAG "1"
+   SEEK docno_str( nDoc_no )
 
-nRet += 1
+   DO WHILE !Eof() .AND. field->doc_no == nDoc_no
+      nRet := field->doc_op_no
+      SKIP
+   ENDDO
 
-select (nTArea)
-go (nTRec)
+   nRet += 1
 
-return nRet
+   SELECT ( nTArea )
+   GO ( nTRec )
+
+   RETURN nRet

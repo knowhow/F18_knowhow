@@ -383,7 +383,7 @@ FUNCTION zagl_bb_sint( params, nStr )
 
    ?
    P_COND2
-   ?? "FIN: SINTETICKI BRUTO BILANS U VALUTI '" + IF( params[ "valuta" ] == 1, ValDomaca(), ValPomocna() ) + "'"
+   ?? "FIN: SINTETICKI BRUTO BILANS (B) U VALUTI '" + IF( params[ "valuta" ] == 1, ValDomaca(), ValPomocna() ) + "'"
 
    IF !( Empty( params["datum_od"] ) .AND. Empty( params["datum_do"] ) )
       ?? " ZA PERIOD OD", params["datum_od"], "-", params["datum_do"]

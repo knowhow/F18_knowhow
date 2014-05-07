@@ -477,7 +477,7 @@ METHOD FinBrutoBilans:zaglavlje_txt()
    P_COND2
 
    ?
-   ? "FIN: " + hb_UTF8ToStr( ::params[ "naziv" ] ) + " U VALUTI " + if( ::params[ "valuta" ] == 1, ValDomaca(), ValPomocna() )
+   ? "FIN: " + hb_UTF8ToStr( ::params[ "naziv" ] ) + " (A) U VALUTI " + if( ::params[ "valuta" ] == 1, ValDomaca(), ValPomocna() )
    ?? " ZA PERIOD OD", ::params[ "datum_od" ], "-", ::params[ "datum_do" ]
    ?? " NA DAN: "
    ?? Date()

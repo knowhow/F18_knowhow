@@ -14,8 +14,6 @@
 #include "hbclass.ch"
 #include "common.ch"
 
-// ----------------------------------------------------
-// ----------------------------------------------------
 CLASS FinBrutoBilans
 
    DATA params
@@ -46,6 +44,8 @@ CLASS FinBrutoBilans
    VAR broj_stranice
    VAR txt_rpt_len
 
+   METHOD print_b_rpt()
+
    METHOD set_bb_params()
    METHOD get_vars()
    METHOD gen_xml()
@@ -60,8 +60,6 @@ ENDCLASS
 
 
 
-// ----------------------------------------------------
-// ----------------------------------------------------
 METHOD FinBrutoBilans:New( _tip_ )
 
    ::tip := 1
@@ -78,8 +76,6 @@ METHOD FinBrutoBilans:New( _tip_ )
    RETURN SELF
 
 
-// ----------------------------------------------------
-// ----------------------------------------------------
 METHOD FinBrutoBilans:init_params()
 
    ::params := hb_Hash()
@@ -95,6 +91,9 @@ METHOD FinBrutoBilans:init_params()
    ::params[ "kolona_tek_prom" ] := .T.
    ::params[ "naziv" ] := ""
    ::params[ "odt_template" ] := ""
+   ::params[ "varijanta" ] := "B"
+   ::params[ "podklase" ] := .F.
+   ::params[ "format" ] := "2"
 
    ::pict_iznos := AllTrim( gPicBHD )
 
@@ -102,8 +101,6 @@ METHOD FinBrutoBilans:init_params()
 
 
 
-// ----------------------------------------------------
-// ----------------------------------------------------
 METHOD FinBrutoBilans:set_bb_params()
 
    DO CASE
@@ -124,9 +121,26 @@ METHOD FinBrutoBilans:set_bb_params()
    RETURN SELF
 
 
+METHOD FinBrutoBilans:print_b_rpt()
 
-// ------------------------------------------------------
-// ------------------------------------------------------
+   // stampanje dbf varijante izvjestaja
+
+   DO CASE
+   case ::tip == 1
+      fin_bb_subanalitika_b( ::params )
+   case ::tip == 2
+      fin_bb_analitika_b( ::params )
+   case ::tip == 3
+      fin_bb_sintetika_b( ::params )
+   case ::tip == 4
+      fin_bb_grupe_b( ::params )
+   ENDCASE
+
+   RETURN SELF
+
+
+
+
 METHOD FinBrutoBilans:get_vars()
 
    LOCAL _ok := .F.
@@ -137,12 +151,11 @@ METHOD FinBrutoBilans:get_vars()
    LOCAL _konto := PadR( fetch_metric( "fin_bb_konto", _user, "" ), 200 )
    LOCAL _dat_od := fetch_metric( "fin_bb_dat_od", _user, CToD( "" ) )
    LOCAL _dat_do := fetch_metric( "fin_bb_dat_do", _user, CToD( "" ) )
-   LOCAL _txt := 1
-
-   // izbacujemo za sada ovaj parametar
-   // fetch_metric( "fin_bb_txt_odt", _user, 1 )
+   LOCAL _var_ab := fetch_metric( "fin_bb_var_ab", _user, "B" )
    LOCAL _tek_prom := fetch_metric( "fin_bb_kol_tek_promet", _user, "D" )
    LOCAL _saldo_nula := fetch_metric( "fin_bb_saldo_nula", _user, "D" )
+   LOCAL _podklase := fetch_metric( "fin_bb_pod_klase", _user, "N" )
+   LOCAL _format := fetch_metric( "fin_bb_format", _user, "2" )
    LOCAL _id_rj := Space( 6 )
    LOCAL _export_dbf := "N"
    LOCAL _tip := 1
@@ -151,7 +164,7 @@ METHOD FinBrutoBilans:get_vars()
       _tip := ::tip
    ENDIF
 
-   Box(, 17, 70 )
+   Box(, 18, 75 )
 
    @ m_x + _x, m_y + 2 SAY "***** BRUTO BILANS *****"
 
@@ -190,7 +203,7 @@ METHOD FinBrutoBilans:get_vars()
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "Varijanta stampe TXT/ODT (1/2):" GET _txt PICT "9" WHEN .F.
+   @ m_x + _x, m_y + 2 SAY8 "Varijanta izvještaja (A/B):" GET _var_ab PICT "@!" VALID _var_ab $ "AB"
 
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Prikaz stavki sa saldom 0 (D/N) ?" GET _saldo_nula VALID _saldo_nula $ "DN" PICT "@!"
@@ -198,12 +211,17 @@ METHOD FinBrutoBilans:get_vars()
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Prikaz kolone tekući promet (D/N) ?" GET _tek_prom VALID _tek_prom $ "DN" PICT "@!"
 
+   @ m_x + _x, col() + 1 SAY8 "Klase unutar izvještaja (D/N) ?" GET _podklase VALID _podklase $ "DN" PICT "@!"
+
    IF _tip == 1 .AND. gRJ == "D"
       ++ _x
       _id_rj := "999999"
       @ m_x + _x, m_y + 2 SAY8 "Radna jedinica ( 999999-sve ): " GET _id_rj
    ENDIF
  	
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY8 "Format izvještaja (1 - A3, 2 - A4, 3 - A4L) ?" GET _format PICT "@S1" VALID _format $ "123"
+
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Export izvještaja u DBF (D/N) ?" GET _export_dbf VALID _export_dbf $ "DN" PICT "@!"
 
@@ -220,8 +238,10 @@ METHOD FinBrutoBilans:get_vars()
    set_metric( "fin_bb_dat_od", _user, _dat_od )
    set_metric( "fin_bb_dat_do", _user, _dat_do )
    set_metric( "fin_bb_saldo_nula", _user, _saldo_nula )
-   set_metric( "fin_bb_txt_odt", _user, _txt )
    set_metric( "fin_bb_kol_tek_promet", _user, _tek_prom )
+   set_metric( "fin_bb_var_ab", _user, _var_ab )
+   set_metric( "fin_bb_pod_klase", _user, _podklase )
+   set_metric( "fin_bb_format", _user, _format )
 
    ::params[ "idfirma" ] := gFirma
    ::params[ "konto" ] := AllTrim( _konto )
@@ -232,8 +252,9 @@ METHOD FinBrutoBilans:get_vars()
    ::params[ "export_dbf" ] := ( _export_dbf == "D" )
    ::params[ "saldo_nula" ] := ( _saldo_nula == "D" )
    ::params[ "kolona_tek_prom" ] := ( _tek_prom == "D" )
-   // tekstualnu varijantu postavljamo kao defaultnu dok se ne ispravi bug #32651
-   ::params[ "txt" ] := .T.
+   ::params[ "varijanta" ] := _var_ab
+   ::params[ "podklase" ] := ( _podklase == "D" )
+   ::params[ "format" ] := _format
 
    ::tip := _tip
 
@@ -460,6 +481,7 @@ METHOD FinBrutoBilans:zaglavlje_txt()
    ?? " ZA PERIOD OD", ::params[ "datum_od" ], "-", ::params[ "datum_do" ]
    ?? " NA DAN: "
    ?? Date()
+   ?? " (v.A)"
 
    @ PRow(), 100 SAY "Str:" + Str( ++::broj_stranice, 3 )
 
@@ -740,21 +762,23 @@ METHOD FinBrutoBilans:gen_xml()
 // ----------------------------------------------------------
 METHOD FinBrutoBilans:print()
 
-   // parametri...
    IF Empty( ::params[ "konto" ] )
       IF !::get_vars()
          RETURN SELF
       ENDIF
    ENDIF
 
-   // daj mi podatke
+   IF ::params["varijanta"] == "B"
+      ::print_b_rpt()
+      RETURN SELF
+   ENDIF
+
    ::get_data()
 
    if ::data == NIL
       RETURN SELF
    ENDIF
 
-   // napuni pomocnu tabelu izvjestaja...
    ::create_temp_table()
    ::fill_temp_table()
 
@@ -854,7 +878,7 @@ METHOD FinBrutoBilans:print_txt()
                ::zaglavlje_txt()
             ENDIF
 
-            @ PRow() + 1, 0 SAY+ + _rbr PICT "9999"
+            @ PRow() + 1, 0 SAY ++ _rbr PICT "9999"
             @ PRow(), PCol() + 1 SAY field->idkonto
 
             if ::tip < 4
@@ -981,7 +1005,7 @@ METHOD FinBrutoBilans:print_txt()
             // ispisi sintetiku....
             ? _line
 
-            @ PRow() + 1, 2 SAY+ + _rbr_2 PICT "9999"
+            @ PRow() + 1, 2 SAY ++ _rbr_2 PICT "9999"
             @ PRow(), PCol() + 1 SAY _sint
 
             IF __sint == NIL
@@ -1019,7 +1043,7 @@ METHOD FinBrutoBilans:print_txt()
       // ispisi klasu
       ? _line
 
-      @ PRow() + 1, 2 SAY+ + _rbr_3 PICT "9999"
+      @ PRow() + 1, 2 SAY ++ _rbr_3 PICT "9999"
       @ PRow(), PCol() + 1 SAY _klasa
 
       if ::tip < 3

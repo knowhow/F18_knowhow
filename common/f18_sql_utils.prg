@@ -381,11 +381,8 @@ FUNCTION _sql_cond_parse( field_name, cond, not )
       not := .F.
    ENDIF
 
-   // idkonto LIKE '211%' AND idkonto LIKE '5411%'
-
    FOR EACH _cond in cond_arr
 
-      // prazan uslov... preskacem
       IF Empty( _cond )
          LOOP
       ENDIF
@@ -393,29 +390,26 @@ FUNCTION _sql_cond_parse( field_name, cond, not )
       _ret += "  OR " + field_name
 
       IF Len( cond_arr ) > 1
-         // ubaci NOT po potrebi...
          IF not
             _ret += " NOT "
          ENDIF
-
          _ret += " LIKE " + _sql_quote( AllTrim( _cond ) + "%" )
-
       ELSE
-
          IF not
             _ret += " <> "
          ELSE
             _ret += " = "
          ENDIF
-
          _ret += _sql_quote( _cond )
-
       ENDIF
 
    NEXT
 
-   // skini mi prvi OR iz uslova !
    _ret := Right( _ret, Len( _ret ) - 5 )
+
+   IF " OR " $ _ret 
+      _ret := " ( " + _ret + " ) "
+   ENDIF
 
    RETURN _ret
 

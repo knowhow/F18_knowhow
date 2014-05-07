@@ -1,3 +1,8 @@
+1.7.73  2014-05-07, vsasa, hernad
+
+  - ePDV, štampa dokumenata u sezoni - bugfix
+  - DBFRDD, ako postoji DBF struktura se u SQLMIX čita iz njega
+ 
 1.7.72  2014-05-07, vsasa
 
   - RNAL, dodavanje novog artikla - bugfix

@@ -21,6 +21,7 @@ local cIdBroj
 PushWa()
 
 o_partn()
+
 select PARTN
 SET ORDER TO TAG "ID"
 seek cIdPartn
@@ -71,6 +72,8 @@ PushWa()
 if lRetArray == nil
 	lRetArray := .f.
 endif
+
+my_close_all_dbf()
 
 o_partn()
 

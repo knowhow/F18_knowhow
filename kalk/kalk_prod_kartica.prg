@@ -89,6 +89,8 @@ FUNCTION KarticaP()
          READ
          ESC_BCR
 
+         EXIT
+
       ENDDO
 
       BoxC()

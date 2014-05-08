@@ -1,6 +1,9 @@
 1.7.74  2014-05-08, vsasa
 
   - ePDV, štampa pdv prijave bugfix
+  - KALK, lager lista prodavnice - opis kolona u zaglavlju vraćen
+  - KALK, kartica prodavnice - bugfix
+  - LD, pregled obračunatih doprinosa, izvještaj izdvojen u poseban prg fajl
  
 1.7.73  2014-05-07, vsasa, hernad
 

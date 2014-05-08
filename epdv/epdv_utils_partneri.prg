@@ -75,8 +75,6 @@ FUNCTION my_firma( lRetArray )
       lRetArray := .F.
    ENDIF
 
-   my_close_all_dbf()
-
    o_partn()
 
    SELECT partn
@@ -186,20 +184,16 @@ FUNCTION part_rejon( cIdPart )
 // -------------------------------------
 FUNCTION o_partn()
 
-   SELECT F_SIFK
-   IF !Used()
-      O_SIFK
-   ENDIF
-
-   SELECT F_SIFV
-   IF !Used()
-      O_SIFV
-   ENDIF
-
    SELECT F_PARTN
-   IF !Used()
-      O_PARTN
-   ENDIF
+   USE
+   SELECT F_SIFK
+   USE
+   SELECT F_SIFV
+   USE
+   
+   O_SIFK
+   O_SIFV
+   O_PARTN
 
    RETURN
 

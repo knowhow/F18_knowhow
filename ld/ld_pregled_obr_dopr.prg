@@ -64,7 +64,10 @@ FUNCTION ld_pregled_obr_doprinosa()
    @ m_x + 5, m_y + 2   SAY "Doprinosi (npr. '3X;')"          GET cDopr PICT "@!"
    @ m_x + 6, m_y + 2   SAY "Obracunati doprinosi za (naziv)" GET cNazDopr PICT "@!"
    @ m_x + 7, m_y + 2   SAY "Po kantonu (S-stanovanja,R-rada)" GET cPoOps VALID cPoOps $ "SR" PICT "@!"
-   READ; ESC_BCR
+
+   READ
+   ESC_BCR
+   
    BoxC()
 
    cMjesecOd := Str( cMjesecOd, 2 )
@@ -80,6 +83,7 @@ FUNCTION ld_pregled_obr_doprinosa()
    WPar( "p5", cDopr    )
    WPar( "p6", cNazDopr )
    WPar( "p7", cPoOps )
+   
    SELECT PARAMS
    USE
 

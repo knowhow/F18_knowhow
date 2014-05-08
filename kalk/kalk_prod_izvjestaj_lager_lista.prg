@@ -19,7 +19,7 @@ STATIC __txt1
 STATIC __txt2
 STATIC __txt3
 
-// lager lista prodavnice
+
 FUNCTION LLP()
 
    PARAMETERS lPocStanje
@@ -774,7 +774,7 @@ FUNCTION ZaglLLP( lSint )
    cSC2 := ""
 
    SELECT kalk
-   ? __line
+   ?U __line
 
    IF cPredhStanje == "D"
 	
@@ -793,7 +793,7 @@ FUNCTION ZaglLLP( lSint )
          cTmp += PadC( "PC.SA PDV", nPom ) + "*"
          cTmp += cSC1
   		
-         ? cTmp
+         ?U cTmp
 		
       ELSE
 		
@@ -810,7 +810,8 @@ FUNCTION ZaglLLP( lSint )
          cTmp += PadC( "MPC sa PP", nPom ) + "*"
          cTmp += cSC1
   	
-         ? cTmp
+         ?U cTmp
+
       ENDIF
 	
       cTmp := " br. *          *                    *   *"
@@ -825,7 +826,7 @@ FUNCTION ZaglLLP( lSint )
       cTmp += REPL( " ", nPom ) + "*"
       cTmp += cSC2
 	
-      ? cTmp
+      ?U cTmp
 	
       IF cPNab == "D"
   		
@@ -841,7 +842,7 @@ FUNCTION ZaglLLP( lSint )
          cTmp += REPL( " ", nPom ) + "*"
          cTmp += cSC2
 		
-         ? cTmp
+         ?U cTmp
       ENDIF
    ELSE
       cTmp := " R.  * Artikal  *   Naziv            *jmj*"
@@ -854,6 +855,7 @@ FUNCTION ZaglLLP( lSint )
       cTmp += PadC( "PV", nPom ) + "*"
       cTmp += PadC( "PC.SA PDV", nPom ) + "*"
       cTmp += cSC1
+      ?U cTmp
   	
       cTmp := " br. *          *                    *   *"
       nPom := Len( gPicKol )
@@ -866,7 +868,7 @@ FUNCTION ZaglLLP( lSint )
       cTmp += REPL( " ", nPom ) + "*"
       cTmp += cSC2
 	
-      ? cTmp
+      ?U cTmp
 	
       IF cPNab == "D"
   		
@@ -881,7 +883,7 @@ FUNCTION ZaglLLP( lSint )
          cTmp += REPL( " ", nPom ) + "*"
          cTmp += cSC2
 	
-         ? cTmp
+         ?U cTmp
 		
       ENDIF
    ENDIF
@@ -901,7 +903,7 @@ FUNCTION ZaglLLP( lSint )
       cTmp += PadC( "9", nPom ) + "*"
       cTmp += cSC2
   	
-      ? cTmp
+      ?U cTmp
 	
    ELSE
 	
@@ -917,11 +919,11 @@ FUNCTION ZaglLLP( lSint )
       cTmp += PadC( "8", nPom ) + "*"
       cTmp += cSC2
 	
-      ? cTmp
+      ?U cTmp
 	
    ENDIF
 
-   ? __line
+   ?U __line
 
    RETURN
 

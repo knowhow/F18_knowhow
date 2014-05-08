@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,580 +12,563 @@
 
 #include "epdv.ch"
 
-static aHeader:={}
-static aZaglLen:={}
-static aZagl:={}
+STATIC aHeader := {}
+STATIC aZaglLen := {}
+STATIC aZagl := {}
 
-static lSvakaHeader := .t.
+STATIC lSvakaHeader := .T.
 
 // tekuca linija reporta
-static nCurrLine:=0
+STATIC nCurrLine := 0
 
-static cRptNaziv := "Izvjestaj KIF na dan "
+STATIC cRptNaziv := "Izvjestaj KIF na dan "
 
-static cTbl := "kif"
+STATIC cTbl := "kif"
 
-static cTar := ""
-static cPart := ""
+STATIC cTar := ""
+STATIC cPart := ""
 
-static cRptBrDok := 0
+STATIC cRptBrDok := 0
 
 // -------------------------------------------
 // kif izvjestaj
 // -------------------------------------------
-function rpt_kif(nBrDok, cIdTarifa)
-local cHeader
-local cPom
-local cPom11
-local cPom12
-local cPom21
-local cPom22
-local nLenIzn
-local _export := "N"
+FUNCTION rpt_kif( nBrDok, cIdTarifa )
 
-// 1 - red.br / ili br.dok
-// 2 - br.dok / ili r.br
-// 3 - dat dok
-// 4 - tarifna kategorija
-// 5 - kupac (naziv + id)
-// 6 - brdok kupca
-// 7 - opis
-// 8 - izn bez pdv
-// 9 - izn  pdv
-// 10 - izn sa pdv
+   LOCAL cHeader
+   LOCAL cPom
+   LOCAL cPom11
+   LOCAL cPom12
+   LOCAL cPom21
+   LOCAL cPom22
+   LOCAL nLenIzn
+   LOCAL _export := "N"
 
-
-nLenIzn := LEN(PIC_IZN())
-aZaglLen:={8, 8, 8, 8, 65, 12, 80,  nLenIzn, nLenIzn, nLenIzn }
+   // 1 - red.br / ili br.dok
+   // 2 - br.dok / ili r.br
+   // 3 - dat dok
+   // 4 - tarifna kategorija
+   // 5 - kupac (naziv + id)
+   // 6 - brdok kupca
+   // 7 - opis
+   // 8 - izn bez pdv
+   // 9 - izn  pdv
+   // 10 - izn sa pdv
 
 
-if nBrDok == nil
-	// izvjestaj se ne pravi za jedan dokument
-	nBrDok := -999
+   nLenIzn := Len( PIC_IZN() )
+   aZaglLen := { 8, 8, 8, 8, 65, 12, 80,  nLenIzn, nLenIzn, nLenIzn }
+
+
+   IF nBrDok == nil
+      // izvjestaj se ne pravi za jedan dokument
+      nBrDok := -999
 	
-endif
-nRptBrDok := nBrDok
+   ENDIF
+   nRptBrDok := nBrDok
 
 
-if cIdTarifa == nil
-	// sve tarife
-	cTar := ""
-else
-	cTar := cIdTarifa
-endif
-cPart := ""
+   IF cIdTarifa == nil
+      // sve tarife
+      cTar := ""
+   ELSE
+      cTar := cIdTarifa
+   ENDIF
+   cPart := ""
 
 
-aDInt := rpt_d_interval (DATE())
+   aDInt := rpt_d_interval ( Date() )
 
-dDate := DATE()
+   dDate := Date()
 
-dDatOd := aDInt[1]
-dDatDo := aDInt[2]
-
-
-if (nBrDok == -999)
-
-// treba zadati parametre izvjestaja
-
-cTar := PADR(cTar, 6)
-cPart := PADR(cPart, 6)
-
-nX:=1
-Box(, 11, 60)
-
-  // izvjestaj za period
-  @ m_x+nX, m_y+2 SAY "Period"
-  nX++
-  
-  @ m_x+nX, m_y+2 SAY "od " GET dDatOd
-  @ m_x+nX, col()+2 SAY "do " GET dDatDo
-  
-  nX += 2
-  
-  @ m_x+nX, m_y+2 SAY "Tarifa (prazno svi)  ? " GET cTar ;
-  	VALID { || empty(cTar) .or. P_Tarifa(@cTar) } ;
-	PICT "@!"
-  nX += 1
-
-  @ m_x+nX, m_y+2 SAY "Partner (prazno svi) ? " GET cPart ;
-  	VALID { || empty(cPart) .or. P_Partneri(@cPart) } ;
-	PICT "@!"
-
-  nX += 2
-
-  @ m_x + nX, m_y + 2 SAY "Eksport izvjestaja u DBF (D/N) ?" GET _export ;
-        VALID _export $ "DN" PICT "@!"
-  
-
-  nX += 2
-  
-  @ m_x+nX, m_y+2 SAY REPLICATE("-", 30) 
-  nX++
-  
-  READ
-BoxC()
-
-if LastKey()==K_ESC
-	my_close_all_dbf()
-    return
-endif
-
-endif
-
-aHeader := {}
-
-if (nBrDok == -999)
- 	cHeader :=  cRptNaziv +  DTOC(dDate) + ", za period :" + DTOC(dDatOd) + "-" + DTOC(dDatDo)  
-
-else
-	if nBrDok == 0
-		cPom := "PRIPREMA"
-	else
-		cPom := STR(nBrDok, 6, 0)
-	endif
-  	cHeader :=  "Dokument KIF: " + cPom + ", na dan " + DTOC(DATE())
-endif
-
-AADD(aHeader, "Preduzece: " + my_firma() )
+   dDatOd := aDInt[ 1 ]
+   dDatDo := aDInt[ 2 ]
 
 
-AADD(aHeader, cHeader )
+   IF ( nBrDok == -999 )
 
-if !empty(cTar)
-	cPom := "Prikaz kategorije : " + s_tarifa(cTar)
-	AADD(aHeader, cPom)
-endif
+      // treba zadati parametre izvjestaja
+
+      cTar := PadR( cTar, 6 )
+      cPart := PadR( cPart, 6 )
+
+      nX := 1
+      Box(, 11, 60 )
+
+      // izvjestaj za period
+      @ m_x + nX, m_y + 2 SAY "Period"
+      nX++
+
+      @ m_x + nX, m_y + 2 SAY "od " GET dDatOd
+      @ m_x + nX, Col() + 2 SAY "do " GET dDatDo
+
+      nX += 2
+
+      @ m_x + nX, m_y + 2 SAY "Tarifa (prazno svi)  ? " GET cTar ;
+         VALID {|| Empty( cTar ) .OR. P_Tarifa( @cTar ) } ;
+         PICT "@!"
+      nX += 1
+
+      @ m_x + nX, m_y + 2 SAY "Partner (prazno svi) ? " GET cPart ;
+         VALID {|| Empty( cPart ) .OR. P_Partneri( @cPart ) } ;
+         PICT "@!"
+
+      nX += 2
+
+      @ m_x + nX, m_y + 2 SAY "Eksport izvjestaja u DBF (D/N) ?" GET _export ;
+         VALID _export $ "DN" PICT "@!"
 
 
-aZagl:={}
+      nX += 2
 
-cPom1:= ""
-cPom2:= ""
+      @ m_x + nX, m_y + 2 SAY Replicate( "-", 30 )
+      nX++
 
-if (nBrDok == -999)
-	// kif za period - globalni redni broj je prva stavka
-	cPom11 := "Red."
-	cPom12 := "br."
+      READ
+      BoxC()
 
-	cPom21 := "Broj"
-	cPom22 := "dok"
-else
-	// prikaz jednog dokumenta
-	// prvo brojdokumenta
-	cPom11 := "Broj"
-	cPom12 := "dok"
+      IF LastKey() == K_ESC
+         my_close_all_dbf()
+         RETURN
+      ENDIF
+
+   ENDIF
+
+   aHeader := {}
+
+   IF ( nBrDok == -999 )
+      cHeader :=  cRptNaziv +  DToC( dDate ) + ", za period :" + DToC( dDatOd ) + "-" + DToC( dDatDo )
+
+   ELSE
+      IF nBrDok == 0
+         cPom := "PRIPREMA"
+      ELSE
+         cPom := Str( nBrDok, 6, 0 )
+      ENDIF
+      cHeader :=  "Dokument KIF: " + cPom + ", na dan " + DToC( Date() )
+   ENDIF
+
+   AAdd( aHeader, "Preduzece: " + my_firma() )
+
+
+   AAdd( aHeader, cHeader )
+
+   IF !Empty( cTar )
+      cPom := "Prikaz kategorije : " + s_tarifa( cTar )
+      AAdd( aHeader, cPom )
+   ENDIF
+
+
+   aZagl := {}
+
+   cPom1 := ""
+   cPom2 := ""
+
+   IF ( nBrDok == -999 )
+      // kif za period - globalni redni broj je prva stavka
+      cPom11 := "Red."
+      cPom12 := "br."
+
+      cPom21 := "Broj"
+      cPom22 := "dok"
+   ELSE
+      // prikaz jednog dokumenta
+      // prvo brojdokumenta
+      cPom11 := "Broj"
+      cPom12 := "dok"
 	
-	// pa redni broj
-	cPom21 := "Red"
-	cPom22 := "br."
+      // pa redni broj
+      cPom21 := "Red"
+      cPom22 := "br."
 
-endif
+   ENDIF
 
-AADD(aZagl, { cPom11,  cPom21, "Datum", "Tar.",  "Kupac", "Broj",  "Opis",  "iznos" , "iznos",    "iznos" })
-AADD(aZagl, { cPom12,  cPom22,  "",     "kat.",      "(naziv, ident. broj)",      "RN",     "",    "bez PDV", "PDV", "sa PDV"})
-AADD(aZagl, { "(1)",   "(2)",  "(3)",   "(4)",   "(5)",  "(6)",     "(7)", "(8)" , "(9)" , "(10) = (8+9)" })
-
-
-fill_rpt( nBrDok )
-
-my_close_all_dbf()
-
-if _export == "D"
-
-    _file := my_home() + "epdv_r_kif.dbf"
-
-    #ifdef __PLATFORM__WINDOWS
-        _file := '"' + _file + '"'
-    #endif
-
-    f18_open_document( _file )
-
-else
-    show_rpt(  .f.,  .f.)
-endif
-
-return
+   AAdd( aZagl, { cPom11,  cPom21, "Datum", "Tar.",  "Kupac", "Broj",  "Opis",  "iznos", "iznos",    "iznos" } )
+   AAdd( aZagl, { cPom12,  cPom22,  "",     "kat.",      "(naziv, ident. broj)",      "RN",     "",    "bez PDV", "PDV", "sa PDV" } )
+   AAdd( aZagl, { "(1)",   "(2)",  "(3)",   "(4)",   "(5)",  "(6)",     "(7)", "(8)", "(9)", "(10) = (8+9)" } )
 
 
+   fill_rpt( nBrDok )
+
+   my_close_all_dbf()
+
+   IF _export == "D"
+
+      _file := my_home() + "epdv_r_kif.dbf"
+
+#ifdef __PLATFORM__WINDOWS
+      _file := '"' + _file + '"'
+#endif
+
+      f18_open_document( _file )
+
+   ELSE
+      show_rpt(  .F.,  .F. )
+   ENDIF
+
+   RETURN
 
 
-// -----------------------------------
-// polja reporta
-// -----------------------------------
-static function get_r_fields(aArr)
-
-AADD(aArr, {"r_br",   "N",  8, 0})
-AADD(aArr, {"br_dok",   "N",  6, 0})
-AADD(aArr, {"datum",   "D",  8, 0})
-
-AADD(aArr, {"id_tar",   "C",  6, 0})
-AADD(aArr, {"id_part",   "C",  6, 0})
-
-AADD(aArr, {"kup_rn",   "C",  12, 0})
-AADD(aArr, {"kup_naz",   "C",  80, 0})
-AADD(aArr, {"opis",   "C",  80, 0})
-
-AADD(aArr, {"i_b_pdv",   "N",  18, 2})
-AADD(aArr, {"i_pdv",   "N",  18, 2})
-AADD(aArr, {"i_uk",   "N",  18, 2})
-
-return
-*}
-
-static function cre_r_tbl()
-local aArr:={}
-
-my_close_all_dbf()
-
-ferase ( my_home() + "epdv_r_" +  cTbl + ".cdx" )
-ferase ( my_home() + "epdv_r_" +  cTbl + ".dbf" )
-
-get_r_fields(@aArr)
-
-// kreiraj tabelu
-dbcreate2( my_home() + "epdv_r_" + cTbl + ".dbf", aArr)
-
-// kreiraj indexe
-CREATE_INDEX("br_dok", "br_dok", "epdv_r_" +  cTbl, .t.)
-
-return
-
-// ------------------------------------------
-// napuni r_kif
-// ------------------------------------------
-static function fill_rpt(nBrDok)
-local nIzArea
-local nBPdv
-local nPdv 
-local nRbr
-local dDatum 
-local cKupRn 
-local cKupNaz
-local cIdTar
-local cOpis
-local cIdPart
 
 
-cre_r_tbl()
+STATIC FUNCTION get_r_fields( aArr )
+
+   AAdd( aArr, { "r_br",   "N",  8, 0 } )
+   AAdd( aArr, { "br_dok",   "N",  6, 0 } )
+   AAdd( aArr, { "datum",   "D",  8, 0 } )
+
+   AAdd( aArr, { "id_tar",   "C",  6, 0 } )
+   AAdd( aArr, { "id_part",   "C",  6, 0 } )
+
+   AAdd( aArr, { "kup_rn",   "C",  12, 0 } )
+   AAdd( aArr, { "kup_naz",   "C",  80, 0 } )
+   AAdd( aArr, { "opis",   "C",  80, 0 } )
+
+   AAdd( aArr, { "i_b_pdv",   "N",  18, 2 } )
+   AAdd( aArr, { "i_pdv",   "N",  18, 2 } )
+   AAdd( aArr, { "i_uk",   "N",  18, 2 } )
+
+   RETURN
+
+STATIC FUNCTION cre_r_tbl()
+
+   LOCAL aArr := {}
+
+   my_close_all_dbf()
+
+   FErase ( my_home() + "epdv_r_" +  cTbl + ".cdx" )
+   FErase ( my_home() + "epdv_r_" +  cTbl + ".dbf" )
+
+   get_r_fields( @aArr )
+
+   // kreiraj tabelu
+   dbcreate2( my_home() + "epdv_r_" + cTbl + ".dbf", aArr )
+
+   // kreiraj indexe
+   CREATE_INDEX( "br_dok", "br_dok", "epdv_r_" +  cTbl, .T. )
+
+   RETURN
+
+STATIC FUNCTION fill_rpt( nBrDok )
+
+   LOCAL nIzArea
+   LOCAL nBPdv
+   LOCAL nPdv
+   LOCAL nRbr
+   LOCAL dDatum
+   LOCAL cKupRn
+   LOCAL cKupNaz
+   LOCAL cIdTar
+   LOCAL cOpis
+   LOCAL cIdPart
+
+   cre_r_tbl()
 
 
-O_R_KIF
+   O_R_KIF
 
-if (nBrDok == 0)
-	// tabela pripreme
+   IF ( nBrDok == 0 )
+      // tabela pripreme
 	
-	nIzArea := F_P_KIF
+      nIzArea := F_P_KIF
 	
-	SELECT (F_P_KIF)
-	if !used()
-		O_P_KIF
-	endif
-	SET ORDER TO TAG "br_dok"
+      SELECT ( F_P_KIF )
+      IF !Used()
+         O_P_KIF
+      ENDIF
+      SET ORDER TO TAG "br_dok"
 
-else
-	// kumulativ
+   ELSE
+      // kumulativ
 
-	nIzArea := F_KIF
+      nIzArea := F_KIF
 	
-	SELECT (F_KIF)
-	if !used()
-		O_KIF
-	endif
-	SET ORDER TO TAG "g_r_br"
+      SELECT ( F_KIF )
+      IF !Used()
+         O_KIF
+      ENDIF
+      SET ORDER TO TAG "g_r_br"
 
 
-endif
+   ENDIF
 
 
 
-SELECT (nIzArea)
+   SELECT ( nIzArea )
 
-PRIVATE cFilter := ""
+   PRIVATE cFilter := ""
 
-if (nBrdok == - 999)
-	// datumski period
-       cFilter := cm2str(dDatOd) + " <= datum .and. " + cm2str(dDatDo) + ">= datum" 
-endif
+   IF ( nBrdok == - 999 )
+      // datumski period
+      cFilter := cm2str( dDatOd ) + " <= datum .and. " + cm2str( dDatDo ) + ">= datum"
+   ENDIF
 
-if !empty(cTar)
-	if !empty(cFilter)
-		cFilter += " .and. "
-	endif
-	cFilter += "id_tar == "+cm2str(cTar)
-endif
+   IF !Empty( cTar )
+      IF !Empty( cFilter )
+         cFilter += " .and. "
+      ENDIF
+      cFilter += "id_tar == " + cm2str( cTar )
+   ENDIF
 
-if !empty(cPart)
-	if !empty(cFilter)
-		cFilter += " .and. "
-	endif
-	cFilter += "id_part == "+cm2str(cPart)
-endif
+   IF !Empty( cPart )
+      IF !Empty( cFilter )
+         cFilter += " .and. "
+      ENDIF
+      cFilter += "id_part == " + cm2str( cPart )
+   ENDIF
 
-SET FILTER TO &cFilter
+   SET FILTER TO &cFilter
 
-GO TOP
-
-
-Box(,3, 60)
-
-nCount := 0
+   GO TOP
 
 
-do while !eof()
+   Box(, 3, 60 )
 
-++nCount
-
-
-@ m_x+2, m_y+2 SAY STR(nCount, 6, 0)
-
-nBrDok := br_dok
-nBPdv := i_b_pdv
-nPdv := i_pdv
-
-if (nRptBrDok == -999)
-	// za vise dokumenata
-	nRbr := g_r_br
-else
-	// za jedan dokument
-	nRbr := r_br
-endif
-
-dDatum := datum
-cKupRn := src_br_2
-cKupNaz := s_partner(id_part)
-cIdTar := id_tar
-cOpis := opis
-cIdPart := id_part
-
-SELECT r_kif   
-APPEND BLANK
+   nCount := 0
 
 
-replace br_dok with nBrDok
-replace r_br with nRbr
-replace id_tar with cIdTar
-replace id_part with cIdPart
-replace datum with dDatum
-replace kup_rn with cKupRn
-replace kup_naz with cKupNaz
-replace opis with cOpis
+   DO WHILE !Eof()
 
-replace i_b_pdv with nBPdv
-replace i_pdv with nPdv
-replace i_uk with ( i_b_pdv + i_pdv )
-
-SELECT (nIzArea)
-
-SKIP
-
-enddo
-
-BoxC()
-
-// skini filter
-SELECT (nIzArea)
-SET FILTER TO
+      ++nCount
 
 
-return
+      @ m_x + 2, m_y + 2 SAY Str( nCount, 6, 0 )
+
+      nBrDok := br_dok
+      nBPdv := i_b_pdv
+      nPdv := i_pdv
+
+      IF ( nRptBrDok == -999 )
+         // za vise dokumenata
+         nRbr := g_r_br
+      ELSE
+         // za jedan dokument
+         nRbr := r_br
+      ENDIF
+
+      dDatum := datum
+      cKupRn := src_br_2
+      cKupNaz := s_partner( id_part )
+      cIdTar := id_tar
+      cOpis := opis
+      cIdPart := id_part
+
+      SELECT r_kif
+      APPEND BLANK
 
 
-// ---------------------------------------
-// ---------------------------------------
-static function show_rpt()
-local nLenUk
-local nPom1
-local nPom2
+      REPLACE br_dok WITH nBrDok
+      REPLACE r_br WITH nRbr
+      REPLACE id_tar WITH cIdTar
+      REPLACE id_part WITH cIdPart
+      REPLACE datum WITH dDatum
+      REPLACE kup_rn WITH cKupRn
+      REPLACE kup_naz WITH cKupNaz
+      REPLACE opis WITH cOpis
 
-nCurrLine := 0
+      REPLACE i_b_pdv WITH nBPdv
+      REPLACE i_pdv WITH nPdv
+      REPLACE i_uk WITH ( i_b_pdv + i_pdv )
 
-START PRINT CRET
+      SELECT ( nIzArea )
 
-//nPageLimit := 65
-nPageLimit := 40
-? "#%LANDS#"
+      SKIP
 
-P_COND
-nRow := 0
+   ENDDO
 
-r_zagl()
+   BoxC()
 
-O_R_KIF
-SELECT r_kif
-SET ORDER TO TAG "1"
-go top
-nRbr := 0
+   SELECT ( nIzArea )
+   SET FILTER TO
 
-nBPdv := 0
-nPdv :=  0
-do while !eof()
-  
-   ++ nCurrLine
-
-   if nRptBrDok == -999
-   	nPom1 := r_br
-	nPom2 := br_dok
-   else
-   	nPom1 := br_dok
-	nPom2 := r_br
-   endif
-   
-   ?
-   // 1. broj dokumenta
-   ?? TRANSFORM( nPom1, REPLICATE("9", aZaglLen[1]) )
-   ?? " "
-   
-   // 2. r.br
-   ?? TRANSFORM( nPom2, REPLICATE("9", aZaglLen[2]) )
-   ?? " "
-  
-   
-   // 3. datum
-   ?? PADR( datum, aZaglLen[3])
-   ?? " "
-  
-   // 4. tarifa
-   ?? PADR( id_tar, aZaglLen[4])
-   ?? " "
-   
-   
-   // 5. kupac naziv
-   ?? PADR( kup_naz, aZaglLen[5])
-   ?? " "
-   
-   // 6. dobavljac rn
-   ?? PADR( kup_rn, aZaglLen[6])
-   ?? " "
-
-   // 7. opis
-   ?? PADR( opis, aZaglLen[7])
-   ?? " "
-
-   // 8. bez pdv
-   ?? TRANSFORM( i_b_pdv,  PIC_IZN() )
-   ?? " "
-   
-   // 9. pdv
-   ?? TRANSFORM( i_pdv,  PIC_IZN() )
-   ?? " "
-   
-   // 10. sa pdv
-   ?? TRANSFORM( i_b_pdv + i_pdv,  PIC_IZN() )
-   ?? " "
+   RETURN
 
 
-   nBPdv += i_b_pdv
-   nPdv += i_pdv
-   
-   if nCurrLine > nPageLimit
-   	FF
-	nCurrLine:=0
-	if lSvakaHeader
-		r_zagl()
-	endif
+STATIC FUNCTION show_rpt()
+
+   LOCAL nLenUk
+   LOCAL nPom1
+   LOCAL nPom2
+
+   nCurrLine := 0
+
+   START PRINT CRET
+
+   nPageLimit := 40
+   ? "#%LANDS#"
+
+   P_COND
+   nRow := 0
+
+   r_zagl()
+
+   O_R_KIF
+   SELECT r_kif
+   SET ORDER TO TAG "1"
+   GO TOP
+   nRbr := 0
+
+   nBPdv := 0
+   nPdv :=  0
+   DO WHILE !Eof()
+
+      ++ nCurrLine
+
+      IF nRptBrDok == -999
+         nPom1 := r_br
+         nPom2 := br_dok
+      ELSE
+         nPom1 := br_dok
+         nPom2 := r_br
+      ENDIF
+
+      ?
+      // 1. broj dokumenta
+      ?? Transform( nPom1, Replicate( "9", aZaglLen[ 1 ] ) )
+      ?? " "
+
+      // 2. r.br
+      ?? Transform( nPom2, Replicate( "9", aZaglLen[ 2 ] ) )
+      ?? " "
+
+
+      // 3. datum
+      ?? PadR( datum, aZaglLen[ 3 ] )
+      ?? " "
+
+      // 4. tarifa
+      ?? PadR( id_tar, aZaglLen[ 4 ] )
+      ?? " "
+
+
+      // 5. kupac naziv
+      ?? PadR( kup_naz, aZaglLen[ 5 ] )
+      ?? " "
+
+      // 6. dobavljac rn
+      ?? PadR( kup_rn, aZaglLen[ 6 ] )
+      ?? " "
+
+      // 7. opis
+      ?? PadR( opis, aZaglLen[ 7 ] )
+      ?? " "
+
+      // 8. bez pdv
+      ?? Transform( i_b_pdv,  PIC_IZN() )
+      ?? " "
+
+      // 9. pdv
+      ?? Transform( i_pdv,  PIC_IZN() )
+      ?? " "
+
+      // 10. sa pdv
+      ?? Transform( i_b_pdv + i_pdv,  PIC_IZN() )
+      ?? " "
+
+
+      nBPdv += i_b_pdv
+      nPdv += i_pdv
+
+      IF nCurrLine > nPageLimit
+         FF
+         nCurrLine := 0
+         IF lSvakaHeader
+            r_zagl()
+         ENDIF
 		
-   endif
-   
-   SKIP
-   
-enddo
+      ENDIF
 
-if (nCurrLine+3) > nPageLimit 
-  FF
-  nCurrLine:=0
-  if lSvakaHeader
-	r_zagl()
-  endif
-endif
+      SKIP
 
+   ENDDO
 
-// ukupno izvjestaj
-r_linija()
-?
-cPom := "   U K U P N O :  "
+   IF ( nCurrLine + 3 ) > nPageLimit
+      FF
+      nCurrLine := 0
+      IF lSvakaHeader
+         r_zagl()
+      ENDIF
+   ENDIF
 
-nLenUk := 0
-for i:=1 to 7
-	nLenUk += aZaglLen[i] + 1
-next
-nLenUk -= 1
+   r_linija()
+   ?
+   cPom := "   U K U P N O :  "
 
-?? PADR( cPom , nLenUk )
-?? " "
-?? TRANSFORM( nBPdv  , PIC_IZN() )
-?? " "
+   nLenUk := 0
+   FOR i := 1 TO 7
+      nLenUk += aZaglLen[ i ] + 1
+   NEXT
+   nLenUk -= 1
 
-?? TRANSFORM( nPdv  , PIC_IZN() )
-?? " "
-
-?? TRANSFORM( nBPdv + nPdv  , PIC_IZN() )
-  
-r_linija()
-  
-
-FF
-END PRINT
-return
-*}
-
-// ----------------------------
-// ----------------------------
-static function r_zagl()
-
-// header
-P_COND
-B_ON
-for i:=1 to LEN(aHeader)
- ? aHeader[i]
- ++nCurrLine
-next
-B_OFF
-
-P_COND2
-
-r_linija()
-
-for i:=1 to LEN(aZagl)
- ++nCurrLine
- ?
- for nCol:=1 to LEN(aZaglLen)
-  	// mergirana kolona ovako izgleda
-	// "#3 Zauzimam tri kolone"
- 	if LEFT(aZagl[i, nCol],1) = "#" 
-	  
-	  nMergirano := VAL( SUBSTR(aZagl[i, nCol], 2, 1 ) )
-	  cPom := SUBSTR(aZagl[i,nCol], 3, LEN(aZagl[i,nCol])-2)
-	  nMrgWidth := 0
-	  for nMrg:=1 to nMergirano 
-	  	nMrgWidth += aZaglLen[nCol+nMrg-1] 
-		nMrgWidth ++
-	  next
-	  ?? PADC(cPom, nMrgWidth)
-	  ?? " "
-	  nCol += (nMergirano - 1)
-	 else
- 	  ?? PADC(aZagl[i, nCol], aZaglLen[nCol])
-	  ?? " "
-	 endif
- next
-next
-r_linija()
-
-return
-
-
-// -------------------------------
-// --------------------------------
-static function r_linija()
-*{
-++nCurrLine
-?
-for i=1 to LEN(aZaglLen)
-   ?? PADR("-", aZaglLen[i], "-" )
+   ?? PadR( cPom, nLenUk )
    ?? " "
-next
+   ?? Transform( nBPdv, PIC_IZN() )
+   ?? " "
 
-return
-*}
+   ?? Transform( nPdv, PIC_IZN() )
+   ?? " "
 
+   ?? Transform( nBPdv + nPdv, PIC_IZN() )
+
+   r_linija()
+
+
+   FF
+   END PRINT
+
+   RETURN
+
+
+STATIC FUNCTION r_zagl()
+
+   P_COND
+   B_ON
+   FOR i := 1 TO Len( aHeader )
+      ? aHeader[ i ]
+      ++nCurrLine
+   NEXT
+   B_OFF
+
+   P_COND2
+
+   r_linija()
+
+   FOR i := 1 TO Len( aZagl )
+      ++nCurrLine
+      ?
+      FOR nCol := 1 TO Len( aZaglLen )
+         // mergirana kolona ovako izgleda
+         // "#3 Zauzimam tri kolone"
+         IF Left( aZagl[ i, nCol ], 1 ) = "#"
+	
+            nMergirano := Val( SubStr( aZagl[ i, nCol ], 2, 1 ) )
+            cPom := SubStr( aZagl[ i, nCol ], 3, Len( aZagl[ i, nCol ] ) -2 )
+            nMrgWidth := 0
+            FOR nMrg := 1 TO nMergirano
+               nMrgWidth += aZaglLen[ nCol + nMrg - 1 ]
+               nMrgWidth ++
+            NEXT
+            ?? PadC( cPom, nMrgWidth )
+            ?? " "
+            nCol += ( nMergirano - 1 )
+         ELSE
+            ?? PadC( aZagl[ i, nCol ], aZaglLen[ nCol ] )
+            ?? " "
+         ENDIF
+      NEXT
+   NEXT
+   r_linija()
+
+   RETURN
+
+
+STATIC FUNCTION r_linija()
+
+   ++nCurrLine
+   ?
+   FOR i = 1 TO Len( aZaglLen )
+      ?? PadR( "-", aZaglLen[ i ], "-" )
+      ?? " "
+   NEXT
+
+   RETURN

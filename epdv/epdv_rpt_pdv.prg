@@ -78,7 +78,8 @@ FUNCTION rpt_p_pdv()
    BoxC()
 
    IF LastKey() == K_ESC
-      closeret
+      my_close_all_dbf()
+      RETURN
    ENDIF
 
    fill_rpt()
@@ -129,10 +130,10 @@ STATIC FUNCTION f_iz_kuf_kif()
    LOCAL nUkUlPdv := 0
    LOCAL nUlPdvKp := 0
 
+   aMyFirma := my_firma( .T. )
+   
    O_R_PDV
    APPEND BLANK
-
-   aMyFirma := my_firma( .T. )
 
    Scatter()
 
@@ -160,7 +161,6 @@ STATIC FUNCTION f_iz_kuf_kif()
 
       @ m_x + 2, m_y + 2 SAY "KUF" + Str( nCount, 6, 0 )
 
-
       cIdTar := id_tar
       nBPdv := i_b_pdv
       nPdv := i_pdv
@@ -177,7 +177,6 @@ STATIC FUNCTION f_iz_kuf_kif()
          _u_pdv_uv += nPdv
          nUkUlPdv += nPdv
 
-		
       CASE t_u_polj( cIdTar )
          _u_nab_23 += nBPdv
          _u_pdv_43 += nPdv
@@ -195,7 +194,6 @@ STATIC FUNCTION f_iz_kuf_kif()
 			
       ENDCASE
 
-
       SELECT KUF
 
       SKIP
@@ -209,7 +207,6 @@ STATIC FUNCTION f_iz_kuf_kif()
 
    SELECT KUF
    USE
-
 
    Beep( 1 )
 

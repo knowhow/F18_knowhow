@@ -1,3 +1,7 @@
+1.7.74  2014-05-08, vsasa
+
+  - ePDV, štampa pdv prijave bugfix
+ 
 1.7.73  2014-05-07, vsasa, hernad
 
   - ePDV, štampa dokumenata u sezoni - bugfix

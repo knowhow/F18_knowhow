@@ -154,7 +154,7 @@ AADD(opcexe,{|| PlatSpTR("2")})
 AADD(opc,"6. pregled primanja za period")
 AADD(opcexe,{|| PregPrimPer()})
 AADD(opc,"7. pregled obracunatih doprinosa")
-AADD(opcexe,{|| IzObDop()})
+AADD(opcexe,{|| ld_pregled_obr_doprinosa() })
 AADD(opc,"8. isplata jednog tipa primanja na tekuci racun")
 AADD(opcexe,{|| IsplataTR("1")})
 

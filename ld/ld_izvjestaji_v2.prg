@@ -932,10 +932,7 @@ FUNCTION SortOpSt(cId)
 RETURN cVrati
 
 
-// -----------------------------------
-// IZvjestaj o OBracunatim DOPrinosima
-// -----------------------------------
-function IzObDop()
+function ld_pregled_obr_doprinosa()
 local cTipRada := " "
  cIdRj    := gRj
  cGodina  := gGodina

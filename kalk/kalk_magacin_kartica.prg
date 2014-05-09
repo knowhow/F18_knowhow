@@ -32,12 +32,7 @@ FUNCTION kartica_magacin()
    PRIVATE PicDEM := Replicate( "9", Val( gFPicDem ) ) + gPicDem
    PRIVATE Pickol := "@Z " + Replicate( "9", Val( gFPicKol ) ) + gPickol
 
-   O_PARTN
-   O_TARIFA
-   O_SIFK
-   O_SIFV
-   O_ROBA
-   O_KONTO
+   close_open_kart_tables()
 
    IF cIdFirma != NIL
       dDatOd := CToD( "" )
@@ -53,14 +48,12 @@ FUNCTION kartica_magacin()
    cBrFDa := "N"
    cPrikFCJ2 := "N"
 
-
    IF !Empty( cRNT1 )
       PRIVATE cRNalBroj := PadR( "", 40 )
    ENDIF
 
    cIdPArtner := Space( 6 )
    cPVSS := "D"
-   // D-Prikaz Vrijednosti Samo u Saldu  (N-duguje,potrazuje,saldo)
 
    IF cIdKonto == NIL
 
@@ -76,7 +69,6 @@ FUNCTION kartica_magacin()
       cBrFDa := fetch_metric( "kalk_kartica_magacin_prikaz_broja_fakture", my_user(), cBrFDa )
       cPrikFCJ2 := fetch_metric( "kalk_kartica_magacin_prikaz_fakturne_cijene", my_user(), cPrikFCJ2 )
       cPVSS := fetch_metric( "kalk_kartica_magacin_prikaz_samo_saldo", my_user(), cPVSS )
-
       cIdKonto := PadR( cIdKonto, gDuzKonto )
 
       Box(, 13, 60 )
@@ -121,16 +113,10 @@ FUNCTION kartica_magacin()
       ENDDO
       BoxC()
 
-      IF Empty( cIdRoba ) .OR. cIdroba == "SIGMAXXXXX"
+      IF Empty( cIdRoba )
          IF pitanje(, "Niste zadali sifru artikla, izlistati sve kartice ?", "N" ) == "N"
-            closeret
-         ELSE
-            IF !Empty( cIdRoba )
-               IF Pitanje(, "Korekcija nabavnih cijena ???", "N" ) == "D"
-                  fKNabC := .T.
-               ENDIF
-            ENDIF
-            cIdr := ""
+            my_close_all_dbf()
+            RETURN
          ENDIF
       ELSE
          cIdr := cIdRoba
@@ -158,14 +144,6 @@ FUNCTION kartica_magacin()
    ENDIF
 
    lBezG2 := .F.
-
-   IF IzFMKINI( "KALK", "NeGrupaPartnera", "N", PRIVPATH ) == "D" .AND. Pitanje(, "Zelite li prikazati grupu 2 ? (D/N)", "N" ) == "N"
-      lBezG2 := .T.
-   ENDIF
-
-   O_KONCIJ
-   O_KALK
-
    nKolicina := 0
 
    SELECT kalk
@@ -199,48 +177,14 @@ FUNCTION kartica_magacin()
 
    nLen := 1
 
-   IF IsPDV()
-
-      _set_zagl( @cLine, @cTxt1, @cTxt2, cPvSS )
-      __line := cLine
-      __txt1 := cTxt1
-      __txt2 := cTxt2
+   _set_zagl( @cLine, @cTxt1, @cTxt2, cPvSS )
+   __line := cLine
+   __txt1 := cTxt1
+   __txt2 := cTxt2
 	
-   ELSE
-
-      IF gVarEv == "2"
-         m := "-------- ----------- ------ ------ ---------- ---------- ----------"
-      ELSE
-         m := "-------- ----------- ------ ------ ---------- ---------- ---------- ---------- ----------"
- 	
-         IF IsMagPNab()
-            m += " ----------"
-            m += " ----------"
-         ENDIF
-	
-         IF cPVSS == "N" .AND. IsMagPNab()
-            m += " ---------- ----------"
-         ENDIF
-
-         IF !IsMagPNab()
-            m += " ---------- ---------- ---------- ----------"
-            IF cPVSS == "N"
-               m += " ---------- ----------"
-            ENDIF
-         ENDIF
-      ENDIF
-
-      __line := m
-
-   ENDIF
-
    PRIVATE nTStrana := 0
 
-   IF IsPDV()
-      ZaglPDV()
-   ELSE
-      Zagl()
-   ENDIF
+   zagl_mag_kart()
 
    DO WHILE !Eof() .AND. iif( fVeci, idfirma + mkonto + idroba >= cIdFirma + cIdKonto + cIdR, idfirma + mkonto + idroba = cIdFirma + cIdKonto + cIdR )
 
@@ -331,14 +275,6 @@ FUNCTION kartica_magacin()
                   @ PRow(), PCol() + 1 SAY nVPV / ( nUlaz - nIzlaz ) PICT piccdem
                ENDIF
 				
-               // if Round(nUlaz-nIzlaz,4)<>0
-               // @ prow(),pcol()+1 SAY nVPV/(nUlaz-nIzlaz) pict piccdem
-               // elseif nVpv<>0
-               // @ prow(),pcol()+1 SAY PADC("ERR",len(piccdem))
-               // else
-               // @ prow(),pcol()+1 SAY 0            pict pickol
-               // endif
-				
                IF !IsMagPNab()
                   // VPV dug. VPV pot.
                   IF cPVSS == "N"
@@ -356,11 +292,7 @@ FUNCTION kartica_magacin()
 		
          IF PRow() -gPStranica > 62
             FF
-            IF IsPDV()
-               ZaglPDV()
-            ELSE
-               Zagl()
-            ENDIF
+            zagl_mag_kart()
          ENDIF
   		
          IF mu_i == "1" .AND. !( idvd $ "12#22#94" )
@@ -405,8 +337,6 @@ FUNCTION kartica_magacin()
                   // NV
                   @ PRow(), PCol() + 1 SAY nNV   PICT picdem
        			
-                  // if !IsMagPNab()
-        		
                   // RABAT
                   @ PRow(), PCol() + 1 SAY 0  PICT piccdem
         		
@@ -429,8 +359,6 @@ FUNCTION kartica_magacin()
        			
                   ENDIF
 			
-                  // endif
-			
                ENDIF
 			
                IF cBrFDa == "D"
@@ -448,14 +376,6 @@ FUNCTION kartica_magacin()
 
          ELSEIF mu_i == "5"
 
-            IF fKNabC
-               // korekcija nabavnih cijena
-               // opcija skrivena - nedokumentovana
-               IF Round( nUlaz - nIzlaz, 2 ) <> 0
-                  REPLACE nc WITH   nNV / ( nUlaz - nIzlaz )
-               ENDIF
-            ENDIF
-		
             nIzlaz += kolicina
             IF datdok >= ddatod
                ? datdok, idvd + "-" + brdok, idtarifa
@@ -697,9 +617,9 @@ FUNCTION kartica_magacin()
          ENDIF
 
          SKIP
-         // kalk
+         
       ENDDO
-      // cIdRoba
+      
 
       ? __line
       ? "Ukupno:"
@@ -739,22 +659,76 @@ FUNCTION kartica_magacin()
          ENDIF
 
       ENDIF
-      ? __line
 
+      ? __line
       ?
       ?
+
    ENDDO
+
    FF
    endprint
 
-   closeret
+   my_close_all_dbf()
 
    RETURN
 
 
-// -----------------------------------------------
-// setovanje zaglavlja
-// -----------------------------------------------
+
+STATIC FUNCTION close_open_kart_tables()
+
+   SELECT ( F_SIFK )
+   IF Used()
+      USE
+   ENDIF
+
+   SELECT ( F_SIFV )
+   IF Used()
+      USE
+   ENDIF
+
+   SELECT ( F_PARTN )
+   IF Used()
+      USE
+   ENDIF
+
+   SELECT ( F_TARIFA )
+   IF Used()
+      USE
+   ENDIF
+
+   SELECT ( F_ROBA )
+   IF Used()
+      USE
+   ENDIF
+
+   SELECT ( F_KONTO )
+   IF Used()
+      USE
+   ENDIF
+
+   SELECT ( F_KALK )
+   IF Used()
+      USE
+   ENDIF
+
+   SELECT ( F_KONCIJ )
+   IF Used()
+      USE
+   ENDIF
+
+   O_PARTN
+   O_TARIFA
+   O_SIFK
+   O_SIFV
+   O_ROBA
+   O_KONTO
+   O_KONCIJ
+   O_KALK
+
+   RETURN
+
+
 STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cPVSS, cPicKol, cPicCDem )
 
    LOCAL nPom
@@ -833,21 +807,22 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cPVSS, cPicKol, cPicCDem )
 
 
 
-// ----------------------------------------
-// zaglavlje kartice pdv varijanta
-// ----------------------------------------
-STATIC FUNCTION ZaglPDV()
+STATIC FUNCTION zagl_mag_kart()
 
    SELECT konto
    hseek cIdKonto
+
    ?
+
    Preduzece()
    P_12CPI
+
    ?? "KARTICA MAGACIN za period", ddatod, "-", ddatdo, Space( 10 ), "Str:", Str( ++nTStrana, 3 )
    IspisNaDan( 5 )
    ? "Konto: ", cIdKonto, "-", konto->naz
 
    SELECT kalk
+
    IF gVarEv == "2"
       P_12CPI
    ELSEIF !IsMagPNab()
@@ -872,60 +847,5 @@ STATIC FUNCTION ZaglPDV()
    RETURN ( nil )
 
 
-
-/*! \fn Zagl()
- *  \brief Zaglavlje izvjestaja "kartica magacin"
- */
-
-STATIC FUNCTION Zagl()
-
-   SELECT konto
-   hseek cIdKonto
-   Preduzece()
-   P_12CPI
-   ?? "KARTICA MAGACIN za period", ddatod, "-", ddatdo, Space( 10 ), "Str:", Str( ++nTStrana, 3 )
-   IspisNaDan( 5 )
-
-   ? "Konto: ", cIdKonto, "-", konto->naz
-   SELECT kalk
-   IF gVarEv == "2"
-      P_12CPI
-   ELSEIF !IsMagPNab()
-      IF cPVSS == "N"
-         P_COND2
-      ELSE
-         P_COND
-      ENDIF
-   ELSE
-      IF cPVSS == "N"
-         P_COND
-      ELSE
-         P_12CPI
-      ENDIF
-   ENDIF
-   ? __line
-
-
-   IF gVarEv == "2"
-      ? "*Datum  *  Dokument *Tarifa*" + " Partn *   Ulaz   *  Izlaz   * Stanje   "
-      ? "*       *           *      *" + "       *          *          *          "
-   ELSE
-      ? "*Datum  *  Dokument *Tarifa*" + " Partn *   Ulaz   *  Izlaz   * Stanje   *   NC     *" + IF( cPVSS == "N" .AND. IsMagPNab(), "  NV dug. *  NV pot. *", "" ) + "   NV    *"
-      IF !IsMagPNab()
-         IF koncij->naz == "P2"
-            ?? "  RABAT   *  Plan.C  *" + IF( cPVSS == "N", " PlVr dug.* PlVr pot.*", "" ) + " Plan.Vr *  MPCSAPP *"
-         ELSE
-            ?? "  RABAT   *   VPC    *" + IF( cPVSS == "N", " VPV dug. * VPV pot. *", "" ) + "   VPV   *  MPCSAPP *"
-         ENDIF
-      ENDIF
-      ? "*       *           *      *" + "       *          *          *          *" + IF( cPrikFCJ2 == "D", PadC( "FCJ", 10 ), Space( 10 ) ) + "*" + IF( cPVSS == "N" .AND. IsMagPNab(), "          *          *", "" ) + "         *"
-      IF !IsMagPNab()
-         ?? "          *          *" + IF( cPVSS == "N", "          *          *", "" ) + "         *          *"
-      ENDIF
-   ENDIF
-
-   ? __line
-
-   RETURN ( nil )
 
 

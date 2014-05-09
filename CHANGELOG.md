@@ -1,3 +1,7 @@
+1.7.75  2014-05-09, vsasa
+
+  - KALK, kartica magacin štampa u sezoni - bugfix 
+ 
 1.7.74  2014-05-08, vsasa
 
   - ePDV, štampa pdv prijave bugfix

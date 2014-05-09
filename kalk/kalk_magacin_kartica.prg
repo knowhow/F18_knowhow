@@ -32,12 +32,7 @@ FUNCTION kartica_magacin()
    PRIVATE PicDEM := Replicate( "9", Val( gFPicDem ) ) + gPicDem
    PRIVATE Pickol := "@Z " + Replicate( "9", Val( gFPicKol ) ) + gPickol
 
-   O_PARTN
-   O_TARIFA
-   O_SIFK
-   O_SIFV
-   O_ROBA
-   O_KONTO
+   close_open_kart_tables()
 
    IF cIdFirma != NIL
       dDatOd := CToD( "" )
@@ -53,14 +48,12 @@ FUNCTION kartica_magacin()
    cBrFDa := "N"
    cPrikFCJ2 := "N"
 
-
    IF !Empty( cRNT1 )
       PRIVATE cRNalBroj := PadR( "", 40 )
    ENDIF
 
    cIdPArtner := Space( 6 )
    cPVSS := "D"
-   // D-Prikaz Vrijednosti Samo u Saldu  (N-duguje,potrazuje,saldo)
 
    IF cIdKonto == NIL
 
@@ -76,7 +69,6 @@ FUNCTION kartica_magacin()
       cBrFDa := fetch_metric( "kalk_kartica_magacin_prikaz_broja_fakture", my_user(), cBrFDa )
       cPrikFCJ2 := fetch_metric( "kalk_kartica_magacin_prikaz_fakturne_cijene", my_user(), cPrikFCJ2 )
       cPVSS := fetch_metric( "kalk_kartica_magacin_prikaz_samo_saldo", my_user(), cPVSS )
-
       cIdKonto := PadR( cIdKonto, gDuzKonto )
 
       Box(, 13, 60 )
@@ -150,9 +142,6 @@ FUNCTION kartica_magacin()
       ENDIF
 
    ENDIF
-
-   O_KONCIJ
-   O_KALK
 
    lBezG2 := .F.
    nKolicina := 0
@@ -681,6 +670,61 @@ FUNCTION kartica_magacin()
    endprint
 
    my_close_all_dbf()
+
+   RETURN
+
+
+
+STATIC FUNCTION close_open_kart_tables()
+
+   SELECT ( F_SIFK )
+   IF Used()
+      USE
+   ENDIF
+
+   SELECT ( F_SIFV )
+   IF Used()
+      USE
+   ENDIF
+
+   SELECT ( F_PARTN )
+   IF Used()
+      USE
+   ENDIF
+
+   SELECT ( F_TARIFA )
+   IF Used()
+      USE
+   ENDIF
+
+   SELECT ( F_ROBA )
+   IF Used()
+      USE
+   ENDIF
+
+   SELECT ( F_KONTO )
+   IF Used()
+      USE
+   ENDIF
+
+   SELECT ( F_KALK )
+   IF Used()
+      USE
+   ENDIF
+
+   SELECT ( F_KONCIJ )
+   IF Used()
+      USE
+   ENDIF
+
+   O_PARTN
+   O_TARIFA
+   O_SIFK
+   O_SIFV
+   O_ROBA
+   O_KONTO
+   O_KONCIJ
+   O_KALK
 
    RETURN
 

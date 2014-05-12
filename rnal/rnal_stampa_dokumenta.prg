@@ -1219,11 +1219,11 @@ if nDoc_el_no == nil
 endif
 
 // provjeri obradu iz matrice
-lRet := ck_obr( aArticle, cSrcJok )
+lRet := obrada_u_artiklu( aArticle, cSrcJok )
 
 if lRet == .f.
     // provjeri i tabelu DOC_OPS
-    lRet := ck_obr_aops( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok )
+    lRet := obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok )
 endif
 
 return lRet 
@@ -1241,11 +1241,11 @@ if nDoc_el_no == nil
 endif
 
 // provjeri obradu iz matrice
-lRet := ck_obr( aArticle, cSrcJok )
+lRet := obrada_u_artiklu( aArticle, cSrcJok )
 
 if lRet == .f.
     // provjeri i tabelu DOC_OPS
-    lRet := ck_obr_aops( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok )
+    lRet := obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok )
 endif
 
 return lRet 
@@ -1264,11 +1264,11 @@ if nDoc_el_no == nil
 endif
 
 // provjeri obradu iz matrice
-lRet := ck_obr( aArticle, cSrcJok )
+lRet := obrada_u_artiklu( aArticle, cSrcJok )
 
 if lRet == .f.
     // provjeri i tabelu DOC_OPS
-    lRet := ck_obr_aops( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok )
+    lRet := obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok )
 endif
 
 return lRet 
@@ -1287,11 +1287,11 @@ if nDoc_el_no == nil
 endif
 
 // provjeri obradu iz matrice
-lRet := ck_obr( aArticle, cSrcJok )
+lRet := obrada_u_artiklu( aArticle, cSrcJok )
 
 if lRet == .f.
     // provjeri i tabelu DOC_OPS
-    lRet := ck_obr_aops( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok )
+    lRet := obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok )
 endif
 
 return lRet 
@@ -1301,7 +1301,7 @@ return lRet
 // ----------------------------------------------------
 // provjeri obradu na osnovu matrice artikla
 // ----------------------------------------------------
-static function ck_obr( aArticle, cSrcObrada )
+static function obrada_u_artiklu( aArticle, cSrcObrada )
 local lRet := .f.
 local nObrada 
 nObrada := ASCAN(aArticle, {|xVar| ALLTRIM(xVar[4]) == cSrcObrada } )
@@ -1317,7 +1317,7 @@ return lRet
 //   cSrcObrada - djoker obrade <AOP_K> .... 
 //                koju obradu trazimo
 // ----------------------------------------------------------------------
-static function ck_obr_aops( nDoc_no, nDocit_no, nDoc_el_no, cSrcObrada )
+static function obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcObrada )
 local lRet := .f.
 local nTArea := SELECT()
 local nTable := F_DOC_OPS

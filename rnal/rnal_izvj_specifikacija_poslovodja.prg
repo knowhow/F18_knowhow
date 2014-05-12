@@ -15,13 +15,9 @@
 
 STATIC __nvar
 STATIC __doc_no
-STATIC __temp
 
 
-// ------------------------------------------
-// osnovni poziv specifikacije
-// ------------------------------------------
-FUNCTION m_get_spec( nVar )
+FUNCTION rnal_specifikacija_poslovodja( nVar )
 
    LOCAL _params
 
@@ -31,27 +27,18 @@ FUNCTION m_get_spec( nVar )
 
    __nVar := nVar
 
-   // gledaj kumulativne tabele
-   __temp := .F.
-
-   // daj uslove izvjestaja
    IF _g_vars( @_params ) == 0
       RETURN
    ENDIF
 
-   // kreiraj specifikaciju po uslovima
    _cre_spec( _params )
 
-   // printaj specifikaciju
    _p_rpt_spec( _params )
 
    RETURN
 
 
 
-// ----------------------------------------
-// uslovi izvjestaja specifikacije
-// ----------------------------------------
 STATIC FUNCTION _g_vars( params )
 
    LOCAL _ret := 1
@@ -245,7 +232,7 @@ STATIC FUNCTION _cre_spec( params )
 
          // check group of item
          // "0156" itd...
-         cIt_group := set_art_docgr( nArt_id, nDoc_no, nDoc_it_no )
+         cIt_group := set_art_docgr( nArt_id, nDoc_no, nDoc_it_no, .F. )
 		
          cDiv := AllTrim( Str( Len( cIt_group ) ) )
 		

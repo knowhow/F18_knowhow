@@ -555,12 +555,12 @@ STATIC FUNCTION _cre_sp_el( dD_from, dD_to, nOper, cArticle )
 		
                IF l_woZaok == .F.
                   l_woZaok := is_kaljeno( aArt, ;
-                     nDoc_no, nDoc_it_no, nEl_no )
+                     nDoc_no, nDoc_it_no, nEl_no, .F. )
                ENDIF
 		
                IF l_woZaok == .F.
                   l_woZaok := is_emajl( aArt, ;
-                     nDoc_no, nDoc_it_no, nEl_no )
+                     nDoc_no, nDoc_it_no, nEl_no, .F. )
                ENDIF
 		
                IF l_woZaok == .F.
@@ -1096,11 +1096,11 @@ STATIC FUNCTION _cre_sp_art( dD_from, dD_to, nOper, cArticle )
             l_woZaok := .F.
 		
             IF l_woZaok == .F.
-               l_woZaok := is_kaljeno( aArt, nDoc_no, nDoc_it_no )
+               l_woZaok := is_kaljeno( aArt, nDoc_no, nDoc_it_no, NIL, .F. )
             ENDIF
 		
             IF l_woZaok == .F.
-               l_woZaok := is_emajl( aArt, nDoc_no, nDoc_it_no )
+               l_woZaok := is_emajl( aArt, nDoc_no, nDoc_it_no, NIL, .F. )
             ENDIF
 		
             IF l_woZaok == .F.

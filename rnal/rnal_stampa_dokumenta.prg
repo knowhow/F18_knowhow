@@ -365,7 +365,7 @@ STATIC FUNCTION _fill_items( lZpoGN, nVar )
 
          // odredi grupu artikla
          // - izo i kaljeno, izo i bruseno ili ....
-         cDoc_gr_no := set_art_docgr( nArt_id, nDoc_no, nDoc_it_no )
+         cDoc_gr_no := set_art_docgr( nArt_id, nDoc_no, nDoc_it_no, __temp )
 
       ELSE
 
@@ -502,12 +502,12 @@ STATIC FUNCTION _fill_items( lZpoGN, nVar )
 
          IF lBezZaokr == .F.
             // da li je kaljeno ? kod kaljenog nema zaokruzenja
-            lBezZaokr := is_kaljeno( aZpoGN, nDoc_no, nDoc_it_no )
+            lBezZaokr := is_kaljeno( aZpoGN, nDoc_no, nDoc_it_no, NIL, __temp )
          ENDIF
 
          IF lBezZaokr == .F.
             // da li je emajlirano ? isto nema zaokruzenja
-            lBezZaokr := is_emajl( aZpoGN, nDoc_no, nDoc_it_no )
+            lBezZaokr := is_emajl( aZpoGN, nDoc_no, nDoc_it_no, NIL, __temp )
          ENDIF
 
          IF lBezZaokr == .F.
@@ -1033,7 +1033,7 @@ FUNCTION get_art_docgr( nGr )
 // -----------------------------------------------
 // setuj grupu artikla za stampu naloga
 // -----------------------------------------------
-FUNCTION set_art_docgr( nArt_id, nDoc_no, nDocit_no )
+FUNCTION set_art_docgr( nArt_id, nDoc_no, nDocit_no, lPriprema )
 
    LOCAL cGroup := ""
    LOCAL aArt := {}
@@ -1059,10 +1059,10 @@ FUNCTION set_art_docgr( nArt_id, nDoc_no, nDocit_no )
    // lami gotovo staklo - ne laminira RG
    lIsLAMIG := is_lamig( aArt )
 
-   lIsBruseno := is_bruseno( aArt, nDoc_no, nDocIt_no )
-   lIsBuseno := is_buseno( aArt, nDoc_no, nDocIt_no )
-   lIsKaljeno := is_kaljeno( aArt, nDoc_no, nDocIt_no )
-   lIsEmajl := is_emajl( aArt, nDoc_no, nDocIt_no )
+   lIsBruseno := is_bruseno( aArt, nDoc_no, nDocIt_no, NIL, lPriprema )
+   lIsBuseno := is_buseno( aArt, nDoc_no, nDocIt_no, NIL, lPriprema )
+   lIsKaljeno := is_kaljeno( aArt, nDoc_no, nDocIt_no, NIL, lPriprema )
+   lIsEmajl := is_emajl( aArt, nDoc_no, nDocIt_no, NIL, lPriprema )
 
    // grupe su sljedece
    // 1 - rezano
@@ -1231,7 +1231,7 @@ FUNCTION is_vglass( aArticle )
 // ------------------------------------------------------------
 // da li je staklo kaljeno ?
 // ------------------------------------------------------------
-FUNCTION is_kaljeno( aArticle, nDoc_no, nDocit_no, nDoc_el_no )
+FUNCTION is_kaljeno( aArticle, nDoc_no, nDocit_no, nDoc_el_no, lPriprema )
 
    LOCAL lRet := .F.
    LOCAL cSrcJok := AllTrim( gAopKaljenje )
@@ -1243,7 +1243,7 @@ FUNCTION is_kaljeno( aArticle, nDoc_no, nDocit_no, nDoc_el_no )
    lRet := postoji_obrada_u_artiklu( aArticle, cSrcJok )
 
    IF lRet == .F.
-      lRet := postoji_obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok )
+      lRet := postoji_obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok, lPriprema )
    ENDIF
 
    RETURN lRet
@@ -1252,7 +1252,7 @@ FUNCTION is_kaljeno( aArticle, nDoc_no, nDocit_no, nDoc_el_no )
 // -----------------------------------------------------------
 // da li je staklo emajlirano ???
 // -----------------------------------------------------------
-FUNCTION is_emajl( aArticle, nDoc_no, nDocit_no, nDoc_el_no )
+FUNCTION is_emajl( aArticle, nDoc_no, nDocit_no, nDoc_el_no, lPriprema )
 
    LOCAL lRet := .F.
    LOCAL cSrcJok := "<A_E>"
@@ -1264,7 +1264,7 @@ FUNCTION is_emajl( aArticle, nDoc_no, nDocit_no, nDoc_el_no )
    lRet := postoji_obrada_u_artiklu( aArticle, cSrcJok )
 
    IF lRet == .F.
-      lRet := postoji_obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok )
+      lRet := postoji_obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok, lPriprema )
    ENDIF
 
    RETURN lRet
@@ -1274,19 +1274,19 @@ FUNCTION is_emajl( aArticle, nDoc_no, nDocit_no, nDoc_el_no )
 // -------------------------------------------------------------
 // da li je staklo kaljeno ???
 // -------------------------------------------------------------
-FUNCTION is_bruseno( aArticle, nDoc_no, nDocit_no, nDoc_el_no )
+FUNCTION is_bruseno( aArticle, nDoc_no, nDocit_no, nDoc_el_no, lPriprema )
 
    LOCAL lRet := .F.
    LOCAL cSrcJok := AllTrim( gAopBrusenje )
 
-   IF nDoc_el_no == nil
+   IF nDoc_el_no == NIL
       nDoc_el_no := 0
    ENDIF
 
    lRet := postoji_obrada_u_artiklu( aArticle, cSrcJok )
 
    IF lRet == .F.
-      lRet := postoji_obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok )
+      lRet := postoji_obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok, lPriprema )
    ENDIF
 
    RETURN lRet
@@ -1296,7 +1296,7 @@ FUNCTION is_bruseno( aArticle, nDoc_no, nDocit_no, nDoc_el_no )
 // -------------------------------------------------------------
 // da li je staklo buseno ???
 // -------------------------------------------------------------
-FUNCTION is_buseno( aArticle, nDoc_no, nDocit_no, nDoc_el_no )
+FUNCTION is_buseno( aArticle, nDoc_no, nDocit_no, nDoc_el_no, lPriprema )
 
    LOCAL lRet := .F.
    LOCAL cSrcJok := "<A_BU>"
@@ -1308,7 +1308,7 @@ FUNCTION is_buseno( aArticle, nDoc_no, nDocit_no, nDoc_el_no )
    lRet := postoji_obrada_u_artiklu( aArticle, cSrcJok )
 
    IF lRet == .F.
-      lRet := postoji_obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok )
+      lRet := postoji_obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok, lPriprema )
    ENDIF
 
    RETURN lRet
@@ -1316,10 +1316,20 @@ FUNCTION is_buseno( aArticle, nDoc_no, nDocit_no, nDoc_el_no )
 
 
 /*
-   Provjerava postoji li obrada unutar matrice artikla
+   Opis: Provjerava postoji li obrada unutar matrice artikla
 
-   Primjer: postoji_obrada_u_artiklu( aArticle, "<A_B>" ) => .T. ili .F.
-   Provjerit će da li u matrici artikla postoji obrada brušenje
+   Usage: postoji_obrada_u_artiklu( aArticle, "<A_B>" )
+
+      Parametri:
+      1) matrica sa definicijom elemenata artikla
+      2) operacija brušenja "<A_B>"
+
+      Return:
+         .T. postoji zadana obrada
+
+   Prerequisites:
+     formirana matrica artikla sa funkcijom _art_set_descr()
+
 */
 STATIC FUNCTION postoji_obrada_u_artiklu( aArticle, cSrcObrada )
 
@@ -1335,26 +1345,44 @@ STATIC FUNCTION postoji_obrada_u_artiklu( aArticle, cSrcObrada )
 
 
 /*
-   Provjerava da li unutar dodatnih operacija postoji određena obrada.
-   Provjerava se tabela DOC_OPS ili _DOC_OPS (tabela pripreme kada se vrši na osnovu naloga iz pripreme)
-  
-   Primjer: postoji_obrada_u_operacijama( 1, 1, 3, "<A_B>" ) => .T. ili .F.
+   Opis: Provjerava da li unutar dodatnih operacija postoji određena obrada.
 
-   provjerit će da li se u tabelu DOC_OPS za dokument 1, stavku 1, element artikla 3 (treće staklo) nalazi operacija
-   brušenja
+   Usage: postoji_obrada_u_operacijama( 1, 1, 3, "<A_B>", .T. ) 
 
+      Parametri:
+      1) dokument 1 tabele DOC_OPS
+      2) stavka 1
+      3) element artikla 3 (treće staklo)
+      4) operacija brušenja "<A_B>" 
+      5) gledati tabelu pripreme ili kumulativ
+
+      Return:
+        .T.  postoji zadana obrada
+
+   Prerequisites:
+
+   - Mora biti otvorena Workarea: 
+       - DOC_OPS ili _DOC_OPS (priprema)
+
+   Napomene:
+
+    - DOC_OPS - tabela operacija dokumenta (kumulativna)
+    - _DOC_OPS - tabela operacija dokumenta (priprema)
 */
-STATIC FUNCTION postoji_obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcObrada )
+
+STATIC FUNCTION postoji_obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcObrada, lPriprema )
 
    LOCAL lRet := .F.
    LOCAL nTArea := Select()
    LOCAL nTable := F_DOC_OPS
-
-   IF __temp == .T.
-      nTable := F__DOC_OPS
+  
+   IF lPriprema == NIL
+      lPriprema := .F.
    ENDIF
 
-   // provjeri na osnovu DOC_AOP
+   IF lPriprema
+      nTable := F__DOC_OPS
+   ENDIF
 
    SELECT ( nTable )
    SET ORDER TO TAG "1"
@@ -1452,12 +1480,12 @@ FUNCTION recalc_pr()
 
    IF lBezZaokr == .F.
       // da li je kaljeno ? kod kaljenog nema zaokruzenja
-      lBezZaokr := is_kaljeno( aZpoGN, field->doc_no, field->doc_it_no )
+      lBezZaokr := is_kaljeno( aZpoGN, field->doc_no, field->doc_it_no, NIL, .T. )
    ENDIF
 
    IF lBezZaokr == .F.
       // da li je emajlirano ? isto nema zaokruzenja
-      lBezZaokr := is_emajl( aZpoGN, field->doc_no, field->doc_it_no )
+      lBezZaokr := is_emajl( aZpoGN, field->doc_no, field->doc_it_no, NIL, .T. )
    ENDIF
 
    IF lBezZaokr == .F.
@@ -1479,3 +1507,5 @@ FUNCTION recalc_pr()
       field->doc_it_net WITH Round( obrl_neto( field->doc_it_tot, aZpoGN ), 2 )
 
    RETURN
+
+

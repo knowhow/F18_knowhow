@@ -20,7 +20,7 @@ STATIC __txt2
 STATIC __txt3
 
 
-FUNCTION LLP()
+FUNCTION lager_lista_prodavnica()
 
    PARAMETERS lPocStanje
 

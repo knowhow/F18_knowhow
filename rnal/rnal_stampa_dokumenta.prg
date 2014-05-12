@@ -1315,9 +1315,12 @@ FUNCTION is_buseno( aArticle, nDoc_no, nDocit_no, nDoc_el_no )
 
 
 
-// ----------------------------------------------------
-// provjeri obradu na osnovu matrice artikla
-// ----------------------------------------------------
+/*
+   Provjerava postoji li obrada unutar matrice artikla
+
+   Primjer: obrada_u_artiklu( aArticle, "<A_B>" ) => .T. ili .F.
+   Provjerit će da li u matrici artikla postoji obrada brušenje
+*/
 STATIC FUNCTION obrada_u_artiklu( aArticle, cSrcObrada )
 
    LOCAL lRet := .F.
@@ -1331,12 +1334,16 @@ STATIC FUNCTION obrada_u_artiklu( aArticle, cSrcObrada )
    RETURN lRet
 
 
-// ----------------------------------------------------------------------
-// provjeri obradu u tabeli DOC_OPS
-// nDocIt_no - redni broj stavke naloga
-// cSrcObrada - djoker obrade <AOP_K> ....
-// koju obradu trazimo
-// ----------------------------------------------------------------------
+/*
+   Provjerava da li unutar dodatnih operacija postoji određena obrada.
+   Provjerava se tabela DOC_OPS ili _DOC_OPS (tabela pripreme kada se vrši na osnovu naloga iz pripreme)
+  
+   Primjer: obrada_u_operacijama( 1, 1, 3, "<A_B>" ) => .T. ili .F.
+
+   provjerit će da li se u tabelu DOC_OPS za dokument 1, stavku 1, element artikla 3 (treće staklo) nalazi operacija
+   brušenja
+
+*/
 STATIC FUNCTION obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcObrada )
 
    LOCAL lRet := .F.

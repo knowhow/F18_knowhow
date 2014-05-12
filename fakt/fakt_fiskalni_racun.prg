@@ -85,6 +85,10 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
 
    SELECT fakt_doks
 
+   IF vec_napravljen_fisc_rn( id_firma, tip_dok, br_dok )
+      RETURN _err_level
+   ENDIF
+
    // da li je racun storno ????
    _storno := fakt_dok_is_storno( id_firma, tip_dok, br_dok )
 
@@ -177,6 +181,24 @@ FUNCTION reklamni_rn_box( rekl_rn )
 
    RETURN rekl_rn
 
+
+
+STATIC FUNCTION vec_napravljen_fisc_rn( id_firma, tip_dok, br_dok )
+   LOCAL lRet := .F.
+   LOCAL nArea := Select()
+
+   SELECT fakt_doks
+   GO TOP
+   SEEK id_firma + tip_dok + br_dok 
+
+   IF Found() .AND. ( field->fisc_rn > 0 .OR. field->fisc_st > 0 )
+      MsgBeep( "Za dokument " + id_firma + "-" + tip_dok + "-" + ALLTRIM( br_dok ) + " već postoji fiskalni račun!" )
+      lRet := .T.
+   ENDIF
+
+   SELECT ( nArea )
+ 
+   RETURN lRet
 
 
 STATIC FUNCTION fakt_dok_is_storno( id_firma, tip_dok, br_dok )

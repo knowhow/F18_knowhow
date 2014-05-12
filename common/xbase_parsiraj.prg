@@ -41,6 +41,12 @@ FUNCTION Parsiraj( cFilterUpit, cImeSifre, cTip, lRekurzivno, nSifWA )
       lRekurzivno := .F.
    ENDIF
 
+   cFilterUpit := TRIM( cFilterUpit )
+
+   IF nSifWA == NIL .AND. Right( cFilterUpit , 1 ) <> ";"
+        cFilterUpit := cFilterUpit + ";"
+   ENDIF
+
    IF !lRekurzivno
       cStartSifra := cFilterUpit
    ENDIF
@@ -211,7 +217,6 @@ FUNCTION Parsiraj( cFilterUpit, cImeSifre, cTip, lRekurzivno, nSifWA )
 
       IF cProlaz == "" .OR. Left( cProlaz, 2 ) == "DE"
 
-         altd()
          MsgO( "Greška u sintaksi !!!" )
          Beep( 4 )
          Inkey()

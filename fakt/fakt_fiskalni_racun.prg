@@ -185,18 +185,17 @@ FUNCTION reklamni_rn_box( rekl_rn )
 
 STATIC FUNCTION vec_napravljen_fisc_rn( id_firma, tip_dok, br_dok )
    LOCAL lRet := .F.
-   LOCAL nArea := Select()
+   LOCAL cWhere
 
-   SELECT fakt_doks
-   GO TOP
-   SEEK id_firma + tip_dok + br_dok 
+   cWhere := " idfirma = " + _sql_quote( id_firma )
+   cWhere += " AND idtipdok = " + _sql_quote( tip_dok )
+   cWhere += " AND brdok = " + _sql_quote( br_dok )
+   cWhere += " AND ( fisc_rn > 0 OR fisc_st > 0 ) "
 
-   IF Found() .AND. ( field->fisc_rn > 0 .OR. field->fisc_st > 0 )
+   IF table_count( "fmk.fakt_doks", cWhere ) > 0
       MsgBeep( "Za dokument " + id_firma + "-" + tip_dok + "-" + ALLTRIM( br_dok ) + " već postoji fiskalni račun!" )
       lRet := .T.
    ENDIF
-
-   SELECT ( nArea )
  
    RETURN lRet
 

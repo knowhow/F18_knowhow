@@ -38,7 +38,7 @@ AADD(_opc, "------------------------------------------- ")
 AADD(_opcexe, {|| nil })
 
 AADD(_opc, "S. specifikacija naloga za poslovodje  ")
-AADD(_opcexe, {|| m_get_spec( 1 ) })
+AADD(_opcexe, {|| rnal_specifikacija_poslovodja(1) })
 
 AADD(_opc, "R. pregled utroska RAL sirovina  ")
 AADD(_opcexe, {|| rpt_ral_calc() })

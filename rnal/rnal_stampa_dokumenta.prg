@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,57 +14,58 @@
 
 
 // variables
-static __temp
-static __doc_no
+STATIC __temp
+STATIC __doc_no
 
 
 
 // -------------------------------------
 // stampa naloga, filovanje prn tabela
 // -------------------------------------
-function st_nalpr( lTemporary, nDoc_no )
-local cFlag := "N"
-local lFlag
+FUNCTION st_nalpr( lTemporary, nDoc_no )
 
-__temp := lTemporary
-__doc_no := nDoc_no
+   LOCAL cFlag := "N"
+   LOCAL lFlag
 
-// kreiraj print tabele
-t_rpt_create()
-// otvori tabele
-t_rpt_open()
+   __temp := lTemporary
+   __doc_no := nDoc_no
 
-rnal_o_tables( __temp )
+   // kreiraj print tabele
+   t_rpt_create()
+   // otvori tabele
+   t_rpt_open()
 
-_fill_main()
-// stavke naloga
-_fill_items()
-// dodatne stavke naloga
-_fill_it2()
-// operacije
-_fill_aops()
+   rnal_o_tables( __temp )
 
-lFlag := _is_p_rekap()
+   _fill_main()
+   // stavke naloga
+   _fill_items()
+   // dodatne stavke naloga
+   _fill_it2()
+   // operacije
+   _fill_aops()
 
-if lFlag == .t.
-    cFlag := "D"
-endif
+   lFlag := _is_p_rekap()
 
-// upisi za rekapitulaciju u t_pars
-add_tpars("N20", cFlag )
+   IF lFlag == .T.
+      cFlag := "D"
+   ENDIF
 
-if gRnalOdt == "D"
-    rnal_nalog_za_proizvodnju_odt()
-else
-    // printaj nalog
-    nalpr_print( .t. )
-endif
+   // upisi za rekapitulaciju u t_pars
+   add_tpars( "N20", cFlag )
 
-my_close_all_dbf()
+   IF gRnalOdt == "D"
+      rnal_nalog_za_proizvodnju_odt()
+   ELSE
+      // printaj nalog
+      nalpr_print( .T. )
+   ENDIF
 
-rnal_o_tables( __temp )
+   my_close_all_dbf()
 
-return DE_REFRESH
+   rnal_o_tables( __temp )
+
+   RETURN DE_REFRESH
 
 
 
@@ -73,198 +74,201 @@ return DE_REFRESH
 // stampa obracunskog lista
 // filovanje prn tabela
 // -------------------------------------
-function st_obr_list( temp, doc_no, a_docs )
-local _gn := .t.
-local _i 
-local _ii
-local _docs := ""
-local _flag := "N"
+FUNCTION st_obr_list( temp, doc_no, a_docs )
 
-if gGnUse == "N"
-    _gn := .f.
-endif
+   LOCAL _gn := .T.
+   LOCAL _i
+   LOCAL _ii
+   LOCAL _docs := ""
+   LOCAL _flag := "N"
 
-if a_docs == NIL .or. LEN( a_docs ) == 0
-    // dodaj onda ovaj nalog koji treba da se stampa
-    a_docs := {}
-    AADD( a_docs, { doc_no, "" })
-endif
+   IF gGnUse == "N"
+      _gn := .F.
+   ENDIF
 
-// setuj opis i dokumente 
-for _ii := 1 to LEN( a_docs )
-    if !EMPTY( _docs )
-        _docs += ","
-    endif
-    _docs += ALLTRIM( STR( a_docs[ _ii, 1 ] ))
-next
+   IF a_docs == NIL .OR. Len( a_docs ) == 0
+      // dodaj onda ovaj nalog koji treba da se stampa
+      a_docs := {}
+      AAdd( a_docs, { doc_no, "" } )
+   ENDIF
 
-__temp := temp
+   // setuj opis i dokumente
+   FOR _ii := 1 TO Len( a_docs )
+      IF !Empty( _docs )
+         _docs += ","
+      ENDIF
+      _docs += AllTrim( Str( a_docs[ _ii, 1 ] ) )
+   NEXT
 
-// kreiraj print tabele
-t_rpt_create()
-// otvori tabele
-t_rpt_open()
+   __temp := temp
 
-rnal_o_tables( __temp )
+   // kreiraj print tabele
+   t_rpt_create()
+   // otvori tabele
+   t_rpt_open()
 
-// prosetaj kroz stavke za stampu !
-for _i := 1 to LEN( a_docs ) 
+   rnal_o_tables( __temp )
 
-    if a_docs[ _i, 1 ] < 0
-        // ovakve stavke preskoci, jer su to brisane stavke !
-        loop
-    endif
+   // prosetaj kroz stavke za stampu !
+   FOR _i := 1 TO Len( a_docs )
 
-    __doc_no := a_docs[ _i, 1 ] 
+      IF a_docs[ _i, 1 ] < 0
+         // ovakve stavke preskoci, jer su to brisane stavke !
+         LOOP
+      ENDIF
 
-    select docs
-    go top
-    seek docno_str( __doc_no )
+      __doc_no := a_docs[ _i, 1 ]
 
-    // osnovni podaci naloga
-    _fill_main( _docs )
-    
-    // stavke naloga
-    _fill_items( _gn, 2 )
-    
-    // dodatne stavke naloga
-    _fill_it2()
-    
-    // operacije
-    _fill_aops()
+      SELECT docs
+      GO TOP
+      SEEK docno_str( __doc_no )
 
-next
+      // osnovni podaci naloga
+      _fill_main( _docs )
 
-_count := t_docit->(RecCount2())
+      // stavke naloga
+      _fill_items( _gn, 2 )
 
-if _count > 0 .and. pitanje(,"Odabrati stavke za stampu ? (D/N)","N") == "D"
-    sel_items()
-endif
+      // dodatne stavke naloga
+      _fill_it2()
 
-// da li se stampa rekapitulacija repromaterijala
-if _is_p_rekap()
-    _flag := "D"
-endif
+      // operacije
+      _fill_aops()
 
-// upisi za rekapitulaciju u t_pars
-add_tpars( "N20", _flag )
+   NEXT
 
-// printaj obracunski list
-if gRnalOdt == "D"
-    rnal_obracunski_list_odt()
-else
-    obrl_print( .t. )
-endif
+   _count := t_docit->( RecCount2() )
 
-my_close_all_dbf()
+   IF _count > 0 .AND. pitanje(, "Odabrati stavke za stampu ? (D/N)", "N" ) == "D"
+      sel_items()
+   ENDIF
 
-rnal_o_tables( __temp )
+   // da li se stampa rekapitulacija repromaterijala
+   IF _is_p_rekap()
+      _flag := "D"
+   ENDIF
 
-return DE_REFRESH
+   // upisi za rekapitulaciju u t_pars
+   add_tpars( "N20", _flag )
+
+   // printaj obracunski list
+   IF gRnalOdt == "D"
+      rnal_obracunski_list_odt()
+   ELSE
+      obrl_print( .T. )
+   ENDIF
+
+   my_close_all_dbf()
+
+   rnal_o_tables( __temp )
+
+   RETURN DE_REFRESH
 
 
 
 // -------------------------------------
 // samo napuni pripremne tabale
 // -------------------------------------
-function st_pripr( lTemporary, nDoc_no, aOlDocs )
-local lGN := .t.
-local i 
-local ii
-local cDocs := ""
-local cFlag := "N"
+FUNCTION st_pripr( lTemporary, nDoc_no, aOlDocs )
 
-if aOlDocs == nil .or. LEN( aOlDocs ) == 0
-    // dodaj onda ovaj nalog koji treba da se stampa
-    aOlDocs := {}
-    AADD(aOlDocs, { nDoc_no, "" })
-endif
+   LOCAL lGN := .T.
+   LOCAL i
+   LOCAL ii
+   LOCAL cDocs := ""
+   LOCAL cFlag := "N"
 
-// setuj opis i dokumente 
-for ii:=1 to LEN(aOlDocs)
-    if !EMPTY(cDocs)
-        cDocs += ","
-    endif
-    cDocs += ALLTRIM( STR(aOlDocs[ii, 1] ))
-next
+   IF aOlDocs == NIL .OR. Len( aOlDocs ) == 0
+      // dodaj onda ovaj nalog koji treba da se stampa
+      aOlDocs := {}
+      AAdd( aOlDocs, { nDoc_no, "" } )
+   ENDIF
 
-__temp := lTemporary
+   // setuj opis i dokumente
+   FOR ii := 1 TO Len( aOlDocs )
+      IF !Empty( cDocs )
+         cDocs += ","
+      ENDIF
+      cDocs += AllTrim( Str( aOlDocs[ ii, 1 ] ) )
+   NEXT
 
-// kreiraj print tabele
-t_rpt_create()
-// otvori tabele
-t_rpt_open()
+   __temp := lTemporary
 
-rnal_o_tables( __temp )
+   // kreiraj print tabele
+   t_rpt_create()
+   // otvori tabele
+   t_rpt_open()
 
-// prosetaj kroz stavke za stampu !
-for i:=1 to LEN( aOlDocs ) 
+   rnal_o_tables( __temp )
 
-    if aOlDocs[i, 1] < 0
-        // ovakve stavke preskoci...
-        // jer su to brisane stavke !
-        loop
-    endif
+   // prosetaj kroz stavke za stampu !
+   FOR i := 1 TO Len( aOlDocs )
 
-    __doc_no := aOlDocs[ i, 1 ] 
+      IF aOlDocs[ i, 1 ] < 0
+         // ovakve stavke preskoci...
+         // jer su to brisane stavke !
+         LOOP
+      ENDIF
 
-    select docs
-    go top
-    seek docno_str( __doc_no )
+      __doc_no := aOlDocs[ i, 1 ]
 
-    // osnovni podaci naloga
-    _fill_main( cDocs )
-    
-    // stavke naloga
-    _fill_items( lGN, 2 )
-    
-    // dodatne stavke naloga
-    _fill_it2()
-    
-    // operacije
-    _fill_aops()
+      SELECT docs
+      GO TOP
+      SEEK docno_str( __doc_no )
 
-next
+      // osnovni podaci naloga
+      _fill_main( cDocs )
 
-my_close_all_dbf()
+      // stavke naloga
+      _fill_items( lGN, 2 )
 
-rnal_o_tables( __temp )
+      // dodatne stavke naloga
+      _fill_it2()
 
-return DE_REFRESH
+      // operacije
+      _fill_aops()
+
+   NEXT
+
+   my_close_all_dbf()
+
+   rnal_o_tables( __temp )
+
+   RETURN DE_REFRESH
 
 
 
 // -------------------------------------
 // stampa labela na osnovu naloga
 // -------------------------------------
-function st_label( lTemporary, nDoc_no )
-local lGn := .t.
+FUNCTION st_label( lTemporary, nDoc_no )
 
-__temp := lTemporary
-__doc_no := nDoc_no
+   LOCAL lGn := .T.
 
-// kreiraj print tabele
-t_rpt_create()
-// otvori tabele
-t_rpt_open()
+   __temp := lTemporary
+   __doc_no := nDoc_no
 
-rnal_o_tables( __temp )
+   // kreiraj print tabele
+   t_rpt_create()
+   // otvori tabele
+   t_rpt_open()
 
-// osnovni podaci naloga
-_fill_main()
-// stavke naloga
-_fill_items( lGn, 2 )
-// operacije
-_fill_aops()
+   rnal_o_tables( __temp )
 
-// printaj labele
-lab_print( lTemporary )
+   // osnovni podaci naloga
+   _fill_main()
+   // stavke naloga
+   _fill_items( lGn, 2 )
+   // operacije
+   _fill_aops()
 
-my_close_all_dbf()
+   // printaj labele
+   lab_print( lTemporary )
 
-rnal_o_tables( __temp )
+   my_close_all_dbf()
 
-return DE_REFRESH
+   rnal_o_tables( __temp )
+
+   RETURN DE_REFRESH
 
 
 
@@ -273,1182 +277,1235 @@ return DE_REFRESH
 // lZPoGn - zaokruzenje po GN .t. or .f.
 // nVar - varijanta 1, 2, 3... 1-nalog, 2-obrl. itd..
 // -------------------------------------------------------
-static function _fill_items( lZpoGN, nVar )
-local nTable := F_DOC_IT
-local nTOps := F_DOC_OPS
-local nArt_id
-local cArt_desc
-local cArt_full_desc
-local nDoc_it_no
-local cDoc_gr_no := "0"
-local nQtty
-local nTotal
-local nTot_m
-local nHeigh
-local nHe2
-local nWidth
-local nWi2
-local nZWidth := 0
-local nZH2 := 0
-local nZW2 := 0
-local nZHeigh := 0
-local nNeto := 0
-local nBruto := 0
-local lGroups := .f.
-local nGr1 
-local nGr2
-local cPosition
-local cIt_lab_pos, cArtShTmp, cOrigDesc
-local xx
-local nScan
+STATIC FUNCTION _fill_items( lZpoGN, nVar )
 
-if nVar == NIL
-    nVar := 1
-endif
+   LOCAL nTable := F_DOC_IT
+   LOCAL nTOps := F_DOC_OPS
+   LOCAL nArt_id
+   LOCAL cArt_desc
+   LOCAL cArt_full_desc
+   LOCAL nDoc_it_no
+   LOCAL cDoc_gr_no := "0"
+   LOCAL nQtty
+   LOCAL nTotal
+   LOCAL nTot_m
+   LOCAL nHeigh
+   LOCAL nHe2
+   LOCAL nWidth
+   LOCAL nWi2
+   LOCAL nZWidth := 0
+   LOCAL nZH2 := 0
+   LOCAL nZW2 := 0
+   LOCAL nZHeigh := 0
+   LOCAL nNeto := 0
+   LOCAL nBruto := 0
+   LOCAL lGroups := .F.
+   LOCAL nGr1
+   LOCAL nGr2
+   LOCAL cPosition
+   LOCAL cIt_lab_pos, cArtShTmp, cOrigDesc
+   LOCAL xx
+   LOCAL nScan
 
-if lZpoGN == NIL
-    lZPoGN := .f.
-endif
+   IF nVar == NIL
+      nVar := 1
+   ENDIF
 
-// iskljucen parametar zaokruzenja
-if gGnUse == "N"
-    lZPoGn := .f.
-endif
+   IF lZpoGN == NIL
+      lZPoGN := .F.
+   ENDIF
 
-// samo kod naloga se vrsi dijeljenje po grupama...
-if nVar == 1 .and. Pitanje(,"Razdijeliti nalog po grupama ?", "D" ) == "D"
-    lGroups := .t.
-endif
+   // iskljucen parametar zaokruzenja
+   IF gGnUse == "N"
+      lZPoGn := .F.
+   ENDIF
 
-if ( __temp == .t. )
-    nTable := F__DOC_IT
-    nTOps := F__DOC_OPS
-endif
+   // samo kod naloga se vrsi dijeljenje po grupama...
+   IF nVar == 1 .AND. Pitanje(, "Razdijeliti nalog po grupama ?", "D" ) == "D"
+      lGroups := .T.
+   ENDIF
 
-select (nTable)
-set order to tag "1"
-go top
-seek docno_str(__doc_no)
+   IF ( __temp == .T. )
+      nTable := F__DOC_IT
+      nTOps := F__DOC_OPS
+   ENDIF
 
-nArtTmp := -1
-cGrTmp := "-1"
-cArtShTmp := "xxx"
+   SELECT ( nTable )
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK docno_str( __doc_no )
 
-// filuj stavke
-do while !EOF() .and. field->doc_no == __doc_no
-    
-    nArt_id := field->art_id
-    nDoc_it_no := field->doc_it_no
-    nDoc_no := field->doc_no
-    
-    cDoc_it_pos := ALLTRIM(field->doc_it_pos)
-    cIt_lab_pos := field->it_lab_pos
-    cPosition := ""
+   nArtTmp := -1
+   cGrTmp := "-1"
+   cArtShTmp := "xxx"
 
-    if !EMPTY( cDoc_it_pos )
-        cPosition := "pozicija: " + cDoc_it_pos + ", "
-    endif
+   // filuj stavke
+   DO WHILE !Eof() .AND. field->doc_no == __doc_no
 
-    // tip artikla
-    cDoc_it_type := field->doc_it_typ
-    
-    // nadji proizvod
-    select articles
-    hseek artid_str( nArt_id )
+      nArt_id := field->art_id
+      nDoc_it_no := field->doc_it_no
+      nDoc_no := field->doc_no
 
-    if lGroups == .t.
-        
-        // odredi grupu artikla
-        // - izo i kaljeno, izo i bruseno ili ....
-        cDoc_gr_no := set_art_docgr( nArt_id, nDoc_no, nDoc_it_no )
-        
-    else
-        
-        cDoc_gr_no := "0"
-        
-    endif
-    
-    cOper_desc := ""
-    lPrepust := .f.
+      cDoc_it_pos := AllTrim( field->doc_it_pos )
+      cIt_lab_pos := field->it_lab_pos
+      cPosition := ""
 
-    nHeigh := 0
-    nWidth := 0
+      IF !Empty( cDoc_it_pos )
+         cPosition := "pozicija: " + cDoc_it_pos + ", "
+      ENDIF
 
-    // u varijanti obracunskog lista uzmi i operacije za ovu stavku
-    if nVar = 2
+      // tip artikla
+      cDoc_it_type := field->doc_it_typ
 
-        aOper := {}
-        cTmp := ""
-        
-        select ( nTOps )
-        seek docno_str( nDoc_no ) + docit_str( nDoc_it_no )
-        do while !EOF() .and. field->doc_no = nDoc_no ;
-            .and. field->doc_it_no = nDoc_it_no
-        
+      // nadji proizvod
+      SELECT articles
+      hseek artid_str( nArt_id )
+
+      IF lGroups == .T.
+
+         // odredi grupu artikla
+         // - izo i kaljeno, izo i bruseno ili ....
+         cDoc_gr_no := set_art_docgr( nArt_id, nDoc_no, nDoc_it_no, __temp )
+
+      ELSE
+
+         cDoc_gr_no := "0"
+
+      ENDIF
+
+      cOper_desc := ""
+      lPrepust := .F.
+
+      nHeigh := 0
+      nWidth := 0
+
+      // u varijanti obracunskog lista uzmi i operacije za ovu stavku
+      IF nVar = 2
+
+         aOper := {}
+         cTmp := ""
+
+         SELECT ( nTOps )
+         SEEK docno_str( nDoc_no ) + docit_str( nDoc_it_no )
+         DO WHILE !Eof() .AND. field->doc_no = nDoc_no ;
+               .AND. field->doc_it_no = nDoc_it_no
+
             // ako je prepust, uzmi dimenzije
-            cTmp_val := ALLTRIM( field->aop_value )
+            cTmp_val := AllTrim( field->aop_value )
 
-            if ( "<A_PREP>" $ cTmp_val ) .and. lPrepust == .f.
-                
-                lPrepust := .t.
-                prep_read( cTmp_val, @nWidth, @nHeigh )
-            
-            endif
+            IF ( "<A_PREP>" $ cTmp_val ) .AND. lPrepust == .F.
+
+               lPrepust := .T.
+               prep_read( cTmp_val, @nWidth, @nHeigh )
+
+            ENDIF
 
             cTmp := g_aop_desc( field->aop_id )
-            
-            nScan := ASCAN( aOper, {|xVar| xVar[1] = cTmp } )
-            
-            if nScan = 0
-                AADD( aOper, { cTmp } ) 
-            endif
 
-            skip
-        enddo
+            nScan := AScan( aOper, {| xVar| xVar[ 1 ] = cTmp } )
 
-        for xx := 1 to LEN( aOper )
-            
-            if !EMPTY( cOper_desc)
-                cOper_desc += ", "
-            endif
-            
-            cOper_desc += ALLTRIM( aOper[xx, 1] )
-        next
+            IF nScan = 0
+               AAdd( aOper, { cTmp } )
+            ENDIF
 
-        if !EMPTY( cOper_desc )
+            SKIP
+         ENDDO
+
+         FOR xx := 1 TO Len( aOper )
+
+            IF !Empty( cOper_desc )
+               cOper_desc += ", "
+            ENDIF
+
+            cOper_desc += AllTrim( aOper[ xx, 1 ] )
+         NEXT
+
+         IF !Empty( cOper_desc )
             cOper_desc := ", " + cOper_desc
-        endif
+         ENDIF
 
-    endif
+      ENDIF
 
-    cArt_full_desc := ALLTRIM(articles->art_full_d)
-    cArt_desc := ALLTRIM(articles->art_desc)
-    
-    cArt_sh := cArt_desc
-    cArt_sh += cOper_desc
+      cArt_full_desc := AllTrim( articles->art_full_d )
+      cArt_desc := AllTrim( articles->art_desc )
 
-    // temporary
-    cArt_desc := "(" + cArt_desc + ")"
-    cArt_desc += " " + cArt_full_desc
-    
-    if nVar = 2
-        cArt_desc += cOper_desc
-    endif
+      cArt_sh := cArt_desc
+      cArt_sh += cOper_desc
 
-    cOrigDesc := cArt_desc
+      // temporary
+      cArt_desc := "(" + cArt_desc + ")"
+      cArt_desc += " " + cArt_full_desc
 
-    // ako je artikal isti ne treba mu opis...
-    if ( nArt_Id == nArtTmp ) .and. ( cGrTmp == cDoc_gr_no ) .and. ( cArt_sh == cArtShTmp )
-        if lZpoGN == .f.
+      IF nVar = 2
+         cArt_desc += cOper_desc
+      ENDIF
+
+      cOrigDesc := cArt_desc
+
+      // ako je artikal isti ne treba mu opis...
+      IF ( nArt_Id == nArtTmp ) .AND. ( cGrTmp == cDoc_gr_no ) .AND. ( cArt_sh == cArtShTmp )
+         IF lZpoGN == .F.
             cArt_desc := ""
-        endif
-    endif
+         ENDIF
+      ENDIF
 
-    select ( nTable )
-    
-    nQtty := field->doc_it_qtt
- 
-    // dimenzije stakla
-    if nHeigh < field->doc_it_hei
-        nHeigh := field->doc_it_hei
-    endif
+      SELECT ( nTable )
 
-    if nWidth < field->doc_it_wid
-        nWidth := field->doc_it_wid
-    endif
+      nQtty := field->doc_it_qtt
 
-    // dimenzije ako je oblik SHAPE
-    nHe2 := field->doc_it_h2
-    nWi2 := field->doc_it_w2
+      // dimenzije stakla
+      IF nHeigh < field->doc_it_hei
+         nHeigh := field->doc_it_hei
+      ENDIF
 
-    // kod obracunskog lista
-    if nVar = 2
-        // prepust...
-    endif
+      IF nWidth < field->doc_it_wid
+         nWidth := field->doc_it_wid
+      ENDIF
 
-    // nadmorska visina
-    // samo ako je razlicita vrijednost od default-ne
-    if (field->doc_it_alt <> gDefNVM) .or. ;
-        ( field->doc_acity <> ALLTRIM(gDefCity) )
-        nDocit_altt := field->doc_it_alt
-        cDocit_city := field->doc_acity
-    else
-        nDocit_altt := 0
-        cDocit_city := ""
-    endif
-    
-    // ukupno mm -> m2
-    nTotal := ROUND( c_ukvadrat(nQtty, nHeigh, nWidth), 2)
-    
-    // ukupno duzinski
-    nTot_m := ROUND( c_duzinski(nQtty, nHeigh, nWidth), 2)
+      // dimenzije ako je oblik SHAPE
+      nHe2 := field->doc_it_h2
+      nWi2 := field->doc_it_w2
 
-    cDoc_it_schema := field->doc_it_sch
-    // na napomene dodaj i poziciju ako postoji...
-    cDoc_it_desc := cPosition + ALLTRIM( field->doc_it_des )
-         
-    aZpoGN := {}
-    // setuje se matrica sa elementima artikla
-    _art_set_descr( nArt_id, .f., nil, @aZpoGN, .t. )
-    
-    if lZpoGN == .t.
+      // kod obracunskog lista
+      IF nVar = 2
+         // prepust...
+      ENDIF
 
-        lBezZaokr := .f.
+      // nadmorska visina
+      // samo ako je razlicita vrijednost od default-ne
+      IF ( field->doc_it_alt <> gDefNVM ) .OR. ;
+            ( field->doc_acity <> AllTrim( gDefCity ) )
+         nDocit_altt := field->doc_it_alt
+         cDocit_city := field->doc_acity
+      ELSE
+         nDocit_altt := 0
+         cDocit_city := ""
+      ENDIF
 
-        if lBezZaokr == .f.
+      // ukupno mm -> m2
+      nTotal := Round( c_ukvadrat( nQtty, nHeigh, nWidth ), 2 )
+
+      // ukupno duzinski
+      nTot_m := Round( c_duzinski( nQtty, nHeigh, nWidth ), 2 )
+
+      cDoc_it_schema := field->doc_it_sch
+      // na napomene dodaj i poziciju ako postoji...
+      cDoc_it_desc := cPosition + AllTrim( field->doc_it_des )
+
+      aZpoGN := {}
+      // setuje se matrica sa elementima artikla
+      _art_set_descr( nArt_id, .F., nil, @aZpoGN, .T. )
+
+      IF lZpoGN == .T.
+
+         lBezZaokr := .F.
+
+         IF lBezZaokr == .F.
             // da li je kaljeno ? kod kaljenog nema zaokruzenja
-            lBezZaokr := is_kaljeno( aZpoGN, nDoc_no, nDoc_it_no )
-        endif
+            lBezZaokr := is_kaljeno( aZpoGN, nDoc_no, nDoc_it_no, NIL, __temp )
+         ENDIF
 
-        if lBezZaokr == .f.
+         IF lBezZaokr == .F.
             // da li je emajlirano ? isto nema zaokruzenja
-            lBezZaokr := is_emajl(aZpoGN, nDoc_no, nDoc_it_no )
-        endif
+            lBezZaokr := is_emajl( aZpoGN, nDoc_no, nDoc_it_no, NIL, __temp )
+         ENDIF
 
-        if lBezZaokr == .f.
+         IF lBezZaokr == .F.
             // da li je vatroglas ? isto nema zaokruzenja
             lBezZaokr := is_vglass( aZpoGN )
-        endif
+         ENDIF
 
-        if lBezZaokr == .f.
+         IF lBezZaokr == .F.
             // da li je plexiglas ? isto nema zaokruzenja
             lBezZaokr := is_plex( aZpoGN )
-        endif
-    
-        nZHeigh := obrl_zaok( nHeigh, aZpoGN, lBezZaokr )
-        nZH2 := obrl_zaok( nHe2, aZpoGN, lBezZaokr )
-        
-        nZWidth := obrl_zaok( nWidth, aZpoGN, lBezZaokr )
-        nZW2 := obrl_zaok( nWi2, aZpoGN, lBezZaokr )
-        
-        // ako se zaokruzuje onda total ide po zaokr.vrijednostima
-        nTotal := ROUND( c_ukvadrat( nQtty, nZHeigh, nZWidth, nZH2, nZW2 ), 2)
-           
-    endif
-         
-        
-    // izracunaj neto
-    nNeto := ROUND( obrl_neto( nTotal, aZpoGN ), 2)
-    nBruto := 0
-    
-    // prva grupa
-    nGr1 := VAL( SUBSTR(cDoc_gr_no, 1, 1) )
+         ENDIF
 
-    // dodaj u stavke
-    a_t_docit( __doc_no, nGr1, nDoc_it_no, nArt_id, cArt_desc , cArt_sh, cOrigDesc, ;
-          cDoc_it_schema, cDoc_it_desc, cDoc_it_Type, ;
-          nQtty, nHeigh, nWidth, ;
-          nHe2, nWi2, ;
-          nDocit_altt, cDocit_city, nTotal, nTot_m, ;
-          nZHeigh, nZWidth, ;
-          nZH2, nZW2, ;
-          nNeto, nBruto, cDoc_it_pos, cIt_lab_pos )
-    
-    
-    if LEN( cDoc_gr_no ) > 1
-    
-        // razdvoji nalog na 2 dijela   
-        // ako ima vise grupa
-    
-        for xx := 1 to ( LEN(cDoc_gr_no) )
-    
+         nZHeigh := obrl_zaok( nHeigh, aZpoGN, lBezZaokr )
+         nZH2 := obrl_zaok( nHe2, aZpoGN, lBezZaokr )
+
+         nZWidth := obrl_zaok( nWidth, aZpoGN, lBezZaokr )
+         nZW2 := obrl_zaok( nWi2, aZpoGN, lBezZaokr )
+
+         // ako se zaokruzuje onda total ide po zaokr.vrijednostima
+         nTotal := Round( c_ukvadrat( nQtty, nZHeigh, nZWidth, nZH2, nZW2 ), 2 )
+
+      ENDIF
+
+
+      // izracunaj neto
+      nNeto := Round( obrl_neto( nTotal, aZpoGN ), 2 )
+      nBruto := 0
+
+      // prva grupa
+      nGr1 := Val( SubStr( cDoc_gr_no, 1, 1 ) )
+
+      // dodaj u stavke
+      a_t_docit( __doc_no, nGr1, nDoc_it_no, nArt_id, cArt_desc, cArt_sh, cOrigDesc, ;
+         cDoc_it_schema, cDoc_it_desc, cDoc_it_Type, ;
+         nQtty, nHeigh, nWidth, ;
+         nHe2, nWi2, ;
+         nDocit_altt, cDocit_city, nTotal, nTot_m, ;
+         nZHeigh, nZWidth, ;
+         nZH2, nZW2, ;
+         nNeto, nBruto, cDoc_it_pos, cIt_lab_pos )
+
+
+      IF Len( cDoc_gr_no ) > 1
+
+         // razdvoji nalog na 2 dijela
+         // ako ima vise grupa
+
+         FOR xx := 1 to ( Len( cDoc_gr_no ) )
+
             // ako je vec kao grupa 1 onda preskoci...
-            if VAL(SUBSTR(cDoc_gr_no, xx, 1)) == nGr1
-                loop
-            endif
+            IF Val( SubStr( cDoc_gr_no, xx, 1 ) ) == nGr1
+               LOOP
+            ENDIF
 
-            a_t_docit( __doc_no, VAL(SUBSTR(cDoc_Gr_no, xx, 1)), nDoc_it_no, nArt_id, cArt_desc , cArt_sh, cOrigDesc, ;
-                cDoc_it_schema, cDoc_it_desc, cDoc_it_type, ;
-                nQtty, nHeigh, nWidth, ;
-                nHe2, nWi2, ;
-                nDocit_altt, cDocit_city, nTotal, nTot_m, ;
-                nZHeigh, nZWidth, ;
-                nZH2, nZW2, ;
-                nNeto, nBruto, cDoc_it_pos, cIt_lab_pos )
+            a_t_docit( __doc_no, Val( SubStr( cDoc_Gr_no, xx, 1 ) ), nDoc_it_no, nArt_id, cArt_desc, cArt_sh, cOrigDesc, ;
+               cDoc_it_schema, cDoc_it_desc, cDoc_it_type, ;
+               nQtty, nHeigh, nWidth, ;
+               nHe2, nWi2, ;
+               nDocit_altt, cDocit_city, nTotal, nTot_m, ;
+               nZHeigh, nZWidth, ;
+               nZH2, nZW2, ;
+               nNeto, nBruto, cDoc_it_pos, cIt_lab_pos )
 
-        next
+         NEXT
 
-    endif
-    
-    nArtTmp := nArt_Id
-    cGrTmp := cDoc_gr_no
-    cArtShTmp := cArt_sh
+      ENDIF
 
-    select ( nTable )
-    skip
-enddo
-    
-return
+      nArtTmp := nArt_Id
+      cGrTmp := cDoc_gr_no
+      cArtShTmp := cArt_sh
+
+      SELECT ( nTable )
+      SKIP
+   ENDDO
+
+   RETURN
 
 
 // ---------------------------------------------------
 // da li printati rekapitulaciju repromaterijala
 // ---------------------------------------------------
-function _is_p_rekap()
-local lRet := .f.
-local nTArea := SELECT()
+FUNCTION _is_p_rekap()
 
-select t_docit2
+   LOCAL lRet := .F.
+   LOCAL nTArea := Select()
 
-if RECCOUNT2() > 0
-    if Pitanje(,"Stampati rekapitulaciju materijala ?", "D") == "D"
-        lRet := .t.
-    endif
-endif
+   SELECT t_docit2
 
-select ( nTArea )
-return lRet
+   IF RECCOUNT2() > 0
+      IF Pitanje(, "Stampati rekapitulaciju materijala ?", "D" ) == "D"
+         lRet := .T.
+      ENDIF
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN lRet
 
 
 // ----------------------------------
 // filuj tabele za stampu DOC_IT2
 // ----------------------------------
-static function _fill_it2()
-local nTable := F_DOC_IT2
-local cArt_id
-local cArt_desc
-local nDoc_it_no
-local nQtty
+STATIC FUNCTION _fill_it2()
 
-if ( __temp == .t. )
-    nTable := F__DOC_IT2
-endif
+   LOCAL nTable := F_DOC_IT2
+   LOCAL cArt_id
+   LOCAL cArt_desc
+   LOCAL nDoc_it_no
+   LOCAL nQtty
 
-select (nTable)
+   IF ( __temp == .T. )
+      nTable := F__DOC_IT2
+   ENDIF
 
-set order to tag "1"
-go top
-seek docno_str(__doc_no)
+   SELECT ( nTable )
 
-// filuj stavke
-do while !EOF() .and. field->doc_no == __doc_no
-    
-    cArt_id := field->art_id
-    nDoc_it_no := field->doc_it_no
-    nDoc_no := field->doc_no
-    nIt_no := field->it_no
-    
-    // nadji artikal
-    select roba
-    hseek cArt_id
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK docno_str( __doc_no )
 
-    cArt_desc := ALLTRIM( roba->naz )
-    
-    select ( nTable )
-    
-    nQtty := field->doc_it_qtt
-    nQ2 := field->doc_it_q2
-    nPrice := field->doc_it_pri
+   // filuj stavke
+   DO WHILE !Eof() .AND. field->doc_no == __doc_no
 
-	cJmj := field->jmj
-	cJmjArt := field->jmj_art
+      cArt_id := field->art_id
+      nDoc_it_no := field->doc_it_no
+      nDoc_no := field->doc_no
+      nIt_no := field->it_no
 
-    cDesc := ALLTRIM( field->descr )
-    cSh_desc := ALLTRIM( field->sh_desc )
+      // nadji artikal
+      SELECT roba
+      hseek cArt_id
 
-    cDescription := ""
+      cArt_desc := AllTrim( roba->naz )
 
-    if !EMPTY( cSh_desc )
-        cDescription += cSh_desc
-    endif
+      SELECT ( nTable )
 
-    if !EMPTY( cDesc )
-        cDescription += ", " + cDesc
-    endif
-    
-    // dodaj u stavke
-    a_t_docit2( __doc_no, nDoc_it_no, nIt_no, cArt_id, cArt_desc , ;
-          nQtty, nQ2, cJmj, cJmjArt, nPrice, cDescription )
-    
-    select ( nTable )
-    skip
+      nQtty := field->doc_it_qtt
+      nQ2 := field->doc_it_q2
+      nPrice := field->doc_it_pri
 
-enddo
+      cJmj := field->jmj
+      cJmjArt := field->jmj_art
 
+      cDesc := AllTrim( field->descr )
+      cSh_desc := AllTrim( field->sh_desc )
 
-return
+      cDescription := ""
+
+      IF !Empty( cSh_desc )
+         cDescription += cSh_desc
+      ENDIF
+
+      IF !Empty( cDesc )
+         cDescription += ", " + cDesc
+      ENDIF
+
+      // dodaj u stavke
+      a_t_docit2( __doc_no, nDoc_it_no, nIt_no, cArt_id, cArt_desc, ;
+         nQtty, nQ2, cJmj, cJmjArt, nPrice, cDescription )
+
+      SELECT ( nTable )
+      SKIP
+
+   ENDDO
+
+   RETURN
 
 
 
 // --------------------------------------------------
-// filovanje operacija 
+// filovanje operacija
 // --------------------------------------------------
-static function _fill_aops()
-local nTable := F_DOC_OPS
-local nTable2 := F_DOC_IT
-local nDoc_op_no
-local nDoc_it_no
-local nDoc_el_no
-local cDoc_el_desc
-local nArt_id
-local aElem
-local nElem_no
-local nAop_id
-local cAop_desc
-local nAop_att_id
-local cAop_att_desc
-local cDoc_op_desc
-local cAop_Value
+STATIC FUNCTION _fill_aops()
+
+   LOCAL nTable := F_DOC_OPS
+   LOCAL nTable2 := F_DOC_IT
+   LOCAL nDoc_op_no
+   LOCAL nDoc_it_no
+   LOCAL nDoc_el_no
+   LOCAL cDoc_el_desc
+   LOCAL nArt_id
+   LOCAL aElem
+   LOCAL nElem_no
+   LOCAL nAop_id
+   LOCAL cAop_desc
+   LOCAL nAop_att_id
+   LOCAL cAop_att_desc
+   LOCAL cDoc_op_desc
+   LOCAL cAop_Value
+
+   IF ( __temp == .T. )
+      nTable := F__DOC_OPS
+      nTable2 := F__DOC_IT
+   ENDIF
+
+   SELECT ( nTable2 )
+   SET ORDER TO TAG "2"
+   GO TOP
+
+   // filuj operacije
+   SELECT ( nTable )
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK docno_str( __doc_no )
+
+   cRecord := ""
+   cTmpRecord := "XX"
+   nArticle := -99
+   nTmpArticle := -99
 
 
-if ( __temp == .t. )
-    nTable := F__DOC_OPS
-    nTable2 := F__DOC_IT
-endif
+   DO WHILE !Eof() .AND. field->doc_no == __doc_no
 
-select (nTable2)
-set order to tag "2"
-go top
+      nElem_no := 0
+      nDoc_it_no := field->doc_it_no
+      nDoc_op_no := field->doc_op_no
+      nDoc_el_no := field->doc_it_el_
 
-// filuj operacije
-select (nTable)
-set order to tag "1"
-go top
-seek docno_str(__doc_no)
+      // uzmi sve operacije za jednu stavku
+      // ispitaj da li trebas da da je dodajes za stampu
 
-cRecord := ""
-cTmpRecord := "XX"
-nArticle := -99
-nTmpArticle := -99
+      nRec := RecNo()
 
+      cRecord := ""
 
-do while !EOF() .and. field->doc_no == __doc_no
+      DO WHILE !Eof() .AND. field->doc_no == __doc_no ;
+            .AND. field->doc_it_no == nDoc_it_no
 
-    nElem_no := 0
-    nDoc_it_no := field->doc_it_no
-    nDoc_op_no := field->doc_op_no
-    nDoc_el_no := field->doc_it_el_
+         nAop_id := field->aop_id
+         nAop_att_id := field->aop_att_id
 
-    // uzmi sve operacije za jednu stavku
-    // ispitaj da li trebas da da je dodajes za stampu
+         cRecord += g_aop_desc( nAop_id )
+         cRecord += ","
+         cRecord += g_aop_att_desc( nAop_att_id )
 
-    nRec := RECNO()
-
-    cRecord := ""
-    
-    do while !EOF() .and. field->doc_no == __doc_no ;
-            .and. field->doc_it_no == nDoc_it_no
-    
-        nAop_id := field->aop_id
-        nAop_att_id := field->aop_att_id
-
-        cRecord += g_aop_desc( nAop_id) 
-        cRecord += ","
-        cRecord += g_aop_att_desc( nAop_att_id )
-        
-        if !EMPTY( field->aop_value )
+         IF !Empty( field->aop_value )
             cRecord += ","
-            cRecord += ALLTRIM( field->aop_value )
-        endif
+            cRecord += AllTrim( field->aop_value )
+         ENDIF
 
-        if !EMPTY( ALLTRIM(field->doc_op_des) )
+         IF !Empty( AllTrim( field->doc_op_des ) )
             cRecord += ","
-            cRecord += ALLTRIM( field->doc_op_des )
-        endif
+            cRecord += AllTrim( field->doc_op_des )
+         ENDIF
 
-        cRecord += "#"
+         cRecord += "#"
 
-        skip
-    enddo
+         SKIP
+      ENDDO
 
-    // doc_it
-    // uzmi artikal...
-    select (nTable2)
-    set order to tag "1"
-    go top
-    seek docno_str( __doc_no ) + docit_str( nDoc_it_no )
+      // doc_it
+      // uzmi artikal...
+      SELECT ( nTable2 )
+      SET ORDER TO TAG "1"
+      GO TOP
+      SEEK docno_str( __doc_no ) + docit_str( nDoc_it_no )
 
-    nArticle := field->art_id
-    
-    // vrati se na operacije
-    select (nTable)
-    
-    // ako su identicne operacije samo idi dalje....
-    if cRecord == cTmpRecord .and. nArticle == nTmpArticle
-        loop
-    endif
+      nArticle := field->art_id
 
-    // vrati se na zapis gdje si bio
-    go (nRec)
+      // vrati se na operacije
+      SELECT ( nTable )
 
-        do while !EOF() .and. field->doc_no == __doc_no ;
-            .and. field->doc_it_no == nDoc_it_no
+      // ako su identicne operacije samo idi dalje....
+      IF cRecord == cTmpRecord .AND. nArticle == nTmpArticle
+         LOOP
+      ENDIF
 
-     
-     nElem_no := 0
-     nDoc_it_no := field->doc_it_no
-     nDoc_op_no := field->doc_op_no
-     nDoc_el_no := field->doc_it_el_
-     
-     select (nTable2)
-     set order to tag "1"
-     go top
-     seek docno_str( __doc_no ) + docit_str( nDoc_it_no )
-    
-     nArt_id := field->art_id
+      // vrati se na zapis gdje si bio
+      GO ( nRec )
 
-     aElem := {}
-    
-     _g_art_elements( @aElem, nArt_id )
-    
-     // vrati broj elementa artikla (1, 2, 3 ...)
-     _g_elem_no( aElem, nDoc_el_no, @nElem_no )
-    
-     cDoc_el_desc := get_elem_desc( aElem, nDoc_el_no, 150 )
-    
-     select (nTable)
-    
-     nAop_id := field->aop_id
-     nAop_att_id := field->aop_att_id
-
-     cAop_desc := g_aop_desc( nAop_id )
-     cAop_att_desc := g_aop_att_desc( nAop_att_id )
-
-     cDoc_op_desc := ALLTRIM( field->doc_op_des )
-    
-     cAop_value := g_aop_value( field->aop_value )
-     cAop_vraw := ALLTRIM(field->aop_value)
-
-     a_t_docop( __doc_no, nDoc_op_no, nDoc_it_no, ;
-           nElem_no, cDoc_el_desc, ;
-                   nAop_id, cAop_desc, ;
-           nAop_att_id, cAop_att_desc, ;
-           cDoc_op_desc, cAop_value, cAop_vraw )
+      DO WHILE !Eof() .AND. field->doc_no == __doc_no ;
+            .AND. field->doc_it_no == nDoc_it_no
 
 
-     select (nTable)
-     
-     skip
-    
-       enddo
+         nElem_no := 0
+         nDoc_it_no := field->doc_it_no
+         nDoc_op_no := field->doc_op_no
+         nDoc_el_no := field->doc_it_el_
 
-       cTmpRecord := cRecord
-       nTmpArticle := nArticle
-    
-enddo
+         SELECT ( nTable2 )
+         SET ORDER TO TAG "1"
+         GO TOP
+         SEEK docno_str( __doc_no ) + docit_str( nDoc_it_no )
 
-return
+         nArt_id := field->art_id
+
+         aElem := {}
+
+         _g_art_elements( @aElem, nArt_id )
+
+         // vrati broj elementa artikla (1, 2, 3 ...)
+         _g_elem_no( aElem, nDoc_el_no, @nElem_no )
+
+         cDoc_el_desc := get_elem_desc( aElem, nDoc_el_no, 150 )
+
+         SELECT ( nTable )
+
+         nAop_id := field->aop_id
+         nAop_att_id := field->aop_att_id
+
+         cAop_desc := g_aop_desc( nAop_id )
+         cAop_att_desc := g_aop_att_desc( nAop_att_id )
+
+         cDoc_op_desc := AllTrim( field->doc_op_des )
+
+         cAop_value := g_aop_value( field->aop_value )
+         cAop_vraw := AllTrim( field->aop_value )
+
+         a_t_docop( __doc_no, nDoc_op_no, nDoc_it_no, ;
+            nElem_no, cDoc_el_desc, ;
+            nAop_id, cAop_desc, ;
+            nAop_att_id, cAop_att_desc, ;
+            cDoc_op_desc, cAop_value, cAop_vraw )
+
+
+         SELECT ( nTable )
+
+         SKIP
+
+      ENDDO
+
+      cTmpRecord := cRecord
+      nTmpArticle := nArticle
+
+   ENDDO
+
+   RETURN
 
 
 // --------------------------------------
 // napuni podatke narucioca i ostalo
 // --------------------------------------
-static function _fill_main( cDescr )
-local nTable := F_DOCS
+STATIC FUNCTION _fill_main( cDescr )
 
-if cDescr == nil
-    cDescr := ""
-endif
+   LOCAL nTable := F_DOCS
 
-if ( __temp == .t. )
-    nTable := F__DOCS
-endif
+   IF cDescr == nil
+      cDescr := ""
+   ENDIF
 
-select (nTable)
-set order to tag "1"
-go top
-seek docno_str( __doc_no )
+   IF ( __temp == .T. )
+      nTable := F__DOCS
+   ENDIF
 
-_fill_customer( field->cust_id )
-_fill_contacts( field->cont_id )
-_fill_objects( field->obj_id)
+   SELECT ( nTable )
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK docno_str( __doc_no )
 
-select (nTable)
+   _fill_customer( field->cust_id )
+   _fill_contacts( field->cont_id )
+   _fill_objects( field->obj_id )
 
-// broj naloga
-add_tpars("N01", docno_str( __doc_no ) )
-// datum naloga
-add_tpars("N02", DToC( field->doc_date ) )
-// datum isporuke
-add_tpars("N03", DToC( field->doc_dvr_da ) )
-// vrijeme isporuke
-add_tpars("N04", PADR( field->doc_dvr_ti, 5))
-// hitnost - prioritet
-add_tpars("N05", s_priority( field->doc_priori ))
-// nalog vrsta placanja
-add_tpars("N06", s_pay_id( field->doc_pay_id ))
-// mjesto isporuke
-add_tpars("N07", ALLTRIM(field->doc_ship_p) )
-// dokument dodatni podaci
-add_tpars("N08", ALLTRIM(field->doc_desc) )
-// dokument kratki opis
-add_tpars("N15", ALLTRIM(field->doc_sh_des) )
-// dokument, kontakt dodatni podaci...
-add_tpars("N09", ALLTRIM(field->cont_add_d) )
-// operater koji je napravio nalog
-add_tpars("N13", ALLTRIM( getfullusername(field->operater_i)) )
+   SELECT ( nTable )
 
-// dokumenti koji su sadrzani 
-if !EMPTY(cDescr)
-    add_tpars("N14", cDescr )
-endif
+   // broj naloga
+   add_tpars( "N01", docno_str( __doc_no ) )
+   // datum naloga
+   add_tpars( "N02", DToC( field->doc_date ) )
+   // datum isporuke
+   add_tpars( "N03", DToC( field->doc_dvr_da ) )
+   // vrijeme isporuke
+   add_tpars( "N04", PadR( field->doc_dvr_ti, 5 ) )
+   // hitnost - prioritet
+   add_tpars( "N05", s_priority( field->doc_priori ) )
+   // nalog vrsta placanja
+   add_tpars( "N06", s_pay_id( field->doc_pay_id ) )
+   // mjesto isporuke
+   add_tpars( "N07", AllTrim( field->doc_ship_p ) )
+   // dokument dodatni podaci
+   add_tpars( "N08", AllTrim( field->doc_desc ) )
+   // dokument kratki opis
+   add_tpars( "N15", AllTrim( field->doc_sh_des ) )
+   // dokument, kontakt dodatni podaci...
+   add_tpars( "N09", AllTrim( field->cont_add_d ) )
+   // operater koji je napravio nalog
+   add_tpars( "N13", AllTrim( getfullusername( field->operater_i ) ) )
 
-// neuskladjeni proizvod
-add_tpars( "N21", field->doc_type )
+   // dokumenti koji su sadrzani
+   IF !Empty( cDescr )
+      add_tpars( "N14", cDescr )
+   ENDIF
 
-// ako je kes, dodaj i podatke o placeno D i napomene
-if field->doc_pay_id == 2
-    
-    // placeno d/n...
-    add_tpars("N10", ALLTRIM( field->doc_paid ) )
-    // placanje dodatne napomene...
-    add_tpars("N11", ALLTRIM( field->doc_pay_de ) )
+   // neuskladjeni proizvod
+   add_tpars( "N21", field->doc_type )
 
-endif
+   // ako je kes, dodaj i podatke o placeno D i napomene
+   IF field->doc_pay_id == 2
 
-if fieldpos("DOC_TIME") <> 0
-    // vrijeme dokumenta
-    add_tpars("N12", ALLTRIM(field->doc_time) )
-endif
+      // placeno d/n...
+      add_tpars( "N10", AllTrim( field->doc_paid ) )
+      // placanje dodatne napomene...
+      add_tpars( "N11", AllTrim( field->doc_pay_de ) )
 
-return
+   ENDIF
+
+   IF FieldPos( "DOC_TIME" ) <> 0
+      // vrijeme dokumenta
+      add_tpars( "N12", AllTrim( field->doc_time ) )
+   ENDIF
+
+   RETURN
 
 
 
 // ----------------------------------------
 // dodaj podatke o naruciocu
 // ----------------------------------------
-static function _fill_customer( nCust_id )
-local nTArea := SELECT()
-local cCust_desc := ""
-local cCust_addr := ""
-local cCust_tel := ""
+STATIC FUNCTION _fill_customer( nCust_id )
 
-select customs
-set order to tag "1"
-go top
-seek custid_str(nCust_id)
+   LOCAL nTArea := Select()
+   LOCAL cCust_desc := ""
+   LOCAL cCust_addr := ""
+   LOCAL cCust_tel := ""
 
-if FOUND()
-    cCust_desc := ALLTRIM( customs->cust_desc )
-    cCust_addr := ALLTRIM( customs->cust_addr )
-    cCust_tel := ALLTRIM( customs->cust_tel )
-endif
+   SELECT customs
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK custid_str( nCust_id )
 
-add_tpars("P01", custid_str(nCust_id))
-add_tpars("P02", cCust_desc )
-add_tpars("P03", cCust_addr )
-add_tpars("P04", cCust_tel )
+   IF Found()
+      cCust_desc := AllTrim( customs->cust_desc )
+      cCust_addr := AllTrim( customs->cust_addr )
+      cCust_tel := AllTrim( customs->cust_tel )
+   ENDIF
 
-select (nTArea)
-return
+   add_tpars( "P01", custid_str( nCust_id ) )
+   add_tpars( "P02", cCust_desc )
+   add_tpars( "P03", cCust_addr )
+   add_tpars( "P04", cCust_tel )
+
+   SELECT ( nTArea )
+
+   RETURN
 
 
 // ----------------------------------------
 // dodaj podatke o kontaktu
 // ----------------------------------------
-static function _fill_contacts( nCont_id )
-local nTArea := SELECT()
-local cCont_desc := ""
-local cCont_tel := ""
-local cCont_add_desc := ""
+STATIC FUNCTION _fill_contacts( nCont_id )
 
-select contacts
-set order to tag "1"
-go top
-seek contid_str(nCont_id)
+   LOCAL nTArea := Select()
+   LOCAL cCont_desc := ""
+   LOCAL cCont_tel := ""
+   LOCAL cCont_add_desc := ""
 
-if FOUND()
-    cCont_desc := ALLTRIM( contacts->cont_desc )
-    cCont_tel := ALLTRIM( contacts->cont_tel )
-    cCont_add_desc := ALLTRIM( contacts->cont_add_d )
-endif
+   SELECT contacts
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK contid_str( nCont_id )
 
-add_tpars("P10", contid_str(nCont_id))
-add_tpars("P11", cCont_desc )
-add_tpars("P12", cCont_tel )
-add_tpars("P13", cCont_add_desc )
+   IF Found()
+      cCont_desc := AllTrim( contacts->cont_desc )
+      cCont_tel := AllTrim( contacts->cont_tel )
+      cCont_add_desc := AllTrim( contacts->cont_add_d )
+   ENDIF
 
-select (nTArea)
-return
+   add_tpars( "P10", contid_str( nCont_id ) )
+   add_tpars( "P11", cCont_desc )
+   add_tpars( "P12", cCont_tel )
+   add_tpars( "P13", cCont_add_desc )
+
+   SELECT ( nTArea )
+
+   RETURN
 
 
 // ----------------------------------------
 // dodaj podatke o objektu
 // ----------------------------------------
-static function _fill_objects( nObj_id )
-local nTArea := SELECT()
-local cObj_desc := ""
+STATIC FUNCTION _fill_objects( nObj_id )
 
-select objects
-set order to tag "1"
-go top
-seek objid_str(nObj_id)
+   LOCAL nTArea := Select()
+   LOCAL cObj_desc := ""
 
-if FOUND()
-    cObj_desc := ALLTRIM( objects->obj_desc )
-endif
+   SELECT objects
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK objid_str( nObj_id )
 
-add_tpars("P20", objid_str(nObj_id))
-add_tpars("P21", cObj_desc )
+   IF Found()
+      cObj_desc := AllTrim( objects->obj_desc )
+   ENDIF
 
-select (nTArea)
-return
+   add_tpars( "P20", objid_str( nObj_id ) )
+   add_tpars( "P21", cObj_desc )
+
+   SELECT ( nTArea )
+
+   RETURN
 
 
 
 // ---------------------------------------------
 // vraca opis grupe za stampu dokumenta
 // ---------------------------------------------
-function get_art_docgr( nGr )
-local cGr := "sve grupe"
+FUNCTION get_art_docgr( nGr )
 
-do case
-    case nGr == 1
-        cGr := "rezano"
-    case nGr == 2
-        cGr := "kaljeno"
-    case nGr == 3
-        cGr := "bruseno"
-    case nGr == 4
-        cGr := "IZO"
-    case nGr == 5
-        cGr := "LAMI-RG"
-    case nGr == 6
-        cGr := "emajlirano"
-    case nGr == 7
-        cGr := "buseno"
-    case nGr == -99
-        cGr := "!!! ARTICLE-ERROR !!!"
-endcase
+   LOCAL cGr := "sve grupe"
 
-return cGr
+   DO CASE
+   CASE nGr == 1
+      cGr := "rezano"
+   CASE nGr == 2
+      cGr := "kaljeno"
+   CASE nGr == 3
+      cGr := "bruseno"
+   CASE nGr == 4
+      cGr := "IZO"
+   CASE nGr == 5
+      cGr := "LAMI-RG"
+   CASE nGr == 6
+      cGr := "emajlirano"
+   CASE nGr == 7
+      cGr := "buseno"
+   CASE nGr == -99
+      cGr := "!!! ARTICLE-ERROR !!!"
+   ENDCASE
+
+   RETURN cGr
 
 
 // -----------------------------------------------
 // setuj grupu artikla za stampu naloga
 // -----------------------------------------------
-function set_art_docgr( nArt_id, nDoc_no, nDocit_no )
-local cGroup := ""
-local aArt := {}
-local lIsIZO := .f.
-local lIsBruseno := .f.
-local lIsBuseno := .f.
-local lIsKaljeno := .f.
-local lIsLamiG := .f.
-local lIsLami := .f.
+FUNCTION set_art_docgr( nArt_id, nDoc_no, nDocit_no, lPriprema )
 
-// daj matricu aArt sa definicijom artikla....
-_art_set_descr( nArt_id, nil, nil, @aArt, .t. )
+   LOCAL cGroup := ""
+   LOCAL aArt := {}
+   LOCAL lIsIZO := .F.
+   LOCAL lIsBruseno := .F.
+   LOCAL lIsBuseno := .F.
+   LOCAL lIsKaljeno := .F.
+   LOCAL lIsLamiG := .F.
+   LOCAL lIsLami := .F.
 
-if aArt == nil .or. LEN(aArt) == 0
-    cGroup := "0"
-    return cGroup
-endif
+   // daj matricu aArt sa definicijom artikla....
+   _art_set_descr( nArt_id, nil, nil, @aArt, .T. )
 
-// da li je artikal IZO...
-lIsIZO := is_izo( aArt )
-// lami-rg staklo
-lIsLami := is_lami( aArt )
-// lami gotovo staklo - ne laminira RG
-lIsLAMIG := is_lamig( aArt )
+   IF aArt == NIL .OR. Len( aArt ) == 0
+      cGroup := "0"
+      RETURN cGroup
+   ENDIF
 
-lIsBruseno := is_bruseno( aArt, nDoc_no, nDocIt_no )
-lIsBuseno := is_buseno( aArt, nDoc_no, nDocIt_no )
-lIsKaljeno := is_kaljeno( aArt, nDoc_no, nDocIt_no )
-lIsEmajl := is_emajl( aArt, nDoc_no, nDocIt_no )
+   // da li je artikal IZO...
+   lIsIZO := is_izo( aArt )
+   // lami-rg staklo
+   lIsLami := is_lami( aArt )
+   // lami gotovo staklo - ne laminira RG
+   lIsLAMIG := is_lamig( aArt )
 
-// grupe su sljedece
-// 1 - rezano
-// 2 - kaljeno
-// 3 - bruseno
-// 4 - IZO
-// 5 - lami-rg
-// 6 - emajlirano
-// 7 - buseno
+   lIsBruseno := is_bruseno( aArt, nDoc_no, nDocIt_no, NIL, lPriprema )
+   lIsBuseno := is_buseno( aArt, nDoc_no, nDocIt_no, NIL, lPriprema )
+   lIsKaljeno := is_kaljeno( aArt, nDoc_no, nDocIt_no, NIL, lPriprema )
+   lIsEmajl := is_emajl( aArt, nDoc_no, nDocIt_no, NIL, lPriprema )
 
-if lIsEmajl == .t.
-    cGroup += "6"
-endif
+   // grupe su sljedece
+   // 1 - rezano
+   // 2 - kaljeno
+   // 3 - bruseno
+   // 4 - IZO
+   // 5 - lami-rg
+   // 6 - emajlirano
+   // 7 - buseno
 
-if lIsKaljeno == .t. .and. lIsEmajl == .f.
-    cGroup += "2"
-endif
+   IF lIsEmajl == .T.
+      cGroup += "6"
+   ENDIF
 
-if lIsBruseno == .t. .and. ( lIsKaljeno == .f. .and. lIsEmajl == .f. )
-    cGroup += "3"
-endif       
+   IF lIsKaljeno == .T. .AND. lIsEmajl == .F.
+      cGroup += "2"
+   ENDIF
 
-if lIsIZO == .t. 
-    cGroup += "4"
-endif       
+   IF lIsBruseno == .T. .AND. ( lIsKaljeno == .F. .AND. lIsEmajl == .F. )
+      cGroup += "3"
+   ENDIF
 
-if lIsLAMI == .t.
-    cGroup += "5"
-endif   
+   IF lIsIZO == .T.
+      cGroup += "4"
+   ENDIF
 
-if lIsBuseno == .t. 
-    cGroup += "7"
-endif       
+   IF lIsLAMI == .T.
+      cGroup += "5"
+   ENDIF
+
+   IF lIsBuseno == .T.
+      cGroup += "7"
+   ENDIF
 
 
-if ( lIsKaljeno == .f. ) .and. ;
-    (lIsBruseno == .f.) .and. ;
-    (lIsBuseno == .f.) .and. ;
-    (lIsIZO == .f.) .and. ;
-    (lIsEmajl == .f.) .and. ;
-    (lIsLami == .f. ) 
+   IF ( lIsKaljeno == .F. ) .AND. ;
+         ( lIsBruseno == .F. ) .AND. ;
+         ( lIsBuseno == .F. ) .AND. ;
+         ( lIsIZO == .F. ) .AND. ;
+         ( lIsEmajl == .F. ) .AND. ;
+         ( lIsLami == .F. )
 
-    // ako sve ovo nije, onda je rezano
-    cGroup += "1"
+      // ako sve ovo nije, onda je rezano
+      cGroup += "1"
 
-endif
+   ENDIF
 
-return cGroup
+   RETURN cGroup
 
 
 // ---------------------------------------
 // da li je staklo IZO
 // ---------------------------------------
-function is_izo( aArticle )
-local lRet := .f.
-local nElNo
-local nGlass
-local nFrame
+FUNCTION is_izo( aArticle )
 
-local cGlCode := ALLTRIM( gGlassJoker )
-local cFrCode := ALLTRIM( gFrameJoker )
+   LOCAL lRet := .F.
+   LOCAL nElNo
+   LOCAL nGlass
+   LOCAL nFrame
 
+   LOCAL cGlCode := AllTrim( gGlassJoker )
+   LOCAL cFrCode := AllTrim( gFrameJoker )
 
-nElNo := aArticle[ LEN(aArticle), 1 ]
+   nElNo := aArticle[ Len( aArticle ), 1 ]
 
-if nElNo > 1
+   IF nElNo > 1
 
-    nGlass := ASCAN(aArticle, {|xVar| ALLTRIM(xVar[2]) == cGlCode })
-    nFrame := ASCAN(aArticle, {|xVar| ALLTRIM(xVar[2]) == cFrCode })
-    
-    if nGlass <> 0 .and. nFrame <> 0
-        lRet := .t.
-    endif
-    
-endif
+      nGlass := AScan( aArticle, {| xVar| AllTrim( xVar[ 2 ] ) == cGlCode } )
+      nFrame := AScan( aArticle, {| xVar| AllTrim( xVar[ 2 ] ) == cFrCode } )
 
-return lRet
+      IF nGlass <> 0 .AND. nFrame <> 0
+         lRet := .T.
+      ENDIF
+
+   ENDIF
+
+   RETURN lRet
 
 
 // ---------------------------------------------
 // da li je staklo LAMI - gotovo LAMI staklo
 // ---------------------------------------------
-function is_lamig( aArticle )
-local lRet := .f.
-local nLAMI
+FUNCTION is_lamig( aArticle )
 
-local cGlCode := ALLTRIM( gGlassJoker )
-local cLamiCode := ALLTRIM( gGlLamiJoker )
+   LOCAL lRet := .F.
+   LOCAL nLAMI
 
-nLAMI := ASCAN(aArticle, {|xVar| ALLTRIM(xVar[2]) == cGlCode .and. ;
-        ALLTRIM(xVar[5]) == cLamiCode } )
+   LOCAL cGlCode := AllTrim( gGlassJoker )
+   LOCAL cLamiCode := AllTrim( gGlLamiJoker )
 
-if nLAMI <> 0
-    lRet := .t.
-endif
+   nLAMI := AScan( aArticle, {| xVar| AllTrim( xVar[ 2 ] ) == cGlCode .AND. ;
+      AllTrim( xVar[ 5 ] ) == cLamiCode } )
 
-return lRet
+   IF nLAMI <> 0
+      lRet := .T.
+   ENDIF
+
+   RETURN lRet
 
 
 // ---------------------------------------------
 // da li je staklo LAMI - lami-rg staklo
 // ramaglas radi laminiranje stakla !
 // ---------------------------------------------
-function is_lami( aArticle )
-local lRet := .f.
-local nLAMI
-// folija je joker kod pravljenih stakala u elementu folija
-local cFrCode := "FL"
+FUNCTION is_lami( aArticle )
 
-// kod ovog tipa je bitno samo da se nadje Folija u komponenti stakla
-nLAMI := ASCAN(aArticle, {|xVar| ALLTRIM(xVar[2]) == cFrCode } )
+   LOCAL lRet := .F.
+   LOCAL nLAMI
 
-if nLAMI <> 0
-    lRet := .t.
-endif
+   // folija je joker kod pravljenih stakala u elementu folija
+   LOCAL cFrCode := "FL"
 
-return lRet
+   // kod ovog tipa je bitno samo da se nadje Folija u komponenti stakla
+   nLAMI := AScan( aArticle, {| xVar| AllTrim( xVar[ 2 ] ) == cFrCode } )
+
+   IF nLAMI <> 0
+      lRet := .T.
+   ENDIF
+
+   RETURN lRet
 
 
 // ---------------------------------------
 // da li je staklo PLEX
 // ---------------------------------------
-function is_plex( aArticle )
-local lRet := .f.
-local nRet
+FUNCTION is_plex( aArticle )
 
-local cGlCode := ALLTRIM( gGlassJoker )
-local cSGlCode := "PLEX"
+   LOCAL lRet := .F.
+   LOCAL nRet
 
-nRet := ASCAN(aArticle, {|xVar| ALLTRIM(xVar[2]) == cGlCode .and. ;
-        ALLTRIM(xVar[5]) = cSGlCode } )
+   LOCAL cGlCode := AllTrim( gGlassJoker )
+   LOCAL cSGlCode := "PLEX"
 
-if nRet <> 0
-    lRet := .t.
-endif
+   nRet := AScan( aArticle, {| xVar| AllTrim( xVar[ 2 ] ) == cGlCode .AND. ;
+      AllTrim( xVar[ 5 ] ) = cSGlCode } )
 
-return lRet
+   IF nRet <> 0
+      lRet := .T.
+   ENDIF
+
+   RETURN lRet
 
 
 // ---------------------------------------
 // da li je staklo vatroglass
 // ---------------------------------------
-function is_vglass( aArticle )
-local lRet := .f.
-local nRet
+FUNCTION is_vglass( aArticle )
 
-local cGlCode := ALLTRIM( gGlassJoker )
-local cSGlCode := "V"
+   LOCAL lRet := .F.
+   LOCAL nRet
 
-nRet := ASCAN(aArticle, {|xVar| ALLTRIM(xVar[2]) == cGlCode .and. ;
-        ALLTRIM(xVar[5]) = cSGlCode } )
+   LOCAL cGlCode := AllTrim( gGlassJoker )
+   LOCAL cSGlCode := "V"
 
-if nRet <> 0
-    lRet := .t.
-endif
+   nRet := AScan( aArticle, {| xVar| AllTrim( xVar[ 2 ] ) == cGlCode .AND. ;
+      AllTrim( xVar[ 5 ] ) = cSGlCode } )
 
-return lRet
+   IF nRet <> 0
+      lRet := .T.
+   ENDIF
+
+   RETURN lRet
 
 
 
 // ------------------------------------------------------------
-// da li je staklo kaljeno ???
+// da li je staklo kaljeno ?
 // ------------------------------------------------------------
-function is_kaljeno( aArticle, nDoc_no, nDocit_no, nDoc_el_no )
-local lRet := .f.
-local cSrcJok := ALLTRIM( gAopKaljenje )
+FUNCTION is_kaljeno( aArticle, nDoc_no, nDocit_no, nDoc_el_no, lPriprema )
 
-if nDoc_el_no == nil
-    nDoc_el_no := 0
-endif
+   LOCAL lRet := .F.
+   LOCAL cSrcJok := AllTrim( gAopKaljenje )
 
-// provjeri obradu iz matrice
-lRet := ck_obr( aArticle, cSrcJok )
+   IF nDoc_el_no == nil
+      nDoc_el_no := 0
+   ENDIF
 
-if lRet == .f.
-    // provjeri i tabelu DOC_OPS
-    lRet := ck_obr_aops( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok )
-endif
+   lRet := postoji_obrada_u_artiklu( aArticle, cSrcJok )
 
-return lRet 
+   IF lRet == .F.
+      lRet := postoji_obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok, lPriprema )
+   ENDIF
+
+   RETURN lRet
 
 
 // -----------------------------------------------------------
 // da li je staklo emajlirano ???
 // -----------------------------------------------------------
-function is_emajl( aArticle, nDoc_no, nDocit_no, nDoc_el_no )
-local lRet := .f.
-local cSrcJok := "<A_E>"
+FUNCTION is_emajl( aArticle, nDoc_no, nDocit_no, nDoc_el_no, lPriprema )
 
-if nDoc_el_no == nil
-    nDoc_el_no := 0
-endif
+   LOCAL lRet := .F.
+   LOCAL cSrcJok := "<A_E>"
 
-// provjeri obradu iz matrice
-lRet := ck_obr( aArticle, cSrcJok )
+   IF nDoc_el_no == nil
+      nDoc_el_no := 0
+   ENDIF
 
-if lRet == .f.
-    // provjeri i tabelu DOC_OPS
-    lRet := ck_obr_aops( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok )
-endif
+   lRet := postoji_obrada_u_artiklu( aArticle, cSrcJok )
 
-return lRet 
+   IF lRet == .F.
+      lRet := postoji_obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok, lPriprema )
+   ENDIF
+
+   RETURN lRet
 
 
 
 // -------------------------------------------------------------
 // da li je staklo kaljeno ???
 // -------------------------------------------------------------
-function is_bruseno( aArticle, nDoc_no, nDocit_no, nDoc_el_no )
-local lRet := .f.
-local cSrcJok := ALLTRIM( gAopBrusenje )
+FUNCTION is_bruseno( aArticle, nDoc_no, nDocit_no, nDoc_el_no, lPriprema )
 
-if nDoc_el_no == nil
-    nDoc_el_no := 0
-endif
+   LOCAL lRet := .F.
+   LOCAL cSrcJok := AllTrim( gAopBrusenje )
 
-// provjeri obradu iz matrice
-lRet := ck_obr( aArticle, cSrcJok )
+   IF nDoc_el_no == NIL
+      nDoc_el_no := 0
+   ENDIF
 
-if lRet == .f.
-    // provjeri i tabelu DOC_OPS
-    lRet := ck_obr_aops( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok )
-endif
+   lRet := postoji_obrada_u_artiklu( aArticle, cSrcJok )
 
-return lRet 
+   IF lRet == .F.
+      lRet := postoji_obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok, lPriprema )
+   ENDIF
+
+   RETURN lRet
 
 
 
 // -------------------------------------------------------------
 // da li je staklo buseno ???
 // -------------------------------------------------------------
-function is_buseno( aArticle, nDoc_no, nDocit_no, nDoc_el_no )
-local lRet := .f.
-local cSrcJok := "<A_BU>"
+FUNCTION is_buseno( aArticle, nDoc_no, nDocit_no, nDoc_el_no, lPriprema )
 
-if nDoc_el_no == nil
-    nDoc_el_no := 0
-endif
+   LOCAL lRet := .F.
+   LOCAL cSrcJok := "<A_BU>"
 
-// provjeri obradu iz matrice
-lRet := ck_obr( aArticle, cSrcJok )
+   IF nDoc_el_no == nil
+      nDoc_el_no := 0
+   ENDIF
 
-if lRet == .f.
-    // provjeri i tabelu DOC_OPS
-    lRet := ck_obr_aops( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok )
-endif
+   lRet := postoji_obrada_u_artiklu( aArticle, cSrcJok )
 
-return lRet 
+   IF lRet == .F.
+      lRet := postoji_obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok, lPriprema )
+   ENDIF
 
+   RETURN lRet
 
 
-// ----------------------------------------------------
-// provjeri obradu na osnovu matrice artikla
-// ----------------------------------------------------
-static function ck_obr( aArticle, cSrcObrada )
-local lRet := .f.
-local nObrada 
-nObrada := ASCAN(aArticle, {|xVar| ALLTRIM(xVar[4]) == cSrcObrada } )
-if nObrada <> 0
-    lRet := .t.
-endif
-return lRet
+
+/*
+   Opis: Provjerava postoji li obrada unutar matrice artikla
+
+   Usage: postoji_obrada_u_artiklu( aArticle, "<A_B>" )
+
+      Parametri:
+      1) matrica sa definicijom elemenata artikla
+      2) operacija brušenja "<A_B>"
+
+      Return:
+         .T. postoji zadana obrada
+
+   Prerequisites:
+     formirana matrica artikla sa funkcijom _art_set_descr()
+
+*/
+STATIC FUNCTION postoji_obrada_u_artiklu( aArticle, cSrcObrada )
+
+   LOCAL lRet := .F.
+   LOCAL nObrada
+
+   nObrada := AScan( aArticle, {| xVar| AllTrim( xVar[ 4 ] ) == cSrcObrada } )
+   IF nObrada <> 0
+      lRet := .T.
+   ENDIF
+
+   RETURN lRet
 
 
-// ----------------------------------------------------------------------
-// provjeri obradu u tabeli DOC_OPS
-//   nDocIt_no - redni broj stavke naloga
-//   cSrcObrada - djoker obrade <AOP_K> .... 
-//                koju obradu trazimo
-// ----------------------------------------------------------------------
-static function ck_obr_aops( nDoc_no, nDocit_no, nDoc_el_no, cSrcObrada )
-local lRet := .f.
-local nTArea := SELECT()
-local nTable := F_DOC_OPS
-if __temp == .t.
-    nTable := F__DOC_OPS
-endif
+/*
+   Opis: Provjerava da li unutar dodatnih operacija postoji određena obrada.
 
-// provjeri na osnovu DOC_AOP
-    
-select (nTable)
-set order to tag "1"
-go top
-    
-seek docno_str(nDoc_no) + docit_str(nDocit_no)
-    
-do while !EOF() .and. field->doc_no == nDoc_no .and. ;
-        field->doc_it_no == nDocit_no
+   Usage: postoji_obrada_u_operacijama( 1, 1, 3, "<A_B>", .T. ) 
 
-    // provjeri po elementu
-    if nDoc_el_no > 0
-        if field->doc_it_el_ <> nDoc_el_no
-            skip
-            loop
-        endif
-    endif
+      Parametri:
+      1) dokument 1 tabele DOC_OPS
+      2) stavka 1
+      3) element artikla 3 (treće staklo)
+      4) operacija brušenja "<A_B>" 
+      5) gledati tabelu pripreme ili kumulativ
 
-    nAop_id := field->aop_id
+      Return:
+        .T.  postoji zadana obrada
 
-    // idi u operacije pa vidi djoker
-    select aops
-    go top
-    seek aopid_str( nAop_id )
-        
-    if FOUND() .and. field->aop_id == nAop_id .and. ;
-        ALLTRIM( field->aop_joker ) == cSrcObrada
-            
-        lRet := .t.
-        exit
-            
-    endif
-        
-    select (nTable)
-    skip
-enddo
-    
-select (nTArea)
-return lRet
+   Prerequisites:
+
+   - Mora biti otvorena Workarea: 
+       - DOC_OPS ili _DOC_OPS (priprema)
+
+   Napomene:
+
+    - DOC_OPS - tabela operacija dokumenta (kumulativna)
+    - _DOC_OPS - tabela operacija dokumenta (priprema)
+*/
+
+STATIC FUNCTION postoji_obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcObrada, lPriprema )
+
+   LOCAL lRet := .F.
+   LOCAL nTArea := Select()
+   LOCAL nTable := F_DOC_OPS
+  
+   IF lPriprema == NIL
+      lPriprema := .F.
+   ENDIF
+
+   IF lPriprema
+      nTable := F__DOC_OPS
+   ENDIF
+
+   SELECT ( nTable )
+   SET ORDER TO TAG "1"
+   GO TOP
+
+   SEEK docno_str( nDoc_no ) + docit_str( nDocit_no )
+
+   DO WHILE !Eof() .AND. field->doc_no == nDoc_no .AND. ;
+         field->doc_it_no == nDocit_no
+
+      IF nDoc_el_no > 0
+         IF field->doc_it_el_ <> nDoc_el_no
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
+
+      nAop_id := field->aop_id
+
+      SELECT aops
+      GO TOP
+      SEEK aopid_str( nAop_id )
+
+      IF Found() .AND. field->aop_id == nAop_id .AND. ;
+            AllTrim( field->aop_joker ) == cSrcObrada
+
+         lRet := .T.
+         EXIT
+
+      ENDIF
+
+      SELECT ( nTable )
+      SKIP
+   ENDDO
+
+   SELECT ( nTArea )
+
+   RETURN lRet
 
 
 
 // ----------------------------------------------
-// printanje naloga, po zadatom broju 
+// printanje naloga, po zadatom broju
 // ----------------------------------------------
-function prn_nal()
-local GetList := {}
-local nDoc_no := 0 
+FUNCTION prn_nal()
 
-Box(,1, 30)
-    @ m_x+1, m_y+2 SAY "Broj naloga:" GET nDoc_no PICT "999999999" 
-    read
-BoxC()
+   LOCAL GetList := {}
+   LOCAL nDoc_no := 0
 
-if LastKey() == K_ESC .or. nDoc_no = 0
-    return
-endif
+   Box(, 1, 30 )
+   @ m_x + 1, m_y + 2 SAY "Broj naloga:" GET nDoc_no PICT "999999999"
+   READ
+   BoxC()
 
-rnal_o_tables( )
+   IF LastKey() == K_ESC .OR. nDoc_no = 0
+      RETURN
+   ENDIF
 
-select docs
-set order to tag "1"
-seek docno_str( nDoc_no )
+   rnal_o_tables()
 
-if field->doc_no <> nDoc_no
-    msgbeep("Trazeni nalog ne postoji !!!")
-    return
-endif
+   SELECT docs
+   SET ORDER TO TAG "1"
+   SEEK docno_str( nDoc_no )
 
-// stampaj nalog
-st_nalpr(.f., nDoc_no)
+   IF field->doc_no <> nDoc_no
+      msgbeep( "Trazeni nalog ne postoji !!!" )
+      RETURN
+   ENDIF
 
+   // stampaj nalog
+   st_nalpr( .F., nDoc_no )
 
-return
+   RETURN
 
 
 // --------------------------------------------
 // rekalkulisanje vrijednosti T_DOCIT stavke
 // --------------------------------------------
-function recalc_pr()
-local aZpoGn := {}
-local nTArea := SELECT()
+FUNCTION recalc_pr()
 
-// ukupno mm -> m2
-RREPLACE field->doc_it_tot with ROUND( c_ukvadrat(field->doc_it_qtt, field->doc_it_hei, field->doc_it_wid), 2), field->doc_it_tm with ROUND( c_duzinski(field->doc_it_qtt, field->doc_it_hei, field->doc_it_wid), 2)
+   LOCAL aZpoGn := {}
+   LOCAL nTArea := Select()
 
-aZpoGN := {}
-        
-// zaokruzi vrijednosti....
-_art_set_descr( field->art_id, nil, nil, @aZpoGN, .t. )
-    
-select (nTArea)
+   // ukupno mm -> m2
+   RREPLACE field->doc_it_tot WITH Round( c_ukvadrat( field->doc_it_qtt, field->doc_it_hei, field->doc_it_wid ), 2 ), field->doc_it_tm WITH Round( c_duzinski( field->doc_it_qtt, field->doc_it_hei, field->doc_it_wid ), 2 )
 
-lBezZaokr := .f.
+   aZpoGN := {}
 
-if lBezZaokr == .f.
-    // da li je kaljeno ? kod kaljenog nema zaokruzenja
-    lBezZaokr := is_kaljeno( aZpoGN, field->doc_no, field->doc_it_no )
-endif
+   // zaokruzi vrijednosti....
+   _art_set_descr( field->art_id, nil, nil, @aZpoGN, .T. )
 
-if lBezZaokr == .f.
-    // da li je emajlirano ? isto nema zaokruzenja
-    lBezZaokr := is_emajl(aZpoGN, field->doc_no, field->doc_it_no )
-endif
+   SELECT ( nTArea )
 
-if lBezZaokr == .f.
-    // da li je vatroglas ? isto nema zaokruzenja
-    lBezZaokr := is_vglass( aZpoGN )
-endif
+   lBezZaokr := .F.
 
-if lBezZaokr == .f.
-    // da li je plexiglas ? isto nema zaokruzenja
-    lBezZaokr := is_plex( aZpoGN )
-endif
-    
-RREPLACE field->doc_it_zhe with obrl_zaok( field->doc_it_hei, aZpoGN, lBezZaokr ), ;
-		field->doc_it_zh2 with obrl_zaok( field->doc_it_h2, aZpoGN, lBezZaokr ), ;
-		field->doc_it_zwi with obrl_zaok( field->doc_it_wid, aZpoGN, lBezZaokr ), ;
-		field->doc_it_zw2 with obrl_zaok( field->doc_it_w2, aZpoGN, lBezZaokr ), ;
-        field->doc_it_tot with ROUND( c_ukvadrat( field->doc_it_qtt, field->doc_it_zhe, field->doc_it_zwi, field->doc_it_zh2, field->doc_it_zw2 ), 2), ;	
-		field->doc_it_tm with ROUND( c_duzinski( field->doc_it_qtt, field->doc_it_zhe, field->doc_it_zwi, field->doc_it_zh2, field->doc_it_zw2 ), 2), ;
-    	field->doc_it_net with ROUND( obrl_neto( field->doc_it_tot, aZpoGN ), 2)
-        
-return
+   IF lBezZaokr == .F.
+      // da li je kaljeno ? kod kaljenog nema zaokruzenja
+      lBezZaokr := is_kaljeno( aZpoGN, field->doc_no, field->doc_it_no, NIL, .T. )
+   ENDIF
+
+   IF lBezZaokr == .F.
+      // da li je emajlirano ? isto nema zaokruzenja
+      lBezZaokr := is_emajl( aZpoGN, field->doc_no, field->doc_it_no, NIL, .T. )
+   ENDIF
+
+   IF lBezZaokr == .F.
+      // da li je vatroglas ? isto nema zaokruzenja
+      lBezZaokr := is_vglass( aZpoGN )
+   ENDIF
+
+   IF lBezZaokr == .F.
+      // da li je plexiglas ? isto nema zaokruzenja
+      lBezZaokr := is_plex( aZpoGN )
+   ENDIF
+
+   RREPLACE field->doc_it_zhe WITH obrl_zaok( field->doc_it_hei, aZpoGN, lBezZaokr ), ;
+      field->doc_it_zh2 WITH obrl_zaok( field->doc_it_h2, aZpoGN, lBezZaokr ), ;
+      field->doc_it_zwi WITH obrl_zaok( field->doc_it_wid, aZpoGN, lBezZaokr ), ;
+      field->doc_it_zw2 WITH obrl_zaok( field->doc_it_w2, aZpoGN, lBezZaokr ), ;
+      field->doc_it_tot WITH Round( c_ukvadrat( field->doc_it_qtt, field->doc_it_zhe, field->doc_it_zwi, field->doc_it_zh2, field->doc_it_zw2 ), 2 ), ;
+   field->doc_it_tm WITH Round( c_duzinski( field->doc_it_qtt, field->doc_it_zhe, field->doc_it_zwi, field->doc_it_zh2, field->doc_it_zw2 ), 2 ), ;
+      field->doc_it_net WITH Round( obrl_neto( field->doc_it_tot, aZpoGN ), 2 )
+
+   RETURN
 
 

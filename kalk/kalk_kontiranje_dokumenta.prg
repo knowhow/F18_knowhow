@@ -1100,12 +1100,7 @@ FUNCTION RekapK()
 
       _predispozicija := .F.
 
-      O_FINMAT
-      O_KONTO
-      O_PARTN
-      O_TDOK
-      O_ROBA
-      O_TARIFA
+      close_open_rekap_tables()
 
       IF fStara
          // otvara se KALK sa aliasom priprema
@@ -1604,7 +1599,20 @@ FUNCTION RekapK()
 
 
 
-// provjerava u finmat tabeli da li se radi o predispoziciji
+
+STATIC FUNCTION close_open_rekap_tables()
+   O_FINMAT
+   O_KONTO
+   O_PARTN
+   O_TDOK
+   O_ROBA
+   O_TARIFA
+   RETURN 
+
+
+
+
+
 FUNCTION predisp()
 
    LOCAL _ret := .F.

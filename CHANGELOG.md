@@ -1,3 +1,15 @@
+1.7.77  2014-05-12, vsasa
+
+  - RNAL, specifikacija za poslovođe - bugfix
+ 
+1.7.76  2014-05-12, vsasa, hernad
+
+  - KALK, kontiranje dokumenta, kontrola zbira naloga - bugfix
+  - Parsiraj(), bugfix 
+  - FAKT, reklamni => reklamirani 
+  - FAKT, povrat dokumenta bez uslova fisklanih opcija, provjera fiskalne veze
+  - FAKT, fiskalni račun, provjera broja veze prilikom izdavanja računa
+ 
 1.7.75  2014-05-09, vsasa
 
   - KALK, kartica magacin štampa u sezoni - bugfix 

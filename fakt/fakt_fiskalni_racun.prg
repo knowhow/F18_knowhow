@@ -49,7 +49,6 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
    LOCAL _items_data, _partn_data
    LOCAL _cont := "1"
 
-   // koriste li se fiskalne opcije uopste ?
    IF !fiscal_opt_active()
       RETURN _err_level
    ENDIF
@@ -58,7 +57,6 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
       auto_print := .F.
    ENDIF
 
-   // set automatsko stampanje, bez informacija
    IF auto_print
       __auto := .T.
    ENDIF
@@ -69,11 +67,9 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
 
    __device_params := dev_param
 
-   // drajver ??
    _dev_drv := AllTrim( dev_param[ "drv" ] )
    __DRV_CURRENT := _dev_drv
 
-   // priprema podatak za racun....
    SELECT fakt_doks
    SET FILTER TO
 
@@ -85,25 +81,25 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
 
    SELECT fakt_doks
 
-   // da li je racun storno ????
+   IF postoji_fiskalni_racun( id_firma, tip_dok, br_dok )
+      MsgBeep( "Za dokument " + tip_dok + "-" + ALLTRIM(br_dok) + " već postoji izdat fiskalni račun !" )
+      RETURN _err_level
+   ENDIF
+
    _storno := fakt_dok_is_storno( id_firma, tip_dok, br_dok )
 
    IF ValType( _storno ) == "N" .AND. _storno == -1
       RETURN _err_level
    ENDIF
 
-   // pripremi matricu sa podacima partnera itd....
    _partn_data := fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, _storno )
 
    IF ValType( _partn_data ) == "L"
-      // nesto nije dobro, zatvaram opciju
       RETURN 1
    ENDIF
 
-   // pripremi mi matricu sa stavkama racuna
    _items_data := fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, _storno, _partn_data )
 
-   // da nije slucajno NIL ???
    IF ValType( _items_data ) == "L" .OR. _items_data == NIL
       RETURN 1
    ENDIF
@@ -111,8 +107,6 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
    DO CASE
 
    CASE _dev_drv == "TEST"
-      // test uredjaj, propusta opciju fiskalnog racuna
-      // azurira racun i prakticno ne uradi nista...
       _err_level := 0
 
    CASE _dev_drv == __DRV_FPRINT
@@ -130,24 +124,18 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
 
    ENDCASE
 
-   // vrati se na my_home()
-   // da ne bi ostao tekuci direktorij na lokaciji izlaznog racuna
    DirChange( my_home() )
 
-   // logiraj operaciju...
    log_write( "fiskalni racun " + _dev_drv + " za dokument: " + ;
       AllTrim( id_firma ) + "-" + AllTrim( tip_dok ) + "-" + AllTrim( br_dok ) + ;
       " err level: " + AllTrim( Str( _err_level ) ) + ;
       " partner: " + IF( _partn_data <> NIL, AllTrim( _partn_data[ 1, 1 ] ) + ;
       " - " + AllTrim( _partn_data[ 1, 2 ] ), "NIL" ), 3 )
 
-   // drugi pokusaj u slucaju greske !
    IF _err_level > 0
 
       IF _dev_drv == __DRV_TREMOL
 
-         // posalji drugi put za ponistavanje komande racuna
-         // parametar continue = 2
          _cont := "2"
          _err_level := fakt_to_tremol( id_firma, tip_dok, br_dok, _items_data, _partn_data, _storno, _cont )
 
@@ -177,6 +165,22 @@ FUNCTION reklamni_rn_box( rekl_rn )
 
    RETURN rekl_rn
 
+
+
+FUNCTION postoji_fiskalni_racun( id_firma, tip_dok, br_dok )
+   LOCAL lRet := .F.
+   LOCAL cWhere
+
+   cWhere := " idfirma = " + _sql_quote( id_firma )
+   cWhere += " AND idtipdok = " + _sql_quote( tip_dok )
+   cWhere += " AND brdok = " + _sql_quote( br_dok )
+   cWhere += " AND ( fisc_rn > 0 OR fisc_st > 0 ) "
+
+   IF table_count( "fmk.fakt_doks", cWhere ) > 0
+      lRet := .T.
+   ENDIF
+ 
+   RETURN lRet
 
 
 STATIC FUNCTION fakt_dok_is_storno( id_firma, tip_dok, br_dok )
@@ -241,7 +245,6 @@ STATIC FUNCTION fakt_izracunaj_total( arr, partner, tip_dok )
    _calc[ "pdv" ] := 0
    _calc[ "osnovica" ] := 0
 
-   // prodji kroz matricu sa porezima i iznosima
    FOR _i := 1 TO Len( arr )
 
       _tar := PadR( arr[ _i, 1 ], 6 )
@@ -251,7 +254,6 @@ STATIC FUNCTION fakt_izracunaj_total( arr, partner, tip_dok )
       hseek _tar
 
       IF tip_dok $ "11#13#23"
-         // MP dokumenti, kod njih je ovo iznos sa porezom
          IF !IsIno( partner ) .AND. !IsOslClan( partner ) .AND. tarifa->opp > 0
             _calc[ "ukupno" ] := _calc[ "ukupno" ] + _iznos
             _calc[ "osnovica" ] := _calc[ "osnovica" ] + ( _iznos / ( 1 + tarifa->opp / 100 ) )
@@ -261,7 +263,6 @@ STATIC FUNCTION fakt_izracunaj_total( arr, partner, tip_dok )
             _calc[ "osnovica" ] := _calc[ "osnovica" ] + _iznos
          ENDIF
       ELSE
-         // VP dokumenti, kod njih je ovo iznos bez poreza
          IF !IsIno( partner ) .AND. !IsOslClan( partner ) .AND. tarifa->opp > 0
             _calc[ "ukupno" ] := _calc[ "ukupno" ] + ( _iznos * ( 1 + tarifa->opp / 100 ) )
             _calc[ "osnovica" ] := _calc[ "osnovica" ] + _iznos
@@ -312,8 +313,6 @@ STATIC FUNCTION get_a_iznos( idfirma, idtipdok, brdok )
          _iznos := Round( _kol * _cijena * PrerCij() * ( 1 - _rab / 100 ), ZAOKRUZENJE )
       ENDIF
 
-      // roba zasticena cijena !
-      // ove tarife cemo tretirati u kalkulaciji kao PDV17 takodjer
       IF RobaZastCijena( _tar )
          _tar := PadR( "PDV17", 6 )
       ENDIF
@@ -334,10 +333,6 @@ STATIC FUNCTION get_a_iznos( idfirma, idtipdok, brdok )
 
 
 
-/*
-    pripremi podatke u matricu
-*/
-
 STATIC FUNCTION fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, storno, partn_arr )
 
    LOCAL _data := {}
@@ -357,13 +352,10 @@ STATIC FUNCTION fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, storno, pa
    _v_plac := "0"
 
    IF partn_arr <> NIL
-      // u ovim clanovima matrice su mi podaci
-      // o partneru
       _v_plac := partn_arr[ 1, 6 ]
       _partn_ino := partn_arr[ 1, 7 ]
       _partn_pdv := partn_arr[ 1, 8 ]
    ELSE
-      // uzmi na osnovu statickih varijabli
       _v_plac := __vrsta_pl
       _partn_ino := __partn_ino
       _partn_pdv := __partn_pdv
@@ -375,7 +367,6 @@ STATIC FUNCTION fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, storno, pa
 
    fakt_fiscal_o_tables()
 
-   // nastimaj me na fakt_doks
    SELECT fakt_doks
    GO TOP
    SEEK ( id_firma + tip_dok + br_dok )
@@ -388,27 +379,22 @@ STATIC FUNCTION fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, storno, pa
    _rn_datum := field->datdok
    _partn_id := field->idpartner
 
-   // matrica sa tarifama i iznosima ukupnim sa dokumenta...
    _a_iznosi := get_a_iznos( id_firma, tip_dok, br_dok )
    _data_total := fakt_izracunaj_total( _a_iznosi, _partn_id, tip_dok )
 
-   // nastimaj me na fakt_fakt
    SELECT fakt
    GO TOP
    SEEK ( id_firma + tip_dok + br_dok )
 
    IF !Found()
-      // ovaj racun nema stavki !!!!
       MsgBeep( "Racun ne posjeduje niti jednu stavku#Stampanje onemoguceno !!!" )
       RETURN NIL
    ENDIF
 
-   // koji je broj racuna koji storniramo
    IF storno
       _rekl_rn_broj := reklamni_rn_box( _rekl_rn_broj )
    ENDIF
 
-   // ESC na unosu veze racuna
    IF _rekl_rn_broj == -1
       MsgBeep( "Broj veze racuna mora biti setovan" )
       RETURN NIL
@@ -421,11 +407,8 @@ STATIC FUNCTION fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, storno, pa
    // _rn_total := _uk_sa_pdv( tip_dok, _partn_id, _rn_iznos )
 
    _rn_total := _data_total[ "ukupno" ]
-
-   // total za sracunavanje kod samaranja po stavkama racuna
    _rn_f_total := 0
 
-   // upisi u matricu stavke
    DO WHILE !Eof() .AND. field->idfirma == id_firma ;
          .AND. field->idtipdok == tip_dok ;
          .AND. field->brdok == br_dok
@@ -435,7 +418,6 @@ STATIC FUNCTION fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, storno, pa
 
       SELECT fakt
 
-      // storno identifikator
       _storno_ident := 0
 
       IF ( field->kolicina < 0 ) .AND. !storno
@@ -445,7 +427,6 @@ STATIC FUNCTION fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, storno, pa
       _rn_broj := fakt->brdok
       _rn_rbr := fakt->rbr
 
-      // memo polje
       _memo := ParsMemo( fakt->txt )
 
       _art_id := fakt->idroba
@@ -467,7 +448,6 @@ STATIC FUNCTION fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, storno, pa
       _art_jmj := AllTrim( roba->jmj )
       _art_plu := roba->fisc_plu
 
-      // generisi automatski plu ako treba
       IF __device_params[ "plu_type" ] == "D" .AND. ;
             ( __device_params[ "vp_sum" ] <> 1 .OR. tip_dok $ "11" .OR. Len( _a_iznosi ) > 1 )
 
@@ -484,23 +464,18 @@ STATIC FUNCTION fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, storno, pa
 
       _tarifa_id := AllTrim( roba->idtarifa )
 
-      // hash_matrica sa iznosima po stavci...
       _arr := {}
       AAdd( _arr, { _tarifa_id, field->cijena } )
       _data_item := fakt_izracunaj_total( _arr, _partn_id, tip_dok )
 
       _cijena := _data_item[ "ukupno" ]
 
-      // izracunaj cijenu
       IF tip_dok == "10"
          _vr_plac := "3"
       ENDIF
 
       _kolicina := Abs( field->kolicina )
 
-      // ako korisnik nije PDV obveznik
-      // i radi se o robi sa zasticenom cijenom
-      // rabat preskoci
       IF !_partn_ino .AND. !_partn_pdv .AND. RobaZastCijena( roba->idtarifa )
          _pop_na_teret_prod := .T.
          _rn_rabat := 0
@@ -508,8 +483,6 @@ STATIC FUNCTION fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, storno, pa
          _rn_rabat := Abs ( field->rabat )
       ENDIF
 
-      // ako je za ino kupca onda ide nulta stopa
-      // oslobodi ga poreza
       IF _partn_ino == .T.
          _tarifa_id := "PDV0"
       ENDIF
@@ -517,13 +490,8 @@ STATIC FUNCTION fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, storno, pa
       _storno_rn_opis := ""
 
       IF _rekl_rn_broj > 0
-         // ovo ce biti racun koji reklamiramo !
          _storno_rn_opis := AllTrim( Str( _rekl_rn_broj ) )
       ENDIF
-
-      // izracunaj total po stavci
-      // ako se radi o robi sa zasticenom cijenom
-      // ovaj total ce se napuniti u matricu
 
       IF field->dindem == Left( ValBazna(), 3 )
          _rn_f_total += Round( _kolicina * _cijena * PrerCij() * ( 1 - _rn_rabat / 100 ), ZAOKRUZENJE )
@@ -569,17 +537,12 @@ STATIC FUNCTION fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, storno, pa
 
    ENDDO
 
-   // setuj total za pojedine opcije
    IF _pop_na_teret_prod .OR. _partn_ino
-      // ako ima popusta na teret prodavaca
-      // sredi total, ukljuci i rabat koji je dat
-      // uzmi sada onaj nF_total
       FOR _n := 1 TO Len( _data )
          _data[ _n, 14 ] := _rn_f_total
       NEXT
    ENDIF
 
-   // zbirni racun
    IF tip_dok $ "10" .AND. Len( _a_iznosi ) < 2
       set_fiscal_rn_zbirni( @_data )
    ENDIF
@@ -596,9 +559,6 @@ STATIC FUNCTION fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, storno, pa
 
 
 
-/*
-   pripremi podatke, partner itd...
-*/
 
 STATIC FUNCTION fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, storno )
 

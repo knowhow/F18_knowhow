@@ -423,7 +423,7 @@ STATIC FUNCTION _chk_povrat_zabrana( vars )
                ( fakt_doks->fisc_rn <> 0 .AND. fakt_doks->fisc_st <> 0 .AND. fakt_doks->iznos < 0 )
 
             // veza sa fisc_rn postoji
-            msgbeep( "Za ovaj dokument je izdat fiskalni racun.#Opcija povrata je onemogucena !!!" )
+            msgbeep( "Za ovaj dokument je izdat fiskalni račun.#Opcija povrata je onemogućena !!!" )
             _ret := .F.
 
             SELECT ( _area )

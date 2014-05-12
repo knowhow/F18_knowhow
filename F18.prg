@@ -229,7 +229,7 @@ STATIC FUNCTION set_menu_choices( menuop, menuexec, p3, p4, p5, p6, p7 )
 
    IF f18_use_module( "reports" )
       _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, _brojac + ". REPORTS  # izvjestajni modul" )
+      AAdd( menuop, _brojac + ". REPORTS  # izvještajni modul" )
       AAdd( menuexec, {|| MainReports( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 

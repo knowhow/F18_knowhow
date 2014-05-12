@@ -15,6 +15,11 @@ FUNCTION kontrola_zbira_naloga()
 
    PushWa()
 
+   SELECT ( F_FIN_PRIPR )
+   IF !Used()
+      O_FIN_PRIPR
+   ENDIF
+
    Box( "kzb", 12, 70, .F., "Kontrola zbira naloga" )
 
    SET CURSOR ON

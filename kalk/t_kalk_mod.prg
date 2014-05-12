@@ -22,12 +22,10 @@ CLASS TKalkMod FROM TAppMod
    METHOD mMenu
    METHOD mMenuStandard
    METHOD initdb
-   METHOD srv
 
 END CLASS
 
-// -----------------------------------------------
-// -----------------------------------------------
+
 METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
 
    ::super:new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
@@ -35,8 +33,6 @@ METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
    RETURN self
 
 
-// -----------------------------------------------
-// -----------------------------------------------
 METHOD initdb()
 
    ::oDatabase := TDbKalk():new()
@@ -45,8 +41,6 @@ METHOD initdb()
 
 
 
-// -----------------------------------------------
-// -----------------------------------------------
 METHOD mMenu()
 
    PRIVATE Izbor
@@ -67,8 +61,6 @@ METHOD mMenu()
 
 
 
-// -----------------------------------------------
-// -----------------------------------------------
 METHOD mMenuStandard
 
    LOCAL opc := {}
@@ -77,7 +69,7 @@ METHOD mMenuStandard
 
    AAdd( opc,   "1. unos/ispravka dokumenata                " )
    AAdd( opcexe, {|| kalk_unos_dokumenta() } )
-   AAdd( opc,   "2. izvjestaji" )
+   AAdd( opc,   "2. izvještaji" )
    AAdd( opcexe, {|| MIzvjestaji() } )
    AAdd( opc,   "3. pregled dokumenata" )
    AAdd( opcexe, {|| kalk_pregled_dokumenata() } )
@@ -111,15 +103,8 @@ METHOD mMenuStandard
    RETURN
 
 
-// -----------------------------------------------
-// -----------------------------------------------
-METHOD srv()
-
-   RETURN
 
 
-// -----------------------------------------------
-// -----------------------------------------------
 METHOD setGVars()
 
    LOCAL cPPSaMr

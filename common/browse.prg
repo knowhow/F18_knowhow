@@ -361,7 +361,7 @@ STATIC FUNCTION standardne_browse_komande( TB, Ch, nRez, nPored, aPoredak )
             aUf := nil
             IF Right( cLoc, 1 ) == ";"
                Beep( 1 )
-               aUF := parsiraj( cLoc, "EVAL(bTekCol)" )
+               aUF := Parsiraj( cLoc, "EVAL(bTekCol)" )
             ENDIF
             Tb:hitTop := TB:hitBottom := .F.
             DO WHILE !( Tb:hitTop .OR. TB:hitBottom )

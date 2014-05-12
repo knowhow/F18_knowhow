@@ -528,7 +528,7 @@ FUNCTION pr_pr_sast()
    aSast := TokToNiz( AllTrim( cSirovine ), ";" )
 
    IF !Empty( cArtikli )
-      bUsl := PARSIRAJ( AllTrim( cArtikli ), "ID" )
+      bUsl := Parsiraj( AllTrim( cArtikli ), "ID" )
    ENDIF
 
    SELECT roba
@@ -688,7 +688,7 @@ FUNCTION pr_br_sast()
    ENDIF
 
    IF !Empty( cArtikli )
-      bUsl := PARSIRAJ( AllTrim( cArtikli ), "ID" )
+      bUsl := Parsiraj( AllTrim( cArtikli ), "ID" )
    ENDIF
 
    SELECT roba
@@ -823,7 +823,7 @@ FUNCTION pr_ned_sast()
    aSast := TokToNiz( cSirovine, ";" )
 
    IF !Empty( cArtikli )
-      bUsl := PARSIRAJ( AllTrim( cArtikli ), "ID" )
+      bUsl := Parsiraj( AllTrim( cArtikli ), "ID" )
    ENDIF
 
    SELECT roba
@@ -972,7 +972,7 @@ FUNCTION pr_dupl_sast()
    GO TOP
 
    IF !Empty( cArtikli )
-      bUsl := PARSIRAJ( AllTrim( cArtikli ), "ID" )
+      bUsl := Parsiraj( AllTrim( cArtikli ), "ID" )
    ENDIF
 
 

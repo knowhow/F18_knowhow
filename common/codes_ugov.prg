@@ -1011,8 +1011,7 @@ FUNCTION OsvjeziPrikUg( lWhen, lNew )
 
 
 
-// -----------------------------------
-// -----------------------------------
+
 FUNCTION I_ListaUg()
 
    LOCAL nArr := Select()
@@ -1034,7 +1033,7 @@ FUNCTION I_ListaUg()
    PRIVATE cPartnNaz := ""
    PRIVATE nRugovKol := 0
 
-   cFiltTrz := Parsiraj( IzFMkIni( 'Fakt_Ugovori', "ZakupljeniArtikli", 'K--T;' ), "ID" )
+   cFiltTrz := Parsiraj( 'K--T;', "ID" )
 
    aKol := { { "R.br.", {|| Str( nRbr, 4 ) + "."   }, .F., "C", 5, 0, 1, ++i }, ;
       { "Broj ugovora", {|| cUgovId           }, .F., 'C', 12, 0, 1, ++i }, ;

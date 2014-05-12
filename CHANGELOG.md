@@ -1,3 +1,7 @@
+1.7.77  2014-05-12, vsasa
+
+  - RNAL, specifikacija za poslovođe - bugfix
+ 
 1.7.76  2014-05-12, vsasa, hernad
 
   - KALK, kontiranje dokumenta, kontrola zbira naloga - bugfix

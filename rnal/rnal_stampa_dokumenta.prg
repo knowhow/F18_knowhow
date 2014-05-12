@@ -1240,10 +1240,10 @@ FUNCTION is_kaljeno( aArticle, nDoc_no, nDocit_no, nDoc_el_no )
       nDoc_el_no := 0
    ENDIF
 
-   lRet := obrada_u_artiklu( aArticle, cSrcJok )
+   lRet := postoji_obrada_u_artiklu( aArticle, cSrcJok )
 
    IF lRet == .F.
-      lRet := obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok )
+      lRet := postoji_obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok )
    ENDIF
 
    RETURN lRet
@@ -1261,10 +1261,10 @@ FUNCTION is_emajl( aArticle, nDoc_no, nDocit_no, nDoc_el_no )
       nDoc_el_no := 0
    ENDIF
 
-   lRet := obrada_u_artiklu( aArticle, cSrcJok )
+   lRet := postoji_obrada_u_artiklu( aArticle, cSrcJok )
 
    IF lRet == .F.
-      lRet := obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok )
+      lRet := postoji_obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok )
    ENDIF
 
    RETURN lRet
@@ -1283,10 +1283,10 @@ FUNCTION is_bruseno( aArticle, nDoc_no, nDocit_no, nDoc_el_no )
       nDoc_el_no := 0
    ENDIF
 
-   lRet := obrada_u_artiklu( aArticle, cSrcJok )
+   lRet := postoji_obrada_u_artiklu( aArticle, cSrcJok )
 
    IF lRet == .F.
-      lRet := obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok )
+      lRet := postoji_obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok )
    ENDIF
 
    RETURN lRet
@@ -1305,10 +1305,10 @@ FUNCTION is_buseno( aArticle, nDoc_no, nDocit_no, nDoc_el_no )
       nDoc_el_no := 0
    ENDIF
 
-   lRet := obrada_u_artiklu( aArticle, cSrcJok )
+   lRet := postoji_obrada_u_artiklu( aArticle, cSrcJok )
 
    IF lRet == .F.
-      lRet := obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok )
+      lRet := postoji_obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcJok )
    ENDIF
 
    RETURN lRet
@@ -1318,10 +1318,10 @@ FUNCTION is_buseno( aArticle, nDoc_no, nDocit_no, nDoc_el_no )
 /*
    Provjerava postoji li obrada unutar matrice artikla
 
-   Primjer: obrada_u_artiklu( aArticle, "<A_B>" ) => .T. ili .F.
+   Primjer: postoji_obrada_u_artiklu( aArticle, "<A_B>" ) => .T. ili .F.
    Provjerit će da li u matrici artikla postoji obrada brušenje
 */
-STATIC FUNCTION obrada_u_artiklu( aArticle, cSrcObrada )
+STATIC FUNCTION postoji_obrada_u_artiklu( aArticle, cSrcObrada )
 
    LOCAL lRet := .F.
    LOCAL nObrada
@@ -1338,13 +1338,13 @@ STATIC FUNCTION obrada_u_artiklu( aArticle, cSrcObrada )
    Provjerava da li unutar dodatnih operacija postoji određena obrada.
    Provjerava se tabela DOC_OPS ili _DOC_OPS (tabela pripreme kada se vrši na osnovu naloga iz pripreme)
   
-   Primjer: obrada_u_operacijama( 1, 1, 3, "<A_B>" ) => .T. ili .F.
+   Primjer: postoji_obrada_u_operacijama( 1, 1, 3, "<A_B>" ) => .T. ili .F.
 
    provjerit će da li se u tabelu DOC_OPS za dokument 1, stavku 1, element artikla 3 (treće staklo) nalazi operacija
    brušenja
 
 */
-STATIC FUNCTION obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcObrada )
+STATIC FUNCTION postoji_obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cSrcObrada )
 
    LOCAL lRet := .F.
    LOCAL nTArea := Select()

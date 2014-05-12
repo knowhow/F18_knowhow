@@ -124,9 +124,6 @@ FUNCTION fakt_unos_dokumenta()
 
 
 
-// ------------------------------------------------------------
-// tabela pripreme - key handler
-// ------------------------------------------------------------
 STATIC FUNCTION fakt_pripr_keyhandler()
 
    LOCAL _rec

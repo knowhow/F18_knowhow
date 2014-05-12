@@ -647,7 +647,6 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
 
       _rn_params := hb_Hash()
 
-      // stampaj fiskalni duplikat...
       IF field->fisc_st <> 0
          _rn_params[ "storno" ] := .T.
       ELSE
@@ -661,14 +660,13 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
 
       MsgBeep( "Duplikat racuna za datum: " + DToC( field->fisc_date ) + ", vrijeme: " + AllTrim( field->fisc_time ) )
 
-      // stampanje fiskalnog racuna
+
    CASE Upper( Chr( Ch ) ) == "R"
 
       IF !fiscal_opt_active()
          RETURN DE_CONT
       ENDIF
 
-      // stampa fiskalnog racuna
       IF field->idtipdok $ "10#11"
 
          IF ( field->fisc_rn > 0 .OR. field->fisc_st > 0 )
@@ -696,7 +694,6 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
                RETURN DE_CONT
             ENDIF
 
-            // da li je korisniku dozvoljeno da stampa racune ?
             IF _dev_params[ "print_fiscal" ] == "N"
                MsgBeep( "Nije Vam dozvoljena opcija za štampu fiskalnih računa !" )
                RETURN DE_CONT

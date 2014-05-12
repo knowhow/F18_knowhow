@@ -399,19 +399,12 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
    RETURN
 
 
-// ------------------------------------------
-// provjeri status zabrane povrata
-// ------------------------------------------
 STATIC FUNCTION _chk_povrat_zabrana( vars )
 
    LOCAL _area
    LOCAL _ret := .T.
 
-   // fiscal zabrana
-   // ako je fiskalni racun u vezi, ovo nema potrebe vracati
-   // samo uz lozinku
-
-   IF fiscal_opt_active() .AND. vars[ "idtipdok" ] $ "10#11"
+   IF vars[ "idtipdok" ] $ "10#11"
 
       _area := Select()
 
@@ -420,10 +413,9 @@ STATIC FUNCTION _chk_povrat_zabrana( vars )
 
       IF Found()
          IF ( fakt_doks->fisc_rn <> 0 .AND. fakt_doks->iznos > 0 ) .OR. ;
-               ( fakt_doks->fisc_rn <> 0 .AND. fakt_doks->fisc_st <> 0 .AND. fakt_doks->iznos < 0 )
+               ( ( fakt_doks->fisc_rn <> 0 .OR. fakt_doks->fisc_st <> 0 ) .AND. fakt_doks->iznos < 0 )
 
-            // veza sa fisc_rn postoji
-            msgbeep( "Za ovaj dokument je izdat fiskalni racun.#Opcija povrata je onemogucena !!!" )
+            MsgBeep( "Za ovaj dokument je izdat fiskalni račun.#Opcija povrata je onemogućena !!!" )
             _ret := .F.
 
             SELECT ( _area )
@@ -439,9 +431,6 @@ STATIC FUNCTION _chk_povrat_zabrana( vars )
    RETURN _ret
 
 
-// -----------------------------------------------------
-// vraca box sa uslovima povrata dokumenta
-// -----------------------------------------------------
 STATIC FUNCTION _get_povrat_vars( vars )
 
    LOCAL _firma   := vars[ "idfirma" ]

@@ -495,12 +495,13 @@ STATIC FUNCTION _veza_fc_rn()
          _txt := ""
 
          IF _rekl_rn <> "0"
-            _txt += "reklamni racun: " + _rekl_rn + ", "
+            _txt += "reklamirani račun: " + _rekl_rn + ", "
          ENDIF
 
-         _txt += "fiskalni rn: " + _fisc_rn
+         _txt += "fiskalni račun: " + _fisc_rn
 
-         @ m_x + 1, m_y + 2 SAY PadR( _txt, 60 ) COLOR "GR+/B"
+         @ m_x + 1, m_y + 2 SAY8 PadR( _txt, 60 ) COLOR "GR+/B"
+
       ENDIF
 
    ELSE

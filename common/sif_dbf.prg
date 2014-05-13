@@ -1690,7 +1690,6 @@ FUNCTION UslovSif()
    ELSE
       IF Left( cFilter, 8 ) == ".t..and."
          cFilter := SubStr( cFilter, 9 )
-         altd()
          SET FILTER to &cFilter
       ENDIF
    ENDIF

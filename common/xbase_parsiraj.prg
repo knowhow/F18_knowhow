@@ -43,7 +43,7 @@ FUNCTION Parsiraj( cFilterUpit, cImeSifre, cTip, lRekurzivno, nSifWA )
 
    cFilterUpit := TRIM( cFilterUpit )
 
-   IF nSifWA == NIL .AND. Right( cFilterUpit , 1 ) <> ";"
+   IF nSifWA == NIL .AND. !EMPTY(cFilterUpit) .and. Right( cFilterUpit , 1 ) <> ";"
         cFilterUpit := cFilterUpit + ";"
    ENDIF
 

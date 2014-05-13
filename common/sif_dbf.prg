@@ -15,7 +15,6 @@
 
 // static integer
 STATIC __PSIF_NIVO__ := 0
-// ;
 
 STATIC _LOG_PROMJENE := .F.
 
@@ -1627,7 +1626,7 @@ FUNCTION UslovSif()
 
    SkratiAZaD( @aStruct )
 
-   Box( "", IF( Len( aStruct ) > 22, 22, Len( aStruct ) ), 67, .F.,"", "Postavi kriterije za pretrazivanje" )
+   Box( "", IIF( Len( aStruct ) > 22, 22, Len( aStruct ) ), 67, .F.,"", "Postavi kriterije za pretrazivanje" )
 
    PRIVATE Getlist := {}
 
@@ -1689,8 +1688,9 @@ FUNCTION UslovSif()
    IF cFilter == ".t."
       SET FILTER TO
    ELSE
-      IF Left( cfilter, 8 ) == ".t..and."
+      IF Left( cFilter, 8 ) == ".t..and."
          cFilter := SubStr( cFilter, 9 )
+         altd()
          SET FILTER to &cFilter
       ENDIF
    ENDIF

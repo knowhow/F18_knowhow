@@ -47,7 +47,7 @@ FUNCTION set_a_dbf_fakt()
    set_a_dbf_temp( "fakt_fapripr",    "FAKT_FAPRIPR", F_FAKT_PRIPR )
    set_a_dbf_temp( "fakt_pripr_atrib", "FAKT_ATRIB", F_FAKT_ATRIB )
    set_a_dbf_temp( "labelu", "LABELU", F_LABELU )
-   set_a_dbf_temp( "lab2", "LAB2", F_LABELU )
+   set_a_dbf_temp( "lab2",   "LAB2",   F_LABELU2 )
 
    // tabele razmjene podataka udaljene lokacije
    set_a_dbf_temp( "e_doks", "E_DOKS", F_TMP_E_DOKS )

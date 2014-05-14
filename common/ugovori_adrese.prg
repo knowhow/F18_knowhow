@@ -385,12 +385,12 @@ STATIC FUNCTION _create_labelu_dbf()
    FErase( my_home() + _table_label_2 + ".dbf" )
    FErase( my_home() + _table_label_2 + ".cdx" )
 
-   SELECT ( F_TMP_1 )
+   SELECT ( F_LABELU2 )
    USE
 
    dbCreate( my_home() + _table_label_2 + ".dbf", _dbf )
 
-   SELECT ( F_TMP_1 )
+   SELECT ( F_LABELU2 )
    USE
    my_use_temp( "lab2", my_home() + _table_label_2 + ".dbf", .F., .F. )
 

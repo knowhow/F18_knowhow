@@ -93,7 +93,7 @@ if gRJ=="D" .and. gSAKrIz=="D" .and. "." $ cidrj
 endif
 
 IF gRJ=="D" .and. gSAKrIz=="D" .and. LEN(cIdRJ)<>0
-  SintFilt(.t.,"IDRJ='"+cIdRJ+"'")
+  otvori_sint_anal_kroz_temp(.t.,"IDRJ='"+cIdRJ+"'")
 ELSE
   O_SINT
 ENDIF
@@ -349,7 +349,7 @@ select params; use
 
 
 IF gRJ=="D" .and. gSAKrIz=="D" .and. LEN(cIdRJ)<>0
-  SintFilt(.t.,"IDRJ='"+cIdRJ+"'")
+  otvori_sint_anal_kroz_temp(.t.,"IDRJ='"+cIdRJ+"'")
 ELSE
   O_SINT
 ENDIF
@@ -622,7 +622,7 @@ IF gNW=="N".and.cPTD=="D"
 ENDIF
 
 IF gRJ=="D" .and. gSAKrIz=="D" .and. LEN(cIdRJ)<>0
-  SintFilt(.f.,"IDRJ='"+cIdRJ+"'")
+  otvori_sint_anal_kroz_temp(.f.,"IDRJ='"+cIdRJ+"'")
 ELSE
   O_ANAL
 ENDIF

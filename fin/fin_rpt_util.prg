@@ -17,7 +17,7 @@
   Opis: kreira se pomoćna tabela sa filterisanim zapisima tabele SUBAN po IDRJ = tražena radna jedinica
         te otvara kao ANAL ili SINT
 
-  Usage: SintFilt( .T., "IDRJ = '01'")
+  Usage: otvori_sint_anal_kroz_temp( .T., "IDRJ = '01'")
     
    Parameters:
       lSint - .T. sintetika, .F. analitika
@@ -28,7 +28,7 @@
  
 */
 
-FUNCTION SintFilt( lSint, cFilter )
+FUNCTION otvori_sint_anal_kroz_temp( lSint, cFilter )
 
    LOCAL nArr
 

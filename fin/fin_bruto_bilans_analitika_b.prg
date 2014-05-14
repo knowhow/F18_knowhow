@@ -61,7 +61,7 @@ FUNCTION fin_bb_analitika_b( params )
    O_BBKLAS
 
    IF gRJ == "D" .AND. Len( cIdRJ ) <> 0
-      SintFilt( .F., "IDRJ='" + cIdRJ + "'" )
+      otvori_sint_anal_kroz_temp( .F., "IDRJ='" + cIdRJ + "'" )
    ELSE
       O_ANAL
    ENDIF

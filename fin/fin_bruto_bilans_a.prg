@@ -213,9 +213,9 @@ METHOD FinBrutoBilans:get_vars()
 
    @ m_x + _x, col() + 1 SAY8 "Klase unutar izvještaja (D/N) ?" GET _podklase VALID _podklase $ "DN" PICT "@!"
 
-   IF _tip == 1 .AND. gRJ == "D"
+   IF gRJ == "D"
       ++ _x
-      _id_rj := "999999"
+      _id_rj := SPACE(6)
       @ m_x + _x, m_y + 2 SAY8 "Radna jedinica ( 999999-sve ): " GET _id_rj
    ENDIF
  	
@@ -248,7 +248,7 @@ METHOD FinBrutoBilans:get_vars()
    ::params[ "datum_od" ] := _dat_od
    ::params[ "datum_do" ] := _dat_do
    ::params[ "valuta" ] := _valuta
-   ::params[ "id_rj" ] := _id_rj
+   ::params[ "id_rj" ] := IF( EMPTY( _id_rj ), ALLTRIM( _id_rj ), _id_rj )
    ::params[ "export_dbf" ] := ( _export_dbf == "D" )
    ::params[ "saldo_nula" ] := ( _saldo_nula == "D" )
    ::params[ "kolona_tek_prom" ] := ( _tek_prom == "D" )

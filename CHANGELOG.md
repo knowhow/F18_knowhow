@@ -1,3 +1,11 @@
+1.7.79  2014-05-14, vsasa
+
+  - FIN, bruto bilans sa radnim jedinicama - bugfix
+ 
+1.7.78  2014-05-13, hernad
+
+  - filter ALT+F bugfix
+ 
 1.7.77  2014-05-12, vsasa
 
   - RNAL, specifikacija za poslovođe - bugfix

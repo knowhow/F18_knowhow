@@ -57,7 +57,7 @@ FUNCTION fin_bb_grupe_b( params )
    my_dbf_zap()
 
    IF gRJ == "D" .AND. Len( cIdRJ ) <> 0
-      SintFilt( .T., "IDRJ='" + cIdRJ + "'" )
+      otvori_sint_anal_kroz_temp( .T., "IDRJ='" + cIdRJ + "'" )
    ELSE
       O_SINT
    ENDIF
@@ -350,8 +350,8 @@ STATIC FUNCTION zagl_bb_grupe( params, nStr )
       ? "Odabrana konta: " + ALLTRIM( params["konto"] )
    ENDIF
 
-   IF gRJ == "D" .AND. Len( params["idrj"] ) <> 0
-      ? "Radna jedinica ='" + params["idrj"] + "'"
+   IF gRJ == "D" .AND. Len( params["id_rj"] ) <> 0
+      ? "Radna jedinica ='" + params["id_rj"] + "'"
    ENDIF
 
    SELECT SINT

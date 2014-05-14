@@ -11,92 +11,79 @@
 
 #include "fin.ch"
 
-/*! \fn SintFilt(lSint,cFilter)
- *  \brief Iz filterisane SUBAN.DBF tabele generise POM.DBF
- *  \brief Ova funkcija ne podrzava varijantu gDatNal:="D"
- *  \param lSint   - .t.-POM.DBF je analitika, .f.-POM.DBF
- *  \param cFilter
 
+/*
 
-   fin/fin_rpt_bilans.prg
-   fin/fin_rpt_kartica_sinteticka.prg
-   fin/fin_rpt_specifikacija_anal5.prg
-   fin/fin_specifikacija.prg
+  Opis: kreira se pomoćna tabela sa filterisanim zapisima tabele SUBAN po IDRJ = tražena radna jedinica
+        te otvara kao ANAL ili SINT
 
+  Usage: otvori_sint_anal_kroz_temp( .T., "IDRJ = '01'")
+    
+   Parameters:
+      lSint - .T. sintetika, .F. analitika
+      cFilter - filter za suban tabelu
+    
+  Return:
+    otvorena pomoćna tabela ali kao alias SINT ili ANAL
+ 
 */
 
-FUNCTION SintFilt( lSint, cFilter )
+FUNCTION otvori_sint_anal_kroz_temp( lSint, cFilter )
+
+   LOCAL nArr
 
    IF lSint == NIL
       lSint := .F.
    ENDIF
 
-   // napravimo pomocnu bazu
-   aDbf := {}
-   AAdd( aDBf, { 'IDFIRMA', 'C',   5,  0 } )
-   AAdd( aDBf, { 'IDKONTO', 'C', IF( lSint, 3, 7 ),  0 } )
-   AAdd( aDBf, { 'IDVN', 'C',   2,  0 } )
-   AAdd( aDBf, { 'BRNAL', 'C',   8,  0 } )
-   AAdd( aDBf, { 'RBR', 'C',   3,  0 } )
-   AAdd( aDBf, { 'DATNAL', 'D',   8,  0 } )
-   AAdd( aDBf, { 'DUGBHD', 'N',  17,  2 } )
-   AAdd( aDBf, { 'POTBHD', 'N',  17,  2 } )
-   AAdd( aDBf, { 'DUGDEM', 'N',  15,  2 } )
-   AAdd( aDBf, { 'POTDEM', 'N',  15,  2 } )
+   napravi_pomocnu_tabelu( lSint )
 
-   DBCREATE2 ( PRIVPATH + "POM", aDbf )
-   IF !lSint
-      USEX ( PRIVPATH + "POM", "ANAL", .T. )
-   ELSE
-      USEX ( PRIVPATH + "POM", "SINT", .F. )
-   ENDIF
-   INDEX ON idFirma + IdVN + BrNal + IdKonto TAG "0"
-   IF lSint
-      INDEX ON IdFirma + IdKonto + DToS( DatNal ) TAG "1"
-      INDEX ON idFirma + IdVN + BrNal + Rbr       TAG "2"
-   ELSE
-      INDEX ON IdFirma + IdKonto + DToS( DatNal ) TAG "1"
-      INDEX ON idFirma + IdVN + BrNal + Rbr       TAG "2"
-      INDEX ON idFirma + DToS( DatNal )         TAG "3"
-      INDEX ON Idkonto                      TAG "4"
-      INDEX ON DatNal                       TAG "5"
-   ENDIF
    SET ORDER TO TAG "0"
    GO TOP
 
    O_SUBAN
+
    Box(, 2, 30 )
-   nSlog := 0; nUkupno := RECCOUNT2()
+
+   nSlog := 0
+   nUkupno := RECCOUNT2()
    cFilt := cFilter
    cSort1 := "idFirma+IdVN+BrNal+IdKonto"
-   INDEX ON &cSort1 TO "SUBTMP" FOR &cFilt Eval( fin_tek_rec_2() ) EVERY 1
+
+   INDEX ON &cSort1 TO "SUBTMP" FOR &cFilt
    GO TOP
+
    nArr := Select()
+
    BoxC()
 
-   DO WHILE !Eof()   // svi nalozi
+   DO WHILE !Eof()
 
       nD1 := nD2 := nP1 := nP2 := 0
-      cIdFirma := IdFirma; cIDVn = IdVN; cBrNal := BrNal
+      cIdFirma := IdFirma
+      cIDVn = IdVN
+      cBrNal := BrNal
 
-      DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal     // jedan nalog
+      DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal
 
          cIdkonto := idkonto
 
          nDugBHD := nDugDEM := 0
          nPotBHD := nPotDEM := 0
+
          IF D_P = "1"
-            nDugBHD := IznosBHD; nDugDEM := IznosDEM
+            nDugBHD := IznosBHD
+            nDugDEM := IznosDEM
          ELSE
-            nPotBHD := IznosBHD; nPotDEM := IznosDEM
+            nPotBHD := IznosBHD
+            nPotDEM := IznosDEM
          ENDIF
 
          IF !lSint
-            SELECT ANAL     // analitika
+            SELECT ANAL
             SEEK cidfirma + cidvn + cbrnal + cidkonto
             fNasao := .F.
-            DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal ;
-                  .AND. IdKonto == cIdKonto
+            DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal .AND. IdKonto == cIdKonto
                IF Month( ( nArr )->datdok ) == Month( datnal )
                   fNasao := .T.
                   EXIT
@@ -118,8 +105,7 @@ FUNCTION SintFilt( lSint, cFilter )
             SELECT SINT
             SEEK cidfirma + cidvn + cbrnal + Left( cidkonto, 3 )
             fNasao := .F.
-            DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal ;
-                  .AND. Left( cidkonto, 3 ) == idkonto
+            DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal .AND. Left( cIdKonto, 3 ) == idkonto
                IF  Month( ( nArr )->datdok ) == Month( datnal )
                   fNasao := .T.
                   EXIT
@@ -135,9 +121,12 @@ FUNCTION SintFilt( lSint, cFilter )
                DatNal WITH Max( ( nArr )->datdok, datnal ), ;
                DugBHD WITH DugBHD + nDugBHD, PotBHD WITH PotBHD + nPotBHD, ;
                DugDEM WITH DugDEM + nDugDEM, PotDEM WITH PotDEM + nPotDEM
+
          ENDIF
+
          SELECT ( nArr )
          SKIP 1
+
       ENDDO
 
       SELECT ( nArr )
@@ -152,13 +141,16 @@ FUNCTION SintFilt( lSint, cFilter )
    ELSE
       SELECT SINT
    ENDIF
+
    GO TOP
 
    my_flock()
 
    DO WHILE !Eof()
       nRbr := 0
-      cIdFirma := IdFirma;cIDVn = IdVN;cBrNal := BrNal
+      cIdFirma := IdFirma
+      cIDVn = IdVN
+      cBrNal := BrNal
       DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal
          REPLACE rbr WITH Str( ++nRbr, 3 )
          SKIP 1
@@ -171,3 +163,68 @@ FUNCTION SintFilt( lSint, cFilter )
    GO TOP
 
    RETURN
+
+
+
+
+STATIC FUNCTION close_sint_anal( lSint )
+
+   IF lSint
+      SELECT ( F_SINT )
+   ELSE
+      SELECT ( F_ANAL )
+   ENDIF
+
+   IF Used()
+      USE
+   ENDIF      
+ 
+   RETURN
+
+
+
+
+STATIC FUNCTION napravi_pomocnu_tabelu( lSint )
+
+   LOCAL aDbf := {}
+   LOCAL cTable := my_home() + "pom"
+
+   close_sint_anal( lSint )
+
+   AAdd( aDBf, { 'IDFIRMA', 'C',   5,  0 } )
+   AAdd( aDBf, { 'IDKONTO', 'C', IF( lSint, 3, 7 ),  0 } )
+   AAdd( aDBf, { 'IDVN', 'C',   2,  0 } )
+   AAdd( aDBf, { 'BRNAL', 'C',   8,  0 } )
+   AAdd( aDBf, { 'RBR', 'C',   3,  0 } )
+   AAdd( aDBf, { 'DATNAL', 'D',   8,  0 } )
+   AAdd( aDBf, { 'DUGBHD', 'N',  17,  2 } )
+   AAdd( aDBf, { 'POTBHD', 'N',  17,  2 } )
+   AAdd( aDBf, { 'DUGDEM', 'N',  15,  2 } )
+   AAdd( aDBf, { 'POTDEM', 'N',  15,  2 } )
+
+   DBCREATE( cTable, aDbf )
+
+   SELECT ( F_TMP_1 )
+   USE
+
+   IF !lSint
+      my_use_temp( "ANAL", cTable, .F., .T. )
+   ELSE
+      my_use_temp( "SINT", cTable, .F., .T. )
+   ENDIF
+
+   INDEX ON idFirma + IdVN + BrNal + IdKonto TAG "0"
+
+   IF lSint
+      INDEX ON IdFirma + IdKonto + DToS( DatNal ) TAG "1"
+      INDEX ON idFirma + IdVN + BrNal + Rbr       TAG "2"
+   ELSE
+      INDEX ON IdFirma + IdKonto + DToS( DatNal ) TAG "1"
+      INDEX ON idFirma + IdVN + BrNal + Rbr       TAG "2"
+      INDEX ON idFirma + DToS( DatNal )         TAG "3"
+      INDEX ON Idkonto                      TAG "4"
+      INDEX ON DatNal                       TAG "5"
+   ENDIF
+ 
+   RETURN
+

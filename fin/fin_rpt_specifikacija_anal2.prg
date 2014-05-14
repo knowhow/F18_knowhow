@@ -154,7 +154,7 @@ for i := nYearFrom to nYearTo
 	O_KONTO
 
 	if gRJ == "D" .and. gSAKrIz == "D" .and. LEN( cIdRJ ) <> 0
-  		SintFilt( .f., "IDRJ='" + cIdRJ + "'" )
+  		otvori_sint_anal_kroz_temp( .f., "IDRJ='" + cIdRJ + "'" )
 	else
   		O_ANAL
 	endif

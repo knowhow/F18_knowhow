@@ -350,8 +350,8 @@ STATIC FUNCTION zagl_bb_grupe( params, nStr )
       ? "Odabrana konta: " + ALLTRIM( params["konto"] )
    ENDIF
 
-   IF gRJ == "D" .AND. Len( params["idrj"] ) <> 0
-      ? "Radna jedinica ='" + params["idrj"] + "'"
+   IF gRJ == "D" .AND. Len( params["id_rj"] ) <> 0
+      ? "Radna jedinica ='" + params["id_rj"] + "'"
    ENDIF
 
    SELECT SINT

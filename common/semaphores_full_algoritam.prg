@@ -47,9 +47,11 @@ nuliraj_ids_and_update_my_semaphore_ver(dbf_table)
 // 3) ako nema transakcije ja cu pokupiti tu promjenu, sa transakcijom ja tu promjenu neću vidjeti
 
 
+
 _sql_table  := "fmk." + dbf_table
 _a_dbf_rec  := get_a_dbf_rec(dbf_table) 
 _sql_fields := sql_fields(_a_dbf_rec["dbf_fields"])
+
 _sql_order  := _a_dbf_rec["sql_order"]
 
 
@@ -72,7 +74,7 @@ Box(, 6, 70)
         _msg := "sql_fields za " + _sql_table + " nije setovan ... sinhro nije moguć"
         log_write( "full_synchro: " + _msg, 2 )
         msgbeep( _msg ) 
-        QUIT_1
+        RaiseError( _msg )
     endif
 
     @ m_x + 3, m_y + 2 SAY _count
@@ -111,7 +113,6 @@ BoxC()
 
 MsgO("Reindex nakon full sync: " + dbf_table)
    log_write("reopen nakon full_sync START:" + dbf_table, 3)
-   altd()
    IF reopen_exclusive(_a_dbf_rec["table"], .t.)
        REINDEX
    ENDIF

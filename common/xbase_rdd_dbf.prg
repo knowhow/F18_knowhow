@@ -223,7 +223,7 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
       open_index := .T.
    ENDIF
 
-   _a_dbf_rec  := get_a_dbf_rec( dbf_table )
+   _a_dbf_rec  := get_a_dbf_rec( dbf_table, .T. )
 
    SELECT ( _a_dbf_rec[ "wa" ] )
    USE

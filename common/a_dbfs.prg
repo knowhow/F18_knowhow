@@ -56,7 +56,7 @@ FUNCTION set_a_dbfs_key_fields()
 
       // nije zadano - ja cu na osnovu strukture dbf-a
       // napraviti dbf_fields
-      IF !hb_HHasKey( __f18_dbfs[ _key ], "dbf_fields" )
+      IF !hb_HHasKey( __f18_dbfs[ _key ], "dbf_fields" )  .OR.  __f18_dbfs[ _key ][ "dbf_fields" ] == NIL
          set_dbf_fields_from_struct( @__f18_dbfs[ _key ] )
       ENDIF
 
@@ -231,7 +231,7 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
 
    // nije zadano - ja cu na osnovu strukture dbf-a
    // napraviti dbf_fields
-   IF !hb_HHasKey( _rec, "dbf_fields" )
+   IF !hb_HHasKey( _rec, "dbf_fields" ) .OR. _rec[ "dbf_fields" ] == NIL
       set_dbf_fields_from_struct( @_rec )
    ENDIF
 

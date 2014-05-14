@@ -1,3 +1,9 @@
+1.7.80  2014-05-14, vsasa, hernad
+
+  - FAKT, štampa naljepnica sa adresama
+  - POS, brisanje stavke računa, izbacio pakovanje tabele
+  - SYNHRO bugovi, hernad radio
+ 
 1.7.79  2014-05-14, vsasa
 
   - FIN, bruto bilans sa radnim jedinicama - bugfix

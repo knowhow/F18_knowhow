@@ -194,6 +194,7 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
    LOCAL _a_dbf_rec
    LOCAL _dbf
    LOCAL lRet
+   LOCAL _msg
 
    IF open_index == NIL
       open_index := .T.
@@ -221,7 +222,11 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
        ENDIF
 
    RECOVER USING _err
+        
+       _msg := "ERROR reopen_dbf: " + _err:description + ": tbl:" + dbf_table + " se ne može otvoriti ?!"
+       log_write( _msg, 2 )
        lRet := .F.
+
    END SEQUENCE
 
    RETURN lRet

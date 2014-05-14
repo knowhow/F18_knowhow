@@ -111,8 +111,10 @@ BoxC()
 
 MsgO("Reindex nakon full sync: " + dbf_table)
    log_write("reopen nakon full_sync START:" + dbf_table, 3)
-   reopen_exclusive(_a_dbf_rec["table"], .t.)
-   REINDEX
+   altd()
+   IF reopen_exclusive(_a_dbf_rec["table"], .t.)
+       REINDEX
+   ENDIF
 MsgC()
 
 USE

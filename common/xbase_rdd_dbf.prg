@@ -11,38 +11,56 @@
 
 #include "fmk.ch"
 
-FUNCTION f18_ime_dbf( alias )
 
-   LOCAL _pos, _a_dbf_rec
-   LOCAL cFullName
+function f18_ime_dbf( xTableRec )
 
-   cFullName := FILEBASE( alias )
+   LOCAL _pos
+   LOCAL _a_dbf_rec
+   LOCAL _ret
+ 
 
-   _a_dbf_rec := get_a_dbf_rec( cFullName, .T. )
+   SWITCH VALTYPE( xTableRec ) 
 
-   cFullName := my_home() + _a_dbf_rec[ "table" ] + "." + DBFEXT
+   CASE "H"
+      _a_dbf_rec := xTableRec
+      EXIT
+   CASE "C"
+      _a_dbf_rec := get_a_dbf_rec( FILEBASE( xTableRec, .t. ) )
+     EXIT
+   OTHERWISE
+      Alert( "f1_ime_dbf arg ?! " + hb_valToStr( xTableRec ) )
+   ENDSWITCH
+  
+    if _a_dbf_rec[ "table" ] == "x"
+        Alert( "f18_ime_dbf alias :" + ToStr( xTableRec ) )
+    endif
 
-   RETURN cFullName
+    _ret := my_home() + _a_dbf_rec["table"] + "." + DBFEXT
+
+return _ret
+
+
 
 /*
    uzima sva polja iz tekuceg dbf zapisa
 */
-function dbf_get_rec()
-local _ime_polja, _i, _struct
-local _ret := hb_hash()
+FUNCTION dbf_get_rec()
 
-_struct := DBSTRUCT()
-for _i := 1 to LEN(_struct)
+   LOCAL _ime_polja, _i, _struct
+   LOCAL _ret := hb_Hash()
 
-  _ime_polja := _struct[_i, 1]
-   
-  if !("#"+ _ime_polja + "#" $ "#BRISANO#_OID_#_COMMIT_#")
-      _ret[ LOWER(_ime_polja) ] := EVAL( FIELDBLOCK(_ime_polja) )
-  endif
+   _struct := dbStruct()
+   FOR _i := 1 TO Len( _struct )
 
-next
+      _ime_polja := _struct[ _i, 1 ]
 
-return _ret
+      IF !( "#" + _ime_polja + "#" $ "#BRISANO#_OID_#_COMMIT_#" )
+         _ret[ Lower( _ime_polja ) ] := Eval( FieldBlock( _ime_polja ) )
+      ENDIF
+
+   NEXT
+
+   RETURN _ret
 
 
 /*
@@ -55,39 +73,42 @@ return _ret
 */
 FUNCTION is_dbf_struktura_polja_identicna( cTable, cPolje, nLen, nWidth )
 
-  my_use( cTable )
+   my_use( cTable )
 
-  IF FIELDPOS( cPolje ) == 0
+   IF FieldPos( cPolje ) == 0
       USE
       RETURN .F.
-  ENDIF
+   ENDIF
 
-  SWITCH ValType( cPolje )
+   SWITCH ValType( cPolje )
 
-     CASE "C"
-          IF LEN( EVAL( FIELDBLOCK( cPolje ) ) ) != nLen
-              USE
-              RETURN .F.
-          ENDIF
-          EXIT
-     OTHERWISE
-          USE
-          RaiseError( "implementirano samo za C polja" )
+   CASE "C"
+      IF Len( Eval( FieldBlock( cPolje ) ) ) != nLen
+         USE
+         RETURN .F.
+      ENDIF
+      EXIT
+   OTHERWISE
+      USE
+      RaiseError( "implementirano samo za C polja" )
 
-  ENDSWITCH
+   ENDSWITCH
 
-  USE
-  RETURN .T.
- 
+   USE
+
+   RETURN .T.
+
 
 FUNCTION my_reccount()
-   RETURN RECCOUNT()
+   RETURN RecCount()
 
 FUNCTION my_delete()
    RETURN delete_with_rlock()
 
 FUNCTION my_delete_with_pack()
+
    my_delete()
+
    RETURN my_dbf_pack()
 
 FUNCTION delete_with_rlock()
@@ -100,14 +121,15 @@ FUNCTION delete_with_rlock()
       RETURN .F.
    ENDIF
 
-/* 
-   ferase_dbf( "konto", .T. ) => izbriši tabelu "konto.dbf" 
+/*
+   ferase_dbf( "konto", .T. ) => izbriši tabelu "konto.dbf"
                                  (kao i pripadajuće indekse)
-    
+
    - lSilent (default .T.)
      .F. => pitaj korisnika da li želi izbrisati tabelu
      .T. => briši bez pitanja
 */
+
 FUNCTION ferase_dbf( tbl_name, lSilent )
 
    LOCAL _tmp, _odg
@@ -184,9 +206,10 @@ FUNCTION repair_dbfs()
 FUNCTION reopen_shared( dbf_table, open_index )
    RETURN reopen_dbf( .F., dbf_table, open_index )
 
+
+
 FUNCTION reopen_exclusive( dbf_table, open_index )
    RETURN reopen_dbf( .T., dbf_table, open_index )
-
 
 
 FUNCTION reopen_dbf( excl, dbf_table, open_index )
@@ -194,7 +217,7 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
    LOCAL _a_dbf_rec
    LOCAL _dbf
    LOCAL lRet
-   LOCAL _msg
+   LOCAL cMsg
 
    IF open_index == NIL
       open_index := .T.
@@ -207,29 +230,27 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
 
    _dbf := my_home() + _a_dbf_rec[ "table" ]
 
-   SELECT ( _a_dbf_rec[ "wa" ] )
-   USE
-
    BEGIN SEQUENCE WITH {| err| Break( err ) }
 
       dbUseArea( .F., DBFENGINE, _dbf, _a_dbf_rec[ "alias" ], iif( excl, .F., .T. ), .F. )
 
-       IF open_index
-           IF File( ImeDbfCdx( _dbf ) )
-               dbSetIndex( ImeDbfCDX( _dbf ) )
-           ENDIF
-           lRet := .T.
-       ENDIF
+      IF open_index
+         IF File( ImeDbfCdx( _dbf ) )
+            dbSetIndex( ImeDbfCDX( _dbf ) )
+         ENDIF
+         lRet := .T.
+      ENDIF
 
    RECOVER USING _err
-        
-       _msg := "ERROR reopen_dbf: " + _err:description + ": tbl:" + dbf_table + " se ne može otvoriti ?!"
-       log_write( _msg, 2 )
-       lRet := .F.
+
+         cMsg := "ERROR reopen_dbf: " + _err:description + ": tbl:" + _dbf + " excl:" + ToStr( excl )
+         log_write( cMsg, 2 )
+         lRet := .F.
 
    END SEQUENCE
 
    RETURN lRet
+
 
 // ------------------------------------------------------
 // zap, then open shared, open_index - otvori index
@@ -244,40 +265,26 @@ FUNCTION reopen_exclusive_and_zap( dbf_table, open_index )
       open_index := .T.
    ENDIF
 
-   _a_dbf_rec  := get_a_dbf_rec( dbf_table )
 
-   SELECT ( _a_dbf_rec[ "wa" ] )
-   USE
 
-   _dbf := my_home() + _a_dbf_rec[ "table" ]
-   _idx := ImeDbfCdx( _dbf )
+   BEGIN SEQUENCE WITH {| err | Break( err ) }
 
-   BEGIN SEQUENCE WITH { | err | Break( err ) } 
-
-       dbUseArea( .F., DBFENGINE, _dbf, _a_dbf_rec[ "alias" ], .F., .F. )
-
-       IF File( _idx )
-           dbSetIndex( _idx )
-       ENDIF
-
-       ZAP
-       USE
-       my_use( _a_dbf_rec["table"] )
+      reopen_dbf( .T., dbf_table, open_index )
+      ZAP
+      reopen_dbf( .F., dbf_table, open_index )
 
    RECOVER USING _err
 
-       log_write( "ERROR exclusive dbf: " + _dbf + " alias: " + _a_dbf_rec[ "alias" ], 2 )
-       my_use( _a_dbf_rec["table"] )
-       zapp()
+      reopen_dbf( .F., dbf_table, open_index )
+      zapp()
 
    END SEQUENCE
 
-  
    RETURN .T.
 
 
 FUNCTION my_dbf_zap()
-     RETURN reopen_exclusive_and_zap( ALIAS(), .T. )
+   RETURN reopen_exclusive_and_zap( Alias(), .T. )
 
 FUNCTION my_dbf_pack( lOpenUSharedRezimu )
 
@@ -285,24 +292,26 @@ FUNCTION my_dbf_pack( lOpenUSharedRezimu )
       lOpenUSharedRezimu := .T.
    ENDIF
 
-   IF reopen_dbf( .T., ALIAS(), .t. )
+   IF reopen_dbf( .T., Alias(), .T. )
       __dbPack()
    ELSE
       RETURN .F.
    ENDIF
 
-   if lOpenUSharedRezimu
-       RETURN reopen_dbf( .F., ALIAS(), .t. )
+   IF lOpenUSharedRezimu
+      RETURN reopen_dbf( .F., Alias(), .T. )
    ENDIF
 
-   return .T.
+   RETURN .T.
+
+
 
 FUNCTION pakuj_dbf( a_dbf_rec, lSilent )
 
    log_write( "PACK table " + a_dbf_rec[ "alias" ], 2 )
 
    BEGIN SEQUENCE WITH {| err| Break( err ) }
- 
+
       SELECT ( a_dbf_rec[ "wa" ] )
       my_use_temp( a_dbf_rec[ "alias" ], my_home() + a_dbf_rec[ "table" ], .F., .T. )
 
@@ -317,7 +326,7 @@ FUNCTION pakuj_dbf( a_dbf_rec, lSilent )
       DO WHILE .T.
          USE
          IF Used()
-            hb_idleSleep(2)
+            hb_idleSleep( 2 )
          ELSE
             EXIT
          ENDIF
@@ -333,6 +342,10 @@ FUNCTION pakuj_dbf( a_dbf_rec, lSilent )
    END SEQUENCE
 
    RETURN
+
+
+
+
 
 
 FUNCTION full_table_synchro()
@@ -362,5 +375,36 @@ FUNCTION full_table_synchro()
    ENDIF
 
    post_login()
+
+   RETURN .T.
+
+
+STATIC FUNCTION zatvori_dbf( value )
+
+   SELECT( value[ 'wa' ] )
+
+   IF Used()
+      // ostalo je još otvorenih DBF-ova
+      USE
+      RETURN .F.
+   ELSE
+      RETURN .T.
+   ENDIF
+
+
+
+FUNCTION dbf_open_and_count( a_dbf_rec, cnt, del )
+
+   SELECT ( a_dbf_rec[ "wa" ] )
+   my_use_temp( a_dbf_rec[ "alias" ], my_home() + a_dbf_rec[ "table" ], .F., .F. ) // new_area = .F. , eksluzivno = .F.
+
+   SET DELETED OFF
+
+   SET ORDER TO TAG "DEL"
+   COUNT TO del
+   cnt := RecCount()
+
+   USE
+   SET DELETED ON
 
    RETURN .T.

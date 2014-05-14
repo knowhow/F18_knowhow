@@ -13,9 +13,6 @@
 #include "fmk.ch"
 
 
-// --------------------------------------------------
-// labeliranje adresa iz ugovora
-// --------------------------------------------------
 FUNCTION kreiraj_adrese_iz_ugovora()
 
    LOCAL _id_roba, _partner, _ptt, _mjesto
@@ -29,10 +26,8 @@ FUNCTION kreiraj_adrese_iz_ugovora()
 
    PushWA()
 
-   // otvori potrebne tabele
    _open_tables()
 
-   // parametri izvjestaja - stampe
    _id_roba := PadR( fetch_metric( "ugovori_naljepnice_idroba", my_user(), Space( 10 ) ), 10 )
    _partner := PadR( fetch_metric( "ugovori_naljepnice_partner", my_user(), Space( 300 ) ), 300 )
    _ptt := PadR( fetch_metric( "ugovori_naljepnice_ptt", my_user(), Space( 300 ) ), 300 )
@@ -80,20 +75,16 @@ FUNCTION kreiraj_adrese_iz_ugovora()
 
    BoxC()
 
-   // snimi parametre
    set_metric( "ugovori_naljepnice_idroba", my_user(), _id_roba )
    set_metric( "ugovori_naljepnice_partner", my_user(), AllTrim( _partner ) )
    set_metric( "ugovori_naljepnice_ptt", my_user(), AllTrim( _ptt ) )
    set_metric( "ugovori_naljepnice_mjesto", my_user(), AllTrim( _mjesto ) )
    set_metric( "ugovori_naljepnice_sort", my_user(), _n_sort )
 
-   // sredi index
    _index_sort := _index_sort + AllTrim( _n_sort )
 
-   // kreiraj "labelu.dbf"
    _create_labelu_dbf()
 
-   // otvori potrebne tabele i postavi sortove...
    IF is_dest()
       SELECT dest
       SET FILTER TO
@@ -113,10 +104,8 @@ FUNCTION kreiraj_adrese_iz_ugovora()
 
    Box(, 3, 60 )
 
-   // vrtim se kroz rugov
    DO WHILE !Eof()
 
-      // pronadji ugovor
       SELECT ugov
       SET ORDER TO TAG "ID"
       GO TOP
@@ -126,7 +115,6 @@ FUNCTION kreiraj_adrese_iz_ugovora()
       @ m_x + 2, m_y + 2 SAY PadR( "", 60 )
       @ m_x + 3, m_y + 2 SAY PadR( "", 60 )
 
-      // nema tog ugovora ... preskoci !!!
       IF !Found()
          MsgBeep( "Ugovor " + rugov->id + " ne postoji !!! Preskacem..." )
          SELECT rugov
@@ -134,31 +122,24 @@ FUNCTION kreiraj_adrese_iz_ugovora()
          LOOP
       ENDIF
 
-      // dodatni uslovi za preskakanje...
-
-      // ugovor aktivan ?
       IF field->aktivan == "N"
          SELECT rugov
          SKIP
          LOOP
       ENDIF
 
-      // printati labelu ??
       IF field->lab_prn == "N"
          SELECT rugov
          SKIP
          LOOP
       ENDIF
 
-      // pogledaj i datum ugovora, ako je istekao
-      // ne stampaj labelu
       IF _g_dat == "D" .AND. ( _dat_do > ugov->datdo )
          SELECT rugov
          SKIP
          LOOP
       ENDIF
 
-      // partner ?
       IF !Empty( _partner )
          IF !( &_usl_partner )
             SELECT rugov
@@ -167,7 +148,6 @@ FUNCTION kreiraj_adrese_iz_ugovora()
          ENDIF
       ENDIF
 
-      // predji na partnere
       SELECT partn
       SEEK ugov->idpartner
 
@@ -178,7 +158,6 @@ FUNCTION kreiraj_adrese_iz_ugovora()
          LOOP
       ENDIF
 
-      // ptt ?
       IF !Empty( _ptt )
          IF !( &_usl_ptt )
             SELECT rugov
@@ -187,7 +166,6 @@ FUNCTION kreiraj_adrese_iz_ugovora()
          ENDIF
       ENDIF
 
-      // mjesto ?
       IF !Empty( _mjesto )
          IF !( &_usl_mjesto )
             SELECT rugov
@@ -212,7 +190,6 @@ FUNCTION kreiraj_adrese_iz_ugovora()
 
       _ima_destinacija := .F.
 
-      // vidi ima li ovaj ugovor destinacije ?
       IF is_dest() .AND. !Empty( rugov->dest )
 
          SELECT dest
@@ -228,7 +205,6 @@ FUNCTION kreiraj_adrese_iz_ugovora()
 
       SELECT labelu
 
-      // ako je destinacija, uzmi info iz tabele DEST
       IF _ima_destinacija
 
          _rec[ "destin" ] := dest->id
@@ -241,9 +217,6 @@ FUNCTION kreiraj_adrese_iz_ugovora()
          _rec[ "adresa" ] := dest->adresa
 
       ELSE
-
-         // nije naznacena destinacija
-         // parametre uzimam iz tabele PARTN
 
          _rec[ "destin" ] := ""
          _rec[ "naz" ] := partn->naz
@@ -267,28 +240,21 @@ FUNCTION kreiraj_adrese_iz_ugovora()
 
    BoxC()
 
-   // nije nista generisano !!! mogu izaci
    IF _count == 0
       MsgBeep( "Nema generisanih adresa !!!" )
       SELECT ugov
       RETURN
    ENDIF
 
-   // prebaci naljenpnice za tabelu lab2
    label_to_lab2( _index_sort )
-
 
    MsgBeep( "Ukupno generisano " + AllTrim( Str( _count ) ) + ;
       " naljepnica, kolicina: " + AllTrim( Str( _total_kolicina, 12, 0 ) ) )
 
-   // stampaj pregled naljepnica...
    stampa_pregleda_naljepnica( _index_sort )
 
-   // stampaj labelu...
-   // pozovi funkciju stampanja rtm fajla kroz labeliranje.exe
    f18_rtm_print( "labelu", "lab2", "1", NIL, "labeliranje" )
 
-   // otvori ponovo tabele ugovora
    _open_tables()
 
    PopWA()
@@ -296,10 +262,6 @@ FUNCTION kreiraj_adrese_iz_ugovora()
    RETURN
 
 
-// -------------------------------------------------------------
-// prebacuje sve iz labelu u lab2
-// ali tu ima index samo po polju IDX (numerickom)
-// -------------------------------------------------------------
 STATIC FUNCTION label_to_lab2( index_sort )
 
    LOCAL _rec
@@ -332,16 +294,12 @@ STATIC FUNCTION label_to_lab2( index_sort )
 
 
 
-// -----------------------------------------------------------------------
-// stampa pregleda naljepnica
-// -----------------------------------------------------------------------
 STATIC FUNCTION stampa_pregleda_naljepnica( index_sort )
 
    LOCAL _table_type := 1
    PRIVATE _index := index_sort
 
    SELECT labelu
-   // (ovako ce indeks profercerati kako treba ...)
    SET ORDER TO tag &_index
    GO TOP
 
@@ -369,7 +327,6 @@ STATIC FUNCTION stampa_pregleda_naljepnica( index_sort )
    RETURN
 
 
-// otvori tabele bitne za ugovore
 STATIC FUNCTION _open_tables()
 
    O_UGOV
@@ -440,3 +397,5 @@ STATIC FUNCTION _create_labelu_dbf()
    INDEX on ( Str( idx, 12, 0 ) ) TAG "1"
 
    RETURN
+
+

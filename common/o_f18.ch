@@ -201,7 +201,6 @@
 #xcommand O__DOC_IT2 => select (F__DOC_IT2); my_use ("_doc_it2"); set order to tag "1"
 #xcommand O__DOC_OPS => select (F__DOC_OPS); my_use ("_doc_ops"); set order to tag "1"
 #xcommand O__DOC_OPST => select (F__DOC_OPST); my_use ("_doc_opst"); set order to tag "1"
-#xcommand O__FND_PAR => select (F__FND_PAR); my_use ("_fnd_par"); set order to tag "1"
 #xcommand O_T_DOCIT => select (F_T_DOCIT); my_use ("t_docit"); set order to tag "1"
 #xcommand O_T_DOCIT2 => select (F_T_DOCIT2); my_use ("t_docit2"); set order to tag "1"
 #xcommand O_T_DOCOP => select (F_T_DOCOP); my_use ("t_docop"); set order to tag "1"

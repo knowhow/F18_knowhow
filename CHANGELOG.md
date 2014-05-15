@@ -1,3 +1,9 @@
+1.7.81  2014-05-15, vsasa
+
+  - ePDV, ulazak iz sezone, problem sa dodavanjem tarifa
+  - POS, korekcije i refactor koda
+  - FIN, bruto bilans BBKLAS prebacio na my_use sa my_usex
+ 
 1.7.80  2014-05-14, vsasa, hernad
 
   - FAKT, štampa naljepnica sa adresama

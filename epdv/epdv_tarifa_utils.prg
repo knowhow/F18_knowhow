@@ -16,9 +16,10 @@
 FUNCTION epdv_set_sif_tarifa()
 
    SELECT ( F_TARIFA )
-   IF !Used()
-      O_TARIFA
+   IF Used()
+      USE
    ENDIF
+   O_TARIFA
 
    IF !f18_lock_tables( { "tarifa" } )
       RETURN .F.

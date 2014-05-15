@@ -110,8 +110,8 @@
 #xcommand O_SINTSUB   => select (F_SUBAN);    my_use("suban")     ; set order to tag "1"
 #xcommand O_BUDZET    => select (F_BUDZET);   my_use("budzet")    ; set order to tag "1"
 #xcommand O_PAREK     => select (F_PAREK);    my_use("parek")     ; set order to tag "1"
-#xcommand O_BBKLAS    => select (F_BBKLAS);   my_usex("bbklas")    ; set order to tag "1"
-#xcommand O_IOS       => select (F_IOS);      my_usex("ios")      ; set order to tag "1"
+#xcommand O_BBKLAS    => select (F_BBKLAS);   my_use("bbklas")    ; set order to tag "1"
+#xcommand O_IOS       => select (F_IOS);      my_use("ios")      ; set order to tag "1"
 
 #xcommand O_FUNK   => select (F_FUNK);    MY_USE  ("funk") ; set order to tag "ID"
 #xcommand O_FOND   => select (F_FOND);    MY_USE  ("fond") ; set order to tag "ID"
@@ -201,7 +201,6 @@
 #xcommand O__DOC_IT2 => select (F__DOC_IT2); my_use ("_doc_it2"); set order to tag "1"
 #xcommand O__DOC_OPS => select (F__DOC_OPS); my_use ("_doc_ops"); set order to tag "1"
 #xcommand O__DOC_OPST => select (F__DOC_OPST); my_use ("_doc_opst"); set order to tag "1"
-#xcommand O__FND_PAR => select (F__FND_PAR); my_use ("_fnd_par"); set order to tag "1"
 #xcommand O_T_DOCIT => select (F_T_DOCIT); my_use ("t_docit"); set order to tag "1"
 #xcommand O_T_DOCIT2 => select (F_T_DOCIT2); my_use ("t_docit2"); set order to tag "1"
 #xcommand O_T_DOCOP => select (F_T_DOCOP); my_use ("t_docop"); set order to tag "1"

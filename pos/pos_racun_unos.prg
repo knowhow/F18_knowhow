@@ -17,9 +17,6 @@ STATIC __max_kolicina := NIL
 STATIC __kalk_konto := NIL
 
 
-// ----------------------------------------------------------
-// maksimalna kolicina na unosu racuna
-// ----------------------------------------------------------
 FUNCTION max_kolicina_kod_unosa( read_par )
 
    IF read_par != NIL
@@ -29,9 +26,6 @@ FUNCTION max_kolicina_kod_unosa( read_par )
    RETURN __max_kolicina
 
 
-// ----------------------------------------------------------
-// kalk konto za stanje artikla
-// ----------------------------------------------------------
 FUNCTION kalk_konto_za_stanje_pos( read_par )
 
    IF read_par != NIL
@@ -42,7 +36,7 @@ FUNCTION kalk_konto_za_stanje_pos( read_par )
 
 
 
-FUNCTION UnesiNarudzbu()
+FUNCTION pos_unos_racuna()
 
    PARAMETERS cBrojRn, cSto
 
@@ -93,13 +87,12 @@ FUNCTION UnesiNarudzbu()
    NEXT
 
    AAdd( aUnosMsg, "<*> - Ispravka stavke" )
-   // AADD( aUnosMsg, "Storno - neg.kolicina")
    AAdd( aUnosMsg, "<F8> storno" )
    AAdd( aUnosMsg, "<F9> fiskalne funkcije" )
 
    Box(, _max_rows - 3, _max_cols - 3, , aUnosMsg )
 
-   @ m_x, m_y + 23 SAY PadC ( "RACUN BR: " + AllTrim( cBrojRn ), 40 ) COLOR Invert
+   @ m_x, m_y + 23 SAY8 PadC ( "RAČUN BR: " + AllTrim( cBrojRn ), 40 ) COLOR Invert
 
    oBrowse := FormBrowse( m_x + 7, m_y + 1, m_x + _max_rows - 12, m_y + _max_cols - 2, ;
       ImeKol, Kol, { BROWSE_PODVUCI_2, BROWSE_PODVUCI, BROWSE_COL_SEP }, 0 )
@@ -111,14 +104,9 @@ FUNCTION UnesiNarudzbu()
 
    SetKey( K_F6, {|| f7_pf_traka() } )
 
-   // storno racuna
    SetKey( K_F7, {|| pos_storno_fisc_no(), _refresh_total() } )
    SetKey( K_F8, {|| pos_storno_rn(), _refresh_total() } )
    SetKey( K_F9, {|| fisc_rpt( .T., .T.  ) } )
-
-   // <*> - ispravka tekuce narudzbe
-   // (ukljucujuci brisanje i ispravku vrijednosti)
-   // </> - pregled racuna - kod HOPSa
 
    SetSpecNar()
 
@@ -126,8 +114,6 @@ FUNCTION UnesiNarudzbu()
    @ m_x + 4, m_y + ( _max_cols - 30 ) SAY "POPUST:"
    @ m_x + 5, m_y + ( _max_cols - 30 ) SAY " TOTAL:"
 
-   // ispis velikim brojevima iznosa racuna
-   // na dnu forme...
    ispisi_iznos_veliki_brojevi( 0, m_x + ( _max_rows - 12 ), _max_cols - 2 )
 
    SELECT _pos
@@ -142,7 +128,6 @@ FUNCTION UnesiNarudzbu()
    SET ORDER TO
    GO TOP
 
-   // uzmi varijable _pos_pripr
    scatter()
 
    gDatum := Date()
@@ -166,10 +151,8 @@ FUNCTION UnesiNarudzbu()
       SET CONFIRM ON
       _show_total( nIznNar, nPopust, m_x + 2 )
 
-      // brisi staru cijenu
       @ m_x + 3, m_y + 15 SAY Space( 10 )
 
-      // ispisi i iznos velikim brojevima na dnu...
       ispisi_iznos_veliki_brojevi( ( nIznNar - nPopust ), m_x + ( _max_rows - 12 ), _max_cols - 2 )
 
       DO WHILE !oBrowse:stable
@@ -185,7 +168,6 @@ FUNCTION UnesiNarudzbu()
       @ m_x + 2, m_y + 25 SAY Space ( 40 )
       SET CURSOR ON
 
-      // duzina naziva robe na unosu...
       IF gDuzSifre > 0
          cDSFINI := AllTrim( Str( gDuzSifre ) )
       ELSE
@@ -200,7 +182,7 @@ FUNCTION UnesiNarudzbu()
       @ m_x + 3, m_y + 5 SAY "  Cijena:" GET _Cijena PICT "99999.999"  ;
          WHEN ( roba->tip == "T" .OR. gPopZcj == "D" )
 
-      @ m_x + 4, m_y + 5 SAY "Kolicina:" GET _kolicina ;
+      @ m_x + 4, m_y + 5 SAY8 "Količina:" GET _kolicina ;
          PICT "999999.999" ;
          WHEN when_pos_kolicina( @_kolicina ) ;
          VALID valid_pos_kolicina( @_kolicina, _cijena )
@@ -212,12 +194,10 @@ FUNCTION UnesiNarudzbu()
 
       @ m_x + 4, m_y + 25 SAY Space ( 11 )
 
-      // zakljuci racun
       IF LastKey() == K_ESC
          EXIT
       ENDIF
 
-      // dodaj stavku racuna
       SELECT _pos_pripr
       APPEND BLANK
 
@@ -228,13 +208,10 @@ FUNCTION UnesiNarudzbu()
 
       IF !( roba->tip == "T" )
          _cijena := pos_get_mpc()
-         // roba->mpc
       ENDIF
 
-      // _pos_pripr
       Gather()
 
-      // gledati iz KALK ili iz POS ?
       IF !Empty( AllTrim( __kalk_konto ) )
          IF PadR( __kalk_konto, 3 ) == "132"
             _stanje_robe := kalk_kol_stanje_artikla_magacin( PadR( __kalk_konto, 7 ), field->idroba, Date() )
@@ -248,7 +225,6 @@ FUNCTION UnesiNarudzbu()
       _stanje_art_id := field->idroba
       _stanje_art_jmj := field->jmj
 
-      // utvrdi stanje racuna
       nIznNar += cijena * kolicina
       nPopust += ncijena * kolicina
       oBrowse:goBottom()
@@ -278,9 +254,6 @@ FUNCTION UnesiNarudzbu()
 
 
 
-// ----------------------------------------------
-// obrada popusta
-// ----------------------------------------------
 FUNCTION Popust( nx, ny )
 
    LOCAL nC1 := 0
@@ -292,9 +265,6 @@ FUNCTION Popust( nx, ny )
    RETURN
 
 
-// ----------------------------------------------
-// validacija artikla na racunu
-// ----------------------------------------------
 STATIC FUNCTION valid_pos_racun_artikal( kolicina )
 
    LOCAL _ok, _read_barkod
@@ -308,17 +278,13 @@ STATIC FUNCTION valid_pos_racun_artikal( kolicina )
    RETURN _ok
 
 
-// ---------------------------------------------
-// ---------------------------------------------
 STATIC FUNCTION when_pos_kolicina( kolicina )
 
    Popust( m_x + 4, m_y + 28 )
 
    IF gOcitBarCod
       IF param_tezinski_barkod() == "D" .AND. kolicina <> 0
-         // _kolicina vec setovana
       ELSE
-         // ako je sifra ocitana po barcodu, onda ponudi kolicinu 1
          kolicina := 1
       ENDIF
    ENDIF
@@ -327,32 +293,24 @@ STATIC FUNCTION when_pos_kolicina( kolicina )
 
 
 
-// ----------------------------------------------------------------
-// ----------------------------------------------------------------
 STATIC FUNCTION valid_pos_kolicina( kolicina, cijena )
    RETURN KolicinaOK( kolicina ) .AND. pos_check_qtty( @kolicina ) .AND. cijena_ok( cijena )
 
 
 
 
-// ----------------------------------------------
-//
-// ----------------------------------------------
 STATIC FUNCTION _refresh_total()
 
    LOCAL _iznos := 0
    LOCAL _popust := 0
 
-   // izracunaj trenutni total...
    _calc_current_total( @_iznos, @_popust )
 
    nIznNar := _iznos
    nPopust := _popust
 
-   // ispisi i iznos velikim brojevima na dnu...
    ispisi_iznos_veliki_brojevi( ( _iznos - _popust ), m_x + ( MAXROWS() - 12 ), MAXCOLS() - 2 )
 
-   // ispisi i na gornjem totalu...
    _show_total( _iznos, _popust, m_x + 2 )
 
    SELECT _pos_pripr
@@ -361,9 +319,6 @@ STATIC FUNCTION _refresh_total()
    RETURN .T.
 
 
-// --------------------------------------------------------------
-// izracunava trenutni total u pripremi
-// --------------------------------------------------------------
 STATIC FUNCTION _calc_current_total( iznos, popust )
 
    LOCAL _t_area := Select()
@@ -387,9 +342,6 @@ STATIC FUNCTION _calc_current_total( iznos, popust )
    RETURN
 
 
-// ----------------------------------------------------
-// provjera kolicine na unosu racuna
-// ----------------------------------------------------
 FUNCTION pos_check_qtty( qtty )
 
    LOCAL _max_qtty
@@ -405,10 +357,9 @@ FUNCTION pos_check_qtty( qtty )
    ENDIF
 
    IF qtty > _max_qtty
-      IF Pitanje(, "Da li je ovo ispravna kolicina: " + AllTrim( Str( qtty ) ), "N" ) == "D"
+      IF Pitanje(, "Da li je ovo ispravna količina: " + AllTrim( Str( qtty ) ), "N" ) == "D"
          RETURN .T.
       ELSE
-         // resetuj na 0
          qtty := 0
          RETURN .F.
       ENDIF
@@ -417,10 +368,6 @@ FUNCTION pos_check_qtty( qtty )
    ENDIF
 
 
-
-/*! \fn HangKeys()
- *  \brief Nabacuje SETKEYa kako je tastatura programirana
- */
 
 FUNCTION HangKeys()
 
@@ -439,11 +386,6 @@ FUNCTION HangKeys()
    RETURN ( aKeysProcs )
 
 
-
-/*! \fn CancelKeys(aPrevSets)
- *  \brief Ukida SETKEYs koji se postave i HANGKEYs
- *  \param aPrevSets
- */
 
 FUNCTION CancelKeys( aPrevSets )
 
@@ -464,22 +406,15 @@ FUNCTION CancelKeys( aPrevSets )
 
 
 FUNCTION SetSpecNar()
-
-   bPrevZv := SetKey( Asc( "*" ), {|| IspraviNarudzbu() } )
-
+   bPrevZv := SetKey( Asc( "*" ), {|| pos_ispravi_racun() } )
    RETURN .T.
 
 
 FUNCTION UnSetSpecNar()
-
    SetKey( Asc ( "*" ), bPrevZv )
-
    RETURN .F.
 
 
-// --------------------------------------------
-// provjera cijene
-// --------------------------------------------
 STATIC FUNCTION cijena_ok( cijena )
 
    LOCAL _ret := .T.
@@ -496,9 +431,6 @@ STATIC FUNCTION cijena_ok( cijena )
    RETURN _ret
 
 
-// --------------------------------------------------------
-// provjerava trenutnu kolicinu artikla u kasi...
-// --------------------------------------------------------
 STATIC FUNCTION KolicinaOK( kolicina )
 
    LOCAL _ok := .F.
@@ -511,7 +443,7 @@ STATIC FUNCTION KolicinaOK( kolicina )
    ENDIF
 
    IF ( kolicina == 0 )
-      MsgBeep( "Nepravilan unos kolicine robe! Ponovite unos!", 15 )
+      MsgBeep( "Nepravilan unos količine! Ponovite unos!", 15 )
       RETURN _ok
    ENDIF
 
@@ -520,7 +452,6 @@ STATIC FUNCTION KolicinaOK( kolicina )
       RETURN _ok
    ENDIF
 
-   // izvuci stanje robe
    _stanje_robe := pos_stanje_artikla( _idpos, _idroba )
 
    _ok := .T.
@@ -530,7 +461,7 @@ STATIC FUNCTION KolicinaOK( kolicina )
       _msg := "Artikal: " + _idroba + " Trenutno na stanju: " + Str( _stanje_robe, 12, 2 )
 
       IF gPratiStanje = "!"
-         _msg += "#Unos artikla onemogucen !!!"
+         _msg += "#Unos artikla onemogućen !!!"
          _ok := .F.
       ENDIF
 
@@ -548,7 +479,6 @@ STATIC FUNCTION NarProvDuple()
    LOCAL lFlag := .T.
 
    IF gDupliArt == "D" .AND. gDupliUpoz == "N"
-      // mogu dupli i nema upozorenja
       RETURN .T.
    ENDIF
 
@@ -574,13 +504,13 @@ STATIC FUNCTION NarProvDuple()
 
    IF Found()
       IF _IdRoba = 'PLDUG'
-         MsgBeep( 'Pri placanju duga ne mozete navoditi robu' )
+         MsgBeep( 'Pri plaćanju duga ne možete navoditi artikal' )
       ENDIF
       IF gDupliArt == "N"
-         MsgBeep ( "Na narudzbi se vec nalazi ista roba!#" + "U slucaju potrebe ispravite stavku narudzbe!", 20 )
+         MsgBeep ( "Na računu se već nalazi ista roba!#" + "U slucaju potrebe ispravite stavku računa!", 20 )
          lFlag := .F.
       ELSEIF gDupliUpoz == "D"
-         MsgBeep ( "Na narudzbi se vec nalazi ista roba!" )
+         MsgBeep ( "Na računu se već nalazi ista roba!" )
       ENDIF
    ENDIF
    SET ORDER TO
@@ -590,9 +520,8 @@ STATIC FUNCTION NarProvDuple()
 
 
 
-FUNCTION IspraviNarudzbu()
+FUNCTION pos_ispravi_racun()
 
-   // Koristi privatnu varijablu oBrowse iz UNESINARUDZBU
    LOCAL cGetId
    LOCAL nGetKol
    LOCAL aConds
@@ -600,17 +529,16 @@ FUNCTION IspraviNarudzbu()
 
    UnSetSpecNar()
 
-   OpcTipke( { "<Enter>-Ispravi stavku", "<B>-Brisi stavku", "<Esc>-Zavrsi" } )
+   OpcTipke( { "<Enter>-Ispravi stavku", hb_utf8tostr( "<B>-Briši stavku" ), hb_utf8tostr( "<Esc>-Završi" ) } )
 
    oBrowse:autolite := .T.
    oBrowse:configure()
 
-   // spasi ono sto je bilo u GET-u
    cGetId := _idroba
    nGetKol := _Kolicina
 
    aConds := { {| Ch| Upper( Chr( Ch ) ) == "B" }, {| Ch| Ch == K_ENTER } }
-   aProcs := { {|| BrisStavNar( oBrowse ) }, {|| EditStavNar ( oBrowse ) } }
+   aProcs := { {|| pos_brisi_stavku_racuna( oBrowse ) }, {|| pos_ispravi_stavku_racuna( oBrowse ) } }
 
    ShowBrowse( oBrowse, aConds, aProcs )
 
@@ -618,11 +546,8 @@ FUNCTION IspraviNarudzbu()
    oBrowse:dehilite()
    oBrowse:stabilize()
 
-   // vrati stari meni
    Prozor0()
 
-   // OpcTipke (aUnosMsg)
-   // vrati sto je bilo u GET-u
    _idroba := cGetId
    _kolicina := nGetKol
 
@@ -631,12 +556,8 @@ FUNCTION IspraviNarudzbu()
    RETURN
 
 
-// ---------------------------------------------------------------------
-// ispisuje total na vrhu prozora unosa racuna
-// ---------------------------------------------------------------------
 STATIC FUNCTION _show_total( iznos, popust, row )
 
-   // osvjezi cijene
    @ m_x + row + 0, m_y + ( MAXCOLS() - 12 ) SAY iznos PICT "99999.99" COLOR Invert
    @ m_x + row + 1, m_y + ( MAXCOLS() - 12 ) SAY popust PICT "99999.99" COLOR Invert
    @ m_x + row + 2, m_y + ( MAXCOLS() - 12 ) SAY iznos - popust PICT "99999.99" COLOR Invert
@@ -645,20 +566,17 @@ STATIC FUNCTION _show_total( iznos, popust, row )
 
 
 
-FUNCTION BrisStavNar( oBrowse )
+FUNCTION pos_brisi_stavku_racuna( oBrowse )
 
-   // Brise stavku narudzbe
-   // Koristi privatni parametar OBROWSE iz SHOWBROWSE
    SELECT _pos_pripr
 
    IF RecCount2() == 0
-      MsgBeep ( "Priprema racuna je prazna !!!#Brisanje nije moguce!", 20 )
+      MsgBeep ( "Priprema računa je prazna !!!#Brisanje nije moguće !", 20 )
       RETURN ( DE_REFRESH )
    ENDIF
 
    Beep ( 2 )
 
-   // ponovo izracunaj ukupno
    nIznNar -= _pos_pripr->( kolicina * cijena )
    nPopust -= _pos_pripr->( kolicina * ncijena )
 
@@ -678,15 +596,13 @@ FUNCTION BrisStavNar( oBrowse )
 
 
 
-FUNCTION EditStavNar()
+FUNCTION pos_ispravi_stavku_racuna()
 
-   // Vrsi editovanje stavke narudzbe, i to samo artikla ili samo kolicine
-   // Koristi privatni parametar OBROWSE iz SHOWBROWSE
    PRIVATE GetList := {}
 
    SELECT _pos_pripr
    IF RecCount2() == 0
-      MsgBeep ( "Narudzba nema nijednu stavku!#Ispravka nije moguca!", 20 )
+      MsgBeep ( "Račun ne sadrži niti jednu stavku!#Ispravka nije moguća!", 20 )
       RETURN ( DE_CONT )
    ENDIF
 
@@ -709,7 +625,6 @@ FUNCTION EditStavNar()
       IF ( _pos_pripr->IdRoba <> _IdRoba ) .OR. roba->tip == "T"
          SELECT ODJ
          HSEEK ROBA->IdOdj
-         // LOCATE FOR IdTipMT == ROBA->IdTreb
          IF Found()
             SELECT _pos_pripr
             _RobaNaz := ROBA->Naz
@@ -730,14 +645,13 @@ FUNCTION EditStavNar()
             Gather ()
             my_unlock()
          ELSE
-            MsgBeep ( "Za robu " + AllTrim ( _IdRoba ) + " nije odredjeno odjeljenje!#" + "Narucivanje nije moguce!!!", 15 )
+            MsgBeep ( "Za artikal " + AllTrim ( _IdRoba ) + " nije određeno odjeljenje!#" + "Unos nije moguć !!!", 15 )
             SELECT _pos_pripr
             RETURN ( DE_CONT )
          ENDIF
       ENDIF
 
       IF ( _pos_pripr->Kolicina <> _Kolicina )
-         // azuriraj narudzbu
          nIznNar += ( _cijena * _kolicina ) - cijena * kolicina
          nPopust += ( _ncijena * _kolicina ) - ncijena * kolicina
          my_rlock()
@@ -749,7 +663,6 @@ FUNCTION EditStavNar()
 
    BoxC()
 
-   // ispisi totale...
    _show_total( nIznNar, nPopust, m_x + 2 )
    ispisi_iznos_veliki_brojevi( ( nIznNar - nPopust ), m_x + ( MAXROWS() - 12 ), MAXCOLS() - 2 )
 
@@ -763,12 +676,6 @@ FUNCTION EditStavNar()
 
 
 
-/*! \fn GetReader2(oGet,GetList,oMenu,aMsg)
- *  \param oGet
- *  \param GetList
- *  \param oMenu
- *  \param aMsg
- */
 
 FUNCTION GetReader2( oGet, GetList, oMenu, aMsg )
 
@@ -799,7 +706,6 @@ FUNCTION GetReader2( oGet, GetList, oMenu, aMsg )
             oGet:exitState := GE_NOEXIT
          ENDIF
       ENDDO
-      // De-activate the GET
       oGet:killFocus()
    ENDIF
 

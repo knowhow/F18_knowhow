@@ -61,7 +61,6 @@ FUNCTION rnal_o_tables( lTemporary )
       O__DOC_IT
       O__DOC_IT2
       O__DOC_OPS
-      O__FND_PAR
 	
    ENDIF
 

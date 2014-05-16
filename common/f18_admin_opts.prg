@@ -86,38 +86,32 @@ METHOD F18AdminOpts:update_app()
    LOCAL _upd_file := ""
    LOCAL _ok := .F.
 
-   // setuj mi ove stavke...
    ::update_app_info_file := "UPDATE_INFO"
    ::update_app_script_file := "f18_upd.sh"
 
-#ifdef __PLATFORM__WINDOWS
-   ::update_app_script_file := "f18_upd.bat"
-#endif
+   #ifdef __PLATFORM__WINDOWS
+      ::update_app_script_file := "f18_upd.bat"
+   #endif
 
-   // download scripts...
    IF !::update_app_dl_scripts()
       MsgBeep( "Problem sa download-om skripti. Provjerite internet koneciju." )
       RETURN SELF
    ENDIF
 
-   // daj mi informacije o url i verzijama
    _ver_params := ::update_app_get_versions()
 
    IF _ver_params == NIL
       RETURN SELF
    ENDIF
 
-   // daj mi parametre za update
    IF !::update_app_form( _ver_params )
       RETURN SELF
    ENDIF
 
-   // update template-a...
    if ::update_app_templates
       ::update_app_run_templates_update( _ver_params )
    ENDIF
 
-   // update f18 aplikcije
    if ::update_app_f18
       ::update_app_run_app_update( _ver_params )
    ENDIF
@@ -126,17 +120,14 @@ METHOD F18AdminOpts:update_app()
 
 
 
-// ------------------------------------------------------------------------
-// update aplikcije...
-// ------------------------------------------------------------------------
 METHOD F18AdminOpts:update_app_run_templates_update( params )
 
    LOCAL _upd_file := "F18_template_#VER#.tar.bz2"
    LOCAL _dest := SLASH + "opt" + SLASH + "knowhowERP" + SLASH
 
-#ifdef __PLATFORM__WINDOWS
-   _dest := "c:" + SLASH + "knowhowERP" + SLASH
-#endif
+   #ifdef __PLATFORM__WINDOWS
+      _dest := "c:" + SLASH + "knowhowERP" + SLASH
+   #endif
 
    if ::update_app_templates_version == "#LAST#"
       ::update_app_templates_version := params[ "templates" ]
@@ -144,12 +135,10 @@ METHOD F18AdminOpts:update_app_run_templates_update( params )
 
    _upd_file := StrTran( _upd_file, "#VER#", ::update_app_templates_version )
 
-   // download fajla za update...
    IF !::wget_download( params[ "url" ], _upd_file, _dest + _upd_file, .T., .T. )
       RETURN SELF
    ENDIF
 
-   // update run script
    ::update_app_unzip_templates( _dest, _dest, _upd_file )
 
    RETURN SELF
@@ -163,25 +152,22 @@ METHOD F18AdminOpts:update_app_unzip_templates( destination_path, location_path,
 
    MsgO( "Vrsim update template fajlova ..." )
 
-#ifdef __PLATFORM__WINDOWS
+   #ifdef __PLATFORM__WINDOWS
 
-   // 1) pozicioniraj se u potrebni direktorij...
-   DirChange( destination_path )
+      DirChange( destination_path )
 
-   // 2) prvo bunzip2
-   _cmd := "bunzip2 -f " + location_path + filename
-   hb_run( _cmd )
+      _cmd := "bunzip2 -f " + location_path + filename
+      hb_run( _cmd )
 
-   // 3) tar
-   _cmd := "tar xvf " + StrTran( filename, ".bz2", "" )
-   hb_run( _cmd )
+      _cmd := "tar xvf " + StrTran( filename, ".bz2", "" )
+      hb_run( _cmd )
 
-#else
+   #else
 
-   _cmd := "tar -C " + location_path + " " + _args + " " + location_path + filename
-   hb_run( _cmd )
+      _cmd := "tar -C " + location_path + " " + _args + " " + location_path + filename
+      hb_run( _cmd )
 
-#endif
+   #endif
 
    MsgC()
 
@@ -189,9 +175,6 @@ METHOD F18AdminOpts:update_app_unzip_templates( destination_path, location_path,
 
 
 
-// ------------------------------------------------------------------------
-// update aplikcije...
-// ------------------------------------------------------------------------
 METHOD F18AdminOpts:update_app_run_app_update( params )
 
    LOCAL _upd_file := "F18_#OS#_#VER#.gz"
@@ -200,11 +183,11 @@ METHOD F18AdminOpts:update_app_run_app_update( params )
       ::update_app_f18_version := params[ "f18" ]
    ENDIF
 
-#ifdef __PLATFORM__LINUX
-   _upd_file := StrTran( _upd_file, "#OS#", ::get_os_name() + "_i686" )
-#else
-   _upd_file := StrTran( _upd_file, "#OS#", ::get_os_name() )
-#endif
+   #ifdef __PLATFORM__LINUX
+      _upd_file := StrTran( _upd_file, "#OS#", ::get_os_name() + "_i686" )
+   #else
+      _upd_file := StrTran( _upd_file, "#OS#", ::get_os_name() )
+   #endif
 
    _upd_file := StrTran( _upd_file, "#VER#", ::update_app_f18_version )
 
@@ -213,12 +196,10 @@ METHOD F18AdminOpts:update_app_run_app_update( params )
       RETURN SELF
    ENDIF
 
-   // download fajla za update...
    IF !::wget_download( params[ "url" ], _upd_file, my_home_root() + _upd_file, .T., .T. )
       RETURN SELF
    ENDIF
 
-   // update run script
    ::update_app_run_script( my_home_root() + _upd_file )
 
    RETURN SELF
@@ -229,27 +210,24 @@ METHOD F18AdminOpts:update_app_run_script( update_file )
 
    LOCAL _url := my_home_root() + ::update_app_script_file
 
-#ifdef __PLATFORM__WINDOWS
+   #ifdef __PLATFORM__WINDOWS
+      _url := 'start cmd /C ""' + _url
+      _url += '" "' + update_file + '""'
+   #else
+      #ifdef __PLATFORM__LINUX
+         _url := "bash " + _url
+      #endif
+      _url += " " + update_file
+   #endif
 
-   _url := 'start cmd /C ""' + _url
-   _url += '" "' + update_file + '""'
-#else
-#ifdef __PLATFORM__LINUX
-   _url := "bash " + _url
-#endif
-   _url += " " + update_file
-#endif
-
-#ifdef __PLATFORM__UNIX
-   _url := _url + " &"
-#endif
+   #ifdef __PLATFORM__UNIX
+      _url := _url + " &"
+   #endif
 
    Msg( "F18 ce se sada zatvoriti#Nakon update procesa ponovo otvorite F18", 4 )
 
-   // pokreni skriptu
    hb_run( _url )
 
-   // zatvori aplikaciju ako je update aplikacije...
    QUIT
 
    RETURN SELF
@@ -258,8 +236,6 @@ METHOD F18AdminOpts:update_app_run_script( update_file )
 
 
 
-// ------------------------------------------------
-// ------------------------------------------------
 METHOD F18AdminOpts:update_app_form( upd_params )
 
    LOCAL _ok := .F.

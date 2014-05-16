@@ -669,7 +669,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
 
       IF field->idtipdok $ "10#11"
 
-         IF ( field->fisc_rn > 0 .OR. field->fisc_st > 0 )
+         IF ( field->fisc_rn > 0 .AND. field->iznos > 0 ) .OR. ( field->iznos < 0 .AND. field->fisc_rn > 0 .AND. field->fisc_st > 0 )
             MsgBeep( "Fiskalni racun vec stampan za ovaj dokument !!!#Ako je potrebna ponovna stampa resetujte broj veze." )
             RETURN DE_CONT
          ENDIF

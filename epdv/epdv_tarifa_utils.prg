@@ -15,17 +15,17 @@
 
 FUNCTION epdv_set_sif_tarifa()
 
-   SELECT ( F_TARIFA )
-   IF Used()
-      USE
-   ENDIF
-   O_TARIFA
-
    IF !f18_lock_tables( { "tarifa" } )
       RETURN .F.
    ENDIF
 
    sql_table_update( nil, "BEGIN" )
+
+   SELECT ( F_TARIFA )
+   IF Used()
+      USE
+   ENDIF
+   O_TARIFA
 
    cPom := PadR( "PDV17", 6 )
    _append_tarifa( cPom, "PDV 17%", 17 )

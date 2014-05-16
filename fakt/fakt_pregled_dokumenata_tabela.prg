@@ -134,7 +134,7 @@ STATIC FUNCTION g_fiscal_info( _f_rn, _s_rn, _iznos )
 
    LOCAL cInfo := " "
 
-   IF ( _iznos > 0 .AND. _f_rn == 0 ) .OR. ( _iznos < 0 .AND. _s_rn == 0 )
+   IF !fakt_racun_fiskalizovan( _iznos, _f_rn, _s_rn ) 
       cInfo := " "
    ELSE
       cInfo := "F"

@@ -1,3 +1,7 @@
+1.7.83  2014-05-16, vsasa
+
+  - FAKT, ispitivanje stanja fiskalnih računa
+ 
 1.7.82  2014-05-16, vsasa
 
   - ePDV, ulazak iz sezone, problem sa dodavanjem tarifa / 2

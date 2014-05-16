@@ -287,6 +287,7 @@ FUNCTION use_sql_tarifa( l_make_index )
    ENDIF
 
    SET ORDER TO TAG ID
+   GO TOP
 
    RETURN .T.
 

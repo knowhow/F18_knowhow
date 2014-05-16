@@ -1,3 +1,8 @@
+1.7.82  2014-05-16, vsasa
+
+  - ePDV, ulazak iz sezone, problem sa dodavanjem tarifa / 2
+  - FAKT, storno računi bugfix
+ 
 1.7.81  2014-05-15, vsasa
 
   - ePDV, ulazak iz sezone, problem sa dodavanjem tarifa

@@ -810,7 +810,7 @@ FUNCTION fakt_racun_fiskalizovan( iznos, fisc_rn, fisc_st )
 
    LOCAL _ret := .F.
 
-   IF ( iznos > 0 .AND. fisc_rn > 0 ) .OR. ( iznos < 0 .AND. fisc_st > 0 )
+   IF ( iznos > 0 .AND. fisc_rn > 0 ) .OR. ( iznos < 0 .AND. ( fisc_st > 0 .OR. fisc_rn > 0 ) )
        _ret := .T.
    ENDIF
 

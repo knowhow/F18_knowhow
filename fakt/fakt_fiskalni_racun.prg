@@ -192,8 +192,7 @@ FUNCTION postoji_fiskalni_racun( id_firma, tip_dok, br_dok )
    LOCAL cWhere
 
    IF PCOUNT() == 0
-      IF ( fakt_doks->iznos > 0 .AND. fakt_doks->fisc_rn > 0 ) .OR. ;
-         ( fakt_doks->iznos < 0 .AND. ( fakt_doks->fisc_st > 0 .OR. fakt_doks->fisc_rn > 0 ) ) 
+      IF ( fakt_doks->iznos > 0 .AND. fakt_doks->fisc_rn > 0 ) .OR. ( fakt_doks->iznos < 0 .AND. fakt_doks->fisc_st > 0 ) 
          lRet := .T.
       ENDIF
       RETURN lRet
@@ -203,7 +202,7 @@ FUNCTION postoji_fiskalni_racun( id_firma, tip_dok, br_dok )
    cWhere += " AND idtipdok = " + _sql_quote( tip_dok )
    cWhere += " AND brdok = " + _sql_quote( br_dok )
    cWhere += " AND ( ( iznos > 0 AND fisc_rn > 0 ) "
-   cWhere += "  OR ( iznos < 0 AND ( fisc_st > 0 OR fisc_rn > 0 ) ) ) "
+   cWhere += "  OR ( iznos < 0 AND fisc_st > 0 ) ) "
 
    IF table_count( "fmk.fakt_doks", cWhere ) > 0
       lRet := .T.

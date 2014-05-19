@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,174 +13,160 @@
 #include "rnal.ch"
 
 
-// ------------------------------------------------
-// otvara TBrowse objekat nad tabelom za stampu
-// 
-// ------------------------------------------------
-function sel_items()
-local nArea
-local nTArea
-local GetList:={}
-local nBoxX := 12
-local nBoxY := 77
-local cHeader := ""
-local cFooter := ""
-local cBoxOpt := ""
-private ImeKol
-private Kol
+FUNCTION rnal_print_odabir_stavki( lPriprema )
 
-nTArea := SELECT()
+   LOCAL nArea
+   LOCAL nTArea
+   LOCAL GetList := {}
+   LOCAL nBoxX := 12
+   LOCAL nBoxY := 77
+   LOCAL cHeader := ""
+   LOCAL cFooter := ""
+   LOCAL cBoxOpt := ""
+   PRIVATE ImeKol
+   PRIVATE Kol
 
-cHeader := ":: Odabir stavki za stampu ::"
+   nTArea := Select()
 
-t_rpt_open()
+   cHeader := hb_utf8tostr( ":: Odabir stavki za štampu ::" )
 
-select t_docit
-go top
+   t_rpt_open()
 
-Box(, nBoxX, nBoxY, .t.)
+   SELECT t_docit
+   GO TOP
 
-cBoxOpt += "<SPACE> markiranje stavke"
-cBoxOpt += " "
-cBoxOpt += "<ESC> izlaz"
-cBoxOpt += " "
-cBoxOpt += "<I> unos isporuke"
+   Box(, nBoxX, nBoxY, .T. )
 
-@ m_x + nBoxX, m_y + 2 SAY cBoxOpt
+   cBoxOpt += "<SPACE> markiranje stavke"
+   cBoxOpt += " "
+   cBoxOpt += "<ESC> izlaz"
+   cBoxOpt += " "
+   cBoxOpt += "<I> unos isporuke"
 
-set_a_kol(@ImeKol, @Kol)
+   @ m_x + nBoxX, m_y + 2 SAY cBoxOpt
 
-ObjDbedit("t_docit", nBoxX, nBoxY, {|| key_handler()}, cHeader, cFooter,,,,,1)
+   set_a_kol( @ImeKol, @Kol )
 
-BoxC()
+   ObjDbedit( "t_docit", nBoxX, nBoxY, {|| rnal_odabir_key_handler( lPriprema ) }, cHeader, cFooter,,,,, 1 )
 
-select (nTArea)
+   BoxC()
 
-if LastKey() == K_ESC
-	return 1
-endif
+   SELECT ( nTArea )
 
-return 1
-  
+   IF LastKey() == K_ESC
+      RETURN 1
+   ENDIF
+
+   RETURN 1
 
 
-// ------------------------------------------
-// key handler nad tabelom
-// ------------------------------------------
-static function key_handler()
-local _t_rec := RECNO()
-local _ret := DE_CONT
-local _rec
 
-do case
+STATIC FUNCTION rnal_odabir_key_handler( lPriprema )
 
-	case ( Ch == ASC(' ') )
+   LOCAL _t_rec := RecNo()
+   LOCAL _ret := DE_CONT
+   LOCAL _rec
 
-		Beep(0.5)
-        
-        _rec := dbf_get_rec()
+   DO CASE
 
-		if _rec["print"] == "D"
-            _rec["print"] := "N"
-		else
-            _rec["print"] := "D"
-		endif
-        
-        dbf_update_rec( _rec )
+   CASE ( Ch == Asc( ' ' ) )
 
-		return DE_REFRESH
+      Beep( 0.5 )
 
-	case ( UPPER( CHR( Ch ) ) ) == "I"
+      _rec := dbf_get_rec()
 
-		// unos isporuke
-		if set_deliver() = 0
-			return DE_CONT
-		else
-			return DE_REFRESH
-		endif
+      IF _rec[ "print" ] == "D"
+         _rec[ "print" ] := "N"
+      ELSE
+         _rec[ "print" ] := "D"
+      ENDIF
 
-endcase
+      dbf_update_rec( _rec )
 
-return _ret
+      RETURN DE_REFRESH
+
+   CASE ( Upper( Chr( Ch ) ) ) == "I"
+
+      IF setuj_broj_komada_za_isporuku( lPriprema ) = 0
+         RETURN DE_CONT
+      ELSE
+         RETURN DE_REFRESH
+      ENDIF
+
+   ENDCASE
+
+   RETURN _ret
 
 
-// ------------------------------------
-// unos isporuke
-// ------------------------------------
-static function set_deliver()
-local _ret := 1
-local GetList := {}
-local _deliver := field->doc_it_qtt
-local _rec
+STATIC FUNCTION setuj_broj_komada_za_isporuku( lPriprema )
 
-Box(, 1, 25)
-	@ m_x + 1, m_y + 2 SAY "isporuceno ?" GET _deliver PICT "9999999.99"
-	read
-BoxC()
+   LOCAL _ret := 1
+   LOCAL GetList := {}
+   LOCAL _deliver := field->doc_it_qtt
+   LOCAL _rec
 
-if LastKey() == K_ESC
-	_ret := 0
-	return _ret
-endif
+   Box(, 1, 25 )
+   @ m_x + 1, m_y + 2 SAY8 "isporučeno ?" GET _deliver PICT "9999999.99"
+   READ
+   BoxC()
 
-_rec := dbf_get_rec()
-_rec["doc_it_qtt"] := _deliver
-dbf_update_rec( _rec )
+   IF LastKey() == K_ESC
+      _ret := 0
+      RETURN _ret
+   ENDIF
 
-// rekalkulisi podatke 
-recalc_pr()
+   _rec := dbf_get_rec()
+   _rec[ "doc_it_qtt" ] := _deliver
+   dbf_update_rec( _rec )
 
-return _ret
+   rekalkulisi_stavke_za_stampu( lPriprema )
+
+   RETURN _ret
 
 
-// -------------------------------------------------------
-// setovanje kolona za selekciju
-// -------------------------------------------------------
-static function set_a_kol(aImeKol, aKol)
-aImeKol := {}
-aKol:={}
 
-AADD(aImeKol, {"nalog", {|| doc_no }, "doc_no", {|| .t.}, {|| .t.} })
-AADD(aImeKol, {"rbr", {|| PADR( ALLTRIM(STR(doc_it_no)),3) }, "doc_it_no", {|| .t.}, {|| .t.} })
-AADD(aImeKol, {PADR("artikal",20), {|| PADR(g_art_desc(art_id,.t.,.f.),20) }, "art_id", {|| .t.}, {|| .t.} })
-AADD(aImeKol, {"ispor.", {|| STR(doc_it_qtt,12,2) }, "doc_it_qtt", {|| .t.}, {|| .t.} })
-AADD(aImeKol, {PADR("dimenzije",20) , {|| PADR(_g_dim(doc_it_qtt, doc_it_hei, doc_it_wid),20) }, "doc_it_qtt", {|| .t.}, {|| .t.} })
-AADD(aImeKol, {"marker", {|| PADR(_g_st(print),3) }, "print", {|| .t.}, {|| .t.} })
-AADD(aImeKol, {"total", {|| "doc_it_tot" }, "doc_it_tot", {|| .t.}, {|| .t.} })
+STATIC FUNCTION set_a_kol( aImeKol, aKol )
 
-for i:=1 to LEN(aImeKol)
-	AADD(aKol, i)
-next
+   aImeKol := {}
+   aKol := {}
 
-return
+   AAdd( aImeKol, { "nalog", {|| doc_no }, "doc_no", {|| .T. }, {|| .T. } } )
+   AAdd( aImeKol, { "rbr", {|| PadR( AllTrim( Str( doc_it_no ) ), 3 ) }, "doc_it_no", {|| .T. }, {|| .T. } } )
+   AAdd( aImeKol, { PadR( "artikal", 20 ), {|| PadR( g_art_desc( art_id, .T., .F. ), 20 ) }, "art_id", {|| .T. }, {|| .T. } } )
+   AAdd( aImeKol, { "ispor.", {|| Str( doc_it_qtt, 12, 2 ) }, "doc_it_qtt", {|| .T. }, {|| .T. } } )
+   AAdd( aImeKol, { PadR( "dimenzije", 20 ), {|| PadR( prikazi_dimenzije( doc_it_qtt, doc_it_hei, doc_it_wid ), 20 ) }, "doc_it_qtt", {|| .T. }, {|| .T. } } )
+   AAdd( aImeKol, { "marker", {|| PadR( get_print_field( print ), 3 ) }, "print", {|| .T. }, {|| .T. } } )
+   AAdd( aImeKol, { "total", {|| "doc_it_tot" }, "doc_it_tot", {|| .T. }, {|| .T. } } )
 
+   FOR i := 1 TO Len( aImeKol )
+      AAdd( aKol, i )
+   NEXT
 
-// -------------------------------------------------
-// vraca ispis status polja
-// -------------------------------------------------
-static function _g_st( value )
-local _ret := ""
-
-_ret := ">"
-_ret += value
-_ret += "<"
-
-return _ret
+   RETURN
 
 
-// ---------------------------------------------------
-// ispisuje opis dimenzija
-// ---------------------------------------------------
-static function _g_dim( qtty, height, width )
-local _ret := ""
+STATIC FUNCTION get_print_field( value )
 
-_ret += ALLTRIM(STR( qtty , 12, 0 ))
-_ret += "x"
-_ret += ALLTRIM(STR( height, 12, 2 ))
-_ret += "x"
-_ret += ALLTRIM(STR( width , 12, 2 ))
+   LOCAL _ret := ""
 
-return _ret
+   _ret := ">"
+   _ret += value
+   _ret += "<"
+
+   RETURN _ret
+
+
+STATIC FUNCTION prikazi_dimenzije( qtty, height, width )
+
+   LOCAL _ret := ""
+
+   _ret += AllTrim( Str( qtty, 12, 0 ) )
+   _ret += "x"
+   _ret += AllTrim( Str( height, 12, 2 ) )
+   _ret += "x"
+   _ret += AllTrim( Str( width, 12, 2 ) )
+
+   RETURN _ret
 
 
 

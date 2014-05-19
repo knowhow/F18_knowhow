@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,230 +16,236 @@
 
 // -----------------------------------------------
 // generisi standardna RNAL pravila
-//      ako NE POSTOJE
+// ako NE POSTOJE
 // -----------------------------------------------
-function gen_rnal_rules()
-local nTArea := SELECT()
+FUNCTION gen_rnal_rules()
 
-O_FMKRULES
+   LOCAL nTArea := Select()
 
-// element CODE_GEN, staklo
-in_elcode_rule("G", "<GL_TICK>#<GL_TYPE>", ;
-    "Sifra stakla, glass code")
+   O_FMKRULES
 
-// element CODE_GEN, distancer
-in_elcode_rule("F", "<FR_TYPE>#<FR_TICK>#<FR_GAS>", ;
-    "Sifra distancera, frame code")
+   // element CODE_GEN, staklo
+   in_elcode_rule( "G", "<GL_TICK>#<GL_TYPE>", ;
+      "Sifra stakla, glass code" )
 
-select (nTArea)
-return
+   // element CODE_GEN, distancer
+   in_elcode_rule( "F", "<FR_TYPE>#<FR_TICK>#<FR_GAS>", ;
+      "Sifra distancera, frame code" )
+
+   SELECT ( nTArea )
+
+   RETURN
 
 
 // -----------------------------------------------
 // ubacuje pravilo za formiranje naziva elementa
 // -----------------------------------------------
-static function in_elcode_rule( cElCond, cRule, cRuleName )
-local cModul
-local cRuleObj
-local cErrMsg
-local nLevel := 5
-local cRuleC3
-local cRuleC4
-local cRuleC7
+STATIC FUNCTION in_elcode_rule( cElCond, cRule, cRuleName )
 
-cTRule := r_elem_code( cElCond )
+   LOCAL cModul
+   LOCAL cRuleObj
+   LOCAL cErrMsg
+   LOCAL nLevel := 5
+   LOCAL cRuleC3
+   LOCAL cRuleC4
+   LOCAL cRuleC7
 
-if !EMPTY(cTRule)
-    return
-endif
-    
-cModul := g_rulemod( "RNAL" )
-cRuleObj := g_ruleobj("ARTICLES")
-cErrMsg := "-"
-cRuleC3 := g_rule_c3("CODE_GEN")
-cRuleC4 := g_rule_c4( cElCond )
+   cTRule := r_elem_code( cElCond )
 
-select fmkrules
-set order to tag "1"
-go bottom
+   IF !Empty( cTRule )
+      RETURN
+   ENDIF
 
-nNrec := field->rule_id + 1
+   cModul := g_rulemod( "RNAL" )
+   cRuleObj := g_ruleobj( "ARTICLES" )
+   cErrMsg := "-"
+   cRuleC3 := g_rule_c3( "CODE_GEN" )
+   cRuleC4 := g_rule_c4( cElCond )
 
-if !f18_lock_tables({"f18_rules"})
-    MsgBeep("Problem sa lockovanjem tabela .... !!!! f18_rules")
-    return
-endif
+   SELECT fmkrules
+   SET ORDER TO TAG "1"
+   GO BOTTOM
 
-sql_table_update( nil, "BEGIN" )
+   nNrec := field->rule_id + 1
 
-append blank
+   IF !f18_lock_tables( { "f18_rules" } )
+      MsgBeep( "Problem sa lockovanjem tabela .... !!!! f18_rules" )
+      RETURN
+   ENDIF
 
-_rec := dbf_get_rec()
+   sql_table_update( nil, "BEGIN" )
 
-_rec["rule_id"] := nNrec
-_rec["modul_name"] := cModul
-_rec["rule_obj"] := cRuleObj
-_rec["rule_no"] := 1
-_rec["rule_name"] := cRuleName
-_rec["rule_ermsg"] := cErrMsg
-_rec["rule_level"] := nLevel
-_rec["rule_c3"] := cRuleC3
-_rec["rule_c4"] := cRuleC4
-_rec["rule_c7"] := cRule
+   APPEND BLANK
 
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+   _rec := dbf_get_rec()
 
-f18_free_tables( { "f18_rules" } )
-sql_table_update( nil, "END" )
+   _rec[ "rule_id" ] := nNrec
+   _rec[ "modul_name" ] := cModul
+   _rec[ "rule_obj" ] := cRuleObj
+   _rec[ "rule_no" ] := 1
+   _rec[ "rule_name" ] := cRuleName
+   _rec[ "rule_ermsg" ] := cErrMsg
+   _rec[ "rule_level" ] := nLevel
+   _rec[ "rule_c3" ] := cRuleC3
+   _rec[ "rule_c4" ] := cRuleC4
+   _rec[ "rule_c7" ] := cRule
 
-return
+   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+
+   f18_free_tables( { "f18_rules" } )
+   sql_table_update( nil, "END" )
+
+   RETURN
 
 
 
 // -----------------------------------------------
 // setovanje specificnih rules kolona
 // -----------------------------------------------
-function g_rule_cols_rnal()
-local aCols := {}
+FUNCTION g_rule_cols_rnal()
 
-AADD( aCols, { "cond.1", {|| rule_c1 }, "rule_c1", {|| .t.}, {|| .t.} })
-AADD( aCols, { "cond.2", {|| rule_c2 }, "rule_c2", {|| .t.}, {|| .t.} })
-AADD( aCols, { "cond.3", {|| rule_c3 }, "rule_c3", {|| .t.}, {|| .t.} })
-AADD( aCols, { "cond.4", {|| rule_c4 }, "rule_c4", {|| .t.}, {|| .t.} })
-AADD( aCols, { "cond.5", {|| rule_c5 }, "rule_c5", {|| .t.}, {|| .t.} })
-AADD( aCols, { "cond.6", {|| rule_c6 }, "rule_c6", {|| .t.}, {|| .t.} })
-AADD( aCols, { "cond.7", {|| rule_c7 }, "rule_c7", {|| .t.}, {|| .t.} })
+   LOCAL aCols := {}
 
-return aCols
+   AAdd( aCols, { "cond.1", {|| rule_c1 }, "rule_c1", {|| .T. }, {|| .T. } } )
+   AAdd( aCols, { "cond.2", {|| rule_c2 }, "rule_c2", {|| .T. }, {|| .T. } } )
+   AAdd( aCols, { "cond.3", {|| rule_c3 }, "rule_c3", {|| .T. }, {|| .T. } } )
+   AAdd( aCols, { "cond.4", {|| rule_c4 }, "rule_c4", {|| .T. }, {|| .T. } } )
+   AAdd( aCols, { "cond.5", {|| rule_c5 }, "rule_c5", {|| .T. }, {|| .T. } } )
+   AAdd( aCols, { "cond.6", {|| rule_c6 }, "rule_c6", {|| .T. }, {|| .T. } } )
+   AAdd( aCols, { "cond.7", {|| rule_c7 }, "rule_c7", {|| .T. }, {|| .T. } } )
+
+   RETURN aCols
 
 
 // ------------------------------------------
 // vraca block za pregled sifrarnika
 // ------------------------------------------
-function g_rule_block_rnal()
-return {|| ed_rules() }
+FUNCTION g_rule_block_rnal()
+   RETURN {|| ed_rules() }
 
 
 // ------------------------------------------
 // ispravka sifrarnika rules
 // ------------------------------------------
-static function ed_rules()
-return DE_CONT
+STATIC FUNCTION ed_rules()
+   RETURN DE_CONT
 
 
 
 // -----------------------------------------------------------
 // vraca iz pravila kod za formiranje naziva elementa
 // params:
-//   cElCond - element condition - tip elementa
+// cElCond - element condition - tip elementa
 //
 // pravilo je sljedece:
-// 
+//
 // modul_name = RNAL
 // rule_obj = ARTICLES
 // rule_c1 = <CODE_GEN> "CODE_GEN" - generacija "kod"-a
 // rule_c2 = cElCond - tip elementa "F" / "G" ili ....
 // -----------------------------------------------------------
-function r_elem_code( cElCond )
-local cCode := ""
-local cModul
-local cRuleType
-local cObj
-local nTArea := SELECT()
+FUNCTION r_elem_code( cElCond )
 
-cModul := g_rulemod( "RNAL" )
-cObj := g_ruleobj( "ARTICLES" )
-cRuleType := g_rule_c3( "CODE_GEN" )
-cElCond := g_rule_c4( cElCond )
+   LOCAL cCode := ""
+   LOCAL cModul
+   LOCAL cRuleType
+   LOCAL cObj
+   LOCAL nTArea := Select()
 
-O_FMKRULES
-select fmkrules
-set order to tag "ELCODE"
-go top
+   cModul := g_rulemod( "RNAL" )
+   cObj := g_ruleobj( "ARTICLES" )
+   cRuleType := g_rule_c3( "CODE_GEN" )
+   cElCond := g_rule_c4( cElCond )
 
-seek cModul + cObj + cRuleType + cElCond
+   O_FMKRULES
+   SELECT fmkrules
+   SET ORDER TO TAG "ELCODE"
+   GO TOP
 
-if FOUND()
-    cCode := ALLTRIM( field->rule_c7 )
-endif
+   SEEK cModul + cObj + cRuleType + cElCond
 
-select (nTArea)
+   IF Found()
+      cCode := AllTrim( field->rule_c7 )
+   ENDIF
 
-return cCode
+   SELECT ( nTArea )
+
+   RETURN cCode
 
 
 
 // ----------------------------------------------
 // validacija errora - pravila
 // ----------------------------------------------
-static function err_validate( nLevel )
-local lRet := .f.
+STATIC FUNCTION err_validate( nLevel )
 
-if nLevel <= 3
-    lRet := .t.
-elseif nLevel == 4
-    if Pitanje(, "Zelite zanemariti ovo pravilo (D/N) ?", "N" ) == "D"
-        lRet := .t.
-    endif
-endif
+   LOCAL lRet := .F.
 
-return lRet
+   IF nLevel <= 3
+      lRet := .T.
+   ELSEIF nLevel == 4
+      IF Pitanje(, "Zelite zanemariti ovo pravilo (D/N) ?", "N" ) == "D"
+         lRet := .T.
+      ENDIF
+   ENDIF
+
+   RETURN lRet
 
 
 // -----------------------------------------------------------
 // vraca matricu sa pravilima za shemu generisanja elemenata
 // nType - tip artikla, jednostruki, dvostruki itd..
 // -----------------------------------------------------------
-function r_el_schema( nType )
-local aSchema
-local nTArea := SELECT()
-local nTmp
-local aTmp
+FUNCTION r_el_schema( nType )
 
-local cObj := g_ruleobj( "ARTICLES" )
-local cCond := g_rule_c3( "AUTO_ELEM" )
-local cMod := g_rulemod( "RNAL" )
+   LOCAL aSchema
+   LOCAL nTArea := Select()
+   LOCAL nTmp
+   LOCAL aTmp
 
-// default schema
-aSchema := {}
+   LOCAL cObj := g_ruleobj( "ARTICLES" )
+   LOCAL cCond := g_rule_c3( "AUTO_ELEM" )
+   LOCAL cMod := g_rulemod( "RNAL" )
 
-O_FMKRULES
-select fmkrules
-set order to tag "ELCODE"
-go top
+   // default schema
+   aSchema := {}
 
-seek cMod + cObj + cCond
+   O_FMKRULES
+   SELECT fmkrules
+   SET ORDER TO TAG "ELCODE"
+   GO TOP
 
-do while !EOF() .and. field->modul_name == cMod ;
-        .and. field->rule_obj == cObj ;
-        .and. field->rule_c3 == cCond
-    
-    if !EMPTY( field->rule_c4 ) 
-        
-        aTmp := TokToNiz( ALLTRIM(field->rule_c4), "-" )
-        
-        // val = 1-SH1
-        // aTmp = ['1', 'SH1']
-        
-        nTmp := VAL( aTmp[1] )
-        
-        if nTmp == nType
-            
+   SEEK cMod + cObj + cCond
+
+   DO WHILE !Eof() .AND. field->modul_name == cMod ;
+         .AND. field->rule_obj == cObj ;
+         .AND. field->rule_c3 == cCond
+
+      IF !Empty( field->rule_c4 )
+
+         aTmp := TokToNiz( AllTrim( field->rule_c4 ), "-" )
+
+         // val = 1-SH1
+         // aTmp = ['1', 'SH1']
+
+         nTmp := Val( aTmp[ 1 ] )
+
+         IF nTmp == nType
+
             // ubaci pravilo...
-            AADD( aSchema, { ALLTRIM( field->rule_c7 ) } )
-        
-        endif
-    
-    endif
-    
-    skip
-    
-enddo
+            AAdd( aSchema, { AllTrim( field->rule_c7 ) } )
 
-select (nTArea)
+         ENDIF
 
+      ENDIF
 
-return aSchema
+      SKIP
+
+   ENDDO
+
+   SELECT ( nTArea )
+
+   RETURN aSchema
 
 
 
@@ -247,135 +253,131 @@ return aSchema
 // -------------------------------------------
 // pravila za sifre iz FMK / otpremnica
 // -------------------------------------------
-function rule_s_fmk( cField, nTickness, cType, cKind, cQttyType  )
-local nErrLevel := 0
-local cReturn := ""
+FUNCTION rule_s_fmk( cField, nTickness, cType, cKind, cQttyType  )
 
-// ako se koriste pravila ? uopste
-if is_fmkrules()
-    
-    cReturn := _rule_s_fmk( cField, nTickness, cType, cKind, @cQttyType )
+   LOCAL nErrLevel := 0
+   LOCAL cReturn := ""
 
-endif
+   cReturn := _rule_s_fmk( cField, nTickness, cType, cKind, @cQttyType )
 
-return cReturn
+   RETURN cReturn
 
 
 // ---------------------------------------------
 // uzima sifru za FMK kod prenosa otpremnice
 // cQttyType se setuje ovom funkcijom
-//   
+//
 // ---------------------------------------------
-static function _rule_s_fmk( cField, nTickness, cType, cKind, cQttyType )
+STATIC FUNCTION _rule_s_fmk( cField, nTickness, cType, cKind, cQttyType )
 
-local nReturn := 0
-local nTArea := SELECT()
+   LOCAL nReturn := 0
+   LOCAL nTArea := Select()
 
-local cObj := "FMK_OTPREMNICA"
-local cCond := ALLTRIM(cField)
-local cMod := "RNAL"
+   LOCAL cObj := "FMK_OTPREMNICA"
+   LOCAL cCond := AllTrim( cField )
+   LOCAL cMod := "RNAL"
 
-local aTTick := {}
+   LOCAL aTTick := {}
 
-local nErrLevel
-local cKtoList
-local cNalog
-local cReturn := ""
+   LOCAL nErrLevel
+   LOCAL cKtoList
+   LOCAL cNalog
+   LOCAL cReturn := ""
 
-O_FMKRULES
-select fmkrules
-set order to tag "ITEM1"
-go top
+   O_FMKRULES
+   SELECT fmkrules
+   SET ORDER TO TAG "ITEM1"
+   GO TOP
 
-seek g_rulemod( cMod ) + g_ruleobj( cObj ) + g_rule_c5( cCond )
+   SEEK g_rulemod( cMod ) + g_ruleobj( cObj ) + g_rule_c5( cCond )
 
-do while !EOF() .and. field->modul_name == g_rulemod( cMod ) ;
-        .and. field->rule_obj == g_ruleobj( cObj ) ;
-        .and. field->rule_c5 == g_rule_c5( cCond )
-    
-    // specificni tip stakla... npr: samo "F"
-    if !EMPTY( cType )
-        
-        if ALLTRIM( field->rule_c6 ) == "ALL" 
+   DO WHILE !Eof() .AND. field->modul_name == g_rulemod( cMod ) ;
+         .AND. field->rule_obj == g_ruleobj( cObj ) ;
+         .AND. field->rule_c5 == g_rule_c5( cCond )
+
+      // specificni tip stakla... npr: samo "F"
+      IF !Empty( cType )
+
+         IF AllTrim( field->rule_c6 ) == "ALL"
             // to je to......
-        elseif ALLTRIM( field->rule_c6 ) <> ALLTRIM( cType )
+         ELSEIF AllTrim( field->rule_c6 ) <> AllTrim( cType )
             // idi dalje
-            skip
-            loop
-        endif
-        
-    endif
+            SKIP
+            LOOP
+         ENDIF
 
-    // vrsta stakla RG ili naruèioc
-    if !EMPTY( cKind )
-        // ako nije ta vrsta preskoci...
-        if ALLTRIM( field->rule_c4 ) <> ALLTRIM( cKind )
-            skip
-            loop
-        endif
-    endif
+      ENDIF
 
-    // setuj vrijednost u kojoj æe se obraèunati kolièina
-    cQttyType := ALLTRIM( field->rule_c3 )
-    
-    // to je rule -> debljina rang 0-20, uzmi u matricu
-    // medjutim moze biti i prazno, onda su sve dimenzije stakla
-    // u igri...
-    // tada je aTTick[1] == "     "
-    
-    aTTick := TokToNiz( field->rule_c2, "-" )
-    
-    lRange := .f.
-    
-    if LEN(aTTick) > 1
-        lRange := .t.
-    endif
-    
-    // ispitaj debljinu
-    
-    // ako se koristi rangovi
-    if lRange == .t.
-        
-        // trazi se vrijednost recimo od 0-20
-        if nTickness >= VAL( aTTick[1] ) .and. ;
-            nTickness <= VAL( aTTick[2] )
-            
-            cReturn := ALLTRIM( field->rule_c7 )
-            
-            // nasao sam izadji iz petlje
-        
-            exit
-            
-        endif
+      // vrsta stakla RG ili naruèioc
+      IF !Empty( cKind )
+         // ako nije ta vrsta preskoci...
+         IF AllTrim( field->rule_c4 ) <> AllTrim( cKind )
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 
-    else
+      // setuj vrijednost u kojoj æe se obraèunati kolièina
+      cQttyType := AllTrim( field->rule_c3 )
 
-        // sve dimenzije stakla, ako je prazno
-        if EMPTY( ALLTRIM( aTTick[1] ) )
-            
-            cReturn := ALLTRIM( field->rule_c7 )
-            exit
-            
-        endif
-        
-        // trazi se odredjena vrijendost, npr 20
-        if nTickness = VAL( aTTick[1] )
-            
-            cReturn := ALLTRIM( field->rule_c7 )
+      // to je rule -> debljina rang 0-20, uzmi u matricu
+      // medjutim moze biti i prazno, onda su sve dimenzije stakla
+      // u igri...
+      // tada je aTTick[1] == "     "
+
+      aTTick := TokToNiz( field->rule_c2, "-" )
+
+      lRange := .F.
+
+      IF Len( aTTick ) > 1
+         lRange := .T.
+      ENDIF
+
+      // ispitaj debljinu
+
+      // ako se koristi rangovi
+      IF lRange == .T.
+
+         // trazi se vrijednost recimo od 0-20
+         IF nTickness >= Val( aTTick[ 1 ] ) .AND. ;
+               nTickness <= Val( aTTick[ 2 ] )
+
+            cReturn := AllTrim( field->rule_c7 )
 
             // nasao sam izadji iz petlje
-            exit
-        
-        endif
-    endif
-    
-    skip
-    
-enddo
 
-select (nTArea)
+            EXIT
 
-return cReturn
+         ENDIF
+
+      ELSE
+
+         // sve dimenzije stakla, ako je prazno
+         IF Empty( AllTrim( aTTick[ 1 ] ) )
+
+            cReturn := AllTrim( field->rule_c7 )
+            EXIT
+
+         ENDIF
+
+         // trazi se odredjena vrijendost, npr 20
+         IF nTickness = Val( aTTick[ 1 ] )
+
+            cReturn := AllTrim( field->rule_c7 )
+
+            // nasao sam izadji iz petlje
+            EXIT
+
+         ENDIF
+      ENDIF
+
+      SKIP
+
+   ENDDO
+
+   SELECT ( nTArea )
+
+   RETURN cReturn
 
 
 
@@ -383,313 +385,305 @@ return cReturn
 // -------------------------------------------
 // pravilo za unos operacija
 // -------------------------------------------
-function rule_aop( xVal, aArr, lShErr )
-local nErrLevel := 0
+FUNCTION rule_aop( xVal, aArr, lShErr )
 
-if lShErr == nil
-    lShErr := .t.
-endif
+   LOCAL nErrLevel := 0
 
-// ako se koriste pravila ? uopste
-if is_fmkrules()
-    
-    nErrLevel := _rule_aop_( xVal, aArr, lShErr )
+   IF lShErr == nil
+      lShErr := .T.
+   ENDIF
 
-endif
+   nErrLevel := _rule_aop_( xVal, aArr, lShErr )
 
-return err_validate( nErrLevel )
+   RETURN err_validate( nErrLevel )
 
 
 
 // ---------------------------------------------
 // rule za unos opracija dokumenta
-// 
-//   aArr -> matrica sa definicijom artikla...
+//
+// aArr -> matrica sa definicijom artikla...
 // ---------------------------------------------
-static function _rule_aop_( xVal,  aArr, lShErr )
+STATIC FUNCTION _rule_aop_( xVal,  aArr, lShErr )
 
-local nReturn := 0
-local nTArea := SELECT()
+   LOCAL nReturn := 0
+   LOCAL nTArea := Select()
 
-local cObj := "ITEMS"
-local cCond := "DOC_IT_AOP"
-local cMod := "RNAL"
+   LOCAL cObj := "ITEMS"
+   LOCAL cCond := "DOC_IT_AOP"
+   LOCAL cMod := "RNAL"
 
-local nErrLevel
-local cKtoList
-local cNalog
+   LOCAL nErrLevel
+   LOCAL cKtoList
+   LOCAL cNalog
 
-O_FMKRULES
-select fmkrules
-set order to tag "ITEM1"
-go top
+   O_FMKRULES
+   SELECT fmkrules
+   SET ORDER TO TAG "ITEM1"
+   GO TOP
 
-seek g_rulemod( cMod ) + g_ruleobj( cObj ) + g_rule_c5( cCond )
+   SEEK g_rulemod( cMod ) + g_ruleobj( cObj ) + g_rule_c5( cCond )
 
-do while !EOF() .and. field->modul_name == g_rulemod( cMod ) ;
-        .and. field->rule_obj == g_ruleobj( cObj ) ;
-        .and. field->rule_c5 == g_rule_c5( cCond )
-    
-    // pravilo: koja operacija <A_KSR> recimo
-    cAopCond := ALLTRIM( fmkrules->rule_c7 )
-    
-    // operator, < > = <> itd...
-    xOperCond := ALLTRIM( fmkrules->rule_c2 )
-    
-    // vrijednost koja se provjerava
-    xValue := ALLTRIM( fmkrules->rule_c3 )
-    
-    // tip elementa
-    xType := ALLTRIM( fmkrules->rule_c4 )
+   DO WHILE !Eof() .AND. field->modul_name == g_rulemod( cMod ) ;
+         .AND. field->rule_obj == g_ruleobj( cObj ) ;
+         .AND. field->rule_c5 == g_rule_c5( cCond )
 
-    // atribut elementa
-    xAttType := ALLTRIM( fmkrules->rule_c6 )
+      // pravilo: koja operacija <A_KSR> recimo
+      cAopCond := AllTrim( fmkrules->rule_c7 )
 
-    nErrLevel := fmkrules->rule_level
+      // operator, < > = <> itd...
+      xOperCond := AllTrim( fmkrules->rule_c2 )
 
-    // da li postoji artikal koji zadovoljava ovo ???
-    if nErrLevel <> 0 .and. cAopCond == xVal .and. ;
-        _r_aop_cond( xVal, xValue, xType, ;
+      // vrijednost koja se provjerava
+      xValue := AllTrim( fmkrules->rule_c3 )
+
+      // tip elementa
+      xType := AllTrim( fmkrules->rule_c4 )
+
+      // atribut elementa
+      xAttType := AllTrim( fmkrules->rule_c6 )
+
+      nErrLevel := fmkrules->rule_level
+
+      // da li postoji artikal koji zadovoljava ovo ???
+      IF nErrLevel <> 0 .AND. cAopCond == xVal .AND. ;
+            _r_aop_cond( xVal, xValue, xType, ;
             xAttType, xOperCond, aArr )
-        
-        nReturn := nErrLevel
-        
-        if lShErr == .t.
+
+         nReturn := nErrLevel
+
+         IF lShErr == .T.
             sh_rule_err( fmkrules->rule_ermsg, nErrLevel )
-        endif
-        
-        exit
-    
-    endif
-    
-    skip
-    
-enddo
+         ENDIF
 
-select (nTArea)
+         EXIT
 
-return nReturn
+      ENDIF
+
+      SKIP
+
+   ENDDO
+
+   SELECT ( nTArea )
+
+   RETURN nReturn
 
 
 // -------------------------------------------
 // pravilo za polje u items
 // -------------------------------------------
-function rule_items( cField, xVal, aArr, lShErr )
-local nErrLevel := 0
+FUNCTION rule_items( cField, xVal, aArr, lShErr )
 
-if lShErr == nil
-    lShErr := .t.
-endif
+   LOCAL nErrLevel := 0
 
-// ako se koriste pravila ? uopste
-if is_fmkrules()
-    nErrLevel := _rule_item_( cField, xVal, aArr, lShErr )
-endif
+   IF lShErr == nil
+      lShErr := .T.
+   ENDIF
 
-return err_validate( nErrLevel )
+   nErrLevel := _rule_item_( cField, xVal, aArr, lShErr )
+
+   RETURN err_validate( nErrLevel )
 
 
 // ---------------------------------------------
 // rule za item u unosu. 1
-// 
-//   aArr -> matrica sa definicijom artikla...
+//
+// aArr -> matrica sa definicijom artikla...
 // ---------------------------------------------
-static function _rule_item_( cField, xVal,  aArr, lShErr )
+STATIC FUNCTION _rule_item_( cField, xVal,  aArr, lShErr )
 
-local nReturn := 0
-local nTArea := SELECT()
+   LOCAL nReturn := 0
+   LOCAL nTArea := Select()
 
-local cObj := "ITEMS"
-local cCond := ALLTRIM(cField)
-local cMod := "RNAL"
+   LOCAL cObj := "ITEMS"
+   LOCAL cCond := AllTrim( cField )
+   LOCAL cMod := "RNAL"
 
-local nErrLevel
-local cKtoList
-local cNalog
+   LOCAL nErrLevel
+   LOCAL cKtoList
+   LOCAL cNalog
 
-O_FMKRULES
-select fmkrules
-set order to tag "ITEM1"
-go top
+   O_FMKRULES
+   SELECT fmkrules
+   SET ORDER TO TAG "ITEM1"
+   GO TOP
 
-seek g_rulemod( cMod ) + g_ruleobj( cObj ) + g_rule_c5( cCond )
+   SEEK g_rulemod( cMod ) + g_ruleobj( cObj ) + g_rule_c5( cCond )
 
-do while !EOF() .and. field->modul_name == g_rulemod( cMod ) ;
-        .and. field->rule_obj == g_ruleobj( cObj ) ;
-        .and. field->rule_c5 == g_rule_c5( cCond )
-    
-    cArtCond := ALLTRIM( fmkrules->rule_c7 )
-    xRCond := ALLTRIM( fmkrules->rule_c2 )
-    xRVal1 := ALLTRIM( fmkrules->rule_c3 )
-    xRVal2 := ALLTRIM( fmkrules->rule_c4 )
+   DO WHILE !Eof() .AND. field->modul_name == g_rulemod( cMod ) ;
+         .AND. field->rule_obj == g_ruleobj( cObj ) ;
+         .AND. field->rule_c5 == g_rule_c5( cCond )
 
-    nErrLevel := fmkrules->rule_level
+      cArtCond := AllTrim( fmkrules->rule_c7 )
+      xRCond := AllTrim( fmkrules->rule_c2 )
+      xRVal1 := AllTrim( fmkrules->rule_c3 )
+      xRVal2 := AllTrim( fmkrules->rule_c4 )
 
-    // da li postoji artikal koji zadovoljava ovo ???
-    if nErrLevel <> 0 .and. ;
-        _r_item_cond( xVal, xRCond, xRVal1, xRVal2 ) .and. ;
-        _r_art_cond( aArr, cArtCond ) 
-        
-        nReturn := nErrLevel
-        
-        if lShErr == .t.
+      nErrLevel := fmkrules->rule_level
+
+      // da li postoji artikal koji zadovoljava ovo ???
+      IF nErrLevel <> 0 .AND. ;
+            _r_item_cond( xVal, xRCond, xRVal1, xRVal2 ) .AND. ;
+            _r_art_cond( aArr, cArtCond )
+
+         nReturn := nErrLevel
+
+         IF lShErr == .T.
             sh_rule_err( fmkrules->rule_ermsg, nErrLevel )
-        endif
-        
-        exit
-    
-    endif
-    
-    skip
-    
-enddo
+         ENDIF
 
-select (nTArea)
+         EXIT
 
-return nReturn
+      ENDIF
+
+      SKIP
+
+   ENDDO
+
+   SELECT ( nTArea )
+
+   RETURN nReturn
 
 
 // -------------------------------------------------------------
 // provjera uslova r_item_cond()
 // -------------------------------------------------------------
-static function _r_item_cond( xVal, xCond, xRVal1, xRVal2 )
-local lRet := .t.
+STATIC FUNCTION _r_item_cond( xVal, xCond, xRVal1, xRVal2 )
 
-xCond := ALLTRIM(xCond)
+   LOCAL lRet := .T.
 
-do case
-    
-    // provjera minimalne i maximalne vrijednosti
-    case xCond == "MIN" 
-        
-        if xVal >= VAL(xRVal1) 
-            lRet := .f.
-        endif
-    
-    case xCond == "MAX"
-        
-        if xVal <= VAL(xRVal2)
-            lRet := .f.
-        endif
-    
-endcase
+   xCond := AllTrim( xCond )
 
-return lRet
+   DO CASE
+
+      // provjera minimalne i maximalne vrijednosti
+   CASE xCond == "MIN"
+
+      IF xVal >= Val( xRVal1 )
+         lRet := .F.
+      ENDIF
+
+   CASE xCond == "MAX"
+
+      IF xVal <= Val( xRVal2 )
+         lRet := .F.
+      ENDIF
+
+   ENDCASE
+
+   RETURN lRet
 
 
 // --------------------------------------------
 //
 // pravila nad artiklima
-// 
+//
 // --------------------------------------------
-function rule_articles( aArr )
-local nErrLevel := 0
+FUNCTION rule_articles( aArr )
 
-// ako se koriste pravila ? uopste
-if is_fmkrules()
-    
-    nErrLevel := _rule_art1( aArr )
+   LOCAL nErrLevel := 0
 
-endif
+   nErrLevel := _rule_art1( aArr )
 
-return err_validate( nErrLevel )
+   RETURN err_validate( nErrLevel )
 
 
 
 
 // ---------------------------------------------
 // rule za sastavljanje artikla ver. 1
-// 
-//   aArr -> matrica sa definicijom artikla...
+//
+// aArr -> matrica sa definicijom artikla...
 // ---------------------------------------------
-static function _rule_art1( aArr )
-local nReturn := 0
-local nTArea := SELECT()
-local cObj := "ARTICLES"
-local cCond := "ART_NEW"
-local cMod := "RNAL"
-local nErrLevel
-local cKtoList
-local cNalog
+STATIC FUNCTION _rule_art1( aArr )
 
-O_FMKRULES
-select fmkrules
-set order to tag "RNART1"
-go top
+   LOCAL nReturn := 0
+   LOCAL nTArea := Select()
+   LOCAL cObj := "ARTICLES"
+   LOCAL cCond := "ART_NEW"
+   LOCAL cMod := "RNAL"
+   LOCAL nErrLevel
+   LOCAL cKtoList
+   LOCAL cNalog
 
-seek g_rulemod( cMod ) + g_ruleobj( cObj ) + g_rule_c3( cCond )
+   O_FMKRULES
+   SELECT fmkrules
+   SET ORDER TO TAG "RNART1"
+   GO TOP
 
-do while !EOF() .and. field->modul_name == g_rulemod( cMod ) ;
-        .and. field->rule_obj == g_ruleobj( cObj ) ;
-        .and. field->rule_c3 == g_rule_c3( cCond )
-    
-    cArtcond := ALLTRIM( fmkrules->rule_c7 )
+   SEEK g_rulemod( cMod ) + g_ruleobj( cObj ) + g_rule_c3( cCond )
 
-    nErrLevel := fmkrules->rule_level
+   DO WHILE !Eof() .AND. field->modul_name == g_rulemod( cMod ) ;
+         .AND. field->rule_obj == g_ruleobj( cObj ) ;
+         .AND. field->rule_c3 == g_rule_c3( cCond )
 
-    // postoji li pravilo koje ne-zadovoljava ???
-    if nErrLevel <> 0 .and. ;
-        _r_art_cond( aArr, cArtCond ) 
-        
-        nReturn := nErrLevel
-        
-        sh_rule_err( fmkrules->rule_ermsg, nErrLevel )
-        
-        exit
-    
-    endif
-    
-    skip
-    
-enddo
+      cArtcond := AllTrim( fmkrules->rule_c7 )
 
-select (nTArea)
+      nErrLevel := fmkrules->rule_level
 
-return nReturn
+      // postoji li pravilo koje ne-zadovoljava ???
+      IF nErrLevel <> 0 .AND. ;
+            _r_art_cond( aArr, cArtCond )
+
+         nReturn := nErrLevel
+
+         sh_rule_err( fmkrules->rule_ermsg, nErrLevel )
+
+         EXIT
+
+      ENDIF
+
+      SKIP
+
+   ENDDO
+
+   SELECT ( nTArea )
+
+   RETURN nReturn
 
 
 // ---------------------------------------------------------
 // uslov za provjeru operacija i artikala
 // ---------------------------------------------------------
-static function _r_aop_cond( cSearch, cVal, cEl_type, ;
-    cEl_att, cOper, aArr )
+STATIC FUNCTION _r_aop_cond( cSearch, cVal, cEl_type, ;
+      cEl_att, cOper, aArr )
 
-local lReturn := .f.
-local nScan
+   LOCAL lReturn := .F.
+   LOCAL nScan
 
-nScan := 0
+   nScan := 0
 
-if cOper == "="
+   IF cOper == "="
 
-    nScan := ASCAN( aArr, { |xV| ALLTRIM(xV[2]) == ALLTRIM(cEl_type) ;
-        .and. ALLTRIM(xV[4]) == ALLTRIM(cEl_att) ;
-        .and. ALLTRIM(xV[5]) == ALLTRIM(cVal) } )
+      nScan := AScan( aArr, {|xV| AllTrim( xV[ 2 ] ) == AllTrim( cEl_type ) ;
+         .AND. AllTrim( xV[ 4 ] ) == AllTrim( cEl_att ) ;
+         .AND. AllTrim( xV[ 5 ] ) == AllTrim( cVal ) } )
 
-elseif cOper == ">"
-    
-    nScan := ASCAN( aArr, { |xV| ALLTRIM(xV[2]) == ALLTRIM(cEl_type) ;
-        .and. ALLTRIM(xV[4]) == ALLTRIM(cEl_att) ;
-        .and. ALLTRIM(xV[5]) > ALLTRIM(cVal) } )
+   ELSEIF cOper == ">"
 
-elseif cOper == "<"
-    
-    nScan := ASCAN( aArr, { |xV| ALLTRIM(xV[2]) == ALLTRIM(cEl_type) ;
-        .and. ALLTRIM(xV[4]) == ALLTRIM(cEl_att) ;
-        .and. ALLTRIM(xV[5]) < ALLTRIM(cVal) } )
+      nScan := AScan( aArr, {|xV| AllTrim( xV[ 2 ] ) == AllTrim( cEl_type ) ;
+         .AND. AllTrim( xV[ 4 ] ) == AllTrim( cEl_att ) ;
+         .AND. AllTrim( xV[ 5 ] ) > AllTrim( cVal ) } )
 
-elseif cOper == "<>"
-    
-    nScan := ASCAN( aArr, { |xV| ALLTRIM(xV[2]) == ALLTRIM(cEl_type) ;
-        .and. ALLTRIM(xV[4]) == ALLTRIM(cEl_att) ;
-        .and. ALLTRIM(xV[5]) <> ALLTRIM(cVal) } )
+   ELSEIF cOper == "<"
 
-endif
+      nScan := AScan( aArr, {|xV| AllTrim( xV[ 2 ] ) == AllTrim( cEl_type ) ;
+         .AND. AllTrim( xV[ 4 ] ) == AllTrim( cEl_att ) ;
+         .AND. AllTrim( xV[ 5 ] ) < AllTrim( cVal ) } )
 
-if nScan <> 0
-    lReturn := .t.
-endif
+   ELSEIF cOper == "<>"
 
-return lReturn
+      nScan := AScan( aArr, {|xV| AllTrim( xV[ 2 ] ) == AllTrim( cEl_type ) ;
+         .AND. AllTrim( xV[ 4 ] ) == AllTrim( cEl_att ) ;
+         .AND. AllTrim( xV[ 5 ] ) <> AllTrim( cVal ) } )
+
+   ENDIF
+
+   IF nScan <> 0
+      lReturn := .T.
+   ENDIF
+
+   RETURN lReturn
 
 
 
@@ -699,147 +693,145 @@ return lReturn
 // aArr - matrica sa osnovnim elementima artikla iz unosa
 // cArtCond - rule artikla
 // ---------------------------------------------------------
-static function _r_art_cond( aArr, cArtCond )
-local aTmp := {}
-local aTmp2 := {}
-local aArtArr := {}
-local i
-local i2
-local nCond
-local lExist := .t.
+STATIC FUNCTION _r_art_cond( aArr, cArtCond )
 
-// example rule:
-//
-// "1:<GL_TYPE>=FL;<GL_TICK>=4#3:<GL_TYPE>=LO"
+   LOCAL aTmp := {}
+   LOCAL aTmp2 := {}
+   LOCAL aArtArr := {}
+   LOCAL i
+   LOCAL i2
+   LOCAL nCond
+   LOCAL lExist := .T.
 
-
-// prvo rastavi elemente sa "#"
-
-aTmp := TokToNiz( cArtCond, "#" )
-
-for i := 1 to LEN( aTmp )
-
-    // "1:<GL_TYPE>=FL;<GL_TICK>=4"
-    cTmp := ALLTRIM( aTmp[ i ] )
-
-    // zatim rastavi broj elementa od uslova..... sa ":"
-    aTmp2 := TokToNiz( cTmp, ":" )
-    
-    // i dobit ces sljedece:
-    //
-    // aTmp2[1] = "1"
-    // aTmp2[2] = "<GL_TYPE>=FL;<GL_TICK>=4"
-    
-    // broj elementa = 1
-    nElem := VAL( ALLTRIM( aTmp2[1] ) )
-    
-    // uslov je = <GL_TYPE>=FL;<GL_TICK>=4
-    cElCond := ALLTRIM( aTmp2[2] )
-
-    // sada razdvoji uslove, moze ih biti vise, sa ";"
-    aElConds := TokToNiz( cElCond, ";" )
-    
-    // dodaj ih u nasu novu matricu....
-
-    for i2 := 1 to LEN( aElConds )
-        
-        // dobije se:
-        // 
-        // aElConds[1] = "<GL_TYPE>=FL"
-        // aElConds[2] = "<GL_TICK>=4"
-        
-        cECond := ALLTRIM( aElConds[ i2 ] )
-
-        // rastavi sada uslov na djoker i vrijednost sa "="
-
-        aECnds := TokToNiz( cECond, "=" )
-        
-        // i ubaci u novu matricu koja ce sluziti za usporedbu
-        // .....
-        // format matrice ce biti ovakav:
-        //
-        // aArtArr[1] = { 1, "<GL_TYPE>", "FL" }
-        // aArtArr[2] = { 1, "<GL_TICK>",  "4" }
-        // aArtArr[3] = { 3, "<GL_TYPE>", "LO" }
-        
-        AADD( aArtArr, { nElem, aECnds[1], aECnds[2] } )
-    
-    next
-
-next
-
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// UPOREDJIVANJE NOVE MATRICE SA USLOVIMA SA POSTOJECOM IZ UNOSA
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-// format matrice iz unosa je npr:
-//
-// aArr = { EL_NO, GR_VAL_CODE, GR_VAL, JOKER, ATR_CODE, ATR_VAL } 
-//
-// aArr[1] = { 1, "G", "staklo", "<GL_TYPE>", "FL", "FLOAT" }
-// aArr[2] = { 1, "G", "staklo", "<GL_TICK>", "4", "4mm" }
-// aArr[3] = { 2, "F", "distancer", "<FR_TYPE>", "A", "Aluminij" }
-// aArr[4] = { 2, "F", "distancer", "<FR_TICK>", "10", "10mm" }
-// aArr[4] = { 2, "F", "distancer", "<FR_GAS>", "A", "Argon" }
-// aArr[4] = { 3, "G", "staklo", "<GL_TYPE>", "FL", "FLOAT" }
-// aArr[4] = { 3, "G", "staklo", "<GL_TYPE>", "4", "4mm" }
+   // example rule:
+   //
+   // "1:<GL_TYPE>=FL;<GL_TICK>=4#3:<GL_TYPE>=LO"
 
 
-for nCond := 1 to LEN( aArtArr )
-    
-    // element = 1
-    nElement := aArtArr[ nCond, 1 ]
-    
-    // djoker atributa = "<GL_TYPE>"
-    cCondAtt := aArtArr[ nCond, 2 ]
-    
-    // vrijednost atributa = "4"
-    cCondVal := aArtArr[ nCond, 3 ]
+   // prvo rastavi elemente sa "#"
 
-    
-    // ako postoji upitnik... onda je to "like"...
-    // pr: S?, moze biti: "S", "SC", "SG" ....
-    
-    if LEN(cCondVal) > 1 .and. "?" $ cCondVal 
-    
-        // ponisti upitnik ....
-        cCondVal := STRTRAN( cCondVal, "?", "" )
-        
-        // pronadji da li postoji takav zapis... u matrici aArr
-        nSeek := ASCAN( aArr, {| xVal | xVal[1] == nElement .and. ;
-                    ALLTRIM(xVal[4]) == cCondAtt .and. ;
-                    ALLTRIM(xVal[5]) = cCondVal } )
-    
-    // rijec je o bilo kojem uslovu...
-    // na poziciji nElement
-    
-    elseif LEN(cCondVal) == 1 .and. cCondVal == "?"
-    
-        // pronadji da li postoji takav zapis... u matrici aArr
-        nSeek := ASCAN( aArr, {| xVal | xVal[1] == nElement .and. ;
-                    ALLTRIM(xVal[4]) == cCondAtt } )
-    
-    // trazi se striktni uslov
-    // npr: "L"
-    
-    else
-        // pronadji da li postoji takav zapis... u matrici aArr
-        nSeek := ASCAN( aArr, {| xVal | xVal[1] == nElement .and. ;
-                    ALLTRIM(xVal[4]) == cCondAtt .and. ;
-                    ALLTRIM(xVal[5]) == cCondVal } )
+   aTmp := TokToNiz( cArtCond, "#" )
 
-    endif
-    
-    if nSeek == 0
-    
-        lExist := .f.
-        exit
-        
-    endif
+   FOR i := 1 TO Len( aTmp )
 
-next
+      // "1:<GL_TYPE>=FL;<GL_TICK>=4"
+      cTmp := AllTrim( aTmp[ i ] )
 
-return lExist
+      // zatim rastavi broj elementa od uslova..... sa ":"
+      aTmp2 := TokToNiz( cTmp, ":" )
+
+      // i dobit ces sljedece:
+      //
+      // aTmp2[1] = "1"
+      // aTmp2[2] = "<GL_TYPE>=FL;<GL_TICK>=4"
+
+      // broj elementa = 1
+      nElem := Val( AllTrim( aTmp2[ 1 ] ) )
+
+      // uslov je = <GL_TYPE>=FL;<GL_TICK>=4
+      cElCond := AllTrim( aTmp2[ 2 ] )
+
+      // sada razdvoji uslove, moze ih biti vise, sa ";"
+      aElConds := TokToNiz( cElCond, ";" )
+
+      // dodaj ih u nasu novu matricu....
+
+      FOR i2 := 1 TO Len( aElConds )
+
+         // dobije se:
+         //
+         // aElConds[1] = "<GL_TYPE>=FL"
+         // aElConds[2] = "<GL_TICK>=4"
+
+         cECond := AllTrim( aElConds[ i2 ] )
+
+         // rastavi sada uslov na djoker i vrijednost sa "="
+
+         aECnds := TokToNiz( cECond, "=" )
+
+         // i ubaci u novu matricu koja ce sluziti za usporedbu
+         // .....
+         // format matrice ce biti ovakav:
+         //
+         // aArtArr[1] = { 1, "<GL_TYPE>", "FL" }
+         // aArtArr[2] = { 1, "<GL_TICK>",  "4" }
+         // aArtArr[3] = { 3, "<GL_TYPE>", "LO" }
+
+         AAdd( aArtArr, { nElem, aECnds[ 1 ], aECnds[ 2 ] } )
+
+      NEXT
+
+   NEXT
+
+   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   // UPOREDJIVANJE NOVE MATRICE SA USLOVIMA SA POSTOJECOM IZ UNOSA
+   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   // format matrice iz unosa je npr:
+   //
+   // aArr = { EL_NO, GR_VAL_CODE, GR_VAL, JOKER, ATR_CODE, ATR_VAL }
+   //
+   // aArr[1] = { 1, "G", "staklo", "<GL_TYPE>", "FL", "FLOAT" }
+   // aArr[2] = { 1, "G", "staklo", "<GL_TICK>", "4", "4mm" }
+   // aArr[3] = { 2, "F", "distancer", "<FR_TYPE>", "A", "Aluminij" }
+   // aArr[4] = { 2, "F", "distancer", "<FR_TICK>", "10", "10mm" }
+   // aArr[4] = { 2, "F", "distancer", "<FR_GAS>", "A", "Argon" }
+   // aArr[4] = { 3, "G", "staklo", "<GL_TYPE>", "FL", "FLOAT" }
+   // aArr[4] = { 3, "G", "staklo", "<GL_TYPE>", "4", "4mm" }
 
 
+   FOR nCond := 1 TO Len( aArtArr )
 
+      // element = 1
+      nElement := aArtArr[ nCond, 1 ]
+
+      // djoker atributa = "<GL_TYPE>"
+      cCondAtt := aArtArr[ nCond, 2 ]
+
+      // vrijednost atributa = "4"
+      cCondVal := aArtArr[ nCond, 3 ]
+
+
+      // ako postoji upitnik... onda je to "like"...
+      // pr: S?, moze biti: "S", "SC", "SG" ....
+
+      IF Len( cCondVal ) > 1 .AND. "?" $ cCondVal
+
+         // ponisti upitnik ....
+         cCondVal := StrTran( cCondVal, "?", "" )
+
+         // pronadji da li postoji takav zapis... u matrici aArr
+         nSeek := AScan( aArr, {| xVal | xVal[ 1 ] == nElement .AND. ;
+            AllTrim( xVal[ 4 ] ) == cCondAtt .AND. ;
+            AllTrim( xVal[ 5 ] ) = cCondVal } )
+
+         // rijec je o bilo kojem uslovu...
+         // na poziciji nElement
+
+      ELSEIF Len( cCondVal ) == 1 .AND. cCondVal == "?"
+
+         // pronadji da li postoji takav zapis... u matrici aArr
+         nSeek := AScan( aArr, {| xVal | xVal[ 1 ] == nElement .AND. ;
+            AllTrim( xVal[ 4 ] ) == cCondAtt } )
+
+         // trazi se striktni uslov
+         // npr: "L"
+
+      ELSE
+         // pronadji da li postoji takav zapis... u matrici aArr
+         nSeek := AScan( aArr, {| xVal | xVal[ 1 ] == nElement .AND. ;
+            AllTrim( xVal[ 4 ] ) == cCondAtt .AND. ;
+            AllTrim( xVal[ 5 ] ) == cCondVal } )
+
+      ENDIF
+
+      IF nSeek == 0
+
+         lExist := .F.
+         EXIT
+
+      ENDIF
+
+   NEXT
+
+   RETURN lExist

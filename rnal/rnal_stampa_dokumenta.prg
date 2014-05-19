@@ -139,8 +139,8 @@ FUNCTION st_obr_list( temp, doc_no, a_docs )
 
    _count := t_docit->( RecCount2() )
 
-   IF _count > 0 .AND. pitanje(, "Odabrati stavke za stampu ? (D/N)", "N" ) == "D"
-      sel_items()
+   IF _count > 0 .AND. Pitanje(, "Odabrati stavke za štampu ? (D/N)", "N" ) == "D"
+      rnal_print_odabir_stavki( temp )
    ENDIF
 
    // da li se stampa rekapitulacija repromaterijala
@@ -1458,20 +1458,15 @@ FUNCTION prn_nal()
    RETURN
 
 
-// --------------------------------------------
-// rekalkulisanje vrijednosti T_DOCIT stavke
-// --------------------------------------------
-FUNCTION recalc_pr()
+FUNCTION rekalkulisi_stavke_za_stampu( lPriprema )
 
    LOCAL aZpoGn := {}
    LOCAL nTArea := Select()
 
-   // ukupno mm -> m2
    RREPLACE field->doc_it_tot WITH Round( c_ukvadrat( field->doc_it_qtt, field->doc_it_hei, field->doc_it_wid ), 2 ), field->doc_it_tm WITH Round( c_duzinski( field->doc_it_qtt, field->doc_it_hei, field->doc_it_wid ), 2 )
 
    aZpoGN := {}
 
-   // zaokruzi vrijednosti....
    _art_set_descr( field->art_id, nil, nil, @aZpoGN, .T. )
 
    SELECT ( nTArea )
@@ -1479,22 +1474,18 @@ FUNCTION recalc_pr()
    lBezZaokr := .F.
 
    IF lBezZaokr == .F.
-      // da li je kaljeno ? kod kaljenog nema zaokruzenja
-      lBezZaokr := is_kaljeno( aZpoGN, field->doc_no, field->doc_it_no, NIL, .T. )
+      lBezZaokr := is_kaljeno( aZpoGN, field->doc_no, field->doc_it_no, NIL, lPriprema )
    ENDIF
 
    IF lBezZaokr == .F.
-      // da li je emajlirano ? isto nema zaokruzenja
-      lBezZaokr := is_emajl( aZpoGN, field->doc_no, field->doc_it_no, NIL, .T. )
+      lBezZaokr := is_emajl( aZpoGN, field->doc_no, field->doc_it_no, NIL, lPriprema )
    ENDIF
 
    IF lBezZaokr == .F.
-      // da li je vatroglas ? isto nema zaokruzenja
       lBezZaokr := is_vglass( aZpoGN )
    ENDIF
 
    IF lBezZaokr == .F.
-      // da li je plexiglas ? isto nema zaokruzenja
       lBezZaokr := is_plex( aZpoGN )
    ENDIF
 
@@ -1503,7 +1494,7 @@ FUNCTION recalc_pr()
       field->doc_it_zwi WITH obrl_zaok( field->doc_it_wid, aZpoGN, lBezZaokr ), ;
       field->doc_it_zw2 WITH obrl_zaok( field->doc_it_w2, aZpoGN, lBezZaokr ), ;
       field->doc_it_tot WITH Round( c_ukvadrat( field->doc_it_qtt, field->doc_it_zhe, field->doc_it_zwi, field->doc_it_zh2, field->doc_it_zw2 ), 2 ), ;
-   field->doc_it_tm WITH Round( c_duzinski( field->doc_it_qtt, field->doc_it_zhe, field->doc_it_zwi, field->doc_it_zh2, field->doc_it_zw2 ), 2 ), ;
+      field->doc_it_tm WITH Round( c_duzinski( field->doc_it_qtt, field->doc_it_zhe, field->doc_it_zwi, field->doc_it_zh2, field->doc_it_zw2 ), 2 ), ;
       field->doc_it_net WITH Round( obrl_neto( field->doc_it_tot, aZpoGN ), 2 )
 
    RETURN

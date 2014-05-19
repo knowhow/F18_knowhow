@@ -22,11 +22,8 @@ FUNCTION m_adm()
 
    AAdd( _opc, "1. pregled artikala bez definisanih elemenata  " )
    AAdd( _opcexe, {|| rpt_artikli_bez_elemenata() } )
-
-   IF is_fmkrules()
-      AAdd( _opc, "2. FMK rules" )
-      AAdd( _opcexe, {|| p_fmkrules( , , , aRuleSpec, bRuleBlock ) } )
-   ENDIF
+   AAdd( _opc, "2. FMK rules" )
+   AAdd( _opcexe, {|| p_fmkrules( , , , aRuleSpec, bRuleBlock ) } )
 	
    f18_menu( "adm", .F., _izbor, _opc, _opcexe )
 

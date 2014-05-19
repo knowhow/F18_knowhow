@@ -70,7 +70,7 @@ STATIC FUNCTION err_validate( nLevel )
 FUNCTION _rule_kto_()
 
    LOCAL nErrLevel := 0
-
+   
    IF is_fmkrules()
       nErrLevel := _rule_kto1_()
    ENDIF

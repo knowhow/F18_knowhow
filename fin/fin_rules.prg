@@ -44,7 +44,7 @@ STATIC FUNCTION ed_rule_bl()
 
 
 
-STATIC FUNCTION err_validate( nLevel )
+STATIC FUNCTION error_validate( nLevel )
 
    LOCAL lRet := .F.
 
@@ -67,17 +67,17 @@ STATIC FUNCTION err_validate( nLevel )
 
 
 
-FUNCTION _rule_kto_()
+FUNCTION fin_pravilo_konto()
 
    LOCAL nErrLevel := 0
    
-   nErrLevel := _rule_kto1_()
+   nErrLevel := ispitaj_pravilo_konto()
 
-   RETURN err_validate( nErrLevel )
+   RETURN error_validate( nErrLevel )
 
 
 
-FUNCTION _rule_kto1_()
+FUNCTION ispitaj_pravilo_konto()
 
    LOCAL nReturn := 0
    LOCAL nTArea := Select()
@@ -108,8 +108,8 @@ FUNCTION _rule_kto1_()
 	
       // ima li konta ???
       IF nErrLevel <> 0 .AND. ;
-            _nalog_cond( _idvn, cNalog ) .AND. ;
-            _konto_cond( _idkonto, cKtoList )
+            uslov_nalog_zadovoljen( _idvn, cNalog ) .AND. ;
+            uslov_konto_zadovoljen( _idkonto, cKtoList )
 		
          nReturn := nErrLevel
 		
@@ -129,7 +129,7 @@ FUNCTION _rule_kto1_()
 
 
 
-STATIC FUNCTION _nalog_cond( cFinNalog, cRuleNalog )
+STATIC FUNCTION uslov_nalog_zadovoljen( cFinNalog, cRuleNalog )
 
    LOCAL lRet := .F.
 
@@ -154,17 +154,17 @@ STATIC FUNCTION _nalog_cond( cFinNalog, cRuleNalog )
 
 
 
-FUNCTION _rule_partn_()
+FUNCTION fin_pravilo_partner()
 
    LOCAL nErrLevel := 0
    
-   nErrLevel := _rule_pt1_()
+   nErrLevel := ispitaj_pravilo_partner()
 
-   RETURN err_validate( nErrLevel )
+   RETURN error_validate( nErrLevel )
 
 
 
-FUNCTION _rule_pt1_()
+FUNCTION ispitaj_pravilo_partner()
 
    LOCAL nReturn := 0
    LOCAL nTArea := Select()
@@ -196,9 +196,9 @@ FUNCTION _rule_pt1_()
       nErrLevel := fmkrules->rule_level
 
       IF nErrLevel <> 0 .AND. ;
-            _nalog_cond( _idvn, cNalog ) .AND. ;
-            _konto_cond( _idkonto, cKtoList ) .AND. ;
-            _partn_cond( _idpartner, cPartn ) == .F.
+            uslov_nalog_zadovoljen( _idvn, cNalog ) .AND. ;
+            uslov_konto_zadovoljen( _idkonto, cKtoList ) .AND. ;
+            uslov_partner_zadovoljen( _idpartner, cPartn ) == .F.
 	
          nReturn := nErrLevel
 		
@@ -219,17 +219,17 @@ FUNCTION _rule_pt1_()
 
 
 
-FUNCTION _rule_d_p_()
+FUNCTION fin_pravilo_dug_pot()
 
    LOCAL nErrLevel := 0
    
-   nErrLevel := _rule_dp1_()
+   nErrLevel := ispitaj_pravilo_dug_pot()
 
-   RETURN err_validate( nErrLevel )
+   RETURN error_validate( nErrLevel )
 
 
 
-FUNCTION _rule_dp1_()
+FUNCTION ispitaj_pravilo_dug_pot()
 
    LOCAL nReturn := 0
    LOCAL nTArea := Select()
@@ -270,10 +270,10 @@ FUNCTION _rule_dp1_()
 
       // ima li konta ???
       IF nErrLevel <> 0 .AND. ;
-            _nalog_cond( _idvn, cNalog ) .AND. ;
-            _konto_cond( _idkonto, cKtoList ) .AND. ;
-            ( _partn_cond( _idpartner, cPartn ) == .F. .OR. ;
-            _dp_cond( _d_p, cDugPot ) == .F. )
+            uslov_nalog_zadovoljen( _idvn, cNalog ) .AND. ;
+            uslov_konto_zadovoljen( _idkonto, cKtoList ) .AND. ;
+            ( uslov_partner_zadovoljen( _idpartner, cPartn ) == .F. .OR. ;
+               uslov_dug_pot_zadovoljen( _d_p, cDugPot ) == .F. )
 			
          nReturn := nErrLevel
 		
@@ -293,7 +293,7 @@ FUNCTION _rule_dp1_()
 
 
 
-STATIC FUNCTION _partn_cond( cNalPartn, cRulePartn, lEmpty )
+STATIC FUNCTION uslov_partner_zadovoljen( cNalPartn, cRulePartn, lEmpty )
 
    LOCAL lRet := .F.
 
@@ -337,7 +337,7 @@ STATIC FUNCTION _partn_cond( cNalPartn, cRulePartn, lEmpty )
 
 
 
-STATIC FUNCTION _konto_cond( cNalKonto, cRuleKtoList, lEmpty )
+STATIC FUNCTION uslov_konto_zadovoljen( cNalKonto, cRuleKtoList, lEmpty )
 
    LOCAL lRet := .F.
 
@@ -365,7 +365,7 @@ STATIC FUNCTION _konto_cond( cNalKonto, cRuleKtoList, lEmpty )
 
 
 
-STATIC FUNCTION _dp_cond( cNalDP, cRuleDP, lEmpty )
+STATIC FUNCTION uslov_dug_pot_zadovoljen( cNalDP, cRuleDP, lEmpty )
 
    LOCAL lRet := .F.
 
@@ -388,17 +388,17 @@ STATIC FUNCTION _dp_cond( cNalDP, cRuleDP, lEmpty )
    RETURN lRet
 
 
-FUNCTION _rule_veza_()
+FUNCTION fin_pravilo_broj_veze()
 
    LOCAL nErrLevel := 0
    
-   nErrLevel := _rule_bv1_()
+   nErrLevel := ispitaj_pravilo_broj_veze()
 
-   RETURN err_validate( nErrLevel )
+   RETURN error_validate( nErrLevel )
 
 
 
-FUNCTION _rule_bv1_()
+FUNCTION ispitaj_pravilo_broj_veze()
 
    LOCAL nReturn := 0
    LOCAL nTArea := Select()
@@ -439,10 +439,10 @@ FUNCTION _rule_bv1_()
 
       // ima li konto/nalog/opis ???
       IF nErrLevel <> 0 .AND. ;
-            _nalog_cond( _idvn, cNalog ) .AND. ;
-            _konto_cond( _idkonto, cKtoList, .T. ) .AND. ;
-            _partn_cond( _idpartner, cPartn, .T. ) .AND. ;
-            _dp_cond( _d_p, cDugPot, .T. ) .AND. ;
+            uslov_nalog_zadovoljen( _idvn, cNalog ) .AND. ;
+            uslov_konto_zadovoljen( _idkonto, cKtoList, .T. ) .AND. ;
+            uslov_partner_zadovoljen( _idpartner, cPartn, .T. ) .AND. ;
+            uslov_dug_pot_zadovoljen( _d_p, cDugPot, .T. ) .AND. ;
             Empty( _brdok )
 		
          nReturn := nErrLevel

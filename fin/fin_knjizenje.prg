@@ -316,19 +316,19 @@ FUNCTION edit_fin_priprema()
    @ m_x + 13, m_y + 2 SAY "Konto  :" GET _IdKonto ;
       PICT "@!" ;
       VALID Partija( @_IdKonto ) .AND. P_Konto( @_IdKonto, 13, 20 ) ;
-      .AND. BrDokOK() .AND. MinKtoLen( _IdKonto ) .AND. _rule_kto_()
+      .AND. BrDokOK() .AND. MinKtoLen( _IdKonto ) .AND. fin_pravilo_konto()
 
 
    @ m_x + 14, m_y + 2 SAY "Partner:" GET _IdPartner PICT "@!" ;
       VALID ;
       {|| IIF( Empty( _idpartner ), Reci( 14, 20, Space( 25 ) ), ), ;
-      ( P_Firma( @_IdPartner, 14, 20 ) ) .AND. _rule_partn_() .AND. ;
+      ( P_Firma( @_IdPartner, 14, 20 ) ) .AND. fin_pravilo_partner() .AND. ;
       IIF( g_knjiz_help == "D" .AND. !Empty( _idpartner ), g_box_stanje( _idpartner, _idkonto, NIL ), .T. ) } ;
       WHEN ;
       {|| IIF( ChkKtoMark( _idkonto ), .T., .F. ) }
 
 
-   @ m_x + 16, m_y + 2  SAY "Duguje/Potrazuje (1/2):" GET _D_P VALID V_DP() .AND. _rule_d_p_() .AND. _rule_veza_()
+   @ m_x + 16, m_y + 2  SAY "Duguje/Potrazuje (1/2):" GET _D_P VALID V_DP() .AND. fin_pravilo_dug_pot() .AND. fin_pravilo_broj_veze()
 
    @ m_x + 16, m_y + 65 GET _ostav PUSHBUTTON  CAPTION "<Otvorene stavke>" WHEN {|| _iznos_unesen } VALID {|| _iznos_unesen := .F., .T. } ;
       SIZE X 15 Y 2 STATE {| param| KonsultOs( param ) }

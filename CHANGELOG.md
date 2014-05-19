@@ -1,3 +1,7 @@
+1.7.85  2014-05-19, vsasa
+
+  - FAKT, fiskalni_uredjaj_model() i algoritam za provjeru fiskalnog računa
+ 
 1.7.84  2014-05-19, vsasa, hernad
 
   - FIN, pravila uzrokovala bug kod unosa naloga

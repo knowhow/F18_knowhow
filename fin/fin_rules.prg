@@ -71,9 +71,7 @@ FUNCTION _rule_kto_()
 
    LOCAL nErrLevel := 0
    
-   IF is_fmkrules()
-      nErrLevel := _rule_kto1_()
-   ENDIF
+   nErrLevel := _rule_kto1_()
 
    RETURN err_validate( nErrLevel )
 
@@ -160,9 +158,7 @@ FUNCTION _rule_partn_()
 
    LOCAL nErrLevel := 0
    
-   IF is_fmkrules()
-      nErrLevel := _rule_pt1_()
-   ENDIF
+   nErrLevel := _rule_pt1_()
 
    RETURN err_validate( nErrLevel )
 
@@ -227,9 +223,7 @@ FUNCTION _rule_d_p_()
 
    LOCAL nErrLevel := 0
    
-   IF is_fmkrules()
-      nErrLevel := _rule_dp1_()
-   ENDIF
+   nErrLevel := _rule_dp1_()
 
    RETURN err_validate( nErrLevel )
 
@@ -398,9 +392,7 @@ FUNCTION _rule_veza_()
 
    LOCAL nErrLevel := 0
    
-   IF is_fmkrules()
-      nErrLevel := _rule_bv1_()
-   ENDIF
+   nErrLevel := _rule_bv1_()
 
    RETURN err_validate( nErrLevel )
 

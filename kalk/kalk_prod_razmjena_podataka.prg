@@ -1480,7 +1480,9 @@ FUNCTION FaKaPrenosRacunMPParagon()
                SELECT kalk_pripr
                LOCATE FOR idroba == fakt->idroba
 
-               IF Found() .AND. ROUND( fakt->rabat, 2 ) == 0 .AND. ( _razl_cijene == "N" .OR. ( _razl_cijene == "D" .AND. mpcsapp == fakt->cijena ) )
+               IF Found() .AND. ;
+                  ( ROUND( fakt->rabat, 2 ) == 0 .AND. ROUND( field->rabatv, 2 ) == 0 ) .AND. ;
+                  ( _razl_cijene == "N" .OR. ( _razl_cijene == "D" .AND. mpcsapp == fakt->cijena ) )
 
                   RREPLACE field->kolicina with field->kolicina + fakt->kolicina
 

@@ -347,6 +347,8 @@ FUNCTION set_dbf_fields_from_struct( rec )
       RETURN .F.
    ENDIF
 
+   PushWa()
+
    SELECT ( rec[ "wa" ] )
 
    IF !Used() .AND. !lSql
@@ -383,6 +385,7 @@ FUNCTION set_dbf_fields_from_struct( rec )
       USE
    ENDIF
 
+   PopWa()
    RETURN .T.
 
 

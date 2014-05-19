@@ -13,9 +13,6 @@
 #include "fin.ch"
 
 
-// --------------------------------------------
-// rule - kolone specificne
-// --------------------------------------------
 FUNCTION g_rule_cols_fin()
 
    LOCAL aKols := {}
@@ -36,28 +33,15 @@ FUNCTION g_rule_cols_fin()
    RETURN aKols
 
 
-// -------------------------------------
-// rule - block tabele rule
-// -------------------------------------
 FUNCTION g_rule_block_fin()
 
    LOCAL bBlock := {|| ed_rule_bl() }
 
    RETURN bBlock
 
-// ------------------------------------
-// edit rule key handler
-// ------------------------------------
 STATIC FUNCTION ed_rule_bl()
    RETURN DE_CONT
 
-
-
-// ---------------------------------------
-//
-// .....RULES.....
-//
-// ---------------------------------------
 
 
 STATIC FUNCTION err_validate( nLevel )
@@ -83,27 +67,18 @@ STATIC FUNCTION err_validate( nLevel )
 
 
 
-// -------------------------------------
-// ispitivanje pravila o kontima
-// -------------------------------------
 FUNCTION _rule_kto_()
 
    LOCAL nErrLevel := 0
 
-   // ako se koriste pravila ? uopste
    IF is_fmkrules()
-	
       nErrLevel := _rule_kto1_()
-
    ENDIF
 
    RETURN err_validate( nErrLevel )
 
 
 
-// -------------------------------------------
-// dozvoljen konto na nalogu
-// -------------------------------------------
 FUNCTION _rule_kto1_()
 
    LOCAL nReturn := 0
@@ -145,7 +120,6 @@ FUNCTION _rule_kto1_()
          EXIT
 	
       ENDIF
-
 	
       SKIP
 	
@@ -157,31 +131,22 @@ FUNCTION _rule_kto1_()
 
 
 
-// ---------------------------------------------------
-// da li vrsta naloga zadovoljava....
-// ---------------------------------------------------
 STATIC FUNCTION _nalog_cond( cFinNalog, cRuleNalog )
 
    LOCAL lRet := .F.
 
    IF cRuleNalog == "*"
 	
-      // odnosi se na sve naloge svi nalozi
-	
       lRet := .T.
 
    ELSEIF Left( cRuleNalog, 1 ) <> "*" .AND. "*" $ cRuleNalog
 
-      // odnosi se na pravilo "B*" recimo
-	
       IF Left( cRuleNalog, 1 ) == Left( cFinNalog, 1 )
          lRet := .T.
       ENDIF
 
    ELSEIF cRuleNalog == cFinNalog
 
-      // odnosi se na uslov "B4"
-	
       lRet := .T.
 	
    ENDIF
@@ -191,27 +156,18 @@ STATIC FUNCTION _nalog_cond( cFinNalog, cRuleNalog )
 
 
 
-// -------------------------------------
-// ispitivanje pravila o partneru
-// -------------------------------------
 FUNCTION _rule_partn_()
 
    LOCAL nErrLevel := 0
-
-   // ako se koriste pravila ? uopste
+   
    IF is_fmkrules()
-	
       nErrLevel := _rule_pt1_()
-
    ENDIF
 
    RETURN err_validate( nErrLevel )
 
 
 
-// -------------------------------------------
-// koji partner na kontu ???
-// -------------------------------------------
 FUNCTION _rule_pt1_()
 
    LOCAL nReturn := 0
@@ -235,19 +191,14 @@ FUNCTION _rule_pt1_()
    DO WHILE !Eof() .AND. field->modul_name == g_rulemod( cMod ) ;
          .AND. field->rule_obj == g_ruleobj( cObj )
 	
-      // B4 ili B* ili *
       cNalog := AllTrim( fmkrules->rule_c3 )
 	
-      // 132 ili 132;1333;2311;....
       cKtoList := AllTrim( fmkrules->rule_c6 )
 
-      // SC_SV1 - sifra partnera
       cPartn := AllTrim( fmkrules->rule_c5 )
 
-      // nivo pravila
       nErrLevel := fmkrules->rule_level
 
-      // ima li konta ???
       IF nErrLevel <> 0 .AND. ;
             _nalog_cond( _idvn, cNalog ) .AND. ;
             _konto_cond( _idkonto, cKtoList ) .AND. ;
@@ -272,27 +223,18 @@ FUNCTION _rule_pt1_()
 
 
 
-// -------------------------------------
-// ispitivanje dugovne/potrazne strane
-// -------------------------------------
 FUNCTION _rule_d_p_()
 
    LOCAL nErrLevel := 0
-
-   // ako se koriste pravila ? uopste
+   
    IF is_fmkrules()
-	
       nErrLevel := _rule_dp1_()
-
    ENDIF
 
    RETURN err_validate( nErrLevel )
 
 
 
-// -------------------------------------------
-// duguje / potrazuje / partner / konto ????
-// -------------------------------------------
 FUNCTION _rule_dp1_()
 
    LOCAL nReturn := 0
@@ -344,7 +286,6 @@ FUNCTION _rule_dp1_()
          sh_rule_err( fmkrules->rule_ermsg, nErrLevel )
 		
          EXIT
-	
 		
       ENDIF
 	
@@ -358,9 +299,6 @@ FUNCTION _rule_dp1_()
 
 
 
-// ---------------------------------------------------
-// da li kupac zadovoljava kriterij ????
-// ---------------------------------------------------
 STATIC FUNCTION _partn_cond( cNalPartn, cRulePartn, lEmpty )
 
    LOCAL lRet := .F.
@@ -377,37 +315,26 @@ STATIC FUNCTION _partn_cond( cNalPartn, cRulePartn, lEmpty )
 
    ELSEIF cRulePartn == "*"
 
-      // svi partneri
       lRet := .T.
 
    ELSEIF cRulePartn == "#KUPAC#"
-	
-      // provjeri da li je partner kupac?
 	
       lRet := is_kupac( cNalPartn )
 
    ELSEIF cRulePartn == "#DOBAVLJAC#"
 
-      // provjeri da li je partner dobavljac?
-	
       lRet := is_dobavljac( cNalPartn )
 
    ELSEIF cRulePartn == "#BANKA#"
-
-      // provjeri da li je partner banka?
 
       lRet := is_banka( cNalPartn )
 
    ELSEIF cRulePartn == "#RADNIK#"
 
-      // provjeri da li je partner radnik?
-
       lRet := is_radnik( cNalPartn )
 
    ELSEIF cRulePartn == cNalPartn
 
-      // odnosi se na uslov "01CZ02", konkretnu sifru
-	
       lRet := .T.
 	
    ENDIF
@@ -416,9 +343,6 @@ STATIC FUNCTION _partn_cond( cNalPartn, cRulePartn, lEmpty )
 
 
 
-// ---------------------------------------------------
-// da li konto kriterij zadovoljava ????
-// ---------------------------------------------------
 STATIC FUNCTION _konto_cond( cNalKonto, cRuleKtoList, lEmpty )
 
    LOCAL lRet := .F.
@@ -435,7 +359,6 @@ STATIC FUNCTION _konto_cond( cNalKonto, cRuleKtoList, lEmpty )
 
    ELSEIF cRuleKtoList == "*"
 
-      // sva konta
       lRet := .T.
 
    ELSEIF cNalKonto $ cRuleKtoList
@@ -448,9 +371,6 @@ STATIC FUNCTION _konto_cond( cNalKonto, cRuleKtoList, lEmpty )
 
 
 
-// ---------------------------------------------------
-// da li DP kriterij zadovoljava ????
-// ---------------------------------------------------
 STATIC FUNCTION _dp_cond( cNalDP, cRuleDP, lEmpty )
 
    LOCAL lRet := .F.
@@ -474,27 +394,18 @@ STATIC FUNCTION _dp_cond( cNalDP, cRuleDP, lEmpty )
    RETURN lRet
 
 
-// -------------------------------------
-// ispitivanje broja veze naloga
-// -------------------------------------
 FUNCTION _rule_veza_()
 
    LOCAL nErrLevel := 0
-
-   // ako se koriste pravila ? uopste
+   
    IF is_fmkrules()
-	
       nErrLevel := _rule_bv1_()
-
    ENDIF
 
    RETURN err_validate( nErrLevel )
 
 
 
-// -------------------------------------------
-// broj veze pravilo 1 ????
-// -------------------------------------------
 FUNCTION _rule_bv1_()
 
    LOCAL nReturn := 0
@@ -547,7 +458,6 @@ FUNCTION _rule_bv1_()
          sh_rule_err( fmkrules->rule_ermsg, nErrLevel )
 		
          EXIT
-	
 		
       ENDIF
 	

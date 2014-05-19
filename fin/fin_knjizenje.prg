@@ -206,9 +206,6 @@ FUNCTION o_fin_edit()
 
 
 
-// ---------------------------------------------------------
-// fin priprema, edit key handler
-// ---------------------------------------------------------
 FUNCTION edit_fin_priprema()
 
    LOCAL _fakt_params := fakt_params()

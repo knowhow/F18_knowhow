@@ -284,25 +284,36 @@ FUNCTION reopen_exclusive_and_zap( dbf_table, open_index )
 
 
 FUNCTION my_dbf_zap()
-   RETURN reopen_exclusive_and_zap( Alias(), .T. )
+   
+   LOCAL lRet
 
+   PushWa()
+   lRet := reopen_exclusive_and_zap( Alias(), .T. )
+   PopWa()
+
+   RETURN lRet   
+ 
 FUNCTION my_dbf_pack( lOpenUSharedRezimu )
+
+   LOCAL lRet
 
    IF lOpenUSharedRezimu == NIL
       lOpenUSharedRezimu := .T.
    ENDIF
 
-   IF reopen_dbf( .T., Alias(), .T. )
+   PushWa()
+   lRet :=  reopen_dbf( .T., Alias(), .T. )
+
+   IF lRet
       __dbPack()
-   ELSE
-      RETURN .F.
    ENDIF
 
-   IF lOpenUSharedRezimu
-      RETURN reopen_dbf( .F., Alias(), .T. )
+   IF lRet .AND. lOpenUSharedRezimu
+     lRet := reopen_dbf( .F., Alias(), .T. )
    ENDIF
 
-   RETURN .T.
+   PopWa()
+   RETURN lRet
 
 
 

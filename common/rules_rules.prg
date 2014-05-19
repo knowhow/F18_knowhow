@@ -73,12 +73,6 @@ FUNCTION g_rule_c7( cSeek )
    RETURN PadR( cSeek, 100 )
 
 
-// -----------------------------------------------
-// da li se koriste pravila
-// -----------------------------------------------
-FUNCTION is_fmkrules()
-   RETURN .T.
-
 
 // -----------------------------------------------
 // otvaranje sifrarnika pravila "RULES"

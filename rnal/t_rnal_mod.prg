@@ -78,10 +78,7 @@ METHOD mMenu()
 // ------------------------------------------
 METHOD mStartUp()
 
-   IF is_fmkrules()
-      // generisi standarne rnal rules
-      gen_rnal_rules()
-   ENDIF
+   gen_rnal_rules()
 
    RETURN NIL
 

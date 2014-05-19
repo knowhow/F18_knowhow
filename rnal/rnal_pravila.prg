@@ -251,12 +251,7 @@ function rule_s_fmk( cField, nTickness, cType, cKind, cQttyType  )
 local nErrLevel := 0
 local cReturn := ""
 
-// ako se koriste pravila ? uopste
-if is_fmkrules()
-    
-    cReturn := _rule_s_fmk( cField, nTickness, cType, cKind, @cQttyType )
-
-endif
+cReturn := _rule_s_fmk( cField, nTickness, cType, cKind, @cQttyType )
 
 return cReturn
 
@@ -390,12 +385,7 @@ if lShErr == nil
     lShErr := .t.
 endif
 
-// ako se koriste pravila ? uopste
-if is_fmkrules()
-    
-    nErrLevel := _rule_aop_( xVal, aArr, lShErr )
-
-endif
+nErrLevel := _rule_aop_( xVal, aArr, lShErr )
 
 return err_validate( nErrLevel )
 
@@ -481,10 +471,7 @@ if lShErr == nil
     lShErr := .t.
 endif
 
-// ako se koriste pravila ? uopste
-if is_fmkrules()
-    nErrLevel := _rule_item_( cField, xVal, aArr, lShErr )
-endif
+nErrLevel := _rule_item_( cField, xVal, aArr, lShErr )
 
 return err_validate( nErrLevel )
 
@@ -585,12 +572,7 @@ return lRet
 function rule_articles( aArr )
 local nErrLevel := 0
 
-// ako se koriste pravila ? uopste
-if is_fmkrules()
-    
-    nErrLevel := _rule_art1( aArr )
-
-endif
+nErrLevel := _rule_art1( aArr )
 
 return err_validate( nErrLevel )
 

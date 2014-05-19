@@ -1,3 +1,9 @@
+1.7.84  2014-05-19, vsasa, hernad
+
+  - FIN, pravila uzrokovala bug kod unosa naloga
+  - RNAL, štampanje specifikacije sa izmjenjenim količinama - bugfix
+  - hernad: korekcije na common funkcijama
+ 
 1.7.83  2014-05-16, vsasa
 
   - FAKT, ispitivanje stanja fiskalnih računa

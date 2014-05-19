@@ -337,7 +337,7 @@ FUNCTION sql_order_from_key_fields( dbf_key_fields )
 // ----------------------------------------------
 FUNCTION set_dbf_fields_from_struct( rec )
 
-   LOCAL _opened := .T.
+   LOCAL lTabelaOtvorenaOvdje := .F.
    LOCAL _dbf
    LOCAL lSql
 
@@ -367,7 +367,7 @@ FUNCTION set_dbf_fields_from_struct( rec )
          RETURN .T.
 
       END SEQUENCE
-      _opened := .T.
+      lTabelaOtvorenaOvdje := .T.
    ENDIF
 
   
@@ -379,14 +379,14 @@ FUNCTION set_dbf_fields_from_struct( rec )
          set_rec_from_dbstruct( @rec )
    ENDIF
 
-   IF _opened
+   IF lTabelaOtvorenaOvdje
       USE
    ENDIF
 
    RETURN .T.
 
-// ----------------------------------------
-// ----------------------------------------
+
+
 FUNCTION set_rec_from_dbstruct( rec )
 
    LOCAL _struct, _i

@@ -81,7 +81,7 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
 
    SELECT fakt_doks
 
-   IF postoji_fiskalni_racun( id_firma, tip_dok, br_dok )
+   IF postoji_fiskalni_racun( id_firma, tip_dok, br_dok, _dev_drv )
       MsgBeep( "Za dokument " + tip_dok + "-" + ALLTRIM(br_dok) + " već postoji izdat fiskalni račun !" )
       RETURN _err_level
    ENDIF
@@ -171,28 +171,38 @@ FUNCTION reklamni_rn_box( rekl_rn )
 
  Opis: ispituje da li je za dokument napravljen fiskalni račun
 
- Usage: postoji_fiskalni_racun( idfirma, idtipdok, brdok ) -> SQL upit se šalje prema serveru 
+ Usage: postoji_fiskalni_racun( idfirma, idtipdok, brdok, model ) -> SQL upit se šalje prema serveru 
 
    Parameters: 
      - idfirma 
      - idtipdok
      - brdok
+     - model - model uređaja, proslijeđuje se rezultat funkcije fiskalni_uredjaj_model()
 
    Retrun: 
     .T. ako postoji fiskalni račun, .F. ako ne
 
 */
 
-FUNCTION postoji_fiskalni_racun( id_firma, tip_dok, br_dok )
+FUNCTION postoji_fiskalni_racun( id_firma, tip_dok, br_dok, model )
 
    LOCAL lRet := .F.
    LOCAL cWhere
 
+   IF model == NIL
+      model := fiskalni_uredjaj_model()
+   ENDIF
+
    cWhere := " idfirma = " + _sql_quote( id_firma )
    cWhere += " AND idtipdok = " + _sql_quote( tip_dok )
    cWhere += " AND brdok = " + _sql_quote( br_dok )
-   cWhere += " AND ( ( iznos > 0 AND fisc_rn > 0 ) "
-   cWhere += "  OR ( iznos < 0 AND fisc_st > 0 ) ) "
+
+   IF ALLTRIM( model ) == "FPRINT"
+      cWhere += " AND ( ( iznos > 0 AND fisc_rn > 0 ) "
+      cWhere += "  OR ( iznos < 0 AND fisc_st > 0 ) ) "
+   ELSE
+      cWhere += " AND fisc_rn > 0 "
+   ENDIF
 
    IF table_count( "fmk.fakt_doks", cWhere ) > 0
       lRet := .T.

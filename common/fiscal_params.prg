@@ -666,8 +666,8 @@ FUNCTION get_fiscal_devices_list( user, tip_dok )
 
 FUNCTION fiskalni_uredjaj_model()
 
-   LOCAL cModel := NIL
-   LOCAL aDevices := get_fiscal_devices_list( f18_user() )
+   LOCAL cModel := ""
+   LOCAL aDevices := get_fiscal_devices_list()
 
    FOR n := 1 TO LEN( aDevices )
       IF aDevices[ n, 3 ] <> cModel .AND. n > 1

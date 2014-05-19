@@ -23,10 +23,11 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
    LOCAL _w1 := 30
    LOCAL _x, _y
    LOCAL _params := fakt_params()
+   LOCAL _model := fiskalni_uredjaj_model()
 
    ImeKol := {}
 
-   AAdd( ImeKol, { " ",            {|| g_fiscal_info() } } )
+   AAdd( ImeKol, { " ",            {|| g_fiscal_info( _model ) } } )
    AAdd( ImeKol, { "RJ",           {|| idfirma }  } )
    AAdd( ImeKol, { "VD",           {|| idtipdok } } )
    AAdd( ImeKol, { "Brdok",        {|| brdok + rezerv } } )
@@ -127,11 +128,11 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
    RETURN
 
 
-STATIC FUNCTION g_fiscal_info()
+STATIC FUNCTION g_fiscal_info( model )
 
    LOCAL cInfo := " "
 
-   IF !postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok ) 
+   IF !postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, model ) 
       cInfo := " "
    ELSE
       cInfo := "F"

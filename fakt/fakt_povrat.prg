@@ -404,7 +404,7 @@ STATIC FUNCTION _chk_povrat_zabrana( vars )
    LOCAL _ret := .T.
 
    IF vars[ "idtipdok" ] $ "10#11"
-      IF postoji_fiskalni_racun( vars["idfirma"], vars["idtipdok"], vars["brdok"] )
+      IF postoji_fiskalni_racun( vars["idfirma"], vars["idtipdok"], vars["brdok"], fiskalni_uredjaj_model() )
          MsgBeep( "Za ovaj dokument je izdat fiskalni račun.#Opcija povrata je onemogućena !!!" )
          _ret := .F.
          RETURN _ret

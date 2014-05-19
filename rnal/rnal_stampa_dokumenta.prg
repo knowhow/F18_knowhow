@@ -140,7 +140,7 @@ FUNCTION st_obr_list( temp, doc_no, a_docs )
    _count := t_docit->( RecCount2() )
 
    IF _count > 0 .AND. pitanje(, "Odabrati stavke za stampu ? (D/N)", "N" ) == "D"
-      sel_items()
+      sel_items( temp )
    ENDIF
 
    // da li se stampa rekapitulacija repromaterijala
@@ -1459,7 +1459,7 @@ FUNCTION prn_nal()
    RETURN
 
 
-FUNCTION rekalkulisi_stavke_naloga()
+FUNCTION rekalkulisi_stavke_za_stampu( lPriprema )
 
    LOCAL aZpoGn := {}
    LOCAL nTArea := Select()
@@ -1475,11 +1475,11 @@ FUNCTION rekalkulisi_stavke_naloga()
    lBezZaokr := .F.
 
    IF lBezZaokr == .F.
-      lBezZaokr := is_kaljeno( aZpoGN, field->doc_no, field->doc_it_no, NIL, .T. )
+      lBezZaokr := is_kaljeno( aZpoGN, field->doc_no, field->doc_it_no, NIL, lPriprema )
    ENDIF
 
    IF lBezZaokr == .F.
-      lBezZaokr := is_emajl( aZpoGN, field->doc_no, field->doc_it_no, NIL, .T. )
+      lBezZaokr := is_emajl( aZpoGN, field->doc_no, field->doc_it_no, NIL, lPriprema )
    ENDIF
 
    IF lBezZaokr == .F.

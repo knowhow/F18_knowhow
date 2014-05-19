@@ -13,7 +13,7 @@
 #include "rnal.ch"
 
 
-FUNCTION sel_items()
+FUNCTION sel_items( lPriprema )
 
    LOCAL nArea
    LOCAL nTArea
@@ -47,7 +47,7 @@ FUNCTION sel_items()
 
    set_a_kol( @ImeKol, @Kol )
 
-   ObjDbedit( "t_docit", nBoxX, nBoxY, {|| key_handler() }, cHeader, cFooter,,,,, 1 )
+   ObjDbedit( "t_docit", nBoxX, nBoxY, {|| key_handler( lPriprema ) }, cHeader, cFooter,,,,, 1 )
 
    BoxC()
 
@@ -61,7 +61,7 @@ FUNCTION sel_items()
 
 
 
-STATIC FUNCTION key_handler()
+STATIC FUNCTION key_handler( lPriprema )
 
    LOCAL _t_rec := RecNo()
    LOCAL _ret := DE_CONT
@@ -87,7 +87,7 @@ STATIC FUNCTION key_handler()
 
    CASE ( Upper( Chr( Ch ) ) ) == "I"
 
-      IF set_deliver() = 0
+      IF set_deliver( lPriprema ) = 0
          RETURN DE_CONT
       ELSE
          RETURN DE_REFRESH
@@ -98,7 +98,7 @@ STATIC FUNCTION key_handler()
    RETURN _ret
 
 
-STATIC FUNCTION set_deliver()
+STATIC FUNCTION set_deliver( lPriprema )
 
    LOCAL _ret := 1
    LOCAL GetList := {}
@@ -119,9 +119,10 @@ STATIC FUNCTION set_deliver()
    _rec[ "doc_it_qtt" ] := _deliver
    dbf_update_rec( _rec )
 
-   rekalkulisi_stavke_naloga()
+   rekalkulisi_stavke_za_stampu( lPriprema )
 
    RETURN _ret
+
 
 
 STATIC FUNCTION set_a_kol( aImeKol, aKol )

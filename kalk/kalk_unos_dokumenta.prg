@@ -1551,10 +1551,6 @@ FUNCTION Get1Header( fNovi )
 
 
 
-// --------------------------------------------------------------------
-// izmjeni sve stavke dokumenta prema tekucoj stavci
-// ovo treba da radi samo na stavci broj 1
-// --------------------------------------------------------------------
 STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
 
    LOCAL _old_firma := old_dok[ "idfirma" ]
@@ -1567,14 +1563,9 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
    LOCAL oAtrib
    LOCAL _vise_konta := fetch_metric( "kalk_dokument_vise_konta", NIL, "N" ) == "D"
 
-   // treba da imam podatke koja je stavka bila prije korekcije
-   // kao i koja je nova
-   // misli se na "idfirma + tipdok + brdok"
-
    SELECT kalk_pripr
    GO TOP
 
-   // uzmi podatke sa izmjenjene stavke
    SEEK _new_firma + _new_tipdok + _new_brdok
 
    IF !Found()
@@ -1583,7 +1574,6 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
 
    _tek_dok := dbf_get_rec()
 
-   // zatim mi pronadji ostale stavke bivseg dokumenta
    GO TOP
    SEEK _old_firma + _old_tipdok + _old_brdok
 
@@ -1598,7 +1588,6 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
       _t_rec := RecNo()
       SKIP -1
 
-      // napravi zamjenu podataka
       _rec := dbf_get_rec()
       _rec[ "idfirma" ] := _tek_dok[ "idfirma" ]
       _rec[ "idvd" ] := _tek_dok[ "idvd" ]
@@ -1637,7 +1626,7 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
       _rec := dbf_get_rec()
 
       _rec[ "idfirma" ] := _tek_dok[ "idfirma" ]
-      _rec[ "idvd" ] := _tek_dok[ "idvd" ]
+      _rec[ "idtipdok" ] := _tek_dok[ "idvd" ]
       _rec[ "brdok" ] := _tek_dok[ "brdok" ]
 
       dbf_update_rec( _rec )
@@ -1645,7 +1634,7 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
       GO ( _t_rec )
 
    ENDDO
-   // zatvori atribute
+
    USE
 
    SELECT kalk_pripr

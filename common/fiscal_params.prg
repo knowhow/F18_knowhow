@@ -638,7 +638,8 @@ FUNCTION get_fiscal_devices_list( user, tip_dok )
             .AND. IF( !Empty( _dev_docs_list ) .AND. !Empty( AllTrim( tip_dok ) ), tip_dok $ _dev_docs_list, .T. )
 
          // ubaci u matricu: dev_id, dev_name
-         AAdd( _arr, { _dev_id, fetch_metric( "fiscal_device_" + _dev_tmp + "_name", NIL, "" ) } )
+         AAdd( _arr, { _dev_id, fetch_metric( "fiscal_device_" + _dev_tmp + "_name", NIL, "" ), ;
+                                fetch_metric( "fiscal_device_" + _dev_tmp + "_drv", NIL, "" ) } )
 
       ENDIF
 
@@ -649,6 +650,34 @@ FUNCTION get_fiscal_devices_list( user, tip_dok )
    ENDIF
 
    RETURN _arr
+
+
+
+/*
+   opis: vraća model definisanih uređaja
+
+   usage: fiskalni_uredjaj_model() => "FPRINT"
+
+     return: 
+
+       - model uređaja, npr FPRINT, TREMOL itd...
+       - ukoliko se koristi više vrsta uređaja vraća "MIX"
+*/
+
+FUNCTION fiskalni_uredjaj_model()
+
+   LOCAL cModel := NIL
+   LOCAL aDevices := get_fiscal_devices_list( f18_user() )
+
+   FOR n := 1 TO LEN( aDevices )
+      IF aDevices[ n, 3 ] <> cModel .AND. n > 1
+         cModel := "MIX"
+         EXIT
+      ENDIF
+      cModel := aDevices[ n, 3 ]
+   NEXT
+
+   RETURN cModel
 
 
 

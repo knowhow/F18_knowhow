@@ -171,16 +171,13 @@ FUNCTION reklamni_rn_box( rekl_rn )
 
  Opis: ispituje da li je za dokument napravljen fiskalni račun
 
- Usage: postoji_fiskalni_racun() -> koristi trenutno područje FAKT_DOKS i trenutni zapis
-        postoji_fiskalni_racun( idfirma, idtipdok, brdok ) -> SQL upit se šalje prema serveru 
+ Usage: postoji_fiskalni_racun( idfirma, idtipdok, brdok ) -> SQL upit se šalje prema serveru 
 
    Parameters: 
      - idfirma 
      - idtipdok
      - brdok
 
-     (ukoliko ne zadamo parametre gleda se tekući zapis tabele FAKT_DOKS)
-   
    Retrun: 
     .T. ako postoji fiskalni račun, .F. ako ne
 
@@ -190,13 +187,6 @@ FUNCTION postoji_fiskalni_racun( id_firma, tip_dok, br_dok )
 
    LOCAL lRet := .F.
    LOCAL cWhere
-
-   IF PCOUNT() == 0
-      IF ( fakt_doks->iznos > 0 .AND. fakt_doks->fisc_rn > 0 ) .OR. ( fakt_doks->iznos < 0 .AND. fakt_doks->fisc_st > 0 ) 
-         lRet := .T.
-      ENDIF
-      RETURN lRet
-   ENDIF
 
    cWhere := " idfirma = " + _sql_quote( id_firma )
    cWhere += " AND idtipdok = " + _sql_quote( tip_dok )

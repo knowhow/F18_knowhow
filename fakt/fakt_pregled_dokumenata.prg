@@ -483,7 +483,7 @@ STATIC FUNCTION _veza_fc_rn()
 
    IF fakt_doks->idtipdok $ "10#11"
 
-      IF !postoji_fiskalni_racun() 
+      IF !postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok ) 
          _txt := "nema fiskalnog racuna !?!!!"
          @ m_x + 1, m_y + 2 SAY PadR( _txt, 60 ) COLOR "W/R+"
       ELSE
@@ -552,7 +552,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
 
       SELECT fakt_doks
 
-      IF postoji_fiskalni_racun()
+      IF postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok )
 
          msgbeep( "veza: fiskalni racun vec setovana !" )
 
@@ -659,7 +659,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
 
       IF field->idtipdok $ "10#11"
 
-         IF postoji_fiskalni_racun() 
+         IF postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok ) 
             MsgBeep( "Fiskalni racun vec stampan za ovaj dokument !!!#Ako je potrebna ponovna stampa resetujte broj veze." )
             RETURN DE_CONT
          ENDIF

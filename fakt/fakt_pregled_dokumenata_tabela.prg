@@ -131,7 +131,7 @@ STATIC FUNCTION g_fiscal_info()
 
    LOCAL cInfo := " "
 
-   IF !postoji_fiskalni_racun() 
+   IF !postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok ) 
       cInfo := " "
    ELSE
       cInfo := "F"

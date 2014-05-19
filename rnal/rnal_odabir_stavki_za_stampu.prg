@@ -28,7 +28,7 @@ FUNCTION rnal_print_odabir_stavki( lPriprema )
 
    nTArea := Select()
 
-   cHeader := ":: Odabir stavki za stampu ::"
+   cHeader := hb_utf8tostr( ":: Odabir stavki za štampu ::" )
 
    t_rpt_open()
 
@@ -47,7 +47,7 @@ FUNCTION rnal_print_odabir_stavki( lPriprema )
 
    set_a_kol( @ImeKol, @Kol )
 
-   ObjDbedit( "t_docit", nBoxX, nBoxY, {|| key_handler( lPriprema ) }, cHeader, cFooter,,,,, 1 )
+   ObjDbedit( "t_docit", nBoxX, nBoxY, {|| rnal_odabir_key_handler( lPriprema ) }, cHeader, cFooter,,,,, 1 )
 
    BoxC()
 
@@ -61,7 +61,7 @@ FUNCTION rnal_print_odabir_stavki( lPriprema )
 
 
 
-STATIC FUNCTION key_handler( lPriprema )
+STATIC FUNCTION rnal_odabir_key_handler( lPriprema )
 
    LOCAL _t_rec := RecNo()
    LOCAL _ret := DE_CONT
@@ -106,7 +106,7 @@ STATIC FUNCTION setuj_broj_komada_za_isporuku( lPriprema )
    LOCAL _rec
 
    Box(, 1, 25 )
-   @ m_x + 1, m_y + 2 SAY "isporuceno ?" GET _deliver PICT "9999999.99"
+   @ m_x + 1, m_y + 2 SAY8 "isporučeno ?" GET _deliver PICT "9999999.99"
    READ
    BoxC()
 

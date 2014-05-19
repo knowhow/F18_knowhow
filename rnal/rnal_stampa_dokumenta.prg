@@ -1384,7 +1384,6 @@ STATIC FUNCTION postoji_obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cS
       nTable := F__DOC_OPS
    ENDIF
 
-   altd()
    SELECT ( nTable )
    SET ORDER TO TAG "1"
    GO TOP

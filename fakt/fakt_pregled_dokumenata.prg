@@ -483,7 +483,7 @@ STATIC FUNCTION _veza_fc_rn()
 
    IF fakt_doks->idtipdok $ "10#11"
 
-      IF !fakt_racun_fiskalizovan( fakt_doks->iznos, fakt_doks->fisc_rn, fakt_doks->fisc_st ) 
+      IF !postoji_fiskalni_racun() 
          _txt := "nema fiskalnog racuna !?!!!"
          @ m_x + 1, m_y + 2 SAY PadR( _txt, 60 ) COLOR "W/R+"
       ELSE
@@ -552,7 +552,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
 
       SELECT fakt_doks
 
-      IF fakt_racun_fiskalizovan( field->iznos, field->fisc_rn, field->fisc_st )
+      IF postoji_fiskalni_racun()
 
          msgbeep( "veza: fiskalni racun vec setovana !" )
 
@@ -659,7 +659,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
 
       IF field->idtipdok $ "10#11"
 
-         IF fakt_racun_fiskalizovan( field->iznos, field->fisc_rn, field->fisc_st ) 
+         IF postoji_fiskalni_racun() 
             MsgBeep( "Fiskalni racun vec stampan za ovaj dokument !!!#Ako je potrebna ponovna stampa resetujte broj veze." )
             RETURN DE_CONT
          ENDIF
@@ -788,33 +788,6 @@ FUNCTION refresh_fakt_tbl_dbfs( tbl_filter )
    SET FILTER TO &( tbl_filter )
 
    RETURN .T.
-
-
-
-/*
-  Opis: ispituje stanje računa
-  
-  Usage: fakt_racun_fiskalizovan( 100, 100, 0 )
-
-    Parameters: 
-      - iznos - iznos računa (100.0)
-      - fisc_rn - broj fiskalnog računa
-      - fisc_rn - broj fiskalnog reklamnog računa
-
-    Return:
-      .T. ako je fiskalizovan, .F. ako nije
-
-*/
-
-FUNCTION fakt_racun_fiskalizovan( iznos, fisc_rn, fisc_st )
-
-   LOCAL _ret := .F.
-
-   IF ( iznos > 0 .AND. fisc_rn > 0 ) .OR. ( iznos < 0 .AND. ( fisc_st > 0 .OR. fisc_rn > 0 ) )
-       _ret := .T.
-   ENDIF
-
-   RETURN _ret
 
 
 

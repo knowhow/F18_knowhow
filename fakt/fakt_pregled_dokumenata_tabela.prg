@@ -26,7 +26,7 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
 
    ImeKol := {}
 
-   AAdd( ImeKol, { " ",            {|| g_fiscal_info( fisc_rn, fisc_st, iznos ) } } )
+   AAdd( ImeKol, { " ",            {|| g_fiscal_info() } } )
    AAdd( ImeKol, { "RJ",           {|| idfirma }  } )
    AAdd( ImeKol, { "VD",           {|| idtipdok } } )
    AAdd( ImeKol, { "Brdok",        {|| brdok + rezerv } } )
@@ -127,14 +127,11 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
    RETURN
 
 
-// ------------------------------------------
-// vraca info o fiskalnom racunu
-// ------------------------------------------
-STATIC FUNCTION g_fiscal_info( _f_rn, _s_rn, _iznos )
+STATIC FUNCTION g_fiscal_info()
 
    LOCAL cInfo := " "
 
-   IF !fakt_racun_fiskalizovan( _iznos, _f_rn, _s_rn ) 
+   IF !postoji_fiskalni_racun() 
       cInfo := " "
    ELSE
       cInfo := "F"
@@ -144,7 +141,6 @@ STATIC FUNCTION g_fiscal_info( _f_rn, _s_rn, _iznos )
 
 
 
-// prikaz fiskalnog racuna i reklamnog racuna
 STATIC FUNCTION sh_fiscal_rn( _f_rn, _s_rn )
 
    LOCAL _txt := ""

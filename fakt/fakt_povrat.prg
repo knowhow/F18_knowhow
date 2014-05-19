@@ -401,27 +401,14 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
 
 STATIC FUNCTION _chk_povrat_zabrana( vars )
 
-   LOCAL _area
    LOCAL _ret := .T.
 
    IF vars[ "idtipdok" ] $ "10#11"
-
-      _area := Select()
-
-      SELECT fakt_doks
-      hseek vars[ "idfirma" ] + vars[ "idtipdok" ] + vars[ "brdok" ]
-
-      IF Found()
-         IF fakt_racun_fiskalizovan( fakt_doks->iznos, fakt_doks->fisc_rn, fakt_doks->fisc_st )
-            MsgBeep( "Za ovaj dokument je izdat fiskalni račun.#Opcija povrata je onemogućena !!!" )
-            _ret := .F.
-            SELECT ( _area )
-            RETURN _ret
-         ENDIF
+      IF postoji_fiskalni_racun( vars["idfirma"], vars["idtipdok"], vars["brdok"] )
+         MsgBeep( "Za ovaj dokument je izdat fiskalni račun.#Opcija povrata je onemogućena !!!" )
+         _ret := .F.
+         RETURN _ret
       ENDIF
-
-      SELECT ( _area )
-
    ENDIF
 
    RETURN _ret

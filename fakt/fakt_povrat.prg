@@ -412,15 +412,11 @@ STATIC FUNCTION _chk_povrat_zabrana( vars )
       hseek vars[ "idfirma" ] + vars[ "idtipdok" ] + vars[ "brdok" ]
 
       IF Found()
-         IF ( fakt_doks->fisc_rn <> 0 .AND. fakt_doks->iznos > 0 ) .OR. ;
-               ( ( fakt_doks->fisc_rn <> 0 .OR. fakt_doks->fisc_st <> 0 ) .AND. fakt_doks->iznos < 0 )
-
+         IF fakt_racun_fiskalizovan( fakt_doks->iznos, fakt_doks->fisc_rn, fakt_doks->fisc_st )
             MsgBeep( "Za ovaj dokument je izdat fiskalni račun.#Opcija povrata je onemogućena !!!" )
             _ret := .F.
-
             SELECT ( _area )
             RETURN _ret
-
          ENDIF
       ENDIF
 

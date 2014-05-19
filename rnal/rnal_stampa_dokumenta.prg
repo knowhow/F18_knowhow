@@ -139,7 +139,7 @@ FUNCTION st_obr_list( temp, doc_no, a_docs )
 
    _count := t_docit->( RecCount2() )
 
-   IF _count > 0 .AND. pitanje(, "Odabrati stavke za stampu ? (D/N)", "N" ) == "D"
+   IF _count > 0 .AND. Pitanje(, "Odabrati stavke za štampu ? (D/N)", "N" ) == "D"
       rnal_print_odabir_stavki( temp )
    ENDIF
 

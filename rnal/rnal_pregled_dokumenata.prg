@@ -12,16 +12,13 @@
 
 #include "rnal.ch"
 
-// variables
 STATIC _status
 STATIC __sort
 STATIC __filter
 STATIC _operater
 
-// ------------------------------------------
-// lista dokumenata....
-// nStatus - "1" otoreni ili "2" zatvoreni
-// ------------------------------------------
+
+
 FUNCTION rnal_lista_dokumenata( nStatus )
 
    _status := nStatus
@@ -34,9 +31,6 @@ FUNCTION rnal_lista_dokumenata( nStatus )
 
 
 
-// -------------------------------------------------
-// otvori tabelu pregleda
-// -------------------------------------------------
 STATIC FUNCTION tbl_list()
 
    LOCAL cFooter
@@ -59,10 +53,8 @@ STATIC FUNCTION tbl_list()
 
    Box(, nBoxX, nBoxY )
 
-   // setuj box opis...
    _set_box( nBoxX, nBoxY )
 
-   // setuj sort...
    _set_sort()
 
    GO TOP
@@ -81,9 +73,6 @@ STATIC FUNCTION tbl_list()
 
 
 
-// ---------------------------------------------------
-// setovanje sorta prema static varijabli __sort
-// ---------------------------------------------------
 STATIC FUNCTION _set_sort()
 
    LOCAL cSort
@@ -97,11 +86,6 @@ STATIC FUNCTION _set_sort()
 
 
 
-// ------------------------------------------
-// setovanje boxa
-// nBoxX - box x koord.
-// nBoxY - box y koord.
-// ------------------------------------------
 STATIC FUNCTION _set_box( nBoxX, nBoxY )
 
    LOCAL cLine1 := ""
@@ -118,7 +102,6 @@ STATIC FUNCTION _set_box( nBoxX, nBoxY )
    cLine1 += "(Q) nadji.opis"
 
 
-   // druga linija je zajednicka
    cLine2 := "(c-P) stamp.nal. "
    cLine2 += "(c-O) specif.    "
    cLine2 += "(K) kontakti "
@@ -131,10 +114,6 @@ STATIC FUNCTION _set_box( nBoxX, nBoxY )
 
 
 
-// -------------------------------------------------
-// otvori formu sa uslovima te postavi filtere
-// nSort - sort prikaza...
-// -------------------------------------------------
 STATIC FUNCTION lst_args( nSort )
 
    LOCAL nX := 1
@@ -156,10 +135,7 @@ STATIC FUNCTION lst_args( nSort )
    LOCAL nTip := 0
    LOCAL nRet := 1
    LOCAL cFilter
-
-   // color header
    LOCAL cColor1 := "BG+/B"
-   // color help
    LOCAL cHelpClr := "GR+/B"
 
    dDateFrom := fetch_metric( "rnal_preg_nalog_datum_od", my_user(), dDateFrom )
@@ -267,7 +243,6 @@ STATIC FUNCTION lst_args( nSort )
 
    _operater := nOperater
 
-   // snimi parametre
    set_metric( "rnal_preg_nalog_datum_od", my_user(), dDateFrom )
    set_metric( "rnal_preg_nalog_datum_do", my_user(), dDateTo )
    set_metric( "rnal_preg_nalog_isporuka_od", my_user(), dDvrDFrom )
@@ -280,7 +255,6 @@ STATIC FUNCTION lst_args( nSort )
    set_metric( "rnal_preg_nalog_odbaceni", my_user(), cShowRejected )
    set_metric( "rnal_preg_nalog_tip", my_user(), nTip )
 
-   // generisi filter
    cFilter := gen_filter( dDateFrom, ;
       dDateTo, ;
       dDvrDFrom, ;
@@ -295,16 +269,12 @@ STATIC FUNCTION lst_args( nSort )
 
    __filter := cFilter
 
-   // setuj filter
    set_f_kol( cFilter )
 
    RETURN nRet
 
 
 
-// ------------------------------------------
-// validacija unosa sorta...
-// ------------------------------------------
 STATIC FUNCTION _val_sort( nSort )
 
    IF nSort >= 1 .AND. nSort <= 3
@@ -316,9 +286,6 @@ STATIC FUNCTION _val_sort( nSort )
 
 
 
-// ---------------------------------
-// generise string filtera
-// ---------------------------------
 STATIC FUNCTION gen_filter( dDateFrom, dDateTo, dDvrDFrom, dDvrDTo, ;
       nCustomer, nContact, nObject, nOper, cShReject, nTip )
 
@@ -326,13 +293,9 @@ STATIC FUNCTION gen_filter( dDateFrom, dDateTo, dDvrDFrom, dDvrDTo, ;
    LOCAL cFilter := ""
 
    IF _status == 1
-      // samo otvoreni nalozi
       cFilter += "(doc_status == 0 .or. doc_status > 2)"
    ELSE
-      // samo zatvoreni nalozi
       cFilter += "doc_status == 1"
-	
-      // prikazi i ponistene
       IF cShReject == "D"
          cFilter := "( " + cFilter +  " .or. doc_status == 2 )"
       ENDIF
@@ -381,9 +344,6 @@ STATIC FUNCTION gen_filter( dDateFrom, dDateTo, dDvrDFrom, dDvrDTo, ;
 
 
 
-// ------------------------------------------------
-// setovanje filtera prema uslovima
-// ------------------------------------------------
 STATIC FUNCTION set_f_kol( cFilter )
 
    _set_sort()
@@ -394,9 +354,6 @@ STATIC FUNCTION set_f_kol( cFilter )
 
 
 
-// ---------------------------------------------
-// pregled - key handler
-// ---------------------------------------------
 STATIC FUNCTION key_handler()
 
    LOCAL nDoc_no
@@ -408,23 +365,17 @@ STATIC FUNCTION key_handler()
    IF _status == 1
 
       IF doc_status == 5
-         // daj info o isporuci, ako je realizovan
-         // TODO: uzeti datum zatvaranja iz LOG-a ili ???
          _sh_dvr_info( 0, 5 )
       ELSE
-         // daj info o kasnjenju
          _sh_dvr_warr( _chk_date( doc_dvr_da ), _chk_time( doc_dvr_ti ), 5 )
       ENDIF
 		
    ENDIF
 
-   // prikazi status dokumenta na pregledu
    _sh_doc_status( doc_status )
 
-   // prikazi u dnu ostale informacije o nalogu...
    _sh_doc_info()
 
-   // ove opcije zabrani na statusu 2
    IF ( _status == 2 )
       IF ( Upper( Chr( Ch ) ) $ "ZP" )
          RETURN DE_CONT
@@ -432,10 +383,10 @@ STATIC FUNCTION key_handler()
    ENDIF
 	
    DO CASE
-      // stampa naloga
+
    CASE ( Ch == K_CTRL_P )
 		
-      IF Pitanje(, "Stampati nalog (D/N) ?", "D" ) == "D"
+      IF Pitanje(, "Štampati nalog (D/N) ?", "D" ) == "D"
 			
          nDoc_no := docs->doc_no
          nTRec := RecNo()
@@ -456,10 +407,9 @@ STATIC FUNCTION key_handler()
       SELECT docs
       RETURN DE_CONT
 	
-      // stampa naloga
    CASE ( Ch == K_CTRL_O )
 		
-      IF Pitanje(, "Stampati specifikaciju (D/N) ?", "D" ) == "D"
+      IF Pitanje(, "Štampati specifikaciju (D/N) ?", "D" ) == "D"
 			
          nDoc_no := docs->doc_no
          nTRec := RecNo()
@@ -480,10 +430,9 @@ STATIC FUNCTION key_handler()
       SELECT docs
       RETURN DE_CONT
 	
-      // stampa labele
    CASE ( Ch == K_CTRL_L )
 		
-      IF Pitanje(, "Stampati naljepnice (D/N) ?", "D" ) == "D"
+      IF Pitanje(, "Štampati naljepnice (D/N) ?", "D" ) == "D"
 			
          nDoc_no := docs->doc_no
          nTRec := RecNo()
@@ -504,7 +453,6 @@ STATIC FUNCTION key_handler()
       SELECT docs
       RETURN DE_CONT
 	
-      // pregled kontakata.... naloga
    CASE ( Upper( Chr( Ch ) ) == "K" )
 		
       SELECT docs
@@ -519,7 +467,6 @@ STATIC FUNCTION key_handler()
 	
       SELECT docs
       nDoc_no := docs->doc_no
-      // promjena broja dokumenta
       IF ch_doc_no( nDoc_no )
          log_write( "F18_DOK_OPER: rnal, promjena broja naloga, nalog broj: " + AllTrim( Str( nDoc_no ) ), 2 )
          SELECT docs
@@ -528,14 +475,12 @@ STATIC FUNCTION key_handler()
 
       RETURN DE_CONT
 
-      // ispravka veznih dokumenata
    CASE ( Upper( Chr( Ch ) ) == "O" )
 		
       otpr_edit( docs->fmk_doc )
 		
       RETURN DE_REFRESH
 	
-      // brza pretraga naloga
    CASE ( Upper( Chr( Ch ) ) == "N" )
 		
       SELECT docs
@@ -546,14 +491,12 @@ STATIC FUNCTION key_handler()
 		
       RETURN nRet
 	
-      // dodaj u listu za obracunske listove
    CASE ( Upper( Chr( Ch ) ) == "A" )
 
       nScn := AScan( aDocs, {|xVar| xVar[ 1 ] == docs->doc_no } )
 
       IF nScn == 0
 			
-         // dodaj u matricu
          AAdd( aDocs, { docs->doc_no, AllTrim( g_cust_desc( docs->cust_id ) ) + "/" + ;
             AllTrim( g_cont_desc( docs->cont_id ) ) } )
 
@@ -565,27 +508,20 @@ STATIC FUNCTION key_handler()
 
       RETURN DE_CONT
 
-      // brisi iz liste za obracunske listove
    CASE ( Upper( Chr( Ch ) ) == "Y" )
 
       nScn := AScan( aDocs, {|xVar| xVar[ 1 ] == docs->doc_no } )
 
       IF nScn <> 0
-
-         // preimenuj broj....
          aDocs[ nScn, 1 ] := -99
-
          Beep( 2 )
-
          s_ol_status( aDocs )
       ENDIF
 
       RETURN DE_CONT
 
-      // otvaranje naloga za doradu
    CASE ( Upper( Chr( Ch ) ) == "D" )
 		
-      // provjeri da li je zauzet
       IF is_doc_busy()
          msg_busy_doc()
          SELECT docs
@@ -605,7 +541,6 @@ STATIC FUNCTION key_handler()
          SELECT docs
          GO ( nTRec )
 			
-         // otvori i obradi pripremu
          ed_document( .F. )
 			
          SELECT docs
@@ -617,10 +552,8 @@ STATIC FUNCTION key_handler()
       SELECT docs
       RETURN DE_CONT
 
-      // quick search......
    CASE ( Upper( Chr( Ch ) ) == "Q" )
 
-      // ima li pravo pristupa...
       IF !ImaPravoPristupa( goModul:oDataBase:cName, "DOK", "QUICKSEARCH" )
 			
          MsgBeep( cZabrana )
@@ -630,7 +563,6 @@ STATIC FUNCTION key_handler()
 			
       ENDIF
 	
-      // filter za quick search
       cFilt := _quick_srch_()
 		
       IF !Empty( cFilt )
@@ -643,10 +575,8 @@ STATIC FUNCTION key_handler()
          RETURN DE_CONT
       ENDIF
 
-      // zatvaranje naloga
    CASE ( Upper( Chr( Ch ) ) == "Z" )
 		
-      // provjeri da li je zauzet
       IF is_doc_busy()
          msg_busy_doc()
          SELECT docs
@@ -655,7 +585,6 @@ STATIC FUNCTION key_handler()
 			
       IF Pitanje(, "Zatvoriti nalog (D/N) ?", "N" ) == "D"
 					
-         // uzmi status naloga
          IF _g_doc_status( @nDoc_status, @cDesc ) == 1
 				
             nTRec := RecNo()
@@ -663,7 +592,6 @@ STATIC FUNCTION key_handler()
 			
             set_doc_marker( nDoc_no, nDoc_status )
 				
-            // logiraj zatvaranje...
             log_closed( nDoc_no, cDesc, nDoc_status )
 				
             MsgBeep( "Nalog zatvoren !!!" )
@@ -686,7 +614,6 @@ STATIC FUNCTION key_handler()
       SELECT docs
       RETURN DE_CONT
 	
-      // fix - procedura ispravke statusa naloga
    CASE ( Upper( Chr( Ch ) ) == "F" )
 		
       IF Pitanje(, "Resetovati status dokumenta (D/N) ?", "N" ) == "N"
@@ -711,10 +638,8 @@ STATIC FUNCTION key_handler()
 		
       RETURN DE_CONT
 
-      // lista promjena na nalogu
    CASE ( Upper( Chr( Ch ) ) == "L" )
 		
-      // ima li pravo pristupa
       IF !ImaPravoPristupa( goModul:oDataBase:cName, "DOK", "LOGVIEW" )
 			
          MsgBeep( cZabrana )
@@ -735,7 +660,6 @@ STATIC FUNCTION key_handler()
 		
       nDoc_no := docs->doc_no
 		
-      // export dokumenta
       rnal_export_menu( nDoc_no, aDocs, .F., .T. )
 		
       SELECT docs
@@ -745,7 +669,6 @@ STATIC FUNCTION key_handler()
 		
       RETURN DE_REFRESH
 
-      // promjene na nalogu
    CASE ( Upper( Chr( Ch ) ) == "P" )
 		
       nTRec := RecNo()
@@ -774,9 +697,6 @@ STATIC FUNCTION key_handler()
    RETURN DE_CONT
 
 
-// ----------------------------------------------------
-// ispravka veznih dokumenata
-// ----------------------------------------------------
 STATIC FUNCTION otpr_edit( cValue )
 
    LOCAL GetList := {}
@@ -802,9 +722,6 @@ STATIC FUNCTION otpr_edit( cValue )
    RETURN
 
 
-// --------------------------------------------------------------
-// ispisuje status naloga u kontejneru za obracunski list
-// --------------------------------------------------------------
 STATIC FUNCTION s_ol_status( aArr )
 
    LOCAL cStr := ""
@@ -817,7 +734,6 @@ STATIC FUNCTION s_ol_status( aArr )
       cStr := "! prazno !"
    ELSE
 
-      // napuni string sa nalozima
       FOR i := 1 TO Len( aArr )
 		
          IF aArr[ i, 1 ] < 0
@@ -832,11 +748,8 @@ STATIC FUNCTION s_ol_status( aArr )
       NEXT
    ENDIF
 
-   // dodaj u matricu tekst
    cOpt := "A-dodaj Y-brisi: "
    aStr := SjeciStr( cOpt + cStr, maxcols() - 20 )
-
-   // prikaz idi u 2-3 reda
 
    @ maxrows() - 7, 5 SAY PadR( "", maxcols() -10 ) COLOR "W/G+"
    @ maxrows() - 6, 5 SAY PadR( "", maxcols() -10 ) COLOR "W/G+"
@@ -851,9 +764,6 @@ STATIC FUNCTION s_ol_status( aArr )
 
 
 
-// --------------------------------------------------
-// brza pretraga naloga u listi
-// --------------------------------------------------
 FUNCTION qf_nalog()
 
    LOCAL GetList := {}
@@ -877,9 +787,6 @@ FUNCTION qf_nalog()
    RETURN DE_REFRESH
 
 
-// ----------------------------------------------
-// direktna dorada naloga, po zadatom broju
-// ----------------------------------------------
 FUNCTION ddor_nal()
 
    LOCAL GetList := {}
@@ -900,7 +807,6 @@ FUNCTION ddor_nal()
    GO TOP
    SEEK docno_str( nDoc_no )
 
-   // provjeri da li je zauzet
    IF is_doc_busy()
       msg_busy_doc()
       SELECT docs
@@ -918,7 +824,6 @@ FUNCTION ddor_nal()
 			
       SELECT docs
 			
-      // otvori i obradi pripremu
       ed_document( .F. )
 		
       RETURN
@@ -928,9 +833,6 @@ FUNCTION ddor_nal()
 
 
 
-// ------------------------------------------
-// box:: quick search
-// ------------------------------------------
 STATIC FUNCTION _quick_srch_()
 
    LOCAL GetList := {}
@@ -968,9 +870,6 @@ STATIC FUNCTION _quick_srch_()
 
 
 
-// -----------------------------------
-// info dokument zauzet
-// -----------------------------------
 STATIC FUNCTION msg_busy_doc()
 
    MsgBeep( "Dokument je zauzet#Operacije onemogucene !!!" )
@@ -979,9 +878,6 @@ STATIC FUNCTION msg_busy_doc()
 
 
 
-// ------------------------------------------------
-// setuj status naloga realizovan, ponisten, opis
-// ------------------------------------------------
 STATIC FUNCTION _g_doc_status( nDoc_status, cDesc )
 
    LOCAL cStat := "R"
@@ -1006,14 +902,14 @@ STATIC FUNCTION _g_doc_status( nDoc_status, cDesc )
 	
    nX += 1
 	
-   @ m_x + nX, m_y + 2 SAY Space( 3 ) + "(N) realizovan, nije isporucen" COLOR cColor
+   @ m_x + nX, m_y + 2 SAY8 Space( 3 ) + "(N) realizovan, nije isporučen" COLOR cColor
    nX += 1
 	
-   @ m_x + nX, m_y + 2 SAY Space( 3 ) + "(D) djelimicno realizovan" COLOR cColor
+   @ m_x + nX, m_y + 2 SAY8 Space( 3 ) + "(D) djelimično realizovan" COLOR cColor
 	
    nX += 1
 	
-   @ m_x + nX, m_y + 2 SAY Space( 3 ) + "(X) ponisten" COLOR cColor
+   @ m_x + nX, m_y + 2 SAY8 Space( 3 ) + "(X) poništen" COLOR cColor
 	
    nX += 2
 	
@@ -1028,22 +924,18 @@ STATIC FUNCTION _g_doc_status( nDoc_status, cDesc )
 
 
    IF cStat == "R"
-      // closed
       nDoc_status := 1
    ENDIF
 
    IF cStat == "X"
-      // rejected
       nDoc_status := 2
    ENDIF
 
    IF cStat == "D"
-      // partialy done
       nDoc_status := 4
    ENDIF
 
    IF cStat == "N"
-      // closed but not delivered
       nDoc_status := 5
    ENDIF
 
@@ -1054,9 +946,6 @@ STATIC FUNCTION _g_doc_status( nDoc_status, cDesc )
 
 
 
-// -------------------------------------------------------
-// ispisuje customer / contact u listi naloga
-// -------------------------------------------------------
 STATIC FUNCTION __sh_cust( cCust, cCont )
 
    LOCAL xRet := ""
@@ -1065,7 +954,6 @@ STATIC FUNCTION __sh_cust( cCust, cCont )
 
    cTmp := AllTrim( cCust )
 
-   // ako je NN kupac
    IF cTmp == "NN"
       xRet := "(" + cTmp + ")"
       xRet += " "
@@ -1080,9 +968,6 @@ STATIC FUNCTION __sh_cust( cCust, cCont )
 
 
 
-// -------------------------------------------------------
-// setovanje kolona tabele za unos operacija
-// -------------------------------------------------------
 STATIC FUNCTION set_a_kol( aImeKol, aKol, nStatus )
 
    aImeKol := {}
@@ -1164,9 +1049,6 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol, nStatus )
    RETURN
 
 
-// ----------------------------------------
-// provjeri datum isporuke...
-// ----------------------------------------
 STATIC FUNCTION _chk_date( dD_dvr_date )
 
    LOCAL nDays := 0
@@ -1176,9 +1058,6 @@ STATIC FUNCTION _chk_date( dD_dvr_date )
    RETURN nDays
 
 
-// ----------------------------------------
-// provjeri vrijeme isporuke...
-// ----------------------------------------
 STATIC FUNCTION _chk_time( cDvr_time )
 
    LOCAL nMinutes := 0
@@ -1186,10 +1065,6 @@ STATIC FUNCTION _chk_time( cDvr_time )
    RETURN nMinutes
 
 
-// ------------------------------------------
-// prikazi upozorenje za istek roka
-// nDays - dana kasnjenja
-// ------------------------------------------
 STATIC FUNCTION _sh_dvr_warr( nDays, nMinutes, nX, nLen )
 
    LOCAL cColWarr := "W/R+"
@@ -1219,10 +1094,6 @@ STATIC FUNCTION _sh_dvr_warr( nDays, nMinutes, nX, nLen )
 
 
 
-// ------------------------------------------
-// prikazi info koliko dana nije preuzeta roba
-// nDays - dana kasnjenja
-// ------------------------------------------
 STATIC FUNCTION _sh_dvr_info( nDays, nX, nLen )
 
    LOCAL cColOk := "GR+/B"
@@ -1249,9 +1120,6 @@ STATIC FUNCTION _sh_dvr_info( nDays, nX, nLen )
 
 
 
-// ----------------------------------------------------
-// prikaz statusa dokumenta na pregledu
-// ----------------------------------------------------
 STATIC FUNCTION _sh_doc_status( doc_status, nX, nY )
 
    LOCAL cTmp
@@ -1266,7 +1134,6 @@ STATIC FUNCTION _sh_doc_status( doc_status, nX, nY )
       nY := 21
    ENDIF
 
-   // daj opis
    cTmp := g_doc_status( doc_status )
 
    DO CASE
@@ -1302,9 +1169,6 @@ STATIC FUNCTION _sh_doc_status( doc_status, nX, nY )
    RETURN
 
 
-// --------------------------------------------
-// vraca staus dokumenta
-// --------------------------------------------
 FUNCTION g_doc_status( doc_status )
 
    LOCAL cTmp := ""
@@ -1341,9 +1205,6 @@ FUNCTION g_doc_status( doc_status )
 
 
 
-// ------------------------------------------------
-// prikaz ostalih informacija o dokumentu
-// ------------------------------------------------
 STATIC FUNCTION _sh_doc_info( nX, nY )
 
    LOCAL cTmp
@@ -1359,7 +1220,6 @@ STATIC FUNCTION _sh_doc_info( nX, nY )
       nY := 6
    ENDIF
 
-   // napuni string sa opisom
    cTmp := ""
 
    cTmp += AllTrim( g_obj_desc( obj_id ) )
@@ -1372,27 +1232,19 @@ STATIC FUNCTION _sh_doc_info( nX, nY )
 
    cTmp += AllTrim( doc_desc )
 
-   // pretvori string u matricu....
    aTmp := SjeciStr( cTmp, nTxtLen )
 
-   // pocisti postojece linije
    @ nX + 1, nY SAY Space( nTxtLen ) COLOR cColor
    @ nX + 2, nY SAY Space( nTxtLen ) COLOR cColor
    @ nX + 3, nY SAY Space( nTxtLen ) COLOR cColor
 
-   // ispisi info
    FOR i := 1 TO Len( aTmp )
-	
       @ nX + i, nY SAY PadR( aTmp[ i ], nTxtLen ) COLOR cColor
-	
    NEXT
 
    RETURN
 
 
-// -----------------------------------------
-// daje listu kontakata naloga
-// -----------------------------------------
 FUNCTION doc_cont_view( nDoc_no )
 
    LOCAL aCont := {}
@@ -1406,9 +1258,6 @@ FUNCTION doc_cont_view( nDoc_no )
    RETURN
 
 
-// ----------------------------------------------
-// puni matricu aArr sa listom kontakata...
-// ----------------------------------------------
 STATIC FUNCTION _get_doc_contacts( aArr, nDoc_no )
 
    LOCAL nC_count := 0
@@ -1467,9 +1316,6 @@ STATIC FUNCTION _get_doc_contacts( aArr, nDoc_no )
 
 
 
-// ----------------------------------------------
-// prikazuje listu kontakata u box-u
-// ----------------------------------------------
 STATIC FUNCTION show_c_list( aArr )
 
    LOCAL nX := m_x

@@ -922,7 +922,7 @@ STATIC FUNCTION fakt_to_hcp( id_firma, tip_dok, br_dok, items, head, storno )
       IF _fiscal_no > 0
 
          // ubaci broj fiskalnog racuna u fakturu
-         set_fiscal_no_to_fakt_doks( id_firma, tip_dok, br_dok, _fiscal_no )
+         set_fiscal_no_to_fakt_doks( id_firma, tip_dok, br_dok, _fiscal_no, storno )
 
       ENDIF
 

@@ -13,7 +13,7 @@
 #include "rnal.ch"
 
 
-FUNCTION sel_items( lPriprema )
+FUNCTION rnal_print_odabir_stavki( lPriprema )
 
    LOCAL nArea
    LOCAL nTArea
@@ -87,7 +87,7 @@ STATIC FUNCTION key_handler( lPriprema )
 
    CASE ( Upper( Chr( Ch ) ) ) == "I"
 
-      IF set_deliver( lPriprema ) = 0
+      IF setuj_broj_komada_za_isporuku( lPriprema ) = 0
          RETURN DE_CONT
       ELSE
          RETURN DE_REFRESH
@@ -98,7 +98,7 @@ STATIC FUNCTION key_handler( lPriprema )
    RETURN _ret
 
 
-STATIC FUNCTION set_deliver( lPriprema )
+STATIC FUNCTION setuj_broj_komada_za_isporuku( lPriprema )
 
    LOCAL _ret := 1
    LOCAL GetList := {}
@@ -134,8 +134,8 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
    AAdd( aImeKol, { "rbr", {|| PadR( AllTrim( Str( doc_it_no ) ), 3 ) }, "doc_it_no", {|| .T. }, {|| .T. } } )
    AAdd( aImeKol, { PadR( "artikal", 20 ), {|| PadR( g_art_desc( art_id, .T., .F. ), 20 ) }, "art_id", {|| .T. }, {|| .T. } } )
    AAdd( aImeKol, { "ispor.", {|| Str( doc_it_qtt, 12, 2 ) }, "doc_it_qtt", {|| .T. }, {|| .T. } } )
-   AAdd( aImeKol, { PadR( "dimenzije", 20 ), {|| PadR( _g_dim( doc_it_qtt, doc_it_hei, doc_it_wid ), 20 ) }, "doc_it_qtt", {|| .T. }, {|| .T. } } )
-   AAdd( aImeKol, { "marker", {|| PadR( _g_st( print ), 3 ) }, "print", {|| .T. }, {|| .T. } } )
+   AAdd( aImeKol, { PadR( "dimenzije", 20 ), {|| PadR( prikazi_dimenzije( doc_it_qtt, doc_it_hei, doc_it_wid ), 20 ) }, "doc_it_qtt", {|| .T. }, {|| .T. } } )
+   AAdd( aImeKol, { "marker", {|| PadR( get_print_field( print ), 3 ) }, "print", {|| .T. }, {|| .T. } } )
    AAdd( aImeKol, { "total", {|| "doc_it_tot" }, "doc_it_tot", {|| .T. }, {|| .T. } } )
 
    FOR i := 1 TO Len( aImeKol )
@@ -145,10 +145,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
    RETURN
 
 
-// -------------------------------------------------
-// vraca ispis status polja
-// -------------------------------------------------
-STATIC FUNCTION _g_st( value )
+STATIC FUNCTION get_print_field( value )
 
    LOCAL _ret := ""
 
@@ -159,10 +156,7 @@ STATIC FUNCTION _g_st( value )
    RETURN _ret
 
 
-// ---------------------------------------------------
-// ispisuje opis dimenzija
-// ---------------------------------------------------
-STATIC FUNCTION _g_dim( qtty, height, width )
+STATIC FUNCTION prikazi_dimenzije( qtty, height, width )
 
    LOCAL _ret := ""
 
@@ -173,3 +167,6 @@ STATIC FUNCTION _g_dim( qtty, height, width )
    _ret += AllTrim( Str( width, 12, 2 ) )
 
    RETURN _ret
+
+
+

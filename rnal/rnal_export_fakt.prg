@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,58 +16,58 @@
 // ------------------------------------------
 // sta generisati, uslovi generacije
 // ------------------------------------------
-static function _export_cond( params )
-local _x := 1
-local _ok := .t.
-local _tip := "V"
-local _suma := "N"
-local _valuta := PADR( ALLTRIM( ValDomaca() ), 3 )
-local _pr_isp := "N"
-private GetList := {}
+STATIC FUNCTION _export_cond( params )
 
+   LOCAL _x := 1
+   LOCAL _ok := .T.
+   LOCAL _tip := "V"
+   LOCAL _suma := "N"
+   LOCAL _valuta := PadR( AllTrim( ValDomaca() ), 3 )
+   LOCAL _pr_isp := "N"
+   PRIVATE GetList := {}
 
-Box(, 8, 65 )
+   Box(, 8, 65 )
 
-    @ m_x + _x, m_y + 2 SAY "Uslovi prenosa naloga u otpremnicu:"
+   @ m_x + _x, m_y + 2 SAY "Uslovi prenosa naloga u otpremnicu:"
 
-    ++ _x
-    ++ _x
+   ++ _x
+   ++ _x
 
-    @ m_x + _x, m_y + 2 SAY " Tip otpremnice: [V] vp (dok 12)"
+   @ m_x + _x, m_y + 2 SAY " Tip otpremnice: [V] vp (dok 12)"
 
-    ++ _x
+   ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "                 [M] mp (dok 13)" GET _tip VALID _tip $ "VM" PICT "@!" 
+   @ m_x + _x, m_y + 2 SAY "                 [M] mp (dok 13)" GET _tip VALID _tip $ "VM" PICT "@!"
 
-    ++ _x
-    ++ _x
+   ++ _x
+   ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Sumirati stavke naloga (D/N)" GET _suma VALID _suma $ "DN" PICT "@!"
+   @ m_x + _x, m_y + 2 SAY "Sumirati stavke naloga (D/N)" GET _suma VALID _suma $ "DN" PICT "@!"
 
-    ++ _x    
+   ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Valuta u koju mjenjamo otpremnicu (KM/EUR)" GET _valuta PICT "@!"
- 
-    ++ _x    
+   @ m_x + _x, m_y + 2 SAY "Valuta u koju mjenjamo otpremnicu (KM/EUR)" GET _valuta PICT "@!"
 
-    @ m_x + _x, m_y + 2 SAY "Promjeniti podatke isporuke naloga (D/N)" GET _pr_isp VALID _pr_isp $ "DN" PICT "@!" 
-       
-    read
+   ++ _x
 
-BoxC()
+   @ m_x + _x, m_y + 2 SAY "Promjeniti podatke isporuke naloga (D/N)" GET _pr_isp VALID _pr_isp $ "DN" PICT "@!"
 
-if LastKey() == K_ESC
-    _ok := .f.
-    return _ok
-endif
+   READ
 
-params := hb_hash()
-params["exp_tip"] := _tip
-params["exp_suma"] := _suma
-params["exp_valuta"] := UPPER( _valuta )
-params["exp_isporuka"] := _pr_isp
+   BoxC()
 
-return _ok
+   IF LastKey() == K_ESC
+      _ok := .F.
+      RETURN _ok
+   ENDIF
+
+   params := hb_Hash()
+   params[ "exp_tip" ] := _tip
+   params[ "exp_suma" ] := _suma
+   params[ "exp_valuta" ] := Upper( _valuta )
+   params[ "exp_isporuka" ] := _pr_isp
+
+   RETURN _ok
 
 
 
@@ -77,483 +77,481 @@ return _ok
 // lTemp - .t. - stampa iz pripreme, .f. - kumulativ
 // nDoc_no - broj dokumenta
 // aDocList - matrica sa listom naloga za obradu
-//            ako je zadata, radit ce na osnovu
-//            vise naloga
+// ako je zadata, radit ce na osnovu
+// vise naloga
 // lNoGen - nemoj generisati ponovo stavke, vec postoje
 // --------------------------------------------------------
-function exp_2_fmk( lTemp, nDoc_no, aDocList, lNoGen )
-local nTArea := SELECT()
-local nADocs := F_DOCS
-local nADOC_IT := F_T_DOCIT
-local nADOC_IT2 := F_T_DOCIT2
-local nADOC_OP := F_T_DOCOP
-local cFmkDoc
-local nCust_id
-local i
-local lSumirati
-local cVpMp := "V"
-local _rec
-local _redni_broj
-local _exp_params, _isporuka, _valuta
+FUNCTION exp_2_fmk( lTemp, nDoc_no, aDocList, lNoGen )
 
-if lNoGen == nil
-    lNoGen := .f.
-endif
+   LOCAL nTArea := Select()
+   LOCAL nADocs := F_DOCS
+   LOCAL nADOC_IT := F_T_DOCIT
+   LOCAL nADOC_IT2 := F_T_DOCIT2
+   LOCAL nADOC_OP := F_T_DOCOP
+   LOCAL cFmkDoc
+   LOCAL nCust_id
+   LOCAL i
+   LOCAL lSumirati
+   LOCAL cVpMp := "V"
+   LOCAL _rec
+   LOCAL _redni_broj
+   LOCAL _exp_params, _isporuka, _valuta
 
-if lNoGen == .f.
-    // napuni podatke za prenos
-    st_pripr( lTemp, nDoc_no, aDocList )
-endif
+   IF lNoGen == nil
+      lNoGen := .F.
+   ENDIF
 
-// uslovi ekporta - raznorazni...
-if !_export_cond( @_exp_params )
-    select ( nTArea )
-    return
-endif
+   IF lNoGen == .F.
+      // napuni podatke za prenos
+      st_pripr( lTemp, nDoc_no, aDocList )
+   ENDIF
 
-// parametri...
-lSumirati := _exp_params["exp_suma"] == "D"
-cVpMp := _exp_params["exp_tip"]
-_isporuka := _exp_params["exp_isporuka"] == "D"
-_valuta := _exp_params["exp_valuta"]
+   // uslovi ekporta - raznorazni...
+   IF !_export_cond( @_exp_params )
+      SELECT ( nTArea )
+      RETURN
+   ENDIF
 
-if EMPTY( _valuta )
-    _valuta := PADR( ValDomaca(), 3 )
-endif
+   lSumirati := _exp_params[ "exp_suma" ] == "D"
+   cVpMp := _exp_params[ "exp_tip" ]
+   _isporuka := _exp_params[ "exp_isporuka" ] == "D"
+   _valuta := _exp_params[ "exp_valuta" ]
 
-if _isporuka
-    // selektuj stavke
-    sel_items()
-endif
+   IF Empty( _valuta )
+      _valuta := PadR( ValDomaca(), 3 )
+   ENDIF
 
-// provjeri da li je priprema faktura prazna
-if !fakt_priprema_prazna()
-    select (nTArea)
-    return
-endif
+   IF _isporuka
+      rnal_print_odabir_stavki( lTemp )
+   ENDIF
 
-select ( F_FAKT_PRIPR )
-if !Used()
-    O_FAKT_PRIPR
-endif
+   IF !fakt_priprema_prazna()
+      SELECT ( nTArea )
+      RETURN
+   ENDIF
 
-if lTemp == .t.
-    nADocs := F__DOCS
-endif
+   SELECT ( F_FAKT_PRIPR )
+   IF !Used()
+      O_FAKT_PRIPR
+   ENDIF
 
-t_rpt_open()
+   IF lTemp == .T.
+      nADocs := F__DOCS
+   ENDIF
 
-// --------------------------------------------
-// 1 korak :
-// uzmi podatke partnera, dokumenta iz T_PARS
-// --------------------------------------------
+   t_rpt_open()
 
-nCust_id := VAL( g_t_pars_opis( "P01" ) )
-nCont_id := VAL( g_t_pars_opis( "P10" ) )
+   // --------------------------------------------
+   // 1 korak :
+   // uzmi podatke partnera, dokumenta iz T_PARS
+   // --------------------------------------------
 
-cCust_desc := g_cust_desc( nCust_id )
-cCont_desc := g_cont_desc( nCont_id )
+   nCust_id := Val( g_t_pars_opis( "P01" ) )
+   nCont_id := Val( g_t_pars_opis( "P10" ) )
 
-dDatDok := CTOD( g_t_pars_opis( "N02" ) )
+   cCust_desc := g_cust_desc( nCust_id )
+   cCont_desc := g_cont_desc( nCont_id )
 
-if ALLTRIM( cCust_desc ) == "NN"
-    // ako je NN kupac u RNAL, dodaj ovo kao contacts....
-    cPartn := PADR( g_rel_val("1", "CONTACTS", "PARTN", ALLTRIM(STR(nCont_id)) ), 6 )
+   dDatDok := CToD( g_t_pars_opis( "N02" ) )
 
-else
-    // dodaj kao customs
-    cPartn := PADR( g_rel_val("1", "CUSTOMS", "PARTN", ALLTRIM(STR(nCust_id)) ), 6 )
-endif
+   IF AllTrim( cCust_desc ) == "NN"
+      // ako je NN kupac u RNAL, dodaj ovo kao contacts....
+      cPartn := PadR( g_rel_val( "1", "CONTACTS", "PARTN", AllTrim( Str( nCont_id ) ) ), 6 )
 
-// ako je partner prazno
-if EMPTY( cPartn )
+   ELSE
+      // dodaj kao customs
+      cPartn := PadR( g_rel_val( "1", "CUSTOMS", "PARTN", AllTrim( Str( nCust_id ) ) ), 6 )
+   ENDIF
 
-    if ALLTRIM( cCust_desc ) == "NN"
-        
-        // ako je NN kupac, presvicaj se na CONTACTS
-        
-        // probaj naci partnera iz PARTN
-        if fnd_partn( @cPartn, nCont_id, cCont_desc ) == 1 
-        
+   // ako je partner prazno
+   IF Empty( cPartn )
+
+      IF AllTrim( cCust_desc ) == "NN"
+
+         // ako je NN kupac, presvicaj se na CONTACTS
+
+         // probaj naci partnera iz PARTN
+         IF fnd_partn( @cPartn, nCont_id, cCont_desc ) == 1
+
             add_to_relation( "CONTACTS", "PARTN", ;
-                ALLTRIM(STR(nCont_id)) , cPartn )
-            
-        else
-        
-            select (F_FAKT_PRIPR)
-            use
-            
-            select (nTArea)
-            msgbeep("Operacija prekinuta !!!")
-            return
-        
-        endif
+               AllTrim( Str( nCont_id ) ), cPartn )
 
-    else
-        // probaj naci partnera iz PARTN
-        if fnd_partn( @cPartn, nCust_id, cCust_desc ) == 1 
-        
+         ELSE
+
+            SELECT ( F_FAKT_PRIPR )
+            USE
+
+            SELECT ( nTArea )
+            msgbeep( "Operacija prekinuta !!!" )
+            RETURN
+
+         ENDIF
+
+      ELSE
+         // probaj naci partnera iz PARTN
+         IF fnd_partn( @cPartn, nCust_id, cCust_desc ) == 1
+
             add_to_relation( "CUSTOMS", "PARTN", ;
-                ALLTRIM(STR(nCust_id)) , cPartn )
-            
-        else
-        
-            select (F_FAKT_PRIPR)
-            use
-            
-            select (nTArea)
-            msgbeep("Operacija prekinuta !!!")
-            return
-        
-        endif
-    endif
-endif
+               AllTrim( Str( nCust_id ) ), cPartn )
+
+         ELSE
+
+            SELECT ( F_FAKT_PRIPR )
+            USE
+
+            SELECT ( nTArea )
+            msgbeep( "Operacija prekinuta !!!" )
+            RETURN
+
+         ENDIF
+      ENDIF
+   ENDIF
 
 
-// ----------------------------------------------
-// 2. korak 
-// prebaci robu iz doc_it2
-// ----------------------------------------------
+   // ----------------------------------------------
+   // 2. korak
+   // prebaci robu iz doc_it2
+   // ----------------------------------------------
 
-cFirma := "10"
+   cFirma := "10"
 
-cIdVd := "12"
-cCtrlNo := "22"
+   cIdVd := "12"
+   cCtrlNo := "22"
 
-// ako je MP onda je drugi set
-if cVpMp == "M"
-    cIdVd := "13"
-    cCtrlNo := "23"
-endif
+   // ako je MP onda je drugi set
+   IF cVpMp == "M"
+      cIdVd := "13"
+      cCtrlNo := "23"
+   ENDIF
 
-// ova funkcija ce vratiti novi broj dokumenta "22"
-cBrDok := fakt_novi_broj_dokumenta( cFirma, cCtrlNo )
+   // ova funkcija ce vratiti novi broj dokumenta "22"
+   cBrDok := fakt_novi_broj_dokumenta( cFirma, cCtrlNo )
 
-cFmkDoc := cIdVd + "-" + ALLTRIM(cBrdok)
-_redni_broj := 0
+   cFmkDoc := cIdVd + "-" + AllTrim( cBrdok )
+   _redni_broj := 0
 
-select (nADOC_IT2)
-set order to tag "2"
-go top
+   SELECT ( nADOC_IT2 )
+   SET ORDER TO TAG "2"
+   GO TOP
 
-do while !EOF()
-        
-    nDoc_no := field->doc_no
-    cArt_id := field->art_id
-	// vrsi se preracunavanje kolicine
-    nQtty := preracunaj_kolicinu_repromaterijala( field->doc_it_qtt, ;
-													field->doc_it_q2, ;
-													field->jmj, ;
-													field->jmj_art )
-    cDesc := field->descr
+   DO WHILE !Eof()
 
-    if lSumirati == .t.
-        nQtty := 0
-        do while !EOF() .and. field->art_id == cArt_id
+      nDoc_no := field->doc_no
+      cArt_id := field->art_id
+      // vrsi se preracunavanje kolicine
+      nQtty := preracunaj_kolicinu_repromaterijala( field->doc_it_qtt, ;
+         field->doc_it_q2, ;
+         field->jmj, ;
+         field->jmj_art )
+      cDesc := field->descr
+
+      IF lSumirati == .T.
+         nQtty := 0
+         DO WHILE !Eof() .AND. field->art_id == cArt_id
             nQtty += preracunaj_kolicinu_repromaterijala( field->doc_it_qtt, ;
-															field->doc_it_q2, ;
-															field->jmj, ;
-															field->jmj_art )
-            skip
-        enddo
-    endif
+               field->doc_it_q2, ;
+               field->jmj, ;
+               field->jmj_art )
+            SKIP
+         ENDDO
+      ENDIF
 
-    nPrice := field->doc_it_pri
+      nPrice := field->doc_it_pri
 
-    if EMPTY( cArt_id )
-        skip
-        loop
-    endif
+      IF Empty( cArt_id )
+         SKIP
+         LOOP
+      ENDIF
 
-    if nQtty = 0
-        skip
-        loop
-    endif
+      IF nQtty = 0
+         SKIP
+         LOOP
+      ENDIF
 
-    select fakt_pripr    
-    append blank
-    
-    scatter()
+      SELECT fakt_pripr
+      APPEND BLANK
 
-    _txt := ""
-    _rbr := STR( ++_redni_broj, 3 )
-    _idpartner := cPartn
-    _idfirma := "10"
-    _brdok := cBrDok
-    _idtipdok := cIdVd
-    _datdok := dDatDok
-    _idroba := cArt_id
-    _cijena := nPrice
-    _kolicina := nQtty
-    _dindem := _valuta
-    _zaokr := 2
+      scatter()
 
-    _txt := ""
+      _txt := ""
+      _rbr := Str( ++_redni_broj, 3 )
+      _idpartner := cPartn
+      _idfirma := "10"
+      _brdok := cBrDok
+      _idtipdok := cIdVd
+      _datdok := dDatDok
+      _idroba := cArt_id
+      _cijena := nPrice
+      _kolicina := nQtty
+      _dindem := _valuta
+      _zaokr := 2
 
-    // roba tip U - nista
-    a_to_txt( "", .t. )
-    // dodatni tekst otpremnice - nista
-    a_to_txt( "", .t. )
-    // naziv partnera
-    a_to_txt( _g_pfmk_desc( cPartn ) , .t. )
-    // adresa
-    a_to_txt( _g_pfmk_addr( cPartn ) , .t. )
-    // ptt i mjesto
-    a_to_txt( _g_pfmk_place( cPartn ) , .t. )
-    // broj otpremnice
-    a_to_txt( "" , .t. )
-    // datum  otpremnice
-    a_to_txt( DTOC( dDatDok ) , .t. )
-    
-    // broj ugovora - nista
-    a_to_txt( "", .t. )
-    
-    // datum isporuke - nista
-    a_to_txt( "", .t. )
-    
-    // 10. datum valute - nista
-    a_to_txt( "", .t. )
-    
-    // 11. 
-    a_to_txt( "", .t. )
-    // 12. 
-    a_to_txt( "", .t. )
-    // 13. 
-    a_to_txt( "", .t. )
-    // 14. 
-    a_to_txt( "", .t. )
-    // 15. 
-    a_to_txt( "", .t. )
-    // 16. 
-    a_to_txt( "", .t. )
-    // 17. 
-    a_to_txt( "", .t. )
-    // 18. 
-    a_to_txt( "", .t. )
-    // 19. 
-    a_to_txt( "", .t. )
-    // 20.
-    a_to_txt( "", .t. )
+      _txt := ""
 
-    gather()
+      // roba tip U - nista
+      a_to_txt( "", .T. )
+      // dodatni tekst otpremnice - nista
+      a_to_txt( "", .T. )
+      // naziv partnera
+      a_to_txt( _g_pfmk_desc( cPartn ), .T. )
+      // adresa
+      a_to_txt( _g_pfmk_addr( cPartn ), .T. )
+      // ptt i mjesto
+      a_to_txt( _g_pfmk_place( cPartn ), .T. )
+      // broj otpremnice
+      a_to_txt( "", .T. )
+      // datum  otpremnice
+      a_to_txt( DToC( dDatDok ), .T. )
 
-    if !EMPTY( cDesc ) 
+      // broj ugovora - nista
+      a_to_txt( "", .T. )
 
-        _t_area := SELECT()
+      // datum isporuke - nista
+      a_to_txt( "", .T. )
 
-        _items_atrib := hb_hash()
-        _items_atrib["opis"] := cDesc
+      // 10. datum valute - nista
+      a_to_txt( "", .T. )
 
-        oAtrib := F18_DOK_ATRIB():new("fakt", F_FAKT_ATRIB)
-        oAtrib:dok_hash := hb_hash()
-        oAtrib:dok_hash["idfirma"] := field->idfirma
-        oAtrib:dok_hash["idtipdok"] := field->idtipdok
-        oAtrib:dok_hash["brdok"] := field->brdok
-        oAtrib:dok_hash["rbr"] := field->rbr
+      // 11.
+      a_to_txt( "", .T. )
+      // 12.
+      a_to_txt( "", .T. )
+      // 13.
+      a_to_txt( "", .T. )
+      // 14.
+      a_to_txt( "", .T. )
+      // 15.
+      a_to_txt( "", .T. )
+      // 16.
+      a_to_txt( "", .T. )
+      // 17.
+      a_to_txt( "", .T. )
+      // 18.
+      a_to_txt( "", .T. )
+      // 19.
+      a_to_txt( "", .T. )
+      // 20.
+      a_to_txt( "", .T. )
 
-        oAtrib:atrib_hash_to_dbf( _items_atrib )
+      gather()
 
-        select ( _t_area )
+      IF !Empty( cDesc )
 
-    endif
- 
-    select (nADOC_IT2)
+         _t_area := Select()
 
-    if lSumirati == .f.
-        skip
-    endif
+         _items_atrib := hb_Hash()
+         _items_atrib[ "opis" ] := cDesc
 
-enddo
+         oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )
+         oAtrib:dok_hash := hb_Hash()
+         oAtrib:dok_hash[ "idfirma" ] := field->idfirma
+         oAtrib:dok_hash[ "idtipdok" ] := field->idtipdok
+         oAtrib:dok_hash[ "brdok" ] := field->brdok
+         oAtrib:dok_hash[ "rbr" ] := field->rbr
 
-// -----------------------------------------------
-// 3. korak :
-// prebaci sve iz T_DOCIT
-// -----------------------------------------------
+         oAtrib:atrib_hash_to_dbf( _items_atrib )
 
-select (nADOC_IT)
-set order to tag "5"
-// index: art_sh_desc
-go top
+         SELECT ( _t_area )
 
-do while !EOF() 
+      ENDIF
 
-    // da li je markirano za prenos
-    if field->print == "N"
-        skip
-        loop
-    endif
+      SELECT ( nADOC_IT2 )
 
-    nDoc_no := field->doc_no
+      IF lSumirati == .F.
+         SKIP
+      ENDIF
 
-    nArt_id := field->art_id
-    
-    // ukupna kvadratura
-    nM2 := field->doc_it_tot
+   ENDDO
 
-    // opis artikla (kratki)
-    cArt_sh := field->art_sh_des
-    
-    cIdRoba := g_rel_val("1", "ARTICLES", "ROBA", ALLTRIM(STR(nArt_id)) )
-    
-    // uzmi cijenu robe iz sifrarnika robe
-    nPrice := g_art_price( cIdRoba )
+   // -----------------------------------------------
+   // 3. korak :
+   // prebaci sve iz T_DOCIT
+   // -----------------------------------------------
 
-    // uzmi opis artikla
-    cArt_desc := g_art_desc( nArt_id )
+   SELECT ( nADOC_IT )
+   SET ORDER TO TAG "5"
+   // index: art_sh_desc
+   GO TOP
 
-    if EMPTY(cIdRoba)
-        
-        if fnd_roba( @cIdRoba, nArt_id, cArt_desc ) == 1
-        
+   DO WHILE !Eof()
+
+      // da li je markirano za prenos
+      IF field->print == "N"
+         SKIP
+         LOOP
+      ENDIF
+
+      nDoc_no := field->doc_no
+
+      nArt_id := field->art_id
+
+      // ukupna kvadratura
+      nM2 := field->doc_it_tot
+
+      // opis artikla (kratki)
+      cArt_sh := field->art_sh_des
+
+      cIdRoba := g_rel_val( "1", "ARTICLES", "ROBA", AllTrim( Str( nArt_id ) ) )
+
+      // uzmi cijenu robe iz sifrarnika robe
+      nPrice := g_art_price( cIdRoba )
+
+      // uzmi opis artikla
+      cArt_desc := g_art_desc( nArt_id )
+
+      IF Empty( cIdRoba )
+
+         IF fnd_roba( @cIdRoba, nArt_id, cArt_desc ) == 1
+
             add_to_relation( "ARTICLES", "ROBA", ;
-                ALLTRIM(STR(nArt_id)), cIdRoba )
-        
-        else
-            msgbeep("Neki artikli nemaju definisani u tabeli relacija#Prekidam operaciju !")    
-            select (F_FAKT_PRIPR)
-            use
-            
-            select (nTArea)
-            return
-        endif
-    endif
+               AllTrim( Str( nArt_id ) ), cIdRoba )
 
-    select (nADOC_IT)
-    
-    if lSumirati == .t.
+         ELSE
+            msgbeep( "Neki artikli nemaju definisani u tabeli relacija#Prekidam operaciju !" )
+            SELECT ( F_FAKT_PRIPR )
+            USE
 
-        nM2 := 0
+            SELECT ( nTArea )
+            RETURN
+         ENDIF
+      ENDIF
 
-        // sracunaj za iste artikle
-        do while !EOF() .and. field->art_sh_des == cArt_sh
+      SELECT ( nADOC_IT )
 
-            if field->print == "D"
-                // kolicina
-                nM2 += field->doc_it_tot
-            endif
+      IF lSumirati == .T.
 
-            skip
+         nM2 := 0
 
-        enddo
-    
-    endif   
-    
-    select fakt_pripr
-    append blank
-    
-    scatter()
+         // sracunaj za iste artikle
+         DO WHILE !Eof() .AND. field->art_sh_des == cArt_sh
 
-    _txt := ""
-    _rbr := STR( ++_redni_broj, 3 )
-    _idpartner := cPartn
-    _idfirma := "10"
-    _brdok := cBrDok
-    _idtipdok := cIdVd
-    _datdok := dDatDok
-    _idroba := cIdRoba
-    _cijena := nPrice
-    _kolicina := nM2
-    _dindem := _valuta
-    _zaokr := 2
-        
-    _txt := ""
+            IF field->print == "D"
+               // kolicina
+               nM2 += field->doc_it_tot
+            ENDIF
 
-    // roba tip U - nista
-    a_to_txt( "", .t. )
-    // dodatni tekst otpremnice - nista
-    a_to_txt( "", .t. )
-    // naziv partnera
-    a_to_txt( _g_pfmk_desc( cPartn ) , .t. )
-    // adresa
-    a_to_txt( _g_pfmk_addr( cPartn ) , .t. )
-    // ptt i mjesto
-    a_to_txt( _g_pfmk_place( cPartn ) , .t. )
-    // broj otpremnice
-    a_to_txt( "" , .t. )
-    // datum  otpremnice
-    a_to_txt( DTOC( dDatDok ) , .t. )
-    
-    // broj ugovora - nista
-    a_to_txt( "", .t. )
-    
-    // datum isporuke - nista
-    a_to_txt( "", .t. )
-    
-    // 10. datum valute - nista
-    a_to_txt( "", .t. )
-    
-    // 11. 
-    a_to_txt( "", .t. )
-    // 12. 
-    a_to_txt( "", .t. )
-    // 13. 
-    a_to_txt( "", .t. )
-    // 14. 
-    a_to_txt( "", .t. )
-    // 15. 
-    a_to_txt( "", .t. )
-    // 16. 
-    a_to_txt( "", .t. )
-    // 17. 
-    a_to_txt( "", .t. )
-    // 18. 
-    a_to_txt( "", .t. )
-    // 19. 
-    a_to_txt( "", .t. )
-    // 20.
-    a_to_txt( "", .t. )
+            SKIP
 
-    gather()
+         ENDDO
 
-    // ubaci mi atribute u fakt_atribute
-    if !EMPTY( cArt_sh )
+      ENDIF
 
-        _t_area := SELECT()
+      SELECT fakt_pripr
+      APPEND BLANK
 
-        _items_atrib := hb_hash()
-        _items_atrib["opis"] := cArt_sh
-    
-        oAtrib := F18_DOK_ATRIB():new("fakt")
-        oAtrib:dok_hash := hb_hash()
-        oAtrib:dok_hash["idfirma"] := field->idfirma
-        oAtrib:dok_hash["idtipdok"] := field->idtipdok
-        oAtrib:dok_hash["brdok"] := field->brdok
-        oAtrib:dok_hash["rbr"] := field->rbr
+      scatter()
 
-        oAtrib:atrib_hash_to_dbf( _items_atrib )
+      _txt := ""
+      _rbr := Str( ++_redni_broj, 3 )
+      _idpartner := cPartn
+      _idfirma := "10"
+      _brdok := cBrDok
+      _idtipdok := cIdVd
+      _datdok := dDatDok
+      _idroba := cIdRoba
+      _cijena := nPrice
+      _kolicina := nM2
+      _dindem := _valuta
+      _zaokr := 2
 
-        select ( _t_area )
+      _txt := ""
 
-    endif
- 
-    select (nADOC_IT)
+      // roba tip U - nista
+      a_to_txt( "", .T. )
+      // dodatni tekst otpremnice - nista
+      a_to_txt( "", .T. )
+      // naziv partnera
+      a_to_txt( _g_pfmk_desc( cPartn ), .T. )
+      // adresa
+      a_to_txt( _g_pfmk_addr( cPartn ), .T. )
+      // ptt i mjesto
+      a_to_txt( _g_pfmk_place( cPartn ), .T. )
+      // broj otpremnice
+      a_to_txt( "", .T. )
+      // datum  otpremnice
+      a_to_txt( DToC( dDatDok ), .T. )
 
-    if lSumirati == .f.
-        skip
-    endif
-    
-enddo
+      // broj ugovora - nista
+      a_to_txt( "", .T. )
 
-// ubaci sada brojeve veze
-// ======================================
+      // datum isporuke - nista
+      a_to_txt( "", .T. )
 
-// ubaci prvo u fakt
-_ins_x_veza( nADoc_it )
+      // 10. datum valute - nista
+      a_to_txt( "", .T. )
 
-// ubaci brojeve veze u tabelu docs
-_ins_veza( nADoc_it, nADocs, cBrDok, lTemp )
+      // 11.
+      a_to_txt( "", .T. )
+      // 12.
+      a_to_txt( "", .T. )
+      // 13.
+      a_to_txt( "", .T. )
+      // 14.
+      a_to_txt( "", .T. )
+      // 15.
+      a_to_txt( "", .T. )
+      // 16.
+      a_to_txt( "", .T. )
+      // 17.
+      a_to_txt( "", .T. )
+      // 18.
+      a_to_txt( "", .T. )
+      // 19.
+      a_to_txt( "", .T. )
+      // 20.
+      a_to_txt( "", .T. )
 
-// sredi redne brojeve
-_fix_rbr()
+      gather()
 
-select ( F_FAKT_PRIPR )
-use
+      // ubaci mi atribute u fakt_atribute
+      IF !Empty( cArt_sh )
 
-msgbeep("export dokumenta zavrsen !")
+         _t_area := Select()
 
-select (nTArea)
+         _items_atrib := hb_Hash()
+         _items_atrib[ "opis" ] := cArt_sh
 
-return
+         oAtrib := F18_DOK_ATRIB():new( "fakt" )
+         oAtrib:dok_hash := hb_Hash()
+         oAtrib:dok_hash[ "idfirma" ] := field->idfirma
+         oAtrib:dok_hash[ "idtipdok" ] := field->idtipdok
+         oAtrib:dok_hash[ "brdok" ] := field->brdok
+         oAtrib:dok_hash[ "rbr" ] := field->rbr
+
+         oAtrib:atrib_hash_to_dbf( _items_atrib )
+
+         SELECT ( _t_area )
+
+      ENDIF
+
+      SELECT ( nADOC_IT )
+
+      IF lSumirati == .F.
+         SKIP
+      ENDIF
+
+   ENDDO
+
+   // ubaci sada brojeve veze
+   // ======================================
+
+   // ubaci prvo u fakt
+   _ins_x_veza( nADoc_it )
+
+   // ubaci brojeve veze u tabelu docs
+   _ins_veza( nADoc_it, nADocs, cBrDok, lTemp )
+
+   // sredi redne brojeve
+   _fix_rbr()
+
+   SELECT ( F_FAKT_PRIPR )
+   USE
+
+   msgbeep( "export dokumenta zavrsen !" )
+
+   SELECT ( nTArea )
+
+   RETURN
 
 
 
@@ -561,417 +559,432 @@ return
 // --------------------------------------
 // ubaci vezu u tabelu docs
 // --------------------------------------
-static function _ins_veza( nA_doc_it, nA_docs, cBrfakt, lTemp )
-local nDoc_no
-local _rec
+STATIC FUNCTION _ins_veza( nA_doc_it, nA_docs, cBrfakt, lTemp )
 
-if !lTemp
-    if !f18_lock_tables( { "rnal_docs" } )
-        MsgBeep( "Problem sa lokovanjem tabele rnal_docs !" )
-        return .f.
-    endif
-    sql_table_update( NIL, "BEGIN" )
-endif
+   LOCAL nDoc_no
+   LOCAL _rec
 
-select ( nA_doc_it )
-set order to tag "1"
-go top
+   IF !lTemp
+      IF !f18_lock_tables( { "rnal_docs" } )
+         MsgBeep( "Problem sa lokovanjem tabele rnal_docs !" )
+         RETURN .F.
+      ENDIF
+      sql_table_update( NIL, "BEGIN" )
+   ENDIF
 
-do while !EOF()
+   SELECT ( nA_doc_it )
+   SET ORDER TO TAG "1"
+   GO TOP
 
-    // ovo preskoci
-    if field->print == "N"
-        skip
-        loop
-    endif
+   DO WHILE !Eof()
 
-    nDoc_no := field->doc_no
+      // ovo preskoci
+      IF field->print == "N"
+         SKIP
+         LOOP
+      ENDIF
 
-    // setuj da je dokument prenesen u DOCS
-    select (nA_docs)
-    seek docno_str(nDoc_no)
+      nDoc_no := field->doc_no
 
-    if !FOUND()
-        MsgBeep( "Nalog ne postoji u azuriranim dokumentima !" )
-        return .f.
-    endif
+      // setuj da je dokument prenesen u DOCS
+      SELECT ( nA_docs )
+      SEEK docno_str( nDoc_no )
 
-    _rec := dbf_get_rec()
-    _rec["doc_in_fmk"] := 1
-    _rec["fmk_doc"] := _add_to_field( ALLTRIM( _rec["fmk_doc"] ), ;
-        ALLTRIM(cBrfakt) )
+      IF !Found()
+         MsgBeep( "Nalog ne postoji u azuriranim dokumentima !" )
+         RETURN .F.
+      ENDIF
 
-    if !lTemp
-        if !update_rec_server_and_dbf( "rnal_docs", _rec, 1, "CONT" )
+      _rec := dbf_get_rec()
+      _rec[ "doc_in_fmk" ] := 1
+      _rec[ "fmk_doc" ] := _add_to_field( AllTrim( _rec[ "fmk_doc" ] ), ;
+         AllTrim( cBrfakt ) )
+
+      IF !lTemp
+         IF !update_rec_server_and_dbf( "rnal_docs", _rec, 1, "CONT" )
             f18_free_tables( { "rnal_docs" } )
             sql_table_update( NIL, "ROLLBACK" )
-            return .f.
-        endif
-    else
-        dbf_update_rec( _rec )
-    endif
+            RETURN .F.
+         ENDIF
+      ELSE
+         dbf_update_rec( _rec )
+      ENDIF
 
-    select ( nA_doc_it )
-    skip
+      SELECT ( nA_doc_it )
+      SKIP
 
-enddo
+   ENDDO
 
-if !lTemp
-    f18_free_tables( { "rnal_docs" } )
-    sql_table_update( NIL, "END" )
-endif
+   IF !lTemp
+      f18_free_tables( { "rnal_docs" } )
+      sql_table_update( NIL, "END" )
+   ENDIF
 
-
-return .t.
+   RETURN .T.
 
 
 // -----------------------------------
 // sredi redne brojeve
 // -----------------------------------
-static function _fix_rbr()
-local nRbr, _rec
+STATIC FUNCTION _fix_rbr()
 
-// sredi redne brojeve pripreme
-select fakt_pripr
-set order to tag "0"
-go top
-nRbr := 0
+   LOCAL nRbr, _rec
 
-do while !EOF()
-	_rec := dbf_get_rec()
-	_rec["rbr"] := STR( ++nRbr, 3 )
-	dbf_update_rec( _rec )
-    skip
-enddo
+   // sredi redne brojeve pripreme
+   SELECT fakt_pripr
+   SET ORDER TO TAG "0"
+   GO TOP
+   nRbr := 0
 
-return
+   DO WHILE !Eof()
+      _rec := dbf_get_rec()
+      _rec[ "rbr" ] := Str( ++nRbr, 3 )
+      dbf_update_rec( _rec )
+      SKIP
+   ENDDO
+
+   RETURN
 
 
 // -----------------------------------
 // ubaci broj veze u fakt pripr
 // -----------------------------------
-static function _ins_x_veza( nArea )
-local cTmp := ""
-local nDoc_no
-local cIns_x := ""
+STATIC FUNCTION _ins_x_veza( nArea )
 
-select ( nArea )
-set order to tag "1"
-go top
+   LOCAL cTmp := ""
+   LOCAL nDoc_no
+   LOCAL cIns_x := ""
 
-do while !EOF()
-    
-    // treba li ovo ubaciti ?
-    if field->print == "N"
-        skip
-        loop
-    endif
+   SELECT ( nArea )
+   SET ORDER TO TAG "1"
+   GO TOP
 
-    nDoc_no := field->doc_no
+   DO WHILE !Eof()
 
-    // veza, broj naloga
-    cTmp := _add_to_field( cTmp, ALLTRIM(STR( nDoc_No )) )
+      // treba li ovo ubaciti ?
+      IF field->print == "N"
+         SKIP
+         LOOP
+      ENDIF
 
-    skip
-enddo
+      nDoc_no := field->doc_no
 
-// insertuj u veze ovu vezu
-set_fakt_vezni_dokumenti( cTmp )
+      // veza, broj naloga
+      cTmp := _add_to_field( cTmp, AllTrim( Str( nDoc_No ) ) )
 
-return .t.
+      SKIP
+   ENDDO
+
+   // insertuj u veze ovu vezu
+   set_fakt_vezni_dokumenti( cTmp )
+
+   RETURN .T.
 
 
 // -----------------------------------------------------
 // setuje vezne dokumente za odredjeni dokument
 // -----------------------------------------------------
-static function set_fakt_vezni_dokumenti( value )
-local _ok := .t.
-local _memo, _rec
-local _t_area := SELECT()
+STATIC FUNCTION set_fakt_vezni_dokumenti( value )
 
-if value == NIL 
-    return _ok
-endif
+   LOCAL _ok := .T.
+   LOCAL _memo, _rec
+   LOCAL _t_area := Select()
 
-select fakt_pripr
-go top
+   IF value == NIL
+      RETURN _ok
+   ENDIF
 
-_rec := dbf_get_rec()
+   SELECT fakt_pripr
+   GO TOP
 
-_memo := ParsMemo( _rec["txt"] )
+   _rec := dbf_get_rec()
 
-// setuj 19-ti clan matrice
-_memo[19] := value 
+   _memo := ParsMemo( _rec[ "txt" ] )
 
-// konvertuj mi memo field u txt
-// zatim setuj za novu vrijednost polja
-_rec["txt"] := fakt_memo_field_to_txt( _memo )
+   // setuj 19-ti clan matrice
+   _memo[ 19 ] := value
 
-dbf_update_rec( _rec )
+   // konvertuj mi memo field u txt
+   // zatim setuj za novu vrijednost polja
+   _rec[ "txt" ] := fakt_memo_field_to_txt( _memo )
 
-select ( _t_area )
+   dbf_update_rec( _rec )
 
-return _ok
+   SELECT ( _t_area )
+
+   RETURN _ok
 
 
 
 
 // --------------------------------------------
-// dodaj dokument u listu 
+// dodaj dokument u listu
 // --------------------------------------------
-function _add_to_field( field_value, new_value )
-local _ret := ""
-local _sep := ";"
-local _tmp 
-local _a_tmp
-local _seek
-local _i
+FUNCTION _add_to_field( field_value, new_value )
 
-_tmp := ALLTRIM( field_value )
-_a_tmp := TokToNiz( _tmp, _sep )
-_seek := ASCAN( _a_tmp, { | val | val == new_value } )
+   LOCAL _ret := ""
+   LOCAL _sep := ";"
+   LOCAL _tmp
+   LOCAL _a_tmp
+   LOCAL _seek
+   LOCAL _i
 
-if _seek = 0
-    AADD( _a_tmp, new_value  )
-    // sortiraj
-    ASORT( _a_tmp )
-endif
+   _tmp := AllTrim( field_value )
+   _a_tmp := TokToNiz( _tmp, _sep )
+   _seek := AScan( _a_tmp, {| val | val == new_value } )
 
-// zatim daj u listu sve stavke
-for _i := 1 to LEN( _a_tmp )
-    if !EMPTY( _a_tmp[ _i ] )
-        _ret += _a_tmp[ _i ] + _sep
-    endif
-next
+   IF _seek = 0
+      AAdd( _a_tmp, new_value  )
+      // sortiraj
+      ASort( _a_tmp )
+   ENDIF
 
-return _ret
+   // zatim daj u listu sve stavke
+   FOR _i := 1 TO Len( _a_tmp )
+      IF !Empty( _a_tmp[ _i ] )
+         _ret += _a_tmp[ _i ] + _sep
+      ENDIF
+   NEXT
+
+   RETURN _ret
 
 
 
 // ----------------------------------------------------
 // sracunaj kolicinu na osnovu vrijednosti polja
 // ----------------------------------------------------
-function _g_kol( cValue, cQttyType, nKol, nQtty, ;
-        nHeigh1, nWidth1, nHeigh2, nWidth2 )
+FUNCTION _g_kol( cValue, cQttyType, nKol, nQtty, ;
+      nHeigh1, nWidth1, nHeigh2, nWidth2 )
 
-local nTmp := 0
+   LOCAL nTmp := 0
 
-if nHeigh2 == nil
-    nHeigh2 := 0
-endif
+   IF nHeigh2 == nil
+      nHeigh2 := 0
+   ENDIF
 
-if nWidth2 == nil
-    nWidth2 := 0
-endif
+   IF nWidth2 == nil
+      nWidth2 := 0
+   ENDIF
 
-// po metru
-if UPPER(cQttyType) == "M"  
+   // po metru
+   IF Upper( cQttyType ) == "M"
 
-    // po metru, znaèi uzmi sve stranice stakla
-    
-    if "#D1#" $ cValue
-        nTmp += nWidth1
-    endif
-    
-    if "#D4#" $ cValue
-    
-        if nWidth2 <> 0
+      // po metru, znaèi uzmi sve stranice stakla
+
+      IF "#D1#" $ cValue
+         nTmp += nWidth1
+      ENDIF
+
+      IF "#D4#" $ cValue
+
+         IF nWidth2 <> 0
             nTmp += nWidth2
-        else
+         ELSE
             nTmp += nWidth1
-        endif
-    
-    endif
+         ENDIF
 
-    if "#D2#" $ cValue
-        nTmp += nHeigh1
-    endif
+      ENDIF
 
-    if "#D3#" $ cValue
-        if nHeigh2 <> 0
+      IF "#D2#" $ cValue
+         nTmp += nHeigh1
+      ENDIF
+
+      IF "#D3#" $ cValue
+         IF nHeigh2 <> 0
             nTmp += nHeigh2
-        else
+         ELSE
             nTmp += nHeigh1
-        endif
-    endif
+         ENDIF
+      ENDIF
 
-    // pretvori u metre
-    nKol := ( nQtty * nTmp ) / 1000
-    
-endif
+      // pretvori u metre
+      nKol := ( nQtty * nTmp ) / 1000
 
-// po m2
-if UPPER(cQttyType) == "M2"
-    
-    nKol := c_ukvadrat( nQtty, nHeigh1, nWidth1 ) 
-    
-endif
+   ENDIF
 
-// po komadu
-if UPPER(cQttyType) == "KOM"
-    
-    // busenje
-    if "<A_BU>" $ cValue
+   // po m2
+   IF Upper( cQttyType ) == "M2"
 
-        // broj rupa za busenje
-        cTmp := STRTRAN( ALLTRIM(cValue), "<A_BU>:#" )
-        aTmp := TokToNiz( cTmp, "#" )
+      nKol := c_ukvadrat( nQtty, nHeigh1, nWidth1 )
 
-        nKol := LEN( aTmp )
-    
-    else
-        nKol := nQtty
-    endif
+   ENDIF
 
-endif
+   // po komadu
+   IF Upper( cQttyType ) == "KOM"
 
-if EMPTY( cQttyType )
+      // busenje
+      IF "<A_BU>" $ cValue
 
-    nKol := nQtty
+         // broj rupa za busenje
+         cTmp := StrTran( AllTrim( cValue ), "<A_BU>:#" )
+         aTmp := TokToNiz( cTmp, "#" )
 
-endif
+         nKol := Len( aTmp )
 
-return
+      ELSE
+         nKol := nQtty
+      ENDIF
+
+   ENDIF
+
+   IF Empty( cQttyType )
+
+      nKol := nQtty
+
+   ENDIF
+
+   RETURN
 
 
 
 // ----------------------------------------------------
 // pronadji partnera u PARTN
 // ----------------------------------------------------
-static function fnd_partn( xPartn, nCustId, cDesc  )
-local nTArea := SELECT()
-private GetList:={}
+STATIC FUNCTION fnd_partn( xPartn, nCustId, cDesc  )
 
-O_PARTN
+   LOCAL nTArea := Select()
+   PRIVATE GetList := {}
 
-xPartn := SPACE(6)
+   O_PARTN
 
-Box(, 5, 70)
-    @ m_x + 1, m_y + 2 SAY "Narucioc: " 
-    @ m_x + 1, col() + 1 SAY ALLTRIM(STR(nCustId)) COLOR "I"
-    @ m_x + 1, col() + 1 SAY " -> " 
-    @ m_x + 1, col() + 1 SAY PADR(cDesc, 50) + ".." COLOR "I"
-    @ m_x + 2, m_y + 2 SAY "nije definisan u relacijama, pronadjite njegov par !!!!"
-    @ m_x + 4, m_y + 2 SAY "sifra u FMK =" GET xPartn VALID p_firma( @xPartn )
-    read
-BoxC()
+   xPartn := Space( 6 )
 
-select (nTArea)
+   Box(, 5, 70 )
+   @ m_x + 1, m_y + 2 SAY "Narucioc: "
+   @ m_x + 1, Col() + 1 SAY AllTrim( Str( nCustId ) ) COLOR "I"
+   @ m_x + 1, Col() + 1 SAY " -> "
+   @ m_x + 1, Col() + 1 SAY PadR( cDesc, 50 ) + ".." COLOR "I"
+   @ m_x + 2, m_y + 2 SAY "nije definisan u relacijama, pronadjite njegov par !!!!"
+   @ m_x + 4, m_y + 2 SAY "sifra u FMK =" GET xPartn VALID p_firma( @xPartn )
+   READ
+   BoxC()
 
-ESC_RETURN 0
-return 1
+   SELECT ( nTArea )
+
+   ESC_RETURN 0
+
+   RETURN 1
 
 
 // ----------------------------------------------------
 // pronadji robu u ROBA
 // ----------------------------------------------------
-static function fnd_roba( xRoba, nArtId, cDesc )
-local nTArea := SELECT()
-private GetList:={}
+STATIC FUNCTION fnd_roba( xRoba, nArtId, cDesc )
 
-O_ROBA
-O_SIFK
-O_SIFV
+   LOCAL nTArea := Select()
+   PRIVATE GetList := {}
 
-xRoba := SPACE(10)
+   O_ROBA
+   O_SIFK
+   O_SIFV
 
-Box(, 5, 70)
-    @ m_x + 1, m_y + 2 SAY "Artikal:" 
-    @ m_x + 1, col() + 1 SAY ALLTRIM(STR(nArtId)) COLOR "I"
-    @ m_x + 1, col() + 1 SAY " -> " 
-    @ m_x + 1, col() + 1 SAY PADR(cDesc, 50) + ".." COLOR "I"
-    @ m_x + 2, m_y + 2 SAY "nije definisan u tabeli relacija, pronadjite njegov par !!!"
-    @ m_x + 4, m_y + 2 SAY "sifra u FMK =" GET xRoba VALID p_roba( @xRoba )
-    read
-BoxC()
+   xRoba := Space( 10 )
 
-select (nTArea)
+   Box(, 5, 70 )
+   @ m_x + 1, m_y + 2 SAY "Artikal:"
+   @ m_x + 1, Col() + 1 SAY AllTrim( Str( nArtId ) ) COLOR "I"
+   @ m_x + 1, Col() + 1 SAY " -> "
+   @ m_x + 1, Col() + 1 SAY PadR( cDesc, 50 ) + ".." COLOR "I"
+   @ m_x + 2, m_y + 2 SAY "nije definisan u tabeli relacija, pronadjite njegov par !!!"
+   @ m_x + 4, m_y + 2 SAY "sifra u FMK =" GET xRoba VALID p_roba( @xRoba )
+   READ
+   BoxC()
 
-ESC_RETURN 0
-return 1
+   SELECT ( nTArea )
+
+   ESC_RETURN 0
+
+   RETURN 1
 
 
 
 // ----------------------------------------
 // vraca naziv partnera iz FMK
 // ----------------------------------------
-static function _g_pfmk_desc( cPart )
-local xRet := ""
-local nTArea := SELECT()
+STATIC FUNCTION _g_pfmk_desc( cPart )
 
-O_PARTN
-select partn
-set order to tag "ID"
-seek cPart
+   LOCAL xRet := ""
+   LOCAL nTArea := Select()
 
-if FOUND()
-    xRet := ALLTRIM( partn->naz )
-endif
+   O_PARTN
+   SELECT partn
+   SET ORDER TO TAG "ID"
+   SEEK cPart
 
-select (nTArea)
-return xRet
+   IF Found()
+      xRet := AllTrim( partn->naz )
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN xRet
 
 
 // ----------------------------------------
 // vraca adresu partnera iz FMK
 // ----------------------------------------
-static function _g_pfmk_addr( cPart )
-local xRet := ""
-local nTArea := SELECT()
+STATIC FUNCTION _g_pfmk_addr( cPart )
 
-O_PARTN
-select partn
-set order to tag "ID"
-seek cPart
+   LOCAL xRet := ""
+   LOCAL nTArea := Select()
 
-if FOUND()
-    xRet := ALLTRIM( partn->adresa )
-endif
+   O_PARTN
+   SELECT partn
+   SET ORDER TO TAG "ID"
+   SEEK cPart
 
-select (nTArea)
-return xRet
+   IF Found()
+      xRet := AllTrim( partn->adresa )
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN xRet
 
 
 // ----------------------------------------
 // vraca mjesto i ptt partnera iz FMK
 // ----------------------------------------
-static function _g_pfmk_place( cPart )
-local xRet := ""
-local nTArea := SELECT()
+STATIC FUNCTION _g_pfmk_place( cPart )
 
-O_PARTN
-select partn
-set order to tag "ID"
-seek cPart
+   LOCAL xRet := ""
+   LOCAL nTArea := Select()
 
-if FOUND()
-    xRet := ALLTRIM( partn->ptt ) + " " + ALLTRIM( partn->mjesto )
-endif
+   O_PARTN
+   SELECT partn
+   SET ORDER TO TAG "ID"
+   SEEK cPart
 
-select (nTArea)
-return xRet
+   IF Found()
+      xRet := AllTrim( partn->ptt ) + " " + AllTrim( partn->mjesto )
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN xRet
 
 
 // -----------------------------------
 // dodaj u polje txt tekst
 // lVise - vise tekstova
 // -----------------------------------
-static function a_to_txt( cVal, lEmpty )
-local nTArr
-nTArr := SELECT()
+STATIC FUNCTION a_to_txt( cVal, lEmpty )
 
-if lEmpty == nil
-    lEmpty := .f.
-endif
+   LOCAL nTArr
 
-// ako je prazno nemoj dodavati
-if !lEmpty .and. EMPTY(cVal)
-    return
-endif
+   nTArr := Select()
 
-_txt += CHR(16) + cVal + CHR(17)
+   IF lEmpty == nil
+      lEmpty := .F.
+   ENDIF
 
-select (nTArr)
-return
+   // ako je prazno nemoj dodavati
+   IF !lEmpty .AND. Empty( cVal )
+      RETURN
+   ENDIF
 
+   _txt += Chr( 16 ) + cVal + Chr( 17 )
 
+   SELECT ( nTArr )
+
+   RETURN

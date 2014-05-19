@@ -140,7 +140,7 @@ FUNCTION st_obr_list( temp, doc_no, a_docs )
    _count := t_docit->( RecCount2() )
 
    IF _count > 0 .AND. pitanje(, "Odabrati stavke za stampu ? (D/N)", "N" ) == "D"
-      sel_items( temp )
+      rnal_print_odabir_stavki( temp )
    ENDIF
 
    // da li se stampa rekapitulacija repromaterijala

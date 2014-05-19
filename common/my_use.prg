@@ -75,24 +75,24 @@ FUNCTION my_use_temp( alias, table, new_area, excl )
       _tmp := alias
    ENDIF
 
-   BEGIN SEQUENCE WITH { |err| Break( err ) } 
+   BEGIN SEQUENCE WITH {| err| Break( err ) }
 
-       // trebam samo osnovne parametre
-       _a_dbf_rec := get_a_dbf_rec( _tmp, .T. )
-       nSelect := SELECT( _a_dbf_rec[ "alias" ] )
-       IF nSelect > 0 .and. ( nSelect <> _a_dbf_rec["wa"] )
-          log_write( "WARNING: " + _a_dbf_rec[ "table" ] + " na WA=" + STR( nSelect ) + " ?", 3 )
-          SELECT( nSelect )
-          USE
-       ENDIF
+      // trebam samo osnovne parametre
+      _a_dbf_rec := get_a_dbf_rec( _tmp, .T. )
+      nSelect := Select( _a_dbf_rec[ "alias" ] )
+      IF nSelect > 0 .AND. ( nSelect <> _a_dbf_rec[ "wa" ] )
+         log_write( "WARNING: " + _a_dbf_rec[ "table" ] + " na WA=" + Str( nSelect ) + " ?", 3 )
+         SELECT( nSelect )
+         USE
+      ENDIF
 
-       IF ! new_area
-          SELECT ( _a_dbf_rec[ "wa" ] )
-       ENDIF
+      IF ! new_area
+         SELECT ( _a_dbf_rec[ "wa" ] )
+      ENDIF
 
-    RECOVER
-         log_write( "ERROR: " + _tmp + " nema a_dbf_rec !", 2 )
-    END SEQUENCE
+   RECOVER
+      log_write( "ERROR: " + _tmp + " nema a_dbf_rec !", 2 )
+   END SEQUENCE
 
 
    IF Used()
@@ -101,7 +101,7 @@ FUNCTION my_use_temp( alias, table, new_area, excl )
 
    nCnt := 0
    DO WHILE nCnt < 3
-      BEGIN SEQUENCE WITH { | err | Break( err ) }
+      BEGIN SEQUENCE WITH {| err | Break( err ) }
 
          dbUseArea( new_area, DBFENGINE, table, alias, !excl, .F. )
          IF File( ImeDbfCdx( table ) )
@@ -109,26 +109,19 @@ FUNCTION my_use_temp( alias, table, new_area, excl )
          ENDIF
          nCnt := 100
 
-      RECOVER USING _err
+      RECOVER USING oError
 
-         _msg := "ERROR my_use_temp: " + _err:description + ": tbl:" + table + " alias:" + alias + " se ne moze otvoriti ?!"
-         log_write( _msg, 2 )
-
-         IF _err:description == "Read error"
-            _force_erase := .T.
-            RaiseError( _msg )
-         ENDIF
+         my_use_error( table, alias, oError )
          hb_idleSleep( 1 )
 
       END SEQUENCE
-      
+
       ++nCnt
    ENDDO
 
    IF nCnt < 100
       RaiseError( "ERROR: my_use " + table + " neusjesno !" )
    ENDIF
-
 
    RETURN
 
@@ -169,9 +162,9 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
       new_area := .F.
    ENDIF
 
-   nSelect := SELECT( _a_dbf_rec[ "alias" ] )
-   IF nSelect > 0 .and. ( nSelect <> _a_dbf_rec["wa"] )
-      log_write( "WARNING: " + _a_dbf_rec[ "table" ] + " na WA=" + STR( nSelect ) + " ?", 3 )
+   nSelect := Select( _a_dbf_rec[ "alias" ] )
+   IF nSelect > 0 .AND. ( nSelect <> _a_dbf_rec[ "wa" ] )
+      log_write( "WARNING: " + _a_dbf_rec[ "table" ] + " na WA=" + Str( nSelect ) + " ?", 3 )
       SELECT( nSelect )
       USE
    ENDIF
@@ -238,19 +231,7 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
 
       RECOVER USING oError
 
-         _msg := "ERROR: my_use " + oError:description + ": tbl:" + my_home() + table + " alias:" + alias + " se ne moze otvoriti ?!"
-         log_write( _msg, 2 )
-
-         IF oError:description == "Read error"
-
-            // Read error se dobije u slucaju ostecenog dbf-a
-            _force_erase := .T.
-
-            IF ferase_dbf( alias, _force_erase )
-               repair_dbfs()
-            ENDIF
-
-         ENDIF
+         my_use_error( table, alias, oError )
          hb_idleSleep( 1 )
 
       END SEQUENCE
@@ -265,6 +246,30 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
 
    RETURN
 
+
+
+/*
+   desio se error kod pokusaja otvaranja tabele
+*/
+
+FUNCTION my_use_error( table, alias, oError )
+
+   LOCAL _msg
+
+   _msg := "ERROR: my_use " + oError:description + ": tbl:" + my_home() + table + " alias:" + alias + " se ne moze otvoriti ?!"
+   log_write( _msg, 2 )
+
+   altd()
+   IF oError:description == "Read error" .OR. oError:description == "Corruption detected"
+
+      // Read error se dobije u slucaju ostecenog dbf-a
+      IF ferase_dbf( alias, .T. )
+         repair_dbfs()
+      ENDIF
+
+   ENDIF
+
+   RETURN .T.
 
 
 

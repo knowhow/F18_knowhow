@@ -218,12 +218,6 @@ FUNCTION CreGparam( nArea )
       nArea := -1
    ENDIF
 
-   CLOSE ALL
-
-   IF gReadonly
-      RETURN
-   ENDIF
-
    aDbf := {}
    AAdd( aDbf, { "FH", "C", 1, 0 } )  // istorija
    AAdd( aDbf, { "FSec", "C", 1, 0 } )

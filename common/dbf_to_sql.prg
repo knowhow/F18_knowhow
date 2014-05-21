@@ -322,17 +322,13 @@ FUNCTION delete_all_dbf_and_server( table )
 
    _rec := hb_Hash()
    _rec[ "id" ] := NIL
-   // ostala polja su nevazna za brisanje
 
 
    IF sql_table_update( table, "del", _rec, "true" )
 
       push_ids_to_semaphore( table, { "#F" } )
-
       sql_table_update( table, "END" )
-
-      altd()
-      my_dbf_zap()
+      my_dbf_zap( table )
 
       RETURN .T.
 

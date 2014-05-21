@@ -287,13 +287,19 @@ FUNCTION reopen_exclusive_and_zap( dbf_table, open_index )
    RETURN .T.
 
 
-FUNCTION my_dbf_zap()
+FUNCTION my_dbf_zap( cTabelaOrAlias )
    
+   LOCAL cAlias
    LOCAL lRet
 
-   altd()
+   IF cTabelaOrAlias  != NIL
+      cAlias := get_a_dbf_rec( cTabelaOrAlias )[ "alias" ]
+   ELSE
+      cAlias := Alias()
+   ENDIF
+
    PushWa()
-   lRet := reopen_exclusive_and_zap( Alias(), .T. )
+   lRet := reopen_exclusive_and_zap( cAlias, .T. )
    PopWa()
 
    RETURN lRet   

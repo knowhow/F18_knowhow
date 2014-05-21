@@ -1320,6 +1320,7 @@ STATIC FUNCTION docit_delete( lSilent )
          SKIP -1
          DELETE
          ++ _it2_count
+         GO nSkip
       ENDDO
       my_unlock()
    ENDIF

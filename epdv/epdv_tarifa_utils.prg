@@ -15,9 +15,7 @@
 
 FUNCTION epdv_set_sif_tarifa()
 
-   IF !f18_lock_tables( { "tarifa" } )
-      RETURN .F.
-   ENDIF
+   O_TARIFA
 
    sql_table_update( nil, "BEGIN" )
 
@@ -60,15 +58,12 @@ FUNCTION epdv_set_sif_tarifa()
    cPom := PadR( "PDV0IZ", 6 )
    _append_tarifa( cPom, "IZVOZ, PDV 0%", 0 )
 
-   f18_free_tables( { "tarifa" } )
    sql_table_update( nil, "END" )
 
    RETURN
 
 
-// ----------------------------------------------------------
-// ubaci tarifu u sifranik
-// ----------------------------------------------------------
+
 STATIC FUNCTION _append_tarifa( tar_id, naziv, iznos )
 
    LOCAL _rec

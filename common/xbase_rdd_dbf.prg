@@ -225,6 +225,10 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
 
    _a_dbf_rec  := get_a_dbf_rec( dbf_table, .T. )
 
+   IF _a_dbf_rec[ "sql" ]
+        RETURN .F.
+   ENDIF
+
    SELECT ( _a_dbf_rec[ "wa" ] )
    USE
 
@@ -287,6 +291,7 @@ FUNCTION my_dbf_zap()
    
    LOCAL lRet
 
+   altd()
    PushWa()
    lRet := reopen_exclusive_and_zap( Alias(), .T. )
    PopWa()

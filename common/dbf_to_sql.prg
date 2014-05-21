@@ -302,8 +302,7 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
 
 
 
-// ---------------------------------------
-// --------------------------------------
+
 FUNCTION delete_all_dbf_and_server( table )
 
    LOCAL _ids := {}
@@ -314,6 +313,7 @@ FUNCTION delete_all_dbf_and_server( table )
    LOCAL _msg
    LOCAL _rec
 
+   altd()
    _a_dbf_rec := get_a_dbf_rec( table )
    reopen_exclusive( _a_dbf_rec[ "table" ] )
 
@@ -331,7 +331,7 @@ FUNCTION delete_all_dbf_and_server( table )
 
       sql_table_update( table, "END" )
 
-      // zapujemo dbf
+      altd()
       my_dbf_zap()
 
       RETURN .T.

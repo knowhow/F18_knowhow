@@ -14,7 +14,7 @@ echo.
 
 PING -n 6 www.google.com  >NUL
 REM # provjeri dali se F18 vrti
-tasklist.exe /FI "IMAGENAME eq F18.exe" 2>NUL | c:\windows\system32\find.exe /I /N "F18.exe" >NUL
+tasklist.exe /FI "IMAGENAME eq F18.exe" 2>NUL | find.exe /I /N "F18.exe" >NUL
 if "%ERRORLEVEL%"=="0" echo "izgleda je je F18 aktivan, zatvorite ga" & goto SERVICE  else got UPDATE
 
 :UPDATE

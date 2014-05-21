@@ -108,7 +108,6 @@ FUNCTION my_delete()
 FUNCTION my_delete_with_pack()
 
    my_delete()
-
    RETURN my_dbf_pack()
 
 FUNCTION delete_with_rlock()
@@ -224,7 +223,7 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
    ENDIF
 
    _a_dbf_rec  := get_a_dbf_rec( dbf_table, .T. )
-
+   altd()
    IF _a_dbf_rec[ "sql" ]
         RETURN .F.
    ENDIF
@@ -307,22 +306,33 @@ FUNCTION my_dbf_zap( cTabelaOrAlias )
 FUNCTION my_dbf_pack( lOpenUSharedRezimu )
 
    LOCAL lRet
+   LOCAL cAlias
+   LOCAL cMsg
+   
+   cAlias := ALIAS()
 
    IF lOpenUSharedRezimu == NIL
       lOpenUSharedRezimu := .T.
    ENDIF
 
+   altd()
    PushWa()
-   lRet :=  reopen_dbf( .T., Alias(), .T. )
+   lRet :=  reopen_dbf( .T., cAlias, .T. )
 
    IF lRet
       __dbPack()
    ENDIF
 
-   IF lRet .AND. lOpenUSharedRezimu
-     lRet := reopen_dbf( .F., Alias(), .T. )
+   IF !lRet .OR. lOpenUSharedRezimu  
+     // ako je neuspjesan bio reopetn u ekskluzivnom režimu obavezno otvoriti ponovo
+     lRet := reopen_dbf( .F., cAlias, .T. )
    ENDIF
 
+   IF Alias() <> cAlias
+        PopWa()
+        cMsg := "my_dbf_pack :" + Alias() + " <> " + cAlias
+        RaiseError( cMsg )
+   ENDIF
    PopWa()
    RETURN lRet
 

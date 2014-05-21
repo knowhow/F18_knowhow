@@ -1,3 +1,7 @@
+1.7.86  2014-05-21, hernad
+
+  - hernad ispravio opasan bug sa my_dbf_zap()
+ 
 1.7.85  2014-05-19, vsasa
 
   - FAKT, fiskalni_uredjaj_model() i algoritam za provjeru fiskalnog računa

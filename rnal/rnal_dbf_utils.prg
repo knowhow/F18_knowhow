@@ -148,7 +148,7 @@ FUNCTION docit_str( nId )
 // nId - id sifrarnika
 // cIdField - naziv id polja....
 // -------------------------------------------
-FUNCTION _set_sif_id( nId, cIdField, lAuto, cont )
+FUNCTION setuj_novi_id_tabele( nId, cIdField, lAuto, cont )
 
    LOCAL nTArea := Select()
    LOCAL nTime

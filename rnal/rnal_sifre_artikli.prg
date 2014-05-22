@@ -257,16 +257,6 @@ STATIC FUNCTION key_handler()
 
    CASE Ch == K_F4
 
-      // ima li pravo pristupa...
-      IF !ImaPravoPristupa( goModul:oDataBase:cName, "SIF", "ARTDUPLI" )
-
-         Msgbeep( cZabrana )
-         SELECT articles
-         RETURN DE_CONT
-
-      ENDIF
-
-      // dupliciranje (kloniranje) artikla....
       SELECT articles
 
       nArt_new := clone_article( articles->art_id )

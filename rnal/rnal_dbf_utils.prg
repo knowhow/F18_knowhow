@@ -170,8 +170,6 @@ FUNCTION setuj_novi_id_tabele( nId, cIdField, lAuto, cont )
       cont := "CONT"
    ENDIF
 
-   rnal_inc_id( @nId, cIdField, cIndex, lAuto )
-
    set_global_memvars_from_dbf()
 
    APPEND BLANK

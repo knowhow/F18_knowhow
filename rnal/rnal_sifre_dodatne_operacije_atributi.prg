@@ -124,7 +124,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
    aImeKol := {}
 
    IF __wo_id == .F.
-      AAdd( aImeKol, { PadC( "ID/MC", 10 ), {|| sif_idmc( aop_att_id ) }, "aop_att_id", {|| rnal_inc_id( @wAop_att_id, "AOP_ATT_ID" ), .F. }, {|| .T. } } )
+      AAdd( aImeKol, { PadC( "ID/MC", 10 ), {|| sif_idmc( aop_att_id ) }, "aop_att_id", {|| rnal_uvecaj_id( @wAop_att_id, "AOP_ATT_ID" ), .F. }, {|| .T. } } )
    ENDIF
 
    AAdd( aImeKol, { PadR( "Dod.op.ID", 15 ), {|| PadR( g_aop_desc( aop_id ), 15 ) }, "aop_id", {|| set_aop_id( @waop_id ) }, {|| s_aops( @waop_id ), show_it( g_aop_desc( waop_id ) )  } } )

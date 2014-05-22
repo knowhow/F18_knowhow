@@ -92,7 +92,7 @@ FUNCTION show_it( cItem, nPadR )
 
 
 
-FUNCTION rnal_inc_id( wId, cFieldName, cIndexTag, lAuto )
+FUNCTION rnal_uvecaj_id( wId, cFieldName, cIndexTag, lAuto )
 
    LOCAL nTRec
    LOCAL _t_rec := RecNo()
@@ -195,7 +195,7 @@ FUNCTION rnal_chk_id( wId, cFieldName, cIndexTag  )
    GO ( _t_rec )
 
    IF lSeek == .F.
-      lSeek := rnal_inc_id( @wId, cFieldName )
+      lSeek := rnal_uvecaj_id( @wId, cFieldName )
    ENDIF
 
    RETURN lSeek

@@ -397,7 +397,7 @@ STATIC FUNCTION elem_kol( aImeKol, aKol, nArt_id )
    aKol := {}
    aImeKol := {}
 
-   AAdd( aImeKol, { "rb", {|| el_no }, "el_no", {|| rnal_inc_id( @wEl_id, "EL_ID" ), .F. }, {|| .T. } } )
+   AAdd( aImeKol, { "rb", {|| el_no }, "el_no", {|| rnal_uvecaj_id( @wEl_id, "EL_ID" ), .F. }, {|| .T. } } )
    AAdd( aImeKol, { PadC( "el.grupa", __box_x ), {|| PadR( g_e_gr_desc( e_gr_id ), __box_x ) }, "e_gr_id" } )
 
    FOR i := 1 TO Len( aImeKol )

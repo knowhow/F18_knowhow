@@ -146,7 +146,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
    aKol := {}
    aImeKol := {}
 
-   AAdd( aImeKol, { PadC( "ID/MC", 10 ), {|| sif_idmc( art_id ) }, "art_id", {|| rnal_inc_id( @wArt_id, "ART_ID" ), .F. }, {|| .T. } } )
+   AAdd( aImeKol, { PadC( "ID/MC", 10 ), {|| sif_idmc( art_id ) }, "art_id", {|| rnal_uvecaj_id( @wArt_id, "ART_ID" ), .F. }, {|| .T. } } )
    AAdd( aImeKol, { "sifra :: puni naziv", {|| AllTrim( art_desc ) + " :: " + Upper( art_full_d ) }, "art_desc" } )
    AAdd( aImeKol, { "labela opis", {|| AllTrim( art_lab_de ) }, "art_desc" } )
 

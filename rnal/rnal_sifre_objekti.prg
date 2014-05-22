@@ -103,7 +103,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol, nCust_id )
    aKol := {}
    aImeKol := {}
 
-   AAdd( aImeKol, { PadC( "ID/MC", 10 ), {|| sif_idmc( obj_id ) }, "obj_id", {|| rnal_inc_id( @wObj_id, "OBJ_ID" ), .F. }, {|| .T. } } )
+   AAdd( aImeKol, { PadC( "ID/MC", 10 ), {|| sif_idmc( obj_id ) }, "obj_id", {|| rnal_uvecaj_id( @wObj_id, "OBJ_ID" ), .F. }, {|| .T. } } )
    AAdd( aImeKol, { PadC( "Narucioc", 10 ), {|| g_cust_desc( cust_id ) }, "cust_id", {|| set_cust_id( @wCust_id ) }, {|| s_customers( @wCust_id ), show_it( g_cust_desc( wcust_id ) ) } } )
    AAdd( aImeKol, { PadC( "Naziv objekta", 20 ), {|| PadR( obj_desc, 30 ) }, "obj_desc", {|| .T. }, {|| rnal_chk_id( @wObj_id, "OBJ_ID" ) } } )
 

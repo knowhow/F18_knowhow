@@ -116,7 +116,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
    aImeKol := {}
 
    IF __wo_id == .F.
-      AAdd( aImeKol, { PadC( "ID/MC", 10 ), {|| sif_idmc( e_gr_at_id ) }, "e_gr_at_id", {|| rnal_inc_id( @wE_gr_at_id, "E_GR_AT_ID" ), .F. }, {|| .T. } } )
+      AAdd( aImeKol, { PadC( "ID/MC", 10 ), {|| sif_idmc( e_gr_at_id ) }, "e_gr_at_id", {|| rnal_uvecaj_id( @wE_gr_at_id, "E_GR_AT_ID" ), .F. }, {|| .T. } } )
    ENDIF
 
    AAdd( aImeKol, { PadC( "Elem.grupa", 10 ), {|| PadR( g_e_gr_desc( e_gr_id ), 10 ) }, "e_gr_id", {|| set_gr_id( @wE_gr_id ) }, {|| s_e_groups( @we_gr_id ), show_it( g_e_gr_desc( we_gr_id ) ) } } )

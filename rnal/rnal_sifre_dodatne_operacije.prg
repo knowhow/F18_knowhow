@@ -110,7 +110,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
 
    IF __wo_id == .F.
 
-      AAdd( aImeKol, { PadC( "ID/MC", 10 ), {|| sif_idmc( aop_id ) }, "aop_id", {|| rnal_inc_id( @wAop_id, "AOP_ID" ), .F. }, {|| .T. } } )
+      AAdd( aImeKol, { PadC( "ID/MC", 10 ), {|| sif_idmc( aop_id ) }, "aop_id", {|| rnal_uvecaj_id( @wAop_id, "AOP_ID" ), .F. }, {|| .T. } } )
 
    ENDIF
 

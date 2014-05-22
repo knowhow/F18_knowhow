@@ -31,11 +31,7 @@ FUNCTION use_sql_sif( table, l_make_index )
       l_make_index = .T.
    ENDIF
 
-   // AEval( rddList(), {| x | QOut( x ) } )
-   // inkey(0)
-
    oConn := my_server():pDB
-   // ? PQHOST(oConn)
 
    rddSetDefault( "SQLMIX" )
 
@@ -68,7 +64,6 @@ FUNCTION use_sql( table, sql_query )
    ENDIF
 
    oConn := my_server():pDB
-   // ? PQHOST(oConn)
 
    rddSetDefault( "SQLMIX" )
 
@@ -117,10 +112,10 @@ FUNCTION use_sql_rj()
 
    cSql := "SELECT "
    cSql += " id, "
-   cSql += " ( CASE WHEN match_code IS NULL THEN rpad( '', 10 ) ELSE match_code END ) AS match_code, "
-   cSql += " ( CASE WHEN naz IS NULL THEN rpad( '', 100 ) ELSE naz END ) AS naz, "
-   cSql += " CAST( CASE WHEN tip IS NULL THEN rpad( '', 2 ) ELSE tip END AS character(2) ) AS tip, "
-   cSql += " CAST( CASE WHEN konto IS NULL THEN rpad( '', 7 ) ELSE konto END AS character(7) ) AS konto "
+   cSql += " match_code::char(10), "
+   cSql += " naz::char(100), "
+   cSql += " tip::char(2), "
+   cSql += " konto::char(7) "
    cSql += "FROM fmk.rj ORDER BY id"
 
    SELECT F_RJ
@@ -182,11 +177,11 @@ FUNCTION use_sql_ks()
    cSql += "  naz, "
    cSql += "  datod, "
    cSql += "  datdo, "
-   cSql += "  CAST( CASE WHEN strev IS NULL THEN 0.0000 ELSE strev END AS float8 ) AS strev, "
-   cSql += "  CAST( CASE WHEN stkam IS NULL THEN 0.0000 ELSE stkam END AS float8 ) AS stkam, "
-   cSql += "  CAST( CASE WHEN den IS NULL THEN 0.000000 ELSE den END AS float8 ) AS den, "
-   cSql += "  tip, "
-   cSql += "  CAST( CASE WHEN duz IS NULL THEN 0 ELSE duz END AS float8 ) AS duz "
+   cSql += "  strev::numeric(8,4), "
+   cSql += "  stkam::numeric(8,4), "
+   cSql += "  den::numeric(15,6), "
+   cSql += "  tip::char(1), "
+   cSql += "  duz::numeric(4,0) "
    cSql += "FROM fmk.ks "
    cSQL += "ORDER BY id"
 
@@ -268,13 +263,13 @@ FUNCTION use_sql_tarifa( l_make_index )
    cSql := "SELECT "
    cSql += "  id, "
    cSql += "  naz, "
-   cSql += "  CAST( CASE WHEN opp IS NULL THEN 0.00 ELSE opp END AS float8 ) AS opp, "
-   cSql += "  CAST( CASE WHEN ppp IS NULL THEN 0.00 ELSE ppp END AS float8 ) AS ppp, "
-   cSql += "  CAST( CASE WHEN zpp IS NULL THEN 0.00 ELSE zpp END AS float8 ) AS zpp, "
-   cSql += "  CAST( CASE WHEN vpp IS NULL THEN 0.00 ELSE vpp END AS float8 ) AS vpp, "
-   cSql += "  CAST( CASE WHEN mpp IS NULL THEN 0.00 ELSE mpp END AS float8 ) AS mpp, "
-   cSql += "  CAST( CASE WHEN dlruc IS NULL THEN 0.00 ELSE dlruc END AS float8 ) AS dlruc, "
-   cSql += "  ( CASE WHEN match_code IS NULL THEN rpad('',10) ELSE match_code END ) AS match_code "
+   cSql += "  opp::numeric(6,2), "
+   cSql += "  ppp::numeric(6,2), "
+   cSql += "  zpp::numeric(6,2), "
+   cSql += "  vpp::numeric(6,2), "
+   cSql += "  mpp::numeric(6,2), "
+   cSql += "  dlruc::numeric(6,2), "
+   cSql += "  match_code::char(10) "
    cSql += "FROM fmk.tarifa "
    cSQL += "ORDER BY id"
 
@@ -450,7 +445,6 @@ FUNCTION use_sql_rules()
 
    _alias := "FMKRULES"
    _table_name := "f18_rules"
-
 
    cSql := "SELECT * FROM fmk." + _table_name
 

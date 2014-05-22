@@ -75,11 +75,6 @@ FUNCTION sif_idmc( nFieldId, lOnlyMc, nRpad )
    RETURN PadR( xRet, nRPad )
 
 
-// ------------------------------------------------
-// prikazuje cItem u istom redu gdje je get
-// cItem - string za prikazati
-// nPadR - n vrijednost pad-a
-// ------------------------------------------------
 FUNCTION show_it( cItem, nPadR )
 
    IF nPadR <> nil

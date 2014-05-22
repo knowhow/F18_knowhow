@@ -1504,12 +1504,29 @@ FUNCTION NNSifru()
    RETURN ( NIL )
 
 
+/*
 
-// ---------------------------------------------------------------------
-// VpSifra(wId)
-// Stroga kontrola ID-a sifre pri unosu nove ili ispravci postojece!
-// wId - ID koji se provjerava
-// --------------------------------------------------------------------
+   vpsifra - validacija sifre 
+
+   Usage:
+   
+   1) vpsifra( wId ) => pretraga po ID-u i upozorenje ako postoji šifra
+   2) vpsifra( wId, "BARKOD" )  => pretraga po barkod indeksu
+   3) kao kodni blok u browse objektu: 
+      AAdd( ImeKol, { "ID", {|| id }, "id", {|| .T. }, {|| vpsifra( wId ) } } )
+ 
+   Uslovi korištenja:
+
+   - prije poziva mora biti odabrana tabela
+   - Ako se koristi unutar browse objekta onda prima i privatnu varijablu 
+     Ch (posljednja tipka)
+
+   Return:
+
+   - .T. => wId je validan, NE postoji dupla sifra
+
+*/
+
 FUNCTION VpSifra( wId, cTag )
 
    LOCAL nRec := RecNo()

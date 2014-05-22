@@ -1,6 +1,7 @@
 1.7.88  2014-05-22, vsasa
 
   - FIN, sintetički bruto bilans - bugfix
+  - USE_SQL, casting ispravljen
  
 1.7.87  2014-05-22, vsasa
 

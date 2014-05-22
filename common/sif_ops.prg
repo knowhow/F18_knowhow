@@ -17,13 +17,15 @@ FUNCTION P_Ops( cId, dx, dy )
    LOCAL _i, lRet, lSql := .F.
    PRIVATE ImeKol
    PRIVATE Kol
-
+   
    // ako je tekuća Workarea DBFCDX pretpostavljam da je cId CPString
    // ako je SQLMix onda je cId UTF8 string
    IF USED() 
         IF rddName() != "SQLMIX"
-             lSql := .F.
-             cId := hb_StrToUtf8( cId )
+            lSql := .F.
+            IF cId <> NIL
+                cId := hb_StrToUtf8( cId )
+            ENDIF
         ENDIF
    ELSE
         lSql := .T.

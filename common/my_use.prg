@@ -259,7 +259,6 @@ FUNCTION my_use_error( table, alias, oError )
    _msg := "ERROR: my_use " + oError:description + ": tbl:" + my_home() + table + " alias:" + alias + " se ne moze otvoriti ?!"
    log_write( _msg, 2 )
 
-   altd()
    IF oError:description == "Read error" .OR. oError:description == "Corruption detected"
 
       // Read error se dobije u slucaju ostecenog dbf-a

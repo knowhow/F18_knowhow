@@ -397,7 +397,7 @@ STATIC FUNCTION elem_kol( aImeKol, aKol, nArt_id )
    aKol := {}
    aImeKol := {}
 
-   AAdd( aImeKol, { "rb", {|| el_no }, "el_no", {|| rnal_inc_id( @wEl_id, "EL_ID" ), .F. }, {|| .T. } } )
+   AAdd( aImeKol, { "rb", {|| el_no }, "el_no", {|| rnal_uvecaj_id( @wEl_id, "EL_ID" ), .F. }, {|| .T. } } )
    AAdd( aImeKol, { PadC( "el.grupa", __box_x ), {|| PadR( g_e_gr_desc( e_gr_id ), __box_x ) }, "e_gr_id" } )
 
    FOR i := 1 TO Len( aImeKol )
@@ -889,7 +889,7 @@ STATIC FUNCTION elem_edit( nArt_id, lNewRec, cType, nEl_no )
          lAuto := .T.
       ENDIF
 	
-      IF _set_sif_id( @nEl_id, "EL_ID", lAuto, "FULL" ) == 0
+      IF setuj_novi_id_tabele( @nEl_id, "EL_ID", lAuto, "FULL" ) == 0
          RETURN 0
       ENDIF
 
@@ -1026,7 +1026,7 @@ STATIC FUNCTION __fill_att__( __gr_id, __el_id )
 
       SELECT e_att
 	
-      IF _set_sif_id( @nEl_att_id, "EL_ATT_ID" ) == 0
+      IF setuj_novi_id_tabele( @nEl_att_id, "EL_ATT_ID" ) == 0
          SELECT e_gr_att
          LOOP
       ENDIF
@@ -1076,7 +1076,7 @@ STATIC FUNCTION e_att_edit( nEl_id, lNewRec )
    ENDIF
 
    IF lNewRec
-      IF _set_sif_id( @nEl_att_id, "EL_ATT_ID", NIL, "FULL" ) == 0
+      IF setuj_novi_id_tabele( @nEl_att_id, "EL_ATT_ID", NIL, "FULL" ) == 0
          RETURN 0
       ENDIF
    ENDIF
@@ -1139,7 +1139,7 @@ STATIC FUNCTION e_aops_edit( nEl_id, lNewRec )
    ENDIF
 
    IF lNewRec
-      IF _set_sif_id( @nEl_op_id, "EL_OP_ID", NIL, "FULL" ) == 0
+      IF setuj_novi_id_tabele( @nEl_op_id, "EL_OP_ID", NIL, "FULL" ) == 0
          RETURN 0
       ENDIF
    ENDIF

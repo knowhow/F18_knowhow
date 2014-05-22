@@ -143,12 +143,28 @@ FUNCTION docit_str( nId )
 
 
 
-// -------------------------------------------
-// setuje novi zapis u tabeli sifrarnika
-// nId - id sifrarnika
-// cIdField - naziv id polja....
-// -------------------------------------------
-FUNCTION _set_sif_id( nId, cIdField, lAuto, cont )
+/*
+  Opis: setuje novi zapis u tabeli i dodjeljuje novi ID po uslovnom polju
+
+  Usage: setuj_novi_id_tabele( @nId, "EL_ID" )
+
+    Parameters: 
+      - nId - vrijednost uvećanog polja 
+      - cIdField - polje tabele koje treba uvećati
+      - lAuto - .T. dodaj novi zapis bez ispitivanja LastKey(), .F. - ispituj LastKey()
+      - cont - tip transakcije "CONT" ili "FULL", funkcija se može pozvati unutar transakcije
+
+    Primjer:
+
+       SELECT elements
+       nId := 0
+       setuj_novi_id_tabele( @nId, "EL_ID", .T., "FULL" )
+
+       kao rezultat dobijamo novi zapis u tabeli ELEMENTS sa uvećanim brojem polja EL_ID
+       
+*/
+
+FUNCTION setuj_novi_id_tabele( nId, cIdField, lAuto, cont )
 
    LOCAL nTArea := Select()
    LOCAL nTime
@@ -170,7 +186,7 @@ FUNCTION _set_sif_id( nId, cIdField, lAuto, cont )
       cont := "CONT"
    ENDIF
 
-   rnal_inc_id( @nId, cIdField, cIndex, lAuto )
+   rnal_uvecaj_id( @nId, cIdField, cIndex, lAuto )
 
    set_global_memvars_from_dbf()
 

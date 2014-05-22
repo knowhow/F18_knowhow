@@ -223,7 +223,6 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
    ENDIF
 
    _a_dbf_rec  := get_a_dbf_rec( dbf_table, .T. )
-   altd()
    IF _a_dbf_rec[ "sql" ]
         RETURN .F.
    ENDIF
@@ -315,7 +314,6 @@ FUNCTION my_dbf_pack( lOpenUSharedRezimu )
       lOpenUSharedRezimu := .T.
    ENDIF
 
-   altd()
    PushWa()
    lRet :=  reopen_dbf( .T., cAlias, .T. )
 

@@ -146,7 +146,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
    aKol := {}
    aImeKol := {}
 
-   AAdd( aImeKol, { PadC( "ID/MC", 10 ), {|| sif_idmc( art_id ) }, "art_id", {|| rnal_inc_id( @wArt_id, "ART_ID" ), .F. }, {|| .T. } } )
+   AAdd( aImeKol, { PadC( "ID/MC", 10 ), {|| sif_idmc( art_id ) }, "art_id", {|| rnal_uvecaj_id( @wArt_id, "ART_ID" ), .F. }, {|| .T. } } )
    AAdd( aImeKol, { "sifra :: puni naziv", {|| AllTrim( art_desc ) + " :: " + Upper( art_full_d ) }, "art_desc" } )
    AAdd( aImeKol, { "labela opis", {|| AllTrim( art_lab_de ) }, "art_desc" } )
 
@@ -204,7 +204,7 @@ STATIC FUNCTION key_handler()
       SET FILTER TO
       SET RELATION TO
 
-      IF _set_sif_id( @nArt_id, "ART_ID", NIL, "FULL" ) == 0
+      IF setuj_novi_id_tabele( @nArt_id, "ART_ID", NIL, "FULL" ) == 0
          RETURN DE_CONT
       ENDIF
 
@@ -257,19 +257,9 @@ STATIC FUNCTION key_handler()
 
    CASE Ch == K_F4
 
-      // ima li pravo pristupa...
-      IF !ImaPravoPristupa( goModul:oDataBase:cName, "SIF", "ARTDUPLI" )
-
-         Msgbeep( cZabrana )
-         SELECT articles
-         RETURN DE_CONT
-
-      ENDIF
-
-      // dupliciranje (kloniranje) artikla....
       SELECT articles
 
-      nArt_new := clone_article( articles->art_id )
+      nArt_new := rnal_dupliciraj_artikal( articles->art_id )
 
       IF nArt_new > 0 .AND. s_elements( nArt_new, .T. ) == 1
 
@@ -278,6 +268,7 @@ STATIC FUNCTION key_handler()
          GO ( nTRec )
 
          RETURN DE_REFRESH
+
       ENDIF
 
       SELECT articles
@@ -293,10 +284,8 @@ STATIC FUNCTION key_handler()
          RETURN DE_CONT
       ENDIF
 
-      IF art_delete( field->art_id, .T. ) == 1
-
+      IF rnal_brisi_artikal( field->art_id, .T. ) == 1
          RETURN DE_REFRESH
-
       ENDIF
 
       RETURN DE_CONT
@@ -304,7 +293,6 @@ STATIC FUNCTION key_handler()
 
    CASE Ch == K_ENTER
 
-      // izaberi sifru....
       IF par_count > 0
          RETURN DE_ABORT
       ENDIF
@@ -772,16 +760,11 @@ FUNCTION g_art_desc( nArt_id, lEmpty, lFullDesc )
 
 
 
-// -------------------------------------------------------
-// brisanje sifre iz sifrarnika
-// nArt_id - artikal id
-// lSilent - tihi nacin rada, bez pitanja .t.
-// lChkKum - check kumulativ...
-// -------------------------------------------------------
-STATIC FUNCTION art_delete( nArt_id, lChkKum, lSilent )
+STATIC FUNCTION rnal_brisi_artikal( nArt_id, lChkKum, lSilent )
 
    LOCAL nEl_id
    LOCAL _del_rec, _field_ids, _where_bl
+   LOCAL _el_tek, _att_tek, _aops_tek
 
    IF lSilent == nil
       lSilent := .F.
@@ -839,6 +822,10 @@ STATIC FUNCTION art_delete( nArt_id, lChkKum, lSilent )
 
       DO WHILE !Eof() .AND. field->art_id == nArt_id
 
+         SKIP 1
+         _el_tek := RecNo()
+         SKIP -1
+
          nEl_id := field->el_id
 
          SELECT e_att
@@ -848,10 +835,14 @@ STATIC FUNCTION art_delete( nArt_id, lChkKum, lSilent )
 
          DO WHILE !Eof() .AND. field->el_id == nEl_id
 
+            SKIP 1
+            _att_tek := RecNo()
+            SKIP -1
+
             _del_rec := dbf_get_rec()
             delete_rec_server_and_dbf( Alias(), _del_rec, 1, "CONT" )
 
-            SKIP
+            GO ( _att_tek )
          ENDDO
 
          SELECT e_aops
@@ -860,11 +851,13 @@ STATIC FUNCTION art_delete( nArt_id, lChkKum, lSilent )
          SEEK elid_str( nEl_id )
 
          DO WHILE !Eof() .AND. field->el_id == nEl_id
-
+            SKIP 1
+            _aops_tek := RecNo()
+            SKIP -1
             _del_rec := dbf_get_rec()
             delete_rec_server_and_dbf( Alias(), _del_rec, 1, "CONT" )
 
-            SKIP
+            GO ( _aops_tek )
          ENDDO
 
          SELECT elements
@@ -872,7 +865,7 @@ STATIC FUNCTION art_delete( nArt_id, lChkKum, lSilent )
          _del_rec := dbf_get_rec()
          delete_rec_server_and_dbf( Alias(), _del_rec, 1, "CONT" )
 
-         SKIP
+         GO ( _el_tek )
 
       ENDDO
 
@@ -890,7 +883,7 @@ STATIC FUNCTION art_delete( nArt_id, lChkKum, lSilent )
 // ----------------------------------------------
 // kloniranje artikla
 // ----------------------------------------------
-STATIC FUNCTION clone_article( nArt_id )
+STATIC FUNCTION rnal_dupliciraj_artikal( nArt_id )
 
    LOCAL nArtNewid
    LOCAL nElRecno
@@ -913,11 +906,10 @@ STATIC FUNCTION clone_article( nArt_id )
 
    sql_table_update( nil, "BEGIN" )
 
-   IF _set_sif_id( @nArtNewid, "ART_ID" ) == 0
+   IF setuj_novi_id_tabele( @nArtNewid, "ART_ID" ) == 0
       RETURN -1
    ENDIF
 
-   // ELEMENTS
    SELECT elements
    SET ORDER TO TAG "1"
    GO TOP
@@ -925,6 +917,7 @@ STATIC FUNCTION clone_article( nArt_id )
 
    DO WHILE !Eof() .AND. field->art_id == nArt_id
 
+      nElNewId := 0
       nOldEl_id := field->el_id
       nElGr_id := field->e_gr_id
 
@@ -933,7 +926,7 @@ STATIC FUNCTION clone_article( nArt_id )
       SKIP -1
 
       // daj mi novi element
-      _set_sif_id( @nElNewid, "EL_ID" )
+      setuj_novi_id_tabele( @nElNewid, "EL_ID" )
 
       _rec := dbf_get_rec()
 
@@ -942,11 +935,9 @@ STATIC FUNCTION clone_article( nArt_id )
 
       update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
 
-      // atributi...
-      _clone_att( nOldEl_id, nElNewid )
+      rnal_dupliciraj_atribute_artikla( nOldEl_id, nElNewid )
 
-      // operacije...
-      _clone_aops( nOldEl_id, nElNewid )
+      rnal_dupliciraj_operacije_artikla( nOldEl_id, nElNewid )
 
       SELECT elements
       GO ( nElRecno )
@@ -959,15 +950,10 @@ STATIC FUNCTION clone_article( nArt_id )
    RETURN nArtNewid
 
 
-// ------------------------------------------------
-// kloniranje atributa prema elementu
-// nOldEl_id - stari element id
-// nNewEl_id - novi element id
-// ------------------------------------------------
-STATIC FUNCTION _clone_att( nOldEl_id, nNewEl_id )
+STATIC FUNCTION rnal_dupliciraj_atribute_artikla( nOldEl_id, nNewEl_id )
 
    LOCAL nElRecno
-   LOCAL nNewAttId
+   LOCAL nNewAttId := 0
    LOCAL _rec
 
    SELECT e_att
@@ -984,7 +970,7 @@ STATIC FUNCTION _clone_att( nOldEl_id, nNewEl_id )
 
       _rec := dbf_get_rec()
 
-      _set_sif_id( @nNewAttId, "EL_ATT_ID" )
+      setuj_novi_id_tabele( @nNewAttId, "EL_ATT_ID" )
 
       _rec := dbf_get_rec()
 
@@ -1001,15 +987,10 @@ STATIC FUNCTION _clone_att( nOldEl_id, nNewEl_id )
    RETURN
 
 
-// ------------------------------------------------
-// kloniranje operacija prema elementu
-// nOldEl_id - stari element id
-// nNewEl_id - novi element id
-// ------------------------------------------------
-STATIC FUNCTION _clone_aops( nOldEl_id, nNewEl_id )
+STATIC FUNCTION rnal_dupliciraj_operacije_artikla( nOldEl_id, nNewEl_id )
 
    LOCAL nElRecno
-   LOCAL nNewAopId
+   LOCAL nNewAopId := 0
    LOCAL _rec
 
    SELECT e_aops
@@ -1026,7 +1007,7 @@ STATIC FUNCTION _clone_aops( nOldEl_id, nNewEl_id )
 
       _rec := dbf_get_rec()
 
-      _set_sif_id( @nNewAopId, "EL_OP_ID" )
+      setuj_novi_id_tabele( @nNewAopId, "EL_OP_ID" )
 
       _rec[ "el_op_id" ] := nNewAopid
       _rec[ "el_id" ] := nNewEl_id
@@ -1608,10 +1589,7 @@ STATIC FUNCTION _art_apnd( nArt_id, cArt_Desc, cArt_full_desc, cArt_mcode, lNew 
       ENDIF
 
       IF lNew == .T.
-
-         // izbrisi tu stavku....
-         art_delete( nArt_id, .T., .T. )
-
+         rnal_brisi_artikal( nArt_id, .T., .T. )
       ENDIF
 
    ENDIF

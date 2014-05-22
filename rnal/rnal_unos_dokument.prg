@@ -1194,7 +1194,6 @@ STATIC FUNCTION docs_delete( lSilent )
    nDoc_no := field->doc_no
    nDoc_status := field->doc_status
 
-   altd()
    // 1) brisi dokument
    SELECT _docs
    my_delete_with_pack()

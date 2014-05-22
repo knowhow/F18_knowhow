@@ -22,9 +22,9 @@ FUNCTION ld_sifrarnici()
    o_ld_sif_tables()
 
    AAdd( _opc, "1. opći šifarnici                     " )
-   AAdd( _opcexe, {|| MnuOpSif() } )
+   AAdd( _opcexe, {|| ld_opci_sifrarnici() } )
    AAdd( _opc, "2. ostali šifrarnici" )
-   AAdd( _opcexe, {|| MnuSpSif() } )
+   AAdd( _opcexe, {|| ld_specificni_sifrarnici() } )
 
    f18_menu( "sif", .F., _izbor, _opc, _opcexe )
 
@@ -32,17 +32,11 @@ FUNCTION ld_sifrarnici()
 
 
 
-FUNCTION MnuOpSif()
+FUNCTION ld_opci_sifrarnici()
 
    LOCAL _opc := {}
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
-   LOCAL _priv := f18_privgranted( "ld_korekcija_sifrarnika" )
-
-   IF !_priv
-      MsgBeep( F18_SECUR_WARRNING )
-      RETURN .T.
-   ENDIF
 
    AAdd( _opc, lokal( "1. radnici                            " ) )
    AAdd( _opcexe, {|| P_Radn() } )
@@ -79,17 +73,11 @@ FUNCTION MnuOpSif()
 
 
 
-FUNCTION MnuSpSif()
+FUNCTION ld_specificni_sifrarnici()
 
    LOCAL _opc := {}
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
-   LOCAL _priv := f18_privgranted( "ld_korekcija_sifrarnika" )
-
-   IF !_priv
-      MsgBeep( F18_SECUR_WARRNING )
-      RETURN .T.
-   ENDIF
 
    AAdd( _opc, "1. parametri obracuna                  " )
    AAdd( _opcexe, {|| P_ParObr() } )
@@ -122,7 +110,6 @@ FUNCTION MnuSpSif()
 
 
 
-// otvaranje tabela sifrarnika
 STATIC FUNCTION o_ld_sif_tables()
 
    O_SIFK

@@ -140,7 +140,6 @@ FUNCTION Tarifa( cIdKonto, cIdRoba, aPorezi, cIdTar )
  */
 FUNCTION SetAPorezi( aPorezi )
 
-   // {
    IF ( aPorezi == nil )
       aPorezi := {}
    ENDIF
@@ -161,7 +160,6 @@ FUNCTION SetAPorezi( aPorezi )
    ENDIF
 
    RETURN NIL
-// }
 
 
 /*! \fn MpcSaPorUgost(nPosebniPorez, nPorezNaRuc, aPorezi)
@@ -172,7 +170,6 @@ FUNCTION SetAPorezi( aPorezi )
  */
 FUNCTION MpcSaPorUgost( nPosebniPorez, nPorezNaRuc, aPorezi )
 
-   // {
    LOCAL nPom
 
    // (MpcSapp - PorezNaRuc) * StopaPP = PosebniPorez
@@ -182,7 +179,7 @@ FUNCTION MpcSaPorUgost( nPosebniPorez, nPorezNaRuc, aPorezi )
    nPom := nPosebniPorez / ( aPorezi[ POR_P_PRUC ] / 100 ) + nPorezNaRUC
 	
    RETURN nPom
-// }
+
 
 /*! \fn MpcSaPor(nMpcBP, aPorezi, aPoreziIzn)
  *  \brief Racuna maloprodajnu cijenu sa porezom
@@ -215,13 +212,13 @@ FUNCTION MpcSaPor( nMPCBp, aPorezi, aPoreziIzn )
 
 FUNCTION MpcSaPorO( nMPCBp, aPorezi, aPoreziIzn )
 
-   // {
    LOCAL nPom
    LOCAL nDLRUC
    LOCAL nMPP
    LOCAL nPP
    LOCAL nPPP
    LOCAL nPPU
+
    nDLRUC := aPorezi[ POR_DLRUC ] / 100
    nMPP := aPorezi[ POR_PRUCMP ] / 100
    nPP := aPorezi[ POR_PP ] / 100
@@ -231,7 +228,6 @@ FUNCTION MpcSaPorO( nMPCBp, aPorezi, aPoreziIzn )
    nPom := nMpcBp * ( nPP + ( nPPP + 1 ) * ( 1 + nPPU ) )
 
    RETURN nPom
-// }
 
 
 /*! \fn MpcBezPor(nMpcSaPP, aPorezi, nRabat, nNC)
@@ -241,6 +237,7 @@ FUNCTION MpcSaPorO( nMPCBp, aPorezi, aPoreziIzn )
  *  \param nRabat Rabat
  *  \param nNC Nabavna cijena
  */
+
 FUNCTION MpcBezPor( nMpcSaPP, aPorezi, nRabat, nNC )
 
    LOCAL nStopa
@@ -261,11 +258,7 @@ FUNCTION MpcBezPor( nMpcSaPP, aPorezi, nRabat, nNC )
 
       nPDV := aPorezi[ POR_PPP ]
 
-      IF glUgost
-         nPP := aPorezi[ POR_PP ]
-      ELSE
-         nPP := 0
-      ENDIF
+      nPP := 0
 
       RETURN nMpcSaPP / ( ( nPDV + nPP ) / 100 + 1 )
 
@@ -314,26 +307,9 @@ FUNCTION MpcBezPorO( nMpcSaPP, aPorezi, nRabat, nNC )
    ENDIF
 
 
-   IF glUgost
-      // ovo je zapetljano ali izgleda da radi
-      // racun se sigurno moze pojednostaviti
-		
-      // porez na razliku u cijeni u maloprodaji
-      // =  bruto_marza * preracunata_stopa_poreza
-      nPor2 := Izn_P_PRugost( nMpcSaPP,, nNC, aPorezi )
-		
-      // osnovica porez na potrosnju =
-      // ( cijena_sa_porezom - porez_na_razliku_u_cijeni )
-      // posebni porez - porez na potrosnju
-      nPor3 := ( nMpcSaPP - nPor2 ) * nPP
-
-      nPom := nMpcSaPP - nPor1 - nPor2 - nPor3
-   ELSE
-      nPom := nMpcSaPP / ( nPP + ( nPPP + 1 ) * ( 1 + nPPU ) )
-   ENDIF
+   nPom := nMpcSaPP / ( nPP + ( nPPP + 1 ) * ( 1 + nPPU ) )
 
    RETURN nPom
-// }
 
 
 
@@ -346,12 +322,8 @@ FUNCTION MpcBezPorO( nMpcSaPP, aPorezi, nRabat, nNC )
  */
 FUNCTION Izn_P_PPP( nMpcBp, aPorezi, aPoreziIzn, nMpcSaP )
 
-   // {
    LOCAL nPom
    LOCAL nUkPor
-
-   IF IsPdv()
-
 
       // zadate je cijena sa porezom, utvrdi cijenu bez poreza
       IF nMpcBp == nil
@@ -363,30 +335,8 @@ FUNCTION Izn_P_PPP( nMpcBp, aPorezi, aPoreziIzn, nMpcSaP )
 
       nPom := nMpcBP * aPorezi[ POR_PPP ] / 100
 
-   ELSE
-      // ovo dole je obracun PPP
-      // ostavimo ovu sumu za sada po strani
-      IF !glPoreziLegacy
-         IF glUgost
-            IF gUgostVarijanta == "MPCSAPOR"
-               nPom := nMpcSaP * ( aPorezi[ POR_PPP ] / 100 ) / ( ( aPorezi[ POR_PPP ] / 100 ) + 1 )
-            ELSE
-               nPom := nMpcSaP * ( aPorezi[ POR_PPP ] / 100 ) / ( ( aPorezi[ POR_PPP ] / 100 ) + 1 )
-            ENDIF
-         ELSE
-            nPom := nMpcSaP * ( aPorezi[ POR_PPP ] / 100 ) / ( ( aPorezi[ POR_PPP ] / 100 ) + 1 )
-         ENDIF
-      ELSE
-         IF gUVarPP $ "MT"
-            nPom := nMpcSaP * ( aPorezi[ POR_PPP ] / 100 ) / ( ( aPorezi[ POR_PPP ] / 100 ) + 1 )
-         ELSE
-            nPom := nMpcBp * ( aPorezi[ POR_PPP ] / 100 )
-         ENDIF
-      ENDIF
-   ENDIF
 
    RETURN nPom
-// }
 
 
 /*! \fn Izn_P_PPU(nMpcBp, aPorezi, aPoreziIzn)
@@ -397,12 +347,10 @@ FUNCTION Izn_P_PPP( nMpcBp, aPorezi, aPoreziIzn, nMpcSaP )
  */
 FUNCTION Izn_P_PPU( nMPCBp, aPorezi, aPoreziIzn )
 
-   // {
    LOCAL nPom
    nPom := nMpcBp * ( aPorezi[ POR_PPP ] / 100 + 1 ) * ( aPorezi[ POR_PPU ] / 100 )
 
    RETURN nPom
-// }
 
 
 /*! \fn Izn_P_PP(nMpcBp, aPorezi, aPoreziIzn)
@@ -413,7 +361,6 @@ FUNCTION Izn_P_PPU( nMPCBp, aPorezi, aPoreziIzn )
  */
 FUNCTION Izn_P_PP( nMpcBp, aPorezi, aPoreziIzn )
 
-   // {
    LOCAL nOsnovica
    LOCAL nMpcSaPor
    LOCAL nPom
@@ -427,7 +374,6 @@ FUNCTION Izn_P_PP( nMpcBp, aPorezi, aPoreziIzn )
    ENDIF
 
    RETURN nPom
-// }
 
 /*! \fn Izn_P_PPUgost(nMpcSaPP, nIznPRuc, aPorezi)
  *  \brief Racuna posebni porez u ugostiteljstvu
@@ -437,7 +383,6 @@ FUNCTION Izn_P_PP( nMpcBp, aPorezi, aPoreziIzn )
  */
 FUNCTION Izn_P_PPUgost( nMpcSaPP, nIznPRuc, aPorezi )
 
-   // {
    LOCAL nPom
    LOCAL nDLRUC
    LOCAL nMPP
@@ -455,7 +400,6 @@ FUNCTION Izn_P_PPUgost( nMpcSaPP, nIznPRuc, aPorezi )
    nPom := ( nMpcSaPP - nIznPRuc ) * aPorezi[ POR_PP ] / 100
 
    RETURN nPom
-// }
 
 
 /*! \fn Izn_P_PRugost(nMpcSaPP, nMPCBp, nNc, aPorezi, aPoreziIzn)
@@ -467,8 +411,6 @@ FUNCTION Izn_P_PPUgost( nMpcSaPP, nIznPRuc, aPorezi )
  *  \param aPoreziIzn matrica izracunatih poreza
  */
 FUNCTION Izn_P_PRugost( nMpcSaPP, nMPCBp, nNc, aPorezi, aPoreziIzn )
-
-   // {
 
    // ovo se ne koristi u rezimu PDV-a
 
@@ -511,7 +453,6 @@ FUNCTION Izn_P_PRugost( nMpcSaPP, nMPCBp, nNc, aPorezi, aPoreziIzn )
    ENDCASE
 				
    RETURN nPom
-// }
 
 
 
@@ -520,7 +461,6 @@ FUNCTION Izn_P_PRugost( nMpcSaPP, nMPCBp, nNc, aPorezi, aPoreziIzn )
  */
 FUNCTION KorekTar()
 
-   // {
    LOCAL cTekIdTarifa
    LOCAL cPriprema
 
@@ -609,7 +549,6 @@ FUNCTION KorekTar()
    CLOSERET
 
    RETURN
-// }
 
 
 /*! \fn PrPPUMP()
@@ -646,7 +585,6 @@ FUNCTION PrPPUMP()
 */
 FUNCTION RacPorezeMP( aPorezi, nMpc, nMpcSaPP, nNc )
 
-   // {
    LOCAL nIznPRuc
    LOCAL nP1, nP2, nP3
 

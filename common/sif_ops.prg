@@ -14,23 +14,18 @@
 
 FUNCTION P_Ops( cId, dx, dy )
 
-   LOCAL _i, lRet, lSql := .F.
+   LOCAL _i, hWorkArea, lRet
    PRIVATE ImeKol
    PRIVATE Kol
 
-   // ako je tekuća Workarea DBFCDX pretpostavljam da je cId CPString
-   // ako je SQLMix onda je cId UTF8 string
-   IF USED() 
-        IF rddName() != "SQLMIX"
-             lSql := .F.
-             cId := hb_StrToUtf8( cId )
-        ENDIF
-   ELSE
-        lSql := .T.
+  
+   hWorkArea := PushWa()
+
+   IF !hWorkArea[ 'sql' ] .AND. cId != NIL
+        // ako je SQL tabela onda je cId UTF8 string
+        cId := hb_StrToUtf8( cId )
    ENDIF
-
-
-   PushWa()
+   
    O_OPS
 
    ImeKol := {}
@@ -49,9 +44,10 @@ FUNCTION P_Ops( cId, dx, dy )
 
    lRet := p_sifra( F_OPS, 1, MAXROWS() - 15, MAXCOLS() - 10, "MP: Lista općina", @cId, dx, dy )
 
-   PopWA()
+   hWorkArea := PopWA()
 
-   IF !lSql
+   IF !hWorkArea[ 'sql' ]
+        // ako smo na pocetku uradili konverziju moramo napraviti novu obrnutu konverziju 
         cId := hb_Utf8ToStr( cId )
    ENDIF
 

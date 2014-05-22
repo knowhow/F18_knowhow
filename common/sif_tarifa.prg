@@ -15,28 +15,28 @@
 
 FUNCTION P_Tarifa( cid, dx, dy )
 
-   LOCAL nTArea := SELECT()
    PRIVATE ImeKol
    PRIVATE Kol
 
    ImeKol := {}
    Kol := {}
 
+   PushWa()
    O_TARIFA
 
    AAdd( ImeKol, { "ID", {|| id }, "id", {|| .T. }, {|| vpsifra( wId ) }  } )
    AAdd( ImeKol, { PadC( "Naziv", 35 ), {|| PadR( ToStrU( naz ), 35 ) }, "naz" } )
-
-   AAdd( ImeKol,  { "PDV ", {|| opp },  "opp"  } )
+   AAdd( ImeKol,  { "PDV ", {|| opp },  "opp", NIL, NIL, NIL, "999.99" } )
 
    FOR i := 1 TO Len( ImeKol )
       AAdd( Kol, i )
    NEXT
 
-   cRet := p_sifra( F_TARIFA, 1, MAXROWS() - 15, MAXCOLS() - 25, "Tarifne grupe", @cid, dx, dy )
+   lRet := p_sifra( F_TARIFA, 1, MAXROWS() - 15, MAXCOLS() - 25, "Tarifne grupe", @cid, dx, dy )
 	
-   SELECT( nTArea )
-   RETURN cRet
+   PopWa()
+
+   RETURN lRet
 
 
 

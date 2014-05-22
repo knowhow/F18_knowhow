@@ -62,7 +62,7 @@ FUNCTION ParObracun()
       set_metric( "ld_varijanta_obracuna", NIL, gVarObracun )
 
    ENDIF
-
+   
    IF gZastitaObracuna == "D"
       IspisiStatusObracuna( gRj, gGodina, gMjesec )
    ENDIF

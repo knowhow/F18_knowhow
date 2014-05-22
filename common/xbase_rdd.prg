@@ -28,20 +28,35 @@ STATIC aWaStack := {}
 
 FUNCTION PushWA()
 
-   LOCAL cFilter
+   LOCAL hRet := hb_hash()
+   LOCAL cFilter, lSql
+
 
    IF Used()
+
       IF rddName() != "SQLMIX"
          cFilter := dbFilter()
+         lSql := .F.
       ELSE
          cFilter := ""
+         lSql := .T.
       ENDIF
-      StackPush( aWAStack, { Select(), ordName(), cFilter, RecNo() } )
+      hRet[ 'wa' ] := Select()
+      hRet[ 'index' ] := ordName()
+      hRet[ 'filter' ] := cFilter
+      hRet[ 'recno' ] := RecNo()
+      hRet[ 'sql' ] := lSql
+      StackPush( aWAStack, hRet )
    ELSE
-      StackPush( aWAStack, { NIL, NIL, NIL, NIL } )
+      hRet[ 'wa' ] := NIL
+      hRet[ 'index' ] := NIL
+      hRet[ 'filter' ] := NIL
+      hRet[ 'recno' ] := -1
+      hRet[ 'sql' ] := .F.
+      StackPush( aWAStack, hRet )
    ENDIF
 
-   RETURN NIL
+   RETURN 
 
 
 /*
@@ -51,41 +66,43 @@ FUNCTION PushWA()
     PopWa( F_KONTO ) - pozicioniraj se na WA sa stack-a,
                        ALI SAMO AKO NA stacku nije pohranjena F_KONTO WA
 
+
+
 */
 FUNCTION PopWA( nWANeDiraj )
 
-   LOCAL aWa
+   LOCAL hRet
    LOCAL i
 
    IF nWaNeDiraj == NIL
      nWaNeDiraj := -1
    ENDIF
 
-   aWa := StackPop( aWaStack )
+   hRet := StackPop( aWaStack )
 
-   IF aWa[ 1 ] <> NIL  .AND. ( aWa[ 1 ] != nWaNeDiraj )
+
+   IF hRet[ 'wa' ] <> NIL  .AND. ( hRet[ 'wa' ] != nWaNeDiraj )
 
       // select
-      SELECT( aWa[ 1 ] )
+      SELECT( hRet[ 'wa' ] )
 
       IF USED()
-         ordSetFocus( aWa[ 2 ] )
+         ordSetFocus( hRet[ 'index' ] )
 
-         // filter
-         IF !Empty( aWa[ 3 ] )
-             SET FILTER to &( aWa[ 3 ] )
+         IF !Empty( hRet[ 'filter' ] )
+             SET FILTER to &( hRet[ 'filter' ] )
          ELSE
             IF !Empty( dbFilter() )
                 SET FILTER TO
              ENDIF
          ENDIF
 
-         GO aWa[ 4 ]
+         GO hRet[ 'recno' ]
       ENDIF
 
    ENDIF
 
-   RETURN NIL
+   RETURN hRet
 
 
 FUNCTION index_tag_num( name )

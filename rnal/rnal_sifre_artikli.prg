@@ -284,10 +284,8 @@ STATIC FUNCTION key_handler()
          RETURN DE_CONT
       ENDIF
 
-      IF art_delete( field->art_id, .T. ) == 1
-
+      IF rnal_brisi_artikal( field->art_id, .T. ) == 1
          RETURN DE_REFRESH
-
       ENDIF
 
       RETURN DE_CONT
@@ -295,7 +293,6 @@ STATIC FUNCTION key_handler()
 
    CASE Ch == K_ENTER
 
-      // izaberi sifru....
       IF par_count > 0
          RETURN DE_ABORT
       ENDIF
@@ -763,16 +760,11 @@ FUNCTION g_art_desc( nArt_id, lEmpty, lFullDesc )
 
 
 
-// -------------------------------------------------------
-// brisanje sifre iz sifrarnika
-// nArt_id - artikal id
-// lSilent - tihi nacin rada, bez pitanja .t.
-// lChkKum - check kumulativ...
-// -------------------------------------------------------
-STATIC FUNCTION art_delete( nArt_id, lChkKum, lSilent )
+STATIC FUNCTION rnal_brisi_artikal( nArt_id, lChkKum, lSilent )
 
    LOCAL nEl_id
    LOCAL _del_rec, _field_ids, _where_bl
+   LOCAL _el_tek, _att_tek, _aops_tek
 
    IF lSilent == nil
       lSilent := .F.
@@ -830,6 +822,10 @@ STATIC FUNCTION art_delete( nArt_id, lChkKum, lSilent )
 
       DO WHILE !Eof() .AND. field->art_id == nArt_id
 
+         SKIP 1
+         _el_tek := RecNo()
+         SKIP -1
+
          nEl_id := field->el_id
 
          SELECT e_att
@@ -839,10 +835,14 @@ STATIC FUNCTION art_delete( nArt_id, lChkKum, lSilent )
 
          DO WHILE !Eof() .AND. field->el_id == nEl_id
 
+            SKIP 1
+            _att_tek := RecNo()
+            SKIP -1
+
             _del_rec := dbf_get_rec()
             delete_rec_server_and_dbf( Alias(), _del_rec, 1, "CONT" )
 
-            SKIP
+            GO ( _att_tek )
          ENDDO
 
          SELECT e_aops
@@ -851,11 +851,13 @@ STATIC FUNCTION art_delete( nArt_id, lChkKum, lSilent )
          SEEK elid_str( nEl_id )
 
          DO WHILE !Eof() .AND. field->el_id == nEl_id
-
+            SKIP 1
+            _aops_tek := RecNo()
+            SKIP -1
             _del_rec := dbf_get_rec()
             delete_rec_server_and_dbf( Alias(), _del_rec, 1, "CONT" )
 
-            SKIP
+            GO ( _aops_tek )
          ENDDO
 
          SELECT elements
@@ -863,7 +865,7 @@ STATIC FUNCTION art_delete( nArt_id, lChkKum, lSilent )
          _del_rec := dbf_get_rec()
          delete_rec_server_and_dbf( Alias(), _del_rec, 1, "CONT" )
 
-         SKIP
+         GO ( _el_tek )
 
       ENDDO
 
@@ -908,14 +910,14 @@ STATIC FUNCTION rnal_dupliciraj_artikal( nArt_id )
       RETURN -1
    ENDIF
 
-   altd()
    SELECT elements
    SET ORDER TO TAG "1"
    GO TOP
    SEEK artid_str( nArt_id )
-
+   altd()
    DO WHILE !Eof() .AND. field->art_id == nArt_id
 
+      nElNewId := 0
       nOldEl_id := field->el_id
       nElGr_id := field->e_gr_id
 
@@ -951,7 +953,7 @@ STATIC FUNCTION rnal_dupliciraj_artikal( nArt_id )
 STATIC FUNCTION rnal_dupliciraj_atribute_artikla( nOldEl_id, nNewEl_id )
 
    LOCAL nElRecno
-   LOCAL nNewAttId
+   LOCAL nNewAttId := 0
    LOCAL _rec
 
    SELECT e_att
@@ -988,7 +990,7 @@ STATIC FUNCTION rnal_dupliciraj_atribute_artikla( nOldEl_id, nNewEl_id )
 STATIC FUNCTION rnal_dupliciraj_operacije_artikla( nOldEl_id, nNewEl_id )
 
    LOCAL nElRecno
-   LOCAL nNewAopId
+   LOCAL nNewAopId := 0
    LOCAL _rec
 
    SELECT e_aops
@@ -1587,10 +1589,7 @@ STATIC FUNCTION _art_apnd( nArt_id, cArt_Desc, cArt_full_desc, cArt_mcode, lNew 
       ENDIF
 
       IF lNew == .T.
-
-         // izbrisi tu stavku....
-         art_delete( nArt_id, .T., .T. )
-
+         rnal_brisi_artikal( nArt_id, .T., .T. )
       ENDIF
 
    ENDIF

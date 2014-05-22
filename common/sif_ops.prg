@@ -14,14 +14,14 @@
 
 FUNCTION P_Ops( cId, dx, dy )
 
-   LOCAL _i, hWorkarea, lRet, lSql := .F.
+   LOCAL _i, hWorkArea, lRet
    PRIVATE ImeKol
    PRIVATE Kol
 
   
-   hWorkarea := PushWa()
+   hWorkArea := PushWa()
 
-   IF !hWorkaRea[ 'sql' ] .AND. cId != NIL
+   IF !hWorkArea[ 'sql' ] .AND. cId != NIL
         // ako je SQL tabela onda je cId UTF8 string
         cId := hb_StrToUtf8( cId )
    ENDIF

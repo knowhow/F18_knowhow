@@ -1,3 +1,7 @@
+1.7.87  2014-05-22, vsasa
+
+  - RNAL, dupliciranje artikla - bugfix
+ 
 1.7.86  2014-05-21, hernad
 
   - hernad ispravio opasan bug sa my_dbf_zap()

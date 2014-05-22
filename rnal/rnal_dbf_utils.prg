@@ -146,13 +146,22 @@ FUNCTION docit_str( nId )
 /*
   Opis: setuje novi zapis u tabeli i dodjeljuje novi ID po uslovnom polju
 
-  Usage: setuj_novi_id_tabele( @nId, "EL_ID" ) => nId = novi broj ID tabele
+  Usage: setuj_novi_id_tabele( @nId, "EL_ID" )
 
     Parameters: 
       - nId - vrijednost uvećanog polja 
       - cIdField - polje tabele koje treba uvećati
-      - lAuto - ???
-      - cont - tip transakcije "CONT" ili "FULL"
+      - lAuto - .T. dodaj novi zapis bez ispitivanja LastKey(), .F. - ispituj LastKey()
+      - cont - tip transakcije "CONT" ili "FULL", funkcija se može pozvati unutar transakcije
+
+    Primjer:
+
+       SELECT elements
+       nId := 0
+       setuj_novi_id_tabele( @nId, "EL_ID", .T., "FULL" )
+
+       kao rezultat dobijamo novi zapis u tabeli ELEMENTS sa uvećanim brojem polja EL_ID
+       
 */
 
 FUNCTION setuj_novi_id_tabele( nId, cIdField, lAuto, cont )

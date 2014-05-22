@@ -914,7 +914,7 @@ STATIC FUNCTION rnal_dupliciraj_artikal( nArt_id )
    SET ORDER TO TAG "1"
    GO TOP
    SEEK artid_str( nArt_id )
-   altd()
+
    DO WHILE !Eof() .AND. field->art_id == nArt_id
 
       nElNewId := 0

@@ -87,6 +87,27 @@ FUNCTION show_it( cItem, nPadR )
 
 
 
+/*
+  Opis: uvećava ID tabele i pri tome gleda zadnji ID tabele i parametar brojača te tabele sa servera
+
+  Usage: rnal_uvecaj_id( @nId, "EL_ID", "1", .T. )
+
+  Parameters: 
+      - wId - uvećana vrijednost tabele, ključno polje ID
+      - cFieldName - polje za koje pravimo uvećanje
+      - cIndexTag - index po kome će biti sortirana tabela
+      - lAuto - .T. uvećaj bez handliranja obrade tipki sa LastKey(), .F. - ispituje LastKey()
+
+  Napomene:
+      - pri pozivu funkcije moramo biti pozicionirani na tabeli za koju želimo da uvećamo polje ID
+      - za svaku tabelu će se na serveru formirati parametar "rnal_naziv_tabele_no", primjer "rnal_elements_no"
+  Primjer:
+
+     SELECT elements
+     nId := 0
+     rnal_uvecaj_id( @nId, "EL_ID", "1", .T. ) => vraća uvećanu vrijednost polja EL_ID iz tabele ELEMENTS
+*/
+
 FUNCTION rnal_uvecaj_id( wId, cFieldName, cIndexTag, lAuto )
 
    LOCAL nTRec
@@ -137,10 +158,26 @@ FUNCTION rnal_uvecaj_id( wId, cFieldName, cIndexTag, lAuto )
    RETURN .T.
 
 
-// ----------------------------------------
-// vraca posljednji id zapis iz tabele
-// cFieldName - ime id polja
-// ----------------------------------------
+
+/*
+  Opis: vraća zadnji zapis polja iz DBF tabele
+
+  Usage: rnal_last_id( "EL_ID" )
+
+  Parameters: 
+    - cFieldName - polje koje se vraća iz tabele
+
+  Napomene:
+    - bitno je da smo pozicionirani na tabeli iz koje nam treba zadnji zapis
+
+  Primjer:
+   
+   SELECT elements
+   nLast := rnal_last_id( "EL_ID" )
+
+   nLast => 123 / zadnji zapis polja EL_ID
+
+*/
 STATIC FUNCTION rnal_last_id( cFieldName )
 
    LOCAL nLast_rec := 0

@@ -396,7 +396,7 @@ DO CASE
      		if LEN( Imekol[ TB:colPos ] ) > 2
 
        			if !EMPTY( ImeKol[ TB:colPos, 3 ] )
-                    altd()
+                    
           			cKolona := ImeKol[ TB:ColPos, 3 ]
 
           			if VALTYPE( &cKolona ) $ "CD"

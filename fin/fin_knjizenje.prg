@@ -70,8 +70,8 @@ FUNCTION KnjNal()
       { "Br.veze ",      {|| BrDok   }, "BrDok" },;
       { "Datum",         {|| DatDok  }, "DatDok" },;
       { "D/P",           {|| D_P     }, "D_P" },;
-      { ValDomaca(),     {|| Transform( IznosBHD, FormPicL( gPicBHD, 15 ) ) }, "iznos " + AllTrim( ValDomaca() ) },;
-      { ValPomocna(),    {|| Transform( IznosDEM, FormPicL( gPicDEM, 10 ) ) }, "iznos " + AllTrim( ValPomocna() ) },;
+      { "Iznos " + ALLTRIM( ValDomaca() ), {|| Transform( IznosBHD, FormPicL( gPicBHD, 15 ) ) }, "iznosbhd" },;
+      { "Iznos " + ALLTRIM( ValPomocna() ), {|| Transform( IznosDEM, FormPicL( gPicDEM, 10 ) ) }, "iznosdem" },;
       { "Opis",          {|| PadR( Left( Opis, 37 ) + iif( Len( AllTrim( Opis ) ) > 37, "...", "" ), 40 )  }, "OPIS" }, ;
       { "K1",            {|| k1      }, "k1" }, ;
       { "K2",            {|| k2      }, "k2" }, ;
@@ -97,31 +97,31 @@ FUNCTION KnjNal()
 
    _opt_row := PadR( "<c+N> Nova stavka", _opt_d ) + _sep
    _opt_row += PadR( " <ENT> Ispravka", _opt_d ) + _sep
-   _opt_row += PadR( hb_UTF8ToStr( " <c+T> Briši stavku" ), _opt_d ) + _sep
+   _opt_row += PadR( " <c+T> Briši stavku" , _opt_d ) + _sep
    _opt_row += " <P> Povrat naloga"
 
-   @ m_x + _x_row - 3, m_y + 2 SAY _opt_row
+   @ m_x + _x_row - 3, m_y + 2 SAY8 _opt_row
 
    _opt_row := PadR( "<c+A> Ispravka stavki", _opt_d ) + _sep
-   _opt_row += PadR( hb_UTF8ToStr( " <c+P> Štampa naloga" ), _opt_d ) + _sep
-   _opt_row += PadR( hb_UTF8ToStr( " <a+A> Ažuriranje" ), _opt_d ) + _sep
-   _opt_row += hb_UTF8ToStr( " <x> Ažur.bez stampe" )
+   _opt_row += PadR( " <c+P> Štampa naloga", _opt_d ) + _sep
+   _opt_row += PadR( " <a+A> Ažuriranje" , _opt_d ) + _sep
+   _opt_row += " <x> Ažur.bez stampe"
 
-   @ m_x + _x_row - 2, m_y + 2 SAY _opt_row
+   @ m_x + _x_row - 2, m_y + 2 SAY8 _opt_row
 
-   _opt_row := PadR( hb_UTF8ToStr( "<c+F9> Briši sve" ), _opt_d ) + _sep
+   _opt_row := PadR( "<c+F9> Briši sve", _opt_d ) + _sep
    _opt_row += PadR( " <F5> Kontrola zbira", _opt_d ) + _sep
    _opt_row += PadR( " <a+F5> Pr.dat", _opt_d ) + _sep
    _opt_row += "<a+B> Blag. <F10> Ost."
 
-   @ m_x + _x_row - 1, m_y + 2 SAY _opt_row
+   @ m_x + _x_row - 1, m_y + 2 SAY8 _opt_row
 
-   _opt_row := PadR( hb_UTF8ToStr( "<a+T> Briši po uslovu" ), _opt_d ) + _sep
+   _opt_row := PadR( "<a+T> Briši po uslovu", _opt_d ) + _sep
    _opt_row += PadR( " <F9> sredi rbr.", _opt_d ) + _sep
    _opt_row += PadR( "", _opt_d ) + _sep
    _opt_row += ""
 
-   @ m_x + _x_row, m_y + 2 SAY _opt_row
+   @ m_x + _x_row, m_y + 2 SAY8 _opt_row
 
    ObjDbedit( "PN2", _x_row, _y_row, {|| edit_fin_pripr() }, "", "Priprema...", , , , , _help_columns )
 
@@ -266,12 +266,12 @@ FUNCTION edit_fin_priprema()
    ENDIF
 
    IF ( IsRamaGlas() )
-      @ m_x + 8, m_y + 2 SAY "Vezni broj (racun/r.nalog):"  GET _BrDok VALID BrDokOK()
+      @ m_x + 8, m_y + 2 SAY8 "Vezni broj (račun/r.nalog):"  GET _BrDok VALID BrDokOK()
    ELSE
       @ m_x + 8, m_y + 2 SAY "Vezni broj:" GET _brdok
    ENDIF
 
-   @ m_x + 8, m_y + Col() + 2  SAY "Datum:" GET _DatDok VALID chk_sezona()
+   @ m_x + 8, m_y + Col() + 2  SAY "Datum:" GET _DatDok
 
    IF gDatVal == "D"
       @ m_x + 8, Col() + 2 SAY "Valuta" GET _DatVal
@@ -328,7 +328,7 @@ FUNCTION edit_fin_priprema()
       {|| IIF( ChkKtoMark( _idkonto ), .T., .F. ) }
 
 
-   @ m_x + 16, m_y + 2  SAY "Duguje/Potrazuje (1/2):" GET _D_P VALID V_DP() .AND. fin_pravilo_dug_pot() .AND. fin_pravilo_broj_veze()
+   @ m_x + 16, m_y + 2  SAY8 "Duguje/Potražuje (1/2):" GET _D_P VALID V_DP() .AND. fin_pravilo_dug_pot() .AND. fin_pravilo_broj_veze()
 
    @ m_x + 16, m_y + 65 GET _ostav PUSHBUTTON  CAPTION "<Otvorene stavke>" WHEN {|| _iznos_unesen } VALID {|| _iznos_unesen := .F., .T. } ;
       SIZE X 15 Y 2 STATE {| param| KonsultOs( param ) }
@@ -338,10 +338,8 @@ FUNCTION edit_fin_priprema()
    @ m_x + 17, m_y + 46  GET _IznosDEM  PICTURE '9999999999.99' ;
       WHEN {|| DinDEM( , , "_IZNOSBHD" ), .T. }
 
-
    READ
 
-   // ako su radne jedinice setuj var cTekucaRJ na novu vrijednost
    IF ( gRJ == "D" .AND. cTekucaRJ <> _idrj )
       cTekucaRJ := _idrj
       SetTekucaRJ( cTekucaRJ )
@@ -363,44 +361,6 @@ FUNCTION edit_fin_priprema()
 
 
 
-
-// provjeri datum dokumenta na osnovu tek.sezona i upozori
-STATIC FUNCTION chk_sezona()
-
-   LOCAL nYearDok
-   LOCAL nYearSez
-   LOCAL cCurrSez
-   LOCAL cTmp := ""
-
-   // trenutno ukidam ovu provjeru, jer nemamo sezona
-
-   RETURN .T.
-
-cCurrSez := goModul:oDataBase:cRadimUSezona
-
-IF cCurrSez == "RADP"
-// ako je radno podrucje, procitaj koja je sezona
-nYearSez := Val( goModul:oDataBase:cSezona )
-cTmp := goModul:oDataBase:cSezona
-ELSE
-// vidi koja je sezona cRadimUSezona
-nYearSez := Val( cCurrSez )
-cTmp := cCurrSez
-ENDIF
-
-nYearDok := Year( _datdok )
-
-IF nYearSez <> nYearDok
-MsgBeep( "Upozorenje!##Datum dokumenta " + DToC( _datDok ) + "#Tekuca sezona " + cTmp )
-ENDIF
-
-   RETURN .T.
-
-
-
-// -----------------------------------------------------
-// minimalna duzina konta
-// -----------------------------------------------------
 FUNCTION MinKtoLen( cIdKonto )
 
    IF gKtoLimit == "N"
@@ -411,7 +371,7 @@ FUNCTION MinKtoLen( cIdKonto )
       IF Len( AllTrim( cIdKonto ) ) > gnKtoLimit
          RETURN .T.
       ELSE
-         MsgBeep( "Duzina konta mora biti veca od " + AllTrim( Str( gnKtoLimit ) ) )
+         MsgBeep( "Dužina konta mora biti veća od " + AllTrim( Str( gnKtoLimit ) ) )
          RETURN .F.
       ENDIF
    ENDIF
@@ -467,7 +427,7 @@ FUNCTION V_DP()
    IF _d_p == "1"
       ?? "   DUGUJE"
    ELSE
-      ?? "POTRAZUJE"
+      ?? hb_utf8tostr( "POTRAŽUJE" )
    ENDIF
 
    ?? " " + ValDomaca()
@@ -477,7 +437,7 @@ FUNCTION V_DP()
    IF _d_p == "1"
       ?? "   DUGUJE"
    ELSE
-      ?? "POTRAZUJE"
+      ?? hb_utf8tostr( "POTRAŽUJE" )
    ENDIF
 
    ?? " " + ValPomocna()

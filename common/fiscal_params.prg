@@ -29,29 +29,6 @@ FUNCTION fiscal_opt_active()
 
 
 
-FUNCTION f18_fiscal_params_menu()
-
-   LOCAL _opc := {}
-   LOCAL _opc_exe := {}
-   LOCAL _izbor := 1
-
-   fiscal_opt_active()
-
-   AAdd( _opc, "1. fiskalni uređaji: globalne postavke        " )
-   AAdd( _opc_exe, {|| set_main_fiscal_params() } )
-   AAdd( _opc, "2. fiskalni uređaji: korisničke postavke " )
-   AAdd( _opc_exe, {|| set_user_fiscal_params() } )
-   AAdd( _opc, "3. korisničke fiskalne postavke  " )
-   AAdd( _opc_exe, {|| set_global_fiscal_params() } )
-   AAdd( _opc, "4. pregled parametara" )
-   AAdd( _opc_exe, {|| print_fiscal_params() } )
-
-   f18_menu( "fiscal", .F., _izbor, _opc, _opc_exe )
-
-   RETURN
-
-
-
 // ---------------------------------------------
 // init fiscal params
 //
@@ -92,7 +69,7 @@ FUNCTION set_init_fiscal_params()
 
 // --------------------------------------------------------------
 // vraca naziv fiskalnog uredjaja
-// --------------------------------------------------------------
+// ---------------------------------:-----------------------------
 STATIC FUNCTION get_fiscal_device_name( device_id )
 
    LOCAL _tmp := PadL( AllTrim( Str( device_id ) ), 2, "0" )
@@ -101,37 +78,46 @@ STATIC FUNCTION get_fiscal_device_name( device_id )
 
 
 
-// ---------------------------------------------------------------------
-// setovanje globalnih fiskalnih parametara
-// ---------------------------------------------------------------------
-FUNCTION set_global_fiscal_params()
+FUNCTION fiskalni_parametri_za_korisnika()
 
    LOCAL _x := 1
    LOCAL _fiscal := fetch_metric( "fiscal_opt_active", my_user(), "N" )
    LOCAL _fiscal_devices := PadR( fetch_metric( "fiscal_opt_usr_devices", my_user(), "" ), 50 )
    LOCAL _pos_def := fetch_metric( "fiscal_opt_usr_pos_default_device", my_user(), 0 )
    LOCAL _rpt_warrning := fetch_metric( "fiscal_opt_usr_daily_warrning", my_user(), "N" )
+   LOCAL _opc := {}
+   LOCAL _opc_exe := {}
+   LOCAL  _izbor := 1
 
-   Box(, 6, 80 )
 
-   @ m_x + _x, m_y + 2 SAY "Koristiti fiskalne opcije (D/N) ?" GET _fiscal PICT "@!" VALID _fiscal $ "DN"
+   _fiscal := Pitanje( , "Koristiti fiskalne funkcije ?" , _fiscal )
 
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "Lista fiskanih uređaja koji se koriste:" GET _fiscal_devices WHEN help_lista_fiskalnih_uredjaja() PICT "@S30"
+   IF _fiscal ==  "N" .OR. LastKey() == K_ESC
+       RETURN .F.
+   ENDIF
+
+
+  
+   AAdd( _opc, "1. fiskalni uređaji: globalne postavke        " )
+   AAdd( _opc_exe, {|| globalne_postavke_fiskalni_uredjaj() } )
+   AAdd( _opc, "2. fiskalni uređaji: korisničke postavke " )
+   AAdd( _opc_exe, {|| korisnik_postavke_fiskalni_uredjaj() } )
+   AAdd( _opc, "P. pregled parametara" )
+   AAdd( _opc_exe, {|| print_fiscal_params() } )
+
+   f18_menu( "fiscal", .F., _izbor, _opc, _opc_exe )
+
+   Box( , 6, 75 )
+   _x := 2
+   @ m_x + _x, m_y + 2 SAY8 "Lista fiskanih uređaja koji se koriste:" GET _fiscal_devices VALID valid_lista_fiskalnih_uredjaja( _fiscal_devices ) PICT "@S30"
 
    IF f18_use_module( "pos" )
-
-      ++ _x
-      @ m_x + _x, m_y + 2 SAY8 "Primarni fiskalni uređaj"
-      ++ _x
-      @ m_x + _x, m_y + 2 SAY8 "kod POS štampe POS računa:" GET _pos_def WHEN help_pos_fiskalni_uredjaj() PICT "99"
-
+       ++ _x
+       @ m_x + _x, m_y + 2 SAY8 "Primarni fiskalni uređaj kod štampe POS računa:" GET _pos_def VALID valid_pos_fiskalni_uredjaj( _pos_def ) PICT "99"
    ENDIF
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "Upozorenje za dnevne izvještaje (D/N)?" GET _rpt_warrning PICT "@!" ;
-      VALID _rpt_warrning $ "DN"
-
+   @ m_x + _x, m_y + 2 SAY8 "Upozorenje za dnevne izvještaje (D/N)?" GET _rpt_warrning PICT "@!" VALID _rpt_warrning $ "DN"
    READ
 
    BoxC()
@@ -147,27 +133,32 @@ FUNCTION set_global_fiscal_params()
 
    fiscal_opt_active()
 
+   RETURN  ( _fiscal == "D" )
+
+
+
+STATIC FUNCTION valid_lista_fiskalnih_uredjaja( cLista )
+
+   IF EMPTY( cLista )
+      MsgBeep( "Ako želite koristiti fiskalne uređaje 1 i 3,#navesti: 1;3" )
+      RETURN .F.
+   ENDIF
+
    RETURN .T.
 
 
+STATIC FUNCTION valid_pos_fiskalni_uredjaj( nUredjaj )
 
-STATIC FUNCTION help_lista_fiskalnih_uredjaja()
+   IF nUredjaj > 0
+       RETURN .T.
+   ENDIF
 
-  MsgBeep( "Ako želite koristiti fiskalne uređaje 1 i 3,#navesti: 1;3" )
+   MsgBeep( "Odaberi fiskalni uređaj koji se koristi za POS račune,#npr: 1" )
+   RETURN .F.
 
-  RETURN .T.
 
 
-STATIC FUNCTION help_pos_fiskalni_uredjaj()
-
-  MsgBeep( "Odaberi fiskalni uređaj koji se koristi za POS račune,#npr: 1" )
-
-  RETURN .T.
-
-// ---------------------------------------------
-// set global fiscal params
-// ---------------------------------------------
-FUNCTION set_main_fiscal_params()
+FUNCTION globalne_postavke_fiskalni_uredjaj()
 
    LOCAL _device_id := 1
    LOCAL _max_id := 10
@@ -180,13 +171,13 @@ FUNCTION set_main_fiscal_params()
    LOCAL _dev_restart
 
    IF !__use_fiscal_opt
-      MsgBeep( "Fiskalne opcije moraju biti ukljucene !!!" )
+      MsgBeep( "Fiskalne opcije moraju biti uključene !" )
       RETURN .F.
    ENDIF
 
    Box(, 20, 80 )
 
-   @ m_x + _x, m_y + 2 SAY "Uredjaj ID:" GET _device_id ;
+   @ m_x + _x, m_y + 2 SAY8 "Uređaj ID:" GET _device_id ;
       PICT "99" ;
       VALID ( _device_id >= _min_id .AND. _device_id <= _max_id )
 
@@ -197,10 +188,8 @@ FUNCTION set_main_fiscal_params()
       RETURN .F.
    ENDIF
 
-   ++ _x
-   ++ _x
-
-   @ m_x + _x, m_y + 2 SAY PadR( "**** Podesenje uredjaja", 60 ) COLOR "I"
+   _x += 2
+   @ m_x + _x, m_y + 2 SAY8 PadR( "**** Podešenje uređaja", 60 ) COLOR "I"
 
    _dev_tmp := PadL( AllTrim( Str( _device_id ) ), 2, "0" )
    _dev_name := PadR( fetch_metric( "fiscal_device_" + _dev_tmp + "_name", NIL, "" ), 100 )
@@ -218,20 +207,13 @@ FUNCTION set_main_fiscal_params()
    _dev_restart := fetch_metric( "fiscal_device_" + _dev_tmp + "_restart_service", NIL, "N" )
 
    ++ _x
+   @ m_x + _x, m_y + 2 SAY8 "Naziv uređaja:" GET _dev_name   PICT "@S40"
+   @ m_x + _x, Col() + 1 SAY8 "Aktivan (D/N):" GET _dev_act  PICT "@!"  VALID _dev_act $ "DN"
 
-   @ m_x + _x, m_y + 2 SAY "Naziv uredjaja:" GET _dev_name ;
-      PICT "@S40"
-
-   @ m_x + _x, Col() + 1 SAY "Aktivan (D/N):" GET _dev_act ;
-      PICT "@!" ;
-      VALID _dev_act $ "DN"
-
-   ++ _x
-   ++ _x
+   _x += 2
 
    @ m_x + _x, m_y + 2 SAY "Drajver (FPRINT/HCP/TREMOL/TRING/...):" GET _dev_drv ;
-      PICT "@S20" ;
-      VALID !Empty( _dev_drv )
+      PICT "@S20"  VALID !Empty( _dev_drv )
 
    READ
 
@@ -243,60 +225,45 @@ FUNCTION set_main_fiscal_params()
    IF AllTrim( _dev_drv ) == "FPRINT"
 
       ++ _x
-
       @ m_x + _x, m_y + 2 SAY "IOSA broj:" GET _dev_iosa ;
-         PICT "@S16" ;
-         VALID !Empty( _dev_iosa )
+         PICT "@S16"  VALID !Empty( _dev_iosa )
 
       @ m_x + _x, Col() + 1 SAY "Serijski broj:" GET _dev_serial ;
-         PICT "@S20" ;
-         VALID !Empty( _dev_serial )
+         PICT "@S20" VALID !Empty( _dev_serial )
 
    ENDIF
 
    ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "Uredjaj je u sistemu PDV-a (D/N):" GET _dev_pdv ;
-      PICT "@!" ;
-      VALID _dev_pdv $ "DN"
+   @ m_x + _x, m_y + 2 SAY8 "Uređaj je u sistemu PDV-a (D/N):" GET _dev_pdv ;
+      PICT "@!" VALID _dev_pdv $ "DN"
 
    ++ _x
+   @ m_x + _x, m_y + 2 SAY8 "Tip uređaja (K - kasa, P - printer):" GET _dev_type ;
+      PICT "@!" VALID _dev_type $ "KP"
 
-   @ m_x + _x, m_y + 2 SAY "Tip uredjaja (K - kasa, P - printer):" GET _dev_type ;
-      PICT "@!" ;
-      VALID _dev_type $ "KP"
-
-   ++ _x
-   ++ _x
+   _x += 2
 
    @ m_x + _x, m_y + 2 SAY PadR( "**** Parametri artikla", 60 ) COLOR "I"
 
    ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "Za artikal koristiti plu [D/P] (stat./dinam.) [I] id, [B] barkod:" GET _dev_plu ;
-      PICT "@!" ;
-      VALID _dev_plu $ "DPIB"
+   @ m_x + _x, m_y + 2 SAY8 "Za artikal koristiti plu [D/P] (stat./dinam.) [I] id, [B] barkod:" GET _dev_plu ;
+      PICT "@!" VALID _dev_plu $ "DPIB"
 
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "(dinamicki) inicijalni PLU kod:" GET _dev_init_plu PICT "999999"
+   @ m_x + _x, m_y + 2 SAY8 "(dinamički) inicijalni PLU kod:" GET _dev_init_plu PICT "999999"
+
+   _x += 2
+   @ m_x + _x, m_y + 2 SAY8 PadR( "**** Parametri rada sa uređajem", 60 ) COLOR "I"
 
    ++ _x
-   ++ _x
-
-   @ m_x + _x, m_y + 2 SAY PadR( "**** Parametri rada sa uredjajem", 60 ) COLOR "I"
-
-   ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "Automatski polog u uredjaj:" GET _dev_avans PICT "999999.99"
-   @ m_x + _x, Col() + 1 SAY "Timeout fiskalnih operacija:" GET _dev_timeout PICT "999"
+   @ m_x + _x, m_y + 2 SAY8 "Automatski polog u uredjaj:" GET _dev_avans PICT "999999.99"
+   @ m_x + _x, Col() + 1 SAY8 "Timeout fiskalnih operacija:" GET _dev_timeout PICT "999"
 
    ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "Zbirni racun u VP (0/1/...):" GET _dev_vp_sum PICT "999"
+   @ m_x + _x, m_y + 2 SAY8 "Zbirni račun u VP (0/1/...):" GET _dev_vp_sum PICT "999"
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Restart servisa nakon slanja komande (D/N) ?" GET _dev_restart ;
       PICT "@!" ;
       VALID _dev_restart $ "DN"
@@ -328,9 +295,7 @@ FUNCTION set_main_fiscal_params()
 
 
 
-
-
-FUNCTION set_user_fiscal_params()
+FUNCTION korisnik_postavke_fiskalni_uredjaj()
 
    LOCAL _user_name := my_user()
    LOCAL _user_id := GetUserId( _user_name )
@@ -344,21 +309,20 @@ FUNCTION set_user_fiscal_params()
    LOCAL _op_docs
 
    IF !__use_fiscal_opt
-      MsgBeep( "Fiskalne opcije moraju biti ukljucene !!!" )
+      MsgBeep( "Fiskalne opcije moraju biti uključene !" )
       RETURN .F.
    ENDIF
 
    Box(, 20, 80 )
 
-   @ m_x + _x, m_y + 2 SAY PadL( "Uredjaj ID:", 15 ) GET _device_id ;
+   @ m_x + _x, m_y + 2 SAY8 PadL( "Uređaj ID:", 15 ) GET _device_id ;
       PICT "99" ;
       VALID {|| ( _device_id >= _min_id .AND. _device_id <= _max_id ), ;
       show_it( get_fiscal_device_name( _device_id, 30 ) ), .T. }
 
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY PadL( "Korisnik:", 15 ) GET _user_id ;
-      PICT "99999999" ;
+   @ m_x + _x, m_y + 2 SAY8 PadL( "Korisnik:", 15 ) GET _user_id PICT "99999999" ;
       VALID {|| iif( _user_id == 0, choose_f18_user_from_list( @_user_id ), .T. ), ;
       show_it( GetFullUserName( _user_id ), 30 ), .T.  }
 
@@ -371,13 +335,10 @@ FUNCTION set_user_fiscal_params()
 
    _user_name := AllTrim( GetUserName( _user_id ) )
 
-   ++ _x
-   ++ _x
-
-   @ m_x + _x, m_y + 2 SAY PadR( "*** podesenja rada sa uredjajem", 60 ) COLOR "I"
+   _x += 2
+   @ m_x + _x, m_y + 2 SAY8 PadR( "*** Podešenja rada sa uređajem", 60 ) COLOR "I"
 
    ++ _x
-
    _dev_tmp := PadL( AllTrim( Str( _device_id ) ), 2, "0" )
    _dev_drv := AllTrim( fetch_metric( "fiscal_device_" + _dev_tmp + "_drv", NIL, "" ) )
 
@@ -394,34 +355,24 @@ FUNCTION set_user_fiscal_params()
    @ m_x + _x, m_y + 2 SAY "Direktorij izlaznih fajlova:" GET _out_dir PICT "@S50" VALID _valid_fiscal_path( _out_dir )
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "       Naziv izlaznog fajla:" GET _out_file PICT "@S20" VALID !Empty( _out_file )
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "       Naziv fajla odgovora:" GET _out_answer PICT "@S20"
 
-   ++ _x
-   ++ _x
-
+   _x += 2
    @ m_x + _x, m_y + 2 SAY "Operater, ID:" GET _op_id PICT "@S10"
    @ m_x + _x, Col() + 1 SAY "lozinka:" GET _op_pwd PICT "@S10"
 
-   ++ _x
-   ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "Stampati A4 racun nakon fiskalnog (D/N/G/X):" GET _print_a4 ;
+   _x += 2
+   @ m_x + _x, m_y + 2 SAY8 "Štampati A4 racun nakon fiskalnog (D/N/G/X):" GET _print_a4 ;
       PICT "@!" VALID _print_a4 $ "DNGX"
 
-   ++ _x
-   ++ _x
-
+   _x += 2
    @ m_x + _x, m_y + 2 SAY "Uredjaj koristiti za slj.tipove dokumenata:" GET _op_docs PICT "@S20"
 
-   ++ _x
-   ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "Korisnik moze printati fiskalne racune (D/N/T):" GET _print_fiscal ;
+   _x += 2
+   @ m_x + _x, m_y + 2 SAY8 "Korisnik može printati fiskalne račune (D/N/T):" GET _print_fiscal ;
       PICT "@!" VALID _print_fiscal $ "DNT"
 
    READ
@@ -628,7 +579,7 @@ FUNCTION get_fiscal_devices_list( user, tip_dok )
             .AND. IF( !Empty( _dev_docs_list ) .AND. !Empty( AllTrim( tip_dok ) ), tip_dok $ _dev_docs_list, .T. )
 
          AAdd( _arr, { _dev_id, fetch_metric( "fiscal_device_" + _dev_tmp + "_name", NIL, "" ), ;
-                                fetch_metric( "fiscal_device_" + _dev_tmp + "_drv", NIL, "" ) } )
+            fetch_metric( "fiscal_device_" + _dev_tmp + "_drv", NIL, "" ) } )
 
       ENDIF
 
@@ -643,7 +594,7 @@ FUNCTION get_fiscal_devices_list( user, tip_dok )
 
    usage: fiskalni_uredjaj_model() => "FPRINT"
 
-     return: 
+     return:
 
        - model uređaja, npr FPRINT, TREMOL itd...
        - ukoliko se koristi više vrsta uređaja vraća "MIX"
@@ -654,7 +605,7 @@ FUNCTION fiskalni_uredjaj_model()
    LOCAL cModel := ""
    LOCAL aDevices := get_fiscal_devices_list()
 
-   FOR n := 1 TO LEN( aDevices )
+   FOR n := 1 TO Len( aDevices )
       IF aDevices[ n, 3 ] <> cModel .AND. n > 1
          cModel := "MIX"
          EXIT
@@ -682,7 +633,7 @@ STATIC FUNCTION fiskalni_uredjaji_meni( arr )
       _tmp := ""
       _tmp += PadL( AllTrim( Str( _i ) ) + ")", 3 )
       _tmp += " uredjaj " + PadL( AllTrim( Str( arr[ _i, 1 ] ) ), 2, "0" )
-      _tmp += " : " + PadR( hb_strtoutf8( arr[ _i, 2 ] ), 40 )
+      _tmp += " : " + PadR( hb_StrToUTF8( arr[ _i, 2 ] ), 40 )
 
       AAdd( _opc, _tmp )
       AAdd( _opcexe, {|| "" } )

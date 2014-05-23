@@ -16,10 +16,7 @@ STATIC __device_id
 STATIC __device_params
 
 
-// ---------------------------------------------------------
-// fiskalni izvjestaji i komande
-// ---------------------------------------------------------
-FUNCTION fisc_rpt( low_level, from_pos )
+FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
 
    LOCAL _dev_id := 0
    LOCAL _dev_drv
@@ -38,7 +35,6 @@ FUNCTION fisc_rpt( low_level, from_pos )
       from_pos := .F.
    ENDIF
 
-   // vrati mi fiskalni uredjaj....
    __device_id := get_fiscal_device( my_user(), NIL, from_pos )
 
    IF __device_id == 0

@@ -106,7 +106,7 @@ FUNCTION pos_unos_racuna()
 
    SetKey( K_F7, {|| pos_storno_fisc_no(), _refresh_total() } )
    SetKey( K_F8, {|| pos_storno_rn(), _refresh_total() } )
-   SetKey( K_F9, {|| fisc_rpt( .T., .T.  ) } )
+   SetKey( K_F9, {|| fiskalni_izvjestaji_komande( .T., .T.  ) } )
 
    SetSpecNar()
 

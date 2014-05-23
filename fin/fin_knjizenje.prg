@@ -427,7 +427,7 @@ FUNCTION V_DP()
    IF _d_p == "1"
       ?? "   DUGUJE"
    ELSE
-      ?? hb_utf8tostr( "POTRAŽUJE" )
+      ??U "POTRAŽUJE"
    ENDIF
 
    ?? " " + ValDomaca()
@@ -437,7 +437,7 @@ FUNCTION V_DP()
    IF _d_p == "1"
       ?? "   DUGUJE"
    ELSE
-      ?? hb_utf8tostr( "POTRAŽUJE" )
+      ??U "POTRAŽUJE"
    ENDIF
 
    ?? " " + ValPomocna()

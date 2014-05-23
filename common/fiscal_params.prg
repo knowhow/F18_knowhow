@@ -89,8 +89,8 @@ FUNCTION fiskalni_parametri_za_korisnika()
    LOCAL _opc_exe := {}
    LOCAL  _izbor := 1
 
-
    _fiscal := Pitanje( , "Koristiti fiskalne funkcije ?" , _fiscal )
+   set_metric( "fiscal_opt_active", my_user(), _fiscal )
 
    IF _fiscal ==  "N" .OR. LastKey() == K_ESC
        RETURN .F.
@@ -126,7 +126,6 @@ FUNCTION fiskalni_parametri_za_korisnika()
       RETURN .F.
    ENDIF
 
-   set_metric( "fiscal_opt_active", my_user(), _fiscal )
    set_metric( "fiscal_opt_usr_devices", my_user(), AllTrim( _fiscal_devices ) )
    set_metric( "fiscal_opt_usr_pos_default_device", my_user(), _pos_def )
    set_metric( "fiscal_opt_usr_daily_warrning", my_user(), _rpt_warrning )

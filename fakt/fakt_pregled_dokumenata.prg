@@ -257,7 +257,6 @@ FUNCTION print_porezna_faktura( lOpcine )
    RETURN DE_CONT
 
 
-// stampaj poresku fakturu u odt formatu
 FUNCTION pr_odt( lOpcine )
 
    SELECT fakt_doks
@@ -288,9 +287,6 @@ FUNCTION pr_odt( lOpcine )
 
 
 
-// --------------------------
-// generisi fakturu
-// --------------------------
 FUNCTION generisi_fakturu( is_opcine )
 
    LOCAL cTipDok
@@ -332,7 +328,6 @@ FUNCTION generisi_fakturu( is_opcine )
    dDatIsp := Date()
    cNBrFakt := PadR( "00000", 8 )
 
-   // uslovi generisanja...
    Box(, 5, 55 )
 
    @ m_x + 1, m_y + 2 SAY "*** Parametri fakture "
@@ -345,7 +340,6 @@ FUNCTION generisi_fakturu( is_opcine )
 
    BoxC()
 
-   // dokument ubaci u pripremu...
    SELECT fakt
    SET ORDER TO TAG "1"
    GO TOP
@@ -362,7 +356,6 @@ FUNCTION generisi_fakturu( is_opcine )
       _rec[ "brdok" ] := cNBrFakt
       _rec[ "datdok" ] := dDatFakt
 
-      // dodaj memo polje, samo prva stavka
       IF nCnt = 1
 
          _rec[ "txt" ] := ""
@@ -403,11 +396,6 @@ FUNCTION generisi_fakturu( is_opcine )
       MsgBeep( "Dokument formiran i nalazi se u pripremi. Obradite ga !" )
    ENDIF
 
-   // sada imamo dokument u pripremi...
-
-   // mozemo ga automatski azurirati po zelji...
-   // ostavljam ovo za sada...
-
    IF isugovori()
 
       IF pitanje(, "Setovati datum uplate za partnera ?", "N" ) == "D"
@@ -445,29 +433,6 @@ FUNCTION generisi_fakturu( is_opcine )
 
 
 
-
-
-FUNCTION pr_choice()
-
-   LOCAL nSelected
-   PRIVATE Opc := {}
-   PRIVATE opcexe := {}
-   PRIVATE Izbor
-
-   AAdd( opc, "   >  stampa dokumenta        " )
-   AAdd( opcexe, {|| nSelected := Izbor, Izbor := 0  } )
-   AAdd( opc, "   >  stampa narudzbenice     " )
-   AAdd( opcexe, {|| nSelected := Izbor, Izbor := 0  } )
-   AAdd( opc, "   >  stampa radnog naloga    " )
-   AAdd( opcexe, {|| nSelected := Izbor, Izbor := 0  } )
-
-   Izbor := 1
-   Menu_SC( "pch" )
-
-   RETURN nSelected
-
-
-
 STATIC FUNCTION prikazi_broj_fiskalnog_racuna( model )
 
    LOCAL _fisc_rn
@@ -477,8 +442,8 @@ STATIC FUNCTION prikazi_broj_fiskalnog_racuna( model )
 
    IF fakt_doks->idtipdok $ "10#11"
       IF !postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, model )
-         _txt := "nema fiskalnog racuna !?!!!"
-         @ m_x + 1, m_y + 2 SAY PadR( _txt, 60 ) COLOR "W/R+"
+         _txt := "nema fiskalnog računa !"
+         @ m_x + 1, m_y + 2 SAY8 PadR( _txt, 60 ) COLOR "W/R+"
       ELSE
          _fisc_rn := AllTrim( Str( fakt_doks->fisc_rn ) )
          _rekl_rn := AllTrim( Str( fakt_doks->fisc_st ) )
@@ -520,41 +485,36 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
       nRet := print_porezna_faktura( lOpcine )
       _refresh := .T.
 
-      // odt stampa dokumenta
    CASE Ch == K_ALT_P
 
       nRet := pr_odt( lOpcine )
       _refresh := .T.
 
-      // refresh tabele
    CASE Ch == K_F5
 
-      // zatvori tabelu, pa otvori
       SELECT fakt_doks
       USE
       O_FAKT_DOKS
 
-      // refresh tabele
       nRet := DE_REFRESH
       _refresh := .T.
 
 
-      // setovanje broja veze fiskalnog racuna
    CASE CH == K_CTRL_V
 
       SELECT fakt_doks
 
       IF postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, model )
 
-         msgbeep( "veza: fiskalni racun vec setovana !" )
+         msgbeep( "veza: fiskalni račun već setovana !" )
 
-         IF Pitanje( "FAKT_PROM_VEZU", "Promjeniti postojecu vezu (D/N)?", "N" ) == "N"
+         IF Pitanje( "FAKT_PROM_VEZU", "Promjeniti postojeću vezu (D/N)?", "N" ) == "N"
             RETURN DE_CONT
          ENDIF
 
       ENDIF
 
-      IF Pitanje( "FISC_NVEZA_SET", "Setovati novu vezu sa fiskalnim racunom (D/N)?", "D" ) == "N"
+      IF Pitanje( "FISC_NVEZA_SET", "Setovati novu vezu sa fiskalnim računom (D/N)?", "D" ) == "N"
          RETURN DE_CONT
       ENDIF
 
@@ -586,20 +546,17 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
 
       ENDIF
 
-      // korekcija podataka dokumenta
    CASE Chr( Ch ) $ "kK"
 
-      // korekcija podataka na dokumentu
       IF fakt_edit_data( field->idfirma, field->idtipdok, field->brdok )
          nRet := DE_REFRESH
          _refresh := .T.
       ENDIF
 
-      // duplikat fiskalnog racuna...
    CASE Upper( Chr( Ch ) ) == "T"
 
       IF ! ( field->idtipdok $ "10#11" )
-         MsgBeep( "Opcija moguca samo za racune !" )
+         MsgBeep( "Opcija moguća samo za račune !" )
          RETURN DE_CONT
       ENDIF
 
@@ -623,7 +580,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
       ENDIF
 
       IF _dev_params[ "drv" ] <> "FPRINT"
-         MsgBeep( "Opcija moguca samo za FPRINT/DATECS uredjaje !" )
+         MsgBeep( "Opcija moguća samo za FPRINT/DATECS uređaje !" )
          RETURN DE_CONT
       ENDIF
 
@@ -640,7 +597,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
 
       fprint_double( _dev_params, _rn_params )
 
-      MsgBeep( "Duplikat racuna za datum: " + DToC( field->fisc_date ) + ", vrijeme: " + AllTrim( field->fisc_time ) )
+      MsgBeep( "Duplikat računa za datum: " + DToC( field->fisc_date ) + ", vrijeme: " + AllTrim( field->fisc_time ) )
 
 
    CASE Upper( Chr( Ch ) ) == "R"
@@ -652,11 +609,11 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
       IF field->idtipdok $ "10#11"
 
          IF postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, model ) 
-            MsgBeep( "Fiskalni racun vec stampan za ovaj dokument !!!#Ako je potrebna ponovna stampa resetujte broj veze." )
+            MsgBeep( "Fiskalni račun već štampan za ovaj dokument !#Ako je potrebna ponovna štampa resetujte broj veze." )
             RETURN DE_CONT
          ENDIF
 
-         IF Pitanje( "ST FISK RN5", "Stampati fiskalni racun za dokument " + ;
+         IF Pitanje( "ST FISK RN5", "Štampati fiskalni račun za dokument " + ;
                AllTrim( field->idfirma ) + "-" + ;
                AllTrim( field->idtipdok ) + "-" + ;
                AllTrim( field->brdok ) + " (D/N) ?", "D" ) == "D"
@@ -692,18 +649,16 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
 
       ENDIF
 
-      // duplikat dokumenta
    CASE Chr( ch ) $ "wW"
 
       fakt_napravi_duplikat( field->idfirma, field->idtipdok, field->brdok )
       SELECT fakt_doks
 
-      // generisanje storno dokumenta
    CASE Chr( Ch ) $ "sS"
 
       storno_dok( field->idfirma, field->idtipdok, field->brDok )
 
-      IF Pitanje(, "Preci u tabelu pripreme ?", "D" ) == "D"
+      IF Pitanje(, "Preći u tabelu pripreme ?", "D" ) == "D"
          fUPripremu := .T.
          nRet := DE_ABORT
       ELSE
@@ -731,7 +686,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
 
       O_FAKT_DOKS
 
-      IF _tmp <> 0 .AND. Pitanje(, "Preci u tabelu pripreme ?", "D" ) == "D"
+      IF _tmp <> 0 .AND. Pitanje(, "Preći u tabelu pripreme ?", "D" ) == "D"
          fUPripremu := .T.
          _refresh := .F.
          nRet := DE_ABORT
@@ -742,7 +697,6 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
 
    ENDCASE
 
-   // refresh ako ima potrebe za tim...
    IF _refresh
 
       SELECT ( _t_area )

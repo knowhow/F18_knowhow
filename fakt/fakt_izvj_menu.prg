@@ -36,7 +36,7 @@ FUNCTION fakt_izvjestaji()
 
    IF fiscal_opt_active()
       AAdd( _opc, "F. fiskalni izvještaji i komande " )
-      AAdd( _opcexe, {|| fisc_rpt() } )
+      AAdd( _opcexe, {|| fiskalni_izvjestaji_komande() } )
    ENDIF
 
    PRIVATE fID_J := .F.

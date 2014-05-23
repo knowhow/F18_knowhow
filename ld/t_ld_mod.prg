@@ -81,7 +81,7 @@ METHOD mMenuStandard
    AAdd( opc,    "4. izvještaji" )
    AAdd( opcexe, {|| ld_izvjestaji() } )
    AAdd( opc,   "5. krediti" )
-   AAdd( opcexe, {|| ld_krediti() } )
+   AAdd( opcexe, {|| ld_krediti_menu() } )
    AAdd( opc,   "6. export podataka za banke " )
    AAdd( opcexe, {|| ld_export_banke() } )
    AAdd( opc, "------------------------------------" )

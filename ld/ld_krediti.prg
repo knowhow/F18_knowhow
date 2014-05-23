@@ -12,7 +12,33 @@
 
 #include "ld.ch"
 
-FUNCTION NoviKredit()
+
+
+FUNCTION ld_krediti_menu()
+
+   LOCAL _izbor:=1
+   LOCAL _opc:={}
+   LOCAL _opcexe:={}
+
+   AADD( _opc, "1. novi kredit                                  ")
+   AADD( _opcexe, {|| ld_novi_kredit() })
+   AADD( _opc, "2. pregled/ispravka kredita")
+   AADD( _opcexe, {|| ld_ispravka_kredita() })
+   AADD( _opc, "3. lista kredita za jednog kreditora ")
+   AADD( _opcexe, {|| ld_lista_kredita() })
+   AADD( _opc, "4. brisanje kredita")
+   AADD( _opcexe, {|| ld_brisanje_kredita() })
+   AADD( _opc, "5. specifikacija kredita po kreditorima")
+   AADD( _opcexe, {|| ld_kred_specifikacija() } )
+
+   f18_menu( "kred", .f., _izbor, _opc, _opcexe )
+
+   RETURN
+
+
+
+
+FUNCTION ld_novi_kredit()
 
    LOCAL lBrojRata := .F.
    LOCAL i
@@ -159,7 +185,7 @@ FUNCTION NoviKredit()
       my_close_all_dbf()
 
       IF ( cDn == "D" )
-         EditKredit( cIdRadn, cIdKred, cOsnov )
+         ld_ispravka_kredita( cIdRadn, cIdKred, cOsnov )
       ENDIF
 
    ENDDO
@@ -171,7 +197,7 @@ FUNCTION NoviKredit()
 
 
 
-FUNCTION EditKredit
+FUNCTION ld_ispravka_kredita
 
    PARAMETERS cIdRadn, cIdKred, cNaOsnovu
 
@@ -214,7 +240,7 @@ FUNCTION EditKredit
 
    cNaOsnovu := PadR( cNaOsnovu, Len( radkr->naosnovu ) )
 
-   BrowseKey( m_x + 6, m_y + 1, m_x + 19, m_y + 77, ImeKol, {| Ch| EddKred( Ch ) }, "idradn+idkred+naosnovu=cidradn+cidkred+cnaosnovu", cIdRadn + cIdKred + cNaOsnovu, 2,, )
+   BrowseKey( m_x + 6, m_y + 1, m_x + 19, m_y + 77, ImeKol, {| Ch| ld_krediti_key_handler( Ch ) }, "idradn+idkred+naosnovu=cidradn+cidkred+cnaosnovu", cIdRadn + cIdKred + cNaOsnovu, 2,, )
 
    BoxC()
 
@@ -223,7 +249,7 @@ FUNCTION EditKredit
    RETURN
 
 
-FUNCTION EddKred( Ch )
+FUNCTION ld_krediti_key_handler( Ch )
 
    LOCAL cDn := "N"
    LOCAL nRet := DE_CONT
@@ -313,13 +339,9 @@ FUNCTION EddKred( Ch )
    ENDCASE
 
    RETURN nRet
-// }
 
 
-// --------------------------------------------
-// redefiniranje kredita, rate
-// --------------------------------------------
-FUNCTION kr_redef()
+FUNCTION ld_krediti_redefinisanje_rata()
 
    LOCAL GetList := {}
    LOCAL nTRata
@@ -351,7 +373,6 @@ FUNCTION kr_redef()
 
    IF nNRata <> nTRata
 
-      // ponovo rekalkulisi rate u otplatnom planu
       SELECT radkr
       SET ORDER TO TAG "4"
       SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn + cNaOsnovu
@@ -442,9 +463,6 @@ FUNCTION kr_redef()
 
 
 
-// ----------------------------------------------------
-// funkcija koja vraca kredit u unosu podataka
-// ----------------------------------------------------
 FUNCTION SumKredita()
 
    LOCAL fUsed := .T.
@@ -504,7 +522,6 @@ FUNCTION SumKredita()
 
 FUNCTION Okreditu( _idradn, cIdkred, cNaOsnovu, _mjesec, _godina )
 
-   // izbaci matricu vezano za kredit
    LOCAL nUkupno, nPlaceno, nNTXORd
    LOCAL fused := .T.
 
@@ -558,8 +575,7 @@ FUNCTION Okreditu( _idradn, cIdkred, cNaOsnovu, _mjesec, _godina )
 
 
 
-// lista kredita
-FUNCTION ListaKredita()
+FUNCTION ld_lista_kredita()
 
    PRIVATE fSvi
    PRIVATE nR := nIzn := nIznP := 0
@@ -639,13 +655,11 @@ FUNCTION ListaKredita()
       GO TOP
 
    ELSE
-      // zadana je radna jedinica ili je prikaz svih rj na jednom spisku
       IF lRjRadn .AND. !Empty( cIdRj )
          SET RELATION TO idradn into radn
          SET FILTER TO radn->idRj == cIdRj
       ENDIF
       SET ORDER TO TAG "3"
-      // "RADKRi3","idkred+naosnovu+idradn"
       SEEK cIdKred + cNaOsnovu
    ENDIF
 
@@ -668,9 +682,9 @@ FUNCTION ListaKredita()
 
    START PRINT CRET
 
-   ZaglKred()
+   ld_lista_kredita_zaglavlje()
 
-   DO WHILE !Eof()  // vrti ako je fsvi=.t. ili ako je lRazdvojiPoRj=.t.
+   DO WHILE !Eof()  
 
       IF lRazdvojiPoRj
          cIdTekRj := radn->idRj
@@ -832,7 +846,7 @@ FUNCTION ListaKredita()
 
 
 
-FUNCTION ZaglKred()
+FUNCTION ld_lista_kredita_zaglavlje()
 
    ?
    P_10CPI
@@ -891,7 +905,6 @@ FUNCTION P_Krediti
 
    PARAMETERS cIdRadn, cIdkred, cNaOsnovu
 
-   // Ponudi postojece kredite, i napuni cidkred, cnaosnovu
    LOCAL i
    PRIVATE ImeKol
 
@@ -899,7 +912,6 @@ FUNCTION P_Krediti
 
    SELECT radkr
    SET ORDER TO TAG "2"
-   // "2","idradn+idkred+naosnovu+str(godina)+str(mjesec)",KUMPATH+"RADKR")
    SET scope to ( cIdRadn )
 
    SEEK cIdRadn
@@ -918,7 +930,7 @@ FUNCTION P_Krediti
    NEXT
 
    Box(, 18, 60 )
-   ObjDbedit( "PKred", 18, 60, {|| EdP_Krediti() }, "Postojece stavke za " + cidradn, "", , , , )
+   ObjDbedit( "PKred", 18, 60, {|| ld_lista_kredita_key_handler() }, "Postojece stavke za " + cidradn, "", , , , )
    Boxc()
 
    SET scope TO
@@ -930,7 +942,7 @@ FUNCTION P_Krediti
 
 
 
-FUNCTION EdP_Krediti()
+FUNCTION ld_lista_kredita_key_handler()
 
    IF Ch == K_ENTER
       cIdKred := radkr->idkred
@@ -989,7 +1001,6 @@ FUNCTION GodMjesec( nGodina, nMjesec, nPomak )
 
 FUNCTION DatADD( dDat, nMjeseci, nGodina )
 
-   // {
    LOCAL aRez
    LOCAL cPom := ""
 
@@ -999,7 +1010,6 @@ FUNCTION DatADD( dDat, nMjeseci, nGodina )
    cPom += PadL( AllTrim( Str( Day( dDat ), 2 ) ), 2, "0" )
 
    RETURN SToD( cPom )
-// }
 
 
 
@@ -1013,7 +1023,6 @@ FUNCTION DatADD( dDat, nMjeseci, nGodina )
  */
 FUNCTION DatRazmak( dDatDo, dDatOd, nMjeseci, nDana )
 
-   // {
    LOCAL aRez
    LOCAL cPom := ""
    LOCAL lZadnjiDan := .F.
@@ -1034,7 +1043,8 @@ FUNCTION DatRazmak( dDatDo, dDatOd, nMjeseci, nDana )
       RETURN
    ENDIF
 
-   DO WHILE .T.  // predvidjen je razmak do 36 mjeseci
+   DO WHILE .T.  
+      // predvidjen je razmak do 36 mjeseci
       IF Month( dNextMj ) = Month( dDatDO ) .AND. Year( dNextMj ) = Year( dDatDo )
          // uletili smo u isti mjesec
          nDana := Day( dDatDo ) -Day( dNextMj )
@@ -1067,20 +1077,15 @@ FUNCTION DatRazmak( dDatDo, dDatOd, nMjeseci, nDana )
    ENDDO
 
    RETURN
-// }
 
 
-/*! \fn DanaUMjesecu(dDatum)
- *  \brief Koliko ima dana u mjesecu
- */
+
 FUNCTION DanaUmjesecu( dDatum )
 
-   // {
    LOCAL nDatZM
    nDatZM := EoM( dDatum )
 
    RETURN Day( nDatZM )
-// }
 
 
 
@@ -1091,7 +1096,6 @@ FUNCTION DanaUmjesecu( dDatum )
 
 FUNCTION DatZadUMjesecu( dDatum )
 
-   // {
    LOCAL nDana
    LOCAL dPoc
 
@@ -1106,13 +1110,10 @@ FUNCTION DatZadUMjesecu( dDatum )
       ENDIF
    ENDDO
 
-   RETURN dDatum - 1  // vrati se unazad
+   RETURN dDatum - 1  
 
 
-// ----------------------------------------------------
-// Brisanje kredita za nekog radnika
-// ----------------------------------------------------
-FUNCTION BrisiKredit()
+FUNCTION ld_brisanje_kredita()
 
    LOCAL _rec
 
@@ -1143,7 +1144,6 @@ FUNCTION BrisiKredit()
 
    SELECT RADKR
    SET ORDER TO TAG "2"
-   // idradn+idkred+naosnovu+str(godina)+str(mjesec)
    SEEK cIdRadn + cIdKred + cNaOsnovu
 
    f18_lock_tables( { "ld_radkr" } )

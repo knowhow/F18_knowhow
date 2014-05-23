@@ -498,9 +498,18 @@ STATIC FUNCTION _valid_fiscal_path( fiscal_path, create_dir )
     odaberi_fiskalni_uredjaj( "11" ) // FAKT, MP računi
 
     odaberi_fiskalni_uredjaj( NIL, .T. ) // POS modul
+
+    Parametri:
+
+       lSilent - .T. default, ne prikazuj poruke o grešci
+    
+    Return (nDevice):
+
+       0 - nema fiskalnog uređaja
+       3 - fiskalni uređaj 3
 */
 
-FUNCTION odaberi_fiskalni_uredjaj( cIdTipDok, lFromPos )
+FUNCTION odaberi_fiskalni_uredjaj( cIdTipDok, lFromPos, lSilent )
 
    LOCAL _device_id := 0
    LOCAL _dev_arr
@@ -515,15 +524,19 @@ FUNCTION odaberi_fiskalni_uredjaj( cIdTipDok, lFromPos )
       lFromPos := .F.
    ENDIF
 
+   IF lSilent == NIL
+     lSilent := .T.
+   ENDIF
+
    IF cIdTipDok == NIL
       cIdTipDok := ""
    ENDIF
 
    _dev_arr := get_fiscal_devices_list( cUser, cIdTipDok )
 
-   IF Len( _dev_arr ) == 0
+   IF Len( _dev_arr ) == 0 .AND. !lSilent
       MsgBeep( "Nema podešenih fiskanih uređaja,#Fiskalne funkcije onemogućene." )
-      RETURN _device_id
+      RETURN 0
    ENDIF
 
    IF lFromPos

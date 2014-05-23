@@ -428,7 +428,7 @@ if fiscal_opt_active()
 
     nTArea := SELECT()
 
-    _dev_id := odaberi_fiskalni_uredjaj( NIL, .t. )
+    _dev_id := odaberi_fiskalni_uredjaj( NIL, .T., .F. )
     
     if _dev_id > 0
         _dev_params := get_fiscal_device_params( _dev_id, my_user() )

@@ -163,23 +163,21 @@ STATIC FUNCTION fakt_pripr_keyhandler()
          RETURN DE_CONT
       ENDIF
 
-      _dev_id := odaberi_fiskalni_uredjaj( __tip_dok )
+      _dev_id := odaberi_fiskalni_uredjaj( __tip_dok, .F., .F. )
 
       IF _dev_id > 0
 
          _dev_params := get_fiscal_device_params( _dev_id, my_user() )
-
          IF _dev_params == NIL
             RETURN DE_CONT
          ENDIF
 
       ELSE
-         MsgBeep( "Problem sa citanjem fiskalnih parametara !!!" )
          RETURN DE_CONT
       ENDIF
 
       IF _dev_params[ "print_fiscal" ] == "N"
-         MsgBeep( "Nije Vam dozvoljena opcija za stampu fiskalnih racuna !" )
+         MsgBeep( "Nije Vam dozvoljena opcija za stampu fiskalnih računa !" )
          RETURN DE_CONT
       ENDIF
 

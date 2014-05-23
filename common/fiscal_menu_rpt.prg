@@ -35,7 +35,7 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
       from_pos := .F.
    ENDIF
 
-   __device_id := odaberi_fiskalni_uredjaj( NIL, from_pos )
+   __device_id := odaberi_fiskalni_uredjaj( NIL, from_pos, .F. )
 
    IF __device_id == 0
       RETURN .F.

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,74 +13,78 @@
 #include "pos.ch"
 
 
-function pos_main_menu_prodavac()
-local _opc := {}
-local _opcexe := {}
-local _izbor := 1
+FUNCTION pos_main_menu_prodavac()
 
-AADD(_opc,"1. priprema racuna                        ")
-AADD(_opcexe, {|| _pos_prodavac_racun() } )
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
+
+   AAdd( _opc, "1. priprema racuna                        " )
+   AAdd( _opcexe, {|| _pos_prodavac_racun() } )
 	
-if gStolovi == "D"
-	AADD(_opc,"2. zakljucenje - placanje stola ")
-    AADD(_opcexe,{|| g_zak_sto() })
-endif
+   IF gStolovi == "D"
+      AAdd( _opc, "2. zakljucenje - placanje stola " )
+      AAdd( _opcexe, {|| g_zak_sto() } )
+   ENDIF
 
-AADD(_opc,"2. pregled azuriranih racuna  ")
-AADD(_opcexe,{|| pos_pregled_racuna(.f.) })
+   AAdd( _opc, "2. pregled azuriranih racuna  " )
+   AAdd( _opcexe, {|| pos_pregled_racuna( .F. ) } )
 
-AADD(_opc,"-------------------------------------------")
-AADD(_opcexe,{|| nil })
+   AAdd( _opc, "-------------------------------------------" )
+   AAdd( _opcexe, {|| nil } )
 
-AADD(_opc,"5. trenutna realizacija radnika")
-AADD(_opcexe,{|| realizacija_radnik( .t., "P", .f. ) })
+   AAdd( _opc, "5. trenutna realizacija radnika" )
+   AAdd( _opcexe, {|| realizacija_radnik( .T., "P", .F. ) } )
 
-AADD(_opc,"6. trenutna realizacija po artiklima")
-AADD(_opcexe,{|| realizacija_radnik( .t., "R", .f. ) })
+   AAdd( _opc, "6. trenutna realizacija po artiklima" )
+   AAdd( _opcexe, {|| realizacija_radnik( .T., "R", .F. ) } )
 
-//AADD(opc,"7. porezna faktura za posljednji racun")
-//AADD(opcexe, {|| f7_pf_traka()})
+   // AADD(opc,"7. porezna faktura za posljednji racun")
+   // AADD(opcexe, {|| f7_pf_traka()})
 
-AADD(_opc,"-------------------------------------------")
-AADD(_opcexe,{|| nil })
+   AAdd( _opc, "-------------------------------------------" )
+   AAdd( _opcexe, {|| nil } )
 
 
-if fiscal_opt_active()
+   IF fiscal_opt_active()
 
-	AADD(_opc,"F. fiskalne opcije za prodavaca")
-	AADD(_opcexe, {|| fisc_rpt( .t., .t. ) })
+      AAdd( _opc, "F. fiskalne funkcije - prodavac" )
+      AAdd( _opcexe, {|| fiskalni_izvjestaji_komande( .T., .T. ) } )
 
-endif	 
+   endif
 
-f18_menu( "prod", .f., _izbor, _opc, _opcexe )
+   f18_menu( "prod", .F., _izbor, _opc, _opcexe )
 
-close all
-return
+   CLOSE ALL
+
+   RETURN
 
 
 // ----------------------------------------------
 // izdavanje racuna za prodavca
 // ----------------------------------------------
-static function _pos_prodavac_racun()
-pos_narudzba()
-zakljuciracun()
-return .t.
+STATIC FUNCTION _pos_prodavac_racun()
+
+   pos_narudzba()
+   zakljuciracun()
+
+   RETURN .T.
 
 
 
-function MnuZakljRacuna()
-private opc:={}
-private opcexe:={}
-private Izbor:=1
+FUNCTION MnuZakljRacuna()
 
-AADD(opc,"1. napravi zbirni racun            ")
-AADD(opcexe,{|| RekapViseRacuna() })
-AADD(opc,"2. pregled nezakljucenih racuna    ")
-AADD(opcexe,{|| PreglNezakljRN() })
-AADD(opc,"3. setuj sve RN na zakljuceno      ")
-AADD(opcexe,{|| SetujZakljuceno() })
+   PRIVATE opc := {}
+   PRIVATE opcexe := {}
+   PRIVATE Izbor := 1
 
-Menu_SC("zrn")
+   AAdd( opc, "1. napravi zbirni racun            " )
+   AAdd( opcexe, {|| RekapViseRacuna() } )
+   AAdd( opc, "2. pregled nezakljucenih racuna    " )
+   AAdd( opcexe, {|| PreglNezakljRN() } )
+   AAdd( opc, "3. setuj sve RN na zakljuceno      " )
+   AAdd( opcexe, {|| SetujZakljuceno() } )
 
-return
+   Menu_SC( "zrn" )
 
+   RETURN

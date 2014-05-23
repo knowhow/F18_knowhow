@@ -295,8 +295,7 @@ FUNCTION StampAzur( cIdPos, cRadRac, cIdVrsteP, cIdGost, uplaceno )
       // fiskalizacija, ispisi racun
       IF fiscal_opt_active()
 
-         // u tops-u uvijek treba da je jedan uredjaj !
-         _dev_id := get_fiscal_device( my_user(), NIL, .T. )
+         _dev_id := odaberi_fiskalni_uredjaj( my_user(), NIL, .T. )
          IF _dev_id > 0
             _dev_params := get_fiscal_device_params( _dev_id, my_user() )
             IF _dev_params == NIL

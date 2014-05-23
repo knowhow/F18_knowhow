@@ -35,7 +35,7 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
       from_pos := .F.
    ENDIF
 
-   __device_id := get_fiscal_device( my_user(), NIL, from_pos )
+   __device_id := odaberi_fiskalni_uredjaj( my_user(), NIL, from_pos )
 
    IF __device_id == 0
       RETURN .F.
@@ -57,8 +57,7 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
       AAdd( opc, "------ izvještaji ---------------------------------" )
       AAdd( opcexe, {|| .F. } )
       AAdd( opc, "1. dnevni izvještaj  (Z-rep / X-rep)          " )
-      AAdd( opcexe, {|| fl_daily( AllTrim( gFC_path ), AllTrim( gFC_name ), ;
-         nDevice ) } )
+      AAdd( opcexe, {|| fl_daily( AllTrim( gFC_path ), AllTrim( gFC_name ), nDevice ) } )
       AAdd( opc, "------ ostale komande --------------------" )
       AAdd( opcexe, {|| .F. } )
       AAdd( opc, "5. unos pologa u uređaj       " )
@@ -160,7 +159,7 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
 
       IF !low_level
 
-         AAdd( opc, "------ izvjestaji -----------------------" )
+         AAdd( opc, "------ izvještaji -----------------------" )
          AAdd( opcexe, {|| .F. } )
 
          AAdd( opc, "1. dnevni fiskalni izvještaj (Z rep.)    " )
@@ -222,7 +221,7 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
       AAdd( opcexe, {|| .F. } )
       AAdd( opc, "5. unos pologa u uredjaj       " )
       AAdd( opcexe, {|| tring_polog( __device_params ) } )
-      AAdd( opc, "6. stampanje duplikata       " )
+      AAdd( opc, "6. štampanje duplikata       " )
       AAdd( opcexe, {|| tring_double( __device_params ) } )
       AAdd( opc, "7. zatvori (poništi) racun " )
       AAdd( opcexe, {|| tring_close_rn( __device_params ) } )
@@ -239,7 +238,6 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
 
       ENDIF
 
-      // ostali uredjaji
    OTHERWISE
 
       AAdd( opc, " ---- nema dostupnih opcija ------ " )

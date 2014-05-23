@@ -526,10 +526,8 @@ STATIC FUNCTION _valid_fiscal_path( fiscal_path, create_dir )
 
 
 
-// ---------------------------------------------------------------
-// vraca odabrani fiskalni uredjaj
-// ---------------------------------------------------------------
-FUNCTION get_fiscal_device( user, tip_dok, from_pos )
+
+FUNCTION odaberi_fiskalni_uredjaj( user, tip_dok, from_pos )
 
    LOCAL _device_id := 0
    LOCAL _dev_arr
@@ -550,7 +548,7 @@ FUNCTION get_fiscal_device( user, tip_dok, from_pos )
    _dev_arr := get_fiscal_devices_list( user, tip_dok )
 
    IF Len( _dev_arr ) == 0
-      MsgBeep( "Nema podesen niti jedan fiskalni uredjaj !!!" )
+      MsgBeep( "Nema podešenih fiskanih uređaja,#Fiskalne funkcije onemogućene." )
       RETURN _device_id
    ENDIF
 
@@ -562,7 +560,7 @@ FUNCTION get_fiscal_device( user, tip_dok, from_pos )
    ENDIF
 
    IF Len( _dev_arr ) > 1
-      _device_id := arr_fiscal_choice( _dev_arr )
+      _device_id := fiskalni_uredjaji_meni( _dev_arr )
    ELSE
       _device_id := _dev_arr[ 1, 1 ]
    ENDIF
@@ -645,10 +643,7 @@ FUNCTION fiskalni_uredjaj_model()
 
 
 
-// -------------------------------------------------------
-// array choice
-// -------------------------------------------------------
-STATIC FUNCTION arr_fiscal_choice( arr )
+STATIC FUNCTION fiskalni_uredjaji_meni( arr )
 
    LOCAL _ret := 0
    LOCAL _i, _n

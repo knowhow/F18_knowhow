@@ -15,9 +15,6 @@
 STATIC __use_fiscal_opt := .F.
 
 
-/*
- vraca ili setuje fiskalni parametar
-*/
 FUNCTION fiscal_opt_active()
 
    LOCAL _opt := fetch_metric( "fiscal_opt_active", my_user(), "N" )
@@ -38,7 +35,6 @@ FUNCTION f18_fiscal_params_menu()
    LOCAL _opc_exe := {}
    LOCAL _izbor := 1
 
-   // setuj mi glavnu varijablu
    fiscal_opt_active()
 
    AAdd( _opc, "1. fiskalni uređaji: globalne postavke        " )
@@ -74,16 +70,12 @@ FUNCTION set_init_fiscal_params()
 
    FOR _i := 1 TO _devices
 
-      // "01", "02", ...
       _dev_id := PadL( AllTrim( Str( _i ) ), 2, "0" )
       _dev_param := "fiscal_device_" + _dev_id
-
-      // fiscal_device_01_id
       _tmp := fetch_metric( _dev_param + "_id", NIL, 0  )
 
       IF _tmp == 0
 
-         // setuj mi device_id parametar
          set_metric( _dev_param + "_id", NIL, _i )
          set_metric( _dev_param + "_active", NIL, "N" )
          set_metric( _dev_param + "_drv", NIL, "FPRINT" )
@@ -152,13 +144,11 @@ FUNCTION set_global_fiscal_params()
       RETURN .F.
    ENDIF
 
-   // snimi parametre
    set_metric( "fiscal_opt_active", my_user(), _fiscal )
    set_metric( "fiscal_opt_usr_devices", my_user(), AllTrim( _fiscal_devices ) )
    set_metric( "fiscal_opt_usr_pos_default_device", my_user(), _pos_def )
    set_metric( "fiscal_opt_usr_daily_warrning", my_user(), _rpt_warrning )
 
-   // setuj glavni parametar
    fiscal_opt_active()
 
    RETURN .T.
@@ -203,8 +193,6 @@ FUNCTION set_main_fiscal_params()
    ++ _x
 
    @ m_x + _x, m_y + 2 SAY PadR( "**** Podesenje uredjaja", 60 ) COLOR "I"
-
-   // iscitaj mi sada kada imam parametar tekuce postavke uredjaja
 
    _dev_tmp := PadL( AllTrim( Str( _device_id ) ), 2, "0" )
    _dev_name := PadR( fetch_metric( "fiscal_device_" + _dev_tmp + "_name", NIL, "" ), 100 )
@@ -314,7 +302,6 @@ FUNCTION set_main_fiscal_params()
       RETURN .F.
    ENDIF
 
-   // snimi mi parametre uredjaja
    set_metric( "fiscal_device_" + _dev_tmp + "_name", NIL, AllTrim( _dev_name ) )
    set_metric( "fiscal_device_" + _dev_tmp + "_active", NIL, _dev_act )
    set_metric( "fiscal_device_" + _dev_tmp + "_drv", NIL, AllTrim( _dev_drv ) )
@@ -335,8 +322,6 @@ FUNCTION set_main_fiscal_params()
 
 
 
-// ---------------------------------------------
-// ---------------------------------------------
 FUNCTION set_user_fiscal_params()
 
    LOCAL _user_name := my_user()
@@ -357,8 +342,6 @@ FUNCTION set_user_fiscal_params()
 
    Box(, 20, 80 )
 
-   // to-do, napraviti da se ispisu uredjaj i korisnik... pored GET polja
-
    @ m_x + _x, m_y + 2 SAY PadL( "Uredjaj ID:", 15 ) GET _device_id ;
       PICT "99" ;
       VALID {|| ( _device_id >= _min_id .AND. _device_id <= _max_id ), ;
@@ -378,7 +361,6 @@ FUNCTION set_user_fiscal_params()
       RETURN .F.
    ENDIF
 
-   // korisnik ce biti na osnovu izbora
    _user_name := AllTrim( GetUserName( _user_id ) )
 
    ++ _x
@@ -388,14 +370,9 @@ FUNCTION set_user_fiscal_params()
 
    ++ _x
 
-   // iscitaj mi sada kada imam parametar tekuce postavke uredjaja za korisnika
    _dev_tmp := PadL( AllTrim( Str( _device_id ) ), 2, "0" )
-   // drajver uredjaja
    _dev_drv := AllTrim( fetch_metric( "fiscal_device_" + _dev_tmp + "_drv", NIL, "" ) )
 
-   // ---------------------------
-   // korisnicki parametri
-   // ---------------------------
    _out_dir := PadR( fetch_metric( "fiscal_device_" + _dev_tmp + "_out_dir", _user_name, out_dir_op_sys( _dev_drv ) ), 300 )
    _out_file := PadR( fetch_metric( "fiscal_device_" + _dev_tmp + "_out_file", _user_name, out_file_op_sys( _dev_drv ) ), 50 )
    _out_answer := PadR( fetch_metric( "fiscal_device_" + _dev_tmp + "_out_answer", _user_name, "" ), 50 )
@@ -447,7 +424,6 @@ FUNCTION set_user_fiscal_params()
       RETURN .F.
    ENDIF
 
-   // snimi mi parametre uredjaja
    set_metric( "fiscal_device_" + _dev_tmp + "_out_dir", _user_name, AllTrim( _out_dir ) )
    set_metric( "fiscal_device_" + _dev_tmp + "_out_file", _user_name, AllTrim( _out_file ) )
    set_metric( "fiscal_device_" + _dev_tmp + "_out_answer", _user_name, AllTrim( _out_answer ) )
@@ -534,7 +510,6 @@ STATIC FUNCTION _valid_fiscal_path( fiscal_path, create_dir )
    ENDIF
 
    IF DirChange( fiscal_path ) != 0
-      // probaj kreirati direktorij...
       IF create_dir
          _cre := MakeDir( fiscal_path )
          IF _cre != 0
@@ -575,12 +550,10 @@ FUNCTION get_fiscal_device( user, tip_dok, from_pos )
    _dev_arr := get_fiscal_devices_list( user, tip_dok )
 
    IF Len( _dev_arr ) == 0
+      MsgBeep( "Nema podesen niti jedan fiskalni uredjaj !!!" )
       RETURN _device_id
    ENDIF
 
-   // default pos fiskalni uredjaj...
-   // ako je setovan, uvijek ces njega koristiti
-   // nema potrebe da se ulazi u listu uredjaj...
    IF from_pos
       _pos_default := fetch_metric( "fiscal_opt_usr_pos_default_device", my_user(), 0 )
       IF _pos_default > 0
@@ -589,10 +562,8 @@ FUNCTION get_fiscal_device( user, tip_dok, from_pos )
    ENDIF
 
    IF Len( _dev_arr ) > 1
-      // prikazi mi listu uredjaja...
       _device_id := arr_fiscal_choice( _dev_arr )
    ELSE
-      // samo je jedan uredjaj u listi, ovo je njegov ID
       _device_id := _dev_arr[ 1, 1 ]
    ENDIF
 
@@ -612,7 +583,6 @@ FUNCTION get_fiscal_devices_list( user, tip_dok )
    LOCAL _usr_dev_list := ""
    LOCAL _dev_docs_list := ""
 
-   // ako je zadan user, provjeri njegova lokalna podesenja
    IF user == NIL
       user := my_user()
    ENDIF
@@ -621,7 +591,6 @@ FUNCTION get_fiscal_devices_list( user, tip_dok )
       tip_dok := ""
    ENDIF
 
-   // ovo je lista koja se setuje kod korisnika...
    _usr_dev_list := fetch_metric( "fiscal_opt_usr_devices", user, "" )
 
    FOR _i := 1 TO _dev_max
@@ -637,17 +606,12 @@ FUNCTION get_fiscal_devices_list( user, tip_dok )
             .AND. IF( !Empty( _usr_dev_list ), AllTrim( Str( _dev_id ) ) + "," $ _usr_dev_list + ",", .T. ) ;
             .AND. IF( !Empty( _dev_docs_list ) .AND. !Empty( AllTrim( tip_dok ) ), tip_dok $ _dev_docs_list, .T. )
 
-         // ubaci u matricu: dev_id, dev_name
          AAdd( _arr, { _dev_id, fetch_metric( "fiscal_device_" + _dev_tmp + "_name", NIL, "" ), ;
                                 fetch_metric( "fiscal_device_" + _dev_tmp + "_drv", NIL, "" ) } )
 
       ENDIF
 
    NEXT
-
-   IF Len( _arr ) == 0
-      MsgBeep( "Nema podesen niti jedan fiskalni uredjaj !!!" )
-   ENDIF
 
    RETURN _arr
 
@@ -740,8 +704,6 @@ FUNCTION get_fiscal_device_params( device_id, user_name )
       RETURN NIL
    ENDIF
 
-   // pretpostavlja da ce se koristiti tekuci user
-   // ali mozemo zadati i nekog drugog korisnika
    IF user_name <> NIL
       _user_name := user_name
    ENDIF
@@ -750,14 +712,10 @@ FUNCTION get_fiscal_device_params( device_id, user_name )
 
    _dev_id := fetch_metric( _dev_param + "_id", NIL, 0 )
 
-   // nema tog fiskalnog uredjaja
    IF _dev_id == 0
       RETURN NIL
    ENDIF
 
-   // napuni mi hash matricu sa podacima uredjaja...
-
-   // globalni parametri
    _param[ "id" ] := _dev_id
    _param[ "name" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_name", NIL, "" )
    _param[ "active" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_active", NIL, "" )
@@ -776,11 +734,9 @@ FUNCTION get_fiscal_device_params( device_id, user_name )
 #ifdef TEST
    _out_dir := "/tmp/"
 #else
-   // user parametri
    _out_dir := fetch_metric( "fiscal_device_" + _dev_tmp + "_out_dir", _user_name, "" )
 #endif
 
-   // ako nema podesen output dir, onda znamo i da user nije setovan...
    IF Empty( _out_dir )
       RETURN NIL
    ENDIF
@@ -805,7 +761,6 @@ FUNCTION get_fiscal_device_params( device_id, user_name )
    _param[ "op_docs" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_op_docs", _user_name, "" )
 #endif
 
-   // chekiranje parametara
    IF !post_check( _param )
       RETURN NIL
    ENDIF
@@ -820,7 +775,6 @@ STATIC FUNCTION post_check( param )
 
    LOCAL _ret := .T.
 
-   // provjeri lokaciju
    _ret := _valid_fiscal_path( PARAM[ "out_dir" ], .F. )
 
    IF !_ret
@@ -828,7 +782,6 @@ STATIC FUNCTION post_check( param )
       RETURN _ret
    ENDIF
 
-   // izlazni fajl
    IF Empty( PARAM[ "out_file" ] )
       MsgBeep( "Naziv izlaznog fajla mora biti popunjen ispravno !!!" )
       _ret := .F.
@@ -868,7 +821,6 @@ FUNCTION print_fiscal_params()
       _user_id := _usr_arr[ _usr_cnt, 1 ]
       _user_name := _usr_arr[ _usr_cnt, 2 ]
 
-      // izvuci mi listu za pojedinog korisnika...
       _dev_arr := get_fiscal_devices_list( _user_name )
 
       ?
@@ -883,8 +835,6 @@ FUNCTION print_fiscal_params()
          ? Space( 3 ), Replicate( "-", 70 )
          ? Space( 3 ), "Uredjaj id:", AllTrim( Str( _dev_id ) ), "-", _dev_name
          ? Space( 3 ), Replicate( "-", 70 )
-
-         // sada imamo parametre za pojedini stampac
 
          _dev_param := get_fiscal_device_params( _dev_id, _user_name )
 

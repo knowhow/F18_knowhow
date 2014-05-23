@@ -382,10 +382,6 @@ return
 
 
 
-
-
-// ------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------
 function set_a_dbf_ld_radkr()
 local _alg, _tbl 
 
@@ -396,22 +392,24 @@ _item := hb_hash()
 _item["alias"] := "RADKR"
 _item["table"] := _tbl
 _item["wa"]    := F_RADKR
-
-// temporary tabela - nema semafora
 _item["temp"]  := .f.
-
 _item["algoritam"] := {}
 
-// algoritam 1 - default
-// -------------------------------------------------------------------------------
+// algoritam 1
 _alg := hb_hash()
 _alg["dbf_key_block"]  := {|| field->idradn + field->idkred + field->naosnovu + STR(field->godina, 4, 0) + STR(field->mjesec, 2, 0)}
 _alg["dbf_key_fields"] := { "idradn", "idkred", "naosnovu", {"godina", 4}, {"mjesec", 2 }}
 _alg["sql_in"]         := "rpad(idradn,6) || rpad(idkred,6) || rpad(naosnovu, 20) || lpad(godina::char(4),4) || lpad(mjesec::char(2),2)"
-
-// "2", "idradn + idkred + naosnovu + str(godina) + str(mjesec)"
 _alg["dbf_tag"]        := "2"
-AADD(_item["algoritam"], _alg)
+AADD(_item["algoritam"], _alg )
+ 
+// algoritam 2
+_alg := hb_hash()
+_alg["dbf_key_block"]  := {|| field->idradn + field->idkred + field->naosnovu }
+_alg["dbf_key_fields"] := { "idradn", "idkred", "naosnovu" }
+_alg["sql_in"]         := "rpad(idradn,6) || rpad(idkred,6) || rpad(naosnovu, 20) "
+_alg["dbf_tag"]        := "2"
+AADD(_item["algoritam"], _alg )
  
 f18_dbfs_add(_tbl, @_item)
 

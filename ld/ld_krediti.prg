@@ -14,6 +14,7 @@
 
 FUNCTION NoviKredit()
 
+   LOCAL lBrojRata := .F.
    LOCAL i
    LOCAL _vals
    LOCAL nOstalo, nTekMj, nTekGodina
@@ -26,14 +27,10 @@ FUNCTION NoviKredit()
    LOCAL nRata2   := 0
    LOCAL cOsnov   := Space( 20 )
 
-   IF Logirati( goModul:oDataBase:cName, "KREDIT", "NOVIKREDIT" )
-      lLogNoviKredit := .T.
-   ELSE
-      lLogNoviKredit := .F.
-   ENDIF
-
    DO WHILE .T.
-      OTblKredit()
+
+      ld_otvori_tabele_kredita()
+
       Box(, 10, 70 )
       @ m_x + 1, m_y + 2   SAY "Mjesec:" GET nMjesec PICT "99"
       @ m_x + 1, Col() + 2 SAY "Godina:" GET nGodina PICT "9999"
@@ -41,14 +38,15 @@ FUNCTION NoviKredit()
       @ m_x + 3, m_y + 2   SAY "Kreditor:" GET cIdKred PICT "@!" VALID P_Kred( @cIdKred, 3, 21 )
       @ m_x + 4, m_y + 2   SAY "Kredit po osnovu:" GET cOsnov PICT "@!"
       @ m_x + 5, m_y + 2   SAY "Ukupan iznos kredita:" GET nIznKred PICT "99" + gPicI
-      IF IzFMKIni( "LD", "ZaNoviKreditUnositiBrojRata", "N", KUMPATH ) == "D"
-         lBrojRata := .T.
+
+      IF lBrojRata 
          @ m_x + 7, m_y + 2 SAY "Broj rata   :" GET nRata2 PICT "9999" VALID nRata2 > 0
       ELSE
-         lBrojRata := .F.
          @ m_x + 7, m_y + 2 SAY "Rata kredita:" GET nRata PICT gpici VALID nRata > 0
       ENDIF
+
       READ
+
       ESC_BCR
       BoxC()
 
@@ -73,13 +71,11 @@ FUNCTION NoviKredit()
             my_close_all_dbf()
             RETURN
          ELSE
-            // pobrisi sve rate kredita
             _vals := hb_Hash()
             _vals[ "idradn" ]    := cIdRadn
             _vals[ "idkred" ]    := cIdKred
             _vals[ "naosnovu" ]  := cOsnov
-
-            delete_rec_server_and_dbf( "ld_radkr", _vals, 1, "FULL" )
+            delete_rec_server_and_dbf( "ld_radkr", _vals, 2, "FULL" )
          ENDIF
 
       ENDIF
@@ -185,7 +181,7 @@ FUNCTION EditKredit
       cNaOsnovu := Space( 20 )
    ENDIF
 
-   OTblKredit()
+   ld_otvori_tabele_kredita()
 
    SELECT radkr
    SET ORDER TO TAG "2"
@@ -227,21 +223,12 @@ FUNCTION EditKredit
    RETURN
 
 
-// ----------------------------------------
-// krediti key handler
-// ----------------------------------------
 FUNCTION EddKred( Ch )
 
    LOCAL cDn := "N"
    LOCAL nRet := DE_CONT
    LOCAL nRec := RecNo()
    LOCAL _placeno, _iznos, _rec
-
-   IF Logirati( goModul:oDataBase:cName, "KREDIT", "EDITKREDIT" )
-      lLogEditKredit := .T.
-   ELSE
-      lLogEditKredit := .F.
-   ENDIF
 
    SELECT radkr
 
@@ -380,14 +367,12 @@ FUNCTION kr_redef()
       f18_lock_tables( { "ld_radkr" } )
       sql_table_update( nil, "BEGIN" )
 
-      // koliko ima rata kredita jos do kraja
       DO WHILE !Eof() .AND. cKreditor == idkred ;
             .AND. idradn = _idradn ;
             .AND. naosnovu == cNaOsnovu
 
          nTotalKr += iznos
 
-         // brisi zapis
          _rec := dbf_get_rec()
          delete_rec_server_and_dbf( "ld_radkr", _rec, 1, "CONT" )
 
@@ -1136,13 +1121,7 @@ FUNCTION BrisiKredit()
    cNaOsnovu := Space( 20 )
    cBrisi := "N"
 
-   IF Logirati( goModul:oDataBase:cName, "KREDIT", "BRISIKREDIT" )
-      lLogBrisiKredit := .T.
-   ELSE
-      lLogBrisiKredit := .F.
-   ENDIF
-
-   OTblKredit()
+   ld_otvori_tabele_kredita()
 
    SET ORDER TO TAG "2"
 
@@ -1187,9 +1166,6 @@ FUNCTION BrisiKredit()
    sql_table_update( nil, "END" )
 
    IF nStavki > 0
-      IF lLogBrisiKredit
-         EventLog( nUser, goModul:oDataBase:cName, "KREDIT", "BRISIKREDIT", nil, nil, nil, nil, "", AllTrim( Str( nStavki ) ), AllTrim( cIdRadn ), Date(), Date(), "", "Obrisan kredit" )
-      ENDIF
       MsgBeep( "Sve neotplacene rate (ukupno " + AllTrim( Str( nStavki ) ) + ") kredita izbrisane!" )
    ELSE
       MsgBeep( "Nista nije izbrisano. Za izabrani kredit ne postoje neotplacene rate!" )
@@ -1201,7 +1177,7 @@ FUNCTION BrisiKredit()
 
 
 
-FUNCTION OTblKredit()
+FUNCTION ld_otvori_tabele_kredita()
 
    O_LD_RJ
    O_KRED

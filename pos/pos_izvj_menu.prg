@@ -29,7 +29,7 @@ private Izbor:=1
 private opc:={}
 private opcexe:={}
 
-AADD(opc,"1. realizacija                      ")
+AADD(opc,"1. realizacija                               ")
 AADD(opcexe,{|| pos_menu_realizacija()})
 
 if gVrstaRS=="K"
@@ -61,7 +61,7 @@ else
 	AADD(opcexe,{|| pos_top_narudzbe()})
 	AADD(opc,"7. stanje partnera")
 	AADD(opcexe,{|| pos_rpt_stanje_partnera()})
-	AADD(opc,"A. stampa azuriranog dokumenta")
+	AADD(opc,"A. štampa azuriranog dokumenta")
 	AADD(opcexe,{|| pos_prepis_dokumenta()})
 endif
 
@@ -69,13 +69,13 @@ AADD(opc,"-------------------")
 AADD(opcexe,nil)
 
 if gPVrsteP
-  AADD(opc,"N. pregled prometa po v.placanja")
+  AADD(opc,"N. pregled prometa po vrstama plaćanja")
   AADD(opcexe,{|| PrometVPl()})
 endif
 
 if fiscal_opt_active()
-    AADD(opc,"F. fiskalni izvjestaji i komande")
-    AADD(opcexe,{|| fisc_rpt( NIL, .t. ) })
+    AADD(opc,"F. fiskalni izvjeptaji i komande")
+    AADD(opcexe,{|| fiskalni_izvjestaji_komande( NIL, .t. ) })
 endif
 
 Menu_SC("izvt")

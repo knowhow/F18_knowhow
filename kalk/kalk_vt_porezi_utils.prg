@@ -14,11 +14,6 @@
 
 
 
-FUNCTION SetStPor_()
-   VtPorezi()
-   RETURN
-
-
 FUNCTION VtPorezi()
 
    PUBLIC _PDV := tarifa->opp / 100

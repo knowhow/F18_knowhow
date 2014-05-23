@@ -139,7 +139,7 @@ if roba->(fieldpos("PLC")) <> 0
     _vpc := roba->plc
 endif
 
-SetStPor_()
+VtPorezi()
 
 if ( ( _idvd<>"47" ) .and. roba->tip != "T" )
 

@@ -411,7 +411,7 @@ FUNCTION PDVRekTar41( cIdFirma, cIdVd, cBrDok, nStr )
 
          SELECT kalk_pripr
 
-         SetStPor_()
+         VtPorezi()
 
          Tarifa( kalk_pripr->pkonto, kalk_pripr->idRoba, @aPorezi, kalk_pripr->idtarifa )
 

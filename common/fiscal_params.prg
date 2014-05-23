@@ -114,25 +114,19 @@ FUNCTION set_global_fiscal_params()
 
    Box(, 6, 60 )
 
-   @ m_x + _x, m_y + 2 SAY "Koristiti fiskalne opcije (D/N) ?" GET _fiscal ;
-      PICT "@!" ;
-      VALID _fiscal $ "DN"
+   @ m_x + _x, m_y + 2 SAY "Koristiti fiskalne opcije (D/N) ?" GET _fiscal PICT "@!" VALID _fiscal $ "DN"
 
    ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "*** Korisiti sljedece fiskalne uredjaje"
-
-   ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "ID:" GET _fiscal_devices PICT "@S30"
+   @ m_x + _x, m_y + 2 SAY8 "*** Koristiti sljedeće fiskalne uređaje"
 
    ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "Default POS uredjaj:" GET _pos_def PICT "99"
+   @ m_x + _x, m_y + 2 SAY8 "ID:" GET _fiscal_devices PICT "@S30"
 
    ++ _x
+   @ m_x + _x, m_y + 2 SAY8 "Fiskalni uređaj:" GET _pos_def PICT "99"
 
-   @ m_x + _x, m_y + 2 SAY "Upozorenje za dnevne izvjestaje (D/N)?" GET _rpt_warrning PICT "@!" ;
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY "Upozorenje za dnevne izvještaje (D/N)?" GET _rpt_warrning PICT "@!" ;
       VALID _rpt_warrning $ "DN"
 
 
@@ -535,7 +529,7 @@ STATIC FUNCTION _valid_fiscal_path( fiscal_path, create_dir )
 
 */
 
-FUNCTION odaberi_fiskalni_uredjaj( tip_dok, from_pos )
+FUNCTION odaberi_fiskalni_uredjaj( cIdTipDok, lFromPos )
 
    LOCAL _device_id := 0
    LOCAL _dev_arr
@@ -546,22 +540,22 @@ FUNCTION odaberi_fiskalni_uredjaj( tip_dok, from_pos )
       RETURN NIL
    ENDIF
 
-   IF from_pos == NIL
-      from_pos := .F.
+   IF lFromPos == NIL
+      lFromPos := .F.
    ENDIF
 
-   IF tip_dok == NIL
-      tip_dok := ""
+   IF cIdTipDok == NIL
+      cIdTipDok := ""
    ENDIF
 
-   _dev_arr := get_fiscal_devices_list( cUser, tip_dok )
+   _dev_arr := get_fiscal_devices_list( cUser, cIdTipDok )
 
    IF Len( _dev_arr ) == 0
       MsgBeep( "Nema podešenih fiskanih uređaja,#Fiskalne funkcije onemogućene." )
       RETURN _device_id
    ENDIF
 
-   IF from_pos
+   IF lFromPos
       _pos_default := fetch_metric( "fiscal_opt_usr_pos_default_device", cUser, 0 )
       IF _pos_default > 0
          RETURN _pos_default

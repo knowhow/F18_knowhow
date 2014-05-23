@@ -1,3 +1,8 @@
+1.7.89  2014-05-23, vsasa
+
+  - USE_SQL, casting sada gleda i obrađuje NULL polja
+  - KALK, refactor funkcije VtPorezi
+ 
 1.7.88  2014-05-22, vsasa
 
   - FIN, sintetički bruto bilans - bugfix

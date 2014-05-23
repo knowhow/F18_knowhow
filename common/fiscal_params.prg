@@ -527,11 +527,20 @@ STATIC FUNCTION _valid_fiscal_path( fiscal_path, create_dir )
 
 
 
-FUNCTION odaberi_fiskalni_uredjaj( user, tip_dok, from_pos )
+/*
+    Odabir fiskalnog uređaja
+
+    - Ako ih ima više od 1 - korisniku se prikazuje meni
+    - Ako je za korisnika definisan jedan uređaj bez menija
+
+*/
+
+FUNCTION odaberi_fiskalni_uredjaj( tip_dok, from_pos )
 
    LOCAL _device_id := 0
    LOCAL _dev_arr
    LOCAL _pos_default
+   LOCAL  cUser := my_user()
 
    IF !__use_fiscal_opt
       RETURN NIL
@@ -545,7 +554,7 @@ FUNCTION odaberi_fiskalni_uredjaj( user, tip_dok, from_pos )
       tip_dok := ""
    ENDIF
 
-   _dev_arr := get_fiscal_devices_list( user, tip_dok )
+   _dev_arr := get_fiscal_devices_list( cUser, tip_dok )
 
    IF Len( _dev_arr ) == 0
       MsgBeep( "Nema podešenih fiskanih uređaja,#Fiskalne funkcije onemogućene." )
@@ -553,7 +562,7 @@ FUNCTION odaberi_fiskalni_uredjaj( user, tip_dok, from_pos )
    ENDIF
 
    IF from_pos
-      _pos_default := fetch_metric( "fiscal_opt_usr_pos_default_device", my_user(), 0 )
+      _pos_default := fetch_metric( "fiscal_opt_usr_pos_default_device", cUser, 0 )
       IF _pos_default > 0
          RETURN _pos_default
       ENDIF

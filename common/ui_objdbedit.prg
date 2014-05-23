@@ -382,10 +382,6 @@ FUNCTION StandTBKomande( TB, Ch, nRez, nPored, aPoredak )
 
    CASE Ch == K_ALT_R
 
-      IF ( gReadOnly .OR. !ImaPravoPristupa( goModul:oDatabase:cName, "CUI", "STANDTBKOMANDE-ALTR_ALTS" ) )
-         Msg( "Nemate pravo na koristenje ove opcije", 15 )
-      ELSE
-		
          PRIVATE cKolona
 
          IF ValType( TB ) == "O" .AND. Len( Imekol[ TB:colPos ] ) > 2
@@ -443,13 +439,8 @@ FUNCTION StandTBKomande( TB, Ch, nRez, nPored, aPoredak )
                ENDIF
             ENDIF
          ENDIF
-      ENDIF
 
    CASE Ch == K_ALT_S
-
-      IF ( gReadOnly .OR. !ImaPravoPristupa( goModul:oDatabase:cName, "CUI", "STANDTBKOMANDE-ALTR_ALTS" ) )
-         Msg( "Nemate pravo na koristenje ove opcije", 15 )
-      ELSE
 
          PRIVATE cKolona
 
@@ -473,7 +464,7 @@ FUNCTION StandTBKomande( TB, Ch, nRez, nPored, aPoredak )
                   @ m_x + 1, m_y + 2 SAY "Postavi na:" GET _trazi_val
                   @ m_x + 2, m_y + 2 SAY "Uslov za obuhvatanje stavki (prazno-sve):" GET _trazi_usl ;
                      PICT "@S20" ;
-                     VALID Empty( _trazi_usl ) .OR. EvEr( _trazi_usl, "Greska! Neispravno postavljen uslov!" )
+                     VALID Empty( _trazi_usl ) .OR. EvEr( _trazi_usl, "Greška! Neispravno postavljen uslov!" )
 
                   READ
 
@@ -529,13 +520,12 @@ FUNCTION StandTBKomande( TB, Ch, nRez, nPored, aPoredak )
                ENDIF
             ENDIF
          ENDIF
-      ENDIF
 
    CASE Ch == K_CTRL_U .AND. nPored > 1
 
       PRIVATE GetList := {}
       nRez := IndexOrd()
-      Prozor1( 12, 20, 17 + nPored, 59, "UTVRDJIVANJE PORETKA", , , "GR+/N", "W/N,B/W, , , B/W", 2 )
+      Prozor1( 12, 20, 17 + nPored, 59, "UTVRĐIVANJE PORETKA", , , "GR+/N", "W/N,B/W, , , B/W", 2 )
       FOR i := 1 TO nPored
          @ 13 + i, 23 SAY PadR( "poredak po " + aPoredak[ i ], 33, "ú" ) + Str( i, 1 )
       NEXT
@@ -579,7 +569,7 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
 
    IF _has_semaphore
       IF !f18_lock_tables( { Lower( Alias() ) } )
-         MsgBeep( "Ne mogu zakljucati " + Alias() + "!?" )
+         MsgBeep( "Ne mogu zaključati " + Alias() + "!?" )
          RETURN DE_CONT
       ENDIF
       sql_table_update( nil, "BEGIN" )
@@ -648,12 +638,7 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
 
 
 
-// ---------------------------------------------------------------
-// ---------------------------------------------------------------
 FUNCTION StandTBTipke()
-
-   // * ove tipke ne smiju aktivirati edit-mod
-
 
    IF Ch == K_ESC .OR. Ch == K_CTRL_T .OR. Ch = K_CTRL_P .OR. Ch = K_CTRL_N .OR. ;
          Ch == K_ALT_A .OR. Ch == K_ALT_P .OR. Ch = K_ALT_S .OR. Ch = K_ALT_R .OR. ;
@@ -664,19 +649,12 @@ FUNCTION StandTBTipke()
    RETURN .F.
 
 
-// ---------------------------------------
-// ---------------------------------------
 STATIC FUNCTION ObjDbGet()
-
-/*!
- *Izvrsi GET za tekucu kolonu u browse-u
- */
 
    LOCAL bIns, lScore, lExit
    LOCAL col, get, nKey
    LOCAL xOldKey, xNewKey
 
-   // Make sure screen is fully updated, dbf position is correct, etc.
    ForceStable()
 
    // Save the current record's key value (or NIL)
@@ -738,8 +716,6 @@ STATIC FUNCTION ObjDbGet()
 
 
 
-// --------------------------------------------------------------
-// --------------------------------------------------------------
 STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, ;
       bWhen, bValid, cBoje )
 
@@ -863,9 +839,6 @@ FUNCTION TBPomjeranje( TB, cPomjeranje )
    ENDIF
 
 
-
-   // ----------------------------------------
-   // ----------------------------------------
 
 FUNCTION EvEr( cExpr, cMes, cT )
 

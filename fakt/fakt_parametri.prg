@@ -53,7 +53,7 @@ FUNCTION mnu_fakt_params()
    AAdd( opcexe, {|| fakt_par_cijene() } )
 
    AAdd( opc, "F. fiskalni parametri  " )
-   AAdd( opcexe, {|| f18_fiscal_params_menu() } )
+   AAdd( opcexe, {|| fiskalni_parametri_za_korisnika() } )
 
    AAdd( opc, "P. parametri labeliranja, barkod stampe  " )
    AAdd( opcexe, {|| label_params() } )

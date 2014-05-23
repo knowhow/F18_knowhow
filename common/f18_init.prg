@@ -921,8 +921,6 @@ FUNCTION my_server_search_path( path )
    RETURN __server_params[ _key ]
 
 
-// -----------------------------
-// -----------------------------
 FUNCTION f18_user()
    RETURN __server_params[ "user" ]
 
@@ -939,8 +937,7 @@ FUNCTION my_user()
    RETURN f18_user()
 
 
-// --------------------
-// --------------------
+
 FUNCTION my_home( home )
 
    IF home != NIL
@@ -950,8 +947,7 @@ FUNCTION my_home( home )
    RETURN __f18_home
 
 
-// ----------------------------
-// ----------------------------
+
 FUNCTION _path_quote( path )
 
    IF ( At( path, " " ) != 0 ) .AND. ( At( PATH, '"' ) == 0 )

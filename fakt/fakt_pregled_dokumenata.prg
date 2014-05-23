@@ -564,18 +564,15 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
          RETURN DE_CONT
       ENDIF
 
-      _dev_id := get_fiscal_device( my_user(), field->idtipdok )
+      _dev_id := odaberi_fiskalni_uredjaj( field->idtipdok, .F., .F. )
 
       IF _dev_id > 0
-
          _dev_params := get_fiscal_device_params( _dev_id, my_user() )
-
          IF _dev_params == NIL
             RETURN DE_CONT
          ENDIF
-
       ELSE
-         MsgBeep( "Problem sa fiskalnim parametrima !!!" )
+
          RETURN DE_CONT
       ENDIF
 
@@ -618,18 +615,15 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
                AllTrim( field->idtipdok ) + "-" + ;
                AllTrim( field->brdok ) + " (D/N) ?", "D" ) == "D"
 
-            _dev_id := get_fiscal_device( my_user(), field->idtipdok )
+            _dev_id := odaberi_fiskalni_uredjaj( field->idtipdok, .F., .F. )
 
             IF _dev_id > 0
-
                _dev_params := get_fiscal_device_params( _dev_id, my_user() )
 
                IF _dev_params == NIL
                   RETURN DE_CONT
                ENDIF
-
             ELSE
-               MsgBeep( "Problem sa fiskalnim parametrima !!!" )
                RETURN DE_CONT
             ENDIF
 

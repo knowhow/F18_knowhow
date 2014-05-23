@@ -270,11 +270,7 @@ FUNCTION StampAzur( cIdPos, cRadRac, cIdVrsteP, cIdGost, uplaceno )
 
    cPartner := cIdGost
 
-   IF IsPDV()
-      cTime := pos_stampa_racuna_pdv( cIdPos, cRadRac, .F., cIdVrsteP, nil, aVezani )
-   ELSE
-      cTime := pos_stampa_racuna( cIdPos, cRadRac, .F., cIdVrsteP, nil, aVezani )
-   ENDIF
+   cTime := pos_stampa_racuna_pdv( cIdPos, cRadRac, .F., cIdVrsteP, nil, aVezani )
 
    IF ( !Empty( cTime ) )
 
@@ -295,15 +291,14 @@ FUNCTION StampAzur( cIdPos, cRadRac, cIdVrsteP, cIdGost, uplaceno )
       // fiskalizacija, ispisi racun
       IF fiscal_opt_active()
 
-         // u tops-u uvijek treba da je jedan uredjaj !
-         _dev_id := get_fiscal_device( my_user(), NIL, .T. )
+         _dev_id := odaberi_fiskalni_uredjaj( NIL, .T., .F. )
          IF _dev_id > 0
             _dev_params := get_fiscal_device_params( _dev_id, my_user() )
             IF _dev_params == NIL
-               RETURN
+               RETURN .F.
             ENDIF
          ELSE
-            RETURN
+            RETURN .F.
          ENDIF
 
          // stampa fiskalnog racuna, vraca ERR

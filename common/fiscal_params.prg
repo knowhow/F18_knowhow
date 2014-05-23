@@ -112,23 +112,25 @@ FUNCTION set_global_fiscal_params()
    LOCAL _pos_def := fetch_metric( "fiscal_opt_usr_pos_default_device", my_user(), 0 )
    LOCAL _rpt_warrning := fetch_metric( "fiscal_opt_usr_daily_warrning", my_user(), "N" )
 
-   Box(, 6, 60 )
+   Box(, 6, 80 )
 
    @ m_x + _x, m_y + 2 SAY "Koristiti fiskalne opcije (D/N) ?" GET _fiscal PICT "@!" VALID _fiscal $ "DN"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "*** Koristiti sljedeće fiskalne uređaje"
+   @ m_x + _x, m_y + 2 SAY8 "Lista fiskanih uređaja koji se koriste:" GET _fiscal_devices WHEN help_lista_fiskalnih_uredjaja() PICT "@S30"
+
+   IF f18_use_module( "pos" )
+
+      ++ _x
+      @ m_x + _x, m_y + 2 SAY8 "Primarni fiskalni uređaj"
+      ++ _x
+      @ m_x + _x, m_y + 2 SAY8 "kod POS štampe POS računa:" GET _pos_def WHEN help_pos_fiskalni_uredjaj() PICT "99"
+
+   ENDIF
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "ID:" GET _fiscal_devices PICT "@S30"
-
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "Fiskalni uređaj:" GET _pos_def PICT "99"
-
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY "Upozorenje za dnevne izvještaje (D/N)?" GET _rpt_warrning PICT "@!" ;
+   @ m_x + _x, m_y + 2 SAY8 "Upozorenje za dnevne izvještaje (D/N)?" GET _rpt_warrning PICT "@!" ;
       VALID _rpt_warrning $ "DN"
-
 
    READ
 
@@ -149,6 +151,18 @@ FUNCTION set_global_fiscal_params()
 
 
 
+STATIC FUNCTION help_lista_fiskalnih_uredjaja()
+
+  MsgBeep( "Ako želite koristiti fiskalne uređaje 1 i 3,#navesti: 1;3" )
+
+  RETURN .T.
+
+
+STATIC FUNCTION help_pos_fiskalni_uredjaj()
+
+  MsgBeep( "Odaberi fiskalni uređaj koji se koristi za POS račune,#npr: 1" )
+
+  RETURN .T.
 
 // ---------------------------------------------
 // set global fiscal params
@@ -527,6 +541,12 @@ STATIC FUNCTION _valid_fiscal_path( fiscal_path, create_dir )
     - Ako ih ima više od 1 - korisniku se prikazuje meni
     - Ako je za korisnika definisan jedan uređaj bez menija
 
+    Korištenje:
+
+    odaberi_fiskalni_uredjaj( "10" ) // FAKT, uređaji koje korisnik upotrebljava za VP račune
+    odaberi_fiskalni_uredjaj( "11" ) // FAKT, MP računi
+
+    odaberi_fiskalni_uredjaj( NIL, .T. ) // POS modul
 */
 
 FUNCTION odaberi_fiskalni_uredjaj( cIdTipDok, lFromPos )

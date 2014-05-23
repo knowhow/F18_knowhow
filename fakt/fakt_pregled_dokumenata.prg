@@ -475,16 +475,13 @@ STATIC FUNCTION prikazi_broj_fiskalnog_racuna( model )
    LOCAL _total
    LOCAL _txt := ""
 
-   _fisc_rn := AllTrim( Str( fakt_doks->fisc_rn ) )
-   _rekl_rn := AllTrim( Str( fakt_doks->fisc_st ) )
-   _total := fakt_doks->iznos
-
    IF fakt_doks->idtipdok $ "10#11"
-
-      IF !postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, model ) 
+      IF !postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, model )
          _txt := "nema fiskalnog racuna !?!!!"
          @ m_x + 1, m_y + 2 SAY PadR( _txt, 60 ) COLOR "W/R+"
       ELSE
+         _fisc_rn := AllTrim( Str( fakt_doks->fisc_rn ) )
+         _rekl_rn := AllTrim( Str( fakt_doks->fisc_st ) )
          _txt := ""
          IF _rekl_rn <> "0"
             _txt += "reklamirani račun: " + _rekl_rn + ", "

@@ -3,6 +3,7 @@
   - LD, unos novog kredita, bugfix
   - FAKT, spori browse dokumenata i greška sa fiskalnim opcijama
   - FIN, kolone iznosdem i iznosbhd u browse-u
+  - USE_SQL, COALESCE umjesto CASE
  
 1.7.89  2014-05-23, vsasa
 

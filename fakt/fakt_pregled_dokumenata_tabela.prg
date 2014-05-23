@@ -47,7 +47,7 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
    AAdd( ImeKol, { "Dat.otpr",       {|| dat_otpr } } )
    AAdd( ImeKol, { "Dat.val.",       {|| dat_val } } )
 
-   AAdd( ImeKol, { "Fisk.rn",        {|| PadR( sh_fiscal_rn( fisc_rn, fisc_st ), 20 ) } } )
+   AAdd( ImeKol, { "Fisk.rn",        {|| PadR( prikazi_brojeve_fiskalnog_racuna( fisc_rn, fisc_st ), 20 ) } } )
    AAdd( ImeKol, { "Fisk.vr",        {|| PadR( DToC( fisc_date ) + " " + AllTrim( fisc_time ), 20 ) } } )
 
    // prikaz operatera
@@ -142,7 +142,7 @@ STATIC FUNCTION g_fiscal_info( model )
 
 
 
-STATIC FUNCTION sh_fiscal_rn( _f_rn, _s_rn )
+STATIC FUNCTION prikazi_brojeve_fiskalnog_racuna( _f_rn, _s_rn )
 
    LOCAL _txt := ""
 

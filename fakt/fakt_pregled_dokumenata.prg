@@ -467,10 +467,8 @@ FUNCTION pr_choice()
    RETURN nSelected
 
 
-// -------------------------------------------------
-// prikazuje broj fiskalnog racuna
-// -------------------------------------------------
-STATIC FUNCTION _veza_fc_rn( model )
+
+STATIC FUNCTION prikazi_broj_fiskalnog_racuna( model )
 
    LOCAL _fisc_rn
    LOCAL _rekl_rn
@@ -502,9 +500,7 @@ STATIC FUNCTION _veza_fc_rn( model )
 
 
 
-// --------------------------------------------------------
-// --------------------------------------------------------
-FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
+FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
 
    LOCAL nRet := DE_CONT
    LOCAL _rec
@@ -513,12 +509,10 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
    LOCAL _refresh
    LOCAL _t_rec := RecNo()
    LOCAL _t_area := Select()
-   LOCAL _model := fiskalni_uredjaj_model()
 
    _filter := dbFilter()
 
-   // ispis informacije o fiskalnom racunu
-   _veza_fc_rn( _model )
+   prikazi_broj_fiskalnog_racuna( model )
 
    _refresh := .F.
 
@@ -553,7 +547,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
 
       SELECT fakt_doks
 
-      IF postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, fiskalni_uredjaj_model() )
+      IF postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, model )
 
          msgbeep( "veza: fiskalni racun vec setovana !" )
 
@@ -660,7 +654,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt )
 
       IF field->idtipdok $ "10#11"
 
-         IF postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, fiskalni_uredjaj_model() ) 
+         IF postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, model ) 
             MsgBeep( "Fiskalni racun vec stampan za ovaj dokument !!!#Ako je potrebna ponovna stampa resetujte broj veze." )
             RETURN DE_CONT
          ENDIF

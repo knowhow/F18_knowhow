@@ -23,11 +23,11 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
    LOCAL _w1 := 30
    LOCAL _x, _y
    LOCAL _params := fakt_params()
-   LOCAL _model := fiskalni_uredjaj_model()
+   LOCAL _model_uredjaja := fiskalni_uredjaj_model()
 
    ImeKol := {}
 
-   AAdd( ImeKol, { " ",            {|| g_fiscal_info( _model ) } } )
+   AAdd( ImeKol, { " ",            {|| g_fiscal_info( _model_uredjaja ) } } )
    AAdd( ImeKol, { "RJ",           {|| idfirma }  } )
    AAdd( ImeKol, { "VD",           {|| idtipdok } } )
    AAdd( ImeKol, { "Brdok",        {|| brdok + rezerv } } )
@@ -115,7 +115,7 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
       AAdd( adKol, i )
    NEXT
 
-   ObjDbedit( "", _x - 3, _y, {|| fakt_tabela_komande ( lOpcine, cFilter ) }, "", "", , , , , 2 )
+   ObjDbedit( "", _x - 3, _y, {|| fakt_tabela_komande ( lOpcine, cFilter, _model_uredjaja ) }, "", "", , , , , 2 )
    BoxC()
 
    IF fUpripremu

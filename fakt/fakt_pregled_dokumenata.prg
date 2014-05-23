@@ -564,7 +564,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
          RETURN DE_CONT
       ENDIF
 
-      _dev_id := odaberi_fiskalni_uredjaj( my_user(), field->idtipdok )
+      _dev_id := odaberi_fiskalni_uredjaj( field->idtipdok )
 
       IF _dev_id > 0
 
@@ -618,7 +618,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
                AllTrim( field->idtipdok ) + "-" + ;
                AllTrim( field->brdok ) + " (D/N) ?", "D" ) == "D"
 
-            _dev_id := odaberi_fiskalni_uredjaj( my_user(), field->idtipdok )
+            _dev_id := odaberi_fiskalni_uredjaj( field->idtipdok )
 
             IF _dev_id > 0
 

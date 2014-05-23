@@ -163,7 +163,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
          RETURN DE_CONT
       ENDIF
 
-      _dev_id := odaberi_fiskalni_uredjaj( my_user(), __tip_dok )
+      _dev_id := odaberi_fiskalni_uredjaj( __tip_dok )
 
       IF _dev_id > 0
 

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,45 +13,45 @@
 #include "ld.ch"
 
 
-function DlgZakljucenje()
+FUNCTION DlgZakljucenje()
 
-O_OBRACUNI
-O_LD_RJ
+   O_OBRACUNI
+   O_LD_RJ
 
-select obracuni
+   SELECT obracuni
 
-cRadnaJedinica:="  "
-nMjObr:=gMjesec
-nGodObr:=gGodina
-cOdgovor:="N"
-cStatus:="U"
+   cRadnaJedinica := "  "
+   nMjObr := gMjesec
+   nGodObr := gGodina
+   cOdgovor := "N"
+   cStatus := "U"
 
-Box(,9,40)
-	@ m_x+1,m_y+2 SAY "Radna jedinica:" GET cRadnaJedinica valid P_LD_Rj(@cRadnaJedinica) PICT "@!"
-      	@ m_x+2,m_y+2 SAY "Mjesec        :" GET nMjObr PICT "99"
-      	@ m_x+3,m_y+2 SAY "Godina        :" GET nGodObr PICT "9999"
-       	@ m_x+4,m_y+2 SAY "--------------------------------------"
-       	@ m_x+5,m_y+2 SAY "Opcije: "
-	@ m_x+6,m_y+2 SAY "  - otvori (U)"
-	@ m_x+7,m_y+2 SAY "  - zakljuci (Z)" GET cStatus VALID cStatus$"UZ" PICT "@!"
-	@ m_x+8,m_y+2 SAY "--------------------------------------"
-	@ m_x+9,m_y+2 SAY "Snimiti promjene (D/N)?" GET cOdgovor VALID cOdgovor$"DN" PICT"@!"
-	read
+   Box(, 9, 40 )
+   @ m_x + 1, m_y + 2 SAY "Radna jedinica:" GET cRadnaJedinica VALID P_LD_Rj( @cRadnaJedinica ) PICT "@!"
+   @ m_x + 2, m_y + 2 SAY "Mjesec        :" GET nMjObr PICT "99"
+   @ m_x + 3, m_y + 2 SAY "Godina        :" GET nGodObr PICT "9999"
+   @ m_x + 4, m_y + 2 SAY "--------------------------------------"
+   @ m_x + 5, m_y + 2 SAY "Opcije: "
+   @ m_x + 6, m_y + 2 SAY "  - otvori (U)"
+   @ m_x + 7, m_y + 2 SAY "  - zakljuci (Z)" GET cStatus VALID cStatus $ "UZ" PICT "@!"
+   @ m_x + 8, m_y + 2 SAY "--------------------------------------"
+   @ m_x + 9, m_y + 2 SAY "Snimiti promjene (D/N)?" GET cOdgovor VALID cOdgovor $ "DN" PICT"@!"
+   READ
 
-	if (cOdgovor=="D")
-		if (cStatus=="Z")
-			ZakljuciObr(cRadnaJedinica,nGodObr,nMjObr,"Z")
-		elseif (cStatus=="U") 
-			if (ProsliObrOtvoren(cRadnaJedinica,nGodObr,nMjObr))
-				MsgBeep("Morate prvo zakljuciti obracun za prethodni mjesec!")
-			else
-				OtvoriObr(cRadnaJedinica,nGodObr,nMjObr,"U")
-			endif
-		endif
-	endif
-BoxC()
+   IF ( cOdgovor == "D" )
+      IF ( cStatus == "Z" )
+         ZakljuciObr( cRadnaJedinica, nGodObr, nMjObr, "Z" )
+      ELSEIF ( cStatus == "U" )
+         IF ( ProsliObrOtvoren( cRadnaJedinica, nGodObr, nMjObr ) )
+            MsgBeep( "Morate prvo zakljuciti obracun za prethodni mjesec!" )
+         ELSE
+            OtvoriObr( cRadnaJedinica, nGodObr, nMjObr, "U" )
+         ENDIF
+      ENDIF
+   ENDIF
+   BoxC()
 
-return
+   RETURN
 
 
 
@@ -63,33 +63,33 @@ return
  *  \param nMjesec - mjesec
  *  \param cStatus - status: "U" otvori novi, "P" ponovo otvori
  */
- 
-function OtvoriObr(cRj,nGodina,nMjesec,cStatus)
 
-select obracuni
-hseek cRj + ALLTRIM( STR( nGodina ) ) + FmtMjesec( nMjesec )
+FUNCTION OtvoriObr( cRj, nGodina, nMjesec, cStatus )
 
-if !Found()
-	AddStatusObr( cRj, nGodina, nMjesec, "U" )
-	MsgBeep("Obracun otvoren !!!")
-	IspisiStatusObracuna(cRj,nGodina,nMjesec)
-	return
-endif
+   SELECT obracuni
+   hseek cRj + AllTrim( Str( nGodina ) ) + FmtMjesec( nMjesec )
 
-if JelZakljucen(cRj,nGodina,nMjesec)
-	if Pitanje(,"Obracun zakljucen, otvoriti ponovo","N")=="D"
-		hseek cRj+ALLTRIM(STR(nGodina))+FmtMjesec(nMjesec)
-		ChStatusObr(cRJ,nGodina,nMjesec,"P")
-		MsgBeep("Obracun ponovo otvoren !!!")
-		IspisiStatusObracuna(cRJ,nGodina,nMjesec)
-		return
-	else
-		MsgBeep("Obracun nije otvoren !!!")
-		return
-	endif
-endif
+   IF !Found()
+      AddStatusObr( cRj, nGodina, nMjesec, "U" )
+      MsgBeep( "Obracun otvoren !!!" )
+      IspisiStatusObracuna( cRj, nGodina, nMjesec )
+      RETURN
+   ENDIF
 
-return
+   IF JelZakljucen( cRj, nGodina, nMjesec )
+      IF Pitanje(, "Obracun zakljucen, otvoriti ponovo", "N" ) == "D"
+         hseek cRj + AllTrim( Str( nGodina ) ) + FmtMjesec( nMjesec )
+         ChStatusObr( cRJ, nGodina, nMjesec, "P" )
+         MsgBeep( "Obracun ponovo otvoren !!!" )
+         IspisiStatusObracuna( cRJ, nGodina, nMjesec )
+         RETURN
+      ELSE
+         MsgBeep( "Obracun nije otvoren !!!" )
+         RETURN
+      ENDIF
+   ENDIF
+
+   RETURN
 
 
 
@@ -101,31 +101,31 @@ return
  *  \param cStatus - status: "Z" zakljuci, "X" ponovo zakljuci
  */
 
-function ZakljuciObr(cRJ,nGodina,nMjesec,cStatus)
+FUNCTION ZakljuciObr( cRJ, nGodina, nMjesec, cStatus )
 
-select obracuni
-hseek cRj+ALLTRIM(STR(nGodina))+FmtMjesec(nMjesec)
+   SELECT obracuni
+   hseek cRj + AllTrim( Str( nGodina ) ) + FmtMjesec( nMjesec )
 
-if !Found()
-	MsgBeep("Potrebno prvo otvoriti obracun !!!")
-	return
-endif
+   IF !Found()
+      MsgBeep( "Potrebno prvo otvoriti obracun !!!" )
+      RETURN
+   ENDIF
 
-if field->status=="U"
-	ChStatusObr(cRj,nGodina,nMjesec,"Z")
-	MsgBeep("Obracun zakljucen !!!")
-	IspisiStatusObracuna(cRj,nGodina,nMjesec)
-	return
-endif
+   IF field->status == "U"
+      ChStatusObr( cRj, nGodina, nMjesec, "Z" )
+      MsgBeep( "Obracun zakljucen !!!" )
+      IspisiStatusObracuna( cRj, nGodina, nMjesec )
+      RETURN
+   ENDIF
 
-if JelOtvoren(cRj,nGodina,nMjesec)
-	ChStatusObr(cRJ,nGodina,nMjesec,"X")
-	MsgBeep("Obracun ponovo zakljucen !!!")
-	IspisiStatusObracuna(cRj,nGodina,nMjesec)
-	return
-endif
+   IF JelOtvoren( cRj, nGodina, nMjesec )
+      ChStatusObr( cRJ, nGodina, nMjesec, "X" )
+      MsgBeep( "Obracun ponovo zakljucen !!!" )
+      IspisiStatusObracuna( cRj, nGodina, nMjesec )
+      RETURN
+   ENDIF
 
-return
+   RETURN
 
 
 
@@ -135,16 +135,17 @@ return
  *  \param nGodina - godina
  *  \param nMjesec - mjesec
  */
-function JelZakljucen(cRJ,nGodina,nMjesec)
+FUNCTION JelZakljucen( cRJ, nGodina, nMjesec )
 
-select obracuni
-hseek (cRJ+ALLTRIM(STR(nGodina))+FmtMjesec(nMjesec))
-if (Found() .and. field->status=="X" .or. Found() .and. field->status=="Z")
-	return .t.
-else
-	return .f.
-endif
-return
+   SELECT obracuni
+   hseek ( cRJ + AllTrim( Str( nGodina ) ) + FmtMjesec( nMjesec ) )
+   IF ( Found() .AND. field->status == "X" .OR. Found() .AND. field->status == "Z" )
+      RETURN .T.
+   ELSE
+      RETURN .F.
+   ENDIF
+
+   RETURN
 
 
 /*! \fn JelOtvoren(cRJ,nGodina,nMjesec)
@@ -153,16 +154,17 @@ return
  *  \param nGodina - godina
  *  \param nMjesec - mjesec
  */
-function JelOtvoren(cRJ,nGodina,nMjesec)
+FUNCTION JelOtvoren( cRJ, nGodina, nMjesec )
 
-select obracuni
-hseek cRJ+ALLTRIM(STR(nGodina))+FmtMjesec(nMjesec)
-if (Found() .and. field->status=="P" .or. Found() .and. field->status=="U")
-	return .t.
-else
-	return .f.
-endif
-return
+   SELECT obracuni
+   hseek cRJ + AllTrim( Str( nGodina ) ) + FmtMjesec( nMjesec )
+   IF ( Found() .AND. field->status == "P" .OR. Found() .AND. field->status == "U" )
+      RETURN .T.
+   ELSE
+      RETURN .F.
+   ENDIF
+
+   RETURN
 
 
 /*! \fn AddStatusObr(cRJ,nGodina,nMjesec,cStatus)
@@ -172,21 +174,22 @@ return
  *  \param nMjesec - mjesec
  *  \param cStatus - status koji se provjerava
  */
-function AddStatusObr(cRJ,nGodina,nMjesec,cStatus)
-local _rec
+FUNCTION AddStatusObr( cRJ, nGodina, nMjesec, cStatus )
 
-select obracuni
-append blank
+   LOCAL _rec
 
-_rec := dbf_get_rec()
-_rec["rj"] := cRJ
-_rec["godina"] := nGodina
-_rec["mjesec"] := nMjesec
-_rec["status"] := cStatus
+   SELECT obracuni
+   APPEND BLANK
 
-update_rec_server_and_dbf( "ld_obracuni", _rec, 1, "FULL" )
+   _rec := dbf_get_rec()
+   _rec[ "rj" ] := cRJ
+   _rec[ "godina" ] := nGodina
+   _rec[ "mjesec" ] := nMjesec
+   _rec[ "status" ] := cStatus
 
-return
+   update_rec_server_and_dbf( "ld_obracuni", _rec, 1, "FULL" )
+
+   RETURN
 
 
 
@@ -197,32 +200,36 @@ return
  *  \param nMjesec - mjesec
  *  \param cStatus - status koji se provjerava
  */
-function ChStatusObr(cRJ,nGodina,nMjesec,cStatus)
-local _rec
-select obracuni
-_rec := dbf_get_rec()
-_rec["rj"] := cRJ
-_rec["godina"] := nGodina
-_rec["mjesec"] := nMjesec
-_rec["status"] := cStatus
+FUNCTION ChStatusObr( cRJ, nGodina, nMjesec, cStatus )
 
-update_rec_server_and_dbf( "ld_obracuni", _rec, 1, "FULL" )
+   LOCAL _rec
 
-return
+   SELECT obracuni
+   _rec := dbf_get_rec()
+   _rec[ "rj" ] := cRJ
+   _rec[ "godina" ] := nGodina
+   _rec[ "mjesec" ] := nMjesec
+   _rec[ "status" ] := cStatus
+
+   update_rec_server_and_dbf( "ld_obracuni", _rec, 1, "FULL" )
+
+   RETURN
 
 
 /*! \fn FmtMjesec(nMjesec)
  *  \brief Format prikaza mjeseca
  *  \param nMjesec - mjesec
  */
-function FmtMjesec(nMjesec)
-*{
-if nMjesec<10
-	cMj:=" "+ALLTRIM(STR(nMjesec))
-else
-	cMj:=ALLTRIM(STR(nMjesec))
-endif
-return cMj
+FUNCTION FmtMjesec( nMjesec )
+
+   // {
+   IF nMjesec < 10
+      cMj := " " + AllTrim( Str( nMjesec ) )
+   ELSE
+      cMj := AllTrim( Str( nMjesec ) )
+   ENDIF
+
+   RETURN cMj
 
 
 /*! \fn GetObrStatus(cRJ,nGodina,nMjesec)
@@ -231,29 +238,30 @@ return cMj
  *  \param nGodina - godina
  *  \param nMjesec - mjesec
  */
-function GetObrStatus(cRj,nGodina,nMjesec)
-local nArr
+FUNCTION GetObrStatus( cRj, nGodina, nMjesec )
 
-nArr:=SELECT()
+   LOCAL nArr
 
-if gZastitaObracuna <> "D"
-	return ""
-endif
+   nArr := Select()
 
-O_OBRACUNI
-select obracuni
-set order to tag "RJ"
-hseek cRj+ALLTRIM(STR(nGodina))+FmtMjesec(nMjesec)
+   IF gZastitaObracuna <> "D"
+      RETURN ""
+   ENDIF
 
-if !Found()
-	cStatus:="N"
-else
-	cStatus:=field->status
-endif
+   O_OBRACUNI
+   SELECT obracuni
+   SET ORDER TO TAG "RJ"
+   hseek cRj + AllTrim( Str( nGodina ) ) + FmtMjesec( nMjesec )
 
-select (nArr)
+   IF !Found()
+      cStatus := "N"
+   ELSE
+      cStatus := field->status
+   ENDIF
 
-return cStatus
+   SELECT ( nArr )
+
+   RETURN cStatus
 
 
 /*! \fn ProsliObrOtvoren(cRj,nGodObr,nMjObr)
@@ -262,15 +270,14 @@ return cStatus
  *  \param nGodObr - godina
  *  \param nMjObr - mjesec
  */
-function ProsliObrOtvoren(cRJ,nGodObr,nMjObr)
-local lOtvoren
-if (nMjObr==1)
-	lOtvoren:=JelOtvoren(cRJ,nGodObr-1,12)
-else
-	lOtvoren:=JelOtvoren(cRJ,nGodObr,nMjObr-1)
-endif
-return (lOtvoren)
+FUNCTION ProsliObrOtvoren( cRJ, nGodObr, nMjObr )
 
+   LOCAL lOtvoren
 
+   IF ( nMjObr == 1 )
+      lOtvoren := JelOtvoren( cRJ, nGodObr - 1, 12 )
+   ELSE
+      lOtvoren := JelOtvoren( cRJ, nGodObr, nMjObr - 1 )
+   ENDIF
 
-
+   RETURN ( lOtvoren )

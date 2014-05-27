@@ -13,9 +13,38 @@
 #include "ld.ch"
 
 
-// ------------------------------------------
-// citanje parametara
-// ------------------------------------------
+
+function ld_parametri()
+local _opc := {}
+local _opcexe := {}
+local _izbor := 1
+
+O_LD_RJ
+O_PARAMS
+
+private cSection:="1"
+private cHistory:=" "
+private aHistory:={}
+
+AADD(_opc, "1. osnovni podaci organizacione jedinice                        ")
+AADD(_opcexe, {|| org_params() })
+AADD(_opc, "2. RJ, mjesec, godina...         ")
+AADD(_opcexe, {|| ld_set_firma()})
+AADD(_opc, "3. postavka zaokruzenja, valute, formata prikaza iznosa...  ")
+AADD(_opcexe, {|| ld_set_forma()})
+AADD(_opc, "4. postavka nacina obracuna ")
+AADD(_opcexe, {|| ld_set_obracun()})
+AADD(_opc, "5. postavka formula (uk.prim.,uk.sati,godisnji) i koeficijenata ")
+AADD(_opcexe, {|| ld_set_formule()})
+AADD(_opc, "6. postavka parametara izgleda dokumenata ")
+AADD(_opcexe, {|| ld_set_prikaz()})
+
+f18_menu( "par", .f., _izbor, _opc, _opcexe )
+
+return
+
+
+
 function ld_get_params()
 
 // ---------

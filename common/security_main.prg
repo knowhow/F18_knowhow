@@ -157,14 +157,14 @@ FUNCTION choose_f18_user_from_list( oper_id )
    oper_id := 0
 
    _list := get_list_f18_users()
-   oper_id := array_choice( _list )
+   oper_id := izaberi_f18_korisnika( _list )
 
    RETURN .T.
 
 
 
 
-STATIC FUNCTION array_choice( arr )
+STATIC FUNCTION izaberi_f18_korisnika( arr )
 
    LOCAL _ret := 0
    LOCAL _i, _n

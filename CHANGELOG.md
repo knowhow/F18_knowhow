@@ -1,3 +1,7 @@
+1.7.91  2014-05-27, hernad
+
+  - fiskalne opcije refactor
+ 
 1.7.90  2014-05-23, vsasa
 
   - LD, unos novog kredita, bugfix

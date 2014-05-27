@@ -122,35 +122,31 @@ METHOD F18Backup:Backup_company()
    LOCAL _color_err := "W+/R+"
    LOCAL _line := Replicate( "-", 70 )
 
-   // daj naziv fajla backup-a
    ::get_backup_filename()
    ::get_windows_ping_time()
+   ::get_removable_drive()
 
-   // pobrisi mi backup file prije svega...
-   // mozda vec postoji jedan
    FErase( ::backup_path + ::backup_filename )
    Sleep( 1 )
 
-   // setuj env.varijable
-#ifdef __PLATFORM__UNIX
-   _cmd += "export pgusername=admin;export PGPASSWORD=boutpgmin;"
-#endif
+   #ifdef __PLATFORM__UNIX
+      _cmd += "export pgusername=admin;export PGPASSWORD=boutpgmin;"
+   #endif
 
-#ifdef __PLATFORM__WINDOWS
-   _cmd += "set pgusername=admin&set PGPASSWORD=boutpgmin&"
+   #ifdef __PLATFORM__WINDOWS
+      _cmd += "set pgusername=admin&set PGPASSWORD=boutpgmin&"
 
-   if ::ping_time > 0
-      // dodaj ping na komandu za backup radi ENV varijabli
-      _cmd += "ping -n " + AllTrim( Str( ::ping_time ) ) + " 8.8.8.8&"
-   ENDIF
+      IF ::ping_time > 0
+         _cmd += "ping -n " + AllTrim( Str( ::ping_time ) ) + " 8.8.8.8&"
+      ENDIF
 
-#endif
+   #endif
 
    _backup_file := ::backup_path + ::backup_filename
 
-#ifdef __PLATFORM__WINDOWS
-   _backup_file := StrTran( _backup_file, "\", "//" )
-#endif
+   #ifdef __PLATFORM__WINDOWS
+      _backup_file := StrTran( _backup_file, "\", "//" )
+   #endif
 
    _cmd += "pg_dump"
    _cmd += " -h " + AllTrim( _host )
@@ -162,7 +158,7 @@ METHOD F18Backup:Backup_company()
    _cmd += ' -f "' + _backup_file + '"'
    _cmd += ' "' + _database + '"'
 
-   @ _x, _y SAY "Obavjestenje: nakon pokretanja procedure backup-a slobodno se prebacite"
+   @ _x, _y SAY8 "Obavještenje: nakon pokretanja procedure backup-a slobodno se prebacite"
    ++_x
    @ _x, _y SAY "              na prozor aplikacije i nastavite raditi."
    ++ _x
@@ -172,20 +168,19 @@ METHOD F18Backup:Backup_company()
    ++ _x
    @ _x, _y SAY _line
    ++ _x
-   @ _x, _y SAY "  Lokacija backup-a: " + ::backup_path
+   @ _x, _y SAY "   Lokacija backup-a: " + ::backup_path
    ++ _x
-   @ _x, _y SAY "Naziv fajla backupa: " + ::backup_filename
+   @ _x, _y SAY "Naziv fajla backup-a: " + ::backup_filename
 
    ++ _x
    ++ _x
-   @ _x, _y SAY "ocekujem rezulat operacije... "
+   @ _x, _y SAY8 "očekujem rezulat operacije... "
 
-   // pokreni komandu
-#ifdef __PLATFORM__WINDOWS
-   f18_run( _cmd )
-#else
-   hb_run( _cmd )
-#endif
+   #ifdef __PLATFORM__WINDOWS
+      f18_run( _cmd )
+   #else
+      hb_run( _cmd )
+   #endif
 
    IF File( ::backup_path + ::backup_filename )
       @ _x, Col() + 1 SAY "OK" COLOR _color_ok
@@ -198,13 +193,15 @@ METHOD F18Backup:Backup_company()
 
       log_write( "backup company kreiran uspjesno: " + ::backup_path + ::backup_filename, 6 )
 
-      ++ _x
-      @ _x, _y SAY "Prebacujem backup na removable drive... "
+      IF !EMPTY( ::removable_drive )
+         ++ _x
+         @ _x, _y SAY "Prebacujem backup na udaljenu lokaciju ... "
 
-      if ::backup_to_removable()
-         @ _x, Col() SAY "OK" COLOR _color_ok
-      ELSE
-         @ _x, Col() SAY "ERROR" COLOR _color_err
+         IF ::backup_to_removable()
+            @ _x, Col() SAY "OK" COLOR _color_ok
+         ELSE
+            @ _x, Col() SAY "ERROR" COLOR _color_err
+         ENDIF
       ENDIF
 
    ENDIF
@@ -217,6 +214,7 @@ METHOD F18Backup:Backup_company()
    NEXT
 
    RETURN _ok
+
 
 METHOD F18Backup:Backup_server()
 
@@ -234,35 +232,32 @@ METHOD F18Backup:Backup_server()
    LOCAL _color_ok := "W+/B+"
    LOCAL _color_err := "W+/R+"
 
-   // daj mi naziv fajla backup-a
    ::get_backup_filename()
    ::get_windows_ping_time()
+   ::get_removable_drive()
 
-   // pobrisi mi backup file prije svega...
-   // mozda vec postoji jedan
    FErase( ::backup_path + ::backup_filename )
    Sleep( 1 )
 
-   // setuj env.varijable
-#ifdef __PLATFORM__UNIX
-   _cmd += "export pgusername=admin;export PGPASSWORD=boutpgmin;"
-#endif
+   #ifdef __PLATFORM__UNIX
+      _cmd += "export pgusername=admin;export PGPASSWORD=boutpgmin;"
+   #endif
 
-#ifdef __PLATFORM__WINDOWS
-   _cmd += "set pgusername=admin&set PGPASSWORD=boutpgmin&"
+   #ifdef __PLATFORM__WINDOWS
+      _cmd += "set pgusername=admin&set PGPASSWORD=boutpgmin&"
 
-   if ::ping_time > 0
-      // dodaj ping na komandu za backup radi ENV varijabli
-      _cmd += "ping -n " + AllTrim( Str( ::ping_time ) ) + " 8.8.8.8&"
-   ENDIF
+      IF ::ping_time > 0
+         // dodaj ping na komandu za backup radi ENV varijabli
+         _cmd += "ping -n " + AllTrim( Str( ::ping_time ) ) + " 8.8.8.8&"
+      ENDIF
 
-#endif
+   #endif
 
    _backup_file := ::backup_path + ::backup_filename
 
-#ifdef __PLATFORM__WINDOWS
-   _backup_file := StrTran( _backup_file, "\", "//" )
-#endif
+   #ifdef __PLATFORM__WINDOWS
+      _backup_file := StrTran( _backup_file, "\", "//" )
+   #endif
 
    _cmd += "pg_dumpall"
    _cmd += " -h " + AllTrim( _host )
@@ -281,19 +276,18 @@ METHOD F18Backup:Backup_server()
    ++ _x
    @ _x, _y SAY Replicate( "=", 70 )
    ++ _x
-   @ _x, _y SAY "   Lokacija backupa: " + ::backup_path
+   @ _x, _y SAY "   Lokacija backup-a: " + ::backup_path
    ++ _x
-   @ _x, _y SAY "Naziv fajla backupa: " + ::backup_filename
+   @ _x, _y SAY "Naziv fajla backup-a: " + ::backup_filename
    ++ _x
    ++ _x
    @ _x, _y SAY8 "očekujem rezulat operacije... "
 
-   // pokreni komandu
-#ifdef __PLATFORM__WINDOWS
-   f18_run( _cmd )
-#else
-   hb_run( _cmd )
-#endif
+   #ifdef __PLATFORM__WINDOWS
+      f18_run( _cmd )
+   #else
+      hb_run( _cmd )
+   #endif
 
    IF File( ::backup_path + ::backup_filename )
       @ _x, Col() + 1 SAY "OK" COLOR _color_ok
@@ -305,17 +299,18 @@ METHOD F18Backup:Backup_server()
    IF _ok
 
       log_write( "backup kreiran uspjesno: " + ::backup_path + ::backup_filename, 6 )
+      
+      IF !EMPTY( ::removable_drive )
+         ++ _x
+         @ _x, _y SAY "Prebacujem backup na udaljenu lokaciju ... "
+    
+         IF ::backup_to_removable()
+            @ _x, Col() SAY "OK" COLOR _color_ok
+         ELSE
+            @ _x, Col() SAY "ERROR" COLOR _color_err
+         ENDIF
 
-      // prebaci i na removable ako treba...
-      ++ _x
-      @ _x, _y SAY "Prebacujem backup na removable drive... "
-
-      if ::backup_to_removable()
-         @ _x, Col() SAY "OK" COLOR _color_ok
-      ELSE
-         @ _x, Col() SAY "ERROR" COLOR _color_err
       ENDIF
-
    ENDIF
 
    ++ _x
@@ -328,18 +323,11 @@ METHOD F18Backup:Backup_server()
    RETURN _ok
 
 
-// -----------------------------------------------------------
-// kreiranje backup fajla na removeble drive
-// -----------------------------------------------------------
-
 METHOD F18Backup:backup_to_removable()
 
    LOCAL _ok := .F.
    LOCAL _res
 
-   ::get_removable_drive()
-
-   // nema se sta raditi
    IF Empty( ::removable_drive )
       RETURN _ok
    ENDIF
@@ -348,7 +336,6 @@ METHOD F18Backup:backup_to_removable()
    Sleep( 1 )
 
    IF !File( ::removable_drive + ::backup_filename )
-      // MsgBeep( "Nisam uspio prebaciti backup na lokaciju " + ::removable_drive + ::backup_filename )
    ELSE
       log_write( "backup to removable drive ok", 6 )
       _ok := .T.
@@ -402,12 +389,8 @@ METHOD F18Backup:get_backup_filename()
 
    FOR _i := 1 TO 99
 
-      // comp: firma_2013_01.01.2013_01.backup
-      // serv: server_01.01.2013_01.backup
-
       _name := _tmp + "_" + DToC( Date() ) + "_" + PadL( AllTrim( Str( _i ) ), 2, "0" ) + ".backup"
 
-      // ako fajl ne postoji, imamo ga !
       IF !File( ::backup_path + _name )
          EXIT
       ENDIF
@@ -418,9 +401,7 @@ METHOD F18Backup:get_backup_filename()
 
    RETURN _name
 
-// ---------------------------------------------------------
-// get backup interval
-// ---------------------------------------------------------
+
 METHOD F18Backup:get_backup_interval()
 
    LOCAL _param := "backup_company_interval"
@@ -434,9 +415,6 @@ METHOD F18Backup:get_backup_interval()
    RETURN .T.
 
 
-// ---------------------------------------------------------
-// backup type
-// ---------------------------------------------------------
 METHOD F18Backup:get_backup_type( backup_type )
 
    LOCAL _type := 1
@@ -456,13 +434,13 @@ METHOD F18Backup:get_backup_type( backup_type )
       @ _x, _y SAY "Dostupne opcije:"
 
       ++ _x
-      @ _x, _y SAY "   1 - backup tekuce firme"
+      @ _x, _y SAY8 "   1 - backup tekuće firme"
 
       ++ _x
       @ _x, _y SAY "   0 - backup kompletnog servera"
 
       ++ _x
-      @ _x, _y SAY "Vas odabir:" GET _type VALID _type >= 0 PICT "9"
+      @ _x, _y SAY8 "Vaš odabir:" GET _type VALID _type >= 0 PICT "9"
 
       ++ _x
       @ _x, _y SAY _s_line

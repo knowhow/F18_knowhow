@@ -601,6 +601,7 @@ FUNCTION pos_ispravi_stavku_racuna()
    PRIVATE GetList := {}
 
    SELECT _pos_pripr
+
    IF RecCount2() == 0
       MsgBeep ( "Račun ne sadrži niti jednu stavku!#Ispravka nije moguća!", 20 )
       RETURN ( DE_CONT )
@@ -619,44 +620,35 @@ FUNCTION pos_ispravi_stavku_racuna()
    READ
 
    SELECT _pos_pripr
-   @ m_x + 3, m_Y + 25  SAY Space( 11 )
+   @ m_x + 3, m_Y + 25 SAY Space(11)
 
    IF LastKey() <> K_ESC
-      IF ( _pos_pripr->IdRoba <> _IdRoba ) .OR. roba->tip == "T"
-         SELECT ODJ
-         HSEEK ROBA->IdOdj
-         IF Found()
-            SELECT _pos_pripr
-            _RobaNaz := ROBA->Naz
-            _JMJ := ROBA->JMJ
-            IF !( roba->tip == "T" )
-               _Cijena := &( "ROBA->Cijena" + gIdCijena )
-            ENDIF
-            _IdTarifa := ROBA->IdTarifa
-            IF gVodiOdj == "D"
-               _IdOdj := ROBA->IdOdj
-            ELSE
-               _IdOdj := Space( 2 )
-            ENDIF
 
-            nIznNar += ( _cijena * _kolicina ) -cijena * kolicina
-            nPopust += ( _ncijena * _kolicina )  - ncijena * kolicina
-            my_rlock()
-            Gather ()
-            my_unlock()
-         ELSE
-            MsgBeep ( "Za artikal " + AllTrim ( _IdRoba ) + " nije određeno odjeljenje!#" + "Unos nije moguć !!!", 15 )
-            SELECT _pos_pripr
-            RETURN ( DE_CONT )
+      IF ( _pos_pripr->IdRoba <> _IdRoba ) .OR. roba->tip == "T"
+
+         _robanaz := roba->naz
+         _jmj := roba->jmj
+
+         IF !( roba->tip == "T" )
+            _cijena := pos_get_mpc()
          ENDIF
+
+         _idtarifa := roba->idtarifa
+         _idodj := Space( 2 )
+
+         nIznNar += ( _cijena * _kolicina ) -cijena * kolicina
+         nPopust += ( _ncijena * _kolicina )  - ncijena * kolicina
+            
+         my_rlock()
+         Gather()
+         my_unlock()
+
       ENDIF
 
       IF ( _pos_pripr->Kolicina <> _Kolicina )
          nIznNar += ( _cijena * _kolicina ) - cijena * kolicina
          nPopust += ( _ncijena * _kolicina ) - ncijena * kolicina
-         my_rlock()
-         REPLACE Kolicina WITH _Kolicina
-         my_unlock()
+         RREPLACE Kolicina WITH _Kolicina
       ENDIF
 
    ENDIF

@@ -610,9 +610,6 @@ STATIC FUNCTION EdSif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    CASE Ch == K_CTRL_F9
       RETURN sif_brisi_sve()
 
-   CASE Ch == K_ALT_C
-      RETURN SifClipBoard()
-
    CASE Ch == K_F10
       SifPopup( nOrder )
       RETURN DE_CONT
@@ -628,8 +625,8 @@ STATIC FUNCTION EdSif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
    RETURN
 
-// ------------------------------------------
-// ------------------------------------------
+
+
 FUNCTION EditSifItem( Ch, nOrder, aZabIsp )
 
    LOCAL i

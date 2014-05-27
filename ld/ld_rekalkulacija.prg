@@ -41,9 +41,6 @@ FUNCTION ld_rekalkulacija()
    RETURN
 
 
-
-
-
 FUNCTION RekalkPrimanja()
 
    LOCAL i

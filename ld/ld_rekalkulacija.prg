@@ -13,6 +13,36 @@
 #include "ld.ch"
 
 
+function ld_rekalkulacija()
+local _opc:={}
+local _opcexe:={}
+local _izbor:=1
+
+if GetObrStatus(gRj,gGodina,gMjesec) $ "ZX"
+    MsgBeep("Obracun zakljucen! Ne mozete vrsiti ispravku podataka!!!")
+    return
+elseif GetObrStatus(gRj,gGodina,gMjesec)=="N"
+    MsgBeep("Nema otvorenog obracuna za "+ALLTRIM(STR(gMjesec))+"."+ALLTRIM(STR(gGodina)))
+    return
+endif
+
+AADD( _opc, "1. rekalkulacija satnica i primanja               ")
+AADD( _opcexe, {|| RekalkPrimanja()})
+AADD( _opc, "2. ponovo izracunaj neto sati/neto iznos/odbici")
+AADD( _opcexe, {|| RekalkSve()})
+AADD( _opc, "3. rekalkulacija odredjenog primanja za procenat")
+AADD( _opcexe, {|| RekalkProcenat()})
+AADD( _opc, "4. rekalkulacija odredjenog primanja po formuli")
+AADD( _opcexe, {|| RekalkFormula()})
+
+f18_menu( "rklk", .f., _izbor, _opc, _opcexe )
+
+return
+
+
+
+
+
 function RekalkPrimanja()
 local i
 local nArrm

@@ -13,15 +13,9 @@
 #include "ld.ch"
 
 function ld_brisanje_obr()
-local _priv := f18_privgranted( "ld_brisanje_podataka" )
 local _opc:={}
 local _opcexe:={}
 local _izbor:=1
-
-if !_priv
-    MsgBeep( F18_SECUR_WARRNING )
-    return .t.
-endif
 
 AADD(_opc, "1. brisanje obracuna za jednog radnika       ")
 AADD(_opcexe, {|| BrisiRadnika() })

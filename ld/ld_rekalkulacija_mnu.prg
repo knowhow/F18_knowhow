@@ -18,12 +18,6 @@ function ld_rekalkulacija()
 local _opc:={}
 local _opcexe:={}
 local _izbor:=1
-local _priv := f18_privgranted( "ld_unos_podataka" )
-
-if !_priv
-    MsgBeep( F18_SECUR_WARRNING )
-    return .t.
-endif
 
 if GetObrStatus(gRj,gGodina,gMjesec) $ "ZX"
     MsgBeep("Obracun zakljucen! Ne mozete vrsiti ispravku podataka!!!")

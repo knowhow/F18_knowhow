@@ -18,12 +18,6 @@ local _opc := {}
 local _opcexe := {}
 local _izbor := 1
 
-// imamo li pravo pristupa ovoj opciji
-if !f18_privgranted( "ld_podesenje_parametara" )
-    MsgBeep( F18_SECUR_WARRNING )
-    return .t.
-endif
-
 O_LD_RJ
 O_PARAMS
 

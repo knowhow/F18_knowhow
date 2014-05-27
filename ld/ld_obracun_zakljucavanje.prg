@@ -40,11 +40,7 @@ Box(,9,40)
 
 	if (cOdgovor=="D")
 		if (cStatus=="Z")
-			if (!f18_privgranted( "ld_unos_podataka" ))
-				MsgBeep("Vi nemate pravo na zakljucenje obracuna!")
-			else
-				ZakljuciObr(cRadnaJedinica,nGodObr,nMjObr,"Z")
-			endif
+			ZakljuciObr(cRadnaJedinica,nGodObr,nMjObr,"Z")
 		elseif (cStatus=="U") 
 			if (ProsliObrOtvoren(cRadnaJedinica,nGodObr,nMjObr))
 				MsgBeep("Morate prvo zakljuciti obracun za prethodni mjesec!")
@@ -81,10 +77,6 @@ if !Found()
 endif
 
 if JelZakljucen(cRj,nGodina,nMjesec)
-	if (!f18_privgranted("ld_unos_podataka"))
-		MsgBeep("Vi nemate pravo na ponovno otvaranje zakljucenog obracuna!")
-		return
-	endif
 	if Pitanje(,"Obracun zakljucen, otvoriti ponovo","N")=="D"
 		hseek cRj+ALLTRIM(STR(nGodina))+FmtMjesec(nMjesec)
 		ChStatusObr(cRJ,nGodina,nMjesec,"P")

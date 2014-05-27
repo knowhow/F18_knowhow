@@ -82,7 +82,6 @@ FUNCTION p_partneri( cId, dx, dy, lEmptyIdOk )
    LOCAL cN2Fin
    LOCAL i
    LOCAL lRet
-   LOCAL _standard_prof := f18_privgranted( "standard_profile" )
 
    PRIVATE ImeKol
    PRIVATE Kol
@@ -119,21 +118,11 @@ FUNCTION p_partneri( cId, dx, dy, lEmptyIdOk )
    AAdd ( ImeKol, { PadR( "MobTel", 20 ), {|| mobtel }, "mobtel" } )
    AAdd ( ImeKol, { PadR( ToStrU( "Općina"), 6 ), {|| idOps }, "idops", {|| .T. }, {|| p_ops( @wIdops ) } } )
 
-   IF !_standard_prof
-      AAdd ( ImeKol, { PadR( "Referent", 10 ), {|| idrefer }, "idrefer", {|| .T. }, {|| p_refer( @widrefer ) } } )
-   ENDIF
-
-   IF !_standard_prof
-	
-      AAdd( ImeKol, { "kup?", {|| _kup }, "_kup", {|| .T. }, {|| _v_dn( w_kup ) } } )
-
-      AAdd( ImeKol, { "dob?", {|| " " + _dob + " " }, "_dob", {|| .T. }, {|| _v_dn( w_dob ) }, nil, nil, nil, nil, 20 } )
-
-      AAdd( ImeKol, { "banka?", {|| " " + _banka + " " }, "_banka", {|| .T. }, {|| _v_dn( w_banka ) }, nil, nil, nil, nil, 30 } )
-
-      AAdd( ImeKol, { "radnik?", {|| " " + _radnik + " " }, "_radnik", {|| .T. }, {|| _v_dn( w_radnik ) }, nil, nil, nil, nil, 40 } )
-
-   ENDIF
+   AAdd ( ImeKol, { PadR( "Referent", 10 ), {|| idrefer }, "idrefer", {|| .T. }, {|| p_refer( @widrefer ) } } )
+   AAdd( ImeKol, { "kup?", {|| _kup }, "_kup", {|| .T. }, {|| _v_dn( w_kup ) } } )
+   AAdd( ImeKol, { "dob?", {|| " " + _dob + " " }, "_dob", {|| .T. }, {|| _v_dn( w_dob ) }, nil, nil, nil, nil, 20 } )
+   AAdd( ImeKol, { "banka?", {|| " " + _banka + " " }, "_banka", {|| .T. }, {|| _v_dn( w_banka ) }, nil, nil, nil, nil, 30 } )
+   AAdd( ImeKol, { "radnik?", {|| " " + _radnik + " " }, "_radnik", {|| .T. }, {|| _v_dn( w_radnik ) }, nil, nil, nil, nil, 40 } )
 
    FOR i := 1 TO Len( ImeKol )
       AAdd( Kol, i )
@@ -156,7 +145,6 @@ STATIC FUNCTION k_handler( Ch )
 
    IF Ch == K_CTRL_T .AND. gSKSif == "D"
 
-      // provjerimo da li je sifra dupla
       PushWA()
       SET ORDER TO TAG "ID"
       SEEK cSif

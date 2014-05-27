@@ -17,12 +17,6 @@ function ld_obracun()
 local _opc := {}
 local _opcexe := {}
 local _izbor := 1
-local _priv := f18_privgranted( "ld_unos_podataka" ) 
-
-if !_priv
-    MsgBeep( F18_SECUR_WARRNING )
-    return .t.
-endif
 
 AADD(_opc, "1. unos                              ")
 AADD(_opcexe, {|| ld_unos_obracuna()})
@@ -34,7 +28,6 @@ f18_menu( "obr", .f., _izbor, _opc, _opcexe )
 return
 
 
-// administrativni menij obracuna plate
 function ld_obracun_mnu_admin()
 local _radni_sati := fetch_metric("ld_radni_sati", NIL, "N" ) 
 local _opc := {}
@@ -74,9 +67,6 @@ f18_menu( "ao", .f., _izbor, _opc, _opcexe )
 
 return
 
-// ------------------------------------------------
-// obrada sihtarica
-// ------------------------------------------------
 function siht_obr()
 local _opc := {}
 local _opcexe := {}

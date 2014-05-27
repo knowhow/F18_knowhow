@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,75 +13,77 @@
 #include "ld.ch"
 
 
-function ld_obracun()
-local _opc := {}
-local _opcexe := {}
-local _izbor := 1
+FUNCTION ld_obracun()
 
-AADD(_opc, "1. unos                              ")
-AADD(_opcexe, {|| ld_unos_obracuna()})
-AADD(_opc, "2. administracija obracuna           ")
-AADD(_opcexe, {|| ld_obracun_mnu_admin()})
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
 
-f18_menu( "obr", .f., _izbor, _opc, _opcexe )
+   AAdd( _opc, "1. unos                              " )
+   AAdd( _opcexe, {|| ld_unos_obracuna() } )
+   AAdd( _opc, "2. administracija obracuna           " )
+   AAdd( _opcexe, {|| ld_obracun_mnu_admin() } )
 
-return
+   f18_menu( "obr", .F., _izbor, _opc, _opcexe )
+
+   RETURN
 
 
-function ld_obracun_mnu_admin()
-local _radni_sati := fetch_metric("ld_radni_sati", NIL, "N" ) 
-local _opc := {}
-local _opcexe := {}
-local _izbor := 1
+FUNCTION ld_obracun_mnu_admin()
 
-AADD( _opc, "1. otvori / zakljuci obracun                     ")
+   LOCAL _radni_sati := fetch_metric( "ld_radni_sati", NIL, "N" )
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
 
-if gZastitaObracuna == "D"
-    AADD( _opcexe, {|| DlgZakljucenje()})
-else
-    AADD( _opcexe, {|| MsgBeep("Opcija nije dostupna !")})
-endif
+   AAdd( _opc, "1. otvori / zakljuci obracun                     " )
 
-AADD( _opc, "2. radnici obradjeni vise puta za isti mjesec")
-AADD( _opcexe, {|| ld_obracun_napravljen_vise_puta()})
+   IF gZastitaObracuna == "D"
+      AAdd( _opcexe, {|| DlgZakljucenje() } )
+   ELSE
+      AAdd( _opcexe, {|| MsgBeep( "Opcija nije dostupna !" ) } )
+   ENDIF
 
-AADD( _opc, "3. promjeni varijantu obracuna za obracun")
-AADD( _opcexe, {|| ld_promjeni_varijantu_obracuna()})
+   AAdd( _opc, "2. radnici obradjeni vise puta za isti mjesec" )
+   AAdd( _opcexe, {|| ld_obracun_napravljen_vise_puta() } )
 
-if gVarObracun == "2"
-    AADD( _opc, "I. unos datuma isplate placa")
-    AADD( _opcexe, {|| unos_datuma_isplate_place()})
-endif
+   AAdd( _opc, "3. promjeni varijantu obracuna za obracun" )
+   AAdd( _opcexe, {|| ld_promjeni_varijantu_obracuna() } )
 
-if gSihtGroup == "D"
-    AADD( _opc, "S. obrada sihtarica")
-    AADD( _opcexe, {|| siht_obr()})
-endif
+   IF gVarObracun == "2"
+      AAdd( _opc, "I. unos datuma isplate placa" )
+      AAdd( _opcexe, {|| unos_datuma_isplate_place() } )
+   ENDIF
 
-if _radni_sati == "D"
-    AADD( _opc, "R. pregled/ispravka radnih sati radnika")
-    AADD( _opcexe, {|| edRadniSati()})
-endif
+   IF gSihtGroup == "D"
+      AAdd( _opc, "S. obrada sihtarica" )
+      AAdd( _opcexe, {|| siht_obr() } )
+   ENDIF
 
-f18_menu( "ao", .f., _izbor, _opc, _opcexe )
+   IF _radni_sati == "D"
+      AAdd( _opc, "R. pregled/ispravka radnih sati radnika" )
+      AAdd( _opcexe, {|| edRadniSati() } )
+   ENDIF
 
-return
+   f18_menu( "ao", .F., _izbor, _opc, _opcexe )
 
-function siht_obr()
-local _opc := {}
-local _opcexe := {}
-local _izbor := 1
+   RETURN
 
-AADD(_opc, "1. unos/ispravka                ")
-AADD(_opcexe, {|| def_siht()})
-AADD(_opc, "2. pregled unesenih sihtarica")
-AADD(_opcexe, {|| get_siht()})
-AADD(_opc, "3. pregled ukupnih sati po siht.")
-AADD(_opcexe, {|| get_siht2()})
-AADD(_opc, "4. brisanje sihtarice ")
-AADD(_opcexe, {|| del_siht()})
+FUNCTION siht_obr()
 
-f18_menu( "sobr", .f., _izbor, _opc, _opcexe )
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
 
-return
+   AAdd( _opc, "1. unos/ispravka                " )
+   AAdd( _opcexe, {|| def_siht() } )
+   AAdd( _opc, "2. pregled unesenih sihtarica" )
+   AAdd( _opcexe, {|| get_siht() } )
+   AAdd( _opc, "3. pregled ukupnih sati po siht." )
+   AAdd( _opcexe, {|| get_siht2() } )
+   AAdd( _opc, "4. brisanje sihtarice " )
+   AAdd( _opcexe, {|| del_siht() } )
 
+   f18_menu( "sobr", .F., _izbor, _opc, _opcexe )
+
+   RETURN

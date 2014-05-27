@@ -11,6 +11,25 @@
 
 #include "ld.ch"
 
+
+
+function ld_brisanje_obr()
+local _opc:={}
+local _opcexe:={}
+local _izbor:=1
+
+AADD(_opc, "1. brisanje obracuna za jednog radnika       ")
+AADD(_opcexe, {|| BrisiRadnika() })
+AADD(_opc, "2. brisanje obracuna za jedan mjesec   ")
+AADD(_opcexe, {|| BrisiMjesec()})
+AADD(_opc, "3. totalno brisanje radnika iz evidencije")
+AADD(_opcexe, {|| TotBrisRadn()})
+
+f18_menu("bris", .f., _izbor, _opc, _opcexe )
+
+return
+
+
 function BrisiRadnika()
 local nTrec
 local cIdRadn

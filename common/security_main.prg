@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,263 +12,226 @@
 #include "fmk.ch"
 
 
-// -----------------------------------------------------------
-// -----------------------------------------------------------
-function ImaPravoPristupa( obj, komponenta, funct )
-local _ret := .t.
-return _ret
+FUNCTION ImaPravoPristupa( obj, komponenta, funct )
 
-// ---------------------------------------------------
-// da li postoji privilegija ?
-// ---------------------------------------------------
-function f18_privilege_exist( funct )
-local _table := "public.privgranted"
-local _count
-local _ret := .f.
+   LOCAL _ret := .T.
 
-_count := table_count( _table, "privilege=" + _sql_quote( funct ) ) 
-
-if _count > 0
-    _ret := .t.
-	return _ret
-endif
-
-return _ret
+   RETURN _ret
 
 
 
-// ------------------------------------------------------
-// vraca id user-a
-// ------------------------------------------------------
-function GetUserID()
-local cTmpQry
-local cTable := "public.usr"
-local oTable
-local nResult
-local oServer := pg_server()
-local cUser   := ALLTRIM( my_user() )
+FUNCTION GetUserID()
 
-cTmpQry := "SELECT usr_id FROM " + cTable + " WHERE usr_username = " + _sql_quote( cUser )
-oTable := _sql_query( oServer, cTmpQry )
-IF oTable == NIL
-      log_write(PROCLINE(1) + " : "  + cTmpQry)
+   LOCAL cTmpQry
+   LOCAL cTable := "public.usr"
+   LOCAL oTable
+   LOCAL nResult
+   LOCAL oServer := pg_server()
+   LOCAL cUser   := AllTrim( my_user() )
+
+   cTmpQry := "SELECT usr_id FROM " + cTable + " WHERE usr_username = " + _sql_quote( cUser )
+   oTable := _sql_query( oServer, cTmpQry )
+   IF oTable == NIL
+      log_write( ProcLine( 1 ) + " : "  + cTmpQry )
       QUIT_1
-ENDIF
+   ENDIF
 
-if oTable:eof()
-  return 0
-else
-  return oTable:Fieldget(1)
-endif
+   IF oTable:Eof()
+      RETURN 0
+   ELSE
+      RETURN oTable:FieldGet( 1 )
+   ENDIF
 
-return
-
-
-
-function GetUserRoles( user_name )
-local _roles
-local _qry
-local _server := pg_server()
-
-if user_name == NIL
-    _user := "CURRENT_USER"
-endif
-
-_qry := "SELECT " + ;
-        " rolname " + ;
-        "FROM pg_user " + ;
-        "JOIN pg_auth_members ON pg_user.usesysid = pg_auth_members.member " + ;
-        "JOIN pg_roles ON pg_roles.oid = pg_auth_members.roleid " + ;
-        "WHERE pg_user.usename = " + _user + " " + ;
-        "ORDER BY rolname ;" 
-    
-_roles := _sql_query( _server, _qry )
-
-if _roles == NIL
-    return NIL
-endif
-
-return _roles
-
-
-// ------------------------------------------------------------
-// vraca informacije o trenutnim grupama za user-a
-// ------------------------------------------------------------
-function f18_user_roles_info()
-local oRow
-local _info := ""
-local _roles := GetUserRoles()
-
-if _roles == NIL
-    return _info
-endif
-
-_roles:GoTo(1)
-
-do while !_roles:EOF()
-
-    oRow := _roles:GetRow()
-    _info += hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "rolname" ) ) ) + ", "
-
-    _roles:Skip()
-
-enddo
-
-// skini na kraju ,
-_info := PADR( _info, LEN( _info ) - 2 )
-_info := "[" + _info + "]"
-
-return _info
+   RETURN
 
 
 
-// ------------------------------------------------------
-// vraca username usera iz sec.systema
-// ------------------------------------------------------
-function GetUserName( nUser_id )
-local cTmpQry
-local cTable := "public.usr"
-local oTable
-local cResult
-local oServer := pg_server()
+FUNCTION GetUserRoles( user_name )
 
-cTmpQry := "SELECT usr_username FROM " + cTable + " WHERE usr_id = " + ALLTRIM(STR( nUser_id ))
-oTable := _sql_query( oServer, cTmpQry )
+   LOCAL _roles
+   LOCAL _qry
+   LOCAL _server := pg_server()
 
-if oTable == NIL
-      log_write(PROCLINE(1) + " : "  + cTmpQry)
+   IF user_name == NIL
+      _user := "CURRENT_USER"
+   ENDIF
+
+   _qry := "SELECT " + ;
+      " rolname " + ;
+      "FROM pg_user " + ;
+      "JOIN pg_auth_members ON pg_user.usesysid = pg_auth_members.member " + ;
+      "JOIN pg_roles ON pg_roles.oid = pg_auth_members.roleid " + ;
+      "WHERE pg_user.usename = " + _user + " " + ;
+      "ORDER BY rolname ;"
+
+   _roles := _sql_query( _server, _qry )
+
+   IF _roles == NIL
+      RETURN NIL
+   ENDIF
+
+   RETURN _roles
+
+
+FUNCTION f18_user_roles_info()
+
+   LOCAL oRow
+   LOCAL _info := ""
+   LOCAL _roles := GetUserRoles()
+
+   IF _roles == NIL
+      RETURN _info
+   ENDIF
+
+   _roles:GoTo( 1 )
+
+   DO WHILE !_roles:Eof()
+
+      oRow := _roles:GetRow()
+      _info += hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "rolname" ) ) ) + ", "
+
+      _roles:Skip()
+
+   ENDDO
+
+   _info := PadR( _info, Len( _info ) - 2 )
+   _info := "[" + _info + "]"
+
+   RETURN _info
+
+
+
+FUNCTION GetUserName( nUser_id )
+
+   LOCAL cTmpQry
+   LOCAL cTable := "public.usr"
+   LOCAL oTable
+   LOCAL cResult
+   LOCAL oServer := pg_server()
+
+   cTmpQry := "SELECT usr_username FROM " + cTable + " WHERE usr_id = " + AllTrim( Str( nUser_id ) )
+   oTable := _sql_query( oServer, cTmpQry )
+
+   IF oTable == NIL
+      log_write( ProcLine( 1 ) + " : "  + cTmpQry )
       QUIT_1
-endif
+   ENDIF
 
-if oTable:eof()
-  return "?user?"
-else
-  return hb_utf8tostr( oTable:Fieldget(1) )
-endif
+   IF oTable:Eof()
+      RETURN "?user?"
+   ELSE
+      RETURN hb_UTF8ToStr( oTable:FieldGet( 1 ) )
+   ENDIF
 
-return
+   RETURN
 
 
-// vraca full username usera iz sec.systema
-function GetFullUserName( nUser_id )
-local cTmpQry
-local cTable := "public.usr"
-local oTable
-local oServer := pg_server()
+FUNCTION GetFullUserName( nUser_id )
 
-cTmpQry := "SELECT usr_propername FROM " + cTable + " WHERE usr_id = " + ALLTRIM(STR( nUser_id ))
-oTable := _sql_query( oServer, cTmpQry )
+   LOCAL cTmpQry
+   LOCAL cTable := "public.usr"
+   LOCAL oTable
+   LOCAL oServer := pg_server()
 
-if oTable == NIL
-      log_write(PROCLINE(1) + " : "  + cTmpQry)
+   cTmpQry := "SELECT usr_propername FROM " + cTable + " WHERE usr_id = " + AllTrim( Str( nUser_id ) )
+   oTable := _sql_query( oServer, cTmpQry )
+
+   IF oTable == NIL
+      log_write( ProcLine( 1 ) + " : "  + cTmpQry )
       QUIT_1
-endif
+   ENDIF
 
-if oTable:eof()
-  return "?user?"
-else
-  return hb_utf8tostr( oTable:Fieldget(1) )
-endif
+   IF oTable:Eof()
+      RETURN "?user?"
+   ELSE
+      RETURN hb_UTF8ToStr( oTable:FieldGet( 1 ) )
+   ENDIF
 
-return
+   RETURN
 
 
-// --------------------------------------------------
-// odabir f18 user-a
-// --------------------------------------------------
-function choose_f18_user_from_list( oper_id )
-local _list
+FUNCTION choose_f18_user_from_list( oper_id )
 
-oper_id := 0
+   LOCAL _list
 
-// daj mi listu korisnika u array
-_list := get_list_f18_users()
+   oper_id := 0
 
-// izbaci mi listu ...
-oper_id := array_choice( _list )
+   _list := get_list_f18_users()
+   oper_id := array_choice( _list )
 
-return .t.
+   RETURN .T.
 
 
 
 
-// -------------------------------------------------------
-// array choice
-// -------------------------------------------------------
-static function array_choice( arr )
-local _ret := 0
-local _i, _n
-local _tmp
-local _choice := 0
-local _izbor := 1
-local _opc := {}
-local _opcexe := {}
-local _m_x := m_x
-local _m_y := m_y
+STATIC FUNCTION array_choice( arr )
 
-for _i := 1 to LEN( arr )
+   LOCAL _ret := 0
+   LOCAL _i, _n
+   LOCAL _tmp
+   LOCAL _choice := 0
+   LOCAL _izbor := 1
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _m_x := m_x
+   LOCAL _m_y := m_y
 
-    _tmp := ""
-    _tmp += PADL( ALLTRIM(STR( _i )) + ")", 3 )
-    _tmp += " " + PADR( arr[ _i, 2] , 30 )
+   FOR _i := 1 TO Len( arr )
 
-    AADD( _opc, _tmp )
-    AADD( _opcexe, {|| "" })
-    
-next
-    
-do while .t. .and. LastKey() != K_ESC
-    _izbor := Menu( "choice", _opc, _izbor, .f. )
-	if _izbor == 0
-        exit
-    else
-        _ret := arr[ _izbor, 1 ]
-        _izbor := 0
-    endif
-enddo
+      _tmp := ""
+      _tmp += PadL( AllTrim( Str( _i ) ) + ")", 3 )
+      _tmp += " " + PadR( arr[ _i, 2 ], 30 )
 
-m_x := _m_x
-m_y := _m_y
+      AAdd( _opc, _tmp )
+      AAdd( _opcexe, {|| "" } )
 
-return _ret
+   NEXT
+
+   DO WHILE .T. .AND. LastKey() != K_ESC
+      _izbor := Menu( "choice", _opc, _izbor, .F. )
+      IF _izbor == 0
+         EXIT
+      ELSE
+         _ret := arr[ _izbor, 1 ]
+         _izbor := 0
+      ENDIF
+   ENDDO
+
+   m_x := _m_x
+   m_y := _m_y
+
+   RETURN _ret
 
 
-// --------------------------------------------------
-// daj mi listu f18 usera u array
-// --------------------------------------------------
-function get_list_f18_users()
-local _qry, _table
-local _server := pg_server()
-local _list := {}
-local _row
+FUNCTION get_list_f18_users()
 
-_qry := "SELECT usr_id AS id, usr_username AS name, usr_propername AS fullname, usr_email AS email " + ;
-        "FROM public.usr " + ;
-        "WHERE usr_username NOT IN ( 'postgres', 'admin' ) " + ;
-        "ORDER BY usr_username;"
+   LOCAL _qry, _table
+   LOCAL _server := pg_server()
+   LOCAL _list := {}
+   LOCAL _row
 
-_table := _sql_query( _server, _qry )
+   _qry := "SELECT usr_id AS id, usr_username AS name, usr_propername AS fullname, usr_email AS email " + ;
+      "FROM public.usr " + ;
+      "WHERE usr_username NOT IN ( 'postgres', 'admin' ) " + ;
+      "ORDER BY usr_username;"
 
-if _table == NIL
-    return NIL
-endif
+   _table := _sql_query( _server, _qry )
 
-_table:Refresh()
+   IF _table == NIL
+      RETURN NIL
+   ENDIF
 
-for _i := 1 to _table:LastRec()
+   _table:Refresh()
 
-    // daj mi row
-    _row := _table:GetRow( _i )
+   FOR _i := 1 TO _table:LastRec()
 
-    AADD( _list, { _row:FieldGet( _row:FieldPos("id") ), ;
-                    _row:FieldGet( _row:FieldPos("name") ), ;
-                    _row:FieldGet( _row:FieldPos("fullname") ), ;
-                    _row:FieldGet( _row:FieldPos("email") ) } )
+      _row := _table:GetRow( _i )
 
-next
+      AAdd( _list, { _row:FieldGet( _row:FieldPos( "id" ) ), ;
+         _row:FieldGet( _row:FieldPos( "name" ) ), ;
+         _row:FieldGet( _row:FieldPos( "fullname" ) ), ;
+         _row:FieldGet( _row:FieldPos( "email" ) ) } )
 
-return _list
+   NEXT
 
-
-
-
+   RETURN _list

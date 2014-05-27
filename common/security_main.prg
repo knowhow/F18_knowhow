@@ -36,41 +36,6 @@ endif
 return _ret
 
 
-// ---------------------------------------------------
-// da li korisnik ima dozvoljen pristup
-// ---------------------------------------------------
-function f18_privgranted( funct )
-local _tmp
-local oTable
-local oServer := pg_server()
-local _ret := .f.
-
-if funct == NIL
-    return _ret
-endif
-
-if !f18_privilege_exist( funct )
-    _ret := .t.
-	return _ret
-endif
-
-_tmp := "SELECT checkprivilege( " + _sql_quote( funct ) + " ) "
-
-oTable := _sql_query( oServer, _tmp )
-
-if oTable == NIL
-	log_write( PROCLINE(1) + " : " + _tmp )
-    quit_1
-endif
-
-if oTable:FieldGet(1) == .t.
-	_ret := .t.
-    return _ret
-endif
-
-return _ret
-
-
 
 // ------------------------------------------------------
 // vraca id user-a

@@ -1,3 +1,9 @@
+1.7.92  2014-05-27, vsasa
+
+  - F18 backup, izbačena ERR poruka o udaljenoj lokaciji ako nije setovana
+  - TOPS, ispravka artikla u pripremi računa - bugfix
+  - izbačena opcija ALT+C iz šifrarnika
+ 
 1.7.91  2014-05-27, hernad
 
   - fiskalne opcije refactor

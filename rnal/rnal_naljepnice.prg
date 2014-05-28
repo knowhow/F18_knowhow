@@ -17,11 +17,7 @@
 /*
 
 */
-FUNCTION rnal_stampa_naljepnica_odt( temp )
-
-   IF temp == nil
-      temp := .F.
-   ENDIF
+FUNCTION rnal_stampa_naljepnica_odt()
 
    t_rpt_open()
 
@@ -39,8 +35,18 @@ STATIC FUNCTION generisi_xml()
    LOCAL _data_xml := my_home() + "data.xml"
    LOCAL _h_stavke, _h_header, _uk_kolicina
    LOCAL nCount := 0
+   LOCAL nCutCount := 0
    LOCAL i, nUkupno
-   LOCAL nDijeli := 200
+   LOCAL nMax_Komada := 200
+   LOCAL lDijeli := .F.
+   LOCAL _template := ""
+   LOCAL _t_path := F18_TEMPLATE_LOCATION
+   LOCAL _desktop_folder
+   LOCAL _output_odt := NIL
+
+   IF get_file_list_array( _t_path, "_rg*.odt", @_template ) = 0
+      RETURN
+   ENDIF
 
    _h_header := hash_header_naljepnice()
 
@@ -50,6 +56,14 @@ STATIC FUNCTION generisi_xml()
 
    nUkupno := koliko_ima_naljepnica()   
 
+   IF nUkupno > nMax_komada
+      lDijeli := .T.
+   ENDIF
+
+   IF lDijeli
+      napravi_folder_na_desktopu( @_desktop_folder, t_docit->doc_no )
+   ENDIF
+
    DO WHILE !Eof()
 
       _kolicina_stavke := field->doc_it_qtt
@@ -57,7 +71,7 @@ STATIC FUNCTION generisi_xml()
 
       FOR i := 1 TO _kolicina_stavke
  
-         IF ( nCount == 0 .OR. nCount%nDijeli == 0 )
+         IF ( nCount == 0 .OR. nCount%nMax_komada == 0 )
 
             open_xml( _data_xml )
             xml_head()
@@ -69,12 +83,22 @@ STATIC FUNCTION generisi_xml()
          upisi_stavke_xml( _h_stavke, _kolicina_stavke )
          ++ nCount
 
-         IF ( nCount > 0 .AND. nCount%nDijeli == 0 ) .OR. nUkupno == nCount 
+         IF ( nCount > 0 .AND. nCount%nMax_komada == 0 ) .OR. nUkupno == nCount 
 
+            ++ nCutCount
+ 
             xml_subnode( "label", .T. )
             close_xml()
-
-            stampaj_odt( _data_xml )
+           
+            IF lDijeli
+                _output_odt := _desktop_folder + SLASH + "lab_" + ALLTRIM( STR( nCutCount ) ) + ".odt" 
+            ENDIF
+ 
+            IF f18_odt_generate( _template, _data_xml, _output_odt )
+               IF !lDijeli
+                  f18_odt_print()   
+               ENDIF   
+            ENDIF
 
          ENDIF
 
@@ -87,6 +111,27 @@ STATIC FUNCTION generisi_xml()
 
    RETURN
 
+
+
+STATIC FUNCTION napravi_folder_na_desktopu( folder_path, doc_no )
+   
+   LOCAL _desktop_path 
+   LOCAL _folder := "lab_" + ALLTRIM( STR( doc_no ) )
+   LOCAL _cre
+
+   // napravi folder: ~\Desktop\F18_dokumenti\
+   create_f18_dokumenti_on_desktop( @_desktop_path )
+
+   folder_path := _desktop_path + _folder
+
+   // ako ne postoji F18_dokumenti\lab_23111\ napravi ga
+   IF DirChange( folder_path ) != 0
+      _cre := MakeDir( folder_path )
+   ENDIF
+
+   DirChange( my_home() )
+
+   RETURN
 
 
 
@@ -239,14 +284,7 @@ STATIC FUNCTION hash_podaci_naljepnice()
 
 
 
-STATIC FUNCTION stampaj_odt( xml_file )
-
-   LOCAL _template := ""
-   LOCAL _t_path := F18_TEMPLATE_LOCATION
-
-   IF get_file_list_array( _t_path, "_rg*.odt", @_template ) = 0
-      RETURN
-   ENDIF
+STATIC FUNCTION stampaj_odt( template, xml_file )
 
    IF f18_odt_generate( _template, xml_file )
       f18_odt_print()

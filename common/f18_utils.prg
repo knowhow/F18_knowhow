@@ -1,50 +1,51 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 #include "fmk.ch"
 
-function usex(cTable)
-return my_use(cTable)
+FUNCTION usex( cTable )
+   RETURN my_use( cTable )
 
 
 // --------------------------------------------------
 // kreira direktorij ako ne postoji
 // --------------------------------------------------
-function f18_create_dir( location )
-local _len
-local _loc
-local _create
+FUNCTION f18_create_dir( location )
 
-_loc := location + "*.*"
+   LOCAL _len
+   LOCAL _loc
+   LOCAL _create
 
-_loc := _path_quote( location + "*.*" )
+   _loc := location + "*.*"
 
-_len := ADIR( _loc )
+   _loc := _path_quote( location + "*.*" )
 
-if _len == 0
+   _len := ADir( _loc )
 
-	_create := DIRMAKE( location )
+   IF _len == 0
 
-	if _create <> 0
-		log_write("f18_create_dir(), problem sa kreiranjem direktorija: " + location, 5 )
-	endif	
+      _create := DirMake( location )
 
-endif
+      IF _create <> 0
+         log_write( "f18_create_dir(), problem sa kreiranjem direktorija: " + location, 5 )
+      endif
 
-return
+   ENDIF
+
+   RETURN
 
 // ---------------------------------------
 // ---------------------------------------
-function f18_help()
-   
+FUNCTION f18_help()
+
    ? "F18 parametri"
    ? "parametri"
    ? "-h hostname (default: localhost)"
@@ -56,161 +57,166 @@ function f18_help()
    ? "-t fmk tables path"
    ? ""
 
-RETURN
+   RETURN
 
 /* --------------------------
  setup ulazne parametre F18
  -------------------------- */
 
-function set_f18_params()
-local _i := 1
+FUNCTION set_f18_params()
 
-// setuj ulazne parametre
-cParams := ""
+   LOCAL _i := 1
 
-DO WHILE _i <= PCount()
+   // setuj ulazne parametre
+   cParams := ""
 
-    // ucitaj parametar
-    cTok := hb_PValue( _i++ )
-     
-    
-    DO CASE
+   DO WHILE _i <= PCount()
+
+      // ucitaj parametar
+      cTok := hb_PValue( _i++ )
+
+
+      DO CASE
 
       CASE cTok == "--no-sql"
-	       no_sql_mode(.t.)
+         no_sql_mode( .T. )
 
       CASE cTok == "--test"
-           test_mode(.t.)
-           
+         test_mode( .T. )
+
       CASE cTok == "--help"
-          f18_help()
-          QUIT
+         f18_help()
+         QUIT
 
       CASE cTok == "-h"
          cHostName := hb_PValue( _i++ )
-         cParams += SPACE(1) + "hostname=" + cHostName
+         cParams += Space( 1 ) + "hostname=" + cHostName
 
       CASE cTok == "-y"
          nPort := Val( hb_PValue( _i++ ) )
-         cParams += SPACE(1) + "port=" + ALLTRIM(STR(nPort))
+         cParams += Space( 1 ) + "port=" + AllTrim( Str( nPort ) )
 
       CASE cTok == "-d"
          cDataBase := hb_PValue( _i++ )
-         cParams += SPACE(1) + "database=" + cDatabase
+         cParams += Space( 1 ) + "database=" + cDatabase
 
       CASE cTok == "-u"
          cUser := hb_PValue( _i++ )
-         cParams += SPACE(1) + "user=" + cUser
+         cParams += Space( 1 ) + "user=" + cUser
 
       CASE cTok == "-p"
          cPassWord := hb_PValue( _i++ )
-         cParams += SPACE(1) + "password=" + cPassword
+         cParams += Space( 1 ) + "password=" + cPassword
 
       CASE cTok == "-t"
          cDBFDataPath := hb_PValue( _i++ )
-         cParams += SPACE(1) + "dbf data path=" + cDBFDataPath
+         cParams += Space( 1 ) + "dbf data path=" + cDBFDataPath
 
       CASE cTok == "-e"
          cSchema := hb_PValue( _i++ )
-         cParams += SPACE(1) + "schema=" + cSchema
-    ENDCASE
+         cParams += Space( 1 ) + "schema=" + cSchema
+      ENDCASE
 
-ENDDO
+   ENDDO
 
-return
+   RETURN
 
 // --------------------------------------------------------------
 // --------------------------------------------------------------
-function pp(x)
-local _key, _i
-local _tmp
-local _type
+FUNCTION pp( x )
 
-_tmp := ""
+   LOCAL _key, _i
+   LOCAL _tmp
+   LOCAL _type
 
-_type := VALTYPE(x)
+   _tmp := ""
 
-if _type == "H"
-  _tmp += "(hash): "
-  FOR EACH _key in x:Keys
-      _tmp +=  pp(_key) + " / " + pp(x[_key]) + " ; "
-  NEXT
-  return _tmp
-endif
+   _type := ValType( x )
 
-if _type  == "A"
-  _tmp += "(array): "
-  FOR _i := 1 to LEN(x)
-      _tmp +=  ALLTRIM(pp(_i)) + " / " + pp(x[_i]) + " ; "
-  NEXT
-  return _tmp
-endif
+   IF _type == "H"
+      _tmp += "(hash): "
+      FOR EACH _key in x:Keys
+         _tmp +=  pp( _key ) + " / " + pp( x[ _key ] ) + " ; "
+      NEXT
+      RETURN _tmp
+   ENDIF
 
-if _type $ "CLDN"
-   return hb_ValToStr(x)
-endif
+   IF _type  == "A"
+      _tmp += "(array): "
+      FOR _i := 1 TO Len( x )
+         _tmp +=  AllTrim( pp( _i ) ) + " / " + pp( x[ _i ] ) + " ; "
+      NEXT
+      RETURN _tmp
+   ENDIF
 
-return "?" + _type + "?"
+   IF _type $ "CLDN"
+      RETURN hb_ValToStr( x )
+   ENDIF
+
+   RETURN "?" + _type + "?"
 
 
 
 // --------------------------------------
-// aktiviranje vpn podrske 
+// aktiviranje vpn podrske
 // --------------------------------------
-function vpn_support( set_params )
-local _conn_name := PADR( "bringout podrska", 50 )
-local _status := 0
-local _ok
+FUNCTION vpn_support( set_params )
 
-#ifdef __PLATFORM__WINDOWS 
-    msgbeep("Opcija nije omogucena !")
-    return
+   LOCAL _conn_name := PadR( "bringout podrska", 50 )
+   LOCAL _status := 0
+   LOCAL _ok
+
+#ifdef __PLATFORM__WINDOWS
+
+   msgbeep( "Opcija nije omogucena !" )
+
+   RETURN
 #endif
 
-if set_params == NIL
-    set_params := .t.
-endif
+IF set_params == NIL
+set_params := .T.
+ENDIF
 
-if set_params
-    _conn_name := fetch_metric( "vpn_support_conn_name", my_user(), _conn_name )
-    _status := fetch_metric( "vpn_support_last_status", my_user(), _status )
-else
-    _status := 1
-endif
+IF set_params
+_conn_name := fetch_metric( "vpn_support_conn_name", my_user(), _conn_name )
+_status := fetch_metric( "vpn_support_last_status", my_user(), _status )
+ELSE
+_status := 1
+ENDIF
 
-if set_params
+IF set_params
 
-    if _status == 0
-	    _status := 1
-    else
-	    _status := 0
-    endif
+IF _status == 0
+_status := 1
+ELSE
+_status := 0
+ENDIF
 
-    Box(, 2, 65 )
-        @ m_x + 1, m_y + 2 SAY "Konekcija:" GET _conn_name PICT "@S50" VALID !EMPTY( _conn_name )
-        @ m_x + 2, m_y + 2 SAY "[1] aktivirati [0] prekinuti" GET _status PICT "9"
-        read
-    BoxC()
+Box(, 2, 65 )
+@ m_x + 1, m_y + 2 SAY "Konekcija:" GET _conn_name PICT "@S50" VALID !Empty( _conn_name )
+@ m_x + 2, m_y + 2 SAY "[1] aktivirati [0] prekinuti" GET _status PICT "9"
+READ
+BoxC()
 
-    if LastKey() == K_ESC
-        return
-    endif
+IF LastKey() == K_ESC
+RETURN
+ENDIF
 
-endif
+ENDIF
 
-if set_params
-    set_metric( "vpn_support_conn_name", my_user(), _conn_name )
-endif
+IF set_params
+set_metric( "vpn_support_conn_name", my_user(), _conn_name )
+ENDIF
 
 // startaj vpn konekciju
 _ok := _vpn_start_stop( _status, _conn_name )
 
 // ako je sve ok snimi parametar u bazu
-if _ok == 0 .and. set_params
-	set_metric( "vpn_support_last_status", my_user(), _status )
-endif
+IF _ok == 0 .AND. set_params
+set_metric( "vpn_support_last_status", my_user(), _status )
+ENDIF
 
-return
+   RETURN
 
 
 
@@ -218,61 +224,71 @@ return
 // stopira ili starta vpn konekciju
 // status : 0 - off, 1 - on
 // ------------------------------------------------
-static function _vpn_start_stop( status, conn_name )
-local _cmd
-local _err
-local _up_dn := "up"
+STATIC FUNCTION _vpn_start_stop( status, conn_name )
 
-if status == 0
-	_up_dn := "down"
-endif
+   LOCAL _cmd
+   LOCAL _err
+   LOCAL _up_dn := "up"
 
-_cmd := 'nmcli con ' + _up_dn + ' id "' + ALLTRIM( conn_name ) + '"' 
+   IF status == 0
+      _up_dn := "down"
+   ENDIF
 
-_err := f18_run( _cmd )
+   _cmd := 'nmcli con ' + _up_dn + ' id "' + AllTrim( conn_name ) + '"'
 
-if _err <> 0
-    msgbeep( "Problem sa vpn konekcijom:#" + ALLTRIM( conn_name ) + " !???" )
-    return _err
-endif
+   _err := f18_run( _cmd )
 
-return _err
+   IF _err <> 0
+      msgbeep( "Problem sa vpn konekcijom:#" + AllTrim( conn_name ) + " !???" )
+      RETURN _err
+   ENDIF
 
-
-
-
-// --------------------------------------------------
-// kopiraj fajl na desktop
-// --------------------------------------------------
-function f18_copy_to_desktop( file_path, file_name, output_file )
-local _desktop_path := ""
-local _desktop_folder := "F18_dokumenti"
-local _cre
-
-if output_file == NIL
-    output_file := ""
-endif
-
-#ifdef __PLATFORM__WINDOWS
-    _desktop_path := hb_DirSepAdd( GetEnv( "USERPROFILE" ) ) + "Desktop" + SLASH
-#else
-    _desktop_path := hb_DirSepAdd( GetEnv( "HOME" ) ) + "Desktop" + SLASH
-#endif
-
-if DirChange( _desktop_path + _desktop_folder + SLASH ) != 0
-    _cre := MakeDir( _desktop_path + _desktop_folder + SLASH )
-endif
-
-DirChange( my_home() )
-
-if EMPTY( output_file )
-    output_file := file_name
-endif
-
-FileCopy( file_path + file_name, _desktop_path + _desktop_folder + SLASH + output_file )
-
-return
+   RETURN _err
 
 
+
+
+FUNCTION f18_copy_to_desktop( file_path, file_name, output_file )
+
+   LOCAL _desktop_path
+
+   create_f18_dokumenti_on_desktop( @_desktop_path )
+
+   IF output_file == NIL
+      output_file := ""
+   ENDIF
+
+   IF Empty( output_file )
+      output_file := file_name
+   ENDIF
+
+   FileCopy( file_path + file_name, _desktop_path + output_file )
+
+   RETURN
+
+
+
+
+FUNCTION create_f18_dokumenti_on_desktop( desktop_path )
+
+   LOCAL _desktop_path := ""
+   LOCAL _desktop_folder := "F18_dokumenti"
+   LOCAL _cre
+
+   #ifdef __PLATFORM__WINDOWS
+      _desktop_path := hb_DirSepAdd( GetEnv( "USERPROFILE" ) ) + "Desktop" + SLASH
+   #else
+      _desktop_path := hb_DirSepAdd( GetEnv( "HOME" ) ) + "Desktop" + SLASH
+   #endif
+
+   desktop_path := _desktop_path + _desktop_folder + SLASH
+
+   IF DirChange( desktop_path ) != 0
+      _cre := MakeDir( desktop_path )
+   ENDIF
+
+   DirChange( my_home() )
+
+   RETURN
 
 

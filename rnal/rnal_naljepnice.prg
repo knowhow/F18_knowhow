@@ -37,7 +37,7 @@ STATIC FUNCTION generisi_xml()
    LOCAL nCount := 0
    LOCAL nCutCount := 0
    LOCAL i, nUkupno
-   LOCAL nMax_Komada := 200
+   LOCAL nMax_Komada := fetch_metric( "rnal_label_br_kom_razdvoji", NIL, 200 )
    LOCAL lDijeli := .F.
    LOCAL _template := ""
    LOCAL _t_path := F18_TEMPLATE_LOCATION

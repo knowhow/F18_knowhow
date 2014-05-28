@@ -510,3 +510,50 @@ FUNCTION ispisi_partn( cPartn, nX, nY )
    SELECT ( nTArea )
 
    RETURN .T.
+
+
+
+/*
+   Opis: vraća id broj iz šifranika partnera na osnovu SIFK->REGB
+        ukoliko je unešen PDV broj dužine 12, dodaje se "4" ispred
+
+*/
+
+FUNCTION firma_id_broj( partn_id )
+
+   LOCAL cBroj
+
+   cBroj := get_partn_regb( partn_id ) 
+
+   IF LEN( cBroj ) == 12
+      cBroj := "4" + cBroj
+   ENDIF
+
+   RETURN cBroj
+
+
+/*
+   Opis: vraća id broj unešen u šifrarnik partnera kroz polje SIFK->REGB
+         ukoliko je broj > 13 vraća se prazno
+*/
+
+FUNCTION firma_pdv_broj( partn_id )
+
+   LOCAL cBroj 
+   
+   cBroj := get_partn_regb( partn_id )
+
+   IF LEN( cBroj ) > 12
+      cBroj := ""  
+   ENDIF
+
+   RETURN cBroj
+
+/*
+   Opis: vraća karaketristiku REGB iz tabele SIFK za partnera 
+*/
+STATIC FUNCTION get_partn_regb( partn_id )
+   RETURN AllTrim( IzSifKPartn( "REGB", partn_id, .F. ) )
+
+
+

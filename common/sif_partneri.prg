@@ -543,7 +543,7 @@ FUNCTION firma_pdv_broj( partn_id )
    
    cBroj := get_partn_regb( partn_id )
 
-   IF LEN( cBroj ) > 12
+   IF LEN( cBroj ) <> 12
       cBroj := ""  
    ENDIF
 

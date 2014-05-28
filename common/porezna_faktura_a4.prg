@@ -735,7 +735,8 @@ STATIC FUNCTION pf_a4_kupac()
    cTipDok := get_dtxt_opis( "D02" )
    cKNaziv := get_dtxt_opis( "K01" )
    cKAdresa := get_dtxt_opis( "K02" )
-   cKIdBroj := get_dtxt_opis( "K03" )
+   cKIdBroj := get_dtxt_opis( "K15" )
+   cKPdvBroj := get_dtxt_opis( "K16" )
    cDestinacija := get_dtxt_opis( "D08" )
    cRNalID := get_dtxt_opis( "O01" )
    cRnalDesc := get_dtxt_opis( "O02" )
@@ -872,6 +873,16 @@ STATIC FUNCTION pf_a4_kupac()
    ENDIF
    cPom := lokal( "ID broj: " ) + cPom
    p_line( Space( 2 ) + PadR( cPom, LEN_KUPAC ), 10, .F. )
+
+   // pdv broj, ako postoji
+   IF !EMPTY( cKPdvBroj )
+      cPom := AllTrim( cKPdvBroj )
+      IF Empty( cPom )
+         cPom := "-"
+      ENDIF
+      cPom := lokal( "PDV broj: " ) + cPom
+      p_line( Space( 2 ) + PadR( cPom, LEN_KUPAC ), 10, .F. )
+   ENDIF
 
    cKTelFax := ""
    cPom := AllTrim( get_dtxt_opis( "K13" ) )

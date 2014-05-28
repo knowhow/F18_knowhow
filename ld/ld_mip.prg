@@ -294,6 +294,11 @@ if lastkey() == K_ESC
     return
 endif
 
+if ld_provjeri_dat_isplate_za_mjesec( cGod, cMj, IF( !EMPTY( cRj_def ), cRj_def, NIL ) ) > 0
+   MsgBeep( "Generisanje onemogućeno, nisu definisani datumi isplata plate." )
+   return
+endif
+
 // staticke
 __mj := cMj
 __god := cGod

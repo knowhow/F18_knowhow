@@ -1,6 +1,7 @@
 1.7.93  2014-05-28, vsasa
 
   - RNAL, štampanje naljepnica razbijeno na po 200 komada
+  - LD, mip obrazac, validacija datuma
  
 1.7.92  2014-05-27, vsasa
 

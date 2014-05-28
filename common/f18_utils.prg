@@ -271,19 +271,25 @@ FUNCTION f18_copy_to_desktop( file_path, file_name, output_file )
 
 FUNCTION create_f18_dokumenti_on_desktop( desktop_path )
 
-   LOCAL _desktop_path := ""
-   LOCAL _desktop_folder := "F18_dokumenti"
+   LOCAL _home_path
+   LOCAL _desk_path := ""
+   LOCAL _desk_folder := "F18_dokumenti"
    LOCAL _cre
 
    #ifdef __PLATFORM__WINDOWS
-      _desktop_path := hb_DirSepAdd( GetEnv( "USERPROFILE" ) ) + "Desktop" + SLASH
+      _home_path := hb_DirSepAdd( GetEnv( "USERPROFILE" ) ) 
+      _desk_path := _home_path + "Desktop" + SLASH
    #else
-      _desktop_path := hb_DirSepAdd( GetEnv( "HOME" ) ) + "Desktop" + SLASH
+      _home_path := hb_DirSepAdd( GetEnv( "HOME" ) ) 
+      _desk_path := _home_path + "Desktop" + SLASH
+      IF DirChange( _desk_path ) != 0
+         _desk_path := _home_path + "Radna površ" + SLASH
+      ENDIF
    #endif
 
-   desktop_path := _desktop_path + _desktop_folder + SLASH
+   desktop_path := _desk_path + _desk_folder + SLASH
 
-   IF DirChange( desktop_path ) != 0
+   IF DirChange( '"' + desktop_path + '"' ) != 0
       _cre := MakeDir( desktop_path )
    ENDIF
 

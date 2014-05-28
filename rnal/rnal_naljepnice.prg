@@ -91,11 +91,10 @@ STATIC FUNCTION generisi_xml()
             close_xml()
            
             IF lDijeli
-                // formira se fajl naziva: lab_01_03.odt, lab_02_03.odt, lab_03_03.odt
+                // formira se fajl naziva: lab_001.odt, lab_002.odt, lab_003.odt
                 _output_odt := _desktop_folder + SLASH 
                 _output_odt += "lab_"
-                _output_odt += PADL( ALLTRIM( STR( nCutCount ) ), 2, "0" ) + "_" 
-                _output_odt += PADL( ALLTRIM( STR( nUkupno ) ), 2, "0" )
+                _output_odt += PADL( ALLTRIM( STR( nCutCount ) ), 3, "0" ) 
                 _output_odt += ".odt"
  
                 _output_odt := '"' + _output_odt + '"'

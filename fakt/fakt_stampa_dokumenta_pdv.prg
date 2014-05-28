@@ -1109,9 +1109,20 @@ FUNCTION _txt_djokeri( cTxt, cPartn )
 
 
 
-// -------------------------------------------
-// filovanje podataka partnera
-// -------------------------------------------
+STATIC FUNCTION set_partner_id_broj( cId )
+   LOCAL cBroj := ""
+   LOCAL cIdBroj := firma_id_broj( cId )
+   LOCAL cPdvBroj := firma_pdv_broj( cId ) 
+
+   cBroj += cIdBroj
+
+   IF !EMPTY( cPdvBroj )
+      cBroj += " PDV broj: " + cPdvBroj
+   ENDIF
+
+   RETURN cBroj
+
+
 STATIC FUNCTION fill_part_data( cId, lPdvObveznik )
 
    LOCAL cIdBroj := ""
@@ -1140,8 +1151,7 @@ STATIC FUNCTION fill_part_data( cId, lPdvObveznik )
    ENDIF
 
    IF !lFromMemo .AND. partn->id == cId
-      // uzmi podatke iz SIFK
-      cIdBroj := IzSifKPartn( "REGB", cId, .F. )
+      cIdBroj := set_partner_id_broj( cId )
       cPorBroj := IzSifKPartn( "PORB", cId, .F. )
       cBrRjes := IzSifKPartn( "BRJS", cId, .F. )
       cBrUpisa := IzSifKPartn( "BRUP", cId, .F. )

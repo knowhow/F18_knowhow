@@ -13,7 +13,7 @@
 #include "rnal.ch"
 
 
-FUNCTION rnal_stamapa_naljepnica_odt()
+FUNCTION rnal_stampa_naljepnica_odt()
 
    LOCAL _data_xml := my_home() + "data.xml"
    LOCAL _h_stavke, _h_header, _uk_kolicina

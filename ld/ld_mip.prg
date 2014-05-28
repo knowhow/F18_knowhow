@@ -298,7 +298,7 @@ FUNCTION r_mip_obr()
       RETURN
    ENDIF
 
-   IF ld_provjeri_dat_isplate_za_mjesec( cGod, cMj, IF( !Empty( cRj_def ), cRj_def, NIL ) ) > 0
+   IF ld_provjeri_dat_isplate_za_mjesec( cGod, cMj, IF( !Empty( cRjDef ), cRjDef, NIL ) ) > 0
       MsgBeep( "Generisanje onemogućeno, nisu definisani datumi isplata plate." )
       RETURN
    ENDIF

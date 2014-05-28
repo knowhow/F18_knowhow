@@ -1,3 +1,7 @@
+1.7.94  2014-05-28, vsasa
+
+  - FAKT, štampa id broja + pdv broja na fakturi (txt, odt)
+ 
 1.7.93  2014-05-28, vsasa
 
   - RNAL, štampanje naljepnica razbijeno na po 200 komada

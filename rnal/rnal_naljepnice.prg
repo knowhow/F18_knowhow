@@ -117,6 +117,10 @@ STATIC FUNCTION generisi_xml()
 
    ENDDO
 
+   IF lDijeli
+      MsgBeep( "Naljepnice sa naloga su razdjeljene u " + ALLTRIM( STR( nCutCount ) ) + " ODT dokumenta." )
+   ENDIF
+
    RETURN
 
 

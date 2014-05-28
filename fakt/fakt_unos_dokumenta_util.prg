@@ -40,7 +40,6 @@ FUNCTION IzSifre( silent )
    ENDIF
 
    IF gShSld == "D"
-      // ako je prikaz salda na fakturi = D prikazi box sa podacima fin
       g_box_stanje( PadR( _idpartner, 6 ), gFinKtoDug, gFinKtoPot )
    ENDIF
 
@@ -89,7 +88,6 @@ FUNCTION V_Podbr()
          READ
       ENDIF
       BoxC()
-      // idemo na sastavnicu
       IF !Empty( _idroba )
          _txt1 := PadR( roba->naz, 40 )
          nTRec := RecNo()
@@ -103,7 +101,6 @@ FUNCTION V_Podbr()
             ENDIF
             GO nPrec
          ENDDO
-         // nafiluj iz sastavnice
          SELECT sast
          cPRoba := _idroba
          cptxt1 := _txt1
@@ -162,9 +159,6 @@ FUNCTION V_Podbr()
 
 
 
-// -----------------------------------------
-// setovanje cijene
-// -----------------------------------------
 FUNCTION fakt_setuj_cijenu( tip_cijene )
 
    LOCAL _rj := .F.
@@ -312,7 +306,6 @@ FUNCTION V_Kolicina( tip_vpc )
             IF gMP == "1"
                _Cijena := MPC
             ELSEIF gMP == "2"
-               // _Cijena:=round(VPC * (1+ tarifa->opp/100) * (1+tarifa->ppp/100),VAL(IzFMKIni("FAKT","ZaokruzenjeMPCuDiskontu","1",KUMPATH)))
                _Cijena := Round( VPC * ( 1 + tarifa->opp / 100 ) * ( 1 + tarifa->ppp / 100 ), 2 )
             ELSEIF gMP == "3"
                _Cijena := MPC2
@@ -327,10 +320,7 @@ FUNCTION V_Kolicina( tip_vpc )
             ENDIF
 
          ELSEIF _idtipdok == "25" .AND. _cijena <> 0
-            // za knjiznu obavijest:
-            // ne dirati cijenu ako je vec odredjena
          ELSEIF cRjTip = "V" .AND. _idTipDok $ "10#20"
-            // ako se radi o racunima i predracunima
             _cijena := fakt_vpc_iz_sifrarnika()
 
          ELSE
@@ -362,8 +352,6 @@ FUNCTION V_Kolicina( tip_vpc )
    IF !( roba->tip = "U" ) .AND. !Empty( _IdRoba ) .AND.  Left( _idtipdok, 1 ) $ "12"  ;
          .AND. ( gPratiK == "D" .OR. lBezMinusa = .T. ) .AND. ;
          !( Left( _idtipdok, 1 ) == "1" .AND. Left( _serbr, 1 ) = "*" )
-      // ovo je onda faktura
-      // na osnovu otpremnice
 
       MsgO( "Izracunavam trenutno stanje ..." )
  	
@@ -376,20 +364,15 @@ FUNCTION V_Kolicina( tip_vpc )
  	
       DO WHILE !Eof()  .AND. roba->id == IdRoba
    		
-         // ovdje provjeravam samo za tekucu firmu
          IF fakt->IdFirma <> _IdFirma
             SKIP
             LOOP
          ENDIF
    		
          IF idtipdok = "0"
-            // ulaz
             nUl  += kolicina
          ELSEIF idtipdok = "1"
-            // izlaz faktura
             IF !( Left( serbr, 1 ) == "*" .AND. idtipdok == "10" )
-               // za fakture na osnovu otpremnice
-               // ne racunaj izlaz
                nIzl += kolicina
             ENDIF
          ELSEIF idtipdok $ "20#27"
@@ -427,9 +410,6 @@ FUNCTION V_Kolicina( tip_vpc )
 
 
 
-// -----------------------------------------------
-// WHEN roba
-// -----------------------------------------------
 FUNCTION W_Roba()
 
    PRIVATE Getlist := {}
@@ -447,9 +427,6 @@ FUNCTION W_Roba()
 
 
 
-// ----------------------------------------------
-// VALID roba
-// ----------------------------------------------
 FUNCTION V_Roba( lPrikTar )
 
    LOCAL cPom
@@ -472,7 +449,6 @@ FUNCTION V_Roba( lPrikTar )
       ENDIF
    ENDIF
 
-   // sredi sifru dobavljaca...
    fix_sifradob( @_idroba, 5, "0" )
 
    P_Roba( @_Idroba, nil, nil, gArtCDX )
@@ -496,7 +472,6 @@ FUNCTION V_Roba( lPrikTar )
       ENDIF
    ENDIF
 
-   // uzmi rabat za ovu robu.... iz polja roba->n1
    IF gRabIzRobe == "D"
       _rabat := roba->n1
    ENDIF
@@ -506,9 +481,6 @@ FUNCTION V_Roba( lPrikTar )
    RETURN .T.
 
 
-// -------------------------------
-// VALID porez
-// -------------------------------
 FUNCTION V_Porez()
 
    LOCAL nPor
@@ -532,9 +504,6 @@ FUNCTION V_Porez()
 
 
 
-// -----------------------------------------
-// when validacija broja otpremnice
-// -----------------------------------------
 FUNCTION w_brotp( novi )
 
    IF novi
@@ -546,10 +515,6 @@ FUNCTION w_brotp( novi )
 
 
 
-
-// ------------------------------------------
-// validacija rabata
-// ------------------------------------------
 FUNCTION V_Rabat( tip_rabata )
 
    IF tip_rabata $ " U"
@@ -586,9 +551,9 @@ FUNCTION V_Rabat( tip_rabata )
 
    ENDIF
 
-   IF _rabat > 99
+   IF ( _rabat > 99 .OR. _rabat < 0 )
       Beep( 2 )
-      Msg( "Rabat ne moze biti > 99% !!", 6 )
+      Msg( "Rabat ne može biti > 99% ili < 0%", 6 )
       _rabat := 0
    ENDIF
 
@@ -600,7 +565,6 @@ FUNCTION V_Rabat( tip_rabata )
       ENDIF
    ENDIF
 
-   // setuj novu cijenu u sifrarnik i rabat ako postoji
    set_cijena( _idtipdok, _idroba, _cijena, _rabat )
 
    ShowGets()
@@ -610,15 +574,11 @@ FUNCTION V_Rabat( tip_rabata )
 
 
 
-// -------------------------------------------------
-// uzorak teksta na kraju fakture
-// -------------------------------------------------
 FUNCTION UzorTxt()
 
    LOCAL cId := "  "
    LOCAL _user_name
 
-   // INO kupci
    IF IsPdv() .AND. _IdTipDok $ "10#20" .AND. IsIno( _IdPartner )
       InoKlauzula()
       IF Empty( AllTrim( _txt2 ) )
@@ -626,9 +586,7 @@ FUNCTION UzorTxt()
       ENDIF
    ENDIF
 
-   // KOMISION
    IF IsPdv() .AND. _IdTipDok == "12" .AND. IsProfil( _IdPartner, "KMS" )
-      // komisiona otprema klauzula
       KmsKlauzula()
       IF Empty( AllTrim( _txt2 ) )
          cId := "KS"

@@ -1126,6 +1126,7 @@ STATIC FUNCTION set_partner_id_broj( cId )
 STATIC FUNCTION fill_part_data( cId, lPdvObveznik )
 
    LOCAL cIdBroj := ""
+   LOCAL cPdvBroj := ""
    LOCAL cPorBroj := ""
    LOCAL cBrRjes := ""
    LOCAL cBrUpisa := ""
@@ -1151,7 +1152,8 @@ STATIC FUNCTION fill_part_data( cId, lPdvObveznik )
    ENDIF
 
    IF !lFromMemo .AND. partn->id == cId
-      cIdBroj := set_partner_id_broj( cId )
+      cIdBroj := firma_id_broj( cId )
+      cPdvBroj := firma_pdv_broj( cId ) 
       cPorBroj := IzSifKPartn( "PORB", cId, .F. )
       cBrRjes := IzSifKPartn( "BRJS", cId, .F. )
       cBrUpisa := IzSifKPartn( "BRUP", cId, .F. )
@@ -1181,8 +1183,11 @@ STATIC FUNCTION fill_part_data( cId, lPdvObveznik )
    add_drntext( "K10", cPartMjesto )
    // ptt
    add_drntext( "K11", cPartPTT )
-   // idbroj
-   add_drntext( "K03", cIdBroj )
+   // idbroj staro polje, koje sadrži i id i pdv broj
+   add_drntext( "K03", set_partner_id_broj( cId ) )
+   // idbroj, pdvbroj, nova polja
+   add_drntext( "K15", cIdBroj )
+   add_drntext( "K16", cPdvBroj )
    // porbroj
    add_drntext( "K05", cPorBroj )
 

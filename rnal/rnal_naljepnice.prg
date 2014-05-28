@@ -59,7 +59,7 @@ STATIC FUNCTION generisi_xml()
    IF nUkupno > nMax_komada
       lDijeli := .T.
    ENDIF
-   altd()
+   
    IF lDijeli
       napravi_folder_na_desktopu( @_desktop_folder, t_docit->doc_no )
    ENDIF
@@ -91,7 +91,15 @@ STATIC FUNCTION generisi_xml()
             close_xml()
            
             IF lDijeli
-                _output_odt := _desktop_folder + SLASH + "lab_" + PADL( ALLTRIM( STR( nCutCount ) ), 3, "0" ) + ".odt" 
+                // formira se fajl naziva: lab_01_03.odt, lab_02_03.odt, lab_03_03.odt
+                _output_odt := _desktop_folder + SLASH 
+                _output_odt += "lab_"
+                _output_odt += PADL( ALLTRIM( STR( nCutCount ) ), 2, "0" ) + "_" 
+                _output_odt += PADL( ALLTRIM( STR( nUkupno ) ), 2, "0" )
+                _output_odt += ".odt"
+ 
+                _output_odt := '"' + _output_odt + '"'
+ 
             ENDIF
  
             IF f18_odt_generate( _template, _data_xml, _output_odt )

@@ -13,24 +13,7 @@
 #include "rnal.ch"
 
 
-
-/*
-
-*/
-FUNCTION rnal_stampa_naljepnica_odt()
-
-   t_rpt_open()
-
-   SELECT t_docit
-   GO TOP
-
-   generisi_xml()
-
-   RETURN
-
-
-
-STATIC FUNCTION generisi_xml()
+FUNCTION rnal_stamapa_naljepnica_odt()
 
    LOCAL _data_xml := my_home() + "data.xml"
    LOCAL _h_stavke, _h_header, _uk_kolicina
@@ -47,6 +30,8 @@ STATIC FUNCTION generisi_xml()
    IF get_file_list_array( _t_path, "_rg*.odt", @_template ) = 0
       RETURN
    ENDIF
+
+   t_rpt_open()
 
    _h_header := hash_header_naljepnice()
 
@@ -296,13 +281,5 @@ STATIC FUNCTION hash_podaci_naljepnice()
 
 
 
-
-STATIC FUNCTION stampaj_odt( template, xml_file )
-
-   IF f18_odt_generate( _template, xml_file )
-      f18_odt_print()
-   ENDIF
-
-   RETURN
 
 

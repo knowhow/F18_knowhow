@@ -52,7 +52,7 @@ FUNCTION V_Rj()
 
    IF gDetPromRj == "D" .AND. gFirma <> _IdFirma
       Beep ( 3 )
-      Msg ( "Mijenjate radnu jedinicu!!!#" )
+      Msg ( "Mijenjate radnu jedinicu!#" )
    ENDIF
 
    RETURN .T.
@@ -82,7 +82,7 @@ FUNCTION V_Podbr()
       @ m_x + 1, m_y + 2 SAY "Proizvod:" GET _idroba valid {|| Empty( _idroba ) .OR. P_roba( @_idroba ) } PICT "@!"
       READ
       IF !Empty( _idroba )
-         @ m_x + 3, m_y + 2 SAY "kolicina        :" GET nPkolicina PICT pickol
+         @ m_x + 3, m_y + 2 SAY8 "količina        :" GET nPkolicina PICT pickol
          @ m_x + 4, m_y + 2 SAY "rabat %         :" GET nPRabat    PICT "999.999"
          @ m_x + 5, m_y + 2 SAY "Varijanta cijene:" GET cTipVPC
          READ
@@ -265,7 +265,6 @@ FUNCTION V_Kolicina( tip_vpc )
       SELECT ROBA
 
       IF !( roba->tip = "U" )
-         // usluge ne diraj
          IF _idtipdok == "13" .AND. ( gVar13 == "2" .OR. glCij13Mpc ) .AND. gVarNum == "1"
             IF gVar13 == "2" .AND. _idtipdok == "13"
                _cijena := fakt_mpc_iz_sifrarnika()
@@ -353,7 +352,7 @@ FUNCTION V_Kolicina( tip_vpc )
          .AND. ( gPratiK == "D" .OR. lBezMinusa = .T. ) .AND. ;
          !( Left( _idtipdok, 1 ) == "1" .AND. Left( _serbr, 1 ) = "*" )
 
-      MsgO( "Izracunavam trenutno stanje ..." )
+      MsgO( "Izračunavam trenutno stanje ..." )
  	
       SEEK _idroba
  	
@@ -666,18 +665,14 @@ FUNCTION UzorTxt2( cList, redni_broj )
    cList := AllTrim( cList )
 
    IF !Empty( cList )
-      // samo kod praznog teksta generisi iz liste
       IF Empty( _txt2 )
-         IF Pitanje(, "Dokument sadrzi txt listu, koristiti je ?", "D" ) == "N"
-            // ponisti listu
+         IF Pitanje(, "Dokument sadrži txt listu, koristiti je ?", "D" ) == "N"
             cList := ""
          ENDIF
-         // napravi matricu sa tekstovima
          aList := TokToNiz( cList, ";" )
       ENDIF
    ENDIF
 
-   // INO kupci
    IF IsPdv() .AND. _IdTipDok $ "10#20" .AND. IsIno( _IdPartner )
       InoKlauzula()
       IF Empty( AllTrim( _txt2 ) )
@@ -686,18 +681,13 @@ FUNCTION UzorTxt2( cList, redni_broj )
       ENDIF
    ENDIF
 
-   // KOMISION
    IF IsPdv() .AND. _IdTipDok == "12" .AND. IsProfil( _IdPartner, "KMS" )
-      // komisiona otprema klauzula
       KmsKlauzula()
       IF Empty( AllTrim( _txt2 ) )
          cId := "KS"
          AAdd( aList, cId )
       ENDIF
    ENDIF
-
-   // dodaj sve iz liste u _TXT2
-   // cID = "MX" - miksani sadrzaj
 
    IF !Empty( cList )
       FOR i := 1 TO Len( aList )
@@ -708,18 +698,16 @@ FUNCTION UzorTxt2( cList, redni_broj )
       NEXT
    ENDIF
 
-   // prva stavka fakture
-
    IF ( redni_broj == 1 .AND. Val( _podbr ) < 1 )
 
       Box(, 11, 75 )
 
       DO WHILE .T.
 
-         @ m_x + 1, m_y + 1 SAY "Odaberi uzorak teksta iz sifrarnika:" ;
+         @ m_x + 1, m_y + 1 SAY8 "Odaberi uzorak teksta iz šifrarnika:" ;
             GET cId PICT "@!"
  	
-         @ m_x + 11, m_y + 1 SAY "<c+W> dodaj novi ili snimi i izadji <ESC> ponisti"
+         @ m_x + 11, m_y + 1 SAY8 "<c+W> dodaj novi ili snimi i izađi <ESC> poništi"
 	
          READ
 
@@ -937,7 +925,7 @@ FUNCTION NijeDupla( fNovi )
    IF Found ()
       IF !( roba->tip $ "UT" )
          Beep ( 2 )
-         Msg ( "Roba se vec nalazi na dokumentu, stavka " + AllTrim ( fakt_pripr->rbr ), 30 )
+         Msg ( "Roba se već nalazi na dokumentu, stavka " + AllTrim ( fakt_pripr->rbr ), 30 )
       ENDIF
    ENDIF
 
@@ -1049,8 +1037,8 @@ FUNCTION UGenNar()
       ENDDO
       IF _kolicina + nIsporuceno > nNaruceno
          lVrati := .F.
-         MsgBeep( "Kolicina: " + AllTrim( TRANS( _kolicina, PicKol ) ) + ". Naruceno: " + AllTrim( TRANS( nNaruceno, PicKol ) ) + ". Dosad isporuceno: " + AllTrim( TRANS( nIsporuceno, PicKol ) ) + ". #" + ;
-            "Za ovoliku isporuku artikla morate imati novu generalnu narudzbenicu!" )
+         MsgBeep( "Količina: " + AllTrim( TRANS( _kolicina, PicKol ) ) + ". Naručeno: " + AllTrim( TRANS( nNaruceno, PicKol ) ) + ". Dosad isporuceno: " + AllTrim( TRANS( nIsporuceno, PicKol ) ) + ". #" + ;
+            "Za ovoliku isporuku artikla morate imati novu generalnu narudžbenicu!" )
       ENDIF
    ENDIF
    SELECT ( nArr )
@@ -1058,11 +1046,11 @@ FUNCTION UGenNar()
    RETURN lVrati
 
 
-// ako
+
 FUNCTION v_pretvori( cPretvori, cDinDem, dDatDok, nCijena )
 
    IF !( cPretvori $ "DN" )
-      MsgBeep( "preracunati cijenu u valutu dokumenta " + cDinDem + " ##(D)a ili (N)e ?" )
+      MsgBeep( "preračunati cijenu u valutu dokumenta " + cDinDem + " ##(D)a ili (N)e ?" )
       RETURN .F.
    ENDIF
 
@@ -1098,13 +1086,13 @@ FUNCTION set_cijena( cIdTipDok, cIdRoba, nCijena, nRabat )
 	
       IF cIdTipDok $ "#10#01#12#20#" .AND. nCijena <> 0
          IF field->vpc <> nCijena .AND. ;
-               Pitanje(, "Postaviti novu VPC u sifranik ?", "N" ) == "D"
+               Pitanje(, "Postaviti novu VPC u šifrarnik ?", "N" ) == "D"
             _vars[ "vpc" ] := nCijena
             lFill := .T.
          ENDIF
       ELSEIF cIdTipDok $ "11#13#" .AND. nCijena <> 0
          IF field->mpc <> nCijena .AND. ;
-               Pitanje(, "Postaviti novu MPC u sifrarnik ?", "N" ) == "D"
+               Pitanje(, "Postaviti novu MPC u šifrarnik ?", "N" ) == "D"
             _vars[ "mpc" ] := nCijena
             lFill := .T.
          ENDIF
@@ -1116,10 +1104,7 @@ FUNCTION set_cijena( cIdTipDok, cIdRoba, nCijena, nRabat )
       ENDIF
 
       IF lFill == .T.
-
-         // filuj robu...
          update_rec_server_and_dbf( "roba", _vars, 1, "FULL" )
-
       ENDIF
 
    ENDIF
@@ -1652,7 +1637,6 @@ FUNCTION c_cijena( nCijena, cTipDok, lNovidok )
    LOCAL lRet := .T.
    LOCAL nRCijena := nil
 
-   // provjeru radi samo kod novog dokumenta
    IF !lNoviDok
       RETURN lRet
    ENDIF
@@ -1674,15 +1658,14 @@ FUNCTION c_cijena( nCijena, cTipDok, lNovidok )
       ENDIF
 
    ELSEIF cTipDok $ "10#"
-      // veleprodaja...
       nRCijena := roba->vpc
    ENDIF
 
    IF gPratiC == "D" .AND. nRCijena <> NIL .AND. nCijena <> nRCijena
-      msgbeep( "Unesena cijena razlicita od cijene u sifrarniku !" + ;
+      msgbeep( "Unesena cijena različita od cijene u šifrarniku !" + ;
          "#Trenutna: " + AllTrim( Str( nCijena, 12, 2 ) ) + ;
-         ", sifrarnik: " + AllTrim( Str( nRCijena, 12, 2 ) ) )
-      IF Pitanje(, "Koristiti ipak ovu cijenu ?", "D" ) == "N"
+         ", šifrarnik: " + AllTrim( Str( nRCijena, 12, 2 ) ) )
+      IF Pitanje(, "Koristiti ipak ovu cijenu (D/N) ?", "D" ) == "N"
          lRet := .F.
       ENDIF
    ENDIF
@@ -1827,15 +1810,15 @@ FUNCTION CijeneOK( cStr )
             IdTipDok == _IdTipDok .AND. BrDok == _BrDok
          IF Cijena == 0 .AND. Empty ( PodBr )
             Beep ( 3 )
-            Msg ( "Utvrdjena greska na stavci broj " + ;
+            Msg ( "Utvrđena greška na stavci broj " + ;
                AllTrim ( rbr ) + "!#" + ;
-               "CIJENA NIJE ODREDJENA!!!", 30 )
+               "CIJENA NIJE ODREĐENA!!!", 30 )
             fMyFlag := .T.
          ENDIF
          SKIP
       END
       IF fMyFlag
-         Msg ( cStr + " nije dozvoljeno!#Vracate se na pripremu!", 30 )
+         Msg ( cStr + " nije dozvoljeno!#Vraćate se u pripremu!", 30 )
          lRetFlag := .F.
       ENDIF
    ENDIF
@@ -1957,7 +1940,7 @@ FUNCTION renumeracija_fakt_pripr( veza_otpremnica, datum_max )
    IF gDodPar == "1"
       @  m_x + 1, m_y + 2 SAY "Otpremnica broj:" GET _brotp
       @  m_x + 2, m_y + 2 SAY "          datum:" GET _Datotp
-      @  m_x + 3, m_y + 2 SAY "Ugovor/narudzba:" GET _brNar
+      @  m_x + 3, m_y + 2 SAY8 "Ugovor/narudžba:" GET _brNar
       @  m_x + 4, m_y + 2 SAY "    Destinacija:" GET _dest PICT "@S45"
       @  m_x + 5, m_y + 2 SAY "Vezni dokumenti:" GET _m_dveza PICT "@S45"
    ENDIF
@@ -1972,9 +1955,9 @@ FUNCTION renumeracija_fakt_pripr( veza_otpremnica, datum_max )
          @  m_x + 6, m_y + 35 SAY "Datum posljednje otpremnice:" GET datum_max WHEN .F. COLOR "GR+/B"
       ENDIF
 
-      @ m_x + 7, m_y + 2 SAY "Rok plac.(dana):" GET nRokPl PICT "999" WHEN valid_rok_placanja( @nRokPl, "0", .T. ) ;
+      @ m_x + 7, m_y + 2 SAY8 "Rok plać.(dana):" GET nRokPl PICT "999" WHEN valid_rok_placanja( @nRokPl, "0", .T. ) ;
          VALID valid_rok_placanja( nRokPl, "1", .T. )
-      @ m_x + 8, m_y + 2 SAY "Datum placanja :" GET _DatPl VALID valid_rok_placanja( nRokPl, "2", .T. )
+      @ m_x + 8, m_y + 2 SAY8 "Datum plaćanja :" GET _DatPl VALID valid_rok_placanja( nRokPl, "2", .T. )
 
       READ
    ENDIF

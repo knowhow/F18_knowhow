@@ -439,7 +439,7 @@ STATIC FUNCTION key_handler()
 			
          SET FILTER TO
 			
-         st_label( .F., nDoc_no )
+         rnal_stampa_naljepnica( .F., nDoc_no )
 			
          SELECT docs
 			

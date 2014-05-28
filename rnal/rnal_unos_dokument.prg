@@ -762,7 +762,7 @@ STATIC FUNCTION key_handler()
    CASE Ch == K_CTRL_L
 
       nTArea := Select()
-      st_label( .T., _docs->doc_no )
+      rnal_stampa_naljepnica( .T., _docs->doc_no )
       SELECT ( nTArea )
       nRet := DE_CONT
 

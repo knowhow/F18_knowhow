@@ -237,38 +237,31 @@ FUNCTION st_pripr( lTemporary, nDoc_no, aOlDocs )
 
 
 
-// -------------------------------------
-// stampa labela na osnovu naloga
-// -------------------------------------
-FUNCTION st_label( lTemporary, nDoc_no )
+
+FUNCTION rnal_stampa_naljepnica( lTemporary, nDoc_no )
 
    LOCAL lGn := .T.
 
    __temp := lTemporary
    __doc_no := nDoc_no
 
-   // kreiraj print tabele
    t_rpt_create()
-   // otvori tabele
    t_rpt_open()
 
    rnal_o_tables( __temp )
 
-   // osnovni podaci naloga
    _fill_main()
-   // stavke naloga
    _fill_items( lGn, 2 )
-   // operacije
    _fill_aops()
 
-   // printaj labele
-   lab_print( lTemporary )
+   rnal_stampa_naljepnica_odt( lTemporary )
 
    my_close_all_dbf()
 
    rnal_o_tables( __temp )
 
    RETURN DE_REFRESH
+
 
 
 

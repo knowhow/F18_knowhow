@@ -809,9 +809,6 @@ STATIC FUNCTION _set_memo_txt_from_vars()
    RETURN
 
 
-// --------------------------------------------------------
-// hendliranje unosa novih stavki u pripremi
-// --------------------------------------------------------
 STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
    LOCAL _a_tipdok := {}
@@ -828,16 +825,13 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
    LOCAL _ref_broj, _lot_broj
    LOCAL _params := fakt_params()
 
-   // daj mi listu tipova dokumenata
    _a_tipdok := fakt_tip_dok_arr()
    _h := {}
    ASize( _h, Len( _a_tipdok ) )
    AFill( _h, "" )
 
-   // sredi atribute kod unosa
    IF items_atrib <> NIL
 
-      // opis fakture
       IF _params[ "fakt_opis_stavke" ]
          IF fNovi
             _opis := PadR( "", 300 )
@@ -846,7 +840,6 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
          ENDIF
       ENDIF
 
-      // ref/lot brojevi
       IF _params[ "ref_lot" ]
 
          IF fNovi
@@ -860,7 +853,6 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
    ENDIF
 
-   // dodatne varijable koje ce se koristiti kod unosa
    _txt1 := ""
    _txt2 := ""
    _brotp := Space( 50 )
@@ -872,7 +864,6 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
    _dokument_veza := ""
    _objekti := ""
 
-   // doks2 varijable
    d2k1 := Space( 15 )
    d2k2 := Space( 15 )
    d2k3 := Space( 15 )
@@ -883,7 +874,6 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
    SET CURSOR ON
 
-   // prva stavka
    IF fNovi
 
       _convert := "D"
@@ -904,7 +894,6 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
       _cijena := 0
       _kolicina := 0
 
-      // ako je ovaj parametar ukljucen ponisti polje roba
       IF gResetRoba == "D"
          _idRoba := Space( 10 )
       ENDIF
@@ -923,27 +912,17 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
          _zaokr := 2
          _dindem := Left( ValBazna(), 3 )
          _m1 := " "
-         // broj dokumenta u pripremi ce biti uvijek 00000
          _brdok := PadR( Replicate( "0", gNumDio ), 8 )
 
       ENDIF
 
    ELSE
-
-      // _txt -> _vars
       _init_vars_from_txt_memo()
-      // meni opcija
       _n_menu := AScan( _a_tipdok, {| x| _idtipdok == Left( x, 2 ) } )
-
    ENDIF
 
-   // podbroj
    _podbr := Space( 2 )
-   // tip rabata
    _tip_rabat := "%"
-
-   // definisanje header-a fakture
-   // =================================================
 
    IF ( __redni_broj == 1 .AND. Val( _podbr ) < 1 )
 
@@ -969,7 +948,6 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
       _old_tip_dok := field->idtipdok
 
-      // odaberi dokument !
       _n_menu := Menu2( 5, 30, _a_tipdok, _n_menu )
 
       m_x := __mx
@@ -977,14 +955,11 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
       ESC_RETURN 0
 
-      // tip dokumenta je
       _idtipdok := Left( _a_tipdok[ _n_menu ], 2 )
 
       ++ _x
       @ m_x + _x, m_y + 2 SAY PadR( fakt_naziv_dokumenta( @_a_tipdok, _idtipdok ), 40 )
 
-
-      // ako treba resetovati broj dokumenta !
       IF !fNovi .AND. __redni_broj == 1
          IF _idtipdok <> _old_tip_dok .AND. !Empty( field->brdok ) .AND. AllTrim( field->brdok ) <> "00000"
             MsgBeep( "Vršite promjenu vrste dokumenta. Obratiti pažnju na broj !" )
@@ -993,9 +968,6 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
             ENDIF
          ENDIF
       ENDIF
-
-      // nesto oko dokumenta tipa "13"
-      // koristit ce se partner ili konto ????
 
       IF ( _idtipdok == "13" .AND. gVar13 == "2" )
 
@@ -1020,12 +992,10 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
          _x := 2
 
-         // datum, broj dokumenta
          @  m_x + _x, m_y + 45 SAY "Datum:" GET _datdok
          @  m_x + _x, Col() + 1 SAY "Broj:" GET _brdok VALID !Empty( _brdok )
 
          _x += 2
-         // partner
          @ _part_x := m_x + _x, _part_y := m_y + 2 SAY "Partner:" GET _idpartner ;
             PICT "@!" ;
             VALID {|| P_Firma( @_idpartner ), ;
@@ -1034,20 +1004,17 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
          _x += 2
 
          IF _params[ "fakt_dok_veze" ]
-            // veza dokumenti
             @ m_x + _x, m_y + 2 SAY "Vezni dok.:" GET _dokument_veza ;
                PICT "@S20"
          ENDIF
 
          ++ _x
          IF _params[ "destinacije" ]
-            // destinacija
             @ m_x + _x, m_y + 2 SAY "Dest:" GET _destinacija ;
                PICT "@S20"
          ENDIF
 
          IF ( _params[ "fakt_objekti" ] .AND. _idtipdok $ "10#11#12#13" )
-            // radni nalog
             @ m_x + _x, Col() + 1 SAY "Objekat:" GET _objekti ;
                VALID p_fakt_objekti( @_objekti ) ;
                PICT "@!"
@@ -1055,7 +1022,6 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
          _x2 := 4
 
-         // sada ide desna strana i podaci isporuke...
          IF _idtipdok $ "10#11"
 
             @ m_x + _x2, m_y + 51 SAY8 "Otpremnica broj:" GET _brotp PICT "@S20" WHEN W_BrOtp( fNovi )
@@ -1064,10 +1030,9 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
             @ m_x + _x2, m_y + 51 SAY8 "          datum:" GET _datotp
 
             ++ _x2
-            @ m_x + _x2, m_y + 51 SAY8 "Ugovor/narudzba:" GET _brnar PICT "@S20"
+            @ m_x + _x2, m_y + 51 SAY8 "Ugovor/narudžba:" GET _brnar PICT "@S20"
 
             IF fNovi .AND. gRokPl > 0
-               // uzmi default vrijednost za rok placanja
                _rok_placanja := gRokPl
             ENDIF
 
@@ -1076,12 +1041,12 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
                WHEN valid_rok_placanja( @_rok_placanja, "0", fNovi ) VALID valid_rok_placanja( _rok_placanja, "1", fNovi )
 
             ++ _x2
-            @ m_x + _x2, m_y + 51 SAY "Datum placanja :" GET _datpl VALID valid_rok_placanja( _rok_placanja, "2", fNovi )
+            @ m_x + _x2, m_y + 51 SAY8 "Datum plaćanja :" GET _datpl VALID valid_rok_placanja( _rok_placanja, "2", fNovi )
 
             IF _params[ "fakt_vrste_placanja" ]
 
                ++ _x
-               @ m_x + _x, m_y + 2  SAY "Nacin placanja" GET _idvrstep PICT "@!" VALID Empty( _idvrstep ) .OR. P_VRSTEP( @_idvrstep, 9, 20 )
+               @ m_x + _x, m_y + 2 SAY8 "Način plaćanja" GET _idvrstep PICT "@!" VALID Empty( _idvrstep ) .OR. P_VRSTEP( @_idvrstep, 9, 20 )
 
             ENDIF
 
@@ -1103,7 +1068,6 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
          ENDIF
 
-         // relacije .... ovo treba zamjeniti sa novom funkcijom
          IF ( fakt_pripr->( FieldPos( "idrelac" ) ) <> 0 .AND. _idtipdok $ "#11#" )
             ++ _x
             @ m_x + _x, m_y + 50  SAY "Relacija   :" GET _idrelac PICT "@S10"
@@ -1111,14 +1075,12 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
          _x += 3
 
-         // valuta
          IF _idTipDok $ "10#11#12#19#20#25#26#27"
             @ m_x + _x, m_y + 2 SAY "Valuta ?" GET _dindem PICT "@!"
          ELSE
             @ m_x + _x, m_y + 2 SAY " "
          ENDIF
 
-         // avansni racun
          IF _idtipdok $ "10"
 
             _avansni_racun := "N"
@@ -1127,13 +1089,11 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
                _avansni_racun := "D"
             ENDIF
 
-            @ m_x + _x, Col() + 4 SAY "Avansni racun (D/N)?:" GET _avansni_racun PICT "@!" ;
+            @ m_x + _x, Col() + 4 SAY8 "Avansni račun (D/N)?:" GET _avansni_racun PICT "@!" ;
                VALID _avansni_racun $ "DN"
 
          ENDIF
 
-         // ako nije ukljucena opcija ispravke partnera
-         // pri unosu dokumenta
          IF ( gIspPart == "N" )
             READ
          ENDIF
@@ -1165,16 +1125,12 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
    ENDIF
 
-   // unos stavki dokumenta pocinje ovdje
-   // ================================================
 
    _x := 13
 
-   // unos stavki dokumenta
    @ m_x + _x, m_y + 2 SAY "R.br: " GET __redni_broj PICT "9999"
 
    _x += 2
-   // artikal
    @ m_x + _x, m_y + 2  SAY "Artikal: " GET _IdRoba PICT "@!S10" ;
       WHEN {|| _idroba := PadR( _idroba, Val( gDuzSifIni ) ), W_Roba() } ;
       VALID {|| _idroba := iif( Len( Trim( _idroba ) ) < Val( gDuzSifIni ), ;
@@ -1188,19 +1144,16 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
 
    ++ _x
-   // serijski broj
    IF ( gSamokol != "D" .AND. !glDistrib )
       @ m_x + _x, m_y + 2 SAY get_serbr_opis() + " " GET _serbr PICT "@S15" WHEN _podbr <> " ."
    ENDIF
 
    _tip_cijene := "1"
 
-   // tip cijene
    IF ( gVarC $ "123" .AND. _idtipdok $ "10#12#20#21#25" )
       @ m_x + _x, m_y + 59 SAY "Cijena (1/2/3):" GET _tip_cijene
    ENDIF
 
-   // unos opisa stavke po fakturama
    IF _params[ "fakt_opis_stavke" ]
       ++ _x
       @ m_x + _x, m_y + 2 SAY "Opis:" GET _opis PICT "@S50"
@@ -1213,13 +1166,11 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
    ENDIF
 
    _x += 3
-   // kolicina
    @ m_x + _x, m_y + 2 SAY8 "Količina "  GET _kolicina PICT pickol VALID V_Kolicina( _tip_cijene )
 
 
    IF gSamokol != "D"
 
-      // cijena
       @ m_x + _x, Col() + 2 SAY IF( _idtipdok $ "13#23" .AND. ( gVar13 == "2" .OR. glCij13Mpc ), ;
          "MPC.s.PDV", "Cijena (" + AllTrim( ValDomaca() ) + ")" ) GET _cijena ;
          PICT piccdem ;
@@ -1227,14 +1178,12 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
          VALID c_cijena( _cijena, _idtipdok, fNovi )
 
 
-      // preracunavanje valute
       IF ( PadR( _dindem, 3 ) <> PadR( ValDomaca(), 3 ) )
          @ m_x + _x, Col() + 2 SAY "Pr"  GET _convert ;
             PICT "@!" ;
             VALID v_pretvori( @_convert, _dindem, _datdok, @_cijena )
       ENDIF
 
-      // rabat
       IF !( _idtipdok $ "12#13" ) .OR. ( _idtipdok == "12" .AND. gV12Por == "D" )
 
          @ m_x + _x, Col() + 2 SAY "Rabat" GET _rabat PICT piccdem ;
@@ -1256,7 +1205,6 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
    ESC_RETURN 0
 
-   // uzorci na fakturi....
    _odabir_txt := .T.
 
    IF _IdTipDok $ "13" .OR. gSamoKol == "D"
@@ -1272,14 +1220,11 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
    ENDIF
 
    IF _odabir_txt
-      // uzmi odgovarajucu listu
       _lista_uzoraka := g_txt_tipdok( _idtipdok )
-      // unesi tekst
       UzorTxt2( _lista_uzoraka, __redni_broj )
    ENDIF
 
    IF ( _podbr == " ." .OR. roba->tip = "U" .OR. ( __redni_broj == 1 .AND. Val( _podbr ) < 1 ) )
-      // setuj memo txt na osnovu varijabli
       _set_memo_txt_from_vars()
    ELSE
       _txt := ""
@@ -1287,12 +1232,9 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
    _rbr := RedniBroj( __redni_broj )
 
-   // snimi atribute u hash matricu....
-   // opis stavke
    IF _params[ "fakt_opis_stavke" ]
       items_atrib[ "opis" ] := _opis
    ENDIF
-   // ref/lot brojevi
    IF _params[ "ref_lot" ]
       items_atrib[ "ref" ] := _ref_broj
       items_atrib[ "lot" ] := _lot_broj
@@ -1302,9 +1244,6 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
 
 
-// ------------------------------------------------------------
-// trentno stanje artikla u kalkulacijama
-// ------------------------------------------------------------
 STATIC FUNCTION _trenutno_na_stanju_kalk( id_rj, tip_dok, id_roba )
 
    LOCAL _stanje := NIL
@@ -1328,15 +1267,11 @@ STATIC FUNCTION _trenutno_na_stanju_kalk( id_rj, tip_dok, id_roba )
    SELECT ( _t_area )
 
    IF tip_dok $ "10#12"
-      // izvuci mi stanje artikla iz kalk
-      // magacinski dokumenti
       _stanje := kalk_kol_stanje_artikla_magacin( _id_konto, id_roba, Date() )
    ELSEIF tip_dok $ "11#13"
-      // ovo su prodavnicki dokumenti
       _stanje := kalk_kol_stanje_artikla_prodavnica( _id_konto, id_roba, Date() )
    ENDIF
 
-   // ispisi stanje artikla
    IF _stanje <> NIL
 
       IF _stanje <= 0

@@ -96,8 +96,9 @@ STATIC FUNCTION generisi_xml()
                 _output_odt += "lab_"
                 _output_odt += PADL( ALLTRIM( STR( nCutCount ) ), 3, "0" ) 
                 _output_odt += ".odt"
- 
-                _output_odt := '"' + _output_odt + '"'
+                #IFNDEF __PLATFORM__WINDOWS 
+                   _output_odt := '"' + _output_odt + '"'
+                #ENDIF
  
             ENDIF
  

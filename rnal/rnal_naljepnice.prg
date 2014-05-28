@@ -38,26 +38,46 @@ STATIC FUNCTION generisi_xml()
 
    LOCAL _data_xml := my_home() + "data.xml"
    LOCAL _h_stavke, _h_header, _uk_kolicina
-
-   open_xml( _data_xml )
-   xml_head()
-   xml_subnode( "label", .F. )
+   LOCAL nCount := 0
+   LOCAL i, nUkupno
+   LOCAL nDijeli := 200
 
    _h_header := hash_header_naljepnice()
-   upisi_header_xml( _h_header )
 
    SELECT t_docit
    SET ORDER TO TAG "1"
    GO TOP
 
+   nUkupno := koliko_ima_naljepnica()   
+
    DO WHILE !Eof()
 
-      _uk_kolicina := field->doc_it_qtt
-
+      _kolicina_stavke := field->doc_it_qtt
 	  _h_stavke := hash_podaci_naljepnice()
 
-      FOR lab_cnt := 1 TO _uk_kolicina
-         upisi_stavke_xml( _h_stavke, _uk_kolicina )
+      FOR i := 1 TO _kolicina_stavke
+ 
+         IF ( nCount == 0 .OR. nCount%nDijeli == 0 )
+
+            open_xml( _data_xml )
+            xml_head()
+            xml_subnode( "label", .F. )
+            upisi_header_xml( _h_header )
+
+         ENDIF
+
+         upisi_stavke_xml( _h_stavke, _kolicina_stavke )
+         ++ nCount
+
+         IF ( nCount > 0 .AND. nCount%nDijeli == 0 ) .OR. nUkupno == nCount 
+
+            xml_subnode( "label", .T. )
+            close_xml()
+
+            stampaj_odt( _data_xml )
+
+         ENDIF
+
       NEXT
 
       SELECT t_docit
@@ -65,13 +85,24 @@ STATIC FUNCTION generisi_xml()
 
    ENDDO
 
-   xml_subnode( "label", .T. )
-
-   close_xml()
-
-   stampaj_odt( _data_xml )
-
    RETURN
+
+
+
+
+STATIC FUNCTION koliko_ima_naljepnica()
+
+   LOCAL nCount := 0
+
+   SELECT t_docit
+   GO TOP
+   DO WHILE !Eof()
+       nCount += field->doc_it_qtt
+       SKIP
+   ENDDO
+   GO TOP
+
+   RETURN nCount
 
 
 

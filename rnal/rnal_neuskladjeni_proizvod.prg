@@ -190,7 +190,7 @@ do while !::damage_data:EOF()
     _a_art := {}
 
     // napuni matricu...
-    _art_set_descr( _art_id, nil, nil, @_a_art, .t. )
+    rnal_setuj_naziv_artikla( _art_id, nil, nil, @_a_art, .t. )
 
     if is_izo( _a_art ) .or. is_lami( _a_art ) .or. is_lamig( _a_art )
         _ok := .t.

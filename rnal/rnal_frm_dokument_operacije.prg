@@ -56,7 +56,7 @@ FUNCTION e_doc_ops( nDoc_no, lNew, nArt_id, nItem_no )
    _a_arr := {}
 
    // napuni matricu sa artiklom
-   _art_set_descr( __art_id, nil, nil, @_a_arr, .T. )
+   rnal_setuj_naziv_artikla( __art_id, nil, nil, @_a_arr, .T. )
 
    // napuni matricu sa elementima artikla
    _g_art_elements( @_a_elem, __art_id )

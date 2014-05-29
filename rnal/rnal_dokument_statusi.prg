@@ -395,7 +395,7 @@ local _scan := 0
 local _el_no 
 
 // daj matricu kompletne strukture artikla 
-_art_set_descr( art_id, .f., nil, @_art, .t. )
+rnal_setuj_naziv_artikla( art_id, .f., nil, @_art, .t. )
 
 // daj elemente artikla 
 _g_art_elements( @_elem, art_id )

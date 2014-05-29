@@ -519,7 +519,7 @@ STATIC FUNCTION _cre_sp_el( dD_from, dD_to, nOper, cArticle )
          aElem := {}
 
          // artikal razlozi na elemente
-         _art_set_descr( nArt_id, nil, nil, @aArt, .T. )
+         rnal_setuj_naziv_artikla( nArt_id, nil, nil, @aArt, .T. )
 
          // ovaj artikal nema elemenata ?!????
          IF Len( aArt ) == 0
@@ -1081,7 +1081,7 @@ STATIC FUNCTION _cre_sp_art( dD_from, dD_to, nOper, cArticle )
 
          // napuni matricu sa artiklom
          aArt := {}
-         _art_set_descr( nArt_id, nil, nil, @aArt, .T. )
+         rnal_setuj_naziv_artikla( nArt_id, nil, nil, @aArt, .T. )
 
          // koliko stakala ima u artiklu
          nGlass_cnt := g_gl_count( aArt )

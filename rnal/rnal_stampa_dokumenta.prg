@@ -487,7 +487,7 @@ STATIC FUNCTION _fill_items( lZpoGN, nVar )
 
       aZpoGN := {}
       // setuje se matrica sa elementima artikla
-      _art_set_descr( nArt_id, .F., nil, @aZpoGN, .T. )
+      rnal_setuj_naziv_artikla( nArt_id, .F., nil, @aZpoGN, .T. )
 
       IF lZpoGN == .T.
 
@@ -1038,7 +1038,7 @@ FUNCTION set_art_docgr( nArt_id, nDoc_no, nDocit_no, lPriprema )
    LOCAL lIsLami := .F.
 
    // daj matricu aArt sa definicijom artikla....
-   _art_set_descr( nArt_id, nil, nil, @aArt, .T. )
+   rnal_setuj_naziv_artikla( nArt_id, nil, nil, @aArt, .T. )
 
    IF aArt == NIL .OR. Len( aArt ) == 0
       cGroup := "0"
@@ -1321,7 +1321,7 @@ FUNCTION is_buseno( aArticle, nDoc_no, nDocit_no, nDoc_el_no, lPriprema )
          .T. postoji zadana obrada
 
    Prerequisites:
-     formirana matrica artikla sa funkcijom _art_set_descr()
+     formirana matrica artikla sa funkcijom rnal_setuj_naziv_artikla()
 
 */
 STATIC FUNCTION postoji_obrada_u_artiklu( aArticle, cSrcObrada )
@@ -1460,7 +1460,7 @@ FUNCTION rekalkulisi_stavke_za_stampu( lPriprema )
 
    aZpoGN := {}
 
-   _art_set_descr( field->art_id, nil, nil, @aZpoGN, .T. )
+   rnal_setuj_naziv_artikla( field->art_id, nil, nil, @aZpoGN, .T. )
 
    SELECT ( nTArea )
 

@@ -172,7 +172,7 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
       nTmpArea := Select()
 
       // uzmi podatke u matricu....
-      _art_set_descr( art_id, lNew, .F., @aTmp, .T. )
+      rnal_setuj_naziv_artikla( art_id, lNew, .F., @aTmp, .T. )
 
       SELECT ( nTmpArea )
 
@@ -202,7 +202,7 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
 
          // generisi naziv artikla i update-uj artikal art_id
          SELECT articles
-         nRet := _art_set_descr( art_id, lNew )
+         nRet := rnal_setuj_naziv_artikla( art_id, lNew )
          SELECT articles
 		
          EXIT

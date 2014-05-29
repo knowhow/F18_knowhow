@@ -346,7 +346,7 @@ return cRet
 static function _set_arr( nArt_id, aArr )
 local nTArea := SELECT()
 
-_art_set_descr( nArt_id, .f., .f., @aArr, .t.)
+rnal_setuj_naziv_artikla( nArt_id, .f., .f., @aArr, .t.)
 
 select (nTArea)
 

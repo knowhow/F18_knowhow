@@ -225,7 +225,7 @@ STATIC FUNCTION _cre_spec( params )
          aArtDesc := {}
 
          // napuni matricu aArtDesc radi podataka o artiklu !
-         _art_set_descr( nArt_id, nil, nil, @aArtDesc, .T. )
+         rnal_setuj_naziv_artikla( nArt_id, nil, nil, @aArtDesc, .T. )
 
          // sracunaj broj stakala
          _glass_count := broj_stakala( aArtDesc, nQtty )

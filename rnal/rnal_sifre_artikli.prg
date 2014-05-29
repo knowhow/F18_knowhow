@@ -1058,7 +1058,7 @@ FUNCTION auto_gen_art()
       @ m_x + 2, m_y + 2 SAY Space( nBoxY )
       @ m_x + 2, m_y + 2 SAY "opis <--- " + PadR( field->art_desc, 40 ) + "..."
 
-      _art_set_descr( nArt_id, lNew, lAuto )
+      rnal_setuj_naziv_artikla( nArt_id, lNew, lAuto )
 
       SELECT articles
       SET ORDER TO TAG "1"
@@ -1112,8 +1112,8 @@ STATIC FUNCTION _f_a_attr( aArr, nElNo, cGrValCode, cGrVal, ;
 // { nElNo, cGrValCode, cGrVal, cAttJoker, cAttValCode, cAttVal }
 //
 //
-//
-FUNCTION _art_set_descr( nArt_id, lNew, lAuto, aAttr, lOnlyArr )
+
+FUNCTION rnal_setuj_naziv_artikla( nArt_id, lNew, lAuto, aAttr, lOnlyArr )
 
    // artikal kod
    LOCAL cArt_code := ""
@@ -1286,20 +1286,12 @@ FUNCTION _art_set_descr( nArt_id, lNew, lAuto, aAttr, lOnlyArr )
 
    IF lOnlyArr == .F.
 
-      // sada izvuci nazive iz matrice
-
-      _aset_descr( aAttr, @cArt_code, @cArt_desc, @cArt_mcode )
-
-      // apenduj na artikal
+      rnal_setuj_naziv_artikla_iz_pravila( aAttr, @cArt_code, @cArt_desc, @cArt_mcode )
 
       IF lAuto == .T.
-         // automatski generisi opsi i mc
-         // bez kontrolnog box-a
-         nRet := _art_apnd_auto( nArt_id, cArt_code, cArt_desc, cArt_mcode )
+         nRet := rnal_azuriraj_artikal_auto( nArt_id, cArt_code, cArt_desc, cArt_mcode )
       ELSE
-         // generisi opis i match_code
-         // otvori kontrolni box
-         nRet := _art_apnd( nArt_id, cArt_code, cArt_desc, cArt_mcode, lNew )
+         nRet := rnal_azuriraj_artikal( nArt_id, cArt_code, cArt_desc, cArt_mcode, lNew )
       ENDIF
 
    ENDIF
@@ -1393,14 +1385,17 @@ FUNCTION g_el_descr( aArr, nEl_count )
    RETURN xRet
 
 
-// ---------------------------------------------------------
-// setovanje naziva iz matrice aAttr prema pravilu
-// aArr - matrica sa podacima artikla
-// cArt_code - sifra artikla
-// cArt_desc - opis artikla
-// cArt_mcode - match code artikla
-// ---------------------------------------------------------
-STATIC FUNCTION _aset_descr( aArr, cArt_code, cArt_desc, cArt_mcode )
+/*
+   Opis: setovanje naziva artikla automatski na osnovu pravila definisanih u tabeli pravila (f18_rules)
+
+   Parameters:
+     - aArr - matrica definicije artikla
+     - cArt_code 
+     - cArt_desc
+     - cArt_mcode
+*/
+
+STATIC FUNCTION rnal_setuj_naziv_artikla_iz_pravila( aArr, cArt_code, cArt_desc, cArt_mcode )
 
    LOCAL nTotElem := 0
    LOCAL cElemCode
@@ -1416,18 +1411,14 @@ STATIC FUNCTION _aset_descr( aArr, cArt_code, cArt_desc, cArt_mcode )
 
    FOR i := 1 TO nTotElem
 
-      // iscitaj code elementa
       nTmp := AScan( aArr, {| xVar | xVar[ 1 ] == i } )
       cElemCode := aArr[ nTmp, 2 ]
 
-      // uzmi pravilo <GL_TICK>#<GL_TYPE>.....
-      cRule := _get_rule( cElemCode )
-      // pa ga u matricu ......
+      cRule := pravilo_grupe_elementa( cElemCode )
       aRule := TokToNiz( cRule, "#" )
 
       FOR nRule := 1 TO Len( aRule )
 
-         // <GL_TICK>
          cRuleDef := AllTrim( aRule[ nRule ] )
 
          IF Left( cRuleDef, 1 ) <> "<"
@@ -1451,7 +1442,6 @@ STATIC FUNCTION _aset_descr( aArr, cArt_code, cArt_desc, cArt_mcode )
 
             cArt_code += AllTrim( aArr[ nSeek, 5 ] )
 
-            // dodaj space..... na opis puni
             IF !Empty( cArt_desc )
                cArt_desc += " "
             ENDIF
@@ -1475,10 +1465,8 @@ STATIC FUNCTION _aset_descr( aArr, cArt_code, cArt_desc, cArt_mcode )
    RETURN
 
 
-// -------------------------------------------------
-// vraca pravilo za pojedinu grupu....
-// -------------------------------------------------
-STATIC FUNCTION _get_rule( cCode )
+
+STATIC FUNCTION pravilo_grupe_elementa( cCode )
 
    LOCAL cRule := ""
 
@@ -1519,15 +1507,18 @@ STATIC FUNCTION _chk_art_exist( nArt_id, cDesc, nId )
    RETURN lRet
 
 
-// --------------------------------------------------
-// apend match_code, desc for article w contr.box
-//
-// nArt_id - id artikla
-// cArt_desc - artikal opis
-// cArt_mcode - artikal match_code
-// lNew - .t. - novi artikal, .f. postojeci
-// --------------------------------------------------
-STATIC FUNCTION _art_apnd( nArt_id, cArt_Desc, cArt_full_desc, cArt_mcode, lNew )
+/*
+   Opis: ažuriranje artikla u šifranik rnal_articles, otvaranje box-a za nazive
+
+   Parametres:
+     - nArt_id - id artikla
+     - cArt_desc - skraćeni opis artikla
+     - cArt_full_desc - puni opis artikla
+     - cArt_mcode - match code artikla
+     - lNew - .T. novi artikla, .F. postojeći
+*/
+
+STATIC FUNCTION rnal_azuriraj_artikal( nArt_id, cArt_Desc, cArt_full_desc, cArt_mcode, lNew )
 
    LOCAL lAppend := .F.
    LOCAL lExist := .F.
@@ -1598,14 +1589,16 @@ STATIC FUNCTION _art_apnd( nArt_id, cArt_Desc, cArt_full_desc, cArt_mcode, lNew 
 
 
 
-// --------------------------------------------------
-// apend match_code, desc for article wo cont.box
-//
-// nArt_id - id artikla
-// cArt_desc - artikal opis
-// cArt_mcode - artikal match_code
-// --------------------------------------------------
-STATIC FUNCTION _art_apnd_auto( nArt_id, cArt_Desc, cArt_full_desc, cArt_mcode )
+/*
+   Opis: automatsko ažuriranje artikla u šifranik rnal_articles
+
+   Parametres:
+     - nArt_id - id artikla
+     - cArt_desc - skraćeni opis artikla
+     - cArt_full_desc - puni opis artikla
+     - cArt_mcode - match code artikla
+*/
+STATIC FUNCTION rnal_azuriraj_artikal_auto( nArt_id, cArt_Desc, cArt_full_desc, cArt_mcode )
 
    LOCAL lChange := .F.
    LOCAL _rec
@@ -1623,7 +1616,6 @@ STATIC FUNCTION _art_apnd_auto( nArt_id, cArt_Desc, cArt_full_desc, cArt_mcode )
 
    IF Found()
 
-      // ako su iste vrijednosti, preskoci...
       IF AllTrim( cArt_desc ) == AllTrim( articles->art_desc ) .AND. ;
             AllTrim( cArt_full_desc ) == AllTrim( articles->art_full_d )
 
@@ -1636,8 +1628,6 @@ STATIC FUNCTION _art_apnd_auto( nArt_id, cArt_Desc, cArt_full_desc, cArt_mcode )
    ENDIF
 
    IF lChange == .T.
-
-      // zamjeni vrijednost....
 
       cArt_desc := PadR( cArt_desc, 100 )
       cArt_full_desc := PadR( cArt_full_desc, 100 )
@@ -1876,7 +1866,7 @@ FUNCTION check_article_valid( art_id )
    LOCAL _elem := {}
 
    // razlozi artikal na elemente
-   _art_set_descr( art_id, nil, nil, @_elem, .T. )
+   rnal_setuj_naziv_artikla( art_id, nil, nil, @_elem, .T. )
 
    IF Len( _elem ) == 0
       MsgBeep( "Artikal nema pripadajuce elemente !!!" )
@@ -1915,7 +1905,7 @@ FUNCTION rpt_artikli_bez_elemenata()
       @ m_x + 1, m_y + 2 SAY "Artikal: " + AllTrim( Str ( _art_id ) )
 
       // razlozi artikal na elemente
-      _art_set_descr( _art_id, nil, nil, @_elem, .T. )
+      rnal_setuj_naziv_artikla( _art_id, nil, nil, @_elem, .T. )
 
       SELECT articles
 

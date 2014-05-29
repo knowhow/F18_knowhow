@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,6 +14,7 @@
 #define D_STAROST_DANA   25
 
 PROCEDURE OutMsg( hFile, cMsg )
+
    IF hFile == 1
       OutStd( cMsg )
    ELSEIF hFile == 2
@@ -21,111 +22,119 @@ PROCEDURE OutMsg( hFile, cMsg )
    ELSE
       FWrite( hFile, cMsg )
    ENDIF
-RETURN
+
+   RETURN
 
 
 
 // ------------------------------------
 // vraca putanju exe fajlova
 // ------------------------------------
-function GetExePath( cPath )
-local cRet := ""
-local i
-local n := 0
-local cTmp
+FUNCTION GetExePath( cPath )
 
-for i:=1 to LEN(cPath)
+   LOCAL cRet := ""
+   LOCAL i
+   LOCAL n := 0
+   LOCAL cTmp
 
-	cTmp := SUBSTR( cPath, i, 1 )
+   FOR i := 1 TO Len( cPath )
+
+      cTmp := SubStr( cPath, i, 1 )
 	
-	if cTmp == "\"
-		n += 1
-	endif
+      IF cTmp == "\"
+         n += 1
+      ENDIF
 
-	cRet += cTmp
+      cRet += cTmp
 
-	if n = 2
-		exit
-	endif
+      IF n = 2
+         EXIT
+      ENDIF
 
-next
+   NEXT
 
-return cRet
+   RETURN cRet
 
 
 /*! \fn FilePath(cFile)
  *  \brief  Extract the full path name from a filename
  *  \return cFilePath
  */
- 
-function My_FilePath( cFile )
-LOCAL nPos, cFilePath
 
-nPos := RAT(SLASH, cFile)
-if (nPos != 0)
-	cFilePath := SUBSTR(cFile, 1, nPos)
-else
-	cFilePath := ""
-endif
-return cFilePath
+FUNCTION My_FilePath( cFile )
 
-function ExFileName( cFile )
-LOCAL nPos, cFileName
-IF (nPos := RAT(SLASH, cFile)) != 0
-   cFileName:= SUBSTR(cFile, nPos + 1 )
-ELSE
-   cFileName := cFile 
-ENDIF
-return cFileName
+   LOCAL nPos, cFilePath
 
-function AddBS(cPath)
-if right(cPath,1)<>SLASH     
-     cPath:=cPath + SLASH
-endif
+   nPos := RAt( SLASH, cFile )
+   IF ( nPos != 0 )
+      cFilePath := SubStr( cFile, 1, nPos )
+   ELSE
+      cFilePath := ""
+   ENDIF
+
+   RETURN cFilePath
+
+FUNCTION ExFileName( cFile )
+
+   LOCAL nPos, cFileName
+
+   IF ( nPos := RAt( SLASH, cFile ) ) != 0
+      cFileName := SubStr( cFile, nPos + 1 )
+   ELSE
+      cFileName := cFile
+   ENDIF
+
+   RETURN cFileName
+
+FUNCTION AddBS( cPath )
+
+   IF Right( cPath, 1 ) <> SLASH
+      cPath := cPath + SLASH
+   ENDIF
+
+FUNCTION DiskPrazan( cDisk )
+
+   IF DiskSpace( Asc( cDisk ) -64 ) < 15000
+      Beep( 4 )
+      Msg( "Nema dovoljno prostora na ovom disku, stavite drugu disketu", 6 )
+      RETURN .F.
+   ENDIF
+
+   RETURN .T.
 
 
-function DiskPrazan(cDisk)
-
- if diskspace(asc(cDisk)-64)<15000
-   Beep(4)
-   Msg("Nema dovoljno prostora na ovom disku, stavite drugu disketu",6)
-   return .f.
- endif
-return .t.
-
-
-*string FmkIni_ExePath_POS_PitanjeUgasiti;
+// string FmkIni_ExePath_POS_PitanjeUgasiti;
 
 /*! \ingroup ini
  *  \var *string FmkIni_ExePath_POS_PitanjeUgasiti
  *  \param "0" - ne pitaj (dobro za racunar koji se ne koristi SAMO kao PC Kasa
- *  \param "-" - pitaj 
+ *  \param "-" - pitaj
  */
 
-function UgasitiR()
+FUNCTION UgasitiR()
 
-local cPitanje
+   LOCAL cPitanje
 
-if (gSQL=="D")
-	cPitanje:=IzFmkIni("POS","PitanjeUgasiti","-")
-	if cPitanje=="-"
-		cPitanje:=" "
-	endif
+   IF ( gSQL == "D" )
+      cPitanje := IzFmkIni( "POS", "PitanjeUgasiti", "-" )
+      IF cPitanje == "-"
+         cPitanje := " "
+      ENDIF
 
-	if (cPitanje=="0")
-		goModul:quit()
-	elseif Pitanje(,"Želite li ugasiti racunar D/N ?", cPitanje)=="D"
-		if Gw("OMSG SHUTDOWN")=="OK"
-			goModul:quit()
-		endif
-	endif
-endif
+      IF ( cPitanje == "0" )
+         goModul:quit()
+      ELSEIF Pitanje(, "Želite li ugasiti racunar D/N ?", cPitanje ) == "D"
+         IF Gw( "OMSG SHUTDOWN" ) == "OK"
+            goModul:quit()
+         ENDIF
+      ENDIF
+   ENDIF
 
-if gModul<>"TOPS"
-	goModul:quit()
-endif
+   IF gModul <> "TOPS"
+      goModul:quit()
+   ENDIF
 
-return
+   RETURN
 
 
 
@@ -133,68 +142,69 @@ return
  * \brief Promjeni ekstenziju
  *
  * \params cImeF   ime fajla
- * \params cExt    polazna extenzija (obavezno 3 slova) 
+ * \params cExt    polazna extenzija (obavezno 3 slova)
  * \params cExtNew nova extenzija
  * \params fBezAdd ako je .t. onda ce fajlu koji nema cExt dodati cExtNew
- * 
+ *
  * \code
  *
  * ChangeEXT("SUBAN", "DBF", "CDX", .t.)
  * suban     -> suban.CDX
- * 
+ *
  * ChangeEXT("SUBAN", "DBF", "CDX", .f.)
  * SUBAN     -> SUBAN
- * 
+ *
  *
  * ChangeEXT("SUBAN.DBF", "DBF", "CDX", .t.)
  * SUBAN.DBF  -> SUBAN.CDX
  *
- * \endcode 
+ * \endcode
  *
  */
 
-function ChangeEXT(cImeF, cExt, cExtNew, fBezAdd)
+FUNCTION ChangeEXT( cImeF, cExt, cExtNew, fBezAdd )
 
-local cTacka
+   LOCAL cTacka
 
-if fBezAdd==NIL
-  fBezAdd:=.t.
-endif  
-  
-if EMPTY(cExtNew)
-  cTacka:=""
-else
-  cTacka:="."
-endif
-cImeF:=ToUnix(cImeF)
+   IF fBezAdd == NIL
+      fBezAdd := .T.
+   ENDIF
 
-cImeF:=trim(STRTRAN(cImeF,"."+cEXT,cTacka+cExtNew))
-if !EMPTY(cTacka) .and.  RIGHT(cImeF,4)<>cTacka+cExtNew
-  cImeF:=cImeF+cTacka+cExtNew
-endif
-return  cImeF
+   IF Empty( cExtNew )
+      cTacka := ""
+   ELSE
+      cTacka := "."
+   ENDIF
+   cImeF := ToUnix( cImeF )
+
+   cImeF := Trim( StrTran( cImeF, "." + cEXT, cTacka + cExtNew ) )
+   IF !Empty( cTacka ) .AND.  Right( cImeF, 4 ) <> cTacka + cExtNew
+      cImeF := cImeF + cTacka + cExtNew
+   ENDIF
+
+   RETURN  cImeF
 
 
 // ------------------------------------------
 // ------------------------------------------
-function IsDirectory(cDir1)
+FUNCTION IsDirectory( cDir1 )
 
-local cDirTek
-local lExists
+   LOCAL cDirTek
+   LOCAL lExists
 
-cDir1 := ToUnix(cDir1)
+   cDir1 := ToUnix( cDir1 )
 
-cDirTek:=DirName()
+   cDirTek := DirName()
 
-if DirChange(cDir1) <> 0
- lExists:=.f.
-else
- lExists:=.t.
-endif
+   IF DirChange( cDir1 ) <> 0
+      lExists := .F.
+   ELSE
+      lExists := .T.
+   ENDIF
 
-DirChange(cDirTek)
+   DirChange( cDirTek )
 
-return lExists
+   RETURN lExists
 
 
 /*! \fn BrisiSFajlove(cDir)
@@ -202,7 +212,7 @@ return lExists
   *
   * \code
   *
-  * npr:  cDir ->  c:\tops\prenos\ 
+  * npr:  cDir ->  c:\tops\prenos\
   *
   * brisi sve fajlove u direktoriju
   * starije od 45 dana
@@ -210,30 +220,31 @@ return lExists
   * \endcode
   */
 
-function BrisiSFajlove(cDir, nDana)
+FUNCTION BrisiSFajlove( cDir, nDana )
 
-local cFile
+   LOCAL cFile
 
-if nDana == nil
-	nDana := D_STAROST_DANA
-endif
+   IF nDana == nil
+      nDana := D_STAROST_DANA
+   ENDIF
 
-cDir:=ToUnix(trim(cdir))
-cFile:=fileseek(trim(cDir)+"*.*")
-do while !empty(cFile)
-    if date() - filedate() > nDana  
-       filedelete(cdir+cfile)
-    endif
-    cfile:=fileseek()
-enddo
-return NIL
+   cDir := ToUnix( Trim( cdir ) )
+   cFile := FileSeek( Trim( cDir ) + "*.*" )
+   DO WHILE !Empty( cFile )
+      IF Date() - FileDate() > nDana
+         FileDelete( cdir + cfile )
+      ENDIF
+      cfile := FileSeek()
+   ENDDO
+
+   RETURN NIL
 
 
 
 // ----------------------------------------------
 // ----------------------------------------------
-function ToUnix(cFileName)
-return cFileName
+FUNCTION ToUnix( cFileName )
+   RETURN cFileName
 
 
 #pragma BEGINDUMP
@@ -316,107 +327,114 @@ HB_FUNC( __RUN_SYSTEM )
 
 
 
-function f18_run(cmd, output, always_ok, async)
-local _ret, _stdout, _stderr, _prefix
-local _msg
+FUNCTION f18_run( cmd, output, always_ok, async )
 
-if always_ok == NIL
-  always_ok := .f.
-endif
+   LOCAL _ret, _stdout, _stderr, _prefix
+   LOCAL _msg
 
-if async == NIL
-  // najcesce mi zelimo da okinemo exkternu komandu i nastavimo rad
-  async := .f.
-endif
+   IF always_ok == NIL
+      always_ok := .F.
+   ENDIF
+
+   IF async == NIL
+      // najcesce mi zelimo da okinemo exkternu komandu i nastavimo rad
+      async := .F.
+   ENDIF
 
 
 #ifdef __PLATFORM__LINUX
-   _ret := __run_system(cmd + IIF(async, "&", ""))
+   _ret := __run_system( cmd + iif( async, "&", "" ) )
 #else
-   _ret := hb_ProcessRun(cmd, NIL, NIL, NIL, async)
+   _ret := hb_processRun( cmd, NIL, NIL, NIL, async )
 #endif
 
-if _ret <> 0
+   IF _ret <> 0
 
 #ifdef __PLATFORM__WINDOWS
-   //_prefix := "start "
-   _prefix := "c:\knowhowERP\util\start.exe /m "
-
+      _prefix := "c:\knowhowERP\util\start.exe /m "
 #else
-   #ifdef __PLATFORM__DARWIN
+#ifdef __PLATFORM__DARWIN
       _prefix := "open "
-   #else
+#else
       _prefix := "xdg-open "
-   #endif
 #endif
+#endif
+
+      IF Left( cmd, 4 ) == "java"
+         _prefix := ""
+      ENDIF
 
 #ifdef __PLATFORM__LINUX
-   if async
-       _ret := __run_system(_prefix + cmd + "&")
-   else
-       _ret := hb_processRun(_prefix + cmd, NIL, NIL, NIL, async) 
-   endif 
+      IF async
+         _ret := __run_system( _prefix + cmd + "&" )
+      ELSE
+         _ret := hb_processRun( _prefix + cmd, NIL, NIL, NIL, async )
+      ENDIF
 #else
-   _ret := hb_processRun(_prefix + cmd, NIL, NIL, NIL, async) 
+      _ret := hb_processRun( _prefix + cmd, NIL, NIL, NIL, async )
 #endif
 
 
 #ifdef __PLATFORM__WINDOWS
-   // copy komanda trazi system run a ne hbprocess run 
-   if _ret <> 0
-       _ret := __run_system(cmd)
-   endif
+      // copy komanda trazi system run a ne hbprocess run
+      IF _ret <> 0
+         _ret := __run_system( cmd )
+      ENDIF
 #endif
-   if _ret <> 0 .and. !always_ok 
-        _msg := "ERR run cmd:"  + cmd
-        log_write(_msg, 2)
-        MsgBeep(_msg)
-   endif
-   
-endif
+      IF _ret <> 0 .AND. !always_ok
+         _msg := "ERR run cmd:"  + cmd
+         log_write( _msg, 2 )
+         MsgBeep( _msg )
+      ENDIF
 
-if VALTYPE(output) == "H"
-    // hash matrica
-    output["stdout"] := _stdout
-    output["stderr"] := _stderr
-endif
+   ENDIF
 
-return _ret
+   IF ValType( output ) == "H"
+      // hash matrica
+      output[ "stdout" ] := _stdout
+      output[ "stderr" ] := _stderr
+   ENDIF
+
+   RETURN _ret
 
 // -------------------------------------------
 // -------------------------------------------
-function f18_open_document(document)
-local _ret, _prefix
-local _msg
+FUNCTION f18_open_document( document )
+
+   LOCAL _ret, _prefix
+   LOCAL _msg
 
 
 #ifdef __PLATFORM__WINDOWS
-   //_prefix := "start "
+
+   // _prefix := "start "
    _prefix := "c:\knowhowERP\util\start.exe "
 
 #else
-   #ifdef __PLATFORM__DARWIN
-      _prefix := "open "
-   #else
-      _prefix := "xdg-open "
-   #endif
+#ifdef __PLATFORM__DARWIN
+   _prefix := "open "
+#else
+   _prefix := "xdg-open "
+#endif
 #endif
 
 #ifdef __PLATFORM__LINUX
-   _ret := __run_system(_prefix + document + "&")
+   _ret := __run_system( _prefix + document + "&" )
 #else
-   _ret := hb_processRun(_prefix + document, NIL, NIL, NIL, .t.) 
+   _ret := hb_processRun( _prefix + document, NIL, NIL, NIL, .T. )
 #endif
 
-return _ret
+   RETURN _ret
 
 
 // ----------------------------
 // ----------------------------
-function open_folder(folder)
-local _cmd
+FUNCTION open_folder( folder )
+
+   LOCAL _cmd
 #ifdef __PLATFORM__WINDOWS
-   folder := _path_quote(folder)   
+
+   folder := _path_quote( folder )
 #endif
 
-return f18_open_document(folder)
+   RETURN f18_open_document( folder )

@@ -986,51 +986,54 @@ STATIC FUNCTION _f_a_attr( aArr, nElNo, cGrValCode, cGrVal, ;
 
 FUNCTION rnal_setuj_naziv_artikla( nArt_id, lNew, lAuto, aAttr, lOnlyArr )
 
-   // artikal kod
+   LOCAL nRet
    LOCAL cArt_code := ""
-   // artikal puni naziv
    LOCAL cArt_desc := ""
-   // artikal match kod
    LOCAL cArt_mcode := ""
-   // element id
+   
+   nRet := rnal_matrica_artikla( nArt_id, @aAttr )
+
+   IF lOnlyArr == .F.
+
+      rnal_setuj_naziv_artikla_iz_pravila( aAttr, @cArt_code, @cArt_desc, @cArt_mcode )
+
+      IF lAuto == .T.
+         nRet := rnal_azuriraj_artikal_auto( nArt_id, cArt_code, cArt_desc, cArt_mcode )
+      ELSE
+         nRet := rnal_azuriraj_artikal( nArt_id, cArt_code, cArt_desc, cArt_mcode, lNew )
+      ENDIF
+
+   ENDIF
+
+   RETURN nRet
+
+
+
+
+
+FUNCTION rnal_matrica_artikla( nArt_id, aAttr )
+
    LOCAL nEl_id
-   // grupa id iz elementa
    LOCAL nEl_gr_id
-   // grupa kod
    LOCAL cGr_code
-   // grupa puni naziv
    LOCAL cGr_desc
-   // atribut grupe ID
    LOCAL nE_gr_att
-   // vrijednost atributa ID
    LOCAL nE_gr_val
-   // vrijednost atributa opis
    LOCAL cAttValCode
-   // vrijednost atributa grupe opis
    LOCAL cAttVal
-   // joker atributa, operacije
    LOCAL cAttJoker
    LOCAL cAopJoker
    LOCAL cAop
    LOCAL cAopCode
    LOCAL cAopAtt
    LOCAL cAopAttCode
-
-   // ostale pomocne varijable
    LOCAL nRet := 0
    LOCAL nCount := 0
    LOCAL nElCount := 0
 
-   IF lOnlyArr == nil
-      lOnlyArr := .F.
-   ENDIF
-
-   // matrica sa atributima
    IF aAttr == nil
       aAttr := {}
    ENDIF
-
-   // setovanje statickih varijabli
 
    // article code separator
    __art_sep := "_"
@@ -1043,7 +1046,6 @@ FUNCTION rnal_setuj_naziv_artikla( nArt_id, lNew, lAuto, aAttr, lOnlyArr )
       lAuto := .F.
    ENDIF
 
-   // ukini filtere
    SELECT elements
    SET FILTER TO
    SELECT e_att
@@ -1063,42 +1065,25 @@ FUNCTION rnal_setuj_naziv_artikla( nArt_id, lNew, lAuto, aAttr, lOnlyArr )
 
    DO WHILE !Eof() .AND. field->art_id == nArt_id
 
-      // brojac elementa, 1, 2, 3
       ++ nElCount
 
-      // ID element
       nEl_id := field->el_id
-      // ID grupa na osnovu elementa
       nEl_gr_id := field->e_gr_id
-
-      // grupa kod
       cGr_code := AllTrim( g_e_gr_desc( nEl_gr_id, nil, .F. ) )
-      // grupa puni opis
       cGr_desc := AllTrim( g_e_gr_desc( nEl_gr_id ) )
 
-      // .... predji na atribute elemenata .....
       SELECT e_att
       SET ORDER TO TAG "1"
       GO TOP
       SEEK elid_str( nEl_id )
 
       DO WHILE !Eof() .AND. field->el_id == nEl_id
-
-
-         // vrijednost atributa
          nE_gr_val := field->e_gr_vl_id
          cAttValCode := AllTrim( g_e_gr_vl_desc( nE_gr_val, nil, .F. ) )
          cAttVal := AllTrim( g_e_gr_vl_desc( nE_gr_val ) )
-
-         // koji je ovo atribut ?????
          nE_gr_att := g_gr_att_val( nE_gr_val )
-
-         // daj njegov opis
          cAtt_desc := AllTrim( g_gr_at_desc( nE_gr_att ) )
-
-         // joker ovog atributa je ???
          cAttJoker := g_gr_att_joker( nE_gr_att )
-
 
          _f_a_attr( @aAttr, nElCount, cGr_code, cGr_desc, ;
             cAttJoker, cAttValCode, cAttVal )
@@ -1107,7 +1092,6 @@ FUNCTION rnal_setuj_naziv_artikla( nArt_id, lNew, lAuto, aAttr, lOnlyArr )
 
       ENDDO
 
-      // predji na dodatne operacije elemenata....
       SELECT e_aops
       SET ORDER TO TAG "1"
       GO TOP
@@ -1115,29 +1099,22 @@ FUNCTION rnal_setuj_naziv_artikla( nArt_id, lNew, lAuto, aAttr, lOnlyArr )
 
       DO WHILE !Eof() .AND. field->el_id == nEl_id
 
-         // dodatna operacija ID ...
          nAop_id := field->aop_id
 
          cAopCode := AllTrim( g_aop_desc( nAop_id, nil, .F. ) )
          cAop := AllTrim( g_aop_desc( nAop_id ) )
-
-         // koji je djoker ????
          cAopJoker := AllTrim( g_aop_joker( nAop_id ) )
-
-         // atribut...
          nAop_att_id := field->aop_att_id
          cAopAttCode := AllTrim( g_aop_att_desc( nAop_att_id, nil, .F. ) )
          IF Empty( cAopAttCode )
             cAopAttCode := cAopCode
          ENDIF
-
          cAopAtt := AllTrim( g_aop_att_desc( nAop_att_id ) )
 
          IF Empty( cAopAtt )
             cAopAtt := cAop
          ENDIF
 
-         // ukini jokere koji se koriste za pozicije pecata i slicno
          rem_jokers( @cAopAtt )
 
          _f_a_attr( @aAttr, nElCount, cGr_code, cGr_desc, ;
@@ -1147,25 +1124,12 @@ FUNCTION rnal_setuj_naziv_artikla( nArt_id, lNew, lAuto, aAttr, lOnlyArr )
          SKIP
       ENDDO
 
-      // vrati se na elemente i idi dalje...
       SELECT elements
       SKIP
 
       ++ nCount
 
    ENDDO
-
-   IF lOnlyArr == .F.
-
-      rnal_setuj_naziv_artikla_iz_pravila( aAttr, @cArt_code, @cArt_desc, @cArt_mcode )
-
-      IF lAuto == .T.
-         nRet := rnal_azuriraj_artikal_auto( nArt_id, cArt_code, cArt_desc, cArt_mcode )
-      ELSE
-         nRet := rnal_azuriraj_artikal( nArt_id, cArt_code, cArt_desc, cArt_mcode, lNew )
-      ENDIF
-
-   ENDIF
 
    RETURN nRet
 

@@ -157,9 +157,6 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
    RETURN
 
 
-// -----------------------------------------
-// key handler funkcija
-// -----------------------------------------
 STATIC FUNCTION key_handler()
 
    LOCAL nArt_id := 0
@@ -169,14 +166,13 @@ STATIC FUNCTION key_handler()
    LOCAL nTRec := RecNo()
    LOCAL nRet
 
-   // prikazi box preview
    box_preview( maxrows() - 9, 2, maxcols() - 3 )
 
    DO CASE
 
    CASE l_quick_find == .T.
 
-      _quick_find()
+      brza_pretraga_artikla()
 
       l_quick_find := .F.
 
@@ -189,17 +185,6 @@ STATIC FUNCTION key_handler()
 
    CASE Ch == K_CTRL_N
 
-      // novi artikal...
-
-      IF !ImaPravoPristupa( goModul:oDataBase:cName, "SIF", "ARTNEW" )
-
-         MsgBeep( cZabrana )
-         SELECT articles
-
-         RETURN DE_CONT
-      ENDIF
-
-      // dodijeli i zauzmi novu sifru...
       SELECT articles
       SET FILTER TO
       SET RELATION TO
@@ -208,8 +193,7 @@ STATIC FUNCTION key_handler()
          RETURN DE_CONT
       ENDIF
 
-      // prvo mi reci koji artikal zelis praviti...
-      _g_art_type( @nArt_type, @cSchema )
+      odaberi_tip_artikla( @nArt_type, @cSchema )
 
       IF s_elements( nArt_id, .T., nArt_Type, cSchema ) == 1
          SELECT articles
@@ -222,16 +206,6 @@ STATIC FUNCTION key_handler()
       RETURN DE_REFRESH
 
    CASE Ch == K_F2
-
-      // ispravka sifre
-
-      IF !ImaPravoPristupa( goModul:oDataBase:cName, "SIF", "ARTEDIT" )
-
-         MsgBeep( cZabrana )
-         SELECT articles
-         RETURN DE_CONT
-
-      ENDIF
 
       IF s_elements( field->art_id ) == 1
 
@@ -251,7 +225,7 @@ STATIC FUNCTION key_handler()
 
    CASE Ch == K_F3
 
-      IF art_ed_desc( field->art_id ) == 1
+      IF ispravi_opis_artikla( field->art_id ) == 1
          RETURN DE_REFRESH
       ENDIF
 
@@ -278,12 +252,6 @@ STATIC FUNCTION key_handler()
 
    CASE Ch == K_CTRL_T
 
-      IF !ImaPravoPristupa( goModul:oDataBase:cName, "SIF", "ARTNEW" )
-         msgbeep( cZabrana )
-         SELECT articles
-         RETURN DE_CONT
-      ENDIF
-
       IF rnal_brisi_artikal( field->art_id, .T. ) == 1
          RETURN DE_REFRESH
       ENDIF
@@ -299,8 +267,7 @@ STATIC FUNCTION key_handler()
 
    CASE Upper( Chr( Ch ) ) == "Q"
 
-      // quick find...
-      IF _quick_find() == 1
+      IF brza_pretraga_artikla() == 1
          RETURN DE_REFRESH
       ENDIF
 
@@ -312,10 +279,7 @@ STATIC FUNCTION key_handler()
 
 
 
-// ---------------------------------------------
-// vraca tip artikla koji zelimo praviti
-// ---------------------------------------------
-STATIC FUNCTION _g_art_type( nType, cSchema )
+STATIC FUNCTION odaberi_tip_artikla( nType, cSchema )
 
    LOCAL nX := 1
    PRIVATE GetList := {}
@@ -337,7 +301,7 @@ STATIC FUNCTION _g_art_type( nType, cSchema )
 
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY "   (3) trostruko/visestruko staklo"
+   @ m_x + nX, m_y + 2 SAY8 "   (3) trostruko/višestruko staklo"
 
    nX += 2
 
@@ -350,7 +314,7 @@ STATIC FUNCTION _g_art_type( nType, cSchema )
    READ
 
    IF nType <> 0
-      @ m_x + nX, m_y + 18 SAY "shema:" GET cSchema VALID __g_sch( @cSchema, nType )
+      @ m_x + nX, m_y + 18 SAY8 "šema:" GET cSchema VALID odaberi_shemu_artikla( @cSchema, nType )
    ENDIF
 
    READ
@@ -360,10 +324,7 @@ STATIC FUNCTION _g_art_type( nType, cSchema )
    RETURN
 
 
-// ---------------------------------------
-// odabir shema
-// ---------------------------------------
-STATIC FUNCTION __g_sch( cSchema, nType )
+STATIC FUNCTION odaberi_shemu_artikla( cSchema, nType )
 
    LOCAL aSch
    LOCAL i
@@ -372,11 +333,11 @@ STATIC FUNCTION __g_sch( cSchema, nType )
    LOCAL opcexe := {}
    LOCAL izbor := 1
 
-   aSch := r_el_schema( nType )
+   aSch := rnal_shema_artikla_za_tip( nType )
 
    IF Len( aSch ) == 0
 
-      msgbeep( "ne postoje definisane sheme, koristim default" )
+      msgbeep( "ne postoje definisane šeme, koristim standardnu šemu" )
 
       IF nType == 1
 
@@ -413,20 +374,16 @@ STATIC FUNCTION __g_sch( cSchema, nType )
    RETURN .T.
 
 
-// -----------------------------------------
-// brza pretraga artikala
-// -----------------------------------------
-STATIC FUNCTION _quick_find()
+
+STATIC FUNCTION brza_pretraga_artikla()
 
    LOCAL cFilt := ".t."
 
-   // box q.find
-   IF _box_qfind() == 0
+   IF brza_pretraga_uslov() == 0
       RETURN 0
    ENDIF
 
-   // generisi q.f. filter
-   IF _g_qf_filt( @cFilt ) == 0
+   IF brza_pretraga_filter( @cFilt ) == 0
       RETURN 0
    ENDIF
 
@@ -442,7 +399,7 @@ STATIC FUNCTION _quick_find()
 
    ELSE
 
-      MsgO( "Vrsim selekciju artikala... sacekajte trenutak...." )
+      MsgO( "Vrsim selekciju artikala... sačekajte trenutak...." )
 
       cFilt := StrTran( cFilt, ".t. .and.", "" )
 
@@ -460,10 +417,7 @@ STATIC FUNCTION _quick_find()
 
 
 
-// -------------------------------------------------
-// generisi filter na osnovu __qf_cond
-// -------------------------------------------------
-STATIC FUNCTION _g_qf_filt( cFilter )
+STATIC FUNCTION brza_pretraga_filter( cFilter )
 
    LOCAL nRet := 0
    LOCAL aTmp := {}
@@ -477,13 +431,11 @@ STATIC FUNCTION _g_qf_filt( cFilter )
 
    cCond := AllTrim( __qf_cond )
 
-   //
    // F4*F4;F2*F4; => aTmp[1] = F4*F4
    // => aTmp[2] = F2*F4
 
    aTmp := TokToNiz( cCond, ";" )
 
-   // prodji kroz matricu aTmp
    FOR i := 1 TO Len( aTmp )
 
       IF ( i == 1 )
@@ -583,10 +535,7 @@ STATIC FUNCTION _g_qf_filt( cFilter )
    RETURN nRet
 
 
-// ---------------------------------------------
-// box za uslov....
-// ---------------------------------------------
-STATIC FUNCTION _box_qfind()
+STATIC FUNCTION brza_pretraga_uslov()
 
    LOCAL nBoxX := 6
    LOCAL nBoxY := 70
@@ -599,7 +548,7 @@ STATIC FUNCTION _box_qfind()
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY "uslov:" GET __qf_cond VALID _vl_cond( __qf_cond ) PICT "@S60!"
+   @ m_x + nX, m_y + 2 SAY "uslov:" GET __qf_cond VALID validacija_uslova( __qf_cond ) PICT "@S60!"
 
    READ
    BoxC()
@@ -609,10 +558,7 @@ STATIC FUNCTION _box_qfind()
    RETURN 1
 
 
-// ----------------------------------------------
-// validacija uslova na boxu
-// ----------------------------------------------
-STATIC FUNCTION _vl_cond( cCond )
+STATIC FUNCTION validacija_uslova( cCond )
 
    LOCAL lRet := .T.
 
@@ -621,7 +567,7 @@ STATIC FUNCTION _vl_cond( cCond )
    ENDIF
 
    IF lRet == .F. .AND. Empty( cCond )
-      MsgBeep( "Uslov mora biti unesen !!!" )
+      MsgBeep( "Uslov ne može biti prazno !" )
    ENDIF
 
    RETURN lRet
@@ -629,13 +575,7 @@ STATIC FUNCTION _vl_cond( cCond )
 
 
 
-
-
-
-// ---------------------------------------------
-// ispravka opisa artikla
-// ---------------------------------------------
-STATIC FUNCTION art_ed_desc( nArt_id )
+STATIC FUNCTION ispravi_opis_artikla( nArt_id )
 
    LOCAL cArt_desc := PadR( field->art_desc, 100 )
    LOCAL cArt_mcode := PadR( field->match_code, 10 )
@@ -647,7 +587,7 @@ STATIC FUNCTION art_ed_desc( nArt_id )
    LOCAL _rec
 
    IF !f18_lock_tables( { "articles" } )
-      MsgBeep( "Ne mogu lockovati tabelu !!!" )
+      MsgBeep( "Ne mogu lockovati tabelu !" )
       RETURN nRet
    ENDIF
 
@@ -784,13 +724,9 @@ STATIC FUNCTION rnal_brisi_artikal( nArt_id, lChkKum, lSilent )
       SEEK artid_str( nArt_id )
 
       IF Found()
-
-         MsgBeep( "Uoceno je da se artikal koristi u nalogu br: " + AllTrim( Str( doc_it->doc_no ) ) + " #!!! BRISANJE ONEMOGUCENO !!!" )
-
+         MsgBeep( "Uočeno je da se artikal koristi u nalogu br: " + AllTrim( Str( doc_it->doc_no ) ) + " #BRISANJE ONEMOGUĆENO !" )
          SELECT articles
-
          RETURN 0
-
       ENDIF
    ENDIF
 
@@ -880,9 +816,6 @@ STATIC FUNCTION rnal_brisi_artikal( nArt_id, lChkKum, lSilent )
 
 
 
-// ----------------------------------------------
-// kloniranje artikla
-// ----------------------------------------------
 STATIC FUNCTION rnal_dupliciraj_artikal( nArt_id )
 
    LOCAL nArtNewid
@@ -1023,60 +956,6 @@ STATIC FUNCTION rnal_dupliciraj_operacije_artikla( nOldEl_id, nNewEl_id )
 
 
 
-// -------------------------------------------------
-// automatska regeneracija opisa artikla
-// -------------------------------------------------
-FUNCTION auto_gen_art()
-
-   LOCAL nBoxX := 4
-   LOCAL nBoxY := 60
-   LOCAL lAuto := .T.
-   LOCAL lNew := .F.
-   LOCAL nCnt := 0
-   LOCAL nRec
-   PRIVATE GetList := {}
-
-   SELECT articles
-   SET ORDER TO TAG "1"
-   GO TOP
-
-   Box( , nBoxX, nBoxY )
-
-   // prodji sve artikle
-   DO WHILE !Eof()
-
-      ++ nCnt
-
-      nRec := RecNo()
-
-      nArt_id := field->art_id
-      cArt_desc := PadR( field->art_desc, 20 )
-
-      @ m_x + 1, m_y + 2 SAY "****** Artikal: " + artid_str( nArt_id )
-      @ m_x + 3, m_y + 2 SAY "-----------------"
-
-      @ m_x + 2, m_y + 2 SAY Space( nBoxY )
-      @ m_x + 2, m_y + 2 SAY "opis <--- " + PadR( field->art_desc, 40 ) + "..."
-
-      rnal_setuj_naziv_artikla( nArt_id, lNew, lAuto )
-
-      SELECT articles
-      SET ORDER TO TAG "1"
-      GO ( nRec )
-
-      @ m_x + 4, m_y + 2 SAY Space( nBoxY )
-      @ m_x + 4, m_y + 2 SAY "opis ---> " + PadR( field->art_desc, 40 ) + "..."
-
-      SKIP
-
-   ENDDO
-
-   BoxC()
-
-   RETURN nCnt
-
-
-
 
 // -----------------------------------------
 // filuje matricu aAttr
@@ -1110,8 +989,6 @@ STATIC FUNCTION _f_a_attr( aArr, nElNo, cGrValCode, cGrVal, ;
 //
 // aArr sadrzi:
 // { nElNo, cGrValCode, cGrVal, cAttJoker, cAttValCode, cAttVal }
-//
-//
 
 FUNCTION rnal_setuj_naziv_artikla( nArt_id, lNew, lAuto, aAttr, lOnlyArr )
 

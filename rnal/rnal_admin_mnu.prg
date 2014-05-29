@@ -21,28 +21,8 @@ FUNCTION rnal_mnu_admin()
 
    AAdd( opc, "1. administracija db-a            " )
    AAdd( opcexe, {|| m_adm() } )
-   AAdd( opc, "2. regeneracija naziva artikala   " )
-   AAdd( opcexe, {|| _a_gen_art() } )
 
    f18_menu( "administracija", .F., izbor, opc, opcexe )
 
    RETURN
 
-
-
-FUNCTION _a_gen_art()
-
-   LOCAL nCnt := 0
-
-   IF !SigmaSif( "ARTGEN" )
-      msgbeep( "!!!!! opcija nedostupna !!!!!" )
-      RETURN
-   ENDIF
-
-   rnal_o_sif_tables()
-
-   nCnt := auto_gen_art()
-
-   MsgBeep( "Obradjeno " + AllTrim( Str( nCnt ) ) + " stavki !" )
-
-   RETURN

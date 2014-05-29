@@ -196,7 +196,7 @@ STATIC FUNCTION err_validate( nLevel )
 // vraca matricu sa pravilima za shemu generisanja elemenata
 // nType - tip artikla, jednostruki, dvostruki itd..
 // -----------------------------------------------------------
-FUNCTION r_el_schema( nType )
+FUNCTION rnal_shema_artikla_za_tip( nType )
 
    LOCAL aSchema
    LOCAL nTArea := Select()

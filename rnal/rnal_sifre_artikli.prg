@@ -335,22 +335,16 @@ STATIC FUNCTION odaberi_shemu_artikla( cSchema, nType )
 
    aSch := rnal_shema_artikla_za_tip( nType )
 
-   IF Len( aSch ) == 0
+   IF ( aSch == NIL .OR. Len( aSch ) == 0 )
 
-      msgbeep( "ne postoje definisane šeme, koristim standardnu šemu" )
+      msgbeep( "Ne postoje definisane šeme, koristim standardnu šemu za tip " + ALLTRIM( STR( nType ) ) )
 
       IF nType == 1
-
          cSchema := "G"
-
       ELSEIF nType == 2
-
          cSchema := "G-F-G"
-
       ELSEIF nType == 3
-
          cSchema := "G-F-G-F-G"
-
       ENDIF
 
       RETURN .T.
@@ -1201,32 +1195,23 @@ FUNCTION g_el_descr( aArr, nEl_count )
    ENDIF
 
    IF nEl_count > nTotElem
-
-      // ovo ne postoji
-
       xRet := "unknown"
       RETURN xRet
-
    ENDIF
 
-   // pozicioniraj se na taj element u matrici prvo
    nScan := AScan( aArr, {|xVal| xVal[ 1 ] = nEl_count } )
 
    IF nScan = 0
-
-      // bound error greska
       xRet := "unknown"
       RETURN xRet
-
    ENDIF
 
    // iscitaj code elementa
    cElemCode := aArr[ nScan, 2 ]
 
    // uzmi pravilo <GL_TICK>#<GL_TYPE>.....
-   cRule := _get_rule( cElemCode )
+   cRule := pravilo_grupe_elementa( cElemCode )
 
-   // pa ga u matricu ......
    aRule := TokToNiz( cRule, "#" )
 
    FOR nRule := 1 TO Len( aRule )
@@ -1347,8 +1332,7 @@ STATIC FUNCTION pravilo_grupe_elementa( cCode )
 
    LOCAL cRule := ""
 
-   // uzmi pravilo iz tabele pravila za "kod" elementa
-   cRule := r_elem_code( cCode )
+   cRule := rnal_format_naziva_elementa( cCode )
 
    IF Empty( cRule )
       msgbeep( "Pravilo za formiranje naziva elementa ne postoji !!!" )
@@ -1359,10 +1343,7 @@ STATIC FUNCTION pravilo_grupe_elementa( cCode )
 
 
 
-// -----------------------------------------------------
-// provjeri da li vec postoji artikal sa istim cDesc
-// -----------------------------------------------------
-STATIC FUNCTION _chk_art_exist( nArt_id, cDesc, nId )
+STATIC FUNCTION postoji_li_artikal( nArt_id, cDesc, nId )
 
    LOCAL nTArea := Select()
    LOCAL lRet := .F.
@@ -1402,14 +1383,12 @@ STATIC FUNCTION rnal_azuriraj_artikal( nArt_id, cArt_Desc, cArt_full_desc, cArt_
    LOCAL nExist_id := 0
    LOCAL cArt_lab_desc := ""
 
-   // provjeri da li vec postoji ovakav artikal
-   lExist := _chk_art_exist( nArt_id, cArt_desc, @nExist_id )
+   lExist := postoji_li_artikal( nArt_id, cArt_desc, @nExist_id )
 
    IF lExist == .T.
-      msgBeep( "UPOZORENJE: vec postoji artikal sa istim opisom !!!#Artikal: " + AllTrim( Str( nExist_id ) ) )
+      msgBeep( "UPOZORENJE: već postoji artikal sa istim opisom !!!#Artikal: " + AllTrim( Str( nExist_id ) ) )
    ENDIF
 
-   // update art_desc..
    SELECT articles
    SET ORDER TO TAG "1"
    GO TOP
@@ -1418,7 +1397,6 @@ STATIC FUNCTION rnal_azuriraj_artikal( nArt_id, cArt_Desc, cArt_full_desc, cArt_
    IF Found()
 
       IF !lNew
-         // ako su iste vrijednosti, preskoci...
          IF AllTrim( cArt_desc ) == AllTrim( articles->art_desc ) ;
                .AND. AllTrim( cArt_full_desc ) == AllTrim( articles->art_full_d )
             lAppend := .F.
@@ -1479,12 +1457,10 @@ STATIC FUNCTION rnal_azuriraj_artikal_auto( nArt_id, cArt_Desc, cArt_full_desc, 
    LOCAL lChange := .F.
    LOCAL _rec
 
-   // ako je vrijednost prazna - 0
    IF Empty( cArt_desc )
       RETURN 0
    ENDIF
 
-   // update art_desc..
    SELECT articles
    SET ORDER TO TAG "1"
    GO TOP
@@ -1494,9 +1470,7 @@ STATIC FUNCTION rnal_azuriraj_artikal_auto( nArt_id, cArt_Desc, cArt_full_desc, 
 
       IF AllTrim( cArt_desc ) == AllTrim( articles->art_desc ) .AND. ;
             AllTrim( cArt_full_desc ) == AllTrim( articles->art_full_d )
-
          lChange := .F.
-
       ELSE
          lChange := .T.
       ENDIF

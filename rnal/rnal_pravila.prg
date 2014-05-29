@@ -50,7 +50,7 @@ STATIC FUNCTION in_elcode_rule( cElCond, cRule, cRuleName )
    LOCAL cRuleC4
    LOCAL cRuleC7
 
-   cTRule := r_elem_code( cElCond )
+   cTRule := rnal_format_naziva_elementa( cElCond )
 
    IF !Empty( cTRule )
       RETURN
@@ -144,7 +144,7 @@ STATIC FUNCTION ed_rules()
 // rule_c1 = <CODE_GEN> "CODE_GEN" - generacija "kod"-a
 // rule_c2 = cElCond - tip elementa "F" / "G" ili ....
 // -----------------------------------------------------------
-FUNCTION r_elem_code( cElCond )
+FUNCTION rnal_format_naziva_elementa( cElCond )
 
    LOCAL cCode := ""
    LOCAL cModul
@@ -174,9 +174,6 @@ FUNCTION r_elem_code( cElCond )
 
 
 
-// ----------------------------------------------
-// validacija errora - pravila
-// ----------------------------------------------
 STATIC FUNCTION err_validate( nLevel )
 
    LOCAL lRet := .F.
@@ -192,22 +189,16 @@ STATIC FUNCTION err_validate( nLevel )
    RETURN lRet
 
 
-// -----------------------------------------------------------
-// vraca matricu sa pravilima za shemu generisanja elemenata
-// nType - tip artikla, jednostruki, dvostruki itd..
-// -----------------------------------------------------------
 FUNCTION rnal_shema_artikla_za_tip( nType )
 
    LOCAL aSchema
    LOCAL nTArea := Select()
    LOCAL nTmp
    LOCAL aTmp
-
    LOCAL cObj := g_ruleobj( "ARTICLES" )
    LOCAL cCond := g_rule_c3( "AUTO_ELEM" )
    LOCAL cMod := g_rulemod( "RNAL" )
 
-   // default schema
    aSchema := {}
 
    O_FMKRULES
@@ -228,13 +219,15 @@ FUNCTION rnal_shema_artikla_za_tip( nType )
          // val = 1-SH1
          // aTmp = ['1', 'SH1']
 
+         IF LEN( aTmp ) <> 2
+            SKIP
+            LOOP
+         ENDIF
+
          nTmp := Val( aTmp[ 1 ] )
 
          IF nTmp == nType
-
-            // ubaci pravilo...
             AAdd( aSchema, { AllTrim( field->rule_c7 ) } )
-
          ENDIF
 
       ENDIF

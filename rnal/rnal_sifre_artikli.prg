@@ -986,12 +986,12 @@ STATIC FUNCTION _f_a_attr( aArr, nElNo, cGrValCode, cGrVal, ;
 
 FUNCTION rnal_setuj_naziv_artikla( nArt_id, lNew, lAuto, aAttr, lOnlyArr )
 
-   LOCAL nRet
+   LOCAL nRet := 0
    LOCAL cArt_code := ""
    LOCAL cArt_desc := ""
    LOCAL cArt_mcode := ""
    
-   nRet := rnal_matrica_artikla( nArt_id, @aAttr )
+   rnal_matrica_artikla( nArt_id, @aAttr )
 
    IF lAuto == NIL
       lAuto := .F.
@@ -1031,7 +1031,6 @@ FUNCTION rnal_matrica_artikla( nArt_id, aAttr )
    LOCAL cAopCode
    LOCAL cAopAtt
    LOCAL cAopAttCode
-   LOCAL nRet := 0
    LOCAL nCount := 0
    LOCAL nElCount := 0
 
@@ -1131,7 +1130,7 @@ FUNCTION rnal_matrica_artikla( nArt_id, aAttr )
 
    ENDDO
 
-   RETURN nRet
+   RETURN
 
 
 

@@ -593,7 +593,7 @@ STATIC FUNCTION ispravi_opis_artikla( nArt_id )
 
    sql_table_update( nil, "BEGIN" )
 
-   IF _box_art_desc( @cArt_desc, @cArt_full_desc, @cArt_lab_desc, ;
+   IF ispravka_artikla_box( @cArt_desc, @cArt_full_desc, @cArt_lab_desc, ;
          @cArt_mcode ) == 1
 
       SET FILTER TO
@@ -1437,8 +1437,7 @@ STATIC FUNCTION rnal_azuriraj_artikal( nArt_id, cArt_Desc, cArt_full_desc, cArt_
          cArt_lab_desc := PadR( cArt_lab_desc, 200 )
          cArt_mcode := PadR( cArt_mcode, 10 )
 
-         // daj box za pregled korekciju
-         IF _box_art_desc( @cArt_desc, @cArt_full_desc, ;
+         IF ispravka_artikla_box( @cArt_desc, @cArt_full_desc, ;
                @cArt_lab_desc, @cArt_mcode ) == 1
 
             _rec := dbf_get_rec()
@@ -1550,10 +1549,7 @@ STATIC FUNCTION __add_to_str( cStr, cAdd, lNoSpace )
 
 
 
-// ------------------------------------------------------
-// box za unos naziva artikla i match_code-a
-// ------------------------------------------------------
-STATIC FUNCTION _box_art_desc( cArt_desc, cArt_full_desc, ;
+STATIC FUNCTION ispravka_artikla_box( cArt_desc, cArt_full_desc, ;
       cArt_lab_desc, cArt_mcode )
 
    PRIVATE GetList := {}

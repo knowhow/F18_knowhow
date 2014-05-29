@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,676 +14,689 @@
 
 // variables
 
-static l_new_it
-static _doc
+STATIC l_new_it
+STATIC _doc
 
 
 // ------------------------------------------
-// unos ispravka stavki naloga.... 
+// unos ispravka stavki naloga....
 // nDoc_no - dokument broj
 // lNew - nova stavka .t. or .f.
 // ------------------------------------------
-function e_doc_item( nDoc_no, lNew )
-local nX := m_x
-local nY := m_y
-local nGetBoxX := 18
-local nGetBoxY := 70
-local cBoxNaz := "unos nove stavke"
-local nRet := 0
-local nFuncRet := 0
-local cGetDOper := "N"
-local lCopyAop
-local nArt
-local _rec
-private GetList:={}
+FUNCTION e_doc_item( nDoc_no, lNew )
 
-_doc := nDoc_no
+   LOCAL nX := m_x
+   LOCAL nY := m_y
+   LOCAL nGetBoxX := 18
+   LOCAL nGetBoxY := 70
+   LOCAL cBoxNaz := "unos nove stavke"
+   LOCAL nRet := 0
+   LOCAL nFuncRet := 0
+   LOCAL cGetDOper := "N"
+   LOCAL lCopyAop
+   LOCAL nArt
+   LOCAL _rec
+   PRIVATE GetList := {}
 
-if lNew == nil
-    lNew := .t.
-endif
+   _doc := nDoc_no
 
-l_new_it := lNew
+   IF lNew == nil
+      lNew := .T.
+   ENDIF
 
-if l_new_it == .f.
-    cBoxNaz := "ispravka stavke"
-endif
+   l_new_it := lNew
 
-select _doc_it
+   IF l_new_it == .F.
+      cBoxNaz := "ispravka stavke"
+   ENDIF
 
-Box(, nGetBoxX, nGetBoxY, .f., "Unos stavki naloga")
+   SELECT _doc_it
 
-set_opc_box(nGetBoxX, 50)
+   Box(, nGetBoxX, nGetBoxY, .F., "Unos stavki naloga" )
 
-// say top, bottom
-@ m_x + 1, m_y + 2 SAY PADL("***** " + cBoxNaz , nGetBoxY - 2)
-@ m_x + nGetBoxX, m_y + 2 SAY PADL("(*) popuna obavezna", nGetBoxY - 2) COLOR "BG+/B"
+   set_opc_box( nGetBoxX, 50 )
+
+   // say top, bottom
+   @ m_x + 1, m_y + 2 SAY PadL( "***** " + cBoxNaz, nGetBoxY - 2 )
+   @ m_x + nGetBoxX, m_y + 2 SAY PadL( "(*) popuna obavezna", nGetBoxY - 2 ) COLOR "BG+/B"
 
 
-do while .t.
+   DO WHILE .T.
 
-    set_global_memvars_from_dbf()
-    
-    nFuncRet := _e_box_item( nGetBoxX, nGetBoxY, @cGetDOper )
-    
-    if nFuncRet == 1
-        
-        select _doc_it
-        
-        if l_new_it
-            append blank
-        endif
-        
-        _rec := get_dbf_global_memvars( NIL, .f. )
-        // update zapisa... 
-        dbf_update_rec( _rec )
-        
-        if cGetDOper == "D"
-            
-            lCopyAop := .f.
-            
-            // operacije moguce kopirati samo ako je isti 
+      set_global_memvars_from_dbf()
+
+      nFuncRet := _e_box_item( nGetBoxX, nGetBoxY, @cGetDOper )
+
+      IF nFuncRet == 1
+
+         SELECT _doc_it
+
+         IF l_new_it
+            APPEND BLANK
+         ENDIF
+
+         _rec := get_dbf_global_memvars( NIL, .F. )
+         // update zapisa...
+         dbf_update_rec( _rec )
+
+         IF cGetDOper == "D"
+
+            lCopyAop := .F.
+
+            // operacije moguce kopirati samo ako je isti
             // artikal i ako je redni broj <> 1
 
-            if _doc_it->doc_it_no <> 1
-                
-                nArt := _doc_it->art_id
-                
-                skip -1
-                
-                if nArt == _doc_it->art_id
-                
-                    lCopyAop := .t.
-                
-                endif
-                
-                skip 1
-            
-            endif
-            
-            if lCopyAop == .t. .and. pitanje(, "koristi operacije prethodne stavke ?", "N") == "D"
-            
-                // kopiraj operacije...
-                _cp_oper( _doc, ;
-                    _doc_it->art_id, ;
-                    _doc_it->doc_it_no )
-            
-            else
-                
-                // manualno unesi operacije
-                
-                e_doc_ops( _doc, ;
-                   lNew, ;
-                   _doc_it->art_id, ;
-                   _doc_it->doc_it_no )
-                   
-            endif
-            
-            select _doc_it
-            
-        endif
-        
-        if l_new_it
-            loop
-        endif
-        
-    endif
-    
-    BoxC()
-    select _doc_it
-    
-    nRet := RECCOUNT2()
-    
-    exit
+            IF _doc_it->doc_it_no <> 1
 
-enddo
+               nArt := _doc_it->art_id
 
-select _docs
+               SKIP -1
 
-m_x := nX
-m_y := nY
+               IF nArt == _doc_it->art_id
 
-return nRet
+                  lCopyAop := .T.
+
+               ENDIF
+
+               SKIP 1
+
+            ENDIF
+
+            IF lCopyAop == .T. .AND. pitanje(, "koristi operacije prethodne stavke ?", "N" ) == "D"
+
+               // kopiraj operacije...
+               _cp_oper( _doc, ;
+                  _doc_it->art_id, ;
+                  _doc_it->doc_it_no )
+
+            ELSE
+
+               // manualno unesi operacije
+
+               e_doc_ops( _doc, ;
+                  lNew, ;
+                  _doc_it->art_id, ;
+                  _doc_it->doc_it_no )
+
+            ENDIF
+
+            SELECT _doc_it
+
+         ENDIF
+
+         IF l_new_it
+            LOOP
+         ENDIF
+
+      ENDIF
+
+      BoxC()
+      SELECT _doc_it
+
+      nRet := RECCOUNT2()
+
+      EXIT
+
+   ENDDO
+
+   SELECT _docs
+
+   m_x := nX
+   m_y := nY
+
+   RETURN nRet
 
 
 // -------------------------------------------------
-// forma za unos podataka 
+// forma za unos podataka
 // cGetDOper , D - unesi dodatne operacije...
 // -------------------------------------------------
-static function _e_box_item( nBoxX, nBoxY, cGetDOper )
-local nX := 1
-local aArtArr := {}
-local nTmpArea
-local nLeft := 21
-local _curr_doc_it_no
+STATIC FUNCTION _e_box_item( nBoxX, nBoxY, cGetDOper )
 
-cGetDOper := "N"
+   LOCAL nX := 1
+   LOCAL aArtArr := {}
+   LOCAL nTmpArea
+   LOCAL nLeft := 21
+   LOCAL _curr_doc_it_no
 
-if l_new_it
-    
-    _doc_no := _doc
-    _doc_it_no := inc_docit( _doc )
-    _doc_it_typ := " "
-	_it_lab_pos := "I"
-    
-    // ako je nova stavka i vrijednost je 0, uzmi default...
-    if _doc_it_alt == 0
-        _doc_it_alt := gDefNVM
-    endif
+   cGetDOper := "N"
 
-    if EMPTY( _doc_acity )
-        _doc_acity := PADR( gDefCity, 50 )
-    endif
+   IF l_new_it
 
-    if _doc_it_sch == " "
-        _doc_it_sch := "N"
-    endif
-    
-endif
+      _doc_no := _doc
+      _doc_it_no := inc_docit( _doc )
+      _doc_it_typ := " "
+      _it_lab_pos := "I"
 
-_curr_doc_it_no := _doc_it_no
+      // ako je nova stavka i vrijednost je 0, uzmi default...
+      IF _doc_it_alt == 0
+         _doc_it_alt := gDefNVM
+      ENDIF
 
-nX += 2
+      IF Empty( _doc_acity )
+         _doc_acity := PadR( gDefCity, 50 )
+      ENDIF
 
-@ m_x + nX, m_y + 2 SAY PADL("r.br stavke (*)", nLeft) GET _doc_it_no WHEN l_new_it ;
-        VALID _check_rbr( _doc_no, _doc_it_no ) 
+      IF _doc_it_sch == " "
+         _doc_it_sch := "N"
+      ENDIF
 
-nX += 2
+   ENDIF
 
-@ m_x + nX, m_y + 2 SAY PADL("ARTIKAL (*):", nLeft) GET _art_id ;
-        VALID {|| _old_x := m_x, _old_y := m_y, ;
-                    s_articles( @_art_id, .f., .t. ), ;
-                    m_x := _old_x, _old_y := m_y, ;
-                    show_it( g_art_desc( _art_id, nil, .f. ) + ".." , 35 ), ;
-                    check_article_valid( @_art_id ) } ;
-        WHEN set_opc_box( nBoxX, 50, "0 - otvori sifrarnik i pretrazi" )
+   _curr_doc_it_no := _doc_it_no
 
-nX += 1
+   nX += 2
 
-@ m_x + nX, m_y + 2 SAY PADL("Tip artikla (*):", nLeft) GET _doc_it_typ ;
-        VALID {|| _doc_it_typ $ " SR" .and. show_it( _g_doc_it_type( _doc_it_typ ) ) } ;
-        WHEN set_opc_box( nBoxX, 50, "' ' - standardni, 'R' - radius, 'S' - shape") PICT "@!"
+   @ m_x + nX, m_y + 2 SAY PadL( "r.br stavke (*)", nLeft ) GET _doc_it_no WHEN l_new_it ;
+      VALID _check_rbr( _doc_no, _doc_it_no )
 
-READ
-ESC_RETURN 0
+   nX += 2
 
-// set opisa na formi
-cDimADesc := "(A) sirina [mm] (*):"
-cDimBDesc := "(B) visina [mm] (*):"
-cDimCDesc := "(C) sirina [mm] (*):"
-cDimDDesc := "(D) visina [mm] (*):"
+   @ m_x + nX, m_y + 2 SAY PadL( "ARTIKAL (*):", nLeft ) GET _art_id ;
+      VALID {|| _old_x := m_x, _old_y := m_y, ;
+      s_articles( @_art_id, .F., .T. ), ;
+      m_x := _old_x, _old_y := m_y, ;
+      show_it( g_art_desc( _art_id, nil, .F. ) + "..", 35 ), ;
+      check_article_valid( @_art_id ) } ;
+      WHEN set_opc_box( nBoxX, 50, "0 - otvori sifrarnik i pretrazi" )
 
-if _doc_it_typ == "R"
-    cDimADesc := "(A) fi [mm] (*):"
-    cDimBDesc := "(B) fi [mm] (*):"
-endif
+   nX += 1
 
-if _doc_it_typ $ "SR"
-    _doc_it_sch := "D"
-endif
+   @ m_x + nX, m_y + 2 SAY PadL( "Tip artikla (*):", nLeft ) GET _doc_it_typ ;
+      VALID {|| _doc_it_typ $ " SR" .AND. show_it( _g_doc_it_type( _doc_it_typ ) ) } ;
+      WHEN set_opc_box( nBoxX, 50, "' ' - standardni, 'R' - radius, 'S' - shape" ) PICT "@!"
 
-_doc_it_h2 := 0
-_doc_it_w2 := 0
+   READ
+   ESC_RETURN 0
 
-nX += 1
+   // set opisa na formi
+   cDimADesc := "(A) sirina [mm] (*):"
+   cDimBDesc := "(B) visina [mm] (*):"
+   cDimCDesc := "(C) sirina [mm] (*):"
+   cDimDDesc := "(D) visina [mm] (*):"
 
-@ m_x + nX, m_y + 2 SAY PADL("shema u prilogu (D/N)? (*):", nLeft + 9) GET _doc_it_sch PICT "@!" VALID {|| _doc_it_sch $ "DN" } WHEN {|| _set_arr( _art_id, @aArtArr), set_opc_box( nBoxX, 50, "da li postoji dodatna shema kao prilog") }
+   IF _doc_it_typ == "R"
+      cDimADesc := "(A) fi [mm] (*):"
+      cDimBDesc := "(B) fi [mm] (*):"
+   ENDIF
 
-@ m_x + nX, col() + 2 SAY "pozicija" GET _doc_it_pos ;
-    WHEN {|| set_opc_box(nBoxX, 50, "pozicija naljepnice") }
+   IF _doc_it_typ $ "SR"
+      _doc_it_sch := "D"
+   ENDIF
 
-@ m_x + nX, col() + 2 SAY "I/O" GET _it_lab_pos ;
-	WHEN {|| set_opc_box(nBoxX, 50, ;
-		"labela, pozicija I - inside O - outside") } ;
-	VALID {|| _it_lab_pos $ "IO" }
+   _doc_it_h2 := 0
+   _doc_it_w2 := 0
 
-nX += 1
+   nX += 1
 
-@ m_x + nX, m_y + 2 SAY PADL("dod.nap.stavke:", nLeft) GET _doc_it_des PICT "@S40" ;
-    WHEN set_opc_box( nBoxX, 50, "dodatne napomene vezane za samu stavku")
+   @ m_x + nX, m_y + 2 SAY PadL( "shema u prilogu (D/N)? (*):", nLeft + 9 ) GET _doc_it_sch PICT "@!" VALID {|| _doc_it_sch $ "DN" } WHEN {|| _set_arr( _art_id, @aArtArr ), set_opc_box( nBoxX, 50, "da li postoji dodatna shema kao prilog" ) }
 
-nX += 2
-    
-@ m_x + nX, m_y + 2 SAY PADL( cDimADesc , nLeft + 3) GET _doc_it_wid PICT Pic_Dim() ;
-    VALID val_width( _doc_it_wid ) .and. rule_items("DOC_IT_WIDTH", _doc_it_wid, aArtArr ) ;
-    WHEN set_opc_box( nBoxX, 50 )
+   @ m_x + nX, Col() + 2 SAY "pozicija" GET _doc_it_pos ;
+      WHEN {|| set_opc_box( nBoxX, 50, "pozicija naljepnice" ) }
 
+   @ m_x + nX, Col() + 2 SAY "I/O" GET _it_lab_pos ;
+      WHEN {|| set_opc_box( nBoxX, 50, ;
+      "labela, pozicija I - inside O - outside" ) } ;
+      VALID {|| _it_lab_pos $ "IO" }
 
-nX += 1
+   nX += 1
 
-@ m_x + nX, m_y + 2 SAY PADL( cDimBDesc , nLeft + 3) GET _doc_it_hei PICT Pic_Dim() ;
-    VALID val_heigh( _doc_it_hei ) .and. rule_items("DOC_IT_HEIGH", _doc_it_hei, aArtArr ) ;
-    WHEN set_opc_box( nBoxX, 50 )
+   @ m_x + nX, m_y + 2 SAY PadL( "dod.nap.stavke:", nLeft ) GET _doc_it_des PICT "@S40" ;
+      WHEN set_opc_box( nBoxX, 50, "dodatne napomene vezane za samu stavku" )
 
-nX += 1
+   nX += 2
 
-@ m_x + nX, m_y + 2 SAY PADL("kolicina [kom] (*):", nLeft + 3) GET _doc_it_qtt PICT Pic_Qtty() VALID val_qtty(_doc_it_qtt) .and. rule_items("DOC_IT_QTTY", _doc_it_qtt, aArtArr ) WHEN set_opc_box( nBoxX, 50 )
-
-nX += 1
-
-READ
-
-ESC_RETURN 0
+   @ m_x + nX, m_y + 2 SAY PadL( cDimADesc, nLeft + 3 ) GET _doc_it_wid PICT Pic_Dim() ;
+      VALID val_width( _doc_it_wid ) .AND. rule_items( "DOC_IT_WIDTH", _doc_it_wid, aArtArr ) ;
+      WHEN set_opc_box( nBoxX, 50 )
 
 
-if rule_items( "DOC_IT_ALT", _doc_it_alt, aArtArr ) <> .t.
-    @ m_x + nX, m_y + 2 SAY PADL("nadm. visina [m] (*):", nLeft + 3) GET _doc_it_alt PICT "999999" VALID val_altt(_doc_it_alt) WHEN set_opc_box( nBoxX, 50, "Nadmorska visina izrazena u metrima" )
-    @ m_x + nX, col() + 2 SAY "grad:" GET _doc_acity VALID !EMPTY(_doc_acity) PICT "@S20" WHEN set_opc_box(nBoxX, 50, "Grad u kojem se montira proizvod")
-else
-    // pobrisi screen na lokaciji nadmorske visine
-    @ m_x + nX, m_y + 2 SAY SPACE(70)
-    
-    // ponisti vrijednosti da ne bi ostale zapamcene u bazi
-    _doc_it_alt := 0
-    _doc_acity := ""
-    
-endif
+   nX += 1
 
-// ako je nova stavka obezbjedi unos operacija...
-if l_new_it
-    nX += 2
-    @ m_x + nX, m_y + 2 SAY PADL("unesi dod.oper.stavke (D/N)? (*):", nLeft + 15) GET cGetDOper PICT "@!" VALID cGetDOper $ "DN" WHEN set_opc_box( nBoxX, 50, "unos dodatnih operacija za stavku")
-endif
+   @ m_x + nX, m_y + 2 SAY PadL( cDimBDesc, nLeft + 3 ) GET _doc_it_hei PICT Pic_Dim() ;
+      VALID val_heigh( _doc_it_hei ) .AND. rule_items( "DOC_IT_HEIGH", _doc_it_hei, aArtArr ) ;
+      WHEN set_opc_box( nBoxX, 50 )
 
-READ
+   nX += 1
 
-ESC_RETURN 0
+   @ m_x + nX, m_y + 2 SAY PadL( "kolicina [kom] (*):", nLeft + 3 ) GET _doc_it_qtt PICT Pic_Qtty() VALID val_qtty( _doc_it_qtt ) .AND. rule_items( "DOC_IT_QTTY", _doc_it_qtt, aArtArr ) WHEN set_opc_box( nBoxX, 50 )
 
-// da li je doslo do promjene rednog broja stavke ?
-if !l_new_it .and. ( ALLTRIM( STR( _curr_doc_it_no ) ) <> ALLTRIM( STR( _doc_it_no ) ) )
-    MsgBeep( "Uslijedila je promjena rednog broja !!!" )
-endif
+   nX += 1
 
-return 1
+   READ
+
+   ESC_RETURN 0
+
+
+   IF rule_items( "DOC_IT_ALT", _doc_it_alt, aArtArr ) <> .T.
+      @ m_x + nX, m_y + 2 SAY PadL( "nadm. visina [m] (*):", nLeft + 3 ) GET _doc_it_alt PICT "999999" VALID val_altt( _doc_it_alt ) WHEN set_opc_box( nBoxX, 50, "Nadmorska visina izrazena u metrima" )
+      @ m_x + nX, Col() + 2 SAY "grad:" GET _doc_acity VALID !Empty( _doc_acity ) PICT "@S20" WHEN set_opc_box( nBoxX, 50, "Grad u kojem se montira proizvod" )
+   ELSE
+      // pobrisi screen na lokaciji nadmorske visine
+      @ m_x + nX, m_y + 2 SAY Space( 70 )
+
+      // ponisti vrijednosti da ne bi ostale zapamcene u bazi
+      _doc_it_alt := 0
+      _doc_acity := ""
+
+   ENDIF
+
+   // ako je nova stavka obezbjedi unos operacija...
+   IF l_new_it
+      nX += 2
+      @ m_x + nX, m_y + 2 SAY PadL( "unesi dod.oper.stavke (D/N)? (*):", nLeft + 15 ) GET cGetDOper PICT "@!" VALID cGetDOper $ "DN" WHEN set_opc_box( nBoxX, 50, "unos dodatnih operacija za stavku" )
+   ENDIF
+
+   READ
+
+   ESC_RETURN 0
+
+   // da li je doslo do promjene rednog broja stavke ?
+   IF !l_new_it .AND. ( AllTrim( Str( _curr_doc_it_no ) ) <> AllTrim( Str( _doc_it_no ) ) )
+      MsgBeep( "Uslijedila je promjena rednog broja !!!" )
+   ENDIF
+
+   RETURN 1
 
 
 // -------------------------------------------------------
 // provjera rednog broja na unosu
 // -------------------------------------------------------
-static function _check_rbr( docno, docitno )
-local _ok := .t.
-local _t_rec := RECNO()
+STATIC FUNCTION _check_rbr( docno, docitno )
 
-if docitno == 0
-    MsgBeep( "Redni broj ne moze biti 0 !!!" )
-    _ok := .f.
-    return _ok
-endif
+   LOCAL _ok := .T.
+   LOCAL _t_rec := RecNo()
 
-select _doc_it
-go top
-seek docno_str( docno ) + docit_str( docitno )
+   IF docitno == 0
+      MsgBeep( "Redni broj ne moze biti 0 !!!" )
+      _ok := .F.
+      RETURN _ok
+   ENDIF
 
-if FOUND()
-    MsgBeep( "Redni broj vec postoji unutar dokumenta !!!" )
-    _ok := .f.
-endif
+   SELECT _doc_it
+   GO TOP
+   SEEK docno_str( docno ) + docit_str( docitno )
 
-go ( _t_rec )
+   IF Found()
+      MsgBeep( "Redni broj vec postoji unutar dokumenta !!!" )
+      _ok := .F.
+   ENDIF
 
-return _ok
+   GO ( _t_rec )
+
+   RETURN _ok
 
 
 
 // -----------------------------------
 // vraca tip stavke naloga
 // -----------------------------------
-function _g_doc_it_type( cType )
-local cRet := "standard"
+FUNCTION _g_doc_it_type( cType )
 
-if cType == "S"
-    cRet := "shape"
-elseif cType == "R"
-    cRet := "radius"
-endif
+   LOCAL cRet := "standard"
 
-return cRet 
+   IF cType == "S"
+      cRet := "shape"
+   ELSEIF cType == "R"
+      cRet := "radius"
+   ENDIF
+
+   RETURN cRet
 
 
 // ------------------------------------
 // setuj matricu sa artiklom
 // ------------------------------------
-static function _set_arr( nArt_id, aArr )
-local nTArea := SELECT()
+STATIC FUNCTION _set_arr( nArt_id, aArr )
 
-rnal_setuj_naziv_artikla( nArt_id, .f., .f., @aArr, .t.)
+   LOCAL nTArea := Select()
 
-select (nTArea)
+   rnal_setuj_naziv_artikla( nArt_id, .F., .F., @aArr, .T. )
 
-return .t.
+   SELECT ( nTArea )
+
+   RETURN .T.
 
 
 
 // -------------------------------------------
 // uvecaj broj stavke naloga
 // -------------------------------------------
-function inc_docit( nDoc_no )
-local nTArea := SELECT()
-local nTRec := RECNO()
-local nRet := 0
+FUNCTION inc_docit( nDoc_no )
 
-select _doc_it
-go top
-set order to tag "1"
-seek doc_str( nDoc_no )
+   LOCAL nTArea := Select()
+   LOCAL nTRec := RecNo()
+   LOCAL nRet := 0
 
-do while !EOF() .and. field->doc_no == nDoc_no
-    nRet := field->doc_it_no
-    skip
-enddo
+   SELECT _doc_it
+   GO TOP
+   SET ORDER TO TAG "1"
+   SEEK doc_str( nDoc_no )
 
-nRet += 1
+   DO WHILE !Eof() .AND. field->doc_no == nDoc_no
+      nRet := field->doc_it_no
+      SKIP
+   ENDDO
 
-select (nTArea)
-go (nTRec)
+   nRet += 1
 
-return nRet
+   SELECT ( nTArea )
+   GO ( nTRec )
+
+   RETURN nRet
 
 
 // --------------------------------------
 // vrijednost mora biti <> 0
 // --------------------------------------
-static function razlicito_od_0( nVal, cObjekatValidacije )
-local lRet := .t.
+STATIC FUNCTION razlicito_od_0( nVal, cObjekatValidacije )
 
-if ROUND( nVal, 2 ) == 0
-    lRet := .f.
-endif
+   LOCAL lRet := .T.
 
-val_msg( lRet, cObjekatValidacije + " : mora biti <> 0 !" ) 
+   IF Round( nVal, 2 ) == 0
+      lRet := .F.
+   ENDIF
 
-return lRet
+   val_msg( lRet, cObjekatValidacije + " : mora biti <> 0 !" )
+
+   RETURN lRet
 
 // ---------------------------------------------------------------------
 // vrijednost mora biti u opsegu
 // ---------------------------------------------------------------------
-static function u_opsegu( nVal, nMin, nMax, cObjekatValidacije, cJMJ )
-local lRet := .f.
+STATIC FUNCTION u_opsegu( nVal, nMin, nMax, cObjekatValidacije, cJMJ )
 
-if nVal >= nMin .and. nVal <= nMax
-    lRet := .t.
-endif
+   LOCAL lRet := .F.
 
-val_msg(lRet, "Dozvoljeni opseg za " + cObjekatValidacije + " " + ;
-         ALLTRIM(STR(nMin)) + " - " +  ALLTRIM(STR(max_width()) ) + " " + cJMJ + " !")
-return lRet
+   IF nVal >= nMin .AND. nVal <= nMax
+      lRet := .T.
+   ENDIF
+
+   val_msg( lRet, "Dozvoljeni opseg za " + cObjekatValidacije + " " + ;
+      AllTrim( Str( nMin ) ) + " - " +  AllTrim( Str( max_width() ) ) + " " + cJMJ + " !" )
+
+   RETURN lRet
 
 // -------------------------------------
 // poruka pri validaciji
 // -------------------------------------
-static function val_msg(lRet, cMsg)
-if lRet == .f.
-    MsgBeeP(cMsg)
-endif
-return 
+STATIC FUNCTION val_msg( lRet, cMsg )
+
+   IF lRet == .F.
+      MsgBeeP( cMsg )
+   ENDIF
+
+   RETURN
 
 
 // ------------------------------------------------------
 // validacija precnika (fi), kolicine, nadmorske visine
 // -------------------------------------------------------
-static function val_fi( nVal )
-return razlicito_od_0( nVal, "prečnik")
+STATIC FUNCTION val_fi( nVal )
+   RETURN razlicito_od_0( nVal, "prečnik" )
 
 // -------------------------------------
 // validacija kolicine
 // -------------------------------------
-static function val_qtty( nVal )
-return razlicito_od_0( nVal, "količina")
+STATIC FUNCTION val_qtty( nVal )
+   RETURN razlicito_od_0( nVal, "količina" )
 
 // -------------------------------------
 // validacija nadmorske visine
 // -------------------------------------
-static function val_altt( nVal )
-return razlicito_od_0( nVal, "nadmorska visina" )
+STATIC FUNCTION val_altt( nVal )
+   RETURN razlicito_od_0( nVal, "nadmorska visina" )
 
 // ----------------------------------
 // validacija sirine, visine
 // ----------------------------------
-static function val_width( nVal )
-return u_opsegu( nVal, 1, gMaxWidth, "širina", "mm" )
+STATIC FUNCTION val_width( nVal )
+   RETURN u_opsegu( nVal, 1, gMaxWidth, "širina", "mm" )
 
 
-static function val_heigh( nVal )
-return u_opsegu( nVal, 1, gMaxHeigh, "visina", "mm" )
+STATIC FUNCTION val_heigh( nVal )
+   RETURN u_opsegu( nVal, 1, gMaxHeigh, "visina", "mm" )
 
 
 // -----------------------------------------------
 // kopiranje stavki sa drugog naloga
 // -----------------------------------------------
-function cp_items()
-local nDocCopy
-local cQ_it
-local cQ_aops
-local cSeason
-local nRet := 1
-local nTArea := SELECT()
+FUNCTION cp_items()
 
-nRet := _cp_box( @nDocCopy, @cQ_it, @cQ_aops, @cSeason )
+   LOCAL nDocCopy
+   LOCAL cQ_it
+   LOCAL cQ_aops
+   LOCAL cSeason
+   LOCAL nRet := 1
+   LOCAL nTArea := Select()
 
-// ako necu nista raditi - izlazim
-if nRet = 0
-    return nRet
-endif
+   nRet := _cp_box( @nDocCopy, @cQ_it, @cQ_aops, @cSeason )
 
-select _docs
+   // ako necu nista raditi - izlazim
+   IF nRet = 0
+      RETURN nRet
+   ENDIF
 
-// imam parametre, idem na kopiranje
-__cp_items( _docs->doc_no, nDocCopy, cQ_it, cQ_aops, cSeason )
+   SELECT _docs
 
-select (nTArea)
+   // imam parametre, idem na kopiranje
+   __cp_items( _docs->doc_no, nDocCopy, cQ_it, cQ_aops, cSeason )
 
-return nRet
+   SELECT ( nTArea )
+
+   RETURN nRet
 
 
 // ----------------------------------------------
 // box sa uslovim kopiranja
-// 
+//
 // nDoc - broj dokumenta
 // cQ_it - pitanje za kopiranje stavki (d/n)
 // cQ_aops - pitanje za kopiranje operac. (d/n)
 // ----------------------------------------------
-static function _cp_box( nDoc, cQ_It, cQ_Aops, cSeason )
-local nRet := 1
-local GetList := {}
+STATIC FUNCTION _cp_box( nDoc, cQ_It, cQ_Aops, cSeason )
 
-nDoc := 0
-cQ_it := "D"
-cQ_Aops := "D"
-cSeason := SPACE(4)
+   LOCAL nRet := 1
+   LOCAL GetList := {}
 
-Box(, 5, 55 )
-    
-    @ m_x + 1, m_y + 2 SAY "Nalog iz kojeg kopiramo:" GET nDoc ;
-        PICT "9999999999" VALID ( nDoc > 0 )
+   nDoc := 0
+   cQ_it := "D"
+   cQ_Aops := "D"
+   cSeason := Space( 4 )
 
-    @ m_x + 1, col() + 2 SAY "sezona:" GET cSeason ;
-    
-    @ m_x + 3, m_y + 2 SAY "   Kopirati stavke naloga (D/N)" GET cQ_it ;
-        PICT "@!" VALID ( cQ_it $ "DN" )
-    
-    @ m_x + 4, m_y + 2 SAY "Kopirati operacije naloga (D/N)" GET cQ_Aops ;
-        PICT "@!" VALID ( cQ_Aops $ "DN" )
+   Box(, 5, 55 )
 
-    read
-BoxC()
+   @ m_x + 1, m_y + 2 SAY "Nalog iz kojeg kopiramo:" GET nDoc ;
+      PICT "9999999999" VALID ( nDoc > 0 )
+
+   @ m_x + 1, Col() + 2 SAY "sezona:" GET cSeason ;
+
+      @ m_x + 3, m_y + 2 SAY "   Kopirati stavke naloga (D/N)" GET cQ_it ;
+      PICT "@!" VALID ( cQ_it $ "DN" )
+
+   @ m_x + 4, m_y + 2 SAY "Kopirati operacije naloga (D/N)" GET cQ_Aops ;
+      PICT "@!" VALID ( cQ_Aops $ "DN" )
+
+   READ
+   BoxC()
 
 
-if LastKey() == K_ESC
-    nRet := 0
-endif
+   IF LastKey() == K_ESC
+      nRet := 0
+   ENDIF
 
-return nRet
+   RETURN nRet
 
 
 
 // ---------------------------------------------------
-// kopiraj stavke naloga 
-// 
+// kopiraj stavke naloga
+//
 // nDoc - originalni dokument
 // nDocCopy - dokument s kojeg kopiramo
 // ---------------------------------------------------
-static function __cp_items( nDoc, nDocCopy, cQ_it, cQ_aops, cSeason )
-local nTArea := SELECT()
-local nDocItCopy 
-local nT_Docit := F_DOC_IT
-local nT_Docops := F_DOC_OPS
-local lSeason := .f.
-local _rec 
+STATIC FUNCTION __cp_items( nDoc, nDocCopy, cQ_it, cQ_aops, cSeason )
 
-if cQ_it == "N"
-    return
-endif
+   LOCAL nTArea := Select()
+   LOCAL nDocItCopy
+   LOCAL nT_Docit := F_DOC_IT
+   LOCAL nT_Docops := F_DOC_OPS
+   LOCAL lSeason := .F.
+   LOCAL _rec
 
-cSeason := ALLTRIM( cSeason )
+   IF cQ_it == "N"
+      RETURN
+   ENDIF
 
-if !EMPTY( cSeason ) .and. VAL( cSeason ) <> YEAR(DATE())
-    
-    lSeason := .t.
+   cSeason := AllTrim( cSeason )
 
-    // pozicioniraj se na tabele iz sezone
-    
-    select (nT_docit)
-    use
-    select (nT_docit)
-    use ( KUMPATH + cSeason + SLASH + "DOC_IT.DBF") alias doc_it
-    
-    select (nT_docops)
-    use
-    select (nT_docops)
-    use ( KUMPATH + cSeason + SLASH + "DOC_OPS.DBF") alias doc_ops
+   IF !Empty( cSeason ) .AND. Val( cSeason ) <> Year( Date() )
 
-endif
+      lSeason := .T.
 
-select (nT_docit)
-set order to tag "1"
-go top
-seek docno_str( nDocCopy )
+      // pozicioniraj se na tabele iz sezone
 
-// kada sam pronasao nalog sada idemo na kopiranje stavki ...
-select _doc_it
-go bottom
-// redni broj
-nDoc_it_no := field->doc_it_no
-    
-select (nT_docit)
-do while !EOF() .and. field->doc_no = nDocCopy
+      SELECT ( nT_docit )
+      USE
+      SELECT ( nT_docit )
+      USE ( KUMPATH + cSeason + SLASH + "DOC_IT.DBF" ) ALIAS doc_it
 
-    nDocItCopy := field->doc_it_no
-        
-    _rec := dbf_get_rec()
-        
-    select _doc_it
-    append blank
+      SELECT ( nT_docops )
+      USE
+      SELECT ( nT_docops )
+      USE ( KUMPATH + cSeason + SLASH + "DOC_OPS.DBF" ) ALIAS doc_ops
 
-    // zamjeni broj dokumenta i redni broj
-    _rec["doc_no"] := nDoc
-    _rec["doc_it_no"] := ++nDoc_it_no
-        
-    dbf_update_rec( _rec )
+   ENDIF
 
-    // kopiraj i operacije ove stavke, ako je to uredu
-    if cQ_aops == "N"
+   SELECT ( nT_docit )
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK docno_str( nDocCopy )
 
-        select ( nT_docit )
-        skip
-        loop
-    
-    endif
+   // kada sam pronasao nalog sada idemo na kopiranje stavki ...
+   SELECT _doc_it
+   GO BOTTOM
+   // redni broj
+   nDoc_it_no := field->doc_it_no
 
-    select ( nT_docops )
-    go top
-    seek docno_str( nDocCopy ) + docit_str( nDocItCopy )
+   SELECT ( nT_docit )
+   DO WHILE !Eof() .AND. field->doc_no = nDocCopy
 
-    do while !EOF() .and. field->doc_no = nDocCopy ;
-            .and. field->doc_it_no = nDocItCopy
-                
-        _rec := dbf_get_rec()
-        
-        select _doc_ops
-        append blank
-                
-        // samo ovo zamjeni sa trenutnim dokumentom
-        _rec["doc_no"] := nDoc
-        _rec["doc_it_no"] := nDoc_it_no
+      nDocItCopy := field->doc_it_no
 
-        dbf_update_rec( _rec )
+      _rec := dbf_get_rec()
 
-        select ( nT_docops )                
-        skip
+      SELECT _doc_it
+      APPEND BLANK
 
-    enddo
-        
-    select ( nT_docit )
-    skip
+      // zamjeni broj dokumenta i redni broj
+      _rec[ "doc_no" ] := nDoc
+      _rec[ "doc_it_no" ] := ++nDoc_it_no
 
-enddo
+      dbf_update_rec( _rec )
 
-if lSeason == .t.
-    // vrati se na stare tabele
-    select (nT_docit)
-    use
-    select (nT_docops)
-    use
-    O_DOC_IT
-    O_DOC_OPS
-endif
+      // kopiraj i operacije ove stavke, ako je to uredu
+      IF cQ_aops == "N"
 
-select (nTArea)
+         SELECT ( nT_docit )
+         SKIP
+         LOOP
 
-return
+      ENDIF
 
+      SELECT ( nT_docops )
+      GO TOP
+      SEEK docno_str( nDocCopy ) + docit_str( nDocItCopy )
 
-// --------------------------------------------------------
-// --------------------------------------------------------
-function set_items_article()
-local _ret := .f.
-local _art_id, _rec
+      DO WHILE !Eof() .AND. field->doc_no = nDocCopy ;
+            .AND. field->doc_it_no = nDocItCopy
 
-_art_id := get_items_article()
+         _rec := dbf_get_rec()
 
-if _art_id == NIL
-	return _ret
-endif
+         SELECT _doc_ops
+         APPEND BLANK
 
-SELECT _doc_it
-GO TOP
-DO WHILE !EOF() 
-	_rec := dbf_get_rec()
-	_rec["art_id"] := _art_id
-	dbf_update_rec( _rec )
-	SKIP
-ENDDO
-GO TOP
-_ret := .t.
-return _ret
+         // samo ovo zamjeni sa trenutnim dokumentom
+         _rec[ "doc_no" ] := nDoc
+         _rec[ "doc_it_no" ] := nDoc_it_no
 
+         dbf_update_rec( _rec )
+
+         SELECT ( nT_docops )
+         SKIP
+
+      ENDDO
+
+      SELECT ( nT_docit )
+      SKIP
+
+   ENDDO
+
+   IF lSeason == .T.
+      // vrati se na stare tabele
+      SELECT ( nT_docit )
+      USE
+      SELECT ( nT_docops )
+      USE
+      O_DOC_IT
+      O_DOC_OPS
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN
 
 
 // --------------------------------------------------------
 // --------------------------------------------------------
-function get_items_article()
-local _art_id := 0
-local _box_x := 3
-local _box_y := 40
-local _x := m_x
-local _y := m_y
-private GetList := {}
+FUNCTION set_items_article()
 
-Box(, _box_x, _box_y )
-	@ m_x + 1, m_y + 2 SAY "Odaberi artikal iz liste artikala:"
-	@ m_x + 2, m_y + 2 SAY "Artikal:" GET _art_id VALID {|| s_articles( @_art_id, .f., .t. ), .t. }
-	READ
-BoxC()
+   LOCAL _ret := .F.
+   LOCAL _art_id, _rec
 
-m_x := _x
-m_y := _y
+   _art_id := get_items_article()
 
-if LastKey() == K_ESC
-	RETURN NIL
-endif
+   IF _art_id == NIL
+      RETURN _ret
+   ENDIF
 
-RETURN _art_id
+   SELECT _doc_it
+   GO TOP
+   DO WHILE !Eof()
+      _rec := dbf_get_rec()
+      _rec[ "art_id" ] := _art_id
+      dbf_update_rec( _rec )
+      SKIP
+   ENDDO
+   GO TOP
+   _ret := .T.
+
+   RETURN _ret
 
 
 
+// --------------------------------------------------------
+// --------------------------------------------------------
+FUNCTION get_items_article()
 
+   LOCAL _art_id := 0
+   LOCAL _box_x := 3
+   LOCAL _box_y := 40
+   LOCAL _x := m_x
+   LOCAL _y := m_y
+   PRIVATE GetList := {}
+
+   Box(, _box_x, _box_y )
+   @ m_x + 1, m_y + 2 SAY "Odaberi artikal iz liste artikala:"
+   @ m_x + 2, m_y + 2 SAY "Artikal:" GET _art_id VALID {|| s_articles( @_art_id, .F., .T. ), .T. }
+   READ
+   BoxC()
+
+   m_x := _x
+   m_y := _y
+
+   IF LastKey() == K_ESC
+      RETURN NIL
+   ENDIF
+
+   RETURN _art_id

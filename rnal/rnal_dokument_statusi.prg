@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,423 +13,397 @@
 
 
 
-// --------------------------------------------------------
-// prebaci sve iz doc_ops u _doc_ops
-// --------------------------------------------------------
-function rnal_doc_ops_to_tmp( r_doc_no )
-local _count := 0, _rec 
-
-select ( F_DOC_OPS )
-if !USED()
-    O_DOC_OPS
-endif
-
-select ( F__DOC_OPST )
-if !USED()
-    O__DOC_OPST
-endif
-
-select _doc_opst
-if RECCOUNT() > 0
-    my_dbf_zap()
-endif
-
-select doc_ops
-set order to tag "1"
-go top
-
-seek docno_str( r_doc_no )
-
-if !FOUND()
-    // nema naloga
-    MsgBeep("Ovaj nalog ne postoji !!!")
-    return _count
-endif
-
-MsgO( "Kopiram operacije naloga u pripremu ..." )
-
-do while !EOF() .and. field->doc_no == r_doc_no
-    
-    ++ _count
-    
-    _rec := dbf_get_rec()
-    
-    select _doc_opst
-    APPEND BLANK
-    
-    dbf_update_rec( _rec )
-
-    select doc_ops    
-    skip
+FUNCTION rnal_doc_ops_to_tmp( r_doc_no )
 
-enddo
+   LOCAL _count := 0, _rec
 
-MsgC()
+   SELECT ( F_DOC_OPS )
+   IF !Used()
+      O_DOC_OPS
+   ENDIF
 
-return _count
+   SELECT ( F__DOC_OPST )
+   IF !Used()
+      O__DOC_OPST
+   ENDIF
 
+   SELECT _doc_opst
+   IF RecCount() > 0
+      my_dbf_zap()
+   ENDIF
 
+   SELECT doc_ops
+   SET ORDER TO TAG "1"
+   GO TOP
 
-// --------------------------------------------------------
-// azuriranje statusa 
-// --------------------------------------------------------
-function rnal_azuriraj_statuse( doc_no )
-local _ok := .f.
-local _promjena := .f.
-local _promj_count := 0
+   SEEK docno_str( r_doc_no )
 
-if !f18_lock_tables( { "rnal_doc_ops" } )
-    MsgBeep( "Problem sa lock tabele doc_ops !!!" )
-    return _ok
-endif
-sql_table_update( nil, "BEGIN" )
-
-// sinhronizuj podatke na server
-select _doc_opst
-set order to tag "1"
-go top
-
-do while !EOF()
-
-    _rec := dbf_get_rec()
-
-    select doc_ops
-    // "1", "STR(doc_no,10)+STR(doc_it_no,4)+STR(doc_op_no,4)"
-    set order to tag "1"
-    go top
-    seek docno_str( _rec["doc_no" ] ) + docit_str( _rec["doc_it_no"] ) + STR( _rec["doc_op_no"], 4 )
-
-    // nisam nasao !!!!
-    if !FOUND()
-        select _doc_opst
-        skip
-        loop
-    endif
+   IF !Found()
+      MsgBeep( "Ovaj nalog ne postoji !!!" )
+      RETURN _count
+   ENDIF
 
-    _rec_ops := dbf_get_rec()
-    _promjena := .f.
+   MsgO( "Kopiram operacije naloga u pripremu ..." )
 
-    if _rec_ops["op_status"] <> _rec["op_status"]
-        _rec_ops["op_status"] := _rec["op_status"]
-        _promjena := .t.
-    endif
+   DO WHILE !Eof() .AND. field->doc_no == r_doc_no
 
-    if _rec_ops["op_notes"] <> _rec["op_notes"]
-        _rec_ops["op_notes"] := _rec["op_notes"]
-        _promjena := .t.
-    endif
+      ++ _count
 
-    // samo ako postoje promjene...
-    if _promjena
-        log_write( "F18_DOK_OPER: rnal, setovanje statusa operacije - dokument: " + ;
-                    ALLTRIM( STR( _rec["doc_no"] ) ) + ;
-                    ", stavka: " + ALLTRIM( STR( _rec["doc_op_no"] ) ) + ;
-                    ", status: " + ALLTRIM( _rec["op_status"] ) + ;
-                    ", opis: " + ALLTRIM( _rec["op_notes"] ) , 2 )
-        update_rec_server_and_dbf( "rnal_doc_ops", _rec, 1, "CONT" )
-        ++ _promj_count 
-    endif
+      _rec := dbf_get_rec()
 
-    // idi na sljedeci zapis...
-    select _doc_opst
-    skip
+      SELECT _doc_opst
+      APPEND BLANK
 
-enddo
+      dbf_update_rec( _rec )
 
-f18_free_tables( { "rnal_doc_ops" } )
-sql_table_update( nil, "END" )
+      SELECT doc_ops
+      SKIP
 
-// pobrisi pripremu...
-select _doc_opst
-my_dbf_zap()
+   ENDDO
 
-return _ok
+   MsgC()
 
+   RETURN _count
 
 
 
-static function _nalog()
-local _nalog := 0
+FUNCTION rnal_azuriraj_statuse( doc_no )
 
-Box(, 1, 60 )
-    @ m_x + 1, m_y + 2 SAY "Pregledati za nalog:" GET _nalog PICT "9999999999" VALID _nalog > 0
-    read
-BoxC()
+   LOCAL _ok := .F.
+   LOCAL _promjena := .F.
+   LOCAL _promj_count := 0
 
-if LastKey() == K_ESC
-    _nalog := NIL
-endif
+   IF !f18_lock_tables( { "rnal_doc_ops" } )
+      MsgBeep( "Problem sa lock tabele doc_ops !!!" )
+      RETURN _ok
+   ENDIF
+   sql_table_update( nil, "BEGIN" )
 
-return _nalog
+   SELECT _doc_opst
+   SET ORDER TO TAG "1"
+   GO TOP
 
+   DO WHILE !Eof()
 
-// --------------------------------------------------------
-// tabela pregleda statusa operacija
-// --------------------------------------------------------
-function rnal_pregled_statusa_operacija( r_doc_no )
-local _ok := .t.
-local _footer
-local _header
-local _box_x := maxrows() - 10
-local _box_y := maxcols() - 10
+      _rec := dbf_get_rec()
 
-private imekol
-private kol
+      SELECT doc_ops
+      SET ORDER TO TAG "1"
+      GO TOP
+      SEEK docno_str( _rec[ "doc_no" ] ) + docit_str( _rec[ "doc_it_no" ] ) + Str( _rec[ "doc_op_no" ], 4 )
 
-if r_doc_no == NIL
-    r_doc_no := _nalog()
-    if r_doc_no == NIL
-        return _ok
-    endif
-endif
+      IF !Found()
+         SELECT _doc_opst
+         SKIP
+         LOOP
+      ENDIF
 
-rnal_o_tables( .t. )
+      _rec_ops := dbf_get_rec()
+      _promjena := .F.
 
-// prebaci sve iz kum u pripr
-if rnal_doc_ops_to_tmp( r_doc_no ) < 1
-    MsgBeep( "Nalog ne sadrzi niti jednu operaciju !!!" )
-    return _ok
-endif
+      IF _rec_ops[ "op_status" ] <> _rec[ "op_status" ]
+         _rec_ops[ "op_status" ] := _rec[ "op_status" ]
+         _promjena := .T.
+      ENDIF
 
-_footer := "Pregled statusa naloga " + ALLTRIM( STR( r_doc_no, 10, 0 ) )
-_header := ""
+      IF _rec_ops[ "op_notes" ] <> _rec[ "op_notes" ]
+         _rec_ops[ "op_notes" ] := _rec[ "op_notes" ]
+         _promjena := .T.
+      ENDIF
 
-Box(, _box_x, _box_y )
+      IF _promjena
+         log_write( "F18_DOK_OPER: rnal, setovanje statusa operacije - dokument: " + ;
+            AllTrim( Str( _rec[ "doc_no" ] ) ) + ;
+            ", stavka: " + AllTrim( Str( _rec[ "doc_op_no" ] ) ) + ;
+            ", status: " + AllTrim( _rec[ "op_status" ] ) + ;
+            ", opis: " + AllTrim( _rec[ "op_notes" ] ), 2 )
+         update_rec_server_and_dbf( "rnal_doc_ops", _rec, 1, "CONT" )
+         ++ _promj_count
+      ENDIF
 
-// setuj box opis...
-_set_box( _box_x, _box_y )
-_set_a_kol( @imekol, @kol )
+      SELECT _doc_opst
+      SKIP
 
-select ( F__DOC_OPST )
-if !USED()
-    O__DOC_OPST
-endif
+   ENDDO
 
-select _doc_opst
-go top
+   f18_free_tables( { "rnal_doc_ops" } )
+   sql_table_update( nil, "END" )
 
-ObjDbedit( "nalst", _box_x, _box_y, {|| key_handler( r_doc_no ) }, _header, _footer, , , , , 5 )
+   // pobrisi pripremu...
+   SELECT _doc_opst
+   my_dbf_zap()
 
-BoxC()
+   RETURN _ok
 
-if LastKey() == K_ESC
 
-    if Pitanje(, "Azurirati promjene na server (D/N) ?", "D" ) == "D"
-        // izlaz mi je bitan radi sinhronizacije ...
-        rnal_azuriraj_statuse( r_doc_no )
-    endif
 
-endif
 
-my_close_all_dbf()
+STATIC FUNCTION _nalog()
 
-return _ok
+   LOCAL _nalog := 0
 
+   Box(, 1, 60 )
+   @ m_x + 1, m_y + 2 SAY "Pregledati za nalog:" GET _nalog PICT "9999999999" VALID _nalog > 0
+   READ
+   BoxC()
 
+   IF LastKey() == K_ESC
+      _nalog := NIL
+   ENDIF
 
-// --------------------------------------------------------
-// obrada tipki
-// --------------------------------------------------------
-static function key_handler( doc )
+   RETURN _nalog
 
-do case
 
-    case Ch == K_F2
+FUNCTION rnal_pregled_statusa_operacija( r_doc_no )
 
-        // setovanje statusa operacije
-        _rec := dbf_get_rec()
-        if _setuj_status( @_rec )
-            dbf_update_rec( _rec )
-            return DE_REFRESH
-        endif
-        
-endcase
+   LOCAL _ok := .T.
+   LOCAL _footer
+   LOCAL _header
+   LOCAL _box_x := maxrows() - 10
+   LOCAL _box_y := maxcols() - 10
 
-return DE_CONT
+   PRIVATE imekol
+   PRIVATE kol
 
+   IF r_doc_no == NIL
+      r_doc_no := _nalog()
+      IF r_doc_no == NIL
+         RETURN _ok
+      ENDIF
+   ENDIF
 
+   rnal_o_tables( .T. )
 
-// ---------------------------------------------------
-// setuj status ...
-// ---------------------------------------------------
-static function _setuj_status( rec )
-local _ok := .f.
-local _x := 1
-local _op_status := _rec["op_status"]
-local _op_notes := _rec["op_notes"]
+   // prebaci sve iz kum u pripr
+   IF rnal_doc_ops_to_tmp( r_doc_no ) < 1
+      MsgBeep( "Nalog ne sadrzi niti jednu operaciju !!!" )
+      RETURN _ok
+   ENDIF
 
-Box(, 10, 70 )
+   _footer := "Pregled statusa naloga " + AllTrim( Str( r_doc_no, 10, 0 ) )
+   _header := ""
 
-    @ m_x + _x, m_y + 2 SAY "Postavi status tekuce stavke na "
+   Box(, _box_x, _box_y )
 
-    ++ _x
-    ++ _x
+   // setuj box opis...
+   _set_box( _box_x, _box_y )
+   _set_a_kol( @imekol, @kol )
 
-    @ m_x + _x, m_y + 2 SAY "  - '1' - zavrseno "
+   SELECT ( F__DOC_OPST )
+   IF !Used()
+      O__DOC_OPST
+   ENDIF
 
-    ++ _x
-    
-    @ m_x + _x, m_y + 2 SAY "  - prazno - u izradi"
+   SELECT _doc_opst
+   GO TOP
 
-    ++ _x
-    ++ _x
+   ObjDbedit( "nalst", _box_x, _box_y, {|| key_handler( r_doc_no ) }, _header, _footer, , , , , 5 )
 
-    @ m_x + _x, m_y + 2 SAY "           -> odabrani status: " GET _op_status VALID _op_status $ " #1#2"
-    
-    ++ _x
+   BoxC()
 
-    @ m_x + _x, m_y + 2 SAY "Napomena:" GET _op_notes PICT "@S50"
+   IF LastKey() == K_ESC
 
-    read
+      IF Pitanje(, "Azurirati promjene na server (D/N) ?", "D" ) == "D"
+         // izlaz mi je bitan radi sinhronizacije ...
+         rnal_azuriraj_statuse( r_doc_no )
+      ENDIF
 
-BoxC()
+   ENDIF
 
-if LastKey() == K_ESC
-    return _ok
-endif
+   my_close_all_dbf()
 
-_ok := .t.
-_rec["op_notes"] := _op_notes
-_rec["op_status"] := _op_status
+   RETURN _ok
 
-return _ok
 
 
+STATIC FUNCTION key_handler( doc )
 
-// ------------------------------------------
-// setovanje boxa
-// box_x - box x koord.
-// box_y - box y koord.
-// ------------------------------------------
-static function _set_box( box_x, box_y )
-local _line_1 := ""
-local _line_2 := ""
+   DO CASE
 
-_line_1 := "(F2) setuj status"
-_line_2 := "-- "
+   CASE Ch == K_F2
 
-@ m_x + ( box_x - 1 ), m_y + 2 SAY _line_1
-@ m_x + box_x, m_y + 2 SAY _line_2
+      // setovanje statusa operacije
+      _rec := dbf_get_rec()
+      IF _setuj_status( @_rec )
+         dbf_update_rec( _rec )
+         RETURN DE_REFRESH
+      ENDIF
 
-return
+   ENDCASE
 
+   RETURN DE_CONT
 
 
-// -------------------------------------------------------
-// setovanje kolona tabele za unos operacija
-// -------------------------------------------------------
-static function _set_a_kol( a_ime_kol, a_kol )
-local _i
 
-a_ime_kol := {}
-a_kol := {}
+STATIC FUNCTION _setuj_status( rec )
 
-AADD( a_ime_kol, { "Artikal", ;
-	{|| PADR( g_art_desc( _get_doc_article( doc_no, doc_it_no ), .t., .f. ), 20 ) }, ;
-	"doc_no", ;
-	{|| .t.}, ;
-	{|| .t.} })
+   LOCAL _ok := .F.
+   LOCAL _x := 1
+   LOCAL _op_status := _rec[ "op_status" ]
+   LOCAL _op_notes := _rec[ "op_notes" ]
 
+   Box(, 10, 70 )
 
-AADD( a_ime_kol, { "Element", ;
-	{|| PADR( _get_doc_op_element( _get_doc_article( doc_no, doc_it_no ), doc_it_el_ ), 10 ) }, ;
-	"doc_it_el_", ;
-	{|| .t.}, ;
-	{|| .t.} })
+   @ m_x + _x, m_y + 2 SAY "Postavi status tekuce stavke na "
 
-AADD( a_ime_kol, {"Operacija" , ;
-	{|| PADR( ALLTRIM( g_aop_desc( aop_id ) ) + "/" + ALLTRIM( g_aop_att_desc( aop_att_id ) ), 30 )  }, ;
-	"aop_id", ;
-	{|| .t.}, ;
-	{|| .t.} } )
+   ++ _x
+   ++ _x
 
-AADD( a_ime_kol, { "Status" , ;
-	{|| PADR( _get_status( op_status ), 10 ) }, ;
-	"aop_value", ;
-	{|| .t.}, ;
-	{|| .t.} })
+   @ m_x + _x, m_y + 2 SAY "  - '1' - zavrseno "
 
-AADD( a_ime_kol, { "Napomene" , ;
-	{|| PADR( op_notes, 50 ) }, ;
-	"aop_value", ;
-	{|| .t.}, ;
-	{|| .t.} })
+   ++ _x
 
+   @ m_x + _x, m_y + 2 SAY "  - prazno - u izradi"
 
-for _i := 1 to LEN( a_ime_kol )
-	AADD( a_kol, _i )
-next
+   ++ _x
+   ++ _x
 
-return
+   @ m_x + _x, m_y + 2 SAY "           -> odabrani status: " GET _op_status VALID _op_status $ " #1#2"
 
+   ++ _x
 
+   @ m_x + _x, m_y + 2 SAY "Napomena:" GET _op_notes PICT "@S50"
 
+   READ
 
-static function _get_status( status )
-local _ret := ""
+   BoxC()
 
-do case
-    case status == " "
-        _ret := "u izradi"
-    case status == "1"
-        _ret := "zavrseno"
-    case status == "2"
-        _ret := "odbaceno"
-endcase
+   IF LastKey() == K_ESC
+      RETURN _ok
+   ENDIF
 
-return _ret
+   _ok := .T.
+   _rec[ "op_notes" ] := _op_notes
+   _rec[ "op_status" ] := _op_status
+
+   RETURN _ok
+
+
+
+STATIC FUNCTION _set_box( box_x, box_y )
+
+   LOCAL _line_1 := ""
+   LOCAL _line_2 := ""
+
+   _line_1 := "(F2) setuj status"
+   _line_2 := "-- "
+
+   @ m_x + ( box_x - 1 ), m_y + 2 SAY _line_1
+   @ m_x + box_x, m_y + 2 SAY _line_2
+
+   RETURN
+
+
+
+STATIC FUNCTION _set_a_kol( a_ime_kol, a_kol )
+
+   LOCAL _i
+
+   a_ime_kol := {}
+   a_kol := {}
+
+   AAdd( a_ime_kol, { "Artikal", ;
+      {|| PadR( g_art_desc( _get_doc_article( doc_no, doc_it_no ), .T., .F. ), 20 ) }, ;
+      "doc_no", ;
+      {|| .T. }, ;
+      {|| .T. } } )
+
+
+   AAdd( a_ime_kol, { "Element", ;
+      {|| PadR( _get_doc_op_element( _get_doc_article( doc_no, doc_it_no ), doc_it_el_ ), 10 ) }, ;
+      "doc_it_el_", ;
+      {|| .T. }, ;
+      {|| .T. } } )
+
+   AAdd( a_ime_kol, { "Operacija", ;
+      {|| PadR( AllTrim( g_aop_desc( aop_id ) ) + "/" + AllTrim( g_aop_att_desc( aop_att_id ) ), 30 )  }, ;
+      "aop_id", ;
+      {|| .T. }, ;
+      {|| .T. } } )
+
+   AAdd( a_ime_kol, { "Status", ;
+      {|| PadR( _get_status( op_status ), 10 ) }, ;
+      "aop_value", ;
+      {|| .T. }, ;
+      {|| .T. } } )
+
+   AAdd( a_ime_kol, { "Napomene", ;
+      {|| PadR( op_notes, 50 ) }, ;
+      "aop_value", ;
+      {|| .T. }, ;
+      {|| .T. } } )
+
+
+   FOR _i := 1 TO Len( a_ime_kol )
+      AAdd( a_kol, _i )
+   NEXT
+
+   RETURN
+
+
+
+
+STATIC FUNCTION _get_status( status )
+
+   LOCAL _ret := ""
+
+   DO CASE
+   CASE status == " "
+      _ret := "u izradi"
+   CASE status == "1"
+      _ret := "zavrseno"
+   CASE status == "2"
+      _ret := "odbaceno"
+   ENDCASE
+
+   RETURN _ret
 
 
 
 
 // ----------------------------------------------------------------
-// vraca oznaku elementa 
+// vraca oznaku elementa
 // ----------------------------------------------------------------
-static function _get_doc_op_element( art_id, el_no )
-local _t_area := SELECT()
-local _elem := {}
-local _art := {}
-local _art_id 
-local _ret := ""
-local _scan := 0
-local _el_no 
+STATIC FUNCTION _get_doc_op_element( art_id, el_no )
 
-// daj matricu kompletne strukture artikla 
-rnal_setuj_naziv_artikla( art_id, .f., nil, @_art, .t. )
+   LOCAL _t_area := Select()
+   LOCAL _elem := {}
+   LOCAL _art := {}
+   LOCAL _art_id
+   LOCAL _ret := ""
+   LOCAL _scan := 0
+   LOCAL _el_no
 
-// daj elemente artikla 
-_g_art_elements( @_elem, art_id )
+   rnal_setuj_naziv_artikla( art_id, .F., nil, @_art, .T. )
 
-// utvrdi koji mi element treba !
-_scan := ASCAN( _elem, { |val| val[1] == el_no } )
-_el_no := _elem[ _scan, 3 ]
+   _g_art_elements( @_elem, art_id )
 
-// to je taj !
-_ret := g_el_descr( _art, _el_no )
- 
-select ( _t_area )
+   _scan := AScan( _elem, {|val| val[ 1 ] == el_no } )
+   _el_no := _elem[ _scan, 3 ]
 
-return _ret
+   _ret := g_el_descr( _art, _el_no )
+
+   SELECT ( _t_area )
+
+   RETURN _ret
 
 
 
 // -----------------------------------------------------------------
 // vraca artikal dokumenta
 // -----------------------------------------------------------------
-static function _get_doc_article( r_doc_no, r_doc_it_no )
-local _ret := 0
-local _t_area := SELECT()
+STATIC FUNCTION _get_doc_article( r_doc_no, r_doc_it_no )
 
-// artikal je ?
-select doc_it
-set order to tag "1"
-go top
-seek docno_str( r_doc_no )  + docit_str( r_doc_it_no )
-    
-_ret := field->art_id
+   LOCAL _ret := 0
+   LOCAL _t_area := Select()
 
-select ( _t_area )
-return _ret
+   SELECT doc_it
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK docno_str( r_doc_no )  + docit_str( r_doc_it_no )
 
+   _ret := field->art_id
 
+   SELECT ( _t_area )
 
+   RETURN _ret

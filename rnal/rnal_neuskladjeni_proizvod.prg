@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,36 +16,35 @@
 
 CLASS RNALDamageDocument
 
-    METHOD New()
-    METHOD get_damage_data()
-    METHOD get_damage_items()
-    METHOD has_damage_data()
-    METHOD has_multiglass()
-    METHOD generate_rnal_document()
-    METHOD multiglass_configurator()
+   METHOD New()
+   METHOD get_damage_data()
+   METHOD get_damage_items()
+   METHOD has_damage_data()
+   METHOD has_multiglass()
+   METHOD generate_rnal_document()
+   METHOD multiglass_configurator()
 
-    DATA damage_items
-    DATA damage_data
-    DATA doc_no
-    DATA multiglass
+   DATA damage_items
+   DATA damage_data
+   DATA doc_no
+   DATA multiglass
 
-    PROTECTED:
+   PROTECTED:
 
-        METHOD open_tables()
-        METHOD get_damage_items_cond()
-        METHOD get_damage_items_qtty()
-        METHOD get_damage_article()
-        METHOD get_rnal_header_data()
-        METHOD get_rnal_items_data()
-        METHOD get_rnal_opers_data()
-        METHOD config_tbl_struct()
-        METHOD configurator_box()
-        METHOD configurator_box_key_handler()
-        METHOD set_configurator_box_columns()
-        METHOD fill_config_tbl()
-        METHOD configurator_edit_data()
-        METHOD fix_items()
-
+   METHOD open_tables()
+   METHOD get_damage_items_cond()
+   METHOD get_damage_items_qtty()
+   METHOD get_damage_article()
+   METHOD get_rnal_header_data()
+   METHOD get_rnal_items_data()
+   METHOD get_rnal_opers_data()
+   METHOD config_tbl_struct()
+   METHOD configurator_box()
+   METHOD configurator_box_key_handler()
+   METHOD set_configurator_box_columns()
+   METHOD fill_config_tbl()
+   METHOD configurator_edit_data()
+   METHOD fix_items()
 
 ENDCLASS
 
@@ -53,159 +52,162 @@ ENDCLASS
 
 // ---------------------------------------
 METHOD RNALDamageDocument:New()
-::damage_data := NIL
-::damage_items := NIL
-::doc_no := NIL
-::multiglass := NIL
-return SELF
+
+   ::damage_data := NIL
+   ::damage_items := NIL
+   ::doc_no := NIL
+   ::multiglass := NIL
+
+   RETURN SELF
 
 
 // vraca podatke o ostecenju za nalog broj
 METHOD RNALDamageDocument:get_damage_data()
-local _ok := .f.
-local _qry, _table
-local _server := pg_server()
-local _log_type := "21"
 
-_qry := "SELECT " + ;
-        "  lit.doc_no, " + ;
-        "  lit.doc_log_no, " + ;
-        "  lit.doc_lit_no, " + ;
-        "  lit.doc_lit_ac, " + ;
-        "  lit.art_id, " + ;
-        "  lit.char_1, " + ;
-        "  lit.num_1, " + ;
-        "  lit.num_2, " + ;
-        "  lit.int_1, " + ;
-        "  lit.int_2, " + ;
-        "  dlog.doc_log_da, " + ;
-        "  dlog.doc_log_ti " + ;
-        "FROM fmk.rnal_doc_lit lit " + ;
-        "LEFT JOIN fmk.rnal_doc_log dlog ON lit.doc_no = dlog.doc_no " + ;
-        "   AND dlog.doc_log_no = lit.doc_log_no " + ;
-        "WHERE dlog.doc_log_ty = " + _sql_quote( _log_type ) + ;
-        "   AND dlog.doc_no = " + ALLTRIM( STR( ::doc_no ) ) + " " + ;
-        "ORDER BY lit.doc_no, lit.doc_log_no, lit.doc_lit_no"
+   LOCAL _ok := .F.
+   LOCAL _qry, _table
+   LOCAL _server := pg_server()
+   LOCAL _log_type := "21"
 
-MsgO( "formiranje sql upita u toku ..." )
+   _qry := "SELECT " + ;
+      "  lit.doc_no, " + ;
+      "  lit.doc_log_no, " + ;
+      "  lit.doc_lit_no, " + ;
+      "  lit.doc_lit_ac, " + ;
+      "  lit.art_id, " + ;
+      "  lit.char_1, " + ;
+      "  lit.num_1, " + ;
+      "  lit.num_2, " + ;
+      "  lit.int_1, " + ;
+      "  lit.int_2, " + ;
+      "  dlog.doc_log_da, " + ;
+      "  dlog.doc_log_ti " + ;
+      "FROM fmk.rnal_doc_lit lit " + ;
+      "LEFT JOIN fmk.rnal_doc_log dlog ON lit.doc_no = dlog.doc_no " + ;
+      "   AND dlog.doc_log_no = lit.doc_log_no " + ;
+      "WHERE dlog.doc_log_ty = " + _sql_quote( _log_type ) + ;
+      "   AND dlog.doc_no = " + AllTrim( Str( ::doc_no ) ) + " " + ;
+      "ORDER BY lit.doc_no, lit.doc_log_no, lit.doc_lit_no"
 
-_table := _sql_query( _server, _qry )
+   MsgO( "formiranje sql upita u toku ..." )
 
-MsgC()
+   _table := _sql_query( _server, _qry )
 
-if _table == NIL
-    return NIL
-endif
+   MsgC()
 
-_table:Refresh()
+   IF _table == NIL
+      RETURN NIL
+   ENDIF
 
-::damage_data := _table
+   _table:Refresh()
 
-return
+   ::damage_data := _table
+
+   RETURN
 
 
 // ------------------------------------------------------
 // daj mi stavke koje su sporne sa naloga
 // ------------------------------------------------------
 METHOD RNALDamageDocument:get_damage_items()
-local oRow
-local _item, _scan
 
-::damage_items := {}
-::damage_data:GoTo(1)
+   LOCAL oRow
+   LOCAL _item, _scan
 
-do while !::damage_data:EOF() 
+   ::damage_items := {}
+   ::damage_data:GoTo( 1 )
 
-    oRow := ::damage_data:GetRow()
+   DO WHILE !::damage_data:Eof()
 
-    _item := oRow:FieldGet( oRow:FieldPos( "int_1" ) )
-    _scan := ASCAN( ::damage_items, { | var | var[1] == _item } )
+      oRow := ::damage_data:GetRow()
 
-    if _scan == 0
-        AADD( ::damage_items, { _item } )
-    endif
+      _item := oRow:FieldGet( oRow:FieldPos( "int_1" ) )
+      _scan := AScan( ::damage_items, {| var | VAR[ 1 ] == _item } )
 
-    ::damage_data:skip()
+      IF _scan == 0
+         AAdd( ::damage_items, { _item } )
+      ENDIF
 
-enddo
+      ::damage_data:skip()
 
-::damage_data:GoTo(1)
+   ENDDO
 
-return 
+   ::damage_data:GoTo( 1 )
+
+   RETURN
 
 // -------------------------------------------------------------
 // vrati mi uslov za sql izraz na osnovu ovoga
 // -------------------------------------------------------------
 METHOD RNALDamageDocument:get_damage_items_cond( field_name )
-local _cond := ""
-local _i
 
-if ::damage_items == NIL .or. LEN( ::damage_items ) == 0
-    return _cond
-endif
+   LOCAL _cond := ""
+   LOCAL _i
 
-_cond := " AND " +  field_name + " IN ( "
+   if ::damage_items == NIL .OR. Len( ::damage_items ) == 0
+      RETURN _cond
+   ENDIF
 
-for _i := 1 to LEN( ::damage_items )
-    _cond += ALLTRIM( STR( ::damage_items[ _i, 1 ] ) )
-    if _i < LEN( ::damage_items )
-        _cond += ", "
-    endif
-next
+   _cond := " AND " +  field_name + " IN ( "
 
-_cond += " ) "
+   FOR _i := 1 TO Len( ::damage_items )
+      _cond += AllTrim( Str( ::damage_items[ _i, 1 ] ) )
+      IF _i < Len( ::damage_items )
+         _cond += ", "
+      ENDIF
+   NEXT
 
-return _cond
+   _cond += " ) "
+
+   RETURN _cond
 
 
 // -------------------------------------------------------------
 // vraca podatke o ostecenju za nalog broj
 // -------------------------------------------------------------
 METHOD RNALDamageDocument:has_damage_data()
-local _res
-local _where
 
-_where := "WHERE doc_log_ty = " + _sql_quote( _log_type ) + ;
-        "   AND doc_no = " + ALLTRIM( STR( ::doc_no ) );
+   LOCAL _res
+   LOCAL _where
 
-_res := table_count( "fmk.rnal_doc_log", _where )
+   _where := "WHERE doc_log_ty = " + _sql_quote( _log_type ) + ;
+      "   AND doc_no = " + AllTrim( Str( ::doc_no ) );
 
-return _res
+      _res := table_count( "fmk.rnal_doc_log", _where )
+
+   RETURN _res
 
 
-// -------------------------------------------------------
-// provjerava da li postoje slozena stakla
-// -------------------------------------------------------
 METHOD RNALDamageDocument:has_multiglass()
-local _ok := .f.
-local oRow, _art_id, _a_art
 
-::damage_data:GoTo(1)
+   LOCAL _ok := .F.
+   LOCAL oRow, _art_id, _a_art
 
-do while !::damage_data:EOF()
+   ::damage_data:GoTo( 1 )
 
-    oRow := ::damage_data:GetRow()
+   DO WHILE !::damage_data:Eof()
 
-    _art_id := oRow:FieldGet( oRow:FieldPos( "art_id" ) )
-    _a_art := {}
+      oRow := ::damage_data:GetRow()
 
-    // napuni matricu...
-    rnal_setuj_naziv_artikla( _art_id, nil, nil, @_a_art, .t. )
+      _art_id := oRow:FieldGet( oRow:FieldPos( "art_id" ) )
+      _a_art := {}
 
-    if is_izo( _a_art ) .or. is_lami( _a_art ) .or. is_lamig( _a_art )
-        _ok := .t.
-        exit
-    endif
+      rnal_setuj_naziv_artikla( _art_id, nil, nil, @_a_art, .T. )
 
-    ::damage_data:Skip()
+      IF is_izo( _a_art ) .OR. is_lami( _a_art ) .OR. is_lamig( _a_art )
+         _ok := .T.
+         EXIT
+      ENDIF
 
-enddo
+      ::damage_data:Skip()
 
-::damage_data:GoTo(1)
+   ENDDO
 
-::multiglass := _ok
+   ::damage_data:GoTo( 1 )
 
-return _ok
+   ::multiglass := _ok
+
+   RETURN _ok
 
 
 
@@ -213,48 +215,47 @@ return _ok
 // pokreni konfiguraciju, tj. odaberi zamjenska stakla
 // --------------------------------------------------------
 METHOD RNALDamageDocument:multiglass_configurator()
-local _ok := .f.
 
-// 1) napravi i napuni tabelu konfiguratora...
-::fill_config_tbl()
+   LOCAL _ok := .F.
 
-// 2) otvori box konfiguratora
-::configurator_box()
+   ::fill_config_tbl()
+   ::configurator_box()
 
-_ok := .t.
+   _ok := .T.
 
-return _ok
+   RETURN _ok
 
 
 
 METHOD RNALDamageDocument:configurator_box()
-local _x_pos := MAXROWS() - 15
-local _y_pos := MAXCOLS() - 10
-local _opts := "<ENTER> definisi novi artikal  <ESC> izlaz/snimanje"
-local _head, _foot
-private Kol, ImeKol
 
-_head := "Konfiguracija artikala za novi nalog..."
-_foot := ""
+   LOCAL _x_pos := MAXROWS() - 15
+   LOCAL _y_pos := MAXCOLS() - 10
+   LOCAL _opts := "<ENTER> definisi novi artikal  <ESC> izlaz/snimanje"
+   LOCAL _head, _foot
+   PRIVATE Kol, ImeKol
 
-Box(, _x_pos, _y_pos, .t. )
+   _head := "Konfiguracija artikala za novi nalog..."
+   _foot := ""
 
-select _tmp1
-go top
+   Box(, _x_pos, _y_pos, .T. )
 
-// setuj kolone konfiguratora
-::set_configurator_box_columns( @ImeKol, @Kol )
+   SELECT _tmp1
+   GO TOP
 
-@ m_x + ( _x_pos - 1 ), m_y + 1 SAY _opts
+   // setuj kolone konfiguratora
+   ::set_configurator_box_columns( @ImeKol, @Kol )
 
-ObjDbedit( "_tmp1", _x_pos, _y_pos, {|| ::configurator_box_key_handler() }, _head, _foot,,,,, 2 )
+   @ m_x + ( _x_pos - 1 ), m_y + 1 SAY _opts
 
-BoxC()
+   ObjDbedit( "_tmp1", _x_pos, _y_pos, {|| ::configurator_box_key_handler() }, _head, _foot,,,,, 2 )
 
-select _tmp1
-go top
+   BoxC()
 
-return
+   SELECT _tmp1
+   GO TOP
+
+   RETURN
 
 
 
@@ -263,15 +264,15 @@ return
 // ----------------------------------------------------------------------
 METHOD RNALDamageDocument:configurator_box_key_handler()
 
-do case
-    case Ch == K_ENTER
-        if ::configurator_edit_data()
-            return DE_REFRESH
-        endif
+   DO CASE
+   CASE Ch == K_ENTER
+      if ::configurator_edit_data()
+         RETURN DE_REFRESH
+      ENDIF
 
-endcase
+   ENDCASE
 
-return DE_CONT
+   RETURN DE_CONT
 
 
 
@@ -280,32 +281,33 @@ return DE_CONT
 //
 // ----------------------------------------------------------------------
 METHOD RNALDamageDocument:configurator_edit_data()
-local _ok := .f.
-local _art_id := 0
 
-Box(, 3, 55 )
+   LOCAL _ok := .F.
+   LOCAL _art_id := 0
 
-    @ m_x + 1, m_y + 2 SAY "Postavi novi artikal:" GET _art_id ;
-                        VALID {|| s_articles( @_art_id, .f., .t.  ), ;
-                            check_article_valid( _art_id ) } ;
-                        PICT "9999999999"
-    read
+   Box(, 3, 55 )
 
-BoxC()
+   @ m_x + 1, m_y + 2 SAY "Postavi novi artikal:" GET _art_id ;
+      VALID {|| s_articles( @_art_id, .F., .T.  ), ;
+      check_article_valid( _art_id ) } ;
+      PICT "9999999999"
+   READ
 
-if LastKey() == K_ESC
-    return _ok
-endif
+   BoxC()
 
-_rec := dbf_get_rec()
+   IF LastKey() == K_ESC
+      RETURN _ok
+   ENDIF
 
-_rec["art_id_2"] := _art_id
+   _rec := dbf_get_rec()
 
-dbf_update_rec( _rec )
+   _rec[ "art_id_2" ] := _art_id
 
-_ok := .t.
+   dbf_update_rec( _rec )
 
-return _ok
+   _ok := .T.
+
+   RETURN _ok
 
 
 
@@ -314,122 +316,125 @@ return _ok
 // setovanje kolona konfiguratora
 // ----------------------------------------------------------------------
 METHOD RNALDamageDocument:set_configurator_box_columns( ime_kol, kol )
-local _i
 
-ime_kol := {}
-kol := {}
+   LOCAL _i
 
-// definisanje kolona
-AADD( ime_kol, { "rbr" , {|| docit_str( doc_it_no ) }, ;
-	"doc_it_no", {|| .t.}, {|| .t.} })
+   ime_kol := {}
+   kol := {}
 
-AADD( ime_kol, {"Artikal/Kol." , {|| sh_article( art_id, doc_it_qtt, 0, 0 ) }, ;
-	"art_id", {|| .t.}, {|| .t.} })
+   // definisanje kolona
+   AAdd( ime_kol, { "rbr", {|| docit_str( doc_it_no ) }, ;
+      "doc_it_no", {|| .T. }, {|| .T. } } )
 
-AADD( ime_kol, {"Br.stakla" , {|| glass_no }, ;
-	"glass_no", {|| .t.}, {|| .t.} })
+   AAdd( ime_kol, { "Artikal/Kol.", {|| sh_article( art_id, doc_it_qtt, 0, 0 ) }, ;
+      "art_id", {|| .T. }, {|| .T. } } )
 
-AADD( ime_kol, {"Novi artikal" , {|| if( art_id_2 <> 0, sh_article( art_id_2, doc_it_qtt, 0, 0 ), "ostaje isti" ) }, ;
-	"art_id_2", {|| .t.}, {|| .t.} })
+   AAdd( ime_kol, { "Br.stakla", {|| glass_no }, ;
+      "glass_no", {|| .T. }, {|| .T. } } )
 
-for _i := 1 to LEN( ime_kol )
-	AADD( kol, _i )
-next
+   AAdd( ime_kol, { "Novi artikal", {|| if( art_id_2 <> 0, sh_article( art_id_2, doc_it_qtt, 0, 0 ), "ostaje isti" ) }, ;
+      "art_id_2", {|| .T. }, {|| .T. } } )
 
-return 
+   FOR _i := 1 TO Len( ime_kol )
+      AAdd( kol, _i )
+   NEXT
+
+   RETURN
 
 
 // -----------------------------------------------------------------
 // sredjuje redne brojeve u pripremi...
 // -----------------------------------------------------------------
 METHOD RNALDamageDocument:fix_items()
-return
+   RETURN
 
 
 // ------------------------------------------------------------------
 // vraca artikal za novi nalog, originalni ili iz konfiguratora
 // ------------------------------------------------------------------
 METHOD RNALDamageDocument:get_damage_article( doc_no, item_no, art_orig )
-local _t_area := SELECT()
-local _ret := art_orig
 
-if !::multiglass
-	return _ret
-endif
+   LOCAL _t_area := Select()
+   LOCAL _ret := art_orig
 
-select _tmp1
-set order to tag "1"
-go top
-seek docno_str( doc_no ) + docit_str( item_no ) + STR( art_orig, 10, 0 )
+   IF !::multiglass
+      RETURN _ret
+   ENDIF
 
-if !FOUND() 
-    select ( _t_area )
-    return _ret
-endif
+   SELECT _tmp1
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK docno_str( doc_no ) + docit_str( item_no ) + Str( art_orig, 10, 0 )
 
-if field->art_id_2 <> 0
-    _ret := field->art_id_2
-endif
+   IF !Found()
+      SELECT ( _t_area )
+      RETURN _ret
+   ENDIF
 
-select ( _t_area )
+   IF field->art_id_2 <> 0
+      _ret := field->art_id_2
+   ENDIF
 
-return _ret
+   SELECT ( _t_area )
+
+   RETURN _ret
 
 
 
 
 // ------------------------------------------------------------
-// filuje tabelu konfiguratora sa podacima 
+// filuje tabelu konfiguratora sa podacima
 // ------------------------------------------------------------
 METHOD RNALDamageDocument:fill_config_tbl()
-local _db_struct := ::config_tbl_struct()
-local oRow
-local _count := 0
 
-// 1) napravi pomocnu tabelu
-cre_tmp1( _db_struct )
-o_tmp1()
-index on ( STR( doc_no, 10, 0 ) + STR( doc_it_no, 4, 0 ) + STR( art_id, 10, 0 ) ) TAG "1"
+   LOCAL _db_struct := ::config_tbl_struct()
+   LOCAL oRow
+   LOCAL _count := 0
 
-select _tmp1
-set order to tag "1"
-go top
+   // 1) napravi pomocnu tabelu
+   cre_tmp1( _db_struct )
+   o_tmp1()
+   INDEX on ( Str( doc_no, 10, 0 ) + Str( doc_it_no, 4, 0 ) + Str( art_id, 10, 0 ) ) TAG "1"
 
-// 2) napuni mi podatke iz tabele ostecenih stavki
-::damage_data:GoTo(1)
+   SELECT _tmp1
+   SET ORDER TO TAG "1"
+   GO TOP
 
-// daj mi podatke stavki
-//_items_tbl := ::get_rnal_items_data()
-//_items_tbl:GoTo(1)
+   // 2) napuni mi podatke iz tabele ostecenih stavki
+   ::damage_data:GoTo( 1 )
 
-do while !::damage_data:EOF()
+   // daj mi podatke stavki
+   // _items_tbl := ::get_rnal_items_data()
+   // _items_tbl:GoTo(1)
 
-    oRow := ::damage_data:GetRow()
+   DO WHILE !::damage_data:Eof()
 
-    select _tmp1
-    append blank
+      oRow := ::damage_data:GetRow()
 
-    _rec := dbf_get_rec()
+      SELECT _tmp1
+      APPEND BLANK
 
-    _rec["doc_no"] := oRow:FieldGet( oRow:FieldPos( "doc_no") )
-    _rec["doc_it_no"] := oRow:FieldGet( oRow:FieldPos( "int_1") )
-    _rec["art_id"] := oRow:FieldGet( oRow:FieldPos( "art_id") )
-    _rec["glass_no"] := oRow:FieldGet( oRow:FieldPos( "int_2") )
-    _rec["doc_it_qtt"] := oRow:FieldGet( oRow:FieldPos( "num_2") )
-    // ovo je zamjenski artikal
-    _rec["art_id_2"] := 0
+      _rec := dbf_get_rec()
 
-    dbf_update_rec( _rec )
+      _rec[ "doc_no" ] := oRow:FieldGet( oRow:FieldPos( "doc_no" ) )
+      _rec[ "doc_it_no" ] := oRow:FieldGet( oRow:FieldPos( "int_1" ) )
+      _rec[ "art_id" ] := oRow:FieldGet( oRow:FieldPos( "art_id" ) )
+      _rec[ "glass_no" ] := oRow:FieldGet( oRow:FieldPos( "int_2" ) )
+      _rec[ "doc_it_qtt" ] := oRow:FieldGet( oRow:FieldPos( "num_2" ) )
+      // ovo je zamjenski artikal
+      _rec[ "art_id_2" ] := 0
 
-    ++ _count 
+      dbf_update_rec( _rec )
 
-    ::damage_data:Skip()
-   
-enddo
+      ++ _count
 
-::damage_data:GoTo(1)
+      ::damage_data:Skip()
 
-return _count
+   ENDDO
+
+   ::damage_data:GoTo( 1 )
+
+   RETURN _count
 
 
 
@@ -438,16 +443,17 @@ return _count
 // vraca strukturu config tabele
 // --------------------------------------------------------
 METHOD RNALDamageDocument:config_tbl_struct()
-local _dbf := {}
 
-AADD( _dbf, { "doc_no", "N", 10, 0 })
-AADD( _dbf, { "doc_it_no", "N", 4, 0 })
-AADD( _dbf, { "art_id", "N", 10, 0 })
-AADD( _dbf, { "glass_no", "N", 3, 0 })
-AADD( _dbf, { "doc_it_qtt", "N", 12, 2 })
-AADD( _dbf, { "art_id_2", "N", 10, 2 })
+   LOCAL _dbf := {}
 
-return _dbf
+   AAdd( _dbf, { "doc_no", "N", 10, 0 } )
+   AAdd( _dbf, { "doc_it_no", "N", 4, 0 } )
+   AAdd( _dbf, { "art_id", "N", 10, 0 } )
+   AAdd( _dbf, { "glass_no", "N", 3, 0 } )
+   AAdd( _dbf, { "doc_it_qtt", "N", 12, 2 } )
+   AAdd( _dbf, { "art_id_2", "N", 10, 2 } )
+
+   RETURN _dbf
 
 
 
@@ -455,69 +461,72 @@ return _dbf
 // vraca header podatke dokumenta
 // ------------------------------------------------------
 METHOD RNALDamageDocument:get_rnal_header_data()
-local _qry, _table
-local _server := pg_server()
 
-_qry := "SELECT * FROM fmk.rnal_docs " + ;
-        " WHERE doc_no = " + docno_str( ::doc_no ) + ;
-        " ORDER BY doc_no"
+   LOCAL _qry, _table
+   LOCAL _server := pg_server()
 
-_table := _sql_query( _server, _qry )
+   _qry := "SELECT * FROM fmk.rnal_docs " + ;
+      " WHERE doc_no = " + docno_str( ::doc_no ) + ;
+      " ORDER BY doc_no"
 
-if _table == NIL
-    return NIL
-endif
+   _table := _sql_query( _server, _qry )
 
-_table:Refresh()
+   IF _table == NIL
+      RETURN NIL
+   ENDIF
 
-return _table
+   _table:Refresh()
+
+   RETURN _table
 
 
 // ------------------------------------------------------
 // vraca item podatke dokumenta
 // ------------------------------------------------------
 METHOD RNALDamageDocument:get_rnal_items_data()
-local _qry, _table
-local _server := pg_server()
-local _items_cond := ::get_damage_items_cond( "doc_it_no" )
-local _i
 
-_qry := " SELECT * FROM fmk.rnal_doc_it " + ;
-        " WHERE doc_no = " + ALLTRIM( STR( ::doc_no ) ) + _items_cond + ;
-        " ORDER BY doc_no, doc_it_no "
-        
-_table := _sql_query( _server, _qry )
+   LOCAL _qry, _table
+   LOCAL _server := pg_server()
+   LOCAL _items_cond := ::get_damage_items_cond( "doc_it_no" )
+   LOCAL _i
 
-if _table == NIL
-    return NIL
-endif
+   _qry := " SELECT * FROM fmk.rnal_doc_it " + ;
+      " WHERE doc_no = " + AllTrim( Str( ::doc_no ) ) + _items_cond + ;
+      " ORDER BY doc_no, doc_it_no "
 
-_table:Refresh()
+   _table := _sql_query( _server, _qry )
 
-return _table
+   IF _table == NIL
+      RETURN NIL
+   ENDIF
+
+   _table:Refresh()
+
+   RETURN _table
 
 
 // ------------------------------------------------------
 // vraca oper podatke dokumenta
 // ------------------------------------------------------
 METHOD RNALDamageDocument:get_rnal_opers_data()
-local _qry, _table
-local _server := pg_server()
-local _items_cond := ::get_damage_items_cond( "doc_it_no" )
 
-_qry := " SELECT * FROM fmk.rnal_doc_ops " + ;
-        " WHERE doc_no = " + ALLTRIM( STR( ::doc_no ) ) + _items_cond + ;
-        " ORDER BY doc_no, doc_it_no, doc_op_no"
+   LOCAL _qry, _table
+   LOCAL _server := pg_server()
+   LOCAL _items_cond := ::get_damage_items_cond( "doc_it_no" )
 
-_table := _sql_query( _server, _qry )
+   _qry := " SELECT * FROM fmk.rnal_doc_ops " + ;
+      " WHERE doc_no = " + AllTrim( Str( ::doc_no ) ) + _items_cond + ;
+      " ORDER BY doc_no, doc_it_no, doc_op_no"
 
-if _table == NIL
-    return NIL
-endif
+   _table := _sql_query( _server, _qry )
 
-_table:Refresh()
+   IF _table == NIL
+      RETURN NIL
+   ENDIF
 
-return _table
+   _table:Refresh()
+
+   RETURN _table
 
 
 
@@ -525,153 +534,154 @@ return _table
 // generisanje novog dokumenta...
 // -----------------------------------------------------
 METHOD RNALDamageDocument:generate_rnal_document()
-local _ok := .f.
-local _rec
-local _header_tbl, _items_tbl, _opers_tbl
-local _damage_doc_no := 0
-local _fix_items := {}
-local oRow, _scan
-local _count := 0
 
-// otvori mi sve tabele potrebne za rad !
-::open_tables()
+   LOCAL _ok := .F.
+   LOCAL _rec
+   LOCAL _header_tbl, _items_tbl, _opers_tbl
+   LOCAL _damage_doc_no := 0
+   LOCAL _fix_items := {}
+   LOCAL oRow, _scan
+   LOCAL _count := 0
 
-if _docs->( RECCOUNT() ) <> 0
-    MsgBeep( "Priprema nije prazna !!!" )
-    return _ok
-endif 
+   // otvori mi sve tabele potrebne za rad !
+   ::open_tables()
 
-// daj mi podatke header-a
-_header_tbl := ::get_rnal_header_data()
-_header_tbl:GoTo(1)
+   IF _docs->( RecCount() ) <> 0
+      MsgBeep( "Priprema nije prazna !!!" )
+      RETURN _ok
+   ENDIF
 
-// daj mi podatke stavki
-_items_tbl := ::get_rnal_items_data()
-_items_tbl:GoTo(1)
+   // daj mi podatke header-a
+   _header_tbl := ::get_rnal_header_data()
+   _header_tbl:GoTo( 1 )
 
-// daj mi podatke operacija
-_opers_tbl := ::get_rnal_opers_data()
-_opers_tbl:GoTo(1)
+   // daj mi podatke stavki
+   _items_tbl := ::get_rnal_items_data()
+   _items_tbl:GoTo( 1 )
 
-// 1) ubaci podatke header-a
+   // daj mi podatke operacija
+   _opers_tbl := ::get_rnal_opers_data()
+   _opers_tbl:GoTo( 1 )
 
-oRow := _header_tbl:GetRow()
+   // 1) ubaci podatke header-a
 
-select _docs
-append blank
+   oRow := _header_tbl:GetRow()
 
-_rec := dbf_get_rec()
+   SELECT _docs
+   APPEND BLANK
 
-_rec["doc_no"] := _damage_doc_no
-_rec["doc_date"] := DATE()
-_rec["doc_dvr_da"] := DATE() + 2
-_rec["doc_dvr_ti"] := PADR( PADR( TIME(), 5 ), 8 )
-_rec["doc_ship_p"] := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "doc_ship_p" ) ) )
-_rec["doc_priori"] := oRow:FieldGet( oRow:FieldPos( "doc_priori" ) )
-_rec["doc_pay_id"] := oRow:FieldGet( oRow:FieldPos( "doc_pay_id" ) )
-_rec["doc_paid"] := oRow:FieldGet( oRow:FieldPos( "doc_paid" ) )
-_rec["doc_pay_de"] := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "doc_pay_de" ) ) )
-_rec["doc_status"] := 10
-_rec["doc_sh_des"] := "NP na osnovu: " + ALLTRIM( docno_str( oRow:FieldGet( oRow:FieldPos("doc_no") ) ) ) ;
-                + ", " + hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "doc_sh_des" ) ) )
-_rec["doc_desc"] := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "doc_desc" ) ) )
-_rec["operater_i"] := GetUserID( f18_user() )
-_rec["cust_id"] := oRow:FieldGet( oRow:FieldPos( "cust_id" ) )
-_rec["cont_add_d"] := oRow:FieldGet( oRow:FieldPos( "cont_add_d" ) )
-_rec["cont_id"] := oRow:FieldGet( oRow:FieldPos( "cont_id" ) )
-_rec["obj_id"] := oRow:FieldGet( oRow:FieldPos( "obj_id" ) )
-_rec["doc_type"] := "NP"
+   _rec := dbf_get_rec()
 
-dbf_update_rec( _rec )
+   _rec[ "doc_no" ] := _damage_doc_no
+   _rec[ "doc_date" ] := Date()
+   _rec[ "doc_dvr_da" ] := Date() + 2
+   _rec[ "doc_dvr_ti" ] := PadR( PadR( Time(), 5 ), 8 )
+   _rec[ "doc_ship_p" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "doc_ship_p" ) ) )
+   _rec[ "doc_priori" ] := oRow:FieldGet( oRow:FieldPos( "doc_priori" ) )
+   _rec[ "doc_pay_id" ] := oRow:FieldGet( oRow:FieldPos( "doc_pay_id" ) )
+   _rec[ "doc_paid" ] := oRow:FieldGet( oRow:FieldPos( "doc_paid" ) )
+   _rec[ "doc_pay_de" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "doc_pay_de" ) ) )
+   _rec[ "doc_status" ] := 10
+   _rec[ "doc_sh_des" ] := "NP na osnovu: " + AllTrim( docno_str( oRow:FieldGet( oRow:FieldPos( "doc_no" ) ) ) ) ;
+      + ", " + hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "doc_sh_des" ) ) )
+   _rec[ "doc_desc" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "doc_desc" ) ) )
+   _rec[ "operater_i" ] := GetUserID( f18_user() )
+   _rec[ "cust_id" ] := oRow:FieldGet( oRow:FieldPos( "cust_id" ) )
+   _rec[ "cont_add_d" ] := oRow:FieldGet( oRow:FieldPos( "cont_add_d" ) )
+   _rec[ "cont_id" ] := oRow:FieldGet( oRow:FieldPos( "cont_id" ) )
+   _rec[ "obj_id" ] := oRow:FieldGet( oRow:FieldPos( "obj_id" ) )
+   _rec[ "doc_type" ] := "NP"
 
-// 2) ubaci podatke u items...
+   dbf_update_rec( _rec )
 
-do while !_items_tbl:EOF()
-    
-    oRow := _items_tbl:GetRow()
+   // 2) ubaci podatke u items...
 
-    _item := oRow:FieldGet( oRow:FieldPos( "doc_it_no" ) )
+   DO WHILE !_items_tbl:Eof()
 
-    select _doc_it
-    append blank
+      oRow := _items_tbl:GetRow()
 
-    _rec := dbf_get_rec()
+      _item := oRow:FieldGet( oRow:FieldPos( "doc_it_no" ) )
 
-    _rec["doc_no"] := _damage_doc_no
-    _rec["doc_it_no"] := inc_docit( _damage_doc_no )
+      SELECT _doc_it
+      APPEND BLANK
 
-    // dodaj u matricu fix_items, stari/novi redni broj
-    AADD( _fix_items, { _item, _rec["doc_it_no"] } )
+      _rec := dbf_get_rec()
 
-    _rec["doc_it_typ"] := oRow:FieldGet( oRow:FieldPos( "doc_it_typ" ) )
-    _rec["it_lab_pos"] := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "it_lab_pos" ) ) )
-    _rec["doc_it_alt"] := oRow:FieldGet( oRow:FieldPos( "doc_it_alt" ) )
-    _rec["doc_it_des"] := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "doc_it_des" ) ) )
-    _rec["doc_acity"] := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "doc_acity" ) ) )
-    _rec["doc_it_sch"] := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "doc_it_sch" ) ) )
-    _rec["doc_it_wid"] := oRow:FieldGet( oRow:FieldPos( "doc_it_wid" ) )
-    _rec["doc_it_w2"] := oRow:FieldGet( oRow:FieldPos( "doc_it_w2" ) )
-    _rec["doc_it_hei"] := oRow:FieldGet( oRow:FieldPos( "doc_it_hei" ) )
-    _rec["doc_it_h2"] := oRow:FieldGet( oRow:FieldPos( "doc_it_h2" ) )
+      _rec[ "doc_no" ] := _damage_doc_no
+      _rec[ "doc_it_no" ] := inc_docit( _damage_doc_no )
 
-    // artikal ces mozda uzeti i iz konfiguratora....
-    _rec["art_id"] := ::get_damage_article( oRow:FieldGet( oRow:FieldPos( "doc_no" )), ; 
-                oRow:FieldGet( oRow:FieldPos( "doc_it_no" ) ), ;
-                oRow:FieldGet( oRow:FieldPos( "art_id" ) ) )
+      // dodaj u matricu fix_items, stari/novi redni broj
+      AAdd( _fix_items, { _item, _rec[ "doc_it_no" ] } )
 
-    // broj komada ostecenog stakla
-    _rec["doc_it_qtt"] := ::get_damage_items_qtty( _item ) 
+      _rec[ "doc_it_typ" ] := oRow:FieldGet( oRow:FieldPos( "doc_it_typ" ) )
+      _rec[ "it_lab_pos" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "it_lab_pos" ) ) )
+      _rec[ "doc_it_alt" ] := oRow:FieldGet( oRow:FieldPos( "doc_it_alt" ) )
+      _rec[ "doc_it_des" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "doc_it_des" ) ) )
+      _rec[ "doc_acity" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "doc_acity" ) ) )
+      _rec[ "doc_it_sch" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "doc_it_sch" ) ) )
+      _rec[ "doc_it_wid" ] := oRow:FieldGet( oRow:FieldPos( "doc_it_wid" ) )
+      _rec[ "doc_it_w2" ] := oRow:FieldGet( oRow:FieldPos( "doc_it_w2" ) )
+      _rec[ "doc_it_hei" ] := oRow:FieldGet( oRow:FieldPos( "doc_it_hei" ) )
+      _rec[ "doc_it_h2" ] := oRow:FieldGet( oRow:FieldPos( "doc_it_h2" ) )
 
-    dbf_update_rec( _rec )
+      // artikal ces mozda uzeti i iz konfiguratora....
+      _rec[ "art_id" ] := ::get_damage_article( oRow:FieldGet( oRow:FieldPos( "doc_no" ) ), ;
+         oRow:FieldGet( oRow:FieldPos( "doc_it_no" ) ), ;
+         oRow:FieldGet( oRow:FieldPos( "art_id" ) ) )
 
-    ++ _count
+      // broj komada ostecenog stakla
+      _rec[ "doc_it_qtt" ] := ::get_damage_items_qtty( _item )
 
-    _items_tbl:Skip()
+      dbf_update_rec( _rec )
 
-enddo
+      ++ _count
 
+      _items_tbl:Skip()
 
-// 3) ubaci podatke u operacije
-
-do while !_opers_tbl:EOF()
-    
-    oRow := _opers_tbl:GetRow()
-
-    _item := oRow:FieldGet( oRow:FieldPos( "doc_it_no" ) )
-
-    select _doc_ops
-    append blank
-
-    _rec := dbf_get_rec()
-
-    _rec["doc_no"] := _damage_doc_no
-    
-    // pronadji i redni broj na osnovu kontrolne matrice
-    _scan := ASCAN( _fix_items, { |var| var[1] == _item } )
-    _item_no := _fix_items[ _scan, 2 ]
-
-    _rec["doc_it_no"] := _item_no
-    _rec["doc_op_no"] := inc_docop( _damage_doc_no )
-    _rec["doc_it_el_"] := oRow:FieldGet( oRow:FieldPos( "doc_it_el_" ) )
-    _rec["aop_id"] := oRow:FieldGet( oRow:FieldPos( "aop_id" ) )
-    _rec["aop_att_id"] := oRow:FieldGet( oRow:FieldPos( "aop_att_id" ) )
-    _rec["doc_op_des"] := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "doc_op_des" ) ) )
-    _rec["aop_value"] := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos( "aop_value" ) ) )
-
-    dbf_update_rec( _rec )
-
-    _opers_tbl:Skip()
-
-enddo
+   ENDDO
 
 
-if _count > 0
-    MsgBeep( "Kreiran nalog tip-a NEUSKLADJENI PROIZVOD#Nalazi se u pripremi!#PREGLEDATI GA PRIJE AZURIRANJA" )
-endif
+   // 3) ubaci podatke u operacije
 
-_ok := .t.
+   DO WHILE !_opers_tbl:Eof()
 
-return _ok
+      oRow := _opers_tbl:GetRow()
+
+      _item := oRow:FieldGet( oRow:FieldPos( "doc_it_no" ) )
+
+      SELECT _doc_ops
+      APPEND BLANK
+
+      _rec := dbf_get_rec()
+
+      _rec[ "doc_no" ] := _damage_doc_no
+
+      // pronadji i redni broj na osnovu kontrolne matrice
+      _scan := AScan( _fix_items, {|var| VAR[ 1 ] == _item } )
+      _item_no := _fix_items[ _scan, 2 ]
+
+      _rec[ "doc_it_no" ] := _item_no
+      _rec[ "doc_op_no" ] := inc_docop( _damage_doc_no )
+      _rec[ "doc_it_el_" ] := oRow:FieldGet( oRow:FieldPos( "doc_it_el_" ) )
+      _rec[ "aop_id" ] := oRow:FieldGet( oRow:FieldPos( "aop_id" ) )
+      _rec[ "aop_att_id" ] := oRow:FieldGet( oRow:FieldPos( "aop_att_id" ) )
+      _rec[ "doc_op_des" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "doc_op_des" ) ) )
+      _rec[ "aop_value" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "aop_value" ) ) )
+
+      dbf_update_rec( _rec )
+
+      _opers_tbl:Skip()
+
+   ENDDO
+
+
+   IF _count > 0
+      MsgBeep( "Kreiran nalog tip-a NEUSKLADJENI PROIZVOD#Nalazi se u pripremi!#PREGLEDATI GA PRIJE AZURIRANJA" )
+   ENDIF
+
+   _ok := .T.
+
+   RETURN _ok
 
 
 
@@ -680,28 +690,29 @@ return _ok
 // koliko je osteceno stakala za stavku
 // -----------------------------------------------------
 METHOD RNALDamageDocument:get_damage_items_qtty( item_no )
-local _qtty := 0
-local _item, oRow
 
-::damage_data:GoTo(1)
+   LOCAL _qtty := 0
+   LOCAL _item, oRow
 
-do while !::damage_data:EOF()
+   ::damage_data:GoTo( 1 )
 
-    oRow := ::damage_data:GetRow()
-    _item := oRow:FieldGet( oRow:FieldPos( "int_1" ) )
+   DO WHILE !::damage_data:Eof()
 
-    if _item == item_no
-        _qtty := oRow:FieldGet( oRow:FieldPos( "num_2" ) )
-        exit
-    endif
+      oRow := ::damage_data:GetRow()
+      _item := oRow:FieldGet( oRow:FieldPos( "int_1" ) )
 
-    ::damage_data:Skip()
+      IF _item == item_no
+         _qtty := oRow:FieldGet( oRow:FieldPos( "num_2" ) )
+         EXIT
+      ENDIF
 
-enddo
+      ::damage_data:Skip()
 
-::damage_data:GoTo(1)
+   ENDDO
 
-return _qtty
+   ::damage_data:GoTo( 1 )
+
+   RETURN _qtty
 
 
 
@@ -711,40 +722,40 @@ return _qtty
 // otvaranje potrebnih tabela
 // -----------------------------------------------------
 METHOD RNALDamageDocument:open_tables()
-rnal_o_tables( .t. )
-return
+
+   rnal_o_tables( .T. )
+
+   RETURN
 
 
 
 // ---------------------------------------------
 // generisi neuskladjeni nalog
 // ---------------------------------------------
-function rnal_damage_doc_generate( doc_no )
-local oDamage := RNALDamageDocument():New()
+FUNCTION rnal_damage_doc_generate( doc_no )
 
-// setuj broj dokumenta za koji cemo ovo sve raditi
-oDamage:doc_no := doc_no
-// daj mi podatke loma za ovaj nalog
-oDamage:get_damage_data()
+   LOCAL oDamage := RNALDamageDocument():New()
 
-// ima li podataka ?
-if oDamage:damage_data == NIL
-    MsgBeep( "Ovaj dokument nema evidencije loma !" )
-    return
-endif
+   // setuj broj dokumenta za koji cemo ovo sve raditi
+   oDamage:doc_no := doc_no
+   // daj mi podatke loma za ovaj nalog
+   oDamage:get_damage_data()
 
-// daj mi matricu stavki koje su sporne sa naloga
-oDamage:get_damage_items()
+   // ima li podataka ?
+   IF oDamage:damage_data == NIL
+      MsgBeep( "Ovaj dokument nema evidencije loma !" )
+      RETURN
+   ENDIF
 
-// konfigurator ako su visestruka stakla
-if oDamage:has_multiglass()
-    MsgBeep( "Ovaj nalog sadrzi visestruka stakla !#Napravite odgovarajucu zamjenu u tabeli" )
-    oDamage:multiglass_configurator()
-endif
+   // daj mi matricu stavki koje su sporne sa naloga
+   oDamage:get_damage_items()
 
-oDamage:generate_rnal_document()
+   // konfigurator ako su visestruka stakla
+   IF oDamage:has_multiglass()
+      MsgBeep( "Ovaj nalog sadrzi visestruka stakla !#Napravite odgovarajucu zamjenu u tabeli" )
+      oDamage:multiglass_configurator()
+   ENDIF
 
-return
+   oDamage:generate_rnal_document()
 
-
-
+   RETURN

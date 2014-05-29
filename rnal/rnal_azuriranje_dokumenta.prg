@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,341 +13,346 @@
 #include "rnal.ch"
 
 
-static __doc_no
-static __doc_stat
-static __doc_desc
+STATIC __doc_no
+STATIC __doc_stat
+STATIC __doc_desc
 
 
 // -------------------------------------------
 // azuriranje dokumenta u kumulativnu bazu
 // cDesc - opis kod azuriranja
 // -------------------------------------------
-function doc_insert( cDesc )
-local _ok := .t.
+FUNCTION doc_insert( cDesc )
 
-if cDesc == nil
-    cDesc := ""
-endif
+   LOCAL _ok := .T.
 
-rnal_o_tables( .t. )
+   IF cDesc == nil
+      cDesc := ""
+   ENDIF
 
-// skloni filtere
-select _docs
-set filter to
+   rnal_o_tables( .T. )
 
-select _doc_it
-set filter to
+   // skloni filtere
+   SELECT _docs
+   SET FILTER TO
 
-select _doc_it2
-set filter to
+   SELECT _doc_it
+   SET FILTER TO
 
-select _doc_ops
-set filter to
+   SELECT _doc_it2
+   SET FILTER TO
 
-// provjeri sve prije azuriranja
-if !_provjeri_prije_azuriranja()
-    MsgBeep( "Redni brojevi u nalogu nisu ispravni, provjeriti !" )
-    return 0
-endif
+   SELECT _doc_ops
+   SET FILTER TO
 
-select _docs
-go top
+   // provjeri sve prije azuriranja
+   IF !_provjeri_prije_azuriranja()
+      MsgBeep( "Redni brojevi u nalogu nisu ispravni, provjeriti !" )
+      RETURN 0
+   ENDIF
 
-if RECCOUNT2() == 0
-    return 0
-endif
+   SELECT _docs
+   GO TOP
 
-__doc_desc := cDesc
-__doc_no := _docs->doc_no
-__doc_stat := _docs->doc_status
+   IF RECCOUNT2() == 0
+      RETURN 0
+   ENDIF
 
-if __doc_stat < 3 .and. !rnal_doc_no_exist( __doc_no )
-    
-    MsgBeep("Nalog " + ALLTRIM(STR( __doc_no )) + " nije moguce azurirati !!!#Status dokumenta = " + ALLTRIM(STR(__doc_stat)) )
-    
-    // resetuj dokument broj
-    select _docs
-        
-    fill__doc_no( 0, .t. )
-        
-    select _docs
-    go top
+   __doc_desc := cDesc
+   __doc_no := _docs->doc_no
+   __doc_stat := _docs->doc_status
 
-    msgbeep("Ponovite operaciju stampe i azuriranja naloga !")
+   IF __doc_stat < 3 .AND. !rnal_doc_no_exist( __doc_no )
 
-    return 0
-    
-endif
+      MsgBeep( "Nalog " + AllTrim( Str( __doc_no ) ) + " nije moguce azurirati !!!#Status dokumenta = " + AllTrim( Str( __doc_stat ) ) )
+
+      // resetuj dokument broj
+      SELECT _docs
+
+      fill__doc_no( 0, .T. )
+
+      SELECT _docs
+      GO TOP
+
+      msgbeep( "Ponovite operaciju stampe i azuriranja naloga !" )
+
+      RETURN 0
+
+   ENDIF
 
 
-// azuriranje naloga u toku...
-// lokuj sve tabele
+   // azuriranje naloga u toku...
+   // lokuj sve tabele
 
-// probaj prvo docs lokovati....
-if !f18_lock_tables( { "docs" } )
-    MsgBeep("Tabele zauzete... ponovite ponovo.... lock docs !!!")
-    return 0
-endif
+   // probaj prvo docs lokovati....
+   IF !f18_lock_tables( { "docs" } )
+      MsgBeep( "Tabele zauzete... ponovite ponovo.... lock docs !!!" )
+      RETURN 0
+   ENDIF
 
-// ----- pocetak transakcije
-// lock ostalih tabela....
-if !f18_lock_tables( { "doc_it", "doc_it2", "doc_ops", "doc_log", "doc_lit" } )
-    MsgBeep( "Ne mogu lock-ovati tabele !!!!")
-    return 0
-endif
+   // ----- pocetak transakcije
+   // lock ostalih tabela....
+   IF !f18_lock_tables( { "doc_it", "doc_it2", "doc_ops", "doc_log", "doc_lit" } )
+      MsgBeep( "Ne mogu lock-ovati tabele !!!!" )
+      RETURN 0
+   ENDIF
 
-sql_table_update( nil, "BEGIN" )
+   sql_table_update( nil, "BEGIN" )
 
-MsgO( "Azuriranje naloga u toku..." )
+   MsgO( "Azuriranje naloga u toku..." )
 
-Beep(1)
+   Beep( 1 )
 
-// doc busy....
-if __doc_stat == 3
-    
-    // napravi deltu dokumenta
-    doc_delta( __doc_no, __doc_desc ) 
+   // doc busy....
+   IF __doc_stat == 3
 
-    // brisi dokument iz kumulativa
-    doc_erase( __doc_no )
-    
-    // zavrsi trenutnu transakciju
-    sql_table_update( nil, "END" )
-    // zapocni novu transakciju
-    // kako bi ovo sto je i izbrisano bilo vidljivo
-    sql_table_update( nil, "BEGIN" )
- 
-    O_DOCS
-    
-endif
+      // napravi deltu dokumenta
+      doc_delta( __doc_no, __doc_desc )
 
-// azuriranje tabele _DOCS
-_ok := _docs_insert( __doc_no  )
+      // brisi dokument iz kumulativa
+      doc_erase( __doc_no )
 
-// azuriranje tabele _DOC_IT
-if _ok 
-    _ok := _doc_it_insert( __doc_no )
-endif
+      // zavrsi trenutnu transakciju
+      sql_table_update( nil, "END" )
+      // zapocni novu transakciju
+      // kako bi ovo sto je i izbrisano bilo vidljivo
+      sql_table_update( nil, "BEGIN" )
 
-// azuriranje tabele _DOC_IT2
-if _ok 
-    _ok := _doc_it2_insert( __doc_no )
-endif
+      O_DOCS
 
-// azuriranje tabele _DOC_OPS
-if _ok
-    _ok := _doc_op_insert( __doc_no )
-endif
+   ENDIF
 
-if _ok
-    // setuj marker dokumenta
-    set_doc_marker( __doc_no, 0, "CONT" )
-    if __doc_stat <> 3
-        // logiraj promjene na dokumentu
-        doc_logit( __doc_no )
-    endif
+   // azuriranje tabele _DOCS
+   _ok := _docs_insert( __doc_no  )
 
-    f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops", "doc_log", "doc_lit" } )
-    sql_table_update( nil, "END" )
+   // azuriranje tabele _DOC_IT
+   IF _ok
+      _ok := _doc_it_insert( __doc_no )
+   ENDIF
 
-    // logiranje
-    log_write( "F18_DOK_OPER: rnal, azuriranje dokumenta broj: " + ALLTRIM( STR( __doc_no ) ) + ;
-            ", status: " + ALLTRIM( STR( __doc_stat ) ), 2 )
+   // azuriranje tabele _DOC_IT2
+   IF _ok
+      _ok := _doc_it2_insert( __doc_no )
+   ENDIF
 
-else
+   // azuriranje tabele _DOC_OPS
+   IF _ok
+      _ok := _doc_op_insert( __doc_no )
+   ENDIF
 
-    f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops", "doc_log", "doc_lit" } )
-    sql_table_update( nil, "ROLLBACK" )
+   IF _ok
+      // setuj marker dokumenta
+      set_doc_marker( __doc_no, 0, "CONT" )
+      IF __doc_stat <> 3
+         // logiraj promjene na dokumentu
+         doc_logit( __doc_no )
+      ENDIF
 
-    MsgC()
+      f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops", "doc_log", "doc_lit" } )
+      sql_table_update( nil, "END" )
 
-    // nesto se nije azuriralo ok !
-    // ostavljam dokument u pripremi...
-    
-    // ako je sta ostalo na serveru ili u dbf-u brisi !
-    doc_erase( __doc_no )
+      // logiranje
+      log_write( "F18_DOK_OPER: rnal, azuriranje dokumenta broj: " + AllTrim( Str( __doc_no ) ) + ;
+         ", status: " + AllTrim( Str( __doc_stat ) ), 2 )
 
-    beep(3)
+   ELSE
 
-    rnal_o_tables( .t. )
-    
-    MsgBeep( "Azuriranje naloga nije uspjesno !" )
-    
-    return 0
+      f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops", "doc_log", "doc_lit" } )
+      sql_table_update( nil, "ROLLBACK" )
 
-endif
+      MsgC()
 
-// ------ kraj transakcije
+      // nesto se nije azuriralo ok !
+      // ostavljam dokument u pripremi...
 
-// sve je ok brisi pripremu
-select _docs
-my_dbf_zap()
+      // ako je sta ostalo na serveru ili u dbf-u brisi !
+      doc_erase( __doc_no )
 
-select _doc_it
-my_dbf_zap()
+      beep( 3 )
 
-select _doc_it2
-my_dbf_zap()
+      rnal_o_tables( .T. )
 
-select _doc_ops
-my_dbf_zap()
+      MsgBeep( "Azuriranje naloga nije uspjesno !" )
 
-use
+      RETURN 0
 
-Beep(1)
+   ENDIF
 
-rnal_o_tables(.t.)
+   // ------ kraj transakcije
 
-MsgC()
+   // sve je ok brisi pripremu
+   SELECT _docs
+   my_dbf_zap()
 
-return 1
+   SELECT _doc_it
+   my_dbf_zap()
+
+   SELECT _doc_it2
+   my_dbf_zap()
+
+   SELECT _doc_ops
+   my_dbf_zap()
+
+   USE
+
+   Beep( 1 )
+
+   rnal_o_tables( .T. )
+
+   MsgC()
+
+   RETURN 1
 
 
 // --------------------------------------------------
 // provjera prije azuriranja dokumenta...
 // --------------------------------------------------
-static function _provjeri_prije_azuriranja()
-local _ok := .t.
-local _t_area := SELECT()
-local _tmp
+STATIC FUNCTION _provjeri_prije_azuriranja()
 
-// stavke naloga ....
-select _doc_it
-go top
+   LOCAL _ok := .T.
+   LOCAL _t_area := Select()
+   LOCAL _tmp
 
-do while !EOF()
+   // stavke naloga ....
+   SELECT _doc_it
+   GO TOP
 
-    _tmp := field->doc_it_no
+   DO WHILE !Eof()
 
-    skip 1
+      _tmp := field->doc_it_no
 
-    if _tmp == field->doc_it_no
-        go top
-        select ( _t_area )
-        _ok := .f.
-        return _ok        
-    endif
+      SKIP 1
 
-enddo
+      IF _tmp == field->doc_it_no
+         GO TOP
+         SELECT ( _t_area )
+         _ok := .F.
+         RETURN _ok
+      ENDIF
 
-go top
+   ENDDO
 
-// dodatne stavke naloga....
+   GO TOP
 
-// operacije naloga ....
+   // dodatne stavke naloga....
 
-select ( _t_area )
+   // operacije naloga ....
 
-return _ok
+   SELECT ( _t_area )
+
+   RETURN _ok
 
 
 
 // --------------------------------------------------
 // azuriranje DOCS
 // --------------------------------------------------
-static function _docs_insert( nDoc_no )
-local _rec
-local _ok := .t.
+STATIC FUNCTION _docs_insert( nDoc_no )
 
-select _docs
-set order to tag "1"
-go top
+   LOCAL _rec
+   LOCAL _ok := .T.
 
-_rec := dbf_get_rec()
+   SELECT _docs
+   SET ORDER TO TAG "1"
+   GO TOP
 
-select docs
-set order to tag "1"
-go top
-seek docno_str( nDoc_no )
+   _rec := dbf_get_rec()
 
-if !FOUND()
-    append blank
-endif
+   SELECT docs
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK docno_str( nDoc_no )
 
-_ok := update_rec_server_and_dbf( "docs", _rec, 1, "CONT" )
-        
-set order to tag "1"
+   IF !Found()
+      APPEND BLANK
+   ENDIF
 
-return _ok
+   _ok := update_rec_server_and_dbf( "docs", _rec, 1, "CONT" )
+
+   SET ORDER TO TAG "1"
+
+   RETURN _ok
 
 
 // ------------------------------------------
 // azuriranje tabele _DOC_IT
 // ------------------------------------------
-static function _doc_it_insert( nDoc_no )
-local _rec, _id_fields, _where_bl
-local _ok := .t.
+STATIC FUNCTION _doc_it_insert( nDoc_no )
 
-select _doc_it
+   LOCAL _rec, _id_fields, _where_bl
+   LOCAL _ok := .T.
 
-if RECCOUNT2() == 0
-    return _ok
-endif
+   SELECT _doc_it
 
-set order to tag "1"
-go top
-seek docno_str( nDoc_no )
+   IF RECCOUNT2() == 0
+      RETURN _ok
+   ENDIF
 
-do while !EOF() .and. ( field->doc_no == nDoc_no )
-    
-    _rec := dbf_get_rec()
-    
-    select doc_it
-    
-    append blank
-    
-    _ok := update_rec_server_and_dbf( "doc_it", _rec, 1, "CONT" )
-    
-    select _doc_it
-    
-    if !_ok
-        return _ok
-    endif
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK docno_str( nDoc_no )
 
-    skip
-    
-enddo
+   DO WHILE !Eof() .AND. ( field->doc_no == nDoc_no )
 
-return _ok
+      _rec := dbf_get_rec()
+
+      SELECT doc_it
+
+      APPEND BLANK
+
+      _ok := update_rec_server_and_dbf( "doc_it", _rec, 1, "CONT" )
+
+      SELECT _doc_it
+
+      IF !_ok
+         RETURN _ok
+      ENDIF
+
+      SKIP
+
+   ENDDO
+
+   RETURN _ok
 
 // ------------------------------------------
 // azuriranje tabele _DOC_IT2
 // ------------------------------------------
-static function _doc_it2_insert( nDoc_no )
-local _rec, _id_fields, _where_bl
-local _ok := .t.
+STATIC FUNCTION _doc_it2_insert( nDoc_no )
 
-select _doc_it2
+   LOCAL _rec, _id_fields, _where_bl
+   LOCAL _ok := .T.
 
-if RECCOUNT2() == 0
-    return _ok
-endif
+   SELECT _doc_it2
 
-set order to tag "1"
-go top
-seek docno_str( nDoc_no )
+   IF RECCOUNT2() == 0
+      RETURN _ok
+   ENDIF
 
-do while !EOF() .and. ( field->doc_no == nDoc_no )
-    
-    _rec := dbf_get_rec()
-    
-    select doc_it2
-    
-    append blank
-       
-    _ok := update_rec_server_and_dbf( "doc_it2", _rec, 1, "CONT" )
-    
-    select _doc_it2
-    
-    if !_ok 
-        return _ok
-    endif
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK docno_str( nDoc_no )
 
-    skip    
+   DO WHILE !Eof() .AND. ( field->doc_no == nDoc_no )
 
-enddo
+      _rec := dbf_get_rec()
 
-return _ok
+      SELECT doc_it2
+
+      APPEND BLANK
+
+      _ok := update_rec_server_and_dbf( "doc_it2", _rec, 1, "CONT" )
+
+      SELECT _doc_it2
+
+      IF !_ok
+         RETURN _ok
+      ENDIF
+
+      SKIP
+
+   ENDDO
+
+   RETURN _ok
 
 
 
@@ -356,108 +361,109 @@ return _ok
 // ------------------------------------------
 // azuriranje tabele _DOC_OP
 // ------------------------------------------
-static function _doc_op_insert( nDoc_no )
-local _rec, _id_fields, _where_bl
-local _ok := .t.
+STATIC FUNCTION _doc_op_insert( nDoc_no )
 
-select _doc_ops
+   LOCAL _rec, _id_fields, _where_bl
+   LOCAL _ok := .T.
 
-if RECCOUNT2() == 0
-    return _ok
-endif
+   SELECT _doc_ops
 
-set order to tag "1"
-go top
-seek docno_str( nDoc_no )
+   IF RECCOUNT2() == 0
+      RETURN _ok
+   ENDIF
 
-do while !EOF() .and. ( field->doc_no == nDoc_no )
-    
-    // ako ima operacija...
-    if field->aop_id + field->aop_att_id <> 0
-        
-        _rec := dbf_get_rec()
-   
-        select doc_ops
-        append blank
- 
-        _ok := update_rec_server_and_dbf( "doc_ops", _rec, 1, "CONT" )
-        
-    endif
-    
-    select _doc_ops
-    
-    if !_ok
-        return _ok
-    endif
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK docno_str( nDoc_no )
 
-    skip
+   DO WHILE !Eof() .AND. ( field->doc_no == nDoc_no )
 
-enddo
+      // ako ima operacija...
+      IF field->aop_id + field->aop_att_id <> 0
 
-return _ok
+         _rec := dbf_get_rec()
+
+         SELECT doc_ops
+         APPEND BLANK
+
+         _ok := update_rec_server_and_dbf( "doc_ops", _rec, 1, "CONT" )
+
+      ENDIF
+
+      SELECT _doc_ops
+
+      IF !_ok
+         RETURN _ok
+      ENDIF
+
+      SKIP
+
+   ENDDO
+
+   RETURN _ok
 
 
 
 // -------------------------------------------
 // procedura povrata dokumenta u pripremu...
 // -------------------------------------------
-function doc_2__doc( nDoc_no )
+FUNCTION doc_2__doc( nDoc_no )
 
-rnal_o_tables(.t.)
+   rnal_o_tables( .T. )
 
-select docs
-set filter to
-select doc_it
-set filter to
-select doc_it2
-set filter to
-select doc_ops
-set filter to
+   SELECT docs
+   SET FILTER TO
+   SELECT doc_it
+   SET FILTER TO
+   SELECT doc_it2
+   SET FILTER TO
+   SELECT doc_ops
+   SET FILTER TO
 
-select docs
-set order to tag "1"
-go top
-seek docno_str( nDoc_no )
+   SELECT docs
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK docno_str( nDoc_no )
 
-if !Found()
-    MsgBeep("Nalog " + ALLTRIM(STR( nDoc_no )) + " ne postoji !!!")
-    select _docs
-    return 0
-endif
+   IF !Found()
+      MsgBeep( "Nalog " + AllTrim( Str( nDoc_no ) ) + " ne postoji !!!" )
+      SELECT _docs
+      RETURN 0
+   ENDIF
 
-select _docs
+   SELECT _docs
 
-if RECCOUNT2() > 0
-    MsgBeep("U pripremi vec postoji dokument#ne moze se izvrsiti povrat#operacija prekinuta !")
-    return 0
-endif
+   IF RECCOUNT2() > 0
+      MsgBeep( "U pripremi vec postoji dokument#ne moze se izvrsiti povrat#operacija prekinuta !" )
+      RETURN 0
+   ENDIF
 
-MsgO("Vrsim povrat dokumenta u pripremu....")
+   MsgO( "Vrsim povrat dokumenta u pripremu...." )
 
-// markiraj da je dokument busy
-set_doc_marker( nDoc_no, 3 )
+   // markiraj da je dokument busy
+   set_doc_marker( nDoc_no, 3 )
 
-// povrat maticne tabele RNAL
-_docs_erase( nDoc_no )
+   // povrat maticne tabele RNAL
+   _docs_erase( nDoc_no )
 
-// povrat stavki RNST
-_doc_it_erase( nDoc_no )
+   // povrat stavki RNST
+   _doc_it_erase( nDoc_no )
 
-// povrat stavki RNST
-_doc_it2_erase( nDoc_no )
+   // povrat stavki RNST
+   _doc_it2_erase( nDoc_no )
 
-// povrat operacija RNOP
-_doc_op_erase( nDoc_no ) 
+   // povrat operacija RNOP
+   _doc_op_erase( nDoc_no )
 
 
-select docs
-use
+   SELECT docs
+   USE
 
-rnal_o_tables(.t.)
+   rnal_o_tables( .T. )
 
-MsgC()
+   MsgC()
 
-return 1
+   RETURN 1
 
 
 // ----------------------------------------
@@ -465,276 +471,291 @@ return 1
 // nDoc_no - dokument broj
 // nMarker - 0, 1, 2, 3, 4, 5
 // ----------------------------------------
-function set_doc_marker( nDoc_no, nMarker, cont )
-local _rec, _id_fields, _where_bl
-local nTArea
-nTArea := SELECT()
+FUNCTION set_doc_marker( nDoc_no, nMarker, cont )
 
-if cont == NIL
-    cont := "FULL"
-endif
+   LOCAL _rec, _id_fields, _where_bl
+   LOCAL nTArea
 
-select docs
-set order to tag "1"
-go top
-seek docno_str( nDoc_no )
+   nTArea := Select()
 
-if FOUND()
-    
-    _rec := dbf_get_rec()
-    _rec["doc_status"] := nMarker
- 
-    update_rec_server_and_dbf( "docs", _rec, 1, cont )
- 
-endif
+   IF cont == NIL
+      cont := "FULL"
+   ENDIF
 
-select (nTArea)
-return
+   SELECT docs
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK docno_str( nDoc_no )
+
+   IF Found()
+
+      _rec := dbf_get_rec()
+      _rec[ "doc_status" ] := nMarker
+
+      update_rec_server_and_dbf( "docs", _rec, 1, cont )
+
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN
 
 
 
 // ------------------------------------
 // provjerava da li je dokument zauzet
 // ------------------------------------
-function is_doc_busy()
-local lRet := .f.
-if field->doc_status == 3
-    lRet := .t.
-endif
-return lRet
+FUNCTION is_doc_busy()
+
+   LOCAL lRet := .F.
+
+   IF field->doc_status == 3
+      lRet := .T.
+   ENDIF
+
+   RETURN lRet
 
 
 // -------------------------------------
 // provjerava da li je dokument rejected
 // -------------------------------------
-function is_doc_rejected()
-local lRet := .f.
-if field->doc_status == 2
-    lRet := .t.
-endif
-return lRet
+FUNCTION is_doc_rejected()
+
+   LOCAL lRet := .F.
+
+   IF field->doc_status == 2
+      lRet := .T.
+   ENDIF
+
+   RETURN lRet
 
 
 
-//----------------------------------------------
+// ----------------------------------------------
 // povrat dokumenta iz tabele DOCS
-//----------------------------------------------
-static function _docs_erase( nDoc_no )
-local _rec 
+// ----------------------------------------------
+STATIC FUNCTION _docs_erase( nDoc_no )
 
-select docs
-set order to tag "1"
-go top
-seek docno_str( nDoc_no )
+   LOCAL _rec
 
-if FOUND()
-    
-    select docs
-        
-    _rec := dbf_get_rec()
-        
-    select _docs
-        
-    APPEND BLANK
-        
-    dbf_update_rec( _rec )
+   SELECT docs
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK docno_str( nDoc_no )
 
-endif
+   IF Found()
 
-select docs
+      SELECT docs
 
-return
+      _rec := dbf_get_rec()
+
+      SELECT _docs
+
+      APPEND BLANK
+
+      dbf_update_rec( _rec )
+
+   ENDIF
+
+   SELECT docs
+
+   RETURN
 
 
-//----------------------------------------------
+// ----------------------------------------------
 // povrat tabele DOC_IT
-//----------------------------------------------
-static function _doc_it_erase( nDoc_no )
-local _rec
+// ----------------------------------------------
+STATIC FUNCTION _doc_it_erase( nDoc_no )
 
-select doc_it
-set order to tag "1"
-go top
+   LOCAL _rec
 
-seek docno_str( nDoc_no )
+   SELECT doc_it
+   SET ORDER TO TAG "1"
+   GO TOP
 
-if FOUND()
-    
-    // dodaj u pripremu dokument
-    do while !EOF() .and. ( field->doc_no == nDoc_no )
-    
-        select doc_it
-        
-        _rec := dbf_get_rec()
-    
-        select _doc_it
-        
-        APPEND BLANK
-        
-        dbf_update_rec( _rec )
-    
-        select doc_it
-        
-        skip
-    enddo
-endif
+   SEEK docno_str( nDoc_no )
 
-select doc_it
+   IF Found()
 
-return
+      // dodaj u pripremu dokument
+      DO WHILE !Eof() .AND. ( field->doc_no == nDoc_no )
+
+         SELECT doc_it
+
+         _rec := dbf_get_rec()
+
+         SELECT _doc_it
+
+         APPEND BLANK
+
+         dbf_update_rec( _rec )
+
+         SELECT doc_it
+
+         SKIP
+      ENDDO
+   ENDIF
+
+   SELECT doc_it
+
+   RETURN
 
 
-//----------------------------------------------
+// ----------------------------------------------
 // povrat tabele DOC_IT2
-//----------------------------------------------
-static function _doc_it2_erase( nDoc_no )
-local _rec
+// ----------------------------------------------
+STATIC FUNCTION _doc_it2_erase( nDoc_no )
 
-select doc_it2
-set order to tag "1"
-go top
+   LOCAL _rec
 
-seek docno_str( nDoc_no )
+   SELECT doc_it2
+   SET ORDER TO TAG "1"
+   GO TOP
 
-if FOUND()
-    
-    // dodaj u pripremu dokument
-    do while !EOF() .and. ( field->doc_no == nDoc_no )
-    
-        select doc_it2
-        
-        _rec := dbf_get_rec()
- 
-        select _doc_it2
-        
-        APPEND BLANK
-        
-        dbf_update_rec( _rec )
-    
-        select doc_it2
-        
-        skip
-    enddo
-endif
+   SEEK docno_str( nDoc_no )
 
-select doc_it2
+   IF Found()
 
-return
+      // dodaj u pripremu dokument
+      DO WHILE !Eof() .AND. ( field->doc_no == nDoc_no )
+
+         SELECT doc_it2
+
+         _rec := dbf_get_rec()
+
+         SELECT _doc_it2
+
+         APPEND BLANK
+
+         dbf_update_rec( _rec )
+
+         SELECT doc_it2
+
+         SKIP
+      ENDDO
+   ENDIF
+
+   SELECT doc_it2
+
+   RETURN
 
 
-//----------------------------------------------
+// ----------------------------------------------
 // povrat tabele DOC_OP
-//----------------------------------------------
-static function _doc_op_erase( nDoc_no )
-local _rec
+// ----------------------------------------------
+STATIC FUNCTION _doc_op_erase( nDoc_no )
 
-select doc_ops
-set order to tag "1"
-go top
+   LOCAL _rec
 
-seek docno_str( nDoc_no )
+   SELECT doc_ops
+   SET ORDER TO TAG "1"
+   GO TOP
 
-if FOUND()
-    
-    // dodaj u pripremu dokument
-    do while !EOF() .and. (field->doc_no == nDoc_no)
-    
-        select doc_ops
-        _rec := dbf_get_rec()
-    
-        select _doc_ops
-        APPEND BLANK
-        dbf_update_rec( _rec )
-    
-        select doc_ops
-        
-        skip
-    enddo
-    
-endif
+   SEEK docno_str( nDoc_no )
 
-select doc_ops
+   IF Found()
 
-return
+      // dodaj u pripremu dokument
+      DO WHILE !Eof() .AND. ( field->doc_no == nDoc_no )
+
+         SELECT doc_ops
+         _rec := dbf_get_rec()
+
+         SELECT _doc_ops
+         APPEND BLANK
+         dbf_update_rec( _rec )
+
+         SELECT doc_ops
+
+         SKIP
+      ENDDO
+
+   ENDIF
+
+   SELECT doc_ops
+
+   RETURN
 
 
 
-//-----------------------------------------------
+// -----------------------------------------------
 // brisi sve vezano za dokument iz kumulativa
-//-----------------------------------------------
-static function doc_erase( nDoc_no )
-local _del_rec
+// -----------------------------------------------
+STATIC FUNCTION doc_erase( nDoc_no )
 
-// DOCS
-select docs
-set order to tag "1"
-go top
-seek docno_str( nDoc_no )
+   LOCAL _del_rec
 
-if FOUND()
-    _del_rec := dbf_get_rec()
-    delete_rec_server_and_dbf( "docs", _del_rec, 1, "CONT" )
-endif
+   // DOCS
+   SELECT docs
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK docno_str( nDoc_no )
 
-// DOC_IT
-select doc_it
-set order to tag "1"
-go top
-seek docno_str( nDoc_no )
+   IF Found()
+      _del_rec := dbf_get_rec()
+      delete_rec_server_and_dbf( "docs", _del_rec, 1, "CONT" )
+   ENDIF
 
-if FOUND()
-    _del_rec := dbf_get_rec()
-    delete_rec_server_and_dbf( "doc_it", _del_rec, 2, "CONT" )
-endif
+   // DOC_IT
+   SELECT doc_it
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK docno_str( nDoc_no )
 
-// DOC_IT2
-select doc_it2
-set order to tag "1"
-go top
-seek docno_str( nDoc_no )
+   IF Found()
+      _del_rec := dbf_get_rec()
+      delete_rec_server_and_dbf( "doc_it", _del_rec, 2, "CONT" )
+   ENDIF
 
-if FOUND()
-    _del_rec := dbf_get_rec()
-    delete_rec_server_and_dbf( "doc_it2", _del_rec, 2, "CONT" )
-endif
+   // DOC_IT2
+   SELECT doc_it2
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK docno_str( nDoc_no )
 
-// DOC_OP
-select doc_ops
-set order to tag "1"
-go top
-seek docno_str( nDoc_no )
+   IF Found()
+      _del_rec := dbf_get_rec()
+      delete_rec_server_and_dbf( "doc_it2", _del_rec, 2, "CONT" )
+   ENDIF
 
-if FOUND()
-    _del_rec := dbf_get_rec()
-    delete_rec_server_and_dbf( "doc_ops", _del_rec, 2, "CONT" )
-endif
+   // DOC_OP
+   SELECT doc_ops
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK docno_str( nDoc_no )
 
-return 1
+   IF Found()
+      _del_rec := dbf_get_rec()
+      delete_rec_server_and_dbf( "doc_ops", _del_rec, 2, "CONT" )
+   ENDIF
+
+   RETURN 1
 
 
 
-//--------------------------------------------
+// --------------------------------------------
 // da li postoji dokument u tabeli
-//--------------------------------------------
-function doc_exist( nDoc_no )
-local nArea
-local lRet := .f.
+// --------------------------------------------
+FUNCTION doc_exist( nDoc_no )
 
-nArea := SELECT()
+   LOCAL nArea
+   LOCAL lRet := .F.
 
-select DOCS
-set order to tag "A"
-go top
-seek d_busy() + docno_str( nDoc_no )
+   nArea := Select()
 
-if FOUND() .and. docs->doc_no == nDoc_no
-    lRet := .t.
-endif
+   SELECT DOCS
+   SET ORDER TO TAG "A"
+   GO TOP
+   SEEK d_busy() + docno_str( nDoc_no )
 
-set order to tag "1"
-select (nArea)
+   IF Found() .AND. docs->doc_no == nDoc_no
+      lRet := .T.
+   ENDIF
 
-return lRet
+   SET ORDER TO TAG "1"
+   SELECT ( nArea )
+
+   RETURN lRet
 
 
 
@@ -742,118 +763,116 @@ return lRet
 // ----------------------------------------------
 // napuni pripremne tabele sa brojem naloga
 // ----------------------------------------------
-function fill__doc_no( nDoc_no, lForce )
-local nTRec
-local nTArea
-local nAPPRec
-local _rec
+FUNCTION fill__doc_no( nDoc_no, lForce )
 
-if lForce == nil
-    lForce := .f.
-endif
+   LOCAL nTRec
+   LOCAL nTArea
+   LOCAL nAPPRec
+   LOCAL _rec
 
-// ako je broj 0 ne poduzimaj nista....
-if ( nDoc_no == 0 .and. lForce == .f. )
-    return
-endif
+   IF lForce == nil
+      lForce := .F.
+   ENDIF
 
-nTArea := SELECT()
-nTRec := RecNo()
+   // ako je broj 0 ne poduzimaj nista....
+   IF ( nDoc_no == 0 .AND. lForce == .F. )
+      RETURN
+   ENDIF
 
-// _DOCS
-select _docs
-set order to tag "1"
-go top
+   nTArea := Select()
+   nTRec := RecNo()
 
-_rec := dbf_get_rec()
+   // _DOCS
+   SELECT _docs
+   SET ORDER TO TAG "1"
+   GO TOP
 
-_rec["doc_no"] := nDoc_no
-if EMPTY( _rec["doc_time"] )
-    _rec["doc_time"] := PADR( TIME(), 5 )
-endif
+   _rec := dbf_get_rec()
 
-dbf_update_rec( _rec )
+   _rec[ "doc_no" ] := nDoc_no
+   IF Empty( _rec[ "doc_time" ] )
+      _rec[ "doc_time" ] := PadR( Time(), 5 )
+   ENDIF
 
-// _DOC_IT
-select _doc_it
-set order to tag "1"
-go top
-do while !EOF()
-    
-    skip
-    nAPPRec := RecNo()
-    skip -1
-    
-    _rec := dbf_get_rec()
-    _rec["doc_no"] := nDoc_no
-    dbf_update_rec( _rec )
-    
-    go (nAPPRec)
-enddo
+   dbf_update_rec( _rec )
 
-// _DOC_IT2
-select _doc_it2
-set order to tag "1"
-go top
-do while !EOF()
-    
-    skip
-    nAPPRec := RecNo()
-    skip -1
-    
-    _rec := dbf_get_rec()
-    _rec["doc_no"] := nDoc_no
-    dbf_update_rec( _rec )
-   
-    go (nAPPRec)
-enddo
+   // _DOC_IT
+   SELECT _doc_it
+   SET ORDER TO TAG "1"
+   GO TOP
+   DO WHILE !Eof()
 
-// _DOC_OPS
-select _doc_ops
-set order to tag "1"
-go top
-do while !EOF()
-    
-    skip
-    nAPPRec := RecNo()
-    skip -1
- 
-    _rec := dbf_get_rec()
-    _rec["doc_no"] := nDoc_no
-    dbf_update_rec( _rec )
-    
-    go (nAPPRec)
-enddo
+      SKIP
+      nAPPRec := RecNo()
+      SKIP -1
 
-select (nTArea)
-go (nTRec)
+      _rec := dbf_get_rec()
+      _rec[ "doc_no" ] := nDoc_no
+      dbf_update_rec( _rec )
 
-return
+      GO ( nAPPRec )
+   ENDDO
+
+   // _DOC_IT2
+   SELECT _doc_it2
+   SET ORDER TO TAG "1"
+   GO TOP
+   DO WHILE !Eof()
+
+      SKIP
+      nAPPRec := RecNo()
+      SKIP -1
+
+      _rec := dbf_get_rec()
+      _rec[ "doc_no" ] := nDoc_no
+      dbf_update_rec( _rec )
+
+      GO ( nAPPRec )
+   ENDDO
+
+   // _DOC_OPS
+   SELECT _doc_ops
+   SET ORDER TO TAG "1"
+   GO TOP
+   DO WHILE !Eof()
+
+      SKIP
+      nAPPRec := RecNo()
+      SKIP -1
+
+      _rec := dbf_get_rec()
+      _rec[ "doc_no" ] := nDoc_no
+      dbf_update_rec( _rec )
+
+      GO ( nAPPRec )
+   ENDDO
+
+   SELECT ( nTArea )
+   GO ( nTRec )
+
+   RETURN
 
 
 // -----------------------------------------
 // formira string za _doc_status - opened
 // -----------------------------------------
-static function d_opened()
-return STR(0, 2)
+STATIC FUNCTION d_opened()
+   RETURN Str( 0, 2 )
 
 // -----------------------------------------
 // formira string za _doc_status - closed
 // -----------------------------------------
-static function d_closed()
-return STR(1, 2)
+STATIC FUNCTION d_closed()
+   RETURN Str( 1, 2 )
 
 // -----------------------------------------
 // formira string za _doc_status - rejected
 // -----------------------------------------
-static function d_rejected()
-return STR(2, 2)
+STATIC FUNCTION d_rejected()
+   RETURN Str( 2, 2 )
 
 // -----------------------------------------
 // formira string za _doc_status - busy
 // -----------------------------------------
-static function d_busy()
-return STR(3, 2)
-
-
-
+STATIC FUNCTION d_busy()
+   RETURN Str( 3, 2 )

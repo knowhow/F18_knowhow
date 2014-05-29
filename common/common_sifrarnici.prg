@@ -117,23 +117,6 @@ FUNCTION SifFmkSvi()
    RETURN
 
 
-FUNCTION IsPdvObveznik( cIdPartner )
-
-   LOCAL cIdBroj
-
-   cIdBroj := IzSifKPartn( "REGB", cIdPartner, .F. )
-
-   IF !Empty( cIdBroj )
-      IF Len( AllTrim( cIdBroj ) ) == 12
-
-         RETURN .T.
-      ELSE
-         RETURN .F.
-      ENDIF
-   ELSE
-      RETURN .F.
-   ENDIF
-
 
 /*
     primjer: PdvParIIIF ( cIdPartner, 1.17, 1, 0)

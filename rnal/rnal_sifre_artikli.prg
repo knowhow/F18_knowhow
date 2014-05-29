@@ -993,6 +993,10 @@ FUNCTION rnal_setuj_naziv_artikla( nArt_id, lNew, lAuto, aAttr, lOnlyArr )
    
    nRet := rnal_matrica_artikla( nArt_id, @aAttr )
 
+   IF lAuto == NIL
+      lAuto := .F.
+   ENDIF
+
    IF lOnlyArr == .F.
 
       rnal_setuj_naziv_artikla_iz_pravila( aAttr, @cArt_code, @cArt_desc, @cArt_mcode )
@@ -1041,10 +1045,6 @@ FUNCTION rnal_matrica_artikla( nArt_id, aAttr )
    __mc_sep := ";"
    // add ops separator
    __aop_sep := "-"
-
-   IF lAuto == nil
-      lAuto := .F.
-   ENDIF
 
    SELECT elements
    SET FILTER TO

@@ -19,7 +19,6 @@ FUNCTION kalk_generisi_inventuru_magacina()
    LOCAL cArtikli := ""
    LOCAL cPosition := "2"
    LOCAL cCijenaTip := "1"
-   LOCAL cNule := "D"
    LOCAL cSrSort := "N"
 
    lOsvjezi := .F.

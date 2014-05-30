@@ -55,7 +55,7 @@ FUNCTION kalk_generisi_inventuru_magacina()
       @ m_x + 4, m_Y + 2 SAY "(prazno-sve):" GET cArtikli
       @ m_x + 5, m_Y + 2 SAY "(Grupacija broj mjesta) :" GET cPosition
       @ m_x + 6, m_Y + 2 SAY "Cijene (1-VPC, 2-NC) :" GET cCijenaTIP VALID cCijenaTIP $ "12"
-      @ m_x + 7, m_y + 2 SAY "sortirati po sifri dobavljaca :" GET cSRSort ;
+      @ m_x + 7, m_y + 2 SAY8 "sortirati po šifri dobavljača :" GET cSRSort ;
          VALID cSRSort $ "DN" PICT "@!"
       @ m_x + 8, m_y + 2 SAY "generisati stavke sa stanjem 0 (D/N)" GET cNule ;
          PICT "@!" VALID cNule $ "DN"
@@ -129,18 +129,14 @@ FUNCTION kalk_generisi_inventuru_magacina()
          SELECT kalk_pripr
 
          IF lOsvjezi
-            // trazi unutar dokumenta
             AzurPostojece( cIdFirma, cIdKonto, cBrDok, dDatDok, @nRbr, cIdRoba, nUlaz, nIzlaz, nVpvU, nVpvI, nNvU, nNvI )
          ELSE
-            // dodaj, formira se novi dokument
             DodajImStavku( cIdFirma, cIdKonto, cBrDok, dDatDok, @nRbr, cIdRoba, nUlaz, nIzlaz, nVpvU, nVpvI, nNvU, nNvI )
-			
          ENDIF
          SELECT kalk
 	
       ELSEIF lOsvjezi
 		
-         // prije je ova stavka bila <>0 , sada je 0 pa je treba izbrisati
          SELECT kalk_pripr
          SET ORDER TO TAG "3"
          GO TOP
@@ -159,7 +155,7 @@ FUNCTION kalk_generisi_inventuru_magacina()
 
    IF cSRSort == "D"
 
-      msgo( "sortiram po SIFRADOB ..." )
+      msgo( "sortiram po index-u SIFRADOB ..." )
 	
       SELECT kalk_pripr
 
@@ -193,8 +189,7 @@ FUNCTION kalk_generisi_inventuru_magacina()
 
 
 
-// generisanje dokumenta tipa IM razlike na osnovu postojece inventure
-FUNCTION gen_im_razlika()
+FUNCTION kalk_generisanje_inventure_razlike()
 
    O_KONTO
 
@@ -460,10 +455,6 @@ FUNCTION RowVpvRabat( nVpvU, nVpvI, nRabat )
    RETURN
 
 
-
-/*! \fn RowNC(nNcU, nNcI)
- *  \brief Popunjava polja NC
- */
 
 FUNCTION RowNC( nNcU, nNcI )
 

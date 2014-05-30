@@ -14,10 +14,7 @@
 #include "ld.ch"
 
 
-// -----------------------------------------------
-// vrati zadnji dan mjeseca
-// -----------------------------------------------
-FUNCTION getlday( nMonth )
+FUNCTION zadnji_dan_mjeseca( nMonth )
 
    LOCAL nDay := 0
 
@@ -156,7 +153,7 @@ FUNCTION SpecPl2()
    nMjesecOd := gMjesec
    nGodinaOd := gGodina
    // posljednji dan mjeseca
-   nDanDo := getlday( gMjesec )
+   nDanDo := zadnji_dan_mjeseca( gMjesec )
    nMjesecDo := gMjesec
    nGodinaDo := gGodina
 

@@ -12,9 +12,8 @@
 
 #include "ld.ch"
 
-// ------------------------------------------------
-// specifikacija place, ostali samostalni 
-// ------------------------------------------------
+
+
 function SpecPlU()
 local GetList:={}
 local aPom:={}
@@ -48,7 +47,7 @@ nDanOd := getfday( gMjesec )
 nMjesecOd:=gMjesec
 nGodinaOd:=gGodina
 // posljednji dan mjeseca
-nDanDo := getlday( gMjesec )
+nDanDo := zadnji_dan_mjeseca( gMjesec )
 nMjesecDo:=gMjesec
 nGodinaDo:=gGodina
 

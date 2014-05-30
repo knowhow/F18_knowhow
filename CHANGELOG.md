@@ -1,3 +1,8 @@
+1.7.95  2014-05-30, vsasa
+
+  - LD, specifikacija plate - bugfix
+  - RNAL, refactor rnal_matrica_artikla()
+ 
 1.7.94  2014-05-28, vsasa
 
   - FAKT, štampa id broja + pdv broja na fakturi (txt, odt)

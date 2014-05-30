@@ -609,7 +609,7 @@ do while !eof() .and. field->godina = cGodina .and. ;
 	select radn
 	seek cT_radnik
 	
-	lInRS := in_rs(radn->idopsst, radn->idopsrad) .and. cT_tipRada $ "A#U"
+	lInRS := radnik_iz_rs(radn->idopsst, radn->idopsrad) .and. cT_tipRada $ "A#U"
 
 	// uzmi samo odgovarajuce tipove rada
 	if ( cVRada $ "1#3" .and. !(cT_tiprada $ "A#U") )
@@ -657,7 +657,7 @@ do while !eof() .and. field->godina = cGodina .and. ;
 		// uvijek provjeri tip rada
 		cT_tiprada := g_tip_rada( field->idradn, field->idrj )
 		
-		lInRS := in_rs(radn->idopsst, radn->idopsrad) .and. cT_tipRada $ "A#U"
+		lInRS := radnik_iz_rs(radn->idopsst, radn->idopsrad) .and. cT_tipRada $ "A#U"
 	
 		// samo pozicionira bazu PAROBR na odgovarajuci zapis
 		ParObr( cMjesec, cGodina, IF(lViseObr, ld->obr,), ld->idrj )

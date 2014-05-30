@@ -580,10 +580,8 @@ do while !eof() .and. eval(bUSlov)
 
     cTrosk := radn->trosk
 
-    // RS ?
-    lInRS := in_rs( radn->idopsst, radn->idopsrad ) .and. cTipRada $ "A#U"
+    lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad ) .and. cTipRada $ "A#U"
 
-    // vrati osnovicu za neto i ostala primanja
     for i:=1 to cLDPolja
         
         cTprField := PADL( ALLTRIM(STR(i)), 2, "0" )

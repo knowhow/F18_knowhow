@@ -43,11 +43,9 @@ FUNCTION SpecPlU()
    nPorOsnovica := 0
    uNaRuke := 0
 
-   // prvi dan mjeseca
-   nDanOd := getfday( gMjesec )
+   nDanOd := prvi_dan_mjeseca( gMjesec )
    nMjesecOd := gMjesec
    nGodinaOd := gGodina
-   // posljednji dan mjeseca
    nDanDo := zadnji_dan_mjeseca( gMjesec )
    nMjesecDo := gMjesec
    nGodinaDo := gGodina
@@ -259,7 +257,7 @@ FUNCTION SpecPlU()
       nRSpr_koef := 0
       nTrosk := 0
 	
-      lInRS := in_rs( radn->idopsst, radn->idopsrad ) .AND. cRTR $ "A#U"
+      lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad ) .AND. cRTR $ "A#U"
 
       // da li koristi troskove
       cKTrosk := radn->trosk

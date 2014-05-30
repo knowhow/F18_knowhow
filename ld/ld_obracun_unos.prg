@@ -450,7 +450,7 @@ if gVarObracun == "2"
     cOpor := " "
     cTrosk := " "
     lInRS := .f.
-    lInRs := in_rs(radn->idopsst, radn->idopsrad)
+    lInRs := radnik_iz_rs(radn->idopsst, radn->idopsrad)
     
     // upisi oporeziva i neoporezive naknade
     for i:=1 to 40

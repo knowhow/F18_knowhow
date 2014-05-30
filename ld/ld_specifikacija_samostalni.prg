@@ -59,7 +59,7 @@ FUNCTION SpecPlS()
    uNaRuke := 0
 
    // prvi dan mjeseca
-   nDanOd := getfday( gMjesec )
+   nDanOd := prvi_dan_mjeseca( gMjesec )
    nMjesecOd := gMjesec
    nGodinaOd := gGodina
    // posljednji dan mjeseca

@@ -48,13 +48,22 @@ FUNCTION zadnji_dan_mjeseca( nMonth )
    RETURN nDay
 
 
+
+FUNCTION prvi_dan_mjeseca( nMonth )
+
+   LOCAL nDay := 1
+
+   RETURN nDay
+
+
+
 // ----------------------------------------------
 // da li je radnik u republ.srpskoj
 // gleda polje region "REG" iz opcina
 // " " ili "1" = federacija
 // "2" = rs
 // ----------------------------------------------
-FUNCTION in_rs( cOpsst, cOpsrad )
+FUNCTION radnik_iz_rs( cOpsst, cOpsrad )
 
    LOCAL lRet := .F.
    LOCAL nTArea := Select()
@@ -70,20 +79,7 @@ FUNCTION in_rs( cOpsst, cOpsrad )
    RETURN lRet
 
 
-// -----------------------------------------------
-// vrati prvi dan u mjesecu
-// -----------------------------------------------
-FUNCTION getfday( nMonth )
-
-   LOCAL nDay := 1
-
-   RETURN nDay
-
-
-// ------------------------------------------------
-// specifikacija place, novi obracun
-// ------------------------------------------------
-FUNCTION SpecPl2()
+FUNCTION ld_specifikacija_plate()
 
    LOCAL GetList := {}
    LOCAL aPom := {}
@@ -112,6 +108,7 @@ FUNCTION SpecPl2()
    LOCAL nDopr6X 
    LOCAL nDopr7X
    LOCAL nPojDoprI
+   LOCAL nObrCount := 0
 
    PRIVATE aSpec := {}
    PRIVATE cFNTZ := "D"
@@ -148,16 +145,13 @@ FUNCTION SpecPl2()
    nPorOsnovica := 0
    uNaRuke := 0
 
-   // prvi dan mjeseca
-   nDanOd := getfday( gMjesec )
+   nDanOd := prvi_dan_mjeseca( gMjesec )
    nMjesecOd := gMjesec
    nGodinaOd := gGodina
-   // posljednji dan mjeseca
    nDanDo := zadnji_dan_mjeseca( gMjesec )
    nMjesecDo := gMjesec
    nGodinaDo := gGodina
 
-   // varijable izvjestaja
    nMjesec := gMjesec
    nGodina := gGodina
 
@@ -361,13 +355,8 @@ FUNCTION SpecPl2()
 
    PoDoIzSez( nGodina, nMjesec )
 
-   // ovo ce biti ini u koji ces ubacivati podatke
    cIniName := _proizv_ini
 
-   //
-   // Radi DRB6 iskoristio f-ju Razrijedi()
-   // npr.:    string  ->  s t r i n g
-   //
    UzmiIzIni( cIniName, 'Varijable', "NAZ", cFirmNaz,'WRITE' )
    UzmiIzIni( cIniName, 'Varijable', "ADRESA", cFirmAdresa,'WRITE' )
    UzmiIzIni( cIniName, 'Varijable', "OPCINA", cFirmOpc,'WRITE' )
@@ -443,23 +432,20 @@ FUNCTION SpecPl2()
       ENDIF
 
       IF cRTR $ "I#N" .AND. Empty( cRTipRada )
-         // ovo je uredu...
-         // jer je i ovo nesamostalni rad
       ELSEIF cRTipRada <> cRTR
          SELECT ld
          SKIP
          LOOP
       ENDIF
 
-      // provjeri da li se radi o republici srpskoj
       IF cRepSr == "N"
-         IF in_rs( radn->idopsst, radn->idopsrad )
+         IF radnik_iz_rs( radn->idopsst, radn->idopsrad )
             SELECT ld
             SKIP
             LOOP
          ENDIF
       ELSE
-         IF !in_rs( radn->idopsst, radn->idopsrad )
+         IF !radnik_iz_rs( radn->idopsst, radn->idopsrad )
             SELECT ld
             SKIP
             LOOP
@@ -473,16 +459,12 @@ FUNCTION SpecPl2()
          LOOP
       ENDIF
 
-      // nKoefLO := (gOsnLOdb * radn->klo)
       nKoefLO := ld->ulicodb
-
       nULicOdbitak += nKoefLO
-
       nP77 := IF( !Empty( cMRad ), LD->&( "I" + cMRad ), 0 )
       nP78 := IF( !Empty( cPorOl ), LD->&( "I" + cPorOl ), 0 )
-
-      // nP79 := IF( !EMPTY(cBolPr) , LD->&("I"+cBolPr) , 0 )
       nP79 := 0
+
       IF !Empty( cBolPr ) .OR. !Empty( cBolPr )
          FOR t := 1 TO 99
             cPom := IF( t > 9, Str( t, 2 ), "0" + Str( t, 1 ) )
@@ -562,11 +544,6 @@ FUNCTION SpecPl2()
 
       ENDIF
 
-
-      // ukupno na ruke sto ide radniku...
-      // uNaRuke += ld->_uiznos
-
-      // ukupno bruto
       nPom := nMBrutoOsnova
 
       nkDopZX := 0
@@ -591,7 +568,6 @@ FUNCTION SpecPl2()
             nBOO := nMBrutoOsnova
          ENDIF
 
-         // dodatni doprinos PIO
          IF ID $ cDodDoprP
             nkDopPX += iznos
             IF !Empty( field->idkbenef )
@@ -601,7 +577,6 @@ FUNCTION SpecPl2()
             ENDIF
          ENDIF
 
-         // dodatni doprinos ZDR
          IF ID $ cDodDoprZ
             nkDopZX += iznos
             IF !Empty( field->idkbenef )
@@ -623,7 +598,6 @@ FUNCTION SpecPl2()
       nkD6X := Ocitaj( F_DOPR, cDopr6, "iznos", .T. )
       nkD7X := Ocitaj( F_DOPR, cDopr7, "iznos", .T. )
 
-      // stope na bruto
       nPom := nKD1X + nKD2X + nKD3X
       UzmiIzIni( cIniName, 'Varijable', 'D11B', FormNum2( nPom, 16, gpici3 ) + "%", 'WRITE' )
       nPom := nKD1X
@@ -659,11 +633,8 @@ FUNCTION SpecPl2()
          round2( ( nMPojBrOsn * nkD2X / 100 ), gZaok2 ) + ;
          round2( ( nMPojBrOsn * nkD3X / 100 ), gZaok2 )
 
-      // iznos doprinosa
-
       nPom := nDopr1X + nDopr2X + nDopr3X
 
-      // ukupni doprinosi iz plate
       nUkDoprIZ := nPom
 
       UzmiIzIni( cIniName, 'Varijable', 'D11I', FormNum2( _ispl_d( nPom, cIsplata ), 16, gPici2 ), 'WRITE' )
@@ -745,10 +716,17 @@ FUNCTION SpecPl2()
             AAdd( aOps, { RADN->idopsst, "", Max( ld->uneto, PAROBR->prosld * gPDLimit / 100 ) } )
          ENDIF
       ENDIF
+      
+      ++ nObrCount
 
       SKIP 1
 
    ENDDO
+
+   IF nObrCount == 0
+      MsgBeep( "Štampa specifikacije nije moguća, nema obračuna !" )
+      RETURN .T.
+   ENDIF
 
    nPorNaPlatu := round2( nPorNaPlatu, gZaok2 )
 

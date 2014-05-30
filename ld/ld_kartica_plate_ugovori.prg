@@ -103,7 +103,7 @@ nTrProc:=0
 nOsnZaBr := nOsnNeto
 
 // radi li se o RS-u ?
-lInRS := in_rs(radn->idopsst, radn->idopsrad)
+lInRS := radnik_iz_rs(radn->idopsst, radn->idopsrad)
 
 // bruto sa troskovima
 nBSaTr := bruto_osn( nOsnZaBr, cRTipRada, nLicOdbitak, nil, cTrosk )

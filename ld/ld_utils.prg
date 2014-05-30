@@ -284,7 +284,7 @@ do case
 		nBrt := ROUND2( nIzn / ( ((100 - nTr) * 0.96 * 0.90 + nTr )/100 ) , gZaok2 )
 		
 		// ako je u RS-u, nema troskova, i drugi koeficijent
-		if in_rs( radn->idopsst, radn->idopsrad )
+		if radnik_iz_rs( radn->idopsst, radn->idopsrad )
 			
 			nBrt := ROUND2( nIzn * 1.111112, gZaok2 )
 		endif
@@ -368,7 +368,7 @@ do case
 	
 		cPrn := ALLTRIM(STR(nNeto)) + " / " + ALLTRIM(STR(nProc,12,6)) + " ="
 		// ako je u RS-u, nema troskova, i drugi koeficijent
-		if in_rs( radn->idopsst, radn->idopsrad )
+		if radnik_iz_rs( radn->idopsst, radn->idopsrad )
 			
 			cPrn := ALLTRIM(STR(nNeto)) + " * 1.111112 ="
 		endif

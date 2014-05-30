@@ -945,7 +945,7 @@ do while !eof()
 
 	cT_radnik := field->idradn
 
-	lInRS := in_rs(radn->idopsst, radn->idopsrad) 
+	lInRS := radnik_iz_rs(radn->idopsst, radn->idopsrad) 
 	
 	if !EMPTY(cRadnik)
 		if cT_radnik <> cRadnik

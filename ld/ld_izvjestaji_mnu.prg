@@ -34,7 +34,7 @@ FUNCTION ld_izvjestaji()
       AAdd( _opcexe, {|| m_spec_o() } )
    ENDIF
 
-   AAdd( _opc, "6. ostali izvjestaji" )
+   AAdd( _opc, "6. ostali izvještaji" )
    AAdd( _opcexe, {|| MnuIzvO() } )
 
    IF gVarObracun == "2"
@@ -43,11 +43,11 @@ FUNCTION ld_izvjestaji()
       AAdd( _opcexe, {|| nil } )
       AAdd( _opc, "J. prijave doprinosa (JS-3400)" )
       AAdd( _opcexe, {|| r_js3400_obrazac() } )
-      AAdd( _opc, "O. obracunski listovi (obrasci OLP i GIP)" )
+      AAdd( _opc, "O. obračunski listovi (obrasci OLP i GIP)" )
       AAdd( _opcexe, {|| r_obr_list() } )
       AAdd( _opc, "P. akontacije poreza (obrasci ASD i AUG)" )
       AAdd( _opcexe, {|| r_ak_list() } )
-      AAdd( _opc, "M. mjesecni obrazac MIP-1023" )
+      AAdd( _opc, "M. mjesečni obrazac MIP-1023" )
       AAdd( _opcexe, {|| r_mip_obr() } )
       AAdd( _opc, "E. poreska kartica : export" )
       AAdd( _opcexe, {|| pk_export() } )
@@ -102,7 +102,7 @@ STATIC FUNCTION MnuIzvS()
 
    AAdd( opc, "1. specifikacija uz isplatu plata                 " )
    IF gVarObracun == "2"
-      AAdd( opcexe, {|| SpecPl2() } )
+      AAdd( opcexe, {|| ld_specifikacija_plate() } )
    ELSE
       AAdd( opcexe, {|| Specif() } )
    ENDIF
@@ -135,21 +135,21 @@ STATIC FUNCTION MnuIzvP()
 
    AAdd( opc, "1. pregled plata                                  " )
    AAdd( opcexe, {|| PregPl() } )
-   AAdd( opc, "1a. pregled plata za vise mjeseci  " )
+   AAdd( opc, "1a. pregled plata za više mjeseci  " )
    AAdd( opcexe, {|| ppl_vise() } )
-   AAdd( opc, "2. pregled odredjenog primanja" )
+   AAdd( opc, "2. pregled određenog primanja" )
    AAdd( opcexe, {|| PregPrim() } )
    AAdd( opc, "3. platni spisak" )
    AAdd( opcexe, {|| PlatSp() } )
-   AAdd( opc, "4. platni spisak tekuci racun" )
+   AAdd( opc, "4. platni spisak tekući račun" )
    AAdd( opcexe, {|| PlatSpTR( "1" ) } )
-   AAdd( opc, "5. platni spisak stedna knj  " )
+   AAdd( opc, "5. platni spisak štedna knjižica  " )
    AAdd( opcexe, {|| PlatSpTR( "2" ) } )
    AAdd( opc, "6. pregled primanja za period" )
    AAdd( opcexe, {|| PregPrimPer() } )
-   AAdd( opc, "7. pregled obracunatih doprinosa" )
+   AAdd( opc, "7. pregled obračunatih doprinosa" )
    AAdd( opcexe, {|| ld_pregled_obr_doprinosa() } )
-   AAdd( opc, "8. isplata jednog tipa primanja na tekuci racun" )
+   AAdd( opc, "8. isplata jednog tipa primanja na tekući račun" )
    AAdd( opcexe, {|| IsplataTR( "1" ) } )
 
 
@@ -164,7 +164,7 @@ STATIC FUNCTION MnuIzvO()
    PRIVATE opcexe := {}
    PRIVATE Izbor := 1
 
-   AAdd( opc, "1. lista radnika sa netom po opst.stanovanja  " )
+   AAdd( opc, "1. lista radnika sa netom po općini stanovanja  " )
    AAdd( opcexe, {|| SpRadOpSt() } )
 
    IF ( IsRamaGlas() )
@@ -172,7 +172,7 @@ STATIC FUNCTION MnuIzvO()
       AAdd( opcexe, {|| PlatePoRNalozima() } )
    ENDIF
 
-   AAdd( opc, "S. pregled utroska po sihtaricama" )
+   AAdd( opc, "S. pregled utroška po šihtaricama" )
    AAdd( opcexe, {|| r_sh_print() } )
 
    AAdd( opc, "T. lista radnika za isplatu toplog obroka" )
@@ -206,7 +206,7 @@ STATIC FUNCTION MnuIzvR()
    AAdd( opcexe, {|| RekapBod() } )
    AAdd( opc, "4. rekapitulacija neto primanja" )
    AAdd( opcexe, {|| RekNeto() } )
-   AAdd( opc, "5. rekapitulacija tekucih racuna" )
+   AAdd( opc, "5. rekapitulacija tekućih računa" )
    AAdd( opcexe, {|| RekTekRac() } )
 
    Menu_SC( "rekap" )

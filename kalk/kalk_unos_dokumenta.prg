@@ -964,9 +964,9 @@ FUNCTION MeniF10()
 
    opc[ 1 ] := "1. prenos dokumenta fakt->kalk                                  "
    opc[ 2 ] := "2. povrat dokumenta u pripremu"
-   opc[ 3 ] := "3. priprema -> smece"
-   opc[ 4 ] := "4. smece    -> priprema"
-   opc[ 5 ] := "5. najstariji dokument iz smeca u pripremu"
+   opc[ 3 ] := "3. priprema -> smeće"
+   opc[ 4 ] := "4. smeće    -> priprema"
+   opc[ 5 ] := "5. najstariji dokument iz smeća u pripremu"
    opc[ 6 ] := "6. generacija dokumenta inventure magacin "
    opc[ 7 ] := "7. generacija dokumenta inventure prodavnica"
    opc[ 8 ] := "8. generacija nivelacije prodavn. na osnovu niv. za drugu prod"
@@ -977,7 +977,6 @@ FUNCTION MeniF10()
    GO TOP
 
    cIdVDTek := IdVD
-   // tekuca vrsta dokumenta
 
    IF cIdVdTek == "19"
       AAdd( opc, "A. obrazac promjene cijena" )
@@ -986,14 +985,14 @@ FUNCTION MeniF10()
    ENDIF
 
    AAdd( opc, "B. pretvori 11 -> 41  ili  11 -> 42"        )
-   AAdd( opc, "C. promijeni predznak za kolicine"          )
-   AAdd( opc, "D. preuzmi tarife iz sifrarnika"            )
+   AAdd( opc, "C. promijeni predznak za količine"          )
+   AAdd( opc, "D. preuzmi tarife iz šifrarnika"            )
    AAdd( opc, "E. storno dokumenta"                        )
    AAdd( opc, "F. prenesi VPC(sifr)+POREZ -> MPCSAPP(dok)" )
    AAdd( opc, "G. prenesi MPCSAPP(dok)    -> MPC(sifr)"    )
    AAdd( opc, "H. prenesi VPC(sif)        -> VPC(dok)"     )
    AAdd( opc, "I. povrat (12,11) -> u drugo skl.(96,97)"   )
-   AAdd( opc, "J. zaduzenje prodavnice iz magacina (10->11)"   )
+   AAdd( opc, "J. zaduženje prodavnice iz magacina (10->11)"   )
    AAdd( opc, "K. veleprodaja na osnovu dopreme u magacin (16->14)"   )
 
    my_close_all_dbf()
@@ -1017,7 +1016,7 @@ FUNCTION MeniF10()
       CASE izbor == 5
          P9najst()
       CASE izbor == 6
-         im()
+         kalk_generisi_inventuru_magacina()
       CASE izbor == 7
          ip()
       CASE izbor == 8
@@ -1099,9 +1098,9 @@ STATIC FUNCTION kalk_dokument_prenos_cijena()
    PRIVATE getList := {}
 
    Box(, 7, 65 )
-   @ m_x + 1, m_y + 2 SAY "Prenos cijena dokument/sifrarnik ****"
-   @ m_x + 3, m_y + 2 SAY "1) prenos MPCSAPP (dok) => sifrarnik"
-   @ m_x + 4, m_y + 2 SAY "2) prenos sifrarnik => MPCSAPP (dok)"
+   @ m_x + 1, m_y + 2 SAY8 "Prenos cijena dokument/šifrarnik ****"
+   @ m_x + 3, m_y + 2 SAY8 "1) prenos MPCSAPP (dok) => šifrarnik"
+   @ m_x + 4, m_y + 2 SAY8 "2) prenos šifrarnik => MPCSAPP (dok)"
    @ m_x + 6, m_y + 2 SAY "    odabir > " GET _opt PICT "9"
    READ
    BoxC()
@@ -1111,7 +1110,7 @@ STATIC FUNCTION kalk_dokument_prenos_cijena()
    ENDIF
 
    IF _opt == 1
-      IF Pitanje(, "Koristiti dokument u kalk_pripremi (D) ili azurirani (N) ?", "N" ) == "D"
+      IF Pitanje(, "Koristiti dokument iz pripreme (D) ili ažurirani (N) ?", "N" ) == "D"
          MPCSAPPuSif()
       ELSE
          MPCSAPPiz80uSif()
@@ -1127,7 +1126,7 @@ STATIC FUNCTION kalk_dokument_prenos_cijena()
       O_KONTO
 
       Box(, 1, 50 )
-      @ m_x + 1, m_y + 2 SAY "Prodavnicki konto:" GET _konto VALID p_konto( @_konto )
+      @ m_x + 1, m_y + 2 SAY8 "Prodavnički konto:" GET _konto VALID p_konto( @_konto )
       READ
       BoxC()
 
@@ -1135,7 +1134,6 @@ STATIC FUNCTION kalk_dokument_prenos_cijena()
          RETURN
       ENDIF
 
-      // imamo konto, mozemo sada da ubacimo cijene...
       SELECT koncij
       hseek _konto
 
@@ -1151,7 +1149,7 @@ STATIC FUNCTION kalk_dokument_prenos_cijena()
          hseek _rec[ "idroba" ]
 
          IF !Found()
-            MsgBeep( "Nepostojeca sifra artikla " + _rec[ "idroba" ] )
+            MsgBeep( "Nepostojeća šifra artikla " + _rec[ "idroba" ] )
             SELECT kalk_pripr
             SKIP
             LOOP
@@ -1176,7 +1174,7 @@ STATIC FUNCTION kalk_dokument_prenos_cijena()
    ENDIF
 
    IF _update
-      MsgBeep( "Ubacene cijene iz sifrarnika !#Odradite asistenta sa opcijom A" )
+      MsgBeep( "Ubačene cijene iz šifrarnika !#Odradite asistenta sa opcijom A" )
    ENDIF
 
    RETURN
@@ -1192,15 +1190,15 @@ FUNCTION MeniF11()
    PRIVATE opc := {}
    PRIVATE opcexe := {}
 
-   AAdd( opc, "1. ubacivanje troskova-uvozna kalkulacija" )
+   AAdd( opc, "1. ubacivanje troškova-uvozna kalkulacija" )
    AAdd( opcexe, {|| KalkTrUvoz() } )
    AAdd( opc, "2. pretvori maloprodajni popust u smanjenje MPC" )
    AAdd( opcexe, {|| PopustKaoNivelacijaMP() } )
-   AAdd( opc, "3. obracun poreza pri uvozu" )
+   AAdd( opc, "3. obračun poreza pri uvozu" )
    AAdd( opcexe, {|| ObracunPorezaUvoz() } )
-   AAdd( opc, "4. pregled smeca" )
+   AAdd( opc, "4. pregled smeća" )
    AAdd( opcexe, {|| kalk_pripr9View() } )
-   AAdd( opc, "5. brisi sve protu-stavke" )
+   AAdd( opc, "5. briši sve protu-stavke" )
    AAdd( opcexe, {|| ProtStErase() } )
    AAdd( opc, "6. setuj sve NC na 0" )
    AAdd( opcexe, {|| SetNcTo0() } )
@@ -1223,9 +1221,6 @@ FUNCTION MeniF11()
 
 
 
-/*! \fn ProtStErase()
- *  \brief Brisi sve protustavke
- */
 FUNCTION ProtStErase()
 
    IF Pitanje(, "Pobrisati protustavke dokumenta (D/N)?", "N" ) == "N"
@@ -1251,9 +1246,6 @@ FUNCTION ProtStErase()
 
 
 
-/*! \fn SetNcTo0()
- *  \brief Setuj sve NC na 0
- */
 FUNCTION SetNcTo0()
 
    IF Pitanje(, "Setovati NC na 0 (D/N)?", "N" ) == "N"
@@ -1278,7 +1270,6 @@ FUNCTION SetNcTo0()
 
 
 
-// ulaz _IdFirma, _IdRoba, ...., nRBr (val(_RBr))
 FUNCTION EditPripr( fNovi, atrib )
 
    PRIVATE nMarza := 0
@@ -1295,7 +1286,6 @@ FUNCTION EditPripr( fNovi, atrib )
 
       SetKey( K_PGDN, {|| NIL } )
       SetKey( K_PGUP, {|| NIL } )
-      // konvertovanje valute - ukljuci
       SetKey( K_CTRL_K, {|| a_val_convert() } )
 
       IF nStrana == 1
@@ -1306,7 +1296,6 @@ FUNCTION EditPripr( fNovi, atrib )
 
       SetKey( K_PGDN, NIL )
       SetKey( K_PGUP, NIL )
-      // konvertovanje valute - iskljuci
       SetKey( K_CTRL_K, NIL )
 
       SET ESCAPE ON
@@ -1492,8 +1481,6 @@ FUNCTION Get1Header( fNovi )
       _TBankTr := "%"
    ENDIF
 
-   // izgenerisani izlazi
-
    IF gNW $ "DX"
       @  m_x + 1, m_y + 2 SAY "Firma: "
       ?? gFirma, "-", gNFirma
@@ -1514,11 +1501,11 @@ FUNCTION Get1Header( fNovi )
 
          Box( "#Glavni konto", 3, 70 )
          IF _idvd $ "10#16#18#IM#"
-            @ m_x + 2, m_y + 2 SAY "Magacinski konto zaduzuje" GET _idKonto VALID P_Konto( @_idKonto ) PICT "@!"
+            @ m_x + 2, m_y + 2 SAY8 "Magacinski konto zadužuje" GET _idKonto VALID P_Konto( @_idKonto ) PICT "@!"
             READ
             cSufiks := SufBrKalk( _idKonto )
          ELSE
-            @ m_x + 2, m_y + 2 SAY "Magacinski konto razduzuje" GET _idKonto2 VALID P_Konto( @_idKonto2 ) PICT "@!"
+            @ m_x + 2, m_y + 2 SAY "Magacinski konto razdužuje" GET _idKonto2 VALID P_Konto( @_idKonto2 ) PICT "@!"
             READ
             cSufiks := SufBrKalk( _idKonto2 )
          ENDIF
@@ -1682,15 +1669,15 @@ FUNCTION RaspTrosk( fSilent )
    IF fsilent == NIL
       fsilent := .F.
    ENDIF
-   IF fsilent .OR.  Pitanje(, "Rasporediti troskove ??", "N" ) == "D"
+   IF fsilent .OR.  Pitanje(, "Rasporediti troškove ??", "N" ) == "D"
       PRIVATE qqTar := ""
       PRIVATE aUslTar := ""
       IF idvd $ "16#80"
          Box(, 1, 55 )
          IF idvd == "16"
-            @ m_x + 1, m_y + 2 SAY "Stopa marze (vpc - stopa*vpc)=nc:" GET nStUc PICT "999.999"
+            @ m_x + 1, m_y + 2 SAY8 "Stopa marže (vpc - stopa*vpc)=nc:" GET nStUc PICT "999.999"
          ELSE
-            @ m_x + 1, m_y + 2 SAY "Stopa marze (mpc-stopa*mpcsapp)=nc:" GET nStUc PICT "999.999"
+            @ m_x + 1, m_y + 2 SAY8 "Stopa marže (mpc-stopa*mpcsapp)=nc:" GET nStUc PICT "999.999"
          ENDIF
          READ
          BoxC()
@@ -2119,13 +2106,12 @@ FUNCTION UzmiTarIzSif()
       SKIP 1
    ENDDO
    my_unlock()
-   Msg( "Automatski pokrecem asistenta (opcija A)!", 1 )
+   Msg( "Automatski pokrećem asistenta (opcija A)!", 1 )
    lAutoAsist := .T.
    KEYBOARD Chr( K_ESC )
    my_close_all_dbf()
 
    RETURN
-// }
 
 
 
@@ -2158,13 +2144,13 @@ FUNCTION DiskMPCSAPP()
       SKIP 1
    ENDDO
    my_unlock()
-   Msg( "Automatski pokrecem asistenta (opcija A)!", 1 )
+   Msg( "Automatski pokrećem asistenta (opcija A)!", 1 )
    lAutoAsist := .T.
    KEYBOARD Chr( K_ESC )
    my_close_all_dbf()
 
    RETURN
-// }
+
 
 
 
@@ -2194,7 +2180,6 @@ FUNCTION MPCSAPPuSif()
    my_close_all_dbf()
 
    RETURN
-// }
 
 
 
@@ -2204,7 +2189,6 @@ FUNCTION MPCSAPPuSif()
 
 FUNCTION MPCSAPPiz80uSif()
 
-   // {
    o_kalk_edit()
 
    cIdFirma := gFirma
@@ -2236,7 +2220,6 @@ FUNCTION MPCSAPPiz80uSif()
    my_close_all_dbf()
 
    RETURN
-// }
 
 
 

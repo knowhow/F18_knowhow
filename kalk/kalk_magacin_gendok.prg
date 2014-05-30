@@ -43,7 +43,7 @@ private Opc:={}
 private opcexe:={}
 
 AADD(Opc,"1. dokument inventure                       ")
-AADD(opcexe, {|| IM()})
+AADD(opcexe, {|| kalk_generisi_inventuru_magacina() })
 AADD(Opc,"2. inventura-razlika prema postojecoj IM    ")
 AADD(opcexe, {|| gen_im_razlika()})
 

@@ -13,16 +13,22 @@
 #include "kalk.ch"
 
 
-// generisanje dokumenta tipa IM
-FUNCTION IM()
+FUNCTION kalk_generisi_inventuru_magacina()
 
    LOCAL cNule := "N"
+   LOCAL cArtikli := ""
+   LOCAL cPosition := "2"
+   LOCAL cCijenaTip := "1"
+   LOCAL cNule := "D"
+   LOCAL cSrSort := "N"
 
    lOsvjezi := .F.
+
    O_KALK_PRIPR
    GO TOP
+
    IF idvd == "IM"
-      IF Pitanje(, "U kalk_pripremi je dokument IM. Generisati samo knjizne podatke?", "D" ) == "D"
+      IF Pitanje(, "U pripremi je dokument IM. Generisati samo knjižne podatke?", "D" ) == "D"
          lOsvjezi := .T.
       ENDIF
    ENDIF
@@ -33,14 +39,10 @@ FUNCTION IM()
    O_SIFV
    O_ROBA
 
-   cSrSort := "N"
-
    IF lOsvjezi
- 	
       cIdFirma := gFirma
       cIdKonto := kalk_pripr->idKonto
       dDatDok := kalk_pripr->datDok
-
    ELSE
 
       Box(, 10, 70 )
@@ -48,9 +50,6 @@ FUNCTION IM()
       cIdKonto := PadR( "1310", gDuzKonto )
       dDatDok := Date()
       cArtikli := Space( 30 )
-      cPosition := "2"
-      cCijenaTIP := "1"
-      cNule := "D"
       @ m_x + 1, m_Y + 2 SAY "Magacin:" GET  cIdKonto VALID P_Konto( @cIdKonto )
       @ m_x + 2, m_Y + 2 SAY "Datum:  " GET  dDatDok
       @ m_x + 3, m_Y + 2 SAY "Uslov po grupaciji robe"

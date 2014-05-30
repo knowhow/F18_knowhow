@@ -74,7 +74,6 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
    PRIVATE ImeKol := {}
    PRIVATE Kol := {}
 
-   // definisi strukturu pripreme
    AAdd( ImeKol, { "F.", {|| idfirma   }, "idfirma"   } )
    AAdd( ImeKol, { "VD", {|| IdVD                     }, "IdVD"        } )
    AAdd( ImeKol, { "BrDok", {|| BrDok                    }, "BrDok"       } )
@@ -115,25 +114,25 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
 
    _opt_row := PadR( "<c+N> Nova stavka", _opt_d ) + _sep
    _opt_row += PadR( "<ENT> Ispravka", _opt_d ) + _sep
-   _opt_row += PadR( hb_UTF8ToStr( "<c+T> Brisi stavku" ), _opt_d ) + _sep
+   _opt_row += PadR( "<c+T> Briši stavku", _opt_d ) + _sep
    _opt_row += "<K> Kalk.cijena"
 
    @ m_x + nMaxRow - 3, m_y + 2 SAY _opt_row
 
    _opt_row := PadR( "<c+A> Ispravka", _opt_d ) + _sep
-   _opt_row += PadR( hb_UTF8ToStr( "<c+P> Stampa dok." ), _opt_d ) + _sep
-   _opt_row += PadR( hb_UTF8ToStr( "<a+A> Azuriranje" ), _opt_d ) + _sep
+   _opt_row += PadR( "<c+P> Štampa dok.", _opt_d ) + _sep
+   _opt_row += PadR( "<a+A> Ažuriranje", _opt_d ) + _sep
    _opt_row += "<Q> Etikete"
 
    @ m_x + nMaxRow - 2, m_y + 2 SAY _opt_row
 
    _opt_row := PadR( "<a+K> Kontiranje", _opt_d ) + _sep
-   _opt_row += PadR( hb_UTF8ToStr( "<c+F9> Brisi sve" ), _opt_d ) + _sep
-   _opt_row += PadR( hb_UTF8ToStr( "<a+P> Stampa pripreme" ), _opt_d ) + _sep
+   _opt_row += PadR( "<c+F9> Briši sve", _opt_d ) + _sep
+   _opt_row += PadR( "<a+P> Štampa pripreme", _opt_d ) + _sep
 
    @ m_x + nMaxRow - 1, m_y + 2 SAY _opt_row
 
-   _opt_row := PadR( hb_UTF8ToStr( "<c+F8> Rasp.troskova" ), _opt_d ) + _sep
+   _opt_row := PadR( "<c+F8> Rasp.troškova", _opt_d ) + _sep
    _opt_row += PadR( "<A> Asistent", _opt_d ) + _sep
    _opt_row += PadR( "<F10> Dodatne opc.", _opt_d ) + _sep
    _opt_row += "<F11> Dodatne opc./2"
@@ -179,10 +178,7 @@ FUNCTION o_kalk_edit()
    RETURN
 
 
-// -------------------------------------------------------
-// provjeri i ispisi duple stavke iz pripreme
-// -------------------------------------------------------
-STATIC FUNCTION _kalk_pripr_duple_stavke()
+STATIC FUNCTION printaj_duple_stavke_iz_pripreme()
 
    LOCAL _data := {}
    LOCAL _dup := {}
@@ -219,7 +215,7 @@ STATIC FUNCTION _kalk_pripr_duple_stavke()
 
       START PRINT CRET
 
-      ? "Sljedeci artikli u pripremi su dupli:"
+      ?U "Sljedeći artikli u pripremi su dupli:"
       ? Replicate( "-", 80 )
       ? PadR( "R.br", 5 ) + " " + PadR( "Rb.st", 5 ) + " " + PadR( "ID", 10 ) + " " + PadR( "NAZIV", 40 ) + " " + PadR( "BARKOD", 13 )
       ? Replicate( "-", 80 )
@@ -239,9 +235,6 @@ STATIC FUNCTION _kalk_pripr_duple_stavke()
    RETURN
 
 
-// ------------------------------------------------------------
-// rekapitulacija kalkulacije tip-a 24
-// ------------------------------------------------------------
 STATIC FUNCTION kalk_24_rekapitulacija()
 
    my_close_all_dbf()
@@ -257,9 +250,6 @@ STATIC FUNCTION kalk_24_rekapitulacija()
    RETURN DE_REFRESH
 
 
-// -------------------------------------------------------------
-// obrada dogadjaja tastature u pripremi kalkulacija
-// -------------------------------------------------------------
 FUNCTION kalk_pripr_key_handler()
 
    LOCAL nTr2
@@ -310,7 +300,7 @@ FUNCTION kalk_pripr_key_handler()
 
    CASE Upper( Chr( Ch ) ) == "Q"
 
-      IF Pitanje(, "Stampa naljepnica(labela) za robu ?", "D" ) == "D"
+      IF Pitanje(, "Štampa naljepnica za robu (D/N) ?", "D" ) == "D"
 
          my_close_all_dbf()
 
@@ -350,7 +340,7 @@ FUNCTION kalk_pripr_key_handler()
          my_close_all_dbf()
 
          o_kalk_edit()
-         MsgBeep( "Stavke koje su bile privremeno sklonjene sada su vracene! Obradite ih!" )
+         MsgBeep( "Stavke koje su bile privremeno uklonjene sada su vraćene! Obradite ih!" )
 
       ENDIF
 
@@ -368,7 +358,7 @@ FUNCTION kalk_pripr_key_handler()
 
    CASE Ch == K_CTRL_T
 
-      IF Pitanje(, "Želite izbrisati ovu stavku ?", "D" ) == "D"
+      IF Pitanje(, "Želite izbrisati ovu stavku (D/N) ?", "D" ) == "D"
 
          _log_info := kalk_pripr->idfirma + "-" + kalk_pripr->idvd + "-" + kalk_pripr->brdok
          cStavka := kalk_pripr->rbr
@@ -392,20 +382,20 @@ FUNCTION kalk_pripr_key_handler()
       RETURN DE_CONT
 
    CASE IsDigit( Chr( Ch ) )
-      Msg( "Ako zelite zapoceti unos novog dokumenta: <Ctrl-N>" )
+      Msg( "Ako želite započeti unos novog dokumenta: <Ctrl-N>" )
       RETURN DE_CONT
    CASE Ch == K_ENTER
       RETURN EditStavka()
    CASE Ch == K_CTRL_A .OR. lAsistRadi
       RETURN EditAll()
-   CASE Ch == K_CTRL_N  // nove stavke
+   CASE Ch == K_CTRL_N
       fNovi := .T.
       RETURN NovaStavka()
    CASE Ch == K_CTRL_F8
       RaspTrosk()
       RETURN DE_REFRESH
    CASE Ch == K_CTRL_F9
-      IF Pitanje(, "Zelite Izbrisati cijelu pripremu ??", "N" ) == "D"
+      IF Pitanje(, "Želite izbrisati kompletnu tabelu pripreme (D/N) ?", "N" ) == "D"
 
          cOpis := kalk_pripr->idfirma + "-" + ;
             kalk_pripr->idvd + "-" + ;
@@ -422,7 +412,6 @@ FUNCTION kalk_pripr_key_handler()
    CASE Upper( Chr( Ch ) ) == "A" .OR. lAutoAsist
       RETURN KnjizAsistent()
    CASE Upper( Chr( Ch ) ) == "K"
-      // kalkulacija cijena
       kalkulacija_cijena( .F. )
       SELECT kalk_pripr
       GO TOP
@@ -438,8 +427,6 @@ FUNCTION kalk_pripr_key_handler()
       KPro()
       RETURN DE_CONT
    CASE lAutoObr .AND. lAAsist
-      // automatski obradi dokument
-      // asistent
       lAAsist := .F.
       RETURN KnjizAsistent()
    CASE lAutoObr .AND. !lAAsist
@@ -468,7 +455,7 @@ FUNCTION EditStavka()
    _opis := fetch_metric( "kalk_dodatni_opis_kod_unosa_dokumenta", NIL, "N" ) == "D"
 
    IF RecCount() == 0
-      Msg( "Ako zelite zapoceti unos novog dokumenta: <Ctrl-N>" )
+      Msg( "Ako želite započeti unos novog dokumenta: <Ctrl-N>" )
       RETURN DE_CONT
    ENDIF
 
@@ -476,7 +463,7 @@ FUNCTION EditStavka()
 
    IF Left( _idkonto2, 3 ) = "XXX"
       Beep( 2 )
-      Msg( "Ne mozete ispravljati protustavke" )
+      Msg( "Ne možete ispravljati protustavke !" )
       RETURN DE_CONT
    ENDIF
 
@@ -532,14 +519,12 @@ FUNCTION EditStavka()
       _dok_hash[ "brdok" ] := field->brdok
       _dok_hash[ "rbr" ] := field->rbr
 
-      // ubaci mi atribute u fakt_atribute
       oAtrib := F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB )
       oAtrib:dok_hash := _dok_hash
       oAtrib:atrib_hash_to_dbf( _atributi )
 
       SELECT kalk_pripr
 
-      // izmjeni sve stavke dokumenta na osnovu prve stavke
       IF nRbr == 1
          _t_rec := RecNo()
          _new_dok := dbf_get_rec()
@@ -634,7 +619,6 @@ FUNCTION NovaStavka()
 
    _TMarza := "A"
 
-   // ipak idi na zadnju stavku !
    GO BOTTOM
    IF Left( field->idkonto2, 3 ) = "XXX"
       _rbr_uvecaj := 1
@@ -709,12 +693,10 @@ FUNCTION NovaStavka()
       _dok_hash[ "brdok" ] := field->brdok
       _dok_hash[ "rbr" ] := field->rbr
 
-      // ubaci mi atribute u fakt_atribute
       oAtrib := F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB )
       oAtrib:dok_hash := _dok_hash
       oAtrib:atrib_hash_to_dbf( _atributi )
 
-      // izmjeni sve stavke dokumenta na osnovu prve stavke
       IF nRbr == 1
          SELECT kalk_pripr
          _t_rec := RecNo()
@@ -733,7 +715,6 @@ FUNCTION NovaStavka()
          _idkonto2 := "XXX"
          _kolicina := -kolicina
 
-         // uvecaj redni broj stavke
          nRbr := RbrUNum( _rbr ) + 1
          _Rbr := RedniBroj( nRbr )
 
@@ -755,7 +736,6 @@ FUNCTION NovaStavka()
             _error := "0"
          ENDIF
 
-         // stavka onda postavi ERROR
          Gather()
 
          BoxC()
@@ -773,9 +753,6 @@ FUNCTION NovaStavka()
 
 
 
-// ---------------------------------------------------------
-// ispravka svih stavki
-// ---------------------------------------------------------
 FUNCTION EditAll()
 
    LOCAL _atributi := hb_Hash()
@@ -783,7 +760,6 @@ FUNCTION EditAll()
    LOCAL oAtrib, _dok_hash, _old_dok, _new_dok
    LOCAL _rok, _opis
 
-   // ovu opciju moze pozvati i asistent alt+F10 !
    PushWA()
    SELECT kalk_pripr
 
@@ -855,7 +831,6 @@ FUNCTION EditAll()
          _error := "0"
       ENDIF
 
-      // stavka onda postavi ERROR
       _oldval := _mpcsapp * _kolicina  // vrijednost prosle stavke
       _oldvaln := _nc * _kolicina
 
@@ -863,14 +838,12 @@ FUNCTION EditAll()
       Gather()
       my_unlock()
 
-      // ubaci mi atribute u fakt_atribute
       oAtrib := F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB )
       oAtrib:dok_hash := _dok
       oAtrib:atrib_hash_to_dbf( _atributi )
 
       SELECT kalk_pripr
 
-      // izmjeni sve stavke dokumenta na osnovu prve stavke
       IF nRbr == 1
          _t_rec := RecNo()
          _new_dok := dbf_get_rec()
@@ -887,7 +860,6 @@ FUNCTION EditAll()
          _idkonto2 := "XXX"
          _kolicina := -kolicina
 
-         // uvecaj redni broj stavke
          nRbr := RbrUNum( _rbr ) + 1
          _Rbr := RedniBroj( nRbr )
 
@@ -939,10 +911,6 @@ FUNCTION EditAll()
 
 
 
-/*! \fn KnjizAsistent()
- *  \brief Asistent za obradu stavki dokumenta u kalk_pripremi
- */
-
 FUNCTION KnjizAsistent()
 
    lAutoAsist := .F.
@@ -954,9 +922,6 @@ FUNCTION KnjizAsistent()
 
 
 
-/*! \fn MeniF10()
- *  \brief Meni ostalih opcija koji se poziva tipkom F10 u tabeli kalk_pripreme
- */
 
 FUNCTION MeniF10()
 
@@ -1181,9 +1146,6 @@ STATIC FUNCTION kalk_dokument_prenos_cijena()
 
 
 
-/*! \fn MeniF11()
- *  \brief Meni ostalih opcija koji se poziva tipkom F11 u tabeli kalk_pripreme
- */
 
 FUNCTION MeniF11()
 
@@ -1205,7 +1167,7 @@ FUNCTION MeniF11()
    AAdd( opc, "7. renumeracija kalk priprema" )
    AAdd( opcexe, {|| renumeracija_kalk_pripr( nil, nil, .F. ) } )
    AAdd( opc, "8. provjeri duple stavke u pripremi" )
-   AAdd( opcexe, {|| _kalk_pripr_duple_stavke() } )
+   AAdd( opcexe, {|| printaj_duple_stavke_iz_pripreme() } )
 
    my_close_all_dbf()
    PRIVATE am_x := m_x, am_y := m_y
@@ -1411,9 +1373,6 @@ FUNCTION Get1( fNovi, atrib )
    RETURN
 
 
-// ----------------------------------------------------------
-// ispisuje naziv sifre na zeljenoj lokaciji
-// ----------------------------------------------------------
 FUNCTION ispisi_naziv_sifre( area, id, x, y, len )
 
    LOCAL _naz := ""
@@ -1505,7 +1464,7 @@ FUNCTION Get1Header( fNovi )
             READ
             cSufiks := SufBrKalk( _idKonto )
          ELSE
-            @ m_x + 2, m_y + 2 SAY "Magacinski konto razdužuje" GET _idKonto2 VALID P_Konto( @_idKonto2 ) PICT "@!"
+            @ m_x + 2, m_y + 2 SAY8 "Magacinski konto razdužuje" GET _idKonto2 VALID P_Konto( @_idKonto2 ) PICT "@!"
             READ
             cSufiks := SufBrKalk( _idKonto2 )
          ENDIF
@@ -1640,7 +1599,6 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
 
 FUNCTION VpcSaPpp()
 
-   // {
    IF _VPC == 0
       _RabatV := 0
       _VPC := ( _VPCSAPPP + _NC * tarifa->vpp / 100 ) / ( 1 + tarifa->vpp / 100 + _mpc / 100 )
@@ -1652,7 +1610,6 @@ FUNCTION VpcSaPpp()
    ShowGets()
 
    RETURN .T.
-// }
 
 
 
@@ -1663,13 +1620,12 @@ FUNCTION VpcSaPpp()
 
 FUNCTION RaspTrosk( fSilent )
 
-   // {
    LOCAL nStUc := 20
 
    IF fsilent == NIL
       fsilent := .F.
    ENDIF
-   IF fsilent .OR.  Pitanje(, "Rasporediti troškove ??", "N" ) == "D"
+   IF fsilent .OR.  Pitanje(, "Rasporediti troškove (D/N) ?", "N" ) == "D"
       PRIVATE qqTar := ""
       PRIVATE aUslTar := ""
       IF idvd $ "16#80"
@@ -2196,8 +2152,8 @@ FUNCTION MPCSAPPiz80uSif()
    cBrDokU  := Space( Len( kalk_pripr->brdok ) )
 
    Box(, 4, 75 )
-   @ m_x + 0, m_y + 5 SAY "FORMIRANJE MPC U SIFRARNIKU OD MPCSAPP DOKUMENTA TIPA 80"
-   @ m_x + 2, m_y + 2 SAY "Dokument: " + cIdFirma + "-" + cIdVdU + "-"
+   @ m_x + 0, m_y + 5 SAY8 "FORMIRANJE MPC U ŠIFRARNIKU OD MPCSAPP DOKUMENTA TIPA 80"
+   @ m_x + 2, m_y + 2 SAY8 "Dokument: " + cIdFirma + "-" + cIdVdU + "-"
    @ Row(), Col() GET cBrDokU VALID postoji_kalk_dok( cIdFirma + cIdVdU + cBrDokU )
    READ; ESC_BCR
    BoxC()
@@ -2247,7 +2203,7 @@ FUNCTION VPCSifUDok()
       SKIP 1
    ENDDO
    my_unlock()
-   Msg( "Automatski pokrecem asistenta (opcija A)!", 1 )
+   Msg( "Automatski pokrećem asistenta (opcija A) !", 1 )
    lAutoAsist := .T.
    KEYBOARD Chr( K_ESC )
    my_close_all_dbf()
@@ -2257,9 +2213,6 @@ FUNCTION VPCSifUDok()
 
 
 
-// ------------------------------------------------
-// otvara tabele za pregled izvjestaja
-// ------------------------------------------------
 STATIC FUNCTION _o_ctrl_tables( azurirana )
 
    O_KONCIJ
@@ -2271,7 +2224,6 @@ STATIC FUNCTION _o_ctrl_tables( azurirana )
 
    IF azurirana
       O_SKALK
-      // alias kalk_pripr
    ELSE
       O_KALK_PRIPR
    ENDIF
@@ -2318,15 +2270,12 @@ FUNCTION kalk_centr_stampa_dokumenta()
 
    my_close_all_dbf()
 
-   // otvori potrebne tabele
    _o_ctrl_tables( fstara )
 
    SELECT kalk_pripr
    SET ORDER TO TAG "1"
    GO TOP
 
-   // kalk dokument tip-a 24
-   // on ce koristiti rekapitulaciju kao izvjestaj
    IF ( field->idvd == "24" )
       RETURN kalk_24_rekapitulacija()
    ENDIF
@@ -2380,7 +2329,7 @@ FUNCTION kalk_centr_stampa_dokumenta()
 
       // provjeri da li kalkulacija ima sve cijene ?
       IF !kalkulacija_ima_sve_cijene( cIdFirma, cIdVd, cBrDok )
-         MsgBeep( "Unutar kalkulacije nedostaju pojedine cijene bitne za obracun!#Stampanje onemoguceno." )
+         MsgBeep( "Unutar kalkulacije nedostaju pojedine cijene bitne za obračun!#Štampanje onemogućeno." )
          my_close_all_dbf()
          RETURN
       ENDIF
@@ -2663,12 +2612,12 @@ FUNCTION kalkulacija_ima_sve_cijene( firma, tip_dok, br_dok )
 
 FUNCTION PopustKaoNivelacijaMP()
 
-   // {
-   LOCAL lImaPromjena
-   lImaPromjena := .F.
+   LOCAL lImaPromjena := .F.
+
    o_kalk_edit()
    SELECT kalk_pripr
    GO TOP
+
    DO WHILE !Eof()
       IF ( !idvd = "4" .OR. rabatv == 0 )
          SKIP 1
@@ -2690,12 +2639,12 @@ FUNCTION PopustKaoNivelacijaMP()
       SKIP 1
    ENDDO
    IF lImaPromjena
-      Msg( "Izvrsio promjene!", 1 )
-      // lAutoAsist:=.t.
+      Msg( "Izvršio promjene!", 1 )
       KEYBOARD Chr( K_ESC )
    ELSE
-      MsgBeep( "Nisam nasao nijednu stavku sa maloprodajnim popustom!" )
+      MsgBeep( "Nisam našao niti jednu stavku sa maloprodajnim popustom !" )
    ENDIF
    CLOSERET
 
    RETURN
+

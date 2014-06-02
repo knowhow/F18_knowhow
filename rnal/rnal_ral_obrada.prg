@@ -14,9 +14,6 @@
 
 
 
-// --------------------------------------
-// otvara sifranik ral
-// --------------------------------------
 function sif_ral( cId, dx, dy )
 local cHeader := "RAL"
 private ImeKol
@@ -24,7 +21,6 @@ private Kol
 
 O_RAL
 
-// setuj kolone tabele
 set_a_kol( @ImeKol, @Kol )
 
 PostojiSifra(F_RAL, 1, maxrows() - 15, maxcols() - 15, cHeader, @cId, dx, dy, {|| key_handler(Ch) })

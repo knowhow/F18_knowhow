@@ -195,7 +195,7 @@ do while !EOF()
 		field->doc_it_wid) 
 
 	// sada imam sve potrebne podatke za obracun
-	aArr := calc_ral( nRal, nTick, nRoller, nUm2 )
+	aArr := rnal_kalkulisi_ral( nRal, nTick, nRoller, nUm2 )
 
 	// dobio sam obracun u aArr sad ga treba upisati u 
 	// pomocnu tabelu ...

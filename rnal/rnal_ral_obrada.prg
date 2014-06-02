@@ -22,7 +22,7 @@ FUNCTION sif_ral( cId, dx, dy )
 
    O_RAL
 
-   set_a_kol( @ImeKol, @Kol )
+   set_kolone( @ImeKol, @Kol )
 
    PostojiSifra( F_RAL, 1, maxrows() - 15, maxcols() - 15, cHeader, @cId, dx, dy, {|| key_handler( Ch ) } )
 
@@ -30,17 +30,11 @@ FUNCTION sif_ral( cId, dx, dy )
 
 
 
-// ----------------------------------------
-// obrada tipki na tastaturi
-// ----------------------------------------
 STATIC FUNCTION key_handler( cCh )
    RETURN DE_CONT
 
 
-// -----------------------------------------
-// setovanje kolona tabele
-// -----------------------------------------
-STATIC FUNCTION set_a_kol( aImeKol, aKol )
+STATIC FUNCTION set_kolone( aImeKol, aKol )
 
    aKol := {}
    aImeKol := {}
@@ -66,9 +60,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
    RETURN
 
 
-// --------------------------------------
-// vraca ral informacije
-// --------------------------------------
+
 FUNCTION get_ral( nTick )
 
    LOCAL cRet := ""
@@ -86,33 +78,28 @@ FUNCTION get_ral( nTick )
       O_RAL
    ENDIF
 
-   Box(, 2, 40 )
+   Box(, 2, 45 )
 
-   @ m_x + 1, m_y + 2 SAY "Valjak (1/2/3):" GET nRoller PICT "9" ;
-      VALID sh_roller( nRoller )
-   @ m_x + 2, m_y + 2 SAY "         RAL ->" GET nRal PICT "99999"
+   @ m_x + 1, m_y + 2 SAY "Valjak [1 - 80] / [2 - 160]:" GET nRoller PICT "9" VALID prikazi_valjak( nRoller )
+   @ m_x + 2, m_y + 2 SAY "             RAL ->" GET nRal PICT "99999"
 	
    READ
 
    BoxC()
 
-   // probaj naci po debljini...
    SELECT ral
    GO TOP
    SEEK Str( nRal, 5 ) + Str( nTick, 2 )
 
    IF !Found()
-      // probaj samo po ral-u
       GO TOP
       SEEK Str( nRal, 5 )
 
       IF !Found()
-         // otvori sifrarnik pa izaberi...
          sif_ral( @nRal )
       ENDIF
    ENDIF
 
-   // uzmi vrijednost iz polja
    nTick := field->gl_tick
 
    SELECT ( nTarea )
@@ -131,17 +118,15 @@ FUNCTION get_ral( nTick )
 
    cRet := "RAL:" + AllTrim( Str( nRal, 5 ) ) + ;
       "#" + AllTrim( Str( nTick, 2 ) ) + ;
-      "#" + AllTrim( Str( _g_roller( nRoller ) ) )
+      "#" + AllTrim( Str( dimenzije_valjaka( nRoller ) ) )
 
    RETURN cRet
 
 
-// --------------------------------------------
-// ispisuje vrijednost valjka
-// --------------------------------------------
-STATIC FUNCTION sh_roller( nRoll )
 
-   LOCAL nValue := _g_roller( nRoll )
+STATIC FUNCTION prikazi_valjak( nValjak )
+
+   LOCAL nValue := dimenzije_valjaka( nValjak )
    LOCAL cValue
 
    cValue := "-> " + AllTrim( Str( nValue ) ) + " gr/m2"
@@ -152,21 +137,28 @@ STATIC FUNCTION sh_roller( nRoll )
 
 
 
-// ------------------------------------------
-// vraca roller dimenziju
-// ------------------------------------------
-STATIC FUNCTION _g_roller( nRoll )
+STATIC FUNCTION matrica_valjaka()
+   
+   LOCAL _arr := {}
+
+   AADD( _arr, { 1, 80 } )
+   AADD( _arr, { 2, 160 } )
+
+   RETURN _arr
+
+
+
+STATIC FUNCTION dimenzije_valjaka( nValjak )
 
    LOCAL nVal := 80
+   LOCAL nScan
+   LOCAL aArr := matrica_valjaka()
+    
+   nScan := ASCAN( aArr, { |xval| xval[1] == nValjak } )  
 
-   DO CASE
-   CASE nRoll = 1
-      nVal := 80
-   CASE nRoll = 2
-      nVal := 100
-   CASE nRoll = 3
-      nVal := 150
-   ENDCASE
+   IF nScan > 0
+      nVal := aArr[ nScan, 2 ]
+   ENDIF
 
    RETURN nVal
 
@@ -255,19 +247,16 @@ FUNCTION g_ral_value( nRal, nTick, nRoller )
    RETURN xRet
 
 
-// ----------------------------------------------
-// ispisi utrosak boja
-// ----------------------------------------------
-FUNCTION sh_ral_calc( aColor )
+
+FUNCTION rnal_prikazi_ral_kalkulaciju( aColor )
 
    LOCAL cTmp := ""
    LOCAL i
 
    // 1. 152000 (54.00%) -> 0.091 kg
    // 2. 182000 (44.00%) -> 0.072 kg
-   // itd....
 
-   ? "RAL: utrosak boja (kg)"
+   ?U "RAL: utrošak boja (kg)"
    ? "-----------------------------------"
 
    FOR i := 1 TO Len( aColor )
@@ -291,7 +280,7 @@ FUNCTION sh_ral_calc( aColor )
 // nRoller - valjak
 // nUm2 - ukupna kvadratura stakla
 // ----------------------------------------------
-FUNCTION calc_ral( nRal, nTick, nRoller, nUm2 )
+FUNCTION rnal_kalkulisi_ral( nRal, nTick, nRoller, nUm2 )
 
    LOCAL nTArea := Select()
    LOCAL nColor1 := 0.00000000000
@@ -310,10 +299,10 @@ FUNCTION calc_ral( nRal, nTick, nRoller, nUm2 )
 
    IF Found()
 	
-      nColor1 := c_ral_color( field->colp_1, nUm2, nRoller )
-      nColor2 := c_ral_color( field->colp_2, nUm2, nRoller )
-      nColor3 := c_ral_color( field->colp_3, nUm2, nRoller )
-      nColor4 := c_ral_color( field->colp_4, nUm2, nRoller )
+      nColor1 := rnal_ral_utrosak_boje( field->colp_1, nUm2, nRoller )
+      nColor2 := rnal_ral_utrosak_boje( field->colp_2, nUm2, nRoller )
+      nColor3 := rnal_ral_utrosak_boje( field->colp_3, nUm2, nRoller )
+      nColor4 := rnal_ral_utrosak_boje( field->colp_4, nUm2, nRoller )
 	
       IF nColor1 <> 0
          AAdd( aColor, { field->col_1, field->colp_1, nColor1 } )
@@ -344,7 +333,7 @@ FUNCTION calc_ral( nRal, nTick, nRoller, nUm2 )
 // nUm2 = ukupna kvadratura stakla
 //
 // --------------------------------------------------------------
-FUNCTION c_ral_color( nPercent, nUm2, nRoller )
+FUNCTION rnal_ral_utrosak_boje( nPercent, nUm2, nRoller )
 
    LOCAL nRet := 0
 

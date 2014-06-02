@@ -152,6 +152,7 @@ METHOD FinBrutoBilans:get_vars()
    LOCAL _dat_od := fetch_metric( "fin_bb_dat_od", _user, CToD( "" ) )
    LOCAL _dat_do := fetch_metric( "fin_bb_dat_do", _user, CToD( "" ) )
    LOCAL _var_ab := fetch_metric( "fin_bb_var_ab", _user, "B" )
+   LOCAL _var_txt := fetch_metric( "fin_bb_var_txt", _user, "1" )
    LOCAL _tek_prom := fetch_metric( "fin_bb_kol_tek_promet", _user, "D" )
    LOCAL _saldo_nula := fetch_metric( "fin_bb_saldo_nula", _user, "D" )
    LOCAL _podklase := fetch_metric( "fin_bb_pod_klase", _user, "N" )
@@ -204,6 +205,7 @@ METHOD FinBrutoBilans:get_vars()
    ++ _x
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Varijanta izvještaja (A/B):" GET _var_ab PICT "@!" VALID _var_ab $ "AB"
+   @ m_x + _x, col() + 1 SAY8 "TXT/ODT (1/2):" GET _var_txt PICT "@!" VALID _var_txt $ "12"
 
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Prikaz stavki sa saldom 0 (D/N) ?" GET _saldo_nula VALID _saldo_nula $ "DN" PICT "@!"
@@ -233,13 +235,17 @@ METHOD FinBrutoBilans:get_vars()
       RETURN _ok
    ENDIF
 
-   // snimi parametre
+   IF _var_ab == "B"
+      _var_txt := "1"
+   ENDIF
+
    set_metric( "fin_bb_konto", _user, AllTrim( _konto ) )
    set_metric( "fin_bb_dat_od", _user, _dat_od )
    set_metric( "fin_bb_dat_do", _user, _dat_do )
    set_metric( "fin_bb_saldo_nula", _user, _saldo_nula )
    set_metric( "fin_bb_kol_tek_promet", _user, _tek_prom )
    set_metric( "fin_bb_var_ab", _user, _var_ab )
+   set_metric( "fin_bb_var_txt", _user, _var_txt )
    set_metric( "fin_bb_pod_klase", _user, _podklase )
    set_metric( "fin_bb_format", _user, _format )
 
@@ -255,6 +261,7 @@ METHOD FinBrutoBilans:get_vars()
    ::params[ "varijanta" ] := _var_ab
    ::params[ "podklase" ] := ( _podklase == "D" )
    ::params[ "format" ] := _format
+   ::params[ "txt" ] := ( _var_txt == "1" )
 
    ::tip := _tip
 
@@ -549,7 +556,11 @@ METHOD FinBrutoBilans:gen_xml()
 
       xml_node( "id", to_xml_encoding( _klasa ) )
 
-      xml_node( "naz", to_xml_encoding( AllTrim( __konto[ "naz" ] ) ) )
+      IF __konto == NIL
+         xml_node( "naz", ALLTRIM( field->idkonto ) + to_xml_encoding( hb_utf8tostr( " - Nepostojeći konto !" ) ) )
+      ELSE
+         xml_node( "naz", to_xml_encoding( AllTrim( __konto[ "naz" ] ) ) )
+      ENDIF
 
       _t_ps_dug := _t_ps_pot := _t_kum_dug := _t_kum_pot := _t_tek_dug := _t_tek_pot := _t_sld_dug := _t_sld_pot := 0
 
@@ -558,16 +569,15 @@ METHOD FinBrutoBilans:gen_xml()
          _sint := Left( field->idkonto, _sint_len )
          __konto := _set_sql_record_to_hash( "fmk.konto", _sint )
 
-         IF __konto == NIL
-            MsgBeep( "Ne postoji sintetički konto " + _sint + " u šifraniku konta" )
-            RETURN _ok
-         ENDIF
-
          xml_subnode( "sint", .F. )
 
          xml_node( "id", to_xml_encoding( _sint ) )
 
-         xml_node( "naz", to_xml_encoding( AllTrim( __konto[ "naz" ] ) ) )
+         IF __konto == NIL
+            xml_node( "naz", ALLTRIM( field->idkonto ) + to_xml_encoding( hb_utf8tostr( " - Nepostojeći konto !" ) ) )
+         ELSE
+            xml_node( "naz", to_xml_encoding( AllTrim( __konto[ "naz" ] ) ) )
+         ENDIF
 
          _u_ps_dug := _u_ps_pot := _u_kum_dug := _u_kum_pot := _u_tek_dug := _u_tek_pot := _u_sld_dug := _u_sld_pot := 0
 
@@ -600,7 +610,6 @@ METHOD FinBrutoBilans:gen_xml()
 
             ENDIF
 
-            // iznosi ...
             xml_node( "ps_dug", AllTrim( Str( field->ps_dug, 12, 2 ) ) )
             xml_node( "ps_pot", AllTrim( Str( field->ps_pot, 12, 2 ) ) )
 
@@ -613,7 +622,6 @@ METHOD FinBrutoBilans:gen_xml()
             xml_node( "sld_dug", AllTrim( Str( field->sld_dug, 12, 2 ) ) )
             xml_node( "sld_pot", AllTrim( Str( field->sld_pot, 12, 2 ) ) )
 
-            // totali sintetički...
             _u_ps_dug += field->ps_dug
             _u_ps_pot += field->ps_pot
             _u_tek_dug += field->tek_dug
@@ -623,7 +631,6 @@ METHOD FinBrutoBilans:gen_xml()
             _u_sld_dug += field->sld_dug
             _u_sld_pot += field->sld_pot
 
-            // totali po klasama
             _t_ps_dug += field->ps_dug
             _t_ps_pot += field->ps_pot
             _t_tek_dug += field->tek_dug
@@ -633,7 +640,6 @@ METHOD FinBrutoBilans:gen_xml()
             _t_sld_dug += field->sld_dug
             _t_sld_pot += field->sld_pot
 
-            // total ukupno
             _tt_ps_dug += field->ps_dug
             _tt_ps_pot += field->ps_pot
             _tt_tek_dug += field->tek_dug
@@ -643,11 +649,9 @@ METHOD FinBrutoBilans:gen_xml()
             _tt_sld_dug += field->sld_dug
             _tt_sld_pot += field->sld_pot
 
-            // dodaj u matricu sa klasama, takodjer totale...
             _scan := AScan( _a_klase, {|var| VAR[ 1 ] == Left( _sint, 1 ) } )
 
             IF _scan == 0
-               // dodaj novu stavku u matricu...
                AAdd( _a_klase, { Left( _sint, 1 ), ;
                   field->ps_dug, ;
                   field->ps_pot, ;
@@ -658,8 +662,6 @@ METHOD FinBrutoBilans:gen_xml()
                   field->sld_dug, ;
                   field->sld_pot } )
             ELSE
-
-               // dodaj na postojeci iznos...
 
                _a_klase[ _scan, 2 ] := _a_klase[ _scan, 2 ] + field->ps_dug
                _a_klase[ _scan, 3 ] := _a_klase[ _scan, 3 ] + field->ps_pot
@@ -679,8 +681,6 @@ METHOD FinBrutoBilans:gen_xml()
          ENDDO
 
          if ::tip < 3
-            // upisi totale sintetike
-            // ....
             xml_node( "ps_dug", AllTrim( Str( _u_ps_dug, 12, 2 ) ) )
             xml_node( "ps_pot", AllTrim( Str( _u_ps_pot, 12, 2 ) ) )
             xml_node( "kum_dug", AllTrim( Str( _u_kum_dug, 12, 2 ) ) )
@@ -696,7 +696,6 @@ METHOD FinBrutoBilans:gen_xml()
 
       ENDDO
 
-      // uspisi totale klase
       xml_node( "ps_dug", AllTrim( Str( _t_ps_dug, 12, 2 ) ) )
       xml_node( "ps_pot", AllTrim( Str( _t_ps_pot, 12, 2 ) ) )
       xml_node( "kum_dug", AllTrim( Str( _t_kum_dug, 12, 2 ) ) )
@@ -710,7 +709,6 @@ METHOD FinBrutoBilans:gen_xml()
 
    ENDDO
 
-   // ukupni total
    xml_node( "ps_dug", AllTrim( Str( _tt_ps_dug, 12, 2 ) ) )
    xml_node( "ps_pot", AllTrim( Str( _tt_ps_pot, 12, 2 ) ) )
    xml_node( "kum_dug", AllTrim( Str( _tt_kum_dug, 12, 2 ) ) )
@@ -720,7 +718,6 @@ METHOD FinBrutoBilans:gen_xml()
    xml_node( "sld_dug", AllTrim( Str( _tt_sld_dug, 12, 2 ) ) )
    xml_node( "sld_pot", AllTrim( Str( _tt_sld_pot, 12, 2 ) ) )
 
-   // totali po klasama...
    xml_subnode( "total", .F. )
 
    FOR _i := 1 TO Len( _a_klase )

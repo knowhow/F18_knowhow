@@ -1,3 +1,7 @@
+1.7.96  2014-06-02, vsasa
+
+  - RNAL, danasnji_datum() umjesto DATE()
+ 
 1.7.95  2014-06-02, vsasa
 
   - LD, specifikacija plate - bugfix

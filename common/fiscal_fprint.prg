@@ -76,7 +76,7 @@ STATIC FUNCTION _max_polog( polog )
    LOCAL _ok := .T.
 
    IF polog > POLOG_LIMIT
-      IF Pitanje(, "Polog je > " + AllTrim( Str( POLOG_LIMIT ) ) + "! Da li je ovo ispravan unos ?", "N" ) == "N"
+      IF Pitanje(, "Depozit je > " + AllTrim( Str( POLOG_LIMIT ) ) + "! Da li je ovo ispravan unos (D/N) ?", "N" ) == "N"
          _ok := .F.
       ENDIF
    ENDIF
@@ -98,17 +98,16 @@ FUNCTION fprint_polog( dev_params, nPolog )
       nPolog := 0
    ENDIF
 
-   // ako je polog 0, pozovi formu za unos
    IF nPolog = 0
 
       Box(, 1, 60 )
-      @ m_x + 1, m_y + 2 SAY "Zaduzujem kasu za:" GET nPolog ;
+      @ m_x + 1, m_y + 2 SAY8 "Zadužujem kasu za:" GET nPolog ;
          PICT "999999.99" VALID _max_polog( nPolog )
       READ
       BoxC()
 
       IF nPolog = 0
-         msgbeep( "Polog mora biti <> 0 !" )
+         msgbeep( "Vrijednost depozita mora biti <> 0 !" )
          RETURN
       ENDIF
 
@@ -170,11 +169,11 @@ FUNCTION fprint_double( dev_params, rn_params )
       @ m_x + 3, m_y + 2 SAY "--------------------------------------"
 
       @ m_x + 4, m_y + 2 SAY "A - duplikat svih dokumenata"
-      @ m_x + 5, m_y + 2 SAY "F - duplikat fiskalnog racuna"
-      @ m_x + 6, m_y + 2 SAY "R - duplikat reklamnog racuna"
-      @ m_x + 7, m_y + 2 SAY "Z - duplikat Z izvjestaja"
-      @ m_x + 8, m_y + 2 SAY "X - duplikat X izvjestaja"
-      @ m_x + 9, m_y + 2 SAY "P - duplikat periodicnog izvjestaja" ;
+      @ m_x + 5, m_y + 2 SAY8 "F - duplikat fiskalnog računa"
+      @ m_x + 6, m_y + 2 SAY8 "R - duplikat reklamnog računa"
+      @ m_x + 7, m_y + 2 SAY8 "Z - duplikat Z izvještaja"
+      @ m_x + 8, m_y + 2 SAY8 "X - duplikat X izvještaja"
+      @ m_x + 9, m_y + 2 SAY8 "P - duplikat periodičnog izvještaja" ;
          GET cType ;
          VALID cType $ "AFRZXP" PICT "@!"
 
@@ -192,12 +191,12 @@ FUNCTION fprint_double( dev_params, rn_params )
    ELSE
 
       IF Empty( rn_params[ "vrijeme" ] )
-         MsgBeep( "Opcija je nemoguca bez parametra vremena !" )
+         MsgBeep( "Opciju nije moguće izvršiti, nije definisano vrijeme !" )
          RETURN
       ENDIF
 
       IF rn_params[ "datum" ] == CToD( "" )
-         MsgBeep( "Opcija je nemoguca bez parametra datuma !" )
+         MsgBeep( "Opciju nije moguće izvršiti, nije definisan datum !" )
          RETURN
       ENDIF
 
@@ -288,9 +287,6 @@ FUNCTION fprint_nf_txt( dev_params, cTxt )
    RETURN
 
 
-// ----------------------------------------------------
-// brisanje PLU iz uredjaja
-// ----------------------------------------------------
 FUNCTION fprint_delete_plu( dev_params, silent )
 
    LOCAL cSep := ";"
@@ -308,7 +304,6 @@ FUNCTION fprint_delete_plu( dev_params, silent )
          RETURN
       ENDIF
 
-      // daj mi vrijednost plu do koje cu resetovati...
       Box(, 1, 50 )
       @ m_x + 1, m_y + 2 SAY "Unesi max.plu vrijednost:" GET nMaxPlu PICT "9999999999"
       READ
@@ -320,10 +315,7 @@ FUNCTION fprint_delete_plu( dev_params, silent )
 
    ENDIF
 
-   // uzmi strukturu tabele za pos racun
    aStruct := _g_f_struct( F_POS_RN )
-
-   // iscitaj pos matricu
    aDel := _fp_del_plu( nMaxPlu, dev_params )
 
    _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aDel )
@@ -352,9 +344,6 @@ FUNCTION fprint_rn_close( dev_params )
    RETURN
 
 
-// ----------------------------------------------------
-// manualno zadavanje komandi
-// ----------------------------------------------------
 FUNCTION fprint_manual_cmd( dev_params )
 
    LOCAL cSep := ";"
@@ -368,13 +357,13 @@ FUNCTION fprint_manual_cmd( dev_params )
 
    Box(, 4, 65 )
 	
-   @ m_x + 1, m_y + 2 SAY "**** manuelno zadavanje komandi ****"
+   @ m_x + 1, m_y + 2 SAY8 "**** PROIZVOLJNE KOMANDE ****"
 	
    @ m_x + 2, m_y + 2 SAY "   broj komande:" GET nCmd PICT "999" ;
       VALID nCmd > 0
    @ m_x + 3, m_y + 2 SAY "        komanda:" GET cCond PICT "@S40"
 	
-   @ m_x + 4, m_y + 2 SAY "provjera greske:" GET cErr PICT "@!" ;
+   @ m_x + 4, m_y + 2 SAY8 "provjera greške:" GET cErr PICT "@!" ;
       VALID cErr $ "DN"
    READ
    BoxC()
@@ -383,32 +372,21 @@ FUNCTION fprint_manual_cmd( dev_params )
       RETURN
    ENDIF
 
-   // uzmi strukturu tabele za pos racun
    aStruct := _g_f_struct( F_POS_RN )
-
-   // iscitaj pos matricu
    aManCmd := _fp_man_cmd( nCmd, cCond )
-
    _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aManCmd )
 
    IF cErr == "D"
-	
-      // provjeri gresku
       nErr := fprint_read_error( dev_params, 0 )
-
       IF nErr <> 0
-         msgbeep( "Postoji greska !!!" )
+         msgbeep( "Postoji greška kod izvršenja proizvoljne komande !" )
       ENDIF
-
    ENDIF
 
    RETURN
 
 
 
-// ----------------------------------------------------
-// izvjestaj o prodanim PLU
-// ----------------------------------------------------
 FUNCTION fprint_sold_plu( dev_params )
 
    LOCAL cSep := ";"
@@ -418,8 +396,8 @@ FUNCTION fprint_sold_plu( dev_params )
    LOCAL cType := "0"
 
    Box(, 4, 50 )
-   @ m_x + 1, m_y + 2 SAY "**** pregled artikala ****" COLOR "I"
-   @ m_x + 3, m_y + 2 SAY "0 - samo u danasnjem prometu "
+   @ m_x + 1, m_y + 2 SAY "**** uslovi pregleda artikala ****" COLOR "I"
+   @ m_x + 3, m_y + 2 SAY8 "0 - samo u današnjem prometu "
    @ m_x + 4, m_y + 2 SAY "1 - svi programirani          -> " GET cType ;
       VALID cType $ "01"
    READ
@@ -429,13 +407,8 @@ FUNCTION fprint_sold_plu( dev_params )
       RETURN
    ENDIF
 
-   // pobrisi answer fajl
    fprint_delete_answer( dev_params )
-
-   // uzmi strukturu tabele za pos racun
    aStruct := _g_f_struct( F_POS_RN )
-
-   // iscitaj pos matricu
    aPlu := _fp_sold_plu( cType )
 
    _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aPlu )
@@ -444,9 +417,6 @@ FUNCTION fprint_sold_plu( dev_params )
 
 
 
-// ----------------------------------------------------
-// dnevni fiskalni izvjestaj
-// ----------------------------------------------------
 FUNCTION fprint_daily_rpt( dev_params )
 
    LOCAL cSep := ";"
@@ -460,11 +430,10 @@ FUNCTION fprint_daily_rpt( dev_params )
 
    cType := fetch_metric( "fiscal_fprint_daily_type", my_user(), cType )
 
-   // uslovi
-   Box(, 4, 50 )
-   @ m_x + 1, m_y + 2 SAY "**** dnevni izvjestaj ****" COLOR "I"
-   @ m_x + 3, m_y + 2 SAY "0 - z-report"
-   @ m_x + 4, m_y + 2 SAY "2 - x-report  -> " GET cType ;
+   Box(, 4, 55 )
+   @ m_x + 1, m_y + 2 SAY8 "**** varijanta dnevnog izvještaja ****" COLOR "I"
+   @ m_x + 3, m_y + 2 SAY8 "0 - z-report (dnevni izvještaj)"
+   @ m_x + 4, m_y + 2 SAY8 "2 - x-report   (presjek stanja) -> " GET cType ;
       VALID cType $ "02"
    READ
    BoxC()
@@ -473,7 +442,6 @@ FUNCTION fprint_daily_rpt( dev_params )
       RETURN
    ENDIF
 
-   // snimi parametar za naredni put
    set_metric( "fiscal_fprint_daily_type", my_user(), cType )
 
    IF cType == "2"
@@ -483,94 +451,58 @@ FUNCTION fprint_daily_rpt( dev_params )
    _param_date := "zadnji_" + _rpt_type + "_izvjestaj_datum"
    _param_time := "zadnji_" + _rpt_type + "_izvjestaj_vrijeme"
 
-   // iscitaj zadnje formirane izvjestaje...
    _last_date := fetch_metric( _param_date, nil, CToD( "" ) )
    _last_time := PadR( fetch_metric( _param_time, nil, "" ), 5 )
 
    IF _rpt_type == "Z" .AND. _last_date == Date()
-      MsgBeep( "Zadnji Z izvjestaj radjen: " + DToC( _last_date ) + ", u " + _last_time )
+      MsgBeep( "Zadnji Z izvještaj rađen: " + DToC( _last_date ) + ", u " + _last_time )
    ENDIF
 
-   IF Pitanje(, "Stampati dnevni izvjestaj ?", "D" ) == "N"
+   IF Pitanje(, "Štampati dnevni izvještaj ?", "D" ) == "N"
       RETURN
    ENDIF
 
-   // pobrisi answer fajl
    fprint_delete_answer( dev_params )
-
-   // uzmi strukturu tabele za pos racun
    aStruct := _g_f_struct( F_POS_RN )
-
-   // iscitaj pos matricu
    aDaily := _fp_daily_rpt( cType )
-
    _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aDaily )
 
-   // procitaj error
    nErr := fprint_read_error( dev_params, 0 )
 
    IF nErr <> 0
-      msgbeep( "Postoji greska !!!" )
+      MsgBeep( "Greška sa štampom dnevnog izvještaja !" )
       RETURN
    ENDIF
 
-   // upisi u sql/db datum i vrijeme formiranja dnevnog izvjestaja
    set_metric( _param_date, nil, Date() )
    set_metric( _param_time, nil, Time() )
 
-   // pokrecem komandu za brisanje artikala iz uredjaja
-   // ovo je bitno za FP550 uredjaj
-   // MP55LD ce ignorisati, nece se nista desiti!
-
-   // ako je dinamicki PLU i tip izvjestaja "Z"
    IF dev_params[ "plu_type" ] == "D" .AND. _rpt_type == "Z"
 
-      msgo( "Nuliram stanje uredjaja ..." )
+      MsgO( "Nuliram stanje uređaja ..." )
 
-      // ako je printer onda posalji ovu komandu !
       IF dev_params[ "type" ] == "P"
-
-         // pobrisi answer fajl
          fprint_delete_answer( dev_params )
-
-         // daj mu malo prostora
          Sleep( 10 )
-
-         // posalji komandu za reset PLU u uredjaju
          fprint_delete_plu( dev_params, .T. )
-
-         // prekontrolisi gresku
-         // ovdje cemo koristiti veci timeout
          nErr := fprint_read_error( dev_params, 0, NIL, 500 )
-
          IF nErr <> 0
-            msgbeep( "Postoji greska !!!" )
+            msgbeep( "Greška sa nuliranjem stanja uređaja !" )
             RETURN
          ENDIF
       ENDIF
 	
       msgc()
-
-      // setuj brojac PLU na 0 u parametrima !
       auto_plu( .T., .T., dev_params )
-
-      msgbeep( "Stanje fiskalnog uredjaju je nulirano." )
+      msgbeep( "Stanje fiskalnog uređaja je nulirano." )
 
    ENDIF
 
-   // ako se koristi opcija automatskog pologa u ureðaj
-   IF dev_params[ "auto_avans" ] <> 0
-	
-      msgo( "Automatski unos pologa u uredjaj... sacekajte." )
-	
-      // daj malo prostora
+   IF dev_params[ "auto_avans" ] <> 0 .AND. _rpt_type == "Z"
+      msgo( "Automatski unos pologa u fiskalni uređaj... sačekajte." )
       Sleep( 10 )
-	
-      // odmah pozovi i automatski polog
       fprint_polog( dev_params, dev_params[ "auto_avans" ] )
-	
       msgc()
-
    ENDIF
 
    RETURN
@@ -599,19 +531,14 @@ FUNCTION fprint_per_rpt( dev_params )
       RETURN
    ENDIF
 
-   // uzmi strukturu tabele za pos racun
    aStruct := _g_f_struct( F_POS_RN )
-
-   // iscitaj pos matricu
    aPer := _fp_per_rpt( dD_from, dD_to )
-
    _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aPer )
 
-   // procitaj error
    _err_level := fprint_read_error( dev_params, 0 )
 
    IF _err_level <> 0
-      msgbeep( "Postoji greska !!!" )
+      msgbeep( "Postoji greška sa štampanjem izvještaja !" )
    ENDIF
 
    RETURN _err_level
@@ -1439,7 +1366,7 @@ FUNCTION fprint_delete_answer( params )
    // ako postoji fajl obrisi ga
    IF File( _f_name )
       IF FErase( _f_name ) = -1
-         msgbeep( "Greska sa brisanjem fajla odgovora !" )
+         msgbeep( "Greška sa brisanjem fajla odgovora !" )
       ENDIF
    ENDIF
 
@@ -1453,7 +1380,7 @@ FUNCTION fprint_delete_out( file_path )
 
    IF File( file_path )
       IF FErase( file_path ) = -1
-         msgbeep( "Greska sa brisanjem izlaznog fajla !" )
+         msgbeep( "Greška sa brisanjem izlaznog fajla !" )
       ENDIF
    ENDIF
 
@@ -1490,7 +1417,7 @@ FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
    // TEST rezim
    IF dev_params[ "print_fiscal" ] == "T"
       // sacekaj malo, vrati fiskalni broj 100 i izadji...
-      MsgO( "TEST: emulacija stampe na fiskalni uredjaj..." )
+      MsgO( "TEST: emulacija štampe na fiskalni uređaj u toku..." )
       Sleep( 4 )
       MsgC()
       fiscal_no := 100
@@ -1509,15 +1436,14 @@ FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
 
    Box( , 3, 60 )
 
-   @ m_x + 1, m_y + 2 SAY hb_UTF8ToStr( "Uređaj ID:" ) + AllTrim( Str( dev_params[ "id" ] ) ) + ;
+   @ m_x + 1, m_y + 2 SAY8 "Uređaj ID:" + AllTrim( Str( dev_params[ "id" ] ) ) + ;
       " : " + PadR( dev_params[ "name" ], 40 )
 
    DO WHILE _time > 0
 	
       -- _time
 
-      @ m_x + 3, m_y + 2 SAY PadR( hb_UTF8ToStr( "Čekam odgovor fiskalnog uređaja: " ) + ;
-         AllTrim( Str( _time ) ), 48 )
+      @ m_x + 3, m_y + 2 SAY8 PadR( "Čekam odgovor fiskalnog uređaja: " + AllTrim( Str( _time ) ), 48 )
 
       Sleep( 1 )
 
@@ -1609,10 +1535,10 @@ FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
 
    _o_file:Close()
 
-   log_write( "FISC ANSWER fajl sadrzaj: " + _tmp, 3 )
+   log_write( "FISC ANSWER fajl sadržaj: " + _tmp, 3 )
 
    IF Empty( _fiscal_txt )
-      log_write( "ERR FISC nema komande 56,1," + _serial + " - broj fiskalnog racuna, mozda vam nije dobar serijski broj !", 1 )
+      log_write( "ERR FISC nema komande 56,1," + _serial + " - broj fiskalnog računa, možda vam nije dobar serijski broj !", 1 )
    ELSE
       // ako je sve ok, uzmi broj fiskalnog isjecka
       fiscal_no := _g_fisc_no( _fiscal_txt, storno )

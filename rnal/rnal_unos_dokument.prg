@@ -392,7 +392,7 @@ STATIC FUNCTION key_handler()
 
       IF Alias() == "_DOCS"
 
-         IF e_doc_main_data( .T. ) == 1
+         IF rnal_unos_osnovnih_podataka_naloga( .T. ) == 1
             SELECT _docs
             nRet := DE_REFRESH
             l_auto_tab := .T.
@@ -463,7 +463,7 @@ STATIC FUNCTION key_handler()
 
          ENDIF
 
-         IF e_doc_main_data( .F. ) == 1
+         IF rnal_unos_osnovnih_podataka_naloga( .F. ) == 1
 
             SELECT _docs
             nRet := DE_REFRESH

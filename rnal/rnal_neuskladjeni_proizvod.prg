@@ -573,8 +573,8 @@ METHOD RNALDamageDocument:generate_rnal_document()
    _rec := dbf_get_rec()
 
    _rec[ "doc_no" ] := _damage_doc_no
-   _rec[ "doc_date" ] := Date()
-   _rec[ "doc_dvr_da" ] := Date() + 2
+   _rec[ "doc_date" ] := danasnji_datum()
+   _rec[ "doc_dvr_da" ] := danasnji_datum() + 2
    _rec[ "doc_dvr_ti" ] := PadR( PadR( Time(), 5 ), 8 )
    _rec[ "doc_ship_p" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "doc_ship_p" ) ) )
    _rec[ "doc_priori" ] := oRow:FieldGet( oRow:FieldPos( "doc_priori" ) )

@@ -665,7 +665,7 @@ _rec := dbf_get_rec()
 
 _rec["doc_no"] := nDoc_no
 _rec["doc_log_no"] := nDoc_log_no
-_rec["doc_log_da"] := DATE()
+_rec["doc_log_da"] := danasnji_datum()
 _rec["doc_log_ti"] := PADR( TIME(), 5 )
 _rec["doc_log_ty"] := cDoc_log_type
 _rec["operater_i"] := nOperId

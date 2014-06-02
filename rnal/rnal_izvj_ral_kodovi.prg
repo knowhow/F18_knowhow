@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,301 +16,304 @@
 // --------------------------------------
 // utrosak boja kod RAL-a
 // --------------------------------------
-function rpt_ral_calc()
-local dD_From
-local dD_To
-local nOper
-local cRalList
-local cColorList
+FUNCTION rpt_ral_calc()
 
-if _get_vars( @dD_From, @dD_To, @nOper, ;
-	@cRalList, @cColorList ) == 0
-	return
-endif
+   LOCAL dD_From
+   LOCAL dD_To
+   LOCAL nOper
+   LOCAL cRalList
+   LOCAL cColorList
 
-// kreiraj report
-_cre_report( dD_from, dD_to, nOper, cRalList, cColorList )
+   IF _get_vars( @dD_From, @dD_To, @nOper, ;
+         @cRalList, @cColorList ) == 0
+      RETURN
+   ENDIF
 
-// ispisi report
-_r_ral_calc( dD_From, dD_to, nOper )
+   // kreiraj report
+   _cre_report( dD_from, dD_to, nOper, cRalList, cColorList )
 
-return
+   // ispisi report
+   _r_ral_calc( dD_From, dD_to, nOper )
+
+   RETURN
 
 
 // ----------------------------------------------
 // uslovi izvjestaja
 // ----------------------------------------------
-static function _get_vars( dD_f, dD_t, nOper, ;
-	cRList, cColList )
+STATIC FUNCTION _get_vars( dD_f, dD_t, nOper, ;
+      cRList, cColList )
 
-dD_f := DATE() - 30
-dD_t := DATE()
-nOper := 0
-cRList := SPACE(200)
-cColList := SPACE(200)
+   dD_t := danasnji_datum()
+   dD_f := ( dD_t - 30 )
+   nOper := 0
+   cRList := Space( 200 )
+   cColList := Space( 200 )
 
-Box(,6,60)
-	@ m_x + 1, m_y + 2 SAY "Datum od:" GET dD_f
-	@ m_x + 1, col() + 1 SAY "do:" GET dD_t
-	@ m_x + 2, m_y + 2 SAY "Operater (0 - svi):" GET nOper ;
-		VALID {|| nOper == 0  } ;
-		PICT "9999999999"
-	@ m_x + 4, m_y + 2 SAY " RAL kodovi (prazno-svi):" GET cRList PICT "@S25"
-	@ m_x + 5, m_y + 2 SAY "boje kodovi (prazno-sve):" GET cColList PICT "@S25"
-	read
-BoxC()
+   Box(, 6, 60 )
+   @ m_x + 1, m_y + 2 SAY "Datum od:" GET dD_f
+   @ m_x + 1, Col() + 1 SAY "do:" GET dD_t
+   @ m_x + 2, m_y + 2 SAY "Operater (0 - svi):" GET nOper ;
+      VALID {|| nOper == 0  } ;
+      PICT "9999999999"
+   @ m_x + 4, m_y + 2 SAY " RAL kodovi (prazno-svi):" GET cRList PICT "@S25"
+   @ m_x + 5, m_y + 2 SAY "boje kodovi (prazno-sve):" GET cColList PICT "@S25"
+   READ
+   BoxC()
 
-if LastKey() == K_ESC
-	return 0
-endif
+   IF LastKey() == K_ESC
+      RETURN 0
+   ENDIF
 
-return 1
+   RETURN 1
 
 
 
 // ---------------------------------------------------------------
 // glavna funkcija za kreiranje pomocne tabele
 // ---------------------------------------------------------------
-static function _cre_report( dD_f, dD_t, nOper, cRalLst, cColLst )
-local aField
-local cValue := ""
-local aValue := {}
-local aRal := {}
-local nRal := 0
-local nTick := 0
-local nRoller := 0
-local nDoc_no
-local nDoc_it_no
-local nDoc_it_el_no
-local aArt := {}
-local aArr := {}
-local aElem := {}
-local nElement := 0
+STATIC FUNCTION _cre_report( dD_f, dD_t, nOper, cRalLst, cColLst )
 
-// kreiraj tmp tabelu
-aField := _rpt_fields()
+   LOCAL aField
+   LOCAL cValue := ""
+   LOCAL aValue := {}
+   LOCAL aRal := {}
+   LOCAL nRal := 0
+   LOCAL nTick := 0
+   LOCAL nRoller := 0
+   LOCAL nDoc_no
+   LOCAL nDoc_it_no
+   LOCAL nDoc_it_el_no
+   LOCAL aArt := {}
+   LOCAL aArr := {}
+   LOCAL aElem := {}
+   LOCAL nElement := 0
 
-cre_tmp1( aField )
+   // kreiraj tmp tabelu
+   aField := _rpt_fields()
 
-// otvori tabelu _tmp1
-o_tmp1()
+   cre_tmp1( aField )
 
-index on STR(r_color, 8) tag "1"
+   // otvori tabelu _tmp1
+   o_tmp1()
 
-O_RAL
-rnal_o_tables( .f. )
+   INDEX ON Str( r_color, 8 ) TAG "1"
 
-_main_filter( dD_f, dD_t, nOper )
+   O_RAL
+   rnal_o_tables( .F. )
 
-Box(, 1, 50 )
+   _main_filter( dD_f, dD_t, nOper )
 
-do while !EOF()
+   Box(, 1, 50 )
+
+   DO WHILE !Eof()
 	
-	// uzmi podatke dokumenta da vidis treba li da se generise
-	// u izvjestaj ?
+      // uzmi podatke dokumenta da vidis treba li da se generise
+      // u izvjestaj ?
 
-	nDoc_no := field->doc_no
-	nDoc_it_no := field->doc_it_no
-	nDoc_it_el_no := field->doc_it_el_
+      nDoc_no := field->doc_no
+      nDoc_it_no := field->doc_it_no
+      nDoc_it_el_no := field->doc_it_el_
 
-	select docs
-	go top
-	seek docno_str( nDoc_no )
+      SELECT docs
+      GO TOP
+      SEEK docno_str( nDoc_no )
 
-	// provjeri uslove !!!
+      // provjeri uslove !!!
 
-	// ako je rejected ili busy... preskoci
-	if ( docs->doc_status == 2 .or. docs->doc_status == 3 )
-		select doc_ops
-		skip
-		loop
-	endif
+      // ako je rejected ili busy... preskoci
+      IF ( docs->doc_status == 2 .OR. docs->doc_status == 3 )
+         SELECT doc_ops
+         SKIP
+         LOOP
+      ENDIF
 
-	if nOper <> 0 .and. ( docs->operater_i <> nOper )
-		select doc_ops
-		skip
-		loop
-	endif
+      IF nOper <> 0 .AND. ( docs->operater_i <> nOper )
+         SELECT doc_ops
+         SKIP
+         LOOP
+      ENDIF
 
-	// datum.....
-	if DTOS(docs->doc_date) > DTOS(dD_t) .or. ;
-		DTOS(docs->doc_date) < DTOS(dD_f)
-		select doc_ops
-		skip
-		loop
-	endif
+      // datum.....
+      IF DToS( docs->doc_date ) > DToS( dD_t ) .OR. ;
+            DToS( docs->doc_date ) < DToS( dD_f )
+         SELECT doc_ops
+         SKIP
+         LOOP
+      ENDIF
 
-	// vrni se nazad, idemo dalje
-	select doc_ops
+      // vrni se nazad, idemo dalje
+      SELECT doc_ops
 
-	// "RAL:1000#4#80"
-	cValue := ALLTRIM( field->aop_value )
-	// ukini "RAL:", to nam ne treba !
-	cValue := STRTRAN( cValue, "RAL:", "" )
+      // "RAL:1000#4#80"
+      cValue := AllTrim( field->aop_value )
+      // ukini "RAL:", to nam ne treba !
+      cValue := StrTran( cValue, "RAL:", "" )
 
-	// aRal[1] = 1000
-	// aRal[2] = 4
-	// aRal[3] = 80
+      // aRal[1] = 1000
+      // aRal[2] = 4
+      // aRal[3] = 80
 
-	aRal := TokToNiz( cValue, "#" )
-	// imamo i vrijednosti
-	nRal := VAL( aRal[1] )
-	nTick := VAL( aRal[2] )
-	nRoller := VAL( aRal[3] )
+      aRal := TokToNiz( cValue, "#" )
+      // imamo i vrijednosti
+      nRal := Val( aRal[ 1 ] )
+      nTick := Val( aRal[ 2 ] )
+      nRoller := Val( aRal[ 3 ] )
 	
-	// provjeri uslov po listi
-	if !EMPTY( cRalLst )
-		if !(ALLTRIM(STR( nRal )) $ ALLTRIM( cRalLst ))
-			select doc_ops
-			skip
-			loop
-		endif
-	endif
+      // provjeri uslov po listi
+      IF !Empty( cRalLst )
+         IF !( AllTrim( Str( nRal ) ) $ AllTrim( cRalLst ) )
+            SELECT doc_ops
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 
-	select ral
-	go top
-	seek STR( nRal, 5 ) + STR( nTick, 2 )
-	// provjeri uslov po listi boja
-	if !EMPTY( cColLst )
-		if !(ALLTRIM(STR( field->col_1 )) $ ALLTRIM( cColLst )) .or. ;
-		 !(ALLTRIM(STR( field->col_2 )) $ ALLTRIM( cColLst )) .or. ;
-		 !(ALLTRIM(STR( field->col_3 )) $ ALLTRIM( cColLst )) .or. ;
-		 !(ALLTRIM(STR( field->col_4 )) $ ALLTRIM( cColLst ))
-			select doc_ops
-			skip
-			loop
-		endif
-	endif
+      SELECT ral
+      GO TOP
+      SEEK Str( nRal, 5 ) + Str( nTick, 2 )
+      // provjeri uslov po listi boja
+      IF !Empty( cColLst )
+         IF !( AllTrim( Str( field->col_1 ) ) $ AllTrim( cColLst ) ) .OR. ;
+               !( AllTrim( Str( field->col_2 ) ) $ AllTrim( cColLst ) ) .OR. ;
+               !( AllTrim( Str( field->col_3 ) ) $ AllTrim( cColLst ) ) .OR. ;
+               !( AllTrim( Str( field->col_4 ) ) $ AllTrim( cColLst ) )
+            SELECT doc_ops
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 
-	@ m_x + 1, m_y + 2 SAY "dokument: " + docno_str( nDoc_no )
+      @ m_x + 1, m_y + 2 SAY "dokument: " + docno_str( nDoc_no )
 
-	select doc_it
-	go top
-	seek docno_str( nDoc_no ) + docit_str( nDoc_it_no )
+      SELECT doc_it
+      GO TOP
+      SEEK docno_str( nDoc_no ) + docit_str( nDoc_it_no )
 	
-	nArt_id := field->art_id
-	// koliko ima kvadrata
-	nUm2 := c_ukvadrat( field->doc_it_qtt, ;
-		field->doc_it_hei, ;
-		field->doc_it_wid) 
+      nArt_id := field->art_id
+      // koliko ima kvadrata
+      nUm2 := c_ukvadrat( field->doc_it_qtt, ;
+         field->doc_it_hei, ;
+         field->doc_it_wid )
 
-	// sada imam sve potrebne podatke za obracun
-	aArr := rnal_kalkulisi_ral( nRal, nTick, nRoller, nUm2 )
+      // sada imam sve potrebne podatke za obracun
+      aArr := rnal_kalkulisi_ral( nRal, nTick, nRoller, nUm2 )
 
-	// dobio sam obracun u aArr sad ga treba upisati u 
-	// pomocnu tabelu ...
+      // dobio sam obracun u aArr sad ga treba upisati u
+      // pomocnu tabelu ...
 
-	for i := 1 to LEN( aArr )
-		app_to_tmp1( aArr[i, 1], aArr[i, 3] )
-	next
+      FOR i := 1 TO Len( aArr )
+         app_to_tmp1( aArr[ i, 1 ], aArr[ i, 3 ] )
+      NEXT
 	
-	// idemo dalje...
-	select doc_ops
-	skip
-enddo
+      // idemo dalje...
+      SELECT doc_ops
+      SKIP
+   ENDDO
 
-BoxC()
+   BoxC()
 
-return
+   RETURN
 
 
 // -------------------------------------------------
 // dodaj u pomocnu tabelu
 // -------------------------------------------------
-static function app_to_tmp1( nColor, nTotal )
-local nTArea := SELECT()
-local _rec
+STATIC FUNCTION app_to_tmp1( nColor, nTotal )
 
-select _tmp1
-go top
-seek STR( nColor, 8 )
+   LOCAL nTArea := Select()
+   LOCAL _rec
 
-if !FOUND()
-	append blank
-	_rec := dbf_get_rec()
-	_rec["r_color"] := nColor
-else
-	_rec := dbf_get_rec()
-endif
+   SELECT _tmp1
+   GO TOP
+   SEEK Str( nColor, 8 )
 
-_rec["c_total"] := _rec["c_total"] + nTotal
+   IF !Found()
+      APPEND BLANK
+      _rec := dbf_get_rec()
+      _rec[ "r_color" ] := nColor
+   ELSE
+      _rec := dbf_get_rec()
+   ENDIF
 
-dbf_update_rec( _rec )
+   _rec[ "c_total" ] := _rec[ "c_total" ] + nTotal
 
-select (nTArea)
-return
+   dbf_update_rec( _rec )
+
+   SELECT ( nTArea )
+
+   RETURN
 
 
 
 // -----------------------------------------
 // polja tabele izvjestaja
 // -----------------------------------------
-static function _rpt_fields()
-local aRet := {}
+STATIC FUNCTION _rpt_fields()
 
-AADD(aRet, { "r_color", "N", 8, 0 })
-AADD(aRet, { "c_total", "N", 20, 8 })
+   LOCAL aRet := {}
 
-return aRet
+   AAdd( aRet, { "r_color", "N", 8, 0 } )
+   AAdd( aRet, { "c_total", "N", 20, 8 } )
+
+   RETURN aRet
 
 
 // -------------------------------------------------
-// filter 
+// filter
 // -------------------------------------------------
-static function _main_filter( dDFrom, dDTo, nOper )
-local cFilter := ""
+STATIC FUNCTION _main_filter( dDFrom, dDTo, nOper )
 
-select doc_ops
+   LOCAL cFilter := ""
 
-cFilter := "'RAL:' $ aop_value"
-set filter to &cFilter
-go top
+   SELECT doc_ops
 
-return
+   cFilter := "'RAL:' $ aop_value"
+   SET FILTER to &cFilter
+   GO TOP
+
+   RETURN
 
 // ------------------------------------------------
 // ispis reporta
 // ------------------------------------------------
-static function _r_ral_calc( dD_from, dD_to, nOper )
-local nCnt := 0
+STATIC FUNCTION _r_ral_calc( dD_from, dD_to, nOper )
 
-select _tmp1
-if RECCOUNT2() == 0
-	msgbeep("nema podataka")
-	return
-endif
+   LOCAL nCnt := 0
 
-set order to tag "1"
-go top
+   SELECT _tmp1
+   IF RECCOUNT2() == 0
+      msgbeep( "nema podataka" )
+      RETURN
+   ENDIF
 
-START PRINT CRET
+   SET ORDER TO TAG "1"
+   GO TOP
 
-? "Utrosak boja kod RAL obrade:"
-?
-? "Period od " + DTOC( dD_from ) + " do " + DTOC( dD_to )
-? "---------------------------------------------------"
-? "r.br * boja   * utrosak u kg            *"
-? "----- -------- -------------------------"
+   START PRINT CRET
 
-do while !EOF()
+   ? "Utrosak boja kod RAL obrade:"
+   ?
+   ? "Period od " + DToC( dD_from ) + " do " + DToC( dD_to )
+   ? "---------------------------------------------------"
+   ? "r.br * boja   * utrosak u kg            *"
+   ? "----- -------- -------------------------"
 
-	++ nCnt
+   DO WHILE !Eof()
 
-	? STR( nCnt, 4) + "."
-	@ prow(), pcol() + 1 SAY r_color
-	@ prow(), pcol() + 1 SAY STR( c_total, 12, 4 )
+      ++ nCnt
 
-	skip
+      ? Str( nCnt, 4 ) + "."
+      @ PRow(), PCol() + 1 SAY r_color
+      @ PRow(), PCol() + 1 SAY Str( c_total, 12, 4 )
 
-enddo
+      SKIP
 
-my_close_all_dbf()
+   ENDDO
 
-FF
-END PRINT
+   my_close_all_dbf()
 
-return
+   FF
+   END PRINT
 
-
-
-
+   RETURN

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -17,220 +17,227 @@
 // --------------------------------------------------
 // lista naloga otvorenih na tekuci dan
 // --------------------------------------------------
-function lst_tek_dan()
-local cLine
-local nOperater
-local GetList:={}
+FUNCTION lst_tek_dan()
 
-O_DOCS
-O_CUSTOMS
-O_CONTACTS
+   LOCAL cLine
+   LOCAL nOperater
+   LOCAL GetList := {}
+   LOCAL dDatum := danasnji_datum()
 
-nOperater := GetUserID( f18_user() )
+   O_DOCS
+   O_CUSTOMS
+   O_CONTACTS
 
-Box( , 1, 60)
-	@ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "9999999999"
-	read
-BoxC()
+   nOperater := GetUserID( f18_user() )
 
-select docs
-set order to tag "D1"
-go top
+   Box( , 1, 60 )
+   @ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "9999999999"
+   READ
+   BoxC()
 
-seek DTOS( DATE() )
+   SELECT docs
+   SET ORDER TO TAG "D1"
+   GO TOP
 
-r_l_get_line( @cLine )
+   SEEK DToS( dDatum )
 
-START PRINT CRET
+   r_l_get_line( @cLine )
 
-?
-? "Lista naloga otvorenih na tekuci dan " + DTOC( DATE() )
+   START PRINT CRET
 
-?
+   ?
+   ? "Lista naloga otvorenih na tekuci dan " + DToC( dDatum )
 
-r_list_zagl()
+   ?
 
-do while !EOF() .and. DTOS(field->doc_date) == DTOS( DATE() )
+   r_list_zagl()
+
+   DO WHILE !Eof() .AND. DToS( field->doc_date ) == DToS( dDatum )
 	
-	// ako je za tekuæeg operatera
-	if nOperater <> 0
-		if field->operater_i <> nOperater
-			skip
-			loop
-		endif
-	endif
+      // ako je za tekuæeg operatera
+      IF nOperater <> 0
+         IF field->operater_i <> nOperater
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 
-	// ako je nalog zatvoren, preskoci
-	if (field->doc_status == 1 ) .or. ( field->doc_status == 2 )
-		skip
-		loop
-	endif
+      // ako je nalog zatvoren, preskoci
+      IF ( field->doc_status == 1 ) .OR. ( field->doc_status == 2 )
+         SKIP
+         LOOP
+      ENDIF
 
 	
-	cPom := ""
-	cPom += PADR( docno_str(field->doc_no) , 10)
-	cPom += " "
-	cPom += PADR( DTOC(field->doc_dvr_da) , 8)
-	cPom += " "
-	cPom += PADR( field->doc_dvr_ti , 8 )
-	cPom += " "
-	cPom += show_customer( field->cust_id, field->cont_id )
+      cPom := ""
+      cPom += PadR( docno_str( field->doc_no ), 10 )
+      cPom += " "
+      cPom += PadR( DToC( field->doc_dvr_da ), 8 )
+      cPom += " "
+      cPom += PadR( field->doc_dvr_ti, 8 )
+      cPom += " "
+      cPom += show_customer( field->cust_id, field->cont_id )
 	
-	? cPom
+      ? cPom
 	
-	skip
-enddo
+      SKIP
+   ENDDO
 
-? cLine
+   ? cLine
 
-FF
-END PRINT
+   FF
+   END PRINT
 
-return
+   RETURN
 
 // ---------------------------------------------------
 // prikaz partnera / kontakta
 // ---------------------------------------------------
-static function show_customer( nCust_id, nCont_id )
-local cRet
-local cCust
-local cCont
+STATIC FUNCTION show_customer( nCust_id, nCont_id )
 
-cCust := ALLTRIM( g_cust_desc( nCust_id ) )
-cCont := ALLTRIM( g_cont_desc( nCont_id ) )
+   LOCAL cRet
+   LOCAL cCust
+   LOCAL cCont
 
-cRet := cCust
+   cCust := AllTrim( g_cust_desc( nCust_id ) )
+   cCont := AllTrim( g_cont_desc( nCont_id ) )
 
-if !EMPTY( cCont ) .and. cCont <> "?????"
-	cRet += " / " + cCont
-endif
+   cRet := cCust
 
-return cRet
+   IF !Empty( cCont ) .AND. cCont <> "?????"
+      cRet += " / " + cCont
+   ENDIF
+
+   RETURN cRet
 
 
 
 // ------------------------------------
 // zaglavlje liste
 // ------------------------------------
-static function r_list_zagl()
-local cLine
-local cText
+STATIC FUNCTION r_list_zagl()
 
-r_l_get_line(@cLine)
+   LOCAL cLine
+   LOCAL cText
 
-cText := PADC("Br.naloga", 10)
-cText += " "
-cText += PADC("Dat.isp", 8)
-cText += " "
-cText += PADC("Vri.isp", 8)
-cText += " "
-cText += PADR("Narucioc / kontakt - naziv", 60)
+   r_l_get_line( @cLine )
 
-? cLine
-? cText
-? cLine
+   cText := PadC( "Br.naloga", 10 )
+   cText += " "
+   cText += PadC( "Dat.isp", 8 )
+   cText += " "
+   cText += PadC( "Vri.isp", 8 )
+   cText += " "
+   cText += PadR( "Narucioc / kontakt - naziv", 60 )
 
-return
+   ? cLine
+   ? cText
+   ? cLine
+
+   RETURN
 
 
 // ---------------------------------------
 // vraca liniju za zaglavlje
 // ---------------------------------------
-static function r_l_get_line(cLine)
-cLine := REPLICATE("-", 10)
-cLine += " "
-cLine += REPLICATE("-", 8)
-cLine += " "
-cLine += REPLICATE("-", 8)
-cLine += " "
-cLine += REPLICATE("-", 60)
-return
+STATIC FUNCTION r_l_get_line( cLine )
+
+   cLine := Replicate( "-", 10 )
+   cLine += " "
+   cLine += Replicate( "-", 8 )
+   cLine += " "
+   cLine += Replicate( "-", 8 )
+   cLine += " "
+   cLine += Replicate( "-", 60 )
+
+   RETURN
 
 
 // --------------------------------------------------
-// lista naloga od izabranog datuma 
+// lista naloga od izabranog datuma
 // --------------------------------------------------
-function lst_ch_date()
-local cLine
-local dDate := DATE()
-local nOperater
+FUNCTION lst_ch_date()
 
-nOperater := GetUserID( f18_user() )
+   LOCAL cLine
+   LOCAL dDate := danasnji_datum()
+   LOCAL nOperater
 
-Box(, 3, 60)
+   nOperater := GetUserID( f18_user() )
+
+   Box(, 3, 60 )
 	
-	@ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "9999999999"
+   @ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "9999999999"
 	
-	@ m_x + 3, m_y + 2 SAY "Listaj naloge >= datum" GET dDate
+   @ m_x + 3, m_y + 2 SAY "Listaj naloge >= datum" GET dDate
 	
-	read
+   READ
 
-BoxC()
+   BoxC()
 
-if LastKey() == K_ESC
-	return
-endif
+   IF LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-O_DOCS
-O_CUSTOMS
-O_CONTACTS
+   O_DOCS
+   O_CUSTOMS
+   O_CONTACTS
 
-select docs
-set order to tag "D1"
-go top
+   SELECT docs
+   SET ORDER TO TAG "D1"
+   GO TOP
 
-seek DTOS( dDate )
+   SEEK DToS( dDate )
 
-r_l_get_line( @cLine )
+   r_l_get_line( @cLine )
 
-START PRINT CRET
+   START PRINT CRET
 
-?
-? "Lista naloga >= datumu: " + DTOC( dDate )
+   ?
+   ? "Lista naloga >= datumu: " + DToC( dDate )
 
-?
+   ?
 
-r_list_zagl()
+   r_list_zagl()
 
-do while !EOF() .and. DTOS(field->doc_date) >= DTOS( dDate )
+   DO WHILE !Eof() .AND. DToS( field->doc_date ) >= DToS( dDate )
 	
-	// operater uslov
-	if nOperater <> 0 
-		if field->operater_i <> nOperater
-			skip
-			loop
-		endif
-	endif
+      // operater uslov
+      IF nOperater <> 0
+         IF field->operater_i <> nOperater
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 
 	
-	// ako je nalog zatvoren, preskoci
-	if (field->doc_status == 1 ) .or. ( field->doc_status == 2 )
+      // ako je nalog zatvoren, preskoci
+      IF ( field->doc_status == 1 ) .OR. ( field->doc_status == 2 )
 		
-		skip
-		loop
+         SKIP
+         LOOP
 	
-	endif
+      ENDIF
 	
-	cPom := ""
-	cPom += PADR( docno_str(field->doc_no) , 10)
-	cPom += " "
-	cPom += PADR( DTOC(field->doc_dvr_da) , 8)
-	cPom += " "
-	cPom += PADR( field->doc_dvr_ti , 8 )
-	cPom += " "
-	cPom += show_customer( field->cust_id, field->cont_id )
+      cPom := ""
+      cPom += PadR( docno_str( field->doc_no ), 10 )
+      cPom += " "
+      cPom += PadR( DToC( field->doc_dvr_da ), 8 )
+      cPom += " "
+      cPom += PadR( field->doc_dvr_ti, 8 )
+      cPom += " "
+      cPom += show_customer( field->cust_id, field->cont_id )
 	
-	? cPom
+      ? cPom
 	
-	skip
-enddo
+      SKIP
+   ENDDO
 
-? cLine
+   ? cLine
 
-FF
-END PRINT
+   FF
+   END PRINT
 
-return
+   RETURN
 
 
 
@@ -238,265 +245,241 @@ return
 // ---------------------------------------------------------
 // lista naloga prispjelih za realizaciju na tekuci dan
 // ---------------------------------------------------------
-function lst_real_tek_dan()
-local cLine
-local nOperater
-local cCurrent := "D"
-local GetList:={}
+FUNCTION lst_real_tek_dan()
 
-O_DOCS
-O_CUSTOMS
-O_CONTACTS
+   LOCAL dDatum := danasnji_datum()
+   LOCAL cLine
+   LOCAL nOperater
+   LOCAL cCurrent := "D"
+   LOCAL GetList := {}
 
-nOperater := GetUserID( f18_user() )
+   O_DOCS
+   O_CUSTOMS
+   O_CONTACTS
 
-Box(, 3, 60)
-	@ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "9999999999" 
-	@ m_x + 3, m_y + 2 SAY "Nalozi prispjeli samo na tekuci dan ?" GET cCurrent PICT "@!" VALID cCurrent $ "DN"
-	read
-BoxC()
+   nOperater := GetUserID( f18_user() )
 
-select docs
-set order to tag "D2"
-go top
+   Box(, 3, 60 )
+   @ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "9999999999"
+   @ m_x + 3, m_y + 2 SAY "Nalozi prispjeli samo na tekuci dan ?" GET cCurrent PICT "@!" VALID cCurrent $ "DN"
+   READ
+   BoxC()
 
-seek DTOS( DATE() )
+   SELECT docs
+   SET ORDER TO TAG "D2"
+   GO TOP
 
-r_l_get_line(@cLine)
+   SEEK DToS( dDatum )
 
-START PRINT CRET
+   r_l_get_line( @cLine )
 
-?
-? "Lista naloga prispjelih za realizaciju na tekuci dan " + DTOC( DATE() )
-?
+   START PRINT CRET
 
-r_list_zagl()
+   ?
+   ? "Lista naloga prispjelih za realizaciju na tekuci dan " + DToC( dDatum )
+   ?
 
-do while !EOF() .and. DTOS(field->doc_dvr_da) >= DTOS( DATE() )
+   r_list_zagl()
+
+   DO WHILE !Eof() .AND. DToS( field->doc_dvr_da ) >= DToS( dDatum )
 	
-	// uslov po operateru
-	if nOperater <> 0 
-		if field->operater_i <> nOperater
-			skip
-			loop
-		endif
-	endif
+      // uslov po operateru
+      IF nOperater <> 0
+         IF field->operater_i <> nOperater
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 	
-	// samo tekuci dan!
-	if cCurrent == "D"
-		if DTOS(field->doc_dvr_da) <> DTOS(DATE())
-			skip
-			loop
-		endif
-	endif
+      // samo tekuci dan!
+      IF cCurrent == "D"
+         IF DToS( field->doc_dvr_da ) <> DToS( dDatum )
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 	
-	// ako je zatvoren, preskoci..
-	if field->doc_status == 1 .or. ;
-		field->doc_status == 2
-		skip
-		loop
-	endif
+      // ako je zatvoren, preskoci..
+      IF field->doc_status == 1 .OR. ;
+            field->doc_status == 2
+         SKIP
+         LOOP
+      ENDIF
 
-	nDoc_no := field->doc_no
+      nDoc_no := field->doc_no
 
-	cPom := ""
-	cPom += PADR( docno_str(nDoc_no) , 10)
-	cPom += " "
-	cPom += PADR( DTOC(field->doc_dvr_da) , 8)
-	cPom += " "
-	cPom += PADR( field->doc_dvr_ti , 8 )
-	cPom += " "
-	cPom += show_customer( field->cust_id, field->cont_id )
+      cPom := ""
+      cPom += PadR( docno_str( nDoc_no ), 10 )
+      cPom += " "
+      cPom += PadR( DToC( field->doc_dvr_da ), 8 )
+      cPom += " "
+      cPom += PadR( field->doc_dvr_ti, 8 )
+      cPom += " "
+      cPom += show_customer( field->cust_id, field->cont_id )
 	
-	? cPom
+      ? cPom
 
 	
-	select docs 
+      SELECT docs
 
-	skip
-enddo
+      SKIP
+   ENDDO
 
-? cLine
+   ? cLine
 
-FF
-END PRINT
+   FF
+   END PRINT
 
-return
+   RETURN
 
 
 
 // ---------------------------------------------------------
 // lista naloga van roka na tekuci dan
 // ---------------------------------------------------------
-function lst_vrok_tek_dan()
-local cLine
-local nDoc_no
-local cLog
-local nDays := 0
-local nOperater
-local cEmail := "N"
-local i
-local aLog
-local cPrinter
+FUNCTION lst_vrok_tek_dan()
 
-nOperater := GetUserID( f18_user() )
+   LOCAL dDatum := danasnji_datum()
+   LOCAL cLine
+   LOCAL nDoc_no
+   LOCAL cLog
+   LOCAL nDays := 0
+   LOCAL nOperater
+   LOCAL cEmail := "N"
+   LOCAL i
+   LOCAL aLog
+   LOCAL cPrinter
 
-Box(, 5, 65)
+   nOperater := GetUserID( f18_user() )
+
+   Box(, 5, 65 )
 	
-	@ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "9999999999"
+   @ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "9999999999"
 	
-	@ m_x + 3, m_y + 2 SAY "Uzeti u obzir do br.predh.dana:" GET nDays PICT "99999"
+   @ m_x + 3, m_y + 2 SAY "Uzeti u obzir do br.predh.dana:" GET nDays PICT "99999"
 	
-	@ m_x + 5, m_y + 2 SAY "Slati report email-om ?" GET cEmail PICT "@!" VALID cEmail $ "DN"
+   @ m_x + 5, m_y + 2 SAY "Slati report email-om ?" GET cEmail PICT "@!" VALID cEmail $ "DN"
 	
-	read
+   READ
 
-BoxC()
+   BoxC()
 
+   O_DOCS
+   O_DOC_LOG
+   O_CUSTOMS
+   O_CONTACTS
 
-O_DOCS
-O_DOC_LOG
-O_CUSTOMS
-O_CONTACTS
+   SELECT docs
+   SET ORDER TO TAG "D2"
+   GO TOP
 
-select docs
-set order to tag "D2"
-go top
+   r_l_get_line( @cLine )
 
-r_l_get_line(@cLine)
+   IF cEmail == "D"
+      cPrinter := gPrinter
+      gPrinter := "0"
+   ENDIF
 
-// printer setuj na 0, radi sekvenci
-if cEmail == "D"
+   START PRINT CRET
+
+   ?
+   ? "Lista naloga van roka na tekuci dan " + DToC( dDatum )
+   ?
+
+   r_list_zagl()
+
+   DO WHILE !Eof()
 	
-	cPrinter := gPrinter
-	gPrinter := "0"
+      // uslov po operateru
+      IF nOperater <> 0
+         IF field->operater_i <> nOperater
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 	
-endif
+      IF field->doc_status == 1 .OR. ;
+            field->doc_status == 2
+         SKIP
+         LOOP
+      ENDIF
 
-START PRINT CRET
+      IF dDatum <= field->doc_dvr_da
+         SKIP
+         LOOP
+      ENDIF
 
-?
-? "Lista naloga van roka na tekuci dan " + DTOC( DATE() )
-?
+      IF nDays <> 0
+         IF ( dDatum - nDays ) <= doc_dvr_da
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 
-r_list_zagl()
+      nDoc_no := field->doc_no
 
-do while !EOF()
+      cPom := ""
+      cPom += PadR( docno_str( nDoc_no ), 10 )
+      cPom += " "
+      cPom += PadR( DToC( field->doc_dvr_da ), 8 )
+      cPom += " "
+      cPom += PadR( field->doc_dvr_ti, 8 )
+      cPom += " "
+      cPom += show_customer( field->cust_id, field->cont_id )
 	
-	// uslov po operateru
-	if nOperater <> 0
-		if field->operater_i <> nOperater
-			skip
-			loop
-		endif
-	endif
+      ? cPom
 	
-	// ako je realizovan, preskoci
-	if field->doc_status == 1 .or. ;
-		field->doc_status == 2
-		skip
-		loop
-	endif
+      SELECT doc_log
+      SET ORDER TO TAG "1"
+      GO TOP
 
-	// ako je u datum isti ili manji, preskoci...
-	if DATE() <= field->doc_dvr_da 
+      SEEK docno_str( nDoc_no )
+
+      cLog := ""
+	
+      DO WHILE !Eof() .AND. field->doc_no == nDoc_no
 		
-		skip
-		loop
+         cLog := DToC( field->doc_log_da )
+         cLog += " / "
+         cLog += AllTrim( field->doc_log_ti )
+         cLog += " : "
+         cLog += AllTrim( field->doc_log_de )
 		
-	endif
-
-	// uzeti filter i za dane unazad....
-	if nDays <> 0
+         SKIP
+      ENDDO
 	
-		if ( DATE() - nDays ) <= doc_dvr_da
+      IF "Inicij" $ cLog
+         cLog := ""
+      ENDIF
+
+      IF !Empty( cLog )
+		
+         aLog := SjeciStr( cLog, 60 )
+		
+         FOR i := 1 TO Len( aLog )
 			
-			skip
-			loop
-			
-		endif
+            ? Space( 29 ) + aLog[ i ]
 		
-	endif
-
-	nDoc_no := field->doc_no
-
-	cPom := ""
-	cPom += PADR( docno_str(nDoc_no) , 10)
-	cPom += " "
-	cPom += PADR( DTOC(field->doc_dvr_da) , 8)
-	cPom += " "
-	cPom += PADR( field->doc_dvr_ti, 8 )
-	cPom += " "
-	cPom += show_customer( field->cust_id, field->cont_id )
-	
-	? cPom
-	
-	
-	// drugi red uzmi iz log-a
-
-	select doc_log
-	set order to tag "1"
-	go top
-
-	seek docno_str( nDoc_no )
-
-	cLog := ""
-	
-	do while !EOF() .and. field->doc_no == nDoc_no
+         NEXT
 		
-		cLog := DTOC( field->doc_log_da ) 
-		cLog += " / " 
-		cLog += ALLTRIM( field->doc_log_ti )
-		cLog += " : "
-		cLog += ALLTRIM( field->doc_log_de )
-		
-		skip
-	enddo
-	
-	// samo za log, koji nije inicijalni....
-	if "Inicij" $ cLog
-		cLog := ""
-	endif
+      ENDIF
 
-	// ispisi log 
-	if !EMPTY( cLog )
-		
-		aLog := SjeciStr( cLog, 60 ) 
-		
-		for i := 1 to LEN( aLog )
-			
-			? SPACE(29) + aLog[ i ]
-		
-		next
-		
-	endif
+      SELECT docs
+      SKIP
+   ENDDO
 
-	// vrati se na docs i idi dalje
-	select docs
-	skip
-enddo
+   ? cLine
 
-? cLine
+   FF
+   END PRINT
 
-FF
-END PRINT
+   IF cEmail == "D"
+      gPrinter := cPrinter
+      _subject := "Lista naloga van roka na tekuci dan"
+      _body := _subject
+      _attach := { my_home() + "outf.txt" }
+      _mail_params := f18_email_prepare( _subject, _body )
+      f18_email_send( _mail_params, _attach )
+   ENDIF
 
-// posalji na email
-if cEmail == "D"
-	
-	// vrati stanje printera
-	gPrinter := cPrinter
-
-	_subject := "Lista naloga van roka na tekuci dan"
-	_body := _subject	
-	_attach := { my_home() + "outf.txt" }
-
-	_mail_params := f18_email_prepare( _subject, _body )
-	
-	f18_email_send( _mail_params, _attach )
-
-endif
-
-return
-
-
+   RETURN

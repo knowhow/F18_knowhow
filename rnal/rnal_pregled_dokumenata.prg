@@ -120,7 +120,7 @@ STATIC FUNCTION lst_args( nSort )
    LOCAL nBoxX := 21
    LOCAL nBoxY := 70
    LOCAL dDateFrom := CToD( "" )
-   LOCAL dDateTo := Date()
+   LOCAL dDateTo := danasnji_datum()
    LOCAL dDvrDFrom := CToD( "" )
    LOCAL dDvrDTo := CToD( "" )
    LOCAL cCustomer := PadR( "", 10 )
@@ -1053,7 +1053,7 @@ STATIC FUNCTION _chk_date( dD_dvr_date )
 
    LOCAL nDays := 0
 
-   nDays := Date() - dD_dvr_date
+   nDays := danasnji_datum() - dD_dvr_date
 
    RETURN nDays
 

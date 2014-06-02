@@ -51,7 +51,7 @@ STATIC __opu_12 := ""
 FUNCTION m_get_rpro()
 
    LOCAL dD_From := CToD( "" )
-   LOCAL dD_to := Date()
+   LOCAL dD_to := danasnji_datum()
    LOCAL nOper := 0
    LOCAL cArticle := Space( 100 )
    LOCAL aError

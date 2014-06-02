@@ -53,8 +53,8 @@ STATIC FUNCTION _g_vars( params )
    _statusi := fetch_metric( "rnal_spec_posl_status", NIL, "N" )
    _tip_datuma := fetch_metric( "rnal_spec_posl_tip_datuma", my_user(), 2 )
 
-   _dat_od := Date()
-   _dat_do := Date()
+   _dat_od := danasnji_datum()
+   _dat_do := _dat_od
    _group := 0
    _operater := 0
 

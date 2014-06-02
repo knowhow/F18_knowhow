@@ -19,7 +19,7 @@
 // ---------------------------------------------------------------
 function r_op_docs()
 local dD_From := CTOD("")
-local dD_to := DATE()
+local dD_to := danasnji_datum()
 local nOper := 0
 
 //rnal_o_sif_tables()

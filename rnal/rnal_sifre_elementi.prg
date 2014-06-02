@@ -176,9 +176,6 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
 
       SELECT ( nTmpArea )
 
-
-      // provjeri pravilo....
-      // Samo na <> ESC, problem sa TBrowse...
       IF LastKey() <> K_ESC
 		
          nTmpX := m_x
@@ -191,16 +188,13 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
 		
       ENDIF
 	
-      // pomjeri koordinatu
       IF Alias() == "ELEMENTS"
-         // bilo: 10
          m_x -= ( __box_x / 2 )
       ENDIF
 
 	
       IF LastKey() == K_ESC
 
-         // generisi naziv artikla i update-uj artikal art_id
          SELECT articles
          nRet := rnal_setuj_naziv_artikla( art_id, lNew )
          SELECT articles

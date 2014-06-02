@@ -486,8 +486,7 @@ STATIC FUNCTION _fill_items( lZpoGN, nVar )
       cDoc_it_desc := cPosition + AllTrim( field->doc_it_des )
 
       aZpoGN := {}
-      // setuje se matrica sa elementima artikla
-      rnal_setuj_naziv_artikla( nArt_id, .F., nil, @aZpoGN, .T. )
+      rnal_matrica_artikla( nArt_id, @aZpoGN )
 
       IF lZpoGN == .T.
 
@@ -1037,8 +1036,7 @@ FUNCTION set_art_docgr( nArt_id, nDoc_no, nDocit_no, lPriprema )
    LOCAL lIsLamiG := .F.
    LOCAL lIsLami := .F.
 
-   // daj matricu aArt sa definicijom artikla....
-   rnal_setuj_naziv_artikla( nArt_id, nil, nil, @aArt, .T. )
+   rnal_matrica_artikla( nArt_id, @aArt )
 
    IF aArt == NIL .OR. Len( aArt ) == 0
       cGroup := "0"
@@ -1460,7 +1458,7 @@ FUNCTION rekalkulisi_stavke_za_stampu( lPriprema )
 
    aZpoGN := {}
 
-   rnal_setuj_naziv_artikla( field->art_id, nil, nil, @aZpoGN, .T. )
+   rnal_matrica_artikla( field->art_id, @aZpoGN )
 
    SELECT ( nTArea )
 

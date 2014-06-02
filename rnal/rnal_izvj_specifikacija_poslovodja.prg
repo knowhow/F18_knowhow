@@ -221,13 +221,10 @@ STATIC FUNCTION _cre_spec( params )
          nDoc_it_no := field->doc_it_no
          nQtty := field->doc_it_qtt
 		
-         // matrica sa stavkama i elementima artikla
          aArtDesc := {}
 
-         // napuni matricu aArtDesc radi podataka o artiklu !
-         rnal_setuj_naziv_artikla( nArt_id, nil, nil, @aArtDesc, .T. )
+         rnal_matrica_artikla( nArt_id, @aArtDesc )
 
-         // sracunaj broj stakala
          _glass_count := broj_stakala( aArtDesc, nQtty )
 
          // check group of item

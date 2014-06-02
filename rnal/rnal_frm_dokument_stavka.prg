@@ -344,14 +344,11 @@ FUNCTION _g_doc_it_type( cType )
    RETURN cRet
 
 
-// ------------------------------------
-// setuj matricu sa artiklom
-// ------------------------------------
 STATIC FUNCTION _set_arr( nArt_id, aArr )
 
    LOCAL nTArea := Select()
 
-   rnal_setuj_naziv_artikla( nArt_id, .F., .F., @aArr, .T. )
+   rnal_matrica_artikla( nArt_id, @aArr )
 
    SELECT ( nTArea )
 
@@ -359,9 +356,6 @@ STATIC FUNCTION _set_arr( nArt_id, aArr )
 
 
 
-// -------------------------------------------
-// uvecaj broj stavke naloga
-// -------------------------------------------
 FUNCTION inc_docit( nDoc_no )
 
    LOCAL nTArea := Select()

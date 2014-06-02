@@ -374,7 +374,7 @@ STATIC FUNCTION _get_doc_op_element( art_id, el_no )
    LOCAL _scan := 0
    LOCAL _el_no
 
-   rnal_setuj_naziv_artikla( art_id, .F., nil, @_art, .T. )
+   rnal_matrica_artikla( art_id, @_art )
 
    _g_art_elements( @_elem, art_id )
 

@@ -518,13 +518,10 @@ STATIC FUNCTION _cre_sp_el( dD_from, dD_to, nOper, cArticle )
          aArt := {}
          aElem := {}
 
-         // artikal razlozi na elemente
-         rnal_setuj_naziv_artikla( nArt_id, nil, nil, @aArt, .T. )
+         rnal_matrica_artikla( nArt_id, @aArt )
 
-         // ovaj artikal nema elemenata ?!????
          IF Len( aArt ) == 0
     		
-            // dodaj u greske
             _scan := AScan( aErr, {|val| val[ 1 ] == "artikal " + AllTrim( Str( nArt_id ) ) } )
             IF _scan == 0
                AAdd( aErr, { "artikal " + AllTrim( Str( nArt_id ) ), nDoc_no, nDoc_it_no } )
@@ -536,13 +533,10 @@ STATIC FUNCTION _cre_sp_el( dD_from, dD_to, nOper, cArticle )
 	
          ENDIF
 
-         // napuni elemente artikla
          _g_art_elements( @aElem, nArt_id )
 	
-         // prodji kroz elemente artikla i obradi svaki
          FOR nEl_cnt := 1 TO Len( aElem )
 		
-            // element identifikator artikla
             nEl_no := aElem[ nEl_cnt, 1 ]
 
             // broj elementa, 1, 2, 3 ...
@@ -1079,11 +1073,9 @@ STATIC FUNCTION _cre_sp_art( dD_from, dD_to, nOper, cArticle )
          // ostecenih stavki
          nDmg := 0
 
-         // napuni matricu sa artiklom
          aArt := {}
-         rnal_setuj_naziv_artikla( nArt_id, nil, nil, @aArt, .T. )
+         rnal_matrica_artikla( nArt_id, @aArt )
 
-         // koliko stakala ima u artiklu
          nGlass_cnt := g_gl_count( aArt )
 		
          // koliko ima elemenenata

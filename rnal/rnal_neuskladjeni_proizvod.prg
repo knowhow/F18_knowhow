@@ -192,7 +192,7 @@ METHOD RNALDamageDocument:has_multiglass()
       _art_id := oRow:FieldGet( oRow:FieldPos( "art_id" ) )
       _a_art := {}
 
-      rnal_setuj_naziv_artikla( _art_id, nil, nil, @_a_art, .T. )
+      rnal_matrica_artikla( _art_id, @_a_art )
 
       IF is_izo( _a_art ) .OR. is_lami( _a_art ) .OR. is_lamig( _a_art )
          _ok := .T.

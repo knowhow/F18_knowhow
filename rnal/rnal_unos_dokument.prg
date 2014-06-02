@@ -620,8 +620,7 @@ STATIC FUNCTION key_handler()
       nRet := DE_CONT
 
       IF Alias() == "_DOC_IT"
-         // kopiranje stavki naloga
-         IF cp_items() <> 0
+         IF rnal_kopiranje_stavki_naloga() <> 0
             nRet := DE_REFRESH
          ENDIF
       ELSE

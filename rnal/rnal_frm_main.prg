@@ -122,9 +122,6 @@ return .t.
 
 
 
-// ---------------------------------------------
-// forma  unosa podataka
-// ---------------------------------------------
 static function _e_box_main( nBoxX, nBoxY )
 local nX := 1
 local nLeft := 21
@@ -132,11 +129,10 @@ local cCustId
 local cContId
 local cObjId
 
-// setuj def.vrijednosti polja za novi dokument
 if l_new_doc
 
-	_doc_date := DATE()
-	_doc_dvr_da := DATE() + 2
+	_doc_date := danasnji_datum()
+	_doc_dvr_da := _doc_date + 2
 	_doc_dvr_ti := PADR( PADR(TIME(), 5), 8)
 	_doc_ship_p := PADR("", LEN(_doc_ship_p) )
 	_doc_priori := 2
@@ -158,10 +154,7 @@ else
 	
 endif
 
-// set vrijednosti polja koja se uvijek mijenjaju
 _operater_i := _oper_id
-
-// unos podataka...
 
 @ m_x + nX, m_y + 2 SAY8 "Datum naloga (*):" GET _doc_date WHEN set_opc_box( nBoxX, 50 ) 
 

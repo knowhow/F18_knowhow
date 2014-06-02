@@ -435,15 +435,11 @@ STATIC FUNCTION val_fi( nVal )
 STATIC FUNCTION val_qtty( nVal )
    RETURN razlicito_od_0( nVal, "količina" )
 
-// -------------------------------------
-// validacija nadmorske visine
-// -------------------------------------
+
 STATIC FUNCTION val_altt( nVal )
    RETURN razlicito_od_0( nVal, "nadmorska visina" )
 
-// ----------------------------------
-// validacija sirine, visine
-// ----------------------------------
+
 STATIC FUNCTION val_width( nVal )
    RETURN u_opsegu( nVal, 1, gMaxWidth, "širina", "mm" )
 
@@ -452,19 +448,16 @@ STATIC FUNCTION val_heigh( nVal )
    RETURN u_opsegu( nVal, 1, gMaxHeigh, "visina", "mm" )
 
 
-// -----------------------------------------------
-// kopiranje stavki sa drugog naloga
-// -----------------------------------------------
-FUNCTION cp_items()
+
+FUNCTION rnal_kopiranje_stavki_naloga()
 
    LOCAL nDocCopy
    LOCAL cQ_it
    LOCAL cQ_aops
-   LOCAL cSeason
    LOCAL nRet := 1
    LOCAL nTArea := Select()
 
-   nRet := _cp_box( @nDocCopy, @cQ_it, @cQ_aops, @cSeason )
+   nRet := kopiranje_box( @nDocCopy, @cQ_it, @cQ_aops )
 
    // ako necu nista raditi - izlazim
    IF nRet = 0
@@ -473,22 +466,15 @@ FUNCTION cp_items()
 
    SELECT _docs
 
-   // imam parametre, idem na kopiranje
-   __cp_items( _docs->doc_no, nDocCopy, cQ_it, cQ_aops, cSeason )
+   kopiraj_stavke( _docs->doc_no, nDocCopy, cQ_it, cQ_aops )
 
    SELECT ( nTArea )
 
    RETURN nRet
 
 
-// ----------------------------------------------
-// box sa uslovim kopiranja
-//
-// nDoc - broj dokumenta
-// cQ_it - pitanje za kopiranje stavki (d/n)
-// cQ_aops - pitanje za kopiranje operac. (d/n)
-// ----------------------------------------------
-STATIC FUNCTION _cp_box( nDoc, cQ_It, cQ_Aops, cSeason )
+
+STATIC FUNCTION kopiranje_box( nDoc, cQ_It, cQ_Aops )
 
    LOCAL nRet := 1
    LOCAL GetList := {}
@@ -496,16 +482,13 @@ STATIC FUNCTION _cp_box( nDoc, cQ_It, cQ_Aops, cSeason )
    nDoc := 0
    cQ_it := "D"
    cQ_Aops := "D"
-   cSeason := Space( 4 )
 
    Box(, 5, 55 )
 
    @ m_x + 1, m_y + 2 SAY "Nalog iz kojeg kopiramo:" GET nDoc ;
       PICT "9999999999" VALID ( nDoc > 0 )
 
-   @ m_x + 1, Col() + 2 SAY "sezona:" GET cSeason ;
-
-      @ m_x + 3, m_y + 2 SAY "   Kopirati stavke naloga (D/N)" GET cQ_it ;
+   @ m_x + 3, m_y + 2 SAY "   Kopirati stavke naloga (D/N)" GET cQ_it ;
       PICT "@!" VALID ( cQ_it $ "DN" )
 
    @ m_x + 4, m_y + 2 SAY "Kopirati operacije naloga (D/N)" GET cQ_Aops ;
@@ -523,43 +506,16 @@ STATIC FUNCTION _cp_box( nDoc, cQ_It, cQ_Aops, cSeason )
 
 
 
-// ---------------------------------------------------
-// kopiraj stavke naloga
-//
-// nDoc - originalni dokument
-// nDocCopy - dokument s kojeg kopiramo
-// ---------------------------------------------------
-STATIC FUNCTION __cp_items( nDoc, nDocCopy, cQ_it, cQ_aops, cSeason )
+STATIC FUNCTION kopiraj_stavke( nDoc, nDocCopy, cQ_it, cQ_aops )
 
    LOCAL nTArea := Select()
    LOCAL nDocItCopy
    LOCAL nT_Docit := F_DOC_IT
    LOCAL nT_Docops := F_DOC_OPS
-   LOCAL lSeason := .F.
    LOCAL _rec
 
    IF cQ_it == "N"
       RETURN
-   ENDIF
-
-   cSeason := AllTrim( cSeason )
-
-   IF !Empty( cSeason ) .AND. Val( cSeason ) <> Year( Date() )
-
-      lSeason := .T.
-
-      // pozicioniraj se na tabele iz sezone
-
-      SELECT ( nT_docit )
-      USE
-      SELECT ( nT_docit )
-      USE ( KUMPATH + cSeason + SLASH + "DOC_IT.DBF" ) ALIAS doc_it
-
-      SELECT ( nT_docops )
-      USE
-      SELECT ( nT_docops )
-      USE ( KUMPATH + cSeason + SLASH + "DOC_OPS.DBF" ) ALIAS doc_ops
-
    ENDIF
 
    SELECT ( nT_docit )
@@ -625,16 +581,6 @@ STATIC FUNCTION __cp_items( nDoc, nDocCopy, cQ_it, cQ_aops, cSeason )
       SKIP
 
    ENDDO
-
-   IF lSeason == .T.
-      // vrati se na stare tabele
-      SELECT ( nT_docit )
-      USE
-      SELECT ( nT_docops )
-      USE
-      O_DOC_IT
-      O_DOC_OPS
-   ENDIF
 
    SELECT ( nTArea )
 

@@ -1,7 +1,8 @@
-1.7.95  2014-05-30, vsasa
+1.7.95  2014-06-02, vsasa
 
   - LD, specifikacija plate - bugfix
   - RNAL, refactor rnal_matrica_artikla()
+  - Fiskalne opcije FPRINT, automatski polog samo u Z varijanti izvještaja
  
 1.7.94  2014-05-28, vsasa
 

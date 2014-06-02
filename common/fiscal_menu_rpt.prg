@@ -60,7 +60,7 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
       AAdd( opcexe, {|| fl_daily( AllTrim( gFC_path ), AllTrim( gFC_name ), nDevice ) } )
       AAdd( opc, "------ ostale komande --------------------" )
       AAdd( opcexe, {|| .F. } )
-      AAdd( opc, "5. unos pologa u uređaj       " )
+      AAdd( opc, "5. unos depozita u uređaj       " )
       AAdd( opcexe, {|| fl_polog( AllTrim( gFC_path ), AllTrim( gFC_name ) ) } )
       AAdd( opc, "6. poništi otvoren racun      " )
       AAdd( opcexe, {|| fl_reset( AllTrim( gFC_path ), AllTrim( gFC_name ) ) } )
@@ -86,7 +86,7 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
       AAdd( opc, "------ ostale komande --------------------" )
       AAdd( opcexe, {|| nil } )
 
-      AAdd( opc, "5. unos pologa u uredjaj       " )
+      AAdd( opc, "5. unos depozita u uredjaj       " )
       AAdd( opcexe, {|| fprint_polog( __device_params ) } )
 
       AAdd( opc, "6. štampanje duplikata       " )
@@ -141,7 +141,7 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
 
       AAdd( opc, "5. kopija računa    " )
       AAdd( opcexe, {|| hcp_rn_copy( __device_params ) } )
-      AAdd( opc, "6. polog u uređaj    " )
+      AAdd( opc, "6. unos depozita u uređaj    " )
       AAdd( opcexe, {|| hcp_polog( __device_params ) } )
       AAdd( opc, "7. pošalji cmd.ok    " )
       AAdd( opcexe, {|| hcp_create_cmd_ok( __device_params ) } )
@@ -192,14 +192,13 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
 
       ENDIF
 
-      AAdd( opc, "P. polog u uređaj    " )
+      AAdd( opc, "P. unos depozita u uređaj    " )
       AAdd( opcexe, {|| tremol_polog( __device_params ) } )
 
       IF !low_level
          AAdd( opc, "R. reset PLU " )
          AAdd( opcexe, {|| auto_plu( .T., nil, __device_params ) } )
       ENDIF
-
 
 
    CASE _dev_drv == "TRING"
@@ -219,7 +218,7 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
 
       AAdd( opc, "------ ostale komande --------------------" )
       AAdd( opcexe, {|| .F. } )
-      AAdd( opc, "5. unos pologa u uredjaj       " )
+      AAdd( opc, "5. unos depozita u uređaj       " )
       AAdd( opcexe, {|| tring_polog( __device_params ) } )
       AAdd( opc, "6. štampanje duplikata       " )
       AAdd( opcexe, {|| tring_double( __device_params ) } )
@@ -237,11 +236,6 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
          AAdd( opcexe, {|| auto_plu( .T., nil, __device_params ) } )
 
       ENDIF
-
-   OTHERWISE
-
-      AAdd( opc, " ---- nema dostupnih opcija ------ " )
-      AAdd( opcexe, {|| .F. } )
 
    ENDCASE
 

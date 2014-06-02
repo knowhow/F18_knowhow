@@ -61,7 +61,7 @@ FUNCTION KnjNal()
    o_fin_edit()
 
    ImeKol := { ;
-      { "F.",            {|| IdFirma }, "IdFirma" },;
+      { "F.",            {|| dbSelectArea( F_FIN_PRIPR ), IdFirma }, "IdFirma" },;
       { "VN",            {|| IdVN    }, "IdVN" },;
       { "Br.",           {|| BrNal   }, "BrNal" }, ;
       { "R.br",          {|| RBr     }, "rbr", {|| wrbr() }, {|| vrbr() } },;

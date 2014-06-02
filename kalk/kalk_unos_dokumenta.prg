@@ -74,7 +74,7 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
    PRIVATE ImeKol := {}
    PRIVATE Kol := {}
 
-   AAdd( ImeKol, { "F.", {|| idfirma   }, "idfirma"   } )
+   AAdd( ImeKol, { "F.", {|| dbSelectArea( F_KALK_PRIPR ), idfirma   }, "idfirma"   } )
    AAdd( ImeKol, { "VD", {|| IdVD                     }, "IdVD"        } )
    AAdd( ImeKol, { "BrDok", {|| BrDok                    }, "BrDok"       } )
    AAdd( ImeKol, { "R.Br", {|| Rbr                      }, "Rbr"         } )

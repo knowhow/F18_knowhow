@@ -56,18 +56,15 @@ CREATE CLASS TDesktop
 
 END CLASS
 
-// void TDesktop::getRow()
 METHOD getRow()
    return ::nRow
 
 
-// void TDesktop::getCol()
 METHOD getCol()
    return ::nCol
 
 
 
-// void TDesktop::showLine(string cTekst, string cRow)
 METHOD showLine( cTekst, cRow )
 
    LOCAL nCol
@@ -85,7 +82,6 @@ METHOD showLine( cTekst, cRow )
    RETURN
 
 
-// void TDesktop::SetColors(string cIzbor)
 METHOD setColors( cIzbor )
 
    IF IsColor()
@@ -143,7 +139,6 @@ METHOD showSezona( cSezona )
    RETURN
 
 
-// void showMainScreen(bool lClear)
 METHOD showMainScreen( lClear )
 
    LOCAL _ver_pos := 3
@@ -157,19 +152,18 @@ METHOD showMainScreen( lClear )
    ENDIF
 
    @ 0, 2 SAY '<ESC> Izlaz' COLOR INVERT
-   @ 0, Col() + 2 SAY Date()  COLOR INVERT
+   @ 0, Col() + 2 SAY danasnji_datum() COLOR INVERT
 
    @ MAXROWS() - 1, MAXCOLS() - 16 SAY fmklibver()
 
    DispBox( 2, 0, 4, MAXCOLS() - 1, B_DOUBLE + ' ', NORMAL )
 
    IF lClear
-      DispBox( 5, 0, MAXROWS() - 1, MAXCOLS() - 1, B_DOUBLE + "�", INVERT )
+      DispBox( 5, 0, MAXROWS() - 1, MAXCOLS() - 1, B_DOUBLE + "±", INVERT )
    ENDIF
 
    @ _ver_pos, 1 SAY PadC( gNaslov + ' Ver.' + gVerzija, MAXCOLS() - 8 ) COLOR NORMAL
 
-   // dodatni ispisi na glavnoj formi
    f18_ispisi_status_log_levela()
    f18_ispisi_status_podrucja( _ver_pos )
    f18_ispisi_status_modula()
@@ -177,8 +171,6 @@ METHOD showMainScreen( lClear )
    RETURN
 
 
-// --------------------------------------------------------------
-// --------------------------------------------------------------
 FUNCTION f18_ispisi_status_log_levela()
 
    @ MAXROWS() -1, 1 SAY "log level: " + AllTrim( Str( log_level() ) )
@@ -186,9 +178,6 @@ FUNCTION f18_ispisi_status_log_levela()
    RETURN
 
 
-// --------------------------------------------------------------
-// ispisuje status podrucja
-// --------------------------------------------------------------
 FUNCTION f18_ispisi_status_podrucja( position )
 
    LOCAL _database := my_server_params()[ "database" ]
@@ -199,12 +188,12 @@ FUNCTION f18_ispisi_status_podrucja( position )
 
    IF !( _c_tek_year $ _database )
       _show := .T.
-      _txt := "! SEZONSKO PODRUCJE: " + Right( AllTrim( _database ), 4 ) + " !!!"
+      _txt := "! SEZONSKO PODRUČJE: " + Right( AllTrim( _database ), 4 ) + " !"
       _color := "W/R+"
    ENDIF
 
    IF _show
-      @ position, MAXCOLS() - 35 SAY PadC( _txt, 30 ) COLOR _color
+      @ position, MAXCOLS() - 35 SAY8 PadC( _txt, 30 ) COLOR _color
    ENDIF
 
    RETURN

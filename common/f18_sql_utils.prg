@@ -479,25 +479,6 @@ FUNCTION _sql_get_value( table_name, field_name, cond )
    RETURN _val
 
 
-// -----------------------------------------------------
-// vraca serverski datum
-// -----------------------------------------------------
-FUNCTION _sql_server_date()
-
-   LOCAL _date
-   LOCAL _pg_server := my_server()
-   LOCAL _qry := "SELECT CURRENT_DATE;"
-   LOCAL _res
-
-   _res := _sql_query( _pg_server, _qry )
-
-   IF ValType( _res ) <> "L"
-      _date := _res:FieldGet( 1 )
-   ELSE
-      _date := NIL
-   ENDIF
-
-   RETURN _date
 
 
 // --------------------------------------------------------------------

@@ -4,6 +4,7 @@
   - RNAL, refactor rnal_matrica_artikla()
   - Fiskalne opcije FPRINT, automatski polog samo u Z varijanti izvještaja
   - RNAL, RAL obrada, samo dvije vrste valjka
+  - FIN, bruto bilans ODT varijanta vraćena u varijanti "A" 
  
 1.7.94  2014-05-28, vsasa
 

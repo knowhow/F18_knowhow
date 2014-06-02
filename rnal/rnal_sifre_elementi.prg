@@ -160,47 +160,31 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
 	
       ENDIF
 
-
       ObjDbedit( "elem", nX, nY, {| Ch| elem_hand( Ch ) }, "", "",,,,, 1 )
 
-	
-      // uzmi matricu artikla......
-      // te provjeri pravilo......
-	
-      // pomocna matrica...
       aTmp := {}
       nTmpArea := Select()
 
-      // uzmi podatke u matricu....
-      rnal_setuj_naziv_artikla( art_id, lNew, .F., @aTmp, .T. )
+      rnal_matrica_artikla( art_id, @aTmp )
 
       SELECT ( nTmpArea )
 
       IF LastKey() <> K_ESC
-		
          nTmpX := m_x
-	
          lRuleRet := rule_articles( aTmp )
-	
          m_x := nTmpX
-	
          SELECT ( nTmpArea )
-		
       ENDIF
 	
       IF Alias() == "ELEMENTS"
          m_x -= ( __box_x / 2 )
       ENDIF
-
 	
       IF LastKey() == K_ESC
-
          SELECT articles
          nRet := rnal_setuj_naziv_artikla( art_id, lNew )
          SELECT articles
-		
          EXIT
-	
       ENDIF
 
    ENDDO

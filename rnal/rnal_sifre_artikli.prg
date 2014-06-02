@@ -996,6 +996,10 @@ FUNCTION rnal_setuj_naziv_artikla( nArt_id, lNew, lAuto, aAttr, lOnlyArr )
   
    rnal_matrica_artikla( nArt_id, @aAttr )
 
+   IF aAttr == NIL .OR. LEN( aAttr ) == 0
+      RETURN nRet
+   ENDIF 
+
    IF lAuto == NIL
       lAuto := .F.
    ENDIF
@@ -1017,7 +1021,6 @@ FUNCTION rnal_setuj_naziv_artikla( nArt_id, lNew, lAuto, aAttr, lOnlyArr )
    ENDIF
 
    RETURN nRet
-
 
 
 
@@ -1237,6 +1240,10 @@ STATIC FUNCTION rnal_setuj_naziv_artikla_iz_pravila( aArr, cArt_code, cArt_desc,
    LOCAL lInsLExtChar := .F.
    LOCAL cLExtraChar := ""
 
+   IF aArr == NIL .OR. LEN( aArr ) == 0
+      RETURN .F.
+   ENDIF
+
    IF Len( aArr ) > 0
       nTotElem := aArr[ Len( aArr ), 1 ]
    ENDIF
@@ -1244,6 +1251,7 @@ STATIC FUNCTION rnal_setuj_naziv_artikla_iz_pravila( aArr, cArt_code, cArt_desc,
    FOR i := 1 TO nTotElem
 
       nTmp := AScan( aArr, {| xVar | xVar[ 1 ] == i } )
+
       cElemCode := aArr[ nTmp, 2 ]
 
       cRule := pravilo_grupe_elementa( cElemCode )
@@ -1294,7 +1302,7 @@ STATIC FUNCTION rnal_setuj_naziv_artikla_iz_pravila( aArr, cArt_code, cArt_desc,
 
    NEXT
 
-   RETURN
+   RETURN .T.
 
 
 

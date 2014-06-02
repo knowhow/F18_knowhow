@@ -48,7 +48,7 @@ FUNCTION fakt_unos_dokumenta()
    ENDIF
 
    PRIVATE ImeKol := { ;
-      { "Red.br",  {|| Rbr()                   } }, ;
+      { "Red.br",  {|| dbSelectArea( F_FAKT_PRIPR ), Rbr()                   } }, ;
       { "Partner/Roba",  {|| Part1Stavka() + Roba()  } }, ;
       { "Kolicina",  {|| kolicina                } }, ;
       { "Cijena",  {|| Cijena                  }, "cijena"    }, ;

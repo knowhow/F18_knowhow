@@ -2004,22 +2004,18 @@ FUNCTION renumeracija_fakt_pripr( veza_otpremnica, datum_max )
 
 
 
-// ---------------------------------
-// prikaz partnera u prvoj stavki
-// ---------------------------------
 FUNCTION Part1Stavka()
 
    LOCAL cRet := ""
 
-   IF AllTrim( rbr ) == "1"
-      cRet += Trim( IdPartner ) + ": "
+   IF AllTrim( fakt_pripr->rbr ) == "1"
+      cRet += Trim( fakt_pripr->idpartner ) + ": "
    ENDIF
 
    RETURN cRet
 
-// ------------------------------------------
-// Roba() - prikazi robu
-// ------------------------------------------
+
+
 FUNCTION Roba()
 
    LOCAL cRet := ""

@@ -980,7 +980,6 @@ STATIC FUNCTION _f_a_attr( aArr, nElNo, cGrValCode, cGrVal, ;
 // lAuto - auto generacija naziva
 // ----------------------------------------------
 //
-//
 // aArr sadrzi:
 // { nElNo, cGrValCode, cGrVal, cAttJoker, cAttValCode, cAttVal }
 
@@ -990,11 +989,23 @@ FUNCTION rnal_setuj_naziv_artikla( nArt_id, lNew, lAuto, aAttr, lOnlyArr )
    LOCAL cArt_code := ""
    LOCAL cArt_desc := ""
    LOCAL cArt_mcode := ""
-   
+ 
+   IF aAttr == NIL
+      aAttr := {}
+   ENDIF
+  
    rnal_matrica_artikla( nArt_id, @aAttr )
+
+   IF aAttr == NIL .OR. LEN( aAttr ) == 0
+      RETURN nRet
+   ENDIF 
 
    IF lAuto == NIL
       lAuto := .F.
+   ENDIF
+
+   IF lOnlyArr == NIL
+      lOnlyArr := .F.
    ENDIF
 
    IF lOnlyArr == .F.
@@ -1010,7 +1021,6 @@ FUNCTION rnal_setuj_naziv_artikla( nArt_id, lNew, lAuto, aAttr, lOnlyArr )
    ENDIF
 
    RETURN nRet
-
 
 
 
@@ -1230,6 +1240,10 @@ STATIC FUNCTION rnal_setuj_naziv_artikla_iz_pravila( aArr, cArt_code, cArt_desc,
    LOCAL lInsLExtChar := .F.
    LOCAL cLExtraChar := ""
 
+   IF aArr == NIL .OR. LEN( aArr ) == 0
+      RETURN .F.
+   ENDIF
+
    IF Len( aArr ) > 0
       nTotElem := aArr[ Len( aArr ), 1 ]
    ENDIF
@@ -1237,6 +1251,7 @@ STATIC FUNCTION rnal_setuj_naziv_artikla_iz_pravila( aArr, cArt_code, cArt_desc,
    FOR i := 1 TO nTotElem
 
       nTmp := AScan( aArr, {| xVar | xVar[ 1 ] == i } )
+
       cElemCode := aArr[ nTmp, 2 ]
 
       cRule := pravilo_grupe_elementa( cElemCode )
@@ -1287,7 +1302,7 @@ STATIC FUNCTION rnal_setuj_naziv_artikla_iz_pravila( aArr, cArt_code, cArt_desc,
 
    NEXT
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1371,7 +1386,7 @@ STATIC FUNCTION rnal_azuriraj_artikal( nArt_id, cArt_Desc, cArt_full_desc, cArt_
       ENDIF
 
       IF !Empty( cArt_desc ) .AND. lAppend == .T. ;
-            .AND. ( !lNew .OR. ( lNew .AND. Pitanje(, "Novi artikal, snimiti promjene ?", "D" ) == "D" ) )
+            .AND. ( !lNew .OR. ( lNew .AND. Pitanje(, "Novi artikal, snimiti promjene (D/N) ?", "D" ) == "D" ) )
 
          cArt_desc := PadR( cArt_desc, 100 )
          cArt_full_desc := PadR( cArt_full_desc, 250 )
@@ -1666,17 +1681,13 @@ FUNCTION _g_elem_no( aElem, nDoc_el_no, nElem_no )
    RETURN
 
 
-// ---------------------------------------------------
-// provjerava ispravnost artikla
-// ---------------------------------------------------
 FUNCTION check_article_valid( art_id )
 
    LOCAL _t_area := Select()
    LOCAL _valid := .T.
    LOCAL _elem := {}
 
-   // razlozi artikal na elemente
-   rnal_setuj_naziv_artikla( art_id, nil, nil, @_elem, .T. )
+   rnal_matrica_artikla( art_id, @_elem )
 
    IF Len( _elem ) == 0
       MsgBeep( "Artikal nema pripadajuce elemente !!!" )
@@ -1690,9 +1701,6 @@ FUNCTION check_article_valid( art_id )
 
 
 
-// ---------------------------------------------------
-// prikaz artikala bez elemenata...
-// ---------------------------------------------------
 FUNCTION rpt_artikli_bez_elemenata()
 
    LOCAL _elem, _art_id
@@ -1714,13 +1722,11 @@ FUNCTION rpt_artikli_bez_elemenata()
 
       @ m_x + 1, m_y + 2 SAY "Artikal: " + AllTrim( Str ( _art_id ) )
 
-      // razlozi artikal na elemente
-      rnal_setuj_naziv_artikla( _art_id, nil, nil, @_elem, .T. )
+      rnal_matrica_artikla( _art_id, @_elem )
 
       SELECT articles
 
       IF Len( _elem ) == 0
-         // ovaj nema ...
          AAdd( _error, { field->art_id, field->art_desc } )
       ENDIF
 

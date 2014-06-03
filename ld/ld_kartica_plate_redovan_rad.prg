@@ -44,15 +44,6 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
       @ PRow(), PCol() + 1 SAY parobr->vrbod / parobr->k1 * brbod PICT "99999.99999"
    ENDIF
 
-   IF l2kolone
-	
-      P_COND2
-      // aRCPos  := { PROW() , PCOL() }
-      cDefDev := Set( _SET_PRINTFILE )
-      SvratiUFajl()
-      // SETPRC(0,0)
-   ENDIF
-
    cUneto := "D"
    nRRsati := 0
    nOsnNeto := 0
@@ -187,7 +178,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
             // suma iz prethodnih obracuna !
             IF "_K" == Right( AllTrim( tippr->opis ), 2 )
 
-               nKumPrim := KumPrim( _IdRadn, cPom )
+               nKumPrim := ld_kumulativna_primanja( _IdRadn, cPom )
 
                IF SubStr( AllTrim( tippr->opis ), 2, 1 ) == "1"
                   nKumPrim := nKumPrim + radn->n1
@@ -251,11 +242,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 			
             IF "SUMKREDITA" $ tippr->formula .AND. gReKrKP == "1"
 				
-               IF l2kolone
-                  P_COND2
-               ELSE
-                  P_COND
-               ENDIF
+               P_COND
 				
                ? cTprLine
                ? cLMSK + "  ", Lokal( "Od toga pojedinacni krediti:" )
@@ -273,11 +260,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 				
                ? cTprLine
 				
-               IF l2kolone
-                  P_COND2
-               ELSE
-                  P_12CPI
-               ENDIF
+               P_12CPI
 				
                SELECT ld
 				
@@ -288,11 +271,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
                SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn
                ukredita := 0
 				
-               IF l2kolone
-                  P_COND2
-               ELSE
-                  P_COND
-               ENDIF
+               P_COND
 				
                ? m2 := cLMSK + "   ------------------------------------------------  --------- --------- -------"
                ?     cLMSK + Lokal( "        Kreditor      /              na osnovu         Ukupno    Ostalo   Rata" )
@@ -311,11 +290,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
                   SKIP 1
                ENDDO
 				
-               IF l2kolone
-                  P_COND2
-               ELSE
-                  P_12CPI
-               ENDIF
+               P_12CPI
 				
                IF !lSkrivena .AND. PRow() > 55 + gPStranica
                   FF
@@ -335,13 +310,11 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
       PushWA()
       SET ORDER TO TAG "2"
       hseek Str( _godina, 4 ) + Str( _mjesec, 2 ) + "1" + _idradn + _idrj
-      // hseek "1"+str(_godina,4)+str(_mjesec,2)+_idradn+_idrj
       ?
       ? cLMSK + Lokal( "Od toga 1. dio:" )
       @ PRow(), 60 + Len( cLMSK ) SAY UIznos PICT gpici
       ? cTprLine
       hseek Str( _godina, 4 ) + Str( _mjesec, 2 ) + "2" + _idradn + _idrj
-      // hseek "2"+str(_godina,4)+str(_mjesec,2)+_idradn+_idrj
       ? cLMSK + Lokal( "Od toga 2. dio:" )
       @ PRow(), 60 + Len( cLMSK ) SAY UIznos PICT gpici
       ? cTprLine
@@ -357,8 +330,6 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
    ENDIF
 
    IF gSihtGroup == "D"
-      // sihtarice po grupama
-      // izbaci satinicu za radnika
       nTmp := get_siht( .T., cGodina, cMjesec, ld->idradn, "" )
       IF ld->usati < nTmp
          ? "Greska: sati po sihtarici veci od uk.sati place !"
@@ -366,8 +337,6 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
    ENDIF
 
    IF gPrBruto $ "D#X"
-	
-      // prikaz bruto iznosa
 	
       SELECT ( F_POR )
 	
@@ -412,8 +381,6 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
          ENDIF
       ENDIF
 
-      // bruto placa iz neta...
-
       ? cMainLine
 	
       IF gPrBruto == "X"
@@ -434,16 +401,11 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
          ? cMainLine
       ENDIF
 	
-      // razrada doprinosa ....
-	
       ? cLmSK + Lokal( "Obracun doprinosa: " )
 	
       IF ( nBo < nBoMin )
-		
          ??  Lokal( "minimalna bruto satnica * sati" )
-
          @ PRow(), 60 + Len( cLMSK ) SAY nBoMin PICT gpici
-
          ? cLmSk + cDoprLine
       ENDIF
 
@@ -458,7 +420,6 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
       DO WHILE !Eof()
 	
          IF cRTipRada $ tr_list() .AND. Empty( dopr->tiprada )
-            // ovo je uredu...
          ELSEIF dopr->tiprada <> cRTipRada
             SKIP
             LOOP
@@ -478,8 +439,6 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 		
          PozicOps( DOPR->poopst )
 			
-         // preskoci zbirne doprinose
-         // ako je tako navedeno u parametrima
          IF gKarSDop == "N" .AND. Left( dopr->id, 1 ) <> "1"
             SKIP
             LOOP
@@ -503,15 +462,12 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
          @ PRow(), PCol() + 1 SAY iznos PICT "99.99%"
 		
          IF Empty( idkbenef )
-            // doprinos udara na neto
             @ PRow(), PCol() + 1 SAY nBoMin PICT gpici
             nC1 := PCol() + 1
             @ PRow(), PCol() + 1 SAY nPom := Max( dlimit, Round( iznos / 100 * nBOMin, gZaok2 ) ) PICT gpici
-			
             IF dopr->id == "1X"
                nUkDoprIz += nPom
             ENDIF
-
          ELSE
             nPom0 := AScan( _a_benef, {| x| x[ 1 ] == idkbenef } )
             IF nPom0 <> 0
@@ -542,17 +498,13 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 		
       ENDDO
 
-      // oporezivi dohodak
       nOporDoh := nBO - nUkDoprIz
 
-      // oporezivi dohodak
       ? cLMSK + Lokal( "3. BRUTO - DOPRINOSI IZ PLATE (1-2)" )
       @ PRow(), 60 + Len( cLMSK ) SAY nOporDoh PICT gpici
 	
       ? cMainLine
 
-      // razrada licnog odbitka ....
-	
       IF nLicOdbitak > 0
 
          ? cLMSK + Lokal( "4. LICNI ODBITAK" ), Space( 14 ) + ;
@@ -571,7 +523,6 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
       nPorOsnovica := ( nBO - nUkDoprIz - nLicOdbitak )
 	
-      // ako je negativna onda je 0
       IF nPorOsnovica < 0 .OR. !radn_oporeziv( radn->id, ld->idrj )
          nPorOsnovica := 0
       ENDIF
@@ -580,9 +531,6 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
       @ PRow(), 60 + Len( cLMSK ) SAY nPorOsnovica PICT gpici
 
       ? cMainLine
-
-      // razrada poreza na platu ....
-      // u ovom dijelu idu samo porezi na bruto TIP = "B"
 
       ? cLMSK + Lokal( "6. POREZ NA PLATU" )
 
@@ -596,7 +544,6 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 	
       DO WHILE !Eof()
 	
-         // vrati algoritam poreza
          cAlgoritam := get_algoritam()
 		
          PozicOps( POR->poopst )
@@ -606,16 +553,12 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
             LOOP
          ENDIF
 		
-         // sracunaj samo poreze na bruto
          IF por->por_tip <> "B"
             SKIP
             LOOP
          ENDIF
 	
-         // obracunaj porez
          aPor := obr_por( por->id, nPorOsnovica, 0 )
-		
-         // ispisi porez
          nPor += isp_por( aPor, cAlgoritam, cLMSK, .T., .T. )
 		
          SKIP 1
@@ -623,13 +566,11 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
       @ PRow(), 60 + Len( cLMSK ) SAY nPor PICT gpici
 
-      // neto na ruke
       nUkIspl := ROUND2( nBO - nUkDoprIz - nPor, gZaok2 )
 
       nMUkIspl := nUkIspl
 
       IF cRTipRada $ " #I#N"
-         // minimalna neto isplata
          nMUkIspl := min_neto( nUkIspl, ld->usati )
       ENDIF
 
@@ -644,7 +585,6 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
       @ PRow(), 60 + Len( cLMSK ) SAY nMUkIspl PICT gpici
 
 
-      // ostala primanja
       ? cMainLine
       ? cLMSK + Lokal( "8. NEOPOREZIVE NAKNADE I ODBICI (preb.stanje)" )
 
@@ -671,7 +611,6 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
       ?
 	
-      // if prow()>31
       IF gPotp <> "D"
          IF PCount() == 0
             FF
@@ -680,30 +619,8 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 	
    ENDIF
 
-   IF l2kolone
-      SET PRINTER TO ( cDefDev ) ADDITIVE
-      // SETPRC(aRCPos[1],aRCPos[2])
-      IF PRow() + 2 + nDMSK > nKRSK * ( 2 -( nRBrKart % 2 ) )
-         aTekst := U2Kolone( PRow() + 2 + nDMSK - nKRSK * ( 2 -( nRBrKart % 2 ) ) )
-         FOR i := 1 TO Len( aTekst )
-            IF i == 1
-               ?? aTekst[ i ]
-            ELSE
-               ? aTekst[ i ]
-            ENDIF
-         NEXT
-         SetPRC( nKRSK * ( 2 -( nRBrKart % 2 ) ) -2 -nDMSK, PCol() )
-      ELSE
-         PRINTFILE( PRIVPATH + "xoutf.txt" )
-      ENDIF
-   ENDIF
-
-   // potpis na kartici
    kart_potpis()
 
-   // obrada sekvence za kraj papira
-
-   // skrivena kartica
    IF lSkrivena
       IF PRow() < nKRSK + 5
          nPom := nKRSK - PRow()
@@ -713,19 +630,14 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
       ELSE
          FF
       ENDIF
-      // 2 kartice na jedan list N - obavezno FF
    ELSEIF c2K1L == "N"
       FF
-      // ako je prikaz bruto D obavezno FF
    ELSEIF gPrBruto $ "D#X"
       FF
-      // nova kartica novi list - obavezno FF
    ELSEIF lNKNS
       FF
-      // druga kartica takodjer FF
    ELSEIF ( nRBRKart % 2 == 0 )
       FF
-      // prva kartica, ali druga ne moze stati
    ELSEIF ( nRBRKart % 2 <> 0 ) .AND. ( DUZ_STRANA - PRow() < nKRedova )
       --nRBRKart
       FF

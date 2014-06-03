@@ -690,4 +690,157 @@ FUNCTION ld_formatiraj_mjesec( nMjesec )
 
 
 
+FUNCTION SortPrez( cId )
+
+   LOCAL cVrati := ""
+   LOCAL nArr := Select()
+
+   SELECT F_RADN
+   IF !Used()
+      O_RADN
+   ENDIF
+
+   HSEEK cId
+   cVrati := naz + ime + imerod + id
+
+   SELECT ( nArr )
+
+   RETURN cVrati
+
+
+FUNCTION SortIme( cId )
+
+   LOCAL cVrati := ""
+   LOCAL nArr := Select()
+
+   SELECT( F_RADN )
+   IF !Used()
+      reopen_exclusive( "ld_radn" )
+   ENDIF
+   SET ORDER TO TAG "1"
+
+   HSEEK cId
+
+   cVrati := ime + naz + imerod + id
+
+   SELECT ( nArr )
+
+   RETURN cVrati
+
+
+FUNCTION SortVar( cId )
+
+   LOCAL cVrati := ""
+   LOCAL nArr := Select()
+
+   O_RADKR
+   SEEK cId
+   SELECT RJES
+   SEEK RADKR->naosnovu + RADKR->idradn
+   cVrati := varijanta
+   SELECT ( nArr )
+
+   RETURN cVrati
+
+
+
+FUNCTION NLjudi()
+   RETURN "(" + AllTrim( Str( opsld->ljudi ) ) + ")"
+
+
+FUNCTION ImaUOp( cPD, cSif )
+
+   LOCAL lVrati := .T.
+
+   IF ops->( FieldPos( "DNE" ) ) <> 0
+      IF Upper( cPD ) = "P"
+         lVrati := ! ( cSif $ OPS->pne )
+      ELSE
+         lVrati := ! ( cSif $ OPS->dne )
+      ENDIF
+   ENDIF
+
+   RETURN lVrati
+
+
+FUNCTION PozicOps( cSR )
+
+   LOCAL nArr := Select()
+   LOCAL cO := ""
+
+   IF cSR == "1"
+      // opstina stanovanja
+      cO := radn->idopsst
+   ELSEIF cSR == "2"
+      // opstina rada
+      cO := radn->idopsrad
+   ELSE
+      // " "
+      cO := Chr( 255 )
+   ENDIF
+
+   SELECT ( F_OPS )
+
+   IF !Used()
+      O_OPS
+   ENDIF
+
+   SEEK cO
+
+   SELECT ( nArr )
+
+   RETURN
+
+FUNCTION ScatterS( cG, cM, cJ, cR, cPrefix )
+
+   PRIVATE cP7 := cPrefix
+
+   IF cPrefix == NIL
+      Scatter()
+   ELSE
+      Scatter( cPrefix )
+   ENDIF
+   SKIP 1
+   DO WHILE !Eof() .AND. mjesec = cM .AND. godina = cG .AND. idradn = cR .AND. ;
+         idrj = cJ
+      IF cPrefix == NIL
+         FOR i := 1 TO cLDPolja
+            cPom    := PadL( AllTrim( Str( i ) ), 2, "0" )
+            _i&cPom += i&cPom
+         NEXT
+         _uneto   += uneto
+         _uodbici += uodbici
+         _uiznos  += uiznos
+      ELSE
+         FOR i := 1 TO cLDPolja
+            cPom    := PadL( AllTrim( Str( i ) ), 2, "0" )
+            &cP7.i&cPom += i&cPom
+         NEXT
+         &cP7.uneto   += uneto
+         &cP7.uodbici += uodbici
+         &cP7.uiznos  += uiznos
+      ENDIF
+      SKIP 1
+   ENDDO
+   SKIP -1
+
+   RETURN
+
+FUNCTION IspisObr()
+
+   LOCAL cVrati := ""
+
+   IF lViseObr .AND. !Empty( cObracun )
+      cVrati := "/" + cObracun
+   ENDIF
+
+   RETURN cVrati
+
+
+FUNCTION Obr2_9()
+   RETURN lViseObr .AND. !Empty( cObracun ) .AND. cObracun <> "1"
+
+
+
+
 

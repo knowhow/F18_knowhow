@@ -410,7 +410,7 @@ STATIC FUNCTION prikazi_primanja()
             SELECT ld
          ENDIF
          IF "_K" == Right( AllTrim( tippr->opis ), 2 )
-            nKumPrim := KumPrim( _IdRadn, cPom )
+            nKumPrim := ld_kumulativna_primanja( _IdRadn, cPom )
 
             IF SubStr( AllTrim( tippr->opis ), 2, 1 ) == "1"
                nKumPrim := nkumprim + radn->n1
@@ -429,3 +429,34 @@ STATIC FUNCTION prikazi_primanja()
          ENDIF
       ENDIF
    ENDIF
+
+   RETURN
+
+
+
+FUNCTION ld_kumulativna_primanja( cIdRadn, cIdPrim )
+
+   LOCAL j := 0, nVrati := 0, nOdGod := 0, nDoGod := 0
+
+   cPom77 := cIdPrim
+   IF cIdRadn == NIL; cIdRadn := ""; ENDIF
+   SELECT LD
+   PushWA()
+   SET ORDER TO TAG ( TagVO( "4" ) )
+   GO BOTTOM; nDoGod := godina
+   GO TOP; nOdGod := godina
+   FOR j := nOdGod TO nDoGod
+      GO TOP
+      SEEK Str( j, 4 ) + cIdRadn
+      DO WHILE godina == j .AND. cIdRadn == IdRadn
+         nVrati += i&cPom77
+         SKIP 1
+      ENDDO
+   NEXT
+   SELECT LD
+   PopWA()
+
+   RETURN nVrati
+
+
+

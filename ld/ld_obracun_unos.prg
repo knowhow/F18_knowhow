@@ -344,7 +344,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
       @ m_x + 3, Col() + 2 SAY Lokal( "Koef.minulog rada" ) GET _kminrad PICT "99.99%" VALID FillKMinRad( _kminrad )
    ENDIF
 
-   @ m_x + 4, m_y + 2 SAY "Lič.odb:" GET _ulicodb PICT "9999.99"
+   @ m_x + 4, m_y + 2 SAY8 "Lič.odb:" GET _ulicodb PICT "9999.99"
    @ m_x + 4, Col() + 1 SAY Lokal( "Vrsta posla koji radnik obavlja" ) GET _IdVPosla valid ( Empty( _idvposla ) .OR. P_VPosla( @_IdVPosla, 4, 55 ) ) .AND. FillVPosla()
 
    READ
@@ -609,16 +609,14 @@ STATIC FUNCTION ld_unos_obracuna_tipovi_primanja()
 
 
 
-STATIC FUNCTION WhUnos( cTP )
-
+FUNCTION WhUnos( cTP )
    tippr->( dbSeek( cTP ) )
-
    RETURN .T.
 
 
 
 
-STATIC FUNCTION ValRNal( cPom, i )
+FUNCTION ValRNal( cPom, i )
 
    IF !Empty( cPom )
       P_fakt_objekti( @cPom )

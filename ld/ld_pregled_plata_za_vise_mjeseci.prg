@@ -12,9 +12,6 @@
 
 #include "ld.ch"
 
-// ---------------------------------------
-// otvara potrebne tabele
-// ---------------------------------------
 STATIC FUNCTION o_tables()
 
    O_OBRACUNI
@@ -32,9 +29,6 @@ STATIC FUNCTION o_tables()
 
    RETURN
 
-// ---------------------------------------------------------
-// sortiranje tabele LD
-// ---------------------------------------------------------
 STATIC FUNCTION ld_sort( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cObr )
 
    LOCAL cFilter := ""
@@ -72,9 +66,6 @@ STATIC FUNCTION ld_sort( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cObr )
    RETURN
 
 
-// ---------------------------------------------
-// upisivanje podatka u pomocnu tabelu za rpt
-// ---------------------------------------------
 STATIC FUNCTION _ins_tbl( nGodina, nMjesec, cRadnik, cIdRj, cObrZa, cIme, ;
       nSati, nR_sati, ;
       nB_sati, nPrim, nBruto, nDoprIz, nDopPio, ;
@@ -122,9 +113,6 @@ STATIC FUNCTION _ins_tbl( nGodina, nMjesec, cRadnik, cIdRj, cObrZa, cIme, ;
 
 
 
-// ---------------------------------------------
-// kreiranje pomocne tabele
-// ---------------------------------------------
 STATIC FUNCTION cre_tmp_tbl()
 
    LOCAL aDbf := {}
@@ -181,7 +169,6 @@ FUNCTION ld_pregled_plata_za_period()
    LOCAL cM4_prim := Space( 100 )
    LOCAL cTotal := "N"
 
-   // kreiraj pomocnu tabelu
    cre_tmp_tbl()
 
    cIdRj := gRj
@@ -189,10 +176,9 @@ FUNCTION ld_pregled_plata_za_period()
    cGodina := gGodina
    cMjesecDo := cMjesec
 
-   // otvori tabele
    o_tables()
 
-   Box( "#PREGLED PLATA ZA VISE MJESECI (M4)", 16, 75 )
+   Box( "#PREGLED PLATA ZA VIŠE MJESECI (M4)", 16, 75 )
 
    @ m_x + 1, m_y + 2 SAY "Radne jedinice: " GET cRj PICT "@!S25"
    @ m_x + 2, m_y + 2 SAY "Za mjesece od:" GET cMjesec PICT "99"
@@ -201,23 +187,23 @@ FUNCTION ld_pregled_plata_za_period()
    @ m_x + 3, m_y + 2 SAY "Godina: " GET cGodina PICT "9999"
 
    IF lViseObr
-      @ m_x + 3, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+      @ m_x + 3, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    ENDIF
 
    @ m_x + 4, m_y + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik ;
       VALID Empty( cRadnik ) .OR. P_RADN( @cRadnik )
-   @ m_x + 6, m_y + 2 SAY "Dodatni doprinosi za prikaz na izvjestaju: "
-   @ m_x + 7, m_y + 2 SAY " Sifra dodatnog doprinosa 1 : " GET cDoprPio
-   @ m_x + 8, m_y + 2 SAY " Sifra dodatnog doprinosa 2 : " GET cDoprZdr
-   @ m_x + 9, m_y + 2 SAY " Sifra dodatnog doprinosa 3 : " GET cDoprNez
-   @ m_x + 10, m_y + 2 SAY " Sifra dodatnog doprinosa 4 : " GET cDoprD4
-   @ m_x + 11, m_y + 2 SAY " Sifra dodatnog doprinosa 5 : " GET cDoprD5
-   @ m_x + 12, m_y + 2 SAY " Sifra dodatnog doprinosa 6 : " GET cDoprD6
+   @ m_x + 6, m_y + 2 SAY8 "Dodatni doprinosi za prikaz na izvještaju: "
+   @ m_x + 7, m_y + 2 SAY8 " Šifra dodatnog doprinosa 1 : " GET cDoprPio
+   @ m_x + 8, m_y + 2 SAY8 " Šifra dodatnog doprinosa 2 : " GET cDoprZdr
+   @ m_x + 9, m_y + 2 SAY8 " Šifra dodatnog doprinosa 3 : " GET cDoprNez
+   @ m_x + 10, m_y + 2 SAY8 " Šifra dodatnog doprinosa 4 : " GET cDoprD4
+   @ m_x + 11, m_y + 2 SAY8 " Šifra dodatnog doprinosa 5 : " GET cDoprD5
+   @ m_x + 12, m_y + 2 SAY8 " Šifra dodatnog doprinosa 6 : " GET cDoprD6
 
-   @ m_x + 14, m_y + 2 SAY "Izdvojena primanja za M4 (npr. 18;24;):" ;
+   @ m_x + 14, m_y + 2 SAY8 "Izdvojena primanja za M4 (npr. 18;24;):" ;
       GET cM4_prim PICT "@S20"
 
-   @ m_x + 16, m_y + 2 SAY "Prikazati ukupno za sve mjesece (D/N)" ;
+   @ m_x + 16, m_y + 2 SAY8 "Prikazati ukupno za sve mjesece (D/N)" ;
       GET cTotal PICT "@!" VALID cTotal $ "DN"
 
    READ
@@ -234,20 +220,16 @@ FUNCTION ld_pregled_plata_za_period()
 
    SELECT ld
 
-   // sortiraj tabelu i postavi filter
    ld_sort( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cObracun )
 
-   // nafiluj podatke obracuna
    fill_data( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, ;
       cDoprPio, cDoprZdr, cDoprNez, cObracun, cDoprD4, cDoprD5, cDoprD6, ;
       cM4_prim, cTotal )
 
    IF cTotal == "N"
-      // printaj izvjestaj
       ppv_print( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, ;
          cDoprPio, cDoprZdr, cDoprNez, cDoprD4, cDoprD5, cDoprD6 )
    ELSE
-      // printaj izvjestaj
       ppv_total( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, ;
          cDoprPio, cDoprZdr, cDoprNez, cDoprD4, cDoprD5, cDoprD6 )
    ENDIF
@@ -256,9 +238,6 @@ FUNCTION ld_pregled_plata_za_period()
 
 
 
-// ----------------------------------------------
-// stampa pregleda plata za vise mjeseci - total
-// ----------------------------------------------
 STATIC FUNCTION ppv_total( cRj, cGodina, cMjOd, cMjDo, cRadnik, ;
       cDop1, cDop2, cDop3, cDop4, cDop5, cDop6 )
 
@@ -353,9 +332,6 @@ STATIC FUNCTION ppv_total( cRj, cGodina, cMjOd, cMjDo, cRadnik, ;
 
       DO WHILE !Eof() .AND. field->godina = nSeek_god .AND. ;
             field->mjesec = nSeek_mj
-
-         // saberi sve za jedan mjesec
-         // svi radnici, sve radne jedinice
 
          nUSati += sati
          nUPrim += prim
@@ -458,8 +434,6 @@ STATIC FUNCTION ppv_total( cRj, cGodina, cMjOd, cMjDo, cRadnik, ;
 		
       IF ( nUb_izn <> 0 )
 
-         // ovo je za drugi red izvjestaja...
-         // redovan rad
          ?
          @ PRow(), nPoc - 3 SAY "r: " + Str( nUR_sati, 12, 2 )
          @ PRow(), nNBP_pt SAY Str( nUR_izn, 12, 2 )
@@ -467,7 +441,6 @@ STATIC FUNCTION ppv_total( cRj, cGodina, cMjOd, cMjDo, cRadnik, ;
          nTUR_sati += nUR_sati
          nTUR_izn += nUR_izn
 
-         // bolovanja ...
          ?
          @ PRow(), nPoc - 3 SAY "b: " + Str( nUb_sati, 12, 2 )
          @ PRow(), nNBP_pt SAY Str( nUb_izn, 12, 2 )
@@ -754,9 +727,6 @@ STATIC FUNCTION ppv_print( cRj, cGodina, cMjOd, cMjDo, cRadnik, ;
    RETURN
 
 
-// ----------------------------------------
-// stampa headera tabele
-// ----------------------------------------
 STATIC FUNCTION ppv_header( cRadnik, cDop1, cDop2, cDop3, ;
       cDop4, cDop5, cDop6 )
 
@@ -806,14 +776,14 @@ STATIC FUNCTION ppv_header( cRadnik, cDop1, cDop2, cDop3, ;
    IF !Empty( cRadnik )
       AAdd( aTxt, { "Obr.", "za mj", "", "2" } )
    ELSE
-      AAdd( aTxt, { "Sifra", "radn.", "", "2" } )
+      AAdd( aTxt, { "Šifra", "radn.", "", "2" } )
    ENDIF
    AAdd( aTxt, { "Naziv", "radnika", "", "3" } )
    AAdd( aTxt, { "Sati", "", "", "4" } )
    AAdd( aTxt, { "Primanja", "", "", "5" } )
    AAdd( aTxt, { "Bruto plata", "(5 x koef.)", "", "6" } )
-   AAdd( aTxt, { "Doprinos", "iz place", "( 31% )", "7" } )
-   AAdd( aTxt, { "Licni odbici", "", "", "8" } )
+   AAdd( aTxt, { "Doprinos", "iz plaće", "( 31% )", "7" } )
+   AAdd( aTxt, { "Lični odbici", "", "", "8" } )
    AAdd( aTxt, { "Porez", "na dohodak", "10%", "9" } )
    AAdd( aTxt, { "Neto", "plata", "(6-7)", "10" } )
    AAdd( aTxt, { "Na", "ruke", "(6-7-9)", "11" } )
@@ -843,32 +813,23 @@ STATIC FUNCTION ppv_header( cRadnik, cDop1, cDop2, cDop3, ;
    NEXT
 
    FOR i := 1 TO Len( aTxt )
-	
-      // koliko je sirok tekst ?
       nTxtLen := Len( aLines[ i, 1 ] )
-
-      // prvi red
       cTxt1 += PadC( "(" + aTxt[ i, 4 ] + ")", nTxtLen ) + Space( 1 )
       cTxt2 += PadC( aTxt[ i, 1 ], nTxtLen ) + Space( 1 )
       cTxt3 += PadC( aTxt[ i, 2 ], nTxtLen ) + Space( 1 )
       cTxt4 += PadC( aTxt[ i, 3 ], nTxtLen ) + Space( 1 )
-
    NEXT
 
-   // ispisi zaglavlje tabele
-   ? cLine
-   ? cTxt1
-   ? cTxt2
-   ? cTxt3
-   ? cTxt4
-   ? cLine
+   ?U cLine
+   ?U cTxt1
+   ?U cTxt2
+   ?U cTxt3
+   ?U cTxt4
+   ?U cLine
 
    RETURN cLine
 
 
-// --------------------------------------
-// vraca procenat doprinosa
-// --------------------------------------
 STATIC FUNCTION get_d_proc( cDop )
 
    LOCAL cProc := ""
@@ -887,9 +848,6 @@ STATIC FUNCTION get_d_proc( cDop )
    RETURN cProc
 
 
-// ----------------------------------------
-// stampa zaglavlja izvjestaja
-// ----------------------------------------
 STATIC FUNCTION ppv_zaglavlje( cRj, cGodina, cMjOd, cMjDo, cRadnik )
 
    ? Upper( gTS ) + ":", gnFirma
@@ -911,9 +869,6 @@ STATIC FUNCTION ppv_zaglavlje( cRj, cGodina, cMjOd, cMjDo, cRadnik )
    RETURN
 
 
-// ---------------------------------------------------------
-// napuni podatke u pomocnu tabelu za izvjestaj
-// ---------------------------------------------------------
 STATIC FUNCTION fill_data( cRj, cGodina, cMjesec, cMjesecDo, ;
       cRadnik, cDoprPio, cDoprZdr, cDoprNez, cObracun, cDop4, cDop5, cDop6, ;
       cM4_prim, cTotal )

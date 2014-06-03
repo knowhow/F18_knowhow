@@ -1279,7 +1279,7 @@ STATIC FUNCTION filter_opcina_kanton( id_radn, opcina, kanton )
        lOk := .F.
    ENDIF
 
-   IF !lOk .AND. !EMPTY( kanton ) 
+   IF lOk .AND. !EMPTY( kanton ) 
 
       O_OPS
       hseek radn->idopsst

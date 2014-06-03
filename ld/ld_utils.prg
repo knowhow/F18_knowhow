@@ -739,9 +739,8 @@ FUNCTION ld_obracun_napravljen_vise_puta()
 
    RETURN
 
-// -------------------------------------------
-// generisanje virman iz modula LD
-// -------------------------------------------
+
+
 FUNCTION ld_gen_virm()
 
    O_VIRM_PRIPR
@@ -757,3 +756,20 @@ FUNCTION ld_gen_virm()
    my_close_all_dbf()
 
    RETURN
+
+
+
+FUNCTION ld_formatiraj_mjesec( nMjesec )
+
+   IF nMjesec < 10
+      cMj := " " + AllTrim( Str( nMjesec ) )
+   ELSE
+      cMj := AllTrim( Str( nMjesec ) )
+   ENDIF
+
+   RETURN cMj
+
+
+
+
+

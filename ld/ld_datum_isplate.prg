@@ -12,12 +12,10 @@
 
 #include "ld.ch"
 
-// -----------------------------------------
-// unos datuma isplate plaæe
-// -----------------------------------------
+
+
 FUNCTION unos_datuma_isplate_place()
 
-   // datum isplate
    LOCAL dDatPr
    LOCAL dDat1
    LOCAL dDat2
@@ -31,7 +29,6 @@ FUNCTION unos_datuma_isplate_place()
    LOCAL dDat10
    LOCAL dDat11
    LOCAL dDat12
-   // mjesec isplate
    LOCAL nMjPr
    LOCAL nMj1
    LOCAL nMj2
@@ -45,7 +42,6 @@ FUNCTION unos_datuma_isplate_place()
    LOCAL nMj10
    LOCAL nMj11
    LOCAL nMj12
-   // isplata za
    LOCAL cIsZaPr
    LOCAL cIsZa1
    LOCAL cIsZa2
@@ -59,7 +55,6 @@ FUNCTION unos_datuma_isplate_place()
    LOCAL cIsZa10
    LOCAL cIsZa11
    LOCAL cIsZa12
-   // vrsta isplate
    LOCAL cVrIsPr
    LOCAL cVrIs1
    LOCAL cVrIs2
@@ -112,12 +107,9 @@ FUNCTION unos_datuma_isplate_place()
 
    READ
 
-   // uzmi parametre postojece
-   // prethodna godina
    dDatPr := g_isp_date( cRj, nGod - 1, 12, cObr, @nMjPr, @cIsZaPr, ;
       @cVrIsPr )
 
-   // od mjeseca 1 do mjeseca 12 tekuce godine
    dDat1 := g_isp_date( cRj, nGod, 1, cObr, @nMj1, @cIsZa1, @cVrIs1 )
    dDat2 := g_isp_date( cRj, nGod, 2, cObr, @nMj2, @cIsZa2, @cVrIs2 )
    dDat3 := g_isp_date( cRj, nGod, 3, cObr, @nMj3, @cIsZa3, @cVrIs3 )
@@ -259,12 +251,9 @@ FUNCTION unos_datuma_isplate_place()
 
       nGodina := nGod
 
-      // setuj promjene
-      // prethodna godina
       s_isp_date( cRJ, nGodina - 1, 12, cObr, dDatPr, nMjPr, cIsZaPr, ;
          cVrIsPr )
 
-      // od 1 do 12 mjeseca tekuce
       s_isp_date( cRJ, nGodina, 1, cObr, dDat1, nMj1, cIsZa1, cVrIs1 )
       s_isp_date( cRJ, nGodina, 2, cObr, dDat2, nMj2, cIsZa2, cVrIs2 )
       s_isp_date( cRJ, nGodina, 3, cObr, dDat3, nMj3, cIsZa3, cVrIs3 )
@@ -285,9 +274,6 @@ FUNCTION unos_datuma_isplate_place()
    RETURN
 
 
-// --------------------------------------------
-// vraca tekuce isplate za godinu
-// --------------------------------------------
 FUNCTION g_isp_date( cRj, nGod, nMjesec, cObr, nMjIsp, cIsplZa, cVrsta )
 
    LOCAL dDate := CToD( "" )
@@ -306,7 +292,7 @@ FUNCTION g_isp_date( cRj, nGod, nMjesec, cObr, nMjIsp, cIsplZa, cVrsta )
    SET ORDER TO TAG "RJ"
    GO TOP
 
-   SEEK  cRJ + AllTrim( Str( nGod ) ) + FmtMjesec( nMjesec ) + "G" + cObr
+   SEEK  cRJ + AllTrim( Str( nGod ) ) + ld_formatiraj_mjesec( nMjesec ) + "G" + cObr
 
    IF field->rj == cRj .AND. ;
          field->mjesec = nMjesec .AND. ;
@@ -328,9 +314,6 @@ FUNCTION g_isp_date( cRj, nGod, nMjesec, cObr, nMjIsp, cIsplZa, cVrsta )
    RETURN dDate
 
 
-// ----------------------------------------
-// setuje datum isplate za mjesec
-// ----------------------------------------
 STATIC FUNCTION s_isp_date( cRj, nGod, nMjesec, cObr, dDatIspl, nMjIspl, ;
       cIsplZa, cVrsta )
 
@@ -346,7 +329,7 @@ STATIC FUNCTION s_isp_date( cRj, nGod, nMjesec, cObr, dDatIspl, nMjIspl, ;
    SELECT obracuni
    SET ORDER TO TAG "RJ"
    GO TOP
-   SEEK  cRJ + AllTrim( Str( nGod ) ) + FmtMjesec( nMjesec ) + "G" + cObr
+   SEEK  cRJ + AllTrim( Str( nGod ) ) + ld_formatiraj_mjesec( nMjesec ) + "G" + cObr
 
 
    IF field->rj == cRj .AND. ;

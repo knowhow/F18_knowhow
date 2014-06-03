@@ -16,10 +16,8 @@ static DUZ_STRANA:=64
 static __var_obr
 static __radni_sati := "N"
 
-// -------------------------------------------------------------
-// kartica plate radnika
-// -------------------------------------------------------------
-function KartPl(cIdRj, cMjesec, cGodina, cIdRadn, cObrac)
+
+function ld_kartica_plate(cIdRj, cMjesec, cGodina, cIdRadn, cObrac)
 local i
 local aNeta:={}
 local _radni_sati := fetch_metric("ld_radni_sati", nil, "N" ) 

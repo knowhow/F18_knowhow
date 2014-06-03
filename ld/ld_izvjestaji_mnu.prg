@@ -20,8 +20,8 @@ FUNCTION ld_izvjestaji()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. kartice                                           " )
-   AAdd( _opcexe, {|| izvjestaji_kartice() } )
+   AAdd( _opc, "1. kartica                                           " )
+   AAdd( _opcexe, {|| ld_kartica_plate() } )
    AAdd( _opc, "2. rekapitulacije" )
    AAdd( _opcexe, {|| izvjestaji_rekapitulacije() } )
    AAdd( _opc, "3. pregledi" )
@@ -37,23 +37,6 @@ FUNCTION ld_izvjestaji()
 
    RETURN
 
-
-
-
-STATIC FUNCTION izvjestaji_kartice()
-
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
-   LOCAL _izbor := 1
-
-   AAdd( _opc, "1. kartice plate                      " )
-   AAdd( _opcexe, {|| KartPl() } )
-   AAdd( _opc, "2. kartica plate za period (za m4)" )
-   AAdd( _opcexe, {|| UKartPl() } )
-
-   f18_menu( "kart", .F., _izbor, _opc, _opcexe )
-
-   RETURN
 
 
 

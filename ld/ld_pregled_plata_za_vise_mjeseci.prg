@@ -12,7 +12,7 @@
 
 #include "ld.ch"
 
-STATIC FUNCTION o_tables()
+STATIC FUNCTION otvori_tabele()
 
    O_OBRACUNI
    O_PAROBR
@@ -29,7 +29,8 @@ STATIC FUNCTION o_tables()
 
    RETURN
 
-STATIC FUNCTION ld_sort( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cObr )
+
+STATIC FUNCTION sortiraj_tabelu_ld( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cObr )
 
    LOCAL cFilter := ""
    PRIVATE cObracun := cObr
@@ -66,7 +67,7 @@ STATIC FUNCTION ld_sort( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cObr )
    RETURN
 
 
-STATIC FUNCTION _ins_tbl( nGodina, nMjesec, cRadnik, cIdRj, cObrZa, cIme, ;
+STATIC FUNCTION dodaj_u_pomocnu_tabelu( nGodina, nMjesec, cRadnik, cIdRj, cObrZa, cIme, ;
       nSati, nR_sati, ;
       nB_sati, nPrim, nBruto, nDoprIz, nDopPio, ;
       nDopZdr, nDopNez, nOporDoh, nLOdb, nPorez, nNetoBp, nNeto, ;
@@ -113,7 +114,7 @@ STATIC FUNCTION _ins_tbl( nGodina, nMjesec, cRadnik, cIdRj, cObrZa, cIme, ;
 
 
 
-STATIC FUNCTION cre_tmp_tbl()
+STATIC FUNCTION napravi_pomocnu_tabelu()
 
    LOCAL aDbf := {}
 
@@ -171,14 +172,14 @@ FUNCTION ld_pregled_plata_za_period()
    LOCAL cM4_prim := Space( 100 )
    LOCAL cTotal := "N"
 
-   cre_tmp_tbl()
+   napravi_pomocnu_tabelu()
 
    cIdRj := gRj
    cMjesec := gMjesec
    cGodina := gGodina
    cMjesecDo := cMjesec
 
-   o_tables()
+   otvori_tabele()
 
    Box( "#PREGLED PLATA ZA PERIOD", 20, 75 )
 
@@ -226,17 +227,17 @@ FUNCTION ld_pregled_plata_za_period()
 
    SELECT ld
 
-   ld_sort( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cObracun )
+   sortiraj_tabelu_ld( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cObracun )
 
-   fill_data( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, ;
+   napuni_podatke( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, ;
       cDoprPio, cDoprZdr, cDoprNez, cObracun, cDoprD4, cDoprD5, cDoprD6, ;
       cM4_prim, cTotal, cOpcStan, cKanton )
 
    IF cTotal == "N"
-      ppv_print( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, ;
+      prikazi_pregled( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, ;
          cDoprPio, cDoprZdr, cDoprNez, cDoprD4, cDoprD5, cDoprD6, cOpcStan, cKanton )
    ELSE
-      ppv_total( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, ;
+      prikazi_pregled_ukupno( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, ;
          cDoprPio, cDoprZdr, cDoprNez, cDoprD4, cDoprD5, cDoprD6, cOpcStan, cKanton )
    ENDIF
 
@@ -244,7 +245,7 @@ FUNCTION ld_pregled_plata_za_period()
 
 
 
-STATIC FUNCTION ppv_total( cRj, cGodina, cMjOd, cMjDo, cRadnik, ;
+STATIC FUNCTION prikazi_pregled_ukupno( cRj, cGodina, cMjOd, cMjDo, cRadnik, ;
       cDop1, cDop2, cDop3, cDop4, cDop5, cDop6, cOpcina, cKanton )
 
    LOCAL cT_radnik := ""
@@ -260,9 +261,9 @@ STATIC FUNCTION ppv_total( cRj, cGodina, cMjOd, cMjDo, cRadnik, ;
    ? "#%LANDS#"
    P_COND2
 
-   ppv_zaglavlje( cRj, cGodina, cMjOd, cMjDo, cRadnik, cOpcina, cKanton )
+   pregled_zaglavlje( cRj, cGodina, cMjOd, cMjDo, cRadnik, cOpcina, cKanton )
 
-   cLine := ppv_header( cRadnik, cDop1, cDop2, cDop3, cDop4, cDop5, cDop6 )
+   cLine := pregled_header( cRadnik, cDop1, cDop2, cDop3, cDop4, cDop5, cDop6 )
 
    nUSati := 0
    nUNeto := 0
@@ -501,19 +502,13 @@ STATIC FUNCTION ppv_total( cRj, cGodina, cMjOd, cMjDo, cRadnik, ;
       @ PRow(), PCol() + 1 SAY Str( nTUDoprD6, 12, 2 )
    ENDIF
 
-   // ako ima bolovanja itd...
    IF ( nTUB_izn <> 0 )
-
-      // redovan rad
       ?
       @ PRow(), nPoc - 3 SAY "r: " + Str( nTUR_sati, 12, 2 )
       @ PRow(), nNBP_pt SAY Str( nTUR_izn, 12, 2 )
-	
-      // bolovanja
       ?
       @ PRow(), nPoc - 3 SAY "b: " + Str( nTUB_sati, 12, 2 )
       @ PRow(), nNBP_pt SAY Str( nTUB_izn, 12, 2 )
-
    ENDIF
 
    ? cLine
@@ -524,10 +519,7 @@ STATIC FUNCTION ppv_total( cRj, cGodina, cMjOd, cMjDo, cRadnik, ;
    RETURN
 
 
-// ----------------------------------------------
-// stampa pregleda plata za vise mjeseci
-// ----------------------------------------------
-STATIC FUNCTION ppv_print( cRj, cGodina, cMjOd, cMjDo, cRadnik, ;
+STATIC FUNCTION prikazi_pregled( cRj, cGodina, cMjOd, cMjDo, cRadnik, ;
       cDop1, cDop2, cDop3, cDop4, cDop5, cDop6, cOpcina, cKanton )
 
    LOCAL cT_radnik := ""
@@ -542,9 +534,9 @@ STATIC FUNCTION ppv_print( cRj, cGodina, cMjOd, cMjDo, cRadnik, ;
    ? "#%LANDS#"
    P_COND2
 
-   ppv_zaglavlje( cRj, cGodina, cMjOd, cMjDo, cRadnik, cOpcina, cKanton )
+   pregled_zaglavlje( cRj, cGodina, cMjOd, cMjDo, cRadnik, cOpcina, cKanton )
 
-   cLine := ppv_header( cRadnik, cDop1, cDop2, cDop3, cDop4, cDop5, cDop6 )
+   cLine := pregled_header( cRadnik, cDop1, cDop2, cDop3, cDop4, cDop5, cDop6 )
 
    nUSati := 0
    nUNeto := 0
@@ -733,7 +725,7 @@ STATIC FUNCTION ppv_print( cRj, cGodina, cMjOd, cMjDo, cRadnik, ;
    RETURN
 
 
-STATIC FUNCTION ppv_header( cRadnik, cDop1, cDop2, cDop3, ;
+STATIC FUNCTION pregled_header( cRadnik, cDop1, cDop2, cDop3, ;
       cDop4, cDop5, cDop6 )
 
    LOCAL aLines := {}
@@ -796,22 +788,22 @@ STATIC FUNCTION ppv_header( cRadnik, cDop1, cDop2, cDop3, ;
    AAdd( aTxt, { "Odbici", "", "", "12" } )
    AAdd( aTxt, { "Za isplatu", "", "(11+12)", "13" } )
    IF !Empty( cDop1 )
-      AAdd( aTxt, { "Doprinos", "1", get_d_proc( cDop1 ), "14" } )
+      AAdd( aTxt, { "Doprinos", "1", procenat_doprinosa( cDop1 ), "14" } )
    ENDIF
    IF !Empty( cDop2 )
-      AAdd( aTxt, { "Doprinos", "2", get_d_proc( cDop2 ), "15" } )
+      AAdd( aTxt, { "Doprinos", "2", procenat_doprinosa( cDop2 ), "15" } )
    ENDIF
    IF !Empty( cDop3 )
-      AAdd( aTxt, { "Doprinos", "3", get_d_proc( cDop3 ), "16" } )
+      AAdd( aTxt, { "Doprinos", "3", procenat_doprinosa( cDop3 ), "16" } )
    ENDIF
    IF !Empty( cDop4 )
-      AAdd( aTxt, { "Doprinos", "4", get_d_proc( cDop4 ), "17" } )
+      AAdd( aTxt, { "Doprinos", "4", procenat_doprinosa( cDop4 ), "17" } )
    ENDIF
    IF !Empty( cDop5 )
-      AAdd( aTxt, { "Doprinos", "5", get_d_proc( cDop5 ), "18" } )
+      AAdd( aTxt, { "Doprinos", "5", procenat_doprinosa( cDop5 ), "18" } )
    ENDIF
    IF !Empty( cDop6 )
-      AAdd( aTxt, { "Doprinos", "6", get_d_proc( cDop6 ), "19" } )
+      AAdd( aTxt, { "Doprinos", "6", procenat_doprinosa( cDop6 ), "19" } )
    ENDIF
 
    FOR i := 1 TO Len( aLines )
@@ -836,7 +828,7 @@ STATIC FUNCTION ppv_header( cRadnik, cDop1, cDop2, cDop3, ;
    RETURN cLine
 
 
-STATIC FUNCTION get_d_proc( cDop )
+STATIC FUNCTION procenat_doprinosa( cDop )
 
    LOCAL cProc := ""
    LOCAL nTmp
@@ -854,7 +846,7 @@ STATIC FUNCTION get_d_proc( cDop )
    RETURN cProc
 
 
-STATIC FUNCTION ppv_zaglavlje( cRj, cGodina, cMjOd, cMjDo, cRadnik, cOpcina, cKanton )
+STATIC FUNCTION pregled_zaglavlje( cRj, cGodina, cMjOd, cMjDo, cRadnik, cOpcina, cKanton )
 
    ? Upper( gTS ) + ":", gnFirma
    ?
@@ -883,7 +875,7 @@ STATIC FUNCTION ppv_zaglavlje( cRj, cGodina, cMjOd, cMjDo, cRadnik, cOpcina, cKa
    RETURN
 
 
-STATIC FUNCTION fill_data( cRj, cGodina, cMjesec, cMjesecDo, ;
+STATIC FUNCTION napuni_podatke( cRj, cGodina, cMjesec, cMjesecDo, ;
       cRadnik, cDoprPio, cDoprZdr, cDoprNez, cObracun, cDop4, cDop5, cDop6, ;
       cM4_prim, cTotal, cOpcStan, cKanton )
 
@@ -1174,8 +1166,7 @@ STATIC FUNCTION fill_data( cRj, cGodina, cMjesec, cMjesecDo, ;
          ENDIF
 
          IF cTotal == "D"
-            // ubaci u tabelu podatke
-            _ins_tbl( nF_god, ;
+            dodaj_u_pomocnu_tabelu( nF_god, ;
                nF_mj, ;
                cT_radnik, ;
                cId_rj, ;
@@ -1242,8 +1233,7 @@ STATIC FUNCTION fill_data( cRj, cGodina, cMjesec, cMjesecDo, ;
       ENDDO
 
       IF cTotal == "N"
-         // ubaci u tabelu podatke
-         _ins_tbl( 0, 0, cT_radnik, ;
+         dodaj_u_pomocnu_tabelu( 0, 0, cT_radnik, ;
             cId_rj, ;
             cObr_za, ;
             cT_rnaziv, ;

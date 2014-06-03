@@ -97,29 +97,29 @@ STATIC FUNCTION izvjestaji_specifikacije()
 
 STATIC FUNCTION izvjestaji_pregledi()
 
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
-   PRIVATE Izbor := 1
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
 
-   AAdd( opc, "1. pregled plata                                  " )
-   AAdd( opcexe, {|| PregPl() } )
-   AAdd( opc, "2. pregled plata za više mjeseci  " )
-   AAdd( opcexe, {|| ppl_vise() } )
-   AAdd( opc, "3. pregled određenog primanja" )
-   AAdd( opcexe, {|| PregPrim() } )
-   AAdd( opc, "4. platni spisak" )
-   AAdd( opcexe, {|| PlatSp() } )
-   AAdd( opc, "5. platni spisak tekući račun" )
-   AAdd( opcexe, {|| PlatSpTR( "1" ) } )
-   AAdd( opc, "6. platni spisak štedna knjižica  " )
-   AAdd( opcexe, {|| PlatSpTR( "2" ) } )
-   AAdd( opc, "7. pregled primanja za period" )
-   AAdd( opcexe, {|| PregPrimPer() } )
-   AAdd( opc, "8. isplata jednog tipa primanja na tekući račun" )
-   AAdd( opcexe, {|| IsplataTR( "1" ) } )
+   AAdd( _opc, "1. pregled plata                                  " )
+   AAdd( _opcexe, {|| PregPl() } )
+   AAdd( _opc, "2. pregled plata za više mjeseci  " )
+   AAdd( _opcexe, {|| ppl_vise() } )
+   AAdd( _opc, "3. pregled određenog primanja" )
+   AAdd( _opcexe, {|| PregPrim() } )
+   AAdd( _opc, "4. platni spisak" )
+   AAdd( _opcexe, {|| PlatSp() } )
+   AAdd( _opc, "5. platni spisak tekući račun" )
+   AAdd( _opcexe, {|| PlatSpTR( "1" ) } )
+   AAdd( _opc, "6. platni spisak štedna knjižica  " )
+   AAdd( _opcexe, {|| PlatSpTR( "2" ) } )
+   AAdd( _opc, "7. pregled primanja za period" )
+   AAdd( _opcexe, {|| PregPrimPer() } )
+   AAdd( _opc, "8. isplata jednog tipa primanja na tekući račun" )
+   AAdd( _opcexe, {|| IsplataTR( "1" ) } )
 
 
-   Menu_SC( "preg" )
+   f18_menu( "preg", .F., _izbor, _opc, _opcexe )
 
    RETURN
 
@@ -127,48 +127,40 @@ STATIC FUNCTION izvjestaji_pregledi()
 
 STATIC FUNCTION izvjestaji_ostali()
 
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
-   PRIVATE Izbor := 1
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
 
-   AAdd( opc, "1. lista radnika sa netom po općini stanovanja  " )
-   AAdd( opcexe, {|| SpRadOpSt() } )
+   AAdd( _opc, "1. lista radnika sa netom po općini stanovanja  " )
+   AAdd( _opcexe, {|| SpRadOpSt() } )
+   AAdd( _opc, "2. pregled utroška po šihtaricama" )
+   AAdd( _opcexe, {|| r_sh_print() } )
+   AAdd( _opc, "3. lista radnika za isplatu toplog obroka" )
+   AAdd( _opcexe, {|| to_list() } )
 
-   IF ( IsRamaGlas() )
-      AAdd( opc, "2. pregled plata po radnim nalozima    " )
-      AAdd( opcexe, {|| PlatePoRNalozima() } )
-   ENDIF
-
-   AAdd( opc, "S. pregled utroška po šihtaricama" )
-   AAdd( opcexe, {|| r_sh_print() } )
-
-   AAdd( opc, "T. lista radnika za isplatu toplog obroka" )
-   AAdd( opcexe, {|| to_list() } )
-
-
-   Menu_SC( "ost" )
+   f18_menu( "ost", .F., _izbor, _opc, _opcexe )
 
    RETURN
 
 
 STATIC FUNCTION izvjestaji_rekapitulacije()
 
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
-   PRIVATE Izbor := 1
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
 
-   AAdd( opc, "1. rekapitulacija                         " )
-   AAdd( opcexe, {|| Rekap2( .F. ) } )
-   AAdd( opc, "2. rekapitulacija za sve radne jedinice" )
-   AAdd( opcexe, {|| Rekap2( .T. ) } )
-   AAdd( opc, "3. rekapitulacija po koeficijentima" )
-   AAdd( opcexe, {|| RekapBod() } )
-   AAdd( opc, "4. rekapitulacija neto primanja" )
-   AAdd( opcexe, {|| RekNeto() } )
-   AAdd( opc, "5. rekapitulacija tekućih računa" )
-   AAdd( opcexe, {|| RekTekRac() } )
+   AAdd( _opc, "1. rekapitulacija                         " )
+   AAdd( _opcexe, {|| Rekap2( .F. ) } )
+   AAdd( _opc, "2. rekapitulacija za sve radne jedinice" )
+   AAdd( _opcexe, {|| Rekap2( .T. ) } )
+   AAdd( _opc, "3. rekapitulacija po koeficijentima" )
+   AAdd( _opcexe, {|| RekapBod() } )
+   AAdd( _opc, "4. rekapitulacija neto primanja" )
+   AAdd( _opcexe, {|| RekNeto() } )
+   AAdd( _opc, "5. rekapitulacija tekućih računa" )
+   AAdd( _opcexe, {|| RekTekRac() } )
 
-   Menu_SC( "rekap" )
+   f18_menu( "rekap", .F., _izbor, _opc, _opcexe )
 
    RETURN
 

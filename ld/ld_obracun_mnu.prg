@@ -36,11 +36,14 @@ FUNCTION ld_obracun_mnu_admin()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. radnici obradjeni vise puta za isti mjesec" )
-   AAdd( _opcexe, {|| ld_obracun_napravljen_vise_puta() } )
-
-   AAdd( _opc, "2. unos datuma isplate placa" )
+   AAdd( _opc, "1. brisanje obračuna                             " )
+   AAdd( _opcexe, {|| ld_brisanje_obr() } )
+ 
+   AAdd( _opc, "2. unos datuma isplate plaća" )
    AAdd( _opcexe, {|| unos_datuma_isplate_place() } )
+
+   AAdd( _opc, "3. radnici obradjeni vise puta za isti mjesec" )
+   AAdd( _opcexe, {|| ld_obracun_napravljen_vise_puta() } )
 
    IF gSihtGroup == "D"
       AAdd( _opc, "S. obrada sihtarica" )

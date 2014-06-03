@@ -14,8 +14,6 @@
 #include "hbclass.ch"
 
 
-// -----------------------------------------------
-// -----------------------------------------------
 CLASS TLdMod FROM TAppMod
 
    METHOD NEW
@@ -26,26 +24,15 @@ CLASS TLdMod FROM TAppMod
 
 END CLASS
 
-// -----------------------------------------------
-// -----------------------------------------------
 METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
-
    ::super:new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
-
    RETURN self
 
-
-// -----------------------------------------------
-// -----------------------------------------------
 METHOD initdb()
-
    ::oDatabase := TDbLd():new()
-
    RETURN NIL
 
 
-// ------------------------------------------------
-// ------------------------------------------------
 METHOD mMenu()
 
    PRIVATE Izbor
@@ -72,33 +59,29 @@ METHOD mMenuStandard
    PRIVATE opc := {}
    PRIVATE opcexe := {}
 
-   AAdd( opc, "1. obračun (unos, ispravka...)              " )
+   AAdd( opc, "1. obračun (unos, ispravka, brisanje...)         " )
    AAdd( opcexe, {|| ld_obracun() } )
-   AAdd( opc,  "2. brisanje" )
-   AAdd( opcexe, {|| ld_brisanje_obr() } )
-   AAdd( opc, "3. rekalkulacija" )
-   AAdd( opcexe, {|| ld_rekalkulacija() } )
-   AAdd( opc,    "4. izvještaji" )
+   AAdd( opc, "2. izvještaji" )
    AAdd( opcexe, {|| ld_izvjestaji() } )
-   AAdd( opc,   "5. krediti" )
+   AAdd( opc, "3. krediti" )
    AAdd( opcexe, {|| ld_krediti_menu() } )
-   AAdd( opc,   "6. export podataka za banke " )
+   AAdd( opc, "4. export podataka za banke " )
    AAdd( opcexe, {|| ld_export_banke() } )
    AAdd( opc, "------------------------------------" )
    AAdd( opcexe, nil )
-   AAdd( opc,   "7. šifrarnici" )
+   AAdd( opc, "S. šifrarnici" )
    AAdd( opcexe, {|| ld_sifrarnici() } )
    AAdd( opc, "------------------------------------" )
    AAdd( opcexe, nil )
-   AAdd( opc,  "A. rekapitulacija" )
+   AAdd( opc, "A. rekapitulacija" )
    AAdd( opcexe, {|| ld_rekapitulacija(.T.) } )
-   AAdd( opc,  "B. kartica plate" )
+   AAdd( opc, "B. kartica plate" )
    AAdd( opcexe, {|| ld_kartica_plate() } )
-   AAdd( opc,   "V. generisanje virmana " )
+   AAdd( opc, "V. generisanje virmana " )
    AAdd( opcexe, {|| ld_gen_virm() } )
    AAdd( opc, "------------------------------------" )
    AAdd( opcexe, nil )
-   AAdd( opc,  "X. parametri     " )
+   AAdd( opc, "X. parametri     " )
    AAdd( opcexe, {|| ld_parametri() } )
 
    Menu_SC( "gld", .T. )

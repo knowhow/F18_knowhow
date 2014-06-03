@@ -247,10 +247,6 @@ FUNCTION ld_set_obracun()
 
    Box(, 20, 77 )
 
-   @ m_x + nX, m_y + 2 SAY "Varijanta obracuna (1/2):" GET gVarObracun
-
-   ++nX
-
    @ m_x + nX, m_y + 2 SAY "  ' ' - (prazno) stara varijanta obracuna"
 
    ++nX

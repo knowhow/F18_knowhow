@@ -95,10 +95,8 @@ FUNCTION BoxRekSvi()
    Box(, 10 + IF( IsRamaGlas(), 1, 0 ), 75 )
    DO WHILE .T.
 
-      IF gVarObracun == "2"
-         @ m_x + 2, m_y + 2 SAY "Vrsta djelatnosti: "  GET cRTipRada ;
+      @ m_x + 2, m_y + 2 SAY "Vrsta djelatnosti: "  GET cRTipRada ;
             VALID val_tiprada( cRTipRada ) PICT "@!"
-      ENDIF
 
       @ m_x + 3, m_y + 2 SAY "Radne jedinice: "  GET  qqRJ PICT "@!S25"
       @ m_x + 4, m_y + 2 SAY "Za mjesece od:"  GET  cmjesec  PICT "99" VALID {|| cMjesecDo := cMjesec, .T. }
@@ -108,9 +106,6 @@ FUNCTION BoxRekSvi()
       @ m_x + 7, m_y + 2 SAY "Strucna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
       @ m_x + 8, m_y + 2 SAY "Opstina stanovanja: "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
       @ m_x + 9, m_y + 2 SAY "Opstina rada:       "  GET  cOpsRad  PICT "@!" VALID Empty( cOpsRad ) .OR. P_Ops( @cOpsRad )
-      IF ( IsRamaGlas() )
-         @ m_x + 10, m_y + 2 SAY "Izdvojiti radnike (P-proizvodne,N-neproizvodne,S-sve)" GET cK4 VALID cK4 $ "PNS" PICT "@!"
-      ENDIF
 
       READ
 
@@ -136,10 +131,8 @@ FUNCTION BoxRekJ()
    nArr := Select()
 
    Box(, 8 + IF( IsRamaGlas(), 1, 0 ), 75 )
-   IF gVarObracun == "2"
-      @ m_x + 1, m_y + 2 SAY "Vrsta djelatnosti: "  GET cRTipRada ;
+   @ m_x + 1, m_y + 2 SAY "Vrsta djelatnosti: "  GET cRTipRada ;
          VALID val_tiprada( cRTipRada ) PICT "@!"
-   ENDIF
    @ m_x + 2, m_y + 2 SAY "Radna jedinica: "  GET cIdRJ
    @ m_x + 3, m_y + 2 SAY "Za mjesece od:"  GET  cmjesec  PICT "99" VALID {|| cMjesecDo := cMjesec, .T. }
    @ m_x + 3, Col() + 2 SAY "do:"  GET  cMjesecDo  PICT "99" VALID cMjesecDo >= cMjesec
@@ -148,9 +141,6 @@ FUNCTION BoxRekJ()
    @ m_x + 6, m_y + 2 SAY "Strucna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
    @ m_x + 7, m_y + 2 SAY "Opstina stanovanja: "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
    @ m_x + 8, m_y + 2 SAY "Opstina rada:       "  GET  cOpsRad  PICT "@!" VALID Empty( cOpsRad ) .OR. P_Ops( @cOpsRad )
-   IF ( IsRamaGlas() )
-      @ m_x + 9, m_y + 2 SAY "Izdvojiti radnike (P-proizvodne,N-neproizvodne,S-sve)" GET cK4 VALID cK4 $ "PNS" PICT "@!"
-   ENDIF
    READ
    ClvBox()
    ESC_BCR
@@ -1165,21 +1155,13 @@ FUNCTION IspisTP( lSvi )
          cUneto := "N"
          ? cLinija
          IF !lPorNaRekap
-            IF gVarObracun == "2"
-               ? Lokal( "Ukupno:" )
-            ELSE
-               ? Lokal( "UKUPNO NETO:" )
-            ENDIF
+            ? Lokal( "Ukupno:" )
             @ PRow(), nC1 + 8  SAY Str( nUSati, 12, 2 )
             ?? Space( 1 ) + Lokal( "sati" )
             @ PRow(), 60 SAY nUNeto PICT gpici
             ?? "", gValuta
          ELSE
-            IF gVarObracun == "2"
-               ? Lokal( "Ukupno:" )
-            ELSE
-               ? Lokal( "UKUPNO NETO:" )
-            ENDIF
+            ? Lokal( "Ukupno:" )
             @ PRow(), nC1 + 5  SAY Str( nUSati, 12, 2 )
             ?? Space( 1 ) + Lokal( "sati" )
             @ PRow(), 42 SAY nUNeto PICT gpici; ?? "", gValuta

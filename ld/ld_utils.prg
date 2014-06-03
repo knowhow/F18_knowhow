@@ -208,12 +208,6 @@ FUNCTION bruto_osn( nIzn, cTipRada, nLOdb, nSKoef, cTrosk )
       cTrosk := ""
    ENDIF
 
-   // stari obracun
-   IF gVarObracun <> "2"
-      nBrt := ROUND2( nIzn * ( parobr->k3 / 100 ), gZaok2 )
-      RETURN nBrt
-   ENDIF
-
    DO CASE
       // nesamostalni rad
    CASE Empty( cTipRada )
@@ -505,27 +499,7 @@ FUNCTION g_licni_odb( cIdRadn )
    RETURN nIzn
 
 
-// ----------------------------------------------------------
-// setuj obracun na tip u skladu sa zak.promjenama
-// ----------------------------------------------------------
-FUNCTION set_obr_2009()
 
-   IF Year( Date() ) >= 2009 .AND. goModul:oDataBase:cRadimUSezona == "RADP" .AND. ;
-         gVarObracun <> "2"
-
-      MsgBeep( "Nova je godina. Obracun je podesen u skladu sa#novim zakonskim promjenama !" )
-      gVarObracun := "2"
-
-   ELSE
-      gVarObracun := " "
-   ENDIF
-
-   RETURN
-
-
-// -----------------------------------------------
-// vraca varijantu obracuna iz tabele ld
-// -----------------------------------------------
 FUNCTION get_varobr()
    RETURN ld->varobr
 

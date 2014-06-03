@@ -208,10 +208,6 @@ STATIC FUNCTION p_pkartica( cIdRadn )
 
    LOCAL nTA := Select()
 
-   IF gVarObracun == "1"
-      RETURN
-   ENDIF
-
    O_PK_RADN
    SELECT pk_radn
    SEEK cIdRadn
@@ -490,9 +486,6 @@ FUNCTION MsgIspl()
 
 
 
-// ------------------------------
-// sifrarnik parametri obracuna
-// ------------------------------
 FUNCTION P_ParObr( cId, dx, dy )
 
    LOCAL _tmp_id
@@ -510,34 +503,14 @@ FUNCTION P_ParObr( cId, dx, dy )
    AAdd( ImeKol, { PadR( "opis", 10 ), {|| naz }, "naz" } )
    AAdd( ImeKol, { PadR( iif( gBodK == "1", "vrijednost boda", "vr.koeficijenta" ), 15 ), ;
       {|| vrbod }, "vrbod" } )
-
-   // ako postoji polje i ako je nova varijanta obracuna
-   IF parobr->( FieldPos( "K5" ) ) <> 0 .AND. gVarObracun == "2"
-      AAdd( ImeKol, { PadR( "n.koef.1", 8 ), {|| k5 }, "k5"  } )
-      AAdd( ImeKol, { PadR( "n.koef.2", 8 ), {|| k6 }, "k6"  } )
-   ENDIF
-
-   IF parobr->( FieldPos( "K7" ) ) <> 0 .AND. gVarObracun == "2"
-      AAdd( ImeKol, { PadR( "n.koef.3", 8 ), {|| k7 }, "k7"  } )
-      AAdd( ImeKol, { PadR( "n.koef.4", 8 ), {|| k8 }, "k8"  } )
-   ENDIF
-
+   AAdd( ImeKol, { PadR( "n.koef.1", 8 ), {|| k5 }, "k5"  } )
+   AAdd( ImeKol, { PadR( "n.koef.2", 8 ), {|| k6 }, "k6"  } )
+   AAdd( ImeKol, { PadR( "n.koef.3", 8 ), {|| k7 }, "k7"  } )
+   AAdd( ImeKol, { PadR( "n.koef.4", 8 ), {|| k8 }, "k8"  } )
    AAdd( ImeKol, { PadR( "br.sati", 5 ), {|| k1 }, "k1"  } )
-
-   IF gVarObracun <> "2"
-      AAdd( ImeKol, { PadR( "Koef2", 5 ), {|| k2 }, "k2"  } )
-      AAdd( ImeKol, { PadR( "Bruto osn.", 6 ), {|| k3 }, "k3"  }  )
-      AAdd( ImeKol, { PadR( "Koef4", 6 ), {|| k4 }, "k4"  } )
-   ENDIF
-
    AAdd( ImeKol, { PadR( "prosj.LD", 12 ), {|| Prosld }, "PROSLD"  }  )
-
-   IF parobr->( FieldPos( "M_NET_SAT" ) ) <> 0 .AND. gVarObracun == "2"
-      AAdd( ImeKol, { PadR( "mn sat.", 12 ), {|| m_net_sat }, "m_net_sat"  } )
-   ENDIF
-   IF parobr->( FieldPos( "M_BR_SAT" ) ) <> 0 .AND. gVarObracun == "2"
-      AAdd( ImeKol, { PadR( "mb sat.", 12 ), {|| m_br_sat }, "m_br_sat"  } )
-   ENDIF
+   AAdd( ImeKol, { PadR( "mn sat.", 12 ), {|| m_net_sat }, "m_net_sat"  } )
+   AAdd( ImeKol, { PadR( "mb sat.", 12 ), {|| m_br_sat }, "m_br_sat"  } )
 
    FOR i := 1 TO Len( ImeKol )
       AAdd( kol, i )
@@ -546,9 +519,6 @@ FUNCTION P_ParObr( cId, dx, dy )
    RETURN PostojiSifra( F_PAROBR, 1, MAXROWS() -15, MAXCOLS() -20, Lokal( "Parametri obracuna" ), @cId, dx, dy )
 
 
-// -----------------------------------------------
-// vraca naziv tipa primanja
-// -----------------------------------------------
 FUNCTION g_tp_naz( cId )
 
    LOCAL nTArea := Select()

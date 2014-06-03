@@ -39,7 +39,7 @@ FUNCTION ld_unos_obracuna()
 
       lSaveObracun := .F.
 
-      PrikaziBox( @lSaveObracun )
+      ld_unos_obracuna_box( @lSaveObracun )
 
       IF ( lSaveObracun )
 
@@ -49,20 +49,18 @@ FUNCTION ld_unos_obracuna()
 
          IF ( _UIznos < 0 )
             Beep( 2 )
-            Msg( Lokal( "Radnik ne moze imati platu u negativnom iznosu!!!" ) )
+            Msg( Lokal( "Radnik ne može imati platu u negativnom iznosu !" ) )
          ENDIF
 
          nPom := 0
 
          FOR i := 1 TO cLDPolja
             cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
-            // ako su sve nule
             nPom += Abs( _i&cPom ) + Abs( _s&cPom )
          NEXT
 
          IF ( nPom <> 0 )
 
-            // upisi tekucu varijantu obracuna
             _vals := get_dbf_global_memvars()
             _vals[ "varobr" ] := gVarObracun
 
@@ -85,7 +83,6 @@ FUNCTION ld_unos_obracuna()
       ELSE
 
          SELECT ( F_LD )
-         // nije se zapravo ni uslo u LD tabelu...
          IF !Used()
             RETURN
          ENDIF
@@ -93,7 +90,6 @@ FUNCTION ld_unos_obracuna()
          SELECT ld
 
          IF lNovi
-            // ako je novi zapis  .and. ESCAPE
             delete_with_rlock()
          ENDIF
 
@@ -103,26 +99,21 @@ FUNCTION ld_unos_obracuna()
 
       SELECT ld
       USE
-      // svaki put zatvoriti tabelu ld
 
       Beep( 1 )
 
-   ENDDO // do while .t.
+   ENDDO 
 
    RETURN
 
-// -----------------------------------
-// -----------------------------------
+
+
 FUNCTION QQOUTC( cTekst, cBoja )
-
    @ Row(), Col() SAY cTekst COLOR cBoja
-
    RETURN
 
 
 
-// ----------------------------------
-// ----------------------------------
 FUNCTION OObracun()
 
    SELECT F_LD
@@ -204,10 +195,7 @@ FUNCTION OObracun()
 
 
 
-// ------------------------------------------------------
-// otvori box za unos obracuna
-// ------------------------------------------------------
-FUNCTION PrikaziBox( lSaveObracun )
+STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    LOCAL nULicOdb
    LOCAL cTrosk
@@ -249,9 +237,9 @@ FUNCTION PrikaziBox( lSaveObracun )
 
    IF lViseObr
       IF gUNMjesec == "D"
-         @ m_x + 1, Col() + 2 SAY Lokal( "Obracun: " ) GET cObracun WHEN HelpObr( .F., cObracun ) VALID ValObr( .F., cObracun )
+         @ m_x + 1, Col() + 2 SAY8 Lokal( "Obračun: " ) GET cObracun WHEN HelpObr( .F., cObracun ) VALID ValObr( .F., cObracun )
       ELSE
-         @ m_x + 1, Col() + 2 SAY Lokal( "Obracun: " )
+         @ m_x + 1, Col() + 2 SAY8 Lokal( "Obračun: " )
          QQOutC( cObracun, "GR+/N" )
       ENDIF
    ENDIF
@@ -270,13 +258,11 @@ FUNCTION PrikaziBox( lSaveObracun )
 
    ESC_BCR
 
-   // da li postoje uneseni parametri obracuna ?
-   nO_Ret := ParObr( cMjesec, cGodina, IF( lViseObr, cObracun, nil ), ;
-      cIdRj )
+   nO_Ret := ParObr( cMjesec, cGodina, IF( lViseObr, cObracun, nil ), cIdRj )
 
    IF nO_ret = 0
 
-      msgbeep( "Ne postoje uneseni parametri obracuna za " + ;
+      msgbeep( "Ne postoje unešeni parametri obračuna za " + ;
          Str( cMjesec, 2 ) + "/" + Str( cGodina, 4 ) + " !!" )
 
       boxc()
@@ -285,28 +271,24 @@ FUNCTION PrikaziBox( lSaveObracun )
 
    ELSEIF nO_ret = 2
 
-      msgbeep( "Ne postoje uneseni parametri obracuna za " + ;
+      msgbeep( "Ne postoje unešeni parametri obračuna za " + ;
          Str( cMjesec, 2 ) + "/" + Str( cGodina, 4 ) + " !!" + ;
-         "#Koristit cu postojece parametre." )
+         "#Koristit ću postojeće parametre." )
    ENDIF
 
    SELECT radn
 
-   IF gVarObracun == "2"
-      // tip rada
-      cTR := g_tip_rada( cIdRadn, cIdRj )
-      // oporeziv
-      cOpor := g_oporeziv( cIdRadn, cIdrj )
-      // koristi troskove
-      cTrosk := radn->trosk
-      nULicOdb := ( radn->klo * gOsnLOdb )
-      // ovi tipovi nemaju odbitka !
-      IF cTR $ "A#U#S"
-         nULicOdb := 0
-      ENDIF
-      IF lViseObr .AND. cObracun <> "1"
-         nULicOdb := 0
-      ENDIF
+   cTR := g_tip_rada( cIdRadn, cIdRj )
+   cOpor := g_oporeziv( cIdRadn, cIdrj )
+   cTrosk := radn->trosk
+   nULicOdb := ( radn->klo * gOsnLOdb )
+
+   IF cTR $ "A#U#S"
+      nULicOdb := 0
+   ENDIF
+
+   IF lViseObr .AND. cObracun <> "1"
+      nULicOdb := 0
    ENDIF
 
    SELECT ld
@@ -314,12 +296,9 @@ FUNCTION PrikaziBox( lSaveObracun )
    SEEK Str( cGodina, 4 ) + cIdRj + Str( cMjesec, 2 ) + iif( lViseObr, cObracun, "" ) + cIdRadn
 
    IF Found()
-
       lNovi := .F.
       set_global_vars_from_dbf()
-
    ELSE
-
       lNovi := .T.
       APPEND BLANK
 
@@ -329,13 +308,10 @@ FUNCTION PrikaziBox( lSaveObracun )
       _idrj   := cIdRj
       _idradn := cIdRadn
       _mjesec := cMjesec
-
-      IF gVarObracun == "2"
-         _ulicodb := nULicOdb
-         IF LD->( FieldPos( "TROSK" ) ) <> 0
-            _trosk := cTrosk
-            _opor := cOpor
-         ENDIF
+      _ulicodb := nULicOdb
+      IF LD->( FieldPos( "TROSK" ) ) <> 0
+         _trosk := cTrosk
+         _opor := cOpor
       ENDIF
 
       IF lViseObr
@@ -345,12 +321,10 @@ FUNCTION PrikaziBox( lSaveObracun )
    ENDIF
 
    IF lNovi
-
       _brbod := radn->brbod
       _kminrad := radn->kminrad
       _idvposla := radn->idvposla
       _idstrspr := radn->idstrspr
-
    ENDIF
 
    ParObr( cMjesec, cGodina, iif( lViseObr, cObracun, ), cIdRj )
@@ -370,7 +344,7 @@ FUNCTION PrikaziBox( lSaveObracun )
       @ m_x + 3, Col() + 2 SAY Lokal( "Koef.minulog rada" ) GET _kminrad PICT "99.99%" VALID FillKMinRad( _kminrad )
    ENDIF
 
-   @ m_x + 4, m_y + 2 SAY "Lic.odb:" GET _ulicodb PICT "9999.99"
+   @ m_x + 4, m_y + 2 SAY "Lič.odb:" GET _ulicodb PICT "9999.99"
    @ m_x + 4, Col() + 1 SAY Lokal( "Vrsta posla koji radnik obavlja" ) GET _IdVPosla valid ( Empty( _idvposla ) .OR. P_VPosla( @_IdVPosla, 4, 55 ) ) .AND. FillVPosla()
 
    READ
@@ -393,12 +367,11 @@ FUNCTION PrikaziBox( lSaveObracun )
       UzmiSiht()
    ENDIF
 
-   PrikUnos()
+   ld_unos_obracuna_tipovi_primanja()
 
-   PrikUkupno( @lSaveObracun )
+   ld_unos_obracuna_footer( @lSaveObracun )
 
    IF _radni_sati == "D" .AND. lSaveObracun == .F.
-      // ako nije sacuvan obracun ponisti i radne sate
       delRadSati( cIdRadn, nSatiPreth )
    ENDIF
 
@@ -408,172 +381,135 @@ FUNCTION PrikaziBox( lSaveObracun )
 
 
 
-// ----------------------------------
-// ispisuje ukupno na dnu obracuna
-// ----------------------------------
-FUNCTION PrikUkupno( lSaveObracun )
+STATIC FUNCTION ld_unos_obracuna_footer( lSaveObracun )
 
    _USati := 0
    _UNeto := 0
    _UOdbici := 0
 
    UkRadnik()
-   // filuje _USati,_UNeto,_UOdbici
 
    _UIznos := _UNeto + _UOdbici
 
-   IF gVarObracun == "2"
+   nKLO := radn->klo
+   cTipRada := g_tip_rada( _idradn, _idrj )
+   nSPr_koef := 0
+   nTrosk := 0
+   nBrOsn := 0
+   cOpor := " "
+   cTrosk := " "
+   lInRS := .F.
+   lInRs := radnik_iz_rs( radn->idopsst, radn->idopsrad )
 
-      nKLO := radn->klo
-      cTipRada := g_tip_rada( _idradn, _idrj )
-      nSPr_koef := 0
-      nTrosk := 0
-      nBrOsn := 0
-      cOpor := " "
-      cTrosk := " "
-      lInRS := .F.
-      lInRs := radnik_iz_rs( radn->idopsst, radn->idopsrad )
+   FOR i := 1 TO 40
 
-      // upisi oporeziva i neoporezive naknade
-      FOR i := 1 TO 40
+      cTp := PadL( AllTrim( Str( i ) ), 2, "0" )
+      xVar := "_I" + cTp
 
-         cTp := PadL( AllTrim( Str( i ) ), 2, "0" )
-         xVar := "_I" + cTp
+      nTArea := Select()
 
-         nTArea := Select()
+      SELECT tippr
+      SEEK cTp
 
-         SELECT tippr
-         SEEK cTp
+      SELECT ( nTArea )
 
-         SELECT ( nTArea )
-
-         IF tippr->uneto == "D"
-            _nakn_opor += &( xVar )
-         ELSEIF tippr->uneto == "N"
-            _nakn_neop += &( xVar )
-         ENDIF
-
-         SELECT ( nTArea )
-
-      NEXT
-
-      // radnik oporeziv ?
-      IF radn->( FieldPos( "opor" ) ) <> 0
-         cOpor := radn->opor
+      IF tippr->uneto == "D"
+         _nakn_opor += &( xVar )
+      ELSEIF tippr->uneto == "N"
+         _nakn_neop += &( xVar )
       ENDIF
 
-      // koristi troskove ?
-      IF radn->( FieldPos( "trosk" ) ) <> 0
-         cTrosk := radn->trosk
+      SELECT ( nTArea )
+
+   NEXT
+
+   IF radn->( FieldPos( "opor" ) ) <> 0
+      cOpor := radn->opor
+   ENDIF
+
+   IF radn->( FieldPos( "trosk" ) ) <> 0
+      cTrosk := radn->trosk
+   ENDIF
+
+   IF cTipRada == "S"
+      IF radn->( FieldPos( "SP_KOEF" ) ) <> 0
+         nSPr_koef := radn->sp_koef
       ENDIF
+   ENDIF
 
-      // samostalni djelatnik
-      IF cTipRada == "S"
-         IF radn->( FieldPos( "SP_KOEF" ) ) <> 0
-            nSPr_koef := radn->sp_koef
-         ENDIF
+   IF cTipRada $ "A#U#P#S"
+      _ULicOdb := 0
+   ENDIF
+
+   _UBruto := bruto_osn( _UNeto, cTipRada, _ULicOdb, nSPr_koef, cTrosk )
+
+   IF cTipRada == "U" .AND. cTrosk <> "N"
+      nTrosk := ROUND2( _UBruto * ( gUgTrosk / 100 ), gZaok2 )
+      IF lInRS == .T.
+         nTrosk := 0
       ENDIF
+      _UBruto := _UBruto - nTrosk
+   ENDIF
 
-      // ako su ovi tipovi primanja - nema odbitka !
-      IF cTipRada $ "A#U#P#S"
-         _ULicOdb := 0
+   IF cTipRada == "A" .AND. cTrosk <> "N"
+
+      nTrosk := ROUND2( _UBruto * ( gAhTrosk / 100 ), gZaok2 )
+      IF lInRS == .T.
+         nTrosk := 0
       ENDIF
+      _UBruto := _UBruto - nTrosk
+   ENDIF
 
-      // bruto osnova
-      _UBruto := bruto_osn( _UNeto, cTipRada, _ULicOdb, nSPr_koef, cTrosk )
-
-      // ugovor o djelu
-      IF cTipRada == "U" .AND. cTrosk <> "N"
-         nTrosk := ROUND2( _UBruto * ( gUgTrosk / 100 ), gZaok2 )
-         IF lInRS == .T.
-            nTrosk := 0
-         ENDIF
-         _UBruto := _UBruto - nTrosk
+   nMinBO := _UBruto
+   IF cTipRada $ " #I#N"
+      IF _I01 = 0
+         // ne racunaj min.bruto osnovu
+      ELSE
+         nMinBO := min_bruto( _UBruto, _USati )
       ENDIF
+   ENDIF
 
-      // autorski honorar
-      IF cTipRada == "A" .AND. cTrosk <> "N"
+   nDop := u_dopr_iz( nMinBO, cTipRada )
+   _udopr := nDop
+   _udop_st := 31.0
+   nPorOsnovica := ( ( _ubruto - _udopr ) - _ulicodb )
 
-         nTrosk := ROUND2( _UBruto * ( gAhTrosk / 100 ), gZaok2 )
-         IF lInRS == .T.
-            nTrosk := 0
-         ENDIF
-         _UBruto := _UBruto - nTrosk
-      ENDIF
+   IF nPorOsnovica < 0 .OR. !radn_oporeziv( _idradn, _idrj )
+      nPorOsnovica := 0
+   ENDIF
 
-      // uiznos je sada sa uracunatim brutom i ostalim
+   _uporez := izr_porez( nPorOsnovica, "B" )
+   _upor_st := 10.0
 
-      nMinBO := _UBruto
-      IF cTipRada $ " #I#N"
-         IF _I01 = 0
-            // ne racunaj min.bruto osnovu
-         ELSE
-            nMinBO := min_bruto( _UBruto, _USati )
-         ENDIF
-      ENDIF
+   IF !radn_oporeziv( _idradn, _idrj )
+      _uporez := 0
+      _upor_st := 0
+   ENDIF
 
-      // ukupni doprinosi IZ place
-      nDop := u_dopr_iz( nMinBO, cTipRada )
-      _udopr := nDop
+   _uneto2 := Round( ( ( _ubruto - _udopr ) - _uporez ), gZaok2 )
 
-      // doprinosi iz place - stopa
-      _udop_st := 31.0
+   IF cTipRada $ " #I#N#"
+      nMinNeto := min_neto( _uneto2, _usati )
+      _uneto2 := nMinNeto
+   ENDIF
 
-      // poreska osnovica
-      nPorOsnovica := ( ( _ubruto - _udopr ) - _ulicodb )
+   _uiznos := ROUND2( _uneto2 + _UOdbici, gZaok2 )
 
-      IF nPorOsnovica < 0 .OR. !radn_oporeziv( _idradn, _idrj )
-         nPorOsnovica := 0
-      ENDIF
-
-      // porez
-      _uporez := izr_porez( nPorOsnovica, "B" )
-
-      // stopa poreza
-      _upor_st := 10.0
-
-      // nema poreza
-      IF !radn_oporeziv( _idradn, _idrj )
-         _uporez := 0
-         _upor_st := 0
-      ENDIF
-
-      // neto plata
-      _uneto2 := Round( ( ( _ubruto - _udopr ) - _uporez ), gZaok2 )
-
-      // ako je prekoracen minimalni neto uzmi minimalni
-      IF cTipRada $ " #I#N#"
-         nMinNeto := min_neto( _uneto2, _usati )
-         _uneto2 := nMinNeto
-      ENDIF
-
-      // ukupno za isplatu
-      _uiznos := ROUND2( _uneto2 + _UOdbici, gZaok2 )
-
-      IF cTipRada $ "U#A" .AND. cTrosk <> "N"
-         // kod ovih vrsta dodaj i troskove
-         _uIznos := ROUND2( _uiznos + nTrosk, gZaok2 )
-         // ako je u RS, onda je isplata ista kao i neto!
-         IF lInRS == .T.
-            _uIznos := _UNeto
-         ENDIF
-      ENDIF
-
-      IF cTipRada $ "S"
-         // neto je za isplatu
+   IF cTipRada $ "U#A" .AND. cTrosk <> "N"
+      _uIznos := ROUND2( _uiznos + nTrosk, gZaok2 )
+      IF lInRS == .T.
          _uIznos := _UNeto
       ENDIF
+   ENDIF
 
+   IF cTipRada $ "S"
+      _uIznos := _UNeto
    ENDIF
 
    @ m_x + 19, m_y + 2 SAY "Ukupno sati:"
    @ Row(), Col() + 1 SAY _USati PICT gPics
-
-   IF gVarObracun == "2"
-      @ m_x + 19, Col() + 2 SAY "Uk.lic.odb.:"
-      @ Row(), Col() + 1 SAY _ULicOdb PICT gPici
-   ENDIF
-
+   @ m_x + 19, Col() + 2 SAY "Uk.lic.odb.:"
+   @ Row(), Col() + 1 SAY _ULicOdb PICT gPici
    @ m_x + 20, m_y + 2 SAY "Primanja:"
    @ Row(), Col() + 1 SAY _UNeto PICT gPici
    @ m_x + 20, Col() + 2 SAY "Odbici:"
@@ -581,12 +517,10 @@ FUNCTION PrikUkupno( lSaveObracun )
    @ m_x + 20, Col() + 2 SAY "UKUPNO ZA ISPLATU:"
    @ Row(), Col() + 1 SAY _UIznos PICT gPici
    @ m_x + 22, m_y + 10 SAY "Pritisni <ENTER> za snimanje, <ESC> napustanje"
+   @ m_x + 21, m_y + 2 SAY "Vrsta isplate (1 - 13):"
+   @ Row(), Col() + 1 GET _v_ispl
 
-   IF gVarObracun == "2" .AND. ld->( FieldPos( "V_ISPL" ) ) <> 0
-      @ m_x + 21, m_y + 2 SAY "Vrsta isplate (1 - 13):"
-      @ Row(), Col() + 1 GET _v_ispl
-      READ
-   ENDIF
+   READ
 
    Inkey( 0 )
 
@@ -604,10 +538,9 @@ FUNCTION PrikUkupno( lSaveObracun )
 
    RETURN
 
-// ------------------------------------------------
-// unos tipova primanja
-// ------------------------------------------------
-FUNCTION PrikUnos()
+
+
+STATIC FUNCTION ld_unos_obracuna_tipovi_primanja()
 
    LOCAL i
    PRIVATE cIdTP := "  "
@@ -674,10 +607,9 @@ FUNCTION PrikUnos()
 
    RETURN
 
-// --------------------------------------------------
-// validacija WHEN na unosu tipova primanja
-// --------------------------------------------------
-FUNCTION WhUnos( cTP )
+
+
+STATIC FUNCTION WhUnos( cTP )
 
    tippr->( dbSeek( cTP ) )
 
@@ -686,7 +618,7 @@ FUNCTION WhUnos( cTP )
 
 
 
-FUNCTION ValRNal( cPom, i )
+STATIC FUNCTION ValRNal( cPom, i )
 
    IF !Empty( cPom )
       P_fakt_objekti( @cPom )
@@ -696,23 +628,3 @@ FUNCTION ValRNal( cPom, i )
    RETURN .T.
 
 
-FUNCTION UcitajSateRNal( nGodina, nMjesec, cIdRadn )
-
-   LOCAL nArr := Select()
-   LOCAL i := 0
-
-   SELECT radsiht
-   SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cIdRadn
-   DO WHILE !Eof() .AND. Str( field->godina, 4 ) + Str( field->mjesec, 2 ) + field->idRadn == Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cIdRadn
-      ++i
-      cRNal[ i ] := field->idRNal
-      nSati[ i ] := field->sati
-      SKIP 1
-   ENDDO
-   FOR j := i + 1 TO 8
-      cRNal[ j ] := Space( 10 )
-      nSati[ j ] := 0
-   NEXT
-   SELECT ( nArr )
-
-   RETURN

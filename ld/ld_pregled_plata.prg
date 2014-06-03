@@ -60,11 +60,7 @@ FUNCTION ld_pregled_plata()
    @ m_x + 8, m_y + 2 SAY Lokal( "Sortirati po(1-sifri,2-prezime+ime)" )  GET cVarSort VALID cVarSort $ "12"  PICT "9"
    @ m_x + 9, m_y + 2 SAY "Prikaz bruto iznosa ?" GET cPrBruto ;
       VALID cPrBruto $ "DN" PICT "@!"
-   IF gVarObracun == "2"
-      @ m_x + 11, m_y + 2 SAY "Kontrola (br.-dopr.-porez)+(prim.van neta)-(odbici)=(za isplatu)? (D/N)" GET cKontrola VALID cKontrola $ "DN" PICT "@!"
-   ELSE
-      @ m_x + 11, m_y + 2 SAY "Kontrolisati (neto)+(prim.van neta)-(odbici)=(za isplatu) ? (D/N)" GET cKontrola VALID cKontrola $ "DN" PICT "@!"
-   ENDIF
+   @ m_x + 11, m_y + 2 SAY "Kontrola (br.-dopr.-porez)+(prim.van neta)-(odbici)=(za isplatu)? (D/N)" GET cKontrola VALID cKontrola $ "DN" PICT "@!"
    read; clvbox(); ESC_BCR
    BoxC()
 
@@ -139,14 +135,12 @@ FUNCTION ld_pregled_plata()
       m := "----- ------ ---------------------------------- " + "-" + REPL( "-", Len( gPicS ) ) + " ----------- ----------- ----------- -----------"
    ENDIF
 
-   IF gVarObracun == "2"
-      m += " " + Replicate( "-", 11 )
-      m += " " + Replicate( "-", 11 )
-      m += " " + Replicate( "-", 11 )
-      m += " " + Replicate( "-", 11 )
-      m += " " + Replicate( "-", 11 )
-      m += " " + Replicate( "-", 11 )
-   ENDIF
+   m += " " + Replicate( "-", 11 )
+   m += " " + Replicate( "-", 11 )
+   m += " " + Replicate( "-", 11 )
+   m += " " + Replicate( "-", 11 )
+   m += " " + Replicate( "-", 11 )
+   m += " " + Replicate( "-", 11 )
 
    IF cPrBruto == "D"
       m += " " + Replicate( "-", 12 )
@@ -251,50 +245,40 @@ FUNCTION ld_pregled_plata()
       nNetNr := 0
       nNeto := 0
 
-      IF gVarObracun == "2"
+      SELECT ld
+
+      cRTipRada := g_tip_rada( ld->idradn, ld->idrj )
+      nPrKoef := radn->sp_koef
+      cOpor := radn->opor
+      cTrosk := radn->trosk
+      nLicOdb := _ulicodb
 		
-         SELECT ld
+      nBO := bruto_osn( _uneto, cRTipRada, nLicOdb, nPrKoef, cTrosk )
+      nMBO := nBO
 
-         cRTipRada := g_tip_rada( ld->idradn, ld->idrj )
-         nPrKoef := radn->sp_koef
-         cOpor := radn->opor
-         cTrosk := radn->trosk
-         nLicOdb := _ulicodb
-		
-         // napravi mali obracun
-         nBO := bruto_osn( _uneto, cRTipRada, nLicOdb, nPrKoef, cTrosk )
-	
-         nMBO := nBO
-
-         IF calc_mbruto()
-            // minimalna bruto osnova
-            nMBO := min_bruto( nBo, ld->usati )
-         ENDIF
-
-         nBrOsn := nBo
-
-         IF cRTipRada == "A" .AND. cTrosk <> "N"
-            nTrosk := nBO * ( gAhTrosk / 100 )
-            nBrOsn := nBO - nTrosk
-         ELSEIF cRTipRada == "U" .AND. cTrosk <> "N"
-            nTrosk := nBO * ( gUgTrosk / 100 )
-            nBrOsn := nBO - nTrosk
-         ENDIF
-
-
-         // doprinosi iz
-         nDoprIz := u_dopr_iz( nMBO, cRTipRada )
-		
-         // porez
-         nPorez := 0
-         IF radn_oporeziv( ld->idradn, ld->idrj ) .AND. cRTipRada <> "S"
-            nPorez := izr_porez( nBrOsn - nDoprIz - nLicOdb, "B" )
-         ENDIF
-		
-         nNeto := ( nBrOsn - nDoprIz )
-         nNetNr := ( nBrOsn - nDoprIz - nPorez )
-
+      IF calc_mbruto()
+         nMBO := min_bruto( nBo, ld->usati )
       ENDIF
+
+      nBrOsn := nBo
+
+      IF cRTipRada == "A" .AND. cTrosk <> "N"
+         nTrosk := nBO * ( gAhTrosk / 100 )
+         nBrOsn := nBO - nTrosk
+      ELSEIF cRTipRada == "U" .AND. cTrosk <> "N"
+         nTrosk := nBO * ( gUgTrosk / 100 )
+         nBrOsn := nBO - nTrosk
+      ENDIF
+
+      nDoprIz := u_dopr_iz( nMBO, cRTipRada )
+		
+      nPorez := 0
+      IF radn_oporeziv( ld->idradn, ld->idrj ) .AND. cRTipRada <> "S"
+         nPorez := izr_porez( nBrOsn - nDoprIz - nLicOdb, "B" )
+      ENDIF
+		
+      nNeto := ( nBrOsn - nDoprIz )
+      nNetNr := ( nBrOsn - nDoprIz - nPorez )
 
       SELECT ld
 
@@ -309,44 +293,23 @@ FUNCTION ld_pregled_plata()
       ENDIF
  	
       @ PRow(), PCol() + 1 SAY _uneto PICT gpici
- 	
-      IF gVarObracun == "2"
-         // bruto placa
-         @ PRow(), PCol() + 1 SAY nBrOsn PICT gpici
-         // doprinosi iz
-         @ PRow(), PCol() + 1 SAY nDoprIz PICT gpici
-         // licni odbici
-         @ PRow(), PCol() + 1 SAY nLicOdb PICT gpici
-         // porez 10%
-         @ PRow(), PCol() + 1 SAY nPorez PICT gpici
-         // neto
-         @ PRow(), PCol() + 1 SAY nNeto PICT gpici
-         // neto na ruke
-         @ PRow(), PCol() + 1 SAY nNetNr PICT gpici
-      ENDIF
-
-      // primanja van neta... ostali odbici/primanja
-	
-      // if gVarPP == "2"
+      @ PRow(), PCol() + 1 SAY nBrOsn PICT gpici
+      @ PRow(), PCol() + 1 SAY nDoprIz PICT gpici
+      @ PRow(), PCol() + 1 SAY nLicOdb PICT gpici
+      @ PRow(), PCol() + 1 SAY nPorez PICT gpici
+      @ PRow(), PCol() + 1 SAY nNeto PICT gpici
+      @ PRow(), PCol() + 1 SAY nNetNr PICT gpici
       @ PRow(), PCol() + 1 SAY nVanP PICT gpici
       @ PRow(), PCol() + 1 SAY nVanM PICT gpici
-      // else
-      // @ prow(), pcol() + 1 SAY nVanP + nVanM PICT gpici
-      // endif
- 	
       @ PRow(), PCol() + 1 SAY _uiznos PICT gpici
 
       IF cKontrola == "D"
-         IF gVarObracun == "2"
             nKontrola := ( nBrOsn - nDoprIz - nPorez ) + nVanP + nVanM
             IF Round( _uiznos, 2 ) = Round( nKontrola, 2 )
                // nista
             ELSE
                @ PRow(), PCol() + 1 SAY "ERR"
             ENDIF
-         ELSEIF _uiznos <> _uneto + nVanP + nVanM
-            @ PRow(), PCol() + 1 SAY "ERR"
-         ENDIF
       ENDIF
 	
       nT1 += _usati
@@ -356,23 +319,16 @@ FUNCTION ld_pregled_plata()
       nT3 += nVanP
       nT3b += nVanM
       nT4 += _uiznos
-
-      IF gVarObracun == "2"
-         nULicOdb += nLicOdb
-         nUBruto += nBrOsn
-         nUDoprIz += nDoprIz
-         nUPorez += nPorez
-         nUNetNr += nNetNr
-         nUNeto += nNeto
-      ENDIF
+      nULicOdb += nLicOdb
+      nUBruto += nBrOsn
+      nUDoprIz += nDoprIz
+      nUPorez += nPorez
+      nUNetNr += nNetNr
+      nUNeto += nNeto
 
       SKIP
-   ENDDO
 
-   // if prow()>58+gpStranica
-   // FF
-   // Eval(bZagl)
-   // endif
+   ENDDO
 
    ? m
    ? Space( 1 ) + Lokal( "UKUPNO:" )
@@ -384,23 +340,14 @@ FUNCTION ld_pregled_plata()
    ENDIF
 
    @ PRow(), PCol() + 1 SAY nT2 PICT gpici
-
-   IF gVarObracun == "2"
-      @ PRow(), PCol() + 1 SAY nUBruto PICT gpici
-      @ PRow(), PCol() + 1 SAY nUDoprIz PICT gpici
-      @ PRow(), PCol() + 1 SAY nULicOdb PICT gpici
-      @ PRow(), PCol() + 1 SAY nUPorez PICT gpici
-      @ PRow(), PCol() + 1 SAY nUNeto PICT gpici
-      @ PRow(), PCol() + 1 SAY nUNetNR PICT gpici
-   ENDIF
-
-   // IF gVarPP="2"
+   @ PRow(), PCol() + 1 SAY nUBruto PICT gpici
+   @ PRow(), PCol() + 1 SAY nUDoprIz PICT gpici
+   @ PRow(), PCol() + 1 SAY nULicOdb PICT gpici
+   @ PRow(), PCol() + 1 SAY nUPorez PICT gpici
+   @ PRow(), PCol() + 1 SAY nUNeto PICT gpici
+   @ PRow(), PCol() + 1 SAY nUNetNR PICT gpici
    @ PRow(), PCol() + 1 SAY nT3 PICT gpici
    @ PRow(), PCol() + 1 SAY nT3b PICT gpici
-   // ELSE
-   // @ prow(),pcol()+1 SAY  nT3+nT3b pict gpici
-   // ENDIF
-
    @ PRow(), PCol() + 1 SAY nT4 PICT gpici
 
    ? m
@@ -416,18 +363,11 @@ FUNCTION ld_pregled_plata()
 
 
 
-// --------------------------------------
-// zaglavlje izvjestaja
-// --------------------------------------
-FUNCTION ZPregPl()
+STATIC FUNCTION ZPregPl()
 
    ?
 
-   IF gVarObracun == "2"
-      P_COND2
-   ELSE
-      P_COND
-   ENDIF
+   P_COND2
 
    ? Upper( gTS ) + ":", gnFirma
    ?
@@ -454,26 +394,14 @@ FUNCTION ZPregPl()
 
    ? m
 
-   IF gVarObracun == "2"
-      IF gVarPP == "2"
+   IF gVarPP == "2"
          ? Lokal( " Rbr * Sifra*         Naziv radnika            *  Sati   *   Redovan *  Minuli   *   Neto    *       VAN NETA       * ZA ISPLATU*" )
          ? Lokal( "     *      *                                  *         *     rad   *   rad     *           * Primanja  * Obustave *           *" )
-      ELSE
+   ELSE
          ? Lokal( " Rbr * Sifra*         Naziv radnika            *  Sati   * Primanja  * Bruto pl. * Dopr (iz) * L.odbici  *  Porez    *    Neto   *  Na ruke  *  Ostale  *  Odbici    * ZA ISPLATU*" )
          ? "     *      *                                  *         *           * 1 x koef. *  1 x 31%  *           *    10%    *   (2-3)   *  (2-3-5)  * naknade  *            *(7 + 8 + 9)*"
          ? "     *      *                                  *         *    (1)    *    (2)    *    (3)    *    (4)    *   (5)     *    (6)    *    (7)    *    (8)   *    (9)     *    (10)   *"
-      ENDIF
-
-   ELSE
-      IF gVarPP == "2"
-         ? Lokal( " Rbr * Sifra*         Naziv radnika            *  Sati   *   Redovan *  Minuli   *   Neto    *       VAN NETA       * ZA ISPLATU*" )
-         ? Lokal( "     *      *                                  *         *     rad   *   rad     *           * Primanja  * Obustave *           *" )
-      ELSE
-         ? Lokal( " Rbr * Sifra*         Naziv radnika            *  Sati   *   Neto    *  Odbici   * ZA ISPLATU*" )
-         ? "     *      *                                  *         *           *           *           *"
-      ENDIF
    ENDIF
-
    ? m
 
    RETURN

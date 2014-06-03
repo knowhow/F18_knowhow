@@ -1293,10 +1293,6 @@ STATIC FUNCTION filter_opcina_kanton( id_radn, opcina, kanton )
 
       O_OPS
       hseek radn->idopsst
-      cKant := ops->idkan
-
-      GO TOP
-      HSEEK cKant
       
       IF FOUND() .AND. !( ops->idkan $ kanton )
          lOk := .F.

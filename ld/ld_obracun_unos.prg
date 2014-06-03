@@ -87,11 +87,7 @@ do while .t.
         endif
 
         if _pr_kart_pl == "D"
-            if lViseObr
-                KartPl( cRj, nMjesec, nGodina, cIdRadn, gObracun )
-            else
-                KartPl( cRj, nMjesec, nGodina, cIdRadn )
-            endif
+             ld_kartica_plate( cRj, nMjesec, nGodina, cIdRadn, IF( lViseObr, gObracun, NIL ) )
         endif
 
     else 

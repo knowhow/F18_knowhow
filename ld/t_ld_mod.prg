@@ -95,7 +95,7 @@ METHOD mMenuStandard
    AAdd( opc,  "A. rekapitulacija" )
    AAdd( opcexe, {|| Rekap2( .T. ) } )
    AAdd( opc,  "B. kartica plate" )
-   AAdd( opcexe, {|| KartPl() } )
+   AAdd( opcexe, {|| ld_kartica_plate() } )
    AAdd( opc,   "V. generisanje virmana " )
    AAdd( opcexe, {|| ld_gen_virm() } )
    AAdd( opc, "------------------------------------" )

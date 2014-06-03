@@ -165,7 +165,7 @@ METHOD FinBrutoBilans:get_vars()
       _tip := ::tip
    ENDIF
 
-   Box(, 18, 75 )
+   Box(, 20, 75 )
 
    @ m_x + _x, m_y + 2 SAY "***** BRUTO BILANS *****"
 
@@ -176,13 +176,28 @@ METHOD FinBrutoBilans:get_vars()
 
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "[1] subanaliticki  [2] analiticki  [3] sinteticki  [4] po grupama :" GET _tip PICT "9"
+   @ m_x + _x, m_y + 2 SAY8 "[1] subanalitički [2] analitički [3] sintetički [4] po grupama :" GET _tip PICT "9"
+
+   ++ _x
+   ++ _x
+
+   @ m_x + _x, m_y + 2 SAY8 "VRSTA ŠTAMPE:"
+
+   ++ _x
+
+   @ m_x + _x, m_y + 2 SAY8 "[1] TXT [2] ODT (Libre Office) :" GET _var_txt PICT "@!" VALID _var_txt $ "12"
 
    READ
 
    IF LastKey() == K_ESC
       BoxC()
       RETURN _ok
+   ENDIF
+
+   IF _var_txt == "1"
+      _var_ab := "B"
+   ELSE
+      _var_ab := "A"
    ENDIF
 
    ++ _x
@@ -203,9 +218,11 @@ METHOD FinBrutoBilans:get_vars()
    @ m_x + _x, Col() + 1 SAY "do:" GET _dat_do
 
    ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "Varijanta izvještaja (A/B):" GET _var_ab PICT "@!" VALID _var_ab $ "AB"
-   @ m_x + _x, col() + 1 SAY8 "TXT/ODT (1/2):" GET _var_txt PICT "@!" VALID _var_txt $ "12"
+
+   IF _var_txt == "1"
+      ++ _x
+      @ m_x + _x, m_y + 2 SAY8 "Varijanta izvještaja (A/B):" GET _var_ab PICT "@!" VALID _var_ab $ "AB"
+   ENDIF
 
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Prikaz stavki sa saldom 0 (D/N) ?" GET _saldo_nula VALID _saldo_nula $ "DN" PICT "@!"
@@ -235,7 +252,7 @@ METHOD FinBrutoBilans:get_vars()
       RETURN _ok
    ENDIF
 
-   IF _var_ab == "B"
+   IF _var_ab == "B" .AND. _var_txt == "2"
       _var_txt := "1"
    ENDIF
 

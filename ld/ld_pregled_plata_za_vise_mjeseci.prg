@@ -178,7 +178,7 @@ FUNCTION ld_pregled_plata_za_period()
 
    o_tables()
 
-   Box( "#PREGLED PLATA ZA VIŠE MJESECI (M4)", 16, 75 )
+   Box( "#PREGLED PLATA ZA PERIOD", 16, 75 )
 
    @ m_x + 1, m_y + 2 SAY "Radne jedinice: " GET cRj PICT "@!S25"
    @ m_x + 2, m_y + 2 SAY "Za mjesece od:" GET cMjesec PICT "99"

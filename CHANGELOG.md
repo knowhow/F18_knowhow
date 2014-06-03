@@ -1,6 +1,7 @@
 1.7.96  2014-06-02, vsasa
 
   - RNAL, danasnji_datum() umjesto DATE()
+  - FIN, bruto bilans, odt ili txt na vrhu izvještaja
  
 1.7.95  2014-06-02, vsasa
 

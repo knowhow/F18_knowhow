@@ -63,31 +63,6 @@ FUNCTION ParObracun()
 
    ENDIF
    
-   IF gZastitaObracuna == "D"
-      IspisiStatusObracuna( gRj, gGodina, gMjesec )
-   ENDIF
-
    RETURN
 
 
-
-FUNCTION IspisiStatusObracuna( cRj, nGodina, nMjesec )
-
-   IF GetObrStatus( cRj, nGodina, nMjesec ) $ "ZX"
-      cStatusObracuna := "Obracun zakljucen !!!    "
-      cClr := "W/R"
-   ENDIF
-
-   IF GetObrStatus( cRj, nGodina, nMjesec ) $ "UP"
-      cStatusObracuna := "Obracun otvoren          "
-      cClr := "W/B"
-   ENDIF
-
-   IF GetObrStatus( cRj, nGodina, nMjesec ) == "N"
-      cStatusObracuna := "Nema otvorenog obracuna !"
-      cClr := "W/R"
-   ENDIF
-
-   @ 24, 1 SAY cStatusObracuna COLOR cClr
-
-   RETURN

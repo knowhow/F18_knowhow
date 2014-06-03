@@ -19,14 +19,6 @@ FUNCTION ld_rekalkulacija()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   IF GetObrStatus( gRj, gGodina, gMjesec ) $ "ZX"
-      MsgBeep( "Obracun zakljucen! Ne mozete vrsiti ispravku podataka!!!" )
-      RETURN
-   ELSEIF GetObrStatus( gRj, gGodina, gMjesec ) == "N"
-      MsgBeep( "Nema otvorenog obracuna za " + AllTrim( Str( gMjesec ) ) + "." + AllTrim( Str( gGodina ) ) )
-      RETURN
-   ENDIF
-
    AAdd( _opc, "1. rekalkulacija satnica i primanja               " )
    AAdd( _opcexe, {|| RekalkPrimanja() } )
    AAdd( _opc, "2. ponovo izracunaj neto sati/neto iznos/odbici" )

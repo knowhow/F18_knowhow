@@ -72,14 +72,6 @@ do while .t.
         ESC_BCR
     BoxC()
     
-    if GetObrStatus(cIdRj,cGodina,cMjesec)$"ZX"
-        MsgBeep("Obracun zakljucen! Ne mozete vrsiti brisanje podataka!!!")
-        return
-    elseif GetObrStatus(cIdRj, cGodina, cMjesec)=="N"
-        MsgBeep("Nema otvorenog obracuna za "+ALLTRIM(STR(cMjesec))+"."+ALLTRIM(STR(cGodina)))
-        return
-    endif
-
     if cIdRadn <> "XXXXXX"
 
         O_LD
@@ -191,14 +183,6 @@ do while .t.
         ClvBox()
         ESC_BCR
     BoxC()
-    
-    if GetObrStatus(cIdRj,cGodina,cMjesec)$"ZX"
-        MsgBeep("Obracun zakljucen! Ne mozete vrsiti brisanje podataka!!!")
-        return
-    elseif GetObrStatus(cIdRj,cGodina,cMjesec)=="N"
-        MsgBeep("Nema otvorenog obracuna za "+ALLTRIM(STR(cMjesec))+"."+ALLTRIM(STR(cGodina)))
-        return
-    endif
     
     if Pitanje(,"Sigurno zelite izbrisati sve podatke za RJ za ovaj mjesec !?","N")=="N"
         my_close_all_dbf()

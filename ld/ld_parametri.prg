@@ -81,7 +81,6 @@ FUNCTION ld_get_params()
    gVarObracun := fetch_metric( "ld_varijanta_obracuna", NIL, gVarObracun )
    gSihtarica := fetch_metric( "ld_obrada_sihtarica", NIL, gSihtarica )
    gSihtGroup := fetch_metric( "ld_obrada_sihtarica_po_grupama", NIL, gSihtGroup )
-   gZastitaObracuna := fetch_metric( "ld_zastita_obracuna", NIL, gZastitaObracuna )
 
 
    // ----------
@@ -146,10 +145,6 @@ FUNCTION ld_set_firma()
 
       set_metric( "ld_obracun", my_user(), _obracun )
       gObracun := _obracun
-
-      IF gZastitaObracuna == "D"
-         IspisiStatusObracuna( gRj, gGodina, gMjesec )
-      ENDIF
 
    ENDIF
 
@@ -302,9 +297,6 @@ FUNCTION ld_set_obracun()
 
    @ m_x + nX, m_y + 2 SAY "Unos i obrada radnih sati (D/N)" GET _radni_sati VALID _radni_sati $ "DN" PICT "@!"
 
-   @ m_x + nX, Col() + 2 SAY "Zastita obracuna (D/N) ?" GET gZastitaObracuna VALID gZastitaObracuna $ "DN" PICT "@!"
-   ++ nX
-
    @ m_x + nX, m_y + 2 SAY "Porezi - stepenaste stope ? (D/N)" GET _st_stopa VALID _st_stopa $ "DN" PICT "@!"
 
    READ
@@ -330,7 +322,6 @@ FUNCTION ld_set_obracun()
       set_metric( "ld_obrada_sihtarica_po_grupama", NIL, gSihtGroup )
       set_metric( "ld_radni_sati", NIL, _radni_sati )
       set_metric( "ld_porezi_stepenasta_stopa", NIL, _st_stopa )
-      set_metric( "ld_zastita_obracuna", NIL, gZastitaObracuna )
       set_metric( "ld_vise_obracuna_na_unosu", my_user(), _v_obr_unos )
 
    ENDIF

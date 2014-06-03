@@ -30,14 +30,6 @@ FUNCTION ld_unos_obracuna()
    nGodina := gGodina
    nMjesec := gMjesec
 
-   IF GetObrStatus( cRj, nGodina, nMjesec ) $ "ZX"
-      MsgBeep( "Obracun zakljucen! Ne mozete vrsiti ispravku podataka!!!" )
-      RETURN
-   ELSEIF GetObrStatus( cRj, nGodina, nMjesec ) == "N"
-      MsgBeep( "Nema otvorenog obracuna za " + AllTrim( Str( nMjesec ) ) + "." + AllTrim( Str( nGodina ) ) )
-      RETURN
-   ENDIF
-
    SELECT ( F_LD )
    IF !Used()
       O_LD

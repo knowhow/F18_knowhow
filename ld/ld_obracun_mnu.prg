@@ -36,24 +36,11 @@ FUNCTION ld_obracun_mnu_admin()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. otvori / zakljuci obracun                     " )
-
-   IF gZastitaObracuna == "D"
-      AAdd( _opcexe, {|| DlgZakljucenje() } )
-   ELSE
-      AAdd( _opcexe, {|| MsgBeep( "Opcija nije dostupna !" ) } )
-   ENDIF
-
-   AAdd( _opc, "2. radnici obradjeni vise puta za isti mjesec" )
+   AAdd( _opc, "1. radnici obradjeni vise puta za isti mjesec" )
    AAdd( _opcexe, {|| ld_obracun_napravljen_vise_puta() } )
 
-   AAdd( _opc, "3. promjeni varijantu obracuna za obracun" )
-   AAdd( _opcexe, {|| ld_promjeni_varijantu_obracuna() } )
-
-   IF gVarObracun == "2"
-      AAdd( _opc, "I. unos datuma isplate placa" )
-      AAdd( _opcexe, {|| unos_datuma_isplate_place() } )
-   ENDIF
+   AAdd( _opc, "2. unos datuma isplate placa" )
+   AAdd( _opcexe, {|| unos_datuma_isplate_place() } )
 
    IF gSihtGroup == "D"
       AAdd( _opc, "S. obrada sihtarica" )
@@ -69,7 +56,8 @@ FUNCTION ld_obracun_mnu_admin()
 
    RETURN
 
-FUNCTION siht_obr()
+
+STATIC FUNCTION siht_obr()
 
    LOCAL _opc := {}
    LOCAL _opcexe := {}

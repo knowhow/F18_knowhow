@@ -171,7 +171,6 @@ METHOD setGVars()
    PUBLIC lViseObr := .T.
    PUBLIC lVOBrisiCDX := .F.
    PUBLIC cLdPolja := 40
-   PUBLIC gZastitaObracuna := "N"
 
    // ucitaj parametre
    ld_get_params()

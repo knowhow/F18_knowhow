@@ -88,8 +88,6 @@ METHOD mMenuStandard
    AAdd( opcexe, nil )
    AAdd( opc,   "7. šifrarnici" )
    AAdd( opcexe, {|| ld_sifrarnici() } )
-   AAdd( opc,   "9. administriranje baze podataka" )
-   AAdd( opcexe, {|| ld_administracija() } )
    AAdd( opc, "------------------------------------" )
    AAdd( opcexe, nil )
    AAdd( opc,  "A. rekapitulacija" )

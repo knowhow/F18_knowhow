@@ -354,7 +354,6 @@ FUNCTION PrikaziBox( lSaveObracun )
    ENDIF
 
    ParObr( cMjesec, cGodina, iif( lViseObr, cObracun, ), cIdRj )
-   // podesi parametre obracuna za ovaj mjesec
 
    IF gTipObr == "1"
       @ m_x + 3, m_y + 2   SAY IF( gBodK == "1", Lokal( "Broj bodova" ), Lokal( "Koeficijent" ) ) GET _brbod PICT "99999.99" VALID FillBrBod( _brbod )
@@ -371,18 +370,10 @@ FUNCTION PrikaziBox( lSaveObracun )
       @ m_x + 3, Col() + 2 SAY Lokal( "Koef.minulog rada" ) GET _kminrad PICT "99.99%" VALID FillKMinRad( _kminrad )
    ENDIF
 
-   IF gVarObracun == "2"
-      @ m_x + 4, m_y + 2 SAY "Lic.odb:" GET _ulicodb PICT "9999.99"
-      @ m_x + 4, Col() + 1 SAY Lokal( "Vrsta posla koji radnik obavlja" ) GET _IdVPosla valid ( Empty( _idvposla ) .OR. P_VPosla( @_IdVPosla, 4, 55 ) ) .AND. FillVPosla()
-   ELSE
-      @ m_x + 4, m_y + 2 SAY Lokal( "Vrsta posla koji radnik obavlja" ) GET _IdVPosla valid ( Empty( _idvposla ) .OR. P_VPosla( @_IdVPosla, 4, 55 ) ) .AND. FillVPosla()
-   ENDIF
+   @ m_x + 4, m_y + 2 SAY "Lic.odb:" GET _ulicodb PICT "9999.99"
+   @ m_x + 4, Col() + 1 SAY Lokal( "Vrsta posla koji radnik obavlja" ) GET _IdVPosla valid ( Empty( _idvposla ) .OR. P_VPosla( @_IdVPosla, 4, 55 ) ) .AND. FillVPosla()
 
    READ
-
-   IF ( IsRamaGlas() .AND. RadnikJeProizvodni() )
-      UnosSatiPoRNal( cGodina, cMjesec, cIdRadn )
-   ENDIF
 
    IF _radni_sati == "D"
       @ m_x + 4, m_y + 85 SAY "R.sati:" GET _radSat

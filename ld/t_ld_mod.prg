@@ -46,7 +46,7 @@ METHOD mMenu()
    @ 1, 2 SAY PadC( gTS + ": " + gNFirma, 50, "*" )
    @ 4, 5 SAY ""
 
-   ParObracun()
+   ld_postavi_parametre_obracuna()
 
    ::mMenuStandard()
 
@@ -101,17 +101,10 @@ METHOD setGVars()
    PUBLIC gObracun := "1"
    // varijanta obracuna u skladu sa zak.promjenama
    PUBLIC gVarObracun := "2"
-   // default vrijednost osnovnog licnog odbitka
    PUBLIC gOsnLOdb := 300
-
-   // filter po polju aktivan u tabeli RADN
    PUBLIC gRadnFilter := "D"
-
-   // trosak kod ugovora o djelu
    PUBLIC gUgTrosk := 20
-   // trosak kod autorskog honorara
    PUBLIC gAhTrosk := 30
-
    PUBLIC gIzdanje := Space( 10 )
    PUBLIC gGodina := Year( Date() )
    PUBLIC gZaok := 2
@@ -155,7 +148,6 @@ METHOD setGVars()
    PUBLIC lVOBrisiCDX := .F.
    PUBLIC cLdPolja := 40
 
-   // ucitaj parametre
    ld_get_params()
 
    LDPoljaINI()
@@ -164,11 +156,3 @@ METHOD setGVars()
 
    RETURN
 
-
-FUNCTION RadnikJeProizvodni()
-
-   PRIVATE cPom
-
-   cPom := IzFmkIni( "ProizvodniRadnik", "Formula", '"P"$RADN->K4', KUMPATH )
-
-   RETURN ( &cPom )

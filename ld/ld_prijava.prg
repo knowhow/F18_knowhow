@@ -14,10 +14,7 @@
 #include "ld.ch"
 
 
-// ----------------------------------------
-// funkcija za prijavu u obracun
-// ----------------------------------------
-FUNCTION ParObracun()
+FUNCTION ld_postavi_parametre_obracuna()
 
    LOCAL _x := 1
    LOCAL _pad_l := 20

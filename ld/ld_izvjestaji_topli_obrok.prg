@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,717 +12,719 @@
 
 #include "ld.ch"
 
-static __PAGE_LEN
+STATIC __PAGE_LEN
 
 
-// ----------------------------------------
-// topli obrok lista....
-// ----------------------------------------
-function to_list()
+FUNCTION ld_lista_isplate_toplog_obroka()
 
-local cRj := gRj
-local cMonthFrom := gMjesec
-local cMonthTo := gMjesec
-local cYear := gGodina
-local cHours := PADR("S01;S10;", 200)
-local nHourLimit := 0
-local nMinHrLimit := 0
-local nKoef := 7
-local nAcontAmount := 70.00
-local nRptVar1 := 1
-local nRptVar2 := 1
-local nDays := 7.5
-local cKred := SPACE(6)
-local cExport
+   LOCAL cRj := gRj
+   LOCAL cMonthFrom := gMjesec
+   LOCAL cMonthTo := gMjesec
+   LOCAL cYear := gGodina
+   LOCAL cHours := PadR( "S01;S10;", 200 )
+   LOCAL nHourLimit := 0
+   LOCAL nMinHrLimit := 0
+   LOCAL nKoef := 7
+   LOCAL nAcontAmount := 70.00
+   LOCAL nRptVar1 := 1
+   LOCAL nRptVar2 := 1
+   LOCAL nDays := 7.5
+   LOCAL cKred := Space( 6 )
+   LOCAL cExport
 
-o_tables()
+   o_tables()
 
-__PAGE_LEN := 60
+   __PAGE_LEN := 60
 
-if _get_vars( @cRj, @cMonthFrom, @cMonthTo, @cYear, @nDays, ;
-		@cHours, @nHourLimit, @nMinHrLimit, @nKoef, @nAcontAmount, ;
-		@nRptVar1, @nRptVar2, @cKred, @cExport ) == 0
-	return
-endif
+   IF _get_vars( @cRj, @cMonthFrom, @cMonthTo, @cYear, @nDays, ;
+         @cHours, @nHourLimit, @nMinHrLimit, @nKoef, @nAcontAmount, ;
+         @nRptVar1, @nRptVar2, @cKred, @cExport ) == 0
+      RETURN
+   ENDIF
 
-// generisi listu...
-if _gen_list( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
-	cHours, nHourLimit, nMinHrLimit, nKoef, nAcontAmount, cKred ) == 0
+   // generisi listu...
+   IF _gen_list( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
+         cHours, nHourLimit, nMinHrLimit, nKoef, nAcontAmount, cKred ) == 0
 
-	return
-endif
+      RETURN
+   ENDIF
 
-if cExport == "D"
-	// export podataka 
-	_export_data( nRptVar1, nRptVar2, cKred )
-else
-	// printaj izvjestaj....
-	_print_list( cMonthFrom, cMonthTo, cYear, nRptVar1, nRptVar2, cKred )
-endif
+   IF cExport == "D"
+      // export podataka
+      _export_data( nRptVar1, nRptVar2, cKred )
+   ELSE
+      // printaj izvjestaj....
+      _print_list( cMonthFrom, cMonthTo, cYear, nRptVar1, nRptVar2, cKred )
+   ENDIF
 
-my_close_all_dbf()
+   my_close_all_dbf()
 
-return
+   RETURN
 
 
 
 // ---------------------------------------
 // export podataka u txt fajl
 // ---------------------------------------
-static function _export_data( nVar1, nVar2, banka )
-local cTxt
-local _output_file := "to.txt"
-private cLokacija
-private cConstBrojTR
-private nH
-private cParKonv
+STATIC FUNCTION _export_data( nVar1, nVar2, banka )
 
-createfilebanka( banka )
+   LOCAL cTxt
+   LOCAL _output_file := "to.txt"
+   PRIVATE cLokacija
+   PRIVATE cConstBrojTR
+   PRIVATE nH
+   PRIVATE cParKonv
 
-if banka == NIL .or. EMPTY( banka )
-    _output_file := "to.txt"
-else
-    _output_file := "to_" + ALLTRIM( banka ) + ".txt"
-endif
+   createfilebanka( banka )
 
-select _tmp
-index on r_bank + r_ime + r_prezime tag "bank"
-go top
+   IF banka == NIL .OR. Empty( banka )
+      _output_file := "to.txt"
+   ELSE
+      _output_file := "to_" + AllTrim( banka ) + ".txt"
+   ENDIF
 
-do while !EOF()
+   SELECT _tmp
+   INDEX ON r_bank + r_ime + r_prezime TAG "bank"
+   GO TOP
+
+   DO WHILE !Eof()
 	
-	cTxt := ""
+      cTxt := ""
 	
-	// tek.racun
-	cTxt += FormatSTR( ALLTRIM(field->r_tr), 25, .f., "" )
+      // tek.racun
+      cTxt += FormatSTR( AllTrim( field->r_tr ), 25, .F., "" )
 	
-	// prezime - ime oca - ime
-	cTxt += FormatSTR( ALLTRIM(field->r_prezime) + ;
-		" (" + ;
-		ALLTRIM(field->r_imeoca) + ;
-		") " + ;
-		ALLTRIM(field->r_ime), 40 )
+      // prezime - ime oca - ime
+      cTxt += FormatSTR( AllTrim( field->r_prezime ) + ;
+         " (" + ;
+         AllTrim( field->r_imeoca ) + ;
+         ") " + ;
+         AllTrim( field->r_ime ), 40 )
 
-	if nVar1 = 1
-		// iznos toplog obroka
-		cTxt += FormatSTR( ALLTRIM(STR(field->r_to, 8, 2)), 8, .t. )
-	else
-		if nVar2 = 1
-			// isplata akontacije
-			cTxt += FormatSTR( ALLTRIM(STR(field->r_acont, 8, 2)),;
-				8, .t. )
-		else
-			// isplata ostatka
-			cTxt += FormatSTR( ALLTRIM(STR(field->r_total, 8, 2)),;
-				8, .t. )
-		endif
-	endif
+      IF nVar1 = 1
+         // iznos toplog obroka
+         cTxt += FormatSTR( AllTrim( Str( field->r_to, 8, 2 ) ), 8, .T. )
+      ELSE
+         IF nVar2 = 1
+            // isplata akontacije
+            cTxt += FormatSTR( AllTrim( Str( field->r_acont, 8, 2 ) ), ;
+               8, .T. )
+         ELSE
+            // isplata ostatka
+            cTxt += FormatSTR( AllTrim( Str( field->r_total, 8, 2 ) ), ;
+               8, .T. )
+         ENDIF
+      ENDIF
 
-	// konverzija znakova...
+      // konverzija znakova...
 
-	write2file( nH, to_win1250_encoding( hb_strtoutf8( cTxt ) ), .t. )
+      write2file( nH, to_win1250_encoding( hb_StrToUTF8( cTxt ) ), .T. )
 	
-	skip
+      SKIP
 
-enddo
+   ENDDO
 
-closefilebanka(nH)
+   closefilebanka( nH )
 
-// kopiraj fajl na desktop
-f18_copy_to_desktop( my_home(), _output_file, _output_file )
+   // kopiraj fajl na desktop
+   f18_copy_to_desktop( my_home(), _output_file, _output_file )
 
-return
+   RETURN
 
 
 
 // --------------------------------------
 // setuje parametre izvjestaja
 // --------------------------------------
-static function _get_vars( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
-				cHours, nHourLimit, nMinHrLimit, ;
-				nKoef, nAcontAmount, ;
-				nRptVar1, nRptVar2, cKred, cExport )
-local nBoxX := 22
-local nBoxY := 70
-local nX := 1
-local cColor := "BG+/B"
+STATIC FUNCTION _get_vars( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
+      cHours, nHourLimit, nMinHrLimit, ;
+      nKoef, nAcontAmount, ;
+      nRptVar1, nRptVar2, cKred, cExport )
 
-cRj := fetch_metric( "ld_rptto_rj", my_user(), cRj )
-cMonthFrom := fetch_metric( "ld_rptto_month_from", my_user(), cMonthFrom )
-cMonthto := fetch_metric( "ld_rptto_month_to", my_user(), cMonthto )
-nDays := fetch_metric( "ld_rptto_days", my_user(), nDays )
-cYear := fetch_metric( "ld_rptto_year", my_user(), cYear )
-cHours := fetch_metric( "ld_rptto_hours", my_user(), cHours )
-nHourLimit := fetch_metric( "ld_rptto_hours_limit", my_user(), nHourLimit )
-nMinHrLimit := fetch_metric( "ld_rptto_min_limit", my_user(), nMinHrLimit )
-nKoef := fetch_metric( "ld_rptto_koef", my_user(), nKoef )
-nAcontAmount := fetch_metric( "ld_rptto_acc_amount", my_user(), nAcontAmount )
-nRptVar1 := fetch_metric( "ld_rptto_var_1", my_user(), nRptVar1 )
-nRptVar2 := fetch_metric( "ld_rptto_var_2", my_user(), nRptVar2 )
-cKred := fetch_metric( "ld_rptto_kred", my_user(), cKred )
+   LOCAL nBoxX := 22
+   LOCAL nBoxY := 70
+   LOCAL nX := 1
+   LOCAL cColor := "BG+/B"
 
-cExport := "N"
+   cRj := fetch_metric( "ld_rptto_rj", my_user(), cRj )
+   cMonthFrom := fetch_metric( "ld_rptto_month_from", my_user(), cMonthFrom )
+   cMonthto := fetch_metric( "ld_rptto_month_to", my_user(), cMonthto )
+   nDays := fetch_metric( "ld_rptto_days", my_user(), nDays )
+   cYear := fetch_metric( "ld_rptto_year", my_user(), cYear )
+   cHours := fetch_metric( "ld_rptto_hours", my_user(), cHours )
+   nHourLimit := fetch_metric( "ld_rptto_hours_limit", my_user(), nHourLimit )
+   nMinHrLimit := fetch_metric( "ld_rptto_min_limit", my_user(), nMinHrLimit )
+   nKoef := fetch_metric( "ld_rptto_koef", my_user(), nKoef )
+   nAcontAmount := fetch_metric( "ld_rptto_acc_amount", my_user(), nAcontAmount )
+   nRptVar1 := fetch_metric( "ld_rptto_var_1", my_user(), nRptVar1 )
+   nRptVar2 := fetch_metric( "ld_rptto_var_2", my_user(), nRptVar2 )
+   cKred := fetch_metric( "ld_rptto_kred", my_user(), cKred )
 
-Box(, nBoxX, nBoxY )
+   cExport := "N"
+
+   Box(, nBoxX, nBoxY )
 	
-	@ m_x + nX, m_y + 2 SAY PADL("**** uslovi izvjestaja", (nBoxY - 1) ) COLOR cColor
+   @ m_x + nX, m_y + 2 SAY PadL( "**** uslovi izvjestaja", ( nBoxY - 1 ) ) COLOR cColor
 	
-	nX += 1
+   nX += 1
 
-	// radna jedinica....
-	@ m_x + nX, m_y + 2 SAY "RJ (prazno-sve):" GET cRj VALID EMPTY(cRj) .or.p_ld_rj(@cRj)
+   // radna jedinica....
+   @ m_x + nX, m_y + 2 SAY "RJ (prazno-sve):" GET cRj VALID Empty( cRj ) .OR. p_ld_rj( @cRj )
 	
-	nX += 1
+   nX += 1
 	
-	@ m_x + nX, m_y + 2 SAY "Mjesec od:" GET cMonthFrom PICT "99" VALID cMonthFrom <= cMonthTo
-	@ m_x + nX, col() + 1 SAY "do:" GET cMonthTo PICT "99"  VALID cMonthTo >= cMonthFrom
+   @ m_x + nX, m_y + 2 SAY "Mjesec od:" GET cMonthFrom PICT "99" VALID cMonthFrom <= cMonthTo
+   @ m_x + nX, Col() + 1 SAY "do:" GET cMonthTo PICT "99"  VALID cMonthTo >= cMonthFrom
 
-	nX += 1
+   nX += 1
 
-	@ m_x + nX, m_y + 2 SAY "Godina:" GET cYear PICT "9999" VALID !EMPTY(cYear)
+   @ m_x + nX, m_y + 2 SAY "Godina:" GET cYear PICT "9999" VALID !Empty( cYear )
 	
-	@ m_x + nX, col() + 1 SAY "Banka (prazno-sve):" GET cKred VALID EMPTY(cKred) .or. P_Kred(@cKred)
+   @ m_x + nX, Col() + 1 SAY "Banka (prazno-sve):" GET cKred VALID Empty( cKred ) .OR. P_Kred( @cKred )
 
-	nX += 2
+   nX += 2
 	
-	@ m_x + nX, m_y + 2 SAY "Sati primanja koja uticnu na isplatu:" GET cHours PICT "@S30" VALID !EMPTY(cHours)
+   @ m_x + nX, m_y + 2 SAY "Sati primanja koja uticnu na isplatu:" GET cHours PICT "@S30" VALID !Empty( cHours )
 
-	nX += 2
+   nX += 2
 
-	@ m_x + nX, m_y + 2 SAY "Koeficijent:" GET nKoef PICT "99999.99"
+   @ m_x + nX, m_y + 2 SAY "Koeficijent:" GET nKoef PICT "99999.99"
 	
-	nX += 1
+   nX += 1
 
-	@ m_x + nX, m_y + 2 SAY "Broj dana sa kojim se dijeli:" GET nDays PICT "99999.99"
+   @ m_x + nX, m_y + 2 SAY "Broj dana sa kojim se dijeli:" GET nDays PICT "99999.99"
 	
-	nX += 2
+   nX += 2
 
-	@ m_x + nX, m_y + 2 SAY "Iznos akontacije:" GET nAcontAmount PICT "99999.99"
-	@ m_x + nX, col() + 1 SAY "KM"
+   @ m_x + nX, m_y + 2 SAY "Iznos akontacije:" GET nAcontAmount PICT "99999.99"
+   @ m_x + nX, Col() + 1 SAY "KM"
 
-	nX += 1
+   nX += 1
 
-	@ m_x + nX, m_y + 2 SAY "Minimalni limit za sate:" GET nMinHrLimit PICT "999999"
+   @ m_x + nX, m_y + 2 SAY "Minimalni limit za sate:" GET nMinHrLimit PICT "999999"
 
-	nX += 1
+   nX += 1
 	
-	@ m_x + nX, m_y + 2 SAY "Maksimalni limit za sate:" GET nHourLimit PICT "999999"
+   @ m_x + nX, m_y + 2 SAY "Maksimalni limit za sate:" GET nHourLimit PICT "999999"
 
-	nX += 2
+   nX += 2
 	
-	@ m_x + nX, m_y + 2 SAY "Varijanta izvjestaja:" GET nRptVar1 PICT "9" VALID nRptVar1 > 0 .and. nRptVar1 < 3
+   @ m_x + nX, m_y + 2 SAY "Varijanta izvjestaja:" GET nRptVar1 PICT "9" VALID nRptVar1 > 0 .AND. nRptVar1 < 3
 	
-	nX += 1
+   nX += 1
 	
-	@ m_x + nX, m_y + 2 SAY "(1) kompletan obracun" COLOR cColor
+   @ m_x + nX, m_y + 2 SAY "(1) kompletan obracun" COLOR cColor
 
-	nX += 1
+   nX += 1
 	
-	@ m_x + nX, m_y + 2 SAY "(2) samo lista sa radnicima za potpis" COLOR cColor
+   @ m_x + nX, m_y + 2 SAY "(2) samo lista sa radnicima za potpis" COLOR cColor
 	
-	nX += 1
+   nX += 1
 
-	@ m_x + nX, m_y + 2 SAY SPACE(3) + "Varijanta prikaza:" GET nRptVar2 PICT "9" VALID nRptVar2 > 0 .and. nRptVar2 < 3 WHEN nRptVar1 == 2
+   @ m_x + nX, m_y + 2 SAY Space( 3 ) + "Varijanta prikaza:" GET nRptVar2 PICT "9" VALID nRptVar2 > 0 .AND. nRptVar2 < 3 WHEN nRptVar1 == 2
 
-	nX += 1
+   nX += 1
 	
-	@ m_x + nX, m_y + 2 SAY SPACE(3) + "(1) isplata akontacije" COLOR cColor
+   @ m_x + nX, m_y + 2 SAY Space( 3 ) + "(1) isplata akontacije" COLOR cColor
 
-	nX += 1
+   nX += 1
 	
-	@ m_x + nX, m_y + 2 SAY SPACE(3) + "(2) isplata razlike" COLOR cColor
+   @ m_x + nX, m_y + 2 SAY Space( 3 ) + "(2) isplata razlike" COLOR cColor
 	
-	nX += 1
+   nX += 1
 	
-	@ m_x + nX, m_y + 2 SAY SPACE(3) + "Export izvjestaja ?" ;
-		GET cExport VALID cExport $ "DN" PICT "@!"
+   @ m_x + nX, m_y + 2 SAY Space( 3 ) + "Export izvjestaja ?" ;
+      GET cExport VALID cExport $ "DN" PICT "@!"
 
-	read
+   READ
 
-BoxC()
+   BoxC()
 
-if LastKey() == K_ESC
-	return 0
-endif
+   IF LastKey() == K_ESC
+      RETURN 0
+   ENDIF
 
-set_metric( "ld_rptto_rj", my_user(), cRj )
-set_metric( "ld_rptto_month_from", my_user(), cMonthFrom )
-set_metric( "ld_rptto_month_to", my_user(), cMonthto )
-set_metric( "ld_rptto_days", my_user(), nDays )
-set_metric( "ld_rptto_year", my_user(), cYear )
-set_metric( "ld_rptto_hours", my_user(), cHours )
-set_metric( "ld_rptto_hours_limit", my_user(), nHourLimit )
-set_metric( "ld_rptto_min_limit", my_user(), nMinHrLimit )
-set_metric( "ld_rptto_koef", my_user(), nKoef )
-set_metric( "ld_rptto_acc_amount", my_user(), nAcontAmount )
-set_metric( "ld_rptto_var_1", my_user(), nRptVar1 )
-set_metric( "ld_rptto_var_2", my_user(), nRptVar2 )
-set_metric( "ld_rptto_kred", my_user(), cKred )
+   set_metric( "ld_rptto_rj", my_user(), cRj )
+   set_metric( "ld_rptto_month_from", my_user(), cMonthFrom )
+   set_metric( "ld_rptto_month_to", my_user(), cMonthto )
+   set_metric( "ld_rptto_days", my_user(), nDays )
+   set_metric( "ld_rptto_year", my_user(), cYear )
+   set_metric( "ld_rptto_hours", my_user(), cHours )
+   set_metric( "ld_rptto_hours_limit", my_user(), nHourLimit )
+   set_metric( "ld_rptto_min_limit", my_user(), nMinHrLimit )
+   set_metric( "ld_rptto_koef", my_user(), nKoef )
+   set_metric( "ld_rptto_acc_amount", my_user(), nAcontAmount )
+   set_metric( "ld_rptto_var_1", my_user(), nRptVar1 )
+   set_metric( "ld_rptto_var_2", my_user(), nRptVar2 )
+   set_metric( "ld_rptto_kred", my_user(), cKred )
 
-return 1
+   RETURN 1
 
 
 // ----------------------------------------------
 // otvori tabele za izvjestaj
 // ----------------------------------------------
-static function o_tables()
-O_LD_RJ
-O_KRED
-O_RADN
-O_LD
-return
+STATIC FUNCTION o_tables()
+
+   O_LD_RJ
+   O_KRED
+   O_RADN
+   O_LD
+
+   RETURN
 
 
 // ----------------------------------------------------
 // generise listu radnika... prema parmetrima
 // ----------------------------------------------------
-static function _gen_list( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
-		cHours, nHourLimit, nMinHrLimit, nKoef, nAcontAmount, cKred )
+STATIC FUNCTION _gen_list( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
+      cHours, nHourLimit, nMinHrLimit, nKoef, nAcontAmount, cKred )
 
-local cIdRadn
-local aHours := {}
-local i
-local nUSati
-local nCount := 0
+   LOCAL cIdRadn
+   LOCAL aHours := {}
+   LOCAL i
+   LOCAL nUSati
+   LOCAL nCount := 0
 
-// napuni matricu aHours sa vrijednostima sati...
-aHours := TokToNiz( ALLTRIM(cHours), ";" )
+   // napuni matricu aHours sa vrijednostima sati...
+   aHours := TokToNiz( AllTrim( cHours ), ";" )
 
-// kreiraj _tmp tabelu
-_cre_tmp()
+   // kreiraj _tmp tabelu
+   _cre_tmp()
 
-select ld
-set order to tag "2"
-// godina + mjesec + idradn + idrj
-go top
-hseek STR(cYear, 4) + STR(cMonthFrom, 2)
+   SELECT ld
+   SET ORDER TO TAG "2"
+   // godina + mjesec + idradn + idrj
+   GO TOP
+   hseek Str( cYear, 4 ) + Str( cMonthFrom, 2 )
 
-Box(, 1, 60)
+   Box(, 1, 60 )
 
-@ m_x + 1, m_y + 2 SAY "generacija izvjestaja u toku...."
+   @ m_x + 1, m_y + 2 SAY "generacija izvjestaja u toku...."
 
-do while !EOF() .and. field->godina == cYear ;
-		.and. field->mjesec >= cMonthFrom ;
-		.and. field->mjesec <= cMonthTo
+   DO WHILE !Eof() .AND. field->godina == cYear ;
+         .AND. field->mjesec >= cMonthFrom ;
+         .AND. field->mjesec <= cMonthTo
 
-	cIdRadn := field->idradn
+      cIdRadn := field->idradn
 	
-	nUSati := 0
+      nUSati := 0
 	
-	select radn
-	set order to tag "1"
-	go top
-	seek cIdRadn
+      SELECT radn
+      SET ORDER TO TAG "1"
+      GO TOP
+      SEEK cIdRadn
 
-	if !EMPTY(cKred) .and. cKred <> radn->idbanka
-		select ld
-		skip 1
-		loop
-	endif
+      IF !Empty( cKred ) .AND. cKred <> radn->idbanka
+         SELECT ld
+         SKIP 1
+         LOOP
+      ENDIF
 
-	select ld
+      SELECT ld
 
-	do while !EOF() .and. field->godina == cYear ;
-			.and. field->mjesec >= cMonthFrom ;
-			.and. field->mjesec <= cMonthTo ;
-			.and. field->idradn == cIdRadn
+      DO WHILE !Eof() .AND. field->godina == cYear ;
+            .AND. field->mjesec >= cMonthFrom ;
+            .AND. field->mjesec <= cMonthTo ;
+            .AND. field->idradn == cIdRadn
 
-		if !EMPTY(cRj) .and. field->idrj <> cRj
+         IF !Empty( cRj ) .AND. field->idrj <> cRj
 			
-			skip
-			loop
+            SKIP
+            LOOP
 			
-		endif
+         ENDIF
 	
-		for i:=1 to LEN(aHours)
+         FOR i := 1 TO Len( aHours )
 		
-			// dodaj na sate
+            // dodaj na sate
 			
-			nUSati += &(aHours[i])
+            nUSati += &( aHours[ i ] )
 			
-		next
+         NEXT
 		
-		skip
+         SKIP
 		
-	enddo
+      ENDDO
 
-	// ako ima sati i nije probijen limit ako postoji limit
-	if ROUND( nUSati, 2 ) > 0  ;
-		.and. ( nHourLimit == 0 .or. ;
-		( nHourLimit <> 0 .and. nUSati <= nHourLimit ))
+      // ako ima sati i nije probijen limit ako postoji limit
+      IF Round( nUSati, 2 ) > 0  ;
+            .AND. ( nHourLimit == 0 .OR. ;
+            ( nHourLimit <> 0 .AND. nUSati <= nHourLimit ) )
 		
-		select _tmp
-		append blank
+         SELECT _tmp
+         APPEND BLANK
 		
-		Scatter()
+         Scatter()
 		
-		_r_bank := radn->idbanka
-		_r_tr := radn->brtekr
-		_r_ime := radn->ime
-		_r_prezime := radn->naz
-		_r_imeoca := radn->imerod
-		_r_hours := nUSati
-		_r_to := ROUND2( ( nUsati / nDays ) * nKoef , gZaok )
+         _r_bank := radn->idbanka
+         _r_tr := radn->brtekr
+         _r_ime := radn->ime
+         _r_prezime := radn->naz
+         _r_imeoca := radn->imerod
+         _r_hours := nUSati
+         _r_to := ROUND2( ( nUsati / nDays ) * nKoef, gZaok )
 		
-		if ROUND(nMinHrLimit, 2) <> 0
+         IF Round( nMinHrLimit, 2 ) <> 0
 		
-			if nUSati >= nMinHrLimit
-				_r_acont := nAcontAmount
-			else
-				_r_acont := 0
-			endif
-		else
-			_r_acont := nAcontAmount
-		endif
+            IF nUSati >= nMinHrLimit
+               _r_acont := nAcontAmount
+            ELSE
+               _r_acont := 0
+            ENDIF
+         ELSE
+            _r_acont := nAcontAmount
+         ENDIF
 		
-		_r_total := _r_to - _r_acont
+         _r_total := _r_to - _r_acont
 		
-		Gather()
+         Gather()
 
-		++ nCount
+         ++ nCount
 
-		@ m_x + 1, m_y + 2 SAY PADR( PADL( STR( nCount), 5 ) + " " + ALLTRIM(radn->naz) + ", " + ALLTRIM(STR(nUSati)) , 60)
+         @ m_x + 1, m_y + 2 SAY PadR( PadL( Str( nCount ), 5 ) + " " + AllTrim( radn->naz ) + ", " + AllTrim( Str( nUSati ) ), 60 )
 		
-	endif
+      ENDIF
 
-	select ld
+      SELECT ld
 
-enddo
+   ENDDO
 
-BoxC()
+   BoxC()
 
-return nCount
+   RETURN nCount
 
 
 
 // -----------------------------------------
 // printanje liste iz _tmp tabele
 // -----------------------------------------
-static function _print_list( cMFrom, cMTo, cYear, nRptVar1, nRptVar2, cKred )
+STATIC FUNCTION _print_list( cMFrom, cMTo, cYear, nRptVar1, nRptVar2, cKred )
 
-local nRbr := 0
-local nUSati := 0
-local nUTotal := 0
-local nUAcont := 0
-local nUTo := 0
-local nUBSati := 0
-local nUBTotal := 0
-local nUBAcont := 0
-local nUBTo := 0
-local cLine
+   LOCAL nRbr := 0
+   LOCAL nUSati := 0
+   LOCAL nUTotal := 0
+   LOCAL nUAcont := 0
+   LOCAL nUTo := 0
+   LOCAL nUBSati := 0
+   LOCAL nUBTotal := 0
+   LOCAL nUBAcont := 0
+   LOCAL nUBTo := 0
+   LOCAL cLine
 
-select _tmp
-// postavi index po bankama
-index on r_bank + r_ime + r_prezime tag "bank"
-go top
+   SELECT _tmp
+   // postavi index po bankama
+   INDEX ON r_bank + r_ime + r_prezime TAG "bank"
+   GO TOP
 
-// setuj liniju...
-_get_line( @cLine, nRptVar1, nRptVar2 )
+   // setuj liniju...
+   _get_line( @cLine, nRptVar1, nRptVar2 )
 
-START PRINT CRET
+   START PRINT CRET
 
-// stampaj header
-_p_header( cLine, nRptVar1, nRptVar2, cMFrom, cMTo, cYear )
+   // stampaj header
+   _p_header( cLine, nRptVar1, nRptVar2, cMFrom, cMTo, cYear )
 
-cBank := "XYX"
+   cBank := "XYX"
 
-do while !EOF()
+   DO WHILE !Eof()
 
-	// ako je ispis akontacije i spisak radnika, r_acont == 0, preskoci
-	if ROUND(r_acont, 2) == 0 .and. nRptVar1 == 2 .and. nRptVar2 == 1
+      // ako je ispis akontacije i spisak radnika, r_acont == 0, preskoci
+      IF Round( r_acont, 2 ) == 0 .AND. nRptVar1 == 2 .AND. nRptVar2 == 1
 		
-		skip
-		loop
+         SKIP
+         LOOP
 		
-	endif
+      ENDIF
 
-	// provjeri za novu stranu
-	_new_page()
+      // provjeri za novu stranu
+      _new_page()
 	
-	if nRptVar1 == 2
+      IF nRptVar1 == 2
 		
-		? 
+         ?
 		
-	endif
+      ENDIF
 
-	if nRptVar1 == 1 .and. cBank <> field->r_bank
+      IF nRptVar1 == 1 .AND. cBank <> field->r_bank
 		
-		if cBank <> "XYX"
+         IF cBank <> "XYX"
 			
-			// total za banku pojedinacnu
+            // total za banku pojedinacnu
 			
-			? cLine
-			? PADR("Ukupno za banku:", 37)
+            ? cLine
+            ? PadR( "Ukupno za banku:", 37 )
 			
-			?? nUBSati
-			?? nUBTo
-			?? nUBAcont
-			?? nUBTotal
+            ?? nUBSati
+            ?? nUBTo
+            ?? nUBAcont
+            ?? nUBTotal
 		
-			? cLine
+            ? cLine
 			
-			? p_potpis()
+            ? p_potpis()
 
-			FF
+            FF
 
-			P_10CPI
+            P_10CPI
 
-			_p_header( cLine, nRptVar1, nRptVar2, ;
-				cMFrom, cMTo, cYear )
+            _p_header( cLine, nRptVar1, nRptVar2, ;
+               cMFrom, cMTo, cYear )
 		
-		endif
+         ENDIF
 		
-		? "Banka: " + field->r_bank + " - " + ;
-			Ocitaj(F_KRED, field->r_bank, "NAZ" )
-		? REPLICATE("-", 50)
+         ? "Banka: " + field->r_bank + " - " + ;
+            Ocitaj( F_KRED, field->r_bank, "NAZ" )
+         ? Replicate( "-", 50 )
 		
-		cBank := r_bank
+         cBank := r_bank
 		
-		// resetuj varijable
-		nUBTo := 0
-		nUBAcont := 0
-		nUBTotal := 0
-		nUBSati := 0
+         // resetuj varijable
+         nUBTo := 0
+         nUBAcont := 0
+         nUBTotal := 0
+         nUBSati := 0
 
-	endif
+      ENDIF
 
-	// r.br
-	? PADL( STR( ++nRbr , 3 ) + ".", 5 )
+      // r.br
+      ? PadL( Str( ++nRbr, 3 ) + ".", 5 )
 	
-	?? " "
+      ?? " "
 	
-	// prezime + ime
-	?? PADR( ALLTRIM(field->r_prezime) + " (" + ALLTRIM(field->r_imeoca) + ") " + ALLTRIM(field->r_ime),  30)
+      // prezime + ime
+      ?? PadR( AllTrim( field->r_prezime ) + " (" + AllTrim( field->r_imeoca ) + ") " + AllTrim( field->r_ime ),  30 )
 	
-	?? " "
+      ?? " "
 	
-	if nRptVar1 == 1
+      IF nRptVar1 == 1
 	
-		// usati...
-		?? field->r_hours
+         // usati...
+         ?? field->r_hours
 	
-		nUSati += field->r_hours
-		nUBSati += field->r_hours
+         nUSati += field->r_hours
+         nUBSati += field->r_hours
 
-		?? " "
+         ?? " "
 	
-		// to
-		?? field->r_to
+         // to
+         ?? field->r_to
 	
-		nUTo += field->r_to
-		nUBTo += field->r_to
+         nUTo += field->r_to
+         nUBTo += field->r_to
 
-		?? " "
+         ?? " "
 	
-		// akontacija
-		?? field->r_acont
+         // akontacija
+         ?? field->r_acont
 
-		nUAcont += field->r_acont
-		nUBAcont += field->r_acont
+         nUAcont += field->r_acont
+         nUBAcont += field->r_acont
 
-		?? " "
+         ?? " "
 	
-		// razlika
-		?? field->r_total
+         // razlika
+         ?? field->r_total
 
-		nUTotal += field->r_total
-		nUBTotal += field->r_total
+         nUTotal += field->r_total
+         nUBTotal += field->r_total
 		
-		?? " "
+         ?? " "
 
-		// ziro racun u banci
-		?? SPACE(5), field->r_tr
+         // ziro racun u banci
+         ?? Space( 5 ), field->r_tr
 
-	else
+      ELSE
 
-		if nRptVar2 == 1
+         IF nRptVar2 == 1
 			
-			// isplata akontacije...
+            // isplata akontacije...
 			
-			?? field->r_acont
-			?? " "
-			?? _get_mp()
+            ?? field->r_acont
+            ?? " "
+            ?? _get_mp()
 
-			nUAcont += field->r_acont
-			nUBAcont += field->r_acont
+            nUAcont += field->r_acont
+            nUBAcont += field->r_acont
 
-		else
+         ELSE
 		
-			// isplata ostatka
-			?? field->r_total
-			?? " "
-			?? _get_mp()
+            // isplata ostatka
+            ?? field->r_total
+            ?? " "
+            ?? _get_mp()
 		
-			nUTotal += field->r_total
-			nUBTotal += field->r_total
+            nUTotal += field->r_total
+            nUBTotal += field->r_total
 
-		endif
+         ENDIF
 	
-	endif
+      ENDIF
 
 
-	skip
+      SKIP
 	
-enddo
+   ENDDO
 
-// print total
+   // print total
 
-_new_page()
+   _new_page()
 
-if nRptVar1 == 1
-	? cLine
-	? PADR("Ukupno za banku:", 37)
-	?? nUBSati
-	?? nUBTo
-	?? nUBAcont
-	?? nUBTotal
-endif
+   IF nRptVar1 == 1
+      ? cLine
+      ? PadR( "Ukupno za banku:", 37 )
+      ?? nUBSati
+      ?? nUBTo
+      ?? nUBAcont
+      ?? nUBTotal
+   ENDIF
 
-? cLine
+   ? cLine
 
-? "UKUPNO:"
-?? SPACE(30)
+   ? "UKUPNO:"
+   ?? Space( 30 )
 
-if nRptVar1 == 1
+   IF nRptVar1 == 1
 
-	?? nUSati
-	?? nUTo
-	?? nUAcont
-	?? nUTotal
+      ?? nUSati
+      ?? nUTo
+      ?? nUAcont
+      ?? nUTotal
 	
-elseif nRptVar1 == 2
+   ELSEIF nRptVar1 == 2
 	
-	if nRptVar2 == 1
+      IF nRptVar2 == 1
 	
-		?? nUAcont
+         ?? nUAcont
 	
-	else
+      ELSE
 	
-		?? nUTotal
+         ?? nUTotal
 	
-	endif
+      ENDIF
 	
-endif
+   ENDIF
 
-? cLine
-?
-? p_potpis()
+   ? cLine
+   ?
+   ? p_potpis()
 
-FF
+   FF
+   END PRINT
 
-END PRINT
-
-return
+   RETURN
 
 
 // ----------------------------------------------------
 // vraca liniju za izvjestaj...
 // ----------------------------------------------------
-static function _get_line( cLine, nVar1 )
-local cTmp
+STATIC FUNCTION _get_line( cLine, nVar1 )
 
-cTmp := ""
-// rbr
-cTmp += REPLICATE("-", 5)
-cTmp += " "
-// ime i prezime
-cTmp += REPLICATE("-", 30)
-cTmp += " "
+   LOCAL cTmp
 
-if nVar1 == 1
+   cTmp := ""
+   // rbr
+   cTmp += Replicate( "-", 5 )
+   cTmp += " "
+   // ime i prezime
+   cTmp += Replicate( "-", 30 )
+   cTmp += " "
 
-	// sati
-	cTmp += REPLICATE("-", 10)
-	cTmp += " "
-	// to
-	cTmp += REPLICATE("-", 12)
-	cTmp += " "
-	// akontacija
-	cTmp += REPLICATE("-", 12)
-	cTmp += " "
-	// razlika
-	cTmp += REPLICATE("-", 12)
-	cTmp += " "
-	// racun 
-	cTmp += REPLICATE("-", 30)
+   IF nVar1 == 1
 
-else
+      // sati
+      cTmp += Replicate( "-", 10 )
+      cTmp += " "
+      // to
+      cTmp += Replicate( "-", 12 )
+      cTmp += " "
+      // akontacija
+      cTmp += Replicate( "-", 12 )
+      cTmp += " "
+      // razlika
+      cTmp += Replicate( "-", 12 )
+      cTmp += " "
+      // racun
+      cTmp += Replicate( "-", 30 )
+
+   ELSE
 	
-	// iznos
-	cTmp += REPLICATE("-", 12)
-	cTmp += " "
-	// potpis
-	cTmp += REPLICATE("-", 20)
+      // iznos
+      cTmp += Replicate( "-", 12 )
+      cTmp += " "
+      // potpis
+      cTmp += Replicate( "-", 20 )
 
-endif
+   ENDIF
 
-cLine := cTmp
+   cLine := cTmp
 
-return
+   RETURN
 
 
 
 // ----------------------------------------
 // vraca liniju za mjesto potpisa....
 // ----------------------------------------
-static function _get_mp()
-return REPLICATE("_", 20)
+STATIC FUNCTION _get_mp()
+   RETURN Replicate( "_", 20 )
 
 
 
 // -----------------------------------------------
 // stampa headera...
 // -----------------------------------------------
-static function _p_header( cLine, nVar1, nVar2, cMonthFrom, cMonthTo, cYear )
-local cTmp
-local cPom := "Akontacija"
+STATIC FUNCTION _p_header( cLine, nVar1, nVar2, cMonthFrom, cMonthTo, cYear )
 
-if nVar2 == 2
-	cPom := "Izn.ostatka"
-endif
+   LOCAL cTmp
+   LOCAL cPom := "Akontacija"
 
-cTmp := ""
-cTmp += PADC("Rbr", 5)
-cTmp += " "
-cTmp += PADC("Prezime (ime oca) ime", 30)
-cTmp += " "
+   IF nVar2 == 2
+      cPom := "Izn.ostatka"
+   ENDIF
 
-if nVar1 == 1
+   cTmp := ""
+   cTmp += PadC( "Rbr", 5 )
+   cTmp += " "
+   cTmp += PadC( "Prezime (ime oca) ime", 30 )
+   cTmp += " "
 
-	cTmp += PADC("Sati", 10)
-	cTmp += " "
-	cTmp += PADC("Topli obrok", 12)
-	cTmp += " "
-	cTmp += PADC("Akontacija", 12)
-	cTmp += " "
-	cTmp += PADC("Razlika", 12)
-	cTmp += " "
-	cTmp += PADC("Tekuci racun", 30)
-else
+   IF nVar1 == 1
 
-	cTmp += PADC(cPom, 12)
-	cTmp += " "
-	cTmp += PADR("Potpis radnika", 20)
+      cTmp += PadC( "Sati", 10 )
+      cTmp += " "
+      cTmp += PadC( "Topli obrok", 12 )
+      cTmp += " "
+      cTmp += PadC( "Akontacija", 12 )
+      cTmp += " "
+      cTmp += PadC( "Razlika", 12 )
+      cTmp += " "
+      cTmp += PadC( "Tekuci racun", 30 )
+   ELSE
 
-endif
+      cTmp += PadC( cPom, 12 )
+      cTmp += " "
+      cTmp += PadR( "Potpis radnika", 20 )
 
-// header
+   ENDIF
 
-? "---------------------------------"
-? "LISTA ZA ISPLATU TOPLOG OBROKA"
-? "---------------------------------"
-? "na dan: " + DTOC( DATE() )
-? "za mjesec od " + STR(cMonthFrom, 2) + " do " + STR(cMonthTo, 2) + ", " + STR(cYear, 4) + " godine" 
+   // header
 
-?
+   ? "---------------------------------"
+   ? "LISTA ZA ISPLATU TOPLOG OBROKA"
+   ? "---------------------------------"
+   ? "na dan: " + DToC( Date() )
+   ? "za mjesec od " + Str( cMonthFrom, 2 ) + " do " + Str( cMonthTo, 2 ) + ", " + Str( cYear, 4 ) + " godine"
 
-P_COND
-// header tablele
-? cLine
-? cTmp
-? cLine
+   ?
 
-return
+   P_COND
+   // header tablele
+   ? cLine
+   ? cTmp
+   ? cLine
+
+   RETURN
 
 
 
@@ -730,41 +732,39 @@ return
 // -----------------------------
 // kreiraj tmp tabelu...
 // -----------------------------
-static function _cre_tmp()
-local aDbf := {}
+STATIC FUNCTION _cre_tmp()
 
-AADD(aDbf, { "r_bank", "C", 6, 0 })
-AADD(aDbf, { "r_tr", "C", 30, 0 })
-AADD(aDbf, { "r_ime", "C", 30, 0 })
-AADD(aDbf, { "r_prezime", "C", 30, 0 })
-AADD(aDbf, { "r_imeoca", "C", 30, 0 })
-AADD(aDbf, { "r_hours", "N", 10, 0 })
-AADD(aDbf, { "r_to", "N", 12, 2 })
-AADD(aDbf, { "r_acont", "N", 12, 2 })
-AADD(aDbf, { "r_total", "N", 12, 2 })
+   LOCAL aDbf := {}
 
-if FILE( my_home() + "_tmp.dbf")
-	FERASE( my_home() + "_tmp.dbf")
-endif
+   AAdd( aDbf, { "r_bank", "C", 6, 0 } )
+   AAdd( aDbf, { "r_tr", "C", 30, 0 } )
+   AAdd( aDbf, { "r_ime", "C", 30, 0 } )
+   AAdd( aDbf, { "r_prezime", "C", 30, 0 } )
+   AAdd( aDbf, { "r_imeoca", "C", 30, 0 } )
+   AAdd( aDbf, { "r_hours", "N", 10, 0 } )
+   AAdd( aDbf, { "r_to", "N", 12, 2 } )
+   AAdd( aDbf, { "r_acont", "N", 12, 2 } )
+   AAdd( aDbf, { "r_total", "N", 12, 2 } )
 
-DbCreate( my_home() + "_tmp.dbf", aDbf )
+   IF File( my_home() + "_tmp.dbf" )
+      FErase( my_home() + "_tmp.dbf" )
+   ENDIF
 
-select ( F_TMP_1 )
-my_use_temp( "_TMP", my_home() + "_tmp.dbf", .f., .t. )
+   dbCreate( my_home() + "_tmp.dbf", aDbf )
 
-return
+   SELECT ( F_TMP_1 )
+   my_use_temp( "_TMP", my_home() + "_tmp.dbf", .F., .T. )
+
+   RETURN
 
 
 // --------------------------------------
 // nova stranica...
 // --------------------------------------
-static function _new_page()
+STATIC FUNCTION _new_page()
 
-if prow() > __PAGE_LEN
-	FF
-endif
+   IF PRow() > __PAGE_LEN
+      FF
+   ENDIF
 
-return
-
-
-
+   RETURN

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,313 +13,309 @@
 #include "ld.ch"
 
 
-// ------------------------------------
-// pregled primanja
-// ------------------------------------
-function PregPrim()
+FUNCTION ld_pregled_primanja()
 
-local nC1:=20
+   LOCAL nC1 := 20
 
-cIdRadn:=space(_LR_)
-cIdRj:=gRj 
-cMjesec:=gMjesec
-cGodina:=gGodina
-cObracun:=gObracun
-cVarSort:="2"
-lKredit:=.f.
-cSifKred:=""
+   cIdRadn := Space( _LR_ )
+   cIdRj := gRj
+   cMjesec := gMjesec
+   cGodina := gGodina
+   cObracun := gObracun
+   cVarSort := "2"
+   lKredit := .F.
+   cSifKred := ""
 
-nRbr:=0
-O_LD_RJ
-O_RADN
-O_LD
+   nRbr := 0
+   O_LD_RJ
+   O_RADN
+   O_LD
 
-private cTip:="  "
+   PRIVATE cTip := "  "
 
-cDod:="N"
-cKolona:=SPACE(20)
+   cDod := "N"
+   cKolona := Space( 20 )
 
-O_PARAMS
+   O_PARAMS
 
-private cSection:="4"
-private cHistory:=" "
-private aHistory:={}
+   PRIVATE cSection := "4"
+   PRIVATE cHistory := " "
+   PRIVATE aHistory := {}
 
-RPar("VS",@cVarSort)
+   RPar( "VS", @cVarSort )
 
-Box(,7,45)
-@ m_x+1, m_y+2 SAY "Radna jedinica (prazno sve): "  GET cIdRJ
-@ m_x+2, m_y+2 SAY "Mjesec: "  GET  cmjesec  pict "99"
-if lViseObr
-  @ m_x+2, col()+2 SAY "Obracun: " GET cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
-endif
-@ m_x+3, m_y+2 SAY "Godina: "  GET  cGodina  pict "9999"
-@ m_x+4, m_y+2 SAY "Tip primanja: "  GET  cTip
-@ m_x+5, m_y+2 SAY "Prikaz dodatnu kolonu: "  GET  cDod pict "@!" valid cdod $ "DN"
-@ m_x+6, m_y+2 SAY "Sortirati po (1-sifri, 2-prezime+ime)"  GET cVarSort VALID cVarSort$"12"  pict "9"
-read
-
-clvbox()
-
-ESC_BCR
-
-if cDod=="D"
- @ m_x+7,m_y+2 SAY "Naziv kolone:" GET cKolona
- read
-endif
-ckolona:="radn->"+ckolona
-
-BoxC()
-
- WPar("VS",cVarSort)
- SELECT PARAMS
-  USE
-
-tipprn_use()
-
-select tippr
-hseek cTip
-
-
-EOF CRET
-
-IF "SUMKREDITA" $ formula
-  // radi se o kreditu, upitajmo da li je potreban prikaz samo za
-  // jednog kreditora
-  // ------------------------------------------------------------
-  lKredit:=.t.
-  O_KRED
-  cSifKred:=SPACE(LEN(id))
-  Box(,6,75)
-   @ m_x+2, m_y+2 SAY "Izabrani tip primanja je kredit ili se tretira na isti nacin kao i kredit."
-   @ m_x+3, m_y+2 SAY "Ako zelite mozete dobiti spisak samo za jednog kreditora."
-   @ m_x+5, m_y+2 SAY "Kreditor (prazno-svi zajedno)" GET cSifKred  valid EMPTY(cSifKred).or.P_Kred(@cSifKred) PICT "@!"
+   Box(, 7, 45 )
+   @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno sve): "  GET cIdRJ
+   @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  cmjesec  PICT "99"
+   IF lViseObr
+      @ m_x + 2, Col() + 2 SAY "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   ENDIF
+   @ m_x + 3, m_y + 2 SAY "Godina: "  GET  cGodina  PICT "9999"
+   @ m_x + 4, m_y + 2 SAY "Tip primanja: "  GET  cTip
+   @ m_x + 5, m_y + 2 SAY "Prikaz dodatnu kolonu: "  GET  cDod PICT "@!" VALID cdod $ "DN"
+   @ m_x + 6, m_y + 2 SAY "Sortirati po (1-sifri, 2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
    READ
-  BoxC()
-ENDIF
 
-IF !EMPTY(cSifKred)
-  O_RADKR
-  SET ORDER TO TAG "1"
-ENDIF
+   clvbox()
 
-select ld
+   ESC_BCR
 
-if lViseObr
-  cObracun := TRIM(cObracun)
-else
-  cObracun := ""
-endif
+   IF cDod == "D"
+      @ m_x + 7, m_y + 2 SAY "Naziv kolone:" GET cKolona
+      READ
+   ENDIF
+   ckolona := "radn->" + ckolona
 
-if empty(cIdRJ)
+   BoxC()
 
-  cidrj:=""
-  IF cVarSort=="1"
-    set order to tag (TagVO("2"))
-    hseek str(cGodina,4) + str(cMjesec, 2) + cObracun
-  ELSE
-    Box(,2, 30)
-     nSlog:=0
-     cSort1:="SortPrez(IDRADN)"
-     cFilt := IF(EMPTY(cMjesec),".t.","MJESEC==" + _filter_quote( cMjesec ) ) + ".and."+;
-              IF(EMPTY(cGodina),".t.","GODINA==" + _filter_quote( cGodina ) )
-     if lViseObr
-       cFilt += ".and. OBR=" + _filter_quote( cObracun )
-     endif
-     INDEX ON &cSort1 TO "tmpld" FOR &cFilt
-    BoxC()
-    GO TOP
-  ENDIF
-else
-  IF cVarSort=="1"
-    set order to tag (TagVO("1"))
-    hseek str(cGodina,4) + cidrj + str(cmjesec, 2) + cObracun
-  ELSE
-    Box(,2,30)
-     nSlog:=0 
-     cSort1:="SortPrez(IDRADN)"
-     cFilt := "IDRJ==" + _filter_quote(cIdRj) + " .and. "
-     cFilt += IIF(EMPTY(cMjesec), ".t." , "MJESEC==" + _filter_quote(cMjesec) ) + ".and."
-     cFilt += IIF(EMPTY(cGodina), ".t.", "GODINA==" + _filter_quote(cGodina) )
+   WPar( "VS", cVarSort )
+   SELECT PARAMS
+   USE
 
-     if lViseObr
-       cFilt += ".and. OBR ==" + _filter_quote(cObracun)
-     endif
+   tipprn_use()
 
-     INDEX ON &cSort1 TO "tmpld" FOR &cFilt
+   SELECT tippr
+   hseek cTip
 
-    BoxC()
-    GO TOP
-  ENDIF
-endif
 
-EOF CRET
+   EOF CRET
 
-nStrana:=0
-m:="----- "+replicate("-",_LR_)+" ---------------------------------- "+IF(lKredit.and.!EMPTY(cSifKred),REPL("-",LEN(RADKR->naosnovu)+1),"-"+REPL("-", LEN(gPicS) ))+" ----------- -----------"
-if cdod=="D"
- if type(ckolona) $ "UUIUE"
-     Msg("Nepostojeca kolona")
-     closeret
- endif
-endif
-bZagl:={|| ZPregPrim() }
+   IF "SUMKREDITA" $ formula
+      // radi se o kreditu, upitajmo da li je potreban prikaz samo za
+      // jednog kreditora
+      // ------------------------------------------------------------
+      lKredit := .T.
+      O_KRED
+      cSifKred := Space( Len( id ) )
+      Box(, 6, 75 )
+      @ m_x + 2, m_y + 2 SAY "Izabrani tip primanja je kredit ili se tretira na isti nacin kao i kredit."
+      @ m_x + 3, m_y + 2 SAY "Ako zelite mozete dobiti spisak samo za jednog kreditora."
+      @ m_x + 5, m_y + 2 SAY "Kreditor (prazno-svi zajedno)" GET cSifKred  VALID Empty( cSifKred ) .OR. P_Kred( @cSifKred ) PICT "@!"
+      READ
+      BoxC()
+   ENDIF
 
-select ld_rj
-hseek ld->idrj
-select ld
+   IF !Empty( cSifKred )
+      O_RADKR
+      SET ORDER TO TAG "1"
+   ENDIF
 
-START PRINT CRET
-P_10CPI
+   SELECT ld
 
-Eval(bZagl)
+   IF lViseObr
+      cObracun := Trim( cObracun )
+   ELSE
+      cObracun := ""
+   ENDIF
 
-nRbr:=0
-nT1:=nT2:=nT3:=nT4:=0
-nC1:=10
+   IF Empty( cIdRJ )
 
-do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .and.;
-         !( lViseObr .and. !EMPTY(cObracun) .and. obr<>cObracun )
+      cidrj := ""
+      IF cVarSort == "1"
+         SET ORDER TO tag ( TagVO( "2" ) )
+         hseek Str( cGodina, 4 ) + Str( cMjesec, 2 ) + cObracun
+      ELSE
+         Box(, 2, 30 )
+         nSlog := 0
+         cSort1 := "SortPrez(IDRADN)"
+         cFilt := IF( Empty( cMjesec ), ".t.", "MJESEC==" + _filter_quote( cMjesec ) ) + ".and." + ;
+            IF( Empty( cGodina ), ".t.", "GODINA==" + _filter_quote( cGodina ) )
+         IF lViseObr
+            cFilt += ".and. OBR=" + _filter_quote( cObracun )
+         ENDIF
+         INDEX ON &cSort1 TO "tmpld" FOR &cFilt
+         BoxC()
+         GO TOP
+      ENDIF
+   ELSE
+      IF cVarSort == "1"
+         SET ORDER TO tag ( TagVO( "1" ) )
+         hseek Str( cGodina, 4 ) + cidrj + Str( cmjesec, 2 ) + cObracun
+      ELSE
+         Box(, 2, 30 )
+         nSlog := 0
+         cSort1 := "SortPrez(IDRADN)"
+         cFilt := "IDRJ==" + _filter_quote( cIdRj ) + " .and. "
+         cFilt += iif( Empty( cMjesec ), ".t.", "MJESEC==" + _filter_quote( cMjesec ) ) + ".and."
+         cFilt += iif( Empty( cGodina ), ".t.", "GODINA==" + _filter_quote( cGodina ) )
 
- if lViseObr .and. EMPTY(cObracun)
-   ScatterS(godina,mjesec,idrj,idradn)
- else
-   Scatter()
- endif
+         IF lViseObr
+            cFilt += ".and. OBR ==" + _filter_quote( cObracun )
+         ENDIF
 
- IF lKredit .and. !EMPTY(cSifKred)
-   // provjerimo da li otplacuje zadanom kreditoru
-   // --------------------------------------------
-   SELECT RADKR
-   SEEK str(cgodina,4)+str(cmjesec,2)+LD->idradn+cSifKred
-   lImaJos:=.f.
-   DO WHILE !EOF() .and. str(cgodina,4)+str(cmjesec,2)+LD->idradn+cSifKred == str(godina,4)+str(mjesec,2)+idradn+idkred
-     IF placeno>0
-       lImaJos:=.t.
-       EXIT
-     ENDIF
-     SKIP 1
+         INDEX ON &cSort1 TO "tmpld" FOR &cFilt
+
+         BoxC()
+         GO TOP
+      ENDIF
+   ENDIF
+
+   EOF CRET
+
+   nStrana := 0
+   m := "----- " + Replicate( "-", _LR_ ) + " ---------------------------------- " + IF( lKredit .AND. !Empty( cSifKred ), REPL( "-", Len( RADKR->naosnovu ) + 1 ), "-" + REPL( "-", Len( gPicS ) ) ) + " ----------- -----------"
+   IF cdod == "D"
+      IF Type( ckolona ) $ "UUIUE"
+         Msg( "Nepostojeca kolona" )
+         closeret
+      ENDIF
+   ENDIF
+   bZagl := {|| ZPregPrim() }
+
+   SELECT ld_rj
+   hseek ld->idrj
+   SELECT ld
+
+   START PRINT CRET
+   P_10CPI
+
+   Eval( bZagl )
+
+   nRbr := 0
+   nT1 := nT2 := nT3 := nT4 := 0
+   nC1 := 10
+
+   DO WHILE !Eof() .AND.  cgodina == godina .AND. idrj = cidrj .AND. cmjesec = mjesec .AND. ;
+         !( lViseObr .AND. !Empty( cObracun ) .AND. obr <> cObracun )
+
+      IF lViseObr .AND. Empty( cObracun )
+         ScatterS( godina, mjesec, idrj, idradn )
+      ELSE
+         Scatter()
+      ENDIF
+
+      IF lKredit .AND. !Empty( cSifKred )
+         // provjerimo da li otplacuje zadanom kreditoru
+         // --------------------------------------------
+         SELECT RADKR
+         SEEK Str( cgodina, 4 ) + Str( cmjesec, 2 ) + LD->idradn + cSifKred
+         lImaJos := .F.
+         DO WHILE !Eof() .AND. Str( cgodina, 4 ) + Str( cmjesec, 2 ) + LD->idradn + cSifKred == Str( godina, 4 ) + Str( mjesec, 2 ) + idradn + idkred
+            IF placeno > 0
+               lImaJos := .T.
+               EXIT
+            ENDIF
+            SKIP 1
+         ENDDO
+         IF !lImaJos
+            SELECT LD; SKIP 1; LOOP
+         ELSE
+            SELECT LD
+         ENDIF
+      ENDIF
+
+      SELECT radn; hseek _idradn; SELECT ld
+
+      DO WHILE .T.
+
+         IF PRow() > RPT_PAGE_LEN + gPStranica
+            FF
+            Eval( bZagl )
+         ENDIF
+
+         IF _i&cTip <> 0 .OR. _s&cTip <> 0
+            ? Str( ++nRbr, 4 ) + ".", idradn, RADNIK
+            nC1 := PCol() + 1
+            IF lKredit .AND. !Empty( cSifKred )
+               @ PRow(), PCol() + 1 SAY RADKR->naosnovu
+            ELSEIF tippr->fiksan == "P"
+               @ PRow(), PCol() + 1 SAY _s&cTip  PICT "999.99"
+            ELSE
+               @ PRow(), PCol() + 1 SAY _s&cTip  PICT gpics
+            ENDIF
+            IF lKredit .AND. !Empty( cSifKred )
+               @ PRow(), PCol() + 1 SAY -RADKR->placeno  PICT gpici
+               nT2 += ( -RADKR->placeno )
+            ELSE
+               @ PRow(), PCol() + 1 SAY _i&cTip  PICT gpici
+               nT1 += _s&cTip; nT2 += _i&cTip
+            ENDIF
+            IF cdod == "D"
+               @ PRow(), PCol() + 1 SAY &ckolona
+            ENDIF
+         ENDIF
+         IF lKredit .AND. !Empty( cSifKred )
+            lImaJos := .F.
+            SELECT RADKR; SKIP 1
+            DO WHILE !Eof() .AND. Str( cgodina, 4 ) + Str( cmjesec, 2 ) + LD->idradn + cSifKred == Str( godina, 4 ) + Str( mjesec, 2 ) + idradn + idkred
+               IF placeno > 0
+                  lImaJos := .T.
+                  EXIT
+               ENDIF
+               SKIP 1
+            ENDDO
+            SELECT LD
+            IF !lImaJos
+               EXIT
+            ENDIF
+         ELSE
+            EXIT
+         ENDIF
+      ENDDO
+
+      SKIP 1
+
    ENDDO
-   IF !lImaJos
-     SELECT LD; SKIP 1; LOOP
-   ELSE
-     SELECT LD
+
+   IF PRow() > RPT_PAGE_LEN + gPStranica
+      FF
+      Eval( bZagl )
    ENDIF
- ENDIF
-
- select radn; hseek _idradn; select ld
-
- DO WHILE .t.
-
-    if prow() > RPT_PAGE_LEN + gPStranica
-        FF
-        Eval(bZagl)
-    endif
-
-   if _i&cTip<>0 .or. _s&cTip<>0
-     ? str(++nRbr,4)+".",idradn, RADNIK
-     nC1:=pcol()+1
-     if lKredit .and. !EMPTY(cSifKred)
-       @ prow(),pcol()+1 SAY RADKR->naosnovu
-     elseif tippr->fiksan=="P"
-       @ prow(),pcol()+1 SAY _s&cTip  pict "999.99"
-     else
-       @ prow(),pcol()+1 SAY _s&cTip  pict gpics
-     endif
-     IF lKredit .and. !EMPTY(cSifKred)
-       @ prow(),pcol()+1 SAY -RADKR->placeno  pict gpici
-       nT2 += (-RADKR->placeno)
-     ELSE
-       @ prow(),pcol()+1 SAY _i&cTip  pict gpici
-       nT1+=_s&cTip; nT2+=_i&cTip
-     ENDIF
-     if cdod=="D"
-       @ prow(),pcol()+1 SAY &ckolona
-     endif
-   endif
-   IF lKredit .and. !EMPTY(cSifKred)
-     lImaJos:=.f.
-     SELECT RADKR; SKIP 1
-     DO WHILE !EOF() .and. str(cgodina,4)+str(cmjesec,2)+LD->idradn+cSifKred == str(godina,4)+str(mjesec,2)+idradn+idkred
-       IF placeno>0
-         lImaJos:=.t.
-         EXIT
-       ENDIF
-       SKIP 1
-     ENDDO
-     SELECT LD
-     IF !lImaJos
-       EXIT
-     ENDIF
+   ? m
+   ? Space( 1 ) + Lokal( "UKUPNO:" )
+   IF lKredit .AND. !Empty( cSifKred )
+      @ PRow(), nC1 SAY  Space( Len( RADKR->naosnovu ) )
    ELSE
-     EXIT
+      @ PRow(), nC1 SAY  nT1 PICT gpics
    ENDIF
- ENDDO
+   @ PRow(), PCol() + 1 SAY  nT2 PICT gpici
+   ? m
+   ?
+   p_potpis()
+   FF
+   END PRINT
+   my_close_all_dbf()
 
- skip 1
-
-enddo
-
-if prow() > RPT_PAGE_LEN + gPStranica
-    FF
-    Eval(bZagl)
-endif
-? m
-? SPACE(1) + Lokal("UKUPNO:")
-IF lKredit .and. !EMPTY(cSifKred)
-  @ prow(),nC1 SAY  SPACE(LEN(RADKR->naosnovu))
-ELSE
-  @ prow(),nC1 SAY  nT1 pict gpics
-ENDIF
-@ prow(),pcol()+1 SAY  nT2 pict gpici
-? m
-?
-p_potpis()
-FF
-END PRINT
-my_close_all_dbf()
-return
+   RETURN
 
 
 
-function ZPregPrim()
+FUNCTION ZPregPrim()
 
-P_12CPI
-? UPPER(gTS)+":",gnFirma
-?
-if empty(cidrj)
- ? Lokal("Pregled za sve RJ ukupno:")
-else
- ? Lokal("RJ:"),cidrj,ld_rj->naz
-endif
+   P_12CPI
+   ? Upper( gTS ) + ":", gnFirma
+   ?
+   IF Empty( cidrj )
+      ? Lokal( "Pregled za sve RJ ukupno:" )
+   ELSE
+      ? Lokal( "RJ:" ), cidrj, ld_rj->naz
+   ENDIF
 
-?? SPACE(2) + Lokal("Mjesec:"), str(cmjesec,2) + IspisObr()
-?? SPACE(4) + Lokal("Godina:"),str(cGodina,5)
-devpos(prow(),74)
-?? Lokal("Str."), str(++nStrana,3)
-?
+   ?? Space( 2 ) + Lokal( "Mjesec:" ), Str( cmjesec, 2 ) + IspisObr()
+   ?? Space( 4 ) + Lokal( "Godina:" ), Str( cGodina, 5 )
+   DevPos( PRow(), 74 )
+   ?? Lokal( "Str." ), Str( ++nStrana, 3 )
+   ?
 #ifdef CPOR
-? Lokal("Pregled") + SPACE(1) +IF(lIsplaceni, Lokal("isplacenih iznosa"),Lokal("neisplacenih iznosa"))+ SPACE(1) + Lokal("za tip primanja:"),ctip,tippr->naz
+   ? Lokal( "Pregled" ) + Space( 1 ) + IF( lIsplaceni, Lokal( "isplacenih iznosa" ), Lokal( "neisplacenih iznosa" ) ) + Space( 1 ) + Lokal( "za tip primanja:" ), ctip, tippr->naz
 #else
-? Lokal("Pregled za tip primanja:"), cTip, tippr->naz
-IF lKredit
-  ? Lokal("KREDITOR:") + SPACE(1)
-  IF !EMPTY(cSifKred)
-    ShowKreditor(cSifKred)
-  ELSE
-    ?? Lokal("SVI POSTOJECI")
-  ENDIF
-ENDIF
+   ? Lokal( "Pregled za tip primanja:" ), cTip, tippr->naz
+   IF lKredit
+      ? Lokal( "KREDITOR:" ) + Space( 1 )
+      IF !Empty( cSifKred )
+         ShowKreditor( cSifKred )
+      ELSE
+         ?? Lokal( "SVI POSTOJECI" )
+      ENDIF
+   ENDIF
 #endif
-?
-? m
-IF lKredit .and. !EMPTY(cSifKred)
-  ? " Rbr  "+padc("Sifra ",_LR_)+"          " + Lokal("Naziv radnika") + "               "+PADC("Na osnovu",LEN(RADKR->naosnovu))+"      " + Lokal("Iznos")
-ELSE
-  ? " Rbr  "+padc("Sifra ",_LR_)+"          " + Lokal("Naziv radnika") + "               "+iif(tippr->fiksan=="P"," %  ","Sati")+"      " + Lokal("Iznos")
-ENDIF
-? m
+   ?
+   ? m
+   IF lKredit .AND. !Empty( cSifKred )
+      ? " Rbr  " + PadC( "Sifra ", _LR_ ) + "          " + Lokal( "Naziv radnika" ) + "               " + PadC( "Na osnovu", Len( RADKR->naosnovu ) ) + "      " + Lokal( "Iznos" )
+   ELSE
+      ? " Rbr  " + PadC( "Sifra ", _LR_ ) + "          " + Lokal( "Naziv radnika" ) + "               " + iif( tippr->fiksan == "P", " %  ", "Sati" ) + "      " + Lokal( "Iznos" )
+   ENDIF
+   ? m
 
-return
-
-
+   RETURN

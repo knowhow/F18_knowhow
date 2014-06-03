@@ -13,10 +13,7 @@
 #include "ld.ch"
 
 
-// ------------------------------------------------
-// specifikacija place, samostalni poduzetnik
-// ------------------------------------------------
-FUNCTION SpecPlS()
+FUNCTION ld_specifikacija_plate_samostalni()
 
    LOCAL GetList := {}
    LOCAL aPom := {}

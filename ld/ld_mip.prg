@@ -172,10 +172,7 @@ FUNCTION mip_tmp_tbl()
    RETURN
 
 
-// ------------------------------------------
-// mip obrazac za radnike
-// ------------------------------------------
-FUNCTION r_mip_obr()
+FUNCTION ld_mip_obrazac()
 
    LOCAL nC1 := 20
    LOCAL i

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,471 +12,468 @@
 
 #include "ld.ch"
 
-// --------------------------------------
-// report: pregled plata
-// --------------------------------------
-function PregPl()
-local nC1 := 20
-local cPrBruto := "N"
 
-cIdRadn := SPACE(_LR_)
-cIdRj := gRj
-cMjesec := gMjesec
-cGodina := gGodina
-cObracun := gObracun
-cVarSort := "2"
+FUNCTION ld_pregled_plata()
 
-O_KBENEF
-O_VPOSLA
-O_LD_RJ
-O_DOPR
-O_POR
-O_RADN
-O_LD
-O_PAROBR
-O_PARAMS
+   LOCAL nC1 := 20
+   LOCAL cPrBruto := "N"
 
-private cSection := "4"
-private cHistory := " "
-private aHistory := {}
+   cIdRadn := Space( _LR_ )
+   cIdRj := gRj
+   cMjesec := gMjesec
+   cGodina := gGodina
+   cObracun := gObracun
+   cVarSort := "2"
 
-RPar("VS",@cVarSort)
+   O_KBENEF
+   O_VPOSLA
+   O_LD_RJ
+   O_DOPR
+   O_POR
+   O_RADN
+   O_LD
+   O_PAROBR
+   O_PARAMS
 
-private cKBenef := " "
-private cVPosla := "  "
+   PRIVATE cSection := "4"
+   PRIVATE cHistory := " "
+   PRIVATE aHistory := {}
 
-cIdMinuli := "17"
-cKontrola := "N"
+   RPar( "VS", @cVarSort )
 
-Box(,11,75)
-@ m_x+1,m_y+2 SAY Lokal( "Radna jedinica (prazno-sve): ")  GET cIdRJ
-@ m_x+2,m_y+2 SAY "Mjesec: "  GET  cMjesec  pict "99"
-IF lViseObr
-  @ m_x+2,col()+2 SAY "Obracun:" GET cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
-ENDIF
-@ m_x+3,m_y+2 SAY "Godina: "  GET  cGodina  pict "9999"
-@ m_x+4,m_y+2 SAY "Koeficijent benef.radnog staza (prazno-svi): "  GET  cKBenef valid empty(cKBenef) .or. P_KBenef(@cKBenef)
-@ m_x+5,m_y+2 SAY "Vrsta posla (prazno-svi): "  GET  cVPosla
-@ m_x+7,m_y+2 SAY "Sifra primanja minuli: "  GET  cIdMinuli pict "@!"
-@ m_x+8,m_y+2 SAY Lokal("Sortirati po(1-sifri,2-prezime+ime)")  GET cVarSort VALID cVarSort$"12"  pict "9"
-@ m_x+9,m_y+2 SAY "Prikaz bruto iznosa ?" GET cPrBruto ;
-			VALID cPrBruto $ "DN" PICT "@!"
-if gVarObracun == "2"
-	@ m_x+11,m_y+2 SAY "Kontrola (br.-dopr.-porez)+(prim.van neta)-(odbici)=(za isplatu)? (D/N)" GET cKontrola VALID cKontrola $ "DN" PICT "@!"
-else
-	@ m_x+11,m_y+2 SAY "Kontrolisati (neto)+(prim.van neta)-(odbici)=(za isplatu) ? (D/N)" GET cKontrola VALID cKontrola$"DN" PICT "@!"
-endif
-read; clvbox(); ESC_BCR
-BoxC()
+   PRIVATE cKBenef := " "
+   PRIVATE cVPosla := "  "
 
- WPar("VS",cVarSort)
- SELECT PARAMS
- USE
+   cIdMinuli := "17"
+   cKontrola := "N"
 
-ParObr( cMjesec, cGodina,IF(lViseObr,cObracun,) )
+   Box(, 11, 75 )
+   @ m_x + 1, m_y + 2 SAY Lokal( "Radna jedinica (prazno-sve): " )  GET cIdRJ
+   @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  cMjesec  PICT "99"
+   IF lViseObr
+      @ m_x + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   ENDIF
+   @ m_x + 3, m_y + 2 SAY "Godina: "  GET  cGodina  PICT "9999"
+   @ m_x + 4, m_y + 2 SAY "Koeficijent benef.radnog staza (prazno-svi): "  GET  cKBenef VALID Empty( cKBenef ) .OR. P_KBenef( @cKBenef )
+   @ m_x + 5, m_y + 2 SAY "Vrsta posla (prazno-svi): "  GET  cVPosla
+   @ m_x + 7, m_y + 2 SAY "Sifra primanja minuli: "  GET  cIdMinuli PICT "@!"
+   @ m_x + 8, m_y + 2 SAY Lokal( "Sortirati po(1-sifri,2-prezime+ime)" )  GET cVarSort VALID cVarSort $ "12"  PICT "9"
+   @ m_x + 9, m_y + 2 SAY "Prikaz bruto iznosa ?" GET cPrBruto ;
+      VALID cPrBruto $ "DN" PICT "@!"
+   IF gVarObracun == "2"
+      @ m_x + 11, m_y + 2 SAY "Kontrola (br.-dopr.-porez)+(prim.van neta)-(odbici)=(za isplatu)? (D/N)" GET cKontrola VALID cKontrola $ "DN" PICT "@!"
+   ELSE
+      @ m_x + 11, m_y + 2 SAY "Kontrolisati (neto)+(prim.van neta)-(odbici)=(za isplatu) ? (D/N)" GET cKontrola VALID cKontrola $ "DN" PICT "@!"
+   ENDIF
+   read; clvbox(); ESC_BCR
+   BoxC()
 
-tipprn_use()
+   WPar( "VS", cVarSort )
+   SELECT PARAMS
+   USE
 
-if !empty(ckbenef)  
-    select kbenef
-    hseek  ckbenef
-endif
-if !empty(cVPosla)
-    select vposla
-    hseek  cvposla
-endif
+   ParObr( cMjesec, cGodina, IF( lViseObr, cObracun, ) )
 
-select ld
+   tipprn_use()
 
-//1 - "str(godina)+idrj+str(mjesec)+idradn"
-//2 - "str(godina)+str(mjesec)+idradn"
+   IF !Empty( ckbenef )
+      SELECT kbenef
+      hseek  ckbenef
+   ENDIF
+   IF !Empty( cVPosla )
+      SELECT vposla
+      hseek  cvposla
+   ENDIF
 
-if empty(cidrj)
-  cidrj:=""
-  IF cVarSort=="1"
-    set order to tag (TagVO("2"))
-    hseek str(cGodina,4)+str(cmjesec,2)+if(lViseObr.and.!EMPTY(cObracun),cObracun,"")
-  ELSE
-    Box(,2,30)
-     nSlog:=0
-     cSort1:="SortPrez(IDRADN)"
-     cFilt := IF(EMPTY(cMjesec),".t.","MJESEC==" + _filter_quote( cMjesec ) ) + ".and."+;
-              IF(EMPTY(cGodina),".t.","GODINA==" + _filter_quote( cGodina ) )
-     IF lViseObr .and. !EMPTY(cObracun)
-       cFilt += ".and.OBR=" + _filter_quote( cObracun )
-     ENDIF
-     INDEX ON &cSort1 TO "tmpld" FOR &cFilt
-    BoxC()
-    GO TOP
-  ENDIF
-else
-  IF cVarSort=="1"
-    set order to tag (TagVO("1"))
-    hseek str(cGodina,4)+cidrj+str(cmjesec,2)+if(lViseObr.and.!EMPTY(cObracun),cObracun,"")
-  ELSE
-    Box(,2,30)
-     nSlog:=0
-     cSort1:="SortPrez(IDRADN)"
-     cFilt := "IDRJ==" + _filter_quote( cIdRj ) + ".and."+;
-              IF(EMPTY(cMjesec),".t.","MJESEC==" + _filter_quote( cMjesec ))+".and."+;
-              IF(EMPTY(cGodina),".t.","GODINA==" + _filter_quote( cGodina ))
-     IF lViseObr .and. !EMPTY(cObracun)
-       cFilt += ".and.OBR=" + _filter_quote( cObracun )
-     ENDIF
-     INDEX ON &cSort1 TO "tmpld" FOR &cFilt
-    BoxC()
-    GO TOP
-  ENDIF
-endif
+   SELECT ld
+
+   // 1 - "str(godina)+idrj+str(mjesec)+idradn"
+   // 2 - "str(godina)+str(mjesec)+idradn"
+
+   IF Empty( cidrj )
+      cidrj := ""
+      IF cVarSort == "1"
+         SET ORDER TO tag ( TagVO( "2" ) )
+         hseek Str( cGodina, 4 ) + Str( cmjesec, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" )
+      ELSE
+         Box(, 2, 30 )
+         nSlog := 0
+         cSort1 := "SortPrez(IDRADN)"
+         cFilt := IF( Empty( cMjesec ), ".t.", "MJESEC==" + _filter_quote( cMjesec ) ) + ".and." + ;
+            IF( Empty( cGodina ), ".t.", "GODINA==" + _filter_quote( cGodina ) )
+         IF lViseObr .AND. !Empty( cObracun )
+            cFilt += ".and.OBR=" + _filter_quote( cObracun )
+         ENDIF
+         INDEX ON &cSort1 TO "tmpld" FOR &cFilt
+         BoxC()
+         GO TOP
+      ENDIF
+   ELSE
+      IF cVarSort == "1"
+         SET ORDER TO tag ( TagVO( "1" ) )
+         hseek Str( cGodina, 4 ) + cidrj + Str( cmjesec, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" )
+      ELSE
+         Box(, 2, 30 )
+         nSlog := 0
+         cSort1 := "SortPrez(IDRADN)"
+         cFilt := "IDRJ==" + _filter_quote( cIdRj ) + ".and." + ;
+            IF( Empty( cMjesec ), ".t.", "MJESEC==" + _filter_quote( cMjesec ) ) + ".and." + ;
+            IF( Empty( cGodina ), ".t.", "GODINA==" + _filter_quote( cGodina ) )
+         IF lViseObr .AND. !Empty( cObracun )
+            cFilt += ".and.OBR=" + _filter_quote( cObracun )
+         ENDIF
+         INDEX ON &cSort1 TO "tmpld" FOR &cFilt
+         BoxC()
+         GO TOP
+      ENDIF
+   ENDIF
 
 
-EOF CRET
+   EOF CRET
 
-nStrana:=0
+   nStrana := 0
 
-if gVarPP == "2"
-	m := "----- ------ ---------------------------------- " + "-" + REPL( "-", LEN(gPicS) ) + " ----------- ----------- ----------- ----------- ----------- -----------"
-else
-  	m := "----- ------ ---------------------------------- " + "-" + REPL( "-", LEN(gPicS) ) + " ----------- ----------- ----------- -----------"
-endif
+   IF gVarPP == "2"
+      m := "----- ------ ---------------------------------- " + "-" + REPL( "-", Len( gPicS ) ) + " ----------- ----------- ----------- ----------- ----------- -----------"
+   ELSE
+      m := "----- ------ ---------------------------------- " + "-" + REPL( "-", Len( gPicS ) ) + " ----------- ----------- ----------- -----------"
+   ENDIF
 
-if gVarObracun == "2"
-	m += " " + REPLICATE("-", 11) 
-	m += " " + REPLICATE("-", 11) 
-	m += " " + REPLICATE("-", 11) 
-	m += " " + REPLICATE("-", 11) 
-	m += " " + REPLICATE("-", 11) 
-	m += " " + REPLICATE("-", 11) 
-endif
+   IF gVarObracun == "2"
+      m += " " + Replicate( "-", 11 )
+      m += " " + Replicate( "-", 11 )
+      m += " " + Replicate( "-", 11 )
+      m += " " + Replicate( "-", 11 )
+      m += " " + Replicate( "-", 11 )
+      m += " " + Replicate( "-", 11 )
+   ENDIF
 
-if cPrBruto == "D"
-	m += " " + REPLICATE("-", 12)
-endif
+   IF cPrBruto == "D"
+      m += " " + Replicate( "-", 12 )
+   ENDIF
 
-bZagl:={|| ZPregPl() }
+   bZagl := {|| ZPregPl() }
 
-select ld_rj
-hseek ld->idrj
-select ld
+   SELECT ld_rj
+   hseek ld->idrj
+   SELECT ld
 
-START PRINT CRET
+   START PRINT CRET
 
-P_12CPI
+   P_12CPI
 
-Eval(bZagl)
+   Eval( bZagl )
 
-nRbr:=0
-nT2a:=nT2b:=0
-nT1:=nT2:=nT3:=nT3b:=nT4:=nT5:=0
-nVanP:=0  // van neta plus
-nVanM:=0  // van neta minus
+   nRbr := 0
+   nT2a := nT2b := 0
+   nT1 := nT2 := nT3 := nT3b := nT4 := nT5 := 0
+   nVanP := 0  // van neta plus
+   nVanM := 0  // van neta minus
 
-nULicOdb := 0
-nUBruto := 0
-nUDoprIz := 0
-nUPorez := 0
-nUNetNr := 0
-nUNeto := 0
+   nULicOdb := 0
+   nUBruto := 0
+   nUDoprIz := 0
+   nUPorez := 0
+   nUNetNr := 0
+   nUNeto := 0
 
-do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .and.!( lViseObr .and. !EMPTY(cObracun) .and. obr<>cObracun )
+   DO WHILE !Eof() .AND.  cgodina == godina .AND. idrj = cidrj .AND. cmjesec = mjesec .AND. !( lViseObr .AND. !Empty( cObracun ) .AND. obr <> cObracun )
 	
-	ParObr( ld->mjesec, ld->godina, IF(lViseObr,cObracun,), ld->idrj )
+      ParObr( ld->mjesec, ld->godina, IF( lViseObr, cObracun, ), ld->idrj )
 	
-	if lViseObr .and. EMPTY(cObracun)
-   		ScatterS(godina,mjesec,idrj,idradn)
- 	else
-   		Scatter()
- 	endif
+      IF lViseObr .AND. Empty( cObracun )
+         ScatterS( godina, mjesec, idrj, idradn )
+      ELSE
+         Scatter()
+      ENDIF
  	
-	select radn
-	hseek _idradn
- 	select vposla
-	hseek _idvposla
- 	select kbenef
-	hseek vposla->idkbenef
- 	select ld
+      SELECT radn
+      hseek _idradn
+      SELECT vposla
+      hseek _idvposla
+      SELECT kbenef
+      hseek vposla->idkbenef
+      SELECT ld
  	
-	if !empty(cvposla) .and. cvposla<>left(_idvposla,2)
-   		skip
-		loop
- 	endif
+      IF !Empty( cvposla ) .AND. cvposla <> Left( _idvposla, 2 )
+         SKIP
+         LOOP
+      ENDIF
  	
-	if !empty(ckbenef) .and. ckbenef<>kbenef->id
-   		skip
-		loop
- 	endif
+      IF !Empty( ckbenef ) .AND. ckbenef <> kbenef->id
+         SKIP
+         LOOP
+      ENDIF
 	
-	nVanP:=0
- 	nVanM:=0
- 	nMinuli:=0
+      nVanP := 0
+      nVanM := 0
+      nMinuli := 0
  	
-	for i:=1 to cLDPolja
+      FOR i := 1 TO cLDPolja
   		
-		cPom:=padl(alltrim(str(i)),2,"0")
-  		select tippr
-		seek cPom
-		select ld
+         cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
+         SELECT tippr
+         SEEK cPom
+         SELECT ld
 
-  		if tippr->(found()) .and. tippr->aktivan=="D"
+         IF tippr->( Found() ) .AND. tippr->aktivan == "D"
    			
-			nIznos:=_i&cpom
+            nIznos := _i&cpom
    			
-			if tippr->uneto=="N" .and. nIznos <> 0
+            IF tippr->uneto == "N" .AND. nIznos <> 0
        				
-				if nIznos > 0
-         				nVanP += nIznos
-       				else
-         				nVanM += nIznos
-       				endif
+               IF nIznos > 0
+                  nVanP += nIznos
+               ELSE
+                  nVanM += nIznos
+               ENDIF
    			
-			elseif tippr->uneto=="D" .and. nIznos <> 0
+            ELSEIF tippr->uneto == "D" .AND. nIznos <> 0
        				
-				if cPom == cIdMinuli
-           				nMinuli := nIznos
-       				endif
+               IF cPom == cIdMinuli
+                  nMinuli := nIznos
+               ENDIF
    			
-			endif
-  		endif
- 	next
+            ENDIF
+         ENDIF
+      NEXT
 
- 	//if prow()>58+gPStranica
-    //		FF
-    //		Eval(bZagl)
- 	//endif
- 
-	cRTipRada := ""
-	nPrKoef := 0
-	cOpor := ""
-	cTrosk := ""
-	nLicOdb := 0
-	nNetNr := 0
-	nNeto := 0
+      // if prow()>58+gPStranica
+      // FF
+      // Eval(bZagl)
+      // endif
 
-	if gVarObracun == "2"
+      cRTipRada := ""
+      nPrKoef := 0
+      cOpor := ""
+      cTrosk := ""
+      nLicOdb := 0
+      nNetNr := 0
+      nNeto := 0
+
+      IF gVarObracun == "2"
 		
-		select ld
+         SELECT ld
 
-		cRTipRada := g_tip_rada( ld->idradn, ld->idrj )
-		nPrKoef := radn->sp_koef
-		cOpor := radn->opor
-		cTrosk := radn->trosk
-		nLicOdb := _ulicodb
+         cRTipRada := g_tip_rada( ld->idradn, ld->idrj )
+         nPrKoef := radn->sp_koef
+         cOpor := radn->opor
+         cTrosk := radn->trosk
+         nLicOdb := _ulicodb
 		
-		// napravi mali obracun
-		nBO := bruto_osn( _uneto, cRTipRada, nLicOdb, nPrKoef, cTrosk )
+         // napravi mali obracun
+         nBO := bruto_osn( _uneto, cRTipRada, nLicOdb, nPrKoef, cTrosk )
 	
-		nMBO := nBO
+         nMBO := nBO
 
-		if calc_mbruto()
-			// minimalna bruto osnova
-			nMBO := min_bruto( nBo, ld->usati )
-		endif
+         IF calc_mbruto()
+            // minimalna bruto osnova
+            nMBO := min_bruto( nBo, ld->usati )
+         ENDIF
 
-		nBrOsn := nBo
+         nBrOsn := nBo
 
-		if cRTipRada == "A" .and. cTrosk <> "N"
-			nTrosk := nBO * (gAhTrosk / 100)
-			nBrOsn := nBO - nTrosk
-		elseif cRTipRada == "U" .and. cTrosk <> "N"
-			nTrosk := nBO * (gUgTrosk / 100)
-			nBrOsn := nBO - nTrosk
-		endif
+         IF cRTipRada == "A" .AND. cTrosk <> "N"
+            nTrosk := nBO * ( gAhTrosk / 100 )
+            nBrOsn := nBO - nTrosk
+         ELSEIF cRTipRada == "U" .AND. cTrosk <> "N"
+            nTrosk := nBO * ( gUgTrosk / 100 )
+            nBrOsn := nBO - nTrosk
+         ENDIF
 
 
-		// doprinosi iz
-		nDoprIz := u_dopr_iz( nMBO, cRTipRada )
+         // doprinosi iz
+         nDoprIz := u_dopr_iz( nMBO, cRTipRada )
 		
-		// porez
-		nPorez := 0
-		if radn_oporeziv( ld->idradn, ld->idrj ) .and. cRTipRada <> "S"
-			nPorez := izr_porez( nBrOsn - nDoprIz - nLicOdb, "B" )
-		endif
+         // porez
+         nPorez := 0
+         IF radn_oporeziv( ld->idradn, ld->idrj ) .AND. cRTipRada <> "S"
+            nPorez := izr_porez( nBrOsn - nDoprIz - nLicOdb, "B" )
+         ENDIF
 		
-		nNeto := ( nBrOsn - nDoprIz )
-		nNetNr := ( nBrOsn - nDoprIz - nPorez )
+         nNeto := ( nBrOsn - nDoprIz )
+         nNetNr := ( nBrOsn - nDoprIz - nPorez )
 
-	endif
+      ENDIF
 
-	select ld
+      SELECT ld
 
- 	? str(++nRbr,4) + ".", idradn, RADNIK
- 	nC1 := pcol() + 1
+      ? Str( ++nRbr, 4 ) + ".", idradn, RADNIK
+      nC1 := PCol() + 1
  	
-	@ prow(), pcol() + 1 SAY _usati PICT gpics
+      @ PRow(), PCol() + 1 SAY _usati PICT gpics
  	
-	if gVarPP == "2"
-   		@ prow(), pcol() + 1 SAY _uneto - nMinuli PICT gpici
-   		@ prow(), pcol() + 1 SAY nMinuli PICT gpici
- 	endif
+      IF gVarPP == "2"
+         @ PRow(), PCol() + 1 SAY _uneto - nMinuli PICT gpici
+         @ PRow(), PCol() + 1 SAY nMinuli PICT gpici
+      ENDIF
  	
-	@ prow(), pcol() + 1 SAY _uneto PICT gpici
+      @ PRow(), PCol() + 1 SAY _uneto PICT gpici
  	
-	if gVarObracun == "2"
-		// bruto placa	
-		@ prow(),pcol()+1 SAY nBrOsn PICT gpici
-		// doprinosi iz
-		@ prow(),pcol()+1 SAY nDoprIz PICT gpici
-		// licni odbici
-		@ prow(),pcol()+1 SAY nLicOdb PICT gpici
-		// porez 10%
-		@ prow(),pcol()+1 SAY nPorez PICT gpici
-		// neto	
-		@ prow(),pcol()+1 SAY nNeto PICT gpici
-		// neto na ruke
-		@ prow(),pcol()+1 SAY nNetNr PICT gpici
-	endif
+      IF gVarObracun == "2"
+         // bruto placa
+         @ PRow(), PCol() + 1 SAY nBrOsn PICT gpici
+         // doprinosi iz
+         @ PRow(), PCol() + 1 SAY nDoprIz PICT gpici
+         // licni odbici
+         @ PRow(), PCol() + 1 SAY nLicOdb PICT gpici
+         // porez 10%
+         @ PRow(), PCol() + 1 SAY nPorez PICT gpici
+         // neto
+         @ PRow(), PCol() + 1 SAY nNeto PICT gpici
+         // neto na ruke
+         @ PRow(), PCol() + 1 SAY nNetNr PICT gpici
+      ENDIF
 
-    // primanja van neta... ostali odbici/primanja
+      // primanja van neta... ostali odbici/primanja
 	
-    //if gVarPP == "2"
-   	@ prow(), pcol() + 1 SAY nVanP PICT gpici
-   	@ prow(), pcol() + 1 SAY nVanM PICT gpici
- 	//else
-   	//	@ prow(), pcol() + 1 SAY nVanP + nVanM PICT gpici
- 	//endif
+      // if gVarPP == "2"
+      @ PRow(), PCol() + 1 SAY nVanP PICT gpici
+      @ PRow(), PCol() + 1 SAY nVanM PICT gpici
+      // else
+      // @ prow(), pcol() + 1 SAY nVanP + nVanM PICT gpici
+      // endif
  	
-	@ prow(), pcol() + 1 SAY _uiznos PICT gpici
+      @ PRow(), PCol() + 1 SAY _uiznos PICT gpici
 
- 	if cKontrola == "D" 
-		if gVarObracun == "2"
-			nKontrola := ( nBrOsn - nDoprIz - nPorez ) + nVanP + nVanM 
-			if ROUND(_uiznos,2) = ROUND(nKontrola,2) 
-				// nista
-			else
-				@ prow(), pcol() + 1 SAY "ERR"
-			endif
-		elseif _uiznos <> _uneto + nVanP + nVanM
-   			@ prow(), pcol() + 1 SAY "ERR"
-		endif
- 	endif
+      IF cKontrola == "D"
+         IF gVarObracun == "2"
+            nKontrola := ( nBrOsn - nDoprIz - nPorez ) + nVanP + nVanM
+            IF Round( _uiznos, 2 ) = Round( nKontrola, 2 )
+               // nista
+            ELSE
+               @ PRow(), PCol() + 1 SAY "ERR"
+            ENDIF
+         ELSEIF _uiznos <> _uneto + nVanP + nVanM
+            @ PRow(), PCol() + 1 SAY "ERR"
+         ENDIF
+      ENDIF
 	
-  	nT1 += _usati
-  	nT2a += _uneto - nMinuli
-  	nT2b += nMinuli
-  	nT2 += _uneto
-	nT3 += nVanP
-	nT3b += nVanM
-	nT4 += _uiznos
+      nT1 += _usati
+      nT2a += _uneto - nMinuli
+      nT2b += nMinuli
+      nT2 += _uneto
+      nT3 += nVanP
+      nT3b += nVanM
+      nT4 += _uiznos
 
-	if gVarObracun == "2"
-		nULicOdb += nLicOdb
-		nUBruto += nBrOsn
-		nUDoprIz += nDoprIz	
-		nUPorez += nPorez
-		nUNetNr += nNetNr
-		nUNeto += nNeto
-	endif
+      IF gVarObracun == "2"
+         nULicOdb += nLicOdb
+         nUBruto += nBrOsn
+         nUDoprIz += nDoprIz
+         nUPorez += nPorez
+         nUNetNr += nNetNr
+         nUNeto += nNeto
+      ENDIF
 
-	skip
-enddo
+      SKIP
+   ENDDO
 
-//if prow()>58+gpStranica
-//	FF
-//    Eval(bZagl)
-//endif
+   // if prow()>58+gpStranica
+   // FF
+   // Eval(bZagl)
+   // endif
 
-? m
-? SPACE(1) + Lokal("UKUPNO:")
-@ prow(),nC1 SAY  nT1 pict gpics
+   ? m
+   ? Space( 1 ) + Lokal( "UKUPNO:" )
+   @ PRow(), nC1 SAY  nT1 PICT gpics
 
-IF gVarPP == "2"
-    @ prow(),pcol()+1 SAY nT2a pict gpici
-    @ prow(),pcol()+1 SAY nT2b pict gpici
-ENDIF
+   IF gVarPP == "2"
+      @ PRow(), PCol() + 1 SAY nT2a PICT gpici
+      @ PRow(), PCol() + 1 SAY nT2b PICT gpici
+   ENDIF
 
-@ prow(), pcol() + 1 SAY nT2 pict gpici
+   @ PRow(), PCol() + 1 SAY nT2 PICT gpici
 
-if gVarObracun == "2"
-	@ prow(),pcol()+1 SAY nUBruto pict gpici
-	@ prow(),pcol()+1 SAY nUDoprIz pict gpici
-	@ prow(),pcol()+1 SAY nULicOdb pict gpici
-	@ prow(),pcol()+1 SAY nUPorez pict gpici
-	@ prow(),pcol()+1 SAY nUNeto pict gpici
-	@ prow(),pcol()+1 SAY nUNetNR pict gpici
-endif
+   IF gVarObracun == "2"
+      @ PRow(), PCol() + 1 SAY nUBruto PICT gpici
+      @ PRow(), PCol() + 1 SAY nUDoprIz PICT gpici
+      @ PRow(), PCol() + 1 SAY nULicOdb PICT gpici
+      @ PRow(), PCol() + 1 SAY nUPorez PICT gpici
+      @ PRow(), PCol() + 1 SAY nUNeto PICT gpici
+      @ PRow(), PCol() + 1 SAY nUNetNR PICT gpici
+   ENDIF
 
-//IF gVarPP="2"
-@ prow(), pcol() + 1 SAY nT3 PICT gpici
-@ prow(), pcol() + 1 SAY nT3b PICT gpici
-//ELSE
-//  @ prow(),pcol()+1 SAY  nT3+nT3b pict gpici
-//ENDIF
+   // IF gVarPP="2"
+   @ PRow(), PCol() + 1 SAY nT3 PICT gpici
+   @ PRow(), PCol() + 1 SAY nT3b PICT gpici
+   // ELSE
+   // @ prow(),pcol()+1 SAY  nT3+nT3b pict gpici
+   // ENDIF
 
-@ prow(),pcol()+1 SAY nT4 PICT gpici
+   @ PRow(), PCol() + 1 SAY nT4 PICT gpici
 
-? m
-?
-? p_potpis()
+   ? m
+   ?
+   ? p_potpis()
 
-FF
-END PRINT
+   FF
+   END PRINT
 
-my_close_all_dbf()
-return
+   my_close_all_dbf()
+
+   RETURN
 
 
 
 // --------------------------------------
 // zaglavlje izvjestaja
 // --------------------------------------
-function ZPregPl()
+FUNCTION ZPregPl()
 
-?
+   ?
 
-if gVarObracun == "2"
-	P_COND2
-else
-	P_COND
-endif
+   IF gVarObracun == "2"
+      P_COND2
+   ELSE
+      P_COND
+   ENDIF
 
-? UPPER( gTS ) + ":", gnFirma
-?
+   ? Upper( gTS ) + ":", gnFirma
+   ?
 
-if empty(cidrj)
-    ? Lokal("Pregled za sve RJ ukupno:")
-else
-    ? Lokal("RJ:"), cIdRj, ld_rj->naz
-endif
+   IF Empty( cidrj )
+      ? Lokal( "Pregled za sve RJ ukupno:" )
+   ELSE
+      ? Lokal( "RJ:" ), cIdRj, ld_rj->naz
+   ENDIF
 
-?? SPACE(2) + Lokal("Mjesec:"),str(cmjesec,2)+IspisObr()
-?? SPACE(4) + Lokal("Godina:"),str(cGodina,5)
+   ?? Space( 2 ) + Lokal( "Mjesec:" ), Str( cmjesec, 2 ) + IspisObr()
+   ?? Space( 4 ) + Lokal( "Godina:" ), Str( cGodina, 5 )
 
-devpos(prow(),74)
+   DevPos( PRow(), 74 )
 
-?? Lokal("Str."),str(++nStrana,3)
+   ?? Lokal( "Str." ), Str( ++nStrana, 3 )
 
-if !empty(cvposla)
-    ? Lokal("Vrsta posla:"),cvposla,"-",vposla->naz
-endif
-if !empty(cKBenef)
-    ? Lokal("Stopa beneficiranog r.st:"),ckbenef,"-",kbenef->naz,":",kbenef->iznos
-endif
+   IF !Empty( cvposla )
+      ? Lokal( "Vrsta posla:" ), cvposla, "-", vposla->naz
+   ENDIF
+   IF !Empty( cKBenef )
+      ? Lokal( "Stopa beneficiranog r.st:" ), ckbenef, "-", kbenef->naz, ":", kbenef->iznos
+   ENDIF
 
-? m
+   ? m
 
-if gVarObracun == "2"
-	IF gVarPP == "2"
-  		? Lokal(" Rbr * Sifra*         Naziv radnika            *  Sati   *   Redovan *  Minuli   *   Neto    *       VAN NETA       * ZA ISPLATU*")
-  		? Lokal("     *      *                                  *         *     rad   *   rad     *           * Primanja  * Obustave *           *")
-	ELSE
-  		? Lokal(" Rbr * Sifra*         Naziv radnika            *  Sati   * Primanja  * Bruto pl. * Dopr (iz) * L.odbici  *  Porez    *    Neto   *  Na ruke  *  Ostale  *  Odbici    * ZA ISPLATU*")
-  		      ? "     *      *                                  *         *           * 1 x koef. *  1 x 31%  *           *    10%    *   (2-3)   *  (2-3-5)  * naknade  *            *(7 + 8 + 9)*"
-  		      ? "     *      *                                  *         *    (1)    *    (2)    *    (3)    *    (4)    *   (5)     *    (6)    *    (7)    *    (8)   *    (9)     *    (10)   *"
-	ENDIF
+   IF gVarObracun == "2"
+      IF gVarPP == "2"
+         ? Lokal( " Rbr * Sifra*         Naziv radnika            *  Sati   *   Redovan *  Minuli   *   Neto    *       VAN NETA       * ZA ISPLATU*" )
+         ? Lokal( "     *      *                                  *         *     rad   *   rad     *           * Primanja  * Obustave *           *" )
+      ELSE
+         ? Lokal( " Rbr * Sifra*         Naziv radnika            *  Sati   * Primanja  * Bruto pl. * Dopr (iz) * L.odbici  *  Porez    *    Neto   *  Na ruke  *  Ostale  *  Odbici    * ZA ISPLATU*" )
+         ? "     *      *                                  *         *           * 1 x koef. *  1 x 31%  *           *    10%    *   (2-3)   *  (2-3-5)  * naknade  *            *(7 + 8 + 9)*"
+         ? "     *      *                                  *         *    (1)    *    (2)    *    (3)    *    (4)    *   (5)     *    (6)    *    (7)    *    (8)   *    (9)     *    (10)   *"
+      ENDIF
 
-else
-	IF gVarPP=="2"
-  		? Lokal(" Rbr * Sifra*         Naziv radnika            *  Sati   *   Redovan *  Minuli   *   Neto    *       VAN NETA       * ZA ISPLATU*")
-  		? Lokal("     *      *                                  *         *     rad   *   rad     *           * Primanja  * Obustave *           *")
-	ELSE
-  		? Lokal(" Rbr * Sifra*         Naziv radnika            *  Sati   *   Neto    *  Odbici   * ZA ISPLATU*")
-  		? "     *      *                                  *         *           *           *           *"
-	ENDIF
-endif
+   ELSE
+      IF gVarPP == "2"
+         ? Lokal( " Rbr * Sifra*         Naziv radnika            *  Sati   *   Redovan *  Minuli   *   Neto    *       VAN NETA       * ZA ISPLATU*" )
+         ? Lokal( "     *      *                                  *         *     rad   *   rad     *           * Primanja  * Obustave *           *" )
+      ELSE
+         ? Lokal( " Rbr * Sifra*         Naziv radnika            *  Sati   *   Neto    *  Odbici   * ZA ISPLATU*" )
+         ? "     *      *                                  *         *           *           *           *"
+      ENDIF
+   ENDIF
 
-? m
+   ? m
 
-return
-
-
-
+   RETURN

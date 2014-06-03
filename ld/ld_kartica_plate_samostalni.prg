@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,277 +12,276 @@
 
 #include "ld.ch"
 
-static DUZ_STRANA := 64
+STATIC DUZ_STRANA := 64
 
-// -------------------------------------------------
-// kartica plate - samostalni poduzetnik
-// -------------------------------------------------
-function kartpls( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNeta )
-local nKRedova
-local cDoprSpace := SPACE(3)
-local cTprLine 
-local cDoprLine 
-local cMainLine 
-local _bn_stepen, _bn_osnova
-local _a_benef := {}
-private cLMSK := ""	
 
-cTprLine := _gtprline()
-cDoprLine := _gdoprline(cDoprSpace)
-cMainLine := _gmainline()
 
-// koliko redova ima kartica
-nKRedova := kart_redova()
 
-Eval(bZagl)
+FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNeta )
 
-cUneto := "D"
-nRRsati := 0 
-nOsnNeto := 0
-nOsnOstalo := 0
-//nLicOdbitak := g_licni_odb( radn->id )
-nLicOdbitak := ld->ulicodb
-nKoefOdbitka := radn->klo
-cRTipRada := g_tip_rada( ld->idradn, ld->idrj ) 
-nRPrKoef := 0
-if radn->(FIELDPOS("SP_KOEF")) <> 0
-	nRPrKoef := radn->sp_koef
-endif
+   LOCAL nKRedova
+   LOCAL cDoprSpace := Space( 3 )
+   LOCAL cTprLine
+   LOCAL cDoprLine
+   LOCAL cMainLine
+   LOCAL _bn_stepen, _bn_osnova
+   LOCAL _a_benef := {}
+   PRIVATE cLMSK := ""
 
-for i:=1 to cLDPolja
+   cTprLine := _gtprline()
+   cDoprLine := _gdoprline( cDoprSpace )
+   cMainLine := _gmainline()
+
+   // koliko redova ima kartica
+   nKRedova := kart_redova()
+
+   Eval( bZagl )
+
+   cUneto := "D"
+   nRRsati := 0
+   nOsnNeto := 0
+   nOsnOstalo := 0
+   // nLicOdbitak := g_licni_odb( radn->id )
+   nLicOdbitak := ld->ulicodb
+   nKoefOdbitka := radn->klo
+   cRTipRada := g_tip_rada( ld->idradn, ld->idrj )
+   nRPrKoef := 0
+   IF radn->( FieldPos( "SP_KOEF" ) ) <> 0
+      nRPrKoef := radn->sp_koef
+   ENDIF
+
+   FOR i := 1 TO cLDPolja
 	
-	cPom := padl(alltrim(str(i)),2,"0")
+      cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
 	
-	select tippr
-	seek cPom
+      SELECT tippr
+      SEEK cPom
 	
-	if tippr->(found()) .and. tippr->aktivan=="D"
+      IF tippr->( Found() ) .AND. tippr->aktivan == "D"
 
-		if _i&cpom<>0 .or. _s&cPom<>0
+         IF _i&cpom <> 0 .OR. _s&cPom <> 0
 			
-			if tippr->(FIELDPOS("TPR_TIP")) <> 0
-			  // uzmi osnovice
-			  if tippr->tpr_tip == "N"
-				nOsnNeto += _i&cPom
-			  elseif tippr->tpr_tip == "2"
-				nOsnOstalo += _i&cPom
-			  elseif tippr->tpr_tip == " "
-				// standardni tekuci sistem
-				if tippr->uneto == "D"
-					nOsnNeto += _i&cPom
-				else
-					nOsnOstalo += _i&cPom
-				endif
-			  endif
-			else
-				// standardni tekuci sistem
-				if tippr->uneto == "D"
-					nOsnNeto += _i&cPom
-				else
-					nOsnOstalo += _i&cPom
-				endif
-			endif
+            IF tippr->( FieldPos( "TPR_TIP" ) ) <> 0
+               // uzmi osnovice
+               IF tippr->tpr_tip == "N"
+                  nOsnNeto += _i&cPom
+               ELSEIF tippr->tpr_tip == "2"
+                  nOsnOstalo += _i&cPom
+               ELSEIF tippr->tpr_tip == " "
+                  // standardni tekuci sistem
+                  IF tippr->uneto == "D"
+                     nOsnNeto += _i&cPom
+                  ELSE
+                     nOsnOstalo += _i&cPom
+                  ENDIF
+               ENDIF
+            ELSE
+               // standardni tekuci sistem
+               IF tippr->uneto == "D"
+                  nOsnNeto += _i&cPom
+               ELSE
+                  nOsnOstalo += _i&cPom
+               ENDIF
+            ENDIF
 			
 				
-			if "SUMKREDITA" $ tippr->formula
+            IF "SUMKREDITA" $ tippr->formula
 				
-				select radkr
-				set order to 1
-				seek str(_godina,4) + str(_mjesec,2) + _idradn
-				ukredita:=0
+               SELECT radkr
+               SET ORDER TO 1
+               SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn
+               ukredita := 0
 				
 				
-				do while !eof() .and. _godina==godina .and. _mjesec=mjesec .and. idradn==_idradn
-					select kred
-					hseek radkr->idkred
-					select radkr
-					aIznosi:=OKreditu(idradn, idkred, naosnovu, _mjesec, _godina)
-					ukredita+=iznos
-					skip 1
-				enddo
+               DO WHILE !Eof() .AND. _godina == godina .AND. _mjesec = mjesec .AND. idradn == _idradn
+                  SELECT kred
+                  hseek radkr->idkred
+                  SELECT radkr
+                  aIznosi := OKreditu( idradn, idkred, naosnovu, _mjesec, _godina )
+                  ukredita += iznos
+                  SKIP 1
+               ENDDO
 				
-				select ld
-			endif
-		endif
-	endif
-next
+               SELECT ld
+            ENDIF
+         ENDIF
+      ENDIF
+   NEXT
 
-if gPrBruto=="D"  
+   IF gPrBruto == "D"
 	
-	// prikaz bruto iznosa
+      // prikaz bruto iznosa
 	
-	select (F_POR)
+      SELECT ( F_POR )
 	
-	if !used()
-		O_POR
-	endif
+      IF !Used()
+         O_POR
+      ENDIF
 	
-	select (F_DOPR)
+      SELECT ( F_DOPR )
 	
-	if !used()
-		O_DOPR
-	endif
+      IF !Used()
+         O_DOPR
+      ENDIF
 	
-	select (F_KBENEF)
+      SELECT ( F_KBENEF )
 	
-	if !used()
-		O_KBENEF
-	endif
+      IF !Used()
+         O_KBENEF
+      ENDIF
 
-	nBO:=0
-	nBFO:=0
+      nBO := 0
+      nBFO := 0
 	
-	nOsnZaBr := nOsnNeto
+      nOsnZaBr := nOsnNeto
 	
-	nBo := bruto_osn( nOsnZaBr, cRTipRada, nLicOdbitak, nRPrKoef )
+      nBo := bruto_osn( nOsnZaBr, cRTipRada, nLicOdbitak, nRPrKoef )
 
-    if UBenefOsnovu()
-        _bn_osnova := bruto_osn( nOsnZaBr - if(!Empty(gBFForm), &gBFForm, 0), cRTipRada, nLicOdbitak, nRPrKoef )
-        _bn_stepen := BenefStepen()
-        add_to_a_benef( @_a_benef, ALLTRIM( radn->k3 ), _bn_stepen, _bn_osnova )
-    endif
+      IF UBenefOsnovu()
+         _bn_osnova := bruto_osn( nOsnZaBr - if( !Empty( gBFForm ), &gBFForm, 0 ), cRTipRada, nLicOdbitak, nRPrKoef )
+         _bn_stepen := BenefStepen()
+         add_to_a_benef( @_a_benef, AllTrim( radn->k3 ), _bn_stepen, _bn_osnova )
+      ENDIF
 
-	? cMainLine
-	? cLMSK + "1. OSNOVA ZA OBRACUN:"
+      ? cMainLine
+      ? cLMSK + "1. OSNOVA ZA OBRACUN:"
 
-	@ prow(),60+LEN(cLMSK) SAY nOsnZaBr pict gpici
+      @ PRow(), 60 + Len( cLMSK ) SAY nOsnZaBr PICT gpici
 	
-	? cMainLine
-	? cLMSK + "2. PROPISANI KOEFICIJENT:"
+      ? cMainLine
+      ? cLMSK + "2. PROPISANI KOEFICIJENT:"
 
-	@ prow(),60+LEN(cLMSK) SAY nRPrKoef pict gpici
+      @ PRow(), 60 + Len( cLMSK ) SAY nRPrKoef PICT gpici
 	
-	? cMainLine
-	? cLMSK + "3. BRUTO OSNOVA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak, nRPrKoef )
+      ? cMainLine
+      ? cLMSK + "3. BRUTO OSNOVA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak, nRPrKoef )
 
-	@ prow(),60+LEN(cLMSK) SAY nBo pict gpici
+      @ PRow(), 60 + Len( cLMSK ) SAY nBo PICT gpici
 	
-	? cMainLine
+      ? cMainLine
 	
-	// razrada doprinosa ....
+      // razrada doprinosa ....
 	
-	? cLmSK + cDoprSpace + Lokal("Obracun doprinosa:")
+      ? cLmSK + cDoprSpace + Lokal( "Obracun doprinosa:" )
 	
-	select dopr
-	go top
+      SELECT dopr
+      GO TOP
 	
-	nPom := 0
-	nDopr := 0
-	nUkDoprIz := 0
-	nC1 := 20 + LEN(cLMSK)
+      nPom := 0
+      nDopr := 0
+      nUkDoprIz := 0
+      nC1 := 20 + Len( cLMSK )
 	
-	do while !eof()
+      DO WHILE !Eof()
 	
-		if dopr->tiprada <> "S"
-			skip
-			loop
-		endif
+         IF dopr->tiprada <> "S"
+            SKIP
+            LOOP
+         ENDIF
 
-		if dopr->(FIELDPOS("DOP_TIP")) <> 0
+         IF dopr->( FieldPos( "DOP_TIP" ) ) <> 0
 			
-			if dopr->dop_tip == "N" .or. dopr->dop_tip == " " 
-				nOsn := nOsnNeto
-			elseif dopr->dop_tip == "2"
-				nOsn := nOsnOstalo
-			elseif dopr->dop_tip == "P"
-				nOsn := nOsnNeto + nOsnOstalo
-			endif
+            IF dopr->dop_tip == "N" .OR. dopr->dop_tip == " "
+               nOsn := nOsnNeto
+            ELSEIF dopr->dop_tip == "2"
+               nOsn := nOsnOstalo
+            ELSEIF dopr->dop_tip == "P"
+               nOsn := nOsnNeto + nOsnOstalo
+            ENDIF
 		
-		endif
+         ENDIF
 		
-		PozicOps(DOPR->poopst)
+         PozicOps( DOPR->poopst )
 			
-		IF !ImaUOp("DOPR",DOPR->id) .or. !lPrikSveDopr .and. !DOPR->ID $ cPrikDopr
-			SKIP 1
-			LOOP
-		ENDIF
+         IF !ImaUOp( "DOPR", DOPR->id ) .OR. !lPrikSveDopr .AND. !DOPR->ID $ cPrikDopr
+            SKIP 1
+            LOOP
+         ENDIF
 		
-		if right(id,1)=="X"
-			? cDoprLine
-		endif
+         IF Right( id, 1 ) == "X"
+            ? cDoprLine
+         ENDIF
 		
-		? cLMSK + cDoprSpace + id, "-", naz
-		@ prow(),pcol()+1 SAY iznos pict "99.99%"
+         ? cLMSK + cDoprSpace + id, "-", naz
+         @ PRow(), PCol() + 1 SAY iznos PICT "99.99%"
 		
-		if empty(idkbenef) 
-			// doprinos udara na neto
-			@ prow(),pcol()+1 SAY nBo pict gpici
-			nC1:=pcol()+1
-			@ prow(),pcol()+1 SAY nPom:=max(dlimit,round(iznos/100*nBO,gZaok2)) pict gpici
+         IF Empty( idkbenef )
+            // doprinos udara na neto
+            @ PRow(), PCol() + 1 SAY nBo PICT gpici
+            nC1 := PCol() + 1
+            @ PRow(), PCol() + 1 SAY nPom := Max( dlimit, Round( iznos / 100 * nBO, gZaok2 ) ) PICT gpici
 			
-			if dopr->id == "1X"
-				nUkDoprIz += nPom
-			endif
+            IF dopr->id == "1X"
+               nUkDoprIz += nPom
+            ENDIF
 
-		else
+         ELSE
             nPom2 := get_benef_osnovica( _a_benef, idkbenef )
-			if round(nPom2,gZaok2)<>0
-				@ prow(),pcol()+1 SAY nPom2 pict gpici
-				nC1:=pcol()+1
-				nPom:=max(dlimit,round(iznos/100*nPom2,gZaok2))
-				@ prow(),pcol()+1 SAY nPom pict gpici
-			endif
-		endif
+            IF Round( nPom2, gZaok2 ) <> 0
+               @ PRow(), PCol() + 1 SAY nPom2 PICT gpici
+               nC1 := PCol() + 1
+               nPom := Max( dlimit, Round( iznos / 100 * nPom2, gZaok2 ) )
+               @ PRow(), PCol() + 1 SAY nPom PICT gpici
+            ENDIF
+         ENDIF
 		
-		if right(id,1)=="X"
+         IF Right( id, 1 ) == "X"
 			
-			? cDoprLine
-			?
-			nDopr += nPom
+            ? cDoprLine
+            ?
+            nDopr += nPom
 		
-		endif
+         ENDIF
 		
-		if !lSkrivena .and. prow()>57+gPStranica
-			FF
-		endif
+         IF !lSkrivena .AND. PRow() > 57 + gPStranica
+            FF
+         ENDIF
 		
-		skip 1
+         SKIP 1
 		
-	enddo
+      ENDDO
 	
-	? cMainLine
-	?  cLMSK + Lokal("UKUPNO ZA ISPLATU")
-	@ prow(),60+LEN(cLMSK) SAY nOsnZaBr pict gpici
+      ? cMainLine
+      ?  cLMSK + Lokal( "UKUPNO ZA ISPLATU" )
+      @ PRow(), 60 + Len( cLMSK ) SAY nOsnZaBr PICT gpici
 
-	? cMainLine
+      ? cMainLine
 
-	if !lSkrivena .and. prow()>55+gPStranica
-		FF
-	endif
+      IF !lSkrivena .AND. PRow() > 55 + gPStranica
+         FF
+      ENDIF
 
-endif
+   ENDIF
 
-// potpis na kartici
-kart_potpis()
+   // potpis na kartici
+   kart_potpis()
 
-// skrivena kartica
-if lSkrivena
-	if prow()<nKRSK+5
-		nPom:=nKRSK-PROW()
-		FOR i:=1 TO nPom
-			?
-		NEXT
-	else
-		FF
-	endif
-// 2 kartice na jedan list N - obavezno FF
-elseif c2K1L == "N"
-	FF
-// ako je prikaz bruto D obavezno FF
-elseif gPrBruto == "D"
-	FF
-// nova kartica novi list - obavezno FF
-elseif lNKNS
-	FF
-// druga kartica takodjer FF
-elseif (nRBRKart%2 == 0) 
-	FF
-// prva kartica, ali druga ne moze stati
-elseif (nRBRKart%2 <> 0) .and. (DUZ_STRANA - prow() < nKRedova )
-	--nRBRKart
-	FF
-endif
+   // skrivena kartica
+   IF lSkrivena
+      IF PRow() < nKRSK + 5
+         nPom := nKRSK - PRow()
+         FOR i := 1 TO nPom
+            ?
+         NEXT
+      ELSE
+         FF
+      ENDIF
+      // 2 kartice na jedan list N - obavezno FF
+   ELSEIF c2K1L == "N"
+      FF
+      // ako je prikaz bruto D obavezno FF
+   ELSEIF gPrBruto == "D"
+      FF
+      // nova kartica novi list - obavezno FF
+   ELSEIF lNKNS
+      FF
+      // druga kartica takodjer FF
+   ELSEIF ( nRBRKart % 2 == 0 )
+      FF
+      // prva kartica, ali druga ne moze stati
+   ELSEIF ( nRBRKart % 2 <> 0 ) .AND. ( DUZ_STRANA - PRow() < nKRedova )
+      --nRBRKart
+      FF
+   ENDIF
 
-return
-
-
+   RETURN

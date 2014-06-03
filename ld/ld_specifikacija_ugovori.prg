@@ -14,7 +14,7 @@
 
 
 
-FUNCTION SpecPlU()
+FUNCTION ld_specifikacija_plate_ostali()
 
    LOCAL GetList := {}
    LOCAL aPom := {}

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,376 +12,380 @@
 
 #include "ld.ch"
 
-static __mj_od
-static __mj_do
-static __god_od
-static __god_do
-static __tp1
-static __tp2
-static __tp3
-static __tp4
-static __tp5
+STATIC __mj_od
+STATIC __mj_do
+STATIC __god_od
+STATIC __god_do
+STATIC __tp1
+STATIC __tp2
+STATIC __tp3
+STATIC __tp4
+STATIC __tp5
 
-// -----------------------------------------------
-// rpt: sihtarice po grupama
-// -----------------------------------------------
-function r_sh_print()
-local cRj := SPACE(60)
-local cRadnik := SPACE(_LR_) 
-local cGroup := SPACE(7)
-local cTipRpt := "1"
-local cIdRj
-local cRjDEF := SPACE(2)
-local cMj_od
-local cMj_do
-local cGod_od
-local cGod_do
-local cDopr10 := "10"
-local cDopr11 := "11"
-local cDopr12 := "12"
-local cDopr1X := "1X"
-local cObracun := gObracun
-local cWinPrint := "N"
-local cDodPr1 := SPACE(2)
-local cDodPr2 := SPACE(2)
-local cDodPr3 := SPACE(2)
-local cDodPr4 := SPACE(2)
-local cDodPr5 := SPACE(2)
-local cPrimDobra := ""
 
-// kreiraj pomocnu tabelu
-ol_tmp_tbl()
 
-cIdRj := gRj
-cMj_od := gMjesec
-cMj_do := gMjesec
-cGod_od := gGodina
-cGod_do := gGodina
+FUNCTION ld_utrosak_po_sihtaricama()
 
-// otvori tabele
-ol_o_tbl()
+   LOCAL cRj := Space( 60 )
+   LOCAL cRadnik := Space( _LR_ )
+   LOCAL cGroup := Space( 7 )
+   LOCAL cTipRpt := "1"
+   LOCAL cIdRj
+   LOCAL cRjDEF := Space( 2 )
+   LOCAL cMj_od
+   LOCAL cMj_do
+   LOCAL cGod_od
+   LOCAL cGod_do
+   LOCAL cDopr10 := "10"
+   LOCAL cDopr11 := "11"
+   LOCAL cDopr12 := "12"
+   LOCAL cDopr1X := "1X"
+   LOCAL cObracun := gObracun
+   LOCAL cWinPrint := "N"
+   LOCAL cDodPr1 := Space( 2 )
+   LOCAL cDodPr2 := Space( 2 )
+   LOCAL cDodPr3 := Space( 2 )
+   LOCAL cDodPr4 := Space( 2 )
+   LOCAL cDodPr5 := Space( 2 )
+   LOCAL cPrimDobra := ""
 
-Box( "#PREGLED TROSKOVA PO SIHTARICAMA", 11, 75 )
+   // kreiraj pomocnu tabelu
+   ol_tmp_tbl()
 
-@ m_x + 1, m_y + 2 SAY "Radne jedinice: " GET cRj PICT "@!S25"
-@ m_x + 2, m_y + 2 SAY "Period od:" GET cMj_od pict "99"
-@ m_x + 2, col() + 1 SAY "/" GET cGod_od pict "9999"
-@ m_x + 2, col() + 1 SAY "do:" GET cMj_do pict "99" 
-@ m_x + 2, col() + 1 SAY "/" GET cGod_do pict "9999"
-@ m_x+2,col()+2 SAY "Obracun:" GET cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
-@ m_x + 4, m_y + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik ;
-	VALID EMPTY(cRadnik) .or. p_radn(@cRadnik)
+   cIdRj := gRj
+   cMj_od := gMjesec
+   cMj_do := gMjesec
+   cGod_od := gGodina
+   cGod_do := gGodina
 
-@ m_x + 5, m_y + 2 SAY "Grupa (prazno-sve): " GET cGroup ;
-	VALID EMPTY(cGroup) .or. p_konto(@cGroup)
+   // otvori tabele
+   ol_o_tbl()
 
-@ m_x + 7, m_y + 2 SAY "Dodatna primanja za prikaz (1): " GET cDodPr1 ;
-	VALID { || _show_get_item_value( g_tp_naz( cDodPr1), 20 ), .t. }
-@ m_x + 8, m_y + 2 SAY "Dodatna primanja za prikaz (2): " GET cDodPr2 ;
-	VALID { || _show_get_item_value( g_tp_naz( cDodPr2), 20 ), .t. }
-@ m_x + 9, m_y + 2 SAY "Dodatna primanja za prikaz (3): " GET cDodPr3 ; 
-	VALID { || _show_get_item_value( g_tp_naz( cDodPr3), 20 ), .t. }
-@ m_x + 10, m_y + 2 SAY "Dodatna primanja za prikaz (4): " GET cDodPr4 ;
-	VALID { || _show_get_item_value( g_tp_naz( cDodPr4), 20 ), .t. }
-@ m_x + 11, m_y + 2 SAY "Dodatna primanja za prikaz (5): " GET cDodPr5 ;
-	VALID { || _show_get_item_value( g_tp_naz( cDodPr5), 20 ), .t. }
+   Box( "#PREGLED TROSKOVA PO SIHTARICAMA", 11, 75 )
 
-read
+   @ m_x + 1, m_y + 2 SAY "Radne jedinice: " GET cRj PICT "@!S25"
+   @ m_x + 2, m_y + 2 SAY "Period od:" GET cMj_od PICT "99"
+   @ m_x + 2, Col() + 1 SAY "/" GET cGod_od PICT "9999"
+   @ m_x + 2, Col() + 1 SAY "do:" GET cMj_do PICT "99"
+   @ m_x + 2, Col() + 1 SAY "/" GET cGod_do PICT "9999"
+   @ m_x + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ m_x + 4, m_y + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik ;
+      VALID Empty( cRadnik ) .OR. p_radn( @cRadnik )
+
+   @ m_x + 5, m_y + 2 SAY "Grupa (prazno-sve): " GET cGroup ;
+      VALID Empty( cGroup ) .OR. p_konto( @cGroup )
+
+   @ m_x + 7, m_y + 2 SAY "Dodatna primanja za prikaz (1): " GET cDodPr1 ;
+      VALID {|| _show_get_item_value( g_tp_naz( cDodPr1 ), 20 ), .T. }
+   @ m_x + 8, m_y + 2 SAY "Dodatna primanja za prikaz (2): " GET cDodPr2 ;
+      VALID {|| _show_get_item_value( g_tp_naz( cDodPr2 ), 20 ), .T. }
+   @ m_x + 9, m_y + 2 SAY "Dodatna primanja za prikaz (3): " GET cDodPr3 ;
+      VALID {|| _show_get_item_value( g_tp_naz( cDodPr3 ), 20 ), .T. }
+   @ m_x + 10, m_y + 2 SAY "Dodatna primanja za prikaz (4): " GET cDodPr4 ;
+      VALID {|| _show_get_item_value( g_tp_naz( cDodPr4 ), 20 ), .T. }
+   @ m_x + 11, m_y + 2 SAY "Dodatna primanja za prikaz (5): " GET cDodPr5 ;
+      VALID {|| _show_get_item_value( g_tp_naz( cDodPr5 ), 20 ), .T. }
+
+   READ
 	
-clvbox()
+   clvbox()
 	
-ESC_BCR
+   ESC_BCR
 
-BoxC()
+   BoxC()
 
-if lastkey() == K_ESC
-	return
-endif
+   IF LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-// staticke
-__mj_od := cMj_od
-__mj_do := cMj_do
-__god_od := cGod_od
-__god_do := cGod_do
-__tp1 := ""
-__tp2 := ""
-__tp3 := ""
+   // staticke
+   __mj_od := cMj_od
+   __mj_do := cMj_do
+   __god_od := cGod_od
+   __god_do := cGod_do
+   __tp1 := ""
+   __tp2 := ""
+   __tp3 := ""
 
-if !EMPTY( cDodPr1 )
-	__tp1 := g_tp_naz( cDodPr1 )
-endif
-if !EMPTY( cDodPr2 )
-	__tp2 := g_tp_naz( cDodPr2 )
-endif
-if !EMPTY( cDodPr3 )
-	__tp3 := g_tp_naz( cDodPr3 )
-endif
-if !EMPTY( cDodPr4 )
-	__tp4 := g_tp_naz( cDodPr4 )
-endif
-if !EMPTY( cDodPr5 )
-	__tp5 := g_tp_naz( cDodPr5 )
-endif
+   IF !Empty( cDodPr1 )
+      __tp1 := g_tp_naz( cDodPr1 )
+   ENDIF
+   IF !Empty( cDodPr2 )
+      __tp2 := g_tp_naz( cDodPr2 )
+   ENDIF
+   IF !Empty( cDodPr3 )
+      __tp3 := g_tp_naz( cDodPr3 )
+   ENDIF
+   IF !Empty( cDodPr4 )
+      __tp4 := g_tp_naz( cDodPr4 )
+   ENDIF
+   IF !Empty( cDodPr5 )
+      __tp5 := g_tp_naz( cDodPr5 )
+   ENDIF
 
-select ld
+   SELECT ld
 
-msgo("... podaci plata ... molimo sacekajte")
-// sortiraj tabelu i postavi filter
-ol_sort( cRj, cGod_od, cGod_do, cMj_od, cMj_do, cRadnik, cTipRpt, cObracun )
+   msgo( "... podaci plata ... molimo sacekajte" )
+   // sortiraj tabelu i postavi filter
+   ol_sort( cRj, cGod_od, cGod_do, cMj_od, cMj_do, cRadnik, cTipRpt, cObracun )
 
-// nafiluj podatke obracuna
-ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, cRadnik, ;
-	cPrimDobra, "", ;
-	cDopr10, cDopr11, cDopr12, cDopr1X, cTipRpt, cObracun, ;
-	cDodPr1, cDodPr2, cDodPr3, cDodPr4, cDodPr5 )
+   // nafiluj podatke obracuna
+   ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, cRadnik, ;
+      cPrimDobra, "", ;
+      cDopr10, cDopr11, cDopr12, cDopr1X, cTipRpt, cObracun, ;
+      cDodPr1, cDodPr2, cDodPr3, cDodPr4, cDodPr5 )
 
-msgc()
+   msgc()
 
-// podatke iz tabele pohrani u matricu
-// to su obracuni
-aObr := {}
-_obr_2_arr( @aObr )
+   // podatke iz tabele pohrani u matricu
+   // to su obracuni
+   aObr := {}
+   _obr_2_arr( @aObr )
 
-msgo("... generisem izvjestaj ....")
+   msgo( "... generisem izvjestaj ...." )
 
-// generisi report
-_gen_rpt( cGod_od, cMj_od, cRadnik, cGroup, aObr )
+   // generisi report
+   _gen_rpt( cGod_od, cMj_od, cRadnik, cGroup, aObr )
 
-msgc()
+   msgc()
 
-// stampa reporta
-_print_rpt()
+   // stampa reporta
+   _print_rpt()
 
-my_close_all_dbf()
+   my_close_all_dbf()
 
-return
+   RETURN
 
 
 // ----------------------------------------------
 // nafiluj matricu iz tabele r_export
 // ----------------------------------------------
-static function _obr_2_arr( aArr )
-select r_export
-go top
+STATIC FUNCTION _obr_2_arr( aArr )
 
-do while !EOF()
+   SELECT r_export
+   GO TOP
+
+   DO WHILE !Eof()
 	
-	AADD( aArr, { field->godina, ;
-		field->mjesec, ;
-		field->idradn, ;
-		field->naziv, ;
-		field->sati, ;
-		field->prihod, ;
-		field->bruto, ;
-		field->neto, ;
-		field->dop_pio, ;
-		field->dop_zdr, ;
-		field->dop_nez, ;
-		field->dop_uk, ;
-		field->osn_por, ;
-		field->izn_por, ;
-		field->tp_1, ;
-		field->tp_2, ;
-		field->tp_3, ;
-		field->tp_4, ;
-		field->tp_5 } )
+      AAdd( aArr, { field->godina, ;
+         field->mjesec, ;
+         field->idradn, ;
+         field->naziv, ;
+         field->sati, ;
+         field->prihod, ;
+         field->bruto, ;
+         field->neto, ;
+         field->dop_pio, ;
+         field->dop_zdr, ;
+         field->dop_nez, ;
+         field->dop_uk, ;
+         field->osn_por, ;
+         field->izn_por, ;
+         field->tp_1, ;
+         field->tp_2, ;
+         field->tp_3, ;
+         field->tp_4, ;
+         field->tp_5 } )
 
-	skip
-enddo
+      SKIP
+   ENDDO
 
-return
+   RETURN
 
 
 // -----------------------------
 // otvori tabele
 // -----------------------------
-static function o_tables()
-O_LD
-O_RADN
-O_KONTO
-O_RADSIHT
-O_DOPR
-O_POR
-return
+STATIC FUNCTION o_tables()
+
+   O_LD
+   O_RADN
+   O_KONTO
+   O_RADSIHT
+   O_DOPR
+   O_POR
+
+   RETURN
 
 
 // ------------------------------------------------------------
 // generisanje reporta
 // ------------------------------------------------------------
-static function _gen_rpt( nGod_od, nMj_od, cRadnik, cGroup, aObr )
+STATIC FUNCTION _gen_rpt( nGod_od, nMj_od, cRadnik, cGroup, aObr )
 
-// kreiraj r_export tabelu
-cre_tmp_tbl()
+   // kreiraj r_export tabelu
+   cre_tmp_tbl()
 
-o_tables()
+   o_tables()
 
-select radsiht
+   SELECT radsiht
 
-// sortiraj sihtarice
-sort_siht( nGod_od, nMj_od, cRadnik, cGroup )
-set order to tag "1"
-go top
+   // sortiraj sihtarice
+   sort_siht( nGod_od, nMj_od, cRadnik, cGroup )
+   SET ORDER TO TAG "1"
+   GO TOP
 
 
-do while !EOF()
+   DO WHILE !Eof()
 	
-	cGr_siht := field->idkonto
-	cGr_naz := g_gr_naz( cGr_siht )
-	cRa_siht := field->idradn
-	// ovo su sati po sihtarici
-	nSiht_sati := field->izvrseno
-	nRa_mj := field->mjesec
-	nRa_god := field->godina
+      cGr_siht := field->idkonto
+      cGr_naz := g_gr_naz( cGr_siht )
+      cRa_siht := field->idradn
+      // ovo su sati po sihtarici
+      nSiht_sati := field->izvrseno
+      nRa_mj := field->mjesec
+      nRa_god := field->godina
 
-	// pronadji radnika u matrici
-	nTmp := ASCAN( aObr, { |xVal| xVal[1] == nRa_god .and. ;
-		xVal[2] == nRa_mj .and. xVal[3] == cRa_siht } )
+      // pronadji radnika u matrici
+      nTmp := AScan( aObr, {|xVal| xVal[ 1 ] == nRa_god .AND. ;
+         xVal[ 2 ] == nRa_mj .AND. xVal[ 3 ] == cRa_siht } )
 
-	if nTmp == 0
-		// nisam nasao
-		skip
-		loop
-	endif
+      IF nTmp == 0
+         // nisam nasao
+         SKIP
+         LOOP
+      ENDIF
 	
-	cRa_naz := aObr[ nTmp, 4 ]
-	nSati := aObr[ nTmp, 5 ]
-	nPrih := aObr[ nTmp, 6 ]
-	nBruto := aObr[ nTmp, 7 ]
-	nNeto := aObr[ nTmp, 8 ]
-	nDop_pio := aObr[ nTmp, 9 ]
-	nDop_zdr := aObr[ nTmp, 10 ]
-	nDop_nez := aObr[ nTmp, 11 ]
-	nDop_uk := aObr[ nTmp, 12 ]
-	nOsn_por := aObr[ nTmp, 13 ]
-	nIzn_por := aObr[ nTmp, 14 ]
-	nTp_1 := aObr[ nTmp, 15 ]
-	nTp_2 := aObr[ nTmp, 16 ]
-	nTp_3 := aObr[ nTmp, 17 ]
-	nTp_4 := aObr[ nTmp, 18 ]
-	nTp_5 := aObr[ nTmp, 19 ]
+      cRa_naz := aObr[ nTmp, 4 ]
+      nSati := aObr[ nTmp, 5 ]
+      nPrih := aObr[ nTmp, 6 ]
+      nBruto := aObr[ nTmp, 7 ]
+      nNeto := aObr[ nTmp, 8 ]
+      nDop_pio := aObr[ nTmp, 9 ]
+      nDop_zdr := aObr[ nTmp, 10 ]
+      nDop_nez := aObr[ nTmp, 11 ]
+      nDop_uk := aObr[ nTmp, 12 ]
+      nOsn_por := aObr[ nTmp, 13 ]
+      nIzn_por := aObr[ nTmp, 14 ]
+      nTp_1 := aObr[ nTmp, 15 ]
+      nTp_2 := aObr[ nTmp, 16 ]
+      nTp_3 := aObr[ nTmp, 17 ]
+      nTp_4 := aObr[ nTmp, 18 ]
+      nTp_5 := aObr[ nTmp, 19 ]
 
-	select r_export
-	append blank
+      SELECT r_export
+      APPEND BLANK
 	
-	replace field->mjesec with nRa_mj
-	replace field->godina with nRa_god
-	replace field->idradn with cRa_siht
-	replace field->r_naz with _rad_ime( cRa_siht )
-	replace field->naziv with cRa_naz
-	replace field->group with cGr_siht
-	replace field->gr_naz with cGr_naz
-	replace field->sati with nSiht_sati
-	replace field->prihod with _calc_val( nPrih, nSati, nSiht_sati ) 
-	replace field->bruto with _calc_val( nBruto, nSati, nSiht_sati )
-	replace field->neto with _calc_val( nNeto, nSati, nSiht_sati )
-	replace field->dop_pio with _calc_val( nDop_pio, nSati, nSiht_sati )
-	replace field->dop_zdr with _calc_val( nDop_zdr, nSati, nSiht_sati )
-	replace field->dop_nez with _calc_val( nDop_nez, nSati, nSiht_sati )
-	replace field->dop_uk with _calc_val( nDop_uk, nSati, nSiht_sati )
-	replace field->osn_por with _calc_val( nOsn_por, nSati, nSiht_sati )
-	replace field->izn_por with _calc_val( nIzn_por, nSati, nSiht_sati )
-	replace field->tp_1 with _calc_val( nTp_1, nSati, nSiht_sati )
-	replace field->tp_2 with _calc_val( nTp_2, nSati, nSiht_sati )
-	replace field->tp_3 with _calc_val( nTp_3, nSati, nSiht_sati )
-	replace field->tp_4 with _calc_val( nTp_4, nSati, nSiht_sati )
-	replace field->tp_5 with _calc_val( nTp_5, nSati, nSiht_sati )
+      REPLACE field->mjesec WITH nRa_mj
+      REPLACE field->godina WITH nRa_god
+      REPLACE field->idradn WITH cRa_siht
+      REPLACE field->r_naz WITH _rad_ime( cRa_siht )
+      REPLACE field->naziv WITH cRa_naz
+      REPLACE field->group WITH cGr_siht
+      REPLACE field->gr_naz WITH cGr_naz
+      REPLACE field->sati WITH nSiht_sati
+      REPLACE field->prihod WITH _calc_val( nPrih, nSati, nSiht_sati )
+      REPLACE field->bruto WITH _calc_val( nBruto, nSati, nSiht_sati )
+      REPLACE field->neto WITH _calc_val( nNeto, nSati, nSiht_sati )
+      REPLACE field->dop_pio WITH _calc_val( nDop_pio, nSati, nSiht_sati )
+      REPLACE field->dop_zdr WITH _calc_val( nDop_zdr, nSati, nSiht_sati )
+      REPLACE field->dop_nez WITH _calc_val( nDop_nez, nSati, nSiht_sati )
+      REPLACE field->dop_uk WITH _calc_val( nDop_uk, nSati, nSiht_sati )
+      REPLACE field->osn_por WITH _calc_val( nOsn_por, nSati, nSiht_sati )
+      REPLACE field->izn_por WITH _calc_val( nIzn_por, nSati, nSiht_sati )
+      REPLACE field->tp_1 WITH _calc_val( nTp_1, nSati, nSiht_sati )
+      REPLACE field->tp_2 WITH _calc_val( nTp_2, nSati, nSiht_sati )
+      REPLACE field->tp_3 WITH _calc_val( nTp_3, nSati, nSiht_sati )
+      REPLACE field->tp_4 WITH _calc_val( nTp_4, nSati, nSiht_sati )
+      REPLACE field->tp_5 WITH _calc_val( nTp_5, nSati, nSiht_sati )
 
-	select radsiht	
-	skip
+      SELECT radsiht
+      SKIP
 
-enddo
+   ENDDO
 
-return
+   RETURN
 
 
 // -------------------------------------------------------
 // kalkulisi iznos po novoj satnici
 // -------------------------------------------------------
-static function _calc_val( nVal, nSati, nNSati )
-local nRet := 0
+STATIC FUNCTION _calc_val( nVal, nSati, nNSati )
 
-nRet := ( nNSati / nSati ) * nVal
+   LOCAL nRet := 0
 
-return nRet
+   nRet := ( nNSati / nSati ) * nVal
+
+   RETURN nRet
 
 
 // -------------------------------------------
 // vraca linije i header
 // -------------------------------------------
-static function _g_line( cLine )
+STATIC FUNCTION _g_line( cLine )
 
-cLine := REPLICATE("-", 5)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 30)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 8)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
+   cLine := Replicate( "-", 5 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 30 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 8 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
 
-cTxt := PADR("R.br", 5)
-cTxt += SPACE(1)
-cTxt += PADR("Ime i prezime radnika", 30)
-cTxt += SPACE(1)
-cTxt += PADR("Sati", 8)
-cTxt += SPACE(1)
-cTxt += PADR("Bruto", 12)
-cTxt += SPACE(1)
-cTxt += PADR("Neto", 12)
-cTxt += SPACE(1)
-cTxt += PADR("Dopr.PIO", 12)
-cTxt += SPACE(1)
-cTxt += PADR("Dopr.ZDR", 12)
-cTxt += SPACE(1)
-cTxt += PADR("Dopr.NEZ", 12)
-cTxt += SPACE(1)
-cTxt += PADR("Porez", 12)
+   cTxt := PadR( "R.br", 5 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "Ime i prezime radnika", 30 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "Sati", 8 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "Bruto", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "Neto", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "Dopr.PIO", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "Dopr.ZDR", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "Dopr.NEZ", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "Porez", 12 )
 
-if !EMPTY( __tp1 )
-	cLine += SPACE(1)
-	cLine += REPLICATE("-", 12)
-	cTxt += SPACE(1)
-	cTxt += PADR( __tp1, 12 )
-endif
-if !EMPTY( __tp2 )
-	cLine += SPACE(1)
-	cLine += REPLICATE("-", 12)
-	cTxt += SPACE(1)
-	cTxt += PADR( __tp2, 12 )
-endif
-if !EMPTY( __tp3 )
-	cLine += SPACE(1)
-	cLine += REPLICATE("-", 12)
-	cTxt += SPACE(1)
-	cTxt += PADR( __tp3, 12 )
-endif
-if !EMPTY( __tp4 )
-	cLine += SPACE(1)
-	cLine += REPLICATE("-", 12)
-	cTxt += SPACE(1)
-	cTxt += PADR( __tp4, 12 )
-endif
-if !EMPTY( __tp5 )
-	cLine += SPACE(1)
-	cLine += REPLICATE("-", 12)
-	cTxt += SPACE(1)
-	cTxt += PADR( __tp5, 12 )
-endif
+   IF !Empty( __tp1 )
+      cLine += Space( 1 )
+      cLine += Replicate( "-", 12 )
+      cTxt += Space( 1 )
+      cTxt += PadR( __tp1, 12 )
+   ENDIF
+   IF !Empty( __tp2 )
+      cLine += Space( 1 )
+      cLine += Replicate( "-", 12 )
+      cTxt += Space( 1 )
+      cTxt += PadR( __tp2, 12 )
+   ENDIF
+   IF !Empty( __tp3 )
+      cLine += Space( 1 )
+      cLine += Replicate( "-", 12 )
+      cTxt += Space( 1 )
+      cTxt += PadR( __tp3, 12 )
+   ENDIF
+   IF !Empty( __tp4 )
+      cLine += Space( 1 )
+      cLine += Replicate( "-", 12 )
+      cTxt += Space( 1 )
+      cTxt += PadR( __tp4, 12 )
+   ENDIF
+   IF !Empty( __tp5 )
+      cLine += Space( 1 )
+      cLine += Replicate( "-", 12 )
+      cTxt += Space( 1 )
+      cTxt += PadR( __tp5, 12 )
+   ENDIF
 
-? cLine
-? cTxt
-? cLine
+   ? cLine
+   ? cTxt
+   ? cLine
 
-return
+   RETURN
 
 
 
@@ -389,246 +393,245 @@ return
 // ----------------------------------------------------------
 // printanje reporta
 // ----------------------------------------------------------
-static function _print_rpt( )
-local cLine
-local nU_sati := 0
-local nU_bruto := 0 
-local nU_neto := 0
-local nU_d_pio := 0
-local nU_d_nez := 0
-local nU_d_zdr := 0
-local nU_i_por := 0
-local nU_o_por := 0
-local nU_tp_1 := 0
-local nU_tp_2 := 0
-local nU_tp_3 := 0
-local nU_tp_4 := 0
-local nU_tp_5 := 0
-local nT_sati := 0
-local nT_bruto := 0 
-local nT_neto := 0
-local nT_d_pio := 0
-local nT_d_nez := 0
-local nT_d_zdr := 0
-local nT_i_por := 0
-local nT_o_por := 0
-local nT_tp_1 := 0
-local nT_tp_2 := 0
-local nT_tp_3 := 0
-local nT_tp_4 := 0
-local nT_tp_5 := 0
-local nCol := 15
+STATIC FUNCTION _print_rpt()
 
-select r_export
-set order to tag "1"
-go top
+   LOCAL cLine
+   LOCAL nU_sati := 0
+   LOCAL nU_bruto := 0
+   LOCAL nU_neto := 0
+   LOCAL nU_d_pio := 0
+   LOCAL nU_d_nez := 0
+   LOCAL nU_d_zdr := 0
+   LOCAL nU_i_por := 0
+   LOCAL nU_o_por := 0
+   LOCAL nU_tp_1 := 0
+   LOCAL nU_tp_2 := 0
+   LOCAL nU_tp_3 := 0
+   LOCAL nU_tp_4 := 0
+   LOCAL nU_tp_5 := 0
+   LOCAL nT_sati := 0
+   LOCAL nT_bruto := 0
+   LOCAL nT_neto := 0
+   LOCAL nT_d_pio := 0
+   LOCAL nT_d_nez := 0
+   LOCAL nT_d_zdr := 0
+   LOCAL nT_i_por := 0
+   LOCAL nT_o_por := 0
+   LOCAL nT_tp_1 := 0
+   LOCAL nT_tp_2 := 0
+   LOCAL nT_tp_3 := 0
+   LOCAL nT_tp_4 := 0
+   LOCAL nT_tp_5 := 0
+   LOCAL nCol := 15
 
-START PRINT CRET
+   SELECT r_export
+   SET ORDER TO TAG "1"
+   GO TOP
 
-?
-? "Pregled utroska po objektima za: ", STR(__mj_od) + "/" + STR(__god_od)
-?
+   START PRINT CRET
 
-P_COND2
+   ?
+   ? "Pregled utroska po objektima za: ", Str( __mj_od ) + "/" + Str( __god_od )
+   ?
 
-_g_line( @cLine ) 
+   P_COND2
 
-nCnt := 0
-do while !EOF()
+   _g_line( @cLine )
 
-	// n.str
-	//if prow() > 64 
-	//	FF
-	//endif
+   nCnt := 0
+   DO WHILE !Eof()
+
+      // n.str
+      // if prow() > 64
+      // FF
+      // endif
 	
-	cGr_id := field->group
+      cGr_id := field->group
 
-	nU_sati := 0
-	nU_bruto := 0 
-	nU_neto := 0
-	nU_d_pio := 0
-	nU_d_nez := 0
-	nU_d_zdr := 0
-	nU_i_por := 0
-	nU_o_por := 0
-	nU_tp_1 := 0
-	nU_tp_2 := 0
-	nU_tp_3 := 0
-	nU_tp_4 := 0
-	nU_tp_5 := 0
+      nU_sati := 0
+      nU_bruto := 0
+      nU_neto := 0
+      nU_d_pio := 0
+      nU_d_nez := 0
+      nU_d_zdr := 0
+      nU_i_por := 0
+      nU_o_por := 0
+      nU_tp_1 := 0
+      nU_tp_2 := 0
+      nU_tp_3 := 0
+      nU_tp_4 := 0
+      nU_tp_5 := 0
 
-	? SPACE(1), "Objekat: ", ;
-		"(" + cGr_id + ")", ;
-		PADR( g_gr_naz( cGr_id ), 30 )
+      ? Space( 1 ), "Objekat: ", ;
+         "(" + cGr_id + ")", ;
+         PadR( g_gr_naz( cGr_id ), 30 )
 
-	do while !EOF() .and. field->group == cGr_id
+      DO WHILE !Eof() .AND. field->group == cGr_id
 
-		// n.str
-		//if prow() > 64 
-		//	FF
-		//endif
+         // n.str
+         // if prow() > 64
+         // FF
+         // endif
 
-		? PADL( ALLTRIM(STR(++nCnt)) + ".", 5 )
-		@ prow(), pcol()+1 SAY PADR( _rad_ime(field->idradn), 30 )
-		@ prow(), nCol:=pcol()+1 SAY STR(field->sati, 8, 2)
-		@ prow(), pcol()+1 SAY STR(field->bruto, 12, 2)
-		@ prow(), pcol()+1 SAY STR(field->neto, 12, 2)
-		@ prow(), pcol()+1 SAY STR(field->dop_pio, 12, 2)
-		@ prow(), pcol()+1 SAY STR(field->dop_zdr, 12, 2)
-		@ prow(), pcol()+1 SAY STR(field->dop_nez, 12, 2)
-		@ prow(), pcol()+1 SAY STR(field->izn_por, 12, 2)
+         ? PadL( AllTrim( Str( ++nCnt ) ) + ".", 5 )
+         @ PRow(), PCol() + 1 SAY PadR( _rad_ime( field->idradn ), 30 )
+         @ PRow(), nCol := PCol() + 1 SAY Str( field->sati, 8, 2 )
+         @ PRow(), PCol() + 1 SAY Str( field->bruto, 12, 2 )
+         @ PRow(), PCol() + 1 SAY Str( field->neto, 12, 2 )
+         @ PRow(), PCol() + 1 SAY Str( field->dop_pio, 12, 2 )
+         @ PRow(), PCol() + 1 SAY Str( field->dop_zdr, 12, 2 )
+         @ PRow(), PCol() + 1 SAY Str( field->dop_nez, 12, 2 )
+         @ PRow(), PCol() + 1 SAY Str( field->izn_por, 12, 2 )
 
-		if !EMPTY( __tp1 )
-			@ prow(), pcol()+1 SAY STR(field->tp_1, 12, 2)
-		endif
-		if !EMPTY( __tp2 )
-			@ prow(), pcol()+1 SAY STR(field->tp_2, 12, 2)
-		endif
-		if !EMPTY( __tp3 )
-			@ prow(), pcol()+1 SAY STR(field->tp_3, 12, 2)
-		endif
-		if !EMPTY( __tp4 )
-			@ prow(), pcol()+1 SAY STR(field->tp_4, 12, 2)
-		endif
-		if !EMPTY( __tp5 )
-			@ prow(), pcol()+1 SAY STR(field->tp_5, 12, 2)
-		endif
+         IF !Empty( __tp1 )
+            @ PRow(), PCol() + 1 SAY Str( field->tp_1, 12, 2 )
+         ENDIF
+         IF !Empty( __tp2 )
+            @ PRow(), PCol() + 1 SAY Str( field->tp_2, 12, 2 )
+         ENDIF
+         IF !Empty( __tp3 )
+            @ PRow(), PCol() + 1 SAY Str( field->tp_3, 12, 2 )
+         ENDIF
+         IF !Empty( __tp4 )
+            @ PRow(), PCol() + 1 SAY Str( field->tp_4, 12, 2 )
+         ENDIF
+         IF !Empty( __tp5 )
+            @ PRow(), PCol() + 1 SAY Str( field->tp_5, 12, 2 )
+         ENDIF
 
-		nU_sati += field->sati
-		nU_bruto += field->bruto
-		nU_neto += field->neto
-		nU_d_pio += field->dop_pio
-		nU_d_nez += field->dop_nez
-		nU_d_zdr += field->dop_zdr
-		nU_i_por += field->izn_por
-		nU_o_por += field->osn_por
-		nU_tp_1 += field->tp_1
-		nU_tp_2 += field->tp_2
-		nU_tp_3 += field->tp_3
-		nU_tp_4 += field->tp_4
-		nU_tp_5 += field->tp_5
+         nU_sati += field->sati
+         nU_bruto += field->bruto
+         nU_neto += field->neto
+         nU_d_pio += field->dop_pio
+         nU_d_nez += field->dop_nez
+         nU_d_zdr += field->dop_zdr
+         nU_i_por += field->izn_por
+         nU_o_por += field->osn_por
+         nU_tp_1 += field->tp_1
+         nU_tp_2 += field->tp_2
+         nU_tp_3 += field->tp_3
+         nU_tp_4 += field->tp_4
+         nU_tp_5 += field->tp_5
 		
-		nT_sati += field->sati
-		nT_bruto += field->bruto
-		nT_neto += field->neto
-		nT_d_pio += field->dop_pio
-		nT_d_nez += field->dop_nez
-		nT_d_zdr += field->dop_zdr
-		nT_i_por += field->izn_por
-		nT_o_por += field->osn_por
-		nT_tp_1 += field->tp_1
-		nT_tp_2 += field->tp_2
-		nT_tp_3 += field->tp_3
-		nT_tp_4 += field->tp_4
-		nT_tp_5 += field->tp_5
+         nT_sati += field->sati
+         nT_bruto += field->bruto
+         nT_neto += field->neto
+         nT_d_pio += field->dop_pio
+         nT_d_nez += field->dop_nez
+         nT_d_zdr += field->dop_zdr
+         nT_i_por += field->izn_por
+         nT_o_por += field->osn_por
+         nT_tp_1 += field->tp_1
+         nT_tp_2 += field->tp_2
+         nT_tp_3 += field->tp_3
+         nT_tp_4 += field->tp_4
+         nT_tp_5 += field->tp_5
 
-		skip
-	enddo
+         SKIP
+      ENDDO
 
-	// total po grupi....
-	? cLine
-	? PADL( "Ukupno " + cGr_id + ":", 25 )
-	@ prow(), nCol SAY STR( nU_sati, 8, 2 )
-	@ prow(), pcol()+1 SAY STR( nU_bruto, 12, 2 )
-	@ prow(), pcol()+1 SAY STR( nU_neto, 12, 2 )
-	@ prow(), pcol()+1 SAY STR( nU_d_pio, 12, 2 )
-	@ prow(), pcol()+1 SAY STR( nU_d_zdr, 12, 2 )
-	@ prow(), pcol()+1 SAY STR( nU_d_nez, 12, 2 )
-	@ prow(), pcol()+1 SAY STR( nU_i_por, 12, 2 )
+      // total po grupi....
+      ? cLine
+      ? PadL( "Ukupno " + cGr_id + ":", 25 )
+      @ PRow(), nCol SAY Str( nU_sati, 8, 2 )
+      @ PRow(), PCol() + 1 SAY Str( nU_bruto, 12, 2 )
+      @ PRow(), PCol() + 1 SAY Str( nU_neto, 12, 2 )
+      @ PRow(), PCol() + 1 SAY Str( nU_d_pio, 12, 2 )
+      @ PRow(), PCol() + 1 SAY Str( nU_d_zdr, 12, 2 )
+      @ PRow(), PCol() + 1 SAY Str( nU_d_nez, 12, 2 )
+      @ PRow(), PCol() + 1 SAY Str( nU_i_por, 12, 2 )
 	
-	if !EMPTY( __tp1 )
-		@ prow(), pcol()+1 SAY STR( nU_tp_1, 12, 2 )
-	endif
-	if !EMPTY( __tp2 )
-		@ prow(), pcol()+1 SAY STR( nU_tp_2, 12, 2 )
-	endif
-	if !EMPTY( __tp3 )
-		@ prow(), pcol()+1 SAY STR( nU_tp_3, 12, 2 )
-	endif
-	if !EMPTY( __tp4 )
-		@ prow(), pcol()+1 SAY STR( nU_tp_4, 12, 2 )
-	endif
-	if !EMPTY( __tp5 )
-		@ prow(), pcol()+1 SAY STR( nU_tp_5, 12, 2 )
-	endif
+      IF !Empty( __tp1 )
+         @ PRow(), PCol() + 1 SAY Str( nU_tp_1, 12, 2 )
+      ENDIF
+      IF !Empty( __tp2 )
+         @ PRow(), PCol() + 1 SAY Str( nU_tp_2, 12, 2 )
+      ENDIF
+      IF !Empty( __tp3 )
+         @ PRow(), PCol() + 1 SAY Str( nU_tp_3, 12, 2 )
+      ENDIF
+      IF !Empty( __tp4 )
+         @ PRow(), PCol() + 1 SAY Str( nU_tp_4, 12, 2 )
+      ENDIF
+      IF !Empty( __tp5 )
+         @ PRow(), PCol() + 1 SAY Str( nU_tp_5, 12, 2 )
+      ENDIF
 	
-	? 
+      ?
 
-enddo
+   ENDDO
 
-// total za sve....
-? cLine
-? "UKUPNO: "
-@ prow(), nCol SAY STR( nT_sati, 8, 2 )
-@ prow(), pcol()+1 SAY STR( nT_bruto, 12, 2 )
-@ prow(), pcol()+1 SAY STR( nT_neto, 12, 2 )
-@ prow(), pcol()+1 SAY STR( nT_d_pio, 12, 2 )
-@ prow(), pcol()+1 SAY STR( nT_d_zdr, 12, 2 )
-@ prow(), pcol()+1 SAY STR( nT_d_nez, 12, 2 )
-@ prow(), pcol()+1 SAY STR( nT_i_por, 12, 2 )
+   // total za sve....
+   ? cLine
+   ? "UKUPNO: "
+   @ PRow(), nCol SAY Str( nT_sati, 8, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nT_bruto, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nT_neto, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nT_d_pio, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nT_d_zdr, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nT_d_nez, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nT_i_por, 12, 2 )
 	
-if !EMPTY( __tp1 )
-	@ prow(), pcol()+1 SAY STR( nT_tp_1, 12, 2 )
-endif
-if !EMPTY( __tp2 )
-	@ prow(), pcol()+1 SAY STR( nT_tp_2, 12, 2 )
-endif
-if !EMPTY( __tp3 )
-	@ prow(), pcol()+1 SAY STR( nT_tp_3, 12, 2 )
-endif
-if !EMPTY( __tp4 )
-	@ prow(), pcol()+1 SAY STR( nT_tp_4, 12, 2 )
-endif
-if !EMPTY( __tp5 )
-	@ prow(), pcol()+1 SAY STR( nT_tp_5, 12, 2 )
-endif
+   IF !Empty( __tp1 )
+      @ PRow(), PCol() + 1 SAY Str( nT_tp_1, 12, 2 )
+   ENDIF
+   IF !Empty( __tp2 )
+      @ PRow(), PCol() + 1 SAY Str( nT_tp_2, 12, 2 )
+   ENDIF
+   IF !Empty( __tp3 )
+      @ PRow(), PCol() + 1 SAY Str( nT_tp_3, 12, 2 )
+   ENDIF
+   IF !Empty( __tp4 )
+      @ PRow(), PCol() + 1 SAY Str( nT_tp_4, 12, 2 )
+   ENDIF
+   IF !Empty( __tp5 )
+      @ PRow(), PCol() + 1 SAY Str( nT_tp_5, 12, 2 )
+   ENDIF
 	
-? cLine
+   ? cLine
 
-FF
-END PRINT
+   FF
+   END PRINT
 
-return
+   RETURN
 
 
 // ---------------------------------------------
 // kreiranje pomocne tabele
 // ---------------------------------------------
-static function cre_tmp_tbl()
-local aDbf := {}
+STATIC FUNCTION cre_tmp_tbl()
 
-AADD(aDbf,{ "IDRADN", "C", 6, 0 })
-AADD(aDbf,{ "R_NAZ", "C", 30, 0 })
-AADD(aDbf,{ "GROUP", "C", 7, 0 })
-AADD(aDbf,{ "GR_NAZ", "C", 50, 0 })
-AADD(aDbf,{ "NAZIV", "C", 15, 0 })
-AADD(aDbf,{ "MJESEC", "N", 2, 0 })
-AADD(aDbf,{ "GODINA", "N", 4, 0 })
-AADD(aDbf,{ "TP_1", "N", 12, 2 })
-AADD(aDbf,{ "TP_2", "N", 12, 2 })
-AADD(aDbf,{ "TP_3", "N", 12, 2 })
-AADD(aDbf,{ "TP_4", "N", 12, 2 })
-AADD(aDbf,{ "TP_5", "N", 12, 2 })
-AADD(aDbf,{ "SATI", "N", 12, 2 })
-AADD(aDbf,{ "PRIHOD", "N", 12, 2 })
-AADD(aDbf,{ "BRUTO", "N", 12, 2 })
-AADD(aDbf,{ "DOP_PIO", "N", 12, 2 })
-AADD(aDbf,{ "DOP_ZDR", "N", 12, 2 })
-AADD(aDbf,{ "DOP_NEZ", "N", 12, 2 })
-AADD(aDbf,{ "DOP_UK", "N", 12, 2 })
-AADD(aDbf,{ "NETO", "N", 12, 2 })
-AADD(aDbf,{ "OSN_POR", "N", 12, 2 })
-AADD(aDbf,{ "IZN_POR", "N", 12, 2 })
-AADD(aDbf,{ "UKUPNO", "N", 12, 2 })
+   LOCAL aDbf := {}
 
-t_exp_create( aDbf )
+   AAdd( aDbf, { "IDRADN", "C", 6, 0 } )
+   AAdd( aDbf, { "R_NAZ", "C", 30, 0 } )
+   AAdd( aDbf, { "GROUP", "C", 7, 0 } )
+   AAdd( aDbf, { "GR_NAZ", "C", 50, 0 } )
+   AAdd( aDbf, { "NAZIV", "C", 15, 0 } )
+   AAdd( aDbf, { "MJESEC", "N", 2, 0 } )
+   AAdd( aDbf, { "GODINA", "N", 4, 0 } )
+   AAdd( aDbf, { "TP_1", "N", 12, 2 } )
+   AAdd( aDbf, { "TP_2", "N", 12, 2 } )
+   AAdd( aDbf, { "TP_3", "N", 12, 2 } )
+   AAdd( aDbf, { "TP_4", "N", 12, 2 } )
+   AAdd( aDbf, { "TP_5", "N", 12, 2 } )
+   AAdd( aDbf, { "SATI", "N", 12, 2 } )
+   AAdd( aDbf, { "PRIHOD", "N", 12, 2 } )
+   AAdd( aDbf, { "BRUTO", "N", 12, 2 } )
+   AAdd( aDbf, { "DOP_PIO", "N", 12, 2 } )
+   AAdd( aDbf, { "DOP_ZDR", "N", 12, 2 } )
+   AAdd( aDbf, { "DOP_NEZ", "N", 12, 2 } )
+   AAdd( aDbf, { "DOP_UK", "N", 12, 2 } )
+   AAdd( aDbf, { "NETO", "N", 12, 2 } )
+   AAdd( aDbf, { "OSN_POR", "N", 12, 2 } )
+   AAdd( aDbf, { "IZN_POR", "N", 12, 2 } )
+   AAdd( aDbf, { "UKUPNO", "N", 12, 2 } )
 
-O_R_EXP
+   t_exp_create( aDbf )
 
-// index on ......
-index on group + idradn + STR(godina,4) + STR(mjesec,2) tag "1"
+   O_R_EXP
 
-return
+   // index on ......
+   INDEX ON group + idradn + Str( godina, 4 ) + Str( mjesec, 2 ) TAG "1"
 
-
-
+   RETURN

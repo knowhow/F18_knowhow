@@ -15,15 +15,14 @@
 STATIC DUZ_STRANA := 64
 
 
-
-FUNCTION ld_kartica_plate_ugovori( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNeta )
+FUNCTION ld_kartica_plate_upravni_odbor( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNeta )
 
    LOCAL nKRedova
    LOCAL cDoprSpace := Space( 3 )
    LOCAL cTprLine
    LOCAL cDoprLine
    LOCAL cMainLine
-   LOCAL _a_benef := {}
+   LOCAL _a_benef
    PRIVATE cLMSK := ""
 
    cTprLine := _gtprline()
@@ -39,11 +38,13 @@ FUNCTION ld_kartica_plate_ugovori( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNe
    nRRsati := 0
    nOsnNeto := 0
    nOsnOstalo := 0
-   // nLicOdbitak := g_licni_odb( radn->id )
    nLicOdbitak := ld->ulicodb
    nKoefOdbitka := radn->klo
    cRTipRada := g_tip_rada( ld->idradn, ld->idrj )
-   cTrosk := radn->trosk
+
+   ? cTprLine
+   ? cLMSK + Lokal( " Vrsta                  Opis         sati/iznos             ukupno" )
+   ? cTprLine
 
    FOR i := 1 TO cLDPolja
 
@@ -75,6 +76,49 @@ FUNCTION ld_kartica_plate_ugovori( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNe
          ENDIF
       ENDIF
 
+      IF tippr->uneto == "N" .AND. cUneto == "D"
+
+         cUneto := "N"
+
+         ? cTprLine
+         ? cLMSK + Lokal( "Ukupna oporeziva primanja:" )
+         @ PRow(), nC1 + 8  SAY  _USati  PICT gpics
+         ?? Space( 1 ) + Lokal( "sati" )
+         @ PRow(), 60 + Len( cLMSK ) SAY _UNeto PICT gpici
+         ?? "", gValuta
+         ? cTprLine
+
+      ENDIF
+
+      IF tippr->( Found() ) .AND. tippr->aktivan == "D"
+
+         IF _i&cpom <> 0 .OR. _s&cPom <> 0
+
+            cTpNaz := tippr->naz
+
+            ? cLMSK + tippr->id + "-" + PadR( cTpNaz, Len( tippr->naz ) ), tippr->opis
+            nC1 := PCol()
+
+            IF tippr->fiksan $ "DN"
+
+               @ PRow(), PCol() + 8 SAY _s&cPom  PICT gpics
+               ?? " s"
+               @ PRow(), 60 + Len( cLMSK ) SAY _i&cPom PICT gpici
+
+            ELSEIF tippr->fiksan == "P"
+
+               @ PRow(), PCol() + 8 SAY _s&cPom  PICT "999.99%"
+               @ PRow(), 60 + Len( cLMSK ) SAY _i&cPom        PICT gpici
+            ELSEIF tippr->fiksan == "B"
+
+               @ PRow(), PCol() + 8 SAY _s&cPom  PICT "999999"; ?? " b"
+               @ PRow(), 60 + Len( cLMSK ) SAY _i&cPom        PICT gpici
+            ELSEIF tippr->fiksan == "C"
+
+               @ PRow(), 60 + Len( cLMSK ) SAY _i&cPom        PICT gpici
+            ENDIF
+         ENDIF
+      ENDIF
    NEXT
 
    SELECT ( F_POR )
@@ -99,56 +143,15 @@ FUNCTION ld_kartica_plate_ugovori( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNe
    nBFO := 0
    nBSaTr := 0
    nTrosk := 0
-   nTrProc := 0
+
    nOsnZaBr := nOsnNeto
 
-   // radi li se o RS-u ?
-   lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad )
-
-   // bruto sa troskovima
-   nBSaTr := bruto_osn( nOsnZaBr, cRTipRada, nLicOdbitak, nil, cTrosk )
-
-   // troskovi su
-   IF cRTipRada == "U"
-      // ugovor o djelu
-      nTrProc := gUgTrosk
-   ELSE
-      // autorski honorar
-      nTrProc := gAhTrosk
-   ENDIF
-
-   IF cTrosk == "N"
-      nTrProc := 0
-   ENDIF
-
-   IF lInRS == .T.
-      nTrProc := 0
-   ENDIF
-
-   nTrosk := nBSaTr * ( nTrProc / 100 )
-
-   // ako je RS, nema troskova
-   IF lInRS == .T.
-      nTrosk := 0
-   ENDIF
-
-   // bruto osnovica za obracun doprinosa i poreza
-   nBo :=  nBSaTr - nTrosk
+   nBo := bruto_osn( nOsnZaBr, cRTipRada, nLicOdbitak )
 
    // bruto placa iz neta...
 
    ? cMainLine
-   ? cLMSK + "1. BRUTO SA TROSKOVIMA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak, nil, cTrosk )
-
-   @ PRow(), 60 + Len( cLMSK ) SAY nBSaTr PICT gpici
-
-   ? cMainLine
-   ? cLMSK + "2. TROSKOVI :  ", " 1 * " + AllTrim( Str( nTrProc ) ) + "% ="
-
-   @ PRow(), 60 + Len( cLMSK ) SAY nTrosk PICT gpici
-
-   ? cMainLine
-   ? cLMSK + "3. BRUTO BEZ TROSKOVA :  ", "(1 - 2) ="
+   ? cLMSK + "1. BRUTO NAKNADA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak )
 
    @ PRow(), 60 + Len( cLMSK ) SAY nBo PICT gpici
 
@@ -169,12 +172,7 @@ FUNCTION ld_kartica_plate_ugovori( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNe
 
    DO WHILE !Eof()
 
-      IF dopr->tiprada <> cRTipRada
-         SKIP
-         LOOP
-      ENDIF
-
-      IF lInRS == .T. .AND. Left( dopr->id, 1 ) <> "2"
+      IF dopr->tiprada <> "P"
          SKIP
          LOOP
       ENDIF
@@ -216,7 +214,12 @@ FUNCTION ld_kartica_plate_ugovori( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNe
          ENDIF
 
       ELSE
-         nPom2 := get_benef_osnovica( _a_benef, idkbenef )
+         nPom0 := AScan( _a_benef, {| x| x[ 1 ] == idkbenef } )
+         IF nPom0 <> 0
+            nPom2 := _a_benef[ nPom0, 3 ]
+         ELSE
+            nPom2 := 0
+         ENDIF
          IF Round( nPom2, gZaok2 ) <> 0
             @ PRow(), PCol() + 1 SAY nPom2 PICT gpici
             nC1 := PCol() + 1
@@ -241,17 +244,13 @@ FUNCTION ld_kartica_plate_ugovori( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNe
 
    ENDDO
 
+
    nOporDoh := nBo - nUkDoprIz
-
-   IF lInRS == .T.
-      nOporDoh := 0
-   ENDIF
-
 
    // oporezivi dohodak ......
 
    ? cMainLine
-   ?  cLMSK + Lokal( "4. NETO IZNOS NAKNADE ( bruto - dopr.IZ )" )
+   ?  cLMSK + Lokal( "2. NETO IZNOS NAKNADE ( bruto - dopr.IZ )" )
    @ PRow(), 60 + Len( cLMSK ) SAY nOporDoh PICT gpici
 
    ? cMainLine
@@ -266,7 +265,7 @@ FUNCTION ld_kartica_plate_ugovori( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNe
    // razrada poreza na platu ....
    // u ovom dijelu idu samo porezi na bruto TIP = "B"
 
-   ? cLMSK + Lokal( "5. AKONTACIJA POREZA NA DOHODAK" )
+   ? cLMSK + Lokal( "3. AKONTACIJA POREZA NA DOHODAK" )
 
    SELECT por
    GO TOP
@@ -306,17 +305,12 @@ FUNCTION ld_kartica_plate_ugovori( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNe
    @ PRow(), 60 + Len( cLMSK ) SAY nPor PICT gpici
 
    // ukupno za isplatu ....
-   nZaIsplatu := ROUND2( ( nOporDoh - nPor ) + nTrosk, gZaok2 )
-
-   IF lInRS == .T.
-      // ispalata = neto
-      nZaIsplatu := nOsnZaBr
-   ENDIF
+   nZaIsplatu := ( nOporDoh - nPor )
 
    ?
 
    ? cMainLine
-   ?  cLMSK + Lokal( "UKUPNO ZA ISPLATU ( 4 - 5 + 2 )" )
+   ? cLMSK + Lokal( "UKUPNO ZA ISPLATU ( 4 - 5 )" )
    @ PRow(), 60 + Len( cLMSK ) SAY nZaIsplatu PICT gpici
 
    ? cMainLine

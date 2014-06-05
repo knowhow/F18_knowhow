@@ -4,6 +4,7 @@
   - FIN, bruto bilans, odt ili txt na vrhu izvještaja
   - LD, mip obrazac, kontrola datuma isplate
   - RNAL, unos artikla, odabir šeme ESC bugfix
+  - fiskalne funkcije POS, pogrešan fajl odgovora handliranje, lockovanje fajla odgovora
  
 1.7.95  2014-06-02, vsasa
 

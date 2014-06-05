@@ -13,19 +13,14 @@
 #include "rnal.ch"
 
 
-// variables
 STATIC l_open_dbedit
 STATIC par_count
 STATIC _art_id
 STATIC l_quick_find
 STATIC __art_sep
-// article separator
 STATIC __mc_sep
-// match code separator
 STATIC __qf_cond
-// quick find condition
 STATIC __aop_sep
-// addops separator
 
 
 
@@ -138,9 +133,6 @@ FUNCTION s_articles( cId, lAutoFind, lQuickFind )
 
 
 
-// -----------------------------------------
-// setovanje kolona tabele
-// -----------------------------------------
 STATIC FUNCTION set_a_kol( aImeKol, aKol )
 
    aKol := {}
@@ -363,7 +355,9 @@ STATIC FUNCTION odaberi_shemu_artikla( cSchema, nType )
 
    f18_menu( "schema", .F., @izbor, opc, opcexe )
 
-   cSchema := AllTrim( aSch[ nSelect, 1 ] )
+   IF LastKey() <> K_ESC .OR. nSelect > 0
+      cSchema := AllTrim( aSch[ nSelect, 1 ] )
+   ENDIF
 
    RETURN .T.
 

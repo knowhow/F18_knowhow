@@ -50,7 +50,6 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
       lNew := .F.
    ENDIF
 
-   // ako ga nema definisanog ili ako je OSTALO onda je 0 - sve ide po starom
    IF nArtType == nil
       nArtType := 0
    ENDIF
@@ -61,39 +60,30 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
    __el_schema := "----"
 
    IF nArtType <> 0
-	
       __el_schema := cSchema
-	
-      // dodaj atribute automatski prema shemi
-      auto_el_gen( nArt_id, nArtType, cSchema )
-	
+      IF !EMPTY( cSchema )
+          generisi_elemente_iz_sheme( nArt_id, nArtType, cSchema )
+      ENDIF
    ENDIF
-
-   // bilo x = 21
-   // bilo y = 77
 
    Box(, __box_x, __box_y )
 
    @ m_x, m_y + 15 SAY " DEFINISANJE ELEMENATA ARTIKLA: " + artid_str( art_id ) + " "
 
-   @ m_x + __box_x - 1, m_y + 1 SAY Replicate( "Õ", __box_y + 1 ) COLOR cLineClr
+   @ m_x + __box_x - 1, m_y + 1 SAY Replicate( "√ç", __box_y + 1 ) COLOR cLineClr
 
    @ m_x + __box_x - 4, m_y + 1 SAY "<c+N> nova"
    @ m_x + __box_x - 3, m_y + 1 SAY "<F2> ispravka"
    @ m_x + __box_x - 2, m_y + 1 SAY "<c+T> brisi"
    @ m_x + __box_x, m_y + 1 SAY "<TAB>-brow.tabela | <ESC> snimi "
 
-   // na dnu dodaj i schemu da se zna sta se pravi...
-
    _sh_piccode( __el_schema )
 
-   // vertikalna crta
    FOR i := 1 to ( __box_x - 2 )
-      @ m_x + i, m_y + __box_x SAY "∫" COLOR cLineClr
+      @ m_x + i, m_y + __box_x SAY "¬∫" COLOR cLineClr
    NEXT
 
-   // horizontalna crta
-   @ m_x + ( __box_x / 2 ), m_y + __box_x + 1 SAY Replicate( "Õ", ( __box_y - __box_x ) + 1 ) COLOR cLineClr
+   @ m_x + ( __box_x / 2 ), m_y + __box_x + 1 SAY Replicate( "√ç", ( __box_y - __box_x ) + 1 ) COLOR cLineClr
 
    SELECT e_att
    GO TOP
@@ -209,10 +199,7 @@ STATIC FUNCTION _o_tables()
 
 
 
-// ------------------------------------------------
-// automatska shema elemenata prema tip artikla
-// ------------------------------------------------
-FUNCTION auto_el_gen( nArt_id, nArtType, cSchema, nStartFrom )
+FUNCTION generisi_elemente_iz_sheme( nArt_id, nArtType, cSchema, nStartFrom )
 
    LOCAL nTArea := Select()
    LOCAL aSchema
@@ -765,17 +752,11 @@ STATIC FUNCTION el_convert( nEl_id, nEl_gr_id, nArt_id )
    LOCAL nFolNr := 1
    LOCAL cGr_code
 
-   // uzmi "kod" grupe
    cGr_code := AllTrim( g_e_gr_desc( nEl_gr_id, nil, .F. ) )
 
    IF cGr_code <> AllTrim( gGlassJoker )
-
-      // ako nije staklo ...
-	
-      msgbeep( "Konverzija se vrsi samo na elementu tipa staklo !!!" )
-	
+      msgbeep( "Konverzija se vr≈°i samo na elementu tipa staklo !!!" )
       RETURN nRet
-
    ENDIF
 
    Box(, 10, 60 )
@@ -810,10 +791,7 @@ STATIC FUNCTION el_convert( nEl_id, nEl_gr_id, nArt_id )
 
 
    IF cSelect == "1"
-	
-      // lami staklo
-      a_lami_gen( field->el_no, nFolNr, nArt_id )
-	
+      rnal_generisi_lamistal_staklo( field->el_no, nFolNr, nArt_id )
       nRet := DE_REFRESH
 	
    ENDIF
@@ -821,13 +799,8 @@ STATIC FUNCTION el_convert( nEl_id, nEl_gr_id, nArt_id )
    RETURN nRet
 
 
-// -----------------------------------------------------------
-// unconfigure element
-// -----------------------------------------------------------
 STATIC FUNCTION el_restore()
-
    LOCAL nRet := DE_CONT
-
    RETURN nRet
 
 

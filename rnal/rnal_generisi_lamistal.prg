@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -18,77 +18,63 @@
 // nEl_nr - redni broj elementa
 // nFolNr - broj folija lami stakla
 // --------------------------------------------------
-function a_lami_gen( nEl_nr, nFolNr, nArt_id )
-local i
-local nTRec := RECNO()
-local nLastNo
-local cTmp
-local cSchema
-local lLast := .t.
-local _rec
+FUNCTION rnal_generisi_lamistal_staklo( nEl_nr, nFolNr, nArt_id )
 
-do while !EOF() .and. field->art_id == nArt_id
-	lLast := .f.
-	skip
-enddo
+   LOCAL i
+   LOCAL nTRec := RecNo()
+   LOCAL nLastNo
+   LOCAL cTmp
+   LOCAL cSchema
+   LOCAL lLast := .T.
+   LOCAL _rec
 
-skip -1
+   DO WHILE !Eof() .AND. field->art_id == nArt_id
+      lLast := .F.
+      SKIP
+   ENDDO
 
-// ne radi se o zadnjem zapisu....
-if lLast == .f.
+   SKIP -1
 
-	nLastNo := field->el_no
+   IF lLast == .F.
 
-	// skontaj koliko treba praznih mjesta....
-	nNewNo := nLastNo + ( nFolNr * 2 )
+      nLastNo := field->el_no
+      nNewNo := nLastNo + ( nFolNr * 2 )
 
-	do while !BOF() .and. field->art_id == nArt_id
+      DO WHILE !Bof() .AND. field->art_id == nArt_id
 	
-		// ako si na odabranom record-u, izadji... on nam treba
-		if RECNO() == nTRec
-			exit
-		endif
+         IF RecNo() == nTRec
+            EXIT
+         ENDIF
 		
-        _rec := dbf_get_rec()
-        _rec["el_no"] := nNewNo
-        dbf_update_rec( _rec )
+         _rec := dbf_get_rec()
+         _rec[ "el_no" ] := nNewNo
+         dbf_update_rec( _rec )
 		
-        nNewNo -= 1
+         nNewNo -= 1
 
-		skip -1
+         SKIP -1
 
-	enddo
+      ENDDO
 
-endif
+   ENDIF
 
-// sada insert novih elemenata....
-nTRec := RECNO()
-cTmp := "FL-G"
-cSchema := ""
+   nTRec := RecNo()
+   cTmp := "FL-G"
+   cSchema := ""
 
-// skontaj koja je shema
-for i := 1 to nFolNr
+   FOR i := 1 TO nFolNr
 
-	if i <> 1
-		cSchema += "-"
-	endif
+      IF i <> 1
+         cSchema += "-"
+      ENDIF
 	
-	cSchema += cTmp
+      cSchema += cTmp
 
-next
+   NEXT
 
-// generisi auto elemente...
-auto_el_gen( nArt_id, nil, cSchema, nEl_nr )
+   generisi_elemente_iz_sheme( nArt_id, nil, cSchema, nEl_nr )
 
-return DE_REFRESH 
-
-
-
-// -------------------------------------------------------------
-// vraæanje lami stakla u prvobitni polozaj, obièno staklo
-// -------------------------------------------------------------
-function undo_lami_gen()
-return
+   RETURN DE_REFRESH
 
 
 

@@ -18,9 +18,6 @@ STATIC __ispl_s := 0
 
 
 
-// ---------------------------------------------------------
-// sortiranje tabele LD
-// ---------------------------------------------------------
 FUNCTION mip_sort( cRj, cGod, cMj, cRadnik, cObr )
 
    LOCAL cFilter := ""
@@ -58,9 +55,6 @@ FUNCTION mip_sort( cRj, cGod, cMj, cRadnik, cObr )
    RETURN
 
 
-// ---------------------------------------------
-// upisivanje podatka u pomocnu tabelu za rpt
-// ---------------------------------------------
 STATIC FUNCTION _ins_tbl( cRadnik, cIdRj, nGodina, nMjesec, ;
       cTipRada, cVrIspl, cR_ime, cR_jmb, cR_opc, dDatIsplate, ;
       nSati, nSatiB, nSatiT, nStUv, nBruto, nO_prih, nU_opor, ;
@@ -108,7 +102,6 @@ STATIC FUNCTION _ins_tbl( cRadnik, cIdRj, nGodina, nMjesec, ;
    REPLACE izn_por WITH nIzn_por
    REPLACE r_rmj WITH cR_rmj
 
-   // bolovanje preko 42 dana ili slicno
    IF lBolPreko = .T.
       REPLACE bol_preko WITH "1"
    ELSE
@@ -121,9 +114,6 @@ STATIC FUNCTION _ins_tbl( cRadnik, cIdRj, nGodina, nMjesec, ;
 
 
 
-// ---------------------------------------------
-// kreiranje pomocne tabele
-// ---------------------------------------------
 FUNCTION mip_tmp_tbl()
 
    LOCAL aDbf := {}
@@ -166,7 +156,6 @@ FUNCTION mip_tmp_tbl()
    t_exp_create( aDbf )
 
    O_R_EXP
-   // index on ......
    INDEX ON idradn + Str( godina, 4 ) + Str( mjesec, 2 ) + vr_ispl TAG "1"
 
    RETURN
@@ -207,7 +196,6 @@ FUNCTION ld_mip_obrazac()
    LOCAL cMipView := "N"
    LOCAL _pojed := .F.
 
-   // kreiraj pomocnu tabelu
    mip_tmp_tbl()
 
    cIdRj := gRj
@@ -220,12 +208,12 @@ FUNCTION ld_mip_obrazac()
    cTp_bol := PadR( fetch_metric( "obracun_plata_mip_tip_pr_bolovanje", NIL, cTp_bol ), 100 )
    cBolPreko := PadR( fetch_metric( "obracun_plata_mip_tip_pr_bolovanje_42_dana", NIL, cBolPreko ), 100 )
    cDoprDod := PadR( fetch_metric( "obracun_plata_mip_dodatni_dopr_ut", NIL, cDoprDod ), 100 )
+   cRjDef := PadR( fetch_metric( "obracun_plata_mip_def_rj_isplata", NIL, cRjDef ), 2 )
    dDatPodn := Date()
 
    nPorGodina := 2011
    nBrZahtjeva := 1
 
-   // otvori tabele
    ol_o_tbl()
 
    Box( "#MIP OBRAZAC ZA RADNIKE", 20, 75 )
@@ -296,11 +284,14 @@ FUNCTION ld_mip_obrazac()
    ENDIF
 
    IF ld_provjeri_dat_isplate_za_mjesec( cGod, cMj, IF( !Empty( cRjDef ), cRjDef, NIL ) ) > 0
-      MsgBeep( "Generisanje onemogućeno, nisu definisani datumi isplata plate." )
+      IF !EMPTY( cRjDef )
+         MsgBeep( "Generisanje onemogućeno#Nije definisan datum isplate za radnu jedinicu '" + cRjDef +  "'" )
+      ELSE
+         MsgBeep( "Generisanje onemogućeno#Za pojedine radne jedinice nije definisan datum isplate." )
+      ENDIF
       RETURN
    ENDIF
 
-   // staticke
    __mj := cMj
    __god := cGod
 
@@ -310,43 +301,36 @@ FUNCTION ld_mip_obrazac()
       __xml := 0
    ENDIF
 
-   // saberi isplate
    IF cIsplSaberi == "D"
       __ispl_s := 1
    ENDIF
 
-   // upisi parametre...
    set_metric( "obracun_plata_preduzece_naziv", NIL, AllTrim( cPredNaz ) )
    set_metric( "obracun_plata_preduzece_id_broj", NIL, cPredJMB )
    set_metric( "obracun_plata_sifra_djelatnosti", NIL, cPredSDJ )
    set_metric( "obracun_plata_mip_tip_pr_bolovanje", NIL, AllTrim( cTp_bol ) )
    set_metric( "obracun_plata_mip_tip_pr_bolovanje_42_dana", NIL, AllTrim( cBolPreko ) )
    set_metric( "obracun_plata_mip_dodatni_dopr_ut", NIL, AllTrim( cDoprDod ) )
+   set_metric( "obracun_plata_mip_def_rj_isplata", NIL, cRjDef )
 
-   // ako je zadat radnik onda se stampa pojedinacni obrazac
    IF !Empty( cRadnik )
       _pojed := .T.
-      // mora se stampati, nema exporta...
       __xml := 1
    ENDIF
 
    SELECT ld
 
-   // sortiraj tabelu i postavi filter
    mip_sort( cRj, cGod, cMj, cRadnik, cObracun )
 
-   // nafiluj podatke obracuna
    mip_fill_data( cRj, cRjDef, cGod, cMj, cRadnik, ;
       cPrimDobra, cTP_off, cTP_bol, cBolPreko, cDopr10, cDopr11, cDopr12, ;
       cDopr1X, cDopr20, cDopr21, cDopr22, cDoprDod, cDopr2D, cObracun, ;
       cNule )
 
-   // pregled tabele prije exporta
    IF cMipView == "D"
       mip_view()
    ENDIF
 
-   // stampa izvjestaja xml/oo3
    IF __xml == 1
       _xml_print( _pojed )
    ELSE
@@ -358,9 +342,6 @@ FUNCTION ld_mip_obrazac()
    RETURN
 
 
-// -------------------------------------------------------
-// vraca dStart i dEnd za tekuci mjesec
-// -------------------------------------------------------
 STATIC FUNCTION _fix_d_per( nMj, nGod, dStart, dEnd )
 
    LOCAL cTmp := ""
@@ -384,9 +365,6 @@ STATIC FUNCTION _fix_d_per( nMj, nGod, dStart, dEnd )
    RETURN
 
 
-// ------------------------------------
-// header za export
-// ------------------------------------
 STATIC FUNCTION _xml_head()
 
    LOCAL cStr := '<?xml version="1.0" encoding="UTF-8"?><PaketniUvozObrazaca xmlns="urn:PaketniUvozObrazaca_V1_0.xsd">'
@@ -396,9 +374,6 @@ STATIC FUNCTION _xml_head()
    RETURN
 
 
-// ----------------------------------------
-// export xml-a
-// ----------------------------------------
 STATIC FUNCTION _xml_export( mjesec, godina )
 
    LOCAL _cre, cMsg, _id_br, _naziv, _adresa, _mjesto, _lokacija

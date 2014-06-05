@@ -217,7 +217,6 @@ STATIC FUNCTION k_handler()
       ENDDO
 
       my_unlock()
-      my_dbf_pack()
 
       SET ORDER TO TAG "BR_DOK"
       GO BOTTOM

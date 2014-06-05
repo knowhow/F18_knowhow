@@ -1,7 +1,9 @@
-1.7.96  2014-06-02, vsasa
+1.7.96  2014-06-05, vsasa
 
   - RNAL, danasnji_datum() umjesto DATE()
   - FIN, bruto bilans, odt ili txt na vrhu izvještaja
+  - LD, mip obrazac, kontrola datuma isplate
+  - RNAL, unos artikla, odabir šeme ESC bugfix
  
 1.7.95  2014-06-02, vsasa
 

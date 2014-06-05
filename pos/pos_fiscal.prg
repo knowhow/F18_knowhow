@@ -548,6 +548,8 @@ FUNCTION pos_da_li_je_racun_fiskalizovan( fisc_no )
 
    BoxC()
 
+   lOk := .T.
+
    RETURN lOk
 
 

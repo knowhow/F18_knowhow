@@ -74,7 +74,7 @@ if gPVrsteP
 endif
 
 if fiscal_opt_active()
-    AADD(opc,"F. fiskalni izvjeptaji i komande")
+    AADD(opc,"F. fiskalni izvještaji i komande")
     AADD(opcexe,{|| fiskalni_izvjestaji_komande( NIL, .t. ) })
 endif
 

@@ -1558,11 +1558,9 @@ STATIC FUNCTION _g_fisc_no( txt, storno )
 
    _a_tmp := toktoniz( txt, ";" )
    _fisc_txt := _a_tmp[ 2 ]
-
    _a_fisc := toktoniz( _fisc_txt, "," )
 
    IF Len( _a_fisc ) < 2
-      MsgBeep( "Izlazni fajl nije kompletan !#Pozovite servis." )
       log_write( "ERROR fiscal out, nema elemenata !", 3 )
       RETURN _fiscal_no
    ENDIF

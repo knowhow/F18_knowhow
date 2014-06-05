@@ -1506,11 +1506,11 @@ FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
       ENDIF
 
       IF "Er;" $ _err_line
+         _o_file:Close()
          _err_tmp := "FISC ERR:" + AllTrim( _err_line )
          log_write( _err_tmp, 2 )
          MsgBeep( _err_tmp )
          _err_level := 1
-         _o_file:Close()
          RETURN _err_level
       ENDIF
 	

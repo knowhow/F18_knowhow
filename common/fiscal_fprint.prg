@@ -1414,9 +1414,7 @@ FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
       time_out := dev_params[ "timeout" ]
    ENDIF
 
-   // TEST rezim
    IF dev_params[ "print_fiscal" ] == "T"
-      // sacekaj malo, vrati fiskalni broj 100 i izadji...
       MsgO( "TEST: emulacija štampe na fiskalni uređaj u toku..." )
       Sleep( 4 )
       MsgC()
@@ -1426,10 +1424,8 @@ FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
 
    _time := time_out
 
-   // primjer: c:\fprint\answer\answer.txt
    _f_name := dev_params[ "out_dir" ] + ANSW_DIR + SLASH + dev_params[ "out_answer" ]
 
-   // ako se koristi isti answer kao i input fajl
    IF Empty( AllTrim( dev_params[ "out_answer" ] ) )
       _f_name := dev_params[ "out_dir" ] + ANSW_DIR + SLASH + dev_params[ "out_file" ]
    ENDIF
@@ -1459,7 +1455,6 @@ FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
       IF _time == 0 .OR. LastKey() == K_ALT_Q
          log_write( "FISC ERR: timeout !", 2 )
          BoxC()
-
          fiscal_no := 0
          RETURN -9
       ENDIF
@@ -1488,28 +1483,21 @@ FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
    _o_file:Open()
 
    IF _o_file:Error()
-
       _err_tmp := "FISC ERR: " + _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " )
       log_write( _err_tmp, 2 )
       MsgBeep( _err_tmp )
       _err_level := -9
       RETURN _err_level
-
    ENDIF
 
    _tmp := ""
 
-   // prodji kroz svaku liniju i procitaj zapise
    WHILE _o_file:MoreToRead()
 	
-      // uzmi u cErr liniju fajla
       _err_line := hb_StrToUTF8( _o_file:ReadLine() )
-
       _tmp += _err_line + " ## "
 
-      // ovo je dodavanje artikla
       IF ( "107,1," + _serial ) $ _err_line
-         // preskoci
          LOOP
       ENDIF
 	
@@ -1519,16 +1507,13 @@ FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
          _fiscal_txt := _err_line
       ENDIF
 
-      // ima neka greska !
       IF "Er;" $ _err_line
-
          _err_tmp := "FISC ERR:" + AllTrim( _err_line )
          log_write( _err_tmp, 2 )
          MsgBeep( _err_tmp )
-
          _err_level := 1
+         _o_file:Close()
          RETURN _err_level
-
       ENDIF
 	
    ENDDO
@@ -1540,7 +1525,6 @@ FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
    IF Empty( _fiscal_txt )
       log_write( "ERR FISC nema komande 56,1," + _serial + " - broj fiskalnog računa, možda vam nije dobar serijski broj !", 1 )
    ELSE
-      // ako je sve ok, uzmi broj fiskalnog isjecka
       fiscal_no := _g_fisc_no( _fiscal_txt, storno )
    ENDIF
 
@@ -1578,7 +1562,6 @@ STATIC FUNCTION _g_fisc_no( txt, storno )
    _a_fisc := toktoniz( _fisc_txt, "," )
 
    IF Len( _a_fisc ) < 2
-      // nesto nije ok !
       MsgBeep( "Izlazni fajl nije kompletan !#Pozovite servis." )
       log_write( "ERROR fiscal out, nema elemenata !", 3 )
       RETURN _fiscal_no

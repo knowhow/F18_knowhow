@@ -274,21 +274,16 @@ FUNCTION StampAzur( cIdPos, cRadRac, cIdVrsteP, cIdGost, uplaceno )
 
    IF ( !Empty( cTime ) )
 
-      // azuriranje racuna
       azur_pos_racun( cIdPos, cStalRac, cRadRac, cTime, cIdVrsteP, cIdGost )
 
-      // azuriranje podataka o kupcu
       IF IsPDV()
          AzurKupData( cIdPos )
       ENDIF
 
-      // prikaz info-a o racunu
       IF gRnInfo == "D"
-         // prikazi info o racunu nakon stampe
          _sh_rn_info( cStalRac )
       ENDIF
 
-      // fiskalizacija, ispisi racun
       IF fiscal_opt_active()
 
          _dev_id := odaberi_fiskalni_uredjaj( NIL, .T., .F. )
@@ -301,22 +296,18 @@ FUNCTION StampAzur( cIdPos, cRadRac, cIdVrsteP, cIdGost, uplaceno )
             RETURN .F.
          ENDIF
 
-         // stampa fiskalnog racuna, vraca ERR
-         nErr := pos_fisc_rn( cIdPos, gDatum, cStalRac, _dev_params, uplaceno )
+         nErr := pos_fiskalni_racun( cIdPos, gDatum, cStalRac, _dev_params, uplaceno )
 
          // da li je nestalo trake ?
          // -20 signira na nestanak trake !
          IF nErr = -20
-            IF Pitanje(, "Da li je nestalo trake (D/N)?", "N" ) == ;
+            IF Pitanje(, "Da li je nestalo trake u fiskalnom uređaju (D/N)?", "N" ) == ;
                   "N"
-               // setuj kao da je greska
                nErr := 20
             ENDIF
          ENDIF
 
-         // ako postoji ERR vrati racun
          IF nErr > 0
-            // vrati racun u pripremu...
             pos_povrat_rn( cStalRac, gDatum )
          ENDIF
 
@@ -324,16 +315,14 @@ FUNCTION StampAzur( cIdPos, cRadRac, cIdVrsteP, cIdGost, uplaceno )
 
    ENDIF
 
-   // nema vremena, to je znak da nema racuna
    IF Empty( cTime )
 
       IF fiscal_opt_active()
          SkloniIznRac()
       ENDIF
 
-      MsgBeep( "Radni racun <" + AllTrim ( cRadRac ) + "> nije zakljucen!#" + "ponovite proceduru stampanja !!!", 20 )
+      MsgBeep( "Račun <" + AllTrim ( cRadRac ) + "> nije zaključen !#" + "Ponovite proceduru štampanja !", 20 )
 
-      // ako nisam uspio azurirati racun izbrisi iz doks
       SELECT ( F_POS_DOKS )
       IF !Used()
          O_POS_DOKS

@@ -23,10 +23,7 @@ STATIC __DRV_TRING := "TRING"
 STATIC __DRV_CURRENT
 
 
-// --------------------------------------
-// stampa fiskalnog racuna
-// --------------------------------------
-FUNCTION pos_fisc_rn( id_pos, datum, rn_broj, dev_params, uplaceni_iznos )
+FUNCTION pos_fiskalni_racun( id_pos, datum, rn_broj, dev_params, uplaceni_iznos )
 
    LOCAL _err_level := 0
    LOCAL _dev_drv
@@ -41,21 +38,14 @@ FUNCTION pos_fisc_rn( id_pos, datum, rn_broj, dev_params, uplaceni_iznos )
       RETURN _err_level
    ENDIF
 
-   // setuj parametre za dati uredjaj
    __device_id := dev_params[ "id" ]
    __device_params := dev_params
-
-   // drajver ??
    _dev_drv := __device_params[ "drv" ]
    __DRV_CURRENT := _dev_drv
 
    _o_tables()
 
-   // priprema podataka
-
-   // da li je racun storno ?
    _storno := pos_dok_is_storno( id_pos, "42", datum, rn_broj )
-   // spremi mi stavke racuna
    _items := pos_items_prepare( id_pos, "42", datum, rn_broj, _storno, uplaceni_iznos )
 
    IF _items == NIL
@@ -64,7 +54,6 @@ FUNCTION pos_fisc_rn( id_pos, datum, rn_broj, dev_params, uplaceni_iznos )
 
    DO CASE
 
-      // TEST uredjaj, prolazi fiskalna operacija
    CASE _dev_drv == "TEST"
       _err_level := 0
 	
@@ -94,11 +83,10 @@ FUNCTION pos_fisc_rn( id_pos, datum, rn_broj, dev_params, uplaceni_iznos )
          _err_level := pos_to_tremol( id_pos, "42", datum, rn_broj, _items, _storno, _cont )
 
          IF _err_level > 0
-            msgbeep( "Problem sa stampanjem na fiskalni stampac !!!" )
+            msgbeep( "Problem sa štampanjem na fiskalni uređaj !" )
          ENDIF
       ELSE
-         // ima greska
-         msgbeep( "Problem sa stampanjem na fiskalni stampac !!!" )
+         msgbeep( "Problem sa štampanjem na fiskalni uređaj !" )
       ENDIF
    ENDIF
 
@@ -291,42 +279,40 @@ STATIC FUNCTION pos_to_fprint( id_pos, tip_dok, datum, rn_broj, items, storno )
    LOCAL _err_level := 0
    LOCAL _fiscal_no := 0
 
-   // pobrisi answer fajl
    fprint_delete_answer( __device_params )
 
-   // idemo sada na upis rn u fiskalni fajl
    fprint_rn( __device_params, items, NIL, storno )
 
-   // iscitaj error
    _err_level := fprint_read_error( __device_params, @_fiscal_no )
 
    IF _err_level = -9
-      // nema answer fajla, da nije do trake ?
       IF Pitanje(, "Da li je nestalo trake ?", "N" ) == "D"
          IF Pitanje(, "Zamjenite traku i pritisnite 'D'", "D" ) == "D"
-            // iscitaj error
             _err_level := fprint_read_error( __device_params, @_fiscal_no )
          ENDIF
       ENDIF
    ENDIF
 
-   // fiskalni racun ne moze biti 0
    IF _fiscal_no <= 0
       _err_level := 1
    ENDIF
 
    IF _err_level <> 0
-      // pobrisati out fajl obavezno
-      // da ne bi otisao greskom na uredjaj kad proradi
-      fprint_delete_out( __device_params )
-      msgbeep( "Postoji greska !!!" )
-   ELSE
-      IF _fiscal_no <> 0
-         pos_doks_update_fisc_rn( id_pos, tip_dok, datum, rn_broj, _fiscal_no )
-         msgo( "Kreiran fiskalni racun broj: " + AllTrim( Str( _fiscal_no ) ) )
-         Sleep( 2 )
-         msgc()
+
+      IF pos_da_li_je_racun_fiskalizovan( @_fiscal_no )
+         _err_level := 0
+      ELSE
+         fprint_delete_out( __device_params )
+         msgbeep( "Greška kod štampanja fiskalnog računa !" )
       ENDIF
+
+   ENDIF
+
+   IF ( _fiscal_no > 0 .AND. _err_level == 0 )
+      pos_doks_update_fisc_rn( id_pos, tip_dok, datum, rn_broj, _fiscal_no )
+      msgo( "Kreiran fiskalni račun broj: " + AllTrim( Str( _fiscal_no ) ) )
+      Sleep( 2 )
+      msgc()
    ENDIF
 
    RETURN _err_level
@@ -530,3 +516,38 @@ STATIC FUNCTION _fix_naz( cR_naz, cNaziv )
    ENDCASE
 
    RETURN
+
+
+
+FUNCTION pos_da_li_je_racun_fiskalizovan( fisc_no )
+   
+   LOCAL lOk := .F.
+   LOCAL nX := 1
+   LOCAL cStampano := "D"
+
+   Box(, 5, 65 )
+
+   @ m_x + nX, m_y + 2 SAY8 "Program ne može da dobije odgovor od fiskalnog uređaja !"
+   ++ nX
+   @ m_x + nX, m_y + 2 SAY8 "Da li je račun ispravno odštampan na fiskalni uređaj (D/N) ?" GET cStampano VALID cStampano $ "DN" PICT "@!"
+
+   READ
+
+   IF cStampano == "N"
+      fisc_no := 0
+      BoxC()
+      RETURN lOk
+   ENDIF
+
+   ++ nX
+   ++ nX
+
+   @ m_x + nX, m_y + 2 SAY8 "Prepišite sa trakice broj fiskalnog računa:" GET fisc_no VALID fisc_no > 0 PICT "9999999999" 
+
+   READ
+
+   BoxC()
+
+   RETURN lOk
+
+

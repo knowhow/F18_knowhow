@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,353 +12,288 @@
 
 #include "epdv.ch"
 
-// ---------------------------------------------
-// edit KIF-a
-// ---------------------------------------------
-function ed_kif()
-*{
 
-// procitaj parametre
-read_params()
+FUNCTION ed_kif()
 
-// otvori tabele
-o_kif(.t.)
+   o_kif( .T. )
+   tbl_priprema()
 
-// prikazi tabelu pripreme
-tbl_priprema()
-
-return
-*}
-
-
-// ---------------------------------------------
-// ---------------------------------------------
-static function read_params()
-
-/*
-O_PARAMS
-private cSection:="1"
-private cHistory:=" "
-private aHistory:={}
-Params1()
-//RPar("po",@gPotpis)
-select params
-use
-*/
-return
+   RETURN
 
 
 
-// ---------------------------------------------
-// prikazi tabelu pripreme
-// ---------------------------------------------
-static function tbl_priprema()
-local _row := maxrows() - 4
-local _col := maxcols() - 3
+STATIC FUNCTION tbl_priprema()
 
-Box(, _row, _col )
-@ m_x + _row - 2, m_y + 2 SAY "<c-N>  Nove Stavke    | <ENT> Ispravi stavku   | <c-T> Brisi Stavku         "
-@ m_x + _row - 1, m_y + 2 SAY "<c-A>  Ispravka Naloga| <c-P> Stampa dokumenta | <a-A> Azuriranje           "
-@ m_x + _row, m_y + 2 SAY "<a-P>  Povrat dok.    | <a-X> Renumeracija"
+   LOCAL _row := maxrows() - 4
+   LOCAL _col := maxcols() - 3
 
-private ImeKol
-private Kol
+   Box(, _row, _col )
+   @ m_x + _row - 2, m_y + 2 SAY "<c-N>  Nove Stavke    | <ENT> Ispravi stavku   | <c-T> Brisi Stavku         "
+   @ m_x + _row - 1, m_y + 2 SAY "<c-A>  Ispravka Naloga| <c-P> Stampa dokumenta | <a-A> Azuriranje           "
+   @ m_x + _row, m_y + 2 SAY "<a-P>  Povrat dok.    | <a-X> Renumeracija"
 
-SELECT (F_P_KIF)
-SET ORDER TO TAG "br_dok"
-GO TOP
+   PRIVATE ImeKol
+   PRIVATE Kol
 
-set_a_kol( @Kol, @ImeKol)
-ObjDbedit("ekif", _row, _col, {|| k_handler()}, "", "KIF Priprema...", , , , , 3)
-BoxC()
-closeret
+   SELECT ( F_P_KIF )
+   SET ORDER TO TAG "br_dok"
+   GO TOP
+
+   set_a_kol( @Kol, @ImeKol )
+   ObjDbedit( "ekif", _row, _col, {|| k_handler() }, "", "KIF Priprema...", , , , , 3 )
+   BoxC()
+   closeret
 
 
-// ---------------------------------------------
-// postavi matrice ImeKol, Kol
-// ---------------------------------------------
-static function set_a_kol( aKol, aImeKol )
+STATIC FUNCTION set_a_kol( aKol, aImeKol )
 
-aImeKol := {}
+   aImeKol := {}
 
-AADD(aImeKol, {"Br.dok", {|| TRANSFORM(br_dok, "99999")}, "br_dok", {|| .t.}, {|| .t.} })
-AADD(aImeKol, {"R.br", {|| TRANSFORM(r_br, "99999")}, "r_br", {|| .t.}, {|| .t.} })
+   AAdd( aImeKol, { "Br.dok", {|| Transform( br_dok, "99999" ) }, "br_dok", {|| .T. }, {|| .T. } } )
+   AAdd( aImeKol, { "R.br", {|| Transform( r_br, "99999" ) }, "r_br", {|| .T. }, {|| .T. } } )
 
-AADD(aImeKol, {"Datum", {|| datum}, "datum", {|| .t.}, {|| .t.} })
-AADD(aImeKol, { PADR("Tarifa", 6), {|| id_tar }, "id_tar", {|| .t.}, {|| .t.} })
+   AAdd( aImeKol, { "Datum", {|| datum }, "datum", {|| .T. }, {|| .T. } } )
+   AAdd( aImeKol, { PadR( "Tarifa", 6 ), {|| id_tar }, "id_tar", {|| .T. }, {|| .T. } } )
 
-AADD(aImeKol, { PADR("Kupac", 19), {|| PADR(s_partner(id_part), 17) + ".." }, "opis", {|| .t.}, {|| .t.} })
-AADD(aImeKol, { PADR("Br.dob - Opis", 17), {|| PADR(ALLTRIM(src_br_2) + "-" + opis, 15) + ".." }, "", {|| .t.}, {|| .t.} })
-AADD(aImeKol, {"Izn.b.pdv", {|| TRANSFORM(i_b_pdv, PIC_IZN()) }, "i_b_pdv", {|| .t.}, {|| .t.} })
-AADD(aImeKol, {"Izn.pdv", {|| TRANSFORM(i_pdv, PIC_IZN()) }, "i_pdv", {|| .t.}, {|| .t.} })
-AADD(aImeKol, {"Izn.s.pdv", {|| TRANSFORM(i_b_pdv+i_pdv, PIC_IZN()) }, "", {|| .t.}, {|| .t.} })
+   AAdd( aImeKol, { PadR( "Kupac", 19 ), {|| PadR( s_partner( id_part ), 17 ) + ".." }, "opis", {|| .T. }, {|| .T. } } )
+   AAdd( aImeKol, { PadR( "Br.dob - Opis", 17 ), {|| PadR( AllTrim( src_br_2 ) + "-" + opis, 15 ) + ".." }, "", {|| .T. }, {|| .T. } } )
+   AAdd( aImeKol, { "Izn.b.pdv", {|| Transform( i_b_pdv, PIC_IZN() ) }, "i_b_pdv", {|| .T. }, {|| .T. } } )
+   AAdd( aImeKol, { "Izn.pdv", {|| Transform( i_pdv, PIC_IZN() ) }, "i_pdv", {|| .T. }, {|| .T. } } )
+   AAdd( aImeKol, { "Izn.s.pdv", {|| Transform( i_b_pdv + i_pdv, PIC_IZN() ) }, "", {|| .T. }, {|| .T. } } )
 
 
 
-aKol:={}
-for i:=1 to LEN(aImeKol)
-    AADD(aKol,i)
-next
+   aKol := {}
+   FOR i := 1 TO Len( aImeKol )
+      AAdd( aKol, i )
+   NEXT
 
-return
-
-
-// ---------------------------------------------
-// ispravka jedne stavke 
-// ---------------------------------------------
-static function ed_item(lNova)
-local cIspravno := "D"
-local nI_s_pdv := 0
-local nX := 2
-local nXPart := 0
-local nYPart := 22
-
-Box(, 16, 70)
-if lNova
-    _br_dok := 0
-    _r_br := next_r_br("P_KIF")
-    _id_part:= SPACE(LEN(id_part))
-    _id_tar:= PADR("PDV17", LEN(id_tar))
-    _datum := DATE()
-    _opis:= SPACE(LEN(opis))
-    _i_b_pdv := 0
-    _i_pdv := 0
-    _src_br_2 := SPACE(LEN(src_br_2))
-endif
-
-@ m_x + nX, m_y+2 SAY "R.br: " GET _r_br ;
-    PICT "999999"
-    
-@ m_x + nX, col()+2 SAY "datum: " GET _datum
-nX += 2
-
-nXPart := nX
-@ m_x + nX, m_y+2 SAY "Kupac: " GET _id_part ;
-    VALID v_part(@_id_part, @_id_tar, "KIF", .t.) ;
-    PICT "@!"
-    
-nX += 2
+   RETURN
 
 
-@ m_x + nX, m_y+2 SAY "Broj racuna (externi broj) " GET _src_br_2 
-nX ++
+STATIC FUNCTION ed_item( lNova )
 
-@ m_x + nX, m_y+2 SAY "Opis stavke: " GET _opis ;
-    WHEN { || SETPOS(m_x + nXPart, m_y + nYPart), QQOUT(s_partner(_id_part)) , .t. } ;
-    PICT "@S50"
-    
-nX += 2
+   LOCAL cIspravno := "D"
+   LOCAL nI_s_pdv := 0
+   LOCAL nX := 2
+   LOCAL nXPart := 0
+   LOCAL nYPart := 22
 
-@ m_x + nX, m_y+2 SAY "Iznos bez PDV (osnovica): " GET _i_b_pdv ;
-    PICT PIC_IZN()
-++nX
+   Box(, 16, 70 )
+   IF lNova
+      _br_dok := 0
+      _r_br := next_r_br( "P_KIF" )
+      _id_part := Space( Len( id_part ) )
+      _id_tar := PadR( "PDV17", Len( id_tar ) )
+      _datum := Date()
+      _opis := Space( Len( opis ) )
+      _i_b_pdv := 0
+      _i_pdv := 0
+      _src_br_2 := Space( Len( src_br_2 ) )
+   ENDIF
 
-@ m_x + nX, m_y+2 SAY "tarifa: " GET _id_tar ;
-    valid v_id_tar(@_id_tar, @_i_b_pdv, @_i_pdv,  col(), lNova)  ;
-    PICT "@!"
-    
-++nX
+   @ m_x + nX, m_y + 2 SAY "R.br: " GET _r_br ;
+      PICT "999999"
 
-@ m_x + nX, m_y+2 SAY "   Iznos PDV: " GET _i_pdv ;
-        WHEN { ||  .t. } ;
-    VALID { || nI_s_pdv := _i_b_pdv + _i_pdv, .t. } ;
-    PICT PIC_IZN()
-++nX
+   @ m_x + nX, Col() + 2 SAY "datum: " GET _datum
+   nX += 2
 
-@ m_x + nX, m_y+2 SAY "Iznos sa PDV: " GET nI_s_pdv ;
-    when { || .f. } ;
-    PICT PIC_IZN()
-nX += 2
+   nXPart := nX
+   @ m_x + nX, m_y + 2 SAY "Kupac: " GET _id_part ;
+      VALID v_part( @_id_part, @_id_tar, "KIF", .T. ) ;
+      PICT "@!"
 
-@ m_x + nX, m_y+2 SAY "Ispravno ?" GET cIspravno ;
-    valid { || cIspravno == "D" } ;
-    pict "@!"
-++nX
+   nX += 2
 
-read
 
-SELECT F_P_KIF
-BoxC()
+   @ m_x + nX, m_y + 2 SAY "Broj racuna (externi broj) " GET _src_br_2
+   nX ++
 
-ESC_RETURN .f.
+   @ m_x + nX, m_y + 2 SAY "Opis stavke: " GET _opis ;
+      WHEN {|| SetPos( m_x + nXPart, m_y + nYPart ), QQOut( s_partner( _id_part ) ), .T. } ;
+      PICT "@S50"
 
-if cIspravno == "D"
-    return .t.
-else
-    return .f.
-endif
-*}
+   nX += 2
+
+   @ m_x + nX, m_y + 2 SAY "Iznos bez PDV (osnovica): " GET _i_b_pdv ;
+      PICT PIC_IZN()
+   ++nX
+
+   @ m_x + nX, m_y + 2 SAY "tarifa: " GET _id_tar ;
+      VALID v_id_tar( @_id_tar, @_i_b_pdv, @_i_pdv,  Col(), lNova )  ;
+      PICT "@!"
+
+   ++nX
+
+   @ m_x + nX, m_y + 2 SAY "   Iznos PDV: " GET _i_pdv ;
+      WHEN {||  .T. } ;
+      VALID {|| nI_s_pdv := _i_b_pdv + _i_pdv, .T. } ;
+      PICT PIC_IZN()
+   ++nX
+
+   @ m_x + nX, m_y + 2 SAY "Iznos sa PDV: " GET nI_s_pdv ;
+      when {|| .F. } ;
+      PICT PIC_IZN()
+   nX += 2
+
+   @ m_x + nX, m_y + 2 SAY "Ispravno ?" GET cIspravno ;
+      valid {|| cIspravno == "D" } ;
+      PICT "@!"
+   ++nX
+
+   READ
+
+   SELECT F_P_KIF
+   BoxC()
+
+   ESC_RETURN .F.
+
+   IF cIspravno == "D"
+      RETURN .T.
+   ELSE
+      RETURN .F.
+   ENDIF
 
 
 
-// ---------------------------------------------
-// tabela KIF keyboard handler 
-// ---------------------------------------------
-static function k_handler()
-local nTekRec
-local nBrDokP
-local lDelete := .f.
+STATIC FUNCTION k_handler()
 
-if (Ch==K_CTRL_T .or. Ch==K_ENTER) .and. reccount2()==0
-    return DE_CONT
-endif
+   LOCAL nTekRec
+   LOCAL nBrDokP
+   LOCAL lDelete := .F.
+
+   IF ( Ch == K_CTRL_T .OR. Ch == K_ENTER ) .AND. reccount2() == 0
+      RETURN DE_CONT
+   ENDIF
 
 
-do case
+   DO CASE
 
-  case (Ch == K_CTRL_T)
+   CASE ( Ch == K_CTRL_T )
 
-    select P_KIF
-    RETURN browse_brisi_stavku()
+      SELECT P_KIF
+      RETURN browse_brisi_stavku()
 
-   case (Ch == K_F5)
-   
-        kzb_kif()
-        return DE_REFRESH
+   CASE ( Ch == K_ENTER )
 
-   case (Ch == K_ENTER)
- 
-    SELECT P_KIF
-    nTekRec := RECNO()
-    my_flock()
-    Scatter()
-    if ed_item(.f.)
-        SELECT P_KIF
-        GO nTekRec
-        Gather()
-        RETURN DE_REFRESH
-    endif
-    my_unlock()
-    return DE_CONT
-    
-   case (Ch == K_CTRL_N)
+      SELECT P_KIF
+      nTekRec := RecNo()
+      my_flock()
+      Scatter()
+      IF ed_item( .F. )
+         SELECT P_KIF
+         GO nTekRec
+         Gather()
+         RETURN DE_REFRESH
+      ENDIF
+      my_unlock()
+      RETURN DE_CONT
 
-    SELECT P_KIF
-	SET ORDER TO TAG "BR_DOK"
+   CASE ( Ch == K_CTRL_N )
 
-   	my_flock()
-    
-	// stavke unosimo cirkularno do ESC znaka
-    DO WHILE .t.
+      SELECT P_KIF
+      SET ORDER TO TAG "BR_DOK"
 
-		SELECT P_KIF    	
-		APPEND BLANK
-		nTekRec := RECNO()
-        Scatter()
-    
-    	if ed_item(.t.)
-        	GO nTekRec
-        	Gather()
-    	else
-        	// brisi necemo ovu stavku
-        	SELECT P_KIF
-        	go nTekRec
-        	DELETE
-        	exit
-    	endif
+      my_flock()
+
+      DO WHILE .T.
+
+         SELECT P_KIF
+         APPEND BLANK
+         nTekRec := RecNo()
+         Scatter()
+
+         IF ed_item( .T. )
+            GO nTekRec
+            Gather()
+         ELSE
+            SELECT P_KIF
+            GO nTekRec
+            DELETE
+            EXIT
+         ENDIF
 
 
-    ENDDO 
-    
-	my_unlock()
-	my_dbf_pack()
+      ENDDO
 
-	SET ORDER TO TAG "BR_DOK"
-	GO BOTTOM
+      my_unlock()
+      my_dbf_pack()
 
-    return DE_REFRESH
-    
-   case (Ch  == K_CTRL_F9)
-   
-        if Pitanje( ,"Želite li izbrisati pripremu !!????","N") == "D"
-            my_dbf_zap()
-            return DE_REFRESH
-    	endif
-        return DE_CONT
+      SET ORDER TO TAG "BR_DOK"
+      GO BOTTOM
 
-   case Ch==K_CTRL_P
-   
-    nBrDokP := 0
-    Box( , 2, 60)
-    @ m_x+1, m_y+2 SAY "Dokument (0-stampaj pripremu) " GET nBrDokP PICT "999999"
-    READ
-    BoxC()
-    if LASTKEY() <> K_ESC
-            rpt_kif(nBrDokP)
-    endif
-    
-    my_close_all_dbf()
-    o_kif(.t.)
-    SELECT P_KIF
-    SET ORDER TO TAG "br_dok"
+      RETURN DE_REFRESH
 
-        return DE_REFRESH
+   CASE ( Ch  == K_CTRL_F9 )
 
-   case Ch==K_ALT_A
-   
-    if Pitanje( , "Azurirati P_KIF -> KIF ?", "N") == "D"
-        azur_kif()
-        RETURN DE_REFRESH
-    else
-        RETURN DE_CONT
-    endif
-    
-   case Ch==K_ALT_P
-   
-    if Pitanje( , "Povrat dokumenta KIF -> P_KIF ?", "N") == "D"
-        nBrDokP := 0
-        Box(, 1, 40)
-          @ m_x+1, m_y+2 SAY "KIF dokument br:" GET nBrDokP  PICT "999999"
-           
-          READ
-        BoxC()
+      IF Pitanje( , "Želite li izbrisati pripremu !!????", "N" ) == "D"
+         my_dbf_zap()
+         RETURN DE_REFRESH
+      ENDIF
+      RETURN DE_CONT
 
-        if LASTKEY()<> K_ESC
-            pov_kif(nBrDokP)
+   CASE Ch == K_CTRL_P
+
+      nBrDokP := 0
+      Box( , 2, 60 )
+      @ m_x + 1, m_y + 2 SAY8 "Dokument (0-štampaj pripremu) " GET nBrDokP PICT "999999"
+      READ
+      BoxC()
+      IF LastKey() <> K_ESC
+         rpt_kif( nBrDokP )
+      ENDIF
+
+      my_close_all_dbf()
+      o_kif( .T. )
+      SELECT P_KIF
+      SET ORDER TO TAG "br_dok"
+
+      RETURN DE_REFRESH
+
+   CASE Ch == K_ALT_A
+
+      IF Pitanje( , "Ažurirati pripremu KIF-a (D/N) ?", "N" ) == "D"
+         azur_kif()
+         RETURN DE_REFRESH
+      ELSE
+         RETURN DE_CONT
+      ENDIF
+
+   CASE Ch == K_ALT_P
+
+      IF Pitanje( , "Povrat KIF dokumenta (D/N) ?", "N" ) == "D"
+         nBrDokP := 0
+         Box(, 1, 40 )
+         @ m_x + 1, m_y + 2 SAY "KIF dokument br:" GET nBrDokP  PICT "999999"
+
+         READ
+         BoxC()
+
+         IF LastKey() <> K_ESC
+            pov_kif( nBrDokP )
             RETURN DE_REFRESH
-        endif
-    endif
-    
-    SELECT P_KIF
-    RETURN DE_REFRESH
+         ENDIF
+      ENDIF
 
-   case Ch==K_ALT_X
-    
-    if Pitanje (, "Izvrsiti Renumeraciju ?" , "N" ) == "D"
-        renm_rbr("P_KIF", .f.)
-    endif
+      SELECT P_KIF
+      RETURN DE_REFRESH
 
-    SELECT P_KIF
-	SET ORDER TO TAG "BR_DOK"
-	GO TOP
+   CASE Ch == K_ALT_X
 
-    RETURN DE_REFRESH
+      IF Pitanje (, "Izvršiti renumeraciju pripreme (D/N) ?", "N" ) == "D"
+         renm_rbr( "P_KIF", .F. )
+      ENDIF
 
+      SELECT P_KIF
+      SET ORDER TO TAG "BR_DOK"
+      GO TOP
 
-   case (Ch == K_F10)
-        t_ost_opcije()
-        return DE_REFRESH
-
-endcase
-
-return DE_CONT
-*}
+      RETURN DE_REFRESH
 
 
-// ---------------------------------
-// ---------------------------------
-static function t_ost_opcije()
+   ENDCASE
 
-MsgBeep("Tabela KIF - ostale opcije = 0")
-
-return
+   RETURN DE_CONT
 
 
-// ---------------------------------
-// kontrola zbira za stavke u pripremi
-// ---------------------------------
-static function kzb_kif()
 
-MsgBeep("KIF - kzb = 0")
-
-return

@@ -507,7 +507,21 @@ STATIC FUNCTION _fix_naz( cR_naz, cNaziv )
    RETURN
 
 
+/*
+   Opis: u slučaju greške sa fajlom odgovora, kada nema broja fiskalnog računa
+         korisnika ispituje da li je račun fiskalizovan te nudi mogućnost ručnog unosa 
+         broja fiskalnog računa
 
+   Parameters:
+      fisc_no - broj fiskalnog računa, proslijeđuje se po referenci
+
+   Return:
+      .T. => trakica je izašla korektno
+      .F. => račun primarno nije fiskalizovan na uređaj
+      fisc_no - varijabla proslijeđena po refernci, sadrži broj fiskalnog računa
+                broj koji je korisnik unjeo na formi
+ 
+*/
 FUNCTION pos_da_li_je_racun_fiskalizovan( fisc_no )
    
    LOCAL lRet := .F.

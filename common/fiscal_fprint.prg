@@ -1465,12 +1465,10 @@ FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
 
 #ifndef TEST
    IF !File( _f_name )
-
-      msgbeep( "Fajl " + _f_name + " ne postoji !!!" )
+      msgbeep( "Fajl " + _f_name + " ne postoji !" )
       fiscal_no := 0
       _err_level := -9
       RETURN _err_level
-
    ENDIF
 #endif
 

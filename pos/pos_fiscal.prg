@@ -298,7 +298,7 @@ STATIC FUNCTION pos_to_fprint( id_pos, tip_dok, datum, rn_broj, items, storno )
    ENDIF
 
    IF _err_level <> 0
-
+      
       IF pos_da_li_je_racun_fiskalizovan( @_fiscal_no )
          _err_level := 0
       ELSE
@@ -481,11 +481,8 @@ STATIC FUNCTION pos_get_vr_plac( id_vr_pl )
 // stampa fiskalnog racuna TRING (www.kase.ba)
 // --------------------------------------------
 STATIC FUNCTION pos_to_tring( id_pos, tip_dok, datum, rn_broj, items, storno )
-
    LOCAL _err_level := 0
-
    _err_level := tring_rn( __device_params, items, NIL, storno )
-
    RETURN _err_level
 
 
@@ -496,21 +493,13 @@ STATIC FUNCTION pos_to_tring( id_pos, tip_dok, datum, rn_broj, items, storno )
 // -------------------------------------------
 STATIC FUNCTION _fix_naz( cR_naz, cNaziv )
 
-   // prvo ga srezi na LEN(30)
    cNaziv := PadR( cR_naz, 30 )
 
    DO CASE
 
    CASE AllTrim( gFc_type ) == "FLINK"
-	
-      // napravi konverziju karaktera 852 -> eng
       cNaziv := StrKzn( cNaziv, "8", "E" )
-
-      // konvertuj naziv na LOWERCASE()
-      // time rjesavamo i veliko slovo "V" prvo
       cNaziv := Lower( cNaziv )
-
-      // zamjeni sve zareze u nazivu sa tackom
       cNaziv := StrTran( cNaziv, ",", "." )
 	
    ENDCASE
@@ -521,35 +510,53 @@ STATIC FUNCTION _fix_naz( cR_naz, cNaziv )
 
 FUNCTION pos_da_li_je_racun_fiskalizovan( fisc_no )
    
-   LOCAL lOk := .F.
-   LOCAL nX := 1
-   LOCAL cStampano := "D"
+   LOCAL lRet := .F.
+   LOCAL nX
+   LOCAL cStampano := " "
 
-   Box(, 5, 65 )
+   DO WHILE .T.
 
-   @ m_x + nX, m_y + 2 SAY8 "Program ne može da dobije odgovor od fiskalnog uređaja !"
-   ++ nX
-   @ m_x + nX, m_y + 2 SAY8 "Da li je račun ispravno odštampan na fiskalni uređaj (D/N) ?" GET cStampano VALID cStampano $ "DN" PICT "@!"
+      nX := 1
 
-   READ
+      Box(, 5, 70 )
 
-   IF cStampano == "N"
-      fisc_no := 0
+      @ m_x + nX, m_y + 2 SAY8 "Program ne može da dobije odgovor od fiskalnog uređaja !"
+      ++ nX
+      @ m_x + nX, m_y + 2 SAY8 "Da li je račun ispravno odštampan na fiskalni uređaj (D/N) ?" GET cStampano VALID cStampano $ "DN" PICT "@!"
+
+      READ
+
+      IF LastKey() == K_ESC
+         BoxC()
+         MsgBeep( "ESC operacija nije dozvoljena. Odgovortite na postavljena pitanja." )
+         LOOP
+      ENDIF
+
+      IF cStampano == "N"
+         fisc_no := 0
+         BoxC()
+         EXIT
+      ENDIF
+
+      ++ nX
+      ++ nX
+
+      @ m_x + nX, m_y + 2 SAY8 "Molimo unesite broj računa koji je fiskalni račun ispisao:" GET fisc_no VALID fisc_no > 0 PICT "9999999999" 
+
+      READ
+
       BoxC()
-      RETURN lOk
-   ENDIF
 
-   ++ nX
-   ++ nX
+      IF LastKey() == K_ESC
+         MsgBeep( "ESC operacija nije dozvoljena. Odgovortite na postavljena pitanja." )
+         LOOP
+      ENDIF
 
-   @ m_x + nX, m_y + 2 SAY8 "Prepišite sa trakice broj fiskalnog računa:" GET fisc_no VALID fisc_no > 0 PICT "9999999999" 
+      lRet := .T.
+      EXIT
 
-   READ
+   ENDDO
 
-   BoxC()
-
-   lOk := .T.
-
-   RETURN lOk
+   RETURN lRet
 
 

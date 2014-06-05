@@ -264,11 +264,9 @@ STATIC FUNCTION fill_rpt( nBrDok )
 
    cre_r_tbl()
 
-
    O_R_KIF
 
    IF ( nBrDok == 0 )
-      // tabela pripreme
 	
       nIzArea := F_P_KIF
 	
@@ -279,7 +277,6 @@ STATIC FUNCTION fill_rpt( nBrDok )
       SET ORDER TO TAG "br_dok"
 
    ELSE
-      // kumulativ
 
       nIzArea := F_KIF
 	
@@ -292,14 +289,11 @@ STATIC FUNCTION fill_rpt( nBrDok )
 
    ENDIF
 
-
-
    SELECT ( nIzArea )
 
    PRIVATE cFilter := ""
 
    IF ( nBrdok == - 999 )
-      // datumski period
       cFilter := cm2str( dDatOd ) + " <= datum .and. " + cm2str( dDatDo ) + ">= datum"
    ENDIF
 

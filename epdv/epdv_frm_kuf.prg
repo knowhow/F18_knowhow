@@ -97,7 +97,7 @@ STATIC FUNCTION ed_item( lNova )
    nX += 2
 
    nXPart := nX
-   @ m_x + nX, m_y + 2 SAY "Dobavljac: " GET _id_part ;
+   @ m_x + nX, m_y + 2 SAY8 "Dobavljač: " GET _id_part ;
       VALID v_part( @_id_part, @_id_tar, "KUF", .T. ) ;
       PICT "@!"
 
@@ -134,7 +134,7 @@ STATIC FUNCTION ed_item( lNova )
       PICT PIC_IZN()
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "Ispravno ?" GET cIspravno ;
+   @ m_x + nX, m_y + 2 SAY "Ispravno (D/N) ?" GET cIspravno ;
       PICT "@!"
    ++nX
 
@@ -200,7 +200,6 @@ STATIC FUNCTION k_handler()
             GO nTekRec
             Gather()
          ELSE
-            // brisi necemo ovu stavku
             SELECT P_KUF
             GO nTekRec
             DELETE
@@ -217,7 +216,7 @@ STATIC FUNCTION k_handler()
 
    CASE ( Ch  == K_CTRL_F9 )
 
-      IF Pitanje( , "Želite li izbrisati pripremu !!????", "N" ) == "D"
+      IF Pitanje( , "Želite li izbrisati pripremu (D/N) ?", "N" ) == "D"
          my_dbf_zap()
          RETURN DE_REFRESH
       ENDIF

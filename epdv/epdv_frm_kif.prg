@@ -225,7 +225,7 @@ STATIC FUNCTION k_handler()
 
    CASE ( Ch  == K_CTRL_F9 )
 
-      IF Pitanje( , "Želite li izbrisati pripremu !!????", "N" ) == "D"
+      IF Pitanje( , "Želite li izbrisati pripremu (D/N) ?", "N" ) == "D"
          my_dbf_zap()
          RETURN DE_REFRESH
       ENDIF
@@ -260,7 +260,7 @@ STATIC FUNCTION k_handler()
 
    CASE Ch == K_ALT_P
 
-      IF Pitanje( , "Povrat KIF dokumenta (D/N) ?", "N" ) == "D"
+      IF Pitanje( , "Povrat KIF dokumenta u pripremu (D/N) ?", "N" ) == "D"
          nBrDokP := 0
          Box(, 1, 40 )
          @ m_x + 1, m_y + 2 SAY "KIF dokument br:" GET nBrDokP  PICT "999999"

@@ -195,6 +195,7 @@ FUNCTION ld_mip_obrazac()
    LOCAL cNule := "N"
    LOCAL cMipView := "N"
    LOCAL _pojed := .F.
+   LOCAL cErr := ""
 
    mip_tmp_tbl()
 
@@ -285,10 +286,12 @@ FUNCTION ld_mip_obrazac()
 
    IF ld_provjeri_dat_isplate_za_mjesec( cGod, cMj, IF( !Empty( cRjDef ), cRjDef, NIL ) ) > 0
       IF !EMPTY( cRjDef )
-         MsgBeep( "Generisanje onemogućeno#Nije definisan datum isplate za radnu jedinicu '" + cRjDef +  "'" )
+         cErr := "Nije definisan datum isplate za radnu jedinicu '" + cRjDef +  "'."
       ELSE
-         MsgBeep( "Generisanje onemogućeno#Za pojedine radne jedinice nije definisan datum isplate." )
+         cErr := "Za pojedine radne jedinice nije definisan datum isplate."
       ENDIF
+      cErr += "#Molimo ispravite pa ponovo pokrenite ovu opciju."
+      MsgBeep( cErr )
       RETURN
    ENDIF
 

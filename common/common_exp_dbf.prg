@@ -18,31 +18,28 @@ STATIC izn_decimala := 2
 STATIC kol_decimala := 3
 STATIC lZaokruziti := .T.
 STATIC cLauncher1 := '"C:\Program Files\LibreOffice 3.4\program\scalc.exe"'
-// zamjeniti tarabu sa brojem
 STATIC cLauncher2 := ""
 STATIC cLauncher := "oo"
-// 4 : 852 => US ASCII
 STATIC cKonverzija := "4"
 
 
 
-// kreiraj tabelu u home direktoriju
 FUNCTION t_exp_create( field_list )
 
    my_close_all_dbf()
-
    FErase( my_home() + __table + ".dbf" )
-
-   // kreiraj tabelu
    dbcreate2( my_home() + __table, field_list )
 
    RETURN
 
 
-// export tabele
 FUNCTION tbl_export( launch )
 
    LOCAL _cmd
+
+   IF launch == NIL
+      RETURN
+   ENDIF
 
    my_close_all_dbf()
 
@@ -55,10 +52,10 @@ FUNCTION tbl_export( launch )
    MsgBeep( "Tabela " + my_home() + __table + ".dbf" + "je formirana##" + ;
       "Sa opcijom Open file se ova tabela ubacuje u excel #" + ;
       "Nakon importa uradite Save as, i odaberite format fajla XLS ! ##" + ;
-      "Tako dobijeni xls fajl mozete mijenjati #" + ;
+      "Tako dobijeni xls fajl možete mijenjati #" + ;
       "prema svojim potrebama ..." )
 
-   IF Pitanje(, "Odmah pokrenuti spreadsheet aplikaciju ?", "D" ) == "D"
+   IF Pitanje(, "Odmah pokrenuti spreadsheet aplikaciju (D/N) ?", "D" ) == "D"
       DirChange( my_home() )
       IF f18_run( _cmd ) <> 0
          MsgBeep( "Problem sa pokretanjem ?!!!" )
@@ -68,30 +65,29 @@ FUNCTION tbl_export( launch )
    RETURN
 
 
-// -----------------------------------------------------
-// setovanje pokretaca za dbf tabelu
-// -----------------------------------------------------
 FUNCTION set_launcher( launch )
 
    LOCAL _tmp
+   LOCAL lRet := .T.
 
    _tmp = Upper( AllTrim( launch ) )
 
    IF ( _tmp == "OO" ) .OR.  ( _tmp == "OOO" ) .OR.  ( _tmp == "OPENOFFICE" )
       launch := cLauncher1
-      RETURN .F.
-
    ELSEIF ( Left( _tmp, 6 ) == "OFFICE" )
-      // OFFICEXP, OFFICE97, OFFICE2003
       launch := msoff_start( SubStr( _tmp, 7 ) )
-      RETURN .F.
    ELSEIF ( Left( _tmp, 5 ) == "EXCEL" )
-      // EXCELXP, EXCEL97
       launch := msoff_start( SubStr( _tmp, 6 ) )
-      RETURN .F.
    ENDIF
 
-   RETURN .T.
+   IF ( !EMPTY( launch ) .AND. SLASH $ launch )
+      IF !File( launch )
+         MsgBeep( "Odabrana aplikacija za pokretanje ne postoji !" )
+         lRet := .F.
+      ENDIF
+   ENDIF
+
+   RETURN lRet
 
 
 
@@ -101,22 +97,16 @@ STATIC FUNCTION msoff_start( ver )
    LOCAL _tmp :=  '"C:\Program Files\Microsoft Office\Office#\excel.exe"'
 
    IF ( ver == "XP" )
-      // office XP
       RETURN StrTran( _tmp,  "#", "10" )
    ELSEIF ( ver == "2000" )
-      // office 2000
       RETURN StrTran( _tmp, "#", "9" )
    ELSEIF ( Empty( ver ) )
-      // instalacija office u /office/ direktoriju
       RETURN StrTran( _tmp, "#", "" )
    ELSEIF ( ver == "2003" )
-      // office 2003
       RETURN StrTran( _tmp, "#", "11" )
    ELSEIF ( ver == "97" )
-      // office 97
       RETURN StrTran( _tmp, "#", "8" )
    ELSE
-      // office najnoviji 2005?2006
       RETURN StrTran( _tmp, "#", "12" )
    ENDIF
 
@@ -125,7 +115,6 @@ STATIC FUNCTION msoff_start( ver )
 
 
 
-// export funkcija
 FUNCTION exp_report()
 
    LOCAL nTArea := Select()
@@ -135,6 +124,7 @@ FUNCTION exp_report()
    cLauncher := PadR( cLauncher, 70 )
 
    Box(, 10, 70 )
+
    @ m_x + 1, m_y + 2 SAY "Parametri exporta:" COLOR "I"
 
    @ m_x + 2, m_y + 2  SAY "Konverzija slova (0-8) " GET cKonverzija PICT "9"
@@ -149,7 +139,6 @@ FUNCTION exp_report()
       closeret
    ENDIF
 
-   // snimi parametre
    set_metric( "export_dbf_konverzija", my_user(), cKonverzija )
    set_metric( "export_dbf_launcher", my_user(), cLauncher )
 

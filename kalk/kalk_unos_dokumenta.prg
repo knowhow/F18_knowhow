@@ -490,7 +490,7 @@ FUNCTION EditStavka()
       _atributi[ "opis" ] := get_kalk_atribut_opis( _dok, .F. )
    ENDIF
 
-   IF EditPRIPR( .F., @_atributi ) == 0
+   IF kalk_edit_priprema( .F., @_atributi ) == 0
       BoxC()
       RETURN DE_CONT
    ELSE
@@ -667,7 +667,7 @@ FUNCTION NovaStavka()
       _old_dok[ "idvd" ] := _idvd
       _old_dok[ "brdok" ] := _brdok
 
-      IF EditPRIPR( .T., @_atributi ) == 0
+      IF kalk_edit_priprema( .T., @_atributi ) == 0
          EXIT
       ENDIF
 
@@ -821,7 +821,7 @@ FUNCTION EditAll()
          _atributi[ "rok" ] := get_kalk_atribut_rok( _dok, .F. )
       ENDIF
 
-      IF EditPRIPR( .F., @_atributi ) == 0
+      IF kalk_edit_priprema( .F., @_atributi ) == 0
          EXIT
       ENDIF
 
@@ -1232,7 +1232,7 @@ FUNCTION SetNcTo0()
 
 
 
-FUNCTION EditPripr( fNovi, atrib )
+FUNCTION kalk_edit_priprema( fNovi, atrib )
 
    PRIVATE nMarza := 0
    PRIVATE nMarza2 := 0

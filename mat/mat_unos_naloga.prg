@@ -118,7 +118,7 @@ return
 
 
 
-static function EditPRIPR(fNovi)
+static function mat_edit_priprema(fNovi)
 private nKurs:=0
    
 if fnovi .and. nRbr == 1
@@ -427,7 +427,7 @@ do case
         
         Scatter()
         nRbr := VAL( _Rbr )
-        if EditPRIPR( .f. ) == 0
+        if mat_edit_priprema( .f. ) == 0
             BoxC()
             return DE_CONT
         else
@@ -462,7 +462,7 @@ do case
             
             @ m_x + 1, m_y + 1 CLEAR TO m_x + ( __unos_x - 7 ), m_y + ( __unos_y - 4 )
             
-            if EditPRIPR(.f.)==0
+            if mat_edit_priprema(.f.)==0
                 exit
             else
                 mat_brisi_pbaze()
@@ -512,7 +512,7 @@ do case
 
             @ m_x + 1, m_y + 1 CLEAR TO m_x + ( __unos_x - 7 ), m_y + ( __unos_y - 4 )
 
-            if EditPRIPR(.t.)==0
+            if mat_edit_priprema(.t.)==0
                 exit
             else
                 mat_brisi_pbaze()

@@ -15,9 +15,8 @@
 STATIC picBHD
 STATIC picDEM
 
-// ------------------------------------
-// otvori tabele
-// ------------------------------------
+
+
 STATIC FUNCTION _o_tables()
 
    O_KONTO
@@ -26,9 +25,6 @@ STATIC FUNCTION _o_tables()
    RETURN
 
 
-// -----------------------------------------------------------------------
-// vraca uslove generisanja kompenzacije
-// -----------------------------------------------------------------------
 STATIC FUNCTION _get_vars( vars )
 
    LOCAL _id_firma := gFirma
@@ -73,11 +69,11 @@ STATIC FUNCTION _get_vars( vars )
       ++ _x
       @ m_x + _x, m_y + 2 SAY "Konto duguje   " GET _usl_kto  VALID P_KontoFin( @_usl_kto )
       ++ _x
-      @ m_x + _x, m_y + 2 SAY "Konto potrazuje" GET _usl_kto2  VALID P_KontoFin( @_usl_kto2 ) .AND. _usl_kto2 > _usl_kto
+      @ m_x + _x, m_y + 2 SAY8 "Konto potražuje" GET _usl_kto2  VALID P_KontoFin( @_usl_kto2 ) .AND. _usl_kto2 > _usl_kto
       ++ _x
-      @ m_x + _x, m_y + 2 SAY "Partner-duznik " GET _usl_partn VALID P_Firma( @_usl_partn )  PICT "@!"
+      @ m_x + _x, m_y + 2 SAY8 "Partner-dužnik " GET _usl_partn VALID P_Firma( @_usl_partn )  PICT "@!"
       ++ _x
-      @ m_x + _x, m_y + 2 SAY "Datum dokumenta od:" GET _dat_od
+      @ m_x + _x, m_y + 2 SAY8 "Datum dokumenta od:" GET _dat_od
       @ m_x + _x, Col() + 2 SAY "do" GET _dat_do   VALID _dat_od <= _dat_do
 
       ++ _x
@@ -88,7 +84,7 @@ STATIC FUNCTION _get_vars( vars )
 
       ++ _x
 
-      @ m_x + _x, m_y + 2 SAY "Prikaz datuma sa brojem racuna (D/N) ?"  GET _sa_datumom VALID _sa_datumom $ "DN" PICT "@!"
+      @ m_x + _x, m_y + 2 SAY8 "Prikaz datuma sa brojem računa (D/N) ?"  GET _sa_datumom VALID _sa_datumom $ "DN" PICT "@!"
 
       READ
       ESC_BCR
@@ -127,15 +123,11 @@ STATIC FUNCTION _get_vars( vars )
    RETURN _ret
 
 
-// ---------------------------------------------------------
-// kreiranje tmp tabela
-// ---------------------------------------------------------
 STATIC FUNCTION _cre_tmp_tables( force )
 
    LOCAL _dbf
    LOCAL _tmp1, _tmp2
 
-   // struktura tabele
    _dbf := {}
    AAdd( _dbf, { "BRDOK", "C", 50, 0 } )
    AAdd( _dbf, { "IZNOSBHD", "N", 17, 2 } )
@@ -152,7 +144,6 @@ STATIC FUNCTION _cre_tmp_tables( force )
       dbCreate( _tmp2, _dbf )
    ENDIF
 
-   // otvori tabele
    SELECT ( F_TMP_1 )
    IF Used()
       USE
@@ -169,9 +160,6 @@ STATIC FUNCTION _cre_tmp_tables( force )
 
 
 
-// ---------------------------------------------------------------
-// komenzacije
-// ---------------------------------------------------------------
 FUNCTION kompenzacija()
 
    LOCAL _is_gen := .F.
@@ -184,10 +172,8 @@ FUNCTION kompenzacija()
    picBHD := FormPicL( gPicBHD, 16 )
    picDEM := FormPicL( gPicDEM, 12 )
 
-   // otvori tabele
    _o_tables()
 
-   // inicijalizuj hash matricu
    _vars[ "konto" ] := ""
    _vars[ "konto2" ] := ""
    _vars[ "partn" ] := ""
@@ -197,11 +183,10 @@ FUNCTION kompenzacija()
    _vars[ "prelom" ] := "N"
    _vars[ "firma" ] := gFirma
 
-   IF Pitanje(, "Izgenerisati stavke za kompenzaciju?", "N" ) == "D"
+   IF Pitanje(, "Izgenerisati stavke za kompenzaciju (D/N) ?", "N" ) == "D"
 
       _is_gen := .T.
 
-      // daj mi parametre...
       IF !_get_vars( @_vars )
          RETURN
       ENDIF
@@ -216,15 +201,12 @@ FUNCTION kompenzacija()
 
    ENDIF
 
-   // kreiraj temp tabele za kompenzacije
    _cre_tmp_tables( _is_gen )
 
-   // generisi stavke za kompenzaciju
    IF _is_gen
       _gen_kompen( _vars )
    ENDIF
 
-   // browsanje
    ImeKol := { ;
       { "Br.racuna", {|| PadR( brdok, 10 )    }, "brdok"    },;
       { "Iznos",     {|| iznosbhd }, "iznosbhd" },;
@@ -241,9 +223,9 @@ FUNCTION kompenzacija()
    @ m_x, m_y + 30 SAY ' KREIRANJE OBRASCA "IZJAVA O KOMPENZACIJI" '
 
    @ m_x + _row - 4, m_y + 1 SAY Replicate( "=", _col )
-   @ m_x + _row - 3, m_y + 1 SAY "  <K> izaberi/ukini racun za kompenzaciju"
-   @ m_x + _row - 2, m_y + 1 SAY "<c+P> stampanje kompenzacije                  <T> promijeni tabelu"
-   @ m_x + _row - 1, m_y + 1 SAY "<c+N> nova stavka                           <c+T> brisanje                 <ENTER> ispravka stavke "
+   @ m_x + _row - 3, m_y + 1 SAY8 "  <K> izaberi/ukini račun za kompenzaciju"
+   @ m_x + _row - 2, m_y + 1 SAY8 "<c+P> štampanje kompenzacije                  <T> promijeni tabelu"
+   @ m_x + _row - 1, m_y + 1 SAY8 "<c+N> nova stavka                           <c+T> brisanje                 <ENTER> ispravka stavke "
 
    FOR _n := 1 to ( _row - 4 )
       @ m_x + _n, m_y + ( _col / 2 ) SAY "|"
@@ -280,9 +262,6 @@ FUNCTION kompenzacija()
 
 
 
-// ----------------------------------------------------------------
-// izgenerisi stavke za kompenzaciju
-// ----------------------------------------------------------------
 STATIC FUNCTION _gen_kompen( vars )
 
    LOCAL _usl_kto := vars[ "konto" ]
@@ -313,7 +292,6 @@ STATIC FUNCTION _gen_kompen( vars )
       SET ORDER TO TAG "3"
    ENDIF
 
-   // postavi filter
    _filter := ".t."
 
    IF !Empty( _dat_od )
@@ -334,7 +312,6 @@ STATIC FUNCTION _gen_kompen( vars )
 
    SEEK _id_firma + _usl_kto + _usl_partn
 
-   // pretrazi na drugom kontu
    IF !Found()
       SEEK _id_firma + _usl_kto2 + _usl_partn
    ENDIF
@@ -354,7 +331,6 @@ STATIC FUNCTION _gen_kompen( vars )
 
    _prolaz := 0
    IF Empty( _usl_partn )
-      // prodji tri puta
       _prolaz := 1
       HSEEK _id_firma + _usl_kto
       IF Eof()
@@ -576,9 +552,6 @@ STATIC FUNCTION _gen_kompen( vars )
    RETURN
 
 
-// ---------------------------------------------------------------
-// obrada dogadjaja tastature
-// ---------------------------------------------------------------
 STATIC FUNCTION key_handler( vars )
 
    LOCAL nTr2
@@ -607,8 +580,8 @@ STATIC FUNCTION key_handler( vars )
          SKIP 1
          Scatter()
          Box(, 5, 70 )
-         @ m_x + 2, m_y + 2 SAY "Br.racuna " GET _brdok
-         @ m_x + 3, m_y + 2 SAY "Iznos     " GET _iznosbhd
+         @ m_x + 2, m_y + 2 SAY8 "Br.računa " GET _brdok
+         @ m_x + 3, m_y + 2 SAY8 "Iznos     " GET _iznosbhd
          READ
          BoxC()
          IF LastKey() == K_ESC
@@ -628,8 +601,8 @@ STATIC FUNCTION key_handler( vars )
          Scatter()
 
          Box(, 5, 70 )
-         @ m_x + 2, m_y + 2 SAY "Br.racuna " GET _brdok
-         @ m_x + 3, m_y + 2 SAY "Iznos     " GET _iznosbhd
+         @ m_x + 2, m_y + 2 SAY8 "Br.računa " GET _brdok
+         @ m_x + 3, m_y + 2 SAY8 "Iznos     " GET _iznosbhd
          READ
          BoxC()
 
@@ -644,7 +617,6 @@ STATIC FUNCTION key_handler( vars )
 
       CASE Ch == Asc( "T" ) .OR. Ch == Asc( "t" )
 
-         // prebacivanje na drugu tabelu
          IF Alias() == "TEMP12"
             SELECT TEMP60
             GO TOP
@@ -665,7 +637,6 @@ STATIC FUNCTION key_handler( vars )
    RETURN nVrati
 
 
-// stampa kompenzacije
 STATIC FUNCTION print_kompen( vars )
 
    LOCAL _id_pov := Space( 6 )
@@ -682,7 +653,6 @@ STATIC FUNCTION print_kompen( vars )
    LOCAL _templates_path := F18_TEMPLATE_LOCATION
    LOCAL _xml_file := my_home() + "data.xml"
 
-   // uzmi partnera
    IF !Empty( vars[ "partn" ] )
       _id_partn := vars[ "partn" ]
    ENDIF
@@ -696,15 +666,15 @@ STATIC FUNCTION print_kompen( vars )
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Datum kompenzacije: " GET _dat_komp
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Rok placanja (dana): " GET _rok_pl VALID _rok_pl >= 0 PICT "999"
+   @ m_x + _x, m_y + 2 SAY8 "Rok plaćanja (dana): " GET _rok_pl VALID _rok_pl >= 0 PICT "999"
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Valuta kompenzacije (D/P): " GET _valuta  VALID _valuta $ "DP"  PICT "!@"
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Broj kompenzacije: " GET _br_komp
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Sifra (ID) povjerioca: " GET _id_pov VALID P_Firma( @_id_pov ) PICT "@!"
+   @ m_x + _x, m_y + 2 SAY8 "Šifra (ID) povjerioca: " GET _id_pov VALID P_Firma( @_id_pov ) PICT "@!"
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "   Sifra (ID) duznika: " GET _id_partn VALID P_Firma( @_id_partn ) PICT "@!"
+   @ m_x + _x, m_y + 2 SAY8 "   Šifra (ID) dužnika: " GET _id_partn VALID P_Firma( @_id_partn ) PICT "@!"
    READ
    BoxC()
 
@@ -713,38 +683,30 @@ STATIC FUNCTION print_kompen( vars )
       RETURN _ret
    ENDIF
 
-   // snimi parametre
    set_metric( "fin_kompen_id_povjerioca", my_home(), _id_pov )
    set_metric( "fin_kompen_broj", my_home(), _br_komp )
    set_metric( "fin_kompen_rok_placanja", my_home(), _rok_pl )
    set_metric( "fin_kompen_valuta", my_home(), _valuta )
 
-   // dodaj u vars hash matricu jos stavki
    vars[ "id_pov" ] := _id_pov
    vars[ "komp_broj" ] := _br_komp
    vars[ "rok_pl" ] := _rok_pl
    vars[ "valuta" ] := _valuta
    vars[ "datum" ] := _dat_komp
 
-   // ako nema partnera u matrici, setuj ga !
    IF Empty( vars[ "partn" ] )
       vars[ "partn" ] := _id_partn
    ENDIF
 
-   // generisi xml fajl
    IF !_gen_xml( vars, _xml_file )
       _ret := .F.
       RETURN _ret
    ENDIF
 
-   // generisi report i prikazi kompenzaciju
-   // -------------------
-   // daj mi listu template-a
    IF get_file_list_array( _templates_path, _filter, @_template, .T. ) == 0
       RETURN
    ENDIF
 
-   // generisi i prikazi report
    IF f18_odt_generate( _template, _xml_file )
       f18_odt_print()
    ENDIF
@@ -752,9 +714,6 @@ STATIC FUNCTION print_kompen( vars )
    RETURN _ret
 
 
-// --------------------------------------------------
-// generise xml fajl kompenzacije
-// --------------------------------------------------
 STATIC FUNCTION _gen_xml( vars, xml_file )
 
    LOCAL _ret := .T.
@@ -778,8 +737,6 @@ STATIC FUNCTION _gen_xml( vars, xml_file )
    _dat_do := vars[ "dat_do" ]
    _dat_komp := vars[ "datum" ]
 
-   // generisanje xml fajla
-   // --------------------------------------------
    open_xml( xml_file )
 
    xml_head()
@@ -787,13 +744,11 @@ STATIC FUNCTION _gen_xml( vars, xml_file )
    xml_subnode( "kompen", .F. )
 
    // povjerioc
-   // ---------------------------------------------
    IF !_fill_partn( _id_pov, "pov" )
       RETURN .F.
    ENDIF
 
    // duznik
-   // ---------------------------------------------
    IF !_fill_partn( _partner, "duz" )
       RETURN .F.
    ENDIF
@@ -844,7 +799,6 @@ STATIC FUNCTION _gen_xml( vars, xml_file )
 
       xml_subnode( "item", .T. )
 
-      // totali
       _ukupno_duz += _iznos_duz
       _ukupno_pov += _iznos_pov
 
@@ -859,8 +813,6 @@ STATIC FUNCTION _gen_xml( vars, xml_file )
 
    xml_subnode( "tabela", .T. )
 
-   // ispisi jos totale i ostale podatke
-   // ---------------------------------------------------------------------
    // totali
    xml_node( "total_duz", AllTrim( Str( _ukupno_duz, 17, 2 ) ) )
    xml_node( "total_pov", AllTrim( Str( _ukupno_pov, 17, 2 ) ) )
@@ -882,9 +834,6 @@ STATIC FUNCTION _gen_xml( vars, xml_file )
    RETURN _ret
 
 
-// -------------------------------------------------------
-// filuje partnera u xml fajl
-// -------------------------------------------------------
 STATIC FUNCTION _fill_partn( part_id, node_name )
 
    LOCAL _ret := .T.
@@ -931,9 +880,6 @@ STATIC FUNCTION _fill_partn( part_id, node_name )
    RETURN _ret
 
 
-// --------------------------------------
-// preskakanje markera
-// --------------------------------------
 STATIC FUNCTION _skip_t_marker( _mark_12, _mark_60 )
 
    LOCAL _t_arr := Select()

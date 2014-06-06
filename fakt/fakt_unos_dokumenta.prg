@@ -968,26 +968,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
             ENDIF
          ENDIF
       ENDIF
-
-      IF ( _idtipdok == "13" .AND. gVar13 == "2" )
-
-         IF gVarNum == "2"
-
-            @ m_x + 1, 57 SAY "Prodavn.konto" GET _idpartner VALID P_Konto( @_idpartner )
-            READ
-            _idpartner := Left( _idpartner, 6 )
-
-         ELSEIF gVarNum == "1"
-
-            _idPartner := IF( Empty( _idpartner ), "P1", RJIzKonta( _idpartner + " " ) )
-            @ m_x + 1, 57 SAY "RJ - objekat:" GET _idpartner VALID P_RJ( @_idpartner ) PICT "@!"
-            READ
-            _idpartner := PadR( KontoIzRJ( _idpartner ), 6 )
-
-         ENDIF
-
-      ENDIF
-
+     
       DO WHILE .T.
 
          _x := 2

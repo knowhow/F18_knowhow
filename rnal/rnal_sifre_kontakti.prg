@@ -48,7 +48,7 @@ FUNCTION s_contacts( cId, nCust_id, cContDesc, dx, dy )
       cTag := "3"
    ENDIF
 
-   rnal_sifra_bez_tacke( @cCont_desc )
+   rnal_sifra_bez_tacke( @cContDesc )
 
    set_a_kol( @ImeKol, @Kol, nCust_id )
 

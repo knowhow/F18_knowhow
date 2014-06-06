@@ -46,7 +46,7 @@ FUNCTION ld_unos_obracuna()
          SELECT ld
 
          cIdRadn := field->idRadn
-
+         
          IF ( _UIznos < 0 )
             Beep( 2 )
             Msg( Lokal( "Radnik ne može imati platu u negativnom iznosu !" ) )

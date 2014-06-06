@@ -636,15 +636,9 @@ STATIC FUNCTION elem_hand()
 
    CASE Upper( Chr( Ch ) ) == "C"
 		
-      // convert element...
-		
       IF Alias() <> "ELEMENTS"
-			
          RETURN DE_CONT
-		
       ENDIF
-
-      // convert only elements...
 
       nEl_id := field->el_id
       nEl_gr_id := field->e_gr_id
@@ -654,15 +648,9 @@ STATIC FUNCTION elem_hand()
 	
    CASE Upper( Chr( Ch ) ) == "U"
 		
-      // restore element...
-		
       IF Alias() <> "ELEMENTS"
-			
          RETURN DE_CONT
-		
       ENDIF
-
-      // restore only elements...
 
       nEl_id := field->el_id
       nEl_gr_id := field->e_gr_id
@@ -741,9 +729,6 @@ STATIC FUNCTION _sh_piccode( cSchema )
    RETURN
 
 
-// -----------------------------------------------------------
-// configure element...
-// -----------------------------------------------------------
 STATIC FUNCTION el_convert( nEl_id, nEl_gr_id, nArt_id )
 
    LOCAL nRet := DE_CONT
@@ -790,11 +775,9 @@ STATIC FUNCTION el_convert( nEl_id, nEl_gr_id, nArt_id )
       RETURN DE_CONT
    ENDIF
 
-
    IF cSelect == "1"
       rnal_generisi_lamistal_staklo( field->el_no, nFolNr, nArt_id )
       nRet := DE_REFRESH
-	
    ENDIF
 
    RETURN nRet
@@ -882,7 +865,7 @@ STATIC FUNCTION elem_edit( nArt_id, lNewRec, cType, nEl_no )
 	
       @ m_x + 5, m_y + 2 SAY PadL( "element pripada grupi:", nLeft ) GET _e_gr_id VALID s_e_groups( @_e_gr_id, .T. )
 	
-      @ m_x + 6, m_y + 2 SAY PadL( "(0 - otvori sifrarnik)", nLeft )
+      @ m_x + 6, m_y + 2 SAY8 PadL( "(0 - otvori šifrarnik)", nLeft )
 	
       READ
 
@@ -909,7 +892,6 @@ STATIC FUNCTION elem_edit( nArt_id, lNewRec, cType, nEl_no )
       // ukloni "*" ako postoji...
       cType := StrTran( cType, "*", "" )
 	
-      // upenduj tip elementa
       _e_gr_id := g_gr_by_type( cType )
 
    ENDIF
@@ -940,10 +922,8 @@ STATIC FUNCTION e_no_edit()
    BoxC()
 
    IF LastKey() <> K_ESC
-
       _rec := get_dbf_global_memvars( NIL, .F. )
       update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
-
    ENDIF
 
    RETURN 1
@@ -1060,7 +1040,7 @@ STATIC FUNCTION e_att_edit( nEl_id, lNewRec )
 		
    @ m_x + 4, m_y + 2 SAY PadL( "izaberi vrijednost atributa", nLeft ) GET cElGrVal VALID {|| s_e_gr_val( @cElGrVal, _e_gr_at_id, cElGrVal, .T. ), set_var( @_e_gr_vl_id, @cElGrVal ) }
 
-   @ m_x + 5, m_y + 2 SAY PadL( "0 - otvori sifrarnik", nLeft )
+   @ m_x + 5, m_y + 2 SAY8 PadL( "0 - otvori šifrarnik", nLeft )
 	
    READ
    BoxC()
@@ -1072,7 +1052,6 @@ STATIC FUNCTION e_att_edit( nEl_id, lNewRec )
    ENDIF
 
    _rec := get_dbf_global_memvars( NIL, .F. )
-   // update zapisa
    update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
 
    RETURN 1
@@ -1123,7 +1102,7 @@ STATIC FUNCTION e_aops_edit( nEl_id, lNewRec )
 		
    @ m_x + 4, m_y + 2 SAY PadL( "izaberi atribut operacije", nLeft ) GET _aop_att_id VALID {|| s_aops_att( @_aop_att_id, _aop_id, nil, .T. ), show_it( g_aop_att_desc( _aop_att_id ) )  }
 	
-   @ m_x + 5, m_y + 2 SAY PadL( "0 - otvori sifrarnik", nLeft )
+   @ m_x + 5, m_y + 2 SAY8 PadL( "0 - otvori šifrarnik", nLeft )
 	
    READ
    BoxC()
@@ -1142,14 +1121,11 @@ STATIC FUNCTION e_aops_edit( nEl_id, lNewRec )
 
 
 
-// ----------------------------------------------
-// brisanje elementa
-// ----------------------------------------------
 STATIC FUNCTION elem_del()
 
    LOCAL _rec
 
-   IF Pitanje(, "Izbrisati stavku ???", "N" ) == "N"
+   IF Pitanje(, "Izbrisati stavku (D/N) ?", "N" ) == "N"
       RETURN DE_CONT
    ENDIF
 
@@ -1160,14 +1136,11 @@ STATIC FUNCTION elem_del()
 
 
 
-// ----------------------------------------------
-// brisanje atributa elementa
-// ----------------------------------------------
 STATIC FUNCTION e_att_del()
 
    LOCAL _rec
 
-   IF Pitanje(, "Izbrisati stavku ???", "N" ) == "N"
+   IF Pitanje(, "Izbrisati stavku (D/N) ?", "N" ) == "N"
       RETURN DE_CONT
    ENDIF
 
@@ -1178,14 +1151,11 @@ STATIC FUNCTION e_att_del()
 
 
 
-// ----------------------------------------------
-// brisanje dodatne operacije elementa
-// ----------------------------------------------
 STATIC FUNCTION e_aops_del()
 
    LOCAL _rec
 
-   IF Pitanje(, "Izbrisati stavku ???", "N" ) == "N"
+   IF Pitanje(, "Izbrisati stavku (D/N) ?", "N" ) == "N"
       RETURN DE_CONT
    ENDIF
 

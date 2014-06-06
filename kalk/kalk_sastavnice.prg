@@ -19,7 +19,6 @@
 // --------------------------------
 function g_sast_list()
 local cMarker
-local cLaunch
 local cKto
 local lExpDbf := .f.
 local cExpDbf
@@ -34,10 +33,6 @@ if cExpDbf == "D"
 	lExpDbf := .t.
 endif
 
-
-if lExpDbf == .t.
-	cLaunch := exp_report()
-endif
 
 // kreiraj kroz export tabelu ovaj pregled....
 aFields := _g_fields()
@@ -142,7 +137,7 @@ r_sast_list( cMarker, nVar )
 
 
 if lExpDbf == .t.
-	tbl_export( cLaunch )
+	tbl_export()
 endif
 
 return

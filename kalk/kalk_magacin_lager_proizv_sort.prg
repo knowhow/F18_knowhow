@@ -714,9 +714,7 @@ replace field->i_izlaz with nI_izlaz
 replace field->i_stanje with nI_ulaz - nI_izlaz
 replace field->rabat with nI_rabat
 
-cLaunch := exp_report()
-
-tbl_export( cLaunch )
+tbl_export()
 
 return
 

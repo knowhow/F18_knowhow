@@ -397,8 +397,7 @@ FUNCTION FLLM()
 
    // pregled izvjestaja nakon generisanja u spreadsheet aplikaciji
    IF _export
-      _launch := exp_report()
-      tbl_export( _launch )
+      tbl_export()
    ENDIF
 
    my_close_all_dbf()

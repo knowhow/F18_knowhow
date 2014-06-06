@@ -247,7 +247,6 @@ FUNCTION SubKart( lOtvst )
       // inicijalizuj export
       aExpFields := g_exp_fields()
       t_exp_create( aExpFields )
-      cLaunch := exp_report()
    ENDIF
 
    cIdFirma := Trim( cIdFirma )
@@ -971,7 +970,7 @@ FUNCTION SubKart( lOtvst )
 
    IF cExpDbf == "D"
       my_close_all_dbf()
-      tbl_export( cLaunch )
+      tbl_export()
    ENDIF
 
    my_close_all_dbf()

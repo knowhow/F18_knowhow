@@ -255,7 +255,6 @@ FUNCTION spec_kol_partn()
 
    aExpFields := _g_exp_fields( aRoba )
    t_exp_create( aExpFields )
-   cLaunch := exp_report()
 
    _o_tables()
 
@@ -347,7 +346,7 @@ FUNCTION spec_kol_partn()
 
    BoxC()
 
-   tbl_export( cLaunch )
+   tbl_export()
 
    RETURN
 

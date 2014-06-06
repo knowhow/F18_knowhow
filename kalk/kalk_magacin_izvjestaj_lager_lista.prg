@@ -274,7 +274,6 @@ FUNCTION LLM()
       // exportuj report....
       aExpFields := g_exp_fields()
       t_exp_create( aExpFields )
-      cLaunch := exp_report()
    ENDIF
 
    _o_tables()
@@ -1030,7 +1029,7 @@ FUNCTION LLM()
 
    // lansiraj report....
    IF lExpDbf == .T.
-      tbl_export( cLaunch )
+      tbl_export()
    ENDIF
 
    gPicDem := cPicDem

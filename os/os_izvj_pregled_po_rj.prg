@@ -276,8 +276,7 @@ FF
 END PRINT
 
 if _export
-	_start_cmd := exp_report()
-	tbl_export( _start_cmd )
+	tbl_export()
 endif
 
 my_close_all_dbf()

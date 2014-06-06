@@ -23,57 +23,34 @@ local dDatOd
 local dDatDo
 local cRekap
 local cExpDbf
-local cLaunch
 
-// daj uslove
 if _get_vars( @cBrFakt, @cValuta, ;
 		@dDatOd, @dDatDo, @cRekap, @cExpDbf ) == 0
 	return
 endif
 
-// ako je rekapitulacija onda pitaj da ne prolazis sve iz pocetka
 if cRekap == "N" .or. Pitanje(,"Generisati stavke izvjestaja (D/N", "D") == "D"
-	
-	// generisi report u tmp
 	_gen_rpt( cBrFakt, cValuta, dDatOd, dDatDo, cRekap )
-
 endif
 
 
 if cExpDbf == "D"
 	
-	// exportuj podatke za dbf
-	
 	if cRekap == "D"
-	
 		msgbeep( "Moguce exportovati samo specifikacija !")
-		
 		return
-	
 	endif
 	
-	// exportuj tabelu
-	cLaunch := exp_report()
-	tbl_export( cLaunch )
-
+	tbl_export()
 	
 	return
 
 endif
-
-
-// prikazi standardne reporte
 
 if cRekap == "D"
-
-	// prikaz rekapitulacije
 	_show_rekap( cValuta, cBrFakt )
-	
 	return
-
 endif
-
-// prikazi specifikaciju
 _show_rpt( cValuta )
 
 return

@@ -227,7 +227,6 @@ FUNCTION fakt_real_kolicina()
    IF lExpRpt == .T.
       aExpFields := get_rpt_fields()
       t_exp_create( aExpFields )
-      cLaunch := exp_report()
    ENDIF
 
    _o_tables()
@@ -615,7 +614,7 @@ FUNCTION fakt_real_kolicina()
 
    // lansiraj export....
    IF lExpRpt
-      tbl_export( cLaunch )
+      tbl_export()
    ENDIF
 
    RETURN

@@ -72,7 +72,6 @@ lExpRpt := (cExpDbf == "D")
 if lExpRpt
     aDbfFields := get_exp_fields()
     t_exp_create( aDbfFields )
-    cLaunch := exp_report()
 endif
 
 O_AMORT
@@ -312,7 +311,7 @@ FF
 end print
 
 if lExpRpt
-    tbl_export( cLaunch )
+    tbl_export()
 endif
 
 my_close_all_dbf()

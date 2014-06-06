@@ -539,14 +539,9 @@ endif
 
 // ako je export izvjestaja onda ne pozivaj stampu !
 if lExpRpt
-
-	// pokreni i pregled export dbf-a nakon izvjestaja
-	cLaunch := exp_report()
-	tbl_export(cLaunch)
-
+	tbl_export()
 	my_close_all_dbf()
 	return
-
 endif
 
 // poziva se izvjestaj

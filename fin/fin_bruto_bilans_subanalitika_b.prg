@@ -63,7 +63,6 @@ FUNCTION fin_bb_subanalitika_b( params )
    IF lExpRpt
       aExpFields := get_sbb_fields( lBBSkraceni, __par_len )
       t_exp_create( aExpFields )
-      cLaunch := exp_report()
    ENDIF
 
    O_KONTO
@@ -508,7 +507,7 @@ FUNCTION fin_bb_subanalitika_b( params )
    my_close_all_dbf()
 
    IF lExpRpt
-      tbl_export( cLaunch )
+      tbl_export()
    ENDIF
 
    RETURN

@@ -19,7 +19,6 @@ function st_sv_nal()
 
 aFields := get_exp_fields()
 t_exp_create( aFields )
-cLaunch := exp_report()
 
 O_SUBAN
 O_KONTO
@@ -59,8 +58,7 @@ enddo
 
 BoxC()
 
-// prikazi export
-tbl_export( cLaunch )
+tbl_export()
 
 
 return

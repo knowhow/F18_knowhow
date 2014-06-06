@@ -1038,7 +1038,6 @@ lExpRpt := (cExpRptDN == "D")
 if lExpRpt
 	aSSFields := get_ss_fields( gRj, __par_len )
 	t_exp_create(aSSFields)
-	cLaunch := exp_report()
 endif
 
 IF gDUFRJ!="D"
@@ -1420,7 +1419,7 @@ FF
 END PRINT
 
 if lExpRpt
-	tbl_export(cLaunch)
+	tbl_export()
 endif
 
 closeret
@@ -3140,7 +3139,6 @@ cSvi := cIdpartner
 if lExpRpt == .t.
 	aExpFld := get_ost_fields( cSaRokom, __par_len )
 	t_exp_create( aExpFld )
-	cStart := exp_report()
 endif
 
 select (F_TRFP2)
@@ -3815,7 +3813,7 @@ FF
 END PRINT
 
 if lExpRpt == .t.
-	tbl_export( cStart )
+	tbl_export()
 endif
 
 select (F_POM)

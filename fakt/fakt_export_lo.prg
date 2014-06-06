@@ -24,13 +24,8 @@ FUNCTION fakt_export_dokument_lo()
    aDbf := _g_fields()
 
    t_exp_create( aDbf )
-
-   // dokument prebaci u dbf
    _exp_dok()
-
-   // pozovi export....
-   cLaunch := exp_report()
-   tbl_export( cLaunch )
+   tbl_export()
 
    RETURN
 

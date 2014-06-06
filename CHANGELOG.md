@@ -1,3 +1,7 @@
+1.7.98  2014-06-06, vsasa
+
+  - RNAL, ispravke bugova, full synchro rnal_e_att
+ 
 1.7.97  2014-06-06, vsasa
 
   - RNAL, naručioci i kontakti, rnal_sifre_bez_tacke()

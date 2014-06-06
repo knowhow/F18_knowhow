@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,263 +13,268 @@
 #include "epdv.ch"
 
 // zaokruzenje iznos
-static gZAO_IZN
+STATIC gZAO_IZN
 // zaokruzenje cijena
-static gZAO_CIJ
+STATIC gZAO_CIJ
 // zaokruzenje cijena
-static gZAO_PDV
+STATIC gZAO_PDV
 
 // picture iznos
-static gPIC_IZN
+STATIC gPIC_IZN
 
 // picture cijena
-static gPIC_CIJ
+STATIC gPIC_CIJ
 
 // ulazni pdv koji se ne moze odbiti
 // da li ulazi u statistiku krajnje potrosnje
 // ako ulazi onda se stavlja polje u koje se dodaje
 // " " - ne dodajes u statistiku
 // "1" - federacija
-// "2" - sprski republikanci 
+// "2" - sprski republikanci
 // "3" - brcko district do las vegasa
-static gUlPdvKp := "1"
+STATIC gUlPdvKp := "1"
 
 
 // -----------------------------------
 // -----------------------------------
-function epdv_parametri()
-local _izbor := 1
-local _opc := {}
-local _opcexe := {}
+FUNCTION epdv_parametri()
 
-AADD( _opc, "1. osnovni podaci org.jedinice            " )
-AADD( _opcexe, { || org_params() } )
-AADD( _opc, "2. parametri izgleda  " )
-AADD( _opcexe, { || ed_g_params() } )
+   LOCAL _izbor := 1
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
 
-f18_menu( "epdv_param", .f., _izbor, _opc, _opcexe )
+   AAdd( _opc, "1. osnovni podaci org.jedinice            " )
+   AAdd( _opcexe, {|| org_params() } )
+   AAdd( _opc, "2. parametri izgleda  " )
+   AAdd( _opcexe, {|| ed_g_params() } )
 
-return
+   f18_menu( "epdv_param", .F., _izbor, _opc, _opcexe )
+
+   RETURN
 
 
 // -------------------------------------
 // set parametre pri pokretanju modula
 // ------------------------------------
-function epdv_set_params()
+FUNCTION epdv_set_params()
 
-// procitaj globalne - kparams
-read_epdv_gl_params()
+   // procitaj globalne - kparams
+   read_epdv_gl_params()
 
-// napuni sifrarnik tarifa
-epdv_set_sif_tarifa()
+   // napuni sifrarnik tarifa
+   epdv_set_sif_tarifa()
 
-// napuni sifk radi unosa partnera - rejon
-epdv_set_sif_partneri()
+   // napuni sifk radi unosa partnera - rejon
+   epdv_set_sif_partneri()
 
-return
-
-
-// --------------------------------------
-// --------------------------------------
-function ed_g_params()
-
-gPIC_IZN:= PADR(gPIC_IZN, 20)
-gPIC_CIJ:= PADR(gPIC_CIJ, 20)
-
-gUlPdvKp:= PADR(gUlPdvKp, 1)
-
-nX:=1
-Box(, 20, 70)
-
- set cursor on
-
- @ m_x + nX, m_y+2 SAY "1. Zaokruzenje ***"
- nX++
- 
- @ m_x + nX , m_y+2 SAY PADL("iznos ", 30)   GET gZAO_IZN PICT "9"
- nX++
- 
- @ m_x + nX, m_y+2 SAY PADL("cijena ", 30)   GET gZAO_CIJ PICT "9"
- nX++
- 
- @ m_x + nX, m_y+2 SAY PADL(" podaci na pdv prijavi ", 30)   GET gZAO_PDV PICT "9"
- nX ++
-
- @ m_x + nX, m_y+2 SAY "2. Prikaz ***"
- nX ++
- 
- @ m_x + nX, m_y+2 SAY PADL(" iznos ", 30)   GET gPIC_IZN
- nX ++
- 
- @ m_x + nX, m_y+2 SAY PADL(" cijena ", 30)   GET gPIC_CIJ
- nX ++
-
- @ m_x + nX, m_y+2 SAY "3. Obracun ***"
- nX ++
- 
- @ m_x + nX, m_y+2 SAY PADL(" ul. pdv kr.potr-stat fed-1, rs-2, bd-3", 55)   GET gUlPdvKp ;
-	VALID gUlPdvKp $ " 123"
- nX ++
- 
- @ m_x + nX, m_y+2 SAY "4. Ostalo ***"
- nX ++
- 
- @ m_x + nX, m_y+2 SAY PADL(" konta dobavljaci:", 30) GET gL_kto_dob ;
- 	PICT "@S30"
- nX ++
- 
- @ m_x + nX, m_y+2 SAY PADL("      konta kupci:", 30) GET gL_kto_kup ;
- 	PICT "@S30"
- nX ++
- 
- @ m_x + nX, m_y+2 SAY PADL("ulazni pdv:", 30) GET gKt_updv ;
- 	PICT "@S30"
- nX ++
- 
- @ m_x + nX, m_y+2 SAY PADL("izlazni pdv:", 30) GET gKt_ipdv ;
- 	PICT "@S30"
-
- READ
-
-BoxC()
-
-gPIC_IZN := ALLTRIM(gPIC_IZN)
-gPIC_CIJ := ALLTRIM(gPIC_CIJ)
-
-if lastkey()<>K_ESC
-	write_g_params()
-endif
-
-return
+   RETURN
 
 
 // --------------------------------------
 // --------------------------------------
-function read_epdv_gl_params()
-gZAO_IZN := 2
-gZAO_CIJ := 3
-gZAO_PDV := 0
-gPIC_IZN := "9999999.99"
-gPIC_CIJ := "9999999.99"
-gUlPdvKp := "1"
+FUNCTION ed_g_params()
 
-gZAO_IZN := fetch_metric("epdv_zaokruzenje_iznosa", nil, gZAO_IZN)
-gZAO_CIJ := fetch_metric("epdv_zaokruzenje_cijene", nil, gZAO_CIJ)
-gZAO_PDV := fetch_metric("epdv_zaokruzenje_pdv", nil, gZAO_PDV)
+   gPIC_IZN := PadR( gPIC_IZN, 20 )
+   gPIC_CIJ := PadR( gPIC_CIJ, 20 )
 
-gPIC_IZN := fetch_metric("epdv_picture_iznos", nil, gPIC_IZN)
-gPIC_CIJ := fetch_metric("epdv_picture_cijena", nil, gPIC_CIJ)
+   gUlPdvKp := PadR( gUlPdvKp, 1 )
 
-gUlPDVKp := fetch_metric("epdv_ulazni_pdv_krajnja_potrosnja", nil, gUlPdvKp)
+   nX := 1
+   Box(, 20, 70 )
 
-gL_kto_dob := fetch_metric("epdv_lista_konta_dobavljaca", nil, gL_kto_dob)
-gL_kto_kup := fetch_metric("epdv_lista_konta_kupaca", nil, gL_kto_kup)
-gkt_updv := fetch_metric("epdv_konto_ulazni_pdv", nil, gkt_updv)
-gkt_ipdv := fetch_metric("epdv_konto_izlazni_pdv", nil, gkt_ipdv)
+   SET CURSOR ON
+
+   @ m_x + nX, m_y + 2 SAY "1. Zaokruzenje ***"
+   nX++
+
+   @ m_x + nX, m_y + 2 SAY PadL( "iznos ", 30 )   GET gZAO_IZN PICT "9"
+   nX++
+
+   @ m_x + nX, m_y + 2 SAY PadL( "cijena ", 30 )   GET gZAO_CIJ PICT "9"
+   nX++
+
+   @ m_x + nX, m_y + 2 SAY PadL( " podaci na pdv prijavi ", 30 )   GET gZAO_PDV PICT "9"
+   nX ++
+
+   @ m_x + nX, m_y + 2 SAY "2. Prikaz ***"
+   nX ++
+
+   @ m_x + nX, m_y + 2 SAY PadL( " iznos ", 30 )   GET gPIC_IZN
+   nX ++
+
+   @ m_x + nX, m_y + 2 SAY PadL( " cijena ", 30 )   GET gPIC_CIJ
+   nX ++
+
+   @ m_x + nX, m_y + 2 SAY "3. Obracun ***"
+   nX ++
+
+   @ m_x + nX, m_y + 2 SAY PadL( " ul. pdv kr.potr-stat fed-1, rs-2, bd-3", 55 )   GET gUlPdvKp ;
+      VALID gUlPdvKp $ " 123"
+   nX ++
+
+   @ m_x + nX, m_y + 2 SAY "4. Ostalo ***"
+   nX ++
+
+   @ m_x + nX, m_y + 2 SAY PadL( " konta dobavljaci:", 30 ) GET gL_kto_dob ;
+      PICT "@S30"
+   nX ++
+
+   @ m_x + nX, m_y + 2 SAY PadL( "      konta kupci:", 30 ) GET gL_kto_kup ;
+      PICT "@S30"
+   nX ++
+
+   @ m_x + nX, m_y + 2 SAY PadL( "ulazni pdv:", 30 ) GET gKt_updv ;
+      PICT "@S30"
+   nX ++
+
+   @ m_x + nX, m_y + 2 SAY PadL( "izlazni pdv:", 30 ) GET gKt_ipdv ;
+      PICT "@S30"
+
+   READ
+
+   BoxC()
+
+   gPIC_IZN := AllTrim( gPIC_IZN )
+   gPIC_CIJ := AllTrim( gPIC_CIJ )
+
+   IF LastKey() <> K_ESC
+      write_g_params()
+   ENDIF
+
+   RETURN
 
 
-return
+// --------------------------------------
+// --------------------------------------
+FUNCTION read_epdv_gl_params()
+
+   gZAO_IZN := 2
+   gZAO_CIJ := 3
+   gZAO_PDV := 0
+   gPIC_IZN := "9999999.99"
+   gPIC_CIJ := "9999999.99"
+   gUlPdvKp := "1"
+
+   gZAO_IZN := fetch_metric( "epdv_zaokruzenje_iznosa", nil, gZAO_IZN )
+   gZAO_CIJ := fetch_metric( "epdv_zaokruzenje_cijene", nil, gZAO_CIJ )
+   gZAO_PDV := fetch_metric( "epdv_zaokruzenje_pdv", nil, gZAO_PDV )
+
+   gPIC_IZN := fetch_metric( "epdv_picture_iznos", nil, gPIC_IZN )
+   gPIC_CIJ := fetch_metric( "epdv_picture_cijena", nil, gPIC_CIJ )
+
+   gUlPDVKp := fetch_metric( "epdv_ulazni_pdv_krajnja_potrosnja", nil, gUlPdvKp )
+
+   gL_kto_dob := fetch_metric( "epdv_lista_konta_dobavljaca", nil, gL_kto_dob )
+   gL_kto_kup := fetch_metric( "epdv_lista_konta_kupaca", nil, gL_kto_kup )
+   gkt_updv := fetch_metric( "epdv_konto_ulazni_pdv", nil, gkt_updv )
+   gkt_ipdv := fetch_metric( "epdv_konto_izlazni_pdv", nil, gkt_ipdv )
+
+   RETURN
 
 
 // ---------------------------
 // ---------------------------
-function write_g_params()
+FUNCTION write_g_params()
 
-set_metric("epdv_zaokruzenje_iznosa", nil, gZAO_IZN)
-set_metric("epdv_zaokruzenje_cijene", nil, gZAO_CIJ)
-set_metric("epdv_zaokruzenje_pdv", nil, gZAO_PDV)
+   set_metric( "epdv_zaokruzenje_iznosa", nil, gZAO_IZN )
+   set_metric( "epdv_zaokruzenje_cijene", nil, gZAO_CIJ )
+   set_metric( "epdv_zaokruzenje_pdv", nil, gZAO_PDV )
 
-set_metric("epdv_picture_iznos", nil, gPIC_IZN)
-set_metric("epdv_picture_cijena", nil, gPIC_CIJ)
+   set_metric( "epdv_picture_iznos", nil, gPIC_IZN )
+   set_metric( "epdv_picture_cijena", nil, gPIC_CIJ )
 
-set_metric("epdv_ulazni_pdv_krajnja_potrosnja", nil, gUlPdvKp)
+   set_metric( "epdv_ulazni_pdv_krajnja_potrosnja", nil, gUlPdvKp )
 
-set_metric("epdv_lista_konta_dobavljaca", nil, gL_kto_dob)
-set_metric("epdv_lista_konta_kupaca", nil, gL_kto_kup)
-set_metric("epdv_konto_ulazni_pdv", nil, gkt_updv)
-set_metric("epdv_konto_izlazni_pdv", nil, gkt_ipdv)
+   set_metric( "epdv_lista_konta_dobavljaca", nil, gL_kto_dob )
+   set_metric( "epdv_lista_konta_kupaca", nil, gL_kto_kup )
+   set_metric( "epdv_konto_ulazni_pdv", nil, gkt_updv )
+   set_metric( "epdv_konto_izlazni_pdv", nil, gkt_ipdv )
 
-return
+   RETURN
 
-
-// ---------------------------------------------------------------
-// ---------------------------------------------------------------
-function read_pdv_pars(dPotDatum, cPotMjesto, cPotOb, cPdvPovrat)
-
-dPotDatum := fetch_metric("epdv_prijava_datum", nil, dPotDatum)
-dPotMjesto := fetch_metric("epdv_prijava_mjesto", nil, cPotMjesto)
-cPotOb := fetch_metric("epdv_prijava_obveznik", nil, cPotOb)
-cPdvPovrat := fetch_metric("epdv_prijava_povrat", nil, cPdvPovrat)
-
-return
 
 // ---------------------------------------------------------------
 // ---------------------------------------------------------------
-function save_pdv_pars(dPotDatum, cPotMjesto, cPotOb, cPdvPovrat)
+FUNCTION read_pdv_pars( dPotDatum, cPotMjesto, cPotOb, cPdvPovrat )
 
-set_metric("epdv_prijava_datum", nil, dPotDatum)
-set_metric("epdv_prijava_mjesto", nil, cPotMjesto)
-set_metric("epdv_prijava_obveznik", nil, cPotOb)
-set_metric("epdv_prijava_povrat", nil, cPdvPovrat)
+   dPotDatum := fetch_metric( "epdv_prijava_datum", nil, dPotDatum )
+   dPotMjesto := fetch_metric( "epdv_prijava_mjesto", nil, cPotMjesto )
+   cPotOb := fetch_metric( "epdv_prijava_obveznik", nil, cPotOb )
+   cPdvPovrat := fetch_metric( "epdv_prijava_povrat", nil, cPdvPovrat )
 
-return
+   RETURN
+
+// ---------------------------------------------------------------
+// ---------------------------------------------------------------
+FUNCTION save_pdv_pars( dPotDatum, cPotMjesto, cPotOb, cPdvPovrat )
+
+   set_metric( "epdv_prijava_datum", nil, dPotDatum )
+   set_metric( "epdv_prijava_mjesto", nil, cPotMjesto )
+   set_metric( "epdv_prijava_obveznik", nil, cPotOb )
+   set_metric( "epdv_prijava_povrat", nil, cPdvPovrat )
+
+   RETURN
 
 // SET - GET sekcija  za PIC i ZAO vrijednostai
 
 // -------------------------------
 // -------------------------------
-function ZAO_IZN(xVal)
+FUNCTION ZAO_IZN( xVal )
 
-if xVal <> nil
-	gZAO_IZN := xVal
-endif
+   IF xVal <> nil
+      gZAO_IZN := xVal
+   ENDIF
 
-return gZAO_IZN
-
-// -------------------------------
-// -------------------------------
-function ZAO_CIJ(xVal)
-
-if xVal <> nil
-	gZAO_CIJ := xVal
-endif
-
-return gZAO_CIJ
+   RETURN gZAO_IZN
 
 // -------------------------------
 // -------------------------------
-function ZAO_PDV(xVal)
+FUNCTION ZAO_CIJ( xVal )
 
-if xVal <> nil
-	gZAO_PDV := xVal
-endif
+   IF xVal <> nil
+      gZAO_CIJ := xVal
+   ENDIF
 
-return gZAO_PDV
-
-
-// -------------------------------
-// -------------------------------
-function PIC_IZN(xVal)
-if xVal <> nil
-	gPIC_IZN := xVal
-endif
-return gPIC_IZN
+   RETURN gZAO_CIJ
 
 // -------------------------------
 // -------------------------------
-function PIC_CIJ(xVal)
-if xVal <> nil
-	gPIC_CIJ := xVal
-endif
-return gPIC_CIJ
+FUNCTION ZAO_PDV( xVal )
+
+   IF xVal <> nil
+      gZAO_PDV := xVal
+   ENDIF
+
+   RETURN gZAO_PDV
 
 
 // -------------------------------
 // -------------------------------
-function gUlPdvKp(xVal)
-if xVal <> nil
-	gUlPdvKp := xVal
-endif
-return gUlPdvKp
+FUNCTION PIC_IZN( xVal )
+
+   IF xVal <> nil
+      gPIC_IZN := xVal
+   ENDIF
+
+   RETURN gPIC_IZN
+
+// -------------------------------
+// -------------------------------
+FUNCTION PIC_CIJ( xVal )
+
+   IF xVal <> nil
+      gPIC_CIJ := xVal
+   ENDIF
+
+   RETURN gPIC_CIJ
 
 
+// -------------------------------
+// -------------------------------
+FUNCTION gUlPdvKp( xVal )
+
+   IF xVal <> nil
+      gUlPdvKp := xVal
+   ENDIF
+
+   RETURN gUlPdvKp

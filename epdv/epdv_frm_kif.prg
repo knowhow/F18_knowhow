@@ -28,9 +28,9 @@ STATIC FUNCTION epdv_kif_tbl_priprema()
    LOCAL _col := maxcols() - 3
 
    Box(, _row, _col )
-   @ m_x + _row - 2, m_y + 2 SAY "<c-N>  Nove Stavke    | <ENT> Ispravi stavku   | <c-T> Brisi Stavku         "
-   @ m_x + _row - 1, m_y + 2 SAY "<c-A>  Ispravka Naloga| <c-P> Stampa dokumenta | <a-A> Azuriranje           "
-   @ m_x + _row, m_y + 2 SAY "<a-P>  Povrat dok.    | <a-X> Renumeracija"
+   @ m_x + _row - 2, m_y + 2 SAY8 "<c-N>  Nove stavke    | <ENT> Ispravi stavku   | <c-T> Briši stavku         "
+   @ m_x + _row - 1, m_y + 2 SAY8 "<c-A>  Ispravka naloga| <c-P> Štampa dokumenta | <a-A> Ažuriranje           "
+   @ m_x + _row, m_y + 2 SAY8 "<a-P>  Povrat dok.    | <a-X> Renumeracija"
 
    PRIVATE ImeKol
    PRIVATE Kol
@@ -60,8 +60,6 @@ STATIC FUNCTION set_a_kol_kif( aKol, aImeKol )
    AAdd( aImeKol, { "Izn.b.pdv", {|| Transform( i_b_pdv, PIC_IZN() ) }, "i_b_pdv", {|| .T. }, {|| .T. } } )
    AAdd( aImeKol, { "Izn.pdv", {|| Transform( i_pdv, PIC_IZN() ) }, "i_pdv", {|| .T. }, {|| .T. } } )
    AAdd( aImeKol, { "Izn.s.pdv", {|| Transform( i_b_pdv + i_pdv, PIC_IZN() ) }, "", {|| .T. }, {|| .T. } } )
-
-
 
    aKol := {}
    FOR i := 1 TO Len( aImeKol )
@@ -106,7 +104,7 @@ STATIC FUNCTION epdv_kif_edit_item( lNova )
    nX += 2
 
 
-   @ m_x + nX, m_y + 2 SAY "Broj racuna (externi broj) " GET _src_br_2
+   @ m_x + nX, m_y + 2 SAY8 "Broj računa (externi broj) " GET _src_br_2
    nX ++
 
    @ m_x + nX, m_y + 2 SAY "Opis stavke: " GET _opis ;
@@ -136,7 +134,7 @@ STATIC FUNCTION epdv_kif_edit_item( lNova )
       PICT PIC_IZN()
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "Ispravno ?" GET cIspravno ;
+   @ m_x + nX, m_y + 2 SAY "Ispravno (D/N) ?" GET cIspravno ;
       valid {|| cIspravno == "D" } ;
       PICT "@!"
    ++nX
@@ -165,7 +163,6 @@ STATIC FUNCTION epdv_kif_key_handler()
    IF ( Ch == K_CTRL_T .OR. Ch == K_ENTER ) .AND. reccount2() == 0
       RETURN DE_CONT
    ENDIF
-
 
    DO CASE
 

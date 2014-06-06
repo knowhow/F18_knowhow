@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,84 +12,74 @@
 
 #include "epdv.ch"
 
-// ----------------------------------------------
-// validacija
-// ----------------------------------------------
-function v_id_tar(cIdTar, nOsnov, nPdv,  nShow, lNova)
-local nStopa 
-local nPrerPdv
+FUNCTION v_id_tar( cIdTar, nOsnov, nPdv,  nShow, lNova )
 
-PushWa()
+   LOCAL nStopa
+   LOCAL nPrerPdv
 
+   PushWa()
 
-P_Tarifa(@cIdTar)
+   P_Tarifa( @cIdTar )
 
-SELECT TARIFA
-SET ORDER TO TAG "ID"
-SEEK cIdTar
-nStopa := tarifa->opp
+   SELECT TARIFA
+   SET ORDER TO TAG "ID"
+   SEEK cIdTar
+   nStopa := tarifa->opp
 
-nPrerPdv := ROUND(nOsnov * nStopa / 100, ZAO_IZN())
+   nPrerPdv := Round( nOsnov * nStopa / 100, ZAO_IZN() )
 
-if lNova
-	// nema se sta pitati
-	nPdv := nPrerPdv
-else
+   IF lNova
+      nPdv := nPrerPdv
+   ELSE
 
-	if ((ROUND(nPrerPdv, 4) <> ROUND(nPdv, 4))) 
-		if Pitanje("", "Preracunati prema stopi PDV ?", "N") == "D"
-			nPdv :=	nPrerPdv
-		endif
-	endif
-endif
+      IF ( ( Round( nPrerPdv, 4 ) <> Round( nPdv, 4 ) ) )
+         IF Pitanje( "", "Preračunati prema stopi PDV-a (D/N) ?", "N" ) == "D"
+            nPdv := nPrerPdv
+         ENDIF
+      ENDIF
+   ENDIF
 
-if nShow <> nil
-	@ row(), nShow + 2 SAY "Tarifa:" + stopa_pdv(nStopa)
-	@ row(), col() + 2 SAY "iznos pdv: " 
-	@ row(), col() + 2 SAY nPdV PICT PIC_IZN()
-endif
+   IF nShow <> nil
+      @ Row(), nShow + 2 SAY "Tarifa:" + stopa_pdv( nStopa )
+      @ Row(), Col() + 2 SAY "iznos PDV: "
+      @ Row(), Col() + 2 SAY nPdV PICT PIC_IZN()
+   ENDIF
 
-PopWa()
+   PopWa()
 
-return .t.
+   RETURN .T.
 
-// ------------------------------
-// partner
-// ------------------------------
-function v_part(cIdPart, cIdTar, cTbl, lShow)
+FUNCTION v_part( cIdPart, cIdTar, cTbl, lShow )
 
-if lShow == nil
-	lShow := .t.
-endif
+   IF lShow == nil
+      lShow := .T.
+   ENDIF
 
-p_partneri(@cIdPart)
+   p_partneri( @cIdPart )
 
-if IsIno(cIdPart)
-	if lShow
-		if cTbl == "KUF"
-			MsgBeep("Ino dobavljac, setuje tarifu na PDV7UV !")
-			cIdTar := PADR("PDV7UV", 6)
-		else
-			MsgBeep("Ino kupac, setuje tarifu na PDV0IZ !")
-			cIdTar := PADR("PDV0IZ", 6)
+   IF IsIno( cIdPart )
+      IF lShow
+         IF cTbl == "KUF"
+            MsgBeep( "Ino dobavljač, setuje tarifu na PDV7UV !" )
+            cIdTar := PadR( "PDV7UV", 6 )
+         ELSE
+            MsgBeep( "Ino kupac, setuje tarifu na PDV0IZ !" )
+            cIdTar := PadR( "PDV0IZ", 6 )
 			
-		endif
-	endif
-endif
+         ENDIF
+      ENDIF
+   ENDIF
 
-// uprava za indirektno oporezivanje
-if IsUio(cIdPart)
-	cIdTar := PADR("UIO", 6)
-endif
+   IF IsUio( cIdPart )
+      cIdTar := PadR( "UIO", 6 )
+   ENDIF
 
-return .t.
+   RETURN .T.
 
-// --------------------------
-// --------------------------
-function v_nazad(nNazad)
-for i:=1 to nNazad
-	KEYBOARD K_UP
-next
-return .t.
+FUNCTION v_nazad( nNazad )
 
+   FOR i := 1 TO nNazad
+      KEYBOARD K_UP
+   NEXT
 
+   RETURN .T.

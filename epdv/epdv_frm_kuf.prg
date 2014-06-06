@@ -29,9 +29,9 @@ STATIC FUNCTION epdv_kuf_tbl_priprema()
 
    Box(, _row, _col )
 
-   @ m_x + _row - 2, m_y + 2 SAY "<c-N>  Nove Stavke    | <ENT> Ispravi stavku   | <c-T> Brisi Stavku         "
-   @ m_x + _row - 1, m_y + 2 SAY "<c-A>  Ispravka Naloga| <c-P> Stampa dokumenta | <a-A> Azuriranje           "
-   @ m_x + _row, m_y + 2 SAY "<a-P>  Povrat dok.    | <a-X> Renumeracija"
+   @ m_x + _row - 2, m_y + 2 SAY8 "<c-N>  Nove stavke    | <ENT> Ispravi stavku   | <c-T> Briši stavku         "
+   @ m_x + _row - 1, m_y + 2 SAY8 "<c-A>  Ispravka Naloga| <c-P> Štampa dokumenta | <a-A> Ažuriranje           "
+   @ m_x + _row, m_y + 2 SAY8 "<a-P>  Povrat dok.    | <a-X> Renumeracija"
 
    PRIVATE ImeKol
    PRIVATE Kol
@@ -44,6 +44,7 @@ STATIC FUNCTION epdv_kuf_tbl_priprema()
    ObjDbedit( "ekuf", _row, _col, {|| epdv_kuf_key_handler() }, "", "KUF Priprema...", , , , , 3 )
    BoxC()
    my_close_all_dbf()
+
    RETURN
 
 

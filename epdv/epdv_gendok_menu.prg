@@ -12,17 +12,18 @@
 
 #include "epdv.ch"
 
+
 FUNCTION epdv_generisanje()
 
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
-   PRIVATE Izbor := 1
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _Izbor := 1
 
-   AAdd( opc, "1. generiši kuf           " )
-   AAdd( opcexe, {|| gen_kuf() } )
-   AAdd( opc, "2. generiši kif" )
-   AAdd( opcexe, {|| gen_kif() } )
+   AAdd( _opc, "1. generiši kuf               " )
+   AAdd( _opcexe, {|| gen_kuf() } )
+   AAdd( _opc, "2. generiši kif" )
+   AAdd( _opcexe, {|| gen_kif() } )
 
-   Menu_SC( "gen" )
+   f18_menu( "gen", .F., _izbor, _opc, _opcexe )
 
    RETURN

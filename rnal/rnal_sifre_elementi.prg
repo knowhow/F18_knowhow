@@ -11,6 +11,7 @@
 
 
 #include "rnal.ch"
+#include "f18_separator.ch"
 
 STATIC art_id
 STATIC el_gr_id
@@ -70,20 +71,20 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
 
    @ m_x, m_y + 15 SAY " DEFINISANJE ELEMENATA ARTIKLA: " + artid_str( art_id ) + " "
 
-   @ m_x + __box_x - 1, m_y + 1 SAY Replicate( "Í", __box_y + 1 ) COLOR cLineClr
+   @ m_x + __box_x - 1, m_y + 1 SAY Replicate( BROWSE_PODVUCI, __box_y + 1 ) COLOR cLineClr
 
    @ m_x + __box_x - 4, m_y + 1 SAY "<c+N> nova"
    @ m_x + __box_x - 3, m_y + 1 SAY "<F2> ispravka"
-   @ m_x + __box_x - 2, m_y + 1 SAY "<c+T> brisi"
+   @ m_x + __box_x - 2, m_y + 1 SAY8 "<c+T> briši"
    @ m_x + __box_x, m_y + 1 SAY "<TAB>-brow.tabela | <ESC> snimi "
 
    _sh_piccode( __el_schema )
 
    FOR i := 1 to ( __box_x - 2 )
-      @ m_x + i, m_y + __box_x SAY "º" COLOR cLineClr
+      @ m_x + i, m_y + __box_x SAY BROWSE_COL_SEP COLOR cLineClr
    NEXT
 
-   @ m_x + ( __box_x / 2 ), m_y + __box_x + 1 SAY Replicate( "Í", ( __box_y - __box_x ) + 1 ) COLOR cLineClr
+   @ m_x + ( __box_x / 2 ), m_y + __box_x + 1 SAY Replicate( BROWSE_PODVUCI_2, ( __box_y - __box_x ) + 1 ) COLOR cLineClr
 
    SELECT e_att
    GO TOP
@@ -917,8 +918,7 @@ STATIC FUNCTION elem_edit( nArt_id, lNewRec, cType, nEl_no )
    update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
 
    IF lNewRec
-      // nafiluj odmah atribute za ovu grupu...
-      __fill_att__( e_gr_id, nEl_id )
+      nafiluj_atribute_grupe( e_gr_id, nEl_id )
       SELECT elements
    ENDIF
 
@@ -953,15 +953,21 @@ STATIC FUNCTION e_no_edit()
 
 // ----------------------------------------------------
 // filovanje tabele e_att sa atributima grupe
+// ako smo odabrali grupu STAKLO, automatski se 
+// insertuju u E_ATT atributi te grupe, npr:
+// - tip
+// - debljina
+// - vrsta
 // ----------------------------------------------------
-STATIC FUNCTION __fill_att__( __gr_id, __el_id )
+STATIC FUNCTION nafiluj_atribute_grupe( __gr_id, __el_id )
 
    LOCAL nTArea := Select()
    LOCAL nEl_att_id := 0
    LOCAL _rec
+   LOCAL lAuto := .T.
 
    IF !f18_lock_tables( { "e_att" } )
-      MsgBeep( "Problem sa lockom tabele e_att !!!!" )
+      MsgBeep( "Problem sa lockom tabele e_att !" )
       RETURN
    ENDIF
 
@@ -974,10 +980,12 @@ STATIC FUNCTION __fill_att__( __gr_id, __el_id )
 
    DO WHILE !Eof() .AND. field->e_gr_id == __gr_id ;
       .AND. field->e_gr_at_re == "*"
+     
+      nEl_att_id := 0
 
       SELECT e_att
-	
-      IF setuj_novi_id_tabele( @nEl_att_id, "EL_ATT_ID" ) == 0
+      	
+      IF setuj_novi_id_tabele( @nEl_att_id, "EL_ATT_ID", lAuto ) == 0
          SELECT e_gr_att
          LOOP
       ENDIF

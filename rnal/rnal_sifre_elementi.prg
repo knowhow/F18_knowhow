@@ -11,6 +11,7 @@
 
 
 #include "rnal.ch"
+#include "f18_separator.ch"
 
 STATIC art_id
 STATIC el_gr_id
@@ -70,20 +71,20 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
 
    @ m_x, m_y + 15 SAY " DEFINISANJE ELEMENATA ARTIKLA: " + artid_str( art_id ) + " "
 
-   @ m_x + __box_x - 1, m_y + 1 SAY Replicate( "Í", __box_y + 1 ) COLOR cLineClr
+   @ m_x + __box_x - 1, m_y + 1 SAY Replicate( BROWSE_PODVUCI, __box_y + 1 ) COLOR cLineClr
 
    @ m_x + __box_x - 4, m_y + 1 SAY "<c+N> nova"
    @ m_x + __box_x - 3, m_y + 1 SAY "<F2> ispravka"
-   @ m_x + __box_x - 2, m_y + 1 SAY "<c+T> brisi"
+   @ m_x + __box_x - 2, m_y + 1 SAY8 "<c+T> briši"
    @ m_x + __box_x, m_y + 1 SAY "<TAB>-brow.tabela | <ESC> snimi "
 
    _sh_piccode( __el_schema )
 
    FOR i := 1 to ( __box_x - 2 )
-      @ m_x + i, m_y + __box_x SAY "º" COLOR cLineClr
+      @ m_x + i, m_y + __box_x SAY BROWSE_COL_SEP COLOR cLineClr
    NEXT
 
-   @ m_x + ( __box_x / 2 ), m_y + __box_x + 1 SAY Replicate( "Í", ( __box_y - __box_x ) + 1 ) COLOR cLineClr
+   @ m_x + ( __box_x / 2 ), m_y + __box_x + 1 SAY Replicate( BROWSE_PODVUCI_2, ( __box_y - __box_x ) + 1 ) COLOR cLineClr
 
    SELECT e_att
    GO TOP
@@ -635,15 +636,9 @@ STATIC FUNCTION elem_hand()
 
    CASE Upper( Chr( Ch ) ) == "C"
 		
-      // convert element...
-		
       IF Alias() <> "ELEMENTS"
-			
          RETURN DE_CONT
-		
       ENDIF
-
-      // convert only elements...
 
       nEl_id := field->el_id
       nEl_gr_id := field->e_gr_id
@@ -653,15 +648,9 @@ STATIC FUNCTION elem_hand()
 	
    CASE Upper( Chr( Ch ) ) == "U"
 		
-      // restore element...
-		
       IF Alias() <> "ELEMENTS"
-			
          RETURN DE_CONT
-		
       ENDIF
-
-      // restore only elements...
 
       nEl_id := field->el_id
       nEl_gr_id := field->e_gr_id
@@ -740,9 +729,6 @@ STATIC FUNCTION _sh_piccode( cSchema )
    RETURN
 
 
-// -----------------------------------------------------------
-// configure element...
-// -----------------------------------------------------------
 STATIC FUNCTION el_convert( nEl_id, nEl_gr_id, nArt_id )
 
    LOCAL nRet := DE_CONT
@@ -789,11 +775,9 @@ STATIC FUNCTION el_convert( nEl_id, nEl_gr_id, nArt_id )
       RETURN DE_CONT
    ENDIF
 
-
    IF cSelect == "1"
       rnal_generisi_lamistal_staklo( field->el_no, nFolNr, nArt_id )
       nRet := DE_REFRESH
-	
    ENDIF
 
    RETURN nRet
@@ -881,7 +865,7 @@ STATIC FUNCTION elem_edit( nArt_id, lNewRec, cType, nEl_no )
 	
       @ m_x + 5, m_y + 2 SAY PadL( "element pripada grupi:", nLeft ) GET _e_gr_id VALID s_e_groups( @_e_gr_id, .T. )
 	
-      @ m_x + 6, m_y + 2 SAY PadL( "(0 - otvori sifrarnik)", nLeft )
+      @ m_x + 6, m_y + 2 SAY8 PadL( "(0 - otvori šifrarnik)", nLeft )
 	
       READ
 
@@ -908,7 +892,6 @@ STATIC FUNCTION elem_edit( nArt_id, lNewRec, cType, nEl_no )
       // ukloni "*" ako postoji...
       cType := StrTran( cType, "*", "" )
 	
-      // upenduj tip elementa
       _e_gr_id := g_gr_by_type( cType )
 
    ENDIF
@@ -917,8 +900,7 @@ STATIC FUNCTION elem_edit( nArt_id, lNewRec, cType, nEl_no )
    update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
 
    IF lNewRec
-      // nafiluj odmah atribute za ovu grupu...
-      __fill_att__( e_gr_id, nEl_id )
+      nafiluj_atribute_grupe( e_gr_id, nEl_id )
       SELECT elements
    ENDIF
 
@@ -940,10 +922,8 @@ STATIC FUNCTION e_no_edit()
    BoxC()
 
    IF LastKey() <> K_ESC
-
       _rec := get_dbf_global_memvars( NIL, .F. )
       update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
-
    ENDIF
 
    RETURN 1
@@ -953,15 +933,21 @@ STATIC FUNCTION e_no_edit()
 
 // ----------------------------------------------------
 // filovanje tabele e_att sa atributima grupe
+// ako smo odabrali grupu STAKLO, automatski se 
+// insertuju u E_ATT atributi te grupe, npr:
+// - tip
+// - debljina
+// - vrsta
 // ----------------------------------------------------
-STATIC FUNCTION __fill_att__( __gr_id, __el_id )
+STATIC FUNCTION nafiluj_atribute_grupe( __gr_id, __el_id )
 
    LOCAL nTArea := Select()
    LOCAL nEl_att_id := 0
    LOCAL _rec
+   LOCAL lAuto := .T.
 
    IF !f18_lock_tables( { "e_att" } )
-      MsgBeep( "Problem sa lockom tabele e_att !!!!" )
+      MsgBeep( "Problem sa lockom tabele e_att !" )
       RETURN
    ENDIF
 
@@ -974,10 +960,12 @@ STATIC FUNCTION __fill_att__( __gr_id, __el_id )
 
    DO WHILE !Eof() .AND. field->e_gr_id == __gr_id ;
       .AND. field->e_gr_at_re == "*"
+     
+      nEl_att_id := 0
 
       SELECT e_att
-	
-      IF setuj_novi_id_tabele( @nEl_att_id, "EL_ATT_ID" ) == 0
+      	
+      IF setuj_novi_id_tabele( @nEl_att_id, "EL_ATT_ID", lAuto ) == 0
          SELECT e_gr_att
          LOOP
       ENDIF
@@ -1052,7 +1040,7 @@ STATIC FUNCTION e_att_edit( nEl_id, lNewRec )
 		
    @ m_x + 4, m_y + 2 SAY PadL( "izaberi vrijednost atributa", nLeft ) GET cElGrVal VALID {|| s_e_gr_val( @cElGrVal, _e_gr_at_id, cElGrVal, .T. ), set_var( @_e_gr_vl_id, @cElGrVal ) }
 
-   @ m_x + 5, m_y + 2 SAY PadL( "0 - otvori sifrarnik", nLeft )
+   @ m_x + 5, m_y + 2 SAY8 PadL( "0 - otvori šifrarnik", nLeft )
 	
    READ
    BoxC()
@@ -1064,7 +1052,6 @@ STATIC FUNCTION e_att_edit( nEl_id, lNewRec )
    ENDIF
 
    _rec := get_dbf_global_memvars( NIL, .F. )
-   // update zapisa
    update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
 
    RETURN 1
@@ -1115,7 +1102,7 @@ STATIC FUNCTION e_aops_edit( nEl_id, lNewRec )
 		
    @ m_x + 4, m_y + 2 SAY PadL( "izaberi atribut operacije", nLeft ) GET _aop_att_id VALID {|| s_aops_att( @_aop_att_id, _aop_id, nil, .T. ), show_it( g_aop_att_desc( _aop_att_id ) )  }
 	
-   @ m_x + 5, m_y + 2 SAY PadL( "0 - otvori sifrarnik", nLeft )
+   @ m_x + 5, m_y + 2 SAY8 PadL( "0 - otvori šifrarnik", nLeft )
 	
    READ
    BoxC()
@@ -1134,14 +1121,11 @@ STATIC FUNCTION e_aops_edit( nEl_id, lNewRec )
 
 
 
-// ----------------------------------------------
-// brisanje elementa
-// ----------------------------------------------
 STATIC FUNCTION elem_del()
 
    LOCAL _rec
 
-   IF Pitanje(, "Izbrisati stavku ???", "N" ) == "N"
+   IF Pitanje(, "Izbrisati stavku (D/N) ?", "N" ) == "N"
       RETURN DE_CONT
    ENDIF
 
@@ -1152,14 +1136,11 @@ STATIC FUNCTION elem_del()
 
 
 
-// ----------------------------------------------
-// brisanje atributa elementa
-// ----------------------------------------------
 STATIC FUNCTION e_att_del()
 
    LOCAL _rec
 
-   IF Pitanje(, "Izbrisati stavku ???", "N" ) == "N"
+   IF Pitanje(, "Izbrisati stavku (D/N) ?", "N" ) == "N"
       RETURN DE_CONT
    ENDIF
 
@@ -1170,14 +1151,11 @@ STATIC FUNCTION e_att_del()
 
 
 
-// ----------------------------------------------
-// brisanje dodatne operacije elementa
-// ----------------------------------------------
 STATIC FUNCTION e_aops_del()
 
    LOCAL _rec
 
-   IF Pitanje(, "Izbrisati stavku ???", "N" ) == "N"
+   IF Pitanje(, "Izbrisati stavku (D/N) ?", "N" ) == "N"
       RETURN DE_CONT
    ENDIF
 

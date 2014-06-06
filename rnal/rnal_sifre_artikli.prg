@@ -915,6 +915,7 @@ STATIC FUNCTION rnal_dupliciraj_operacije_artikla( nOldEl_id, nNewEl_id )
    LOCAL nElRecno
    LOCAL nNewAopId := 0
    LOCAL _rec
+   LOCAL lAuto := .T.
 
    SELECT e_aops
    SET ORDER TO TAG "1"
@@ -924,13 +925,15 @@ STATIC FUNCTION rnal_dupliciraj_operacije_artikla( nOldEl_id, nNewEl_id )
 
    DO WHILE !Eof() .AND. field->el_id == nOldEl_id
 
+      nNewAopId := 0
+
       SKIP 1
       nElRecno := RecNo()
       SKIP -1
 
       _rec := dbf_get_rec()
 
-      setuj_novi_id_tabele( @nNewAopId, "EL_OP_ID" )
+      setuj_novi_id_tabele( @nNewAopId, "EL_OP_ID", lAuto )
 
       _rec[ "el_op_id" ] := nNewAopid
       _rec[ "el_id" ] := nNewEl_id

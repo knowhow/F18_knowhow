@@ -247,18 +247,11 @@ FUNCTION V_Kolicina( tip_vpc )
    ENDIF
 
    IF _podbr <> " ."
+
       SELECT rj
       hseek _idfirma
 	
-      IF rj->( FieldPos( "tip" ) ) <> 0
-         cRjTip := rj->tip
-      ELSE
-         cRjTip := ""
-      ENDIF
-
-      IF gVarNum == "1" .AND. gVar13 == "2" .AND. _idtipdok == "13"
-         hseek RJIzKonta( _idpartner + " " )
-      ENDIF
+      cRjTip := rj->tip
 
       NSRNPIdRoba( _IDROBA )
 
@@ -1345,64 +1338,8 @@ FUNCTION NSRNPIdRoba( cSR, fSint )
 
    RETURN
 
-// ------------------------------------------------------------
-// RJIzKonta(cKonto)
-// Vraca radnu jedinicu iz sif->konto na osnovu zadatog konta
-// param cKonto   - konto
-// return cVrati
-// ------------------------------------------------------------
-
-FUNCTION RJIzKonta( cKonto )
-
-   LOCAL cVrati := "  ", nArr := Select(), nRec
-
-   SELECT ( F_RJ )
-
-   nRec := RecNo()
-
-   GO TOP
-   DO WHILE !Eof()
-      IF cKonto == RJ->konto
-         cVrati := RJ->id
-         EXIT
-      ENDIF
-      SKIP 1
-   ENDDO
-
-   GO ( nRec )
-   SELECT ( nArr )
-
-   RETURN cVrati
 
 
-/*! \fn KontoIzRJ(cRJ)
- *  \brief Vraca konto na osnovu radne jedinice
- *  \param cRJ  - radna jedinica
- *  \return cVrati
- */
-
-FUNCTION KontoIzRJ( cRJ )
-
-   LOCAL cVrati := Space( 7 )
-
-   PushWA()
-
-   SELECT ( F_RJ )
-   HSEEK cRJ
-
-   IF Found()
-      cVrati := RJ->konto
-   ENDIF
-
-   PopWA()
-
-   RETURN cVrati
-
-
-
-// --------------------------------------------
-// vraca opis za serijski broj
-// --------------------------------------------
 FUNCTION get_serbr_opis()
 
    LOCAL _tmp := "Ser.broj"

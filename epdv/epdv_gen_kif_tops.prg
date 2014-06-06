@@ -52,7 +52,7 @@ endif
 dDatOd := dD1
 dDatDo := dD2
 
-o_kif(.t.)
+epdv_otvori_kif_tabele(.t.)
 
 SELECT F_SG_KIF
 if !used()

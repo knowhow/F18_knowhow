@@ -12,17 +12,17 @@
 
 #include "epdv.ch"
 
-FUNCTION ed_kuf()
 
-   o_kuf( .T. )
-   tbl_priprema()
+
+FUNCTION epdv_edit_kuf()
+
+   epdv_otvori_kuf_tabele( .T. )
+   epdv_kuf_tbl_priprema()
 
    RETURN
 
 
-
-
-STATIC FUNCTION tbl_priprema()
+STATIC FUNCTION epdv_kuf_tbl_priprema()
 
    LOCAL _row := maxrows() - 4
    LOCAL _col := maxcols() - 3
@@ -40,13 +40,14 @@ STATIC FUNCTION tbl_priprema()
    SET ORDER TO TAG "br_dok"
    GO TOP
 
-   set_a_kol( @Kol, @ImeKol )
-   ObjDbedit( "ekuf", _row, _col, {|| k_handler() }, "", "KUF Priprema...", , , , , 3 )
+   set_a_kol_kuf( @Kol, @ImeKol )
+   ObjDbedit( "ekuf", _row, _col, {|| epdv_kuf_key_handler() }, "", "KUF Priprema...", , , , , 3 )
    BoxC()
-   closeret
+   my_close_all_dbf()
+   RETURN
 
 
-STATIC FUNCTION set_a_kol( aKol, aImeKol )
+STATIC FUNCTION set_a_kol_kuf( aKol, aImeKol )
 
    aImeKol := {}
 
@@ -69,7 +70,7 @@ STATIC FUNCTION set_a_kol( aKol, aImeKol )
    RETURN
 
 
-STATIC FUNCTION ed_item( lNova )
+STATIC FUNCTION epdv_kuf_edit_item( lNova )
 
    LOCAL cIspravno := "D"
    LOCAL nI_s_pdv := 0
@@ -153,7 +154,7 @@ STATIC FUNCTION ed_item( lNova )
 
 
 
-STATIC FUNCTION k_handler()
+STATIC FUNCTION epdv_kuf_key_handler()
 
    LOCAL nTekRec
    LOCAL nBrDokP
@@ -175,7 +176,7 @@ STATIC FUNCTION k_handler()
       nTekRec := RecNo()
       my_flock()
       Scatter()
-      IF ed_item( .F. )
+      IF epdv_kuf_edit_item( .F. )
          SELECT P_KUF
          GO nTekRec
          Gather()
@@ -196,7 +197,7 @@ STATIC FUNCTION k_handler()
          nTekRec := RecNo()
          Scatter()
 
-         IF ed_item( .T. )
+         IF epdv_kuf_edit_item( .T. )
             GO nTekRec
             Gather()
          ELSE
@@ -235,7 +236,7 @@ STATIC FUNCTION k_handler()
 
       my_close_all_dbf()
 
-      o_kuf( .T. )
+      epdv_otvori_kuf_tabele( .T. )
 
       SELECT P_KUF
       SET ORDER TO TAG "br_dok"
@@ -273,7 +274,7 @@ STATIC FUNCTION k_handler()
    CASE Ch == K_ALT_X
 
       IF Pitanje (, "Izvršiti renumeraciju KUF pripreme (D/N) ?", "N" ) == "D"
-         renm_rbr( "P_KUF", .F. )
+         epdv_renumeracija_rbr( "P_KUF", .F. )
       ENDIF
 
       SELECT P_KUF

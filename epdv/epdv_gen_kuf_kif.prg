@@ -58,7 +58,7 @@ FUNCTION gen_kuf()
    kalk_kuf( dDatOd, dDatDo, cSezona )
    fin_kuf( dDatOd, dDatDo, cSezona )
 	
-   renm_rbr( "P_KUF", .F. )
+   epdv_renumeracija_rbr( "P_KUF", .F. )
    BoxC()
 
    RETURN
@@ -109,7 +109,7 @@ FUNCTION gen_kif()
 	
    fin_kif( dDatOd, dDatDo, cSezona )
 
-   renm_rbr( "P_KIF", .F. )
+   epdv_renumeracija_rbr( "P_KIF", .F. )
    BoxC()
 
    RETURN

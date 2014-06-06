@@ -39,7 +39,7 @@ FUNCTION kalk_kif( dD1, dD2, cSezona )
    dDatOd := dD1
    dDatDo := dD2
 
-   o_kif( .T. )
+   epdv_otvori_kif_tabele( .T. )
 
    SELECT F_SG_KIF
    IF !Used()

@@ -46,14 +46,11 @@ local _rec
 public __br_dok := 0
 
 if cTbl == "KUF"
-	o_kuf(.t.)
-	// privatno podrucje
+	epdv_otvori_kuf_tabele(.t.)
 	nPArea := F_P_KUF
-	
-	// kumulativ 
 	nKArea := F_KUF
 else
-	o_kif(.t.)
+	epdv_otvori_kif_tabele(.t.)
 	nPArea := F_P_KIF
 	nKArea := F_KIF
 endif
@@ -119,7 +116,7 @@ if kuf_kif_azur_sql( cTbl, nNextGRbr, nBrDok )
 
 else
 
-	msgbeep("Neuspjesno azuriranje epdv/sql !")
+	msgbeep("Neuspješno ažuriranje epdv/sql !")
 	return 
 
 endif
@@ -127,7 +124,7 @@ endif
 SELECT (nKArea)
 use
 
-@ m_x+1, m_y+2 SAY PADR("Brisem pripremu ...", 40)
+@ m_x+1, m_y+2 SAY8 PADR("Brišem pripremu ...", 40)
 
 // sve je ok brisi pripremu
 SELECT (nPArea)
@@ -135,15 +132,15 @@ my_dbf_zap()
 
 use
 
-if (cTbl == "KUF")
-	o_kuf(.t.)
+if ( cTbl == "KUF" )
+	epdv_otvori_kuf_tabele(.T.)
 else
-	o_kuf(.t.)
+	epdv_otvori_kif_tabele(.T.)
 endif	
 
 BoxC()
 
-MsgBeep("Azuriran je " + cTbl + " dokument " + STR( __br_dok, 6, 0) )
+MsgBeep( "Ažuriran je " + cTbl + " dokument " + STR( __br_dok, 6, 0) )
 
 return __br_dok
 
@@ -239,14 +236,14 @@ local _cnt
 local _table
 
 if (cTbl == "KUF")
-	o_kuf(.t.)
+	epdv_otvori_kuf_tabele(.t.)
 	// privatno podrucje
 	_p_area := F_P_KUF
 	// kumulativ 
 	_k_area := F_KUF
 	_table := "epdv_kuf"
 else
-	o_kif(.t.)
+	epdv_otvori_kif_tabele(.t.)
 	_p_area := F_P_KIF
 	_k_area := F_KIF
 	_table := "epdv_kif"
@@ -293,9 +290,9 @@ do while !eof() .and. (br_dok == nBrDok)
 enddo
 
 if ( cTbl == "KUF" )
-	o_kuf(.t.)
+	epdv_otvori_kuf_tabele(.t.)
 else
-	o_kif(.t.)
+	epdv_otvori_kif_tabele(.t.)
 endif	
 
 SELECT ( _k_area )
@@ -321,9 +318,9 @@ SELECT ( _k_area )
 use
 
 if ( cTbl == "KUF" )
-	o_kuf(.t.)
+	epdv_otvori_kuf_tabele(.t.)
 else
-	o_kif(.t.)
+	epdv_otvori_kif_tabele(.t.)
 endif	
 
 BoxC()
@@ -338,7 +335,7 @@ return nBrDok
 // --------------------------------------
 // renumeracija rednih brojeva - priprema
 // --------------------------------------
-function renm_rbr(cTbl, lShow)
+function epdv_renumeracija_rbr(cTbl, lShow)
 local _rec
 
 if lShow == nil

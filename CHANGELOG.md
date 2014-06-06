@@ -1,3 +1,8 @@
+1.7.97  2014-06-06, vsasa
+
+  - RNAL, naručioci i kontakti, rnal_sifre_bez_tacke()
+  - ePDV, greška kod otvaranja KIF tabele kod ažuriranja dokumenta
+ 
 1.7.96  2014-06-06, vsasa
 
   - RNAL, danasnji_datum() umjesto DATE()

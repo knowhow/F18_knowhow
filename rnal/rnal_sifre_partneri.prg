@@ -39,15 +39,16 @@ FUNCTION s_customers( cId, cCustDesc, dx, dy )
 
    set_a_kol( @ImeKol, @Kol )
 
+   rnal_sifra_bez_tacke( @cCustDesc )
+
    IF ValType( cId ) == "C"
-      // try to validate
+      rnal_sifra_bez_tacke( @cId )
       IF Val( cId ) <> 0
          cId := Val( cId )
          cCustDesc := ""
       ENDIF
    ENDIF
 
-   // postavi filter...
    set_f_kol( cCustDesc, @cId )
 
    cRet := PostojiSifra( F_CUSTOMS, cTag, maxrows() - 15, maxcols() - 5, cHeader, @cId, dx, dy, {|| key_handler( Ch ) } )

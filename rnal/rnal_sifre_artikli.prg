@@ -61,6 +61,8 @@ FUNCTION s_articles( cId, lAutoFind, lQuickFind )
 
    IF ( par_count > 0 )
 
+      rnal_sifra_bez_tacke( @cId )
+
       IF lAutoFind == .F.
 
          l_open_dbedit := .F.

@@ -11,6 +11,19 @@
 
 #include "rnal.ch"
 
+
+
+FUNCTION rnal_sifra_bez_tacke( sifra )
+
+   IF ValType( sifra ) == "C" .AND. !EMPTY( sifra ) .AND. RIGHT( ALLTRIM( sifra ), 1 ) $ ".$"
+      sifra := STRTRAN( sifra, ".", " " )  
+      sifra := STRTRAN( sifra, "$", " " )  
+   ENDIF
+
+   RETURN .T.
+
+
+
 // -------------------------------------------------
 // vrati match_code za stavku sifrarnika
 // -------------------------------------------------

@@ -16,9 +16,6 @@
 STATIC __cust_id
 
 
-// -------------------------------------
-// otvara tabelu kontakata
-// -------------------------------------
 FUNCTION s_contacts( cId, nCust_id, cContDesc, dx, dy )
 
    LOCAL nTArea
@@ -46,24 +43,24 @@ FUNCTION s_contacts( cId, nCust_id, cContDesc, dx, dy )
    SELECT contacts
 
    IF cID == nil
-      // cont_desc
       cTag := "4"
    ELSE
-      // cust_id + cont_desc
       cTag := "3"
    ENDIF
+
+   rnal_sifra_bez_tacke( @cCont_desc )
 
    set_a_kol( @ImeKol, @Kol, nCust_id )
 
    IF ValType( cId ) == "C"
-      // try to validate
-      IF Val( cId ) <> 0
-	
+
+      rnal_sifra_bez_tacke( @cId )
+
+      IF Val( cId ) <> 0	
          cId := Val( cId )
          nCust_id := -1
          cContDesc := ""
          cTag := "1"
-		
       ENDIF
    ENDIF
 

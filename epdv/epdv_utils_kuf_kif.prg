@@ -14,7 +14,7 @@
 
 
 
-FUNCTION o_kuf( lPriprema )
+FUNCTION epdv_otvori_kuf_tabele( lPriprema )
 
    IF lPriprema == nil
       lPriprema := .F.
@@ -46,7 +46,7 @@ FUNCTION o_kuf( lPriprema )
    RETURN
 
 
-FUNCTION o_kif( lPriprema )
+FUNCTION epdv_otvori_kif_tabele( lPriprema )
 
    IF lPriprema == nil
       lPriprema := .F.

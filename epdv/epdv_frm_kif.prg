@@ -13,24 +13,24 @@
 #include "epdv.ch"
 
 
-FUNCTION ed_kif()
+FUNCTION epdv_edit_kif()
 
-   o_kif( .T. )
-   tbl_priprema()
+   epdv_otvori_kif_tabele( .T. )
+   epdv_kif_tbl_priprema()
 
    RETURN
 
 
 
-STATIC FUNCTION tbl_priprema()
+STATIC FUNCTION epdv_kif_tbl_priprema()
 
    LOCAL _row := maxrows() - 4
    LOCAL _col := maxcols() - 3
 
    Box(, _row, _col )
-   @ m_x + _row - 2, m_y + 2 SAY "<c-N>  Nove Stavke    | <ENT> Ispravi stavku   | <c-T> Brisi Stavku         "
-   @ m_x + _row - 1, m_y + 2 SAY "<c-A>  Ispravka Naloga| <c-P> Stampa dokumenta | <a-A> Azuriranje           "
-   @ m_x + _row, m_y + 2 SAY "<a-P>  Povrat dok.    | <a-X> Renumeracija"
+   @ m_x + _row - 2, m_y + 2 SAY8 "<c-N>  Nove stavke    | <ENT> Ispravi stavku   | <c-T> Briši stavku         "
+   @ m_x + _row - 1, m_y + 2 SAY8 "<c-A>  Ispravka naloga| <c-P> Štampa dokumenta | <a-A> Ažuriranje           "
+   @ m_x + _row, m_y + 2 SAY8 "<a-P>  Povrat dok.    | <a-X> Renumeracija"
 
    PRIVATE ImeKol
    PRIVATE Kol
@@ -39,13 +39,13 @@ STATIC FUNCTION tbl_priprema()
    SET ORDER TO TAG "br_dok"
    GO TOP
 
-   set_a_kol( @Kol, @ImeKol )
-   ObjDbedit( "ekif", _row, _col, {|| k_handler() }, "", "KIF Priprema...", , , , , 3 )
+   set_a_kol_kif( @Kol, @ImeKol )
+   ObjDbedit( "ekif", _row, _col, {|| epdv_kif_key_handler() }, "", "KIF Priprema...", , , , , 3 )
    BoxC()
    closeret
 
 
-STATIC FUNCTION set_a_kol( aKol, aImeKol )
+STATIC FUNCTION set_a_kol_kif( aKol, aImeKol )
 
    aImeKol := {}
 
@@ -61,8 +61,6 @@ STATIC FUNCTION set_a_kol( aKol, aImeKol )
    AAdd( aImeKol, { "Izn.pdv", {|| Transform( i_pdv, PIC_IZN() ) }, "i_pdv", {|| .T. }, {|| .T. } } )
    AAdd( aImeKol, { "Izn.s.pdv", {|| Transform( i_b_pdv + i_pdv, PIC_IZN() ) }, "", {|| .T. }, {|| .T. } } )
 
-
-
    aKol := {}
    FOR i := 1 TO Len( aImeKol )
       AAdd( aKol, i )
@@ -71,7 +69,7 @@ STATIC FUNCTION set_a_kol( aKol, aImeKol )
    RETURN
 
 
-STATIC FUNCTION ed_item( lNova )
+STATIC FUNCTION epdv_kif_edit_item( lNova )
 
    LOCAL cIspravno := "D"
    LOCAL nI_s_pdv := 0
@@ -106,7 +104,7 @@ STATIC FUNCTION ed_item( lNova )
    nX += 2
 
 
-   @ m_x + nX, m_y + 2 SAY "Broj racuna (externi broj) " GET _src_br_2
+   @ m_x + nX, m_y + 2 SAY8 "Broj računa (externi broj) " GET _src_br_2
    nX ++
 
    @ m_x + nX, m_y + 2 SAY "Opis stavke: " GET _opis ;
@@ -136,7 +134,7 @@ STATIC FUNCTION ed_item( lNova )
       PICT PIC_IZN()
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY "Ispravno ?" GET cIspravno ;
+   @ m_x + nX, m_y + 2 SAY "Ispravno (D/N) ?" GET cIspravno ;
       valid {|| cIspravno == "D" } ;
       PICT "@!"
    ++nX
@@ -156,7 +154,7 @@ STATIC FUNCTION ed_item( lNova )
 
 
 
-STATIC FUNCTION k_handler()
+STATIC FUNCTION epdv_kif_key_handler()
 
    LOCAL nTekRec
    LOCAL nBrDokP
@@ -165,7 +163,6 @@ STATIC FUNCTION k_handler()
    IF ( Ch == K_CTRL_T .OR. Ch == K_ENTER ) .AND. reccount2() == 0
       RETURN DE_CONT
    ENDIF
-
 
    DO CASE
 
@@ -180,7 +177,7 @@ STATIC FUNCTION k_handler()
       nTekRec := RecNo()
       my_flock()
       Scatter()
-      IF ed_item( .F. )
+      IF epdv_kif_edit_item( .F. )
          SELECT P_KIF
          GO nTekRec
          Gather()
@@ -203,7 +200,7 @@ STATIC FUNCTION k_handler()
          nTekRec := RecNo()
          Scatter()
 
-         IF ed_item( .T. )
+         IF epdv_kif_edit_item( .T. )
             GO nTekRec
             Gather()
          ELSE
@@ -243,7 +240,7 @@ STATIC FUNCTION k_handler()
       ENDIF
 
       my_close_all_dbf()
-      o_kif( .T. )
+      epdv_otvori_kif_tabele( .T. )
       SELECT P_KIF
       SET ORDER TO TAG "br_dok"
 
@@ -280,7 +277,7 @@ STATIC FUNCTION k_handler()
    CASE Ch == K_ALT_X
 
       IF Pitanje (, "Izvršiti renumeraciju pripreme (D/N) ?", "N" ) == "D"
-         renm_rbr( "P_KIF", .F. )
+         epdv_renumeracija_rbr( "P_KIF", .F. )
       ENDIF
 
       SELECT P_KIF

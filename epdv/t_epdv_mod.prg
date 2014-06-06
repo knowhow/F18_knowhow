@@ -14,8 +14,6 @@
 #include "hbclass.ch"
 
 
-// -----------------------------------------------
-// -----------------------------------------------
 CLASS TEpdvMod FROM TAppMod
 
    METHOD NEW
@@ -27,8 +25,6 @@ CLASS TEpdvMod FROM TAppMod
 
 END CLASS
 
-// -----------------------------------------------
-// -----------------------------------------------
 METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
 
    ::super:new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
@@ -36,8 +32,6 @@ METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
    RETURN self
 
 
-// -----------------------------------------------
-// -----------------------------------------------
 METHOD initdb()
 
    ::oDatabase := TDbEpdv():new()
@@ -46,8 +40,6 @@ METHOD initdb()
 
 
 
-// -----------------------------------------------
-// -----------------------------------------------
 METHOD mMenu()
 
    my_close_all_dbf()
@@ -57,15 +49,11 @@ METHOD mMenu()
    @ 1, 2 SAY PadC( gNFirma, 50, "*" )
    @ 4, 5 SAY ""
 
-
    ::mMenuStandard()
 
    RETURN NIL
 
 
-
-// -----------------------------------------------
-// -----------------------------------------------
 METHOD mMenuStandard()
 
    PRIVATE Izbor := 1
@@ -73,9 +61,9 @@ METHOD mMenuStandard()
    PRIVATE opcexe := {}
 
    AAdd( opc, "1. KUF unos/ispravka           " )
-   AAdd( opcexe, {|| ed_kuf() } )
+   AAdd( opcexe, {|| epdv_edit_kuf() } )
    AAdd( opc, "2. KIF unos/ispravka" )
-   AAdd( opcexe, {|| ed_kif() } )
+   AAdd( opcexe, {|| epdv_edit_kif() } )
    AAdd( opc, "3. generacija dokumenata" )
    AAdd( opcexe, {|| epdv_generisanje() } )
    AAdd( opc, "4. izvještaji" )
@@ -97,14 +85,10 @@ METHOD mMenuStandard()
 
    RETURN
 
-// ---------------------------------------------
-// ---------------------------------------------
 METHOD srv()
    RETURN
 
 
-// ---------------------------------------------
-// ---------------------------------------------
 METHOD setGVars()
 
    set_global_vars()
@@ -119,7 +103,6 @@ METHOD setGVars()
    PUBLIC gKt_updv := PadR( "260;", 100 )
    PUBLIC gKt_ipdv := PadR( "560;", 100 )
 
-   // iscitaj parametre
    epdv_set_params()
 
    O_PARAMS

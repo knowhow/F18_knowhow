@@ -98,7 +98,7 @@ FUNCTION pos_unos_racuna()
       ImeKol, Kol, { BROWSE_PODVUCI_2, BROWSE_PODVUCI, BROWSE_COL_SEP }, 0 )
 
    oBrowse:autolite := .F.
-   aAutoKeys := HangKeys()
+   aAutoKeys := pos_hang_keys()
    bPrevDn := SetKey( K_PGDN, {|| DummyProc() } )
    bPrevUp := SetKey( K_PGUP, {|| DummyProc() } )
 
@@ -108,7 +108,7 @@ FUNCTION pos_unos_racuna()
    SetKey( K_F8, {|| pos_storno_rn(), _refresh_total() } )
    SetKey( K_F9, {|| fiskalni_izvjestaji_komande( .T., .T.  ) } )
 
-   SetSpecNar()
+   pos_set_spec_nar()
 
    @ m_x + 3, m_y + ( _max_cols - 30 ) SAY "UKUPNO:"
    @ m_x + 4, m_y + ( _max_cols - 30 ) SAY "POPUST:"
@@ -237,7 +237,7 @@ FUNCTION pos_unos_racuna()
 
    ENDDO
 
-   CancelKeys( aAutoKeys )
+   pos_cancel_keys( aAutoKeys )
    SetKey( K_PGDN, bPrevDn )
    SetKey( K_PGUP, bPrevUp )
 
@@ -246,7 +246,7 @@ FUNCTION pos_unos_racuna()
    SetKey( K_F8, NIL )
    SetKey( K_F9, NIL )
 
-   UnSetSpecNar()
+   pos_unset_spec_nar()
 
    BoxC()
 
@@ -357,7 +357,7 @@ FUNCTION pos_check_qtty( qtty )
    ENDIF
 
    IF qtty > _max_qtty
-      IF Pitanje(, "Da li je ovo ispravna količina: " + AllTrim( Str( qtty ) ), "N" ) == "D"
+      IF Pitanje(, "Da li je ovo ispravna količina (D/N) ?: " + AllTrim( Str( qtty ) ), "N" ) == "D"
          RETURN .T.
       ELSE
          qtty := 0
@@ -369,7 +369,7 @@ FUNCTION pos_check_qtty( qtty )
 
 
 
-FUNCTION HangKeys()
+FUNCTION pos_hang_keys()
 
    LOCAL aKeysProcs := {}
    LOCAL bPrevSet
@@ -387,7 +387,7 @@ FUNCTION HangKeys()
 
 
 
-FUNCTION CancelKeys( aPrevSets )
+FUNCTION pos_cancel_keys( aPrevSets )
 
    LOCAL i := 1
 
@@ -405,12 +405,12 @@ FUNCTION CancelKeys( aPrevSets )
 
 
 
-FUNCTION SetSpecNar()
+FUNCTION pos_set_spec_nar()
    bPrevZv := SetKey( Asc( "*" ), {|| pos_ispravi_racun() } )
    RETURN .T.
 
 
-FUNCTION UnSetSpecNar()
+FUNCTION pos_unset_spec_nar()
    SetKey( Asc ( "*" ), bPrevZv )
    RETURN .F.
 
@@ -527,7 +527,7 @@ FUNCTION pos_ispravi_racun()
    LOCAL aConds
    LOCAL aProcs
 
-   UnSetSpecNar()
+   pos_unset_spec_nar()
 
    OpcTipke( { "<Enter>-Ispravi stavku", hb_utf8tostr( "<B>-Briši stavku" ), hb_utf8tostr( "<Esc>-Završi" ) } )
 
@@ -551,7 +551,7 @@ FUNCTION pos_ispravi_racun()
    _idroba := cGetId
    _kolicina := nGetKol
 
-   SetSpecNar()
+   pos_set_spec_nar()
 
    RETURN
 

@@ -51,7 +51,7 @@ FUNCTION kalk_kuf( dD1, dD2, cSezona )
 
    dDatOd := dD1
    dDatDo := dD2
-   o_kuf( .T. )
+   epdv_otvori_kuf_tabele( .T. )
 
    SELECT F_SG_KUF
    IF !Used()

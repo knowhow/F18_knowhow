@@ -274,7 +274,7 @@ STATIC FUNCTION _cre_rpt( rpt_vars, otv_stavke )
 
    MsgC()
 
-   IF _table == NIL .OR. ValType( _table ) <> "O" .OR. _table:LastRec() == 0
+   IF !is_sql_query_ok( _table )
       RETURN NIL
    ENDIF
 

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -15,472 +15,472 @@
 
 
 
-static function _o_pos_prepis_tbl()
+STATIC FUNCTION _o_pos_prepis_tbl()
 
-select (F_PARTN)
-if !used()
-    O_PARTN
-endif
+   SELECT ( F_PARTN )
+   IF !Used()
+      O_PARTN
+   ENDIF
 
-select (F_VRSTEP)
-if !used()
-    O_VRSTEP
-endif
+   SELECT ( F_VRSTEP )
+   IF !Used()
+      O_VRSTEP
+   ENDIF
 
-select (F_DIO)
-if !used()
-    O_DIO
-endif
+   SELECT ( F_DIO )
+   IF !Used()
+      O_DIO
+   ENDIF
 
-select (F_ODJ)
-if !used()
-    O_ODJ
-endif
+   SELECT ( F_ODJ )
+   IF !Used()
+      O_ODJ
+   ENDIF
 
-select (F_KASE)
-if !used()
-    O_KASE
-endif
+   SELECT ( F_KASE )
+   IF !Used()
+      O_KASE
+   ENDIF
 
-select (F_OSOB)
-if !used()
-    O_OSOB
-    set order to tag "NAZ"
-endif
+   SELECT ( F_OSOB )
+   IF !Used()
+      O_OSOB
+      SET ORDER TO TAG "NAZ"
+   ENDIF
 
-select (F_TARIFA)
-if !used()
-    O_TARIFA 
-endif
+   SELECT ( F_TARIFA )
+   IF !Used()
+      O_TARIFA
+   ENDIF
 
-select (F_VALUTE)
-if !used()
-    O_VALUTE
-endif
+   SELECT ( F_VALUTE )
+   IF !Used()
+      O_VALUTE
+   ENDIF
 
-select (F_SIFK)
-if !used()
-    O_SIFK
-endif
+   SELECT ( F_SIFK )
+   IF !Used()
+      O_SIFK
+   ENDIF
 
-select (F_SIFV)
-if !used()
-    O_SIFV
-endif
+   SELECT ( F_SIFV )
+   IF !Used()
+      O_SIFV
+   ENDIF
 
-select (F_ROBA)
-if !used()
-    O_ROBA
-endif
+   SELECT ( F_ROBA )
+   IF !Used()
+      O_ROBA
+   ENDIF
 
-select (F_POS_DOKS)
-if !used()
-    O_POS_DOKS   
-endif
+   SELECT ( F_POS_DOKS )
+   IF !Used()
+      O_POS_DOKS
+   ENDIF
 
-select (F_POS)
-if !used()
-    O_POS
-endif
+   SELECT ( F_POS )
+   IF !Used()
+      O_POS
+   ENDIF
 
-return
+   RETURN
 
 
 // -------------------------------------------
 // Stampa azuriranog dokumenta
 // -------------------------------------------
-function pos_prepis_dokumenta()
-local aOpc
-local _prikaz_partnera := .f.
-private cFilter := ".t."
-private ImeKol := {}
-private Kol := {}
-
-cVrste := "  "
-dDatOd := DATE() - 1
-dDatDo := DATE()
-
-Box(, 3, 60 )
-    @ m_x + 1, m_y + 2 SAY "Datumski period:" GET dDatOd
-    @ m_x + 1, col() + 2 SAY "-" GET dDatDo
-    @ m_x + 3, m_y + 2 SAY "Vrste (prazno svi)" GET cVrste pict "@!"
-    read
-BoxC()
-
-if LastKey() == K_ESC
-    return
-endif
-
-_o_pos_prepis_tbl()
-
-AADD(ImeKol, {"Vrsta", {|| IdVd}})
-AADD(ImeKol, {"Broj ",{||PADR(IF(!Empty(IdPos),trim(IdPos)+"-","")+alltrim(BrDok),9)}} )
-AADD(ImeKol, {"Fisk.rn", {|| fisc_rn}})
-
-if _prikaz_partnera
-    select pos_doks
-    SET RELATION TO idgost INTO partn
-    AADD(ImeKol,{PADR("Partner",25),{||PADR(TRIM(idgost)+"-"+TRIM(partn->naz),25)}})
-endif
+FUNCTION pos_prepis_dokumenta()
+
+   LOCAL aOpc
+   LOCAL _prikaz_partnera := .F.
+   PRIVATE cFilter := ".t."
+   PRIVATE ImeKol := {}
+   PRIVATE Kol := {}
+
+   cVrste := "  "
+   dDatOd := Date() - 1
+   dDatDo := Date()
+
+   Box(, 3, 60 )
+   @ m_x + 1, m_y + 2 SAY "Datumski period:" GET dDatOd
+   @ m_x + 1, Col() + 2 SAY "-" GET dDatDo
+   @ m_x + 3, m_y + 2 SAY "Vrste (prazno svi)" GET cVrste PICT "@!"
+   READ
+   BoxC()
+
+   IF LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-AADD(ImeKol,{"VP",{||IdVrsteP}})
-AADD(ImeKol,{"Datum",{||datum}})
+   _o_pos_prepis_tbl()
 
-if gStolovi == "D"
-    AADD(ImeKol,{"Sto",{||sto_br}})
-else
-    AADD(ImeKol,{"Smj",{||smjena}})
-endif
+   AAdd( ImeKol, { "Vrsta", {|| IdVd } } )
+   AAdd( ImeKol, { "Broj ", {|| PadR( IF( !Empty( IdPos ), Trim( IdPos ) + "-", "" ) + AllTrim( BrDok ), 9 ) } } )
+   AAdd( ImeKol, { "Fisk.rn", {|| fisc_rn } } )
 
-AADD(ImeKol,{PADC("Iznos",10),{|| pos_iznos_dokumenta(NIL)}})
-AADD(ImeKol,{"Radnik",{||IdRadnik}})
+   IF _prikaz_partnera
+      SELECT pos_doks
+      SET RELATION TO idgost INTO partn
+      AAdd( ImeKol, { PadR( "Partner", 25 ), {|| PadR( Trim( idgost ) + "-" + Trim( partn->naz ), 25 ) } } )
+   ENDIF
 
-if gStolovi == "D"
-    AADD(ImeKol,{"Zaklj",{||zak_br}})
-endif
+   AAdd( ImeKol, { "VP", {|| IdVrsteP } } )
+   AAdd( ImeKol, { "Datum", {|| datum } } )
 
-for i:=1 to LEN(ImeKol)
-    AADD(Kol,i)
-next
+   IF gStolovi == "D"
+      AAdd( ImeKol, { "Sto", {|| sto_br } } )
+   ELSE
+      AAdd( ImeKol, { "Smj", {|| smjena } } )
+   ENDIF
 
-select pos_doks
-set cursor on
+   AAdd( ImeKol, { PadC( "Iznos", 10 ), {|| pos_iznos_dokumenta( NIL ) } } )
+   AAdd( ImeKol, { "Radnik", {|| IdRadnik } } )
 
-if !empty(dDatOd).or.!empty(dDatDo)
-    cFilter+=".and. Datum>="+cm2str(dDatOD)+".and. Datum<="+cm2str(dDatDo)
-endif
-if !empty(cVrste)
-    cFilter+=".and. IdVd="+cm2str(cVrste)
-endif
-if !(cFilter==".t.")
-    set filter to &cFilter
-endif
+   IF gStolovi == "D"
+      AAdd( ImeKol, { "Zaklj", {|| zak_br } } )
+   ENDIF
 
-//set scopebottom to "W"
-go top
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
 
-aOpc := { "<ENTER> Odabir", "<E> eksport" }
+   SELECT pos_doks
+   SET CURSOR ON
 
-if klevel <= "1"
-    AADD( aOpc, "<F2> - promjena vrste placanja" )
-endif
+   IF !Empty( dDatOd ) .OR. !Empty( dDatDo )
+      cFilter += ".and. Datum>=" + cm2str( dDatOD ) + ".and. Datum<=" + cm2str( dDatDo )
+   ENDIF
+   IF !Empty( cVrste )
+      cFilter += ".and. IdVd=" + cm2str( cVrste )
+   ENDIF
+   IF !( cFilter == ".t." )
+      SET FILTER to &cFilter
+   ENDIF
 
-ObjDBedit( "pos_doks" , MAXROWS() - 10, MAXCOLS() - 3, {|| PrepDokProc (dDatOd, dDatDo) },"  STAMPA AZURIRANOG DOKUMENTA  ", "", nil, aOpc )
+   // set scopebottom to "W"
+   GO TOP
 
-close all
+   aOpc := { "<ENTER> Odabir", "<E> eksport" }
 
-return
+   IF klevel <= "1"
+      AAdd( aOpc, "<F2> - promjena vrste placanja" )
+   ENDIF
 
+   ObjDBedit( "pos_doks", MAXROWS() - 10, MAXCOLS() - 3, {|| PrepDokProc ( dDatOd, dDatDo ) }, "  STAMPA AZURIRANOG DOKUMENTA  ", "", nil, aOpc )
 
+   CLOSE ALL
 
-function PrepDokProc( dDat0, dDat1 )
-local cLevel
-local cOdg
-local nRecNo
-local ctIdPos
-local dtDatum
-local _rec, _id_pos, _id_vd, _dat_dok, _br_dok
-local _t_area := SELECT()
-local _tbl_filter := DbFilter()
-local _rec_no, _ok
-local _tbl_pos := "pos_pos"
-local _tbl_doks := "pos_doks"
-static cIdPos
-static cIdVd
-static cBrDok
-static dDatum
-static cIdRadnik
+   RETURN
 
-// M->Ch je iz OBJDB
-if M->Ch == 0
-    return (DE_CONT)
-endif
 
-if LASTKEY() == K_ESC
-    return (DE_ABORT)
-endif
 
-_rec_no := RECNO()
+FUNCTION PrepDokProc( dDat0, dDat1 )
 
-do case
+   LOCAL cLevel
+   LOCAL cOdg
+   LOCAL nRecNo
+   LOCAL ctIdPos
+   LOCAL dtDatum
+   LOCAL _rec, _id_pos, _id_vd, _dat_dok, _br_dok
+   LOCAL _t_area := Select()
+   LOCAL _tbl_filter := dbFilter()
+   LOCAL _rec_no, _ok
+   LOCAL _tbl_pos := "pos_pos"
+   LOCAL _tbl_doks := "pos_doks"
+   STATIC cIdPos
+   STATIC cIdVd
+   STATIC cBrDok
+   STATIC dDatum
+   STATIC cIdRadnik
 
-    case Ch == K_F2 .and. kLevel <= "1"
+   // M->Ch je iz OBJDB
+   IF M->Ch == 0
+      RETURN ( DE_CONT )
+   ENDIF
 
-        if pitanje(,"Zelite li promijeniti vrstu placanja?","N")=="D"
+   IF LastKey() == K_ESC
+      RETURN ( DE_ABORT )
+   ENDIF
 
-            cVrPl := field->idvrstep
+   _rec_no := RecNo()
 
-            if !VarEdit({{"Nova vrsta placanja","cVrPl","Empty (cVrPl).or.P_VrsteP(@cVrPl)","@!",}},10,5,14,74,'PROMJENA VRSTE PLACANJA, DOKUMENT:'+idvd+"/"+idpos+"-"+brdok+" OD "+DTOC(datum),"B1")
-                return DE_CONT
-            endif
+   DO CASE
 
-            _rec := dbf_get_rec()
-            _rec["idvrstep"] := cVrPl
+   CASE Ch == K_F2 .AND. kLevel <= "1"
 
-            update_rec_server_and_dbf( "pos_doks", _rec, 1, "FULL" )
+      IF pitanje(, "Zelite li promijeniti vrstu placanja?", "N" ) == "D"
 
-            return DE_REFRESH
+         cVrPl := field->idvrstep
 
-        endif
+         IF !VarEdit( { { "Nova vrsta placanja", "cVrPl", "Empty (cVrPl).or.P_VrsteP(@cVrPl)", "@!", } }, 10, 5, 14, 74, 'PROMJENA VRSTE PLACANJA, DOKUMENT:' + idvd + "/" + idpos + "-" + brdok + " OD " + DToC( datum ), "B1" )
+            RETURN DE_CONT
+         ENDIF
 
-        return DE_CONT
+         _rec := dbf_get_rec()
+         _rec[ "idvrstep" ] := cVrPl
 
-    case Ch == K_CTRL_F9
+         update_rec_server_and_dbf( "pos_doks", _rec, 1, "FULL" )
 
-        _id_pos := field->idpos
-        _id_vd := field->idvd
-        _br_dok := field->brdok
-        _dat_dok := field->datum
+         RETURN DE_REFRESH
 
-        _rec_no := RECNO()
-        
-        if Pitanje(, "Zelite li zaista izbrisati dokument", "N" ) == "D"
-           
-            pos_brisi_dokument( _id_pos, _id_vd, _dat_dok, _br_dok )    
+      ENDIF
 
-            _o_pos_prepis_tbl()
+      RETURN DE_CONT
 
-            select ( _t_area )
-            set filter to &_tbl_filter
-            go (_rec_no)
+   CASE Ch == K_CTRL_F9
 
-            return DE_REFRESH
-            
-        endif
+      _id_pos := field->idpos
+      _id_vd := field->idvd
+      _br_dok := field->brdok
+      _dat_dok := field->datum
 
-        return DE_CONT
+      _rec_no := RecNo()
 
-    case Ch == K_ENTER
-        
-        do case
-
-            // stampanje racuna
-            case pos_doks->IdVd==VD_RN
-                
-                cOdg := "D"
-                
-                if glRetroakt
-                    cOdg := Pitanje(,"Stampati tekuci racun? (D-da,N-ne,S-sve racune u izabranom periodu)","D","DNS")
-                endif
-                
-                if cOdg == "S"
-
-                    ctIdPos := gIdPos
-                    seek ctIdPos+VD_RN
-
-                    START PRINT CRET
-
-                    do while !eof() .and. IdPos+IdVd==ctIdPos+VD_RN
-                        if (datum <= dDat1)
-                            aVezani:={{IdPos, BrDok, IdVd, datum}}
-                            StampaPrep(IdPos, dtos(datum)+BrDok, aVezani, .f., glRetroakt)
-                        endif
-                        select pos_doks
-                        skip 1
-                    enddo
-
-                    END PRINT
-
-                elseif cOdg=="D"
-
-                    aVezani:={{IdPos, BrDok, IdVd, datum}}
-                    StampaPrep(IdPos, dtos(datum)+BrDok, aVezani, .t.)
-
-                endif
-
-            case pos_doks->IdVd == "16"
-                PrepisZad("ZADUZENJE ")
-            case pos_doks->IdVd == VD_OTP
-                PrepisZad("OTPIS ")
-            case pos_doks->IdVd == VD_REK
-                PrepisZad("REKLAMACIJA")
-            case pos_doks->IdVd == VD_RZS
-                PrepisRazd()
-            case pos_doks->IdVd == "IN"
-                PrepisInvNiv(.t.)
-            case pos_doks->IdVd == VD_NIV
-                PrepisInvNiv(.f.)
-                RETURN (DE_REFRESH)
-            case pos_doks->IdVd == VD_PRR
-                PrepisKumPr()
-            case pos_doks->IdVd == VD_PCS
-                PrepisPCS()
-            case pos_doks->IdVd == VD_ROP // reklamacija ostali podaci
-                StDokROP(.t.)
-        endcase
-        
-    case Ch == ASC("F") .or. Ch == ASC("f")
-
-        // stampa poreske fakture
-        aVezani:={{IdPos, BrDok, IdVd, datum}}
-        StampaPrep(IdPos, dtos(datum)+BrDok, aVezani, .t., nil, .t.)
-
-        select pos_doks
-
-        f7_pf_traka(.t.)
-
-        select pos_doks
-
-        return (DE_REFRESH)
-
-    case gStolovi == "D" .and. ( Ch == ASC("Z") .or. Ch == ASC("z") )
-        
-        if pos_doks->idvd == "42"
-
-            PushWa()
-            print_zak_br(pos_doks->zak_br)
-            o_pos_tables()
-            PopWa()
-            select pos_doks
-            return (DE_REFRESH)     
-
-        endif
-
-        return (DE_CONT)
-    
-    
-    case Ch == K_CTRL_P
-
-        pos_stampa_dokumenta()
-            
-    case Ch == ASC("E") .or. Ch == ASC("e")
-        
-        if field->idvd == "IN"
-            if Pitanje(, "Eksportovati dokument (D/N) ?", "N" ) == "D"
-                // export dokumenta
-                pos_prenos_inv_2_kalk( field->idpos, field->idvd, field->datum, field->brdok )
-            endif
-        else
-            MsgBeep( "Ne postoji metoda eksporta za ovu vrstu dokumenta !!!" )
-        endif
-
-        return (DE_CONT)
-
-    case Ch == ASC("P") .or. Ch == ASC("p")
-             
-        _id_pos := field->idpos
-        _id_vd := field->idvd
-        _br_dok := field->brdok
-        _dat_dok := field->datum
-
-        if field->idvd <> VD_INV
-            MsgBeep( "Ne postoji metoda povrata za ovu vrstu dokumenta !!!" )
-            return ( DE_CONT )
-        endif
-
-        if Pitanje(, "Dokument " + _id_pos + "-" + _id_vd + "-" + _br_dok + " povuci u pripremu (D/N) ?", "N" ) == "N"
-            return ( DE_CONT )
-        endif
-
-        if field->idvd == VD_INV
-
-            // povrat dokumenta u pripremu
-            pos_2_priprz()
-            
-            // pobrisi dokument sa servera i dbf-a
-            pos_brisi_dokument( _id_pos, _id_vd, _dat_dok, _br_dok )
-            
-            _o_pos_prepis_tbl()
-            select pos_doks
-            set filter to &_tbl_filter
-            go top
-
-            MsgBeep( "Dokument je vracen u pripremu inventure..." )
-
-            return ( DE_REFRESH )
-
-        endif
-
-        return (DE_CONT)
-
-
-endcase
-    
-// vrati se tamo gdje si bio
-_o_pos_prepis_tbl()
-select pos_doks
-set filter to &( _tbl_filter )
-go ( _rec_no ) 
-
-return (DE_CONT)
+      IF Pitanje(, "Zelite li zaista izbrisati dokument", "N" ) == "D"
+
+         pos_brisi_dokument( _id_pos, _id_vd, _dat_dok, _br_dok )
+
+         _o_pos_prepis_tbl()
+
+         SELECT ( _t_area )
+         SET FILTER to &_tbl_filter
+         GO ( _rec_no )
+
+         RETURN DE_REFRESH
+
+      ENDIF
+
+      RETURN DE_CONT
+
+   CASE Ch == K_ENTER
+
+      DO CASE
+
+         // stampanje racuna
+      CASE pos_doks->IdVd == VD_RN
+
+         cOdg := "D"
+
+         IF glRetroakt
+            cOdg := Pitanje(, "Stampati tekuci racun? (D-da,N-ne,S-sve racune u izabranom periodu)", "D", "DNS" )
+         ENDIF
+
+         IF cOdg == "S"
+
+            ctIdPos := gIdPos
+            SEEK ctIdPos + VD_RN
+
+            START PRINT CRET
+
+            DO WHILE !Eof() .AND. IdPos + IdVd == ctIdPos + VD_RN
+               IF ( datum <= dDat1 )
+                  aVezani := { { IdPos, BrDok, IdVd, datum } }
+                  StampaPrep( IdPos, DToS( datum ) + BrDok, aVezani, .F., glRetroakt )
+               ENDIF
+               SELECT pos_doks
+               SKIP 1
+            ENDDO
+
+            END PRINT
+
+         ELSEIF cOdg == "D"
+
+            aVezani := { { IdPos, BrDok, IdVd, datum } }
+            StampaPrep( IdPos, DToS( datum ) + BrDok, aVezani, .T. )
+
+         ENDIF
+
+      CASE pos_doks->IdVd == "16"
+         PrepisZad( "ZADUZENJE " )
+      CASE pos_doks->IdVd == VD_OTP
+         PrepisZad( "OTPIS " )
+      CASE pos_doks->IdVd == VD_REK
+         PrepisZad( "REKLAMACIJA" )
+      CASE pos_doks->IdVd == VD_RZS
+         PrepisRazd()
+      CASE pos_doks->IdVd == "IN"
+         PrepisInvNiv( .T. )
+      CASE pos_doks->IdVd == VD_NIV
+         PrepisInvNiv( .F. )
+         RETURN ( DE_REFRESH )
+      CASE pos_doks->IdVd == VD_PRR
+         PrepisKumPr()
+      CASE pos_doks->IdVd == VD_PCS
+         PrepisPCS()
+      CASE pos_doks->IdVd == VD_ROP // reklamacija ostali podaci
+         StDokROP( .T. )
+      ENDCASE
+
+   CASE Ch == Asc( "F" ) .OR. Ch == Asc( "f" )
+
+      // stampa poreske fakture
+      aVezani := { { IdPos, BrDok, IdVd, datum } }
+      StampaPrep( IdPos, DToS( datum ) + BrDok, aVezani, .T., nil, .T. )
+
+      SELECT pos_doks
+
+      f7_pf_traka( .T. )
+
+      SELECT pos_doks
+
+      RETURN ( DE_REFRESH )
+
+   CASE gStolovi == "D" .AND. ( Ch == Asc( "Z" ) .OR. Ch == Asc( "z" ) )
+
+      IF pos_doks->idvd == "42"
+
+         PushWa()
+         print_zak_br( pos_doks->zak_br )
+         o_pos_tables()
+         PopWa()
+         SELECT pos_doks
+         RETURN ( DE_REFRESH )
+
+      ENDIF
+
+      RETURN ( DE_CONT )
+
+
+   CASE Ch == K_CTRL_P
+
+      pos_stampa_dokumenta()
+
+   CASE Ch == Asc( "E" ) .OR. Ch == Asc( "e" )
+
+      IF field->idvd == "IN"
+         IF Pitanje(, "Eksportovati dokument (D/N) ?", "N" ) == "D"
+            // export dokumenta
+            pos_prenos_inv_2_kalk( field->idpos, field->idvd, field->datum, field->brdok )
+         ENDIF
+      ELSE
+         MsgBeep( "Ne postoji metoda eksporta za ovu vrstu dokumenta !!!" )
+      ENDIF
+
+      RETURN ( DE_CONT )
+
+   CASE Ch == Asc( "P" ) .OR. Ch == Asc( "p" )
+
+      _id_pos := field->idpos
+      _id_vd := field->idvd
+      _br_dok := field->brdok
+      _dat_dok := field->datum
+
+      IF field->idvd <> VD_INV
+         MsgBeep( "Ne postoji metoda povrata za ovu vrstu dokumenta !!!" )
+         RETURN ( DE_CONT )
+      ENDIF
+
+      IF Pitanje(, "Dokument " + _id_pos + "-" + _id_vd + "-" + _br_dok + " povuci u pripremu (D/N) ?", "N" ) == "N"
+         RETURN ( DE_CONT )
+      ENDIF
+
+      IF field->idvd == VD_INV
+
+         // povrat dokumenta u pripremu
+         pos_2_priprz()
+
+         // pobrisi dokument sa servera i dbf-a
+         pos_brisi_dokument( _id_pos, _id_vd, _dat_dok, _br_dok )
+
+         _o_pos_prepis_tbl()
+         SELECT pos_doks
+         SET FILTER to &_tbl_filter
+         GO TOP
+
+         MsgBeep( "Dokument je vracen u pripremu inventure..." )
+
+         RETURN ( DE_REFRESH )
+
+      ENDIF
+
+      RETURN ( DE_CONT )
+
+
+   ENDCASE
+
+   // vrati se tamo gdje si bio
+   _o_pos_prepis_tbl()
+   SELECT pos_doks
+   SET FILTER to &( _tbl_filter )
+   GO ( _rec_no )
+
+   RETURN ( DE_CONT )
 
 
 // ----------------------------------------------------------
 // pregled racuna iz pregleda racuna, opcija "P"
 // ----------------------------------------------------------
-function PreglSRacun()
-local oBrowse
-local cPrevCol
-local _rec
-private ImeKol
-private Kol
+FUNCTION PreglSRacun()
 
-cPrevCol := SETCOLOR(INVERT)
+   LOCAL oBrowse
+   LOCAL cPrevCol
+   LOCAL _rec
+   PRIVATE ImeKol
+   PRIVATE Kol
 
-SELECT F__PRIPR
+   cPrevCol := SetColor( INVERT )
 
-if !used()
-    O__POS_PRIPR
-endif
+   SELECT F__PRIPR
 
-select _pos_pripr
+   IF !Used()
+      O__POS_PRIPR
+   ENDIF
 
-my_dbf_zap()
+   SELECT _pos_pripr
 
-Scatter()
+   my_dbf_zap()
 
-SELECT POS
-seek pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
+   Scatter()
 
-do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok) == pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
+   SELECT POS
+   SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
-    _rec := dbf_get_rec()
+   DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
-    select roba
-    HSEEK _rec["idroba"]
+      _rec := dbf_get_rec()
 
-    _rec["robanaz"] := roba->naz
-    _rec["jmj"] := roba->jmj
+      SELECT roba
+      HSEEK _rec[ "idroba" ]
 
-    // pobrisi mi polje "rbr" koje pos koristi
-    hb_hdel( _rec, "rbr" )
+      _rec[ "robanaz" ] := roba->naz
+      _rec[ "jmj" ] := roba->jmj
 
-    select _pos_pripr
-    append Blank 
- 
-    dbf_update_rec( _rec )
+      // pobrisi mi polje "rbr" koje pos koristi
+      hb_HDel( _rec, "rbr" )
 
-    SELECT POS
-    SKIP
+      SELECT _pos_pripr
+      APPEND BLANK
 
-enddo
+      dbf_update_rec( _rec )
 
-select _pos_pripr
-GO TOP
+      SELECT POS
+      SKIP
 
-ImeKol := { { "Sifra", {|| idroba} }, ;
-            { "Naziv", {|| LEFT(RobaNaz,30) } }, ;
-            { "Kolicina", {|| STR(Kolicina,7,2)}}, ;
-            { "Cijena", {|| STR(Cijena,7,2)}}, ;
-            { "Iznos", {|| STR(Kolicina*Cijena,11,2)}} }
+   ENDDO
 
-Kol := {1,2,3,4,5}
+   SELECT _pos_pripr
+   GO TOP
 
-Box(, 15, 73 )
+   ImeKol := { { "Sifra", {|| idroba } }, ;
+      { "Naziv", {|| Left( RobaNaz, 30 ) } }, ;
+      { "Kolicina", {|| Str( Kolicina, 7, 2 ) } }, ;
+      { "Cijena", {|| Str( Cijena, 7, 2 ) } }, ;
+      { "Iznos", {|| Str( Kolicina * Cijena, 11, 2 ) } } }
 
-@ m_x+1,m_y+19 SAY PADC ("Pregled "+IIF(gRadniRac=="D","stalnog ","")+"racuna "+TRIM(pos_doks->IdPos)+"-"+ LTRIM (pos_doks->BrDok),30) COLOR INVERT
+   Kol := { 1, 2, 3, 4, 5 }
 
-    oBrowse:=FormBrowse(m_x+2,m_y+1,m_x+15,m_y+73,ImeKol,Kol,{"Í","Ä","³"},0)
-    ShowBrowse(oBrowse,{},{})
+   Box(, 15, 73 )
 
-    select _pos_pripr
-    my_dbf_zap()
-BoxC()
-    
-SETCOLOR (cPrevCol)
-select pos_doks
+   @ m_x + 1, m_y + 19 SAY PadC ( "Pregled " + iif( gRadniRac == "D", "stalnog ", "" ) + "racuna " + Trim( pos_doks->IdPos ) + "-" + LTrim ( pos_doks->BrDok ), 30 ) COLOR INVERT
 
-return
+   oBrowse := FormBrowse( m_x + 2, m_y + 1, m_x + 15, m_y + 73, ImeKol, Kol, { "Í", "Ä", "³" }, 0 )
+   ShowBrowse( oBrowse, {}, {} )
 
+   SELECT _pos_pripr
+   my_dbf_zap()
+   BoxC()
 
+   SetColor ( cPrevCol )
+   SELECT pos_doks
 
+   RETURN

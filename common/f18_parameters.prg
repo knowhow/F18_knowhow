@@ -221,9 +221,6 @@ FUNCTION f18_app_parameters( just_set )
    RETURN
 
 
-// ---------------------------------------------------------------------
-// koristi se pojedini od modula na osnovu parametara
-// ---------------------------------------------------------------------
 FUNCTION f18_use_module( module_name )
 
    LOCAL _ret := .F.
@@ -240,6 +237,30 @@ FUNCTION f18_use_module( module_name )
    IF fetch_metric( "main_menu_" + module_name, my_user(), _default ) == "D"
       _ret := .T.
    ENDIF
+
+   RETURN _ret
+
+
+
+
+FUNCTION f18_set_use_module( module_name, lset )
+
+   LOCAL _ret := .F.
+   LOCAL _set := "N"
+
+   IF module_name == "tops"
+      module_name := "pos"
+   ENDIF
+
+   IF lset == NIL
+      lset := .T.
+   ENDIF
+
+   IF lset 
+      _set := "D"
+   ENDIF
+
+   set_metric( "main_menu_" + module_name, my_user(), _set )
 
    RETURN _ret
 

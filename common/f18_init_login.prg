@@ -280,6 +280,7 @@ METHOD F18Login:company_db_relogin( server_param, database, session )
    LOCAL _curr_database := server_param[ "database" ]
    LOCAL _curr_session := Right( _curr_database, 4 )
    LOCAL _show_box := .T.
+   LOCAL _modul_name := Lower( goModul:cName )
 
    IF database <> NIL
       _curr_database := database
@@ -314,10 +315,14 @@ METHOD F18Login:company_db_relogin( server_param, database, session )
 
    IF _ok .AND. _show_box
 
-      IF !f18_use_module( Lower( goModul:cName ) )     
-         MsgBeep( "U " + ALLTRIM( _new_session ) + " programski modul nije aktivan !#Vraćamo se u sezonu " + _curr_session )
-         // vratit ćemo se na bazu iz koje smo počeli
-         ::company_db_relogin( server_param, _curr_database, _curr_session ) 
+      IF !f18_use_module( _modul_name ) 
+         MsgBeep( "U " + ALLTRIM( _new_session ) + " vama programski modul nije aktivan !" )
+         IF Pitanje(, "Da li je programski modul aktivan u sezoni " + _new_session + " (D/N) ?", "N" ) == "D"
+            f18_set_use_module( _modul_name, .T. )
+         ELSE
+            // vratit ćemo se na bazu iz koje smo počeli
+            ::company_db_relogin( server_param, _curr_database, _curr_session ) 
+         ENDIF
       ENDIF
 
       SetgaSDbfs()

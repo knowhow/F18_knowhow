@@ -274,7 +274,7 @@ STATIC FUNCTION _cre_rpt( rpt_vars, otv_stavke )
 
    MsgC()
 
-   IF _table == NIL
+   IF _table == NIL .OR. ValType( _table ) == "L"
       RETURN NIL
    ENDIF
 

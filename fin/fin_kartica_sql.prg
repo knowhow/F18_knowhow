@@ -39,7 +39,7 @@ FUNCTION fin_suban_kartica_sql( otv_stavke )
    _rpt_data := _cre_rpt( _rpt_vars, otv_stavke )
 
    IF _rpt_data == NIL
-      Msgbeep( "Problem sa generisanjem izvjestaja !!!" )
+      Msgbeep( "Problem sa generisanjem izvještaja !" )
       RETURN
    ENDIF
 
@@ -135,7 +135,7 @@ STATIC FUNCTION _get_vars( rpt_vars )
    ++ _x
    ++ _x
  	
-   @ m_x + _x, m_y + 2 SAY "Kartica za domacu/stranu valutu (1/2):" GET _tip_val PICT "9"
+   @ m_x + _x, m_y + 2 SAY8 "Kartica za domaću/stranu valutu (1/2):" GET _tip_val PICT "9"
 
    ++ _x
    ++ _x
@@ -151,7 +151,7 @@ STATIC FUNCTION _get_vars( rpt_vars )
    @ m_x + _x, m_y + 2 SAY "Uslov za broj veze (prazno-svi):" GET _brdok PICT "@!S20"
 	
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Opcina (prazno-sve):" GET _opcina PICT "@!S20"
+   @ m_x + _x, m_y + 2 SAY8 "Općina (prazno-sve):" GET _opcina PICT "@!S20"
 	
    ++ _x
    ++ _x
@@ -160,7 +160,7 @@ STATIC FUNCTION _get_vars( rpt_vars )
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Eksport kartice u dbf (D/N)?" GET _export_dbf PICT "@!" VALID _export_dbf $ "DN"
+   @ m_x + _x, m_y + 2 SAY "Eksport kartice u DBF (D/N)?" GET _export_dbf PICT "@!" VALID _export_dbf $ "DN"
 	
    READ
 		

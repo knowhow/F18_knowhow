@@ -1,3 +1,7 @@
+1.7.99  2014-06-09, vsasa
+
+  - razne sitne ispravke i korekcije
+ 
 1.7.98  2014-06-06, vsasa
 
   - RNAL, ispravke bugova, full synchro rnal_e_att

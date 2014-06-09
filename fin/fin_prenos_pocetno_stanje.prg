@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,613 +12,533 @@
 #include "fin.ch"
 
 
-// ------------------------------------------
-// otvori potrebne DBF fajlove
-// ------------------------------------------
-static function _o_tables()
+STATIC FUNCTION _o_tables()
 
-select ( F_PKONTO )
-if !Used()
-    O_PKONTO
-endif
+   SELECT ( F_PKONTO )
+   IF !Used()
+      O_PKONTO
+   ENDIF
 
-select ( F_KONTO )
-if !Used()
-    O_KONTO
-endif
+   SELECT ( F_KONTO )
+   IF !Used()
+      O_KONTO
+   ENDIF
 
-select ( F_PARTN )
-if !Used()
-    O_PARTN
-endif
+   SELECT ( F_PARTN )
+   IF !Used()
+      O_PARTN
+   ENDIF
 
-select ( F_FIN_PRIPR )
-if !Used()
-    O_FIN_PRIPR
-endif
+   SELECT ( F_FIN_PRIPR )
+   IF !Used()
+      O_FIN_PRIPR
+   ENDIF
 
-return
+   RETURN
 
 
 
-// -----------------------------------------------------
-// prenos dokumenata pocetnog stanja - sql varijanta
-// -----------------------------------------------------
-function fin_pocetno_stanje_sql()
-local _dug_kto, _pot_kto, _dat_ps, _dat_od, _dat_do
-local _k_1, _k_2, _k_3, _k_4
-local _copy_sif
-local _param := hb_hash()
-local _sint
-local _data, _partn_data, _konto_data 
+FUNCTION fin_pocetno_stanje_sql()
 
-// ucitavanje parametara
-_k_1 := fetch_metric( "fin_prenos_pocetno_stanje_k1", NIL, "9" )
-_k_2 := fetch_metric( "fin_prenos_pocetno_stanje_k2", NIL, "9" )
-_k_3 := fetch_metric( "fin_prenos_pocetno_stanje_k3", NIL, "99" )
-_k_4 := fetch_metric( "fin_prenos_pocetno_stanje_k4", NIL, "99" )
+   LOCAL _dug_kto, _pot_kto, _dat_ps, _dat_od, _dat_do
+   LOCAL _k_1, _k_2, _k_3, _k_4
+   LOCAL _copy_sif
+   LOCAL _param := hb_Hash()
+   LOCAL _sint
+   LOCAL _data, _partn_data, _konto_data
 
-// otvori potrebne tabele
-_o_tables()
+   _k_1 := fetch_metric( "fin_prenos_pocetno_stanje_k1", NIL, "9" )
+   _k_2 := fetch_metric( "fin_prenos_pocetno_stanje_k2", NIL, "9" )
+   _k_3 := fetch_metric( "fin_prenos_pocetno_stanje_k3", NIL, "99" )
+   _k_4 := fetch_metric( "fin_prenos_pocetno_stanje_k4", NIL, "99" )
 
-// otvori sifrarnik nacina prenosa u NG
-P_PKonto()
+   _o_tables()
 
-_dug_kto := fetch_metric( "fin_klasa_duguje", NIL, "2" )
-_pot_kto := fetch_metric( "fin_klasa_potrazuje", NIL, "4" )
-_sint := fetch_metric( "fin_prenos_pocetno_stanje_sint", NIL, 3 )
-_copy_sif := fetch_metric("fin_prenos_pocetno_stanje_sif", NIL, "N" )
+   P_PKonto()
 
-_dat_od := CTOD( "01.01." + ALLTRIM( STR( YEAR( DATE() ) -1 ) ) )
-_dat_do := CTOD( "31.12." + ALLTRIM( STR( YEAR( DATE() ) -1 ) ) )
-_dat_ps := CTOD( "01.01." + ALLTRIM( STR( YEAR( DATE() ) ) ) )
+   _dug_kto := fetch_metric( "fin_klasa_duguje", NIL, "2" )
+   _pot_kto := fetch_metric( "fin_klasa_potrazuje", NIL, "4" )
+   _sint := fetch_metric( "fin_prenos_pocetno_stanje_sint", NIL, 3 )
+   _copy_sif := fetch_metric( "fin_prenos_pocetno_stanje_sif", NIL, "N" )
 
-Box(, 9, 60 )
+   _dat_od := CToD( "01.01." + AllTrim( Str( Year( Date() ) -1 ) ) )
+   _dat_do := CToD( "31.12." + AllTrim( Str( Year( Date() ) -1 ) ) )
+   _dat_ps := CToD( "01.01." + AllTrim( Str( Year( Date() ) ) ) )
 
-  	@ m_x + 1, m_y + 2 SAY "Za datumski period od:" GET _dat_od
-  	@ m_x + 1, col() + 1 SAY "do:" GET _dat_do
+   Box(, 9, 60 )
 
-  	@ m_x + 3, m_y + 2 SAY "Datum dokumenta pocetnog stanja:" GET _dat_ps
+   @ m_x + 1, m_y + 2 SAY "Za datumski period od:" GET _dat_od
+   @ m_x + 1, Col() + 1 SAY "do:" GET _dat_do
 
-  	@ m_x + 5, m_y + 2 SAY "Klasa dugovnog  konta:" GET _dug_kto
-  	@ m_x + 6, m_y + 2 SAY "Klasa potraznog konta:" GET _pot_kto 
-  
-  	@ m_x + 8, m_y + 2 SAY "Grupisem konta na broj mjesta ?" GET _sint PICT "9"
-  	@ m_x + 9, m_y + 2 SAY "Kopiraj nepostojece sifre (konto/partn) (D/N)?" GET _copy_sif VALID _copy_sif $ "DN" PICT "@!"
+   @ m_x + 3, m_y + 2 SAY8 "Datum dokumenta početnog stanja:" GET _dat_ps
+
+   @ m_x + 5, m_y + 2 SAY "Klasa dugovnog  konta:" GET _dug_kto
+   @ m_x + 6, m_y + 2 SAY8 "Klasa potražnog konta:" GET _pot_kto
+
+   @ m_x + 8, m_y + 2 SAY8 "Grupišem konta na broj mjesta ?" GET _sint PICT "9"
+   @ m_x + 9, m_y + 2 SAY8 "Kopiraj nepostojeće sifre (konto/partn) (D/N)?" GET _copy_sif VALID _copy_sif $ "DN" PICT "@!"
   	
-    read
+   READ
 
- 	ESC_BCR
-  
-BoxC()
+   ESC_BCR
 
-// odabrano ESC
-if LastKey() == K_ESC
-    return
-endif
+   BoxC()
 
-// snimi parametre
-set_metric( "fin_klasa_duguje", NIL, _dug_kto )
-set_metric( "fin_klasa_potrazuje", NIL, _pot_kto )
-set_metric( "fin_prenos_pocetno_stanje_sint", NIL, _sint )
-set_metric( "fin_prenos_pocetno_stanje_sif", NIL, _copy_sif )
-set_metric( "fin_prenos_pocetno_stanje_k1", NIL, _k_1 )
-set_metric( "fin_prenos_pocetno_stanje_k2", NIL, _k_2 )
-set_metric( "fin_prenos_pocetno_stanje_k3", NIL, _k_3 )
-set_metric( "fin_prenos_pocetno_stanje_k4", NIL, _k_4 )
+   IF LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-_param["klasa_duguje"] := _dug_kto
-_param["klasa_potrazuje"] := _pot_kto
-_param["k_1"] := _k_1
-_param["k_2"] := _k_2
-_param["k_3"] := _k_3
-_param["k_4"] := _k_4
-_param["datum_od"] := _dat_od
-_param["datum_do"] := _dat_do
-_param["datum_ps"] := _dat_ps
-_param["sintetika"] := _sint
-_param["copy_sif"] := _copy_sif
+   set_metric( "fin_klasa_duguje", NIL, _dug_kto )
+   set_metric( "fin_klasa_potrazuje", NIL, _pot_kto )
+   set_metric( "fin_prenos_pocetno_stanje_sint", NIL, _sint )
+   set_metric( "fin_prenos_pocetno_stanje_sif", NIL, _copy_sif )
+   set_metric( "fin_prenos_pocetno_stanje_k1", NIL, _k_1 )
+   set_metric( "fin_prenos_pocetno_stanje_k2", NIL, _k_2 )
+   set_metric( "fin_prenos_pocetno_stanje_k3", NIL, _k_3 )
+   set_metric( "fin_prenos_pocetno_stanje_k4", NIL, _k_4 )
 
-// izvuci mi podatke u matricu iz sql-a...
-get_data( _param, @_data, @_konto_data, @_partn_data )
+   _param[ "klasa_duguje" ] := _dug_kto
+   _param[ "klasa_potrazuje" ] := _pot_kto
+   _param[ "k_1" ] := _k_1
+   _param[ "k_2" ] := _k_2
+   _param[ "k_3" ] := _k_3
+   _param[ "k_4" ] := _k_4
+   _param[ "datum_od" ] := _dat_od
+   _param[ "datum_do" ] := _dat_do
+   _param[ "datum_ps" ] := _dat_ps
+   _param[ "sintetika" ] := _sint
+   _param[ "copy_sif" ] := _copy_sif
 
-if _data == NIL
-    MsgBeep( "Ne postoje trazeni podaci... prekidam operaciju !!!" )
-    return
-endif
+   get_data( _param, @_data, @_konto_data, @_partn_data )
 
-// generisi dokument u tabeli pripreme...
-if !_insert_into_fin_priprema( _data, _konto_data, _partn_data, _param )
-    return
-endif
+   IF _data == NIL
+      MsgBeep( "Ne postoje traženi podaci... prekidam operaciju !" )
+      RETURN
+   ENDIF
 
-// azuriraj dokument automatski
-fin_set_broj_dokumenta()
+   IF !_insert_into_fin_priprema( _data, _konto_data, _partn_data, _param )
+      RETURN
+   ENDIF
 
-my_close_all_dbf()
-fin_gen_ptabele_stampa_nalozi( .T. )
-my_close_all_dbf()
+   fin_set_broj_dokumenta()
+
+   my_close_all_dbf()
+   fin_gen_ptabele_stampa_nalozi( .T. )
+   my_close_all_dbf()
 
 
-fin_azur( .t. ) 
+   fin_azur( .T. )
 
-MsgBeep( "Dokument formiran i automatski azuriran..." )
+   MsgBeep( "Dokument formiran i automatski ažuriran..." )
 
-return
+   RETURN
 
 
 
-// --------------------------------------------------------------------
-// napravi dokument u pripremi
-// --------------------------------------------------------------------
-static function _insert_into_fin_priprema( data, konto_data, partn_data, param )
-local _fin_vn := "00"
-local _fin_broj := fin_prazan_broj_naloga()
-local _dat_ps := param["datum_ps"]
-local _sint := param["sintetika"]
-local _kl_dug := param["klasa_duguje"]
-local _kl_pot := param["klasa_potrazuje"]
-local _copy_sif := param["copy_sif"]
-local _ret := .f.
-local _row, _duguje, _potrazuje, _id_konto, _id_partner
-local _dat_dok, _dat_val, _otv_st, _br_veze
-local _rec, _i_saldo
-local _rbr := 0
+STATIC FUNCTION _insert_into_fin_priprema( data, konto_data, partn_data, param )
 
-// otvori potrebne tabele
-_o_tables()
+   LOCAL _fin_vn := "00"
+   LOCAL _fin_broj := fin_prazan_broj_naloga()
+   LOCAL _dat_ps := PARAM[ "datum_ps" ]
+   LOCAL _sint := PARAM[ "sintetika" ]
+   LOCAL _kl_dug := PARAM[ "klasa_duguje" ]
+   LOCAL _kl_pot := PARAM[ "klasa_potrazuje" ]
+   LOCAL _copy_sif := PARAM[ "copy_sif" ]
+   LOCAL _ret := .F.
+   LOCAL _row, _duguje, _potrazuje, _id_konto, _id_partner
+   LOCAL _dat_dok, _dat_val, _otv_st, _br_veze
+   LOCAL _rec, _i_saldo
+   LOCAL _rbr := 0
 
-// isprazni fin priprema
-if !prazni_fin_priprema()
-    return _ret
-endif
+   _o_tables()
 
-MsgO( "Formiram dokument pocetnog stanja u pripremi ..." )
+   IF !prazni_fin_priprema()
+      RETURN _ret
+   ENDIF
 
-_i_saldo := 0
+   MsgO( "Formiram dokument početnog stanja u tabeli pripreme." )
 
-do while !data:EOF()
+   _i_saldo := 0
 
-    _row := data:GetRow()
+   DO WHILE !data:Eof()
 
-    // karakterna polja...
-    _id_konto := PADR( _row:FieldGet( _row:FieldPos( "idkonto" ) ), 7 )
-    _id_partner := PADR( hb_utf8tostr( _row:FieldGet( _row:FieldPos( "idpartner" ) ) ), 6 )
-    _br_veze := PADR( hb_utf8tostr( _row:FieldGet( _row:FieldPos( "brdok" ) ) ), 20 )
- 
-    // datumi
-    _dat_dok := _row:FieldGet( _row:FieldPos( "datdok" ) )
-    _dat_val := _row:FieldGet( _row:FieldPos( "datval" ) )
+      _row := data:GetRow()
 
-    // marker otvorenih stavki
-    _otv_st := _row:FieldGet( _row:FieldPos( "otvst" ) )
+      _id_konto := PadR( _row:FieldGet( _row:FieldPos( "idkonto" ) ), 7 )
+      _id_partner := PadR( hb_UTF8ToStr( _row:FieldGet( _row:FieldPos( "idpartner" ) ) ), 6 )
+      _br_veze := PadR( hb_UTF8ToStr( _row:FieldGet( _row:FieldPos( "brdok" ) ) ), 20 )
 
-    // vidi ima li ove stavke u semama prenosa...
-    select pkonto
-    go top
-    seek PADR( _id_konto, _sint )
+      _dat_dok := _row:FieldGet( _row:FieldPos( "datdok" ) )
+      _dat_val := _row:FieldGet( _row:FieldPos( "datval" ) )
 
-    _tip_prenosa := "0"
+      _otv_st := _row:FieldGet( _row:FieldPos( "otvst" ) )
 
-    if FOUND()
-        _tip_prenosa := pkonto->tip
-    endif
+      SELECT pkonto
+      GO TOP
+      SEEK PadR( _id_konto, _sint )
 
-    _i_saldo := 0
-    _i_br_veze := ""
-    _i_dat_val := NIL
+      _tip_prenosa := "0"
 
-    // provrti razlicite nacine prenosa...
-    do while !data:EOF() .and. PADR( data:FieldGet( data:FieldPos( "idkonto" ) ), 7 ) == _id_konto ;
-                        .and. IF( _tip_prenosa $ "1#2", ;
-                            PADR( hb_utf8tostr( data:FieldGet( data:FieldPos("idpartner") ) ), 6 ) == _id_partner, .t. ) ;
-                        .and. IF( _tip_prenosa $ "1", ;
-                            PADR( hb_utf8tostr( data:FieldGet( data:FieldPos("brdok") ) ), 20 ) == _br_veze, .t. )
-   
-        _row2 := data:GetRow()
+      IF Found()
+         _tip_prenosa := pkonto->tip
+      ENDIF
 
-        // saldo
-        _i_saldo += _row2:FieldGet( _row2:FieldPos("saldo") )
+      _i_saldo := 0
+      _i_br_veze := ""
+      _i_dat_val := NIL
 
-        if _tip_prenosa == "1"
-            
-            // broj veze
-            _i_br_veze := PADR( hb_utf8tostr( _row2:FieldGet( _row2:FieldPos( "brdok" ) ) ), 20 )
-        
-            // datum valute ili datum naloga
+      DO WHILE !data:Eof() .AND. PadR( data:FieldGet( data:FieldPos( "idkonto" ) ), 7 ) == _id_konto ;
+            .AND. IF( _tip_prenosa $ "1#2", ;
+            PadR( hb_UTF8ToStr( data:FieldGet( data:FieldPos( "idpartner" ) ) ), 6 ) == _id_partner, .T. ) ;
+            .AND. IF( _tip_prenosa $ "1", ;
+            PadR( hb_UTF8ToStr( data:FieldGet( data:FieldPos( "brdok" ) ) ), 20 ) == _br_veze, .T. )
+
+         _row2 := data:GetRow()
+
+         _i_saldo += _row2:FieldGet( _row2:FieldPos( "saldo" ) )
+
+         IF _tip_prenosa == "1"
+
+            _i_br_veze := PadR( hb_UTF8ToStr( _row2:FieldGet( _row2:FieldPos( "brdok" ) ) ), 20 )
+
             _i_dat_val := _row2:FieldGet( _row2:FieldPos( "datval" ) )
-            if _i_dat_val == CTOD("")
-                _i_dat_val := _row2:FieldGet( _row2:FieldPos( "datdok" ) )
-            endif
+            IF _i_dat_val == CToD( "" )
+               _i_dat_val := _row2:FieldGet( _row2:FieldPos( "datdok" ) )
+            ENDIF
 
-        endif
+         ENDIF
 
-        data:Skip()
-        
-    enddo
+         data:Skip()
 
-    // ako je saldo 0 - preskoci...
-    if ROUND( _i_saldo, 2 ) == 0
-        loop
-    endif
+      ENDDO
 
-    // postavke pojedinih polja...
-    if _tip_prenosa == "0"
-        _id_partner := SPACE(6)
-    endif
+      IF Round( _i_saldo, 2 ) == 0
+         LOOP
+      ENDIF
 
-    select fin_pripr
-    append blank
+      IF _tip_prenosa == "0"
+         _id_partner := Space( 6 )
+      ENDIF
 
-    _rec := dbf_get_rec()
+      SELECT fin_pripr
+      APPEND BLANK
 
-    _rec["idfirma"] := gFirma
-    _rec["idvn"] := _fin_vn
-    _rec["brnal"] := _fin_broj
-    _rec["datdok"] := _dat_ps
-    _rec["rbr"] := STR( ++ _rbr, 4 )
-    _rec["idkonto"] := _id_konto
-    _rec["idpartner"] := _id_partner
-    _rec["opis"] := "POCETNO STANJE"
+      _rec := dbf_get_rec()
 
-    if _tip_prenosa $ "0#2"
-        _rec["brdok"] := "PS"
-    else
-        _rec["brdok"] := _i_br_veze
-        _rec["datval"] := _i_dat_val
-    endif
-  
-    // po otvorenim stavkama...
-    if _tip_prenosa == "1"
+      _rec[ "idfirma" ] := gFirma
+      _rec[ "idvn" ] := _fin_vn
+      _rec[ "brnal" ] := _fin_broj
+      _rec[ "datdok" ] := _dat_ps
+      _rec[ "rbr" ] := Str( ++_rbr, 4 )
+      _rec[ "idkonto" ] := _id_konto
+      _rec[ "idpartner" ] := _id_partner
+      _rec[ "opis" ] := "POCETNO STANJE"
 
-        if LEFT( _id_konto, 1 ) == _kl_pot
-            _rec["d_p"] := "2"
-            _rec["iznosbhd"] := -( _i_saldo )
-        else
-            _rec["d_p"] := "1"
-            _rec["iznosbhd"] := _i_saldo
-        endif
+      IF _tip_prenosa $ "0#2"
+         _rec[ "brdok" ] := "PS"
+      ELSE
+         _rec[ "brdok" ] := _i_br_veze
+         _rec[ "datval" ] := _i_dat_val
+      ENDIF
 
-    else
+      IF _tip_prenosa == "1"
 
-    // ostale varijante prenosa...
+         IF Left( _id_konto, 1 ) == _kl_pot
+            _rec[ "d_p" ] := "2"
+            _rec[ "iznosbhd" ] := -( _i_saldo )
+         ELSE
+            _rec[ "d_p" ] := "1"
+            _rec[ "iznosbhd" ] := _i_saldo
+         ENDIF
 
-        if ROUND( _i_saldo, 2 ) > 0
-            _rec["d_p"] := "1"
-            _rec["iznosbhd"] := ABS( _i_saldo )
-        else
-            _rec["d_p"] := "2"
-            _rec["iznosbhd"] := ABS( _i_saldo )
-        endif
+      ELSE
 
-    endif
+         IF Round( _i_saldo, 2 ) > 0
+            _rec[ "d_p" ] := "1"
+            _rec[ "iznosbhd" ] := Abs( _i_saldo )
+         ELSE
+            _rec[ "d_p" ] := "2"
+            _rec[ "iznosbhd" ] := Abs( _i_saldo )
+         ENDIF
 
-    // konverovanje valute u stranu
-    fin_konvert_valute( @_rec, "D" )
-    
-    // update
-    dbf_update_rec( _rec )
+      ENDIF
 
-enddo
+      fin_konvert_valute( @_rec, "D" )
 
-MsgC()
+      dbf_update_rec( _rec )
 
-// kopiranje sifrarnika - provjera
-if _copy_sif == "D"
-    
-    MsgO( "Provjeravam sifranike konto/partn ..." )
+   ENDDO
 
-    select fin_pripr
-    set order to tag "1"
-    go top
+   MsgC()
 
-    f18_lock_tables( { "partn", "konto" } )
-    sql_table_update( NIL, "BEGIN" )
+   IF _copy_sif == "D"
 
-    do while !EOF()
+      MsgO( "Provjeravam sifranike konto/partn ..." )
 
-        _pr_konto := field->idkonto
-        _pr_partn := field->idpartner
+      SELECT fin_pripr
+      SET ORDER TO TAG "1"
+      GO TOP
 
-		// 1.       
-        if !EMPTY( _pr_konto )
+      f18_lock_tables( { "partn", "konto" } )
+      sql_table_update( NIL, "BEGIN" )
+
+      DO WHILE !Eof()
+
+         _pr_konto := field->idkonto
+         _pr_partn := field->idpartner
+
+         IF !Empty( _pr_konto )
        		
-			append_sif_konto( _pr_konto, konto_data )
+            append_sif_konto( _pr_konto, konto_data )
 				
-			// insert grupe, klase, sintetike
-			// 1) grupa
-        	append_sif_konto( PADR( LEFT( _pr_konto, 1 ), 7 ), konto_data )
-			// 2) klasa
-        	append_sif_konto( PADR( LEFT( _pr_konto, 2 ), 7 ), konto_data )
-			// 3) sintetika
-        	append_sif_konto( PADR( LEFT( _pr_konto, 3 ), 7 ), konto_data )
+            append_sif_konto( PadR( Left( _pr_konto, 1 ), 7 ), konto_data )
+            append_sif_konto( PadR( Left( _pr_konto, 2 ), 7 ), konto_data )
+            append_sif_konto( PadR( Left( _pr_konto, 3 ), 7 ), konto_data )
 
-		endif
-        
-		if !EMPTY( _pr_partn )
+         ENDIF
+
+         IF !Empty( _pr_partn )
             append_sif_partn( _pr_partn, partn_data )
-        endif
+         ENDIF
 
-        select fin_pripr
-        skip
+         SELECT fin_pripr
+         SKIP
 
-    enddo
+      ENDDO
 
-    sql_table_update( NIL, "END" )
-    f18_free_tables( { "partn", "konto" } )
+      sql_table_update( NIL, "END" )
+      f18_free_tables( { "partn", "konto" } )
 
-    MsgC()
+      MsgC()
 
-    go top
+      GO TOP
 
-endif
+   ENDIF
 
-if _rbr > 0
-    _ret := .t.
-endif
+   IF _rbr > 0
+      _ret := .T.
+   ENDIF
 
-return _ret
+   RETURN _ret
 
 
-// -----------------------------------------------------------------
-// appenduj u sifranik konta ako nema zapisa...
-// -----------------------------------------------------------------
-static function append_sif_konto( id_konto, konto_data )
-local _t_area := SELECT()
-local _kto_id := ""
-local _kto_naz := ""
-local _append := .f.
-local oRow
+STATIC FUNCTION append_sif_konto( id_konto, konto_data )
 
-O_KONTO
+   LOCAL _t_area := Select()
+   LOCAL _kto_id := ""
+   LOCAL _kto_naz := ""
+   LOCAL _append := .F.
+   LOCAL oRow
 
-select konto
-go top
-seek PADR( id_konto, 7 )
+   O_KONTO
 
-if FOUND()
-    select ( _t_area )
-    return _append
-endif
+   SELECT konto
+   GO TOP
+   SEEK PadR( id_konto, 7 )
 
-konto_data:GoTo(1)
+   IF Found()
+      SELECT ( _t_area )
+      RETURN _append
+   ENDIF
 
-// pronadji ga u matrici
-do while !konto_data:EOF()
+   konto_data:GoTo( 1 )
 
-    oRow := konto_data:GetRow()
+   DO WHILE !konto_data:Eof()
 
-    if PADR( hb_utf8tostr( oRow:FieldGet( oRow:FieldPos("id") ) ), 7 ) == id_konto
-        // imamo ga !!!
-        _kto_id := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos("id") ) )
-        _kto_naz := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos("naz") ) )
-        _append := .t.
-        exit
-    endif
+      oRow := konto_data:GetRow()
 
-    konto_data:Skip()
+      IF PadR( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "id" ) ) ), 7 ) == id_konto
+         _kto_id := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "id" ) ) )
+         _kto_naz := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "naz" ) ) )
+         _append := .T.
+         EXIT
+      ENDIF
 
-enddo
+      konto_data:Skip()
 
-if _append
+   ENDDO
 
-    // nema zapisa, dodaj ga...
-    APPEND BLANK
+   IF _append
 
-    _rec := dbf_get_rec()
-    _rec["id"] := _kto_id
-    _rec["naz"] := _kto_naz
+      APPEND BLANK
 
-    update_rec_server_and_dbf( "konto", _rec, 1, "CONT" )
+      _rec := dbf_get_rec()
+      _rec[ "id" ] := _kto_id
+      _rec[ "naz" ] := _kto_naz
 
-endif
+      update_rec_server_and_dbf( "konto", _rec, 1, "CONT" )
 
-select ( _t_area )
-return _append
+   ENDIF
 
+   SELECT ( _t_area )
 
-// -----------------------------------------------------------------
-// appenduj u sifranik partnera ako nema zapisa...
-// -----------------------------------------------------------------
-static function append_sif_partn( id_partn, partn_data )
-local _t_area := SELECT()
-local _part_id := ""
-local _part_naz := ""
-local _append := .f.
-local oRow
+   RETURN _append
 
-O_PARTN
 
-select partn
-go top
-seek PADR( id_partn, 6 )
+STATIC FUNCTION append_sif_partn( id_partn, partn_data )
 
-if FOUND()
-    select ( _t_area )
-    return _append
-endif
+   LOCAL _t_area := Select()
+   LOCAL _part_id := ""
+   LOCAL _part_naz := ""
+   LOCAL _append := .F.
+   LOCAL oRow
 
-partn_data:GoTo(1)
+   O_PARTN
 
-// pronadji ga u matrici
-do while !partn_data:EOF()
+   SELECT partn
+   GO TOP
+   SEEK PadR( id_partn, 6 )
 
-    oRow := partn_data:GetRow()
+   IF Found()
+      SELECT ( _t_area )
+      RETURN _append
+   ENDIF
 
-    if PADR( hb_utf8tostr( oRow:FieldGet( oRow:FieldPos("id") ) ), 6 ) == id_partn
-        // imamo ga !!!
-        _part_id := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos("id") ) )
-        _part_naz := hb_utf8tostr( oRow:FieldGet( oRow:FieldPos("naz") ) )
+   partn_data:GoTo( 1 )
 
-        _append := .t.
+   DO WHILE !partn_data:Eof()
 
-        exit
+      oRow := partn_data:GetRow()
 
-    endif
+      IF PadR( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "id" ) ) ), 6 ) == id_partn
+         _part_id := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "id" ) ) )
+         _part_naz := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "naz" ) ) )
 
-    partn_data:Skip()
+         _append := .T.
 
-enddo
+         EXIT
 
-if _append  
-    // nema zapisa, dodaj ga...
-    APPEND BLANK
+      ENDIF
 
-    _rec := dbf_get_rec()
-    _rec["id"] := _part_id
-    _rec["naz"] := _part_naz
-    _rec["ptt"] := "?????"
-    update_rec_server_and_dbf( "partn", _rec, 1, "CONT" )
+      partn_data:Skip()
 
-endif
+   ENDDO
 
-select ( _t_area )
-return _append
+   IF _append
+      APPEND BLANK
 
+      _rec := dbf_get_rec()
+      _rec[ "id" ] := _part_id
+      _rec[ "naz" ] := _part_naz
+      _rec[ "ptt" ] := "?????"
+      update_rec_server_and_dbf( "partn", _rec, 1, "CONT" )
 
+   ENDIF
 
+   SELECT ( _t_area )
 
-// -------------------------------------------------------------------
-// isprazni fin priprema ako nije prazna...
-// -------------------------------------------------------------------
-static function prazni_fin_priprema()
-local _ret := .t.
+   RETURN _append
 
-select fin_pripr
-if RECCOUNT2() == 0
-    return _ret
-endif
 
-if Pitanje(, "Priprema FIN nije prazna ! Izbrisati postojeće stavke (D/N) ?", "D" ) == "D"
-    my_dbf_zap()
-    return _ret
-else
-    _ret := .f.
-    return _ret
-endif
 
-return _ret
 
+STATIC FUNCTION prazni_fin_priprema()
 
+   LOCAL _ret := .T.
 
-// ----------------------------------------------------------------------
-// izvlacenje podataka za pocetno stanje iz sql-a u matricu
-// ----------------------------------------------------------------------
-static function get_data( param, data_fin, konto_data, partner_data )
-local _server
-local _qry, _qry_2, _qry_3, _where
-local _dat_od := param["datum_od"]
-local _dat_do := param["datum_do"]
-local _dat_ps := param["datum_ps"]
-local _copy_sif := param["copy_sif"]
-local _db_params := my_server_params()
-local _tek_database := my_server_params()["database"]
-local _year_sez := YEAR( _dat_do )
-local _year_tek := YEAR( _dat_ps )
+   SELECT fin_pripr
+   IF RECCOUNT2() == 0
+      RETURN _ret
+   ENDIF
 
-// where uslov
-_where := " WHERE "
-_where += _sql_date_parse( "sub.datdok", _dat_od, _dat_do )
-_where += " AND " + _sql_cond_parse( "sub.idfirma", gFirma )
+   IF Pitanje(, "Priprema FIN nije prazna ! Izbrisati postojeće stavke (D/N) ?", "D" ) == "D"
+      my_dbf_zap()
+      RETURN _ret
+   ELSE
+      _ret := .F.
+      RETURN _ret
+   ENDIF
 
-// query
-_qry := " SELECT " + ;
-            "sub.idkonto, " + ;
-            "sub.idpartner, " + ;
-            "sub.datdok, " + ;
-            "sub.datval, " + ;
-            "sub.brdok, " + ;
-            "sub.otvst, " + ;
-            "SUM( CASE WHEN sub.d_p = '1' THEN sub.iznosbhd ELSE -sub.iznosbhd END ) AS saldo " + ; 
-        " FROM fmk.fin_suban sub "
+   RETURN _ret
 
-_qry += _where
 
-_qry += " GROUP BY sub.idkonto, sub.idpartner, sub.brdok, sub.datdok, sub.datval, sub.otvst "
-_qry += " ORDER BY sub.idkonto, sub.idpartner, sub.brdok, sub.datdok, sub.datval, sub.otvst "
 
+STATIC FUNCTION get_data( param, data_fin, konto_data, partner_data )
 
-// 1) predji u sezonsko podrucje
-// ------------------------------------------------------------
-// prebaci se u sezonu
-switch_to_database( _db_params, _tek_database, _year_sez )
-// setuj server
-_server := pg_server()
+   LOCAL _server
+   LOCAL _qry, _qry_2, _qry_3, _where
+   LOCAL _dat_od := PARAM[ "datum_od" ]
+   LOCAL _dat_do := PARAM[ "datum_do" ]
+   LOCAL _dat_ps := PARAM[ "datum_ps" ]
+   LOCAL _copy_sif := PARAM[ "copy_sif" ]
+   LOCAL _db_params := my_server_params()
+   LOCAL _tek_database := my_server_params()[ "database" ]
+   LOCAL _year_sez := Year( _dat_do )
+   LOCAL _year_tek := Year( _dat_ps )
 
-MsgO( "pocetno stanje - sql query u toku..." )
+   _where := " WHERE "
+   _where += _sql_date_parse( "sub.datdok", _dat_od, _dat_do )
+   _where += " AND " + _sql_cond_parse( "sub.idfirma", gFirma )
 
-// podaci pocetnog stanja su ovdje....
-data_fin := _sql_query( _server, _qry )
+   _qry := " SELECT " + ;
+      "sub.idkonto, " + ;
+      "sub.idpartner, " + ;
+      "sub.datdok, " + ;
+      "sub.datval, " + ;
+      "sub.brdok, " + ;
+      "sub.otvst, " + ;
+      "SUM( CASE WHEN sub.d_p = '1' THEN sub.iznosbhd ELSE -sub.iznosbhd END ) AS saldo " + ;
+      " FROM fmk.fin_suban sub "
 
-if _copy_sif == "D"
+   _qry += _where
 
-    // prikupi podatke konta
-    _qry_2 := "SELECT * FROM fmk.konto ORDER BY id"
-    konto_data := _sql_query( _server, _qry_2 )
+   _qry += " GROUP BY sub.idkonto, sub.idpartner, sub.brdok, sub.datdok, sub.datval, sub.otvst "
+   _qry += " ORDER BY sub.idkonto, sub.idpartner, sub.brdok, sub.datdok, sub.datval, sub.otvst "
 
-    // prikupi podatke partnera
-    _qry_3 := "SELECT * FROM fmk.partn ORDER BY id"
-    partner_data := _sql_query( _server, _qry_3 )
 
-else
+   switch_to_database( _db_params, _tek_database, _year_sez )
+   _server := pg_server()
 
-    konto_data := NIL
-    partner_data := NIL
+   MsgO( "početno stanje - sql query u toku..." )
 
-endif
+   data_fin := _sql_query( _server, _qry )
 
-if VALTYPE( data_fin ) == "L"
-    data_fin := NIL    
-else
-    data_fin:Refresh()
-    // ako nema zapisa u tabeli...
-    if data_fin:LastRec() == 0
-        data_fin := NIL
-    endif
-endif
+   IF _copy_sif == "D"
+      _qry_2 := "SELECT * FROM fmk.konto ORDER BY id"
+      konto_data := _sql_query( _server, _qry_2 )
+      _qry_3 := "SELECT * FROM fmk.partn ORDER BY id"
+      partner_data := _sql_query( _server, _qry_3 )
+   ELSE
+      konto_data := NIL
+      partner_data := NIL
+   ENDIF
 
-MsgC()
+   IF !is_var_objekat_tpquery( data_fin ) 
+      data_fin := NIL
+   ELSE
+      data_fin:Refresh()
+      IF data_fin:LastRec() == 0
+         data_fin := NIL
+      ENDIF
+   ENDIF
 
-// 3) vrati se u tekucu bazu...
-// ------------------------------------------------------------
-switch_to_database( _db_params, _tek_database, _year_tek )
-_server := pg_server()
+   MsgC()
 
-return
+   switch_to_database( _db_params, _tek_database, _year_tek )
+   _server := pg_server()
 
+   RETURN
 
 
 
 
 
-// ----------------------------------------------------------
-// prebaci se na rad sa sezonskim podrucjem
-// ----------------------------------------------------------
-function switch_to_database( db_params, database, year )
 
-if year == NIL
-    year := YEAR( DATE() )
-endif
+FUNCTION switch_to_database( db_params, database, year )
 
-// 1) odjavi mi se iz tekuce sezone
-my_server_logout()
+   IF year == NIL
+      year := Year( Date() )
+   ENDIF
 
-if year <> YEAR( DATE() )
-    // 2) xxxx_2013 => xxxx_2012
-    db_params["database"] := LEFT( database, LEN( database ) - 4 ) + ALLTRIM( STR( year ) )
-else
-    db_params["database"] := database
-endif
+   my_server_logout()
 
-// 3) setuj parametre
-my_server_params( db_params )
-// 4) napravi login
-my_server_login( db_params )
+   IF year <> Year( Date() )
+      db_params[ "database" ] := Left( database, Len( database ) - 4 ) + AllTrim( Str( year ) )
+   ELSE
+      db_params[ "database" ] := database
+   ENDIF
 
-return 
+   my_server_params( db_params )
+   my_server_login( db_params )
 
-
-
-
-
-
+   RETURN

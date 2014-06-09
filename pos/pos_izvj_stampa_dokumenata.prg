@@ -1,17 +1,16 @@
-/*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+/* 
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 
 #include "pos.ch"
-
 
 
 FUNCTION pos_stampa_dokumenta()
@@ -42,25 +41,25 @@ FUNCTION pos_stampa_dokumenta()
    ENDIF
 
    IF gVrstaRS == "K"
-      cDoks := VD_RN + "#" + VD_RZS   // samo ovo moze postojati
+      cDoks := VD_RN + "#" + VD_RZS   
    ELSE
       cDoks := VD_RN + "#" + VD_ZAD + "#" + "IN" + "#" + VD_NIV + "#" + VD_RZS
    ENDIF
 
    cIdRadnik := Space( Len( OSOB->Id ) )
-   cIdVd := Space( Len( DOKS->IdVd ) )
+   cIdVd := Space( Len( pos_doks->IdVd ) )
 
    SET CURSOR ON
    Box(, 10, 77 )
 
    IF gVrstaRS <> "K"
-      @ m_x + 1, m_y + 2 SAY " Prodajno mjesto (prazno sva)" GET cIdPos PICT "@!" VALID Empty( cIdPos ) .OR. P_Kase( @cIdPos, 1, 37 )
+      @ m_x + 1, m_y + 2 SAY " Prodajno mjesto (prazno-sva)" GET cIdPos PICT "@!" VALID Empty( cIdPos ) .OR. P_Kase( @cIdPos, 1, 37 )
    ENDIF
 
-   @ m_x + 2, m_y + 2 SAY "          Radnik (prazno svi)" GET cIdRadnik PICT "@!" VALID Empty( cIdRadnik ) .OR. P_Osob( @cIdRadnik, 2, 37 )
-   @ m_x + 3, m_y + 2 SAY "Vrste dokumenata (prazno svi)" GET cIdVd PICT "@!" VALID Empty( cIdVd ) .OR. cIdVd $ cDoks
-   @ m_x + 4, m_y + 2 SAY "            Pocevsi od datuma" GET dDatOd PICT "@D" VALID dDatOd <= gDatum .AND. dDatOd <= dDatDo
-   @ m_x + 5, m_y + 2 SAY "                 Zakljucno sa" GET dDatDo PICT "@D" VALID dDatDo <= gDatum .AND. dDatOd <= dDatDo
+   @ m_x + 2, m_y + 2 SAY "          Radnik (prazno-svi)" GET cIdRadnik PICT "@!" VALID Empty( cIdRadnik ) .OR. P_Osob( @cIdRadnik, 2, 37 )
+   @ m_x + 3, m_y + 2 SAY "Vrste dokumenata (prazno-svi)" GET cIdVd PICT "@!" VALID Empty( cIdVd ) .OR. cIdVd $ cDoks
+   @ m_x + 4, m_y + 2 SAY8 "            Počevši od datuma" GET dDatOd PICT "@D" VALID dDatOd <= gDatum .AND. dDatOd <= dDatDo
+   @ m_x + 5, m_y + 2 SAY8 "                 zaključno sa" GET dDatDo PICT "@D" VALID dDatDo <= gDatum .AND. dDatOd <= dDatDo
    READ
    ESC_BCR
 
@@ -84,7 +83,7 @@ FUNCTION pos_stampa_dokumenta()
       P_10CPI
    ENDIF
 
-   ? PadC( "STAMPA LISTE DOKUMENATA", nSir )
+   ?U PadC( "ŠTAMPA LISTE DOKUMENATA", nSir )
    ? PadC( "NA DAN " + FormDat1 ( gDatum ), nSir )
    ? PadC( "-------------------------", nSir )
    ? PadC( "Za period od " + FormDat1( dDatOd ) + " do " + FormDat1( dDatDo ), nSir )
@@ -115,16 +114,16 @@ FUNCTION pos_stampa_dokumenta()
 
    DO WHILE !Eof()
 
-      IF ( !Empty( cIdVd ) .AND. DOKS->IdVd <> cIdVd ) .OR. ( !Empty( cIdRadnik ) .AND. DOKS->IdRadnik <> cIdRadnik )
+      IF ( !Empty( cIdVd ) .AND. pos_doks->IdVd <> cIdVd ) .OR. ( !Empty( cIdRadnik ) .AND. pos_doks->IdRadnik <> cIdRadnik )
          SKIP
          LOOP
       ENDIF
 
       ? cLM
-      ?? pos_doks->IdVd, PadR( AllTrim( DOKS->IdPos ) + "-" + AllTrim( DOKS->BrDok ), 9 )
+      ?? pos_doks->IdVd, PadR( AllTrim( pos_doks->IdPos ) + "-" + AllTrim( pos_doks->BrDok ), 9 )
 
       IF gVrstaRS == "S"
-         ?? " " + FormDat1( DOKS->Datum ), PadC( DOKS->Smjena, 6 )
+         ?? " " + FormDat1( pos_doks->datum ), PadC( pos_doks->Smjena, 6 )
       ENDIF
 
       SELECT OSOB
@@ -135,7 +134,7 @@ FUNCTION pos_stampa_dokumenta()
       SELECT POS
       SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
-      DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == DOKS->( IdPos + IdVd + DToS( datum ) + BrDok )
+      DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
          nBrStav++
          nIznos += POS->kolicina * POS->cijena
          SKIP

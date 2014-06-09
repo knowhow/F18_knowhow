@@ -410,7 +410,7 @@ METHOD FinBrutoBilans:get_data()
    _data := _sql_query( _server, _qry )
    MsgC()
 
-   IF ValType( _data ) == "L" .OR. _data:LastRec() == 0
+   IF !is_var_objekat_tpquery( _data ) 
       MsgBeep( "Ne postoje trazeni podaci !!!" )
       RETURN NIL
    ENDIF

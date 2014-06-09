@@ -109,7 +109,7 @@ FUNCTION _sql_query( oServer, cQuery, silent )
 
 
 
-FUNCTION is_sql_query_ok( xVar )
+FUNCTION is_var_objekat_tpquery( xVar )
    RETURN is_var_objekat_tipa( xVar, "TPQuery" )
 
 

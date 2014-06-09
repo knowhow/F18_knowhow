@@ -14,9 +14,6 @@
 STATIC __sanacije
 
 
-// ----------------------------------
-// obracun meni
-// ----------------------------------
 FUNCTION os_obracuni()
 
    LOCAL _izbor := 1
@@ -39,9 +36,6 @@ FUNCTION os_obracuni()
    RETURN
 
 
-// ----------------------------------
-// obracun amortizacije
-// ----------------------------------
 FUNCTION os_obracun_amortizacije()
 
    LOCAL cAGrupe := "N"
@@ -607,7 +601,6 @@ FUNCTION os_sii_iznos_sanacije( id, datum_od, datum_do )
       RETURN _hash
    ENDIF
 
-   _data:Refresh()
    _data:GoTo( 1 )
 
    DO WHILE !_data:Eof()

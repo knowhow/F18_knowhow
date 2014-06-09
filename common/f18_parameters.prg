@@ -221,6 +221,15 @@ FUNCTION f18_app_parameters( just_set )
    RETURN
 
 
+
+/*
+   Opis: ispituje da li je modul aktivan za tekućeg korisnika
+
+   Usage: f18_use_module( 'kalk' ) => .T. ili .F.
+
+   Params:
+      module_name - naziv modula 'kalk', 'fin'
+*/
 FUNCTION f18_use_module( module_name )
 
    LOCAL _ret := .F.
@@ -242,7 +251,15 @@ FUNCTION f18_use_module( module_name )
 
 
 
+/*
+   Opis: setuje modul kao aktivan ili ne za tekućeg korisnika
 
+   Usage: f18_set_use_module( 'kalk', .T. ) => modul KALK za korisnika je aktivan
+
+   Params:
+       module_name - naziv modula 'kalk', 'fin'
+       lset - .T. aktivan, .F. neaktivan
+*/
 FUNCTION f18_set_use_module( module_name, lset )
 
    LOCAL _ret := .F.

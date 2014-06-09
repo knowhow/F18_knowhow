@@ -20,6 +20,7 @@ CLASS F18Login
    METHOD main_db_login()
    METHOD company_db_login()
    METHOD company_db_relogin()
+   METHOD company_db_relogin_box()
    METHOD browse_database_array()
    METHOD manual_enter_company_data()
    METHOD administrative_options()
@@ -56,8 +57,6 @@ ENDCLASS
 // if !oLogin:_main_db_connected
 // ....
 // endif
-
-
 
 
 METHOD F18Login:New()
@@ -257,14 +256,23 @@ METHOD F18Login:company_db_login( server_param )
    RETURN
 
 
+METHOD F18Login:company_db_relogin_box( session )
+
+   LOCAL lRet := .T.
+
+   Box(, 1, 50 )
+   @ m_x + 1, m_y + 2 SAY "Pristup podacima sezone:" GET session VALID !Empty( session )
+   READ
+   BoxC()
+
+   IF LastKey() == K_ESC
+      lRet := .F.
+      RETURN lRet
+   ENDIF
+
+   RETURN lRet
 
 
-
-
-
-// --------------------------------------------------------------------
-// relogin metoda...
-// --------------------------------------------------------------------
 METHOD F18Login:company_db_relogin( server_param, database, session )
 
    LOCAL _ok := .F.
@@ -272,9 +280,6 @@ METHOD F18Login:company_db_relogin( server_param, database, session )
    LOCAL _curr_database := server_param[ "database" ]
    LOCAL _curr_session := Right( _curr_database, 4 )
    LOCAL _show_box := .T.
-
-   // uzmi iz proslijedjenih parametara
-   // ovo omogucava automatski switch na bazu...
 
    IF database <> NIL
       _curr_database := database
@@ -286,49 +291,37 @@ METHOD F18Login:company_db_relogin( server_param, database, session )
       _show_box := .F.
    ENDIF
 
-   // relogin radi samo kod baza "ime_godina"
    IF ! ( "_" $ _curr_database )
       RETURN _ok
    ENDIF
 
-   // ovdje se sada moze ubaciti i parametar firme... tako da mozemo skociti i u drugu firmu...
-
    IF _show_box
-
-      Box(, 1, 50 )
-      @ m_x + 1, m_y + 2 SAY "Pristup podacima sezone:" GET _new_session VALID !Empty( _new_session )
-      READ
-      BoxC()
-
-      IF LastKey() == K_ESC
-         RETURN _ok
+      IF !::company_db_relogin_box( @_new_session )
+          RETURN _ok
       ENDIF
-
    ENDIF
 
-   // ako sam u istoj sezoni
    IF _curr_session == _new_session
       MsgBeep( hb_UTF8ToStr( "Već se nalazimo u sezoni " ) + _curr_session  )
       RETURN _ok
    ENDIF
 
-   // promjeni mi podatke... database - bringout_2013 > bringout_2012
    server_param[ "database" ] := StrTran( _curr_database, _curr_session, _new_session )
 
-   // imamo sezonu... sada samo da se prebacimo
    if ::connect( server_param, 1 )
       _ok := .T.
    ENDIF
 
-   // samo ako su uslovi zadovoljeni i ako je prelazak u sezonu sa pitanjem
-   // ako se koristi direktni prelaz u sezonu onda mi ovo nista nije potrebno
-   // sve sto treba je konekcija na sql server !
-
    IF _ok .AND. _show_box
+
+      IF !f18_use_module( Lower( goModul:cName ) )     
+         MsgBeep( "Modul nije aktivan u sezoni " + ALLTRIM( _new_session ) + " !" )
+         // vratit ćemo se na bazu iz koje smo počeli
+         ::company_db_relogin( server_param, _curr_database, _curr_session ) 
+      ENDIF
 
       SetgaSDbfs()
 
-      // zatvori mi sve baze aktuelne ako su otvorene
       CLOSE ALL
 
       set_global_vars_0()
@@ -343,10 +336,8 @@ METHOD F18Login:company_db_relogin( server_param, database, session )
 
       set_hot_keys()
 
-      // init parametara sezonskog podrucja...
       goModul:setGVars()
 
-      // prikazi info baza/user na vrhu u skladu sa tekucom bazom
       say_database_info()
 
    ENDIF

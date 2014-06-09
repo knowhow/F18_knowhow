@@ -229,12 +229,14 @@ FUNCTION f18_use_module( module_name )
    LOCAL _ret := .F.
    LOCAL _default := "N"
 
-   // reports modul treba biti po defaultu dozvoljen
+   IF module_name == "tops"
+      module_name := "pos"
+   ENDIF
+
    IF module_name $ "fin#kalk#fakt"
       _default := "D"
    ENDIF
 
-   // default odgovor za sve module je "N"
    IF fetch_metric( "main_menu_" + module_name, my_user(), _default ) == "D"
       _ret := .T.
    ENDIF

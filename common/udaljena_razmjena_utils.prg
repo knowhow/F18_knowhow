@@ -256,26 +256,21 @@ STATIC FUNCTION update_rec_sifk_struct( rec )
       rec[ "f_decimal" ] := rec[ "decimal" ]
    ENDIF
 
-   IF hb_HHasKey( rec, "match_code" )
-      rec[ "match_code" ] := ""
-   ENDIF
-
    hb_HDel( rec, "unique" )
    hb_HDel( rec, "decimal" )
+
+   IF !hb_HHasKey( rec, "match_code" ) .OR. rec["match_code"] == NIL
+      rec[ "match_code" ] := PadR("", 10)
+   ENDIF
 
    RETURN
 
 
 
-// --------------------------------------------------
-// update strukture zapisa tabele konto
-// --------------------------------------------------
 STATIC FUNCTION update_rec_konto_struct( rec )
 
    LOCAL _no_field
    LOCAL _struct := {}
-
-   // moguca nepostojeca polja tabele roba
 
    AAdd( _struct, "match_code" )
    AAdd( _struct, "pozbilu" )

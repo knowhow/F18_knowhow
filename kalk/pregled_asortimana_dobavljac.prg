@@ -117,28 +117,17 @@ STATIC FUNCTION frm_vars( vars )
    RETURN .T.
 
 
-// ----------------------------------------
-// generisi report
-// ----------------------------------------
 STATIC FUNCTION gen_rpt( vars )
 
-   // izdvoji mi ulaze za izvjestaj i napuni u pomocnu tabelu
    IF _izdvoji_ulaze( vars ) == 0
       RETURN .F.
    ENDIF
-
-   // samo ako se radi izvjestaj
-   // ako je narudzba, ovo je nepotrebno
    IF vars[ "narudzba" ] == "N"
-      // sada nastiklaj i prodaju na osnovu upita i pomocne tabele
       _izdvoji_prodaju( vars )
    ENDIF
 
    RETURN .T.
 
-// ------------------------------------------------------
-// izdvoji ulaze u pomocnu tabelu
-// ------------------------------------------------------
 STATIC FUNCTION _izdvoji_ulaze( vars )
 
    LOCAL _qry := ""
@@ -157,7 +146,6 @@ STATIC FUNCTION _izdvoji_ulaze( vars )
    _dob := vars[ "dobavljac" ]
    _id_firma := gFirma
 
-   // datumski uslov
    IF _dat_od <> CToD( "" )
       _date += "kalk.datdok >= " + _sql_quote( _dat_od )
    ENDIF
@@ -172,12 +160,10 @@ STATIC FUNCTION _izdvoji_ulaze( vars )
 
    ENDIF
 
-   // sredi upit
    IF !Empty( _date )
       _date := " AND (" + _date + ")"
    ENDIF
 
-   // sql upit za ulaze:
    _qry := "SELECT " + ;
       "kalk.pkonto pkonto, " + ;
       "kalk.idroba idroba, " + ;
@@ -203,17 +189,16 @@ STATIC FUNCTION _izdvoji_ulaze( vars )
       "GROUP BY kalk.pkonto, kalk.idroba, roba.barkod, roba.naz, roba.idtarifa, roba.jmj " + ;
       "ORDER BY kalk.idroba"
 
-   MsgO( "Prikupljanje podataka ulaza u maloprodaji... sacekajte !" )
-
    _table := _sql_query( _server, _qry )
 
    IF !is_var_objekat_tpquery( _table )
       RETURN 0
    ENDIF
 
+   MsgO( "Prikupljanje podataka ulaza u maloprodaji... sacekajte !" )
+
    _table:Refresh()
 
-   // provrti se kroz matricu i azuriraj rezultat u pomocni dbf
    FOR _i := 1 TO _table:LastRec()
 
       ++ _cnt
@@ -225,10 +210,7 @@ STATIC FUNCTION _izdvoji_ulaze( vars )
 
       _rec := dbf_get_rec()
 
-      // uzmi iz varijabli
       _rec[ "idpartner" ] := _dob
-
-      // uzmi iz matrice
       _rec[ "idkonto" ] := oRow:FieldGet( oRow:FieldPos( "pkonto" ) )
       _rec[ "idroba" ] := PadR( oRow:FieldGet( oRow:FieldPos( "idroba" ) ), 10 )
       _rec[ "barkod" ] := PadR( oRow:FieldGet( oRow:FieldPos( "barkod" ) ), 13 )

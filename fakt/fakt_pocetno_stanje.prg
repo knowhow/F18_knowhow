@@ -33,6 +33,8 @@ FUNCTION fakt_pocetno_stanje()
 
    _data := fakt_lager_lista_sql( _param, _ps )
 
+   MsgC()
+
    IF _data == NIL
       MsgBeep( "Ne postoje traženi podaci !" )
       RETURN

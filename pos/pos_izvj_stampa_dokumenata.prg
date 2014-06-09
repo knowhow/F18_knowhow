@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,159 +14,160 @@
 
 
 
-function pos_stampa_dokumenta()
-local cIdVd
-local dDatOd:=CTOD("")
-local dDatDo:=gDatum
-local cIdRadnik
-local cDoks
-local nBH:=8
-local nR:=5
-local cIdPos:=gIdPos
-local cLM:=""
-local nRW:=13
-local nSir
+FUNCTION pos_stampa_dokumenta()
 
-set cursor on
+   LOCAL cIdVd
+   LOCAL dDatOd := CToD( "" )
+   LOCAL dDatDo := gDatum
+   LOCAL cIdRadnik
+   LOCAL cDoks
+   LOCAL nBH := 8
+   LOCAL nR := 5
+   LOCAL cIdPos := gIdPos
+   LOCAL cLM := ""
+   LOCAL nRW := 13
+   LOCAL nSir
 
-if gVrstaRS=="S"
-	nBH:=10
-	nR:=7
-	cLM:=SPACE(5)
-	cIdPos:=SPACE(LEN(KASE->Id))
-	nRW:=30
-	nSir:=80
-else
-	cIdPos:=gIdPos
-endif
+   SET CURSOR ON
 
-if gVrstaRS=="K"
-	cDoks:=VD_RN+"#"+VD_RZS   // samo ovo moze postojati
-else
-	cDoks:=VD_RN+"#"+VD_ZAD+"#"+"IN"+"#"+VD_NIV+"#"+VD_RZS
-endif
+   IF gVrstaRS == "S"
+      nBH := 10
+      nR := 7
+      cLM := Space( 5 )
+      cIdPos := Space( Len( KASE->Id ) )
+      nRW := 30
+      nSir := 80
+   ELSE
+      cIdPos := gIdPos
+   ENDIF
 
-cIdRadnik:=SPACE(LEN(OSOB->Id))
-cIdVd:=SPACE(LEN(DOKS->IdVd))
+   IF gVrstaRS == "K"
+      cDoks := VD_RN + "#" + VD_RZS   // samo ovo moze postojati
+   ELSE
+      cDoks := VD_RN + "#" + VD_ZAD + "#" + "IN" + "#" + VD_NIV + "#" + VD_RZS
+   ENDIF
 
-set cursor on
-Box(,10,77)
+   cIdRadnik := Space( Len( OSOB->Id ) )
+   cIdVd := Space( Len( DOKS->IdVd ) )
 
-if gVrstaRS<>"K"
-	@ m_x+1,m_y+2 SAY " Prodajno mjesto (prazno sva)" GET cIdPos PICT "@!" VALID empty(cIdPos).or.P_Kase(@cIdPos,1,37)
-endif
+   SET CURSOR ON
+   Box(, 10, 77 )
 
-@ m_x+2,m_y+2 SAY "          Radnik (prazno svi)" GET cIdRadnik PICT "@!" VALID empty(cIdRadnik).or.P_Osob(@cIdRadnik,2,37)
-@ m_x+3,m_y+2 SAY "Vrste dokumenata (prazno svi)" GET cIdVd PICT "@!" VALID empty(cIdVd).or.cIdVd$cDoks
-@ m_x+4,m_y+2 SAY "            Pocevsi od datuma" GET dDatOd PICT "@D" VALID dDatOd<=gDatum.and.dDatOd<=dDatDo
-@ m_x+5,m_y+2 SAY "                 Zakljucno sa" GET dDatDo PICT "@D" VALID dDatDo<=gDatum.and.dDatOd<=dDatDo
-read
-ESC_BCR
+   IF gVrstaRS <> "K"
+      @ m_x + 1, m_y + 2 SAY " Prodajno mjesto (prazno sva)" GET cIdPos PICT "@!" VALID Empty( cIdPos ) .OR. P_Kase( @cIdPos, 1, 37 )
+   ENDIF
 
-BoxC()
+   @ m_x + 2, m_y + 2 SAY "          Radnik (prazno svi)" GET cIdRadnik PICT "@!" VALID Empty( cIdRadnik ) .OR. P_Osob( @cIdRadnik, 2, 37 )
+   @ m_x + 3, m_y + 2 SAY "Vrste dokumenata (prazno svi)" GET cIdVd PICT "@!" VALID Empty( cIdVd ) .OR. cIdVd $ cDoks
+   @ m_x + 4, m_y + 2 SAY "            Pocevsi od datuma" GET dDatOd PICT "@D" VALID dDatOd <= gDatum .AND. dDatOd <= dDatDo
+   @ m_x + 5, m_y + 2 SAY "                 Zakljucno sa" GET dDatDo PICT "@D" VALID dDatDo <= gDatum .AND. dDatOd <= dDatDo
+   READ
+   ESC_BCR
 
-select pos_doks
-cFilt1:="DATUM>="+cm2str(dDatOd)+".and.DATUM<="+cm2str(dDatDo)
-set filter to &cFilt1
-seek cIdPos+cIdVd
+   BoxC()
 
-EOF CRET
+   SELECT pos_doks
+   cFilt1 := "DATUM>=" + cm2str( dDatOd ) + ".and.DATUM<=" + cm2str( dDatDo )
+   SET FILTER to &cFilt1
+   SEEK cIdPos + cIdVd
 
-START PRINT CRET
+   EOF CRET
 
-ZagFirma()
-?
+   START PRINT CRET
 
-if gVrstaRS<>"S"
-	? PADC("KASA "+gIdPos,40)
-else
-	P_10CPI
-endif
+   ZagFirma()
+   ?
 
-? PADC("STAMPA LISTE DOKUMENATA",nSir)
-? PADC("NA DAN "+FormDat1 (gDatum),nSir)
-? PADC("-------------------------",nSir)
-? PADC("Za period od "+FormDat1(dDatOd)+" do "+FormDat1(dDatDo),nSir)
-?
+   IF gVrstaRS <> "S"
+      ? PadC( "KASA " + gIdPos, 40 )
+   ELSE
+      P_10CPI
+   ENDIF
 
-if gVrstaRS=="S"
-	P_12CPI
-endif
+   ? PadC( "STAMPA LISTE DOKUMENATA", nSir )
+   ? PadC( "NA DAN " + FormDat1 ( gDatum ), nSir )
+   ? PadC( "-------------------------", nSir )
+   ? PadC( "Za period od " + FormDat1( dDatOd ) + " do " + FormDat1( dDatDo ), nSir )
+   ?
 
-? cLM+"VD",PADR("Broj",9)
+   IF gVrstaRS == "S"
+      P_12CPI
+   ENDIF
 
-if gVrstaRS=="S"
-	?? " "+PADC("Datum",11),"Smjena"
-endif
+   ? cLM + "VD", PadR( "Broj", 9 )
 
-?? " "+PADR("Radnik",nRW),"BrS"," Iznos"
-? cLM+"--",REPL("-", 9)
+   IF gVrstaRS == "S"
+      ?? " " + PadC( "Datum", 11 ), "Smjena"
+   ENDIF
 
-if gVrstaRS=="S"
-	?? " "+REPL("-",11),REPL("-",6)
-endif
+   ?? " " + PadR( "Radnik", nRW ), "BrS", " Iznos"
+   ? cLM + "--", REPL( "-", 9 )
 
-?? " "+REPL("-",nRW),"---",REPL("-",10)
+   IF gVrstaRS == "S"
+      ?? " " + REPL( "-", 11 ), REPL( "-", 6 )
+   ENDIF
 
-if !empty(cIdVd)
-	nSuma:=0
-endif
+   ?? " " + REPL( "-", nRW ), "---", REPL( "-", 10 )
 
-do while !eof()
+   IF !Empty( cIdVd )
+      nSuma := 0
+   ENDIF
 
-	if (!empty(cIdVd).and.DOKS->IdVd<>cIdVd).or.(!empty(cIdRadnik).and.DOKS->IdRadnik<>cIdRadnik)
-		skip
-		loop
-	endif
+   DO WHILE !Eof()
 
-	? cLM
-	?? pos_doks->IdVd,PADR(ALLTRIM(DOKS->IdPos)+"-"+ALLTRIM(DOKS->BrDok),9)
+      IF ( !Empty( cIdVd ) .AND. DOKS->IdVd <> cIdVd ) .OR. ( !Empty( cIdRadnik ) .AND. DOKS->IdRadnik <> cIdRadnik )
+         SKIP
+         LOOP
+      ENDIF
 
-	if gVrstaRS=="S"
-		?? " "+FormDat1(DOKS->Datum),PADC(DOKS->Smjena,6)
-	endif
+      ? cLM
+      ?? pos_doks->IdVd, PadR( AllTrim( DOKS->IdPos ) + "-" + AllTrim( DOKS->BrDok ), 9 )
 
-	SELECT OSOB
-	HSEEK pos_doks->IdRadnik
-	?? " "+LEFT(OSOB->Naz,nRW)
-	nBrStav:=0
-	nIznos:=0
-	SELECT POS
-	seek pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
+      IF gVrstaRS == "S"
+         ?? " " + FormDat1( DOKS->Datum ), PadC( DOKS->Smjena, 6 )
+      ENDIF
 
-	do while !eof().and.POS->(IdPos+IdVd+dtos(datum)+BrDok)==DOKS->(IdPos+IdVd+dtos(datum)+BrDok)
-		nBrStav++
-		nIznos+=POS->kolicina*POS->cijena
-		skip
-	enddo
+      SELECT OSOB
+      HSEEK pos_doks->IdRadnik
+      ?? " " + Left( OSOB->Naz, nRW )
+      nBrStav := 0
+      nIznos := 0
+      SELECT POS
+      SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
-	?? " "+STR(nBrStav,3),STR(nIznos,8,2)
+      DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == DOKS->( IdPos + IdVd + DToS( datum ) + BrDok )
+         nBrStav++
+         nIznos += POS->kolicina * POS->cijena
+         SKIP
+      ENDDO
 
-	if !empty(cIdVd)
-		nSuma+=nIznos
-	endif
+      ?? " " + Str( nBrStav, 3 ), Str( nIznos, 8, 2 )
 
-	select pos_doks
-	skip
-enddo
+      IF !Empty( cIdVd )
+         nSuma += nIznos
+      ENDIF
 
-if !empty(cIdVd)
-	? cLM+"--",REPL ("-",9)
+      SELECT pos_doks
+      SKIP
+   ENDDO
 
-	if gVrstaRS=="S"
-		?? " "+REPL("-",11),REPL("-",6)
-	endif
+   IF !Empty( cIdVd )
+      ? cLM + "--", REPL ( "-", 9 )
 
-	?? " "+REPL("-",nRW),"---",REPL("-",8)
+      IF gVrstaRS == "S"
+         ?? " " + REPL( "-", 11 ), REPL( "-", 6 )
+      ENDIF
 
-	if gVrstaRS=="S"
-		? cLM+PADL("U K U P N O  ("+gDomValuta+")",3+9+19+1+nRW),STR(nSuma,12,2)
-	else
-		? cLM+PADL("U K U P N O  ("+gDomValuta+")",3+9+0+1+nRW),STR(nSuma,12,2)
-	endif
-endif
+      ?? " " + REPL( "-", nRW ), "---", REPL( "-", 8 )
 
-END PRINT
-return
+      IF gVrstaRS == "S"
+         ? cLM + PadL( "U K U P N O  (" + gDomValuta + ")", 3 + 9 + 19 + 1 + nRW ), Str( nSuma, 12, 2 )
+      ELSE
+         ? cLM + PadL( "U K U P N O  (" + gDomValuta + ")", 3 + 9 + 0 + 1 + nRW ), Str( nSuma, 12, 2 )
+      ENDIF
+   ENDIF
 
+   END PRINT
+
+   RETURN
 

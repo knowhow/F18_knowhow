@@ -93,7 +93,7 @@ FUNCTION kalk_prod_lager_lista_sql( params, ps )
 
    _data := _sql_query( _server, _qry )
 
-   IF ValType( _data ) == "L"
+   IF !is_var_objekat_tpquery( _data ) 
       _data := NIL
    ELSE
       _data:Refresh()

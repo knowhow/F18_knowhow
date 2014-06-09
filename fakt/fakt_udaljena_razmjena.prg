@@ -18,9 +18,6 @@ STATIC __import_zip_name
 STATIC __export_zip_name
 
 
-// --------------------------------------------------------------------
-// fakt: udaljena razmjena podataka modul FAKT->FAKT
-// --------------------------------------------------------------------
 FUNCTION fakt_udaljena_razmjena_podataka()
 
    LOCAL _opc := {}
@@ -32,7 +29,6 @@ FUNCTION fakt_udaljena_razmjena_podataka()
    __import_zip_name := "fakt_exp.zip"
    __export_zip_name := "fakt_exp.zip"
 
-   // kreiraj ove direktorije odmah
    _dir_create( __export_dbf_path )
 
    AAdd( _opc, "1. => export podataka               " )
@@ -47,9 +43,6 @@ FUNCTION fakt_udaljena_razmjena_podataka()
    RETURN
 
 
-// ----------------------------------------
-// export podataka modula FAKT
-// ----------------------------------------
 STATIC FUNCTION _fakt_export()
 
    LOCAL _vars := hb_Hash()
@@ -57,47 +50,32 @@ STATIC FUNCTION _fakt_export()
    LOCAL _error
    LOCAL _a_data := {}
 
-   // uslovi exporta
    IF !_vars_export( @_vars )
       RETURN
    ENDIF
 
-   // pobrisi u folderu tmp fajlove ako postoje
    delete_exp_files( __export_dbf_path, "fakt" )
 
-   // exportuj podatake
    _exported_rec := __export( _vars, @_a_data )
 
-   // zatvori sve tabele prije operacije pakovanja
    my_close_all_dbf()
 
-   // arhiviraj podatke
    IF _exported_rec > 0
 
-      // kompresuj ih u zip fajl za prenos
       _error := _compress_files( "fakt", __export_dbf_path )
 
-      // sve u redu
       IF _error == 0
-
-         // pobrisi fajlove razmjene
          delete_exp_files( __export_dbf_path, "fakt" )
-
-         // otvori folder sa exportovanim podacima
          open_folder( __export_dbf_path )
-
       ENDIF
 
    ENDIF
 
-   // vrati se na glavni direktorij
    DirChange( my_home() )
 
    IF ( _exported_rec > 0 )
 
       MsgBeep( "Exportovao " + AllTrim( Str( _exported_rec ) ) + " dokumenta." )
-	
-      // printaj izvjestaj
       print_imp_exp_report( _a_data )
 
    ENDIF
@@ -108,9 +86,6 @@ STATIC FUNCTION _fakt_export()
 
 
 
-// ----------------------------------------
-// import podataka modula FAKT
-// ----------------------------------------
 STATIC FUNCTION _fakt_import()
 
    LOCAL _imported_rec
@@ -128,11 +103,9 @@ STATIC FUNCTION _fakt_import()
       RETURN
    endif
 
-   // snimi u parametre
    __import_dbf_path := AllTrim( _imp_path )
    set_metric( "fakt_import_path", my_user(), _imp_path )
 
-   // import fajl iz liste
    _imp_file := get_import_file( "fakt", __import_dbf_path )
 
    IF _imp_file == NIL .OR. Empty( _imp_file )
@@ -140,20 +113,16 @@ STATIC FUNCTION _fakt_import()
       RETURN
    ENDIF
 
-   // parametri
    IF !_vars_import( @_vars )
       RETURN
    ENDIF
 
    IF !import_file_exist( _imp_file )
-      // nema fajla za import ?
-      MsgBeep( "import fajl ne postoji !??? prekidam operaciju" )
+      MsgBeep( "Import fajl ne postoji! Prekidam operaciju." )
       RETURN
    ENDIF
 
-   // dekompresovanje podataka
    IF _decompress_files( _imp_file, __import_dbf_path, __import_zip_name ) <> 0
-      // ako je bilo greske
       RETURN
    ENDIF
 
@@ -161,38 +130,23 @@ STATIC FUNCTION _fakt_import()
    set_file_access( __import_dbf_path )
 #endif
 
-   // import procedura
    _imported_rec := __import( _vars, @_a_data )
-
-   // zatvori sve
    my_close_all_dbf()
-
-   // brisi fajlove importa
    delete_exp_files( __import_dbf_path, "fakt" )
 
    IF ( _imported_rec > 0 )
-
-      // nakon uspjesnog importa...
       IF Pitanje(, "Pobrisati fajl razmjne ?", "D" ) == "D"
-         // brisi zip fajl...
          delete_zip_files( _imp_file )
       ENDIF
-
       MsgBeep( "Importovao " + AllTrim( Str( _imported_rec ) ) + " dokumenta." )
-
-      // printaj izvjestaj
       print_imp_exp_report( _a_data )
-
    ENDIF
 
-   // vrati se na home direktorij nakon svega
    DirChange( my_home() )
 
    RETURN
 
 
-// -------------------------------------------------------------
-// -------------------------------------------------------------
 FUNCTION print_imp_exp_report( data )
 
    LOCAL _i, _cnt
@@ -256,24 +210,12 @@ FUNCTION print_imp_exp_report( data )
          ++ _delete_docs
       ENDIF
 
-      // r.br
       ? PadL( AllTrim( Str( ++_cnt ) ), 4 ) + "."
-
-      // opis
       @ PRow(), PCol() + 1 SAY PadL( _descr, 10 )
-
-      // dokument
       @ PRow(), PCol() + 1 SAY PadR( DATA[ _i, 2 ], 16 )
-
-      // datum
       @ PRow(), PCol() + 1 SAY DToC( DATA[ _i, 7 ] )
-
-      // partner
       @ PRow(), PCol() + 1 SAY PadR( DATA[ _i, 5 ], 27 ) + "..."
-
-      // iznos
       @ PRow(), PCol() + 1 SAY Str( DATA[ _i, 6 ], 12, 2 )
-
 
    NEXT
 
@@ -306,9 +248,6 @@ FUNCTION print_imp_exp_report( data )
 
 
 
-// -------------------------------------------
-// uslovi exporta dokumenta
-// -------------------------------------------
 STATIC FUNCTION _vars_export( vars )
 
    LOCAL _ret := .F.
@@ -349,11 +288,11 @@ STATIC FUNCTION _vars_export( vars )
    ++ _x
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "Uzeti u obzir sljedece rj:" GET _rj PICT "@S30"
+   @ m_x + _x, m_y + 2 SAY8 "Uzeti u obzir sljedeće rj:" GET _rj PICT "@S30"
 
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "Svoditi na primarnu sifru (duzina primarne sifre):" GET _prim_sif PICT "9"
+   @ m_x + _x, m_y + 2 SAY8 "Svoditi na primarnu šifru (dužina primarne šifre):" GET _prim_sif PICT "9"
 
    ++ _x
 
@@ -363,7 +302,7 @@ STATIC FUNCTION _vars_export( vars )
    ++ _x
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "Eksportovati sifrarnike (D/N) ?" GET _exp_sif PICT "@!" VALID _exp_sif $ "DN"
+   @ m_x + _x, m_y + 2 SAY8 "Eksportovati šifrarnike (D/N) ?" GET _exp_sif PICT "@!" VALID _exp_sif $ "DN"
 
    ++ _x
    ++ _x
@@ -374,7 +313,6 @@ STATIC FUNCTION _vars_export( vars )
 
    BoxC()
 
-   // snimi parametre
    IF LastKey() <> K_ESC
 
       _ret := .T.
@@ -388,7 +326,6 @@ STATIC FUNCTION _vars_export( vars )
       set_metric( "fakt_export_path", my_user(), _exp_path )
       set_metric( "fakt_export_brojevi_dokumenata", my_user(), _br_dok )
 
-      // export path, set static var
       __export_dbf_path := AllTrim( _exp_path )
 
       vars[ "datum_od" ] := _dat_od
@@ -407,9 +344,6 @@ STATIC FUNCTION _vars_export( vars )
 
 
 
-// -------------------------------------------
-// uslovi importa dokumenta
-// -------------------------------------------
 STATIC FUNCTION _vars_import( vars )
 
    LOCAL _ret := .F.
@@ -449,16 +383,16 @@ STATIC FUNCTION _vars_import( vars )
    ++ _x
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "Uzeti u obzir sljedece radne jedinice:" GET _rj PICT "@S30"
+   @ m_x + _x, m_y + 2 SAY8 "Uzeti u obzir sljedeće radne jedinice:" GET _rj PICT "@S30"
 
    ++ _x
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "Zamjeniti postojece dokumente novim (D/N):" GET _zamjeniti_dok PICT "@!" VALID _zamjeniti_dok $ "DN"
+   @ m_x + _x, m_y + 2 SAY8 "Zamjeniti postojeće dokumente novim (D/N):" GET _zamjeniti_dok PICT "@!" VALID _zamjeniti_dok $ "DN"
 
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "Zamjeniti postojece sifre novim (D/N):" GET _zamjeniti_sif PICT "@!" VALID _zamjeniti_sif $ "DN"
+   @ m_x + _x, m_y + 2 SAY8 "Zamjeniti postojeće šifre novim (D/N):" GET _zamjeniti_sif PICT "@!" VALID _zamjeniti_sif $ "DN"
 
    ++ _x
    ++ _x
@@ -474,7 +408,6 @@ STATIC FUNCTION _vars_import( vars )
 
    BoxC()
 
-   // snimi parametre
    IF LastKey() <> K_ESC
 
       _ret := .T.
@@ -489,7 +422,6 @@ STATIC FUNCTION _vars_import( vars )
       set_metric( "fakt_import_path", my_user(), _imp_path )
       set_metric( "fakt_import_brojevi_dokumenata", my_user(), _br_dok )
 
-      // set static var
       __import_dbf_path := AllTrim( _imp_path )
 
       vars[ "datum_od" ] := _dat_od
@@ -507,9 +439,6 @@ STATIC FUNCTION _vars_import( vars )
 
 
 
-// -------------------------------------------
-// export podataka
-// -------------------------------------------
 STATIC FUNCTION __export( vars, a_details )
 
    LOCAL _ret := 0
@@ -525,7 +454,6 @@ STATIC FUNCTION __export( vars, a_details )
    LOCAL _change_rj := .F.
    LOCAL _detail_rec
 
-   // uslovi za export ce biti...
    _dat_od := vars[ "datum_od" ]
    _dat_do := vars[ "datum_do" ]
    _rj := AllTrim( vars[ "rj" ] )
@@ -536,18 +464,12 @@ STATIC FUNCTION __export( vars, a_details )
    _rj_dest := vars[ "rj_dest" ]
    _brojevi_dok := vars[ "brojevi_dok" ]
 
-   // treba li mjenjati radne jedinice
    IF !Empty( _rj_src ) .AND. !Empty( _rj_dest )
       _change_rj := .T.
    ENDIF
 
-   // kreiraj tabele exporta
    _cre_exp_tbls( __export_dbf_path )
-
-   // otvori export tabele za pisanje podataka
    _o_exp_tables( __export_dbf_path )
-
-   // otvori lokalne tabele za prenos
    _o_tables()
 
    Box(, 2, 65 )
@@ -565,18 +487,12 @@ STATIC FUNCTION __export( vars, a_details )
       _br_dok := field->brdok
       _id_partn := field->idpartner
 
-      // provjeri uslove ?!??
-
-      // lista konta...
       IF !Empty( _rj )
-
          _usl_rj := Parsiraj( AllTrim( _rj ), "idfirma" )
-
          IF !( &_usl_rj )
             SKIP
             LOOP
          ENDIF
-
       ENDIF
 
       IF !Empty( _brojevi_dok )
@@ -587,7 +503,6 @@ STATIC FUNCTION __export( vars, a_details )
          ENDIF
       ENDIF
 
-      // lista dokumenata...
       IF !Empty( _vrste_dok )
          IF !( field->idtipdok $ _vrste_dok )
             SKIP
@@ -595,7 +510,6 @@ STATIC FUNCTION __export( vars, a_details )
          ENDIF
       ENDIF
 
-      // datumski uslov...
       IF _dat_od <> CToD( "" )
          IF ( field->datdok < _dat_od )
             SKIP
@@ -610,8 +524,6 @@ STATIC FUNCTION __export( vars, a_details )
          ENDIF
       ENDIF
 
-      // ako je sve zadovoljeno !
-      // dodaj zapis u tabelu e_doks
       _app_rec := dbf_get_rec()
 
       IF _change_rj
@@ -629,7 +541,6 @@ STATIC FUNCTION __export( vars, a_details )
       _detail_rec[ "datum" ] := _app_rec[ "datdok" ]
       _detail_rec[ "tip" ] := "export"
 
-      // dodaj u detalje
       add_to_details( @a_details, _detail_rec )
 
       SELECT e_doks
@@ -639,7 +550,6 @@ STATIC FUNCTION __export( vars, a_details )
       ++ _cnt
       @ m_x + 2, m_y + 2 SAY PadR(  PadL( AllTrim( Str( _cnt ) ), 6 ) + ". " + "dokument: " + _id_firma + "-" + _id_vd + "-" + AllTrim( _br_dok ), 50 )
 
-      // dodaj zapis i u tabelu e_fakt
       SELECT fakt
       SET ORDER TO TAG "1"
       GO TOP
@@ -649,15 +559,10 @@ STATIC FUNCTION __export( vars, a_details )
 
       DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idtipdok == _id_vd .AND. field->brdok == _br_dok
 
-         // uzmi robu...
          _id_roba := field->idroba
-
-         // svodi na primarnu sifru
          IF _prim_sif > 0
             _id_roba := PadR( _id_roba, _prim_sif )
          ENDIF
-
-         // upisi zapis u tabelu e_fakt
          _app_rec := dbf_get_rec()
 
          IF _change_rj
@@ -671,7 +576,6 @@ STATIC FUNCTION __export( vars, a_details )
             _app_rec[ "idroba" ] := _id_roba
          ENDIF
 
-         // prvo potrazi da li postoji ovaj zapis...
          SELECT e_fakt
          SET ORDER TO TAG "2"
 
@@ -684,7 +588,7 @@ STATIC FUNCTION __export( vars, a_details )
                APPEND BLANK
                dbf_update_rec( _app_rec )
             ELSE
-               REPLACE field->kolicina WITH field->kolicina + _app_rec[ "kolicina" ]
+               RREPLACE field->kolicina WITH field->kolicina + _app_rec[ "kolicina" ]
             ENDIF
 
          ELSE
@@ -694,7 +598,6 @@ STATIC FUNCTION __export( vars, a_details )
 
          ENDIF
 
-         // uzmi sada robu sa ove stavke pa je ubaci u e_roba
          SELECT roba
          hseek _id_roba
 
@@ -706,18 +609,15 @@ STATIC FUNCTION __export( vars, a_details )
             IF !Found()
                APPEND BLANK
                dbf_update_rec( _app_rec )
-               // napuni i sifk, sifv parametre
                _fill_sifk( "ROBA", _id_roba )
             ENDIF
          ENDIF
 
-         // idi dalje...
          SELECT fakt
          SKIP
 
       ENDDO
 
-      // fakt_doks2
       SELECT fakt_doks2
       SET ORDER TO TAG "1"
       GO TOP
@@ -736,7 +636,6 @@ STATIC FUNCTION __export( vars, a_details )
 
       ENDDO
 
-      // e sada mozemo komotno ici na export partnera
       SELECT partn
       hseek _id_partn
       IF Found() .AND. _export_sif == "D"
@@ -747,7 +646,6 @@ STATIC FUNCTION __export( vars, a_details )
          IF !Found()
             APPEND BLANK
             dbf_update_rec( _app_rec )
-            // napuni i sifk, sifv parametre
             _fill_sifk( "PARTN", _id_partn )
          ENDIF
       ENDIF
@@ -766,9 +664,6 @@ STATIC FUNCTION __export( vars, a_details )
    RETURN _ret
 
 
-// ----------------------------------------------------------------
-// dodaj u matricu sa detaljima
-// ----------------------------------------------------------------
 FUNCTION add_to_details( details, rec )
 
    AAdd( details, { rec[ "tip" ], ;
@@ -782,9 +677,6 @@ FUNCTION add_to_details( details, rec )
    RETURN
 
 
-// ----------------------------------------
-// import podataka
-// ----------------------------------------
 STATIC FUNCTION __import( vars, a_details )
 
    LOCAL _ret := 0
@@ -803,14 +695,12 @@ STATIC FUNCTION __import( vars, a_details )
    LOCAL _brojevi_dok
    LOCAL _detail_rec
 
-   // lokuj potrebne tabele
    IF !f18_lock_tables( { "fakt_doks", "fakt_doks2", "fakt_fakt" } )
       RETURN _cnt
    ENDIF
 
    sql_table_update( nil, "BEGIN" )
 
-   // ovo su nam uslovi za import...
    _dat_od := vars[ "datum_od" ]
    _dat_do := vars[ "datum_do" ]
    _rj := vars[ "rj" ]
@@ -824,13 +714,9 @@ STATIC FUNCTION __import( vars, a_details )
       _fmk_import := .T.
    ENDIF
 
-   // otvaranje export tabela
    _o_exp_tables( __import_dbf_path, nil )
-
-   // otvori potrebne tabele za import podataka
    _o_tables()
 
-   // broj zapisa u import tabelama
    SELECT e_doks
    _total_doks := RECCOUNT2()
 
@@ -853,9 +739,6 @@ STATIC FUNCTION __import( vars, a_details )
       _id_vd := field->idtipdok
       _br_dok := field->brdok
 
-      // uslovi, provjera...
-
-      // datumi...
       IF _dat_od <> CToD( "" )
          IF field->datdok < _dat_od
             SKIP
@@ -870,32 +753,22 @@ STATIC FUNCTION __import( vars, a_details )
          ENDIF
       ENDIF
 
-      // lista konta...
       IF !Empty( _rj )
-
          _usl_rj := Parsiraj( AllTrim( _rj ), "idfirma" )
-
          IF !( &_usl_rj )
             SKIP
             LOOP
          ENDIF
-
       ENDIF
 
-      // brojevi dokumenata
       IF !Empty( _brojevi_dok )
-
          _usl_br_dok := Parsiraj( AllTrim( _brojevi_dok ), "brdok" )
-
          IF !( &_usl_br_dok )
             SKIP
             LOOP
          ENDIF
-
       ENDIF
 
-
-      // lista dokumenata...
       IF !Empty( _vrste_dok )
          IF !( field->idtipdok $ _vrste_dok )
             SKIP
@@ -903,7 +776,6 @@ STATIC FUNCTION __import( vars, a_details )
          ENDIF
       ENDIF
 
-      // da li postoji u prometu vec ?
       IF _vec_postoji_u_prometu( _id_firma, _id_vd, _br_dok )
 
          SELECT e_doks
@@ -918,27 +790,19 @@ STATIC FUNCTION __import( vars, a_details )
          _detail_rec[ "datum" ] := _app_rec[ "datdok" ]
 
          IF _zamjeniti_dok == "D"
-
-            // dokumente iz fakt, fakt_doks brisi !
             _detail_rec[ "tip" ] := "delete"
             add_to_details( @a_details, _detail_rec )
-
             _ok := .T.
             _ok := del_fakt_doc( _id_firma, _id_vd, _br_dok )
-
          ELSE
-
             _detail_rec[ "tip" ] := "x"
             add_to_details( @a_details, _detail_rec )
-
             SKIP
             LOOP
-
          ENDIF
 
       ENDIF
 
-      // zikni je u nasu tabelu doks
       SELECT e_doks
       _app_rec := dbf_get_rec()
 
@@ -951,7 +815,6 @@ STATIC FUNCTION __import( vars, a_details )
       _detail_rec[ "datum" ] := _app_rec[ "datdok" ]
       _detail_rec[ "tip" ] := "import"
 
-      // dodaj u detalje
       add_to_details( @a_details, _detail_rec )
 
       SELECT fakt_doks
@@ -961,26 +824,19 @@ STATIC FUNCTION __import( vars, a_details )
       ++ _cnt
       @ m_x + 3, m_y + 2 SAY PadR( PadL( AllTrim( Str( _cnt ) ), 5 ) + ". dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok, 60 )
 
-      // zikni je u nasu tabelu fakt
       SELECT e_fakt
       SET ORDER TO TAG "1"
       GO TOP
       SEEK _id_firma + _id_vd + _br_dok
 
-      // setuj novi redni broj stavke
       _redni_broj := 0
 
-      // prebaci mi stavke tabele FAKT
       DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idtipdok == _id_vd .AND. field->brdok == _br_dok
 
          _app_rec := dbf_get_rec()
 
-         // setuj redni broj automatski...
          _app_rec[ "rbr" ] := PadL( AllTrim( Str( ++_redni_broj ) ), 3 )
-         // reset podbroj
          _app_rec[ "podbr" ] := ""
-
-         // uvecaj i globalni brojac stavki...
          _gl_brojac += _redni_broj
 
          @ m_x + 3, m_y + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + _app_rec[ "rbr" ]
@@ -994,7 +850,6 @@ STATIC FUNCTION __import( vars, a_details )
 
       ENDDO
 
-      // upisi i doks2 tabelu
       SELECT e_doks2
       SET ORDER TO TAG "1"
       GO TOP
@@ -1018,23 +873,15 @@ STATIC FUNCTION __import( vars, a_details )
 
    ENDDO
 
-   // zavrsi transakciju
    f18_free_tables( { "fakt_doks", "fakt_doks2", "fakt_fakt" } )
    sql_table_update( nil, "END" )
 
-   // ako je sve ok, predji na import tabela sifrarnika
    IF _cnt > 0
 
-      // ocisti mi 3 red
       @ m_x + 3, m_y + 2 SAY PadR( "", 69 )
 
-      // update tabele roba
       update_table_roba( _zamjeniti_sif, _fmk_import )
-
-      // update tabele partnera
       update_table_partn( _zamjeniti_sif, _fmk_import )
-
-      // odradi update tabela sifk, sifv
       update_sifk_sifv( _fmk_import )
 
    ENDIF
@@ -1049,9 +896,6 @@ STATIC FUNCTION __import( vars, a_details )
 
 
 
-// ---------------------------------------------------------------------
-// provjerava da li dokument vec postoji u prometu
-// ---------------------------------------------------------------------
 STATIC FUNCTION _vec_postoji_u_prometu( id_firma, id_vd, br_dok )
 
    LOCAL _t_area := Select()

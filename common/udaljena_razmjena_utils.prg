@@ -236,9 +236,8 @@ f18_free_tables( { "roba" } )
 
 return
 
-// --------------------------------------------------
-// update strukture zapisa tabele sifk
-// --------------------------------------------------
+
+
 static function update_rec_sifk_struct( rec )
 local _no_field
 local _struct := {}
@@ -251,7 +250,10 @@ if hb_hhaskey( rec, "decimal" )
     rec["f_decimal"] := rec["decimal"]
 endif
 
-// pobrisi sljedece clanove...
+if hb_hhaskey( rec, "match_code")
+    rec["match_code"] := ""
+endif
+
 hb_hdel( rec, "unique" ) 
 hb_hdel( rec, "decimal" ) 
 
@@ -355,18 +357,15 @@ if fmk_import == NIL
     fmk_import := .f.
 endif
 
-// sifk, sifv tabele
 select e_sifk
 set order to tag "ID2"
 go top
 
-// update sifk
 do while !EOF()
 
     _app_rec := dbf_get_rec()
         
     if fmk_import
-        // promijeni strukturu ako treba
         update_rec_sifk_struct( @_app_rec )
     endif
 
@@ -381,7 +380,6 @@ do while !EOF()
         
     @ m_x + 3, m_y + 2 SAY "import sifk id: " + _app_rec["id"] + ", oznaka: " + _app_rec["oznaka"]
     
-    // uvijek update odradi friskog stanja sifk tabele
     update_rec_server_and_dbf( "sifk", _app_rec, 1, "FULL" )
         
     select e_sifk
@@ -393,7 +391,6 @@ select e_sifv
 set order to tag "ID"
 go top
 
-// update sifv
 do while !EOF()
 
     _app_rec := dbf_get_rec()

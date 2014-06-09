@@ -368,9 +368,6 @@ FUNCTION _sql_in_list_parse( string_cond, brackets )
 
 
 
-// ---------------------------------------------------
-// sql parsiranje uslova sa ;
-// ---------------------------------------------------
 FUNCTION _sql_cond_parse( field_name, cond, not )
 
    LOCAL _ret := ""
@@ -404,11 +401,15 @@ FUNCTION _sql_cond_parse( field_name, cond, not )
       ENDIF
 
    NEXT
-
+   
    _ret := Right( _ret, Len( _ret ) - 5 )
 
    IF " OR " $ _ret 
       _ret := " ( " + _ret + " ) "
+   ENDIF
+
+   IF EMPTY( _ret )
+      _ret := " TRUE "
    ENDIF
 
    RETURN _ret

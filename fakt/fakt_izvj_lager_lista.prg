@@ -939,16 +939,12 @@ STATIC FUNCTION lager_lista_xml( table, params )
 
 
 
-// ------------------------------------------------------------------
-// lager lista sql
-// ------------------------------------------------------------------
 FUNCTION fakt_lager_lista_sql( param, ps )
 
    LOCAL _table
    LOCAL _tek_database := my_server_params()[ "database" ]
    LOCAL _db_params := my_server_params()
 
-   // ako nema parametara setuj mi ih...
    IF param == NIL
       IF fakt_lager_lista_vars( @param ) == 0
          RETURN
@@ -959,16 +955,12 @@ FUNCTION fakt_lager_lista_sql( param, ps )
       ps := .F.
    ENDIF
 
-   // formiranje sql upita za lager listu
    _table := fakt_lager_lista_get_data( param, ps )
 
    RETURN _table
 
 
 
-// -----------------------------------------------------------------
-// daj mi podatke za lager listu...
-// -----------------------------------------------------------------
 STATIC FUNCTION fakt_lager_lista_get_data( params, ps )
 
    LOCAL _tek_database := my_server_params()[ "database" ]
@@ -985,7 +977,6 @@ STATIC FUNCTION fakt_lager_lista_get_data( params, ps )
    _usl_tip_dok := params[ "dokumenti" ]
    _date_ps := params[ "datum_ps" ]
 
-   // pocetno stanje
    IF ps == NIL
       ps := .F.
    ENDIF
@@ -1012,7 +1003,6 @@ STATIC FUNCTION fakt_lager_lista_get_data( params, ps )
       "FROM fmk.fakt_fakt f " + ;
       "LEFT JOIN fmk.roba r ON f.idroba = r.id "
 
-   // where cond ...
    _qry += " WHERE "
    _qry += _sql_cond_parse( "idfirma", _id_firma )
    _qry += " AND " + _sql_date_parse( "datdok", _date_from, _date_to )
@@ -1032,11 +1022,14 @@ STATIC FUNCTION fakt_lager_lista_get_data( params, ps )
    _qry += " GROUP BY f.idroba, r.naz, r.jmj, r.vpc "
    _qry += " ORDER BY f.idroba "
 
-   // podaci pocetnog stanja su ovdje....
    _table := _sql_query( _server, _qry )
-   _table:Refresh()
 
-   // vrni se na tekuce podrucje
+   IF !is_var_objekat_tpquery( _table )
+      _table := NIL
+   ELSE
+      _table:Refresh()
+   ENDIF
+
    IF ps
       my_server_logout()
       _db_params[ "database" ] := Left( _tek_database, Len( _tek_database ) - 4 ) + AllTrim( Str( Year( _date_ps ) ) )

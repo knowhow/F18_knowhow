@@ -206,6 +206,11 @@ STATIC FUNCTION _izdvoji_ulaze( vars )
    MsgO( "Prikupljanje podataka ulaza u maloprodaji... sacekajte !" )
 
    _table := _sql_query( _server, _qry )
+
+   IF !is_var_objekat_tpquery( _table )
+      RETURN 0
+   ENDIF
+
    _table:Refresh()
 
    // provrti se kroz matricu i azuriraj rezultat u pomocni dbf

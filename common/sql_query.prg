@@ -108,3 +108,19 @@ FUNCTION _sql_query( oServer, cQuery, silent )
    RETURN oQuery
 
 
+
+FUNCTION is_sql_query_ok( xVar )
+   RETURN is_var_objekat_tipa( xVar, "TPQuery" )
+
+
+
+FUNCTION is_var_objekat_tipa( xVar, cClassName )
+
+   IF ValType( xVar ) == "O" .AND. xVar:ClassName() != cClassName
+      RETURN .T.
+   ENDIF
+
+   RETURN .F.
+
+
+

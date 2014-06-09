@@ -222,7 +222,7 @@ if fMark .and. (LastKey()==Asc("+"))
 endif
 
 if UPPER(CHR(LASTKEY())) == "P"
-    PreglSRacun( pos_doks->IdPos, pos_doks->datum, pos_doks->BrDok )
+    pos_pregled_stavki_racuna( pos_doks->IdPos, pos_doks->datum, pos_doks->BrDok )
     return DE_REFRESH
 endif
 

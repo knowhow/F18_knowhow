@@ -1,17 +1,17 @@
-/*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+/* 
+ * This file is part of the bring.out knowhow ERP, a free and open source 
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 
-
 #include "pos.ch"
+#include "f18_separator.ch"
 
 
 
@@ -86,9 +86,6 @@ STATIC FUNCTION _o_pos_prepis_tbl()
    RETURN
 
 
-// -------------------------------------------
-// Stampa azuriranog dokumenta
-// -------------------------------------------
 FUNCTION pos_prepis_dokumenta()
 
    LOCAL aOpc
@@ -104,7 +101,7 @@ FUNCTION pos_prepis_dokumenta()
    Box(, 3, 60 )
    @ m_x + 1, m_y + 2 SAY "Datumski period:" GET dDatOd
    @ m_x + 1, Col() + 2 SAY "-" GET dDatDo
-   @ m_x + 3, m_y + 2 SAY "Vrste (prazno svi)" GET cVrste PICT "@!"
+   @ m_x + 3, m_y + 2 SAY "Vrste (prazno-svi)" GET cVrste PICT "@!"
    READ
    BoxC()
 
@@ -157,7 +154,6 @@ FUNCTION pos_prepis_dokumenta()
       SET FILTER to &cFilter
    ENDIF
 
-   // set scopebottom to "W"
    GO TOP
 
    aOpc := { "<ENTER> Odabir", "<E> eksport" }
@@ -166,7 +162,7 @@ FUNCTION pos_prepis_dokumenta()
       AAdd( aOpc, "<F2> - promjena vrste placanja" )
    ENDIF
 
-   ObjDBedit( "pos_doks", MAXROWS() - 10, MAXCOLS() - 3, {|| PrepDokProc ( dDatOd, dDatDo ) }, "  STAMPA AZURIRANOG DOKUMENTA  ", "", nil, aOpc )
+   ObjDBedit( "pos_doks", MAXROWS() - 10, MAXCOLS() - 3, {|| pos_stampa_dokumenta_key_handler( dDatOd, dDatDo ) }, "  STAMPA AZURIRANOG DOKUMENTA  ", "", nil, aOpc )
 
    CLOSE ALL
 
@@ -174,7 +170,7 @@ FUNCTION pos_prepis_dokumenta()
 
 
 
-FUNCTION PrepDokProc( dDat0, dDat1 )
+FUNCTION pos_stampa_dokumenta_key_handler( dDat0, dDat1 )
 
    LOCAL cLevel
    LOCAL cOdg
@@ -193,7 +189,6 @@ FUNCTION PrepDokProc( dDat0, dDat1 )
    STATIC dDatum
    STATIC cIdRadnik
 
-   // M->Ch je iz OBJDB
    IF M->Ch == 0
       RETURN ( DE_CONT )
    ENDIF
@@ -208,7 +203,7 @@ FUNCTION PrepDokProc( dDat0, dDat1 )
 
    CASE Ch == K_F2 .AND. kLevel <= "1"
 
-      IF pitanje(, "Zelite li promijeniti vrstu placanja?", "N" ) == "D"
+      IF Pitanje(, "Želite li promijeniti vrstu plaćanja (D/N) ?", "N" ) == "D"
 
          cVrPl := field->idvrstep
 
@@ -236,7 +231,7 @@ FUNCTION PrepDokProc( dDat0, dDat1 )
 
       _rec_no := RecNo()
 
-      IF Pitanje(, "Zelite li zaista izbrisati dokument", "N" ) == "D"
+      IF Pitanje(, "Želite li zaista izbrisati dokument (D/N) ?", "N" ) == "D"
 
          pos_brisi_dokument( _id_pos, _id_vd, _dat_dok, _br_dok )
 
@@ -256,13 +251,12 @@ FUNCTION PrepDokProc( dDat0, dDat1 )
 
       DO CASE
 
-         // stampanje racuna
       CASE pos_doks->IdVd == VD_RN
 
          cOdg := "D"
 
          IF glRetroakt
-            cOdg := Pitanje(, "Stampati tekuci racun? (D-da,N-ne,S-sve racune u izabranom periodu)", "D", "DNS" )
+            cOdg := Pitanje(, "Štampati tekući račun? (D-da,N-ne,S-sve račune u izabranom periodu)", "D", "DNS" )
          ENDIF
 
          IF cOdg == "S"
@@ -307,13 +301,12 @@ FUNCTION PrepDokProc( dDat0, dDat1 )
          PrepisKumPr()
       CASE pos_doks->IdVd == VD_PCS
          PrepisPCS()
-      CASE pos_doks->IdVd == VD_ROP // reklamacija ostali podaci
+      CASE pos_doks->IdVd == VD_ROP 
          StDokROP( .T. )
       ENDCASE
 
    CASE Ch == Asc( "F" ) .OR. Ch == Asc( "f" )
 
-      // stampa poreske fakture
       aVezani := { { IdPos, BrDok, IdVd, datum } }
       StampaPrep( IdPos, DToS( datum ) + BrDok, aVezani, .T., nil, .T. )
 
@@ -349,11 +342,10 @@ FUNCTION PrepDokProc( dDat0, dDat1 )
 
       IF field->idvd == "IN"
          IF Pitanje(, "Eksportovati dokument (D/N) ?", "N" ) == "D"
-            // export dokumenta
             pos_prenos_inv_2_kalk( field->idpos, field->idvd, field->datum, field->brdok )
          ENDIF
       ELSE
-         MsgBeep( "Ne postoji metoda eksporta za ovu vrstu dokumenta !!!" )
+         MsgBeep( "Ne postoji metoda eksporta za ovu vrstu dokumenta !" )
       ENDIF
 
       RETURN ( DE_CONT )
@@ -366,20 +358,17 @@ FUNCTION PrepDokProc( dDat0, dDat1 )
       _dat_dok := field->datum
 
       IF field->idvd <> VD_INV
-         MsgBeep( "Ne postoji metoda povrata za ovu vrstu dokumenta !!!" )
+         MsgBeep( "Ne postoji metoda povrata za ovu vrstu dokumenta !" )
          RETURN ( DE_CONT )
       ENDIF
 
-      IF Pitanje(, "Dokument " + _id_pos + "-" + _id_vd + "-" + _br_dok + " povuci u pripremu (D/N) ?", "N" ) == "N"
+      IF Pitanje(, "Dokument " + _id_pos + "-" + _id_vd + "-" + _br_dok + " povući u pripremu (D/N) ?", "N" ) == "N"
          RETURN ( DE_CONT )
       ENDIF
 
       IF field->idvd == VD_INV
 
-         // povrat dokumenta u pripremu
          pos_2_priprz()
-
-         // pobrisi dokument sa servera i dbf-a
          pos_brisi_dokument( _id_pos, _id_vd, _dat_dok, _br_dok )
 
          _o_pos_prepis_tbl()
@@ -387,7 +376,7 @@ FUNCTION PrepDokProc( dDat0, dDat1 )
          SET FILTER to &_tbl_filter
          GO TOP
 
-         MsgBeep( "Dokument je vracen u pripremu inventure..." )
+         MsgBeep( "Dokument je vraćen u pripremu inventure ..." )
 
          RETURN ( DE_REFRESH )
 
@@ -398,7 +387,6 @@ FUNCTION PrepDokProc( dDat0, dDat1 )
 
    ENDCASE
 
-   // vrati se tamo gdje si bio
    _o_pos_prepis_tbl()
    SELECT pos_doks
    SET FILTER to &( _tbl_filter )
@@ -407,10 +395,9 @@ FUNCTION PrepDokProc( dDat0, dDat1 )
    RETURN ( DE_CONT )
 
 
-// ----------------------------------------------------------
-// pregled racuna iz pregleda racuna, opcija "P"
-// ----------------------------------------------------------
-FUNCTION PreglSRacun()
+
+
+FUNCTION pos_pregled_stavki_racuna()
 
    LOCAL oBrowse
    LOCAL cPrevCol
@@ -445,7 +432,6 @@ FUNCTION PreglSRacun()
       _rec[ "robanaz" ] := roba->naz
       _rec[ "jmj" ] := roba->jmj
 
-      // pobrisi mi polje "rbr" koje pos koristi
       hb_HDel( _rec, "rbr" )
 
       SELECT _pos_pripr
@@ -471,9 +457,9 @@ FUNCTION PreglSRacun()
 
    Box(, 15, 73 )
 
-   @ m_x + 1, m_y + 19 SAY PadC ( "Pregled " + iif( gRadniRac == "D", "stalnog ", "" ) + "racuna " + Trim( pos_doks->IdPos ) + "-" + LTrim ( pos_doks->BrDok ), 30 ) COLOR INVERT
+   @ m_x + 1, m_y + 19 SAY8 PadC ( "Pregled " + IIF( gRadniRac == "D", "stalnog ", "" ) + "računa " + Trim( pos_doks->IdPos ) + "-" + LTrim ( pos_doks->BrDok ), 30 ) COLOR INVERT
 
-   oBrowse := FormBrowse( m_x + 2, m_y + 1, m_x + 15, m_y + 73, ImeKol, Kol, { "�", "�", "�" }, 0 )
+   oBrowse := FormBrowse( m_x + 2, m_y + 1, m_x + 15, m_y + 73, ImeKol, Kol, { BROWSE_PODVUCI_2, BROWSE_PODVUCI, BROWSE_COL_SEP }, 0 )
    ShowBrowse( oBrowse, {}, {} )
 
    SELECT _pos_pripr

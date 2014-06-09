@@ -315,7 +315,7 @@ METHOD F18Login:company_db_relogin( server_param, database, session )
    IF _ok .AND. _show_box
 
       IF !f18_use_module( Lower( goModul:cName ) )     
-         MsgBeep( "Modul nije aktivan u sezoni " + ALLTRIM( _new_session ) + " !" )
+         MsgBeep( "U " + ALLTRIM( _new_session ) + " programski modul nije aktivan !#Vraćamo se u sezonu " + _curr_session )
          // vratit ćemo se na bazu iz koje smo počeli
          ::company_db_relogin( server_param, _curr_database, _curr_session ) 
       ENDIF

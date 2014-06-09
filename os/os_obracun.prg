@@ -597,7 +597,7 @@ _qry += "ORDER BY datum "
 
 _data := _sql_query( my_server(), _qry )
 
-if VALTYPE( _data ) == "L" .or. _data:LastRec() == 0
+if !is_var_objekat_tpquery( _data ) 
     return _hash
 endif
 

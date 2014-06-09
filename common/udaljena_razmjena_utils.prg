@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -17,680 +17,692 @@
 // --------------------------------------------
 // promjena privilegija fajlova
 // --------------------------------------------
-function set_file_access( file_path, mask ) 
-local _ret := .t.
-private _cmd
+FUNCTION set_file_access( file_path, mask )
 
-if file_path == NIL
-	file_path := ""
-endif
+   LOCAL _ret := .T.
+   PRIVATE _cmd
 
-if mask == NIL
-	mask := ""
-endif
+   IF file_path == NIL
+      file_path := ""
+   ENDIF
 
-_cmd := "chmod ugo+w " + file_path + mask + "*.*"
+   IF mask == NIL
+      mask := ""
+   ENDIF
 
-run &_cmd
-    
-return _ret
+   _cmd := "chmod ugo+w " + file_path + mask + "*.*"
+
+   run &_cmd
+
+   RETURN _ret
 
 
 // -----------------------------------------
 // otvara listu fajlova za import
 // vraca naziv fajla za import
 // -----------------------------------------
-function get_import_file( modul, import_dbf_path )
-local _file
-local _filter
+FUNCTION get_import_file( modul, import_dbf_path )
 
-if modul == NIL
-    modul := "kalk"
-endif
+   LOCAL _file
+   LOCAL _filter
 
-_filter := ALLTRIM( modul ) + "*.*"
+   IF modul == NIL
+      modul := "kalk"
+   ENDIF
 
-if _gFList( _filter, import_dbf_path, @_file ) == 0
-    _file := ""
-endif
+   _filter := AllTrim( modul ) + "*.*"
 
-return _file
+   IF _gFList( _filter, import_dbf_path, @_file ) == 0
+      _file := ""
+   ENDIF
+
+   RETURN _file
 
 
 // ----------------------------------------------------------------
 // update tabele konto na osnovu pomocne tabele
 // ----------------------------------------------------------------
-function update_table_konto( zamjena_sifre, fmk_import )
-local _app_rec
-local _sif_exist := .t.
+FUNCTION update_table_konto( zamjena_sifre, fmk_import )
 
-if fmk_import == NIL
-    fmk_import := .f.
-endif
+   LOCAL _app_rec
+   LOCAL _sif_exist := .T.
 
-f18_lock_tables( { "konto" } )
-sql_table_update( nil, "BEGIN" )
+   IF fmk_import == NIL
+      fmk_import := .F.
+   ENDIF
 
-select e_konto
-set order to tag "ID"
-go top
+   f18_lock_tables( { "konto" } )
+   sql_table_update( nil, "BEGIN" )
 
-do while !EOF()
+   SELECT e_konto
+   SET ORDER TO TAG "ID"
+   GO TOP
 
-    _app_rec := dbf_get_rec()    
+   DO WHILE !Eof()
 
-    if fmk_import
-        // uskladi strukture
-        update_rec_konto_struct( @_app_rec )
-    endif
+      _app_rec := dbf_get_rec()
 
-    select konto
-    hseek _app_rec["id"]
+      IF fmk_import
+         // uskladi strukture
+         update_rec_konto_struct( @_app_rec )
+      ENDIF
 
-    _sif_exist := .t.
-    if !FOUND()
-        _sif_exist := .f.
-    endif
+      SELECT konto
+      hseek _app_rec[ "id" ]
 
-    if !_sif_exist .or. ( _sif_exist .and. zamjena_sifre == "D" )
+      _sif_exist := .T.
+      IF !Found()
+         _sif_exist := .F.
+      ENDIF
 
-        @ m_x + 3, m_y + 2 SAY "import partn id: " + _app_rec["id"] + " : " + PADR( _app_rec["naz"], 20 )
+      IF !_sif_exist .OR. ( _sif_exist .AND. zamjena_sifre == "D" )
 
-        select konto
+         @ m_x + 3, m_y + 2 SAY "import partn id: " + _app_rec[ "id" ] + " : " + PadR( _app_rec[ "naz" ], 20 )
 
-        if !_sif_exist
-            append blank
-        endif
+         SELECT konto
 
-        update_rec_server_and_dbf( "konto", _app_rec, 1, "CONT" )
+         IF !_sif_exist
+            APPEND BLANK
+         ENDIF
 
-    endif
+         update_rec_server_and_dbf( "konto", _app_rec, 1, "CONT" )
 
-    select e_konto
-    skip
+      ENDIF
 
-enddo
+      SELECT e_konto
+      SKIP
 
-sql_table_update( nil, "END" )
-f18_free_tables( { "konto" } )
+   ENDDO
 
-return
+   sql_table_update( nil, "END" )
+   f18_free_tables( { "konto" } )
+
+   RETURN
 
 
 
 // -----------------------------------------------------------
 // update tabele partnera na osnovu pomocne tabele
 // -----------------------------------------------------------
-function update_table_partn( zamjena_sifre, fmk_import )
-local _app_rec
-local _sif_exist := .t.
+FUNCTION update_table_partn( zamjena_sifre, fmk_import )
 
-if fmk_import == NIL
-    fmk_import := .f.
-endif
+   LOCAL _app_rec
+   LOCAL _sif_exist := .T.
 
-f18_lock_tables( { "partn" } )
-sql_table_update( nil, "BEGIN" )
+   IF fmk_import == NIL
+      fmk_import := .F.
+   ENDIF
 
-select e_partn
-set order to tag "ID"
-go top
+   f18_lock_tables( { "partn" } )
+   sql_table_update( nil, "BEGIN" )
 
-do while !EOF()
-    
-    _app_rec := dbf_get_rec()
+   SELECT e_partn
+   SET ORDER TO TAG "ID"
+   GO TOP
 
-    if fmk_import
-        // uskladi strukture
-        update_rec_partn_struct( @_app_rec )
-    endif
+   DO WHILE !Eof()
 
-    select partn
-    hseek _app_rec["id"]
+      _app_rec := dbf_get_rec()
 
-    _sif_exist := .t.        
-    if !FOUND()
-        _sif_exist := .f.
-    endif
+      IF fmk_import
+         // uskladi strukture
+         update_rec_partn_struct( @_app_rec )
+      ENDIF
 
-    if !_sif_exist .or. ( _sif_exist .and. zamjena_sifre == "D" )
+      SELECT partn
+      hseek _app_rec[ "id" ]
 
-        @ m_x + 3, m_y + 2 SAY "import partn id: " + _app_rec["id"] + " : " + PADR( _app_rec["naz"], 20 )
+      _sif_exist := .T.
+      IF !Found()
+         _sif_exist := .F.
+      ENDIF
 
-        select partn
+      IF !_sif_exist .OR. ( _sif_exist .AND. zamjena_sifre == "D" )
 
-        if !_sif_exist
-            append blank
-        endif
+         @ m_x + 3, m_y + 2 SAY "import partn id: " + _app_rec[ "id" ] + " : " + PadR( _app_rec[ "naz" ], 20 )
 
-        update_rec_server_and_dbf( "partn", _app_rec, 1, "CONT" )
-    endif
+         SELECT partn
 
-    select e_partn
-    skip
+         IF !_sif_exist
+            APPEND BLANK
+         ENDIF
 
-enddo
+         update_rec_server_and_dbf( "partn", _app_rec, 1, "CONT" )
+      ENDIF
 
-sql_table_update( nil, "END" )
-f18_free_tables( { "partn" } )
+      SELECT e_partn
+      SKIP
 
-return
+   ENDDO
+
+   sql_table_update( nil, "END" )
+   f18_free_tables( { "partn" } )
+
+   RETURN
 
 
 
 // update podataka u tabelu robe
-function update_table_roba( zamjena_sifre, fmk_import )
-local _app_rec 
-local _sif_exist := .t.
+FUNCTION update_table_roba( zamjena_sifre, fmk_import )
 
-if fmk_import == NIL
-    fmk_import := .f.
-endif
+   LOCAL _app_rec
+   LOCAL _sif_exist := .T.
 
-f18_lock_tables( { "roba" } )
-sql_table_update( nil, "BEGIN" )
+   IF fmk_import == NIL
+      fmk_import := .F.
+   ENDIF
 
-// moramo ziknuti i robu ako fali !
-select e_roba
-set order to tag "ID"
-go top
+   f18_lock_tables( { "roba" } )
+   sql_table_update( nil, "BEGIN" )
 
-do while !EOF()
-   
-    _app_rec := dbf_get_rec()
+   // moramo ziknuti i robu ako fali !
+   SELECT e_roba
+   SET ORDER TO TAG "ID"
+   GO TOP
 
-    if fmk_import
-        // uskladi strukture tabela
-        update_rec_roba_struct( @_app_rec )
-    endif
+   DO WHILE !Eof()
 
-    select roba
-    hseek _app_rec["id"]
+      _app_rec := dbf_get_rec()
 
-    _sif_exist := .t.
-    if !FOUND()
-        _sif_exist := .f.
-    endif
+      IF fmk_import
+         // uskladi strukture tabela
+         update_rec_roba_struct( @_app_rec )
+      ENDIF
 
-    if !_sif_exist .or. ( _sif_exist .and. zamjena_sifre == "D" )
+      SELECT roba
+      hseek _app_rec[ "id" ]
 
-        @ m_x + 3, m_y + 2 SAY "import roba id: " + _app_rec["id"] + " : " + PADR( _app_rec["naz"], 20 )
+      _sif_exist := .T.
+      IF !Found()
+         _sif_exist := .F.
+      ENDIF
 
-        select roba
+      IF !_sif_exist .OR. ( _sif_exist .AND. zamjena_sifre == "D" )
 
-        if !_sif_exist
-            append blank
-        endif
-        
-        update_rec_server_and_dbf( "roba", _app_rec, 1, "CONT" )
+         @ m_x + 3, m_y + 2 SAY "import roba id: " + _app_rec[ "id" ] + " : " + PadR( _app_rec[ "naz" ], 20 )
 
-    endif
+         SELECT roba
 
-    select e_roba
-    skip
+         IF !_sif_exist
+            APPEND BLANK
+         ENDIF
 
-enddo
+         update_rec_server_and_dbf( "roba", _app_rec, 1, "CONT" )
 
-sql_table_update( nil, "END" )
-f18_free_tables( { "roba" } )
+      ENDIF
 
-return
+      SELECT e_roba
+      SKIP
+
+   ENDDO
+
+   sql_table_update( nil, "END" )
+   f18_free_tables( { "roba" } )
+
+   RETURN
 
 
 
-static function update_rec_sifk_struct( rec )
-local _no_field
-local _struct := {}
+STATIC FUNCTION update_rec_sifk_struct( rec )
 
-if hb_hhaskey( rec, "unique")
-    rec["f_unique"] := rec["unique"]
-endif
+   LOCAL _no_field
+   LOCAL _struct := {}
 
-if hb_hhaskey( rec, "decimal" )
-    rec["f_decimal"] := rec["decimal"]
-endif
+   IF hb_HHasKey( rec, "unique" )
+      rec[ "f_unique" ] := rec[ "unique" ]
+   ENDIF
 
-if hb_hhaskey( rec, "match_code")
-    rec["match_code"] := ""
-endif
+   IF hb_HHasKey( rec, "decimal" )
+      rec[ "f_decimal" ] := rec[ "decimal" ]
+   ENDIF
 
-hb_hdel( rec, "unique" ) 
-hb_hdel( rec, "decimal" ) 
+   IF hb_HHasKey( rec, "match_code" )
+      rec[ "match_code" ] := ""
+   ENDIF
 
-return
+   hb_HDel( rec, "unique" )
+   hb_HDel( rec, "decimal" )
+
+   RETURN
 
 
 
 // --------------------------------------------------
 // update strukture zapisa tabele konto
 // --------------------------------------------------
-static function update_rec_konto_struct( rec )
-local _no_field
-local _struct := {}
+STATIC FUNCTION update_rec_konto_struct( rec )
 
-// moguca nepostojeca polja tabele roba
+   LOCAL _no_field
+   LOCAL _struct := {}
 
-AADD( _struct, "match_code" )
-AADD( _struct, "pozbilu" )
-AADD( _struct, "pozbils" )
+   // moguca nepostojeca polja tabele roba
 
-for each _no_field in _struct
-    if ! HB_HHASKEY( rec, _no_field )
-        rec[ _no_field ] := nil
-    endif
-next
+   AAdd( _struct, "match_code" )
+   AAdd( _struct, "pozbilu" )
+   AAdd( _struct, "pozbils" )
 
-return
+   FOR EACH _no_field in _struct
+      IF ! hb_HHasKey( rec, _no_field )
+         rec[ _no_field ] := nil
+      ENDIF
+   NEXT
+
+   RETURN
 
 
 
 // --------------------------------------------------
 // update strukture zapisa tabele partn
 // --------------------------------------------------
-static function update_rec_partn_struct( rec )
-local _no_field
-local _struct := {}
+STATIC FUNCTION update_rec_partn_struct( rec )
 
-// moguca nepostojeca polja tabele roba
-AADD( _struct, "match_code" )
+   LOCAL _no_field
+   LOCAL _struct := {}
 
-for each _no_field in _struct
-    if ! HB_HHASKEY( rec, _no_field )
-        rec[ _no_field ] := nil
-    endif
-next
+   // moguca nepostojeca polja tabele roba
+   AAdd( _struct, "match_code" )
 
-// pobrisi sljedece clanove...
-hb_hdel( rec, "brisano" ) 
-hb_hdel( rec, "rejon" ) 
+   FOR EACH _no_field in _struct
+      IF ! hb_HHasKey( rec, _no_field )
+         rec[ _no_field ] := nil
+      ENDIF
+   NEXT
 
-return
+   // pobrisi sljedece clanove...
+   hb_HDel( rec, "brisano" )
+   hb_HDel( rec, "rejon" )
+
+   RETURN
 
 
 
 // --------------------------------------------------
 // update strukture zapisa tabele roba
 // --------------------------------------------------
-static function update_rec_roba_struct( rec )
-local _no_field
-local _struct := {}
+STATIC FUNCTION update_rec_roba_struct( rec )
 
-// moguca nepostojeca polja tabele roba
-AADD( _struct, "idkonto" )
-AADD( _struct, "sifradob" )
-AADD( _struct, "strings" )
-AADD( _struct, "k7" )
-AADD( _struct, "k8" )
-AADD( _struct, "k9" )
-AADD( _struct, "mink" )
-AADD( _struct, "fisc_plu" )
-AADD( _struct, "match_code" )
-AADD( _struct, "mpc4" )
-AADD( _struct, "mpc5" )
-AADD( _struct, "mpc6" )
-AADD( _struct, "mpc7" )
-AADD( _struct, "mpc8" )
-AADD( _struct, "mpc9" )
+   LOCAL _no_field
+   LOCAL _struct := {}
 
-for each _no_field in _struct
-    if ! HB_HHASKEY( rec, _no_field )
-        rec[ _no_field ] := nil
-    endif
-next
+   // moguca nepostojeca polja tabele roba
+   AAdd( _struct, "idkonto" )
+   AAdd( _struct, "sifradob" )
+   AAdd( _struct, "strings" )
+   AAdd( _struct, "k7" )
+   AAdd( _struct, "k8" )
+   AAdd( _struct, "k9" )
+   AAdd( _struct, "mink" )
+   AAdd( _struct, "fisc_plu" )
+   AAdd( _struct, "match_code" )
+   AAdd( _struct, "mpc4" )
+   AAdd( _struct, "mpc5" )
+   AAdd( _struct, "mpc6" )
+   AAdd( _struct, "mpc7" )
+   AAdd( _struct, "mpc8" )
+   AAdd( _struct, "mpc9" )
 
-// pobrisi sljedece clanove...
-hb_hdel( rec, "carina" ) 
-hb_hdel( rec, "_m1_" ) 
-hb_hdel( rec, "brisano" ) 
+   FOR EACH _no_field in _struct
+      IF ! hb_HHasKey( rec, _no_field )
+         rec[ _no_field ] := nil
+      ENDIF
+   NEXT
 
-return
+   // pobrisi sljedece clanove...
+   hb_HDel( rec, "carina" )
+   hb_HDel( rec, "_m1_" )
+   hb_HDel( rec, "brisano" )
+
+   RETURN
 
 
 
 // ---------------------------------------------------------
 // update tabela sifk, sifv na osnovu pomocnih tabela
 // ---------------------------------------------------------
-function update_sifk_sifv( fmk_import )
-local _app_rec
+FUNCTION update_sifk_sifv( fmk_import )
 
-if fmk_import == NIL
-    fmk_import := .f.
-endif
+   LOCAL _app_rec
 
-select e_sifk
-set order to tag "ID2"
-go top
+   IF fmk_import == NIL
+      fmk_import := .F.
+   ENDIF
 
-do while !EOF()
+   SELECT e_sifk
+   SET ORDER TO TAG "ID2"
+   GO TOP
 
-    _app_rec := dbf_get_rec()
-        
-    if fmk_import
-        update_rec_sifk_struct( @_app_rec )
-    endif
+   DO WHILE !Eof()
 
-    select sifk
-    set order to tag "ID2"
-    go top
-    seek _app_rec["id"] + _app_rec["oznaka"] 
+      _app_rec := dbf_get_rec()
 
-    if !FOUND()
-        append blank
-    endif
-        
-    @ m_x + 3, m_y + 2 SAY "import sifk id: " + _app_rec["id"] + ", oznaka: " + _app_rec["oznaka"]
-    
-    update_rec_server_and_dbf( "sifk", _app_rec, 1, "FULL" )
-        
-    select e_sifk
-    skip
+      IF fmk_import
+         update_rec_sifk_struct( @_app_rec )
+      ENDIF
 
-enddo
+      SELECT sifk
+      SET ORDER TO TAG "ID2"
+      GO TOP
+      SEEK _app_rec[ "id" ] + _app_rec[ "oznaka" ]
 
-select e_sifv
-set order to tag "ID"
-go top
+      IF !Found()
+         APPEND BLANK
+      ENDIF
 
-do while !EOF()
+      @ m_x + 3, m_y + 2 SAY "import sifk id: " + _app_rec[ "id" ] + ", oznaka: " + _app_rec[ "oznaka" ]
 
-    _app_rec := dbf_get_rec()
-    select sifv
-    set order to tag "ID"
-    go top
-    seek _app_rec["id"] + _app_rec["oznaka"] + _app_rec["idsif"] + _app_rec["naz"] 
+      update_rec_server_and_dbf( "sifk", _app_rec, 1, "FULL" )
 
-    if !FOUND()
-        append blank
-    endif
+      SELECT e_sifk
+      SKIP
 
-    @ m_x + 3, m_y + 2 SAY "import sifv id: " + _app_rec["id"] + ", oznaka: " + _app_rec["oznaka"] + ", sifra: " + _app_rec["idsif"]
+   ENDDO
 
-    update_rec_server_and_dbf( "sifv", _app_rec, 1, "FULL" )
+   SELECT e_sifv
+   SET ORDER TO TAG "ID"
+   GO TOP
 
-    select e_sifv
-    skip
+   DO WHILE !Eof()
 
-enddo
+      _app_rec := dbf_get_rec()
+      SELECT sifv
+      SET ORDER TO TAG "ID"
+      GO TOP
+      SEEK _app_rec[ "id" ] + _app_rec[ "oznaka" ] + _app_rec[ "idsif" ] + _app_rec[ "naz" ]
 
-return
+      IF !Found()
+         APPEND BLANK
+      ENDIF
+
+      @ m_x + 3, m_y + 2 SAY "import sifv id: " + _app_rec[ "id" ] + ", oznaka: " + _app_rec[ "oznaka" ] + ", sifra: " + _app_rec[ "idsif" ]
+
+      update_rec_server_and_dbf( "sifv", _app_rec, 1, "FULL" )
+
+      SELECT e_sifv
+      SKIP
+
+   ENDDO
+
+   RETURN
 
 
 // ---------------------------------------------
 // kreiraj direktorij ako ne postoji
 // ---------------------------------------------
-function _dir_create( use_path )
-local _ret := .t.
+FUNCTION _dir_create( use_path )
 
-//_lokacija := _path_quote( my_home() + "export" + SLASH )
+   LOCAL _ret := .T.
 
-if DirChange( use_path ) != 0
-    _cre := MakeDir ( use_path )
-    if _cre != 0
-        MsgBeep("kreiranje " + use_path + " neuspjesno ?!")
-        log_write("dircreate err:" + use_path, 7 )
-        _ret := .f.
-    endif
-endif
+   // _lokacija := _path_quote( my_home() + "export" + SLASH )
 
-return _ret
+   IF DirChange( use_path ) != 0
+      _cre := MakeDir ( use_path )
+      IF _cre != 0
+         MsgBeep( "kreiranje " + use_path + " neuspjesno ?!" )
+         log_write( "dircreate err:" + use_path, 7 )
+         _ret := .F.
+      ENDIF
+   ENDIF
+
+   RETURN _ret
 
 
 // -------------------------------------------------
 // brise zip fajl exporta
 // -------------------------------------------------
-function delete_zip_files( zip_file )
-if FILE( zip_file )
-    FERASE( zip_file )
-endif 
-return
+FUNCTION delete_zip_files( zip_file )
+
+   IF File( zip_file )
+      FErase( zip_file )
+   ENDIF
+
+   RETURN
 
 
 
 // ---------------------------------------------------
 // brise temp fajlove razmjene
 // ---------------------------------------------------
-function delete_exp_files( use_path, modul )
-local _files := _file_list( use_path, modul )
-local _file, _tmp
+FUNCTION delete_exp_files( use_path, modul )
 
-MsgO( "Brisem tmp fajlove ..." )
-for each _file in _files
-    if FILE( _file )
-        // pobrisi dbf fajl
-        FERASE( _file )
-        // cdx takodjer ?
-        _tmp := ImeDbfCDX(_file)
-        FERASE( _tmp )
-        // fpt takodjer ?
-        _tmp := STRTRAN( _file, ".dbf", ".fpt" )
-        FERASE( _tmp )
-    endif
-next
-MsgC()
+   LOCAL _files := _file_list( use_path, modul )
+   LOCAL _file, _tmp
 
-return
+   MsgO( "Brisem tmp fajlove ..." )
+   FOR EACH _file in _files
+      IF File( _file )
+         // pobrisi dbf fajl
+         FErase( _file )
+         // cdx takodjer ?
+         _tmp := ImeDbfCDX( _file )
+         FErase( _tmp )
+         // fpt takodjer ?
+         _tmp := StrTran( _file, ".dbf", ".fpt" )
+         FErase( _tmp )
+      ENDIF
+   NEXT
+   MsgC()
+
+   RETURN
 
 
 // -------------------------------------------------------
 // da li postoji import fajl ?
 // -------------------------------------------------------
-function import_file_exist( imp_file )
-local _ret := .t.
+FUNCTION import_file_exist( imp_file )
 
-if ( imp_file == NIL )
-    imp_file := __import_dbf_path + __import_zip_name
-endif
+   LOCAL _ret := .T.
 
-if !FILE( imp_file )
-    _ret := .f.
-endif
+   IF ( imp_file == NIL )
+      imp_file := __import_dbf_path + __import_zip_name
+   ENDIF
 
-return _ret
+   IF !File( imp_file )
+      _ret := .F.
+   ENDIF
+
+   RETURN _ret
 
 
 // --------------------------------------------
 // vraca naziv zip fajla
 // --------------------------------------------
-function zip_name( modul, export_dbf_path )
-local _file 
-local _ext := ".zip"
-local _count := 1
-local _exist := .t.
+FUNCTION zip_name( modul, export_dbf_path )
 
-if modul == NIL
-    modul := "kalk"
-endif
+   LOCAL _file
+   LOCAL _ext := ".zip"
+   LOCAL _count := 1
+   LOCAL _exist := .T.
 
-if export_dbf_path == NIL
-    export_dbf_path := my_home()
-endif
+   IF modul == NIL
+      modul := "kalk"
+   ENDIF
 
-modul := ALLTRIM( LOWER( modul ) )
+   IF export_dbf_path == NIL
+      export_dbf_path := my_home()
+   ENDIF
 
-_file := export_dbf_path + modul + "_exp_" + PADL( ALLTRIM(STR( _count )), 2, "0" ) + _ext 
+   modul := AllTrim( Lower( modul ) )
 
-if FILE( _file )
-    
-    // generisi nove nazive fajlova
-    do while _exist 
+   _file := export_dbf_path + modul + "_exp_" + PadL( AllTrim( Str( _count ) ), 2, "0" ) + _ext
 
-        ++ _count
-        _file := export_dbf_path + modul + "_exp_" + PADL( ALLTRIM(STR( _count )), 2, "0" ) + _ext 
+   IF File( _file )
 
-        if !FILE( _file )
-            _exist := .f.
-            exit
-        endif
+      // generisi nove nazive fajlova
+      DO WHILE _exist
 
-    enddo
+         ++ _count
+         _file := export_dbf_path + modul + "_exp_" + PadL( AllTrim( Str( _count ) ), 2, "0" ) + _ext
 
-endif
+         IF !File( _file )
+            _exist := .F.
+            EXIT
+         ENDIF
 
-return _file
+      ENDDO
+
+   ENDIF
+
+   RETURN _file
 
 
 
 // ----------------------------------------------------
 // vraca listu fajlova koji se koriste kod prenosa
 // ----------------------------------------------------
-static function _file_list( use_path, modul )
-local _a_files := {} 
+STATIC FUNCTION _file_list( use_path, modul )
 
-if modul == NIL
-    modul := "kalk"
-endif
+   LOCAL _a_files := {}
 
-do case
+   IF modul == NIL
+      modul := "kalk"
+   ENDIF
 
-    case modul == "kalk"
-        
-        AADD( _a_files, use_path + "e_kalk.dbf" )
-        AADD( _a_files, use_path + "e_doks.dbf" )
-        AADD( _a_files, use_path + "e_roba.dbf" )
-        AADD( _a_files, use_path + "e_partn.dbf" )
-        AADD( _a_files, use_path + "e_konto.dbf" )
-        AADD( _a_files, use_path + "e_sifk.dbf" )
-        AADD( _a_files, use_path + "e_sifv.dbf" )
+   DO CASE
 
-    case modul == "fakt"
+   CASE modul == "kalk"
 
-        AADD( _a_files, use_path + "e_fakt.dbf" )
-        AADD( _a_files, use_path + "e_fakt.fpt" )
-        AADD( _a_files, use_path + "e_doks.dbf" )
-        AADD( _a_files, use_path + "e_doks2.dbf" )
-        AADD( _a_files, use_path + "e_roba.dbf" )
-        AADD( _a_files, use_path + "e_partn.dbf" )
-        AADD( _a_files, use_path + "e_sifk.dbf" )
-        AADD( _a_files, use_path + "e_sifv.dbf" )
+      AAdd( _a_files, use_path + "e_kalk.dbf" )
+      AAdd( _a_files, use_path + "e_doks.dbf" )
+      AAdd( _a_files, use_path + "e_roba.dbf" )
+      AAdd( _a_files, use_path + "e_partn.dbf" )
+      AAdd( _a_files, use_path + "e_konto.dbf" )
+      AAdd( _a_files, use_path + "e_sifk.dbf" )
+      AAdd( _a_files, use_path + "e_sifv.dbf" )
 
+   CASE modul == "fakt"
 
-    case modul == "fin"
-
-        AADD( _a_files, use_path + "e_suban.dbf" )
-        AADD( _a_files, use_path + "e_sint.dbf" )
-        AADD( _a_files, use_path + "e_anal.dbf" )
-        AADD( _a_files, use_path + "e_nalog.dbf" )
-        AADD( _a_files, use_path + "e_partn.dbf" )
-        AADD( _a_files, use_path + "e_konto.dbf" )
-        AADD( _a_files, use_path + "e_sifk.dbf" )
-        AADD( _a_files, use_path + "e_sifv.dbf" )
-
-endcase
-
-return _a_files
+      AAdd( _a_files, use_path + "e_fakt.dbf" )
+      AAdd( _a_files, use_path + "e_fakt.fpt" )
+      AAdd( _a_files, use_path + "e_doks.dbf" )
+      AAdd( _a_files, use_path + "e_doks2.dbf" )
+      AAdd( _a_files, use_path + "e_roba.dbf" )
+      AAdd( _a_files, use_path + "e_partn.dbf" )
+      AAdd( _a_files, use_path + "e_sifk.dbf" )
+      AAdd( _a_files, use_path + "e_sifv.dbf" )
 
 
+   CASE modul == "fin"
 
-// ------------------------------------------
-// kompresuj fajlove i vrati path 
-// ------------------------------------------
-function _compress_files( modul, export_dbf_path )
-local _files
-local _error
-local _zip_path, _zip_name, _file
-local __path, __name, __ext
+      AAdd( _a_files, use_path + "e_suban.dbf" )
+      AAdd( _a_files, use_path + "e_sint.dbf" )
+      AAdd( _a_files, use_path + "e_anal.dbf" )
+      AAdd( _a_files, use_path + "e_nalog.dbf" )
+      AAdd( _a_files, use_path + "e_partn.dbf" )
+      AAdd( _a_files, use_path + "e_konto.dbf" )
+      AAdd( _a_files, use_path + "e_sifk.dbf" )
+      AAdd( _a_files, use_path + "e_sifv.dbf" )
 
-// lista fajlova za kompresovanje
-_files := _file_list( export_dbf_path, modul )
+   ENDCASE
 
-_file := zip_name( modul, export_dbf_path )
-
-HB_FNameSplit( _file, @__path, @__name, @__ext ) 
-
-_zip_path := __path
-_zip_name := __name + __ext
-
-// unzipuj fajlove
-_error := zip_files( _zip_path, _zip_name, _files )
-
-return _error
+   RETURN _a_files
 
 
 
 // ------------------------------------------
-// dekompresuj fajlove i vrati path 
+// kompresuj fajlove i vrati path
 // ------------------------------------------
-function _decompress_files( imp_file, import_dbf_path, import_zip_name )
-local _zip_name, _zip_path
-local _error
-local __name, __path, __ext
+FUNCTION _compress_files( modul, export_dbf_path )
 
-if ( imp_file == NIL )
+   LOCAL _files
+   LOCAL _error
+   LOCAL _zip_path, _zip_name, _file
+   LOCAL __path, __name, __ext
 
-    _zip_path := import_dbf_path
-    _zip_name := import_zip_name
+   // lista fajlova za kompresovanje
+   _files := _file_list( export_dbf_path, modul )
 
-else
+   _file := zip_name( modul, export_dbf_path )
 
-    HB_FNameSplit( imp_file, @__path, @__name, @__ext ) 
-    _zip_path := __path
-    _zip_name := __name + __ext    
+   hb_FNameSplit( _file, @__path, @__name, @__ext )
 
-endif
+   _zip_path := __path
+   _zip_name := __name + __ext
 
-log_write("dekompresujem fajl:" + _zip_path + _zip_name, 7 )
+   // unzipuj fajlove
+   _error := zip_files( _zip_path, _zip_name, _files )
 
-// unzipuj fajlove
-_error := unzip_files( _zip_path, _zip_name, import_dbf_path )
+   RETURN _error
 
-return _error
+
+
+// ------------------------------------------
+// dekompresuj fajlove i vrati path
+// ------------------------------------------
+FUNCTION _decompress_files( imp_file, import_dbf_path, import_zip_name )
+
+   LOCAL _zip_name, _zip_path
+   LOCAL _error
+   LOCAL __name, __path, __ext
+
+   IF ( imp_file == NIL )
+
+      _zip_path := import_dbf_path
+      _zip_name := import_zip_name
+
+   ELSE
+
+      hb_FNameSplit( imp_file, @__path, @__name, @__ext )
+      _zip_path := __path
+      _zip_name := __name + __ext
+
+   ENDIF
+
+   log_write( "dekompresujem fajl:" + _zip_path + _zip_name, 7 )
+
+   // unzipuj fajlove
+   _error := unzip_files( _zip_path, _zip_name, import_dbf_path )
+
+   RETURN _error
 
 
 // --------------------------------------------------
 // popunjava sifrarnike sifk, sifv
 // --------------------------------------------------
-function _fill_sifk( sifrarnik, id_sif )
-local _rec
+FUNCTION _fill_sifk( sifrarnik, id_sif )
 
-PushWa()
+   LOCAL _rec
 
-select e_sifk
+   PushWa()
 
-if RecCount2() == 0  
+   SELECT e_sifk
 
-    // karakteristike upisi samo jednom i to sve
-    // za svaki slucaj !
+   IF RecCount2() == 0
 
-	O_SIFK
-    select sifk
-    set order to tag "ID"
-    go top
+      O_SIFK
+      SELECT sifk
+      SET ORDER TO TAG "ID"
+      GO TOP
 
-    do while !EOF()
-        _rec := dbf_get_rec()
-        select e_sifk
-        append blank
-        dbf_update_rec( _rec )
-        select sifk
-        skip
-    enddo
+      DO WHILE !Eof()
+         _rec := dbf_get_rec()
+         SELECT e_sifk
+         APPEND BLANK
+         dbf_update_rec( _rec )
+         SELECT sifk
+         SKIP
+      ENDDO
 
-endif 
+   ENDIF
 
-// uzmi iz sifv sve one kod kojih je ID=ROBA, idsif=2MON0002
-use_sql_sifv()
-//INDEX ON ID + IDSIF TAG IDIDSIF TO "sifv" 
+   use_sql_sifv()
+   // INDEX ON ID + IDSIF TAG IDIDSIF TO "sifv"
 
-select sifv
-set order to tag "IDIDSIF"
+   SELECT sifv
+   SET ORDER TO TAG "IDIDSIF"
 
-seek PADR( sifrarnik, 8 ) + id_sif
+   SEEK PadR( sifrarnik, 8 ) + id_sif
 
-do while !EOF() .and. field->id = PADR( sifrarnik, 8 ) ;
-    .and. field->idsif = PADR( id_sif, LEN( id_sif ) )
+   DO WHILE !Eof() .AND. field->id = PadR( sifrarnik, 8 ) ;
+         .AND. field->idsif = PadR( id_sif, Len( id_sif ) )
 
-    _rec := dbf_get_rec()
-    select e_sifv
-    append blank
-    dbf_update_rec( _rec )
-    select sifv
-    skip
-enddo
+      _rec := dbf_get_rec()
+      SELECT e_sifv
+      APPEND BLANK
+      dbf_update_rec( _rec )
+      SELECT sifv
+      SKIP
+   ENDDO
 
-PopWa()
+   PopWa()
 
-return
-
-
-
-
+   RETURN

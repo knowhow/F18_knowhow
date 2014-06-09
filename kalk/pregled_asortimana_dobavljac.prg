@@ -195,7 +195,7 @@ STATIC FUNCTION _izdvoji_ulaze( vars )
       RETURN 0
    ENDIF
 
-   MsgO( "Prikupljanje podataka ulaza u maloprodaji... sacekajte !" )
+   MsgO( "Prikupljanje podataka ulaza u maloprodaji... sačekajte !" )
 
    _table:Refresh()
 

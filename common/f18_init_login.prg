@@ -103,7 +103,6 @@ METHOD F18Login:connect( params, conn_type, silent )
    _connected := my_server_login( params, conn_type )
 
    IF !silent .AND. !_connected
-      // MsgBeep( "Neuspjesna prijava na server !" )
    ELSE
       ++ ::_login_count
    ENDIF
@@ -303,21 +302,23 @@ METHOD F18Login:company_db_relogin( server_param, database, session )
    ENDIF
 
    IF _curr_session == _new_session
-      MsgBeep( hb_UTF8ToStr( "Već se nalazimo u sezoni " ) + _curr_session  )
+      MsgBeep( "Već se nalazimo u sezoni " + _curr_session  )
       RETURN _ok
    ENDIF
 
    server_param[ "database" ] := StrTran( _curr_database, _curr_session, _new_session )
 
-   if ::connect( server_param, 1 )
+   IF ::connect( server_param, 1 )
       _ok := .T.
+   ELSE
+      MsgBeep( "Traženo sezonsko područje " + _new_session + " ne postoji !" )
    ENDIF
 
    IF _ok .AND. _show_box
 
       IF !f18_use_module( _modul_name ) 
-         MsgBeep( "U " + ALLTRIM( _new_session ) + " vama programski modul nije aktivan !" )
-         IF Pitanje(, "Da li je programski modul aktivan u sezoni " + _new_session + " (D/N) ?", "N" ) == "D"
+         MsgBeep( "U " + ALLTRIM( _new_session ) + " programski modul " + Upper( _modul_name ) + " vam nije aktiviran !" )
+         IF Pitanje(, "Želite li korisiti programski modul " + Upper( _modul_name ) + " u sezoni " + _new_session + " (D/N) ?", "N" ) == "D"
             f18_set_use_module( _modul_name, .T. )
          ELSE
             MsgBeep( "Vraćamo se u sezonu " + _curr_session )

@@ -320,7 +320,7 @@ METHOD F18Login:company_db_relogin( server_param, database, session )
          IF Pitanje(, "Da li je programski modul aktivan u sezoni " + _new_session + " (D/N) ?", "N" ) == "D"
             f18_set_use_module( _modul_name, .T. )
          ELSE
-            // vratit ćemo se na bazu iz koje smo počeli
+            MsgBeep( "Vraćamo se u sezonu " + _curr_session )
             ::company_db_relogin( server_param, _curr_database, _curr_session ) 
          ENDIF
       ENDIF

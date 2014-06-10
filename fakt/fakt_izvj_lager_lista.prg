@@ -806,12 +806,12 @@ FUNCTION fakt_lager_lista_vars( param, ps )
    @ m_x + _x, m_y + 2 SAY "Prikaz stavki sa stanjem 0 (D/N)    " GET _stavke_nula PICT "@!" VALID _stavke_nula $ "DN"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Prikaz kolicina ( U-samo ulaz, I-samo izlaz, S-sve )" GET _tip_prikaza VALID _tip_prikaza $ "UIS" PICT "@!"
+   @ m_x + _x, m_y + 2 SAY8 "Prikaz količina ( U-samo ulaz, I-samo izlaz, S-sve )" GET _tip_prikaza VALID _tip_prikaza $ "UIS" PICT "@!"
 
    IF ps
       ++ _x
       ++ _x
-      @ m_x + _x, m_y + 2 SAY "Datum pocetnog stanja:" GET _date_ps
+      @ m_x + _x, m_y + 2 SAY8 "Datum početnog stanja:" GET _date_ps
    ENDIF
 
    READ
@@ -875,6 +875,7 @@ STATIC FUNCTION lager_lista_xml( table, params )
    // xml_node( "datum_do", gFirma )
    // xml_node( "roba", gFirma )
 
+   table:GoTo(1)
 
    DO WHILE !table:Eof()
 
@@ -1026,8 +1027,6 @@ STATIC FUNCTION fakt_lager_lista_get_data( params, ps )
 
    IF !is_var_objekat_tpquery( _table )
       _table := NIL
-   ELSE
-      _table:Refresh()
    ENDIF
 
    IF ps

@@ -42,17 +42,21 @@ FUNCTION fill_all_partneri_idbr_pdvb()
 
    LOCAL nCnt := 0
 
-   O_PARTN
 
-   ++nCnt
+   O_PARTN
+   SELECT partn
+
 
    Box( , 3, 60 )
 
-     @ m_x + 2, m_y + 2 SAY8  "Podešavam identifikacijski i PDV broj za sve partnere"
-     @ m_x + 2, m_y + 2 SAY  nCnt
-     @ m_x + 3, m_y + 2 SAY  recno()
+     @ m_x + 1, m_y + 2 SAY8  "Podešavam identifikacijski i PDV broj za sve partnere"
+  
+     @ m_x + 3, m_y + 18 SAY  "/"
+     @ m_x + 3, m_y + 20 SAY  partn->(reccount())
 
      DO WHILE !Eof()
+        ++nCnt
+        @ m_x + 3, m_y + 2 SAY  nCnt
         update_idbr_pdvb_from_regb()
         SKIP
      ENDDO
@@ -87,8 +91,9 @@ FUNCTION update_idbr_pdvb_from_regb()
 
    PushWa()
 
+   SELECT PARTN
+
    oPartnId := Unicode():New( partn->id, is_partn_sql() )
-   altd() 
    cRegB := get_partn_regb( oPartnId )
    cIdBr := get_partn_idbr( oPartnId )
    cPdvBr := get_partn_pdvb( oPartnId )
@@ -112,6 +117,10 @@ FUNCTION update_idbr_pdvb_from_regb()
       USifK( "PARTN", "PDVB", oPartnId, "" )
       EXIT
 
+   CASE 0
+
+      // ne upisivati prazan string
+      EXIT
 
    OTHERWISE
 

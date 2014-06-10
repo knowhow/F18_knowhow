@@ -278,8 +278,6 @@ STATIC FUNCTION _cre_rpt( rpt_vars, otv_stavke )
       RETURN NIL
    ENDIF
 
-   _table:Refresh()
-
    RETURN _table
 
 
@@ -393,6 +391,8 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
    ELSE
       xml_node( "val", "EUR" )
    ENDIF
+
+   table:GoTo(1)
 
    DO WHILE !table:Eof()
 

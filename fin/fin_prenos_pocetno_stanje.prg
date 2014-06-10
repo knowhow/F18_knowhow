@@ -160,6 +160,8 @@ STATIC FUNCTION _insert_into_fin_priprema( data, konto_data, partn_data, param )
 
    _i_saldo := 0
 
+   data:GoTo(1)
+
    DO WHILE !data:Eof()
 
       _row := data:GetRow()
@@ -506,7 +508,6 @@ STATIC FUNCTION get_data( param, data_fin, konto_data, partner_data )
    IF !is_var_objekat_tpquery( data_fin ) 
       data_fin := NIL
    ELSE
-      data_fin:Refresh()
       IF data_fin:LastRec() == 0
          data_fin := NIL
       ENDIF

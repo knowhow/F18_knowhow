@@ -48,7 +48,6 @@ FUNCTION fin_dok_get_last_rbr( idfirma, idvn, brnal )
       " AND brnal = " + _sql_quote( brnal )
 
    _table := _sql_query( _server, _qry )
-   _table:Refresh()
 
    oRow := _table:GetRow( 1 )
 

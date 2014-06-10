@@ -197,7 +197,7 @@ STATIC FUNCTION _izdvoji_ulaze( vars )
 
    MsgO( "Prikupljanje podataka ulaza u maloprodaji... sačekajte !" )
 
-   _table:Refresh()
+   _table:GoTo(1)
 
    FOR _i := 1 TO _table:LastRec()
 
@@ -229,9 +229,6 @@ STATIC FUNCTION _izdvoji_ulaze( vars )
    RETURN _cnt
 
 
-// ------------------------------------------------------
-// izdvoji prodaju artikala
-// ------------------------------------------------------
 STATIC FUNCTION _izdvoji_prodaju( vars )
 
    LOCAL _qry := ""
@@ -251,7 +248,6 @@ STATIC FUNCTION _izdvoji_prodaju( vars )
    _dob := vars[ "dobavljac" ]
    _id_firma := gFirma
 
-   // datumski uslov
    IF _dat_od <> CToD( "" )
       _date += "kalk.datdok >= " + _sql_quote( _dat_od ) + " "
    ENDIF
@@ -266,13 +262,10 @@ STATIC FUNCTION _izdvoji_prodaju( vars )
 
    ENDIF
 
-   // sredi upit
    IF !Empty( _date )
       _date := " AND (" + _date + ")"
    ENDIF
 
-   // sql upit za izlaze:
-   //
    _qry := "SELECT " + ;
       "kalk.pkonto pkonto, " + ;
       "kalk.idroba idroba, " + ;
@@ -294,12 +287,10 @@ STATIC FUNCTION _izdvoji_prodaju( vars )
       "GROUP BY kalk.pkonto, kalk.idroba " + ;
       "ORDER BY kalk.idroba"
 
-   MsgO( "Prikupljanje podataka o izlazima robe... sacekajte !" )
+   MsgO( "Prikupljanje podataka o izlazima robe... sačekajte !" )
 
    _table := _sql_query( _server, _qry )
-   _table:Refresh()
-
-   log_write( _qry, 7 )
+   _table:GoTo(1)
 
    FOR _i := 1 TO _table:LastRec()
 

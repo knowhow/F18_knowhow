@@ -13,9 +13,6 @@
 #include "kalk.ch"
 
 
-// ------------------------------------------------------------
-// lager lista sql varijanata
-// ------------------------------------------------------------
 FUNCTION kalk_prod_lager_lista_sql( params, ps )
 
    LOCAL _data, _server
@@ -96,7 +93,6 @@ FUNCTION kalk_prod_lager_lista_sql( params, ps )
    IF !is_var_objekat_tpquery( _data ) 
       _data := NIL
    ELSE
-      _data:Refresh()
       IF _data:LastRec() == 0
          _data := NIL
       ENDIF
@@ -114,9 +110,6 @@ FUNCTION kalk_prod_lager_lista_sql( params, ps )
 
 
 
-// ------------------------------------------------------------
-// lager lista prodavnice, uslovi izvjestaja
-// ------------------------------------------------------------
 FUNCTION kalk_prod_lager_lista_vars( params, ps )
 
    LOCAL _ret := .T.
@@ -129,7 +122,6 @@ FUNCTION kalk_prod_lager_lista_vars( params, ps )
    LOCAL _curr_user := my_user()
    LOCAL _set_roba := "N"
 
-   // pocetno stanje parametar
    IF ps == NIL
       ps := .F.
    ENDIF
@@ -142,14 +134,13 @@ FUNCTION kalk_prod_lager_lista_vars( params, ps )
    _dat_ps := NIL
    _roba_tip_tu := "N"
 
-   // parametri za pocetno stanje
    IF ps
       _dat_od := CToD( "01.01." + AllTrim( Str( Year( Date() ) -1 ) ) )
       _dat_do := CToD( "31.12." + AllTrim( Str( Year( Date() ) -1 ) ) )
       _dat_ps := CToD( "01.01." + AllTrim( Str( Year( Date() ) ) ) )
    ENDIF
 
-   Box( "# LAGER LISTA PRODAVNICE" + if( ps, " / POCETNO STANJE", "" ), 15, MAXCOLS() - 5 )
+   Box( "# LAGER LISTA PRODAVNICE" + if( ps, " / POČETNO STANJE", "" ), 15, MAXCOLS() - 5 )
 
    @ m_x + _x, m_y + 2 SAY "Firma "
 		
@@ -157,18 +148,16 @@ FUNCTION kalk_prod_lager_lista_vars( params, ps )
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Prodavnicki konto:" GET _p_konto VALID P_Konto( @_p_konto )
+   @ m_x + _x, m_y + 2 SAY8 "Prodavnički konto:" GET _p_konto VALID P_Konto( @_p_konto )
 
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Datum od:" GET _dat_od
    @ m_x + _x, Col() + 1 SAY "do:" GET _dat_do
 
-   // pocetno stanje...
    IF ps
-      @ m_x + _x, Col() + 1 SAY "Datum poc.stanja:" GET _dat_ps
+      @ m_x + _x, Col() + 1 SAY8 "Datum poč.stanja:" GET _dat_ps
    ENDIF
 
-   // filteri...
    ++ _x
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Filter po artiklima:" GET _art_filter PICT "@S50"
@@ -179,7 +168,6 @@ FUNCTION kalk_prod_lager_lista_vars( params, ps )
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Filter po v.dokument:" GET _dok_filter PICT "@S50"
 
-   // ostali uslovi...
    ++ _x
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Prikaz nabavne vrijednosti (D/N)" GET _pr_nab VALID _pr_nab $ "DN" PICT "@!"
@@ -189,26 +177,23 @@ FUNCTION kalk_prod_lager_lista_vars( params, ps )
    @ m_x + _x, m_y + 2 SAY "Prikaz robe tipa T/U (D/N)" GET _roba_tip_tu VALID _roba_tip_tu $ "DN" PICT "@!"
 
    IF ps
-      @ m_x + _x, Col() + 1 SAY "MPC uzmi iz sifrarnika (D/N) ?" GET _set_roba VALID _set_roba $ "DN" PICT "@!"
+      @ m_x + _x, Col() + 1 SAY8 "MPC uzmi iz šifrarnika (D/N) ?" GET _set_roba VALID _set_roba $ "DN" PICT "@!"
    ENDIF
 
    READ
 
    BoxC()
 
-   // ESC dogadjaj
    IF LastKey() == K_ESC
       RETURN .F.
    ENDIF
 
-   // setuj parametre sql/par
    set_metric( "kalk_lager_lista_prod_id_konto", _curr_user, _p_konto )
    set_metric( "kalk_lager_lista_prod_po_nabavnoj", _curr_user, _pr_nab )
    set_metric( "kalk_lager_lista_prod_prikaz_nula", _curr_user, _nule )
    set_metric( "kalk_lager_lista_prod_datum_od", _curr_user, _dat_od )
    set_metric( "kalk_lager_lista_prod_datum_do", _curr_user, _dat_do )
 
-   // setuj matricu parametara
    params[ "datum_od" ] := _dat_od
    params[ "datum_do" ] := _dat_do
    params[ "datum_ps" ] := _dat_ps
@@ -226,9 +211,6 @@ FUNCTION kalk_prod_lager_lista_vars( params, ps )
 
 
 
-// ------------------------------------------------------------
-// prodavnicko pocetno stanje...
-// ------------------------------------------------------------
 FUNCTION kalk_prod_pocetno_stanje()
 
    LOCAL _ps := .T.
@@ -236,26 +218,19 @@ FUNCTION kalk_prod_pocetno_stanje()
    LOCAL _data
    LOCAL _count := 0
 
-   // pozovi lager listu ali kao pocetno stanje...
    _data := kalk_prod_lager_lista_sql( @_param, _ps )
 
-   IF _data == NIL .OR. ValType( _data ) == "L"
+   IF _data == NIL
       RETURN
    ENDIF
 
-   // sada imam podatke
-   // trebam napraviti insert podataka u pripremu...
    _count := kalk_prod_insert_ps_into_pripr( _data, _param )
 
    IF _count > 0
-      // renumerisi pripremu...
       renumeracija_kalk_pripr( nil, nil, .T. )
-
       my_close_all_dbf()
       azur_kalk( .T. )
-
-      MsgBeep( "Formiran dokument pocetnog stanj i automatski azuriran !" )
-
+      MsgBeep( "Formiran dokument početnog stanja i automatski ažuriran !" )
    ENDIF
 
    RETURN
@@ -263,9 +238,6 @@ FUNCTION kalk_prod_pocetno_stanje()
 
 
 
-// ----------------------------------------------------------------
-// ubacuje podatke pocetnog stanja u pripremu...
-// ----------------------------------------------------------------
 STATIC FUNCTION kalk_prod_insert_ps_into_pripr( data, params )
 
    LOCAL _count := 0
@@ -285,7 +257,6 @@ STATIC FUNCTION kalk_prod_insert_ps_into_pripr( data, params )
    O_ROBA
    O_TARIFA
 
-   // nadji mi novi broj dokumenta za ps
    IF glBrojacPoKontima
       _sufix := SufBrKalk( _p_konto )
       _kalk_broj := SljBrKalk( _kalk_tip, gFirma, _sufix )
@@ -297,18 +268,18 @@ STATIC FUNCTION kalk_prod_insert_ps_into_pripr( data, params )
       _kalk_broj := PadR( "00001", 8 )
    ENDIF
 
-   // pronadji konto u konta tipovi cijena...
    SELECT koncij
    GO TOP
    SEEK _p_konto
 
-   MsgO( "Punjenje pripreme podacima pocetnog stanja u toku, dok: " + _kalk_tip + "-" + AllTrim( _kalk_broj ) )
+   MsgO( "Punjenje pripreme podacima početnog stanja u toku, dok: " + _kalk_tip + "-" + AllTrim( _kalk_broj ) )
+
+   data:GoTo(1)
 
    DO WHILE !data:Eof()
 
       _row := data:GetRow()
 
-      // zapisi....
       _id_roba := hb_UTF8ToStr( _row:FieldGet( _row:FieldPos( "idroba" ) ) )
       _ulaz := _row:FieldGet( _row:FieldPos( "ulaz" ) )
       _izlaz := _row:FieldGet( _row:FieldPos( "izlaz" ) )
@@ -317,12 +288,10 @@ STATIC FUNCTION kalk_prod_insert_ps_into_pripr( data, params )
       _mpvu := _row:FieldGet( _row:FieldPos( "mpvu" ) )
       _mpvi := _row:FieldGet( _row:FieldPos( "mpvi" ) )
 
-      // pronadji artikal
       SELECT roba
       GO TOP
       SEEK _id_roba
 
-      // roba tip T ili U
       IF _roba_tip_tu == "N" .AND. roba->tip $ "TU"
          data:Skip()
          LOOP
@@ -333,7 +302,6 @@ STATIC FUNCTION kalk_prod_insert_ps_into_pripr( data, params )
          LOOP
       ENDIF
 
-      // dodaj u pripremu...
       SELECT kalk_pripr
       APPEND BLANK
 
@@ -367,7 +335,6 @@ STATIC FUNCTION kalk_prod_insert_ps_into_pripr( data, params )
       _rec[ "mpcsapp" ] := Round( ( _mpvu - _mpvi ) / ( _ulaz - _izlaz ), 2 )
 
       IF params[ "set_mpc" ]
-         // ako je setovanje cijene iz sifrarnika
          _rec[ "mpcsapp" ] := UzmiMpcSif()
       ENDIF
 

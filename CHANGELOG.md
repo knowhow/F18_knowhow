@@ -1,3 +1,7 @@
+1.7.100  2014-06-10, vsasa
+
+  - TPQuery:Refresh() izbačeno
+ 
 1.7.99  2014-06-09, vsasa
 
   - razne sitne ispravke i korekcije

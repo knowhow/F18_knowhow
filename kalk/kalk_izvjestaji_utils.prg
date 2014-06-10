@@ -114,7 +114,7 @@ STATIC FUNCTION _fakt_get_izlazi( partner, roba )
       " ORDER BY datdok"
 
    _table := _sql_query( _server, _qry )
-   _table:Refresh()
+   _table:GoTo(1)
 
    FOR _i := 1 TO _table:LastRec()
 
@@ -154,7 +154,7 @@ STATIC FUNCTION _kalk_get_ulazi( partner, roba, mag_prod )
       " ORDER BY datdok"
 
    _table := _sql_query( _server, _qry )
-   _table:Refresh()
+   _table:GoTo(1)
 
    FOR _i := 1 TO _table:LastRec()
 

@@ -99,8 +99,6 @@ METHOD RNALDamageDocument:get_damage_data()
       RETURN NIL
    ENDIF
 
-   _table:Refresh()
-
    ::damage_data := _table
 
    RETURN
@@ -475,8 +473,6 @@ METHOD RNALDamageDocument:get_rnal_header_data()
       RETURN NIL
    ENDIF
 
-   _table:Refresh()
-
    RETURN _table
 
 
@@ -500,8 +496,6 @@ METHOD RNALDamageDocument:get_rnal_items_data()
       RETURN NIL
    ENDIF
 
-   _table:Refresh()
-
    RETURN _table
 
 
@@ -523,8 +517,6 @@ METHOD RNALDamageDocument:get_rnal_opers_data()
    IF _table == NIL
       RETURN NIL
    ENDIF
-
-   _table:Refresh()
 
    RETURN _table
 

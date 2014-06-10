@@ -531,8 +531,6 @@ STATIC FUNCTION __dupli_bk_sql()
       RETURN NIL
    ENDIF
 
-   _table:Refresh()
-
    RETURN _table
 
 

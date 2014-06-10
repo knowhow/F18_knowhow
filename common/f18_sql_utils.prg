@@ -463,12 +463,10 @@ FUNCTION _sql_get_value( table_name, field_name, cond )
    ENDIF
 
    _table := _sql_query( _server, _qry )
-   _table:Refresh()
 
    oRow := _table:GetRow( 1 )
    _val := oRow:FieldGet( 1 )
 
-   // ako nema polja vraca NIL
    IF ValType( _val ) == "L"
       _val := NIL
    ENDIF
@@ -562,7 +560,6 @@ FUNCTION _sql_table_struct( table )
       " ORDER BY ordinal_position;"
 
    _data := _sql_query( _server, _qry )
-   _data:refresh()
    _data:goto( 1 )
 
    DO WHILE !_data:Eof()
@@ -741,7 +738,6 @@ FUNCTION _sql_query_to_table( alias, qry )
    SELECT ( alias )
    GO TOP
 
-   qry:Refresh()
    qry:Goto( 1 )
 
    DO WHILE !qry:Eof()

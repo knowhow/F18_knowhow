@@ -30,7 +30,6 @@ _qry := "SELECT SUM( CASE WHEN d_p = '1' THEN iznosbhd ELSE -iznosbhd END ) AS s
         " AND idfirma = " + _sql_quote( id_firma )
 
 _table := _sql_query( _server, _qry )
-_table:Refresh()
 
 oRow := _table:GetRow( 1 )
 
@@ -61,7 +60,6 @@ _qry := "SELECT MAX( datdok ) AS uplata FROM fmk.fin_suban " + ;
         " AND d_p = '2' "
 
 _table := _sql_query( _server, _qry )
-_table:Refresh()
 
 oRow := _table:GetRow( 1 )
 
@@ -92,7 +90,6 @@ _qry := "SELECT MAX( datdok ) AS uplata FROM fmk.fin_suban " + ;
         " AND idfirma = " + _sql_quote( id_firma )
 
 _table := _sql_query( _server, _qry )
-_table:Refresh()
 
 oRow := _table:GetRow( 1 )
 

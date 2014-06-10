@@ -57,15 +57,14 @@ FUNCTION Kurs( datum, val_iz, val_u )
    _qry += " ORDER BY id, datum"
 
    _data := _sql_query( my_server(), _qry )
-   _data:Refresh()
    _data:GoTo( 1 )
    oRow := _data:GetRow( 1 )
 
    IF _data:LastRec() == 0
-      Msg( "Nepostojeca valuta iz koje se pretvara iznos:## '" + val_iz + "' !" )
+      Msg( "Nepostojeća valuta iz koje se pretvara iznos:## '" + val_iz + "' !" )
       _tmp_1 := 1
    ELSEIF !Empty( datum ) .AND. ( DToS( datum ) < DToS( oRow:FieldGet( oRow:FieldPos( "datum" ) ) ) )
-      Msg( "Nepostojeci kurs valute iz koje se pretvara iznos:## '" + val_iz + "'. Provjeriti datum !" )
+      Msg( "Nepostojeći kurs valute iz koje se pretvara iznos:## '" + val_iz + "'. Provjeriti datum !" )
       _tmp_1 := 1
    ELSE
       _id := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "id" ) ) )
@@ -96,16 +95,15 @@ FUNCTION Kurs( datum, val_iz, val_u )
    _qry += " ORDER BY id, datum"
 
    _data := _sql_query( my_server(), _qry )
-   _data:Refresh()
    _data:GoTo( 1 )
    oRow := _data:GetRow( 1 )
 
    IF _data:LastRec() == 0
-      Msg( "Nepostojeca valuta u koju se pretvara iznos:## '" + val_u + "' !" )
+      Msg( "Nepostojeća valuta u koju se pretvara iznos:## '" + val_u + "' !" )
       _tmp_1 := 1
       _tmp_2 := 1
    ELSEIF !Empty( datum ) .AND. ( DToS( datum ) < DToS( oRow:FieldGet( oRow:FieldPos( "datum" ) ) ) )
-      Msg( "Nepostojeci kurs valute u koju se pretvara iznos:## '" + val_u + "'. Provjeriti datum !" )
+      Msg( "Nepostojeći kurs valute u koju se pretvara iznos:## '" + val_u + "'. Provjeriti datum !" )
       _tmp_1 := 1
       _tmp_2 := 1
    ELSE

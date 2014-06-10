@@ -556,7 +556,6 @@ METHOD F18Login:get_database_sessions( database )
       "ORDER BY godina"
 
    _table := _sql_query( _server, _qry )
-   _table:Refresh()
 
    IF _table == NIL
       RETURN NIL
@@ -593,7 +592,6 @@ METHOD F18Login:get_database_top_session( database )
       "ORDER BY godina"
 
    _table := _sql_query( _server, _qry )
-   _table:Refresh()
 
    IF _table == NIL
       RETURN NIL
@@ -625,7 +623,6 @@ METHOD F18Login:get_database_description( database, session )
       "WHERE datname = " + _sql_quote( _database_name )
 
    _table := _sql_query( _server, _qry )
-   _table:Refresh()
 
    IF _table == NIL
       RETURN NIL
@@ -690,7 +687,6 @@ METHOD F18Login:database_array()
       " ORDER BY datab "
 
    _table := _sql_query( _server, _qry )
-   _table:Refresh()
 
    IF _table == NIL
       RETURN NIL

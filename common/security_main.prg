@@ -221,7 +221,7 @@ FUNCTION get_list_f18_users()
       RETURN NIL
    ENDIF
 
-   _table:Refresh()
+   _table:GoTo(1)
 
    FOR _i := 1 TO _table:LastRec()
 

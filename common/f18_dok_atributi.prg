@@ -296,9 +296,8 @@ METHOD F18_DOK_ATRIB:get_atrib_list_from_server()
       RETURN NIL
    ENDIF
 
-   _table:Refresh()
+   _table:GoTo(1)
 
-   // napuni mi matricu sa rezultatom...
    DO WHILE !_table:Eof()
       oItem := _table:GetRow()
       AAdd( _a_atrib, { oItem:FieldGet( oItem:FieldPos( "rbr" ) ), ;

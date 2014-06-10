@@ -130,8 +130,8 @@ FUNCTION Pitanje2( cId, cPitanje, cOdgDefault )
    Box( "", 5, nDuz + 4, .F. )
    SET CURSOR ON
    @ m_x + 2, m_y + 3 SAY PadR( cPitanje, nDuz ) GET cOdg PICTURE "@!" VALID cOdg $ 'DNAO'
-   @ m_x + 4, m_y + 3 SAY PadC( "Moguci odgovori:  D - DA  ,  A - DA sve do kraja", nDuz )
-   @ m_x + 5, m_y + 3 SAY PadC( "                  N - NE  ,  O - NE sve do kraja", nDuz )
+   @ m_x + 4, m_y + 3 SAY8 PadC( "Mogući odgovori:  D - DA  ,  A - DA sve do kraja", nDuz )
+   @ m_x + 5, m_y + 3 SAY8 PadC( "                  N - NE  ,  O - NE sve do kraja", nDuz )
    READ
    BoxC()
 
@@ -187,9 +187,9 @@ FUNCTION select_print_mode( cDirekt )
          PICT "@!" VALID cDirekt $ "DEFGRV"
 
       @ m_x + 2, m_y + 2 SAY "----------------------------------"
-      @ m_x + 3, m_y + 2 SAY "E - direktna stampa na LPT1 (F,G)"
-      @ m_x + 4, m_y + 2 SAY "V - prikaz izvjestaja u editoru"
-      @ m_x + 5, m_y + 2 SAY "R - ptxt stampa"
+      @ m_x + 3, m_y + 2 SAY8 "E - direktna štampa na LPT1 (F,G)"
+      @ m_x + 4, m_y + 2 SAY8 "V - prikaz izvještaja u editoru"
+      @ m_x + 5, m_y + 2 SAY8 "R - ptxt štampa"
       @ m_x + 6, m_y + 2 SAY "---------- O P C I J E -----------"
 
       READ
@@ -205,7 +205,7 @@ FUNCTION select_print_mode( cDirekt )
    ELSE
 
       Box (, 3, 60 )
-      @ m_x + 1, m_y + 2 SAY "Batch printer rezim ..."
+      @ m_x + 1, m_y + 2 SAY8 "Batch printer režim ..."
       Sleep( 14 )
       BoxC()
       RETURN "D"
@@ -284,7 +284,6 @@ FUNCTION PozdravMsg( cNaslov, cVer, lGreska )
 
    lInvert := .F.
 
-   // Pozdravna poruka
    Box( "por", 11, 60, lInvert )
    SET CURSOR OFF
 
@@ -296,7 +295,7 @@ FUNCTION PozdravMsg( cNaslov, cVer, lGreska )
    @ m_x + 9, m_y + 2 SAY PadC( "web: http://bring.out.ba", 60 )
    @ m_x + 10, m_y + 2 SAY PadC( "email: podrska@bring.out.ba", 60 )
    IF lGreska
-      @ m_x + 11, m_y + 4 SAY "Prosli put program nije regularno zavrsen"
+      @ m_x + 11, m_y + 4 SAY8 "Prošli put program nije regularno završen"
       Beep( 2 )
    ENDIF
 

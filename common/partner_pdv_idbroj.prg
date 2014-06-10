@@ -27,8 +27,8 @@ FUNCTION kreiraj_pa_napuni_partn_idbr_pdvb()
    lDodano := fill_sifk_partn_idbr()
    lDodano := lDodano .AND. fill_sifk_partn_pdvb()
 
-   IF lDodano 
-       RETURN fill_all_partneri_idbr_pdvb()
+   IF lDodano
+      RETURN fill_all_partneri_idbr_pdvb()
    ENDIF
 
    RETURN .F.
@@ -42,26 +42,27 @@ FUNCTION fill_all_partneri_idbr_pdvb()
 
    LOCAL nCnt := 0
 
-
    O_PARTN
    SELECT partn
 
 
    Box( , 3, 60 )
 
-     @ m_x + 1, m_y + 2 SAY8  "Podešavam identifikacijski i PDV broj za sve partnere"
-  
-     @ m_x + 3, m_y + 18 SAY  "/"
-     @ m_x + 3, m_y + 20 SAY  partn->(reccount())
+   @ m_x + 1, m_y + 2 SAY8  "Podešavam identifikacijski i PDV broj za sve partnere"
 
-     DO WHILE !Eof()
-        ++nCnt
-        @ m_x + 3, m_y + 2 SAY  nCnt
-        update_idbr_pdvb_from_regb()
-        SKIP
-     ENDDO
+   @ m_x + 3, m_y + 18 SAY  "/"
+   @ m_x + 3, m_y + 20 SAY  partn->( RecCount() )
+
+   DO WHILE !Eof()
+      ++nCnt
+      @ m_x + 3, m_y + 2 SAY  nCnt
+      update_idbr_pdvb_from_regb()
+      SKIP
+   ENDDO
 
    BoxC()
+
+   delete_sifk_partner_regb()
 
    RETURN .T.
 
@@ -99,8 +100,8 @@ FUNCTION update_idbr_pdvb_from_regb()
    cPdvBr := get_partn_pdvb( oPartnId )
 
 
-   IF !EMPTY( cIdBr ) .OR. !EMPTY( cPdvBr )
-        RETURN .F.
+   IF !Empty( cIdBr ) .OR. !Empty( cPdvBr )
+      RETURN .F.
    ENDIF
 
    SWITCH Len( cRegB )
@@ -131,7 +132,7 @@ FUNCTION update_idbr_pdvb_from_regb()
 
    PopWa()
 
-   return .T.
+   RETURN .T.
 
 FUNCTION fill_sifk_partn( cIdSifk, cNazSifk, cSort, nLen )
 
@@ -232,3 +233,12 @@ STATIC FUNCTION get_partn_idbr( partn_id )
 FUNCTION fill_partn_sifk_regb()
 
    RETURN fill_sifk_partn( "REGB", "ID broj", "01", 13 )
+
+
+FUNCTION delete_sifk_partner_regb()
+
+   LOCAL cQuery
+
+   cQuery := "DELETE FROM fmk.sifk WHERE oznaka='REGB'"
+
+   RETURN _sql_query( my_server(), cQuery )

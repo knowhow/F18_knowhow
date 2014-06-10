@@ -70,7 +70,6 @@ FUNCTION run_sql_query( qry, retry )
 
 
 
-// pomoćna funkcija za sql query izvršavanje
 FUNCTION _sql_query( oServer, cQuery, silent )
 
    LOCAL oQuery, cMsg

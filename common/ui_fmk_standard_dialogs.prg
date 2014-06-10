@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -19,299 +19,289 @@ STATIC cLDirekt := "0"
  *  \param cId
  *  \param cPitanje       - Pitanje
  *  \param cOdgDefault    - Odgovor koji ce biti ponudjen na boxu
- *  \cMogOdg              - Moguci odgovori  
+ *  \cMogOdg              - Moguci odgovori
  */
- 
-function Pitanje(cId, cPitanje, cOdgDefault, cMogOdg)
 
-local cPom
-local cOdgovor
+FUNCTION Pitanje( cId, cPitanje, cOdgDefault, cMogOdg )
 
-IF cMogOdg == NIL
-  cMogOdg := "YDNL"
-ENDIF
+   LOCAL cPom
+   LOCAL cOdgovor
 
-private GetList:={}
+   IF cMogOdg == NIL
+      cMogOdg := "YDNL"
+   ENDIF
+
+   PRIVATE GetList := {}
 
 
-if gAppSrv
-	return cOdgDefault
-endif
+   IF gAppSrv
+      RETURN cOdgDefault
+   ENDIF
 
-cPom := SET(_SET_DEVICE)
-SET DEVICE TO SCREEN
+   cPom := Set( _SET_DEVICE )
+   SET DEVICE TO SCREEN
 
-if cOdgDefault == NIL .or. !(cOdgDefault $ cMogOdg)
-  cOdgovor:=" "
-else
-  cOdgovor := cOdgDefault
-endif
+   IF cOdgDefault == NIL .OR. !( cOdgDefault $ cMogOdg )
+      cOdgovor := " "
+   ELSE
+      cOdgovor := cOdgDefault
+   ENDIF
 
-set escape off
+   SET ESCAPE OFF
 #ifdef TEST
-  push_test_tag(cId)
+   push_test_tag( cId )
 #else
-  set confirm off
+   SET CONFIRM OFF
 #endif
 
-Box( , 3, LEN(cPitanje) + 6, .f.)
+   Box( , 3, Len( cPitanje ) + 6, .F. )
 
- set cursor on
- @ m_x + 2, m_y + 3 SAY8 cPitanje GET cOdgovor PICTURE "@!" ; 
- 	VALID ValidSamo(cOdgovor, cMogOdg)
+   SET CURSOR ON
+   @ m_x + 2, m_y + 3 SAY8 cPitanje GET cOdgovor PICTURE "@!" ;
+      VALID ValidSamo( cOdgovor, cMogOdg )
 
- READ
+   READ
 
-BoxC()
+   BoxC()
 
-set escape on
+   SET ESCAPE ON
 #ifdef TEST
-  pop_test_tag()
+   pop_test_tag()
 #else
-  set confirm on
+   SET CONFIRM ON
 #endif
 
-SET(_SET_DEVICE, cPom)
-return cOdgovor
+   SET( _SET_DEVICE, cPom )
+
+   RETURN cOdgovor
 
 
 // ------------------------------------------------
 // ------------------------------------------------
-static function ValidSamo(cOdg, cMogOdg)
+STATIC FUNCTION ValidSamo( cOdg, cMogOdg )
 
-if cOdg $ cMogOdg
-  return .t.
-else
+   IF cOdg $ cMogOdg
+      RETURN .T.
+   ELSE
 
 #ifndef TEST
-  MsgBeep("Unešeno: " + cOdg + "#Morate unijeti nešto od :" + cMogOdg)
+      MsgBeep( "Unešeno: " + cOdg + "#Morate unijeti nešto od :" + cMogOdg )
 #endif
 
-  return .f.
-endif
+      RETURN .F.
+   ENDIF
 
-RETURN .f.
+   RETURN .F.
 
 
 
 /*! \fn Pitanje2(cId,cPitanje,cOdgDefault)
- *  \brief 
+ *  \brief
  *  \param cId
  *  \param cPitanje       - Pitanje
  *  \cOdgDefault          - Ponudjeni odgovor
  */
- 
-function Pitanje2(cId,cPitanje,cOdgDefault)
 
-local cOdg
-local nDuz:=LEN(cPitanje)+4
-local cPom:=SET(_SET_DEVICE)
-private GetList:={}
+FUNCTION Pitanje2( cId, cPitanje, cOdgDefault )
 
-if gAppSrv
-	return cOdgDefault
-endif
+   LOCAL cOdg
+   LOCAL nDuz := Len( cPitanje ) + 4
+   LOCAL cPom := Set( _SET_DEVICE )
+   PRIVATE GetList := {}
 
-SET DEVICE TO SCREEN
-if nDuz<54; nDuz:=54; endif
+   IF gAppSrv
+      RETURN cOdgDefault
+   ENDIF
 
-if cOdgDefault==NIL .or. !(cOdgDefault $ 'DNAO')
-  cOdg:=' '
-else
-  cOdg:=cOdgDefault
-endif
+   SET DEVICE TO SCREEN
+   IF nDuz < 54; nDuz := 54; ENDIF
 
-#ifndef TEST
- set escape off
- set confirm off
-#endif
-
-Box("",5,nDuz+4,.f.)
- set cursor on
- @ m_x+2,m_y+3 SAY PADR(cPitanje,nDuz) GET cOdg PICTURE "@!" VALID cOdg $ 'DNAO'
- @ m_x+4,m_y+3 SAY PADC("Moguci odgovori:  D - DA  ,  A - DA sve do kraja",nDuz)
- @ m_x+5,m_y+3 SAY PADC("                  N - NE  ,  O - NE sve do kraja",nDuz)
- READ
-BoxC()
+   IF cOdgDefault == NIL .OR. !( cOdgDefault $ 'DNAO' )
+      cOdg := ' '
+   ELSE
+      cOdg := cOdgDefault
+   ENDIF
 
 #ifndef TEST
-  set escape on
-  set confirm on
+   SET ESCAPE OFF
+   SET CONFIRM OFF
 #endif
 
-SET(_SET_DEVICE,cPom)
+   Box( "", 5, nDuz + 4, .F. )
+   SET CURSOR ON
+   @ m_x + 2, m_y + 3 SAY PadR( cPitanje, nDuz ) GET cOdg PICTURE "@!" VALID cOdg $ 'DNAO'
+   @ m_x + 4, m_y + 3 SAY PadC( "Moguci odgovori:  D - DA  ,  A - DA sve do kraja", nDuz )
+   @ m_x + 5, m_y + 3 SAY PadC( "                  N - NE  ,  O - NE sve do kraja", nDuz )
+   READ
+   BoxC()
 
-return cOdg
+#ifndef TEST
+   SET ESCAPE ON
+   SET CONFIRM ON
+#endif
 
+   SET( _SET_DEVICE, cPom )
 
-
-
-// ----------------------------
-//  print_dialog_box(cDirekt)
-//  \param cDirekt
-// ---------------------------- 
-function print_dialog_box( cDirekt )
-
-if gAppSrv
-	return cDirekt
-endif
-
-set confirm off
-set cursor on
-
-if !gAppSrv
-	cDirekt := select_print_mode( @cDirekt )
-endif
-
-set confirm on
-
-return cDirekt
+   RETURN cOdg
 
 
 
-function select_print_mode( cDirekt )
-local nWidth
 
-nWidth:=35
-   
-Tone(400, 2)
+FUNCTION print_dialog_box( cDirekt )
 
-// radi pozicioniranja dijaloga na sredinu ekrana
-m_x := 8
-m_y := 38 - ROUND( nWidth / 2, 0 ) 
+   IF gAppSrv
+      RETURN cDirekt
+   ENDIF
 
-@ m_x, m_y SAY ""
+   SET CONFIRM OFF
+   SET CURSOR ON
 
-if gcDirekt <> "B"
+   IF !gAppSrv
+      cDirekt := select_print_mode( @cDirekt )
+   ENDIF
 
-    Box(, 6, nWidth )
+   SET CONFIRM ON
 
-	    @ m_x + 1, m_y + 2 SAY "   Izlaz direktno na printer:" GET cDirekt ;
-			pict "@!" valid cDirekt $ "DEFGRV"
-
-	    @ m_x + 2, m_y + 2 SAY "----------------------------------" 
-	    @ m_x + 3, m_y + 2 SAY "E - direktna stampa na LPT1 (F,G)"
-	    @ m_x + 4, m_y + 2 SAY "V - prikaz izvjestaja u editoru"
-	    @ m_x + 5, m_y + 2 SAY "R - ptxt stampa"
-	    @ m_x + 6, m_y + 2 SAY "---------- O P C I J E -----------"
-
-	    read
-
-    BoxC()
-
-    if LASTKEY() == K_ESC
-        return ""
-    else
-        return cDirekt
-    endif
-
-else
-
-	Box (, 3, 60)
-  		@ m_x+1, m_y+2 SAY "Batch printer rezim ..."
-  		// moram sacekati da se predhona faktura odstampa
-  		SLEEP(14)
- 	BoxC()
- 	// batch rezim
- 	return "D"
-
-endif
-
-return
+   RETURN cDirekt
 
 
-/*! \fn GetLozinka(nSiflen)
- *  \brief
- *  \param nSiflen
- */
- 
-function GetLozinka(nSiflen)
 
-local cKorsif
+FUNCTION select_print_mode( cDirekt )
 
-cKorsif:=""
-Box(, 2, 30 )
-@ m_x+2,m_y+2 SAY "Lozinka..... "
+   LOCAL nWidth
 
-DO WHILE .T.
+   nWidth := 35
 
-   nChar:=WaitScrSav()
+   Tone( 400, 2 )
 
-   if nChar==K_ESC
-      cKorsif:=""
-   
-   elseif (nChar==0) .or. (nChar > 128)
-       loop
-   
-   elseif (nChar==K_ENTER)
-       exit
-   
-   elseif (nChar==K_BS)
-       cKorSif:=left(ckorsif,len(cKorsif)-1)
-   
-   else
-   
-      
-      if len(cKorsif)>=nSifLen // max 15 znakova
-         Beep(1)
-      endif
-      
-      if (nChar > 1)
-        cKorsif:=cKorSif+Chr(nChar)
-      endif
-   
-   endif
+   m_x := 8
+   m_y := 38 - Round( nWidth / 2, 0 )
 
-   @ m_x+2,m_y+15 SAY padr(replicate("*",len(cKorSif)),nSifLen)
-   if (nChar==K_ESC)
-      loop
-   endif
+   @ m_x, m_y SAY ""
 
-ENDDO
+   IF gcDirekt <> "B"
 
-BoxC()
+      Box(, 6, nWidth )
 
-set cursor on
-return padr(cKorSif,nSifLen)
+      @ m_x + 1, m_y + 2 SAY "   Izlaz direktno na printer:" GET cDirekt ;
+         PICT "@!" VALID cDirekt $ "DEFGRV"
+
+      @ m_x + 2, m_y + 2 SAY "----------------------------------"
+      @ m_x + 3, m_y + 2 SAY "E - direktna stampa na LPT1 (F,G)"
+      @ m_x + 4, m_y + 2 SAY "V - prikaz izvjestaja u editoru"
+      @ m_x + 5, m_y + 2 SAY "R - ptxt stampa"
+      @ m_x + 6, m_y + 2 SAY "---------- O P C I J E -----------"
+
+      READ
+
+      BoxC()
+
+      IF LastKey() == K_ESC
+         RETURN ""
+      ELSE
+         RETURN cDirekt
+      ENDIF
+
+   ELSE
+
+      Box (, 3, 60 )
+      @ m_x + 1, m_y + 2 SAY "Batch printer rezim ..."
+      Sleep( 14 )
+      BoxC()
+      RETURN "D"
+
+   ENDIF
+
+   RETURN
+
+
+FUNCTION GetLozinka( nSiflen )
+
+   LOCAL cKorsif
+
+   cKorsif := ""
+   Box(, 2, 30 )
+   @ m_x + 2, m_y + 2 SAY "Lozinka..... "
+
+   DO WHILE .T.
+
+      nChar := WaitScrSav()
+
+      IF nChar == K_ESC
+         cKorsif := ""
+
+      ELSEIF ( nChar == 0 ) .OR. ( nChar > 128 )
+         LOOP
+
+      ELSEIF ( nChar == K_ENTER )
+         EXIT
+
+      ELSEIF ( nChar == K_BS )
+         cKorSif := Left( ckorsif, Len( cKorsif ) -1 )
+
+      ELSE
+
+
+         IF Len( cKorsif ) >= nSifLen // max 15 znakova
+            Beep( 1 )
+         ENDIF
+
+         IF ( nChar > 1 )
+            cKorsif := cKorSif + Chr( nChar )
+         ENDIF
+
+      ENDIF
+
+      @ m_x + 2, m_y + 15 SAY PadR( Replicate( "*", Len( cKorSif ) ), nSifLen )
+      IF ( nChar == K_ESC )
+         LOOP
+      ENDIF
+
+   ENDDO
+
+   BoxC()
+
+   SET CURSOR ON
+
+   RETURN PadR( cKorSif, nSifLen )
 
 
 
 /*! \fn PozdravMsg(cNaslov,cVer,nk)
  *  \brief Ispisuje ekran sa pozdravnom porukom
  *  \param cNaslov
- *  \param cVer       
+ *  \param cVer
  *  \param nk
  */
- 
-function PozdravMsg(cNaslov,cVer, lGreska)
 
-local lInvert
+FUNCTION PozdravMsg( cNaslov, cVer, lGreska )
 
-if gAppSrv
-	return
-endif
+   LOCAL lInvert
 
-lInvert:=.f.
+   IF gAppSrv
+      RETURN
+   ENDIF
 
-// Pozdravna poruka
-Box("por",11, 60, lInvert)      
-Set cursor off
+   lInvert := .F.
 
-     @ m_x+2,m_y+2 SAY PADC(cNaslov,60)
-     @ m_x+3,m_y+2 SAY PADC("Ver. "+cVer,60)
-     @ m_x+5,m_y+2 SAY PADC("bring.out d.o.o. Sarajevo",60)
-     @ m_x+7,m_y+2 SAY PADC("Juraja Najtharta 3, Sarajevo, BiH", 60)
-     @ m_x+8,m_y+2 SAY PADC("tel: 033/269-291, fax: 033/269-292", 60)
-     @ m_x+9,m_y+2 SAY PADC("web: http://bring.out.ba",60)
-     @ m_x+10,m_y+2 SAY PADC("email: podrska@bring.out.ba",60)
-     IF lGreska
-         @ m_x+11,m_y+4 SAY "Prosli put program nije regularno zavrsen"
-         Beep(2)
-     ENDIF
+   // Pozdravna poruka
+   Box( "por", 11, 60, lInvert )
+   SET CURSOR OFF
 
-     Inkey(5)
+   @ m_x + 2, m_y + 2 SAY PadC( cNaslov, 60 )
+   @ m_x + 3, m_y + 2 SAY PadC( "Ver. " + cVer, 60 )
+   @ m_x + 5, m_y + 2 SAY PadC( "bring.out d.o.o. Sarajevo", 60 )
+   @ m_x + 7, m_y + 2 SAY PadC( "Juraja Najtharta 3, Sarajevo, BiH", 60 )
+   @ m_x + 8, m_y + 2 SAY PadC( "tel: 033/269-291, fax: 033/269-292", 60 )
+   @ m_x + 9, m_y + 2 SAY PadC( "web: http://bring.out.ba", 60 )
+   @ m_x + 10, m_y + 2 SAY PadC( "email: podrska@bring.out.ba", 60 )
+   IF lGreska
+      @ m_x + 11, m_y + 4 SAY "Prosli put program nije regularno zavrsen"
+      Beep( 2 )
+   ENDIF
 
-BoxC()
-return
+   Inkey( 5 )
 
+   BoxC()
 
+   RETURN

@@ -1187,8 +1187,6 @@ METHOD FinBrutoBilans:rekapitulacija_klasa()
 
 
 
-// -----------------------------------------------------
-// -----------------------------------------------------
 METHOD FinBrutoBilans:fill_temp_table()
 
    LOCAL _count := 0
@@ -1199,7 +1197,6 @@ METHOD FinBrutoBilans:fill_temp_table()
    O_R_EXP
    SET ORDER TO TAG "1"
 
-   ::data:refresh()
    ::data:goTo( 1 )
 
    MsgO( "Punim pomocnu tabelu izvjestaja ..." )
@@ -1212,8 +1209,6 @@ METHOD FinBrutoBilans:fill_temp_table()
       __konto := _set_sql_record_to_hash( "fmk.konto", _id_konto )
 
       if ::tip == 1
-         // postoji mogućnost da imamo praznog partnera a u šifrarniku nemamo prazan zapis koji bi se uzeo
-         // __partn može u konačnici biti = NIL
          _id_partn := query_row( oRow, "idpartner" )
          __partn := _set_sql_record_to_hash( "fmk.partn", _id_partn )
       ENDIF
@@ -1253,7 +1248,6 @@ METHOD FinBrutoBilans:fill_temp_table()
       _rec[ "kum_dug" ] := query_row( oRow, "kum_dug" )
       _rec[ "kum_pot" ] := query_row( oRow, "kum_pot" )
 
-      // sredi kolonu saldo...
       _rec[ "sld_dug" ] := _rec[ "kum_dug" ] - _rec[ "kum_pot" ]
 
       IF _rec[ "sld_dug" ] >= 0

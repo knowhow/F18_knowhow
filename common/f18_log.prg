@@ -12,9 +12,6 @@
 #include "fmk.ch"
 
 
-// -----------------------------------------------------------
-// pregled log-a
-// -----------------------------------------------------------
 FUNCTION f18_view_log( _params )
 
    LOCAL _data
@@ -25,15 +22,11 @@ FUNCTION f18_view_log( _params )
       _print_to_file := .T.
    ENDIF
 
-   // uslovi pregleda...
    IF _params == NIL .AND. !_vars( @_params )
       RETURN
    ENDIF
 
-   // sql upit...
    _data := _log_get_data( _params )
-
-   // printanje sadrzaja
    _log_file := _print_log_data( _data, _params, _print_to_file )
 
    RETURN _log_file
@@ -41,9 +34,6 @@ FUNCTION f18_view_log( _params )
 
 
 
-// -----------------------------------------------------------
-// uslovi pregleda ...
-// -----------------------------------------------------------
 STATIC FUNCTION _vars( params )
 
    LOCAL _ok := .F.
@@ -77,11 +67,11 @@ STATIC FUNCTION _vars( params )
 
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "  sadrzi:" GET _conds_true PICT "@S40"
+   @ m_x + _x, m_y + 2 SAY8 "  sadrži:" GET _conds_true PICT "@S40"
 
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "nesadrzi:" GET _conds_false PICT "@S40"
+   @ m_x + _x, m_y + 2 SAY8 "nesadrži:" GET _conds_false PICT "@S40"
 
    ++ _x
    ++ _x
@@ -129,9 +119,6 @@ STATIC FUNCTION _vars( params )
 
 
 
-// -----------------------------------------------------------
-// vraca podatke prema zadanom sql upitu
-// -----------------------------------------------------------
 STATIC FUNCTION _log_get_data( params )
 
    LOCAL _user := ""
@@ -167,9 +154,6 @@ STATIC FUNCTION _log_get_data( params )
       _where += " AND ( msg LIKE '%F18_DOK_OPER%' ) "
    ENDIF
 
-
-   // GLAVNI UPIT
-   // ==========================
    _qry := "SELECT id, user_code, l_time, msg "
    _qry += "FROM fmk.log "
    _qry += "WHERE " + _where
@@ -177,25 +161,18 @@ STATIC FUNCTION _log_get_data( params )
    IF _limit > 0
       _qry += " LIMIT " + AllTrim( Str( _limit ) )
    ENDIF
-   MsgO( "Vrsim upit prema serveru..." )
 
+   MsgO( "Vršim upit prema serveru..." )
    _data := _sql_query( _server, _qry )
+   MsgC()
 
-   IF ValType( _data ) == "L"
-      MsgC()
+   IF !is_var_objekat_tpquery( _data )
       RETURN NIL
    ENDIF
-
-   _data:Refresh()
-
-   MsgC()
 
    RETURN _data
 
 
-// -----------------------------------------------------------
-// printanje sadrzaja log-a
-// -----------------------------------------------------------
 STATIC FUNCTION _print_log_data( data, params, print_to_file )
 
    LOCAL _row
@@ -205,10 +182,9 @@ STATIC FUNCTION _print_log_data( data, params, print_to_file )
    LOCAL _log_file := DToS( Date() ) + "_" + StrTran( Time(), ":", "" ) + "_log.txt"
    LOCAL _log_path := my_home_root()
 
-   // nema zapisa
    IF data == NIL .OR. data:LastRec() == 0
       IF !print_to_file
-         MsgBeep( "Za zadati uslov ne postoje podaci u log-u !!!" )
+         MsgBeep( "Za zadati uslov ne postoje podaci u log-u !" )
       ENDIF
       RETURN
    ENDIF
@@ -240,7 +216,6 @@ STATIC FUNCTION _print_log_data( data, params, print_to_file )
       @ PRow(), PCol() + 1 SAY PadR( _date, 19 )
       @ PRow(), _pos_y := PCol() + 1 SAY PadR( _user, 10 )
 
-      // razbij poruku u niz
       _a_txt := SjeciStr( _txt, _txt_len )
 
       FOR _i := 1 TO Len( _a_txt )
@@ -267,9 +242,6 @@ STATIC FUNCTION _print_log_data( data, params, print_to_file )
 
 
 
-// ------------------------------------------------------------
-// brisanje log-a
-// ------------------------------------------------------------
 FUNCTION f18_log_delete()
 
    LOCAL _params := hb_Hash()
@@ -278,20 +250,15 @@ FUNCTION f18_log_delete()
    LOCAL _delete_log_level := fetch_metric( "log_delete_level", NIL, 30 )
 
    IF _delete_log_level == 0
-      // ne radi nista
       RETURN
    ENDIF
 
-   // DATE() - 30 > zadnji put brisano !
    IF ( _curr_log_date - _delete_log_level ) > _last_log_date
 
-      // brisi sve starije od n dana
       _params[ "delete_level" ] := _delete_log_level
       _params[ "current_date" ] := _curr_log_date
 
-      // brisi log
       IF _sql_log_delete( _params )
-         // zabiljezi operaciju
          set_metric( "log_last_delete_date", NIL,  _curr_log_date )
       ENDIF
 
@@ -300,9 +267,6 @@ FUNCTION f18_log_delete()
    RETURN
 
 
-// -------------------------------------------------------------
-// brisanje log-a za odredjeni datumski period
-// -------------------------------------------------------------
 STATIC FUNCTION _sql_log_delete( params )
 
    LOCAL _ok := .T.
@@ -313,21 +277,13 @@ STATIC FUNCTION _sql_log_delete( params )
    LOCAL _curr_date := params[ "current_date" ]
    LOCAL _delete_date := ( _curr_date - _delete_level )
 
-   // WHERE uslov
-   // ==========================
-
-   // datumski uslov
    _where := "l_time::char(8) <= " + _sql_quote( _delete_date )
    _where += " AND msg NOT LIKE " + _sql_quote( "%F18_DOK_OPER%" )
 
-   // GLAVNI UPIT
-   // ==========================
-   // glavni dio upita...
    _qry := "DELETE FROM fmk.log "
-   // dodaj WHERE
    _qry += "WHERE " + _where
 
-   MsgO( "Brisanje log-a u toku... sacekajte trenutak !" )
+   MsgO( "Brisanje log-a u toku... sačekajte trenutak !" )
 
    _result := _sql_query( _server, _qry )
 

@@ -26,6 +26,10 @@ FUNCTION lock_semaphore( table, status, unlock_table )
    LOCAL _user   := f18_user()
    LOCAL _get_status
 
+   IF skip_semaphore( table)
+        RETURN .T.
+   ENDIF
+
    IF unlock_table == NIL
       unlock_table := .T.
    ENDIF
@@ -98,14 +102,17 @@ FUNCTION lock_semaphore( table, status, unlock_table )
    RETURN .T.
 
 
-// -----------------------------------
-// -----------------------------------
 FUNCTION get_semaphore_status( table )
 
    LOCAL _qry
    LOCAL _ret
    LOCAL _server := pg_server()
    LOCAL _user   := f18_user()
+
+   IF skip_semaphore( table)
+        RETURN "free" 
+   ENDIF
+
 
    _qry := "SELECT algorithm FROM fmk.semaphores_" + table + " WHERE user_code=" + _sql_quote( _user )
    _ret := _sql_query( _server, _qry )
@@ -119,8 +126,6 @@ FUNCTION get_semaphore_status( table )
 
 
 
-// ------------------------------------
-// ------------------------------------
 FUNCTION last_semaphore_version( table )
 
    LOCAL _qry
@@ -137,8 +142,7 @@ FUNCTION last_semaphore_version( table )
    RETURN _ret:FieldGet( 1 )
 
 
-// -------------------------------
-// -------------------------------
+
 FUNCTION sql_query_bez_zapisa( ret )
 
    SWITCH ValType( ret )
@@ -157,6 +161,7 @@ FUNCTION sql_query_bez_zapisa( ret )
 
    RETURN .F.
 
+
 // -----------------------------------------------------------------------
 // get_semaphore_version( "konto", last = .t. => last_version)
 // -----------------------------------------------------------------------
@@ -168,6 +173,11 @@ FUNCTION get_semaphore_version( table, last )
    LOCAL _tbl
    LOCAL _server := pg_server()
    LOCAL _user := f18_user()
+
+
+   IF skip_semaphore( table)
+        RETURN 1
+   ENDIF
 
    // trebam last_version
    IF last == NIL
@@ -212,6 +222,13 @@ FUNCTION get_semaphore_version_h( table )
    LOCAL _user := f18_user()
    LOCAL _ret := hb_Hash()
 
+   IF skip_semaphore( table)
+        _ret[ "version" ] := 1
+        _ret[ "last_version" ] := 1
+        RETURN _ret
+   ENDIF
+
+
    _tbl := "fmk.semaphores_" + Lower( table )
 
    _qry := "SELECT version, last_trans_version AS last_version"
@@ -248,6 +265,11 @@ FUNCTION reset_semaphore_version( table )
    LOCAL _user := f18_user()
    LOCAL _server := pg_server()
 
+   IF skip_semaphore( table)
+        RETURN .T.
+   ENDIF
+
+
    _tbl := "fmk.semaphores_" + Lower( table )
    _result := table_count( _tbl, "user_code=" + _sql_quote( _user ) )
 
@@ -282,6 +304,11 @@ FUNCTION push_dat_to_semaphore( table, date )
    LOCAL _i
    LOCAL _user := f18_user()
    LOCAL _server := pg_server()
+
+   IF skip_semaphore( table)
+        RETURN .F.
+   ENDIF
+
 
    _tbl := "fmk.semaphores_" + table
    _result := table_count( _tbl, "user_code=" + _sql_quote( _user ) )
@@ -462,6 +489,10 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
       to_myself := .F.
    ENDIF
 
+   IF skip_semaphore( table)
+        RETURN .F.
+   ENDIF
+
    log_write( "START: update semaphore version after push", 7 )
 
    _a_dbf_rec := get_a_dbf_rec( table )
@@ -528,6 +559,10 @@ FUNCTION nuliraj_ids_and_update_my_semaphore_ver( table )
    LOCAL _free
    LOCAL _sem_status
 
+   IF skip_semaphore( table)
+        RETURN .F.
+   ENDIF
+
    log_write( "START: nuliraj ids-ove - user: " + _user, 7 )
 
    _tbl := "fmk.semaphores_" + Lower( table )
@@ -541,3 +576,16 @@ FUNCTION nuliraj_ids_and_update_my_semaphore_ver( table )
    log_write( "END: nuliraj ids-ove - user: " + _user, 7 )
 
    RETURN _ret
+
+
+STATIC FUNCTION skip_semaphore( table )
+
+   table := LOWER( table )
+
+   IF table == "sifk" .OR. table == "sifv"
+        RETURN .T.
+   ENDIF
+
+   RETURN .F.
+
+   

@@ -446,49 +446,6 @@ FUNCTION set_sifk_partn_bank()
 
 
 
-
-FUNCTION set_sifk_id_broj()
-
-   LOCAL lFound
-   LOCAL cSeek
-   LOCAL cNaz
-   LOCAL cId
-
-   SELECT ( F_SIFK )
-   O_SIFK
-
-   SET ORDER TO TAG "ID"
-   // id + SORT + naz
-
-   cId := PadR( "PARTN", SIFK_LEN_DBF )
-   cNaz := PadR( "ID broj", Len( field->naz ) )
-   cSeek :=  cId + "01" + cNaz
-
-   SEEK cSeek
-
-   IF !Found()
-
-      APPEND BLANK
-
-      _rec := dbf_get_rec()
-      _rec[ "id" ] := cId
-      _rec[ "naz" ] := cNaz
-      _rec[ "oznaka" ] := "REGB"
-      _rec[ "sort" ] := "01"
-      _rec[ "tip" ] := "C"
-      _rec[ "duzina" ] := 13
-      _rec[ "veza" ] := "1"
-
-      IF !update_rec_server_and_dbf( "sifk", _rec, 1, "FULL" )
-         delete_with_rlock()
-      ENDIF
-
-   ENDIF
-
-   RETURN .T.
-
-
-
 FUNCTION ispisi_partn( cPartn, nX, nY )
 
    LOCAL nTArea := Select()
@@ -511,49 +468,6 @@ FUNCTION ispisi_partn( cPartn, nX, nY )
 
    RETURN .T.
 
-
-
-/*
-   Opis: vraća id broj iz šifranika partnera na osnovu SIFK->REGB
-        ukoliko je unešen PDV broj dužine 12, dodaje se "4" ispred
-
-*/
-
-FUNCTION firma_id_broj( partn_id )
-
-   LOCAL cBroj
-
-   cBroj := get_partn_regb( partn_id ) 
-
-   IF LEN( cBroj ) == 12
-      cBroj := "4" + cBroj
-   ENDIF
-
-   RETURN cBroj
-
-
-/*
-   Opis: vraća id broj unešen u šifrarnik partnera kroz polje SIFK->REGB
-         ukoliko je broj > 13 vraća se prazno
-*/
-
-FUNCTION firma_pdv_broj( partn_id )
-
-   LOCAL cBroj 
-   
-   cBroj := get_partn_regb( partn_id )
-
-   IF LEN( cBroj ) <> 12
-      cBroj := ""  
-   ENDIF
-
-   RETURN cBroj
-
-/*
-   Opis: vraća karaketristiku REGB iz tabele SIFK za partnera 
-*/
-STATIC FUNCTION get_partn_regb( partn_id )
-   RETURN AllTrim( IzSifKPartn( "REGB", partn_id, .F. ) )
 
 
 

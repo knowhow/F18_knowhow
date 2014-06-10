@@ -12,16 +12,10 @@
 #include "fmk.ch"
 #include "fileio.ch"
 
-// static string
 STATIC OID_ASK := "0"
-// ;
 
-// static string
 STATIC nSlogova := 0
-// ;
 
-// -----------------------------------------------------
-// -----------------------------------------------------
 FUNCTION create_index( cImeInd, xKljuc, alias, silent )
 
    LOCAL _force_erase := .F.

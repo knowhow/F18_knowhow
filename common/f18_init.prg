@@ -461,8 +461,8 @@ FUNCTION _get_server_params_from_config()
 #endif
 
 #endif
-// --------------------------------------------------------
-// --------------------------------------------------------
+
+
 FUNCTION _write_server_params_to_config()
 
    LOCAL _key, _ini_params := hb_Hash()
@@ -476,9 +476,6 @@ FUNCTION _write_server_params_to_config()
    ENDIF
 
 
-   // -------------------------------
-   // -------------------------------
-
 FUNCTION post_login( gVars )
 
    LOCAL _ver
@@ -491,26 +488,20 @@ FUNCTION post_login( gVars )
    set_f18_home( my_server_params()[ "database" ] )
    log_write( "home baze: " + my_home() )
 
-#ifndef NODE
    hb_gtInfo( HB_GTI_WINTITLE, "[ " + my_server_params()[ "user" ] + " ][ " + my_server_params()[ "database" ] + " ]" )
 
    _ver := read_dbf_version_from_config()
-#endif
 
    // setuje u matricu sve tabele svih modula
    set_a_dbfs()
 
-#ifndef NODE
-   // kreiranje tabela...
    cre_all_dbfs( _ver )
-#endif
+   kreiraj_pa_napuni_partn_idbr_pdvb ()
 
    // inicijaliziraj "dbf_key_fields" u __f18_dbf hash matrici
    set_a_dbfs_key_fields()
 
-#ifndef NODE
    write_dbf_version_to_config()
-#endif
 
    check_server_db_version()
    server_log_enable()

@@ -367,7 +367,7 @@ METHOD LDExportTxt:fill_data_from_ld()
       RETURN NIL
    ENDIF
 
-   _table:Refresh()
+   _table:GoTo(1)
    _count := 0
 
    // napunit ce iz sql upita tabelu export

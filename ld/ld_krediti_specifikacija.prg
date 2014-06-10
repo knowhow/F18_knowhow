@@ -102,7 +102,6 @@ if _data == NIL
     return NIL
 endif
 
-_data:Refresh()
 _data:GoTo(1)
 
 return _data

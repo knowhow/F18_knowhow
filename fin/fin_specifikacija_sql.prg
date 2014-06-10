@@ -263,8 +263,6 @@ STATIC FUNCTION _cre_rpt( rpt_vars )
       RETURN NIL
    ENDIF
 
-   _table:Refresh()
-
    RETURN _table
 
 
@@ -397,6 +395,8 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
 
    _sint_kto := "X"
 
+   table:GoTo(1)
+  
    DO WHILE !table:Eof()
 
       oItem := table:GetRow()

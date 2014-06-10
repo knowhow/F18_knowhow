@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * ERP software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -15,136 +15,140 @@
 // ----------------------------------------------------------------
 // vraca naredni redni broj fin naloga
 // ----------------------------------------------------------------
-function fin_dok_get_next_rbr( idfirma, idvn, brnal )
-local _rbr := ""
+FUNCTION fin_dok_get_next_rbr( idfirma, idvn, brnal )
 
-// vrati mi zadnji redni broj sa dokumenta
-_rbr := fin_dok_get_last_rbr( idfirma, idvn, brnal )
+   LOCAL _rbr := ""
 
-if EMPTY( _rbr )
-    return _rbr
-endif
+   // vrati mi zadnji redni broj sa dokumenta
+   _rbr := fin_dok_get_last_rbr( idfirma, idvn, brnal )
 
-// uvecaj i sredi redni broj
-_rbr := STR( VAL( ALLTRIM( _rbr ) ) + 1 , 4 )
+   IF Empty( _rbr )
+      RETURN _rbr
+   ENDIF
 
-return _rbr
+   // uvecaj i sredi redni broj
+   _rbr := Str( Val( AllTrim( _rbr ) ) + 1, 4 )
+
+   RETURN _rbr
 
 
 // ----------------------------------------------------------------
 // vraca najveci redni broj stavke u nalogu
 // ----------------------------------------------------------------
-function fin_dok_get_last_rbr( idfirma, idvn, brnal )
-local _qry, _qry_ret, _table
-local _server := pg_server()
-local oRow
-local _last
+FUNCTION fin_dok_get_last_rbr( idfirma, idvn, brnal )
 
-_qry := "SELECT MAX(rbr) AS last FROM fmk.fin_suban " + ;
-        " WHERE idfirma = " + _sql_quote( idfirma ) + ;
-        " AND idvn = " + _sql_quote( idvn ) + ;
-        " AND brnal = " + _sql_quote( brnal )
+   LOCAL _qry, _qry_ret, _table
+   LOCAL _server := pg_server()
+   LOCAL oRow
+   LOCAL _last
 
-_table := _sql_query( _server, _qry )
-_table:Refresh()
+   _qry := "SELECT MAX(rbr) AS last FROM fmk.fin_suban " + ;
+      " WHERE idfirma = " + _sql_quote( idfirma ) + ;
+      " AND idvn = " + _sql_quote( idvn ) + ;
+      " AND brnal = " + _sql_quote( brnal )
 
-oRow := _table:GetRow( 1 )
+   _table := _sql_query( _server, _qry )
 
-_last := oRow:FieldGet( oRow:FieldPos("last"))
+   oRow := _table:GetRow( 1 )
 
-if VALTYPE( _last ) == "L"
-    _last := ""
-endif
+   _last := oRow:FieldGet( oRow:FieldPos( "last" ) )
 
-return _last
+   IF ValType( _last ) == "L"
+      _last := ""
+   ENDIF
+
+   RETURN _last
 
 
 // ------------------------------------------------
 // vraca prazan broj naloga
 // ------------------------------------------------
-function fin_prazan_broj_naloga()
-return PADR( "0", 8, "0" )
+FUNCTION fin_prazan_broj_naloga()
+   RETURN PadR( "0", 8, "0" )
 
 
 // ------------------------------------------------------------
 // resetuje brojač dokumenta ako smo pobrisali dokument
 // ------------------------------------------------------------
-function fin_reset_broj_dokumenta( firma, tip_dokumenta, broj_dokumenta )
-local _param
-local _broj := 0
+FUNCTION fin_reset_broj_dokumenta( firma, tip_dokumenta, broj_dokumenta )
 
-// param: fin/10/10
-_param := "fin" + "/" + firma + "/" + tip_dokumenta 
-_broj := fetch_metric( _param, nil, _broj )
+   LOCAL _param
+   LOCAL _broj := 0
 
-if VAL( broj_dokumenta ) == _broj
-    -- _broj
-    // smanji globalni brojac za 1
-    set_metric( _param, nil, _broj )
-endif
+   // param: fin/10/10
+   _param := "fin" + "/" + firma + "/" + tip_dokumenta
+   _broj := fetch_metric( _param, nil, _broj )
 
-return
+   IF Val( broj_dokumenta ) == _broj
+      -- _broj
+      // smanji globalni brojac za 1
+      set_metric( _param, nil, _broj )
+   ENDIF
+
+   RETURN
 
 
 
 // ------------------------------------------------------------------
 // fin, uzimanje novog broja za fin dokument
 // ------------------------------------------------------------------
-function fin_novi_broj_dokumenta( firma, tip_dokumenta )
-local _broj := 0
-local _broj_nalog := 0
-local _len_broj := 8
-local _param
-local _tmp, _rest
-local _ret := ""
-local _t_area := SELECT()
+FUNCTION fin_novi_broj_dokumenta( firma, tip_dokumenta )
 
-// obratiti paznju na gBrojac... 1 ili 2
-// 1 - idfirma + idvn + brnal
-// 2 - idfirma + brnal
+   LOCAL _broj := 0
+   LOCAL _broj_nalog := 0
+   LOCAL _len_broj := 8
+   LOCAL _param
+   LOCAL _tmp, _rest
+   LOCAL _ret := ""
+   LOCAL _t_area := Select()
 
-// param: fin/10/10
-_param := "fin" + "/" + firma + "/" + tip_dokumenta 
+   // obratiti paznju na gBrojac... 1 ili 2
+   // 1 - idfirma + idvn + brnal
+   // 2 - idfirma + brnal
 
-if gBrojac == "2"
-    _param := "fin" + "/" + firma
-endif
+   // param: fin/10/10
+   _param := "fin" + "/" + firma + "/" + tip_dokumenta
 
-_broj := fetch_metric( _param, nil, _broj )
+   IF gBrojac == "2"
+      _param := "fin" + "/" + firma
+   ENDIF
 
-// konsultuj i doks uporedo
-O_NALOG
+   _broj := fetch_metric( _param, nil, _broj )
 
-if gBrojac == "2"
-    set order to tag "2"
-    go bottom
-else
-    set order to tag "1"
-    go top
-    seek firma + tip_dokumenta + "Ž"
-    skip -1
-endif
+   // konsultuj i doks uporedo
+   O_NALOG
 
-if field->idfirma == firma .and. IF( gBrojac == "1", field->idvn == tip_dokumenta, .t. )
-    _broj_nalog := VAL( field->brnal )
-else
-    _broj_nalog := 0
-endif
+   IF gBrojac == "2"
+      SET ORDER TO TAG "2"
+      GO BOTTOM
+   ELSE
+      SET ORDER TO TAG "1"
+      GO TOP
+      SEEK firma + tip_dokumenta + "Ž"
+      SKIP -1
+   ENDIF
 
-// uzmi sta je vece, nalog broj ili globalni brojac
-_broj := MAX( _broj, _broj_nalog )
+   IF field->idfirma == firma .AND. IF( gBrojac == "1", field->idvn == tip_dokumenta, .T. )
+      _broj_nalog := Val( field->brnal )
+   ELSE
+      _broj_nalog := 0
+   ENDIF
 
-// uvecaj broj
-++ _broj
+   // uzmi sta je vece, nalog broj ili globalni brojac
+   _broj := Max( _broj, _broj_nalog )
 
-// ovo ce napraviti string prave duzine...
-_ret := PADL( ALLTRIM( STR( _broj ) ), _len_broj, "0" )
+   // uvecaj broj
+   ++ _broj
 
-// upisi ga u globalni parametar
-set_metric( _param, nil, _broj )
+   // ovo ce napraviti string prave duzine...
+   _ret := PadL( AllTrim( Str( _broj ) ), _len_broj, "0" )
 
-select ( _t_area )
-return _ret
+   // upisi ga u globalni parametar
+   set_metric( _param, nil, _broj )
+
+   SELECT ( _t_area )
+
+   RETURN _ret
 
 
 
@@ -153,54 +157,55 @@ return _ret
 // ------------------------------------------------------------
 // setuj broj dokumenta u pripremi ako treba !
 // ------------------------------------------------------------
-function fin_set_broj_dokumenta()
-local _broj_dokumenta
-local _t_rec, _rec
-local _firma, _td, _null_brdok
-local _len_broj := 8
+FUNCTION fin_set_broj_dokumenta()
 
-PushWa()
+   LOCAL _broj_dokumenta
+   LOCAL _t_rec, _rec
+   LOCAL _firma, _td, _null_brdok
+   LOCAL _len_broj := 8
 
-select fin_pripr
-go top
+   PushWa()
 
-_null_brdok := fin_prazan_broj_naloga()
-        
-if field->brnal <> _null_brdok 
-    // nemam sta raditi, broj je vec setovan
-    PopWa()
-    return .f.
-endif
+   SELECT fin_pripr
+   GO TOP
 
-_firma := field->idfirma
-_td := field->idvn
+   _null_brdok := fin_prazan_broj_naloga()
 
-// daj mi novi broj dokumenta
-_broj_dokumenta := fin_novi_broj_dokumenta( _firma, _td )
+   IF field->brnal <> _null_brdok
+      // nemam sta raditi, broj je vec setovan
+      PopWa()
+      RETURN .F.
+   ENDIF
 
-select fin_pripr
-set order to tag "1"
-go top
+   _firma := field->idfirma
+   _td := field->idvn
 
-do while !EOF()
+   // daj mi novi broj dokumenta
+   _broj_dokumenta := fin_novi_broj_dokumenta( _firma, _td )
 
-    skip 1
-    _t_rec := RECNO()
-    skip -1
+   SELECT fin_pripr
+   SET ORDER TO TAG "1"
+   GO TOP
 
-    if field->idfirma == _firma .and. field->idvn == _td .and. field->brnal == _null_brdok
-        _rec := dbf_get_rec()
-        _rec["brnal"] := _broj_dokumenta
-        dbf_update_rec( _rec )
-    endif
+   DO WHILE !Eof()
 
-    go (_t_rec)
+      SKIP 1
+      _t_rec := RecNo()
+      SKIP -1
 
-enddo
+      IF field->idfirma == _firma .AND. field->idvn == _td .AND. field->brnal == _null_brdok
+         _rec := dbf_get_rec()
+         _rec[ "brnal" ] := _broj_dokumenta
+         dbf_update_rec( _rec )
+      ENDIF
 
-PopWa()
- 
-return .t.
+      GO ( _t_rec )
+
+   ENDDO
+
+   PopWa()
+
+   RETURN .T.
 
 
 
@@ -209,55 +214,50 @@ return .t.
 // ------------------------------------------------------------
 // setovanje parametra brojaca na admin meniju
 // ------------------------------------------------------------
-function fin_set_param_broj_dokumenta()
-local _param
-local _broj := 0
-local _broj_old
-local _firma := gFirma
-local _tip_dok := "10"
+FUNCTION fin_set_param_broj_dokumenta()
 
-Box(, 2, 60 )
+   LOCAL _param
+   LOCAL _broj := 0
+   LOCAL _broj_old
+   LOCAL _firma := gFirma
+   LOCAL _tip_dok := "10"
 
-    @ m_x + 1, m_y + 2 SAY "Nalog:" GET _firma
+   Box(, 2, 60 )
 
-    if gBrojac == "1"
-        @ m_x + 1, col() + 1 SAY "-" GET _tip_dok
-    endif
+   @ m_x + 1, m_y + 2 SAY "Nalog:" GET _firma
 
-    read
+   IF gBrojac == "1"
+      @ m_x + 1, Col() + 1 SAY "-" GET _tip_dok
+   ENDIF
 
-    if LastKey() == K_ESC
-        BoxC()
-        return
-    endif
+   READ
 
-    // param: fin/10/10
-    if gBrojac == "1"
-        _param := "fin" + "/" + _firma + "/" + _tip_dok
-    else
-        _param := "fin" + "/" + _firma
-    endif
+   IF LastKey() == K_ESC
+      BoxC()
+      RETURN
+   ENDIF
 
-    _broj := fetch_metric( _param, nil, _broj )
-    _broj_old := _broj
+   // param: fin/10/10
+   IF gBrojac == "1"
+      _param := "fin" + "/" + _firma + "/" + _tip_dok
+   ELSE
+      _param := "fin" + "/" + _firma
+   ENDIF
 
-    @ m_x + 2, m_y + 2 SAY "Zadnji broj naloga:" GET _broj PICT "99999999"
+   _broj := fetch_metric( _param, nil, _broj )
+   _broj_old := _broj
 
-    read
+   @ m_x + 2, m_y + 2 SAY "Zadnji broj naloga:" GET _broj PICT "99999999"
 
-BoxC()
+   READ
 
-if LastKey() != K_ESC
-    // snimi broj u globalni brojac
-    if _broj <> _broj_old
-        set_metric( _param, nil, _broj )
-    endif
-endif
+   BoxC()
 
-return
+   IF LastKey() != K_ESC
+      // snimi broj u globalni brojac
+      IF _broj <> _broj_old
+         set_metric( _param, nil, _broj )
+      ENDIF
+   ENDIF
 
-
-
-
-
-
+   RETURN

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,326 +12,285 @@
 #include "fmk.ch"
 
 
-// -----------------------------------------------------------
-// pregled log-a
-// -----------------------------------------------------------
-function f18_view_log( _params )
-local _data
-local _print_to_file := .f.
-local _log_file
+FUNCTION f18_view_log( _params )
 
-if PCOUNT() > 0
-	_print_to_file := .t.
-endif
+   LOCAL _data
+   LOCAL _print_to_file := .F.
+   LOCAL _log_file
 
-// uslovi pregleda...
-if _params == NIL .and. !_vars( @_params )
-    return
-endif
+   IF PCount() > 0
+      _print_to_file := .T.
+   ENDIF
 
-// sql upit...
-_data := _log_get_data( _params )
+   IF _params == NIL .AND. !_vars( @_params )
+      RETURN
+   ENDIF
 
-// printanje sadrzaja
-_log_file := _print_log_data( _data, _params, _print_to_file )
+   _data := _log_get_data( _params )
+   _log_file := _print_log_data( _data, _params, _print_to_file )
 
-return _log_file
+   RETURN _log_file
 
 
 
 
-// -----------------------------------------------------------
-// uslovi pregleda ...
-// -----------------------------------------------------------
-static function _vars( params )
-local _ok := .f.
-local _limit := 0
-local _datum_od := DATE()
-local _datum_do := DATE()
-local _user := PADR( f18_user(), 200 )
-local _x := 1
-local _conds_true := SPACE(600)
-local _conds_false := SPACE(600)
-local _f18_doc_oper := "N"
+STATIC FUNCTION _vars( params )
 
-Box(, 12, 70 )
+   LOCAL _ok := .F.
+   LOCAL _limit := 0
+   LOCAL _datum_od := Date()
+   LOCAL _datum_do := Date()
+   LOCAL _user := PadR( f18_user(), 200 )
+   LOCAL _x := 1
+   LOCAL _conds_true := Space( 600 )
+   LOCAL _conds_false := Space( 600 )
+   LOCAL _f18_doc_oper := "N"
 
-    @ m_x + _x, m_y + 2 SAY "Uslovi za pregled log-a..."
+   Box(, 12, 70 )
 
-    ++ _x
-    ++ _x
+   @ m_x + _x, m_y + 2 SAY "Uslovi za pregled log-a..."
 
-    @ m_x + _x, m_y + 2 SAY "Datum od" GET _datum_od
-    @ m_x + _x, col() + 1 SAY "do" GET _datum_do
+   ++ _x
+   ++ _x
 
-    ++ _x
+   @ m_x + _x, m_y + 2 SAY "Datum od" GET _datum_od
+   @ m_x + _x, Col() + 1 SAY "do" GET _datum_do
 
-    @ m_x + _x, m_y + 2 SAY "Korisnik (prazno svi):" GET _user PICT "@S40"
+   ++ _x
 
-    ++ _x
-    ++ _x
+   @ m_x + _x, m_y + 2 SAY "Korisnik (prazno svi):" GET _user PICT "@S40"
 
-    @ m_x + _x, m_y + 2 SAY "LIKE uslovi:" 
+   ++ _x
+   ++ _x
 
-    ++ _x
+   @ m_x + _x, m_y + 2 SAY "LIKE uslovi:"
 
-    @ m_x + _x, m_y + 2 SAY "  sadrzi:" GET _conds_true PICT "@S40"
+   ++ _x
 
-    ++ _x
+   @ m_x + _x, m_y + 2 SAY8 "  sadrži:" GET _conds_true PICT "@S40"
 
-    @ m_x + _x, m_y + 2 SAY "nesadrzi:" GET _conds_false PICT "@S40"
+   ++ _x
 
-    ++ _x
-    ++ _x
-    
-    @ m_x + _x, m_y + 2 SAY "Pregledaj samo operacije nad dokumentima (D/N)?" GET _f18_doc_oper VALID _f18_doc_oper $ "DN" PICT "@!"
+   @ m_x + _x, m_y + 2 SAY8 "nesadrži:" GET _conds_false PICT "@S40"
 
-    ++ _x
+   ++ _x
+   ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Limit na broj zapisa (0-bez limita)" GET _limit PICT "999999"
-    
-    read
+   @ m_x + _x, m_y + 2 SAY "Pregledaj samo operacije nad dokumentima (D/N)?" GET _f18_doc_oper VALID _f18_doc_oper $ "DN" PICT "@!"
 
-BoxC()
+   ++ _x
 
-if LastKey() == K_ESC
-    return _ok
-endif
+   @ m_x + _x, m_y + 2 SAY "Limit na broj zapisa (0-bez limita)" GET _limit PICT "999999"
 
-_ok := .t.
+   READ
 
-if !EMPTY( _conds_true )
-    _conds_true := ALLTRIM( _conds_true ) + SPACE(1)
-else
-    _conds_true := ""
-endif
+   BoxC()
 
-if !EMPTY( _conds_false )
-    _conds_false := ALLTRIM( _conds_false ) + SPACE(1)
-else
-    _conds_false := ""
-endif
+   IF LastKey() == K_ESC
+      RETURN _ok
+   ENDIF
 
-params := hb_hash()
-params["date_from"] := _datum_od
-params["date_to"] := _datum_do
-params["user"] := ALLTRIM( _user )
-params["limit"] := _limit
-params["conds_true"] := _conds_true
-params["conds_false"] := _conds_false
-params["doc_oper"] := _f18_doc_oper
+   _ok := .T.
 
-return _ok
+   IF !Empty( _conds_true )
+      _conds_true := AllTrim( _conds_true ) + Space( 1 )
+   ELSE
+      _conds_true := ""
+   ENDIF
+
+   IF !Empty( _conds_false )
+      _conds_false := AllTrim( _conds_false ) + Space( 1 )
+   ELSE
+      _conds_false := ""
+   ENDIF
+
+   params := hb_Hash()
+   params[ "date_from" ] := _datum_od
+   params[ "date_to" ] := _datum_do
+   params[ "user" ] := AllTrim( _user )
+   params[ "limit" ] := _limit
+   params[ "conds_true" ] := _conds_true
+   params[ "conds_false" ] := _conds_false
+   params[ "doc_oper" ] := _f18_doc_oper
+
+   RETURN _ok
 
 
 
 
 
-// -----------------------------------------------------------
-// vraca podatke prema zadanom sql upitu
-// -----------------------------------------------------------
-static function _log_get_data( params )
-local _user := ""
-local _dat_from := params["date_from"]
-local _dat_to := params["date_to"]
-local _limit := params["limit"]
-local _conds_true := params["conds_true"]
-local _conds_false := params["conds_false"]
-local _is_doc_oper := params["doc_oper"] == "D"
-local _qry, _where
-local _server := pg_server()
-local _data
+STATIC FUNCTION _log_get_data( params )
 
-IF hb_hhaskey( params, "user" )
-    _user := params["user"]
-ENDIF
+   LOCAL _user := ""
+   LOCAL _dat_from := params[ "date_from" ]
+   LOCAL _dat_to := params[ "date_to" ]
+   LOCAL _limit := params[ "limit" ]
+   LOCAL _conds_true := params[ "conds_true" ]
+   LOCAL _conds_false := params[ "conds_false" ]
+   LOCAL _is_doc_oper := params[ "doc_oper" ] == "D"
+   LOCAL _qry, _where
+   LOCAL _server := pg_server()
+   LOCAL _data
 
-_where := _sql_date_parse( "l_time", _dat_from, _dat_to )
+   IF hb_HHasKey( params, "user" )
+      _user := params[ "user" ]
+   ENDIF
 
-if !EMPTY( _user )
-    _where += " AND " + _sql_cond_parse( "user_code", _user )
-endif
+   _where := _sql_date_parse( "l_time", _dat_from, _dat_to )
 
-if !EMPTY( _conds_true )
-    _where += " AND (" + _sql_cond_parse( "msg", _conds_true ) + ")"
-endif
+   IF !Empty( _user )
+      _where += " AND " + _sql_cond_parse( "user_code", _user )
+   ENDIF
 
-if !EMPTY( _conds_false )
-    _where += " AND (" + _sql_cond_parse( "msg", _conds_false, .t. ) + ")"
-endif
+   IF !Empty( _conds_true )
+      _where += " AND (" + _sql_cond_parse( "msg", _conds_true ) + ")"
+   ENDIF
 
-if _is_doc_oper
-    _where += " AND ( msg LIKE '%F18_DOK_OPER%' ) " 
-endif
+   IF !Empty( _conds_false )
+      _where += " AND (" + _sql_cond_parse( "msg", _conds_false, .T. ) + ")"
+   ENDIF
 
+   IF _is_doc_oper
+      _where += " AND ( msg LIKE '%F18_DOK_OPER%' ) "
+   ENDIF
 
-// GLAVNI UPIT
-// ==========================
-_qry := "SELECT id, user_code, l_time, msg "
-_qry += "FROM fmk.log "
-_qry += "WHERE " + _where 
-_qry += " ORDER BY l_time DESC "
-if _limit > 0
-    _qry += " LIMIT " + ALLTRIM(STR( _limit )) 
-endif
-MsgO( "Vrsim upit prema serveru..." )
+   _qry := "SELECT id, user_code, l_time, msg "
+   _qry += "FROM fmk.log "
+   _qry += "WHERE " + _where
+   _qry += " ORDER BY l_time DESC "
+   IF _limit > 0
+      _qry += " LIMIT " + AllTrim( Str( _limit ) )
+   ENDIF
 
-_data := _sql_query( _server, _qry )
+   MsgO( "Vršim upit prema serveru..." )
+   _data := _sql_query( _server, _qry )
+   MsgC()
 
-if VALTYPE( _data ) == "L"
-    MsgC()
-    return NIL
-endif
+   IF !is_var_objekat_tpquery( _data )
+      RETURN NIL
+   ENDIF
 
-_data:Refresh()
-
-MsgC()
-
-return _data
+   RETURN _data
 
 
-// -----------------------------------------------------------
-// printanje sadrzaja log-a
-// -----------------------------------------------------------
-static function _print_log_data( data, params, print_to_file )
-local _row
-local _user, _txt, _date
-local _a_txt, _tmp, _i, _pos_y
-local _txt_len := 100
-local _log_file := DTOS( DATE() ) + "_" + STRTRAN( TIME(), ":", "" ) + "_log.txt"
-local _log_path := my_home_root()
+STATIC FUNCTION _print_log_data( data, params, print_to_file )
 
-// nema zapisa
-if data == NIL .or. data:LastRec() == 0
-    if !print_to_file
-    	MsgBeep( "Za zadati uslov ne postoje podaci u log-u !!!" )
-	endif
-    return
-endif
+   LOCAL _row
+   LOCAL _user, _txt, _date
+   LOCAL _a_txt, _tmp, _i, _pos_y
+   LOCAL _txt_len := 100
+   LOCAL _log_file := DToS( Date() ) + "_" + StrTran( Time(), ":", "" ) + "_log.txt"
+   LOCAL _log_path := my_home_root()
 
-if print_to_file
-	f18_start_print( _log_path + _log_file, "D" )
-else
-	START PRINT CRET
-endif
+   IF data == NIL .OR. data:LastRec() == 0
+      IF !print_to_file
+         MsgBeep( "Za zadati uslov ne postoje podaci u log-u !" )
+      ENDIF
+      RETURN
+   ENDIF
 
-?
+   IF print_to_file
+      f18_start_print( _log_path + _log_file, "D" )
+   ELSE
+      START PRINT CRET
+   ENDIF
 
-P_COND
+   ?
 
-? "PREGLED LOG-a"
-? REPLICATE( "-", 130 )
-? PADR("Datum / vrijeme", 19 ), PADR( "Korisnik", 10 ), "operacija" 
-? REPLICATE( "-", 130 )
+   P_COND
 
-do while !data:EOF()
+   ? "PREGLED LOG-a"
+   ? Replicate( "-", 130 )
+   ? PadR( "Datum / vrijeme", 19 ), PadR( "Korisnik", 10 ), "operacija"
+   ? Replicate( "-", 130 )
 
-    _row := data:GetRow()
+   DO WHILE !data:Eof()
 
-    _date := data:FieldGet( data:FieldPos( "l_time" ) )
-    _user := hb_utf8tostr( data:FieldGet( data:FieldPos( "user_code" ) ) )
-    _txt := hb_utf8tostr( data:FieldGet( data:FieldPos( "msg" ) ) )
+      _row := data:GetRow()
 
-    ?
-    @ prow(), pcol() + 1 SAY PADR( _date, 19 )
-    @ prow(), _pos_y := pcol() + 1 SAY PADR( _user, 10 )
+      _date := data:FieldGet( data:FieldPos( "l_time" ) )
+      _user := hb_UTF8ToStr( data:FieldGet( data:FieldPos( "user_code" ) ) )
+      _txt := hb_UTF8ToStr( data:FieldGet( data:FieldPos( "msg" ) ) )
 
-    // razbij poruku u niz
-    _a_txt := SjeciStr( _txt, _txt_len )
+      ?
+      @ PRow(), PCol() + 1 SAY PadR( _date, 19 )
+      @ PRow(), _pos_y := PCol() + 1 SAY PadR( _user, 10 )
 
-    for _i := 1 to LEN( _a_txt )
-        if _i > 1
+      _a_txt := SjeciStr( _txt, _txt_len )
+
+      FOR _i := 1 TO Len( _a_txt )
+         IF _i > 1
             ?
-            @ prow(), _pos_y SAY PAD( _a_txt[ _i ], _txt_len )
-        else
-            @ prow(), _pos_y := pcol() + 1 SAY PADR( _a_txt[ _i ], _txt_len )
-        endif
-    next
+            @ PRow(), _pos_y SAY Pad( _a_txt[ _i ], _txt_len )
+         ELSE
+            @ PRow(), _pos_y := PCol() + 1 SAY PadR( _a_txt[ _i ], _txt_len )
+         ENDIF
+      NEXT
 
-    data:Skip()
+      data:Skip()
 
-enddo
+   ENDDO
 
-if print_to_file
-	f18_end_print( _log_path + _log_file, "D" )
-else
-	FF
-	END PRINT
-endif
+   IF print_to_file
+      f18_end_print( _log_path + _log_file, "D" )
+   ELSE
+      FF
+      END PRINT
+   ENDIF
 
-return _log_file
-
-
-
-// ------------------------------------------------------------
-// brisanje log-a
-// ------------------------------------------------------------
-function f18_log_delete()
-local _params := hb_hash()
-local _curr_log_date := DATE()
-local _last_log_date := fetch_metric( "log_last_delete_date", NIL, CTOD( "" ) )
-local _delete_log_level := fetch_metric( "log_delete_level", NIL, 30 )
-
-if _delete_log_level == 0
-    // ne radi nista
-    return
-endif
-
-// DATE() - 30 > zadnji put brisano !
-if ( _curr_log_date - _delete_log_level ) > _last_log_date   
-
-    // brisi sve starije od n dana
-    _params["delete_level"] := _delete_log_level
-    _params["current_date"] := _curr_log_date
-
-    // brisi log
-    if _sql_log_delete( _params )
-        // zabiljezi operaciju
-        set_metric( "log_last_delete_date", NIL,  _curr_log_date )
-    endif
-
-endif
-
-return
+   RETURN _log_file
 
 
-// -------------------------------------------------------------
-// brisanje log-a za odredjeni datumski period
-// -------------------------------------------------------------
-static function _sql_log_delete( params )
-local _ok := .t.
-local _qry, _where
-local _server := pg_server()
-local _result
-local _delete_level := params["delete_level"]
-local _curr_date := params["current_date"]
-local _delete_date := ( _curr_date - _delete_level )
 
-// WHERE uslov
-// ==========================
+FUNCTION f18_log_delete()
 
-// datumski uslov
-_where := "l_time::char(8) <= " + _sql_quote( _delete_date )
-_where += " AND msg NOT LIKE " + _sql_quote( "%F18_DOK_OPER%" )
+   LOCAL _params := hb_Hash()
+   LOCAL _curr_log_date := Date()
+   LOCAL _last_log_date := fetch_metric( "log_last_delete_date", NIL, CToD( "" ) )
+   LOCAL _delete_log_level := fetch_metric( "log_delete_level", NIL, 30 )
 
-// GLAVNI UPIT
-// ==========================
-// glavni dio upita...
-_qry := "DELETE FROM fmk.log "
-// dodaj WHERE
-_qry += "WHERE " + _where 
+   IF _delete_log_level == 0
+      RETURN
+   ENDIF
 
-MsgO( "Brisanje log-a u toku... sacekajte trenutak !" )
+   IF ( _curr_log_date - _delete_log_level ) > _last_log_date
 
-_result := _sql_query( _server, _qry )
+      _params[ "delete_level" ] := _delete_log_level
+      _params[ "current_date" ] := _curr_log_date
 
-MsgC()
+      IF _sql_log_delete( _params )
+         set_metric( "log_last_delete_date", NIL,  _curr_log_date )
+      ENDIF
 
-if VALTYPE( _result ) == "L"
-    _ok := .f.
-endif
+   ENDIF
 
-return _ok
+   RETURN
 
 
- 
+STATIC FUNCTION _sql_log_delete( params )
+
+   LOCAL _ok := .T.
+   LOCAL _qry, _where
+   LOCAL _server := pg_server()
+   LOCAL _result
+   LOCAL _delete_level := params[ "delete_level" ]
+   LOCAL _curr_date := params[ "current_date" ]
+   LOCAL _delete_date := ( _curr_date - _delete_level )
+
+   _where := "l_time::char(8) <= " + _sql_quote( _delete_date )
+   _where += " AND msg NOT LIKE " + _sql_quote( "%F18_DOK_OPER%" )
+
+   _qry := "DELETE FROM fmk.log "
+   _qry += "WHERE " + _where
+
+   MsgO( "Brisanje log-a u toku... sačekajte trenutak !" )
+
+   _result := _sql_query( _server, _qry )
+
+   MsgC()
+
+   IF ValType( _result ) == "L"
+      _ok := .F.
+   ENDIF
+
+   RETURN _ok

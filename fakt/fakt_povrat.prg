@@ -476,10 +476,9 @@ FUNCTION fakt_napravi_duplikat( id_firma, id_tip_dok, br_dok )
       " ORDER BY idfirma, idtipdok, brdok, rbr "
 
    _table := _sql_query( _server, _qry )
-   _table:Refresh()
 
    IF _table:LastRec() == 0
-      MsgBeep( "Trazeni dokument nisam pronasao !" )
+      MsgBeep( "Traženi dokument nisam pronašao !" )
       RETURN .T.
    ENDIF
 
@@ -498,7 +497,6 @@ FUNCTION fakt_napravi_duplikat( id_firma, id_tip_dok, br_dok )
          ENDIF
       NEXT
 
-      // ako ima koje pride polje obradi ga !!!
       _rec[ "brdok" ] := fakt_prazan_broj_dokumenta()
       _rec[ "datdok" ] := Date()
 

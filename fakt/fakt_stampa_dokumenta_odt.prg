@@ -346,9 +346,6 @@ STATIC FUNCTION _grupno_sql_gen( racuni, params )
       RETURN NIL
    ENDIF
 
-   _table:Refresh()
-
-   // sada mi formiraj matricu na osnovu ovoga...
    _table:GoTo( 1 )
 
    racuni := {}

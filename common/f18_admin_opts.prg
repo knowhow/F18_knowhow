@@ -863,7 +863,6 @@ METHOD F18AdminOpts:new_session()
 
    // daj mi listu...
    _dbs := _sql_query( _pg_srv, _qry )
-   _dbs:Refresh()
    _dbs:GoTo( 1 )
 
    // treba da imamo listu baza...

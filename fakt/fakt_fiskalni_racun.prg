@@ -575,8 +575,6 @@ STATIC FUNCTION fakt_fiscal_stavke_racuna( id_firma, tip_dok, br_dok, storno, pa
       set_fiscal_rn_zbirni( @_data )
    ENDIF
 
-   // level validacije kolicine, cijene i decimalnih separatora
-   // kod ovog levela, desit ce se prepakivanje artikla na x100 metodu
    _item_level_check := 2
 
    IF fiscal_items_check( @_data, storno, _item_level_check, __device_params[ "drv" ] ) < 0
@@ -640,7 +638,7 @@ STATIC FUNCTION dokument_se_moze_fiskalizovati( tip_dok )
 
 
 
-FUNCTION podaci_partnera_kompletirani( sifra, id_broj )
+STATIC FUNCTION is_podaci_partnera_kompletirani( sifra, id_broj )
 
    LOCAL lRet := .T.
 
@@ -649,7 +647,6 @@ FUNCTION podaci_partnera_kompletirani( sifra, id_broj )
    SEEK sifra
 
    IF !Found()
-      MsgBeep( "Partnera nisam pronašao u šifrarniku !" )
       lRet := .F.
       RETURN lRet
    ENDIF
@@ -747,7 +744,7 @@ STATIC FUNCTION fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno )
       __prikazi_partnera := .F.
    ENDIF
 
-   _podaci_kompletirani := podaci_partnera_kompletirani( _partn_id, _partn_id_broj )
+   _podaci_kompletirani := is_podaci_partnera_kompletirani( _partn_id, _partn_id_broj )
 
    IF racun_bezgotovinski( tip_dok, _vrsta_p ) .AND. ( !__prikazi_partnera .OR. !_podaci_kompletirani )
       MsgBeep( "Podaci partnera nisu kompletirani#Operacija štampe zaustavljena !" )

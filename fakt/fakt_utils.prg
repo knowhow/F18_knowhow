@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,242 +12,215 @@
 #include "fakt.ch"
 
 
-// -----------------------------------------------------------------------------
-// sljedece funkcije su bezveze, jer gledaju po kompletnom iznosu racuna
-// ako imamo miksani rezim ili slicno... to nece raditi
-// -----------------------------------------------------------------------------
 
-// ------------------------------------------------------
-// vraca ukupno sa pdv
-// ------------------------------------------------------
-function _uk_sa_pdv( cIdTipDok, cPartner, nIznos )
-local nRet := 0
-local nTArea := SELECT()
+FUNCTION _uk_sa_pdv( cIdTipDok, cPartner, nIznos )
 
-if cIdTipDok $ "11#13#23"
-    nRet := nIznos
-else
-    if !IsIno( cPartner ) .and. !IsOslClan( cPartner )
-        nRet := ( nIznos * 1.17 )
-    else
-        nRet := nIznos
-    endif
-endif
+   LOCAL nRet := 0
+   LOCAL nTArea := Select()
 
-select (nTArea)
-return nRet
+   IF cIdTipDok $ "11#13#23"
+      nRet := nIznos
+   ELSE
+      IF !IsIno( cPartner ) .AND. !IsOslClan( cPartner )
+         nRet := ( nIznos * 1.17 )
+      ELSE
+         nRet := nIznos
+      ENDIF
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN nRet
 
 
 
-// ------------------------------------------------------
-// vraca osnovicu dokumenta
-// ------------------------------------------------------
-function _osnovica( cIdTipDok, cPartner, nIznos )
-local nRet := 0
-local nTArea := SELECT()
+FUNCTION _osnovica( cIdTipDok, cPartner, nIznos )
 
-if cIdTipDok $ "11#13#23"
-    nRet := ( nIznos / 1.17 )
-else
-    nRet := nIznos
-endif
+   LOCAL nRet := 0
+   LOCAL nTArea := Select()
 
-select (nTArea)
-return nRet
+   IF cIdTipDok $ "11#13#23"
+      nRet := ( nIznos / 1.17 )
+   ELSE
+      nRet := nIznos
+   ENDIF
 
+   SELECT ( nTArea )
+
+   RETURN nRet
 
 
-// -----------------------------------------------------
-// vraca pdv dokumenta
-// -----------------------------------------------------
-function _pdv( cIdTipDok, cPartner, nIznos )
-local nRet := 0
-local nTArea := SELECT()
 
-if cIdTipDok $ "11#13#23"
-    nRet := ( nIznos / 1.17 ) * 0.17
-else
-    if !IsIno( cPartner ) .and. !IsOslClan( cPartner )
-        nRet := ( nIznos * 0.17 )
-    else
-        nRet := 0
-    endif
-endif
+FUNCTION _pdv( cIdTipDok, cPartner, nIznos )
 
-select (nTArea)
+   LOCAL nRet := 0
+   LOCAL nTArea := Select()
 
-return nRet
+   IF cIdTipDok $ "11#13#23"
+      nRet := ( nIznos / 1.17 ) * 0.17
+   ELSE
+      IF !IsIno( cPartner ) .AND. !IsOslClan( cPartner )
+         nRet := ( nIznos * 0.17 )
+      ELSE
+         nRet := 0
+      ENDIF
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN nRet
 
 
 
 
-// --------------------------------------------------
-// Vraca naziv objekta
-// --------------------------------------------------
-function fakt_objekat_naz( id_obj )
-local _ret := ""
+FUNCTION fakt_objekat_naz( id_obj )
 
-PushWa()
+   LOCAL _ret := ""
 
-O_FAKT_OBJEKTI
+   PushWa()
 
-select fakt_objekti
-set order to tag "ID"
-seek id_obj
+   O_FAKT_OBJEKTI
 
-if FOUND()
-    _ret := ALLTRIM( field->naz )
-endif
+   SELECT fakt_objekti
+   SET ORDER TO TAG "ID"
+   SEEK id_obj
 
-PopWa()
-return _ret
+   IF Found()
+      _ret := AllTrim( field->naz )
+   ENDIF
+
+   PopWa()
+
+   RETURN _ret
 
 
 
 // --------------------------------------------------
 // Vraca objekat iz tabele fakt
-// ako se zadaje bez parametara pretpostavlja se da je 
+// ako se zadaje bez parametara pretpostavlja se da je
 // napravljena tabela relacije fakt_doks->fakt
 // --------------------------------------------------
-function fakt_objekat_id( id_firma, id_tipdok, br_dok )
-local _ret := ""
-local _memo
+FUNCTION fakt_objekat_id( id_firma, id_tipdok, br_dok )
 
-PushWa()
-if id_firma == NIL
-  id_firma = fakt->idfirma
-  id_tipdok = fakt->idtipdok
-  br_dok = fakt->brdok
-endif
+   LOCAL _ret := ""
+   LOCAL _memo
 
-select ( F_FAKT )
+   PushWa()
+   IF id_firma == NIL
+      id_firma = fakt->idfirma
+      id_tipdok = fakt->idtipdok
+      br_dok = fakt->brdok
+   ENDIF
 
-if !Used()
-   O_FAKT
-endif
+   SELECT ( F_FAKT )
 
-select fakt
+   IF !Used()
+      O_FAKT
+   ENDIF
 
-// filter se mora iskljuciti inace se ova funkcija rekurzivno poziva
-// PopWa ce uraditi restore filtera
-set filter to
-set order to tag "1"
-seek id_firma + id_tipdok + br_dok + "  1"
+   SELECT fakt
+   SET FILTER TO
+   SET ORDER TO TAG "1"
+   SEEK id_firma + id_tipdok + br_dok + "  1"
 
-if !FOUND()
-    _ret := SPACE(10)
-else
-  _memo := ParsMemo( fakt->txt )
-  if LEN( _memo ) >= 20
-      _ret := PADR(_memo[20], 10)
-  endif
-endif
+   IF !Found()
+      _ret := Space( 10 )
+   ELSE
+      _memo := ParsMemo( fakt->txt )
+      IF Len( _memo ) >= 20
+         _ret := PadR( _memo[ 20 ], 10 )
+      ENDIF
+   ENDIF
 
-PopWa()
-return _ret
+   PopWa()
 
-// ----------------------------------------------------------------------
-// setuje pojedinacni clan matrice memo
-// ----------------------------------------------------------------------
-function fakt_memo_field_to_txt( memo_field )
-local _txt := ""
-local _val := ""
-local _i
-
-for _i := 1 to LEN( memo_field )
-
-    _tmp := memo_field[ _i ]
-
-    if VALTYPE( _tmp ) == "D"
-        _val := DTOC( _tmp )
-    elseif VALTYPE( _tmp ) == "N"
-        _val := VAL( _tmp )
-    else
-        _val := _tmp
-    endif
-
-    _txt += CHR(16) + _val + CHR(17)
-
-next
-
-return _txt
+   RETURN _ret
 
 
 
-// --------------------------------------------------
-// Vraca vezne dokumente
-// ako se zadaje bez parametara pretpostavlja se da je 
-// napravljena tabela relacije fakt_doks->fakt
-// --------------------------------------------------
-function get_fakt_vezni_dokumenti( id_firma, tip_dok, br_dok )
-local _t_arr := SELECT()
-local _ret := ""
-local _memo
-    
-select ( F_FAKT )
-if !Used()
-    O_FAKT
-endif
+FUNCTION fakt_memo_field_to_txt( memo_field )
 
-// pozicioniraj se na stavku broj 1
-select fakt
-set order to tag "1"
-go top
-seek id_firma + tip_dok + br_dok
-    
-if !FOUND()
-    return _ret
-endif
+   LOCAL _txt := ""
+   LOCAL _val := ""
+   LOCAL _i
 
-// to se krije kao 20 clan matrice
-_memo := ParsMemo( fakt->txt )
+   FOR _i := 1 TO Len( memo_field )
 
-if LEN( _memo ) >= 19
-    _ret := _memo[19]
-endif
+      _tmp := memo_field[ _i ]
 
-select ( _t_arr )
+      IF ValType( _tmp ) == "D"
+         _val := DToC( _tmp )
+      ELSEIF ValType( _tmp ) == "N"
+         _val := Val( _tmp )
+      ELSE
+         _val := _tmp
+      ENDIF
 
-return _ret
+      _txt += Chr( 16 ) + _val + Chr( 17 )
+
+   NEXT
+
+   RETURN _txt
 
 
 
-// ------------------------------------------------------
-// da li je fakt priprema prazna 
-// mogucnost brisanja pripreme
-// ------------------------------------------------------
-function fakt_priprema_prazna()
-local _ret := .t.
-local _t_area := SELECT()
+FUNCTION get_fakt_vezni_dokumenti( id_firma, tip_dok, br_dok )
 
-select ( F_FAKT_PRIPR )
-if !Used()
-    O_FAKT_PRIPR
-endif
+   LOCAL _t_arr := Select()
+   LOCAL _ret := ""
+   LOCAL _memo
 
-// prazna je
-if RECCOUNT2() == 0
-    select ( _t_area )
-    return _ret
-endif
+   SELECT ( F_FAKT )
+   IF !Used()
+      O_FAKT
+   ENDIF
 
-_ret := .f.
+   SELECT fakt
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK id_firma + tip_dok + br_dok
 
-if Pitanje(, "Priprema modula FAKT nije prazna, izbrisati postojece stavke (D/N) ?", "N" ) == "D"
+   IF !Found()
+      RETURN _ret
+   ENDIF
 
-    // pobrisi pripremu
-    select fakt_pripr
-    my_dbf_zap()
-    _ret := .t.
+   _memo := ParsMemo( fakt->txt )
 
-endif
+   IF Len( _memo ) >= 19
+      _ret := _memo[ 19 ]
+   ENDIF
 
-select ( _t_area )
+   SELECT ( _t_arr )
 
-return _ret
+   RETURN _ret
 
 
 
+FUNCTION fakt_priprema_prazna()
 
+   LOCAL _ret := .T.
+   LOCAL _t_area := Select()
 
+   SELECT ( F_FAKT_PRIPR )
+   IF !Used()
+      O_FAKT_PRIPR
+   ENDIF
 
+   IF RECCOUNT2() == 0
+      SELECT ( _t_area )
+      RETURN _ret
+   ENDIF
+
+   _ret := .F.
+
+   IF Pitanje(, "Priprema modula FAKT nije prazna, izbrisati postojeće stavke (D/N) ?", "N" ) == "D"
+
+      SELECT fakt_pripr
+      my_dbf_zap()
+      _ret := .T.
+
+   ENDIF
+
+   SELECT ( _t_area )
+
+   RETURN _ret

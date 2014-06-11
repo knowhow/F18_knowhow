@@ -624,7 +624,7 @@ STATIC FUNCTION fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, storno )
    LOCAL _v_plac := "0"
    LOCAL _partn_id_broj, _partn_pdv_broj
    LOCAL lPartnClan
-   LOCAL _prikazi_partnera := .F.
+   LOCAL _prikazi_partnera := .T.
    LOCAL _partn_ino := .F.
    LOCAL _partn_pdv := .T.
 

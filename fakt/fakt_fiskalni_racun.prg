@@ -624,7 +624,7 @@ STATIC FUNCTION fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, storno )
    LOCAL _v_plac := "0"
    LOCAL _partn_id_broj, _partn_pdv_broj
    LOCAL lPartnClan
-   LOCAL _prikazi_partnera := .T.
+   LOCAL _prikazi_partnera := .F.
    LOCAL _partn_ino := .F.
    LOCAL _partn_pdv := .T.
 
@@ -668,18 +668,12 @@ STATIC FUNCTION fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, storno )
    __vrsta_pl := _v_plac
 
    _partn_id_broj := AllTrim( firma_id_broj( _partn_id ) )
-   _partn_pdv_broj := AllTrim( firma_pdv_broj( _partn_id ) )
-
-   IF EMPTY( _partn_pdv_broj )
-      _partn_jib := _partn_id_broj
-   ELSE
-      _partn_jib := _partn_pdv_broj
-   ENDIF
 
    lPartnClan := IsOslClan( _partn_id )
 
    IF IsIno( _partn_id ) .OR. lPartnClan
 
+      _partn_pdv := .F.
       _partn_ino := .T.
       _prikazi_partnera := .F.
 
@@ -693,22 +687,15 @@ STATIC FUNCTION fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, storno )
       _partn_pdv := .T.
       _prikazi_partnera := .T.
 
-   ELSEIF Len( _partn_jib ) > 12
+   ELSEIF Len( _partn_id_broj ) > 12
 
       _partn_ino := .F.
-      _partn_pdv := .F.
+      _partn_pdv := .T.
       _prikazi_partnera := .T.
 
    ENDIF
 
-   // u ovoj varijanti nam partner ne treba !
-   // dokument 10, vrsta placanja "G "
-   // dokuemnt 11, vrsta placanja gotovina
-   // nema ID broja
-
-   IF ( tip_dok == "10" .AND. _vrsta_p == "G " ) .OR. ;
-         ( tip_dok == "11" .AND. ! ( _vrsta_p $ "#VR#" ) ) .OR. ;
-         Empty( _partn_jib )
+   IF Empty( _partn_id_broj ) .AND. ( tip_dok == "11" .AND. !( _vrsta_p $ "#VR#" ) )
       _prikazi_partnera := .F.
    ENDIF
 
@@ -731,7 +718,7 @@ STATIC FUNCTION fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, storno )
    ENDIF
 
    _ok := .T.
-   IF Empty( _partn_jib )
+   IF Empty( _partn_id_broj )
       _ok := .F.
    ENDIF
    IF _ok .AND. Empty( partn->naz )
@@ -752,7 +739,7 @@ STATIC FUNCTION fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, storno )
       RETURN .F.
    ENDIF
 
-   IF !Empty( AllTrim( _partn_jib ) ) .AND. Len( AllTrim( _partn_jib ) ) < 12 .AND. lPartnClan
+   IF !Empty( AllTrim( _partn_id_broj ) ) .AND. Len( AllTrim( _partn_id_broj ) ) < 12 .AND. lPartnClan
       _ok := .F.
       MsgBeep( "INO partner sadrži član o oslobađanju od PDV-a, to je nedozvoljeno !" )
       RETURN _ok

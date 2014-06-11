@@ -86,7 +86,9 @@ FUNCTION is_idbroj_13cifara( id_broj )
 
 FUNCTION PdvParIIIF( cIdPartner, nPdvObv, nNoPdv, nIno, nUndefined )
 
-   LOCAL cIdBroj
+   IF !is_postoji_partner( cIdPartner )
+      RETURN nUndefined
+   ENDIF
 
    IF IsPdvObveznik( cIdPartner )
       RETURN nPdvObv
@@ -94,15 +96,10 @@ FUNCTION PdvParIIIF( cIdPartner, nPdvObv, nNoPdv, nIno, nUndefined )
 
    IF IsIno( cIdPartner )
       RETURN nIno
-   ENDIF
-
-   cIdBroj := ALLTRIM( firma_id_broj( cIdPartner ) )
-
-   IF ( EMPTY( cIdBroj ) .OR. is_idbroj_13cifara( cIdBroj ) )
+   ELSE
       RETURN nNoPdv
    ENDIF
 
-   RETURN nUndefined
 
 
 /*

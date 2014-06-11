@@ -753,7 +753,7 @@ return
 // ------------------------------------------------------
 static function _xml_partner( subnode, id_partner )
 local _ret := .t.
-local _jib
+local _jib, cPdvBroj, cIdBroj
 
 select partn
 go top
@@ -789,9 +789,14 @@ xml_subnode( subnode, .f. )
         xml_node( "ziror", to_xml_encoding( partn->ziror ) )
         xml_node( "tel", to_xml_encoding( partn->telefon ) )
 
-        _jib := IzSifKPartn( "REGB", id_partner, .f. )
+        _jib := firma_pdv_broj( id_partner )
+
+        cPdvBroj := _jib
+        cIdBroj := firma_id_broj( id_partner )
 
         xml_node( "jib", _jib )
+        xml_node( "pdvbr", cPdvBroj )
+        xml_node( "idbbr", cIdBroj )
     endif
 
 xml_subnode( subnode, .t. )
@@ -1132,7 +1137,7 @@ hseek _id_firma
 @ prow()+1,5 SAY partn->Adresa
 @ prow()+1,5 SAY partn->ptt
 @ prow()+1,5 SAY partn->ZiroR
-@ prow()+1,5 SAY IzSifKPartn( "REGB", _id_firma, .f. )
+@ prow()+1,5 SAY firma_pdv_broj( _id_firma )
 
 ?
 
@@ -1150,7 +1155,7 @@ if !empty( partn->telefon)
   @ prow()+1,45 SAY "Telefon: " + partn->telefon
 endif
 
-@ prow()+1,45 SAY IzSifKPartn( "REGB", _id_partner, .f. )
+@ prow()+1,45 SAY firma_pdv_broj( _id_partner )
 
 _naz_partner := naz
 

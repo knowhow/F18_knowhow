@@ -23,11 +23,11 @@ FUNCTION IsPdvObveznik( cIdPartner )
 
    cPdvBroj := ALLTRIM( firma_pdv_broj( cIdPartner ) )
 
-   IF LEN( cPdvBroj ) < 12
-      RETURN .F.
+   IF LEN( cPdvBroj ) == 12
+      RETURN .T.
    ENDIF
 
-   RETURN .T.
+   RETURN .F.
 
 
 FUNCTION IsIno( cIdPartner, lShow )
@@ -65,6 +65,18 @@ FUNCTION IsInoDob( cIdPartner, lShow )
    ENDIF
 
 
+
+/*
+   Opis: da li id broj ima 13 cifara
+*/
+FUNCTION is_idbroj_13cifara( id_broj )
+
+   IF LEN( ALLTRIM( id_broj ) ) == 13
+      RETURN .T.
+   ENDIF
+
+   RETURN .F.
+
 /*
     primjer: PdvParIIIF ( cIdPartner, 1.17, 1, 0)
     ako je partner pdv obvezinik return 1.17
@@ -74,24 +86,23 @@ FUNCTION IsInoDob( cIdPartner, lShow )
 
 FUNCTION PdvParIIIF( cIdPartner, nPdvObv, nNoPdv, nIno, nUndefined )
 
-   LOCAL cPDVBroj, cIdBroj
+   LOCAL cIdBroj
 
-   cPdvBroj := ALLTRIM( firma_pdv_broj( cIdPartner ) )
-   cIdBroj  := ALLTRIM( firma_id_broj( cIdPartner ) )
-
-   IF !Empty( cPdvBroj )
-
-      IF ( Len( cPdvBroj ) == 12 )
-         RETURN nPdvObv
-      ELSEIF ( Len( cPdvBroj ) == 0 )
-         RETURN nNoPdv
-      ELSE
-         RETURN nIno
-      ENDIF
-
-   ELSE
-      RETURN nUndefined
+   IF IsPdvObveznik( cIdPartner )
+      RETURN nPdvObv
    ENDIF
+
+   IF IsIno( cIdPartner )
+      RETURN nIno
+   ENDIF
+
+   cIdBroj := ALLTRIM( firma_id_broj( cIdPartner ) )
+
+   IF ( EMPTY( cIdBroj ) .OR. is_idbroj_13cifara( cIdBroj ) )
+      RETURN nNoPdv
+   ENDIF
+
+   RETURN nUndefined
 
 
 /*

@@ -602,17 +602,6 @@ STATIC FUNCTION racun_bezgotovinski( tip_dok, vrsta_placanja )
 
 
 
-/*
-   Opis: da li id broj ima 13 cifara
-*/
-STATIC FUNCTION is_idbroj_13cifara( id_broj )
-
-   IF LEN( ALLTRIM( id_broj ) ) == 13
-      RETURN .T.
-   ENDIF
-
-   RETURN .F.
-
 
 
 /*

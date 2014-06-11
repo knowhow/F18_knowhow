@@ -1,6 +1,7 @@
 1.7.101  2014-06-11, vsasa
 
   - ID broj, PDV broj, obrada kod fiskalnog računa, obrada kod kontiranja dokumenta
+  - LD, generisanje virmana nakon rekapitulacije onemogućeno ako je modul VIRM neaktivan
  
 1.7.100  2014-06-10, vsasa
 

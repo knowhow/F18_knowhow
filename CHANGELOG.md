@@ -1,3 +1,7 @@
+1.7.101  2014-06-11, vsasa
+
+  - ID broj, PDV broj, obrada kod fiskalnog računa, obrada kod kontiranja dokumenta
+ 
 1.7.100  2014-06-10, vsasa
 
   - TPQuery:Refresh() izbačeno

@@ -23,6 +23,8 @@ STATIC __DRV_TRING := "TRING"
 STATIC __DRV_CURRENT
 
 
+
+
 FUNCTION pos_fiskalni_racun( id_pos, datum, rn_broj, dev_params, uplaceni_iznos )
 
    LOCAL _err_level := 0
@@ -43,10 +45,8 @@ FUNCTION pos_fiskalni_racun( id_pos, datum, rn_broj, dev_params, uplaceni_iznos 
    _dev_drv := __device_params[ "drv" ]
    __DRV_CURRENT := _dev_drv
 
-   _o_tables()
-
    _storno := pos_dok_is_storno( id_pos, "42", datum, rn_broj )
-   _items := pos_items_prepare( id_pos, "42", datum, rn_broj, _storno, uplaceni_iznos )
+   _items := pos_fiscal_stavke_racuna( id_pos, "42", datum, rn_broj, _storno, uplaceni_iznos )
 
    IF _items == NIL
       RETURN 1
@@ -93,17 +93,7 @@ FUNCTION pos_fiskalni_racun( id_pos, datum, rn_broj, dev_params, uplaceni_iznos 
    RETURN _err_level
 
 
-// -----------------------------------------------
-// otvori potrebne tabele
-// -----------------------------------------------
-STATIC FUNCTION _o_tables()
-   RETURN
 
-
-
-// ------------------------------------------------------------------
-// da li je racun storno
-// ------------------------------------------------------------------
 STATIC FUNCTION pos_dok_is_storno( id_pos, tip_dok, datum, rn_broj )
 
    LOCAL _storno := .F.
@@ -131,10 +121,7 @@ STATIC FUNCTION pos_dok_is_storno( id_pos, tip_dok, datum, rn_broj )
 
 
 
-// ------------------------------------------------------------------
-// priprema podataka racuna za ispis na fiskalni uredjaj
-// ------------------------------------------------------------------
-STATIC FUNCTION pos_items_prepare( id_pos, tip_dok, datum, rn_broj, storno, uplaceni_iznos )
+STATIC FUNCTION pos_fiscal_stavke_racuna( id_pos, tip_dok, datum, rn_broj, storno, uplaceni_iznos )
 
    LOCAL _items := {}
    LOCAL _plu
@@ -150,7 +137,6 @@ STATIC FUNCTION pos_items_prepare( id_pos, tip_dok, datum, rn_broj, storno, upla
       uplaceni_iznos := 0
    ENDIF
 
-   // pozicioniraj se na pos_doks
    SELECT pos_doks
    SET ORDER TO TAG "1"
    GO TOP
@@ -160,24 +146,18 @@ STATIC FUNCTION pos_items_prepare( id_pos, tip_dok, datum, rn_broj, storno, upla
       RETURN NIL
    ENDIF
 
-   // vrsta placanja
    _vr_plac := pos_get_vr_plac( field->idvrstep )
 
-   // ako je vrsta placanja <> gotovina
    IF _vr_plac <> "0"
-      // vrati mi iznos racuna
       _rn_total := pos_iznos_racuna( id_pos, tip_dok, datum, rn_broj )
    ELSE
       _rn_total := 0
    ENDIF
 
-   // ako postoji iznos uplate, onda je to total
-   // koji ce biti proslijedjen txt fajlu
    IF uplaceni_iznos > 0
       _rn_total := uplaceni_iznos
    ENDIF
 
-   // pronadji u bazi racun
    SELECT pos
    SET ORDER TO TAG "1"
    GO TOP
@@ -198,7 +178,6 @@ STATIC FUNCTION pos_items_prepare( id_pos, tip_dok, datum, rn_broj, storno, upla
       _cijena := 0
       _art_barkod := ""
 
-      // ovo je broj racuna koji se stornira
       _reklamni_racun := field->c_1
 
       _art_id := field->idroba
@@ -209,13 +188,11 @@ STATIC FUNCTION pos_items_prepare( id_pos, tip_dok, datum, rn_broj, storno, upla
       _plu := roba->fisc_plu
 
       IF __device_params[ "plu_type" ] == "D"
-         // generisi PLU iz parametara
          _plu := auto_plu( nil, nil, __device_params )
       ENDIF
 
-      // plu ne moze biti 0
       IF __DRV_CURRENT == "FPRINT" .AND. _plu == 0
-         MsgBeep( "PLU artikla = 0, to nije moguce !" )
+         MsgBeep( "PLU artikla = 0, to nije moguće !" )
          RETURN NIL
       ENDIF
 
@@ -228,9 +205,6 @@ STATIC FUNCTION pos_items_prepare( id_pos, tip_dok, datum, rn_broj, storno, upla
       IF field->ncijena > 0
          _rabat := ( field->ncijena / field->cijena ) * 100
       ENDIF
-
-      // kolicina uvijek ide apsolutna vrijednost
-      // storno racun fiskalni stampac tretira kao regularni unos
 
       _art_naz := fiscal_art_naz_fix( roba->naz, __device_params[ "drv" ] )
 
@@ -256,12 +230,12 @@ STATIC FUNCTION pos_items_prepare( id_pos, tip_dok, datum, rn_broj, storno, upla
    ENDDO
 
    IF Len( _items ) == 0
-      msgbeep( "fiskal: nema stavki za stampu !!!" )
+      msgbeep( "Nema stavki za štampu na fiskalni uređaj !" )
       RETURN NIL
    ENDIF
 
    _level := 1
-   // provjeri stavke racuna, kolicine, cijene
+
    IF fiscal_items_check( @_items, storno, _level, __device_params[ "drv" ] ) < 0
       RETURN NIL
    ENDIF

@@ -240,7 +240,6 @@ FUNCTION ld_rekapitulacija( lSvi )
 
    cLinija := cTpLine
 
-   // ispisi tipove primanja...
    IspisTP( lSvi )
 
    IF IzFmkIni( "LD", "Rekap_ZaIsplatuRasclanitiPoTekRacunima", "N", KUMPATH ) == "D" .AND. Len( aUkTR ) > 1
@@ -269,9 +268,9 @@ FUNCTION ld_rekapitulacija( lSvi )
    IF cRTipRada $ "A#U"
 
       ? cMainLine
-      ? Lokal( "a) UKUPNI BRUTO SA TROSKOVIMA " )
+      ?U Lokal( "a) UKUPNI BRUTO SA TROŠKOVIMA " )
       @ PRow(), 60 SAY nUBBTrosk PICT gPicI
-      ? Lokal( "b) UKUPNI TROSKOVI " )
+      ?U Lokal( "b) UKUPNI TROŠKOVI " )
       @ PRow(), 60 SAY nURTrosk PICT gPici
 
    ENDIF
@@ -285,7 +284,7 @@ FUNCTION ld_rekapitulacija( lSvi )
    PRIVATE nDopr
    PRIVATE nDopr2
 
-   ? Lokal( "2. OBRACUN DOPRINOSA:" )
+   ?U Lokal( "2. OBRAČUN DOPRINOSA:" )
 
    // bruto osnova minimalca
    IF nURadn_bo < nUMRadn_bo
@@ -313,7 +312,7 @@ FUNCTION ld_rekapitulacija( lSvi )
 
    // LICNI ODBITCI
    ? cMainLine
-   ? Lokal( "4. LICNI ODBICI UKUPNO" )
+   ?U Lokal( "4. LIČNI ODBICI UKUPNO" )
    @ PRow(), 60 SAY nULOdbitak PICT gPici
 
 
@@ -321,7 +320,7 @@ FUNCTION ld_rekapitulacija( lSvi )
 
    // osnovica za porez na dohodak
    ? cMainLine
-   ? Lokal( "5. OSNOVICA ZA OBRACUN POREZA NA PLATU (1-2-4)" )
+   ?U Lokal( "5. OSNOVICA ZA OBRAČUN POREZA NA PLATU (1-2-4)" )
    @ PRow(), 60 SAY nPorOsn PICT gPici
    ? cMainLine
 
@@ -350,7 +349,7 @@ FUNCTION ld_rekapitulacija( lSvi )
    // ako je stvarna osnova veca od ove BRUTO - DOPRIZ - ODBICI
    // rijec je o radnicima koji nemaju poreza
    IF Round( nTOsnova, 2 ) > Round( nPorOsn, 2 )
-      ? Lokal( "!!! razlika osnovice poreza (radi radnika bez poreza):" )
+      ?U Lokal( "! razlika osnovice poreza (radi radnika bez poreza):" )
       @ PRow(), 60 SAY nPorOsn - nTOsnova PICT gpici
       ?
    ENDIF
@@ -370,7 +369,7 @@ FUNCTION ld_rekapitulacija( lSvi )
 
    // obracun ostalog poreza na neto
    ? cMainLine
-   ? Lokal( "7. OSNOVICA ZA OBRACUN OSTALIH NAKNADA (6)" )
+   ?U Lokal( "7. OSNOVICA ZA OBRAČUN OSTALIH NAKNADA (6)" )
    @ PRow(), 60 SAY nNetoIspl PICT gpici
    ? cMainLine
 
@@ -395,10 +394,10 @@ FUNCTION ld_rekapitulacija( lSvi )
    // ukupno za isplatu
    ? cMainLine
    IF cRTipRada $ "A#U"
-      ? Lokal( "9. UKUPNO ZA ISPLATU (bruto-dopr-porez+troskovi):" )
+      ?U Lokal( "9. UKUPNO ZA ISPLATU (bruto-dopr-porez+troškovi):" )
       @ PRow(), 60 SAY nUZaIspl + nURTrosk PICT gpici
    ELSE
-      ? Lokal( "9. UKUPNO ZA ISPLATU (bruto-dopr-porez+odbici+naknade):" )
+      ?U Lokal( "9. UKUPNO ZA ISPLATU (bruto-dopr-porez+odbici+naknade):" )
       @ PRow(), 60 SAY nUZaIspl PICT gpici
    ENDIF
    ? cMainLine
@@ -444,14 +443,17 @@ FUNCTION ld_rekapitulacija( lSvi )
       ? Lokal( " POTREBNA SREDSTVA (1 + 3 + 4 + ost.nakn.):" )
       @ PRow(), PCol() + 1 SAY ( nURadn_Bo - nUDoprIz ) + ( nPorR ) + nDopr + nUOdbiciP PICT gpici
    ENDIF
+
    ? cLinija
    ?
-   ? Lokal( "Izvrsena obrada na" ) + " ", Str( nLjudi, 5 ), Lokal( "radnika" )
+   ?U Lokal( "Izvršena obrada na" ) + " ", Str( nLjudi, 5 ), Lokal( "radnika" )
    ?
+
    IF nUSati == 0
       nUSati := 999999
    ENDIF
-   ? Lokal( "Prosjecni neto/satu je" ), AllTrim( Transform( nNetoIspl, gpici ) ), "/", AllTrim( Str( nUSati ) ), "=", AllTrim( Transform( nNetoIspl / nUsati, gpici ) ), "*", AllTrim( Transform( parobr->k1, "999" ) ), "=", AllTrim( Transform( nNetoIspl / nUsati * parobr->k1, gpici ) )
+
+   ?U Lokal( "Prosječni neto/satu je" ), AllTrim( Transform( nNetoIspl, gpici ) ), "/", AllTrim( Str( nUSati ) ), "=", AllTrim( Transform( nNetoIspl / nUsati, gpici ) ), "*", AllTrim( Transform( parobr->k1, "999" ) ), "=", AllTrim( Transform( nNetoIspl / nUsati * parobr->k1, gpici ) )
 
 
    P_12CPI
@@ -469,24 +471,16 @@ FUNCTION ld_rekapitulacija( lSvi )
    ENDIF
 
    my_close_all_dbf()
+
    END PRINT
 
-   IF Pitanje(, "Generisati virmane za ovaj obracun plate ? (D/N)", "N" ) == "D"
-
+   IF f18_use_module( "virm" ) .AND. Pitanje(, "Generisati virmane za ovaj obračun plate ? (D/N)", "N" ) == "D"
       virm_set_global_vars()
-      // uzmi parametre iz sql/db
-
-      // setuj parametre za prenos godina/mjesec
       set_metric( "virm_godina", my_user(), cGodina )
       set_metric( "virm_mjesec", my_user(), cMjesec )
-
-      // prenesi
       virm_prenos_ld( .T. )
-      // otvori pripremu virmana...
       unos_virmana()
-
       my_close_all_dbf()
-
    ENDIF
 
    RETURN
@@ -850,7 +844,7 @@ STATIC FUNCTION _calc_totals( lSvi, a_benef )
             nTObl := Select()
             nTRec := PAROBR->( RecNo() )
             ParObr( mjesec, godina, IF( lViseObr, cObracun, ), IF( !lSvi, cIdRj, ) )
-            // samo pozicionira bazu PAROBR na odgovaraju�i zapis
+            // samo pozicionira bazu PAROBR na odgovarajui zapis
             AAdd( aNetoMj, { mjesec, _uneto, _usati, PAROBR->k3, PAROBR->k1 } )
             SELECT PAROBR
             GO ( nTRec )

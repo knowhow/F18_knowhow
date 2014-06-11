@@ -635,6 +635,10 @@ FUNCTION ld_obracun_napravljen_vise_puta()
 
 FUNCTION ld_gen_virm()
 
+   IF !f18_use_module( "virm" )
+       RETURN
+   ENDIF
+
    O_VIRM_PRIPR
    my_dbf_zap()
 
@@ -642,7 +646,6 @@ FUNCTION ld_gen_virm()
 
    virm_set_global_vars()
    virm_prenos_ld( .T. )
-   // otvori pripremu virmana...
    unos_virmana()
 
    my_close_all_dbf()

@@ -42,7 +42,7 @@ FUNCTION s_partner( cIdPartn )
 
    cPom += ", " + cMjesto
 
-   cIdBroj := IzSifKPartn( "REGB", cIdPartn, .F. )
+   cIdBroj := firma_id_broj( cIdPartn )
    IF Empty( cIdBroj )
       cIdBroj := "-NEP.ID-"
    ENDIF
@@ -90,7 +90,7 @@ FUNCTION my_firma( lRetArray )
 
    cNaziv := naz
    cMjesto := mjesto
-   cIdBroj := IzSifKPartn( "REGB", gFirma, .F. )
+   cIdBroj := firma_id_broj( gFirma )
    cAdresa := adresa
    cPtt := ptt
 

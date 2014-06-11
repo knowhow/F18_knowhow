@@ -208,7 +208,6 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
    LOCAL cOpis := ""
    LOCAL _a_tmp, _tmp
 
-   // ako je kupac pdv obveznik, ova varijable je .t.
    LOCAL lPdvObveznik := .F.
 
    LOCAL nDx1 := 0
@@ -255,7 +254,7 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
 
    // napuni podatke partnera
 
-   lPdvObveznik := .F.
+   lPdvObveznik := is_pdv_obveznik( field->idpartner )
    fill_part_data( field->idpartner, @lPdvObveznik )
 
    // popuni ostale podatke, radni nalog i slicno
@@ -1110,6 +1109,7 @@ FUNCTION _txt_djokeri( cTxt, cPartn )
 
 
 STATIC FUNCTION set_partner_id_broj( cId )
+
    LOCAL cBroj := ""
    LOCAL cIdBroj := firma_id_broj( cId )
    LOCAL cPdvBroj := firma_pdv_broj( cId ) 
@@ -1183,8 +1183,10 @@ STATIC FUNCTION fill_part_data( cId, lPdvObveznik )
    add_drntext( "K10", cPartMjesto )
    // ptt
    add_drntext( "K11", cPartPTT )
+
    // idbroj staro polje, koje sadrži i id i pdv broj
    add_drntext( "K03", set_partner_id_broj( cId ) )
+
    // idbroj, pdvbroj, nova polja
    add_drntext( "K15", cIdBroj )
    add_drntext( "K16", cPdvBroj )
@@ -1196,16 +1198,6 @@ STATIC FUNCTION fill_part_data( cId, lPdvObveznik )
    // fax
    add_drntext( "K14", cPartFax )
 
-   IF !Empty( cIdBroj )
-      IF Len( AllTrim( cIdBroj ) ) == 12
-         lPdvObveznik := .T.
-      ELSE
-         lPdvObveznik := .F.
-      ENDIF
-   ELSE
-      lPdvObveznik := .F.
-   ENDIF
-	
    // brrjes
    add_drntext( "K06", cBrRjes )
    // brupisa

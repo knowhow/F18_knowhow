@@ -871,8 +871,7 @@ STATIC FUNCTION _fill_partn( part_id, node_name )
    xml_node( "adr", to_xml_encoding ( AllTrim( field->adresa ) ) )
    xml_node( "ptt", AllTrim( field->ptt ) )
 
-   // iz sifk nesto ...
-   xml_node( "id_broj", AllTrim( IzsifkPartn( "REGB", part_id, .F. ) ) )
+   xml_node( "id_broj", AllTrim( firma_pdv_broj( part_id ) ) )
    xml_node( "por_broj", AllTrim( IzsifkPartn( "PORB", part_id, .F. ) ) )
 
    xml_subnode( node_name, .T. )

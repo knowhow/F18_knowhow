@@ -118,57 +118,6 @@ FUNCTION SifFmkSvi()
 
 
 
-/*
-    primjer: PdvParIIIF ( cIdPartner, 1.17, 1, 0)
-    ako je partner pdv obvezinik return 1.17
-    ako je no pdv return 1
-    ako je ino return 0
-*/
-FUNCTION PdvParIIIF( cIdPartner, nPdvObv, nNoPdv, nIno, nUndefined )
-
-   LOCAL cIdBroj
-
-   cIdBroj := IzSifKPartn( "REGB", cIdPartner, .F. )
-   cIdBroj := AllTrim( cIdBroj )
-
-   IF !Empty( cIdBroj )
-      IF ( Len( cIdBroj ) == 12 )
-         RETURN nPdvObv
-      ELSEIF ( Len( cIdBroj ) == 13 )
-         RETURN nNoPdv
-      ELSE
-         RETURN nIno
-      ENDIF
-   ELSE
-      RETURN nUndefined
-   ENDIF
-
-   // u ovo polje se stavlja clan zakona o pdv-u ako postoji
-   // osnova za oslobadjanje
-   //
-
-FUNCTION PdvOslobadjanje( cIdPartner )
-
-   LOCAL cIdBroj
-
-   RETURN cIdBroj := IzSifKPartn( "PDVO", cIdPartner, .F. )
-
-// ---------------------------------------------
-// da li je partner oslobodjen po clanu
-// ---------------------------------------------
-FUNCTION IsOslClan( cIdPartner )
-
-   LOCAL lRet := .F.
-   LOCAL cClan
-
-   cClan := PdvOslobadjanje( cIdPartner )
-
-   IF cClan <> NIL .AND. !Empty( cClan )
-      lRet := .T.
-   ENDIF
-
-   RETURN lRet
-
 
 // -------------------------------------------------------------------------
 // profili
@@ -200,9 +149,10 @@ FUNCTION IsProfil( cIdPartner, cProfId )
       RETURN .F.
    ENDIF
 
-   // -----------------------------------
-   // partner je komisionar
-   // -----------------------------------
+
+/*
+   partner je komisionar
+*/
 
 FUNCTION IsKomision( cIdPartner )
 

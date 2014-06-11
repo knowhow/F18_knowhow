@@ -329,10 +329,7 @@ FUNCTION spec_kol_partn()
          SELECT fakt
 
          fill_exp_tbl( ;
-            AllTrim( Str( ++nCount ) ), ;
-            cDistNaz, ;
-            IzSifKPartn( "REGB", cPartner, .F. ), ;
-            partn->naz, ;
+            AllTrim( Str( ++nCount ) ), cDistNaz, firma_pdv_broj( cPartner ), partn->naz, ;
             IzSifKPartn( "TIP", cPartner, .F. ), ;
             partn->mjesto, ;
             partn->ptt, ;

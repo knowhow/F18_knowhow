@@ -12,21 +12,111 @@
 #include "fmk.ch"
 #include "cre_all.ch"
 
+FUNCTION is_pdv_obveznik( cIdPartner )
+
+   RETURN IsPdvObveznik( cIdPartner )
+
+
 FUNCTION IsPdvObveznik( cIdPartner )
+
+   LOCAL cPdvBroj
+
+   cPdvBroj := ALLTRIM( firma_pdv_broj( cIdPartner ) )
+
+   IF LEN( cPdvBroj ) < 12
+      RETURN .F.
+   ENDIF
+
+   RETURN .T.
+
+
+FUNCTION IsIno( cIdPartner, lShow )
+
+   // isti je algoritam za utvrdjivanje
+   // ino partnera bio dobavljac ili kupac
+
+   RETURN IsInoDob( cIdPartner, lShow )
+
+
+/*
+    Ino dobavljač:
+    - PDV broj je prazan
+    - Id broj sadrži manje od 13 cifri: npr. ENG105
+*/
+
+FUNCTION IsInoDob( cIdPartner, lShow )
 
    LOCAL cIdBroj
 
-   cIdBroj := IzSifKPartn( "REGB", cIdPartner, .F. )
+   cIdBroj :=  ALLTRIM( firma_id_broj( cIdPartner ) )
 
    IF !Empty( cIdBroj )
-      IF Len( AllTrim( cIdBroj ) ) == 12
 
+      IF Len( cIdBroj ) < 13 .AND. Len( cIdBroj ) > 0
          RETURN .T.
       ELSE
          RETURN .F.
       ENDIF
+
    ELSE
       RETURN .F.
    ENDIF
 
 
+/*
+    primjer: PdvParIIIF ( cIdPartner, 1.17, 1, 0)
+    ako je partner pdv obvezinik return 1.17
+    ako je no pdv return 1
+    ako je ino return 0
+*/
+
+FUNCTION PdvParIIIF( cIdPartner, nPdvObv, nNoPdv, nIno, nUndefined )
+
+   LOCAL cPDVBroj, cIdBroj
+
+   cPdvBroj := ALLTRIM( firma_pdv_broj( cIdPartner ) )
+   cIdBroj  := ALLTRIM( firma_id_broj( cIdPartner ) )
+
+   IF !Empty( cPdvBroj )
+
+      IF ( Len( cPdvBroj ) == 12 )
+         RETURN nPdvObv
+      ELSEIF ( Len( cPdvBroj ) == 0 )
+         RETURN nNoPdv
+      ELSE
+         RETURN nIno
+      ENDIF
+
+   ELSE
+      RETURN nUndefined
+   ENDIF
+
+
+/*
+   u ovo polje se stavlja clan zakona o pdv-u ako postoji
+   osnova za oslobadjanje
+*/
+
+FUNCTION PdvOslobadjanje( cIdPartner )
+
+   LOCAL cIdBroj
+
+   RETURN cIdBroj := IzSifKPartn( "PDVO", cIdPartner, .F. )
+
+
+/*
+ da li je partner oslobodjen po clanu
+*/
+
+FUNCTION IsOslClan( cIdPartner )
+
+   LOCAL lRet := .F.
+   LOCAL cClan
+
+   cClan := PdvOslobadjanje( cIdPartner )
+
+   IF cClan <> NIL .AND. !Empty( cClan )
+      lRet := .T.
+   ENDIF
+
+   RETURN lRet

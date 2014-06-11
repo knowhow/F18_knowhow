@@ -276,7 +276,7 @@ FUNCTION V_Kolicina( tip_vpc )
                   _cijena := MPC
                ENDIF
             ENDIF
-         ELSEIF _idtipdok == "13" .AND. ( gVar13 == "2" .OR. glCij13Mpc ) .AND. gVarNum == "2" .OR. _idtipdok == "19" .AND. IzFMKIni( "FAKT", "19KaoRacunParticipacije", "N", KUMPATH ) == "D"
+         ELSEIF _idtipdok == "13" .AND. ( gVar13 == "2" .OR. glCij13Mpc ) .AND. gVarNum == "2"
             IF g13dcij == "6"
                _cijena := MPC6
             ELSEIF g13dcij == "5"
@@ -339,11 +339,9 @@ FUNCTION V_Kolicina( tip_vpc )
    SELECT fakt
    SET ORDER TO TAG "3"
 
-   lBezMinusa := ( IzFMKIni( "FAKT", "NemaIzlazaBezUlaza", "N", KUMPATH ) == "D" )
+   lBezMinusa := .F.
 
-   IF !( roba->tip = "U" ) .AND. !Empty( _IdRoba ) .AND.  Left( _idtipdok, 1 ) $ "12"  ;
-         .AND. ( gPratiK == "D" .OR. lBezMinusa = .T. ) .AND. ;
-         !( Left( _idtipdok, 1 ) == "1" .AND. Left( _serbr, 1 ) = "*" )
+   IF !( roba->tip = "U" ) .AND. !Empty( _IdRoba ) .AND.  Left( _idtipdok, 1 ) $ "12" .AND. ( gPratiK == "D" .OR. lBezMinusa = .T. ) .AND. !( Left( _idtipdok, 1 ) == "1" .AND. Left( _serbr, 1 ) = "*" )
 
       MsgO( "Izračunavam trenutno stanje ..." )
  	
@@ -485,9 +483,7 @@ FUNCTION V_Porez()
       ENDIF
       IF nPor <> _Porez
          Beep( 2 )
-         Msg( "Roba pripada tarifnom stavu " + roba->idtarifa + ;
-            "#kod koga je porez " + Str( nPor, 5, 2 )  ;
-            )
+         Msg( "Roba pripada tarifnom stavu " + roba->idtarifa + "#kod koga je porez " + Str( nPor, 5, 2 ) )
       ENDIF
    ENDIF
 
@@ -571,7 +567,7 @@ FUNCTION UzorTxt()
    LOCAL cId := "  "
    LOCAL _user_name
 
-   IF IsPdv() .AND. _IdTipDok $ "10#20" .AND. IsIno( _IdPartner )
+   IF _IdTipDok $ "10#20" .AND. IsIno( _IdPartner )
       InoKlauzula()
       IF Empty( AllTrim( _txt2 ) )
          cId := "IN"
@@ -612,7 +608,7 @@ FUNCTION UzorTxt()
          SELECT fakt_pripr
   		
          IF glDistrib .AND. _IdTipdok == "26"
-            IF cId $ IzFMKIni( "FAKT", "TXTIzjaveZaObracunPoreza", ";", KUMPATH )
+            IF cId $ ";"
                _k2 := "OPOR"
             ELSE
                _k2 := ""

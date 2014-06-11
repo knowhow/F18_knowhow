@@ -643,11 +643,11 @@ STATIC FUNCTION fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, storno )
    __vrsta_pl := _v_plac
 
    // podaci partnera
-   _partn_jib := AllTrim( IzSifKPartn( "REGB", _partn_id, .F. ) )
+   _partn_jib := AllTrim( firma_id_broj( _partn_id ) )
    // oslobadjanje po clanu
    _partn_clan := AllTrim( IzSifKPartn( "PDVO",  _partn_id, .F. ) )
 
-   IF !Empty( _partn_jib ) .AND. ( Len( _partn_jib ) < 12 .OR. !Empty( _partn_clan ) )
+   IF IsIno( _partn_id ) .OR. !Empty( _partn_clan )
 
       // kod info faktura ne prikazuj partnera
       _partn_ino := .T.

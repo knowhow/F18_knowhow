@@ -585,6 +585,9 @@ STATIC FUNCTION fakt_fiscal_stavke_racuna( id_firma, tip_dok, br_dok, storno, pa
 
 
 
+/*
+   Opis: da li je račun bezgotovinski u zavisnosti od tipa dokumenta i vrste plaćanja
+*/
 STATIC FUNCTION racun_bezgotovinski( tip_dok, vrsta_placanja )
 
    IF tip_dok == "10" .AND. vrsta_placanja <> "G "
@@ -599,6 +602,9 @@ STATIC FUNCTION racun_bezgotovinski( tip_dok, vrsta_placanja )
 
 
 
+/*
+   Opis: da li id broj ima 13 cifara
+*/
 STATIC FUNCTION is_idbroj_13cifara( id_broj )
 
    IF LEN( ALLTRIM( id_broj ) ) == 13
@@ -609,7 +615,14 @@ STATIC FUNCTION is_idbroj_13cifara( id_broj )
 
 
 
+/*
+   Opis: vraća "kod" vrste plaćanja za fiskalni uređaj u zavisnosti od vrste dokumenta i vrste plaćanja
 
+   Return:
+     - "0" - gotovina
+     - "1" - kartica
+     - "3" - virman
+*/
 STATIC FUNCTION vrsta_placanja_za_fiskalni_uredjaj( tip_dok, vrsta_placanja )
 
    LOCAL cVrPlac := "0"
@@ -627,6 +640,9 @@ STATIC FUNCTION vrsta_placanja_za_fiskalni_uredjaj( tip_dok, vrsta_placanja )
    RETURN cVrPlac
 
 
+/*
+   Opis: da li se vrsta dokumenta može poslati na fiskalni uređaj
+*/ 
 STATIC FUNCTION dokument_se_moze_fiskalizovati( tip_dok )
 
    IF tip_dok $ "10#11"
@@ -637,7 +653,10 @@ STATIC FUNCTION dokument_se_moze_fiskalizovati( tip_dok )
 
 
 
-
+/*
+   Opis: da li su podaci partnera za ispis na fiskalni račun kompletni
+         naziv, adresa, ptt, telefon
+*/
 STATIC FUNCTION is_podaci_partnera_kompletirani( sifra, id_broj )
 
    LOCAL lRet := .T.

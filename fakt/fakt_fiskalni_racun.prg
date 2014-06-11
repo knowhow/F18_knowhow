@@ -762,6 +762,10 @@ STATIC FUNCTION fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno )
       __partn_pdv := .T.
    ENDIF
 
+   IF !__prikazi_partnera
+      RETURN NIL
+   ENDIF
+
    AAdd( _podaci, { _partn_id_broj, partn->naz, partn->adresa, ;
       partn->ptt, partn->mjesto, __vrsta_pl, __partn_ino, __partn_pdv } )
 

@@ -33,7 +33,7 @@ FUNCTION azur_fakt( lSilent )
 
    close_open_fakt_tabele()
 
-   IF ( !lSilent .AND. Pitanje( "FAKT_AZUR", "Sigurno želite izvrpiti ažuriranje (D/N) ?", "N" ) == "N" )
+   IF ( !lSilent .AND. Pitanje( "FAKT_AZUR", "Sigurno želite izvršiti ažuriranje (D/N) ?", "N" ) == "N" )
       RETURN _a_fakt_doks
    ENDIF
 

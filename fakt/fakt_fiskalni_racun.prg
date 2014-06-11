@@ -140,7 +140,7 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
          _err_level := fakt_to_tremol( id_firma, tip_dok, br_dok, _items_data, _partn_data, _storno, _cont )
 
          IF _err_level > 0
-            msgbeep( "Problem sa stampanjem na fiskalni stampac !!!" )
+            MsgBeep( "Problem sa štampanjem na fiskalni uređaj !" )
          ENDIF
 
       ENDIF
@@ -154,7 +154,7 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
 FUNCTION reklamni_rn_box( rekl_rn )
 
    Box(, 1, 60 )
-   @ m_x + 1, m_y + 2 SAY "Reklamiramo fiskalni racun broj:" ;
+   @ m_x + 1, m_y + 2 SAY "Reklamiramo fiskalni račun broj:" ;
       GET rekl_rn PICT "999999999" VALID ( rekl_rn > 0 )
    READ
    BoxC()
@@ -415,7 +415,7 @@ STATIC FUNCTION fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, storno, pa
    SEEK ( id_firma + tip_dok + br_dok )
 
    IF !Found()
-      MsgBeep( "Racun ne posjeduje niti jednu stavku#Stampanje onemoguceno !!!" )
+      MsgBeep( "Račun ne posjeduje niti jednu stavku#Štampanje onemogućeno !" )
       RETURN NIL
    ENDIF
 
@@ -424,7 +424,7 @@ STATIC FUNCTION fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, storno, pa
    ENDIF
 
    IF _rekl_rn_broj == -1
-      MsgBeep( "Broj veze racuna mora biti setovan" )
+      MsgBeep( "Broj veze računa mora biti setovan" )
       RETURN NIL
    ENDIF
 
@@ -587,6 +587,34 @@ STATIC FUNCTION fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, storno, pa
 
 
 
+
+/*
+   Opis: vraća matricu napunjenu sa podacima partnera kao i informacije o vrsti plaćanja, da li partner pdv obveznik
+         na osnovu ažuriranog fakt dokumenta
+
+   Usage: fakt_fiscal_head_perepare( id_firma, tip_dok, br_dok, storno )
+
+   Parametri:
+      - id_firma - fakt_doks->idfirma 
+      - tip_dok - fakt_doks->idtipdok
+      - br_dok - fakt_doks->brdok
+      - storno - .T. račun je storno
+
+   Return:
+      - .F. - podaci partnera nisu kompletirani ili ispravni, ima ID broj, PDV broj, ali fali adresa
+      - NIL - podaci partnera ne treba da se uzimaju kod štampe fiskalnog računa
+      - {} - podaci partnera { identifikacioni broj, naziv, adresa, telefon, ... }
+
+   Primjer:
+
+      partn_arr := fakt_fiscal_head_prepare( "10", "10", "00001", .F. )
+
+      IF partn_arr == .F.
+            => partner ima podešene idbroj, pdv broj ali podaci partnera nisu kompletni, fiskalni račun nije moguće napraviti
+      IF partn_arr == NIL
+            => na fiskalnom račun partner i njegovi podaci će biti ignorisani
+
+*/
 
 STATIC FUNCTION fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, storno )
 

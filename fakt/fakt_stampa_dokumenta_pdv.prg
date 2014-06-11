@@ -12,13 +12,8 @@
 #include "fakt.ch"
 
 
-// konto duguje
 STATIC __KTO_DUG
-// konto potrazuje
 STATIC __KTO_POT
-// fin kumpath
-STATIC __FIN_KUM
-// show saldo varijanta
 STATIC __SH_SLD_VAR
 
 // ----------------------------------------------------
@@ -95,14 +90,10 @@ FUNCTION StdokPDV( cIdFirma, cIdTipDok, cBrDok, lJFill )
       RETURN
    ENDIF
 
-   __FIN_KUM := StrTran( KUMPATH, "FAKT", "FIN" )
-
    _fill_params[ "barkod" ] := lPBarkod
    _fill_params[ "samo_kolicine" ] := lSamoKol
 
-   // ako nije nesto uredu! izadji...
    IF !fill_porfakt_data( _dok, _fill_params )
-      // izadji ....
       RETURN
    ENDIF
 
@@ -914,8 +905,6 @@ FUNCTION _txt_djokeri( cTxt, cPartn )
    LOCAL dPUplKup
    LOCAL dPPromKup
    LOCAL dPPromDob
-
-   // strings
    LOCAL cStrSlKup := "#SALDO_KUP#"
    LOCAL cStrSlDob := "#SALDO_DOB#"
    LOCAL cStrSlKD := "#SALDO_KUP_DOB#"
@@ -923,13 +912,9 @@ FUNCTION _txt_djokeri( cTxt, cPartn )
    LOCAL cStrDPrKup := "#D_P_PROMJENA_KUP#"
    LOCAL cStrDPrDob := "#D_P_PROMJENA_DOB#"
 
-   PRIVATE gFinKPath
-
    IF gShSld == "N"
       RETURN
    ENDIF
-
-   gFinKPath := __FIN_KUM
 
    IF gFinKtoDug <> nil
 

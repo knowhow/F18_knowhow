@@ -594,7 +594,8 @@ STATIC FUNCTION fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, storno )
    LOCAL _partn_id
    LOCAL _vrsta_p
    LOCAL _v_plac := "0"
-   LOCAL _partn_clan, _partn_jib
+   LOCAL _partn_id_broj, _partn_pdv_broj
+   LOCAL lPartnClan
    LOCAL _prikazi_partnera := .T.
    LOCAL _partn_ino := .F.
    LOCAL _partn_pdv := .T.
@@ -627,38 +628,38 @@ STATIC FUNCTION fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, storno )
    ENDIF
 
    IF ( tip_dok $ "#10#" .AND. !_vrsta_p == "G " ) .OR. ( tip_dok == "11" .AND. _vrsta_p == "VR" )
-      // virmansko placanje
-      // tip dokumenta: 10
-      // tip dokumenta: 11 i vrsta placanja "VR"
       _v_plac := "3"
    ELSEIF ( tip_dok == "10" .AND. _vrsta_p == "G " )
       _v_plac := "0"
    ENDIF
 
    IF tip_dok $ "#11#" .AND. _vrsta_p == "KT"
-      // karticno placanje
       _v_plac := "1"
    ENDIF
 
    __vrsta_pl := _v_plac
 
-   // podaci partnera
-   _partn_jib := AllTrim( firma_id_broj( _partn_id ) )
-   // oslobadjanje po clanu
-   _partn_clan := AllTrim( IzSifKPartn( "PDVO",  _partn_id, .F. ) )
+   _partn_id_broj := AllTrim( firma_id_broj( _partn_id ) )
+   _partn_pdv_broj := AllTrim( firma_pdv_broj( _partn_id ) )
 
-   IF IsIno( _partn_id ) .OR. !Empty( _partn_clan )
+   IF EMPTY( _partn_pdv_broj )
+      _partn_jib := _partn_id_broj
+   ELSE
+      _partn_jib := _partn_pdv_broj
+   ENDIF
 
-      // kod info faktura ne prikazuj partnera
+   lPartnClan := IsOslClan( _partn_id )
+
+   IF IsIno( _partn_id ) .OR. lPartnClan
+
       _partn_ino := .T.
       _prikazi_partnera := .F.
 
-      // ako je samo oslobadjanje po clanu onda prikazi
-      IF !Empty( _partn_clan )
+      IF lPartnClan
          _prikazi_partnera := .T.
       ENDIF
 
-   ELSEIF Len( _partn_jib ) == 12
+   ELSEIF IsPdvObveznik( _partn_id )
 
       _partn_ino := .F.
       _partn_pdv := .T.
@@ -683,14 +684,11 @@ STATIC FUNCTION fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, storno )
       _prikazi_partnera := .F.
    ENDIF
 
-   // setuj staticke
    __vrsta_pl := _v_plac
    __partn_ino := _partn_ino
    __partn_pdv := _partn_pdv
    __prikazi_partnera := _prikazi_partnera
 
-   // ako ga ne treba prikazivti
-   // nista nemoj vracati...
    IF !_prikazi_partnera
       RETURN NIL
    ENDIF
@@ -700,17 +698,10 @@ STATIC FUNCTION fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, storno )
    SEEK _partn_id
 
    IF !Found()
-      MsgBeep( "Partnera nisam pronasao u sifrarniku - head prepare !" )
+      MsgBeep( "Partnera nisam pronašao u šifrarniku !" )
       RETURN .F.
    ENDIF
 
-   // ako je pdv obveznik
-   // dodaj "4" ispred id broja
-   IF Len( AllTrim( _partn_jib ) ) == 12
-      _partn_jib := "4" + AllTrim( _partn_jib )
-   ENDIF
-
-   // provjeri podatke partnera
    _ok := .T.
    IF Empty( _partn_jib )
       _ok := .F.
@@ -729,18 +720,17 @@ STATIC FUNCTION fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, storno )
    ENDIF
 
    IF !_ok
-      MsgBeep( "!!! Podaci partnera nisu kompletirani !!!#(id, naziv, adresa, ptt, mjesto)#Prekidam operaciju" )
+      MsgBeep( "Podaci partnera nisu kompletirani !#(id, naziv, adresa, ptt, mjesto)#Prekidam operaciju" )
       RETURN .F.
    ENDIF
 
-   IF !Empty( AllTrim( _partn_jib ) ) .AND. Len( AllTrim( _partn_jib ) ) < 12 .AND. !Empty( _partn_clan )
+   IF !Empty( AllTrim( _partn_jib ) ) .AND. Len( AllTrim( _partn_jib ) ) < 12 .AND. lPartnClan
       _ok := .F.
-      MsgBeep( "INO partner sadrzi clan o oslobodjenju od PDV-a, to je nedozvoljeno !!!" )
+      MsgBeep( "INO partner sadrži član o oslobađanju od PDV-a, to je nedozvoljeno !" )
       RETURN _ok
    ENDIF
 
-   // ubaci u matricu podatke o partneru
-   AAdd( _head, { _partn_jib, partn->naz, partn->adresa, ;
+   AAdd( _head, { _partn_id_broj, partn->naz, partn->adresa, ;
       partn->ptt, partn->mjesto, _v_plac, _partn_ino, _partn_pdv } )
 
    RETURN _head

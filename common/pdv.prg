@@ -47,12 +47,14 @@ FUNCTION IsIno( cIdPartner, lShow )
 FUNCTION IsInoDob( cIdPartner, lShow )
 
    LOCAL cIdBroj
+   LOCAL cPdvBroj
 
+   cPdvBroj := ALLTRIM( firma_pdv_broj( cIdPartner ) )
    cIdBroj :=  ALLTRIM( firma_id_broj( cIdPartner ) )
 
    IF !Empty( cIdBroj )
 
-      IF Len( cIdBroj ) < 13 .AND. Len( cIdBroj ) > 0
+      IF EMPTY( cPdvBroj ) .AND. Len( cIdBroj ) < 13 .AND. Len( cIdBroj ) > 0
          RETURN .T.
       ELSE
          RETURN .F.

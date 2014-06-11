@@ -92,13 +92,13 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
       RETURN _err_level
    ENDIF
 
-   _partn_data := fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, _storno )
+   _partn_data := fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, _storno )
 
    IF ValType( _partn_data ) == "L"
       RETURN 1
    ENDIF
 
-   _items_data := fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, _storno, _partn_data )
+   _items_data := fakt_fiscal_stavke_racuna( id_firma, tip_dok, br_dok, _storno, _partn_data )
 
    IF ValType( _items_data ) == "L" .OR. _items_data == NIL
       RETURN 1
@@ -361,7 +361,7 @@ STATIC FUNCTION get_a_iznos( idfirma, idtipdok, brdok )
 
 
 
-STATIC FUNCTION fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, storno, partn_arr )
+STATIC FUNCTION fakt_fiscal_stavke_racuna( id_firma, tip_dok, br_dok, storno, partn_arr )
 
    LOCAL _data := {}
    LOCAL _n_rn_broj, _rn_iznos, _rn_rabat, _rn_datum, _rekl_rn_broj
@@ -587,12 +587,102 @@ STATIC FUNCTION fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, storno, pa
 
 
 
+STATIC FUNCTION racun_bezgotovinski( tip_dok, vrsta_placanja )
+
+   IF tip_dok == "10" .AND. vrsta_placanja <> "G "
+      RETURN .T.
+   ENDIF
+
+   IF tip_dok == "11" .AND. vrsta_placanja == "VR"
+      RETURN .T.
+   ENDIF
+
+   RETURN .F.
+
+
+
+STATIC FUNCTION is_idbroj_13cifara( id_broj )
+
+   IF LEN( ALLTRIM( id_broj ) ) == 13
+      RETURN .T.
+   ENDIF
+
+   RETURN .F.
+
+
+
+
+STATIC FUNCTION vrsta_placanja_za_fiskalni_uredjaj( tip_dok, vrsta_placanja )
+
+   LOCAL cVrPlac := "0"
+
+   IF ( tip_dok $ "#10#" .AND. !vrsta_placanja == "G " ) .OR. ( tip_dok == "11" .AND. vrsta_placanja == "VR" )
+      cVrPlac := "3"
+   ELSEIF ( tip_dok == "10" .AND. vrsta_placanja == "G " )
+      cVrPlac := "0"
+   ENDIF
+
+   IF tip_dok $ "#11#" .AND. vrsta_placanja == "KT"
+      cVrPlac := "1"
+   ENDIF
+
+   RETURN cVrPlac
+
+
+STATIC FUNCTION dokument_se_moze_fiskalizovati( tip_dok )
+
+   IF tip_dok $ "10#11"
+       RETURN .T.
+   ENDIF
+
+   RETURN .F.
+
+
+
+
+FUNCTION podaci_partnera_kompletirani( sifra, id_broj )
+
+   LOCAL lRet := .T.
+
+   SELECT partn
+   GO TOP
+   SEEK sifra
+
+   IF !Found()
+      MsgBeep( "Partnera nisam pronašao u šifrarniku !" )
+      lRet := .F.
+      RETURN lRet
+   ENDIF
+
+   IF Empty( id_broj )
+      lRet := .F.
+   ENDIF
+
+   IF lRet .AND. Empty( partn->naz )
+      lRet := .F.
+   ENDIF
+
+   IF lRet .AND. Empty( partn->adresa )
+      lRet := .F.
+   ENDIF
+
+   IF lRet .AND. Empty( partn->ptt )
+      lRet := .F.
+   ENDIF
+
+   IF lRet .AND. Empty( partn->mjesto )
+      lRet := .F.
+   ENDIF
+
+   RETURN lRet
+
+
 
 /*
    Opis: vraća matricu napunjenu sa podacima partnera kao i informacije o vrsti plaćanja, da li partner pdv obveznik
          na osnovu ažuriranog fakt dokumenta
 
-   Usage: fakt_fiscal_head_perepare( id_firma, tip_dok, br_dok, storno )
+   Usage: fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno )
 
    Parametri:
       - id_firma - fakt_doks->idfirma 
@@ -607,7 +697,7 @@ STATIC FUNCTION fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, storno, pa
 
    Primjer:
 
-      partn_arr := fakt_fiscal_head_prepare( "10", "10", "00001", .F. )
+      partn_arr := fakt_fiscal_podaci_partnera( "10", "10", "00001", .F. )
 
       IF partn_arr == .F.
             => partner ima podešene idbroj, pdv broj ali podaci partnera nisu kompletni, fiskalni račun nije moguće napraviti
@@ -616,21 +706,19 @@ STATIC FUNCTION fakt_fiscal_items_prepare( id_firma, tip_dok, br_dok, storno, pa
 
 */
 
-STATIC FUNCTION fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, storno )
+STATIC FUNCTION fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno )
 
-   LOCAL _head := {}
+   LOCAL _podaci := {}
    LOCAL _partn_id
    LOCAL _vrsta_p
    LOCAL _v_plac := "0"
-   LOCAL _partn_id_broj, _partn_pdv_broj
+   LOCAL _partn_id_broj
    LOCAL lPartnClan
-   LOCAL _prikazi_partnera := .T.
-   LOCAL _partn_ino := .F.
-   LOCAL _partn_pdv := .T.
+   LOCAL _podaci_kompletirani
 
-   __partn_ino := _partn_ino
-   __partn_pdv := _partn_pdv
-   __vrsta_pl := _v_plac
+   __prikazi_partnera := .T.
+   __partn_ino := .F.
+   __partn_pdv := .T.
 
    SELECT fakt_doks
    SET ORDER TO TAG "1"
@@ -640,116 +728,44 @@ STATIC FUNCTION fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, storno )
    _partn_id := field->idpartner
    _vrsta_p := field->idvrstep
 
-   // head matrica
-   // =============================
-   // 1 - id broj kupca
-   // 2 - naziv
-   // 3 - adresa
-   // 4 - ptt
-   // 5 - grad
-   // 6 - vrsta placanja
-   // 7 - ino partner
-   // 8 - pdv obveznik
-
-   IF ! ( tip_dok $ "#10#11#" ) .OR. Empty( _partn_id )
-      RETURN NIL
+   IF EMPTY( _partn_id )
+      MsgBeep( "Šifra partnera ne postoji, izdavanje računa nije moguće !" )
+      RETURN .F.
    ENDIF
-
-   IF ( tip_dok $ "#10#" .AND. !_vrsta_p == "G " ) .OR. ( tip_dok == "11" .AND. _vrsta_p == "VR" )
-      _v_plac := "3"
-   ELSEIF ( tip_dok == "10" .AND. _vrsta_p == "G " )
-      _v_plac := "0"
-   ENDIF
-
-   IF tip_dok $ "#11#" .AND. _vrsta_p == "KT"
-      _v_plac := "1"
-   ENDIF
-
-   __vrsta_pl := _v_plac
 
    _partn_id_broj := AllTrim( firma_id_broj( _partn_id ) )
-
+   __vrsta_pl := vrsta_placanja_za_fiskalni_uredjaj( tip_dok, _vrsta_p )
    lPartnClan := IsOslClan( _partn_id )
 
-   IF IsIno( _partn_id ) .OR. lPartnClan
-
-      _partn_pdv := .F.
-      _partn_ino := .T.
-      _prikazi_partnera := .F.
-
-      IF lPartnClan
-         _prikazi_partnera := .T.
-      ENDIF
-
-   ELSEIF IsPdvObveznik( _partn_id )
-
-      _partn_ino := .F.
-      _partn_pdv := .T.
-      _prikazi_partnera := .T.
-
-   ELSEIF Len( _partn_id_broj ) > 12
-
-      _partn_ino := .F.
-      _partn_pdv := .T.
-      _prikazi_partnera := .T.
-
-   ENDIF
-
-   IF Empty( _partn_id_broj ) .AND. ;
-        ( ( tip_dok == "11" .AND. !( _vrsta_p $ "#VR#" ) ) .OR. ( tip_dok == "10" .AND. _vrsta_p == "G " ) )
-      _prikazi_partnera := .F.
-   ENDIF
-
-   __vrsta_pl := _v_plac
-   __partn_ino := _partn_ino
-   __partn_pdv := _partn_pdv
-   __prikazi_partnera := _prikazi_partnera
-
-   IF !_prikazi_partnera
+   IF IsIno( _partn_id )
+      __partn_ino := .T.
+      __partn_pdv := .F.
       RETURN NIL
    ENDIF
 
-   SELECT partn
-   GO TOP
-   SEEK _partn_id
+   IF !is_idbroj_13cifara( _partn_id_broj )
+      __prikazi_partnera := .F.
+   ENDIF
 
-   IF !Found()
-      MsgBeep( "Partnera nisam pronašao u šifrarniku !" )
+   _podaci_kompletirani := podaci_partnera_kompletirani( _partn_id, _partn_id_broj )
+
+   IF racun_bezgotovinski( tip_dok, _vrsta_p ) .AND. ( !__prikazi_partnera .OR. !_podaci_kompletirani )
+      MsgBeep( "Podaci partnera nisu kompletirani#Operacija štampe zaustavljena !" )
       RETURN .F.
    ENDIF
 
-   _ok := .T.
-   IF Empty( _partn_id_broj )
-      _ok := .F.
-   ENDIF
-   IF _ok .AND. Empty( partn->naz )
-      _ok := .F.
-   ENDIF
-   IF _ok .AND. Empty( partn->adresa )
-      _ok := .F.
-   ENDIF
-   IF _ok .AND. Empty( partn->ptt )
-      _ok := .F.
-   ENDIF
-   IF _ok .AND. Empty( partn->mjesto )
-      _ok := .F.
+   IF lPartnClan
+      __partn_ino := .T.
+      __partn_pdv := .F.
+   ELSEIF IsPdvObveznik( _partn_id )
+      __partn_ino := .F.
+      __partn_pdv := .T.
    ENDIF
 
-   IF !_ok
-      MsgBeep( "Podaci partnera nisu kompletirani !#(id, naziv, adresa, ptt, mjesto)#Prekidam operaciju" )
-      RETURN .F.
-   ENDIF
+   AAdd( _podaci, { _partn_id_broj, partn->naz, partn->adresa, ;
+      partn->ptt, partn->mjesto, __vrsta_pl, __partn_ino, __partn_pdv } )
 
-   IF !Empty( AllTrim( _partn_id_broj ) ) .AND. Len( AllTrim( _partn_id_broj ) ) < 12 .AND. lPartnClan
-      _ok := .F.
-      MsgBeep( "INO partner sadrži član o oslobađanju od PDV-a, to je nedozvoljeno !" )
-      RETURN _ok
-   ENDIF
-
-   AAdd( _head, { _partn_id_broj, partn->naz, partn->adresa, ;
-      partn->ptt, partn->mjesto, _v_plac, _partn_ino, _partn_pdv } )
-
-   RETURN _head
+   RETURN _podaci
 
 
 

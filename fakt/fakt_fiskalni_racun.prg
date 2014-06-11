@@ -695,7 +695,8 @@ STATIC FUNCTION fakt_fiscal_head_prepare( id_firma, tip_dok, br_dok, storno )
 
    ENDIF
 
-   IF Empty( _partn_id_broj ) .AND. ( tip_dok == "11" .AND. !( _vrsta_p $ "#VR#" ) )
+   IF Empty( _partn_id_broj ) .AND. ;
+        ( ( tip_dok == "11" .AND. !( _vrsta_p $ "#VR#" ) ) .OR. ( tip_dok == "10" .AND. _vrsta_p == "G " ) )
       _prikazi_partnera := .F.
    ENDIF
 

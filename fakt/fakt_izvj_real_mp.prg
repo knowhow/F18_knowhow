@@ -175,7 +175,7 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
    LOCAL nUkupno
    LOCAL _tip_partnera := "1"
    LOCAL _pdv_broj := ""
-   LOCAL _pdv_clan := ""
+   LOCAL _pdv_clan
    LOCAL _d_do, _d_od, _varijanta, _tip_dok, _operater, _id_firma, _rasclaniti
    LOCAL _vrsta_p
 
@@ -283,12 +283,10 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
 
          IF _rasclaniti
 
-            // odredi tip partnera
             _pdv_broj := firma_pdv_broj( cPart_id )
-            _pdv_clan := IzSifKPartn( "REG0", cPart_id )
+            _pdv_clan := IsOslClan( cPart_id )
 
             IF !Empty( _pdv_broj )
-               // pdv obveznici
                _tip_partnera := "2"
             ENDIF
 

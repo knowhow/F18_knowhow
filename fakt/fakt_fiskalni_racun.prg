@@ -754,6 +754,10 @@ STATIC FUNCTION fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno )
       RETURN .F.
    ENDIF
 
+   IF __prikazi_partnera .AND. !_podaci_kompletirani
+      __prikazi_partnera := .F.
+   ENDIF
+
    IF lPartnClan
       __partn_ino := .T.
       __partn_pdv := .F.

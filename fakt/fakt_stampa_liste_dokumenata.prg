@@ -38,7 +38,7 @@ FUNCTION stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, objekat_id
    P_COND
 
    ?? Space( gnLMarg )
-   ?? "FAKT: Stampa dokumenata na dan:", Date(), Space( 10 ), "za period", dDatOd, "-", dDatDo
+   ??U "FAKT: Štampa dokumenata na dan:", Date(), Space( 10 ), "za period", dDatOd, "-", dDatDo
    ?
 
    ? Space( gnLMarg )
@@ -88,7 +88,7 @@ FUNCTION stampa_liste_dokumenata( dDatOd, dDatDo, qqTipDok, cIdFirma, objekat_id
    ENDIF
 
    IF lVrsteP
-      ?? " Nac.pl."
+      ??U " Nač.pl."
    ENDIF
 
    IF FieldPos( "DATPL" ) <> 0

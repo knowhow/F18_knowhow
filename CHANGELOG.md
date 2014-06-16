@@ -1,3 +1,7 @@
+1.7.102  2014-06-16, vsasa
+
+  - Fiskalne opcije, bezgotovinski račun moguć bez podataka partnera
+ 
 1.7.101  2014-06-11, vsasa
 
   - ID broj, PDV broj, obrada kod fiskalnog računa, obrada kod kontiranja dokumenta

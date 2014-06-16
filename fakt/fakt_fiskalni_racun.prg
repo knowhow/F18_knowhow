@@ -727,7 +727,7 @@ STATIC FUNCTION racun_bezgotovinski_bez_partnera_pitanje()
 
 */
 
-STATIC FUNCTION fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno, lRacunBezPartnera )
+STATIC FUNCTION fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno, lBezgRacunBezPartnera )
 
    LOCAL _podaci := {}
    LOCAL _partn_id
@@ -736,6 +736,10 @@ STATIC FUNCTION fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno, 
    LOCAL _partn_id_broj
    LOCAL lPartnClan
    LOCAL _podaci_kompletirani
+
+   IF lBezgRacunBezPartnera == NIL
+      lBezgRacunBezPartnera := .F.
+   ENDIF
 
    __prikazi_partnera := .T.
    __partn_ino := .F.
@@ -771,7 +775,7 @@ STATIC FUNCTION fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno, 
    _podaci_kompletirani := is_podaci_partnera_kompletirani( _partn_id, _partn_id_broj )
 
    IF racun_bezgotovinski( tip_dok, _vrsta_p ) .AND. ( !__prikazi_partnera .OR. !_podaci_kompletirani )
-      IF lRacunBezPartnera .AND. racun_bezgotovinski_bez_partnera_pitanje()
+      IF lBezgRacunBezPartnera .AND. racun_bezgotovinski_bez_partnera_pitanje()
          __prikazi_partnera := .F.
       ELSE
          MsgBeep( "Podaci partnera nisu kompletirani#Operacija štampe zaustavljena !" )

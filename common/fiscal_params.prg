@@ -860,6 +860,6 @@ STATIC FUNCTION _print_param( param )
    ?
    ?U Space( 3 ), "A4 print:", PARAM[ "print_a4" ], " dokumenti za štampu:", PARAM[ "op_docs" ]
    ?U Space( 3 ), "Zbirni bezgotovinski račun:", AllTrim( Str( PARAM[ "vp_sum" ] ) )
-   ?U Space( 3 ), "Bezgotovinski račun moguć bez partnera:", PARAM[ "vp_no_customer" ] )
+   ?U Space( 3 ), "Bezgotovinski račun moguć bez partnera:", PARAM[ "vp_no_customer" ]
 
    RETURN

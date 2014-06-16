@@ -48,6 +48,7 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
    LOCAL _storno := .F.
    LOCAL _items_data, _partn_data
    LOCAL _cont := "1"
+   LOCAL lRacunBezgBezPartnera
 
    IF !fiscal_opt_active()
       RETURN _err_level
@@ -68,6 +69,9 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
    __device_params := dev_param
 
    _dev_drv := AllTrim( dev_param[ "drv" ] )
+
+   lRacunBezgBezPartnera := ( dev_param["vp_no_customer"] == "D" )
+
    __DRV_CURRENT := _dev_drv
 
    SELECT fakt_doks
@@ -92,7 +96,7 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
       RETURN _err_level
    ENDIF
 
-   _partn_data := fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, _storno )
+   _partn_data := fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, _storno, lRacunBezgBezPartnera )
 
    IF ValType( _partn_data ) == "L"
       RETURN 1
@@ -682,18 +686,30 @@ STATIC FUNCTION is_podaci_partnera_kompletirani( sifra, id_broj )
    RETURN lRet
 
 
+STATIC FUNCTION racun_bezgotovinski_bez_partnera_pitanje()
+ 
+   IF Pitanje(, "Račun je bezgotovinski, podaci partnera nisu kompletirani. Želite nastaviti (D/N) ?", "N" ) == "D"
+      IF Pitanje(, "Sigurno želite štampati fiskalni račun bez podataka kupca (D/N) ?", "N" ) == "D"
+         RETURN .T.
+      ENDIF
+   ENDIF
+
+   RETURN .F.
+
+
 
 /*
    Opis: vraća matricu napunjenu sa podacima partnera kao i informacije o vrsti plaćanja, da li partner pdv obveznik
          na osnovu ažuriranog fakt dokumenta
 
-   Usage: fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno )
+   Usage: fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno, lRacunBezPartnera )
 
    Parametri:
       - id_firma - fakt_doks->idfirma 
       - tip_dok - fakt_doks->idtipdok
       - br_dok - fakt_doks->brdok
       - storno - .T. račun je storno
+      - lRacunBezPartnera - .T. bezgotovinski račun je moguć bez partnera
 
    Return:
       - .F. - podaci partnera nisu kompletirani ili ispravni, ima ID broj, PDV broj, ali fali adresa
@@ -702,7 +718,7 @@ STATIC FUNCTION is_podaci_partnera_kompletirani( sifra, id_broj )
 
    Primjer:
 
-      partn_arr := fakt_fiscal_podaci_partnera( "10", "10", "00001", .F. )
+      partn_arr := fakt_fiscal_podaci_partnera( "10", "10", "00001", .F., .F. )
 
       IF partn_arr == .F.
             => partner ima podešene idbroj, pdv broj ali podaci partnera nisu kompletni, fiskalni račun nije moguće napraviti
@@ -711,7 +727,7 @@ STATIC FUNCTION is_podaci_partnera_kompletirani( sifra, id_broj )
 
 */
 
-STATIC FUNCTION fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno )
+STATIC FUNCTION fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno, lRacunBezPartnera )
 
    LOCAL _podaci := {}
    LOCAL _partn_id
@@ -755,8 +771,12 @@ STATIC FUNCTION fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno )
    _podaci_kompletirani := is_podaci_partnera_kompletirani( _partn_id, _partn_id_broj )
 
    IF racun_bezgotovinski( tip_dok, _vrsta_p ) .AND. ( !__prikazi_partnera .OR. !_podaci_kompletirani )
-      MsgBeep( "Podaci partnera nisu kompletirani#Operacija štampe zaustavljena !" )
-      RETURN .F.
+      IF lRacunBezPartnera .AND. racun_bezgotovinski_bez_partnera_pitanje()
+         __prikazi_partnera := .F.
+      ELSE
+         MsgBeep( "Podaci partnera nisu kompletirani#Operacija štampe zaustavljena !" )
+         RETURN .F.
+      ENDIF
    ENDIF
 
    IF __prikazi_partnera .AND. !_podaci_kompletirani

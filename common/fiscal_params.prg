@@ -166,7 +166,7 @@ FUNCTION globalne_postavke_fiskalni_uredjaj()
    LOCAL _dev_tmp
    LOCAL _dev_name, _dev_act, _dev_type, _dev_drv
    LOCAL _dev_iosa, _dev_serial, _dev_plu, _dev_pdv, _dev_init_plu
-   LOCAL _dev_avans, _dev_timeout, _dev_vp_sum
+   LOCAL _dev_avans, _dev_timeout, _dev_vp_sum, _dev_vp_no_customer
    LOCAL _dev_restart
 
    IF !__use_fiscal_opt
@@ -204,6 +204,7 @@ FUNCTION globalne_postavke_fiskalni_uredjaj()
    _dev_timeout := fetch_metric( "fiscal_device_" + _dev_tmp + "_time_out", NIL, 300 )
    _dev_vp_sum := fetch_metric( "fiscal_device_" + _dev_tmp + "_vp_sum", NIL, 1 )
    _dev_restart := fetch_metric( "fiscal_device_" + _dev_tmp + "_restart_service", NIL, "N" )
+   _dev_vp_no_customer := fetch_metric( "fiscal_device_" + _dev_tmp + "_vp_no_customer" , NIL, "N" )
 
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Naziv uređaja:" GET _dev_name   PICT "@S40"
@@ -263,6 +264,9 @@ FUNCTION globalne_postavke_fiskalni_uredjaj()
    @ m_x + _x, m_y + 2 SAY8 "Zbirni račun u VP (0/1/...):" GET _dev_vp_sum PICT "999"
 
    ++ _x
+   @ m_x + _x, m_y + 2 SAY8 "Bezgotovinski račun moguć bez partnera (D/N) ?" GET _dev_vp_no_customer PICT "!@" VALID _dev_vp_no_customer $ "DN"
+
+   ++ _x
    @ m_x + _x, m_y + 2 SAY "Restart servisa nakon slanja komande (D/N) ?" GET _dev_restart ;
       PICT "@!" ;
       VALID _dev_restart $ "DN"
@@ -289,6 +293,7 @@ FUNCTION globalne_postavke_fiskalni_uredjaj()
    set_metric( "fiscal_device_" + _dev_tmp + "_time_out", NIL, _dev_timeout )
    set_metric( "fiscal_device_" + _dev_tmp + "_vp_sum", NIL, _dev_vp_sum )
    set_metric( "fiscal_device_" + _dev_tmp + "_restart_service", NIL, _dev_restart )
+   set_metric( "fiscal_device_" + _dev_tmp + "_vp_no_customer", NIL, _dev_vp_no_customer )
 
    RETURN .T.
 
@@ -710,6 +715,7 @@ FUNCTION get_fiscal_device_params( device_id, user_name )
    _param[ "auto_avans" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_auto_avans", NIL, 0 )
    _param[ "timeout" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_time_out", NIL, 300 )
    _param[ "vp_sum" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_vp_sum", NIL, 1 )
+   _param[ "vp_no_customer" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_vp_no_customer", NIL, "N" )
    _param[ "restart_service" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_restart_service", NIL, "N" )
 
 #ifdef TEST
@@ -852,7 +858,8 @@ STATIC FUNCTION _print_param( param )
    ? Space( 3 ), "Auto polog:", AllTrim( Str( PARAM[ "auto_avans" ], 12, 2 ) ), ;
       "Timeout fiskalnih operacija:", AllTrim( Str( PARAM[ "timeout" ] ) )
    ?
-   ? Space( 3 ), "A4 print:", PARAM[ "print_a4" ], " dokumenti za stampu:", PARAM[ "op_docs" ]
-   ? Space( 3 ), "Zbirni VP racun:", AllTrim( Str( PARAM[ "vp_sum" ] ) )
+   ?U Space( 3 ), "A4 print:", PARAM[ "print_a4" ], " dokumenti za štampu:", PARAM[ "op_docs" ]
+   ?U Space( 3 ), "Zbirni bezgotovinski račun:", AllTrim( Str( PARAM[ "vp_sum" ] ) )
+   ?U Space( 3 ), "Bezgotovinski račun moguć bez partnera:", PARAM[ "vp_no_customer" ] )
 
    RETURN

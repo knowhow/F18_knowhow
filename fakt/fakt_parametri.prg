@@ -177,7 +177,7 @@ FUNCTION fakt_par_razno()
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Uvijek resetuj artikal pri unosu dokumenata (D/N)" GET gResetRoba PICT "@!" VALID gResetRoba $ "DN"
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Prikaz bazood-a na fakturi (0/1/2)" GET _prik_bk VALID _prik_bk $ "012"
+   @ m_x + _x, m_y + 2 SAY "Prikaz barkod-a na fakturi (0/1/2)" GET _prik_bk VALID _prik_bk $ "012"
 
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Račun na email:" GET _racun_na_email PICT "@S50"

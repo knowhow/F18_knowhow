@@ -1,6 +1,7 @@
-1.7.102  2014-06-16, vsasa
+1.7.102  2014-06-17, vsasa
 
   - Fiskalne opcije, bezgotovinski račun moguć bez podataka partnera
+  - FAKT, bugfix, štampa liste dokumenata
  
 1.7.101  2014-06-11, vsasa
 

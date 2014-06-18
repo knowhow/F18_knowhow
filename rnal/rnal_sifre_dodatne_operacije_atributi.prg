@@ -283,10 +283,6 @@ FUNCTION g_aop_att_desc( nAop_att_id, lEmpty, lFullDesc )
 
    // izbaci konfiguratore ako postoje
    rem_jokers( @cAopAttDesc )
-   // cAopAttDesc := STRTRAN( cAopAttDesc, "#G_CONFIG#", "" )
-   // cAopAttDesc := STRTRAN( cAopAttDesc, "#HOLE_CONFIG#", "" )
-   // cAopAttDesc := STRTRAN( cAopAttDesc, "#STAMP_CONFIG#", "" )
-   // cAopAttDesc := STRTRAN( cAopAttDesc, "#PREP_CONFIG#", "" )
 
    SELECT ( nTArea )
 
@@ -340,30 +336,24 @@ FUNCTION is_g_config( cVal, nAop_att_id, ;
 	
       // standarni konfigurator
       IF "#G_CONFIG#" $ field->aop_att_fu
-		
          lGConf := .T.
 	
-         // konfigurator busenja rupa
+      // konfigurator busenja rupa
       ELSEIF "#HOLE_CONFIG#" $ field->aop_att_fu
-		
          lHConf := .T.
 	
-         // RAL - konfigurator
+      // RAL - konfigurator
       ELSEIF "#RAL_CONFIG#" $ field->aop_att_fu
-		
          lRalConf := .T.
 
-         // konfigurator pozicije pecata
+      // konfigurator pozicije pecata
       ELSEIF "#STAMP_CONFIG#" $ field->aop_att_fu
-		
          lStConf := .T.
 	
       ELSEIF "#PREP_CONFIG#" $ field->aop_att_fu
-		
          lPrepConf := .T.
 
       ELSEIF "#" $ field->aop_att_fu
-	
          lGConf := .F.
 
          aTmp := TokToNiz( field->aop_att_fu, "#" )
@@ -373,21 +363,17 @@ FUNCTION is_g_config( cVal, nAop_att_id, ;
 		
       ENDIF
 	
-      // find joker
       IF aops_att->( FieldPos( "AOP_ATT_JO" ) ) <> 0
-         // uzmi iz polja joker
          cJoker := AllTrim( field->aop_att_jo )
       ELSE
-         // uzmi iz opisa
          cJoker := AllTrim( field->aop_att_de )
       ENDIF
 	
    ENDIF
 
-   // show glass config
    IF lGConf == .T.
 
-      IF glass_config( nWidth, nHeigh, @cV1, @cV2, @cV3, @cV4, ;
+      IF rnal_konfigurator_stakla( nWidth, nHeigh, @cV1, @cV2, @cV3, @cV4, ;
             @nR1, @nR2, @nR3, @nR4 ) == .T.
 		
          // shema za G_CONFIG
@@ -454,29 +440,19 @@ FUNCTION is_g_config( cVal, nAop_att_id, ;
    ENDIF
 
    IF lHConf == .T.
-
-      // konfigurator busenja rupa
-      cVal := hole_config( cJoker )
-	
+      cVal := rnal_konfiguracija_dimenzija_rupa( cJoker )
    ENDIF
 
    IF lRalConf == .T.
       cVal := PadR( get_ral( nTick ), 150 )
    ENDIF
 
-   IF lStConf == .T. .AND. ;
-         pitanje(, "Unjeti pozicije pecata (D/N) ?", "D" ) == "D"
-	
-      // konfigurator pozicije pecata
-      cVal := stamp_config( cJoker, nWidth, nHeigh )
-
+   IF lStConf == .T. .AND. Pitanje(, "Unjeti pozicije peƒçata (D/N) ?", "D" ) == "D"
+      cVal := rnal_konfigurator_pozicije_pecata( cJoker, nWidth, nHeigh )
    ENDIF
 
    IF lPrepConf == .T.
-	
-      // konfigurator prepusta
-      cVal := prepust_config( cJoker, nWidth, nHeigh, 0, 0, 0, 0 )
-
+      cVal := rnal_konfiguracija_prepusta( cJoker, nWidth, nHeigh, 0, 0, 0, 0 )
    ENDIF
 
    SELECT ( nTArea )
@@ -510,30 +486,21 @@ FUNCTION g_aop_value( cVal )
 
    DO CASE
 	
-      // brusenje stranica
    CASE aTmp[ 1 ] == "<A_B>"
-	
       cRet := _cre_aop_str( aTmp[ 2 ] )
 		
-      // zaobljavanje
+   // zaobljavanje
    CASE aTmp[ 1 ] == "<A_Z>"
-		
       cRet := _cre_aop_Str( aTmp[ 2 ] )
 
-      // pozicija peËata
    CASE aTmp[ 1 ] == "STAMP"
+      cRet := rnal_pozicija_pecata_stavke( cVal )
 		
-      cRet := stamp_read( cVal )
-		
-      // rupe i dimenzije
    CASE aTmp[ 1 ] == "<A_BU>"
-
-      cRet := hole_read( cVal )
+      cRet := rnal_dimenzije_rupa_za_nalog( cVal )
 	
-      // prepust
    CASE aTmp[ 1 ] == "<A_PREP>"
-
-      cRet := prep_read( cVal )
+      cRet := rnal_dimenzije_prepusta_za_nalog( cVal )
 
    CASE aTmp[ 1 ] == "RAL"
 

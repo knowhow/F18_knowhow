@@ -108,7 +108,7 @@ FUNCTION rem_jokers( cVal )
 // ispisuje box sa slikom stakla i odabirom
 // obrade na stranicama
 // ---------------------------------------------------
-FUNCTION glass_config( nWidth, nHeigh, ;
+FUNCTION rnal_konfigurator_stakla( nWidth, nHeigh, ;
       cV1, cV2, cV3, cV4, ;
       nR1, nR2, nR3, nR4 )
 
@@ -145,7 +145,7 @@ FUNCTION glass_config( nWidth, nHeigh, ;
 
    @ m_x + 1, m_y + 2 SAY "##glass_config##  select operations..."
 
-   _show_glass( nGLen, nGTop, nGBott, nGLeft, cColSch, nWidth, nHeigh )
+   box_staklo( nGLen, nGTop, nGBott, nGLeft, cColSch, nWidth, nHeigh )
 	
    // top
    @ m_x + nGTop - 1, m_y + ( nBoxY / 2 ) - 1 SAY "d1 ?" GET cV1 ;
@@ -164,17 +164,14 @@ FUNCTION glass_config( nWidth, nHeigh, ;
       PICT "@!" VALID cV4 $ "DN"
 	
 	
-   // procitaj prvo stranice
    READ
 	
 	
-   IF pitanje(, "Definisati radijuse ?", "N" ) == "D"
+   IF Pitanje(, "Definisati radijuse (D/N) ?", "N" ) == "D"
 
-      // pobrisi prethodno
       @ nStX, nStY CLEAR TO nStX + nBoxX - 3, nStY + nBoxY - 2
 
-
-      _show_glass( nGLen, nGTop, nGBott, nGLeft, cColSch, nWidth, nHeigh )
+      box_staklo( nGLen, nGTop, nGBott, nGLeft, cColSch, nWidth, nHeigh )
 		
       // top left
       @ m_x + nGTop - 1, m_y + ( nGLeft - 4 ) SAY "r1 ?" GET cD1 ;
@@ -206,8 +203,6 @@ FUNCTION glass_config( nWidth, nHeigh, ;
 
       READ
 	
-      // zatim procitaj radijuse
-	
    ENDIF
 	
    BoxC()
@@ -220,11 +215,7 @@ FUNCTION glass_config( nWidth, nHeigh, ;
 
 
 
-// ---------------------------------------------------
-// staklo sa prepustom - konfigurator
-// nove dimenzije stakla
-// ---------------------------------------------------
-FUNCTION prepust_config( cJoker, nWidth, nHeigh, ;
+FUNCTION rnal_konfiguracija_prepusta( cJoker, nWidth, nHeigh, ;
       nD1, nD2, nD3, nD4 )
 
    LOCAL nBoxX := 17
@@ -250,7 +241,7 @@ FUNCTION prepust_config( cJoker, nWidth, nHeigh, ;
 
    @ m_x + 1, m_y + 2 SAY "##glass_config## konfigurisanje prepusta..."
 
-   _show_glass( nGLen, nGTop, nGBott, nGLeft, cColSch, nWidth, nHeigh )
+   box_staklo( nGLen, nGTop, nGBott, nGLeft, cColSch, nWidth, nHeigh )
 	
    // top
    @ m_x + nGTop - 1, m_y + ( nBoxY / 2 ) - 1 SAY "A:" GET nD1 ;
@@ -276,8 +267,6 @@ FUNCTION prepust_config( cJoker, nWidth, nHeigh, ;
       RETURN ""
    ENDIF
 
-   // ako su identicne mjere kao i original staklo
-   // izadji
    IF ( nD1 = nWidth .AND. nD4 = nWidth ) .AND. ;
          ( nD2 = nHeigh .AND. nD3 = nHeigh )
       RETURN ""
@@ -285,19 +274,15 @@ FUNCTION prepust_config( cJoker, nWidth, nHeigh, ;
 
    cTmp := ""
 
-   // dim. 1
    IF nD1 > 0
       cTmp += "A=" + AllTrim( Str( nD1, 12, 2 ) ) + "#"
    ENDIF
-   // dim. 2
    IF nD2 > 0
       cTmp += "B=" + AllTrim( Str( nD2, 12, 2 ) ) + "#"
    ENDIF
-   // dim. 3
    IF nD3 > 0
       cTmp += "C=" + AllTrim( Str( nD3, 12, 2 ) ) + "#"
    ENDIF
-   // dim. 4
    IF nD4 > 0
       cTmp += "D=" + AllTrim( Str( nD4, 12, 2 ) ) + "#"
    ENDIF
@@ -306,10 +291,7 @@ FUNCTION prepust_config( cJoker, nWidth, nHeigh, ;
       cTmp := "#" + cTmp
    ENDIF
 
-   // formiraj gotov string
    // <A_PREP>:#D1=2#D2=5#
-   // dim1 = 2mm
-   // dim2 = 5mm itd...
 
    IF !Empty( cTmp )
       cRet := cJoker + ":" + cTmp
@@ -318,11 +300,7 @@ FUNCTION prepust_config( cJoker, nWidth, nHeigh, ;
    RETURN cRet
 
 
-// --------------------------------------
-// konfigurator busenja
-// cJoker - joker operacije
-// --------------------------------------
-FUNCTION hole_config( cJoker )
+FUNCTION rnal_konfiguracija_dimenzija_rupa( cJoker )
 
    LOCAL nBoxX := 12
    LOCAL nBoxY := 65
@@ -341,7 +319,6 @@ FUNCTION hole_config( cJoker )
    LOCAL cTmp := ""
    LOCAL GetList := {}
 
-   // generisi box za definisanje rupa...
    Box(, nBoxX, nBoxY )
 	
    @ m_x + nX, m_y + 2 SAY "#HOLE_CONFIG#"
@@ -368,7 +345,7 @@ FUNCTION hole_config( cJoker )
 	
    READ
 
-   IF pitanje(, "Da li postoji jos rupa ?", "N" ) == "D"
+   IF Pitanje(, "Da li postoje dodatne rupe (D/N) ?", "N" ) == "D"
 	
       nX += 1
 	
@@ -397,65 +374,51 @@ FUNCTION hole_config( cJoker )
 
    cTmp := ""
 
-   // rupa 1
    IF nHole1 <> 0
       cTmp += "H1=" + AllTrim( Str( nHole1 ) ) + "#"
    ENDIF
 
-   // rupa 2
    IF nHole2 <> 0
       cTmp += "H2=" + AllTrim( Str( nHole2 ) ) + "#"
    ENDIF
 
-   // rupa 3
    IF nHole3 <> 0
       cTmp += "H3=" + AllTrim( Str( nHole3 ) ) + "#"
    ENDIF
 
-   // rupa 4
    IF nHole4 <> 0
       cTmp += "H4=" + AllTrim( Str( nHole4 ) ) + "#"
    ENDIF
 
-   // rupa 5
    IF nHole5 <> 0
       cTmp += "H5=" + AllTrim( Str( nHole5 ) ) + "#"
    ENDIF
 
-   // rupa 6
    IF nHole6 <> 0
       cTmp += "H6=" + AllTrim( Str( nHole6 ) ) + "#"
    ENDIF
 
-   // rupa 7
    IF nHole7 <> 0
       cTmp += "H7=" + AllTrim( Str( nHole7 ) ) + "#"
    ENDIF
 
-   // rupa 8
    IF nHole8 <> 0
       cTmp += "H8=" + AllTrim( Str( nHole8 ) ) + "#"
    ENDIF
 
-   // rupa 9
    IF nHole9 <> 0
       cTmp += "H9=" + AllTrim( Str( nHole9 ) ) + "#"
    ENDIF
 
-   // rupa 10
    IF nHole10 <> 0
       cTmp += "H10=" + AllTrim( Str( nHole10 ) ) + "#"
    ENDIF
-
 
    IF !Empty( cTmp )
       cTmp := "#" + cTmp
    ENDIF
 
-   // formiraj gotov string
    // <A_BU_HOLE>:#H1=2#H2=5#
-   // hole1 = 2mm
-   // hole2 = 5mm
 
    IF !Empty( cTmp )
       cRet := cJoker + ":" + cTmp
@@ -465,10 +428,7 @@ FUNCTION hole_config( cJoker )
 
 
 
-// --------------------------------------------------
-// vraæa u stringu ispis rupa i dimenzija rupa
-// --------------------------------------------------
-FUNCTION hole_read( cValue )
+FUNCTION rnal_dimenzije_rupa_za_nalog( cValue )
 
    LOCAL cRet := ""
    LOCAL aTmp
@@ -481,7 +441,6 @@ FUNCTION hole_read( cValue )
    aTmp := TokToNiz( cValue, ":" )
 
    IF aTmp[ 1 ] <> "<A_BU>"
-      // ovo nije busenje
       RETURN cRet
    ENDIF
 
@@ -489,7 +448,6 @@ FUNCTION hole_read( cValue )
 
    aTmp2 := TokToNiz( cTmp, "#" )
 
-   // i sada imamo rupe ...
    // H1=24, H2=55
 
    FOR i := 1 TO Len( aTmp2 )
@@ -504,10 +462,9 @@ FUNCTION hole_read( cValue )
 
    RETURN cRet
 
-// --------------------------------------------------
-// vraca u stringu ispis dimenzija prepust stakla
-// --------------------------------------------------
-FUNCTION prep_read( cValue, nW, nH )
+
+
+FUNCTION rnal_dimenzije_prepusta_za_nalog( cValue, nW, nH )
 
    LOCAL cRet := ""
    LOCAL aTmp
@@ -520,7 +477,6 @@ FUNCTION prep_read( cValue, nW, nH )
    aTmp := TokToNiz( cValue, ":" )
 
    IF aTmp[ 1 ] <> "<A_PREP>"
-      // ovo nije prepust
       RETURN cRet
    ENDIF
 
@@ -553,17 +509,14 @@ FUNCTION prep_read( cValue, nW, nH )
    RETURN cRet
 
 
-// ---------------------------------------------
-// procitaj vrijednosti...
-// ---------------------------------------------
+
 FUNCTION get_prep_dim( cVal, nW, nH )
-   RETURN prep_read( cVal, @nW, @nH )
+   RETURN rnal_dimenzije_prepusta_za_nalog( cVal, @nW, @nH )
 
 
-// ---------------------------------------------------
-// konfigurator pozicije peèata
-// ---------------------------------------------------
-FUNCTION stamp_config( cJoker, nWidth, nHeigh )
+
+
+FUNCTION rnal_konfigurator_pozicije_pecata( cJoker, nWidth, nHeigh )
 
    LOCAL nBoxX := 17
    LOCAL nBoxY := 56
@@ -577,7 +530,6 @@ FUNCTION stamp_config( cJoker, nWidth, nHeigh )
 
    PRIVATE GetList := {}
 
-   // varijable
    cStampInfo := "P"
    cStampSch := "N"
    nX1 := nY1 := 0
@@ -602,7 +554,7 @@ FUNCTION stamp_config( cJoker, nWidth, nHeigh )
 	
       IF cStampSch == "N"
 	
-         _show_glass( nGLen, nGTop, nGBott, nGLeft, cColSch, nWidth, nHeigh )
+         box_staklo( nGLen, nGTop, nGBott, nGLeft, cColSch, nWidth, nHeigh )
 	
          // x1
          @ m_x + nGTop - 1, m_y + nGLeft GET nX1 PICT "999" ;
@@ -643,12 +595,9 @@ FUNCTION stamp_config( cJoker, nWidth, nHeigh )
          @ m_x + nGBott + 1, Col() + ( nGLen - 8 ) GET nX4 PICT "999" ;
             VALID val_stamp( nX4, nWidth, nHeigh )
          @ m_x + nGBott + 1, Col() SAY "mm"
-
 	
          READ
 	
-	
-         // mora biti unesena pozicija
          IF ( nX1 + nX2 + nX3 + nX4 + nY1 + nY2 + nY3 + nY4 ) <> 0
             EXIT
          ENDIF
@@ -694,15 +643,9 @@ FUNCTION stamp_config( cJoker, nWidth, nHeigh )
 
    IF !Empty( cTmp ) .OR. cStampSch == "D"
 	
-      // ako je pogledaj shemu
       IF cStampSch == "D"
-		
          cTmp := cStampSch
-		
       ENDIF
-	
-      // primjer stringa koji se dobije:
-      // STAMP:P#X1=20#Y1=25#
 	
       cReturn := "STAMP" + ":" + cStampInfo + "#" + cTmp
 
@@ -712,10 +655,7 @@ FUNCTION stamp_config( cJoker, nWidth, nHeigh )
 
 
 
-// -----------------------------------------------
-// citanje pozicije pecata za nalog
-// -----------------------------------------------
-FUNCTION stamp_read( cStampStr )
+FUNCTION rnal_pozicija_pecata_stavke( cStampStr )
 
    LOCAL cRet := ""
    LOCAL i
@@ -727,24 +667,18 @@ FUNCTION stamp_read( cStampStr )
       RETURN cRet
    ENDIF
 
-   // string                   1          2
    // ex: "<A_K>:P#X1=20#Y1=25" => {<A_K>} {P#X1=20#Y1=25}
    aTmp := TokToNiz( cStampStr, ":" )
 
    IF aTmp[ 1 ] <> "STAMP"
-
       RETURN cRet
-
    ENDIF
-
 
    // ex: "P#X1=20#Y1=25" =>  {P} {X1=20} {Y1=25}
    aTmp2 := TokToNiz( aTmp[ 2 ], "#" )
 
    cRet := "pozicija pecata: "
 
-
-   // pozitiv ili negativ
    IF aTmp2[ 1 ] == "P"
       cRet += "pozitiv, "
    ELSEIF aTmp2[ 1 ] == "N"
@@ -752,31 +686,21 @@ FUNCTION stamp_read( cStampStr )
    ENDIF
 
    IF aTmp2[ 2 ] == "D"
-
-      // ako je pozicija pecata, pogledati shemu
       // ex: "P#D" => {P} {D}
-
-      cRet += " (pogledaj shemu u prilogu ) "
+      cRet += " (pogledaj shemu u prilogu) "
       RETURN cRet
-	
    ENDIF
 
-
-
-   // x koordinata
    aTmp3 := TokToNiz( aTmp2[ 2 ], "=" )
 
-   // dodaj na ispis
-   cRet += _stamp_pos( aTmp3[ 1 ] )
+   cRet += pozicija_pecata_opis( aTmp3[ 1 ] )
    cRet += " "
    cRet += AllTrim( aTmp3[ 2 ] )
    cRet += " mm - "
 
-   // y koordinata
    aTmp3 := TokToNiz( aTmp2[ 3 ], "=" )
 
-   // dodaj na ispis i y koordinatu
-   cRet += _stamp_pos( aTmp3[ 1 ] )
+   cRet += pozicija_pecata_opis( aTmp3[ 1 ] )
    cRet += " "
    cRet += AllTrim( aTmp3[ 2 ] )
    cRet += " mm"
@@ -784,10 +708,7 @@ FUNCTION stamp_read( cStampStr )
    RETURN cRet
 
 
-// ----------------------------------------
-// pozicija peèata stranice
-// ----------------------------------------
-STATIC FUNCTION _stamp_pos( cVar )
+STATIC FUNCTION pozicija_pecata_opis( cVar )
 
    LOCAL cRet := ""
 
@@ -806,16 +727,9 @@ STATIC FUNCTION _stamp_pos( cVar )
 
 
 
-// -------------------------
-// validacija pecata
-// osnovu dimenzija A i B
-// stakla
-// -------------------------
 FUNCTION val_stamp( nDim, nA, nB )
 
    LOCAL lRet := .T.
-
-   // trenutno nas nista ne interesuje....
 
    RETURN lRet
 
@@ -850,7 +764,7 @@ FUNCTION val_radius( nRadius, nA, nB )
 // nLeft - lijeva strana
 // cColSch - kolor shema
 // ----------------------------------------
-STATIC FUNCTION _show_glass( nLenght, nTop, nBottom, nLeft, cColSch, ;
+STATIC FUNCTION box_staklo( nLenght, nTop, nBottom, nLeft, cColSch, ;
       nWidth, nHeigh )
 
    LOCAL i

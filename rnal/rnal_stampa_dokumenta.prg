@@ -389,7 +389,7 @@ STATIC FUNCTION _fill_items( lZpoGN, nVar )
             IF ( "<A_PREP>" $ cTmp_val ) .AND. lPrepust == .F.
 
                lPrepust := .T.
-               prep_read( cTmp_val, @nWidth, @nHeigh )
+               rnal_dimenzije_prepusta_za_nalog( cTmp_val, @nWidth, @nHeigh )
 
             ENDIF
 

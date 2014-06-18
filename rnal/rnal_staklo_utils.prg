@@ -691,19 +691,27 @@ FUNCTION rnal_pozicija_pecata_stavke( cStampStr )
       RETURN cRet
    ENDIF
 
-   aTmp3 := TokToNiz( aTmp2[ 2 ], "=" )
+   IF LEN( aTmp2 ) >= 2
+      aTmp3 := TokToNiz( aTmp2[ 2 ], "=" )
 
-   cRet += pozicija_pecata_opis( aTmp3[ 1 ] )
-   cRet += " "
-   cRet += AllTrim( aTmp3[ 2 ] )
-   cRet += " mm - "
+      cRet += pozicija_pecata_opis( aTmp3[ 1 ] )
+      cRet += " "
+      cRet += AllTrim( aTmp3[ 2 ] )
+      cRet += " mm - "
+   ELSE
+      cRet += "nedefinisana X pozicija "
+   ENDIF
 
-   aTmp3 := TokToNiz( aTmp2[ 3 ], "=" )
+   IF LEN( aTmp2 ) >= 3
+      aTmp3 := TokToNiz( aTmp2[ 3 ], "=" )
 
-   cRet += pozicija_pecata_opis( aTmp3[ 1 ] )
-   cRet += " "
-   cRet += AllTrim( aTmp3[ 2 ] )
-   cRet += " mm"
+      cRet += pozicija_pecata_opis( aTmp3[ 1 ] )
+      cRet += " "
+      cRet += AllTrim( aTmp3[ 2 ] )
+      cRet += " mm"
+   ELSE
+      cRet += "nedefinisana Y pozicija "
+   ENDIF
 
    RETURN cRet
 

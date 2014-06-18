@@ -557,46 +557,42 @@ FUNCTION rnal_konfigurator_pozicije_pecata( cJoker, nWidth, nHeigh )
          box_staklo( nGLen, nGTop, nGBott, nGLeft, cColSch, nWidth, nHeigh )
 	
          // x1
-         @ m_x + nGTop - 1, m_y + nGLeft GET nX1 PICT "999" ;
-            VALID val_stamp( nX1, nWidth, nHeigh )
+         @ m_x + nGTop - 1, m_y + nGLeft GET nX1 PICT "999"
          @ m_x + nGTop - 1, Col() SAY "mm"
 	
          // x2
-         @ m_x + nGTop - 1, Col() + nGLen - 8 GET nX2 PICT "999" ;
-            VALID val_stamp( nX2, nWidth, nHeigh )
+         @ m_x + nGTop - 1, Col() + nGLen - 8 GET nX2 PICT "999"
          @ m_x + nGTop - 1, Col() SAY "mm"
 	
          // y1
-         @ m_x + nGTop + 1, m_y + 2 GET nY1 PICT "999" ;
-            VALID val_stamp( nY1, nWidth, nHeigh )
+         @ m_x + nGTop + 1, m_y + 2 GET nY1 PICT "999" VALID val_stamp( nX1, nY1 )
          @ m_x + nGTop + 1, Col() SAY "mm"
 	
          // y2
-         @ m_x + nGTop + 1, Col() + ( nGLen  + 4 ) GET nY2 PICT "999" ;
-            VALID val_stamp( nY2, nWidth, nHeigh )
+         @ m_x + nGTop + 1, Col() + ( nGLen  + 4 ) GET nY2 PICT "999" VALID val_stamp( nX2, nY2 )
          @ m_x + nGTop + 1, Col() SAY "mm"
 	
          // y3
-         @ m_x + nGBott - 2, m_y + 2 GET nY3 PICT "999" ;
-            VALID val_stamp( nY3, nWidth, nHeigh )
+         @ m_x + nGBott - 2, m_y + 2 GET nY3 PICT "999"
          @ m_x + nGBott - 2, Col() SAY "mm"
 	
          // y4
-         @ m_x + nGBott - 2, Col() + ( nGLen + 4 ) GET nY4 PICT "999" ;
-            VALID val_stamp( nY4, nWidth, nHeigh )
+         @ m_x + nGBott - 2, Col() + ( nGLen + 4 ) GET nY4 PICT "999"
          @ m_x + nGBott - 2, Col() SAY "mm"
-	
+
          // x3
-         @ m_x + nGBott + 1, m_y + nGLeft GET nX3 PICT "999" ;
-            VALID val_stamp( nX3, nWidth, nHeigh )
+         @ m_x + nGBott + 1, m_y + nGLeft GET nX3 PICT "999" VALID val_stamp( nX3, nY3 )
          @ m_x + nGBott + 1, Col() SAY "mm"
 	
          // x4
-         @ m_x + nGBott + 1, Col() + ( nGLen - 8 ) GET nX4 PICT "999" ;
-            VALID val_stamp( nX4, nWidth, nHeigh )
+         @ m_x + nGBott + 1, Col() + ( nGLen - 8 ) GET nX4 PICT "999" VALID val_stamp( nX4, nY4 )
          @ m_x + nGBott + 1, Col() SAY "mm"
 	
          READ
+
+         IF LastKey() == K_ESC
+            EXIT
+         ENDIF
 	
          IF ( nX1 + nX2 + nX3 + nX4 + nY1 + nY2 + nY3 + nY4 ) <> 0
             EXIT
@@ -604,10 +600,10 @@ FUNCTION rnal_konfigurator_pozicije_pecata( cJoker, nWidth, nHeigh )
 
       ELSE
          EXIT
-      ENDIF
-	
+      ENDIF	
 	
    ENDDO
+
    BoxC()
 
    IF LastKey() == K_ESC
@@ -735,9 +731,16 @@ STATIC FUNCTION pozicija_pecata_opis( cVar )
 
 
 
-FUNCTION val_stamp( nDim, nA, nB )
+FUNCTION val_stamp( nX, nY )
 
    LOCAL lRet := .T.
+
+   IF ( ( nX + nY ) > 0 ) .AND. ( nX == 0 .OR. nY == 0 )
+      MsgBeep( "X i Y pozicije ne mogu biti 0 !" )
+      IF nX == 0
+         lRet := .F.
+      ENDIF
+   ENDIF
 
    RETURN lRet
 

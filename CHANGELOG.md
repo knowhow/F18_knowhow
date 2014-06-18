@@ -1,3 +1,7 @@
+1.7.103  2014-06-18, vsasa
+
+  - RNAL, konfiguracija pozicije pečata, korekcija funkcije
+ 
 1.7.102  2014-06-17, vsasa
 
   - Fiskalne opcije, bezgotovinski račun moguć bez podataka partnera

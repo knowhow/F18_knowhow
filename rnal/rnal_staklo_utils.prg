@@ -523,10 +523,11 @@ FUNCTION rnal_konfigurator_pozicije_pecata( cJoker, nWidth, nHeigh )
    LOCAL cReturn := ""
    LOCAL cTmp := ""
    LOCAL nGLen := 40
-   LOCAL nGLeft := 8
+   LOCAL nGLeft := 2
    LOCAL nGTop := 6
    LOCAL nGBott := 15
    LOCAL cColSch := "GR+/G+"
+   LOCAL cColRed := "GR+/R+"
 
    PRIVATE GetList := {}
 
@@ -544,50 +545,37 @@ FUNCTION rnal_konfigurator_pozicije_pecata( cJoker, nWidth, nHeigh )
       nStX := m_x + 2
       nStY := m_y + 2
 
-      @ m_x + 1, m_y + 2 SAY "##stamp_position##  select position..."
+      @ m_x + 1, m_y + 2 SAY8 "### Odabir pozicije pečata na staklu"
 
-      @ m_x + 2, m_y + 2 SAY "vrsta pecata [P]ositiv / [N]egativ:" GET cStampInfo VALID cStampInfo $ "PN" PICT "@!"
+      @ m_x + 2, m_y + 2 SAY8 "vrsta pečata [P]ositiv / [N]egativ:" GET cStampInfo VALID cStampInfo $ "PN" PICT "@!"
 	
-      @ m_x + 3, m_y + 2 SAY "pogledati shemu u prilogu (D/N)?" GET cStampSch VALID cStampSch $ "DN" PICT "@!"
+      @ m_x + 3, m_y + 2 SAY8 "pogledati šemu u prilogu (D/N)?" GET cStampSch VALID cStampSch $ "DN" PICT "@!"
 
       READ
 	
       IF cStampSch == "N"
 	
-         box_staklo( nGLen, nGTop, nGBott, nGLeft, cColSch, nWidth, nHeigh )
+         box_staklo( nGLen, nGTop, nGBott, nGLeft + 6, cColSch, nWidth, nHeigh )
 	
-         // x1
-         @ m_x + nGTop - 1, m_y + nGLeft GET nX1 PICT "999"
-         @ m_x + nGTop - 1, Col() SAY "mm"
-	
-         // x2
-         @ m_x + nGTop - 1, Col() + nGLen - 8 GET nX2 PICT "999"
-         @ m_x + nGTop - 1, Col() SAY "mm"
-	
-         // y1
-         @ m_x + nGTop + 1, m_y + 2 GET nY1 PICT "999" VALID val_stamp( nX1, nY1 )
-         @ m_x + nGTop + 1, Col() SAY "mm"
-	
-         // y2
-         @ m_x + nGTop + 1, Col() + ( nGLen  + 4 ) GET nY2 PICT "999" VALID val_stamp( nX2, nY2 )
-         @ m_x + nGTop + 1, Col() SAY "mm"
-	
-         // y3
-         @ m_x + nGBott - 2, m_y + 2 GET nY3 PICT "999"
-         @ m_x + nGBott - 2, Col() SAY "mm"
-	
-         // y4
-         @ m_x + nGBott - 2, Col() + ( nGLen + 4 ) GET nY4 PICT "999"
-         @ m_x + nGBott - 2, Col() SAY "mm"
+         @ m_x + nGTop - 1, m_y + ( nGlen / 2 ) + 4 SAY "X dim." COLOR cColRed
+         @ m_x + nGTop + 4, m_y + nGLeft SAY "Y dim." COLOR cColRed
 
-         // x3
-         @ m_x + nGBott + 1, m_y + nGLeft GET nX3 PICT "999" VALID val_stamp( nX3, nY3 )
-         @ m_x + nGBott + 1, Col() SAY "mm"
+         @ m_x + nGTop - 1, m_y + nGLeft SAY "X" GET nX1 PICT "999"
+         @ m_x + nGTop - 1, Col() + 1 SAY "/Y" GET nY1 PICT "999" VALID val_pecat( nX1, nY1 )
+         @ m_x + nGTop - 1, Col() SAY "mm"
 	
-         // x4
-         @ m_x + nGBott + 1, Col() + ( nGLen - 8 ) GET nX4 PICT "999" VALID val_stamp( nX4, nY4 )
-         @ m_x + nGBott + 1, Col() SAY "mm"
+         @ m_x + nGTop - 1, Col() + nGLen - 15 SAY "X" GET nX2 PICT "999"
+         @ m_x + nGTop - 1, Col() + 1 SAY "/Y" GET nY2 PICT "999" VALID val_pecat( nX2, nY2 )
+         @ m_x + nGTop - 1, Col() SAY "mm"
 	
+         @ m_x + nGBott + 1, m_y + nGLeft SAY "X" GET nX3 PICT "999" 
+         @ m_x + nGBott + 1, Col() + 1 SAY "/Y" GET nY3 PICT "999" VALID val_pecat( nX3, nY3 )
+         @ m_x + nGBott + 1, Col() SAY "mm"
+
+         @ m_x + nGBott + 1, Col() + ( nGLen - 15 ) SAY "X"GET nX4 PICT "999" 
+         @ m_x + nGBott + 1, Col() + 1 SAY "/Y" GET nY4 PICT "999" VALID val_pecat( nX4, nY4 )
+         @ m_x + nGBott + 1, Col() SAY "mm"
+
          READ
 
          IF LastKey() == K_ESC
@@ -731,15 +719,13 @@ STATIC FUNCTION pozicija_pecata_opis( cVar )
 
 
 
-FUNCTION val_stamp( nX, nY )
+FUNCTION val_pecat( nX, nY )
 
    LOCAL lRet := .T.
 
    IF ( ( nX + nY ) > 0 ) .AND. ( nX == 0 .OR. nY == 0 )
       MsgBeep( "X i Y pozicije ne mogu biti 0 !" )
-      IF nX == 0
-         lRet := .F.
-      ENDIF
+      lRet := .F.
    ENDIF
 
    RETURN lRet

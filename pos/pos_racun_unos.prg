@@ -53,7 +53,6 @@ FUNCTION pos_unos_racuna()
    PRIVATE aAutoKeys := {}
    PRIVATE nPopust := 0
    PRIVATE nIznNar := 0
-   PRIVATE bPrevZv
    PRIVATE aUnosMsg := {}
    PRIVATE GetList := {}
 

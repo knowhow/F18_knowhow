@@ -34,7 +34,7 @@ FUNCTION InventNivel()
    PRIVATE cZaduzuje := "R"
 
    IF gSamoProdaja == "D"
-      MsgBeep( "Ne mozete vrsiti zaduzenja !" )
+      MsgBeep( "Ne možete vršiti unos zaduženja !" )
       RETURN
    ENDIF
 
@@ -120,20 +120,14 @@ FUNCTION InventNivel()
       RETURN
    ENDIF
 
-   // datum trebam setovati na osnovu dokumenta koji je vracen u priprz
-   // ako postoji
-
    SELECT priprz
 
-   // pocetak inventure
    IF RecCount2() == 0
       fPocInv := .T.
    ELSE
       fPocInv := .F.
       dDatRada := priprz->datum
    ENDIF
-
-   // 1) formiranje pomocne baze sa knjiznim stanjima artikala
 
    IF fPocInv
 
@@ -146,14 +140,12 @@ FUNCTION InventNivel()
       ENDIF
 
       IF stanje_dn == "N" .AND. cIdVd == VD_INV
-         // iskljucujem generisanje stavki sa stanjem
          fPocInv := .F.
       ENDIF
 
       IF fPocInv .AND. !fPreuzeo .AND. cIdVd == VD_INV
 
-         // generisi stavke SAMO ZA INVENTURU (nemoj za NIVELACIJU)
-         MsgO( "GENERISEM DATOTEKU " + cNazDok + "E" )
+         MsgO( "GENERIŠEM DATOTEKU " + cNazDok + "E" )
 
          SELECT priprz
 
@@ -184,26 +176,21 @@ FUNCTION InventNivel()
                IF cZaduzuje == "S" .AND. pos->idvd $ "42#01"
                   SKIP
                   LOOP
-                  // racuni za sirovine - zdravo
                ENDIF
 
                IF cZaduzuje == "R" .AND. pos->idvd == "96"
                   SKIP
                   LOOP
-                  // otpremnice za robu - zdravo
                ENDIF
 
                IF pos->idvd $ "16#00"
-                  // na ulazu imam samo VD_ZAD i VD_PCS
                   _kolicina += pos->kolicina
 
                ELSEIF pos->idvd $ "42#96#01#IN#NI"
-                  // na izlazu imam i VD_INV i VD_NIV
                   DO CASE
                   CASE pos->idvd == VD_INV
                      _kolicina -= pos->kolicina - pos->kol2
                   CASE pos->idvd == VD_NIV
-                     // ne mijenja kolicinu
                   OTHERWISE
                      _kolicina -= pos->kolicina
                   ENDCASE
@@ -217,7 +204,6 @@ FUNCTION InventNivel()
                HSEEK _idroba
 
                _cijena := pos_get_mpc()
-               // postavi tekucu cijenu
                _ncijena := pos_get_mpc()
                _robanaz := _field->naz
                _jmj := _field->jmj
@@ -261,13 +247,6 @@ FUNCTION InventNivel()
       cBrDok := priprz->brdok
 
    ENDIF
-
-   // 2) prikaz formirane baze u browse-sistemu sa mogucnoscu:
-   // - unosa stvarnog stanja (ispravka stavke)
-   // - unosa novih stavki
-   // - brisanja stavki
-   // - stampanja dokumenta inventure
-   // - stampanja popisne liste
 
    IF !fSadAz
 
@@ -315,9 +294,6 @@ FUNCTION InventNivel()
             "PRIPREMA " + cNazDok + "E", nil, ;
             { "<c-N>   Dodaj stavku", "<Enter> Ispravi stavku", "<a-P>   Popisna lista", "<c-P>   Stampanje", "<c-A> cirk ispravka", "<D> ispravi datum" }, 2, , , )
 
-         // 3) nakon prekida rada na inventuri (<Esc>) utvrdjuje se da li je inventura zavrsena
-
-         // ako je priprema prazna, nemam sta raditi...
          IF priprz->( RecCount() ) == 0
             pos_reset_broj_dokumenta( gIdPos, cIdVd, cBrDok )
             CLOSE ALL
@@ -332,7 +308,6 @@ FUNCTION InventNivel()
 
          IF i == 1
 
-            // ostavi je za kasnije
             SELECT _POS
             AppFrom( "PRIPRZ", .F. )
             SELECT PRIPRZ
@@ -342,19 +317,16 @@ FUNCTION InventNivel()
 
          ELSEIF i == 3
 
-            IF Pitanje(, "Sigurno zelite izbrisati pripremu dokumenta (D/N) ?", "N" ) == "D"
+            IF Pitanje(, "Sigurno želite izbrisati pripremu dokumenta (D/N) ?", "N" ) == "D"
 
-               // obrisati pripremu
                SELECT PRIPRZ
                my_dbf_zap()
-               // reset brojaca dokumenta...
                pos_reset_broj_dokumenta( gIdPos, cIdVd, cBrDok )
                CLOSE ALL
                RETURN
 
             ELSE
 
-               // ostavi je za kasnije
                SELECT _POS
                AppFrom( "PRIPRZ", .F. )
                SELECT PRIPRZ
@@ -366,7 +338,6 @@ FUNCTION InventNivel()
 
          ELSEIF i == 4
 
-            // vracamo se na pripremu
             SELECT PRIPRZ
             GO TOP
             LOOP
@@ -374,8 +345,6 @@ FUNCTION InventNivel()
          ENDIF
 
          IF i == 2
-            // izvsiti azuriranje
-            // izadji iz petlje, izvrsi azuriranje
             EXIT
          ENDIF
 
@@ -383,10 +352,8 @@ FUNCTION InventNivel()
 
    ENDIF
 
-   // posljednje chekiranje pred azuriranje
    check_before_azur( dDatRada )
 
-   // azuriraj pripremu u POS
    Priprz2Pos()
 
    CLOSE ALL
@@ -394,15 +361,12 @@ FUNCTION InventNivel()
    RETURN
 
 
-// ---------------------------------------------------------------
-// checkiranje tabele priprz prije azuriranja
-// ---------------------------------------------------------------
 STATIC FUNCTION check_before_azur( dDatRada )
 
    LOCAL _ret := .T.
    LOCAL _rec
 
-   MsgO( "Provjera unesenih podataka prije azuriranja u toku ..." )
+   MsgO( "Provjera unesenih podataka prije ažuriranja u toku ..." )
 
    SELECT priprz
    GO TOP
@@ -425,9 +389,6 @@ STATIC FUNCTION check_before_azur( dDatRada )
 
 
 
-// ---------------------------------------------
-// Ispravka nivelacije ili inventure
-// ---------------------------------------------
 FUNCTION EditInvNiv( dat_inv_niv )
 
    LOCAL nRec := RecNo()
@@ -451,7 +412,6 @@ FUNCTION EditInvNiv( dat_inv_niv )
 
       _dat := Date()
 
-      // zamjena vrijednosti polja datum...
       Box(, 1, 50 )
       @ m_x + 1, m_y + 2 SAY "Postavi datum na:" GET _dat
       READ
@@ -478,24 +438,20 @@ FUNCTION EditInvNiv( dat_inv_niv )
 
    CASE Ch == K_ENTER
 
-      // kalkulisi stavke u pripremi
       _calc_priprz()
 
-      // otvori unos
       IF !( EdPrInv( 1, dat_inv_niv ) == 0 )
          lVrati := DE_REFRESH
       ENDIF
 
    CASE Ch == K_CTRL_O
 
-      // update razlika na inventuri
       IF update_ip_razlika() == 1
          lVrati := DE_REFRESH
       ENDIF
 
    CASE Ch == K_CTRL_U
 
-      // update knj.kolicina
       update_knj_kol()
       lVrati := DE_REFRESH
 
@@ -516,10 +472,8 @@ FUNCTION EditInvNiv( dat_inv_niv )
 
    CASE Ch == K_CTRL_N
 
-      // kalkulisi stavke iz pripreme
       _calc_priprz()
 
-      // otvori unos
       EdPrInv( 0, dat_inv_niv )
 
       lVrati := DE_REFRESH
@@ -531,7 +485,6 @@ FUNCTION EditInvNiv( dat_inv_niv )
       IF Pitanje(, "Stavku " + AllTrim( priprz->idroba ) + " izbrisati ?", "N" ) == "D"
          my_delete_with_pack()
          lVrati := DE_REFRESH
-
       ENDIF
 
    ENDCASE
@@ -540,11 +493,6 @@ FUNCTION EditInvNiv( dat_inv_niv )
 
 
 
-// ----------------------------------------
-// kalkulisi priprz stavke
-// napuni staticke varijable
-// _saldo_kol, _saldo_izn
-// ----------------------------------------
 STATIC FUNCTION _calc_priprz()
 
    LOCAL _t_area := Select()
@@ -558,7 +506,6 @@ STATIC FUNCTION _calc_priprz()
 
    DO WHILE !Eof()
 
-      // inventura treba da gleda kol2
       IF field->idvd == "IN"
          _saldo_kol += field->kol2
          _saldo_izn += ( field->kol2 * field->cijena )
@@ -579,9 +526,6 @@ STATIC FUNCTION _calc_priprz()
 
 
 
-// ---------------------------------------------------------
-// ispravka ili unos nove stavke u pipremi
-// ---------------------------------------------------------
 FUNCTION edprinv( nInd, datum )
 
    LOCAL nVrati := 0
@@ -591,9 +535,6 @@ FUNCTION edprinv( nInd, datum )
    LOCAL _duz_sif := "10"
    LOCAL _pict := "9999999.99"
    LOCAL _last_read_var
-
-   // slijedi ispravka stavke ( nInd == 1 )
-   // ili petlja unosa stavki ( nInd == 0 )
 
    IF gDuzSifre <> NIL .AND. gDuzSifre > 0
       _duz_sif := AllTrim( Str( gDuzSifre ) )
@@ -629,7 +570,6 @@ FUNCTION edprinv( nInd, datum )
 
       IF nInd == 0
 
-         // unosenje novih stavki
          _idodj := cIdOdj
          _iddio := cIdDio
          _idroba := Space( 10 )
@@ -660,11 +600,10 @@ FUNCTION edprinv( nInd, datum )
       nLX ++
 
       IF cIdVd == VD_INV
-         // ovo mi treba samo informativno kod inventure...
-         @ nLX, m_y + 3 SAY "Knj. kolicina:" GET _kolicina PICT _pict ;
+         @ nLX, m_y + 3 SAY8 "Knj. količina:" GET _kolicina PICT _pict ;
             WHEN {|| .F. }
       ELSE
-         @ nLX, m_y + 3 SAY "     Kolicina:" GET _kolicina PICT _pict ;
+         @ nLX, m_y + 3 SAY8 "     Količina:" GET _kolicina PICT _pict ;
             WHEN {|| .T. }
       ENDIF
 
@@ -672,7 +611,7 @@ FUNCTION edprinv( nInd, datum )
 
       IF cIdVd == VD_INV
 
-         @ nLX, m_y + 3 SAY "Pop. kolicina:" GET _kol2 PICT _pict ;
+         @ nLX, m_y + 3 SAY8 "Pop. količina:" GET _kol2 PICT _pict ;
             VALID _pop_kol( _kol2 ) ;
             WHEN {|| .T. }
 
@@ -708,7 +647,6 @@ FUNCTION edprinv( nInd, datum )
 
       ENDIF
 
-      // priprz
       IF nInd == 0
 
          SELECT priprz
@@ -721,7 +659,6 @@ FUNCTION edprinv( nInd, datum )
 
       ENDIF
 
-      // pronadji tarifu i barkod za ovaj artikal
       SELECT ( cRSdbf )
       SET ORDER TO TAG "ID"
       hseek _idroba
@@ -738,8 +675,6 @@ FUNCTION edprinv( nInd, datum )
       _robanaz := _r_naz
       _jmj := _r_jmj
 
-      // nadodaj vrijednost sa postojecom iz pripreme
-      // radi se o appendu na postojeci artikal
       _kol2 := ( priprz->kol2 + _kol2 )
 
       Gather()
@@ -773,9 +708,6 @@ FUNCTION edprinv( nInd, datum )
    RETURN nVrati
 
 
-// -----------------------------------------------------
-// update razlika artikala na postojecoj inventuri
-// -----------------------------------------------------
 STATIC FUNCTION update_ip_razlika()
 
    LOCAL _id_odj := Space( 2 )
@@ -786,7 +718,7 @@ STATIC FUNCTION update_ip_razlika()
       RETURN 0
    ENDIF
 
-   MsgO( "GENERISEM RAZLIKU NA OSNOVU STANJA" )
+   MsgO( "GENERIŠEM RAZLIKU NA OSNOVU STANJA" )
 
    SELECT priprz
    GO TOP
@@ -828,16 +760,13 @@ STATIC FUNCTION update_ip_razlika()
          ENDIF
 
          IF pos->idvd $ "16#00"
-            // na ulazu imam samo VD_ZAD i VD_PCS
             ip_kol += pos->kolicina
 
          ELSEIF pos->idvd $ "42#96#01#IN#NI"
-            // na izlazu imam i VD_INV i VD_NIV
             DO CASE
             CASE pos->idvd == VD_INV
                ip_kol -= pos->kolicina - pos->kol2
             CASE pos->idvd == VD_NIV
-               // ne mijenja kolicinu
             OTHERWISE
                ip_kol -= pos->kolicina
             ENDCASE
@@ -897,9 +826,6 @@ STATIC FUNCTION update_ip_razlika()
    RETURN 1
 
 
-// -------------------------------------------------
-// update knjiznih kolicina na dokumentu
-// -------------------------------------------------
 STATIC FUNCTION update_knj_kol()
 
    SELECT priprz
@@ -925,8 +851,6 @@ STATIC FUNCTION update_knj_kol()
    RETURN .T.
 
 
-// ------------------------------------------------------------------
-// ------------------------------------------------------------------
 STATIC FUNCTION valid_pos_inv_niv( cIdVd, ind )
 
    LOCAL _area := Select()
@@ -937,8 +861,6 @@ STATIC FUNCTION valid_pos_inv_niv( cIdVd, ind )
 
    _set_cijena_artikla( cIdVd, _idroba )
 
-   // kod unosa duplih artikala dodaji na postojeci artikal
-   // ali napravi obavjestenje
    IF ind == 0 .AND. !_postoji_artikal_u_pripremi( _idroba )
       SELECT ( _area )
    ENDIF
@@ -956,15 +878,12 @@ STATIC FUNCTION valid_pos_inv_niv( cIdVd, ind )
 
 
 
-// ----------------------------------------------
-// provjera popisane kolicine
-// ----------------------------------------------
 FUNCTION _pop_kol( kol )
 
    LOCAL _ok := .T.
 
    IF kol > 200
-      IF Pitanje(, "Da li je kolicina " + AllTrim( Str( kol, 12, 2 ) ) + " ispravna kolicina ?", "N" ) == "N"
+      IF Pitanje(, "Da li je " + AllTrim( Str( kol, 12, 2 ) ) + " ispravna količina (D/N) ?", "N" ) == "N"
          _ok := .F.
       ENDIF
    ENDIF
@@ -973,9 +892,6 @@ FUNCTION _pop_kol( kol )
 
 
 
-// -----------------------------------------------
-// setovanje cijene iz sifrarnika
-// -----------------------------------------------
 FUNCTION _set_cijena_artikla( id_vd, id_roba )
 
    LOCAL _t_area := Select()
@@ -984,7 +900,6 @@ FUNCTION _set_cijena_artikla( id_vd, id_roba )
 
       SELECT roba
       hseek id_roba
-      // setuj cijene
       _cijena := pos_get_mpc()
 
    ENDIF
@@ -994,10 +909,6 @@ FUNCTION _set_cijena_artikla( id_vd, id_roba )
    RETURN .T.
 
 
-
-// -------------------------------------------------------
-// provjeri da li postoji ovaj zapis vec u pripremi...
-// -------------------------------------------------------
 FUNCTION _postoji_artikal_u_pripremi( id_roba )
 
    LOCAL _ok := .T.
@@ -1011,7 +922,7 @@ FUNCTION _postoji_artikal_u_pripremi( id_roba )
 
    IF Found()
       _ok := .F.
-      MsgBeep( "Artikal " + AllTrim( id_roba ) + " se vec nalazi u pripremi! Ako nastavite sa unosom #dodat ce se vrijednost na postojecu stavku..." )
+      MsgBeep( "Artikal " + AllTrim( id_roba ) + " se već nalazi u pripremi! Ako nastavite sa unosom #dodat će se vrijednost na postojeću stavku..." )
    ENDIF
 
    SELECT ( _t_area )
@@ -1021,18 +932,10 @@ FUNCTION _postoji_artikal_u_pripremi( id_roba )
 
 
 
-/*! \fn RacKol(cIdOdj,cIdRoba,nKol)
- *  \brief Racuna kolicinu robe
- *  \param cIdOdj
- *  \param cIdRoba
- *  \param nKol
- *  \return
- */
-
 FUNCTION RacKol( cIdOdj, cIdRoba, nKol )
 
-   MsgO( "Racunam kolicinu ..." )
-
+   MsgO( "Računam količinu artikla ..." )
+ 
    SELECT pos
    SET ORDER TO TAG "2"
    nKol := 0
@@ -1046,9 +949,6 @@ FUNCTION RacKol( cIdOdj, cIdRoba, nKol )
          LOOP
       ENDIF
 
-      // ovdje ne gledam DIO objekta, jer nivelaciju uvijek radim za
-      // cijeli objekat
-
       IF pos->idvd $ "16#00"
          nKol += pos->Kolicina
       ELSEIF POS->idvd $ "42#01#IN#NI"
@@ -1056,7 +956,6 @@ FUNCTION RacKol( cIdOdj, cIdRoba, nKol )
          CASE POS->IdVd == VD_INV
             nKol := pos->kol2
          CASE POS->idvd == VD_NIV
-            // ne utice na kolicinu
          OTHERWISE
             nKol -= pos->kolicina
          ENDCASE

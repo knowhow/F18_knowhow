@@ -33,6 +33,7 @@ FUNCTION fakt_unos_dokumenta()
    LOCAL _i, _x_pos, _y_pos, _x, _y
    LOCAL _sep := BROWSE_COL_SEP
    PRIVATE ImeKol, Kol
+   PRIVATE bPrevZv := NIL
 
    // kada je radjen zadnji fiskalni izvjestaj info...
    zadnji_fiscal_z_report_info()

@@ -54,10 +54,7 @@ FUNCTION pos_unos_racuna()
    PRIVATE nPopust := 0
    PRIVATE nIznNar := 0
    PRIVATE bPrevZv
-   PRIVATE bPrevKroz
    PRIVATE aUnosMsg := {}
-   PRIVATE bPrevUp
-   PRIVATE bPrevDn
    PRIVATE GetList := {}
 
    o_pos_tables()
@@ -99,8 +96,6 @@ FUNCTION pos_unos_racuna()
 
    oBrowse:autolite := .F.
    aAutoKeys := pos_hang_keys()
-   bPrevDn := SetKey( K_PGDN, {|| DummyProc() } )
-   bPrevUp := SetKey( K_PGUP, {|| DummyProc() } )
 
    SetKey( K_F6, {|| f7_pf_traka() } )
 
@@ -238,8 +233,6 @@ FUNCTION pos_unos_racuna()
    ENDDO
 
    pos_cancel_keys( aAutoKeys )
-   SetKey( K_PGDN, bPrevDn )
-   SetKey( K_PGUP, bPrevUp )
 
    SetKey( K_F6, NIL )
    SetKey( K_F7, NIL )

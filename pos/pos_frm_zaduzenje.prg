@@ -57,9 +57,6 @@ FUNCTION Zaduzenje
    PRIVATE cRobSir := " "
    PRIVATE dDatRada := Date()
    PRIVATE cBrDok := nil
-   PRIVATE bPrevZv
-   PRIVATE bPrevUp
-   PRIVATE bPrevDn
 
    IF cIdVd == NIL
       cIdVd := "16"

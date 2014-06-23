@@ -167,7 +167,7 @@ FUNCTION globalne_postavke_fiskalni_uredjaj()
    LOCAL _dev_name, _dev_act, _dev_type, _dev_drv
    LOCAL _dev_iosa, _dev_serial, _dev_plu, _dev_pdv, _dev_init_plu
    LOCAL _dev_avans, _dev_timeout, _dev_vp_sum, _dev_vp_no_customer
-   LOCAL _dev_restart
+   LOCAL _dev_restart, _dev_unos_depozita
 
    IF !__use_fiscal_opt
       MsgBeep( "Fiskalne opcije moraju biti uključene !" )
@@ -205,6 +205,7 @@ FUNCTION globalne_postavke_fiskalni_uredjaj()
    _dev_vp_sum := fetch_metric( "fiscal_device_" + _dev_tmp + "_vp_sum", NIL, 1 )
    _dev_restart := fetch_metric( "fiscal_device_" + _dev_tmp + "_restart_service", NIL, "N" )
    _dev_vp_no_customer := fetch_metric( "fiscal_device_" + _dev_tmp + "_vp_no_customer" , NIL, "N" )
+   _dev_unos_depozita := fetch_metric( "fiscal_device_" + _dev_tmp + "_unos_depozita" , NIL, "N" )
 
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Naziv uređaja:" GET _dev_name   PICT "@S40"
@@ -257,8 +258,12 @@ FUNCTION globalne_postavke_fiskalni_uredjaj()
    @ m_x + _x, m_y + 2 SAY8 PadR( "**** Parametri rada sa uređajem", 60 ) COLOR "I"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "Automatski polog u uredjaj:" GET _dev_avans PICT "999999.99"
-   @ m_x + _x, Col() + 1 SAY8 "Timeout fiskalnih operacija:" GET _dev_timeout PICT "999"
+   @ m_x + _x, m_y + 2 SAY8 "Auto depozit:" GET _dev_avans PICT "999999.99"
+
+   @ m_x + _x, col() + 1 SAY8 "Unos depozita kod reklamiranog računa (D/N) ?" GET _dev_unos_depozita PICT "@!" VALID _dev_unos_depozita $ "DN"
+
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY8 "Timeout fiskalnih operacija:" GET _dev_timeout PICT "999"
 
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Zbirni račun u VP (0/1/...):" GET _dev_vp_sum PICT "999"
@@ -294,6 +299,7 @@ FUNCTION globalne_postavke_fiskalni_uredjaj()
    set_metric( "fiscal_device_" + _dev_tmp + "_vp_sum", NIL, _dev_vp_sum )
    set_metric( "fiscal_device_" + _dev_tmp + "_restart_service", NIL, _dev_restart )
    set_metric( "fiscal_device_" + _dev_tmp + "_vp_no_customer", NIL, _dev_vp_no_customer )
+   set_metric( "fiscal_device_" + _dev_tmp + "_unos_depozita", NIL, _dev_unos_depozita )
 
    RETURN .T.
 
@@ -716,6 +722,7 @@ FUNCTION get_fiscal_device_params( device_id, user_name )
    _param[ "timeout" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_time_out", NIL, 300 )
    _param[ "vp_sum" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_vp_sum", NIL, 1 )
    _param[ "vp_no_customer" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_vp_no_customer", NIL, "N" )
+   _param[ "unos_depozita" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_unos_depozita", NIL, "N" )
    _param[ "restart_service" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_restart_service", NIL, "N" )
 
 #ifdef TEST

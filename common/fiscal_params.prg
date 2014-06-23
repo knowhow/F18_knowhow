@@ -205,7 +205,7 @@ FUNCTION globalne_postavke_fiskalni_uredjaj()
    _dev_vp_sum := fetch_metric( "fiscal_device_" + _dev_tmp + "_vp_sum", NIL, 1 )
    _dev_restart := fetch_metric( "fiscal_device_" + _dev_tmp + "_restart_service", NIL, "N" )
    _dev_vp_no_customer := fetch_metric( "fiscal_device_" + _dev_tmp + "_vp_no_customer" , NIL, "N" )
-   _dev_unos_depozita := fetch_metric( "fiscal_device_" + _dev_tmp + "_unos_depozita" , NIL, "N" )
+   _dev_unos_depozita := fetch_metric( "fiscal_device_" + _dev_tmp + "_unos_depozita" , NIL, "D" )
 
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Naziv uređaja:" GET _dev_name   PICT "@S40"
@@ -722,7 +722,7 @@ FUNCTION get_fiscal_device_params( device_id, user_name )
    _param[ "timeout" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_time_out", NIL, 300 )
    _param[ "vp_sum" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_vp_sum", NIL, 1 )
    _param[ "vp_no_customer" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_vp_no_customer", NIL, "N" )
-   _param[ "unos_depozita" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_unos_depozita", NIL, "N" )
+   _param[ "unos_depozita" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_unos_depozita", NIL, "D" )
    _param[ "restart_service" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_restart_service", NIL, "N" )
 
 #ifdef TEST

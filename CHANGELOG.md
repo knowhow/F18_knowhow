@@ -1,6 +1,7 @@
-1.7.103  2014-06-18, vsasa
+1.7.103  2014-06-23, vsasa
 
   - RNAL, konfiguracija pozicije pečata, korekcija funkcije
+  - FAKT, udaljena razmjena podataka, korekcija funkcija
  
 1.7.102  2014-06-17, vsasa
 

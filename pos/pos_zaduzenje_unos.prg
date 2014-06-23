@@ -11,7 +11,7 @@
 
 
 #include "pos.ch"
-
+#include "f18_separator.ch"
 
 /*! \fn Zaduzenje(cIdVd)
  *  \brief Dokument zaduzenja
@@ -178,7 +178,8 @@ FUNCTION Zaduzenje
          AllTrim( ODJ->Naz ) + iif( !Empty( cIdDio ), ;
          "-" + DIO->Naz, "" ), 70 ) COLOR Invert
 
-      oBrowse := FormBrowse( m_x + 6, m_y + 1, m_x + 19, m_y + 77, ImeKol, Kol, { "Í", "Ä", "³" }, 0 )
+      oBrowse := FormBrowse( m_x + 6, m_y + 1, m_x + 19, m_y + 77, ImeKol, Kol, ;
+                { BROWSE_PODVUCI_2, BROWSE_PODVUCI, BROWSE_COL_SEP }, 0 )
       oBrowse:autolite := .F.
 
       pos_set_key_handler_ispravka_zaduzenja()
@@ -189,7 +190,6 @@ FUNCTION Zaduzenje
 
       _IdPos := cIdPos
       _IdVrsteP := cIdOdj2
-      // vrste placanja su iskoristene za idodj2
       _IdOdj := cIdOdj
       _IdDio := cIdDio
       _IdVd := cIdVd
@@ -198,13 +198,10 @@ FUNCTION Zaduzenje
       _Smjena := gSmjena
       _IdRadnik := gIdRadnik
       _IdCijena := "1"
-      // ne interesuje me set cijena
       _Prebacen := OBR_NIJE
       _MU_I := cUI_U
-      // ulaz
       IF cIdVd == VD_OTP
          _MU_I := cUI_I
-         // kad je otpis imam izlaz
       ENDIF
 
       SET CURSOR ON
@@ -212,7 +209,6 @@ FUNCTION Zaduzenje
       DO WHILE .T.
 
          DO WHILE !oBrowse:Stabilize() .AND. ( ( Ch := Inkey() ) == 0 )
-            // Ol_Yield()
          ENDDO
 
          _idroba := Space ( Len ( _idroba ) )

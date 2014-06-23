@@ -42,7 +42,7 @@ FUNCTION Zaduzenje
    LOCAL nSign
 
    IF gSamoProdaja == "D" .AND. ( cIdVd <> VD_REK )
-      MsgBeep( "Ne mozete vrsiti zaduzenja !" )
+      MsgBeep( "Ne možete vršiti unos zaduženja !" )
       RETURN
    ENDIF
 
@@ -60,9 +60,6 @@ FUNCTION Zaduzenje
    PRIVATE bPrevZv
    PRIVATE bPrevUp
    PRIVATE bPrevDn
-
-   // koristim ga kod sirovinskog zaduzenja odjeljenja
-   // ma kako se ono vodilo
 
    IF cIdVd == NIL
       cIdVd := "16"
@@ -109,14 +106,13 @@ FUNCTION Zaduzenje
    BoxC()
 
    cRSdbf := "ROBA"
-   bRSblok := {|x, y| pos_postoji_roba( @_idroba, x, y ), pos_set_spec_zad() }
+   bRSblok := {|x, y| pos_postoji_roba( @_idroba, x, y ), pos_set_key_handler_ispravka_zaduzenja() }
    cUI_I := R_I
    cUI_U := R_U
 
    SELECT PRIPRZ
 
    IF RecCount2() > 0
-      // ako je sta bilo ostalo, spasi i oslobodi pripremu
       SELECT _POS
       AppFrom( "PRIPRZ", .F. )
    ENDIF
@@ -124,7 +120,6 @@ FUNCTION Zaduzenje
    SELECT priprz
    my_dbf_zap()
 
-   // vrati ili pobrisi ono sto je poceo raditi ili prekini s radom
    IF !pos_vrati_dokument_iz_pripr( cIdVd, gIdRadnik, cIdOdj, cIdDio )
       my_close_all_dbf()
       RETURN
@@ -138,7 +133,7 @@ FUNCTION Zaduzenje
 
       IF priprz->( RecCount2() ) > 0
 
-         IF cBrDok <> NIL .AND. Pitanje(, "Odstampati prenesni dokument na stampac ?", "N" ) == "D"
+         IF cBrDok <> NIL .AND. Pitanje(, "Odštampati prenesni dokument na štampac (D/N) ?", "N" ) == "D"
 
             IF cIdVd $ "16#96#95#98"
                StampZaduz( cIdVd, cBrDok )
@@ -146,10 +141,9 @@ FUNCTION Zaduzenje
                StampaInv()
             ENDIF
 
-            // otvori ponovo tabele
             o_pos_tables()
 
-            IF Pitanje(, "Ako je sve u redu, zelite li staviti na stanje dokument ?", " " ) == "D"
+            IF Pitanje(, "Ako je sve u redu, želite li staviti dokument na stanje (D/N) ?", " " ) == "D"
                fSadAz := .T.
             ENDIF
 
@@ -180,23 +174,22 @@ FUNCTION Zaduzenje
 
    IF !fSadAz
 
-      // browsanje dokumenta ...........
       SELECT PRIPRZ
       SET ORDER TO
       GO  TOP
 
       Box (, 20, 77,, { "<*> - Ispravka stavke ", "Storno - negativna kolicina" } )
-      @ m_x, m_y + 4 SAY PadC( "PRIPREMA " + NaslovDok( cIdVd ) + " NA ODJELJENJE " + ;
+      @ m_x, m_y + 4 SAY8 PadC( "PRIPREMA " + NaslovDok( cIdVd ) + " NA ODJELJENJE " + ;
          AllTrim( ODJ->Naz ) + iif( !Empty( cIdDio ), ;
          "-" + DIO->Naz, "" ), 70 ) COLOR Invert
 
-      oBrowse := FormBrowse( m_x + 6, m_y + 1, m_x + 19, m_y + 77, ImeKol, Kol, { "�", "�", "�" }, 0 )
+      oBrowse := FormBrowse( m_x + 6, m_y + 1, m_x + 19, m_y + 77, ImeKol, Kol, { "Í", "Ä", "³" }, 0 )
       oBrowse:autolite := .F.
 
       PrevDn := SetKey( K_PGDN, {|| DummyProc() } )
       PrevUp := SetKey( K_PGUP, {|| DummyProc() } )
 
-      pos_set_spec_zad()
+      pos_set_key_handler_ispravka_zaduzenja()
 
       SELECT PRIPRZ
 
@@ -249,7 +242,7 @@ FUNCTION Zaduzenje
          @ m_x + 2, m_y + 5 SAY " Artikal:" GET _idroba PICT "@!S" + cDSFINI ;
             WHEN {|| _idroba := PadR( _idroba, Val( cDSFINI ) ), .T. } ;
             VALID Eval ( bRSblok, 2, 25 ) .AND. ( gDupliArt == "D" .OR. ZadProvDuple( _idroba ) )
-         @ m_x + 4, m_y + 5 SAY "Kolicina:" GET _Kolicina PICT "999999.999" ;
+         @ m_x + 4, m_y + 5 SAY8 "Količina:" GET _Kolicina PICT "999999.999" ;
             WHEN{|| OsvPrikaz(), ShowGets(), .T. } ;
             VALID ZadKolOK( _Kolicina )
 
@@ -267,17 +260,13 @@ FUNCTION Zaduzenje
             EXIT
          ELSE
 
-            // setuj MPC u sifranik robe ako je
-            // razlicita !!!
             StUSif()
 
             SELECT PRIPRZ
             APPEND BLANK
 
-            // selektuj robu
             SELECT roba
 
-            // setuj varijable za append
             _robanaz := roba->naz
             _jmj := roba->jmj
             _idtarifa := roba->idtarifa
@@ -304,7 +293,8 @@ FUNCTION Zaduzenje
 
       SetKey( K_PGUP, PrevUp )
       SetKey( K_PGDN, PrevDn )
-      pos_unset_spec_zad()
+
+      pos_unset_key_handler_ispravka_zaduzenja()
 
       BoxC()
 
@@ -325,12 +315,12 @@ FUNCTION Zaduzenje
 
       Beep( 4 )
 
-      IF !fSadAz .AND. Pitanje(, "Zelite li odstampati dokument ?", "N" ) == "D"
+      IF !fSadAz .AND. Pitanje(, "Želite li odštampati dokument (D/N) ?", "N" ) == "D"
          StampZaduz( cIdVd, cBrDok )
          o_pos_tables()
       ENDIF
 
-      IF fSadAz .OR. Pitanje(, "Zelite li staviti dokument na stanje? (D/N)", "D" ) == "D"
+      IF fSadAz .OR. Pitanje(, "Želite li staviti dokument na stanje (D/N) ?", "D" ) == "D"
          AzurPriprZ( cBrDok, cIdVD )
       ELSE
          SELECT _POS
@@ -389,7 +379,7 @@ FUNCTION StUSif()
 
    IF gZadCij == "D"
 
-      IF _cijena <> pos_get_mpc() .AND. Pitanje(, "Staviti u sifrarnik novu cijenu? (D/N)", "D" ) == "D"
+      IF _cijena <> pos_get_mpc() .AND. Pitanje(, "Staviti u šifrarnik novu cijenu? (D/N)", "D" ) == "D"
 
          SELECT ( F_ROBA )
          _rec := dbf_get_rec()
@@ -406,14 +396,14 @@ FUNCTION StUSif()
 
 
 
-FUNCTION pos_set_spec_zad()
-   bPrevZv := SetKey( Asc( "*" ), {|| IspraviZaduzenje() } )
+FUNCTION pos_set_key_handler_ispravka_zaduzenja()
+   SetKey( Asc( "*" ), {|| IspraviZaduzenje() } )
    RETURN .T.
 
 
 
-FUNCTION pos_unset_spec_zad()
-   SetKey( Asc( "*" ), {|| bPrevZv } )
+FUNCTION pos_unset_key_handler_ispravka_zaduzenja()
+   SetKey( Asc( "*" ), NIL )
    RETURN .F.
 
 
@@ -424,7 +414,7 @@ FUNCTION ZadKolOK( nKol )
       RETURN .T.
    ENDIF
    IF nKol = 0
-      MsgBeep( "Kolicina mora biti razlicita od nule!#Ponovite unos!", 20 )
+      MsgBeep( "Količina mora biti različita od nule!#Ponovite unos!", 20 )
       RETURN ( .F. )
    ENDIF
 
@@ -446,7 +436,7 @@ FUNCTION ZadProvDuple( cSif )
    nPrevRec := RecNo()
    SEEK cSif
    IF Found()
-      MsgBeep( "Na zaduzenju se vec nalazi isti artikal!#" + "U slucaju potrebe ispravite stavku zaduzenja!", 20 )
+      MsgBeep( "Na zaduženju se vec nalazi isti artikal!#" + "U slučaju potrebe ispravite stavku zaduženja!", 20 )
       lFlag := .F.
    ENDIF
    SET ORDER TO
@@ -466,7 +456,8 @@ FUNCTION IspraviZaduzenje()
    LOCAL aConds
    LOCAL aProcs
 
-   pos_unset_spec_zad()
+   pos_unset_key_handler_ispravka_zaduzenja()
+
    cGetId := _idroba
    nGetKol := _Kolicina
 
@@ -481,12 +472,11 @@ FUNCTION IspraviZaduzenje()
    oBrowse:dehilite()
    oBrowse:stabilize()
 
-   // vrati stari meni
    Prozor0()
-   // vrati sto je bilo u GET-u
    _idroba := cGetId
    _Kolicina := nGetKol
-   pos_set_spec_zad()
+
+   pos_set_key_handler_ispravka_zaduzenja()
 
    RETURN
 
@@ -500,7 +490,7 @@ FUNCTION BrisStavZaduz()
 
    SELECT PRIPRZ
    IF RecCount2() == 0
-      MsgBeep( "Zaduzenje nema nijednu stavku!#Brisanje nije moguce!", 20 )
+      MsgBeep( "Zaduženje nema nijednu stavku!#Brisanje nije moguće!", 20 )
       RETURN ( DE_CONT )
    ENDIF
    Beep( 2 )
@@ -511,11 +501,7 @@ FUNCTION BrisStavZaduz()
 
 
 
-
-/*! \fn EditStavZaduz()
- *  \brief Vrsi editovanje stavke zaduzenja i to samo artikla ili samo kolicine
- */
-FUNCTION  EditStavZaduz()
+FUNCTION EditStavZaduz()
 
    LOCAL PrevRoba
    LOCAL nARTKOL := 2
@@ -523,25 +509,22 @@ FUNCTION  EditStavZaduz()
    PRIVATE GetList := {}
 
    IF RecCount2() == 0
-      MsgBeep( "Zaduzenje nema nijednu stavku!#Ispravka nije moguca!", 20 )
+      MsgBeep( "Zaduženje nema nijednu stavku!#Ispravka nije moguća!", 20 )
       RETURN ( DE_CONT )
    ENDIF
-   // uradi edit samo vrijednosti u tekucoj koloni
 
    PrevRoba := _IdRoba := PRIPRZ->idroba
    _Kolicina := PRIPRZ->Kolicina
    Box(, 3, 60 )
    @ m_x + 1, m_y + 3 SAY "Novi artikal:" GET _idroba PICTURE "@K" VALID Eval ( bRSblok, 1, 27 ) .AND. ( _IdRoba == PrevRoba .OR. ZadProvDuple ( _idroba ) )
-   @ m_x + 2, m_y + 3 SAY "Nova kolicina:" GET _Kolicina VALID ZadKolOK ( _Kolicina )
+   @ m_x + 2, m_y + 3 SAY8 "Nova količina:" GET _Kolicina VALID ZadKolOK ( _Kolicina )
    READ
 
    IF LastKey() <> K_ESC
       my_rlock()
       IF _idroba <> PrevRoba
-         // priprz
          REPLACE RobaNaz WITH &cRSdbf.->Naz, Jmj WITH &cRSdbf.->Jmj, Cijena WITH &cRSdbf.->Cijena, IdRoba WITH _IdRoba
       ENDIF
-      // priprz
       REPLACE Kolicina WITH _Kolicina
       my_unlock()
    ENDIF
@@ -550,13 +533,13 @@ FUNCTION  EditStavZaduz()
    oBrowse:refreshCurrent()
 
    RETURN ( DE_CONT )
-// }
+
 
 FUNCTION NaslovDok( cIdVd )
 
    DO CASE
    CASE cIdVd == "16"
-      RETURN "ZADUZENJE"
+      RETURN "ZADUŽENJE"
    CASE cIdVd == "PD"
       RETURN "PREDISPOZICIJA"
    CASE cIdVd == "95"
@@ -568,3 +551,4 @@ FUNCTION NaslovDok( cIdVd )
    ENDCASE
 
    RETURN
+

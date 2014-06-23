@@ -108,7 +108,7 @@ FUNCTION pos_unos_racuna()
    SetKey( K_F8, {|| pos_storno_rn(), _refresh_total() } )
    SetKey( K_F9, {|| fiskalni_izvjestaji_komande( .T., .T.  ) } )
 
-   pos_set_spec_nar()
+   pos_set_key_handler_ispravka_racuna()
 
    @ m_x + 3, m_y + ( _max_cols - 30 ) SAY "UKUPNO:"
    @ m_x + 4, m_y + ( _max_cols - 30 ) SAY "POPUST:"
@@ -246,7 +246,7 @@ FUNCTION pos_unos_racuna()
    SetKey( K_F8, NIL )
    SetKey( K_F9, NIL )
 
-   pos_unset_spec_nar()
+   pos_unset_key_handler_ispravka_racuna()
 
    BoxC()
 
@@ -405,14 +405,17 @@ FUNCTION pos_cancel_keys( aPrevSets )
 
 
 
-FUNCTION pos_set_spec_nar()
-   bPrevZv := SetKey( Asc( "*" ), {|| pos_ispravi_racun() } )
+
+FUNCTION pos_set_key_handler_ispravka_racuna()
+   SetKey( Asc( "*" ), {|| pos_ispravi_racun() } )
    RETURN .T.
 
 
-FUNCTION pos_unset_spec_nar()
-   SetKey( Asc ( "*" ), bPrevZv )
+
+FUNCTION pos_unset_key_handler_ispravka_racuna()
+   SetKey( Asc ( "*" ), NIL )
    RETURN .F.
+
 
 
 STATIC FUNCTION cijena_ok( cijena )
@@ -527,7 +530,7 @@ FUNCTION pos_ispravi_racun()
    LOCAL aConds
    LOCAL aProcs
 
-   pos_unset_spec_nar()
+   pos_unset_key_handler_ispravka_racuna()
 
    OpcTipke( { "<Enter>-Ispravi stavku", hb_utf8tostr( "<B>-Briši stavku" ), hb_utf8tostr( "<Esc>-Završi" ) } )
 
@@ -551,7 +554,7 @@ FUNCTION pos_ispravi_racun()
    _idroba := cGetId
    _kolicina := nGetKol
 
-   pos_set_spec_nar()
+   pos_set_key_handler_ispravka_racuna()
 
    RETURN
 

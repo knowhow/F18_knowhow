@@ -38,7 +38,7 @@ FUNCTION pos_postoji_roba( cId, dx, dy, barkod )
 
    sif_uv_naziv( @cId )
 
-   pos_unset_spec_nar()
+   pos_unset_key_handler_ispravka_racuna()
 
    SetKey( K_PGDN, bPrevDn )
    SetKey( K_PGUP, bPrevUp )
@@ -101,7 +101,7 @@ FUNCTION pos_postoji_roba( cId, dx, dy, barkod )
    SetKey ( K_PGDN, {|| DummyProc() } )
    SetKey ( K_PGUP, {|| DummyProc() } )
 
-   pos_set_spec_nar()
+   pos_set_key_handler_ispravka_racuna()
 
    barkod := _barkod
 

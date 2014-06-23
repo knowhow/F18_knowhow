@@ -13,7 +13,6 @@
 #include "fakt.ch"
 
 
-// staticke varijable
 STATIC __device_id := 0
 STATIC __device_params
 STATIC __auto := .F.
@@ -96,6 +95,12 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
       RETURN _err_level
    ENDIF
 
+   IF _storno
+      IF !fakt_reklamirani_racun_preduslovi( id_firma, tip_dok, br_dok, dev_param )
+         RETURN _err_level
+      ENDIF
+   ENDIF
+
    _partn_data := fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, _storno, lRacunBezgBezPartnera )
 
    IF ValType( _partn_data ) == "L"
@@ -158,7 +163,7 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
 FUNCTION reklamni_rn_box( rekl_rn )
 
    Box(, 1, 60 )
-   @ m_x + 1, m_y + 2 SAY "Reklamiramo fiskalni račun broj:" ;
+   @ m_x + 1, m_y + 2 SAY8 "Reklamiramo fiskalni račun broj:" ;
       GET rekl_rn PICT "999999999" VALID ( rekl_rn > 0 )
    READ
    BoxC()
@@ -168,6 +173,84 @@ FUNCTION reklamni_rn_box( rekl_rn )
    ENDIF
 
    RETURN rekl_rn
+
+
+
+
+STATIC FUNCTION idpartner_sa_fakt_dokumenta( idfirma, idtipdok, brdok )
+
+   SELECT fakt_doks
+   SET ORDER TO TAG "1"
+   GO TOP
+
+   SEEK idfirma + idtipdok + brdok
+
+   cIdPartner := fakt_doks->idpartner
+
+   RETURN cIdPartner
+
+
+
+STATIC FUNCTION fakt_izracunaj_ukupnu_vrijednost_racuna( idfirma, idtipdok, brdok )
+
+   LOCAL nUkupno := 0
+   LOCAL aIznosi, _data_total
+   LOCAL cIdPartner := ""
+
+   SELECT ( F_ROBA )
+   IF !Used()
+      O_ROBA
+   ENDIF
+
+   SELECT ( F_TARIFA )
+   IF !Used()
+      O_TARIFA
+   ENDIF
+
+   cIdPartner := idpartner_sa_fakt_dokumenta( idfirma, idtipdok, brdok )
+   aIznosi := get_a_iznos( idfirma, idtipdok, brdok )
+   _data_total := fakt_izracunaj_total( aIznosi, cIdPartner, idtipdok )
+
+   nUkupno := _data_total["ukupno"]
+
+   RETURN nUkupno
+
+
+
+STATIC FUNCTION fakt_reklamirani_racun_preduslovi( idfirma, idtipdok, brdok, device_params )
+
+   LOCAL lRet := .T.
+   LOCAL nDepozit := 0
+   LOCAL nErr := 0
+   LOCAL aIznosi, _data_total
+
+   // #34537
+   IF AllTrim( device_params[ "drv" ] ) <> "FPRINT"
+      RETURN lRet
+   ENDIF
+
+   MsgBeep( "Želite izdati reklamirani račun.#Prije toga je neophodno da postoji minimalan depozit u uređaju.")
+
+   IF Pitanje(, "Da li je potrebno napraviti unos depozita (D/N) ?", " " ) == "N"
+       RETURN lRet
+   ENDIF
+
+   nDepozit := ABS( fakt_izracunaj_ukupnu_vrijednost_racuna( idfirma, idtipdok, brdok ) )
+
+   nDepozit := ROUND( nDepozit + 1, 0 )
+
+   fprint_polog( device_params, nDepozit, .T. )
+
+   nErr := fprint_read_error( device_params, 0 )
+
+   IF nErr <> 0
+      lRet := .F.
+      MsgBeep( "Greška kod unosa depozita u uređaj !" )
+      RETURN lRet
+   ENDIF
+
+   RETURN lRet
+
 
 
 

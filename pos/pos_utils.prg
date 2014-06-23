@@ -1,440 +1,452 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 
 #include "pos.ch"
- 
-
-function gSjeciStr()
-
-Setpxlat()
-if gPrinter=="R"
-    Beep(1)
-    FF
-else
-    qqout(gSjeciStr)
-endif
-konvtable()
-return
 
 
- 
-function gOtvorStr()
+FUNCTION gSjeciStr()
 
-Setpxlat()
-if gPrinter<>"R"
-    qqout(gOtvorStr)
-endif
-konvtable()
-return
+   Setpxlat()
+   IF gPrinter == "R"
+      Beep( 1 )
+      FF
+   ELSE
+      QQOut( gSjeciStr )
+   ENDIF
+   konvtable()
+
+   RETURN
 
 
 
-function PaperFeed()
+FUNCTION gOtvorStr()
 
-if gVrstaRS <> "S"
-    for i:=1 to nFeedLines
-            ?
-    next
-    if gPrinter=="R"
-        Beep(1)
-        FF
-    else  
-        gSjeciStr()
-    endif
-endif
-return
+   Setpxlat()
+   IF gPrinter <> "R"
+      QQOut( gOtvorStr )
+   ENDIF
+   konvtable()
+
+   RETURN
 
 
 
-   
+FUNCTION PaperFeed()
 
-function IncID(cId,cPadCh)
+   IF gVrstaRS <> "S"
+      FOR i := 1 TO nFeedLines
+         ?
+      NEXT
+      IF gPrinter == "R"
+         Beep( 1 )
+         FF
+      ELSE
+         gSjeciStr()
+      ENDIF
+   ENDIF
 
-if cPadCh==nil
-    cPadCh:=" "
-else
-    cPadCh:=cPadCh
-endif
+   RETURN
 
-return (PADL(VAL(ALLTRIM(cID))+1,LEN(cID),cPadCh))
+
+
+
+
+FUNCTION IncID( cId, cPadCh )
+
+   IF cPadCh == nil
+      cPadCh := " "
+   ELSE
+      cPadCh := cPadCh
+   ENDIF
+
+   RETURN ( PadL( Val( AllTrim( cID ) ) + 1, Len( cID ), cPadCh ) )
 
 /*! \fn DecId(cId,cPadCh)
  *  \brief Decrement id, kontra IncId
  */
 
-function DecID(cId,cPadCh)
-*{
-if cPadCh==nil
-    cPadCh:=" "
-else
-    cPadCh:=cPadCh
-endif
-return (PADL(VAL(ALLTRIM(cID))-1,LEN(cID),cPadCh) )
-*}
+FUNCTION DecID( cId, cPadCh )
+
+   // {
+   IF cPadCh == nil
+      cPadCh := " "
+   ELSE
+      cPadCh := cPadCh
+   ENDIF
+
+   RETURN ( PadL( Val( AllTrim( cID ) ) -1, Len( cID ), cPadCh ) )
+// }
 
 
 
 // ------------------------------------------------------
 // Postavlja naziv domace valute
 // ------------------------------------------------------
-function SetNazDVal()
-local lOpened
+FUNCTION SetNazDVal()
 
-SELECT F_VALUTE
+   LOCAL lOpened
 
-PushWA()
+   SELECT F_VALUTE
 
-lOpened := .t.
+   PushWA()
 
-if !USED() 
-    O_VALUTE
-    lOpened := .f.
-endif
+   lOpened := .T.
 
-SET ORDER TO TAG "NAZ"       
-GO TOP
+   IF !Used()
+      O_VALUTE
+      lOpened := .F.
+   ENDIF
 
-// trazi domacu valutu
-Seek2( "D" )   
+   SET ORDER TO TAG "NAZ"
+   GO TOP
 
-gDomValuta := ALLTRIM( naz2 )
+   // trazi domacu valutu
+   Seek2( "D" )
 
-GO TOP
+   gDomValuta := AllTrim( naz2 )
 
-Seek2( "P" )
+   GO TOP
 
-gStrValuta := ALLTRIM( naz2 )
+   Seek2( "P" )
 
-if !lOpened
-    USE
-endif
+   gStrValuta := AllTrim( naz2 )
 
-PopWA()
+   IF !lOpened
+      USE
+   ENDIF
 
-return
+   PopWA()
+
+   RETURN
 
 // --------------------------------------------------------------------
 // ispisi donji dio forme unosa podataka
 // --------------------------------------------------------------------
-function ispisi_donji_dio_forme_unosa( txt, row )
+FUNCTION ispisi_donji_dio_forme_unosa( txt, row )
 
-if row == nil
-    row := 1
-endif
+   IF row == nil
+      row := 1
+   ENDIF
 
-@ m_x + ( MAXROWS() - 12 ) + row, 2 SAY PADR( txt, MAXCOLS() / 2 )
+   @ m_x + ( MAXROWS() - 12 ) + row, 2 SAY PadR( txt, MAXCOLS() / 2 )
 
-return
+   RETURN
 
 
-//-----------------------------------------------------
+// -----------------------------------------------------
 // ispisuje iznos racuna velikim brojevima
-//-----------------------------------------------------
-function ispisi_iznos_veliki_brojevi( iznos, row, col )
-local _iznos
-local _cnt, _char, _next_y
+// -----------------------------------------------------
+FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
 
-if col == nil
-    col := 76
-endif
+   LOCAL _iznos
+   LOCAL _cnt, _char, _next_y
 
-_iznos := ALLTRIM( TRANSFORM( iznos, "9999999.99" ) )
-_next_y := m_y + col
+   IF col == nil
+      col := 76
+   ENDIF
 
-// ocisti iznos 
-@ m_x + row + 0, MAXCOLS() / 2 SAY PADR( "", MAXCOLS() / 2 )
-@ m_x + row + 1, MAXCOLS() / 2 SAY PADR( "", MAXCOLS() / 2 )
-@ m_x + row + 2, MAXCOLS() / 2 SAY PADR( "", MAXCOLS() / 2 )
-@ m_x + row + 3, MAXCOLS() / 2 SAY PADR( "", MAXCOLS() / 2 )
-@ m_x + row + 4, MAXCOLS() / 2 SAY PADR( "", MAXCOLS() / 2 )
+   _iznos := AllTrim( Transform( iznos, "9999999.99" ) )
+   _next_y := m_y + col
 
-for _cnt := LEN( _iznos ) TO 1 STEP -1
+   // ocisti iznos
+   @ m_x + row + 0, MAXCOLS() / 2 SAY PadR( "", MAXCOLS() / 2 )
+   @ m_x + row + 1, MAXCOLS() / 2 SAY PadR( "", MAXCOLS() / 2 )
+   @ m_x + row + 2, MAXCOLS() / 2 SAY PadR( "", MAXCOLS() / 2 )
+   @ m_x + row + 3, MAXCOLS() / 2 SAY PadR( "", MAXCOLS() / 2 )
+   @ m_x + row + 4, MAXCOLS() / 2 SAY PadR( "", MAXCOLS() / 2 )
 
-    _char := SUBSTR( _iznos, _cnt, 1 )
+   FOR _cnt := Len( _iznos ) TO 1 STEP -1
 
-    do case
-        case _char = "1"
+      _char := SubStr( _iznos, _cnt, 1 )
 
-            _next_y -= 5
+      DO CASE
+      CASE _char = "1"
 
-            @ m_x + row + 0, _Next_Y SAY " лл"
-            @ m_x + row + 1, _Next_Y SAY "  л"
-            @ m_x + row + 2, _Next_Y SAY "  л"
-            @ m_x + row + 3, _Next_Y SAY "  л"
-            @ m_x + row + 4, _Next_Y SAY "лллл"
+         _next_y -= 5
 
-        case _char = "2"
+         @ m_x + row + 0, _Next_Y SAY " лл"
+         @ m_x + row + 1, _Next_Y SAY "  л"
+         @ m_x + row + 2, _Next_Y SAY "  л"
+         @ m_x + row + 3, _Next_Y SAY "  л"
+         @ m_x + row + 4, _Next_Y SAY "лллл"
 
-            _next_y -= 5
+      CASE _char = "2"
 
-            @ m_x + row + 0, _Next_Y SAY "лллл"
-            @ m_x + row + 1, _Next_Y SAY "   л"
-            @ m_x + row + 2, _Next_Y SAY "лллл"
-            @ m_x + row + 3, _Next_Y SAY "л"
-            @ m_x + row + 4, _Next_Y SAY "лллл"
+         _next_y -= 5
 
-        case _char = "3"
+         @ m_x + row + 0, _Next_Y SAY "лллл"
+         @ m_x + row + 1, _Next_Y SAY "   л"
+         @ m_x + row + 2, _Next_Y SAY "лллл"
+         @ m_x + row + 3, _Next_Y SAY "л"
+         @ m_x + row + 4, _Next_Y SAY "лллл"
 
-            _next_y -= 5
+      CASE _char = "3"
 
-            @ m_x + row + 0, _Next_Y SAY " ллл"
-            @ m_x + row + 1, _Next_Y SAY "   л"
-            @ m_x + row + 2, _Next_Y SAY "  лл"
-            @ m_x + row + 3, _Next_Y SAY "   л"
-            @ m_x + row + 4, _Next_Y SAY "лллл"
-        
-        case _char = "4"
+         _next_y -= 5
 
-            _next_y -= 5
+         @ m_x + row + 0, _Next_Y SAY " ллл"
+         @ m_x + row + 1, _Next_Y SAY "   л"
+         @ m_x + row + 2, _Next_Y SAY "  лл"
+         @ m_x + row + 3, _Next_Y SAY "   л"
+         @ m_x + row + 4, _Next_Y SAY "лллл"
 
-            @ m_x + row + 0, _Next_Y SAY "л"
-            @ m_x + row + 1, _Next_Y SAY "л  л"
-            @ m_x + row + 2, _Next_Y SAY "лллл"
-            @ m_x + row + 3, _Next_Y SAY "   л"
-            @ m_x + row + 4, _Next_Y SAY "   л"
+      CASE _char = "4"
 
-        case _char = "5"
+         _next_y -= 5
 
-            _next_y -= 5
+         @ m_x + row + 0, _Next_Y SAY "л"
+         @ m_x + row + 1, _Next_Y SAY "л  л"
+         @ m_x + row + 2, _Next_Y SAY "лллл"
+         @ m_x + row + 3, _Next_Y SAY "   л"
+         @ m_x + row + 4, _Next_Y SAY "   л"
 
-            @ m_x + row + 0, _Next_Y SAY "лллл"
-            @ m_x + row + 1, _Next_Y SAY "л"
-            @ m_x + row + 2, _Next_Y SAY "лллл"
-            @ m_x + row + 3, _Next_Y SAY "   л"
-            @ m_x + row + 4, _Next_Y SAY "лллл"
+      CASE _char = "5"
 
-        case _char = "6"
+         _next_y -= 5
 
-            _next_y -= 5
+         @ m_x + row + 0, _Next_Y SAY "лллл"
+         @ m_x + row + 1, _Next_Y SAY "л"
+         @ m_x + row + 2, _Next_Y SAY "лллл"
+         @ m_x + row + 3, _Next_Y SAY "   л"
+         @ m_x + row + 4, _Next_Y SAY "лллл"
 
-            @ m_x + row + 0, _Next_Y SAY "лллл"
-            @ m_x + row + 1, _Next_Y SAY "л"
-            @ m_x + row + 2, _Next_Y SAY "лллл"
-            @ m_x + row + 3, _Next_Y SAY "л  л"
-            @ m_x + row + 4, _Next_Y SAY "лллл"
+      CASE _char = "6"
 
-        case _char = "7"
+         _next_y -= 5
 
-            _next_y -= 5
-         
-            @ m_x + row + 0, _Next_Y SAY "лллл"
-            @ m_x + row + 1, _Next_Y SAY "   л"
-            @ m_x + row + 2, _Next_Y SAY "  л"
-            @ m_x + row + 3, _Next_Y SAY " л"
-            @ m_x + row + 4, _Next_Y SAY "л"
+         @ m_x + row + 0, _Next_Y SAY "лллл"
+         @ m_x + row + 1, _Next_Y SAY "л"
+         @ m_x + row + 2, _Next_Y SAY "лллл"
+         @ m_x + row + 3, _Next_Y SAY "л  л"
+         @ m_x + row + 4, _Next_Y SAY "лллл"
 
-        case _char = "8"
+      CASE _char = "7"
 
-            _next_y -= 5
+         _next_y -= 5
 
-            @ m_x + row + 0, _Next_Y SAY "лллл"
-            @ m_x + row + 1, _Next_Y SAY "л  л"
-            @ m_x + row + 2, _Next_Y SAY " лл "
-            @ m_x + row + 3, _Next_Y SAY "л  л"
-            @ m_x + row + 4, _Next_Y SAY "лллл"
-        
-        case _char = "9"
+         @ m_x + row + 0, _Next_Y SAY "лллл"
+         @ m_x + row + 1, _Next_Y SAY "   л"
+         @ m_x + row + 2, _Next_Y SAY "  л"
+         @ m_x + row + 3, _Next_Y SAY " л"
+         @ m_x + row + 4, _Next_Y SAY "л"
 
-            _next_y -= 5
-         
-            @ m_x + row + 0, _Next_Y SAY "лллл"
-            @ m_x + row + 1, _Next_Y SAY "л  л"
-            @ m_x + row + 2, _Next_Y SAY "лллл"
-            @ m_x + row + 3, _Next_Y SAY "   л"
-            @ m_x + row + 4, _Next_Y SAY "лллл"
+      CASE _char = "8"
 
-        case _char = "0"
+         _next_y -= 5
 
-            _next_y -= 5
+         @ m_x + row + 0, _Next_Y SAY "лллл"
+         @ m_x + row + 1, _Next_Y SAY "л  л"
+         @ m_x + row + 2, _Next_Y SAY " лл "
+         @ m_x + row + 3, _Next_Y SAY "л  л"
+         @ m_x + row + 4, _Next_Y SAY "лллл"
 
-            @ m_x + row + 0, _Next_Y SAY " лл "
-            @ m_x + row + 1, _Next_Y SAY "л  л"
-            @ m_x + row + 2, _Next_Y SAY "л  л"
-            @ m_x + row + 3, _Next_Y SAY "л  л"
-            @ m_x + row + 4, _Next_Y SAY " лл"
+      CASE _char = "9"
 
-        case _char = "."
+         _next_y -= 5
 
-            _next_y -= 2
+         @ m_x + row + 0, _Next_Y SAY "лллл"
+         @ m_x + row + 1, _Next_Y SAY "л  л"
+         @ m_x + row + 2, _Next_Y SAY "лллл"
+         @ m_x + row + 3, _Next_Y SAY "   л"
+         @ m_x + row + 4, _Next_Y SAY "лллл"
 
-            @ m_x + row + 4, _Next_Y SAY "л"
+      CASE _char = "0"
 
-        case _char = "-"
+         _next_y -= 5
 
-            _next_y -= 4
+         @ m_x + row + 0, _Next_Y SAY " лл "
+         @ m_x + row + 1, _Next_Y SAY "л  л"
+         @ m_x + row + 2, _Next_Y SAY "л  л"
+         @ m_x + row + 3, _Next_Y SAY "л  л"
+         @ m_x + row + 4, _Next_Y SAY " лл"
 
-            @ m_x + row + 2, _Next_Y SAY "ллл"
+      CASE _char = "."
 
-    endcase
-next
+         _next_y -= 2
 
-return
+         @ m_x + row + 4, _Next_Y SAY "л"
+
+      CASE _char = "-"
+
+         _next_y -= 4
+
+         @ m_x + row + 2, _Next_Y SAY "ллл"
+
+      ENDCASE
+   NEXT
+
+   RETURN
 
 
 
-//-----------------------------------------------------
+// -----------------------------------------------------
 // ispisuje iznos racuna u box-u
-//-----------------------------------------------------
-function ispisi_iznos_racuna_box( iznos )
-local cIzn
-local nCnt, Char, NextY
-local nPrevRow := ROW()
-local nPrevCol := COL()
+// -----------------------------------------------------
+FUNCTION ispisi_iznos_racuna_box( iznos )
 
-SETPOS (0,0)
+   LOCAL cIzn
+   LOCAL nCnt, Char, NextY
+   LOCAL nPrevRow := Row()
+   LOCAL nPrevCol := Col()
 
-Box (, 9, 77)
+   SetPos ( 0, 0 )
 
-    cIzn := ALLTRIM (TRANSFORM ( iznos, "9999999.99" ))
+   Box (, 9, 77 )
 
-    @ m_x, m_y + 28 SAY "  IZNOS RACUNA JE  " COLOR INVERT
+   cIzn := AllTrim ( Transform ( iznos, "9999999.99" ) )
 
-    NextY := m_y + 76
+   @ m_x, m_y + 28 SAY "  IZNOS RACUNA JE  " COLOR INVERT
 
-    FOR nCnt := LEN (cIzn) TO 1 STEP -1
-        Char := SUBSTR (cIzn, nCnt, 1)
-        DO CASE
-        CASE Char = "1"
+   NextY := m_y + 76
+
+   FOR nCnt := Len ( cIzn ) TO 1 STEP -1
+      Char := SubStr ( cIzn, nCnt, 1 )
+      DO CASE
+      CASE Char = "1"
          NextY -= 6
-         @ m_x+2, NextY SAY " лл"
-         @ m_x+3, NextY SAY "  л"
-         @ m_x+4, NextY SAY "  л"
-         @ m_x+5, NextY SAY "  л"
-         @ m_x+6, NextY SAY "  л"
-         @ m_x+7, NextY SAY "  л"
-         @ m_x+8, NextY SAY "  л"
-         @ m_x+9, NextY SAY "ллллл"
-        CASE Char = "2"
+         @ m_x + 2, NextY SAY " лл"
+         @ m_x + 3, NextY SAY "  л"
+         @ m_x + 4, NextY SAY "  л"
+         @ m_x + 5, NextY SAY "  л"
+         @ m_x + 6, NextY SAY "  л"
+         @ m_x + 7, NextY SAY "  л"
+         @ m_x + 8, NextY SAY "  л"
+         @ m_x + 9, NextY SAY "ллллл"
+      CASE Char = "2"
          NextY -= 8
-         @ m_x+2, NextY SAY "ллллллл"
-         @ m_x+3, NextY SAY "      л"
-         @ m_x+4, NextY SAY "      л"
-         @ m_x+5, NextY SAY "ллллллл"
-         @ m_x+6, NextY SAY "л"
-         @ m_x+7, NextY SAY "л"
-         @ m_x+8, NextY SAY "л     л"
-         @ m_x+9, NextY SAY "ллллллл"
-        CASE Char = "3"
+         @ m_x + 2, NextY SAY "ллллллл"
+         @ m_x + 3, NextY SAY "      л"
+         @ m_x + 4, NextY SAY "      л"
+         @ m_x + 5, NextY SAY "ллллллл"
+         @ m_x + 6, NextY SAY "л"
+         @ m_x + 7, NextY SAY "л"
+         @ m_x + 8, NextY SAY "л     л"
+         @ m_x + 9, NextY SAY "ллллллл"
+      CASE Char = "3"
          NextY -= 8
-         @ m_x+2, NextY SAY " лллллл"
-         @ m_x+3, NextY SAY "      л"
-         @ m_x+4, NextY SAY "      л"
-         @ m_x+5, NextY SAY "  лллл"
-         @ m_x+6, NextY SAY "      л"
-         @ m_x+7, NextY SAY "      л"
-         @ m_x+8, NextY SAY "      л"
-         @ m_x+9, NextY SAY "ллллллл"
-        CASE Char = "4"
+         @ m_x + 2, NextY SAY " лллллл"
+         @ m_x + 3, NextY SAY "      л"
+         @ m_x + 4, NextY SAY "      л"
+         @ m_x + 5, NextY SAY "  лллл"
+         @ m_x + 6, NextY SAY "      л"
+         @ m_x + 7, NextY SAY "      л"
+         @ m_x + 8, NextY SAY "      л"
+         @ m_x + 9, NextY SAY "ллллллл"
+      CASE Char = "4"
          NextY -= 8
-         @ m_x+2, NextY SAY "л"
-         @ m_x+3, NextY SAY "л"
-         @ m_x+4, NextY SAY "л     л"
-         @ m_x+5, NextY SAY "л     л"
-         @ m_x+6, NextY SAY "ллллллл"
-         @ m_x+7, NextY SAY "      л"
-         @ m_x+8, NextY SAY "      л"
-         @ m_x+9, NextY SAY "      л"
-        CASE Char = "5"
+         @ m_x + 2, NextY SAY "л"
+         @ m_x + 3, NextY SAY "л"
+         @ m_x + 4, NextY SAY "л     л"
+         @ m_x + 5, NextY SAY "л     л"
+         @ m_x + 6, NextY SAY "ллллллл"
+         @ m_x + 7, NextY SAY "      л"
+         @ m_x + 8, NextY SAY "      л"
+         @ m_x + 9, NextY SAY "      л"
+      CASE Char = "5"
          NextY -= 8
-         @ m_x+2, NextY SAY "ллллллл"
-         @ m_x+3, NextY SAY "л"
-         @ m_x+4, NextY SAY "л"
-         @ m_x+5, NextY SAY "ллллллл"
-         @ m_x+6, NextY SAY "      л"
-         @ m_x+7, NextY SAY "      л"
-         @ m_x+8, NextY SAY "л     л"
-         @ m_x+9, NextY SAY "ллллллл"
-        CASE Char = "6"
+         @ m_x + 2, NextY SAY "ллллллл"
+         @ m_x + 3, NextY SAY "л"
+         @ m_x + 4, NextY SAY "л"
+         @ m_x + 5, NextY SAY "ллллллл"
+         @ m_x + 6, NextY SAY "      л"
+         @ m_x + 7, NextY SAY "      л"
+         @ m_x + 8, NextY SAY "л     л"
+         @ m_x + 9, NextY SAY "ллллллл"
+      CASE Char = "6"
          NextY -= 8
-         @ m_x+2, NextY SAY "ллллллл"
-         @ m_x+3, NextY SAY "л"
-         @ m_x+4, NextY SAY "л"
-         @ m_x+5, NextY SAY "ллллллл"
-         @ m_x+6, NextY SAY "л     л"
-         @ m_x+7, NextY SAY "л     л"
-         @ m_x+8, NextY SAY "л     л"
-         @ m_x+9, NextY SAY "ллллллл"
-        CASE Char = "7"
+         @ m_x + 2, NextY SAY "ллллллл"
+         @ m_x + 3, NextY SAY "л"
+         @ m_x + 4, NextY SAY "л"
+         @ m_x + 5, NextY SAY "ллллллл"
+         @ m_x + 6, NextY SAY "л     л"
+         @ m_x + 7, NextY SAY "л     л"
+         @ m_x + 8, NextY SAY "л     л"
+         @ m_x + 9, NextY SAY "ллллллл"
+      CASE Char = "7"
          NextY -= 8
-         @ m_x+2, NextY SAY "ллллллл"
-         @ m_x+3, NextY SAY "      л"
-         @ m_x+4, NextY SAY "     л"
-         @ m_x+5, NextY SAY "    л"
-         @ m_x+6, NextY SAY "   л"
-         @ m_x+7, NextY SAY "  л"
-         @ m_x+8, NextY SAY " л"
-         @ m_x+9, NextY SAY "л"
-        CASE Char = "8"
+         @ m_x + 2, NextY SAY "ллллллл"
+         @ m_x + 3, NextY SAY "      л"
+         @ m_x + 4, NextY SAY "     л"
+         @ m_x + 5, NextY SAY "    л"
+         @ m_x + 6, NextY SAY "   л"
+         @ m_x + 7, NextY SAY "  л"
+         @ m_x + 8, NextY SAY " л"
+         @ m_x + 9, NextY SAY "л"
+      CASE Char = "8"
          NextY -= 8
-         @ m_x+2, NextY SAY "ллллллл"
-         @ m_x+3, NextY SAY "л     л"
-         @ m_x+4, NextY SAY "л     л"
-         @ m_x+5, NextY SAY " ллллл "
-         @ m_x+6, NextY SAY "л     л"
-         @ m_x+7, NextY SAY "л     л"
-         @ m_x+8, NextY SAY "л     л"
-         @ m_x+9, NextY SAY "ллллллл"
-        CASE Char = "9"
+         @ m_x + 2, NextY SAY "ллллллл"
+         @ m_x + 3, NextY SAY "л     л"
+         @ m_x + 4, NextY SAY "л     л"
+         @ m_x + 5, NextY SAY " ллллл "
+         @ m_x + 6, NextY SAY "л     л"
+         @ m_x + 7, NextY SAY "л     л"
+         @ m_x + 8, NextY SAY "л     л"
+         @ m_x + 9, NextY SAY "ллллллл"
+      CASE Char = "9"
          NextY -= 8
-         @ m_x+2, NextY SAY "ллллллл"
-         @ m_x+3, NextY SAY "л     л"
-         @ m_x+4, NextY SAY "л     л"
-         @ m_x+5, NextY SAY "ллллллл"
-         @ m_x+6, NextY SAY "      л"
-         @ m_x+7, NextY SAY "      л"
-         @ m_x+8, NextY SAY "л     л"
-         @ m_x+9, NextY SAY "ллллллл"
-        CASE Char = "0"
+         @ m_x + 2, NextY SAY "ллллллл"
+         @ m_x + 3, NextY SAY "л     л"
+         @ m_x + 4, NextY SAY "л     л"
+         @ m_x + 5, NextY SAY "ллллллл"
+         @ m_x + 6, NextY SAY "      л"
+         @ m_x + 7, NextY SAY "      л"
+         @ m_x + 8, NextY SAY "л     л"
+         @ m_x + 9, NextY SAY "ллллллл"
+      CASE Char = "0"
          NextY -= 8
-         @ m_x+2, NextY SAY " ллллл "
-         @ m_x+3, NextY SAY "л     л"
-         @ m_x+4, NextY SAY "л     л"
-         @ m_x+5, NextY SAY "л     л"
-         @ m_x+6, NextY SAY "л     л"
-         @ m_x+7, NextY SAY "л     л"
-         @ m_x+8, NextY SAY "л     л"
-         @ m_x+9, NextY SAY " ллллл"
-        CASE Char = "."
+         @ m_x + 2, NextY SAY " ллллл "
+         @ m_x + 3, NextY SAY "л     л"
+         @ m_x + 4, NextY SAY "л     л"
+         @ m_x + 5, NextY SAY "л     л"
+         @ m_x + 6, NextY SAY "л     л"
+         @ m_x + 7, NextY SAY "л     л"
+         @ m_x + 8, NextY SAY "л     л"
+         @ m_x + 9, NextY SAY " ллллл"
+      CASE Char = "."
          NextY -= 4
-         @ m_x+9, NextY SAY "ллл"
-        CASE Char = "-"
+         @ m_x + 9, NextY SAY "ллл"
+      CASE Char = "-"
          NextY -= 6
-         @ m_x+5, NextY SAY "ллллл"
-    ENDCASE
-NEXT
+         @ m_x + 5, NextY SAY "ллллл"
+      ENDCASE
+   NEXT
 
-SETPOS (nPrevRow, nPrevCol)
+   SetPos ( nPrevRow, nPrevCol )
 
-return
+   RETURN
 
 
 /*! \fn SkloniIznosRac()
     \brief Pravo korisna funkcija ... ?!?
 */
 
-function SkloniIznRac()
-*{
-BoxC()
-return
-*}
+FUNCTION SkloniIznRac()
+
+   // {
+   BoxC()
+
+   RETURN
+// }
 
 /*! \fn DummyProc()
  *  \brief
  */
- 
-function DummyProc()
-*{
- return NIL
-*}
+
+FUNCTION DummyProc()
+
+   // {
+
+   RETURN NIL
+// }
 
 
 /*! \fn PromIdCijena()
@@ -442,55 +454,59 @@ function DummyProc()
  *  \todo Ovu funkciju treba ugasiti, zajedno sa konceptom vise setova cijena, to treba generalno revidirati jer prakticno niko i ne koristi, a knjigovodstveno je sporno
  */
 
-function PromIdCijena()
-*{
+FUNCTION PromIdCijena()
 
-LOCAL i:=0,j:=LEN(SC_Opisi)
-LOCAL cbsstara:=ShemaBoja("B1")
- Prozor1(5,1,6+j+2,78,"SETOVI CIJENA",cbnaslova,,cbokvira,cbteksta,0)
- FOR i:=1 TO j
-  @ 6+i,2 SAY IF(VAL(gIdCijena)==i,"->","  ")+;
-              STR(i,3)+". "+PADR(SC_Opisi[i],40)+;
-              IF(VAL(gIdCijena)==i," <- tekuci set","")
- NEXT
- VarEdit({{"Oznaka seta cijena","gIdCijena","VAL(gIdCijena)>0.and.VAL(gIdCijena)<=LEN(SC_Opisi)",,}},;
-             6+j+3,1,6+j+7,78,"IZBOR SETA CIJENA","B1")
- Prozor0()
- ShemaBoja(cbsstara)
- pos_status_traka()
-return
-*}
+   // {
+
+   LOCAL i := 0, j := Len( SC_Opisi )
+   LOCAL cbsstara := ShemaBoja( "B1" )
+   Prozor1( 5, 1, 6 + j + 2, 78, "SETOVI CIJENA", cbnaslova,, cbokvira, cbteksta, 0 )
+   FOR i := 1 TO j
+      @ 6 + i, 2 SAY IF( Val( gIdCijena ) == i, "->", "  " ) + ;
+         Str( i, 3 ) + ". " + PadR( SC_Opisi[ i ], 40 ) + ;
+         IF( Val( gIdCijena ) == i, " <- tekuci set", "" )
+   NEXT
+   VarEdit( { { "Oznaka seta cijena", "gIdCijena", "VAL(gIdCijena)>0.and.VAL(gIdCijena)<=LEN(SC_Opisi)",, } }, ;
+      6 + j + 3, 1, 6 + j + 7, 78, "IZBOR SETA CIJENA", "B1" )
+   Prozor0()
+   ShemaBoja( cbsstara )
+   pos_status_traka()
+
+   RETURN
+// }
 
 
 /*! \fn PortZaMT(cIdDio,cIdOdj)
- *  \brief 
+ *  \brief
  *  \param cIdDio
  *  \param cIdOdj
  */
- 
-function PortZaMT(cIdDio,cIdOdj)
-*{
 
-LOCAL nObl:=SELECT(),cVrati:=gLocPort    // default port je gLocPort
-  SELECT F_UREDJ; PushWA()
-  IF ! USED()
-    O_UREDJ
-  ENDIF
-  SELECT F_MJTRUR; PushWA()
-  IF ! USED()
-    O_MJTRUR
-  ENDIF
-  GO TOP; HSEEK cIdDio+cIdOdj
-  IF FOUND()
-    SELECT F_UREDJ
-    GO TOP; HSEEK MJTRUR->iduredjaj
-    cVrati:=ALLTRIM(port)
-  ENDIF
-  SELECT F_MJTRUR; PopWA()
-  SELECT F_UREDJ; PopWA()
-  SELECT (nObl)
-return cVrati
-*}
+FUNCTION PortZaMT( cIdDio, cIdOdj )
+
+   // {
+
+   LOCAL nObl := Select(), cVrati := gLocPort    // default port je gLocPort
+   SELECT F_UREDJ; PushWA()
+   IF ! Used()
+      O_UREDJ
+   ENDIF
+   SELECT F_MJTRUR; PushWA()
+   IF ! Used()
+      O_MJTRUR
+   ENDIF
+   GO TOP; HSEEK cIdDio + cIdOdj
+   IF Found()
+      SELECT F_UREDJ
+      GO TOP; HSEEK MJTRUR->iduredjaj
+      cVrati := AllTrim( port )
+   ENDIF
+   SELECT F_MJTRUR; PopWA()
+   SELECT F_UREDJ; PopWA()
+   SELECT ( nObl )
+
+   RETURN cVrati
+// }
 
 
 
@@ -500,185 +516,196 @@ return cVrati
 *   \brief Programiranje tastature
 *
 */
-function ProgKeyboard()
-*{
+FUNCTION ProgKeyboard()
 
-local nKey1
-local nKey2
-local idroba
-local fIzm
-local nIzb
-local aOpc[3]
+   // {
 
-aOpc:={"Izmjeni","Ukini","Ostavi"}
+   LOCAL nKey1
+   LOCAL nKey2
+   LOCAL idroba
+   LOCAL fIzm
+   LOCAL nIzb
+   LOCAL aOpc[ 3 ]
 
-O_SIFK
-O_SIFV
-O_ROBA
-O_K2C
+   aOpc := { "Izmjeni", "Ukini", "Ostavi" }
 
-Box(,10,75)
-do while .t.
-    @ m_x+1,m_y+3 SAY "Pritisnite tipku koju zelite programirati --> "
-    nKey1:=INKEY(0)
-    if nKey1==K_ESC
-            EXIT
-    endif
-    if nKey1==K_ENTER
-            MsgBeep("Ovu tipku ne mozete programirati")
-            BoxCls()
+   O_SIFK
+   O_SIFV
+   O_ROBA
+   O_K2C
+
+   Box(, 10, 75 )
+   DO WHILE .T.
+      @ m_x + 1, m_y + 3 SAY "Pritisnite tipku koju zelite programirati --> "
+      nKey1 := Inkey( 0 )
+      IF nKey1 == K_ESC
+         EXIT
+      ENDIF
+      IF nKey1 == K_ENTER
+         MsgBeep( "Ovu tipku ne mozete programirati" )
+         BoxCls()
+         LOOP
+      ENDIF
+      @ m_x + 3, m_y + 3 SAY "          Ponovite pritisak na istu tipku --> "
+      nKey2 := Inkey( 0 )
+      IF nKey2 == K_ESC
+         EXIT
+      ENDIF
+      IF nKey1 == K_ENTER
+         MsgBeep( "Ovu tipku ne mozete programirati" )
+         BoxCls()
+         LOOP
+      ENDIF
+      IF nKey1 <> nKey2
+         Msg ( "Pritisnute razlicite tipke! Ponovite proceduru", 10 )
+         BoxCLS ()
+         LOOP
+      ENDIF
+      fIzm := .F.
+      SELECT K2C
+      SET ORDER TO TAG "1"
+      SEEK Str( nKey1, 4 )
+      IF Found ()
+         Beep( 3 )
+         nIzb := KudaDalje( "Tipka je vec programirana!!!", aOpc )
+         DO CASE
+         CASE nIzb == 0 .OR. nIzb == 3
             LOOP
-    endif
-    @ m_x+3,m_y+3 SAY "          Ponovite pritisak na istu tipku --> "
-    nKey2:=INKEY(0)
-    if nKey2==K_ESC
-            EXIT
-    endif
-    if nKey1==K_ENTER
-            MsgBeep("Ovu tipku ne mozete programirati")
-            BoxCls()
+         CASE nIzb == 1
+            fIzm := .T.
+         CASE nIzb == 2
+            my_delete()
             LOOP
-    endif
-    if nKey1<>nKey2
-            Msg ("Pritisnute razlicite tipke! Ponovite proceduru", 10)
-            BoxCLS ()
-            LOOP
-    endif
-    fIzm:=.f.
-    SELECT K2C
-    set order to tag "1"
-    SEEK STR(nKey1,4)
-    if FOUND ()
-            Beep(3)
-            nIzb:=KudaDalje("Tipka je vec programirana!!!", aOpc)
-            do case
-                case nIzb==0 .or. nIzb==3
-                    LOOP
-                case nIzb==1
-                    fIzm:=.t.
-                case nIzb==2
-                    my_delete()
-                    LOOP
-            endcase
-    endif
+         ENDCASE
+      ENDIF
 
-    Scatter() // iz K2C
-    @ m_x+5,m_y+3 SAY "Sifra robe koja se pridruzuje tipki:"
-    @ m_x+6,m_y+13 GET _idroba VALID P_Roba(@_idroba,6,25).AND.NijeDuplo(_idroba, nKey1)
-    READ
-    if LASTKEY()=K_ESC
-            EXIT
-    endif
+      Scatter() // iz K2C
+      @ m_x + 5, m_y + 3 SAY "Sifra robe koja se pridruzuje tipki:"
+      @ m_x + 6, m_y + 13 GET _idroba VALID P_Roba( @_idroba, 6, 25 ) .AND. NijeDuplo( _idroba, nKey1 )
+      READ
+      IF LastKey() = K_ESC
+         EXIT
+      ENDIF
 
-    SELECT K2C
-    if !fIzm
-            APPEND BLANK
-            _KeyCode:=nKey1
-    endif
-    Gather()
-    BoxCLS()
-end
-BoxC()
-CLOSERET
-return
-*}
+      SELECT K2C
+      IF !fIzm
+         APPEND BLANK
+         _KeyCode := nKey1
+      ENDIF
+      Gather()
+      BoxCLS()
+   END
+   BoxC()
+   CLOSERET
+
+   RETURN
+// }
 
 
 /*! \fn NijeDuplo(cIdRoba,nKey)
-*   \brief Provjerava da li se pokusava staviti jedna roba na vise tipki 
+*   \brief Provjerava da li se pokusava staviti jedna roba na vise tipki
 *   \param cIdRoba - Id robe
 *   \param nKey    - tipka
 *   \return lFlag==.t. ili .f.
 */
-function NijeDuplo(cIdRoba,nKey)
-*{
+FUNCTION NijeDuplo( cIdRoba, nKey )
 
-local lFlag:=.t.
-SELECT K2C
-set order to tag "2"
-nCurrRec:=RECNO()
-HSEEK cIdRoba
-if FOUND().and.RECNO()<>nCurrRec
-    Beep(2)
-    Msg("Roba je vec pridruzena drugoj tipki!", 15)
-    lFlag := .f.
-endif
-GO(nCurrRec)
-return (lFlag)
-*}
+   // {
+
+   LOCAL lFlag := .T.
+   SELECT K2C
+   SET ORDER TO TAG "2"
+   nCurrRec := RecNo()
+   HSEEK cIdRoba
+   IF Found() .AND. RecNo() <> nCurrRec
+      Beep( 2 )
+      Msg( "Roba je vec pridruzena drugoj tipki!", 15 )
+      lFlag := .F.
+   ENDIF
+   GO( nCurrRec )
+
+   RETURN ( lFlag )
+// }
 
 
 /*! \fn NazivRobe(cIdRoba)
  *  \brief
  *  \param cIdRoba
  */
- 
-function NazivRobe(cIdRoba)
-*{
-local nCurr:=SELECT()
 
-select roba
-HSEEK cIdRoba
-SELECT nCurr
-return (roba->Naz)
-*}
+FUNCTION NazivRobe( cIdRoba )
+
+   // {
+   LOCAL nCurr := Select()
+
+   SELECT roba
+   HSEEK cIdRoba
+   SELECT nCurr
+
+   RETURN ( roba->Naz )
+// }
 
 
 /*! \fn Godina_2(dDatum)
  *  \brief
  *  \param dDatum
  */
- 
-function Godina_2(dDatum)
-*{
-//
-// 01.01.99 -> "99"
-// 01.01.00 -> "00"
-return padl(alltrim(str(year(dDatum)%100,2,0)),2,"0")
-*}
+
+FUNCTION Godina_2( dDatum )
+
+   // {
+   //
+   // 01.01.99 -> "99"
+   // 01.01.00 -> "00"
+
+   RETURN PadL( AllTrim( Str( Year( dDatum ) % 100, 2, 0 ) ), 2, "0" )
+// }
 
 
 /*! \fn NenapPop()
  *  \brief
  */
- 
-function NenapPop()
-*{
-return iif(gPopVar="A","NENAPLACENO:","     POPUST:")
-*}
+
+FUNCTION NenapPop()
+
+   // {
+
+   RETURN iif( gPopVar = "A", "NENAPLACENO:", "     POPUST:" )
+// }
 
 
 /*! \fn InstallOps(cKorSif)
  *  \brief
  *  \param cKorSif
  */
- 
-function InstallOps(cKorSif)
-*{
-if cKorsif="I"
-          cKom:=cKom:="I"+gModul+" "+imekorisn+" "+CryptSC(sifrakorisn)
-endif
-if cKorsif="IM"
-          cKom+="  /M"
-endif
-if cKorsif="II"
-          cKom+="  /I"
-endif
-if cKorsif="IR"
-          cKom+="  /R"
-endif
-if cKorsif="IP"
-          cKom+="  /P"
-endif
-if cKorsif="IB"
-          cKom+="  /B"
-endif
-if cKorsif="I"
-          RunInstall(cKom)
-endif
 
-return
-*}
+FUNCTION InstallOps( cKorSif )
+
+   // {
+   IF cKorsif = "I"
+      cKom := cKom := "I" + gModul + " " + imekorisn + " " + CryptSC( sifrakorisn )
+   ENDIF
+   IF cKorsif = "IM"
+      cKom += "  /M"
+   ENDIF
+   IF cKorsif = "II"
+      cKom += "  /I"
+   ENDIF
+   IF cKorsif = "IR"
+      cKom += "  /R"
+   ENDIF
+   IF cKorsif = "IP"
+      cKom += "  /P"
+   ENDIF
+   IF cKorsif = "IB"
+      cKom += "  /B"
+   ENDIF
+   IF cKorsif = "I"
+      RunInstall( cKom )
+   ENDIF
+
+   RETURN
+// }
 
 /*! \fn SetUser(cKorSif,nSifLen,cLevel)
  *  \brief
@@ -686,55 +713,56 @@ return
  *  \param nSifLen
  *  \param cLevel
  */
- 
-function SetUser(cKorSif,nSifLen,cLevel)
 
-O_STRAD
-O_OSOB
+FUNCTION SetUser( cKorSif, nSifLen, cLevel )
 
-cKorSif:=CryptSC(PADR(UPPER(TRIM(cKorSif)),nSifLen))
-SELECT OSOB
-Seek2(cKorSif)
+   O_STRAD
+   O_OSOB
 
-if FOUND()
-    gIdRadnik := ID     ; gKorIme   := Naz
-    gSTRAD  := ALLTRIM (Status)
-    SELECT STRAD
-    Seek2 (OSOB->Status)
-    IF FOUND ()
-      cLevel := Prioritet
-    ELSE
-      cLevel := L_PRODAVAC ; gSTRAD := "K"
-    ENDIF
-    SELECT OSOB
-    return 1
-else
-    MsgBeep ("Unijeta je nepostojeca lozinka!")
-    SELECT OSOB
-    return 0
-endif
+   cKorSif := CryptSC( PadR( Upper( Trim( cKorSif ) ), nSifLen ) )
+   SELECT OSOB
+   Seek2( cKorSif )
 
-return 0
+   IF Found()
+      gIdRadnik := ID     ; gKorIme   := Naz
+      gSTRAD  := AllTrim ( Status )
+      SELECT STRAD
+      Seek2 ( OSOB->Status )
+      IF Found ()
+         cLevel := Prioritet
+      ELSE
+         cLevel := L_PRODAVAC ; gSTRAD := "K"
+      ENDIF
+      SELECT OSOB
+      RETURN 1
+   ELSE
+      MsgBeep ( "Unijeta je nepostojeca lozinka!" )
+      SELECT OSOB
+      RETURN 0
+   ENDIF
+
+   RETURN 0
 
 
 // ...........................................
-// prikazuje status pos modula... 
+// prikazuje status pos modula...
 // ...........................................
-function pos_status_traka()
-local _x := MAXROWS() - 3
-local _y := 0
+FUNCTION pos_status_traka()
 
-@ 1, _y + 1 SAY "RADI:"+PADR(LTRIM(gKorIme),31)+" SMJENA:"+gSmjena+" CIJENE:"+gIdCijena+" DATUM:"+DTOC(gDatum)+IF(gVrstaRS=="S","   SERVER  "," KASA-PM:"+gIdPos)
+   LOCAL _x := MAXROWS() - 3
+   LOCAL _y := 0
 
-if gIdPos=="X "
-    @ _x, _y + 1 SAY PADC( "$$$ --- PRODAJNO MJESTO X ! --- $$$", MAXCOLS() - 2, "Б" )
-else
-    @ _x, _y + 1 SAY REPLICATE( "Б", MAXCOLS() - 2 )
-endif
+   @ 1, _y + 1 SAY "RADI:" + PadR( LTrim( gKorIme ), 31 ) + " SMJENA:" + gSmjena + " CIJENE:" + gIdCijena + " DATUM:" + DToC( gDatum ) + IF( gVrstaRS == "S", "   SERVER  ", " KASA-PM:" + gIdPos )
 
-@ _x - 1, _y + 1 SAY PADC ( Razrijedi (gKorIme), MAXCOLS() - 2 ) COLOR INVERT
+   IF gIdPos == "X "
+      @ _x, _y + 1 SAY PadC( "$$$ --- PRODAJNO MJESTO X ! --- $$$", MAXCOLS() - 2, "Б" )
+   ELSE
+      @ _x, _y + 1 SAY Replicate( "Б", MAXCOLS() - 2 )
+   ENDIF
 
-return
+   @ _x - 1, _y + 1 SAY PadC ( Razrijedi ( gKorIme ), MAXCOLS() - 2 ) COLOR INVERT
+
+   RETURN
 
 
 
@@ -742,19 +770,18 @@ return
  *  \brief
  *  \param gVrstaRS
  */
- 
-function SetBoje(gVrstaRS)
-*{
 
-// postavljanje boja (samo C/B kombinacija dolazi u obzir, ako nije server)
-IF gVrstaRS <> "S"
-    Invert := "N/W,W/N,,,W/N"
-    Normal := "W/N,N/W,,,N/W"
-    Blink  := "N****/W,W/N,,,W/N"
-    Nevid  := "W/W,N/N"
-ENDIF
+FUNCTION SetBoje( gVrstaRS )
 
-return
-*}
+   // {
 
+   // postavljanje boja (samo C/B kombinacija dolazi u obzir, ako nije server)
+   IF gVrstaRS <> "S"
+      Invert := "N/W,W/N,,,W/N"
+      Normal := "W/N,N/W,,,N/W"
+      Blink  := "N****/W,W/N,,,W/N"
+      Nevid  := "W/W,N/N"
+   ENDIF
 
+   RETURN
+// }

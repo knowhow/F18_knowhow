@@ -25,24 +25,19 @@ STATIC __enter_seq := Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER )
 STATIC __redni_broj
 
 
-// -----------------------------------------------------------------
-// glavna funkcija za poziv pripreme i knjizenje fakture
-// -----------------------------------------------------------------
 FUNCTION fakt_unos_dokumenta()
 
    LOCAL _i, _x_pos, _y_pos, _x, _y
    LOCAL _sep := BROWSE_COL_SEP
    PRIVATE ImeKol, Kol
-   // #34526, u ovoj funkciji ulijeće TOPS funkcija pos_ispravi_racun()
-   PRIVATE bPrevZv := NIL
 
-   // kada je radjen zadnji fiskalni izvjestaj info...
+   pos_unset_key_handler_ispravka_racuna()
+
    zadnji_fiscal_z_report_info()
 
    close_open_fakt_tabele()
    select_fakt_pripr()
 
-   // unos inventure
    IF field->idtipdok == "IM"
       my_close_all_dbf()
       fakt_unos_inventure()

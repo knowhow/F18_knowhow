@@ -40,9 +40,6 @@ FUNCTION pos_postoji_roba( cId, dx, dy, barkod )
 
    pos_unset_key_handler_ispravka_racuna()
 
-   SetKey( K_PGDN, bPrevDn )
-   SetKey( K_PGUP, bPrevUp )
-
    IF ValType( GetList ) == "A" .AND. Len( GetList ) > 1
       PrevId := GetList[ 1 ]:original
    ENDIF
@@ -97,9 +94,6 @@ FUNCTION pos_postoji_roba( cId, dx, dy, barkod )
          _vrati := .F.
       ENDIF
    ENDIF
-
-   SetKey ( K_PGDN, {|| DummyProc() } )
-   SetKey ( K_PGUP, {|| DummyProc() } )
 
    pos_set_key_handler_ispravka_racuna()
 

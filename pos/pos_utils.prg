@@ -70,13 +70,9 @@ FUNCTION IncID( cId, cPadCh )
 
    RETURN ( PadL( Val( AllTrim( cID ) ) + 1, Len( cID ), cPadCh ) )
 
-/*! \fn DecId(cId,cPadCh)
- *  \brief Decrement id, kontra IncId
- */
 
 FUNCTION DecID( cId, cPadCh )
 
-   // {
    IF cPadCh == nil
       cPadCh := " "
    ELSE
@@ -84,13 +80,9 @@ FUNCTION DecID( cId, cPadCh )
    ENDIF
 
    RETURN ( PadL( Val( AllTrim( cID ) ) -1, Len( cID ), cPadCh ) )
-// }
 
 
 
-// ------------------------------------------------------
-// Postavlja naziv domace valute
-// ------------------------------------------------------
 FUNCTION SetNazDVal()
 
    LOCAL lOpened
@@ -109,7 +101,6 @@ FUNCTION SetNazDVal()
    SET ORDER TO TAG "NAZ"
    GO TOP
 
-   // trazi domacu valutu
    Seek2( "D" )
 
    gDomValuta := AllTrim( naz2 )
@@ -128,9 +119,8 @@ FUNCTION SetNazDVal()
 
    RETURN
 
-// --------------------------------------------------------------------
-// ispisi donji dio forme unosa podataka
-// --------------------------------------------------------------------
+
+
 FUNCTION ispisi_donji_dio_forme_unosa( txt, row )
 
    IF row == nil
@@ -142,9 +132,6 @@ FUNCTION ispisi_donji_dio_forme_unosa( txt, row )
    RETURN
 
 
-// -----------------------------------------------------
-// ispisuje iznos racuna velikim brojevima
-// -----------------------------------------------------
 FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
 
    LOCAL _iznos
@@ -157,7 +144,6 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
    _iznos := AllTrim( Transform( iznos, "9999999.99" ) )
    _next_y := m_y + col
 
-   // ocisti iznos
    @ m_x + row + 0, MAXCOLS() / 2 SAY PadR( "", MAXCOLS() / 2 )
    @ m_x + row + 1, MAXCOLS() / 2 SAY PadR( "", MAXCOLS() / 2 )
    @ m_x + row + 2, MAXCOLS() / 2 SAY PadR( "", MAXCOLS() / 2 )
@@ -288,9 +274,6 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
 
 
 
-// -----------------------------------------------------
-// ispisuje iznos racuna u box-u
-// -----------------------------------------------------
 FUNCTION ispisi_iznos_racuna_box( iznos )
 
    LOCAL cIzn
@@ -425,28 +408,12 @@ FUNCTION ispisi_iznos_racuna_box( iznos )
    RETURN
 
 
-/*! \fn SkloniIznosRac()
-    \brief Pravo korisna funkcija ... ?!?
-*/
 
 FUNCTION SkloniIznRac()
-
-   // {
    BoxC()
 
    RETURN
-// }
 
-/*! \fn DummyProc()
- *  \brief
- */
-
-FUNCTION DummyProc()
-
-   // {
-
-   RETURN NIL
-// }
 
 
 /*! \fn PromIdCijena()
@@ -455,8 +422,6 @@ FUNCTION DummyProc()
  */
 
 FUNCTION PromIdCijena()
-
-   // {
 
    LOCAL i := 0, j := Len( SC_Opisi )
    LOCAL cbsstara := ShemaBoja( "B1" )
@@ -473,7 +438,6 @@ FUNCTION PromIdCijena()
    pos_status_traka()
 
    RETURN
-// }
 
 
 /*! \fn PortZaMT(cIdDio,cIdOdj)
@@ -483,8 +447,6 @@ FUNCTION PromIdCijena()
  */
 
 FUNCTION PortZaMT( cIdDio, cIdOdj )
-
-   // {
 
    LOCAL nObl := Select(), cVrati := gLocPort    // default port je gLocPort
    SELECT F_UREDJ; PushWA()
@@ -506,136 +468,12 @@ FUNCTION PortZaMT( cIdDio, cIdOdj )
    SELECT ( nObl )
 
    RETURN cVrati
-// }
 
 
 
-
-/*! \fn ProgKeyboard()
-*
-*   \brief Programiranje tastature
-*
-*/
-FUNCTION ProgKeyboard()
-
-   // {
-
-   LOCAL nKey1
-   LOCAL nKey2
-   LOCAL idroba
-   LOCAL fIzm
-   LOCAL nIzb
-   LOCAL aOpc[ 3 ]
-
-   aOpc := { "Izmjeni", "Ukini", "Ostavi" }
-
-   O_SIFK
-   O_SIFV
-   O_ROBA
-   O_K2C
-
-   Box(, 10, 75 )
-   DO WHILE .T.
-      @ m_x + 1, m_y + 3 SAY "Pritisnite tipku koju zelite programirati --> "
-      nKey1 := Inkey( 0 )
-      IF nKey1 == K_ESC
-         EXIT
-      ENDIF
-      IF nKey1 == K_ENTER
-         MsgBeep( "Ovu tipku ne mozete programirati" )
-         BoxCls()
-         LOOP
-      ENDIF
-      @ m_x + 3, m_y + 3 SAY "          Ponovite pritisak na istu tipku --> "
-      nKey2 := Inkey( 0 )
-      IF nKey2 == K_ESC
-         EXIT
-      ENDIF
-      IF nKey1 == K_ENTER
-         MsgBeep( "Ovu tipku ne mozete programirati" )
-         BoxCls()
-         LOOP
-      ENDIF
-      IF nKey1 <> nKey2
-         Msg ( "Pritisnute razlicite tipke! Ponovite proceduru", 10 )
-         BoxCLS ()
-         LOOP
-      ENDIF
-      fIzm := .F.
-      SELECT K2C
-      SET ORDER TO TAG "1"
-      SEEK Str( nKey1, 4 )
-      IF Found ()
-         Beep( 3 )
-         nIzb := KudaDalje( "Tipka je vec programirana!!!", aOpc )
-         DO CASE
-         CASE nIzb == 0 .OR. nIzb == 3
-            LOOP
-         CASE nIzb == 1
-            fIzm := .T.
-         CASE nIzb == 2
-            my_delete()
-            LOOP
-         ENDCASE
-      ENDIF
-
-      Scatter() // iz K2C
-      @ m_x + 5, m_y + 3 SAY "Sifra robe koja se pridruzuje tipki:"
-      @ m_x + 6, m_y + 13 GET _idroba VALID P_Roba( @_idroba, 6, 25 ) .AND. NijeDuplo( _idroba, nKey1 )
-      READ
-      IF LastKey() = K_ESC
-         EXIT
-      ENDIF
-
-      SELECT K2C
-      IF !fIzm
-         APPEND BLANK
-         _KeyCode := nKey1
-      ENDIF
-      Gather()
-      BoxCLS()
-   END
-   BoxC()
-   CLOSERET
-
-   RETURN
-// }
-
-
-/*! \fn NijeDuplo(cIdRoba,nKey)
-*   \brief Provjerava da li se pokusava staviti jedna roba na vise tipki
-*   \param cIdRoba - Id robe
-*   \param nKey    - tipka
-*   \return lFlag==.t. ili .f.
-*/
-FUNCTION NijeDuplo( cIdRoba, nKey )
-
-   // {
-
-   LOCAL lFlag := .T.
-   SELECT K2C
-   SET ORDER TO TAG "2"
-   nCurrRec := RecNo()
-   HSEEK cIdRoba
-   IF Found() .AND. RecNo() <> nCurrRec
-      Beep( 2 )
-      Msg( "Roba je vec pridruzena drugoj tipki!", 15 )
-      lFlag := .F.
-   ENDIF
-   GO( nCurrRec )
-
-   RETURN ( lFlag )
-// }
-
-
-/*! \fn NazivRobe(cIdRoba)
- *  \brief
- *  \param cIdRoba
- */
 
 FUNCTION NazivRobe( cIdRoba )
 
-   // {
    LOCAL nCurr := Select()
 
    SELECT roba
@@ -643,76 +481,23 @@ FUNCTION NazivRobe( cIdRoba )
    SELECT nCurr
 
    RETURN ( roba->Naz )
-// }
 
 
-/*! \fn Godina_2(dDatum)
- *  \brief
- *  \param dDatum
- */
 
 FUNCTION Godina_2( dDatum )
 
-   // {
-   //
    // 01.01.99 -> "99"
    // 01.01.00 -> "00"
 
    RETURN PadL( AllTrim( Str( Year( dDatum ) % 100, 2, 0 ) ), 2, "0" )
-// }
 
 
-/*! \fn NenapPop()
- *  \brief
- */
 
 FUNCTION NenapPop()
 
-   // {
-
    RETURN iif( gPopVar = "A", "NENAPLACENO:", "     POPUST:" )
-// }
 
 
-/*! \fn InstallOps(cKorSif)
- *  \brief
- *  \param cKorSif
- */
-
-FUNCTION InstallOps( cKorSif )
-
-   // {
-   IF cKorsif = "I"
-      cKom := cKom := "I" + gModul + " " + imekorisn + " " + CryptSC( sifrakorisn )
-   ENDIF
-   IF cKorsif = "IM"
-      cKom += "  /M"
-   ENDIF
-   IF cKorsif = "II"
-      cKom += "  /I"
-   ENDIF
-   IF cKorsif = "IR"
-      cKom += "  /R"
-   ENDIF
-   IF cKorsif = "IP"
-      cKom += "  /P"
-   ENDIF
-   IF cKorsif = "IB"
-      cKom += "  /B"
-   ENDIF
-   IF cKorsif = "I"
-      RunInstall( cKom )
-   ENDIF
-
-   RETURN
-// }
-
-/*! \fn SetUser(cKorSif,nSifLen,cLevel)
- *  \brief
- *  \param cKorSif
- *  \param nSifLen
- *  \param cLevel
- */
 
 FUNCTION SetUser( cKorSif, nSifLen, cLevel )
 
@@ -736,7 +521,7 @@ FUNCTION SetUser( cKorSif, nSifLen, cLevel )
       SELECT OSOB
       RETURN 1
    ELSE
-      MsgBeep ( "Unijeta je nepostojeca lozinka!" )
+      MsgBeep ( "Unijeta je nepostojeca lozinka !" )
       SELECT OSOB
       RETURN 0
    ENDIF
@@ -744,9 +529,6 @@ FUNCTION SetUser( cKorSif, nSifLen, cLevel )
    RETURN 0
 
 
-// ...........................................
-// prikazuje status pos modula...
-// ...........................................
 FUNCTION pos_status_traka()
 
    LOCAL _x := MAXROWS() - 3
@@ -766,16 +548,8 @@ FUNCTION pos_status_traka()
 
 
 
-/*! \fn SetBoje(gVrstaRS)
- *  \brief
- *  \param gVrstaRS
- */
-
 FUNCTION SetBoje( gVrstaRS )
 
-   // {
-
-   // postavljanje boja (samo C/B kombinacija dolazi u obzir, ako nije server)
    IF gVrstaRS <> "S"
       Invert := "N/W,W/N,,,W/N"
       Normal := "W/N,N/W,,,N/W"
@@ -784,4 +558,3 @@ FUNCTION SetBoje( gVrstaRS )
    ENDIF
 
    RETURN
-// }

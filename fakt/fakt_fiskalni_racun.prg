@@ -245,7 +245,7 @@ STATIC FUNCTION fakt_reklamirani_racun_preduslovi( idfirma, idtipdok, brdok, dev
 
    IF nErr <> 0
       lRet := .F.
-      MsgBeep( "Greška kod unosa depozita u uređaj !" )
+      MsgBeep( "Neuspješan unosa depozita u uređaj !" )
       RETURN lRet
    ENDIF
 

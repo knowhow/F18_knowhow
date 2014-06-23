@@ -62,14 +62,10 @@ FUNCTION get_import_file( modul, import_dbf_path )
 // ----------------------------------------------------------------
 // update tabele konto na osnovu pomocne tabele
 // ----------------------------------------------------------------
-FUNCTION update_table_konto( zamjena_sifre, fmk_import )
+FUNCTION update_table_konto( zamjena_sifre )
 
    LOCAL _app_rec
    LOCAL _sif_exist := .T.
-
-   IF fmk_import == NIL
-      fmk_import := .F.
-   ENDIF
 
    f18_lock_tables( { "konto" } )
    sql_table_update( nil, "BEGIN" )
@@ -82,10 +78,7 @@ FUNCTION update_table_konto( zamjena_sifre, fmk_import )
 
       _app_rec := dbf_get_rec()
 
-      IF fmk_import
-         // uskladi strukture
-         update_rec_konto_struct( @_app_rec )
-      ENDIF
+      update_rec_konto_struct( @_app_rec )
 
       SELECT konto
       hseek _app_rec[ "id" ]
@@ -124,14 +117,10 @@ FUNCTION update_table_konto( zamjena_sifre, fmk_import )
 // -----------------------------------------------------------
 // update tabele partnera na osnovu pomocne tabele
 // -----------------------------------------------------------
-FUNCTION update_table_partn( zamjena_sifre, fmk_import )
+FUNCTION update_table_partn( zamjena_sifre )
 
    LOCAL _app_rec
    LOCAL _sif_exist := .T.
-
-   IF fmk_import == NIL
-      fmk_import := .F.
-   ENDIF
 
    f18_lock_tables( { "partn" } )
    sql_table_update( nil, "BEGIN" )
@@ -144,10 +133,7 @@ FUNCTION update_table_partn( zamjena_sifre, fmk_import )
 
       _app_rec := dbf_get_rec()
 
-      IF fmk_import
-         // uskladi strukture
-         update_rec_partn_struct( @_app_rec )
-      ENDIF
+      update_rec_partn_struct( @_app_rec )
 
       SELECT partn
       hseek _app_rec[ "id" ]
@@ -182,20 +168,14 @@ FUNCTION update_table_partn( zamjena_sifre, fmk_import )
 
 
 
-// update podataka u tabelu robe
-FUNCTION update_table_roba( zamjena_sifre, fmk_import )
+FUNCTION update_table_roba( zamjena_sifre )
 
    LOCAL _app_rec
    LOCAL _sif_exist := .T.
 
-   IF fmk_import == NIL
-      fmk_import := .F.
-   ENDIF
-
    f18_lock_tables( { "roba" } )
    sql_table_update( nil, "BEGIN" )
 
-   // moramo ziknuti i robu ako fali !
    SELECT e_roba
    SET ORDER TO TAG "ID"
    GO TOP
@@ -204,10 +184,7 @@ FUNCTION update_table_roba( zamjena_sifre, fmk_import )
 
       _app_rec := dbf_get_rec()
 
-      IF fmk_import
-         // uskladi strukture tabela
-         update_rec_roba_struct( @_app_rec )
-      ENDIF
+      update_rec_roba_struct( @_app_rec )
 
       SELECT roba
       hseek _app_rec[ "id" ]
@@ -245,19 +222,15 @@ FUNCTION update_table_roba( zamjena_sifre, fmk_import )
 
 STATIC FUNCTION update_rec_sifk_struct( rec )
 
-   LOCAL _no_field
-   LOCAL _struct := {}
-
    IF hb_HHasKey( rec, "unique" )
       rec[ "f_unique" ] := rec[ "unique" ]
+      hb_HDel( rec, "unique" )
    ENDIF
 
    IF hb_HHasKey( rec, "decimal" )
       rec[ "f_decimal" ] := rec[ "decimal" ]
+      hb_HDel( rec, "decimal" )
    ENDIF
-
-   hb_HDel( rec, "unique" )
-   hb_HDel( rec, "decimal" )
 
    IF !hb_HHasKey( rec, "match_code" ) .OR. rec["match_code"] == NIL
       rec[ "match_code" ] := PadR("", 10)
@@ -269,20 +242,54 @@ STATIC FUNCTION update_rec_sifk_struct( rec )
 
 STATIC FUNCTION update_rec_konto_struct( rec )
 
-   LOCAL _no_field
    LOCAL _struct := {}
 
    AAdd( _struct, "match_code" )
    AAdd( _struct, "pozbilu" )
    AAdd( _struct, "pozbils" )
 
-   FOR EACH _no_field in _struct
-      IF ! hb_HHasKey( rec, _no_field )
-         rec[ _no_field ] := nil
+   dodaj_u_hash_matricu( _struct, @rec )
+
+   RETURN
+
+
+
+
+STATIC FUNCTION dodaj_u_hash_matricu( polja, hash )
+
+   LOCAL _field
+
+   IF polja == NIL .OR. LEN( polja ) == 0
+      RETURN
+   ENDIF
+
+   FOR EACH _field in polja
+      IF ! hb_HHasKey( hash, _field )
+         hash[ _field ] := NIL
       ENDIF
    NEXT
 
    RETURN
+
+
+
+
+STATIC FUNCTION brisi_iz_hash_matrice( polja, hash )
+
+   LOCAL _field
+
+   IF polja == NIL .OR. LEN( polja ) == 0
+      RETURN
+   ENDIF
+
+   FOR EACH _field in polja
+      IF hb_HHasKey( hash, _field )
+         hb_HDel( hash, _field )
+      ENDIF
+   NEXT
+
+   RETURN
+
 
 
 
@@ -291,21 +298,15 @@ STATIC FUNCTION update_rec_konto_struct( rec )
 // --------------------------------------------------
 STATIC FUNCTION update_rec_partn_struct( rec )
 
-   LOCAL _no_field
-   LOCAL _struct := {}
+   LOCAL _add := {}
+   LOCAL _remove := {}
 
-   // moguca nepostojeca polja tabele roba
-   AAdd( _struct, "match_code" )
+   AAdd( _add, "match_code" )
+   dodaj_u_hash_matricu( _add, @rec )
 
-   FOR EACH _no_field in _struct
-      IF ! hb_HHasKey( rec, _no_field )
-         rec[ _no_field ] := nil
-      ENDIF
-   NEXT
-
-   // pobrisi sljedece clanove...
-   hb_HDel( rec, "brisano" )
-   hb_HDel( rec, "rejon" )
+   AAdd( _remove, "brisano" )
+   AAdd( _remove, "rejon" )
+   brisi_iz_hash_matrice( _remove, @rec )
 
    RETURN
 
@@ -316,36 +317,32 @@ STATIC FUNCTION update_rec_partn_struct( rec )
 // --------------------------------------------------
 STATIC FUNCTION update_rec_roba_struct( rec )
 
-   LOCAL _no_field
-   LOCAL _struct := {}
+   LOCAL _add := {}
+   LOCAL _remove := {}
 
-   // moguca nepostojeca polja tabele roba
-   AAdd( _struct, "idkonto" )
-   AAdd( _struct, "sifradob" )
-   AAdd( _struct, "strings" )
-   AAdd( _struct, "k7" )
-   AAdd( _struct, "k8" )
-   AAdd( _struct, "k9" )
-   AAdd( _struct, "mink" )
-   AAdd( _struct, "fisc_plu" )
-   AAdd( _struct, "match_code" )
-   AAdd( _struct, "mpc4" )
-   AAdd( _struct, "mpc5" )
-   AAdd( _struct, "mpc6" )
-   AAdd( _struct, "mpc7" )
-   AAdd( _struct, "mpc8" )
-   AAdd( _struct, "mpc9" )
+   AAdd( _add, "idkonto" )
+   AAdd( _add, "sifradob" )
+   AAdd( _add, "strings" )
+   AAdd( _add, "k7" )
+   AAdd( _add, "k8" )
+   AAdd( _add, "k9" )
+   AAdd( _add, "mink" )
+   AAdd( _add, "fisc_plu" )
+   AAdd( _add, "match_code" )
+   AAdd( _add, "mpc4" )
+   AAdd( _add, "mpc5" )
+   AAdd( _add, "mpc6" )
+   AAdd( _add, "mpc7" )
+   AAdd( _add, "mpc8" )
+   AAdd( _add, "mpc9" )
 
-   FOR EACH _no_field in _struct
-      IF ! hb_HHasKey( rec, _no_field )
-         rec[ _no_field ] := nil
-      ENDIF
-   NEXT
+   dodaj_u_hash_matricu( _add, @rec )
 
-   // pobrisi sljedece clanove...
-   hb_HDel( rec, "carina" )
-   hb_HDel( rec, "_m1_" )
-   hb_HDel( rec, "brisano" )
+   AAdd( _remove, "carina" )
+   AAdd( _remove, "_m1_" )
+   AAdd( _remove, "brisano" )
+
+   brisi_iz_hash_matrice( _remove, @rec )
 
    RETURN
 
@@ -354,13 +351,9 @@ STATIC FUNCTION update_rec_roba_struct( rec )
 // ---------------------------------------------------------
 // update tabela sifk, sifv na osnovu pomocnih tabela
 // ---------------------------------------------------------
-FUNCTION update_sifk_sifv( fmk_import )
+FUNCTION update_sifk_sifv()
 
    LOCAL _app_rec
-
-   IF fmk_import == NIL
-      fmk_import := .F.
-   ENDIF
 
    SELECT e_sifk
    SET ORDER TO TAG "ID2"
@@ -369,10 +362,8 @@ FUNCTION update_sifk_sifv( fmk_import )
    DO WHILE !Eof()
 
       _app_rec := dbf_get_rec()
-
-      IF fmk_import
-         update_rec_sifk_struct( @_app_rec )
-      ENDIF
+     altd() 
+      update_rec_sifk_struct( @_app_rec )
 
       SELECT sifk
       SET ORDER TO TAG "ID2"

@@ -880,9 +880,9 @@ STATIC FUNCTION __import( vars, a_details )
 
       @ m_x + 3, m_y + 2 SAY PadR( "", 69 )
 
-      update_table_roba( _zamjeniti_sif, _fmk_import )
-      update_table_partn( _zamjeniti_sif, _fmk_import )
-      update_sifk_sifv( _fmk_import )
+      update_table_roba( _zamjeniti_sif )
+      update_table_partn( _zamjeniti_sif )
+      update_sifk_sifv()
 
    ENDIF
 

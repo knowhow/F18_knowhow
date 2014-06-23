@@ -779,23 +779,14 @@ sql_table_update( nil, "END" )
 f18_free_tables( { "kalk_doks", "kalk_kalk" } )
 
 
-// ako je sve ok, predji na import tabela sifrarnika
 if _cnt >= 0
 
-    // ocisti mi 3 red
     @ m_x + 3, m_y + 2 SAY PADR( "", 69 )
 
-    // update tabele roba
-    update_table_roba( _zamjeniti_sif, _fmk_import )
-
-    // update tabele partnera
-    update_table_partn( _zamjeniti_sif, _fmk_import )
-
-    // update tabele konta
-    update_table_konto( _zamjeniti_sif, _fmk_import )
-
-    // odradi update tabela sifk, sifv
-    update_sifk_sifv( _fmk_import )
+    update_table_roba( _zamjeniti_sif )
+    update_table_partn( _zamjeniti_sif )
+    update_table_konto( _zamjeniti_sif )
+    update_sifk_sifv()
 
 endif
 

@@ -33,6 +33,7 @@ FUNCTION fakt_unos_dokumenta()
    LOCAL _i, _x_pos, _y_pos, _x, _y
    LOCAL _sep := BROWSE_COL_SEP
    PRIVATE ImeKol, Kol
+   // #34526, u ovoj funkciji ulijeće TOPS funkcija pos_ispravi_racun()
    PRIVATE bPrevZv := NIL
 
    // kada je radjen zadnji fiskalni izvjestaj info...

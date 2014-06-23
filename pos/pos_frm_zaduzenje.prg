@@ -37,8 +37,6 @@ FUNCTION Zaduzenje
 
    LOCAL _from_kalk := .F.
    LOCAL cOdg
-   LOCAL bPrethKeyUp
-   LOCAL bPrethKeyDown
    LOCAL nSign
 
    IF gSamoProdaja == "D" .AND. ( cIdVd <> VD_REK )
@@ -183,9 +181,6 @@ FUNCTION Zaduzenje
       oBrowse := FormBrowse( m_x + 6, m_y + 1, m_x + 19, m_y + 77, ImeKol, Kol, { "Í", "Ä", "³" }, 0 )
       oBrowse:autolite := .F.
 
-      bPrethKeyDown := SetKey( K_PGDN, NIL )
-      bPrethKeyUp := SetKey( K_PGUP, NIL )
-
       pos_set_key_handler_ispravka_zaduzenja()
 
       SELECT PRIPRZ
@@ -287,9 +282,6 @@ FUNCTION Zaduzenje
          ENDIF
 
       ENDDO
-
-      SetKey( K_PGUP, bPrethKeyUp )
-      SetKey( K_PGDN, bPrethKeyDown )
 
       pos_unset_key_handler_ispravka_zaduzenja()
 

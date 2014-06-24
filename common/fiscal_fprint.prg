@@ -251,7 +251,7 @@ STATIC FUNCTION _fix_time( time, fix )
 // ----------------------------------------------------
 // zatvori nasilno racun sa 0.0 KM iznosom
 // ----------------------------------------------------
-FUNCTION fprint_void( dev_params )
+FUNCTION fprint_komanda_301_zatvori_racun( dev_params )
 
    LOCAL cSep := ";"
    LOCAL aVoid := {}

@@ -96,7 +96,7 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
       AAdd( opcexe, {|| fprint_rn_close( __device_params ) } )
 
       AAdd( opc, "8. zatvori nasilno račun (cmd 301) " )
-      AAdd( opcexe, {|| fprint_void( __device_params ) } )
+      AAdd( opcexe, {|| fprint_komanda_301_zatvori_racun( __device_params ) } )
 
       IF !low_level
 

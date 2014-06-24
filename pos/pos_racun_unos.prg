@@ -53,11 +53,7 @@ FUNCTION pos_unos_racuna()
    PRIVATE aAutoKeys := {}
    PRIVATE nPopust := 0
    PRIVATE nIznNar := 0
-   PRIVATE bPrevZv
-   PRIVATE bPrevKroz
    PRIVATE aUnosMsg := {}
-   PRIVATE bPrevUp
-   PRIVATE bPrevDn
    PRIVATE GetList := {}
 
    o_pos_tables()
@@ -99,8 +95,6 @@ FUNCTION pos_unos_racuna()
 
    oBrowse:autolite := .F.
    aAutoKeys := pos_hang_keys()
-   bPrevDn := SetKey( K_PGDN, {|| DummyProc() } )
-   bPrevUp := SetKey( K_PGUP, {|| DummyProc() } )
 
    SetKey( K_F6, {|| f7_pf_traka() } )
 
@@ -108,7 +102,7 @@ FUNCTION pos_unos_racuna()
    SetKey( K_F8, {|| pos_storno_rn(), _refresh_total() } )
    SetKey( K_F9, {|| fiskalni_izvjestaji_komande( .T., .T.  ) } )
 
-   pos_set_spec_nar()
+   pos_set_key_handler_ispravka_racuna()
 
    @ m_x + 3, m_y + ( _max_cols - 30 ) SAY "UKUPNO:"
    @ m_x + 4, m_y + ( _max_cols - 30 ) SAY "POPUST:"
@@ -238,15 +232,13 @@ FUNCTION pos_unos_racuna()
    ENDDO
 
    pos_cancel_keys( aAutoKeys )
-   SetKey( K_PGDN, bPrevDn )
-   SetKey( K_PGUP, bPrevUp )
 
    SetKey( K_F6, NIL )
    SetKey( K_F7, NIL )
    SetKey( K_F8, NIL )
    SetKey( K_F9, NIL )
 
-   pos_unset_spec_nar()
+   pos_unset_key_handler_ispravka_racuna()
 
    BoxC()
 
@@ -405,14 +397,17 @@ FUNCTION pos_cancel_keys( aPrevSets )
 
 
 
-FUNCTION pos_set_spec_nar()
-   bPrevZv := SetKey( Asc( "*" ), {|| pos_ispravi_racun() } )
+
+FUNCTION pos_set_key_handler_ispravka_racuna()
+   SetKey( Asc( "*" ), {|| pos_ispravi_racun() } )
    RETURN .T.
 
 
-FUNCTION pos_unset_spec_nar()
-   SetKey( Asc ( "*" ), bPrevZv )
+
+FUNCTION pos_unset_key_handler_ispravka_racuna()
+   SetKey( Asc ( "*" ), NIL )
    RETURN .F.
+
 
 
 STATIC FUNCTION cijena_ok( cijena )
@@ -527,7 +522,7 @@ FUNCTION pos_ispravi_racun()
    LOCAL aConds
    LOCAL aProcs
 
-   pos_unset_spec_nar()
+   pos_unset_key_handler_ispravka_racuna()
 
    OpcTipke( { "<Enter>-Ispravi stavku", hb_utf8tostr( "<B>-Briši stavku" ), hb_utf8tostr( "<Esc>-Završi" ) } )
 
@@ -551,7 +546,7 @@ FUNCTION pos_ispravi_racun()
    _idroba := cGetId
    _kolicina := nGetKol
 
-   pos_set_spec_nar()
+   pos_set_key_handler_ispravka_racuna()
 
    RETURN
 

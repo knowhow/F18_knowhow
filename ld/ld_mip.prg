@@ -265,13 +265,13 @@ FUNCTION ld_mip_obrazac()
 
    ENDIF
 
-   // period za tekuci mjesec od dana do dana
    dD_start := Date()
    dD_end := Date()
+
    _fix_d_per( cMj, cGod, @dD_start, @dD_end )
 
    dPer := Date()
-   // daj period od - do
+
    g_per( cMj, cGod, @dPer )
 
    clvbox()
@@ -285,14 +285,22 @@ FUNCTION ld_mip_obrazac()
    ENDIF
 
    IF ld_provjeri_dat_isplate_za_mjesec( cGod, cMj, IF( !Empty( cRjDef ), cRjDef, NIL ) ) > 0
+
       IF !EMPTY( cRjDef )
          cErr := "Nije definisan datum isplate za radnu jedinicu '" + cRjDef +  "'."
       ELSE
          cErr := "Za pojedine radne jedinice nije definisan datum isplate."
       ENDIF
-      cErr += "#Molimo ispravite pa ponovo pokrenite ovu opciju."
-      MsgBeep( cErr )
-      RETURN
+
+      IF cWinPrint == "S"
+         cErr += "#Obrazac će biti prikazan bez datuma isplate."
+         MsgBeep( cErr )
+      ELSE
+         cErr += "#Molimo ispravite pa ponovo pokrenite ovu opciju."
+         MsgBeep( cErr )
+         RETURN
+      ENDIF
+
    ENDIF
 
    __mj := cMj

@@ -88,17 +88,21 @@ STATIC FUNCTION _max_polog( polog )
 // ----------------------------------------------------
 // fprint: unos pologa u printer
 // ----------------------------------------------------
-FUNCTION fprint_polog( dev_params, nPolog )
+FUNCTION fprint_polog( dev_params, nPolog, lShowBox )
 
    LOCAL cSep := ";"
    LOCAL aPolog := {}
    LOCAL aStruct := {}
 
-   IF nPolog == nil
+   IF nPolog == NIL
       nPolog := 0
    ENDIF
 
-   IF nPolog = 0
+   IF lShowBox == NIL
+      lShowBox := .F.
+   ENDIF
+
+   IF nPolog = 0 .OR. lShowBox
 
       Box(, 1, 60 )
       @ m_x + 1, m_y + 2 SAY8 "Zadužujem kasu za:" GET nPolog ;
@@ -117,10 +121,8 @@ FUNCTION fprint_polog( dev_params, nPolog )
 
    ENDIF
 
-   // uzmi strukturu tabele za pos racun
    aStruct := _g_f_struct( F_POS_RN )
 
-   // iscitaj pos matricu
    aPolog := _fp_polog( nPolog )
 
    _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aPolog )
@@ -1506,12 +1508,17 @@ FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
       ENDIF
 
       IF "Er;" $ _err_line
+
          _o_file:Close()
+
          _err_tmp := "FISC ERR:" + AllTrim( _err_line )
          log_write( _err_tmp, 2 )
          MsgBeep( _err_tmp )
-         _err_level := 1
+
+         _err_level := nivo_greske_na_osnovu_odgovora( _err_line )
+ 
          RETURN _err_level
+
       ENDIF
 	
    ENDDO
@@ -1529,6 +1536,29 @@ FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
    RETURN _err_level
 
 
+
+/*
+   Opis: vraća nivo greške na osnovu linije na kojoj se pojavio ERR
+
+   Usage: nivo_greske_na_osnovu_odgovora( line ) => 1
+
+   Parameters: 
+     line - sekvenca iz fajla odgovora sa ERR markerom "55,1,1000123;ERR;" 
+
+   Return:
+     2 - u slučaju greške na liniji 55
+     1 - u slučaju bilo koje druge greške
+*/
+STATIC FUNCTION nivo_greske_na_osnovu_odgovora( line )
+   
+   LOCAL nLevel := 1
+
+   DO CASE
+   CASE "55,1," $ line
+      nLevel := 2
+   ENDCASE 
+
+   RETURN nLevel
 
 
 // ------------------------------------------------

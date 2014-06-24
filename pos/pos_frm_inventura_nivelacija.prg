@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,1055 +12,959 @@
 
 #include "pos.ch"
 
-static _saldo_izn := 0
-static _saldo_kol := 0
+STATIC _saldo_izn := 0
+STATIC _saldo_kol := 0
 
 
-function InventNivel()
-parameters fInvent, fIzZad, fSadAz, dDatRada, stanje_dn
+FUNCTION InventNivel()
 
-local i:=0
-local j:=0
-local fPocInv:=.f.
-local fPreuzeo:=.f.
-local cNazDok
+   PARAMETERS fInvent, fIzZad, fSadAz, dDatRada, stanje_dn
 
-private bPrevZv
-private bPrevKroz
-private bPrevUp
-private bPrevDn
+   LOCAL i := 0
+   LOCAL j := 0
+   LOCAL fPocInv := .F.
+   LOCAL fPreuzeo := .F.
+   LOCAL cNazDok
 
-private cRSdbf
-private cRSblok
-private cUI_U
-private cUI_I
-private cIdVd
-private cZaduzuje:="R"
+   PRIVATE cRSdbf
+   PRIVATE cRSblok
+   PRIVATE cUI_U
+   PRIVATE cUI_I
+   PRIVATE cIdVd
+   PRIVATE cZaduzuje := "R"
 
-if gSamoProdaja == "D"
-    MsgBeep( "Ne mozete vrsiti zaduzenja !" )
-    return
-endif
+   IF gSamoProdaja == "D"
+      MsgBeep( "Ne možete vršiti unos zaduženja !" )
+      RETURN
+   ENDIF
 
-if dDatRada == nil
-    dDatRada := gDatum
-endif
+   IF dDatRada == nil
+      dDatRada := gDatum
+   ENDIF
 
-if stanje_dn == nil
-    stanje_dn := "N"
-endif
+   IF stanje_dn == nil
+      stanje_dn := "N"
+   ENDIF
 
-if (fInvent == nil)
-    fInvent := .t.
-else
-    fInvent := fInvent
-endif
+   IF ( fInvent == nil )
+      fInvent := .T.
+   ELSE
+      fInvent := fInvent
+   ENDIF
 
-if fInvent
-    cIdVd := VD_INV
-else
-    cIdVd := VD_NIV
-endif
+   IF fInvent
+      cIdVd := VD_INV
+   ELSE
+      cIdVd := VD_NIV
+   ENDIF
 
-if fInvent
-    cNazDok := "INVENTUR"
-else
-    cNazDok := "NIVELACIJ"
-endif
+   IF fInvent
+      cNazDok := "INVENTUR"
+   ELSE
+      cNazDok := "NIVELACIJ"
+   ENDIF
 
-if fIzZad == nil
-    fIzZad := .f.  
-    // fja pozvana iz zaduzenja
-endif
+   IF fIzZad == nil
+      fIzZad := .F.
+      // fja pozvana iz zaduzenja
+   ENDIF
 
-if fSadAz == nil
-    fSadAz := .f.  
-    // fja pozvana iz zaduzenja
-endif
+   IF fSadAz == nil
+      fSadAz := .F.
+      // fja pozvana iz zaduzenja
+   ENDIF
 
-if fIzZad
-    // ne diraj ove varijable
-else
-    private cIdOdj := SPACE(2)
-    private cIdDio := SPACE(2)
-endif
+   IF fIzZad
+      // ne diraj ove varijable
+   ELSE
+      PRIVATE cIdOdj := Space( 2 )
+      PRIVATE cIdDio := Space( 2 )
+   ENDIF
 
-o_pos_tables()
+   o_pos_tables()
 
-set cursor on
+   SET CURSOR ON
 
-if !fIzZad
-    
-    aNiz := {}
-    
-    if gVodiOdj == "D"
-        AADD( aNiz,{ "Sifra odjeljenja","cIdOdj","P_Odj(@cIdOdj)",,} )
-    endif
-    
-    if gPostDO == "D" .and. fInvent
-        AADD( aNiz,{"Sifra dijela objekta","cIdDio","P_Dio(@cIdDio)",,} )
-    endif
+   IF !fIzZad
 
-    AADD( aNiz, { "Datum rada", "dDatRada", "dDatRada <= DATE()",, } )
-    AADD( aNiz, { "Inventura sa gen.stanja (D/N) ?", "stanje_dn", "stanje_dn $ 'DN'", "@!", } )
+      aNiz := {}
 
-    if !VarEdit( aNiz, 9, 15, 15, 64, cNazDok + "A", "B1" )
-        close all
-        return
-    endif
+      IF gVodiOdj == "D"
+         AAdd( aNiz, { "Sifra odjeljenja", "cIdOdj", "P_Odj(@cIdOdj)",, } )
+      ENDIF
 
-endif
+      IF gPostDO == "D" .AND. fInvent
+         AAdd( aNiz, { "Sifra dijela objekta", "cIdDio", "P_Dio(@cIdDio)",, } )
+      ENDIF
 
-SELECT ODJ
+      AAdd( aNiz, { "Datum rada", "dDatRada", "dDatRada <= DATE()",, } )
+      AAdd( aNiz, { "Inventura sa gen.stanja (D/N) ?", "stanje_dn", "stanje_dn $ 'DN'", "@!", } )
 
-cZaduzuje := "R"
-cRSdbf := "ROBA"
-//cRSblok := "P_Roba( @_IdRoba, 1, 31 )"
-cUI_U := R_U
-cUI_I := R_I
+      IF !VarEdit( aNiz, 9, 15, 15, 64, cNazDok + "A", "B1" )
+         CLOSE ALL
+         RETURN
+      ENDIF
 
-if !pos_vrati_dokument_iz_pripr( cIdVd, gIdRadnik, cIdOdj, cIdDio )
-    close all
-    return
-endif
+   ENDIF
 
-// datum trebam setovati na osnovu dokumenta koji je vracen u priprz
-// ako postoji
+   SELECT ODJ
 
-select priprz
+   cZaduzuje := "R"
+   cRSdbf := "ROBA"
+   // cRSblok := "P_Roba( @_IdRoba, 1, 31 )"
+   cUI_U := R_U
+   cUI_I := R_I
 
-// pocetak inventure
-if RecCount2() == 0
-    fPocInv := .t.
-else
-    fPocInv := .f.
-    dDatRada := priprz->datum
-endif
+   IF !pos_vrati_dokument_iz_pripr( cIdVd, gIdRadnik, cIdOdj, cIdDio )
+      CLOSE ALL
+      RETURN
+   ENDIF
 
-// 1) formiranje pomocne baze sa knjiznim stanjima artikala
+   SELECT priprz
 
-if fPocInv    
+   IF RecCount2() == 0
+      fPocInv := .T.
+   ELSE
+      fPocInv := .F.
+      dDatRada := priprz->datum
+   ENDIF
 
-    cBrDok := pos_novi_broj_dokumenta( gIdPos, cIdVd )  
+   IF fPocInv
 
-    fPreuzeo := .f.
+      cBrDok := pos_novi_broj_dokumenta( gIdPos, cIdVd )
 
-    if !fPreuzeo
-        o_pos_tables()
-    endif
+      fPreuzeo := .F.
 
-    if stanje_dn == "N" .and. cIdVd == VD_INV
-        // iskljucujem generisanje stavki sa stanjem
-        fPocInv := .f.
-    endif
+      IF !fPreuzeo
+         o_pos_tables()
+      ENDIF
 
-    if fPocInv .and. !fPreuzeo .and. cIdVd == VD_INV
-        
-        // generisi stavke SAMO ZA INVENTURU (nemoj za NIVELACIJU)
-        MsgO( "GENERISEM DATOTEKU " + cNazDok + "E" )
-        
-        select priprz 
+      IF stanje_dn == "N" .AND. cIdVd == VD_INV
+         fPocInv := .F.
+      ENDIF
 
-        Scatter()
+      IF fPocInv .AND. !fPreuzeo .AND. cIdVd == VD_INV
 
-        select pos
-        set order to tag "2"
-        // "2", "IdOdj + idroba + DTOS(Datum)
-        seek cIdOdj
-    
-        do while !EOF() .and. field->idodj == cIdOdj
-            
-            if pos->datum > dDatRada
-                skip
-                loop
-            endif
+         MsgO( "GENERIŠEM DATOTEKU " + cNazDok + "E" )
+
+         SELECT priprz
+
+         Scatter()
+
+         SELECT pos
+         SET ORDER TO TAG "2"
+         // "2", "IdOdj + idroba + DTOS(Datum)
+         SEEK cIdOdj
+
+         DO WHILE !Eof() .AND. field->idodj == cIdOdj
+
+            IF pos->datum > dDatRada
+               SKIP
+               LOOP
+            ENDIF
 
             _kolicina := 0
             _idroba := pos->idroba
 
-            do while !EOF() .and. pos->( idodj + idroba ) == ( cIdOdj + _idroba ) .and. pos->datum <= dDatRada
+            DO WHILE !Eof() .AND. pos->( idodj + idroba ) == ( cIdOdj + _idroba ) .AND. pos->datum <= dDatRada
 
-                if !EMPTY( cIdDio ) .and. pos->iddio <> cIdDio
-                    skip
-                    loop
-                endif
-                    
-                if cZaduzuje == "S" .and. pos->idvd $ "42#01"
-                    skip
-                    loop  
-                    // racuni za sirovine - zdravo
-                endif
-                    
-                if cZaduzuje == "R" .and. pos->idvd == "96"
-                    skip
-                    loop   
-                    // otpremnice za robu - zdravo
-                endif
-                    
-                if pos->idvd $ "16#00"
-                    // na ulazu imam samo VD_ZAD i VD_PCS
-                    _kolicina += pos->kolicina
-                    
-                elseif pos->idvd $ "42#96#01#IN#NI"
-                    // na izlazu imam i VD_INV i VD_NIV
-                    do case
-                        case pos->idvd == VD_INV
-                            _kolicina -= pos->kolicina - pos->kol2
-                        case pos->idvd == VD_NIV
-                            // ne mijenja kolicinu
-                        otherwise
-                            _kolicina -= pos->kolicina
-                    endcase
-                endif
-                skip
-            enddo
+               IF !Empty( cIdDio ) .AND. pos->iddio <> cIdDio
+                  SKIP
+                  LOOP
+               ENDIF
 
-            if Round( _kolicina, 3 ) <> 0
-                    
-                select (cRSdbf)
-                HSEEK _idroba
+               IF cZaduzuje == "S" .AND. pos->idvd $ "42#01"
+                  SKIP
+                  LOOP
+               ENDIF
 
-                _cijena := pos_get_mpc()
-                // postavi tekucu cijenu
-                _ncijena := pos_get_mpc()
-                _robanaz := _field->naz 
-                _jmj := _field->jmj
-                _idtarifa := _field->idtarifa
+               IF cZaduzuje == "R" .AND. pos->idvd == "96"
+                  SKIP
+                  LOOP
+               ENDIF
 
-                select priprz
+               IF pos->idvd $ "16#00"
+                  _kolicina += pos->kolicina
 
-                _IdOdj := cIdOdj 
-                _IdDio := cIdDio
-                _BrDok := cBrDok 
-                _IdVd := cIdVd
-                _Prebacen := OBR_NIJE
-                _IdCijena := "1"
-                _IdRadnik := gIdRadnik 
-                _IdPos := gIdPos
-                _datum := dDatRada 
-                _Smjena := gSmjena
-                _Kol2 := _Kolicina
-                _MU_I := cUI_I
-                
-                append blank  
-                Gather()
+               ELSEIF pos->idvd $ "42#96#01#IN#NI"
+                  DO CASE
+                  CASE pos->idvd == VD_INV
+                     _kolicina -= pos->kolicina - pos->kol2
+                  CASE pos->idvd == VD_NIV
+                  OTHERWISE
+                     _kolicina -= pos->kolicina
+                  ENDCASE
+               ENDIF
+               SKIP
+            ENDDO
 
-                select pos
+            IF Round( _kolicina, 3 ) <> 0
 
-            endif
+               SELECT ( cRSdbf )
+               HSEEK _idroba
 
-        enddo  
-        
-        MsgC()
+               _cijena := pos_get_mpc()
+               _ncijena := pos_get_mpc()
+               _robanaz := _field->naz
+               _jmj := _field->jmj
+               _idtarifa := _field->idtarifa
 
-    else
-        select priprz
-        my_dbf_zap() 
-    endif
+               SELECT priprz
 
-else
-        
-    select priprz
-    go top
-    cBrDok := priprz->brdok
+               _IdOdj := cIdOdj
+               _IdDio := cIdDio
+               _BrDok := cBrDok
+               _IdVd := cIdVd
+               _Prebacen := OBR_NIJE
+               _IdCijena := "1"
+               _IdRadnik := gIdRadnik
+               _IdPos := gIdPos
+               _datum := dDatRada
+               _Smjena := gSmjena
+               _Kol2 := _Kolicina
+               _MU_I := cUI_I
 
-endif
+               APPEND BLANK
+               Gather()
 
-// 2) prikaz formirane baze u browse-sistemu sa mogucnoscu:
-//    - unosa stvarnog stanja (ispravka stavke)
-//    - unosa novih stavki
-//    - brisanja stavki
-//    - stampanja dokumenta inventure
-//    - stampanja popisne liste
+               SELECT pos
 
-if !fSadAz  
+            ENDIF
 
-    ImeKol := {}
+         ENDDO
 
-    AADD( ImeKol, { "Sifra i naziv", {|| idroba + "-" + LEFT( robanaz, 25 ) }})
-    AADD( ImeKol, { "BARKOD", {|| barkod } })
+         MsgC()
 
-    if cIdVd == VD_INV
-        AADD( ImeKol, { "Knj.kol." , {|| STR( kolicina, 9, 3 ) } })
-        AADD( ImeKol, { "Pop.kol." , {|| STR( kol2, 9, 3 ) }, "kol2" })
-    else
-        AADD( ImeKol, { "Kolicina" , {|| STR( kolicina, 9, 3 ) } })
-    endif
+      ELSE
+         SELECT priprz
+         my_dbf_zap()
+      ENDIF
 
-    AADD( ImeKol, { "Cijena "    , {|| STR( cijena, 7, 2 ) }})
+   ELSE
 
-    if cIdVd == VD_NIV
-        AADD( ImeKol, { "Nova C.",     {|| STR( ncijena, 7, 2 ) } })
-    endif
-        
-    AADD( ImeKol, { "Tarifa "    , {|| idtarifa }})
-    AADD( ImeKol, { "Datum "     , {|| datum }})
+      SELECT priprz
+      GO TOP
+      cBrDok := priprz->brdok
 
-    Kol := {}
-        
-    for nCnt := 1 TO LEN( ImeKol )
-        AADD( Kol, nCnt )
-    next
+   ENDIF
 
-    select priprz 
-    set order to tag "1"
+   IF !fSadAz
 
-    do while .t.
+      ImeKol := {}
 
-        select priprz
-        go top
+      AAdd( ImeKol, { "Sifra i naziv", {|| idroba + "-" + Left( robanaz, 25 ) } } )
+      AAdd( ImeKol, { "BARKOD", {|| barkod } } )
 
-        @ 12, 0 SAY ""
+      IF cIdVd == VD_INV
+         AAdd( ImeKol, { "Knj.kol.", {|| Str( kolicina, 9, 3 ) } } )
+         AAdd( ImeKol, { "Pop.kol.", {|| Str( kol2, 9, 3 ) }, "kol2" } )
+      ELSE
+         AAdd( ImeKol, { "Kolicina", {|| Str( kolicina, 9, 3 ) } } )
+      ENDIF
 
-        SET CURSOR ON
+      AAdd( ImeKol, { "Cijena ", {|| Str( cijena, 7, 2 ) } } )
 
-        ObjDBedit( "PripInv", MAXROWS() - 15, MAXCOLS() - 3, {|| EditInvNiv( dDatRada ) }, ;
-                "Broj dokumenta: " + ALLTRIM( cBrDok ) + " datum: " + DTOC( dDatRada ) , ;
-                "PRIPREMA " + cNazDok + "E", nil, ;
-                { "<c-N>   Dodaj stavku", "<Enter> Ispravi stavku", "<a-P>   Popisna lista", "<c-P>   Stampanje", "<c-A> cirk ispravka", "<D> ispravi datum" }, 2, , , )
+      IF cIdVd == VD_NIV
+         AAdd( ImeKol, { "Nova C.",     {|| Str( ncijena, 7, 2 ) } } )
+      ENDIF
 
-        // 3) nakon prekida rada na inventuri (<Esc>) utvrdjuje se da li je inventura zavrsena
+      AAdd( ImeKol, { "Tarifa ", {|| idtarifa } } )
+      AAdd( ImeKol, { "Datum ", {|| datum } } )
 
-        // ako je priprema prazna, nemam sta raditi...
-        if priprz->( RECCOUNT() ) == 0
+      Kol := {}
+
+      FOR nCnt := 1 TO Len( ImeKol )
+         AAdd( Kol, nCnt )
+      NEXT
+
+      SELECT priprz
+      SET ORDER TO TAG "1"
+
+      DO WHILE .T.
+
+         SELECT priprz
+         GO TOP
+
+         @ 12, 0 SAY ""
+
+         SET CURSOR ON
+
+         ObjDBedit( "PripInv", MAXROWS() - 15, MAXCOLS() - 3, {|| EditInvNiv( dDatRada ) }, ;
+            "Broj dokumenta: " + AllTrim( cBrDok ) + " datum: " + DToC( dDatRada ), ;
+            "PRIPREMA " + cNazDok + "E", nil, ;
+            { "<c-N>   Dodaj stavku", "<Enter> Ispravi stavku", "<a-P>   Popisna lista", "<c-P>   Stampanje", "<c-A> cirk ispravka", "<D> ispravi datum" }, 2, , , )
+
+         IF priprz->( RecCount() ) == 0
             pos_reset_broj_dokumenta( gIdPos, cIdVd, cBrDok )
-            close all
-            return
-        endif
- 
-        i := KudaDalje( "ZAVRSAVATE SA PRIPREMOM " + cNazDok + "E. STA RADITI S NJOM?", { ;
-                    "NASTAVICU S NJOM KASNIJE", ;
-                    "AZURIRATI (ZAVRSENA JE)", ;
-                    "TREBA JE IZBRISATI", ;
-                    "VRATI PRIPREMU " + cNazDok + "E" })
+            CLOSE ALL
+            RETURN
+         ENDIF
 
-        if i == 1     
+         i := KudaDalje( "ZAVRSAVATE SA PRIPREMOM " + cNazDok + "E. STA RADITI S NJOM?", { ;
+            "NASTAVICU S NJOM KASNIJE", ;
+            "AZURIRATI (ZAVRSENA JE)", ;
+            "TREBA JE IZBRISATI", ;
+            "VRATI PRIPREMU " + cNazDok + "E" } )
 
-            // ostavi je za kasnije
+         IF i == 1
+
             SELECT _POS
-            AppFrom( "PRIPRZ", .f. )
+            AppFrom( "PRIPRZ", .F. )
             SELECT PRIPRZ
             my_dbf_zap()
-            close all
-            return
+            CLOSE ALL
+            RETURN
 
-        elseif i == 3 
+         ELSEIF i == 3
 
-            if Pitanje(, "Sigurno zelite izbrisati pripremu dokumenta (D/N) ?", "N" ) == "D"
+            IF Pitanje(, "Sigurno želite izbrisati pripremu dokumenta (D/N) ?", "N" ) == "D"
 
-                // obrisati pripremu
-                SELECT PRIPRZ
-                my_dbf_zap()
-                // reset brojaca dokumenta...
-                pos_reset_broj_dokumenta( gIdPos, cIdVd, cBrDok )
-                close all
-                return
+               SELECT PRIPRZ
+               my_dbf_zap()
+               pos_reset_broj_dokumenta( gIdPos, cIdVd, cBrDok )
+               CLOSE ALL
+               RETURN
 
-            else
+            ELSE
 
-                // ostavi je za kasnije
-                SELECT _POS
-                AppFrom( "PRIPRZ", .f. )
-                SELECT PRIPRZ
-                my_dbf_zap()
-                close all
-                return
+               SELECT _POS
+               AppFrom( "PRIPRZ", .F. )
+               SELECT PRIPRZ
+               my_dbf_zap()
+               CLOSE ALL
+               RETURN
 
-            endif
+            ENDIF
 
-        elseif i == 4     
+         ELSEIF i == 4
 
-            // vracamo se na pripremu
             SELECT PRIPRZ
             GO TOP
             LOOP
 
-        endif
+         ENDIF
 
-        if i == 2 
-            // izvsiti azuriranje
-            // izadji iz petlje, izvrsi azuriranje
-            exit 
-        endif
+         IF i == 2
+            EXIT
+         ENDIF
 
-    enddo  
+      ENDDO
 
-endif 
+   ENDIF
 
-// posljednje chekiranje pred azuriranje
-check_before_azur( dDatRada )
+   check_before_azur( dDatRada )
 
-// azuriraj pripremu u POS
-Priprz2Pos()
+   Priprz2Pos()
 
-close all
+   CLOSE ALL
 
-return
+   RETURN
 
 
-// ---------------------------------------------------------------
-// checkiranje tabele priprz prije azuriranja
-// ---------------------------------------------------------------
-static function check_before_azur( dDatRada )
-local _ret := .t.
-local _rec
+STATIC FUNCTION check_before_azur( dDatRada )
 
-MsgO( "Provjera unesenih podataka prije azuriranja u toku ..." )
+   LOCAL _ret := .T.
+   LOCAL _rec
 
-select priprz
-go top
-do while !EOF()
+   MsgO( "Provjera unesenih podataka prije ažuriranja u toku ..." )
 
-    if field->datum <> dDatRada
-        _rec := dbf_get_rec()
-        _rec["datum"] := dDatRada
-        dbf_update_rec( _rec )
-    endif
-    skip
-enddo
+   SELECT priprz
+   GO TOP
+   DO WHILE !Eof()
 
-select priprz
-go top
+      IF field->datum <> dDatRada
+         _rec := dbf_get_rec()
+         _rec[ "datum" ] := dDatRada
+         dbf_update_rec( _rec )
+      ENDIF
+      SKIP
+   ENDDO
 
-MsgC()
+   SELECT priprz
+   GO TOP
 
-return _ret
+   MsgC()
 
+   RETURN _ret
 
 
-// ---------------------------------------------
-// Ispravka nivelacije ili inventure
-// ---------------------------------------------
-function EditInvNiv( dat_inv_niv )
-local nRec := RECNO()
-local i := 0
-local lVrati := DE_CONT
-local _dat
 
-do case
+FUNCTION EditInvNiv( dat_inv_niv )
 
-    case Ch == K_CTRL_P
+   LOCAL nRec := RecNo()
+   LOCAL i := 0
+   LOCAL lVrati := DE_CONT
+   LOCAL _dat
 
-        StampaInv()
-        
-        o_pos_tables()
-        select priprz
-        go nRec
-        
-        lVrati := DE_REFRESH
+   DO CASE
 
-    case UPPER( CHR( Ch ) ) == "D"
+   CASE Ch == K_CTRL_P
 
-        _dat := DATE()
+      StampaInv()
 
-        // zamjena vrijednosti polja datum...
-        Box(, 1, 50 )
-            @ m_x + 1, m_y + 2 SAY "Postavi datum na:" GET _dat
-            READ
-        BoxC()        
+      o_pos_tables()
+      SELECT priprz
+      GO nRec
 
-        if LastKey() <> K_ESC
-            check_before_azur( _dat )   
-            TB:RefreshAll()
-            DO WHILE !TB:stable .AND. ( Ch := INKEY() ) == 0 
-                Tb:stabilize()
-            ENDDO
-            lVrati := DE_REFRESH 
-        endif
+      lVrati := DE_REFRESH
 
-    case Ch == K_ALT_P
+   CASE Upper( Chr( Ch ) ) == "D"
 
-        if cIdVd == VD_INV
-            StampaInv( .t. )
-            o_pos_tables()
-            select priprz
-            go nRec
-            lVrati:=DE_REFRESH
-        endif
+      _dat := Date()
 
-    case Ch == K_ENTER
-        
-        // kalkulisi stavke u pripremi
-        _calc_priprz()
+      Box(, 1, 50 )
+      @ m_x + 1, m_y + 2 SAY "Postavi datum na:" GET _dat
+      READ
+      BoxC()
 
-        // otvori unos
-        if !( EdPrInv( 1, dat_inv_niv ) == 0 )
-            lVrati := DE_REFRESH
-        endif
+      IF LastKey() <> K_ESC
+         check_before_azur( _dat )
+         TB:RefreshAll()
+         DO WHILE !TB:stable .AND. ( Ch := Inkey() ) == 0
+            Tb:stabilize()
+         ENDDO
+         lVrati := DE_REFRESH
+      ENDIF
 
-    case Ch == K_CTRL_O
+   CASE Ch == K_ALT_P
 
-        // update razlika na inventuri
-        if update_ip_razlika() == 1
-            lVrati := DE_REFRESH
-        endif
+      IF cIdVd == VD_INV
+         StampaInv( .T. )
+         o_pos_tables()
+         SELECT priprz
+         GO nRec
+         lVrati := DE_REFRESH
+      ENDIF
 
-    case Ch == K_CTRL_U
+   CASE Ch == K_ENTER
 
-        // update knj.kolicina
-        update_knj_kol()
-        lVrati := DE_REFRESH
+      _calc_priprz()
 
-    case Ch == K_CTRL_A
+      IF !( EdPrInv( 1, dat_inv_niv ) == 0 )
+         lVrati := DE_REFRESH
+      ENDIF
 
-        do while !eof()
-            if EdPrInv( 1, dat_inv_niv ) == 0
-                exit
-            endif
-            skip
-        enddo
+   CASE Ch == K_CTRL_O
 
-        if EOF()
-            skip -1
-        endif
+      IF update_ip_razlika() == 1
+         lVrati := DE_REFRESH
+      ENDIF
 
-        lVrati := DE_REFRESH
+   CASE Ch == K_CTRL_U
 
-    case Ch == K_CTRL_N  
+      update_knj_kol()
+      lVrati := DE_REFRESH
 
-        // kalkulisi stavke iz pripreme
-        _calc_priprz()
+   CASE Ch == K_CTRL_A
 
-        // otvori unos
-        EdPrInv( 0, dat_inv_niv )
-        
-        lVrati := DE_REFRESH
-        
-    case Ch == K_CTRL_T
-        
-        lVrati := DE_CONT
+      DO WHILE !Eof()
+         IF EdPrInv( 1, dat_inv_niv ) == 0
+            EXIT
+         ENDIF
+         SKIP
+      ENDDO
 
-        if Pitanje(, "Stavku " + ALLTRIM( priprz->idroba ) + " izbrisati ?", "N" ) == "D"
-            my_delete_with_pack()
-            lVrati := DE_REFRESH        
-            
-        endif
+      IF Eof()
+         SKIP -1
+      ENDIF
 
-endcase
+      lVrati := DE_REFRESH
 
-return lVrati
+   CASE Ch == K_CTRL_N
 
+      _calc_priprz()
 
+      EdPrInv( 0, dat_inv_niv )
 
-// ----------------------------------------
-// kalkulisi priprz stavke
-// napuni staticke varijable
-// _saldo_kol, _saldo_izn
-// ----------------------------------------
-static function _calc_priprz()
-local _t_area := SELECT()
-local _t_rec := RECNO()
+      lVrati := DE_REFRESH
 
-select priprz
-go top
+   CASE Ch == K_CTRL_T
 
-_saldo_kol := 0
-_saldo_izn := 0
+      lVrati := DE_CONT
 
-do while !EOF()
+      IF Pitanje(, "Stavku " + AllTrim( priprz->idroba ) + " izbrisati ?", "N" ) == "D"
+         my_delete_with_pack()
+         lVrati := DE_REFRESH
+      ENDIF
 
-    // inventura treba da gleda kol2
-    if field->idvd == "IN"
-        _saldo_kol += field->kol2
-        _saldo_izn += ( field->kol2 * field->cijena )
-    else
-        _saldo_kol += field->kolicina
-        _saldo_kol += ( field->kolicina * field->cijena )
-    endif
+   ENDCASE
 
-    skip
+   RETURN lVrati
 
-enddo
 
-select (_t_area)
-go ( _t_rec )
 
-return
+STATIC FUNCTION _calc_priprz()
 
+   LOCAL _t_area := Select()
+   LOCAL _t_rec := RecNo()
 
+   SELECT priprz
+   GO TOP
 
+   _saldo_kol := 0
+   _saldo_izn := 0
 
-// ---------------------------------------------------------
-// ispravka ili unos nove stavke u pipremi
-// ---------------------------------------------------------
-function edprinv( nInd, datum )
-local nVrati := 0
-local aNiz := {}
-local nRec := RECNO()
-local _r_tar, _r_barkod, _r_jmj, _r_naz
-local _duz_sif := "10"
-local _pict := "9999999.99"
-local _last_read_var
+   DO WHILE !Eof()
 
-// slijedi ispravka stavke ( nInd == 1 ) 
-// ili petlja unosa stavki ( nInd == 0 )
+      IF field->idvd == "IN"
+         _saldo_kol += field->kol2
+         _saldo_izn += ( field->kol2 * field->cijena )
+      ELSE
+         _saldo_kol += field->kolicina
+         _saldo_kol += ( field->kolicina * field->cijena )
+      ENDIF
 
-if gDuzSifre <> nil .and. gDuzSifre > 0
-	_duz_sif := ALLTRIM( STR( gDuzSifre ) )
-endif
+      SKIP
 
-SET CURSOR ON
+   ENDDO
 
-select priprz
+   SELECT ( _t_area )
+   GO ( _t_rec )
 
-do while .t.
-   
-    set confirm on
- 
-    Box(, 7, maxcols()-5 , .t. )
+   RETURN
 
-    @ m_x + 0, m_y + 1 SAY " " + IF( nInd == 0, "NOVA STAVKA", "ISPRAVKA STAVKE" ) + " "
 
-    Scatter()
 
-    @ m_x + 1, m_y + 31 SAY PADR( "", 35 ) 
-    @ m_x + 6, m_y + 2 SAY "... zadnji artikal: " + ALLTRIM( _idroba ) + " - " + PADR( _robanaz, 25 ) + "..." 
-    @ m_x + 7, m_y + 2 SAY "stanje unosa - kol: " + ALLTRIM( STR( _saldo_kol, 12, 2)) + ;
-                                                    " total: " + ALLTRIM( STR( _saldo_izn, 12, 2 ) )
- 
-    select ( cRSdbf )
-    hseek _idroba
 
-    if nInd == 1
-        @ m_x + 0, m_y + 1 SAY _idroba + " : " + ALLTRIM(naz) + " (" + ALLTRIM(idtarifa) + ")"
-    endif
+FUNCTION edprinv( nInd, datum )
 
-    select priprz
+   LOCAL nVrati := 0
+   LOCAL aNiz := {}
+   LOCAL nRec := RecNo()
+   LOCAL _r_tar, _r_barkod, _r_jmj, _r_naz
+   LOCAL _duz_sif := "10"
+   LOCAL _pict := "9999999.99"
+   LOCAL _last_read_var
 
-    if nInd == 0  
+   IF gDuzSifre <> NIL .AND. gDuzSifre > 0
+      _duz_sif := AllTrim( Str( gDuzSifre ) )
+   ENDIF
 
-        // unosenje novih stavki
-        _idodj := cIdOdj
-        _iddio := cIdDio
-        _idroba := SPACE(10)
-        _kolicina := 0  
-        _kol2 := 0
-        _brdok := cBrDok
-        _idvd := cIdVd
-        _prebacen := OBR_NIJE
-        _idcijena := "1"
-        _idradnik := gIdRadnik 
-        _idpos := gIdPos
-        _cijena := 0
-        _ncijena := 0
-        _datum := datum
-        _smjena := gSmjena
-        _mu_i := cUI_I
+   SET CURSOR ON
 
-    endif
+   SELECT priprz
 
-    nLX := m_x + 1
+   DO WHILE .T.
+
+      SET CONFIRM ON
+
+      Box(, 7, maxcols() -5, .T. )
+
+      @ m_x + 0, m_y + 1 SAY " " + IF( nInd == 0, "NOVA STAVKA", "ISPRAVKA STAVKE" ) + " "
+
+      Scatter()
+
+      @ m_x + 1, m_y + 31 SAY PadR( "", 35 )
+      @ m_x + 6, m_y + 2 SAY "... zadnji artikal: " + AllTrim( _idroba ) + " - " + PadR( _robanaz, 25 ) + "..."
+      @ m_x + 7, m_y + 2 SAY "stanje unosa - kol: " + AllTrim( Str( _saldo_kol, 12, 2 ) ) + ;
+         " total: " + AllTrim( Str( _saldo_izn, 12, 2 ) )
+
+      SELECT ( cRSdbf )
+      hseek _idroba
+
+      IF nInd == 1
+         @ m_x + 0, m_y + 1 SAY _idroba + " : " + AllTrim( naz ) + " (" + AllTrim( idtarifa ) + ")"
+      ENDIF
+
+      SELECT priprz
+
+      IF nInd == 0
+
+         _idodj := cIdOdj
+         _iddio := cIdDio
+         _idroba := Space( 10 )
+         _kolicina := 0
+         _kol2 := 0
+         _brdok := cBrDok
+         _idvd := cIdVd
+         _prebacen := OBR_NIJE
+         _idcijena := "1"
+         _idradnik := gIdRadnik
+         _idpos := gIdPos
+         _cijena := 0
+         _ncijena := 0
+         _datum := datum
+         _smjena := gSmjena
+         _mu_i := cUI_I
+
+      ENDIF
+
+      nLX := m_x + 1
 	
-    @ nLX, m_y + 3 SAY "      Artikal:" GET _idroba ;
-            PICT PICT_POS_ARTIKAL ;
-            WHEN {|| _idroba := PADR( _idroba, VAL( _duz_sif )), .t. } ;
-            VALID valid_pos_inv_niv( cIdVd, nInd )
+      @ nLX, m_y + 3 SAY "      Artikal:" GET _idroba ;
+         PICT PICT_POS_ARTIKAL ;
+         WHEN {|| _idroba := PadR( _idroba, Val( _duz_sif ) ), .T. } ;
+         VALID valid_pos_inv_niv( cIdVd, nInd )
 
-                   
-    nLX ++
-        
-    if cIdVd == VD_INV
-            // ovo mi treba samo informativno kod inventure...
-            @ nLX, m_y + 3 SAY "Knj. kolicina:" GET _kolicina PICT _pict ;
-               WHEN { || .f. }
-    else
-            @ nLX, m_y + 3 SAY "     Kolicina:" GET _kolicina PICT _pict ;
-               WHEN { || .t. }
-    endif
-            
-    nLX ++
-    
-    if cIdVd == VD_INV
 
-        @ nLX, m_y + 3 SAY "Pop. kolicina:" GET _kol2 PICT _pict ;
-              VALID _pop_kol( _kol2 ) ;
-              WHEN { || .t.}
+      nLX ++
 
-        nLX ++
+      IF cIdVd == VD_INV
+         @ nLX, m_y + 3 SAY8 "Knj. količina:" GET _kolicina PICT _pict ;
+            WHEN {|| .F. }
+      ELSE
+         @ nLX, m_y + 3 SAY8 "     Količina:" GET _kolicina PICT _pict ;
+            WHEN {|| .T. }
+      ENDIF
 
-    endif
+      nLX ++
 
-    @ nLX, m_y + 3 SAY "       Cijena:" GET _cijena PICT _pict ;
-         WHEN { || .t. } ;
-         VALID { || _cijena < 999999.99 }
+      IF cIdVd == VD_INV
 
-    if cIdVd == VD_NIV
+         @ nLX, m_y + 3 SAY8 "Pop. količina:" GET _kol2 PICT _pict ;
+            VALID _pop_kol( _kol2 ) ;
+            WHEN {|| .T. }
 
-        nLX ++
+         nLX ++
 
-        @ nLX, m_y + 3 SAY "  Nova cijena:" GET _ncijena PICT _pict ;
-           WHEN { || .t.}
+      ENDIF
 
-    endif
+      @ nLX, m_y + 3 SAY "       Cijena:" GET _cijena PICT _pict ;
+         WHEN {|| .T. } ;
+         VALID {|| _cijena < 999999.99 }
 
-    READ
+      IF cIdVd == VD_NIV
 
-    if LastKey() == K_ESC
+         nLX ++
 
-        BoxC()
+         @ nLX, m_y + 3 SAY "  Nova cijena:" GET _ncijena PICT _pict ;
+            WHEN {|| .T. }
 
-        TB:RefreshAll()
-        DO WHILE !TB:stable .AND. ( Ch := INKEY() ) == 0 
+      ENDIF
+
+      READ
+
+      IF LastKey() == K_ESC
+
+         BoxC()
+
+         TB:RefreshAll()
+         DO WHILE !TB:stable .AND. ( Ch := Inkey() ) == 0
             Tb:stabilize()
-        ENDDO
+         ENDDO
 
-        exit
+         EXIT
 
-    endif
-        
-    // priprz
-    if nInd == 0
+      ENDIF
 
-        select priprz
-        go top
-        seek _idroba
+      IF nInd == 0
 
-        if !FOUND()
-            append blank
-        endif 
+         SELECT priprz
+         GO TOP
+         SEEK _idroba
 
-    endif
-    
-    // pronadji tarifu i barkod za ovaj artikal
-    select (cRSdbf)
-    set order to tag "ID"
-    hseek _idroba
+         IF !Found()
+            APPEND BLANK
+         ENDIF
 
-    _r_tar := field->idtarifa
-    _r_barkod := field->barkod
-    _r_naz := field->naz
-    _r_jmj := field->jmj 
+      ENDIF
 
-    select priprz
+      SELECT ( cRSdbf )
+      SET ORDER TO TAG "ID"
+      hseek _idroba
 
-    _idtarifa := _r_tar
-    _barkod := _r_barkod
-    _robanaz := _r_naz
-    _jmj := _r_jmj
+      _r_tar := field->idtarifa
+      _r_barkod := field->barkod
+      _r_naz := field->naz
+      _r_jmj := field->jmj
 
-    // nadodaj vrijednost sa postojecom iz pripreme
-    // radi se o appendu na postojeci artikal
-    _kol2 := ( priprz->kol2 + _kol2 )
+      SELECT priprz
 
-    Gather()
- 
-    _saldo_kol += priprz->kol2
-    _saldo_izn += ( priprz->kol2 * priprz->cijena )
- 
-    if nInd == 0
-        
-        TB:RefreshAll()
+      _idtarifa := _r_tar
+      _barkod := _r_barkod
+      _robanaz := _r_naz
+      _jmj := _r_jmj
 
-        DO WHILE !TB:stable .AND. ( Ch := INKEY() ) == 0 
+      _kol2 := ( priprz->kol2 + _kol2 )
+
+      Gather()
+
+      _saldo_kol += priprz->kol2
+      _saldo_izn += ( priprz->kol2 * priprz->cijena )
+
+      IF nInd == 0
+
+         TB:RefreshAll()
+
+         DO WHILE !TB:stable .AND. ( Ch := Inkey() ) == 0
             Tb:stabilize()
-        ENDDO
+         ENDDO
 
-    endif
-
-
-    if nInd == 1
-        nVrati := 1
-        BoxC()
-        exit
-    endif
-
-    BoxC()
-
-enddo
-
-go nRec
-
-return nVrati
+      ENDIF
 
 
-// -----------------------------------------------------
-// update razlika artikala na postojecoj inventuri
-// -----------------------------------------------------
-static function update_ip_razlika()
-local _id_odj := SPACE(2)
-local ip_kol, ip_roba
-local _rec2, _rec
+      IF nInd == 1
+         nVrati := 1
+         BoxC()
+         EXIT
+      ENDIF
 
-if Pitanje(,"Generisati razliku artikala sa stanja ?", "N" ) == "N"
-    return 0
-endif
-        
-MsgO( "GENERISEM RAZLIKU NA OSNOVU STANJA" )
-       
-select priprz
-go top
-_rec2 := dbf_get_rec()
- 
-select pos
-set order to tag "2"
-// "2", "IdOdj + idroba + DTOS(Datum)
-seek _id_odj
-    
-do while !EOF() .and. field->idodj == _id_odj
-            
-    if pos->datum > dDatRada
-        skip
-        loop
-    endif
+      BoxC()
 
-    ip_kol := 0
-    ip_roba := pos->idroba
+   ENDDO
 
-    select priprz
-    set order to tag "1"
-    go top
-    seek PADR( ip_roba, 10 )
+   GO nRec
 
-    if FOUND() .and. field->idroba == PADR( ip_roba, 10 )
-        select pos
-        skip
-        loop
-    endif
+   RETURN nVrati
 
-    select pos
 
-    do while !EOF() .and. pos->( idodj + idroba ) == ( _id_odj + ip_roba ) .and. pos->datum <= dDatRada
+STATIC FUNCTION update_ip_razlika()
 
-        if !EMPTY( cIdDio ) .and. pos->iddio <> cIdDio
-            skip
-            loop
-        endif
-                    
-        if pos->idvd $ "16#00"
-            // na ulazu imam samo VD_ZAD i VD_PCS
+   LOCAL _id_odj := Space( 2 )
+   LOCAL ip_kol, ip_roba
+   LOCAL _rec2, _rec
+
+   IF Pitanje(, "Generisati razliku artikala sa stanja ?", "N" ) == "N"
+      RETURN 0
+   ENDIF
+
+   MsgO( "GENERIŠEM RAZLIKU NA OSNOVU STANJA" )
+
+   SELECT priprz
+   GO TOP
+   _rec2 := dbf_get_rec()
+
+   SELECT pos
+   SET ORDER TO TAG "2"
+   // "2", "IdOdj + idroba + DTOS(Datum)
+   SEEK _id_odj
+
+   DO WHILE !Eof() .AND. field->idodj == _id_odj
+
+      IF pos->datum > dDatRada
+         SKIP
+         LOOP
+      ENDIF
+
+      ip_kol := 0
+      ip_roba := pos->idroba
+
+      SELECT priprz
+      SET ORDER TO TAG "1"
+      GO TOP
+      SEEK PadR( ip_roba, 10 )
+
+      IF Found() .AND. field->idroba == PadR( ip_roba, 10 )
+         SELECT pos
+         SKIP
+         LOOP
+      ENDIF
+
+      SELECT pos
+
+      DO WHILE !Eof() .AND. pos->( idodj + idroba ) == ( _id_odj + ip_roba ) .AND. pos->datum <= dDatRada
+
+         IF !Empty( cIdDio ) .AND. pos->iddio <> cIdDio
+            SKIP
+            LOOP
+         ENDIF
+
+         IF pos->idvd $ "16#00"
             ip_kol += pos->kolicina
-                    
-        elseif pos->idvd $ "42#96#01#IN#NI"
-            // na izlazu imam i VD_INV i VD_NIV
-            do case
-                case pos->idvd == VD_INV
-                    ip_kol -= pos->kolicina - pos->kol2
-                case pos->idvd == VD_NIV
-                    // ne mijenja kolicinu
-                otherwise
-                    ip_kol -= pos->kolicina
-            endcase
-        endif
-                
-        skip
 
-    enddo
+         ELSEIF pos->idvd $ "42#96#01#IN#NI"
+            DO CASE
+            CASE pos->idvd == VD_INV
+               ip_kol -= pos->kolicina - pos->kol2
+            CASE pos->idvd == VD_NIV
+            OTHERWISE
+               ip_kol -= pos->kolicina
+            ENDCASE
+         ENDIF
 
-    if ROUND( ip_kol, 3 ) <> 0
-                    
-        select roba
-        set order to tag "ID"
-        go top
-        seek ip_roba
+         SKIP
 
-        select priprz
-        append blank
+      ENDDO
 
-        _rec := dbf_get_rec()
-        _rec["cijena"] := pos_get_mpc()
-        _rec["ncijena"] := 0 
-        _rec["idroba"] := ip_roba
-        _rec["barkod"] := roba->barkod
-        _rec["robanaz"] := roba->naz 
-        _rec["jmj"] := roba->jmj
-        _rec["idtarifa"] := roba->idtarifa
-        _rec["kol2"] := 0
-        _rec["kolicina"] := ip_kol
-        _rec["brdok"] := _rec2["brdok"]
-        _rec["datum"] := _rec2["datum"]
-        _rec["idcijena"] := _rec2["idcijena"]
-        _rec["idpos"] := _rec2["idpos"]
-        _rec["idradnik"] := _rec2["idradnik"]
-        _rec["idvd"] := _rec2["idvd"]
-        _rec["mu_i"] := _rec2["mu_i"]
-        _rec["prebacen"] := _rec2["prebacen"]
-        _rec["smjena"] := _rec2["smjena"]
-                
-        dbf_update_rec( _rec )
-                
-    endif
+      IF Round( ip_kol, 3 ) <> 0
 
-    select pos
+         SELECT roba
+         SET ORDER TO TAG "ID"
+         GO TOP
+         SEEK ip_roba
 
-enddo  
+         SELECT priprz
+         APPEND BLANK
+
+         _rec := dbf_get_rec()
+         _rec[ "cijena" ] := pos_get_mpc()
+         _rec[ "ncijena" ] := 0
+         _rec[ "idroba" ] := ip_roba
+         _rec[ "barkod" ] := roba->barkod
+         _rec[ "robanaz" ] := roba->naz
+         _rec[ "jmj" ] := roba->jmj
+         _rec[ "idtarifa" ] := roba->idtarifa
+         _rec[ "kol2" ] := 0
+         _rec[ "kolicina" ] := ip_kol
+         _rec[ "brdok" ] := _rec2[ "brdok" ]
+         _rec[ "datum" ] := _rec2[ "datum" ]
+         _rec[ "idcijena" ] := _rec2[ "idcijena" ]
+         _rec[ "idpos" ] := _rec2[ "idpos" ]
+         _rec[ "idradnik" ] := _rec2[ "idradnik" ]
+         _rec[ "idvd" ] := _rec2[ "idvd" ]
+         _rec[ "mu_i" ] := _rec2[ "mu_i" ]
+         _rec[ "prebacen" ] := _rec2[ "prebacen" ]
+         _rec[ "smjena" ] := _rec2[ "smjena" ]
+
+         dbf_update_rec( _rec )
+
+      ENDIF
+
+      SELECT pos
+
+   ENDDO
+
+   SELECT priprz
+   GO TOP
+
+   TB:RefreshAll()
+
+   DO WHILE !TB:stable .AND. ( Ch := Inkey() ) == 0
+      Tb:stabilize()
+   ENDDO
+
+   RETURN 1
+
+
+STATIC FUNCTION update_knj_kol()
+
+   SELECT priprz
+   GO TOP
+
+   DO WHILE !Eof()
+      Scatter()
+      RacKol( _idodj, _idroba, @_kolicina )
+      SELECT priprz
+      Gather()
+      SKIP
+   ENDDO
+
+   TB:RefreshAll()
+
+   DO WHILE !TB:stable .AND. ( Ch := Inkey() ) == 0
+      Tb:stabilize()
+   ENDDO
+
+   SELECT priprz
+   GO TOP
+
+   RETURN .T.
+
+
+STATIC FUNCTION valid_pos_inv_niv( cIdVd, ind )
+
+   LOCAL _area := Select()
+
+   pos_postoji_roba( @_IdRoba, 1, 31 )
+
+   RacKol( _idodj, _idroba, @_kolicina )
+
+   _set_cijena_artikla( cIdVd, _idroba )
+
+   IF ind == 0 .AND. !_postoji_artikal_u_pripremi( _idroba )
+      SELECT ( _area )
+   ENDIF
+
+   IF cIdVD == VD_INV
+      get_field_set_focus( "_kol2" )
+   ELSE
+      get_field_set_focus( "_cijena" )
+   ENDIF
+
+   SELECT ( _area )
+
+   RETURN .T.
+
+
+
+
+FUNCTION _pop_kol( kol )
+
+   LOCAL _ok := .T.
+
+   IF kol > 200
+      IF Pitanje(, "Da li je " + AllTrim( Str( kol, 12, 2 ) ) + " ispravna količina (D/N) ?", "N" ) == "N"
+         _ok := .F.
+      ENDIF
+   ENDIF
+
+   RETURN _ok
+
+
+
+FUNCTION _set_cijena_artikla( id_vd, id_roba )
+
+   LOCAL _t_area := Select()
+
+   IF id_vd == VD_INV
+
+      SELECT roba
+      hseek id_roba
+      _cijena := pos_get_mpc()
+
+   ENDIF
+
+   SELECT ( _t_area )
+
+   RETURN .T.
+
+
+FUNCTION _postoji_artikal_u_pripremi( id_roba )
+
+   LOCAL _ok := .T.
+   LOCAL _t_area := Select()
+   LOCAL _t_rec := RecNo()
+
+   SELECT priprz
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK id_roba
+
+   IF Found()
+      _ok := .F.
+      MsgBeep( "Artikal " + AllTrim( id_roba ) + " se već nalazi u pripremi! Ako nastavite sa unosom #dodat će se vrijednost na postojeću stavku..." )
+   ENDIF
+
+   SELECT ( _t_area )
+   GO ( _t_rec )
+
+   RETURN _ok
+
+
+
+FUNCTION RacKol( cIdOdj, cIdRoba, nKol )
+
+   MsgO( "Računam količinu artikla ..." )
  
-select priprz
-go top
+   SELECT pos
+   SET ORDER TO TAG "2"
+   nKol := 0
 
-TB:RefreshAll()
+   SEEK cIdOdj + cIdRoba
 
-DO WHILE !TB:stable .AND. ( Ch := INKEY() ) == 0 
-    Tb:stabilize()
-ENDDO
+   WHILE !Eof() .AND. pos->( IdOdj + IdRoba ) == ( cIdOdj + cIdRoba ) .AND. pos->Datum <= dDatRada
 
-return 1
+      IF AllTrim( POS->IdPos ) == "X"
+         SKIP
+         LOOP
+      ENDIF
 
+      IF pos->idvd $ "16#00"
+         nKol += pos->Kolicina
+      ELSEIF POS->idvd $ "42#01#IN#NI"
+         DO CASE
+         CASE POS->IdVd == VD_INV
+            nKol := pos->kol2
+         CASE POS->idvd == VD_NIV
+         OTHERWISE
+            nKol -= pos->kolicina
+         ENDCASE
+      ENDIF
+      SKIP
+   ENDDO
 
-// -------------------------------------------------
-// update knjiznih kolicina na dokumentu
-// -------------------------------------------------
-static function update_knj_kol()
+   MsgC()
 
-select priprz
-go top
+   SELECT priprz
 
-do while !EOF()
-    Scatter()
-    RacKol( _idodj, _idroba, @_kolicina )
-    select priprz
-    Gather()
-    skip
-enddo
-    
-TB:RefreshAll()
-
-DO WHILE !TB:stable .AND. ( Ch := INKEY() ) == 0 
-    Tb:stabilize()
-ENDDO
-
-select priprz
-go top
-
-return .t.
-
-
-// ------------------------------------------------------------------
-// ------------------------------------------------------------------
-static function valid_pos_inv_niv( cIdVd, ind )
-local _area := SELECT()
-
-pos_postoji_roba( @_IdRoba, 1, 31) 
-
-RacKol( _idodj, _idroba, @_kolicina )
-
-_set_cijena_artikla( cIdVd, _idroba )
-
-// kod unosa duplih artikala dodaji na postojeci artikal
-// ali napravi obavjestenje
-if ind == 0 .and. !_postoji_artikal_u_pripremi( _idroba )
-    select ( _area )
-endif
-
-if cIdVD == VD_INV
-   get_field_set_focus("_kol2")
-else
-   get_field_set_focus("_cijena")
-endif
-
-select ( _area )
-return .t.
-
- 
-
-
-// ----------------------------------------------
-// provjera popisane kolicine 
-// ----------------------------------------------
-function _pop_kol( kol )
-local _ok := .t.
-
-if kol > 200
-    if Pitanje(, "Da li je kolicina " + ALLTRIM( STR( kol, 12, 2) ) + " ispravna kolicina ?", "N" ) == "N"
-        _ok := .f.    
-    endif
-endif
-
-return _ok
-
-
-
-// -----------------------------------------------
-// setovanje cijene iz sifrarnika
-// -----------------------------------------------
-function _set_cijena_artikla( id_vd, id_roba )
-local _t_area := SELECT()
-
-if id_vd == VD_INV
-    
-    select roba
-    hseek id_roba        
-    // setuj cijene
-    _cijena := pos_get_mpc()
-
-endif
-
-select ( _t_area )
-return .t.
-
-
-
-// -------------------------------------------------------
-// provjeri da li postoji ovaj zapis vec u pripremi...
-// -------------------------------------------------------
-function _postoji_artikal_u_pripremi( id_roba )
-local _ok := .t.
-local _t_area := SELECT()
-local _t_rec := RECNO()
-
-select priprz
-set order to tag "1"
-go top
-seek id_roba
-
-if FOUND()
-    _ok := .f.
-    MsgBeep( "Artikal " + ALLTRIM( id_roba ) + " se vec nalazi u pripremi! Ako nastavite sa unosom #dodat ce se vrijednost na postojecu stavku...")
-endif
-
-select ( _t_area )
-go ( _t_rec )
-
-return _ok
-
-
-
-/*! \fn RacKol(cIdOdj,cIdRoba,nKol)
- *  \brief Racuna kolicinu robe
- *  \param cIdOdj
- *  \param cIdRoba
- *  \param nKol
- *  \return
- */
- 
-function RacKol( cIdOdj, cIdRoba, nKol )
-
-MsgO( "Racunam kolicinu ..." )
-
-select pos
-set order to tag "2"
-nKol := 0
-
-seek cIdOdj + cIdRoba
-
-while !EOF() .and. pos->(IdOdj+IdRoba) == (cIdOdj+cIdRoba) .and. pos->Datum <= dDatRada
-
-    if ALLTRIM(POS->IdPos) == "X"
-        SKIP
-        LOOP
-    endif
-
-    // ovdje ne gledam DIO objekta, jer nivelaciju uvijek radim za
-    // cijeli objekat
-
-    if pos->idvd $ "16#00"   
-        nKol += pos->Kolicina     
-    elseif POS->idvd $ "42#01#IN#NI"
-        do case
-            case POS->IdVd == VD_INV
-                nKol := pos->kol2
-            case POS->idvd == VD_NIV
-                // ne utice na kolicinu
-            otherwise
-                nKol -= pos->kolicina
-        endcase
-    endif
-    skip
-enddo
-
-MsgC()
-
-select priprz
-
-return (.t.)
-
-
+   RETURN ( .T. )

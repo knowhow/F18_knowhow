@@ -13,7 +13,6 @@
 #include "fakt.ch"
 
 
-// staticke varijable
 STATIC __device_id := 0
 STATIC __device_params
 STATIC __auto := .F.
@@ -96,6 +95,12 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
       RETURN _err_level
    ENDIF
 
+   IF _storno
+      IF !fakt_reklamirani_racun_preduslovi( id_firma, tip_dok, br_dok, dev_param )
+         RETURN _err_level
+      ENDIF
+   ENDIF
+
    _partn_data := fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, _storno, lRacunBezgBezPartnera )
 
    IF ValType( _partn_data ) == "L"
@@ -158,7 +163,7 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
 FUNCTION reklamni_rn_box( rekl_rn )
 
    Box(, 1, 60 )
-   @ m_x + 1, m_y + 2 SAY "Reklamiramo fiskalni račun broj:" ;
+   @ m_x + 1, m_y + 2 SAY8 "Reklamiramo fiskalni račun broj:" ;
       GET rekl_rn PICT "999999999" VALID ( rekl_rn > 0 )
    READ
    BoxC()
@@ -168,6 +173,86 @@ FUNCTION reklamni_rn_box( rekl_rn )
    ENDIF
 
    RETURN rekl_rn
+
+
+
+
+STATIC FUNCTION idpartner_sa_fakt_dokumenta( idfirma, idtipdok, brdok )
+
+   SELECT fakt_doks
+   SET ORDER TO TAG "1"
+   GO TOP
+
+   SEEK idfirma + idtipdok + brdok
+
+   cIdPartner := fakt_doks->idpartner
+
+   RETURN cIdPartner
+
+
+
+STATIC FUNCTION fakt_izracunaj_ukupnu_vrijednost_racuna( idfirma, idtipdok, brdok )
+
+   LOCAL nUkupno := 0
+   LOCAL aIznosi, _data_total
+   LOCAL cIdPartner := ""
+
+   SELECT ( F_ROBA )
+   IF !Used()
+      O_ROBA
+   ENDIF
+
+   SELECT ( F_TARIFA )
+   IF !Used()
+      O_TARIFA
+   ENDIF
+
+   cIdPartner := idpartner_sa_fakt_dokumenta( idfirma, idtipdok, brdok )
+   aIznosi := get_a_iznos( idfirma, idtipdok, brdok )
+   _data_total := fakt_izracunaj_total( aIznosi, cIdPartner, idtipdok )
+
+   nUkupno := _data_total["ukupno"]
+
+   RETURN nUkupno
+
+
+
+STATIC FUNCTION fakt_reklamirani_racun_preduslovi( idfirma, idtipdok, brdok, device_params )
+
+   LOCAL lRet := .T.
+   LOCAL nDepozit := 0
+   LOCAL nErr := 0
+   LOCAL aIznosi, _data_total
+
+   // #34537
+   IF AllTrim( device_params[ "drv" ] ) <> "FPRINT"
+      RETURN lRet
+   ENDIF
+
+   MsgBeep( "Želite izdati reklamirani račun.#Prije toga je neophodno da postoji minimalan depozit u uređaju.")
+
+   IF Pitanje(, "Da li je potrebno napraviti unos depozita (D/N) ?", " " ) == "N"
+       RETURN lRet
+   ENDIF
+
+   nDepozit := ABS( fakt_izracunaj_ukupnu_vrijednost_racuna( idfirma, idtipdok, brdok ) )
+
+   nDepozit := ROUND( nDepozit + 1, 0 )
+
+   fprint_delete_answer( device_params )
+
+   fprint_polog( device_params, nDepozit, .T. )
+
+   nErr := fprint_read_error( device_params, 0 )
+
+   IF nErr <> 0
+      lRet := .F.
+      MsgBeep( "Neuspješan unosa depozita u uređaj !" )
+      RETURN lRet
+   ENDIF
+
+   RETURN lRet
+
 
 
 
@@ -793,6 +878,9 @@ STATIC FUNCTION fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno, 
    ELSEIF IsPdvObveznik( _partn_id )
       __partn_ino := .F.
       __partn_pdv := .T.
+   ELSE
+      __partn_ino := .F.
+      __partn_pdv := .F.
    ENDIF
 
    IF !__prikazi_partnera
@@ -817,23 +905,23 @@ STATIC FUNCTION fakt_to_fprint( id_firma, tip_dok, br_dok, items, head, storno )
    LOCAL _total := items[ 1, 14 ]
    LOCAL _partn_naz
 
-   // pobrisi fajl odgovora
    fprint_delete_answer( __device_params )
 
-   // posalji fajl prema FPRINT drajveru
    fprint_rn( __device_params, items, head, storno )
 
-   // procitaj gresku!
    _err_level := fprint_read_error( __device_params, @_fiscal_no, storno )
 
    IF _err_level = -9
       // nestanak trake ?
-      IF Pitanje(, "Da li je nestalo trake ?", "N" ) == "D"
-         IF Pitanje(, "Ubacite traku i pritisnite 'D'", "D" ) == "D"
-            // procitaj gresku opet !
+      IF Pitanje(, "Da li je nestalo trake (D/N) ?", "N" ) == "D"
+         IF Pitanje(, "Ubacite traku i pritisnite 'D'", " " ) == "D"
             _err_level := fprint_read_error( __device_params, @_fiscal_no, storno )
          ENDIF
       ENDIF
+   ENDIF
+
+   IF _err_level = 2
+      obrada_greske_na_liniji_55( __device_params )
    ENDIF
 
    IF _fiscal_no <= 0
@@ -842,7 +930,6 @@ STATIC FUNCTION fakt_to_fprint( id_firma, tip_dok, br_dok, items, head, storno )
 
    IF _err_level <> 0
 
-      // pobrisi izlazni fajl ako je ostao !
       fprint_delete_out( _path + _filename )
 
       _msg := "ERR FISC: stampa racuna err:" + AllTrim( Str( _err_level ) ) + ;
@@ -856,27 +943,30 @@ STATIC FUNCTION fakt_to_fprint( id_firma, tip_dok, br_dok, items, head, storno )
 
    ENDIF
 
-   // post operacije....
-
-   // racun na email ?
    IF !Empty( param_racun_na_email() ) .AND. tip_dok $ "#11#"
-
-      // posalji email...
-      // ako se radi o racunu tipa "11"
       _partn_naz := _get_partner_for_email( id_firma, tip_dok, br_dok )
       _snd_eml( _fiscal_no, tip_dok + "-" + AllTrim( br_dok ), _partn_naz, nil, _total )
-
    ENDIF
 
-   // ubaci broj fiskalnog racuna u fakturu
    set_fiscal_no_to_fakt_doks( id_firma, tip_dok, br_dok, _fiscal_no, storno )
 
-   // samo ako se zadaje direktna stampa ispisi
    IF __auto = .F.
       MsgBeep( "Kreiran fiskalni racun broj: " + AllTrim( Str( _fiscal_no ) ) )
    ENDIF
 
    RETURN _err_level
+
+
+
+/*
+   Opis: obrada kod greške na liniji 55
+*/
+STATIC FUNCTION obrada_greske_na_liniji_55( device_params )
+
+   //fprint_delete_answer( device_params )
+
+   RETURN
+
 
 
 // -----------------------------------------------------------------------

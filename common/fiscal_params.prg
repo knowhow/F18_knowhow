@@ -257,8 +257,10 @@ FUNCTION globalne_postavke_fiskalni_uredjaj()
    @ m_x + _x, m_y + 2 SAY8 PadR( "**** Parametri rada sa uređajem", 60 ) COLOR "I"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "Automatski polog u uredjaj:" GET _dev_avans PICT "999999.99"
-   @ m_x + _x, Col() + 1 SAY8 "Timeout fiskalnih operacija:" GET _dev_timeout PICT "999"
+   @ m_x + _x, m_y + 2 SAY8 "Auto depozit:" GET _dev_avans PICT "999999.99"
+
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY8 "Timeout fiskalnih operacija:" GET _dev_timeout PICT "999"
 
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Zbirni račun u VP (0/1/...):" GET _dev_vp_sum PICT "999"

@@ -38,10 +38,7 @@ FUNCTION pos_postoji_roba( cId, dx, dy, barkod )
 
    sif_uv_naziv( @cId )
 
-   pos_unset_spec_nar()
-
-   SetKey( K_PGDN, bPrevDn )
-   SetKey( K_PGUP, bPrevUp )
+   pos_unset_key_handler_ispravka_racuna()
 
    IF ValType( GetList ) == "A" .AND. Len( GetList ) > 1
       PrevId := GetList[ 1 ]:original
@@ -98,10 +95,7 @@ FUNCTION pos_postoji_roba( cId, dx, dy, barkod )
       ENDIF
    ENDIF
 
-   SetKey ( K_PGDN, {|| DummyProc() } )
-   SetKey ( K_PGUP, {|| DummyProc() } )
-
-   pos_set_spec_nar()
+   pos_set_key_handler_ispravka_racuna()
 
    barkod := _barkod
 

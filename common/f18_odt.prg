@@ -108,11 +108,19 @@ FUNCTION f18_odt_generate( template, xml_file, output_file, test_mode )
    RESTORE SCREEN FROM _screen
 
    IF _error <> 0
+
       log_write( "ODT report gen: greška - " + AllTrim( Str( _error ) ), 7 )
+
       cErr := "Došlo je do greške prilikom generisanja reporta ! #" + "Greška: " + AllTrim( Str( _error ) )
+
       MsgBeep( cErr )
-      odt_na_email_podrska( cErr )
+
+      IF fetch_metric( "bug_report_email", my_user(), "A" ) $ "D#A"
+         odt_na_email_podrska( cErr )
+      ENDIF
+
       RETURN lRet
+
    ENDIF
 
    lRet := .T.

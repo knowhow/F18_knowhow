@@ -217,7 +217,7 @@ STATIC FUNCTION fakt_izracunaj_ukupnu_vrijednost_racuna( idfirma, idtipdok, brdo
 
 
 
-STATIC FUNCTION fakt_reklamirani_racun_preduslovi( idfirma, idtipdok, brdok, device_params )
+STATIC FUNCTION fakt_reklamirani_racun_preduslovi( idfirma, idtipdok, brdok, device_params, lForsirano )
 
    LOCAL lRet := .T.
    LOCAL nDepozit := 0
@@ -229,9 +229,15 @@ STATIC FUNCTION fakt_reklamirani_racun_preduslovi( idfirma, idtipdok, brdok, dev
       RETURN lRet
    ENDIF
 
-   MsgBeep( "Želite izdati reklamirani račun.#Prije toga je neophodno da postoji minimalan depozit u uređaju.")
+   IF lForsirano == NIL
+      lForsirano := .F.
+   ENDIF
 
-   IF Pitanje(, "Da li je potrebno napraviti unos depozita (D/N) ?", " " ) == "N"
+   IF !lForsirano
+      MsgBeep( "Želite izdati reklamirani račun.#Prije toga je neophodno da postoji minimalan depozit u uređaju.")
+   ENDIF
+
+   IF !lForsirano .AND. Pitanje(, "Da li je potrebno napraviti unos depozita (D/N) ?", " " ) == "N"
        RETURN lRet
    ENDIF
 
@@ -912,7 +918,6 @@ STATIC FUNCTION fakt_to_fprint( id_firma, tip_dok, br_dok, items, head, storno )
    _err_level := fprint_read_error( __device_params, @_fiscal_no, storno )
 
    IF _err_level = -9
-      // nestanak trake ?
       IF Pitanje(, "Da li je nestalo trake (D/N) ?", "N" ) == "D"
          IF Pitanje(, "Ubacite traku i pritisnite 'D'", " " ) == "D"
             _err_level := fprint_read_error( __device_params, @_fiscal_no, storno )
@@ -920,8 +925,11 @@ STATIC FUNCTION fakt_to_fprint( id_firma, tip_dok, br_dok, items, head, storno )
       ENDIF
    ENDIF
 
-   IF _err_level = 2
-      obrada_greske_na_liniji_55( __device_params )
+   IF _err_level = 2 .AND. storno 
+      IF obrada_greske_na_liniji_55_reklamni_racun( id_firma, tip_dok, br_dok, __device_params )
+         MsgBeep( "Sada možete ponoviti izdavanje reklamiranog računa na fiskalni uređaj." )
+         RETURN 0        
+      ENDIF
    ENDIF
 
    IF _fiscal_no <= 0
@@ -929,18 +937,8 @@ STATIC FUNCTION fakt_to_fprint( id_firma, tip_dok, br_dok, items, head, storno )
    ENDIF
 
    IF _err_level <> 0
-
-      fprint_delete_out( _path + _filename )
-
-      _msg := "ERR FISC: stampa racuna err:" + AllTrim( Str( _err_level ) ) + ;
-         "##" + _path + _filename
-
-      log_write( _msg, 2 )
-
-      MsgBeep( _msg )
-
+      obradi_gresku_izdavanja_fiskalnog_racuna( __device_params, _err_level )
       RETURN _err_level
-
    ENDIF
 
    IF !Empty( param_racun_na_email() ) .AND. tip_dok $ "#11#"
@@ -958,14 +956,59 @@ STATIC FUNCTION fakt_to_fprint( id_firma, tip_dok, br_dok, items, head, storno )
 
 
 
+
+STATIC FUNCTION obradi_gresku_izdavanja_fiskalnog_racuna( device_params, error_level )
+
+   LOCAL cPath := device_params[ "out_dir" ]
+   LOCAL cFilename := device_params[ "out_file" ]
+   LOCAL cMsg 
+
+   fprint_delete_out( cPath + cFilename )
+
+   cMsg := "ERR FISC: stampa racuna err:" + AllTrim( Str( error_level ) ) + ;
+         "##" + cPath + cFilename
+
+   log_write( cMsg, 2 )
+
+   MsgBeep( cMsg )
+
+   RETURN 
+
+
+
 /*
    Opis: obrada kod greške na liniji 55
 */
-STATIC FUNCTION obrada_greske_na_liniji_55( device_params )
+STATIC FUNCTION obrada_greske_na_liniji_55_reklamni_racun( idfirma, idtipdok, brdok, device_params )
 
-   //fprint_delete_answer( device_params )
+   LOCAL lRet := .T. 
+   LOCAL nErr
+   LOCAL lForsirano := .T.
 
-   RETURN
+   MsgBeep( "Greška se desila kod izdavanja reklamiranog računa.#Mogući uzrok je nedostatak depozita u uređaju." )
+
+   IF Pitanje(, "Želite li otkloniti uzrok dodavanjem depozita (D/N) ?", " " ) == "N"
+       RETURN lRet
+   ENDIF
+
+   fprint_delete_answer( device_params )
+
+   fprint_komanda_301_zatvori_racun( device_params )
+
+   nErr := fprint_read_error( device_params, 0 )
+
+   IF nErr <> 0
+      lRet := .F.
+      MsgBeep( "Neuspješan pokušaj poništavanja računa. Pozovite servis bring.out !" )
+      RETURN lRet
+   ENDIF
+
+   IF !fakt_reklamirani_racun_preduslovi( idfirma, idtipdok, brdok, device_params, lForsirano )
+      lRet := .F.
+      RETURN lRet
+   ENDIF
+
+   RETURN lRet
 
 
 

@@ -1,3 +1,7 @@
+1.7.106  2014-06-24, vsasa
+
+  - FIN, uvedene tabele fin_komp_dug, fin_komp_pot za opciju kompenzacija
+ 
 1.7.105  2014-06-24, vsasa
 
   - FAKT, fiskalni računi obrada zaglavljivanja uslijed nedostatka pologa

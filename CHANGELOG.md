@@ -1,3 +1,7 @@
+1.7.105  2014-06-24, vsasa
+
+  - FAKT, fiskalni računi obrada zaglavljivanja uslijed nedostatka pologa
+ 
 1.7.104  2014-06-24, vsasa
 
   - FAKT, fiskalni računi za robu sa zaštićenom cijenom - bugfix

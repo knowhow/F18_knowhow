@@ -229,7 +229,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 
    CASE Ch == K_CTRL_A
 
-      fakt_prodji_kroz_stavke()
+      fakt_prodji_kroz_stavke( _params )
       RETURN DE_REFRESH
 
    CASE Ch == K_CTRL_N
@@ -406,16 +406,18 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 // --------------------------------------------------
 // prolazak kroz stavke pripreme
 // --------------------------------------------------
-STATIC FUNCTION fakt_prodji_kroz_stavke()
+STATIC FUNCTION fakt_prodji_kroz_stavke( fakt_params )
 
    LOCAL _dug
    LOCAL _rec_no, _rec
+   LOCAL _items_atrib
+   LOCAL _item_before
 
    PushWA()
 
    select_fakt_pripr()
 
-   Box(, 22, 75, .F., "" )
+   Box( "pst", MAXROWS() - 10, MAXCOLS() - 10, .F. )
 
    _dug := 0
 
@@ -427,13 +429,29 @@ STATIC FUNCTION fakt_prodji_kroz_stavke()
 
       set_global_vars_from_dbf( "_" )
 
-      _podbr := Space( 2 )
+      _item_before := hb_Hash()
+      _item_before[ "idfirma" ] := _idfirma
+      _item_before[ "idtipdok" ] := _idtipdok
+      _item_before[ "brdok" ] := _brdok
+      _item_before[ "rbr" ] := _rbr
 
+      _items_atrib := hb_hash()
+
+      IF fakt_params[ "fakt_opis_stavke" ]
+         _items_atrib[ "opis" ] := get_fakt_atribut_opis( _item_before, .F. )
+      ENDIF
+
+      IF fakt_params[ "ref_lot" ]
+         _items_atrib[ "ref" ] := get_fakt_atribut_ref( _item_before, .F. )
+         _items_atrib[ "lot" ] := get_fakt_atribut_lot( _item_before, .F. )
+      ENDIF
+
+      _podbr := Space( 2 )
       __redni_broj := RbrUnum( _rbr )
 
       BoxCLS()
 
-      IF edit_fakt_priprema( .F. ) == 0
+      IF edit_fakt_priprema( .F., @_items_atrib ) == 0
          EXIT
       ENDIF
 
@@ -446,9 +464,8 @@ STATIC FUNCTION fakt_prodji_kroz_stavke()
       InkeySc( 10 )
 
       select_fakt_pripr()
-
-      _rec := get_dbf_global_memvars( "_" )
-      dbf_update_rec( _rec, .F. )
+    
+      fakt_dodaj_ispravi_stavku( .F., _item_before, _items_atrib )
 
       fakt_promjena_cijene_u_sif()
 

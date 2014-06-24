@@ -229,10 +229,6 @@ STATIC FUNCTION fakt_reklamirani_racun_preduslovi( idfirma, idtipdok, brdok, dev
       RETURN lRet
    ENDIF
 
-   IF device_params["unos_depozita"] == "N"
-      RETURN lRet
-   ENDIF
-
    MsgBeep( "Želite izdati reklamirani račun.#Prije toga je neophodno da postoji minimalan depozit u uređaju.")
 
    IF Pitanje(, "Da li je potrebno napraviti unos depozita (D/N) ?", " " ) == "N"

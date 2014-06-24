@@ -926,7 +926,7 @@ STATIC FUNCTION fakt_to_fprint( id_firma, tip_dok, br_dok, items, head, storno )
    ENDIF
 
    IF _err_level = 2 .AND. storno 
-      IF obrada_greske_na_liniji_55_reklamni_racun( id_firma, tip_dok, br_dok, __device_params )
+      IF obrada_greske_na_liniji_55_reklamirani_racun( id_firma, tip_dok, br_dok, __device_params )
          MsgBeep( "Sada možete ponoviti izdavanje reklamiranog računa na fiskalni uređaj." )
          RETURN 0        
       ENDIF
@@ -979,7 +979,7 @@ STATIC FUNCTION obradi_gresku_izdavanja_fiskalnog_racuna( device_params, error_l
 /*
    Opis: obrada kod greške na liniji 55
 */
-STATIC FUNCTION obrada_greske_na_liniji_55_reklamni_racun( idfirma, idtipdok, brdok, device_params )
+STATIC FUNCTION obrada_greske_na_liniji_55_reklamirani_racun( idfirma, idtipdok, brdok, device_params )
 
    LOCAL lRet := .T. 
    LOCAL nErr

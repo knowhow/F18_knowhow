@@ -98,17 +98,17 @@ STATIC FUNCTION _set_box( nBoxX, nBoxY )
       cLine1 += "(P) promjene "
    ENDIF
 
-   cLine1 += "(N) nadji.nal. "
-   cLine1 += "(Q) nadji.opis"
+   cLine1 += "(N) nađi.nal. "
+   cLine1 += "(Q) nađi.opis"
 
 
-   cLine2 := "(c-P) stamp.nal. "
+   cLine2 := "(c-P) štamp.nal. "
    cLine2 += "(c-O) specif.    "
    cLine2 += "(K) kontakti "
    cLine2 += "(L) promjene"
 
-   @ m_x + ( nBoxX - 1 ), m_y + 2 SAY cLine1
-   @ m_x + ( nBoxX ), m_y + 2 SAY cLine2
+   @ m_x + ( nBoxX - 1 ), m_y + 2 SAY8 cLine1
+   @ m_x + ( nBoxX ), m_y + 2 SAY8 cLine2
 
    RETURN
 
@@ -156,12 +156,12 @@ STATIC FUNCTION lst_args( nSort )
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Naručioc (prazno-svi):", 25 ) GET cCustomer ;
+   @ m_x + nX, m_y + 2 SAY8 PadL( "Naručioc (prazno-svi):", 25 ) GET cCustomer ;
       VALID {|| Empty( cCustomer ) .OR. ;
       s_customers( @cCustomer, cCustomer ), ;
       set_var( @nCustomer, @cCustomer ),  ;
       show_it( g_cust_desc( nCustomer ) ) } ;
-      WHEN set_opc_box( nBoxX, 60, "narucioc naloga, pretrazi sifrarnik", nil, nil, cHelpClr )
+      WHEN set_opc_box( nBoxX, 60, "naručioc naloga, pretraži šifrarnik", nil, nil, cHelpClr )
 
    nX += 1
 
@@ -170,7 +170,7 @@ STATIC FUNCTION lst_args( nSort )
       s_contacts( @cContact, nCustomer, cContact ), ;
       set_var( @nContact, @cContact ), ;
       show_it( g_cont_desc( nContact ) ) } ;
-      WHEN set_opc_box( nBoxX, 60, "kontakt osoba naloga, pretrazi sifrarnik", nil, nil, cHelpClr )
+      WHEN set_opc_box( nBoxX, 60, "kontakt osoba naloga, pretraži šifrarnik", nil, nil, cHelpClr )
 
    nX += 1
 
@@ -209,7 +209,7 @@ STATIC FUNCTION lst_args( nSort )
    @ m_x + nX, m_y + 2 SAY "***** sort pregleda:" GET nSort ;
       VALID _val_sort( nSort ) ;
       PICT "9" ;
-      WHEN set_opc_box( nBoxX, 60, "nacin sortiranja pregleda dokumenata", nil, nil, cHelpClr )
+      WHEN set_opc_box( nBoxX, 60, "način sortiranja pregleda dokumenata", nil, nil, cHelpClr )
 
    nX += 1
 
@@ -227,7 +227,7 @@ STATIC FUNCTION lst_args( nSort )
 
       nX += 2
 
-      @ m_x + nX, m_y + 2 SAY "Prikaz ponistenih dokumenata (D/N)?" GET cShowRejected VALID cShowRejected $ "DN" PICT "@!" WHEN set_opc_box( nBoxX, 60, "pored zatvorenih naloga", "prikazi i ponistene", nil, cHelpClr )
+      @ m_x + nX, m_y + 2 SAY8 "Prikaz poništenih dokumenata (D/N)?" GET cShowRejected VALID cShowRejected $ "DN" PICT "@!" WHEN set_opc_box( nBoxX, 60, "pored zatvorenih naloga", "prikazi i ponistene", nil, cHelpClr )
 
    ENDIF
 

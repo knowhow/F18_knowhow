@@ -71,6 +71,8 @@
 #define F_FIDOKS   73
 #define F_FIDOKS2  74
 #define F_P_UPDATE   77
+#define F_FIN_KOMP_DUG   78
+#define F_FIN_KOMP_POT   79
 
 
 // modul KALK (wa 80-110)

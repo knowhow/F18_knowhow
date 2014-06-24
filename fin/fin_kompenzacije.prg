@@ -19,6 +19,8 @@ STATIC picDEM
 
 STATIC FUNCTION _o_tables()
 
+   O_KOMP_POT
+   O_KOMP_DUG
    O_KONTO
    O_PARTN
 
@@ -39,7 +41,6 @@ STATIC FUNCTION _get_vars( vars )
    LOCAL _x := 1
    LOCAL _ret := .T.
 
-   // citaj parametre
    _usl_kto := fetch_metric( "fin_komen_konto", my_user(), _usl_kto )
    _usl_kto2 := fetch_metric( "fin_komen_konto_2", my_user(), _usl_kto2 )
    _usl_partn := fetch_metric( "fin_komen_partn", my_user(), _usl_partn )
@@ -100,7 +101,6 @@ STATIC FUNCTION _get_vars( vars )
       RETURN _ret
    ENDIF
 
-   // snimi parametre
    set_metric( "fin_komen_konto", my_user(), _usl_kto )
    set_metric( "fin_komen_konto_2", my_user(), _usl_kto2 )
    set_metric( "fin_komen_partn", my_user(), _usl_partn )
@@ -121,43 +121,6 @@ STATIC FUNCTION _get_vars( vars )
    vars[ "sa_datumom" ] := _sa_datumom
 
    RETURN _ret
-
-
-STATIC FUNCTION _cre_tmp_tables( force )
-
-   LOCAL _dbf
-   LOCAL _tmp1, _tmp2
-
-   _dbf := {}
-   AAdd( _dbf, { "BRDOK", "C", 50, 0 } )
-   AAdd( _dbf, { "IZNOSBHD", "N", 17, 2 } )
-   AAdd( _dbf, { "MARKER", "C",  1, 0 } )
-
-   _tmp1 := my_home() + "temp12.dbf"
-   _tmp2 := my_home() + "temp60.dbf"
-
-   IF force .OR. !File( _tmp1 )
-      dbCreate( _tmp1, _dbf )
-   ENDIF
-
-   IF force .OR. !File( _tmp2 )
-      dbCreate( _tmp2, _dbf )
-   ENDIF
-
-   SELECT ( F_TMP_1 )
-   IF Used()
-      USE
-   ENDIF
-   my_use_temp( "TEMP12", _tmp1, .F., .T. )
-
-   SELECT ( F_TMP_2 )
-   IF Used()
-      USE
-   ENDIF
-   my_use_temp( "TEMP60", _tmp2, .F., .T. )
-
-   RETURN
-
 
 
 FUNCTION kompenzacija()
@@ -201,8 +164,6 @@ FUNCTION kompenzacija()
 
    ENDIF
 
-   _cre_tmp_tables( _is_gen )
-
    IF _is_gen
       _gen_kompen( _vars )
    ENDIF
@@ -231,22 +192,23 @@ FUNCTION kompenzacija()
       @ m_x + _n, m_y + ( _col / 2 ) SAY "|"
    NEXT
 
-   SELECT temp60
+   SELECT komp_pot
    GO TOP
-   SELECT temp12
+
+   SELECT komp_dug
    GO TOP
 
    m_y += ( _col / 2 ) + 1
 
    DO WHILE .T.
 
-      IF Alias() == "TEMP12"
+      IF Alias() == "KOMP_DUG"
          m_y -= ( _col / 2 ) + 1
-      ELSEIF Alias() == "TEMP60"
+      ELSEIF Alias() == "KOMP_POT"
          m_y += ( _col / 2 ) + 1
       ENDIF
 
-      ObjDbedit( "komp1", _row - 7, ( _col / 2 ) - 1, {|| key_handler( _vars ) }, "", if( Alias() == "TEMP12", "DUGUJE " + _usl_kto, "POTRAZUJE " + _usl_kto2 ), , , , , 1 )
+      ObjDbedit( "komp1", _row - 7, ( _col / 2 ) - 1, {|| key_handler( _vars ) }, "", if( Alias() == "KOMP_DUG", "DUGUJE " + _usl_kto, "POTRAZUJE " + _usl_kto2 ), , , , , 1 )
 
       IF LastKey() == K_ESC
          EXIT
@@ -257,6 +219,17 @@ FUNCTION kompenzacija()
    BoxC()
 
    my_close_all_dbf()
+
+   RETURN
+
+
+STATIC FUNCTION zap_tabele_kompenzacije()
+
+   SELECT komp_dug
+   my_dbf_zap()
+
+   SELECT komp_pot
+   my_dbf_zap()
 
    RETURN
 
@@ -282,6 +255,8 @@ STATIC FUNCTION _gen_kompen( vars )
    LOCAL _dug_bhd, _pot_bhd, _dug_dem, _pot_dem
    LOCAL _kon_d, _kon_p, _kon_d2, _kon_p2
    LOCAL _svi_d, _svi_p, _svi_d2, _svi_p2
+
+   zap_tabele_kompenzacije()
 
    O_SUBAN
    O_TDOK
@@ -381,12 +356,13 @@ STATIC FUNCTION _gen_kompen( vars )
 
             SELECT suban
             IF _id_konto == _usl_kto
-               SELECT TEMP12
+               SELECT komp_dug
             ELSE
-               SELECT TEMP60
+               SELECT komp_pot
             ENDIF
 
             my_flock()
+
             APPEND BLANK
 
             __opis_br_dok := AllTrim( suban->brdok )
@@ -400,6 +376,7 @@ STATIC FUNCTION _gen_kompen( vars )
             ENDIF
 
             REPLACE field->brdok WITH __opis_br_dok
+
             my_unlock()
 
             _t_id_konto := _id_konto
@@ -458,7 +435,7 @@ STATIC FUNCTION _gen_kompen( vars )
 
             // otvorena stavka
             IF _t_id_konto == _usl_kto
-               SELECT TEMP12
+               SELECT komp_dug
                IF _d_bhd > 0
                   RREPLACE field->iznosbhd WITH _d_bhd
                   IF _p_bhd > 0
@@ -472,7 +449,7 @@ STATIC FUNCTION _gen_kompen( vars )
                ENDIF
             ELSE
 
-               SELECT TEMP60
+               SELECT komp_pot
                IF _p_bhd > 0
                   RREPLACE field->iznosbhd WITH _p_bhd
                   IF _d_bhd > 0
@@ -515,7 +492,6 @@ STATIC FUNCTION _gen_kompen( vars )
       ELSEIF _prolaz == 1
          SEEK _id_firma + _usl_kto + _id_partner + Chr( 255 )
          IF _usl_kto <> field->idkonto
-            // nema vise
             _prolaz := 2
             SEEK _id_firma + _usl_kto2
             _id_partner := Replicate( "", Len( field->idpartner ) )
@@ -533,12 +509,10 @@ STATIC FUNCTION _gen_kompen( vars )
                _id_partner := field->idpartner
                hseek _id_firma + _usl_kto + _id_partner
                IF !Found()
-                  // ove kartice nije bilo
                   GO ( _t_rec )
                   EXIT
                ELSE
                   LOOP
-                  // vrati se traziti
                ENDIF
             ENDIF
             EXIT
@@ -560,6 +534,7 @@ STATIC FUNCTION key_handler( vars )
    LOCAL nX := m_x
    LOCAL nY := m_y
    LOCAL nVrati := DE_CONT
+   LOCAL _area
 
    IF ! ( ( Ch == K_CTRL_T .OR. Ch == K_ENTER ) .AND. reccount2() == 0 )
 
@@ -571,7 +546,12 @@ STATIC FUNCTION key_handler( vars )
          nVrati := DE_REFRESH
 
       CASE Ch == K_CTRL_P
+
+         _area := SELECT()
+
          print_kompen( vars )
+         
+         SELECT ( _area )
          nVrati := DE_CONT
 
       CASE Ch == K_CTRL_N
@@ -617,11 +597,11 @@ STATIC FUNCTION key_handler( vars )
 
       CASE Ch == Asc( "T" ) .OR. Ch == Asc( "t" )
 
-         IF Alias() == "TEMP12"
-            SELECT TEMP60
+         IF Alias() == "KOMP_DUG"
+            SELECT komp_pot
             GO TOP
-         ELSEIF Alias() == "TEMP60"
-            SELECT TEMP12
+         ELSEIF Alias() == "KOMP_POT"
+            SELECT komp_dug
             GO TOP
          ENDIF
 
@@ -753,16 +733,16 @@ STATIC FUNCTION _gen_xml( vars, xml_file )
       RETURN .F.
    ENDIF
 
-   SELECT temp12
+   SELECT komp_dug
    GO TOP
-   SELECT temp60
+   SELECT komp_pot
    GO TOP
 
    _skip_t_marker( @_temp_duz, @_temp_pov )
 
    xml_subnode( "tabela", .F. )
 
-   SELECT temp60
+   SELECT komp_pot
 
    DO WHILE _temp_duz .OR. _temp_pov
 
@@ -787,7 +767,7 @@ STATIC FUNCTION _gen_xml( vars, xml_file )
       xml_node( "dok_pov", to_xml_encoding( _broj_dok_pov ) )
       xml_node( "izn_pov", AllTrim( Str( _iznos_pov, 17, 2 ) ) )
 
-      SELECT temp12
+      SELECT komp_dug
 
       IF _temp_duz
          _broj_dok_duz := AllTrim( field->brdok )
@@ -804,7 +784,7 @@ STATIC FUNCTION _gen_xml( vars, xml_file )
 
       SKIP 1
 
-      SELECT temp60
+      SELECT komp_pot
       SKIP 1
 
       _skip_t_marker( @_temp_duz, @_temp_pov )
@@ -883,7 +863,7 @@ STATIC FUNCTION _skip_t_marker( _mark_12, _mark_60 )
 
    LOCAL _t_arr := Select()
 
-   SELECT temp12
+   SELECT komp_dug
    DO WHILE field->marker != "K" .AND. !Eof()
       SKIP 1
    ENDDO
@@ -891,7 +871,7 @@ STATIC FUNCTION _skip_t_marker( _mark_12, _mark_60 )
       _mark_12 := .F.
    ENDIF
 
-   SELECT temp60
+   SELECT komp_pot
    DO WHILE field->marker != "K" .AND. !Eof()
       SKIP 1
    ENDDO
@@ -902,3 +882,5 @@ STATIC FUNCTION _skip_t_marker( _mark_12, _mark_60 )
    SELECT ( _t_arr )
 
    RETURN NIL
+
+

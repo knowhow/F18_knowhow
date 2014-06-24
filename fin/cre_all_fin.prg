@@ -457,6 +457,25 @@ IF_NOT_FILE_DBF_CREATE
 CREATE_INDEX("1", "idpartner+brdok+dtos(datod)", _alias)
 
 
+// ----------------------------------------------------------
+// KOMP_DUG / KOMP_POT 
+// ----------------------------------------------------------
+
+aDbf := {}
+AAdd( aDbf, { "BRDOK", "C", 50, 0 } )
+AAdd( aDbf, { "IZNOSBHD", "N", 17, 2 } )
+AAdd( aDbf, { "MARKER", "C",  1, 0 } )
+
+_alias := "komp_dug"
+_table_name := "fin_komp_dug"
+
+IF_NOT_FILE_DBF_CREATE
+
+_alias := "komp_pot"
+_table_name := "fin_komp_pot"
+
+IF_NOT_FILE_DBF_CREATE
+
 return
 
 

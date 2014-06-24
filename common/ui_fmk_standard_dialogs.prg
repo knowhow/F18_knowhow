@@ -181,16 +181,17 @@ FUNCTION select_print_mode( cDirekt )
 
    IF gcDirekt <> "B"
 
-      Box(, 6, nWidth )
+      Box(, 7, nWidth )
 
       @ m_x + 1, m_y + 2 SAY "   Izlaz direktno na printer:" GET cDirekt ;
-         PICT "@!" VALID cDirekt $ "DEFGRV"
+         PICT "@!" VALID cDirekt $ "DEFGRVP"
 
       @ m_x + 2, m_y + 2 SAY "----------------------------------"
       @ m_x + 3, m_y + 2 SAY8 "E - direktna štampa na LPT1 (F,G)"
       @ m_x + 4, m_y + 2 SAY8 "V - prikaz izvještaja u editoru"
-      @ m_x + 5, m_y + 2 SAY8 "R - ptxt štampa"
-      @ m_x + 6, m_y + 2 SAY "---------- O P C I J E -----------"
+      @ m_x + 5, m_y + 2 SAY8 "P - pošalji na email podrške"
+      @ m_x + 6, m_y + 2 SAY8 "R - ptxt štampa"
+      @ m_x + 7, m_y + 2 SAY "---------- O P C I J E -----------"
 
       READ
 

@@ -11,7 +11,7 @@
 
 
 #include "fmk.ch"
-
+#include "f18_ver.ch"
 
 
 FUNCTION f18_start_print( f_name, print_opt, document_name )
@@ -107,13 +107,17 @@ FUNCTION f18_end_print( f_name, print_opt )
 
    CASE print_opt == "D"
 
+   CASE print_opt == "P"
+   
+      txt_izvjestaj_podrska_email( f_name )   
+   
    CASE print_opt $ "E#F#G"
 
-   #ifdef __PLATFORM__WINDOWS
-      direct_print_windows( f_name, _port )
-   #else
-      direct_print_unix( f_name, _port )
-   #endif
+      #ifdef __PLATFORM__WINDOWS
+         direct_print_windows( f_name, _port )
+      #else
+         direct_print_unix( f_name, _port )
+      #endif
 
    OTHERWISE
 
@@ -126,6 +130,35 @@ FUNCTION f18_end_print( f_name, print_opt )
    END CASE
 
    RETURN
+
+
+/*
+   Opis: šalje izvještaj na email podrške
+*/
+STATIC FUNCTION txt_izvjestaj_podrska_email( file_name )
+
+   LOCAL _attach, _body, _subject, _mail_params
+
+   // Uzorak TXT izvještaja, F18 1.7.21, rg_2013/bjasko, 02.04.04, 15:00:07
+   _subject := "Uzorak TXT izvještaja, F18 " 
+   _subject += F18_VER 
+   _subject += ", " + my_server_params()["database"] + "/" + ALLTRIM( f18_user() ) 
+   _subject += ", " + DTOC( DATE() ) + " " + PADR( TIME(), 8 ) 
+
+   _body := "U prilogu primjer TXT izvještaja"
+
+   _mail_params := email_hash_za_podrska_bring_out( _subject, _body )
+
+   _attach := { file_name }
+
+   MsgO( "Slanje email-a u toku ..." )
+
+   f18_email_send( _mail_params, _attach )
+
+   MsgC()
+
+   RETURN
+
 
 
 STATIC FUNCTION get_printer_port( print_opt )

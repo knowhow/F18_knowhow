@@ -255,8 +255,7 @@ FUNCTION RaiseError( cErrMsg )
 // ---------------------------------
 STATIC FUNCTION send_email( err_obj )
 
-   LOCAL _mail_params, _attach, _body, _subject, _from, _to, _cc
-   LOCAL _srv, _port, _username, _pwd
+   LOCAL _body, _subject
    LOCAL _attachment
    LOCAL _answ := fetch_metric( "bug_report_email", my_user(), "A" )
 
@@ -282,26 +281,9 @@ STATIC FUNCTION send_email( err_obj )
    ENDIF
 
    _body := "U prilogu zip fajl sa sadržajem trenutne greške i log fajlom servera"
-   _to := "F18@bug.out.ba"
-   _from := "F18@bug.out.ba"
-   _srv := "smtp.bug.out.ba"
-   _port := 999
-   _username := "xx"
-   _pwd := "xx"
 
-   _mail_params := f18_email_prepare( _subject, _body, _from, _to )
+   _mail_params := email_hash_za_podrska_bring_out( _subject, _body )
 
-   _mail_params["server"] := _srv
-   _mail_params["port"] := _port
-   _mail_params["user_name"] := _username
-   _mail_params["user_password"] := _pwd
-   _mail_params["trace"] := .f.
-
-   // ponisti cc i bcc ako postoji
-   _mail_params["mail_cc"] := ""
-   _mail_params["mail_bcc"] := ""
-   _mail_params["mail_reply_to"] := ""
-   
    _attachment := send_email_attachment()
 
    if VALTYPE( _attachment ) == "L"

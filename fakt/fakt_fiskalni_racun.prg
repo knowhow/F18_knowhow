@@ -878,6 +878,9 @@ STATIC FUNCTION fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno, 
    ELSEIF IsPdvObveznik( _partn_id )
       __partn_ino := .F.
       __partn_pdv := .T.
+   ELSE
+      __partn_ino := .F.
+      __partn_pdv := .F.
    ENDIF
 
    IF !__prikazi_partnera
@@ -902,23 +905,23 @@ STATIC FUNCTION fakt_to_fprint( id_firma, tip_dok, br_dok, items, head, storno )
    LOCAL _total := items[ 1, 14 ]
    LOCAL _partn_naz
 
-   // pobrisi fajl odgovora
    fprint_delete_answer( __device_params )
 
-   // posalji fajl prema FPRINT drajveru
    fprint_rn( __device_params, items, head, storno )
 
-   // procitaj gresku!
    _err_level := fprint_read_error( __device_params, @_fiscal_no, storno )
 
    IF _err_level = -9
       // nestanak trake ?
-      IF Pitanje(, "Da li je nestalo trake ?", "N" ) == "D"
-         IF Pitanje(, "Ubacite traku i pritisnite 'D'", "D" ) == "D"
-            // procitaj gresku opet !
+      IF Pitanje(, "Da li je nestalo trake (D/N) ?", "N" ) == "D"
+         IF Pitanje(, "Ubacite traku i pritisnite 'D'", " " ) == "D"
             _err_level := fprint_read_error( __device_params, @_fiscal_no, storno )
          ENDIF
       ENDIF
+   ENDIF
+
+   IF _err_level = 2
+      obrada_greske_na_liniji_55( __device_params )
    ENDIF
 
    IF _fiscal_no <= 0
@@ -927,7 +930,6 @@ STATIC FUNCTION fakt_to_fprint( id_firma, tip_dok, br_dok, items, head, storno )
 
    IF _err_level <> 0
 
-      // pobrisi izlazni fajl ako je ostao !
       fprint_delete_out( _path + _filename )
 
       _msg := "ERR FISC: stampa racuna err:" + AllTrim( Str( _err_level ) ) + ;
@@ -941,27 +943,30 @@ STATIC FUNCTION fakt_to_fprint( id_firma, tip_dok, br_dok, items, head, storno )
 
    ENDIF
 
-   // post operacije....
-
-   // racun na email ?
    IF !Empty( param_racun_na_email() ) .AND. tip_dok $ "#11#"
-
-      // posalji email...
-      // ako se radi o racunu tipa "11"
       _partn_naz := _get_partner_for_email( id_firma, tip_dok, br_dok )
       _snd_eml( _fiscal_no, tip_dok + "-" + AllTrim( br_dok ), _partn_naz, nil, _total )
-
    ENDIF
 
-   // ubaci broj fiskalnog racuna u fakturu
    set_fiscal_no_to_fakt_doks( id_firma, tip_dok, br_dok, _fiscal_no, storno )
 
-   // samo ako se zadaje direktna stampa ispisi
    IF __auto = .F.
       MsgBeep( "Kreiran fiskalni racun broj: " + AllTrim( Str( _fiscal_no ) ) )
    ENDIF
 
    RETURN _err_level
+
+
+
+/*
+   Opis: obrada kod greške na liniji 55
+*/
+STATIC FUNCTION obrada_greske_na_liniji_55( device_params )
+
+   //fprint_delete_answer( device_params )
+
+   RETURN
+
 
 
 // -----------------------------------------------------------------------

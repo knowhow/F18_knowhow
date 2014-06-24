@@ -1515,7 +1515,7 @@ FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
          log_write( _err_tmp, 2 )
          MsgBeep( _err_tmp )
 
-         _err_level := nivo_greke_na_osnovu_odgovora( _err_line )
+         _err_level := nivo_greske_na_osnovu_odgovora( _err_line )
  
          RETURN _err_level
 

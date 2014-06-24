@@ -1508,12 +1508,17 @@ FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
       ENDIF
 
       IF "Er;" $ _err_line
+
          _o_file:Close()
+
          _err_tmp := "FISC ERR:" + AllTrim( _err_line )
          log_write( _err_tmp, 2 )
          MsgBeep( _err_tmp )
-         _err_level := 1
+
+         _err_level := nivo_greke_na_osnovu_odgovora( _err_line )
+ 
          RETURN _err_level
+
       ENDIF
 	
    ENDDO
@@ -1531,6 +1536,29 @@ FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
    RETURN _err_level
 
 
+
+/*
+   Opis: vraća nivo greške na osnovu linije na kojoj se pojavio ERR
+
+   Usage: nivo_greske_na_osnovu_odgovora( line ) => 1
+
+   Parameters: 
+     line - sekvenca iz fajla odgovora sa ERR markerom "55,1,1000123;ERR;" 
+
+   Return:
+     2 - u slučaju greške na liniji 55
+     1 - u slučaju bilo koje druge greške
+*/
+STATIC FUNCTION nivo_greske_na_osnovu_odgovora( line )
+   
+   LOCAL nLevel := 1
+
+   DO CASE
+   CASE "55,1," $ line
+      nLevel := 2
+   ENDCASE 
+
+   RETURN nLevel
 
 
 // ------------------------------------------------

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,13 +12,13 @@
 #include "fmk.ch"
 #include "fileio.ch"
 
-static __output_odt
-static __output_pdf
-static __jod_converter := "jodconverter-cli.jar"
-static __jod_reports := "jodreports-cli.jar"
-static __java_run_cmd := "java -Xmx128m -jar"
-static __util_path
-static __current_odt
+STATIC __output_odt
+STATIC __output_pdf
+STATIC __jod_converter := "jodconverter-cli.jar"
+STATIC __jod_reports := "jodreports-cli.jar"
+STATIC __java_run_cmd := "java -Xmx128m -jar"
+STATIC __util_path
+STATIC __current_odt
 
 // -------------------------------------------------------------------
 // generisanje odt reporta putem jodreports
@@ -29,145 +29,148 @@ static __current_odt
 // - test_mode - testiranje opcije, samo za windows
 //
 // -------------------------------------------------------------------
-function f18_odt_generate( template, xml_file, output_file, test_mode )
-local _ok := .f.
-local _template
-local _screen
-local _cmd
-local _error
-local _util_path
-local _jod_full_path
+FUNCTION f18_odt_generate( template, xml_file, output_file, test_mode )
 
-// xml fajl
-if ( xml_file == NIL )
-    __xml_file := my_home() + DATA_XML_FILE
-else
-    __xml_file := xml_file
-endif
+   LOCAL _ok := .F.
+   LOCAL _template
+   LOCAL _screen
+   LOCAL _cmd
+   LOCAL _error
+   LOCAL _util_path
+   LOCAL _jod_full_path
 
-// output fajl
-if ( output_file == NIL )
-    __output_odt := my_home() + gen_random_odt_name()
-else
-    __output_odt := output_file
-endif
+   // xml fajl
+   IF ( xml_file == NIL )
+      __xml_file := my_home() + DATA_XML_FILE
+   ELSE
+      __xml_file := xml_file
+   ENDIF
 
-// tekuci odt koji je generisan
-__current_odt := __output_odt
+   // output fajl
+   IF ( output_file == NIL )
+      __output_odt := my_home() + gen_random_odt_name()
+   ELSE
+      __output_odt := output_file
+   ENDIF
 
-// testni rezim
-if ( test_mode == NIL )
-    test_mode := .f.
-endif
+   // tekuci odt koji je generisan
+   __current_odt := __output_odt
 
-// kopiranje template fajla...
-_ok := _copy_odt_template( template )
+   // testni rezim
+   IF ( test_mode == NIL )
+      test_mode := .F.
+   ENDIF
 
-if !_ok
-	return _ok
-endif
+   // kopiranje template fajla...
+   _ok := _copy_odt_template( template )
 
-// prije generisanja pobrisi prošli izlazni fajl...
-delete_odt_files()
+   IF !_ok
+      RETURN _ok
+   ENDIF
 
-log_write( "ODT report gen: pobrisao fajl " + __output_odt, 7 )
+   // prije generisanja pobrisi prošli izlazni fajl...
+   delete_odt_files()
 
-// ovo ce nam biti template lokcija
-_template := my_home() + template
+   log_write( "ODT report gen: pobrisao fajl " + __output_odt, 7 )
 
-// vraca util path za operativni sistem
-__util_path := get_util_path()
-// daj mi liniju jod utilitija
-_jod_full_path := __util_path + __jod_reports
+   // ovo ce nam biti template lokcija
+   _template := my_home() + template
 
-// postoji li jodreports-cli.jar ?
-if !FILE( ALLTRIM( _jod_full_path ) )
-    log_write( "ODT report gen: " + __jod_reports + " ne postoji na lokaciji !", 7 )
-    MsgBeep( "Aplikacija " + __jod_reports + " ne postoji !" )
-    return _ok
-endif
+   // vraca util path za operativni sistem
+   __util_path := get_util_path()
+   // daj mi liniju jod utilitija
+   _jod_full_path := __util_path + __jod_reports
 
-// na windows masinama moramo radi DOS-a dodati ove navodnike
+   // postoji li jodreports-cli.jar ?
+   IF !File( AllTrim( _jod_full_path ) )
+      log_write( "ODT report gen: " + __jod_reports + " ne postoji na lokaciji !", 7 )
+      MsgBeep( "Aplikacija " + __jod_reports + " ne postoji !" )
+      RETURN _ok
+   ENDIF
+
+   // na windows masinama moramo radi DOS-a dodati ove navodnike
 #ifdef __PLATFORM__WINDOWS
-    _template := '"' + _template + '"'
-    __xml_file := '"' + __xml_file + '"'
-    __output_odt := '"' + __output_odt + '"'
-    _jod_full_path := '"' + _jod_full_path + '"'
+   _template := '"' + _template + '"'
+   __xml_file := '"' + __xml_file + '"'
+   __output_odt := '"' + __output_odt + '"'
+   _jod_full_path := '"' + _jod_full_path + '"'
 #endif
 
-// slozi mi komandu za generisanje...
-_cmd := __java_run_cmd + " " + _jod_full_path + " " 
-_cmd += _template + " "
-_cmd += __xml_file + " "
-_cmd += __output_odt
+   // slozi mi komandu za generisanje...
+   _cmd := __java_run_cmd + " " + _jod_full_path + " "
+   _cmd += _template + " "
+   _cmd += __xml_file + " "
+   _cmd += __output_odt
 
-log_write( "ODT report gen, cmd: " + _cmd, 7 )
+   log_write( "ODT report gen, cmd: " + _cmd, 7 )
 
-SAVE SCREEN TO _screen
-CLEAR SCREEN
+   SAVE SCREEN TO _screen
+   CLEAR SCREEN
 
-? "Generisanje ODT reporta u toku ...  fajl: ..." + RIGHT( __current_odt, 20 )
+   ? "Generisanje ODT reporta u toku ...  fajl: ..." + Right( __current_odt, 20 )
 
-// pokreni generisanje reporta, async = .f.
-_error := f18_run(_cmd, NIL, NIL, .f.)
-RESTORE SCREEN FROM _screen
+   // pokreni generisanje reporta, async = .f.
+   _error := f18_run( _cmd, NIL, NIL, .F. )
+   RESTORE SCREEN FROM _screen
 
-if _error <> 0
-    log_write( "ODT report gen: greška - " + ALLTRIM( STR( _error )), 7 )
-    MsgBeep( "Doslo je do greske prilikom generisanja reporta... !!!#" + "Greska: " + ALLTRIM(STR( _error )) )
-    return _ok
-endif
+   IF _error <> 0
+      log_write( "ODT report gen: greška - " + AllTrim( Str( _error ) ), 7 )
+      MsgBeep( "Doslo je do greske prilikom generisanja reporta... !!!#" + "Greska: " + AllTrim( Str( _error ) ) )
+      RETURN _ok
+   ENDIF
 
-// sve je ok
-_ok := .t.
+   // sve je ok
+   _ok := .T.
 
-return _ok
+   RETURN _ok
 
 
 
 // ---------------------------------------------------------
 // generise random odt out file name
 // ---------------------------------------------------------
-static function gen_random_odt_name()
-local _i
-local _tmp := "out.odt"
+STATIC FUNCTION gen_random_odt_name()
 
-for _i := 1 to 1000
-    _tmp := "out_" + PADL( ALLTRIM( STR( _i ) ), 4, "0" ) + ".odt"
-    if !FILE( my_home() + _tmp )
-        exit
-    endif
-next
+   LOCAL _i
+   LOCAL _tmp := "out.odt"
 
-return _tmp
+   FOR _i := 1 TO 1000
+      _tmp := "out_" + PadL( AllTrim( Str( _i ) ), 4, "0" ) + ".odt"
+      IF !File( my_home() + _tmp )
+         EXIT
+      ENDIF
+   NEXT
+
+   RETURN _tmp
 
 
 
 
 // -----------------------------------------------------------------
-// brise odt fajlove 
+// brise odt fajlove
 // -----------------------------------------------------------------
-static function delete_odt_files()
-local _tmp
-local _f_path
+STATIC FUNCTION delete_odt_files()
 
-_f_path := my_home()
-_tmp := "out_*.odt"
+   LOCAL _tmp
+   LOCAL _f_path
 
-// lock fajl izgleda ovako
-//.~lock.out_0001.odt#
+   _f_path := my_home()
+   _tmp := "out_*.odt"
 
-AEVAL( DIRECTORY( _f_path + _tmp ), { | aFile | ;
-        if( ;
-            FILE( _f_path + ".~lock." + ALLTRIM( aFile[1]) + "#" ), ;
-            .t., ;
-            FERASE( _f_path + ALLTRIM( aFile[1]) ) ;
-        ) ;
-    })
+   // lock fajl izgleda ovako
+   // .~lock.out_0001.odt#
 
-sleep(1)
+   AEval( Directory( _f_path + _tmp ), {| aFile | ;
+      if( ;
+      File( _f_path + ".~lock." + AllTrim( aFile[ 1 ] ) + "#" ), ;
+      .T., ;
+      FErase( _f_path + AllTrim( aFile[ 1 ] ) ) ;
+      ) ;
+      } )
 
-return
+   Sleep( 1 )
+
+   RETURN
 
 
 
@@ -175,86 +178,90 @@ return
 // ------------------------------------------------------------------
 // vraca util path po operativnom sistemu
 // ------------------------------------------------------------------
-static function get_util_path()
-local _path := ""
+STATIC FUNCTION get_util_path()
+
+   LOCAL _path := ""
 
 #ifdef __PLATFORM__WINDOWS
-	_path := "c:" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+
+   _path := "c:" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
 #else
-	_path := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+   _path := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
 #endif
 
-return _path
+   RETURN _path
 
 
 
 // -----------------------------------------------------------------
 // kopiranje odt template fajla
 // -----------------------------------------------------------------
-static function _copy_odt_template( template )
-local _ret := .f.
-local _a_source, _a_template
-local _src_size, _src_date, _src_time
-local _temp_size, _temp_date, _temp_time
-local _copy := .f.
+STATIC FUNCTION _copy_odt_template( template )
 
-if !FILE( my_home() + template )
-	_copy := .t.
-else
+   LOCAL _ret := .F.
+   LOCAL _a_source, _a_template
+   LOCAL _src_size, _src_date, _src_time
+   LOCAL _temp_size, _temp_date, _temp_time
+   LOCAL _copy := .F.
+
+   IF !File( my_home() + template )
+      _copy := .T.
+   ELSE
 	
-	// fajl postoji na lokaciji
-	// ispitaj velicinu, datum vrijeme...
-	_a_source := DIRECTORY( my_home() + template )
-	_a_template := DIRECTORY( F18_TEMPLATE_LOCATION + template ) 	
+      // fajl postoji na lokaciji
+      // ispitaj velicinu, datum vrijeme...
+      _a_source := Directory( my_home() + template )
+      _a_template := Directory( F18_TEMPLATE_LOCATION + template )
 
-	// datum, vrijeme, velicina
-	_src_size := ALLTRIM( STR( _a_source[1, 2] ) )
-	_src_date := DTOS( _a_source[1, 3] )
-	_src_time := _a_source[1, 4]
+      // datum, vrijeme, velicina
+      _src_size := AllTrim( Str( _a_source[ 1, 2 ] ) )
+      _src_date := DToS( _a_source[ 1, 3 ] )
+      _src_time := _a_source[ 1, 4 ]
 
-	_temp_size := ALLTRIM( STR( _a_template[1, 2] ) )
-	_temp_date := DTOS( _a_template[1, 3] )
-	_temp_time := _a_template[1, 4]
+      _temp_size := AllTrim( Str( _a_template[ 1, 2 ] ) )
+      _temp_date := DToS( _a_template[ 1, 3 ] )
+      _temp_time := _a_template[ 1, 4 ]
 
-	// treba ga kopirati
-	if _temp_date + _temp_time > _src_date + _src_time
-		_copy := .t.
-	endif
+      // treba ga kopirati
+      IF _temp_date + _temp_time > _src_date + _src_time
+         _copy := .T.
+      ENDIF
 
-endif
+   ENDIF
 
-// treba ga kopirati
-if _copy
-	// fajl ne postoji na lokaciji !!! kopiraj ga
-    if FILE( F18_TEMPLATE_LOCATION + template )
-        FileCopy( F18_TEMPLATE_LOCATION + template, my_home() + template )
-    else
-        MsgBeep( "Fajl " + F18_TEMPLATE_LOCATION + template + " ne postoji !???" )
-        return _ret
-    endif
-endif
+   // treba ga kopirati
+   IF _copy
+      // fajl ne postoji na lokaciji !!! kopiraj ga
+      IF File( F18_TEMPLATE_LOCATION + template )
+         FileCopy( F18_TEMPLATE_LOCATION + template, my_home() + template )
+      ELSE
+         MsgBeep( "Fajl " + F18_TEMPLATE_LOCATION + template + " ne postoji !???" )
+         RETURN _ret
+      ENDIF
+   ENDIF
 
-_ret := .t.
+   _ret := .T.
 
-return _ret 
+   RETURN _ret
 
 
 // ------------------------------------------------------------
 // kopiraj fajl na lokaciju
 // ------------------------------------------------------------
-function f18_odt_copy( output_file, destination_file )
-local _ok := .f.
+FUNCTION f18_odt_copy( output_file, destination_file )
 
-if ( output_file == NIL )
-    __output_odt := __current_odt
-else
-    __output_odt := output_file
-endif
+   LOCAL _ok := .F.
 
-// kopiranje...
-FileCopy( __output_odt, destination_file )
+   IF ( output_file == NIL )
+      __output_odt := __current_odt
+   ELSE
+      __output_odt := output_file
+   ENDIF
 
-return
+   // kopiranje...
+   FileCopy( __output_odt, destination_file )
+
+   RETURN
 
 
 
@@ -266,224 +273,225 @@ return
 // - from_params - .t. ili .f. pokreni odt report na osnovu parametara
 // - test_mode - .t. ili .f., testiranje komande - samo windows
 // -------------------------------------------------------------------
-function f18_odt_print( output_file, from_params, test_mode )
-local _ok := .f.
-local _screen, _error := 0
+FUNCTION f18_odt_print( output_file, from_params, test_mode )
 
-if ( output_file == NIL )
-    __output_odt := __current_odt
-else
-    __output_odt := output_file
-endif
+   LOCAL _ok := .F.
+   LOCAL _screen, _error := 0
 
-if ( from_params == NIL )
-    from_params := .f.
-endif
+   IF ( output_file == NIL )
+      __output_odt := __current_odt
+   ELSE
+      __output_odt := output_file
+   ENDIF
 
-if ( test_mode == NIL )
-    test_mode := .f.
-endif
+   IF ( from_params == NIL )
+      from_params := .F.
+   ENDIF
 
-if !FILE( __output_odt )
-    MsgBeep( "Nema fajla za prikaz !!!!" )
-    return _ok
-endif
+   IF ( test_mode == NIL )
+      test_mode := .F.
+   ENDIF
 
-// ako je windows sredi mi sa navodnicima
+   IF !File( __output_odt )
+      MsgBeep( "Nema fajla za prikaz !!!!" )
+      RETURN _ok
+   ENDIF
+
+   // ako je windows sredi mi sa navodnicima
 #ifdef __PLATFORM__WINDOWS
-    __output_odt := '"' + __output_odt + '"'
+   __output_odt := '"' + __output_odt + '"'
 #endif
 
-SAVE SCREEN TO _screen
-CLEAR SCREEN
+   SAVE SCREEN TO _screen
+   CLEAR SCREEN
 
-? "Prikaz odt fajla u toku ...   fajl: ..." + RIGHT( __current_odt, 20 )
+   ? "Prikaz odt fajla u toku ...   fajl: ..." + Right( __current_odt, 20 )
 
 #ifndef TEST
-	_error := f18_open_document(__output_odt)
+   _error := f18_open_document( __output_odt )
 #endif
 
-RESTORE SCREEN FROM _screen
+   RESTORE SCREEN FROM _screen
 
-if _error <> 0
-    MsgBeep( "Problem sa pokretanjem odt reporta !!!!#Greska: " + ALLTRIM(STR( _error )) )
-    return _error
-endif
+   IF _error <> 0
+      MsgBeep( "Problem sa pokretanjem odt reporta !!!!#Greska: " + AllTrim( Str( _error ) ) )
+      RETURN _error
+   ENDIF
 
-// sve ok
-_ok := .t.
+   // sve ok
+   _ok := .T.
 
-return _ok
+   RETURN _ok
 
 
 // ------------------------------------------------------
 // otvaranje dokumenta na osnovu ekstenzije
 // ------------------------------------------------------
-function f18_open_mime_document( document )
-local _cmd := ""
+FUNCTION f18_open_mime_document( document )
 
-if Pitanje(, "Otvoriti " + ALLTRIM( document ) + " ?", "D" ) == "N"
-    return 0
-endif
+   LOCAL _cmd := ""
+
+   IF Pitanje(, "Otvoriti " + AllTrim( document ) + " ?", "D" ) == "N"
+      RETURN 0
+   ENDIF
 
 #ifdef __PLATFORM__UNIX
 
-	#ifdef __PLATFORM__DARWIN
-        	_cmd += "open " + document
-	#else
-			_cmd += "xdg-open " + document + " &"
-	#endif
+#ifdef __PLATFORM__DARWIN
+   _cmd += "open " + document
+#else
+   _cmd += "xdg-open " + document + " &"
+#endif
 
 #else __PLATFORM__WINDOWS
 
-    document := '"' + document + '"'
-    _cmd += "c:\knowhowERP\util\start.exe /m " + document
+   document := '"' + document + '"'
+   _cmd += "c:\knowhowERP\util\start.exe /m " + document
 
 #endif
 
-_error := f18_run( _cmd )
+   _error := f18_run( _cmd )
 
-if _error <> 0
-    MsgBeep( "Problem sa otvaranjem dokumenta !!!!#Greska: " + ALLTRIM(STR( _error )) )
-    return _error
-endif
+   IF _error <> 0
+      MsgBeep( "Problem sa otvaranjem dokumenta !!!!#Greska: " + AllTrim( Str( _error ) ) )
+      RETURN _error
+   ENDIF
 
-return 0
+   RETURN 0
 
 
 
 // ------------------------------------------------------------------
 // konvertovanje odt fajla u pdf
-// 
+//
 // koristi se jodreports util: jodconverter-cli.jar
 // java -jar jodconverter-cli.jar input_file_odt output_file_pdf
 // ------------------------------------------------------------------
-function f18_convert_odt_to_pdf( input_file, output_file, overwrite_file )
-local _ret := .f.
-local _jod_full_path, _util_path
-local _cmd
-local _screen, _error
+FUNCTION f18_convert_odt_to_pdf( input_file, output_file, overwrite_file )
 
-// input fajl
-if ( input_file == NIL )
-    __output_odt := __current_odt
-else
-    __output_odt := input_file
-endif
+   LOCAL _ret := .F.
+   LOCAL _jod_full_path, _util_path
+   LOCAL _cmd
+   LOCAL _screen, _error
 
-// output fajl
-if ( output_file == NIL )
-	__output_pdf := STRTRAN( __current_odt, ".odt", ".pdf" )
-else
-	__output_pdf := output_file
-endif
+   // input fajl
+   IF ( input_file == NIL )
+      __output_odt := __current_odt
+   ELSE
+      __output_odt := input_file
+   ENDIF
 
-// overwrite izlaznog fajla
-if ( overwrite_file == NIL )
-	overwrite_file := .t.
-endif
+   // output fajl
+   IF ( output_file == NIL )
+      __output_pdf := StrTran( __current_odt, ".odt", ".pdf" )
+   ELSE
+      __output_pdf := output_file
+   ENDIF
 
-// konverter
+   // overwrite izlaznog fajla
+   IF ( overwrite_file == NIL )
+      overwrite_file := .T.
+   ENDIF
+
+   // konverter
 #ifdef __PLATFORM__WINDOWS
-	__output_odt := '"' + __output_odt + '"'
-	__output_pdf := '"' + __output_pdf + '"'
+   __output_odt := '"' + __output_odt + '"'
+   __output_pdf := '"' + __output_pdf + '"'
 #endif
 
-// provjeri izlazni fajl
-_ret := _check_out_pdf( @__output_pdf, overwrite_file )
-if !_ret
-	return _ret
-endif  
+   // provjeri izlazni fajl
+   _ret := _check_out_pdf( @__output_pdf, overwrite_file )
+   IF !_ret
+      RETURN _ret
+   ENDIF
 
-// daj mi path do util direktorija
-_util_path := get_util_path()
-// daj mi punu putanju jod-converter-a
-_jod_full_path := _util_path + __jod_converter
+   // daj mi path do util direktorija
+   _util_path := get_util_path()
+   // daj mi punu putanju jod-converter-a
+   _jod_full_path := _util_path + __jod_converter
 
-// postoji li jodconverter-cli.jar ?
-if !FILE( ALLTRIM( _jod_full_path ) )
-    log_write( "ODT report conv: " + __jod_converter + " ne postoji na lokaciji !", 7 )
-    MsgBeep( "Aplikacija " + __jod_converter + " ne postoji !" )
-    return _ret
-endif
+   // postoji li jodconverter-cli.jar ?
+   IF !File( AllTrim( _jod_full_path ) )
+      log_write( "ODT report conv: " + __jod_converter + " ne postoji na lokaciji !", 7 )
+      MsgBeep( "Aplikacija " + __jod_converter + " ne postoji !" )
+      RETURN _ret
+   ENDIF
 
-log_write( "ODT report convert start", 9 )
+   log_write( "ODT report convert start", 9 )
 
-// na windows masinama moramo radi DOS-a dodati ove navodnike
+   // na windows masinama moramo radi DOS-a dodati ove navodnike
 #ifdef __PLATFORM__WINDOWS
-    _jod_full_path := '"' + _jod_full_path + '"'
+   _jod_full_path := '"' + _jod_full_path + '"'
 #endif
 
-// slozi mi komandu za generisanje...
-_cmd := __java_run_cmd + " " + _jod_full_path + " " 
-_cmd += __output_odt + " "
-_cmd += __output_pdf
+   // slozi mi komandu za generisanje...
+   _cmd := __java_run_cmd + " " + _jod_full_path + " "
+   _cmd += __output_odt + " "
+   _cmd += __output_pdf
 
-log_write( "ODT report convert, cmd: " + _cmd, 7 )
+   log_write( "ODT report convert, cmd: " + _cmd, 7 )
 
-SAVE SCREEN TO _screen
-CLEAR SCREEN
+   SAVE SCREEN TO _screen
+   CLEAR SCREEN
 
-? "Konvertovanje ODT dokumenta u toku..."
+   ? "Konvertovanje ODT dokumenta u toku..."
 
-// pokreni generisanje reporta
-_error := f18_run( _cmd )
+   // pokreni generisanje reporta
+   _error := f18_run( _cmd )
 
-RESTORE SCREEN FROM _screen
- 
-if _error <> 0
-    log_write( "ODT report convert: greška - " + ALLTRIM( STR( _error )), 7 )
-    MsgBeep( "Doslo je do greske prilikom konvertovanja dokumenta... !!!#" + "Greska: " + ALLTRIM(STR( _error )) )
-    return _ret
-endif
+   RESTORE SCREEN FROM _screen
 
-_ret := .t.
+   IF _error <> 0
+      log_write( "ODT report convert: greška - " + AllTrim( Str( _error ) ), 7 )
+      MsgBeep( "Doslo je do greske prilikom konvertovanja dokumenta... !!!#" + "Greska: " + AllTrim( Str( _error ) ) )
+      RETURN _ret
+   ENDIF
 
-return _ret
+   _ret := .T.
+
+   RETURN _ret
 
 
 
 // ----------------------------------------------------------------
 // provjera izlaznog fajla
 // ----------------------------------------------------------------
-static function _check_out_pdf( out_file, overwrite )
-local _ret := .f.
-local _i, _ext, _tmp, _wo_ext
+STATIC FUNCTION _check_out_pdf( out_file, overwrite )
 
-if ( overwrite == NIL )
-	overwrite := .t.
-endif
+   LOCAL _ret := .F.
+   LOCAL _i, _ext, _tmp, _wo_ext
 
-// u slucaju overwrite-a
-if overwrite
-	FERASE( out_file )
-	_ret := .t.
-	return _ret
-endif
+   IF ( overwrite == NIL )
+      overwrite := .T.
+   ENDIF
 
-// ekstenzija fajla
-_ext := RIGHT( ALLTRIM( out_file ), 4 )
+   // u slucaju overwrite-a
+   IF overwrite
+      FErase( out_file )
+      _ret := .T.
+      RETURN _ret
+   ENDIF
 
-// fajl bez ekstenzije
-_wo_ext := LEFT( ALLTRIM( out_file ), LEN( ALLTRIM( out_file) ) - LEN( _ext ) )
+   // ekstenzija fajla
+   _ext := Right( AllTrim( out_file ), 4 )
 
-// vidi da dodaš neki sufiks
-for _i := 1 to 99
+   // fajl bez ekstenzije
+   _wo_ext := Left( AllTrim( out_file ), Len( AllTrim( out_file ) ) - Len( _ext ) )
+
+   // vidi da dodaš neki sufiks
+   FOR _i := 1 TO 99
 	
-	_tmp := _wo_ext + PADL( ALLTRIM(STR(_i)), 2, "0" ) + _ext
+      _tmp := _wo_ext + PadL( AllTrim( Str( _i ) ), 2, "0" ) + _ext
 
-	if !FILE( _tmp )
+      IF !File( _tmp )
 
-		// imamo novi izlazni fajl
-		out_file := _tmp
+         // imamo novi izlazni fajl
+         out_file := _tmp
 
-		exit
+         EXIT
 
-	endif
+      ENDIF
 
-next
+   NEXT
 
-return _ret
-
-
-
+   RETURN _ret

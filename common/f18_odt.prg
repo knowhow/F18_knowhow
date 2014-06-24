@@ -331,7 +331,6 @@ FUNCTION f18_odt_print( output_file, from_params, test_mode )
      - email na f18@bring.out.ba
      - u attachmentu: template.odt
                       data.xml
-                      izlazni_fajl.odt
 */
 
 STATIC FUNCTION odt_na_email_podrska( error_text )
@@ -351,7 +350,6 @@ STATIC FUNCTION odt_na_email_podrska( error_text )
    _body += "U prilogu fajlovi neophodni za generisanje ODT izvještaja."
 
    _attachment := {}
-   AADD( _attachment, __output_odt )
    AADD( _attachment, __template )
    AADD( _attachment, __xml_file )
 

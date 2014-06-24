@@ -1,3 +1,8 @@
+1.7.104  2014-06-24, vsasa
+
+  - FAKT, fiskalni računi za robu sa zaštićenom cijenom - bugfix
+  - FAKT, rekalmirani računi, iznos reklamiranog računa prije štampe
+ 
 1.7.103  2014-06-23, vsasa
 
   - RNAL, konfiguracija pozicije pečata, korekcija funkcije

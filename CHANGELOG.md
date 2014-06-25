@@ -1,6 +1,7 @@
-1.7.106  2014-06-24, vsasa
+1.7.106  2014-06-25, vsasa
 
   - FIN, uvedene tabele fin_komp_dug, fin_komp_pot za opciju kompenzacija
+  - F18 podrška email, ispravljeno
  
 1.7.105  2014-06-24, vsasa
 

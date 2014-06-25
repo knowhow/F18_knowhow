@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,17 +14,17 @@
 
 
 // static variables
-static __REL_VER
-static __REL
-static __ORD
-static __POS
-static __PO2
-static __GLX
-static __FRX
-static __TXT
-static __TX2
-static __TX3
-static __SPACE
+STATIC __REL_VER
+STATIC __REL
+STATIC __ORD
+STATIC __POS
+STATIC __PO2
+STATIC __GLX
+STATIC __FRX
+STATIC __TXT
+STATIC __TX2
+STATIC __TX3
+STATIC __SPACE
 
 
 
@@ -32,21 +32,21 @@ static __SPACE
 // setovanje i definicija kljucnih rijeci
 // setovanje statickih varijabli
 // --------------------------------------------
-function set_keywords()
+FUNCTION lisec_init_static_vars()
 
-__REL_VER := "02.60"
-__REL := "<REL>"
-__ORD := "<ORD>"
-__POS := "<POS>"
-__PO2 := "<PO2>"
-__TXT := "<TXT>"
-__TX2 := "<TX2>"
-__TX3 := "<TX3>"
-__GLX := "<GLx>"
-__FRX := "<FRx>"
-__SPACE := SPACE(1)
+   __REL_VER := "02.60"
+   __REL := "<REL>"
+   __ORD := "<ORD>"
+   __POS := "<POS>"
+   __PO2 := "<PO2>"
+   __TXT := "<TXT>"
+   __TX2 := "<TX2>"
+   __TX3 := "<TX3>"
+   __GLX := "<GLx>"
+   __FRX := "<FRx>"
+   __SPACE := Space( 1 )
 
-return
+   RETURN
 
 
 // ---------------------------------------------
@@ -57,20 +57,21 @@ return
 // ------------------------------
 // dodaj u record <REL>
 // ------------------------------
-function add_rel( cRelAddInfo )
-local aRel := {}
+FUNCTION add_rel( cRelAddInfo )
 
-set_keywords()
+   LOCAL aRel := {}
 
-if EMPTY(cRelAddInfo) .or. cRelAddInfo == nil
-	cRelAddInfo := ""
-endif
+   lisec_init_static_vars()
 
-AADD( aRel, __REL )
-AADD( aRel, __REL_VER )
-AADD( aRel, cRelAddInfo )
+   IF Empty( cRelAddInfo ) .OR. cRelAddInfo == nil
+      cRelAddInfo := ""
+   ENDIF
 
-return aRel
+   AAdd( aRel, __REL )
+   AAdd( aRel, __REL_VER )
+   AAdd( aRel, cRelAddInfo )
+
+   RETURN aRel
 
 
 
@@ -78,16 +79,17 @@ return aRel
 // -----------------------------------------------
 // vraca specifikaciju recorda <REL>
 // -----------------------------------------------
-function _get_rel()
-local aRelSpec := {}
+FUNCTION _get_rel()
 
-set_keywords()
+   LOCAL aRelSpec := {}
 
-AADD(aRelSpec, { __REL,     "C", 5 } )
-AADD(aRelSpec, { "REL_NUM", "N", 2.2 } )
-AADD(aRelSpec, { "REL_INFO", "C", 40 } )
+   lisec_init_static_vars()
 
-return aRelSpec
+   AAdd( aRelSpec, { __REL,     "C", 5 } )
+   AAdd( aRelSpec, { "REL_NUM", "N", 2.2 } )
+   AAdd( aRelSpec, { "REL_INFO", "C", 40 } )
+
+   RETURN aRelSpec
 
 
 
@@ -99,61 +101,62 @@ return aRelSpec
 // ------------------------------
 // dodaj u record <ORD>
 // ------------------------------
-function add_ord( nOrd_no, ;
-		nCust_id, ;
-		cCust_name, ;
-		cText1, ;
-		cText2, ;
-		cText3, ;
-		cText4, ;
-		cText5, ;
-		dDoc_date, ;
-		dDoc_dvr_date, ;
-		cDvr_ship )
+FUNCTION add_ord( nOrd_no, ;
+      nCust_id, ;
+      cCust_name, ;
+      cText1, ;
+      cText2, ;
+      cText3, ;
+      cText4, ;
+      cText5, ;
+      dDoc_date, ;
+      dDoc_dvr_date, ;
+      cDvr_ship )
 
-local aOrd := {}
+   LOCAL aOrd := {}
 
-set_keywords()
+   lisec_init_static_vars()
 
-AADD( aOrd, __ORD )
-AADD( aOrd, nOrd_no )
-AADD( aOrd, ALLTRIM(STR(nCust_id)) )
-AADD( aOrd, cCust_name )
-AADD( aOrd, cText1 )
-AADD( aOrd, cText2 )
-AADD( aOrd, cText3 )
-AADD( aOrd, cText4 )
-AADD( aOrd, cText5 )
-AADD( aOrd, conv_date( dDoc_date ) )
-AADD( aOrd, conv_date( dDoc_dvr_date ) )
-AADD( aOrd, cDvr_ship )
+   AAdd( aOrd, __ORD )
+   AAdd( aOrd, nOrd_no )
+   AAdd( aOrd, AllTrim( Str( nCust_id ) ) )
+   AAdd( aOrd, cCust_name )
+   AAdd( aOrd, cText1 )
+   AAdd( aOrd, cText2 )
+   AAdd( aOrd, cText3 )
+   AAdd( aOrd, cText4 )
+   AAdd( aOrd, cText5 )
+   AAdd( aOrd, conv_date( dDoc_date ) )
+   AAdd( aOrd, conv_date( dDoc_dvr_date ) )
+   AAdd( aOrd, cDvr_ship )
 
-return aOrd
+   RETURN aOrd
 
 
 
 // -----------------------------------------------
 // vraca specifikaciju recorda <ORD>
 // -----------------------------------------------
-function _get_ord()
-local aOrdSpec := {}
+FUNCTION _get_ord()
 
-set_keywords()
+   LOCAL aOrdSpec := {}
 
-AADD(aOrdSpec, { __ORD,      "C",    5 } )
-AADD(aOrdSpec, { "ORD",      "N",   10 } )
-AADD(aOrdSpec, { "CUST_NUM", "C",   10 } )
-AADD(aOrdSpec, { "CUST_NAM", "C",   40 } )
-AADD(aOrdSpec, { "TEXT1",    "C",   40 } )
-AADD(aOrdSpec, { "TEXT2",    "C",   40 } )
-AADD(aOrdSpec, { "TEXT3",    "C",   40 } )
-AADD(aOrdSpec, { "TEXT4",    "C",   40 } )
-AADD(aOrdSpec, { "TEXT5",    "C",   40 } )
-AADD(aOrdSpec, { "PRD_DATE", "C",   10 } )
-AADD(aOrdSpec, { "DEL_DATE", "C",   10 } )
-AADD(aOrdSpec, { "DEL_AREA", "C",   10 } )
+   lisec_init_static_vars()
 
-return aOrdSpec
+   AAdd( aOrdSpec, { __ORD,      "C",    5 } )
+   AAdd( aOrdSpec, { "ORD",      "N",   10 } )
+   AAdd( aOrdSpec, { "CUST_NUM", "C",   10 } )
+   AAdd( aOrdSpec, { "CUST_NAM", "C",   40 } )
+   AAdd( aOrdSpec, { "TEXT1",    "C",   40 } )
+   AAdd( aOrdSpec, { "TEXT2",    "C",   40 } )
+   AAdd( aOrdSpec, { "TEXT3",    "C",   40 } )
+   AAdd( aOrdSpec, { "TEXT4",    "C",   40 } )
+   AAdd( aOrdSpec, { "TEXT5",    "C",   40 } )
+   AAdd( aOrdSpec, { "PRD_DATE", "C",   10 } )
+   AAdd( aOrdSpec, { "DEL_DATE", "C",   10 } )
+   AAdd( aOrdSpec, { "DEL_AREA", "C",   10 } )
+
+   RETURN aOrdSpec
 
 
 
@@ -162,17 +165,18 @@ return aOrdSpec
 // 01.01.2007 => 01/01/2007
 // #format = "DD/MM/YYYY"
 // ------------------------------------
-static function conv_date( dDate )
-local cDate
+STATIC FUNCTION conv_date( dDate )
 
-cDate := ""
-cDate += PADL( ALLTRIM(STR(DAY(dDate))), 2, "0" )
-cDate += "/"
-cDate += PADL( ALLTRIM(STR(MONTH(dDate))), 2, "0" )
-cDate += "/"
-cDate += STR( YEAR(dDate) , 4 )
+   LOCAL cDate
 
-return cDate
+   cDate := ""
+   cDate += PadL( AllTrim( Str( Day( dDate ) ) ), 2, "0" )
+   cDate += "/"
+   cDate += PadL( AllTrim( Str( Month( dDate ) ) ), 2, "0" )
+   cDate += "/"
+   cDate += Str( Year( dDate ), 4 )
+
+   RETURN cDate
 
 
 // ---------------------------------------------
@@ -183,103 +187,104 @@ return cDate
 // ------------------------------
 // dodaj u record <POS>
 // ------------------------------
-function add_pos( nItem_no, ;
-		cId_no, ;
-		nBarCode, ;
-		nQty, ;
-		nWidth, ;
-		nHeight, ;
-		cGlass1, ;
-		cFrame1, ;
-		cGlass2, ;
-		cFrame2, ;
-		cGlass3, ;
-		nInset, ;
-		nFrame_txt, ;
-		nGas_code1, ;
-		nGas_code2, ;
-		nSeal_type, ;
-		nFrah_type, ;
-		nFrah_hoe, ;
-		nPattDir )
+FUNCTION add_pos( nItem_no, ;
+      cId_no, ;
+      nBarCode, ;
+      nQty, ;
+      nWidth, ;
+      nHeight, ;
+      cGlass1, ;
+      cFrame1, ;
+      cGlass2, ;
+      cFrame2, ;
+      cGlass3, ;
+      nInset, ;
+      nFrame_txt, ;
+      nGas_code1, ;
+      nGas_code2, ;
+      nSeal_type, ;
+      nFrah_type, ;
+      nFrah_hoe, ;
+      nPattDir )
 
-local aPos := {}
+   LOCAL aPos := {}
 
-set_keywords()
+   lisec_init_static_vars()
 
-AADD( aPos, __POS )
-AADD( aPos, nItem_no )
-AADD( aPos, cId_no )
-AADD( aPos, nBarcode )
-AADD( aPos, nQty )
-AADD( aPos, calc_dim(nWidth) )
-AADD( aPos, calc_dim(nHeight) )
-AADD( aPos, cGlass1 )
-AADD( aPos, cFrame1 )
-AADD( aPos, cGlass2 )
-AADD( aPos, cFrame2 )
-AADD( aPos, cGlass3 )
-AADD( aPos, nInset )
-AADD( aPos, nFrame_txt )
-AADD( aPos, nGas_code1 )
-AADD( aPos, nGas_code2 )
-AADD( aPos, nSeal_type )
-AADD( aPos, nFrah_type )
-AADD( aPos, nFrah_hoe )
-AADD( aPos, nPattdir )
+   AAdd( aPos, __POS )
+   AAdd( aPos, nItem_no )
+   AAdd( aPos, cId_no )
+   AAdd( aPos, nBarcode )
+   AAdd( aPos, nQty )
+   AAdd( aPos, recalc_dim_za_lisec( nWidth ) )
+   AAdd( aPos, recalc_dim_za_lisec( nHeight ) )
+   AAdd( aPos, cGlass1 )
+   AAdd( aPos, cFrame1 )
+   AAdd( aPos, cGlass2 )
+   AAdd( aPos, cFrame2 )
+   AAdd( aPos, cGlass3 )
+   AAdd( aPos, nInset )
+   AAdd( aPos, nFrame_txt )
+   AAdd( aPos, nGas_code1 )
+   AAdd( aPos, nGas_code2 )
+   AAdd( aPos, nSeal_type )
+   AAdd( aPos, nFrah_type )
+   AAdd( aPos, nFrah_hoe )
+   AAdd( aPos, nPattdir )
 
-return aPos
+   RETURN aPos
 
 
 
 // -----------------------------------------------
 // vraca specifikaciju recorda <POS>
 // -----------------------------------------------
-function _get_pos()
-local aPosSpec := {}
+FUNCTION _get_pos()
 
-set_keywords()
+   LOCAL aPosSpec := {}
 
-AADD(aPosSpec, { __POS,      "C",    5 } )
-AADD(aPosSpec, { "ITEM_NUM", "N",    5 } )
-AADD(aPosSpec, { "ID_NUM",   "C",    8 } )
-AADD(aPosSpec, { "BARCODE",  "N",    4 } )
-AADD(aPosSpec, { "QTY",      "N",    5 } )
-AADD(aPosSpec, { "WIDTH",    "N",    5 } )
-AADD(aPosSpec, { "HEIGHT",   "N",    5 } )
-AADD(aPosSpec, { "GLASS1",   "C",    5 } )
-AADD(aPosSpec, { "FRAME1",   "C",    3 } )
-AADD(aPosSpec, { "GLASS2",   "C",    5 } )
-AADD(aPosSpec, { "FRAME2",   "C",    3 } )
-AADD(aPosSpec, { "GLASS3",   "C",    5 } )
-AADD(aPosSpec, { "INSET",    "N",    3 } )
-AADD(aPosSpec, { "FRAME_TXT",  "N",    2 } )
-AADD(aPosSpec, { "GAS_CODE1",  "N",    2 } )
-AADD(aPosSpec, { "GAS_CODE2",  "N",    2 } )
-AADD(aPosSpec, { "SEAL_TYPE",  "N",    1 } )
-AADD(aPosSpec, { "FRAH_TYPE",  "N",    1 } )
-AADD(aPosSpec, { "FRAH_HOE",  "N",    5 } )
-AADD(aPosSpec, { "PATT_DIR",  "N",    1 } )
+   lisec_init_static_vars()
 
-return aPosSpec
+   AAdd( aPosSpec, { __POS,      "C",    5 } )
+   AAdd( aPosSpec, { "ITEM_NUM", "N",    5 } )
+   AAdd( aPosSpec, { "ID_NUM",   "C",    8 } )
+   AAdd( aPosSpec, { "BARCODE",  "N",    4 } )
+   AAdd( aPosSpec, { "QTY",      "N",    5 } )
+   AAdd( aPosSpec, { "WIDTH",    "N",    5 } )
+   AAdd( aPosSpec, { "HEIGHT",   "N",    5 } )
+   AAdd( aPosSpec, { "GLASS1",   "C",    5 } )
+   AAdd( aPosSpec, { "FRAME1",   "C",    3 } )
+   AAdd( aPosSpec, { "GLASS2",   "C",    5 } )
+   AAdd( aPosSpec, { "FRAME2",   "C",    3 } )
+   AAdd( aPosSpec, { "GLASS3",   "C",    5 } )
+   AAdd( aPosSpec, { "INSET",    "N",    3 } )
+   AAdd( aPosSpec, { "FRAME_TXT",  "N",    2 } )
+   AAdd( aPosSpec, { "GAS_CODE1",  "N",    2 } )
+   AAdd( aPosSpec, { "GAS_CODE2",  "N",    2 } )
+   AAdd( aPosSpec, { "SEAL_TYPE",  "N",    1 } )
+   AAdd( aPosSpec, { "FRAH_TYPE",  "N",    1 } )
+   AAdd( aPosSpec, { "FRAH_HOE",  "N",    5 } )
+   AAdd( aPosSpec, { "PATT_DIR",  "N",    1 } )
+
+   RETURN aPosSpec
 
 
+/*
+   rekalkulisi kalkulisi dimenziju na n/10 mm
+   jer je u lisec/GPS.opt to jedinica mjere
+*/
 
-// ----------------------------------------
-// kalkulisi dimenziju
-// n/10 mm je u GPS.opt uzima
-// dakle moram svoju dim. pomnoziti sa 10
-// ----------------------------------------
-static function calc_dim( nDim )
-local xRet := 0
+STATIC FUNCTION recalc_dim_za_lisec( nDim )
 
-if nDim = 0
-	xRet := nDim
-endif
+   LOCAL xRet := 0
 
-xRet := nDim * 10
+   IF nDim = 0
+      xRet := nDim
+   ENDIF
 
-return xRet
+   xRet := nDim * 10
+
+   RETURN xRet
 
 
 
@@ -291,110 +296,111 @@ return xRet
 // ------------------------------
 // dodaj u record <PO2>
 // -----------------------------
-function add_po2( cIdCode, ;
-		nW1, nH1, ;
-		nG1_bott, nG1_rig, nG1_top, nG1_left, ;
-		nS1_bott, nS1_rig, nS1_top, nS1_left, ;
-		nW2, nH2, ;
-		nG2_bott, nG2_rig, nG2_top, nG2_left, ;
-		nS2_bott, nS2_rig, nS2_top, nS2_left, ;
-		nOff2x, nOff2y, ;
-		nW3, nH3, ;
-		nG3_bott, nG3_rig, nG3_top, nG3_left, ;
-		nS3_bott, nS3_rig, nS3_top, nS3_left, ;
-		nOff3x, nOff3y )
+FUNCTION add_po2( cIdCode, ;
+      nW1, nH1, ;
+      nG1_bott, nG1_rig, nG1_top, nG1_left, ;
+      nS1_bott, nS1_rig, nS1_top, nS1_left, ;
+      nW2, nH2, ;
+      nG2_bott, nG2_rig, nG2_top, nG2_left, ;
+      nS2_bott, nS2_rig, nS2_top, nS2_left, ;
+      nOff2x, nOff2y, ;
+      nW3, nH3, ;
+      nG3_bott, nG3_rig, nG3_top, nG3_left, ;
+      nS3_bott, nS3_rig, nS3_top, nS3_left, ;
+      nOff3x, nOff3y )
 
-local aPo2 := {}
+   LOCAL aPo2 := {}
 
-set_keywords()
+   lisec_init_static_vars()
 
-AADD( aPo2, __PO2 )
-AADD( aPo2, cIdCode )
-AADD( aPo2, calc_dim(nW1) )
-AADD( aPo2, calc_dim(nH1) )
-AADD( aPo2, calc_dim( nG1_bott ) )
-AADD( aPo2, calc_dim(nG1_rig) )
-AADD( aPo2, calc_dim(nG1_top) )
-AADD( aPo2, calc_dim(nG1_left) )
-AADD( aPo2, calc_dim(nS1_bott) )
-AADD( aPo2, calc_dim(nS1_rig) )
-AADD( aPo2, calc_dim(nS1_top) )
-AADD( aPo2, calc_dim(nS1_left) )
-AADD( aPo2, calc_dim(nW2) )
-AADD( aPo2, calc_dim(nH2) )
-AADD( aPo2, calc_dim(nG2_bott) )
-AADD( aPo2, calc_dim(nG2_rig) )
-AADD( aPo2, calc_dim(nG2_top) )
-AADD( aPo2, calc_dim(nG2_left) )
-AADD( aPo2, calc_dim(nS2_bott) )
-AADD( aPo2, calc_dim(nS2_rig) )
-AADD( aPo2, calc_dim(nS2_top) )
-AADD( aPo2, calc_dim(nS2_left) )
-AADD( aPo2, calc_dim(nOff2x) )
-AADD( aPo2, calc_dim(nOff2y) )
-AADD( aPo2, calc_dim(nW3) )
-AADD( aPo2, calc_dim(nH3) )
-AADD( aPo2, calc_dim(nG3_bott) )
-AADD( aPo2, calc_dim(nG3_rig) )
-AADD( aPo2, calc_dim(nG3_top) )
-AADD( aPo2, calc_dim(nG3_left) )
-AADD( aPo2, calc_dim(nS3_bott) )
-AADD( aPo2, calc_dim(nS3_rig) )
-AADD( aPo2, calc_dim(nS3_top) )
-AADD( aPo2, calc_dim(nS3_left) )
-AADD( aPo2, calc_dim(nOff3x) )
-AADD( aPo2, calc_dim(nOff3y) )
+   AAdd( aPo2, __PO2 )
+   AAdd( aPo2, cIdCode )
+   AAdd( aPo2, recalc_dim_za_lisec( nW1 ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nH1 ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nG1_bott ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nG1_rig ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nG1_top ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nG1_left ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nS1_bott ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nS1_rig ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nS1_top ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nS1_left ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nW2 ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nH2 ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nG2_bott ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nG2_rig ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nG2_top ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nG2_left ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nS2_bott ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nS2_rig ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nS2_top ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nS2_left ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nOff2x ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nOff2y ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nW3 ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nH3 ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nG3_bott ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nG3_rig ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nG3_top ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nG3_left ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nS3_bott ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nS3_rig ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nS3_top ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nS3_left ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nOff3x ) )
+   AAdd( aPo2, recalc_dim_za_lisec( nOff3y ) )
 
-return aPo2
+   RETURN aPo2
 
 
 // -----------------------------------------------
 // vraca specifikaciju recorda <PO2>
 // dodatne informacije na samom rekord-u iz <POS>
 // -----------------------------------------------
-function _get_po2()
-local aPO2Spec := {}
+FUNCTION _get_po2()
 
-set_keywords()
+   LOCAL aPO2Spec := {}
 
-AADD(aPO2Spec, { __PO2,        "C",    5 } )
-AADD(aPO2Spec, { "ID_CODE",    "C",   40 } )
-AADD(aPO2Spec, { "WIDTH1",     "N",    5 } )
-AADD(aPO2Spec, { "HEIGHT1",    "N",    5 } )
-AADD(aPO2Spec, { "GA1_BOTT",   "N",    4 } )
-AADD(aPO2Spec, { "GA1_RIGHT",  "N",    4 } )
-AADD(aPO2Spec, { "GA1_TOP",    "N",    4 } )
-AADD(aPO2Spec, { "GA1_LEFT",   "N",    4 } )
-AADD(aPO2Spec, { "ST1_BOTT",   "N",    5 } )
-AADD(aPO2Spec, { "ST1_RIGHT",  "N",    5 } )
-AADD(aPO2Spec, { "ST1_TOP",    "N",    5 } )
-AADD(aPO2Spec, { "ST1_LEFT",   "N",    5 } )
-AADD(aPO2Spec, { "WIDTH2",     "N",    5 } )
-AADD(aPO2Spec, { "HEIGHT2",    "N",    5 } )
-AADD(aPO2Spec, { "GA2_BOTT",   "N",    4 } )
-AADD(aPO2Spec, { "GA2_RIGHT",  "N",    4 } )
-AADD(aPO2Spec, { "GA2_TOP",    "N",    4 } )
-AADD(aPO2Spec, { "GA2_LEFT",   "N",    4 } )
-AADD(aPO2Spec, { "ST2_BOTT",   "N",    5 } )
-AADD(aPO2Spec, { "ST2_RIGHT",  "N",    5 } )
-AADD(aPO2Spec, { "ST2_TOP",    "N",    5 } )
-AADD(aPO2Spec, { "ST2_LEFT",   "N",    5 } )
-AADD(aPO2Spec, { "OFFS2_X",    "N",    5 } )
-AADD(aPO2Spec, { "OFFS2_Y",    "N",    5 } )
-AADD(aPO2Spec, { "WIDTH3",     "N",    5 } )
-AADD(aPO2Spec, { "HEIGHT3",    "N",    5 } )
-AADD(aPO2Spec, { "GA3_BOTT",   "N",    4 } )
-AADD(aPO2Spec, { "GA3_RIGHT",  "N",    4 } )
-AADD(aPO2Spec, { "GA3_TOP",    "N",    4 } )
-AADD(aPO2Spec, { "GA3_LEFT",   "N",    4 } )
-AADD(aPO2Spec, { "ST3_BOTT",   "N",    5 } )
-AADD(aPO2Spec, { "ST3_RIGHT",  "N",    5 } )
-AADD(aPO2Spec, { "ST3_TOP",    "N",    5 } )
-AADD(aPO2Spec, { "ST3_LEFT",   "N",    5 } )
-AADD(aPO2Spec, { "OFFS3_X",    "N",    5 } )
-AADD(aPO2Spec, { "OFFS3_Y",    "N",    5 } )
+   lisec_init_static_vars()
 
-return aPO2Spec
+   AAdd( aPO2Spec, { __PO2,        "C",    5 } )
+   AAdd( aPO2Spec, { "ID_CODE",    "C",   40 } )
+   AAdd( aPO2Spec, { "WIDTH1",     "N",    5 } )
+   AAdd( aPO2Spec, { "HEIGHT1",    "N",    5 } )
+   AAdd( aPO2Spec, { "GA1_BOTT",   "N",    4 } )
+   AAdd( aPO2Spec, { "GA1_RIGHT",  "N",    4 } )
+   AAdd( aPO2Spec, { "GA1_TOP",    "N",    4 } )
+   AAdd( aPO2Spec, { "GA1_LEFT",   "N",    4 } )
+   AAdd( aPO2Spec, { "ST1_BOTT",   "N",    5 } )
+   AAdd( aPO2Spec, { "ST1_RIGHT",  "N",    5 } )
+   AAdd( aPO2Spec, { "ST1_TOP",    "N",    5 } )
+   AAdd( aPO2Spec, { "ST1_LEFT",   "N",    5 } )
+   AAdd( aPO2Spec, { "WIDTH2",     "N",    5 } )
+   AAdd( aPO2Spec, { "HEIGHT2",    "N",    5 } )
+   AAdd( aPO2Spec, { "GA2_BOTT",   "N",    4 } )
+   AAdd( aPO2Spec, { "GA2_RIGHT",  "N",    4 } )
+   AAdd( aPO2Spec, { "GA2_TOP",    "N",    4 } )
+   AAdd( aPO2Spec, { "GA2_LEFT",   "N",    4 } )
+   AAdd( aPO2Spec, { "ST2_BOTT",   "N",    5 } )
+   AAdd( aPO2Spec, { "ST2_RIGHT",  "N",    5 } )
+   AAdd( aPO2Spec, { "ST2_TOP",    "N",    5 } )
+   AAdd( aPO2Spec, { "ST2_LEFT",   "N",    5 } )
+   AAdd( aPO2Spec, { "OFFS2_X",    "N",    5 } )
+   AAdd( aPO2Spec, { "OFFS2_Y",    "N",    5 } )
+   AAdd( aPO2Spec, { "WIDTH3",     "N",    5 } )
+   AAdd( aPO2Spec, { "HEIGHT3",    "N",    5 } )
+   AAdd( aPO2Spec, { "GA3_BOTT",   "N",    4 } )
+   AAdd( aPO2Spec, { "GA3_RIGHT",  "N",    4 } )
+   AAdd( aPO2Spec, { "GA3_TOP",    "N",    4 } )
+   AAdd( aPO2Spec, { "GA3_LEFT",   "N",    4 } )
+   AAdd( aPO2Spec, { "ST3_BOTT",   "N",    5 } )
+   AAdd( aPO2Spec, { "ST3_RIGHT",  "N",    5 } )
+   AAdd( aPO2Spec, { "ST3_TOP",    "N",    5 } )
+   AAdd( aPO2Spec, { "ST3_LEFT",   "N",    5 } )
+   AAdd( aPO2Spec, { "OFFS3_X",    "N",    5 } )
+   AAdd( aPO2Spec, { "OFFS3_Y",    "N",    5 } )
+
+   RETURN aPO2Spec
 
 
 
@@ -406,41 +412,43 @@ return aPO2Spec
 // ------------------------------
 // dodaj u record <GLx>
 // -----------------------------
-function add_glx( cGlassNo, cIdCode )
-local aGLx := {}
+FUNCTION add_glx( cGlassNo, cIdCode )
 
-set_keywords()
+   LOCAL aGLx := {}
 
-AADD( aGLx, STRTRAN( __GLX, "x", cGlassNo ) )
-AADD( aGLx, cIdCode )
+   lisec_init_static_vars()
 
-// dodaci na liniju
-AADD( aGLx, 1 )
-AADD( aGLx, 0 )
-AADD( aGLx, 0 )
-AADD( aGLx, "" )
-AADD( aGLx, 0 )
+   AAdd( aGLx, StrTran( __GLX, "x", cGlassNo ) )
+   AAdd( aGLx, cIdCode )
 
-return aGLx
+   // dodaci na liniju
+   AAdd( aGLx, 1 )
+   AAdd( aGLx, 0 )
+   AAdd( aGLx, 0 )
+   AAdd( aGLx, "" )
+   AAdd( aGLx, 0 )
+
+   RETURN aGLx
 
 
 // -----------------------------------------------
 // vraca specifikaciju recorda <GLx>
 // -----------------------------------------------
-function _get_glx()
-local aGLxSpec := {}
+FUNCTION _get_glx()
 
-set_keywords()
+   LOCAL aGLxSpec := {}
 
-AADD(aGLxSpec, { __GLX,      "C",    5 } )
-AADD(aGLxSpec, { "DESCRIPT", "C",   40 } )
-AADD(aGLxSpec, { "TYPE",     "N",    1 } )
-AADD(aGLxSpec, { "THICKNESS",  "N",  5 } )
-AADD(aGLxSpec, { "FACE_SIDE",  "N",  1 } )
-AADD(aGLxSpec, { "IDENT",      "C", 10 } )
-AADD(aGLxSpec, { "PATT_DIR",   "N",  1 } )
+   lisec_init_static_vars()
 
-return aGLxSpec
+   AAdd( aGLxSpec, { __GLX,        "C",   5 } )
+   AAdd( aGLxSpec, { "DESCRIPT",   "C",  40 } )
+   AAdd( aGLxSpec, { "TYPE",       "N",   1 } )
+   AAdd( aGLxSpec, { "THICKNESS",  "N",   5 } )
+   AAdd( aGLxSpec, { "FACE_SIDE",  "N",   1 } )
+   AAdd( aGLxSpec, { "IDENT",      "C",  10 } )
+   AAdd( aGLxSpec, { "PATT_DIR",   "N",   1 } )
+
+   RETURN aGLxSpec
 
 
 // ---------------------------------------------
@@ -451,43 +459,35 @@ return aGLxSpec
 // ------------------------------
 // dodaj u record <FRx>
 // -----------------------------
-function add_frx( cFrameNo, cIdCode )
-local aFrx := {}
+FUNCTION add_frx( cFrameNo, cIdCode )
 
-set_keywords()
+   LOCAL aFrx := {}
 
-AADD( aFRx, STRTRAN( __FRX, "x", cFrameNo ) )
-AADD( aFRx, cIdCode )
+   lisec_init_static_vars()
 
-// dodatna polja koja se nece citati !
-//AADD( aFRx, 0 )
-//AADD( aFRx, 0 )
-//AADD( aFRx, 0 )
-//AADD( aFRx, "" )
-//AADD( aFRx, 0 )
-//AADD( aFRx, 0 )
-//AADD( aFRx, 0 )
-//AADD( aFRx, 0 )
+   AAdd( aFRx, StrTran( __FRX, "x", cFrameNo ) )
+   AAdd( aFRx, cIdCode )
 
-return aFRx
+   RETURN aFRx
 
 
 // -----------------------------------------------
 // vraca specifikaciju recorda <FRx>
 // -----------------------------------------------
-function _get_frx()
-local aFRxSpec := {}
+FUNCTION _get_frx()
 
-set_keywords()
+   LOCAL aFRxSpec := {}
 
-AADD(aFRxSpec, { __FRX,      "C",    5 } )
-AADD(aFRxSpec, { "DESCRIPT", "C",   40 } )
-AADD(aFRxSpec, { "TYPE",     "N",    1 } )
-AADD(aFRxSpec, { "WIDTH",    "N",    5 } )
-AADD(aFRxSpec, { "HEIGHT",   "N",    5 } )
-AADD(aFRxSpec, { "IDENT",    "C",   10 } )
+   lisec_init_static_vars()
 
-return aFRxSpec
+   AAdd( aFRxSpec, { __FRX,      "C",    5 } )
+   AAdd( aFRxSpec, { "DESCRIPT", "C",   40 } )
+   AAdd( aFRxSpec, { "TYPE",     "N",    1 } )
+   AAdd( aFRxSpec, { "WIDTH",    "N",    5 } )
+   AAdd( aFRxSpec, { "HEIGHT",   "N",    5 } )
+   AAdd( aFRxSpec, { "IDENT",    "C",   10 } )
+
+   RETURN aFRxSpec
 
 
 
@@ -499,196 +499,177 @@ return aFRxSpec
 // ------------------------------
 // dodaj u record <TXT>
 // -----------------------------
-function add_txt( nVar, cT1, cT2, cT3, cT4, cT5, cT6, cT7, cT8, cT9, cT10 )
-local aTxt := {}
+FUNCTION add_txt( nVar, cT1, cT2, cT3, cT4, cT5, cT6, cT7, cT8, cT9, cT10 )
 
-set_keywords()
+   LOCAL aTxt := {}
 
-if nVar == nil
-	nVar := 1
-endif
+   lisec_init_static_vars()
 
-if nVar == 1
-	AADD( aTxt, __TXT )
-endif
+   IF nVar == nil
+      nVar := 1
+   ENDIF
 
-if nVar == 2
-	AADD( aTxt, __TX2 )
-endif
+   IF nVar == 1
+      AAdd( aTxt, __TXT )
+   ENDIF
 
-if nVar == 3
-	AADD( aTxt, __TX3 )
-endif
+   IF nVar == 2
+      AAdd( aTxt, __TX2 )
+   ENDIF
 
-AADD( aTxt, cT1 )
-AADD( aTxt, cT2 )
-AADD( aTxt, cT3 )
-AADD( aTxt, cT4 )
-AADD( aTxt, cT5 )
-AADD( aTxt, cT6 )
-AADD( aTxt, cT7 )
-AADD( aTxt, cT8 )
-AADD( aTxt, cT9 )
-AADD( aTxt, cT10 )
+   IF nVar == 3
+      AAdd( aTxt, __TX3 )
+   ENDIF
 
-return aTxt
+   AAdd( aTxt, cT1 )
+   AAdd( aTxt, cT2 )
+   AAdd( aTxt, cT3 )
+   AAdd( aTxt, cT4 )
+   AAdd( aTxt, cT5 )
+   AAdd( aTxt, cT6 )
+   AAdd( aTxt, cT7 )
+   AAdd( aTxt, cT8 )
+   AAdd( aTxt, cT9 )
+   AAdd( aTxt, cT10 )
+
+   RETURN aTxt
 
 
 // -----------------------------------------------
 // vraca specifikaciju recorda <TXT>
 // -----------------------------------------------
-function _get_txt( nVar )
-local aTxtSpec := {}
+FUNCTION _get_txt( nVar )
 
-set_keywords()
+   LOCAL aTxtSpec := {}
 
-if nVar == nil
-	nVar := 1
-endif
+   lisec_init_static_vars()
 
-if nVar == 1
-	AADD(aTxtSpec, { __TXT,      "C",    5 } )
-endif
+   IF nVar == nil
+      nVar := 1
+   ENDIF
 
-if nVar == 2
-	AADD(aTxtSpec, { __TX2,      "C",    5 } )
-endif
+   IF nVar == 1
+      AAdd( aTxtSpec, { __TXT,      "C",    5 } )
+   ENDIF
 
-if nVar == 3
-	AADD(aTxtSpec, { __TX3,      "C",    5 } )
-endif
+   IF nVar == 2
+      AAdd( aTxtSpec, { __TX2,      "C",    5 } )
+   ENDIF
 
-AADD(aTxtSpec, { "TEXT1",  "C",   40 } )
-AADD(aTxtSpec, { "TEXT2",  "C",   40 } )
-AADD(aTxtSpec, { "TEXT3",  "C",   40 } )
-AADD(aTxtSpec, { "TEXT4",  "C",   40 } )
-AADD(aTxtSpec, { "TEXT5",  "C",   40 } )
-AADD(aTxtSpec, { "TEXT6",  "C",   40 } )
-AADD(aTxtSpec, { "TEXT7",  "C",   40 } )
-AADD(aTxtSpec, { "TEXT8",  "C",   40 } )
-AADD(aTxtSpec, { "TEXT9",  "C",   40 } )
-AADD(aTxtSpec, { "TEXT10",  "C",   40 } )
+   IF nVar == 3
+      AAdd( aTxtSpec, { __TX3,      "C",    5 } )
+   ENDIF
 
-return aTxtSpec
+   AAdd( aTxtSpec, { "TEXT1",   "C",   40 } )
+   AAdd( aTxtSpec, { "TEXT2",   "C",   40 } )
+   AAdd( aTxtSpec, { "TEXT3",   "C",   40 } )
+   AAdd( aTxtSpec, { "TEXT4",   "C",   40 } )
+   AAdd( aTxtSpec, { "TEXT5",   "C",   40 } )
+   AAdd( aTxtSpec, { "TEXT6",   "C",   40 } )
+   AAdd( aTxtSpec, { "TEXT7",   "C",   40 } )
+   AAdd( aTxtSpec, { "TEXT8",   "C",   40 } )
+   AAdd( aTxtSpec, { "TEXT9",   "C",   40 } )
+   AAdd( aTxtSpec, { "TEXT10",  "C",   40 } )
 
-
-
-
-// --------------------------------------------------
-//
-//
-// FUNKCIJE ZA UPISIVANJE TEKSTA U TRF FAJL
-//
-//
-// --------------------------------------------------
-
+   RETURN aTxtSpec
 
 
 
 // ----------------------------------------
 // ispisi vrijednosti recorda
-// na osnovu aRec podataka 
+// na osnovu aRec podataka
 // i na osnovu aSpec - specifikacije polja
 // ----------------------------------------
-function write_rec( nH, aRec, aSpec )
-local i
-local nI
-local nII
-local cTmp := ""
-local cType 
-local nLen 
-local xVal
-local nVal1
-local nVal2
-local cTrans
-local aPom
+FUNCTION write_rec( nH, aRec, aSpec )
 
-set_keywords()
+   LOCAL i
+   LOCAL nI
+   LOCAL nII
+   LOCAL cTmp := ""
+   LOCAL cType
+   LOCAL nLen
+   LOCAL xVal
+   LOCAL nVal1
+   LOCAL nVal2
+   LOCAL cTrans
+   LOCAL aPom
 
-for i := 1 to LEN( aRec )
-	
-	// dodaj space, ali ne na prvoj
-	if i <> 1
-	
-		cTmp += __SPACE
-		
-	endif
-	
-	xVal := aRec[ i ]
-	cType := aSpec[ i, 2 ]
-	nLen := aSpec[ i, 3 ]
-	
-	if xVal == nil .or. EMPTY(xVal)
-		xVal := " "
-	endif
-	
-	// karakterni tip
-	if cType == "C"
-	
-		cTmp += PADR( xVal , nLen, " " )
-	
-	endif
+   lisec_init_static_vars()
 
-	// numericki tip
-	if cType == "N"
+   FOR i := 1 TO Len( aRec )
 	
-		aPom := TokToNiz( ALLTRIM(STR(nLen)), "." )
-		nVal1 := 0
-		nVal2 := 0
+      // dodaj space, ali ne na prvoj
+      IF i <> 1
+	
+         cTmp += __SPACE
 		
-		for nI := 1 to LEN( aPom )
+      ENDIF
+	
+      xVal := aRec[ i ]
+      cType := aSpec[ i, 2 ]
+      nLen := aSpec[ i, 3 ]
+	
+      IF xVal == NIL .OR. Empty( xVal )
+         xVal := " "
+      ENDIF
+	
+      // karakterni tip
+      IF cType == "C"
+	
+         cTmp += PadR( xVal, nLen, " " )
+	
+      ENDIF
+
+      // numericki tip
+      IF cType == "N"
+	
+         aPom := TokToNiz( AllTrim( Str( nLen ) ), "." )
+         nVal1 := 0
+         nVal2 := 0
 		
-			if nI == 1
-				nVal1 := VAL( aPom[nI] )
-			endif
+         FOR nI := 1 TO Len( aPom )
+		
+            IF nI == 1
+               nVal1 := Val( aPom[ nI ] )
+            ENDIF
 			
-			if nI == 2
-				nVal2 := VAL( aPom[nI] )
-			endif
+            IF nI == 2
+               nVal2 := Val( aPom[ nI ] )
+            ENDIF
 			
-		next
+         NEXT
 		
-		cTrans := REPLICATE( "9", nVal1 )
+         cTrans := Replicate( "9", nVal1 )
 			
-		if nVal2 > 0
-			cTrans += "." + REPLICATE( "9", nVal2 )
-		endif
+         IF nVal2 > 0
+            cTrans += "." + Replicate( "9", nVal2 )
+         ENDIF
 		
-		nTmpLen := LEN( cTrans )
+         nTmpLen := Len( cTrans )
 		
-		if VALTYPE(xVal) == "N"
+         IF ValType( xVal ) == "N"
 			
-			cTmp += PADL( ALLTRIM( STR(xVal, nVal1, nVal2 ) ), nTmpLen, "0" )
+            cTmp += PadL( AllTrim( Str( xVal, nVal1, nVal2 ) ), nTmpLen, "0" )
 		
-		endif
+         ENDIF
 		
-		if VALTYPE(xVal) == "C"
+         IF ValType( xVal ) == "C"
 		
-			if xVal == " "
-				xVal := 0
-			endif
+            IF xVal == " "
+               xVal := 0
+            ENDIF
 			
 			
-			cTmp += PADL ( ALLTRIM( TRANSFORM( xVal, cTrans )), nTmpLen, "0" )
+            cTmp += PadL ( AllTrim( Transform( xVal, cTrans ) ), nTmpLen, "0" )
 			
-		endif
+         ENDIF
 
-	endif
+      ENDIF
 
-next
+   NEXT
 
-// upisi u fajl
-write2file( nH, cTmp, .t. )
+   write2file( nH, cTmp, .T. )
 
-return
-
-// -------------------------------------------
-// konverzija windows
-// -------------------------------------------
-static function win_txt_conv( cTxt )
-
-cTxt := STRTRAN(cTxt, "È", "¬" )
-
-return
+   RETURN
 
 

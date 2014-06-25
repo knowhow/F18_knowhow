@@ -13,9 +13,7 @@
 
 #include "rnal.ch"
 
-// --------------------------------------------------------
-// meni exporta
-// --------------------------------------------------------
+
 FUNCTION rnal_export_menu( nDoc_no, aDocList, lTemp, lWriteRel )
 
    LOCAL mX := m_x
@@ -26,9 +24,9 @@ FUNCTION rnal_export_menu( nDoc_no, aDocList, lTemp, lWriteRel )
 
    AAdd( _opc, "1. rnal -> GPS.opt (Lisec)         " )
    AAdd( _opcexe, {|| exp_2_lisec( nDoc_no, lTemp, lWriteRel ), _izbor := 0 } )
-   AAdd( _opc, "2. rnal -> FMK    " )
+   AAdd( _opc, "2. rnal -> FAKT   " )
    AAdd( _opcexe, {|| exp_2_fmk( lTemp, nDoc_no, aDocList ), _izbor := 0 } )
-   AAdd( _opc, "3. rnal -> FMK (zadnja otpremnica) " )
+   AAdd( _opc, "3. rnal -> FAKT (zadnja otpremnica) " )
    AAdd( _opcexe, {|| exp_2_fmk( lTemp, nDoc_no, aDocList, .T. ), _izbor := 0 } )
 
    f18_menu( "export", .f., @_izbor, _opc, _opcexe )

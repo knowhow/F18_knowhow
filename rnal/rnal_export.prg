@@ -56,7 +56,6 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
    LOCAL aArticles
    LOCAL aElem
 
-   // napuni matrice sa specifikacijama record-a
    aRelSpec := _get_rel()
    aOrdSpec := _get_ord()
    aPosSpec := _get_pos()
@@ -532,5 +531,5 @@ STATIC FUNCTION _a_gx_fx( nHnd, cGl1, cGl2, cGl3, ;
 
 STATIC FUNCTION dodaj_za_bruseno( nDimension )
 
-   RETRUN nDimension + gBrusenoStakloDodaj
+   RETURN nDimension + gBrusenoStakloDodaj
 

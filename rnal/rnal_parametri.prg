@@ -171,7 +171,7 @@ FUNCTION ed_ex_params()
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Dodaj (mm) na bruseno staklo:", 45 ) GET gAddToDim PICT "9999.99"
+   @ m_x + nX, m_y + 2 SAY8 PadL( "Dodaj (mm) na brušeno staklo:", 45 ) GET gBrusenoStakloDodaj PICT "9999.99"
 
    nX += 2
 
@@ -495,7 +495,7 @@ FUNCTION read_ex_params()
 
    gExpOutDir := fetch_metric( "rnal_export_lokacija", my_user(), gExpOutDir )
    gExpAlwOvWrite := fetch_metric( "rnal_export_overwrite_file", my_user(), gExpAlwOvWrite )
-   gAddToDim := fetch_metric( "rnal_dodatak_na_dimenzije", nil, gAddToDim )
+   gBrusenoStakloDodaj := fetch_metric( "rnal_dodatak_na_dimenzije", nil, gBrusenoStakloDodaj )
 
    RETURN
 
@@ -508,7 +508,7 @@ FUNCTION write_ex_params()
 
    set_metric( "rnal_export_lokacija", my_user(), gExpOutDir )
    set_metric( "rnal_export_overwrite_file", my_user(), gExpAlwOvWrite )
-   set_metric( "rnal_dodatak_na_dimenzije", nil, gAddToDim )
+   set_metric( "rnal_dodatak_na_dimenzije", nil, gBrusenoStakloDodaj )
 
    RETURN
 

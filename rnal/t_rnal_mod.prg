@@ -169,7 +169,7 @@ METHOD setGVars()
    PUBLIC gFaPrivDir := Space( 300 )
    PUBLIC gPoKumDir := Space( 300 )
    PUBLIC gPoPrivDir := Space( 300 )
-   PUBLIC gAddToDim := 3
+   PUBLIC gBrusenoStakloDodaj := 3
 
    // default joker glass type
    PUBLIC gDefGlType

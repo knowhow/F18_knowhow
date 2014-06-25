@@ -510,7 +510,7 @@ FUNCTION rnal_dimenzije_prepusta_za_nalog( cValue, nW, nH )
 
 
 
-FUNCTION get_prep_dim( cVal, nW, nH )
+FUNCTION izracunaj_dimenzije_prepusta( cVal, nW, nH )
    RETURN rnal_dimenzije_prepusta_za_nalog( cVal, @nW, @nH )
 
 

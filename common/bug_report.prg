@@ -255,17 +255,18 @@ FUNCTION RaiseError( cErrMsg )
 // ---------------------------------
 STATIC FUNCTION send_email( err_obj )
 
+   LOCAL _mail_params
    LOCAL _body, _subject
    LOCAL _attachment
    LOCAL _answ := fetch_metric( "bug_report_email", my_user(), "A" )
 
    DO CASE
          CASE _answ $ "D#N#A"
-              if _answ $ "DN"
-                   if Pitanje(, "Poslati poruku greške email-om podrški bring.out-a (D/N) ?", _answ ) == "N"
+              IF _answ $ "DN"
+                   IF Pitanje(, "Poslati poruku greške email-om podrški bring.out-a (D/N) ?", _answ ) == "N"
                         RETURN .F.
-                   endif
-              endif
+                   ENDIF
+              ENDIF
          OTHERWISE
               RETURN .F.
    ENDCASE
@@ -307,6 +308,7 @@ STATIC FUNCTION send_email( err_obj )
 // ----------------------------------------------------------------
 // ----------------------------------------------------------------
 STATIC FUNCTION send_email_attachment()
+
    LOCAL _a_files := {}
    LOCAL _path := my_home_root()
    LOCAL _server := my_server_params()
@@ -314,14 +316,12 @@ STATIC FUNCTION send_email_attachment()
    LOCAL _log_file, _log_params
    LOCAL _error_file := "error.txt"
  
-   // setovanje naziva izlaznog fajla
    _filename := ALLTRIM( _server["database"] )
    _filename += "_" + ALLTRIM( f18_user() )
    _filename += "_" + DTOS( DATE() ) 
    _filename += "_" + STRTRAN( TIME(), ":", "" ) 
    _filename += ".zip"
 
-   // izvuci podatke iz server log-a
    _log_params := hb_hash()
    _log_params["date_from"] := DATE()
    _log_params["date_to"] := DATE()
@@ -331,7 +331,6 @@ STATIC FUNCTION send_email_attachment()
    _log_params["doc_oper"] := "N"
    _log_file := f18_view_log( _log_params )
 
-   // dodaj fajlove za zip kompresiju
    AADD( _a_files, _error_file )
    AADD( _a_files, _log_file )
 

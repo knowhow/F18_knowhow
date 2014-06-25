@@ -640,9 +640,7 @@ FUNCTION a4_line( cTip )
    RETURN cLine
 
 
-// ---------------------------------------------------------------------------
-// funkcija za ispis podataka o kupcu, dokument, datum fakture, otpremnica itd..
-STATIC FUNCTION pf_a4_kupac()
+FUNCTION pf_a4_kupac()
 
    LOCAL cPartMjesto
    LOCAL cPartPTT
@@ -679,9 +677,7 @@ STATIC FUNCTION pf_a4_kupac()
    LOCAL nRowsIspod
    LOCAL nRowsOdTabele
 
-   // koliko je redova odstampano u zaglavlju
    LOCAL nPRowsDelta
-
 
    nPRowsDelta := PRow()
 

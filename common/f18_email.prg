@@ -39,8 +39,6 @@
 // ---------------------------------------------------------
 FUNCTION f18_email_send( mail_params, attach )
 
-   // default parametri
-   // koje necemo setovati
    LOCAL _pop_srv := ""
    LOCAL _smtp_pass := ""
    LOCAL _pop_auth := .F.
@@ -48,7 +46,7 @@ FUNCTION f18_email_send( mail_params, attach )
    LOCAL _timeout := NIL
    LOCAL _tls := .F.
    LOCAL _encoding := ""
-   LOCAL _charset := ""
+   LOCAL _charset := "UTF-8"
    LOCAL _priority := NIL
    LOCAL _read := NIL
    LOCAL _trace := .F.
@@ -56,7 +54,6 @@ FUNCTION f18_email_send( mail_params, attach )
    LOCAL _files := NIL
    LOCAL _server, _port, _user, _pass, _from, _to, _cc, _bcc, _repl_to, _body, _subject
 
-   // parametri iz mail matrice
    _server := mail_params[ "server" ]
    _port := mail_params[ "port" ]
    _user := mail_params[ "user_name" ]
@@ -76,7 +73,6 @@ FUNCTION f18_email_send( mail_params, attach )
       _files := attach
    ENDIF
 
-   // posalji email
    IF hb_SendMail( _server, ;
          _port, ;
          _from, ;
@@ -121,7 +117,6 @@ FUNCTION f18_email_prepare( subject, body, m_from, m_to, m_cc, m_bcc, m_reply )
 
    LOCAL _mail_params := hb_Hash()
 
-   // ucitaj parametre F18
    _mail_params[ "trace" ] := .F.
    _mail_params[ "no_auth" ] := NIL
    _mail_params[ "server" ] := AllTrim( fetch_metric( "email_server", my_user(), "" ) )
@@ -129,9 +124,6 @@ FUNCTION f18_email_prepare( subject, body, m_from, m_to, m_cc, m_bcc, m_reply )
    _mail_params[ "user_name" ] := AllTrim( fetch_metric( "email_user_name", my_user(), "" ) )
    _mail_params[ "user_password" ] := AllTrim( fetch_metric( "email_user_pass", my_user(), "" ) )
    _mail_params[ "smtp_password" ] := ""
-
-   // sve ostalo setuj default, ako ne postoji
-   // ili proslijedi iz funkcije
 
    IF m_from == NIL
       _mail_params[ "mail_from" ] := AllTrim( fetch_metric( "email_from", my_user(), "" ) )
@@ -223,7 +215,7 @@ FUNCTION f18_email_test()
 
 FUNCTION email_hash_za_podrska_bring_out( subject, body )
 
-   LOCAL _mail_params, _attach, _body, _subject, _from, _to, _cc
+   LOCAL _mail_params, _from, _to
    LOCAL _srv, _port, _username, _pwd
 
    _to := "F18@bug.out.ba"

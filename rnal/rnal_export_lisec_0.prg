@@ -424,8 +424,7 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
 	
       ENDIF
 
-      // upisi <GLx> <FRx>
-      _a_gx_fx( nHnd, cGl1, cGl2, cGl3, cFr1, cFr2, aGlSpec, aFrSpec )
+      upisi_glx_frx( nHnd, cGl1, cGl2, cGl3, cFr1, cFr2, aGlSpec, aFrSpec )
 
       // ako ima napomena...
       IF !Empty( field->doc_it_des )
@@ -473,12 +472,7 @@ STATIC FUNCTION abs_unit( nGl1, nUnit )
    RETURN nStep
 
 
-// --------------------------------------------------
-// upisi vrijednosti gx - fx
-// --------------------------------------------------
-STATIC FUNCTION _a_gx_fx( nHnd, cGl1, cGl2, cGl3, ;
-      cFr1, cFr2, ;
-      aGlSpec, aFrSpec )
+STATIC FUNCTION  upisi_glx_frx( nHnd, cGl1, cGl2, cGl3, cFr1, cFr2, aGlSpec, aFrSpec )
 
    // upisi <GLx>, <FRx>
    IF !Empty( cGl1 )
@@ -487,24 +481,28 @@ STATIC FUNCTION _a_gx_fx( nHnd, cGl1, cGl2, cGl3, ;
       write_rec( nHnd, aGl1, aGlSpec )
 		
    ENDIF
+
    IF !Empty( cFr1 )
 			
       aFr1 := add_frx( "1", cFr1 )
       write_rec( nHnd, aFr1, aFrSpec )
 			
    ENDIF
+
    IF !Empty( cGl2 )
 			
       aGl2 := add_glx( "2", cGl2 )
       write_rec( nHnd, aGl2, aGlSpec )
 			
    ENDIF
+
    IF !Empty( cFr2 )
 			
       aFr2 := add_frx( "2", cFr2 )
       write_rec( nHnd, aFr2, aFrSpec )
 			
    ENDIF
+
    IF !Empty( cGl3 )
 
       aGl3 := add_glx( "3", cGl3 )

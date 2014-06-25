@@ -115,9 +115,9 @@ FUNCTION f18_odt_generate( template, xml_file, output_file, test_mode )
 
       MsgBeep( cErr )
 
-      IF fetch_metric( "bug_report_email", my_user(), "A" ) $ "D#A"
-         odt_na_email_podrska( cErr )
-      ENDIF
+      //IF fetch_metric( "bug_report_email", my_user(), "A" ) $ "D#A"
+        // odt_na_email_podrska( cErr )
+      //ENDIF
 
       RETURN lRet
 

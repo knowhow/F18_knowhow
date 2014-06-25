@@ -85,8 +85,7 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
    SEEK docno_str( nDoc_no )
 
 
-   // ako je nalog 0 ili manje, znaci da nema broja
-   // nije odstampan !
+   // ako je nalog 0 ili manje, znaci da nema broja nije odstampan !
 
    IF nDoc_no <= 0
       MsgBeep( "Broj naloga: " + AllTrim( Str( nDoc_no ) ) + "#Odradite prvo stampu naloga !" )
@@ -110,7 +109,7 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
 
    Box(, 2, 60 )
 
-   @ m_x + 1, m_y + 2 SAY PadR( "upisujem osnovne podatke", 50 )
+   @ m_x + 1, m_y + 2 SAY PadR( "Upisujem osnovne podatke", 50 )
 
    // upisi <REL>
    aRel := add_rel( "" )
@@ -158,7 +157,7 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
    ELSE
 
       SELECT ( nTArea )
-      msgbeep( "Nisu ispravni podaci narudzbe !!!!#Operacija prekinuta..." )
+      Msgbeep( "Nisu ispravni podaci narudžbe !#Operacija prekinuta..." )
 
       BoxC()
 
@@ -298,7 +297,7 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
             ENDIF
          ENDIF
 
-         // kod prepust stakala - takodjer gledaj druge dimenzije
+         // kod stakala sa prepustom - takodjer gledaj druge dimenzije
          IF "A_PREP" $ cJoker
 			
             lPo2Write := .T.
@@ -387,14 +386,7 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
             field->doc_it_qtt <> 0 )
 		
          // ubaci u matricu podatke
-         aPos := add_pos( field->doc_it_no, "", nil, field->doc_it_qtt, ;
-            nGl1w, ;
-            nGl1h, ;
-            cPosGl1, ;
-            cPosFr1, ;
-            cPosGl2, ;
-            cPosFr2, ;
-            cPosGl3 )
+         aPos := add_pos( field->doc_it_no, "", nil, field->doc_it_qtt, nGl1w, nGl1h, cPosGl1, cPosFr1, cPosGl2, cPosFr2, cPosGl3 )
 
          // upisi <POS>
          write_rec( nHnd, aPos, aPosSpec )
@@ -409,25 +401,24 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
             nGl1w, ;
             nGl1h, ;
             0, 0, 0, 0, ;
-            0, ; // _step( nGl1w, nUnit_w ), ;
-            0, ; // _step( nGl1h, nUnit_h ), ;
+            0, ;
+            0, ; 
             0, 0, ;
             nGl2w, ;
             nGl2h, ;
             0, 0, 0, 0, ;
-            _step( nGl2w, nGl1w ), ;
-            _step( nGl2h, nGl1h ), ;
+            abs_unit( nGl2w, nGl1w ), ;
+            abs_unit( nGl2h, nGl1h ), ;
             0, 0, ;
             0, 0, ;
             nGl3w, ;
             nGl3h, ;
             0, 0, 0, 0, ;
-            _step( nGl3w, nGl2w ), ;
-            _step( nGl3h, nGl2h ), ;
+            abs_unit( nGl3w, nGl2w ), ;
+            abs_unit( nGl3h, nGl2h ), ;
             0, 0, ;
             0, 0 )
 	
-         // upisi <PO2>
          write_rec( nHnd, aPo2, aPo2Spec )
 		
 	
@@ -466,25 +457,20 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
 
    RETURN
 
-// ----------------------------------------------------
-// step vrijednost kod razlicite dimenzije stakla
-// nGl1 - vrijednost za staklo
-// nUnit - vrijednost za kompletnu jedinicu
-// ----------------------------------------------------
-STATIC FUNCTION _step( nGl1, nUnit )
+/*
+ step vrijednost kod razlicite dimenzije stakla
+ nGl1 - vrijednost za staklo
+ nUnit - vrijednost za kompletnu jedinicu
+*/
+STATIC FUNCTION abs_unit( nGl1, nUnit )
 
-   LOCAL nZero := 0
    LOCAL nStep := 0
 
-   DO CASE
-   CASE ( nGl1 <> 0 ) .AND. ( nGl1 <> nUnit )
-		
+   IF ( nGl1 <> 0 ) .AND. ( nGl1 <> nUnit )
       nStep := Abs( nGl1 - nUnit )
-      RETURN nStep
+   ENDIF
 
-   ENDCASE
-
-   RETURN nZero
+   RETURN nStep
 
 
 // --------------------------------------------------

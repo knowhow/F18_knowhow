@@ -355,7 +355,7 @@ FUNCTION add_po2( cIdCode, ;
 
 // -----------------------------------------------
 // vraca specifikaciju recorda <PO2>
-// dodatne informacije na samom rekord-u iz <POS>
+// dodatne informacije na samom rekordu iz <POS>
 // -----------------------------------------------
 FUNCTION _get_po2()
 

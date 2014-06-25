@@ -13,7 +13,6 @@
 #include "fmk.ch"
 
 
-
 FUNCTION st_pf_a4_2( lStartPrint )
 
    LOCAL cBrDok

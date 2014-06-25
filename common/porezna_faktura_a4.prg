@@ -640,7 +640,7 @@ FUNCTION a4_line( cTip )
    RETURN cLine
 
 
-FUNCTION pf_a4_kupac()
+FUNCTION pf_a4_kupac( cRazmak )
 
    LOCAL cPartMjesto
    LOCAL cPartPTT
@@ -668,41 +668,36 @@ FUNCTION pf_a4_kupac()
    LOCAL nLines
    LOCAL i
    LOCAL cLinijaNarOtp
-
-   // nRowsIznad - Redova iznad kupca
-   // nRowsIspod - Redova ispod kupca - izmedju dna kupac - tabela
-   // nRowsOdTabele - Redova izmedju broja ugovora i tabele
-   // ---------------------------------------------------------------------------
    LOCAL nRowsIznad
    LOCAL nRowsIspod
    LOCAL nRowsOdTabele
-
    LOCAL nPRowsDelta
+
+   IF cRazmak <> NIL
+      RAZMAK := cRazmak
+   ENDIF
 
    nPRowsDelta := PRow()
 
+   nSw4 := Val( get_dtxt_opis( "X07" ) )
    nRowsIznad := Val( get_dtxt_opis( "X01" ) )
    nRowsIspod := Val( get_dtxt_opis( "X02" ) )
    nRowsOdTabele := Val( get_dtxt_opis( "X03" ) )
 
    nShowRj := Val( get_dtxt_opis( "X10" ) )
 
-   // redova iznad
    IF nRowsIznad == nil
       nRowsIznad := 0
    ENDIF
 
-   // redova ispod
    IF nRowsIspod == nil
       nRowsIspod := 0
    ENDIF
 
-   // redova ispod linije broj narudzbe/otpremnice i tabele
    IF nRowsOdTabele == nil
       nRowsOdTabele := 0
    ENDIF
 
-   // prije broja dokumenta prikazi i idfirma (radna jedinica)
    IF nShowRj == nil
       nShowRj := 0
    ENDIF
@@ -714,9 +709,6 @@ FUNCTION pf_a4_kupac()
    cDatDok := DToC( datdok )
 
    IF Empty( datIsp )
-      // posto je ovo obavezno polje na racunu
-      // stavicemo ako nije uneseno da je datum isporuke
-      // jednak datumu dokumenta
       cDatIsp := DToC( datDok )
    ELSE
       cDatIsp := DToC( datisp )
@@ -752,9 +744,7 @@ FUNCTION pf_a4_kupac()
       cIdRj := get_dtxt_opis( "D10" )
    ENDIF
 
-   // K10 - partner mjesto
    cPartMjesto := get_dtxt_opis( "K10" )
-   // K11 - partner PTT
    cPartPTT := get_dtxt_opis( "K11" )
    cInoDomaci := AllTrim( get_dtxt_opis( "P11" ) )
 
@@ -768,7 +758,6 @@ FUNCTION pf_a4_kupac()
 
    cPom := ""
 
-   // redova iznad
    FOR i := 1 TO nRowsIznad
       ?
    NEXT
@@ -777,7 +766,6 @@ FUNCTION pf_a4_kupac()
 
    DO CASE
    CASE cIdVd == "12" .AND. cInoDomaci == "KOMISION"
-      // komisiona otpremnica
       cPom := lokal( "Komisionar:" )
       lKomision := .T.
 	
@@ -785,7 +773,6 @@ FUNCTION pf_a4_kupac()
 
       DO CASE
       CASE cIdVd $ "10#11#20#22#29"
-         // ino partner
          cPom := lokal( "Ino-Kupac:" )
       OTHERWISE
          cPom := lokal( "Partner" )
@@ -795,9 +782,7 @@ FUNCTION pf_a4_kupac()
 
       DO CASE
       CASE cIdVd == "12"
-         // otpremnica - subjekat koji zaduzuje
          cPom := lokal( "Prima:" )
-		
       CASE cIdVd $ "10#11#20#29"
          cPom := lokal( "Kupac:" )
       OTHERWISE
@@ -805,12 +790,10 @@ FUNCTION pf_a4_kupac()
       ENDCASE
 		
    OTHERWISE
-      // obracun PDV-a po nekom osnovu = 0
       DO CASE
       CASE cIdVd == "12"
          cPom := lokal( "Zaduzuje:" )
       CASE cIdVd $ "10#11#20#29"
-         // kupac oslobodjen PDV-a po nekom clanu ZPDV
          cPom := lokal( "Kupac, oslobodjen PDV, cl. " ) + AllTrim( cInoDomaci )
       OTHERWISE
          cPom := lokal( "Partner" )
@@ -823,46 +806,38 @@ FUNCTION pf_a4_kupac()
    p_line( Replicate( "-", nSw4 ), 10, .F. )
    I_OFF
 
-   // prvi red kupca, 10cpi, bold
    cPom := AllTrim( aKupac[ 1 ] )
    IF Empty( cPom )
       cPom := "-"
    ENDIF
    p_line( Space( 2 ) + PadR( cPom, LEN_KUPAC ), 10, .T. )
    B_OFF
-   // u istom redu mjesto
    ?? PadL( cMjesto + ", " + cDatDok, LEN_DATUM )
 
-
-   // adresa, 10cpi, bold
    cPom := AllTrim( cKAdresa )
    IF Empty( cPom )
       cPom := "-"
    ENDIF
    p_line( Space( 2 ) + PadR( cPom, LEN_KUPAC ), 10, .T. )
    B_OFF
-   // u istom redu datum isporuke
    IF cDatIsp <> DToC( CToD( "" ) )
       IF !( cIdVd $ "12#00#01" )
          ?? PadL( lokal( "Datum isporuke: " ) + cDatIsp, LEN_DATUM )
       ENDIF
    ENDIF
 
-   // mjesto
    cPom := AllTrim( cKMjesto )
    IF Empty( cPom )
       cPom := "-"
    ENDIF
    p_line( Space( 2 ) + PadR( cPom, LEN_KUPAC ), 10, .T. )
    B_OFF
-   // u istom redu datum valute
    IF cDatVal <> DToC( CToD( "" ) )
       IF !( cIdVd $ "12#00#01#20" )
          ?? PadL( lokal( "Datum valute: " ) + cDatVal, LEN_DATUM )
       ENDIF
    ENDIF
 
-   // identifikacijski broj
    cPom := AllTrim( cKIdBroj )
    IF Empty( cPom )
       cPom := "-"
@@ -870,7 +845,6 @@ FUNCTION pf_a4_kupac()
    cPom := lokal( "ID broj: " ) + cPom
    p_line( Space( 2 ) + PadR( cPom, LEN_KUPAC ), 10, .F. )
 
-   // pdv broj, ako postoji
    IF !EMPTY( cKPdvBroj )
       cPom := AllTrim( cKPdvBroj )
       IF Empty( cPom )
@@ -901,9 +875,7 @@ FUNCTION pf_a4_kupac()
 
    IF !Empty( cDokVeza ) .AND. cDokVeza <> "-"
 	
-      // specificno za radni nalog
       cDokVeza := "Veza: " + AllTrim( cDokVeza )
-	
       aDokVeza := SjeciStr( cDokVeza, 70 )
 	
       FOR i := 1 TO Len( aDokVeza )
@@ -1174,15 +1146,12 @@ FUNCTION show_popust( nPopust )
 // ---------------------------------------------
 FUNCTION p_line( cPLine, nCpi, lBold, lNewLine )
 
-   // ako nije prazno telefon ispisi
-
    IF lNewLine == nil
       lNewline := .F.
    ENDIF
 
    IF Empty( cPLine )
       IF lNewLine
-         // odstampaj i praznu liniju
          IF Len( cPLine ) == 0
             cPLine := " "
          ENDIF
@@ -1191,12 +1160,9 @@ FUNCTION p_line( cPLine, nCpi, lBold, lNewLine )
       ENDIF
    ENDIF
 
-
-   // odstapaj razmak u COND rezimu
    ?
    P_COND
    ?? RAZMAK
-   // nakon toga idi na rezim ispisa linije
    DO CASE
    CASE ( nCpi == 12 )
       P_12CPI

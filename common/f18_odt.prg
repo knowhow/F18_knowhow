@@ -23,16 +23,24 @@ STATIC __java_run_cmd := "java -Xmx128m -jar"
 STATIC __util_path
 STATIC __current_odt
 
-// -------------------------------------------------------------------
-// generisanje odt reporta putem jodreports
-//
-// - template - naziv template fajla (npr. f_01.odt)
-// - xml_file - putanja + naziv fajla (npr. c:/data.xml)
-// - output_file - putanja + naziv fajla (npr. c:/out.odt)
-// - test_mode - testiranje opcije, samo za windows
-//
-// -------------------------------------------------------------------
-FUNCTION f18_odt_generate( template, xml_file, output_file, test_mode )
+
+
+
+/*
+   Opis: generisanja odt dokumenta na osnovu XML fajla i ODT template-a putem jodreports
+
+   Usage: generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file )
+
+   Params:
+       cTemplate - lokacija + naziv tempate fajla (template ODT)
+       cXml_file - lokacija + naziv xml fajla
+       cOutput_file - lokacija + naziv izlaznog ODT fajla koji će se generisati
+
+   Returns: 
+      .T. - ukoliko je operacija uspješna
+      .F. - ukoliko je neuspješna
+*/
+FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file )
 
    LOCAL lRet := .F.
    LOCAL _ok := .F.
@@ -44,35 +52,31 @@ FUNCTION f18_odt_generate( template, xml_file, output_file, test_mode )
    LOCAL _jod_full_path
    LOCAL cErr := ""
 
-   IF ( xml_file == NIL )
+   IF ( cXml_file == NIL )
       __xml_file := my_home() + DATA_XML_FILE
    ELSE
-      __xml_file := xml_file
+      __xml_file := cXml_file
    ENDIF
 
-   IF ( output_file == NIL )
-      __output_odt := my_home() + gen_random_odt_name()
+   IF ( cOutput_file == NIL )
+      __output_odt := my_home() + naziv_izlaznog_odt_fajla()
    ELSE
-      __output_odt := output_file
+      __output_odt := cOutput_file
    ENDIF
 
    __current_odt := __output_odt
 
-   IF ( test_mode == NIL )
-      test_mode := .F.
-   ENDIF
-
-   _ok := _copy_odt_template( template )
+   _ok := kopiraj_odt_template_u_home_path( cTemplate )
 
    IF !_ok
       RETURN _ok
    ENDIF
 
-   delete_odt_files()
+   brisi_odt_fajlove_iz_home_path()
 
    log_write( "ODT report gen: pobrisao fajl " + __output_odt, 7 )
 
-   _template := my_home() + template
+   _template := my_home() + cTemplate
 
    __util_path := get_util_path()
    _jod_full_path := __util_path + __jod_reports
@@ -83,12 +87,12 @@ FUNCTION f18_odt_generate( template, xml_file, output_file, test_mode )
       RETURN lRet
    ENDIF
 
-#ifdef __PLATFORM__WINDOWS
-   _template := '"' + _template + '"'
-   __xml_file := '"' + __xml_file + '"'
-   __output_odt := '"' + __output_odt + '"'
-   _jod_full_path := '"' + _jod_full_path + '"'
-#endif
+   #ifdef __PLATFORM__WINDOWS
+      _template := '"' + _template + '"'
+      __xml_file := '"' + __xml_file + '"'
+      __output_odt := '"' + __output_odt + '"'
+      _jod_full_path := '"' + _jod_full_path + '"'
+   #endif
 
    __template := _template
 
@@ -129,10 +133,16 @@ FUNCTION f18_odt_generate( template, xml_file, output_file, test_mode )
 
 
 
-// ---------------------------------------------------------
-// generise random odt out file name
-// ---------------------------------------------------------
-STATIC FUNCTION gen_random_odt_name()
+/*
+   Opis: generiše naziv izlaznog ODT fajla po inkrementalnom brojaču
+         koristi se radi poziva ODT štampe više puta
+
+         out_0001.odt
+         out_0002.odt
+         itd...
+*/
+
+STATIC FUNCTION naziv_izlaznog_odt_fajla()
 
    LOCAL _i
    LOCAL _tmp := "out.odt"
@@ -149,10 +159,7 @@ STATIC FUNCTION gen_random_odt_name()
 
 
 
-// -----------------------------------------------------------------
-// brise odt fajlove
-// -----------------------------------------------------------------
-STATIC FUNCTION delete_odt_files()
+STATIC FUNCTION brisi_odt_fajlove_iz_home_path()
 
    LOCAL _tmp
    LOCAL _f_path
@@ -178,28 +185,25 @@ STATIC FUNCTION delete_odt_files()
 
 
 
-// ------------------------------------------------------------------
-// vraca util path po operativnom sistemu
-// ------------------------------------------------------------------
 STATIC FUNCTION get_util_path()
 
    LOCAL _path := ""
 
-#ifdef __PLATFORM__WINDOWS
-
-   _path := "c:" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
-#else
-   _path := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
-#endif
+   #ifdef __PLATFORM__WINDOWS
+      _path := "c:" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+   #else
+      _path := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+   #endif
 
    RETURN _path
 
 
 
-// -----------------------------------------------------------------
-// kopiranje odt template fajla
-// -----------------------------------------------------------------
-STATIC FUNCTION _copy_odt_template( template )
+/*
+   Opis: kopira template sa lokacije /knowhowERP/templates => home path
+*/
+
+STATIC FUNCTION kopiraj_odt_template_u_home_path( cTemplate )
 
    LOCAL _ret := .F.
    LOCAL _a_source, _a_template
@@ -207,12 +211,12 @@ STATIC FUNCTION _copy_odt_template( template )
    LOCAL _temp_size, _temp_date, _temp_time
    LOCAL _copy := .F.
 
-   IF !File( my_home() + template )
+   IF !File( my_home() + cTemplate )
       _copy := .T.
    ELSE
 	
-      _a_source := Directory( my_home() + template )
-      _a_template := Directory( F18_TEMPLATE_LOCATION + template )
+      _a_source := Directory( my_home() + cTemplate )
+      _a_template := Directory( F18_TEMPLATE_LOCATION + cTemplate )
 
       _src_size := AllTrim( Str( _a_source[ 1, 2 ] ) )
       _src_date := DToS( _a_source[ 1, 3 ] )
@@ -229,10 +233,10 @@ STATIC FUNCTION _copy_odt_template( template )
    ENDIF
 
    IF _copy
-      IF File( F18_TEMPLATE_LOCATION + template )
-         FileCopy( F18_TEMPLATE_LOCATION + template, my_home() + template )
+      IF File( F18_TEMPLATE_LOCATION + cTemplate )
+         FileCopy( F18_TEMPLATE_LOCATION + cTemplate, my_home() + cTemplate )
       ELSE
-         MsgBeep( "Fajl " + F18_TEMPLATE_LOCATION + template + " ne postoji !???" )
+         MsgBeep( "Fajl " + F18_TEMPLATE_LOCATION + cTemplate + " ne postoji !???" )
          RETURN _ret
       ENDIF
    ENDIF
@@ -242,74 +246,70 @@ STATIC FUNCTION _copy_odt_template( template )
    RETURN _ret
 
 
-// ------------------------------------------------------------
-// kopiraj fajl na lokaciju
-// ------------------------------------------------------------
-FUNCTION f18_odt_copy( output_file, destination_file )
+
+
+FUNCTION f18_odt_copy( cOutput_file, cDestination_file )
 
    LOCAL _ok := .F.
 
-   IF ( output_file == NIL )
+   IF ( cOutput_file == NIL )
       __output_odt := __current_odt
    ELSE
-      __output_odt := output_file
+      __output_odt := cOutput_file
    ENDIF
 
-   FileCopy( __output_odt, destination_file )
+   FileCopy( __output_odt, cDestination_file )
 
    RETURN
 
 
 
+/*
+   Opis: otvara i prikazuje ODT fajl
 
-// -------------------------------------------------------------------
-// stampanje odt fajla
-//
-// - output_file - naziv fajla za prikaz (npr. c:/out.odt)
-// - from_params - .t. ili .f. pokreni odt report na osnovu parametara
-// - test_mode - .t. ili .f., testiranje komande - samo windows
-// -------------------------------------------------------------------
-FUNCTION f18_odt_print( output_file, from_params, test_mode )
+   Usage: pokreni_odt( cOutput_file )
+
+   Params:
+     cOutput_file - izlazni fajl za prikaz (path + filename)
+
+   Napomene: 
+     Ukoliko nije zadat parametar cOutput_file, štampa se zadnji generisani ODT dokuement koji je smješten
+     u statičku varijablu __current_odt
+*/
+
+FUNCTION pokreni_odt( cOutput_file )
 
    LOCAL _ok := .F.
    LOCAL _screen, _error := 0
 
-   IF ( output_file == NIL )
+   IF ( cOutput_file == NIL )
       __output_odt := __current_odt
    ELSE
-      __output_odt := output_file
-   ENDIF
-
-   IF ( from_params == NIL )
-      from_params := .F.
-   ENDIF
-
-   IF ( test_mode == NIL )
-      test_mode := .F.
+      __output_odt := cOutput_file
    ENDIF
 
    IF !File( __output_odt )
-      MsgBeep( "Nema fajla za prikaz !!!!" )
+      MsgBeep( "Nema fajla za prikaz !" )
       RETURN _ok
    ENDIF
 
-#ifdef __PLATFORM__WINDOWS
-   __output_odt := '"' + __output_odt + '"'
-#endif
+   #ifdef __PLATFORM__WINDOWS
+      __output_odt := '"' + __output_odt + '"'
+   #endif
 
    SAVE SCREEN TO _screen
    CLEAR SCREEN
 
-   ? "Prikaz odt fajla u toku ...   fajl: ..." + Right( __current_odt, 20 )
+   ? "Prikaz odt fajla u toku ... fajl: ..." + Right( __current_odt, 20 )
 
-#ifndef TEST
-   _error := f18_open_document( __output_odt )
-#endif
+   #ifndef TEST
+       _error := f18_open_document( __output_odt )
+   #endif
 
    RESTORE SCREEN FROM _screen
 
    IF _error <> 0
-      MsgBeep( "Problem sa pokretanjem odt reporta !!!!#Greska: " + AllTrim( Str( _error ) ) )
+      MsgBeep( "Problem sa pokretanjem odt dokumenta !#Greška: " + AllTrim( Str( _error ) ) )
       RETURN _error
    ENDIF
 
@@ -365,36 +365,33 @@ STATIC FUNCTION odt_na_email_podrska( error_text )
 
 
 
-// ------------------------------------------------------
-// otvaranje dokumenta na osnovu ekstenzije
-// ------------------------------------------------------
-FUNCTION f18_open_mime_document( document )
+FUNCTION f18_open_mime_document( cDocument )
 
    LOCAL _cmd := ""
 
-   IF Pitanje(, "Otvoriti " + AllTrim( document ) + " ?", "D" ) == "N"
+   IF Pitanje(, "Otvoriti " + AllTrim( cDocument ) + " ?", "D" ) == "N"
       RETURN 0
    ENDIF
 
-#ifdef __PLATFORM__UNIX
+   #ifdef __PLATFORM__UNIX
 
-#ifdef __PLATFORM__DARWIN
-   _cmd += "open " + document
-#else
-   _cmd += "xdg-open " + document + " &"
-#endif
+      #ifdef __PLATFORM__DARWIN
+         _cmd += "open " + cDocument
+      #else
+         _cmd += "xdg-open " + cDocument + " &"
+      #endif
 
-#else __PLATFORM__WINDOWS
+   #else __PLATFORM__WINDOWS
 
-   document := '"' + document + '"'
-   _cmd += "c:\knowhowERP\util\start.exe /m " + document
+      cDocument := '"' + cDocument + '"'
+      _cmd += "c:\knowhowERP\util\start.exe /m " + cDocument
 
-#endif
+   #endif
 
    _error := f18_run( _cmd )
 
    IF _error <> 0
-      MsgBeep( "Problem sa otvaranjem dokumenta !!!!#Greska: " + AllTrim( Str( _error ) ) )
+      MsgBeep( "Problem sa otvaranjem dokumenta !#Greška: " + AllTrim( Str( _error ) ) )
       RETURN _error
    ENDIF
 
@@ -402,41 +399,48 @@ FUNCTION f18_open_mime_document( document )
 
 
 
-// ------------------------------------------------------------------
-// konvertovanje odt fajla u pdf
-//
-// koristi se jodreports util: jodconverter-cli.jar
-// java -jar jodconverter-cli.jar input_file_odt output_file_pdf
-// ------------------------------------------------------------------
-FUNCTION f18_convert_odt_to_pdf( input_file, output_file, overwrite_file )
+/*
+   Opis: konvertuje ODT fajl u PDF putem java aplikacije jod-convert
+
+   Usage: konvertuj_odt_u_pdf( cInput_file, cOutput_file, lOwerwrite_file )
+
+   Params: 
+
+     - cInput_file - ulazni ODT fajl (lokacija + naziv)
+     - cOutput_file - izlazni PDF fajl (lokacija + naziv)
+     - lOwerwrite_file - .T. - briši uvijek postojeći, .F. - daj novi broj PDF dokumenta inkrementalnim brojačem
+*/
+
+FUNCTION konvertuj_odt_u_pdf( cInput_file, cOutput_file, lOverwrite_file )
 
    LOCAL _ret := .F.
    LOCAL _jod_full_path, _util_path
    LOCAL _cmd
    LOCAL _screen, _error
 
-   IF ( input_file == NIL )
+   IF ( cInput_file == NIL )
       __output_odt := __current_odt
    ELSE
-      __output_odt := input_file
+      __output_odt := cInput_file
    ENDIF
 
-   IF ( output_file == NIL )
+   IF ( cOutput_file == NIL )
       __output_pdf := StrTran( __current_odt, ".odt", ".pdf" )
    ELSE
-      __output_pdf := output_file
+      __output_pdf := cOutput_file
    ENDIF
 
-   IF ( overwrite_file == NIL )
-      overwrite_file := .T.
+   IF lOverwrite_file == NIL
+      lOverwrite_file := .T.
    ENDIF
 
-#ifdef __PLATFORM__WINDOWS
-   __output_odt := '"' + __output_odt + '"'
-   __output_pdf := '"' + __output_pdf + '"'
-#endif
+   #ifdef __PLATFORM__WINDOWS
+      __output_odt := '"' + __output_odt + '"'
+      __output_pdf := '"' + __output_pdf + '"'
+   #endif
 
-   _ret := _check_out_pdf( @__output_pdf, overwrite_file )
+   _ret := naziv_izlaznog_pdf_fajla( @__output_pdf, lOverwrite_file )
+
    IF !_ret
       RETURN _ret
    ENDIF
@@ -452,9 +456,9 @@ FUNCTION f18_convert_odt_to_pdf( input_file, output_file, overwrite_file )
 
    log_write( "ODT report convert start", 9 )
 
-#ifdef __PLATFORM__WINDOWS
-   _jod_full_path := '"' + _jod_full_path + '"'
-#endif
+   #ifdef __PLATFORM__WINDOWS
+      _jod_full_path := '"' + _jod_full_path + '"'
+   #endif
 
    _cmd := __java_run_cmd + " " + _jod_full_path + " "
    _cmd += __output_odt + " "
@@ -473,7 +477,7 @@ FUNCTION f18_convert_odt_to_pdf( input_file, output_file, overwrite_file )
 
    IF _error <> 0
       log_write( "ODT report convert: greška - " + AllTrim( Str( _error ) ), 7 )
-      MsgBeep( "Doslo je do greske prilikom konvertovanja dokumenta... !!!#" + "Greska: " + AllTrim( Str( _error ) ) )
+      MsgBeep( "Došlo je do greške prilikom konvertovanja dokumenta !#" + "Greška: " + AllTrim( Str( _error ) ) )
       RETURN _ret
    ENDIF
 
@@ -483,37 +487,32 @@ FUNCTION f18_convert_odt_to_pdf( input_file, output_file, overwrite_file )
 
 
 
-// ----------------------------------------------------------------
-// provjera izlaznog fajla
-// ----------------------------------------------------------------
-STATIC FUNCTION _check_out_pdf( out_file, overwrite )
+STATIC FUNCTION naziv_izlaznog_pdf_fajla( cOut_file, lOverwrite )
 
    LOCAL _ret := .F.
    LOCAL _i, _ext, _tmp, _wo_ext
 
-   IF ( overwrite == NIL )
-      overwrite := .T.
+   IF lOverwrite == NIL
+      lOverwrite := .T.
    ENDIF
 
-   IF overwrite
-      FErase( out_file )
+   IF lOverwrite
+      FErase( cOut_file )
       _ret := .T.
       RETURN _ret
    ENDIF
 
-   _ext := Right( AllTrim( out_file ), 4 )
+   _ext := Right( AllTrim( cOut_file ), 4 )
 
-   _wo_ext := Left( AllTrim( out_file ), Len( AllTrim( out_file ) ) - Len( _ext ) )
+   _wo_ext := Left( AllTrim( cOut_file ), Len( AllTrim( cOut_file ) ) - Len( _ext ) )
 
    FOR _i := 1 TO 99
 	
       _tmp := _wo_ext + PadL( AllTrim( Str( _i ) ), 2, "0" ) + _ext
 
       IF !File( _tmp )
-         out_file := _tmp
-
+         cOut_file := _tmp
          EXIT
-
       ENDIF
 
    NEXT

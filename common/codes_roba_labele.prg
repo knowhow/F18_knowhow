@@ -51,14 +51,12 @@ if RECCOUNT() == 0
     return 
 endif
 
-// generisi xml fajl sa podacima labele
 _gen_xml( _xml_file, _tkm_no, _len_naz )
 
 my_close_all_dbf()
 
-if f18_odt_generate( _template, _xml_file )
-	// printaj odt
-    f18_odt_print()
+if generisi_odt_iz_xml( _template, _xml_file )
+    prikazi_odt()
 endif
 
 return

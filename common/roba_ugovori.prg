@@ -296,9 +296,15 @@ STATIC FUNCTION _val_num( nNum )
 FUNCTION g_rugov_opis( cIdUgov )
 
    LOCAL cOpis := ""
-   LOCAL nTArea := Select()
 
    PushWa()
+
+   SELECT (F_RUGOV)
+   IF !USED()
+      O_RUGOV
+   ENDIF
+
+   SELECT rugov
    SET FILTER TO
    SEEK cIdUgov
 
@@ -307,6 +313,6 @@ FUNCTION g_rugov_opis( cIdUgov )
    ENDIF
 
    PopWa()
-   SELECT ( nTArea )
 
    RETURN cOpis
+

@@ -24,6 +24,7 @@ FUNCTION lock_semaphore( table, status, unlock_table )
    LOCAL _err_msg, _msg
    LOCAL _server := pg_server()
    LOCAL _user   := f18_user()
+   LOCAL _user_locked := ""
    LOCAL _get_status
 
    IF skip_semaphore( table)
@@ -44,7 +45,6 @@ FUNCTION lock_semaphore( table, status, unlock_table )
 
       _i++
 
-      // daj mi status semafora
       _get_status := get_semaphore_status( table )
 
       IF !unlock_table .AND. _get_status == "lock"
@@ -53,7 +53,8 @@ FUNCTION lock_semaphore( table, status, unlock_table )
       ENDIF
 
       IF _get_status == "lock"
-         _err_msg := ToStr( Time() ) + " : table locked : " + table + " retry : " + Str( _i, 2 ) + "/" + Str( SEMAPHORE_LOCK_RETRY_NUM, 2 )
+         _user_locked := get_semaphore_locked_by_me_status_user( table )
+         _err_msg := ToStr( Time() ) + " : table locked : " + table + " user: " + _user_locked + " retry : " + Str( _i, 2 ) + "/" + Str( SEMAPHORE_LOCK_RETRY_NUM, 2 )
          log_write( _err_msg, 2 )
          @ maxrows() - 1, maxcols() - 70 SAY PadR( _err_msg, 53 )
          hb_idleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
@@ -93,13 +94,24 @@ FUNCTION lock_semaphore( table, status, unlock_table )
    log_write( "table: " + table + ", status:" + status + " - END", 7 )
 
    IF ValType( _ret ) == "L"
-      // ERROR
       log_write( "qry error: " + _qry, 7 )
       Alert( "error :" + _qry )
       QUIT_1
    ENDIF
 
    RETURN .T.
+
+
+FUNCTION get_semaphore_locked_by_me_status_user( table )
+
+   LOCAL _qry
+   LOCAL _ret
+   LOCAL _server := pg_server()
+
+   _qry := "SELECT user_code FROM fmk.semaphores_" + table + " WHERE algoritam = 'locked_by_me'"
+   _ret := _sql_query( _server, _qry )
+
+   RETURN AllTrim( _ret:FieldGet( 1 ) )
 
 
 FUNCTION get_semaphore_status( table )
@@ -112,7 +124,6 @@ FUNCTION get_semaphore_status( table )
    IF skip_semaphore( table)
         RETURN "free" 
    ENDIF
-
 
    _qry := "SELECT algorithm FROM fmk.semaphores_" + table + " WHERE user_code=" + _sql_quote( _user )
    _ret := _sql_query( _server, _qry )

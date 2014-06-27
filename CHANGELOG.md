@@ -1,3 +1,7 @@
+1.7.107  2014-06-27, vsasa
+
+  - LD, specifikacija po radnim jedinicama, trijaž
+ 
 1.7.106  2014-06-25, vsasa
 
   - FIN, uvedene tabele fin_komp_dug, fin_komp_pot za opciju kompenzacija

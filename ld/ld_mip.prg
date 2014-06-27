@@ -745,10 +745,7 @@ STATIC FUNCTION g_per( cMj, cGod, dPer )
    RETURN
 
 
-// ----------------------------------------
-// stampa xml-a
-// ----------------------------------------
-STATIC FUNCTION _xml_print( pojedinacni )
+STATIC FUNCTION _xml_print( lPojedinacni )
 
    LOCAL _template := "ld_mip.odt"
    LOCAL _xml_file := my_home() + "data.xml"
@@ -757,25 +754,19 @@ STATIC FUNCTION _xml_print( pojedinacni )
       RETURN
    ENDIF
 
-   IF pojedinacni == .T.
+   IF lPojedinacni == .T.
       _template := "ld_pmip.odt"
    ENDIF
 
-   // napuni xml fajl podacima
    _fill_xml( _xml_file )
 
-   // generisi odt report
-   IF f18_odt_generate( _template, _xml_file )
-      // prikazi ga !
-      f18_odt_print()
+   IF generisi_odt_iz_xml( _template, _xml_file )
+      prikazi_odt()
    ENDIF
 
    RETURN
 
 
-// --------------------------------------------
-// filuje xml fajl sa podacima izvjestaja
-// --------------------------------------------
 STATIC FUNCTION _fill_xml( xml_file )
 
    LOCAL nTArea := Select()

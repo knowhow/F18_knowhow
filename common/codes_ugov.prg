@@ -81,7 +81,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
 
    AAdd( aImeKol, { "Ugovor", {|| PadR( Trim( id ) + "/" + Trim( IdPartner ) + ":" + g_part_name( IdPartner ), 34 ) }, "Idpartner", {|| vpsifra( wid ), .T. }, {|| P_Firma( @wIdPartner ) } } )
 
-   AAdd( aImeKol, { "Opis", {|| PadR( Trim( naz ) + ": " + g_rugov_opis( id ), 30 )  }, "naz" } )
+   AAdd( aImeKol, { "Opis", {|| PadR( Trim( naz ) + ": " + vrati_opis_ugovora( id ), 30 )  }, "naz" } )
    AAdd( aImeKol, { "DatumOd", {|| DatOd }, "DatOd" } )
    AAdd( aImeKol, { "DatumDo", {|| DatDo }, "DatDo" } )
    AAdd( aImeKol, { "Aktivan", {|| Aktivan }, "Aktivan", {|| .T. }, {|| wAKtivan $ "DN" } } )
@@ -230,7 +230,7 @@ FUNCTION set_datl_fakt()
 
    @ m_x + 1, m_y + 2 SAY "SETOVANJE DATUMA POSLJEDNJEG FAKTURISANJA:"
    @ m_x + 3, m_y + 2 SAY "Postavi datum na:" GET dDatL
-   @ m_x + 5, m_y + 2 SAY "Izvrsiti promjenu (D/N)?" GET cProm VALID cProm $ "DN" PICT "@!"
+   @ m_x + 5, m_y + 2 SAY8 "Izvršiti promjenu (D/N)?" GET cProm VALID cProm $ "DN" PICT "@!"
 
    READ
    BoxC()
@@ -269,9 +269,9 @@ FUNCTION gen_ug_part()
       cArtikalOld := idroba
       cDN := "N"
       Box(, 3, 50 )
-      @ m_x + 1, m_y + 5 SAY "Generisi ugovore za artikal: " GET cArtikal
-      @ m_x + 2, m_y + 5 SAY "Preuzmi podatke artikla: " GET cArtikalOld
-      @ m_x + 3, m_y + 5 SAY "Zamjenu vrsiti samo za aktivne D/N: " GET cDN VALID cDN $ "DN"
+      @ m_x + 1, m_y + 5 SAY8 "Generiši ugovore za artikal: " GET cArtikal
+      @ m_x + 2, m_y + 5 SAY8 "Preuzmi podatke artikla: " GET cArtikalOld
+      @ m_x + 3, m_y + 5 SAY8 "Zamjenu vršiti samo za aktivne (D/N): " GET cDN VALID cDN $ "DN"
       READ
       BoxC()
 
@@ -292,7 +292,7 @@ FUNCTION gen_ug_part()
             APPEND BLANK
             _idroba := cArtikal
             Gather()
-            @ m_x + 1, m_y + 2 SAY "Obuhvaceno: " + Str( nTrec )
+            @ m_x + 1, m_y + 2 SAY8 "Obuhvaćeno: " + Str( nTrec )
             GO nTrec
          ELSE
             GO nTrec
@@ -316,12 +316,12 @@ FUNCTION br_ugovor()
    LOCAL _rec
    LOCAL _ret := 0
 
-   IF Pitanje(, "Izbrisati ugovor sa pripadajucim stavkama ?", "N" ) == "N"
+   IF Pitanje(, "Izbrisati ugovor sa pripadajućim stavkama (D/N) ?", "N" ) == "N"
       RETURN _ret
    ENDIF
 
    IF !f18_lock_tables( { "fakt_ugov", "fakt_rugov" } )
-      MsgBeep( "Problem sa lokovanjem tabela !!!" )
+      MsgBeep( "Problem sa lokovanjem tabela !" )
       RETURN _ret
    ENDIF
 
@@ -556,7 +556,7 @@ STATIC FUNCTION chg_ug_id( cId )
    nRecno := RecNo()
    SEEK cId
    IF Found() .AND. ( cId <> cIdOld )
-      MsgBeep( "Ugovor " + cId + " vec postoji##promjena nije moguca !" )
+      MsgBeep( "Ugovor " + cId + " već postoji##Promjena nije moguća !" )
       GO nRecno
       RETURN DE_CONT
    ELSE
@@ -815,10 +815,10 @@ FUNCTION EdUgov2()
       _id := cIdUg
 
       Box(, 8, 77 )
-      @ m_x + 2, m_y + 2 SAY "SIFRA ARTIKLA:" GET _idroba ;
+      @ m_x + 2, m_y + 2 SAY8 "ŠIFRA ARTIKLA:" GET _idroba ;
          VALID ( glDistrib .AND. Right( Trim( _idroba ), 1 ) == ";" ) .OR. P_Roba( @_idroba ) ;
          PICT "@!"
-      @ m_x + 3, m_y + 2 SAY "Kolicina      " GET _Kolicina  ;
+      @ m_x + 3, m_y + 2 SAY8 "Količina      " GET _Kolicina  ;
          PICT "99999999.999"
 
 
@@ -853,7 +853,7 @@ FUNCTION EdUgov2()
 
    CASE Ch == K_CTRL_T
 
-      IF Pitanje( , "Izbrisati stavku ?", "N" ) == "D"
+      IF Pitanje( , "Izbrisati stavku (D/N) ?", "N" ) == "D"
          _rec := dbf_get_rec()
          delete_rec_server_and_dbf( "fakt_ugov", _rec, 1, "FULL" )
          lTrebaOsvUg := .T.
@@ -1089,8 +1089,8 @@ STATIC FUNCTION ZaOdgovarajuci()
             cPartnNaz := ""
          ENDIF
       ELSE
-         MsgBeep( "Greska! Stavka ugovora '" + RUGOV->ID + "' postoji, ugovor ne postoji?!" )
-         IF Pitanje(, "Brisati problematicnu stavku (u RUGOV.DBF) ? (D/N)", "N" ) == "D"
+         MsgBeep( "Greška! Stavka ugovora '" + RUGOV->ID + "' postoji, ugovor ne postoji ?!" )
+         IF Pitanje(, "Brisati problematičnu stavku (u RUGOV.DBF) ? (D/N)", "N" ) == "D"
             SELECT RUGOV; DELETE
          ENDIF
          cUgovId   := ""
@@ -1183,7 +1183,7 @@ FUNCTION IzfUgovor()
          SELECT rugov
          SEEK ugov->id
          IF !Found()
-            IF Pitanje(, "Sve stavke ugovora su izbrisane, izbrisati ugovor u potputnosti ? ", "D" ) == "D"
+            IF Pitanje(, "Sve stavke ugovora su izbrisane, izbrisati ugovor u potputnosti (D/N) ?", "D" ) == "D"
                SELECT ugov
                DELETE
             ENDIF

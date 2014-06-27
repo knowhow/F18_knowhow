@@ -252,15 +252,11 @@ STATIC FUNCTION g_osig( mjesec, od_do )
 
 
 
-// ----------------------------------------
-// stampa xml-a
-// ----------------------------------------
 STATIC FUNCTION _xml_print( tip )
 
    LOCAL _template
    LOCAL _xml_file := my_home() + "data.xml"
 
-   // napuni xml fajl
    _fill_xml( tip, _xml_file )
 
    DO CASE
@@ -268,9 +264,8 @@ STATIC FUNCTION _xml_print( tip )
       _template := "ld_js_1.odt"
    ENDCASE
 
-   // generisi report
-   IF f18_odt_generate( _template, _xml_file )
-      f18_odt_print()
+   IF generisi_odt_iz_xml( _template, _xml_file )
+      prikazi_odt()
    ENDIF
 
    RETURN

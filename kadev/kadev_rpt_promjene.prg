@@ -14,9 +14,8 @@
 STATIC __template
 STATIC __xml_file
 
-// -----------------------------------------------------
-// izvjestaj po promjenama
-// -----------------------------------------------------
+
+
 FUNCTION kadev_izvjestaj_promjene()
 
    LOCAL _params
@@ -24,16 +23,13 @@ FUNCTION kadev_izvjestaj_promjene()
    __template := "kadev_promjene.odt"
    __xml_file := my_home() + "data.xml"
 
-   // parametri
    IF !_get_vars( @_params )
       RETURN
    ENDIF
 
-   // pozovi izvjestaj
    IF _cre_xml( _params )
-      // generisi i printaj dokument...
-      IF f18_odt_generate( __template, __xml_file )
-         f18_odt_print()
+      IF generisi_odt_iz_xml( __template, __xml_file )
+         prikazi_odt()
       ENDIF
    ENDIF
 

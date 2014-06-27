@@ -177,8 +177,8 @@ STATIC FUNCTION _print_data( data, params )
 
    _cre_xml( data, params )
 
-   IF f18_odt_generate( _template )
-      f18_odt_print()
+   IF generisi_odt_iz_xml( _template )
+      prikazi_odt()
    ENDIF
 
    RETURN

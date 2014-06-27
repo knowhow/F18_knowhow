@@ -93,34 +93,29 @@ FUNCTION stdokodt( cIdf, cIdVd, cBrDok )
 
    AAdd( _racuni, { cIdF, cIdVd, cBrDok  } )
 
-   // generisi xml fajl
    _gen_xml( _xml_file, _racuni )
 
    MsgC()
 
-   // odaberi template za stampu...
    fakt_odaberi_template( @_template, __tip_dok )
 
    my_close_all_dbf()
 
-   IF f18_odt_generate( _template, _xml_file )
+   IF generisi_odt_iz_xml( _template, _xml_file )
 
-      // konvertuj odt u pdf
       IF _gen_pdf .AND. !Empty( _file_pdf )
 
          _ext_path := AllTrim( _ext_pdf )
 
          IF Left( AllTrim( _ext_pdf ), 4 ) == "HOME"
-            // bacaj u HOME path
             _ext_path := my_home()
          ENDIF
 
-         f18_convert_odt_to_pdf( NIL, _ext_path + _file_pdf )
+         konvertuj_odt_u_pdf( NIL, _ext_path + _file_pdf )
 
       ENDIF
 
-      // printaj odt
-      f18_odt_print()
+      prikazi_odt()
 
    ENDIF
 
@@ -426,23 +421,19 @@ FUNCTION stdokodt_grupno()
 
    CASE _tip_gen == "1"
 
-      // generise se zbirno...
-      // ===================================================================
       _gen_xml( _xml_file, _racuni, @_ctrl_data )
 
       IF !Empty( _jod_templates_path )
          _t_path := AllTrim( _jod_templates_path )
       ENDIF
 
-      // uzmi template koji ces koristiti
       IF get_file_list_array( _t_path, _filter, @_template, .T. ) == 0
          RETURN
       ENDIF
 
       my_close_all_dbf()
 
-      // generisi i printaj dokument...
-      IF f18_odt_generate( _template, _xml_file )
+      IF generisi_odt_iz_xml( _template, _xml_file )
 
          _file_out := "fakt_" + DToS( _params[ "datum_od" ] ) + "_" + DToS( _params[ "datum_do" ] )
 
@@ -451,10 +442,10 @@ FUNCTION stdokodt_grupno()
          ENDIF
 
          IF _params[ "gen_pdf" ] == "D"
-            f18_convert_odt_to_pdf( NIL, AllTrim( _ext_pdf ) + _file_out + ".pdf" )
+            konvertuj_odt_u_pdf( NIL, AllTrim( _ext_pdf ) + _file_out + ".pdf" )
          ENDIF
 
-         f18_odt_print()
+         prikazi_odt()
 
       ENDIF
 
@@ -483,9 +474,7 @@ FUNCTION stdokodt_grupno()
                _template := "f-std.odt"
             ENDIF
          ELSE
-            // ako je template prazan, pronadji ga !
             IF Empty( _template )
-               // uzmi template koji ces koristiti
                IF get_file_list_array( _t_path, _filter, @_template, .T. ) == 0
                   RETURN
                ENDIF
@@ -494,19 +483,17 @@ FUNCTION stdokodt_grupno()
 
          my_close_all_dbf()
 
-         // u ovoj varijanti mi ne printarj dokument samo generisi
-         IF f18_odt_generate( _template, _xml_file )
+         IF generisi_odt_iz_xml( _template, _xml_file )
 
             _file_out := "fakt_" + _racuni[ _i, 1 ] + "_" + _racuni[ _i, 2 ] + "_" + ;
                AllTrim( _racuni[ _i, 3 ] )
 
-            // mozes nesto raditi sa njim...
             IF !Empty( _na_lokaciju )
                f18_odt_copy( NIL, AllTrim( _na_lokaciju ) + _file_out + ".odt" )
             ENDIF
 
             IF _params[ "gen_pdf" ] == "D"
-               f18_convert_odt_to_pdf( NIL, AllTrim( _ext_pdf ) + _file_out + ".pdf" )
+               konvertuj_odt_u_pdf( NIL, AllTrim( _ext_pdf ) + _file_out + ".pdf" )
             ENDIF
 
          ENDIF
@@ -514,13 +501,6 @@ FUNCTION stdokodt_grupno()
       NEXT
 
    ENDCASE
-
-   // kontrolni podaci....
-   // ctrl_data, { field->ukbezpdv, field->ukpopust, field->ukpoptp, field->ukbpdvpop, ;
-   // field->ukpdv, field->ukkol, field->ukupno, field->zaokr, ;
-   // ( field->ukupno - field->ukpoptp ) } )
-
-   // ovdje bi trebalo izbaciti na kraju rekapitulaciju podataka...
 
    RETURN
 

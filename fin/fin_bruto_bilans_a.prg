@@ -810,18 +810,13 @@ METHOD FinBrutoBilans:print()
    RETURN SELF
 
 
-// -----------------------------------------------
-// -----------------------------------------------
 METHOD FinBrutoBilans:print_odt()
 
    LOCAL _template := "fin_bbl.odt"
 
-   // generisi xml report
    if ::gen_xml()
-      // printaj odt report
-      IF f18_odt_generate( _template )
-         // printaj odt
-         f18_odt_print()
+      IF generisi_odt_iz_xml( _template )
+         prikazi_odt()
       ENDIF
    ENDIF
 

@@ -687,8 +687,8 @@ STATIC FUNCTION print_kompen( vars )
       RETURN
    ENDIF
 
-   IF f18_odt_generate( _template, _xml_file )
-      f18_odt_print()
+   IF generisi_odt_iz_xml( _template, _xml_file )
+      prikazi_odt()
    ENDIF
 
    RETURN _ret

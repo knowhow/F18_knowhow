@@ -1042,8 +1042,8 @@ close_xml()
 my_close_all_dbf()
 
 if B > 0
-    if f18_odt_generate( "mat_invent.odt", _my_xml )
-        f18_odt_print()
+    if generisi_odt_iz_xml( "mat_invent.odt", _my_xml )
+        prikazi_odt()
     endif
 endif
 

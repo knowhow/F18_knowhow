@@ -29,16 +29,12 @@ FUNCTION rnal_obracunski_list_odt()
 
    t_rpt_open()
 
-   // uzmi mi sve parametre za obracunski list
-   // header, footer itd...
    _get_t_pars( @_params )
 
-   // kreiraj xml
    IF !_cre_xml( _params )
       RETURN _ok
    ENDIF
 
-   // zatvori nepotrebne tabele
    SELECT t_docit
    USE
    SELECT t_docop
@@ -46,9 +42,8 @@ FUNCTION rnal_obracunski_list_odt()
    SELECT t_pars
    USE
 
-   // lansiraj odt
-   IF f18_odt_generate( _template )
-      f18_odt_print()
+   IF generisi_odt_iz_xml( _template )
+      prikazi_odt()
    ENDIF
 
    _ok := .T.

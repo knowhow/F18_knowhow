@@ -45,8 +45,8 @@ FUNCTION fin_suban_specifikacija_sql()
    ENDIF
 
    IF _cre_xml( _rpt_data, _rpt_vars )
-      IF f18_odt_generate( _template, _my_xml )
-         f18_odt_print()
+      IF generisi_odt_iz_xml( _template, _my_xml )
+         prikazi_odt()
       ENDIF
    ENDIF
 

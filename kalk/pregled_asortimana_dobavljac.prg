@@ -385,10 +385,8 @@ STATIC FUNCTION print_frm_asort_nar( vars )
    close_xml()
 
    IF _count > 0
-      // pozovi print odt forme
-      IF f18_odt_generate( _template, _my_xml )
-         // printaj odt
-         f18_odt_print()
+      IF generisi_odt_iz_xml( _template, _my_xml )
+         prikazi_odt()
       ENDIF
    ENDIF
 

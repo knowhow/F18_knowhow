@@ -87,9 +87,9 @@ FUNCTION rnal_stampa_naljepnica_odt()
  
             ENDIF
  
-            IF f18_odt_generate( _template, _data_xml, _output_odt )
+            IF generisi_odt_iz_xml( _template, _data_xml, _output_odt )
                IF !lDijeli
-                  f18_odt_print()   
+                  prikazi_odt()   
                ENDIF   
             ENDIF
 

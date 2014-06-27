@@ -49,16 +49,12 @@ enddo
 select t_docit
 go top
 
-// uzmi mi sve parametre za nalog
-// header, footer itd...
 _get_t_pars( @_params, LEN( _groups ) )
 
-// kreiraj xml
 if !_cre_xml( _groups, _params ) 
     return _ok
 endif
 
-// zatvori nepotrebne tabele
 select t_docit
 use
 select t_docop
@@ -70,9 +66,8 @@ if LEN( _groups ) == 1 .and. _groups[ 1, 1 ] == 0
     _po_grupama := .f.
 endif
 
-// lansiraj odt
-if f18_odt_generate( _template )
-    f18_odt_print()
+if generisi_odt_iz_xml( _template )
+    prikazi_odt()
 endif
 
 my_close_all_dbf()

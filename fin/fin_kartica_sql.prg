@@ -55,8 +55,8 @@ FUNCTION fin_suban_kartica_sql( otv_stavke )
          _template := "fin_kart_svi.odt"
       ENDIF
 
-      IF f18_odt_generate( _template, _my_xml )
-         f18_odt_print()
+      IF generisi_odt_iz_xml( _template, _my_xml )
+         prikazi_odt()
       ENDIF
 
    ENDIF

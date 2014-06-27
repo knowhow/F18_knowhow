@@ -135,13 +135,10 @@ return _ret
 
 
 
-// ----------------------------------------------
-// stampaj odt dokument
-// ----------------------------------------------
 static function st_kalkulacija_cijena_odt( template_file )
 
-if f18_odt_generate( template_file )
-    f18_odt_print()
+if generisi_odt_iz_xml( template_file )
+    prikazi_odt()
 endif
 
 return

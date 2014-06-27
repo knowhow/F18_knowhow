@@ -32,7 +32,8 @@ STATIC __current_odt
    Usage: generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file )
 
    Params:
-       cTemplate - lokacija + naziv tempate fajla (template ODT)
+       cTemplate - naziv tempate fajla (template ODT)
+                 // fajl će se pretražiti u template lokaciji pa će se kopirati u home direktorij
        cXml_file - lokacija + naziv xml fajla
        cOutput_file - lokacija + naziv izlaznog ODT fajla koji će se generisati
 
@@ -277,7 +278,7 @@ FUNCTION f18_odt_copy( cOutput_file, cDestination_file )
      u statičku varijablu __current_odt
 */
 
-FUNCTION pokreni_odt( cOutput_file )
+FUNCTION prikazi_odt( cOutput_file )
 
    LOCAL _ok := .F.
    LOCAL _screen, _error := 0

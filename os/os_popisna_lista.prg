@@ -12,7 +12,6 @@
 #include "os.ch"
 
 
-// popisna lista...
 function os_popisna_lista()
 local _pars 
 
@@ -26,14 +25,13 @@ if !_gen_xml( _pars )
     return 
 endif
 
-if f18_odt_generate( "mat_invent.odt", my_home() + "data.xml" )
-    f18_odt_print()
+if generisi_odt_iz_xml( "mat_invent.odt", my_home() + "data.xml" )
+    prikazi_odt()
 endif
 
 return
 
 
-// otvaranje tabela
 static function _o_tables()
 O_RJ
 o_os_sii()

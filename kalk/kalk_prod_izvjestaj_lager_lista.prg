@@ -973,9 +973,6 @@ STATIC FUNCTION AzurKontrolnaTabela( cIdRoba, nStanje, nMpv )
 
 
 
-// -----------------------------------------------------
-// stampa dokumenta u odt formatu
-// -----------------------------------------------------
 STATIC FUNCTION kalk_prodavnica_llp_odt( params )
 
    IF !_gen_xml( params )
@@ -983,8 +980,8 @@ STATIC FUNCTION kalk_prodavnica_llp_odt( params )
       RETURN
    ENDIF
 
-   IF f18_odt_generate( "kalk_llp.odt", my_home() + "data.xml" )
-      f18_odt_print()
+   IF generisi_odt_iz_xml( "kalk_llp.odt", my_home() + "data.xml" )
+      prikazi_odt()
    ENDIF
 
    RETURN

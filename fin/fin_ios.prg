@@ -702,10 +702,8 @@ do while !EOF() .and. _id_firma == field->idfirma ;
     _params["prelom"] := _prelomljeno
 
     if _print_tip == "2"
-        // printaj IOS
         print_ios_txt( _params )
     else
-        // print u xml
         print_ios_xml( _params )
     endif
 
@@ -717,13 +715,11 @@ if _print_tip == "2"
     END PRINT
 else
 
-    // zatvori mi xml node...
     xml_subnode( "ios", .t. )
     close_xml()
 
 endif
 
-// lansiraj report....
 if _print_tip == "2" .and. _export_dbf == "D"
     f18_open_mime_document( my_home() + "r_export.dbf" )
 endif
@@ -732,16 +728,14 @@ my_close_all_dbf()
 
 if _print_tip == "1"
     
-    // vise ios-a
     if EMPTY( _id_partner )
         _template := "ios_2.odt"
     endif
 
-    // printaj odt report
-    if f18_odt_generate( _template, _xml_file )
-	    // printaj odt
-        f18_odt_print()
+    if generisi_odt_iz_xml( _template, _xml_file )
+        prikazi_odt()
     endif
+
 endif
 
 return

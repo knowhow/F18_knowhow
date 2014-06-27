@@ -1462,8 +1462,6 @@ FUNCTION IsInGroup( cGr, cPodGr, cIdRoba )
 
 
 
-// ------------------------------------------------------
-// ------------------------------------------------------
 STATIC FUNCTION kalk_magacin_llm_odt( params )
 
    IF !_gen_xml( params )
@@ -1471,15 +1469,13 @@ STATIC FUNCTION kalk_magacin_llm_odt( params )
       RETURN
    ENDIF
 
-   IF f18_odt_generate( "kalk_llm.odt", my_home() + "data.xml" )
-      f18_odt_print()
+   IF generisi_odt_iz_xml( "kalk_llm.odt", my_home() + "data.xml" )
+      prikazi_odt()
    ENDIF
 
    RETURN
 
 
-// -----------------------------------------------------
-// -----------------------------------------------------
 STATIC FUNCTION _gen_xml( params )
 
    LOCAL _idfirma := params[ "idfirma" ]

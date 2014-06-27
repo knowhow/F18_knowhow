@@ -1,6 +1,7 @@
 1.7.107  2014-06-27, vsasa
 
   - LD, specifikacija po radnim jedinicama, trijaž
+  - F18, ko je zaključao semafor tabelu
  
 1.7.106  2014-06-25, vsasa
 

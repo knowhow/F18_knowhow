@@ -209,7 +209,7 @@ FUNCTION edit_rugov( lNovi )
 
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Kolicina", nBoxLen ) GET nKolicina PICT "99999999.999" VALID _val_num( nKolicina )
+   @ m_x + nX, m_y + 2 SAY8 PadL( "Količina", nBoxLen ) GET nKolicina PICT "99999999.999" VALID _val_num( nKolicina )
 
    IF lCijena
       ++ nX

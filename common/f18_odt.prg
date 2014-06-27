@@ -352,9 +352,8 @@ STATIC FUNCTION odt_na_email_podrska( error_text )
 
    _body += "U prilogu fajlovi neophodni za generisanje ODT izvještaja."
 
-   _attachment := {}
-   AADD( _attachment, __template )
-   AADD( _attachment, __xml_file )
+   _attachment := NIL
+       //odt_email_attachment()
 
    _mail_params := email_hash_za_podrska_bring_out( _subject, _body )
 
@@ -366,6 +365,30 @@ STATIC FUNCTION odt_na_email_podrska( error_text )
 
    RETURN
 
+
+
+STATIC FUNCTION odt_email_attachment()
+
+   LOCAL aFiles := {}
+   LOCAL cPath := my_home()
+   LOCAL aAttachment := {}
+   LOCAL cServer := my_server_params()
+   LOCAL cZipFile
+ 
+   cZipFile := ALLTRIM( _server["database"] )
+   cZipFile += "_" + ALLTRIM( f18_user() )
+   cZipFile += "_" + DTOS( DATE() ) 
+   cZipFile += "_" + STRTRAN( TIME(), ":", "" ) 
+   cZipFile += ".zip"
+
+   DirChange( my_home() )
+ 
+   AADD( aFiles, "" )
+   AADD( aFiles, "" )
+  
+   _err := zip_files( cPath, cZipFile, aFiles )
+
+   RETURN aAttachment
 
 
 FUNCTION f18_open_mime_document( cDocument )

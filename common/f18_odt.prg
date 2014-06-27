@@ -138,6 +138,8 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file )
    Opis: generiše naziv izlaznog ODT fajla po inkrementalnom brojaču
          koristi se radi poziva ODT štampe više puta
 
+         Ispituje postojanje out fajla u home folderu, pa ako postoji generiše sljedeći redni broj
+
          out_0001.odt
          out_0002.odt
          itd...

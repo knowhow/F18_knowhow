@@ -289,11 +289,10 @@ STATIC FUNCTION _val_num( nNum )
 
    RETURN lRet
 
-// ----------------------------------------
-// vecina ugovora ima samo jednu stavku
-// koja najcesce govi sta ugovor sadrzi
-// -----------------------------------------
-FUNCTION g_rugov_opis( cIdUgov )
+
+
+
+FUNCTION vrati_opis_ugovora( cIdUgov )
 
    LOCAL cOpis := ""
 

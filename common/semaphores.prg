@@ -108,7 +108,7 @@ FUNCTION get_semaphore_locked_by_me_status_user( table )
    LOCAL _ret
    LOCAL _server := pg_server()
 
-   _qry := "SELECT user_code FROM fmk.semaphores_" + table + " WHERE algoritam = 'locked_by_me'"
+   _qry := "SELECT user_code FROM fmk.semaphores_" + table + " WHERE algorithm = 'locked_by_me'"
    _ret := _sql_query( _server, _qry )
 
    RETURN AllTrim( _ret:FieldGet( 1 ) )

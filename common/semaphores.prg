@@ -57,8 +57,8 @@ FUNCTION lock_semaphore( table, status, unlock_table )
          log_write( _err_msg, 2 )
          @ maxrows() - 1, maxcols() - 70 SAY PadR( _err_msg, 53 )
          hb_idleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-         log_write( "call stack 1 " + ProcName( 1 ) + AllTrim( Str( ProcLine( 1 ) ) ), 2 )
-         log_write( "call stack 2 " + ProcName( 2 ) + AllTrim( Str( ProcLine( 2 ) ) ), 2 )
+         log_write( "call stack 1 " + ProcName( 1 ) + " " + AllTrim( Str( ProcLine( 1 ) ) ), 2 )
+         log_write( "call stack 2 " + ProcName( 2 ) + " " + AllTrim( Str( ProcLine( 2 ) ) ), 2 )
          MsgC()
       ELSE
          IF _i > 1

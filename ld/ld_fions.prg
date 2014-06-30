@@ -712,12 +712,12 @@ FUNCTION FillKMinRad( k_min_rad )
    LOCAL _fields
 
    IF radn->kminrad <> k_min_rad
-      IF Pitanje( , Lokal( "Staviti u sifrarnik radnika ovu vrijednost D/N?" ), "N" ) == "D"
+      IF Pitanje( , Lokal( "Staviti u šifrarnik radnika ovu vrijednost (D/N) ?" ), "N" ) == "D"
 
          SELECT radn
          _fields := dbf_get_rec()
          _fields[ "kminrad" ] := k_min_rad
-         update_rec_server_and_dbf( "ld_radn", _vars, 1, "FULL" )
+         update_rec_server_and_dbf( "ld_radn", _fields, 1, "FULL" )
          SELECT ld
       ENDIF
    ENDIF

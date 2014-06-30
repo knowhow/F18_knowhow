@@ -17,7 +17,7 @@ STATIC __doc_no
 
 
 
-FUNCTION frm_lst_log( nDoc_no )
+FUNCTION rnal_pregled_loga_za_nalog( nDoc_no )
 
    LOCAL nTArea
 

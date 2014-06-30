@@ -640,17 +640,9 @@ STATIC FUNCTION key_handler()
 
    CASE ( Upper( Chr( Ch ) ) == "L" )
 		
-      IF !ImaPravoPristupa( goModul:oDataBase:cName, "DOK", "LOGVIEW" )
-			
-         MsgBeep( cZabrana )
-         SELECT docs
-         RETURN DE_CONT
-			
-      ENDIF
-	
       nDoc_no := docs->doc_no
 		
-      frm_lst_log( nDoc_no )
+      rnal_pregled_loga_za_nalog( nDoc_no )
 		
       RETURN DE_CONT
 

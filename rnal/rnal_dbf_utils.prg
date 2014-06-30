@@ -49,8 +49,6 @@ FUNCTION rnal_o_tables( lTemporary )
    O_DOC_IT
    O_DOC_IT2
    O_DOC_OPS
-   O_DOC_LOG
-   O_DOC_LIT
 
    IF lTemporary == .T.
 

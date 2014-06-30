@@ -10,20 +10,23 @@
  */
 
 
-
+#include "rnal.ch"
 
 /*
    use_sql_doc_log() => otvori šifarnik rnal_doc_log
 */
 
-FUNCTION use_sql_doc_log( doc_no )
+FUNCTION use_sql_doc_log( nDoc_no, cDoc_type )
 
    LOCAL cSql
-   LOCAL cTable := "rnal_doc_log"
+   LOCAL cTable := "doc_log"
    LOCAL cWhere := ""
 
-   IF doc_no <> NIL
-       cWhere := " WHERE doc_no = " + _sql_quote( doc_no )
+   IF nDoc_no <> NIL
+       cWhere := " WHERE doc_no = " + ALLTRIM( STR ( nDoc_no ) )
+       IF cDoc_type <> NIL
+           cWhere += " AND doc_log_ty = " + _sql_quote( cDoc_type )
+       ENDIF
    ENDIF
 
    cSql := "SELECT "
@@ -45,6 +48,7 @@ FUNCTION use_sql_doc_log( doc_no )
    INDEX ON STR(DOC_NO,10) + DOC_LOG_TY + STR(DOC_LOG_NO,10) TAG "2" TO ( cTable )
 	
    SET ORDER TO TAG "1"
+   GO TOP
 
    RETURN .T.
 
@@ -54,16 +58,16 @@ FUNCTION use_sql_doc_log( doc_no )
    use_sql_doc_lit() => otvori šifarnik rnal_doc_lit
 */
 
-FUNCTION use_sql_doc_lit( doc_no, doc_log_no )
+FUNCTION use_sql_doc_lit( nDoc_no, nDoc_log_no )
 
    LOCAL cSql
-   LOCAL cTable := "rnal_doc_lit"
+   LOCAL cTable := "doc_lit"
    LOCAL cWhere := ""
 
-   IF doc_no <> NIL
-       cWhere := " WHERE doc_no = " + _sql_quote( doc_no )
-       IF doc_log_no <> NIL
-           cWhere += " AND doc_log_no = " + _sql_quote( doc_log_no )
+   IF nDoc_no <> NIL
+       cWhere := " WHERE doc_no = " + ALLTRIM( STR ( nDoc_no ) )
+       IF nDoc_log_no <> NIL
+           cWhere += " AND doc_log_no = " + ALLTRIM( STR ( nDoc_log_no ) )
        ENDIF
    ENDIF
 
@@ -96,6 +100,7 @@ FUNCTION use_sql_doc_lit( doc_no, doc_log_no )
    INDEX ON STR(DOC_NO,10) + STR(DOC_LOG_NO,10) + STR(DOC_LIT_NO,10) TAG "1" TO ( cTable )
 	
    SET ORDER TO TAG "1"
+   GO TOP
 
    RETURN .T.
 
@@ -422,17 +427,12 @@ STATIC FUNCTION _inc_lit_no( nDoc_no, nDoc_log_no )
 
 
 
-// ----------------------------------------------
-// vraca string napunjen promjenama tipa "20"
-// ----------------------------------------------
 FUNCTION _lit_20_get( nDoc_no, nDoc_log_no )
 
    LOCAL cRet := ""
-   LOCAL nTArea := Select()
 
-   SELECT doc_lit
-   SET ORDER TO TAG "1"
-   GO TOP
+   use_sql_doc_lit( nDoc_no, nDoc_log_no )
+
    SEEK docno_str( nDoc_no ) + doclog_str( nDoc_log_no )
 
    DO WHILE !Eof() .AND. field->doc_no == nDoc_no ;
@@ -462,23 +462,16 @@ FUNCTION _lit_20_get( nDoc_no, nDoc_log_no )
       SKIP
    ENDDO
 
-   SELECT ( nTArea )
-
    RETURN cRet
 
 
 
-// ----------------------------------------------
-// vraca string napunjen promjenama tipa "21"
-// ----------------------------------------------
 FUNCTION _lit_21_get( nDoc_no, nDoc_log_no )
 
    LOCAL cRet := ""
-   LOCAL nTArea := Select()
 
-   SELECT doc_lit
-   SET ORDER TO TAG "1"
-   GO TOP
+   use_sql_doc_lit( nDoc_no, nDoc_log_no )
+
    SEEK docno_str( nDoc_no ) + doclog_str( nDoc_log_no )
 
    DO WHILE !Eof() .AND. field->doc_no == nDoc_no ;
@@ -500,22 +493,15 @@ FUNCTION _lit_21_get( nDoc_no, nDoc_log_no )
       SKIP
    ENDDO
 
-   SELECT ( nTArea )
-
    RETURN cRet
 
 
-// ----------------------------------------------
-// vraca string napunjen promjenama tipa "30"
-// ----------------------------------------------
 FUNCTION _lit_30_get( nDoc_no, nDoc_log_no )
 
    LOCAL cRet := ""
-   LOCAL nTArea := Select()
 
-   SELECT doc_lit
-   SET ORDER TO TAG "1"
-   GO TOP
+   use_sql_doc_lit( nDoc_no, nDoc_log_no )
+
    SEEK docno_str( nDoc_no ) + doclog_str( nDoc_log_no )
 
    DO WHILE !Eof() .AND. field->doc_no == nDoc_no ;
@@ -533,40 +519,20 @@ FUNCTION _lit_30_get( nDoc_no, nDoc_log_no )
       SKIP
    ENDDO
 
-   SELECT ( nTArea )
-
    RETURN cRet
 
 
 
 
-// ----------------------------------------------
-// vraca string napunjen promjenama tipa "01"
-// ----------------------------------------------
 FUNCTION _lit_01_get( nDoc_no, nDoc_log_no )
-
-   LOCAL cRet := ""
-   LOCAL nTArea := Select()
-
-   cRet += "Otvaranje naloga...#"
-	
-   SELECT ( nTArea )
-
-   RETURN cRet
+   RETURN "Otvaranje naloga...#"
 
 
-// ----------------------------------------------
-// vraca string napunjen promjenama tipa "99"
-// ----------------------------------------------
 FUNCTION _lit_99_get( nDoc_no, nDoc_log_no )
 
    LOCAL cRet := ""
-   LOCAL nTArea := Select()
 
-   SELECT doc_lit
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK docno_str( nDoc_no ) + doclog_str( nDoc_log_no )
+   use_sql_doc_lit( nDoc_no, nDoc_log_no )
 
    nStat := field->int_1
 
@@ -581,22 +547,15 @@ FUNCTION _lit_99_get( nDoc_no, nDoc_log_no )
       cRet := "zatvoren, ali nije isporucen...#"
    ENDCASE
 
-   SELECT ( nTArea )
-
    RETURN cRet
 
 
-// ----------------------------------------------
-// vraca string napunjen promjenama tipa "10"
-// ----------------------------------------------
 FUNCTION _lit_10_get( nDoc_no, nDoc_log_no )
 
    LOCAL cRet := ""
-   LOCAL nTArea := Select()
 
-   SELECT doc_lit
-   SET ORDER TO TAG "1"
-   GO TOP
+   use_sql_doc_lit( nDoc_no, nDoc_log_no )
+
    SEEK docno_str( nDoc_no ) + doclog_str( nDoc_log_no )
 
    DO WHILE !Eof() .AND. field->doc_no == nDoc_no ;
@@ -611,22 +570,15 @@ FUNCTION _lit_10_get( nDoc_no, nDoc_log_no )
       SKIP
    ENDDO
 
-   SELECT ( nTArea )
-
    RETURN cRet
 
 
-// ----------------------------------------------
-// vraca string napunjen promjenama tipa "11"
-// ----------------------------------------------
 FUNCTION _lit_11_get( nDoc_no, nDoc_log_no )
 
    LOCAL cRet := ""
-   LOCAL nTArea := Select()
 
-   SELECT doc_lit
-   SET ORDER TO TAG "1"
-   GO TOP
+   use_sql_doc_lit( nDoc_no, nDoc_log_no )
+
    SEEK docno_str( nDoc_no ) + doclog_str( nDoc_log_no )
 
    DO WHILE !Eof() .AND. field->doc_no == nDoc_no ;
@@ -645,23 +597,16 @@ FUNCTION _lit_11_get( nDoc_no, nDoc_log_no )
       SKIP
    ENDDO
 
-   SELECT ( nTArea )
-
    RETURN cRet
 
 
 
-// ----------------------------------------------
-// vraca string napunjen promjenama tipa "12"
-// ----------------------------------------------
 FUNCTION _lit_12_get( nDoc_no, nDoc_log_no )
 
    LOCAL cRet := ""
-   LOCAL nTArea := Select()
 
-   SELECT doc_lit
-   SET ORDER TO TAG "1"
-   GO TOP
+   use_sql_doc_lit( nDoc_no, nDoc_log_no )
+
    SEEK docno_str( nDoc_no ) + doclog_str( nDoc_log_no )
 
    DO WHILE !Eof() .AND. field->doc_no == nDoc_no ;
@@ -676,23 +621,16 @@ FUNCTION _lit_12_get( nDoc_no, nDoc_log_no )
       SKIP
    ENDDO
 
-   SELECT ( nTArea )
-
    RETURN cRet
 
 
 
-// ----------------------------------------------
-// vraca string napunjen promjenama tipa "13"
-// ----------------------------------------------
 FUNCTION _lit_13_get( nDoc_no, nDoc_log_no )
 
    LOCAL cRet := ""
-   LOCAL nTArea := Select()
 
-   SELECT doc_lit
-   SET ORDER TO TAG "1"
-   GO TOP
+   use_sql_doc_lit( nDoc_no, nDoc_log_no )
+
    SEEK docno_str( nDoc_no ) + doclog_str( nDoc_log_no )
 
    DO WHILE !Eof() .AND. field->doc_no == nDoc_no ;
@@ -708,8 +646,6 @@ FUNCTION _lit_13_get( nDoc_no, nDoc_log_no )
       SELECT doc_lit
       SKIP
    ENDDO
-
-   SELECT ( nTArea )
 
    RETURN cRet
 

@@ -214,6 +214,7 @@ FUNCTION set_a_dbf_rnal_doc_log()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_DOC_LOG
    _item[ "temp" ]  := .F.
+   _item[ "sql" ]  := .T.
 
    _item[ "algoritam" ] := {}
 
@@ -248,6 +249,7 @@ FUNCTION set_a_dbf_rnal_doc_lit()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_DOC_LIT
    _item[ "temp" ]  := .F.
+   _item[ "sql" ]  := .T.
 
    _item[ "algoritam" ] := {}
 

@@ -184,11 +184,8 @@ STATIC FUNCTION _cre_spec( params )
       cDoc_oper := getusername( docs->operater_i )
 
       cDoc_prior := s_priority( docs->doc_priori )
-	
-      // get log if exist
-      SELECT doc_log
-      SET ORDER TO TAG "1"
-      GO TOP
+
+      use_sql_doc_log( nDoc_no )	
 
       SEEK docno_str( nDoc_no )
 

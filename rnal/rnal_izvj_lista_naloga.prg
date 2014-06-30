@@ -365,7 +365,6 @@ FUNCTION lst_vrok_tek_dan()
    BoxC()
 
    O_DOCS
-   O_DOC_LOG
    O_CUSTOMS
    O_CONTACTS
 
@@ -390,7 +389,6 @@ FUNCTION lst_vrok_tek_dan()
 
    DO WHILE !Eof()
 	
-      // uslov po operateru
       IF nOperater <> 0
          IF field->operater_i <> nOperater
             SKIP
@@ -428,11 +426,8 @@ FUNCTION lst_vrok_tek_dan()
       cPom += show_customer( field->cust_id, field->cont_id )
 	
       ? cPom
-	
-      SELECT doc_log
-      SET ORDER TO TAG "1"
-      GO TOP
 
+      use_sql_doc_log( nDoc_no )	
       SEEK docno_str( nDoc_no )
 
       cLog := ""
@@ -466,6 +461,7 @@ FUNCTION lst_vrok_tek_dan()
 
       SELECT docs
       SKIP
+
    ENDDO
 
    ? cLine

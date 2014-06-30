@@ -1258,24 +1258,20 @@ STATIC FUNCTION _get_doc_contacts( aArr, nDoc_no )
    LOCAL nSrch := 0
    LOCAL nCont_id := 0
 
-   SELECT doc_log
-   SET FILTER TO
-   SELECT doc_lit
-   SET FILTER TO
-   SELECT doc_log
+   use_sql_doc_log( nDoc_no, cLogType )
    SET ORDER TO TAG "2"
    GO TOP
 
-   SEEK docno_str( nDoc_no ) + cLogType
+   SELECT doc_log
+   SET ORDER TO TAG "2"
+   GO TOP
 
    DO WHILE !Eof() .AND. field->doc_no == nDoc_no ;
          .AND. field->doc_log_ty == cLogType
 
       nDoc_log_no := field->doc_log_no
-	
-      SELECT doc_lit
-      SET ORDER TO TAG "1"
-      GO TOP
+
+      use_sql_doc_lit( nDoc_no, nDoc_log_no )	
       SEEK docno_str( nDoc_no ) + doclog_str( nDoc_log_no )
 
       DO WHILE !Eof() .AND. field->doc_no == nDoc_no ;

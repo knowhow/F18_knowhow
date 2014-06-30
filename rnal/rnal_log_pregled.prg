@@ -27,7 +27,7 @@ FUNCTION rnal_pregled_loga_za_nalog( nDoc_no )
 
    rnal_o_tables( .F. )
 
-   tbl_list()
+   tabelarni_pregled_loga()
 
    SELECT ( nTArea )
 
@@ -35,10 +35,7 @@ FUNCTION rnal_pregled_loga_za_nalog( nDoc_no )
 
 
 
-// -------------------------------------------------
-// otvori tabelu pregleda
-// -------------------------------------------------
-STATIC FUNCTION tbl_list()
+STATIC FUNCTION tabelarni_pregled_loga()
 
    LOCAL cFooter
    LOCAL cHeader
@@ -51,27 +48,22 @@ STATIC FUNCTION tbl_list()
 
    Box(, 20, 77 )
 
-   _set_box()
+   box_header_footer()
 
-   SELECT doc_log
-   SET ORDER TO TAG "1"
+   use_sql_doc_log( __doc_no )
 
-   set_f_kol()
-   set_a_kol( @ImeKol, @Kol )
+   setuj_browse_kolone( @ImeKol, @Kol )
 
    Beep( 2 )
 
-   ObjDbedit( "lstlog", 20, 77, {|| k_handler() }, cHeader, cFooter,,,,, 5 )
+   ObjDbedit( "lstlog", 20, 77, {|| pregled_loga_key_handler() }, cHeader, cFooter,,,,, 5 )
 
    BoxC()
 
    RETURN
 
 
-// ------------------------------------------
-// setovanje dna boxa
-// ------------------------------------------
-STATIC FUNCTION _set_box()
+STATIC FUNCTION box_header_footer()
 
    LOCAL cLine1 := ""
    LOCAL cLine2 := ""
@@ -87,45 +79,22 @@ STATIC FUNCTION _set_box()
    RETURN
 
 
-// ------------------------------------------------
-// setovanje filtera
-// ------------------------------------------------
-STATIC FUNCTION set_f_kol()
-
-   LOCAL cFilter
-
-   cFilter := "doc_no == " + docno_str( __doc_no )
-   SELECT doc_log
-   SET FILTER to &cFilter
-   GO TOP
-
-   RETURN
 
 
-
-// ---------------------------------------------
-// pregled - key handler
-// ---------------------------------------------
-STATIC FUNCTION k_handler()
+STATIC FUNCTION pregled_loga_key_handler()
 
    LOCAL nTblFilt
    LOCAL cLogDesc := ""
    LOCAL cPom
-
-   // napravi string iz rnlog/rnlog_it
-   cLogDesc := g_log_desc( doc_log->doc_no, ;
-      doc_log->doc_log_no, ;
-      doc_log_ty )
+   
+   cLogDesc := opis_loga( doc_log->doc_no, doc_log->doc_log_no, doc_log_ty )
 
    cPom := StrTran( cLogDesc, "#", "," )
 
-   // prikaz stringa u browse - box-u
-   s_log_desc_on_form( cPom )
+   prikazi_status_loga_u_dnu( cPom )
 
    DO CASE
 	
-      // refresh na browse
-      // radi prikaza s_log_opis...()
    CASE ( Ch == K_UP ) .OR. ;
          ( Ch == K_PGUP ) .OR. ;
          ( Ch == K_DOWN ) .OR. ;
@@ -133,44 +102,25 @@ STATIC FUNCTION k_handler()
 		
       RETURN DE_REFRESH
 		
-      // detaljni prikaz box-a sa promjenama
    CASE ( Ch == K_ENTER )
 	
-      // ima li pravo pristupa
-      IF !ImaPravoPristupa( goModul:oDataBase:cName, "DOK", "LOGDETAIL" )
-         msgbeep( cZabrana )
-         SELECT docs
-         RETURN DE_CONT
-      ENDIF
-		
-      sh_log_box( cLogDesc )
+      prikazi_promjene_unutar_boxa( cLogDesc )
+
       RETURN DE_CONT
-	
-      // stampa liste log-a
-   CASE ( Ch == K_CTRL_P )
-      IF Pitanje(, "Stampati liste promjena (D/N) ?", "D" ) == "D"
-         // stampa liste
-         RETURN DE_CONT
-      ENDIF
-      SELECT doc_log
-      RETURN DE_CONT
-	
+
    ENDCASE
 
    RETURN DE_CONT
 
 
 
-// -------------------------------------------------------
-// setovanje kolona tabele za pregled log-a
-// -------------------------------------------------------
-STATIC FUNCTION set_a_kol( aImeKol, aKol )
+STATIC FUNCTION setuj_browse_kolone( aImeKol, aKol )
 
    aImeKol := {}
 
    AAdd( aImeKol, { "dat./vr./oper.", {|| DToC( doc_log_da ) + " / " + PadR( doc_log_ti, 5 ) + " " + PadR( getusername( operater_i ), 10 ) + ".." }, "datum", {|| .T. }, {|| .T. } } )
 
-   AAdd( aImeKol, { "prom.tip", {|| PadR( s_log_type( doc_log_ty ), 12 ) }, "tip", {|| .T. }, {|| .T. } } )
+   AAdd( aImeKol, { "prom.tip", {|| PadR( tip_loga_opis( doc_log_ty ), 12 ) }, "tip", {|| .T. }, {|| .T. } } )
 
    AAdd( aImeKol, { "kratki opis", {|| PadR( doc_log_de, 30 ) + ".." }, "opis", {|| .T. }, {|| .T. } } )
 
@@ -183,10 +133,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
    RETURN
 
 
-// --------------------------------------------
-// vraca opis tipa promjene
-// --------------------------------------------
-STATIC FUNCTION s_log_type( cType )
+STATIC FUNCTION tip_loga_opis( cType )
 
    LOCAL xRet := ""
 
@@ -222,11 +169,8 @@ STATIC FUNCTION s_log_type( cType )
    RETURN xRet
 
 
-// -------------------------------------------
-// prikaz opisa log-a na formi
-// cLogText se lomi na 3 reda...
-// -------------------------------------------
-STATIC FUNCTION s_log_desc_on_form( cLogText )
+
+STATIC FUNCTION prikazi_status_loga_u_dnu( cLogText )
 
    LOCAL aLogArr := {}
    LOCAL cRow1
@@ -254,31 +198,20 @@ STATIC FUNCTION s_log_desc_on_form( cLogText )
       ENDIF
    ENDIF
 
-   // separator
    @ m_x + 16, m_y + 2 SAY Space( nLenText )
    @ m_x + 16, m_y + 2 SAY PadR( cRow1, nLenText ) COLOR "I"
-   // prvi red
    @ m_x + 17, m_y + 2 SAY Space( nLenText )
    @ m_x + 17, m_y + 2 SAY PadR( cRow2, nLenText ) COLOR "I"
-   // drugi red
    @ m_x + 18, m_y + 2 SAY Space( nLenText )
    @ m_x + 18, m_y + 2 SAY PadR( cRow3, nLenText ) COLOR "I"
 
    RETURN
 
 
-// -------------------------------------------------------
-// formira i vraca string na osnovu tabela DOC_LOG/DOC_LIT
-// -------------------------------------------------------
-STATIC FUNCTION g_log_desc( nDoc_no, nDoc_log_no, cDoc_log_type )
+
+STATIC FUNCTION opis_loga( nDoc_no, nDoc_log_no, cDoc_log_type )
 
    LOCAL cRet := ""
-   LOCAL nTArea := Select()
-   LOCAL nTRec := RecNo()
-   LOCAL cTBFilter := dbFilter()
-
-   SELECT doc_log
-   SET ORDER TO TAG "1"
 
    cDoc_log_type := AllTrim( cDoc_log_type )
 
@@ -309,17 +242,10 @@ STATIC FUNCTION g_log_desc( nDoc_no, nDoc_log_no, cDoc_log_type )
       cRet := _lit_30_get( nDoc_no, nDoc_log_no )
    ENDCASE
 
-   SELECT ( nTArea )
-   SET FILTER to &cTBFILTER
-   GO ( nTRec )
-
    RETURN cRet
 
 
 
-// -------------------------------------------------
-// vraca opis akcije prema oznaci cAkcija
-// -------------------------------------------------
 STATIC FUNCTION g_action_info( cAction )
 
    LOCAL xRet := ""
@@ -336,10 +262,7 @@ STATIC FUNCTION g_action_info( cAction )
    RETURN xRet
 
 
-// ------------------------------------------
-// prikaz box-a sa informacijama loga
-// ------------------------------------------
-STATIC FUNCTION sh_log_box( cLogTxt )
+STATIC FUNCTION prikazi_promjene_unutar_boxa( cLogTxt )
 
    LOCAL aBoxTxt := {}
    LOCAL cPom

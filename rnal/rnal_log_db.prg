@@ -11,6 +11,96 @@
 
 
 
+
+/*
+   use_sql_doc_log() => otvori šifarnik rnal_doc_log
+*/
+
+FUNCTION use_sql_doc_log( doc_no )
+
+   LOCAL cSql
+   LOCAL cTable := "rnal_doc_log"
+   LOCAL cWhere := ""
+
+   IF doc_no <> NIL
+       cWhere := " WHERE doc_no = " + _sql_quote( doc_no )
+   ENDIF
+
+   cSql := "SELECT "
+   cSql += "doc_no, "
+   cSql += "doc_log_no,"
+   cSql += "(CASE WHEN doc_log_da IS NULL THEN '1960-01-01'::date ELSE doc_log_da END) AS doc_log_da,"
+   cSql += "doc_log_ti::char(8),"
+   cSql += "operater_i,"
+   cSql += "doc_log_ty::char(3),"
+   cSql += "doc_log_de::char(250) "
+   cSql += " FROM fmk.rnal_doc_log "
+   cSql += cWhere
+   cSql += " ORDER BY doc_no, doc_log_no "
+
+   SELECT ( F_DOC_LOG )
+   use_sql( cTable, cSql )
+
+   INDEX ON STR(DOC_NO,10) + STR(DOC_LOG_NO,10) + DTOS(DOC_LOG_DA) + DOC_LOG_TI TAG "1" TO ( cTable )
+   INDEX ON STR(DOC_NO,10) + DOC_LOG_TY + STR(DOC_LOG_NO,10) TAG "2" TO ( cTable )
+	
+   SET ORDER TO TAG "1"
+
+   RETURN .T.
+
+
+
+/*
+   use_sql_doc_lit() => otvori šifarnik rnal_doc_lit
+*/
+
+FUNCTION use_sql_doc_lit( doc_no, doc_log_no )
+
+   LOCAL cSql
+   LOCAL cTable := "rnal_doc_lit"
+   LOCAL cWhere := ""
+
+   IF doc_no <> NIL
+       cWhere := " WHERE doc_no = " + _sql_quote( doc_no )
+       IF doc_log_no <> NIL
+           cWhere += " AND doc_log_no = " + _sql_quote( doc_log_no )
+       ENDIF
+   ENDIF
+
+   cSql := "SELECT "
+   cSql += "doc_no, "
+   cSql += "doc_log_no,"
+   cSql += "doc_lit_no,"
+   cSql += "doc_lit_ac::char(1),"
+   cSql += "art_id,"
+   cSql += "char_1::char(250),"
+   cSql += "char_2::char(250),"
+   cSql += "char_3::char(250),"
+   cSql += "num_1,"
+   cSql += "num_2,"
+   cSql += "num_3,"
+   cSql += "int_1,"
+   cSql += "int_2,"
+   cSql += "int_3,"
+   cSql += "int_4,"
+   cSql += "int_5,"
+   cSql += "(CASE WHEN date_1 IS NULL THEN '1960-01-01'::date ELSE date_1 END) AS date_1,"
+   cSql += "(CASE WHEN date_2 IS NULL THEN '1960-01-01'::date ELSE date_2 END) AS date_2 "
+   cSql += " FROM fmk.rnal_doc_lit "
+   cSql += cWhere
+   cSql += " ORDER BY doc_no, doc_log_no, doc_lit_no "
+
+   SELECT ( F_DOC_LIT )
+   use_sql( cTable, cSql )
+
+   INDEX ON STR(DOC_NO,10) + STR(DOC_LOG_NO,10) + STR(DOC_LIT_NO,10) TAG "1" TO ( cTable )
+	
+   SET ORDER TO TAG "1"
+
+   RETURN .T.
+
+
+
 // -----------------------------------
 // punjenje loga sa stavkama tipa 10
 // -----------------------------------

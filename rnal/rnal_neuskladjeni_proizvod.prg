@@ -50,7 +50,6 @@ ENDCLASS
 
 
 
-// ---------------------------------------
 METHOD RNALDamageDocument:New()
 
    ::damage_data := NIL
@@ -104,9 +103,6 @@ METHOD RNALDamageDocument:get_damage_data()
    RETURN
 
 
-// ------------------------------------------------------
-// daj mi stavke koje su sporne sa naloga
-// ------------------------------------------------------
 METHOD RNALDamageDocument:get_damage_items()
 
    LOCAL oRow
@@ -134,8 +130,9 @@ METHOD RNALDamageDocument:get_damage_items()
 
    RETURN
 
+
 // -------------------------------------------------------------
-// vrati mi uslov za sql izraz na osnovu ovoga
+// vrati uslov za sql izraz na osnovu ovoga
 // -------------------------------------------------------------
 METHOD RNALDamageDocument:get_damage_items_cond( field_name )
 

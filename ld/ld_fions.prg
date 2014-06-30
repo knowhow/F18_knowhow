@@ -707,7 +707,7 @@ FUNCTION FillBrBod( _brbod )
    RETURN .T.
 
 
-FUNCTION FillKMinRad( k_min_rad )
+FUNCTION ld_setuj_minuli_rad_radnika( k_min_rad )
 
    LOCAL _fields
 

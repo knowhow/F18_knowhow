@@ -339,9 +339,9 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    @ m_x + 3, Col() + 2 SAY IF( gBodK == "1", Lokal( "Vrijednost boda" ), Lokal( "Vr.koeficijenta" ) ); @ Row(), Col() + 1 SAY parobr->vrbod  PICT "99999.99999"
    IF gMinR == "B"
-      @ m_x + 3, Col() + 2 SAY Lokal( "Minuli rad (bod)" ) GET _kminrad PICT "9999.99" VALID FillKMinRad( _kminrad )
+      @ m_x + 3, Col() + 2 SAY Lokal( "Minuli rad (bod)" ) GET _kminrad PICT "9999.99" VALID ld_setuj_minuli_rad_radnika( _kminrad )
    ELSE
-      @ m_x + 3, Col() + 2 SAY Lokal( "Koef.minulog rada" ) GET _kminrad PICT "99.99%" VALID FillKMinRad( _kminrad )
+      @ m_x + 3, Col() + 2 SAY Lokal( "Koef.minulog rada" ) GET _kminrad PICT "99.99%" VALID ld_setuj_minuli_rad_radnika( _kminrad )
    ENDIF
 
    @ m_x + 4, m_y + 2 SAY8 "Lič.odb:" GET _ulicodb PICT "9999.99"

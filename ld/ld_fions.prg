@@ -481,7 +481,7 @@ FUNCTION Prosj1( cTip, cTip2, cF0 )
             ENDIF
          ENDIF
       ELSE
-         MsgBeep( Lokal( "Prosjek je uzet iz sifrarnika radnika - OSN.BOL. !" ) )
+         MsgBeep( Lokal( "Prosjek je uzet iz šifrarnika radnika - OSN.BOL. !" ) )
          SELECT RADN
          SET ORDER TO TAG "1"
          GO TOP
@@ -514,7 +514,7 @@ FUNCTION Prosj1( cTip, cTip2, cF0 )
    ENDDO
 
    Box(, 4, 50 )
-   @ m_x + 1, m_y + 2 SAY "PRIMANJE ZA PROSLI MJESEC:"
+   @ m_x + 1, m_y + 2 SAY8 "PRIMANJE ZA PROŠLI MJESEC:"
    @ m_x + 2, m_y + 2 SAY  cmj1; @ Row(), Col() + 2 SAY nMj1 PICT "999999.999"
    @ m_x + 4, m_y + 2 SAY "Prosjek"; @ Row(), Col() + 2 SAY nMj1 PICT "999999.999"
    Inkey( 0 )
@@ -707,12 +707,12 @@ FUNCTION FillBrBod( _brbod )
    RETURN .T.
 
 
-FUNCTION ld_setuj_minuli_rad_radnika( k_min_rad )
+FUNCTION set_koeficijent_minulog_rada( k_min_rad )
 
    LOCAL _fields
 
    IF radn->kminrad <> k_min_rad
-      IF Pitanje( , Lokal( "Staviti u šifrarnik radnika ovu vrijednost (D/N) ?" ), "N" ) == "D"
+      IF Pitanje( , "Staviti u šifrarnik radnika ovu vrijednost (D/N) ?", "N" ) == "D"
 
          SELECT radn
          _fields := dbf_get_rec()

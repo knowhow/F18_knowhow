@@ -86,8 +86,8 @@ STATIC FUNCTION pregled_loga_key_handler()
    LOCAL nTblFilt
    LOCAL cLogDesc := ""
    LOCAL cPom
-   
-   cLogDesc := opis_loga( doc_log->doc_no, doc_log->doc_log_no, doc_log_ty )
+  
+   cLogDesc := opis_loga( doc_log->doc_no, doc_log->doc_log_no, doc_log->doc_log_ty )
 
    cPom := StrTran( cLogDesc, "#", "," )
 
@@ -241,6 +241,8 @@ STATIC FUNCTION opis_loga( nDoc_no, nDoc_log_no, cDoc_log_type )
    CASE cDoc_log_type == "30"
       cRet := _lit_30_get( nDoc_no, nDoc_log_no )
    ENDCASE
+
+   SELECT doc_log
 
    RETURN cRet
 

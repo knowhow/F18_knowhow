@@ -11,31 +11,31 @@
 
 #include "fmk.ch"
 
-// --------------------------------------------------------------
-// koristenje f18_lock_tables( arr ), f18_free_tables( arr )
-// --------
-// if !f18_lock_tables( {"pos_doks", "pos_pos"} )
-// -- prekidamo operaciju
-// endif
-//
-// sql_table_update(nil, "BEGIN")
-// update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-// f18_free_tables( {"pos_doks", "pos_pos"} )
-// sql_table_update(nil, "END")
-//
-// ako imamo samo jednan zapis, jednu tabelu, transakcija i lockovanje
-// se desavaju unutar funkcije update_rec_server_and_dbf:
-//
-// update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
-//
-// na isti nacin se koristi i u kombinaciji sa
-// delete_rec_server_and_dbf()
-// --------------------------------------------------------------
+/*
 
-// -----------------------------------------------------
-// lokovanje tabela zadatih u matrici a_tables
-// a_tables := {"sifk", "sifv"...}
-// -----------------------------------------------------
+
+  koristenje f18_lock_tables( arr ), f18_free_tables( arr )
+
+  if !f18_lock_tables( {"pos_doks", "pos_pos"} )
+     -- prekidamo operaciju
+  endif
+
+  sql_table_update(nil, "BEGIN")
+       update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
+       f18_free_tables( {"pos_doks", "pos_pos"} )
+  sql_table_update(nil, "END")
+
+  ako imamo samo jednan zapis, jednu tabelu, transakcija i lockovanje
+  se desavaju unutar funkcije update_rec_server_and_dbf:
+
+       update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+
+  na isti nacin se koristi i u kombinaciji sa:
+      
+        delete_rec_server_and_dbf()
+
+*/
+
 FUNCTION f18_lock_tables( a_tables, unlock_table )
 
    LOCAL _ok := .T.
@@ -63,14 +63,13 @@ FUNCTION f18_lock_tables( a_tables, unlock_table )
          sql_table_update( nil, "END" )
          log_write( "uspjesno izvrsen lock tabela " + pp( a_tables ), 7 )
 
-         // nakon uspjesnog lockovanja svih tabela preuzmi promjene od drugih korisnika
+         // nakon uspjesnog lockovanja svih tabela preuzeti promjene od drugih korisnika
          my_use_semaphore_on()
 
          FOR _i := 1 TO Len( a_tables )
             _dbf_rec := get_a_dbf_rec( a_tables[ _i ] )
             _tbl := _dbf_rec[ "table" ]
             IF !_dbf_rec[ "sql" ]
-               // otvori tabelu i selectuj workarea koja je rezervisana za ovu tabelu
                my_use( _tbl, NIL, NIL, NIL, NIL, NIL, .T. )
             ENDIF
          NEXT
@@ -93,10 +92,14 @@ FUNCTION f18_lock_tables( a_tables, unlock_table )
 
    RETURN _ok
 
-// -----------------------------------------------------
-// unlokovanje tabela zadatih u matrici a_tables
-// a_tables := {"sifk", "sifv"}
-// -----------------------------------------------------
+
+/*
+   unlokovanje tabela:
+
+   f18_free_tables( {"pos_pos", "pos_doks"} )
+
+*/
+
 FUNCTION f18_free_tables( a_tables )
 
    LOCAL _ok := .T.

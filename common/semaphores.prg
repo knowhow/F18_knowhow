@@ -16,7 +16,7 @@
 // ------------------------------------------
 // status = "lock" (locked_by_me), "free"
 // ------------------------------------------
-FUNCTION lock_semaphore( table, status, unlock_table )
+FUNCTION lock_semaphore( table, status, lUnlockTable )
 
    LOCAL _qry
    LOCAL _ret
@@ -31,8 +31,8 @@ FUNCTION lock_semaphore( table, status, unlock_table )
         RETURN .T.
    ENDIF
 
-   IF unlock_table == NIL
-      unlock_table := .T.
+   IF lUnlockTable == NIL
+      lUnlockTable := .T.
    ENDIF
 
    // status se moze mijenjati samo ako neko drugi nije lock-ovao tabelu
@@ -47,8 +47,7 @@ FUNCTION lock_semaphore( table, status, unlock_table )
 
       _get_status := get_semaphore_status( table )
 
-      IF !unlock_table .AND. _get_status == "lock"
-         // tabela je lokovana i ja bjezim odavdje
+      IF !lUnlockTable .AND. _get_status == "lock"
          RETURN .F.
       ENDIF
 
@@ -62,6 +61,7 @@ FUNCTION lock_semaphore( table, status, unlock_table )
          log_write( "call stack 2 " + ProcName( 2 ) + " " + AllTrim( Str( ProcLine( 2 ) ) ), 2 )
          MsgC()
       ELSE
+
          IF _i > 1
             _err_msg := ToStr( Time() ) + " : table unlocked : " + table + " retry : " + Str( _i, 2 ) + "/" + Str( SEMAPHORE_LOCK_RETRY_NUM, 2 )
             @ maxrows() - 1, maxcols() - 70 SAY PadR( _err_msg, 53 )

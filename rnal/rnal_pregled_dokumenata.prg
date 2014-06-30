@@ -592,7 +592,7 @@ STATIC FUNCTION key_handler()
 			
             set_doc_marker( nDoc_no, nDoc_status )
 				
-            log_closed( nDoc_no, cDesc, nDoc_status )
+            logiraj_zatvaranje_naloga( nDoc_no, cDesc, nDoc_status )
 				
             MsgBeep( "Nalog zatvoren !!!" )
 			
@@ -604,7 +604,7 @@ STATIC FUNCTION key_handler()
 				
          ELSE
 			
-            MsgBeep( "Setovanje statusa obavezno !!!" )
+            MsgBeep( "Setovanje statusa obavezno !" )
             SELECT docs
             RETURN DE_CONT
 				

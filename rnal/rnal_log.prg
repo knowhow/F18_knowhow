@@ -238,7 +238,7 @@ FUNCTION logiraj_podatke_placanja_za_nalog( nDoc_no, cDesc, cAction, aArr )
 // cDesc - opis
 // cAction - akcija
 // ----------------------------------------------------
-FUNCTION log_damage( nDoc_no, cDesc, cAction )
+FUNCTION logiraj_podatke_loma_na_staklima( nDoc_no, cDesc, cAction )
 
    LOCAL nDoc_log_no
    LOCAL cDoc_log_type
@@ -393,7 +393,7 @@ FUNCTION logiraj_dodatne_operacije_naloga( nDoc_no, cDesc, cAction )
 // cDesc - opis
 // cAction - akcija
 // ----------------------------------------------------
-FUNCTION log_closed( nDoc_no, cDesc, nDoc_status )
+FUNCTION logiraj_zatvaranje_naloga( nDoc_no, cDesc, nDoc_status )
 
    LOCAL nDoc_log_no
    LOCAL cDoc_log_type

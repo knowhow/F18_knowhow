@@ -50,7 +50,7 @@ FUNCTION _ch_damage( nOperId )
 
    beep( 1 )
 
-   log_damage( __doc_no, cDesc, "+" )
+   logiraj_podatke_loma_na_staklima( __doc_no, cDesc, "+" )
 
    beep( 2 )
 

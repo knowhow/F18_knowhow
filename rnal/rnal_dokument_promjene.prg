@@ -41,7 +41,7 @@ FUNCTION m_changes( nDoc_no )
    AAdd( opc, "promjena, novi kontakt naloga " )
    AAdd( opcexe, {|| _ch_cont( .T. ) } )
    AAdd( opc, "promjena, lom artikala " )
-   AAdd( opcexe, {|| _ch_damage( __oper_id ) } )
+   AAdd( opcexe, {|| rnal_evidencija_loma_stakla( __oper_id ) } )
    AAdd( opc, "napravi neuskladjeni proizvod " )
    AAdd( opcexe, {|| rnal_damage_doc_generate( __doc_no ) } )
 

@@ -148,8 +148,8 @@ FUNCTION logiraj_osnovne_podatke_naloga( nDoc_no, cDesc, cAction, aArr )
    cDoc_log_type := "10"
    nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
-   _d_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
-   _lit_10_insert( cAction, nDoc_no, nDoc_log_no, aArr )
+   rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
+   rnal_log_tip_10_insert( cAction, nDoc_no, nDoc_log_no, aArr )
 
    RETURN
 
@@ -174,8 +174,8 @@ FUNCTION logiraj_podatke_isporuke_za_nalog( nDoc_no, cDesc, cAction, aArr )
    cDoc_log_type := "11"
    nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
-   _d_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
-   _lit_11_insert( cAction, nDoc_no, nDoc_log_no, aArr )
+   rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
+   rnal_log_tip_11_insert( cAction, nDoc_no, nDoc_log_no, aArr )
 
    RETURN
 
@@ -199,8 +199,8 @@ FUNCTION logiraj_podatke_kontakta_naloga( nDoc_no, cDesc, cAction, aArr )
    cDoc_log_type := "12"
    nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
-   _d_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
-   _lit_12_insert( cAction, nDoc_no, nDoc_log_no, aArr )
+   rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
+   rnal_log_tip_12_insert( cAction, nDoc_no, nDoc_log_no, aArr )
 
    RETURN
 
@@ -224,8 +224,8 @@ FUNCTION logiraj_podatke_placanja_za_nalog( nDoc_no, cDesc, cAction, aArr )
    cDoc_log_type := "13"
    nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
-   _d_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
-   _lit_13_insert( cAction, nDoc_no, nDoc_log_no, aArr )
+   rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
+   rnal_log_tip_13_insert( cAction, nDoc_no, nDoc_log_no, aArr )
 
    RETURN
 
@@ -262,7 +262,7 @@ FUNCTION logiraj_podatke_loma_na_staklima( nDoc_no, cDesc, cAction )
    cDoc_log_type := "21"
    nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
-   _d_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
+   rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
 
    SELECT _tmp1
    GO TOP
@@ -274,7 +274,7 @@ FUNCTION logiraj_podatke_loma_na_staklima( nDoc_no, cDesc, cAction )
          LOOP
       ENDIF
 	
-      _lit_21_insert( cAction, nDoc_no, nDoc_log_no, ;
+      rnal_log_tip_21_insert( cAction, nDoc_no, nDoc_log_no, ;
          field->art_id,  ;
          field->art_desc, ;
          field->glass_no, ;
@@ -318,7 +318,7 @@ FUNCTION logiraj_stavke_naloga( nDoc_no, cDesc, cAction )
    cDoc_log_type := "20"
    nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
-   _d_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
+   rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
 
    SELECT _doc_it
    GO TOP
@@ -326,7 +326,7 @@ FUNCTION logiraj_stavke_naloga( nDoc_no, cDesc, cAction )
 
    DO WHILE !Eof() .AND. field->doc_no == nDoc_no
 
-      _lit_20_insert( cAction, nDoc_no, nDoc_log_no, ;
+      rnal_log_tip_20_insert( cAction, nDoc_no, nDoc_log_no, ;
          field->art_id,  ;
          field->doc_it_des, ;
          field->doc_it_sch, ;
@@ -365,7 +365,7 @@ FUNCTION logiraj_dodatne_operacije_naloga( nDoc_no, cDesc, cAction )
    cDoc_log_type := "30"
    nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
-   _d_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
+   rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
 
    SELECT _doc_ops
    GO TOP
@@ -373,7 +373,7 @@ FUNCTION logiraj_dodatne_operacije_naloga( nDoc_no, cDesc, cAction )
 
    DO WHILE !Eof() .AND. field->doc_no == nDoc_no
 
-      _lit_30_insert( cAction, nDoc_no, nDoc_log_no, ;
+      rnal_log_tip_30_insert( cAction, nDoc_no, nDoc_log_no, ;
          field->aop_id,  ;
          field->aop_att_id,  ;
          field->doc_op_des )
@@ -424,8 +424,8 @@ FUNCTION logiraj_zatvaranje_naloga( nDoc_no, cDesc, nDoc_status )
 
    nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
-   _d_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
-   _lit_99_insert( cAction, nDoc_no, nDoc_log_no, nDoc_status )
+   rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
+   rnal_log_tip_99_insert( cAction, nDoc_no, nDoc_log_no, nDoc_status )
 
    f18_free_tables( { "doc_log", "doc_lit" } )
    sql_table_update( nil, "END" )
@@ -455,11 +455,8 @@ FUNCTION rnal_logiraj_promjenu_naloga( nDoc_no, cDesc )
    SELECT doc_it
    SET FILTER TO
 
-   // delta stavki dokumenta
-   _doc_it_delta( nDoc_no, cDesc )
-
-   // delta dodatnih operacija dokumenta
-   _doc_op_delta( nDoc_no, cDesc )
+   logiraj_deltu_stavki_naloga( nDoc_no, cDesc )
+   logiraj_deltu_operacija_naloga( nDoc_no, cDesc )
 
    SELECT ( nTArea )
 
@@ -473,17 +470,15 @@ FUNCTION rnal_logiraj_promjenu_naloga( nDoc_no, cDesc )
 // 1. stavke koje nisu iste
 // 2. stavke koje su izbrisane
 // -------------------------------------------------
-STATIC FUNCTION _doc_it_delta( nDoc_no, cDesc )
+STATIC FUNCTION logiraj_deltu_stavki_naloga( nDoc_no, cDesc )
 
    LOCAL nDoc_log_no
    LOCAL cDoc_log_type := "20"
    LOCAL cAction
    LOCAL lLogAppend := .F.
 
-   // uzmi sljedeci broj DOC_LOG
    nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
-   // pozicioniraj se na trazeni dokument
    SELECT doc_it
    SET ORDER TO TAG "1"
    GO TOP
@@ -506,7 +501,7 @@ STATIC FUNCTION _doc_it_delta( nDoc_no, cDesc )
 		
          cAction := "-"
 		
-         _lit_20_insert( cAction, nDoc_no, nDoc_log_no, ;
+         rnal_log_tip_20_insert( cAction, nDoc_no, nDoc_log_no, ;
             nArt_id, ;
             cDoc_it_desc, ;
             cDoc_it_sch, ;
@@ -533,7 +528,7 @@ STATIC FUNCTION _doc_it_delta( nDoc_no, cDesc )
 		
          cAction := "E"
 		
-         _lit_20_insert( cAction, nDoc_no, nDoc_log_no, ;
+         rnal_log_tip_20_insert( cAction, nDoc_no, nDoc_log_no, ;
             _doc_it->art_id, ;
             _doc_it->doc_it_des, ;
             _doc_it->doc_it_sch, ;
@@ -572,7 +567,7 @@ STATIC FUNCTION _doc_it_delta( nDoc_no, cDesc )
 		
          cAction := "+"
 		
-         _lit_20_insert( cAction, nDoc_no, nDoc_log_no, ;
+         rnal_log_tip_20_insert( cAction, nDoc_no, nDoc_log_no, ;
             nArt_id, ;
             cDoc_it_desc, ;
             cDoc_it_sch, ;
@@ -589,12 +584,9 @@ STATIC FUNCTION _doc_it_delta( nDoc_no, cDesc )
       SKIP
    ENDDO
 
-   // bilo je promjena dodaj novi log zapis
    IF lLogAppend
-      _d_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
+      rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
    ELSE
-      // cDesc := "Nije bilo nikakvih promjena..."
-      // _d_log_insert(nDoc_no, nDoc_log_no, cDoc_log_type, cDesc)
    ENDIF
 
    RETURN
@@ -608,17 +600,15 @@ STATIC FUNCTION _doc_it_delta( nDoc_no, cDesc )
 // 1. stavke koje nisu iste
 // 2. stavke koje su izbrisane
 // -------------------------------------------------
-STATIC FUNCTION _doc_op_delta( nDoc_no, cDesc )
+STATIC FUNCTION logiraj_deltu_operacija_naloga( nDoc_no, cDesc )
 
    LOCAL nDoc_log_no
    LOCAL cDoc_log_type := "30"
    LOCAL cAction
    LOCAL lLogAppend := .F.
 
-   // uzmi sljedeci broj DOC_LOG
    nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
-   // pozicioniraj se na trazeni dokument
    SELECT doc_ops
    SET ORDER TO TAG "1"
    GO TOP
@@ -640,7 +630,7 @@ STATIC FUNCTION _doc_op_delta( nDoc_no, cDesc )
 		
          cAction := "-"
 		
-         _lit_30_insert( cAction, nDoc_no, nDoc_log_no, ;
+         rnal_log_tip_30_insert( cAction, nDoc_no, nDoc_log_no, ;
             nAop_id, ;
             nAop_att_id, ;
             cDoc_op_desc )
@@ -663,7 +653,7 @@ STATIC FUNCTION _doc_op_delta( nDoc_no, cDesc )
 		
          cAction := "E"
 		
-         _lit_30_insert( cAction, nDoc_no, nDoc_log_no, ;
+         rnal_log_tip_30_insert( cAction, nDoc_no, nDoc_log_no, ;
             _doc_ops->aop_id, ;
             _doc_ops->aop_att_id, ;
             _doc_ops->doc_op_des )
@@ -697,7 +687,7 @@ STATIC FUNCTION _doc_op_delta( nDoc_no, cDesc )
 		
          cAction := "+"
 		
-         _lit_30_insert( cAction, nDoc_no, nDoc_log_no, ;
+         rnal_log_tip_30_insert( cAction, nDoc_no, nDoc_log_no, ;
             nAop_id, ;
             nAop_att_id, ;
             cDoc_op_desc )
@@ -711,16 +701,9 @@ STATIC FUNCTION _doc_op_delta( nDoc_no, cDesc )
       SKIP
    ENDDO
 
-   // bilo je promjena dodaj novi log zapis
    IF lLogAppend
-
-      _d_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
-	
+      rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
    ELSE
-
-      // cDesc := "Nije bilo promjena ..."
-      // _d_log_insert(nDoc_no, nDoc_log_no, cDoc_log_type, cDesc)
-	
    ENDIF
 
    RETURN

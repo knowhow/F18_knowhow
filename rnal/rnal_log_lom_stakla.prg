@@ -15,10 +15,9 @@
 STATIC __doc_no
 STATIC __oper_id
 
-// ---------------------------------
-// promjena, lom na artiklima
-// ---------------------------------
-FUNCTION _ch_damage( nOperId )
+
+
+FUNCTION rnal_evidencija_loma_stakla( nOperId )
 
    LOCAL nTRec := RecNo()
    LOCAL cDesc
@@ -27,24 +26,20 @@ FUNCTION _ch_damage( nOperId )
 
    __oper_id := nOperId
 
-   // setuj polja tabele....
-   tmp_damage( @aDbf )
+   pomocna_tabela_arr( @aDbf )
 
-   // kreiraj pomocnu tabelu...
    cre_tmp1( aDbf )
    o_tmp1()
+
    SELECT _tmp1
    my_dbf_zap()
-
 
    SELECT docs
    __doc_no := field->doc_no
 
-   // napuni tmp sa stavkama naloga
-   _doc_to_tmp()
+   napuni_tmp_tabelu_sa_dokumentom()
 
-   // box sa unosom podataka
-   IF _box_damage( @cDesc ) == 0
+   IF lom_stakla_box( @cDesc ) == 0
       RETURN
    ENDIF
 
@@ -61,10 +56,7 @@ FUNCTION _ch_damage( nOperId )
 
 
 
-// --------------------------------------------
-// setovanje polja tabele _tmp1
-// --------------------------------------------
-STATIC FUNCTION tmp_damage( aDbf )
+STATIC FUNCTION pomocna_tabela_arr( aDbf )
 
    AAdd( aDbf, { "doc_no", "N", 10, 0 } )
    AAdd( aDbf, { "doc_it_no", "N", 4, 0 } )
@@ -81,10 +73,7 @@ STATIC FUNCTION tmp_damage( aDbf )
 
 
 
-// ---------------------------------------------
-// napuni tmp tabelu sa stavkama naloga
-// ---------------------------------------------
-STATIC FUNCTION _doc_to_tmp()
+STATIC FUNCTION napuni_tmp_tabelu_sa_dokumentom()
 
    LOCAL nTArea := Select()
 
@@ -98,18 +87,18 @@ STATIC FUNCTION _doc_to_tmp()
       SELECT _tmp1
       APPEND BLANK
 	
-      Scatter()
+      _rec := dbf_get_rec()
 	
-      _doc_no := doc_it->doc_no
-      _doc_it_no := doc_it->doc_it_no
-      _art_id := doc_it->art_id
-      _doc_it_qtt := doc_it->doc_it_qtt
-      _doc_it_h := doc_it->doc_it_hei
-      _doc_it_w := doc_it->doc_it_wid
-      _damage := 0
-      _glass_no := 0
+      _rec["doc_no"] := doc_it->doc_no
+      _rec["doc_it_no"] := doc_it->doc_it_no
+      _rec["art_id"] := doc_it->art_id
+      _rec["doc_it_qtt"] := doc_it->doc_it_qtt
+      _rec["doc_it_h"] := doc_it->doc_it_hei
+      _rec["doc_it_w"] := doc_it->doc_it_wid
+      _rec["damage"] := 0
+      _rec["glass_no"] := 0
 	
-      Gather()
+      dbf_update_rec( _rec )
 	
       SELECT doc_it
       SKIP
@@ -121,10 +110,7 @@ STATIC FUNCTION _doc_to_tmp()
    RETURN
 
 
-// --------------------------------------
-// box sa unosom podataka osnovnih
-// --------------------------------------
-STATIC FUNCTION _box_damage( cDesc )
+STATIC FUNCTION lom_stakla_box( cDesc )
 
    LOCAL nBoxX := 14
    LOCAL nBoxY := 77
@@ -148,17 +134,16 @@ STATIC FUNCTION _box_damage( cDesc )
    SELECT _tmp1
    GO TOP
 
-   set_a_kol( @ImeKol, @Kol )
+   setuj_browse_kolone( @ImeKol, @Kol )
 
    @ m_x + ( nBoxX - 1 ), m_y + 1 SAY cOptions
 
-   ObjDbedit( "damage", nBoxX, nBoxY, {|| key_handler() }, cHeader, cFooter,,,,, 2 )
+   ObjDbedit( "damage", nBoxX, nBoxY, {|| evidencija_loma_key_handler() }, cHeader, cFooter,,,,, 2 )
 
    BoxC()
 
    IF LastKey() == K_ESC
 
-      // provjeri da li treba logirati ista...
       SELECT _tmp1
       GO TOP
 
@@ -171,12 +156,8 @@ STATIC FUNCTION _box_damage( cDesc )
       ENDDO
 	
       IF lLogCh == .T. .AND. Pitanje(, "Logirati promjene (D/N) ?", "D" ) == "D"
-         // daj opis promjene
-         _get_ch_desc( @cDesc )
-		
-         cDesc := ""
+         unos_opisa_promjene( @cDesc )
          RETURN 1
-		
       ELSE
          cDesc := ""
          RETURN 0
@@ -186,10 +167,7 @@ STATIC FUNCTION _box_damage( cDesc )
    RETURN 0
 
 
-// ------------------------------------------
-// setovanje kolona browse-a
-// ------------------------------------------
-STATIC FUNCTION set_a_kol( aImeKol, aKol )
+STATIC FUNCTION setuj_browse_kolone( aImeKol, aKol )
 
    aImeKol := {}
    aKol := {}
@@ -219,9 +197,6 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
 
    RETURN
 
-// -----------------------------------------
-// prikaz artikla u tabeli
-// -----------------------------------------
 FUNCTION sh_article( nArt_id, nQtty, nWidth, nHeight )
 
    LOCAL xRet := "???"
@@ -251,25 +226,18 @@ FUNCTION sh_article( nArt_id, nQtty, nWidth, nHeight )
    RETURN PadR( xRet, 35 )
 
 
-// ---------------------------------------
-// obrada key handlera
-// ---------------------------------------
-STATIC FUNCTION key_handler()
+STATIC FUNCTION evidencija_loma_key_handler()
 
    DO CASE
    CASE Ch == Asc( " " )
-      // markiranje loma "*"
-      RETURN _mark_item()
+      RETURN markiraj_stavku()
 	
    ENDCASE
 
    RETURN DE_CONT
 
 
-// --------------------------------------
-// markiranje stavke...
-// --------------------------------------
-STATIC FUNCTION _mark_item()
+STATIC FUNCTION markiraj_stavku()
 
    LOCAL cDesc
    LOCAL nDamage
@@ -290,7 +258,7 @@ STATIC FUNCTION _mark_item()
 	
    ELSE
 	
-      IF _get_it_desc( @cDesc, field->doc_it_qtt, ;
+      IF unos_podataka_o_lomu( @cDesc, field->doc_it_qtt, ;
             @nDamage, @nGlass_no ) > 0
 	
          RREPLACE field->art_marker WITH "*", field->art_desc WITH cDesc, field->damage WITH nDamage, field->glass_no WITH nGlass_no
@@ -307,10 +275,7 @@ STATIC FUNCTION _mark_item()
 
 
 
-// ----------------------------------------------------------------
-// unesi opis stavke...
-// ----------------------------------------------------------------
-STATIC FUNCTION _get_it_desc( cDesc, nQty, nDamage, nGlass_no )
+STATIC FUNCTION unos_podataka_o_lomu( cDesc, nQty, nDamage, nGlass_no )
 
    LOCAL nRet := 1
    PRIVATE GetList := {}
@@ -327,7 +292,7 @@ STATIC FUNCTION _get_it_desc( cDesc, nQty, nDamage, nGlass_no )
    @ m_x + 3, m_y + 2 SAY "odnosi se na staklo br:" GET nGlass_no ;
       PICT "99"
 
-   @ m_x + 4, m_y + 2 SAY " broj ostecenih komada:" GET nDamage ;
+   @ m_x + 4, m_y + 2 SAY8 " broj oštećenih komada:" GET nDamage ;
       PICT "999999.99" VALID nDamage <= nQty
 	
    @ m_x + 6, m_y + 2 SAY "opis:" GET cDesc PICT "@S60" ;
@@ -344,10 +309,7 @@ STATIC FUNCTION _get_it_desc( cDesc, nQty, nDamage, nGlass_no )
 
 
 
-// -----------------------------------------
-// unesi opis promjene
-// -----------------------------------------
-STATIC FUNCTION _get_ch_desc( cDesc )
+STATIC FUNCTION unos_opisa_promjene( cDesc )
 
    PRIVATE GetList := {}
 
@@ -384,22 +346,22 @@ FUNCTION calc_dmg( nDoc_no, nDoc_it_no, nArt_id, nElem_no )
       nElem_no := 0
    ENDIF
 
-   SELECT doc_log
+   use_sql_doc_log( nDoc_no, cLogType )
+ 
    SET ORDER TO TAG "2"
-   SEEK docno_str( nDoc_no ) + cLogType
 
    IF !Found()
       SELECT ( nTArea )
       RETURN nRet
    ENDIF
 
-   // prodji kroz logove tipa "21" - lom
    DO WHILE !Eof() .AND. field->doc_no == nDoc_no ;
          .AND. field->doc_log_ty == cLogType
 
       nDoc_log_no := field->doc_log_no
 
-      SELECT doc_lit
+      use_sql_doc_lit( nDoc_no, nDoc_log_no )
+
       SEEK docno_str( nDoc_no ) + doclog_str( nDoc_log_no )
 
       DO WHILE !Eof() .AND. field->doc_no == nDoc_no .AND. ;

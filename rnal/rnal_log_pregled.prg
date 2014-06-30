@@ -217,29 +217,23 @@ STATIC FUNCTION opis_loga( nDoc_no, nDoc_log_no, cDoc_log_type )
 
    DO CASE
    CASE cDoc_log_type == "01"
-      cRet := _lit_01_get( nDoc_no, nDoc_log_no )
-   CASE cDoc_log_type == "99"
-      cRet := _lit_99_get( nDoc_no, nDoc_log_no )
-   CASE cDoc_log_type == "98"
-      cRet := _lit_99_get( nDoc_no, nDoc_log_no )
-   CASE cDoc_log_type == "97"
-      cRet := _lit_99_get( nDoc_no, nDoc_log_no )
-   CASE cDoc_log_type == "96"
-      cRet := _lit_99_get( nDoc_no, nDoc_log_no )
+      cRet := rnal_log_tip_01_get( nDoc_no, nDoc_log_no )
+   CASE cDoc_log_type $ "96#97#98#99"
+      cRet := rnal_log_tip_99_get( nDoc_no, nDoc_log_no )
    CASE cDoc_log_type == "10"
-      cRet := _lit_10_get( nDoc_no, nDoc_log_no )
+      cRet := rnal_log_tip_10_get( nDoc_no, nDoc_log_no )
    CASE cDoc_log_type == "11"
-      cRet := _lit_11_get( nDoc_no, nDoc_log_no )
+      cRet := rnal_log_tip_11_get( nDoc_no, nDoc_log_no )
    CASE cDoc_log_type == "12"
-      cRet := _lit_12_get( nDoc_no, nDoc_log_no )
+      cRet := rnal_log_tip_12_get( nDoc_no, nDoc_log_no )
    CASE cDoc_log_type == "13"
-      cRet := _lit_13_get( nDoc_no, nDoc_log_no )
+      cRet := rnal_log_tip_13_get( nDoc_no, nDoc_log_no )
    CASE cDoc_log_type == "20"
-      cRet := _lit_20_get( nDoc_no, nDoc_log_no )
+      cRet := rnal_log_tip_20_get( nDoc_no, nDoc_log_no )
    CASE cDoc_log_type == "21"
-      cRet := _lit_21_get( nDoc_no, nDoc_log_no )
+      cRet := rnal_log_tip_21_get( nDoc_no, nDoc_log_no )
    CASE cDoc_log_type == "30"
-      cRet := _lit_30_get( nDoc_no, nDoc_log_no )
+      cRet := rnal_log_tip_30_get( nDoc_no, nDoc_log_no )
    ENDCASE
 
    SELECT doc_log
@@ -247,21 +241,6 @@ STATIC FUNCTION opis_loga( nDoc_no, nDoc_log_no, cDoc_log_type )
    RETURN cRet
 
 
-
-STATIC FUNCTION g_action_info( cAction )
-
-   LOCAL xRet := ""
-
-   DO CASE
-   CASE cAction == "E"
-      xRet := "update"
-   CASE cAction == "+"
-      xRet := "insert"
-   CASE cAction == "-"
-      xRet := "delete"
-   ENDCASE
-
-   RETURN xRet
 
 
 STATIC FUNCTION prikazi_promjene_unutar_boxa( cLogTxt )

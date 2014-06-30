@@ -106,14 +106,15 @@ FUNCTION use_sql_doc_lit( nDoc_no, nDoc_log_no )
 
 
 
-FUNCTION _d_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
+FUNCTION rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
 
    LOCAL nOperId
    LOCAL nTArea := Select()
 
    nOperId := GetUserID( f18_user() )
 
-   SELECT doc_log
+   use_sql_doc_log( 0 )
+
    APPEND BLANK
 
    _rec := dbf_get_rec()
@@ -133,13 +134,14 @@ FUNCTION _d_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
    RETURN
 
 
-FUNCTION _lit_10_insert( cAction, nDoc_no, nDoc_log_no, aArr )
+FUNCTION rnal_log_tip_10_insert( cAction, nDoc_no, nDoc_log_no, aArr )
 
    LOCAL nDoc_lit_no
 
    nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
 
-   SELECT doc_lit
+   use_sql_doc_lit( 0, 0 )
+
    APPEND BLANK
 
    _rec := dbf_get_rec()
@@ -157,13 +159,14 @@ FUNCTION _lit_10_insert( cAction, nDoc_no, nDoc_log_no, aArr )
 
 
 
-FUNCTION _lit_11_insert( cAction, nDoc_no, nDoc_log_no, aArr )
+FUNCTION rnal_log_tip_11_insert( cAction, nDoc_no, nDoc_log_no, aArr )
 
    LOCAL nDoc_lit_no
 
    nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
 
-   SELECT doc_lit
+   use_sql_doc_lit( 0, 0 )
+
    APPEND BLANK
 
    _rec := dbf_get_rec()
@@ -183,13 +186,14 @@ FUNCTION _lit_11_insert( cAction, nDoc_no, nDoc_log_no, aArr )
 
 
 
-FUNCTION _lit_12_insert( cAction, nDoc_no, nDoc_log_no, aArr )
+FUNCTION rnal_log_tip_12_insert( cAction, nDoc_no, nDoc_log_no, aArr )
 
    LOCAL nDoc_lit_no
 
    nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
 
-   SELECT doc_lit
+   use_sql_doc_lit( 0, 0 )
+   
    APPEND BLANK
 
    _rec := dbf_get_rec()
@@ -207,13 +211,14 @@ FUNCTION _lit_12_insert( cAction, nDoc_no, nDoc_log_no, aArr )
 
 
 
-FUNCTION _lit_13_insert( cAction, nDoc_no, nDoc_log_no, aArr )
+FUNCTION rnal_log_tip_13_insert( cAction, nDoc_no, nDoc_log_no, aArr )
 
    LOCAL nDoc_lit_no
 
    nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
 
-   SELECT doc_lit
+   use_sql_doc_lit( 0, 0 )
+
    APPEND BLANK
 
    _rec := dbf_get_rec()
@@ -231,7 +236,7 @@ FUNCTION _lit_13_insert( cAction, nDoc_no, nDoc_log_no, aArr )
    RETURN
 
 
-FUNCTION _lit_20_insert( cAction, nDoc_no, nDoc_log_no, ;
+FUNCTION rnal_log_tip_20_insert( cAction, nDoc_no, nDoc_log_no, ;
       nArt_id, cDoc_desc, cDoc_sch, ;
       nArt_qtty, nArt_heigh, nArt_width )
 
@@ -239,7 +244,8 @@ FUNCTION _lit_20_insert( cAction, nDoc_no, nDoc_log_no, ;
 
    nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
 
-   SELECT doc_lit
+   use_sql_doc_lit( 0, 0 )
+
    APPEND BLANK
 
    _rec := dbf_get_rec()
@@ -260,7 +266,7 @@ FUNCTION _lit_20_insert( cAction, nDoc_no, nDoc_log_no, ;
    RETURN
 
 
-FUNCTION _lit_21_insert( cAction, nDoc_no, nDoc_log_no, ;
+FUNCTION rnal_log_tip_21_insert( cAction, nDoc_no, nDoc_log_no, ;
       nArt_id, cArt_desc, nGlass_no, nDoc_it_no, ;
       nQty, nDamage )
 
@@ -268,7 +274,8 @@ FUNCTION _lit_21_insert( cAction, nDoc_no, nDoc_log_no, ;
 
    nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
 
-   SELECT doc_lit
+   use_sql_doc_lit( 0, 0 )
+
    APPEND BLANK
 
    _rec := dbf_get_rec()
@@ -291,14 +298,15 @@ FUNCTION _lit_21_insert( cAction, nDoc_no, nDoc_log_no, ;
 
 
 
-FUNCTION _lit_30_insert( cAction, nDoc_no, nDoc_log_no, ;
+FUNCTION rnal_log_tip_30_insert( cAction, nDoc_no, nDoc_log_no, ;
       nAop_id, nAop_att_id, cDoc_op_desc )
 
    LOCAL nDoc_lit_no
 
    nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
 
-   SELECT doc_lit
+   use_sql_doc_lit( 0, 0 )
+
    APPEND BLANK
 
    _rec := dbf_get_rec()
@@ -317,13 +325,14 @@ FUNCTION _lit_30_insert( cAction, nDoc_no, nDoc_log_no, ;
 
 
 
-FUNCTION _lit_99_insert( cAction, nDoc_no, nDoc_log_no, nDoc_status )
+FUNCTION rnal_log_tip_99_insert( cAction, nDoc_no, nDoc_log_no, nDoc_status )
 
    LOCAL nDoc_lit_no
 
    nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
 
-   SELECT doc_lit
+   use_sql_doc_lit( 0, 0 )
+
    APPEND BLANK
 
    _rec := dbf_get_rec()
@@ -425,7 +434,7 @@ STATIC FUNCTION rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
 
 
 
-FUNCTION _lit_20_get( nDoc_no, nDoc_log_no )
+FUNCTION rnal_log_tip_20_get( nDoc_no, nDoc_log_no )
 
    LOCAL cRet := ""
 
@@ -464,7 +473,7 @@ FUNCTION _lit_20_get( nDoc_no, nDoc_log_no )
 
 
 
-FUNCTION _lit_21_get( nDoc_no, nDoc_log_no )
+FUNCTION rnal_log_tip_21_get( nDoc_no, nDoc_log_no )
 
    LOCAL cRet := ""
 
@@ -494,7 +503,7 @@ FUNCTION _lit_21_get( nDoc_no, nDoc_log_no )
    RETURN cRet
 
 
-FUNCTION _lit_30_get( nDoc_no, nDoc_log_no )
+FUNCTION rnal_log_tip_30_get( nDoc_no, nDoc_log_no )
 
    LOCAL cRet := ""
 
@@ -522,11 +531,11 @@ FUNCTION _lit_30_get( nDoc_no, nDoc_log_no )
 
 
 
-FUNCTION _lit_01_get( nDoc_no, nDoc_log_no )
+FUNCTION rnal_log_tip_01_get( nDoc_no, nDoc_log_no )
    RETURN "Otvaranje naloga...#"
 
 
-FUNCTION _lit_99_get( nDoc_no, nDoc_log_no )
+FUNCTION rnal_log_tip_99_get( nDoc_no, nDoc_log_no )
 
    LOCAL cRet := ""
 
@@ -548,7 +557,7 @@ FUNCTION _lit_99_get( nDoc_no, nDoc_log_no )
    RETURN cRet
 
 
-FUNCTION _lit_10_get( nDoc_no, nDoc_log_no )
+FUNCTION rnal_log_tip_10_get( nDoc_no, nDoc_log_no )
 
    LOCAL cRet := ""
 
@@ -571,7 +580,7 @@ FUNCTION _lit_10_get( nDoc_no, nDoc_log_no )
    RETURN cRet
 
 
-FUNCTION _lit_11_get( nDoc_no, nDoc_log_no )
+FUNCTION rnal_log_tip_11_get( nDoc_no, nDoc_log_no )
 
    LOCAL cRet := ""
 
@@ -599,7 +608,7 @@ FUNCTION _lit_11_get( nDoc_no, nDoc_log_no )
 
 
 
-FUNCTION _lit_12_get( nDoc_no, nDoc_log_no )
+FUNCTION rnal_log_tip_12_get( nDoc_no, nDoc_log_no )
 
    LOCAL cRet := ""
 
@@ -623,7 +632,7 @@ FUNCTION _lit_12_get( nDoc_no, nDoc_log_no )
 
 
 
-FUNCTION _lit_13_get( nDoc_no, nDoc_log_no )
+FUNCTION rnal_log_tip_13_get( nDoc_no, nDoc_log_no )
 
    LOCAL cRet := ""
 

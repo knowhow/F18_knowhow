@@ -82,7 +82,7 @@ FUNCTION doc_insert( cDesc )
       RETURN 0
    ENDIF
 
-   IF !f18_lock_tables( { "doc_it", "doc_it2", "doc_ops", "doc_log", "doc_lit" } )
+   IF !f18_lock_tables( { "doc_it", "doc_it2", "doc_ops" } )
       MsgBeep( "Ne mogu lock-ovati tabele !!!!" )
       RETURN 0
    ENDIF
@@ -126,7 +126,7 @@ FUNCTION doc_insert( cDesc )
          rnal_logiraj_novi_nalog( __doc_no )
       ENDIF
 
-      f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops", "doc_log", "doc_lit" } )
+      f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops" } )
       sql_table_update( nil, "END" )
 
       log_write( "F18_DOK_OPER: rnal, azuriranje dokumenta broj: " + AllTrim( Str( __doc_no ) ) + ;
@@ -134,7 +134,7 @@ FUNCTION doc_insert( cDesc )
 
    ELSE
 
-      f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops", "doc_log", "doc_lit" } )
+      f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops" } )
       sql_table_update( nil, "ROLLBACK" )
 
       MsgC()

@@ -106,242 +106,6 @@ FUNCTION use_sql_doc_lit( nDoc_no, nDoc_log_no )
 
 
 
-// -----------------------------------
-// punjenje loga sa stavkama tipa 10
-// -----------------------------------
-FUNCTION _lit_10_insert( cAction, nDoc_no, nDoc_log_no, aArr )
-
-   LOCAL nDoc_lit_no
-
-   nDoc_lit_no := _inc_lit_no( nDoc_no, nDoc_log_no )
-
-   SELECT doc_lit
-   APPEND BLANK
-
-   _rec := dbf_get_rec()
-
-   _rec[ "doc_no" ] := nDoc_no
-   _rec[ "doc_log_no" ] := nDoc_log_no
-   _rec[ "doc_lit_no" ] := nDoc_lit_no
-   _rec[ "int_1" ] := aArr[ 1, 1 ]
-   _rec[ "int_2" ] := aArr[ 1, 2 ]
-   _rec[ "doc_lit_ac" ] := cAction
-
-   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
-
-   RETURN
-
-
-
-// -----------------------------------
-// punjenje loga sa stavkama tipa 11
-// -----------------------------------
-FUNCTION _lit_11_insert( cAction, nDoc_no, nDoc_log_no, aArr )
-
-   LOCAL nDoc_lit_no
-
-   nDoc_lit_no := _inc_lit_no( nDoc_no, nDoc_log_no )
-
-   SELECT doc_lit
-   APPEND BLANK
-
-   _rec := dbf_get_rec()
-
-   _rec[ "doc_no" ] := nDoc_no
-   _rec[ "doc_log_no" ] := nDoc_log_no
-   _rec[ "doc_lit_no" ] := nDoc_lit_no
-   _rec[ "date_1" ] := aArr[ 1, 2 ]
-   _rec[ "int_1" ] := aArr[ 1, 1 ]
-   _rec[ "char_1" ] := aArr[ 1, 3 ]
-   _rec[ "char_2" ] := aArr[ 1, 4 ]
-   _rec[ "doc_lit_ac" ] := cAction
-
-   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
-
-   RETURN
-
-
-
-
-
-// -----------------------------------
-// punjenje loga sa stavkama tipa 12
-// -----------------------------------
-FUNCTION _lit_12_insert( cAction, nDoc_no, nDoc_log_no, aArr )
-
-   LOCAL nDoc_lit_no
-
-   nDoc_lit_no := _inc_lit_no( nDoc_no, nDoc_log_no )
-
-   SELECT doc_lit
-   APPEND BLANK
-
-   _rec := dbf_get_rec()
-
-   _rec[ "doc_no" ] := nDoc_no
-   _rec[ "doc_log_no" ] := nDoc_log_no
-   _rec[ "doc_lit_no" ] := nDoc_lit_no
-   _rec[ "int_1" ] := aArr[ 1, 1 ]
-   _rec[ "char_1" ] := aArr[ 1, 2 ]
-   _rec[ "doc_lit_ac" ] := cAction
-
-   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
-
-   RETURN
-
-
-
-// -----------------------------------
-// punjenje loga sa stavkama tipa 13
-// -----------------------------------
-FUNCTION _lit_13_insert( cAction, nDoc_no, nDoc_log_no, aArr )
-
-   LOCAL nDoc_lit_no
-
-   nDoc_lit_no := _inc_lit_no( nDoc_no, nDoc_log_no )
-
-   SELECT doc_lit
-   APPEND BLANK
-
-   _rec := dbf_get_rec()
-
-   _rec[ "doc_no" ] := nDoc_no
-   _rec[ "doc_log_no" ] := nDoc_log_no
-   _rec[ "doc_lit_no" ] := nDoc_lit_no
-   _rec[ "int_1" ] := aArr[ 1, 1 ]
-   _rec[ "char_1" ] := aArr[ 1, 2 ]
-   _rec[ "char_2" ] := aArr[ 1, 3 ]
-   _rec[ "doc_lit_ac" ] := cAction
-
-   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
-
-   RETURN
-
-
-// -----------------------------------
-// punjenje loga sa stavkama tipa 20
-// -----------------------------------
-FUNCTION _lit_20_insert( cAction, nDoc_no, nDoc_log_no, ;
-      nArt_id, cDoc_desc, cDoc_sch, ;
-      nArt_qtty, nArt_heigh, nArt_width )
-
-   LOCAL nDoc_lit_no
-
-   nDoc_lit_no := _inc_lit_no( nDoc_no, nDoc_log_no )
-
-   SELECT doc_lit
-   APPEND BLANK
-
-   _rec := dbf_get_rec()
-
-   _rec[ "doc_no" ] := nDoc_no
-   _rec[ "doc_log_no" ] := nDoc_log_no
-   _rec[ "doc_lit_no" ] := nDoc_lit_no
-   _rec[ "art_id" ] := nArt_id
-   _rec[ "num_1" ] := nArt_qtty
-   _rec[ "num_2" ] := nArt_heigh
-   _rec[ "num_3" ] := nArt_width
-   _rec[ "char_1" ] := cDoc_desc
-   _rec[ "char_2" ] := cDoc_sch
-   _rec[ "doc_lit_ac" ] := cAction
-
-   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
-
-   RETURN
-
-
-// -----------------------------------
-// punjenje loga sa stavkama tipa 21
-// -----------------------------------
-FUNCTION _lit_21_insert( cAction, nDoc_no, nDoc_log_no, ;
-      nArt_id, cArt_desc, nGlass_no, nDoc_it_no, ;
-      nQty, nDamage )
-
-   LOCAL nDoc_lit_no
-
-   nDoc_lit_no := _inc_lit_no( nDoc_no, nDoc_log_no )
-
-   SELECT doc_lit
-   APPEND BLANK
-
-   _rec := dbf_get_rec()
-
-   _rec[ "doc_no" ] := nDoc_no
-   _rec[ "doc_log_no" ] := nDoc_log_no
-   _rec[ "doc_lit_no" ] := nDoc_lit_no
-   _rec[ "art_id" ] := nArt_id
-   _rec[ "num_1" ] := nQty
-   _rec[ "num_2" ] := nDamage
-   _rec[ "int_1" ] := nDoc_it_no
-   _rec[ "int_2" ] := nGlass_no
-   _rec[ "char_1" ] := cArt_desc
-   _rec[ "doc_lit_ac" ] := cAction
-
-   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
-
-   RETURN
-
-
-
-
-// -----------------------------------
-// punjenje loga sa stavkama tipa 30
-// -----------------------------------
-FUNCTION _lit_30_insert( cAction, nDoc_no, nDoc_log_no, ;
-      nAop_id, nAop_att_id, cDoc_op_desc )
-
-   LOCAL nDoc_lit_no
-
-   nDoc_lit_no := _inc_lit_no( nDoc_no, nDoc_log_no )
-
-   SELECT doc_lit
-   APPEND BLANK
-
-   _rec := dbf_get_rec()
-
-   _rec[ "doc_no" ] := nDoc_no
-   _rec[ "doc_log_no" ] := nDoc_log_no
-   _rec[ "doc_lit_no" ] := nDoc_lit_no
-   _rec[ "int_1" ] := nAop_id
-   _rec[ "int_2" ] := nAop_att_id
-   _rec[ "char_1" ] := cDoc_op_desc
-   _rec[ "doc_lit_ac" ] := cAction
-
-   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
-
-   RETURN
-
-
-
-
-// -----------------------------------
-// punjenje loga sa stavkama tipa 99
-// -----------------------------------
-FUNCTION _lit_99_insert( cAction, nDoc_no, nDoc_log_no, nDoc_status )
-
-   LOCAL nDoc_lit_no
-
-   nDoc_lit_no := _inc_lit_no( nDoc_no, nDoc_log_no )
-
-   SELECT doc_lit
-   APPEND BLANK
-
-   _rec := dbf_get_rec()
-
-   _rec[ "doc_no" ] := nDoc_no
-   _rec[ "doc_log_no" ] := nDoc_log_no
-   _rec[ "doc_lit_no" ] := nDoc_lit_no
-   _rec[ "int_1" ] := nDoc_status
-   _rec[ "doc_lit_ac" ] := cAction
-
-   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
-
-   RETURN
-
-
-// --------------------------------------------
-// dodaje zapis u tabelu doc_log
-// --------------------------------------------
 FUNCTION _d_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
 
    LOCAL nOperId
@@ -369,30 +133,254 @@ FUNCTION _d_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
    RETURN
 
 
+FUNCTION _lit_10_insert( cAction, nDoc_no, nDoc_log_no, aArr )
 
-// -------------------------------------------------------
-// vraca sljedeci redni broj dokumenta u DOC_LOG tabeli
-// -------------------------------------------------------
-FUNCTION _inc_log_no( nDoc_no )
+   LOCAL nDoc_lit_no
 
-   LOCAL nLastNo := 0
+   nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
 
-   PushWa()
+   SELECT doc_lit
+   APPEND BLANK
 
-   SELECT doc_log
-   SET ORDER TO TAG "1"
-   GO TOP
+   _rec := dbf_get_rec()
 
-   SEEK docno_str( nDoc_no )
+   _rec[ "doc_no" ] := nDoc_no
+   _rec[ "doc_log_no" ] := nDoc_log_no
+   _rec[ "doc_lit_no" ] := nDoc_lit_no
+   _rec[ "int_1" ] := aArr[ 1, 1 ]
+   _rec[ "int_2" ] := aArr[ 1, 2 ]
+   _rec[ "doc_lit_ac" ] := cAction
 
-   DO WHILE !Eof() .AND. ( field->doc_no == nDoc_no )
-      nLastNo := field->doc_log_no
-      SKIP
-   ENDDO
+   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
 
-   PopWa()
+   RETURN
+
+
+
+FUNCTION _lit_11_insert( cAction, nDoc_no, nDoc_log_no, aArr )
+
+   LOCAL nDoc_lit_no
+
+   nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
+
+   SELECT doc_lit
+   APPEND BLANK
+
+   _rec := dbf_get_rec()
+
+   _rec[ "doc_no" ] := nDoc_no
+   _rec[ "doc_log_no" ] := nDoc_log_no
+   _rec[ "doc_lit_no" ] := nDoc_lit_no
+   _rec[ "date_1" ] := aArr[ 1, 2 ]
+   _rec[ "int_1" ] := aArr[ 1, 1 ]
+   _rec[ "char_1" ] := aArr[ 1, 3 ]
+   _rec[ "char_2" ] := aArr[ 1, 4 ]
+   _rec[ "doc_lit_ac" ] := cAction
+
+   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+
+   RETURN
+
+
+
+FUNCTION _lit_12_insert( cAction, nDoc_no, nDoc_log_no, aArr )
+
+   LOCAL nDoc_lit_no
+
+   nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
+
+   SELECT doc_lit
+   APPEND BLANK
+
+   _rec := dbf_get_rec()
+
+   _rec[ "doc_no" ] := nDoc_no
+   _rec[ "doc_log_no" ] := nDoc_log_no
+   _rec[ "doc_lit_no" ] := nDoc_lit_no
+   _rec[ "int_1" ] := aArr[ 1, 1 ]
+   _rec[ "char_1" ] := aArr[ 1, 2 ]
+   _rec[ "doc_lit_ac" ] := cAction
+
+   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+
+   RETURN
+
+
+
+FUNCTION _lit_13_insert( cAction, nDoc_no, nDoc_log_no, aArr )
+
+   LOCAL nDoc_lit_no
+
+   nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
+
+   SELECT doc_lit
+   APPEND BLANK
+
+   _rec := dbf_get_rec()
+
+   _rec[ "doc_no" ] := nDoc_no
+   _rec[ "doc_log_no" ] := nDoc_log_no
+   _rec[ "doc_lit_no" ] := nDoc_lit_no
+   _rec[ "int_1" ] := aArr[ 1, 1 ]
+   _rec[ "char_1" ] := aArr[ 1, 2 ]
+   _rec[ "char_2" ] := aArr[ 1, 3 ]
+   _rec[ "doc_lit_ac" ] := cAction
+
+   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+
+   RETURN
+
+
+FUNCTION _lit_20_insert( cAction, nDoc_no, nDoc_log_no, ;
+      nArt_id, cDoc_desc, cDoc_sch, ;
+      nArt_qtty, nArt_heigh, nArt_width )
+
+   LOCAL nDoc_lit_no
+
+   nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
+
+   SELECT doc_lit
+   APPEND BLANK
+
+   _rec := dbf_get_rec()
+
+   _rec[ "doc_no" ] := nDoc_no
+   _rec[ "doc_log_no" ] := nDoc_log_no
+   _rec[ "doc_lit_no" ] := nDoc_lit_no
+   _rec[ "art_id" ] := nArt_id
+   _rec[ "num_1" ] := nArt_qtty
+   _rec[ "num_2" ] := nArt_heigh
+   _rec[ "num_3" ] := nArt_width
+   _rec[ "char_1" ] := cDoc_desc
+   _rec[ "char_2" ] := cDoc_sch
+   _rec[ "doc_lit_ac" ] := cAction
+
+   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+
+   RETURN
+
+
+FUNCTION _lit_21_insert( cAction, nDoc_no, nDoc_log_no, ;
+      nArt_id, cArt_desc, nGlass_no, nDoc_it_no, ;
+      nQty, nDamage )
+
+   LOCAL nDoc_lit_no
+
+   nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
+
+   SELECT doc_lit
+   APPEND BLANK
+
+   _rec := dbf_get_rec()
+
+   _rec[ "doc_no" ] := nDoc_no
+   _rec[ "doc_log_no" ] := nDoc_log_no
+   _rec[ "doc_lit_no" ] := nDoc_lit_no
+   _rec[ "art_id" ] := nArt_id
+   _rec[ "num_1" ] := nQty
+   _rec[ "num_2" ] := nDamage
+   _rec[ "int_1" ] := nDoc_it_no
+   _rec[ "int_2" ] := nGlass_no
+   _rec[ "char_1" ] := cArt_desc
+   _rec[ "doc_lit_ac" ] := cAction
+
+   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+
+   RETURN
+
+
+
+
+FUNCTION _lit_30_insert( cAction, nDoc_no, nDoc_log_no, ;
+      nAop_id, nAop_att_id, cDoc_op_desc )
+
+   LOCAL nDoc_lit_no
+
+   nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
+
+   SELECT doc_lit
+   APPEND BLANK
+
+   _rec := dbf_get_rec()
+
+   _rec[ "doc_no" ] := nDoc_no
+   _rec[ "doc_log_no" ] := nDoc_log_no
+   _rec[ "doc_lit_no" ] := nDoc_lit_no
+   _rec[ "int_1" ] := nAop_id
+   _rec[ "int_2" ] := nAop_att_id
+   _rec[ "char_1" ] := cDoc_op_desc
+   _rec[ "doc_lit_ac" ] := cAction
+
+   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+
+   RETURN
+
+
+
+FUNCTION _lit_99_insert( cAction, nDoc_no, nDoc_log_no, nDoc_status )
+
+   LOCAL nDoc_lit_no
+
+   nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
+
+   SELECT doc_lit
+   APPEND BLANK
+
+   _rec := dbf_get_rec()
+
+   _rec[ "doc_no" ] := nDoc_no
+   _rec[ "doc_log_no" ] := nDoc_log_no
+   _rec[ "doc_lit_no" ] := nDoc_lit_no
+   _rec[ "int_1" ] := nDoc_status
+   _rec[ "doc_lit_ac" ] := cAction
+
+   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+
+   RETURN
+
+
+
+/*
+   Opis: vraća zadnji broj polja doc_log_no tabele rnal_doc_log
+*/
+
+STATIC FUNCTION zadnji_broj_loga( nDoc_no )
+
+   LOCAL cSql := ""
+   LOCAL xRes
+   LOCAL nLast := 0
+
+   cSql := "SELECT MAX( doc_log_no ) FROM fmk.rnal_doc_log WHERE doc_no = " + ALLTRIM( STR( nDoc_no ) )
+   xRes := _sql_query( my_server(), cSql )
+
+   IF is_var_objekat_tpquery( xRes ) .AND. xRes:FieldGet(1) <> NIL
+      nLast := xRes:FieldGet(1)
+   ENDIF
+
+   RETURN nLast
+
+
+
+/*
+   Opis: vraća sljedeći increment broj za polje doc_log_no tabele rnal_doc_log
+   
+   Usage: rnal_novi_broj_loga( nDoc_no ) 
+
+   Params: 
+     - nDoc_no - broj radnog naloga
+
+   Return:
+     vraća sljedeći broj
+*/ 
+
+FUNCTION rnal_novi_broj_loga( nDoc_no )
+
+   LOCAL nLastNo
+
+   nLastNo := zadnji_broj_loga( nDoc_no )
 
    RETURN nLastNo + 1
+
 
 
 
@@ -401,27 +389,37 @@ FUNCTION doclog_str( nId )
 
 
 
-STATIC FUNCTION _inc_lit_no( nDoc_no, nDoc_log_no )
+/*
+   Opis: vraća zadnji broj polja doc_lit_no iz tabele rnal_doc_lit
+
+   Usage: rnal_novi_broj_stavke_naloga( nDoc_no, nDoc_log_no )
+
+   Params:
+    - nDoc_no - broj radnog naloga
+    - nDoc_log_no - broj loga
+
+   Returns:
+    - vraća novi broj za tabelu
+*/
+
+STATIC FUNCTION rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
 
    LOCAL nLastNo := 0
+   LOCAL cSql := ""
+   LOCAL xRes
+   LOCAL nLast := 0
 
-   PushWa()
-   SELECT doc_lit
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK docno_str( nDoc_no ) + doclog_str( nDoc_log_no )
+   cSql := "SELECT MAX( doc_lit_no ) FROM fmk.rnal_doc_lit "
+   cSql += "WHERE doc_no = " + ALLTRIM( STR( nDoc_no ) )
+   cSql += "  AND doc_log_no = " + ALLTRIM( STR( nDoc_log_no ) )
 
-   DO WHILE !Eof() .AND. ( field->doc_no == nDoc_no ) ;
-         .AND. ( field->doc_log_no == nDoc_log_no )
-	
-      nLastNo := field->doc_lit_no
-      SKIP
-	
-   ENDDO
-   PopWa()
+   xRes := _sql_query( my_server(), cSql )
+
+   IF is_var_objekat_tpquery( xRes ) .AND. xRes:FieldGet(1) <> NIL
+      nLast := xRes:FieldGet(1)
+   ENDIF
 
    RETURN nLastNo + 1
-
 
 
 

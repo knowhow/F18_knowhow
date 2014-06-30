@@ -28,7 +28,7 @@ FUNCTION cre_all_rnal( ver )
 
    // 0.8.6
    IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 00806
-      FOR EACH _tbl in { _table_name, "rnal__docs", "doc_log" }
+      FOR EACH _tbl in { _table_name, "rnal__docs" }
          modstru( { "*" + _tbl, "C OPERATER_I N 3 0 OPERATER_I N 10 0" } )
       NEXT
    ENDIF
@@ -166,26 +166,6 @@ FUNCTION cre_all_rnal( ver )
    CREATE_INDEX( "1", "STR(doc_no,10)+STR(doc_it_no,4)+STR(doc_op_no,4)", _alias )
    CREATE_INDEX( "2", "STR(doc_no,10)+STR(doc_it_no,4)+STR(doc_it_el_,10)", _alias )
 	
-
-   aDbf := a_doc_log()
-   _alias := "DOC_LOG"
-   _table_name := "rnal_doc_log"
-
-   IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
-
-   CREATE_INDEX( "1", "STR(doc_no,10)+STR(doc_log_no,10)+DTOS(doc_log_da)+doc_log_ti", _alias )
-   CREATE_INDEX( "2", "STR(doc_no,10)+doc_log_ty+STR(doc_log_no,10)", _alias )
-	
-   aDbf := a_doc_lit()
-   _alias := "DOC_LIT"
-   _table_name := "rnal_doc_lit"
-
-   IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
-
-   CREATE_INDEX( "1", "STR(doc_no,10)+STR(doc_log_no,10)+STR(doc_lit_no,10)", _alias )
-
    aDbf := a_articles()
    _alias := "ARTICLES"
    _table_name := "rnal_articles"
@@ -450,50 +430,6 @@ STATIC FUNCTION a_doc_ops()
    AAdd( aDBf, { "doc_op_des", "C", 150,  0 } )
    AAdd( aDBf, { "op_status", "C", 1,  0 } )
    AAdd( aDBf, { "op_notes", "C", 250,  0 } )
-
-   RETURN aDbf
-
-
-STATIC FUNCTION a_doc_log()
-
-   LOCAL aDbf
-
-   aDbf := {}
-   AAdd( aDBf, { "doc_no", "N", 10, 0 } )
-   AAdd( aDBf, { "doc_log_no", "N", 10, 0 } )
-   AAdd( aDBf, { "doc_log_da", "D", 8, 0 } )
-   AAdd( aDBf, { "doc_log_ti", "C", 8, 0 } )
-   AAdd( aDBf, { "operater_i", "N", 10,  0 } )
-   AAdd( aDBf, { "doc_log_ty", "C", 3,  0 } )
-   AAdd( aDBf, { "doc_log_de", "C", 100,  0 } )
-
-   RETURN aDbf
-
-
-STATIC FUNCTION a_doc_lit()
-
-   LOCAL aDbf
-
-   aDbf := {}
-   AAdd( aDBf, { "doc_no", "N", 10, 0 } )
-   AAdd( aDBf, { "doc_log_no", "N", 10, 0 } )
-   AAdd( aDBf, { "doc_lit_no", "N", 4, 0 } )
-   AAdd( aDBf, { "doc_lit_ac", "C", 1, 0 } )
-   AAdd( aDBf, { "art_id", "N", 10, 0 } )
-   AAdd( aDBf, { "char_1", "C", 100,  0 } )
-   AAdd( aDBf, { "char_2", "C", 100,  0 } )
-   AAdd( aDBf, { "char_3", "C", 100,  0 } )
-   AAdd( aDBf, { "num_1", "N", 15,  5 } )
-   AAdd( aDBf, { "num_2", "N", 15,  5 } )
-   AAdd( aDBf, { "num_3", "N", 15,  5 } )
-   AAdd( aDBf, { "int_1", "N", 10,  0 } )
-   AAdd( aDBf, { "int_2", "N", 10,  0 } )
-   AAdd( aDBf, { "int_3", "N", 10,  0 } )
-   AAdd( aDBf, { "int_4", "N", 10,  0 } )
-   AAdd( aDBf, { "int_5", "N", 10,  0 } )
-   AAdd( aDBf, { "date_1", "D", 8,  0 } )
-   AAdd( aDBf, { "date_2", "D", 8,  0 } )
-   AAdd( aDBf, { "date_3", "D", 8,  0 } )
 
    RETURN aDbf
 

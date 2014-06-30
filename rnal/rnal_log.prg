@@ -146,7 +146,7 @@ FUNCTION logiraj_osnovne_podatke_naloga( nDoc_no, cDesc, cAction, aArr )
    ENDIF
 
    cDoc_log_type := "10"
-   nDoc_log_no := _inc_log_no( nDoc_no )
+   nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
    _d_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
    _lit_10_insert( cAction, nDoc_no, nDoc_log_no, aArr )
@@ -172,7 +172,7 @@ FUNCTION logiraj_podatke_isporuke_za_nalog( nDoc_no, cDesc, cAction, aArr )
    ENDIF
 
    cDoc_log_type := "11"
-   nDoc_log_no := _inc_log_no( nDoc_no )
+   nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
    _d_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
    _lit_11_insert( cAction, nDoc_no, nDoc_log_no, aArr )
@@ -197,7 +197,7 @@ FUNCTION logiraj_podatke_kontakta_naloga( nDoc_no, cDesc, cAction, aArr )
    ENDIF
 
    cDoc_log_type := "12"
-   nDoc_log_no := _inc_log_no( nDoc_no )
+   nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
    _d_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
    _lit_12_insert( cAction, nDoc_no, nDoc_log_no, aArr )
@@ -222,7 +222,7 @@ FUNCTION logiraj_podatke_placanja_za_nalog( nDoc_no, cDesc, cAction, aArr )
    ENDIF
 
    cDoc_log_type := "13"
-   nDoc_log_no := _inc_log_no( nDoc_no )
+   nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
    _d_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
    _lit_13_insert( cAction, nDoc_no, nDoc_log_no, aArr )
@@ -259,9 +259,8 @@ FUNCTION logiraj_podatke_loma_na_staklima( nDoc_no, cDesc, cAction )
 
    sql_table_update( nil, "BEGIN" )
 
-
    cDoc_log_type := "21"
-   nDoc_log_no := _inc_log_no( nDoc_no )
+   nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
    _d_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
 
@@ -317,7 +316,7 @@ FUNCTION logiraj_stavke_naloga( nDoc_no, cDesc, cAction )
    ENDIF
 
    cDoc_log_type := "20"
-   nDoc_log_no := _inc_log_no( nDoc_no )
+   nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
    _d_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
 
@@ -364,7 +363,7 @@ FUNCTION logiraj_dodatne_operacije_naloga( nDoc_no, cDesc, cAction )
    ENDIF
 
    cDoc_log_type := "30"
-   nDoc_log_no := _inc_log_no( nDoc_no )
+   nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
    _d_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
 
@@ -423,7 +422,7 @@ FUNCTION logiraj_zatvaranje_naloga( nDoc_no, cDesc, nDoc_status )
 
    sql_table_update( nil, "BEGIN" )
 
-   nDoc_log_no := _inc_log_no( nDoc_no )
+   nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
    _d_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
    _lit_99_insert( cAction, nDoc_no, nDoc_log_no, nDoc_status )
@@ -482,7 +481,7 @@ STATIC FUNCTION _doc_it_delta( nDoc_no, cDesc )
    LOCAL lLogAppend := .F.
 
    // uzmi sljedeci broj DOC_LOG
-   nDoc_log_no := _inc_log_no( nDoc_no )
+   nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
    // pozicioniraj se na trazeni dokument
    SELECT doc_it
@@ -617,7 +616,7 @@ STATIC FUNCTION _doc_op_delta( nDoc_no, cDesc )
    LOCAL lLogAppend := .F.
 
    // uzmi sljedeci broj DOC_LOG
-   nDoc_log_no := _inc_log_no( nDoc_no )
+   nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
    // pozicioniraj se na trazeni dokument
    SELECT doc_ops

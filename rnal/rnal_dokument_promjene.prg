@@ -79,8 +79,8 @@ FUNCTION _ch_main()
       RETURN
    ENDIF
 
-   aArr := a_log_main( nCustId, nDoc_priority )
-   log_main( __doc_no, cDesc, "E", aArr )
+   aArr := podaci_naloga_za_log_osnovni( nCustId, nDoc_priority )
+   logiraj_osnovne_podatke_naloga( __doc_no, cDesc, "E", aArr )
 
    SELECT docs
    _rec := dbf_get_rec()
@@ -149,14 +149,12 @@ FUNCTION _ch_ship()
    nCust_id := field->cust_id
    nDoc_no := field->doc_no
 
-   // box sa unosom podataka
    IF _box_ship( @nObj_id, @cShipPlace, @cDvrTime, @dDvrDate, @cDesc, nCust_id ) == 0
       RETURN
    ENDIF
 
-   // logiraj isporuku
-   aArr := a_log_ship( nObj_id, dDvrDate, cDvrTime, cShipPlace )
-   log_ship( __doc_no, cDesc, "E", aArr )
+   aArr := podaci_naloga_za_log_isporuka( nObj_id, dDvrDate, cDvrTime, cShipPlace )
+   logiraj_podatke_isporuke_za_nalog( __doc_no, cDesc, "E", aArr )
 
    SELECT docs
 
@@ -231,14 +229,12 @@ FUNCTION _ch_pay()
    cDoc_pay_desc := field->doc_pay_de
    nDoc_no := field->doc_no
 
-   // box sa unosom podataka
    IF _box_pay( @nDoc_pay_id, @cDoc_paid, @cDoc_pay_desc, @cDesc ) == 0
       RETURN
    ENDIF
 
-   // logiraj placanje..
-   aArr := a_log_pay( nDoc_pay_id, cDoc_paid, cDoc_pay_desc )
-   log_pay( __doc_no, cDesc, "E", aArr )
+   aArr := podaci_naloga_za_log_placanje( nDoc_pay_id, cDoc_paid, cDoc_pay_desc )
+   logiraj_podatke_placanja_za_nalog( __doc_no, cDesc, "E", aArr )
 
    SELECT docs
 
@@ -315,13 +311,13 @@ FUNCTION _ch_cont( lNew )
    ENDIF
 
    // logiraj promjenu kontakta
-   aArr := a_log_cont( nCont_id, cCont_desc )
+   aArr := podaci_naloga_za_log_kontakti( nCont_id, cCont_desc )
 
    IF lNew
       cType := "+"
    ENDIF
 
-   log_cont( __doc_no, cDesc, cType, aArr )
+   logiraj_podatke_kontakta_naloga( __doc_no, cDesc, cType, aArr )
 
    SELECT docs
 	

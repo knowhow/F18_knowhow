@@ -32,7 +32,6 @@ FUNCTION doc_insert( cDesc )
 
    rnal_o_tables( .T. )
 
-   // skloni filtere
    SELECT _docs
    SET FILTER TO
 
@@ -45,7 +44,6 @@ FUNCTION doc_insert( cDesc )
    SELECT _doc_ops
    SET FILTER TO
 
-   // provjeri sve prije azuriranja
    IF !_provjeri_prije_azuriranja()
       MsgBeep( "Redni brojevi u nalogu nisu ispravni, provjeriti !" )
       RETURN 0
@@ -66,7 +64,6 @@ FUNCTION doc_insert( cDesc )
 
       MsgBeep( "Nalog " + AllTrim( Str( __doc_no ) ) + " nije moguce azurirati !!!#Status dokumenta = " + AllTrim( Str( __doc_stat ) ) )
 
-      // resetuj dokument broj
       SELECT _docs
 
       fill__doc_no( 0, .T. )
@@ -80,18 +77,11 @@ FUNCTION doc_insert( cDesc )
 
    ENDIF
 
-
-   // azuriranje naloga u toku...
-   // lokuj sve tabele
-
-   // probaj prvo docs lokovati....
    IF !f18_lock_tables( { "docs" } )
       MsgBeep( "Tabele zauzete... ponovite ponovo.... lock docs !!!" )
       RETURN 0
    ENDIF
 
-   // ----- pocetak transakcije
-   // lock ostalih tabela....
    IF !f18_lock_tables( { "doc_it", "doc_it2", "doc_ops", "doc_log", "doc_lit" } )
       MsgBeep( "Ne mogu lock-ovati tabele !!!!" )
       RETURN 0
@@ -103,55 +93,42 @@ FUNCTION doc_insert( cDesc )
 
    Beep( 1 )
 
-   // doc busy....
    IF __doc_stat == 3
 
-      // napravi deltu dokumenta
-      doc_delta( __doc_no, __doc_desc )
+      rnal_logiraj_promjenu_naloga( __doc_no, __doc_desc )
 
-      // brisi dokument iz kumulativa
       doc_erase( __doc_no )
 
-      // zavrsi trenutnu transakciju
       sql_table_update( nil, "END" )
-      // zapocni novu transakciju
-      // kako bi ovo sto je i izbrisano bilo vidljivo
       sql_table_update( nil, "BEGIN" )
 
       O_DOCS
 
    ENDIF
 
-   // azuriranje tabele _DOCS
    _ok := _docs_insert( __doc_no  )
 
-   // azuriranje tabele _DOC_IT
    IF _ok
       _ok := _doc_it_insert( __doc_no )
    ENDIF
 
-   // azuriranje tabele _DOC_IT2
    IF _ok
       _ok := _doc_it2_insert( __doc_no )
    ENDIF
 
-   // azuriranje tabele _DOC_OPS
    IF _ok
       _ok := _doc_op_insert( __doc_no )
    ENDIF
 
    IF _ok
-      // setuj marker dokumenta
       set_doc_marker( __doc_no, 0, "CONT" )
       IF __doc_stat <> 3
-         // logiraj promjene na dokumentu
-         doc_logit( __doc_no )
+         rnal_logiraj_novi_nalog( __doc_no )
       ENDIF
 
       f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops", "doc_log", "doc_lit" } )
       sql_table_update( nil, "END" )
 
-      // logiranje
       log_write( "F18_DOK_OPER: rnal, azuriranje dokumenta broj: " + AllTrim( Str( __doc_no ) ) + ;
          ", status: " + AllTrim( Str( __doc_stat ) ), 2 )
 
@@ -162,10 +139,6 @@ FUNCTION doc_insert( cDesc )
 
       MsgC()
 
-      // nesto se nije azuriralo ok !
-      // ostavljam dokument u pripremi...
-
-      // ako je sta ostalo na serveru ili u dbf-u brisi !
       doc_erase( __doc_no )
 
       beep( 3 )
@@ -178,9 +151,6 @@ FUNCTION doc_insert( cDesc )
 
    ENDIF
 
-   // ------ kraj transakcije
-
-   // sve je ok brisi pripremu
    SELECT _docs
    my_dbf_zap()
 

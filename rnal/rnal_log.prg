@@ -17,11 +17,11 @@ STATIC __doc_no
 
 
 
-// -------------------------------------------
-// logiranje promjena pri operaciji azuriranja
-// dokumenta
-// -------------------------------------------
-FUNCTION doc_logit()
+/*
+   Opis: logiranje stavki novog naloga prilikom ažuriranja
+         podaci naloga, podaci stavki naloga, podaci operacija
+*/
+FUNCTION rnal_logiraj_novi_nalog()
 
    LOCAL cDesc := ""
    LOCAL aArr
@@ -33,56 +33,55 @@ FUNCTION doc_logit()
 
    cDesc := "Inicijalni osnovni podaci"
 
-   aArr := a_log_main( field->cust_id, ;
-      field->doc_priori )
+   aArr := podaci_naloga_za_log_osnovni( field->cust_id, field->doc_priori )
 
-   log_main( __doc_no, cDesc, nil, aArr )
+   logiraj_osnovne_podatke_naloga( __doc_no, cDesc, nil, aArr )
 
    SELECT _docs
    GO TOP
 
    cDesc := "Inicijalni podaci isporuke"
-   aArr := a_log_ship( field->obj_id, ;
+   aArr := podaci_naloga_za_log_isporuka( field->obj_id, ;
       field->doc_dvr_da, ;
       field->doc_dvr_ti, ;
       field->doc_ship_p )
 		
-   log_ship( __doc_no, cDesc, nil, aArr )
+   logiraj_podatke_isporuke_za_nalog( __doc_no, cDesc, nil, aArr )
 
    SELECT _docs
    GO TOP
 
    cDesc := "Inicijalni podaci kontakta"
-   aArr := a_log_cont( field->cont_id, field->cont_add_d )
+   aArr := podaci_naloga_za_log_kontakti( field->cont_id, field->cont_add_d )
 
-   log_cont( __doc_no, cDesc, nil, aArr )
+   logiraj_podatke_kontakta_naloga( __doc_no, cDesc, nil, aArr )
 
    SELECT _docs
    GO TOP
 
    cDesc := "Inicijalni podaci placanja"
-   aArr := a_log_pay( field->doc_pay_id, field->doc_paid, field->doc_pay_de )
+   aArr := podaci_naloga_za_log_placanje( field->doc_pay_id, field->doc_paid, field->doc_pay_de )
 
-   log_pay( __doc_no, cDesc, nil, aArr )
+   logiraj_podatke_placanja_za_nalog( __doc_no, cDesc, nil, aArr )
 
    SELECT _doc_it
    GO TOP
 
    cDesc := "Inicijalni podaci stavki"
-
-   log_items( __doc_no, cDesc )
+   logiraj_stavke_naloga( __doc_no, cDesc )
 
    cDesc := "Inicijalni podaci dodatnih operacija"
-   log_aops( __doc_no, cDesc )
+   logiraj_dodatne_operacije_naloga( __doc_no, cDesc )
 
    RETURN
+
 
 
 // -------------------------------------------------
 // puni matricu sa osnovnim podacima dokumenta
 // aArr = { customer_id, doc_priority }
 // -------------------------------------------------
-FUNCTION a_log_main( nCustId, nPriority )
+FUNCTION podaci_naloga_za_log_osnovni( nCustId, nPriority )
 
    LOCAL aArr := {}
 
@@ -95,7 +94,7 @@ FUNCTION a_log_main( nCustId, nPriority )
 // puni matricu sa podacima placanja
 // aArr = { doc_pay_id, doc_paid, doc_pay_desc }
 // -------------------------------------------------
-FUNCTION a_log_pay( nPayId, cDocPaid, cDocPayDesc )
+FUNCTION podaci_naloga_za_log_placanje( nPayId, cDocPaid, cDocPayDesc )
 
    LOCAL aArr := {}
 
@@ -108,7 +107,7 @@ FUNCTION a_log_pay( nPayId, cDocPaid, cDocPayDesc )
 // puni matricu sa podacima isporuke
 // aArr = { doc_dvr_date, doc_dvr_time, doc_ship_place }
 // -------------------------------------------------
-FUNCTION a_log_ship( nObj_id, dDate, cTime, cPlace )
+FUNCTION podaci_naloga_za_log_isporuka( nObj_id, dDate, cTime, cPlace )
 
    LOCAL aArr := {}
 
@@ -121,15 +120,13 @@ FUNCTION a_log_ship( nObj_id, dDate, cTime, cPlace )
 // puni matricu sa podacima kontakta
 // aArr = { cont_id, cont_add_desc }
 // -------------------------------------------------
-FUNCTION a_log_cont( nCont_id, cCont_desc )
+FUNCTION podaci_naloga_za_log_kontakti( nCont_id, cCont_desc )
 
    LOCAL aArr := {}
 
    AAdd( aArr, { nCont_id, cCont_desc } )
 
    RETURN aArr
-
-
 
 
 
@@ -140,7 +137,7 @@ FUNCTION a_log_cont( nCont_id, cCont_desc )
 // cAction - akcija
 // aMain - matrica sa osnovnim podacima
 // ----------------------------------------------------
-FUNCTION log_main( nDoc_no, cDesc, cAction, aArr )
+FUNCTION logiraj_osnovne_podatke_naloga( nDoc_no, cDesc, cAction, aArr )
 
    LOCAL nDoc_log_no
    LOCAL cDoc_log_type
@@ -192,7 +189,7 @@ FUNCTION _lit_10_insert( cAction, nDoc_no, nDoc_log_no, aArr )
 // cAction - akcija
 // aArr - matrica sa podacima
 // ----------------------------------------------------
-FUNCTION log_ship( nDoc_no, cDesc, cAction, aArr )
+FUNCTION logiraj_podatke_isporuke_za_nalog( nDoc_no, cDesc, cAction, aArr )
 
    LOCAL nDoc_log_no
    LOCAL cDoc_log_type
@@ -245,7 +242,7 @@ FUNCTION _lit_11_insert( cAction, nDoc_no, nDoc_log_no, aArr )
 // cAction - akcija
 // aArr - matrica sa podacima
 // ----------------------------------------------------
-FUNCTION log_cont( nDoc_no, cDesc, cAction, aArr )
+FUNCTION logiraj_podatke_kontakta_naloga( nDoc_no, cDesc, cAction, aArr )
 
    LOCAL nDoc_log_no
    LOCAL cDoc_log_type
@@ -296,7 +293,7 @@ FUNCTION _lit_12_insert( cAction, nDoc_no, nDoc_log_no, aArr )
 // cAction - akcija
 // aArr - matrica sa osnovnim podacima
 // ----------------------------------------------------
-FUNCTION log_pay( nDoc_no, cDesc, cAction, aArr )
+FUNCTION logiraj_podatke_placanja_za_nalog( nDoc_no, cDesc, cAction, aArr )
 
    LOCAL nDoc_log_no
    LOCAL cDoc_log_type
@@ -403,8 +400,6 @@ FUNCTION log_damage( nDoc_no, cDesc, cAction )
    f18_free_tables( { "doc_log", "doc_lit" } )
    sql_table_update( nil, "END" )
 
-   // ------ kraj transakcije
-
    RETURN
 
 
@@ -415,7 +410,7 @@ FUNCTION log_damage( nDoc_no, cDesc, cAction )
 // cDesc - opis
 // cAction - akcija
 // ----------------------------------------------------
-FUNCTION log_items( nDoc_no, cDesc, cAction )
+FUNCTION logiraj_stavke_naloga( nDoc_no, cDesc, cAction )
 
    LOCAL nDoc_log_no
    LOCAL cDoc_log_type
@@ -462,7 +457,7 @@ FUNCTION log_items( nDoc_no, cDesc, cAction )
 // cDesc - opis
 // cAction - akcija
 // ----------------------------------------------------
-FUNCTION log_aops( nDoc_no, cDesc, cAction )
+FUNCTION logiraj_dodatne_operacije_naloga( nDoc_no, cDesc, cAction )
 
    LOCAL nDoc_log_no
    LOCAL cDoc_log_type
@@ -726,17 +721,11 @@ FUNCTION _inc_log_no( nDoc_no )
 
 
 
-// ----------------------------------------------
-// konvert doc_log_no -> STR(doc_log_no,10)
-// ----------------------------------------------
 FUNCTION doclog_str( nId )
    RETURN Str( nId, 10 )
 
 
 
-// ------------------------------------------------
-// vraca sljedeci doc_lit_no u tabeli DOC_LIT
-// ------------------------------------------------
 STATIC FUNCTION _inc_lit_no( nDoc_no, nDoc_log_no )
 
    LOCAL nLastNo := 0
@@ -760,10 +749,7 @@ STATIC FUNCTION _inc_lit_no( nDoc_no, nDoc_log_no )
 
 
 
-// -----------------------------------------------
-// logiranje delte izmedju kumulativa i pripreme
-// -----------------------------------------------
-FUNCTION doc_delta( nDoc_no, cDesc )
+FUNCTION rnal_logiraj_promjenu_naloga( nDoc_no, cDesc )
 
    LOCAL nTArea := Select()
 

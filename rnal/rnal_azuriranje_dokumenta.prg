@@ -64,25 +64,23 @@ FUNCTION doc_insert( cDesc )
 
    IF __doc_stat < 3 .AND. !rnal_doc_no_exist( __doc_no )
 
-      MsgBeep( "Nalog " + AllTrim( Str( __doc_no ) ) + " nije moguce azurirati !!!#Status dokumenta = " + AllTrim( Str( __doc_stat ) ) )
+      MsgBeep( "Nalog " + AllTrim( Str( __doc_no ) ) + " nije moguce ažurirati !#Status dokumenta = " + AllTrim( Str( __doc_stat ) ) )
 
       // resetuj dokument broj
       SELECT _docs
-
       fill__doc_no( 0, .T. )
 
       SELECT _docs
       GO TOP
 
-      msgbeep( "Ponovite operaciju stampe i azuriranja naloga !" )
+      MsgBeep( "Ponovite operaciju štampe i ažuriranja naloga !" )
 
       RETURN 0
 
    ENDIF
 
 
-   // azuriranje naloga u toku...
-   // lokuj sve tabele
+   sql_table_update( nil, "BEGIN" )
 
    // probaj prvo docs lokovati....
    IF !f18_lock_tables( { "docs" } )
@@ -97,9 +95,8 @@ FUNCTION doc_insert( cDesc )
       RETURN 0
    ENDIF
 
-   sql_table_update( nil, "BEGIN" )
 
-   MsgO( "Azuriranje naloga u toku..." )
+   MsgO( "Ažuriranje naloga u toku..." )
 
    Beep( 1 )
 
@@ -122,20 +119,16 @@ FUNCTION doc_insert( cDesc )
 
    ENDIF
 
-   // azuriranje tabele _DOCS
    _ok := _docs_insert( __doc_no  )
 
-   // azuriranje tabele _DOC_IT
    IF _ok
       _ok := _doc_it_insert( __doc_no )
    ENDIF
 
-   // azuriranje tabele _DOC_IT2
    IF _ok
       _ok := _doc_it2_insert( __doc_no )
    ENDIF
 
-   // azuriranje tabele _DOC_OPS
    IF _ok
       _ok := _doc_op_insert( __doc_no )
    ENDIF
@@ -178,9 +171,6 @@ FUNCTION doc_insert( cDesc )
 
    ENDIF
 
-   // ------ kraj transakcije
-
-   // sve je ok brisi pripremu
    SELECT _docs
    my_dbf_zap()
 
@@ -196,7 +186,6 @@ FUNCTION doc_insert( cDesc )
    USE
 
    Beep( 1 )
-
    rnal_o_tables( .T. )
 
    MsgC()

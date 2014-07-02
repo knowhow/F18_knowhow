@@ -1,3 +1,8 @@
+1.7.108  2014-07-02, vsasa
+
+  - LD, setovanje minulog rada kod unosa podataka obračuna - bugfix
+  - RNAL, ažuriranje naloga, lock semafora u transakciji
+ 
 1.7.107  2014-06-27, vsasa
 
   - LD, specifikacija po radnim jedinicama, trijaž

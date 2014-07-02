@@ -204,6 +204,8 @@ STATIC FUNCTION _cre_spec( params )
       // samo za log, koji nije inicijalni....
       IF "Inicij" $ cLog
          cLog := ""
+      ELSE
+         cLog := hb_Utf8ToStr( cLog )
       ENDIF
 	
       SELECT doc_it

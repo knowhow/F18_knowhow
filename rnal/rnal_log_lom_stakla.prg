@@ -218,7 +218,6 @@ FUNCTION sh_article( nArt_id, nQtty, nWidth, nHeight )
       xRet += ")"
    ENDIF
 
-   // naziv
    cTmp := AllTrim( g_art_desc( nArt_id, .T., .F. ) )
 
    xRet := cTmp + " " + xRet

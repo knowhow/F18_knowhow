@@ -453,7 +453,7 @@ FUNCTION lst_vrok_tek_dan()
 		
          FOR i := 1 TO Len( aLog )
 			
-            ? Space( 29 ) + aLog[ i ]
+            ?U Space( 29 ) + aLog[ i ]
 		
          NEXT
 		

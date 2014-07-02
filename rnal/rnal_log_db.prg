@@ -125,7 +125,7 @@ FUNCTION rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
    _rec[ "doc_log_ti" ] := PadR( Time(), 5 )
    _rec[ "doc_log_ty" ] := cDoc_log_type
    _rec[ "operater_i" ] := nOperId
-   _rec[ "doc_log_de" ] := cDesc
+   _rec[ "doc_log_de" ] := hb_StrToUtf8( cDesc )
 
    update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
 

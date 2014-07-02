@@ -958,7 +958,6 @@ use
 select ( F_POS_DOKS )
 use
 
-altd()
 select ( nTArea )
 
 if lSilent == .f.

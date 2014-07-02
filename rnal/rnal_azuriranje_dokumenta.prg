@@ -30,6 +30,14 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
 
    rnal_ukloni_filter_kumulativne_tabele()
 
+   SELECT _docs
+   GO TOP
+
+   IF RECCOUNT2() == 0
+      MsgBeep( "U pripremi nema stavki za ažuriranje." )
+      RETURN 0
+   ENDIF
+
    IF !_provjeri_prije_azuriranja()
       MsgBeep( "Redni brojevi u nalogu nisu ispravni, provjeriti !" )
       RETURN 0
@@ -37,10 +45,6 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
 
    SELECT _docs
    GO TOP
-
-   IF RECCOUNT2() == 0
-      RETURN 0
-   ENDIF
 
    __doc_desc := cDesc
    __doc_no := _docs->doc_no

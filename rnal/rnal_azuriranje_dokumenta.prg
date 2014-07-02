@@ -87,6 +87,8 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
 
    ENDIF
 
+   altd()
+
    _ok := _docs_insert( __doc_no  )
 
    IF _ok

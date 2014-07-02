@@ -35,7 +35,7 @@ FUNCTION run_sql_query( qry, retry )
 
       BEGIN SEQUENCE WITH {| err| Break( err ) }
          _qry_obj := _server:Query( qry + ";" )
-         recove
+         recover
          log_write( "ERROR: run_sql_query(), ajoj ajoj: qry ne radi !?!", 2 )
          my_server_logout()
          hb_idleSleep( 0.5 )

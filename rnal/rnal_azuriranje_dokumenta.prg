@@ -28,17 +28,7 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
 
    rnal_o_tables( .T. )
 
-   SELECT _docs
-   SET FILTER TO
-
-   SELECT _doc_it
-   SET FILTER TO
-
-   SELECT _doc_it2
-   SET FILTER TO
-
-   SELECT _doc_ops
-   SET FILTER TO
+   rnal_ukloni_filter_kumulativne_tabele()
 
    IF !_provjeri_prije_azuriranja()
       MsgBeep( "Redni brojevi u nalogu nisu ispravni, provjeriti !" )
@@ -74,11 +64,10 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
 
    sql_table_update( nil, "BEGIN" )
 
-   IF !f18_lock_tables( { "docs", "doc_it", "doc_it2", "doc_ops", "doc_log", "doc_lit" }, .T. )
+   IF !f18_lock_tables( { "docs", "doc_it", "doc_it2", "doc_ops" }, .T. )
       MsgBeep( "Ne mogu zaključati tabele !" )
       RETURN 0
    ENDIF
-
 
    MsgO( "Ažuriranje naloga u toku..." )
 
@@ -109,7 +98,9 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
    ENDIF
 
    IF _ok
+
       set_doc_marker( __doc_no, 0, "CONT" )
+
       IF __doc_stat <> 3
          rnal_logiraj_novi_nalog( __doc_no )
       ENDIF
@@ -154,11 +145,29 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
    USE
 
    Beep( 1 )
+ 
    rnal_o_tables( .T. )
 
    MsgC()
 
    RETURN 1
+
+
+FUNCTION rnal_ukloni_filter_kumulativne_tabele()
+
+   SELECT _docs
+   SET FILTER TO
+
+   SELECT _doc_it
+   SET FILTER TO
+
+   SELECT _doc_it2
+   SET FILTER TO
+
+   SELECT _doc_ops
+   SET FILTER TO
+
+   RETURN 
 
 
 // --------------------------------------------------
@@ -170,7 +179,6 @@ STATIC FUNCTION _provjeri_prije_azuriranja()
    LOCAL _t_area := Select()
    LOCAL _tmp
 
-   // stavke naloga ....
    SELECT _doc_it
    GO TOP
 
@@ -190,10 +198,6 @@ STATIC FUNCTION _provjeri_prije_azuriranja()
    ENDDO
 
    GO TOP
-
-   // dodatne stavke naloga....
-
-   // operacije naloga ....
 
    SELECT ( _t_area )
 
@@ -335,7 +339,6 @@ STATIC FUNCTION _doc_op_insert( nDoc_no )
 
    DO WHILE !Eof() .AND. ( field->doc_no == nDoc_no )
 
-      // ako ima operacija...
       IF field->aop_id + field->aop_att_id <> 0
 
          _rec := dbf_get_rec()
@@ -368,14 +371,7 @@ FUNCTION doc_2__doc( nDoc_no )
 
    rnal_o_tables( .T. )
 
-   SELECT docs
-   SET FILTER TO
-   SELECT doc_it
-   SET FILTER TO
-   SELECT doc_it2
-   SET FILTER TO
-   SELECT doc_ops
-   SET FILTER TO
+   rnal_ukloni_filter_kumulativne_tabele()
 
    SELECT docs
    SET ORDER TO TAG "1"
@@ -391,25 +387,18 @@ FUNCTION doc_2__doc( nDoc_no )
    SELECT _docs
 
    IF RECCOUNT2() > 0
-      MsgBeep( "U pripremi vec postoji dokument#ne moze se izvrsiti povrat#operacija prekinuta !" )
+      MsgBeep( "U pripremi već postoji dokument#ne može se izvršiti povrat#operacija prekinuta !" )
       RETURN 0
    ENDIF
 
-   MsgO( "Vrsim povrat dokumenta u pripremu...." )
+   MsgO( "Vršim povrat dokumenta u pripremu ..." )
 
    // markiraj da je dokument busy
    set_doc_marker( nDoc_no, 3 )
 
-   // povrat maticne tabele RNAL
    _docs_erase( nDoc_no )
-
-   // povrat stavki RNST
    _doc_it_erase( nDoc_no )
-
-   // povrat stavki RNST
    _doc_it2_erase( nDoc_no )
-
-   // povrat operacija RNOP
    _doc_op_erase( nDoc_no )
 
 
@@ -534,7 +523,6 @@ STATIC FUNCTION _doc_it_erase( nDoc_no )
 
    IF Found()
 
-      // dodaj u pripremu dokument
       DO WHILE !Eof() .AND. ( field->doc_no == nDoc_no )
 
          SELECT doc_it
@@ -573,7 +561,6 @@ STATIC FUNCTION _doc_it2_erase( nDoc_no )
 
    IF Found()
 
-      // dodaj u pripremu dokument
       DO WHILE !Eof() .AND. ( field->doc_no == nDoc_no )
 
          SELECT doc_it2
@@ -612,7 +599,6 @@ STATIC FUNCTION _doc_op_erase( nDoc_no )
 
    IF Found()
 
-      // dodaj u pripremu dokument
       DO WHILE !Eof() .AND. ( field->doc_no == nDoc_no )
 
          SELECT doc_ops
@@ -642,7 +628,6 @@ STATIC FUNCTION doc_erase( nDoc_no )
 
    LOCAL _del_rec
 
-   // DOCS
    SELECT docs
    SET ORDER TO TAG "1"
    GO TOP
@@ -653,7 +638,6 @@ STATIC FUNCTION doc_erase( nDoc_no )
       delete_rec_server_and_dbf( "docs", _del_rec, 1, "CONT" )
    ENDIF
 
-   // DOC_IT
    SELECT doc_it
    SET ORDER TO TAG "1"
    GO TOP
@@ -664,7 +648,6 @@ STATIC FUNCTION doc_erase( nDoc_no )
       delete_rec_server_and_dbf( "doc_it", _del_rec, 2, "CONT" )
    ENDIF
 
-   // DOC_IT2
    SELECT doc_it2
    SET ORDER TO TAG "1"
    GO TOP
@@ -675,7 +658,6 @@ STATIC FUNCTION doc_erase( nDoc_no )
       delete_rec_server_and_dbf( "doc_it2", _del_rec, 2, "CONT" )
    ENDIF
 
-   // DOC_OP
    SELECT doc_ops
    SET ORDER TO TAG "1"
    GO TOP
@@ -695,22 +677,15 @@ STATIC FUNCTION doc_erase( nDoc_no )
 // --------------------------------------------
 FUNCTION doc_exist( nDoc_no )
 
-   LOCAL nArea
    LOCAL lRet := .F.
+   LOCAL cWhere := ""
 
-   nArea := Select()
+   cWhere := "doc_no = " + ALLTRIM( STR( nDoc_no ) )
+   cWhere += " AND doc_status = " + dokument_zauzet() 
 
-   SELECT DOCS
-   SET ORDER TO TAG "A"
-   GO TOP
-   SEEK d_busy() + docno_str( nDoc_no )
-
-   IF Found() .AND. docs->doc_no == nDoc_no
+   IF table_count( "fmk.rnal_docs", cWhere ) > 0
       lRet := .T.
    ENDIF
-
-   SET ORDER TO TAG "1"
-   SELECT ( nArea )
 
    RETURN lRet
 
@@ -813,23 +788,24 @@ FUNCTION fill__doc_no( nDoc_no, lForce )
 // -----------------------------------------
 // formira string za _doc_status - opened
 // -----------------------------------------
-STATIC FUNCTION d_opened()
+STATIC FUNCTION dokument_otvoren()
    RETURN Str( 0, 2 )
 
 // -----------------------------------------
 // formira string za _doc_status - closed
 // -----------------------------------------
-STATIC FUNCTION d_closed()
+STATIC FUNCTION dokument_zatvoren()
    RETURN Str( 1, 2 )
 
 // -----------------------------------------
 // formira string za _doc_status - rejected
 // -----------------------------------------
-STATIC FUNCTION d_rejected()
+STATIC FUNCTION dokument_odbacen()
    RETURN Str( 2, 2 )
 
 // -----------------------------------------
 // formira string za _doc_status - busy
 // -----------------------------------------
-STATIC FUNCTION d_busy()
+STATIC FUNCTION dokument_zauzet()
    RETURN Str( 3, 2 )
+

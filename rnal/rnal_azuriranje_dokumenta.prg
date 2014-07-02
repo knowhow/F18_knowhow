@@ -18,11 +18,7 @@ STATIC __doc_stat
 STATIC __doc_desc
 
 
-// -------------------------------------------
-// azuriranje dokumenta u kumulativnu bazu
-// cDesc - opis kod azuriranja
-// -------------------------------------------
-FUNCTION doc_insert( cDesc )
+FUNCTION rnal_azuriraj_dokument( cDesc )
 
    LOCAL _ok := .T.
 
@@ -62,34 +58,29 @@ FUNCTION doc_insert( cDesc )
 
    IF __doc_stat < 3 .AND. !rnal_doc_no_exist( __doc_no )
 
-      MsgBeep( "Nalog " + AllTrim( Str( __doc_no ) ) + " nije moguce azurirati !!!#Status dokumenta = " + AllTrim( Str( __doc_stat ) ) )
+      MsgBeep( "Nalog " + AllTrim( Str( __doc_no ) ) + " nije moguce ažurirati !#Status dokumenta = " + AllTrim( Str( __doc_stat ) ) )
 
       SELECT _docs
-
       fill__doc_no( 0, .T. )
 
       SELECT _docs
       GO TOP
 
-      msgbeep( "Ponovite operaciju stampe i azuriranja naloga !" )
+      MsgBeep( "Ponovite operaciju štampe i ažuriranja naloga !" )
 
       RETURN 0
 
-   ENDIF
-
-   IF !f18_lock_tables( { "docs" } )
-      MsgBeep( "Tabele zauzete... ponovite ponovo.... lock docs !!!" )
-      RETURN 0
-   ENDIF
-
-   IF !f18_lock_tables( { "doc_it", "doc_it2", "doc_ops" } )
-      MsgBeep( "Ne mogu lock-ovati tabele !!!!" )
-      RETURN 0
    ENDIF
 
    sql_table_update( nil, "BEGIN" )
 
-   MsgO( "Azuriranje naloga u toku..." )
+   IF !f18_lock_tables( { "docs", "doc_it", "doc_it2", "doc_ops", "doc_log", "doc_lit" }, .T. )
+      MsgBeep( "Ne mogu zaključati tabele !" )
+      RETURN 0
+   ENDIF
+
+
+   MsgO( "Ažuriranje naloga u toku..." )
 
    Beep( 1 )
 
@@ -98,9 +89,6 @@ FUNCTION doc_insert( cDesc )
       rnal_logiraj_promjenu_naloga( __doc_no, __doc_desc )
 
       doc_erase( __doc_no )
-
-      sql_table_update( nil, "END" )
-      sql_table_update( nil, "BEGIN" )
 
       O_DOCS
 
@@ -145,7 +133,7 @@ FUNCTION doc_insert( cDesc )
 
       rnal_o_tables( .T. )
 
-      MsgBeep( "Azuriranje naloga nije uspjesno !" )
+      MsgBeep( "Ažuriranje naloga nje uspješno izvršeno !" )
 
       RETURN 0
 
@@ -166,7 +154,6 @@ FUNCTION doc_insert( cDesc )
    USE
 
    Beep( 1 )
-
    rnal_o_tables( .T. )
 
    MsgC()

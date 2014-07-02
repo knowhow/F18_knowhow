@@ -147,7 +147,7 @@ FUNCTION create_index( cImeInd, xKljuc, alias, silent )
          RETURN
       ENDIF
 
-      IF !File( Lower( cImeCdx ) ) .OR. nOrder == 0 .OR. AllTrim( Upper( cOrdKey ) ) <> AllTrim( Upper( cKljuc ) )
+      IF !File( cImeCdx ) .OR. nOrder == 0 .OR. AllTrim( Upper( cOrdKey ) ) <> AllTrim( Upper( cKljuc ) )
 
          SELECT( _wa )
          my_use_temp( alias, f18_ime_dbf( alias) , .F. , .T. )
@@ -176,7 +176,7 @@ FUNCTION create_index( cImeInd, xKljuc, alias, silent )
 
             log_write( "index on " + cKljucIz + " / " + cTag + " / " + cImeCdx + " FILTER: " + iif( cFilter != NIL, cFilter, "-" ) + " / alias=" + alias + " / used() = " + hb_ValToStr( Used() ), 5 )
             IF _tag == "DEL"
-               INDEX ON Deleted() TAG "DEL" TO ( cImeCdx ) FOR Deleted()
+               INDEX ON Deleted() TAG "DEL" TO ( cImeCdx ) FOR deleted()
             ELSE
                IF cFilter != NIL
                   IF _unique

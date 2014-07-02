@@ -207,9 +207,9 @@ STATIC FUNCTION header_footer()
    cFooter := "<TAB> brow.tab "
    cFooter += "<c-N> nova "
    cFooter += "<c-T> brisi "
-   cFooter += "<F2> ispravka "
+   cFooter += "<F2>  ispravka "
    cFooter += "<c-P> stampa "
-   cFooter += "<a-A> azur."
+   cFooter += "<a-A> ažuriraj"
 
    cHeader := get_document_no()
    cHeader += Space( 5 )
@@ -252,7 +252,7 @@ STATIC FUNCTION docs_kol( aImeKol, aKol )
    aImeKol := {}
    aKol := {}
 
-   AAdd( aImeKol, { PadC( "Narucioc", 20 ), {|| PadR( g_cust_desc( cust_id ), 18 ) + ".." }, "cust_id" } )
+   AAdd( aImeKol, { PadC( "Naručioc", 20 ), {|| PadR( g_cust_desc( cust_id ), 18 ) + ".." }, "cust_id" } )
    AAdd( aImeKol, { PadC( "Datum", 8 ), {|| doc_date }, "doc_date", {|| .T. }, {|| .T. } } )
    AAdd( aImeKol, { PadC( "Dat.isp", 8 ), {|| doc_dvr_da }, "doc_dvr_da" } )
    AAdd( aImeKol, { "Vr.isp", {|| PadR( doc_dvr_ti, 5 ) }, "doc_dvr_ti"  } )
@@ -649,7 +649,6 @@ STATIC FUNCTION key_handler()
             RETURN DE_CONT
          ENDIF
 
-         // busy....
          IF field->doc_status == 3
             _g_doc_desc( @cDesc )
          ENDIF
@@ -661,8 +660,7 @@ STATIC FUNCTION key_handler()
             fill__doc_no( nDocNoNew )
          ENDIF
 
-         // insertuj nalog u kumulativ
-         IF doc_insert( cDesc ) == 1
+         IF rnal_azuriraj_dokument( cDesc ) == 1
             SELECT _docs
             l_auto_tab := .T.
             KEYBOARD Chr( K_TAB )
@@ -926,8 +924,7 @@ STATIC FUNCTION _check_orphaned_items()
    RETURN _ok
 
 
-// ---------------------------------------------------------
-// ---------------------------------------------------------
+
 STATIC FUNCTION _show_orphaned_items( orph )
 
    LOCAL _m_x := m_x
@@ -1056,8 +1053,7 @@ STATIC FUNCTION _change_item_no( docno, docitno )
    RETURN _ok
 
 
-// --------------------------------------------------
-// --------------------------------------------------
+
 STATIC FUNCTION _change_item_no_valid( it_no, it_old, doc_no )
 
    LOCAL _ok := .F.
@@ -1069,7 +1065,7 @@ STATIC FUNCTION _change_item_no_valid( it_no, it_old, doc_no )
    ENDIF
 
    IF it_no == it_old
-      MsgBeep( "Odabran je isti redni broj !!!" )
+      MsgBeep( "Greška ! Odabran je isti redni broj !" )
       RETURN _ok
    ENDIF
 
@@ -1435,9 +1431,7 @@ FUNCTION must_enter( xVal )
 
    RETURN lRet
 
-// -----------------------------------------
-// poruka za must_enter validaciju
-// -----------------------------------------
+
 STATIC FUNCTION msg_must_enter( lVal )
 
    IF lVal == .F.

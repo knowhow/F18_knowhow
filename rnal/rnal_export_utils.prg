@@ -57,7 +57,6 @@ function cre_exp_file( nDoc_no, cLocation, cFileName, nH )
 // daj naziv fajla
 cFileName := g_exp_file( nDoc_no , cLocation )
 
-// da li vec postoji ????
 // gExpAlwOvWrite - export file uvijek overwrite
 if gExpAlwOvWrite == "N" .and. FILE( cLocation + cFileName )
 	
@@ -67,7 +66,6 @@ if gExpAlwOvWrite == "N" .and. FILE( cLocation + cFileName )
 	
 endif
 
-// pobrisi fajl
 FERASE( cLocation + cFileName )
 
 nH := FCREATE( cLocation + cFileName )

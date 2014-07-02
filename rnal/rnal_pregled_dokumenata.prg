@@ -467,7 +467,7 @@ STATIC FUNCTION key_handler()
 	
       SELECT docs
       nDoc_no := docs->doc_no
-      IF ch_doc_no( nDoc_no )
+      IF rnal_promjena_broja_naloga( nDoc_no )
          log_write( "F18_DOK_OPER: rnal, promjena broja naloga, nalog broj: " + AllTrim( Str( nDoc_no ) ), 2 )
          SELECT docs
          RETURN DE_REFRESH

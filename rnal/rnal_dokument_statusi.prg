@@ -13,7 +13,7 @@
 
 
 
-FUNCTION rnal_doc_ops_to_tmp( r_doc_no )
+STATIC FUNCTION kopiraj_operacije_sa_azuriranog_naloga( r_doc_no )
 
    LOCAL _count := 0, _rec
 
@@ -39,11 +39,11 @@ FUNCTION rnal_doc_ops_to_tmp( r_doc_no )
    SEEK docno_str( r_doc_no )
 
    IF !Found()
-      MsgBeep( "Ovaj nalog ne postoji !!!" )
+      MsgBeep( "Za ovaj nalog operacije ne postoje !#Prekidam operaciju." )
       RETURN _count
    ENDIF
 
-   MsgO( "Kopiram operacije naloga u pripremu ..." )
+   MsgO( "Kopiram operacije naloga u pomoćnu tabelu ..." )
 
    DO WHILE !Eof() .AND. field->doc_no == r_doc_no
 
@@ -73,11 +73,13 @@ FUNCTION rnal_azuriraj_statuse( doc_no )
    LOCAL _promjena := .F.
    LOCAL _promj_count := 0
 
-   IF !f18_lock_tables( { "rnal_doc_ops" } )
-      MsgBeep( "Problem sa lock tabele doc_ops !!!" )
+   sql_table_update( nil, "BEGIN" )
+
+   IF !f18_lock_tables( { "rnal_doc_ops" }, .T. )
+      sql_table_update( nil, "END" )
+      MsgBeep( "Ne mogu zaključati tabele!#Prekidam operaciju." )
       RETURN _ok
    ENDIF
-   sql_table_update( nil, "BEGIN" )
 
    SELECT _doc_opst
    SET ORDER TO TAG "1"
@@ -129,7 +131,6 @@ FUNCTION rnal_azuriraj_statuse( doc_no )
    f18_free_tables( { "rnal_doc_ops" } )
    sql_table_update( nil, "END" )
 
-   // pobrisi pripremu...
    SELECT _doc_opst
    my_dbf_zap()
 
@@ -154,6 +155,7 @@ STATIC FUNCTION _nalog()
    RETURN _nalog
 
 
+
 FUNCTION rnal_pregled_statusa_operacija( r_doc_no )
 
    LOCAL _ok := .T.
@@ -174,9 +176,8 @@ FUNCTION rnal_pregled_statusa_operacija( r_doc_no )
 
    rnal_o_tables( .T. )
 
-   // prebaci sve iz kum u pripr
-   IF rnal_doc_ops_to_tmp( r_doc_no ) < 1
-      MsgBeep( "Nalog ne sadrzi niti jednu operaciju !!!" )
+   IF kopiraj_operacije_sa_azuriranog_naloga( r_doc_no ) < 1
+      MsgBeep( "Nalog ne sadrži niti jednu operaciju !#Prekidam operaciju." )
       RETURN _ok
    ENDIF
 
@@ -185,7 +186,6 @@ FUNCTION rnal_pregled_statusa_operacija( r_doc_no )
 
    Box(, _box_x, _box_y )
 
-   // setuj box opis...
    _set_box( _box_x, _box_y )
    _set_a_kol( @imekol, @kol )
 
@@ -203,8 +203,7 @@ FUNCTION rnal_pregled_statusa_operacija( r_doc_no )
 
    IF LastKey() == K_ESC
 
-      IF Pitanje(, "Azurirati promjene na server (D/N) ?", "D" ) == "D"
-         // izlaz mi je bitan radi sinhronizacije ...
+      IF Pitanje(, "Ažurirati promjene na server (D/N) ?", "D" ) == "D"
          rnal_azuriraj_statuse( r_doc_no )
       ENDIF
 
@@ -222,7 +221,6 @@ STATIC FUNCTION key_handler( doc )
 
    CASE Ch == K_F2
 
-      // setovanje statusa operacije
       _rec := dbf_get_rec()
       IF _setuj_status( @_rec )
          dbf_update_rec( _rec )
@@ -244,12 +242,12 @@ STATIC FUNCTION _setuj_status( rec )
 
    Box(, 10, 70 )
 
-   @ m_x + _x, m_y + 2 SAY "Postavi status tekuce stavke na "
+   @ m_x + _x, m_y + 2 SAY8 "Postavi status tekuće stavke na "
 
    ++ _x
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "  - '1' - zavrseno "
+   @ m_x + _x, m_y + 2 SAY8 "  - '1' - završeno "
 
    ++ _x
 

@@ -261,7 +261,7 @@ STATIC FUNCTION _del_tmp( cPath )
 // promjena broja naloga
 // servisna opcija, zasticena password-om
 // ----------------------------------------------
-FUNCTION ch_doc_no( old_doc )
+FUNCTION rnal_promjena_broja_naloga( old_doc )
 
    LOCAL _new_no := old_doc
    LOCAL _repl := .T.
@@ -276,22 +276,16 @@ FUNCTION ch_doc_no( old_doc )
    BoxC()
 
    IF LastKey() == K_ESC
-      msgbeep( "Prekinuta operacija !" )
       RETURN .F.
    ENDIF
 
-   // prodji kroz tabele i promjeni broj
-   // tabele su:
-   //
-   // - docs
-   // - doc_it
-   // - doc_it2
-   // - doc_ops
-
-   // odmah zamjeni u tabeli docs, jer se na njoj nalazis
-
-   f18_lock_tables( { "docs", "doc_it", "doc_it2", "doc_ops" } )
    sql_table_update( nil, "BEGIN" )
+
+   IF !f18_lock_tables( { "docs", "doc_it", "doc_it2", "doc_ops" }, .T. )
+      sql_table_update( nil, "END" )
+      MsgBeep( "Ne mogu zaključati tabele#Prekid opcije promjene broja naloga." )
+      RETURN .F.
+   ENDIF
 
    IF field->doc_no == old_doc
       _rec := dbf_get_rec()
@@ -302,11 +296,12 @@ FUNCTION ch_doc_no( old_doc )
    ENDIF
 
    IF _repl == .F.
-      msgbeep( "Nisam nista zamjenio !!!" )
+      f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops" } )
+      sql_table_update( nil, "END" )
+      msgbeep( "Zamjena broja naloga nije izvršena !" )
       RETURN .F.
    ENDIF
 
-   // doc_it
    SELECT doc_it
    SET ORDER TO TAG "1"
    GO TOP
@@ -323,7 +318,6 @@ FUNCTION ch_doc_no( old_doc )
       ENDDO
    ENDIF
 
-   // doc_it2
    SELECT doc_it2
    SET ORDER TO TAG "1"
    GO TOP
@@ -340,7 +334,6 @@ FUNCTION ch_doc_no( old_doc )
       ENDDO
    ENDIF
 
-   // doc_ops
    SELECT doc_ops
    SET ORDER TO TAG "1"
    GO TOP

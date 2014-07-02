@@ -576,15 +576,16 @@ STATIC FUNCTION ispravi_opis_artikla( nArt_id )
    LOCAL nRet := 0
    LOCAL _rec
 
-   IF !f18_lock_tables( { "articles" } )
-      MsgBeep( "Ne mogu lockovati tabelu !" )
-      RETURN nRet
-   ENDIF
-
-   sql_table_update( nil, "BEGIN" )
-
    IF ispravka_artikla_box( @cArt_desc, @cArt_full_desc, @cArt_lab_desc, ;
          @cArt_mcode ) == 1
+
+      sql_table_update( nil, "BEGIN" )
+
+      IF !f18_lock_tables( { "articles" }, .T. )
+         sql_table_update( nil, "END" )
+         MsgBeep( "Ne mogu zaključati tabelu articles !#Prekidam operaciju." )
+         RETURN nRet
+      ENDIF
 
       SET FILTER TO
       SET ORDER TO TAG "1"
@@ -601,15 +602,16 @@ STATIC FUNCTION ispravi_opis_artikla( nArt_id )
 
       update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
 
+      f18_free_tables( { "articles" } )
+      sql_table_update( nil, "END" )
+
       SET ORDER TO TAG "1"
       SET FILTER to &cDBFilter
       GO ( nTRec )
 
       nRet := 1
-   ENDIF
 
-   f18_free_tables( { "articles" } )
-   sql_table_update( nil, "END" )
+   ENDIF
 
    RETURN nRet
 
@@ -727,17 +729,19 @@ STATIC FUNCTION rnal_brisi_artikal( nArt_id, lChkKum, lSilent )
 
    IF Found()
 
-      IF !lSilent .AND. Pitanje(, "Izbrisati zapis (D/N) ???", "N" ) == "N"
+      IF !lSilent .AND. Pitanje(, "Izbrisati artikal iz šifrarnika (D/N) ?", "N" ) == "N"
          RETURN 0
       ENDIF
 
       _del_rec := dbf_get_rec()
 
-      IF !f18_lock_tables( { "articles", "elements", "e_att", "e_aops" } )
+      sql_table_update( nil, "BEGIN" )
+
+      IF !f18_lock_tables( { "articles", "elements", "e_att", "e_aops" }, .T. )
+         sql_table_update( nil, "END" )
+         MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
          RETURN 0
       ENDIF
-
-      sql_table_update( nil, "BEGIN" )
 
       delete_rec_server_and_dbf( Alias(), _del_rec, 1, "CONT" )
 
@@ -823,11 +827,13 @@ STATIC FUNCTION rnal_dupliciraj_artikal( nArt_id )
    SET FILTER TO
    SET RELATION TO
 
-   IF !f18_lock_tables( { "articles", "elements", "e_att", "e_aops" } )
+   sql_table_update( nil, "BEGIN" )
+
+   IF !f18_lock_tables( { "articles", "elements", "e_att", "e_aops" }, .T. )
+      sql_table_update( nil, "END" )
+      MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
       RETURN -1
    ENDIF
-
-   sql_table_update( nil, "BEGIN" )
 
    IF setuj_novi_id_tabele( @nArtNewid, "ART_ID" ) == 0
       RETURN -1

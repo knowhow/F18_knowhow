@@ -565,11 +565,12 @@ STATIC FUNCTION _ins_veza( nA_doc_it, nA_docs, cBrfakt, lTemp )
    LOCAL _rec
 
    IF !lTemp
-      IF !f18_lock_tables( { "rnal_docs" } )
-         MsgBeep( "Problem sa lokovanjem tabele rnal_docs !" )
+      sql_table_update( NIL, "BEGIN" )
+      IF !f18_lock_tables( { "rnal_docs" }, .T. )
+         sql_table_update( NIL, "END" )
+         MsgBeep( "Ne mogu zaključati tabelu !#Operacija prekinuta." )
          RETURN .F.
       ENDIF
-      sql_table_update( NIL, "BEGIN" )
    ENDIF
 
    SELECT ( nA_doc_it )
@@ -578,7 +579,6 @@ STATIC FUNCTION _ins_veza( nA_doc_it, nA_docs, cBrfakt, lTemp )
 
    DO WHILE !Eof()
 
-      // ovo preskoci
       IF field->print == "N"
          SKIP
          LOOP
@@ -586,12 +586,15 @@ STATIC FUNCTION _ins_veza( nA_doc_it, nA_docs, cBrfakt, lTemp )
 
       nDoc_no := field->doc_no
 
-      // setuj da je dokument prenesen u DOCS
       SELECT ( nA_docs )
       SEEK docno_str( nDoc_no )
 
       IF !Found()
-         MsgBeep( "Nalog ne postoji u azuriranim dokumentima !" )
+         IF !lTemp
+            f18_free_tables( { "rnal_docs" } )
+            sql_table_update( NIL, "END" )
+         ENDIF
+         MsgBeep( "Traženi nalog ne postoji u ažuriranim dokumentima !" )
          RETURN .F.
       ENDIF
 
@@ -621,6 +624,7 @@ STATIC FUNCTION _ins_veza( nA_doc_it, nA_docs, cBrfakt, lTemp )
    ENDIF
 
    RETURN .T.
+
 
 
 // -----------------------------------

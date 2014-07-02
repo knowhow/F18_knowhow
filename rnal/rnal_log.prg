@@ -253,11 +253,12 @@ FUNCTION logiraj_podatke_loma_na_staklima( nDoc_no, cDesc, cAction )
       cAction := "+"
    ENDIF
 
-   IF !f18_lock_tables( { "doc_log", "doc_lit" } )
+   sql_table_update( nil, "BEGIN" )
+
+   IF !f18_lock_tables( { "doc_log", "doc_lit" }, .T. )
+      sql_table_update( nil, "END" )
       RETURN
    ENDIF
-
-   sql_table_update( nil, "BEGIN" )
 
    cDoc_log_type := "21"
    nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
@@ -286,7 +287,6 @@ FUNCTION logiraj_podatke_loma_na_staklima( nDoc_no, cDesc, cAction )
       SKIP
 	
    ENDDO
-
 
    f18_free_tables( { "doc_log", "doc_lit" } )
    sql_table_update( nil, "END" )
@@ -415,12 +415,13 @@ FUNCTION logiraj_zatvaranje_naloga( nDoc_no, cDesc, nDoc_status )
 
    ENDCASE
 
-   IF !f18_lock_tables( { "doc_log", "doc_lit" } )
-      MsgBeep( "Problem sa logiranjem tabela !!!" )
+   sql_table_update( nil, "BEGIN" )
+
+   IF !f18_lock_tables( { "doc_log", "doc_lit" }, .T. )
+      sql_table_update( nil, "END" )
+      MsgBeep( "Ne mogu zaključati tabelu !#Prekidam operaciju." )
       RETURN
    ENDIF
-
-   sql_table_update( nil, "BEGIN" )
 
    nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 

@@ -946,12 +946,13 @@ STATIC FUNCTION nafiluj_atribute_grupe( __gr_id, __el_id )
    LOCAL _rec
    LOCAL lAuto := .T.
 
-   IF !f18_lock_tables( { "e_att" } )
-      MsgBeep( "Problem sa lockom tabele e_att !" )
+   sql_table_update( nil, "BEGIN" )
+
+   IF !f18_lock_tables( { "e_att" }, .T. )
+      sql_table_update( nil, "END" )
+      MsgBeep( "Ne mogu zaključati e_att tabelu !#Prekidam operaciju." )
       RETURN
    ENDIF
-
-   sql_table_update( nil, "BEGIN" )
 
    SELECT e_gr_att
    SET ORDER TO TAG "2"

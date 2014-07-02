@@ -68,12 +68,13 @@ STATIC FUNCTION in_elcode_rule( cElCond, cRule, cRuleName )
 
    nNrec := field->rule_id + 1
 
-   IF !f18_lock_tables( { "f18_rules" } )
-      MsgBeep( "Problem sa lockovanjem tabela .... !!!! f18_rules" )
+   sql_table_update( nil, "BEGIN" )
+
+   IF !f18_lock_tables( { "f18_rules" }, .T. )
+      sql_table_update( nil, "END" )
+      MsgBeep( "Ne mogu zakljuƒçati tabelu f18_rules !#Prekidam operaciju." )
       RETURN
    ENDIF
-
-   sql_table_update( nil, "BEGIN" )
 
    APPEND BLANK
 
@@ -181,7 +182,7 @@ STATIC FUNCTION err_validate( nLevel )
    IF nLevel <= 3
       lRet := .T.
    ELSEIF nLevel == 4
-      IF Pitanje(, "Zelite zanemariti ovo pravilo (D/N) ?", "N" ) == "D"
+      IF Pitanje(, "≈Ωelite zanemariti ovo pravilo (D/N) ?", "N" ) == "D"
          lRet := .T.
       ENDIF
    ENDIF
@@ -301,7 +302,7 @@ STATIC FUNCTION _rule_s_fmk( cField, nTickness, cType, cKind, cQttyType )
 
       ENDIF
 
-      // vrsta stakla RG ili naruËioc
+      // vrsta stakla RG ili naru√®ioc
       IF !Empty( cKind )
          // ako nije ta vrsta preskoci...
          IF AllTrim( field->rule_c4 ) <> AllTrim( cKind )
@@ -310,7 +311,7 @@ STATIC FUNCTION _rule_s_fmk( cField, nTickness, cType, cKind, cQttyType )
          ENDIF
       ENDIF
 
-      // setuj vrijednost u kojoj Êe se obraËunati koliËina
+      // setuj vrijednost u kojoj √¶e se obra√®unati koli√®ina
       cQttyType := AllTrim( field->rule_c3 )
 
       // to je rule -> debljina rang 0-20, uzmi u matricu

@@ -1,3 +1,7 @@
+1.7.109  2014-07-02, vsasa
+
+  - RNAL, log tabele i naša slova - bugfix
+ 
 1.7.108  2014-07-02, vsasa
 
   - LD, setovanje minulog rada kod unosa podataka obračuna - bugfix

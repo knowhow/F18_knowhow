@@ -172,7 +172,7 @@ STATIC FUNCTION test_lose_mrezne_konekcije( nTimeout, cMsg )
 
 
 
-FUNCTION rnal_ukloni_filter_kumulativne_tabele()
+FUNCTION rnal_ukloni_filter_lokalnih_tabela()
 
    SELECT _docs
    SET FILTER TO
@@ -390,7 +390,7 @@ FUNCTION doc_2__doc( nDoc_no )
 
    rnal_o_tables( .T. )
 
-   rnal_ukloni_filter_kumulativne_tabele()
+   rnal_ukloni_filter_lokalnih_tabela()
 
    SELECT docs
    SET ORDER TO TAG "1"

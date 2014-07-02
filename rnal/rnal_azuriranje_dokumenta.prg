@@ -88,31 +88,25 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
 
    ENDIF
 
-   test_lose_mrezne_konekcije( 30, "ažuriranje - tabela dokument - 30 sec" )
-
    _ok := _docs_insert( __doc_no  )
 
    IF _ok
-      test_lose_mrezne_konekcije( 15, "ažuriranje - tabela stavke - 15 sec" )
       _ok := _doc_it_insert( __doc_no )
    ENDIF
 
    IF _ok
-      test_lose_mrezne_konekcije( 15, "ažuriranje - tabela repromaterijal - 15 sec" )
       _ok := _doc_it2_insert( __doc_no )
    ENDIF
 
    IF _ok
-      test_lose_mrezne_konekcije( 10, "ažuriranje - tabela operacije - 10 sec" )
       _ok := _doc_op_insert( __doc_no )
    ENDIF
 
    IF _ok
 
-      test_lose_mrezne_konekcije( 5, "ažuriranje - setovanje statusa - 5 sec" )
-
       set_doc_marker( __doc_no, 0, "CONT" )
-
+      __doc_stat := 0
+ 
       IF __doc_stat <> 3
          rnal_logiraj_novi_nalog( __doc_no )
       ENDIF
@@ -163,13 +157,6 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
    MsgC()
 
    RETURN 1
-
-
-STATIC FUNCTION test_lose_mrezne_konekcije( nTimeout, cMsg )
-   MsgO( cMsg )
-   sleep( nTimeout )
-   MsgC()
-   RETURN
 
 
 

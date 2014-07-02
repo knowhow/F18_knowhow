@@ -219,9 +219,6 @@ STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
       SKIP
    ENDDO
 
-   MsgO( "FAKT - ažuriranje stavki 30sec" )
-   sleep(30)
-
    IF _ok == .T.
       @ m_x + 2, m_y + 2 SAY "fakt_doks -> server: " + _tmp_id
       AAdd( _ids_doks, _tmp_id )

@@ -176,8 +176,8 @@ FUNCTION rnal_log_tip_11_insert( cAction, nDoc_no, nDoc_log_no, aArr )
    _rec[ "doc_lit_no" ] := nDoc_lit_no
    _rec[ "date_1" ] := aArr[ 1, 2 ]
    _rec[ "int_1" ] := aArr[ 1, 1 ]
-   _rec[ "char_1" ] := aArr[ 1, 3 ]
-   _rec[ "char_2" ] := aArr[ 1, 4 ]
+   _rec[ "char_1" ] := hb_StrToUtf8( aArr[ 1, 3 ] )
+   _rec[ "char_2" ] := hb_StrToUtf8( aArr[ 1, 4 ] )
    _rec[ "doc_lit_ac" ] := cAction
 
    update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
@@ -202,7 +202,7 @@ FUNCTION rnal_log_tip_12_insert( cAction, nDoc_no, nDoc_log_no, aArr )
    _rec[ "doc_log_no" ] := nDoc_log_no
    _rec[ "doc_lit_no" ] := nDoc_lit_no
    _rec[ "int_1" ] := aArr[ 1, 1 ]
-   _rec[ "char_1" ] := aArr[ 1, 2 ]
+   _rec[ "char_1" ] := hb_StrToUtf8( aArr[ 1, 2 ] )
    _rec[ "doc_lit_ac" ] := cAction
 
    update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
@@ -227,10 +227,10 @@ FUNCTION rnal_log_tip_13_insert( cAction, nDoc_no, nDoc_log_no, aArr )
    _rec[ "doc_log_no" ] := nDoc_log_no
    _rec[ "doc_lit_no" ] := nDoc_lit_no
    _rec[ "int_1" ] := aArr[ 1, 1 ]
-   _rec[ "char_1" ] := aArr[ 1, 2 ]
-   _rec[ "char_2" ] := aArr[ 1, 3 ]
+   _rec[ "char_1" ] := hb_StrToUtf8( aArr[ 1, 2 ] )
+   _rec[ "char_2" ] := hb_StrToUtf8( aArr[ 1, 3 ] )
    _rec[ "doc_lit_ac" ] := cAction
-
+ 
    update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
 
    RETURN
@@ -257,8 +257,8 @@ FUNCTION rnal_log_tip_20_insert( cAction, nDoc_no, nDoc_log_no, ;
    _rec[ "num_1" ] := nArt_qtty
    _rec[ "num_2" ] := nArt_heigh
    _rec[ "num_3" ] := nArt_width
-   _rec[ "char_1" ] := cDoc_desc
-   _rec[ "char_2" ] := cDoc_sch
+   _rec[ "char_1" ] := hb_StrToUtf8( cDoc_desc )
+   _rec[ "char_2" ] := hb_StrToUtf8( cDoc_sch )
    _rec[ "doc_lit_ac" ] := cAction
 
    update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
@@ -288,7 +288,7 @@ FUNCTION rnal_log_tip_21_insert( cAction, nDoc_no, nDoc_log_no, ;
    _rec[ "num_2" ] := nDamage
    _rec[ "int_1" ] := nDoc_it_no
    _rec[ "int_2" ] := nGlass_no
-   _rec[ "char_1" ] := cArt_desc
+   _rec[ "char_1" ] := hb_StrToUtf8( cArt_desc )
    _rec[ "doc_lit_ac" ] := cAction
 
    update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
@@ -316,7 +316,7 @@ FUNCTION rnal_log_tip_30_insert( cAction, nDoc_no, nDoc_log_no, ;
    _rec[ "doc_lit_no" ] := nDoc_lit_no
    _rec[ "int_1" ] := nAop_id
    _rec[ "int_2" ] := nAop_att_id
-   _rec[ "char_1" ] := cDoc_op_desc
+   _rec[ "char_1" ] := hb_StrToUtf8( cDoc_op_desc )
    _rec[ "doc_lit_ac" ] := cAction
 
    update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
@@ -445,7 +445,7 @@ FUNCTION rnal_log_tip_20_get( nDoc_no, nDoc_log_no )
    DO WHILE !Eof() .AND. field->doc_no == nDoc_no ;
          .AND. field->doc_log_no == nDoc_log_no
 
-      cRet += "artikal: " + PadR( g_art_desc( field->art_id ), 10 )
+      cRet += "artikal: " + PadR( hb_StrToUtf8( g_art_desc( field->art_id ) ), 10 )
       cRet += "#"
       cRet += "kol.=" + AllTrim( Str( field->num_1, 8, 2 ) )
       cRet += ","
@@ -487,7 +487,7 @@ FUNCTION rnal_log_tip_21_get( nDoc_no, nDoc_log_no )
 	
       cRet += "stavka: " + AllTrim( Str( field->int_1 ) )
       cRet += "#"
-      cRet += AllTrim( "artikal: " + PadR( g_art_desc( field->art_id ), 30 ) )
+      cRet += AllTrim( "artikal: " + PadR( hb_StrToUtf8( g_art_desc( field->art_id ) ), 30 ) )
       cRet += "#"
       cRet += "staklo br: " + AllTrim( Str( field->int_2 ) )
       cRet += "#"
@@ -514,9 +514,9 @@ FUNCTION rnal_log_tip_30_get( nDoc_no, nDoc_log_no )
    DO WHILE !Eof() .AND. field->doc_no == nDoc_no ;
          .AND. field->doc_log_no == nDoc_log_no
 
-      cRet += "d.oper.: " + g_aop_desc( field->int_1 )
+      cRet += "d.oper.: " + hb_StrToUtf8( g_aop_desc( field->int_1 ) )
       cRet += "#"
-      cRet += "atr.d.oper.:" + g_aop_att_desc( field->int_2 )
+      cRet += "atr.d.oper.:" + hb_StrToUtf8( g_aop_att_desc( field->int_2 ) )
       cRet += ","
       cRet += "d.opis:" + AllTrim( field->char_1 )
       cRet += "#"
@@ -591,7 +591,7 @@ FUNCTION rnal_log_tip_11_get( nDoc_no, nDoc_log_no )
    DO WHILE !Eof() .AND. field->doc_no == nDoc_no ;
          .AND. field->doc_log_no == nDoc_log_no
 
-      cRet += "objekat: " + AllTrim( g_obj_desc( field->int_1 ) )
+      cRet += "objekat: " + AllTrim( hb_StrToUtf8( g_obj_desc( field->int_1 ) ) )
       cRet += "#"
       cRet += "datum isp.: " + DToC( field->date_1 )
       cRet += "#"
@@ -619,7 +619,7 @@ FUNCTION rnal_log_tip_12_get( nDoc_no, nDoc_log_no )
    DO WHILE !Eof() .AND. field->doc_no == nDoc_no ;
          .AND. field->doc_log_no == nDoc_log_no
 
-      cRet += "kontakt.: " + g_cont_desc( field->int_1 )
+      cRet += "kontakt.: " + hb_StrToUtf8( g_cont_desc( field->int_1 ) )
       cRet += "#"
       cRet += "kont.d.opis.: " + AllTrim( field->char_1 )
       cRet += "#"

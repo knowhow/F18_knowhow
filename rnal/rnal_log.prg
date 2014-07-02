@@ -58,7 +58,7 @@ FUNCTION rnal_logiraj_novi_nalog()
    SELECT _docs
    GO TOP
 
-   cDesc := "Inicijalni podaci plaćanja"
+   cDesc := hb_Utf8ToStr( "Inicijalni podaci plaćanja" )
    aArr := podaci_naloga_za_log_placanje( field->doc_pay_id, field->doc_paid, field->doc_pay_de )
 
    logiraj_podatke_placanja_za_nalog( __doc_no, cDesc, nil, aArr )

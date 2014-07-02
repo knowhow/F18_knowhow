@@ -12,14 +12,19 @@
 #include "fmk.ch"
 
 
+FUNCTION _sql_query( oServer, cQuery, silent )
+ 
+   RETURN run_sql_query( cQuery, 10 )
+
+
 FUNCTION run_sql_query( qry, retry )
 
-   LOCAL _i, _qry_obj
+   LOCAL _i, _qry_obj, lMsg := .F.
 
    LOCAL _server := my_server()
 
    IF retry == NIL
-      retry := 1
+      retry := 10
    ENDIF
 
    IF ValType( qry ) != "C"
@@ -33,44 +38,45 @@ FUNCTION run_sql_query( qry, retry )
 
    FOR _i := 1 TO retry
 
+      IF _i > 1
+            MsgO( "Pokusavam izvrsiti SQL upit: " + qry + " pokušaj: " + ALLTRIM( STR( _i ) ) )
+            lMsg := .T.
+      ENDIF
+
       BEGIN SEQUENCE WITH {| err| Break( err ) }
          _qry_obj := _server:Query( qry + ";" )
-      RECOVER
-         log_write( "ERROR: run_sql_query(), slijedi timeout od 0.5 sec", 2 )
-         my_server_logout()
-         hb_idleSleep( 0.5 )
-         IF my_server_login()
-            _server := my_server()
-         ENDIF
+
+      RECOVER 
+
+         log_write( "ERROR: run_sql_query() pokusaj: " + ALLTRIM( STR( _i ) ), 2 )
+         hb_idleSleep( 1 )
+
       END SEQUENCE
 
-      IF _qry_obj:NetErr() .AND. !Empty( _qry_obj:ErrorMsg() )
+      IF _qry_obj:NetErr() 
 
-         log_write( "run_sql_query(), ajoj: " + _qry_obj:ErrorMsg(), 2 )
-         log_write( "run_sql_query(), error na sljedecem upitu: " + qry, 2 )
-
-         my_server_logout()
-         hb_idleSleep( 0.5 )
-
-         IF my_server_login()
-            _server := my_server()
-         ENDIF
+         log_write( "ERROR RUN_SQL_QRY: " + _qry_obj:ErrorMsg() + " QRY:" + qry, 2 )
 
          IF _i == retry
-            MsgBeep( "neuspjesno nakon " + ALLTRIM( to_str( retry ) ) + " pokusaja !?" )
-            Alert( qry )
-            QUIT_1
+
+            //MsgBeep( "Ne mogu pristupiti serveru !##SQL Upit: " + qry  + "# nakon " + ALLTRIM( to_str( retry ) ) + " pokušaja !?" )
+            MsgC()
+
+            RETURN .F.
          ENDIF
       ELSE
          _i := retry + 1
       ENDIF
+
+      IIF( lMsg, MsgC(), NIL )
+
    NEXT
 
    RETURN _qry_obj
 
 
 
-FUNCTION _sql_query( oServer, cQuery, silent )
+FUNCTION _sql_query_orig( oServer, cQuery, silent )
 
    LOCAL oQuery, cMsg
 

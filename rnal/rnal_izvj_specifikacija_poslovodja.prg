@@ -60,7 +60,7 @@ STATIC FUNCTION _g_vars( params )
 
    Box(, _box_x, _box_y )
 
-   @ m_x + _x, m_y + 2 SAY "*** Specifikacija radnih naloga za poslovodje"
+   @ m_x + _x, m_y + 2 SAY8 "*** Specifikacija radnih naloga za poslovođe"
 	
    ++ _x
    ++ _x
@@ -88,7 +88,7 @@ STATIC FUNCTION _g_vars( params )
 	
    ++ _x
 	
-   @ m_x + _x, m_y + 2 SAY "(3) - bruseno         (6) - emajlirano"
+   @ m_x + _x, m_y + 2 SAY8 "(3) - brušeno         (6) - emajlirano"
 	
    ++ _x
 
@@ -155,7 +155,6 @@ STATIC FUNCTION _cre_spec( params )
    LOCAL nGr2
    LOCAL _glass_count := 0
 
-   // kreiraj tmp tabelu
    aField := _spec_fields()
 
    cre_tmp1( aField )
@@ -232,9 +231,6 @@ STATIC FUNCTION _cre_spec( params )
 		
          cDoc_div := "(" + cDiv + "/" + cDiv + ")"
 	
-         // uzmi operaciju za ovu stavku naloga....
-         // if exist
-		
          cAop := " "
 		
          SELECT doc_ops
@@ -276,7 +272,6 @@ STATIC FUNCTION _cre_spec( params )
 		
          ENDIF
 
-         // provjeri da li je artikal LAMI-RG staklo ?
          lIsLami := is_lami( aArtDesc )
 
          IF lIsLami == .T.
@@ -288,7 +283,6 @@ STATIC FUNCTION _cre_spec( params )
 
          SELECT doc_it
 
-         // item description
          cItem := AllTrim( g_art_desc( nArt_id ) )
          cItemAop := cAop
 		
@@ -311,8 +305,6 @@ STATIC FUNCTION _cre_spec( params )
             cItemAop, ;
             nGr1, ;
             cLog )
-
-         // ako ima vise grupa...
 
          IF Len( cIt_group ) > 1
 
@@ -381,10 +373,8 @@ STATIC FUNCTION _main_filter( params )
    ENDIF
 
    IF _statusi == "N"
-      // necemo gledati statuse, prikazi sve naloge
       _filter += "( doc_status == 0 .or. doc_status > 2 )"
    ELSE
-      // gledaju se prakticno stamo otvoreni
       _filter += "( doc_status == 0 .or. doc_status == 4 ) "
    ENDIF
 
@@ -401,8 +391,6 @@ STATIC FUNCTION _main_filter( params )
    GO TOP
 	
    RETURN
-
-
 
 
 
@@ -424,11 +412,8 @@ STATIC FUNCTION _p_rpt_spec( params )
    ?
    P_COND2
 
-   // naslov izvjestaja
    _rpt_descr()
-   // info operater, datum
    __rpt_info()
-   // header
    _rpt_head()
 
    SELECT _tmp1
@@ -437,7 +422,6 @@ STATIC FUNCTION _p_rpt_spec( params )
    DO WHILE !Eof()
 	
       IF _group <> 0
-         // preskoci ako filterises po grupi
          IF field->it_group <> _group
             SKIP
             loop
@@ -448,7 +432,6 @@ STATIC FUNCTION _p_rpt_spec( params )
          FF
       ENDIF
 	
-      // pripremi varijable za ispis...
       nDoc_no := field->doc_no
 	
       cCustDesc := field->cust_desc
@@ -471,7 +454,6 @@ STATIC FUNCTION _p_rpt_spec( params )
       aItemAop := {}
       nScan := 0
 	
-      // sracunaj kolicinu artikala na nalogu
       DO WHILE !Eof() .AND. field->doc_no == nDoc_no
 		
          ++ nCount
@@ -479,7 +461,6 @@ STATIC FUNCTION _p_rpt_spec( params )
          nTotQtty += field->qtty
          nTotGlQtty += field->glass_qtty
 
-         // dodatna operacija stavke
          cItemAop := AllTrim( field->doc_aop )
 		
          IF !Empty( cItemAop )
@@ -499,38 +480,22 @@ STATIC FUNCTION _p_rpt_spec( params )
             NEXT
          ENDIF
 		
-         // divizor
          cDiv := AllTrim( field->doc_div )
-		
-         // zapamti i log
          cLog := AllTrim( field->doc_log )
 		
          SKIP
       ENDDO
 	
-      // dodaj divizora na veliki opis...
       cDescr := cDiv + " - " + cDescr
 
-      // ispisi prvu stavku
-
-      // broj dokumenta
       ? docno_str( nDoc_no )
-	
-      // partner / naru�ioc / kontakt
       @ PRow(), PCol() + 1 SAY PadR( cCustDesc, 30 )
-	
-      // datumi - isporuka
       @ PRow(), PCol() + 1 SAY PadR( cDate, 17 )
-	
-      // prioritet, statusi, operater ....
       @ PRow(), PCol() + 1 SAY " " + PadR( cDescr, 100 )
-
       ? Space( 10 )
-	
       @ PRow(), PCol() + 1 SAY "kom.na nalogu: " + AllTrim( Str( nTotQtty, 12 ) ) + ;
          " broj stakala: " + AllTrim( Str( nTotGlQtty, 12 ) )
 	
-      // dodatne operacije stavke...
       IF Len( aItemAop ) > 0
 		
          cPom := ""
@@ -546,7 +511,6 @@ STATIC FUNCTION _p_rpt_spec( params )
 	
       ENDIF
 	
-      // upisi i log na kraju ako postoji
       IF !Empty( cLog )
 		
          ? Space( 10 )
@@ -593,15 +557,13 @@ STATIC FUNCTION _rpt_descr()
 
    DO CASE
    CASE __nvar == 1
-      cTmp += "SPECIFIKACIJA NALOGA ZA POSLOVODJE"
-
-   OTHERWISE
-      cTmp += "WITH NO NAME"
+      cTmp += "SPECIFIKACIJA NALOGA ZA POSLOVOĐE"
    ENDCASE
 
-   ? cTmp
+   ?U cTmp
 
    RETURN
+
 
 
 // -------------------------------------------------

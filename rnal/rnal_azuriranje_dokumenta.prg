@@ -68,6 +68,8 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
 
    sql_table_update( nil, "BEGIN" )
 
+   altd()
+
    IF !f18_lock_tables( { "docs", "doc_it", "doc_it2", "doc_ops" }, .T. )
       MsgBeep( "Ne mogu zaključati tabele !" )
       RETURN 0

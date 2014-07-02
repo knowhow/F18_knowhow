@@ -68,8 +68,6 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
 
    sql_table_update( nil, "BEGIN" )
 
-   altd()
-
    IF !f18_lock_tables( { "docs", "doc_it", "doc_it2", "doc_ops" }, .T. )
       MsgBeep( "Ne mogu zaključati tabele !" )
       RETURN 0
@@ -89,23 +87,32 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
 
    ENDIF
 
-   altd()
-
+   MsgO( "ažuriranje - tabela dokument - 15sec" )
+   sleep(15)
    _ok := _docs_insert( __doc_no  )
 
    IF _ok
+      MsgO( "ažuriranje - tabela stavke - 15sec" )
+      sleep(15)
       _ok := _doc_it_insert( __doc_no )
    ENDIF
 
    IF _ok
+      MsgO( "ažuriranje - tabela repromaterijal - 15sec" )
+      sleep(15)
       _ok := _doc_it2_insert( __doc_no )
    ENDIF
 
    IF _ok
+      MsgO( "ažuriranje - tabela operacije - 15sec" )
+      sleep(10)
       _ok := _doc_op_insert( __doc_no )
    ENDIF
 
    IF _ok
+
+      MsgO( "ažuriranje - setovanje statusa - 5sec" )
+      sleep(5)
 
       set_doc_marker( __doc_no, 0, "CONT" )
 

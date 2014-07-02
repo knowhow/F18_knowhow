@@ -69,7 +69,8 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
    sql_table_update( nil, "BEGIN" )
 
    IF !f18_lock_tables( { "docs", "doc_it", "doc_it2", "doc_ops" }, .T. )
-      MsgBeep( "Ne mogu zaključati tabele !" )
+      sql_table_update( nil, "END" )
+      MsgBeep( "Ne mogu zaključati tabele !?# Prekid operacije ažuriranja" )
       RETURN 0
    ENDIF
 
@@ -87,7 +88,7 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
 
    ENDIF
 
-   test_lose_mrezne_konekcije( 15, "ažuriranje - tabela dokument - 15 sec" )
+   test_lose_mrezne_konekcije( 30, "ažuriranje - tabela dokument - 30 sec" )
 
    _ok := _docs_insert( __doc_no  )
 

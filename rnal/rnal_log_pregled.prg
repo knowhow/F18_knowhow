@@ -120,9 +120,9 @@ STATIC FUNCTION setuj_browse_kolone( aImeKol, aKol )
 
    AAdd( aImeKol, { "dat./vr./oper.", {|| DToC( doc_log_da ) + " / " + PadR( doc_log_ti, 5 ) + " " + PadR( getusername( operater_i ), 10 ) + ".." }, "datum", {|| .T. }, {|| .T. } } )
 
-   AAdd( aImeKol, { "prom.tip", {|| PadR( tip_loga_opis( doc_log_ty ), 12 ) }, "tip", {|| .T. }, {|| .T. } } )
+   AAdd( aImeKol, { "prom.tip", {|| PadRU( tip_loga_opis( doc_log_ty ), 12 ) }, "tip", {|| .T. }, {|| .T. } } )
 
-   AAdd( aImeKol, { "kratki opis", {|| PadR( doc_log_de, 30 ) + ".." }, "opis", {|| .T. }, {|| .T. } } )
+   AAdd( aImeKol, { "kratki opis", {|| PadRU( doc_log_de, 30 ) + ".." }, "opis", {|| .T. }, {|| .T. } } )
 
    aKol := {}
 
@@ -147,7 +147,7 @@ STATIC FUNCTION tip_loga_opis( cType )
    CASE cType == "98"
       xRet := "real.dio"
    CASE cType == "97"
-      xRet := "ponisten"
+      xRet := "poništen"
    CASE cType == "96"
       xRet := "nije ispor."
    CASE cType == "10"
@@ -157,7 +157,7 @@ STATIC FUNCTION tip_loga_opis( cType )
    CASE cType == "12"
       xRet := "kontakti"
    CASE cType == "13"
-      xRet := "placanje"
+      xRet := "plaćanje"
    CASE cType == "20"
       xRet := "artikli"
    CASE cType == "21"

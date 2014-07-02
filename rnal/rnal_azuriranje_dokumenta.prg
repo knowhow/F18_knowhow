@@ -28,7 +28,7 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
 
    rnal_o_tables( .T. )
 
-   rnal_ukloni_filter_kumulativne_tabele()
+   rnal_ukloni_filter_lokalnih_tabela()
 
    SELECT _docs
    GO TOP

@@ -547,11 +547,11 @@ FUNCTION rnal_log_tip_99_get( nDoc_no, nDoc_log_no )
    CASE nStat == 1
       cRet := "zatvoren nalog...#"
    CASE nStat == 2
-      cRet := "ponisten nalog...#"
+      cRet := "poništen nalog...#"
    CASE nStat == 4
-      cRet := "djelimicno zatvoren nalog...#"
+      cRet := "djelimično zatvoren nalog...#"
    CASE nStat == 5
-      cRet := "zatvoren, ali nije isporucen...#"
+      cRet := "zatvoren, ali nije isporučen...#"
    ENDCASE
 
    RETURN cRet
@@ -568,7 +568,7 @@ FUNCTION rnal_log_tip_10_get( nDoc_no, nDoc_log_no )
    DO WHILE !Eof() .AND. field->doc_no == nDoc_no ;
          .AND. field->doc_log_no == nDoc_log_no
 
-      cRet += "narucioc: " + PadR( g_cust_desc( field->int_1 ), 20 )
+      cRet += "naručilac: " + PadR( g_cust_desc( field->int_1 ), 20 )
       cRet += "#"
       cRet += "prioritet: " + AllTrim( Str( field->int_2 ) )
       cRet += "#"
@@ -643,9 +643,9 @@ FUNCTION rnal_log_tip_13_get( nDoc_no, nDoc_log_no )
    DO WHILE !Eof() .AND. field->doc_no == nDoc_no ;
          .AND. field->doc_log_no == nDoc_log_no
 
-      cRet += "vr.plac: " + s_pay_id( field->int_1 )
+      cRet += "vr.plać: " + s_pay_id( field->int_1 )
       cRet += "#"
-      cRet += "placeno: " + AllTrim( field->char_1 )
+      cRet += "plaćeno: " + AllTrim( field->char_1 )
       cRet += "#"
       cRet += "opis: " + AllTrim( field->char_2 )
       cRet += "#"

@@ -199,11 +199,11 @@ STATIC FUNCTION prikazi_status_loga_u_dnu( cLogText )
    ENDIF
 
    @ m_x + 16, m_y + 2 SAY Space( nLenText )
-   @ m_x + 16, m_y + 2 SAY PadR( cRow1, nLenText ) COLOR "I"
+   @ m_x + 16, m_y + 2 SAY8 PadR( cRow1, nLenText ) COLOR "I"
    @ m_x + 17, m_y + 2 SAY Space( nLenText )
-   @ m_x + 17, m_y + 2 SAY PadR( cRow2, nLenText ) COLOR "I"
+   @ m_x + 17, m_y + 2 SAY8 PadR( cRow2, nLenText ) COLOR "I"
    @ m_x + 18, m_y + 2 SAY Space( nLenText )
-   @ m_x + 18, m_y + 2 SAY PadR( cRow3, nLenText ) COLOR "I"
+   @ m_x + 18, m_y + 2 SAY8 PadR( cRow3, nLenText ) COLOR "I"
 
    RETURN
 
@@ -261,8 +261,7 @@ STATIC FUNCTION prikazi_promjene_unutar_boxa( cLogTxt )
    @ m_x + 1, m_y + 2 SAY "Detaljni prikaz promjene: " COLOR "I"
 	
    FOR i := 1 TO Len( aBoxTxt )
-
-      @ m_x + ( i + 1 ), m_y + 2 SAY PadR( aBoxTxt[ i ], 65 )
+      @ m_x + ( i + 1 ), m_y + 2 SAY8 PadR( aBoxTxt[ i ], 65 )
    NEXT
 
    @ m_x + Len( aBoxTxt ) + 2, m_y + 2 GET cResp
@@ -275,3 +274,4 @@ STATIC FUNCTION prikazi_promjene_unutar_boxa( cLogTxt )
    ENDIF
 
    RETURN
+

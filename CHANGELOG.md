@@ -1,3 +1,8 @@
+1.7.110  2014-07-03, vsasa
+
+  - RNAL, ažuriranje naloga i promjena u log-u
+  - f18_lock_semaphore, f18_unlock_semaphore unutar transakcije
+ 
 1.7.109  2014-07-02, vsasa
 
   - RNAL, log tabele i naša slova - bugfix

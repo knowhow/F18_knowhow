@@ -21,6 +21,7 @@ STATIC __doc_desc
 FUNCTION rnal_azuriraj_dokument( cDesc )
 
    LOCAL _ok := .T.
+   LOCAL lDokumentPostoji := .F.
 
    IF cDesc == nil
       cDesc := ""
@@ -50,17 +51,20 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
    __doc_no := _docs->doc_no
    __doc_stat := _docs->doc_status
 
-   IF __doc_stat < 3 .AND. !rnal_doc_no_exist( __doc_no )
+   lDokumentPostoji := rnal_dokument_postoji( __doc_no )
+   
+   IF __doc_stat < 3 .AND. !lDokumentPostoji
 
       MsgBeep( "Nalog " + AllTrim( Str( __doc_no ) ) + " nije moguce ažurirati !#Status dokumenta = " + AllTrim( Str( __doc_stat ) ) )
-
-      SELECT _docs
-      fill__doc_no( 0, .T. )
-
-      SELECT _docs
-      GO TOP
-
+      resetuj_broj_naloga_na_0_u_pripremi()
       MsgBeep( "Ponovite operaciju štampe i ažuriranja naloga !" )
+
+      RETURN 0
+  
+   ELSEIF __doc_stat = 10 .AND. lDokumentPostoji
+
+      MsgBeep( "Nalog " + AllTrim( Str( __doc_no ) ) + " nije moguće ažurirati !#Već postoji ažuriran." )
+      resetuj_broj_naloga_na_0_u_pripremi()
 
       RETURN 0
 
@@ -80,15 +84,17 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
 
    IF __doc_stat == 3
 
-      rnal_logiraj_promjenu_naloga( __doc_no, __doc_desc )
+      _ok := rnal_logiraj_promjenu_naloga( __doc_no, __doc_desc )
 
       doc_erase( __doc_no )
 
       O_DOCS
 
    ENDIF
-
-   _ok := _docs_insert( __doc_no  )
+   
+   IF _ok
+      _ok := _docs_insert( __doc_no )
+   ENDIF
 
    IF _ok
       _ok := _doc_it_insert( __doc_no )
@@ -103,13 +109,19 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
    ENDIF
 
    IF _ok
-
+      // setuj da je nalog opet otvoren
       set_doc_marker( __doc_no, 0, "CONT" )
-      __doc_stat := 0
  
+      // ako nije bio u doradi logiraj promjene inicijalne
       IF __doc_stat <> 3
-         rnal_logiraj_novi_nalog( __doc_no )
+         _ok := rnal_logiraj_novi_nalog( __doc_no )
       ENDIF
+
+      __doc_stat := 0
+
+   ENDIF
+
+   IF _ok
 
       f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops" } )
       sql_table_update( nil, "END" )
@@ -119,7 +131,6 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
 
    ELSE
 
-      f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops" } )
       sql_table_update( nil, "ROLLBACK" )
 
       MsgC()
@@ -157,6 +168,23 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
    MsgC()
 
    RETURN 1
+
+
+
+/*
+   Opis: resetuje broj naloga na 0 u tabelama pripreme
+*/
+
+STATIC FUNCTION resetuj_broj_naloga_na_0_u_pripremi()
+
+   SELECT _docs
+
+   rnal_set_broj_naloga_u_pripremi( 0, .T. )
+
+   SELECT _docs
+   GO TOP
+
+   RETURN
 
 
 
@@ -235,7 +263,7 @@ STATIC FUNCTION _docs_insert( nDoc_no )
       APPEND BLANK
    ENDIF
 
-   _ok := update_rec_server_and_dbf( "docs", _rec, 1, "CONT" )
+   _ok := update_rec_server_and_dbf( "rnal_docs", _rec, 1, "CONT" )
 
    SET ORDER TO TAG "1"
 
@@ -268,7 +296,7 @@ STATIC FUNCTION _doc_it_insert( nDoc_no )
 
       APPEND BLANK
 
-      _ok := update_rec_server_and_dbf( "doc_it", _rec, 1, "CONT" )
+      _ok := update_rec_server_and_dbf( "rnal_doc_it", _rec, 1, "CONT" )
 
       SELECT _doc_it
 
@@ -308,7 +336,7 @@ STATIC FUNCTION _doc_it2_insert( nDoc_no )
 
       APPEND BLANK
 
-      _ok := update_rec_server_and_dbf( "doc_it2", _rec, 1, "CONT" )
+      _ok := update_rec_server_and_dbf( "rnal_doc_it2", _rec, 1, "CONT" )
 
       SELECT _doc_it2
 
@@ -353,7 +381,7 @@ STATIC FUNCTION _doc_op_insert( nDoc_no )
          SELECT doc_ops
          APPEND BLANK
 
-         _ok := update_rec_server_and_dbf( "doc_ops", _rec, 1, "CONT" )
+         _ok := update_rec_server_and_dbf( "rnal_doc_ops", _rec, 1, "CONT" )
 
       ENDIF
 
@@ -380,15 +408,8 @@ FUNCTION doc_2__doc( nDoc_no )
 
    rnal_ukloni_filter_lokalnih_tabela()
 
-   SELECT docs
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK docno_str( nDoc_no )
-
-   IF !Found()
+   IF !rnal_dokument_postoji( nDoc_no )
       MsgBeep( "Nalog " + AllTrim( Str( nDoc_no ) ) + " ne postoji !!!" )
-      SELECT _docs
-      RETURN 0
    ENDIF
 
    SELECT _docs
@@ -407,7 +428,6 @@ FUNCTION doc_2__doc( nDoc_no )
    _doc_it_erase( nDoc_no )
    _doc_it2_erase( nDoc_no )
    _doc_op_erase( nDoc_no )
-
 
    SELECT docs
    USE
@@ -679,30 +699,33 @@ STATIC FUNCTION doc_erase( nDoc_no )
 
 
 
-// --------------------------------------------
-// da li postoji dokument u tabeli
-// --------------------------------------------
-FUNCTION doc_exist( nDoc_no )
+/*
+   Opis: provjerava postojanje dokumenta na serveru
+*/
 
-   LOCAL lRet := .F.
-   LOCAL cWhere := ""
+FUNCTION rnal_dokument_postoji( nDoc_no )
+
+   LOCAL lExist := .F.
+   LOCAL cWhere
 
    cWhere := "doc_no = " + ALLTRIM( STR( nDoc_no ) )
-   cWhere += " AND doc_status = " + dokument_zauzet() 
 
    IF table_count( "fmk.rnal_docs", cWhere ) > 0
-      lRet := .T.
+      lExist := .T.
    ENDIF
 
-   RETURN lRet
+   RETURN lExist
 
 
 
 
-// ----------------------------------------------
-// napuni pripremne tabele sa brojem naloga
-// ----------------------------------------------
-FUNCTION fill__doc_no( nDoc_no, lForce )
+/*
+   Opis: puni tabele pripreme sa brojem naloga
+   
+   Usage: rnal_set_broj_naloga_u_pripremi( nDoc_no, lForce )
+*/
+
+FUNCTION rnal_set_broj_naloga_u_pripremi( nDoc_no, lForce )
 
    LOCAL nTRec
    LOCAL nTArea
@@ -713,7 +736,6 @@ FUNCTION fill__doc_no( nDoc_no, lForce )
       lForce := .F.
    ENDIF
 
-   // ako je broj 0 ne poduzimaj nista....
    IF ( nDoc_no == 0 .AND. lForce == .F. )
       RETURN
    ENDIF
@@ -721,7 +743,6 @@ FUNCTION fill__doc_no( nDoc_no, lForce )
    nTArea := Select()
    nTRec := RecNo()
 
-   // _DOCS
    SELECT _docs
    SET ORDER TO TAG "1"
    GO TOP
@@ -735,7 +756,6 @@ FUNCTION fill__doc_no( nDoc_no, lForce )
 
    dbf_update_rec( _rec )
 
-   // _DOC_IT
    SELECT _doc_it
    SET ORDER TO TAG "1"
    GO TOP
@@ -752,7 +772,6 @@ FUNCTION fill__doc_no( nDoc_no, lForce )
       GO ( nAPPRec )
    ENDDO
 
-   // _DOC_IT2
    SELECT _doc_it2
    SET ORDER TO TAG "1"
    GO TOP
@@ -769,7 +788,6 @@ FUNCTION fill__doc_no( nDoc_no, lForce )
       GO ( nAPPRec )
    ENDDO
 
-   // _DOC_OPS
    SELECT _doc_ops
    SET ORDER TO TAG "1"
    GO TOP

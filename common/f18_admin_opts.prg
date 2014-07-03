@@ -1255,6 +1255,8 @@ METHOD F18AdminOpts:delete_db_data_all( db_name, data_type )
    _qry += "DELETE FROM fmk.metric WHERE metric_name LIKE '%auto_plu%';"
    _qry += "DELETE FROM fmk.metric WHERE metric_name LIKE '%lock%';"
 
+   _qry += "DELETE FROM fmk.log;"
+
    // ako je potrebno brisati sve onda dodaj i sljedece...
    IF data_type > 1
 

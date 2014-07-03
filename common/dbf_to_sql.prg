@@ -69,16 +69,19 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
       sql_table_update( table, "BEGIN" )
    ENDIF
 
-
    // izbrisi sa servera stare vrijednosti za values
    IF !sql_table_update( table, "del", nil, _where_str )
 
-      sql_table_update( table, "ROLLBACK" )
+      IF transaction == "FULL"
+         sql_table_update( table, "ROLLBACK" )
+      ENDIF
+
       _msg := "ERROR: sql delete " + table +  " , ROLLBACK, where: " + _where_str
       log_write( _msg, 1 )
       Alert( _msg )
 
       _ret := .F.
+
    ENDIF
 
    IF _ret .AND.  ( _where_str_dbf != _where_str )
@@ -96,23 +99,32 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
       //
       IF !sql_table_update( table, "del", nil, _where_str_dbf )
 
-         sql_table_update( table, "ROLLBACK" )
+         IF transaction == "FULL"
+            sql_table_update( table, "ROLLBACK" )
+         ENDIF
+
          _msg := "ERROR: sql delete " + table +  " , ROLLBACK, where: " + _where_str_dbf
          log_write( _msg, 1 )
          Alert( _msg )
 
          RETURN .F.
+
       ENDIF
 
    ENDIF
 
-   // dodaj nove
    IF _ret .AND. !sql_table_update( table, "ins", values )
-      sql_table_update( table, "ROLLBACK" )
+      
+      IF transaction == "FULL"
+         sql_table_update( table, "ROLLBACK" )
+      ENDIF
+
       _msg := RECI_GDJE_SAM + "ERRORY: sql_insert: " + table + " , ROLLBACK values: " + pp( values )
       log_write( _msg, 1 )
-      RaiseError( _msg )
+      Alert( _msg )
+
       RETURN .F.
+
    ENDIF
 
    // stanje u dbf-u (_values_dbf)
@@ -127,28 +139,43 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
    ENDIF
 
    IF !push_ids_to_semaphore( table, _ids )
-      sql_table_update( table, "ROLLBACK" )
+      
+      IF transaction == "FULL"
+         sql_table_update( table, "ROLLBACK" )
+      ENDIF
+
       _msg := "ERR " + RECI_GDJE_SAM0 + "push_ids_to_semaphore " + table + "/ ids=" + _alg_tag + _ids  + " ! ROLLBACK"
       log_write( _msg, 1 )
       Alert( _msg )
+
       _ret := .F.
+
    ENDIF
 
    IF _ret
-      // na kraju, azuriraj lokalni dbf
-      IF  dbf_update_rec( values )
+
+      IF dbf_update_rec( values )
+
          IF transaction $ "FULL#END"
             sql_table_update( table, "END" )
          ENDIF
 
          _ret := .T.
+
       ELSE
-         sql_table_update( table, "ROLLBACK" )
+    
+         IF transaction == "FULL"
+            sql_table_update( table, "ROLLBACK" )
+         ENDIF
+
          _msg := "ERR: " + RECI_GDJE_SAM0 + "dbf_update_rec " + table +  " ! ROLLBACK"
          log_write( _msg, 1 )
          Alert( _msg )
+
          _ret := .F.
+
       ENDIF
+
    ENDIF
 
    IF lock
@@ -224,11 +251,16 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
 
       IF index_tag_num( _alg[ "dbf_tag" ] ) < 1
          IF !_a_dbf_rec[ "sql" ]
+
+            lock_semaphore( table, "free" )
+
+            IF transaction == "FULL"
+               sql_table_update( table, "ROLLBACK" )
+            ENDIF
+
             _msg := "ERROR: " + RECI_GDJE_SAM0 + " tabela: " + table + " DBF_TAG " + _alg[ "dbf_tag" ]
             Alert( _msg )
             log_write( _msg, 1 )
-            lock_semaphore( table, "free" )
-            sql_table_update( table, "ROLLBACK" )
             RaiseError( _msg )
             QUIT_1
          ELSE
@@ -270,22 +302,27 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
 
       ELSE
 
-         sql_table_update( table, "ROLLBACK" )
+         IF transaction == "FULL"
+            sql_table_update( table, "ROLLBACK" )
+         ENDIF
 
          _msg := "delete rec server " + table + " nije lockovana !!! ROLLBACK"
          log_write( _msg, 1 )
          Alert( _msg )
 
          _ret := .F.
+
       ENDIF
 
    ELSE
 
+      IF transaction == "FULL"
+         sql_table_update( table, "ROLLBACK" )
+      ENDIF
+
       _msg := "delete rec server, " + table + " transakcija neuspjesna ! ROLLBACK"
       Alert( _msg )
       log_write( _msg, 1 )
-
-      sql_table_update( table, "ROLLBACK" )
 
       _ret := .F.
 

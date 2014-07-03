@@ -34,7 +34,9 @@ FUNCTION rnal_logiraj_novi_nalog()
 
    aArr := podaci_naloga_za_log_osnovni( field->cust_id, field->doc_priori )
 
-   logiraj_osnovne_podatke_naloga( __doc_no, cDesc, nil, aArr )
+   IF !logiraj_osnovne_podatke_naloga( __doc_no, cDesc, nil, aArr )
+      RETURN .F.
+   ENDIF
 
    SELECT _docs
    GO TOP
@@ -45,7 +47,9 @@ FUNCTION rnal_logiraj_novi_nalog()
       field->doc_dvr_ti, ;
       field->doc_ship_p )
 		
-   logiraj_podatke_isporuke_za_nalog( __doc_no, cDesc, nil, aArr )
+   IF !logiraj_podatke_isporuke_za_nalog( __doc_no, cDesc, nil, aArr )
+      RETURN .F.
+   ENDIF
 
    SELECT _docs
    GO TOP
@@ -53,7 +57,9 @@ FUNCTION rnal_logiraj_novi_nalog()
    cDesc := "Inicijalni podaci kontakta"
    aArr := podaci_naloga_za_log_kontakti( field->cont_id, field->cont_add_d )
 
-   logiraj_podatke_kontakta_naloga( __doc_no, cDesc, nil, aArr )
+   IF !logiraj_podatke_kontakta_naloga( __doc_no, cDesc, nil, aArr )
+      RETURN .F.
+   ENDIF
 
    SELECT _docs
    GO TOP
@@ -61,18 +67,24 @@ FUNCTION rnal_logiraj_novi_nalog()
    cDesc := hb_Utf8ToStr( "Inicijalni podaci plaćanja" )
    aArr := podaci_naloga_za_log_placanje( field->doc_pay_id, field->doc_paid, field->doc_pay_de )
 
-   logiraj_podatke_placanja_za_nalog( __doc_no, cDesc, nil, aArr )
+   IF !logiraj_podatke_placanja_za_nalog( __doc_no, cDesc, nil, aArr )
+      RETURN .F.
+   ENDIF
 
    SELECT _doc_it
    GO TOP
 
    cDesc := "Inicijalni podaci stavki"
-   logiraj_stavke_naloga( __doc_no, cDesc )
+   IF !logiraj_stavke_naloga( __doc_no, cDesc )
+      RETURN .F.
+   ENDIF
 
    cDesc := "Inicijalni podaci dodatnih operacija"
-   logiraj_dodatne_operacije_naloga( __doc_no, cDesc )
+   IF !logiraj_dodatne_operacije_naloga( __doc_no, cDesc )
+      RETURN .F.
+   ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -140,6 +152,7 @@ FUNCTION logiraj_osnovne_podatke_naloga( nDoc_no, cDesc, cAction, aArr )
 
    LOCAL nDoc_log_no
    LOCAL cDoc_log_type
+   LOCAL lOk := .T.
 
    IF ( cAction == nil )
       cAction := "+"
@@ -148,10 +161,13 @@ FUNCTION logiraj_osnovne_podatke_naloga( nDoc_no, cDesc, cAction, aArr )
    cDoc_log_type := "10"
    nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
-   rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
-   rnal_log_tip_10_insert( cAction, nDoc_no, nDoc_log_no, aArr )
+   lOk := rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
 
-   RETURN
+   IF lOk
+      lOk := rnal_log_tip_10_insert( cAction, nDoc_no, nDoc_log_no, aArr )
+   ENDIF
+
+   RETURN lOk
 
 
 
@@ -166,6 +182,7 @@ FUNCTION logiraj_podatke_isporuke_za_nalog( nDoc_no, cDesc, cAction, aArr )
 
    LOCAL nDoc_log_no
    LOCAL cDoc_log_type
+   LOCAL lOk := .T.
 
    IF ( cAction == nil )
       cAction := "+"
@@ -174,10 +191,12 @@ FUNCTION logiraj_podatke_isporuke_za_nalog( nDoc_no, cDesc, cAction, aArr )
    cDoc_log_type := "11"
    nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
-   rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
-   rnal_log_tip_11_insert( cAction, nDoc_no, nDoc_log_no, aArr )
+   lOk := rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
+   IF lOk
+      lOk := rnal_log_tip_11_insert( cAction, nDoc_no, nDoc_log_no, aArr )
+   ENDIF
 
-   RETURN
+   RETURN lOk
 
 
 // ----------------------------------------------------
@@ -191,6 +210,7 @@ FUNCTION logiraj_podatke_kontakta_naloga( nDoc_no, cDesc, cAction, aArr )
 
    LOCAL nDoc_log_no
    LOCAL cDoc_log_type
+   LOCAL lOk := .T.
 
    IF ( cAction == nil )
       cAction := "+"
@@ -199,10 +219,12 @@ FUNCTION logiraj_podatke_kontakta_naloga( nDoc_no, cDesc, cAction, aArr )
    cDoc_log_type := "12"
    nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
-   rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
-   rnal_log_tip_12_insert( cAction, nDoc_no, nDoc_log_no, aArr )
+   lOk := rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
+   IF lOk
+      lOk := rnal_log_tip_12_insert( cAction, nDoc_no, nDoc_log_no, aArr )
+   ENDIF
 
-   RETURN
+   RETURN lOk
 
 
 // ----------------------------------------------------
@@ -216,6 +238,7 @@ FUNCTION logiraj_podatke_placanja_za_nalog( nDoc_no, cDesc, cAction, aArr )
 
    LOCAL nDoc_log_no
    LOCAL cDoc_log_type
+   LOCAL lOk := .T.
 
    IF ( cAction == nil )
       cAction := "+"
@@ -224,10 +247,12 @@ FUNCTION logiraj_podatke_placanja_za_nalog( nDoc_no, cDesc, cAction, aArr )
    cDoc_log_type := "13"
    nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
-   rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
-   rnal_log_tip_13_insert( cAction, nDoc_no, nDoc_log_no, aArr )
+   lOk := rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
+   IF lOk
+      lOk := rnal_log_tip_13_insert( cAction, nDoc_no, nDoc_log_no, aArr )
+   ENDIF
 
-   RETURN
+   RETURN lOk
 
 
 
@@ -242,6 +267,7 @@ FUNCTION logiraj_podatke_loma_na_staklima( nDoc_no, cDesc, cAction )
 
    LOCAL nDoc_log_no
    LOCAL cDoc_log_type
+   LOCAL lOk := .T.
 
    SELECT _tmp1
 
@@ -257,39 +283,53 @@ FUNCTION logiraj_podatke_loma_na_staklima( nDoc_no, cDesc, cAction )
 
    IF !f18_lock_tables( { "doc_log", "doc_lit" }, .T. )
       sql_table_update( nil, "END" )
-      RETURN
+      lOk := .F.
+      RETURN lOk
    ENDIF
 
    cDoc_log_type := "21"
    nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
-   rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
+   lOk := rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
 
-   SELECT _tmp1
-   GO TOP
+   IF lOk
+     
+       SELECT _tmp1
+       GO TOP
 
-   DO WHILE !Eof()
+       DO WHILE !Eof()
 
-      IF field->art_marker <> "*"
-         SKIP
-         LOOP
-      ENDIF
+          IF field->art_marker <> "*"
+             SKIP
+             LOOP
+          ENDIF
 	
-      rnal_log_tip_21_insert( cAction, nDoc_no, nDoc_log_no, ;
-         field->art_id,  ;
-         field->art_desc, ;
-         field->glass_no, ;
-         field->doc_it_no, ;
-         field->doc_it_qtt, ;
-         field->damage )
+          lOk := rnal_log_tip_21_insert( cAction, nDoc_no, nDoc_log_no, ;
+                field->art_id,  ;
+                field->art_desc, ;
+                field->glass_no, ;
+                field->doc_it_no, ;
+                field->doc_it_qtt, ;
+                field->damage )
+          
+          IF !lOk
+             EXIT
+          ENDIF
 	
-      SELECT _tmp1
-      SKIP
+          SELECT _tmp1
+          SKIP
 	
-   ENDDO
+       ENDDO
 
-   f18_free_tables( { "doc_log", "doc_lit" } )
-   sql_table_update( nil, "END" )
+   ENDIF
+
+   IF lOk
+      f18_free_tables( { "doc_log", "doc_lit" } )
+      sql_table_update( nil, "END" )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+      MsgBeep( "Podaci o lomu na staklima nisu ažurirani.#Greška u transakciji." )
+   ENDIF
 
    RETURN
 
@@ -305,10 +345,11 @@ FUNCTION logiraj_stavke_naloga( nDoc_no, cDesc, cAction )
 
    LOCAL nDoc_log_no
    LOCAL cDoc_log_type
+   LOCAL lOk := .T.
 
    SELECT _doc_it
    IF RecCount() == 0
-      RETURN
+      RETURN lOk
    ENDIF
 
    IF ( cAction == nil )
@@ -318,15 +359,19 @@ FUNCTION logiraj_stavke_naloga( nDoc_no, cDesc, cAction )
    cDoc_log_type := "20"
    nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
-   rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
+   lOk := rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
 
+   IF !lOk
+      RETURN lOk
+   ENDIF
+ 
    SELECT _doc_it
    GO TOP
    SEEK docno_str( nDoc_no )
 
    DO WHILE !Eof() .AND. field->doc_no == nDoc_no
 
-      rnal_log_tip_20_insert( cAction, nDoc_no, nDoc_log_no, ;
+      lOk := rnal_log_tip_20_insert( cAction, nDoc_no, nDoc_log_no, ;
          field->art_id,  ;
          field->doc_it_des, ;
          field->doc_it_sch, ;
@@ -334,12 +379,16 @@ FUNCTION logiraj_stavke_naloga( nDoc_no, cDesc, cAction )
          field->doc_it_hei, ;
          field->doc_it_wid )
 	
+      IF !lOk
+         EXIT
+      ENDIF
+
       SELECT _doc_it
       SKIP
 	
    ENDDO
 
-   RETURN
+   RETURN lOk
 
 
 // ----------------------------------------------------
@@ -352,10 +401,11 @@ FUNCTION logiraj_dodatne_operacije_naloga( nDoc_no, cDesc, cAction )
 
    LOCAL nDoc_log_no
    LOCAL cDoc_log_type
+   LOCAL lOk := .T.
 
    SELECT _doc_ops
    IF RecCount() == 0
-      RETURN
+      RETURN lOk
    ENDIF
 
    IF ( cAction == nil )
@@ -365,7 +415,11 @@ FUNCTION logiraj_dodatne_operacije_naloga( nDoc_no, cDesc, cAction )
    cDoc_log_type := "30"
    nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
-   rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
+   lOk := rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
+
+   IF !lOk
+      RETURN lOk
+   ENDIF
 
    SELECT _doc_ops
    GO TOP
@@ -373,17 +427,21 @@ FUNCTION logiraj_dodatne_operacije_naloga( nDoc_no, cDesc, cAction )
 
    DO WHILE !Eof() .AND. field->doc_no == nDoc_no
 
-      rnal_log_tip_30_insert( cAction, nDoc_no, nDoc_log_no, ;
+      lOk := rnal_log_tip_30_insert( cAction, nDoc_no, nDoc_log_no, ;
          field->aop_id,  ;
          field->aop_att_id,  ;
          field->doc_op_des )
 	
+      IF !lOk
+         EXIT
+      ENDIF
+
       SELECT _doc_ops
       SKIP
 	
    ENDDO
 
-   RETURN
+   RETURN lOk
 
 
 // ----------------------------------------------------
@@ -397,6 +455,7 @@ FUNCTION logiraj_zatvaranje_naloga( nDoc_no, cDesc, nDoc_status )
    LOCAL nDoc_log_no
    LOCAL cDoc_log_type
    LOCAL cAction := "+"
+   LOCAL lOk := .T.
 
    DO CASE
 
@@ -420,24 +479,32 @@ FUNCTION logiraj_zatvaranje_naloga( nDoc_no, cDesc, nDoc_status )
    IF !f18_lock_tables( { "doc_log", "doc_lit" }, .T. )
       sql_table_update( nil, "END" )
       MsgBeep( "Ne mogu zaključati tabelu !#Prekidam operaciju." )
-      RETURN
+      lOk := .F.
+      RETURN lOk
    ENDIF
 
    nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
-   rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
-   rnal_log_tip_99_insert( cAction, nDoc_no, nDoc_log_no, nDoc_status )
+   lOk := rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
+   IF lOk
+      lOk := rnal_log_tip_99_insert( cAction, nDoc_no, nDoc_log_no, nDoc_status )
+   ENDIF
 
-   f18_free_tables( { "doc_log", "doc_lit" } )
-   sql_table_update( nil, "END" )
+   IF lOk
+       f18_free_tables( { "doc_log", "doc_lit" } )
+       sql_table_update( nil, "END" )
+   ELSE
+       sql_table_update( nil, "ROLLBACK" )
+   ENDIF
 
-   RETURN
+   RETURN lOk
 
 
 
 FUNCTION rnal_logiraj_promjenu_naloga( nDoc_no, cDesc )
 
    LOCAL nTArea := Select()
+   LOCAL lOk := .T.
 
    IF cDesc == nil
       cDesc := ""
@@ -456,12 +523,15 @@ FUNCTION rnal_logiraj_promjenu_naloga( nDoc_no, cDesc )
    SELECT doc_it
    SET FILTER TO
 
-   logiraj_deltu_stavki_naloga( nDoc_no, cDesc )
-   logiraj_deltu_operacija_naloga( nDoc_no, cDesc )
+   lOk := logiraj_deltu_stavki_naloga( nDoc_no, cDesc )
+
+   IF lOk
+      lOk := logiraj_deltu_operacija_naloga( nDoc_no, cDesc )
+   ENDIF
 
    SELECT ( nTArea )
 
-   RETURN 0
+   RETURN lOk
 
 
 // -------------------------------------------------
@@ -477,7 +547,8 @@ STATIC FUNCTION logiraj_deltu_stavki_naloga( nDoc_no, cDesc )
    LOCAL cDoc_log_type := "20"
    LOCAL cAction
    LOCAL lLogAppend := .F.
-
+   LOCAL lOk := .T.
+ 
    nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
    SELECT doc_it
@@ -502,7 +573,7 @@ STATIC FUNCTION logiraj_deltu_stavki_naloga( nDoc_no, cDesc )
 		
          cAction := "-"
 		
-         rnal_log_tip_20_insert( cAction, nDoc_no, nDoc_log_no, ;
+         lOk := rnal_log_tip_20_insert( cAction, nDoc_no, nDoc_log_no, ;
             nArt_id, ;
             cDoc_it_desc, ;
             cDoc_it_sch, ;
@@ -510,6 +581,10 @@ STATIC FUNCTION logiraj_deltu_stavki_naloga( nDoc_no, cDesc )
             nDoc_it_heigh, ;
             nDoc_it_width )
 			
+         IF !lOk
+            EXIT
+         ENDIF
+
          lLogAppend := .T.
 		
          SELECT doc_it
@@ -529,7 +604,7 @@ STATIC FUNCTION logiraj_deltu_stavki_naloga( nDoc_no, cDesc )
 		
          cAction := "E"
 		
-         rnal_log_tip_20_insert( cAction, nDoc_no, nDoc_log_no, ;
+         lOk := rnal_log_tip_20_insert( cAction, nDoc_no, nDoc_log_no, ;
             _doc_it->art_id, ;
             _doc_it->doc_it_des, ;
             _doc_it->doc_it_sch, ;
@@ -537,13 +612,23 @@ STATIC FUNCTION logiraj_deltu_stavki_naloga( nDoc_no, cDesc )
             _doc_it->doc_it_hei, ;
             _doc_it->doc_it_wid )
 	
+         IF !lOk
+            EXIT
+         ENDIF
+
          lLogAppend := .T.
+
       ENDIF
 	
       SELECT doc_it
 	
       SKIP
+
    ENDDO
+
+   IF !lOk
+      RETURN lOk
+   ENDIF
 
    // pozicioniraj se na _DOC_IT
    SELECT _doc_it
@@ -568,13 +653,17 @@ STATIC FUNCTION logiraj_deltu_stavki_naloga( nDoc_no, cDesc )
 		
          cAction := "+"
 		
-         rnal_log_tip_20_insert( cAction, nDoc_no, nDoc_log_no, ;
+         lOk := rnal_log_tip_20_insert( cAction, nDoc_no, nDoc_log_no, ;
             nArt_id, ;
             cDoc_it_desc, ;
             cDoc_it_sch, ;
             nDoc_it_qtty, ;
             nDoc_it_heigh, ;
             nDoc_it_width )
+
+         IF !lOk
+            EXIT
+         ENDIF
 
          lLogAppend := .T.
 	
@@ -583,14 +672,14 @@ STATIC FUNCTION logiraj_deltu_stavki_naloga( nDoc_no, cDesc )
       SELECT _doc_it
 	
       SKIP
+
    ENDDO
 
-   IF lLogAppend
-      rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
-   ELSE
+   IF lOk .AND. lLogAppend
+      lOk := rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
    ENDIF
 
-   RETURN
+   RETURN lOk
 
 
 
@@ -607,6 +696,7 @@ STATIC FUNCTION logiraj_deltu_operacija_naloga( nDoc_no, cDesc )
    LOCAL cDoc_log_type := "30"
    LOCAL cAction
    LOCAL lLogAppend := .F.
+   LOCAL lOk := .T.
 
    nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
@@ -631,11 +721,15 @@ STATIC FUNCTION logiraj_deltu_operacija_naloga( nDoc_no, cDesc )
 		
          cAction := "-"
 		
-         rnal_log_tip_30_insert( cAction, nDoc_no, nDoc_log_no, ;
+         lOk := rnal_log_tip_30_insert( cAction, nDoc_no, nDoc_log_no, ;
             nAop_id, ;
             nAop_att_id, ;
             cDoc_op_desc )
 			
+         IF !lOk
+            EXIT
+         ENDIF
+
          lLogAppend := .T.
 		
          SELECT doc_ops
@@ -654,18 +748,28 @@ STATIC FUNCTION logiraj_deltu_operacija_naloga( nDoc_no, cDesc )
 		
          cAction := "E"
 		
-         rnal_log_tip_30_insert( cAction, nDoc_no, nDoc_log_no, ;
+         lOk := rnal_log_tip_30_insert( cAction, nDoc_no, nDoc_log_no, ;
             _doc_ops->aop_id, ;
             _doc_ops->aop_att_id, ;
             _doc_ops->doc_op_des )
-	
+	      
+         IF !lOk
+            EXIT
+         ENDIF
+
          lLogAppend := .T.
+
       ENDIF
 	
       SELECT doc_ops
 	
       SKIP
+
    ENDDO
+
+   IF !lOk
+      RETURN lOk
+   ENDIF
 
    // pozicioniraj se na _DOC_IT
    SELECT _doc_ops
@@ -688,10 +792,14 @@ STATIC FUNCTION logiraj_deltu_operacija_naloga( nDoc_no, cDesc )
 		
          cAction := "+"
 		
-         rnal_log_tip_30_insert( cAction, nDoc_no, nDoc_log_no, ;
+         lOk := rnal_log_tip_30_insert( cAction, nDoc_no, nDoc_log_no, ;
             nAop_id, ;
             nAop_att_id, ;
             cDoc_op_desc )
+
+         IF !lOk
+            EXIT
+         ENDIF
 
          lLogAppend := .T.
 	
@@ -700,14 +808,14 @@ STATIC FUNCTION logiraj_deltu_operacija_naloga( nDoc_no, cDesc )
       SELECT _doc_ops
 	
       SKIP
+
    ENDDO
 
-   IF lLogAppend
-      rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
-   ELSE
+   IF lOk .AND. lLogAppend
+      lOk := rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
    ENDIF
 
-   RETURN
+   RETURN lOk
 
 
 

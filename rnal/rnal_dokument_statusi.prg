@@ -69,16 +69,17 @@ STATIC FUNCTION kopiraj_operacije_sa_azuriranog_naloga( r_doc_no )
 
 FUNCTION rnal_azuriraj_statuse( doc_no )
 
-   LOCAL _ok := .F.
    LOCAL _promjena := .F.
    LOCAL _promj_count := 0
+   LOCAL lOk := .T.
 
    sql_table_update( nil, "BEGIN" )
 
    IF !f18_lock_tables( { "rnal_doc_ops" }, .T. )
       sql_table_update( nil, "END" )
       MsgBeep( "Ne mogu zaključati tabele!#Prekidam operaciju." )
-      RETURN _ok
+      lOk := .F.
+      RETURN lOk
    ENDIF
 
    SELECT _doc_opst
@@ -114,13 +115,20 @@ FUNCTION rnal_azuriraj_statuse( doc_no )
       ENDIF
 
       IF _promjena
+
          log_write( "F18_DOK_OPER: rnal, setovanje statusa operacije - dokument: " + ;
             AllTrim( Str( _rec[ "doc_no" ] ) ) + ;
             ", stavka: " + AllTrim( Str( _rec[ "doc_op_no" ] ) ) + ;
             ", status: " + AllTrim( _rec[ "op_status" ] ) + ;
             ", opis: " + AllTrim( _rec[ "op_notes" ] ), 2 )
-         update_rec_server_and_dbf( "rnal_doc_ops", _rec, 1, "CONT" )
+         lOk := update_rec_server_and_dbf( "rnal_doc_ops", _rec, 1, "CONT" )
+
+         IF !lOk
+            EXIT
+         ENDIF
+
          ++ _promj_count
+
       ENDIF
 
       SELECT _doc_opst
@@ -128,13 +136,19 @@ FUNCTION rnal_azuriraj_statuse( doc_no )
 
    ENDDO
 
-   f18_free_tables( { "rnal_doc_ops" } )
-   sql_table_update( nil, "END" )
+   IF lOk
+      f18_free_tables( { "rnal_doc_ops" } )
+      sql_table_update( nil, "END" )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+   ENDIF
 
-   SELECT _doc_opst
-   my_dbf_zap()
+   IF lOk
+      SELECT _doc_opst
+      my_dbf_zap()
+   ENDIF
 
-   RETURN _ok
+   RETURN lOk
 
 
 

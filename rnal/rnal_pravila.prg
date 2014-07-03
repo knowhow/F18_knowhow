@@ -91,10 +91,12 @@ STATIC FUNCTION in_elcode_rule( cElCond, cRule, cRuleName )
    _rec[ "rule_c4" ] := cRuleC4
    _rec[ "rule_c7" ] := cRule
 
-   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
-
-   f18_free_tables( { "f18_rules" } )
-   sql_table_update( nil, "END" )
+   IF !update_rec_server_and_dbf( "f18_rules", _rec, 1, "CONT" )
+      sql_table_update( nil, "ROLLBACK" )
+   ELSE
+      f18_free_tables( { "f18_rules" } )
+      sql_table_update( nil, "END" )
+   ENDIF
 
    RETURN
 

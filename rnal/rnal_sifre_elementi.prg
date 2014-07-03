@@ -945,6 +945,7 @@ STATIC FUNCTION nafiluj_atribute_grupe( __gr_id, __el_id )
    LOCAL nEl_att_id := 0
    LOCAL _rec
    LOCAL lAuto := .T.
+   LOCAL lOk := .T.
 
    sql_table_update( nil, "BEGIN" )
 
@@ -978,15 +979,23 @@ STATIC FUNCTION nafiluj_atribute_grupe( __gr_id, __el_id )
       _rec[ "e_gr_at_id" ] := e_gr_att->e_gr_at_id
       _rec[ "e_gr_vl_id" ] := 0
 
-      update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+      lOk := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
 	
+      IF !lOk
+         EXIT
+      ENDIF
+
       SELECT e_gr_att
       SKIP
 
    ENDDO
 
-   f18_free_tables( { "e_att" } )
-   sql_table_update( nil, "END" )
+   IF lOk
+      f18_free_tables( { "e_att" } )
+      sql_table_update( nil, "END" )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+   ENDIF
 
    SELECT ( nTArea )
 

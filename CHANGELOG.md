@@ -2,6 +2,7 @@
 
   - RNAL, ažuriranje naloga i promjena u log-u
   - f18_lock_semaphore, f18_unlock_semaphore unutar transakcije
+  - F18, logiranje verzije aplikacije kod uspješne konekcije na server
  
 1.7.109  2014-07-02, vsasa
 

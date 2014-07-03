@@ -123,8 +123,7 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
 
    ELSE
 
-      altd()
-      f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops" } )
+      //f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops" } )
       sql_table_update( nil, "ROLLBACK" )
 
       MsgC()

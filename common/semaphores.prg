@@ -124,7 +124,7 @@ FUNCTION get_semaphore_status( table )
    IF skip_semaphore( table)
         RETURN "free" 
    ENDIF
-
+   
    _qry := "SELECT algorithm FROM fmk.semaphores_" + table + " WHERE user_code=" + _sql_quote( _user )
    _ret := _sql_query( _server, _qry )
 

@@ -147,6 +147,20 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
 
    ENDIF
 
+   brisi_tabele_pripreme()
+
+   Beep( 1 )
+ 
+   rnal_o_tables( .T. )
+
+   MsgC()
+
+   RETURN 1
+
+
+
+STATIC FUNCTION brisi_tabele_pripreme()
+
    SELECT _docs
    my_dbf_zap()
 
@@ -159,15 +173,7 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
    SELECT _doc_ops
    my_dbf_zap()
 
-   USE
-
-   Beep( 1 )
- 
-   rnal_o_tables( .T. )
-
-   MsgC()
-
-   RETURN 1
+   RETURN
 
 
 

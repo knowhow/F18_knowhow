@@ -419,31 +419,12 @@ FUNCTION rnal_novi_broj_dokumenta()
 
 
 
-// ------------------------------------------------------------
-// provjerava da li dokument postoji na strani servera
-// ------------------------------------------------------------
-FUNCTION rnal_doc_no_exist( doc_no )
-
-   LOCAL _exist := .F.
-   LOCAL _qry, _qry_ret, _table
-   LOCAL _server := pg_server()
-
-   _qry := "SELECT COUNT(*) FROM fmk.rnal_docs WHERE doc_no = " + _sql_quote( doc_no )
-   _table := _sql_query( _server, _qry )
-   _qry_ret := _table:FieldGet( 1 )
-
-   IF _qry_ret > 0
-      _exist := .T.
-   ENDIF
-
-   RETURN _exist
-
 
 
 // ------------------------------------------------------------
 // setuj broj dokumenta u pripremi ako treba !
 // ------------------------------------------------------------
-FUNCTION rnal_set_broj_dokumenta( doc_no )
+FUNCTION rnal_treba_setovati_broj_naloga( doc_no )
 
    LOCAL _null_brdok
 

@@ -641,9 +641,15 @@ STATIC FUNCTION key_handler()
    CASE ( Upper( Chr( Ch ) ) == "L" )
 		
       nDoc_no := docs->doc_no
-		
+	  nTRec := RecNo()
+	
       rnal_pregled_loga_za_nalog( nDoc_no )
+	
+      SELECT docs
+	  set_f_kol( cTmpFilter )
 		
+      GO ( nTRec )
+	
       RETURN DE_CONT
 
    CASE Upper( Chr( Ch ) ) == "E"

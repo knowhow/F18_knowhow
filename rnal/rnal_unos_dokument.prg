@@ -655,9 +655,8 @@ STATIC FUNCTION key_handler()
 
          nDocNoNew := _docs->doc_no
 
-         IF rnal_set_broj_dokumenta( @nDocNoNew )
-            // filuj sve tabele sa novim brojem
-            fill__doc_no( nDocNoNew )
+         IF rnal_treba_setovati_broj_naloga( @nDocNoNew )
+            rnal_set_broj_naloga_u_pripremi( nDocNoNew )
          ENDIF
 
          IF rnal_azuriraj_dokument( cDesc ) == 1
@@ -696,9 +695,8 @@ STATIC FUNCTION key_handler()
 
       nDocNoNew := _docs->doc_no
 
-      IF rnal_set_broj_dokumenta( @nDocNoNew )
-         // filuj sve tabele sa novim brojem
-         fill__doc_no( nDocNoNew )
+      IF rnal_treba_setovati_broj_naloga( @nDocNoNew )
+         rnal_set_broj_naloga_u_pripremi( nDocNoNew )
       ENDIF
 
       SELECT _docs
@@ -731,9 +729,8 @@ STATIC FUNCTION key_handler()
 
       nDocNoNew := _docs->doc_no
 
-      IF rnal_set_broj_dokumenta( @nDocNoNew )
-         // filuj sve tabele sa novim brojem
-         fill__doc_no( nDocNoNew )
+      IF rnal_treba_setovati_broj_naloga( @nDocNoNew )
+         rnal_set_broj_naloga_u_pripremi( nDocNoNew )
       ENDIF
 
       SELECT _docs

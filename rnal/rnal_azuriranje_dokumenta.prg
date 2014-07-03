@@ -50,12 +50,12 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
    __doc_no := _docs->doc_no
    __doc_stat := _docs->doc_status
 
-   IF __doc_stat < 3 .AND. !rnal_doc_no_exist( __doc_no )
+   IF __doc_stat < 3 .AND. !rnal_dokument_postoji( __doc_no )
 
       MsgBeep( "Nalog " + AllTrim( Str( __doc_no ) ) + " nije moguce ažurirati !#Status dokumenta = " + AllTrim( Str( __doc_stat ) ) )
 
       SELECT _docs
-      fill__doc_no( 0, .T. )
+      rnal_set_broj_naloga_u_pripremi( 0, .T. )
 
       SELECT _docs
       GO TOP
@@ -679,30 +679,33 @@ STATIC FUNCTION doc_erase( nDoc_no )
 
 
 
-// --------------------------------------------
-// da li postoji dokument u tabeli
-// --------------------------------------------
-FUNCTION doc_exist( nDoc_no )
+/*
+   Opis: provjerava postojanje dokumenta na serveru
+*/
 
-   LOCAL lRet := .F.
-   LOCAL cWhere := ""
+FUNCTION rnal_dokument_postoji( nDoc_no )
+
+   LOCAL lExist := .F.
+   LOCAL cWhere
 
    cWhere := "doc_no = " + ALLTRIM( STR( nDoc_no ) )
-   cWhere += " AND doc_status = " + dokument_zauzet() 
 
    IF table_count( "fmk.rnal_docs", cWhere ) > 0
-      lRet := .T.
+      lExist := .T.
    ENDIF
 
-   RETURN lRet
+   RETURN lExist
 
 
 
 
-// ----------------------------------------------
-// napuni pripremne tabele sa brojem naloga
-// ----------------------------------------------
-FUNCTION fill__doc_no( nDoc_no, lForce )
+/*
+   Opis: puni tabele pripreme sa brojem naloga
+   
+   Usage: rnal_set_broj_naloga_u_pripremi( nDoc_no, lForce )
+*/
+
+FUNCTION rnal_set_broj_naloga_u_pripremi( nDoc_no, lForce )
 
    LOCAL nTRec
    LOCAL nTArea
@@ -713,7 +716,6 @@ FUNCTION fill__doc_no( nDoc_no, lForce )
       lForce := .F.
    ENDIF
 
-   // ako je broj 0 ne poduzimaj nista....
    IF ( nDoc_no == 0 .AND. lForce == .F. )
       RETURN
    ENDIF
@@ -721,7 +723,6 @@ FUNCTION fill__doc_no( nDoc_no, lForce )
    nTArea := Select()
    nTRec := RecNo()
 
-   // _DOCS
    SELECT _docs
    SET ORDER TO TAG "1"
    GO TOP
@@ -735,7 +736,6 @@ FUNCTION fill__doc_no( nDoc_no, lForce )
 
    dbf_update_rec( _rec )
 
-   // _DOC_IT
    SELECT _doc_it
    SET ORDER TO TAG "1"
    GO TOP
@@ -752,7 +752,6 @@ FUNCTION fill__doc_no( nDoc_no, lForce )
       GO ( nAPPRec )
    ENDDO
 
-   // _DOC_IT2
    SELECT _doc_it2
    SET ORDER TO TAG "1"
    GO TOP
@@ -769,7 +768,6 @@ FUNCTION fill__doc_no( nDoc_no, lForce )
       GO ( nAPPRec )
    ENDDO
 
-   // _DOC_OPS
    SELECT _doc_ops
    SET ORDER TO TAG "1"
    GO TOP

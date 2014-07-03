@@ -264,14 +264,14 @@ STATIC FUNCTION _del_tmp( cPath )
 FUNCTION rnal_promjena_broja_naloga( old_doc )
 
    LOCAL _new_no := old_doc
-   LOCAL _repl := .T.
+   LOCAL lOk := .T.
 
    IF !SigmaSif( "PRBRNO" )
       RETURN .F.
    ENDIF
 
    Box(, 1, 50 )
-   @ m_x + 1, m_y + 2 SAY "setuj novi broj:" GET _new_no
+   @ m_x + 1, m_y + 2 SAY "setuj novi broj:" GET _new_no VALID _new_no <> old_doc
    READ
    BoxC()
 
@@ -287,73 +287,144 @@ FUNCTION rnal_promjena_broja_naloga( old_doc )
       RETURN .F.
    ENDIF
 
-   IF field->doc_no == old_doc
-      _rec := dbf_get_rec()
-      _rec[ "doc_no" ] := _new_no
-      update_rec_server_and_dbf( "docs", _rec, 1, "CONT" )
-   ELSE
-      _repl := .T.
+   lOk := zamjeni_broj_u_docs( old_doc, _new_no )
+
+   IF lOk
+       lOk := zamjeni_broj_u_doc_it( old_doc, _new_no )
    ENDIF
 
-   IF _repl == .F.
+   IF lOk
+       lOk := zamjeni_broj_u_doc_it2( old_doc, _new_no )
+   ENDIF
+
+   IF lOk
+       lOk := zamjeni_broj_u_doc_ops( old_doc, _new_no )
+   ENDIF
+
+   IF lOk
       f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops" } )
       sql_table_update( nil, "END" )
-      msgbeep( "Zamjena broja naloga nije izvršena !" )
-      RETURN .F.
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
    ENDIF
+
+   RETURN lOk
+
+
+
+
+STATIC FUNCTION zamjeni_broj_u_docs( nStari, nNovi ) 
+   
+   LOCAL _rec
+   LOCAL lOk := .T.
+
+   _rec := dbf_get_rec()
+   _rec[ "doc_no" ] := nNovi
+   lOk := update_rec_server_and_dbf( "rnal_docs", _rec, 1, "CONT" )
+
+   RETURN lOk
+
+
+
+STATIC FUNCTION zamjeni_broj_u_doc_it( nStari, nNovi ) 
+   
+   LOCAL _rec
+   LOCAL lOk := .T.
 
    SELECT doc_it
    SET ORDER TO TAG "1"
    GO TOP
 
-   SEEK docno_str( old_doc )
+   SEEK docno_str( nStari )
 
    IF Found()
+
       SET ORDER TO 0
-      DO WHILE !Eof() .AND. field->doc_no == old_doc
+
+      DO WHILE !Eof() .AND. field->doc_no == nStari
          _rec := dbf_get_rec()
-         _rec[ "doc_no" ] := _new_no
-         update_rec_server_and_dbf( "docs", _rec, 1, "CONT" )
+         _rec[ "doc_no" ] := nNovi
+         lOk := update_rec_server_and_dbf( "rnal_doc_it", _rec, 1, "CONT" )
+
+         IF !lOk
+            EXIT
+         ENDIF
+        
          SKIP
+
       ENDDO
+
    ENDIF
+
+   RETURN lOk
+
+
+STATIC FUNCTION zamjeni_broj_u_doc_it2( nStari, nNovi ) 
+   
+   LOCAL _rec
+   LOCAL lOk := .T.
 
    SELECT doc_it2
    SET ORDER TO TAG "1"
    GO TOP
 
-   SEEK docno_str( old_doc )
+   SEEK docno_str( nStari )
 
    IF Found()
+
       SET ORDER TO 0
-      DO WHILE !Eof() .AND. field->doc_no == old_doc
+
+      DO WHILE !Eof() .AND. field->doc_no == nStari
          _rec := dbf_get_rec()
-         _rec[ "doc_no" ] := _new_no
-         update_rec_server_and_dbf( "docs", _rec, 1, "CONT" )
+         _rec[ "doc_no" ] := nNovi
+         lOk := update_rec_server_and_dbf( "rnal_doc_it2", _rec, 1, "CONT" )
+
+         IF !lOk
+            EXIT
+         ENDIF
+        
          SKIP
+
       ENDDO
+
    ENDIF
+
+   RETURN lOk
+
+
+
+STATIC FUNCTION zamjeni_broj_u_doc_ops( nStari, nNovi ) 
+   
+   LOCAL _rec
+   LOCAL lOk := .T.
 
    SELECT doc_ops
    SET ORDER TO TAG "1"
    GO TOP
 
-   SEEK docno_str( old_doc )
+   SEEK docno_str( nStari )
 
    IF Found()
+
       SET ORDER TO 0
-      DO WHILE !Eof() .AND. field->doc_no == old_doc
+
+      DO WHILE !Eof() .AND. field->doc_no == nStari
          _rec := dbf_get_rec()
-         _rec[ "doc_no" ] := _new_no
-         update_rec_server_and_dbf( "docs", _rec, 1, "CONT" )
+         _rec[ "doc_no" ] := nNovi
+         lOk := update_rec_server_and_dbf( "rnal_doc_ops", _rec, 1, "CONT" )
+
+         IF !lOk
+            EXIT
+         ENDIF
+        
          SKIP
+
       ENDDO
+
    ENDIF
 
-   f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops" } )
-   sql_table_update( nil, "END" )
+   RETURN lOk
 
-   RETURN .T.
 
 
 // ------------------------------------------------------------

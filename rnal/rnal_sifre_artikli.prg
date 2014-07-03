@@ -600,16 +600,17 @@ STATIC FUNCTION ispravi_opis_artikla( nArt_id )
       _rec[ "art_lab_de" ] := cArt_lab_desc
       _rec[ "match_code" ] := cArt_mcode
 
-      update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
-
-      f18_free_tables( { "articles" } )
-      sql_table_update( nil, "END" )
+      IF !update_rec_server_and_dbf( "articles", _rec, 1, "CONT" )
+         sql_table_update( nil, "ROLLBACK" )
+      ELSE
+         f18_free_tables( { "articles" } )
+         sql_table_update( nil, "END" )
+         nRet := 1
+      ENDIF
 
       SET ORDER TO TAG "1"
       SET FILTER to &cDBFilter
       GO ( nTRec )
-
-      nRet := 1
 
    ENDIF
 
@@ -692,11 +693,119 @@ FUNCTION g_art_desc( nArt_id, lEmpty, lFullDesc )
 
 
 
+
+STATIC FUNCTION brisi_stavku_iz_articles( nArt_id )
+
+   LOCAL lOk := .T.
+   LOCAL _rec
+
+   _rec := dbf_get_rec()
+   
+   lOk := delete_rec_server_and_dbf( "articles", _rec, 1, "CONT" )
+
+   RETURN lOk
+
+
+
+STATIC FUNCTION brisi_stavke_iz_elemenata_i_operacija( nArt_id )
+
+   LOCAL lOk := .T.
+   LOCAL nElTekRec, nAttTekRec, nAopTekRec, nEl_id
+   LOCAL _rec
+
+   SELECT elements
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK artid_str( nArt_id )
+
+   DO WHILE !Eof() .AND. field->art_id == nArt_id
+
+      SKIP 1
+      nElTekRec := RecNo()
+      SKIP -1
+
+      nEl_id := field->el_id
+
+      SELECT e_att
+      SET ORDER TO TAG "1"
+      GO TOP
+      SEEK elid_str( nEl_id )
+
+      DO WHILE !Eof() .AND. field->el_id == nEl_id
+
+         SKIP 1
+         nAttTekRec := RecNo()
+         SKIP -1
+
+         _rec := dbf_get_rec()
+         lOk := delete_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+
+         IF !lOk
+            RETURN lOk
+         ENDIF
+
+         GO ( nAttTekRec )
+
+      ENDDO
+
+      SELECT e_aops
+      SET ORDER TO TAG "1"
+      GO TOP
+      SEEK elid_str( nEl_id )
+
+      DO WHILE !Eof() .AND. field->el_id == nEl_id
+         SKIP 1
+         nAopTekRec := RecNo()
+         SKIP -1
+         _rec := dbf_get_rec()
+         lOk := delete_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+
+         IF !lOk
+            RETURN lOk
+         ENDIF
+
+         GO ( nAopTekRec )
+      ENDDO
+
+      SELECT elements
+
+      _rec := dbf_get_rec()
+      lOk := delete_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+
+      IF !lOk
+         EXIT
+      ENDIF
+
+      GO ( nElTekRec )
+
+   ENDDO
+
+   RETURN lOk
+
+
+
+FUNCTION rnal_ima_li_artikla_u_dokumentima( nArt_id )
+
+   LOCAL lExist := .F.
+   LOCAL cWhere
+
+   cWhere := " art_id = " + AllTrim( Str( nArt_id ) ) 
+  
+   IF table_count( "fmk.rnal_doc_it", cWhere ) > 0
+      lExist := .T.
+   ENDIF
+
+   RETURN lExist
+
+
+
+
 STATIC FUNCTION rnal_brisi_artikal( nArt_id, lChkKum, lSilent )
 
    LOCAL nEl_id
    LOCAL _del_rec, _field_ids, _where_bl
    LOCAL _el_tek, _att_tek, _aops_tek
+   LOCAL lOk := .T.
 
    IF lSilent == nil
       lSilent := .F.
@@ -708,18 +817,12 @@ STATIC FUNCTION rnal_brisi_artikal( nArt_id, lChkKum, lSilent )
 
    IF lChkKum == .T.
 
-      O_DOC_IT
-      SELECT doc_it
-      SET ORDER TO TAG "2"
-      GO TOP
-
-      SEEK artid_str( nArt_id )
-
-      IF Found()
-         MsgBeep( "Uočeno je da se artikal koristi u nalogu br: " + AllTrim( Str( doc_it->doc_no ) ) + " #BRISANJE ONEMOGUĆENO !" )
+      IF rnal_ima_li_artikla_u_dokumentima( nArt_id )
+         MsgBeep( "Artikal se nalazi u ažuriranim nalozima.#BRISANJE ONEMOGUĆENO !" )
          SELECT articles
          RETURN 0
       ENDIF
+
    ENDIF
 
    SELECT articles
@@ -733,8 +836,6 @@ STATIC FUNCTION rnal_brisi_artikal( nArt_id, lChkKum, lSilent )
          RETURN 0
       ENDIF
 
-      _del_rec := dbf_get_rec()
-
       sql_table_update( nil, "BEGIN" )
 
       IF !f18_lock_tables( { "articles", "elements", "e_att", "e_aops" }, .T. )
@@ -743,64 +844,18 @@ STATIC FUNCTION rnal_brisi_artikal( nArt_id, lChkKum, lSilent )
          RETURN 0
       ENDIF
 
-      delete_rec_server_and_dbf( Alias(), _del_rec, 1, "CONT" )
+      lOk := brisi_stavku_iz_articles( nArt_id )
 
-      SELECT elements
-      SET ORDER TO TAG "1"
-      GO TOP
-      SEEK artid_str( nArt_id )
+      IF lOk
+          lOk := brisi_stavke_iz_elemenata_i_operacija( nArt_id )
+      ENDIF
 
-      DO WHILE !Eof() .AND. field->art_id == nArt_id
-
-         SKIP 1
-         _el_tek := RecNo()
-         SKIP -1
-
-         nEl_id := field->el_id
-
-         SELECT e_att
-         SET ORDER TO TAG "1"
-         GO TOP
-         SEEK elid_str( nEl_id )
-
-         DO WHILE !Eof() .AND. field->el_id == nEl_id
-
-            SKIP 1
-            _att_tek := RecNo()
-            SKIP -1
-
-            _del_rec := dbf_get_rec()
-            delete_rec_server_and_dbf( Alias(), _del_rec, 1, "CONT" )
-
-            GO ( _att_tek )
-         ENDDO
-
-         SELECT e_aops
-         SET ORDER TO TAG "1"
-         GO TOP
-         SEEK elid_str( nEl_id )
-
-         DO WHILE !Eof() .AND. field->el_id == nEl_id
-            SKIP 1
-            _aops_tek := RecNo()
-            SKIP -1
-            _del_rec := dbf_get_rec()
-            delete_rec_server_and_dbf( Alias(), _del_rec, 1, "CONT" )
-
-            GO ( _aops_tek )
-         ENDDO
-
-         SELECT elements
-
-         _del_rec := dbf_get_rec()
-         delete_rec_server_and_dbf( Alias(), _del_rec, 1, "CONT" )
-
-         GO ( _el_tek )
-
-      ENDDO
-
-      f18_free_tables( { "articles", "elements", "e_att", "e_aops" } )
-      sql_table_update( nil, "END" )
+      IF lOk
+         f18_free_tables( { "articles", "elements", "e_att", "e_aops" } )
+         sql_table_update( nil, "END" )
+      ELSE
+         sql_table_update( nil, "ROLLBACK" )
+      ENDIF
 
    ENDIF
 
@@ -818,6 +873,7 @@ STATIC FUNCTION rnal_dupliciraj_artikal( nArt_id )
    LOCAL nElGr_id
    LOCAL nElNewid := 0
    LOCAL _rec
+   LOCAL lOk := .T.
 
    IF Pitanje(, "Duplicirati artikal (D/N)?", "D" ) == "N"
       RETURN -1
@@ -862,21 +918,35 @@ STATIC FUNCTION rnal_dupliciraj_artikal( nArt_id )
       _rec[ "art_id" ] := nArtNewid
       _rec[ "e_gr_id" ] := nElGr_id
 
-      update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+      lOk := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
 
-      rnal_dupliciraj_atribute_artikla( nOldEl_id, nElNewid )
+      IF lOk
+         lOk := rnal_dupliciraj_atribute_artikla( nOldEl_id, nElNewid )
+      ENDIF
 
-      rnal_dupliciraj_operacije_artikla( nOldEl_id, nElNewid )
+      IF lOk
+         lOk := rnal_dupliciraj_operacije_artikla( nOldEl_id, nElNewid )
+      ENDIF
+
+      IF !lOk
+         EXIT
+      ENDIF
 
       SELECT elements
       GO ( nElRecno )
 
    ENDDO
 
-   f18_free_tables( { "articles", "elements", "e_att", "e_aops" } )
-   sql_table_update( nil, "END" )
+   IF lOk
+      f18_free_tables( { "articles", "elements", "e_att", "e_aops" } )
+      sql_table_update( nil, "END" )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+   ENDIF
 
    RETURN nArtNewid
+
+
 
 
 STATIC FUNCTION rnal_dupliciraj_atribute_artikla( nOldEl_id, nNewEl_id )
@@ -884,6 +954,7 @@ STATIC FUNCTION rnal_dupliciraj_atribute_artikla( nOldEl_id, nNewEl_id )
    LOCAL nElRecno
    LOCAL nNewAttId := 0
    LOCAL _rec
+   LOCAL lOk := .T.
 
    SELECT e_att
    SET ORDER TO TAG "1"
@@ -906,14 +977,18 @@ STATIC FUNCTION rnal_dupliciraj_atribute_artikla( nOldEl_id, nNewEl_id )
       _rec[ "el_att_id" ] := nNewAttId
       _rec[ "el_id" ] := nNewEl_id
 
-      update_rec_server_and_dbf( "e_att", _rec, 1, "CONT" )
+      lOk := update_rec_server_and_dbf( "e_att", _rec, 1, "CONT" )
+
+      IF !lOk
+         EXIT
+      ENDIF
 
       SELECT e_att
       GO ( nElRecno )
 
    ENDDO
 
-   RETURN
+   RETURN lOk
 
 
 STATIC FUNCTION rnal_dupliciraj_operacije_artikla( nOldEl_id, nNewEl_id )
@@ -922,6 +997,7 @@ STATIC FUNCTION rnal_dupliciraj_operacije_artikla( nOldEl_id, nNewEl_id )
    LOCAL nNewAopId := 0
    LOCAL _rec
    LOCAL lAuto := .T.
+   LOCAL lOk := .T.
 
    SELECT e_aops
    SET ORDER TO TAG "1"
@@ -944,14 +1020,18 @@ STATIC FUNCTION rnal_dupliciraj_operacije_artikla( nOldEl_id, nNewEl_id )
       _rec[ "el_op_id" ] := nNewAopid
       _rec[ "el_id" ] := nNewEl_id
 
-      update_rec_server_and_dbf( "e_aops", _rec, 1, "CONT" )
+      lOk := update_rec_server_and_dbf( "e_aops", _rec, 1, "CONT" )
+
+      IF !lOk 
+         EXIT
+      ENDIF
 
       SELECT e_aops
       GO ( nElRecno )
 
    ENDDO
 
-   RETURN
+   RETURN lOk
 
 
 

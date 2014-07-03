@@ -114,7 +114,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
    ENDIF
 
    IF _ret .AND. !sql_table_update( table, "ins", values )
-
+      
       IF transaction == "FULL"
          sql_table_update( table, "ROLLBACK" )
       ENDIF

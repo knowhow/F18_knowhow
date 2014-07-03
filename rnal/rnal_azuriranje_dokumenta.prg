@@ -84,7 +84,7 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
 
    IF __doc_stat == 3
 
-      rnal_logiraj_promjenu_naloga( __doc_no, __doc_desc )
+      _ok := rnal_logiraj_promjenu_naloga( __doc_no, __doc_desc )
 
       doc_erase( __doc_no )
 
@@ -92,7 +92,9 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
 
    ENDIF
    
-   _ok := _docs_insert( __doc_no )
+   IF _ok
+      _ok := _docs_insert( __doc_no )
+   ENDIF
 
    IF _ok
       _ok := _doc_it_insert( __doc_no )
@@ -107,13 +109,19 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
    ENDIF
 
    IF _ok
-
+      // setuj da je nalog opet otvoren
       set_doc_marker( __doc_no, 0, "CONT" )
-      __doc_stat := 0
  
+      // ako nije bio u doradi logiraj promjene inicijalne
       IF __doc_stat <> 3
-         rnal_logiraj_novi_nalog( __doc_no )
+         _ok := rnal_logiraj_novi_nalog( __doc_no )
       ENDIF
+
+      __doc_stat := 0
+
+   ENDIF
+
+   IF _ok
 
       f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops" } )
       sql_table_update( nil, "END" )

@@ -12,6 +12,7 @@
 #include "fmk.ch"
 #include "hbgtinfo.ch"
 #include "dbinfo.ch"
+#include "f18_ver.ch"
 
 STATIC __server := NIL
 STATIC __server_params := NIL
@@ -668,7 +669,7 @@ STATIC FUNCTION f18_form_login( server_params )
       ENDIF
 
       IF my_server_login( server_params )
-         log_write( "form login succesfull: " + server_params[ "host" ] + " / " + server_params[ "database" ] + " / " + server_params[ "user" ] + " / " + Str( my_server_params()[ "port" ] )  + " / " + server_params[ "schema" ] )
+         log_write( "form login succesfull: " + server_params[ "host" ] + " / " + server_params[ "database" ] + " / " + server_params[ "user" ] + " / " + Str( my_server_params()[ "port" ] )  + " / " + server_params[ "schema" ] + " / verzija programa: " + F18_VER )
          EXIT
       ELSE
          Beep( 4 )
@@ -867,7 +868,7 @@ FUNCTION my_server_login( params, conn_type )
 
       IF conn_type == 1
          set_sql_search_path()
-         log_write( "server connection ok: " + params[ "user" ] + " / " + if ( conn_type == 1, params[ "database" ], "postgres" ) )
+         log_write( "server connection ok: " + params[ "user" ] + " / " + if ( conn_type == 1, params[ "database" ], "postgres" ) + " / verzija aplikacije: " + F18_VER, 1 )
       ENDIF
 
       RETURN .T.

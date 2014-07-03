@@ -42,7 +42,7 @@ FUNCTION run_sql_query( qry, retry )
             MsgO( "Pokusavam izvrsiti SQL upit: " + qry + " pokušaj: " + ALLTRIM( STR( _i ) ) )
             lMsg := .T.
       ENDIF
-
+       
       BEGIN SEQUENCE WITH {| err| Break( err ) }
          _qry_obj := _server:Query( qry + ";" )
 

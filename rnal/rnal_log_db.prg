@@ -110,6 +110,7 @@ FUNCTION rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
 
    LOCAL nOperId
    LOCAL nTArea := Select()
+   LOCAL lRet
 
    nOperId := GetUserID( f18_user() )
 
@@ -127,16 +128,17 @@ FUNCTION rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
    _rec[ "operater_i" ] := nOperId
    _rec[ "doc_log_de" ] := hb_StrToUtf8( cDesc )
 
-   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+   lRet := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
 
    SELECT ( nTArea )
 
-   RETURN
+   RETURN lRet
 
 
 FUNCTION rnal_log_tip_10_insert( cAction, nDoc_no, nDoc_log_no, aArr )
 
    LOCAL nDoc_lit_no
+   LOCAL lRet
 
    nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
 
@@ -153,15 +155,16 @@ FUNCTION rnal_log_tip_10_insert( cAction, nDoc_no, nDoc_log_no, aArr )
    _rec[ "int_2" ] := aArr[ 1, 2 ]
    _rec[ "doc_lit_ac" ] := cAction
 
-   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+   lRet := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
 
-   RETURN
+   RETURN lRet
 
 
 
 FUNCTION rnal_log_tip_11_insert( cAction, nDoc_no, nDoc_log_no, aArr )
 
    LOCAL nDoc_lit_no
+   LOCAL lRet
 
    nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
 
@@ -180,15 +183,16 @@ FUNCTION rnal_log_tip_11_insert( cAction, nDoc_no, nDoc_log_no, aArr )
    _rec[ "char_2" ] := hb_StrToUtf8( aArr[ 1, 4 ] )
    _rec[ "doc_lit_ac" ] := cAction
 
-   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+   lRet := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
 
-   RETURN
+   RETURN lRet
 
 
 
 FUNCTION rnal_log_tip_12_insert( cAction, nDoc_no, nDoc_log_no, aArr )
 
    LOCAL nDoc_lit_no
+   LOCAL lRet
 
    nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
 
@@ -205,15 +209,16 @@ FUNCTION rnal_log_tip_12_insert( cAction, nDoc_no, nDoc_log_no, aArr )
    _rec[ "char_1" ] := hb_StrToUtf8( aArr[ 1, 2 ] )
    _rec[ "doc_lit_ac" ] := cAction
 
-   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+   lRet := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
 
-   RETURN
+   RETURN lRet
 
 
 
 FUNCTION rnal_log_tip_13_insert( cAction, nDoc_no, nDoc_log_no, aArr )
 
    LOCAL nDoc_lit_no
+   LOCAL lRet
 
    nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
 
@@ -231,9 +236,9 @@ FUNCTION rnal_log_tip_13_insert( cAction, nDoc_no, nDoc_log_no, aArr )
    _rec[ "char_2" ] := hb_StrToUtf8( aArr[ 1, 3 ] )
    _rec[ "doc_lit_ac" ] := cAction
  
-   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+   lRet := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
 
-   RETURN
+   RETURN lRet
 
 
 FUNCTION rnal_log_tip_20_insert( cAction, nDoc_no, nDoc_log_no, ;
@@ -241,6 +246,7 @@ FUNCTION rnal_log_tip_20_insert( cAction, nDoc_no, nDoc_log_no, ;
       nArt_qtty, nArt_heigh, nArt_width )
 
    LOCAL nDoc_lit_no
+   LOCAL lRet
 
    nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
 
@@ -261,9 +267,9 @@ FUNCTION rnal_log_tip_20_insert( cAction, nDoc_no, nDoc_log_no, ;
    _rec[ "char_2" ] := hb_StrToUtf8( cDoc_sch )
    _rec[ "doc_lit_ac" ] := cAction
 
-   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+   lRet := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
 
-   RETURN
+   RETURN lRet
 
 
 FUNCTION rnal_log_tip_21_insert( cAction, nDoc_no, nDoc_log_no, ;
@@ -271,6 +277,7 @@ FUNCTION rnal_log_tip_21_insert( cAction, nDoc_no, nDoc_log_no, ;
       nQty, nDamage )
 
    LOCAL nDoc_lit_no
+   LOCAL lRet
 
    nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
 
@@ -291,9 +298,9 @@ FUNCTION rnal_log_tip_21_insert( cAction, nDoc_no, nDoc_log_no, ;
    _rec[ "char_1" ] := hb_StrToUtf8( cArt_desc )
    _rec[ "doc_lit_ac" ] := cAction
 
-   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+   lRet := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
 
-   RETURN
+   RETURN lRet
 
 
 
@@ -302,7 +309,8 @@ FUNCTION rnal_log_tip_30_insert( cAction, nDoc_no, nDoc_log_no, ;
       nAop_id, nAop_att_id, cDoc_op_desc )
 
    LOCAL nDoc_lit_no
-
+   LOCAL lRet
+ 
    nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
 
    use_sql_doc_lit( 0, 0 )
@@ -319,15 +327,16 @@ FUNCTION rnal_log_tip_30_insert( cAction, nDoc_no, nDoc_log_no, ;
    _rec[ "char_1" ] := hb_StrToUtf8( cDoc_op_desc )
    _rec[ "doc_lit_ac" ] := cAction
 
-   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+   lRet := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
 
-   RETURN
+   RETURN lRet
 
 
 
 FUNCTION rnal_log_tip_99_insert( cAction, nDoc_no, nDoc_log_no, nDoc_status )
 
    LOCAL nDoc_lit_no
+   LOCAL lRet
 
    nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
 
@@ -343,9 +352,9 @@ FUNCTION rnal_log_tip_99_insert( cAction, nDoc_no, nDoc_log_no, nDoc_status )
    _rec[ "int_1" ] := nDoc_status
    _rec[ "doc_lit_ac" ] := cAction
 
-   update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+   lRet := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
 
-   RETURN
+   RETURN lRet
 
 
 

@@ -605,7 +605,6 @@ STATIC FUNCTION _ins_veza( nA_doc_it, nA_docs, cBrfakt, lTemp )
 
       IF !lTemp
          IF !update_rec_server_and_dbf( "rnal_docs", _rec, 1, "CONT" )
-            f18_free_tables( { "rnal_docs" } )
             sql_table_update( NIL, "ROLLBACK" )
             RETURN .F.
          ENDIF

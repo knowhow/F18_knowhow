@@ -242,6 +242,7 @@ FUNCTION logiraj_podatke_loma_na_staklima( nDoc_no, cDesc, cAction )
 
    LOCAL nDoc_log_no
    LOCAL cDoc_log_type
+   LOCAL lOk
 
    SELECT _tmp1
 
@@ -263,33 +264,46 @@ FUNCTION logiraj_podatke_loma_na_staklima( nDoc_no, cDesc, cAction )
    cDoc_log_type := "21"
    nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
-   rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
+   lOk := rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
 
-   SELECT _tmp1
-   GO TOP
+   IF lOk
+     
+       SELECT _tmp1
+       GO TOP
 
-   DO WHILE !Eof()
+       DO WHILE !Eof()
 
-      IF field->art_marker <> "*"
-         SKIP
-         LOOP
-      ENDIF
+          IF field->art_marker <> "*"
+             SKIP
+             LOOP
+          ENDIF
 	
-      rnal_log_tip_21_insert( cAction, nDoc_no, nDoc_log_no, ;
-         field->art_id,  ;
-         field->art_desc, ;
-         field->glass_no, ;
-         field->doc_it_no, ;
-         field->doc_it_qtt, ;
-         field->damage )
+          lOk := rnal_log_tip_21_insert( cAction, nDoc_no, nDoc_log_no, ;
+                field->art_id,  ;
+                field->art_desc, ;
+                field->glass_no, ;
+                field->doc_it_no, ;
+                field->doc_it_qtt, ;
+                field->damage )
+          
+          IF !lOk
+             EXIT
+          ENDIF
 	
-      SELECT _tmp1
-      SKIP
+          SELECT _tmp1
+          SKIP
 	
-   ENDDO
+       ENDDO
 
-   f18_free_tables( { "doc_log", "doc_lit" } )
-   sql_table_update( nil, "END" )
+   ENDIF
+
+   IF lOk
+      f18_free_tables( { "doc_log", "doc_lit" } )
+      sql_table_update( nil, "END" )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+      MsgBeep( "Podaci o lomu na staklima nisu ažurirani.#Greška u transakciji." )
+   ENDIF
 
    RETURN
 

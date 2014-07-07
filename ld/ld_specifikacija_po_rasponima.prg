@@ -70,7 +70,7 @@ FUNCTION ld_specifikacija_po_rasponima_primanja()
 
    @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno sve): "  GET cIdRJ
    @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  cmjesec  PICT "99"
-   @ m_x + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ m_x + 2, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    @ m_x + 3, m_y + 2 SAY "Godina: "  GET  cGodina  PICT "9999"
 
    @ m_x + 5, m_y + 2 SAY "Naziv raspona primanja: "  GET cNaziv
@@ -230,12 +230,10 @@ STATIC FUNCTION filter_specifikacija_raspon()
    DO WHILE !Eof()
       nPrim := &( cFormula )
       FOR i := 1 TO Len( aUslRasp )
-         // ? aUslRasp[i,1], nPrim, aUslRasp[i,2]
          IF nPrim > aUslRasp[ i, 1 ] .AND. nPrim <= aUslRasp[ i, 2 ]
             ++nSumRasp[i ]
          ENDIF
       NEXT
-      // ?
       SKIP 1
    ENDDO
    SKIP -1

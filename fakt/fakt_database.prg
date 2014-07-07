@@ -418,10 +418,9 @@ FUNCTION fakt_postoji_li_rupa_u_brojacu( id_firma, id_tip_dok, priprema_broj )
 
    IF _inc_error > 30
 
-      // eto greske !!!!
-      MsgBeep( "Postoji greska sa brojacem dokumenta#Priprema: " + AllTrim( priprema_broj ) + ;
+      MsgBeep( "Postoji greška sa brojačem dokumenta#Priprema: " + AllTrim( priprema_broj ) + ;
          ", server dokument: " + AllTrim( Str( _max_dok ) ) + "#" + ;
-         "Provjerite brojac" )
+         "Provjerite brojač" )
       _ret := 1
       RETURN _ret
 
@@ -505,10 +504,7 @@ FUNCTION fakt_admin_menu()
 
 
 
-// -------------------------------------------------
-// ispravka podataka dokumenta
-// -------------------------------------------------
-FUNCTION fakt_edit_data( id_firma, tip_dok, br_dok )
+FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok )
 
    LOCAL _t_area := Select()
    LOCAL lRet := .F.

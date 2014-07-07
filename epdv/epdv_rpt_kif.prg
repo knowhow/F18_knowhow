@@ -184,7 +184,7 @@ FUNCTION rpt_kif( nBrDok, cIdTarifa )
    ENDIF
 
    AAdd( aZagl, { cPom11,  cPom21, "Datum", "Tar.",  "Kupac", "Broj",  "Opis",  "iznos", "iznos",    "iznos" } )
-   AAdd( aZagl, { cPom12,  cPom22,  "",     "kat.",      "(naziv, ident. broj)",      "RN",     "",    "bez PDV", "PDV", "sa PDV" } )
+   AAdd( aZagl, { cPom12,  cPom22,  "",     "kat.",      "(naziv, identifikacijski broj)",      "RN",     "",    "bez PDV", "PDV", "sa PDV" } )
    AAdd( aZagl, { "(1)",   "(2)",  "(3)",   "(4)",   "(5)",  "(6)",     "(7)", "(8)", "(9)", "(10) = (8+9)" } )
 
 

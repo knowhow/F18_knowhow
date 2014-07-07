@@ -125,7 +125,7 @@ FUNCTION fakt_kartica()
       ENDIF
 
       @ m_x + 12, m_y + 2 SAY "Prikaz kretanja cijena D/N"  GET cPPC PICT "@!" VALID cPPC $ "DN"
-      @ m_x + 13, m_y + 2 SAY "Prikazi partnera za svaku stavku"  GET cPPartn PICT "@!" VALID cPPartn $ "DN"
+      @ m_x + 13, m_y + 2 SAY8 "Prikaži partnera za svaku stavku"  GET cPPartn PICT "@!" VALID cPPartn $ "DN"
 
       IF cBrza == "N"
          @ m_x + 15, m_y + 2 SAY "Svaka kartica na novu stranicu? (D/N)"  GET cOstran VALID cOstran $ "DN" PICT "@!"
@@ -147,7 +147,7 @@ FUNCTION fakt_kartica()
 
       cSintetika := "N"
       IF cSintetika == "D" .AND.  IF( cBrza == "D", ROBA->tip == "S", .T. )
-         @ m_x + 17, m_y + 2 SAY "Sinteticki prikaz? (D/N) " GET  cSintetika PICT "@!" VALID cSintetika $ "DN"
+         @ m_x + 17, m_y + 2 SAY8 "Sintetički prikaz? (D/N) " GET  cSintetika PICT "@!" VALID cSintetika $ "DN"
       ELSE
          cSintetika := "N"
       ENDIF
@@ -263,7 +263,7 @@ FUNCTION fakt_kartica()
    qqPartn := Trim( qqPartn )
    IF !Empty( qqPartn )
       ?
-      ? Space( gnlmarg ), "- Prikaz za partnere ciji naziv pocinje sa:"
+      ?U Space( gnlmarg ), "- Prikaz za partnere čiji naziv počinje sa:"
 
       ? Space( gnlmarg ), " ", qqPartn
       ?
@@ -487,8 +487,10 @@ STATIC FUNCTION ZaglKart( lIniStrana )
       ?? Space( 66 ) + "Strana: " + AllTrim( Str( nStrana ) )
    ENDIF
    ?
-   ? Space( gnLMarg ); ?? m
-   ? Space( gnLMarg ); ?? "SIFRA:"
+   ? Space( gnLMarg )
+   ?? m
+   ? Space( gnLMarg )
+   ?? "ŠIFRA:"
    IF fID_J
       ?? IF( cSintetika == "D" .AND. ROBA->tip == "S", ROBA->ID_J, Left( cidroba, 10 ) ), PadR( ROBA->naz, 40 ), " (" + ROBA->jmj + ")"
    ELSE

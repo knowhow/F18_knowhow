@@ -52,9 +52,9 @@ FUNCTION Uplate()
    DO WHILE .T.
 
       @ m_x + 0, m_y + 20 SAY PadC( " EVIDENCIJA UPLATA - KUPCI ", 35, Chr( 205 ) )
-      @ m_x + 1, m_y + 2 SAY "Sifra partnera:" GET cIdPartner VALID P_Firma( @cIdPartner, 1, 26 )
-      @ m_x + 2, m_y + 2 SAY "Tip dokumenta zaduzenja:" GET qqTipDok PICT "@!S20"
-      @ m_x + 3, m_y + 2 SAY "Zaduzenja od datuma    :"  GET dDatOd
+      @ m_x + 1, m_y + 2 SAY8 "Šifra partnera:" GET cIdPartner VALID P_Firma( @cIdPartner, 1, 26 )
+      @ m_x + 2, m_y + 2 SAY8 "Tip dokumenta zaduženja:" GET qqTipDok PICT "@!S20"
+      @ m_x + 3, m_y + 2 SAY8 "Zaduženja od datuma    :"  GET dDatOd
       @ m_x + 3, Col() + 1 SAY "do:"  GET dDatDo
       READ
       ESC_BCR
@@ -77,7 +77,7 @@ FUNCTION Uplate()
       GO TOP
 
       @ m_x + X_POS_STANJE - 2, m_y + 1        SAY REPL( "=", 70 )
-      @ m_x + X_POS_STANJE - 1, m_y + Y_POS_STANJE SAY " (+)     ZADUZENJE:"
+      @ m_x + X_POS_STANJE - 1, m_y + Y_POS_STANJE SAY8 " (+)     ZADUŽENJE:"
       @ m_x + X_POS_STANJE - 0, m_y + Y_POS_STANJE SAY " (-)       UPLATIO:"
       @ m_x + X_POS_STANJE + 1, m_y + Y_POS_STANJE SAY " ------------------"
       @ m_x + X_POS_STANJE + 2, m_y + Y_POS_STANJE SAY " (=) PREOSTALI DUG:"
@@ -86,20 +86,19 @@ FUNCTION Uplate()
 
       @ m_x + 4, m_y + 1 SAY REPL( "=", 70 )
 
-      SEEK cIdPartner  // pozicioniraj se na pocetak !!
+      SEEK cIdPartner
       ObjDbEdit( "EvUpl", MAXROWS() -5, MAXCOLS() -10, {|| EdUplata() },"", "<c-N> nova uplata  <F2> ispravka  <c-T> brisanje  <c-P> stampanje", ;
          .F., NIL, 1, NIL, 4, 3, NIL, {| nSkip| SkipDBBK( nSkip ) } )
 
    ENDDO
    BoxC()
 
-   CLOSERET
+   my_close_all_dbf()
 
    RETURN NIL
 
-// --------------------
-// EdUplata
-// --------------------
+
+
 FUNCTION EdUplata()
 
    LOCAL fK1 := .F.
@@ -134,7 +133,7 @@ FUNCTION EdUplata()
 
    CASE Ch == K_CTRL_T
 
-      IF Pitanje(, "Izbrisati stavku ?", "N" ) == "D"
+      IF Pitanje(, "Izbrisati stavku (D/N) ?", "N" ) == "D"
 
          delete_with_rlock()
          my_dbf_pack()
@@ -294,20 +293,20 @@ STATIC FUNCTION StKartKup()
    ? "KUPAC:", cIdPartner, "-", PARTN->naz
    ?
    ? "-------- " + REPL( "-", Len( opis ) ) + " " + REPL( "-", 10 )
-   ? "DAT.UPL.�" + PadC( "OPIS", Len( opis ) ) + "�" + PadC( "IZNOS", 10 )
+   ? "DAT.UPL.³" + PadC( "OPIS", Len( opis ) ) + "³" + PadC( "IZNOS", 10 )
    ? "-------- " + REPL( "-", Len( opis ) ) + " " + REPL( "-", 10 )
 
    SEEK cIdPartner
    DO WHILE !Eof() .AND. idpartner == cIdPartner
       ? datupl
-      ?? "�" + opis + "�"
+      ?? "³" + opis + "³"
       ?? TRANS( iznos, "9999999.99" )
       SKIP 1
    ENDDO
 
    ? "-------- " + REPL( "-", Len( opis ) ) + " " + REPL( "-", 10 )
    ?
-   ? " UKUPNO ZADUZENJE", TRANS( nUkZaduz, "9999999.99" )
+   ?U " UKUPNO ZADUŽENJE", TRANS( nUkZaduz, "9999999.99" )
    ? "  - UKUPNO UPLATE", TRANS( nUkUplata, "9999999.99" )
    ? "-----------------", "----------"
    ? "  = PREOSTALI DUG", TRANS( nUkZaduz - nUkUplata, "9999999.99" )
@@ -319,6 +318,8 @@ STATIC FUNCTION StKartKup()
    END PRINT
 
    RETURN NIL
+
+
 
 // -----------------------------------------------------------------------
 // SaldaKupaca(lPocStanje)

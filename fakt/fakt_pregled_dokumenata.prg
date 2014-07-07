@@ -548,7 +548,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
 
    CASE Chr( Ch ) $ "kK"
 
-      IF fakt_edit_data( field->idfirma, field->idtipdok, field->brdok )
+      IF fakt_ispravka_podataka_azuriranog_dokumenta( field->idfirma, field->idtipdok, field->brdok )
          nRet := DE_REFRESH
          _refresh := .T.
       ENDIF

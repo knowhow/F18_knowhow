@@ -11,9 +11,8 @@
 
 #include "fmk.ch"
 
-// --------------------------------------------------
-// get atribut opis
-// --------------------------------------------------
+
+
 FUNCTION get_fakt_atribut_opis( dok, from_server )
 
    LOCAL oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )
@@ -24,9 +23,6 @@ FUNCTION get_fakt_atribut_opis( dok, from_server )
 
    RETURN oAtrib:get_atrib()
 
-// --------------------------------------------------
-// get atribut ref, lot
-// --------------------------------------------------
 FUNCTION get_fakt_atribut_ref( dok, from_server )
 
    LOCAL oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )

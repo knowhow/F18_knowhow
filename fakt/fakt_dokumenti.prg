@@ -58,7 +58,7 @@ METHOD FaktDokumenti:New()
 // -------------------------------------------
 METHOD FaktDokumenti:Lock()
 
-   IF f18_lock_tables( ::p_lock_tables )
+   IF f18_lock_tables( ::p_lock_tables, .T. )
       ::p_locked := .T.
    ELSE
       ::p_locked := .F.

@@ -121,7 +121,7 @@ METHOD open()
 
       READ
       ESC_RETURN 0
-      IF fakt_doks_exist( ::cIdRj, ::cIdVd, ::cBrDok )
+      IF fakt_dokument_postoji( ::cIdRj, ::cIdVd, ::cBrDok )
          MsgBeep( "Dokument vec postoji !!??" )
       ELSE
          EXIT

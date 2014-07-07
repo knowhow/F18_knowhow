@@ -416,7 +416,7 @@ METHOD genDokManjak()
          RETURN
       ENDIF
 
-      IF !fakt_doks_exist( cIdRj, "IM", cBrDok )
+      IF !fakt_dokument_postoji( cIdRj, "IM", cBrDok )
          MsgBeep( "Dokument ne postoji ?!" )
       ELSE
          EXIT
@@ -459,7 +459,7 @@ METHOD genDokVisak
          RETURN
       ENDIF
 
-      IF !fakt_doks_exist( cIdRj, "IM", cBrDok )
+      IF !fakt_dokument_postoji( cIdRj, "IM", cBrDok )
          MsgBeep( "Dokument " + cIdRj + "-IM-" + cBrDok + "ne postoji ?!" )
       ELSE
          EXIT

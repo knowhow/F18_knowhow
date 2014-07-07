@@ -32,7 +32,7 @@ FUNCTION fakt_stanje_artikla( cIdRj, cIdroba, nUl, nIzl, nRezerv, nRevers, lSile
    ENDIF
 
    IF ( !lSilent )
-      MsgO( "Izracunavam trenutno stanje ..." )
+      MsgO( "Izračunavam trenutno stanje artikla ..." )
    ENDIF
 
    SEEK cIdRoba
@@ -93,11 +93,7 @@ FUNCTION fakt_mpc_iz_sifrarnika()
       ELSEIF RJ->tip == "M6"
          nCV := roba->mpc6
       ELSE
-         IF IzFMKINI( "FAKT", "ZaIzvjestajeDefaultJeMPC", "N", KUMPATH ) == "D"
-            nCV := roba->mpc
-         ELSE
-            nCV := roba->vpc
-         ENDIF
+         nCV := roba->vpc
       ENDIF
    ELSE
       nCV := roba->vpc
@@ -435,29 +431,22 @@ FUNCTION fakt_postoji_li_rupa_u_brojacu( id_firma, id_tip_dok, priprema_broj )
 
 
 
-// ------------------------------------------------------------
-// provjerava da li dokument postoji na strani servera
-// ------------------------------------------------------------
-FUNCTION fakt_doks_exist( firma, tip_dok, br_dok )
+FUNCTION fakt_dokument_postoji( cFirma, cTipDok, cBroj )
 
-   LOCAL _exist := .F.
-   LOCAL _qry, _qry_ret, _table
-   LOCAL _server := pg_server()
+   LOCAL lExist := .F.
+   LOCAL cWhere
 
-   _qry := "SELECT COUNT(*) FROM fmk.fakt_doks WHERE idfirma = " + _sql_quote( firma ) + " AND idtipdok = " + _sql_quote( tip_dok ) + " AND brdok = " + _sql_quote( br_dok )
-   _table := _sql_query( _server, _qry )
-   _qry_ret := _table:FieldGet( 1 )
+   cWhere := " idfirma = " + _sql_quote( cFirma )
+   cWhere += " AND idtipdok = " + _sql_quote( cTipDok ) 
+   cWhere += " AND brdok = " + _sql_quote( cBroj )
 
-   IF _qry_ret > 0
-      _exist := .T.
+   IF table_count( "fmk.fakt_doks", cWhere ) > 0
+      lExist := .T.
    ENDIF
 
-   RETURN _exist
+   RETURN lExist
 
 
-// ------------------------------------------------------------
-// setovanje parametra brojaca na admin meniju
-// ------------------------------------------------------------
 FUNCTION fakt_set_param_broj_dokumenta()
 
    LOCAL _param
@@ -522,7 +511,7 @@ FUNCTION fakt_admin_menu()
 FUNCTION fakt_edit_data( id_firma, tip_dok, br_dok )
 
    LOCAL _t_area := Select()
-   LOCAL _ret := .F.
+   LOCAL lRet := .F.
    LOCAL _x := 1
    LOCAL _cnt
    LOCAL __idpartn
@@ -534,6 +523,7 @@ FUNCTION fakt_edit_data( id_firma, tip_dok, br_dok )
    LOCAL __id_vrsta_p
    LOCAL __p_tmp
    LOCAL _t_txt
+   LOCAL lOk := .T.
 
    __idpartn := field->idpartner
    __id_vrsta_p := field->idvrstep
@@ -555,7 +545,7 @@ FUNCTION fakt_edit_data( id_firma, tip_dok, br_dok )
 
    IF !Found()
       SELECT ( _t_area )
-      RETURN _ret
+      RETURN lRet
    ENDIF
 
    _t_txt := parsmemo( field->txt )
@@ -572,8 +562,7 @@ FUNCTION fakt_edit_data( id_firma, tip_dok, br_dok )
    ++ _x
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "Partner:" GET __idpartn ;
-      VALID p_firma( @__idpartn )
+   @ m_x + _x, m_y + 2 SAY "Partner:" GET __idpartn VALID p_firma( @__idpartn )
 
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Datum otpremnice:" GET __dat_otpr
@@ -582,13 +571,13 @@ FUNCTION fakt_edit_data( id_firma, tip_dok, br_dok )
    @ m_x + _x, m_y + 2 SAY " Broj otpremnice:" GET __br_otpr PICT "@S40"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "  Datum placanja:" GET __dat_pl
+   @ m_x + _x, m_y + 2 SAY8 "  Datum plaćanja:" GET __dat_pl
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "        Narudzba:" GET __br_nar PICT "@S40"
+   @ m_x + _x, m_y + 2 SAY8 "        Narudžba:" GET __br_nar PICT "@S40"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "  Vrsta placanja:" GET __id_vrsta_p VALID Empty( __id_vrsta_p ) .OR. P_VRSTEP( @__id_vrsta_p )
+   @ m_x + _x, m_y + 2 SAY8 "  Vrsta plaćanja:" GET __id_vrsta_p VALID Empty( __id_vrsta_p ) .OR. P_VRSTEP( @__id_vrsta_p )
 
 
    READ
@@ -597,26 +586,23 @@ FUNCTION fakt_edit_data( id_firma, tip_dok, br_dok )
 
    IF LastKey() == K_ESC
       SELECT ( _t_area )
-      RETURN _ret
+      RETURN lRet
    ENDIF
 
-   IF Pitanje(, "Izvrsiti zamjenu podataka ? (D/N)", "D" ) == "N"
+   IF Pitanje(, "Izvršiti zamjenu podataka ? (D/N)", "D" ) == "N"
       SELECT ( _t_area )
-      RETURN _ret
-   ENDIF
-
-   IF !f18_lock_tables( { "fakt_fakt", "fakt_doks" } )
-      MsgBeep( "Problem sa lokovanjem tabela !!!" )
-      SELECT ( _t_area )
-      RETURN _ret
+      RETURN lRet
    ENDIF
 
    sql_table_update( nil, "BEGIN" )
 
-   // mjenjamo podatke
-   _ret := .T.
+   IF !f18_lock_tables( { "fakt_fakt", "fakt_doks" }, .T. )
+      sql_table_update( nil, "END" )
+      MsgBeep( "Ne mogu napraviti zaključavanje tabela.#Prekidam operaciju." )
+      SELECT ( _t_area )
+      RETURN lRet
+   ENDIF
 
-   // pronadji nam partnera
    SELECT partn
    SEEK __idpartn
 
@@ -624,24 +610,29 @@ FUNCTION fakt_edit_data( id_firma, tip_dok, br_dok )
       "," + AllTrim( field->ptt ) + ;
       " " + AllTrim( field->mjesto )
 
-   // vrati se na doks
    SELECT fakt_doks
    SEEK id_firma + tip_dok + br_dok
 
    IF !Found()
-      msgbeep( "Nisam nista promjenio !!!" )
-      RETURN .F.
+      f18_free_tables( { "fakt_fakt", "fakt_doks" } )
+      sql_table_update( nil, "END" )
+      MsgBeep( "Dokument ne postoji, nije ništa zamjenjeno !" )
+      RETURN lRet
    ENDIF
 
-   // napravi zamjenu u doks tabeli
    _rec := dbf_get_rec()
    _rec[ "idpartner" ] := __idpartn
    _rec[ "partner" ] := __p_tmp
    _rec[ "idvrstep" ] := __id_vrsta_p
 
-   update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
+   lOk := update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
 
-   // prodji kroz fakt stavke
+   IF !lOk
+      sql_table_update( nil, "ROLLBACK" )
+      MsgBeep( "Postoji problem sa zamjenom podataka#Prekidam operaciju." )
+      RETURN lRet
+   ENDIF
+
    SELECT fakt
    GO TOP
    SEEK id_firma + tip_dok + br_dok
@@ -687,7 +678,11 @@ FUNCTION fakt_edit_data( id_firma, tip_dok, br_dok )
 
       ENDIF
 
-      update_rec_server_and_dbf( "fakt_fakt", _rec, 1, "CONT" )
+      lOk := update_rec_server_and_dbf( "fakt_fakt", _rec, 1, "CONT" )
+
+      IF !lOk
+         EXIT
+      ENDIF
 
       ++ _cnt
 
@@ -695,12 +690,17 @@ FUNCTION fakt_edit_data( id_firma, tip_dok, br_dok )
 
    ENDDO
 
-   sql_table_update( nil, "END" )
-   f18_free_tables( { "fakt_fakt", "fakt_doks" } )
+   IF lOk
+      lRet := .T.
+      f18_free_tables( { "fakt_fakt", "fakt_doks" } )
+      sql_table_update( nil, "END" )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+   ENDIF
 
    SELECT ( _t_area )
 
-   RETURN _ret
+   RETURN lRet
 
 
 

@@ -694,12 +694,15 @@ STATIC FUNCTION __import( vars, a_details )
    LOCAL _gl_brojac := 0
    LOCAL _brojevi_dok
    LOCAL _detail_rec
-
-   IF !f18_lock_tables( { "fakt_doks", "fakt_doks2", "fakt_fakt" } )
-      RETURN _cnt
-   ENDIF
+   LOCAL lOk := .T.
 
    sql_table_update( nil, "BEGIN" )
+
+   IF !f18_lock_tables( { "fakt_doks", "fakt_doks2", "fakt_fakt" }, .T. )
+      sql_table_update( nil, "END" )
+      MsgBeep( "Problem sa zaključavanjem tabela.#Prekidam operaciju." )
+      RETURN _cnt
+   ENDIF
 
    _dat_od := vars[ "datum_od" ]
    _dat_do := vars[ "datum_do" ]
@@ -819,7 +822,12 @@ STATIC FUNCTION __import( vars, a_details )
 
       SELECT fakt_doks
       APPEND BLANK
-      update_rec_server_and_dbf( "fakt_doks", _app_rec, 1, "CONT" )
+
+      lOk := update_rec_server_and_dbf( "fakt_doks", _app_rec, 1, "CONT" )
+
+      IF !lOk
+         EXIT
+      ENDIF
 
       ++ _cnt
       @ m_x + 3, m_y + 2 SAY PadR( PadL( AllTrim( Str( _cnt ) ), 5 ) + ". dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok, 60 )
@@ -843,12 +851,20 @@ STATIC FUNCTION __import( vars, a_details )
 
          SELECT fakt
          APPEND BLANK
-         update_rec_server_and_dbf( "fakt_fakt", _app_rec, 1, "CONT" )
+         lOk := update_rec_server_and_dbf( "fakt_fakt", _app_rec, 1, "CONT" )
+
+         IF !lOk
+            EXIT
+         ENDIF
 
          SELECT e_fakt
          SKIP
 
       ENDDO
+
+      IF !lOk
+         EXIT
+      ENDIF
 
       SELECT e_doks2
       SET ORDER TO TAG "1"
@@ -861,22 +877,35 @@ STATIC FUNCTION __import( vars, a_details )
 
          SELECT fakt_doks2
          APPEND BLANK
-         update_rec_server_and_dbf( "fakt_doks2", _app_rec, 1, "CONT" )
+         lOK := update_rec_server_and_dbf( "fakt_doks2", _app_rec, 1, "CONT" )
+
+         IF !lOk
+            EXIT
+         ENDIF
 
          SELECT e_doks2
          SKIP
 
       ENDDO
 
+      IF !lOk
+         EXIT
+      ENDIF
+
       SELECT e_doks
       SKIP
 
    ENDDO
 
-   f18_free_tables( { "fakt_doks", "fakt_doks2", "fakt_fakt" } )
-   sql_table_update( nil, "END" )
+   IF lOk
+      f18_free_tables( { "fakt_doks", "fakt_doks2", "fakt_fakt" } )
+      sql_table_update( nil, "END" )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+      Msgbeep( "Problem sa operacijom inserta dokumenata.#Prekidam operaciju." )
+   ENDIF
 
-   IF _cnt > 0
+   IF _cnt > 0 .AND. lOk
 
       @ m_x + 3, m_y + 2 SAY PadR( "", 69 )
 
@@ -898,8 +927,11 @@ STATIC FUNCTION __import( vars, a_details )
 
 STATIC FUNCTION _vec_postoji_u_prometu( id_firma, id_vd, br_dok )
 
+   LOCAL cWhere
    LOCAL _t_area := Select()
    LOCAL _ret := .T.
+
+   
 
    SELECT fakt_doks
    GO TOP

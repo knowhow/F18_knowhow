@@ -1214,7 +1214,9 @@ STATIC FUNCTION set_fiscal_no_to_fakt_doks( cFirma, cTD, cBroj, nFiscal, lStorno
    _rec[ "fisc_date" ] := Date()
    _rec[ "fisc_time" ] := PadR( Time(), 10 )
 
-   update_rec_server_and_dbf( "fakt_doks", _rec, 1, "FULL" )
+   IF !update_rec_server_and_dbf( "fakt_doks", _rec, 1, "FULL" )
+      MsgBeep( "Problem setovanja veze fiskalnog računa#Operacija prekinuta." )
+   ENDIF
 
    SELECT ( nTArea )
 

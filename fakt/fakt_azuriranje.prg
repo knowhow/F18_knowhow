@@ -70,7 +70,7 @@ FUNCTION azur_fakt( lSilent )
       _id_tip_dok := _a_fakt_doks[ _i, 2 ]
       _br_dok     := _a_fakt_doks[ _i, 3 ]
 
-      IF fakt_doks_exist( _id_firma, _id_tip_dok, _br_dok )
+      IF fakt_dokument_postoji( _id_firma, _id_tip_dok, _br_dok )
          MsgBeep( "Dokument " + _id_firma + "-" + _id_tip_dok + "-" + AllTrim( _br_dok ) + " već postoji ažuriran u bazi !" )
          _ok := .F.
       ENDIF
@@ -78,7 +78,7 @@ FUNCTION azur_fakt( lSilent )
       IF _ok .AND. fakt_azur_sql( _id_firma, _id_tip_dok, _br_dok  )
 
          IF _ok .AND. !fakt_azur_dbf( _id_firma, _id_tip_dok, _br_dok )
-            _msg := "ERROR DBF: Neuspjesno FAKT/DBF azuriranje: " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok
+            _msg := "Neuspješno DBF ažuriranje dokumenta: " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok
             log_write( _msg, 1 )
             MsgBeep( _msg )
             _ok := .F.
@@ -87,7 +87,7 @@ FUNCTION azur_fakt( lSilent )
          ENDIF
 
       ELSE
-         _msg := "ERROR SQL: Neuspjesno SQL azuriranje: " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok
+         _msg := "Neuspješno SQL ažuriranje dokumenta: " + _id_firma + "-" + _id_tip_dok + "-" + _br_dok
          log_write( _msg, 1 )
          MsgBeep( _msg )
          _ok := .F.
@@ -169,7 +169,7 @@ STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
    O_FAKT_PRIPR
 
    IF !_seek_pripr_dok( id_firma, id_tip_dok, br_dok )
-      Alert( "ne kontam u fakt_pripr nema: " + id_firma + "-" + id_tip_dok + "-" + br_dok )
+      Alert( "U tabeli pripreme ne postoji dokument: " + id_firma + "-" + id_tip_dok + "-" + br_dok )
       RETURN .F.
    ENDIF
 
@@ -230,13 +230,7 @@ STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
    ENDIF
 
    IF !_ok
-
       sql_table_update( nil, "ROLLBACK" )
-
-      _msg := "FAKT sql azuriranje, trasakcija " + _tmp_id + " neuspjesna ?!"
-      log_write( _msg, 2 )
-      MsgBeep( _msg )
-
    ELSE
 
       @ m_x + 4, m_y + 2 SAY "push ids to semaphore: " + _tmp_id
@@ -552,7 +546,7 @@ FUNCTION fakt_dokumenti_pripreme_u_matricu()
          SKIP
       ENDDO
 
-      IF !fakt_doks_exist( _id_firma, _id_tip_dok, _br_dok )
+      IF !fakt_dokument_postoji( _id_firma, _id_tip_dok, _br_dok )
          AAdd( _fakt_doks, { _id_firma, _id_tip_dok, _br_dok } )
       ENDIF
 

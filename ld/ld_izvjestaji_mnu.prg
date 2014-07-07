@@ -77,6 +77,8 @@ STATIC FUNCTION izvjestaji_specifikacije()
    AAdd( _opcexe, {|| ld_specifikacija_po_mjesecima() } )
    AAdd( _opc, "5. specifikacija primanja po RJ" )
    AAdd( _opcexe, {|| ld_specifikacija_po_rj() } )
+   AAdd( _opc, "6. specifikacija po rasponima primanja" )
+   AAdd( _opcexe, {|| ld_specifikacija_po_rasponima_primanja() } )
 
    f18_menu( "spec", .F., _izbor, _opc, _opcexe )
 

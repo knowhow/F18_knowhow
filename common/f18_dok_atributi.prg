@@ -548,7 +548,6 @@ METHOD F18_DOK_ATRIB:delete_atrib_from_server()
 
    ::set_table_name()
 
-   // prvo pobrisi sa servera
    _qry := "DELETE FROM " + ::table_name_server
    _qry += " WHERE "
    _qry += "idfirma = " + _sql_quote( ::dok_hash[ "idfirma" ] )

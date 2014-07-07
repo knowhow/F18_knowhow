@@ -1541,7 +1541,7 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
       CASE izbor == 1
          m_gen_ug()
       CASE izbor == 2
-         SrediRbrFakt()
+         fakt_sredi_redni_broj_u_pripremi()
       CASE izbor == 3
          O_FAKT_S_PRIPR
          O_FTXT

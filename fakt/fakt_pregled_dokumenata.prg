@@ -650,7 +650,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
 
    CASE Chr( Ch ) $ "sS"
 
-      storno_dok( field->idfirma, field->idtipdok, field->brDok )
+      fakt_generisi_storno_dokument( field->idfirma, field->idtipdok, field->brDok )
 
       IF Pitanje(, "Preći u tabelu pripreme ?", "D" ) == "D"
          fUPripremu := .T.

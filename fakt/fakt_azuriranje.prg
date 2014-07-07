@@ -11,9 +11,8 @@
 
 #include "fakt.ch"
 
-// --------------------------------------------------
-// centralna funkcija za azuriranje fakture
-// --------------------------------------------------
+
+
 FUNCTION azur_fakt( lSilent )
 
    LOCAL _a_fakt_doks := {}
@@ -43,42 +42,36 @@ FUNCTION azur_fakt( lSilent )
    O_FAKT_PRIPR
    GO TOP
 
-   // ubaci mi matricu sve dokumente iz pripreme
-   _a_fakt_doks := fakt_dokumenti_u_pripremi()
+   _a_fakt_doks := fakt_dokumenti_pripreme_u_matricu()
 
    IF Len( _a_fakt_doks ) == 0
-      MsgBeep( "Postojeci dokumenti u pripremi vec postoje azurirani u bazi !" )
+      MsgBeep( "Postojeći dokumenti u pripremi već postoje ažurirani u bazi !" )
       RETURN _a_fakt_doks
    ENDIF
 
-   // ako je samo jedan dokument provjeri njegove redne brojeve
    IF Len( _a_fakt_doks ) == 1
       SELECT fakt_pripr
       GO TOP
-      // provjeri redne brojeve dokumenta
       IF !provjeri_redni_broj()
-         MsgBeep( "Redni brojevi u dokumentu nisu ispravni !!!" )
+         MsgBeep( "Redni brojevi u dokumentu nisu ispravni !" )
          RETURN _a_fakt_doks
       ENDIF
    ENDIF
 
-   // fiksiranje tabele atributa
    F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB ):fix_atrib( F_FAKT_PRIPR, _a_fakt_doks )
 
    _ok := .T.
 
-   MsgO( "Azuriranje dokumenata u toku ..." )
+   MsgO( "Ažuriranje dokumenata u toku ..." )
 
-   // prodji kroz matricu sa dokumentima i azuriraj ih
    FOR _i := 1 TO Len( _a_fakt_doks )
 
       _id_firma   := _a_fakt_doks[ _i, 1 ]
       _id_tip_dok := _a_fakt_doks[ _i, 2 ]
       _br_dok     := _a_fakt_doks[ _i, 3 ]
 
-      // provjeri da li postoji vec identican broj azuriran u bazi ?
       IF fakt_doks_exist( _id_firma, _id_tip_dok, _br_dok )
-         MsgBeep( "Dokument " + _id_firma + "-" + _id_tip_dok + "-" + AllTrim( _br_dok ) + " vec postoji azuriran u bazi !" )
+         MsgBeep( "Dokument " + _id_firma + "-" + _id_tip_dok + "-" + AllTrim( _br_dok ) + " već postoji ažuriran u bazi !" )
          _ok := .F.
       ENDIF
 
@@ -110,12 +103,11 @@ FUNCTION azur_fakt( lSilent )
 
    SELECT fakt_pripr
 
-   MsgO( "brisem pripremu...." )
+   MsgO( "brišem tabele pripreme ..." )
 
    SELECT fakt_pripr
    my_dbf_zap()
 
-   // pobrisi mi fakt_atribute takodjer
    F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB ):zapp_local_table()
 
    MsgC()
@@ -125,9 +117,7 @@ FUNCTION azur_fakt( lSilent )
    RETURN _a_fakt_doks
 
 
-// -----------------------------------------------------------------
-// seek dokumenta u pripremi
-// -----------------------------------------------------------------
+
 STATIC FUNCTION _seek_pripr_dok( idfirma, idtipdok, brdok )
 
    LOCAL _ret := .F.
@@ -147,9 +137,6 @@ STATIC FUNCTION _seek_pripr_dok( idfirma, idtipdok, brdok )
 
 
 
-// --------------------------------------------------------------
-// azuriranje u sql tabele
-// --------------------------------------------------------------
 STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
 
    LOCAL _ok
@@ -181,30 +168,24 @@ STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
 
    O_FAKT_PRIPR
 
-   // vidi ima li tog dokumenta u pripremi !
-   // svakako mi se nastimaj na taj record
    IF !_seek_pripr_dok( id_firma, id_tip_dok, br_dok )
       Alert( "ne kontam u fakt_pripr nema: " + id_firma + "-" + id_tip_dok + "-" + br_dok )
       RETURN .F.
    ENDIF
 
-   // lokuj prvo tabele
-   IF !f18_lock_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" } )
+   sql_table_update( nil, "BEGIN" )
+
+   IF !f18_lock_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" }, .T. )
+      sql_table_update( nil, "END" )
+      MsgBeep( "Ne mogu zaključati tabele.#Prekidam operaciju." )
       RETURN .F.
    ENDIF
 
-
    close_open_fakt_tabele()
-   // opet se vrati na ovaj slog koji mi treba
    _seek_pripr_dok( id_firma, id_tip_dok, br_dok )
 
-   // -----------------------------------------------------------------------------------------------------
-   sql_table_update( nil, "BEGIN" )
-
-   // uzmi potrebni record
    _record := dbf_get_rec()
 
-   // algoritam 2 - dokument nivo
    _tmp_id := _record[ "idfirma" ] + _record[ "idtipdok" ] + _record[ "brdok" ]
    AAdd( _ids_fakt, "#2" + _tmp_id )
 
@@ -249,15 +230,12 @@ STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
    ENDIF
 
    IF !_ok
+
+      sql_table_update( nil, "ROLLBACK" )
+
       _msg := "FAKT sql azuriranje, trasakcija " + _tmp_id + " neuspjesna ?!"
       log_write( _msg, 2 )
       MsgBeep( _msg )
-      // transakcija neuspjesna
-      // server nije azuriran
-      sql_table_update( nil, "ROLLBACK" )
-
-      // ako je transakcja neuspjesna, svejedno trebas osloboditi tabele
-      f18_free_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" } )
 
    ELSE
 
@@ -268,6 +246,7 @@ STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
       push_ids_to_semaphore( _tbl_doks2, _ids_doks2  )
 
       f18_free_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" } )
+
       sql_table_update( nil, "END" )
 
    ENDIF
@@ -278,10 +257,6 @@ STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
 
 
 
-
-// -------------------------------------------------------------------
-// azuriranje u dbf tabele
-// -------------------------------------------------------------------
 STATIC FUNCTION fakt_azur_dbf( id_firma, id_tip_dok, br_dok, lSilent )
 
    LOCAL _a_memo
@@ -323,7 +298,6 @@ STATIC FUNCTION fakt_azur_dbf( id_firma, id_tip_dok, br_dok, lSilent )
 
       _rec := get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
 
-      // pobrisi sljedece clanove...
       hb_HDel( _rec, "brisano" )
       hb_HDel( _rec, "sifra" )
 
@@ -365,15 +339,23 @@ STATIC FUNCTION fakt_azur_dbf( id_firma, id_tip_dok, br_dok, lSilent )
 
    BoxC()
 
-   // opet seekuj pripremu
    _seek_pripr_dok( id_firma, id_tip_dok, br_dok )
 
    RETURN .T.
 
 
-STATIC FUNCTION _fakt_partner_naziv( id_partner )
 
-   LOCAL _return := ""
+/*
+   Opis: formira string naziva partnera za tabelu FAKT_DOKS polje "partner"
+   
+   Format: naziv adresa, ptt mjesto
+
+   Primjer: "bring.out" d.o.o. Juraja Najtharta 3, 71000 Sarajevo 
+*/
+
+STATIC FUNCTION naziv_partnera_za_tabelu_doks( cId_partner )
+
+   LOCAL cRet := ""
    LOCAL _t_area := Select()
 
    SELECT ( F_PARTN )
@@ -383,27 +365,27 @@ STATIC FUNCTION _fakt_partner_naziv( id_partner )
 
    SELECT partn
    GO TOP
-   hseek id_partner
+   hseek cId_partner
 
-   // priprema podatke za upis u polje "doks->partner"
-   _return := AllTrim( partn->naz )
-   _return += " "
-   _return += AllTrim( partn->adresa )
-   _return += ","
-   _return += AllTrim( partn->ptt )
-   _return += " "
-   _return += AllTrim( partn->mjesto )
+   cRet := AllTrim( partn->naz )
+   cRet += " "
+   cRet += AllTrim( partn->adresa )
+   cRet += ","
+   cRet += AllTrim( partn->ptt )
+   cRet += " "
+   cRet += AllTrim( partn->mjesto )
 
-   _return := PadR( _return, FAKT_DOKS_PARTNER_LENGTH )
+   cRet := PadR( cRet, FAKT_DOKS_PARTNER_LENGTH )
 
    SELECT ( _t_area )
 
-   RETURN _return
+   RETURN cRet
 
 
-// -------------------------------------------------------------
-// vraca hash matricu za fakt_doks2
-// -------------------------------------------------------------
+/*
+   Opis: formira hash string podataka za tabelu FAKT_DOKS2 kod ažuriranja dokumenta
+*/
+
 FUNCTION get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
 
    LOCAL _fakt_data := hb_Hash()
@@ -431,22 +413,22 @@ FUNCTION get_fakt_doks2_data( id_firma, id_tip_dok, br_dok )
    RETURN _fakt_data
 
 
-// -------------------------------------------------------------
-// -------------------------------------------------------------
+/*
+   Opis: formira hash string podataka za tabelu FAKT_DOKS kod ažuriranja dokumenta
+*/
+
 FUNCTION get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
 
    LOCAL _fakt_totals
    LOCAL _fakt_data
    LOCAL _memo
 
-   // definiši matricu za fakt_doks zapis
    _fakt_data := hb_Hash()
    _fakt_data[ "idfirma" ]  := id_firma
    _fakt_data[ "idtipdok" ] := id_tip_dok
    _fakt_data[ "brdok" ]    := br_dok
 
    O_FAKT_PRIPR
-   // sljedeća polja ću uzeti iz pripreme
    SELECT fakt_pripr
    HSEEK id_firma + id_tip_dok + br_dok
 
@@ -457,7 +439,7 @@ FUNCTION get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
    _fakt_data[ "rezerv" ] := " "
    _fakt_data[ "m1" ] := field->m1
    _fakt_data[ "idpartner" ] := field->idpartner
-   _fakt_data[ "partner" ] := _fakt_partner_naziv( field->idpartner )
+   _fakt_data[ "partner" ] := naziv_partnera_za_tabelu_doks( field->idpartner )
    _fakt_data[ "oper_id" ] := getUserId()
    _fakt_data[ "sifra" ] := Space( 6 )
    _fakt_data[ "brisano" ] := Space( 1 )
@@ -467,25 +449,13 @@ FUNCTION get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
    _fakt_data[ "dat_isp" ]  := iif( Len( _memo ) >= 7, CToD( _memo[ 7 ] ), CToD( "" ) )
    _fakt_data[ "dat_otpr" ] := iif( Len( _memo ) >= 7, CToD( _memo[ 7 ] ), CToD( "" ) )
    _fakt_data[ "dat_val" ]  := iif( Len( _memo ) >= 9, CToD( _memo[ 9 ] ), CToD( "" ) )
-
-   // ovo nema nikakvog smisla. fisc_rn uvijek postoji u F18
-   // takođe mi mije jasno zašto se ne uzmu oba polja onakva kakva jesu ?
-   // ovdje uopšte mi nije jasna ova zbrka koja se pravi sa fisc_rn i fisc_st poljima
-   // non stop se nešto gleda bez ikakve potrebe
-   // u fisc_rn treba biti broj fiskalnog račun.
-
-   // ako se radi o reklamoranom (storno računu) onda sadržan treba biti
-   // fisc_rn - originalni račun koji se reklamira, fisc_st - broj reklamiranog računa
-
    _fakt_data[ "fisc_rn" ] := field->fisc_rn
    _fakt_data[ "fisc_st" ] := 0
    _fakt_data[ "fisc_date" ] := CToD( "" )
    _fakt_data[ "fisc_time" ] := PadR( "", 10 )
 
-   // izracunaj totale za fakturu
-   _fakt_totals := calculate_fakt_total( id_firma, id_tip_dok, br_dok )
+   _fakt_totals := izracunaj_ukupni_iznos_dokumenta_iz_pripreme( id_firma, id_tip_dok, br_dok )
 
-   // ubaci u fakt_doks totale
    _fakt_data[ "iznos" ] := _fakt_totals[ "iznos" ]
    _fakt_data[ "rabat" ] := _fakt_totals[ "rabat" ]
 
@@ -493,10 +463,18 @@ FUNCTION get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
 
 
 
-// ----------------------------------------------------------
-// kalkulise ukupno za fakturu
-// ----------------------------------------------------------
-FUNCTION calculate_fakt_total( id_firma, id_tipdok, br_dok )
+/*
+   Opis: izračunava vrijednost dokumenta iz tabele pripreme FAKT_PRIPR za polja 
+           FAKT_DOKS->IZNOS
+           FAKT_DOKS->RABAT
+
+   Returns:
+       hash matrica sljedećih članova
+              _fakt_total["iznos"]
+              _fakt_total["rabat"]
+*/
+
+FUNCTION izracunaj_ukupni_iznos_dokumenta_iz_pripreme( id_firma, id_tipdok, br_dok )
 
    LOCAL _fakt_total := hb_Hash()
    LOCAL _cij_sa_por := 0
@@ -545,11 +523,15 @@ FUNCTION calculate_fakt_total( id_firma, id_tipdok, br_dok )
    RETURN _fakt_total
 
 
+/*
+   Opis: vraća dokumente iz pripreme u matricu u formatu:
 
-// -----------------------------------
-// vise dokumenata u pripremi
-// ----------------------------------
-FUNCTION fakt_dokumenti_u_pripremi()
+        array[ idfirma, idtipdok, brdok ]
+       
+   Napomena: u pripremi može biti više dokumenata
+*/
+
+FUNCTION fakt_dokumenti_pripreme_u_matricu()
 
    LOCAL _fakt_doks := {}
    LOCAL _id_firma
@@ -567,11 +549,9 @@ FUNCTION fakt_dokumenti_u_pripremi()
 
       DO WHILE !Eof() .AND. ( field->idfirma + field->idtipdok + field->brdok ) == ;
             ( _id_firma + _id_tip_dok + _br_dok )
-         // preskoci sve stavke
          SKIP
       ENDDO
 
-      // provjeri da li postoji vec identican broj azuriran u bazi ?
       IF !fakt_doks_exist( _id_firma, _id_tip_dok, _br_dok )
          AAdd( _fakt_doks, { _id_firma, _id_tip_dok, _br_dok } )
       ENDIF
@@ -641,7 +621,7 @@ FUNCTION close_open_fakt_tabele( lOpenFaktAsPripr )
 
 
 
-FUNCTION SrediRbrFakt()
+FUNCTION fakt_sredi_redni_broj_u_pripremi()
 
    LOCAL _t_rec, _rec
    LOCAL _firma, _broj, _tdok
@@ -683,8 +663,6 @@ FUNCTION SrediRbrFakt()
 
 
 
-// ------------------------------------------------
-// ------------------------------------------------
 FUNCTION fakt_brisanje_pripreme()
 
    LOCAL _id_firma, _tip_dok, _br_dok
@@ -710,29 +688,15 @@ FUNCTION fakt_brisanje_pripreme()
       oAtrib:dok_hash[ "brdok" ] := _br_dok
 
       IF gcF9usmece == "D"
-
-         // pobrisi i atribute...
          oAtrib:delete_atrib()
-
-         // azuriraj dokument u smece
          azuriraj_smece( .T. )
-
          log_write( "F18_DOK_OPER: fakt, prenosa dokumenta iz pripreme u smece: " + _id_firma + "-" + _tip_dok + "-" + _br_dok, 2 )
-
          SELECT fakt_pripr
-
       ELSE
-
-         // ponisti pripremu...
          my_dbf_zap()
-         // ponisti i atribut        // ponisti i atributee
          oAtrib:zapp_local_table()
-
          log_write( "F18_DOK_OPER: fakt, brisanje dokumenta iz pripreme: " + _id_firma + "-" + _tip_dok + "-" + _br_dok, 2 )
-
-         // potreba za resetom brojaca ?
          fakt_reset_broj_dokumenta( _id_firma, _tip_dok, _br_dok )
-
       ENDIF
 
    ENDIF
@@ -740,10 +704,7 @@ FUNCTION fakt_brisanje_pripreme()
    RETURN
 
 
-// ---------------------------------------------------
-// generisi storno dokument u pripremi
-// ---------------------------------------------------
-FUNCTION storno_dok( id_firma, id_tip_dok, br_dok )
+FUNCTION fakt_generisi_storno_dokument( id_firma, id_tip_dok, br_dok )
 
    LOCAL _novi_br_dok
    LOCAL _rec
@@ -751,7 +712,7 @@ FUNCTION storno_dok( id_firma, id_tip_dok, br_dok )
    LOCAL _fiscal_no
    LOCAL _fiscal_use := fiscal_opt_active()
 
-   IF Pitanje( "FORM_STORNO", "Formirati storno dokument ?", "D" ) == "N"
+   IF Pitanje( "FORM_STORNO", "Formirati storno dokument (D/N) ?", "D" ) == "N"
       RETURN
    ENDIF
 
@@ -771,11 +732,7 @@ FUNCTION storno_dok( id_firma, id_tip_dok, br_dok )
    _novi_br_dok := AllTrim( br_dok ) + "/S"
 
    IF Len( AllTrim( _novi_br_dok ) ) > 8
-
-      // otkini prva dva karaktera
-      // da moze stati "/S"
       _novi_br_dok := Right( AllTrim( br_dok ), 6 ) + "/S"
-
    ENDIF
 
    _count := 0
@@ -806,8 +763,6 @@ FUNCTION storno_dok( id_firma, id_tip_dok, br_dok )
       _rec[ "kolicina" ] := ( _rec[ "kolicina" ] * -1 )
       _rec[ "brdok" ] := _novi_br_dok
       _rec[ "datdok" ] := Date()
-
-      // obavezno resetuj vrstu placanja na gotovina...
       _rec[ "idvrstep" ] := ""
 
       IF _fiscal_use
@@ -830,3 +785,5 @@ FUNCTION storno_dok( id_firma, id_tip_dok, br_dok )
    ENDIF
 
    RETURN
+
+

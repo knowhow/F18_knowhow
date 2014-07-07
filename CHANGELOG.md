@@ -1,3 +1,8 @@
+1.7.112  2014-07-07, vsasa
+
+  - FAKT, ažuriranje dokumenta u jednoj transakciji
+  - ePDV, s_partner() vraća PDV broj i ID broj 
+
 1.7.111  2014-07-07, vsasa
 
   - LD, specifikacija po rasponima primanja, vraćen stari izvještaj

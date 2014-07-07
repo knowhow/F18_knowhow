@@ -117,27 +117,27 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
    _opt_row += PadR( "<c+T> Briši stavku", _opt_d ) + _sep
    _opt_row += "<K> Kalk.cijena"
 
-   @ m_x + nMaxRow - 3, m_y + 2 SAY _opt_row
+   @ m_x + nMaxRow - 3, m_y + 2 SAY8 _opt_row
 
    _opt_row := PadR( "<c+A> Ispravka", _opt_d ) + _sep
    _opt_row += PadR( "<c+P> Štampa dok.", _opt_d ) + _sep
    _opt_row += PadR( "<a+A> Ažuriranje", _opt_d ) + _sep
    _opt_row += "<Q> Etikete"
 
-   @ m_x + nMaxRow - 2, m_y + 2 SAY _opt_row
+   @ m_x + nMaxRow - 2, m_y + 2 SAY8 _opt_row
 
    _opt_row := PadR( "<a+K> Kontiranje", _opt_d ) + _sep
    _opt_row += PadR( "<c+F9> Briši sve", _opt_d ) + _sep
    _opt_row += PadR( "<a+P> Štampa pripreme", _opt_d ) + _sep
 
-   @ m_x + nMaxRow - 1, m_y + 2 SAY _opt_row
+   @ m_x + nMaxRow - 1, m_y + 2 SAY8 _opt_row
 
    _opt_row := PadR( "<c+F8> Rasp.troškova", _opt_d ) + _sep
    _opt_row += PadR( "<A> Asistent", _opt_d ) + _sep
    _opt_row += PadR( "<F10> Dodatne opc.", _opt_d ) + _sep
    _opt_row += "<F11> Dodatne opc./2"
 
-   @ m_x + nMaxRow, m_y + 2 SAY _opt_row
+   @ m_x + nMaxRow, m_y + 2 SAY8 _opt_row
 
    IF gCijene == "1" .AND. gMetodaNC == " "
       Soboslikar( { { nMaxRow - 3, m_y + 1, nMaxRow, m_y + 77 } }, 23, 14 )

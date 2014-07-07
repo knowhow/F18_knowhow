@@ -586,8 +586,8 @@ STATIC FUNCTION __import( vars, a_details )
    LOCAL _total_kalk := 0
    LOCAL _gl_brojac := 0
    LOCAL _detail_rec
+   LOCAL lOk := .T.
 
-   // ovo su nam uslovi za import...
    _dat_od := vars[ "datum_od" ]
    _dat_do := vars[ "datum_do" ]
    _konta := vars[ "konta" ]
@@ -600,24 +600,23 @@ STATIC FUNCTION __import( vars, a_details )
       _fmk_import := .T.
    ENDIF
 
-   // otvaranje export tabela
    _o_exp_tables( __import_dbf_path, _fmk_import )
 
-   // otvori potrebne tabele za import podataka
    _o_tables()
 
-   // broj zapisa u import tabelama
    SELECT e_doks
    _total_doks := RECCOUNT2()
 
    SELECT e_kalk
    _total_kalk := RECCOUNT2()
 
-   // zakljucaj mi tabele bitne za prenos !!!
-   IF !f18_lock_tables( { "kalk_kalk", "kalk_doks" } )
+   sql_table_update( nil, "BEGIN" )
+
+   IF !f18_lock_tables( { "kalk_kalk", "kalk_doks" }, .T. )
+      sql_table_update( nil, "END" )
+      MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
       RETURN _cnt
    ENDIF
-   sql_table_update( nil, "BEGIN" )
 
    SELECT e_doks
    SET ORDER TO TAG "1"
@@ -635,9 +634,6 @@ STATIC FUNCTION __import( vars, a_details )
       _br_dok := field->brdok
       _dat_dok := field->datdok
 
-      // uslovi, provjera...
-
-      // datumi...
       IF _dat_od <> CToD( "" )
          IF field->datdok < _dat_od
             SKIP
@@ -652,7 +648,6 @@ STATIC FUNCTION __import( vars, a_details )
          ENDIF
       ENDIF
 
-      // lista konta...
       IF !Empty( _konta )
 
          _usl_mkonto := Parsiraj( AllTrim( _konta ), "mkonto" )
@@ -667,7 +662,6 @@ STATIC FUNCTION __import( vars, a_details )
 
       ENDIF
 
-      // lista dokumenata...
       IF !Empty( _vrste_dok )
          IF !( field->idvd $ _vrste_dok )
             SKIP
@@ -675,8 +669,7 @@ STATIC FUNCTION __import( vars, a_details )
          ENDIF
       ENDIF
 
-      // da li postoji u prometu vec ?
-      IF _vec_postoji_u_prometu( _id_firma, _id_vd, _br_dok )
+      IF kalk_dokument_postoji( _id_firma, _id_vd, _br_dok )
 
          _detail_rec := hb_Hash()
          _detail_rec[ "dokument" ] := _id_firma + "-" + _id_vd + "-" + _br_dok
@@ -691,15 +684,7 @@ STATIC FUNCTION __import( vars, a_details )
             _detail_rec[ "tip" ] := "delete"
             add_to_details( @a_details, _detail_rec )
 
-            // dokumente iz kalk, kalk_doks brisi !
-            _ok := .T.
-            _ok := del_kalk_doc( _id_firma, _id_vd, _br_dok )
-
-            // if !_ok
-            // MsgBeep( "Doslo je do greske sa brisanjem podataka !!!#Dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok )
-            // BoxC()
-            // return 0
-            // endif
+            lOk := del_kalk_doc( _id_firma, _id_vd, _br_dok )
 
          ELSE
 
@@ -714,7 +699,10 @@ STATIC FUNCTION __import( vars, a_details )
 
       ENDIF
 
-      // zikni je u nasu tabelu doks
+      IF !lOk
+         EXIT
+      ENDIF
+
       SELECT e_doks
       _app_rec := dbf_get_rec()
 
@@ -726,44 +714,39 @@ STATIC FUNCTION __import( vars, a_details )
       _detail_rec[ "iznos" ] := 0
       _detail_rec[ "datum" ] := _app_rec[ "datdok" ]
       _detail_rec[ "tip" ] := "import"
-      // dodaj u detalje
       add_to_details( @a_details, _detail_rec )
 
-      // cisti podbroj
       _app_rec[ "podbr" ] := ""
 
       SELECT kalk_doks
       APPEND BLANK
 
-      update_rec_server_and_dbf( "kalk_doks", _app_rec, 1, "CONT" )
+      lOk := update_rec_server_and_dbf( "kalk_doks", _app_rec, 1, "CONT" )
 
+      IF !lOk
+         EXIT
+      ENDIF
+   
       ++ _cnt
       @ m_x + 3, m_y + 2 SAY PadR( PadL( AllTrim( Str( _cnt ) ), 5 ) + ". dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok, 60 )
 
-      // zikni je u nasu tabelu kalk
       SELECT e_kalk
       SET ORDER TO TAG "1"
       GO TOP
       SEEK _id_firma + _id_vd + _br_dok
 
-      // setuj novi redni broj stavke
       _redni_broj := 0
 
-      // prebaci mi stavke tabele KALK
       DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idvd == _id_vd .AND. field->brdok == _br_dok
 
          _app_rec := dbf_get_rec()
 
-         // pobrisi, ovo mi ne treba !
          hb_HDel( _app_rec, "roktr" )
          hb_HDel( _app_rec, "datkurs" )
 
-         // setuj redni broj automatski...
          _app_rec[ "rbr" ] := PadL( AllTrim( Str( ++_redni_broj ) ), 3 )
-         // reset podbroj
          _app_rec[ "podbr" ] := ""
 
-         // uvecaj i globalni brojac stavki...
          _gl_brojac += _redni_broj
 
          @ m_x + 3, m_y + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + _app_rec[ "rbr" ]
@@ -771,24 +754,35 @@ STATIC FUNCTION __import( vars, a_details )
          SELECT kalk
          APPEND BLANK
 
-         update_rec_server_and_dbf( "kalk_kalk", _app_rec, 1, "CONT" )
+         lOk := update_rec_server_and_dbf( "kalk_kalk", _app_rec, 1, "CONT" )
+
+         IF !lOk
+            EXIT
+         ENDIF
 
          SELECT e_kalk
          SKIP
 
       ENDDO
 
+      IF !lOk
+         EXIT 
+      ENDIF
+
       SELECT e_doks
       SKIP
 
    ENDDO
 
-   // zavrsi transakciju
-   sql_table_update( nil, "END" )
-   f18_free_tables( { "kalk_doks", "kalk_kalk" } )
+   IF lOk
+      f18_free_tables( { "kalk_doks", "kalk_kalk" } )
+      sql_table_update( nil, "END" )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+      MsgBeep( "Problem sa ažuriranjem dokumenta na server !" )
+   ENDIF
 
-
-   IF _cnt >= 0
+   IF _cnt >= 0 .AND. lOk
 
       @ m_x + 3, m_y + 2 SAY PadR( "", 69 )
 
@@ -807,26 +801,6 @@ STATIC FUNCTION __import( vars, a_details )
 
    RETURN _ret
 
-
-// ---------------------------------------------------------------------
-// provjerava da li dokument vec postoji u prometu
-// ---------------------------------------------------------------------
-STATIC FUNCTION _vec_postoji_u_prometu( id_firma, id_vd, br_dok )
-
-   LOCAL _t_area := Select()
-   LOCAL _ret := .T.
-
-   SELECT kalk_doks
-   GO TOP
-   SEEK id_firma + id_vd + br_dok
-
-   IF !Found()
-      _ret := .F.
-   ENDIF
-
-   SELECT ( _t_area )
-
-   RETURN _ret
 
 
 // ----------------------------------------------------------

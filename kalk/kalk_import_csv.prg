@@ -887,7 +887,7 @@ if lStampaj == .t.
 endif
 
 // azuriraj kalk
-azur_kalk( .t. )
+kalk_azuriranje_dokumenta( .t. )
 
 o_kalk_edit()
 

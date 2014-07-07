@@ -48,7 +48,7 @@ FUNCTION kalk_ostale_operacije_doks()
    AAdd( _opc, "1. povrat dokumenta u pripremu" )
 
    IF ( ImaPravoPristupa( goModul:oDataBase:cName, "DOK", "POVRATDOK" ) )
-      AAdd( _opcexe, {|| Povrat_kalk_dokumenta() } )
+      AAdd( _opcexe, {|| kalk_povrat_dokumenta() } )
    ELSE
       AAdd( _opcexe, {|| MsgBeep( cZabrana ) } )
    ENDIF

@@ -1844,7 +1844,7 @@ if lStampaj == .t.
 endif
 
 // azuriraj kalk
-azur_kalk( .t. )
+kalk_azuriranje_dokumenta( .t. )
 
 o_kalk_edit()
 
@@ -1867,7 +1867,7 @@ do while (ChkKkalk_pripr(cIdVd, @nRslt) <> 0)
 			kalk_centr_stampa_dokumenta(nil, nil, .t.)
 		endif
 		
-		azur_kalk( .t. )
+		kalk_azuriranje_dokumenta( .t. )
 		o_kalk_edit()
 		
 	endif

@@ -77,70 +77,25 @@ FUNCTION KalkNaF( cidroba, nKols )
    SELECT kalk_pripr
 
    RETURN
-// }
-
-
-// ako nije razduzeno kako bi trebalo po metodi NC
-
-/*! \fn MsgNCRazd()
- *  \brief
- *  \todo ukinuti?
- */
-
-FUNCTION MsgNCRazd()
-
-   // {
-   // ne moze raditi
-   // if round(nab-> kalk->kolicina) .and. round(nab->nc-kalk->nc,3)<>0;  Msg("U dokumentu "+kalk->(idfirma+"-"+idvd+"-"+brdok)+" nije dobra NC po metodi razduzenja !"); endif
-
-   RETURN
 
 
 
-// ------------------------------------------------------------
-// postoji kalk dokument ?
-// ------------------------------------------------------------
-FUNCTION kalk_doc_exist( id_firma, id_vd, br_dok )
 
-   LOCAL _exist := .F.
-   LOCAL _server := pg_server()
-   LOCAL _tbl, _result
+FUNCTION kalk_dokument_postoji( cFirma, cIdVd, cBroj )
 
-   _tbl := "fmk.kalk_doks"
-   _result := table_count( _tbl, "idfirma=" + _sql_quote( id_firma ) + " AND idvd=" + _sql_quote( id_vd ) + " AND brdok=" + _sql_quote( br_dok ) )
+   LOCAL lExist := .F.
+   LOCAL cWhere
 
-   IF _result <> 0
-      _exist := .T.
-   ENDIF
+   cWhere := "idfirma = " + _sql_quote( cFirma ) 
+   cWhere += " AND idvd = " + _sql_quote( cIdVd ) 
+   cWhere += " AND brdok = " + _sql_quote( cBroj ) )
 
-   RETURN _exist
+   IF table_count( "fmk.kalk_doks", cWhere ) > 0
+      lExist := .T.
+   ENDIF 
 
+   RETURN lExist
 
-
-/*! \fn P_Kalk(cIdFirma,cIdVD,cBrDok)
- *  \brief Ispituje postojanje zadanog dokumenta medju azuriranim
- */
-
-FUNCTION P_Kalk( cIdFirma, cIdVD, cBrDok )
-
-   LOCAL nRez := .F.
-   LOCAL nArr := Select()
-
-   // PushWa()
-   SELECT KALK
-   SET FILTER TO
-   SET ORDER TO TAG "1"
-   SEEK cIdFirma + cIdVD + cBrDok
-   IF Found()
-      Beep( 1 )
-      Msg( "Dokument vec postoji !" )
-      nRez := .T.
-   ELSE
-   ENDIF
-   // PopWa()
-   SELECT ( nArr )
-
-   RETURN nRez
 
 
 
@@ -150,7 +105,6 @@ FUNCTION P_Kalk( cIdFirma, cIdVD, cBrDok )
 
 FUNCTION VVT()
 
-   // {
    @ m_x + 13, m_y + 2 SAY "PPP:"
    @ m_x + 13, Col() + 2 SAY tarifa->opp PICT "99.99%"
    IF roba->tip = "X"
@@ -163,9 +117,6 @@ FUNCTION VVT()
    _tmarza := "A"
 
    RETURN .T.
-// }
-
-
 
 
 /*! \fn DuplRoba()
@@ -211,7 +162,6 @@ FUNCTION DuplRoba()
    SET ORDER TO TAG "1"
 
    RETURN .T.
-// }
 
 
 
@@ -221,20 +171,18 @@ FUNCTION DuplRoba()
 
 FUNCTION DatPosljK()
 
-   // {
    SELECT kalk
    SET ORDER TO TAG "3"
    SEEK _idfirma + _mkonto + _idroba + Chr( 254 )
    SKIP -1
    IF _idfirma + _idkonto + _idroba == idfirma + mkonto + idroba .AND. _datdok < datdok
       Beep( 2 )
-      Msg( "Zadnji dokument za ovaj artikal radjen je: " + DToC( datdok ) )
+      Msg( "Zadnji dokument za ovaj artikal rađen je: " + DToC( datdok ) )
       _ERROR := "1"
    ENDIF
    SELECT kalk_pripr
 
    RETURN
-// }
 
 
 /*! \fn DatPosljP()
@@ -243,14 +191,13 @@ FUNCTION DatPosljK()
 
 FUNCTION DatPosljP()
 
-   // {
    SELECT kalk
    SET ORDER TO TAG "4"
 
    IF _idroba = "T"
       GO BOTTOM
       IF _datdok < datdok
-         Msg( "Zadji dokument je radjen: " + DToC( datdok ) )
+         Msg( "Zadji dokument je rađen: " + DToC( datdok ) )
          _ERROR := "1"
       ENDIF
    ELSE
@@ -258,14 +205,13 @@ FUNCTION DatPosljP()
       SKIP -1
       IF _idfirma + _idkonto + _idroba == idfirma + pkonto + idroba .AND. _datdok < datdok
          Beep( 2 )
-         Msg( "Zadnji dokument za ovaj artikal radjen je: " + DToC( datdok ) )
+         Msg( "Zadnji dokument za ovaj artikal rađen je: " + DToC( datdok ) )
          _ERROR := "1"
       ENDIF
    ENDIF
    SELECT kalk_pripr
 
    RETURN
-// }
 
 
 
@@ -745,7 +691,7 @@ FUNCTION kalk_pripr_brisi_od_do()
    _od := PadR( field->rbr, 4 )
 
    Box(, 1, 60 )
-   @ m_x + 1, m_y + 2 SAY "Brisi stavke od" GET _od PICT "@S4"
+   @ m_x + 1, m_y + 2 SAY8 "Briši stavke od" GET _od PICT "@S4"
    @ m_x + 1, Col() + 1 SAY "do" GET _do PICT "@S4"
    READ
    BoxC()
@@ -867,7 +813,7 @@ FUNCTION NCuMP( _idfirma, _idroba, _idkonto, nKolicina, dDatDok )
    _datdok   := dDatDok
    SELECT KALK
    PushWA()
-   MsgO( "Racunam stanje u prodavnici" )
+   MsgO( "Računam stanje u prodavnici" )
    KalkNabP( _idfirma, PadR( _idroba, Len( idroba ) ), _idkonto, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
    MsgC()
    SELECT KALK

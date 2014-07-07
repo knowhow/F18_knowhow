@@ -229,7 +229,7 @@ FUNCTION kalk_prod_pocetno_stanje()
    IF _count > 0
       renumeracija_kalk_pripr( nil, nil, .T. )
       my_close_all_dbf()
-      azur_kalk( .T. )
+      kalk_azuriranje_dokumenta( .T. )
       MsgBeep( "Formiran dokument početnog stanja i automatski ažuriran !" )
    ENDIF
 

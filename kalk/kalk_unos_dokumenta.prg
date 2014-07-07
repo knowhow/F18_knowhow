@@ -317,7 +317,7 @@ FUNCTION kalk_pripr_key_handler()
 
       my_close_all_dbf()
 
-      azur_kalk()
+      kalk_azuriranje_dokumenta()
       o_kalk_edit()
 
       IF kalk_pripr->( RecCount() ) == 0 .AND. IzFMKINI( "Indikatori", "ImaU_KALK", "N", PRIVPATH ) == "D"
@@ -973,7 +973,7 @@ FUNCTION MeniF10()
       CASE izbor == 1
          FaktKalk()
       CASE izbor == 2
-         Povrat_kalk_dokumenta()
+         kalk_povrat_dokumenta()
       CASE izbor == 3
          azur_kalk_pripr9()
       CASE izbor == 4
@@ -1482,7 +1482,7 @@ FUNCTION Get1Header( fNovi )
 
    ENDIF
 
-   @ m_x + 2, m_y + 40  SAY "Broj:" GET _brdok valid {|| !P_Kalk( _idfirma, _idvd, _brdok ) }
+   @ m_x + 2, m_y + 40  SAY "Broj:" GET _brdok valid {|| !kalk_dokument_postoji( _idfirma, _idvd, _brdok ) }
 
    @ m_x + 2, Col() + 2 SAY "Datum:" GET _datdok
 

@@ -17,6 +17,7 @@ FUNCTION s_partner( cIdPartn )
 
    LOCAL cPom
    LOCAL cIdBroj
+   LOCAL cPdvBroj
 
    PushWa()
 
@@ -40,17 +41,23 @@ FUNCTION s_partner( cIdPartn )
 
    cPom += ", " + cMjesto
 
-   cIdBroj := firma_pdv_broj( cIdPartn )
+   cPdvBroj := firma_pdv_broj( cIdPartn )
+   
+   IF !EMPTY( cPdvBroj )
+      cPdvBroj := "PDV: " + cPdvBroj + " / "
+   ELSE
+      cPdvBroj := ""
+   ENDIF
+
+   cIdBroj := firma_id_broj( cIdPartn )
 
    IF EMPTY( cIdBroj )
-       cIdBroj := firma_id_broj( cIdPartn ) 
-   ENDIF
-
-   IF Empty( cIdBroj )
       cIdBroj := "-NEP.ID-"
+   ELSE
+      cIdBroj := "ID: " + cIdBroj
    ENDIF
 
-   cPom += ", " + cIdBroj
+   cPom += ", " + cPdvBroj + cIdBroj
 
    PopWa()
 

@@ -184,7 +184,7 @@ FUNCTION rpt_kif( nBrDok, cIdTarifa )
    ENDIF
 
    AAdd( aZagl, { cPom11,  cPom21, "Datum", "Tar.",  "Kupac", "Broj",  "Opis",  "iznos", "iznos",    "iznos" } )
-   AAdd( aZagl, { cPom12,  cPom22,  "",     "kat.",      "(naziv, identifikacijski broj)",      "RN",     "",    "bez PDV", "PDV", "sa PDV" } )
+   AAdd( aZagl, { cPom12,  cPom22,  "",     "kat.",      "(naziv, PDV / identifikacijski broj)",      "RN",     "",    "bez PDV", "PDV", "sa PDV" } )
    AAdd( aZagl, { "(1)",   "(2)",  "(3)",   "(4)",   "(5)",  "(6)",     "(7)", "(8)", "(9)", "(10) = (8+9)" } )
 
 
@@ -221,7 +221,7 @@ STATIC FUNCTION get_r_fields( aArr )
    AAdd( aArr, { "id_part",   "C",  6, 0 } )
 
    AAdd( aArr, { "kup_rn",   "C",  12, 0 } )
-   AAdd( aArr, { "kup_naz",   "C",  80, 0 } )
+   AAdd( aArr, { "kup_naz",   "C",  200, 0 } )
    AAdd( aArr, { "opis",   "C",  80, 0 } )
 
    AAdd( aArr, { "i_b_pdv",   "N",  18, 2 } )
@@ -383,6 +383,7 @@ STATIC FUNCTION show_rpt()
    LOCAL nLenUk
    LOCAL nPom1
    LOCAL nPom2
+   LOCAL aKupacNaziv
 
    nCurrLine := 0
 
@@ -416,6 +417,8 @@ STATIC FUNCTION show_rpt()
          nPom2 := r_br
       ENDIF
 
+      aKupacNaziv := SjeciStr( kup_naz, aZaglLen[5] )
+ 
       ?
       // 1. broj dokumenta
       ?? Transform( nPom1, Replicate( "9", aZaglLen[ 1 ] ) )
@@ -434,9 +437,10 @@ STATIC FUNCTION show_rpt()
       ?? PadR( id_tar, aZaglLen[ 4 ] )
       ?? " "
 
+      nPos := pcol()
 
       // 5. kupac naziv
-      ?? PadR( kup_naz, aZaglLen[ 5 ] )
+      ?? PadR( aKupacNaziv[1], aZaglLen[ 5 ] )
       ?? " "
 
       // 6. dobavljac rn
@@ -459,6 +463,10 @@ STATIC FUNCTION show_rpt()
       ?? Transform( i_b_pdv + i_pdv,  PIC_IZN() )
       ?? " "
 
+      IF LEN( aKupacNaziv ) > 1
+         ?
+         @ prow(), nPos SAY aKupacNaziv[2]
+      ENDIF
 
       nBPdv += i_b_pdv
       nPdv += i_pdv

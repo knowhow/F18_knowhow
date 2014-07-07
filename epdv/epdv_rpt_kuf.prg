@@ -178,7 +178,7 @@ FUNCTION rpt_kuf( nBrDok, cIdTarifa )
    ENDIF
 
    AAdd( aZagl, { cPom11,  cPom21, "Datum", "Tar.",  "Dobavljač", "Broj",  "Opis",  "iznos", "izn.",    "izn. 2", "iznos" } )
-   AAdd( aZagl, { cPom12,  cPom22,  "",     "kat.",      "(naziv, identifikacijski broj)",      "RN",     "",    "bez PDV", "PDV", "PDV NP", "sa PDV" } )
+   AAdd( aZagl, { cPom12,  cPom22,  "",     "kat.",      "(naziv, PDV / identifikacijski broj)",      "RN",     "",    "bez PDV", "PDV", "PDV NP", "sa PDV" } )
    AAdd( aZagl, { "(1)",   "(2)",  "(3)",   "(4)",   "(5)",  "(6)",     "(7)", "(8)", "(9)",  "(10)",  "(11) = (8+9+10)" } )
 
    fill_rpt( nBrDok )
@@ -212,7 +212,7 @@ STATIC FUNCTION get_r_fields( aArr )
    AAdd( aArr, { "id_part",   "C",  6, 0 } )
 
    AAdd( aArr, { "dob_rn",   "C",  12, 0 } )
-   AAdd( aArr, { "dob_naz",   "C",  80, 0 } )
+   AAdd( aArr, { "dob_naz",   "C",  200, 0 } )
    AAdd( aArr, { "opis",   "C",  80, 0 } )
 
    AAdd( aArr, { "i_b_pdv",   "N",  18, 2 } )
@@ -389,6 +389,7 @@ STATIC FUNCTION show_rpt()
    LOCAL nPom2
    LOCAL nPdv
    LOCAL nPdv2
+   LOCAL aDobavljacNaziv
 
    nCurrLine := 0
 
@@ -412,6 +413,7 @@ STATIC FUNCTION show_rpt()
    nUBPdv := 0
    nUPdv :=  0
    nUPdv2 :=  0
+
    DO WHILE !Eof()
 
       ++ nCurrLine
@@ -425,6 +427,7 @@ STATIC FUNCTION show_rpt()
       // 9 - izn  pdv
       // 10 - izn sa pdv
 
+      aDobavljacNaziv := SjeciStr( dob_naz, aZaglLen[5] )
 
       IF nRptBrDok == -999
          nPom1 := r_br
@@ -452,9 +455,10 @@ STATIC FUNCTION show_rpt()
       ?? PadR( id_tar, aZaglLen[ 4 ] )
       ?? " "
 
+      nPos := PCol()
 
       // 5. dobavljac naziv
-      ?? PadR( dob_naz, aZaglLen[ 5 ] )
+      ?? PadR( aDobavljacNaziv[1], aZaglLen[ 5 ] )
       ?? " "
 
       // 6. dobavljac rn
@@ -489,6 +493,11 @@ STATIC FUNCTION show_rpt()
       // 10. sa pdv
       ?? Transform( i_b_pdv + ( i_pdv + i_pdv2 ),  PIC_IZN() )
       ?? " "
+
+      IF LEN( aDobavljacNaziv ) > 1
+          ?
+          @ prow(), nPos SAY aDobavljacNaziv[2]
+      ENDIF
 
       nUBPdv += i_b_pdv
       nUPdv += nPdv

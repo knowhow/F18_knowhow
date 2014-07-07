@@ -1058,8 +1058,8 @@ if !EMPTY(cIdArt)
     cFirma := g_idfirma( cIdArt )
 endif
 
-if fakt_doks_exist(cFirma, "10", gen_ug->brdok_od) .and. ;
-    fakt_doks_exist(cFirma, "10", gen_ug->brdok_do)
+if fakt_dokument_postoji( cFirma, "10", gen_ug->brdok_od) .and. ;
+    fakt_dokument_postoji( cFirma, "10", gen_ug->brdok_do)
     
     cBrDokOdDo := gen_ug->brdok_od + "--" +  gen_ug->brdok_do + ";"
     Povrat_fakt_po_kriteriju( cBrDokOdDo, nil, nil, cFirma )

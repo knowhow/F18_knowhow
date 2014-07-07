@@ -975,11 +975,11 @@ FUNCTION MeniF10()
       CASE izbor == 2
          kalk_povrat_dokumenta()
       CASE izbor == 3
-         azur_kalk_pripr9()
+         kalk_azuriranje_tabele_pripr9()
       CASE izbor == 4
-         Povrat9()
+         kalk_povrat_dokumenta_iz_pripr9()
       CASE izbor == 5
-         P9najst()
+         kalk_povrat_najstariji_dokument_iz_pripr9()
       CASE izbor == 6
          kalk_generisi_inventuru_magacina()
       CASE izbor == 7

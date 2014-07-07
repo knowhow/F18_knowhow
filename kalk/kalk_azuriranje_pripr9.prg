@@ -15,11 +15,7 @@
 
 
 
-// ------------------------------------------------------------
-// azuriranje kalk_pripr9 tabele
-// koristi se za smece u vecini slucajeva
-// ------------------------------------------------------------
-FUNCTION azur_kalk_pripr9()
+FUNCTION kalk_azuriranje_tabele_pripr9()
 
    LOCAL lGen := .F.
    LOCAL cPametno := "D"
@@ -44,9 +40,9 @@ FUNCTION azur_kalk_pripr9()
       RETURN
    ENDIF
 
-   _a_pripr := dokumenti_iz_pripreme_u_matricu()
+   _a_pripr := kalk_dokumenti_iz_pripreme_u_matricu()
 
-   _provjeri_smece( @_a_pripr )
+   postoji_li_dokument_u_pripr9( @_a_pripr )
 
    SELECT kalk_pripr
    GO TOP
@@ -92,7 +88,7 @@ FUNCTION azur_kalk_pripr9()
 
 
 
-FUNCTION Povrat9( cIdFirma, cIdVd, cBrDok )
+FUNCTION kalk_povrat_dokumenta_iz_pripr9( cIdFirma, cIdVd, cBrDok )
 
    LOCAL nRec
    LOCAL _rec
@@ -104,7 +100,6 @@ FUNCTION Povrat9( cIdFirma, cIdVd, cBrDok )
 
    SELECT kalk_pripr9
    SET ORDER TO TAG "1"
-   // idFirma+IdVD+BrDok+RBr
 
    IF ( ( cIdFirma == nil ) .AND. ( cIdVd == nil ) .AND. ( cBrDok == nil ) )
       lSilent := .F.
@@ -236,10 +231,7 @@ FUNCTION Povrat9( cIdFirma, cIdVd, cBrDok )
 
 
 
-// ------------------------------------------------------------------
-// iz kalk_pripr 9 u kalk_pripr najstariju kalkulaciju
-// ------------------------------------------------------------------
-FUNCTION P9najst()
+FUNCTION kalk_povrat_najstariji_dokument_iz_pripr9()
 
    LOCAL nRec
 
@@ -297,7 +289,7 @@ FUNCTION P9najst()
 
 
 
-STATIC FUNCTION _provjeri_smece( arr )
+STATIC FUNCTION postoji_li_dokument_u_pripr9( arr )
 
    LOCAL _i
    LOCAL _ctrl

@@ -668,7 +668,7 @@ STATIC FUNCTION kalk_provjeri_duple_dokumente( aRezim )
 
 
 
-STATIC FUNCTION o_kalk_za_azuriranje( raspored_tr )
+FUNCTION o_kalk_za_azuriranje( raspored_tr )
 
    IF raspored_tr == NIL
       raspored_tr := .F.
@@ -867,7 +867,7 @@ STATIC FUNCTION kalk_azur_sql()
 
 
 
-STATIC FUNCTION dokumenti_iz_pripreme_u_matricu()
+FUNCTION kalk_dokumenti_iz_pripreme_u_matricu()
 
    LOCAL _arr := {}
    LOCAL _scan

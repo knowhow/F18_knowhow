@@ -88,7 +88,7 @@ FUNCTION kalk_dokument_postoji( cFirma, cIdVd, cBroj )
 
    cWhere := "idfirma = " + _sql_quote( cFirma ) 
    cWhere += " AND idvd = " + _sql_quote( cIdVd ) 
-   cWhere += " AND brdok = " + _sql_quote( cBroj ) )
+   cWhere += " AND brdok = " + _sql_quote( cBroj )
 
    IF table_count( "fmk.kalk_doks", cWhere ) > 0
       lExist := .T.

@@ -20,7 +20,7 @@ STATIC lSvakaHeader := .T.
 // tekuca linija reporta
 STATIC nCurrLine := 0
 
-STATIC cRptNaziv := "Izvjestaj KUF na dan "
+STATIC cRptNaziv := "Izvještaj KUF na dan "
 
 STATIC cTbl := "kuf"
 
@@ -115,7 +115,7 @@ FUNCTION rpt_kuf( nBrDok, cIdTarifa )
 
       nX += 2
 
-      @ m_x + nX, m_y + 2 SAY "Eksport izvjestaja u DBF (D/N) ?" GET _export ;
+      @ m_x + nX, m_y + 2 SAY8 "Eksport izvještaja u DBF (D/N) ?" GET _export ;
          VALID _export $ "DN" PICT "@!"
 
       nX += 2
@@ -149,7 +149,7 @@ FUNCTION rpt_kuf( nBrDok, cIdTarifa )
       cHeader :=  "Dokument KUF: " + cPom + ", na dan " + DToC( Date() )
    ENDIF
 
-   AAdd( aHeader, "Preduzece: " + my_firma() )
+   AAdd( aHeader, "Preduzeće: " + my_firma() )
    AAdd( aHeader, cHeader )
 
    IF !Empty( cTar )
@@ -177,7 +177,7 @@ FUNCTION rpt_kuf( nBrDok, cIdTarifa )
 
    ENDIF
 
-   AAdd( aZagl, { cPom11,  cPom21, "Datum", "Tar.",  "Dobavljac", "Broj",  "Opis",  "iznos", "izn.",    "izn. 2", "iznos" } )
+   AAdd( aZagl, { cPom11,  cPom21, "Datum", "Tar.",  "Dobavljač", "Broj",  "Opis",  "iznos", "izn.",    "izn. 2", "iznos" } )
    AAdd( aZagl, { cPom12,  cPom22,  "",     "kat.",      "(naziv, ident. broj)",      "RN",     "",    "bez PDV", "PDV", "PDV NP", "sa PDV" } )
    AAdd( aZagl, { "(1)",   "(2)",  "(3)",   "(4)",   "(5)",  "(6)",     "(7)", "(8)", "(9)",  "(10)",  "(11) = (8+9+10)" } )
 
@@ -554,7 +554,7 @@ STATIC FUNCTION r_zagl()
    P_COND
    B_ON
    FOR i := 1 TO Len( aHeader )
-      ? aHeader[ i ]
+      ?U aHeader[ i ]
       ++nCurrLine
    NEXT
    B_OFF
@@ -576,11 +576,11 @@ STATIC FUNCTION r_zagl()
                nMrgWidth += aZaglLen[ nCol + nMrg - 1 ]
                nMrgWidth ++
             NEXT
-            ?? PadC( cPom, nMrgWidth )
+            ??U PadC( cPom, nMrgWidth )
             ?? " "
             nCol += ( nMergirano - 1 )
          ELSE
-            ?? PadC( aZagl[ i, nCol ], aZaglLen[ nCol ] )
+            ??U PadC( aZagl[ i, nCol ], aZaglLen[ nCol ] )
             ?? " "
          ENDIF
       NEXT

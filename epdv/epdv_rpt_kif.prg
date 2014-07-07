@@ -21,7 +21,7 @@ STATIC lSvakaHeader := .T.
 // tekuca linija reporta
 STATIC nCurrLine := 0
 
-STATIC cRptNaziv := "Izvjestaj KIF na dan "
+STATIC cRptNaziv := "Izvještaj KIF na dan "
 
 STATIC cTbl := "kif"
 
@@ -115,7 +115,7 @@ FUNCTION rpt_kif( nBrDok, cIdTarifa )
 
       nX += 2
 
-      @ m_x + nX, m_y + 2 SAY "Eksport izvjestaja u DBF (D/N) ?" GET _export ;
+      @ m_x + nX, m_y + 2 SAY8 "Eksport izvještaja u DBF (D/N) ?" GET _export ;
          VALID _export $ "DN" PICT "@!"
 
 
@@ -148,7 +148,7 @@ FUNCTION rpt_kif( nBrDok, cIdTarifa )
       cHeader :=  "Dokument KIF: " + cPom + ", na dan " + DToC( Date() )
    ENDIF
 
-   AAdd( aHeader, "Preduzece: " + my_firma() )
+   AAdd( aHeader, "Preduzeće: " + my_firma() )
 
 
    AAdd( aHeader, cHeader )
@@ -518,7 +518,7 @@ STATIC FUNCTION r_zagl()
    P_COND
    B_ON
    FOR i := 1 TO Len( aHeader )
-      ? aHeader[ i ]
+      ?U aHeader[ i ]
       ++nCurrLine
    NEXT
    B_OFF
@@ -542,11 +542,11 @@ STATIC FUNCTION r_zagl()
                nMrgWidth += aZaglLen[ nCol + nMrg - 1 ]
                nMrgWidth ++
             NEXT
-            ?? PadC( cPom, nMrgWidth )
+            ??U PadC( cPom, nMrgWidth )
             ?? " "
             nCol += ( nMergirano - 1 )
          ELSE
-            ?? PadC( aZagl[ i, nCol ], aZaglLen[ nCol ] )
+            ??U PadC( aZagl[ i, nCol ], aZaglLen[ nCol ] )
             ?? " "
          ENDIF
       NEXT

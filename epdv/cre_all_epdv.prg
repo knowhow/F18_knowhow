@@ -143,7 +143,6 @@ AADD(aDBf,{ "datum_2"      , "D" ,   8 ,  0 })
 // datum zakljucavanja
 AADD(aDBf,{ "datum_3"      , "D" ,   8 ,  0 })
 
-
 // identifikacijski broj
 AADD(aDBf,{ "id_br"      , "C" ,   12 ,  0 })
 

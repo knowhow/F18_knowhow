@@ -653,7 +653,7 @@ STATIC FUNCTION fakt_print_dokument()
 
    fakt_set_broj_dokumenta()
 
-   _a_fakt_doks := fakt_dokumenti_u_pripremi()
+   _a_fakt_doks := fakt_dokumenti_pripreme_u_matricu()
 
    IF Len( _a_fakt_doks ) == 0
       MsgBeep( "Postojeći dokumenti u pripremi vec postoje !" )

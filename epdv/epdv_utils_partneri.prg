@@ -29,8 +29,6 @@ FUNCTION s_partner( cIdPartn )
    cPom := ""
 
    cPom += AllTrim( naz )
-
-
    cMjesto := AllTrim( mjesto )
    IF Empty( cMjesto )
       cMjesto := "-NEP.MJ-"
@@ -42,7 +40,12 @@ FUNCTION s_partner( cIdPartn )
 
    cPom += ", " + cMjesto
 
-   cIdBroj := firma_id_broj( cIdPartn )
+   cIdBroj := firma_pdv_broj( cIdPartn )
+
+   IF EMPTY( cIdBroj )
+       cIdBroj := firma_id_broj( cIdPartn ) 
+   ENDIF
+
    IF Empty( cIdBroj )
       cIdBroj := "-NEP.ID-"
    ENDIF
@@ -52,6 +55,7 @@ FUNCTION s_partner( cIdPartn )
    PopWa()
 
    RETURN cPom
+
 
 // -----------------------------------------------
 // podaci o mojoj firmi ubaceni u partnera "10"
@@ -90,7 +94,7 @@ FUNCTION my_firma( lRetArray )
 
    cNaziv := naz
    cMjesto := mjesto
-   cIdBroj := firma_id_broj( gFirma )
+   cIdBroj := firma_pdv_broj( gFirma )
    cAdresa := adresa
    cPtt := ptt
 

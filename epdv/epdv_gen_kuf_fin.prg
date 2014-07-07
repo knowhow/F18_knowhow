@@ -316,11 +316,6 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
             ENDIF
          ENDCASE
 		
-			
-	
-
-	
-	
          nCount ++
 
          cPom := "SUBAN : " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok
@@ -329,21 +324,14 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
          cPom := "SUBAN cnt : " + Str( nCount, 6 )
          @ m_x + 4, m_y + 2 SAY cPom
 	
-	
-	
-         // tarifa koja se nalazi unutar dokumenta
          cDokTar := ""
 	
          dDMinD := datdok
          dDMaxD := datdok
 	
-         // do while !eof() .and. cBrDok == brnal .and. cIdTipDok == IdVN .and. cIdFirma == IdFirma
-
-         // zadaje se formula za tarifu
          lSkip2 := .F.
          IF !Empty( cTarFormula )
             IF ! &( cTarFormula )
-               // npr. ABS(trazi_kto("5431")>0)
                lSkip2 := .T.
                SKIP
                LOOP
@@ -381,7 +369,6 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
             nIznos := -iznosbhd
          ENDIF
 		
-         // broj veze
          cBrDok := brdok
 		
          _iznos += nIznos
@@ -389,11 +376,7 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
          SELECT SUBAN
          SKIP
 		
-         // enddo
-
-	
          IF ( cRazbDan == "D" )
-            // razbij po danima
             IF dDMinD <> dDMaxD
                MsgBeep( "U dokumentu " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok + "  se nalaze datumi " + DToC( dDMaxD ) + "-" + DToC( dDMaxD ) + "##" + ;
                   "To nije uredu je se promet razbija po danima !!!" )
@@ -402,46 +385,34 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
          ENDIF
 
          IF cRazbDan <> "D"
-            // nije po danima
-            // za jedan dokument se uzima
             EXIT
-            // ako pak jeste "D" onda se vrti u petlji
          ENDIF
 
-         // datumski interval
       ENDDO
 
-      // za datum uzmi datum dokumenta ili najveci datum gore pronadjen
       _datum := dDMax
 	
       IF lSkip .OR. lSkip2
-         // vrati se gore
          SELECT SUBAN
          LOOP
       ENDIF
 	
       PRIVATE _uk_pdv :=  0
       PushWa()
-      // --------------------------------------------------------------
       SELECT SUBAN
       GO ( nRecNoSuban )
 
       _iznos := Round( _iznos, nZaok2 )
 	
       IF !Empty( cIdTar )
-         // uzmi iz sg sifrarnika tarifu kojom treba setovati
          _id_tar := cIdTar
       ELSE
-         // uzmi iz dokumenta
          _id_tar := cDokTar
       ENDIF
 
       DO CASE
       CASE AllTrim( cSBrDok ) == "#EXT#"
-         // extractuj ako je empty cBrDok
          IF Empty( cBrDok )
-            // ako nije stavljen broj dokumenta
-            // izvuci oznaku iz opisa
             _src_br := extract_oznaka( cOpisSuban )
             _src_br_2 := _src_br
          ELSE
@@ -454,7 +425,6 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
          _src_br_2 := cSBrDok
       OTHERWISE
 	
-         // broj dokumenta
          _src_br := cBrDok
          _src_br_2 := cBrDok
       ENDCASE
@@ -463,7 +433,6 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
       IF !Empty( cFormBPDV )
          _i_b_pdv := &cFormBPdv
       ELSE
-         // nema formule koristi ukupan iznos bez pdv-a
          _i_b_pdv := _iznos / 1.17
       ENDIF
       _i_b_pdv := Round( _i_b_pdv, nZaok )
@@ -471,27 +440,22 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
       IF !Empty( cFormPDV )
          _i_pdv := &cFormPdv
       ELSE
-         // nema formule koristi ukupan iznos bez pdv-a
          _i_pdv :=  _iznos / 1.17 * 0.17
       ENDIF
       _i_pdv := Round( _i_pdv, nZaok )
-      // ----------------------------------------------------------
       PopWa()
 	
-      // snimi gornje podatke
       SELECT P_KUF
       APPEND BLANK
       Gather()
-	
 
       SELECT SUBAN
+
    ENDDO
 
    RETURN
 
 
-// ----------------------------------------------
-// ----------------------------------------------
 STATIC FUNCTION zav_tr( nZ1, nZ2, nZ3, nZ4, nZ5 )
 
    LOCAL Skol := 0
@@ -586,10 +550,6 @@ STATIC FUNCTION zav_tr( nZ1, nZ2, nZ3, nZ4, nZ5 )
 
    RETURN
 
-// -----------------------------------------------------------
-// trazi dobavljaca za trosak - mora biti u blizini - iznad ili
-// ispod samog troska
-// -----------------------------------------------------------
 STATIC FUNCTION trazi_dob( nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr )
 
    LOCAL i
@@ -600,34 +560,23 @@ STATIC FUNCTION trazi_dob( nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr )
 
    FOR i := -3 TO 3
 
-      // idi na zadati slog ...
       GO ( nRecNo )
-      // pa onda skoci dva unazad i dva unaprijed ...
       SKIP i
-
 
       cKto := Left( idkonto, 3 )
 
       IF ( cKto $ AllTrim( gL_kto_dob ) ) .AND. ( IdFirma ==  cIdFirma ) .AND. ( IdVn == cIdVn ) .AND. ( BrNal == cBrNal ) .AND. ( BrDok == cBrDok )
-         // dobavljac
-         // ili kreditor
          cIdPartner := idpartner
-
          PopWa()
          RETURN cIdPartner
       ENDIF
 
    NEXT
 
-   // nema nista - nisam nista nasao
    PopWa()
 
    RETURN ""
 
-// -----------------------------------------------------------
-// trazi pdv za odredjenu fakturu dobavljaca
-// ispod samog troska
-// -----------------------------------------------------------
 FUNCTION traz_pdv_dob( nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr, cOpis )
 
    LOCAL nPdvIznos
@@ -651,24 +600,17 @@ FUNCTION traz_pdv_dob( nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr, cOpis )
 
    FOR i := -15 TO 15
 
-      // idi na zadati slog ...
       GO ( nRecNo )
-      // pa onda skoci dva unazad i dva unaprijed ...
       SKIP i
 
       cKto := Left( idkonto, 3 )
-
-      // 543 i 260 moraju imati identicnu oznaku broja dokumenta
-      // ili u samom broju ili u opisu
 
       IF cKto $ AllTrim( gKt_updv ) .AND. ( IdFirma ==  cIdFirma ) .AND. ( IdVn == cIdVn ) .AND. ( BrNal == cBrNal ) .AND. ;
             ( ( !Empty( BrDok ) .AND. ( BrDok == cBrDok ) ) .OR. opis_i_oznaka( cOpis, opis ) )
 
          IF d_p == "1"
-            // nasao sam stavku pdv-a koja se veze za dobavljaca
             nPdvIznos := iznosbhd
          ELSE
-            //
             nPdvIznos := -iznosbhd
          ENDIF
 	
@@ -678,7 +620,6 @@ FUNCTION traz_pdv_dob( nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr, cOpis )
 
    NEXT
 
-   // nema nista - nisam nista nasao
    PopWa()
 
    RETURN nPdvIznos
@@ -755,19 +696,14 @@ FUNCTION trazi_kto( cIdKonto, nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr, cOp
 
    FOR i := -15 TO 15
 
-      // idi na zadati slog ...
       GO ( nRecNo )
-      // pa onda skoci dva unazad i dva unaprijed ...
       SKIP i
-
 
       IF ( cIdKonto == IdKonto ) .AND. ( IdFirma ==  cIdFirma ) .AND. ( IdVn == cIdVn ) .AND. ( BrNal == cBrNal ) .AND. ( BrDok == cBrDok )
 
          IF ( d_p == "1" )
-            // nasao sam stavku koja je isti konto
             nIznos := iznosbhd
          ELSE
-            //
             nIznos := -iznosbhd
          ENDIF
 	
@@ -777,7 +713,6 @@ FUNCTION trazi_kto( cIdKonto, nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr, cOp
 
    NEXT
 
-   // nema nista - nisam nista nasao
    PopWa()
 
    RETURN nIznos

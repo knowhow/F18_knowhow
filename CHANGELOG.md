@@ -1,3 +1,7 @@
+1.7.113  2014-07-07, vsasa
+
+  - KALK, ažuriranje dokumenta u jednoj transakciji
+ 
 1.7.112  2014-07-07, vsasa
 
   - FAKT, ažuriranje dokumenta u jednoj transakciji

@@ -1,3 +1,7 @@
+1.7.111  2014-07-07, vsasa
+
+  - LD, specifikacija po rasponima primanja, vraćen stari izvještaj
+ 
 1.7.110  2014-07-03, vsasa
 
   - RNAL, ažuriranje naloga i promjena u log-u

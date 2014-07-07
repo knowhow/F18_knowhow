@@ -68,7 +68,7 @@ FUNCTION rpt_p_pdv()
    nX ++
 
    IF cSource == "1"
-      @ m_x + nX, m_y + 2 SAY " azurirati podatke u PDV bazu ?" GET cAzurirati ;
+      @ m_x + nX, m_y + 2 SAY8 " Ažurirati podatke u PDV bazu (D/N) ?" GET cAzurirati ;
          PICT "@!" ;
          VALID cAzurirati $ "DN"
       READ
@@ -295,7 +295,7 @@ STATIC FUNCTION f_iz_kuf_kif()
    _pot_datum := Date()
 	
    Box(, 8, 65 )
-   @ m_x + 1, m_y + 2 SAY "Prenos PDV iz predhodnog perioda (KM) ?" GET _u_pdv_pp ;
+   @ m_x + 1, m_y + 2 SAY "Prenos PDV-a iz predhodnog perioda (KM) ?" GET _u_pdv_pp ;
       PICT PIC_IZN()
 	
    @ m_x + 3, m_y + 2 SAY "- Potpis -----------------"
@@ -484,7 +484,7 @@ STATIC FUNCTION show_rpt()
    show_raz_1()
 
    ?? rpt_lm()
-   ?? "5. Postanski broj/Mjesto : "
+   ??U "5. Poštanski broj/Mjesto : "
    ?? po_ptt
    ?? " / "
    ?? po_mjesto
@@ -533,8 +533,8 @@ STATIC FUNCTION show_rpt()
    ?? rpt_lm()
    ?? Space( RPT_RI )
 
-   cPom := PadR( "13. Isp. oslobodjene PDV-a ", RPT_W2 ) + Transform( i_neop, PIC_IZN() )
-   ?? PadL( cPom, RPT_COL - RPT_RI + 1 )
+   cPom := PadR( "13. Isp. oslobođene PDV-a ", RPT_W2 ) + Transform( i_neop, PIC_IZN() )
+   ??U PadL( cPom, RPT_COL - RPT_RI + 1 )
 
    ?? Space( RPT_GAP )
 
@@ -573,7 +573,7 @@ STATIC FUNCTION show_rpt()
    ?? Space( RPT_RI )
 
    B_ON
-   ?? PadR( "PDV obracunat na ulaze (dobra i usluge)", RPT_COL - RPT_RI )
+   ??U PadR( "PDV obračunat na ulaze (dobra i usluge)", RPT_COL - RPT_RI )
    B_OFF
 
 
@@ -613,17 +613,17 @@ STATIC FUNCTION show_rpt()
    ?? Space( RPT_GAP )
 
    ?? Space( RPT_RI )
-   cPom := PadR( "43. Pausalna naknada za poljoprivrednike ", RPT_W2 ) + Transform( u_pdv_43, PIC_IZN() )
-   ?? PadL( cPom, RPT_COL - RPT_RI + 1 )
+   cPom := PadR( "43. Paušalna naknada za poljoprivrednike ", RPT_W2 ) + Transform( u_pdv_43, PIC_IZN() )
+   ??U PadL( cPom, RPT_COL - RPT_RI + 1 )
 
    show_raz_1()
    show_raz_1()
 
    ?? rpt_lm()
    ?? Space( RPT_RI )
-   cPom :=  PadR( "51. PDV obracunat na izlaz (dobra i usluge) ",  RPT_W2 - RPT_BOLD_DELTA ) + Transform( i_pdv_uk, PIC_IZN() )
+   cPom :=  PadR( "51. PDV obračunat na izlaz (dobra i usluge) ",  RPT_W2 - RPT_BOLD_DELTA ) + Transform( i_pdv_uk, PIC_IZN() )
    B_ON
-   ?? PadL( cPom, RPT_COL - RPT_RI - RPT_BOLD_DELTA + 1 )
+   ??U PadL( cPom, RPT_COL - RPT_RI - RPT_BOLD_DELTA + 1 )
    B_OFF
 
    ?? Space( RPT_GAP )
@@ -659,7 +659,7 @@ STATIC FUNCTION show_rpt()
 
    B_ON
    U_ON
-   ?? PadR( "III. STATISTICKI PODACI", RPT_COL - RPT_BOLD_DELTA )
+   ??U PadR( "III. STATISTIČKI PODACI", RPT_COL - RPT_BOLD_DELTA )
    U_OFF
    B_OFF
 
@@ -686,14 +686,14 @@ STATIC FUNCTION show_rpt()
    show_raz_1()
    ?? rpt_lm()
    ?? Space( RPT_RI )
-   cPom := PadR( "34. Brcko Distrikta ", RPT_W2 ) + Transform( i_pdv_nr3, PIC_IZN() )
-   ?? PadL( cPom, RPT_COL - RPT_RI + 1 )
+   cPom := PadR( "34. Brčko Distrikta ", RPT_W2 ) + Transform( i_pdv_nr3, PIC_IZN() )
+   ??U PadL( cPom, RPT_COL - RPT_RI + 1 )
 
    show_raz_1()
    show_raz_1()
 
    ?? rpt_lm()
-   ?? "Pod krivicnom i materijalnom odgovornoscu potvrdjujem da su podaci u PDV prijavi potuni i tacni"
+   ??U "Pod krivičnom i materijalnom odgovornošću potvrđujem da su podaci u PDV prijavi potuni i tačni"
 
    show_raz_1()
    show_raz_1()

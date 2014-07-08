@@ -495,35 +495,28 @@ STATIC FUNCTION show_rpt()
       ?? " "
 
       IF LEN( aDobavljacNaziv ) > 1
+
+          nCurrLine := nCurrLine + 1
+
+          epdv_rpt_kuf_kif_nova_stranica( @nCurrLine, nPageLimit, lSvakaHeader )
+
           ?
           @ prow(), nPos SAY aDobavljacNaziv[2]
+
       ENDIF
 
       nUBPdv += i_b_pdv
       nUPdv += nPdv
       nUPdv2 += nPdv2
 
-      IF nCurrLine > nPageLimit
-         FF
-         nCurrLine := 0
-         IF lSvakaHeader
-            r_zagl()
-         ENDIF
-		
-      ENDIF
+      epdv_rpt_kuf_kif_nova_stranica( @nCurrLine, nPageLimit, lSvakaHeader )
 
       SKIP
 
    ENDDO
 
-   IF ( nCurrLine + 3 ) > nPageLimit
-      FF
-      nCurrLine := 0
-      IF lSvakaHeader
-         r_zagl()
-      ENDIF
-   ENDIF
-
+   nCurrLine := nCurrLine + 3
+   epdv_rpt_kuf_kif_nova_stranica( @nCurrLine, nPageLimit, lSvakaHeader )
 
    // ukupno izvjestaj
    r_linija()
@@ -554,6 +547,19 @@ STATIC FUNCTION show_rpt()
 
    FF
    END PRINT
+
+   RETURN
+
+
+FUNCTION epdv_rpt_kuf_kif_nova_stranica( nCurrLine, nPageLimit, lSvakaHeader )
+
+   IF nCurrLine > nPageLimit
+      FF
+      nCurrLine := 0
+      IF lSvakaHeader
+         r_zagl()
+      ENDIF
+   ENDIF
 
    RETURN
 

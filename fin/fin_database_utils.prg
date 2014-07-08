@@ -12,6 +12,41 @@
 #include "fin.ch"
 
 
+
+FUNCTION fin_admin_opcije_menu()
+
+   PRIVATE opc := {}
+   PRIVATE opcexe := {}
+   PRIVATE Izbor := 1
+
+   AAdd( opc, "1. provjera integriteta tabela - ima u suban nema u nalog " )
+   AAdd( opcexe, {|| ImaUSubanNemaUNalog() } )
+
+   AAdd( opc, "2. pregled datumskih gresaka u nalozima" )
+   AAdd( opcexe, {|| daterr_rpt() } )
+
+   AAdd( opc, "4. kontrola podataka nakon importa iz FMK" )
+   AAdd( opcexe, {|| f18_test_data() } )
+
+   AAdd( opc, "------------------------------------------------------" )
+   AAdd( opcexe, {|| NIL } )
+
+   AAdd( opc, "B. podešenje brojaca naloga" )
+   AAdd( opcexe, {|| fin_set_param_broj_dokumenta() } )
+
+   AAdd( opc, "------------------------------------------------------" )
+   AAdd( opcexe, {|| NIL } )
+   AAdd( opc, "R. fmk pravila - rules " )
+   AAdd( opcexe, {|| p_fmkrules(,,, aRuleCols, bRuleBlock ) } )
+
+
+   Menu_SC( "adm" )
+
+   RETURN
+
+
+
+
 // ----------------------------------------------------------------
 // vraca naredni redni broj fin naloga
 // ----------------------------------------------------------------

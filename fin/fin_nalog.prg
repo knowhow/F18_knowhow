@@ -106,7 +106,7 @@ FUNCTION fin_nalog_priprema_kalk( lAuto )
          fin_gen_sint_stavke_kalk()
       ENDIF
 	
-      fin_azur( lAuto )
+      fin_azuriranje_naloga( lAuto )
 
    ENDIF
 

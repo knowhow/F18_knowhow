@@ -11,6 +11,8 @@
 
 #include "fin.ch"
 
+
+
 FUNCTION povrat_fin_naloga( lStorno )
 
    LOCAL _rec
@@ -19,7 +21,8 @@ FUNCTION povrat_fin_naloga( lStorno )
    LOCAL _field_ids, _where_block
    LOCAL _t_rec
    LOCAL _tbl
-   LOCAL _brisi_nalog
+   LOCAL lBrisiKumulativ := .T.
+   LOCAL lOk := .T.
 
    IF lStorno == NIL
       lStorno := .F.
@@ -73,16 +76,100 @@ FUNCTION povrat_fin_naloga( lStorno )
    BoxC()
 
    IF Pitanje(, "Nalog " + cIdFirma + "-" + cIdVN + "-" + cBrNal + ;
-         iif( lStorno," stornirati", " povuci u pripremu" ) + " (D/N) ?", "D" ) == "N"
+         IIF( lStorno," stornirati", " povuci u pripremu" ) + " (D/N) ?", "D" ) == "N"
       my_close_all_dbf()
       RETURN
    ENDIF
 
-   _brisi_nalog := .T.
-
    IF !lStorno
-      _brisi_nalog := ( Pitanje(, "Nalog " + cIdFirma + "-" + cIdVN + "-" + cBrNal + " izbrisati iz baze ažuriranih dokumenata (D/N) ?", "D" ) == "D" )
+      lBrisiKumulativ := Pitanje(, "Nalog " + cIdFirma + "-" + cIdVN + "-" + ALLTRIM( cBrNal ) + " izbrisati iz baze ažuriranih dokumenata (D/N) ?", "D" ) == "D"
    ENDIF
+
+   kopiraj_fin_nalog_u_tabelu_pripreme( cIdFirma, cIdVn, cBrNal, lStorno )
+
+   IF !lBrisiKumulativ .OR. lStorno
+      my_close_all_dbf()
+      RETURN
+   ENDIF
+
+   IF !brisi_fin_nalog_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
+       MsgBeep( "Greška sa brisanjem naloga iz kumulativa !#Poništavam operaciju." )
+   ENDIF
+
+   my_close_all_dbf()
+
+   RETURN
+
+
+
+
+STATIC FUNCTION brisi_fin_nalog_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
+
+   LOCAL _rec, cTbl
+   LOCAL lOk := .T.
+   LOCAL lRet := .F.
+
+   _rec := hb_Hash()
+   _rec[ "idfirma" ] := cIdFirma
+   _rec[ "idvn" ] := cIdVn
+   _rec[ "brnal" ] := cBrNal
+
+   sql_table_update( nil, "BEGIN" )
+      
+   IF !f18_lock_tables( { "fin_suban", "fin_nalog", "fin_sint", "fin_anal" }, .T. )
+      sql_table_update( nil, "END" )
+      MsgBeep( "Ne mogu zaključati tabele !#Operacija povrata poništena." )
+      RETURN lRet
+   ENDIF
+
+   Box(, 5, 70 )
+
+   cTbl := "fin_suban"
+   @ m_x + 1, m_y + 2 SAY "delete " + cTbl
+   SELECT suban
+   lOk := delete_rec_server_and_dbf( cTbl, _rec, 2, "CONT" )
+
+   IF lOk
+      cTbl := "fin_anal"
+      @ m_x + 2, m_y + 2 SAY "delete " + cTbl
+      SELECT anal
+      lOk := delete_rec_server_and_dbf( cTbl, _rec, 2, "CONT" )
+   ENDIF
+
+   IF lOk
+      cTbl := "fin_sint"
+      @ m_x + 3, m_y + 2 SAY "delete " + cTbl
+      SELECT sint
+      lOk := delete_rec_server_and_dbf( cTbl, _rec, 2, "CONT" )
+   ENDIF
+
+   IF lOk
+      cTbl := "fin_nalog"
+      @ m_x + 4, m_y + 2 SAY "delete " + cTbl
+      SELECT nalog
+      lOk := delete_rec_server_and_dbf( cTbl, _rec, 1, "CONT" )
+   ENDIF
+
+   BoxC()
+
+   IF lOk
+      lRet := .T.
+      f18_free_tables( { "fin_suban", "fin_nalog", "fin_sint", "fin_anal" } )
+      sql_table_update( nil, "END" )
+      log_write( "F18_DOK_OPER: povrat finansijskog naloga u pripremu: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+      log_write( "F18_DOK_OPER: greška sa povratom finansijskog naloga u pripremu: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
+   ENDIF
+
+   RETURN lRet
+
+
+
+
+STATIC FUNCTION kopiraj_fin_nalog_u_tabelu_pripreme( cIdFirma, cIdVn, cBrNal, lStorno ) 
+
+   LOCAL _rec
 
    SELECT suban
    SET ORDER TO TAG "4"
@@ -112,78 +199,6 @@ FUNCTION povrat_fin_naloga( lStorno )
 
    ENDDO
 
-   MsgC()
-
-   IF !_brisi_nalog
-      my_close_all_dbf()
-      RETURN
-   ENDIF
-
-   IF !lStorno
-
-      _del_rec := hb_Hash()
-      _del_rec[ "idfirma" ] := cIdFirma
-      _del_rec[ "idvn" ]    := cIdVn
-      _del_rec[ "brnal" ]   := cBrNal
-
-      _ok := .T.
-
-      IF !f18_lock_tables( { "fin_suban", "fin_nalog", "fin_sint", "fin_anal", "fin_suban" } )
-         MsgBeep( "lockovanje FIN tabela neuspjesno !?" )
-         RETURN .F.
-      ENDIF
-
-      Box(, 5, 70 )
-
-      sql_table_update( nil, "BEGIN" )
-
-      _tbl := "fin_suban"
-      @ m_x + 1, m_y + 2 SAY "delete " + _tbl
-      // algoritam 2  - nivo dokumenta
-      SELECT suban
-      _ok := _ok .AND. delete_rec_server_and_dbf( _tbl, _del_rec, 2, "CONT" )
-
-      _tbl := "fin_anal"
-      @ m_x + 2, m_y + 2 SAY "delete " + _tbl
-      // algoritam 2  - nivo dokumenta
-      SELECT anal
-      _ok := _ok .AND. delete_rec_server_and_dbf( _tbl, _del_rec, 2, "CONT" )
-
-      _tbl := "fin_sint"
-      @ m_x + 3, m_y + 2 SAY "delete " + _tbl
-      // algoritam 2  - nivo dokumenta
-      SELECT sint
-      _ok := _ok .AND. delete_rec_server_and_dbf( _tbl, _del_rec, 2, "CONT" )
-
-      _tbl := "fin_nalog"
-      @ m_x + 4, m_y + 2 SAY "delete " + _tbl
-      // algoritam 1 - jedini algoritam za naloge
-      SELECT nalog
-      _ok := _ok .AND. delete_rec_server_and_dbf( _tbl, _del_rec, 1, "CONT" )
-
-      IF _ok
-         f18_free_tables( { "fin_suban", "fin_nalog", "fin_sint", "fin_anal", "fin_suban" } )
-         sql_table_update( nil, "END" )
-      ENDIF
-
-      BoxC()
-
-
-   ENDIF
-
-   IF !_ok
-      sql_table_update( nil, "ROLLBACK" )
-      f18_free_tables( { "fin_suban", "fin_nalog", "fin_sint", "fin_anal", "fin_suban" } )
-
-      MsgBeep( "Ajoooooooj del suban/anal/sint/nalog nije ok ?! " + cIdFirma + "-" + cIdVn + "-" + cBrNal )
-   ELSE
-      log_write( "F18_DOK_OPER: povrat finansijskog naloga u pripremu: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
-   ENDIF
-
-   my_close_all_dbf()
-
    RETURN
-
-
 
 

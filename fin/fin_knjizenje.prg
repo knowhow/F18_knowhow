@@ -787,12 +787,10 @@ FUNCTION edit_fin_pripr()
 
          _log_info := fin_pripr->idfirma + "-" + fin_pripr->idvn + "-" + fin_pripr->brnal
 
-         // ima li potrebe resetovati gl.brojac
          fin_reset_broj_dokumenta( fin_pripr->idfirma, fin_pripr->idvn, fin_pripr->brnal )
          
 		 my_dbf_zap()
 
-         // brisi i pomocne tabele psuban, panal....
          BrisiPBaze()
 
          log_write( "F18_DOK_OPER: fin, brisanje pripreme: " + _log_info, 2  )
@@ -814,34 +812,29 @@ FUNCTION edit_fin_pripr()
 
    CASE Upper( Chr( Ch ) ) == "X"
 
-      // setuj fin broj dokumenta ako ima potrebe za tim
       fin_set_broj_dokumenta()
 
       my_close_all_dbf()
       fin_gen_ptabele_stampa_nalozi( .T. )
       my_close_all_dbf()
 
-      fin_azur( .T. )
+      fin_azuriranje_naloga( .T. )
       o_fin_edit()
       RETURN DE_REFRESH
 
 
    CASE Ch == K_ALT_A
 
-      // setuj fin broj dokumenta ako je potrebno
       fin_set_broj_dokumenta()
-      // azuriraj dokument
-      fin_azur()
+      fin_azuriranje_naloga()
       o_fin_edit()
       RETURN DE_REFRESH
 
    CASE Ch == K_ALT_B
 
-      // setuj fin broj dokumenta ako je potrebno
       fin_set_broj_dokumenta()
 
       my_close_all_dbf()
-      // blagajnicki izvjestaj
       Blagajna()
 
       o_fin_edit()
@@ -866,7 +859,7 @@ FUNCTION edit_fin_pripr()
    CASE Upper( Chr( Ch ) ) == "P"
 
       IF RecCount() != 0
-         MsgBeep( "Povrat nedozvoljen, imate stavke u pripremi" )
+         MsgBeep( "Povrat nije nedozvoljen, priprema nije prazna !" )
          RETURN DE_CONT
       ENDIF
 

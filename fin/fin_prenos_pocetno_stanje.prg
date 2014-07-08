@@ -127,7 +127,7 @@ FUNCTION fin_pocetno_stanje_sql()
    my_close_all_dbf()
 
 
-   fin_azur( .T. )
+   fin_azuriranje_naloga( .T. )
 
    MsgBeep( "Dokument formiran i automatski ažuriran..." )
 

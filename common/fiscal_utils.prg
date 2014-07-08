@@ -443,7 +443,7 @@ FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, level, drv 
       IF ( !is_ispravna_kolicina( _kolicina ) .OR. !is_ispravna_cijena( _cijena ) ) ;
             .OR. !is_ispravna_cijena( _plu_cijena )
 		
-         IF level > 1 .AND. _kolicina > 0
+         IF ( level > 1 .AND. _kolicina > 0 )
 			
             prepakuj_vrijednosti_na_100_komada( @_kolicina, @_cijena, @_plu_cijena, @_naziv )
 			

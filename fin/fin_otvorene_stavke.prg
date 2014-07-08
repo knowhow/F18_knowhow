@@ -475,7 +475,9 @@ STATIC FUNCTION ponisti_markere_postojecih_stavki( cIdFirma, cIdKonto, cIdPartne
       RETURN lRet
    ENDIF
 
-   MsgO( "Brišem markere ..." )
+   Box(, 3, 65 )
+  
+   @ m_x + 1, m_y + 2 SAY8 "Brišem markere postojećih stavki tabele..."
 
    DO WHILE !Eof() .AND. idfirma == cidfirma .AND. cIdKonto = IdKonto
          
@@ -489,6 +491,8 @@ STATIC FUNCTION ponisti_markere_postojecih_stavki( cIdFirma, cIdKonto, cIdPartne
       _rec := dbf_get_rec()
       _rec[ "otvst" ] := " "
 
+      @ m_x + 2, m_y + 2 SAY "nalog: " + _rec["idvn"] + "-" + ALLTRIM( _rec["brnal"] ) + " / stavka: " + _rec["rbr"]
+
       lOk := update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
 
       IF !lOk
@@ -499,7 +503,7 @@ STATIC FUNCTION ponisti_markere_postojecih_stavki( cIdFirma, cIdKonto, cIdPartne
 
    ENDDO
 
-   MSgC()
+   BoxC()
 
    IF lOk
       lRet := .T.

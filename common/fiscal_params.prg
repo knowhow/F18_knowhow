@@ -94,7 +94,7 @@ FUNCTION fiskalni_parametri_za_korisnika()
    set_metric( "fiscal_opt_active", my_user(), _fiscal )
 
    IF _fiscal_tek <> _fiscal
-       log_write( "fiskalne funkcije za korisnika " + my_user() + " : " + IF( _fiscal == "D", "aktivirane", "deaktivirane" ), 2 )
+       log_write( "fiskalne funkcije za korisnika " + my_user() + " : " + IIF( _fiscal == "D", "aktivirane", "deaktivirane" ), 2 )
    ENDIF
 
    IF _fiscal ==  "N" .OR. LastKey() == K_ESC

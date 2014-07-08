@@ -47,7 +47,7 @@ endif
 OStRunUndo(dDatOd, dDatDo, cPartn, cKonto, cDp, cVNal)
 
 if Pitanje(,"Pokrenuti opciju automatskog zatvaranja stavki?","D")=="D"
-	AutoZat(.t., cKonto, cPartn)
+	fin_automatsko_zatvaranje_otvorenih_stavki(.t., cKonto, cPartn)
 endif
 
 return

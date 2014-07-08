@@ -21,9 +21,9 @@ FUNCTION Ostav()
    PRIVATE gnLost := 0
 
    AAdd( opc, "1. ručno zatvaranje                                 " )
-   AAdd( opcexe, {|| RucnoZat() } )
+   AAdd( opcexe, {|| fin_rucno_zatvaranje_otvorenih_stavki() } )
    AAdd( opc, "2. automatsko zatvaranje" )
-   AAdd( opcexe, {|| AutoZat() } )
+   AAdd( opcexe, {|| fin_automatsko_zatvaranje_otvorenih_stavki() } )
    AAdd( opc, "3. kartica" )
    AAdd( opcexe, {|| SubKart( .T. ) } )
    AAdd( opc, "4. usporedna kartica dva konta" )
@@ -39,7 +39,7 @@ FUNCTION Ostav()
    AAdd( opc, "9. asistent otvorenih stavki" )
    AAdd( opcexe, {|| fin_asistent_otv_st() } )
    AAdd( opc, "B. brisanje svih markera otvorenih stavki" )
-   AAdd( opcexe, {|| brisanje_markera_otvorenih_stavki() } )
+   AAdd( opcexe, {|| fin_brisanje_markera_otvorenih_stavki() } )
    AAdd( opc, "U. OASIST - undo" )
    AAdd( opcexe, {|| OStUndo() } )
 
@@ -296,13 +296,11 @@ FUNCTION ZaglSpK()
 
 
 
-/*! \fn AutoZat()
- *  \brief Zatvaranje stavki automatski
- */
-FUNCTION AutoZat( lAuto, cKto, cPtn )
+FUNCTION fin_automatsko_zatvaranje_otvorenih_stavki( lAuto, cKto, cPtn )
 
    LOCAL _rec
    LOCAL  nDugBHD := 0, nPotBHD := 0
+   LOCAL lOk := .T.
 
    IF lAuto == nil
       lAuto := .F.
@@ -340,7 +338,6 @@ FUNCTION AutoZat( lAuto, cKto, cPtn )
       SET CURSOR ON
 
       cPobST := "N"
-      // pobrisati stavke koje su se uzimale zatvorenim
 
       @ m_x + 1, m_y + 2 SAY "AUTOMATSKO ZATVARANJE STAVKI"
       IF gNW == "D"
@@ -368,53 +365,35 @@ FUNCTION AutoZat( lAuto, cKto, cPtn )
 
    SELECT SUBAN
    SET ORDER TO TAG "3"
-   // IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)
    SEEK cIdFirma + cIdKonto
 
    EOF CRET
 
    IF cPobSt == "D" .AND. Pitanje(, "Želite li zaista pobrisati markere ??", "N" ) == "D"
-
-      MsgO( "Brisem markere ..." )
-
-      f18_lock_tables( { Lower( Alias() ) } )
-      sql_table_update( nil, "BEGIN" )
-
-      DO WHILE !Eof() .AND. idfirma == cidfirma .AND. cIdKonto = IdKonto // konto
-         IF !Empty( cIdPart )
-            IF ( cIdPart <> idpartner )
-               SKIP
-               LOOP
-            ENDIF
-         ENDIF
-
-         _rec := dbf_get_rec()
-         _rec[ "otvst" ] := " "
-         update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
-
-         SKIP
-
-      ENDDO
-
-      f18_free_tables( { Lower( Alias() ) } )
-      sql_table_update( nil, "END" )
-
-      MSgC()
-
+      IF !ponisti_markere_postojecih_stavki( cIdFirma, cIdKonto, cIdPart )
+         RETURN
+      ENDIF
    ENDIF
 
    Box( "count", 1, 30, .F. )
+
    nC := 0
+
    @ m_x + 1, m_y + 2 SAY "Zatvoreno:"
-   @ m_x + 1, m_y + 12 SAY nC  // brojac zatvaranja
+   @ m_x + 1, m_y + 12 SAY nC  
 
    SEEK cidfirma + cidkonto
    EOF CRET
 
-   f18_lock_tables( { "fin_suban" } )
    sql_table_update( nil, "BEGIN" )
 
-   DO WHILE !Eof() .AND. idfirma == cidfirma .AND. cIdKonto = IdKonto // konto
+   IF !f18_lock_tables( { "fin_suban" }, .T. )
+      sql_table_update( nil, "END" )
+      MsgBeep( "Ne mogu zaključati tabelu fin_suban !#Prekidam operaciju zatvaranja stavki." )
+      RETURN
+   ENDIF
+
+   DO WHILE !Eof() .AND. idfirma == cidfirma .AND. cIdKonto = IdKonto
 
       IF !Empty( cIdPart )
          IF ( cIdPart <> idpartner )
@@ -422,12 +401,13 @@ FUNCTION AutoZat( lAuto, cKto, cPtn )
             LOOP
          ENDIF
       ENDIF
+
       cIdPartner := IdPartner
       cBrDok := BrDok
       cOtvSt := " "
       nDugBHD := nPotBHD := 0
+
       DO WHILE !Eof() .AND. idfirma == cidfirma .AND. cIdKonto == IdKonto .AND. cIdPartner == IdPartner .AND. cBrDok == BrDok
-         // partner, brdok
          IF D_P = "1"
             nDugBHD += IznosBHD
             cOtvSt := "1"
@@ -439,23 +419,42 @@ FUNCTION AutoZat( lAuto, cKto, cPtn )
       ENDDO
 
       IF Abs( Round( nDugBHD - nPotBHD, 3 ) ) <= gnLOSt .AND. cOtvSt == "1"
+
          SEEK cIdFirma + cIdKonto + cIdPartner + cBrDok
-         @ m_x + 1, m_y + 12 SAY ++nC  // brojac zatvaranja
+         @ m_x + 1, m_y + 12 SAY ++nC 
+
          DO WHILE !Eof() .AND. cIdKonto = IdKonto .AND. cIdPartner == IdPartner .AND. cBrDok = BrDok
+
             _rec := dbf_get_rec()
             _rec[ "otvst" ] := "9"
-            update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+
+            lOk := update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+
+            IF !lOk
+               EXIT
+            ENDIF
+
             SKIP
+
          ENDDO
 
          log_write( "F18_DOK_OPER, automatsko zatvaranje stavki, OASIST, duguje: " + AllTrim( Str( nDugBHD, 12, 2 ) ) + ", potrazuje: " + AllTrim( Str( nPotBHD, 12, 2 ) ) + " firma: " + cIdFirma + " konto: " + cIdKonto, 2 )
 
-
       ENDIF
+
+      IF !lOk
+         EXIT
+      ENDIF
+
    ENDDO
 
-   f18_free_tables( { "fin_suban" } )
-   sql_table_update( nil, "END" )
+   IF lOk
+      f18_free_tables( { "fin_suban" } )
+      sql_table_update( nil, "END" )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+      MsgBeep( "Greška sa opcijom automatskog zatvaranja stavki !#Operacija poništena." )
+   ENDIF
 
    BoxC()
 
@@ -465,18 +464,74 @@ FUNCTION AutoZat( lAuto, cKto, cPtn )
 
 
 
-FUNCTION brisanje_markera_otvorenih_stavki()
+STATIC FUNCTION ponisti_markere_postojecih_stavki( cIdFirma, cIdKonto, cIdPartner )
 
-   IF Pitanje(, "Pobrisati sve markere otvorenih stavki (D/N) ?", "N" ) == "N"
-      RETURN
+   LOCAL _rec
+   LOCAL lRet := .F.
+   LOCAL lOk := .T.
+
+   sql_table_update( nil, "BEGIN" )
+      
+   IF !f18_lock_tables( { "fin_suban" }, .T. )
+      sql_table_update( nil, "END" )
+      RETURN lRet
    ENDIF
 
-   IF !f18_lock_tables( { "fin_suban" } )
-      MsgBeep( "Problem sa lokovanjem tabele fin_suban !!!" )
-      RETURN
+   MsgO( "Brišem markere ..." )
+
+   DO WHILE !Eof() .AND. idfirma == cidfirma .AND. cIdKonto = IdKonto
+         
+      IF !Empty( cIdPartner )
+         IF ( cIdPartner <> idpartner )
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
+
+      _rec := dbf_get_rec()
+      _rec[ "otvst" ] := " "
+
+      lOk := update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+
+      IF !lOk
+         EXIT
+      ENDIF
+
+      SKIP
+
+   ENDDO
+
+   MSgC()
+
+   IF lOk
+      lRet := .T.
+      f18_free_tables( { "fin_suban" } )
+      sql_table_update( nil, "END" )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+   ENDIF
+
+   RETURN lRet
+
+
+
+
+FUNCTION fin_brisanje_markera_otvorenih_stavki()
+
+   LOCAL lRet := .F.
+   LOCAL lOk := .T.
+
+   IF Pitanje(, "Pobrisati sve markere otvorenih stavki (D/N) ?", "N" ) == "N"
+      RETURN lRet
    ENDIF
 
    sql_table_update( nil, "BEGIN" )
+
+   IF !f18_lock_tables( { "fin_suban" }, .T. )
+      sql_table_update( nil, "END" )
+      MsgBeep( "Ne mogu zaključati tabelu fin_suban !#Operacija poništena." )
+      RETURN lRet
+   ENDIF
 
    SELECT ( F_SUBAN )
    IF !Used()
@@ -486,7 +541,7 @@ FUNCTION brisanje_markera_otvorenih_stavki()
    SET ORDER TO TAG "1"
    GO TOP
 
-   MsgO( "Brisem markere... molimo sacekajte trenutak..." )
+   MsgO( "Brišem markere... molimo sačekajte trenutak ..." )
 
    DO WHILE !Eof()
 
@@ -494,22 +549,32 @@ FUNCTION brisanje_markera_otvorenih_stavki()
 
       IF _rec[ "otvst" ] <> ""
          _rec[ "otvst" ] := ""
-         update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+         lOk := update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+      ENDIF
+
+      IF !lOk
+         EXIT
       ENDIF
 
       SKIP
 
    ENDDO
 
-   f18_free_tables( { "fin_suban" } )
-   sql_table_update( nil, "END" )
-
    MsgC()
+
+   IF lOk
+      lRet := .T.
+      f18_free_tables( { "fin_suban" } )
+      sql_table_update( nil, "END" )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+      MsgBeep( "Greška sa opcijom brisanja markera !#Operacija poništena." )
+   ENDIF
 
    SELECT ( F_SUBAN )
    USE
 
-   RETURN
+   RETURN lRet
 
 
 
@@ -543,10 +608,10 @@ STATIC FUNCTION _o_ruc_zat( lOsuban )
    RETURN
 
 
-// ------------------------------------------------------------------------
-// rucno zatvaranje stavki
-// ------------------------------------------------------------------------
-FUNCTION RucnoZat()
+
+
+
+FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
 
    _o_ruc_zat()
 
@@ -586,7 +651,6 @@ FUNCTION RucnoZat()
    cIdFirma := Left( cIdFirma, 2 )
 
    SELECT SUBAN
-   // IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr
    SET ORDER TO TAG "1"
 
    IF gRJ == "D" .AND. !Empty( cIdRJ )
@@ -613,9 +677,6 @@ FUNCTION RucnoZat()
    NEXT
 
    PRIVATE aPPos := { 2, 3 }
-
-   // pozicija kolone partner, broj veze
-
    PRIVATE bGoreRed := NIL
    PRIVATE bDoleRed := NIL
    PRIVATE bDodajRed := NIL
@@ -623,13 +684,10 @@ FUNCTION RucnoZat()
    PRIVATE TBCanClose := .T. // da li se moze zavrsiti unos podataka ?
    PRIVATE TBAppend := "N"  // mogu dodavati slogove
    PRIVATE bZaglavlje := NIL
-   // zaglavlje se edituje kada je kursor u prvoj koloni
-   // prvog reda
    PRIVATE TBSkipBlock := {| nSkip| SkipDBBK( nSkip ) }
    PRIVATE nTBLine := 1      // tekuca linija-kod viselinijskog browsa
    PRIVATE nTBLastLine := 1  // broj linija kod viselinijskog browsa
    PRIVATE TBPomjerise := "" // ako je ">2" pomjeri se lijevo dva
-   // ovo se mo§e setovati u when/valid fjama
    PRIVATE TBScatter := "N"  // uzmi samo tekuce polje
    adImeKol := {}
 
@@ -651,10 +709,9 @@ FUNCTION RucnoZat()
 
    SEEK Eval( bBkUslov )
 
-   // prikazi opcije rucnog zatvaranja
-   OSt_StatLin()
+   opcije_browse_pregleda()
 
-   ObjDbEdit( "Ost", MAXROWS() - 10, MAXCOLS() - 10, {|| EdRos() }, ;
+   ObjDbEdit( "Ost", MAXROWS() - 10, MAXCOLS() - 10, {|| rucno_zatvaranje_key_handler() }, ;
       "", "", .F., NIL, 1, {|| otvst == "9" }, 6, 0, NIL, {| nSkip| SkipDBBK( nSkip ) } )
 
    BoxC()
@@ -664,10 +721,7 @@ FUNCTION RucnoZat()
    RETURN
 
 
-// --------------------------------------------
-// key handler otv.st. rucno zatvaranje
-// --------------------------------------------
-FUNCTION EdROS( l_osuban )
+STATIC FUNCTION rucno_zatvaranje_key_handler( l_osuban )
 
    LOCAL _rec
    LOCAL cMark
@@ -686,10 +740,7 @@ FUNCTION EdROS( l_osuban )
 
    CASE Ch == K_ALT_E .AND. FieldPos( "_OBRDOK" ) = 0
 
-      // nema prebacivanja u
-      // asistentu ot.st.
-
-      IF Pitanje(, "Preci u mod direktog unosa podataka u tabelu? (D/N)", "D" ) == "D"
+      IF Pitanje(, "Preći u mod direktog unosa podataka u tabelu ? (D/N)", "D" ) == "D"
          log_write( "otovrene stavke, mod direktnog unosa = D", 5 )
          gTBDir := "D"
          OSt_StatLin()
@@ -833,9 +884,7 @@ FUNCTION EdROS( l_osuban )
 
 
 
-// --------------------------------------------
-// --------------------------------------------
-FUNCTION OSt_StatLin()
+STATIC FUNCTION opcije_browse_pregleda()
 
    LOCAL _x, _y
 
@@ -843,12 +892,13 @@ FUNCTION OSt_StatLin()
    _y := m_y + 1
 
    @ _x,     _y SAY " <F2>   Ispravka broja dok.       <c-P> Print   <a-P> Print Br.Dok          "
-   @ _x + 1, _y SAY " <K>    Ukljuci/iskljuci racun za kamate         <F5> uzmi broj dok.        "
-   @ _x + 2, _y SAY '<ENTER> Postavi/Ukini zatvaranje                 <F6> "nalijepi" broj dok.  '
+   @ _x + 1, _y SAY8 " <K>    Uključi/isključi račun za kamate         <F5> uzmi broj dok.        "
+   @ _x + 2, _y SAY '<ENTER> Postavi/ukini zatvaranje                 <F6> "nalijepi" broj dok.  '
 
    @ _x + 3, _y SAY REPL( BROWSE_PODVUCI, MAXCOLS() - 12 )
 
    @ _x + 4, _y SAY ""
+
    ?? "Konto:", cIdKonto
 
    RETURN
@@ -877,11 +927,11 @@ FUNCTION StKart( fSolo, fTiho, bFilter )
    picDEM := FormPicL( gPicDEM, 10 )
 
    IF fTiho .OR. Pitanje(, "Želite li prikaz sa datumima dokumenta i valutiranja ? (D/N)", "D" ) == "D"
-      lEx := .T.         // lEx=.t. > varijanta napravljena za EXCLUSIVE
+      lEx := .T.
    ENDIF
 
    IF fsolo == NIL
-      fSolo := .F.  // fsolo=.t. > poziv iz menija
+      fSolo := .F.  
    ENDIF
 
    IF gVar1 == "0"
@@ -968,9 +1018,6 @@ FUNCTION StKart( fSolo, fTiho, bFilter )
 
    IF fTiho .OR. lEx
 
-      // odredjivanje prirode zadanog konta (dug. ili pot.)
-      // --------------------------------------------------
-
       SELECT ( F_TRFP2 )
       IF !Used()
          O_TRFP2
@@ -986,7 +1033,7 @@ FUNCTION StKart( fSolo, fTiho, bFilter )
       ELSE
          cDugPot := "1"
          Box( , 3, 60 )
-         @ m_x + 2, m_y + 2 SAY "Konto " + cIdKonto + " duguje / potrazuje (1/2)" GET cdugpot  VALID cdugpot $ "12" PICT "9"
+         @ m_x + 2, m_y + 2 SAY8 "Konto " + cIdKonto + " duguje / potražuje (1/2)" GET cdugpot  VALID cdugpot $ "12" PICT "9"
          READ
          Boxc()
       ENDIF
@@ -1275,12 +1322,6 @@ FUNCTION StKart( fSolo, fTiho, bFilter )
 
 
 
-
-/*! \fn fin_create_pom_table(fTiho)
- *  \brief Kreira pomocnu tabelu
- *  \fTiho
- */
-
 FUNCTION fin_create_pom_table( fTiho, nParLen )
 
    LOCAL i
@@ -1300,9 +1341,6 @@ FUNCTION fin_create_pom_table( fTiho, nParLen )
       nParLen := 6
    ENDIF
 
-   // kreiranje pomocne baze POM.DBF
-   // ------------------------------
-
    FErase( _ime_dbf + ".dbf" )
    FErase( _ime_dbf + ".cdx" )
 
@@ -1318,7 +1356,6 @@ FUNCTION fin_create_pom_table( fTiho, nParLen )
    AAdd( aDBf, { 'OTVST', 'C',  1,  0 } )
    AAdd( aDBf, { 'DATZPR', 'D',  8,  0 } )
 
-   // datum zadnje promjene
    IF fTiho
       FOR i := 1 TO Len( aGod )
          AAdd( aDBf, { 'GOD' + aGod[ i, 1 ], 'N', 15,  2 } )
@@ -1582,9 +1619,6 @@ STATIC FUNCTION _cre_oext_struct()
 
 
 
-// ----------------------------------------------------------------
-// asistent otvorenih stavki
-// ----------------------------------------------------------------
 FUNCTION fin_asistent_otv_st()
 
    LOCAL nSaldo
@@ -2062,7 +2096,6 @@ FUNCTION fin_asistent_otv_st()
 
    PRIVATE bBKUslov := {|| idFirma + idkonto + idpartner = cidFirma + cidkonto + cidpartner }
    PRIVATE bBkTrazi := {|| cIdFirma + cIdkonto + cIdPartner }
-   // Brows ekey uslova
    PRIVATE aPPos := { cIdPartner, 1 }  // pozicija kolone partner, broj veze
 
    SET CURSOR ON
@@ -2070,14 +2103,14 @@ FUNCTION fin_asistent_otv_st()
    @ m_x + ( _max_rows - 5 ), m_y + 1 SAY "****************  REZULTATI ASISTENTA ************"
    @ m_x + ( _max_rows - 4 ), m_y + 1 SAY REPL( "=", MAXCOLS() - 2 )
    @ m_x + ( _max_rows - 3 ), m_y + 1 SAY " <F2> Ispravka broja dok.       <c-P> Print      <a-P> Print Br.Dok           "
-   @ m_x + ( _max_rows - 2 ), m_y + 1 SAY " <K> Ukljuci/iskljuci racun za kamate "
-   @ m_x + ( _max_rows - 1 ), m_y + 1 SAY ' < F6 > Stampanje izvrsenih promjena  '
+   @ m_x + ( _max_rows - 2 ), m_y + 1 SAY8 " <K> Uključi/isključi račun za kamate "
+   @ m_x + ( _max_rows - 1 ), m_y + 1 SAY8 ' < F6 > Štampanje izvršenih promjena  '
 
    PRIVATE cPomBrDok := Space( 10 )
 
    SEEK Eval( bBkTrazi )
 
-   ObjDbEdit( "Ost", _max_rows, _max_cols, {|| EdRos( .T. ) }, "", "", .F., NIL, 1, {|| brdok <> _obrdok }, 6, 0, ;  // zadnji par: nGPrazno
+   ObjDbEdit( "Ost", _max_rows, _max_cols, {|| rucno_zatvaranje_key_handler( .T. ) }, "", "", .F., NIL, 1, {|| brdok <> _obrdok }, 6, 0, ;  // zadnji par: nGPrazno
    NIL, {| nSkip| SkipDBBK( nSkip ) } )
 
    BoxC()
@@ -2095,14 +2128,13 @@ FUNCTION fin_asistent_otv_st()
 
    IF fpromjene
       GO TOP
-      IF pitanje(, "Ostampati rezultate asistenta ?", "N" ) = "D"
+      IF Pitanje(, "Prikazati rezultate asistenta (D/N) ?", "N" ) = "D"
          StAz()
       ENDIF
    ELSE
       SELECT suban
       USE
       RETURN
-      // izadji - nije bilo promjena
    ENDIF
 
    SELECT ( F_OSUBAN )
@@ -2110,118 +2142,174 @@ FUNCTION fin_asistent_otv_st()
    SELECT ( F_SUBAN )
    USE
 
-   MsgBeep( "U slucaju da azurirate rezultate asistenta#program će izmijeniti sadržaj subanalitičkih podataka !" )
+   MsgBeep( "U slucaju da ažurirate rezultate asistenta#program će izmijeniti sadržaj subanalitičkih podataka !" )
 
-   IF pitanje(, "Želite li izvrsiti ažuriranje rezultata asistenta u bazu SUBAN !!", "N" ) == "D"
+   IF Pitanje(, "Želite li izvrsiti ažuriranje rezultata asistenta u kumulativ (D/N) ?", "N" ) == "D"
 
-      // ekskluzivno otvori
       SELECT ( F_OSUBAN )
       my_use_temp( "OSUBAN", my_home() + "osuban", .F., .T. )
 
       O_SUBAN
 
-      SELECT osuban
-      GO TOP
-
-      // prvi krug - provjeriti da neko nije slucajno dirao stavke ??!!-drugi korisnik
-      DO WHILE !Eof()
-
-         IF osuban->_recno == 0
-            // ovo su nove stavke, njih preskoci
-            SKIP
-            LOOP
-         ENDIF
-
-         SELECT suban
-         GO osuban->_recno
-
-         IF Eof() .OR. idfirma <> osuban->idfirma .OR. idvn <> osuban->idvn .OR. brnal <> osuban->brnal .OR. idkonto <> osuban->idkonto .OR. idpartner <> osuban->idpartner .OR. d_p <> osuban->d_p
-            MsgBeep( "Izgleda da je drugi korisnik radio na ovom partneru#Prekidam operaciju !!!" )
-            my_close_all_dbf()
-         ENDIF
-
-         SELECT osuban
-         SKIP
-
-      ENDDO
-
-      // odradi lokovanje
-      IF !f18_lock_tables( { "suban" } )
-         Alert( "Prekidam opreraciju, nisam napravio lock !!!" )
+      IF !promjene_otvorenih_stavki_se_mogu_azurirati()
+         my_close_all_dbf()
          RETURN
       ENDIF
 
-      sql_table_update( nil, "BEGIN" )
-
-      // drugi krug - sve je cisto brisi iz suban!
-      SELECT osuban
-      GO TOP
-
-      DO WHILE !Eof()
-
-         IF osuban->_recno == 0
-            // ovo je nova stavka, nju preskoci !
-            SKIP
-            LOOP
-         ENDIF
-
-         SELECT suban
-         GO osuban->_recno
-
-         IF !Eof()
-            _rec := dbf_get_rec()
-            delete_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
-         ENDIF
-
-         SELECT osuban
-         SKIP
-
-      ENDDO
-
-      f18_free_tables( { "suban" } )
-      sql_table_update( nil, "END" )
-
-      // treci krug - dodaj iz osuban
-
-      IF !f18_lock_tables( { "suban" } )
-         Alert( "Prekidam opreraciju, nisam napravio lock !!!" )
+      IF !brisi_otvorene_stavke_iz_tabele_suban()
+         MsgBeep( "Greška sa brisanjem stavki iz tabele SUBAN !" )
+         my_close_all_dbf()
          RETURN
       ENDIF
 
-      sql_table_update( nil, "BEGIN" )
+      IF !dodaj_promjene_iz_osuban_u_suban()
+         MsgBeep( "Greška kod dodavanja stavki u kumulativnu SUBAN tabelu !" )
+         my_close_all_dbf()
+         RETURN
+      ENDIF
 
-      SELECT osuban
-      GO TOP
-
-      DO WHILE !Eof()
-
-         _rec := dbf_get_rec()
-
-         // ukloni viska polja za suban
-         hb_HDel( _rec, "_recno" )
-         hb_HDel( _rec, "_ppk1" )
-         hb_HDel( _rec, "_obrdok" )
-
-         SELECT suban
-         APPEND BLANK
-
-         update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
-
-         SELECT osuban
-         SKIP
-
-      ENDDO
-
-      f18_free_tables( { "suban" } )
-      sql_table_update( nil, "END" )
-
-      MsgBeep( "Promjene su izvrsene - provjerite na kartici" )
+      MsgBeep( "Promjene su izvršene - provjerite podatke na kartici !" )
 
    ENDIF
 
    my_close_all_dbf()
 
    RETURN
+
+
+
+STATIC FUNCTION promjene_otvorenih_stavki_se_mogu_azurirati()
+
+   LOCAL lRet := .F.
+
+   SELECT osuban
+   GO TOP
+
+   DO WHILE !Eof()
+
+      IF osuban->_recno == 0
+         SKIP
+         LOOP
+      ENDIF
+
+      SELECT suban
+      GO osuban->_recno
+
+      IF EOF() .OR. idfirma <> osuban->idfirma .OR. idvn <> osuban->idvn .OR. brnal <> osuban->brnal .OR. idkonto <> osuban->idkonto .OR. idpartner <> osuban->idpartner .OR. d_p <> osuban->d_p
+         lRet := .F.
+         MsgBeep( "Izgleda da je drugi korisnik radio na ovom partneru#Prekidam operaciju !!!" )
+         EXIT
+      ENDIF
+
+      SELECT osuban
+      SKIP
+
+   ENDDO
+
+   RETURN lRet
+
+
+
+STATIC FUNCTION dodaj_promjene_iz_osuban_u_suban()
+
+   LOCAL _rec
+   LOCAL lRet := .F.
+   LOCAL lOk := .T.
+
+   sql_table_update( nil, "BEGIN" )
+      
+   IF !f18_lock_tables( { "fin_suban" }, .T. )
+      sql_table_update( nil, "END" )
+      MsgBeep( "Ne mogu zaključati tabelu fin_suban !#Operacija poništena." )
+      RETURN lRet
+   ENDIF
+
+   SELECT osuban
+   GO TOP
+
+   DO WHILE !Eof()
+
+      _rec := dbf_get_rec()
+
+      hb_HDel( _rec, "_recno" )
+      hb_HDel( _rec, "_ppk1" )
+      hb_HDel( _rec, "_obrdok" )
+
+      SELECT suban
+      APPEND BLANK
+
+      lOk := update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+
+      IF !lOk
+         EXIT
+      ENDIF
+
+      SELECT osuban
+      SKIP
+
+   ENDDO
+
+   IF lOk
+      lRet := .T.
+      f18_free_tables( { "fin_suban" } )
+      sql_table_update( nil, "END" )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+   ENDIF
+
+   RETURN lRet
+
+
+STATIC FUNCTION brisi_otvorene_stavke_iz_tabele_suban()
+   
+   LOCAL _rec
+   LOCAL lOk := .T.
+   LOCAL lRet := .F.
+   
+   sql_table_update( nil, "BEGIN" )
+      
+   IF !f18_lock_tables( { "fin_suban" }, .T. )
+      sql_table_update( nil, "END" )
+      MsgBeep( "Problem sa zaključavanjem tabele fin_suban !#Prekidam operaciju." )
+      RETURN lRet
+   ENDIF
+
+   SELECT osuban
+   GO TOP
+
+   DO WHILE !Eof()
+
+      IF osuban->_recno == 0
+         SKIP
+         LOOP
+      ENDIF
+
+      SELECT suban
+      GO osuban->_recno
+
+      IF !Eof()
+         _rec := dbf_get_rec()
+         lOk := delete_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+      ENDIF
+
+      IF !lOk
+         EXIT
+      ENDIF
+
+      SELECT osuban
+      SKIP
+
+   ENDDO
+
+   IF lOk
+      lRet := .T.
+      f18_free_tables( { "fin_suban" } )
+      sql_table_update( nil, "END" )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+   ENDIF
+
+   RETURN lRet
 
 
 

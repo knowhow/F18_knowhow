@@ -1,3 +1,7 @@
+1.7.114  2014-07-08, vsasa
+
+  - ePDV, štampa KUF/KIF izvještaja ne prelama dobro stranice - bugfix
+ 
 1.7.113  2014-07-07, vsasa
 
   - KALK, ažuriranje dokumenta u jednoj transakciji

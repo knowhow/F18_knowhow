@@ -149,6 +149,7 @@ STATIC FUNCTION _insert_into_fin_priprema( data, konto_data, partn_data, param )
    LOCAL _dat_dok, _dat_val, _otv_st, _br_veze
    LOCAL _rec, _i_saldo
    LOCAL _rbr := 0
+   LOCAL lOk := .T.
 
    _o_tables()
 
@@ -275,14 +276,18 @@ STATIC FUNCTION _insert_into_fin_priprema( data, konto_data, partn_data, param )
 
    IF _copy_sif == "D"
 
-      MsgO( "Provjeravam sifranike konto/partn ..." )
+      MsgO( "Provjeravam šifranike konto/partn ..." )
 
       SELECT fin_pripr
       SET ORDER TO TAG "1"
       GO TOP
 
-      f18_lock_tables( { "partn", "konto" } )
       sql_table_update( NIL, "BEGIN" )
+      IF !f18_lock_tables( { "partn", "konto" }, .T. )
+         sql_table_update( NIL, "END" )
+         MsgBeep( "Problem sa zaključavanjem tabela !#Prekidam operaciju." )
+         RETURN _ret 
+      ENDIF
 
       DO WHILE !Eof()
 
@@ -291,16 +296,28 @@ STATIC FUNCTION _insert_into_fin_priprema( data, konto_data, partn_data, param )
 
          IF !Empty( _pr_konto )
        		
-            append_sif_konto( _pr_konto, konto_data )
+            lOk := append_sif_konto( _pr_konto, konto_data )
 				
-            append_sif_konto( PadR( Left( _pr_konto, 1 ), 7 ), konto_data )
-            append_sif_konto( PadR( Left( _pr_konto, 2 ), 7 ), konto_data )
-            append_sif_konto( PadR( Left( _pr_konto, 3 ), 7 ), konto_data )
+            IF lOk
+               lOk := append_sif_konto( PadR( Left( _pr_konto, 1 ), 7 ), konto_data )
+            ENDIF
+
+            IF lOk
+               lOk := append_sif_konto( PadR( Left( _pr_konto, 2 ), 7 ), konto_data )
+            ENDIF
+
+            IF lOk
+               lOk := append_sif_konto( PadR( Left( _pr_konto, 3 ), 7 ), konto_data )
+            ENDIF
 
          ENDIF
 
-         IF !Empty( _pr_partn )
-            append_sif_partn( _pr_partn, partn_data )
+         IF !Empty( _pr_partn ) .AND. lOk
+            lOk := append_sif_partn( _pr_partn, partn_data )
+         ENDIF
+
+         IF !lOk
+            EXIT
          ENDIF
 
          SELECT fin_pripr
@@ -308,8 +325,13 @@ STATIC FUNCTION _insert_into_fin_priprema( data, konto_data, partn_data, param )
 
       ENDDO
 
-      sql_table_update( NIL, "END" )
-      f18_free_tables( { "partn", "konto" } )
+      IF lOk
+         f18_free_tables( { "partn", "konto" } )
+         sql_table_update( NIL, "END" )
+      ELSE
+         sql_table_update( NIL, "ROLLBACK" )
+         MsgBeep( "Problem sa dodavanjem novih šifri na server !" )
+      ENDIF
 
       MsgC()
 
@@ -331,6 +353,7 @@ STATIC FUNCTION append_sif_konto( id_konto, konto_data )
    LOCAL _kto_naz := ""
    LOCAL _append := .F.
    LOCAL oRow
+   LOCAL lOk := .T.
 
    O_KONTO
 
@@ -368,13 +391,13 @@ STATIC FUNCTION append_sif_konto( id_konto, konto_data )
       _rec[ "id" ] := _kto_id
       _rec[ "naz" ] := _kto_naz
 
-      update_rec_server_and_dbf( "konto", _rec, 1, "CONT" )
+      lOk := update_rec_server_and_dbf( "konto", _rec, 1, "CONT" )
 
    ENDIF
 
    SELECT ( _t_area )
 
-   RETURN _append
+   RETURN lOk
 
 
 STATIC FUNCTION append_sif_partn( id_partn, partn_data )
@@ -384,6 +407,7 @@ STATIC FUNCTION append_sif_partn( id_partn, partn_data )
    LOCAL _part_naz := ""
    LOCAL _append := .F.
    LOCAL oRow
+   LOCAL lOk := .T.
 
    O_PARTN
 
@@ -423,13 +447,13 @@ STATIC FUNCTION append_sif_partn( id_partn, partn_data )
       _rec[ "id" ] := _part_id
       _rec[ "naz" ] := _part_naz
       _rec[ "ptt" ] := "?????"
-      update_rec_server_and_dbf( "partn", _rec, 1, "CONT" )
+      lOk := update_rec_server_and_dbf( "partn", _rec, 1, "CONT" )
 
    ENDIF
 
    SELECT ( _t_area )
 
-   RETURN _append
+   RETURN lOk
 
 
 

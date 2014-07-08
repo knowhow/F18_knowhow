@@ -583,15 +583,16 @@ STATIC FUNCTION __import( vars, a_details )
    LOCAL _total_nalog := 0
    LOCAL _gl_brojac := 0
    LOCAL _detail_rec
-
-   // lokuj potrebne fajlove
-   IF !f18_lock_tables( { "fin_nalog", "fin_anal", "fin_sint", "fin_suban" } )
-      RETURN _cnt
-   ENDIF
+   LOCAL lOk := .T.
 
    sql_table_update( nil, "BEGIN" )
 
-   // ovo su nam uslovi za import...
+   IF !f18_lock_tables( { "fin_nalog", "fin_anal", "fin_sint", "fin_suban" }, .T. )
+      sql_table_update( nil, "END" )
+      MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
+      RETURN _cnt
+   ENDIF
+
    _dat_od := vars[ "datum_od" ]
    _dat_do := vars[ "datum_do" ]
    _konta := vars[ "konta" ]
@@ -604,13 +605,10 @@ STATIC FUNCTION __import( vars, a_details )
       _fmk_import := .T.
    ENDIF
 
-   // otvaranje export tabela
    _o_exp_tables( __import_dbf_path, _fmk_import )
 
-   // otvori potrebne tabele za import podataka
    _o_tables()
 
-   // broj zapisa u import tabelama
    SELECT e_nalog
    _total_nalog := RECCOUNT2()
 
@@ -633,9 +631,6 @@ STATIC FUNCTION __import( vars, a_details )
       _br_dok := field->brnal
       _dat_dok := field->datnal
 
-      // uslovi, provjera...
-
-      // datumi...
       IF _dat_od <> CToD( "" )
          IF field->datnal < _dat_od
             SKIP
@@ -650,7 +645,6 @@ STATIC FUNCTION __import( vars, a_details )
          ENDIF
       ENDIF
 
-      // lista dokumenata...
       IF !Empty( _vrste_dok )
          IF !( field->idvn $ _vrste_dok )
             SKIP
@@ -658,8 +652,7 @@ STATIC FUNCTION __import( vars, a_details )
          ENDIF
       ENDIF
 
-      // da li postoji u prometu vec ?
-      IF _vec_postoji_u_prometu( _id_firma, _id_vd, _br_dok )
+      IF fin_dokument_postoji( _id_firma, _id_vd, _br_dok )
 
          _detail_rec := hb_Hash()
          _detail_rec[ "dokument" ] := _id_firma + "-" + _id_vd + "-" + _br_dok
@@ -674,9 +667,7 @@ STATIC FUNCTION __import( vars, a_details )
             _detail_rec[ "tip" ] := "delete"
             add_to_details( @a_details, _detail_rec )
 
-            // dokumente iz fin brisi !
-            _ok := .T.
-            _ok := del_fin_doc( _id_firma, _id_vd, _br_dok )
+            lOk := brisi_dokument_iz_kumulativa( _id_firma, _id_vd, _br_dok )
 
          ELSE
 
@@ -691,7 +682,10 @@ STATIC FUNCTION __import( vars, a_details )
 
       ENDIF
 
-      // zikni je u nasu tabelu doks
+      IF !lOk
+         EXIT
+      ENDIF
+
       SELECT e_nalog
       _app_rec := dbf_get_rec()
 
@@ -708,113 +702,131 @@ STATIC FUNCTION __import( vars, a_details )
 
       SELECT nalog
       APPEND BLANK
-      update_rec_server_and_dbf( "fin_nalog", _app_rec, 1, "CONT" )
+      lOk := update_rec_server_and_dbf( "fin_nalog", _app_rec, 1, "CONT" )
+
+      IF !lOk
+         EXIT
+      ENDIF
 
       ++ _cnt
       @ m_x + 3, m_y + 2 SAY PadR( PadL( AllTrim( Str( _cnt ) ), 5 ) + ". dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok, 60 )
 
-      // zikni je u nasu tabelu fin
       SELECT e_suban
       SET ORDER TO TAG "1"
       GO TOP
       SEEK _id_firma + _id_vd + _br_dok
 
-      // setuj novi redni broj stavke
       _redni_broj := 0
 
-      // prebaci mi stavke tabele FIN
       DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idvn == _id_vd .AND. field->brnal == _br_dok
 
          _app_rec := dbf_get_rec()
 
-         // setuj redni broj automatski...
          _app_rec[ "rbr" ] := PadL( AllTrim( Str( ++_redni_broj ) ), 4 )
 
-         // uvecaj i globalni brojac stavki...
          _gl_brojac += _redni_broj
 
          @ m_x + 3, m_y + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + _app_rec[ "rbr" ]
 
          SELECT suban
          APPEND BLANK
-         update_rec_server_and_dbf( "fin_suban", _app_rec, 1, "CONT" )
+         lOk := update_rec_server_and_dbf( "fin_suban", _app_rec, 1, "CONT" )
+
+         IF !lOk
+            EXIT
+         ENDIF
 
          SELECT e_suban
          SKIP
 
       ENDDO
 
-      // zikni je i u tabelu anal
+      IF !lOk
+         EXIT
+      ENDIF
+
       SELECT e_anal
       SET ORDER TO TAG "1"
       GO TOP
       SEEK _id_firma + _id_vd + _br_dok
 
-      // setuj novi redni broj stavke
       _redni_broj := 0
 
-      // prebaci mi stavke tabele FIN
       DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idvn == _id_vd .AND. field->brnal == _br_dok
 
          _app_rec := dbf_get_rec()
 
-         // setuj redni broj automatski...
          _app_rec[ "rbr" ] := PadL( AllTrim( Str( ++_redni_broj ) ), 3 )
 
-         // uvecaj i globalni brojac stavki...
          _gl_brojac += _redni_broj
 
          @ m_x + 3, m_y + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + _app_rec[ "rbr" ]
 
          SELECT anal
          APPEND BLANK
-         update_rec_server_and_dbf( "fin_anal", _app_rec, 1, "CONT" )
+         lOk := update_rec_server_and_dbf( "fin_anal", _app_rec, 1, "CONT" )
+
+         IF !lOk
+           EXIT
+         ENDIF
 
          SELECT e_anal
          SKIP
 
       ENDDO
 
-      // zikni je i u tabelu sint
+      IF !lOk
+         EXIT
+      ENDIF
+
       SELECT e_sint
       SET ORDER TO TAG "1"
       GO TOP
       SEEK _id_firma + _id_vd + _br_dok
 
-      // setuj novi redni broj stavke
       _redni_broj := 0
 
-      // prebaci mi stavke tabele FIN
       DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idvn == _id_vd .AND. field->brnal == _br_dok
 
          _app_rec := dbf_get_rec()
 
-         // setuj redni broj automatski...
          _app_rec[ "rbr" ] := PadL( AllTrim( Str( ++_redni_broj ) ), 3 )
 
-         // uvecaj i globalni brojac stavki...
          _gl_brojac += _redni_broj
 
          @ m_x + 3, m_y + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + _app_rec[ "rbr" ]
 
          SELECT sint
          APPEND BLANK
-         update_rec_server_and_dbf( "fin_sint", _app_rec, 1, "CONT" )
+         lOk := update_rec_server_and_dbf( "fin_sint", _app_rec, 1, "CONT" )
+
+         IF !lOk
+            EXIT
+         ENDIF
 
          SELECT e_sint
          SKIP
 
       ENDDO
 
+      IF !lOk
+         EXIT
+      ENDIF
+
       SELECT e_nalog
       SKIP
 
    ENDDO
 
-   sql_table_update( nil, "END" )
-   f18_free_tables( { "fin_nalog", "fin_anal", "fin_sint", "fin_suban" } )
+   IF lOk
+      f18_free_tables( { "fin_nalog", "fin_anal", "fin_sint", "fin_suban" } )
+      sql_table_update( nil, "END" )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+      MsgBeep( "Problem sa importom finansijskih naloga u kumulativne tabele." )
+   ENDIF
 
-   IF _cnt > 0
+   IF _cnt > 0 .AND. lOk
 
       @ m_x + 3, m_y + 2 SAY PadR( "", 69 )
 
@@ -833,81 +845,58 @@ STATIC FUNCTION __import( vars, a_details )
    RETURN _ret
 
 
-// ---------------------------------------------------------------------
-// provjerava da li dokument vec postoji u prometu
-// ---------------------------------------------------------------------
-STATIC FUNCTION _vec_postoji_u_prometu( id_firma, id_vd, br_dok )
 
-   LOCAL _t_area := Select()
-   LOCAL _ret := .T.
-
-   SELECT nalog
-   GO TOP
-   SEEK id_firma + id_vd + br_dok
-
-   IF !Found()
-      _ret := .F.
-   ENDIF
-
-   SELECT ( _t_area )
-
-   RETURN _ret
-
-
-
-
-// ----------------------------------------------------------
-// brisi dokument iz fin-a
-// ----------------------------------------------------------
-STATIC FUNCTION del_fin_doc( id_firma, id_vd, br_dok )
+STATIC FUNCTION brisi_dokument_iz_kumulativa( id_firma, id_vd, br_dok )
 
    LOCAL _t_area := Select()
    LOCAL _del_rec, _t_rec
-   LOCAL _ret := .F.
+   LOCAL lOk := .T.
 
-   // suban brisi
    SELECT suban
    SET ORDER TO TAG "4"
    GO TOP
    SEEK id_firma + id_vd + br_dok
    IF Found()
-      _ret := .T.
       _del_rec := dbf_get_rec()
-      delete_rec_server_and_dbf( "fin_suban", _del_rec, 2, "CONT" )
+      lOk := delete_rec_server_and_dbf( "fin_suban", _del_rec, 2, "CONT" )
    ENDIF
 
-   // nalog brisi
-   SELECT nalog
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK id_firma + id_vd + br_dok
-   IF Found()
-      _del_rec := dbf_get_rec()
-      delete_rec_server_and_dbf( "fin_nalog", _del_rec, 1, "CONT" )
+   IF lOk
+      SELECT nalog
+      SET ORDER TO TAG "1"
+      GO TOP
+      SEEK id_firma + id_vd + br_dok
+      IF Found()
+         _del_rec := dbf_get_rec()
+         lOk := delete_rec_server_and_dbf( "fin_nalog", _del_rec, 1, "CONT" )
+      ENDIF
    ENDIF
 
-   // anal brisi
-   SELECT anal
-   SET ORDER TO TAG "2"
-   GO TOP
-   SEEK id_firma + id_vd + br_dok
-   IF Found()
-      _del_rec := dbf_get_rec()
-      delete_rec_server_and_dbf( "fin_anal", _del_rec, 2, "CONT" )
+   IF lOk
+      SELECT anal
+      SET ORDER TO TAG "2"
+      GO TOP
+      SEEK id_firma + id_vd + br_dok
+      IF Found()
+         _del_rec := dbf_get_rec()
+         lOk := delete_rec_server_and_dbf( "fin_anal", _del_rec, 2, "CONT" )
+      ENDIF
    ENDIF
 
-   SELECT sint
-   SET ORDER TO TAG "2"
-   GO TOP
-   SEEK id_firma + id_vd + br_dok
-   IF Found()
-      _del_rec := dbf_get_rec()
-      delete_rec_server_and_dbf( "fin_sint", _del_rec, 2, "CONT" )
+   IF lOk
+      SELECT sint
+      SET ORDER TO TAG "2"
+      GO TOP
+      SEEK id_firma + id_vd + br_dok
+      IF Found()
+         _del_rec := dbf_get_rec()
+         lOk := delete_rec_server_and_dbf( "fin_sint", _del_rec, 2, "CONT" )
+      ENDIF
    ENDIF
-
+  
    SELECT ( _t_area )
 
-   RETURN _ret
+   RETURN lOk
 
 
 

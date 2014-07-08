@@ -862,8 +862,12 @@ STATIC FUNCTION AzurPPK()
 
    GO TOP
 
-   f18_lock_tables( { "fin_suban", "fin_anal", "fin_sint" } )
    sql_table_update( nil, "BEGIN" )
+
+   IF !f18_lock_tables( { "fin_suban", "fin_anal", "fin_sint" }, .T. )
+      sql_table_update( nil, "END" )
+      RETURN     
+   ENDIF
 
    DO WHILE !Eof()
 

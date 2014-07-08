@@ -1,3 +1,7 @@
+1.7.115  2014-07-08, vsasa
+
+  - FIN, ažuriranje u jednoj transakciji
+ 
 1.7.114  2014-07-08, vsasa
 
   - ePDV, štampa KUF/KIF izvještaja ne prelama dobro stranice - bugfix

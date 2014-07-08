@@ -89,14 +89,12 @@ FUNCTION fiskalni_parametri_za_korisnika()
    LOCAL _opc_exe := {}
    LOCAL  _izbor := 1
 
-   _fiscal := Pitanje( , "Koristiti fiskalne funkcije ?" , _fiscal )
+   _fiscal := Pitanje( , "Koristiti fiskalne funkcije (D/N) ?" , _fiscal )
    set_metric( "fiscal_opt_active", my_user(), _fiscal )
 
    IF _fiscal ==  "N" .OR. LastKey() == K_ESC
        RETURN .F.
    ENDIF
-
-
   
    AAdd( _opc, "1. fiskalni uređaji: globalne postavke        " )
    AAdd( _opc_exe, {|| globalne_postavke_fiskalni_uredjaj() } )

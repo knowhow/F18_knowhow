@@ -672,7 +672,7 @@ STATIC FUNCTION fakt_fiscal_stavke_racuna( id_firma, tip_dok, br_dok, storno, pa
 
    _item_level_check := 2
 
-   IF fiscal_items_check( @_data, storno, _item_level_check, __device_params[ "drv" ] ) < 0
+   IF provjeri_kolicine_i_cijene_fiskalnog_racuna( @_data, storno, _item_level_check, __device_params[ "drv" ] ) < 0
       RETURN NIL
    ENDIF
 

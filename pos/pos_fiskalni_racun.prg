@@ -236,7 +236,7 @@ STATIC FUNCTION pos_fiscal_stavke_racuna( id_pos, tip_dok, datum, rn_broj, storn
 
    _level := 1
 
-   IF fiscal_items_check( @_items, storno, _level, __device_params[ "drv" ] ) < 0
+   IF provjeri_kolicine_i_cijene_fiskalnog_racuna( @_items, storno, _level, __device_params[ "drv" ] ) < 0
       RETURN NIL
    ENDIF
 

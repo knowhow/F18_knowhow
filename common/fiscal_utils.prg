@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,203 +13,207 @@
 #include "fmk.ch"
 
 
-static __MAX_QT := 99999.999
-static __MIN_QT := 0.001
-static __MAX_PRICE := 999999.99
-static __MIN_PRICE := 0.01
-static __MAX_PERC := 99.99
-static __MIN_PERC := -99.99
+STATIC __MAX_QT := 99999.999
+STATIC __MIN_QT := 0.001
+STATIC __MAX_PRICE := 999999.99
+STATIC __MIN_PRICE := 0.01
+STATIC __MAX_PERC := 99.99
+STATIC __MIN_PERC := -99.99
 
 
 
 // ----------------------------------------
 // fajl za fiskalni stampac
 // ----------------------------------------
-function fiscal_out_filename( file_name, rn_broj, trig )
-local _ret, _rn
-local _f_name := ALLTRIM( file_name )
+FUNCTION fiscal_out_filename( file_name, rn_broj, trig )
 
-if trig == nil
-	trig := ""
-endif
+   LOCAL _ret, _rn
+   LOCAL _f_name := AllTrim( file_name )
 
-trig := ALLTRIM( trig )
+   IF trig == nil
+      trig := ""
+   ENDIF
 
-do case
+   trig := AllTrim( trig )
 
-    // po broju racuna ( TREMOL ) 
-	case "$rn" $ _f_name
+   DO CASE
 
-        if EMPTY( rn_broj )
-            _ret := STRTRAN( _f_name, "$rn", "0000" )
-        else
-		    // broj racuna.xml
-		    _rn := PADL( ALLTRIM( rn_broj ), 8, "0" )
-            // ukini znak "/" ako postoji
-            _rn := STRTRAN( _rn, "/", "" )
-		    _ret := STRTRAN( _f_name, "$rn", _rn )
-        endif
+      // po broju racuna ( TREMOL )
+   CASE "$rn" $ _f_name
 
-		_ret := UPPER( _ret )
+      IF Empty( rn_broj )
+         _ret := StrTran( _f_name, "$rn", "0000" )
+      ELSE
+         // broj racuna.xml
+         _rn := PadL( AllTrim( rn_broj ), 8, "0" )
+         // ukini znak "/" ako postoji
+         _rn := StrTran( _rn, "/", "" )
+         _ret := StrTran( _f_name, "$rn", _rn )
+      ENDIF
 
-    // po trigeru ( HCP, TRING )	
-	case "TR$" $ _f_name
+      _ret := Upper( _ret )
 
-		// odredjuje PLU ili CLI ili RCP na osnovu trigera
-		_ret := STRTRAN( _f_name, "TR$", trig )
-		_ret := UPPER( _ret )
+      // po trigeru ( HCP, TRING )
+   CASE "TR$" $ _f_name
+
+      // odredjuje PLU ili CLI ili RCP na osnovu trigera
+      _ret := StrTran( _f_name, "TR$", trig )
+      _ret := Upper( _ret )
 	
-		if ".XML" $ UPPER( trig )
-			_ret := trig
-		endif
+      IF ".XML" $ Upper( trig )
+         _ret := trig
+      ENDIF
 
-    // ostale verijante
-	otherwise 
-		_ret := _f_name
+      // ostale verijante
+   OTHERWISE
+      _ret := _f_name
 
-endcase
+   ENDCASE
 
-return _ret
+   RETURN _ret
 
 
 // ---------------------------------------------------
 // ispravi naziv artikla
 // ---------------------------------------------------
-function fiscal_art_naz_fix( naz, drv )
-local _ret := ""
+FUNCTION fiscal_art_naz_fix( naz, drv )
 
-do case 
-    case drv == "FPRINT"
-        _ret := STRTRAN( naz, ";", "" )
-    otherwise
-        _ret := naz
-endcase
+   LOCAL _ret := ""
 
-return _ret
+   DO CASE
+   CASE drv == "FPRINT"
+      _ret := StrTran( naz, ";", "" )
+   OTHERWISE
+      _ret := naz
+   ENDCASE
+
+   RETURN _ret
 
 
 
 // -------------------------------------------------
 // generise novi plu kod za sifru
 // -------------------------------------------------
-function gen_plu( nVal )
-local nTArea := SELECT()
-local nTRec := RECNO()
-local nPlu := 0
+FUNCTION gen_plu( nVal )
 
-if ((Ch==K_CTRL_N) .or. (Ch==K_F4))
+   LOCAL nTArea := Select()
+   LOCAL nTRec := RecNo()
+   LOCAL nPlu := 0
 
-	if LastKey() == K_ESC
-		return .f.
-	endif
+   IF ( ( Ch == K_CTRL_N ) .OR. ( Ch == K_F4 ) )
 
-	set order to tag "plu"
-	go top
-	seek STR(99999999999, 10)
-	skip -1
+      IF LastKey() == K_ESC
+         RETURN .F.
+      ENDIF
 
-	nPlu := field->fisc_plu
-	nVal := nPlu + 1
+      SET ORDER TO TAG "plu"
+      GO TOP
+      SEEK Str( 99999999999, 10 )
+      SKIP -1
 
-	select (nTArea)
-	set order to tag "ID"
-	go (nTRec)
+      nPlu := field->fisc_plu
+      nVal := nPlu + 1
 
-	AEVAL(GetList,{|o| o:display()})
+      SELECT ( nTArea )
+      SET ORDER TO TAG "ID"
+      GO ( nTRec )
 
-endif
+      AEval( GetList, {| o| o:display() } )
 
-return .t.
+   ENDIF
+
+   RETURN .T.
 
 
 // -------------------------------------------------------
 // generisi PLU kodove za postojece stavke sifraranika
 // -------------------------------------------------------
-function gen_all_plu( lSilent )
-local nPLU := 0
-local lReset := .f.
-local nP_PLU := 0
-local nCnt 
-local _rec
+FUNCTION gen_all_plu( lSilent )
 
-if lSilent == nil
-	lSilent := .f.
-endif
+   LOCAL nPLU := 0
+   LOCAL lReset := .F.
+   LOCAL nP_PLU := 0
+   LOCAL nCnt
+   LOCAL _rec
 
-if lSilent == .f. .and. !SigmaSIF("GENPLU")
-	msgbeep("NE DIRAJ !!!")
-	return .f.
-endif
+   IF lSilent == nil
+      lSilent := .F.
+   ENDIF
 
-if lSilent == .f. .and. Pitanje(,"Resetovati postojeće PLU", "N") == "D"
-	lReset := .t.
-endif
+   IF lSilent == .F. .AND. !SigmaSIF( "GENPLU" )
+      msgbeep( "NE DIRAJ !!!" )
+      RETURN .F.
+   ENDIF
 
-if lSilent == .t.
-	lReset := .f.
-endif
+   IF lSilent == .F. .AND. Pitanje(, "Resetovati postojeće PLU", "N" ) == "D"
+      lReset := .T.
+   ENDIF
 
-f18_lock_tables({"roba"})
-sql_table_update( nil, "BEGIN" )
+   IF lSilent == .T.
+      lReset := .F.
+   ENDIF
 
-O_ROBA
-select ROBA
-go top
+   f18_lock_tables( { "roba" } )
+   sql_table_update( nil, "BEGIN" )
 
-// prvo mi nadji zadnji PLU kod
-select roba
-set order to tag "PLU"
-go top
-seek str(9999999999,10)
-skip -1
-nP_PLU := field->fisc_plu
-nCnt := 0
+   O_ROBA
+   SELECT ROBA
+   GO TOP
 
-select roba
-set order to tag "ID"
-go top
+   // prvo mi nadji zadnji PLU kod
+   SELECT roba
+   SET ORDER TO TAG "PLU"
+   GO TOP
+   SEEK Str( 9999999999, 10 )
+   SKIP -1
+   nP_PLU := field->fisc_plu
+   nCnt := 0
 
-Box(, 1, 50)
-do while !EOF()
+   SELECT roba
+   SET ORDER TO TAG "ID"
+   GO TOP
+
+   Box(, 1, 50 )
+   DO WHILE !Eof()
 	
-	if lReset == .f.
-		// preskoci ako vec postoji PLU i 
-		// neces RESET
-		if field->fisc_plu <> 0
-			skip
-			loop
-		endif
-	endif
+      IF lReset == .F.
+         // preskoci ako vec postoji PLU i
+         // neces RESET
+         IF field->fisc_plu <> 0
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 	
-	++ nCnt
-	++ nP_PLU
-    
-    _rec := dbf_get_rec()
-    _rec["fisc_plu"] := nP_PLU
-    update_rec_server_and_dbf( "roba", _rec, 1, "CONT")
+      ++ nCnt
+      ++ nP_PLU
 
-	@ m_x + 1, m_y + 2 SAY PADR( "idroba: " + field->id + ;
-		" -> PLU: " + ALLTRIM( STR( nP_PLU ) ), 30 )
+      _rec := dbf_get_rec()
+      _rec[ "fisc_plu" ] := nP_PLU
+      update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
+
+      @ m_x + 1, m_y + 2 SAY PadR( "idroba: " + field->id + ;
+         " -> PLU: " + AllTrim( Str( nP_PLU ) ), 30 )
 	
-	skip
+      SKIP
 
-enddo
+   ENDDO
 
-BoxC()
+   BoxC()
 
-f18_free_tables({"roba"})
-sql_table_update( nil, "END" )
+   f18_free_tables( { "roba" } )
+   sql_table_update( nil, "END" )
 
-if nCnt > 0
-	if lSilent == .f.
-		msgbeep("Generisao " + ALLTRIM(STR(nCnt)) + " PLU kodova.")
-	endif
-	return .t.
-else
-	return .f.
-endif
+   IF nCnt > 0
+      IF lSilent == .F.
+         msgbeep( "Generisao " + AllTrim( Str( nCnt ) ) + " PLU kodova." )
+      ENDIF
+      RETURN .T.
+   ELSE
+      RETURN .F.
+   ENDIF
 
-return
+   RETURN
 
 
 
@@ -217,11 +221,14 @@ return
 // --------------------------------------------------
 // vraca iz parametara zadnji PLU broj
 // --------------------------------------------------
-function last_plu( device_id )
-local _plu := 0
-local _param_name := _get_auto_plu_param_name( device_id )
-_plu := fetch_metric( _param_name, nil, _plu )
-return _plu
+FUNCTION last_plu( device_id )
+
+   LOCAL _plu := 0
+   LOCAL _param_name := _get_auto_plu_param_name( device_id )
+
+   _plu := fetch_metric( _param_name, nil, _plu )
+
+   RETURN _plu
 
 
 
@@ -229,384 +236,349 @@ return _plu
 // --------------------------------------------------
 // generisanje novog plug kod-a inkrementalno
 // --------------------------------------------------
-function auto_plu( reset_plu, silent_mode, dev_params )
-local _plu := 0
-local _t_area := SELECT()
-local _param_name := _get_auto_plu_param_name( dev_params["id"] )
+FUNCTION auto_plu( reset_plu, silent_mode, dev_params )
 
-if reset_plu == nil
-	reset_plu := .f.
-endif
+   LOCAL _plu := 0
+   LOCAL _t_area := Select()
+   LOCAL _param_name := _get_auto_plu_param_name( dev_params[ "id" ] )
 
-if silent_mode == nil
-	silent_mode := .f.
-endif
+   IF reset_plu == nil
+      reset_plu := .F.
+   ENDIF
 
-if reset_plu = .t.
-	// uzmi inicijalni plu iz parametara
-	_plu := dev_params["plu_init"]
-else
-    _plu := fetch_metric( _param_name, nil, _plu )
-    // prvi put pokrecemo opciju, uzmi init vrijednost !
-	if _plu == 0
-        _plu := dev_params["plu_init"]
-    endif
-    // uvecaj za 1
-	++ _plu 
-endif
+   IF silent_mode == nil
+      silent_mode := .F.
+   ENDIF
 
-if reset_plu = .t. .and. !silent_mode
-	if !SigmaSif("RESET")
-		msgbeep("Unesena pogrešna šifra !")
-		select (_t_area)
-		return _plu
-	endif
-endif
+   IF reset_plu = .T.
+      // uzmi inicijalni plu iz parametara
+      _plu := dev_params[ "plu_init" ]
+   ELSE
+      _plu := fetch_metric( _param_name, nil, _plu )
+      // prvi put pokrecemo opciju, uzmi init vrijednost !
+      IF _plu == 0
+         _plu := dev_params[ "plu_init" ]
+      ENDIF
+      // uvecaj za 1
+      ++ _plu
+   ENDIF
 
-// upisi u sql/db
-set_metric( _param_name, nil, _plu )
+   IF reset_plu = .T. .AND. !silent_mode
+      IF !SigmaSif( "RESET" )
+         msgbeep( "Unesena pogrešna šifra !" )
+         SELECT ( _t_area )
+         RETURN _plu
+      ENDIF
+   ENDIF
 
-if reset_plu = .t. .and. !silent_mode
-	MsgBeep( "Setovan početni PLU na: " + ALLTRIM( STR( _plu ) ) )
-endif
+   // upisi u sql/db
+   set_metric( _param_name, nil, _plu )
 
-select ( _t_area )
+   IF reset_plu = .T. .AND. !silent_mode
+      MsgBeep( "Setovan početni PLU na: " + AllTrim( Str( _plu ) ) )
+   ENDIF
 
-return _plu
+   SELECT ( _t_area )
+
+   RETURN _plu
 
 
 // -----------------------------------------------------------------
 // vraca naziv parametra za sql/db
 // parametar moze biti:
-// 
+//
 // "auto_plu_dev_1" - auto plu device 1
 // "auto_plu_dev_2" - auto plu device 2
 // -----------------------------------------------------------------
-static function _get_auto_plu_param_name( device_id )
-local _tmp := "auto_plu"
-local _ret
-_ret := _tmp + "_dev_" + ALLTRIM( STR( device_id ) )
-return _ret
+STATIC FUNCTION _get_auto_plu_param_name( device_id )
+
+   LOCAL _tmp := "auto_plu"
+   LOCAL _ret
+
+   _ret := _tmp + "_dev_" + AllTrim( Str( device_id ) )
+
+   RETURN _ret
 
 
 
-// ------------------------------------------
-// vraca tarifu za fiskalni stampac
-// po uredjajima...
-// ------------------------------------------
-function fiscal_txt_get_tarifa( tarifa_id, pdv, drv )
-local _tar := "2"
-local _tmp 
+FUNCTION fiscal_txt_get_tarifa( tarifa_id, pdv, drv )
 
-// PDV17 -> PDV1 ili PDV7NP -> PDV7 ili PDV0IZ -> PDV0
-_tmp := LEFT( UPPER( ALLTRIM( tarifa_id ) ), 4 )
+   LOCAL _tar := "2"
+   LOCAL _tmp
 
-do case
+   // PDV17 -> PDV1 ili PDV7NP -> PDV7 ili PDV0IZ -> PDV0
+   _tmp := Left( Upper( AllTrim( tarifa_id ) ), 4 )
 
-	case ( _tmp == "PDV1" .or. _tmp == "PDV7" ) .and. pdv == "D"
+   DO CASE
 
-		// PDV je tarifna skupina "E"
+   CASE ( _tmp == "PDV1" .OR. _tmp == "PDV7" ) .AND. pdv == "D"
 
-        if drv == "TRING"
-		    _tar := "E"
-        elseif drv == "FPRINT"
-            _tar := "2"
-        elseif drv == "HCP"
-            _tar := "1"
-        elseif drv == "TREMOL"
-            _tar := "2"
-        endif
+      // PDV je tarifna skupina "E"
 
-	case _tmp == "PDV0" .and. pdv == "D"
+      IF drv == "TRING"
+         _tar := "E"
+      ELSEIF drv == "FPRINT"
+         _tar := "2"
+      ELSEIF drv == "HCP"
+         _tar := "1"
+      ELSEIF drv == "TREMOL"
+         _tar := "2"
+      ENDIF
 
-		// bez PDV-a je tarifna skupina "K"
+   CASE _tmp == "PDV0" .AND. pdv == "D"
 
-        if drv == "TRING"
-		    _tar := "K"
-        elseif drv == "FPRINT"
-            _tar := "4"
-        elseif drv == "HCP"
-            _tar := "3"
-        elseif drv == "TREMOL"
-            _tar := "1"
-        endif
+      // bez PDV-a je tarifna skupina "K"
 
-	case pdv == "N"
+      IF drv == "TRING"
+         _tar := "K"
+      ELSEIF drv == "FPRINT"
+         _tar := "4"
+      ELSEIF drv == "HCP"
+         _tar := "3"
+      ELSEIF drv == "TREMOL"
+         _tar := "1"
+      ENDIF
 
-		// ne-pdv obveznik, skupina "A"
-        if drv == "TRING"
-		    _tar := "A"
-        elseif drv == "FPRINT"
-            _tar := "1"
-        elseif drv == "HCP"
-            _tar := "0"
-        elseif drv == "TREMOL"
-            _tar := "3"
-        endif
+   CASE pdv == "N"
 
-    otherwise
+      // ne-pdv obveznik, skupina "A"
+      IF drv == "TRING"
+         _tar := "A"
+      ELSEIF drv == "FPRINT"
+         _tar := "1"
+      ELSEIF drv == "HCP"
+         _tar := "0"
+      ELSEIF drv == "TREMOL"
+         _tar := "3"
+      ENDIF
 
-        MsgBeep( "Greška sa tarifom !!!" )
+   OTHERWISE
 
-endcase
+      MsgBeep( "Greška sa tarifom !!!" )
 
-return _tar
+   ENDCASE
+
+   RETURN _tar
 
 
-// -----------------------------------------------------
-// vraca oznaku vrste placanja za pojedine uredjaje
-// -----------------------------------------------------
-function fiscal_txt_get_vr_plac( id_plac, drv )
-local _ret := ""
+FUNCTION fiscal_txt_get_vr_plac( id_plac, drv )
 
-do case
+   LOCAL _ret := ""
 
-    case id_plac == "0"
+   DO CASE
 
-        if drv == "TRING"
-            _ret := "Gotovina"
-        elseif drv $ "#HCP#FPRINT#"
-            _ret := id_plac
-        elseif drv == "TREMOL"
-            _ret := "Gotovina"
-        endif
+   CASE id_plac == "0"
 
-    case id_plac == "1"
+      IF drv == "TRING"
+         _ret := "Gotovina"
+      ELSEIF drv $ "#HCP#FPRINT#"
+         _ret := id_plac
+      ELSEIF drv == "TREMOL"
+         _ret := "Gotovina"
+      ENDIF
 
-        if drv == "TRING"
-            _ret := "Cek"
-        elseif drv $ "#HCP#FPRINT#"
-            _ret := id_plac
-        elseif drv == "TREMOL"
-            _ret := "Cek"
-        endif
+   CASE id_plac == "1"
 
-    case id_plac == "2"
+      IF drv == "TRING"
+         _ret := "Cek"
+      ELSEIF drv $ "#HCP#FPRINT#"
+         _ret := id_plac
+      ELSEIF drv == "TREMOL"
+         _ret := "Cek"
+      ENDIF
 
-        if drv == "TRING"
-            _ret := "Virman"
-        elseif drv $ "#HCP#FPRINT#"
-            _ret := id_plac
-        elseif drv == "TREMOL"
-            _ret := "Kartica"
-        endif
+   CASE id_plac == "2"
 
-    case id_plac == "3"
+      IF drv == "TRING"
+         _ret := "Virman"
+      ELSEIF drv $ "#HCP#FPRINT#"
+         _ret := id_plac
+      ELSEIF drv == "TREMOL"
+         _ret := "Kartica"
+      ENDIF
 
-        if drv == "TRING"
-            _ret := "Kartica"
-        elseif drv $ "#HCP#FPRINT#"
-            _ret := id_plac
-        elseif drv == "TREMOL"
-            _ret := "Virman"
-        endif
+   CASE id_plac == "3"
 
-endcase
+      IF drv == "TRING"
+         _ret := "Kartica"
+      ELSEIF drv $ "#HCP#FPRINT#"
+         _ret := id_plac
+      ELSEIF drv == "TREMOL"
+         _ret := "Virman"
+      ENDIF
 
-return _ret
+   ENDCASE
+
+   RETURN _ret
 
 
 
-// ---------------------------------------------------------
-// vrsi provjeru vrijednosti cijena, kolicina itd...
-// ---------------------------------------------------------
-function fiscal_items_check( items, storno, level, drv )
-local _i, _cijena, _plu_cijena, _kolicina, _naziv
-local _fix := 0
-local _ret := 0
+FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, level, drv )
 
-if drv == NIL
-    drv := "FPRINT"
-endif
+   LOCAL _i, _cijena, _plu_cijena, _kolicina, _naziv
+   LOCAL _fix := 0
+   LOCAL _ret := 0
 
-// aData[4] - naziv
-// aData[5] - cijena
-// aData[6] - kolicina
+   IF drv == NIL
+      drv := "FPRINT"
+   ENDIF
 
-// setuj mi min, max values za pojedine uredjaje
-set_min_max_values( drv )
+   // aData[4] - naziv
+   // aData[5] - cijena
+   // aData[6] - kolicina
 
-if storno == nil
-	storno := .f.
-endif
+   set_min_max_values( drv )
 
-for _i := 1 to LEN( items )
+   IF storno == nil
+      storno := .F.
+   ENDIF
 
-	_cijena := items[ _i, 5 ]	
-	_plu_cijena := items[ _i, 10 ]
-	_kolicina := items[ _i, 6 ]	
-	_naziv := items[ _i, 4 ]
+   FOR _i := 1 TO Len( items )
 
-	if ( !_chk_qtty( _kolicina ) .or. !_chk_price( _cijena ) ) ;
-		.or. !_chk_price( _plu_cijena )
+      _cijena := items[ _i, 5 ]
+      _plu_cijena := items[ _i, 10 ]
+      _kolicina := items[ _i, 6 ]
+      _naziv := items[ _i, 4 ]
+
+      IF ( !is_ispravna_kolicina( _kolicina ) .OR. !is_ispravna_cijena( _cijena ) ) ;
+            .OR. !is_ispravna_cijena( _plu_cijena )
 		
-		if level > 1
+         IF level > 1 .AND. _kolicina > 0
 			
-			// popravi kolicine, cijene
-			_fix_qtty( @_kolicina, @_cijena, @_plu_cijena, @_naziv )
+            prepakuj_vrijednosti_na_100_komada( @_kolicina, @_cijena, @_plu_cijena, @_naziv )
 			
-			// promjeni u matrici podatke takodjer
-			items[ _i, 5 ] := _cijena
-			items[ _i, 10 ] := _plu_cijena
-			items[ _i, 6 ] := _kolicina
-			items[ _i, 4 ] := _naziv
+            items[ _i, 5 ] := _cijena
+            items[ _i, 10 ] := _plu_cijena
+            items[ _i, 6 ] := _kolicina
+            items[ _i, 4 ] := _naziv
 		
-		endif
+         ENDIF
 
-		++ _fix
+         ++ _fix
 
-	endif
+      ENDIF
 
-next
+   NEXT
 
-if _fix > 0 .and. level > 1
+   IF _fix > 0 .AND. level > 1
 
-	msgbeep( "Pojedini artikli na računu su prepakovani na 100 kom !" )
+      MsgBeep( "Pojedini artikli na računu su prepakovani na 100 kom !" )
 
-elseif _fix > 0 .and. level == 1
+   ELSEIF _fix > 0 .AND. level == 1
 	
-	_ret := -99
-	msgbeep( "Pojedinim artiklima je količina/cijena van dozvoljenog ranga#Prekidam operaciju !!!!" )
+      _ret := -99
+      MsgBeep( "Pojedinim artiklima je količina/cijena van dozvoljenog ranga#Prekidam operaciju !" )
 
-	if storno
-		// ako je rijec o storno dokumentu, prikazi poruku
-		// ali ipak nastavi dalje...
-		_ret := 0
-	endif
+      IF storno
+         _ret := 0
+      ENDIF
 
-endif
+   ENDIF
 
-return _ret
+   RETURN _ret
 
 
 
-// ---------------------------------------------------------
-// setuje minimalne i maksimalne vrijednosti 
-// za pojedini uredjaj
-// ---------------------------------------------------------
-static function set_min_max_values( drv )
+STATIC FUNCTION set_min_max_values( drv )
 
-do case
- 
-    case drv $ "FPRINT#TRING"
+   DO CASE
 
-        __MAX_QT := 99999.999
-        __MIN_QT := 0.001
-        __MAX_PRICE := 999999.99
-        __MIN_PRICE := 0.01
-        __MAX_PERC := 99.99
-        __MIN_PERC := -99.99
+   CASE drv $ "FPRINT#TRING"
 
-    case drv $ "HCP#TREMOL"
+      __MAX_QT := 99999.999
+      __MIN_QT := 0.001
+      __MAX_PRICE := 999999.99
+      __MIN_PRICE := 0.01
+      __MAX_PERC := 99.99
+      __MIN_PERC := -99.99
 
-        __MAX_QT := 99999.999
-        __MIN_QT := 0.001
-        __MAX_PRICE := 999999.99
-        __MIN_PRICE := 0.01
-        __MAX_PERC := 99.99
-        __MIN_PERC := -99.99
+   CASE drv $ "HCP#TREMOL"
 
-endcase
+      __MAX_QT := 99999.999
+      __MIN_QT := 0.001
+      __MAX_PRICE := 999999.99
+      __MIN_PRICE := 0.01
+      __MAX_PERC := 99.99
+      __MIN_PERC := -99.99
 
-return
+   ENDCASE
+
+   RETURN
 
 
 
 
-// -------------------------------------------------
-// provjerava da li zadovoljava kolicina
-// -------------------------------------------------
-function _chk_qtty( rn_qtty )
-return _validate( rn_qtty, __MIN_QT, __MAX_QT, 3 )
-
-
-// -------------------------------------------------
-// provjerava da li zadovoljava cijena
-// -------------------------------------------------
-function _chk_price( price )
-return _validate( price, __MIN_PRICE, __MAX_PRICE, 2 )
-
-
-// --------------------------------------------------------------------
-// validator iznosa prema omjeru i prema decimalnom separatoru
-// --------------------------------------------------------------------
-static function _validate( value, min_value, max_value, dec )
-local _ok := .f.
-
-// validator min/max vrijednosti
-if value > max_value .or. value < min_value
-    return _ok
-endif
-
-// validator decimalnog mjesta
-// fiskalni uredjaj dozvoljava unos na 3 decimale
-if dec <> NIL .and. ( ABS( value ) - ABS( VAL( STR( value, 12, dec ) ) ) <> 0 )
-    return _ok
-endif
-
-// sve je ok
-_ok := .t.
-
-return _ok
-
-
-// -------------------------------------------------
-// koriguj cijenu i kolicinu
-// -------------------------------------------------
-function _fix_qtty( nQtty, nPrice, nPPrice, cName )
-
-nQtty := nQtty / 100
-nPrice := nPrice * 100
-nPPrice := nPPrice * 100
-cName := LEFT( ALLTRIM( cName ), 5 ) + " x100"
-
-return
-
-
-// ------------------------------------------------------------
-// zadnji fiskalni report datum...
-// ------------------------------------------------------------
-function zadnji_fiscal_z_report_info( cre_rpt )
-local _param_date := "zadnji_Z_izvjestaj_datum"
-local _param_time := "zadnji_Z_izvjestaj_vrijeme"
-local _z_date := fetch_metric( _param_date, NIL, CTOD("") )
-local _z_time := fetch_metric( _param_time, NIL, "" )
-local _warr := fetch_metric( "fiscal_opt_usr_daily_warrning", my_user(), "N" )
-local _fiscal_use := fiscal_opt_active()
-
-if cre_rpt == NIL
-    cre_rpt := .f.
-endif
-
-if !_fiscal_use
-    return
-endif
-
-// ne koristi se opcija upozorenja
-if _warr == "N"
-    return
-endif
-
-// provjeri po datumu i satu, ne moze samo po datumu
-// prakticno radimo izvjestaj na 20.02.2013 u 14:00 i onda
-// ga trebamo uraditi na 21.02.2013 u 14:00 takodjer...
-// sve do 21.02.2013 : 14:00 je vrijeme koje je dozvoljeno bez izvjestaja
-
-if DTOC( DATE() ) + ALLTRIM( TIME() ) > DTOC( _z_date ) + ALLTRIM( _z_time ) 
-
-    MsgBeep( "Zadnji dnevni izvještaj rađen " + DTOC( _z_date ) + " u " + _z_time + "#" + ;
-            "Potrebno napraviti dnevni izvještaj#" + ;
-            "prije izdavanja novih računa !" )
-
-    if cre_rpt
-        if Pitanje(, "Napraviti dnevni izvještaj (D/N) ?", "N" ) == "D"
-            // pokrenuti proceduru kreiranja fiskalnog izvjestaja...
-        endif
-    endif
-
-endif
-
-return
+STATIC FUNCTION is_ispravna_kolicina( rn_qtty )
+   RETURN validator_vrijednosti( rn_qtty, __MIN_QT, __MAX_QT, 3 )
 
 
 
+STATIC FUNCTION is_ispravna_cijena( price )
+   RETURN validator_vrijednosti( price, __MIN_PRICE, __MAX_PRICE, 2 )
+
+
+
+STATIC FUNCTION validator_vrijednosti( value, min_value, max_value, dec )
+
+   LOCAL _ok := .F.
+
+   IF value > max_value .OR. value < min_value
+      RETURN _ok
+   ENDIF
+
+   IF dec <> NIL .AND. ( Abs( value ) - Abs( Val( Str( value, 12, dec ) ) ) <> 0 )
+      RETURN _ok
+   ENDIF
+
+   _ok := .T.
+
+   RETURN _ok
+
+
+
+STATIC FUNCTION prepakuj_vrijednosti_na_100_komada( nQtty, nPrice, nPPrice, cName )
+
+   nQtty := nQtty / 100
+   nPrice := nPrice * 100
+   nPPrice := nPPrice * 100
+   cName := Left( AllTrim( cName ), 5 ) + " x100"
+
+   RETURN
+
+
+
+FUNCTION zadnji_fiscal_z_report_info( cre_rpt )
+
+   LOCAL _param_date := "zadnji_Z_izvjestaj_datum"
+   LOCAL _param_time := "zadnji_Z_izvjestaj_vrijeme"
+   LOCAL _z_date := fetch_metric( _param_date, NIL, CToD( "" ) )
+   LOCAL _z_time := fetch_metric( _param_time, NIL, "" )
+   LOCAL _warr := fetch_metric( "fiscal_opt_usr_daily_warrning", my_user(), "N" )
+   LOCAL _fiscal_use := fiscal_opt_active()
+
+   IF cre_rpt == NIL
+      cre_rpt := .F.
+   ENDIF
+
+   IF !_fiscal_use
+      RETURN
+   ENDIF
+
+   IF _warr == "N"
+      RETURN
+   ENDIF
+
+   IF DToC( Date() ) + AllTrim( Time() ) > DToC( _z_date ) + AllTrim( _z_time )
+
+      MsgBeep( "Zadnji dnevni izvještaj rađen " + DToC( _z_date ) + " u " + _z_time + "#" + ;
+         "Potrebno napraviti dnevni izvještaj#" + ;
+         "prije izdavanja novih računa !" )
+
+      IF cre_rpt
+         IF Pitanje(, "Napraviti dnevni izvještaj (D/N) ?", "N" ) == "D"
+         ENDIF
+      ENDIF
+
+   ENDIF
+
+   RETURN

@@ -418,6 +418,7 @@ FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, level, drv 
    LOCAL _i, _cijena, _plu_cijena, _kolicina, _naziv
    LOCAL _fix := 0
    LOCAL _ret := 0
+   LOCAL lImaGreska := .F.
 
    IF drv == NIL
       drv := "FPRINT"
@@ -429,11 +430,13 @@ FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, level, drv 
 
    set_min_max_values( drv )
 
-   IF storno == nil
+   IF storno == NIL
       storno := .F.
    ENDIF
 
    FOR _i := 1 TO Len( items )
+
+      lImaGreska := .F.
 
       _cijena := items[ _i, 5 ]
       _plu_cijena := items[ _i, 10 ]
@@ -443,18 +446,26 @@ FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, level, drv 
       IF ( !is_ispravna_kolicina( _kolicina ) .OR. !is_ispravna_cijena( _cijena ) ) ;
             .OR. !is_ispravna_cijena( _plu_cijena )
 		
-         IF ( level > 1 .AND. _kolicina > 0 )
+         lImaGreska := .T.
+
+         IF ( level > 1 .AND. _kolicina > 1 )
 			
             prepakuj_vrijednosti_na_100_komada( @_kolicina, @_cijena, @_plu_cijena, @_naziv )
 			
             items[ _i, 5 ] := _cijena
             items[ _i, 10 ] := _plu_cijena
             items[ _i, 6 ] := _kolicina
-            items[ _i, 4 ] := _naziv
-		
+            items[ _i, 4 ] := _naziv		
+
+            lImaGreska := .F.
+
+            ++ _fix
+
          ENDIF
 
-         ++ _fix
+         IF lImaGreska
+            EXIT
+         ENDIF
 
       ENDIF
 
@@ -464,9 +475,10 @@ FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, level, drv 
 
       MsgBeep( "Pojedini artikli na računu su prepakovani na 100 kom !" )
 
-   ELSEIF _fix > 0 .AND. level == 1
+   ELSEIF ( _fix > 0 .AND. level == 1 ) .OR. lImaGreska
 	
       _ret := -99
+
       MsgBeep( "Pojedinim artiklima je količina/cijena van dozvoljenog ranga#Prekidam operaciju !" )
 
       IF storno

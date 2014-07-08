@@ -82,6 +82,7 @@ FUNCTION fiskalni_parametri_za_korisnika()
 
    LOCAL _x := 1
    LOCAL _fiscal := fetch_metric( "fiscal_opt_active", my_user(), "N" )
+   LOCAL _fiscal_tek := _fiscal
    LOCAL _fiscal_devices := PadR( fetch_metric( "fiscal_opt_usr_devices", my_user(), "" ), 50 )
    LOCAL _pos_def := fetch_metric( "fiscal_opt_usr_pos_default_device", my_user(), 0 )
    LOCAL _rpt_warrning := fetch_metric( "fiscal_opt_usr_daily_warrning", my_user(), "N" )
@@ -92,10 +93,16 @@ FUNCTION fiskalni_parametri_za_korisnika()
    _fiscal := Pitanje( , "Koristiti fiskalne funkcije (D/N) ?" , _fiscal )
    set_metric( "fiscal_opt_active", my_user(), _fiscal )
 
+   IF _fiscal_tek <> _fiscal
+       log_write( "fiskalne funkcije za korisnika " + my_user() + " : " + IF( _fiscal == "D", "aktivirane", "deaktivirane" ), 2 )
+   ENDIF
+
    IF _fiscal ==  "N" .OR. LastKey() == K_ESC
        RETURN .F.
    ENDIF
   
+   fiscal_opt_active()
+
    AAdd( _opc, "1. fiskalni uređaji: globalne postavke        " )
    AAdd( _opc_exe, {|| globalne_postavke_fiskalni_uredjaj() } )
    AAdd( _opc, "2. fiskalni uređaji: korisničke postavke " )
@@ -127,8 +134,6 @@ FUNCTION fiskalni_parametri_za_korisnika()
    set_metric( "fiscal_opt_usr_devices", my_user(), AllTrim( _fiscal_devices ) )
    set_metric( "fiscal_opt_usr_pos_default_device", my_user(), _pos_def )
    set_metric( "fiscal_opt_usr_daily_warrning", my_user(), _rpt_warrning )
-
-   fiscal_opt_active()
 
    RETURN  ( _fiscal == "D" )
 

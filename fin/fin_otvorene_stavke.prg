@@ -40,8 +40,6 @@ FUNCTION Ostav()
    AAdd( opcexe, {|| fin_asistent_otv_st() } )
    AAdd( opc, "B. brisanje svih markera otvorenih stavki" )
    AAdd( opcexe, {|| fin_brisanje_markera_otvorenih_stavki() } )
-   AAdd( opc, "U. OASIST - undo" )
-   AAdd( opcexe, {|| OStUndo() } )
 
    Izbor := 1
    Menu_SC( "oas" )
@@ -743,7 +741,7 @@ STATIC FUNCTION rucno_zatvaranje_key_handler( l_osuban )
       IF Pitanje(, "Preći u mod direktog unosa podataka u tabelu ? (D/N)", "D" ) == "D"
          log_write( "otovrene stavke, mod direktnog unosa = D", 5 )
          gTBDir := "D"
-         OSt_StatLin()
+         opcije_browse_pregleda()
          DaTBDirektni()
       ENDIF
 

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -15,194 +15,192 @@
 /*! \fn OStUndo()
  *  \brief Otvorene stavke - UNDO operacija
  */
-function OStUndo()
+FUNCTION OStUndo()
 
-if !SigmaSif("SCUNDO")
-	MsgBeep("Nemate ovlastenja za koristenje ove operacije!")
-	return
-endif
+   IF !SigmaSif( "SCUNDO" )
+      MsgBeep( "Nemate ovlastenja za koristenje ove operacije!" )
+      RETURN
+   ENDIF
 
-MsgBeep("Prije ove operacije obavezno arhivirati podatke!")
+   MsgBeep( "Prije ove operacije obavezno arhivirati podatke!" )
 
-dDatOd:=CToD("")
-dDatDo:=DATE()
-cPartn:=SPACE(6)
-cKonto:="2120"
-cVNal:=PADR("61;",40)
-cDp:="1"
+   dDatOd := CToD( "" )
+   dDatDo := Date()
+   cPartn := Space( 6 )
+   cKonto := "2120"
+   cVNal := PadR( "61;", 40 )
+   cDp := "1"
 
-O_SUBAN
-select suban
+   O_SUBAN
+   SELECT suban
 
-cKonto:=PADR(cKonto, LEN(suban->idkonto))
-cPartn:=PADR(cPartn, LEN(suban->idPartner))
+   cKonto := PadR( cKonto, Len( suban->idkonto ) )
+   cPartn := PadR( cPartn, Len( suban->idPartner ) )
 
-// setuj parametre
-if GetVars(@dDatOd, @dDatDo, @cPartn, @cKonto, @cDp, @cVNal) == 0
-	MsgBeep("Operacija prekinuta !!!")
-	return
-endif
+   // setuj parametre
+   IF GetVars( @dDatOd, @dDatDo, @cPartn, @cKonto, @cDp, @cVNal ) == 0
+      MsgBeep( "Operacija prekinuta !!!" )
+      RETURN
+   ENDIF
 
-// pokreni undo opciju
-OStRunUndo(dDatOd, dDatDo, cPartn, cKonto, cDp, cVNal)
+   // pokreni undo opciju
+   OStRunUndo( dDatOd, dDatDo, cPartn, cKonto, cDp, cVNal )
 
-if Pitanje(,"Pokrenuti opciju automatskog zatvaranja stavki?","D")=="D"
-	fin_automatsko_zatvaranje_otvorenih_stavki(.t., cKonto, cPartn)
-endif
+   IF Pitanje(, "Pokrenuti opciju automatskog zatvaranja stavki?", "D" ) == "D"
+      fin_automatsko_zatvaranje_otvorenih_stavki( .T., cKonto, cPartn )
+   ENDIF
 
-return
+   RETURN
 
 
 
 /*! \fn GetVars(dDatOd, dDatDo, cPartn, cKonto, cDp, cVNal)
  *  \brief Setuj parametre
  */
-static function GetVars(dDatOd, dDatDo, cPartn, cKonto, cDp, cVNal)
+STATIC FUNCTION GetVars( dDatOd, dDatDo, cPartn, cKonto, cDp, cVNal )
 
-O_PARTN
-O_KONTO
+   O_PARTN
+   O_KONTO
 
-Box(,5,60)
-	@ m_x+1,m_y+2 SAY "Datum od" GET dDatOd 
-	@ m_x+1,m_y+21 SAY "do" GET dDatDo 
-	@ m_x+2,m_y+2 SAY "Konto   " GET cKonto VALID P_KontoFin(@cKonto) PICT "@!"
-  	@ m_x+3,m_y+2 SAY "Partner (prazno-svi)" GET cPartn VALID EMPTY(cPartn) .or. P_Firma(@cPartn) PICT "@!"
-  	@ m_x+4,m_y+2 SAY "Konto duguje / potrazuje" GET cDp WHEN {|| cDp:=iif(cKonto='54','2','1'), .t.} VALID cDp$"12 "
-  	@ m_x+5,m_y+2 SAY "Vrste naloga" GET cVNal 
-  	read
-BoxC()
+   Box(, 5, 60 )
+   @ m_x + 1, m_y + 2 SAY "Datum od" GET dDatOd
+   @ m_x + 1, m_y + 21 SAY "do" GET dDatDo
+   @ m_x + 2, m_y + 2 SAY "Konto   " GET cKonto VALID P_KontoFin( @cKonto ) PICT "@!"
+   @ m_x + 3, m_y + 2 SAY "Partner (prazno-svi)" GET cPartn VALID Empty( cPartn ) .OR. P_Firma( @cPartn ) PICT "@!"
+   @ m_x + 4, m_y + 2 SAY "Konto duguje / potrazuje" GET cDp WHEN {|| cDp := iif( cKonto = '54', '2', '1' ), .T. } VALID cDp $ "12 "
+   @ m_x + 5, m_y + 2 SAY "Vrste naloga" GET cVNal
+   READ
+   BoxC()
 
-if LastKey()==K_ESC
-	return 0
-endif
+   IF LastKey() == K_ESC
+      RETURN 0
+   ENDIF
 
-return 1
+   RETURN 1
 
 
 
 /*! \fn OStRunUndo()
- *  \brief glavna funkcija obrade dokumenta 
+ *  \brief glavna funkcija obrade dokumenta
  */
-static function OStRunUndo(dDOd, dDDo, cIdPartn, cIdKonto, cDugPot, cVNal)
-local _rec
+STATIC FUNCTION OStRunUndo( dDOd, dDDo, cIdPartn, cIdKonto, cDugPot, cVNal )
 
-select suban
-set order to tag "1"
-go top
+   LOCAL _rec
 
-if !Empty(cIdPartn)
-	seek gFirma + cIdKonto + cIdPartn
-else
-	seek gFirma + cIdKonto
-endif
+   SELECT suban
+   SET ORDER TO TAG "1"
+   GO TOP
 
-cBrNal:=""
-cTipNal:=""
-cKupac:=""
+   IF !Empty( cIdPartn )
+      SEEK gFirma + cIdKonto + cIdPartn
+   ELSE
+      SEEK gFirma + cIdKonto
+   ENDIF
 
-Box(, 3, 70)
+   cBrNal := ""
+   cTipNal := ""
+   cKupac := ""
 
-do while !EOF() .and. field->idkonto=cIdKonto .and. field->datdok <= dDatDo .and. if(!Empty(cIdPartn), field->idpartner=cIdPartn, .t.)
+   Box(, 3, 70 )
 
-	// uzmi broj prvog naloga
-	cBrNal := field->brnal
-	cTipNal := field->idvn
-	cKupac := field->idpartner
+   DO WHILE !Eof() .AND. field->idkonto = cIdKonto .AND. field->datdok <= dDatDo .AND. if( !Empty( cIdPartn ), field->idpartner = cIdPartn, .T. )
 
-	select partn
-	hseek cKupac
+      // uzmi broj prvog naloga
+      cBrNal := field->brnal
+      cTipNal := field->idvn
+      cKupac := field->idpartner
 
-	select suban
+      SELECT partn
+      hseek cKupac
+
+      SELECT suban
 	
-	@ 1+m_x, 2+m_y SAY "Partner: " + partn->naz
+      @ 1 + m_x, 2 + m_y SAY "Partner: " + partn->naz
 	
-	// ako tip naloga nije u zadatim tipovima naloga
-	if AT(cTipNal, cVNal)==0
-		skip
-		loop
-	endif
+      // ako tip naloga nije u zadatim tipovima naloga
+      IF At( cTipNal, cVNal ) == 0
+         SKIP
+         LOOP
+      ENDIF
 	
-	nIznBhd := 0
-	nIznDem := 0
+      nIznBhd := 0
+      nIznDem := 0
 	
-	@ 2+m_x, 2+m_y SAY "Nalog: " + gFirma + "-" + cTipNal + "-" + ALLTRIM(cBrNal)
+      @ 2 + m_x, 2 + m_y SAY "Nalog: " + gFirma + "-" + cTipNal + "-" + AllTrim( cBrNal )
 	
-	do while !EOF() .and. field->idkonto=cIdKonto .and. field->idpartner=cKupac .and. field->datdok <= dDatDo .and. field->brnal=cBrNal .and. field->idvn=cTipNal
+      DO WHILE !Eof() .AND. field->idkonto = cIdKonto .AND. field->idpartner = cKupac .AND. field->datdok <= dDatDo .AND. field->brnal = cBrNal .AND. field->idvn = cTipNal
 		
-		do case
-			case cDugPot == "1"
-				// varijanta duguje
-				if (field->d_p == "1")
-					skip
-				endif
+         DO CASE
+         CASE cDugPot == "1"
+            // varijanta duguje
+            IF ( field->d_p == "1" )
+               SKIP
+            ENDIF
 				
-			case cDugPot == "2"
-				// varijanta potrazuje
-				// uplate
-				if (field->d_p == "2")
-					skip
-				endif
-		endcase
+         CASE cDugPot == "2"
+            // varijanta potrazuje
+            // uplate
+            IF ( field->d_p == "2" )
+               SKIP
+            ENDIF
+         ENDCASE
 		
-		nIznBhd += field->iznosbhd
-		nIznDem += field->iznosdem
+         nIznBhd += field->iznosbhd
+         nIznDem += field->iznosdem
 		
-		@ 3+m_x, 2+m_y SAY SPACE(50)
-		@ 3+m_x, 2+m_y SAY "Suma += " + ALLTRIM(STR(nIznBhd))
+         @ 3 + m_x, 2 + m_y SAY Space( 50 )
+         @ 3 + m_x, 2 + m_y SAY "Suma += " + AllTrim( Str( nIznBhd ) )
 		
-		skip
+         SKIP
 		
-        f18_lock_tables({"fin_suban"})		
-		sql_table_update( nil, "BEGIN" )
+         f18_lock_tables( { "fin_suban" } )
+         sql_table_update( nil, "BEGIN" )
 		
-		// ako je sljedeci nalog razlicit, updateuj postojeci sa sumom
-		if (field->brnal<>cBrNal .or. field->idvn <> cTipNal)
+         // ako je sljedeci nalog razlicit, updateuj postojeci sa sumom
+         IF ( field->brnal <> cBrNal .OR. field->idvn <> cTipNal )
 
-			skip -1
+            SKIP -1
 
-			_rec := dbf_get_rec()
+            _rec := dbf_get_rec()
 
-			_rec["iznosbhd"] := nIznBhd
-			_rec["iznosdem"] := nIznDem
-			_rec["brdok"] := ""
-			_rec["otvst"] := ""
+            _rec[ "iznosbhd" ] := nIznBhd
+            _rec[ "iznosdem" ] := nIznDem
+            _rec[ "brdok" ] := ""
+            _rec[ "otvst" ] := ""
 
-			update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+            update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
 
-			skip
+            SKIP
 
-		else
+         ELSE
 
-			// izbrisi prethodnu stavku
-			skip -1
+            // izbrisi prethodnu stavku
+            SKIP -1
 
-			_rec := dbf_get_rec()
-			delete_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
+            _rec := dbf_get_rec()
+            delete_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
 
-			skip
+            SKIP
 
-		endif
+         ENDIF
 			
-        f18_free_tables({"fin_suban"})		
-		sql_table_update( nil, "END" )
+         f18_free_tables( { "fin_suban" } )
+         sql_table_update( nil, "END" )
 
-	enddo
+      ENDDO
 
-enddo
+   ENDDO
 
-BoxC()
+   BoxC()
 
-MsgBeep("Opcija zavrsena!#Pogledajte rezultate...")
+   MsgBeep( "Opcija zavrsena!#Pogledajte rezultate..." )
 
-return
+   RETURN
 
 
 
 /*! \fn OStAfterAzur(cIdPart, cIdKonto, cDp)
  *  \brief Pokrece asistenta otvorenih stavki poslije azuriranja naloga
  */
-function OStAfterAzur(aPartList, cIdPart, cIdKonto, cDp)
-return
-
-
-
+FUNCTION OStAfterAzur( aPartList, cIdPart, cIdKonto, cDp )
+   RETURN

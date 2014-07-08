@@ -1,6 +1,8 @@
 1.7.114  2014-07-08, vsasa
 
   - ePDV, štampa KUF/KIF izvještaja ne prelama dobro stranice - bugfix
+  - F18 fiskalne funkcije, aktiviranje, deaktiviranje - bugfix + logiranje operacije
+  - F18 fiskalne funkcije, prepakivanje artikala na 100 komada samo kada je količina > 1
  
 1.7.113  2014-07-07, vsasa
 

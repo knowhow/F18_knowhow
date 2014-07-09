@@ -134,8 +134,6 @@ FUNCTION cre_all_kalk( ver )
    AAdd( aDBf, { 'VPCSAP', 'B',  8,  8 } )
 
 
-
-
    _alias := "KALK"
    _table_name := "kalk_kalk"
 
@@ -201,44 +199,6 @@ FUNCTION cre_all_kalk( ver )
    CREATE_INDEX( "PU_I2", "pu_i+idfirma+idvd+brdok", _alias )
    CREATE_INDEX( "PMAG", "idfirma+mkonto+idpartner+idvd+dtos(datdok)", _alias )
 
-   // objekti
-   _alias := "OBJEKTI"
-   _table_name := "objekti"
-
-   aDbf:={}
-   AADD(aDbf, {"id","C",2,0})
-   AADD(aDbf, {"naz","C",10,0})
-   AADD(aDbf, {"IdObj","C", 7,0})
-
-   IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
-
-   CREATE_INDEX("ID", "ID", _alias )
-   CREATE_INDEX("NAZ", "NAZ", _alias )
-   CREATE_INDEX("IdObj", "IdObj", _alias )
-
-   // pobjekti
-
-   _alias := "POBJEKTI"
-   _table := "pobjekti"
-
-   aDbf:={}
-   AADD(aDbf, {"id","C",2,0})
-   AADD(aDbf, {"naz","C",10,0})
-   AADD(aDbf, {"idobj","C", 7,0})
-   AADD(aDbf, {"zalt","N", 18, 5})
-   AADD(aDbf, {"zaltu","N", 18, 5})
-   AADD(aDbf, {"zalu","N", 18, 5})
-   AADD(aDbf, {"zalg","N", 18, 5})
-   AADD(aDbf, {"prodt","N", 18, 5})
-   AADD(aDbf, {"prodtu","N", 18, 5})
-   AADD(aDbf, {"prodg","N", 18, 5})
-   AADD(aDbf, {"produ","N", 18, 5})
-
-   IF_NOT_FILE_DBF_CREATE
-
-   CREATE_INDEX( "ID", "id", _alias )
-
 
    // KALK_PRIPR
 
@@ -303,6 +263,44 @@ FUNCTION cre_all_kalk( ver )
    IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "IdFirma+idvd+brdok", _alias )
+
+   // objekti
+   _alias := "OBJEKTI"
+   _table_name := "objekti"
+
+   aDbf:={}
+   AADD(aDbf, {"id","C",2,0})
+   AADD(aDbf, {"naz","C",10,0})
+   AADD(aDbf, {"IdObj","C", 7,0})
+
+   IF_NOT_FILE_DBF_CREATE
+   IF_C_RESET_SEMAPHORE
+
+   CREATE_INDEX("ID", "ID", _alias )
+   CREATE_INDEX("NAZ", "NAZ", _alias )
+   CREATE_INDEX("IdObj", "IdObj", _alias )
+
+   // pobjekti
+
+   _alias := "POBJEKTI"
+   _table := "pobjekti"
+
+   aDbf:={}
+   AADD(aDbf, {"id","C",2,0})
+   AADD(aDbf, {"naz","C",10,0})
+   AADD(aDbf, {"idobj","C", 7,0})
+   AADD(aDbf, {"zalt","N", 18, 5})
+   AADD(aDbf, {"zaltu","N", 18, 5})
+   AADD(aDbf, {"zalu","N", 18, 5})
+   AADD(aDbf, {"zalg","N", 18, 5})
+   AADD(aDbf, {"prodt","N", 18, 5})
+   AADD(aDbf, {"prodtu","N", 18, 5})
+   AADD(aDbf, {"prodg","N", 18, 5})
+   AADD(aDbf, {"produ","N", 18, 5})
+
+   IF_NOT_FILE_DBF_CREATE
+
+   CREATE_INDEX( "ID", "id", _alias )
 
 
    F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB ):create_local_atrib_table()

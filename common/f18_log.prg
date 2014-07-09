@@ -22,7 +22,7 @@ FUNCTION f18_view_log( _params )
       _print_to_file := .T.
    ENDIF
 
-   IF _params == NIL .AND. !_vars( @_params )
+   IF _params == NIL .AND. !uslovi_pregleda_loga( @_params )
       RETURN
    ENDIF
 
@@ -34,7 +34,7 @@ FUNCTION f18_view_log( _params )
 
 
 
-STATIC FUNCTION _vars( params )
+STATIC FUNCTION uslovi_pregleda_loga( params )
 
    LOCAL _ok := .F.
    LOCAL _limit := 0
@@ -258,7 +258,7 @@ FUNCTION f18_log_delete()
       _params[ "delete_level" ] := _delete_log_level
       _params[ "current_date" ] := _curr_log_date
 
-      IF _sql_log_delete( _params )
+      IF sql_log_delete( _params )
          set_metric( "log_last_delete_date", NIL,  _curr_log_date )
       ENDIF
 
@@ -267,18 +267,23 @@ FUNCTION f18_log_delete()
    RETURN
 
 
-STATIC FUNCTION _sql_log_delete( params )
+STATIC FUNCTION sql_log_delete( params )
 
    LOCAL _ok := .T.
    LOCAL _qry, _where
    LOCAL _server := pg_server()
    LOCAL _result
+   LOCAL _dok_oper := "%F18_DOK_OPER%"
    LOCAL _delete_level := params[ "delete_level" ]
    LOCAL _curr_date := params[ "current_date" ]
    LOCAL _delete_date := ( _curr_date - _delete_level )
 
-   _where := "l_time::char(8) <= " + _sql_quote( _delete_date )
-   _where += " AND msg NOT LIKE " + _sql_quote( "%F18_DOK_OPER%" )
+   _where := "( l_time::char(8) <= " + _sql_quote( _delete_date )
+   _where += " AND msg NOT LIKE " + _sql_quote( _dok_oper ) + " ) "
+   _where += " OR "
+   _where += "( EXTRACT( YEAR FROM l_time ) < EXTRACT( YEAR FROM CURRENT_DATE ) " 
+   _where += " AND "
+   _where += " msg LIKE " + _sql_quote( _dok_oper ) + " ) "
 
    _qry := "DELETE FROM fmk.log "
    _qry += "WHERE " + _where

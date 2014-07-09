@@ -87,18 +87,13 @@ FUNCTION kalk_izvj_stanje_po_objektima()
       lMarkiranaRoba := .T.
    ENDIF
 
-   CreTblPobjekti()
+   brisi_tabelu_pobjekti()
+
+   napuni_tabelu_pobjekti_iz_objekti()
+ 
    CreTblRek1( "1" )
 
-   O_POBJEKTI
-   O_KONCIJ
-   O_ROBA
-   O_KONTO
-   O_TARIFA
-   O_K1
-   O_OBJEKTI
-   O_KALK
-   O_REKAP1
+   otvori_tabele()
 
    GenRekap1( cUslov1, cUslov2, cUslovRoba, "N", "1", "N", lMarkiranaRoba, nil, cK9 )
 
@@ -122,7 +117,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
 
    nCol1 := 43
 
-   FillPObjekti()
+   resetuj_vrijednosti_tabele_pobjekti()
 
    SELECT rekap1
    nRbr := 0
@@ -239,6 +234,24 @@ FUNCTION kalk_izvj_stanje_po_objektima()
 
 
 
+STATIC FUNCTION otvori_tabele()
+
+   O_POBJEKTI
+   O_KONCIJ
+   O_ROBA
+   O_KONTO
+   O_TARIFA
+   O_K1
+   O_OBJEKTI
+   O_KALK
+   O_REKAP1
+
+   RETURN
+
+
+
+
+
 FUNCTION SetK1K2( cG1, cIdTarifa, cIdRoba, nK1, nK2 )
 
    nK2 := 0
@@ -270,7 +283,7 @@ STATIC FUNCTION SetLinSpo()
 
    DO WHILE !Eof()
 
-      IF field->id <> "99" .AND. !Empty( cObjUsl ) .AND. !( &cObjUsl )
+      IF ! ( "SVE" $ UPPER( field->naz ) ) .AND. ( field->id <> "99" .AND. !Empty( cObjUsl ) .AND. !( &cObjUsl ) )
          SKIP
          LOOP
       ENDIF
@@ -294,11 +307,14 @@ STATIC FUNCTION zaglavlje_izvjestaja( nStr )
 
    ? gTS + ":", gNFirma, Space( 40 ), "Strana:" + Str( ++nStr, 3 )
    ?
-   ?  "Stanje artikala po objektima za period:", dDatOd, "-", dDatDo
+   ?U  "Količinsko stanje " + IIF( cPrikProd == "D", "zaliha i prodaje", "zaliha" ) + " artikala po objektima za period:"
+   ?? dDatOd, "-", dDatDo
    ?
+
    IF ( qqRoba == nil )
       qqRoba := ""
    ENDIF
+
    ? "Kriterij za objekat:", Trim( qqKonto ), "Robu:", Trim( qqRoba )
    ?
 
@@ -329,7 +345,9 @@ STATIC FUNCTION zaglavlje_izvjestaja( nStr )
    ENDDO
 
    ? PadC( " ", 4 ) + " " + PadC( " ", 10 ) + " " + PadC( " ", ROBAN_LEN )
-   ?? " " + PadC( "za/pr", KOLICINA_LEN )
+   
+   ?? " " + PadC( IIF( cPrikProd == "D", "zal/pr", "zaliha" ), KOLICINA_LEN )
+
    SELECT pobjekti
    GO TOP
    DO WHILE ( !Eof() .AND. field->id < "99" )
@@ -339,8 +357,10 @@ STATIC FUNCTION zaglavlje_izvjestaja( nStr )
          LOOP
       ENDIF
 
-      ?? " " + PadC( "zal/pr", KOLICINA_LEN )
+      ?? " " + PadC( IIF( cPrikProd == "D", "zal/pr", "zaliha" ), KOLICINA_LEN )
+
       SKIP
+
    ENDDO
 
    ? cLinija
@@ -552,6 +572,7 @@ STATIC FUNCTION PrintZalGr()
 
    RETURN
 
+
 STATIC FUNCTION PrintProdGr()
 
    SELECT pobjekti
@@ -565,3 +586,68 @@ STATIC FUNCTION PrintProdGr()
       ++i
       SKIP
    ENDDO
+
+
+
+FUNCTION brisi_tabelu_pobjekti()
+
+   O_POBJEKTI
+
+   my_dbf_zap()
+
+   RETURN
+
+
+
+FUNCTION napuni_tabelu_pobjekti_iz_objekti()
+
+   LOCAL _rec
+
+   O_POBJEKTI
+   O_OBJEKTI
+
+   MsgO("objekti -> pobjekti")
+
+   SELECT objekti
+   GO TOP 
+
+   DO WHILE !Eof()
+      _rec := dbf_get_rec()
+      SELECT pobjekti
+	  APPEND BLANK
+	  dbf_update_rec( _rec )
+	  SELECT objekti
+	  SKIP
+   ENDDO
+
+   MsgC()
+
+   RETURN
+
+
+
+FUNCTION resetuj_vrijednosti_tabele_pobjekti()
+
+   LOCAL _rec
+
+   SELECT pobjekti    
+   GO TOP
+
+   DO WHILE !Eof()
+
+      _rec := dbf_get_rec()
+
+      _rec["prodtu"] := 0
+      _rec["produ"] := 0
+      _rec["zaltu"] := 0
+      _rec["zalu"] := 0
+	
+      dbf_update_rec( _rec )
+
+      SKIP
+
+   ENDDO
+
+   RETURN
+
+

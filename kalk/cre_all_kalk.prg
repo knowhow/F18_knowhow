@@ -217,6 +217,29 @@ FUNCTION cre_all_kalk( ver )
    CREATE_INDEX("NAZ", "NAZ", _alias )
    CREATE_INDEX("IdObj", "IdObj", _alias )
 
+   // pobjekti
+
+   _alias := "POBJEKTI"
+   _table := "pobjekti"
+
+   aDbf:={}
+   AADD(aDbf, {"id","C",2,0})
+   AADD(aDbf, {"naz","C",10,0})
+   AADD(aDbf, {"idobj","C", 7,0})
+   AADD(aDbf, {"zalt","N", 18, 5})
+   AADD(aDbf, {"zaltu","N", 18, 5})
+   AADD(aDbf, {"zalu","N", 18, 5})
+   AADD(aDbf, {"zalg","N", 18, 5})
+   AADD(aDbf, {"prodt","N", 18, 5})
+   AADD(aDbf, {"prodtu","N", 18, 5})
+   AADD(aDbf, {"prodg","N", 18, 5})
+   AADD(aDbf, {"produ","N", 18, 5})
+
+   IF_NOT_FILE_DBF_CREATE
+
+   CREATE_INDEX( "ID", "id", _alias )
+
+
    // KALK_PRIPR
 
    _alias := "KALK_PRIPR"

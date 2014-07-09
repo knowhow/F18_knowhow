@@ -35,7 +35,7 @@ FUNCTION fin_azuriranje_naloga( automatic )
    o_fin_za_azuriranje()
 
    IF fin_pripr->( RecCount() == 0 ) .OR. ( !automatic .AND. Pitanje(, "Izvršiti ažuriranje fin naloga ? (D/N)?", "N" ) == "N" )
-      RETURN lOk
+      RETURN lRet
    ENDIF
 
    aNalozi := fin_nalozi_iz_pripreme_u_matricu()
@@ -50,7 +50,7 @@ FUNCTION fin_azuriranje_naloga( automatic )
    ENDIF
 
    IF !fin_provjera_prije_azuriranja_naloga( automatic, aNalozi )
-      RETURN _ok
+      RETURN lRet
    ENDIF
 
    sql_table_update( nil, "BEGIN" )

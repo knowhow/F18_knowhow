@@ -3,6 +3,7 @@
   - brisanje log tabele : stari zapisi F18_DOK_OPER
   - KALK, količinsko stanje zaliha / prodaje - korekcije
   - FIN, ažuriranje naloga lOk - bugfix
+  - KALK, kreiranje tabela - bugfix
  
 1.7.116  2014-07-09, vsasa
 

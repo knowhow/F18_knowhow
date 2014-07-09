@@ -973,13 +973,8 @@ FUNCTION Sca2PKonto( dDatOd, dDatDo, aUsl1, aUsl2, cIdKPovrata, cC, lK2X, lMagac
 
 STATIC FUNCTION GRekap22()
 
-   // {
-
-   // REKAP2 je gotova, formirati REKA22
-
    nStavki := 0
    SELECT rekap2
-   // g1+str(godina)+str(mjesec)
    SET ORDER TO TAG "3"
 
    GO TOP
@@ -995,7 +990,6 @@ STATIC FUNCTION GRekap22()
       nProdajaF := 0
       nProdajaK := 0
 
-      // matrica zaliha
       aZalihe := {}
       nProdKumF := 0
       nProdKumK := 0
@@ -1113,6 +1107,207 @@ STATIC FUNCTION GRekap22()
    ENDDO
 
    RETURN
-/
+
+
+
+FUNCTION GenProdNc()
+
+   LOCAL cPKonto
+   LOCAL cIdRoba
+
+   LOCAL nNc
+   LOCAL cBrDok
+   LOCAL cIdVd
+   LOCAL dDatDok
+
+   O_PRODNC
+   O_ROBA
+   O_KALK
+   O_KALK_PRIPR
+   O_KONCIJ
+   GO TOP
+
+   Box(, 3, 60 )
+
+   DO WHILE !Eof()
+
+      SELECT koncij
+      IF !Empty( koncij->IdProdMjes )
+         cPKonto = koncij->Id
+      ELSE
+         SKIP
+         LOOP
+      ENDIF
+	
+      @ m_x + 1, m_y + 2 SAY "Prodavnica: " + cPKonto
+      SELECT roba
+      GO TOP
+      DO WHILE !Eof()
+	
+         cIdRoba := roba->id
+         IF IsRobaInProdavnica( cPKonto, cIdRoba )
+            @ m_x + 2, m_y + 2 SAY "Roba " + cIdRoba
+            nNc := GetNcForProdavnica( cPKonto, cIdRoba )
+            cBrDok := "00000000"
+            cIdVd := "00"
+            dDatDok := Date()
+            SetProdNc( cPKonto, cIdRoba, cIdVd, cBrDok, dDatDok, nNc )
+         ELSE
+            @ m_x + 2, m_y + 2 SAY "!Roba " + cIdRoba
+         ENDIF
+		
+         SELECT roba
+         SKIP
+      ENDDO
+			
+      SELECT koncij
+      SKIP
+   ENDDO
+
+   BoxC()
+
+   RETURN
+
+FUNCTION IsRobaInProdavnica( cPKonto, cIdRoba )
+
+   SELECT kalk
+   SET ORDER TO TAG "4"
+   SEEK gFirma + cPKonto + cIdRoba
+
+   IF Found()
+      RETURN .T.
+   ELSE
+      RETURN .F.
+   ENDIF
+
+
+FUNCTION GetNcForProdavnica( cPKonto, cIdRoba )
+
+   LOCAL nKolS
+   LOCAL nKolZn
+   LOCAL nNc1
+   LOCAL nSredNc
+   LOCAL dDatNab
+
+   PRIVATE _DatDok
+
+   SELECT ( F_PRIPR )
+   IF !Used()
+      O_KALK_PRIPR
+   ENDIF
+
+   _DatDok = Date()
+   KalkNabP( gFirma, cIdRoba, cPKonto, @nKolS, @nKolZN, @nNc1, @nSredNc, @dDatNab )
+
+   RETURN nSredNc
+
+
+
+
+FUNCTION SetProdNc( cPKonto, cIdRoba, cIdVd, cBrDok, dDatDok, nNc )
+
+   LOCAL nArr
+   nArr := Select()
+
+   SELECT ( F_PRODNC )
+   IF !Used()
+      O_PRODNC
+   ENDIF
+
+   SEEK cPKonto + cIdRoba
+
+   my_flock()
+
+   IF !Found()
+      APPEND BLANK
+      REPLACE PKonto WITH cPKonto
+      REPLACE IdRoba WITH cIdRoba
+   ENDIF
+
+   REPLACE IdVd WITH cIdVd
+   REPLACE BrDok WITH cBrDok
+   REPLACE DatDok WITH dDatDok
+   REPLACE Nc WITH nNc
+
+   my_unlock()
+
+   SELECT ( nArr )
+
+   RETURN
+
+
+
+FUNCTION SetIdPartnerRoba()
+
+   LOCAL cPKonto
+   LOCAL cIdRoba
+
+   LOCAL nNc
+   LOCAL cBrDok
+   LOCAL cIdVd
+   LOCAL dDatDok
+
+
+   O_ROBA
+   O_PARTN
+   GO TOP
+
+   Box(, 3, 60 )
+
+
+   FOR i = 1 TO 7
+
+      IF ( i == 1 )
+         cGodina = ""
+      ELSEIF ( i == 2 )
+         cGodina = "2002"
+      ELSEIF ( i == 3 )
+         cGodina = "2001"
+      ELSEIF ( i == 4 )
+         cGodina = "2000"
+      ELSEIF ( i == 5 )
+         cGodina = "1999"
+      ELSEIF ( i == 6 )
+         cGodina = "1998"
+      ELSEIF ( i == 7 )
+         cGodina = "1997"
+      ENDIF
+
+
+      SELECT ( F_KALK )
+      USE  ( KUMPATH + cGodina + "\kalk" )
+      SET ORDER TO TAG "1"
+
+	
+      @ m_x + 1, m_y + 2 SAY iif( cGodina == "", "2003", cGodina )
+	
+      SEEK gFirma + "10"
+      DO WHILE !Eof() .AND. ( IdVd == "10" )
+
+         @ m_x + 2, m_y + 2 SAY kalk->IdRoba
+		
+         SELECT ROBA
+         cIdPartner = kalk->IdPartner
+         SEEK kalk->IdRoba
+         IF Found()
+            IF Empty( IdPartner )
+               REPLACE IdPartner WITH cIdPartner
+            ENDIF
+         ENDIF
+
+         SELECT KALK
+         SKIP
+      ENDDO
+
+      SELECT kalk
+      USE
+
+   NEXT
+
+   BoxC()
+
+   RETURN
+
+
 
 

@@ -15,15 +15,20 @@
 
 FUNCTION cre_all_kalk( ver )
 
+   kreiraj_kalk_bazirane_tabele( ver )
+
+   kreiraj_ostale_kalk_tabele( ver )
+
+   RETURN .T.
+
+
+STATIC FUNCTION kreiraj_ostale_kalk_tabele( ver )
+
    LOCAL aDbf
    LOCAL _alias, _table_name
    LOCAL _created
    LOCAL _tbl
 
-   // -----------------------------------------------
-   // KALK_DOKS
-   // -----------------------------------------------
-	
    aDbf := {}
    AAdd( aDBf, { 'IDFIRMA', 'C',   2,  0 } )
    AAdd( aDBf, { 'IDVD', 'C',   2,  0 } )
@@ -62,33 +67,87 @@ FUNCTION cre_all_kalk( ver )
    CREATE_INDEX( "V_BRF", "brfaktp+idvd", _alias )
    CREATE_INDEX( "V_BRF2", "idvd+brfaktp", _alias )
 
-
-   // -----------------------------------------------
-   // KALK_KALK
-   // -----------------------------------------------
+   // kalk_doks2
 
    aDbf := {}
+   AAdd( aDBf, { 'IDFIRMA', 'C',   2,  0 } )
+   AAdd( aDBf, { 'IDvd', 'C',   2,  0 } )
+   AAdd( aDBf, { 'BRDOK', 'C',   8,  0 } )
+   AAdd( aDBf, { 'DATVAL', 'D',   8,  0 } )
+   AAdd( aDBf, { 'Opis', 'C',  20,  0 } )
+   AAdd( aDBf, { 'K1', 'C',  1,  0 } )
+   AAdd( aDBf, { 'K2', 'C',  2,  0 } )
+   AAdd( aDBf, { 'K3', 'C',  3,  0 } )
+
+   _alias := "KALK_DOKS2"
+   _table_name := "kalk_doks2"
+
+   IF_NOT_FILE_DBF_CREATE
+
+   IF_C_RESET_SEMAPHORE
+
+   CREATE_INDEX( "1", "IdFirma+idvd+brdok", _alias )
+
+   // objekti
+   _alias := "OBJEKTI"
+   _table_name := "objekti"
+
+   aDbf:={}
+   AADD(aDbf, {"id","C",2,0})
+   AADD(aDbf, {"naz","C",10,0})
+   AADD(aDbf, {"IdObj","C", 7,0})
+
+   IF_NOT_FILE_DBF_CREATE
+   IF_C_RESET_SEMAPHORE
+
+   CREATE_INDEX("ID", "ID", _alias )
+   CREATE_INDEX("NAZ", "NAZ", _alias )
+   CREATE_INDEX("IdObj", "IdObj", _alias )
+
+   // pobjekti
+
+   _alias := "POBJEKTI"
+   _table := "pobjekti"
+
+   aDbf:={}
+   AADD(aDbf, {"id","C",2,0})
+   AADD(aDbf, {"naz","C",10,0})
+   AADD(aDbf, {"idobj","C", 7,0})
+   AADD(aDbf, {"zalt","N", 18, 5})
+   AADD(aDbf, {"zaltu","N", 18, 5})
+   AADD(aDbf, {"zalu","N", 18, 5})
+   AADD(aDbf, {"zalg","N", 18, 5})
+   AADD(aDbf, {"prodt","N", 18, 5})
+   AADD(aDbf, {"prodtu","N", 18, 5})
+   AADD(aDbf, {"prodg","N", 18, 5})
+   AADD(aDbf, {"produ","N", 18, 5})
+
+   IF_NOT_FILE_DBF_CREATE
+   CREATE_INDEX( "ID", "id", _alias )
+
+   F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB ):create_local_atrib_table()
+
+   RETURN .T.
+
+
+STATIC FUNCTION definicija_kalk_tabele()
+
+   LOCAL aDbf := {}
+
    AAdd( aDBf, { 'IDFIRMA', 'C',   2,  0 } )
    AAdd( aDBf, { 'IDROBA', 'C',  10,  0 } )
    AAdd( aDBf, { 'IDKONTO', 'C',   7,  0 } )
    AAdd( aDBf, { 'IDKONTO2', 'C',   7,  0 } )
    AAdd( aDBf, { 'IDZADUZ', 'C',   6,  0 } )
    AAdd( aDBf, { 'IDZADUZ2', 'C',   6,  0 } )
-   // ova su polja prakticno tu samo radi kompat
-   // istina, ona su ponegdje iskoristena za neke sasvim druge stvari
-   // pa zato treba biti pazljiv sa njihovim diranjem
    AAdd( aDBf, { 'IDVD', 'C',   2,  0 } )
    AAdd( aDBf, { 'BRDOK', 'C',   8,  0 } )
    AAdd( aDBf, { 'DATDOK', 'D',   8,  0 } )
-
    AAdd( aDBf, { 'BRFAKTP', 'C',  10,  0 } )
    AAdd( aDBf, { 'DATFAKTP', 'D',   8,  0 } )
-
    AAdd( aDBf, { 'IDPARTNER', 'C',   6,  0 } )
-
    AAdd( aDBf, { 'RBR', 'C',   3,  0 } )
    AAdd( aDBf, { 'PODBR', 'C',   2,  0 } )
-
    AAdd( aDBf, { 'TPREVOZ', 'C',   1,  0 } )
    AAdd( aDBf, { 'TPREVOZ2', 'C',   1,  0 } )
    AAdd( aDBf, { 'TBANKTR', 'C',   1,  0 } )
@@ -98,23 +157,16 @@ FUNCTION cre_all_kalk( ver )
    AAdd( aDBf, { 'TRABAT', 'C',   1,  0 } )
    AAdd( aDBf, { 'TMARZA', 'C',   1,  0 } )
    AAdd( aDBf, { 'TMARZA2', 'C',   1,  0 } )
-
    AAdd( aDBf, { 'NC', 'B',  8,  8 } )
    AAdd( aDBf, { 'MPC', 'B',  8,  8 } )
-
-   // currency tip
    AAdd( aDBf, { 'VPC', 'B',  8,  8 } )
    AAdd( aDBf, { 'MPCSAPP', 'B',  8,  8 } )
-
    AAdd( aDBf, { 'IDTARIFA', 'C',   6,  0 } )
    AAdd( aDBf, { 'MKONTO', 'C',   7,  0 } )
    AAdd( aDBf, { 'PKONTO', 'C',   7,  0 } )
-
-
    AAdd( aDBf, { 'MU_I', 'C',   1,  0 } )
    AAdd( aDBf, { 'PU_I', 'C',   1,  0 } )
    AAdd( aDBf, { 'ERROR', 'C',   1,  0 } )
-
    AAdd( aDBf, { 'KOLICINA', 'B',  8,  8 } )
    AAdd( aDBf, { 'GKOLICINA', 'B',  8,  8 } )
    AAdd( aDBf, { 'GKOLICIN2', 'B',  8,  8 } )
@@ -133,6 +185,18 @@ FUNCTION cre_all_kalk( ver )
    AAdd( aDBf, { 'RABATV', 'B',  8,  8 } )
    AAdd( aDBf, { 'VPCSAP', 'B',  8,  8 } )
 
+   RETURN aDbf
+
+
+
+STATIC FUNCTION kreiraj_kalk_bazirane_tabele( ver )
+
+   LOCAL aDbf
+   LOCAL _alias, _table_name
+   LOCAL _created
+   LOCAL _tbl
+
+   aDbf := definicija_kalk_tabele()
 
    _alias := "KALK"
    _table_name := "kalk_kalk"
@@ -199,7 +263,6 @@ FUNCTION cre_all_kalk( ver )
    CREATE_INDEX( "PU_I2", "pu_i+idfirma+idvd+brdok", _alias )
    CREATE_INDEX( "PMAG", "idfirma+mkonto+idpartner+idvd+dtos(datdok)", _alias )
 
-
    // KALK_PRIPR
 
    _alias := "KALK_PRIPR"
@@ -234,7 +297,6 @@ FUNCTION cre_all_kalk( ver )
    CREATE_INDEX( "2", "idFirma+idvd+brdok+IDTarifa", _alias )
    CREATE_INDEX( "3", "dtos(datdok)+mu_i+pu_i", _alias )
 
-
    // _KALK
 
    _alias := "_KALK"
@@ -243,66 +305,5 @@ FUNCTION cre_all_kalk( ver )
    IF_NOT_FILE_DBF_CREATE
 
    CREATE_INDEX( "1", "idFirma+IdVD+BrDok+RBr", _alias )
-
-   // kalk_doks2
-   aDbf := {}
-   AAdd( aDBf, { 'IDFIRMA', 'C',   2,  0 } )
-   AAdd( aDBf, { 'IDvd', 'C',   2,  0 } )
-   AAdd( aDBf, { 'BRDOK', 'C',   8,  0 } )
-   AAdd( aDBf, { 'DATVAL', 'D',   8,  0 } )
-   AAdd( aDBf, { 'Opis', 'C',  20,  0 } )
-   AAdd( aDBf, { 'K1', 'C',  1,  0 } )
-   AAdd( aDBf, { 'K2', 'C',  2,  0 } )
-   AAdd( aDBf, { 'K3', 'C',  3,  0 } )
-
-   _alias := "KALK_DOKS2"
-   _table_name := "kalk_doks2"
-
-   IF_NOT_FILE_DBF_CREATE
-
-   IF_C_RESET_SEMAPHORE
-
-   CREATE_INDEX( "1", "IdFirma+idvd+brdok", _alias )
-
-   // objekti
-   _alias := "OBJEKTI"
-   _table_name := "objekti"
-
-   aDbf:={}
-   AADD(aDbf, {"id","C",2,0})
-   AADD(aDbf, {"naz","C",10,0})
-   AADD(aDbf, {"IdObj","C", 7,0})
-
-   IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
-
-   CREATE_INDEX("ID", "ID", _alias )
-   CREATE_INDEX("NAZ", "NAZ", _alias )
-   CREATE_INDEX("IdObj", "IdObj", _alias )
-
-   // pobjekti
-
-   _alias := "POBJEKTI"
-   _table := "pobjekti"
-
-   aDbf:={}
-   AADD(aDbf, {"id","C",2,0})
-   AADD(aDbf, {"naz","C",10,0})
-   AADD(aDbf, {"idobj","C", 7,0})
-   AADD(aDbf, {"zalt","N", 18, 5})
-   AADD(aDbf, {"zaltu","N", 18, 5})
-   AADD(aDbf, {"zalu","N", 18, 5})
-   AADD(aDbf, {"zalg","N", 18, 5})
-   AADD(aDbf, {"prodt","N", 18, 5})
-   AADD(aDbf, {"prodtu","N", 18, 5})
-   AADD(aDbf, {"prodg","N", 18, 5})
-   AADD(aDbf, {"produ","N", 18, 5})
-
-   IF_NOT_FILE_DBF_CREATE
-
-   CREATE_INDEX( "ID", "id", _alias )
-
-
-   F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB ):create_local_atrib_table()
 
    RETURN .T.

@@ -32,6 +32,8 @@ STATIC cLinija
 #define ROBAN_LEN 40
 #define KOLICINA_LEN 10
 
+
+
 FUNCTION kalk_izvj_stanje_po_objektima()
 
    LOCAL i
@@ -77,7 +79,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
    qqKonto := PadR( "13;", 60 )
    qqRoba := Space( 60 )
 
-   IF GetVars( @cNObjekat ) == 0
+   IF uslovi_izvjestaja( @cNObjekat ) == 0
       RETURN
    ENDIF
 
@@ -106,8 +108,6 @@ FUNCTION kalk_izvj_stanje_po_objektima()
    SET ORDER TO TAG "2"
    GO TOP
 
-   SetGaZagSpo()
-
    START PRINT CRET
    ?
 
@@ -118,7 +118,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
 
    nStr := 0
 
-   ZaglSPo( @nStr )
+   zaglavlje_izvjestaja( @nStr )
 
    nCol1 := 43
 
@@ -177,7 +177,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
 		
          IF ( PRow() > cStrRedova2 )
             FF
-            ZaglSPo( @nStr )
+            zaglavlje_izvjestaja( @nStr )
          ENDIF
 		
          ++nRBr
@@ -186,7 +186,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
          @ PRow(), nColR  SAY PadR( aStrRoba[ 1 ], ROBAN_LEN )
          nCol1 := PCol()
 
-         PrintZal( cG1, cIdTarifa, cIdRoba, cObjUsl )
+         ispisi_zalihe( cG1, cIdTarifa, cIdRoba, cObjUsl )
 		
          nK1 := 0
          IF ( ( cPrikProd == "D" ) .OR. Len( aStrRoba ) > 1 )
@@ -196,7 +196,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
             ENDIF
             @ PRow(), nCol1 SAY ""
             IF ( cPrikProd == "D" )
-               PrintProd( cG1, cIdTarifa, cIdRoba, cObjUsl )
+               ispisi_prodaju( cG1, cIdTarifa, cIdRoba, cObjUsl )
             ENDIF
          ENDIF
 		
@@ -214,7 +214,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
 	
       IF ( PRow() > cStrRedova2 )
          FF
-         ZaglSPo( @nStr )
+         zaglavlje_izvjestaja( @nStr )
       ENDIF
 
       ? StrTran( cLinija, "-", "=" )
@@ -227,7 +227,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
 
    IF ( PRow() > cStrRedova2 )
       FF
-      ZaglSPo( @nStr )
+      zaglavlje_izvjestaja( @nStr )
    ENDIF
 
    FF
@@ -288,7 +288,7 @@ STATIC FUNCTION SetLinSpo()
 
 
 
-STATIC FUNCTION ZaglSPo( nStr )
+STATIC FUNCTION zaglavlje_izvjestaja( nStr )
 
    LOCAL nObjekata
 
@@ -299,18 +299,22 @@ STATIC FUNCTION ZaglSPo( nStr )
    IF ( qqRoba == nil )
       qqRoba := ""
    ENDIF
-   ? "Kriterij za Objekat:", Trim( qqKonto ), "Robu:", Trim( qqRoba )
+   ? "Kriterij za objekat:", Trim( qqKonto ), "Robu:", Trim( qqRoba )
    ?
 
    P_COND
 
    ? cLinija
 
-   ? PadC( "Rbr", 4 ) + " " + PadC( "Sifra", 10 ) + " " + PadC( "NAZIV  ARTIKLA", ROBAN_LEN )
+   ?U PadC( "Rbr", 4 ) + " " + PadC( "Šifra", 10 ) + " " + PadC( "Naziv  artikla", ROBAN_LEN )
+
    SELECT objekti
    GO BOTTOM
+
    ?? " " + PadC( AllTrim( objekti->naz ), KOLICINA_LEN )
+
    GO TOP
+
    DO WHILE ( !Eof() .AND. objekti->id < "99" )
 	
       IF !Empty( cObjUsl ) .AND. !( &cObjUsl )
@@ -343,7 +347,8 @@ STATIC FUNCTION ZaglSPo( nStr )
 
    RETURN NIL
 
-STATIC FUNCTION GetVars( cNObjekat )
+
+STATIC FUNCTION uslovi_izvjestaja( cNObjekat )
 
    cUslov1 := ""
    cUslov2 := ""
@@ -372,7 +377,7 @@ STATIC FUNCTION GetVars( cNObjekat )
 
    DO WHILE .T.
       @ m_x + 1, m_y + 2 SAY "Konta objekata:" GET qqKonto PICT "@!S50"
-      @ m_x + 3, m_y + 2 SAY "tekuci promet je period:" GET dDatOd
+      @ m_x + 3, m_y + 2 SAY8 "tekući promet je period:" GET dDatOd
       @ m_x + 3, Col() + 2 SAY "do" GET dDatDo
       @ m_x + 4, m_y + 2 SAY "Kriterij za robu :" GET qqRoba PICT "@!S50"
       @ m_x + 5, m_y + 2 SAY "Prikaz prodaje (D/N)" GET cPrikProd PICT "@!" VALID cPrikProd $ "DN"
@@ -409,11 +414,9 @@ STATIC FUNCTION GetVars( cNObjekat )
 
    RETURN 1
 
-STATIC FUNCTION SetGaZagSpo()
-   RETURN
 
 
-STATIC FUNCTION PrintZal( cG1, cIdTarifa, cIdRoba, cDUslov )
+STATIC FUNCTION ispisi_zalihe( cG1, cIdTarifa, cIdRoba, cDUslov )
 
    LOCAL nK2
 
@@ -470,7 +473,7 @@ STATIC FUNCTION PrintZal( cG1, cIdTarifa, cIdRoba, cDUslov )
    RETURN
 
 
-STATIC FUNCTION PrintProd( cG1, cIdTarifa, cIdRoba, cDUslov )
+STATIC FUNCTION ispisi_prodaju( cG1, cIdTarifa, cIdRoba, cDUslov )
 
    LOCAL nK1
 

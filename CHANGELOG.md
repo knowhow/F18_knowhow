@@ -1,3 +1,7 @@
+1.7.118  2014-07-09, vsasa
+
+  - KALK, kreiranje tabela razvojeno u dvije funkcije
+ 
 1.7.117  2014-07-09, vsasa
 
   - brisanje log tabele : stari zapisi F18_DOK_OPER

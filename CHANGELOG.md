@@ -1,3 +1,7 @@
+1.7.117  2014-07-09, vsasa
+
+  - brisanje log tabele : stari zapisi F18_DOK_OPER
+ 
 1.7.116  2014-07-09, vsasa
 
   - FIN, ažuriranje naloga, nepostojeća varijabla _ok

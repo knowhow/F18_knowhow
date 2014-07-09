@@ -71,8 +71,10 @@ private lSMark:=.f.
 if right(trim(qqSezona),1)="*"
 	lSMark:=.t.
 endif
+   
+brisi_tabelu_pobjekti()
+napuni_tabelu_pobjekti_iz_objekti()
 
-CreTblPobjekti()
 CreTblRek1("1")
 
 O_POBJEKTI
@@ -115,8 +117,7 @@ endif
 
 nCol1:=43
 
-// inicijalizuj pomocna polja
-FillPObjekti()
+resetuj_vrijednosti_tabele_pobjekti()
 
 select rekap1
 nRbr:=0

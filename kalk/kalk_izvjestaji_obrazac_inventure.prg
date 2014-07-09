@@ -86,7 +86,9 @@ FUNCTION ObrazInv()
    Inkey( 0 )
 #endif
 
-   CreTblPobjekti()
+   brisi_tabelu_pobjekti()
+   napuni_tabelu_pobjekti_iz_objekti()
+
    CreTblRek1( "2" )
 
    O_POBJEKTI

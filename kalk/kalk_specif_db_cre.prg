@@ -14,66 +14,6 @@
 
 
 
- 
-function CreTblPObjekti()
-local cTbl
-local aDbf
-local _rec
-local _table
-
-my_close_all_dbf()
-
-cTbl := "pobjekti"
-
-_table := my_home() + cTbl + ".dbf"
-FERASE( _table )
-FERASE( STRTRAN( _table, ".dbf", ".cdx" ) )
-
-aDbf:={ {"id","C",2,0}   ,;
-        {"naz","C", 10,0}, ;
-        {"IdObj","C", 7,0}, ;
-        {"zalt","N", 18,5}, ;
-        {"zaltu","N", 18,5}, ;
-        {"zalu","N", 18,5}, ;
-        {"zalg","N", 18,5}, ;
-        {"prodt","N", 18,5}, ;
-        {"prodtu","N", 18,5}, ;
-        {"prodg","N", 18,5}, ;
-        {"produ","N", 18,5} ;
-       }
-
-// uvijek kreiraj
-DBCREATE2( cTbl, aDbf )
-CREATE_INDEX( "ID", "id", cTbl )
-
-my_close_all_dbf()
-
-O_POBJEKTI
-O_OBJEKTI
-
-MsgO("objekti -> pobjekti")
-
-// napuni PObjekti sa id iz Objekti 
-
-select objekti
-go top 
-
-do while !EOF()
-	_rec := dbf_get_rec()
-	
-    SELECT pobjekti
-	APPEND BLANK
-	dbf_update_rec( _rec )
-
-	SELECT objekti
-	skip
-enddo
-
-MsgC()
-
-my_close_all_dbf()
-return
-
 
 function CreTblRek1(cVarijanta)
 local _table := "kalk_rekap1"

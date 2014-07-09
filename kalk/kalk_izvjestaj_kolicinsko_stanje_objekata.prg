@@ -87,18 +87,13 @@ FUNCTION kalk_izvj_stanje_po_objektima()
       lMarkiranaRoba := .T.
    ENDIF
 
-   CreTblPobjekti()
+   brisi_tabelu_pobjekti()
+
+   napuni_tabelu_pobjekti_iz_objekti()
+ 
    CreTblRek1( "1" )
 
-   O_POBJEKTI
-   O_KONCIJ
-   O_ROBA
-   O_KONTO
-   O_TARIFA
-   O_K1
-   O_OBJEKTI
-   O_KALK
-   O_REKAP1
+   otvori_tabele()
 
    GenRekap1( cUslov1, cUslov2, cUslovRoba, "N", "1", "N", lMarkiranaRoba, nil, cK9 )
 
@@ -122,7 +117,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
 
    nCol1 := 43
 
-   FillPObjekti()
+   resetuj_vrijednosti_tabele_pobjekti()
 
    SELECT rekap1
    nRbr := 0
@@ -236,6 +231,24 @@ FUNCTION kalk_izvj_stanje_po_objektima()
    my_close_all_dbf()
 
    RETURN
+
+
+
+STATIC FUNCTION otvori_tabele()
+
+   O_POBJEKTI
+   O_KONCIJ
+   O_ROBA
+   O_KONTO
+   O_TARIFA
+   O_K1
+   O_OBJEKTI
+   O_KALK
+   O_REKAP1
+
+   RETURN
+
+
 
 
 
@@ -552,6 +565,7 @@ STATIC FUNCTION PrintZalGr()
 
    RETURN
 
+
 STATIC FUNCTION PrintProdGr()
 
    SELECT pobjekti
@@ -565,3 +579,68 @@ STATIC FUNCTION PrintProdGr()
       ++i
       SKIP
    ENDDO
+
+
+
+FUNCTION brisi_tabelu_pobjekti()
+
+   O_POBJEKTI
+
+   my_dbf_zap()
+
+   RETURN
+
+
+
+FUNCTION napuni_tabelu_pobjekti_iz_objekti()
+
+   LOCAL _rec
+
+   O_POBJEKTI
+   O_OBJEKTI
+
+   MsgO("objekti -> pobjekti")
+
+   SELECT objekti
+   GO TOP 
+
+   DO WHILE !Eof()
+      _rec := dbf_get_rec()
+      SELECT pobjekti
+	  APPEND BLANK
+	  dbf_update_rec( _rec )
+	  SELECT objekti
+	  SKIP
+   ENDDO
+
+   MsgC()
+
+   RETURN
+
+
+
+FUNCTION resetuj_vrijednosti_tabele_pobjekti()
+
+   LOCAL _rec
+
+   SELECT pobjekti    
+   GO TOP
+
+   DO WHILE !Eof()
+
+      _rec := dbf_get_rec()
+
+      _rec["prodtu"] := 0
+      _rec["produ"] := 0
+      _rec["zaltu"] := 0
+      _rec["zalu"] := 0
+	
+      dbf_update_rec( _rec )
+
+      SKIP
+
+   ENDDO
+
+   RETURN
+
+

@@ -32,28 +32,6 @@ return
 
 
 
-function FillPObjekti()
-local _rec
-
-SELECT pobjekti    
-GO TOP
-do while !eof()
-
-    _rec := dbf_get_rec()
-
-    _rec["prodtu"] := 0
-    _rec["produ"] := 0
-    _rec["zaltu"] := 0
-    _rec["zalu"] := 0
-	
-    dbf_update_rec( _rec )
-
-    skip
-
-enddo
-
-return
-
 
 function KesirajKalks(dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj)
 local cPom

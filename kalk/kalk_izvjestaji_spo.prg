@@ -32,9 +32,8 @@ STATIC cLinija
 #define ROBAN_LEN 40
 #define KOLICINA_LEN 10
 
-FUNCTION StanjePoObjektima()
+FUNCTION kalk_izvj_stanje_po_objektima()
 
-   // kao djon cu iskoristiti pregled kretanja zaliha
    LOCAL i
    LOCAL nT1
    LOCAL nT4
@@ -78,7 +77,7 @@ FUNCTION StanjePoObjektima()
    qqKonto := PadR( "13;", 60 )
    qqRoba := Space( 60 )
 
-   IF ( GetVars( @cNObjekat ) == 0 )
+   IF GetVars( @cNObjekat ) == 0
       RETURN
    ENDIF
 
@@ -123,7 +122,6 @@ FUNCTION StanjePoObjektima()
 
    nCol1 := 43
 
-   // inicijalizuj pomocna polja
    FillPObjekti()
 
    SELECT rekap1
@@ -137,11 +135,9 @@ FUNCTION StanjePoObjektima()
 
       SELECT pobjekti
 
-      // inicijalizuj polja
       GO TOP
       DO WHILE !Eof()
          _rec := dbf_get_rec()
-         // nivo grupe
          _rec[ "prodg" ] := 0
          _rec[ "zalg" ] := 0
          dbf_update_rec( _rec )
@@ -169,7 +165,6 @@ FUNCTION StanjePoObjektima()
          SetK1K2( cG1, cIdTarifa, cIdRoba, @nK1, @nK2 )
 		
          IF ( ( Round( nK2, 3 ) == 0 .AND. Round( nK1, 2 ) == 0 ) )
-            // stanje nula, skoci na sljedecu robu
             SELECT rekap1
             SEEK cG1 + cIdTarifa + cIdroba + Chr( 254 )
             LOOP
@@ -193,7 +188,6 @@ FUNCTION StanjePoObjektima()
 
          PrintZal( cG1, cIdTarifa, cIdRoba, cObjUsl )
 		
-         // drugi red  prodaja  u mjesecu  k1
          nK1 := 0
          IF ( ( cPrikProd == "D" ) .OR. Len( aStrRoba ) > 1 )
             ?
@@ -211,7 +205,6 @@ FUNCTION StanjePoObjektima()
          ENDIF
 
          SELECT rekap1
-         // pozicioniraj se na sljedeci artikal
          SEEK cG1 + cIdTarifa + cIdroba + Chr( 255 )
       ENDDO
 
@@ -264,9 +257,6 @@ FUNCTION SetK1K2( cG1, cIdTarifa, cIdRoba, nK1, nK2 )
    RETURN
 
 
-// ----------------------------------------------------
-// setovanje linije za izvjestaj
-// ----------------------------------------------------
 STATIC FUNCTION SetLinSpo()
 
    LOCAL nObjekata
@@ -334,7 +324,6 @@ STATIC FUNCTION ZaglSPo( nStr )
 
    ENDDO
 
-   // drugi red zaglavlja
    ? PadC( " ", 4 ) + " " + PadC( " ", 10 ) + " " + PadC( " ", ROBAN_LEN )
    ?? " " + PadC( "za/pr", KOLICINA_LEN )
    SELECT pobjekti
@@ -424,16 +413,11 @@ STATIC FUNCTION SetGaZagSpo()
    RETURN
 
 
-// ---------------------------------------------
-// printanje stavki reporta po kontima
-// ---------------------------------------------
 STATIC FUNCTION PrintZal( cG1, cIdTarifa, cIdRoba, cDUslov )
 
    LOCAL nK2
 
-   // prvi red zalihe
    nK2 := 0
-   // izracunajmo prvo ukupno (kolona "SVI")
    SELECT pobjekti
    GO TOP
    DO WHILE ( !Eof() .AND. field->id < "99" )
@@ -444,10 +428,8 @@ STATIC FUNCTION PrintZal( cG1, cIdTarifa, cIdRoba, cDUslov )
       SKIP
    ENDDO
 
-   // ispis kolone "SVI"
    @ PRow(), PCol() + 1 SAY nK2 PICT cPicKol
 
-   // ispisi kolone za pojedine objekte
    SELECT pobjekti
    GO TOP
    DO WHILE ( !Eof() .AND. pobjekti->id < "99" )
@@ -468,7 +450,6 @@ STATIC FUNCTION PrintZal( cG1, cIdTarifa, cIdRoba, cDUslov )
       ENDIF
       SELECT pobjekti
       IF roba->k2 <> "X"
-         // samo u finansijski zbir
          _rec := dbf_get_rec()
          _rec[ "zalt" ] := _rec[ "zalt" ] + rekap1->k2
          _rec[ "zalu" ] := _rec[ "zalu" ] + rekap1->k2
@@ -478,9 +459,7 @@ STATIC FUNCTION PrintZal( cG1, cIdTarifa, cIdRoba, cDUslov )
       SKIP
    ENDDO
 
-   // ovo je objekat 99
    IF ( roba->k2 <> "X" )
-      // roba sa oznakom k2=X
       _rec := dbf_get_rec()
       _rec[ "zalt" ] := _rec[ "zalt" ] + nK2
       _rec[ "zalu" ] := _rec[ "zalu" ] + nK2
@@ -496,7 +475,6 @@ STATIC FUNCTION PrintProd( cG1, cIdTarifa, cIdRoba, cDUslov )
    LOCAL nK1
 
    SELECT pobjekti
-   // ispisi kolone za pojedine objekte
    nK1 := 0
    GO TOP
    DO WHILE ( !Eof() .AND. pobjekti->id < "99" )
@@ -507,7 +485,6 @@ STATIC FUNCTION PrintProd( cG1, cIdTarifa, cIdRoba, cDUslov )
       SKIP
    ENDDO
 
-   // sumarno prodaja
    @ PRow(), PCol() + 1 SAY nK1 PICT cPicKol
 
    SELECT pobjekti
@@ -544,7 +521,6 @@ STATIC FUNCTION PrintProd( cG1, cIdTarifa, cIdRoba, cDUslov )
       SKIP
    ENDDO
 
-   // skipuje na polje "99"
    IF roba->k2 <> "X"
 
       _rec := dbf_get_rec()
@@ -560,7 +536,6 @@ STATIC FUNCTION PrintProd( cG1, cIdTarifa, cIdRoba, cDUslov )
 STATIC FUNCTION PrintZalGr()
 
    SELECT pobjekti
-   // idi na "objekat" 99 (SVI)
    GO BOTTOM
    @ PRow(), nCol1 + 1 SAY zalg PICT cPicKol
    SELECT pobjekti
@@ -578,7 +553,6 @@ STATIC FUNCTION PrintProdGr()
 
    SELECT pobjekti
    GO BOTTOM
-   // idi na "objekat" 99 (SVI)
    @ PRow() + 1, nCol1 + 1 SAY prodg PICT cPicKol
    SELECT pobjekti
    GO TOP

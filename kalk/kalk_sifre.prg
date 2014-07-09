@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,158 +12,148 @@
 
 #include "kalk.ch"
 
-function kalk_sifrarnik()
-local _opc:={}
-local _opcexe:={}
-local _izbor := 1
+FUNCTION kalk_sifrarnik()
 
-PRIVATE PicDem
-PicDem:=gPICDem
-my_close_all_dbf()
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
 
-AADD(_opc,"1. opći šifarnici                  ")
-if (ImaPravoPristupa(goModul:oDataBase:cName, "SIF", "OPCISIFOPEN"))
-	AADD(_opcexe, {|| SifFmkSvi()})
-else
-	AADD(_opcexe, {|| MsgBeep(cZabrana)})
-endif
-AADD(_opc,"2. robno-materijalno poslovanje")
-if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","ROBMATSIFOPEN"))
-	AADD(_opcexe, {|| SifFmkRoba()})
-else
-	AADD(_opcexe, {|| MsgBeep(cZabrana)})
-endif
+   PRIVATE PicDem
 
-AADD(_opc,"3. magacinski i prodajni objekti")
-if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","PRODOBJSIFOPEN"))
-	AADD(_opcexe, {|| P_Objekti()})
-else
-	AADD(_opcexe, {|| MsgBeep(cZabrana)})
-endif
+   PicDem := gPICDem
+   my_close_all_dbf()
 
+   AAdd( _opc, "1. opći šifarnici                  " )
+   AAdd( _opcexe, {|| SifFmkSvi() } )
+   AAdd( _opc, "2. robno-materijalno poslovanje" )
+   AAdd( _opcexe, {|| SifFmkRoba() } )
+   AAdd( _opc, "3. magacinski i prodajni objekti" )
+   AAdd( _opcexe, {|| P_Objekti() } )
 
-f18_menu("msif", .f., _izbor, _opc, _opcexe )
+   f18_menu( "msif", .F., _izbor, _opc, _opcexe )
 
-CLOSERET
-return .f.
+   my_close_all_dbf()
+
+   RETURN .F.
 
 
 
-function kalk_serv_functions()
-Msg("Nije u upotrebi")
-closeret
-return
+FUNCTION kalk_serv_functions()
+
+   Msg( "Nije u upotrebi" )
+   closeret
+
+   RETURN
 
 
-function KalkRobaBlock(Ch)
-LOCAL cSif:=ROBA->id, cSif2:=""
+FUNCTION KalkRobaBlock( Ch )
 
-if Ch==K_CTRL_T .and. gSKSif=="D"
+   LOCAL cSif := ROBA->id, cSif2 := ""
 
-    // provjerimo da li je sifra dupla
-    PushWA()
-    SET ORDER TO TAG "ID"
-    SEEK cSif
-    SKIP 1
-    cSif2:=ROBA->id
-    PopWA()
-    IF !(cSif==cSif2)
-        // ako nije dupla provjerimo da li postoji u kumulativu
-        if ima_u_kalk_kumulativ(cSif,"7")
-            Beep(1)
-            Msg("Stavka se ne moze brisati jer se vec nalazi u dokumentima!")
-            return 7
-        endif
-    ENDIF
+   IF Ch == K_CTRL_T .AND. gSKSif == "D"
 
-elseif Ch == K_ALT_M
-    return MpcIzVpc()
+      PushWA()
+      SET ORDER TO TAG "ID"
+      SEEK cSif
+      SKIP 1
+      cSif2 := ROBA->id
+      PopWA()
+      IF !( cSif == cSif2 )
+         IF ima_u_kalk_kumulativ( cSif, "7" )
+            Beep( 1 )
+            Msg( "Stavka se ne moze brisati jer se vec nalazi u dokumentima!" )
+            RETURN 7
+         ENDIF
+      ENDIF
 
-elseif Ch==K_F2 .and. gSKSif=="D"
+   ELSEIF Ch == K_ALT_M
+      RETURN MpcIzVpc()
 
-    if ima_u_kalk_kumulativ(cSif,"7")
-        return 99
-    endif
+   ELSEIF Ch == K_F2 .AND. gSKSif == "D"
 
-elseif Ch == K_F8  
+      IF ima_u_kalk_kumulativ( cSif, "7" )
+         RETURN 99
+      ENDIF
 
-    // cjenovnik
-    PushWa()
-    nRet:=CjenR()
-    OSifBaze()
-    SELECT ROBA
-    PopWA()
-    return nRet
+   ELSEIF Ch == K_F8
 
-elseif upper(Chr(Ch)) == "O"
-    
-    if roba->(fieldpos("strings")) == 0
- 	    return 6
-    endif
-    TB:Stabilize()
-    PushWa()
-    m_strings(roba->strings, roba->id)
-    select roba
-    PopWa()
-    return 7
+      PushWa()
+      nRet := CjenR()
+      OSifBaze()
+      SELECT ROBA
+      PopWA()
+      RETURN nRet
 
-elseif upper(Chr(Ch)) == "S"
+   ELSEIF Upper( Chr( Ch ) ) == "O"
 
-    TB:Stabilize()  
-    // problem sa "S" - exlusive, htc
-    PushWa()
-    KalkStanje( roba->id )
-    PopWa()
-    return 6  
-    // DE_CONT2
+      IF roba->( FieldPos( "strings" ) ) == 0
+         RETURN 6
+      ENDIF
+      TB:Stabilize()
+      PushWa()
+      m_strings( roba->strings, roba->id )
+      SELECT roba
+      PopWa()
+      RETURN 7
 
-elseif upper(Chr(Ch)) == "D"
-    // pregled detalja artikla
-    roba_opis_edit( .t. )
-    return 6  
- 
-endif
+   ELSEIF Upper( Chr( Ch ) ) == "S"
 
-return DE_CONT
+      TB:Stabilize()
+      PushWa()
+      KalkStanje( roba->id )
+      PopWa()
+      RETURN 6
+
+   ELSEIF Upper( Chr( Ch ) ) == "D"
+      roba_opis_edit( .T. )
+      RETURN 6
+
+   ENDIF
+
+   RETURN DE_CONT
 
 
 
-function OSifBaze()
-O_KONTO
-O_KONCIJ
-O_PARTN
-O_TNAL
-O_TDOK
-O_TRFP
-O_TRMP
-O_VALUTE
-O_TARIFA
-O_ROBA
-O_SAST
-return
+FUNCTION OSifBaze()
 
-function P_Objekti()
-local nTArea
-private ImeKol
-private Kol
+   O_KONTO
+   O_KONCIJ
+   O_PARTN
+   O_TNAL
+   O_TDOK
+   O_TRFP
+   O_TRMP
+   O_VALUTE
+   O_TARIFA
+   O_ROBA
+   O_SAST
 
-ImeKol := {}
-Kol := {}
+   RETURN
 
-nTArea := SELECT()
-O_OBJEKTI
 
-AADD(ImeKol, { "ID", { || id }, "id" })
-add_mcode(@ImeKol)
-AADD(ImeKol, { "Naziv", { || PadR( ToStrU( naz ), 20 ) }, "naz" })
-AADD(ImeKol, { "IdObj", { || idobj }, "idobj" })
+FUNCTION P_Objekti()
 
-for i:=1 to LEN(ImeKol)
-	AADD(Kol, i)
-next
+   LOCAL nTArea
+   PRIVATE ImeKol
+   PRIVATE Kol
 
-select (nTArea)
-p_sifra(F_OBJEKTI, 1, MAXROWS()-15, MAXCOLS()-20, "Objekti")
-return 
+   ImeKol := {}
+   Kol := {}
 
+   nTArea := Select()
+   O_OBJEKTI
+
+   AAdd( ImeKol, { "ID", {|| id }, "id" } )
+   add_mcode( @ImeKol )
+   AAdd( ImeKol, { "Naziv", {|| PadR( ToStrU( naz ), 20 ) }, "naz" } )
+   AAdd( ImeKol, { "IdObj", {|| idobj }, "idobj" } )
+
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
+
+   SELECT ( nTArea )
+   p_sifra( F_OBJEKTI, 1, MAXROWS() -15, MAXCOLS() -20, "Objekti" )
+
+   RETURN
 

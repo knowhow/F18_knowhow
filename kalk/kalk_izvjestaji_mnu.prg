@@ -51,7 +51,7 @@ FUNCTION kalk_izvjestaji_mag_i_pro()
    AAdd( _opc, "N. najprometniji artikli" )
    AAdd( _opcexe, {|| NPArtikli() } )
    AAdd( _opc, "O. stanje artikala po objektima " )
-   AAdd( _opcexe, {|| StanjePoObjektima() } )
+   AAdd( _opcexe, {|| kalk_izvj_stanje_po_objektima() } )
 
    IF IsVindija()
       AAdd( _opc, "V. pregled prodaje" )

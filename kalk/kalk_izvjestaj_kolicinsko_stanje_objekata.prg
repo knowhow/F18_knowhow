@@ -294,7 +294,7 @@ STATIC FUNCTION zaglavlje_izvjestaja( nStr )
 
    ? gTS + ":", gNFirma, Space( 40 ), "Strana:" + Str( ++nStr, 3 )
    ?
-   ?  "Stanje artikala po objektima za period:", dDatOd, "-", dDatDo
+   ?U  "Količinsko stanje artikala po objektima za period:", dDatOd, "-", dDatDo
    ?
    IF ( qqRoba == nil )
       qqRoba := ""

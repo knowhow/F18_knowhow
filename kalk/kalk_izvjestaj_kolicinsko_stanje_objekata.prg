@@ -283,7 +283,7 @@ STATIC FUNCTION SetLinSpo()
 
    DO WHILE !Eof()
 
-      IF field->id <> "99" .AND. !Empty( cObjUsl ) .AND. !( &cObjUsl )
+      IF ! ( "SVE" $ UPPER( field->naz ) ) .AND. ( field->id <> "99" .AND. !Empty( cObjUsl ) .AND. !( &cObjUsl ) )
          SKIP
          LOOP
       ENDIF
@@ -307,11 +307,14 @@ STATIC FUNCTION zaglavlje_izvjestaja( nStr )
 
    ? gTS + ":", gNFirma, Space( 40 ), "Strana:" + Str( ++nStr, 3 )
    ?
-   ?U  "Količinsko stanje artikala po objektima za period:", dDatOd, "-", dDatDo
+   ?U  "Količinsko stanje " + IIF( cPrikProd == "D", "zaliha i prodaje", "zaliha" ) + " artikala po objektima za period:"
+   ?? dDatOd, "-", dDatDo
    ?
+
    IF ( qqRoba == nil )
       qqRoba := ""
    ENDIF
+
    ? "Kriterij za objekat:", Trim( qqKonto ), "Robu:", Trim( qqRoba )
    ?
 
@@ -342,7 +345,9 @@ STATIC FUNCTION zaglavlje_izvjestaja( nStr )
    ENDDO
 
    ? PadC( " ", 4 ) + " " + PadC( " ", 10 ) + " " + PadC( " ", ROBAN_LEN )
-   ?? " " + PadC( "za/pr", KOLICINA_LEN )
+   
+   ?? " " + PadC( IIF( cPrikProd == "D", "zal/pr", "zaliha" ), KOLICINA_LEN )
+
    SELECT pobjekti
    GO TOP
    DO WHILE ( !Eof() .AND. field->id < "99" )
@@ -352,8 +357,10 @@ STATIC FUNCTION zaglavlje_izvjestaja( nStr )
          LOOP
       ENDIF
 
-      ?? " " + PadC( "zal/pr", KOLICINA_LEN )
+      ?? " " + PadC( IIF( cPrikProd == "D", "zal/pr", "zaliha" ), KOLICINA_LEN )
+
       SKIP
+
    ENDDO
 
    ? cLinija

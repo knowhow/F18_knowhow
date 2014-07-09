@@ -241,7 +241,39 @@ FUNCTION CrePPProd()
 
 
 
-FUNCTION GenRekap1( aUsl1, aUsl2, aUslR, cKartica, cVarijanta, cKesiraj, fSMark,  cK1, cK7, cK9, cIdKPovrata, aUslSez ) LOCAL nSec IF ( cKesiraj = nil ) cKesiraj := "N" ENDIF IF ( fSMark == nil ) fSMark := .F.  ENDIF IF ( cK1 == nil ) cK1 := "9999" ENDIF IF ( cK7 == nil ) cK7 := "N" ENDIF IF ( cK9 == nil ) cK9 := "999" ENDIF IF ( cIdKPovrata == nil ) cIdKPovrata := "XXXXXXXX" ENDIF IF ( aUslSez == nil ) aUslSez := ".t." ENDIF 
+FUNCTION GenRekap1( aUsl1, aUsl2, aUslR, cKartica, cVarijanta, cKesiraj, fSMark,  cK1, cK7, cK9, cIdKPovrata, aUslSez ) 
+
+   LOCAL nSec 
+
+   IF ( cKesiraj = nil ) 
+      cKesiraj := "N" 
+   ENDIF 
+   
+   IF ( fSMark == nil ) 
+      fSMark := .F.  
+   ENDIF 
+
+   IF ( cK1 == nil ) 
+      cK1 := "9999" 
+   ENDIF 
+
+   IF ( cK7 == nil ) 
+      cK7 := "N" 
+   ENDIF 
+
+   IF ( cK9 == nil ) 
+      cK9 := "999" 
+   ENDIF 
+
+   IF ( cIdKPovrata == nil ) 
+      cIdKPovrata := "XXXXXXXX" 
+   ENDIF 
+
+   IF ( aUslSez == nil ) 
+      aUslSez := ".t." 
+   ENDIF 
+
+
    nSec := Seconds()
 
    SELECT kalk

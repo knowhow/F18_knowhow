@@ -1,3 +1,8 @@
+1.7.116  2014-07-09, vsasa
+
+  - FIN, ažuriranje naloga, nepostojeća varijabla _ok
+  - KALK, štampa izvještaja stanje po objektima - bugfix
+ 
 1.7.115  2014-07-08, vsasa
 
   - FIN, ažuriranje u jednoj transakciji

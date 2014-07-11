@@ -61,7 +61,7 @@ FUNCTION fin_bb_subanalitika_b( params )
    fin_bb_txt_header()
 
    IF lExpRpt
-      aExpFields := get_sbb_fields( lBBSkraceni, __par_len )
+      aExpFields := get_sbb_fields( __par_len )
       t_exp_create( aExpFields )
    ENDIF
 
@@ -606,7 +606,7 @@ STATIC FUNCTION fill_sbb_tbl( cKonto, cIdPart, cNaziv, ;
 
 
 
-STATIC FUNCTION get_sbb_fields( lBBSkraceni, nPartLen )
+STATIC FUNCTION get_sbb_fields( nPartLen )
 
    IF nPartLen == nil
       nPartLen := 6
@@ -616,19 +616,12 @@ STATIC FUNCTION get_sbb_fields( lBBSkraceni, nPartLen )
    AAdd( aFields, { "konto", "C", 7, 0 } )
    AAdd( aFields, { "idpart", "C", nPartLen, 0 } )
    AAdd( aFields, { "naziv", "C", 40, 0 } )
-
-   IF lBBSkraceni
-      AAdd( aFields, { "duguje", "N", 15, 2 } )
-      AAdd( aFields, { "potrazuje", "N", 15, 2 } )
-      AAdd( aFields, { "saldo", "N", 15, 2 } )
-   ELSE
-      AAdd( aFields, { "psdug", "N", 15, 2 } )
-      AAdd( aFields, { "pspot", "N", 15, 2 } )
-      AAdd( aFields, { "kumdug", "N", 15, 2 } )
-      AAdd( aFields, { "kumpot", "N", 15, 2 } )
-      AAdd( aFields, { "slddug", "N", 15, 2 } )
-      AAdd( aFields, { "sldpot", "N", 15, 2 } )
-   ENDIF
+   AAdd( aFields, { "psdug", "N", 15, 2 } )
+   AAdd( aFields, { "pspot", "N", 15, 2 } )
+   AAdd( aFields, { "kumdug", "N", 15, 2 } )
+   AAdd( aFields, { "kumpot", "N", 15, 2 } )
+   AAdd( aFields, { "slddug", "N", 15, 2 } )
+   AAdd( aFields, { "sldpot", "N", 15, 2 } )
 
    RETURN aFields
 

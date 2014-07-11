@@ -1,6 +1,7 @@
-1.7.118  2014-07-09, vsasa
+1.7.118  2014-07-11, vsasa
 
   - KALK, kreiranje tabela razvojeno u dvije funkcije
+  - FIN, bruto bilans B eksport u DBF - bugfix
  
 1.7.117  2014-07-09, vsasa
 

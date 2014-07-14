@@ -24,7 +24,6 @@ STATIC __DRV_CURRENT
 
 
 
-
 FUNCTION pos_fiskalni_racun( id_pos, datum, rn_broj, dev_params, uplaceni_iznos )
 
    LOCAL _err_level := 0

@@ -45,48 +45,6 @@ FUNCTION NaprPom( aDbf, cPom )
    RETURN
 
 
-
-FUNCTION pos_prebaci_pripr_u_pos( cIdVrsteP )
-
-   LOCAL cBrdok
-   LOCAL nTrec := 0
-   LOCAL _rec
-
-   IF cIdVrsteP == nil
-      cIdVrsteP := ""
-   ENDIF
-
-   SELECT _pos_pripr
-   GO TOP
-
-   cBrdok := field->brdok
-
-   DO WHILE !Eof()
-
-      _rec := dbf_get_rec()
-
-      SELECT _pos
-      APPEND BLANK
-
-      IF ( gRadniRac == "N" )
-         _rec[ "brdok" ] := cBrDok
-      ENDIF
-
-      _rec[ "idvrstep" ] := cIdVrsteP
-
-      dbf_update_rec( _rec )
-
-      SELECT _pos_pripr
-      SKIP
-
-   ENDDO
-
-   SELECT _pos_pripr
-   my_dbf_zap()
-
-   RETURN
-
-
 FUNCTION pos2_pripr()
 
    LOCAL _rec

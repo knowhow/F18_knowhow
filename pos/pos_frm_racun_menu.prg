@@ -19,35 +19,25 @@ FUNCTION pos_narudzba()
 
    SetKXLat( "'", "-" )
 
-   _ret := narudzba_tops()
-
-   SET KEY "'" to
-
-   RETURN _ret
-
-
-FUNCTION narudzba_tops()
-
-   LOCAL _ret
-
    o_pos_tables()
 
    SELECT _pos_pripr
 
    IF reccount2() <> 0 .AND. !Empty( field->brdok )
-      _ret := DodajNaRacun( _pos_pripr->brdok )
+      _ret := dodaj_na_racun( _pos_pripr->brdok )
    ELSE
-      _ret := NoviRacun()
+      _ret := novi_racun()
    ENDIF
 
    SET KEY "'" to
-   CLOSE ALL
+
+   my_close_all_dbf()
 
    RETURN _ret
 
 
 
-FUNCTION dodajnaracun( cBrojRn )
+STATIC FUNCTION dodaj_na_racun( cBrojRn )
 
    SET CURSOR ON
 
@@ -62,10 +52,7 @@ FUNCTION dodajnaracun( cBrojRn )
    RETURN
 
 
-// --------------------------------------------
-// unos novog racuna
-// --------------------------------------------
-FUNCTION noviracun()
+STATIC FUNCTION novi_racun()
 
    LOCAL cBrojRn
    LOCAL cBr2
@@ -75,7 +62,6 @@ FUNCTION noviracun()
    SELECT _pos
    SET CURSOR ON
 
-   // novi broj racuna...
    cBrojRn := "PRIPRE"
 
    IF gStolovi == "D"
@@ -90,11 +76,10 @@ FUNCTION noviracun()
          MsgBeep( "Unos stola obavezan !" )
          RETURN
       ENDIF
-      // daj mi info o trenutnom stanju stola
       nStStanje := g_stanje_stola( Val( cSto ) )
       @ m_x + 4, m_y + 2 SAY "Prethodno stanje stola:   " + AllTrim( Str( nStStanje ) ) + " KM"
       IF nStStanje > 0
-         @ m_x + 6, m_y + 2 SAY "Zakljuciti prethodno stanje (D/N)?" GET cStZak VALID cStZak $ "DN" PICT "@!"
+         @ m_x + 6, m_y + 2 SAY8 "Zaključiti prethodno stanje (D/N)?" GET cStZak VALID cStZak $ "DN" PICT "@!"
       ENDIF
       READ
       BoxC()
@@ -113,6 +98,7 @@ FUNCTION noviracun()
    pos_unos_racuna( cBrojRn, cSto )
 
    RETURN
+
 
 
 
@@ -141,27 +127,30 @@ FUNCTION PreglRadni( cBrDok )
 
 
 
+
 FUNCTION ZakljuciRacun()
 
-   LOCAL _ret
-   LOCAL _ne_zatvaraj := fetch_metric( "pos_konstantni_unos_racuna", my_user(), "N" )
+   LOCAL lRet
+   LOCAL lOtvoriUnos := fetch_metric( "pos_konstantni_unos_racuna", my_user(), "N" ) == "D"
 
-   _ret := zakljuci_pos_racun()
+   lRet := zakljuci_pos_racun()
 
-   IF _ne_zatvaraj == "D" .AND. _ret == .T.
-
-      pos_narudzba()
-      zakljuciracun()
-
+   IF !lRet
+      MsgBeep( "Postoji problem sa ažuriranjem računa !" )
    ENDIF
 
-   RETURN _ret
+   IF lOtvoriUnos .AND. lRet
+      pos_narudzba()
+      zakljuciracun()
+   ENDIF
+
+   RETURN lRet
 
 
 
 FUNCTION zakljuci_pos_racun()
 
-   LOCAL _ret := .F.
+   LOCAL lRet := .F.
    LOCAL _param := hb_Hash()
 
    O__POS_PRIPR
@@ -169,8 +158,8 @@ FUNCTION zakljuci_pos_racun()
    my_dbf_pack()
 
    IF _pos_pripr->( RecCount2() ) == 0
-      CLOSE ALL
-      RETURN _ret
+      my_close_all_dbf()
+      RETURN lRet
    ENDIF
 
    GO TOP
@@ -187,12 +176,12 @@ FUNCTION zakljuci_pos_racun()
    form_zakljuci_racun( @_param )
 
    IF _param[ "zakljuci" ] == "D"
-      _ret := pos_zakljuci_racun_sve_na_jedan( _param )
+      lRet := pos_zakljuci_racun_sve_na_jedan( _param )
    ENDIF
 
-   CLOSE ALL
+   my_close_all_dbf()
 
-   RETURN _ret
+   RETURN lRet
 
 
 

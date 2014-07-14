@@ -2580,7 +2580,7 @@ FUNCTION kalkulacija_ima_sve_cijene( firma, tip_dok, br_dok )
 
    DO WHILE !Eof() .AND. field->idfirma + field->idvd + field->brdok == firma + tip_dok + br_dok
 
-      IF field->idvd $ "11#41#42#RN"
+      IF field->idvd $ "11#41#42#RN#19"
          IF field->fcj == 0
             _ok := .F.
             MsgBeep( "Stavka broj " + AllTrim( field->rbr ) + " FCJ <= 0 !" )

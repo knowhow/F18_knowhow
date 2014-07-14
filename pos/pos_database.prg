@@ -199,13 +199,12 @@ FUNCTION o_pos_tables( lOtvoriKumulativ )
    O_SIFV
    O_PRIPRZ
    O_PRIPRG
-   O__POS
    O__POS_PRIPR
 
    IF lOtvoriKumulativ
       SELECT pos_doks
    ELSE
-      SELECT _pos
+      SELECT _pos_pripr
    ENDIF
 
    RETURN

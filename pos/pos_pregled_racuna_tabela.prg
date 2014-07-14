@@ -57,7 +57,7 @@ if !EMPTY(dDatOd).and.!EMPTY(dDatDo)
 	cFil0 := "datum >= " + _filter_quote( dDatOD ) + " .and. datum <= " + _filter_quote( dDatDo ) + " .and. "
 endif
 
-PRacuni(,,,fScope, cFil0, qIdRoba )  
+pos_lista_racuna(,,,fScope, cFil0, qIdRoba )  
 
 CLOSE ALL
 

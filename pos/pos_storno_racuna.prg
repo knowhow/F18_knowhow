@@ -156,12 +156,10 @@ FUNCTION pos_storno_fisc_no()
       RETURN
    ENDIF
 
-   // filuj stavke storno racuna
    __fill_storno( _datum, _broj_rn, Str( _fisc_broj, 10 ) )
 
    SELECT ( nTArea )
 
-   // ovo refreshira pripremu
    oBrowse:goBottom()
    oBrowse:refreshAll()
    oBrowse:dehilite()
@@ -172,9 +170,6 @@ FUNCTION pos_storno_fisc_no()
    RETURN
 
 
-// -------------------------------------
-// storniranje racuna
-// -------------------------------------
 FUNCTION pos_storno_rn( lSilent, cSt_rn, dSt_date, cSt_fisc )
 
    LOCAL nTArea := Select()
@@ -220,7 +215,7 @@ FUNCTION pos_storno_rn( lSilent, cSt_rn, dSt_date, cSt_fisc )
       _datum := NIL
    ENDIF
 
-   @ m_x + 2, m_y + 2 SAY "stornirati pos racun broj:" GET cSt_rn VALID {|| PRacuni( @_datum, @cSt_rn, .T. ), _fix_rn_no( @cSt_rn ), dSt_date := _datum,  .T. }
+   @ m_x + 2, m_y + 2 SAY "stornirati pos racun broj:" GET cSt_rn VALID {|| pos_lista_racuna( @_datum, @cSt_rn, .T. ), _fix_rn_no( @cSt_rn ), dSt_date := _datum,  .T. }
    @ m_x + 3, m_y + 2 SAY "od datuma:" GET dSt_date
 
    READ
@@ -233,7 +228,7 @@ FUNCTION pos_storno_rn( lSilent, cSt_rn, dSt_date, cSt_fisc )
       cSt_fisc := PadR( AllTrim( Str( pos_doks->fisc_rn ) ), 10 )
    ENDIF
 
-   @ m_x + 4, m_y + 2 SAY "broj fiskalnog isjecka:" GET cSt_fisc
+   @ m_x + 4, m_y + 2 SAY8 "broj fiskalnog isječka:" GET cSt_fisc
 
    READ
 
@@ -251,7 +246,6 @@ FUNCTION pos_storno_rn( lSilent, cSt_rn, dSt_date, cSt_fisc )
 
    SELECT ( nTArea )
 
-   // filuj stavke storno racuna
    __fill_storno( dSt_date, cSt_rn, cSt_fisc )
 
    SELECT ( F_POS )
@@ -263,7 +257,6 @@ FUNCTION pos_storno_rn( lSilent, cSt_rn, dSt_date, cSt_fisc )
 
    IF lSilent == .F.
 
-      // ovo refreshira pripremu
       oBrowse:goBottom()
       oBrowse:refreshAll()
       oBrowse:dehilite()
@@ -276,15 +269,11 @@ FUNCTION pos_storno_rn( lSilent, cSt_rn, dSt_date, cSt_fisc )
    RETURN
 
 
-// --------------------------------------------------
-// filuje pripremu sa storno stavkama
-// --------------------------------------------------
 STATIC FUNCTION __fill_storno( rn_datum, storno_rn, broj_fiscal )
 
    LOCAL _t_area := Select()
    LOCAL _t_roba, _rec
 
-   // napuni pripremu sa stavkama racuna za storno
    SELECT ( F_POS )
    IF !Used()
       O_POS
@@ -313,7 +302,6 @@ STATIC FUNCTION __fill_storno( rn_datum, storno_rn, broj_fiscal )
       _rec[ "kolicina" ] := ( _rec[ "kolicina" ] * -1 )
       _rec[ "robanaz" ] := roba->naz
       _rec[ "datum" ] := gDatum
-      // placanje uvijek resetovati kod storna na gotovinu
       _rec[ "idvrstep" ] := "01"
 
       IF Empty( broj_fiscal )

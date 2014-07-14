@@ -195,6 +195,7 @@ FUNCTION pos_povrat_dokumenta_u_pripremu()
       _oper := odaberi_opciju_povrata_dokumenta()
    ENDIF
 
+
    IF _oper == "1"
       my_dbf_zap()
    ENDIF

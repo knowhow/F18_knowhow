@@ -13,27 +13,31 @@
 
 
 
-FUNCTION pos_azuriraj_racun( cIdPos, cStalRac, cRadRac, cVrijeme, cNacPlac, cIdGost )
+FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
 
-   LOCAL cDatum
-   LOCAL nStavki
    LOCAL cDokument := ""
    LOCAL _rec
    LOCAL nCount := 0
-   LOCAL _kolicina := 0
-   LOCAL _idroba, _idcijena, _cijena
    LOCAL lOk := .T.
    LOCAL lRet := .F.
 
    otvori_pos_tabele_bez_semafora()
 
-   IF !postoji_racun_za_azuriranje_u_pripremi( cIdPos, cRadRac )
-      _msg := "Problem sa podacima tabele _POS, nema stavi !!!#Azuriranje nije moguce !"
-      log_write( _msg, 2 )
-      msgbeep( _msg )
-      my_use_semaphore_on()
-      RETURN lRet 
+   IF pos_dokument_postoji( cIdPos, VD_RN, gDatum, cBrojRacuna )
+      MsgBeep( "Dokument već postoji ažuriran pod istim brojem !" )
+      RETURN lRet
    ENDIF
+
+   SELECT _pos_pripr
+  
+   IF RecCount() == 0
+      MsgBeep( "Priprema računa je prazna, ažuriranje nije moguće !" )
+      RETURN lRet
+   ENDIF
+
+   SELECT _pos_pripr
+   SET ORDER TO TAG "2"
+   GO TOP
 
    sql_table_update( nil, "BEGIN" )
    IF !f18_lock_tables( { "pos_pos", "pos_doks" }, .T. )
@@ -42,32 +46,33 @@ FUNCTION pos_azuriraj_racun( cIdPos, cStalRac, cRadRac, cVrijeme, cNacPlac, cIdG
       RETURN lRet
    ENDIF
 
+   MsgO( "Ažuriranje stavki računa u toku ..." )
+
    SELECT pos_doks
    APPEND BLANK
 
-   cDokument := cIdPos + "-" + VD_RN + "-" + cStalRac + " " + DTOC( gDatum ) 
+   cDokument := cIdPos + "-" + VD_RN + "-" + cBrojRacuna + " " + DTOC( gDatum ) 
 
    _rec := dbf_get_rec()
    _rec[ "idpos" ] := cIdPos
    _rec[ "idvd" ] := VD_RN
    _rec[ "datum" ] := gDatum
-   _rec[ "brdok" ] := cStalRac
+   _rec[ "brdok" ] := cBrojRacuna
    _rec[ "vrijeme" ] := cVrijeme
    _rec[ "idvrstep" ] := IIF( cNacPlac == NIL, gGotPlac, cNacPlac )
    _rec[ "idgost" ] := IIF( cIdGost == NIL, "", cIdGost )
-   _rec[ "idradnik" ] := _pos->idradnik
+   _rec[ "idradnik" ] := _pos_pripr->idradnik
    _rec[ "m1" ] := OBR_NIJE
    _rec[ "prebacen" ] := OBR_JEST
-   _rec[ "smjena" ] := _pos->smjena
+   _rec[ "smjena" ] := _pos_pripr->smjena
 
    lOk := update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
 
    IF lOk
 
-      SELECT _pos
-      cDatum := DToS( gDatum )
+      SELECT _pos_pripr
 
-      DO WHILE !Eof() .AND. _POS->( IdPos + IdVd + DToS( Datum ) + BrDok ) == ( cIdPos + "42" + cDatum + cRadRac )
+      DO WHILE !Eof() .AND. _pos_pripr->( IdPos + IdVd + DToS( Datum ) + BrDok ) == ( cIdPos + "42" + DTOS( gDatum ) + "PRIPRE" )
 
          SELECT pos
          APPEND BLANK
@@ -77,24 +82,24 @@ FUNCTION pos_azuriraj_racun( cIdPos, cStalRac, cRadRac, cVrijeme, cNacPlac, cIdG
          _rec[ "idpos" ] := cIdPos
          _rec[ "idvd" ] := VD_RN
          _rec[ "datum" ] := gDatum
-         _rec[ "brdok" ] := cStalRac
+         _rec[ "brdok" ] := cBrojRacuna
          _rec[ "rbr" ] := PadL( AllTrim( Str( ++ nCount ) ), 5 )
          _rec[ "m1" ] := OBR_JEST
          _rec[ "prebacen" ] := OBR_NIJE
-         _rec[ "iddio" ] := _pos->iddio
-         _rec[ "idodj" ] := _pos->idodj
-         _rec[ "idcijena" ] := _pos->idcijena
-         _rec[ "idradnik" ] := _pos->idradnik
-         _rec[ "idroba" ] := _pos->idroba
-         _rec[ "idtarifa" ] := _pos->idtarifa
-         _rec[ "kolicina" ] := _pos->kolicina
-         _rec[ "mu_i" ] := _pos->mu_i
-         _rec[ "ncijena" ] := _pos->ncijena
-         _rec[ "cijena" ] := _pos->cijena
-         _rec[ "smjena" ] := _pos->smjena
-         _rec[ "c_1" ] := _pos->c_1
-         _rec[ "c_2" ] := _pos->c_2
-         _rec[ "c_3" ] := _pos->c_3
+         _rec[ "iddio" ] := _pos_pripr->iddio
+         _rec[ "idodj" ] := _pos_pripr->idodj
+         _rec[ "idcijena" ] := _pos_pripr->idcijena
+         _rec[ "idradnik" ] := _pos_pripr->idradnik
+         _rec[ "idroba" ] := _pos_pripr->idroba
+         _rec[ "idtarifa" ] := _pos_pripr->idtarifa
+         _rec[ "kolicina" ] := _pos_pripr->kolicina
+         _rec[ "mu_i" ] := _pos_pripr->mu_i
+         _rec[ "ncijena" ] := _pos_pripr->ncijena
+         _rec[ "cijena" ] := _pos_pripr->cijena
+         _rec[ "smjena" ] := _pos_pripr->smjena
+         _rec[ "c_1" ] := _pos_pripr->c_1
+         _rec[ "c_2" ] := _pos_pripr->c_2
+         _rec[ "c_3" ] := _pos_pripr->c_3
 
          lOk := update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )
 
@@ -102,12 +107,14 @@ FUNCTION pos_azuriraj_racun( cIdPos, cStalRac, cRadRac, cVrijeme, cNacPlac, cIdG
             EXIT
          ENDIF
 
-         SELECT _pos
+         SELECT _pos_pripr
          SKIP
 
       ENDDO
 
    ENDIF
+
+   MsgC()
 
    IF lOk
       lRet := .T.
@@ -120,16 +127,19 @@ FUNCTION pos_azuriraj_racun( cIdPos, cStalRac, cRadRac, cVrijeme, cNacPlac, cIdG
    ENDIF
 
    IF lOk
-      brisi_pos_pripremu()
+      brisi_pripremu_racuna()
    ENDIF
 
    RETURN lRet
 
 
-STATIC FUNCTION brisi_pos_pripremu()
 
-   SELECT _pos
+STATIC FUNCTION brisi_pripremu_racuna()
+
+   SELECT _pos_pripr
    my_dbf_zap()
+
+   SET ORDER TO
 
    RETURN
 

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,305 +14,277 @@
 
 
 
-// ------------------------------------------------------
-// pregled racuna - browse racuna sa opcijom P
-// ------------------------------------------------------
-function pos_pregled_racuna( admin )
-local _datum := NIL
-local _danas := "D"
-private aVezani := {}
+FUNCTION pos_pregled_racuna( admin )
 
-if admin == NIL
-    admin := .f.
-endif
+   LOCAL _datum := NIL
+   LOCAL _danas := "D"
+   PRIVATE aVezani := {}
 
-o_pos_tables()
+   IF admin == NIL
+      admin := .F.
+   ENDIF
 
-Box(, 1, 50)
-    @ m_x + 1, m_y + 2 SAY "Samo danasnji ? (D/N)" GET _danas VALID _danas $ "DN" PICT "!@"
-    read
-BoxC()
+   o_pos_tables()
 
-if _danas == "D"
-    _datum := DATE()
-endif
+   Box(, 1, 50 )
+   @ m_x + 1, m_y + 2 SAY8 "Samo današnji ? (D/N)" GET _danas VALID _danas $ "DN" PICT "!@"
+   READ
+   BoxC()
 
-PRacuni( _datum )
+   IF _danas == "D"
+      _datum := Date()
+   ENDIF
 
-my_close_all_dbf()
+   pos_lista_racuna( _datum )
 
-return
+   my_close_all_dbf()
+
+   RETURN
 
 
 
-// -----------------------------------------------------------------------
-// tabela sa listom racuna
-// -----------------------------------------------------------------------
-function PRacuni( dDat, cBroj, fPrep, fScope, cPrefixFilter, qIdRoba )
-local i
-private fMark:=.f.
-private cFilter
-private ImeKol := {}
-private Kol := {}
+FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, fScope, cPrefixFilter, qIdRoba )
 
-if cPrefixFilter == NIL
-    cPrefixFilter := ""
-endif
+   LOCAL i
+   PRIVATE fMark := .F.
+   PRIVATE cFilter
+   PRIVATE ImeKol := {}
+   PRIVATE Kol := {}
 
-cFilter := cPrefixFilter + " IdVd=='42'"
+   IF cPrefixFilter == NIL
+      cPrefixFilter := ""
+   ENDIF
 
-if fPrep == NIL
-    fPrep := .f.
-else
-    fPrep := fPrep
-endif
+   cFilter := cPrefixFilter + " IdVd=='42'"
 
-if cBroj == NIL
-    cRacun := SPACE(LEN(POS->BrDok))
-else
-    cRacun := ALLTRIM(cBroj)
-endif
+   IF fPrep == NIL
+      fPrep := .F.
+   ELSE
+      fPrep := fPrep
+   ENDIF
 
-cIdPos:=LEFT(cRacun,AT("-",cRacun)-1)
-cIdPos:=PADR(cIdPOS,LEN(gIdPos))
+   IF cBroj == NIL
+      cRacun := Space( Len( POS->BrDok ) )
+   ELSE
+      cRacun := AllTrim( cBroj )
+   ENDIF
 
-if gVrstaRS<>"S".and.!EMPTY(cIdPos).and.cIdPOS<>gIdPos
-    MsgBeep("Racun nije napravljen na ovoj kasi!#"+"Ne mozete napraviti promjenu!",20)
-    return (.f.)
-endif
+   cIdPos := Left( cRacun, At( "-", cRacun ) -1 )
+   cIdPos := PadR( cIdPOS, Len( gIdPos ) )
 
-cBroj:=RIGHT(cRacun,LEN(cRacun)-AT("-",cRacun))
-cBroj:=PADL(cBroj,6)
+   IF gVrstaRS <> "S" .AND. !Empty( cIdPos ) .AND. cIdPOS <> gIdPos
+      MsgBeep( "Racun nije napravljen na ovoj kasi!#" + "Ne mozete napraviti promjenu!", 20 )
+      RETURN ( .F. )
+   ENDIF
 
-AADD(ImeKol, { "Broj racuna", {|| padr(trim(IdPos)+"-"+alltrim(BrDok),9)}}) 
-AADD(ImeKol, { "Fisk.rn",{|| fisc_rn}} )
-AADD(ImeKol, { "Iznos", {|| STR (SR_Iznos(), 13, 2)}} )
-AADD(ImeKol, { IIF(gStolovi == "D", "Sto", "Smj"), ;
-    {|| IIF(gStolovi == "D", sto_br , smjena)}})
-AADD(ImeKol, { "Datum",{|| datum}} )
-AADD(ImeKol, { "Vr.Pl",{|| idvrstep} } )
-AADD(ImeKol, { "Partner", {|| idgost} })
-AADD(ImeKol, { "Vrijeme",{|| vrijeme} })
-AADD(ImeKol,{ "Placen",     {|| IIF (Placen==PLAC_NIJE,"  NE","  DA")} })
+   cBroj := Right( cRacun, Len( cRacun ) -At( "-", cRacun ) )
+   cBroj := PadL( cBroj, 6 )
 
-for i:=1 to LEN(ImeKol)
-    AADD(kol,i)
-next
+   AAdd( ImeKol, { "Broj racuna", {|| PadR( Trim( IdPos ) + "-" + AllTrim( BrDok ), 9 ) } } )
+   AAdd( ImeKol, { "Fisk.rn", {|| fisc_rn } } )
+   AAdd( ImeKol, { "Iznos", {|| Str ( pos_iznos_racuna( field->idpos, field->idvd, field->datum, field->brdok ), 13, 2 ) } } )
+   AAdd( ImeKol, { iif( gStolovi == "D", "Sto", "Smj" ), ;
+      {|| iif( gStolovi == "D", sto_br, smjena ) } } )
+   AAdd( ImeKol, { "Datum", {|| datum } } )
+   AAdd( ImeKol, { "Vr.Pl", {|| idvrstep } } )
+   AAdd( ImeKol, { "Partner", {|| idgost } } )
+   AAdd( ImeKol, { "Vrijeme", {|| vrijeme } } )
+   AAdd( ImeKol, { "Placen",     {|| iif ( Placen == PLAC_NIJE, "  NE", "  DA" ) } } )
 
-select pos_doks
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( kol, i )
+   NEXT
 
-if fScope=nil
-    fScope:=.t.
-endif
+   SELECT pos_doks
 
-if fScope
-    SET SCOPEBOTTOM TO "W"
-endif
+   IF fScope = nil
+      fScope := .T.
+   ENDIF
 
-if gVrstaRS=="S".or.KLevel<L_UPRAVN
-    AADD(ImeKol,{"Radnik",{|| IdRadnik}})
-    AADD(Kol, LEN(ImeKol))
-    cFilter+=".and. (Idpos="+cm2str(gIdPos)+" .or. IdPos='X ')"
-else
-    cFilter+=".and. IdRadnik="+cm2str(gIdRadnik)+".and. Idpos="+cm2str(gIdPos)
-endif
+   IF fScope
+      SET SCOPEBOTTOM TO "W"
+   ENDIF
 
-if kLevel == L_PRODAVAC .and. dDat <> NIL
-    cFilter += '.and. Datum=' + cm2str(dDat)
-endif
+   IF gVrstaRS == "S" .OR. KLevel < L_UPRAVN
+      AAdd( ImeKol, { "Radnik", {|| IdRadnik } } )
+      AAdd( Kol, Len( ImeKol ) )
+      cFilter += ".and. (Idpos=" + cm2str( gIdPos ) + " .or. IdPos='X ')"
+   ELSE
+      cFilter += ".and. IdRadnik=" + cm2str( gIdRadnik ) + ".and. Idpos=" + cm2str( gIdPos )
+   ENDIF
 
-if qIdRoba<>nil.and.!EMPTY(qIdRoba)
-    cFilter+=".and. pos_racun_sadrzi_artikal(IdPos, IdVd, datum, BrDok, " + cm2str( qIdRoba ) + ")"
-endif
+   IF dDat <> NIL
+      cFilter += '.and. Datum=' + cm2str( dDat )
+   ENDIF
 
-SET FILTER TO &cFilter
+   IF qIdRoba <> NIL .AND. !Empty( qIdRoba )
+      cFilter += ".and. pos_racun_sadrzi_artikal(IdPos, IdVd, datum, BrDok, " + cm2str( qIdRoba ) + ")"
+   ENDIF
 
-if !EMPTY(cBroj)
-    SEEK2( cIdPos + "42" + dtos(dDat) + cBroj )
-    if FOUND()
-            cBroj:=ALLTRIM(pos_doks->IdPos)+"-"+ALLTRIM(pos_doks->BrDok)
-            dDat:=pos_doks->datum
-            return(.t.)
-    endif
-else
-    GO BOTTOM
-endif
+   SET FILTER TO &cFilter
 
-if fPrep
-    cFnc:="<Enter>-Odabir   <+>-Markiraj/Demarkiraj   <P>-Pregled"
-    fMark:=.t.
-    // ako je prepis, aVezani je privatna varijabla funkcije <PrepisRacuna>
-    bMarkF:={|| RacObilj ()}
-else
-    cFnc:="<Enter>-Odabir          <P>-Pregled"
-    bMarkF:=NIL
-endif
+   IF !Empty( cBroj )
+      SEEK2( cIdPos + "42" + DToS( dDat ) + cBroj )
+      IF Found()
+         cBroj := AllTrim( pos_doks->IdPos ) + "-" + AllTrim( pos_doks->BrDok )
+         dDat := pos_doks->datum
+         RETURN( .T. )
+      ENDIF
+   ELSE
+      GO BOTTOM
+   ENDIF
 
-ObjDBedit( "racun" , MAXROWS() - 10, MAXCOLS() - 3, {|| EdPRacuni(fMark) },IIF(gRadniRac=="D", "  STALNI ","  ")+"RACUNI  ", "", nil,cFnc,,bMarkF)
+   IF fPrep
+      cFnc := "<Enter>-Odabir   <+>-Markiraj/Demarkiraj   <P>-Pregled"
+      fMark := .T.
+      // ako je prepis, aVezani je privatna varijabla funkcije <PrepisRacuna>
+      bMarkF := {|| RacObilj () }
+   ELSE
+      cFnc := "<Enter>-Odabir          <P>-Pregled"
+      bMarkF := NIL
+   ENDIF
 
-SET FILTER TO
+   ObjDBedit( "racun", MAXROWS() - 10, MAXCOLS() - 3, {|| EdPRacuni( fMark ) }, iif( gRadniRac == "D", "  STALNI ", "  " ) + "RACUNI  ", "", nil, cFnc,, bMarkF )
 
-cBroj := ALLTRIM( pos_doks->IdPos ) + "-"+ AllTrim( pos_doks->BrDok )
+   SET FILTER TO
 
-if cBroj='-'  
-    // nema racuna
-    cBroj:=SPACE(9)
-endif
+   cBroj := AllTrim( pos_doks->IdPos ) + "-" + AllTrim( pos_doks->BrDok )
 
-dDat := pos_doks->datum
+   IF cBroj = '-'
+      // nema racuna
+      cBroj := Space( 9 )
+   ENDIF
 
-if LASTKEY()==K_ESC
-    return(.f.)
-endif
+   dDat := pos_doks->datum
 
-return(.t.)
+   IF LastKey() == K_ESC
+      RETURN( .F. )
+   ENDIF
+
+   RETURN( .T. )
 
 
 
 /*! \fn EdPRacuni()
- *  \brief Ispravka 
+ *  \brief Ispravka
  */
 
-function EdPRacuni()
+STATIC FUNCTION EdPRacuni()
 
-//                   1            2               3              4
-// aVezani : {pos_doks->IdPos, pos_doks->(BrDok), pos_doks->IdVrsteP, pos_doks->Datum})
+   // 1            2               3              4
+   // aVezani : {pos_doks->IdPos, pos_doks->(BrDok), pos_doks->IdVrsteP, pos_doks->Datum})
 
-local cLevel
-local ii
-local nTrec
-local nTrec2
-local _rec
+   LOCAL cLevel
+   LOCAL ii
+   LOCAL nTrec
+   LOCAL nTrec2
+   LOCAL _rec
 
-// M->Ch je iz OBJDB, fMark je iz PRacuni
-if M->Ch == 0
-    return (DE_CONT)
-endif
+   // M->Ch je iz OBJDB, fMark je iz PRacuni
+   IF M->Ch == 0
+      RETURN ( DE_CONT )
+   ENDIF
 
-if ( LASTKEY() == K_ESC ) .or. ( LASTKEY() == K_ENTER )
-    return (DE_ABORT)
-endif
+   IF ( LastKey() == K_ESC ) .OR. ( LastKey() == K_ENTER )
+      RETURN ( DE_ABORT )
+   ENDIF
 
-O_DIO
-O_ODJ
-O_STRAD
+   O_DIO
+   O_ODJ
+   O_STRAD
 
-select strad
-hseek gStrad
-cLevel := prioritet
-use
-select pos_doks
+   SELECT strad
+   hseek gStrad
+   cLevel := prioritet
+   USE
+   SELECT pos_doks
 
-if fMark .and. (LastKey()==Asc("+"))
-    nPos := ASCAN (aVezani, {|x| (x[1]+dtos(x[4])+x[2])==pos_doks->(IdPos+dtos(datum)+BrDok)})
-    if nPos == 0
-            if LEN(aVezani)==0 .or.(aVezani[1][3]==pos_doks->IdVrsteP .and. aVezani[1][4]==pos_doks->Datum)
-                AADD (aVezani, {pos_doks->IdPos, pos_doks->(BrDok), pos_doks->IdVrsteP, pos_doks->Datum})
-            elseif aVezani[1][3]<>pos_doks->IdVrsteP
-                MsgBeep ("Nemoguce spajanje!#Nacin placanja nije isti!")
-            elseif aVezani[1][4]<>pos_doks->Datum
-                MsgBeep ("Nemoguce spajanje!#Datum racuna nije isti!")
-        endif
-    else
-            ADEL(aVezani, nPos)
-            ASIZE(aVezani, LEN (aVezani)-1)
-    endif
-    
-    return DE_REFRESH
-endif
+   IF fMark .AND. ( LastKey() == Asc( "+" ) )
+      nPos := AScan ( aVezani, {| x| ( x[ 1 ] + DToS( x[ 4 ] ) + x[ 2 ] ) == pos_doks->( IdPos + DToS( datum ) + BrDok ) } )
+      IF nPos == 0
+         IF Len( aVezani ) == 0 .OR. ( aVezani[ 1 ][ 3 ] == pos_doks->IdVrsteP .AND. aVezani[ 1 ][ 4 ] == pos_doks->Datum )
+            AAdd ( aVezani, { pos_doks->IdPos, pos_doks->( BrDok ), pos_doks->IdVrsteP, pos_doks->Datum } )
+         ELSEIF aVezani[ 1 ][ 3 ] <> pos_doks->IdVrsteP
+            MsgBeep ( "Nemoguce spajanje!#Nacin placanja nije isti!" )
+         ELSEIF aVezani[ 1 ][ 4 ] <> pos_doks->Datum
+            MsgBeep ( "Nemoguce spajanje!#Datum racuna nije isti!" )
+         ENDIF
+      ELSE
+         ADel( aVezani, nPos )
+         ASize( aVezani, Len ( aVezani ) -1 )
+      ENDIF
 
-if UPPER(CHR(LASTKEY())) == "P"
-    pos_pregled_stavki_racuna( pos_doks->IdPos, pos_doks->datum, pos_doks->BrDok )
-    return DE_REFRESH
-endif
+      RETURN DE_REFRESH
+   ENDIF
 
-if UPPER(CHR(LASTKEY()))=="F"
-    // stampa poreske fakture
-    aVezani:={{IdPos, BrDok, IdVd, datum}}
-    StampaPrep(IdPos, dtos(datum)+BrDok, aVezani, .t., nil, .t.)
-    select pos_doks
-    f7_pf_traka(.t.)
-    select pos_doks
-    
-    return DE_REFRESH
-endif
+   IF Upper( Chr( LastKey() ) ) == "P"
+      pos_pregled_stavki_racuna( pos_doks->IdPos, pos_doks->datum, pos_doks->BrDok )
+      RETURN DE_REFRESH
+   ENDIF
 
-if UPPER(CHR(LASTKEY())) == "S"
-    
-    // storno racuna
-    pos_storno_rn( .t., pos_doks->brdok, pos_doks->datum, ;
-        PADR( ALLTRIM(STR(pos_doks->fisc_rn)), 10 ) )
+   IF Upper( Chr( LastKey() ) ) == "F"
+      // stampa poreske fakture
+      aVezani := { { IdPos, BrDok, IdVd, datum } }
+      StampaPrep( IdPos, DToS( datum ) + BrDok, aVezani, .T., nil, .T. )
+      SELECT pos_doks
+      f7_pf_traka( .T. )
+      SELECT pos_doks
 
-    msgbeep("Storno racun se nalazi u pripremi !")
+      RETURN DE_REFRESH
+   ENDIF
 
-    select pos_doks
-    return DE_REFRESH
+   IF Upper( Chr( LastKey() ) ) == "S"
 
-endif
+      // storno racuna
+      pos_storno_rn( .T., pos_doks->brdok, pos_doks->datum, ;
+         PadR( AllTrim( Str( pos_doks->fisc_rn ) ), 10 ) )
 
-if UPPER(CHR(LASTKEY()))=="Z"
-    PushWa()
-    print_zak_br(pos_doks->zak_br)
-    o_pos_tables()
-    PopWa()
-    return DE_REFRESH
-endif
+      msgbeep( "Storno racun se nalazi u pripremi !" )
 
-// setovanje veze sa brojem fiskalnog racuna
-// ovo bi trebao da radi samo ADMIN !!!!!!!!!
-// sad moze svako
-if ch == K_CTRL_V
-    
-    // ako nije racun ... izadji
-    if pos_doks->idvd <> "42"
-        return DE_CONT
-    endif
-    
-    nFisc_no := pos_doks->fisc_rn
+      SELECT pos_doks
+      RETURN DE_REFRESH
 
-    Box(,1,40)
-        @ m_x + 1, m_y + 2 SAY "Broj fiskalnog racuna: " GET nFisc_no
-        read
-    BoxC()
+   ENDIF
 
-    if LastKey() <> K_ESC
-   
-        _rec := dbf_get_rec()
-        _rec["fisc_rn"] := nFisc_no
-        
-        update_rec_server_and_dbf( "pos_doks", _rec, 1, "FULL")   
-        
-        return DE_REFRESH
-    
-    endif
+   IF Upper( Chr( LastKey() ) ) == "Z"
+      PushWa()
+      print_zak_br( pos_doks->zak_br )
+      o_pos_tables()
+      PopWa()
+      RETURN DE_REFRESH
+   ENDIF
 
-endif
+   // setovanje veze sa brojem fiskalnog racuna
+   // ovo bi trebao da radi samo ADMIN !!!!!!!!!
+   // sad moze svako
+   IF ch == K_CTRL_V
 
-return (DE_CONT)
+      // ako nije racun ... izadji
+      IF pos_doks->idvd <> "42"
+         RETURN DE_CONT
+      ENDIF
 
+      nFisc_no := pos_doks->fisc_rn
 
+      Box(, 1, 40 )
+      @ m_x + 1, m_y + 2 SAY "Broj fiskalnog racuna: " GET nFisc_no
+      READ
+      BoxC()
 
+      IF LastKey() <> K_ESC
 
-// ------------------------------------------
-// vraca iznos racuna iz pos baze
-// ------------------------------------------
-function SR_Iznos()
-local _iznos_rn := 0
+         _rec := dbf_get_rec()
+         _rec[ "fisc_rn" ] := nFisc_no
 
-select pos
-set order to tag "1"
-go top
+         update_rec_server_and_dbf( "pos_doks", _rec, 1, "FULL" )
 
-Seek2( pos_doks->( IdPos + IdVd + dtos(datum) + BrDok ) )
+         RETURN DE_REFRESH
 
-while !EOF() .and. pos->( IdPos + IdVd + dtos(datum) + BrDok ) == pos_doks->( IdPos + IdVd +dtos(datum) + BrDok )
-    _iznos_rn += pos->( kolicina * cijena )
-    SKIP
-end
+      ENDIF
 
-select pos_doks
-return ( _iznos_rn )
+   ENDIF
 
+   RETURN ( DE_CONT )
 
 
 

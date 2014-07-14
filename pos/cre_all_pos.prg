@@ -125,7 +125,7 @@ FUNCTION cre_all_pos( ver )
 
    IF_C_RESET_SEMAPHORE
 
-   CREATE_INDEX ( "1", "IdPos+IdVd+dtos(datum)+BrDok+IdRoba+IdCijena", _alias )
+   CREATE_INDEX ( "1", "IdPos+IdVd+dtos(datum)+BrDok+IdRoba+IdCijena+Rbr", _alias )
    CREATE_INDEX ( "2", "IdOdj+idroba+DTOS(Datum)", _alias )
    CREATE_INDEX ( "3", "Prebacen", _alias )
    CREATE_INDEX ( "4", "dtos(datum)", _alias )
@@ -270,6 +270,7 @@ FUNCTION cre_all_pos( ver )
    IF_NOT_FILE_DBF_CREATE
 
    CREATE_INDEX ( "1", "IdRoba", _alias )
+   CREATE_INDEX ( "2", "IdPos+IdVd+dtos(datum)+BrDok", _alias )
 
    _alias := "PRIPRZ"
    _table_name := "priprz"

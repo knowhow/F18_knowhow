@@ -47,7 +47,7 @@ STATIC FUNCTION dodaj_na_racun( cBrojRn )
       cBrojRn := cBrojRn
    ENDIF
 
-   pos_unos_racuna( cBrojRn, _pos->sto )
+   pos_unos_racuna( cBrojRn, _pos_pripr->sto )
 
    RETURN
 
@@ -59,7 +59,7 @@ STATIC FUNCTION novi_racun()
    LOCAL cSto := Space( 3 )
    LOCAL dx := 3
 
-   SELECT _pos
+   SELECT _pos_pripr
    SET CURSOR ON
 
    cBrojRn := "PRIPRE"
@@ -103,41 +103,12 @@ STATIC FUNCTION novi_racun()
 
 
 
-FUNCTION PreglRadni( cBrDok )
-
-   LOCAL nPrev := Select()
-
-   SELECT _POS
-   SET ORDER TO TAG "1"
-   cFilt1 := "IdPos+IdVd+dtos(datum)+BrDok+IdRadnik==" + cm2str( gIdPos + VD_RN + DToS( gDatum ) + cBrDok + gIdRadnik )
-   SET FILTER To &cFilt1
-   ImeKol := { { "Roba",         {|| IdRoba + "-" + Left ( RobaNaz, 30 ) }, }, ;
-      { "Kolicina",     {|| Str ( Kolicina, 8, 2 ) }, }, ;
-      { "Cijena",       {|| Str ( Cijena, 8, 2 ) }, }, ;
-      { "Iznos stavke", {|| Str ( Kolicina * Cijena, 12, 2 ) }, };
-      }
-   Kol := { 1, 2, 3, 4 }
-   GO TOP
-   ObjDBedit ( "rn2", MAXROWS() - 4, MAXCOLS() - 3,, " Radni racun " + AllTrim ( cBrDok ), "", nil )
-   SET FILTER TO
-
-   SELECT _pos_pripr
-
-   RETURN
-
-
-
-
 FUNCTION ZakljuciRacun()
 
    LOCAL lRet
    LOCAL lOtvoriUnos := fetch_metric( "pos_konstantni_unos_racuna", my_user(), "N" ) == "D"
 
    lRet := zakljuci_pos_racun()
-
-   IF !lRet
-      MsgBeep( "Postoji problem sa ažuriranjem računa !" )
-   ENDIF
 
    IF lOtvoriUnos .AND. lRet
       pos_narudzba()
@@ -176,7 +147,7 @@ FUNCTION zakljuci_pos_racun()
    form_zakljuci_racun( @_param )
 
    IF _param[ "zakljuci" ] == "D"
-      lRet := pos_zakljuci_racun_sve_na_jedan( _param )
+      lRet := azuriraj_stavke_racuna_i_napravi_fiskalni_racun( _param )
    ENDIF
 
    my_close_all_dbf()
@@ -185,7 +156,7 @@ FUNCTION zakljuci_pos_racun()
 
 
 
-STATIC FUNCTION pos_zakljuci_racun_sve_na_jedan( params )
+STATIC FUNCTION azuriraj_stavke_racuna_i_napravi_fiskalni_racun( params )
 
    LOCAL _br_dok := params[ "brdok" ]
    LOCAL _id_pos := params[ "idpos" ]
@@ -193,58 +164,41 @@ STATIC FUNCTION pos_zakljuci_racun_sve_na_jedan( params )
    LOCAL _id_partner := params[ "idpartner" ]
    LOCAL _uplaceno := params[ "uplaceno" ]
    LOCAL lOk := .T.
-
+   LOCAL lRet := .F.
+   LOCAL cVrijemeRacuna
+   LOCAL cBrojRacuna 
+ 
    o_pos_tables()
 
    IF ( Len( aRabat ) > 0 )
       ReCalcRabat( _id_vrsta_p )
    ENDIF
 
-   pos_prebaci_pripr_u_pos( _id_vrsta_p )
-
-   lOk := azuriraj_racun_iz_pripreme( _id_pos, _br_dok, _id_vrsta_p, _id_partner, _uplaceno )
-
-   my_close_all_dbf()
-
-   RETURN lOk
-
-
-
-STATIC FUNCTION azuriraj_racun_iz_pripreme( cIdPos, cRadRac, cIdVrsteP, cIdGost, nUplaceno )
-
-   LOCAL cTime
-   LOCAL nFis_err := 0
-   LOCAL cBrojRacuna 
-   LOCAL lRet := .F.
-   LOCAL lOk := .T.
-   LOCAL _rec, _dev_id, _dev_params
-   PRIVATE cPartner
-
    SELECT pos_doks
 
-   cBrojRacuna := pos_novi_broj_dokumenta( cIdPos, VD_RN )
+   cBrojRacuna := pos_novi_broj_dokumenta( _id_pos, VD_RN )
 
-   cTime := PADR( TIME(), 5 )
+   cVrijemeRacuna := PADR( TIME(), 5 )
    gDatum := Date()
-   cPartner := cIdGost
 
-   lOk := pos_azuriraj_racun( cIdPos, cBrojRacuna, cRadRac, cTime, cIdVrsteP, cIdGost )
+   lOk := pos_azuriraj_racun( _id_pos, cBrojRacuna, cVrijemeRacuna, _id_vrsta_p, _id_partner )
 
    IF !lOk
+      MsgBeep( "Greška sa ažuriranjem računa u kumulativ !" )
       RETURN lRet
    ENDIF
 
    IF gRnInfo == "D"
-      _sh_rn_info( cStalRac )
+      _sh_rn_info( cBrojRacuna )
    ENDIF
 
    IF fiscal_opt_active()
-      stampaj_fiskalni_racun( cIdPos, gDatum, cBrojRacuna, nUplaceno )
+      stampaj_fiskalni_racun( _id_pos, gDatum, cBrojRacuna, _uplaceno )
    ENDIF
 
-   lRet := .T.
+   my_close_all_dbf()
 
-   RETURN lRet
+   RETURN lOk
 
 
 
@@ -353,14 +307,10 @@ STATIC FUNCTION form_zakljuci_racun( params )
    LOCAL _uplaceno := params[ "uplaceno" ]
 
    IF gClanPopust
-      // ako je rijec o clanovima pusti da izaberem vrstu placanja
       _id_vrsta_p := Space( 2 )
    ELSE
       _id_vrsta_p := gGotPlac
    ENDIF
-
-   // select _pos
-   // seek _id_pos + _id_vd + DTOS( _dat_dok ) + _br_dok
 
    Box(, 8, 67 )
 
@@ -413,68 +363,6 @@ STATIC FUNCTION form_zakljuci_racun( params )
 
 
 
-
-
-FUNCTION ZakljuciDio()
-
-   LOCAL cRacBroj := Space( 6 )
-
-   // Zakljucuje dio racuna (ostatak ostaje aktivan)
-   O__POS
-
-   SET CURSOR ON
-   Box (, 1, 50 )
-   // unesi broj racuna
-   @ m_x + 1, m_y + 3 SAY "Zakljuci dio radnog racuna broj:" GET cRacBroj VALID P_RadniRac ( @cRacBroj )
-   READ
-   ESC_BCR
-   BoxC()
-
-   o_pos_tables()
-
-   O_RAZDR
-
-   RazdRac( cRacBroj, .F., 2, "N", "ZAKLJUCENJE DIJELA RACUNA" )
-
-   my_close_all_dbf()
-
-   RETURN
-
-
-
-
-FUNCTION RazdijeliRacun()
-
-   LOCAL cOK := " "
-   LOCAL cAuto := "D"
-   LOCAL cRacBroj := Space( 6 )
-   LOCAL nKoliko := 0
-
-   O__POS
-
-   SET CURSOR ON
-   Box(, 8, 55 )
-   WHILE cOK <> "D"
-      @ m_x + 1, m_y + 3 SAY "          Razdijeli radni racun broj:" GET cRacBroj VALID P_RadniRac ( @cRacBroj )
-      @ m_x + 3, m_y + 3 SAY "        Ukupno je potrebno napraviti:" GET nKoliko PICT "99" VALID nKoliko > 1 .AND. nKoliko <= 10
-      @ m_x + 4, m_y + 3 SAY "  (ukljucujuci i ovaj prvi)"
-      @ m_x + 6, m_y + 3 SAY "Automatski razdijeli kolicine? (D/N):" GET cAuto PICT "@!" VALID cAuto $ "DN"
-      @ m_x + 8, m_y + 3 SAY "                  Unos u redu? (D/N):" GET cOK PICT "@!" VALID cOK $ "DN"
-      READ
-      ESC_BCR
-   END
-   BoxC()
-
-   o_pos_tables()
-
-   O_RAZDR
-   RazdRac( cRacBroj, .T., nKoliko, cAuto, "RAZDIOBA RACUNA" )
-   my_close_all_dbf()
-
-   RETURN
-
-
-
 FUNCTION RobaNaziv( cSifra )
 
    LOCAL nARRR := Select()
@@ -485,127 +373,6 @@ FUNCTION RobaNaziv( cSifra )
 
    RETURN roba->naz
 
-
-
-FUNCTION PromNacPlac()
-
-   LOCAL cRacun := Space( 9 )
-   LOCAL cIdVrsPla := gGotPlac
-   LOCAL cPartner := Space( 8 )
-   LOCAL cDN := " "
-   LOCAL cIdPOS
-   LOCAL _rec
-   PRIVATE aVezani := {}
-
-   O_PARTN
-   O_VRSTEP
-   O_ROBA
-   O__POS_PRIPR
-   O__POS
-   O_POS
-   O_POS_DOKS
-
-   Box (, 7, 70 )
-   // prebaci se na posljednji racun da ti je lakse
-   IF gVrstaRS <> "S"
-      SELECT pos_doks
-      SEEK ( gIdPos + VD_RN + Chr ( 250 ) )
-      IF pos_doks->IdVd <> VD_RN
-         SKIP -1
-      ENDIF
-      DO WHILE !Bof() .AND. pos_doks->( IdPos + IdVd ) == ( gIdPos + VD_RN ) .AND. pos_doks->IdRadnik <> gIdRadnik
-         SKIP -1
-      ENDDO
-      IF !Bof() .AND. pos_doks->( IdPos + IdVd ) == ( gIdPos + VD_RN ) .AND. pos_doks->IdRadnik == gIdRadnik
-         cRacun := PadR ( AllTrim ( gIdPos ) + "-" + AllTrim ( pos_doks->BrDok ), Len( cRacun ) )
-      ENDIF
-   ENDIF
-
-   dDat := gDatum
-
-   SET CURSOR ON
-   @ m_x + 1, m_y + 4 SAY "Datum:" GET dDat
-   @ m_x + 2, m_y + 4 SAY "Racun:" GET cRacun VALID PRacuni ( @dDat, @cRacun ) ;
-      .AND. Pisi_NPG();
-      .AND. RacNijeZaklj ( cRacun );
-      .AND. RacNijePlac ( @cIdVrspla, @cPartner )
-   @ m_x + 3, m_y + 7 SAY "Nacin placanja:" GET cIdVrsPla ;
-      VALID P_VrsteP ( @cIdVrsPla, 3, 26 ) PICT "@!"
-   READ
-   ESC_BCR
-
-   IF ( cIdVrsPla <> gGotPlac )
-      @ m_x + 5, m_y + 9 SAY "Partner:" GET cPartner PICT "@!" ;
-         VALID P_Firma( @cPartner, 5, 26 )
-      READ
-      ESC_BCR
-   ELSE
-      cPartner := ""
-   ENDIF
-
-   // vec je DOKS nastiman u BrowseSRn
-   SELECT pos_doks
-
-   _rec := dbf_get_rec()
-   _rec[ "idvrstep" ] := cIdVrsPla
-   _rec[ "idgost" ] := cPartner
-
-   update_rec_server_and_dbf( "pos_doks", _rec, 1, "FULL" )
-
-   BoxC()
-
-   CLOSE ALL
-
-   RETURN
-
-
-FUNCTION RacNijeZaklj()
-
-   IF ( gVrstaRS == "S" .AND. kLevel < L_UPRAVN )
-      RETURN .T.
-   ENDIF
-   IF ( pos_doks->Datum == gDatum )
-      RETURN .T.
-   ENDIF
-   MsgBeep ( "Promjena nacina placanja nije moguca!" )
-
-   RETURN .F.
-
-
-FUNCTION RacNijePlac( cIdVrsPla, cPartner )
-
-   // Provjerava da li je racun pribiljezen kao placen
-   // Ako jest, tad promjena nacina placanja nema smisla
-
-   IF pos_doks->Placen == "D"
-      MsgBeep ( "Racun je vec placen!#Promjena nacina placanja nije dopustena!" )
-      RETURN ( .F. )
-   ELSE
-      cIdVrsPla := pos_doks->idvrstep
-      cPartner := pos_doks->idgost
-   ENDIF
-
-   RETURN ( .T. )
-
-
-
-
-FUNCTION Pisi_NPG()
-
-   PushWA()
-   SELECT VRSTEP
-   Seek2 ( pos_doks->IdVrsteP )
-   IF Found ()
-      @ m_x + 3, m_y + 26 SAY Naz
-   ENDIF
-   SELECT partn
-   Seek2 ( pos_doks->IdGost )
-   IF Found ()
-      @ m_x + 5, m_y + 31 SAY Left ( Naz, 30 )
-   ENDIF
-   PopWA ()
-
-   RETURN ( .T. )
 
 
 
@@ -691,7 +458,7 @@ FUNCTION PrepisRacuna()
 
    SET CURSOR ON
 
-   @ m_x + 2, m_y + 4 SAY "Racun:" GET cPolRacun VALID PRacuni( @dDat, @cPolRacun, .T. )
+   @ m_x + 2, m_y + 4 SAY "Racun:" GET cPolRacun VALID pos_lista_racuna( @dDat, @cPolRacun, .T. )
 
    READ
    ESC_BCR

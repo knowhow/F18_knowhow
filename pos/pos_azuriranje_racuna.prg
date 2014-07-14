@@ -23,20 +23,11 @@ FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
 
    otvori_pos_tabele_bez_semafora()
 
-   IF pos_dokument_postoji( cIdPos, VD_RN, gDatum, cBrojRacuna )
-      MsgBeep( "Dokument već postoji ažuriran pod istim brojem !" )
+   IF !racun_se_moze_azurirati( cIdPos, VD_RN, gDatum, cBrojRacuna )
       RETURN lRet
    ENDIF
 
    SELECT _pos_pripr
-  
-   IF RecCount() == 0
-      MsgBeep( "Priprema računa je prazna, ažuriranje nije moguće !" )
-      RETURN lRet
-   ENDIF
-
-   SELECT _pos_pripr
-   SET ORDER TO TAG "2"
    GO TOP
 
    sql_table_update( nil, "BEGIN" )
@@ -153,17 +144,32 @@ STATIC FUNCTION otvori_pos_tabele_bez_semafora()
    RETURN
 
 
-STATIC FUNCTION postoji_racun_za_azuriranje_u_pripremi( cIdPos, cBroj )
+STATIC FUNCTION racun_se_moze_azurirati( cIdPos, cIdVd, dDatum, cBroj )
 
-   LOCAL lRet := .T.
+   LOCAL lRet := .F.
 
-   SELECT _pos
-   SET ORDER TO TAG "1"
-   SEEK cIdPos + "42" + DToS( gDatum ) + cBroj
-
-   IF !Found()
-      lRet := .F.
+   IF pos_dokument_postoji( cIdPos, cIdVd, dDatum, cBroj )
+      MsgBeep( "Dokument već postoji ažuriran pod istim brojem !" )
+      RETURN lRet
    ENDIF
+
+   SELECT _pos_pripr
+  
+   IF RecCount() == 0
+      MsgBeep( "Priprema računa je prazna, ažuriranje nije moguće !" )
+      RETURN lRet
+   ENDIF
+
+   SELECT _pos_pripr
+   SET ORDER TO TAG "2"
+   GO TOP
+
+   IF field->brdok <> "PRIPR" .AND. field->idpos <> cIdPos
+      MsgBeep( "Pogrešne stavke računa !#Ažuriranje onemogućeno." )
+      RETURN lRet
+   ENDIF 
+
+   lRet := .T.
 
    RETURN lRet
 

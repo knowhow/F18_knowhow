@@ -1456,7 +1456,7 @@ STATIC FUNCTION _cre_sp_art( dD_from, dD_to, nOper, cArticle )
 // --------------------------------------------------------------------
 STATIC FUNCTION _calc_oper( nQtty, nH, nW, nOp, cOpU, cValue, lComp )
 
-   LOCAL xRet := 0
+   LOCAL nKol
    LOCAL nTArea := Select()
    LOCAL nU_m2 := c_ukvadrat( nQtty, nH, nW )
 
@@ -1472,17 +1472,15 @@ STATIC FUNCTION _calc_oper( nQtty, nH, nW, nOp, cOpU, cValue, lComp )
    DO CASE
    CASE Upper( cOpU ) == "M"
 		
-      xRet := 0
-      _g_kol( cValue, cOpU, @xRet, nQtty, nH, nW, 0, 0 )
+      nKol := rnal_g_kol( cValue, cOpU, nQtty, nH, nW, 0, 0 )
 
    CASE Upper( cOpU ) == "KOM"
 		
-      xRet := 0
-      _g_kol( cValue, cOpU, @xRet, nQtty, nH, nW, 0, 0 )
+      nKol := rnal_g_kol( cValue, cOpU, nQtty, nH, nW, 0, 0 )
 
    CASE Upper( cOpU ) == "M2"
 		
-      xRet := nU_m2
+      nKol := nU_m2
 	
    OTHERWISE
 
@@ -1493,7 +1491,71 @@ STATIC FUNCTION _calc_oper( nQtty, nH, nW, nOp, cOpU, cValue, lComp )
 
    SELECT ( nTArea )
 
-   RETURN xRet
+   RETURN nKol
+
+
+FUNCTION rnal_g_kol( cValue, cQttyType, nKol, nQtty, nHeigh1, nWidth1 )
+
+   LOCAL nKol := 0
+   LOCAL nTmp := 0
+
+   // po metru
+   IF Upper( cQttyType ) == "M"
+
+      // po metru, znači uzmi sve stranice stakla
+
+      IF "#D1#" $ cValue
+         nTmp += nWidth1
+      ENDIF
+
+      IF "#D4#" $ cValue
+            nTmp += nWidth1
+      ENDIF
+
+      IF "#D2#" $ cValue
+         nTmp += nHeigh1
+      ENDIF
+
+      IF "#D3#" $ cValue
+            nTmp += nHeigh1
+      ENDIF
+
+      // pretvori u metre
+      nKol := ( nQtty * nTmp ) / 1000
+
+   ENDIF
+
+   // po m2
+   IF Upper( cQttyType ) == "M2"
+
+      nKol := c_ukvadrat( nQtty, nHeigh1, nWidth1 )
+
+   ENDIF
+
+   // po komadu
+   IF Upper( cQttyType ) == "KOM"
+
+      // busenje
+      IF "<A_BU>" $ cValue
+
+         // broj rupa za busenje
+         cTmp := StrTran( AllTrim( cValue ), "<A_BU>:#" )
+         aTmp := TokToNiz( cTmp, "#" )
+         nKol := Len( aTmp )
+
+      ELSE
+         nKol := nQtty
+      ENDIF
+
+   ENDIF
+
+   IF Empty( cQttyType )
+
+      nKol := nQtty
+
+   ENDIF
+
+   RETURN nKol
 
 
 // ----------------------------------------------------------

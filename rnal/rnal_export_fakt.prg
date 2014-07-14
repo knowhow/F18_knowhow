@@ -753,91 +753,6 @@ FUNCTION _add_to_field( field_value, new_value )
 
 
 
-// ----------------------------------------------------
-// sracunaj kolicinu na osnovu vrijednosti polja
-// ----------------------------------------------------
-FUNCTION _g_kol( cValue, cQttyType, nKol, nQtty, ;
-      nHeigh1, nWidth1, nHeigh2, nWidth2 )
-
-   LOCAL nTmp := 0
-
-   IF nHeigh2 == nil
-      nHeigh2 := 0
-   ENDIF
-
-   IF nWidth2 == nil
-      nWidth2 := 0
-   ENDIF
-
-   // po metru
-   IF Upper( cQttyType ) == "M"
-
-      // po metru, znaèi uzmi sve stranice stakla
-
-      IF "#D1#" $ cValue
-         nTmp += nWidth1
-      ENDIF
-
-      IF "#D4#" $ cValue
-
-         IF nWidth2 <> 0
-            nTmp += nWidth2
-         ELSE
-            nTmp += nWidth1
-         ENDIF
-
-      ENDIF
-
-      IF "#D2#" $ cValue
-         nTmp += nHeigh1
-      ENDIF
-
-      IF "#D3#" $ cValue
-         IF nHeigh2 <> 0
-            nTmp += nHeigh2
-         ELSE
-            nTmp += nHeigh1
-         ENDIF
-      ENDIF
-
-      // pretvori u metre
-      nKol := ( nQtty * nTmp ) / 1000
-
-   ENDIF
-
-   // po m2
-   IF Upper( cQttyType ) == "M2"
-
-      nKol := c_ukvadrat( nQtty, nHeigh1, nWidth1 )
-
-   ENDIF
-
-   // po komadu
-   IF Upper( cQttyType ) == "KOM"
-
-      // busenje
-      IF "<A_BU>" $ cValue
-
-         // broj rupa za busenje
-         cTmp := StrTran( AllTrim( cValue ), "<A_BU>:#" )
-         aTmp := TokToNiz( cTmp, "#" )
-
-         nKol := Len( aTmp )
-
-      ELSE
-         nKol := nQtty
-      ENDIF
-
-   ENDIF
-
-   IF Empty( cQttyType )
-
-      nKol := nQtty
-
-   ENDIF
-
-   RETURN
-
 
 
 // ----------------------------------------------------
@@ -853,12 +768,12 @@ STATIC FUNCTION fnd_partn( xPartn, nCustId, cDesc  )
    xPartn := Space( 6 )
 
    Box(, 5, 70 )
-   @ m_x + 1, m_y + 2 SAY "Narucioc: "
+   @ m_x + 1, m_y + 2 SAY8 "Naručioc: "
    @ m_x + 1, Col() + 1 SAY AllTrim( Str( nCustId ) ) COLOR "I"
    @ m_x + 1, Col() + 1 SAY " -> "
    @ m_x + 1, Col() + 1 SAY PadR( cDesc, 50 ) + ".." COLOR "I"
-   @ m_x + 2, m_y + 2 SAY "nije definisan u relacijama, pronadjite njegov par !!!!"
-   @ m_x + 4, m_y + 2 SAY "sifra u FMK =" GET xPartn VALID p_firma( @xPartn )
+   @ m_x + 2, m_y + 2 SAY8 "nije definisan u relacijama, pronađite njegov par !"
+   @ m_x + 4, m_y + 2 SAY8 "šifra u knjigovodstvu: " GET xPartn VALID p_firma( @xPartn )
    READ
    BoxC()
 

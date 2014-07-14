@@ -60,13 +60,10 @@ FUNCTION pos_main_menu_prodavac()
    RETURN
 
 
-// ----------------------------------------------
-// izdavanje racuna za prodavca
-// ----------------------------------------------
 STATIC FUNCTION _pos_prodavac_racun()
 
-   pos_narudzba()
-   zakljuciracun()
+   pos_unos_ispravka_racuna()
+   zakljuci_pos_racun()
 
    RETURN .T.
 

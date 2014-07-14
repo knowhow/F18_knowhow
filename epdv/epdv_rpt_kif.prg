@@ -18,7 +18,6 @@ STATIC aZagl := {}
 
 STATIC lSvakaHeader := .T.
 
-// tekuca linija reporta
 STATIC nCurrLine := 0
 
 STATIC cRptNaziv := "Izvještaj KIF na dan "
@@ -57,19 +56,16 @@ FUNCTION rpt_kif( nBrDok, cIdTarifa )
 
 
    nLenIzn := Len( PIC_IZN() )
-   aZaglLen := { 8, 8, 8, 8, 65, 12, 80,  nLenIzn, nLenIzn, nLenIzn }
+   aZaglLen := { 8, 8, 8, 8, 82, 12, 70,  nLenIzn, nLenIzn, nLenIzn }
 
 
    IF nBrDok == nil
-      // izvjestaj se ne pravi za jedan dokument
       nBrDok := -999
-	
    ENDIF
    nRptBrDok := nBrDok
 
 
    IF cIdTarifa == nil
-      // sve tarife
       cTar := ""
    ELSE
       cTar := cIdTarifa
@@ -86,16 +82,12 @@ FUNCTION rpt_kif( nBrDok, cIdTarifa )
 
 
    IF ( nBrDok == -999 )
-
-      // treba zadati parametre izvjestaja
-
       cTar := PadR( cTar, 6 )
       cPart := PadR( cPart, 6 )
 
       nX := 1
       Box(, 11, 60 )
 
-      // izvjestaj za period
       @ m_x + nX, m_y + 2 SAY "Period"
       nX++
 
@@ -165,15 +157,12 @@ FUNCTION rpt_kif( nBrDok, cIdTarifa )
    cPom2 := ""
 
    IF ( nBrDok == -999 )
-      // kif za period - globalni redni broj je prva stavka
       cPom11 := "Red."
       cPom12 := "br."
 
       cPom21 := "Broj"
       cPom22 := "dok"
    ELSE
-      // prikaz jednog dokumenta
-      // prvo brojdokumenta
       cPom11 := "Broj"
       cPom12 := "dok"
 	
@@ -241,10 +230,8 @@ STATIC FUNCTION cre_r_tbl()
 
    get_r_fields( @aArr )
 
-   // kreiraj tabelu
    dbcreate2( my_home() + "epdv_r_" + cTbl + ".dbf", aArr )
 
-   // kreiraj indexe
    CREATE_INDEX( "br_dok", "br_dok", "epdv_r_" +  cTbl, .T. )
 
    RETURN
@@ -333,10 +320,8 @@ STATIC FUNCTION fill_rpt( nBrDok )
       nPdv := i_pdv
 
       IF ( nRptBrDok == -999 )
-         // za vise dokumenata
          nRbr := g_r_br
       ELSE
-         // za jedan dokument
          nRbr := r_br
       ENDIF
 
@@ -395,7 +380,7 @@ STATIC FUNCTION show_rpt()
    P_COND
    nRow := 0
 
-   r_zagl()
+   zaglavlje_kif()
 
    O_R_KIF
    SELECT r_kif
@@ -465,7 +450,7 @@ STATIC FUNCTION show_rpt()
 
       IF LEN( aKupacNaziv ) > 1
          nCurrLine := nCurrLine + 1
-         epdv_rpt_kuf_kif_nova_stranica( @nCurrLine, nPageLimit, lSvakaHeader )
+         kif_nova_stranica( @nCurrLine, nPageLimit, lSvakaHeader )
          ?
          @ prow(), nPos SAY aKupacNaziv[2]
       ENDIF
@@ -473,7 +458,7 @@ STATIC FUNCTION show_rpt()
       nBPdv += i_b_pdv
       nPdv += i_pdv
 
-      epdv_rpt_kuf_kif_nova_stranica( @nCurrLine, nPageLimit, lSvakaHeader )
+      kif_nova_stranica( @nCurrLine, nPageLimit, lSvakaHeader )
 
       SKIP
 
@@ -481,9 +466,10 @@ STATIC FUNCTION show_rpt()
 
    nCurrLine := nCurrLine + 3
 
-   epdv_rpt_kuf_kif_nova_stranica( @nCurrLine, nPageLimit, lSvakaHeader )
+   kif_nova_stranica( @nCurrLine, nPageLimit, lSvakaHeader )
 
-   r_linija()
+   kif_linija()
+
    ?
    cPom := "   U K U P N O :  "
 
@@ -503,8 +489,7 @@ STATIC FUNCTION show_rpt()
 
    ?? Transform( nBPdv + nPdv, PIC_IZN() )
 
-   r_linija()
-
+   kif_linija()
 
    FF
    END PRINT
@@ -512,7 +497,22 @@ STATIC FUNCTION show_rpt()
    RETURN
 
 
-STATIC FUNCTION r_zagl()
+
+STATIC FUNCTION kif_nova_stranica( nCurrLine, nPageLimit, lSvakaHeader )
+
+   IF nCurrLine > nPageLimit
+      FF
+      nCurrLine := 0
+      IF lSvakaHeader
+         zaglavlje_kif()
+      ENDIF
+   ENDIF
+
+   RETURN
+
+
+
+STATIC FUNCTION zaglavlje_kif()
 
    P_COND
    B_ON
@@ -524,14 +524,12 @@ STATIC FUNCTION r_zagl()
 
    P_COND2
 
-   r_linija()
+   kif_linija()
 
    FOR i := 1 TO Len( aZagl )
       ++nCurrLine
       ?
       FOR nCol := 1 TO Len( aZaglLen )
-         // mergirana kolona ovako izgleda
-         // "#3 Zauzimam tri kolone"
          IF Left( aZagl[ i, nCol ], 1 ) = "#"
 	
             nMergirano := Val( SubStr( aZagl[ i, nCol ], 2, 1 ) )
@@ -550,12 +548,13 @@ STATIC FUNCTION r_zagl()
          ENDIF
       NEXT
    NEXT
-   r_linija()
+
+   kif_linija()
 
    RETURN
 
 
-STATIC FUNCTION r_linija()
+STATIC FUNCTION kif_linija()
 
    ++nCurrLine
    ?
@@ -565,3 +564,4 @@ STATIC FUNCTION r_linija()
    NEXT
 
    RETURN
+

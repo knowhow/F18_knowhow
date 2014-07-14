@@ -54,21 +54,17 @@ FUNCTION rpt_kuf( nBrDok, cIdTarifa )
    // 9 - izn  pdv
    // 10 - izn sa pdv
 
-
    nLenIzn := Len( PIC_IZN() )
-   aZaglLen := { 8, 8, 8, 8, 65, 12, 80,  nLenIzn, nLenIzn, nLenIzn, nLenIzn }
+   aZaglLen := { 8, 8, 8, 8, 82, 12, 70,  nLenIzn, nLenIzn, nLenIzn, nLenIzn }
 
 
    IF nBrDok == nil
-      // izvjestaj se ne pravi za jedan dokument
       nBrDok := -999
-	
    ENDIF
    nRptBrDok := nBrDok
 
 
    IF cIdTarifa == nil
-      // sve tarife
       cTar := ""
    ELSE
       cTar := cIdTarifa
@@ -86,8 +82,6 @@ FUNCTION rpt_kuf( nBrDok, cIdTarifa )
 
    IF ( nBrDok == -999 )
 
-      // treba zadati parametre izvjestaja
-
       cTar := PadR( cTar, 6 )
       cPart := PadR( cPart, 6 )
 
@@ -95,7 +89,6 @@ FUNCTION rpt_kuf( nBrDok, cIdTarifa )
 
       Box(, 11, 60 )
 
-      // izvjestaj za period
       @ m_x + nX, m_y + 2 SAY "Period"
       nX++
 
@@ -380,8 +373,6 @@ STATIC FUNCTION fill_rpt( nBrDok )
 
 
 
-// ---------------------------------------
-// ---------------------------------------
 STATIC FUNCTION show_rpt()
 
    LOCAL nLenUk
@@ -395,14 +386,13 @@ STATIC FUNCTION show_rpt()
 
    START PRINT CRET
 
-   // nPageLimit := 65
    nPageLimit := 40
    ? "#%LANDS#"
 
    P_COND
    nRow := 0
 
-   r_zagl()
+   zaglavlje_kuf()
 
    O_R_KUF
    SELECT r_kuf
@@ -498,7 +488,7 @@ STATIC FUNCTION show_rpt()
 
           nCurrLine := nCurrLine + 1
 
-          epdv_rpt_kuf_kif_nova_stranica( @nCurrLine, nPageLimit, lSvakaHeader )
+          kuf_nova_stranica( @nCurrLine, nPageLimit, lSvakaHeader )
 
           ?
           @ prow(), nPos SAY aDobavljacNaziv[2]
@@ -509,17 +499,17 @@ STATIC FUNCTION show_rpt()
       nUPdv += nPdv
       nUPdv2 += nPdv2
 
-      epdv_rpt_kuf_kif_nova_stranica( @nCurrLine, nPageLimit, lSvakaHeader )
+      kuf_nova_stranica( @nCurrLine, nPageLimit, lSvakaHeader )
 
       SKIP
 
    ENDDO
 
    nCurrLine := nCurrLine + 3
-   epdv_rpt_kuf_kif_nova_stranica( @nCurrLine, nPageLimit, lSvakaHeader )
+   kuf_nova_stranica( @nCurrLine, nPageLimit, lSvakaHeader )
 
-   // ukupno izvjestaj
-   r_linija()
+   kuf_linija()
+
    ?
    cPom := "   U K U P N O :  "
 
@@ -542,8 +532,7 @@ STATIC FUNCTION show_rpt()
 
    ?? Transform( nUBPdv + nUPdv + nUPdv2, PIC_IZN() )
 
-   r_linija()
-
+   kuf_linija()
 
    FF
    END PRINT
@@ -551,20 +540,21 @@ STATIC FUNCTION show_rpt()
    RETURN
 
 
-FUNCTION epdv_rpt_kuf_kif_nova_stranica( nCurrLine, nPageLimit, lSvakaHeader )
+STATIC FUNCTION kuf_nova_stranica( nCurrLine, nPageLimit, lSvakaHeader )
 
    IF nCurrLine > nPageLimit
       FF
       nCurrLine := 0
       IF lSvakaHeader
-         r_zagl()
+         zaglavlje_kuf()
       ENDIF
    ENDIF
 
    RETURN
 
 
-STATIC FUNCTION r_zagl()
+
+STATIC FUNCTION zaglavlje_kuf()
 
    P_COND
    B_ON
@@ -576,7 +566,7 @@ STATIC FUNCTION r_zagl()
 
    P_COND2
 
-   r_linija()
+   kuf_linija()
 
    FOR i := 1 TO Len( aZagl )
       ++nCurrLine
@@ -600,12 +590,13 @@ STATIC FUNCTION r_zagl()
          ENDIF
       NEXT
    NEXT
-   r_linija()
+
+   kuf_linija()
 
    RETURN
 
 
-STATIC FUNCTION r_linija()
+STATIC FUNCTION kuf_linija()
 
    ++nCurrLine
    ?

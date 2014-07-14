@@ -135,10 +135,8 @@ STATIC FUNCTION stampaj_tkm( vars )
          LOOP
       ENDIF
 
-      // redni broj...
       ? PadL( AllTrim( Str( ++_red_br ) ), 6 ) + "."
 
-      // datum dokumenta
       @ PRow(), PCol() + 1 SAY field->datum
 
       _opis_knjizenja := AllTrim( field->vr_dok )
@@ -189,7 +187,7 @@ STATIC FUNCTION stampaj_tkm( vars )
    @ PRow(), _n_iznosi SAY Str( _t_dug, 12, 2 )
    @ PRow(), PCol() + 1 SAY Str( _t_pot, 12, 2 )
 
-   ? "SALDO TRGOVACKE KNJIGE:"
+   ?U "SALDO TRGOVAČKE KNJIGE:"
    @ PRow(), _n_iznosi SAY Str( _t_dug - _t_pot, 12, 2 )
 
    ? _line

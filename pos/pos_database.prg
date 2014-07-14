@@ -140,7 +140,7 @@ STATIC FUNCTION pos_definisi_inicijalne_podatke()
       MsgO( "Definišem šifranik radnika ..." )
 
       sql_table_update( nil, "BEGIN" )
-      IF !f18_lock_tables( { "pos_osob" } )
+      IF !f18_lock_tables( { "pos_osob" }, .T. )
           sql_table_update( nil, "END" )
           RETURN
       ENDIF

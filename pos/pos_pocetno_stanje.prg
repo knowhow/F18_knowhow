@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,287 +12,274 @@
 
 #include "pos.ch"
 
-static __stanje
-static __vrijednost
-static __dok_br
+STATIC __stanje
+STATIC __vrijednost
+STATIC __dok_br
 
 
 // --------------------------------------------
 // prenos pocetnog stanja....
 // --------------------------------------------
-function p_poc_stanje()
-local _params := hb_hash()
-local _cnt := 0
-local _padr := 80
+FUNCTION p_poc_stanje()
 
-__stanje := 0
-__vrijednost := 0
-__dok_br := ""
+   LOCAL _params := hb_Hash()
+   LOCAL _cnt := 0
+   LOCAL _padr := 80
 
-// parametri prenosa...
-if _get_vars( @_params ) == 0
-    return
-endif
+   __stanje := 0
+   __vrijednost := 0
+   __dok_br := ""
 
-// prenesi pocetno stanje...
-_cnt := pocetno_stanje_sql( _params )
+   // parametri prenosa...
+   IF _get_vars( @_params ) == 0
+      RETURN
+   ENDIF
 
-if _cnt > 0
-    _txt := "Izvrsen prenos pocetnog stanja, dokument 16-1 !"
-else
-	_txt := "Nema dokumenata za prenos !!!"
-endif
+   // prenesi pocetno stanje...
+   _cnt := pocetno_stanje_sql( _params )
 
-MsgBeep( _txt )
+   IF _cnt > 0
+      _txt := "Izvrsen prenos pocetnog stanja, dokument 16-1 !"
+   ELSE
+      _txt := "Nema dokumenata za prenos !!!"
+   ENDIF
 
-return
+   MsgBeep( _txt )
+
+   RETURN
 
 
 // --------------------------------------------
 // parametri prenosa
 // --------------------------------------------
-static function _get_vars( params )
-local _x := 1
-local _box_x := 8
-local _box_y := 60
-local _dat_od, _dat_do, _id_pos, _dat_ps
-private GetList:={}
+STATIC FUNCTION _get_vars( params )
 
-_dat_od := CTOD( "01.01." + ALLTRIM(STR(YEAR(DATE())-1)) )
-_dat_do := CTOD( "31.12." + ALLTRIM(STR(YEAR(DATE())-1)) )
-_dat_ps := CTOD( "01.01." + ALLTRIM(STR(YEAR(DATE()))) )
-_id_pos := gIdPos
+   LOCAL _x := 1
+   LOCAL _box_x := 8
+   LOCAL _box_y := 60
+   LOCAL _dat_od, _dat_do, _id_pos, _dat_ps
+   PRIVATE GetList := {}
 
-Box(, _box_x, _box_y )
+   _dat_od := CToD( "01.01." + AllTrim( Str( Year( Date() ) -1 ) ) )
+   _dat_do := CToD( "31.12." + AllTrim( Str( Year( Date() ) -1 ) ) )
+   _dat_ps := CToD( "01.01." + AllTrim( Str( Year( Date() ) ) ) )
+   _id_pos := gIdPos
 
-	set cursor on
-	
-	@ m_x + _x, m_y + 2 SAY "Parametri prenosa u novu godinu" COLOR "BG+/B"
-	
-	_x += 2
-	
-	@ m_x + _x, m_y + 2 SAY "pos ID" GET _id_pos VALID !EMPTY( _id_pos )
-	
-	_x += 2
-	
-	@ m_x + _x, m_y + 2 SAY "Datum prenosa od:" GET _dat_od VALID !EMPTY(_dat_od)
-	@ m_x + _x, col() + 1 SAY "do:" GET _dat_do VALID !EMPTY(_dat_do)
-	
- 	_x += 2
-	
-	@ m_x + _x, m_y + 2 SAY "Datum dokumenta pocetnog stanja:" GET _dat_ps VALID !EMPTY( _dat_ps )
-	
-	read
-	
-BoxC()
+   Box(, _box_x, _box_y )
 
-if LastKey() == K_ESC
-	return 0
-endif
+   SET CURSOR ON
+	
+   @ m_x + _x, m_y + 2 SAY "Parametri prenosa u novu godinu" COLOR "BG+/B"
+	
+   _x += 2
+	
+   @ m_x + _x, m_y + 2 SAY "pos ID" GET _id_pos VALID !Empty( _id_pos )
+	
+   _x += 2
+	
+   @ m_x + _x, m_y + 2 SAY "Datum prenosa od:" GET _dat_od VALID !Empty( _dat_od )
+   @ m_x + _x, Col() + 1 SAY "do:" GET _dat_do VALID !Empty( _dat_do )
+	
+   _x += 2
+	
+   @ m_x + _x, m_y + 2 SAY "Datum dokumenta pocetnog stanja:" GET _dat_ps VALID !Empty( _dat_ps )
+	
+   READ
+	
+   BoxC()
 
-// snimi parametre
-params["datum_od"] := _dat_od
-params["datum_do"] := _dat_do
-params["id_pos"] := _id_pos
-params["datum_ps"] := _dat_ps
+   IF LastKey() == K_ESC
+      RETURN 0
+   ENDIF
 
-return 1
+   // snimi parametre
+   params[ "datum_od" ] := _dat_od
+   params[ "datum_do" ] := _dat_do
+   params[ "id_pos" ] := _id_pos
+   params[ "datum_ps" ] := _dat_ps
+
+   RETURN 1
 
 
 // ----------------------------------------------------------
 // prebaci se na rad sa sezonskim podrucjem
 // ----------------------------------------------------------
-static function prebaci_se_u_bazu( db_params, database, year )
+STATIC FUNCTION prebaci_se_u_bazu( db_params, database, year )
 
-if year == NIL
-    year := YEAR( DATE() )
-endif
+   IF year == NIL
+      year := Year( Date() )
+   ENDIF
 
-// 1) odjavi mi se iz tekuce sezone
-my_server_logout()
+   // 1) odjavi mi se iz tekuce sezone
+   my_server_logout()
 
-if year <> YEAR( DATE() )
-    // 2) xxxx_2013 => xxxx_2012
-    db_params["database"] := LEFT( database, LEN( database ) - 4 ) + ALLTRIM( STR( year ) )
-else
-    db_params["database"] := database
-endif
+   IF year <> Year( Date() )
+      // 2) xxxx_2013 => xxxx_2012
+      db_params[ "database" ] := Left( database, Len( database ) - 4 ) + AllTrim( Str( year ) )
+   ELSE
+      db_params[ "database" ] := database
+   ENDIF
 
-// 3) setuj parametre
-my_server_params( db_params )
-// 4) napravi login
-my_server_login( db_params )
+   // 3) setuj parametre
+   my_server_params( db_params )
+   // 4) napravi login
+   my_server_login( db_params )
 
-return 
+   RETURN
 
 
 
 // -----------------------------------------------------
 // pocetno stanje POS na osnovu sql upita...
 // -----------------------------------------------------
-static function pocetno_stanje_sql( param )
-local _db_params := my_server_params()
-local _tek_database := my_server_params()["database"]
-local _date_from := param["datum_od"]
-local _date_to := param["datum_do"]
-local _date_ps := param["datum_ps"]
-local _year_sez := YEAR( _date_to )
-local _year_tek := YEAR( _date_ps )
-local _id_pos := param["id_pos"]
-local _server := pg_server()
-local _qry, _table, _row
-local _count := 0
-local _rec, _id_roba, _kolicina, _vrijednost
-local _n_br_dok 
+STATIC FUNCTION pocetno_stanje_sql( param )
 
-// 1) predji u sezonsko podrucje
-// ------------------------------------------------------------
-// prebaci se u sezonu
-prebaci_se_u_bazu( _db_params, _tek_database, _year_sez )
-// setuj server
-_server := pg_server()
+   LOCAL _db_params := my_server_params()
+   LOCAL _tek_database := my_server_params()[ "database" ]
+   LOCAL _date_from := PARAM[ "datum_od" ]
+   LOCAL _date_to := PARAM[ "datum_do" ]
+   LOCAL _date_ps := PARAM[ "datum_ps" ]
+   LOCAL _year_sez := Year( _date_to )
+   LOCAL _year_tek := Year( _date_ps )
+   LOCAL _id_pos := PARAM[ "id_pos" ]
+   LOCAL _server := pg_server()
+   LOCAL _qry, _table, _row
+   LOCAL _count := 0
+   LOCAL _rec, _id_roba, _kolicina, _vrijednost
+   LOCAL _n_br_dok
+   LOCAL lOk := .T.
 
-// 2) izvuci podatke u matricu...
-// ------------------------------------------------------------
+   prebaci_se_u_bazu( _db_params, _tek_database, _year_sez )
+   _server := pg_server()
 
-// select
-_qry := "SELECT " + ;
-            "idroba, " + ;
-            "SUM( CASE " + ;
-            "WHEN idvd IN ('16', '00') THEN kolicina " + ;
-            "WHEN idvd IN ('IN') THEN -(kolicina - kol2) " + ;
-            "WHEN idvd IN ('42') THEN -kolicina " + ;
-            "END ) as kolicina, " + ;
-        "SUM( CASE  " + ;
-            "WHEN idvd IN ('16', '00') THEN kolicina * cijena " + ;
-            "WHEN idvd IN ('IN') THEN -(kolicina - kol2) * cijena " + ;
-            "WHEN idvd IN ('42') THEN -kolicina * cijena " + ;
-            "END ) as vrijednost " + ;
-        "FROM fmk.pos_pos "
-        
-// where cond ...
-_qry += " WHERE "
-_qry += _sql_cond_parse( "idpos", _id_pos )
-_qry += " AND " + _sql_date_parse( "datum", _date_from, _date_to )
-_qry += " GROUP BY idroba "
-_qry += " ORDER BY idroba "
+   _qry := "SELECT " + ;
+      "idroba, " + ;
+      "SUM( CASE " + ;
+      "WHEN idvd IN ('16', '00') THEN kolicina " + ;
+      "WHEN idvd IN ('IN') THEN -(kolicina - kol2) " + ;
+      "WHEN idvd IN ('42') THEN -kolicina " + ;
+      "END ) as kolicina, " + ;
+      "SUM( CASE  " + ;
+      "WHEN idvd IN ('16', '00') THEN kolicina * cijena " + ;
+      "WHEN idvd IN ('IN') THEN -(kolicina - kol2) * cijena " + ;
+      "WHEN idvd IN ('42') THEN -kolicina * cijena " + ;
+      "END ) as vrijednost " + ;
+      "FROM fmk.pos_pos "
 
-msgO( "pocetno stanje sql query u toku..." )
+   _qry += " WHERE "
+   _qry += _sql_cond_parse( "idpos", _id_pos )
+   _qry += " AND " + _sql_date_parse( "datum", _date_from, _date_to )
+   _qry += " GROUP BY idroba "
+   _qry += " ORDER BY idroba "
 
-// podaci pocetnog stanja su ovdje....
-_table := _sql_query( _server, _qry )
-_table:Refresh()
+   msgO( "pocetno stanje sql query u toku..." )
 
-msgC()
+   _table := _sql_query( _server, _qry )
+   _table:Refresh()
 
-// 3) vrati se u tekucu bazu...
-// ------------------------------------------------------------
-prebaci_se_u_bazu( _db_params, _tek_database, _year_tek )
-_server := pg_server()
+   msgC()
 
-// otvori potrebne tabele
-O_POS
-O_POS_DOKS
-O_ROBA
+   prebaci_se_u_bazu( _db_params, _tek_database, _year_tek )
+   _server := pg_server()
 
+   O_POS
+   O_POS_DOKS
+   O_ROBA
 
-// 4) daj mi novi broj dokumenta zaduzenja
-// ------------------------------------------------------------
-_n_br_dok := pos_novi_broj_dokumenta( _id_pos, "16", _date_ps )
+   _n_br_dok := pos_novi_broj_dokumenta( _id_pos, "16", _date_ps )
 
+   sql_table_update( nil, "BEGIN" )
+   IF !f18_lock_tables( { "pos_pos", "pos_doks" }, .T. )
+      sql_table_update( nil, "END" )
+      MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju.")
+      RETURN
+   ENDIF
 
-// 5) napravi push podataka u tekucem podrucju...
-// ------------------------------------------------------------
+   MsgO( "Formiranje dokumenta početnog stanja u toku ..." )
 
-// zakljucaj semafore pos-a
-if !f18_lock_tables( {"pos_pos", "pos_doks" })
-    return
-endif
-sql_table_update( nil, "BEGIN")
+   DO WHILE !_table:Eof()
 
-MsgO( "Formiranje dokumenta pocetnog stanja u toku... ")
+      _row := _table:GetRow()
 
-do while !_table:EOF()
+      _id_roba := hb_UTF8ToStr( _row:FieldGet( _row:FieldPos( "idroba" ) ) )
 
-    _row := _table:GetRow()
+      _kolicina := _row:FieldGet( _row:FieldPos( "kolicina" ) )
+      __stanje += _kolicina
 
-    _id_roba := hb_utf8tostr( _row:Fieldget( _row:Fieldpos("idroba") ) )
+      _vrijednost := _row:FieldGet( _row:FieldPos( "vrijednost" ) )
+      __vrijednost += _vrijednost
 
-    _kolicina := _row:Fieldget( _row:Fieldpos("kolicina") )
-    __stanje += _kolicina
+      SELECT roba
+      hseek _id_roba
 
-    _vrijednost := _row:Fieldget( _row:Fieldpos("vrijednost") )
-    __vrijednost += _vrijednost
+      IF Round( _kolicina, 2 ) <> 0
 
-    select roba
-    hseek _id_roba
+         SELECT pos
+         APPEND BLANK
 
-    if ROUND( _kolicina, 2 ) <> 0
+         _rec := dbf_get_rec()
 
-        select pos
-        append blank
-
-        _rec := dbf_get_rec()
-
-		_rec["idpos"] := _id_pos
-		_rec["idvd"] := "16"
-		_rec["brdok"] := _n_br_dok
-        _rec["rbr"] := PADL( ALLTRIM(STR( ++ _count ) ) , 5 ) 
-		_rec["idroba"] := _id_roba
-		_rec["kolicina"] := _kolicina
-		_rec["cijena"] := pos_get_mpc() 
-		_rec["datum"] := _date_ps
-		_rec["idradnik"] := "XXXX"
-		_rec["idtarifa"] := roba->idtarifa
-		_rec["prebacen"] := "1"
-		_rec["smjena"] := "1"
-		_rec["mu_i"] := "1"
+         _rec[ "idpos" ] := _id_pos
+         _rec[ "idvd" ] := "16"
+         _rec[ "brdok" ] := _n_br_dok
+         _rec[ "rbr" ] := PadL( AllTrim( Str( ++_count ) ), 5 )
+         _rec[ "idroba" ] := _id_roba
+         _rec[ "kolicina" ] := _kolicina
+         _rec[ "cijena" ] := pos_get_mpc()
+         _rec[ "datum" ] := _date_ps
+         _rec[ "idradnik" ] := "XXXX"
+         _rec[ "idtarifa" ] := roba->idtarifa
+         _rec[ "prebacen" ] := "1"
+         _rec[ "smjena" ] := "1"
+         _rec[ "mu_i" ] := "1"
 		
-	    update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )
+         lOk := update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )
 
-    endif
+      ENDIF
 
-    _table:Skip()
+      IF !lOk
+         EXIT
+      ENDIF
 
-enddo
+      _table:Skip()
 
-// ima li za DOKS ?
-if _count > 0
+   ENDDO
 
-    select pos_doks
-    append blank
+   IF lOk .AND. _count > 0
 
-    _rec := dbf_get_rec()
+      SELECT pos_doks
+      APPEND BLANK
 
-	_rec["idpos"] := _id_pos
-	_rec["idvd"] := "16"
-	_rec["brdok"] := _n_br_dok
-	_rec["datum"] := _date_ps
-	_rec["idradnik"] := "XXXX"
-	_rec["prebacen"] := "1"
-	_rec["smjena"] := "1"
+      _rec := dbf_get_rec()
 
-    update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
+      _rec[ "idpos" ] := _id_pos
+      _rec[ "idvd" ] := "16"
+      _rec[ "brdok" ] := _n_br_dok
+      _rec[ "datum" ] := _date_ps
+      _rec[ "idradnik" ] := "XXXX"
+      _rec[ "prebacen" ] := "1"
+      _rec[ "smjena" ] := "1"
 
-endif
+      lOk := update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
 
+   ENDIF
 
-f18_free_tables( { "pos_pos", "pos_doks" } )
-sql_table_update( nil, "END" )
+   MsgC()
 
-MsgC()
+   IF lOk
+      f18_free_tables( { "pos_pos", "pos_doks" } )
+      sql_table_update( nil, "END" )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+   ENDIF
 
-select ( F_ROBA )
-use
-select ( F_POS_DOKS )
-use
-select ( F_POS )
-use
+   SELECT ( F_ROBA )
+   USE
+   SELECT ( F_POS_DOKS )
+   USE
+   SELECT ( F_POS )
+   USE
 
-return _count
-
-
-
-
+   RETURN _count
 
 

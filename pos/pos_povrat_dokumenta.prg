@@ -15,46 +15,26 @@
 
 FUNCTION pos_brisi_dokument( id_pos, id_vd, dat_dok, br_dok )
 
-   LOCAL _ok := .T.
-   LOCAL _t_area := Select()
-   LOCAL _ret := .F.
+   LOCAL lOk := .T.
+   LOCAL lRet := .F.
    LOCAL _rec
+   LOCAL nTArea := Select()
+   LOCAL cDokument
 
-   SELECT pos
-   SET FILTER TO
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK id_pos + id_vd + DToS( dat_dok ) + br_dok
-
-   IF !Found()
-
-      // potrazi i u doks
-      SELECT pos_doks
-      SET FILTER TO
-      SET ORDER TO TAG "1"
-      GO TOP
-      SEEK id_pos + id_vd + DToS( dat_dok ) + br_dok
-
-      // nema ga stvarno !!!
-      IF !Found()
-         SELECT ( _t_area )
-         RETURN _ret
-      ENDIF
-
+   IF !pos_dokument_postoji( id_pos, id_vd, dat_dok, br_dok, .T. )
+      RETURN lRet
    ENDIF
 
-   log_write( "F18_DOK_OPER: pos, brisanje racuna broj: " + br_dok + " od " + DToC( dat_dok ), 2 )
-	           	
-   IF !f18_lock_tables( { "pos_pos", "pos_doks" } )
+   sql_table_update( nil, "BEGIN" )
+   IF !f18_lock_tables( { "pos_pos", "pos_doks" }, .T. )
+      sql_table_update( nil, "END" )
       SELECT ( _t_area )
       RETURN _ret
    ENDIF
 
-   sql_table_update( nil, "BEGIN" )
-
-   _ret := .T.
-
    MsgO( "Brisanje dokumenta iz glavne tabele u toku ..." )
+
+   cDokument := id_pos + "-" + id_vd + "-" + br_dok + " " + DTOC( dat_dok ) 
 
    SELECT pos
    GO TOP
@@ -62,26 +42,66 @@ FUNCTION pos_brisi_dokument( id_pos, id_vd, dat_dok, br_dok )
 
    IF Found()
       _rec := dbf_get_rec()
-      delete_rec_server_and_dbf( "pos_pos", _rec, 2, "CONT" )
+      lOk := delete_rec_server_and_dbf( "pos_pos", _rec, 2, "CONT" )
    ENDIF
 
-   SELECT pos_doks
-   GO TOP
-   SEEK id_pos + id_vd + DToS( dat_dok ) + br_dok
+   IF lOk
+      SELECT pos_doks
+      GO TOP
+      SEEK id_pos + id_vd + DToS( dat_dok ) + br_dok
 
-   IF Found()
-      _rec := dbf_get_rec()
-      delete_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
+      IF Found()
+         _rec := dbf_get_rec()
+         lOk := delete_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
+      ENDIF
    ENDIF
-
-   f18_free_tables( { "pos_pos", "pos_doks" } )
-   sql_table_update( nil, "END" )
 
    MsgC()
 
-   SELECT ( _t_area )
+   IF lOk
+      lRet := .T.
+      f18_free_tables( { "pos_pos", "pos_doks" } )
+      sql_table_update( nil, "END" )
+      log_write( "F18_DOK_OPER, izbrisan pos dokument: " + cDokument, 2 )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+      log_write( "F18_DOK_OPER, greška sa brisanjem pos dokumenta: " + cDokument, 2 )
+   ENDIF
 
-   RETURN _ret
+   SELECT ( nTArea )
+
+   RETURN lRet
+
+
+
+
+
+FUNCTION pos_dokument_postoji( cIdPos, cIdvd, dDatum, cBroj, lUTabeliStavki )
+
+   LOCAL lRet := .F.
+   LOCAL cWhere
+   LOCAL cTable := "fmk.pos_doks"
+
+   IF lUTabeliStavki == NIL
+      lUTabeliStavki := .F.
+   ENDIF
+
+   IF lUTabeliStavki
+      cTable := "fmk.pos_pos"
+   ENDIF
+
+   cWhere := "idpos = " + _sql_quote( cIdPos )
+   cWhere += " AND idvd = " + _sql_quote( cIdVd )
+   cWhere += " AND datum = " + _sql_quote( dDatum )
+   cWhere += " AND brdok = " + _sql_quote( cBroj )
+
+   IF table_count( cTable, cWhere ) > 0
+      lRet := .T.
+   ENDIF
+
+   RETURN lRet
+
+
 
 
 

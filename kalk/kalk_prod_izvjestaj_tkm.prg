@@ -15,35 +15,24 @@
 STATIC __LEN_OPIS := 70
 
 
-// -----------------------------------------
-// izvjestaj TKM
-// -----------------------------------------
 FUNCTION kalk_tkm()
 
    LOCAL _vars
    LOCAL _calc_rec := 0
 
-   // skeleton ::
-
-   // uslovi izvjestaja...
    IF !get_vars( @_vars )
       RETURN
    ENDIF
 
-   // generisanje izvjestaja
    _calc_rec := kalk_gen_fin_stanje_prodavnice( _vars )
 
    IF _calc_rec > 0
-      // stampaj TKM izvjestaj
       stampaj_tkm( _vars )
    ENDIF
 
    RETURN
 
 
-// -----------------------------------------
-// uslovi izvjestaja
-// -----------------------------------------
 STATIC FUNCTION get_vars( vars )
 
    LOCAL _ret := .F.
@@ -89,20 +78,17 @@ STATIC FUNCTION get_vars( vars )
 
    _ret := .T.
 
-   // snimi hash matricu...
    vars := hb_Hash()
    vars[ "datum_od" ] := _d_od
    vars[ "datum_do" ] := _d_do
    vars[ "konto" ] := _konta
    vars[ "vrste_dok" ] := _vr_dok
    vars[ "gledati_usluge" ] := _usluge
-   // ako postoji tacka u kontu onda gledaj
    IF Right( AllTrim( _konta ), 1 ) == "."
       _vise_konta := "N"
    ENDIF
    vars[ "vise_konta" ] := _vise_konta
 
-   // snimi sql/db parametre
    set_metric( "kalk_tkm_konto", my_user(), _konta )
    set_metric( "kalk_tkm_datum_od", my_user(), _d_od )
    set_metric( "kalk_tkm_datum_do", my_user(), _d_do )
@@ -113,9 +99,6 @@ STATIC FUNCTION get_vars( vars )
 
 
 
-// ------------------------------------------
-// stampa izvjestaja TKM
-// ------------------------------------------
 STATIC FUNCTION stampaj_tkm( vars )
 
    LOCAL _red_br := 0
@@ -125,7 +108,6 @@ STATIC FUNCTION stampaj_tkm( vars )
    LOCAL _a_opis := {}
    LOCAL _i
 
-   // daj mi liniju za report...
    _line := _get_line()
 
    START PRINT CRET
@@ -133,10 +115,8 @@ STATIC FUNCTION stampaj_tkm( vars )
    ?
    P_COND
 
-   // ispisi zaglavlje izvjestaja
    tkm_zaglavlje( vars )
 
-   // stampaj header izvjestaja
    ? _line
    tkm_header()
    ? _line
@@ -150,13 +130,10 @@ STATIC FUNCTION stampaj_tkm( vars )
 
    DO WHILE !Eof()
 
-      // preskoci ako su stavke = 0
       IF ( Round( field->mp_saldo, 2 ) == 0 .AND. Round( field->nv_saldo, 2 ) == 0 )
          SKIP
          LOOP
       ENDIF
-
-      // 1. red izvjestaja...
 
       // redni broj...
       ? PadL( AllTrim( Str( ++_red_br ) ), 6 ) + "."
@@ -164,7 +141,6 @@ STATIC FUNCTION stampaj_tkm( vars )
       // datum dokumenta
       @ PRow(), PCol() + 1 SAY field->datum
 
-      // generisi string za opis knjizenja...
       _opis_knjizenja := AllTrim( field->vr_dok )
       _opis_knjizenja += " "
       _opis_knjizenja += "broj: "
@@ -188,22 +164,15 @@ STATIC FUNCTION stampaj_tkm( vars )
 
       _a_opis := SjeciStr( _opis_knjizenja, __LEN_OPIS )
 
-      // opis knjizenja
       @ PRow(), _n_opis := PCol() + 1 SAY _a_opis[ 1 ]
 
-      // zaduzenje sa PDV
       @ PRow(), _n_iznosi := PCol() + 1 SAY Str( field->mpp_dug + ( -field->mp_rabat ), 12, 2 )
 
-      // razduzenje sa PDV
       @ PRow(), PCol() + 1 SAY Str( ( field->mp_pot + field->mp_porez ), 12, 2 )
 
       _t_dug += field->mpp_dug + ( -field->mp_rabat )
       _t_pot += field->mp_pot + field->mp_porez
       _t_rabat += field->mp_rabat
-
-
-      // 2, 3... red izvjestaja...
-      // radi opisnog polja...
 
       FOR _i := 2 TO Len( _a_opis )
          ?
@@ -216,11 +185,9 @@ STATIC FUNCTION stampaj_tkm( vars )
 
    ? _line
 
-   // stampaj ukupno
    ? "UKUPNO:"
    @ PRow(), _n_iznosi SAY Str( _t_dug, 12, 2 )
    @ PRow(), PCol() + 1 SAY Str( _t_pot, 12, 2 )
-   // @ prow(), pcol() + 1 SAY STR( _t_rabat, 12, 2 )
 
    ? "SALDO TRGOVACKE KNJIGE:"
    @ PRow(), _n_iznosi SAY Str( _t_dug - _t_pot, 12, 2 )
@@ -234,9 +201,6 @@ STATIC FUNCTION stampaj_tkm( vars )
 
 
 
-// ----------------------------------------
-// vraca liniju za report
-// ----------------------------------------
 STATIC FUNCTION _get_line()
 
    LOCAL _line
@@ -255,14 +219,12 @@ STATIC FUNCTION _get_line()
    RETURN _line
 
 
-// -----------------------------------------
-// zaglavlje izvjestaja
-// -----------------------------------------
 STATIC FUNCTION tkm_zaglavlje( vars )
 
    ? gFirma, "-", AllTrim( gNFirma )
    ?
-   ? Space( 10 ), "TRGOVACKA KNJIGA NA MALO (TKM) za period od:", vars[ "datum_od" ], "do:", vars[ "datum_do" ]
+   ?U Space( 10 ), "TRGOVAČKA KNJIGA NA MALO (TKM) za period od:"
+   ?? vars[ "datum_od" ], "do:", vars[ "datum_do" ]
    ?
    ? "Uslov za prodavnice: "
 
@@ -279,9 +241,6 @@ STATIC FUNCTION tkm_zaglavlje( vars )
    RETURN
 
 
-// -----------------------------------------
-// header izvjestaja
-// -----------------------------------------
 STATIC FUNCTION tkm_header()
 
    LOCAL _row_1, _row_2
@@ -302,21 +261,21 @@ STATIC FUNCTION tkm_header()
    _row_2 += Space( 1 )
 
    _row_1 += PadR( "", __LEN_OPIS )
-   _row_2 += PadR( "Opis knjizenja", __LEN_OPIS )
+   _row_2 += PadR( "Opis knjiženja", __LEN_OPIS )
 
    _row_1 += Space( 1 )
    _row_2 += Space( 1 )
 
-   _row_1 += PadC( "Zaduzenje", 12 )
+   _row_1 += PadC( "Zaduženje", 12 )
    _row_2 += PadC( "sa PDV", 12 )
 
    _row_1 += Space( 1 )
    _row_2 += Space( 1 )
 
-   _row_1 += PadC( "Razduzenje", 12 )
+   _row_1 += PadC( "Razduženje", 12 )
    _row_2 += PadC( "sa PDV", 12 )
 
-   ? _row_1
-   ? _row_2
+   ?U _row_1
+   ?U _row_2
 
    RETURN

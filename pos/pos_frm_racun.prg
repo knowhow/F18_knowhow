@@ -122,7 +122,7 @@ if kLevel == L_PRODAVAC .and. dDat <> NIL
 endif
 
 if qIdRoba<>nil.and.!EMPTY(qIdRoba)
-    cFilter+=".and. SR_ImaRobu(IdPos+IdVd+dtos(datum)+BrDok,"+cm2str(qIdRoba)+")"
+    cFilter+=".and. pos_racun_sadrzi_artikal(IdPos, IdVd, datum, BrDok, " + cm2str( qIdRoba ) + ")"
 endif
 
 SET FILTER TO &cFilter

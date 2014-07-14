@@ -119,7 +119,6 @@ FUNCTION noviracun()
 
 FUNCTION PreglRadni( cBrDok )
 
-   // koristi se gDatum - uzima se da je to datum radnog racuna SIGURNO
    LOCAL nPrev := Select()
 
    SELECT _POS
@@ -142,9 +141,6 @@ FUNCTION PreglRadni( cBrDok )
 
 
 
-// --------------------------------------------
-// zakljucenje racuna
-// --------------------------------------------
 FUNCTION ZakljuciRacun()
 
    LOCAL _ret
@@ -154,7 +150,6 @@ FUNCTION ZakljuciRacun()
 
    IF _ne_zatvaraj == "D" .AND. _ret == .T.
 
-      // jednostano ponavljaj ove procedure, do ESC
       pos_narudzba()
       zakljuciracun()
 
@@ -164,9 +159,6 @@ FUNCTION ZakljuciRacun()
 
 
 
-// --------------------------------------------------------------
-// zakljuci racun tops
-// --------------------------------------------------------------
 FUNCTION zakljuci_pos_racun()
 
    LOCAL _ret := .F.
@@ -195,8 +187,7 @@ FUNCTION zakljuci_pos_racun()
    form_zakljuci_racun( @_param )
 
    IF _param[ "zakljuci" ] == "D"
-      _ret := .T.
-      SveNaJedan( _param )
+      _ret := pos_zakljuci_racun_sve_na_jedan( _param )
    ENDIF
 
    CLOSE ALL
@@ -205,140 +196,103 @@ FUNCTION zakljuci_pos_racun()
 
 
 
-
-
-// -------------------------------------------------
-// zakljucivanje racuna - sve na jedan
-// -------------------------------------------------
-FUNCTION SveNaJedan( params )
+STATIC FUNCTION pos_zakljuci_racun_sve_na_jedan( params )
 
    LOCAL _br_dok := params[ "brdok" ]
    LOCAL _id_pos := params[ "idpos" ]
    LOCAL _id_vrsta_p := params[ "idvrstap" ]
    LOCAL _id_partner := params[ "idpartner" ]
    LOCAL _uplaceno := params[ "uplaceno" ]
+   LOCAL lOk := .T.
 
    o_pos_tables()
 
-   IF gRadniRac == "D"
-
-      _br_dok := Space( 6 )
-      SET CURSOR ON
-
-      Box(, 2, 40 )
-      @ m_x + 1, m_y + 3 SAY "Broj radnog racuna:" GET _br_dok VALID P_RadniRac( @_br_dok )
-      READ
-      ESC_BCR
-      BoxC()
-
-   ENDIF
-
-   // prebaci iz prip u pos
    IF ( Len( aRabat ) > 0 )
       ReCalcRabat( _id_vrsta_p )
    ENDIF
 
    _Pripr2_Pos( _id_vrsta_p )
 
-   StampAzur( _id_pos, _br_dok, _id_vrsta_p, _id_partner, _uplaceno )
+   lOk := azuriraj_racun_iz_pripreme( _id_pos, _br_dok, _id_vrsta_p, _id_partner, _uplaceno )
 
-   CLOSE ALL
+   my_close_all_dbf()
 
-   RETURN
+   RETURN lOk
 
 
 
-// ------------------------------------------------------------------
-// stampa i azuriranje racuna
-// ------------------------------------------------------------------
-FUNCTION StampAzur( cIdPos, cRadRac, cIdVrsteP, cIdGost, uplaceno )
+STATIC FUNCTION azuriraj_racun_iz_pripreme( cIdPos, cRadRac, cIdVrsteP, cIdGost, nUplaceno )
 
-   LOCAL cTime, _rec, _dev_id, _dev_params
+   LOCAL cTime
    LOCAL nFis_err := 0
+   LOCAL cBrojRacuna 
+   LOCAL lRet := .F.
+   LOCAL lOk := .T.
+   LOCAL _rec, _dev_id, _dev_params
    PRIVATE cPartner
 
    SELECT pos_doks
 
-   // naredni broj racuna, nova funkcija koja konsultuje sql/db
-   cStalRac := pos_novi_broj_dokumenta( cIdPos, VD_RN )
+   cBrojRacuna := pos_novi_broj_dokumenta( cIdPos, VD_RN )
 
+   cTime := PADR( TIME(), 5 )
    gDatum := Date()
-
-   aVezani := {}
-   // AADD( aVezani, { pos_doks->idpos, cRadRac, cIdVrsteP, pos_doks->datum })
-   AAdd( aVezani, { cIdPos, cRadRac, cIdVrsteP, gDatum } )
-
    cPartner := cIdGost
 
-   cTime := pos_stampa_racuna_pdv( cIdPos, cRadRac, .F., cIdVrsteP, nil, aVezani )
+   lOk := pos_azuriraj_racun( cIdPos, cBrojRacuna, cRadRac, cTime, cIdVrsteP, cIdGost )
 
-   IF ( !Empty( cTime ) )
-
-      azur_pos_racun( cIdPos, cStalRac, cRadRac, cTime, cIdVrsteP, cIdGost )
-
-      IF IsPDV()
-         AzurKupData( cIdPos )
-      ENDIF
-
-      IF gRnInfo == "D"
-         _sh_rn_info( cStalRac )
-      ENDIF
-
-      IF fiscal_opt_active()
-
-         _dev_id := odaberi_fiskalni_uredjaj( NIL, .T., .F. )
-         IF _dev_id > 0
-            _dev_params := get_fiscal_device_params( _dev_id, my_user() )
-            IF _dev_params == NIL
-               RETURN .F.
-            ENDIF
-         ELSE
-            RETURN .F.
-         ENDIF
-
-         nErr := pos_fiskalni_racun( cIdPos, gDatum, cStalRac, _dev_params, uplaceno )
-
-         // da li je nestalo trake ?
-         // -20 signira na nestanak trake !
-         IF nErr = -20
-            IF Pitanje(, "Da li je nestalo trake u fiskalnom uređaju (D/N)?", "N" ) == ;
-                  "N"
-               nErr := 20
-            ENDIF
-         ENDIF
-
-         IF nErr > 0
-            pos_povrat_rn( cStalRac, gDatum )
-         ENDIF
-
-      ENDIF
-
+   IF !lOk
+      RETURN lRet
    ENDIF
 
-   IF Empty( cTime )
-
-      IF fiscal_opt_active()
-         SkloniIznRac()
-      ENDIF
-
-      MsgBeep( "Račun <" + AllTrim ( cRadRac ) + "> nije zaključen !#" + "Ponovite proceduru štampanja !", 20 )
-
-      SELECT ( F_POS_DOKS )
-      IF !Used()
-         O_POS_DOKS
-      ENDIF
-
-      SELECT pos_doks
-      SEEK gIdPos + "42" + DToS( gDatum ) + cStalRac
-
-      IF ( pos_doks->idRadnik == "////" )
-         _rec := dbf_get_rec()
-         delete_rec_server_and_dbf( "pos_doks", _rec, 1, "FULL" )
-      ENDIF
-
+   IF gRnInfo == "D"
+      _sh_rn_info( cStalRac )
    ENDIF
 
-   RETURN
+   IF fiscal_opt_active()
+      stampaj_fiskalni_racun( cIdPos, gDatum, cBrojRacuna, nUplaceno )
+   ENDIF
+
+   lRet := .T.
+
+   RETURN lRet
+
+
+
+
+STATIC FUNCTION stampaj_fiskalni_racun( cIdPos, dDatum, cBrRn, nUplaceno )
+
+   LOCAL nDeviceId
+   LOCAL hDeviceParams
+   LOCAL lRet := .F.
+   LOCAL nError := 0
+
+   nDeviceId := odaberi_fiskalni_uredjaj( NIL, .T., .F. )
+   IF nDeviceId > 0
+      hDeviceParams := get_fiscal_device_params( nDeviceId, my_user() )
+      IF hDeviceParams == NIL
+         RETURN lRet
+      ENDIF
+   ELSE
+      RETURN lRet
+   ENDIF
+
+   nError := pos_fiskalni_racun( cIdPos, dDatum, cBrRn, hDeviceParams, nUplaceno )
+
+   IF nError = -20
+      IF Pitanje(, "Da li je nestalo trake u fiskalnom uređaju (D/N)?", "N" ) == "N"
+         nError := 20
+      ENDIF
+   ENDIF
+
+   IF nError > 0
+      pos_povrat_rn( cBrRn, dDatum )
+   ENDIF
+   
+   lRet := .T.
+ 
+   RETURN lRet
+
 
 
 

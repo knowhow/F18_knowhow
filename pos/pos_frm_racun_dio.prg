@@ -150,7 +150,7 @@ if fZakPol
 		cTime:=pos_stampa_racuna(gIdPos, cRadRac)
     	endif
 	if !EMPTY(cTime)
-      		azur_pos_racun (gIdPos, cStalRac, cRadRac, cTime)
+      		pos_azuriraj_racun(gIdPos, cStalRac, cRadRac, cTime)
     	else
       		SkloniIznRac()
       		MsgBeep ("Radni racun <" + ALLTRIM (cRadRac) + "> nije zakljucen!#" + "Ponovite proceduru zakljucenja kasnije!", 20)
@@ -165,7 +165,7 @@ for nCnt:=2 to nKoliko
     	cStalRac := IncID (cStalRac)
     	cTime := pos_stampa_racuna(gIdPos, aRacPriv [nCnt-1])
     	if !EMPTY (cTime)
-      		azur_pos_racun(gIdPos, cStalRac, aRacPriv[nCnt-1], cTime)
+      		pos_azuriraj_racun(gIdPos, cStalRac, aRacPriv[nCnt-1], cTime)
     	else
       		SkloniIznRac()
       		MsgBeep ("Radni racun <" + ALLTRIM (aRacPriv[nCnt-1]) + "> nije zakljucen!#" +"Ponovite proceduru zakljucenja kasnije!", 20)

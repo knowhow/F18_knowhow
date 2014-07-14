@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -23,72 +23,74 @@
 // -------------------------------------------------------------
 // prebacuje stavke iz tabele _pos_pripr u tabelu _pos
 // -------------------------------------------------------------
-function _pripr2_pos( cIdVrsteP )
-local cBrdok
-local nTrec := 0
-local _rec
+FUNCTION _pripr2_pos( cIdVrsteP )
 
-if cIdVrsteP == nil
-    cIdVrsteP := ""
-endif
+   LOCAL cBrdok
+   LOCAL nTrec := 0
+   LOCAL _rec
 
-select _pos_pripr
-go top
+   IF cIdVrsteP == nil
+      cIdVrsteP := ""
+   ENDIF
 
-cBrdok := field->brdok
+   SELECT _pos_pripr
+   GO TOP
 
-do while !EOF()
-    
-    _rec := dbf_get_rec()
+   cBrdok := field->brdok
 
-    select _pos
-    append blank
-    
-    if ( gRadniRac == "N" )
-        // u _pos_pripr mora biti samo jedan dokument!!!
-        _rec["brdok"] := cBrDok   
-    endif
+   DO WHILE !Eof()
 
-    _rec["idvrstep"] := cIdVrsteP
+      _rec := dbf_get_rec()
 
-    dbf_update_rec( _rec )
-    
-    select _pos_pripr
-    skip
+      SELECT _pos
+      APPEND BLANK
 
-enddo
+      IF ( gRadniRac == "N" )
+         // u _pos_pripr mora biti samo jedan dokument!!!
+         _rec[ "brdok" ] := cBrDok
+      ENDIF
 
-// pobrisi mi _pos_pripr
-select _pos_pripr
-my_dbf_zap()
+      _rec[ "idvrstep" ] := cIdVrsteP
 
-return
+      dbf_update_rec( _rec )
+
+      SELECT _pos_pripr
+      SKIP
+
+   ENDDO
+
+   // pobrisi mi _pos_pripr
+   SELECT _pos_pripr
+   my_dbf_zap()
+
+   RETURN
 
 
 // ------------------------------------------
 // odabir opcija za povrat pripremu
 // ------------------------------------------
-static function pripr_choice()
-local _ch := "1"
+STATIC FUNCTION pripr_choice()
 
-// brisati
-// spojiti
+   LOCAL _ch := "1"
 
-Box(, 3, 50 )
-    @ m_x + 1, m_y + 2 SAY "Priprema nije prazna, sta dalje ? "
-    @ m_x + 2, m_y + 2 SAY " (1) brisati pripremu  "
-    @ m_x + 3, m_y + 2 SAY " (2) spojiti na postojeci dokument " GET _ch VALID _ch $ "12"
-    read
-BoxC()
+   // brisati
+   // spojiti
 
-// na ESC
-if LastKey() == K_ESC
-    // marker "0" za nista odabrano
-    _ch := "0"
-    return _ch
-endif
+   Box(, 3, 50 )
+   @ m_x + 1, m_y + 2 SAY "Priprema nije prazna, sta dalje ? "
+   @ m_x + 2, m_y + 2 SAY " (1) brisati pripremu  "
+   @ m_x + 3, m_y + 2 SAY " (2) spojiti na postojeci dokument " GET _ch VALID _ch $ "12"
+   READ
+   BoxC()
 
-return _ch
+   // na ESC
+   IF LastKey() == K_ESC
+      // marker "0" za nista odabrano
+      _ch := "0"
+      RETURN _ch
+   ENDIF
+
+   RETURN _ch
 
 
 
@@ -96,132 +98,135 @@ return _ch
 // -------------------------------------------
 // pos -> priprz
 // -------------------------------------------
-function pos_2_priprz()
-local _rec
-local _t_area := SELECT()
-local _oper := "1"
-local _exist, _rec2
+FUNCTION pos_2_priprz()
 
-O_PRIPRZ
-select priprz
+   LOCAL _rec
+   LOCAL _t_area := Select()
+   LOCAL _oper := "1"
+   LOCAL _exist, _rec2
 
-if RECCOUNT() <> 0
-    _oper := pripr_choice()
-endif
+   O_PRIPRZ
+   SELECT priprz
 
-// brisat cemo pripremu....
-if _oper == "1"
-   my_dbf_zap()
-endif
+   IF RecCount() <> 0
+      _oper := pripr_choice()
+   ENDIF
 
-if _oper == "2"
-    // postojeci zapis... u priprz
-    _rec2 := dbf_get_rec()
-endif
+   // brisat cemo pripremu....
+   IF _oper == "1"
+      my_dbf_zap()
+   ENDIF
 
-MsgO( "Vrsim povrat dokumenta u pripremu ..." )
+   IF _oper == "2"
+      // postojeci zapis... u priprz
+      _rec2 := dbf_get_rec()
+   ENDIF
 
-select pos
-seek pos_doks->( IdPos + IdVd + DTOS(datum) + BrDok )
+   MsgO( "Vrsim povrat dokumenta u pripremu ..." )
 
-do while !EOF() .and. pos->( IdPos + IdVd + DTOS( datum ) + BrDok ) == ;
-                    pos_doks->( IdPos + IdVd + DTOS( datum ) + BrDok )
+   SELECT pos
+   SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
-    _rec := dbf_get_rec()
+   DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + BrDok ) == ;
+         pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
-    hb_hdel( _rec, "rbr" )
-    
-    select roba
-    HSEEK _rec["idroba"]
+      _rec := dbf_get_rec()
 
-    _rec["robanaz"] := roba->naz
-    _rec["jmj"] := roba->jmj
-    _rec["barkod"] := roba->barkod
+      hb_HDel( _rec, "rbr" )
 
-    // ako je operacija spajanja
-    // spoji dokumente sa postojecim u pripremi....
-    if _oper == "2"
-        _rec["idpos"] := _rec2["idpos"]
-        _rec["idvd"] := _rec2["idvd"]
-        _rec["brdok"] := _rec2["brdok"]
-    endif
+      SELECT roba
+      HSEEK _rec[ "idroba" ]
 
-    select priprz
-    
-    if _oper <> "2"
-        append blank 
-    endif
+      _rec[ "robanaz" ] := roba->naz
+      _rec[ "jmj" ] := roba->jmj
+      _rec[ "barkod" ] := roba->barkod
 
-    if _oper == "2"
+      // ako je operacija spajanja
+      // spoji dokumente sa postojecim u pripremi....
+      IF _oper == "2"
+         _rec[ "idpos" ] := _rec2[ "idpos" ]
+         _rec[ "idvd" ] := _rec2[ "idvd" ]
+         _rec[ "brdok" ] := _rec2[ "brdok" ]
+      ENDIF
 
-        // pronadji postojeci artikal...
-        set order to tag "1"
-        hseek _rec["idroba"]
+      SELECT priprz
 
-        if !FOUND()
-            append blank
-        else
+      IF _oper <> "2"
+         APPEND BLANK
+      ENDIF
+
+      IF _oper == "2"
+
+         // pronadji postojeci artikal...
+         SET ORDER TO TAG "1"
+         hseek _rec[ "idroba" ]
+
+         IF !Found()
+            APPEND BLANK
+         ELSE
             // uzmi postojeci zapis iz pripreme
             _exist := dbf_get_rec()
             // dodaj na postojecu kolicinu kolicinu sa novog dokumenta
-            _rec["kol2"] := _rec["kol2"] + _exist["kol2"]
-        endif
+            _rec[ "kol2" ] := _rec[ "kol2" ] + _exist[ "kol2" ]
+         ENDIF
 
-    endif
+      ENDIF
 
-    dbf_update_rec( _rec )
+      dbf_update_rec( _rec )
 
-    select pos
-    skip
+      SELECT pos
+      SKIP
 
-enddo
+   ENDDO
 
-MsgC()
+   MsgC()
 
-select ( _t_area )
-return
+   SELECT ( _t_area )
+
+   RETURN
 
 
 
 // ----------------------------------------
 // prebaci iz pos u _pripr
 // ----------------------------------------
-function pos2_pripr()
-local _rec
+FUNCTION pos2_pripr()
 
-select _pos_pripr
+   LOCAL _rec
 
-my_dbf_zap()
+   SELECT _pos_pripr
 
-go top
-scatter()
+   my_dbf_zap()
 
-select pos
-seek pos_doks->( IdPos+IdVd+dtos(datum)+BrDok )
+   GO TOP
+   scatter()
 
-do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
+   SELECT pos
+   SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
-    _rec := dbf_get_rec()
-    hb_hdel( _rec, "rbr" )
-    
-    select roba
-    HSEEK _IdRoba
-    _rec["robanaz"] := roba->naz
-    _rec["jmj"] := roba->jmj
+   DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
-    select _pos_pripr
-    append blank 
+      _rec := dbf_get_rec()
+      hb_HDel( _rec, "rbr" )
 
-    dbf_update_rec( _rec )
+      SELECT roba
+      HSEEK _IdRoba
+      _rec[ "robanaz" ] := roba->naz
+      _rec[ "jmj" ] := roba->jmj
 
-    select pos
-    skip
+      SELECT _pos_pripr
+      APPEND BLANK
 
-enddo
+      dbf_update_rec( _rec )
 
-select _pos_pripr
+      SELECT pos
+      SKIP
 
-return
+   ENDDO
+
+   SELECT _pos_pripr
+
+   RETURN
 
 
 
@@ -232,98 +237,95 @@ return
  *  \brief Ukloni radne racune (koj se nalaze u _POS tabeli)
  *  \param cIdRadnik
  */
- 
-function UkloniRadne(cIdRadnik)
-SELECT _POS
-Set order to tag "1"
-SEEK gIdPos+VD_RN
-while !eof() .and. _POS->(IdPos+IdVd)==(gIdPos+VD_RN)
-    if _POS->IdRadnik==cIdRadnik .and. _POS->M1 == "Z"
-        Del_Skip ()
-    else
-        SKIP
-    endif
-end
-SELECT ZAKSM
-return
+
+FUNCTION UkloniRadne( cIdRadnik )
+
+   SELECT _POS
+   SET ORDER TO TAG "1"
+   SEEK gIdPos + VD_RN
+   WHILE !Eof() .AND. _POS->( IdPos + IdVd ) == ( gIdPos + VD_RN )
+      IF _POS->IdRadnik == cIdRadnik .AND. _POS->M1 == "Z"
+         Del_Skip ()
+      ELSE
+         SKIP
+      ENDIF
+   END
+   SELECT ZAKSM
+
+   RETURN
 
 
 
 // --------------------------------------------------------------------------
 // vraca dokumente iz privremene pripreme u pripremu zaduzenja itd...
 // --------------------------------------------------------------------------
-function pos_vrati_dokument_iz_pripr(cIdVd,cIdRadnik,cIdOdj,cIdDio)
-local cSta
-local cBrDok
+FUNCTION pos_vrati_dokument_iz_pripr( cIdVd, cIdRadnik, cIdOdj, cIdDio )
 
-do case
-    case cIdVd == VD_ZAD
-        cSta := "zaduzenja"
-    case cIdVd == VD_OTP
-        cSta := "otpisa"
-    case cIdVd == VD_INV
-        cSta := "inventure"
-    case cIdVd == VD_NIV
-        cSta := "nivelacije"
-    otherwise 
-        cSta := "ostalo"
-endcase
+   LOCAL cSta
+   LOCAL cBrDok
 
-select _pos
-set order to tag "2"         
-// IdVd+IdOdj+IdRadnik
+   DO CASE
+   CASE cIdVd == VD_ZAD
+      cSta := "zaduzenja"
+   CASE cIdVd == VD_OTP
+      cSta := "otpisa"
+   CASE cIdVd == VD_INV
+      cSta := "inventure"
+   CASE cIdVd == VD_NIV
+      cSta := "nivelacije"
+   OTHERWISE
+      cSta := "ostalo"
+   ENDCASE
 
-seek cIdVd+cIdOdj+cIdDio
+   SELECT _pos
+   SET ORDER TO TAG "2"
+   // IdVd+IdOdj+IdRadnik
 
-if FOUND()      
-    // .and. (Empty (cIdDio) .or. _POS->IdDio==cIdDio)
-    if _pos->idradnik <> cIdRadnik
-        // ne mogu dopustiti da vise radnika radi paralelno inventuru, nivelaciju
-        // ili zaduzenje
-        MsgBeep ("Drugi radnik je poceo raditi pripremu "+cSta+"#"+"AKO NASTAVITE, PRIPREMA SE BRISE!!!", 30)
-        if Pitanje(,"Zelite li nastaviti?", " ")=="N"
-            return .f.
-        endif
-        // xIdRadnik := _POS->IdRadnik
-        do while !eof() .and. _POS->(IdVd+IdOdj+IdDio)==(cIdVd+cIdOdj+cIdDio)     
+   SEEK cIdVd + cIdOdj + cIdDio
+
+   IF Found()
+      // .and. (Empty (cIdDio) .or. _POS->IdDio==cIdDio)
+      IF _pos->idradnik <> cIdRadnik
+         // ne mogu dopustiti da vise radnika radi paralelno inventuru, nivelaciju
+         // ili zaduzenje
+         MsgBeep ( "Drugi radnik je poceo raditi pripremu " + cSta + "#" + "AKO NASTAVITE, PRIPREMA SE BRISE!!!", 30 )
+         IF Pitanje(, "Zelite li nastaviti?", " " ) == "N"
+            RETURN .F.
+         ENDIF
+         // xIdRadnik := _POS->IdRadnik
+         DO WHILE !Eof() .AND. _POS->( IdVd + IdOdj + IdDio ) == ( cIdVd + cIdOdj + cIdDio )
             // IdRadnik, xIdRadnik
             Del_Skip()
-        enddo
-        MsgBeep("Izbrisana je priprema "+cSta)
-    else
+         ENDDO
+         MsgBeep( "Izbrisana je priprema " + cSta )
+      ELSE
 
-        Beep (3)
+         Beep ( 3 )
 
-        if Pitanje(, "Poceli ste pripremu! Zelite li nastaviti? (D/N)", "D" ) == "N"
+         IF Pitanje(, "Poceli ste pripremu! Zelite li nastaviti? (D/N)", "D" ) == "N"
             // brisanje prethodne pripreme
-            do while !EOF() .and. _POS->(IdVd+IdOdj+IdDio)==(cIdVd+cIdOdj+cIdDio)
-                Del_Skip()
-            enddo
-            MsgBeep ("Priprema je izbrisana ... ")
-        else
+            DO WHILE !Eof() .AND. _POS->( IdVd + IdOdj + IdDio ) == ( cIdVd + cIdOdj + cIdDio )
+               Del_Skip()
+            ENDDO
+            MsgBeep ( "Priprema je izbrisana ... " )
+         ELSE
             // vrati ono sto je poceo raditi
             SELECT _POS
-            do while !eof() .and. _POS->(IdVd+IdOdj+IdDio)==(cIdVd+cIdOdj+cIdDio)
-                Scatter()
-                SELECT PRIPRZ
-                Append Blank
-                Gather()
-                SELECT _POS
-                Del_Skip()
-            enddo
+            DO WHILE !Eof() .AND. _POS->( IdVd + IdOdj + IdDio ) == ( cIdVd + cIdOdj + cIdDio )
+               Scatter()
+               SELECT PRIPRZ
+               APPEND BLANK
+               Gather()
+               SELECT _POS
+               Del_Skip()
+            ENDDO
             SELECT PRIPRZ
             GO TOP
-        endif
-    endif
-endif
+         ENDIF
+      ENDIF
+   ENDIF
 
-SELECT _POS
-Set order to tag "1"
+   SELECT _POS
+   SET ORDER TO TAG "1"
 
-return .t.
-
-
-
-
-
-
+   RETURN .T.

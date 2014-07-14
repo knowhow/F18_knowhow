@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,136 +14,136 @@
 
 
 
-function NaprPom( aDbf, cPom )
+FUNCTION NaprPom( aDbf, cPom )
 
-if cPom == nil
-    cPom := "POM"
-endif
+   IF cPom == nil
+      cPom := "POM"
+   ENDIF
 
-cPomDBF := my_home() + "pom.dbf"
-cPomCDX := my_home() + "pom.cdx"
+   cPomDBF := my_home() + "pom.dbf"
+   cPomCDX := my_home() + "pom.cdx"
 
-if File(cPomDBF)
-    FErase(cPomDBF)
-endif
+   IF File( cPomDBF )
+      FErase( cPomDBF )
+   ENDIF
 
-if File(cPomCDX)
-    FErase(cPomCDX)
-endif
+   IF File( cPomCDX )
+      FErase( cPomCDX )
+   ENDIF
 
-if File(UPPER(cPomDBF))
-    FErase(UPPER(cPomDBF))
-endif
+   IF File( Upper( cPomDBF ) )
+      FErase( Upper( cPomDBF ) )
+   ENDIF
 
-if File (UPPER(cPomCDX))
-    FErase(UPPER(cPomCDX))
-endif
+   IF File ( Upper( cPomCDX ) )
+      FErase( Upper( cPomCDX ) )
+   ENDIF
 
-// kreiraj tabelu pom.dbf
-DBcreate( my_home() + "pom.dbf", aDbf )
+   // kreiraj tabelu pom.dbf
+   dbCreate( my_home() + "pom.dbf", aDbf )
 
-return
-
-
-
-function ChkTblPromVp()
-local cTbl
-
-return
+   RETURN
 
 
 
-function CrePosISifData()
-local _rec
+FUNCTION ChkTblPromVp()
 
-O_STRAD
+   LOCAL cTbl
 
-if (RECCOUNT2() == 0)
-    
-    MsgO("Kreiram ini STRAD")
-
-    f18_lock_tables({"pos_strad"})
-    sql_table_update( nil, "BEGIN")
-
-    select strad
-    append blank
-    _rec := dbf_get_rec()
-    _rec["id"] := PADR( "0", LEN( _rec["id"] ) )
-    _rec["prioritet"] := PADR( "0", LEN( _rec["prioritet"] ) )
-    _rec["naz"] := PADR( "Nivo adm.", LEN( _rec["naz"] ) )
-
-    update_rec_server_and_dbf( "pos_strad", _rec, 1, "CONT" )
-    
-    append blank
-    _rec := dbf_get_rec()
-    _rec["id"] := PADR( "1", LEN( _rec["id"] ) )
-    _rec["prioritet"] := PADR( "1", LEN( _rec["prioritet"] ) )
-    _rec["naz"] := PADR( "Nivo upr.", LEN( _rec["naz"] ) )
-
-    update_rec_server_and_dbf( "pos_strad", _rec, 1, "CONT" )
-
-    append blank
-    _rec := dbf_get_rec()
-    _rec["id"] := PADR( "3", LEN( _rec["id"] ) )
-    _rec["prioritet"] := PADR( "3", LEN( _rec["prioritet"] ) )
-    _rec["naz"] := PADR( "Nivo prod.", LEN( _rec["naz"] ) )
-
-    update_rec_server_and_dbf( "pos_strad", _rec, 1, "CONT" )
-
-    f18_free_tables({"pos_strad"})
-    sql_table_update( nil, "END")
-
-    MsgC()
-    
-endif
-
-O_OSOB
-
-if (RECCOUNT2() == 0)
-    
-    MsgO("Kreiram ini OSOB")
-    
-    select osob
-  
-    f18_lock_tables({"pos_osob"}) 
-    sql_table_update( nil, "BEGIN")
-    
-    append blank
-    _rec := dbf_get_rec()
-    _rec["id"] := PADR( "0001", LEN( _rec["id"] ) )
-    _rec["korsif"] := PADR( CryptSc( PADR( "PARSON", 6 ) ), 6 )
-    _rec["naz"] := PADR( "Admin", LEN( _rec["naz"] ) )
-    _rec["status"] := PADR( "0", LEN( _rec["status"] ) )
-
-    update_rec_server_and_dbf( "pos_osob", _rec, 1, "CONT" )
-    
-    append blank
-    _rec := dbf_get_rec()
-    _rec["id"] := PADR( "0010", LEN( _rec["id"] ) )
-    _rec["korsif"] := PADR( CryptSc( PADR( "P1", 6 ) ), 6 )
-    _rec["naz"] := PADR( "Prodavac 1", LEN( _rec["naz"] ) )
-    _rec["status"] := PADR( "3", LEN( _rec["status"] ) )
-
-    update_rec_server_and_dbf( "pos_osob", _rec, 1, "CONT" )
-    
-    append blank
-    _rec := dbf_get_rec() 
-    _rec["id"] := PADR( "0011", LEN( _rec["id"] ) )
-    _rec["korsif"] := PADR( CryptSc( PADR( "P2", 6 ) ), 6 )
-    _rec["naz"] := PADR( "Prodavac 2", LEN( _rec["naz"] ) )
-    _rec["status"] := PADR( "3", LEN( _rec["status"] ) )
-
-    update_rec_server_and_dbf( "pos_osob", _rec, 1, "CONT" )
-    
-    f18_free_tables({"pos_osob"}) 
-    sql_table_update( nil, "END")
-
-    MsgC()
-
-endif
-
-CLOSE ALL
-
-return
+   RETURN
 
 
+
+FUNCTION CrePosISifData()
+
+   LOCAL _rec
+
+   O_STRAD
+
+   IF ( RECCOUNT2() == 0 )
+
+      MsgO( "Kreiram ini STRAD" )
+
+      f18_lock_tables( { "pos_strad" } )
+      sql_table_update( nil, "BEGIN" )
+
+      SELECT strad
+      APPEND BLANK
+      _rec := dbf_get_rec()
+      _rec[ "id" ] := PadR( "0", Len( _rec[ "id" ] ) )
+      _rec[ "prioritet" ] := PadR( "0", Len( _rec[ "prioritet" ] ) )
+      _rec[ "naz" ] := PadR( "Nivo adm.", Len( _rec[ "naz" ] ) )
+
+      update_rec_server_and_dbf( "pos_strad", _rec, 1, "CONT" )
+
+      APPEND BLANK
+      _rec := dbf_get_rec()
+      _rec[ "id" ] := PadR( "1", Len( _rec[ "id" ] ) )
+      _rec[ "prioritet" ] := PadR( "1", Len( _rec[ "prioritet" ] ) )
+      _rec[ "naz" ] := PadR( "Nivo upr.", Len( _rec[ "naz" ] ) )
+
+      update_rec_server_and_dbf( "pos_strad", _rec, 1, "CONT" )
+
+      APPEND BLANK
+      _rec := dbf_get_rec()
+      _rec[ "id" ] := PadR( "3", Len( _rec[ "id" ] ) )
+      _rec[ "prioritet" ] := PadR( "3", Len( _rec[ "prioritet" ] ) )
+      _rec[ "naz" ] := PadR( "Nivo prod.", Len( _rec[ "naz" ] ) )
+
+      update_rec_server_and_dbf( "pos_strad", _rec, 1, "CONT" )
+
+      f18_free_tables( { "pos_strad" } )
+      sql_table_update( nil, "END" )
+
+      MsgC()
+
+   ENDIF
+
+   O_OSOB
+
+   IF ( RECCOUNT2() == 0 )
+
+      MsgO( "Kreiram ini OSOB" )
+
+      SELECT osob
+
+      f18_lock_tables( { "pos_osob" } )
+      sql_table_update( nil, "BEGIN" )
+
+      APPEND BLANK
+      _rec := dbf_get_rec()
+      _rec[ "id" ] := PadR( "0001", Len( _rec[ "id" ] ) )
+      _rec[ "korsif" ] := PadR( CryptSc( PadR( "PARSON", 6 ) ), 6 )
+      _rec[ "naz" ] := PadR( "Admin", Len( _rec[ "naz" ] ) )
+      _rec[ "status" ] := PadR( "0", Len( _rec[ "status" ] ) )
+
+      update_rec_server_and_dbf( "pos_osob", _rec, 1, "CONT" )
+
+      APPEND BLANK
+      _rec := dbf_get_rec()
+      _rec[ "id" ] := PadR( "0010", Len( _rec[ "id" ] ) )
+      _rec[ "korsif" ] := PadR( CryptSc( PadR( "P1", 6 ) ), 6 )
+      _rec[ "naz" ] := PadR( "Prodavac 1", Len( _rec[ "naz" ] ) )
+      _rec[ "status" ] := PadR( "3", Len( _rec[ "status" ] ) )
+
+      update_rec_server_and_dbf( "pos_osob", _rec, 1, "CONT" )
+
+      APPEND BLANK
+      _rec := dbf_get_rec()
+      _rec[ "id" ] := PadR( "0011", Len( _rec[ "id" ] ) )
+      _rec[ "korsif" ] := PadR( CryptSc( PadR( "P2", 6 ) ), 6 )
+      _rec[ "naz" ] := PadR( "Prodavac 2", Len( _rec[ "naz" ] ) )
+      _rec[ "status" ] := PadR( "3", Len( _rec[ "status" ] ) )
+
+      update_rec_server_and_dbf( "pos_osob", _rec, 1, "CONT" )
+
+      f18_free_tables( { "pos_osob" } )
+      sql_table_update( nil, "END" )
+
+      MsgC()
+
+   ENDIF
+
+   CLOSE ALL
+
+   RETURN

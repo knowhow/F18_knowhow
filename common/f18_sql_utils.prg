@@ -333,40 +333,6 @@ FUNCTION _sql_date_parse( field_name, date1, date2 )
 
    RETURN _ret
 
-// parsiranje uslova za IN listu unutar upita... id IN ( '', '', '', .... )
-FUNCTION _sql_in_list_parse( string_cond, brackets )
-
-   LOCAL _list := ""
-   LOCAL _cond_arr := TokToNiz( string_cond, ";" )
-   LOCAL _cnt := 0
-   LOCAL _cond
-
-   IF brackets == NIL
-      brackets := .F.
-   ENDIF
-
-   FOR EACH _cond in _cond_arr
-
-      IF Empty( _cond )
-         LOOP
-      ENDIF
-
-      _list += _sql_quote( _cond )
-      _list += ","
-
-   NEXT
-
-   _list := PadR( _list, Len( AllTrim( _list ) ) - 1 )
-
-   // dodaj zagrade...
-   IF brackets
-      _list := " ( " + _list + " ) "
-   ENDIF
-
-   RETURN _list
-
-
-
 
 FUNCTION _sql_cond_parse( field_name, cond, not )
 

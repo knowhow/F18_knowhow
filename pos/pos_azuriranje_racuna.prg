@@ -19,12 +19,11 @@ FUNCTION pos_azuriraj_racun( cIdPos, cStalRac, cRadRac, cVrijeme, cNacPlac, cIdG
    LOCAL nStavki
    LOCAL cDokument := ""
    LOCAL _rec
-   LOCAL _cnt := 0
+   LOCAL nCount := 0
    LOCAL _kolicina := 0
    LOCAL _idroba, _idcijena, _cijena
    LOCAL lOk := .T.
    LOCAL lRet := .F.
-   PRIVATE nIznRn := 0
 
    otvori_pos_tabele_bez_semafora()
 
@@ -70,8 +69,6 @@ FUNCTION pos_azuriraj_racun( cIdPos, cStalRac, cRadRac, cVrijeme, cNacPlac, cIdG
 
       DO WHILE !Eof() .AND. _POS->( IdPos + IdVd + DToS( Datum ) + BrDok ) == ( cIdPos + "42" + cDatum + cRadRac )
 
-         nIznRn += ( _pos->kolicina * _pos->cijena )
-
          SELECT pos
          APPEND BLANK
 
@@ -81,7 +78,7 @@ FUNCTION pos_azuriraj_racun( cIdPos, cStalRac, cRadRac, cVrijeme, cNacPlac, cIdG
          _rec[ "idvd" ] := VD_RN
          _rec[ "datum" ] := gDatum
          _rec[ "brdok" ] := cStalRac
-         _rec[ "rbr" ] := PadL( AllTrim( Str( ++_cnt ) ), 5 )
+         _rec[ "rbr" ] := PadL( AllTrim( Str( ++ nCount ) ), 5 )
          _rec[ "m1" ] := OBR_JEST
          _rec[ "prebacen" ] := OBR_NIJE
          _rec[ "iddio" ] := _pos->iddio

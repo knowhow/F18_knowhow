@@ -146,7 +146,7 @@ STATIC FUNCTION otvori_pos_tabele_bez_semafora()
    RETURN
 
 
-STATIC postoji_racun_za_azuriranje_u_pripremi( cIdPos, cBroj )
+STATIC FUNCTION postoji_racun_za_azuriranje_u_pripremi( cIdPos, cBroj )
 
    LOCAL lRet := .T.
 

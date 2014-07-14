@@ -13,25 +13,19 @@
 #include "pos.ch"
 
 
-// -------------------------------------------------
-// otvaranje pos tabela
-// -------------------------------------------------
-FUNCTION o_pos_tables( kum )
+FUNCTION o_pos_tables( lOtvoriKumulativ )
 
    my_close_all_dbf()
 
-   IF kum == NIL
-      kum := .T.
+   IF lOtvoriKumulativ == NIL
+      lOtvoriKumulativ := .T.
    ENDIF
 
-   IF kum
-      O_POS
-      O_POS_DOKS
-      O_DOKSPF
+   IF lOtvoriKumulativ
+      o_pos_kumulativne_tabele()
    ENDIF
 
    O_ODJ
-
    O_OSOB
    SET ORDER TO TAG "NAZ"
 
@@ -51,12 +45,21 @@ FUNCTION o_pos_tables( kum )
    O__POS
    O__POS_PRIPR
 
-   IF kum
+   IF lOtvoriKumulativ
       SELECT pos_doks
    ELSE
       SELECT _pos
    ENDIF
 
+   RETURN
+
+
+STATIC FUNCTION o_pos_kumulativne_tabele()
+
+   O_POS
+   O_POS_DOKS
+   O_DOKSPF
+ 
    RETURN
 
 
@@ -80,38 +83,38 @@ FUNCTION o_pos_sifre()
 
 
 
-// -----------------------------------------------------------------------
-// vraca iznos racuna
-// -----------------------------------------------------------------------
 FUNCTION pos_iznos_racuna( cIdPos, cIdVD, dDatum, cBrDok )
 
-   LOCAL _iznos := 0
-   LOCAL _popust := 0
-   LOCAL _total := 0
+   LOCAL cSql, oData, oRow
+   LOCAL nTotal := 0
 
    IF PCount() == 0
-
       cIdPos := pos_doks->IdPos
       cIdVD := pos_doks->IdVD
       dDatum := pos_doks->Datum
       cBrDok := pos_doks->BrDok
-
    ENDIF
 
-   SELECT pos
-   Seek2( cIdPos + cIdVd + DToS( dDatum ) + cBrDok )
+   cSql := "SELECT "
+   cSql += " SUM( ( kolicina * cijena ) - ( kolicina * ncijena ) ) AS total "
+   cSql += "FROM fmk.pos_pos "
+   cSql += "WHERE "
+   cSql += " idpos = " + _sql_quote( cIdPos )
+   cSql += " AND idvd = " + _sql_quote( cIdVd )
+   cSql += " AND brdok = " + _sql_quote( cBrDok )
+   cSql += " AND datum = " + _sql_quote( dDatum )  
 
-   DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == ( cIdPos + cIdVd + DToS( dDatum ) + cBrDok )
-      _iznos += POS->( kolicina * cijena )
-      _popust += POS->( kolicina * ncijena )
-      SKIP
-   ENDDO
+   oData := _sql_query( my_server(), cSql )
 
-   _total := ( _iznos - _popust )
+   IF !is_var_objekat_tpquery( oData )
+      RETURN nTotal
+   ENDIF 
 
-   SELECT pos_doks
+   nTotal := oData:FieldGet(1) 
 
-   RETURN _total
+   RETURN nTotal
+
+
 
 
 // ----------------------------------------

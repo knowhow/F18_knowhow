@@ -14,7 +14,6 @@
 #include "fin.ch"
 
 
-STATIC __par_len := 6
 STATIC REP1_LEN
 STATIC PICD
 
@@ -61,7 +60,7 @@ FUNCTION fin_bb_subanalitika_b( params )
    fin_bb_txt_header()
 
    IF lExpRpt
-      aExpFields := get_sbb_fields( __par_len )
+      aExpFields := struktura_pomocne_tabele_eksporta()
       t_exp_create( aExpFields )
    ENDIF
 
@@ -259,7 +258,7 @@ FUNCTION fin_bb_subanalitika_b( params )
                   D1PS += D0PS;P1PS += P0PS;D1TP += D0TP;P1TP += P0TP;D1KP += D0KP;P1KP += P0KP
 
                   IF lExpRpt .AND. !Empty( cIdPartner )
-                     fill_sbb_tbl( cIdKonto, cIdPartner, partn->naz, D0PS, P0PS, D0KP, P0KP, D0S, P0S )
+                     dodaj_stavku_u_tabelu_eksporta( cIdKonto, cIdPartner, partn->naz, D0PS, P0PS, D0KP, P0KP, D0S, P0S )
                   ENDIF
                ENDIF
 	
@@ -321,7 +320,7 @@ FUNCTION fin_bb_subanalitika_b( params )
             P2KP += P1KP
 
             IF lExpRpt 
-               fill_sbb_tbl( cIdKonto, "", konto->naz, D1PS, P1PS, D1KP, P1KP, D1S, P1S )
+               dodaj_stavku_u_tabelu_eksporta( cIdKonto, "", konto->naz, D1PS, P1PS, D1KP, P1KP, D1S, P1S )
             ENDIF
 
          ENDDO
@@ -367,7 +366,7 @@ FUNCTION fin_bb_subanalitika_b( params )
          P3KP += P2KP
 
          IF lExpRpt
-             fill_sbb_tbl( cSinKonto, "", konto->naz, D2PS, P2PS, D2KP, P2KP, D2S, P2S )
+             dodaj_stavku_u_tabelu_eksporta( cSinKonto, "", konto->naz, D2PS, P2PS, D2KP, P2KP, D2S, P2S )
          ENDIF
 	
       ENDDO 
@@ -411,7 +410,7 @@ FUNCTION fin_bb_subanalitika_b( params )
       P4KP += P3KP
 
       IF lExpRpt
-         fill_sbb_tbl( cKlKonto, "", konto->naz, D3PS, P3PS, D3KP, P3KP, D3S, P3S )
+         dodaj_stavku_u_tabelu_eksporta( cKlKonto, "", konto->naz, D3PS, P3PS, D3KP, P3KP, D3S, P3S )
       ENDIF
 	
    ENDDO
@@ -433,7 +432,7 @@ FUNCTION fin_bb_subanalitika_b( params )
    ?U th5
 
    IF lExpRpt
-      fill_sbb_tbl( "UKUPNO", "", "", D4PS, P4PS, D4KP, P4KP, D4S, P4S )
+      dodaj_stavku_u_tabelu_eksporta( "UKUPNO", "", "", D4PS, P4PS, D4KP, P4KP, D4S, P4S )
    ENDIF
 
    IF PRow() > 55 + gpStranica
@@ -580,7 +579,7 @@ STATIC FUNCTION zagl_bb_suban( params, nStr )
 
 
 
-STATIC FUNCTION fill_sbb_tbl( cKonto, cIdPart, cNaziv, ;
+STATIC FUNCTION dodaj_stavku_u_tabelu_eksporta( cKonto, cIdPart, cNaziv, ;
       nPsDug, nPsPot, nKumDug, nKumPot, ;
       nSldDug, nSldPot )
 
@@ -606,15 +605,11 @@ STATIC FUNCTION fill_sbb_tbl( cKonto, cIdPart, cNaziv, ;
 
 
 
-STATIC FUNCTION get_sbb_fields( nPartLen )
-
-   IF nPartLen == nil
-      nPartLen := 6
-   ENDIF
+STATIC FUNCTION struktura_pomocne_tabele_eksporta()
 
    aFields := {}
    AAdd( aFields, { "konto", "C", 7, 0 } )
-   AAdd( aFields, { "idpart", "C", nPartLen, 0 } )
+   AAdd( aFields, { "idpart", "C", 6, 0 } )
    AAdd( aFields, { "naziv", "C", 40, 0 } )
    AAdd( aFields, { "psdug", "N", 15, 2 } )
    AAdd( aFields, { "pspot", "N", 15, 2 } )

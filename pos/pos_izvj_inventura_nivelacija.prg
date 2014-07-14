@@ -254,14 +254,7 @@ if !fLista .and. round(nStVr-nNVR,3)<>0
   ? "Razlika vrijednosti    :",str(nNVr-nStVr,10,2 )
 endif
 
-
-if gModul="TOPS"
-  if IsPDV()
- 	PDVpos_rekap_tarifa(aTarife)
-  else
- 	pos_rekap_tarifa(aTarife)
-  endif
-endif
+pos_rekapitulacija_tarifa(aTarife)
 
 IF gVrstaRS == "S"
   FF

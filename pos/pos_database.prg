@@ -18,7 +18,7 @@ FUNCTION pos_init_dbfs()
 
    my_close_all_dbf()
 
-   pos_definisi_incijalne_podatke()
+   pos_definisi_inicijalne_podatke()
    cre_priprz()
 
    RETURN
@@ -76,7 +76,7 @@ STATIC FUNCTION dodaj_u_sifrarnik_prioriteta( cSifra, cPrioritet, cOpis )
 
 
 
-STATIC FUNCTION dodaj_u_sifranik_radnika( cSifra, cLozinka, cOpis, cStatus )
+STATIC FUNCTION dodaj_u_sifrarnik_radnika( cSifra, cLozinka, cOpis, cStatus )
 
    LOCAL lOk := .T.
    LOCAL _rec
@@ -96,7 +96,7 @@ STATIC FUNCTION dodaj_u_sifranik_radnika( cSifra, cLozinka, cOpis, cStatus )
 
 
 
-FUNCTION pos_definisi_inicijalne_podatke()
+STATIC FUNCTION pos_definisi_inicijalne_podatke()
 
    LOCAL lOk := .T.
 

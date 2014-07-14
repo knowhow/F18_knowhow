@@ -301,8 +301,6 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDat0, dDat1 )
          PrepisKumPr()
       CASE pos_doks->IdVd == VD_PCS
          PrepisPCS()
-      CASE pos_doks->IdVd == VD_ROP 
-         StDokROP( .T. )
       ENDCASE
 
    CASE Ch == Asc( "F" ) .OR. Ch == Asc( "f" )

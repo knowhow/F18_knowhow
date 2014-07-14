@@ -28,8 +28,6 @@
  *                           sirovinama
  */
 
-// function Zaduzenje(cIdVd)
-// {
 
 FUNCTION Zaduzenje
 

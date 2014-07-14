@@ -306,7 +306,7 @@ FUNCTION Zaduzenje
       ENDIF
 
       IF fSadAz .OR. Pitanje(, "Želite li staviti dokument na stanje (D/N) ?", "D" ) == "D"
-         pos_azuriraj_dokument( cBrDok, cIdVD )
+         pos_azuriraj_zaduzenje( cBrDok, cIdVD )
       ELSE
          SELECT _POS
          AppFrom( "PRIPRZ", .F. )

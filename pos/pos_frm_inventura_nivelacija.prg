@@ -354,7 +354,7 @@ FUNCTION InventNivel()
 
    check_before_azur( dDatRada )
 
-   Priprz2Pos()
+   pos_azuriraj_inventura_nivelacija()
 
    CLOSE ALL
 

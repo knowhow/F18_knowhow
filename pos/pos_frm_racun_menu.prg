@@ -211,7 +211,7 @@ STATIC FUNCTION pos_zakljuci_racun_sve_na_jedan( params )
       ReCalcRabat( _id_vrsta_p )
    ENDIF
 
-   _Pripr2_Pos( _id_vrsta_p )
+   pos_prebaci_pripr_u_pos( _id_vrsta_p )
 
    lOk := azuriraj_racun_iz_pripreme( _id_pos, _br_dok, _id_vrsta_p, _id_partner, _uplaceno )
 

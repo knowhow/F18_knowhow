@@ -14,6 +14,162 @@
 
 
 
+FUNCTION pos_init_dbfs()
+
+   my_close_all_dbf()
+
+   pos_definisi_incijalne_podatke()
+   cre_priprz()
+
+   RETURN
+
+
+STATIC FUNCTION cre_priprz()
+
+   LOCAL cFileName := PRIVPATH + "PRIPRZ"
+   LOCAL lCreate := .F.
+
+   IF !File( f18_ime_dbf( "priprz" ) )
+      lCreate := .T.
+   ELSE
+      CLOSE ALL
+      O_PRIPRZ
+      IF reccount2() > 0
+         RETURN .F.
+      ENDIF
+
+      IF FieldPos( "k7" ) == 0
+         lCreate := .T.
+      ENDIF
+   ENDIF
+
+   CLOSE ALL
+   IF lCreate
+      aDbf := g_pos_pripr_fields()
+      DBcreate2 ( cFileName, aDbf )
+      CREATE_INDEX ( "1", "IdRoba", cFileName )
+   ENDIF
+
+   RETURN
+
+
+
+
+
+STATIC FUNCTION dodaj_u_sifrarnik_prioriteta( cSifra, cPrioritet, cOpis )
+
+   LOCAL lOk := .T.
+   LOCAL _rec
+
+   SELECT strad
+   APPEND BLANK
+      
+   _rec := dbf_get_rec()
+   _rec[ "id" ] := PadR( cSifra, Len( _rec[ "id" ] ) )
+   _rec[ "prioritet" ] := PadR( cPrioritet, Len( _rec[ "prioritet" ] ) )
+   _rec[ "naz" ] := PadR( cOpis, Len( _rec[ "naz" ] ) )
+
+   lOk := update_rec_server_and_dbf( "pos_strad", _rec, 1, "CONT" )
+
+   RETURN lOk
+
+
+
+
+STATIC FUNCTION dodaj_u_sifranik_radnika( cSifra, cLozinka, cOpis, cStatus )
+
+   LOCAL lOk := .T.
+   LOCAL _rec
+
+   SELECT OSOB
+   APPEND BLANK
+      
+   _rec := dbf_get_rec()
+   _rec[ "id" ] := PadR( cSifra, Len( _rec[ "id" ] ) )
+   _rec[ "korsif" ] := PadR( CryptSc( PadR( cLozinka, 6 ) ), 6 )
+   _rec[ "naz" ] := PadR( cOpis, Len( _rec[ "naz" ] ) )
+   _rec[ "status" ] := PadR( cStatus, Len( _rec[ "status" ] ) )
+
+   lOk := update_rec_server_and_dbf( "pos_osob", _rec, 1, "CONT" )
+
+   RETURN lOk
+
+
+
+FUNCTION pos_definisi_inicijalne_podatke()
+
+   LOCAL lOk := .T.
+
+   O_STRAD
+
+   IF ( RECCOUNT2() == 0 )
+
+      MsgO( "Definišem šifre prioriteta ..." )
+
+      sql_table_update( nil, "BEGIN" )
+      IF !f18_lock_tables( { "pos_strad" }, .T. )
+         sql_table_update( nil, "END" )
+         RETURN
+      ENDIF
+
+      lOk := dodaj_u_sifrarnik_prioriteta( "0", "0", "Nivo adm." )
+
+      IF lOk
+         lOk := dodaj_u_sifrarnik_prioriteta( "1", "1", "Nivo upr." )
+      ENDIF
+ 
+      IF lOk
+         lOk := dodaj_u_sifrarnik_prioriteta( "3", "3", "Nivo prod." )
+      ENDIF
+
+      MsgC()
+
+      IF lOk     
+         f18_free_tables( { "pos_strad" } )
+         sql_table_update( nil, "END" )
+      ELSE
+         sql_table_update( nil, "ROLLBACK" )
+      ENDIF
+
+   ENDIF
+
+   O_OSOB
+
+   IF ( RECCOUNT2() == 0 )
+
+      MsgO( "Definišem šifranik radnika ..." )
+
+      sql_table_update( nil, "BEGIN" )
+      IF !f18_lock_tables( { "pos_osob" } )
+          sql_table_update( nil, "END" )
+          RETURN
+      ENDIF
+
+      lOk := dodaj_u_sifrarnik_radnika( "0001", "PARSON", "Admin", "0" ) 
+
+      IF lOk
+         lOk := dodaj_u_sifrarnik_radnika( "0010", "P1", "Prodavac 1", "3" ) 
+      ENDIF
+
+      IF lOk
+         lOk := dodaj_u_sifrarnik_radnika( "0011", "P2", "Prodavac 2", "3" ) 
+      ENDIF
+
+      MsgC()
+
+      IF lOk
+         f18_free_tables( { "pos_osob" } )
+         sql_table_update( nil, "END" )
+      ELSE
+         sql_table_update( nil, "ROLLBACK" )
+      ENDIF
+
+   ENDIF
+
+   my_close_all_dbf()
+
+   RETURN
+
 FUNCTION o_pos_tables( lOtvoriKumulativ )
 
    my_close_all_dbf()
@@ -358,14 +514,12 @@ FUNCTION pos_racun_sadrzi_artikal( cIdPos, cIdVd, dDatum, cBroj, cIdRoba )
 
 
 
-// ---------------------------------------------
-// import sifrarnika iz fmk
-// ---------------------------------------------
 FUNCTION pos_import_fmk_roba()
 
    LOCAL _location := fetch_metric( "pos_import_fmk_roba_path", my_user(), PadR( "", 300 ) )
    LOCAL _cnt := 0
    LOCAL _rec
+   LOCAL lOk := .T.
 
    O_ROBA
 
@@ -380,7 +534,6 @@ FUNCTION pos_import_fmk_roba()
       RETURN
    ENDIF
 
-   // snimi parametar
    set_metric( "pos_import_fmk_roba_path", my_user(), _location )
 
    SELECT ( F_TMP_1 )
@@ -391,15 +544,15 @@ FUNCTION pos_import_fmk_roba()
    my_use_temp( "TOPS_ROBA", AllTrim( _location ), .F., .T. )
    INDEX on ( "id" ) TAG "ID"
 
-   // ----------
-   // predji na tops_roba
-
    SELECT tops_roba
    SET ORDER TO TAG "ID"
    GO TOP
 
-   f18_lock_tables( { "roba" } )
    sql_table_update( nil, "BEGIN" )
+   IF !f18_lock_tables( { "roba" }, .T. )
+      sql_table_update( nil, "END" )
+      RETURN
+   ENDIF
 
    Box(, 1, 60 )
 
@@ -433,7 +586,11 @@ FUNCTION pos_import_fmk_roba()
 
       ++ _cnt
       @ m_x + 1, m_y + 2 SAY "import roba: " + _rec[ "id" ] + ":" + PadR( _rec[ "naz" ], 20 ) + "..."
-      update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
+      lOk := update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
+
+      IF !lOk
+         EXIT
+      ENDIF
 
       SELECT tops_roba
       SKIP
@@ -442,16 +599,22 @@ FUNCTION pos_import_fmk_roba()
 
    BoxC()
 
-   f18_free_tables( { "roba" } )
-   sql_table_update( nil, "END" )
+   IF lOk
+      f18_free_tables( { "roba" } )
+      sql_table_update( nil, "END" )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+   ENDIF
 
    SELECT ( F_TMP_1 )
    USE
 
-   IF _cnt > 0
+   IF lOk .AND. _cnt > 0
       msgbeep( "Update " + AllTrim( Str( _cnt ) ) + " zapisa !" )
    ENDIF
 
    CLOSE ALL
 
    RETURN
+
+

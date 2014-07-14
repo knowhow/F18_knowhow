@@ -13,7 +13,7 @@
 
 
 
-FUNCTION pos_azuriraj_dokument( cBrDok, cIdVd )
+FUNCTION pos_azuriraj_zaduzenje( cBrDok, cIdVd )
 
    LOCAL lOk := .T.
    LOCAL lRet := .F.
@@ -58,7 +58,7 @@ FUNCTION pos_azuriraj_dokument( cBrDok, cIdVd )
 
          SELECT PRIPRZ
 
-         lOk := azur_sif_roba_row()
+         lOk := azuriraj_artikal_u_sifrarniku()
 
          IF !lOk
             EXIT
@@ -115,9 +115,13 @@ FUNCTION pos_azuriraj_dokument( cBrDok, cIdVd )
 
 
 STATIC FUNCTION brisi_tabelu_pripreme()
-      
+     
+   MsgO( "Brisanje tabele pripreme u toku ..." ) 
+
    SELECT priprz
    my_dbf_pack()
+
+   MsgC()
  
    RETURN
 
@@ -141,43 +145,28 @@ STATIC FUNCTION setuj_plu_kodove_artikala_nakon_azuriranja()
 
 
 
-/*! \fn Priprz2Pos()
- *  \brief prebaci iz priprz -> pos,doks
- *  \note azuriranje dokumenata zaduzenja, nivelacija
- *
- */
+FUNCTION pos_azuriraj_inventura_nivelacija()
 
-FUNCTION Priprz2Pos()
+   LOCAL lOk := .T.
+   LOCAL lRet := .F.
+   LOCAL nTotalCount
+   LOCAL nCount := 0
+   LOCAL _rec, _t_rec
+   LOCAL cTipDok, cDokument
 
-   LOCAL lNivel
-   LOCAL _rec
-   LOCAL _cnt := 0
-   LOCAL _tbl_pos := "pos_pos"
-   LOCAL _tbl_doks := "pos_doks"
-   LOCAL _ok := .T.
-   LOCAL _t_rec
-   LOCAL _cnt_no
-   LOCAL _id_tip_dok
-   LOCAL _dok_count
-
-   lNivel := .F.
-
-   SELECT ( cRsDbf )
-   SET ORDER TO TAG "ID"
-
-   _dok_count := priprz->( RecCount() )
-
-   log_write( "F18_DOK_OPER: azuriranje stavki iz priprz u pos/doks, br.zapisa: " + AllTrim( Str( _dok_count ) ), 2 )
+   sql_table_update( nil, "BEGIN" )
+   IF !f18_free_tables( { "pos_pos", "pos_doks" } )
+      sql_table_update( nil, "END" )
+      MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
+      RETURN lRet
+   ENDIF
 
    Box(, 3, 60 )
 
-   // lockuj semafore
-   IF !f18_free_tables( { "pos_pos", "pos_doks" } )
-      MsgC()
-      RETURN .F.
-   ENDIF
+   nTotalCount := priprz->( RecCount() )
 
-   sql_table_update( nil, "BEGIN" )
+   SELECT ROBA
+   SET ORDER TO TAG "ID"
 
    SELECT PRIPRZ
    GO TOP
@@ -198,92 +187,95 @@ FUNCTION Priprz2Pos()
    _rec[ "prebacen" ] := priprz->prebacen
    _rec[ "smjena" ] := priprz->smjena
 
-   // tip dokumenta
-   _id_tip_dok := _rec[ "idvd" ]
+   cTipDok := _rec[ "idvd" ]
+   cDokument := _rec["idpos"] + "-" + _rec["idvd"] + "-" + _rec["brdok"] + " " + _rec["datum"]
 
-   @ m_x + 1, m_y + 2 SAY "    AZURIRANJE DOKUMENTA U TOKU ..."
-   @ m_x + 2, m_y + 2 SAY "Formiran dokument: " + AllTrim( _rec[ "idvd" ] ) + "-" + _rec[ "brdok" ] + " / zap: " + ;
-      AllTrim( Str( _dok_count ) )
+   @ m_x + 1, m_y + 2 SAY8 "    AŽURIRANJE DOKUMENTA U TOKU ..."
+   @ m_x + 2, m_y + 2 SAY "Formiran dokument: " + cDokument +  " / zap: " + AllTrim( Str( nTotalCount ) )
 
-   update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
+   lOk := update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
 
-   // upis inventure/nivelacije
-   SELECT PRIPRZ
-
-   DO WHILE !Eof()
-
-      _t_rec := RecNo()
-
-      // dodaj stavku u pos
-      SELECT POS
-      APPEND BLANK
-
-      _rec := dbf_get_rec()
-      _rec[ "idpos" ] := priprz->idpos
-      _rec[ "idvd" ] := priprz->idvd
-      _rec[ "datum" ] := priprz->datum
-      _rec[ "brdok" ] := priprz->brdok
-      _rec[ "m1" ] := priprz->m1
-      _rec[ "prebacen" ] := priprz->prebacen
-      _rec[ "iddio" ] := priprz->iddio
-      _rec[ "idodj" ] := priprz->idodj
-      _rec[ "idcijena" ] := priprz->idcijena
-      _rec[ "idradnik" ] := priprz->idradnik
-      _rec[ "idroba" ] := priprz->idroba
-      _rec[ "idtarifa" ] := priprz->idtarifa
-      _rec[ "kolicina" ] := priprz->kolicina
-      _rec[ "kol2" ] := priprz->kol2
-      _rec[ "mu_i" ] := priprz->mu_i
-      _rec[ "ncijena" ] := priprz->ncijena
-      _rec[ "cijena" ] := priprz->cijena
-      _rec[ "smjena" ] := priprz->smjena
-      _rec[ "c_1" ] := priprz->c_1
-      _rec[ "c_2" ] := priprz->c_2
-      _rec[ "c_3" ] := priprz->c_3
-      _rec[ "rbr" ] := PadL( AllTrim( Str( ++_cnt ) ), 5 )
-
-      @ m_x + 3, m_y + 2 SAY "Stavka " + AllTrim( Str( _cnt ) ) + " roba: " + _rec[ "idroba" ]
-
-      update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )
+   IF lOk
 
       SELECT PRIPRZ
 
-      // ako je inventura ne treba nista dirati u sifrarniku...
-      IF _id_tip_dok <> "IN"
-         // azur sifrarnik robe na osnovu priprz
-         azur_sif_roba_row()
-      ENDIF
+      DO WHILE !Eof()
 
-      SELECT PRIPRZ
-      GO ( _t_rec )
-      SKIP
+         _t_rec := RecNo()
 
-   ENDDO
+         SELECT POS
+         APPEND BLANK
+
+         _rec := dbf_get_rec()
+         _rec[ "idpos" ] := priprz->idpos
+         _rec[ "idvd" ] := priprz->idvd
+         _rec[ "datum" ] := priprz->datum
+         _rec[ "brdok" ] := priprz->brdok
+         _rec[ "m1" ] := priprz->m1
+         _rec[ "prebacen" ] := priprz->prebacen
+         _rec[ "iddio" ] := priprz->iddio
+         _rec[ "idodj" ] := priprz->idodj
+         _rec[ "idcijena" ] := priprz->idcijena
+         _rec[ "idradnik" ] := priprz->idradnik
+         _rec[ "idroba" ] := priprz->idroba
+         _rec[ "idtarifa" ] := priprz->idtarifa
+         _rec[ "kolicina" ] := priprz->kolicina
+         _rec[ "kol2" ] := priprz->kol2
+         _rec[ "mu_i" ] := priprz->mu_i
+         _rec[ "ncijena" ] := priprz->ncijena
+         _rec[ "cijena" ] := priprz->cijena
+         _rec[ "smjena" ] := priprz->smjena
+         _rec[ "c_1" ] := priprz->c_1
+         _rec[ "c_2" ] := priprz->c_2
+         _rec[ "c_3" ] := priprz->c_3
+         _rec[ "rbr" ] := PadL( AllTrim( Str( ++_cnt ) ), 5 )
+
+         @ m_x + 3, m_y + 2 SAY "Stavka " + AllTrim( Str( _cnt ) ) + " roba: " + _rec[ "idroba" ]
+
+         lOk := update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )
+
+         IF !lOk 
+            EXIT
+         ENDIF
+
+         SELECT PRIPRZ
+
+         IF cTipDok <> "IN"
+            azuriraj_artikal_u_sifrarniku()
+         ENDIF
+
+         SELECT PRIPRZ
+         GO ( _t_rec )
+         SKIP
+
+      ENDDO
+
+   ENDIF
 
    BoxC()
 
-   f18_free_tables( { "pos_pos", "pos_doks" } )
-   sql_table_update( nil, "END" )
+   IF lOk
+       lRet := .T.
+       f18_free_tables( { "pos_pos", "pos_doks" } )
+       sql_table_update( nil, "END" )
+       log_write( "F18_DOK_OPER, ažuriran pos dokument: " + cDokument, 2 )
+   ELSE
+       sql_table_update( nil, "ROLLBACK" )
+       log_write( "F18_DOK_OPER, greška sa ažuriranjem pos dokumenta: " + cDokument, 2 )
+   ENDIF
 
-   MsgO( "brisem pripremu...." )
+   IF lOk
+       brisi_tabelu_pripreme()
+   ENDIF
 
-   // ostalo je jos da izbrisemo stavke iz pomocne baze
-   SELECT PRIPRZ
-
-   my_dbf_zap()
-
-   MsgC()
-
-   RETURN
+   RETURN lRet
 
 
 
-// ------------------------------------------
-// azuriraj sifrarnik robe
-// priprz -> roba
-// ------------------------------------------
-STATIC FUNCTION azur_sif_roba_row()
 
+STATIC FUNCTION azuriraj_artikal_u_sifrarniku()
+
+   LOCAL lOk := .T.
    LOCAL _rec
    LOCAL _field_mpc
    LOCAL _update := .F.
@@ -298,40 +290,29 @@ STATIC FUNCTION azur_sif_roba_row()
       _field_mpc := "mpc" + AllTrim( gSetMPCijena )
    ENDIF
 
-   // pozicioniran sam na robi
    SEEK priprz->idroba
 
    lNovi := .F.
 
    IF !Found()
-
-      // novi artikal
-      // roba (ili sirov)
       APPEND BLANK
-
       _rec := dbf_get_rec()
       _rec[ "id" ] := priprz->idroba
       _update := .T.
-
    ELSE
-
       _rec := dbf_get_rec()
-
    ENDIF
 
    _rec[ "naz" ] := priprz->robanaz
    _rec[ "jmj" ] := priprz->jmj
 
    IF !IsPDV()
-      // u ne-pdv rezimu je bilo bitno da preknjizenje na pdv ne pokvari
-      // star cijene
       IF katops->idtarifa <> "PDV17"
          _rec[ _field_mpc ] := Round( priprz->cijena, 3 )
       ENDIF
    ELSE
 
       IF cIdVd == "NI"
-         // nivelacija - u sifrarnik stavi novu cijenu
          _rec[ _field_mpc ] := Round( priprz->ncijena, 3 )
       ELSE
          _rec[ _field_mpc ] := Round( priprz->cijena, 3 )
@@ -349,8 +330,8 @@ STATIC FUNCTION azur_sif_roba_row()
    _rec[ "n2" ] := priprz->n2
    _rec[ "barkod" ] := priprz->barkod
 
-   update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
+   lOk := update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
 
-   RETURN
+   RETURN lOk
 
 

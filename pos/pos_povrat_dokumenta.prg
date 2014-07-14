@@ -85,9 +85,6 @@ FUNCTION pos_brisi_dokument( id_pos, id_vd, dat_dok, br_dok )
 
 
 
-// -------------------------------------
-// povrat racuna u pripremu
-// -------------------------------------
 FUNCTION pos_povrat_rn( cSt_rn, dSt_date )
 
    LOCAL nTArea := Select()
@@ -101,7 +98,6 @@ FUNCTION pos_povrat_rn( cSt_rn, dSt_date )
 
    cSt_rn := PadL( AllTrim( cSt_rn ), 6 )
 
-   // napuni pripremu sa stavkama racuna za storno
    SELECT pos
    SEEK gIdPos + "42" + DToS( dSt_date ) + cSt_rn
 
@@ -135,11 +131,115 @@ FUNCTION pos_povrat_rn( cSt_rn, dSt_date )
 
    msgC()
 
-   // pos brisi dokument iz baze...
    pos_brisi_dokument( gIdPos, VD_RN, dSt_date, cSt_rn )
 
    SELECT ( nTArea )
 
    RETURN
+
+
+
+
+STATIC FUNCTION odaberi_opciju_povrata_dokumenta()
+
+   LOCAL _ch := "1"
+
+   Box(, 3, 50 )
+   @ m_x + 1, m_y + 2 SAY "Priprema nije prazna, sta dalje ? "
+   @ m_x + 2, m_y + 2 SAY " (1) brisati pripremu  "
+   @ m_x + 3, m_y + 2 SAY " (2) spojiti na postojeci dokument " GET _ch VALID _ch $ "12"
+   READ
+   BoxC()
+
+   IF LastKey() == K_ESC
+      _ch := "0"
+      RETURN _ch
+   ENDIF
+
+   RETURN _ch
+
+
+
+
+FUNCTION pos_povrat_dokumenta_u_pripremu()
+
+   LOCAL _rec
+   LOCAL _t_area := Select()
+   LOCAL _oper := "1"
+   LOCAL _exist, _rec2
+
+   O_PRIPRZ
+   SELECT priprz
+
+   IF RecCount() <> 0
+      _oper := odaberi_opciju_povrata_dokumenta()
+   ENDIF
+
+   IF _oper == "1"
+      my_dbf_zap()
+   ENDIF
+
+   IF _oper == "2"
+      _rec2 := dbf_get_rec()
+   ENDIF
+
+   MsgO( "Vršim povrat dokumenta u pripremu ..." )
+
+   SELECT pos
+   SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+
+   DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + BrDok ) == ;
+         pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+
+      _rec := dbf_get_rec()
+
+      hb_HDel( _rec, "rbr" )
+
+      SELECT roba
+      HSEEK _rec[ "idroba" ]
+
+      _rec[ "robanaz" ] := roba->naz
+      _rec[ "jmj" ] := roba->jmj
+      _rec[ "barkod" ] := roba->barkod
+
+      IF _oper == "2"
+         _rec[ "idpos" ] := _rec2[ "idpos" ]
+         _rec[ "idvd" ] := _rec2[ "idvd" ]
+         _rec[ "brdok" ] := _rec2[ "brdok" ]
+      ENDIF
+
+      SELECT priprz
+
+      IF _oper <> "2"
+         APPEND BLANK
+      ENDIF
+
+      IF _oper == "2"
+
+         SET ORDER TO TAG "1"
+         hseek _rec[ "idroba" ]
+
+         IF !Found()
+            APPEND BLANK
+         ELSE
+            _exist := dbf_get_rec()
+            _rec[ "kol2" ] := _rec[ "kol2" ] + _exist[ "kol2" ]
+         ENDIF
+
+      ENDIF
+
+      dbf_update_rec( _rec )
+
+      SELECT pos
+      SKIP
+
+   ENDDO
+
+   MsgC()
+
+   SELECT ( _t_area )
+
+   RETURN
+
 
 

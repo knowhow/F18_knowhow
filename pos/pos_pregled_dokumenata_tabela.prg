@@ -368,7 +368,7 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDat0, dDat1 )
 
       IF field->idvd == VD_INV
 
-         pos_2_priprz()
+         pos_povrat_dokumenta_u_pripremu()
          pos_brisi_dokument( _id_pos, _id_vd, _dat_dok, _br_dok )
 
          _o_pos_prepis_tbl()

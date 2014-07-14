@@ -13,17 +13,40 @@
 #include "pos.ch"
 
 
-// ---------------------------------------------------------
-// uglavnom funkcije za manipulaciju sa temporary tabelama
-// _priprz, _pos, _priprg itd...
-// ---------------------------------------------------------
+
+FUNCTION NaprPom( aDbf, cPom )
+
+   IF cPom == nil
+      cPom := "POM"
+   ENDIF
+
+   cPomDBF := my_home() + "pom.dbf"
+   cPomCDX := my_home() + "pom.cdx"
+
+   IF File( cPomDBF )
+      FErase( cPomDBF )
+   ENDIF
+
+   IF File( cPomCDX )
+      FErase( cPomCDX )
+   ENDIF
+
+   IF File( Upper( cPomDBF ) )
+      FErase( Upper( cPomDBF ) )
+   ENDIF
+
+   IF File ( Upper( cPomCDX ) )
+      FErase( Upper( cPomCDX ) )
+   ENDIF
+
+   // kreiraj tabelu pom.dbf
+   dbCreate( my_home() + "pom.dbf", aDbf )
+
+   RETURN
 
 
 
-// -------------------------------------------------------------
-// prebacuje stavke iz tabele _pos_pripr u tabelu _pos
-// -------------------------------------------------------------
-FUNCTION _pripr2_pos( cIdVrsteP )
+FUNCTION pos_prebaci_pripr_u_pos( cIdVrsteP )
 
    LOCAL cBrdok
    LOCAL nTrec := 0
@@ -46,7 +69,6 @@ FUNCTION _pripr2_pos( cIdVrsteP )
       APPEND BLANK
 
       IF ( gRadniRac == "N" )
-         // u _pos_pripr mora biti samo jedan dokument!!!
          _rec[ "brdok" ] := cBrDok
       ENDIF
 
@@ -59,137 +81,12 @@ FUNCTION _pripr2_pos( cIdVrsteP )
 
    ENDDO
 
-   // pobrisi mi _pos_pripr
    SELECT _pos_pripr
    my_dbf_zap()
 
    RETURN
 
 
-// ------------------------------------------
-// odabir opcija za povrat pripremu
-// ------------------------------------------
-STATIC FUNCTION pripr_choice()
-
-   LOCAL _ch := "1"
-
-   // brisati
-   // spojiti
-
-   Box(, 3, 50 )
-   @ m_x + 1, m_y + 2 SAY "Priprema nije prazna, sta dalje ? "
-   @ m_x + 2, m_y + 2 SAY " (1) brisati pripremu  "
-   @ m_x + 3, m_y + 2 SAY " (2) spojiti na postojeci dokument " GET _ch VALID _ch $ "12"
-   READ
-   BoxC()
-
-   // na ESC
-   IF LastKey() == K_ESC
-      // marker "0" za nista odabrano
-      _ch := "0"
-      RETURN _ch
-   ENDIF
-
-   RETURN _ch
-
-
-
-
-// -------------------------------------------
-// pos -> priprz
-// -------------------------------------------
-FUNCTION pos_2_priprz()
-
-   LOCAL _rec
-   LOCAL _t_area := Select()
-   LOCAL _oper := "1"
-   LOCAL _exist, _rec2
-
-   O_PRIPRZ
-   SELECT priprz
-
-   IF RecCount() <> 0
-      _oper := pripr_choice()
-   ENDIF
-
-   // brisat cemo pripremu....
-   IF _oper == "1"
-      my_dbf_zap()
-   ENDIF
-
-   IF _oper == "2"
-      // postojeci zapis... u priprz
-      _rec2 := dbf_get_rec()
-   ENDIF
-
-   MsgO( "Vrsim povrat dokumenta u pripremu ..." )
-
-   SELECT pos
-   SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
-
-   DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + BrDok ) == ;
-         pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
-
-      _rec := dbf_get_rec()
-
-      hb_HDel( _rec, "rbr" )
-
-      SELECT roba
-      HSEEK _rec[ "idroba" ]
-
-      _rec[ "robanaz" ] := roba->naz
-      _rec[ "jmj" ] := roba->jmj
-      _rec[ "barkod" ] := roba->barkod
-
-      // ako je operacija spajanja
-      // spoji dokumente sa postojecim u pripremi....
-      IF _oper == "2"
-         _rec[ "idpos" ] := _rec2[ "idpos" ]
-         _rec[ "idvd" ] := _rec2[ "idvd" ]
-         _rec[ "brdok" ] := _rec2[ "brdok" ]
-      ENDIF
-
-      SELECT priprz
-
-      IF _oper <> "2"
-         APPEND BLANK
-      ENDIF
-
-      IF _oper == "2"
-
-         // pronadji postojeci artikal...
-         SET ORDER TO TAG "1"
-         hseek _rec[ "idroba" ]
-
-         IF !Found()
-            APPEND BLANK
-         ELSE
-            // uzmi postojeci zapis iz pripreme
-            _exist := dbf_get_rec()
-            // dodaj na postojecu kolicinu kolicinu sa novog dokumenta
-            _rec[ "kol2" ] := _rec[ "kol2" ] + _exist[ "kol2" ]
-         ENDIF
-
-      ENDIF
-
-      dbf_update_rec( _rec )
-
-      SELECT pos
-      SKIP
-
-   ENDDO
-
-   MsgC()
-
-   SELECT ( _t_area )
-
-   RETURN
-
-
-
-// ----------------------------------------
-// prebaci iz pos u _pripr
-// ----------------------------------------
 FUNCTION pos2_pripr()
 
    LOCAL _rec
@@ -230,14 +127,6 @@ FUNCTION pos2_pripr()
 
 
 
-
-
-
-/*! \fn UkloniRadne(cIdRadnik)
- *  \brief Ukloni radne racune (koj se nalaze u _POS tabeli)
- *  \param cIdRadnik
- */
-
 FUNCTION UkloniRadne( cIdRadnik )
 
    SELECT _POS
@@ -256,9 +145,6 @@ FUNCTION UkloniRadne( cIdRadnik )
 
 
 
-// --------------------------------------------------------------------------
-// vraca dokumente iz privremene pripreme u pripremu zaduzenja itd...
-// --------------------------------------------------------------------------
 FUNCTION pos_vrati_dokument_iz_pripr( cIdVd, cIdRadnik, cIdOdj, cIdDio )
 
    LOCAL cSta
@@ -279,22 +165,16 @@ FUNCTION pos_vrati_dokument_iz_pripr( cIdVd, cIdRadnik, cIdOdj, cIdDio )
 
    SELECT _pos
    SET ORDER TO TAG "2"
-   // IdVd+IdOdj+IdRadnik
 
    SEEK cIdVd + cIdOdj + cIdDio
 
    IF Found()
-      // .and. (Empty (cIdDio) .or. _POS->IdDio==cIdDio)
       IF _pos->idradnik <> cIdRadnik
-         // ne mogu dopustiti da vise radnika radi paralelno inventuru, nivelaciju
-         // ili zaduzenje
-         MsgBeep ( "Drugi radnik je poceo raditi pripremu " + cSta + "#" + "AKO NASTAVITE, PRIPREMA SE BRISE!!!", 30 )
-         IF Pitanje(, "Zelite li nastaviti?", " " ) == "N"
+         MsgBeep ( "Drugi radnik je počeo raditi pripremu " + cSta + "#" + "AKO NASTAVITE, PRIPREMA SE BRIŠE !", 30 )
+         IF Pitanje(, "Želite li nastaviti (D/N) ?", " " ) == "N"
             RETURN .F.
          ENDIF
-         // xIdRadnik := _POS->IdRadnik
          DO WHILE !Eof() .AND. _POS->( IdVd + IdOdj + IdDio ) == ( cIdVd + cIdOdj + cIdDio )
-            // IdRadnik, xIdRadnik
             Del_Skip()
          ENDDO
          MsgBeep( "Izbrisana je priprema " + cSta )
@@ -302,14 +182,12 @@ FUNCTION pos_vrati_dokument_iz_pripr( cIdVd, cIdRadnik, cIdOdj, cIdDio )
 
          Beep ( 3 )
 
-         IF Pitanje(, "Poceli ste pripremu! Zelite li nastaviti? (D/N)", "D" ) == "N"
-            // brisanje prethodne pripreme
+         IF Pitanje(, "Počeli ste pripremu! Želite li nastaviti? (D/N)", "D" ) == "N"
             DO WHILE !Eof() .AND. _POS->( IdVd + IdOdj + IdDio ) == ( cIdVd + cIdOdj + cIdDio )
                Del_Skip()
             ENDDO
             MsgBeep ( "Priprema je izbrisana ... " )
          ELSE
-            // vrati ono sto je poceo raditi
             SELECT _POS
             DO WHILE !Eof() .AND. _POS->( IdVd + IdOdj + IdDio ) == ( cIdVd + cIdOdj + cIdDio )
                Scatter()
@@ -329,3 +207,7 @@ FUNCTION pos_vrati_dokument_iz_pripr( cIdVd, cIdRadnik, cIdOdj, cIdDio )
    SET ORDER TO TAG "1"
 
    RETURN .T.
+
+
+
+

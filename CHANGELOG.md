@@ -1,3 +1,7 @@
+1.7.119  2014-07-14, vsasa
+
+  - KALK, provjera integriteta cijena kod štampe dokumenta 19
+ 
 1.7.118  2014-07-11, vsasa
 
   - KALK, kreiranje tabela razvojeno u dvije funkcije

@@ -32,15 +32,10 @@ private opc:={}
 private opcexe:={}
 private Izbor:=1
 
-// Vrsta kase "A" - samostalna kasa
-
 AADD(opc, "1. izvjestaji                        ")
 AADD(opcexe, {|| pos_izvjestaji() })    
 AADD(opc,"L. lista azuriranih dokumenata")
 AADD(opcexe, {|| pos_prepis_dokumenta()})
-
-AADD(opc, "V. evidencija prometa po vrstama")
-AADD(opcexe, {|| FrmPromVp()})    
 
 AADD(opc, "R. prenos realizacije u KALK")
 AADD(opcexe, {|| pos_prenos_pos_kalk() })

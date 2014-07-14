@@ -73,7 +73,7 @@ FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, fScope, cPrefixFilter, qIdRoba )
    cIdPos := PadR( cIdPOS, Len( gIdPos ) )
 
    IF gVrstaRS <> "S" .AND. !Empty( cIdPos ) .AND. cIdPOS <> gIdPos
-      MsgBeep( "Racun nije napravljen na ovoj kasi!#" + "Ne mozete napraviti promjenu!", 20 )
+      MsgBeep( "Račun nije napravljen na ovoj kasi!#" + "Ne možete napraviti promjenu!", 20 )
       RETURN ( .F. )
    ENDIF
 
@@ -137,14 +137,13 @@ FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, fScope, cPrefixFilter, qIdRoba )
    IF fPrep
       cFnc := "<Enter>-Odabir   <+>-Markiraj/Demarkiraj   <P>-Pregled"
       fMark := .T.
-      // ako je prepis, aVezani je privatna varijabla funkcije <PrepisRacuna>
       bMarkF := {|| RacObilj () }
    ELSE
       cFnc := "<Enter>-Odabir          <P>-Pregled"
       bMarkF := NIL
    ENDIF
 
-   ObjDBedit( "racun", MAXROWS() - 10, MAXCOLS() - 3, {|| EdPRacuni( fMark ) }, iif( gRadniRac == "D", "  STALNI ", "  " ) + "RACUNI  ", "", nil, cFnc,, bMarkF )
+   ObjDBedit( "racun", MAXROWS() - 10, MAXCOLS() - 3, {|| lista_racuna_key_handler( fMark ) }, iif( gRadniRac == "D", "  STALNI ", "  " ) + "RACUNI  ", "", nil, cFnc,, bMarkF )
 
    SET FILTER TO
 
@@ -165,14 +164,7 @@ FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, fScope, cPrefixFilter, qIdRoba )
 
 
 
-/*! \fn EdPRacuni()
- *  \brief Ispravka
- */
-
-STATIC FUNCTION EdPRacuni()
-
-   // 1            2               3              4
-   // aVezani : {pos_doks->IdPos, pos_doks->(BrDok), pos_doks->IdVrsteP, pos_doks->Datum})
+STATIC FUNCTION lista_racuna_key_handler()
 
    LOCAL cLevel
    LOCAL ii
@@ -180,7 +172,6 @@ STATIC FUNCTION EdPRacuni()
    LOCAL nTrec2
    LOCAL _rec
 
-   // M->Ch je iz OBJDB, fMark je iz PRacuni
    IF M->Ch == 0
       RETURN ( DE_CONT )
    ENDIF
@@ -199,31 +190,12 @@ STATIC FUNCTION EdPRacuni()
    USE
    SELECT pos_doks
 
-   IF fMark .AND. ( LastKey() == Asc( "+" ) )
-      nPos := AScan ( aVezani, {| x| ( x[ 1 ] + DToS( x[ 4 ] ) + x[ 2 ] ) == pos_doks->( IdPos + DToS( datum ) + BrDok ) } )
-      IF nPos == 0
-         IF Len( aVezani ) == 0 .OR. ( aVezani[ 1 ][ 3 ] == pos_doks->IdVrsteP .AND. aVezani[ 1 ][ 4 ] == pos_doks->Datum )
-            AAdd ( aVezani, { pos_doks->IdPos, pos_doks->( BrDok ), pos_doks->IdVrsteP, pos_doks->Datum } )
-         ELSEIF aVezani[ 1 ][ 3 ] <> pos_doks->IdVrsteP
-            MsgBeep ( "Nemoguce spajanje!#Nacin placanja nije isti!" )
-         ELSEIF aVezani[ 1 ][ 4 ] <> pos_doks->Datum
-            MsgBeep ( "Nemoguce spajanje!#Datum racuna nije isti!" )
-         ENDIF
-      ELSE
-         ADel( aVezani, nPos )
-         ASize( aVezani, Len ( aVezani ) -1 )
-      ENDIF
-
-      RETURN DE_REFRESH
-   ENDIF
-
    IF Upper( Chr( LastKey() ) ) == "P"
       pos_pregled_stavki_racuna( pos_doks->IdPos, pos_doks->datum, pos_doks->BrDok )
       RETURN DE_REFRESH
    ENDIF
 
    IF Upper( Chr( LastKey() ) ) == "F"
-      // stampa poreske fakture
       aVezani := { { IdPos, BrDok, IdVd, datum } }
       StampaPrep( IdPos, DToS( datum ) + BrDok, aVezani, .T., nil, .T. )
       SELECT pos_doks
@@ -235,11 +207,10 @@ STATIC FUNCTION EdPRacuni()
 
    IF Upper( Chr( LastKey() ) ) == "S"
 
-      // storno racuna
       pos_storno_rn( .T., pos_doks->brdok, pos_doks->datum, ;
          PadR( AllTrim( Str( pos_doks->fisc_rn ) ), 10 ) )
 
-      msgbeep( "Storno racun se nalazi u pripremi !" )
+      msgbeep( "Storno račun se nalazi u pripremi !" )
 
       SELECT pos_doks
       RETURN DE_REFRESH
@@ -254,12 +225,8 @@ STATIC FUNCTION EdPRacuni()
       RETURN DE_REFRESH
    ENDIF
 
-   // setovanje veze sa brojem fiskalnog racuna
-   // ovo bi trebao da radi samo ADMIN !!!!!!!!!
-   // sad moze svako
    IF ch == K_CTRL_V
 
-      // ako nije racun ... izadji
       IF pos_doks->idvd <> "42"
          RETURN DE_CONT
       ENDIF
@@ -267,7 +234,7 @@ STATIC FUNCTION EdPRacuni()
       nFisc_no := pos_doks->fisc_rn
 
       Box(, 1, 40 )
-      @ m_x + 1, m_y + 2 SAY "Broj fiskalnog racuna: " GET nFisc_no
+      @ m_x + 1, m_y + 2 SAY8 "Broj fiskalnog računa: " GET nFisc_no
       READ
       BoxC()
 

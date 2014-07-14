@@ -324,23 +324,18 @@ FUNCTION rnal_konfiguracija_dimenzija_rupa( cJoker )
    @ m_x + nX, m_y + 2 SAY "#HOLE_CONFIG#"
 
    nX += 2
-
    @ m_x + nX, m_y + 2 SAY "Rupa 1 (fi):" GET nHole1 PICT "999"
 
    nX += 1
-	
    @ m_x + nX, m_y + 2 SAY "Rupa 2 (fi):" GET nHole2 PICT "999"
 	
    nX += 1
-	
    @ m_x + nX, m_y + 2 SAY "Rupa 3 (fi):" GET nHole3 PICT "999"
 	
    nX += 1
-	
    @ m_x + nX, m_y + 2 SAY "Rupa 4 (fi):" GET nHole4 PICT "999"
 	
    nX += 1
-	
    @ m_x + nX, m_y + 2 SAY "Rupa 5 (fi):" GET nHole5 PICT "999"
 	
    READ
@@ -348,23 +343,18 @@ FUNCTION rnal_konfiguracija_dimenzija_rupa( cJoker )
    IF Pitanje(, "Da li postoje dodatne rupe (D/N) ?", "N" ) == "D"
 	
       nX += 1
-	
       @ m_x + nX, m_y + 2 SAY "Rupa 6 (fi):" GET nHole6 PICT "999"
 		
       nX += 1
-	
       @ m_x + nX, m_y + 2 SAY "Rupa 7 (fi):" GET nHole7 PICT "999"
 
       nX += 1
-	
       @ m_x + nX, m_y + 2 SAY "Rupa 8 (fi):" GET nHole8 PICT "999"
 		
       nX += 1
-	
       @ m_x + nX, m_y + 2 SAY "Rupa 9 (fi):" GET nHole9 PICT "999"
 		
       nX += 1
-	
       @ m_x + nX, m_y + 2 SAY "Rupa 10 (fi):" GET nHole10 PICT "999"
 
       READ

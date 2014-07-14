@@ -393,7 +393,7 @@ STATIC FUNCTION key_handler()
 			
          SET FILTER TO
 			
-         st_nalpr( .F., nDoc_no )
+         stampa_nalog_proizvodnje( .F., nDoc_no )
 			
          SELECT docs
 			

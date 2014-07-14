@@ -704,7 +704,7 @@ STATIC FUNCTION key_handler()
       _doc := field->doc_no
       show_document_no()
 
-      st_nalpr( .T., _docs->doc_no )
+      stampa_nalog_proizvodnje( .T., _docs->doc_no )
 
       SELECT ( nTArea )
       GO TOP

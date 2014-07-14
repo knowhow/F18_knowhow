@@ -19,10 +19,7 @@ STATIC __doc_no
 
 
 
-// -------------------------------------
-// stampa naloga, filovanje prn tabela
-// -------------------------------------
-FUNCTION st_nalpr( lTemporary, nDoc_no )
+FUNCTION stampa_nalog_proizvodnje( lTemporary, nDoc_no )
 
    LOCAL cFlag := "N"
    LOCAL lFlag
@@ -30,9 +27,7 @@ FUNCTION st_nalpr( lTemporary, nDoc_no )
    __temp := lTemporary
    __doc_no := nDoc_no
 
-   // kreiraj print tabele
    t_rpt_create()
-   // otvori tabele
    t_rpt_open()
 
    rnal_o_tables( __temp )
@@ -57,8 +52,7 @@ FUNCTION st_nalpr( lTemporary, nDoc_no )
    IF gRnalOdt == "D"
       rnal_nalog_za_proizvodnju_odt()
    ELSE
-      // printaj nalog
-      nalpr_print( .T. )
+      rnal_nalog_za_proizvodnju_txt()
    ENDIF
 
    my_close_all_dbf()
@@ -1051,7 +1045,7 @@ FUNCTION set_art_docgr( nArt_id, nDoc_no, nDocit_no, lPriprema )
    lIsLAMIG := is_lamig( aArt )
 
    lIsBruseno := is_bruseno( aArt, nDoc_no, nDocIt_no, NIL, lPriprema )
-   lIsBuseno := is_buseno( aArt, nDoc_no, nDocIt_no, NIL, lPriprema )
+   lIsBuseno := is_staklo_buseno( aArt, nDoc_no, nDocIt_no, NIL, lPriprema )
    lIsKaljeno := is_kaljeno( aArt, nDoc_no, nDocIt_no, NIL, lPriprema )
    lIsEmajl := is_emajl( aArt, nDoc_no, nDocIt_no, NIL, lPriprema )
 
@@ -1284,10 +1278,7 @@ FUNCTION is_bruseno( aArticle, nDoc_no, nDocit_no, nDoc_el_no, lPriprema )
 
 
 
-// -------------------------------------------------------------
-// da li je staklo buseno ???
-// -------------------------------------------------------------
-FUNCTION is_buseno( aArticle, nDoc_no, nDocit_no, nDoc_el_no, lPriprema )
+FUNCTION is_staklo_buseno( aArticle, nDoc_no, nDocit_no, nDoc_el_no, lPriprema )
 
    LOCAL lRet := .F.
    LOCAL cSrcJok := "<A_BU>"
@@ -1381,8 +1372,7 @@ STATIC FUNCTION postoji_obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cS
 
    SEEK docno_str( nDoc_no ) + docit_str( nDocit_no )
 
-   DO WHILE !Eof() .AND. field->doc_no == nDoc_no .AND. ;
-         field->doc_it_no == nDocit_no
+   DO WHILE !Eof() .AND. field->doc_no == nDoc_no .AND. field->doc_it_no == nDocit_no
 
       IF nDoc_el_no > 0
          IF field->doc_it_el_ <> nDoc_el_no
@@ -1397,8 +1387,7 @@ STATIC FUNCTION postoji_obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cS
       GO TOP
       SEEK aopid_str( nAop_id )
 
-      IF Found() .AND. field->aop_id == nAop_id .AND. ;
-            AllTrim( field->aop_joker ) == cSrcObrada
+      IF Found() .AND. field->aop_id == nAop_id .AND. AllTrim( field->aop_joker ) == cSrcObrada
 
          lRet := .T.
          EXIT
@@ -1439,12 +1428,11 @@ FUNCTION prn_nal()
    SEEK docno_str( nDoc_no )
 
    IF field->doc_no <> nDoc_no
-      msgbeep( "Trazeni nalog ne postoji !!!" )
+      msgbeep( "Traženi nalog ne postoji !" )
       RETURN
    ENDIF
 
-   // stampaj nalog
-   st_nalpr( .F., nDoc_no )
+   stampa_nalog_proizvodnje( .F., nDoc_no )
 
    RETURN
 

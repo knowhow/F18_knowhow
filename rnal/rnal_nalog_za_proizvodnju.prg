@@ -55,20 +55,11 @@ STATIC FUNCTION g_line()
    RETURN cLine
 
 
-// ------------------------------------------------------
-// glavna funkcija za poziv stampe naloga za proizvodnju
-// lStartPrint - pozovi funkcije stampe START PRINT
-// -----------------------------------------------------
-FUNCTION nalpr_print( lStartPrint )
+FUNCTION rnal_nalog_za_proizvodnju_txt()
 
    LOCAL aGroups := {}
    LOCAL nCnt := 0
    LOCAL i
-
-   // ako je nil onda je uvijek .t.
-   IF ( lStartPrint == nil )
-      lStartPrint := .T.
-   ENDIF
 
    LEN_QTTY := Len( PIC_QTTY )
    LEN_VALUE := Len( PIC_VALUE )
@@ -88,15 +79,12 @@ FUNCTION nalpr_print( lStartPrint )
 	
       // grupa dokumenta
       nDoc_gr := field->doc_gr_no
-	
-      DO WHILE !Eof() .AND. field->doc_no == nDoc_no .AND. ;
-            field->doc_gr_no == nDoc_gr
+      DO WHILE !Eof() .AND. field->doc_no == nDoc_no .AND. field->doc_gr_no == nDoc_gr
 		
          skip
       ENDDO
 	
       ++ nCnt
-	
       AAdd( aGroups, { nDoc_gr, nCnt } )
 	
    ENDDO
@@ -108,8 +96,7 @@ FUNCTION nalpr_print( lStartPrint )
 
    FOR i := 1 TO Len( aGroups )
 	
-      // stampaj nalog za grupu....
-      p_a4_nalpr( .F., aGroups[ i, 1 ], aGroups[ i, 2 ], Len( aGroups ) )
+      stampa_naloga_za_grupu( aGroups[ i, 1 ], aGroups[ i, 2 ], Len( aGroups ) )
 	
       FF
    NEXT
@@ -119,10 +106,7 @@ FUNCTION nalpr_print( lStartPrint )
    RETURN
 
 
-// -----------------------------------
-// stampa naloga za proizvodnju
-// -----------------------------------
-FUNCTION p_a4_nalpr( lStartPrint, nDoc_gr, nGr_cnt, nGr_total )
+FUNCTION stampa_naloga_za_grupu( nDoc_gr, nGr_cnt, nGr_total )
 
    LOCAL lShow_zagl
    LOCAL i
@@ -135,15 +119,6 @@ FUNCTION p_a4_nalpr( lStartPrint, nDoc_gr, nGr_cnt, nGr_total )
 
    nDuzStrKorekcija := 0
    lPrintedTotal := .F.
-
-   IF lStartPrint
-
-      IF !StartPrint( nil, nil )
-         my_close_all_dbf()
-         RETURN
-      ENDIF
-
-   ENDIF
 
    nTTotal := Val( g_t_pars_opis( "N10" ) )
 
@@ -161,7 +136,6 @@ FUNCTION p_a4_nalpr( lStartPrint, nDoc_gr, nGr_cnt, nGr_total )
    B_ON
 
    ?
-
    cLine := g_line( 1 )
 
    // setuj len_ukupno
@@ -170,9 +144,6 @@ FUNCTION p_a4_nalpr( lStartPrint, nDoc_gr, nGr_cnt, nGr_total )
    SELECT t_docit
    SET ORDER TO TAG "1"
    GO TOP
-
-   // kondenzuj font
-   // P_COND
 
    // stampaj grupu artikala naloga
    s_art_group( nDoc_gr )
@@ -202,7 +173,6 @@ FUNCTION p_a4_nalpr( lStartPrint, nDoc_gr, nGr_cnt, nGr_total )
    DO WHILE !Eof() .AND. field->doc_no == nDoc_no .AND. field->doc_gr_no == nDoc_gr
 	
       lAops := .F.
-	
 	
       nArt_id := field->art_id
 	
@@ -546,11 +516,6 @@ FUNCTION p_a4_nalpr( lStartPrint, nDoc_gr, nGr_cnt, nGr_total )
 
    // stampa rekapitulacije
    s_nal_rekap( lRekPrint, nDoc_no )
-
-   IF lStartPrint
-      FF
-      EndPrint()
-   ENDIF
 
    RETURN
 

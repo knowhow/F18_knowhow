@@ -1,6 +1,8 @@
-1.7.119  2014-07-14, vsasa
+1.7.119  2014-07-15, vsasa
 
   - KALK, provjera integriteta cijena kod štampe dokumenta 19
+  - POS, ažuriranje dokumenata u jednoj transakciji
+  - ePDV, štampa KUF/KIF izvještaja, promjena dimenzija kolona
  
 1.7.118  2014-07-11, vsasa
 

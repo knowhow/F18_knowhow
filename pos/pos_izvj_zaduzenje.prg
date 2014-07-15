@@ -93,15 +93,7 @@ FUNCTION StampZaduz( cIdVd, cBrDok )
       DO WHILE ! Eof()
 
          nIzn := cijena * kolicina
-         IF !IsPDV()
-            IF priprz->idtarifa = "PDV17"
-               WhilePTarife( IdRoba, IdTarifa, nIzn, @aTarife, @nPPP, @nPPU, @nOsn, @nPP )
-            ELSE
-               WhileaTarife( IdRoba, nIzn, @aTarife, @nPPP, @nPPU, @nOsn, @nPP )
-            ENDIF
-         ELSE
-            WhileaTarife( IdRoba, nIzn, @aTarife, @nPPP, @nPPU, @nOsn, @nPP )
-         ENDIF
+         pos_setuj_tarife( IdRoba, nIzn, @aTarife, @nPPP, @nPPU, @nOsn, @nPP )
          IF fpred .AND. !Empty( IdDio )
             // ne stampaj nista
          ELSE
@@ -243,17 +235,7 @@ FUNCTION PrepisZad( cNazDok )
       ?? TRANS ( POS->Kolicina, cPicKol )
       nFinZad += POS->( Kolicina * Cijena )
 
-      IF gModul = "TOPS"
-         IF !IsPDV()
-            IF pos->idtarifa = "PDV17"
-               WhilePTarife( pos->IdRoba, pos->idtarifa, POS->( Kolicina * Cijena ), @aTarife )
-            ELSE
-               WhileaTarife( pos->IdRoba, POS->( Kolicina * Cijena ), @aTarife )
-            ENDIF
-         else
-            WhileaTarife( pos->IdRoba, POS->( Kolicina * Cijena ), @aTarife )
-         ENDIF
-      ENDIF
+      pos_setuj_tarife( pos->IdRoba, POS->( Kolicina * Cijena ), @aTarife )
       SKIP
    ENDDO
 

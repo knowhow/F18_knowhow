@@ -51,9 +51,9 @@ FUNCTION pos_rekapitulacija_tarifa( aTarife )
       nPDV := tarifa->opp
 		
       ? aTarife[ nCnt ][ 1 ], "(" + Str( nPDV ) + "%)"
-      ? Str( aTarife[nCnt ][ 2 ], 12, 2 ), Str ( aTarife[nCnt ][ 3 ], 12, 2 ), Str( Round( aTarife[ nCnt ][ 2 ], 2 ) + Round( aTarife[ nCnt ][ 3 ], 2 ), 12, 2 )
-      nTotOsn += Round( aTarife[nCnt ][ 2 ], 2 )
-      nTotPPP += Round( aTarife[nCnt ][ 3 ], 2 )
+      ? Str( aTarife[ nCnt ][ 2 ], 12, 2 ), Str ( aTarife[ nCnt ][ 3 ], 12, 2 ), Str( Round( aTarife[ nCnt ][ 2 ], 2 ) + Round( aTarife[ nCnt ][ 3 ], 2 ), 12, 2 )
+      nTotOsn += Round( aTarife[ nCnt ][ 2 ], 2 )
+      nTotPPP += Round( aTarife[ nCnt ][ 3 ], 2 )
    NEXT
 
    SELECT ( nArr )
@@ -68,25 +68,30 @@ FUNCTION pos_rekapitulacija_tarifa( aTarife )
 
 
 
-
-FUNCTION WhilePTarife( cIdRoba, cIdTarifa, nIzn, aTarife, nPPP, nPPU, nOsn, nPP )
+FUNCTION pos_setuj_tarife( cIdRoba, nIzn, aTarife, nPPP, nPPU, nOsn, nPP )
 
    nArr := Select()
 
+   O_ROBA
    O_TARIFA
 
+   SELECT ( F_ROBA )
+   SEEK cIdRoba
+
    SELECT ( F_TARIFA )
-   SEEK cIdTarifa
+   SEEK roba->idtarifa
    SELECT ( nArr )
 
    nOsn := nIzn / ( tarifa->zpp / 100 + ( 1 + tarifa->opp / 100 ) * ( 1 + tarifa->ppp / 100 ) )
    nPPP := nOsn * tarifa->opp / 100
    nPP := nOsn * tarifa->zpp / 100
+
    nPPU := ( nOsn + nPPP ) * tarifa->ppp / 100
 
-   nPoz := AScan ( aTarife, {| x| x[ 1 ] == cIdTarifa } )
+   nPoz := AScan ( aTarife, {| x| x[ 1 ] == roba->IdTarifa } )
+
    IF nPoz == 0
-      AAdd ( aTarife, { cIdTarifa, nOsn, nPPP, nPPU, nPP } )
+      AAdd ( aTarife, { roba->IdTarifa, nOsn, nPPP, nPPU, nPP } )
    ELSE
       aTarife[nPoz ][ 2 ] += nOsn
       aTarife[nPoz ][ 3 ] += nPPP
@@ -95,3 +100,4 @@ FUNCTION WhilePTarife( cIdRoba, cIdTarifa, nIzn, aTarife, nPPP, nPPU, nOsn, nPP 
    ENDIF
 
    RETURN NIL
+

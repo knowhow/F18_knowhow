@@ -42,7 +42,7 @@ FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
    SELECT pos_doks
    APPEND BLANK
 
-   cDokument := cIdPos + "-" + VD_RN + "-" + cBrojRacuna + " " + DTOC( gDatum ) 
+   cDokument := ALLTRIM( cIdPos ) + "-" + VD_RN + "-" + ALLTRIM( cBrojRacuna ) + " " + DTOC( gDatum ) 
 
    _rec := dbf_get_rec()
    _rec[ "idpos" ] := cIdPos

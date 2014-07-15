@@ -38,7 +38,7 @@ FUNCTION pos_azuriraj_zaduzenje( cBrDok, cIdVd )
    _brdok := cBrDok
    _idvd := cIdVd
 
-   cDokument := _idpos + "-" + _idvd + "-" + _brdok + " " + DTOC( _datum )
+   cDokument := ALLTRIM( _idpos ) + "-" + _idvd + "-" + ALLTRIM( _brdok ) + " " + DTOC( _datum )
 
    IF gBrojSto == "D"
       IF cIdVd <> VD_RN
@@ -188,7 +188,7 @@ FUNCTION pos_azuriraj_inventura_nivelacija()
    _rec[ "smjena" ] := priprz->smjena
 
    cTipDok := _rec[ "idvd" ]
-   cDokument := _rec["idpos"] + "-" + _rec["idvd"] + "-" + _rec["brdok"] + " " + DTOC( _rec["datum"] )
+   cDokument := ALLTRIM( _rec["idpos"] ) + "-" + _rec["idvd"] + "-" + ALLTRIM( _rec["brdok"] ) + " " + DTOC( _rec["datum"] )
 
    @ m_x + 1, m_y + 2 SAY8 "    AŽURIRANJE DOKUMENTA U TOKU ..."
    @ m_x + 2, m_y + 2 SAY "Formiran dokument: " + cDokument +  " / zap: " + AllTrim( Str( nTotalCount ) )

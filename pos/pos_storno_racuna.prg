@@ -145,7 +145,7 @@ FUNCTION pos_storno_fisc_no()
    PRIVATE aVezani := {}
 
    Box(, 1, 55 )
-   @ m_x + 1, m_y + 2 SAY "broj fiskalnog isjecka:" GET _fisc_broj ;
+   @ m_x + 1, m_y + 2 SAY8 "broj fiskalnog isječka:" GET _fisc_broj ;
       VALID pos_vrati_broj_racuna_iz_fiskalnog( _fisc_broj, @_broj_rn, @_datum ) ;
       PICT "9999999999"
    READ
@@ -156,7 +156,7 @@ FUNCTION pos_storno_fisc_no()
       RETURN
    ENDIF
 
-   __fill_storno( _datum, _broj_rn, Str( _fisc_broj, 10 ) )
+   napravi_u_pripremi_storno_dokument( _datum, _broj_rn, Str( _fisc_broj, 10 ) )
 
    SELECT ( nTArea )
 
@@ -207,7 +207,7 @@ FUNCTION pos_storno_rn( lSilent, cSt_rn, dSt_date, cSt_fisc )
 
    Box(, 4, 55 )
 
-   @ m_x + 1, m_y + 2 SAY "Racun je danasnji ?" GET _danasnji VALID _danasnji $ "DN" PICT "@!"
+   @ m_x + 1, m_y + 2 SAY8 "Račun je današnji (D/N) ?" GET _danasnji VALID _danasnji $ "DN" PICT "@!"
 
    READ
 
@@ -215,7 +215,7 @@ FUNCTION pos_storno_rn( lSilent, cSt_rn, dSt_date, cSt_fisc )
       _datum := NIL
    ENDIF
 
-   @ m_x + 2, m_y + 2 SAY "stornirati pos racun broj:" GET cSt_rn VALID {|| pos_lista_racuna( @_datum, @cSt_rn, .T. ), _fix_rn_no( @cSt_rn ), dSt_date := _datum,  .T. }
+   @ m_x + 2, m_y + 2 SAY8 "stornirati pos račun broj:" GET cSt_rn VALID {|| pos_lista_racuna( @_datum, @cSt_rn, .T. ), _fix_rn_no( @cSt_rn ), dSt_date := _datum,  .T. }
    @ m_x + 3, m_y + 2 SAY "od datuma:" GET dSt_date
 
    READ
@@ -246,7 +246,7 @@ FUNCTION pos_storno_rn( lSilent, cSt_rn, dSt_date, cSt_fisc )
 
    SELECT ( nTArea )
 
-   __fill_storno( dSt_date, cSt_rn, cSt_fisc )
+   napravi_u_pripremi_storno_dokument( dSt_date, cSt_rn, cSt_fisc )
 
    SELECT ( F_POS )
    USE
@@ -269,7 +269,7 @@ FUNCTION pos_storno_rn( lSilent, cSt_rn, dSt_date, cSt_fisc )
    RETURN
 
 
-STATIC FUNCTION __fill_storno( rn_datum, storno_rn, broj_fiscal )
+STATIC FUNCTION napravi_u_pripremi_storno_dokument( rn_datum, storno_rn, broj_fiscal )
 
    LOCAL _t_area := Select()
    LOCAL _t_roba, _rec

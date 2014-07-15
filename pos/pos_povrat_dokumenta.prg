@@ -34,7 +34,7 @@ FUNCTION pos_brisi_dokument( id_pos, id_vd, dat_dok, br_dok )
 
    MsgO( "Brisanje dokumenta iz glavne tabele u toku ..." )
 
-   cDokument := id_pos + "-" + id_vd + "-" + br_dok + " " + DTOC( dat_dok ) 
+   cDokument := ALLTRIM( id_pos ) + "-" + id_vd + "-" + ALLTRIM( br_dok ) + " " + DTOC( dat_dok ) 
 
    SELECT pos
    GO TOP
@@ -109,7 +109,8 @@ FUNCTION pos_povrat_rn( cSt_rn, dSt_date )
 
    LOCAL nTArea := Select()
    LOCAL _rec
-   PRIVATE GetList := {}
+   LOCAL nCount := 0
+   PRIVATE GetList := {} 
 
    IF Empty( cSt_rn )
       SELECT ( nTArea )
@@ -143,6 +144,8 @@ FUNCTION pos_povrat_rn( cSt_rn, dSt_date )
 
       dbf_update_rec( _rec )
 
+      ++ nCount
+
       SELECT pos
 
       SKIP
@@ -150,6 +153,11 @@ FUNCTION pos_povrat_rn( cSt_rn, dSt_date )
    ENDDO
 
    msgC()
+
+   IF nCount > 0
+      log_write( "F18_DOK_OPER, povrat dokumenta u pripremu: " + ;
+             ALLTRIM( gIdPos ) + "-" + VD_RN + "-" + ALLTRIM( cSt_rn ) + " " + DTOC( dSt_date), 2 )
+   ENDIF
 
    pos_brisi_dokument( gIdPos, VD_RN, dSt_date, cSt_rn )
 
@@ -165,9 +173,9 @@ STATIC FUNCTION odaberi_opciju_povrata_dokumenta()
    LOCAL _ch := "1"
 
    Box(, 3, 50 )
-   @ m_x + 1, m_y + 2 SAY "Priprema nije prazna, sta dalje ? "
+   @ m_x + 1, m_y + 2 SAY8 "Priprema nije prazna, šta dalje ? "
    @ m_x + 2, m_y + 2 SAY " (1) brisati pripremu  "
-   @ m_x + 3, m_y + 2 SAY " (2) spojiti na postojeci dokument " GET _ch VALID _ch $ "12"
+   @ m_x + 3, m_y + 2 SAY8 " (2) spojiti na postojeći dokument " GET _ch VALID _ch $ "12"
    READ
    BoxC()
 
@@ -183,6 +191,8 @@ STATIC FUNCTION odaberi_opciju_povrata_dokumenta()
 
 FUNCTION pos_povrat_dokumenta_u_pripremu()
 
+   LOCAL cDokument
+   LOCAL nCount := 0
    LOCAL _rec
    LOCAL _t_area := Select()
    LOCAL _oper := "1"
@@ -195,7 +205,6 @@ FUNCTION pos_povrat_dokumenta_u_pripremu()
       _oper := odaberi_opciju_povrata_dokumenta()
    ENDIF
 
-
    IF _oper == "1"
       my_dbf_zap()
    ENDIF
@@ -205,6 +214,8 @@ FUNCTION pos_povrat_dokumenta_u_pripremu()
    ENDIF
 
    MsgO( "Vršim povrat dokumenta u pripremu ..." )
+
+   cDokument := ALLTRIM( pos_doks->idpos ) + "-" + pos_doks->idvd + "-" + ALLTRIM( pos_doks->brdok ) + " " + DToC( pos_doks->datum )
 
    SELECT pos
    SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
@@ -251,6 +262,8 @@ FUNCTION pos_povrat_dokumenta_u_pripremu()
 
       dbf_update_rec( _rec )
 
+      ++ nCount
+
       SELECT pos
       SKIP
 
@@ -259,6 +272,10 @@ FUNCTION pos_povrat_dokumenta_u_pripremu()
    MsgC()
 
    SELECT ( _t_area )
+
+   IF nCount > 0
+      log_write( "F18_DOK_OPER: povrat dokumenta u pripremu: " + cDokument, 2 )
+   ENDIF
 
    RETURN
 

@@ -935,7 +935,7 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
    IF lPrepis == .T.
       SELECT pos
    ELSE
-      SELECT _pos
+      SELECT _pos_pripr
    ENDIF
 
    // checksum
@@ -964,7 +964,7 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
       IF lPrepis == .T.
          SELECT pos
       ELSE
-         SELECT _pos
+         SELECT _pos_pripr
       ENDIF
 
       SET ORDER TO TAG "1"
@@ -1018,7 +1018,7 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
       IF lPrepis == .T.
          SELECT pos
       ELSE
-         SELECT _pos
+         SELECT _pos_pripr
       ENDIF
 
       DO WHILE !Eof() .AND. iif( lPrepis == .T., pos->( idpos + idvd + DToS( datum ) + brdok ) == ( cIdPos + VD_RN + DToS( dDatRn ) + cBrDok ), ;
@@ -1051,7 +1051,7 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
          IF lPrepis == .T.
             SELECT pos
          ELSE
-            SELECT _pos
+            SELECT _pos_pripr
          ENDIF
 
          nKolicina := kolicina
@@ -1117,7 +1117,7 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
          IF lPrepis == .T.
             SELECT pos
          ELSE
-            SELECT _pos
+            SELECT _pos_pripr
          ENDIF
 
          SKIP

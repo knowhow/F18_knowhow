@@ -50,7 +50,6 @@ FUNCTION pos_unos_racuna()
    PRIVATE Kol := {}
    PRIVATE nRowPos
    PRIVATE oBrowse
-   PRIVATE aAutoKeys := {}
    PRIVATE nPopust := 0
    PRIVATE nIznNar := 0
    PRIVATE aUnosMsg := {}
@@ -58,7 +57,7 @@ FUNCTION pos_unos_racuna()
 
    o_pos_tables()
 
-   SELECT _pos
+   SELECT _pos_pripr
 
    aRabat := {}
 
@@ -94,7 +93,6 @@ FUNCTION pos_unos_racuna()
       ImeKol, Kol, { BROWSE_PODVUCI_2, BROWSE_PODVUCI, BROWSE_COL_SEP }, 0 )
 
    oBrowse:autolite := .F.
-   aAutoKeys := pos_hang_keys()
 
    SetKey( K_F6, {|| f7_pf_traka() } )
 
@@ -109,9 +107,6 @@ FUNCTION pos_unos_racuna()
    @ m_x + 5, m_y + ( _max_cols - 30 ) SAY " TOTAL:"
 
    ispisi_iznos_veliki_brojevi( 0, m_x + ( _max_rows - 12 ), _max_cols - 2 )
-
-   SELECT _pos
-   SET ORDER TO TAG "1"
 
    nIznNar := 0
    nPopust := 0
@@ -230,8 +225,6 @@ FUNCTION pos_unos_racuna()
       ispisi_donji_dio_forme_unosa( _tmp, 1 )
 
    ENDDO
-
-   pos_cancel_keys( aAutoKeys )
 
    SetKey( K_F6, NIL )
    SetKey( K_F7, NIL )
@@ -359,41 +352,6 @@ FUNCTION pos_check_qtty( qtty )
       RETURN .T.
    ENDIF
 
-
-
-FUNCTION pos_hang_keys()
-
-   LOCAL aKeysProcs := {}
-   LOCAL bPrevSet
-
-   SELECT K2C
-   GO TOP
-
-   DO WHILE !Eof()
-      bPrevSet := SetKey( KeyCode, {|| AutoKeys () } )
-      AAdd ( aKeysProcs, { KeyCode, bPrevSet } )
-      SKIP
-   ENDDO
-
-   RETURN ( aKeysProcs )
-
-
-
-FUNCTION pos_cancel_keys( aPrevSets )
-
-   LOCAL i := 1
-
-   nPrev := Select()
-
-   SELECT K2C
-   GoTop2()
-   DO WHILE !Eof()
-      SetKey( KeyCode, aPrevSets[ i++ ] )
-      SKIP
-   ENDDO
-   SELECT ( nPrev )
-
-   RETURN
 
 
 

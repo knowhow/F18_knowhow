@@ -199,6 +199,7 @@ FUNCTION o_pos_tables( lOtvoriKumulativ )
    O_SIFV
    O_PRIPRZ
    O_PRIPRG
+   O__POS
    O__POS_PRIPR
 
    IF lOtvoriKumulativ

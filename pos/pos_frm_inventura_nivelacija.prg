@@ -46,10 +46,8 @@ FUNCTION InventNivel()
       stanje_dn := "N"
    ENDIF
 
-   IF ( fInvent == nil )
+   IF fInvent == nil
       fInvent := .T.
-   ELSE
-      fInvent := fInvent
    ENDIF
 
    IF fInvent
@@ -66,16 +64,13 @@ FUNCTION InventNivel()
 
    IF fIzZad == nil
       fIzZad := .F.
-      // fja pozvana iz zaduzenja
    ENDIF
 
    IF fSadAz == nil
       fSadAz := .F.
-      // fja pozvana iz zaduzenja
    ENDIF
 
    IF fIzZad
-      // ne diraj ove varijable
    ELSE
       PRIVATE cIdOdj := Space( 2 )
       PRIVATE cIdDio := Space( 2 )
@@ -98,7 +93,10 @@ FUNCTION InventNivel()
       ENDIF
 
       AAdd( aNiz, { "Datum rada", "dDatRada", "dDatRada <= DATE()",, } )
-      AAdd( aNiz, { "Inventura sa gen.stanja (D/N) ?", "stanje_dn", "stanje_dn $ 'DN'", "@!", } )
+
+      IF fInvent
+         AAdd( aNiz, { "Inventura sa gen.stanja (D/N) ?", "stanje_dn", "stanje_dn $ 'DN'", "@!", } )
+      ENDIF
 
       IF !VarEdit( aNiz, 9, 15, 15, 64, cNazDok + "A", "B1" )
          CLOSE ALL
@@ -111,12 +109,11 @@ FUNCTION InventNivel()
 
    cZaduzuje := "R"
    cRSdbf := "ROBA"
-   // cRSblok := "P_Roba( @_IdRoba, 1, 31 )"
    cUI_U := R_U
    cUI_I := R_I
 
    IF !pos_vrati_dokument_iz_pripr( cIdVd, gIdRadnik, cIdOdj, cIdDio )
-      CLOSE ALL
+      my_close_all_dbf()
       RETURN
    ENDIF
 
@@ -132,7 +129,6 @@ FUNCTION InventNivel()
    IF fPocInv
 
       cBrDok := pos_novi_broj_dokumenta( gIdPos, cIdVd )
-
       fPreuzeo := .F.
 
       IF !fPreuzeo
@@ -153,7 +149,6 @@ FUNCTION InventNivel()
 
          SELECT pos
          SET ORDER TO TAG "2"
-         // "2", "IdOdj + idroba + DTOS(Datum)
          SEEK cIdOdj
 
          DO WHILE !Eof() .AND. field->idodj == cIdOdj
@@ -310,9 +305,10 @@ FUNCTION InventNivel()
 
             SELECT _POS
             AppFrom( "PRIPRZ", .F. )
+
             SELECT PRIPRZ
             my_dbf_zap()
-            CLOSE ALL
+            my_close_all_dbf()
             RETURN
 
          ELSEIF i == 3
@@ -322,7 +318,7 @@ FUNCTION InventNivel()
                SELECT PRIPRZ
                my_dbf_zap()
                pos_reset_broj_dokumenta( gIdPos, cIdVd, cBrDok )
-               CLOSE ALL
+               my_close_all_dbf()
                RETURN
 
             ELSE
@@ -331,7 +327,7 @@ FUNCTION InventNivel()
                AppFrom( "PRIPRZ", .F. )
                SELECT PRIPRZ
                my_dbf_zap()
-               CLOSE ALL
+               my_close_all_dbf()
                RETURN
 
             ENDIF
@@ -356,7 +352,7 @@ FUNCTION InventNivel()
 
    pos_azuriraj_inventura_nivelacija()
 
-   CLOSE ALL
+   my_close_all_dbf()
 
    RETURN
 
@@ -677,7 +673,9 @@ FUNCTION edprinv( nInd, datum )
 
       _kol2 := ( priprz->kol2 + _kol2 )
 
+      my_rlock()
       Gather()
+      my_unlock()
 
       _saldo_kol += priprz->kol2
       _saldo_izn += ( priprz->kol2 * priprz->cijena )

@@ -188,7 +188,7 @@ FUNCTION pos_azuriraj_inventura_nivelacija()
    _rec[ "smjena" ] := priprz->smjena
 
    cTipDok := _rec[ "idvd" ]
-   cDokument := _rec["idpos"] + "-" + _rec["idvd"] + "-" + _rec["brdok"] + " " + _rec["datum"]
+   cDokument := _rec["idpos"] + "-" + _rec["idvd"] + "-" + _rec["brdok"] + " " + DTOC( _rec["datum"] )
 
    @ m_x + 1, m_y + 2 SAY8 "    AŽURIRANJE DOKUMENTA U TOKU ..."
    @ m_x + 2, m_y + 2 SAY "Formiran dokument: " + cDokument +  " / zap: " + AllTrim( Str( nTotalCount ) )
@@ -228,9 +228,9 @@ FUNCTION pos_azuriraj_inventura_nivelacija()
          _rec[ "c_1" ] := priprz->c_1
          _rec[ "c_2" ] := priprz->c_2
          _rec[ "c_3" ] := priprz->c_3
-         _rec[ "rbr" ] := PadL( AllTrim( Str( ++_cnt ) ), 5 )
+         _rec[ "rbr" ] := PadL( AllTrim( Str( ++ nCount ) ), 5 )
 
-         @ m_x + 3, m_y + 2 SAY "Stavka " + AllTrim( Str( _cnt ) ) + " roba: " + _rec[ "idroba" ]
+         @ m_x + 3, m_y + 2 SAY "Stavka " + AllTrim( Str( nCount ) ) + " roba: " + _rec[ "idroba" ]
 
          lOk := update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )
 

@@ -1484,8 +1484,7 @@ STATIC FUNCTION _calc_oper( nQtty, nH, nW, nOp, cOpU, cValue, lComp )
 	
    OTHERWISE
 
-      // racunaj kao povrsinu
-      xRet := nU_m2
+      nKol := nU_m2
 
    ENDCASE
 
@@ -1496,7 +1495,6 @@ STATIC FUNCTION _calc_oper( nQtty, nH, nW, nOp, cOpU, cValue, lComp )
 
 FUNCTION rnal_g_kol( cValue, cQttyType, nKol, nQtty, nHeigh1, nWidth1 )
 
-   LOCAL nKol := 0
    LOCAL nTmp := 0
 
    // po metru

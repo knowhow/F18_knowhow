@@ -121,6 +121,8 @@ FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
       brisi_pripremu_racuna()
    ENDIF
 
+   priprema_set_order_to()
+
    RETURN lRet
 
 
@@ -130,6 +132,12 @@ STATIC FUNCTION brisi_pripremu_racuna()
    SELECT _pos_pripr
    my_dbf_zap()
 
+   RETURN
+
+
+STATIC FUNCTION priprema_set_order_to()
+
+   SELECT _pos_pripr
    SET ORDER TO
 
    RETURN

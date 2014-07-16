@@ -410,13 +410,7 @@ FUNCTION cre_all_ld( ver )
    CREATE_INDEX( "RADN", "idradn", _alias )
 
 
-   // --------------------------------------
-   // LD__LD
-   // --------------------------------------
-   _alias := "_LD"
-   _table_name := "_ld_ld"
-
-   IF_NOT_FILE_DBF_CREATE
+   kreiraj_tabelu_ld__ld( aDbf )
 
 
    // --------------------------------------------
@@ -674,3 +668,35 @@ FUNCTION cre_all_ld( ver )
    CREATE_INDEX( "NAZ", "NAZ", _alias )
 
    RETURN .T.
+
+
+
+STATIC FUNCTION kreiraj_tabelu_ld__ld( aDbf )
+  
+   LOCAL _alias, _table_name 
+
+   _alias := "_LD"
+   _table_name := "_ld_ld"
+
+   prosiri_numericka_polja_tabele( @aDbf )
+
+   IF_NOT_FILE_DBF_CREATE
+
+   CREATE_INDEX( "1", "idradn + idrj", _alias )
+
+   RETURN .T.
+
+
+STATIC FUNCTION prosiri_numericka_polja_tabele( aDbf )
+
+   LOCAL i
+   LOCAL nProsiri := 4
+
+   FOR i := 1 TO Len( aDbf )
+      IF aDbf[ i, 2 ] == "N" .AND. !( Upper( AllTrim( aDbf[ i, 1 ] ) ) $ "GODINA#MJESEC" )
+         aDbf[ i, 3 ] += nProsiri
+      ENDIF
+   NEXT
+
+   RETURN 
+

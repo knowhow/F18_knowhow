@@ -13,6 +13,24 @@
 
 
 
+STATIC FUNCTION otvori_tabele()
+
+   tipprn_use()
+
+   O_PAROBR
+   O_LD_RJ
+   O_RADN
+   O_VPOSLA
+   O_RADKR
+   O_KRED
+   O__LD
+   SET ORDER TO TAG "1"
+   O_LD
+
+   RETURN
+
+
+
 FUNCTION ld_kartica_plate_za_vise_mjeseci()
 
    LOCAL nC1 := 20
@@ -26,24 +44,8 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
    cObracun := gObracun
    cRazdvoji := "N"
 
-   O_LD
-
-   napravi_pomocnu_tabelu()
-
-   my_use( "_ld" )
-   INDEX ON idradn + idrj TAG "1"
-
-   my_close_all_dbf()
-   O_PAROBR
-   O_LD_RJ
-   O_RADN
-   O_VPOSLA
-   O_RADKR
-   O_KRED
-   O__LD
-   SET ORDER TO TAG "1"
-
-   O_LD
+   brisi_pomocnu_tabelu()
+   otvori_tabele()
 
    cIdRadn := Space( _LR_ )
    cSatiVO := "S"
@@ -66,8 +68,6 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
       ESC_BCR
    ENDIF
    BoxC()
-
-   tipprn_use()
 
    SELECT LD
 
@@ -317,33 +317,12 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
 
 
 
-STATIC FUNCTION napravi_pomocnu_tabelu()
+STATIC FUNCTION brisi_pomocnu_tabelu()
 
-   LOCAL _i, _struct
-   LOCAL _table := "_ld"
-   LOCAL _ret := .T.
+   O__LD
+   my_dbf_zap()
 
-   IF File( my_home() + _table + ".dbf" )
-      FErase( my_home() + _table + ".dbf" )
-   ENDIF
-
-   _struct := LD->( dbStruct() )
-
-   FOR _i := 1 TO Len( _struct )
-      IF _struct[ _i, 2 ] == "N" .AND. !( Upper( AllTrim( _struct[ _i, 1 ] ) ) $ "GODINA#MJESEC" )
-         _struct[ _i, 3 ] += 4
-      ENDIF
-   NEXT
-
-   dbCreate( my_home() + _table + ".dbf", _struct )
-
-   IF !File( my_home() + _table + ".dbf" )
-      MsgBeep( "Ne postoji " + _table + ".dbf !!!" )
-      _ret := .F.
-   ENDIF
-
-   RETURN _ret
-
+   RETURN
 
 
 

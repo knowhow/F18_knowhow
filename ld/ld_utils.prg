@@ -523,7 +523,6 @@ FUNCTION TagVO( cT, cI )
 
 FUNCTION tipprn_use()
 
-   // zatvori tippr, tippr2
    SELECT ( F_TIPPR )
    IF Used()
       USE
@@ -534,7 +533,6 @@ FUNCTION tipprn_use()
       USE
    ENDIF
 
-   // otvori sta vec treba
    O_TIPPRN
 
    RETURN

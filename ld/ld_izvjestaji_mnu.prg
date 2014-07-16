@@ -120,10 +120,12 @@ STATIC FUNCTION izvjestaji_ostali()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. pregled utroška po šihtaricama" )
+   AAdd( _opc, "1. pregled utroška po šihtaricama                        " )
    AAdd( _opcexe, {|| ld_utrosak_po_sihtaricama() } )
    AAdd( _opc, "2. lista radnika za isplatu toplog obroka" )
    AAdd( _opcexe, {|| ld_lista_isplate_toplog_obroka() } )
+   AAdd( _opc, "3. lista radnika sa neto iznosom po općinama stanovanja " )
+   AAdd( _opcexe, {|| ld_specifikacija_neto_primanja_po_opcinama() } )
 
    f18_menu( "ost", .F., _izbor, _opc, _opcexe )
 

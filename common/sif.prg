@@ -719,6 +719,7 @@ FUNCTION snimi_promjene_sifrarnika( lNovi, cTekuciZapis )
    ELSE
       sql_table_update( nil, "ROLLBACK" )
       log_write( "F18_DOK_OPER: greška kod dodavanja/ispravke zapisa u šifrarnik " + cAlias, 2 )
+      MsgBeep( "Greška kod dodavanja/ispravke šifre !#Operacija prekinuta." )
    ENDIF
 
    set_global_vars_from_dbf( "w" )
@@ -765,6 +766,7 @@ FUNCTION snimi_promjene_cirkularne_ispravke_sifrarnika()
    ELSE
       sql_table_update( nil, "ROLLBACK" )
       log_write( "F18_DOK_OPER: greška sa cirkularnom ispravkom šifrarnika " + _alias, 2 )
+      MsgBeep( "Greška sa operacijom cirkularne ispravke !#Operacija prekinuta." )
    ENDIF
 
    set_global_vars_from_dbf( "w" )
@@ -1131,6 +1133,7 @@ FUNCTION sifrarnik_brisi_stavku()
    ELSE
       sql_table_update( nil, "ROLLBACK" )
       log_write( "F18_DOK_OPER: greška sa brisanjem stavke iz šifrarnika", 2 )
+      MsgBeep( "Greška sa brisanjem zapisa iz šifrarnika !#Operacija prekinuta." )
    ENDIF
 
    PopWa()

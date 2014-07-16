@@ -1092,7 +1092,7 @@ FUNCTION sifrarnik_brisi_stavku()
    PushWa()
 
    sql_table_update( nil, "BEGIN" )
-   IF !f18_lock_table( { Lower( Alias() ) }, .T. )
+   IF !f18_lock_tables( { Lower( Alias() ) }, .T. )
       sql_table_update( nil, "END" )
       MsgBeep( "Ne mogu zaključati tabelu " + Alias() + "!#Prekidam operaciju." )
       RETURN DE_CONT

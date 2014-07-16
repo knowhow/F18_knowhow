@@ -13,12 +13,9 @@
 
 #include "dbstruct.ch"
 
-// static integer
 STATIC __PSIF_NIVO__ := 0
-
-STATIC _LOG_PROMJENE := .F.
-
 STATIC __A_SIFV__ := { { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL } }
+
 
 FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aPoredak, bPodvuci, aZabrane, lInvert, aZabIsp )
 
@@ -30,7 +27,6 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
    LOCAL cUslovSrch :=  ""
    LOCAL cNazSrch
 
-   // trazenje je po nazivu
    PRIVATE fPoNaz := .F.
    PRIVATE fID_J := .F.
 
@@ -41,11 +37,6 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
    FOR _i := 1 TO Len( aZabIsp )
       aZabIsp[ _i ] := Upper( aZabIsp[ _i ] )
    NEXT
-
-   // provjeri da li treba logirati promjene
-   IF Logirati( "FMK", "SIF", "PROMJENE" )
-      _LOG_PROMJENE := .T.
-   ENDIF
 
    PRIVATE cOrderTag
 
@@ -58,22 +49,19 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
 
    SELECT ( nDbf )
    IF !Used()
-      MsgBeep( "USED FALSE ?!" )
+      MsgBeep( "Tabela nije otvorena u radnom području !#Prekidam operaciju." )
       RETURN .F.
    ENDIF
 
    cOrderTag := ordName( 1 )
 
    sif_set_order( xIndex, cOrderTag, @fID_j )
-
    sif_sql_seek( @cId, @cIdBK, @cUslovSrch, @cNazSrch, fId_j, cOrderTag )
 
    IF dx <> NIL .AND. dx < 0
-      // u slucaju negativne vrijednosti vraca se vrijednost polja
-      // koje je na poziciji ABS(i)
       IF !Found()
          GO BOTTOM
-         SKIP  // id na eof, tamo su prazne vrijednosti
+         SKIP  
          cRet := &( FieldName( -dx ) )
          SKIP -1
       ELSE
@@ -130,13 +118,13 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
 
    __A_SIFV__[ __PSIF_NIVO__, 2 ] := RecNo()
 
-   // ispisi naziv
    sif_ispisi_naziv( nDbf, dx, dy )
 
    SELECT ( nDbf )
    ordSetFocus( cOrderTag )
 
    SET FILTER TO
+
    PopSifV()
    PopWa( nDbf )
 
@@ -164,13 +152,11 @@ STATIC FUNCTION sif_set_order( xIndex, cOrderTag, fID_j )
 
    CASE ValType( xIndex ) == "C" .AND. Right( Upper( Trim( xIndex ) ), 2 ) == "_J"
 
-      // postavi order na ID_J
       SET ORDER TO tag ( xIndex )
       fID_J := .T.
 
    OTHERWISE
 
-      // IDX varijanta:  TAG_IMEIDXA
       nPos := At( "_", xIndex )
       IF nPos <> 0
          IF Empty( Left( xIndex, nPos - 1 ) )
@@ -186,8 +172,8 @@ STATIC FUNCTION sif_set_order( xIndex, cOrderTag, fID_j )
 
    RETURN .T.
 
-// ----------------------------------------------------------------------
-// ----------------------------------------------------------------------
+
+
 STATIC FUNCTION sif_sql_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j, cOrderTag )
 
    LOCAL _bk := ""
@@ -213,17 +199,13 @@ STATIC FUNCTION sif_sql_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j, cOrderTag
       RETURN
    ENDIF
 
-   // glavni seek
-   // id, barkod
    SEEK cId
 
    IF Found()
-      // po id-u
       cId := &( FieldName( 1 ) )
       RETURN
    ENDIF
 
-   // po barkod-u
    IF Len( cId ) > 10
 
       IF !tezinski_barkod( @cId, @_tezina, .F. )
@@ -253,7 +235,6 @@ STATIC FUNCTION sif_katbr_zvjezdica( cId, cIdBK, fId_j )
 
    IF !Found()
 
-      // trazi iz sifranika karakteristika
       cIdBK := Left( cId, Len( Trim( cId ) ) -1 )
       cId   := ""
 
@@ -264,7 +245,6 @@ STATIC FUNCTION sif_katbr_zvjezdica( cId, cIdBK, fId_j )
          SELECT roba
          SET ORDER TO TAG "ID"
       
-         // nasao sam sifru !!
          SEEK cId
          cId := Id
          IF fid_j
@@ -299,7 +279,6 @@ FUNCTION sif_point_or_slash( cId, fPoNaz, cOrderTag, cUslovSrch, cNazSrch )
 
    IF Left( Trim( cId ), 1 ) == "."
 
-      // SEEK PO NAZ kada se unese DUGACKI DIO
       PRIVATE GetList := {}
 
       Box(, 1, 60 )
@@ -318,7 +297,6 @@ FUNCTION sif_point_or_slash( cId, fPoNaz, cOrderTag, cUslovSrch, cNazSrch )
 
    ELSEIF Right( Trim( cId ), 1 ) == "$"
 
-      // pretraga dijela sifre...
       _filter := _filter_quote( Left( Upper( cId ), Len( Trim( cId ) ) - 1 ) ) + " $ UPPER(naz)"
       SET FILTER TO
       SET FILTER to &( _filter )
@@ -356,20 +334,16 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    PRIVATE aUsl
    PRIVATE aStruct
 
-   // matrica zabrana
    IF aZabrane = nil
       aZabrane := {}
    ENDIF
 
-   // matrica zabrana ispravki polja
    IF aZabIsp = nil
       aZabIsp := {}
    ENDIF
 
    Ch := LastKey()
 
-   // deklarisi privatne varijable sifrarnika
-   // wPrivate
    aStruct := dbStruct()
    SkratiAZaD ( @aStruct )
    FOR i := 1 TO Len( aStruct )
@@ -405,35 +379,31 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
       RETURN DE_CONT
    ENDIF
 
-#ifndef TEST
+   #ifndef TEST
 
-   // provjeri pristup opcijama koje mjenjaju podatke
-   IF ( Ch == K_CTRL_N .OR. Ch == K_CTRL_A .OR. Ch == K_F2 .OR. ;
+      IF ( Ch == K_CTRL_N .OR. Ch == K_CTRL_A .OR. Ch == K_F2 .OR. ;
          Ch == K_CTRL_T .OR. Ch == K_F4 .OR. Ch == K_CTRL_F9 .OR. Ch == K_F10 ) .AND. ;
          ( !ImaPravoPristupa( goModul:oDatabase:cName, "SIF", "EDSIF" ) )
 
-      RETURN DE_CONT
+          RETURN DE_CONT
 
-   ENDIF
+      ENDIF
 
-#endif
+   #endif
 
    DO CASE
 
    CASE Ch == K_ENTER
 
       IF gMeniSif
-         // ako sam u sifrarniku a ne u unosu dokumenta
          RETURN DE_CONT
       ELSE
-         // u unosu sam dokumenta
          lPrviPoziv := .F.
          RETURN DE_ABORT
       ENDIF
 
    CASE Upper( Chr( Ch ) ) == "F"
 
-      // pretraga po MATCH_CODE
       IF m_code_src() == 0
          RETURN DE_CONT
       ELSE
@@ -526,6 +496,7 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp )
    LOCAL cMCField
    LOCAL nMCScan
    LOCAL _vars
+   LOCAL cTekuciZapis
 
    PRIVATE nXP
    PRIVATE nYP
@@ -538,20 +509,15 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp )
 
    lNovi := .F.
 
-   IF _LOG_PROMJENE == .T.
-      // daj stare vrijednosti
-      cOldDesc := _g_fld_desc( "w" )
-   ENDIF
+   cTekuciZapis := vrati_vrijednosti_polja_sifrarnika_u_string( "w" )
 
    add_match_code( @ImeKol, @Kol )
 
    __A_SIFV__[ __PSIF_NIVO__, 3 ] :=  Ch
 
    IF Ch == K_CTRL_N .OR. Ch == K_F2
-
       ordSetFocus( cOrderTag )
       GO ( nPrevRecNo )
-
    ENDIF
 
    IF Ch == K_CTRL_N
@@ -564,14 +530,11 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp )
       lNovi := .T.
    ENDIF
 
-
    DO WHILE .T.
 
-      // setuj varijable za tekuci slog
       set_sif_vars()
 
       IF Ch == K_CTRL_N
-         // nastimaj default vrijednosti za sifrarnik robe
          set_roba_defaults()
       ENDIF
 
@@ -584,7 +547,6 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp )
       NEXT
 
       i := 1
-      // tekuci red u matrici imekol
       FOR _jg := 1 TO 3  
 
          IF _jg == 1
@@ -596,10 +558,8 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp )
          SET CURSOR ON
          PRIVATE Getlist := {}
 
-         // brojac get-ova
          nGet := 1
 
-         // broj redova koji se ne prikazuju (_?_)
          nNestampati := 0
 
          nTekRed := 1
@@ -609,8 +569,6 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp )
             lShowPGroup := .F.
 
             IF Empty( ImeKol[ i, 3 ] )
-               // ovdje se kroji matrica varijabli.......
-               // area->nazpolja
                cPom := ""
             ELSE
                cPom := set_w_var( ImeKol, i, @lShowPGroup )
@@ -618,7 +576,6 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp )
 
             cPic := ""
 
-            // samo varijable koje mozes direktno mjenjati
             IF !Empty( cPom )
                sif_getlist( cPom, @GetList,  lZabIsp, aZabIsp, lShowPGroup, Ch, @nGet, @i, @nTekRed )
                nGet++
@@ -640,14 +597,12 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp )
 
             i++
 
-            // ! sljedeci slog se stampa u istom redu
             IF ( Len( ImeKol ) < i ) .OR. ( nTekRed > Min( MAXROWS() -7, nTrebaRedova ) .AND. !( Len( ImeKol[ i ] ) >= 10 .AND. imekol[ i, 10 ] <> NIL )  )
-               // izadji dosao sam do zadnjeg reda boxa, ili do kraja imekol
                EXIT
             ENDIF
+
          ENDDO
 
-         // key handleri F8, F9, F5
          SET KEY K_F8 TO NNSifru()
          SET KEY K_F9 TO n_num_sif()
          SET KEY K_F5 TO NNSifru2()
@@ -670,29 +625,13 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp )
          EXIT
       ELSE
 
-         // ovo vazi samo za CTRL + A opciju !!!!!
          IF LastKey() == K_ESC
             EXIT
          ENDIF
 
-         _vars := get_dbf_global_memvars( "w", NIL, .T. )
-
-         _alias := Lower( Alias() )
-
-         IF !f18_lock_tables( { _alias, "sifv", "sifk", _alias } )
-            log_write( "ERROR: nisam uspio lokovati tabele: " + _alias + ", sifk, sifv", 2 )
+         IF !snimi_promjene_cirkularne_ispravke_sifrarnika()
             EXIT
          ENDIF
-
-         sql_table_update( nil, "BEGIN" )
-         // sifarnik
-         update_rec_server_and_dbf( _alias, _vars, 1, "CONT" )
-         // sifk/sifv
-         update_sifk_na_osnovu_ime_kol_from_global_var( ImeKol, "w", Ch == K_CTRL_N, "CONT" )
-         f18_free_tables( { _alias, "sifv", "sifk" } )
-         sql_table_update( nil, "END" )
-
-         set_global_vars_from_dbf( "w" )
 
          IF LastKey() == K_PGUP
             SKIP -1
@@ -709,83 +648,121 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp )
 
    ENDDO
 
-
    IF Ch == K_CTRL_N .OR. Ch == K_F2
-        ordSetFocus( cOrderTag )
+      ordSetFocus( cOrderTag )
    ENDIF
 
    IF LastKey() == K_ESC
-
       IF lNovi
          GO ( nPrevRecNo )
       ENDIF
-
       RETURN 0
-
    ENDIF
 
-   // ako je novi zapis napravi APPEND BLANK
    IF lNovi
-
-      // provjeri da li vec ovaj id postoji ?
-      nNSInfo := _chk_sif( "w" )
-
-      IF nNSInfo = 1
-         msgbeep( "Ova sifra vec postoji !" )
-         RETURN 0
-      ELSEIF nNSInfo = -1
-         RETURN 0
-      ENDIF
-
       APPEND BLANK
-
    ENDIF
 
-   // uzmi varijable sa forme za unos
-   _vars := get_dbf_global_memvars( "w", NIL, .T. )
-
-   // lokuj tabele i napravi update zapisa....
-   IF f18_lock_tables( { Lower( Alias() ), "sifv", "sifk" } )
-
-      sql_table_update( nil, "BEGIN" )
-	
-      IF !update_rec_server_and_dbf( Alias(), _vars, 1, "CONT" )
-
-         IF lNovi
-            delete_with_rlock()
-         ENDIF
-
-         f18_free_tables( { Lower( Alias() ), "sifv", "sifk" } )
-         sql_table_update( nil, "ROLLBACK" )
-
-      ELSE
-
-         update_sifk_na_osnovu_ime_kol_from_global_var( ImeKol, "w", lNovi, "CONT" )
-         f18_free_tables( { Lower( Alias() ), "sifv", "sifk" } )
-         sql_table_update( nil, "END" )
-
-      ENDIF
-   ELSE
-
+   IF !snimi_promjene_sifrarnika( lNovi, cTekuciZapis )
       IF lNovi
-         // izbrisi  append koji je prvobitno dodan ....
          delete_with_rlock()
       ENDIF
-
-      MsgBeep( "ne mogu lockovati " + Lower( Alias() ) + " sifk/sifv ?!" )
-
    ENDIF
 
-   // ovo je potrebno radi nekih sifrarnika koji nakon ove opcije opet koriste
-   // globalne memoriske varijable w....
-   set_global_vars_from_dbf( "w" )
-
-   IF Ch == K_F4 .AND. Pitanje( , "Vrati se na predhodni zapis", "D" ) == "D"
+   IF Ch == K_F4 .AND. Pitanje( , "Vrati se na predhodni zapis (D/N) ?", "D" ) == "D"
       GO ( nPrevRecNo )
    ENDIF
 
    ordSetFocus( cOrderTag)
+
    RETURN 1
+
+
+
+FUNCTION snimi_promjene_sifrarnika( lNovi, cTekuciZapis )
+
+   LOCAL lRet := .F.
+   LOCAL lOk := .T.
+   LOCAL _rec
+   LOCAL cAlias := Alias()
+   LOCAL cEditovaniZapis
+
+   _rec := get_dbf_global_memvars( "w", NIL, .T. )
+
+   sql_table_update( nil, "BEGIN" )
+
+   IF !f18_lock_tables( { Lower( cAlias ) }, .T. )
+      sql_table_update( nil, "END" )
+      Msgbeep( "Ne mogu zaključati tabelu " + cAlias + "!#Prekidam operaciju." )
+      RETURN lRet
+   ENDIF
+
+   lOk := update_rec_server_and_dbf( cAlias, _rec, 1, "CONT" )
+
+   IF lOk
+       lOk := update_sifk_na_osnovu_ime_kol_from_global_var( ImeKol, "w", lNovi, "CONT" )
+   ENDIF
+
+   IF lOk
+      lRet := .T.
+      f18_free_tables( { Lower( cAlias ) } )
+      sql_table_update( nil, "END" )
+      log_write( "F18_DOK_OPER: dodavanje/ispravka zapisa u šifrarnik " + cAlias, 2 )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+      log_write( "F18_DOK_OPER: greška kod dodavanja/ispravke zapisa u šifrarnik " + cAlias, 2 )
+   ENDIF
+
+   set_global_vars_from_dbf( "w" )
+
+   IF lRet
+      cEditovaniZapis := vrati_vrijednosti_polja_sifrarnika_u_string( "w" )
+      IF cEditovaniZapis <> cTekuciZapis
+         log_write( "F18_DOK_OPER: " + ;
+              IIF( lNovi, "dodan novi", "ispravljen" ) + " zapis tabele " + cAlias + ;
+              IIF( !lNovi, " postojeći zapis: " + cTekuciZapis, "" ) + " novi zapis: " + cEditovaniZapis , 2 )
+      ENDIF
+   ENDIF
+
+   RETURN lRet
+
+
+
+FUNCTION snimi_promjene_cirkularne_ispravke_sifrarnika()
+
+   LOCAL _vars, _alias
+   LOCAL lRet := .F.
+   LOCAL lOk := .T.
+
+   _vars := get_dbf_global_memvars( "w", NIL, .T. )
+   _alias := Lower( Alias() )
+
+   sql_table_update( nil, "BEGIN" )
+   IF !f18_lock_tables( { _alias  }, .T. )
+      sql_table_update( nil, "END" )
+      MsgBeep( "Ne mogu zaključati tabelu " + _alias + " !#Prekidam operaciju." )
+      RETURN lRet
+   ENDIF
+
+   lOk := update_rec_server_and_dbf( _alias, _vars, 1, "CONT" )
+   IF lOk
+      lOk := update_sifk_na_osnovu_ime_kol_from_global_var( ImeKol, "w", Ch == K_CTRL_N, "CONT" )
+   ENDIF
+
+   IF lOk
+      lRet := .T.
+      f18_free_tables( { _alias } )
+      sql_table_update( nil, "END" )
+      log_write( "F18_DOK_OPER: cirkularna ispravka šifrarnika " + _alias, 2 )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+      log_write( "F18_DOK_OPER: greška sa cirkularnom ispravkom šifrarnika " + _alias, 2 )
+   ENDIF
+
+   set_global_vars_from_dbf( "w" )
+
+   RETURN lRet
+
 
 
 
@@ -951,6 +928,38 @@ STATIC FUNCTION add_match_code( ImeKol, Kol )
    ENDIF
 
 
+
+
+FUNCTION is_sifra_postoji_u_tabeli( xValue, cField, cAlias )
+
+   LOCAL lRet := .F.
+   LOCAL cWhere
+   LOCAL cTable
+   LOCAL cValue, hRec
+
+   IF VALTYPE( xValue ) == "N"
+      cValue := Str( xValue )
+   ELSE
+      cValue := _sql_quote( xValue )
+   ENDIF
+
+   cWhere := cField + " = " + cValue
+
+   hRec := get_a_dbf_rec( cAlias, .T. )
+   IF hRec["temp"]
+      RETURN lRet
+   ENDIF
+
+   cTable := hRec["table"] 
+
+   IF table_count( cTable, cWhere ) > 0
+      lRet := .T.
+   ENDIF
+
+   RETURN lRet
+
+
+
 /*
    kod sifarnika partnera se mora potvrditi ma
 */
@@ -996,7 +1005,7 @@ STATIC FUNCTION _chk_sif( cMarker )
    cMarker = "w" ako je Scatter("w")
 */
 
-STATIC FUNCTION _g_fld_desc( cMarker )
+FUNCTION vrati_vrijednosti_polja_sifrarnika_u_string( cMarker )
 
    LOCAL cRet := ""
    LOCAL i
@@ -1014,13 +1023,10 @@ STATIC FUNCTION _g_fld_desc( cMarker )
       cType := ValType( xFVal )
 
       IF cType == "C"
-         // string
          cFVal := AllTrim( xFVal )
       ELSEIF cType == "N"
-         // numeric
          cFVal := AllTrim( Str( xFVal, 12, 2 ) )
       ELSEIF cType == "D"
-         // date
          cFVal := DToC( xFVal )
       ENDIF
 
@@ -1028,6 +1034,8 @@ STATIC FUNCTION _g_fld_desc( cMarker )
    NEXT
 
    RETURN cRet
+
+
 
 // ----------------------------------------------------
 // uporedjuje liste promjena na sifri u sifrarniku

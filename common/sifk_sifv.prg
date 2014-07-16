@@ -438,7 +438,6 @@ FUNCTION USifk( dbf_name, ozna, u_id_sif, val, transaction )
       sql_table_update( nil, _tran )
    ENDIF
 
-
    IF sifk->veza == "N"
       IF !update_sifv_n_relation( _sifk_rec, cIdSif, val )
          RETURN .F.
@@ -483,7 +482,6 @@ STATIC FUNCTION update_sifv_n_relation( sifk_rec, id_sif, vals )
 
       _sifv_rec[ "naz" ] := PadR( get_sifv_naz( _tmp, sifk_rec ), 50 )
 
-      // zakljucavanje se desava u nadfunkciji
       update_rec_server_and_dbf( "sifv", _sifv_rec, 1, "CONT" )
 
    NEXT
@@ -588,22 +586,27 @@ FUNCTION update_sifk_na_osnovu_ime_kol_from_global_var( ime_kol, var_prefix, nov
    LOCAL _field_b
    LOCAL _a_dbf_rec
    LOCAL lSql := is_sql_table( Alias() )
+   LOCAL lOk := .T.
+   LOCAL lRet := .F.
 
    _alias := Alias()
-
 
    FOR _i := 1 TO Len( ime_kol )
       IF Left( ime_kol[ _i, 3 ], 6 ) == "SIFK->"
          _field_b :=  MemVarBlock( var_prefix + "SIFK_" + SubStr( ime_kol[ _i, 3 ], 7 ) )
-
          uId := Unicode():New( ( _alias )->id,  lSql )
          IF IzSifk( _alias, SubStr( ime_kol[ _i, 3 ], 7 ), uId ) <> NIL
-            USifk( _alias, SubStr( ImeKol[ _i, 3 ], 7 ), uId, Eval( _field_b ), transaction )
+            lOk := USifk( _alias, SubStr( ImeKol[ _i, 3 ], 7 ), uId, Eval( _field_b ), transaction )
+         ENDIF
+         IF !lOk
+           EXIT
          ENDIF
       ENDIF
    NEXT
 
-   RETURN
+   lRet := lOk
+
+   RETURN lRet
 
 
 // --------------------------------------------

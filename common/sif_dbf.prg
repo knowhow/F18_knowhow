@@ -13,11 +13,7 @@
 
 #include "dbstruct.ch"
 
-// static integer
 STATIC __PSIF_NIVO__ := 0
-
-STATIC _LOG_PROMJENE := .F.
-
 STATIC __A_SIFV__ := { { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL } }
 
 FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aPoredak, bPodvuci, aZabrane, invert, aZabIsp )
@@ -30,7 +26,6 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
    LOCAL cUslovSrch :=  ""
    LOCAL cNazSrch
 
-   // trazenje je po nazivu
    PRIVATE fPoNaz := .F.
    PRIVATE fID_J := .F.
 
@@ -41,11 +36,6 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
    FOR _i := 1 TO Len( aZabIsp )
       aZabIsp[ _i ] := Upper( aZabIsp[ _i ] )
    NEXT
-
-   // provjeri da li treba logirati promjene
-   IF Logirati( "FMK", "SIF", "PROMJENE" )
-      _LOG_PROMJENE := .T.
-   ENDIF
 
    PRIVATE nOrdId
 
@@ -59,20 +49,15 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
    SELECT ( nDbf )
 
    IF USED() .AND. (rddName() ==  "SQLMIX")
-
       PopSifV()
       PopWa()
-
       RETURN p_sifra( nDbf, nNtx, nVisina, nSirina, cNaslov, @cID, dx, dy,  bBlok, aPoredak, bPodvuci, aZabrane, invert, aZabIsp )
    ENDIF
-
-
 
    IF !Used()
       my_use( nDbf, nil, .F. )
    ENDIF
 
-   // setuj match_code polje...
    set_mc_imekol( nDbf )
 
    nOrderSif := IndexOrd()
@@ -83,8 +68,6 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
    sif_seek( @cId, @cIdBK, @cUslovSrch, @cNazSrch, fId_j, nOrdId )
 
    IF dx <> NIL .AND. dx < 0
-      // u slucaju negativne vrijednosti vraca se vrijednost polja
-      // koje je na poziciji ABS(i)
       IF !Found()
          GO BOTTOM
          SKIP  // id na eof, tamo su prazne vrijednosti
@@ -105,8 +88,6 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
          .OR. ( !Found() .AND. cNaslov <> NIL ) ;
          .OR. ( cNaslov <> NIL .AND. Left( cNaslov, 1 ) = "#" )
 
-      // if cID == nil - pregled sifrarnika
-
       lPrviPoziv := .T.
 
       IF Eof()
@@ -114,7 +95,6 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
       ENDIF
 
       IF cId == NIL
-         // idemo bez parametara
          GO TOP
       ENDIF
 
@@ -136,7 +116,6 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
 
    ELSE
 
-      // nisam ni ulazio u objdb
       IF fID_J
          cId := ( nDBF )->id
          __A_SIFV__[ __PSIF_NIVO__, 1 ] := ( nDBF )->ID_J
@@ -146,13 +125,10 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
 
    __A_SIFV__[ __PSIF_NIVO__, 2 ] := RecNo()
 
-   // ispisi naziv
-
    sif_ispisi_naziv( nDbf, dx, dy )
 
    SELECT ( nDbf )
 
-   // vrati order sifranika !!
    ordSetFocus( nOrderSif )
 
    SET FILTER TO
@@ -208,8 +184,8 @@ STATIC FUNCTION sif_set_order( nNTX, nOrdId, fID_j )
 
    RETURN .T.
 
-// ----------------------------------------------------------------------
-// ----------------------------------------------------------------------
+
+
 STATIC FUNCTION sif_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j, nOrdId )
 
    LOCAL _bk := ""
@@ -235,18 +211,13 @@ STATIC FUNCTION sif_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j, nOrdId )
       RETURN
    ENDIF
 
-   // glavni seek
-   // id, barkod
-
    SEEK cId
 
    IF Found()
-      // po id-u
       cId := &( FieldName( 1 ) )
       RETURN
    ENDIF
 
-   // po barkod-u
    IF Len( cId ) > 10
 
       IF !tezinski_barkod( @cId, @_tezina, .F. )
@@ -457,8 +428,9 @@ STATIC FUNCTION PopSifV()
 
    RETURN
 
-// ------------------------------------------------------------
-// -----------------------------------------------------------
+
+
+
 STATIC FUNCTION EdSif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
    LOCAL i
@@ -480,20 +452,16 @@ STATIC FUNCTION EdSif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    PRIVATE aUsl
    PRIVATE aStruct
 
-   // matrica zabrana
    IF aZabrane = nil
       aZabrane := {}
    ENDIF
 
-   // matrica zabrana ispravki polja
    IF aZabIsp = nil
       aZabIsp := {}
    ENDIF
 
    Ch := LastKey()
 
-   // deklarisi privatne varijable sifrarnika
-   // wPrivate
    aStruct := dbStruct()
    SkratiAZaD ( @aStruct )
    FOR i := 1 TO Len( aStruct )
@@ -527,34 +495,30 @@ STATIC FUNCTION EdSif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
       RETURN DE_CONT
    ENDIF
 
-#ifndef TEST
+   #ifndef TEST
 
-   // provjeri pristup opcijama koje mjenjaju podatke
-   IF ( Ch == K_CTRL_N .OR. Ch == K_CTRL_A .OR. Ch == K_F2 .OR. ;
+      IF ( Ch == K_CTRL_N .OR. Ch == K_CTRL_A .OR. Ch == K_F2 .OR. ;
          Ch == K_CTRL_T .OR. Ch == K_F4 .OR. Ch == K_CTRL_F9 .OR. Ch == K_F10 ) .AND. ;
          ( !ImaPravoPristupa( goModul:oDatabase:cName, "SIF", "EDSIF" ) )
 
-      RETURN DE_CONT
+          RETURN DE_CONT
 
-   ENDIF
+      ENDIF
 
-#endif
+   #endif
 
    DO CASE
 
    CASE Ch == K_ENTER
-      // ako sam u sifrarniku a ne u unosu dokumenta
       IF gMeniSif
          RETURN DE_CONT
       ELSE
-         // u unosu sam dokumenta
          lPrviPoziv := .F.
          RETURN DE_ABORT
       ENDIF
 
    CASE Upper( Chr( Ch ) ) == "F"
 
-      // pretraga po MATCH_CODE
       IF m_code_src() == 0
          RETURN DE_CONT
       ELSE
@@ -647,6 +611,7 @@ FUNCTION EditSifItem( Ch, nOrder, aZabIsp )
    LOCAL cMCField
    LOCAL nMCScan
    LOCAL _vars
+   LOCAL cTekuciZapis
 
    PRIVATE nXP
    PRIVATE nYP
@@ -659,10 +624,7 @@ FUNCTION EditSifItem( Ch, nOrder, aZabIsp )
 
    lNovi := .F.
 
-   IF _LOG_PROMJENE == .T.
-      // daj stare vrijednosti
-      cOldDesc := _g_fld_desc( "w" )
-   ENDIF
+   cTekuciZapis := vrati_vrijednosti_polja_sifrarnika_u_string( "w" )
 
    add_match_code( @ImeKol, @Kol )
 
@@ -802,32 +764,13 @@ FUNCTION EditSifItem( Ch, nOrder, aZabIsp )
          EXIT
       ELSE
 
-         // ovo vazi samo za CTRL + A opciju !!!!!
-
          IF LastKey() == K_ESC
             EXIT
          ENDIF
 
-         _vars := get_dbf_global_memvars( "w" )
-         _alias := Lower( Alias() )
-
-         IF !f18_lock_tables( { _alias, "sifv", "sifk" } )
-            log_write( "ERROR: nisam uspio lokovati tabele: " + _alias + ", sifk, sifv", 2 )
+         IF !snimi_promjene_cirkularne_ispravke_sifrarnika()
             EXIT
          ENDIF
-
-         sql_table_update( nil, "BEGIN" )
-
-         // sifarnik
-         update_rec_server_and_dbf( _alias, _vars, 1, "CONT" )
-
-         // sifk/sifv
-         update_sifk_na_osnovu_ime_kol_from_global_var( ImeKol, "w", Ch == K_CTRL_N, "CONT" )
-
-         f18_free_tables( { _alias, "sifv", "sifk" } )
-         sql_table_update( nil, "END" )
-
-         set_global_vars_from_dbf( "w" )
 
          IF LastKey() == K_PGUP
             SKIP -1
@@ -859,72 +802,17 @@ FUNCTION EditSifItem( Ch, nOrder, aZabIsp )
 
    ENDIF
 
-   //
-   // ako je novi zapis napravi APPEND BLANK
-   //
-
    IF lNovi
-
-      // provjeri da li vec ovaj id postoji ?
-      nNSInfo := _chk_sif( "w" )
-
-      IF nNSInfo = 1
-         msgbeep( "Ova sifra vec postoji !" )
-         RETURN 0
-      ELSEIF nNSInfo = -1
-         RETURN 0
-      ENDIF
-
       APPEND BLANK
-
    ENDIF
 
-   //
-   // uzmi mi varijable sa unosne maske
-   //
-
-   _vars := get_dbf_global_memvars( "w" )
-
-   //
-   // lokuj tabele i napravi update zapisa....
-   //
-
-   IF f18_lock_tables( { Lower( Alias() ), "sifv", "sifk" } )
-
-      sql_table_update( nil, "BEGIN" )
-	
-      IF !update_rec_server_and_dbf( Alias(), _vars, 1, "CONT" )
-
-         IF lNovi
-            delete_with_rlock()
-         ENDIF
-
-         f18_free_tables( { Lower( Alias() ), "sifv", "sifk" } )
-         sql_table_update( nil, "ROLLBACK" )
-
-      ELSE
-
-         update_sifk_na_osnovu_ime_kol_from_global_var( ImeKol, "w", lNovi, "CONT" )
-         f18_free_tables( { Lower( Alias() ), "sifv", "sifk" } )
-         sql_table_update( nil, "END" )
-
-      ENDIF
-   ELSE
-
+   IF !snimi_promjene_sifrarnika( lNovi, cTekuciZapis )
       IF lNovi
-         // izbrisi ovaj append koji si dodao....
          delete_with_rlock()
       ENDIF
-
-      MsgBeep( "ne mogu lockovati " + Lower( Alias() ) + " sifk/sifv ?!" )
-
    ENDIF
 
-   // ovo je potrebno radi nekih sifrarnika koji nakon ove opcije opet koriste
-   // globalne memoriske varijable w....
-   set_global_vars_from_dbf( "w" )
-
-   IF Ch == K_F4 .AND. Pitanje( , "Vrati se na predhodni zapis", "D" ) == "D"
+   IF Ch == K_F4 .AND. Pitanje( , "Vrati se na predhodni zapis (D/N) ?", "D" ) == "D"
       GO ( nPrevRecNo )
    ENDIF
 

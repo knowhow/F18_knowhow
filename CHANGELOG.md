@@ -1,3 +1,9 @@
+1.7.120  2014-07-16, vsasa
+
+  - LD, vraćena dva izvještaja koji su prethodno izbačeni
+    - kartica plate za period
+    - specifikacija neto primanja po općinama stanovanja 
+
 1.7.119  2014-07-15, vsasa
 
   - KALK, provjera integriteta cijena kod štampe dokumenta 19

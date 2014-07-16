@@ -88,22 +88,7 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
 
    nStrana := 0
 
-   IF cRazdvoji == "N"
-      bZagl := {|| ;
-         QQOut( "OBRACUN" + iif( lViseObr, IF( Empty( cObracun ), " ' '(SVI)", " '" + cObracun + "'" ), "" ) + Lokal( " PLATE ZA PERIOD" ) + Str( cmjesec, 2 ) + "-" + Str( cmjesec2, 2 ) + "/" + Str( godina, 4 ), " ZA " + Upper( Trim( gTS ) ) + " ", gNFirma ), ;
-         QOut( "RJ:", idrj, ld_rj->naz ), ;
-         QOut( idradn, "-", RADNIK, "Mat.br:", radn->matbr, " STR.SPR:", IDSTRSPR ), ;
-         QOut( Lokal( "Broj knjizice:" ), RADN->brknjiz ), ;
-         QOut( "Vrsta posla:", idvposla, vposla->naz, Lokal( "        U radnom odnosu od " ), radn->datod );
-         }
-   ELSE
-      bZagl := {|| ;
-         QQOut( Lokal( "OBRACUN" ) + iif( lViseObr, iif( Empty( cObracun ), " ' '(SVI)", " '" + cObracun + "'" ), "" ) + Lokal( " PLATE ZA PERIOD" ) + Str( cmjesec, 2 ) + "-" + Str( cmjesec2, 2 ) + "/" + Str( godina, 4 ), " ZA " + Upper( Trim( gTS ) ) + " ", gNFirma ), ;
-         QOut( idradn, "-", RADNIK, "Mat.br:", radn->matbr, " STR.SPR:", IDSTRSPR ), ;
-         QOut( "Broj knjizice:", RADN->brknjiz ), ;
-         QOut( "Vrsta posla:", idvposla, vposla->naz, Lokal( "        U radnom odnosu od " ), radn->datod );
-         }
-   ENDIF
+   bZagl := {|| zaglavlje_izvjestaja() }
 
    SELECT vposla
    hseek ld->idvposla
@@ -324,5 +309,27 @@ STATIC FUNCTION brisi_pomocnu_tabelu()
 
    RETURN
 
+
+STATIC FUNCTION zaglavlje_izvjestaja()
+
+   ?U "OBRAČUN "
+   
+   IF EMPTY( cObracun )
+      ?? "'SVI'"
+   ELSE
+      ?? "'" + cObracun + "'" 
+   ENDIF
+
+   ?? " PLATE ZA PERIOD OD " + Str( cMjesec, 2 ) + " DO " + Str( cMjesec2, 2 )
+   ?? " / " + Str( godina, 4 )
+   ?? " ZA " + Upper( Trim( gTs ) )
+   ?? " " + ALLTRIM( gNFirma )
+   ? "RJ: " + idrj + " " + ALLTRIM( ld_rj->naz )
+   ? idradn + "-" + RADNIK + " Mat.br: " + radn->matbr + " STR.SPR: " + idstrspr
+   ? "Vrsta posla: " + idvposla + "-" + ALLTRIM( vposla->naz )
+   ?? "   U radnom odnosu od: "  + DTOC( radn->datod )
+
+
+   RETURN
 
 

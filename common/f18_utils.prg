@@ -132,7 +132,7 @@ FUNCTION pp( x )
    _tmp := ""
 
    _type := ValType( x )
-
+   
    IF _type == "H"
       _tmp += "(hash): "
       FOR EACH _key in x:Keys
@@ -149,7 +149,7 @@ FUNCTION pp( x )
       RETURN _tmp
    ENDIF
 
-   IF _type $ "CLDN"
+   IF _type $ "CLDNM"
       RETURN hb_ValToStr( x )
    ENDIF
 

@@ -1082,6 +1082,7 @@ FUNCTION sifrarnik_brisi_stavku()
 
    LOCAL _rec_dbf, _rec, _alias
    LOCAL lOk := .T.
+   LOCAL hRec
 
    IF Pitanje( , "Želite li izbrisati ovu stavku (D/N) ?", "D" ) == "N"
       RETURN DE_CONT
@@ -1099,6 +1100,9 @@ FUNCTION sifrarnik_brisi_stavku()
    ENDIF
 
    _rec_dbf := dbf_get_rec()
+
+   hRec := _rec_dbf
+
    lOk := delete_rec_server_and_dbf( _alias, _rec_dbf, 1, "CONT" )
 
    IF lOk .AND. hb_HHasKey( _rec_dbf, "id" )
@@ -1117,12 +1121,13 @@ FUNCTION sifrarnik_brisi_stavku()
       _rec[ "id" ]    := PadR( _alias, 8 )
       _rec[ "idsif" ] := PadR( _rec_dbf[ "id" ], 15 )
       lOk := delete_rec_server_and_dbf( "sifv", _rec, 3, "CONT" )
+
    ENDIF
 
    IF lOk
       f18_free_tables( { Lower( Alias() ) } )
       sql_table_update( nil, "END" )
-      log_write( "F18_DOK_OPER: brisanje stavke iz šifrarnika, stavka " + _rec, 2 )
+      log_write( "F18_DOK_OPER: brisanje stavke iz šifrarnika, stavka " + pp( hRec ), 2 )
    ELSE
       sql_table_update( nil, "ROLLBACK" )
       log_write( "F18_DOK_OPER: greška sa brisanjem stavke iz šifrarnika", 2 )

@@ -1577,10 +1577,10 @@ FUNCTION P_Sifk( cId, dx, dy )
    Kol := {}
    O_SIFK
    O_SIFV
-   ImeKol := { { PadR( "Id", 15 ),      {|| id }, "id"  },;
-      { PadR( "Naz", 25 ),     {|| naz }, "naz" },;
+   ImeKol := { { PadR( "Id", 15 ),      {|| ToStrU(id) }, "id"  },;
+      { PadR( "Naz", 25 ),     {|| ToStrU( naz ) }, "naz" },;
       { PadR( "Sort", 4 ),     {|| sort }, "sort" },;
-      { PadR( "Oznaka", 4 ),   {|| oznaka }, "oznaka" },;
+      { PadR( "Oznaka", 4 ),   {|| ToStrU( oznaka ) }, "oznaka" },;
       { PadR( "Veza", 4 ),     {|| veza }, "veza" },;
       { PadR( "Izvor", 15 ),   {|| izvor }, "izvor" },;
       { PadR( "Uslov", 30 ),   {|| PadR( uslov, 30 ) }, "uslov" },;

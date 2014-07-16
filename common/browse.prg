@@ -271,7 +271,7 @@ STATIC FUNCTION browse_only( params, lIzOBJDB )
 
    // Dodavanje kolona  za stampanje
    FOR k := 1 TO Len( Kol )
-
+      
       i := AScan( Kol, k )
       IF i <> 0
          // TODO: SQL vraca nil .and. (ImeKol[i,2] <> NIL)

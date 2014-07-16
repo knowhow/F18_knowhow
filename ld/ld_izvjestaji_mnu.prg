@@ -82,7 +82,7 @@ STATIC FUNCTION izvjestaji_specifikacije()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. specifikacija uz isplatu plata                 " )
+   AAdd( _opc, "1. specifikacija uz isplatu plata                              " )
    AAdd( _opcexe, {|| ld_specifikacija_plate() } )
    AAdd( _opc, "2. specifikacija za samostalne poduzetnike     " )
    AAdd( _opcexe, {|| ld_specifikacija_plate_samostalni() } )
@@ -94,6 +94,9 @@ STATIC FUNCTION izvjestaji_specifikacije()
    AAdd( _opcexe, {|| ld_specifikacija_po_rj() } )
    AAdd( _opc, "6. specifikacija po rasponima primanja" )
    AAdd( _opcexe, {|| ld_specifikacija_po_rasponima_primanja() } )
+   AAdd( _opc, "7. specifikacija neto primanja radnika po općinama stanovanja " )
+   AAdd( _opcexe, {|| ld_specifikacija_neto_primanja_po_opcinama() } )
+
 
    f18_menu( "spec", .F., _izbor, _opc, _opcexe )
 
@@ -139,8 +142,6 @@ STATIC FUNCTION izvjestaji_ostali()
    AAdd( _opcexe, {|| ld_utrosak_po_sihtaricama() } )
    AAdd( _opc, "2. lista radnika za isplatu toplog obroka" )
    AAdd( _opcexe, {|| ld_lista_isplate_toplog_obroka() } )
-   AAdd( _opc, "3. lista radnika sa neto iznosom po općinama stanovanja " )
-   AAdd( _opcexe, {|| ld_specifikacija_neto_primanja_po_opcinama() } )
 
    f18_menu( "ost", .F., _izbor, _opc, _opcexe )
 

@@ -705,7 +705,7 @@ FUNCTION EditSifItem( Ch, nOrder, aZabIsp, lNovi )
             cPic := ""
 
             IF !Empty( cPom )
-               sif_getlist( cPom, @GetList,  lZabIsp, aZabIsp, lShowPGroup, Ch, @nGet, @i, @nTekRed )
+               sif_dbf_getlist( cPom, @GetList,  lZabIsp, aZabIsp, lShowPGroup, Ch, @nGet, @i, @nTekRed )
                nGet++
             ELSE
                nRed := 1
@@ -843,7 +843,7 @@ STATIC FUNCTION set_w_var( ImeKol, _i, show_grup )
 
 
 
-STATIC FUNCTION sif_getlist( var_name, GetList, lZabIsp, aZabIsp, lShowGrup, Ch, nGet, i, nTekRed )
+FUNCTION sif_dbf_getlist( var_name, GetList, lZabIsp, aZabIsp, lShowGrup, Ch, nGet, i, nTekRed )
 
    LOCAL bWhen, bValid, cPic
    LOCAL nRed, nKolona
@@ -954,46 +954,6 @@ STATIC FUNCTION add_match_code( ImeKol, Kol )
       ENDIF
 
    ENDIF
-
-
-   // --------------------------------------------------
-   // kod sifarnika partnera se mora potvrditi ma
-   // --------------------------------------------------
-
-STATIC FUNCTION _chk_sif( cMarker )
-
-   LOCAL cFName
-   LOCAL xFVal
-   LOCAL cFVal
-   LOCAL cType
-   LOCAL nTArea := Select()
-   LOCAL nTREC := RecNo()
-   LOCAL nRet := 0
-   LOCAL i := 1
-   LOCAL cArea := Alias( nTArea )
-   PRIVATE cF_Seek
-   PRIVATE GetList := {}
-
-   cFName := AllTrim( FIELD( i ) )
-   xFVal := FieldGet( i )
-   cType := ValType( xFVal )
-   cF_Seek := &( cMarker + cFName )
-
-   IF ( cType == "C" ) .AND. ( cArea $ "#PARTN#ROBA#" )
-
-      GO TOP
-      SEEK cF_seek
-
-      IF Found()
-         nRet := 1
-         GO ( nTRec )
-      ENDIF
-
-   ENDIF
-
-   SELECT ( nTArea )
-
-   RETURN nRet
 
 
 // --------------------------------------------------

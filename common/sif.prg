@@ -585,7 +585,7 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
             cPic := ""
 
             IF !Empty( cPom )
-               sif_getlist( cPom, @GetList,  lZabIsp, aZabIsp, lShowPGroup, Ch, @nGet, @i, @nTekRed )
+               sif_sql_getlist( cPom, @GetList,  lZabIsp, aZabIsp, lShowPGroup, Ch, @nGet, @i, @nTekRed )
                nGet++
             ELSE
                nRed := 1
@@ -694,8 +694,11 @@ FUNCTION snimi_promjene_sifrarnika( lNovi, cTekuciZapis )
    LOCAL _rec
    LOCAL cAlias := Alias()
    LOCAL cEditovaniZapis
+   LOCAL lSqlTable 
 
-   _rec := get_dbf_global_memvars( "w", NIL, .T. )
+   lSqlTable := is_sql_table( cAlias )
+
+   _rec := get_dbf_global_memvars( "w", NIL, lSqlTable )
 
    sql_table_update( nil, "BEGIN" )
 
@@ -742,8 +745,11 @@ FUNCTION snimi_promjene_cirkularne_ispravke_sifrarnika()
    LOCAL _vars, _alias
    LOCAL lRet := .F.
    LOCAL lOk := .T.
+   LOCAL lSqlTable
 
-   _vars := get_dbf_global_memvars( "w", NIL, .T. )
+   lSqlTable := is_sql_table( Alias() )
+
+   _vars := get_dbf_global_memvars( "w", NIL, lSqlTable )
    _alias := Lower( Alias() )
 
    sql_table_update( nil, "BEGIN" )
@@ -806,7 +812,7 @@ STATIC FUNCTION set_w_var( ImeKol, _i, show_grup )
 
 
 
-STATIC FUNCTION sif_getlist( var_name, GetList, lZabIsp, aZabIsp, lShowGrup, Ch, nGet, i, nTekRed )
+FUNCTION sif_sql_getlist( var_name, GetList, lZabIsp, aZabIsp, lShowGrup, Ch, nGet, i, nTekRed )
 
    LOCAL bWhen, bValid, cPic
    LOCAL nRed, nKolona

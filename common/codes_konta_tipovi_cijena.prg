@@ -26,7 +26,7 @@ FUNCTION P_KonCij( CId, dx, dy )
 
    O_KONCIJ
 
-   AAdd( ImeKol, { "ID", {|| id }, "id", {|| .T. }, {|| vpsifra( wId ) } } )
+   AAdd( ImeKol, { "ID", {|| id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
    AAdd( ImeKol, { PadC( "Shema", 5 ), {|| PadC( shema, 5 ) }, "shema" } )
    AAdd( ImeKol, { "Tip", {|| naz }, "naz" } )
    AAdd( ImeKol, { "PM", {|| idprodmjes }, "idprodmjes" } )
@@ -100,7 +100,7 @@ FUNCTION P_KonCij2( CId, dx, dy )
    nTArea := Select()
    O_KONCIJ
 
-   AAdd( ImeKol, { "ID", {|| id }, "id", {|| .T. }, {|| vpsifra( wId ) } } )
+   AAdd( ImeKol, { "ID", {|| id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
    AAdd( ImeKol, { PadC( "Shema", 5 ), {|| PadC( shema, 5 ) }, "shema" } )
    AAdd( ImeKol, { "Tip", {|| naz }, "naz" } )
    AAdd( ImeKol, { "PM", {|| idprodmjes }, "idprodmjes" } )

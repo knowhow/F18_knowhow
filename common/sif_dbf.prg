@@ -525,11 +525,21 @@ STATIC FUNCTION EdSif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
          RETURN DE_REFRESH
       ENDIF
 
-   CASE ( Ch == K_CTRL_N .OR. Ch == K_F2 .OR. Ch == K_F4 .OR. Ch == K_CTRL_A )
+   CASE ( Ch == K_CTRL_N .OR. Ch == K_F4 )
 
       Tb:RefreshCurrent()
 
-      IF EditSifItem( Ch, nOrder, aZabIsp ) == 1
+      IF EditSifItem( Ch, nOrder, aZabIsp, .T. ) == 1
+         RETURN DE_REFRESH
+      ENDIF
+
+      RETURN DE_CONT
+
+   CASE ( Ch == K_F2 .OR. Ch == K_CTRL_A )
+
+      Tb:RefreshCurrent()
+
+      IF EditSifItem( Ch, nOrder, aZabIsp, .F. ) == 1
          RETURN DE_REFRESH
       ENDIF
 
@@ -569,10 +579,10 @@ STATIC FUNCTION EdSif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
       RETURN DE_REFRESH
 
    CASE Ch == K_CTRL_T
-      RETURN sif_brisi_stavku()
+      RETURN sifrarnik_brisi_stavku()
 
    CASE Ch == K_CTRL_F9
-      RETURN sif_brisi_sve()
+      RETURN sifrarnik_brisi_sve()
 
    CASE Ch == K_F10
       SifPopup( nOrder )
@@ -591,7 +601,7 @@ STATIC FUNCTION EdSif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
 
 
-FUNCTION EditSifItem( Ch, nOrder, aZabIsp )
+FUNCTION EditSifItem( Ch, nOrder, aZabIsp, lNovi )
 
    LOCAL i
    LOCAL j
@@ -622,8 +632,6 @@ FUNCTION EditSifItem( Ch, nOrder, aZabIsp )
 
    nPrevRecNo := RecNo()
 
-   lNovi := .F.
-
    cTekuciZapis := vrati_vrijednosti_polja_sifrarnika_u_string( "w" )
 
    add_match_code( @ImeKol, @Kol )
@@ -651,14 +659,11 @@ FUNCTION EditSifItem( Ch, nOrder, aZabIsp )
       lNovi := .T.
    ENDIF
 
-
    DO WHILE .T.
 
-      // setuj varijable za tekuci slog
       SetSifVars()
 
       IF Ch == K_CTRL_N
-         // naštimaj default vrijednosti za sifrarnik robe
          set_roba_defaults()
       ENDIF
 
@@ -671,10 +676,7 @@ FUNCTION EditSifItem( Ch, nOrder, aZabIsp )
       NEXT
 
       i := 1
-      // tekuci red u matrici imekol
       FOR _jg := 1 TO 3  // glavna petlja
-
-         // moguca su  tri get ekrana
 
          IF _jg == 1
             Box( NIL, Min( MAXROWS() -7, nTrebaRedova ) + 1, MAXCOLS() -20, .F. )
@@ -685,10 +687,7 @@ FUNCTION EditSifItem( Ch, nOrder, aZabIsp )
          SET CURSOR ON
          PRIVATE Getlist := {}
 
-         // brojac get-ova
          nGet := 1
-
-         // broj redova koji se ne prikazuju (_?_)
          nNestampati := 0
 
          nTekRed := 1
@@ -698,8 +697,6 @@ FUNCTION EditSifItem( Ch, nOrder, aZabIsp )
             lShowPGroup := .F.
 
             IF Empty( ImeKol[ i, 3 ] )
-               // ovdje se kroji matrica varijabli.......
-               // area->nazpolja
                cPom := ""
             ELSE
                cPom := set_w_var( ImeKol, i, @lShowPGroup )
@@ -707,7 +704,6 @@ FUNCTION EditSifItem( Ch, nOrder, aZabIsp )
 
             cPic := ""
 
-            // samo varijable koje mozes direktno mjenjati
             IF !Empty( cPom )
                sif_getlist( cPom, @GetList,  lZabIsp, aZabIsp, lShowPGroup, Ch, @nGet, @i, @nTekRed )
                nGet++
@@ -719,7 +715,6 @@ FUNCTION EditSifItem( Ch, nOrder, aZabIsp )
                   nRed := 0
                ENDIF
 
-               // ne prikazuj nil vrijednosti
                IF Eval( ImeKol[ i, 2 ] ) <> NIL .AND. ToStr( Eval( ImeKol[ i, 2 ] ) ) <> "_?_"
                   IF nKolona = 1
                      ++nTekRed
@@ -734,14 +729,11 @@ FUNCTION EditSifItem( Ch, nOrder, aZabIsp )
 
             i++
 
-            // ! sljedeci slog se stampa u istom redu
             IF ( Len( imeKol ) < i ) .OR. ( nTekRed > Min( MAXROWS() -7, nTrebaRedova ) .AND. !( Len( ImeKol[ i ] ) >= 10 .AND. imekol[ i, 10 ] <> NIL )  )
-               // izadji dosao sam do zadnjeg reda boxa, ili do kraja imekol
                EXIT
             ENDIF
          ENDDO
 
-         // key handleri F8, F9, F5
          SET KEY K_F8 TO NNSifru()
          SET KEY K_F9 TO n_num_sif()
          SET KEY K_F5 TO NNSifru2()
@@ -787,19 +779,15 @@ FUNCTION EditSifItem( Ch, nOrder, aZabIsp )
 
    ENDDO
 
-
    IF Ch == K_CTRL_N .OR. Ch == K_F2
       ordSetFocus( nOrder )
    ENDIF
 
    IF LastKey() == K_ESC
-
       IF lNovi
          GO ( nPrevRecNo )
       ENDIF
-
       RETURN 0
-
    ENDIF
 
    IF lNovi
@@ -1125,11 +1113,11 @@ FUNCTION SifPopup( nOrder )
    PRIVATE Izbor
 
    AAdd( Opc, "1. novi                  " )
-   AAdd( opcexe, {|| EditSifItem( K_CTRL_N, nOrder ) } )
+   AAdd( opcexe, {|| EditSifItem( K_CTRL_N, nOrder, NIL, .T. ) } )
    AAdd( Opc, "2. edit  " )
-   AAdd( opcexe, {|| EditSifItem( K_F2, nOrder ) } )
+   AAdd( opcexe, {|| EditSifItem( K_F2, nOrder, NIL, .F. ) } )
    AAdd( Opc, "3. dupliciraj  " )
-   AAdd( opcexe, {|| EditSifItem( K_F4, nOrder ) } )
+   AAdd( opcexe, {|| EditSifItem( K_F4, nOrder, NIL, .T. ) } )
    AAdd( Opc, "4. <a+R> za sifk polja  " )
    AAdd( opcexe, {|| repl_sifk_item() } )
    AAdd( Opc, "5. copy polje -> sifk polje  " )
@@ -1760,76 +1748,4 @@ FUNCTION SeekBarKod( cId, cIdBk, lNFGR )
 
    RETURN
 
-// -------------------------------
-// -------------------------------
-STATIC FUNCTION sif_brisi_stavku()
 
-   LOCAL _rec_dbf, _rec, _alias
-
-   IF Pitanje( , "Želite li izbrisati ovu stavku ??", "D" ) == "D"
-      PushWa()
-
-      _alias := Alias()
-
-      sql_table_update( nil, "BEGIN" )
-
-      _rec_dbf := dbf_get_rec()
-      delete_rec_server_and_dbf( Alias(), _rec_dbf, 1, "CONT" )
-
-      // ako postoji id polje, pobriši i sifv
-      IF hb_HHasKey( _rec_dbf, "id" )
-
-         SELECT ( F_SIFK )
-         IF !Used()
-            O_SIFK
-         ENDIF
-
-         SELECT ( F_SIFV )
-         IF !Used()
-            O_SIFV
-         ENDIF
-
-         _rec := hb_Hash()
-         _rec[ "id" ]    := PadR( _alias, 8 )
-         _rec[ "idsif" ] := PadR( _rec_dbf[ "id" ], 15 )
-         // id + idsif
-         delete_rec_server_and_dbf( "sifv", _rec, 3, "CONT" )
-      ENDIF
-
-      sql_table_update( nil, "END" )
-
-      PopWa()
-      RETURN DE_REFRESH
-   ELSE
-      RETURN DE_CONT
-   ENDIF
-
-   RETURN DE_REFRESH
-
-// -------------------------------
-// -------------------------------
-STATIC FUNCTION sif_brisi_sve()
-
-   IF Pitanje( , "Želite li sigurno izbrisati SVE zapise ??", "N" ) == "N"
-      RETURN DE_CONT
-   ENDIF
-
-   Beep( 6 )
-
-   nTArea := Select()
-   // logiraj promjenu brisanja stavke
-   IF _LOG_PROMJENE == .T.
-      EventLog( nUser, "FMK", "SIF", "PROMJENE", nil, nil, nil, nil, ;
-         "", "", "", Date(), Date(), "", ;
-         "pokusaj brisanja kompletnog sifrarnika" )
-   ENDIF
-   SELECT ( nTArea )
-
-   IF Pitanje( , "Ponavljam : izbrisati BESPOVRATNO kompletan sifrarnik ??", "N" ) == "D"
-
-      delete_all_dbf_and_server( Alias() )
-      SELECT ( nTArea )
-
-   ENDIF
-
-   RETURN DE_REFRESH

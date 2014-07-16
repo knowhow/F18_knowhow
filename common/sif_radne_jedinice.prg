@@ -28,7 +28,7 @@ nTArea := SELECT()
 
 O_RJ
 
-AADD(ImeKol, { PADR("Id" ,  2),       {|| id },   "id",     {|| .t.}, {|| vpsifra(wId)} })
+AADD(ImeKol, { PADR("Id" ,  2),       {|| id },   "id",     {|| .t.}, {|| sifra_postoji(wId)} })
 AADD(ImeKol, { PADR("Naziv" , 35),    {|| Padr( ToStrU(naz), 35) },  "naz" })
 AADD(ImeKol, { PADR("Tip cij." , 10), {|| tip },    "tip" })
 AADD(ImeKol, { PADR("Konto" , 10),    {|| konto },  "konto" })

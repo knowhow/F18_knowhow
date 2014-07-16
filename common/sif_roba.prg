@@ -32,7 +32,7 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
    PushWa()
    O_ROBA_NOT_USED
 
-   AAdd( ImeKol, { PadC( "ID", 10 ),  {|| id }, "id", {|| .T. }, {|| vpsifra( wId ) } } )
+   AAdd( ImeKol, { PadC( "ID", 10 ),  {|| id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
 
    AAdd( ImeKol, { PadC( "PLU kod", 8 ),  {|| PadR( fisc_plu, 10 ) }, "fisc_plu", {|| gen_plu( @wfisc_plu ), .F. }, {|| .T. } } )
 
@@ -94,7 +94,7 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
    AAdd( ImeKol, { "Tarifa", {|| IdTarifa }, "IdTarifa", {|| .T. }, {|| P_Tarifa( @wIdTarifa ), roba_opis_edit()  }   } )
    AAdd( ImeKol, { "Tip", {|| " " + Tip + " " }, "Tip", {|| .T. }, {|| wTip $ " TUCKVPSXY" },NIL, NIL, NIL, NIL, 27 } )
 
-   AAdd ( ImeKol, { PadC( "BARKOD", 14 ), {|| BARKOD }, "BarKod", {|| .T. }, {|| DodajBK( @wBarkod ), vpsifra( wbarkod, "BARKOD" ) }  } )
+   AAdd ( ImeKol, { PadC( "BARKOD", 14 ), {|| BARKOD }, "BarKod", {|| .T. }, {|| DodajBK( @wBarkod ), sifra_postoji( wbarkod, "BARKOD" ) }  } )
 
    AAdd ( ImeKol, { PadC( "MINK", 10 ), {|| Transform( MINK, "999999.99" ) }, "MINK"   } )
 

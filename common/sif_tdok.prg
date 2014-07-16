@@ -24,7 +24,7 @@ FUNCTION browse_tdok( cId, dx, dy )
    nTArea := Select()
    O_TDOK
 
-   AAdd( ImeKol, { "ID",    {|| PadR( ToStrU( field->id), 2 ) },  "id", {|| .T. }, {|| vpsifra( wId ) } } )
+   AAdd( ImeKol, { "ID",    {|| PadR( ToStrU( field->id), 2 ) },  "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
    AAdd( ImeKol, { "Naziv", {|| PadR( ToStrU( field->naz ), 35 ) }, "naz" } )
 
    FOR i := 1 TO Len( ImeKol )

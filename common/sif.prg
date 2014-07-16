@@ -410,11 +410,21 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
          RETURN DE_REFRESH
       ENDIF
 
-   CASE ( Ch == K_CTRL_N .OR. Ch == K_F2 .OR. Ch == K_F4 .OR. Ch == K_CTRL_A )
+   CASE ( Ch == K_CTRL_N .OR. Ch == K_F4 )
 
       Tb:RefreshCurrent()
 
-      IF edit_sql_sif_item( Ch, cOrderTag, aZabIsp ) == 1
+      IF edit_sql_sif_item( Ch, cOrderTag, aZabIsp, .T. ) == 1
+         RETURN DE_REFRESH
+      ENDIF
+
+      RETURN DE_CONT
+
+   CASE ( Ch == K_F2 .OR. Ch == K_CTRL_A )
+
+      Tb:RefreshCurrent()
+
+      IF edit_sql_sif_item( Ch, cOrderTag, aZabIsp, .F. ) == 1
          RETURN DE_REFRESH
       ENDIF
 
@@ -454,10 +464,10 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
       RETURN DE_REFRESH
 
    CASE Ch == K_CTRL_T
-      RETURN sif_brisi_stavku()
+      RETURN sifrarnik_brisi_stavku()
 
    CASE Ch == K_CTRL_F9
-      RETURN sif_brisi_sve()
+      RETURN sifrarnik_brisi_sve()
 
    CASE Ch == K_F10
       Popup( cOrderTag )
@@ -476,7 +486,7 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
 
 
-STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp )
+STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
 
    LOCAL i
    LOCAL j
@@ -506,8 +516,6 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp )
    PRIVATE aStruct
 
    nPrevRecNo := RecNo()
-
-   lNovi := .F.
 
    cTekuciZapis := vrati_vrijednosti_polja_sifrarnika_u_string( "w" )
 
@@ -773,12 +781,8 @@ STATIC FUNCTION set_w_var( ImeKol, _i, show_grup )
    IF Left( ImeKol[ _i, 3 ], 6 ) != "SIFK->"
 
       _var_name := "w" + ImeKol[ _i, 3 ]
-      // npr WVPC2
-      // ako provjerimo strukturu, onda mozemo vidjeti da trebamo uzeti
-      // varijablu karakteristike("ROBA","V2")
 
    ELSE
-      // ako je SIFK->GRUP, prikazuj status
       IF Alias() == "PARTN" .AND. Right( ImeKol[ _i, 3 ], 4 ) == "GRUP"
          show_grup := .T.
       ENDIF
@@ -788,7 +792,6 @@ STATIC FUNCTION set_w_var( ImeKol, _i, show_grup )
       _tmp := IzSifk( Alias(), SubStr( ImeKol[ _i, 3 ], 7 ) )
 
       IF _tmp == NIL
-         // ne koristi se !!!
          _var_name := ""
       ELSE
          __mvPublic( _var_name )
@@ -864,7 +867,6 @@ STATIC FUNCTION sif_getlist( var_name, GetList, lZabIsp, aZabIsp, lShowGrup, Ch,
    ENDIF
 
    IF "wSifk_" $ var_name
-      // uzmi when valid iz SIFK
 
       IzSifKWV( Alias(), SubStr( var_name, 7 ), @cWhenSifk, @cValidSifk )
 
@@ -886,12 +888,10 @@ STATIC FUNCTION sif_getlist( var_name, GetList, lZabIsp, aZabIsp, lShowGrup, Ch,
 
    @ m_x + nTekRed, m_y + nKolona SAY  IIF( nKolona > 1, "  " + AllTrim( ImeKol[ i, 1 ] ), PadL( AllTrim( ImeKol[ i, 1 ] ), 15 ) )  + " "
 
-   // SQL moze vratiti nil vrijednosti
    if &var_name == NIL
       tmpRec = RecNo()
       GO BOTTOM
       SKIP
-      // EOF record
       &var_name := Eval( ImeKol[ i, 2 ] )
       GO tmpRec
    ENDIF
@@ -912,92 +912,17 @@ STATIC FUNCTION add_match_code( ImeKol, Kol )
 
    LOCAL  _pos, cMCField := Alias()
 
-   // dodaj u matricu match_code ako ne postoji
    IF ( cMCField )->( FieldPos( "MATCH_CODE" ) ) <> 0
 
       _pos := AScan( ImeKol, {| xImeKol| Upper( xImeKol[ 3 ] ) == "MATCH_CODE" } )
 
-      // ako ne postoji dodaj ga...
       IF _pos == 0
-         // dodaj polje u ImeKol
          AAdd( ImeKol, { "MATCH_CODE", {|| match_code }, "match_code" } )
-         // dodaj novu stavku u kol
          AAdd( Kol, Len( ImeKol ) )
       ENDIF
 
    ENDIF
 
-
-
-
-FUNCTION is_sifra_postoji_u_tabeli( xValue, cField, cAlias )
-
-   LOCAL lRet := .F.
-   LOCAL cWhere
-   LOCAL cTable
-   LOCAL cValue, hRec
-
-   IF VALTYPE( xValue ) == "N"
-      cValue := Str( xValue )
-   ELSE
-      cValue := _sql_quote( xValue )
-   ENDIF
-
-   cWhere := cField + " = " + cValue
-
-   hRec := get_a_dbf_rec( cAlias, .T. )
-   IF hRec["temp"]
-      RETURN lRet
-   ENDIF
-
-   cTable := hRec["table"] 
-
-   IF table_count( cTable, cWhere ) > 0
-      lRet := .T.
-   ENDIF
-
-   RETURN lRet
-
-
-
-/*
-   kod sifarnika partnera se mora potvrditi ma
-*/
-
-STATIC FUNCTION _chk_sif( cMarker )
-
-   LOCAL cFName
-   LOCAL xFVal
-   LOCAL cFVal
-   LOCAL cType
-   LOCAL nTArea := Select()
-   LOCAL nTREC := RecNo()
-   LOCAL nRet := 0
-   LOCAL i := 1
-   LOCAL cArea := Alias( nTArea )
-   PRIVATE cF_Seek
-   PRIVATE GetList := {}
-
-   cFName := AllTrim( FIELD( i ) )
-   xFVal := FieldGet( i )
-   cType := ValType( xFVal )
-   cF_Seek := &( cMarker + cFName )
-
-   IF ( cType == "C" ) .AND. ( cArea $ "#PARTN#ROBA#" )
-
-      GO TOP
-      SEEK cF_seek
-
-      IF Found()
-         nRet := 1
-         GO ( nTRec )
-      ENDIF
-
-   ENDIF
-
-   SELECT ( nTArea )
-
-   RETURN nRet
 
 
 /*
@@ -1114,11 +1039,11 @@ STATIC FUNCTION Popup( cOrderTag )
    LOCAL Izbor
 
    AAdd( Opc, "1. novi                  " )
-   AAdd( opcexe, {|| edit_sql_sif_item( K_CTRL_N, cOrderTag ) } )
+   AAdd( opcexe, {|| edit_sql_sif_item( K_CTRL_N, cOrderTag, NIL, .T. ) } )
    AAdd( Opc, "2. edit  " )
-   AAdd( opcexe, {|| edit_sql_sif_item( K_F2, cOrderTag ) } )
+   AAdd( opcexe, {|| edit_sql_sif_item( K_F2, cOrderTag, NIL, .F. ) } )
    AAdd( Opc, "3. dupliciraj  " )
-   AAdd( opcexe, {|| edit_sql_sif_item( K_F4, cOrderTag ) } )
+   AAdd( opcexe, {|| edit_sql_sif_item( K_F4, cOrderTag, NIL, .T. ) } )
    AAdd( Opc, "4. <a+R> za sifk polja  " )
    AAdd( opcexe, {|| repl_sifk_item() } )
    AAdd( Opc, "5. copy polje -> sifk polje  " )
@@ -1152,73 +1077,84 @@ STATIC FUNCTION _fix_usl( xUsl )
 
 
 
-STATIC FUNCTION sif_brisi_stavku()
+
+FUNCTION sifrarnik_brisi_stavku()
 
    LOCAL _rec_dbf, _rec, _alias
+   LOCAL lOk := .T.
 
-   IF Pitanje( , "Želite li izbrisati ovu stavku ??", "D" ) == "D"
+   IF Pitanje( , "Želite li izbrisati ovu stavku (D/N) ?", "D" ) == "N"
+      RETURN DE_CONT
+   ENDIF
 
-      _alias := Alias()
-      PushWa()
+   _alias := Alias()
 
-      sql_table_update( nil, "BEGIN" )
+   PushWa()
 
-      _rec_dbf := dbf_get_rec()
-      delete_rec_server_and_dbf( _alias, _rec_dbf, 1, "CONT" )
+   sql_table_update( nil, "BEGIN" )
+   IF !f18_lock_table( { Lower( Alias() ) }, .T. )
+      sql_table_update( nil, "END" )
+      MsgBeep( "Ne mogu zaključati tabelu " + Alias() + "!#Prekidam operaciju." )
+      RETURN DE_CONT
+   ENDIF
 
-      // ako postoji id polje, pobriši i sifv
-      IF hb_HHasKey( _rec_dbf, "id" )
+   _rec_dbf := dbf_get_rec()
+   lOk := delete_rec_server_and_dbf( _alias, _rec_dbf, 1, "CONT" )
 
-         SELECT ( F_SIFK )
-         IF !Used()
-            O_SIFK
-         ENDIF
+   IF lOk .AND. hb_HHasKey( _rec_dbf, "id" )
 
-         SELECT ( F_SIFV )
-         IF !Used()
-            O_SIFV
-         ENDIF
-
-         _rec := hb_Hash()
-         _rec[ "id" ]    := PadR( _alias, 8 )
-         _rec[ "idsif" ] := PadR( _rec_dbf[ "id" ], 15 )
-         // id + idsif
-         delete_rec_server_and_dbf( "sifv", _rec, 3, "CONT" )
+      SELECT ( F_SIFK )
+      IF !Used()
+         O_SIFK
       ENDIF
 
-      sql_table_update( nil, "END" )
+      SELECT ( F_SIFV )
+      IF !Used()
+         O_SIFV
+      ENDIF
 
-      PopWa()
+      _rec := hb_Hash()
+      _rec[ "id" ]    := PadR( _alias, 8 )
+      _rec[ "idsif" ] := PadR( _rec_dbf[ "id" ], 15 )
+      lOk := delete_rec_server_and_dbf( "sifv", _rec, 3, "CONT" )
+   ENDIF
+
+   IF lOk
+      f18_free_tables( { Lower( Alias() ) } )
+      sql_table_update( nil, "END" )
+      log_write( "F18_DOK_OPER: brisanje stavke iz šifrarnika, stavka " + _rec, 2 )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+      log_write( "F18_DOK_OPER: greška sa brisanjem stavke iz šifrarnika", 2 )
+   ENDIF
+
+   PopWa()
+
+   IF lOk
       RETURN DE_REFRESH
    ELSE
       RETURN DE_CONT
    ENDIF
 
-   RETURN DE_REFRESH
 
 
+FUNCTION sifrarnik_brisi_sve()
 
-STATIC FUNCTION sif_brisi_sve()
+   PushWa()
 
-   IF Pitanje( , "Želite li sigurno izbrisati SVE zapise ??", "N" ) == "N"
+   IF Pitanje( , "Želite li sigurno izbrisati SVE zapise (D/N) ?", "N" ) == "N"
       RETURN DE_CONT
    ENDIF
 
    Beep( 6 )
 
-   nTArea := Select()
-   // logiraj promjenu brisanja stavke
-   IF _LOG_PROMJENE == .T.
-      EventLog( nUser, "FMK", "SIF", "PROMJENE", nil, nil, nil, nil, ;
-         "", "", "", Date(), Date(), "", ;
-         "pokusaj brisanja kompletnog sifrarnika" )
-   ENDIF
-   SELECT ( nTArea )
+   IF Pitanje( , "Ponavljam : izbrisati BESPOVRATNO kompletan šifrarnik (D/N) ?", "N" ) == "D"
 
-   IF Pitanje( , "Ponavljam : izbrisati BESPOVRATNO kompletan sifrarnik ??", "N" ) == "D"
+      IF delete_all_dbf_and_server( Alias() )
+         log_write( "F18_DOK_OPER: brisanje kompletnog šifrarnika " + Alias(), 2 )
+      ENDIF
 
-      delete_all_dbf_and_server( Alias() )
-      SELECT ( nTArea )
+      PopWa()
 
    ENDIF
 
@@ -1244,11 +1180,8 @@ STATIC FUNCTION PopSifV()
    RETURN
 
 
-// ---------------------------------------------------------------------
-// VpSifra(wId)
-// Stroga kontrola ID-a sifre pri unosu nove ili ispravci postojece!
-// wId - ID koji se provjerava
-// --------------------------------------------------------------------
+
+
 FUNCTION sifra_postoji( wId, cTag )
 
    LOCAL nRec := RecNo()
@@ -1263,15 +1196,14 @@ FUNCTION sifra_postoji( wId, cTag )
       _msg := "alias: " + Alias() + ", tag ne postoji :" + cTag
       log_write( _msg )
       MsgBeep( _msg )
-      QUIT_1
+      RETURN nRet
    ENDIF
 
-   // ako nije tag = ID, dozvoli i dupli unos, moze biti barkod polje
    IF cTag <> "ID" .AND. Empty( wId )
       RETURN nRet
    ENDIF
 
-   cUpozorenje := "Vrijednost polja " + cTag + " vec postoji !!!"
+   cUpozorenje := "Vrijednost polja " + cTag + " već postoji !"
 
    PushWa()
 
@@ -1284,12 +1216,10 @@ FUNCTION sifra_postoji( wId, cTag )
       nRet := .F.
 
    ELSEIF ( gSKSif == "D" .AND. Found() )
-      // nasao na ispravci ili dupliciranju
       IF nRec <> RecNo()
          MsgBeep( cUpozorenje )
          nRet := .F.
       ELSE
-         // bio isti zapis, idi na drugi
          SKIP 1
          IF ( !Eof() .AND. wId == id )
             MsgBeep( cUpozorenje )

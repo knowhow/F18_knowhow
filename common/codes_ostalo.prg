@@ -37,7 +37,7 @@ PRIVATE ImeKol, Kol:={}
 
 O_VRSTEP
 
-ImeKol:={ { "ID ",             {|| id }                       ,  "id"  , {|| .t.}, {|| vpsifra(wId)}      },;
+ImeKol:={ { "ID ",             {|| id }                       ,  "id"  , {|| .t.}, {|| sifra_postoji(wId)}      },;
           { PADC("Naziv", 20), {|| Padr( ToStrU( naz ), 20 ) },  "naz" };
         }
 

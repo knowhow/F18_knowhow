@@ -25,7 +25,7 @@ FUNCTION P_Konto( cId, dx, dy )
    PushWa()
    O_KONTO_NOT_USED
 
-   AAdd( ImeKol, { PadC( "ID", 7 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wId ) } } )
+   AAdd( ImeKol, { PadC( "ID", 7 ), {|| id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
    AAdd( ImeKol, { "Naziv", {|| naz }, "naz" } )
 
    FOR i := 1 TO Len( ImeKol )

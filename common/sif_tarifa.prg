@@ -24,7 +24,7 @@ FUNCTION P_Tarifa( cid, dx, dy )
    PushWa()
    O_TARIFA
 
-   AAdd( ImeKol, { "ID", {|| id }, "id", {|| .T. }, {|| vpsifra( wId ) }  } )
+   AAdd( ImeKol, { "ID", {|| id }, "id", {|| .T. }, {|| sifra_postoji( wId ) }  } )
    AAdd( ImeKol, { PadC( "Naziv", 35 ), {|| PadR( ToStrU( naz ), 35 ) }, "naz" } )
    AAdd( ImeKol,  { "PDV ", {|| opp },  "opp", NIL, NIL, NIL, "999.99" } )
 

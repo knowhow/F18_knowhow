@@ -31,7 +31,7 @@ FUNCTION P_Ops( cId, dx, dy )
    ImeKol := {}
    Kol := {}
 
-   AAdd( ImeKol, { PadR( "Id", 4 ),  {|| PadrU( field->id, 4 ) }, "id", {|| .T. }, {|| vpsifra( wid ) } } )
+   AAdd( ImeKol, { PadR( "Id", 4 ),  {|| PadrU( field->id, 4 ) }, "id", {|| .T. }, {|| sifra_postoji( wid ) } } )
    AAdd( ImeKol, { PadR( "IDJ", 3 ), {|| idj }, "idj" } )
    AAdd( ImeKol, { PadR( "Kan", 3 ), {|| idkan }, "idkan" } )
    AAdd( ImeKol, { PadR( "N0", 3 ),  {|| idN0 }, "idN0" } )
@@ -65,7 +65,7 @@ FUNCTION P_Banke( cId, dx, dy )
    O_BANKE
 
    ImeKol := {}
-   AAdd( ImeKol, { PadR( "Id", 2 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wId ) } } )
+   AAdd( ImeKol, { PadR( "Id", 2 ), {|| id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
    AAdd( ImeKol, { PadR( "Naziv", 35 ), {|| PadR( ToStrU( naz ), 35 ) }, "naz" } )
    AAdd( ImeKol, { "Mjesto", {|| mjesto }, "mjesto" } )
    AAdd( ImeKol, { "Adresa", {|| adresa }, "adresa" } )

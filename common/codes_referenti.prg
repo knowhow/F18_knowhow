@@ -28,7 +28,7 @@ O_REFER
 ImeKol:={}
 Kol:={}
 
-AADD(ImeKol, { PADR("Id", 2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} })
+AADD(ImeKol, { PADR("Id", 2), {|| id}, "id", {|| .t.}, {|| sifra_postoji(wid)} })
 AADD(ImeKol, {PADR("idops", 5), {|| idops}, "idops", {|| .t.}, {|| p_ops(widops)} })
 AADD(ImeKol, {PADR("Naziv", 40), {|| naz}, "naz"})
 

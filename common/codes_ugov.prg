@@ -79,7 +79,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
    aImeKol := {}
    aKol := {}
 
-   AAdd( aImeKol, { "Ugovor", {|| PadR( Trim( id ) + "/" + Trim( IdPartner ) + ":" + g_part_name( IdPartner ), 34 ) }, "Idpartner", {|| vpsifra( wid ), .T. }, {|| P_Firma( @wIdPartner ) } } )
+   AAdd( aImeKol, { "Ugovor", {|| PadR( Trim( id ) + "/" + Trim( IdPartner ) + ":" + g_part_name( IdPartner ), 34 ) }, "Idpartner", {|| sifra_postoji( wid ), .T. }, {|| P_Firma( @wIdPartner ) } } )
 
    AAdd( aImeKol, { "Opis", {|| PadR( Trim( naz ) + ": " + vrati_opis_ugovora( id ), 30 )  }, "naz" } )
    AAdd( aImeKol, { "DatumOd", {|| DatOd }, "DatOd" } )
@@ -935,7 +935,7 @@ FUNCTION OsvjeziPrikUg( lWhen, lNew )
       cPom := TempIni( 'Fakt_Ugovori_Novi', 'Partner', '_NIL_', "WRITE" )
    ENDIF
 
-   @ m_x + 1, m_y + 1 SAY "Ugovor broj    :" GET wid WHEN lWhen VALID !lWhen .OR. !Empty( wid ) .AND. VPSifra( wid )
+   @ m_x + 1, m_y + 1 SAY "Ugovor broj    :" GET wid WHEN lWhen VALID !lWhen .OR. !Empty( wid ) .AND. sifra_postoji( wid )
    @ m_x + 1, m_y + 30 SAY "Opis ugovora   :" GET wnaz WHEN lWhen
    @ m_x + 2, m_y + 1 SAY "PARTNER        :" GET widpartner ;
       WHEN lWhen ;

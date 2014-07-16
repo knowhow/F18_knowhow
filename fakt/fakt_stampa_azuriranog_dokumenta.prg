@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,107 +12,109 @@
 
 #include "fakt.ch"
 
-function fakt_stampa_azuriranog()
-private cIdFirma, cIdTipDok, cBrDok
 
-cIdFirma:=gFirma
-cIdTipDok:="10"
-cBrdok:=space(8)
+FUNCTION fakt_stampa_azuriranog()
 
-Box("", 2, 35)
-        @ m_x+1, m_y+2 SAY "Dokument:"
-        @ m_x+2, m_y+2 SAY " RJ-tip-broj:" GET cIdFirma
-        @ m_x+2, col()+1 SAY "-" GET cIdTipDok
-        @ m_x+2, col()+1 SAY "-" GET cBrDok
-        read
-BoxC()
+   PRIVATE cIdFirma, cIdTipDok, cBrDok
 
-if LASTKEY()==K_ESC
-	return
-endif
+   cIdFirma := gFirma
+   cIdTipDok := "10"
+   cBrdok := Space( 8 )
 
-my_close_all_dbf()
+   Box( "", 2, 35 )
+   @ m_x + 1, m_y + 2 SAY "Dokument:"
+   @ m_x + 2, m_y + 2 SAY " RJ-tip-broj:" GET cIdFirma
+   @ m_x + 2, Col() + 1 SAY "-" GET cIdTipDok
+   @ m_x + 2, Col() + 1 SAY "-" GET cBrDok
+   READ
+   BoxC()
 
-StampTXT(cIdFirma, cIdTipDok, cBrDok)
+   IF LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-select F_FAKT_PRIPR
-if USED()
-    use
-endif
+   my_close_all_dbf()
 
-return
+   StampTXT( cIdFirma, cIdTipDok, cBrDok )
+
+   SELECT F_FAKT_PRIPR
+   IF Used()
+      USE
+   ENDIF
+
+   RETURN
 
 
-// Stampa azuriranih faktura od broja do broja
-function fakt_stampa_azuriranog_period(cIdFirma, cIdTipDok, cBrOd, cBrDo)
-local lDirekt := .f.
-local cBatch := "N"
+FUNCTION fakt_stampa_azuriranog_period( cIdFirma, cIdTipDok, cBrOd, cBrDo )
 
-if cIdFirma <> nil
-	lDirekt := .t.
-endif
+   LOCAL lDirekt := .F.
+   LOCAL cBatch := "N"
 
-if !lDirekt
+   IF cIdFirma <> nil
+      lDirekt := .T.
+   ENDIF
+
+   IF !lDirekt
 	
-	cIdFirma:=gFirma
-	cIdTipDok:="10"
-	cBrOd:=space(8)
-	cBrDo:=space(8)
-	cBatch := "D"
+      cIdFirma := gFirma
+      cIdTipDok := "10"
+      cBrOd := Space( 8 )
+      cBrDo := Space( 8 )
+      cBatch := "D"
 
-	Box("", 5, 35)
-        @ m_x+1, m_y+2 SAY "Dokument:"
-        @ m_x+2, m_y+2 SAY " RJ-tip:" GET cIdFirma
-        @ m_x+2, col()+1 SAY "-" GET cIdTipDok
-        @ m_x+3, m_y+2 SAY "Brojevi:" 
-	@ m_x+4, m_y+3 SAY "od" GET cBrOd VALID !EMPTY(cBrOd)
-	@ m_x+4, col()+1 SAY "do" GET cBrDo VALID !EMPTY(cBrDo)
-	@ m_x+5, m_y+2 SAY "batch rezim ?" GET cBatch VALID cBatch $ "DN" ;
-						PICT "@!"
-        
-	read
-	BoxC()
+      Box( "", 5, 35 )
+      @ m_x + 1, m_y + 2 SAY "Dokument:"
+      @ m_x + 2, m_y + 2 SAY " RJ-tip:" GET cIdFirma
+      @ m_x + 2, Col() + 1 SAY "-" GET cIdTipDok
+      @ m_x + 3, m_y + 2 SAY "Brojevi:"
+      @ m_x + 4, m_y + 3 SAY "od" GET cBrOd VALID !Empty( cBrOd )
+      @ m_x + 4, Col() + 1 SAY "do" GET cBrDo VALID !Empty( cBrDo )
+      @ m_x + 5, m_y + 2 SAY "batch rezim ?" GET cBatch VALID cBatch $ "DN" ;
+         PICT "@!"
 
-	if LASTKEY()==K_ESC
-		return
-	endif
-endif
+      READ
+      BoxC()
 
-my_close_all_dbf()
-O_FAKT_DOKS
-set order to tag "1"
-hseek cIdFirma + cIdTipDok
+      IF LastKey() == K_ESC
+         RETURN
+      ENDIF
+   ENDIF
 
-if Found()
-	do while !EOF() .and. fakt_doks->idfirma = cIdFirma .and. fakt_doks->idtipdok = cIdTipDok
-		nTRec := RecNo()
+   my_close_all_dbf()
+
+   O_FAKT_DOKS
+
+   SET ORDER TO TAG "1"
+   hseek cIdFirma + cIdTipDok
+
+   IF Found()
+      DO WHILE !Eof() .AND. fakt_doks->idfirma = cIdFirma .AND. fakt_doks->idtipdok = cIdTipDok
+         nTRec := RecNo()
 		
-		if ALLTRIM(fakt_doks->brdok) >= ALLTRIM(cBrOd) .and. ALLTRIM(fakt_doks->brdok) <= ALLTRIM(cBrDo) 
+         IF AllTrim( fakt_doks->brdok ) >= AllTrim( cBrOd ) .AND. AllTrim( fakt_doks->brdok ) <= AllTrim( cBrDo )
 			
-			if cBatch == "D"
-				cDirPom := gcDirekt
-				gcDirekt := "B"
-				// prebaci na direkt stampu
-			endif
+            IF cBatch == "D"
+               cDirPom := gcDirekt
+               gcDirekt := "B"
+            ENDIF
 			
-			StampTXT(fakt_doks->idfirma,fakt_doks->idtipdok,fakt_doks->brdok)
+            StampTXT( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok )
 			
-			if cBatch == "D"
-				gcDirekt := cDirPom
-			endif
+            IF cBatch == "D"
+               gcDirekt := cDirPom
+            ENDIF
 			
-		endif
+         ENDIF
 		
-		select fakt_doks
-		go (nTRec)
-		skip
-	enddo
-else
-	MsgBeep("Trazeni tip dokumenta ne postoji!")
-endif
+         SELECT fakt_doks
+         GO ( nTRec )
+         SKIP
+      ENDDO
+   ELSE
+      MsgBeep( "Trazeni tip dokumenta ne postoji!" )
+   ENDIF
 
-select fakt_doks
-use
-return
+   SELECT fakt_doks
+   USE
 
-
+   RETURN

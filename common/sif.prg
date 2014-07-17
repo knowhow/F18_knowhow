@@ -543,7 +543,7 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
       set_sif_vars()
 
       IF Ch == K_CTRL_N
-         set_roba_defaults()
+         sifarnik_set_roba_defaults()
       ENDIF
 
       nTrebaredova := Len( ImeKol )
@@ -976,40 +976,6 @@ FUNCTION vrati_vrijednosti_polja_sifarnika_u_string( cMarker )
 
 
 
-// ----------------------------------------------------
-// uporedjuje liste promjena na sifri u sifrarniku
-// ----------------------------------------------------
-STATIC FUNCTION _g_fld_changes( cOld, cNew )
-
-   LOCAL cChanges := "nema promjena - samo prolaz sa F2"
-   LOCAL aOld
-   LOCAL aNew
-   LOCAL cTmp := ""
-
-   // stara matrica
-   aOld := TokToNiz( cOld, "#" )
-   // nova matrica
-   aNew := TokToNiz( cNew, "#" )
-
-   // kao osnovnu referencu uzmi novu matricu
-   FOR i := 1 TO Len( aNew )
-
-      cVOld := AllTrim( aOld[ i ] )
-      cVNew := AllTrim( aNew[ i ] )
-      IF cVNew == cVOld
-         // do nothing....
-      ELSE
-         cTmp += "nova " + cVNew + " stara " + cVOld + ","
-      ENDIF
-   NEXT
-
-   IF !Empty( cTmp )
-      cChanges := cTmp
-   ENDIF
-
-   RETURN cChanges
-
-
 
 STATIC FUNCTION set_sif_vars()
 
@@ -1031,10 +997,7 @@ STATIC FUNCTION set_sif_vars()
    RETURN
 
 
-// --------------------------------------------------------
-// setuje default vrijednosti tekuceg sloga za sif.roba
-// --------------------------------------------------------
-STATIC FUNCTION set_roba_defaults()
+FUNCTION sifarnik_set_roba_defaults()
 
    IF Alias() <> "ROBA"
       RETURN

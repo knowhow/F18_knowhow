@@ -708,6 +708,12 @@ FUNCTION snimi_promjene_sifrarnika( lNovi, cTekuciZapis )
       RETURN lRet
    ENDIF
 
+   IF lNovi .AND. is_sifra_postoji_u_sifrarniku( _rec )
+      sql_table_update( nil, "END" )
+      Msgbeep( "Šifra koju želite dodati već postoji u šifrarniku !" )
+      RETURN lRet
+   ENDIF
+
    lOk := update_rec_server_and_dbf( cAlias, _rec, 1, "CONT" )
 
    IF lOk
@@ -1245,5 +1251,81 @@ FUNCTION sifra_postoji( wId, cTag )
    PopWa()
 
    RETURN nRet
+
+
+
+/*
+   Opis: funkcija ispituje da li šifra postoji na serveru
+ */
+
+FUNCTION is_sifra_postoji_u_sifrarniku( hTekuciRec )
+
+   LOCAL lRet := .F.
+   LOCAL cAlias := Alias()
+   LOCAL hTblRec := get_a_dbf_rec( cAlias, .T. ) 
+   LOCAL cTable, cWhere
+
+   IF ValType( hTblRec ) <> "H"
+      RETURN lRet
+   ENDIF
+
+   IF hTblRec["temp"]
+      RETURN lRet
+   ENDIF
+
+   cTable := hTblRec["table"]
+   IF LEFT( cTable, 4 ) <> "fmk."
+      cTable := "fmk." + cTable
+   ENDIF
+ 
+   cWhere := napravi_where_uslov_na_osnovu_hash_matrica( hTblRec, hTekuciRec )
+
+   IF EMPTY( cWhere )
+      RETURN lRet
+   ENDIF
+
+   IF table_count( cTable, cWhere ) > 0
+      lRet := .T.
+   ENDIF
+
+   RETURN lRet
+
+
+
+STATIC FUNCTION napravi_where_uslov_na_osnovu_hash_matrica( hTblRec, hRec )
+
+   LOCAL cSqlFields, aDbfFields, i, aTmp 
+   LOCAL cWhere := ""
+   LOCAL cTmp := ""
+
+   cSqlFields := hTblRec["algoritam"][1]["sql_in"]
+   aDbfFields := hTblRec["algoritam"][1]["dbf_key_fields"]
+ 
+   IF cSqlFields == NIL .OR. EMPTY( cSqlFields )
+      RETURN cWhere
+   ENDIF
+
+   IF aDbfFields == NIL .OR. LEN( aDbfFields ) == 0
+      RETURN cWhere
+   ENDIF
+
+   FOR i := 1 TO LEN( aDbfFields )
+      IF ValType( aDbfFields[i] ) == "A"
+         aTmp := aDbfFields[i]
+         cTmp += Str( hRec[ aTmp[1] ], aTmp[2], 0 )
+      ELSE
+         cTmp += hRec[ aDbfFields[i] ] 
+      ENDIF
+   NEXT
+
+   IF EMPTY( cTmp )
+      RETURN cWhere
+   ENDIF
+
+   cWhere := cSqlFields
+   cWhere += " = "
+   cWhere += _sql_quote( cTmp ) 
+
+   RETURN cWhere
 
 

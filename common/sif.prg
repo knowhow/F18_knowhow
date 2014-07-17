@@ -710,7 +710,7 @@ FUNCTION snimi_promjene_sifrarnika( lNovi, cTekuciZapis )
 
    IF lNovi .AND. is_sifra_postoji_u_sifrarniku( _rec )
       sql_table_update( nil, "END" )
-      Msgbeep( "Šifra već postoji u šifrarniku !" )
+      Msgbeep( "Šifra koju želite dodati već postoji u šifrarniku !" )
       RETURN lRet
    ENDIF
 

@@ -664,7 +664,7 @@ FUNCTION EditSifItem( Ch, nOrder, aZabIsp, lNovi )
       SetSifVars()
 
       IF Ch == K_CTRL_N
-         set_roba_defaults()
+         sifarnik_set_roba_defaults()
       ENDIF
 
       nTrebaredova := Len( ImeKol )
@@ -956,78 +956,7 @@ STATIC FUNCTION add_match_code( ImeKol, Kol )
    ENDIF
 
 
-// --------------------------------------------------
-// vraca naziv polja + vrijednost za tekuci alias
-// cMarker = "w" ako je Scatter("w")
-// --------------------------------------------------
-STATIC FUNCTION _g_fld_desc( cMarker )
 
-   LOCAL cRet := ""
-   LOCAL i
-   LOCAL cFName
-   LOCAL xFVal
-   LOCAL cFVal
-   LOCAL cType
-
-   FOR i := 1 TO FCount()
-
-      cFName := AllTrim( FIELD( i ) )
-
-      xFVal := FieldGet( i )
-
-      cType := ValType( xFVal )
-
-      IF cType == "C"
-         // string
-         cFVal := AllTrim( xFVal )
-      ELSEIF cType == "N"
-         // numeric
-         cFVal := AllTrim( Str( xFVal, 12, 2 ) )
-      ELSEIF cType == "D"
-         // date
-         cFVal := DToC( xFVal )
-      ENDIF
-
-      cRet += cFName + "=" + cFVal + "#"
-   NEXT
-
-   RETURN cRet
-
-// ----------------------------------------------------
-// uporedjuje liste promjena na sifri u sifarniku
-// ----------------------------------------------------
-STATIC FUNCTION _g_fld_changes( cOld, cNew )
-
-   LOCAL cChanges := "nema promjena - samo prolaz sa F2"
-   LOCAL aOld
-   LOCAL aNew
-   LOCAL cTmp := ""
-
-   // stara matrica
-   aOld := TokToNiz( cOld, "#" )
-   // nova matrica
-   aNew := TokToNiz( cNew, "#" )
-
-   // kao osnovnu referencu uzmi novu matricu
-   FOR i := 1 TO Len( aNew )
-
-      cVOld := AllTrim( aOld[ i ] )
-      cVNew := AllTrim( aNew[ i ] )
-      IF cVNew == cVOld
-         // do nothing....
-      ELSE
-         cTmp += "nova " + cVNew + " stara " + cVOld + ","
-      ENDIF
-   NEXT
-
-   IF !Empty( cTmp )
-      cChanges := cTmp
-   ENDIF
-
-   RETURN cChanges
-
-// -----------------------
-// -----------------------
 FUNCTION SetSifVars()
 
    LOCAL _i, _struct
@@ -1044,21 +973,6 @@ FUNCTION SetSifVars()
 
       &cVar := &cImeP
    NEXT
-
-   RETURN
-
-
-// --------------------------------------------------------
-// setuje default vrijednosti tekuceg sloga za sif.roba
-// --------------------------------------------------------
-STATIC FUNCTION set_roba_defaults()
-
-   IF Alias() <> "ROBA"
-      RETURN
-   ENDIF
-
-   // set tarifa uvijek PDV17
-   widtarifa := PadR( "PDV17", 6 )
 
    RETURN
 
@@ -1338,80 +1252,12 @@ FUNCTION NNSifru()
 
 
 /*
-
-   vpsifra - validacija sifre 
-
-   Usage:
-   
-   1) vpsifra( wId ) => pretraga po ID-u i upozorenje ako postoji šifra
-   2) vpsifra( wId, "BARKOD" )  => pretraga po barkod indeksu
-   3) kao kodni blok u browse objektu: 
-      AAdd( ImeKol, { "ID", {|| id }, "id", {|| .T. }, {|| vpsifra( wId ) } } )
- 
-   Uslovi korištenja:
-
-   - prije poziva mora biti odabrana tabela
-   - Ako se koristi unutar browse objekta onda prima i privatnu varijablu 
-     Ch (posljednja tipka)
-
-   Return:
-
-   - .T. => wId je validan, NE postoji dupla sifra
-
+   Opis: ovo je wrapper funkcija koja koristi funkciju sifra_postoji()
 */
 
 FUNCTION VpSifra( wId, cTag )
+   RETURN sifra_postoji( wId, cTag )
 
-   LOCAL nRec := RecNo()
-   LOCAL nRet := .T.
-   LOCAL cUpozorenje
-
-   IF cTag == NIL
-      cTag := "ID"
-   ENDIF
-
-   IF index_tag_num( cTag ) == 0
-      _msg := "alias: " + Alias() + ", tag ne postoji :" + cTag
-      log_write( _msg )
-      MsgBeep( _msg )
-      QUIT_1
-   ENDIF
-
-   // ako nije tag = ID, dozvoli i dupli unos, moze biti barkod polje
-   IF cTag <> "ID" .AND. Empty( wId )
-      RETURN nRet
-   ENDIF
-
-   cUpozorenje := "Vrijednost polja " + cTag + " vec postoji !!!"
-
-   PushWa()
-
-   SET ORDER TO TAG ( cTag )
-   SEEK wId
-
-   IF ( Found() .AND. ( Ch == K_CTRL_N .OR. Ch == K_F4 ) )
-
-      MsgBeep( cUpozorenje )
-      nRet := .F.
-
-   ELSEIF ( gSKSif == "D" .AND. Found() )
-      // nasao na ispravci ili dupliciranju
-      IF nRec <> RecNo()
-         MsgBeep( cUpozorenje )
-         nRet := .F.
-      ELSE
-         // bio isti zapis, idi na drugi
-         SKIP 1
-         IF ( !Eof() .AND. wId == id )
-            MsgBeep( cUpozorenje )
-            nRet := .F.
-         ENDIF
-      ENDIF
-   ENDIF
-
-   PopWa()
-
-   RETURN nRet
 
 
 
@@ -1454,8 +1300,6 @@ FUNCTION VpNaziv( wNaziv )
    RETURN nRet
 
 
-// ---------------------------------
-// ---------------------------------
 FUNCTION ImaSlovo( cSlova, cString )
 
    LOCAL i
@@ -1468,8 +1312,8 @@ FUNCTION ImaSlovo( cSlova, cString )
 
    RETURN .F.
 
-// ------------------------------
-// ------------------------------
+
+
 FUNCTION UslovSif()
 
    LOCAL aStruct := dbStruct()
@@ -1604,8 +1448,8 @@ FUNCTION P_Sifk( cId, dx, dy )
 
    RETURN PostojiSifra( F_SIFK, 1, MAXROWS() -15, MAXCOLS() -15, "sifk - Karakteristike", @cId, dx, dy )
 
-// nadji novu sifru - radi na pritisak F5 pri unosu
-// nove sifre
+
+
 FUNCTION NNSifru2()
 
    LOCAL cPom

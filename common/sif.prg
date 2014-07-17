@@ -438,7 +438,7 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
          RETURN DE_CONT
       ENDIF
 
-      Izlaz( "Pregled: " + AllTrim( cNaslov ) + " na dan " + DToC( Date() ) + " g.", "sifrarnik" )
+      Izlaz( "Pregled: " + AllTrim( cNaslov ) + " na dan " + DToC( Date() ) + " g.", "sifarnik" )
       PopWa()
 
       RETURN DE_CONT
@@ -464,10 +464,10 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
       RETURN DE_REFRESH
 
    CASE Ch == K_CTRL_T
-      RETURN sifrarnik_brisi_stavku()
+      RETURN sifarnik_brisi_stavku()
 
    CASE Ch == K_CTRL_F9
-      RETURN sifrarnik_brisi_sve()
+      RETURN sifarnik_brisi_sve()
 
    CASE Ch == K_F10
       Popup( cOrderTag )
@@ -517,7 +517,7 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
 
    nPrevRecNo := RecNo()
 
-   cTekuciZapis := vrati_vrijednosti_polja_sifrarnika_u_string( "w" )
+   cTekuciZapis := vrati_vrijednosti_polja_sifarnika_u_string( "w" )
 
    add_match_code( @ImeKol, @Kol )
 
@@ -637,7 +637,7 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
             EXIT
          ENDIF
 
-         IF !snimi_promjene_cirkularne_ispravke_sifrarnika()
+         IF !snimi_promjene_cirkularne_ispravke_sifarnika()
             EXIT
          ENDIF
 
@@ -671,7 +671,7 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
       APPEND BLANK
    ENDIF
 
-   IF !snimi_promjene_sifrarnika( lNovi, cTekuciZapis )
+   IF !snimi_promjene_sifarnika( lNovi, cTekuciZapis )
       IF lNovi
          delete_with_rlock()
       ENDIF
@@ -687,7 +687,7 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
 
 
 
-FUNCTION snimi_promjene_sifrarnika( lNovi, cTekuciZapis )
+FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
 
    LOCAL lRet := .F.
    LOCAL lOk := .T.
@@ -708,7 +708,7 @@ FUNCTION snimi_promjene_sifrarnika( lNovi, cTekuciZapis )
       RETURN lRet
    ENDIF
 
-   IF lNovi .AND. is_sifra_postoji_u_sifrarniku( _rec )
+   IF lNovi .AND. is_sifra_postoji_u_sifarniku( _rec )
       sql_table_update( nil, "END" )
       Msgbeep( "Šifra koju želite dodati već postoji u šifrarniku !" )
       RETURN lRet
@@ -734,7 +734,7 @@ FUNCTION snimi_promjene_sifrarnika( lNovi, cTekuciZapis )
    set_global_vars_from_dbf( "w" )
 
    IF lRet
-      cEditovaniZapis := vrati_vrijednosti_polja_sifrarnika_u_string( "w" )
+      cEditovaniZapis := vrati_vrijednosti_polja_sifarnika_u_string( "w" )
       IF cEditovaniZapis <> cTekuciZapis
          log_write( "F18_DOK_OPER: " + ;
               IIF( lNovi, "dodan novi", "ispravljen" ) + " zapis tabele " + cAlias + ;
@@ -746,7 +746,7 @@ FUNCTION snimi_promjene_sifrarnika( lNovi, cTekuciZapis )
 
 
 
-FUNCTION snimi_promjene_cirkularne_ispravke_sifrarnika()
+FUNCTION snimi_promjene_cirkularne_ispravke_sifarnika()
 
    LOCAL _vars, _alias
    LOCAL lRet := .F.
@@ -944,7 +944,7 @@ STATIC FUNCTION add_match_code( ImeKol, Kol )
    cMarker = "w" ako je Scatter("w")
 */
 
-FUNCTION vrati_vrijednosti_polja_sifrarnika_u_string( cMarker )
+FUNCTION vrati_vrijednosti_polja_sifarnika_u_string( cMarker )
 
    LOCAL cRet := ""
    LOCAL i
@@ -1092,7 +1092,7 @@ STATIC FUNCTION _fix_usl( xUsl )
 
 
 
-FUNCTION sifrarnik_brisi_stavku()
+FUNCTION sifarnik_brisi_stavku()
 
    LOCAL _rec_dbf, _rec, _alias
    LOCAL lOk := .T.
@@ -1158,7 +1158,7 @@ FUNCTION sifrarnik_brisi_stavku()
 
 
 
-FUNCTION sifrarnik_brisi_sve()
+FUNCTION sifarnik_brisi_sve()
 
    PushWa()
 
@@ -1258,7 +1258,7 @@ FUNCTION sifra_postoji( wId, cTag )
    Opis: funkcija ispituje da li šifra postoji na serveru
  */
 
-FUNCTION is_sifra_postoji_u_sifrarniku( hTekuciRec )
+FUNCTION is_sifra_postoji_u_sifarniku( hTekuciRec )
 
    LOCAL lRet := .F.
    LOCAL cAlias := Alias()

@@ -169,11 +169,13 @@ STATIC FUNCTION key_handler()
       brza_pretraga_artikla()
 
       l_quick_find := .F.
-
+      
       Tb:RefreshAll()
 
       WHILE !TB:stabilize()
       END
+
+      box_preview( maxrows() - 9, 2, maxcols() - 3 )
 
       RETURN DE_CONT
 

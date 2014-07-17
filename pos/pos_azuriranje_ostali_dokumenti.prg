@@ -119,7 +119,7 @@ STATIC FUNCTION brisi_tabelu_pripreme()
    MsgO( "Brisanje tabele pripreme u toku ..." ) 
 
    SELECT priprz
-   my_dbf_pack()
+   my_dbf_zap()
 
    MsgC()
  

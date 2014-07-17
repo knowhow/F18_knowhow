@@ -1,8 +1,10 @@
-1.7.120  2014-07-16, vsasa
+1.7.120  2014-07-17, vsasa
 
   - LD, vraćena dva izvještaja koji su prethodno izbačeni
     - kartica plate za period
     - specifikacija neto primanja po općinama stanovanja 
+  - RNAL, opis artikla u dnu šifrarnika artikala nakon brze pretrage
+  - F18, šifrarnici, ažuriranje unutar jedne transakcije
 
 1.7.119  2014-07-15, vsasa
 

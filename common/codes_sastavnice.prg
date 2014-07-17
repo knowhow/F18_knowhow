@@ -134,6 +134,7 @@ STATIC FUNCTION key_handler( Ch )
 // -----------------------------------------
 STATIC FUNCTION sast_repl_all()
 
+   LOCAL lOk := .T.
    LOCAL cOldS
    LOCAL cNewS
    LOCAL nKolic
@@ -152,12 +153,12 @@ STATIC FUNCTION sast_repl_all()
 
    IF ( LastKey() <> K_ESC )
 
-      IF !f18_lock_tables( { "sast" } )
+      sql_table_update( nil, "BEGIN" )
+      IF !f18_lock_tables( { "sast" }, .T. )
+         sql_table_update( nil, "END" )
          MsgBeep( "Greska sa lock-om tabele sast !" )
          RETURN
       ENDIF
-
-      sql_table_update( nil, "BEGIN" )
 
       SELECT sast
       SET ORDER TO
@@ -168,14 +169,21 @@ STATIC FUNCTION sast_repl_all()
             IF ( nKolic = 0 .OR. Round( nKolic - kolicina, 5 ) = 0 )
                _rec := dbf_get_rec()
                _rec[ "id2" ] := cNewS
-               update_rec_server_and_dbf( "sast", _rec, 1, "CONT" )
+               lOk := update_rec_server_and_dbf( "sast", _rec, 1, "CONT" )
             ENDIF
+         ENDIF
+         IF !lOk
+            EXIT
          ENDIF
          SKIP
       ENDDO
 
-      f18_free_tables( { "sast" } )
-      sql_table_update( nil, "END" )
+      IF lOk
+         f18_free_tables( { "sast" } )
+         sql_table_update( nil, "END" )
+      ELSE
+         sql_table_update( nil, "ROLLBACK" )
+      ENDIF
 
       SET ORDER TO TAG "idrbr"
 
@@ -189,6 +197,7 @@ STATIC FUNCTION sast_repl_all()
 // ------------------------
 STATIC FUNCTION pr_uces_sast()
 
+   LOCAL lOk := .T.
    LOCAL cOldS
    LOCAL cNewS
    LOCAL nKolic
@@ -209,12 +218,12 @@ STATIC FUNCTION pr_uces_sast()
 
    IF ( LastKey() <> K_ESC )
 
-      IF !f18_lock_tables( { "sast" } )
+      sql_table_update( nil, "BEGIN" )
+      IF !f18_lock_tables( { "sast" }, .T. )
+         sql_table_update( nil, "END" )
          MsgBeep( "Greska sa lock-om tabele sast !" )
          RETURN
       ENDIF
-
-      sql_table_update( nil, "BEGIN" )
 
       SELECT sast
       SET ORDER TO
@@ -226,16 +235,24 @@ STATIC FUNCTION pr_uces_sast()
             IF Round( nKolic - field->kolicina, 5 ) = 0
                _rec := dbf_get_rec()
                _rec[ "kolicina" ] := nKolic2
-               update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+               lOk := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
             ENDIF
+         ENDIF
+ 
+         IF !lOk
+            EXIT
          ENDIF
 
          SKIP
 
       ENDDO
 
-      f18_free_tables( { "sast" } )
-      sql_table_update( nil, "END" )
+      IF lOk
+         f18_free_tables( { "sast" } )
+         sql_table_update( nil, "END" )
+      ELSE
+         sql_table_update( nil, "ROLLBACK" )
+      ENDIF
 
       SET ORDER TO TAG "idrbr"
    ENDIF
@@ -287,6 +304,7 @@ STATIC FUNCTION ost_opc_sast()
 // ---------------------------------
 STATIC FUNCTION copy_sast()
 
+   LOCAL lOk := .T.
    LOCAL nTRobaRec
    LOCAL cNoviProizvod
    LOCAL cIdTek
@@ -308,18 +326,18 @@ STATIC FUNCTION copy_sast()
 
       IF ( LastKey() <> K_ESC )
 
-         IF !f18_lock_tables( { "sast" } )
+         sql_table_update( nil, "BEGIN" )
+         IF !f18_lock_tables( { "sast" }, .T. )
+            sql_table_update( nil, "END" )
             MsgBeep( "lock sast neuspjesno !" )
             RETURN .F.
          ENDIF
-
 
          SELECT sast
          SET ORDER TO TAG "idrbr"
          SEEK cIdTek
          nCnt := 0
 
-         sql_table_update( nil, "BEGIN" )
 
          DO WHILE !Eof() .AND. ( id == cIdTek )
             ++ nCnt
@@ -328,14 +346,23 @@ STATIC FUNCTION copy_sast()
             _rec[ "id" ] := cNoviProizvod
             APPEND BLANK
 
-            update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+            lOk := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+
+            IF !lOk
+               EXIT
+            ENDIF
 
             GO ( nTrec )
             SKIP
+
          ENDDO
 
-         f18_free_tables( { "sast" } )
-         sql_table_update( nil, "END" )
+         IF lOk
+            f18_free_tables( { "sast" } )
+            sql_table_update( nil, "END" )
+         ELSE
+            sql_table_update( nil, "ROLLBACK" )
+         ENDIF
 
          SELECT roba
          SET ORDER TO TAG "idun"
@@ -359,6 +386,7 @@ STATIC FUNCTION copy_sast()
 // --------------------------------
 STATIC FUNCTION bris_sast()
 
+   LOCAL lOk := .T.
    LOCAL _d_n
    LOCAL _t_rec
    LOCAL _rec
@@ -366,8 +394,8 @@ STATIC FUNCTION bris_sast()
    _d_n := "0"
 
    Box(, 5, 40 )
-   @ m_x + 1, m_Y + 2 SAY "Sta ustvari zelite:"
-   @ m_x + 3, m_Y + 2 SAY "0. Nista !"
+   @ m_x + 1, m_Y + 2 SAY8 "Odaberite željenu opciju:"
+   @ m_x + 3, m_Y + 2 SAY8 "0. Ništa !"
    @ m_x + 4, m_Y + 2 SAY "1. Izbrisati samo sastavnice ?"
    @ m_x + 5, m_Y + 2 SAY "2. Izbrisati i artikle i sastavnice "
    @ m_x + 5, Col() + 2 GET _d_n VALID _d_n $ "012"
@@ -378,14 +406,15 @@ STATIC FUNCTION bris_sast()
       RETURN 7
    ENDIF
 
-   IF !f18_lock_tables( { "roba", "sast" } )
+   sql_table_update( nil, "BEGIN" )
+   IF !f18_lock_tables( { "roba", "sast" }, .T. )
+      sql_table_update( nil, "END" )
       MsgBeep( "lock roba, sast neuspjeno !" )
       RETURN 7
    ENDIF
 
-   sql_table_update( nil, "BEGIN" )
 
-   IF _d_n $ "12" .AND. Pitanje(, "Sigurno zelite izbrisati definisane sastavnice ?", "N" ) == "D"
+   IF _d_n $ "12" .AND. Pitanje(, "Sigurno želite izbrisati definisane sastavnice (D/N) ?", "N" ) == "D"
 
       SELECT sast
       DO WHILE !Eof()
@@ -393,24 +422,30 @@ STATIC FUNCTION bris_sast()
          _t_rec := RecNo()
          SKIP -1
          _rec := dbf_get_rec()
-         delete_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+         lOk := delete_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+         IF !lOk
+            EXIT
+         ENDIF
          GO ( _t_rec )
       ENDDO
 
    ENDIF
 
-   IF _d_n $ "2" .AND. Pitanje(, "Sigurno zelite izbrisati proizvode ?", "N" ) == "D"
+   IF lOk .AND. _d_n $ "2" .AND. Pitanje(, "Sigurno želite izbrisati proizvode (D/N) ?", "N" ) == "D"
 
       SELECT roba
 
-      // filter je na roba->tip = "P"
       DO WHILE !Eof()
          SKIP
          _t_rec := RecNo()
          SKIP -1
 
          _rec := dbf_get_rec()
-         delete_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+         lOk := delete_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+
+         IF !lOk
+            EXIT
+         ENDIF
 
          GO ( _t_rec )
 
@@ -418,8 +453,12 @@ STATIC FUNCTION bris_sast()
 
    ENDIF
 
-   f18_free_tables( { "roba", "sast" } )
-   sql_table_update( nil, "END" )
+   IF lOk
+      f18_free_tables( { "roba", "sast" } )
+      sql_table_update( nil, "END" )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+   ENDIF
 
    RETURN
 

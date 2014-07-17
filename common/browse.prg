@@ -533,107 +533,8 @@ STATIC FUNCTION standardne_browse_komande( TB, Ch, nRez, nPored, aPoredak )
    RETURN
 
 
-// -----------------------------------------------------
-// -----------------------------------------------------
-STATIC FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search )
 
-   LOCAL nRec
-   LOCAL nOrder
-   LOCAL _saved
-   LOCAL _has_semaphore
-   LOCAL _rec
-   LOCAL cDio1, cDio2
-   LOCAL _sect
-
-   nRec := RecNo()
-   nOrder := IndexOrd()
-
-   SET ORDER TO 0
-   GO TOP
-
-   _saved := .F.
-	
-   // da li tabela ima semafor ?
-   _has_semaphore := alias_has_semaphore()
-
-
-   IF _has_semaphore
-      IF !f18_lock_tables( { Lower( Alias() ) } )
-         MsgBeep( "Ne mogu zakljucati " + Alias() + "!?" )
-         RETURN DE_CONT
-      ENDIF
-      sql_table_update( nil, "BEGIN" )
-   ENDIF
-
-   DO WHILE !Eof()
-
-      IF Eval( FieldBlock( cKolona ) ) == trazi_val
-
-         _rec := dbf_get_rec()
-         _rec[ Lower( cKolona ) ] := zamijeni_val
-
-         IF _has_semaphore
-            update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
-         ELSE
-            dbf_update_rec( _rec )
-         ENDIF
-         IF !_saved .AND. last_search == "D"
-            // snimi
-            _sect := "_brow_fld_find_" + AllTrim( Lower( cKolona ) )
-            set_metric( _sect, "<>", trazi_val )
-
-            _sect := "_brow_fld_repl_" + AllTrim( Lower( cKolona ) )
-            set_metric( _sect, "<>", zamijeni_val )
-            _saved := .T.
-         ENDIF
-
-      ENDIF
-
-
-      IF ValType( trazi_val ) == "C"
-
-         _rec := dbf_get_rec()
-
-         cDio1 := Left( trazi_val, Len( Trim( trazi_val ) ) - 2 )
-         cDio2 := Left( zamijeni_val, Len( Trim( zamijeni_val ) ) -2 )
-
-         IF Right( Trim( trazi_val ), 2 ) == "**" .AND. cDio1 $  _rec[ Lower( cKolona ) ]
-
-            _rec[ Lower( cKolona ) ] := StrTran( _rec[ Lower( cKolona ) ], cDio1, cDio2 )
-
-            IF _has_semaphore
-               update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
-            ELSE
-               dbf_update_rec( _rec )
-            ENDIF
-
-         ENDIF
-
-      ENDIF
-
-      SKIP
-
-   ENDDO
-
-   IF _has_semaphore
-      f18_free_tables( { Lower( Alias() ) } )
-      sql_table_update( nil, "END" )
-   ENDIF
-
-   dbSetOrder( nOrder )
-   GO nRec
-
-   RETURN .T.
-
-
-
-
-// ---------------------------------------------------------------
-// ---------------------------------------------------------------
 STATIC FUNCTION StandTBTipke()
-
-   // * ove tipke ne smiju aktivirati edit-mod
-
 
    IF Ch == K_ESC .OR. Ch == K_CTRL_T .OR. Ch = K_CTRL_P .OR. Ch = K_CTRL_N .OR. ;
          Ch == K_ALT_A .OR. Ch == K_ALT_P .OR. Ch = K_ALT_S .OR. Ch = K_ALT_R .OR. ;
@@ -644,19 +545,12 @@ STATIC FUNCTION StandTBTipke()
    RETURN .F.
 
 
-// ---------------------------------------
-// ---------------------------------------
 STATIC FUNCTION ObjDbGet()
-
-/*!
- *Izvrsi GET za tekucu kolonu u browse-u
- */
 
    LOCAL bIns, lScore, lExit
    LOCAL col, get, nKey
    LOCAL xOldKey, xNewKey
 
-   // Make sure screen is fully updated, dbf position is correct, etc.
    ForceStable()
 
    // Save the current record's key value (or NIL)

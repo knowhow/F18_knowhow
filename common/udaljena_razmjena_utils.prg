@@ -64,11 +64,16 @@ FUNCTION get_import_file( modul, import_dbf_path )
 // ----------------------------------------------------------------
 FUNCTION update_table_konto( zamjena_sifre )
 
+   LOCAL lRet := .F.
+   LOCAL lOk := .T.
    LOCAL _app_rec
    LOCAL _sif_exist := .T.
 
-   f18_lock_tables( { "konto" } )
    sql_table_update( nil, "BEGIN" )
+   IF !f18_lock_tables( { "konto" }, .T. )
+      sql_table_update( nil, "END" )
+      RETURN lRet
+   ENDIF
 
    SELECT e_konto
    SET ORDER TO TAG "ID"
@@ -98,8 +103,12 @@ FUNCTION update_table_konto( zamjena_sifre )
             APPEND BLANK
          ENDIF
 
-         update_rec_server_and_dbf( "konto", _app_rec, 1, "CONT" )
+         lOk := update_rec_server_and_dbf( "konto", _app_rec, 1, "CONT" )
 
+      ENDIF
+
+      IF !lOk
+        EXIT
       ENDIF
 
       SELECT e_konto
@@ -107,10 +116,15 @@ FUNCTION update_table_konto( zamjena_sifre )
 
    ENDDO
 
-   sql_table_update( nil, "END" )
-   f18_free_tables( { "konto" } )
+   IF lOk
+      lRet := .T.
+      f18_free_tables( { "konto" } )
+      sql_table_update( nil, "END" )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+   ENDIF
 
-   RETURN
+   RETURN lRet
 
 
 
@@ -119,11 +133,16 @@ FUNCTION update_table_konto( zamjena_sifre )
 // -----------------------------------------------------------
 FUNCTION update_table_partn( zamjena_sifre )
 
+   LOCAL lRet := .F.
+   LOCAL lOk := .T.
    LOCAL _app_rec
    LOCAL _sif_exist := .T.
 
-   f18_lock_tables( { "partn" } )
    sql_table_update( nil, "BEGIN" )
+   IF !f18_lock_tables( { "partn" }, .T. )
+      sql_table_update( nil, "END" )
+      RETURN lRet
+   ENDIF
 
    SELECT e_partn
    SET ORDER TO TAG "ID"
@@ -153,7 +172,11 @@ FUNCTION update_table_partn( zamjena_sifre )
             APPEND BLANK
          ENDIF
 
-         update_rec_server_and_dbf( "partn", _app_rec, 1, "CONT" )
+         lOk := update_rec_server_and_dbf( "partn", _app_rec, 1, "CONT" )
+      ENDIF
+
+      IF !lOk
+         EXIT
       ENDIF
 
       SELECT e_partn
@@ -161,20 +184,30 @@ FUNCTION update_table_partn( zamjena_sifre )
 
    ENDDO
 
-   sql_table_update( nil, "END" )
-   f18_free_tables( { "partn" } )
+   IF lOk
+      lRet := .T.
+      f18_free_tables( { "partn" } )
+      sql_table_update( nil, "END" )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+   ENDIF
 
-   RETURN
+   RETURN lRet
 
 
 
 FUNCTION update_table_roba( zamjena_sifre )
 
+   LOCAL lRet := .F.
+   LOCAL lOk := .T.
    LOCAL _app_rec
    LOCAL _sif_exist := .T.
 
-   f18_lock_tables( { "roba" } )
    sql_table_update( nil, "BEGIN" )
+   IF !f18_lock_tables( { "roba" }, .T. )
+      sql_table_update( nil, "END" )
+      RETURN lRet
+   ENDIF
 
    SELECT e_roba
    SET ORDER TO TAG "ID"
@@ -204,8 +237,12 @@ FUNCTION update_table_roba( zamjena_sifre )
             APPEND BLANK
          ENDIF
 
-         update_rec_server_and_dbf( "roba", _app_rec, 1, "CONT" )
+         lOk := update_rec_server_and_dbf( "roba", _app_rec, 1, "CONT" )
 
+      ENDIF
+
+      IF !lOk
+         EXIT
       ENDIF
 
       SELECT e_roba
@@ -213,10 +250,15 @@ FUNCTION update_table_roba( zamjena_sifre )
 
    ENDDO
 
-   sql_table_update( nil, "END" )
-   f18_free_tables( { "roba" } )
+   IF lOk
+      lRet := .T.
+      f18_free_tables( { "roba" } )
+      sql_table_update( nil, "END" )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+   ENDIF
 
-   RETURN
+   RETURN lRet
 
 
 

@@ -311,6 +311,7 @@ FUNCTION gen_ug_part()
 // ------------------------------------
 FUNCTION br_ugovor()
 
+   LOCAL lOk := .T.
    LOCAL _id_ugov
    LOCAL _t_rec
    LOCAL _rec
@@ -320,12 +321,12 @@ FUNCTION br_ugovor()
       RETURN _ret
    ENDIF
 
-   IF !f18_lock_tables( { "fakt_ugov", "fakt_rugov" } )
+   sql_table_update( nil, "BEGIN" )
+   IF !f18_lock_tables( { "fakt_ugov", "fakt_rugov" }, .T. )
+      sql_table_update( nil, "END" )
       MsgBeep( "Problem sa lokovanjem tabela !" )
       RETURN _ret
    ENDIF
-
-   sql_table_update( nil, "BEGIN" )
 
    _id_ugov := field->id
 
@@ -342,16 +343,23 @@ FUNCTION br_ugovor()
       SKIP -1
 
       _rec := dbf_get_rec()
-      delete_rec_server_and_dbf( "fakt_rugov", _rec, 1, "CONT" )
+      lOk := delete_rec_server_and_dbf( "fakt_rugov", _rec, 1, "CONT" )
+
+      IF !lOk
+         EXIT
+      ENDIF
 
       GO ( _t_rec )
 
    ENDDO
 
-   _ret := 1
-
-   f18_free_tables( { "fakt_ugov", "fakt_rugov" } )
-   sql_table_update( nil, "END" )
+   IF lOk
+      _ret := 1
+      f18_free_tables( { "fakt_ugov", "fakt_rugov" } )
+      sql_table_update( nil, "END" )
+   ELSE
+      sql_table_update( nil, "ROLLBACK" )
+   ENDIF
 
    SELECT ugov
 

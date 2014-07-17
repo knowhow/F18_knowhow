@@ -584,15 +584,17 @@ FUNCTION roba_setuj_mpc_iz_vpc()
    LOCAL _mpc_set
    LOCAL _tarifa
    LOCAL _count := 0
+   LOCAL lOk := .T.
 
    IF !_get_params( @_params )
       RETURN
    ENDIF
 
-   IF !f18_lock_tables( { "roba" } )
+   sql_table_update( NIL, "BEGIN" )
+   IF !f18_lock_tables( { "roba" }, .T. )
+      sql_table_update( NIL, "END" )
       RETURN
    ENDIF
-   sql_table_update( NIL, "BEGIN" )
 
    O_TARIFA
    O_ROBA
@@ -663,10 +665,14 @@ FUNCTION roba_setuj_mpc_iz_vpc()
          @ m_x + 2, m_y + 2 SAY PadR( " VPC: " + AllTrim( Str( _rec[ "vpc" ], 12, 3 ) ) + ;
             " -> " + Upper( _mpc_set ) + ": " + AllTrim( Str( _rec[ _mpc_set ], 12, 3 ) ), 50 )
 
-         update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
+         lOk := update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
 
          ++ _count
 
+      ENDIF
+
+      IF !lOk
+         EXIT
       ENDIF
 
       SKIP
@@ -675,8 +681,12 @@ FUNCTION roba_setuj_mpc_iz_vpc()
 
    BoxC()
 
-   f18_free_tables( { "roba" } )
-   sql_table_update( NIL, "END" )
+   IF lOk
+      f18_free_tables( { "roba" } )
+      sql_table_update( NIL, "END" )
+   ELSE
+      sql_table_update( NIL, "ROLLBACK" )
+   ENDIF
 
    RETURN
 

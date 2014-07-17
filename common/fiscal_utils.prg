@@ -130,6 +130,8 @@ FUNCTION gen_plu( nVal )
 // -------------------------------------------------------
 FUNCTION gen_all_plu( lSilent )
 
+   LOCAL lRet := .F.
+   LOCAL lOk := .T.
    LOCAL nPLU := 0
    LOCAL lReset := .F.
    LOCAL nP_PLU := 0
@@ -141,7 +143,7 @@ FUNCTION gen_all_plu( lSilent )
    ENDIF
 
    IF lSilent == .F. .AND. !SigmaSIF( "GENPLU" )
-      msgbeep( "NE DIRAJ !!!" )
+      msgbeep( "Neispravnan unos lozinke !" )
       RETURN .F.
    ENDIF
 
@@ -153,8 +155,12 @@ FUNCTION gen_all_plu( lSilent )
       lReset := .F.
    ENDIF
 
-   f18_lock_tables( { "roba" } )
    sql_table_update( nil, "BEGIN" )
+   IF !f18_lock_tables( { "roba" }, .T. )
+      sql_table_update( nil, "END" )
+      MsgBeep( "Ne mogu zaključati ROBA !#Prekidam operaciju." )
+      RETURN lRet
+   ENDIF
 
    O_ROBA
    SELECT ROBA
@@ -190,7 +196,12 @@ FUNCTION gen_all_plu( lSilent )
 
       _rec := dbf_get_rec()
       _rec[ "fisc_plu" ] := nP_PLU
-      update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
+
+      lOk := update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
+
+      IF !lOk
+         EXIT
+      ENDIF
 
       @ m_x + 1, m_y + 2 SAY PadR( "idroba: " + field->id + ;
          " -> PLU: " + AllTrim( Str( nP_PLU ) ), 30 )
@@ -201,19 +212,21 @@ FUNCTION gen_all_plu( lSilent )
 
    BoxC()
 
-   f18_free_tables( { "roba" } )
-   sql_table_update( nil, "END" )
-
-   IF nCnt > 0
-      IF lSilent == .F.
-         msgbeep( "Generisao " + AllTrim( Str( nCnt ) ) + " PLU kodova." )
-      ENDIF
-      RETURN .T.
+   IF lOk
+      lRet := .T.
+      f18_free_tables( { "roba" } )
+      sql_table_update( nil, "END" )
    ELSE
-      RETURN .F.
+      sql_table_update( nil, "ROLLBACK" )
    ENDIF
 
-   RETURN
+   IF nCnt > 0
+      IF !lSilent
+         msgbeep( "Generisao " + AllTrim( Str( nCnt ) ) + " PLU kodova." )
+      ENDIF
+   ENDIF
+
+   RETURN lRet
 
 
 

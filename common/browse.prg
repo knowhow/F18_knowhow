@@ -446,17 +446,18 @@ STATIC FUNCTION standardne_browse_komande( TB, Ch, nRez, nPored, aPoredak )
                      RETURN DE_CONT
                   ENDIF
 
-                  replace_kolona_in_table( cKolona, _trazi_val, _zamijeni_val, _last_srch )
-                  TB:RefreshAll()
-
+                  IF replace_kolona_in_table( cKolona, _trazi_val, _zamijeni_val, _last_srch )
+                     TB:RefreshAll()
+                  ELSE
+                     RETURN DE_CONT
+                  ENDIF
             	
                ENDIF
             ENDIF
          ENDIF
       ENDIF
 
-      // trazi i zamjeni numeričke vrijednosti u tabeli
-      // -----------------------
+
    CASE Ch == K_ALT_S
 
       IF ( gReadOnly .OR. !ImaPravoPristupa( goModul:oDatabase:cName, "CUI", "STANDTBKOMANDE-ALTR_ALTS" ) )
@@ -493,53 +494,16 @@ STATIC FUNCTION standardne_browse_komande( TB, Ch, nRez, nPored, aPoredak )
 
                   BoxC()
 
-                  IF LastKey() <> K_ESC
-
-                     nRec := RecNo()
-                     nOrder := IndexOrd()
-
-                     SET ORDER TO 0
-
-                     IF Pitanje(, "Promjena ce se izvrsiti u " + iif( Empty( _trazi_usl ), "svim ", "" ) + "stavkama" + iif( !Empty( _trazi_usl ), " koje obuhvata uslov", "" ) + ". Zelite nastaviti ?", "N" ) == "D"
-
-                        IF _has_semaphore
-                           f18_lock_tables( { Lower( Alias() ) } )
-                           sql_table_update( nil, "BEGIN" )
-                        ENDIF
-
-                        GO TOP
-
-                        DO WHILE !Eof()
-
-                           IF Empty( _trazi_usl ) .OR. &( _trazi_usl )
-
-                              _rec := dbf_get_rec()
-                              _rec[ Lower( cKolona ) ] := _trazi_val
-
-                              IF _has_semaphore
-                                 update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
-                              ELSE
-                                 dbf_update_rec( _rec )
-                              ENDIF
-
-                           ENDIF
-
-                           SKIP
-
-                        ENDDO
-
-                        IF _has_semaphore
-                           f18_free_tables( { Lower( Alias() ) } )
-                           sql_table_update( nil, "END" )
-                        ENDIF
-	
-                     ENDIF
-			
-                     dbSetOrder( nOrder )
-                     GO nRec
-                     TB:RefreshAll()
-
+                  IF LastKey() == K_ESC
+                     RETURN DE_CONT
                   ENDIF
+
+                  IF zamjeni_numericka_polja_u_tabeli( cKolona, _trazi_val, _trazi_usl )
+                     TB:RefreshAll()
+                  ELSE
+                     RETURN DE_CONT
+                  ENDIF
+
                ENDIF
             ENDIF
          ENDIF

@@ -475,9 +475,9 @@ FUNCTION StandTBKomande( TB, Ch, nRez, nPored, aPoredak )
                   ENDIF
 
                   IF zamjeni_numericka_polja_u_tabeli( cKolona, _trazi_val, _trazi_usl )		
-                     dbSetOrder( nOrder )
-                     GO nRec
                      TB:RefreshAll()
+                  ELSE
+                     RETURN DE_CONT
                   ENDIF
                   
                ENDIF
@@ -571,7 +571,12 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
    ELSE
       lRet := .T.
    ENDIF
-	
+
+   IF lRet	                  
+      dbSetOrder( nOrder )
+      GO nRec
+   ENDIF
+
    RETURN lRet
 
 

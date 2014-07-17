@@ -553,7 +553,7 @@ STATIC FUNCTION EdSif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
          RETURN DE_CONT
       ENDIF
 
-      Izlaz( "Pregled: " + AllTrim( cNaslov ) + " na dan " + DToC( Date() ) + " g.", "sifrarnik" )
+      Izlaz( "Pregled: " + AllTrim( cNaslov ) + " na dan " + DToC( Date() ) + " g.", "sifarnik" )
       PopWa()
 
       RETURN DE_CONT
@@ -579,10 +579,10 @@ STATIC FUNCTION EdSif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
       RETURN DE_REFRESH
 
    CASE Ch == K_CTRL_T
-      RETURN sifrarnik_brisi_stavku()
+      RETURN sifarnik_brisi_stavku()
 
    CASE Ch == K_CTRL_F9
-      RETURN sifrarnik_brisi_sve()
+      RETURN sifarnik_brisi_sve()
 
    CASE Ch == K_F10
       SifPopup( nOrder )
@@ -632,7 +632,7 @@ FUNCTION EditSifItem( Ch, nOrder, aZabIsp, lNovi )
 
    nPrevRecNo := RecNo()
 
-   cTekuciZapis := vrati_vrijednosti_polja_sifrarnika_u_string( "w" )
+   cTekuciZapis := vrati_vrijednosti_polja_sifarnika_u_string( "w" )
 
    add_match_code( @ImeKol, @Kol )
 
@@ -760,7 +760,7 @@ FUNCTION EditSifItem( Ch, nOrder, aZabIsp, lNovi )
             EXIT
          ENDIF
 
-         IF !snimi_promjene_cirkularne_ispravke_sifrarnika()
+         IF !snimi_promjene_cirkularne_ispravke_sifarnika()
             EXIT
          ENDIF
 
@@ -794,7 +794,7 @@ FUNCTION EditSifItem( Ch, nOrder, aZabIsp, lNovi )
       APPEND BLANK
    ENDIF
 
-   IF !snimi_promjene_sifrarnika( lNovi, cTekuciZapis )
+   IF !snimi_promjene_sifarnika( lNovi, cTekuciZapis )
       IF lNovi
          delete_with_rlock()
       ENDIF
@@ -994,7 +994,7 @@ STATIC FUNCTION _g_fld_desc( cMarker )
    RETURN cRet
 
 // ----------------------------------------------------
-// uporedjuje liste promjena na sifri u sifrarniku
+// uporedjuje liste promjena na sifri u sifarniku
 // ----------------------------------------------------
 STATIC FUNCTION _g_fld_changes( cOld, cNew )
 

@@ -432,9 +432,11 @@ FUNCTION StandTBKomande( TB, Ch, nRez, nPored, aPoredak )
                      RETURN DE_CONT
                   ENDIF
 
-                  replace_kolona_in_table( cKolona, _trazi_val, _zamijeni_val, _last_srch )
-                  TB:RefreshAll()
-
+                  IF replace_kolona_in_table( cKolona, _trazi_val, _zamijeni_val, _last_srch )
+                     TB:RefreshAll()
+                  ELSE
+                     RETURN DE_CONT
+                  ENDIF
             	
                ENDIF
             ENDIF
@@ -448,7 +450,6 @@ FUNCTION StandTBKomande( TB, Ch, nRez, nPored, aPoredak )
 
             IF !Empty( ImeKol[ TB:colPos, 3 ] )
 
-               _has_semaphore := alias_has_semaphore()
                cKolona := ImeKol[ TB:ColPos, 3 ]
 
                IF ValType( &cKolona ) == "N"
@@ -465,60 +466,24 @@ FUNCTION StandTBKomande( TB, Ch, nRez, nPored, aPoredak )
                   @ m_x + 2, m_y + 2 SAY "Uslov za obuhvatanje stavki (prazno-sve):" GET _trazi_usl ;
                      PICT "@S20" ;
                      VALID Empty( _trazi_usl ) .OR. EvEr( _trazi_usl, "Greška! Neispravno postavljen uslov!" )
-
                   READ
 
                   BoxC()
 
-                  IF LastKey() <> K_ESC
+                  IF LastKey() == K_ESC
+                      RETURN DE_CONT
+                  ENDIF
 
-                     nRec := RecNo()
-                     nOrder := IndexOrd()
-
-                     SET ORDER TO 0
-
-                     IF Pitanje(, "Promjena će se izvršiti u " + iif( Empty( _trazi_usl ), "svim ", "" ) + "stavkama" + iif( !Empty( _trazi_usl ), " koje obuhvata uslov", "" ) + ". Želite nastaviti ?", "N" ) == "D"
-
-                        IF _has_semaphore
-                           f18_lock_tables( { Lower( Alias() ) } )
-                           sql_table_update( nil, "BEGIN" )
-                        ENDIF
-
-                        GO TOP
-
-                        DO WHILE !Eof()
-
-                           IF Empty( _trazi_usl ) .OR. &( _trazi_usl )
-
-                              _rec := dbf_get_rec()
-                              _rec[ Lower( cKolona ) ] := _trazi_val
-
-                              IF _has_semaphore
-                                 update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
-                              ELSE
-                                 dbf_update_rec( _rec )
-                              ENDIF
-
-                           ENDIF
-
-                           SKIP
-
-                        ENDDO
-
-                        IF _has_semaphore
-                           f18_free_tables( { Lower( Alias() ) } )
-                           sql_table_update( nil, "END" )
-                        ENDIF
-	
-                     ENDIF
-			
+                  IF zamjeni_numericka_polja_u_tabeli( cKolona, _trazi_val, _trazi_usl )		
                      dbSetOrder( nOrder )
                      GO nRec
                      TB:RefreshAll()
-
                   ENDIF
+                  
                ENDIF
+
             ENDIF
+
          ENDIF
 
    CASE Ch == K_CTRL_U .AND. nPored > 1
@@ -545,8 +510,75 @@ FUNCTION StandTBKomande( TB, Ch, nRez, nPored, aPoredak )
    RETURN
 
 
+
+FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
+
+   LOCAL lRet := .F.
+   LOCAL lOk := .T.
+   LOCAL nRec := RecNo()
+   LOCAL nOrder := IndexOrd()
+   LOCAL lImaSemafor := alias_has_semaphore()
+   LOCAL _rec
+
+   SET ORDER TO 0
+
+   IF Pitanje(, "Promjena će se izvršiti u " + IIF( Empty( cUslov ), "svim ", "" ) + "stavkama" + ;
+          IIF( !Empty( cUslov ), " koje obuhvata uslov", "" ) + ". Želite nastaviti ?", "N" ) == "N"
+       RETURN lRet
+   ENDIF
+
+   IF lImaSemafor
+       sql_table_update( nil, "BEGIN" )
+       IF !f18_lock_tables( { Lower( Alias() ) }, .T. )
+           sql_table_update( nil, "END" )
+           RETURN lRet
+       ENDIF
+   ENDIF
+
+   GO TOP
+
+   DO WHILE !Eof()
+
+       IF Empty( cUslov ) .OR. &( cUslov )
+
+           _rec := dbf_get_rec()
+           _rec[ Lower( cKolona ) ] := cTrazi
+
+           IF _has_semaphore
+               lOk := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+           ELSE
+               dbf_update_rec( _rec )
+           ENDIF
+
+       ENDIF
+
+       IF !lOk
+          EXIT
+       ENDIF
+
+       SKIP
+
+   ENDDO
+
+   IF lImaSemafor
+      IF lOk
+         lRet := .T.
+         f18_free_tables( { Lower( Alias() ) } )
+         sql_table_update( nil, "END" )
+      ELSE
+         sql_table_update( nil, "ROLLBACK" )
+      ENDIF
+   ELSE
+      lRet := .T.
+   ENDIF
+	
+   RETURN lRet
+
+
+
 FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search )
 
+   LOCAL lRet := .F.
    LOCAL nRec
    LOCAL nOrder
    LOCAL _saved
@@ -554,6 +586,7 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
    LOCAL _rec
    LOCAL cDio1, cDio2
    LOCAL _sect
+   LOCAL lOk := .T.
 
    nRec := RecNo()
    nOrder := IndexOrd()
@@ -563,16 +596,15 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
 
    _saved := .F.
 	
-   // da li tabela ima semafor ?
    _has_semaphore := alias_has_semaphore()
 
-
    IF _has_semaphore
-      IF !f18_lock_tables( { Lower( Alias() ) } )
-         MsgBeep( "Ne mogu zaključati " + Alias() + "!?" )
-         RETURN DE_CONT
-      ENDIF
       sql_table_update( nil, "BEGIN" )
+      IF !f18_lock_tables( { Lower( Alias() ) }, .T. )
+         sql_table_update( nil, "END" )
+         MsgBeep( "Ne mogu zaključati " + Alias() + "!?" )
+         RETURN lRet
+      ENDIF
    ENDIF
 
    DO WHILE !Eof()
@@ -583,10 +615,11 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
          _rec[ Lower( cKolona ) ] := zamijeni_val
 
          IF _has_semaphore
-            update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+            lOk := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
          ELSE
             dbf_update_rec( _rec )
          ENDIF
+
          IF !_saved .AND. last_search == "D"
             // snimi
             _sect := "_brow_fld_find_" + AllTrim( Lower( cKolona ) )
@@ -599,6 +632,9 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
 
       ENDIF
 
+      IF !lOk
+         EXIT
+      ENDIF
 
       IF ValType( trazi_val ) == "C"
 
@@ -612,7 +648,7 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
             _rec[ Lower( cKolona ) ] := StrTran( _rec[ Lower( cKolona ) ], cDio1, cDio2 )
 
             IF _has_semaphore
-               update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+               lOk := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
             ELSE
                dbf_update_rec( _rec )
             ENDIF
@@ -621,19 +657,31 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
 
       ENDIF
 
+      IF !lOk
+         EXIT
+      ENDIF
+
       SKIP
 
    ENDDO
 
    IF _has_semaphore
-      f18_free_tables( { Lower( Alias() ) } )
-      sql_table_update( nil, "END" )
+      IF lOk
+         lRet := .T.
+         f18_free_tables( { Lower( Alias() ) } )
+         sql_table_update( nil, "END" )
+      ELSE
+         sql_table_update( nil, "ROLLBACK" )
+         MsgBeep( "Greška sa opcijom ALT+R !#Operacija prekinuta." )
+      ENDIF
+   ELSE
+      lRet := .T.
    ENDIF
 
    dbSetOrder( nOrder )
    GO nRec
 
-   RETURN .T.
+   RETURN lRet
 
 
 

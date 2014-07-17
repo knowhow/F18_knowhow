@@ -1274,6 +1274,10 @@ FUNCTION is_sifra_postoji_u_sifrarniku( hTekuciRec )
    ENDIF
 
    cTable := hTblRec["table"]
+   IF LEFT( cTable, 4 ) <> "fmk."
+      cTable := "fmk." + cTable
+   ENDIF
+ 
    cWhere := napravi_where_uslov_na_osnovu_hash_matrica( hTblRec, hTekuciRec )
 
    IF EMPTY( cWhere )

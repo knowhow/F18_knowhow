@@ -1132,7 +1132,7 @@ STATIC FUNCTION _sh_doc_status( doc_status, nX, nY )
       nY := 21
    ENDIF
 
-   cTmp := g_doc_status( doc_status )
+   cTmp := get_status_dokumenta( doc_status )
 
    DO CASE
 
@@ -1162,40 +1162,29 @@ STATIC FUNCTION _sh_doc_status( doc_status, nX, nY )
 
    ENDCASE
 
-   @ nX, nY SAY PadR( cTmp, 20 ) COLOR cColor
+   @ nX, nY SAY8 PadR( cTmp, 20 ) COLOR cColor
 
    RETURN
 
 
-FUNCTION g_doc_status( doc_status )
+FUNCTION get_status_dokumenta( doc_status )
 
    LOCAL cTmp := ""
 
    DO CASE
 
    CASE doc_status == 0
-		
       cTmp := " otvoren"
-		
    CASE doc_status == 1
-		
       cTmp := " realizovan"
-		
    CASE doc_status == 2
-		
-      cTmp := " ponisten"
-		
+      cTmp := " poništen"
    CASE doc_status == 3
-		
       cTmp := " zauzet"
-		
    CASE doc_status == 4
-		
       cTmp := " realizovan dio"
-		
    CASE doc_status == 5
-		
-      cTmp := "real.nije isporucen"
+      cTmp := "real.nije isporučen"
    ENDCASE
 
    RETURN cTmp

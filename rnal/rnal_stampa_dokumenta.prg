@@ -33,11 +33,8 @@ FUNCTION stampa_nalog_proizvodnje( lTemporary, nDoc_no )
    rnal_o_tables( __temp )
 
    _fill_main()
-   // stavke naloga
    _fill_items()
-   // dodatne stavke naloga
    _fill_it2()
-   // operacije
    _fill_aops()
 
    lFlag := _is_p_rekap()
@@ -46,7 +43,6 @@ FUNCTION stampa_nalog_proizvodnje( lTemporary, nDoc_no )
       cFlag := "D"
    ENDIF
 
-   // upisi za rekapitulaciju u t_pars
    add_tpars( "N20", cFlag )
 
    IF gRnalOdt == "D"
@@ -81,12 +77,10 @@ FUNCTION st_obr_list( temp, doc_no, a_docs )
    ENDIF
 
    IF a_docs == NIL .OR. Len( a_docs ) == 0
-      // dodaj onda ovaj nalog koji treba da se stampa
       a_docs := {}
       AAdd( a_docs, { doc_no, "" } )
    ENDIF
 
-   // setuj opis i dokumente
    FOR _ii := 1 TO Len( a_docs )
       IF !Empty( _docs )
          _docs += ","
@@ -96,18 +90,14 @@ FUNCTION st_obr_list( temp, doc_no, a_docs )
 
    __temp := temp
 
-   // kreiraj print tabele
    t_rpt_create()
-   // otvori tabele
    t_rpt_open()
 
    rnal_o_tables( __temp )
 
-   // prosetaj kroz stavke za stampu !
    FOR _i := 1 TO Len( a_docs )
 
       IF a_docs[ _i, 1 ] < 0
-         // ovakve stavke preskoci, jer su to brisane stavke !
          LOOP
       ENDIF
 
@@ -117,16 +107,9 @@ FUNCTION st_obr_list( temp, doc_no, a_docs )
       GO TOP
       SEEK docno_str( __doc_no )
 
-      // osnovni podaci naloga
       _fill_main( _docs )
-
-      // stavke naloga
       _fill_items( _gn, 2 )
-
-      // dodatne stavke naloga
       _fill_it2()
-
-      // operacije
       _fill_aops()
 
    NEXT
@@ -137,15 +120,12 @@ FUNCTION st_obr_list( temp, doc_no, a_docs )
       rnal_print_odabir_stavki( temp )
    ENDIF
 
-   // da li se stampa rekapitulacija repromaterijala
    IF _is_p_rekap()
       _flag := "D"
    ENDIF
 
-   // upisi za rekapitulaciju u t_pars
    add_tpars( "N20", _flag )
 
-   // printaj obracunski list
    IF gRnalOdt == "D"
       rnal_obracunski_list_odt()
    ELSE
@@ -823,9 +803,8 @@ STATIC FUNCTION _fill_aops()
    RETURN
 
 
-// --------------------------------------
-// napuni podatke narucioca i ostalo
-// --------------------------------------
+
+
 STATIC FUNCTION _fill_main( cDescr )
 
    LOCAL nTable := F_DOCS
@@ -871,6 +850,8 @@ STATIC FUNCTION _fill_main( cDescr )
    add_tpars( "N09", AllTrim( field->cont_add_d ) )
    // operater koji je napravio nalog
    add_tpars( "N13", AllTrim( getfullusername( field->operater_i ) ) )
+   // status naloga
+   add_tpars( "N22", AllTrim( get_status_dokumenta( field->doc_status ) ) )
 
    // dokumenti koji su sadrzani
    IF !Empty( cDescr )

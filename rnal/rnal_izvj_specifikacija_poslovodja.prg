@@ -178,7 +178,7 @@ STATIC FUNCTION _cre_spec( params )
             AllTrim( g_cont_desc( docs->cont_id ) )
       ENDIF
 	
-      cDoc_stat := g_doc_status( docs->doc_status )
+      cDoc_stat := get_status_dokumenta( docs->doc_status )
 	
       cDoc_oper := getusername( docs->operater_i )
 

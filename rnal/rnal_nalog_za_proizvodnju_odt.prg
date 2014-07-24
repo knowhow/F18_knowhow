@@ -47,9 +47,9 @@ FUNCTION rnal_nalog_za_proizvodnju_odt()
    SELECT t_docit
    GO TOP
 
-   _get_t_pars( @_params, Len( _groups ) )
+   procitaj_parametre_naloga( @_params, Len( _groups ) )
 
-   IF !_cre_xml( _groups, _params )
+   IF !kreiraj_xml_fajl( _groups, _params )
       RETURN _ok
    ENDIF
 
@@ -76,81 +76,48 @@ FUNCTION rnal_nalog_za_proizvodnju_odt()
 
 
 
-// ------------------------------------------------------
-// citanje vrijednosti iz tabele tpars u hash matricu
-// ------------------------------------------------------
-STATIC FUNCTION _get_t_pars( params, groups_total )
+STATIC FUNCTION procitaj_parametre_naloga( params, groups_total )
 
    LOCAL _tmp
 
    params := hb_Hash()
 
-   // ttotal
    _tmp := Val( g_t_pars_opis( "N10" ) )
    params[ "ttotal" ] := _tmp
-   // rekapitulacija materijala
    params[ "rekap_materijala" ] := ( AllTrim( g_t_pars_opis( "N20" ) ) == "D" )
 
-
-   // operater
    _tmp := g_t_pars_opis( "N13" )
    params[ "nalog_operater" ] := _tmp
-   // operater koji printa
    _tmp := getfullusername( getUserid( f18_user() ) )
    params[ "nalog_print_operater" ] := _tmp
-   // vrijeme printanja
    _tmp := PadR( Time(), 5 )
    params[ "nalog_print_vrijeme" ] := _tmp
 
-   // podaci header-a
-   // ==============================================
-   // broj dokumenta
    params[ "nalog_broj" ] := g_t_pars_opis( "N01" )
-   // naziv naloga
    params[ "nalog_naziv" ] := "NALOG ZA PROIZVODNJU br."
-   // koliko je ukupno grupa na nalogu
    params[ "nalog_grupa_total" ] := AllTrim( Str( groups_total ) )
-   // tekuca grupa
    params[ "nalog_grupa" ] := AllTrim( Str( 1 ) )
-   // datum naloga
    params[ "nalog_datum" ] := g_t_pars_opis( "N02" )
-   // vrijeme naloga
    params[ "nalog_vrijeme" ] := g_t_pars_opis( "N12" )
-   // datum isporuke
    params[ "nalog_isp_datum" ] := g_t_pars_opis( "N03" )
-   // vrijeme isporuke
    params[ "nalog_isp_vrijeme" ] := g_t_pars_opis( "N04" )
-   // prioritet naloga
    params[ "nalog_prioritet" ] := g_t_pars_opis( "N05" )
-   // mjesto isporuke
    params[ "nalog_isp_mjesto" ] := g_t_pars_opis( "N07" )
-   // dodatni opis naloga
    params[ "nalog_dod_opis" ] := g_t_pars_opis( "N08" )
-   // kratki opis naloga
    params[ "nalog_kratki_opis" ] := g_t_pars_opis( "N15" )
-   // objekat id
    params[ "nalog_objekat_id" ] := g_t_pars_opis( "P20" )
-   // naziv objekta
    params[ "nalog_objekat_naziv" ] := g_t_pars_opis( "P21" )
-   // vrsta placanja
    params[ "nalog_vrsta_placanja" ] := g_t_pars_opis( "N06" )
-   // placeno
    params[ "nalog_placeno" ] := g_t_pars_opis( "N10" )
-   // placanje dodatni opis
    params[ "nalog_placanje_opis" ] := g_t_pars_opis( "N11" )
-   // tip naloga
    params[ "nalog_tip" ] := g_t_pars_opis( "N21" )
+   params[ "nalog_status" ] := g_t_pars_opis( "N22" )
 
-   // podaci kupca
-   // ===============================================
-   // firma
    params[ "firma_naziv" ] := AllTrim( gFNaziv )
-   // kupac
    params[ "kupac_id" ] := g_t_pars_opis( "P01" )
    params[ "kupac_naziv" ] := g_t_pars_opis( "P02" )
    params[ "kupac_adresa" ] := g_t_pars_opis( "P03" )
    params[ "kupac_telefon" ] := g_t_pars_opis( "P04" )
-   // kontakt
    params[ "kontakt_id" ] := g_t_pars_opis( "P10" )
    params[ "kontakt_naziv" ] := g_t_pars_opis( "P11" )
    params[ "kontakt_telefon" ] := g_t_pars_opis( "P12" )
@@ -161,10 +128,7 @@ STATIC FUNCTION _get_t_pars( params, groups_total )
 
 
 
-// -------------------------------------------------------
-// kreiranje xml fajla na osnovu podataka...
-// -------------------------------------------------------
-STATIC FUNCTION _cre_xml( groups, params )
+STATIC FUNCTION kreiraj_xml_fajl( groups, params )
 
    LOCAL _ok := .F.
    LOCAL _i, _group_id
@@ -181,12 +145,10 @@ STATIC FUNCTION _cre_xml( groups, params )
 
    PIC_VRIJEDNOST := PadL( AllTrim( Right( _picdem, LEN_VRIJEDNOST ) ), LEN_VRIJEDNOST, "9" )
 
-   // otvori xml za upis...
    open_xml( _xml )
 
    xml_subnode( "nalozi", .F. )
 
-   // upisi osvnovne podatke naloga
    xml_node( "fdesc", to_xml_encoding( params[ "firma_naziv" ] ) )
    xml_node( "tip", params[ "nalog_tip" ] )
    xml_node( "no", params[ "nalog_broj" ] )
@@ -212,8 +174,8 @@ STATIC FUNCTION _cre_xml( groups, params )
    xml_node( "oper_print", to_xml_encoding( params[ "nalog_print_operater" ] ) )
    xml_node( "pr_time", params[ "nalog_print_vrijeme" ] )
    xml_node( "vrpl", params[ "nalog_vrsta_placanja" ] )
+   xml_node( "stat", to_xml_encoding( params[ "nalog_status" ] ) )
 
-   // kupac/kontakt podaci...
    xml_node( "cust_id", to_xml_encoding( params[ "kupac_id" ] ) )
    xml_node( "cust_desc", to_xml_encoding( params[ "kupac_naziv" ] ) )
    xml_node( "cust_adr", to_xml_encoding( params[ "kupac_adresa" ] ) )
@@ -226,22 +188,17 @@ STATIC FUNCTION _cre_xml( groups, params )
 
    FOR _i := 1 TO Len( groups )
 
-      // resetuj matricu stavki grupe
       _a_items := {}
 
-      // subnode
       xml_subnode( "nalog", .F. )
 
-      // uzmi broj grupe
       _group_id := groups[ _i, 1 ]
 
-      // grupa naloga, naziv grupe
       params[ "nalog_grupa" ] := AllTrim( Str( _group_id ) )
       params[ "nalog_grupa_naziv" ] := get_art_docgr( _group_id )
       xml_node( "gr_no", params[ "nalog_grupa" ] )
       xml_node( "gr_desc", to_xml_encoding( params[ "nalog_grupa_naziv" ] ) )
 
-      // broj stranice, ukupni broj stranica
       xml_node( "pg_no", AllTrim( Str( _i ) ) )
       xml_node( "pg_total", AllTrim( Str( Len( groups ) ) ) )
 
@@ -268,7 +225,6 @@ STATIC FUNCTION _cre_xml( groups, params )
 
       DO WHILE !Eof() .AND. field->doc_no == _doc_no .AND. field->doc_gr_no == _group_id
 	
-         // dodaj u matricu stavki naloga po grupi
          AAdd( _a_items, { field->doc_no, field->doc_it_no } )
 
          xml_subnode( "item", .F. )
@@ -276,17 +232,14 @@ STATIC FUNCTION _cre_xml( groups, params )
          _art_id := field->art_id
          _item_type := field->doc_it_typ
 	
-         // redni broj
          xml_node( "no", AllTrim( Str( ++_doc_rbr ) ) )
 
-         // naziv artikla
          IF !Empty( field->art_desc )
             xml_node( "desc", to_xml_encoding( AllTrim( field->art_desc ) ) )
          ELSE
             xml_node( "desc", to_xml_encoding( AllTrim( "-||-" ) ) )
          ENDIF
 
-         // operacije i obrade
          SELECT t_docop
          SET ORDER TO TAG "1"
          GO TOP
@@ -295,7 +248,6 @@ STATIC FUNCTION _cre_xml( groups, params )
          DO WHILE !Eof() .AND. field->doc_no == t_docit->doc_no ;
                .AND. field->doc_it_no == t_docit->doc_it_no
 
-            // uzmi element
             _el_no := field->doc_el_no
             _el_desc := 1
             _el_count := 0
@@ -311,7 +263,6 @@ STATIC FUNCTION _cre_xml( groups, params )
 		
                xml_subnode( "oper", .F. )
 
-               // iskljuci ga do daljnjeg
                _el_desc := 0
 	
                IF !Empty( field->aop_desc ) .AND. AllTrim( field->aop_desc ) <> "?????"
@@ -350,12 +301,9 @@ STATIC FUNCTION _cre_xml( groups, params )
          SELECT t_docit
 	
          IF _item_type == "R"
-            // tip
             xml_node( "type", "fi" )
 
-            // prikazi fi
             IF Round( field->doc_it_wid + field->doc_it_hei, 2 ) == 0
-               // nema podataka
                xml_node( "w", "" )
                xml_node( "h", "" )
             ELSE
@@ -368,31 +316,20 @@ STATIC FUNCTION _cre_xml( groups, params )
             ENDIF
 
          ELSEIF _item_type == "S"
-            // tip
             xml_node( "type", "shp" )
-            // sirina kod shape
             xml_node( "w", show_number( field->doc_it_wid, PIC_VRIJEDNOST ) )
-            // visina kod shape
             xml_node( "h", show_number( field->doc_it_hei, PIC_VRIJEDNOST ) )
          ELSE
 
-            // tip
             xml_node( "type", "std" )
-            // sirina
             xml_node( "w", show_number( field->doc_it_wid, PIC_VRIJEDNOST ) )
-            // visina
             xml_node( "h", show_number( field->doc_it_hei, PIC_VRIJEDNOST ) )
 
          ENDIF
 	
-         // kolicina
          xml_node( "kol", show_number( field->doc_it_qtt, PIC_VRIJEDNOST ) )
          _qtty_total += field->doc_it_qtt
 	
-         // napomene za item:
-         // - napomene
-         // - shema u prilogu
-
          _tmp := ""
          _opis_stavke := ""
          _l_opis_stavke := .F.
@@ -408,7 +345,6 @@ STATIC FUNCTION _cre_xml( groups, params )
                _tmp += "(SHEMA U PRILOGU)"
             endif
 
-            // nadmorska visina
             IF field->doc_it_alt <> 0
 			
                IF !Empty( field->doc_acity )
@@ -451,7 +387,6 @@ STATIC FUNCTION _cre_xml( groups, params )
 
       xml_node( "qtty", show_number( _qtty_total, PIC_VRIJEDNOST ) )
 
-      // ispis repromaterijala koji je vezan za stavku...
       _xml_repromaterijal( _a_items, groups, _group_id, params )
 
       xml_subnode( "nalog", .T. )
@@ -460,7 +395,6 @@ STATIC FUNCTION _cre_xml( groups, params )
 
    xml_subnode( "nalozi", .T. )
 
-   // zatvori xml za upis
    close_xml()
 
    _ok := .T.
@@ -469,9 +403,6 @@ STATIC FUNCTION _cre_xml( groups, params )
 
 
 
-// --------------------------------------------------------
-// generisanje xml-a za repromaterijal
-// --------------------------------------------------------
 FUNCTION _xml_repromaterijal( a_items, groups, group_id, params )
 
    LOCAL _t_area := Select()
@@ -485,7 +416,6 @@ FUNCTION _xml_repromaterijal( a_items, groups, group_id, params )
       RETURN
    ENDIF
 
-   // rekapitulacija materijala treba
    xml_subnode( "rekap", .F. )
 
    FOR _i := 1 TO Len( a_items )
@@ -493,8 +423,7 @@ FUNCTION _xml_repromaterijal( a_items, groups, group_id, params )
       _doc_no := a_items[ _i, 1 ]
       _doc_it_no := a_items[ _i, 2 ]
 
-      // provjera: da li ima vise grupa i da li je artikal u zadnjoj grupi
-      IF Len( groups ) > 1 .AND. group_id <> _item_last_group( _doc_no, _doc_it_no )
+      IF Len( groups ) > 1 .AND. group_id <> rnal_zadnja_grupa_stavke( _doc_no, _doc_it_no )
          LOOP
       ENDIF
 
@@ -505,7 +434,6 @@ FUNCTION _xml_repromaterijal( a_items, groups, group_id, params )
 
       DO WHILE !Eof() .AND. field->doc_no == _doc_no .AND. field->doc_it_no == _doc_it_no
 
-         // da li se treba stampati ?
          SELECT t_docit
          SEEK docno_str( _doc_no ) + docit_str( _doc_it_no )
 	
@@ -543,15 +471,12 @@ FUNCTION _xml_repromaterijal( a_items, groups, group_id, params )
 
 
 
-// ------------------------------------------------------
-// ------------------------------------------------------
 FUNCTION repro_qtty_str( kol, duzina )
 
    LOCAL _str := ""
 
    _str := AllTrim( Str( kol, 12, 2 ) )
 
-   // ako u polju postoji informacija onda je to sigurno unesena dužina
    IF duzina > 0
       _str += " x " + AllTrim( Str( duzina, 12, 2 ) ) + " (mm)"
    ENDIF
@@ -560,10 +485,7 @@ FUNCTION repro_qtty_str( kol, duzina )
 
 
 
-// -------------------------------------------------------
-// odredjuje zadnju grupu stavke naloga
-// -------------------------------------------------------
-FUNCTION _item_last_group( doc_no, doc_it_no )
+FUNCTION rnal_zadnja_grupa_stavke( doc_no, doc_it_no )
 
    LOCAL _group := 1
    LOCAL _t_area := Select()

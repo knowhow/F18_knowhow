@@ -27,19 +27,19 @@ FUNCTION rnal_specifikacija_poslovodja( nVar )
 
    __nVar := nVar
 
-   IF _g_vars( @_params ) == 0
+   IF parametri_izvjestaja( @_params ) == 0
       RETURN
    ENDIF
 
-   _cre_spec( _params )
+   generisi_specifikaciju_u_pomocnu_tabelu( _params )
 
-   _p_rpt_spec( _params )
+   printaj_specifikaciju( _params )
 
    RETURN
 
 
 
-STATIC FUNCTION _g_vars( params )
+STATIC FUNCTION parametri_izvjestaja( params )
 
    LOCAL _ret := 1
    LOCAL _box_x := 18
@@ -138,14 +138,13 @@ STATIC FUNCTION _g_vars( params )
 // kreiraj specifikaciju
 // izvjestaj se primarno puni u _tmp0 tabelu
 // ----------------------------------------------
-STATIC FUNCTION _cre_spec( params )
+STATIC FUNCTION generisi_specifikaciju_u_pomocnu_tabelu( params )
 
    LOCAL nDoc_no
    LOCAL nArt_id
    LOCAL aArtArr := {}
    LOCAL nCount := 0
-   LOCAL cCust_desc
-   LOCAL aField
+   LOCAL cCust_desc, cDoc_object
    LOCAL nScan
    LOCAL ii
    LOCAL cAop
@@ -155,14 +154,12 @@ STATIC FUNCTION _cre_spec( params )
    LOCAL nGr2
    LOCAL _glass_count := 0
 
-   aField := _spec_fields()
-
-   cre_tmp1( aField )
+   cre_tmp1( definicija_pomocne_tabele() )
    o_tmp1()
 
    rnal_o_tables( .F. )
 
-   _main_filter( params )
+   postavi_filter_na_dokumente( params )
 
    Box(, 1, 50 )
 
@@ -184,6 +181,8 @@ STATIC FUNCTION _cre_spec( params )
 
       cDoc_prior := s_priority( docs->doc_priori )
 
+      cDoc_object := g_obj_desc( docs->obj_id, .T. )
+
       use_sql_doc_log( nDoc_no )	
 
       SEEK docno_str( nDoc_no )
@@ -201,7 +200,6 @@ STATIC FUNCTION _cre_spec( params )
          SKIP
       ENDDO
 	
-      // samo za log, koji nije inicijalni....
       IF "Inicij" $ cLog
          cLog := ""
       ELSE
@@ -290,7 +288,7 @@ STATIC FUNCTION _cre_spec( params )
 		
          nGr1 := Val( SubStr( cIt_group, 1, 1 ) )
 	
-         _ins_tmp1( nDoc_no, ;
+         dodaj_u_pomocnu_tabelu( nDoc_no, ;
             cCust_desc, ;
             docs->doc_date, ;
             docs->doc_dvr_da, ;
@@ -306,7 +304,8 @@ STATIC FUNCTION _cre_spec( params )
             cItem, ;
             cItemAop, ;
             nGr1, ;
-            cLog )
+            cLog, ;
+            cDoc_object )
 
          IF Len( cIt_group ) > 1
 
@@ -316,7 +315,7 @@ STATIC FUNCTION _cre_spec( params )
                   LOOP
                ENDIF
 
-               _ins_tmp1( nDoc_no, ;
+               dodaj_u_pomocnu_tabelu( nDoc_no, ;
                   cCust_desc, ;
                   docs->doc_date, ;
                   docs->doc_dvr_da, ;
@@ -332,7 +331,8 @@ STATIC FUNCTION _cre_spec( params )
                   cItem, ;
                   cItemAop, ;
                   Val( SubStr( cIt_group, xx, 1 ) ), ;
-                  cLog )
+                  cLog, ;
+                  cDoc_object )
 		
             NEXT
 		
@@ -356,7 +356,7 @@ STATIC FUNCTION _cre_spec( params )
    RETURN
 
 
-STATIC FUNCTION _main_filter( params )
+STATIC FUNCTION postavi_filter_na_dokumente( params )
 
    LOCAL _filter := ""
    LOCAL _date := "doc_date"
@@ -400,7 +400,7 @@ STATIC FUNCTION _main_filter( params )
 // stampa specifikacije
 // stampa se iz _tmp0 tabele
 // ------------------------------------------
-STATIC FUNCTION _p_rpt_spec( params )
+STATIC FUNCTION printaj_specifikaciju( params )
 
    LOCAL i
    LOCAL ii
@@ -414,9 +414,9 @@ STATIC FUNCTION _p_rpt_spec( params )
    ?
    P_COND2
 
-   _rpt_descr()
+   naziv_izvjestaja()
    __rpt_info()
-   _rpt_head()
+   zaglavlje()
 
    SELECT _tmp1
    GO TOP
@@ -430,7 +430,7 @@ STATIC FUNCTION _p_rpt_spec( params )
          ENDIF
       ENDIF
 
-      IF _nstr() == .T.
+      IF nova_stranica() == .T.
          FF
       ENDIF
 	
@@ -467,8 +467,6 @@ STATIC FUNCTION _p_rpt_spec( params )
 		
          IF !Empty( cItemAop )
 			
-            // razbij string "brusenje#poliranje#kaljenje#"
-            // -> u matricu
             aPom := TokToNiz( cItemAop, "#" )
 			
             FOR ii := 1 TO Len( aPom )
@@ -497,6 +495,7 @@ STATIC FUNCTION _p_rpt_spec( params )
       ? Space( 10 )
       @ PRow(), PCol() + 1 SAY "kom.na nalogu: " + AllTrim( Str( nTotQtty, 12 ) ) + ;
          " broj stakala: " + AllTrim( Str( nTotGlQtty, 12 ) )
+      @ PRow(), PCol() + 1 SAY "obj: " + ALLTRIM( field->doc_obj )
 	
       IF Len( aItemAop ) > 0
 		
@@ -535,10 +534,7 @@ STATIC FUNCTION _p_rpt_spec( params )
    RETURN
 
 
-// -----------------------------------
-// provjerava za novu stranu
-// -----------------------------------
-STATIC FUNCTION _nstr()
+STATIC FUNCTION nova_stranica()
 
    LOCAL lRet := .F.
 
@@ -550,10 +546,7 @@ STATIC FUNCTION _nstr()
 
 
 
-// ------------------------------------------------
-// ispisi naziv izvjestaja po varijanti
-// ------------------------------------------------
-STATIC FUNCTION _rpt_descr()
+STATIC FUNCTION naziv_izvjestaja()
 
    LOCAL cTmp := "rpt: "
 
@@ -568,10 +561,7 @@ STATIC FUNCTION _rpt_descr()
 
 
 
-// -------------------------------------------------
-// header izvjestaja
-// -------------------------------------------------
-STATIC FUNCTION _rpt_head()
+STATIC FUNCTION zaglavlje()
 
    cLine := Replicate( "-", 10 )
    cLine += Space( 1 )
@@ -587,7 +577,7 @@ STATIC FUNCTION _rpt_head()
    cTxt += Space( 1 )
    cTxt += PadR( "Termini", 17 )
    cTxt += Space( 1 )
-   cTxt += PadR( "Ostale info (divizor - prioritet - status - operater - opis)", 100 )
+   cTxt += PadR( "Ostale info (divizor - prioritet - status - operater - opis - objekat isporuke)", 100 )
 
    ? cLine
    ? cTxt
@@ -597,10 +587,7 @@ STATIC FUNCTION _rpt_head()
 
 
 
-// -----------------------------------------------
-// vraca strukturu polja tabele _tmp1
-// -----------------------------------------------
-STATIC FUNCTION _spec_fields()
+STATIC FUNCTION definicija_pomocne_tabele()
 
    LOCAL aDbf := {}
 
@@ -614,6 +601,7 @@ STATIC FUNCTION _spec_fields()
    AAdd( aDbf, { "doc_oper", "C", 30, 0 } )
    AAdd( aDbf, { "doc_div", "C", 20, 0 } )
    AAdd( aDbf, { "doc_desc", "C", 100, 0 } )
+   AAdd( aDbf, { "doc_obj", "C", 150, 0 } )
    AAdd( aDbf, { "doc_sdesc", "C", 100, 0 } )
    AAdd( aDbf, { "doc_item", "C", 250, 0 } )
    AAdd( aDbf, { "doc_aop", "C", 250, 0 } )
@@ -625,14 +613,11 @@ STATIC FUNCTION _spec_fields()
    RETURN aDbf
 
 
-// -----------------------------------------------------
-// insert into _tmp1
-// -----------------------------------------------------
-STATIC FUNCTION _ins_tmp1( nDoc_no, cCust_desc, dDoc_date, dDoc_dvr_d, ;
+STATIC FUNCTION dodaj_u_pomocnu_tabelu( nDoc_no, cCust_desc, dDoc_date, dDoc_dvr_d, ;
       cDoc_dvr_t, ;
       cDoc_stat, cDoc_prior, ;
       cDoc_div, cDoc_desc, cDoc_sDesc, cDoc_oper, ;
-      nQtty, nGl_qtty, cDoc_item, cDoc_aop,nIt_group, cDoc_log )
+      nQtty, nGl_qtty, cDoc_item, cDoc_aop,nIt_group, cDoc_log, cObjekat )
 
    LOCAL nTArea := Select()
 
@@ -652,6 +637,7 @@ STATIC FUNCTION _ins_tmp1( nDoc_no, cCust_desc, dDoc_date, dDoc_dvr_d, ;
    REPLACE field->doc_sdesc WITH cDoc_sdesc
    REPLACE field->doc_item WITH cDoc_item
    REPLACE field->doc_aop WITH cDoc_aop
+   REPLACE field->doc_obj WITH cObjekat
    REPLACE field->qtty WITH nQtty
    REPLACE field->glass_qtty WITH nGl_qtty
    REPLACE field->it_group WITH nIt_group
@@ -660,3 +646,5 @@ STATIC FUNCTION _ins_tmp1( nDoc_no, cCust_desc, dDoc_date, dDoc_dvr_d, ;
    SELECT ( nTArea )
 
    RETURN
+
+

@@ -170,7 +170,7 @@ STATIC FUNCTION _cre_spec( params )
 
       nDoc_no := field->doc_no
       __doc_no := nDoc_no
-	
+
       cCust_desc := AllTrim( g_cust_desc( docs->cust_id ) )
 	
       IF "NN" $ cCust_desc

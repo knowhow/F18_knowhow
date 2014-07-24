@@ -17,6 +17,7 @@ STATIC __nvar
 STATIC __doc_no
 
 
+
 FUNCTION rnal_specifikacija_poslovodja( nVar )
 
    LOCAL _params
@@ -33,7 +34,11 @@ FUNCTION rnal_specifikacija_poslovodja( nVar )
 
    generisi_specifikaciju_u_pomocnu_tabelu( _params )
 
-   printaj_specifikaciju( _params )
+   IF _params["txt_rpt"]
+      printaj_specifikaciju_txt( _params )
+   ELSE
+      printaj_specifikaciju_odt( _params )
+   ENDIF
 
    RETURN
 
@@ -46,11 +51,12 @@ STATIC FUNCTION parametri_izvjestaja( params )
    LOCAL _box_y := 70
    LOCAL _x := 1
    LOCAL _statusi, _tip_datuma
-   LOCAL _dat_od, _dat_do, _group, _operater
+   LOCAL _dat_od, _dat_do, _group, _operater, _txt
 
    PRIVATE GetList := {}
 
    _statusi := fetch_metric( "rnal_spec_posl_status", NIL, "N" )
+   _txt := fetch_metric( "rnal_spec_posl_tip_rpt", my_user(), 1 )
    _tip_datuma := fetch_metric( "rnal_spec_posl_tip_datuma", my_user(), 2 )
 
    _dat_od := danasnji_datum()
@@ -103,6 +109,10 @@ STATIC FUNCTION parametri_izvjestaja( params )
 
    @ m_x + _x, m_y + 2 SAY "Gledati datum naloga ili datum isporuke (1/2) ?" GET _tip_datuma PICT "9"
 	
+   ++ _x
+
+   @ m_x + _x, m_y + 2 SAY8 "Tip izvještaja TXT/ODT (1/2) ?" GET _txt PICT "9" VALID _txt > 0 .AND. _txt < 3
+	
    READ
 
    BoxC()
@@ -112,9 +122,9 @@ STATIC FUNCTION parametri_izvjestaja( params )
       RETURN _ret
    ENDIF
 
-   // snimi parametre
    set_metric( "rnal_spec_posl_status", NIL, _statusi )
    set_metric( "rnal_spec_posl_tip_datuma", my_user(), _tip_datuma )
+   set_metric( "rnal_spec_posl_tip_rpt", my_user(), _txt )
 
    params := hb_Hash()
    params[ "datum_od" ] := _dat_od
@@ -123,6 +133,7 @@ STATIC FUNCTION parametri_izvjestaja( params )
    params[ "group" ] := _group
    params[ "operater" ] := _operater
    params[ "gledaj_statuse" ] := _statusi
+   params[ "txt_rpt" ] := ( _txt == 1 )
 
    params[ "idx" ] := "D1"
 
@@ -134,10 +145,6 @@ STATIC FUNCTION parametri_izvjestaja( params )
 
 
 
-// ----------------------------------------------
-// kreiraj specifikaciju
-// izvjestaj se primarno puni u _tmp0 tabelu
-// ----------------------------------------------
 STATIC FUNCTION generisi_specifikaciju_u_pomocnu_tabelu( params )
 
    LOCAL nDoc_no
@@ -396,11 +403,141 @@ STATIC FUNCTION postavi_filter_na_dokumente( params )
 
 
 
-// ------------------------------------------
-// stampa specifikacije
-// stampa se iz _tmp0 tabele
-// ------------------------------------------
-STATIC FUNCTION printaj_specifikaciju( params )
+STATIC FUNCTION printaj_specifikaciju_odt( params )
+
+   LOCAL cTemplate := "specnalp.odt"
+   LOCAL i
+   LOCAL ii
+   LOCAL nScan
+   LOCAL aItemAop
+   LOCAL cPom
+   LOCAL cXml := my_home() + "data.xml"
+   LOCAL _group := params[ "group" ]
+
+   SELECT _tmp1
+
+   IF RecCount() == 0
+       MsgBeep("Ne postoje traženi podaci !")
+       RETURN 
+   ENDIF
+
+   GO TOP
+
+   open_xml( cXml )
+
+   xml_subnode( "spec", .F. )
+
+   xml_node( "date", DToC( DATE() ) )
+   xml_node( "per_od", DToC( params["datum_od"] ) )
+   xml_node( "per_do", DToC( params["datum_do"] ) )
+
+   DO WHILE !Eof()
+	
+      IF _group <> 0
+         IF field->it_group <> _group
+            SKIP
+            loop
+         ENDIF
+      ENDIF
+
+      nDoc_no := field->doc_no
+      cCustDesc := field->cust_desc
+      cDate := DToC( field->doc_date ) + "/" + ;
+         DToC( field->doc_dvr_d )
+	
+      cDescr := AllTrim( field->doc_prior ) + " - " + ;
+         AllTrim( field->doc_stat ) + " - " + ;
+         AllTrim( field->doc_oper ) + " - (" + ;
+         AllTrim( field->doc_sdesc ) + " )"
+
+      nCount := 0
+      nTotQtty := 0
+      nTotGlQtty := 0
+      cItemAop := ""
+      aItemAop := {}
+      nScan := 0
+	
+      DO WHILE !Eof() .AND. field->doc_no == nDoc_no
+		
+         ++ nCount
+		
+         nTotQtty += field->qtty
+         nTotGlQtty += field->glass_qtty
+
+         cItemAop := AllTrim( field->doc_aop )
+		
+         IF !Empty( cItemAop )
+            aPom := TokToNiz( cItemAop, "#" )
+            FOR ii := 1 TO Len( aPom )
+               nScan := AScan( aItemAop, ;
+                  {| xVar| aPom[ ii ] == xVar[ 1 ] } )
+               IF nScan = 0
+                  AAdd( aItemAop, { aPom[ ii ] } )
+               ENDIF
+            NEXT
+         ENDIF
+		
+         cDiv := AllTrim( field->doc_div )
+         cLog := AllTrim( field->doc_log )
+		
+         SKIP
+
+      ENDDO
+	
+      xml_subnode( "nalog", .F. )
+
+      xml_subnode( "item", .F. )
+
+      xml_node( "doc_no", AllTrim( Str( nDoc_no ) ) )
+      xml_node( "date", cDate )
+      xml_node( "cust", to_xml_encoding( cCustDesc ) )
+      xml_node( "obj", to_xml_encoding( AllTrim( field->doc_obj ) ) )
+      xml_node( "qtty", AllTrim( Str( nTotQtty, 12, 0 ) ) )
+      xml_node( "gl_qtty", AllTrim( Str( nTotGlQtty, 12, 0 ) ) )
+      xml_node( "div", cDiv )
+      xml_node( "pri", to_xml_encoding( AllTrim( field->doc_prior ) ) )
+      xml_node( "stat", to_xml_encoding( AllTrim( field->doc_stat ) ) )
+      xml_node( "oper", to_xml_encoding( AllTrim( field->doc_oper ) ) )
+      xml_node( "descr", to_xml_encoding( AllTrim( field->doc_sdesc ) ) )
+
+      IF Len( aItemAop ) > 0
+         cPom := ""
+         FOR i := 1 TO Len( aItemAop )
+            IF i <> 1
+               cPom += ", "
+            ENDIF
+            cPom += aItemAop[ i, 1 ]
+         NEXT
+         xml_node( "op", to_xml_encoding( cPom ) )
+      ELSE
+         xml_node( "op", "" )
+      ENDIF
+	
+      IF !Empty( cLog )
+         xml_node( "log", to_xml_encoding( cLog ) )
+      ELSE
+         xml_node( "log", "" )
+      ENDIF
+
+      xml_subnode( "item", .T. )
+      xml_subnode( "nalog", .T. )
+
+   ENDDO
+
+   xml_subnode( "spec", .T. )
+   close_xml()
+
+   my_close_all_dbf()
+
+   IF generisi_odt_iz_xml( cTemplate )
+      prikazi_odt()
+   ENDIF
+
+   RETURN
+
+
+
+STATIC FUNCTION printaj_specifikaciju_txt( params )
 
    LOCAL i
    LOCAL ii

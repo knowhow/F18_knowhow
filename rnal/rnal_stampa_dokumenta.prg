@@ -851,7 +851,7 @@ STATIC FUNCTION _fill_main( cDescr )
    // operater koji je napravio nalog
    add_tpars( "N13", AllTrim( getfullusername( field->operater_i ) ) )
    // status naloga
-   add_tpars( "N22", AllTrim( get_status_dokumenta( field->doc_status ) ) )
+   add_tpars( "N22", hb_utf8tostr( AllTrim( get_status_dokumenta( field->doc_status ) ) ) )
 
    // dokumenti koji su sadrzani
    IF !Empty( cDescr )

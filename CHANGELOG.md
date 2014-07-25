@@ -4,6 +4,7 @@
      - ubačena kolona "objekat isporuke"
      - napravljena ODT varijanta izvještaja
   - KALK, povrat dokumenta, provjerava se da li dokument postoji i u kalk_kalk i u kalk_doks
+  - otklonjeno još nekoliko sitnih bugova sa UTF konverzijom i loše referenciranim varijablama
  
 1.7.120  2014-07-17, vsasa
 

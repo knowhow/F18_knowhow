@@ -3,6 +3,7 @@
   - RNAL, izvještaj za poslovođe
      - ubačena kolona "objekat isporuke"
      - napravljena ODT varijanta izvještaja
+  - KALK, povrat dokumenta, provjerava se da li dokument postoji i u kalk_kalk i u kalk_doks
  
 1.7.120  2014-07-17, vsasa
 

@@ -13,8 +13,8 @@
 #include "kalk.ch"
 
 
-STATIC __PIC_KOL := "999999999.999"
-STATIC __PIC_DEM := "999999999.99"
+STATIC s_cPicKol := "999999999.999"
+STATIC s_cPicDem := "999999999.99"
 
 
 STATIC FUNCTION _o_tables()
@@ -32,8 +32,8 @@ STATIC FUNCTION _o_tables()
 
 FUNCTION kalk_mag_promet_grupe_partnera()
 
-   nlPK := Len( __PIC_KOL )
-   nlPI := Len( __PIC_DEM )
+   nlPK := Len( s_cPicKol )
+   nlPI := Len( s_cPicDem )
 
    cIdFirma := gFirma
    cIdKonto := PadR( "1310", gDuzKonto )
@@ -254,10 +254,10 @@ FUNCTION kalk_mag_promet_grupe_partnera()
          @ PRow(), PCol() + 1 SAY roba->jmj
          nCol0 := PCol() + 1
 
-         @ PRow(), PCol() + 1 SAY nUlaz    PICT __PIC_KOL
-         @ PRow(), PCol() + 1 SAY nNVU     PICT __PIC_DEM
-         @ PRow(), PCol() + 1 SAY nIzlaz   PICT __PIC_KOL
-         @ PRow(), PCol() + 1 SAY nVPVI - nRabat    PICT __PIC_DEM
+         @ PRow(), PCol() + 1 SAY nUlaz PICT s_cPicKol
+         @ PRow(), PCol() + 1 SAY nNVU PICT s_cPicDem
+         @ PRow(), PCol() + 1 SAY nIzlaz PICT s_cPicKol
+         @ PRow(), PCol() + 1 SAY nVPVI - nRabat PICT s_cPicDem
 
          IF Len( aNaz ) > 1
             @ PRow() + 1, 0 SAY ""
@@ -274,10 +274,10 @@ FUNCTION kalk_mag_promet_grupe_partnera()
 
    ? m
    ? "UKUPNO:"
-   @ PRow(), nCol0    SAY nTUlaz    PICT __PIC_KOL
-   @ PRow(), PCol() + 1 SAY nTNVU     PICT __PIC_DEM
-   @ PRow(), PCol() + 1 SAY nTIzlaz   PICT __PIC_KOL
-   @ PRow(), PCol() + 1 SAY nTVPVI - nTRabat    PICT __PIC_DEM
+   @ PRow(), nCol0    SAY nTUlaz PICT s_cPicKol
+   @ PRow(), PCol() + 1 SAY nTNVU PICT s_cPicDem
+   @ PRow(), PCol() + 1 SAY nTIzlaz PICT s_cPicKol
+   @ PRow(), PCol() + 1 SAY nTVPVI - nTRabat PICT s_cPicDem
    nCol1 := PCol() + 1
 
    ? m

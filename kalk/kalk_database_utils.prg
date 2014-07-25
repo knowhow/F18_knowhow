@@ -80,6 +80,14 @@ FUNCTION KalkNaF( cidroba, nKols )
 
 
 
+/*
+    Opis: provjerava postojanje ažuriranog dokumenta u tabelama kalk_doks i kalk_kalk
+
+    Prvo se provjerava tabela kalk_doks, ako je rezultat FALSE za svaki slučaj se provjerava i tabela kalk_kalk
+
+    Returns:
+       kalk_dokument_postoji( "10", "10", "00001" ) => TRUE ili FALSE
+ */
 
 FUNCTION kalk_dokument_postoji( cFirma, cIdVd, cBroj )
 
@@ -92,6 +100,12 @@ FUNCTION kalk_dokument_postoji( cFirma, cIdVd, cBroj )
 
    IF table_count( "fmk.kalk_doks", cWhere ) > 0
       lExist := .T.
+   ENDIF 
+
+   IF !lExist
+      IF table_count( "fmk.kalk_kalk", cWhere ) > 0
+         lExist := .T.
+      ENDIF
    ENDIF 
 
    RETURN lExist

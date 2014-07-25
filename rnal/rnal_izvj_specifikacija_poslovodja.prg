@@ -56,7 +56,7 @@ STATIC FUNCTION parametri_izvjestaja( params )
    PRIVATE GetList := {}
 
    _statusi := fetch_metric( "rnal_spec_posl_status", NIL, "N" )
-   _txt := fetch_metric( "rnal_spec_posl_tip_rpt", my_user(), 1 )
+   _txt := fetch_metric( "rnal_spec_posl_tip_rpt", my_user(), 2 )
    _tip_datuma := fetch_metric( "rnal_spec_posl_tip_datuma", my_user(), 2 )
 
    _dat_od := danasnji_datum()
@@ -111,7 +111,7 @@ STATIC FUNCTION parametri_izvjestaja( params )
 	
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY8 "Tip izvještaja TXT/ODT (1/2) ?" GET _txt PICT "9" VALID _txt > 0 .AND. _txt < 3
+   @ m_x + _x, m_y + 2 SAY8 "Tip izvještaja TXT / LibreOffice (1/2) ?" GET _txt PICT "9" VALID _txt > 0 .AND. _txt < 3
 	
    READ
 

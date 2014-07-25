@@ -17,9 +17,6 @@ STATIC __PIC_KOL := "999999999.999"
 STATIC __PIC_DEM := "999999999.99"
 
 
-// -----------------------------------------------
-// otvaranje potrebnih tabela
-// -----------------------------------------------
 STATIC FUNCTION _o_tables()
 
    O_SIFK
@@ -33,10 +30,7 @@ STATIC FUNCTION _o_tables()
 
 
 
-// ------------------------------------------------
-// izvjestaj - promet grupe partnera
-// ------------------------------------------------
-FUNCTION PrometGP()
+FUNCTION kalk_mag_promet_grupe_partnera()
 
    nlPK := Len( __PIC_KOL )
    nlPI := Len( __PIC_DEM )
@@ -95,7 +89,7 @@ FUNCTION PrometGP()
       cIdkonto := Trim( cidkonto )
       cSintK := cIdkonto
       fSint := .T.
-      lSabKon := ( Pitanje(, "Racunati stanje robe kao zbir stanja na svim obuhvacenim kontima? (D/N)", "N" ) == "D" )
+      lSabKon := ( Pitanje(, "Računati stanje robe kao zbir stanja na svim obuhvaćenim kontima ? (D/N)", "N" ) == "D" )
    ENDIF
 
    O_KALKREP
@@ -129,7 +123,6 @@ FUNCTION PrometGP()
 
    IF fSint .AND. lSabKon
       SET ORDER TO TAG "6"
-      // "6","idFirma+IdTarifa+idroba",KUMPATH+"KALK"
       hseek cidfirma
    ELSE
       SET ORDER TO TAG "3"
@@ -261,13 +254,12 @@ FUNCTION PrometGP()
          @ PRow(), PCol() + 1 SAY roba->jmj
          nCol0 := PCol() + 1
 
-         @ PRow(), PCol() + 1 SAY nUlaz    PICT cgPicKol
-         @ PRow(), PCol() + 1 SAY nNVU     PICT cgPicDem
-         @ PRow(), PCol() + 1 SAY nIzlaz   PICT cgPicKol
-         @ PRow(), PCol() + 1 SAY nVPVI - nRabat    PICT cgPicDem
+         @ PRow(), PCol() + 1 SAY nUlaz    PICT __PIC_KOL
+         @ PRow(), PCol() + 1 SAY nNVU     PICT __PIC_DEM
+         @ PRow(), PCol() + 1 SAY nIzlaz   PICT __PIC_KOL
+         @ PRow(), PCol() + 1 SAY nVPVI - nRabat    PICT __PIC_DEM
 
          IF Len( aNaz ) > 1
-            // novi red
             @ PRow() + 1, 0 SAY ""
             @ PRow(), nCR  SAY aNaz[ 2 ]
          ENDIF
@@ -282,10 +274,10 @@ FUNCTION PrometGP()
 
    ? m
    ? "UKUPNO:"
-   @ PRow(), nCol0    SAY nTUlaz    PICT cgPicKol
-   @ PRow(), PCol() + 1 SAY nTNVU     PICT cgPicDem
-   @ PRow(), PCol() + 1 SAY nTIzlaz   PICT cgPicKol
-   @ PRow(), PCol() + 1 SAY nTVPVI - nTRabat    PICT cgPicDem
+   @ PRow(), nCol0    SAY nTUlaz    PICT __PIC_KOL
+   @ PRow(), PCol() + 1 SAY nTNVU     PICT __PIC_DEM
+   @ PRow(), PCol() + 1 SAY nTIzlaz   PICT __PIC_KOL
+   @ PRow(), PCol() + 1 SAY nTVPVI - nTRabat    PICT __PIC_DEM
    nCol1 := PCol() + 1
 
    ? m
@@ -303,14 +295,8 @@ FUNCTION PrometGP()
 
 
 
-
-/*! \fn ZaglPGP()
- *  \brief Zaglavlje izvjestaja "promet grupe partnera"
- */
-
 FUNCTION ZaglPGP()
 
-   // {
    Preduzece()
 
    P_12CPI
@@ -322,14 +308,13 @@ FUNCTION ZaglPGP()
    SET CENTURY OFF
 
    ? "Grupa partnera:", IF( Empty( cGP ), "SVE", "'" + cGP + "'" )
-   ? "Magacin:", cidkonto, "-", konto->naz
+   ? "Magacin:", cIdkonto, "-", konto->naz
    SELECT KALK
 
    ? m
-   ? " R.  *  SIFRA   *   NAZIV ARTIKLA    *JMJ*" + PadC( "   ULAZ   ", nlPK ) + "*" + PadC( "  NV ULAZA  ", nlPI ) + "*" + PadC( "  IZLAZ   ", nlPK ) + "*" + PadC( " VPV IZLAZA ", nlPI ) + "*"
+   ?U " R.  *  ŠIFRA   *   NAZIV ARTIKLA    *JMJ*" + PadC( "   ULAZ   ", nlPK ) + "*" + PadC( "  NV ULAZA  ", nlPI ) + "*" + PadC( "  IZLAZ   ", nlPK ) + "*" + PadC( " VPV IZLAZA ", nlPI ) + "*"
    ? " BR. * ARTIKLA  *                    *   *" + PadC( "          ", nlPK ) + "*" + PadC( "            ", nlPI ) + "*" + PadC( "          ", nlPK ) + "*" + PadC( " minus RABAT", nlPI ) + "*"
    ? "     *    1     *         2          * 3 *" + PadC( "     4    ", nlPK ) + "*" + PadC( "      5     ", nlPI ) + "*" + PadC( "     6    ", nlPK ) + "*" + PadC( "      7     ", nlPI ) + "*"
    ? m
 
    RETURN ( nil )
-// }

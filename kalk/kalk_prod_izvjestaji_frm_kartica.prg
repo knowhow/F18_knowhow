@@ -45,7 +45,7 @@ endif
 
 my_close_all_dbf()
 
-KarticaP( cIdFirma, cIdRoba, cKonto )
+kalk_kartica_prodavnica( cIdFirma, cIdRoba, cKonto )
 
 o_kalk_edit()
 select roba

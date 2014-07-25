@@ -27,7 +27,7 @@ FUNCTION fin_suban_specifikacija_sql()
    _my_xml := my_home() + "data.xml"
    _template := "fin_specif.odt"
 
-   IF !_get_vars( @_rpt_vars )
+   IF !uslovi_izvjestaja( @_rpt_vars )
       RETURN
    ENDIF
 
@@ -39,7 +39,7 @@ FUNCTION fin_suban_specifikacija_sql()
    ENDIF
 
    IF _rpt_vars[ "export_dbf" ] == "D"
-      IF _export_dbf( _rpt_data, _rpt_vars )
+      IF export_podataka_u_dbf( _rpt_data, _rpt_vars )
          _exported := .T.
       ENDIF
    ENDIF
@@ -58,10 +58,7 @@ FUNCTION fin_suban_specifikacija_sql()
 
 
 
-// ------------------------------------------------------------------
-// uslovi izvjestaja
-// ------------------------------------------------------------------
-STATIC FUNCTION _get_vars( rpt_vars )
+STATIC FUNCTION uslovi_izvjestaja( rpt_vars )
 
    LOCAL _konto := fetch_metric( "fin_spec_rpt_konto", my_user(), "" )
    LOCAL _partner := fetch_metric( "fin_spec_rpt_partner", my_user(), "" )
@@ -267,12 +264,12 @@ STATIC FUNCTION _cre_rpt( rpt_vars )
 
 
 
-STATIC FUNCTION _export_dbf( table, rpt_vars )
+STATIC FUNCTION export_podataka_u_dbf( table, rpt_vars )
 
    LOCAL oRow, _struct
    LOCAL _rasclan := rpt_vars[ "rasclaniti_rj" ] == "D"
    LOCAL _nule := rpt_vars[ "nule" ] == "D"
-   LOCAL _rec
+   LOCAL _rec, cKontoId, cPartnerId
 
    IF table:LastRec() == 0
       RETURN .F.
@@ -287,28 +284,30 @@ STATIC FUNCTION _export_dbf( table, rpt_vars )
 
       oRow := table:GetRow( _i )
 
+      cKontoId := query_row( oRow, "konto_id" ) 
+      cPartnerId := query_row( oRow, "partner_id" )
+
       SELECT r_export
       APPEND BLANK
 
       _rec := dbf_get_rec()
+      _rec[ "id_konto" ] := cKontoId
+      _rec[ "id_partn" ] := cPartnerId
 
-      _rec[ "id_konto" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "konto_id" ) ) )
-      _rec[ "id_partn" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "partner_id" ) ) )
-
-      IF !Empty ( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "partner_id" ) ) ) )
-         _rec[ "naziv" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "partn_naz" ) ) )
+      IF !Empty ( cPartnerId )
+         _rec[ "naziv" ] := query_row( oRow, "partner_naz" )
       ELSE
-         _rec[ "naziv" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "konto_naz" ) ) )
+         _rec[ "naziv" ] := query_row( oRow, "konto_naz" )
       ENDIF
 
       IF _rasclan
-         _rec[ "rj" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idrj" ) ) )
-         _rec[ "fond" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "fond" ) ) )
-         _rec[ "funk" ] := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "funk" ) ) )
+         _rec[ "rj" ] := query_row( oRow, "idrj" ) 
+         _rec[ "fond" ] := query_row( oRow, "fond" ) 
+         _rec[ "funk" ] := query_row( oRow, "funk") 
       ENDIF
 
-      _rec[ "duguje" ] := oRow:FieldGet( oRow:FieldPos( "duguje" ) )
-      _rec[ "potrazuje" ] := oRow:FieldGet( oRow:FieldPos( "potrazuje" ) )
+      _rec[ "duguje" ] := query_row( oRow, "duguje") 
+      _rec[ "potrazuje" ] := query_row( oRow, "potrazuje") 
       _rec[ "saldo" ] := _rec[ "duguje" ] - _rec[ "potrazuje" ]
 
       IF Round( _rec[ "saldo" ], 2 ) == 0 .AND. !_nule

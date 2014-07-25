@@ -19,7 +19,7 @@ FUNCTION kalk_izvjestaji_prodavnice_menu()
    LOCAL _izbor := 1
 
    AAdd( _Opc, "1. kartica - prodavnica                          " )
-   AAdd( _opcexe, {|| KarticaP() } )
+   AAdd( _opcexe, {|| kalk_kartica_prodavnica() } )
    AAdd( _Opc, "2. lager lista - prodavnica" )
    AAdd( _opcexe, {|| lager_lista_prodavnica() } )
    AAdd( _Opc, "3. finansijsko stanje prodavnice" )

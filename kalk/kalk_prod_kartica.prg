@@ -17,10 +17,9 @@ STATIC __txt1
 STATIC __txt2
 STATIC __txt3
 
-// ------------------------------------
-// kartica prodavnice
-// ------------------------------------
-FUNCTION KarticaP()
+
+
+FUNCTION kalk_kartica_prodavnica()
 
    PARAMETERS cIdFirma, cIdRoba, cIdKonto
 
@@ -106,26 +105,17 @@ FUNCTION KarticaP()
       ENDIF
 
       IF Empty( cIdRoba )
-         IF Pitanje(, "Niste zadali sifru artikla, izlistati sve kartice ?", "N" ) == "N"
+         IF Pitanje(, "Niste zadali šifru artikla, izlistati sve kartice (D/N) ?", "N" ) == "N"
             my_close_all_dbf()
             RETURN
-         ELSE
-            IF !Empty( cIdroba )
-               IF Pitanje(, "Korekcija nabavnih cijena ???", "N" ) == "D"
-                  fKNabC := .T.
-               ENDIF
-            ENDIF
-            cIdr := ""
-         ENDIF
+        ENDIF
       ELSE
          cIdr := cIdRoba
       ENDIF
 
    ELSE
-
       cIdR := cIdRoba
       dDatOd := CToD( "" )
-
    ENDIF
 
    O_KALK
@@ -134,7 +124,6 @@ FUNCTION KarticaP()
 
    SELECT kalk
    SET ORDER TO TAG "4"
-   // hseek cidfirma+cidkonto+cidroba
 
    PRIVATE cFilt := ".t."
 
@@ -154,18 +143,9 @@ FUNCTION KarticaP()
 
    nLen := 1
 
-   IF IsPDV()
-
-      _set_zagl( @cLine, @cTxt1 )
-      __line := cLine
-      __txt1 := cTxt1
-
-   ELSE
-
-      m := "-------- ----------- ------ ------ " + "---------- ---------- ---------- ---------- ---------- ---------- ----------"
-      __line := m
-
-   ENDIF
+   _set_zagl( @cLine, @cTxt1 )
+   __line := cLine
+   __txt1 := cTxt1
 
    nTStrana := 0
 
@@ -217,8 +197,6 @@ FUNCTION KarticaP()
          ENDIF
 
          IF cPredh == "D" .AND. field->datdok >= dDatod .AND. fPrviProl
-
-            // ispis predhodnog stanja
 
             fPrviprol := .F.
 
@@ -344,8 +322,6 @@ FUNCTION KarticaP()
 
          ELSEIF field->pu_i == "5" .AND. ( field->idvd $ "12#13#22" )
 
-            // povrati
-
             nUlaz -= field->kolicina
 
             IF field->datdok >= dDatod
@@ -377,7 +353,6 @@ FUNCTION KarticaP()
                @ PRow(), PCol() + 1 SAY field->kolicina PICT pickol
                @ PRow(), PCol() + 1 SAY 0 PICT pickol
                @ PRow(), PCol() + 1 SAY nUlaz - nIzlaz PICT pickol
-               // kod ove kalk fcj predstavlja staru vpc
                @ PRow(), PCol() + 1 SAY field->fcj PICT piccdem
                @ PRow(), PCol() + 1 SAY field->mpcsapp PICT piccdem
                @ PRow(), PCol() + 1 SAY field->fcj + field->mpcsapp PICT piccdem
@@ -435,9 +410,6 @@ FUNCTION KarticaP()
 
 
 
-// ---------------------------------------------------------
-// setovanje zaglavlja
-// ---------------------------------------------------------
 STATIC FUNCTION _set_zagl( cLine, cTxt1 )
 
    LOCAL aKProd := {}
@@ -481,9 +453,6 @@ FUNCTION Test( cIdRoba )
 
 
 
-// --------------------------------------
-// zaglavlje kartice
-// --------------------------------------
 STATIC FUNCTION Zagl()
 
    SELECT konto
@@ -508,7 +477,6 @@ STATIC FUNCTION Zagl()
    RETURN
 
 
-// izvjestaj najprometniji artikli
 FUNCTION NPArtikli()
 
    LOCAL PicDEM := gPicDem
@@ -580,7 +548,7 @@ FUNCTION NPArtikli()
    aTopI := {}
    aTopK := {}
 
-   MsgO( "Priprema izvjestaja..." )
+   MsgO( "Priprema izvještaja..." )
 
    GO TOP
    DO WHILE !Eof()
@@ -628,32 +596,28 @@ FUNCTION NPArtikli()
 
    START PRINT CRET
    ?
-   // zaglavlje
    Preduzece()
    ?? "Najprometniji artikli za period", ddat0, "-", ddat1
-   ? "Obuhvacene prodavnice:", IF( Empty( qqKonto ), "SVE", "'" + Trim( qqKonto ) + "'" )
-   ? "Obuhvaceni artikli   :", IF( Empty( qqRoba ), "SVI", "'" + Trim( qqRoba ) + "'" )
+   ?U "Obuhvaćene prodavnice:", IF( Empty( qqKonto ), "SVE", "'" + Trim( qqKonto ) + "'" )
+   ?U "Obuhvaćeni artikli   :", IF( Empty( qqRoba ), "SVI", "'" + Trim( qqRoba ) + "'" )
    ?
 
-   // top lista po iznosima
    IF cSta $ "IO"
       m := AllTrim( Str( Min( nTop, Len( aTopI ) ) ) ) + " NAJPROMETNIJIH ARTIKALA POSMATRANO PO IZNOSIMA:"
       ? __line
       ? REPL( "-", Len( m ) )
       ?
-      ? PadC( "SIFRA", Len( id ) ) + " " + PadC( "NAZIV", Len( naz ) ) + " " + PadC( "IZNOS", 20 )
+      ?U PadC( "ŠIFRA", Len( id ) ) + " " + PadC( "NAZIV", Len( naz ) ) + " " + PadC( "IZNOS", 20 )
       ? REPL( "-", Len( id ) ) + " " + REPL( "-", Len( naz ) ) + " " + REPL( "-", 20 )
       FOR i := 1 TO Len( aTopI )
          cIdRoba := aTopI[ i, 1 ]
          SEEK cIdRoba
          ? cIdRoba, Left( ROBA->naz, 40 ), PadC( Transform( aTopI[ i, 2 ], picdem ), 20 )
-
       NEXT
       ? REPL( "-", Len( id ) ) + " " + REPL( "-", Len( naz ) ) + " " + REPL( "-", 20 )
 
    ENDIF
 
-   // top lista po kolicinama
    IF cSta $ "KO"
       IF cSta == "O"
          ?
@@ -664,14 +628,13 @@ FUNCTION NPArtikli()
       ? __line
       ? REPL( "-", Len( m ) )
       ?
-      ? PadC( "SIFRA", Len( id ) ) + " " + PadC( "NAZIV", Len( naz ) ) + " " + PadC( "KOLICINA", 20 )
+      ?U PadC( "ŠIFRA", Len( id ) ) + " " + PadC( "NAZIV", Len( naz ) ) + " " + PadC( "KOLICINA", 20 )
       ? REPL( "-", Len( id ) ) + " " + REPL( "-", Len( naz ) ) + " " + REPL( "-", 20 )
 
       FOR i := 1 TO Len( aTopK )
          cIdRoba := aTopK[ i, 1 ]
          SEEK cIdRoba
          ? cIdRoba, Left( ROBA->naz, 40 ), PadC( Transform( aTopK[ i, 2 ], pickol ), 20 )
-
       NEXT
       ? REPL( "-", Len( id ) ) + " " + REPL( "-", Len( naz ) ) + " " + REPL( "-", 20 )
 

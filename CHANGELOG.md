@@ -1,3 +1,9 @@
+1.7.121  2014-07-25, vsasa
+
+  - RNAL, izvještaj za poslovođe
+     - ubačena kolona "objekat isporuke"
+     - napravljena ODT varijanta izvještaja
+ 
 1.7.120  2014-07-17, vsasa
 
   - LD, vraćena dva izvještaja koji su prethodno izbačeni

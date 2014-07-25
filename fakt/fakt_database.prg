@@ -443,6 +443,12 @@ FUNCTION fakt_dokument_postoji( cFirma, cTipDok, cBroj )
       lExist := .T.
    ENDIF
 
+   IF !lExist
+      IF table_count( "fmk.fakt_fakt", cWhere ) > 0
+         lExist := .T.
+      ENDIF
+   ENDIF
+
    RETURN lExist
 
 

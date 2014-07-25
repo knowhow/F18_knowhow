@@ -1617,9 +1617,6 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
       CASE izbor == 7 .OR. izbor == 8
          RETURN DE_CONT
 
-      CASE izbor == 13
-         ug_za_period()
-
       ENDCASE
 
    ENDDO

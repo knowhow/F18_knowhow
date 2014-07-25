@@ -24,15 +24,8 @@ FUNCTION fakt_pregled_dokumenata()
    AAdd( _opcexe, {|| fakt_stampa_azuriranog() } )
    AAdd( _opc, "2. pregled liste dokumenata" )
    AAdd( _opcexe, {|| fakt_pregled_liste_dokumenata() } )
-   AAdd( _opc, "3. štampa txt dokumenata od broja do broja      " )
-   AAdd( _opcexe, {|| fakt_stampa_azuriranog_period() } )
-   AAdd( _opc, "4. štampa/export odt dokumenata po zadanom uslovu" )
+   AAdd( _opc, "3. štampa/export odt dokumenata po zadanom uslovu" )
    AAdd( _opcexe, {|| stdokodt_grupno() } )
-
-   IF IsUgovori()
-      AAdd( _opc, "U. štampa faktura na osnovu ugovora za period" )
-      AAdd( _opcexe, {|| ug_za_period() } )
-   ENDIF
 
    f18_menu( "stfak", .F., _izbor, _opc, _opcexe )
 

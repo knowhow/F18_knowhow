@@ -126,6 +126,9 @@ FUNCTION zakljuci_pos_racun()
       RETURN lRet
    ENDIF
 
+   IF treba_li_dodati_taksu_za_gorivo()
+   ENDIF
+
    GO TOP
 
    _param[ "idpos" ] := _pos_pripr->idpos

@@ -14,12 +14,15 @@
 STATIC s_cId_taksa := "TAKGORI   "
 
 
+
 STATIC FUNCTION is_modul_pos()
    IF goModul:oDataBase:cName == "POS"
       RETURN .T.
    ELSE
       RETURN .F.
    ENDIF
+
+
 
 FUNCTION valid_taksa_gorivo( cError, nGorivoKolicina, nTaksaKolicina )
 
@@ -31,6 +34,12 @@ FUNCTION valid_taksa_gorivo( cError, nGorivoKolicina, nTaksaKolicina )
    ELSE
       SELECT fakt_pripr
    ENDIF
+
+   IF RecCount() == 0
+      RETURN lRet
+   ENDIF
+
+   GO TOP
 
    nGorivoKolicina := 0
    nTaksaKolicina := 0
@@ -49,11 +58,13 @@ FUNCTION valid_taksa_gorivo( cError, nGorivoKolicina, nTaksaKolicina )
 
    ENDDO
 
+   GO TOP
+
    SELECT ( nSelect )
 
    IF nGorivoKolicina <> nTaksaKolicina
       lRet := .F.
-      cError := "Količina goriva na računu je " + AllTrim( Str( nGorivoKolicina ) ) + "#Dok je unesena taksa količina " + ;
+      cError := "Količina goriva na računu je " + AllTrim( Str( nGorivoKolicina ) ) + "#Dok je unesena taksa TAKGORI " + ;
                AllTrim( Str( nTaksaKolicina ) )
    ENDIF
 
@@ -77,34 +88,80 @@ STATIC FUNCTION artikal_je_gorivo( cIdRoba )
 
 
 
-FUNCTION treba_li_dodati_taksu_za_gorivo()
+
+FUNCTION valid_dodaj_taksu_za_gorivo()
   
    LOCAL cError := ""
    LOCAL nGorivoKolicina := 0
    LOCAL nTaksaKolicina := 0
    LOCAL nDodajTakse := 0
-   LOCAL lRet := .F.
+   LOCAL lRet := .T.
 
    IF !valid_taksa_gorivo( @cError, @nGorivoKolicina, @nTaksaKolicina )
+
        MsgBeep( cError )
-   ENDIF
+    
+       nDodajTakse := nGorivoKolicina - nTaksaKolicina
 
-   nDodajTakse := nGorivoKolicina - nTaksaKolicina
+       IF nDodajTakse > 0
 
-   IF nDodajTakse > 0
-       lRet := .T.
-       dodaj_taksu_za_gorivo( nDodajTakse )
+          IF Pitanje(, "Unijeti stavku TAKGORI " + AllTrim( Str( nDodajTakse ), 12, 2 ) + " na gorivo (D/N) ?", "D" ) == "D"
+
+             dodaj_taksu_za_gorivo( nDodajTakse )
+
+             nGorivoKolicina := 0
+             nTaksaKolicina := 0
+
+             IF !valid_taksa_gorivo( @cError, @nGorivoKolicina, @nTaksaKolicina )
+                lRet := .F.
+                error_dodaj_stavku_takse_goriva()
+             ENDIF
+
+          ENDIF
+
+       ELSE
+          lRet := .F.
+          error_dodaj_stavku_takse_goriva()
+       ENDIF 
+
    ENDIF
 
    RETURN lRet
+
+
+STATIC FUNCTION error_dodaj_stavku_takse_goriva()
+   MsgBeep( "Pobrisati stavku TAKGORI iz pripreme pa ponoviti operciju ažuriranja !" )
+   RETURN
+
+
+STATIC FUNCTION brisi_taksu_za_gorivo_sa_racuna()
+
+   IF is_modul_pos()
+      SELECT _pos_pripr
+   ELSE
+      SELECT fakt_pripr
+   ENDIF
+
+   GO TOP
+
+   DO WHILE !Eof()
+      IF field->idroba == s_cId_taksa
+         my_delete()
+      ENDIF
+      SKIP
+   ENDDO
+
+   GO TOP
+
+   RETURN
 
 
 
 FUNCTION dodaj_taksu_za_gorivo( nKolicina )
 
    LOCAL nSelect := SELECT()
-   LOCAL lPos := .F.
    LOCAL hRec, hPrviRec
+   LOCAL lRet := .T.
 
    O_ROBA
    hseek s_cId_taksa
@@ -113,11 +170,7 @@ FUNCTION dodaj_taksu_za_gorivo( nKolicina )
       dodaj_sifru_takse_u_sifarnik_robe()
    ENDIF
 
-   IF goModul:oDataBase:cName == "POS"
-      lPos := .T.
-   ENDIF
-
-   IF lPos
+   IF is_modul_pos()
       SELECT _pos_pripr
    ELSE
       SELECT fakt_pripr
@@ -135,6 +188,7 @@ FUNCTION dodaj_taksu_za_gorivo( nKolicina )
    hRec["datum"] := hPrviRec["datum"]
    hRec["sto"] := hPrviRec["sto"]
    hRec["smjena"] := hPrviRec["smjena"]
+   hRec["idodj"] := hPrviRec["idodj"]
    hRec["idradnik"] := hPrviRec["idradnik"]
    hRec["idcijena"] := hPrviRec["idcijena"]
    hRec["prebacen"] := hPrviRec["prebacen"]
@@ -144,12 +198,14 @@ FUNCTION dodaj_taksu_za_gorivo( nKolicina )
    hRec["kolicina"] := nKolicina
    hRec["cijena"] := roba->mpc
    hRec["idtarifa"] := roba->idtarifa
+   hRec["robanaz"] := roba->naz
+   hRec["jmj"] := roba->jmj
 
-   dbf_update_rec( _rec ) 
+   dbf_update_rec( hRec ) 
 
    SELECT ( nSelect )
 
-   RETURN
+   RETURN lRet
 
 
 
@@ -164,12 +220,11 @@ STATIC FUNCTION dodaj_sifru_takse_u_sifarnik_robe()
    APPEND BLANK
 
    hRec := dbf_get_rec()
+
    hRec["id"] := s_cId_taksa
-
-   gen_plu( @nNovi_plu )
-   hRec["fisc_plu"] := nNovi_plu
-
+   hRec["fisc_plu"] := posljednji_plu_artikla() + 1
    hRec["naz"] := "TAKSA ZA GORIVO 1 pf"
+   hRec["jmj"] := "KOM"
    hRec["idtarifa"] := PadR( "PDV0", 6 )
    hRec["mpc"] := 0.01
 

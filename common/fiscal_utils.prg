@@ -91,13 +91,25 @@ FUNCTION fiscal_art_naz_fix( naz, drv )
 
 
 
+FUNCTION posljednji_plu_artikla()
+
+   LOCAL nPlu := 0
+   LOCAL cSql, oQuery
+
+   cSql := "SELECT MAX( fisc_plu ) AS last_plu FROM fmk.roba"
+   oQuery := _sql_query( my_server(), cSql )
+
+   nPlu := query_row( oQuery, "last_plu" )
+
+   RETURN nPlu
+
+
+
 // -------------------------------------------------
 // generise novi plu kod za sifru
 // -------------------------------------------------
 FUNCTION gen_plu( nVal )
 
-   LOCAL nTArea := Select()
-   LOCAL nTRec := RecNo()
    LOCAL nPlu := 0
 
    IF ( ( Ch == K_CTRL_N ) .OR. ( Ch == K_F4 ) )
@@ -105,20 +117,8 @@ FUNCTION gen_plu( nVal )
       IF LastKey() == K_ESC
          RETURN .F.
       ENDIF
-
-      SET ORDER TO TAG "plu"
-      GO TOP
-      SEEK Str( 99999999999, 10 )
-      SKIP -1
-
-      nPlu := field->fisc_plu
-      nVal := nPlu + 1
-
-      SELECT ( nTArea )
-      SET ORDER TO TAG "ID"
-      GO ( nTRec )
-
-      AEval( GetList, {| o| o:display() } )
+      
+      nVal := posljednji_plu_artikla() + 1
 
    ENDIF
 

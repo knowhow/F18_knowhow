@@ -150,7 +150,6 @@ FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, fScope, cPrefixFilter, qIdRoba )
    cBroj := AllTrim( pos_doks->IdPos ) + "-" + AllTrim( pos_doks->BrDok )
 
    IF cBroj = '-'
-      // nema racuna
       cBroj := Space( 9 )
    ENDIF
 

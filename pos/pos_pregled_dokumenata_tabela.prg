@@ -400,6 +400,8 @@ FUNCTION pos_pregled_stavki_racuna()
    LOCAL oBrowse
    LOCAL cPrevCol
    LOCAL _rec
+   LOCAL nMaxCol := MAXCOL() - 2
+
    PRIVATE ImeKol
    PRIVATE Kol
 
@@ -445,19 +447,13 @@ FUNCTION pos_pregled_stavki_racuna()
    SELECT _pos_pripr
    GO TOP
 
-   ImeKol := { { "Sifra", {|| idroba } }, ;
-      { "Naziv", {|| Left( RobaNaz, 30 ) } }, ;
-      { "Kolicina", {|| Str( Kolicina, 7, 2 ) } }, ;
-      { "Cijena", {|| Str( Cijena, 7, 2 ) } }, ;
-      { "Iznos", {|| Str( Kolicina * Cijena, 11, 2 ) } } }
+   browse_kolone( @ImeKol, @Kol )
 
-   Kol := { 1, 2, 3, 4, 5 }
-
-   Box(, 15, 73 )
+   Box(, 15, nMaxCol )
 
    @ m_x + 1, m_y + 19 SAY8 PadC ( "Pregled " + IIF( gRadniRac == "D", "stalnog ", "" ) + "računa " + Trim( pos_doks->IdPos ) + "-" + LTrim ( pos_doks->BrDok ), 30 ) COLOR INVERT
 
-   oBrowse := FormBrowse( m_x + 2, m_y + 1, m_x + 15, m_y + 73, ImeKol, Kol, { BROWSE_PODVUCI_2, BROWSE_PODVUCI, BROWSE_COL_SEP }, 0 )
+   oBrowse := FormBrowse( m_x + 2, m_y + 1, m_x + 15, m_y + nMaxCol, ImeKol, Kol, { BROWSE_PODVUCI_2, BROWSE_PODVUCI, BROWSE_COL_SEP }, 0 )
    ShowBrowse( oBrowse, {}, {} )
 
    SELECT _pos_pripr
@@ -465,6 +461,31 @@ FUNCTION pos_pregled_stavki_racuna()
    BoxC()
 
    SetColor ( cPrevCol )
+
    SELECT pos_doks
 
    RETURN
+
+
+
+STATIC FUNCTION browse_kolone( aImeKol, aKol )
+
+   LOCAL i
+
+   aImeKol := {}
+   aKol := {}
+
+   AADD( aImeKol, { "Sifra", {|| idroba } } )
+   AADD( aImeKol, { "Naziv", {|| Left( robanaz, 30 ) } } )
+   AADD( aImeKol, { "Kolicina", {|| Str( kolicina, 7, 3 ) } } )
+   AADD( aImeKol, { "Cijena", {|| Str( cijena, 7, 2 ) } } )
+   AADD( aImeKol, { "Ukupno", {|| Str( kolicina * cijena, 11, 2 ) } } )
+   AADD( aImeKol, { "Tarifa", {|| idtarifa } } )
+
+   FOR i := 1 TO Len( aImeKol )
+      AAdd( aKol, i )
+   NEXT
+
+   RETURN
+
+

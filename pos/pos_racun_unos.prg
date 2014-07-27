@@ -184,7 +184,9 @@ FUNCTION pos_unos_racuna()
       @ m_x + 4, m_y + 25 SAY Space ( 11 )
 
       IF LastKey() == K_ESC
-         EXIT
+         IF valid_dodaj_taksu_za_gorivo()
+            EXIT
+         ENDIF
       ENDIF
 
       SELECT _pos_pripr
@@ -220,7 +222,6 @@ FUNCTION pos_unos_racuna()
       oBrowse:refreshAll()
       oBrowse:dehilite()
 
-      // prikazi stanje artikla u dnu ekrana
       _tmp := "STANJE ARTIKLA " + AllTrim( _stanje_art_id ) + ": " + AllTrim( Str( _stanje_robe, 12, 2 ) ) + " " + _stanje_art_jmj
       ispisi_donji_dio_forme_unosa( _tmp, 1 )
 

@@ -2,6 +2,7 @@
 
   - POS, automatska taksa za gorivo u iznosu od 1 pf na svaki izdati litar goriva
   - F18, slanje uzoraka TXT/LO izvještaja uslijed greške ili korisničkog odabira
+  - F18, notify_podrska()
  
 1.7.121  2014-07-25, vsasa
 

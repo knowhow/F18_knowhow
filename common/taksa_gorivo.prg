@@ -193,7 +193,7 @@ STATIC FUNCTION dodaj_taksu_za_gorivo_na_pos_racun( nKolicina )
 
 STATIC FUNCTION dodaj_taksu_za_gorivo_na_fakt_racun( nKolicina )
 
-   MsgBeep( "Nije implementirano !" )
+   MsgBeep( "Prema zakonu o naftnim derivatima potrebno je na svaki izdati litar goriva#dodati na račun i posebnu stavku TAKGORI za istu količinu !" )
 
    RETURN .T.
 

@@ -21,6 +21,7 @@ FUNCTION check_recno_and_fix( dbf_alias, cnt_dbf, full_synchro )
    LOCAL _opened := .F.
    LOCAL _sql_table
    LOCAL _dbf, _udbf
+   LOCAL cErrMsg
 
    IF full_synchro == NIL
       full_synchro := .F.
@@ -74,9 +75,14 @@ FUNCTION check_recno_and_fix( dbf_alias, cnt_dbf, full_synchro )
 
     IF _cnt_sql <> _cnt_dbf
 
-      log_write( "ERROR: check_recno " + _a_dbf_rec[ "alias" ] + " cnt: " + AllTrim( Str( _cnt_dbf, 10 ) ) + " / " + _sql_table + " cnt:" + AllTrim( Str( _cnt_sql, 10 ) ), 2 )
+      cErrMsg := "full synchro, ERROR: "
+      cErrMsg += "broj zapisa DBF tabele " + _a_dbf_rec[ "alias" ] + ": " + AllTrim( Str( _cnt_dbf, 10 ) ) + " "
+      cErrMsg += "broj zapisa SQL tabele " + _sql_table + ": " + AllTrim( Str( _cnt_sql, 10 ) )
+
+      log_write( cErrMsg )
 
       IF full_synchro
+          notify_podrska( cErrMsg )
           full_synchro( _a_dbf_rec[ "table" ], 50000 )
       ENDIF
 

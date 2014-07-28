@@ -295,7 +295,7 @@ STATIC FUNCTION send_email( err_obj )
 
    _attach := { _attachment }
 
-   MsgO( "Slanje email-a u toku ...." )
+   MsgO( "Šaljem izvještaj greške podršci bring.out ..." )
 
    f18_email_send( _mail_params, _attach )
 

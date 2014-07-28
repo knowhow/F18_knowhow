@@ -213,7 +213,7 @@ STATIC FUNCTION dodaj_sifru_takse_u_sifarnik_robe()
 
    hRec["id"] := s_cId_taksa
    hRec["fisc_plu"] := posljednji_plu_artikla() + 1
-   hRec["naz"] := "TAKSA ZA GORIVO 1 pf"
+   hRec["naz"] := "TAKSA NAFTNI DERIVATI"
    hRec["jmj"] := "KOM"
    hRec["idtarifa"] := PadR( "PDV0", 6 )
    hRec["mpc"] := 0.01

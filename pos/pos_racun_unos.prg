@@ -45,7 +45,6 @@ FUNCTION pos_unos_racuna()
    LOCAL _read_barkod
    LOCAL _stanje_robe := 0
    LOCAL _stanje_art_id, _stanje_art_jmj
-   LOCAL nTekRec 
 
    PRIVATE ImeKol := {}
    PRIVATE Kol := {}
@@ -186,16 +185,11 @@ FUNCTION pos_unos_racuna()
 
       IF LastKey() == K_ESC
     
-         nTekRec := RecNo()
-         
          IF valid_dodaj_taksu_za_gorivo()
             EXIT
          ELSE
  
-            IF nTekRec <> RecNo()
-               nIznNar += cijena * kolicina
-               nPopust += ncijena * kolicina
-            ENDIF
+            _calc_current_total( @nIznNar, @nPopust )
 
             oBrowse:goBottom()
             oBrowse:refreshAll()
@@ -337,6 +331,8 @@ STATIC FUNCTION _calc_current_total( iznos, popust )
       _popust += _pos_pripr->( kolicina * ncijena )
       SKIP
    ENDDO
+
+   GO TOP
 
    iznos := _iznos
    popust := _popust

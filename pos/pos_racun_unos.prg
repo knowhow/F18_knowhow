@@ -45,6 +45,7 @@ FUNCTION pos_unos_racuna()
    LOCAL _read_barkod
    LOCAL _stanje_robe := 0
    LOCAL _stanje_art_id, _stanje_art_jmj
+   LOCAL nTekRec 
 
    PRIVATE ImeKol := {}
    PRIVATE Kol := {}
@@ -184,13 +185,18 @@ FUNCTION pos_unos_racuna()
       @ m_x + 4, m_y + 25 SAY Space ( 11 )
 
       IF LastKey() == K_ESC
-
+    
+         nTekRec := RecNo()
+         
          IF valid_dodaj_taksu_za_gorivo()
             EXIT
          ELSE
  
-            nIznNar += cijena * kolicina
-            nPopust += ncijena * kolicina
+            IF nTekRec <> RecNo()
+               nIznNar += cijena * kolicina
+               nPopust += ncijena * kolicina
+            ENDIF
+
             oBrowse:goBottom()
             oBrowse:refreshAll()
             oBrowse:dehilite()

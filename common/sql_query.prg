@@ -20,7 +20,7 @@ FUNCTION _sql_query( oServer, cQuery, silent )
 FUNCTION run_sql_query( qry, retry )
 
    LOCAL _i, _qry_obj, lMsg := .F.
-
+   LOCAL cErrorMsg
    LOCAL _server := my_server()
 
    IF retry == NIL
@@ -55,13 +55,12 @@ FUNCTION run_sql_query( qry, retry )
 
       IF _qry_obj:NetErr() 
 
-         log_write( "ERROR RUN_SQL_QRY: " + _qry_obj:ErrorMsg() + " QRY:" + qry, 2 )
+         cErrorMsg := "ERROR RUN_SQL_QRY: " + _qry_obj:ErrorMsg() + " QRY:" + qry
+         log_write( cErrorMsg, 2 )
 
          IF _i == retry
-
-            //MsgBeep( "Ne mogu pristupiti serveru !##SQL Upit: " + qry  + "# nakon " + ALLTRIM( to_str( retry ) ) + " pokušaja !?" )
             MsgC()
-
+            notify_podrska( "Greška sa pozivanjem SQL upita, broj pokušaja: " + AllTrim( Str( retry ) ) + " " + cErrorMsg )
             RETURN .F.
          ENDIF
       ELSE

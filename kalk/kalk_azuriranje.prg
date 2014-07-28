@@ -204,7 +204,6 @@ STATIC FUNCTION kalk_zavisni_nakon_azuriranja( lGenerisi, lAuto )
 
    LOCAL lForm11 := .F.
    LOCAL cNext11 := ""
-   LOCAL cOdg := "D"
    LOCAL lgAFin := gAFin
    LOCAL lgAMat := gAMat
 
@@ -222,36 +221,62 @@ STATIC FUNCTION kalk_zavisni_nakon_azuriranja( lGenerisi, lAuto )
 
       RekapK()
 
-      IF ( gaFin == "D" .OR. gaMat == "D" )
-         IF kalk_kontiranje_naloga( .T., lAuto )
-            fin_nalog_priprema_kalk( lAuto )
-         ENDIF
-      ENDIF
+      formiraj_finansijski_nalog( lAuto )
 
       gAFin := lgAFin
       gAMat := lgAMat
 
-      O_KALK_PRIPR
-
-      IF field->idvd $ "10#12#13#16#11#95#96#97#PR#RN" .AND. gAFakt == "D"
-
-         IF field->idvd $ "16#96"
-            cOdg := "N"
-         ENDIF
-
-         IF Pitanje(, "Formirati dokument u FAKT ?", cOdg ) == "D"
-
-            P_Fakt()
-            o_kalk_za_azuriranje()
-
-         ENDIF
-
-      ENDIF
+      formiraj_fakt_zavisne_dokumente()
 
    ENDIF
 
-   IF lForm11 == .T.
+   IF lForm11
       Get11FromSmece( cNext11 )
+   ENDIF
+
+   RETURN
+
+
+STATIC FUNCTION formiraj_finansijski_nalog( lAuto )
+
+   IF !f18_use_module( "fin" )
+      RETURN
+   ENDIF
+         
+   IF ( gaFin == "D" .OR. gaMat == "D" )
+      IF kalk_kontiranje_naloga( .T., lAuto )
+         fin_nalog_priprema_kalk( lAuto )
+      ENDIF
+   ENDIF
+
+   RETURN
+
+
+STATIC FUNCTION formiraj_fakt_zavisne_dokumente()
+
+   LOCAL cOdg := "D"
+
+   O_KALK_PRIPR
+
+   IF !f18_use_module( "fakt" )
+      RETURN
+   ENDIF 
+
+   IF gAFakt != "D"
+      RETURN
+   ENDIF
+
+   IF field->idvd $ "10#12#13#16#11#95#96#97#PR#RN"
+
+      IF field->idvd $ "16#96"
+         cOdg := "N"
+      ENDIF
+
+      IF Pitanje(, "Formirati dokument u FAKT ?", cOdg ) == "D"
+         P_Fakt()
+         o_kalk_za_azuriranje()
+      ENDIF
+
    ENDIF
 
    RETURN

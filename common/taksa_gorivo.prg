@@ -106,54 +106,26 @@ FUNCTION valid_dodaj_taksu_za_gorivo()
        IF nDodajTakse > 0
 
           IF Pitanje(, "Unijeti stavku TAKGORI " + AllTrim( Str( nDodajTakse ), 12, 2 ) + " na gorivo (D/N) ?", "D" ) == "D"
-
              dodaj_taksu_za_gorivo( nDodajTakse )
-
-             nGorivoKolicina := 0
-             nTaksaKolicina := 0
-
-             IF !valid_taksa_gorivo( @cError, @nGorivoKolicina, @nTaksaKolicina )
-                lRet := .F.
-                error_dodaj_stavku_takse_goriva()
-             ENDIF
-
           ENDIF
 
        ELSE
-          lRet := .F.
           error_dodaj_stavku_takse_goriva()
        ENDIF 
+
+       lRet := .F.
 
    ENDIF
 
    RETURN lRet
 
 
+
+
 STATIC FUNCTION error_dodaj_stavku_takse_goriva()
    MsgBeep( "Pobrisati stavku TAKGORI iz pripreme pa ponoviti operciju ažuriranja !" )
    RETURN
 
-
-STATIC FUNCTION brisi_taksu_za_gorivo_sa_racuna()
-
-   IF is_modul_pos()
-      SELECT _pos_pripr
-   ELSE
-      SELECT fakt_pripr
-   ENDIF
-
-   GO TOP
-
-   DO WHILE !Eof()
-      IF field->idroba == s_cId_taksa
-         my_delete()
-      ENDIF
-      SKIP
-   ENDDO
-
-   GO TOP
-
-   RETURN
 
 
 
@@ -171,10 +143,22 @@ FUNCTION dodaj_taksu_za_gorivo( nKolicina )
    ENDIF
 
    IF is_modul_pos()
-      SELECT _pos_pripr
+      dodaj_taksu_za_gorivo_na_pos_racun( nKolicina )
    ELSE
-      SELECT fakt_pripr
+      dodaj_taksu_za_gorivo_na_fakt_racun( nKolicina )
    ENDIF
+
+   SELECT ( nSelect )
+
+   RETURN lRet
+
+
+
+STATIC FUNCTION dodaj_taksu_za_gorivo_na_pos_racun( nKolicina )
+
+   LOCAL hRec, hPrviRec
+
+   SELECT _pos_pripr
 
    GO TOP
    hPrviRec := dbf_get_rec()
@@ -203,9 +187,15 @@ FUNCTION dodaj_taksu_za_gorivo( nKolicina )
 
    dbf_update_rec( hRec ) 
 
-   SELECT ( nSelect )
+   RETURN .T.
 
-   RETURN lRet
+
+
+STATIC FUNCTION dodaj_taksu_za_gorivo_na_fakt_racun( nKolicina )
+
+   MsgBeep( "Nije implementirano !" )
+
+   RETURN .T.
 
 
 

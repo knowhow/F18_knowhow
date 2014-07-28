@@ -184,9 +184,21 @@ FUNCTION pos_unos_racuna()
       @ m_x + 4, m_y + 25 SAY Space ( 11 )
 
       IF LastKey() == K_ESC
+
          IF valid_dodaj_taksu_za_gorivo()
             EXIT
+         ELSE
+ 
+            nIznNar += cijena * kolicina
+            nPopust += ncijena * kolicina
+            oBrowse:goBottom()
+            oBrowse:refreshAll()
+            oBrowse:dehilite()
+
+            LOOP
+
          ENDIF
+
       ENDIF
 
       SELECT _pos_pripr

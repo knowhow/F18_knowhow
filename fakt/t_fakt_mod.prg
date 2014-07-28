@@ -12,8 +12,8 @@
 #include "fakt.ch"
 #include "hbclass.ch"
 
-// -----------------------------------------------
-// -----------------------------------------------
+
+
 CLASS TFaktMod FROM TAppMod
 
    VAR nDuzinaSifre
@@ -34,8 +34,6 @@ END CLASS
 
 
 
-// -----------------------------------------------
-// -----------------------------------------------
 METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
 
    ::super:new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
@@ -43,17 +41,11 @@ METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
    RETURN self
 
 
-// -----------------------------------------------
-// -----------------------------------------------
 METHOD initdb()
-
    ::oDatabase := TDbFakt():new()
-
    RETURN NIL
 
 
-// -----------------------------------------------
-// -----------------------------------------------
 METHOD mMenu()
 
    PRIVATE Izbor
@@ -62,14 +54,8 @@ METHOD mMenu()
 
    Izbor := 1
 
-   // setuj parametre pri pokretanju modula
    fakt_set_params()
-
-   // setuj sifrarnik sifk
    set_sifk_partn_bank()
-
-   // setuj sifrarnik idbroj itd...
-   // set_sifk_id_broj()
 
    @ 1, 2 SAY PadC( gTS + ": " + gNFirma, 50, "*" )
 
@@ -79,8 +65,6 @@ METHOD mMenu()
 
 
 
-// -----------------------------------------------
-// -----------------------------------------------
 METHOD mMenuStandard
 
    LOCAL _opc    := {}
@@ -124,8 +108,6 @@ METHOD mMenuStandard
 
 
 
-// -----------------------------------------------
-// -----------------------------------------------
 METHOD srv()
 
    ? "Pokrecem FAKT aplikacijski server"
@@ -148,15 +130,12 @@ METHOD srv()
    RETURN
 
 
-// -----------------------------------------------
-// -----------------------------------------------
 METHOD setGVars()
 
    LOCAL cSekcija
    LOCAL cVar
    LOCAL cVal
 
-   // setuj default odt template fakture
    __default_odt_template()
 
    set_global_vars()

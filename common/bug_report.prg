@@ -13,13 +13,16 @@
 #include "f18_ver.ch"
 #include "error.ch"
 
-// -----------------------------------------------
-// -----------------------------------------------
-FUNCTION GlobalErrorHandler( err_obj )
+
+
+FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
 
    LOCAL _i, _err_code
    LOCAL _out_file
    LOCAL _msg, _log_msg := "BUG REPORT: "
+
+   hb_default( @lQuitApp, .T. )
+   hb_default( @lShowErrorReport, .T. )
 
    _err_code := err_obj:genCode
 
@@ -28,20 +31,17 @@ FUNCTION GlobalErrorHandler( err_obj )
 
    PTxtSekvence()
 
-
    SET CONSOLE OFF
    SET PRINTER OFF
    SET DEVICE TO PRINTER
    SET PRINTER to ( _out_file )
    SET PRINTER ON
 
-
    P_12CPI
 
    ? Replicate( "=", 84 )
    ? "F18 bug report (v3.2) :", Date(), Time()
    ? Replicate( "=", 84 )
-
 
    _msg := "Verzija programa: " + F18_VER + " " + F18_VER_DATE + " " + FMK_LIB_VER
    ? _msg
@@ -127,7 +127,6 @@ FUNCTION GlobalErrorHandler( err_obj )
 
    ? "== END OF BUG REPORT =="
 
-
    SET DEVICE TO SCREEN
    SET PRINTER OFF
    SET PRINTER TO
@@ -136,18 +135,22 @@ FUNCTION GlobalErrorHandler( err_obj )
    my_close_all_dbf()
 
    log_write( _log_msg, 1 )
-   _cmd := "f18_editor " + _out_file
 
-   f18_run( _cmd )
+   IF lShowErrorReport
+      _cmd := "f18_editor " + _out_file
+      f18_run( _cmd )
+   ENDIF
 
    send_email( err_obj )
 
-   QUIT_1
+   IF lQuitApp
+      QUIT_1
+   ENDIF
 
    RETURN
 
-// ----------------------------------------------------
-// ----------------------------------------------------
+
+
 STATIC FUNCTION server_info()
 
    LOCAL _key
@@ -179,8 +182,8 @@ STATIC FUNCTION server_info()
 
    RETURN .T.
 
-// --------------------------------------
-// --------------------------------------
+
+
 STATIC FUNCTION server_connection_info()
 
    ?
@@ -192,8 +195,8 @@ STATIC FUNCTION server_connection_info()
 
    RETURN .T.
 
-// -------------------------------
-// -------------------------------
+
+
 STATIC FUNCTION server_db_version_info()
 
    LOCAL _server_db_num, _server_db_str, _f18_required_server_str, _f18_required_server_num
@@ -211,8 +214,8 @@ STATIC FUNCTION server_db_version_info()
    RETURN .T.
 
 
-// ---------------------------------
-// ---------------------------------
+
+
 STATIC FUNCTION current_dbf_info()
 
    LOCAL _struct, _i
@@ -232,8 +235,8 @@ STATIC FUNCTION current_dbf_info()
    RETURN .T.
 
 
-// -----------------------------------
-// -----------------------------------
+
+
 FUNCTION RaiseError( cErrMsg )
 
    LOCAL oErr
@@ -250,9 +253,8 @@ FUNCTION RaiseError( cErrMsg )
    RETURN .T.
 
 
-// ---------------------------------
-// pošalji grešku na email
-// ---------------------------------
+
+
 STATIC FUNCTION send_email( err_obj )
 
    LOCAL _mail_params
@@ -305,8 +307,6 @@ STATIC FUNCTION send_email( err_obj )
 
 
 
-// ----------------------------------------------------------------
-// ----------------------------------------------------------------
 STATIC FUNCTION send_email_attachment()
 
    LOCAL _a_files := {}
@@ -345,4 +345,24 @@ STATIC FUNCTION send_email_attachment()
    endif
 
    RETURN ( _path + _filename )
+
+
+
+
+FUNCTION notify_podrska( cErrorMsg )
+
+   LOCAL oErr
+
+   oErr := ErrorNew()
+   oErr:severity := ES_ERROR
+   oErr:genCode := EG_OPEN
+   oErr:subSystem := "F18"
+   oErr:subCode := 1000
+   oErr:Description := cErrorMsg
+
+   EVAL( ErrorBlock(), oErr, .F., .F. )
+
+   RETURN .T.
+
+
 

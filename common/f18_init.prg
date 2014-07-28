@@ -58,9 +58,6 @@ STATIC __font_width := 15
 STATIC __log_level := 3
 
 
-// ---------------------------------
-//
-// ---------------------------------
 FUNCTION f18_init_app( arg_v )
 
    LOCAL oLogin
@@ -76,14 +73,11 @@ REQUEST DBFFPT
 #ifndef NODE
 #ifdef __PLATFORM__WINDOWS
 
-// REQUEST HB_GT_WIN
-// REQUEST HB_GT_WIN_DEFAULT
 REQUEST HB_GT_WVT
 REQUEST HB_GT_WVT_DEFAULT
 
 #else
 
-// REQUEST HB_GT_CRS_DEFAULT
 REQUEST HB_GT_XWC_DEFAULT
 
 #endif
@@ -92,9 +86,6 @@ REQUEST HB_GT_XWC_DEFAULT
 rddSetDefault( RDDENGINE )
 
 SET( _SET_AUTOPEN, .F.  )
-// Set( _SET_AUTOSHARE, 0  )
-// SET DBFLOCKSCHEME TO DB_DBFLOCK_HB32
-// SET DBFLOCKSCHEME TO DB_DBFLOCK_HB64
 
 init_harbour()
 
@@ -108,15 +99,11 @@ PUBLIC cDirSif     := ""
 PUBLIC glBrojacPoKontima := .T.
 
 set_f18_home_root()
-
-//log_create()
-
 SetgaSDbfs()
 set_global_vars_0()
 PtxtSekvence()
 
-__my_error_handler := {|objError| GlobalErrorHandler( objError, .F. ) }
-
+__my_error_handler := { | objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) }
 __global_error_handler := ErrorBlock( __my_error_handler )
 
 set_screen_dimensions()
@@ -128,7 +115,6 @@ IF no_sql_mode()
    RETURN .T.
 ENDIF
 
-// iniciraj logiranje
 f18_init_app_login( NIL, arg_v )
 
 RETURN .T.

@@ -1,3 +1,7 @@
+1.7.122  2014-07-28, vsasa
+
+  - POS, automatska taksa za gorivo u iznosu od 1 pf na svaki izdati litar goriva
+ 
 1.7.121  2014-07-25, vsasa
 
   - RNAL, izvještaj za poslovođe

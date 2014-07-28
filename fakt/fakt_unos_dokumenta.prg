@@ -294,6 +294,10 @@ STATIC FUNCTION fakt_pripr_keyhandler()
          RETURN DE_REFRESH
       ENDIF
 
+      IF !valid_dodaj_taksu_za_gorivo()
+         RETURN DE_REFRESH
+      ENDIF
+
       my_close_all_dbf()
 
       _fakt_doks := azur_fakt()

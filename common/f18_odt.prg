@@ -17,6 +17,7 @@ STATIC __xml_file
 STATIC __output_odt
 STATIC __output_pdf
 STATIC __template
+STATIC __template_filename
 STATIC __jod_converter := "jodconverter-cli.jar"
 STATIC __jod_reports := "jodreports-cli.jar"
 STATIC __java_run_cmd := "java -Xmx128m -jar"
@@ -96,6 +97,7 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file )
    #endif
 
    __template := _template
+   __template_filename := cTemplate
 
    _cmd := __java_run_cmd + " " + _jod_full_path + " "
    _cmd += _template + " "
@@ -120,9 +122,9 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file )
 
       MsgBeep( cErr )
 
-      //IF fetch_metric( "bug_report_email", my_user(), "A" ) $ "D#A"
-        // odt_na_email_podrska( cErr )
-      //ENDIF
+      IF fetch_metric( "bug_report_email", my_user(), "A" ) $ "D#A"
+         odt_na_email_podrska( cErr )
+      ENDIF
 
       RETURN lRet
 
@@ -131,6 +133,24 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file )
    lRet := .T.
 
    RETURN lRet
+
+
+
+STATIC FUNCTION samo_naziv_fajla( cFajl )
+
+   LOCAL cNaziv := ""
+   LOCAL aTmp
+
+   IF EMPTY( cFajl )
+      RETURN cNaziv
+   ENDIF
+
+   aTmp := TokToNiz( cFajl, SLASH )
+
+   cNaziv := aTmp[ LEN( aTmp ) ]
+   cNaziv := STRTRAN( cNaziv, '"', '' )
+
+   RETURN cNaziv
 
 
 
@@ -336,30 +356,38 @@ FUNCTION prikazi_odt( cOutput_file )
                       data.xml
 */
 
-STATIC FUNCTION odt_na_email_podrska( error_text )
+STATIC FUNCTION odt_na_email_podrska( cErrorTxt )
 
-   LOCAL _mail_params, _body, _subject, _attachment
+   LOCAL hMailParams, cBody, cSubject, aAttachment, cZipFile
 
-   _subject := "Uzorak ODT izvještaja, F18 " + F18_VER
-   _subject += ", " + my_server_params()["database"] + "/" + ALLTRIM( f18_user() ) 
-   _subject += ", " + DTOC( DATE() ) + " " + PADR( TIME(), 8 ) 
+   cSubject := "Uzorak ODT izvještaja, F18 " + F18_VER
+   cSubject += ", " + my_server_params()["database"] + "/" + ALLTRIM( f18_user() ) 
+   cSubject += ", " + DTOC( DATE() ) + " " + PADR( TIME(), 8 ) 
 
-   _body := ""
+   cBody := ""
 
-   IF error_text <> NIL 
-      _body += error_text + ". "
+   IF cErrorTxt <> NIL .AND. !EMPTY( cErrorTxt ) 
+      cBody += cErrorTxt + ". "
    ENDIF
 
-   _body += "U prilogu fajlovi neophodni za generisanje ODT izvještaja."
+   cBody += "U prilogu fajlovi neophodni za generisanje ODT izvještaja."
 
-   _attachment := NIL
-       //odt_email_attachment()
+   cZipFile := odt_email_attachment()
 
-   _mail_params := email_hash_za_podrska_bring_out( _subject, _body )
+   aAttachment := {}
+   IF !EMPTY( cZipFile )
+      AADD( aAttachment, cZipFile )
+   ENDIF
+
+   DirChange( my_home() )
+
+   hMailParams := email_hash_za_podrska_bring_out( cSubject, cBody )
 
    MsgO( "Slanje email-a u toku ..." )
   
-   f18_email_send( _mail_params, _attachment )
+   f18_email_send( hMailParams, aAttachment )
+
+   FErase( my_home() + cZipFile )
 
    MsgC()
 
@@ -371,11 +399,10 @@ STATIC FUNCTION odt_email_attachment()
 
    LOCAL aFiles := {}
    LOCAL cPath := my_home()
-   LOCAL aAttachment := {}
    LOCAL cServer := my_server_params()
    LOCAL cZipFile
- 
-   cZipFile := ALLTRIM( _server["database"] )
+
+   cZipFile := ALLTRIM( cServer["database"] )
    cZipFile += "_" + ALLTRIM( f18_user() )
    cZipFile += "_" + DTOS( DATE() ) 
    cZipFile += "_" + STRTRAN( TIME(), ":", "" ) 
@@ -383,12 +410,13 @@ STATIC FUNCTION odt_email_attachment()
 
    DirChange( my_home() )
  
-   AADD( aFiles, "" )
-   AADD( aFiles, "" )
+   AADD( aFiles, samo_naziv_fajla( __xml_file ) )
+   AADD( aFiles, __template_filename )
   
    _err := zip_files( cPath, cZipFile, aFiles )
 
-   RETURN aAttachment
+   RETURN cZipFile
+
 
 
 FUNCTION f18_open_mime_document( cDocument )

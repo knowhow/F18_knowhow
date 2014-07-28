@@ -925,7 +925,8 @@ STATIC FUNCTION fakt_to_fprint( id_firma, tip_dok, br_dok, items, head, storno )
       ENDIF
    ENDIF
 
-   IF _err_level = 2 .AND. storno 
+   IF _err_level = 2 .AND. storno
+      notify_podrska( "Greška sa izdavanjem reklamiranog računa !" ) 
       IF obrada_greske_na_liniji_55_reklamirani_racun( id_firma, tip_dok, br_dok, __device_params )
          MsgBeep( "Sada možete ponoviti izdavanje reklamiranog računa na fiskalni uređaj." )
          RETURN 0        
@@ -937,6 +938,7 @@ STATIC FUNCTION fakt_to_fprint( id_firma, tip_dok, br_dok, items, head, storno )
    ENDIF
 
    IF _err_level <> 0
+      notify_podrska( "Greška sa izdavanjem fiskalnog računa !" )
       obradi_gresku_izdavanja_fiskalnog_racuna( __device_params, _err_level )
       RETURN _err_level
    ENDIF

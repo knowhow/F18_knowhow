@@ -387,18 +387,14 @@ FUNCTION stdokodt_grupno()
    LOCAL _gen_jedan := {}
    LOCAL _na_lokaciju
 
-   // setuj static var...
    __auto_odt_template()
 
-   // init ctrl
    AAdd( _ctrl_data, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } )
 
-   // parametri generisanja...
    IF !_grupno_params( @_params )
       RETURN
    ENDIF
 
-   // generisi mi listu racuna za eksport
    IF !_grupno_sql_gen( @_racuni, _params )
       RETURN
    ENDIF
@@ -408,13 +404,8 @@ FUNCTION stdokodt_grupno()
       RETURN
    ENDIF
 
-   // tip generisanja i pdf varijanta !
-   // 1 - grupno
-   // 2 - jedna po jedna...
    _tip_gen := _params[ "tip_gen" ]
-   // generisi PDF dokument ?
    _gen_pdf := _params[ "gen_pdf" ]
-   // prebaci na lokaciju
    _na_lokaciju := _params[ "na_lokaciju" ]
 
    DO CASE
@@ -433,7 +424,7 @@ FUNCTION stdokodt_grupno()
 
       my_close_all_dbf()
 
-      IF generisi_odt_iz_xml( _template, _xml_file )
+      IF generisi_odt_iz_xml( _template, _xml_file, NIL, .T. )
 
          _file_out := "fakt_" + DToS( _params[ "datum_od" ] ) + "_" + DToS( _params[ "datum_do" ] )
 
@@ -451,12 +442,7 @@ FUNCTION stdokodt_grupno()
 
    CASE _tip_gen == "2"
 
-      // generise se jedan po jedan dokument...
-      // ====================================================================
-
       FOR _i := 1 TO Len( _racuni )
-
-         // napravi mi samo jedan zapis...
 
          _gen_jedan := {}
          AAdd( _gen_jedan, { _racuni[ _i, 1 ], _racuni[ _i, 2 ], _racuni[ _i, 3 ] } )
@@ -483,7 +469,7 @@ FUNCTION stdokodt_grupno()
 
          my_close_all_dbf()
 
-         IF generisi_odt_iz_xml( _template, _xml_file )
+         IF generisi_odt_iz_xml( _template, _xml_file, NIL, .T. )
 
             _file_out := "fakt_" + _racuni[ _i, 1 ] + "_" + _racuni[ _i, 2 ] + "_" + ;
                AllTrim( _racuni[ _i, 3 ] )
@@ -503,6 +489,7 @@ FUNCTION stdokodt_grupno()
    ENDCASE
 
    RETURN
+
 
 
 // ------------------------------------------------

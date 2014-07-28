@@ -17,6 +17,7 @@ STATIC __xml_file
 STATIC __output_odt
 STATIC __output_pdf
 STATIC __template
+STATIC __template_filename
 STATIC __jod_converter := "jodconverter-cli.jar"
 STATIC __jod_reports := "jodreports-cli.jar"
 STATIC __java_run_cmd := "java -Xmx128m -jar"
@@ -29,19 +30,20 @@ STATIC __current_odt
 /*
    Opis: generisanja odt dokumenta na osnovu XML fajla i ODT template-a putem jodreports
 
-   Usage: generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file )
+   Usage: generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file, lBezPitanja )
 
    Params:
        cTemplate - naziv tempate fajla (template ODT)
                  // fajl će se pretražiti u template lokaciji pa će se kopirati u home direktorij
        cXml_file - lokacija + naziv xml fajla
        cOutput_file - lokacija + naziv izlaznog ODT fajla koji će se generisati
+       lBezPitanja - generiši odt report bez ikakvih pitanja da li želite 
 
    Returns: 
       .T. - ukoliko je operacija uspješna
       .F. - ukoliko je neuspješna
 */
-FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file )
+FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file, lBezPitanja )
 
    LOCAL lRet := .F.
    LOCAL _ok := .F.
@@ -52,6 +54,19 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file )
    LOCAL _util_path
    LOCAL _jod_full_path
    LOCAL cErr := ""
+   LOCAL cOdgovor := "D"
+
+   IF lBezPitanja == NIL
+      lBezPitanja := .F.
+   ENDIF
+
+   IF !lBezPitanja
+      cOdgovor := pitanje_prikazi_odt() 
+   ENDIF
+
+   IF cOdgovor == "N"
+      RETURN lRet
+   ENDIF
 
    IF ( cXml_file == NIL )
       __xml_file := my_home() + DATA_XML_FILE
@@ -96,6 +111,7 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file )
    #endif
 
    __template := _template
+   __template_filename := cTemplate
 
    _cmd := __java_run_cmd + " " + _jod_full_path + " "
    _cmd += _template + " "
@@ -120,17 +136,40 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file )
 
       MsgBeep( cErr )
 
-      //IF fetch_metric( "bug_report_email", my_user(), "A" ) $ "D#A"
-        // odt_na_email_podrska( cErr )
-      //ENDIF
+      IF fetch_metric( "bug_report_email", my_user(), "A" ) $ "D#A"
+         odt_na_email_podrska( cErr )
+      ENDIF
 
       RETURN lRet
 
    ENDIF
 
+   IF cOdgovor == "P"
+      odt_na_email_podrska()
+      RETURN lRet
+   ENDIF
+
    lRet := .T.
 
    RETURN lRet
+
+
+
+STATIC FUNCTION samo_naziv_fajla( cFajl )
+
+   LOCAL cNaziv := ""
+   LOCAL aTmp
+
+   IF EMPTY( cFajl )
+      RETURN cNaziv
+   ENDIF
+
+   aTmp := TokToNiz( cFajl, SLASH )
+
+   cNaziv := aTmp[ LEN( aTmp ) ]
+   cNaziv := STRTRAN( cNaziv, '"', '' )
+
+   RETURN cNaziv
 
 
 
@@ -282,8 +321,9 @@ FUNCTION f18_odt_copy( cOutput_file, cDestination_file )
 
 FUNCTION prikazi_odt( cOutput_file )
 
-   LOCAL _ok := .F.
-   LOCAL _screen, _error := 0
+   LOCAL lOk := .F.
+   LOCAL cScreen, nError := 0
+   LOCAL cOdgovor
 
    IF ( cOutput_file == NIL )
       __output_odt := __current_odt
@@ -293,33 +333,55 @@ FUNCTION prikazi_odt( cOutput_file )
 
    IF !File( __output_odt )
       MsgBeep( "Nema fajla za prikaz !" )
-      RETURN _ok
+      RETURN lOk
    ENDIF
 
    #ifdef __PLATFORM__WINDOWS
       __output_odt := '"' + __output_odt + '"'
    #endif
 
-   SAVE SCREEN TO _screen
+   SAVE SCREEN TO cScreen
    CLEAR SCREEN
 
    ? "Prikaz odt fajla u toku ... fajl: ..." + Right( __current_odt, 20 )
 
    #ifndef TEST
-       _error := f18_open_document( __output_odt )
+       nError := f18_open_document( __output_odt )
    #endif
 
-   RESTORE SCREEN FROM _screen
+   RESTORE SCREEN FROM cScreen
 
-   IF _error <> 0
-      MsgBeep( "Problem sa pokretanjem odt dokumenta !#Greška: " + AllTrim( Str( _error ) ) )
-      RETURN _error
+   IF nError <> 0
+      MsgBeep( "Problem sa pokretanjem odt dokumenta !#Greška: " + AllTrim( Str( nError ) ) )
+      RETURN lOk
    ENDIF
 
-   _ok := .T.
+   lOk := .T.
 
-   RETURN _ok
+   RETURN lOk
 
+
+
+STATIC FUNCTION pitanje_prikazi_odt()
+
+   LOCAL cRet := "D"
+   PRIVATE getList := {}
+
+   SET CONFIRM OFF
+   SET CURSOR ON
+
+   Box(, 1, 50 )
+   @ m_x + 1, m_y + 2 SAY8 "Prikazati Libre Office izvještaj (D/N/P) ?" GET cRet PICT "@!" VALID cRet $ "DNP"
+   READ
+   BoxC()
+
+   SET CONFIRM ON
+
+   IF LastKey() == K_ESC
+      cRet := "N"
+   ENDIF
+
+   RETURN cRet
 
 
 /*
@@ -336,35 +398,75 @@ FUNCTION prikazi_odt( cOutput_file )
                       data.xml
 */
 
-STATIC FUNCTION odt_na_email_podrska( error_text )
+STATIC FUNCTION odt_na_email_podrska( cErrorTxt )
 
-   LOCAL _mail_params, _body, _subject, _attachment
+   LOCAL hMailParams, cBody, cSubject, aAttachment, cZipFile
+   LOCAL lIzlazniOdt := .T.
 
-   _subject := "Uzorak ODT izvještaja, F18 " + F18_VER
-   _subject += ", " + my_server_params()["database"] + "/" + ALLTRIM( f18_user() ) 
-   _subject += ", " + DTOC( DATE() ) + " " + PADR( TIME(), 8 ) 
-
-   _body := ""
-
-   IF error_text <> NIL 
-      _body += error_text + ". "
+   IF cErrorTxt <> NIL 
+      lIzlazniOdt := .F.
    ENDIF
 
-   _body += "U prilogu fajlovi neophodni za generisanje ODT izvještaja."
+   cSubject := "Uzorak ODT izvještaja, F18 " + F18_VER
+   cSubject += ", " + my_server_params()["database"] + "/" + ALLTRIM( f18_user() ) 
+   cSubject += ", " + DTOC( DATE() ) + " " + PADR( TIME(), 8 ) 
 
-   _attachment := {}
-   AADD( _attachment, __template )
-   AADD( _attachment, __xml_file )
+   cBody := ""
 
-   _mail_params := email_hash_za_podrska_bring_out( _subject, _body )
+   IF cErrorTxt <> NIL .AND. !EMPTY( cErrorTxt ) 
+      cBody += cErrorTxt + ". "
+   ENDIF
+
+   cBody += "U prilogu fajlovi neophodni za generisanje ODT izvještaja."
+
+   cZipFile := odt_email_attachment( lIzlazniOdt )
+
+   aAttachment := {}
+   IF !EMPTY( cZipFile )
+      AADD( aAttachment, cZipFile )
+   ENDIF
+
+   DirChange( my_home() )
+
+   hMailParams := email_hash_za_podrska_bring_out( cSubject, cBody )
 
    MsgO( "Slanje email-a u toku ..." )
   
-   f18_email_send( _mail_params, _attachment )
+   f18_email_send( hMailParams, aAttachment )
+
+   FErase( my_home() + cZipFile )
 
    MsgC()
 
    RETURN
+
+
+
+STATIC FUNCTION odt_email_attachment( lIzlazniOdt )
+
+   LOCAL aFiles := {}
+   LOCAL cPath := my_home()
+   LOCAL cServer := my_server_params()
+   LOCAL cZipFile
+
+   cZipFile := ALLTRIM( cServer["database"] )
+   cZipFile += "_" + ALLTRIM( f18_user() )
+   cZipFile += "_" + DTOS( DATE() ) 
+   cZipFile += "_" + STRTRAN( TIME(), ":", "" ) 
+   cZipFile += ".zip"
+
+   DirChange( my_home() )
+ 
+   AADD( aFiles, samo_naziv_fajla( __xml_file ) )
+   AADD( aFiles, __template_filename )
+
+   IF lIzlazniOdt
+      AADD( aFiles, samo_naziv_fajla( __current_odt ) )
+   ENDIF
+  
+   _err := zip_files( cPath, cZipFile, aFiles )
+
+   RETURN cZipFile
 
 
 

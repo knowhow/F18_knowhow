@@ -177,8 +177,6 @@ FUNCTION o_fin_za_azuriranje()
    O_SIFK
    O_SIFV
 
-   O_FIN_PRIPR
-
    O_SUBAN
    O_ANAL
    O_SINT
@@ -188,6 +186,8 @@ FUNCTION o_fin_za_azuriranje()
    O_PANAL
    O_PSINT
    O_PNALOG
+
+   O_FIN_PRIPR
 
    RETURN
 

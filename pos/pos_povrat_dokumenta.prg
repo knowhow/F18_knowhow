@@ -21,7 +21,7 @@ FUNCTION pos_brisi_dokument( id_pos, id_vd, dat_dok, br_dok )
    LOCAL nTArea := Select()
    LOCAL cDokument
 
-   IF !pos_dokument_postoji( id_pos, id_vd, dat_dok, br_dok, .T. )
+   IF !pos_dokument_postoji( id_pos, id_vd, dat_dok, br_dok )
       RETURN lRet
    ENDIF
 
@@ -76,27 +76,24 @@ FUNCTION pos_brisi_dokument( id_pos, id_vd, dat_dok, br_dok )
 
 
 
-FUNCTION pos_dokument_postoji( cIdPos, cIdvd, dDatum, cBroj, lUTabeliStavki )
+FUNCTION pos_dokument_postoji( cIdPos, cIdvd, dDatum, cBroj )
 
    LOCAL lRet := .F.
    LOCAL cWhere
-   LOCAL cTable := "fmk.pos_doks"
-
-   IF lUTabeliStavki == NIL
-      lUTabeliStavki := .F.
-   ENDIF
-
-   IF lUTabeliStavki
-      cTable := "fmk.pos_pos"
-   ENDIF
 
    cWhere := "idpos = " + _sql_quote( cIdPos )
    cWhere += " AND idvd = " + _sql_quote( cIdVd )
    cWhere += " AND datum = " + _sql_quote( dDatum )
    cWhere += " AND brdok = " + _sql_quote( cBroj )
 
-   IF table_count( cTable, cWhere ) > 0
+   IF table_count( "fmk.pos_doks", cWhere ) > 0
       lRet := .T.
+   ENDIF
+
+   IF !lRet
+      IF table_count( "fmk.pos_pos", cWhere ) > 0
+         lRet := .T.
+      ENDIF
    ENDIF
 
    RETURN lRet

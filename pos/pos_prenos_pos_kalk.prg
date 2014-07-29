@@ -41,6 +41,7 @@ FUNCTION pos_preuzmi_iz_kalk( tip_dok, br_dok, rs_dbf )
    LOCAL _val_inventura
    LOCAL _val_nivelacija
    LOCAL _id_pos, _prodajno_mjesto
+   LOCAL lOk := .T.
 
    _id_pos := gIdPos
    _prodajno_mjesto := Space( 2 )
@@ -83,7 +84,8 @@ FUNCTION pos_preuzmi_iz_kalk( tip_dok, br_dok, rs_dbf )
 
    DO WHILE !Eof()
       IF ( katops->idpos == _id_pos )
-         IF ( import_row( _id_tip_dok, _br_dok, "" ) == 0 )
+         IF import_row( _id_tip_dok, _br_dok, "" ) == 0
+            lOk := .F.
             EXIT
          ENDIF
       ENDIF
@@ -96,7 +98,13 @@ FUNCTION pos_preuzmi_iz_kalk( tip_dok, br_dok, rs_dbf )
 
    MsgC()
 
-   _brisi_fajlove_importa( _imp_table )
+   IF !lOk
+      MsgBeep( "Procedura importa nije uspješna !" )
+   ENDIF
+
+   IF lOk
+      _brisi_fajlove_importa( _imp_table )
+   ENDIF
 
    RETURN .T.
 
@@ -109,9 +117,24 @@ STATIC FUNCTION _brisi_fajlove_importa( import_file )
    RETURN
 
 
+STATIC FUNCTION uslovi_za_insert_ispunjeni()
+
+   LOCAL lOk := .T.
+
+   IF Abs( katops->mpc ) - Abs( Val( Str( katops->mpc, 10, 3 ) ) ) <> 0
+      lOk := .F.
+   ENDIF
+
+   RETURN lOk
+
+
 STATIC FUNCTION import_row( id_vd, br_dok, id_odj )
 
    LOCAL _t_area := Select()
+
+   IF !uslovi_za_insert_ispunjeni()
+      RETURN 0
+   ENDIF
 
    SELECT priprz
    APPEND BLANK
@@ -253,81 +276,6 @@ STATIC FUNCTION GetPm( id_pos )
 
 
 
-
-FUNCTION AutoRek2Kalk( cDate1, cDate2 )
-
-   LOCAL dD1
-   LOCAL dD2
-   LOCAL nD1
-   LOCAL nD2
-
-   PRIVATE gPPort := "8"
-   set_epson_print_codes()
-
-   nD1 := Len( cDate1 )
-   nD2 := Len( cDate2 )
-
-   IF ( ( nD1 < 10 ) .OR. ( nD2 < 10 ) )
-      ? "FORMAT DATUMA NEISPRAVAN...."
-      ? "ISPRAVAN FORMAT, PRIMJER: 01.01.2005"
-      Sleep( 5 )
-      RETURN
-   ENDIF
-
-   IF ( !Empty( cDate1 ) .AND. !Empty( cDate2 ) )
-      dD1 := CToD( cDate1 )
-      dD2 := CToD( cDate2 )
-      ? "Vrsim prenos reklamacija za datum od: " + DToC( dD1 ) + " do " + DToC( dD2 )
-      pos_prenos_pos_kalk( dD1, dD2 )
-      ? "Izvrsen prenos ..."
-      Sleep( 1 )
-   ENDIF
-
-   RETURN
-
-
-
-/*! \fn AutoReal2Kalk(cDate1, cDate2)
- *  \brief APPSRV prenos real2kalk
- *  \param cDate1 - datum od
- *  \param cDate2 - datum do
- */
-FUNCTION AutoReal2Kalk( cDate1, cDate2 )
-
-   // {
-   LOCAL dD1
-   LOCAL dD2
-   LOCAL nD1
-   LOCAL nD2
-
-   // inicijalizuj port za stampu i sekvence stampaca (EPSON)
-   // radi globalnih varijabli
-   PRIVATE gPPort := "8"
-   set_epson_print_codes()
-
-   nD1 := Len( cDate1 )
-   nD2 := Len( cDate2 )
-
-   IF ( ( nD1 < 10 ) .OR. ( nD2 < 10 ) )
-      ? "FORMAT DATUMA NEISPRAVAN...."
-      ? "ISPRAVAN FORMAT, PRIMJER: 01.01.2005"
-      Sleep( 5 )
-      RETURN
-   ENDIF
-
-   IF ( !Empty( cDate1 ) .AND. !Empty( cDate2 ) )
-      dD1 := CToD( cDate1 )
-      dD2 := CToD( cDate2 )
-      ? "Vrsim prenos realizacija za datum od: " + DToC( dD1 ) + " do " + DToC( dD2 )
-      // pozovi f-ju Real2Kalk() sa argumentima
-      pos_prenos_pos_kalk( dD1, dD2 )
-      ? "Izvrsen prenos ..."
-      Sleep( 1 )
-   ENDIF
-
-   RETURN
-
-
 STATIC FUNCTION _o_real_table()
 
    O_ROBA
@@ -355,12 +303,7 @@ FUNCTION pos_prenos_inv_2_kalk( id_pos, id_vd, dat_dok, br_dok )
 
    _o_real_table()
 
-   SELECT pos_doks
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK id_pos + id_vd + DToS( dat_dok ) + br_dok
-
-   IF !Found()
+   IF !pos_dokument_postoji( id_pos, id_vd, dat_dok, br_dok )
       MsgBeep( "Dokument: " + id_pos + "-" + id_vd + "-" + PadL( br_dok, 6 ) + " ne postoji !" )
       RETURN
    ENDIF
@@ -481,7 +424,7 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, id_pm )
       @ m_x + 2, m_y + 2 SAY "Prenos za period" GET _dat_od
       @ m_x + 2, Col() + 2 SAY "-" GET _dat_do
       @ m_x + 3, m_y + 2 SAY "Uslov po artiklima:" GET _usl_roba PICT "@S40"
-      @ m_x + 4, m_y + 2 SAY "Artikle (U)kljuci / (I)skljuci iz prenosa:" GET _usl_mark PICT "@!" VALID _usl_mark $ "UI"
+      @ m_x + 4, m_y + 2 SAY8 "Artikle (U)ključi / (I)sključi iz prenosa:" GET _usl_mark PICT "@!" VALID _usl_mark $ "UI"
 
       READ
       ESC_BCR
@@ -597,7 +540,7 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, id_pm )
    SELECT pom
    USE
 
-   CLOSE ALL
+   my_close_all_dbf()
 
    IF !_auto_prenos
 

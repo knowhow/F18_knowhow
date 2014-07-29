@@ -121,7 +121,7 @@ STATIC FUNCTION uslovi_za_insert_ispunjeni()
 
    LOCAL lOk := .T.
 
-   IF Abs( katops->mpc ) - Abs( Val( Str( katops->mpc, 10, 3 ) ) ) <> 0
+   IF Abs( katops->mpc ) - Abs( Val( Str( katops->mpc, 8, 3 ) ) ) <> 0
       lOk := .F.
    ENDIF
 

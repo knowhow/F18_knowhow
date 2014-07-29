@@ -2,6 +2,7 @@
 
   - KALK, štampa kalkulacije cijena, provjera ispravnosti cijena prije štampe
   - F18, notify_podrska(), kod full synchro samo kada je DBF count > 0
+  - POS, prenos podataka KALK->POS, provjera MPC
  
 1.7.122  2014-07-28, vsasa
 

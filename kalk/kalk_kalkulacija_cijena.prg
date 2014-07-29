@@ -67,6 +67,11 @@ FUNCTION kalkulacija_cijena( azurirana )
       RETURN
    ENDIF
 
+   IF !kalkulacija_ima_sve_cijene( _vars["id_firma"], _vars["tip_dok"], _vars["br_dok"] )
+      MsgBeep( "Unutar kalkulacije nedostaju pojedine cijene bitne za obračun!#Štampanje onemogućeno." )
+      RETURN
+   ENDIF
+
    DO CASE
 
    CASE _predisp == .T.

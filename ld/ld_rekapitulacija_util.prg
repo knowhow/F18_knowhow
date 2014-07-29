@@ -1138,6 +1138,8 @@ FUNCTION ZaglJ()
 
 FUNCTION IspisTP( lSvi )
 
+   LOCAL cTipPrElem := ld_tip_primanja_el_nepogode()
+
    cUNeto := "D"
 
    FOR i := 1 TO cLDPolja
@@ -1218,6 +1220,11 @@ FUNCTION IspisTP( lSvi )
                ENDIF
             ENDIF
          ENDIF
+
+         IF !EMPTY( cTipPrElem ) .AND. cPom == cTipPrElem
+            aRekap[ i, 2 ] := ABS( aRekap[ i, 2 ] )
+         ENDIF
+
          IF cMjesec == cMjesecDo
             Rekapld( "PRIM" + tippr->id, cgodina, cmjesec, aRekap[ i, 2 ], aRekap[ i, 1 ] )
          ELSE

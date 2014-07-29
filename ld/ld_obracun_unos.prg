@@ -375,7 +375,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    ld_unos_obracuna_tipovi_primanja()
 
-   ld_unos_obracuna_footer( @lSaveObracun )
+   ld_unos_obracuna_footer( @lSaveObracun, lNovi )
 
    IF _radni_sati == "D" .AND. lSaveObracun == .F.
       delRadSati( cIdRadn, nSatiPreth )
@@ -387,7 +387,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
 
 
-STATIC FUNCTION ld_unos_obracuna_footer( lSaveObracun )
+STATIC FUNCTION ld_unos_obracuna_footer( lSaveObracun, lNovi )
 
    _USati := 0
    _UNeto := 0
@@ -510,6 +510,10 @@ STATIC FUNCTION ld_unos_obracuna_footer( lSaveObracun )
 
    IF cTipRada $ "S"
       _uIznos := _UNeto
+   ENDIF
+
+   IF ld_obracunaj_odbitak_za_elementarne_nepogode( lNovi )
+      MsgBeep( "Za radnika je obračnuat odbitak radi elementarnih nepogoda." )
    ENDIF
 
    @ m_x + 19, m_y + 2 SAY "Ukupno sati:"

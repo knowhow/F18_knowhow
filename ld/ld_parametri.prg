@@ -39,6 +39,8 @@ FUNCTION ld_parametri()
    AAdd( _opcexe, {|| ld_set_formule() } )
    AAdd( _opc, "6. postavka parametara izgleda dokumenata " )
    AAdd( _opcexe, {|| ld_set_prikaz() } )
+   AAdd( _opc, "7. poseban odbitak za elementarne nepogode" )
+   AAdd( _opcexe, {|| ld_elementarne_nepogode_parametri() } )
 
    f18_menu( "par", .F., _izbor, _opc, _opcexe )
 

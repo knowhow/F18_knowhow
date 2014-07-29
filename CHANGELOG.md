@@ -1,3 +1,8 @@
+1.7.123  2014-07-29, vsasa
+
+  - KALK, štampa kalkulacije cijena, provjera ispravnosti cijena prije štampe
+  - F18, notify_podrska(), kod full synchro samo kada je DBF count > 0
+ 
 1.7.122  2014-07-28, vsasa
 
   - POS, automatska taksa za gorivo u iznosu od 1 pf na svaki izdati litar goriva

@@ -82,8 +82,13 @@ FUNCTION check_recno_and_fix( dbf_alias, cnt_dbf, full_synchro )
       log_write( cErrMsg )
 
       IF full_synchro
-          notify_podrska( cErrMsg )
+
+          IF _cnt_dbf > 0
+             notify_podrska( cErrMsg )
+          ENDIF
+
           full_synchro( _a_dbf_rec[ "table" ], 50000 )
+
       ENDIF
 
    ENDIF

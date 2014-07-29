@@ -20,9 +20,14 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
    LOCAL _i, _err_code
    LOCAL _out_file
    LOCAL _msg, _log_msg := "BUG REPORT: "
+   LOCAL lNotify := .F.
 
    hb_default( @lQuitApp, .T. )
    hb_default( @lShowErrorReport, .T. )
+
+   IF !lShowErrorReport
+      lNotify := .T.
+   ENDIF
 
    _err_code := err_obj:genCode
 
@@ -141,7 +146,7 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
       f18_run( _cmd )
    ENDIF
 
-   send_email( err_obj )
+   send_email( err_obj, lNotify )
 
    IF lQuitApp
       QUIT_1
@@ -255,12 +260,16 @@ FUNCTION RaiseError( cErrMsg )
 
 
 
-STATIC FUNCTION send_email( err_obj )
+STATIC FUNCTION send_email( err_obj, lNotify )
 
    LOCAL _mail_params
    LOCAL _body, _subject
    LOCAL _attachment
    LOCAL _answ := fetch_metric( "bug_report_email", my_user(), "A" )
+
+   IF lNotify == NIL
+      lNotify := .F.
+   ENDIF
 
    DO CASE
          CASE _answ $ "D#N#A"
@@ -274,7 +283,13 @@ STATIC FUNCTION send_email( err_obj )
    ENDCASE
    
    // BUG F18 1.7.21, rg_2013/bjasko, 02.04.04, 15:00:07, variable does not exist
-   _subject := "BUG F18 " 
+   IF lNotify
+      _subject := "NOTIFY "
+   ELSE
+      _subject := ""
+   ENDIF
+
+   _subject += "BUG F18 " 
    _subject += F18_VER 
    _subject += ", " + my_server_params()["database"] + "/" + ALLTRIM( f18_user() ) 
    _subject += ", " + DTOC( DATE() ) + " " + PADR( TIME(), 8 ) 

@@ -34,7 +34,6 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
    cDoprLine := _gdoprline( cDoprSpace )
    cMainLine := _gmainline()
 
-   // koliko redova ima kartica
    nKRedova := kart_redova()
 
    Eval( bZagl )
@@ -57,9 +56,9 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
    ? cTprLine
    IF gPrBruto == "X"
-      ? cLMSK + Lokal( " Vrsta                  Opis         sati/iznos            ukupno bruto" )
+      ? cLMSK + " Vrsta                  Opis         sati/iznos            ukupno bruto"
    ELSE
-      ? cLMSK + Lokal( " Vrsta                  Opis         sati/iznos             ukupno" )
+      ? cLMSK + " Vrsta                  Opis         sati/iznos             ukupno"
    ENDIF
 
    ? cTprLine
@@ -76,10 +75,10 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
          cUneto := "N"
 		
          ? cTprLine
-         ? cLMSK + Lokal( "Ukupno:" )
+         ? cLMSK + "Ukupno:"
 
          @ PRow(), nC1 + 8  SAY  _USati  PICT gpics
-         ?? Space( 1 ) + Lokal( "sati" )
+         ?? Space( 1 ) + "sati"
          nPom := _calc_tpr( _UNeto, .T. )
          @ PRow(), 60 + Len( cLMSK ) SAY nPom PICT gpici
          ?? "", gValuta
@@ -91,38 +90,9 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
          IF _i&cpom <> 0 .OR. _s&cPom <> 0
 			
-            // uvodi se djoker # : Primjer:
-            // Naziv tipa primanja
-            // je: REDOVAN RAD BOD #RADN->N1 -> naci RADN->N1
-            // i ispisati REDOVAN RAD BOD 12.0
-			
             nDJ := At( "#", tippr->naz )
             cDJ := Right( AllTrim( tippr->naz ), nDJ + 1 )
             cTPNaz := tippr->naz
-			
-            // NEPOTREBNO, ALI IPAK OSTAVLJAM 'KOD'
-
-            // if nDJ <> 0
-				
-            // RSati:=_s&cPom
-				
-            // nRSTmp := bruto_osn( _i&cPom, cRTipRada, ;
-            // nLicOdbitak )
-
-            // @ prow(),60+LEN(cLMSK) SAY nRsTmp pict gpici
-            // @ prow()+1,0 SAY Lokal("Odbici od bruta: ")
-				
-            // @ prow(), pcol()+48 SAY "-" + ;
-            // ALLTRIM(STR(( nRSTmp -_i&cPom)))
-
-            // if type( cDJ ) = "C"
-            // cTPNaz := LEFT( tippr->naz, nDJ-1 ) + ;
-            // &cDJ
-            // elseif type( cDJ ) = "N"
-            // cTPNAZ := LEFT( tippr->naz, nDJ-1 ) + ;
-            // alltrim(str( &cDJ ))
-            // endif
-            // endif
 			
             ? cLMSK + tippr->id + "-" + ;
                PadR( cTPNAZ, Len( tippr->naz ) ), sh_tp_opis( tippr->id, radn->id )
@@ -143,23 +113,6 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 				
                ENDIF
 
-               // UKIDA SE, ALI OSTAVLJAM 'KOD'
-
-               // nRSTmp := bruto_osn( _i&cPom, ;
-               // cRTipRada, ;
-               // nLicOdbitak )
-	
-               // @ prow(),60+LEN(cLMSK) SAY nRSTmp pict gpici
-               // @ prow()+1,0 SAY Lokal("Odbici od bruta: ")
-               // @ prow(), pcol()+48 SAY "-" + ;
-               // ALLTRIM(STR(nRSTmp - _i&cPom))
-               // else
-					
-               // nPom := _calc_tpr( _i&cPom )
-					
-               // @ prow(),60+LEN(cLMSK) say nPom pict gpici
-               // endif
-			
             ELSEIF tippr->fiksan == "P"
                nPom := _calc_tpr( _i&cPom )
                @ PRow(), PCol() + 8 SAY _s&cPom  PICT "999.99%"
@@ -175,7 +128,6 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
                @ PRow(), 60 + Len( cLMSK ) SAY nPom PICT gpici
             ENDIF
 	
-            // suma iz prethodnih obracuna !
             IF "_K" == Right( AllTrim( tippr->opis ), 2 )
 
                nKumPrim := ld_kumulativna_primanja( _IdRadn, cPom )
@@ -193,7 +145,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
                ENDIF
     			
                ? cLPom := cLMSK + "   ----------------------------- ----------------------------"
-               ? cLMSK + "    SUMA IZ PRETHODNIH OBRA�UNA   UKUPNO (SA OVIM OBRA�UNOM)"
+               ?U cLMSK + "    SUMA IZ PRETHODNIH OBRAČUNA   UKUPNO (SA OVIM OBRAČUNOM)"
                ? cLPom
                ? cLMSK + "   " + PadC( Str( nKumPrim - Abs( _i&cPom ) ), 29 ) + " " + PadC( Str( nKumPrim ), 28 )
                ? cLPom
@@ -245,7 +197,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
                P_COND
 				
                ? cTprLine
-               ? cLMSK + "  ", Lokal( "Od toga pojedinacni krediti:" )
+               ?U cLMSK + "  ", "Od toga pojedinačni krediti:"
                SELECT radkr
                SET ORDER TO 1
                SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn
@@ -274,7 +226,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
                P_COND
 				
                ? m2 := cLMSK + "   ------------------------------------------------  --------- --------- -------"
-               ?     cLMSK + Lokal( "        Kreditor      /              na osnovu         Ukupno    Ostalo   Rata" )
+               ? cLMSK + "        Kreditor      /              na osnovu         Ukupno    Ostalo   Rata"
                ? m2
 				
                DO WHILE !Eof() .AND. _godina == godina .AND. _mjesec = mjesec .AND. idradn == _idradn
@@ -304,18 +256,16 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
    IF cVarijanta == "5"
 
-      // select ldsm
-	
       SELECT ld
       PushWA()
       SET ORDER TO TAG "2"
       hseek Str( _godina, 4 ) + Str( _mjesec, 2 ) + "1" + _idradn + _idrj
       ?
-      ? cLMSK + Lokal( "Od toga 1. dio:" )
+      ? cLMSK + "Od toga 1. dio:"
       @ PRow(), 60 + Len( cLMSK ) SAY UIznos PICT gpici
       ? cTprLine
       hseek Str( _godina, 4 ) + Str( _mjesec, 2 ) + "2" + _idradn + _idrj
-      ? cLMSK + Lokal( "Od toga 2. dio:" )
+      ? cLMSK + "Od toga 2. dio:"
       @ PRow(), 60 + Len( cLMSK ) SAY UIznos PICT gpici
       ? cTprLine
       SELECT ld
@@ -323,16 +273,16 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
    ENDIF
 
    IF __radni_sati == "D"
-      ? Lokal( "NAPOMENA: Ostaje da se plati iz preraspodjele radnog vremena " )
+      ? "NAPOMENA: Ostaje da se plati iz preraspodjele radnog vremena "
       ?? AllTrim( Str( ( ld->radsat ) - nRRSati ) )  + Lokal( " sati." )
-      ? Lokal( "          Ostatak predhodnih obracuna: " ) + GetStatusRSati( ld->idradn ) + Space( 1 ) + Lokal( "sati" )
+      ?U "          Ostatak predhodnih obračuna: " + GetStatusRSati( ld->idradn ) + Space( 1 ) + Lokal( "sati" )
       ?
    ENDIF
 
    IF gSihtGroup == "D"
       nTmp := get_siht( .T., cGodina, cMjesec, ld->idradn, "" )
       IF ld->usati < nTmp
-         ? "Greska: sati po sihtarici veci od uk.sati place !"
+         ?U "Greška: sati po šihtarici veći od uk.sati plaće !"
       ENDIF
    ENDIF
 
@@ -376,7 +326,6 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
       IF cRTipRada $ " #I#N"
          IF calc_mbruto()
-            // minimalni bruto
             nBoMin := min_bruto( nBo, ld->usati )
          ENDIF
       ENDIF
@@ -401,10 +350,10 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
          ? cMainLine
       ENDIF
 	
-      ? cLmSK + Lokal( "Obracun doprinosa: " )
+      ?U cLmSK + "Obračun doprinosa: "
 	
       IF ( nBo < nBoMin )
-         ??  Lokal( "minimalna bruto satnica * sati" )
+         ??  "minimalna bruto satnica * sati"
          @ PRow(), 60 + Len( cLMSK ) SAY nBoMin PICT gpici
          ? cLmSk + cDoprLine
       ENDIF
@@ -500,21 +449,21 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
       nOporDoh := nBO - nUkDoprIz
 
-      ? cLMSK + Lokal( "3. BRUTO - DOPRINOSI IZ PLATE (1-2)" )
+      ? cLMSK + "3. BRUTO - DOPRINOSI IZ PLATE (1-2)"
       @ PRow(), 60 + Len( cLMSK ) SAY nOporDoh PICT gpici
 	
       ? cMainLine
 
       IF nLicOdbitak > 0
 
-         ? cLMSK + Lokal( "4. LICNI ODBITAK" ), Space( 14 ) + ;
-            AllTrim( Str( gOsnLOdb ) ) + " * koef. " + ;
+         ?U cLMSK + "4. LIČNI ODBITAK", Space( 14 )
+         ?? AllTrim( Str( gOsnLOdb ) ) + " * koef. " + ;
             AllTrim( Str( nKoefOdbitka ) ) + " = "
          @ PRow(), 60 + Len( cLMSK ) SAY nLicOdbitak PICT gpici
 	
       ELSE
 	
-         ? cLMSK + Lokal( "4. LICNI ODBITAK" )
+         ?U cLMSK + "4. LIČNI ODBITAK"
          @ PRow(), 60 + Len( cLMSK ) SAY nLicOdbitak PICT gpici
 	
       ENDIF
@@ -527,12 +476,12 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
          nPorOsnovica := 0
       ENDIF
 
-      ?  cLMSK + Lokal( "5. OSNOVICA ZA POREZ NA PLATU (1-2-4)" )
+      ?  cLMSK + "5. OSNOVICA ZA POREZ NA PLATU (1-2-4)"
       @ PRow(), 60 + Len( cLMSK ) SAY nPorOsnovica PICT gpici
 
       ? cMainLine
 
-      ? cLMSK + Lokal( "6. POREZ NA PLATU" )
+      ? cLMSK + "6. POREZ NA PLATU"
 
       SELECT por
       GO TOP
@@ -577,30 +526,28 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
       ? cMainLine
 	
       IF nUkIspl < nMUkIspl
-         ? cLMSK + Lokal( "7. Minimalna neto isplata : min.neto satnica * sati" )
+         ? cLMSK + "7. Minimalna neto isplata : min.neto satnica * sati"
       ELSE
-         ? cLMSK + Lokal( "7. NETO PLATA (1-2-6)" )
+         ? cLMSK + "7. NETO PLATA (1-2-6)"
       ENDIF
 
       @ PRow(), 60 + Len( cLMSK ) SAY nMUkIspl PICT gpici
 
-
       ? cMainLine
-      ? cLMSK + Lokal( "8. NEOPOREZIVE NAKNADE I ODBICI (preb.stanje)" )
+      ? cLMSK + "8. NEOPOREZIVE NAKNADE I ODBICI (preb.stanje)"
 
       @ PRow(), 60 + Len( cLMSK ) SAY nOsnOstalo PICT gpici
 
-      ? cLMSK + Lokal( "  - naknade (+ primanja): " )
+      ? cLMSK + "  - naknade (+ primanja): "
       @ PRow(), 60 + Len( cLMSK ) SAY nOstPoz PICT gPICI
 
-      ? cLMSK + Lokal( "  -  odbici (- primanja): " )
+      ? cLMSK + "  -  odbici (- primanja): "
       @ PRow(), 60 + Len( cLMSK ) SAY nOstNeg PICT gPICI
 
-      // ukupno za isplatu ....
       nZaIsplatu := ROUND2( nMUkIspl + nOsnOstalo, gZaok2 )
 	
       ? cMainLine
-      ?  cLMSK + Lokal( "UKUPNO ZA ISPLATU SA NAKNADAMA I ODBICIMA (7+8)" )
+      ?  cLMSK + "UKUPNO ZA ISPLATU SA NAKNADAMA I ODBICIMA (7+8)"
       @ PRow(), 60 + Len( cLMSK ) SAY nZaIsplatu PICT gpici
 
       ? cMainLine

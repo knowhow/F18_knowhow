@@ -219,15 +219,15 @@ FUNCTION ld_rekapitulacija( lSvi )
    B_OFF
 
    IF !Empty( cstrspr )
-      ?? Space( 1 ) + Lokal( "za radnike strucne spreme" ) + Space( 1 ), cStrSpr
+      ??U Space( 1 ) + "za radnike stručne spreme" + Space( 1 ), cStrSpr
    ENDIF
 
    IF !Empty( cOpsSt )
-      ? Lokal( "Opstina stanovanja:" ), cOpsSt
+      ?U "Općina stanovanja:", cOpsSt
    ENDIF
 
    IF !Empty( cOpsRad )
-      ? Lokal( "Opstina rada:" ), cOpsRad
+      ?U "Općina rada:", cOpsRad
    ENDIF
 
    IF lSvi
@@ -242,10 +242,6 @@ FUNCTION ld_rekapitulacija( lSvi )
 
    IspisTP( lSvi )
 
-   IF IzFmkIni( "LD", "Rekap_ZaIsplatuRasclanitiPoTekRacunima", "N", KUMPATH ) == "D" .AND. Len( aUkTR ) > 1
-      PoTekRacunima()
-   ENDIF
-
    ? cTpLine
 
    nPosY := 60
@@ -253,7 +249,7 @@ FUNCTION ld_rekapitulacija( lSvi )
       nPosY := 42
    ENDIF
 
-   ? Lokal( "Ukupno (primanja sa obustavama):" )
+   ? "Ukupno (primanja sa obustavama):"
    @ PRow(), nPosY SAY nUNeto + nUOdbiciP + nUOdbici PICT gpici
    ?? "", gValuta
 
@@ -268,9 +264,9 @@ FUNCTION ld_rekapitulacija( lSvi )
    IF cRTipRada $ "A#U"
 
       ? cMainLine
-      ?U Lokal( "a) UKUPNI BRUTO SA TROŠKOVIMA " )
+      ?U "a) UKUPNI BRUTO SA TROŠKOVIMA "
       @ PRow(), 60 SAY nUBBTrosk PICT gPicI
-      ?U Lokal( "b) UKUPNI TROŠKOVI " )
+      ?U "b) UKUPNI TROŠKOVI "
       @ PRow(), 60 SAY nURTrosk PICT gPici
 
    ENDIF
@@ -284,7 +280,7 @@ FUNCTION ld_rekapitulacija( lSvi )
    PRIVATE nDopr
    PRIVATE nDopr2
 
-   ?U Lokal( "2. OBRAČUN DOPRINOSA:" )
+   ?U "2. OBRAČUN DOPRINOSA:"
 
    // bruto osnova minimalca
    IF nURadn_bo < nUMRadn_bo
@@ -298,29 +294,23 @@ FUNCTION ld_rekapitulacija( lSvi )
 
    cLinija := cDoprLine
 
-   // obracunaj i prikazi doprinose
    obr_doprinos( @nDopr, @nDopr2, cRTipRada, _a_benef )
 
-   // oporezivi dohodak
    nTOporDoh := nURadn_bo - nUDoprIz
 
-   // oporezivi dohodak
    ? cMainLine
-   ? Lokal( "3. UKUPNO BRUTO - DOPRINOSI IZ PLATE" )
+   ? "3. UKUPNO BRUTO - DOPRINOSI IZ PLATE"
    @ PRow(), 60 SAY nTOporDoh PICT gPici
 
-
-   // LICNI ODBITCI
    ? cMainLine
-   ?U Lokal( "4. LIČNI ODBICI UKUPNO" )
+   ?U "4. LIČNI ODBICI UKUPNO"
    @ PRow(), 60 SAY nULOdbitak PICT gPici
 
 
    nPorOsn := nURadn_bo - nUDoprIz - nULOdbitak
 
-   // osnovica za porez na dohodak
    ? cMainLine
-   ?U Lokal( "5. OSNOVICA ZA OBRAČUN POREZA NA PLATU (1-2-4)" )
+   ?U "5. OSNOVICA ZA OBRAČUN POREZA NA PLATU (1-2-4)"
    @ PRow(), 60 SAY nPorOsn PICT gPici
    ? cMainLine
 
@@ -364,16 +354,14 @@ FUNCTION ld_rekapitulacija( lSvi )
    nUZaIspl := ( nNetoIspl ) + nUOdbiciM + nUOdbiciP
 
    ? cMainLine
-   ? Lokal( "6. UKUPNA NETO PLATA" )
+   ? "6. UKUPNA NETO PLATA"
    @ PRow(), 60 SAY nNetoIspl PICT gpici
 
-   // obracun ostalog poreza na neto
    ? cMainLine
-   ?U Lokal( "7. OSNOVICA ZA OBRAČUN OSTALIH NAKNADA (6)" )
+   ?U "7. OSNOVICA ZA OBRAČUN OSTALIH NAKNADA (6)"
    @ PRow(), 60 SAY nNetoIspl PICT gpici
    ? cMainLine
 
-   // obracunaj ostali porez na neto
    obr_porez( @nPor, @nPor2, @nPorOps, @nPorOps2, @nUPorOl, "R" )
 
    nPorR := nPor
@@ -384,20 +372,19 @@ FUNCTION ld_rekapitulacija( lSvi )
    nPorOl1 += nUPorOl
 
    ? cMainLine
-   ? Lokal( "8. UKUPNO ODBICI/NAKNADE IZ PLATE:" )
-   ? Lokal( "             ODBICI:" )
+   ? "8. UKUPNO ODBICI/NAKNADE IZ PLATE:"
+   ? "             ODBICI:"
    @ PRow(), 60 SAY nUOdbiciM PICT gpici
-   ? Lokal( "     OSTALE NAKNADE:" )
+   ? "     OSTALE NAKNADE:"
    @ PRow(), 60 SAY nUOdbiciP PICT gpici
    ? cMainLine
 
-   // ukupno za isplatu
    ? cMainLine
    IF cRTipRada $ "A#U"
-      ?U Lokal( "9. UKUPNO ZA ISPLATU (bruto-dopr-porez+troškovi):" )
+      ?U "9. UKUPNO ZA ISPLATU (bruto-dopr-porez+troškovi):"
       @ PRow(), 60 SAY nUZaIspl + nURTrosk PICT gpici
    ELSE
-      ?U Lokal( "9. UKUPNO ZA ISPLATU (bruto-dopr-porez+odbici+naknade):" )
+      ?U "9. UKUPNO ZA ISPLATU (bruto-dopr-porez+odbici+naknade):"
       @ PRow(), 60 SAY nUZaIspl PICT gpici
    ENDIF
    ? cMainLine
@@ -407,27 +394,27 @@ FUNCTION ld_rekapitulacija( lSvi )
    cLinija := "-----------------------------------------------------------"
 
    ? cLinija
-   ? Lokal( "OPOREZIVA PRIMANJA:" )
+   ? "OPOREZIVA PRIMANJA:"
    @ PRow(), PCol() + 1 SAY nUNeto PICT gpici
-   ?? "(" + Lokal( "za isplatu:" )
+   ?? "(" + "za isplatu:"
    @ PRow(), PCol() + 1 SAY nUZaIspl PICT gpici
-   ?? "," + Lokal( "Obustave:" )
+   ?? "," + "Obustave:"
    @ PRow(), PCol() + 1 SAY -nUOdbiciM PICT gpici
    ?? ")"
-   ? "    " + Lokal( "OSTALE NAKNADE:" )
+   ? "    " + "OSTALE NAKNADE:"
    @ PRow(), PCol() + 1 SAY nUOdbiciP PICT gpici  // dodatna primanja van neta
    ? cLinija
-   ? " " + Lokal( "OPOREZIVI DOHODAK (1):" )
+   ? " " + "OPOREZIVI DOHODAK (1):"
    @ PRow(), PCol() + 1 SAY nURadn_bo - nUDoprIz PICT gpici
-   ? "         " + Lokal( "POREZ 10% (2):" )
+   ? "         " + "POREZ 10% (2):"
    IF cUmPD == "D"
       @ PRow(), PCol() + 1 SAY nPorB - nPorOl1 - nPorez2    PICT gpici
    ELSE
       @ PRow(), PCol() + 1 SAY nPorB - nPorOl1    PICT gpici
    ENDIF
-   ? "     " + Lokal( "OSTALI POREZI (3):" )
+   ? "     " + "OSTALI POREZI (3):"
    @ PRow(), PCol() + 1 SAY nPorR PICT gpici
-   ? "         " + Lokal( "DOPRINOSI (4):" )
+   ? "         " + "DOPRINOSI (4):"
    IF cUmPD == "D"
       @ PRow(), PCol() + 1 SAY nDopr - nDopr2    PICT gpici
    ELSE
@@ -437,29 +424,29 @@ FUNCTION ld_rekapitulacija( lSvi )
    ? cLinija
 
    IF cUmPD == "D"
-      ? Lokal( " POTREBNA SREDSTVA (1 + 3 + 4):" )
+      ? " POTREBNA SREDSTVA (1 + 3 + 4):"
       @ PRow(), PCol() + 1 SAY ( nURadn_Bo - nUDoprIz ) + ( nPorR ) + nDopr - nPorez2 - nDopr2    PICT gpici
    ELSE
-      ? Lokal( " POTREBNA SREDSTVA (1 + 3 + 4 + ost.nakn.):" )
+      ? " POTREBNA SREDSTVA (1 + 3 + 4 + ost.nakn.):"
       @ PRow(), PCol() + 1 SAY ( nURadn_Bo - nUDoprIz ) + ( nPorR ) + nDopr + nUOdbiciP PICT gpici
    ENDIF
 
    ? cLinija
    ?
-   ?U Lokal( "Izvršena obrada na" ) + " ", Str( nLjudi, 5 ), Lokal( "radnika" )
+   ?U "Izvršena obrada na ", Str( nLjudi, 5 ), "radnika"
    ?
 
    IF nUSati == 0
       nUSati := 999999
    ENDIF
 
-   ?U Lokal( "Prosječni neto/satu je" ), AllTrim( Transform( nNetoIspl, gpici ) ), "/", AllTrim( Str( nUSati ) ), "=", AllTrim( Transform( nNetoIspl / nUsati, gpici ) ), "*", AllTrim( Transform( parobr->k1, "999" ) ), "=", AllTrim( Transform( nNetoIspl / nUsati * parobr->k1, gpici ) )
+   ?U "Prosječni neto/satu je ", AllTrim( Transform( nNetoIspl, gpici ) ), "/", AllTrim( Str( nUSati ) ), "=", AllTrim( Transform( nNetoIspl / nUsati, gpici ) ), "*", AllTrim( Transform( parobr->k1, "999" ) ), "=", AllTrim( Transform( nNetoIspl / nUsati * parobr->k1, gpici ) )
 
 
    P_12CPI
    ?
    ?
-   ?  PadC( "     " + Lokal( "Obradio:" ) + "                                 " + Lokal( "Direktor:" ) + "    ", 80 )
+   ?  PadC( "     " + "Obradio:" + "                                 " + "Direktor:" + "    ", 80 )
    ?
    ?  PadC( "_____________________                    __________________", 80 )
    ?
@@ -495,9 +482,6 @@ STATIC FUNCTION nstr()
    RETURN
 
 
-// -----------------------------------------------------
-// napravi obracun
-// -----------------------------------------------------
 STATIC FUNCTION _calc_totals( lSvi, a_benef )
 
    LOCAL i

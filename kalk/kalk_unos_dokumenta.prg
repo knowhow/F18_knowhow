@@ -159,7 +159,6 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
 FUNCTION o_kalk_edit()
 
    O_KALK_DOKS
-   O_KALK_PRIPR
    O_SIFK
    O_SIFV
    O_ROBA
@@ -170,6 +169,7 @@ FUNCTION o_kalk_edit()
    O_VALUTE
    O_TARIFA
    O_KONCIJ
+   O_KALK_PRIPR
 
    SELECT kalk_pripr
    SET ORDER TO TAG "1"

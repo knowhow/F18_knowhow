@@ -122,6 +122,7 @@ STATIC FUNCTION uslovi_za_insert_ispunjeni()
    LOCAL lOk := .T.
 
    IF Abs( katops->mpc ) - Abs( Val( Str( katops->mpc, 8, 3 ) ) ) <> 0
+      MsgBeep( "Cijena van dozvoljenog ranga: " + AllTrim(Str( katops->mpc)) )
       lOk := .F.
    ENDIF
 

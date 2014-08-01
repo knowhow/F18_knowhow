@@ -2,6 +2,7 @@
 
   - LD, specijalni odbitak za elementarne nepogode
   - F18, notify podrška, subjekt poruke samo "notify"
+  - run_sql_query - izbačen notify
  
 1.7.123  2014-07-29, vsasa
 

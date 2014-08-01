@@ -105,6 +105,10 @@ FUNCTION update_table_konto( zamjena_sifre )
 
          lOk := update_rec_server_and_dbf( "konto", _app_rec, 1, "CONT" )
 
+         IF !lOk .AND. !_sif_exist
+            delete_with_rlock()
+         ENDIF
+
       ENDIF
 
       IF !lOk
@@ -173,6 +177,11 @@ FUNCTION update_table_partn( zamjena_sifre )
          ENDIF
 
          lOk := update_rec_server_and_dbf( "partn", _app_rec, 1, "CONT" )
+
+         IF !lOk .AND. !_sif_exist
+            delete_with_rlock()
+         ENDIF
+
       ENDIF
 
       IF !lOk
@@ -238,6 +247,10 @@ FUNCTION update_table_roba( zamjena_sifre )
          ENDIF
 
          lOk := update_rec_server_and_dbf( "roba", _app_rec, 1, "CONT" )
+          
+         IF !lOk .AND. !_sif_exist
+            delete_with_rlock()
+         ENDIF
 
       ENDIF
 

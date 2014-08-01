@@ -253,6 +253,7 @@ STATIC FUNCTION _docs_insert( nDoc_no )
 
    LOCAL _rec
    LOCAL _ok := .T.
+   LOCAL lNovi := .F.
 
    SELECT _docs
    SET ORDER TO TAG "1"
@@ -267,9 +268,14 @@ STATIC FUNCTION _docs_insert( nDoc_no )
 
    IF !Found()
       APPEND BLANK
+      lNovi := .T.
    ENDIF
 
    _ok := update_rec_server_and_dbf( "rnal_docs", _rec, 1, "CONT" )
+
+   IF !_ok .AND. lNovi
+      delete_with_rlock()
+   ENDIF
 
    SET ORDER TO TAG "1"
 
@@ -283,6 +289,7 @@ STATIC FUNCTION _doc_it_insert( nDoc_no )
 
    LOCAL _rec, _id_fields, _where_bl
    LOCAL _ok := .T.
+   LOCAL lNovi := .F.
 
    SELECT _doc_it
 
@@ -303,6 +310,10 @@ STATIC FUNCTION _doc_it_insert( nDoc_no )
       APPEND BLANK
 
       _ok := update_rec_server_and_dbf( "rnal_doc_it", _rec, 1, "CONT" )
+
+      IF !_ok
+         delete_with_rlock()
+      ENDIF
 
       SELECT _doc_it
 
@@ -343,6 +354,10 @@ STATIC FUNCTION _doc_it2_insert( nDoc_no )
       APPEND BLANK
 
       _ok := update_rec_server_and_dbf( "rnal_doc_it2", _rec, 1, "CONT" )
+
+      IF !_ok
+         delete_with_rlock()
+      ENDIF
 
       SELECT _doc_it2
 
@@ -389,6 +404,10 @@ STATIC FUNCTION _doc_op_insert( nDoc_no )
 
          _ok := update_rec_server_and_dbf( "rnal_doc_ops", _rec, 1, "CONT" )
 
+      ENDIF
+
+      IF !_ok
+         delete_with_rlock()
       ENDIF
 
       SELECT _doc_ops

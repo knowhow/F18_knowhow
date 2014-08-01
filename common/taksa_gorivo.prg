@@ -220,6 +220,10 @@ STATIC FUNCTION dodaj_sifru_takse_u_sifarnik_robe()
 
    lOk := update_rec_server_and_dbf( "roba", hRec, 1, "FULL" )
 
+   IF !lOk
+      delete_with_rlock()
+   ENDIF
+
    SELECT roba
    hseek s_cId_taksa
 

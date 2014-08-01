@@ -178,6 +178,7 @@ STATIC FUNCTION dodaj_tip_primanja_elementarnih_nepogoda( cTip )
    lOk := update_rec_server_and_dbf( "tippr", hRec, 1, "FULL" )
 
    IF !lOk
+      delete_with_rlock()
       MsgBeep( "Problem sa dodavanjem nove šifre u šifarnik !" )
    ENDIF
 

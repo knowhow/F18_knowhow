@@ -64,7 +64,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
    IF lock
       lock_semaphore( table, "lock" )
    ENDIF
-
+   
    IF transaction $ "FULL#BEGIN"
       sql_table_update( table, "BEGIN" )
    ENDIF

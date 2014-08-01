@@ -13,7 +13,6 @@
 
 
 FUNCTION _sql_query( oServer, cQuery, silent )
- 
    RETURN run_sql_query( cQuery, 10 )
 
 
@@ -22,6 +21,8 @@ FUNCTION run_sql_query( qry, retry )
    LOCAL _i, _qry_obj, lMsg := .F.
    LOCAL cErrorMsg
    LOCAL _server := my_server()
+   LOCAL lSavePoint := .T.
+   LOCAL cSavePointName := f18_user() + "_save_point"
 
    IF retry == NIL
       retry := 10
@@ -44,6 +45,11 @@ FUNCTION run_sql_query( qry, retry )
       ENDIF
        
       BEGIN SEQUENCE WITH {| err| Break( err ) }
+
+         IF lSavePoint
+            _qry_obj := _server:Query( "SAVEPOINT " + cSavePointName + ";" )
+         ENDIF
+
          _qry_obj := _server:Query( qry + ";" )
 
       RECOVER 
@@ -56,13 +62,19 @@ FUNCTION run_sql_query( qry, retry )
       IF _qry_obj:NetErr() 
 
          cErrorMsg := "ERROR RUN_SQL_QRY: " + _qry_obj:ErrorMsg() + " QRY:" + qry
+
+         IF lSavePoint
+            _qry_obj := _server:Query( "ROLLBACK TO " + cSavePointName + ";" )
+         ENDIF
+
          log_write( cErrorMsg, 2 )
 
          IF _i == retry
             MsgC()
-            notify_podrska( "Greška sa pozivanjem SQL upita, broj pokušaja: " + AllTrim( Str( retry ) ) + " " + cErrorMsg )
+            notify_podrska( cErrorMsg )
             RETURN .F.
          ENDIF
+
       ELSE
          _i := retry + 1
       ENDIF

@@ -167,7 +167,7 @@ STATIC FUNCTION dodaj_tip_primanja_elementarnih_nepogoda( cTip )
    hRec := dbf_get_rec()
 
    hRec["id"] := cTip
-   hRec["naz"] := "EL.NEPOGODE ODBITAK"
+   hRec["naz"] := "EL.NEPOGODE ODBITAK 1%"
    hRec["aktivan"] := "D"
    hRec["fiksan"] := "D"
    hRec["ufs"] := "N"
@@ -176,6 +176,10 @@ STATIC FUNCTION dodaj_tip_primanja_elementarnih_nepogoda( cTip )
    hRec["formula"] := "_I" + cTip
 
    lOk := update_rec_server_and_dbf( "tippr", hRec, 1, "FULL" )
+
+   IF !lOk
+      MsgBeep( "Problem sa dodavanjem nove šifre u šifarnik !" )
+   ENDIF
 
    RETURN lOk
 

@@ -167,7 +167,7 @@ STATIC FUNCTION dodaj_tip_primanja_elementarnih_nepogoda( cTip )
    hRec := dbf_get_rec()
 
    hRec["id"] := cTip
-   hRec["naz"] := "EL.NEPOGODE ODBITAK 1%"
+   hRec["naz"] := "EL.NEPOGODE ODBITAK"
    hRec["aktivan"] := "D"
    hRec["fiksan"] := "D"
    hRec["ufs"] := "N"

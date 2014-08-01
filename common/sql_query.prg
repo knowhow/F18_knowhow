@@ -56,7 +56,6 @@ FUNCTION run_sql_query( qry, retry )
 
       RECOVER 
 
-         log_write( "ERROR: run_sql_query() pokusaj: " + ALLTRIM( STR( _i ) ), 2 )
          hb_idleSleep( 1 )
 
       END SEQUENCE
@@ -68,8 +67,6 @@ FUNCTION run_sql_query( qry, retry )
          //IF lRestorePoint
            // _qry_obj := _server:Query( "ROLLBACK TO " + cSavePointName + ";" )
          //ENDIF
-
-         log_write( cErrorMsg, 2 )
 
          IF _i == retry
             MsgC()

@@ -284,12 +284,11 @@ STATIC FUNCTION send_email( err_obj, lNotify )
    
    // BUG F18 1.7.21, rg_2013/bjasko, 02.04.04, 15:00:07, variable does not exist
    IF lNotify
-      _subject := "NOTIFY "
+      _subject := "NOTIFY F18 "
    ELSE
-      _subject := ""
+      _subject := "BUG F18 "
    ENDIF
 
-   _subject += "BUG F18 " 
    _subject += F18_VER 
    _subject += ", " + my_server_params()["database"] + "/" + ALLTRIM( f18_user() ) 
    _subject += ", " + DTOC( DATE() ) + " " + PADR( TIME(), 8 ) 

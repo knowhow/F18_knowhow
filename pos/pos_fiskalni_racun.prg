@@ -420,7 +420,6 @@ STATIC FUNCTION pos_get_vr_plac( id_vr_pl )
    LOCAL _naz := ""
 
    IF Empty( id_vr_pl ) .OR. id_vr_pl == "01"
-      // ovo je gotovina
       RETURN _ret
    ENDIF
 
@@ -436,8 +435,6 @@ STATIC FUNCTION pos_get_vr_plac( id_vr_pl )
       _ret := "1"
    CASE "CEK" $ _naz
       _ret := "2"
-   CASE "VAUCER" $ _naz
-      _ret := "3"
    CASE "VIRMAN" $ _naz
       _ret := "3"
    OTHERWISE

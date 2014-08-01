@@ -1,3 +1,8 @@
+1.7.124  2014-08-01, vsasa
+
+  - LD, specijalni odbitak za elementarne nepogode
+  - F18, notify podrška, subjekt poruke samo "notify"
+ 
 1.7.123  2014-07-29, vsasa
 
   - KALK, štampa kalkulacije cijena, provjera ispravnosti cijena prije štampe

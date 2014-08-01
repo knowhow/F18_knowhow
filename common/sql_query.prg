@@ -21,7 +21,7 @@ FUNCTION run_sql_query( qry, retry )
    LOCAL _i, _qry_obj, lMsg := .F.
    LOCAL cErrorMsg
    LOCAL _server := my_server()
-   LOCAL lSavePoint := .T.
+   LOCAL lRestorePoint := .F.
    LOCAL cSavePointName := f18_user() + "_save_point"
 
    IF retry == NIL
@@ -35,20 +35,22 @@ FUNCTION run_sql_query( qry, retry )
       quit_1
    ENDIF
 
-   log_write( "QRY OK: run_sql_query: " + qry, 9 )
+   //IF _server:TransactionStatus() > 0
+     // lRestorePoint := .T.
+   //ENDIF
 
    FOR _i := 1 TO retry
 
       IF _i > 1
-            MsgO( "Pokusavam izvrsiti SQL upit: " + qry + " pokušaj: " + ALLTRIM( STR( _i ) ) )
-            lMsg := .T.
+         MsgO( "Pokušavam izvršiti SQL upit: " + qry + " pokušaj: " + ALLTRIM( STR( _i ) ) )
+         lMsg := .T.
       ENDIF
        
       BEGIN SEQUENCE WITH {| err| Break( err ) }
 
-         IF lSavePoint
-            _qry_obj := _server:Query( "SAVEPOINT " + cSavePointName + ";" )
-         ENDIF
+         //IF lRestorePoint
+           // _qry_obj := _server:Query( "SAVEPOINT " + cSavePointName + ";" )
+         //ENDIF
 
          _qry_obj := _server:Query( qry + ";" )
 
@@ -63,15 +65,15 @@ FUNCTION run_sql_query( qry, retry )
 
          cErrorMsg := "ERROR RUN_SQL_QRY: " + _qry_obj:ErrorMsg() + " QRY:" + qry
 
-         IF lSavePoint
-            _qry_obj := _server:Query( "ROLLBACK TO " + cSavePointName + ";" )
-         ENDIF
+         //IF lRestorePoint
+           // _qry_obj := _server:Query( "ROLLBACK TO " + cSavePointName + ";" )
+         //ENDIF
 
          log_write( cErrorMsg, 2 )
 
          IF _i == retry
             MsgC()
-            notify_podrska( cErrorMsg )
+            //notify_podrska( cErrorMsg )
             RETURN .F.
          ENDIF
 

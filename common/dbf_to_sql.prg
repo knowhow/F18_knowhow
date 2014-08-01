@@ -118,7 +118,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
       IF transaction == "FULL"
          sql_table_update( table, "ROLLBACK" )
       ENDIF
-
+      altd()
       _msg := RECI_GDJE_SAM + "ERRORY: sql_insert: " + table + " , ROLLBACK values: " + pp( values )
       log_write( _msg, 1 )
       Alert( _msg )

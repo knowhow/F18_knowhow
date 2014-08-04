@@ -16,7 +16,6 @@ STATIC s_cTipPrimanja
 STATIC s_nTipObracuna
 
 
-
 FUNCTION ld_tip_primanja_el_nepogode()
 
    IF s_cTipPrimanja == NIL
@@ -35,12 +34,9 @@ FUNCTION ld_tip_obracuna_el_nepogode()
    RETURN s_nTipObracuna
 
 
-
-
 FUNCTION ld_obracunaj_odbitak_za_elementarne_nepogode( lNovi )
 
    LOCAL cTipPrimanja := ld_tip_primanja_el_nepogode()
-   LOCAL nTipObracuna := ld_tip_obracuna_el_nepogode()
    LOCAL lOk := .T.
    LOCAL nIznos := 0
    LOCAL cTmp 
@@ -50,27 +46,100 @@ FUNCTION ld_obracunaj_odbitak_za_elementarne_nepogode( lNovi )
       RETURN lOk
    ENDIF
 
-   IF lNovi
-      IF Pitanje(, "Obračunati poseban odbitak za elementarne nepogode 1% (D/N) ?", "D" ) == "N"
-         lOk := .F.
-         RETURN lOk
-      ENDIF
+   nIznos := obracunaj_odbitak()
+     
+   cTmp := "_I" + PADL( cTipPrimanja, 2, "0" )
+
+   IF nIznos == 0 .AND. Round( &cTmp, 2 ) == 0
+      lOk := .F.
+      RETURN lOk
+   ENDIF
+ 
+   IF nIznos <> 0
+      nIznos := -nIznos
+   ENDIF
+      
+   &cTmp := nIznos
+
+   RETURN lOk
+
+
+
+STATIC FUNCTION obracunaj_odbitak()
+
+   LOCAL nX := 1
+   LOCAL cTipPrimanja := ld_tip_primanja_el_nepogode()
+   LOCAL nTipObracuna := ld_tip_obracuna_el_nepogode()
+   LOCAL nProcIznos := 1
+   LOCAL cOpcSt
+   LOCAL lRadnikJeIzRs := .F.
+   LOCAL cObr := "D"
+   LOCAL nIznos := 0
+   PRIVATE getList := {}
+
+   cOpcSt := ld_iz_koje_opcine_je_radnik( _idradn )
+
+   lRadnikJeIzRs := radnik_iz_rs( cOpcSt )
+
+   IF lRadnikJeIzRs 
+      nProcIznos := 1.5
+   ENDIF
+
+   Box(, 7, 67 )
+
+   @ m_x + nX, m_y + 2 SAY "*** ODBITAK ZA ELEMENTARNE NEPOGODE"
+
+   nX := nX + 2
+
+   @ m_x + nX, m_y + 2 SAY8 "Tip obračuna (1) procentualni iznos (2) jedna neto dnevnica" GET nTipObracuna PICT "9"
+   
+   READ
+
+   IF LastKey() == K_ESC 
+      BoxC()
+      RETURN nIznos
+   ENDIF
+
+   nX := nX + 2
+
+   IF nTipObracuna == 1
+      @ m_x + nX, m_y + 2 SAY "u procentualnom iznosu od:" GET nProcIznos PICT "999.99"
+      @ m_x + nX, col() + 1 SAY "%"
+   ELSE
+      @ m_x + nX, m_y + 2 SAY "na osnovu jedne neto dnevnice."
+   ENDIF
+
+   READ
+ 
+   IF LastKey() == K_ESC
+      BoxC()
+      nIznos := 0
+      RETURN nIznos
    ENDIF
 
    IF nTipObracuna == 1
-      nIznos := Round( _uneto2 * 0.01, 2 )
+      nIznos := Round( _uneto2 * ( nProcIznos / 100 ), 2 )
    ENDIF
 
    IF nTipObracuna == 2
       nIznos := Round( ( _uneto2 / _usati ) * 8 , 2 )
    ENDIF
 
-   cTmp := "_I" + PADL( cTipPrimanja, 2, "0" )
+   ++ nX
 
-   &cTmp := -nIznos
+   @ m_x + nX, m_y + 2 SAY8 "Iznos odbitka = " + AllTrim( Str( nIznos, 12, 2 ) ) + ", obračunati odbitak (D/N) ?" GET cObr ;
+             VALID cObr $ "DN" PICT "@!"
 
-   RETURN lOk
+   READ
 
+   BoxC()
+
+   IF LastKey() == K_ESC .OR. cObr == "N"
+      nIznos := 0
+      RETURN nIznos
+   ENDIF
+
+   RETURN nIznos
 
 
 
@@ -93,7 +162,7 @@ FUNCTION ld_elementarne_nepogode_parametri()
 
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY8 " (1) 1% od neto plate uposlenika"
+   @ m_x + nX, m_y + 2 SAY8 " (1) procenat od neto plate uposlenika" 
 
    ++ nX
 

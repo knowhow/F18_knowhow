@@ -512,7 +512,7 @@ STATIC FUNCTION ld_unos_obracuna_footer( lSaveObracun, lNovi )
       _uIznos := _UNeto
    ENDIF
 
-   IF ld_obracunaj_odbitak_za_elementarne_nepogode( lNovi )
+   IF Round( _uneto2, 2 ) <> 0 .AND. LastKey() <> K_ESC .AND. ld_obracunaj_odbitak_za_elementarne_nepogode( lNovi )
       MsgBeep( "Za radnika je obračnuat odbitak radi elementarnih nepogoda." )
    ENDIF
 

@@ -67,17 +67,38 @@ FUNCTION prvi_dan_mjeseca( nMonth )
 FUNCTION radnik_iz_rs( cOpsst, cOpsrad )
 
    LOCAL lRet := .F.
-   LOCAL nTArea := Select()
+   LOCAL cSql, oQry
 
-   O_OPS
-   SELECT ops
-   hseek cOpsst
-   IF ops->reg == "2"
-      lRet := .T.
+   cSql := "SELECT reg FROM fmk.ops " 
+   cSql += "WHERE id = " + _sql_quote( cOpsSt )
+
+   oQry := _sql_query( my_server(), cSql )
+
+   IF is_var_objekat_tpquery( oQry ) 
+      IF oQry:FieldGet(1) == "2"
+         lRet := .T.
+      ENDIF   
    ENDIF
-   SELECT ( nTArea )
 
    RETURN lRet
+
+
+
+FUNCTION ld_iz_koje_opcine_je_radnik( cIdRadn )
+   
+   LOCAL cOpc := ""
+   LOCAL cSql, oQry
+ 
+   cSql := "SELECT idopsst FROM fmk.ld_radn WHERE id = " + _sql_quote( cIdRadn )
+
+   oQry := _sql_query( my_server(), cSql )
+
+   IF is_var_objekat_tpquery( oQry ) 
+      cOpc := hb_utf8tostr( oQry:FieldGet(1) )
+   ENDIF
+
+   RETURN cOpc
+ 
 
 
 FUNCTION ld_specifikacija_plate()

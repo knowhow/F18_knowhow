@@ -37,7 +37,9 @@ FUNCTION pos_brisi_dokument( id_pos, id_vd, dat_dok, br_dok )
    cDokument := ALLTRIM( id_pos ) + "-" + id_vd + "-" + ALLTRIM( br_dok ) + " " + DTOC( dat_dok ) 
 
    SELECT pos
+   SET ORDER TO TAG "1"
    GO TOP
+
    SEEK id_pos + id_vd + DToS( dat_dok ) + br_dok
 
    IF Found()
@@ -47,6 +49,7 @@ FUNCTION pos_brisi_dokument( id_pos, id_vd, dat_dok, br_dok )
 
    IF lOk
       SELECT pos_doks
+      SET ORDER TO TAG "1"
       GO TOP
       SEEK id_pos + id_vd + DToS( dat_dok ) + br_dok
 

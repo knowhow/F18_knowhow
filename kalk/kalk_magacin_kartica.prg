@@ -117,6 +117,8 @@ FUNCTION kartica_magacin()
          IF pitanje(, "Niste zadali sifru artikla, izlistati sve kartice ?", "N" ) == "N"
             my_close_all_dbf()
             RETURN
+         ELSE
+            cIdR := cIdRoba
          ENDIF
       ELSE
          cIdr := cIdRoba

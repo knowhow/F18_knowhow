@@ -973,6 +973,11 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
       ESC_RETURN 0
 
+      IF _a_tipdok == NIL .OR. Len( _a_tipdok ) == 0
+         MsgBeep( "Odabir vrste dokumenta se vrši sa ENTER !" )
+         RETURN 0
+      ENDIF
+
       _idtipdok := Left( _a_tipdok[ _n_menu ], 2 )
 
       ++ _x

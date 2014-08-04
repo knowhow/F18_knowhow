@@ -1,6 +1,8 @@
 1.7.125  2014-08-04, vsasa
 
   - LD, specijalni odbitak za elementarne nepogode, korekcije
+  - POS, brisanje dokumenta sa CTRL+F9, bugfix
+  - ispravke sitnih bug-ova
  
 1.7.124  2014-08-01, vsasa
 

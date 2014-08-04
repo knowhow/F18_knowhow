@@ -2586,7 +2586,7 @@ FUNCTION kalkulacija_ima_sve_cijene( firma, tip_dok, br_dok )
             MsgBeep( "Stavka broj " + AllTrim( field->rbr ) + " FCJ <= 0 !" )
             EXIT
          ENDIF
-      ELSEIF field->idvd $ "16#96#94#95#14#80#81#"
+      ELSEIF field->idvd $ "10#16#96#94#95#14#80#81#"
          IF field->nc == 0
             _ok := .F.
             MsgBeep( "Stavka broj " + AllTrim( field->rbr ) + " NC <= 0 !" )

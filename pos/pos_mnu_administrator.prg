@@ -70,6 +70,9 @@ FUNCTION pos_admin_menu()
    AAdd( opc, "R. setovanje brojaca dokumenata" )
    AAdd( opcexe, {|| pos_set_param_broj_dokumenta() } )
 
+   AAdd( opc, "X. briši nepostojeće dokumente" )
+   AAdd( opcexe, {|| pos_brisi_nepostojece_dokumente() } )
+
    IF gStolovi == "D"
       AAdd( opc, "7. zakljucivanje postojecih racuna " )
       AAdd( opcexe, {|| zak_sve_stolove() } )

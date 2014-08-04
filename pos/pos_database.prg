@@ -618,3 +618,81 @@ FUNCTION pos_import_fmk_roba()
    RETURN
 
 
+
+FUNCTION pos_brisi_nepostojece_dokumente()
+
+   LOCAL cSql, oQry
+   LOCAL cIdPos, cIdVd, cBrDok, dDatum
+   LOCAL nCount := 0
+
+   IF !SigmaSif( "ADMIN" )
+      MsgBeep( "Opcija nije dostupna !" )
+      RETURN 
+   ENDIF
+
+   cSql := "SELECT p.idpos, p.idvd, p.datum, p.brdok " 
+   cSql += "FROM fmk.pos_pos p "
+   cSql += "WHERE ( SELECT COUNT(*) FROM fmk.pos_doks d "
+   cSql += "         WHERE d.idpos = p.idpos "
+   cSql += "           AND d.idvd = p.idvd "
+   cSql += "           AND d.datum = p.datum "
+   cSql += "           AND d.brdok = p.brdok ) = 0 "
+   cSql += "GROUP BY p.idpos, p.idvd, p.datum, p.brdok "
+   cSql += "ORDER BY p.idpos, p.idvd, p.datum, p.brdok "
+
+   MsgO( "SQL upit u toku, sačekajte trenutak ... " )
+
+   oQry := _sql_query( my_server(), cSql )
+
+   MsgC()
+
+   IF !is_var_objekat_tpquery( oQry )
+      MsgBeep( "Problem sa SQL upitom !" )
+      RETURN
+   ENDIF 
+
+   IF oQry:LastRec() > 0
+      IF Pitanje(, "Izbrisati ukupno " + AllTrim( Str( oQry:LastRec() ) ) + " dokumenata (D/N) ?", "N" ) == "N"
+         RETURN
+      ENDIF
+   ENDIF
+
+   O_POS_DOKS
+   O_POS
+   
+   oQry:GoTo(1)
+
+   Box(, 1, 50 )
+
+   DO WHILE !oQry:Eof()
+
+      oRow := oQry:GetRow()
+
+      dDatum := query_row( oRow, "datum" )
+      cIdPos := query_row( oRow, "idpos" )
+      cIdVd := query_row( oRow, "idvd" )
+      cBrDok := query_row( oRow, "brdok" )
+
+      @ m_x + 1, m_y + 2 SAY8 "Brišem dokument: " + cIdPos + "-" + cIdVd + "-" + cBrDok + " od datuma " + DToC( dDatum )
+
+      IF !pos_brisi_dokument( cIdPos, cIdVd, dDatum, cBrDok )
+         BoxC()
+         MsgBeep( "Problem sa brisanjem dokumenta !" )
+         RETURN 
+      ENDIF
+
+      ++ nCount
+
+      oQry:Skip()
+
+   ENDDO
+
+   BoxC()
+
+   IF nCount > 0
+       MsgBeep( "Izbrisao ukupno " + AllTrim( Str( nCount ) ) + " dokumenta !"  )
+   ENDIF
+
+   RETURN
+
+

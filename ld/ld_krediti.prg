@@ -689,7 +689,7 @@ FUNCTION ld_lista_kredita()
       IF lRazdvojiPoRj
          cIdTekRj := radn->idRj
          ?
-         ? "RJ:", radn->idRj, "-", Ocitaj( F_RJ, cIdTekRj, "naz" )
+         ? "RJ:", radn->idRj, "-", Ocitaj( F_LD_RJ, cIdTekRj, "naz" )
          ?
       ENDIF
 

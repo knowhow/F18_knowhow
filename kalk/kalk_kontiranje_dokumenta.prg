@@ -123,7 +123,7 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
    lAFin2 := ( !fAuto .AND. gAFin <> "0" )
    lAMat := ( fAuto .AND. gAMat == "D" )
 
-   IF lAMat
+   IF lAMat .AND. f18_use_module( "mat" )
       Beep( 1 )
       lAMat := Pitanje(, "Formirati MAT nalog?", "D" ) == "D"
       O_TRMP

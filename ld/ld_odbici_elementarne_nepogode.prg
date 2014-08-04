@@ -47,17 +47,19 @@ FUNCTION ld_obracunaj_odbitak_za_elementarne_nepogode( lNovi )
    ENDIF
 
    nIznos := obracunaj_odbitak()
+     
+   cTmp := "_I" + PADL( cTipPrimanja, 2, "0" )
 
-   IF nIznos == 0
+   IF nIznos == 0 .AND. Round( &cTmp, 2 ) == 0
       lOk := .F.
       RETURN lOk
    ENDIF
-      
-   cTmp := "_I" + PADL( cTipPrimanja, 2, "0" )
-
-   IF lNovi .OR. &cTmp <> 0
-      &cTmp := -nIznos
+ 
+   IF nIznos <> 0
+      nIznos := -nIznos
    ENDIF
+      
+   &cTmp := nIznos
 
    RETURN lOk
 
@@ -83,12 +85,23 @@ STATIC FUNCTION obracunaj_odbitak()
       nProcIznos := 1.5
    ENDIF
 
-   Box(, 5, 60 )
+   Box(, 7, 67 )
 
    @ m_x + nX, m_y + 2 SAY "*** ODBITAK ZA ELEMENTARNE NEPOGODE"
 
    nX := nX + 2
+
+   @ m_x + nX, m_y + 2 SAY8 "Tip obračuna (1) procentualni iznos (2) jedna neto dnevnica" GET nTipObracuna PICT "9"
    
+   READ
+
+   IF LastKey() == K_ESC 
+      BoxC()
+      RETURN nIznos
+   ENDIF
+
+   nX := nX + 2
+
    IF nTipObracuna == 1
       @ m_x + nX, m_y + 2 SAY "u procentualnom iznosu od:" GET nProcIznos PICT "999.99"
       @ m_x + nX, col() + 1 SAY "%"

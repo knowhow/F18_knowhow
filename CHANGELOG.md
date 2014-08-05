@@ -3,6 +3,7 @@
   - LD, specijalni odbitak za elementarne nepogode, korekcije
   - POS, brisanje dokumenta sa CTRL+F9, bugfix
   - POS, brisanje nepostojećih dokumenata iz POS tabele
+  - KALK, hronološki pregled dokumenata - bugfix
   - ispravke sitnih bug-ova
  
 1.7.124  2014-08-01, vsasa

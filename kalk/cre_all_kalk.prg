@@ -125,9 +125,26 @@ STATIC FUNCTION kreiraj_ostale_kalk_tabele( ver )
    IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX( "ID", "id", _alias )
 
+   _alias := "KALK_KARTICA"
+   _table := "kalk_kartica"
+
+   aDbf := {}
+   AAdd( aDbf, { "ID", "C", 15, 0 } )
+   AAdd( aDbf, { "stanje", "N", 15, 3 } )
+   AAdd( aDbf, { "VPV", "N", 15, 3 } )
+   AAdd( aDbf, { "NV", "N", 15, 3 } )
+   AAdd( aDbf, { "VPC", "N", 15, 3 } )
+   AAdd( aDbf, { "MPC", "N", 15, 3 } )
+   AAdd( aDbf, { "MPV", "N", 15, 3 } )
+
+   IF_NOT_FILE_DBF_CREATE
+   CREATE_INDEX( "ID", "id", _alias )
+
+
    F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB ):create_local_atrib_table()
 
    RETURN .T.
+
 
 
 STATIC FUNCTION definicija_kalk_tabele()

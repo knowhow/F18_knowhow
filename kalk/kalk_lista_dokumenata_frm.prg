@@ -247,15 +247,13 @@ STATIC FUNCTION usl_browse_kalk_dok( cFirma, cIdVd, dDatOd, dDatDo, ;
    RETURN 1
 
 
-// --------------------------------------------
-// browse dokumenata hronoloski
-// --------------------------------------------
-FUNCTION BrowseHron()
+FUNCTION kalk_pregled_dokumenata_hronoloski()
 
    O_ROBA
    O_KONCIJ
    O_KALK
    O_KONTO
+
    cIdFirma := gFirma
    cIdFirma := Left( cIdFirma, 2 )
 
@@ -263,7 +261,6 @@ FUNCTION BrowseHron()
    SELECT kalk
    SELECT kalk_doks
    SET ORDER TO TAG "3"
-   // CREATE_INDEX("DOKSi3","IdFirma+dtos(datdok)+podbr","DOKS")
 
    Box(, 19, 77 )
 
@@ -283,19 +280,16 @@ FUNCTION BrowseHron()
 
    SET CURSOR ON
    @ m_x + 2, m_y + 1 SAY "<SPACE> pomjeri dokument nagore"
-   BrowseKey( m_x + 4, m_y + 1, m_x + 19, m_y + 77, ImeKol, {| Ch| EdHron( Ch ) }, "idFirma=cidFirma", cidFirma, 2,,, {|| .F. } )
+   BrowseKey( m_x + 4, m_y + 1, m_x + 19, m_y + 77, ImeKol, {| Ch| pregled_dokumenata_hron_keyhandler( Ch ) }, "idFirma=cidFirma", cidFirma, 2,,, {|| .F. } )
 
    BoxC()
 
-   closeret
+   my_close_all_dbf()
 
    RETURN
 
 
-// ---------------------------------------------
-// key handler za hronoloski pregled
-// ---------------------------------------------
-FUNCTION EdHron( Ch )
+STATIC FUNCTION pregled_dokumenata_hron_keyhandler( Ch )
 
    LOCAL cDn := "N", nTrecDok := 0, nRet := DE_CONT
 
@@ -368,7 +362,7 @@ FUNCTION EdHron( Ch )
       nRet := DE_REFRESH
 
    CASE Ch == K_ENTER
-      BrowseDok()
+      pregled_dokumenta()
       SELECT kalk_doks
       nRet := DE_CONT
    CASE Ch == K_CTRL_P
@@ -383,17 +377,13 @@ FUNCTION EdHron( Ch )
    ENDCASE
 
    RETURN nRet
-// }
 
 
-/*! \fn BrowseDok()
- *  \brief Pregled dokumenta u vidu browse tabele
- */
 
-FUNCTION BrowseDok()
+STATIC FUNCTION pregled_dokumenta()
 
-   // {
-   SELECT kalk; SET ORDER TO TAG "1"
+   SELECT kalk
+   SET ORDER TO TAG "1"
 
    Box(, 15, 77, .T., "Pregled dokumenta" )
 
@@ -411,25 +401,22 @@ FUNCTION BrowseDok()
    FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ); NEXT
 
    SET CURSOR ON
-   @ m_x + 2, m_y + 1 SAY "Pregled dokumenta: "; ?? kalk_doks->idfirma, "-", kalk_doks->idvd, "-", kalk_doks->brdok, " od", kalk_doks->datdok
-   BrowseKey( m_x + 4, m_y + 1, m_x + 15, m_y + 77, ImeKol, {| Ch| EdDok( Ch ) }, "idFirma+idvd+brdok=kalk_doks->(idFirma+idvd+brdok)", kalk_doks->( idFirma + idvd + brdok ), 2,,, {|| .F. } )
+   @ m_x + 2, m_y + 1 SAY "Pregled dokumenta: "
+   ?? kalk_doks->idfirma, "-", kalk_doks->idvd, "-", kalk_doks->brdok, " od", kalk_doks->datdok
+   BrowseKey( m_x + 4, m_y + 1, m_x + 15, m_y + 77, ImeKol, {| Ch| pregled_dokumenta_key_handler( Ch ) }, "idFirma+idvd+brdok=kalk_doks->(idFirma+idvd+brdok)", kalk_doks->( idFirma + idvd + brdok ), 2,,, {|| .F. } )
 
    BoxC()
-   // }
+
+   RETURN
 
 
 
-/*! \fn EdDOK(Ch)
- *  \brief Obrada opcija u browsu odredjenog dokumenta
- */
+STATIC FUNCTION pregled_dokumenta_key_handler( Ch )
 
-FUNCTION EdDOK( Ch )
-
-   // {
    LOCAL cDn := "N", nTrecDok := 0, nRet := DE_CONT
    DO CASE
    CASE Ch == K_ENTER
-      BrowseKart()
+      pregled_kartice()
       nRet := DE_CONT
 
    CASE Ch == K_CTRL_P
@@ -437,19 +424,11 @@ FUNCTION EdDOK( Ch )
    ENDCASE
 
    RETURN nRet
-// }
 
 
 
-/*! \fn BrowseKart()
- *  \brief Browse prikaz kartice artikla
- */
 
-FUNCTION BrowseKart()
-
-   // {
-   // tekuca baza: KALK
-   // prikaz kartice koja je odredjena tekucim zapisom u KALK
+STATIC FUNCTION pregled_kartice()
 
    nTreckalk := RecNo()
 
@@ -460,7 +439,7 @@ FUNCTION BrowseKart()
    cMkonto := mkonto
    cPkonto := pkonto
 
-   IF !Empty( cpkonto )
+   IF !Empty( cPKonto )
       IF !Empty( cMkonto ) .AND. Pitanje(, "Pregled magacina - D, prodavnica - N" ) == "D"
          cPKonto := ""
       ELSE
@@ -475,28 +454,17 @@ FUNCTION BrowseKart()
 
    Box(, 15, 77, .T., "Pregled  kartice " + iif( Empty( cPkonto ), cMKonto, cPKonto ) )
 
-   nArr := Select()
-
-   aDbf := {}
-   AAdd( aDbf, { "ID", "C", 15, 0 } )
-   AAdd( aDbf, { "stanje", "N", 15, 3 } )
-   AAdd( aDbf, { "VPV", "N", 15, 3 } )
-   AAdd( aDbf, { "NV", "N", 15, 3 } )
-   AAdd( aDbf, { "VPC", "N", 15, 3 } )
-   AAdd( aDbf, { "MPC", "N", 15, 3 } )
-   AAdd( aDbf, { "MPV", "N", 15, 3 } )
-   dbcreate2( PRIVPATH + "Kartica", aDbf )
-
-   SELECT 66
-   usex ( PRIVPATH + "kartica" )
-   INDEX ON id TAG "ID"
-   INDEX ON brisano TAG "BRISAN"
-   SET ORDER TO TAG "ID"
+   O_KALK_KARTICA
+   my_dbf_zap()
+   SET ORDER TO TAG "ID"  
 
    IF !Empty( cMkonto )
+
       SELECT kalk
       SEEK cidfirma + cmkonto + cidroba
+
       nStanje := nNV := nVPV := 0
+
       DO WHILE !Eof() .AND. idfirma + mkonto + idroba == cidfirma + cmkonto + cidroba
          cId := idfirma + idvd + brdok + rbr
          IF mu_i == "1"
@@ -510,7 +478,7 @@ FUNCTION BrowseKart()
             nVPV -= vpc * kolicina
             nNV -= nc * kolicina
          ENDIF
-         SELECT kartica
+         SELECT kalk_kartica
          APPEND BLANK
          REPLACE id WITH cid, stanje WITH nStanje, VPV WITH nVPV, NV WITH nNV
          IF nStanje <> 0
@@ -540,7 +508,7 @@ FUNCTION BrowseKart()
             nMPV -= Mpcsapp * gkolicin2
             nNV -= nc * gkolicin2
          ENDIF
-         SELECT kartica
+         SELECT kalk_kartica
          APPEND BLANK
          REPLACE id WITH cid, stanje WITH nStanje, MPV WITH nMPV, NV WITH nNV
          IF nStanje <> 0
@@ -552,7 +520,7 @@ FUNCTION BrowseKart()
 
    ENDIF
 
-   SET RELATION TO idfirma + idvd + brdok + rbr into kartica
+   SET RELATION TO idfirma + idvd + brdok + rbr into kalk_kartica
 
    ImeKol := {}
    AAdd( ImeKol, { "VD",       {|| idvd }                         } )
@@ -563,16 +531,16 @@ FUNCTION BrowseKart()
    AAdd( ImeKol, { "VPC",      {|| Transform( vpc, gpicdem ) }  } )
    IF !Empty( cPKonto )
       AAdd( ImeKol, { "MPV",    {|| Transform( mpcsapp * kolicina, gpicdem ) } } )
-      AAdd( ImeKol, { "NV po kartici", {|| kartica->nv } } )
-      AAdd( ImeKol, { "Stanje", {|| kartica->stanje } } )
-      AAdd( ImeKol, { "MPC po Kartici", {|| kartica->mpc } } )
-      AAdd( ImeKol, { "MPV po kartici", {|| kartica->mpv } } )
+      AAdd( ImeKol, { "NV po kartici", {|| kalk_kartica->nv } } )
+      AAdd( ImeKol, { "Stanje", {|| kalk_kartica->stanje } } )
+      AAdd( ImeKol, { "MPC po Kartici", {|| kalk_kartica->mpc } } )
+      AAdd( ImeKol, { "MPV po kartici", {|| kalk_kartica->mpv } } )
    ELSE
       AAdd( ImeKol, { "VPV",    {|| Transform( vpc * kolicina, gpicdem ) } } )
-      AAdd( ImeKol, { "NV po kartici", {|| kartica->nv } } )
-      AAdd( ImeKol, { "Stanje", {|| kartica->stanje } } )
-      AAdd( ImeKol, { "VPC po Kartici", {|| kartica->vpc } } )
-      AAdd( ImeKol, { "VPV po kartici", {|| kartica->vpv } } )
+      AAdd( ImeKol, { "NV po kartici", {|| kalk_kartica->nv } } )
+      AAdd( ImeKol, { "Stanje", {|| kalk_kartica->stanje } } )
+      AAdd( ImeKol, { "VPC po Kartici", {|| kalk_kartica->vpc } } )
+      AAdd( ImeKol, { "VPV po kartici", {|| kalk_kartica->vpv } } )
    ENDIF
 
    Kol := {}
@@ -595,169 +563,151 @@ FUNCTION BrowseKart()
          cidFirma + cpkonto + cidroba, 2,,, {|| OznaciPro( .T. ) } )
    ENDIF
 
-   SELECT kartica; USE  // kartica
-   SELECT kalk; SET ORDER TO TAG "1"
+   SELECT kalk_kartica
+   USE 
+   SELECT kalk
+   SET ORDER TO TAG "1"
    GO nTreckalk
 
    BoxC()
 
    RETURN
-// }
 
 
 
-/*! \fn OznaciMag(fsilent)
- *  \brief Markira sumnjive stavke na magac.kartici i daje poruku o indikacijama
- */
 
-FUNCTION OznaciMag( fsilent )
 
-   // {
-   // oznaci markiraj stavke koje su
-   // vjerovatno neispravne
+STATIC FUNCTION OznaciMag( fsilent )
 
-   IF Round( kartica->stanje, 4 ) <> 0
+   IF Round( kalk_kartica->stanje, 4 ) <> 0
 
       IF idvd <> "18"
-         IF koncij->naz <> "N1" .AND. Round( VPC - kartica->vpc, 2 ) <> 0  // po kartici i po stavci razlika
+         IF koncij->naz <> "N1" .AND. Round( VPC - kalk_kartica->vpc, 2 ) <> 0  
             IF !fsilent
-               MsgBeep( "vpc stavke <> vpc kumulativno po kartici ??" )
+               MsgBeep( "vpc stavke <> vpc kumulativno po kartici !" )
             ENDIF
             RETURN .T.
          ENDIF
       ELSE
-         IF Round( mpcsapp + vpc - kartica->vpc, 4 ) <> 0  // vpc iz nivelacije
+         IF Round( mpcsapp + vpc - kalk_kartica->vpc, 4 ) <> 0
             IF !fsilent
-               MsgBeep( "vpc stavke <> vpc kumulativno po kartici ??" )
+               MsgBeep( "vpc stavke <> vpc kumulativno po kartici !" )
             ENDIF
             RETURN .T.
          ENDIF
 
          IF mpcsapp <> 0  .AND. Abs( vpc + MPCSAPP ) / mpcsapp * 100 > 80
             IF !fsilent
-               MSgBeep( "Promjena cijene za " + Str( Abs( vpc + MPCSAPP ) / mpcsapp * 100, 5, 0 ) + "??" )
+               MSgBeep( "Promjena cijene za " + Str( Abs( vpc + MPCSAPP ) / mpcsapp * 100, 5, 0 ) + "!" )
             ENDIF
          ENDIF
 
       ENDIF
 
    ELSE
-      IF Round( kartica->vpv, 4 ) <> 0
+      IF Round( kalk_kartica->vpv, 4 ) <> 0
          IF !fsilent
-            MsgBeep( "kolicina 0 , vpv <> 0 ??" )
+            MsgBeep( "količina 0 , vpv <> 0 !" )
          ENDIF
          RETURN .T.
       ENDIF
-      IF Round( kartica->nv, 4 ) <> 0
+      IF Round( kalk_kartica->nv, 4 ) <> 0
          IF !fsilent
-            MsgBeep( "kolicina 0 , NV <> 0 ??" )
+            MsgBeep( "količina 0 , NV <> 0 !" )
          ENDIF
          RETURN .T.
       ENDIF
    ENDIF
 
-   IF kartica->nv < 0
+   IF kalk_kartica->nv < 0
       IF !fsilent
-         MsgBeep( "Nabavna cijena < 0 ???" )
+         MsgBeep( "Nabavna cijena < 0 !" )
       ENDIF
       RETURN .T.
    ENDIF
 
-   IF kartica->vpv <> 0 .AND. kartica->( nv / vpv ) * 100 > 150
+   IF kalk_kartica->vpv <> 0 .AND. kalk_kartica->( nv / vpv ) * 100 > 150
       IF !fsilent
-         MsgBeep( "VPV za " + Str( kartica->( nv / vpv ) * 100, 4, 0 ) + " veca od nabavne ??" )
+         MsgBeep( "VPV za " + Str( kalk_kartica->( nv / vpv ) * 100, 4, 0 ) + " veća od nabavne !" )
       ENDIF
    ENDIF
 
-   IF kartica->stanje < 0
+   IF kalk_kartica->stanje < 0
       IF !fsilent
-         MsgBeep( "Stanje negativno ????? " )
+         MsgBeep( "Stanje negativno !" )
       ENDIF
       RETURN .T.
    ENDIF
 
    RETURN .F.
-// }
 
 
 
-/*! \fn OznaciPro(fsilent)
- *  \brief Markira sumnjive stavke na prod.kartici i daje poruku o indikacijama
- */
 
-FUNCTION OznaciPro( fsilent )
+STATIC FUNCTION OznaciPro( fsilent )
 
-   // {
-   // oznaci markiraj stavke koje su
-   // vjerovatno neispravne
-
-   IF Round( kartica->stanje, 4 ) <> 0
+   IF Round( kalk_kartica->stanje, 4 ) <> 0
 
       IF idvd <> "19"
-         IF koncij->naz <> "N1" .AND. Round( MPCSAPP - kartica->mpc, 2 ) <> 0  // po kartici i po stavci razlika
+         IF koncij->naz <> "N1" .AND. Round( MPCSAPP - kalk_kartica->mpc, 2 ) <> 0  // po kartici i po stavci razlika
             IF !fsilent
-               MsgBeep( "vpc stavke <> vpc kumulativno po kartici ??" )
+               MsgBeep( "vpc stavke <> vpc kumulativno po kartici ?" )
             ENDIF
             RETURN .T.
          ENDIF
       ELSE
-         IF Round( fcj + mpcsapp - kartica->mpc, 4 ) <> 0  // vpc iz nivelacije
+         IF Round( fcj + mpcsapp - kalk_kartica->mpc, 4 ) <> 0  // vpc iz nivelacije
             IF !fsilent
-               MsgBeep( "mpc stavke <> mpc kumulativno po kartici ??" )
+               MsgBeep( "mpc stavke <> mpc kumulativno po kartici ?" )
             ENDIF
             RETURN .T.
          ENDIF
 
          IF fcj <> 0  .AND. Abs( mpcsapp + fcj ) / fcj * 100 > 80
             IF !fsilent
-               MSgBeep( "Promjena cijene za " + Str( Abs( mpcsapp + fcj ) / fcj * 100, 5, 0 ) + "??" )
+               MSgBeep( "Promjena cijene za " + Str( Abs( mpcsapp + fcj ) / fcj * 100, 5, 0 ) + "?" )
             ENDIF
          ENDIF
 
       ENDIF
 
    ELSE
-      IF Round( kartica->mpv, 4 ) <> 0
+      IF Round( kalk_kartica->mpv, 4 ) <> 0
          IF !fsilent
-            MsgBeep( "kolicina 0 , mpv <> 0 ??" )
+            MsgBeep( "količina 0, mpv <> 0 !" )
          ENDIF
          RETURN .T.
       ENDIF
-      IF Round( kartica->nv, 4 ) <> 0
+      IF Round( kalk_kartica->nv, 4 ) <> 0
          IF !fsilent
-            MsgBeep( "kolicina 0 , NV <> 0 ??" )
+            MsgBeep( "količina 0, NV <> 0 !" )
          ENDIF
          RETURN .T.
       ENDIF
    ENDIF
 
-   IF kartica->nv < 0
+   IF kalk_kartica->nv < 0
       IF !fsilent
-         MsgBeep( "Nabavna cijena < 0 ???" )
+         MsgBeep( "Nabavna cijena < 0 !" )
       ENDIF
       RETURN .T.
    ENDIF
 
 
-   IF kartica->stanje < 0
+   IF kalk_kartica->stanje < 0
       IF !fsilent
-         MsgBeep( "Stanje negativno ????? " )
+         MsgBeep( "Stanje negativno !" )
       ENDIF
       RETURN .T.
    ENDIF
 
    RETURN .F.
-// }
 
 
 
-/*! \fn EdKart(Ch)
- *  \brief Obrada opcija u browsu kartice
- */
 
-FUNCTION EdKart( Ch )
+STATIC FUNCTION EdKart( Ch )
 
-   // {
    LOCAL cDn := "N", nTrecDok := 0, nRet := DE_CONT
    DO CASE
    CASE Ch == K_ENTER
@@ -774,4 +724,3 @@ FUNCTION EdKart( Ch )
    ENDCASE
 
    RETURN nRet
-// }

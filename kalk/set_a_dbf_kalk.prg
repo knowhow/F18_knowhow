@@ -52,7 +52,9 @@ set_a_dbf_temp("kalk_reka22"   , "REKA22"        , F_REKA22        )
 
 set_a_dbf_temp("kalk_r_uio"    , "R_UIO"         , F_R_UIO         )
 set_a_dbf_temp("kalk_rpt_tmp"  , "RPT_TMP"       , F_RPT_TMP       )
-set_a_dbf_temp("kalk_pripr_atrib", "KALK_ATRIB"   , F_KALK_ATRIB )
+set_a_dbf_temp("kalk_pripr_atrib", "KALK_ATRIB"  , F_KALK_ATRIB )
+
+set_a_dbf_temp("kalk_kartica"  , "KALK_KARTICA"       , F_KALK_KARTICA )
 
 set_a_dbf_temp("topska", "TOPSKA"   , F_TMP_TOPSKA )
 set_a_dbf_temp("katops", "KATOPS"   , F_TMP_KATOPS )

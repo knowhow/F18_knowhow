@@ -169,7 +169,9 @@ STATIC FUNCTION forma_osnovnih_podataka( nBoxX, nBoxY )
 
    nX += 2
 
-   @ m_x + nX, m_y + 2 SAY8 PadL( "Datum isporuke (*):", nLeft ) GET _doc_dvr_da VALID must_enter( _doc_dvr_da ) WHEN set_opc_box( nBoxX, 50 )
+   @ m_x + nX, m_y + 2 SAY8 PadL( "Datum isporuke (*):", nLeft ) GET _doc_dvr_da ;
+        VALID _doc_dvr_da >= _doc_date .AND. must_enter( _doc_dvr_da ) ;
+        WHEN set_opc_box( nBoxX, 50 )
 
    @ m_x + nX, Col() + 2 SAY8 PadL( "Vrijeme isporuke (*):", nLeft ) GET _doc_dvr_ti VALID must_enter( _doc_dvr_ti ) WHEN set_opc_box( nBoxX, 50, "format: HH:MM" )
 

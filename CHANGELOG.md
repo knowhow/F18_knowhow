@@ -1,3 +1,8 @@
+1.7.127  2014-08-07, vsasa
+
+  - F18, semafori
+  - TAKGORI, tarifa u uređaju "M"
+ 
 1.7.126  2014-08-07, vsasa
 
   - F18, semaforologija, ispravke bug-ova

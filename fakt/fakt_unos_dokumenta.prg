@@ -978,6 +978,11 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
          RETURN 0
       ENDIF
 
+      IF _n_menu == NIL .OR. _n_menu > LEN( _a_tipdok ) .OR. _n_menu < 0
+         MsgBeep( "Nepostojeća opcija !" )
+         RETURN 0  
+      ENDIF
+
       _idtipdok := Left( _a_tipdok[ _n_menu ], 2 )
 
       ++ _x

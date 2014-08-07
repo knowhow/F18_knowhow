@@ -176,12 +176,19 @@ FUNCTION get_ids_from_semaphore( table )
    LOCAL _user := f18_user()
    LOCAL _tok, _versions, _tmp
    LOCAL _log_level := log_level()
+   LOCAL lAllreadyInTransaction := .F.
+
+   IF _server:TransactionStatus() > 0
+      lAllreadyInTransaction := .T.
+   ENDIF
 
    log_write( "START get_ids_from_semaphore", 7 )
 
    _tbl := "fmk.semaphores_" + Lower( table )
 
-   run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE" )
+   IF !lAllreadyInTransaction
+      run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE" )
+   ENDIF
 
    IF _log_level > 6
 
@@ -206,7 +213,9 @@ FUNCTION get_ids_from_semaphore( table )
 
    IF ( _tbl_obj == NIL ) .OR. ( _update_obj == NIL ) .OR. ( ValType( _update_obj ) == "L" .AND. _update_obj == .F. )
 
-      sql_table_update( nil, "ROLLBACK", nil, nil, .T. )
+      IF !lAllreadyInTransaction
+         sql_table_update( nil, "ROLLBACK", nil, nil, .T. )
+      ENDIF
 
       log_write( "transakcija neuspjesna #29667 ISOLATION LEVEL !", 1, .T. )
 
@@ -228,7 +237,9 @@ FUNCTION get_ids_from_semaphore( table )
 
    ENDIF
 
-   sql_table_update( nil, "END" )
+   IF !lAllreadyInTransaction
+      sql_table_update( nil, "END" )
+   ENDIF
 
    _ids := _tbl_obj:FieldGet( 1 )
 

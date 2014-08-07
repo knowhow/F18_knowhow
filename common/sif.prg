@@ -695,6 +695,7 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
 
    sql_table_update( nil, "BEGIN" )
 
+   altd()
    IF !f18_lock_tables( { Lower( cAlias ) }, .T. )
       sql_table_update( nil, "END" )
       Msgbeep( "Ne mogu zaključati tabelu " + cAlias + "!#Prekidam operaciju." )

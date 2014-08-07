@@ -14,8 +14,13 @@
 
 FUNCTION refresh_me( a_dbf_rec, lSilent, lFromMyUse )
 
-   LOCAL _wa, _del, _cnt, _msg_1, _msg_2
+   LOCAL _wa, _del, _cnt, _msg_1, _msg_2, _cnt_sql
    LOCAL _dbf_pack_algoritam
+   LOCAL lInTransaction := .F.
+
+   //IF my_server():transactionStatus() > 0
+     // lInTransaction := .T.
+   //ENDIF
 
    IF lSilent == NIL
       lSilent := .T.
@@ -33,6 +38,7 @@ FUNCTION refresh_me( a_dbf_rec, lSilent, lFromMyUse )
    set_a_dbf_rec_chk0( a_dbf_rec[ "table" ] )
 
    _msg_1 := "START refresh_me: " + a_dbf_rec[ "alias" ] + " / " + a_dbf_rec[ "table" ]
+
    IF ! lSilent
       Box( "#Molimo sačekajte...", 7, 60 )
       @ m_x + 1, m_y + 2 SAY _msg_1
@@ -47,9 +53,23 @@ FUNCTION refresh_me( a_dbf_rec, lSilent, lFromMyUse )
       USE
    ENDIF
 
+   //IF !lInTransaction
+     // sql_table_update( NIL, "BEGIN" )
+     // IF !f18_lock_tables( { a_dbf_rec["table"] }, .T. )
+      //   sql_table_update( NIL, "END" )
+     // ENDIF
+   //ENDIF
+
+   _cnt_sql := table_count( a_dbf_rec["table"] )
+
    // 3) ponovo otvori nakon sinhronizacije
    dbf_open_temp( a_dbf_rec, @_cnt, @_del )
    USE
+
+   //IF !lInTransaction
+     // f18_free_tables( { a_dbf_rec["table"] } )
+     // sql_table_update( NIL, "END" )
+   //ENDIF
 
    _msg_1 := "nakon sync: " +  a_dbf_rec[ "alias" ] + " / " + a_dbf_rec[ "table" ]
    _msg_2 := "cnt = " + AllTrim( Str( _cnt, 0 ) ) + " / " + AllTrim( Str( _del, 0 ) )
@@ -65,25 +85,23 @@ FUNCTION refresh_me( a_dbf_rec, lSilent, lFromMyUse )
    //
    // _cnt - _del je broj aktivnih dbf zapisa, dajemo taj info check_recno funkciji
    // ako se utvrti greska uradi full sync
-   check_recno_and_fix( a_dbf_rec[ "table" ], _cnt - _del, .T. )
+   check_recno_and_fix( a_dbf_rec[ "table" ], _cnt_sql, _cnt - _del, .T. )
 
    USE
    _msg_1 := a_dbf_rec[ "alias" ] + " / " + a_dbf_rec[ "table" ]
    _msg_2 := "cnt = "  + AllTrim( Str( _cnt, 0 ) ) + " / " + AllTrim( Str( _del, 0 ) )
 
-
    IF ! lSilent
       @ m_x + 4, m_y + 2 SAY _msg_1
       @ m_x + 5, m_y + 2 SAY _msg_2
-
       BoxC()
    ENDIF
 
    log_write( "END refresh_me " +  _msg_1 + " " + _msg_2, 8 )
 
-   if hocu_li_pakovati_dbf(_cnt, _del)
-     pakuj_dbf( a_dbf_rec, .T. )
-   endif
+   IF hocu_li_pakovati_dbf(_cnt, _del)
+      pakuj_dbf( a_dbf_rec, .T. )
+   ENDIF
 
    IF ! lSilent
       BoxC()

@@ -1,3 +1,11 @@
+1.7.126  2014-08-07, vsasa
+
+  - F18, semaforologija, ispravke bug-ova
+    - FULL SYNCHRO 2 puta
+    - get_ids_from_semaphore() transakcija na transakciju
+    - snimi_promjene_sifarnika() se sada bavi i sa DBF zapisom
+  - RNAL, validacija polja datum isporuke kod unosa naloga
+ 
 1.7.125  2014-08-04, vsasa
 
   - LD, specijalni odbitak za elementarne nepogode, korekcije

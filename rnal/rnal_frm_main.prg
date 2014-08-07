@@ -231,11 +231,6 @@ STATIC FUNCTION valid_datum_isporuke( dDatIsp, dDatNaloga )
  
    LOCAL lRet := .F.
 
-   IF EMPTY( dDatIsp )
-      MsgBeep( "Datum isporuke ne može biti prazan !")
-      RETURN lRet
-   ENDIF
-
    IF dDatIsp < dDatNaloga
       MsgBeep( "Datum isporuke mora biti identičan ili veći od datuma naloga !" )
       RETURN lRet

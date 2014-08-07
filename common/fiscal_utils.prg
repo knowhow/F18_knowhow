@@ -319,7 +319,7 @@ FUNCTION fiscal_txt_get_tarifa( tarifa_id, pdv, drv )
    LOCAL _tar := "2"
    LOCAL _tmp
 
-   // PDV17 -> PDV1 ili PDV7NP -> PDV7 ili PDV0IZ -> PDV0
+   // PDV17 -> PDV1 ili PDV7NP -> PDV7 ili PDV0IZ -> PDV0 ili PDVM
    _tmp := Left( Upper( AllTrim( tarifa_id ) ), 4 )
 
    DO CASE
@@ -351,6 +351,14 @@ FUNCTION fiscal_txt_get_tarifa( tarifa_id, pdv, drv )
       ELSEIF drv == "TREMOL"
          _tar := "1"
       ENDIF
+
+   CASE _tmp == "PDVM"
+
+     IF drv == "FPRINT"
+        _tar := "5"
+     ELSEIF drv == "TRING"
+        _tar := "M"
+     ENDIF
 
    CASE pdv == "N"
 

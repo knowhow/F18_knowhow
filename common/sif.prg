@@ -667,15 +667,7 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
       RETURN 0
    ENDIF
 
-   IF lNovi
-      APPEND BLANK
-   ENDIF
-
-   IF !snimi_promjene_sifarnika( lNovi, cTekuciZapis )
-      IF lNovi
-         delete_with_rlock()
-      ENDIF
-   ENDIF
+   snimi_promjene_sifarnika( lNovi, cTekuciZapis )
 
    IF Ch == K_F4 .AND. Pitanje( , "Vrati se na predhodni zapis (D/N) ?", "D" ) == "D"
       GO ( nPrevRecNo )
@@ -694,7 +686,8 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
    LOCAL _rec
    LOCAL cAlias := Alias()
    LOCAL cEditovaniZapis
-   LOCAL lSqlTable 
+   LOCAL lSqlTable
+   LOCAL lAppended := .F. 
 
    lSqlTable := is_sql_table( cAlias )
 
@@ -714,6 +707,11 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
       RETURN lRet
    ENDIF
 
+   IF lNovi
+      lAppended := .T.
+      APPEND BLANK
+   ENDIF
+
    lOk := update_rec_server_and_dbf( cAlias, _rec, 1, "CONT" )
 
    IF lOk
@@ -721,14 +719,24 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
    ENDIF
 
    IF lOk
+
       lRet := .T.
       f18_free_tables( { Lower( cAlias ) } )
       sql_table_update( nil, "END" )
       log_write( "F18_DOK_OPER: dodavanje/ispravka zapisa u šifrarnik " + cAlias, 2 )
+
    ELSE
+
       sql_table_update( nil, "ROLLBACK" )
+
+      IF lNovi .AND. lAppended
+         // brisi DBF zapis koji smo prvobitno dodali
+         delete_with_rlock()
+      ENDIF
+
       log_write( "F18_DOK_OPER: greška kod dodavanja/ispravke zapisa u šifrarnik " + cAlias, 2 )
       MsgBeep( "Greška kod dodavanja/ispravke šifre !#Operacija prekinuta." )
+
    ENDIF
 
    set_global_vars_from_dbf( "w" )

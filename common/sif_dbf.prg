@@ -790,15 +790,7 @@ FUNCTION EditSifItem( Ch, nOrder, aZabIsp, lNovi )
       RETURN 0
    ENDIF
 
-   IF lNovi
-      APPEND BLANK
-   ENDIF
-
-   IF !snimi_promjene_sifarnika( lNovi, cTekuciZapis )
-      IF lNovi
-         delete_with_rlock()
-      ENDIF
-   ENDIF
+   snimi_promjene_sifarnika( lNovi, cTekuciZapis )
 
    IF Ch == K_F4 .AND. Pitanje( , "Vrati se na predhodni zapis (D/N) ?", "D" ) == "D"
       GO ( nPrevRecNo )

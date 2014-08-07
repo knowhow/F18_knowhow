@@ -14,7 +14,7 @@
 // ------------------------------------------
 // param full synchro - uradi full synchro
 // ------------------------------------------
-FUNCTION check_recno_and_fix( dbf_alias, cnt_dbf, full_synchro )
+FUNCTION check_recno_and_fix( dbf_alias, cnt_sql, cnt_dbf, full_synchro )
 
    LOCAL _cnt_sql, _cnt_dbf, nSelect
    LOCAL _a_dbf_rec
@@ -30,15 +30,12 @@ FUNCTION check_recno_and_fix( dbf_alias, cnt_dbf, full_synchro )
    _a_dbf_rec :=  get_a_dbf_rec( dbf_alias )
    _sql_table :=  my_server_params()[ "schema" ] + "." + _a_dbf_rec[ "table" ]
 
-   _cnt_sql := table_count( _sql_table )
-
    nSelect := SELECT ( _a_dbf_rec[ "alias" ] )
 
    IF nSelect > 0
          SELECT( nSelect )
          USE
    ENDIF
-
 
    SELECT ( _a_dbf_rec[ "wa" ] )
    USE
@@ -73,7 +70,7 @@ FUNCTION check_recno_and_fix( dbf_alias, cnt_dbf, full_synchro )
 
     ENDIF
 
-    IF _cnt_sql <> _cnt_dbf
+    IF cnt_sql <> _cnt_dbf
 
       cErrMsg := "full synchro, ERROR: "
       cErrMsg += "broj zapisa DBF tabele " + _a_dbf_rec[ "alias" ] + ": " + AllTrim( Str( _cnt_dbf, 10 ) ) + " "

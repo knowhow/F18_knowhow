@@ -285,9 +285,7 @@ FUNCTION dbf_semaphore_synchro( table, lFullSynchro )
    LOCAL lRet := .T.
    LOCAL _version, _last_version
 
-   IF lFullSynchro == NIL
-      lFullSynchro := .F.
-   ENDIF
+   lFullSynchro := .F.
 
    log_write( "START dbf_semaphore_synchro", 9 )
 

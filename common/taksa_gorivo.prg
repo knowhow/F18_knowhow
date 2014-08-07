@@ -11,7 +11,7 @@
 
 #include "fmk.ch"
 
-STATIC s_cId_taksa := "TAKGORI   "
+STATIC s_cId_taksa := "TAKGORI-M "
 
 
 
@@ -64,7 +64,7 @@ FUNCTION valid_taksa_gorivo( cError, nGorivoKolicina, nTaksaKolicina )
 
    IF nGorivoKolicina <> nTaksaKolicina
       lRet := .F.
-      cError := "Količina goriva na računu je " + AllTrim( Str( nGorivoKolicina ) ) + "#Dok je unesena taksa TAKGORI " + ;
+      cError := "Količina goriva na računu je " + AllTrim( Str( nGorivoKolicina ) ) + "#Dok je unesena taksa TAKGORI-M " + ;
                AllTrim( Str( nTaksaKolicina ) )
    ENDIF
 
@@ -105,7 +105,7 @@ FUNCTION valid_dodaj_taksu_za_gorivo()
 
        IF nDodajTakse > 0
 
-          IF Pitanje(, "Unijeti stavku TAKGORI " + AllTrim( Str( nDodajTakse ), 12, 2 ) + " na gorivo (D/N) ?", "D" ) == "D"
+          IF Pitanje(, "Unijeti stavku TAKGORI-M " + AllTrim( Str( nDodajTakse ), 12, 2 ) + " na gorivo (D/N) ?", "D" ) == "D"
              dodaj_taksu_za_gorivo( nDodajTakse )
           ENDIF
 
@@ -123,7 +123,7 @@ FUNCTION valid_dodaj_taksu_za_gorivo()
 
 
 STATIC FUNCTION error_dodaj_stavku_takse_goriva()
-   MsgBeep( "Pobrisati stavku TAKGORI iz pripreme pa ponoviti operciju ažuriranja !" )
+   MsgBeep( "Pobrisati stavku TAKGORI-M iz pripreme pa ponoviti operciju ažuriranja !" )
    RETURN
 
 
@@ -193,7 +193,7 @@ STATIC FUNCTION dodaj_taksu_za_gorivo_na_pos_racun( nKolicina )
 
 STATIC FUNCTION dodaj_taksu_za_gorivo_na_fakt_racun( nKolicina )
 
-   MsgBeep( "Prema zakonu o naftnim derivatima potrebno je na svaki izdati litar goriva#dodati na račun i posebnu stavku TAKGORI za istu količinu !" )
+   MsgBeep( "Prema zakonu o naftnim derivatima potrebno je na svaki izdati litar goriva#dodati na račun i posebnu stavku TAKGORI-M za istu količinu !" )
 
    RETURN .T.
 
@@ -206,6 +206,8 @@ STATIC FUNCTION dodaj_sifru_takse_u_sifarnik_robe()
    LOCAL lOk := .T.
    LOCAL nNovi_plu := 0
 
+   dodaj_sifru_takse_u_tarife()
+
    SELECT roba
    APPEND BLANK
 
@@ -213,15 +215,51 @@ STATIC FUNCTION dodaj_sifru_takse_u_sifarnik_robe()
 
    hRec["id"] := s_cId_taksa
    hRec["fisc_plu"] := posljednji_plu_artikla() + 1
-   hRec["naz"] := "TAKSA NAFTNI DERIVATI"
+   hRec["naz"] := "TAKSA M NAFTNI DERIVATI"
    hRec["jmj"] := "KOM"
-   hRec["idtarifa"] := PadR( "PDV0", 6 )
+   hRec["idtarifa"] := PadR( "PDVM0", 6 )
    hRec["mpc"] := 0.01
 
    lOk := update_rec_server_and_dbf( "roba", hRec, 1, "FULL" )
 
+   IF !lOk
+      delete_with_rlock()
+   ENDIF
+
    SELECT roba
    hseek s_cId_taksa
+
+   RETURN lOk
+
+
+STATIC FUNCTION dodaj_sifru_takse_u_tarife()
+
+   LOCAL lOk := .T.
+   LOCAL hRec
+   LOCAL cTarifa := PADR( "PDVM0", 6 )
+
+   IF table_count( "fmk.tarifa", "id = " + _sql_quote( cTarifa ) ) > 0
+      RETURN lOk
+   ENDIF
+
+   O_TARIFA
+
+   APPEND BLANK
+   hRec := dbf_get_rec()
+   hRec["id"] := cTarifa
+   hRec["naz"] := "PDV 0 %"
+   hRec["opp"] := 0
+   hRec["ppp"] := 0
+   hRec["zpp"] := 0
+   hRec["vpp"] := 0
+   hRec["mpp"] := 0
+   hRec["dlruc"] := 0
+
+   lOk := update_rec_server_and_dbf( "tarifa", hRec, 1, "FULL" )
+
+   IF !lOk
+      delete_with_rlock()
+   ENDIF
 
    RETURN lOk
 

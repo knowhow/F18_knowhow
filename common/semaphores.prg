@@ -411,15 +411,19 @@ FUNCTION table_count( table, condition )
 // napuni dbf tabelu sa podacima sa servera
 // dbf_tabela mora biti otvorena i u tekucoj WA
 // --------------------------------------------------------------------------------
-FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_time )
+FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_time, lShowInfo )
 
    LOCAL _counter := 0
    LOCAL _i, _fld
    LOCAL _server := pg_server()
    LOCAL _qry_obj
    LOCAL _retry := 3
-   LOCAL _a_dbf_rec, _msg
+   LOCAL _a_dbf_rec
    LOCAL _dbf_alias, _dbf_fields
+
+   IF lShowInfo == NIL
+      lShowInfo := .F.
+   ENDIF
 
    _a_dbf_rec := get_a_dbf_rec( dbf_table )
    _dbf_alias := _a_dbf_rec[ "alias" ]
@@ -456,7 +460,11 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
 
       NEXT
 
-      _msg := ToStr( Time() ) + " : sync fill : " + dbf_table + " : " + AllTrim( Str( _counter ) )
+      IF lShowInfo
+          IF _counter % 500 == 0
+             @ m_x + 7, m_y + 2 SAY8 "synchro '" + dbf_table + "' broj obrađenih zapisa: " + AllTrim( Str( _counter ) )
+          ENDIF
+      ENDIF
 
       _qry_obj:Skip()
 

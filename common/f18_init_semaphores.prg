@@ -32,7 +32,6 @@ FUNCTION refresh_me( a_dbf_rec, lSilent, lFromMyUse )
    _wa := a_dbf_rec[ "wa" ]
    set_a_dbf_rec_chk0( a_dbf_rec[ "table" ] )
 
-
    _msg_1 := "START refresh_me: " + a_dbf_rec[ "alias" ] + " / " + a_dbf_rec[ "table" ]
    IF ! lSilent
       Box( "#Molimo sačekajte...", 7, 60 )

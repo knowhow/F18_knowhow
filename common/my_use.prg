@@ -140,6 +140,7 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
    LOCAL _dbf
    LOCAL _tmp
    LOCAL nSelect
+   LOCAL lOdradioFullSynchro := .F.
 
    IF excl == NIL
       excl := .F.
@@ -196,11 +197,18 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
    IF !( _a_dbf_rec[ "temp" ] )
 
       IF ( _rdd != "SEMAPHORE" ) .AND. my_use_semaphore()
-         dbf_semaphore_synchro( table )
+
+         dbf_semaphore_synchro( table, @lOdradioFullSynchro )
+
+         IF lOdradioFullSynchro
+            set_a_dbf_rec_chk0( _a_dbf_rec["table"] )   
+         ENDIF
+
          IF !_a_dbf_rec[ "chk0" ]
             // nije nikada uradjena inicijalna kontrola ove tabele
             refresh_me( _a_dbf_rec, .T., .T. )
          ENDIF
+
       ELSE
          // rdd = "SEMAPHORE" poziv is update from sql server procedure
          // samo otvori tabelu
@@ -272,25 +280,27 @@ FUNCTION my_use_error( table, alias, oError )
 
 
 
-FUNCTION dbf_semaphore_synchro( table )
+FUNCTION dbf_semaphore_synchro( table, lFullSynchro )
 
+   LOCAL lRet := .T.
    LOCAL _version, _last_version
+
+   IF lFullSynchro == NIL
+      lFullSynchro := .F.
+   ENDIF
 
    log_write( "START dbf_semaphore_synchro", 9 )
 
-   // uzmimo od tabele stanje svog semafora
    _version :=  get_semaphore_version( table )
 
    DO WHILE .T.
 
       IF ( _version == -1 )
          log_write( "full synchro version semaphore version -1", 7 )
-         // odradi full sinhro i setuj vesion = last_trans_version
+         lFullSynchro := .T.
          update_dbf_from_server( table, "FULL" )
       ELSE
-
          _last_version := last_semaphore_version( table )
-         // moramo osvjeziti cache
          IF ( _version < _last_version )
             log_write( "dbf_semaphore_synchro/1, my_use" + table + " osvjeziti dbf cache: ver: " + AllTrim( Str( _version, 10 ) ) + " last_ver: " + AllTrim( Str( _last_version, 10 ) ), 5 )
             update_dbf_from_server( table, "IDS" )
@@ -312,4 +322,4 @@ FUNCTION dbf_semaphore_synchro( table )
 
    log_write( "END dbf_semaphore_synchro", 9 )
 
-   RETURN .T.
+   RETURN lRet

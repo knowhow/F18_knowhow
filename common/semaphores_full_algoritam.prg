@@ -47,20 +47,17 @@ FUNCTION full_synchro( dbf_table, step_size )
    // 4) ja cu pokupiti 100 000 stavki a necu posljednjih 500
    // 3) ako nema transakcije ja cu pokupiti tu promjenu, sa transakcijom ja tu promjenu neću vidjeti
 
-
-
    _sql_table  := "fmk." + dbf_table
    _a_dbf_rec  := get_a_dbf_rec( dbf_table )
    _sql_fields := sql_fields( _a_dbf_rec[ "dbf_fields" ] )
 
    _sql_order  := _a_dbf_rec[ "sql_order" ]
 
-
    // .t. - brisi indeksni fajl tako da se full sinchro obavlja bez azuriranja indeksa
    // .f. - otvori indeks
    reopen_exclusive_and_zap( _a_dbf_rec[ "table" ], .T., .F. )
 
-   Box(, 6, 70 )
+   Box(, 10, 70 )
 
    @ m_x + 1, m_y + 2 SAY "full synchro: " + _sql_table + " => " + dbf_table
 
@@ -88,14 +85,18 @@ FUNCTION full_synchro( dbf_table, step_size )
 
       log_write( "GET FROM SQL full_synchro tabela: " + dbf_table + " " + AllTrim( Str( _offset ) ) + " / qry: " + _qry, 7 )
 
-      @ m_x + 5, m_y + 2 SAY "dbf <- qry "
-      fill_dbf_from_server( dbf_table, _qry, @_sql_fetch_time, @_dbf_write_time )
-      @ m_x + 5, m_y + 15 SAY "sql fetch time: " + AllTrim( Str( _sql_fetch_time ) ) + " dbf write time: " + AllTrim( Str( _dbf_write_time ) )
+      @ m_x + 5, m_y + 2 SAY "dbf <- qry (ne zatvarati aplikaciju u toku ovog procesa)"
 
-      @ m_x + 6, m_y + 2 SAY _offset + step_size
+      fill_dbf_from_server( dbf_table, _qry, @_sql_fetch_time, @_dbf_write_time, .T. )
+
+      @ m_x + 9, m_y + 15 SAY "sql fetch time: " + AllTrim( Str( _sql_fetch_time ) ) + " dbf write time: " + AllTrim( Str( _dbf_write_time ) )
+
+      @ m_x + 10, m_y + 2 SAY _offset + step_size
       @ Row(), Col() + 2 SAY "/"
       @ Row(), Col() + 2 SAY _count
+
       log_write( "STEP full_synchro tabela: " + dbf_table + " " + AllTrim( Str( _offset + step_size ) ) + " / " + AllTrim( Str( _count ) ), 7 )
+      altd()
    NEXT
 
    IF log_level() > 6

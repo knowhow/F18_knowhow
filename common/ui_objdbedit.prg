@@ -544,7 +544,7 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
            _rec := dbf_get_rec()
            _rec[ Lower( cKolona ) ] := cTrazi
 
-           IF _has_semaphore
+           IF lImaSemafor
                lOk := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
            ELSE
                dbf_update_rec( _rec )

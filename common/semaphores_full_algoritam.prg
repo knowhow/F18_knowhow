@@ -96,7 +96,7 @@ FUNCTION full_synchro( dbf_table, step_size )
       @ Row(), Col() + 2 SAY _count
 
       log_write( "STEP full_synchro tabela: " + dbf_table + " " + AllTrim( Str( _offset + step_size ) ) + " / " + AllTrim( Str( _count ) ), 7 )
-      altd()
+      
    NEXT
 
    IF log_level() > 6

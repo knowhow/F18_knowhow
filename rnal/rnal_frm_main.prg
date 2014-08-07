@@ -170,7 +170,7 @@ STATIC FUNCTION forma_osnovnih_podataka( nBoxX, nBoxY )
    nX += 2
 
    @ m_x + nX, m_y + 2 SAY8 PadL( "Datum isporuke (*):", nLeft ) GET _doc_dvr_da ;
-        VALID _doc_dvr_da >= _doc_date .AND. must_enter( _doc_dvr_da ) ;
+        VALID must_enter( _doc_dvr_da ) .AND. valid_datum_isporuke( _doc_dvr_da, _doc_date ) ;
         WHEN set_opc_box( nBoxX, 50 )
 
    @ m_x + nX, Col() + 2 SAY8 PadL( "Vrijeme isporuke (*):", nLeft ) GET _doc_dvr_ti VALID must_enter( _doc_dvr_ti ) WHEN set_opc_box( nBoxX, 50, "format: HH:MM" )
@@ -223,6 +223,27 @@ STATIC FUNCTION forma_osnovnih_podataka( nBoxX, nBoxY )
    ESC_RETURN 0
 
    RETURN 1
+
+
+
+
+STATIC FUNCTION valid_datum_isporuke( dDatIsp, dDatNaloga )
+ 
+   LOCAL lRet := .F.
+
+   IF EMPTY( dDatIsp )
+      MsgBeep( "Datum isporuke ne može biti prazan !")
+      RETURN lRet
+   ENDIF
+
+   IF dDatIsp < dDatNaloga
+      MsgBeep( "Datum isporuke mora biti identičan ili veći od datuma naloga !" )
+      RETURN lRet
+   ENDIF
+
+   lRet := .T.
+
+   RETURN lRet
 
 
 // --------------------------------------------

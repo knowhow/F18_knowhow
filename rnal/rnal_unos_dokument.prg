@@ -1432,7 +1432,7 @@ FUNCTION must_enter( xVal )
 STATIC FUNCTION msg_must_enter( lVal )
 
    IF lVal == .F.
-      MsgBeep( "Unos polja obavezan !!!" )
+      MsgBeep( "Unos polja obavezan !" )
    ENDIF
 
    RETURN

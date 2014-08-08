@@ -1,3 +1,7 @@
+1.7.128 2014-08-08, vsasa
+
+  - LD, odbici el.nepogode, dodavanje tipa primanja - bugfix
+ 
 1.7.127  2014-08-07, vsasa
 
   - F18, semafori

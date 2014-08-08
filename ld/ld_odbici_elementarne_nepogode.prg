@@ -196,6 +196,10 @@ STATIC FUNCTION valid_tip_primanja_elementarne_nepogode( cTip )
 
    LOCAL lRet := .T.
 
+   IF EMPTY( cTip )
+       RETURN lRet
+   ENDIF
+
    IF !ld_tip_primanja_se_koristi( cTip )
       dodaj_tip_primanja_elementarnih_nepogoda( cTip )
    ELSE

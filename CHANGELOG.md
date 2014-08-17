@@ -1,3 +1,7 @@
+1.7.129 2014-08-17, vsasa
+
+  - check_recno_and_fix - bugfix
+ 
 1.7.128 2014-08-08, vsasa
 
   - LD, odbici el.nepogode, dodavanje tipa primanja - bugfix

@@ -16,7 +16,7 @@
 // ------------------------------------------
 FUNCTION check_recno_and_fix( dbf_alias, cnt_sql, cnt_dbf, full_synchro )
 
-   LOCAL _cnt_sql, _cnt_dbf, nSelect
+   LOCAL nSelect
    LOCAL _a_dbf_rec
    LOCAL _opened := .F.
    LOCAL _sql_table
@@ -41,7 +41,6 @@ FUNCTION check_recno_and_fix( dbf_alias, cnt_sql, cnt_dbf, full_synchro )
    USE
 
    _udbf := my_home() + _a_dbf_rec[ "table" ]
-   _cnt_dbf := cnt_dbf
 
    IF cnt_dbf == NIL
    
@@ -57,10 +56,10 @@ FUNCTION check_recno_and_fix( dbf_alias, cnt_sql, cnt_dbf, full_synchro )
             
              // reccount() se ne moze iskoristiti jer prikazuje i deleted zapise
              // count je vremenski skupa operacija za velike tabele !
-             COUNT TO _cnt_dbf
+             COUNT TO cnt_dbf
              USE
 
-             log_write( "DBF recs " + _a_dbf_rec[ "alias" ] + ": " + AllTrim( Str( _cnt_dbf, 10 ) ) + " / sql recs " + _sql_table + ": " + AllTrim( Str( _cnt_sql, 10 ) ), 7 )
+             log_write( "DBF recs " + _a_dbf_rec[ "alias" ] + ": " + AllTrim( Str( cnt_dbf, 10 ) ) + " / sql recs " + _sql_table + ": " + AllTrim( Str( cnt_sql, 10 ) ), 7 )
 
          RECOVER USING _err
 
@@ -70,17 +69,17 @@ FUNCTION check_recno_and_fix( dbf_alias, cnt_sql, cnt_dbf, full_synchro )
 
     ENDIF
 
-    IF cnt_sql <> _cnt_dbf
+    IF cnt_sql <> cnt_dbf
 
       cErrMsg := "full synchro, ERROR: "
-      cErrMsg += "broj zapisa DBF tabele " + _a_dbf_rec[ "alias" ] + ": " + AllTrim( Str( _cnt_dbf, 10 ) ) + " "
-      cErrMsg += "broj zapisa SQL tabele " + _sql_table + ": " + AllTrim( Str( _cnt_sql, 10 ) )
+      cErrMsg += "broj zapisa DBF tabele " + _a_dbf_rec[ "alias" ] + ": " + AllTrim( Str( cnt_dbf, 10 ) ) + " "
+      cErrMsg += "broj zapisa SQL tabele " + _sql_table + ": " + AllTrim( Str( cnt_sql, 10 ) )
 
       log_write( cErrMsg )
 
       IF full_synchro
 
-          IF _cnt_dbf > 0
+          IF cnt_dbf > 0
              notify_podrska( cErrMsg )
           ENDIF
 

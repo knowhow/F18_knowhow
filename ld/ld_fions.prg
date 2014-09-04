@@ -30,38 +30,57 @@ FUNCTION BrojObracuna()
 
    RETURN cOznObracuna
 
-// ---------------------------------
-// ukupno radnik
-// ---------------------------------
-FUNCTION UkRadnik()
 
-   LOCAL i
-   LOCAL nArr
+
+// -------------------------------------------
+// ukupno radnik
+// -------------------------------------------
+FUNCTION izracunaj_uneto_usati_za_radnika()
+
+   LOCAL i, nArr
+   LOCAL hData := hb_hash()
+   LOCAL nSati := 0
+   LOCAL nNeto := 0
+   LOCAL nIznos := 0
+   LOCAL nOdbici := 0
+
+   PRIVATE cTmp := ""
 
    nArr := Select()
 
-   PRIVATE cPom := ""
-
    FOR i := 1 TO cLDPolja
-      cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
+
+      cTmp := PadL( AllTrim( Str( i ) ), 2, "0" )
+
       SELECT tippr
-      SEEK cPom
+      SEEK cTmp
+
       IF tippr->( Found() ) .AND. tippr->aktivan == "D"
+
+         nIznos += _i&cTmp
+
          IF tippr->ufs == "D"
-            _USati += _s&cPom
+            nSati += _s&cTmp
          ENDIF
-         _UIznos += _i&cPom
+
          IF tippr->uneto == "D"
-            _Uneto += _i&cPom
+            nNeto += _i&cTmp
          ELSE
-            _UOdbici += _i&cPom
+            nOdbici += _i&cTmp
          ENDIF
+
       ENDIF
+
    NEXT
+
+   hData["uneto"] := nNeto
+   hData["usati"] := nSati
+   hData["uodbici"] := nOdbici
+   hData["iznos"] := nIznos
 
    SELECT( nArr )
 
-   RETURN ( nil )
+   RETURN hData
 
 
 

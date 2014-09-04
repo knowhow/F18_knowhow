@@ -387,15 +387,48 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
 
 
+STATIC FUNCTION kalkulisi_uneto_usati_uiznos_za_radnika()
+
+   LOCAL hData
+
+   _usati := 0
+   _uneto := 0
+   _uiznos := 0
+   _uodbici := 0
+
+   hData := izracunaj_uneto_usati_za_radnika()
+
+   _usati := hData["usati"] 
+   _uneto := hData["uneto"] 
+   _uodbici := hData["uodbici"]
+   _uiznos := hData["uneto"] + hData["uodbici"] 
+
+   RETURN NIL
+
+
+
+STATIC FUNCTION izracunaj_ukupno_za_isplatu_za_radnika( cTipRada, cTrosk, nTrosk, lInRs )
+
+   _uiznos := ROUND2( _uneto2 + _uodbici, gZaok2 )
+
+   IF cTipRada $ "U#A" .AND. cTrosk <> "N"
+      _uIznos := ROUND2( _uiznos + nTrosk, gZaok2 )
+      IF lInRS == .T.
+         _uIznos := _uneto
+      ENDIF
+   ENDIF
+
+   IF cTipRada $ "S"
+      _uiznos := _uneto
+   ENDIF
+
+   RETURN NIL
+
+
+
 STATIC FUNCTION ld_unos_obracuna_footer( lSaveObracun, lNovi )
 
-   _USati := 0
-   _UNeto := 0
-   _UOdbici := 0
-
-   UkRadnik()
-
-   _UIznos := _UNeto + _UOdbici
+   kalkulisi_uneto_usati_uiznos_za_radnika()
 
    nKLO := radn->klo
    cTipRada := g_tip_rada( _idradn, _idrj )
@@ -499,33 +532,29 @@ STATIC FUNCTION ld_unos_obracuna_footer( lSaveObracun, lNovi )
       _uneto2 := nMinNeto
    ENDIF
 
-   _uiznos := ROUND2( _uneto2 + _UOdbici, gZaok2 )
-
-   IF cTipRada $ "U#A" .AND. cTrosk <> "N"
-      _uIznos := ROUND2( _uiznos + nTrosk, gZaok2 )
-      IF lInRS == .T.
-         _uIznos := _UNeto
-      ENDIF
-   ENDIF
-
-   IF cTipRada $ "S"
-      _uIznos := _UNeto
-   ENDIF
+   izracunaj_ukupno_za_isplatu_za_radnika( cTipRada, cTrosk, nTrosk, lInRs )
 
    IF Round( _uneto2, 2 ) <> 0 .AND. LastKey() <> K_ESC .AND. ld_obracunaj_odbitak_za_elementarne_nepogode( lNovi )
+
+      // zato što naknadno radimo definisanje tip primanja, moramo napraviti rekalkulaciju
+      hData := izracunaj_uneto_usati_za_radnika()
+      _uodbici := hData["uodbici"]
+      izracunaj_ukupno_za_isplatu_za_radnika( cTipRada, cTrosk, nTrosk, lInRs )
+
       MsgBeep( "Za radnika je obračnuat odbitak radi elementarnih nepogoda." )
+
    ENDIF
 
    @ m_x + 19, m_y + 2 SAY "Ukupno sati:"
-   @ Row(), Col() + 1 SAY _USati PICT gPics
+   @ Row(), Col() + 1 SAY _usati PICT gPics
    @ m_x + 19, Col() + 2 SAY "Uk.lic.odb.:"
-   @ Row(), Col() + 1 SAY _ULicOdb PICT gPici
+   @ Row(), Col() + 1 SAY _ulicodb PICT gPici
    @ m_x + 20, m_y + 2 SAY "Primanja:"
-   @ Row(), Col() + 1 SAY _UNeto PICT gPici
+   @ Row(), Col() + 1 SAY _uneto PICT gPici
    @ m_x + 20, Col() + 2 SAY "Odbici:"
-   @ Row(), Col() + 1 SAY _UOdbici PICT gPici
+   @ Row(), Col() + 1 SAY _uodbici PICT gPici
    @ m_x + 20, Col() + 2 SAY "UKUPNO ZA ISPLATU:"
-   @ Row(), Col() + 1 SAY _UIznos PICT gPici
+   @ Row(), Col() + 1 SAY _uiznos PICT gPici
    @ m_x + 22, m_y + 10 SAY "Pritisni <ENTER> za snimanje, <ESC> napustanje"
    @ m_x + 21, m_y + 2 SAY "Vrsta isplate (1 - 13):"
    @ Row(), Col() + 1 GET _v_ispl

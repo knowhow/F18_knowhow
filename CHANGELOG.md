@@ -1,3 +1,7 @@
+1.7.130 2014-09-04, vsasa
+
+  - LD, obračun odbitaka za elementarne nepogode, korekcije
+ 
 1.7.129 2014-08-17, vsasa
 
   - check_recno_and_fix - bugfix

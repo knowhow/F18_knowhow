@@ -375,7 +375,9 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    ld_unos_obracuna_tipovi_primanja()
 
-   ld_unos_obracuna_footer( @lSaveObracun, lNovi )
+   kalkulacija_obracuna_plate_za_radnika( lNovi )
+
+   ld_unos_obracuna_footer( @lSaveObracun )
 
    IF _radni_sati == "D" .AND. lSaveObracun == .F.
       delRadSati( cIdRadn, nSatiPreth )
@@ -426,7 +428,7 @@ STATIC FUNCTION izracunaj_ukupno_za_isplatu_za_radnika( cTipRada, cTrosk, nTrosk
 
 
 
-STATIC FUNCTION ld_unos_obracuna_footer( lSaveObracun, lNovi )
+STATIC FUNCTION kalkulacija_obracuna_plate_za_radnika( lNovi )
 
    kalkulisi_uneto_usati_uiznos_za_radnika()
 
@@ -545,6 +547,12 @@ STATIC FUNCTION ld_unos_obracuna_footer( lSaveObracun, lNovi )
 
    ENDIF
 
+   RETURN
+
+
+
+STATIC FUNCTION ld_unos_obracuna_footer( lSaveObracun )
+
    @ m_x + 19, m_y + 2 SAY "Ukupno sati:"
    @ Row(), Col() + 1 SAY _usati PICT gPics
    @ m_x + 19, Col() + 2 SAY "Uk.lic.odb.:"
@@ -574,6 +582,7 @@ STATIC FUNCTION ld_unos_obracuna_footer( lSaveObracun, lNovi )
       MsgBeep( "Obracun je pohranjen !!!" )
       lSaveObracun := .T.
    ENDIF
+
 
    RETURN
 

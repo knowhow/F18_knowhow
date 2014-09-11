@@ -1,3 +1,7 @@
+1.7.131 2014-09-11, vsasa
+
+  - TOPS, get_pos_mpc() => SQL 
+ 
 1.7.130 2014-09-04, vsasa
 
   - LD, obračun odbitaka za elementarne nepogode, korekcije

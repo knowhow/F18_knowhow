@@ -51,7 +51,9 @@ FUNCTION pos_get_mpc()
    IF !is_var_objekat_tpquery( oData ) 
       MsgBeep( "Problem sa SQL upitom !" )
    ELSE
-      nCijena := oData:FieldGet(1)
+      IF oData:LastRec() > 0 .AND. VALTYPE( oData:FieldGet(1) ) == "N"
+         nCijena := oData:FieldGet(1)
+      ENDIF
    ENDIF
 
    RETURN nCijena

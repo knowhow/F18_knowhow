@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,385 +14,427 @@
 
 
 
-// ------------------------------------------------------
-// blok za robu koji se koristi kod pos sifrarnika
-// ------------------------------------------------------
-function pos_roba_block( ch )
+FUNCTION pos_roba_block( ch )
 
-do case
+   DO CASE
 
-    case UPPER( CHR( ch ) ) == "P"
-        if gen_all_plu()
-            return DE_REFRESH
-        endif
+   CASE Upper( Chr( ch ) ) == "P"
+      IF gen_all_plu()
+         RETURN DE_REFRESH
+      ENDIF
 
-endcase
+   ENDCASE
 
-return DE_CONT
+   RETURN DE_CONT
 
 
 
 
-// ----------------------------------------------------
-// vraca mpc na osnovu seta cijena koji se koristi
-// ----------------------------------------------------
-function pos_get_mpc()
-local _tmp := ALLTRIM( gSetMPCijena )
-local _cijena := 0
-local _field
+FUNCTION pos_get_mpc()
 
-if EMPTY( _tmp ) .or. _tmp == "0"
-    MsgBeep("Set cijena nije podesen ispravno !!!")
-    return 0
-endif
+   LOCAL nCijena := 0
+   LOCAL cField
+   LOCAL oData, cQry
 
-if _tmp == "1"
-    _cijena := roba->mpc    
-else
-    _field := "mpc" + _tmp
-    _cijena := roba->&(_field)
-endif
+   IF !pos_get_mpc_valid()
+      MsgBeep( "Set cijena nije podesen ispravno !" )
+      RETURN 0
+   ENDIF
 
-return _cijena
+   cField := pos_get_mpc_field()
 
+   cQry := "SELECT " + cField + " FROM fmk.roba "
+   cQry += "WHERE id = " + _sql_quote( roba->id )         
+   
+   oData := _sql_query( my_server(), cQry )
  
+   IF !is_var_objekat_tpquery( oData ) 
+      MsgBeep( "Problem sa SQL upitom !" )
+   ELSE
+      nCijena := oData:FieldGet(1)
+   ENDIF
 
-function P_Kase(cId,dx,dy)
-private ImeKol
-private Kol
-
-SELECT (F_KASE)
-if !used()
-    O_KASE
-endif
-
-ImeKol:={}
-AADD(ImeKol,{"Sifra/ID kase",{||id},"id"})
-AADD(ImeKol,{"Naziv kase",{||Naz },"Naz"})
-AADD(ImeKol,{"Lokacija kumulativa",{||pPath},"pPath"})
-Kol:={1,2,3}
-
-return PostojiSifra(F_KASE,1, 10, 77, "Sifarnik kasa/prodajnih mjesta", @cId, dx, dy)
-
-
- 
-function Id2Naz()
-local nSel:=SELECT()
-
-Pushwa()
-select roba
-HSEEK sast->id2
-popwa()
-
-return LEFT(roba->naz,25)
-
- 
-function LMarg()
-return "   "
-
-
- 
-function P_Odj(cId,dx,dy)
-private ImeKol
-private Kol:={}
-
-ImeKol:={{"ID ",{|| id },"id",{|| .t.},{|| vpsifra(wId)}},{PADC("Naziv",25),{|| naz},"naz"},{"Konto u KALK",{|| IdKonto},"IdKonto"}}
-
-for i:=1 to LEN(ImeKol)
-    AADD(Kol,i)
-next
-return PostojiSifra(F_ODJ,1,10,40,"Sifarnik odjeljenja", @cId,dx,dy)
-
-
- 
-function P_Dio(cId,dx,dy)
-private ImeKol
-private Kol:={}
-
-ImeKol:={{"ID ",{|| id },"id",{|| .t.},{|| vpsifra(wId)}},{PADC("Naziv",25),{|| naz},"naz"}}
-
-for i:=1 to LEN(ImeKol)
-    AADD(Kol,i)
-next
-return PostojiSifra(F_DIO,1,10,55,"Sifrarnik dijelova objekta",@cid,dx,dy)
-
-
- 
-function P_StRad(cId,dx,dy)
-private ImeKol
-private Kol:={}
-
-ImeKol:={ { "ID ",  {|| id },       "id"  , {|| .t.}, {|| vpsifra(wId)}      },;
-          { PADC("Naziv",15), {|| naz},       "naz"       },;
-          { "Prioritet"     , {|| PADC(prioritet,9)}, "prioritet", {|| .t.}, {|| ("0" <= wPrioritet) .AND. (wPrioritet <= "3")} } ;
-        }
-
-for i:=1 to LEN(ImeKol)
-    AADD(Kol,i)
-next
-return PostojiSifra(F_STRAD,1,10,55,"Sifrarnik statusa radnika",@cid,dx,dy)
+   RETURN nCijena
 
 
 
-function P_Osob(cId, dx, dy)
-private ImeKol
-private Kol:={}
+STATIC FUNCTION pos_get_mpc_field()
 
-ImeKol:={ { "ID ",          {|| id },    "id", {|| .t.}, {|| vpsifra(wId)} },;
-          { PADC("Naziv",40), {|| naz},  "naz"    },;
-          { "Korisn.sifra", {|| korsif}, "korsif" },;
-          { "Status",       {|| status}, "status" };
-        }
+   LOCAL cField := "mpc"
+   LOCAL cSet := AllTrim( gSetMPCijena )
+  
+   IF cSet <> "1"
+       cField := cField + cSet
+   ENDIF
 
-for i:=1 to LEN(ImeKol)
-    AADD(Kol,i)
-next
-
-return PostojiSifra( F_OSOB, 2, 10, 55, "Sifrarnik osoblja", @cid, dx, dy, {|| EdOsob()})
-return
+   RETURN cField
 
 
 
- 
-function P_Uredj(cId, dx, dy)
-private ImeKol
-private Kol:={}
+STATIC FUNCTION pos_get_mpc_valid()
 
-ImeKol:={ { "ID ",  {|| id },       "id"  , {|| .t.}, {|| vpsifra(wId)}      },;
-          { PADC("Naziv",30), {|| naz},      "naz"       },;
-          { "Port", {|| port},      "port"       };
-        }
+   LOCAL lOk := .T.
+   LOCAL cSet := AllTrim( gSetMPCijena )
 
-for i:=1 to LEN(ImeKol)
-    AADD(Kol,i)
-next
+   IF EMPTY( cSet ) .OR. cSet == "0"
+      lOk := .F.
+   ENDIF
 
-return PostojiSifra(F_UREDJ,1,10,55,"Sifrarnik uredjaja",@cid,dx,dy)
+   RETURN lOk
 
 
 
- 
-function P_MJTRUR(cId,dx,dy)
-private ImeKol
-private Kol:={}
+FUNCTION P_Kase( cId, dx, dy )
 
-ImeKol:={{ "Uredjaj",     {|| iduredjaj }, "IdUredjaj", {|| .t.}, {|| P_Uredj(wIdUredjaj)}},;
-     { "Odjeljenje",  {|| IdOdj },     "IdOdj"    , {|| .t.}, {|| P_Odj(wIdOdj)}},;
-     { "Dio objekta", {|| IdDio },     "IdDio"    , {|| .t.}, {|| P_Dio(wIdDio)}} ;
-        }
+   PRIVATE ImeKol
+   PRIVATE Kol
 
-for i:=1 to LEN(ImeKol)
-    AADD(Kol,i)
-next
-return PostojiSifra(F_MJTRUR, 1, 10, 55, "Sifrarnik parova uredjaj-odjeljenje", @cid, dx, dy)
+   SELECT ( F_KASE )
+   IF !Used()
+      O_KASE
+   ENDIF
+
+   ImeKol := {}
+   AAdd( ImeKol, { "Sifra/ID kase", {|| id }, "id" } )
+   AAdd( ImeKol, { "Naziv kase", {|| Naz }, "Naz" } )
+   AAdd( ImeKol, { "Lokacija kumulativa", {|| pPath }, "pPath" } )
+   Kol := { 1, 2, 3 }
+
+   RETURN PostojiSifra( F_KASE, 1, 10, 77, "Sifarnik kasa/prodajnih mjesta", @cId, dx, dy )
 
 
 
-function EdOsob()
-local System:=(KLevel<L_UPRAVN)
-local nVrati:=DE_CONT
-local _rec
+FUNCTION Id2Naz()
 
-do case
+   LOCAL nSel := Select()
 
-    case Ch==K_CTRL_N
+   Pushwa()
+   SELECT roba
+   HSEEK sast->id2
+   popwa()
 
-        if gSamoProdaja=="D"
-            MsgBeep("SamoProdaja=D#Nemate ovlastenje za ovu opciju !")
-            nVrati := DE_CONT
-        else
-         
-           if System
+   RETURN Left( roba->naz, 25 )
 
-                // setuj varijable globalne
-                set_global_memvars_from_dbf()
 
-                _korsif := SPACE(6)
-                
-                if GetOsob( .t. ) <> K_ESC
+FUNCTION LMarg()
+   RETURN "   "
 
-                    // azuriranje OSOB.DBF
-                    _korsif := CryptSC( _korsif )
 
-                    APPEND BLANK
-                    
-                    // daj mi iz globalnih varijabli                    
-                    _rec := get_dbf_global_memvars()
 
-                    update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+FUNCTION P_Odj( cId, dx, dy )
 
-                    nVrati:=DE_REFRESH
+   PRIVATE ImeKol
+   PRIVATE Kol := {}
 
-                endif
-            endif
-        endif
+   ImeKol := { { "ID ", {|| id }, "id", {|| .T. }, {|| vpsifra( wId ) } }, { PadC( "Naziv", 25 ), {|| naz }, "naz" }, { "Konto u KALK", {|| IdKonto }, "IdKonto" } }
 
-    case Ch==K_F2
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
 
-        if gSamoProdaja=="D"
-            MsgBeep("SamoProdaja=D#Nemate ovlastenje za ovu opciju !")
-            nVrati:=DE_CONT
-        else
+   RETURN PostojiSifra( F_ODJ, 1, 10, 40, "Sifarnik odjeljenja", @cId, dx, dy )
 
-            if System
 
-                set_global_memvars_from_dbf()
-                _korsif:=CryptSC(_korsif)
-                    
-                if GetOsob( .f. ) <> K_ESC
-                    // azuriranje OSOB.DBF
-                    _korsif:=CryptSC(_korsif)
-                    // daj mi iz globalnih varijabli                    
-                    _rec := get_dbf_global_memvars()
+
+FUNCTION P_Dio( cId, dx, dy )
+
+   PRIVATE ImeKol
+   PRIVATE Kol := {}
+
+   ImeKol := { { "ID ", {|| id }, "id", {|| .T. }, {|| vpsifra( wId ) } }, { PadC( "Naziv", 25 ), {|| naz }, "naz" } }
+
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
+
+   RETURN PostojiSifra( F_DIO, 1, 10, 55, "Sifrarnik dijelova objekta", @cid, dx, dy )
+
+
+
+FUNCTION P_StRad( cId, dx, dy )
+
+   PRIVATE ImeKol
+   PRIVATE Kol := {}
+
+   ImeKol := { { "ID ",  {|| id },       "id", {|| .T. }, {|| vpsifra( wId ) }      }, ;
+      { PadC( "Naziv", 15 ), {|| naz },       "naz"       }, ;
+      { "Prioritet", {|| PadC( prioritet, 9 ) }, "prioritet", {|| .T. }, {|| ( "0" <= wPrioritet ) .AND. ( wPrioritet <= "3" ) } } ;
+      }
+
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
+
+   RETURN PostojiSifra( F_STRAD, 1, 10, 55, "Sifrarnik statusa radnika", @cid, dx, dy )
+
+
+
+FUNCTION P_Osob( cId, dx, dy )
+
+   PRIVATE ImeKol
+   PRIVATE Kol := {}
+
+   ImeKol := { { "ID ",          {|| id },    "id", {|| .T. }, {|| vpsifra( wId ) } }, ;
+      { PadC( "Naziv", 40 ), {|| naz },  "naz"    }, ;
+      { "Korisn.sifra", {|| korsif }, "korsif" }, ;
+      { "Status",       {|| status }, "status" };
+      }
+
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
+
+   RETURN PostojiSifra( F_OSOB, 2, 10, 55, "Sifrarnik osoblja", @cid, dx, dy, {|| EdOsob() } )
+
+   RETURN
+
+
+
+
+FUNCTION P_Uredj( cId, dx, dy )
+
+   PRIVATE ImeKol
+   PRIVATE Kol := {}
+
+   ImeKol := { { "ID ",  {|| id },       "id", {|| .T. }, {|| vpsifra( wId ) }      }, ;
+      { PadC( "Naziv", 30 ), {|| naz },      "naz"       }, ;
+      { "Port", {|| port },      "port"       };
+      }
+
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
+
+   RETURN PostojiSifra( F_UREDJ, 1, 10, 55, "Sifrarnik uredjaja", @cid, dx, dy )
+
+
+
+
+FUNCTION P_MJTRUR( cId, dx, dy )
+
+   PRIVATE ImeKol
+   PRIVATE Kol := {}
+
+   ImeKol := { { "Uredjaj",     {|| iduredjaj }, "IdUredjaj", {|| .T. }, {|| P_Uredj( wIdUredjaj ) } }, ;
+      { "Odjeljenje",  {|| IdOdj },     "IdOdj", {|| .T. }, {|| P_Odj( wIdOdj ) } }, ;
+      { "Dio objekta", {|| IdDio },     "IdDio", {|| .T. }, {|| P_Dio( wIdDio ) } } ;
+      }
+
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
+
+   RETURN PostojiSifra( F_MJTRUR, 1, 10, 55, "Sifrarnik parova uredjaj-odjeljenje", @cid, dx, dy )
+
+
+
+FUNCTION EdOsob()
+
+   LOCAL System := ( KLevel < L_UPRAVN )
+   LOCAL nVrati := DE_CONT
+   LOCAL _rec
+
+   DO CASE
+
+   CASE Ch == K_CTRL_N
+
+      IF gSamoProdaja == "D"
+         MsgBeep( "SamoProdaja=D#Nemate ovlastenje za ovu opciju !" )
+         nVrati := DE_CONT
+      ELSE
+
+         IF System
+
+            // setuj varijable globalne
+            set_global_memvars_from_dbf()
+
+            _korsif := Space( 6 )
+
+            IF GetOsob( .T. ) <> K_ESC
+
+               // azuriranje OSOB.DBF
+               _korsif := CryptSC( _korsif )
+
+               APPEND BLANK
+
+               // daj mi iz globalnih varijabli
+               _rec := get_dbf_global_memvars()
+
+               update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+
+               nVrati := DE_REFRESH
+
+            ENDIF
+         ENDIF
+      ENDIF
+
+   CASE Ch == K_F2
+
+      IF gSamoProdaja == "D"
+         MsgBeep( "SamoProdaja=D#Nemate ovlastenje za ovu opciju !" )
+         nVrati := DE_CONT
+      ELSE
+
+         IF System
+
+            set_global_memvars_from_dbf()
+            _korsif := CryptSC( _korsif )
+
+            IF GetOsob( .F. ) <> K_ESC
+               // azuriranje OSOB.DBF
+               _korsif := CryptSC( _korsif )
+               // daj mi iz globalnih varijabli
+               _rec := get_dbf_global_memvars()
 					
-                    update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+               update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
 
-                    nVrati:=DE_REFRESH
+               nVrati := DE_REFRESH
 
-                endif
-            endif
-        endif
+            ENDIF
+         ENDIF
+      ENDIF
 
-    case Ch == K_CTRL_T
+   CASE Ch == K_CTRL_T
 
-        if gSamoProdaja=="D"
-            MsgBeep("Nemate ovlastenje za ovu opciju !")
-            nVrati:=DE_CONT
-        else
-            if System
-                if Pitanje(,"Izbrisati korisnika "+ trim(naz) +":"+CryptSC(korsif)+" D/N ?","N")=="D"
+      IF gSamoProdaja == "D"
+         MsgBeep( "Nemate ovlastenje za ovu opciju !" )
+         nVrati := DE_CONT
+      ELSE
+         IF System
+            IF Pitanje(, "Izbrisati korisnika " + Trim( naz ) + ":" + CryptSC( korsif ) + " D/N ?", "N" ) == "D"
 
-                    SELECT osob
-                    _rec := dbf_get_rec()                    
-                    delete_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
-                    nVrati:=DE_REFRESH
+               SELECT osob
+               _rec := dbf_get_rec()
+               delete_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+               nVrati := DE_REFRESH
 
-                endif
-            endif
-        endif
-    case Ch==K_ESC .or. Ch==K_ENTER
-        nVrati := DE_ABORT
-endcase
+            ENDIF
+         ENDIF
+      ENDIF
+   CASE Ch == K_ESC .OR. Ch == K_ENTER
+      nVrati := DE_ABORT
+   ENDCASE
 
-if ch==K_ALT_R .or. ch==K_ALT_S .or. ch==K_CTRL_N .or. ch==K_F2 .or. ch==K_F4 .or. ch==K_CTRL_A .or. ch==K_CTRL_T .or. ch==K_ENTER
-    ch:=0
-endif
+   IF ch == K_ALT_R .OR. ch == K_ALT_S .OR. ch == K_CTRL_N .OR. ch == K_F2 .OR. ch == K_F4 .OR. ch == K_CTRL_A .OR. ch == K_CTRL_T .OR. ch == K_ENTER
+      ch := 0
+   ENDIF
 
-return nVrati
-
-
-
-
-function GetOsob(fNovi)
-local cLevel
-
-Box("",4,60,.f.,"Unos novog korisnika,sifre")
-
-    SET CURSOR ON
-
-    if fNovi.or.KLevel=="0"
-        @ m_x+1,m_y+2 SAY "Sifra radnika (ID)." GET _id VALID vpsifra(_id)
-    else
-        @ m_x+1,m_y+2 SAY "Sifra radnika (ID). " + _id
-    endif
-
-    @ m_x+2,m_y+2 SAY "Ime radnika........" GET _naz
-
-    read
-
-    SELECT strad
-    HSEEK gStRad
-    cLevel := strad->prioritet
-
-    SELECT strad
-    HSEEK _status
-    select osob
-
-    // level tekuceg korisnika > level
-    if (cLevel > strad->prioritet)  
-        MsgBeep("Ne mozete mjenjati sifru")
-    else
-        @ m_x+3,m_y+2 SAY "Sifra.............." GET _korsif PICTURE "@!" VALID vpsifra2(_korsif,_id)
-        @ m_x+4,m_y+2 SAY "Status............." GET _status VALID P_STRAD(@_status)
-    endif
-
-    READ
-
-BoxC()
-
-return lastkey()
-
-
-
-static function VPSifra2(cSifra,cIme)
-local lRet:=.t.
-local nObl:=SELECT()
-
-if EMPTY(cSifra)
-    Beep (3)
-    return (.f.)
-endif
-
-return lRet
+   RETURN nVrati
 
 
 
 
-function PomMenu1(aNiz)
-local xP:=ROW()
-local yP:=COL()
-local xN
-local yN
-local dP:=LEN(aNiz)+1
-local sP:=0
+FUNCTION GetOsob( fNovi )
 
-AEVAL(aNiz,{|x| IF(LEN(x[1]+x[2])>sP,sP:=LEN(x[1]+x[2]),)})
-sP+=3
-xN:=IF(xP>11,xP-dP,xP+1)
-yN:=IF(yP>39,yP-sP,yP+1)
-Prozor1(xN,yN,xN+dP,yN+sP-1,"POMOC")
+   LOCAL cLevel
 
-for i:=1 to dP-1
-    @ xN+i,yN+1 SAY PADR(aNiz[i,1]+"-"+aNiz[i,2],sP-2)
-next
+   Box( "", 4, 60, .F., "Unos novog korisnika,sifre" )
 
-@ xP,yP SAY ""
+   SET CURSOR ON
 
-return
+   IF fNovi .OR. KLevel == "0"
+      @ m_x + 1, m_y + 2 SAY "Sifra radnika (ID)." GET _id VALID vpsifra( _id )
+   ELSE
+      @ m_x + 1, m_y + 2 SAY "Sifra radnika (ID). " + _id
+   ENDIF
 
+   @ m_x + 2, m_y + 2 SAY "Ime radnika........" GET _naz
 
+   READ
 
+   SELECT strad
+   HSEEK gStRad
+   cLevel := strad->prioritet
 
-function P_Barkod(cBK)
-local fRet:=.f.
-local nRec:=recno()
+   SELECT strad
+   HSEEK _status
+   SELECT osob
 
-PushWa()
-set order to tag "BARKOD"
-seek cBK
-if !empty(cBK) .and. found() .and. nRec<>RECNO()
-    MsgBeep("Isti barkod pridruzen je sifri: "+id+" ??!")
-        PopWa()
-        return .f.
-endif
+   // level tekuceg korisnika > level
+   IF ( cLevel > strad->prioritet )
+      MsgBeep( "Ne mozete mjenjati sifru" )
+   ELSE
+      @ m_x + 3, m_y + 2 SAY "Sifra.............." GET _korsif PICTURE "@!" VALID vpsifra2( _korsif, _id )
+      @ m_x + 4, m_y + 2 SAY "Status............." GET _status VALID P_STRAD( @_status )
+   ENDIF
 
-// trazi alternativne sifre
-if !empty(cBK)
-    cID:=""
-    ImaUSifV("ROBA","BARK", cBK, @cId)
-    if !empty(cID)
-            select roba
-        set order to tag "ID"
-        seek cId  // nasao sam sifru !!
-            MsgBeep("Isti barkod pridruzen je sifri: "+id+" ??!")
-            PopWa()
-            return .f.
-    endif
-endif
+   READ
 
-PopWa()
-return .t.
+   BoxC()
+
+   RETURN LastKey()
 
 
 
+STATIC FUNCTION VPSifra2( cSifra, cIme )
 
+   LOCAL lRet := .T.
+   LOCAL nObl := Select()
+
+   IF Empty( cSifra )
+      Beep ( 3 )
+      RETURN ( .F. )
+   ENDIF
+
+   RETURN lRet
+
+
+
+
+FUNCTION PomMenu1( aNiz )
+
+   LOCAL xP := Row()
+   LOCAL yP := Col()
+   LOCAL xN
+   LOCAL yN
+   LOCAL dP := Len( aNiz ) + 1
+   LOCAL sP := 0
+
+   AEval( aNiz, {| x| IF( Len( x[ 1 ] + x[ 2 ] ) > sP, sP := Len( x[ 1 ] + x[ 2 ] ), ) } )
+   sP += 3
+   xN := IF( xP > 11, xP - dP, xP + 1 )
+   yN := IF( yP > 39, yP - sP, yP + 1 )
+   Prozor1( xN, yN, xN + dP, yN + sP - 1, "POMOC" )
+
+   FOR i := 1 TO dP - 1
+      @ xN + i, yN + 1 SAY PadR( aNiz[ i, 1 ] + "-" + aNiz[ i, 2 ], sP - 2 )
+   NEXT
+
+   @ xP, yP SAY ""
+
+   RETURN
+
+
+
+
+FUNCTION P_Barkod( cBK )
+
+   LOCAL fRet := .F.
+   LOCAL nRec := RecNo()
+
+   PushWa()
+   SET ORDER TO TAG "BARKOD"
+   SEEK cBK
+   IF !Empty( cBK ) .AND. Found() .AND. nRec <> RecNo()
+      MsgBeep( "Isti barkod pridruzen je sifri: " + id + " ??!" )
+      PopWa()
+      RETURN .F.
+   ENDIF
+
+   // trazi alternativne sifre
+   IF !Empty( cBK )
+      cID := ""
+      ImaUSifV( "ROBA", "BARK", cBK, @cId )
+      IF !Empty( cID )
+         SELECT roba
+         SET ORDER TO TAG "ID"
+         SEEK cId  // nasao sam sifru !!
+         MsgBeep( "Isti barkod pridruzen je sifri: " + id + " ??!" )
+         PopWa()
+         RETURN .F.
+      ENDIF
+   ENDIF
+
+   PopWa()
+
+   RETURN .T.

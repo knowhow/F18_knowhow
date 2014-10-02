@@ -9,7 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "ld.ch"
+#include "fmk.ch"
 
 STATIC __mj
 STATIC __god
@@ -52,7 +52,7 @@ FUNCTION mip_sort( cRj, cGod, cMj, cRadnik, cObr )
       SEEK Str( cGod, 4 ) + Str( cMj, 2 ) + cObracun + cRadnik
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION _ins_tbl( cRadnik, cIdRj, nGodina, nMjesec, ;
@@ -215,6 +215,9 @@ FUNCTION ld_mip_obrazac()
    nPorGodina := 2011
    nBrZahtjeva := 1
 
+
+altd()
+
    ol_o_tbl()
 
    Box( "#MIP OBRAZAC ZA RADNIKE", 20, 75 )
@@ -281,7 +284,7 @@ FUNCTION ld_mip_obrazac()
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF ld_provjeri_dat_isplate_za_mjesec( cGod, cMj, IF( !Empty( cRjDef ), cRjDef, NIL ) ) > 0
@@ -350,7 +353,7 @@ FUNCTION ld_mip_obrazac()
       msgbeep( "Obradjeno " + AllTrim( Str( nBrZahtjeva ) ) + " radnika." )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION _fix_d_per( nMj, nGod, dStart, dEnd )

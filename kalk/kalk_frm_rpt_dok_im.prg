@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -87,21 +87,21 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVd
     RptSeekRT()
     DokNovaStrana(125, @nStr, 3)
     SKol:=Kolicina
-    
+
     if cCijenaTIP=="N"
     	nCijena:=field->nc
     else
     	nCijena:=field->vpc
     endif
-    
+
     @ prow()+1,0 SAY  Rbr PICTURE "XXX"
     @ prow(),4 SAY  ""
     ?? idroba, trim(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
- 
+
 	if lKoristitiBK .and. !EMPTY( roba->barkod )
-		?? ", BK: " + ROBA->barkod 
+		?? ", BK: " + ROBA->barkod
 	endif
- 
+
     @ prow()+1,4 SAY IdTarifa+space(4)
     if cSamoObrazac == "D"
       @ prow(),pcol()+30 SAY Kolicina  PICTURE replicate("_",len(PicKol))
@@ -126,13 +126,16 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVd
     else
     	@ prow(),pcol()+1 SAY nCijena  PICTURE replicate(" ", LEN(PicDEM))
     endif
-    nTotb+=fcj
+
+    nTotb+=kolicina*gkolicina
     nTotc+=kolicina*nCijena
-    nU4 := nCijena*(Kolicina-gKolicina)
+
+		nU4 := nCijena*(Kolicina-gKolicina)
     nTot4 += nU4
-    nTotKol += kolicina
+
+		nTotKol += kolicina
     nTotGKol += gkolicina
-    
+
     if cSamoObrazac == "D"
 	      @ prow(),pcol()+1 SAY nU4  pict replicate(" ",len(PicDEM))
     else
@@ -166,5 +169,3 @@ endif
 
 
 return
-
-

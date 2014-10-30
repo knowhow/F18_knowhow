@@ -127,7 +127,7 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVd
     	@ prow(),pcol()+1 SAY nCijena  PICTURE replicate(" ", LEN(PicDEM))
     endif
 
-    nTotb+=kolicina*gkolicina
+    nTotb+=gkolicina*nCijena
     nTotc+=kolicina*nCijena
 
 		nU4 := nCijena*(Kolicina-gKolicina)

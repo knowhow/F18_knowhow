@@ -18,7 +18,7 @@ FUNCTION kalk_generisi_inventuru_magacina()
    LOCAL cNule := "N"
    LOCAL cArtikli := ""
    LOCAL cPosition := "2"
-   LOCAL cCijenaTip := "1"
+   LOCAL cCijenaTip := "2"
    LOCAL cSrSort := "N"
 
    lOsvjezi := .F.
@@ -86,14 +86,14 @@ FUNCTION kalk_generisi_inventuru_magacina()
    hseek cIdFirma + cIdKonto
 
    DO WHILE !Eof() .AND. cIdFirma + cIdKonto == field->idfirma + field->mkonto
-	
+
       cIdRoba := field->idRoba
-	
+
       IF !Empty( cArtikli ) .AND. At( SubStr( cIdRoba, 1, Val( cPosition ) ), AllTrim( cArtikli ) ) == 0
          SKIP
          LOOP
       ENDIF
-	
+
       nUlaz := 0
       nIzlaz := 0
       nVPVU := 0
@@ -101,31 +101,31 @@ FUNCTION kalk_generisi_inventuru_magacina()
       nNVU := 0
       nNVI := 0
       nRabat := 0
-	
+
       DO WHILE !Eof() .AND. cIdFirma + cIdKonto + cIdRoba == idFirma + mkonto + idroba
-	  	
+
          IF dDatdok < field->datdok
             SKIP
             LOOP
          ENDIF
-		
+
          RowVpvRabat( @nVpvU, @nVpvI, @nRabat )
-		
+
          IF cCijenaTIP == "2"
             RowNC( @nNVU, @nNVI )
          ENDIF
-		
+
          RowKolicina( @nUlaz, @nIzlaz )
-	  	
+
          SKIP
       ENDDO
 
       IF cNule == "D" .OR. ;
             ( ( Round( nUlaz - nIzlaz, 4 ) <> 0 ) .OR. ( Round( nVpvU - nVpvI, 4 ) <> 0 ) )
-		
+
          SELECT roba
          HSEEK cIdroba
-		
+
          SELECT kalk_pripr
 
          IF lOsvjezi
@@ -134,20 +134,20 @@ FUNCTION kalk_generisi_inventuru_magacina()
             DodajImStavku( cIdFirma, cIdKonto, cBrDok, dDatDok, @nRbr, cIdRoba, nUlaz, nIzlaz, nVpvU, nVpvI, nNvU, nNvI )
          ENDIF
          SELECT kalk
-	
+
       ELSEIF lOsvjezi
-		
+
          SELECT kalk_pripr
          SET ORDER TO TAG "3"
          GO TOP
          SEEK cIdFirma + "IM" + cBrDok + cIdRoba
-		
+
          IF Found()
             DELETE
          ENDIF
-		
+
          SELECT KALK
-	
+
       ENDIF
 
    ENDDO
@@ -156,11 +156,11 @@ FUNCTION kalk_generisi_inventuru_magacina()
    IF cSRSort == "D"
 
       msgo( "sortiram po index-u SIFRADOB ..." )
-	
+
       SELECT kalk_pripr
 
       SET RELATION TO idroba INTO ROBA
-	
+
       INDEX ON idFirma + idvd + brdok + roba->sifradob TO "SDOB"
       GO TOP
 
@@ -174,7 +174,7 @@ FUNCTION kalk_generisi_inventuru_magacina()
          my_unlock()
          SKIP
       ENDDO
-	
+
       msgc()
 
       SET RELATION TO
@@ -250,27 +250,27 @@ FUNCTION kalk_generisanje_inventure_razlike()
    hseek cIdFirma + cIdKonto
 
    DO WHILE !Eof() .AND. cIdFirma + cIdKonto == field->idfirma + field->mkonto
-	
+
       cIdRoba := field->idRoba
-	
+
       SELECT pript
       SET ORDER TO TAG "2"
       hseek cIdFirma + cIdVd + cOldBrDok + cIdRoba
-	
+
       // ako sam nasao prekoci ovaj zapis
       IF Found()
          SELECT kalk
          SKIP
          LOOP
       ENDIF
-	
+
       SELECT kalk
-	
+
       IF !Empty( cArtikli ) .AND. At( SubStr( cIdRoba, 1, Val( cPosition ) ), AllTrim( cArtikli ) ) == 0
          SKIP
          LOOP
       ENDIF
-	
+
       nUlaz := 0
       nIzlaz := 0
       nVPVU := 0
@@ -296,7 +296,7 @@ FUNCTION kalk_generisanje_inventure_razlike()
          HSEEK cIdroba
          SELECT kalk_pripr
          DodajImStavku( cIdFirma, cIdKonto, cBrDok, dDatDok, @nRbr, cIdRoba, nUlaz, nIzlaz, nVpvU, nVpvI, nNvU, nNvI, .T. )
-			
+
          SELECT kalk
       ENDIF
    ENDDO

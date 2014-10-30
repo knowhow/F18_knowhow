@@ -45,7 +45,7 @@ if cSamoObrazac == "D"
 	cPrikazCijene:=Pitanje(,"Prikazati cijenu na obrascu? (D/N)")
 endif
 
-cCijenaTip:=Pitanje(,"Na obrascu prikazati VPC (D) ili NC (N)?")
+cCijenaTip:=Pitanje(,"Na obrascu prikazati VPC (D) ili NC (N)?", "N")
 
 P_10CPI
 SELECT konto

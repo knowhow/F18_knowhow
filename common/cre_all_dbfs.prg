@@ -91,11 +91,6 @@ if f18_use_module( "virm" )
    _db:kreiraj()
 endif
 
-if f18_use_module( "kadev" )
-   cre_all_kadev(ver)
-   _db := TDbKadev():new()
-   _db:kreiraj()
-endif
 
 if f18_use_module( "epdv" )
    cre_all_epdv(ver)
@@ -107,17 +102,6 @@ if f18_use_module( "pos" )
    _db:kreiraj()
 endif
 
-if f18_use_module( "rnal" )
-   cre_all_rnal(ver)
-   _db := TDbRnal():new()
-   _db:kreiraj()
-endif
-
-if f18_use_module( "mat" )
-   cre_all_mat(ver)
-   _db := TDbMat():new()
-   _db:kreiraj()
-endif
 
 if _first_start = 0
     // setuj da je modul vec aktiviran...

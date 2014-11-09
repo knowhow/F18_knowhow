@@ -1,0 +1,5 @@
+--type-set=harbour:ext:prg,ch
+--ignore-case
+--ignore-dir=.h
+--ignore-dir=.r
+--ignore-file=is:tags

@@ -2,17 +2,19 @@ f18.hbc -DPROBA -DDEFINE2 -DDEBUG -inc
 
 -oF18
 
+xhbp.hbc
+
 F18.prg 
 fin/*.prg 
 fakt/*.prg 
 kalk/*.prg 
-rnal/*.prg 
+#rnal/*.prg 
 epdv/*.prg 
 ld/*.prg 
 os/*.prg 
 pos/*.prg 
-mat/*.prg 
+#mat/*.prg 
 virm/*.prg
-kadev/*.prg
+#kadev/*.prg
 reports/*.prg 
 common/*.prg

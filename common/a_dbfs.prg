@@ -39,9 +39,6 @@ set_a_dbf_pos()
 set_a_dbf_epdv()
 set_a_dbf_os()
 set_a_dbf_virm()
-set_a_dbf_rnal()
-set_a_dbf_mat()
-set_a_dbf_kadev()
 
 return
 

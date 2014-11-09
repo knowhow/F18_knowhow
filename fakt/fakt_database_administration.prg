@@ -35,12 +35,6 @@ AADD( _opc, "U. pretvaranje otpremnica - unlock ")
 AADD( _opcexe, {|| fakt_otpremnice_pretvaranje_unlock() } )
 AADD( _opc, "------------ T E S T O V I ------------------")
 AADD( _opcexe, {|| fakt_otpremnice_pretvaranje_unlock() } )
-AADD( _opc, "X. test sql browse - ROBA ")
-AADD( _opcexe, {|| test_sql_table_browse() } )
-AADD( _opc, "Y. test sql browse - GET ROBA ")
-AADD( _opcexe, {|| test_get_box_table_browse() } )
-AADD( _opc, "Z. test sql browse - FAKT_DOKS ")
-AADD( _opcexe, {|| test_fakt_doks_table_browse() } )
 
 f18_menu("fain", .f., _izbor, _opc, _opcexe )
 

@@ -11,7 +11,6 @@
 
 #include "fmk.ch"
 #include "hbgtinfo.ch"
-#include "hbcompat.ch"
 #include "dbinfo.ch"
 
 static __server := NIL
@@ -267,7 +266,6 @@ SET DATE TO GERMAN
 REQUEST HB_CODEPAGE_SL852 
 REQUEST HB_CODEPAGE_SLISO
 
-hb_setCodePage("SL852" )
 hb_setTermCP("SLISO")
 hb_CdpSelect("SL852")
 

@@ -13,7 +13,6 @@
 #include "hbthread.ch"
 #include "hbclass.ch"
 #include "hbgtinfo.ch"
-#include "hbcompat.ch"
 #include "common.ch"
 
 

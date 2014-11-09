@@ -200,11 +200,6 @@ if f18_use_module( "ld" )
 	AADD( menuexec, {|| MainLd( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
 endif
 
-if f18_use_module( "rnal" )
-	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
-	AADD( menuop, _brojac + ". RNAL  # radni nalozi" )
-	AADD( menuexec, {|| MainRnal( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
-endif
 
 if f18_use_module( "os" )
 	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
@@ -218,23 +213,12 @@ if f18_use_module( "pos" )
 	AADD( menuexec, {|| MainPos( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
 endif
 
-if f18_use_module( "mat" )
-	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
-	AADD( menuop, _brojac + ". MAT   # materijalno" )
-	AADD( menuexec, {|| MainMat( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
-endif
-
 if f18_use_module( "virm" )
 	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
 	AADD( menuop, _brojac + ". VIRM  # virmani" )
 	AADD( menuexec, {|| MainVirm( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
 endif
 
-if f18_use_module( "kadev" )
-	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )
-	AADD( menuop, _brojac + ". KADEV  # kadrovska evidencija" )
-	AADD( menuexec, {|| MainKadev( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
-endif
 
 if f18_use_module( "reports" )
 	_brojac := PADL( ALLTRIM( STR( ++ _count )), 2 )

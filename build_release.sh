@@ -29,7 +29,7 @@ cp -av common/*.ch $HB_INC_INSTALL
 cp hb_release.hbm hbmk.hbm
 
 
-hbmk2 -workdir=.r F18.hbp
+hbmk2 -workdir=.r F14.hbp
 #ne treba mi rebuild poseban je direktorij u odnosu debug -rebuildall
 
 #mkdir -p out/bin

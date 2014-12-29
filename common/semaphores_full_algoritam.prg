@@ -28,7 +28,7 @@ local _opened
 local _sql_fetch_time, _dbf_write_time
 
 // hernad: izbacen full sync u 1.4
-RETURN .T.
+// RETURN .T.
 
 if f18_session()['id'] > 1
     log_write("full_synchro u child thread se ne radi, preskocena tabela: "  + dbf_table, 3 )

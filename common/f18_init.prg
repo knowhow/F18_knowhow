@@ -523,8 +523,7 @@ _ver := read_dbf_version_from_config()
 // setuje u matricu sve tabele svih modula
 set_a_dbfs()
 
-// hernad: ne kreiraj dbf-ove u 1.4
-//    cre_all_dbfs(_ver)
+cre_all_dbfs(_ver)
 
 
 // inicijaliziraj "dbf_key_fields" u __f18_dbf hash matrici

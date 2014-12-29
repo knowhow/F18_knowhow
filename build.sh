@@ -17,5 +17,5 @@ cp -av common/*.ch $HB_INC_INSTALL
 
 cp hb_debug.hbm hbmk.hbm
 
-hbmk2 -workdir=.h F18.hbp
+hbmk2 -workdir=.h F14.hbp
 

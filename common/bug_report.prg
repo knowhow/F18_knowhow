@@ -41,7 +41,7 @@ set printer on
 P_12CPI
 
 ? REPLICATE("=", 84)
-? "F18 bug report (v3.2) :", DATE(), TIME()
+? "F14 bug report (v3.2) :", DATE(), TIME()
 ? REPLICATE("=", 84)
 
 
@@ -198,6 +198,7 @@ _f18_required_server_num := get_version_num(SERVER_DB_VER_MAJOR, SERVER_DB_VER_M
 
 //_server_db_num := server_db_version()
 _server_db_num := 0
+
 _f18_required_server_str := get_version_str(_f18_required_server_num)
 _server_db_str := get_version_str(_server_db_num)
 

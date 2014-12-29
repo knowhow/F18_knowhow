@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -54,7 +54,7 @@ do while _i <= PCount()
     // ucitaj parametar
     _param := hb_PValue( _i++ )
     // p1, p2, p3...
-    hash[ "p" + ALLTRIM(STR( ++_count )) ] := _param 
+    hash[ "p" + ALLTRIM(STR( ++_count )) ] := _param
 enddo
 
 return
@@ -77,8 +77,8 @@ local _count := 0
 local oBackup := F18Backup():New()
 local oDb_lock
 local _user_roles := f18_user_roles_info()
-local _server_db_version := get_version_str( server_db_version() )
-local _lock_db 
+//local _server_db_version := get_version_str( server_db_version() )
+local _lock_db
 local _tmp
 local _color := "BG+/B"
 
@@ -97,19 +97,19 @@ do while .t.
 
     oDb_lock := F18_DB_LOCK():New()
     _lock_db := oDb_lock:is_locked()
-    
+
     _x := 1
 
-    @ _x, mnu_left + 1 SAY "Tekuca baza: " + ALLTRIM( _db_params["database"] ) + " / db ver: " + _server_db_version
+    @ _x, mnu_left + 1 SAY "Tekuca baza: " + ALLTRIM( _db_params["database"] ) //+ " / db ver: " + _server_db_version
 
     if _lock_db
         _tmp := "[ srv lock " + oDb_lock:lock_params["server_lock"] + " / cli lock " + oDb_lock:lock_params["client_lock"]  + " ]"
     else
         _tmp := ""
     endif
-    
-    @ _x, col() + 1 SAY _tmp COLOR _color 
-    
+
+    @ _x, col() + 1 SAY _tmp COLOR _color
+
     ++ _x
 
     @ _x, mnu_left + 1 SAY "   Korisnik: " + ALLTRIM( _db_params["user"] ) + "   u grupama " + _user_roles
@@ -121,12 +121,12 @@ do while .t.
     // backup okidamo samo na prvom ulasku
     // ili na opciji relogina
     if _count == 1 .or. __relogin_opt
-       
+
         // provjera da li je backup locked ?
         if oBackup:locked( .f. )
             oBackup:unlock()
         endif
- 
+
         // automatski backup podataka preduzeca
         f18_auto_backup_data(1)
         __relogin_opt := .f.
@@ -153,7 +153,7 @@ do while .t.
                 MsgBeep( oBackup:backup_in_progress_info() )
             endif
 
-		case mnu_choice > 0 
+		case mnu_choice > 0
 			eval( menuexec[ mnu_choice ] )
 	endcase
 
@@ -261,5 +261,3 @@ AADD( menuop, " V. VPN podrska" )
 AADD( menuexec, {|| vpn_support() } )
 
 return
-
-

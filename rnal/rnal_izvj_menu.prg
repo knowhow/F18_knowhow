@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -37,8 +37,6 @@ AADD(_opcexe, {|| lst_ch_date() })
 AADD(_opc, "------------------------------------------- ")
 AADD(_opcexe, {|| nil })
 
-AADD(_opc, "M. montaza  ")
-AADD(_opcexe, {|| rnal_rpt_montaza() })
 
 AADD(_opc, "S. specifikacija naloga za poslovodje  ")
 AADD(_opcexe, {|| m_get_spec( 1 ) })
@@ -60,8 +58,6 @@ AADD(_opcexe, {|| m_rpt_check() })
 AADD(_opc, "Kp. popuni veze RNAL <> FAKT (dok.11) ")
 AADD(_opcexe, {|| chk_dok_11() })
 
-AADD(_opc, "X. mysql test ")
-AADD(_opcexe, {|| rnal_mysql_test() })
 
 AADD(_opc, "------------------------------------------- ")
 AADD(_opcexe, {|| nil })
@@ -72,10 +68,3 @@ AADD(_opcexe, {|| f18_email_test() })
 f18_menu("rpt_rnal", .f., _izbor, _opc, _opcexe )
 
 return
-
-
-
-
-
-
-

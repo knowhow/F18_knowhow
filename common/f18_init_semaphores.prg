@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -20,8 +20,7 @@ static __dbf_pack_v2 := 10
 
 
 
-// -----------------------------------------------------
-// -----------------------------------------------------
+
 function f18_init_semaphores()
 local _synchro := .f.
 
@@ -37,7 +36,10 @@ if _synchro
 endif
 
 // prodji kroz aktivne dbf tabele
-iterate_through_active_tables({|dbf_rec| refresh_me(dbf_rec)})
+Alert( "skip iterate kroz tabele")
+IF 0 == 1
+ iterate_through_active_tables({|dbf_rec| refresh_me(dbf_rec)})
+ENDIF
 
 return .t.
 
@@ -99,7 +101,7 @@ _msg_2 := "cnt = "  + ALLTRIM(STR(_cnt, 0)) + " / " + ALLTRIM(STR(_del, 0))
 log_write("END refresh_me " +  _msg_1 + " " + _msg_2, 8 )
 
 if hocu_li_pack(_cnt, _del)
-    
+
     @ m_x + 7, m_y + 2 SAY "Pakujem tabelu radi brzine, molim sacekajte ..."
     log_write( "PACK table " + a_dbf_rec["alias"], 2 )
 
@@ -192,20 +194,20 @@ return __dbf_pack_v2
 // - da li se nakupilo deleted zapisa
 // -------------------------------------------------------------
 static function hocu_li_pack(cnt, del)
-local _pack_alg 
+local _pack_alg
 
 
 _pack_alg := dbf_pack_algoritam()
 
-DO CASE 
+DO CASE
   CASE _pack_alg == "0"
- 
+
     return .f.
 
   CASE _pack_alg == "1"
-    
+
     // 1 - pakuje ako ima vise od 00 deleted() zapisa
-    if del > dbf_pack_v1() 
+    if del > dbf_pack_v1()
         return .t.
     endif
 
@@ -214,14 +216,14 @@ DO CASE
 
    if cnt > 0
       // 2 - standardno pakuje se samo ako je > 10% od broja zapisa deleted
-      if (del / cnt) * 100 > dbf_pack_v2() 
+      if (del / cnt) * 100 > dbf_pack_v2()
              return .t.
       endif
    endif
 
  CASE "9"
    CASE _pack_alg == "9"
-              
+
       // 9 - uvijek ako ima ijedan delted rec
       if del > 0
             return .t.
@@ -231,4 +233,3 @@ END CASE
 
 
 return .f.
-

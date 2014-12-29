@@ -1,6 +1,6 @@
 f18.hbc -DPROBA -DDEFINE2 -DDEBUG -inc
 
--oF18
+-oF14
 
 F18.prg 
 fin/*.prg 

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -58,7 +58,7 @@ static __log_level := 3
 
 
 // ---------------------------------
-// 
+//
 // ---------------------------------
 function f18_init_app( arg_v )
 local oLogin
@@ -78,7 +78,7 @@ local oLogin
  // REQUEST HB_GT_WIN_DEFAULT
  REQUEST HB_GT_WVT
  REQUEST HB_GT_WVT_DEFAULT
-  
+
 #else
 
   //REQUEST HB_GT_CRS_DEFAULT
@@ -92,7 +92,7 @@ RDDSETDEFAULT( RDDENGINE )
 Set( _SET_AUTOPEN, .f.  )
 //Set( _SET_AUTOSHARE, 0  )
 //SET DBFLOCKSCHEME TO DB_DBFLOCK_HB32
-//SET DBFLOCKSCHEME TO DB_DBFLOCK_HB64 
+//SET DBFLOCKSCHEME TO DB_DBFLOCK_HB64
 
 init_harbour()
 
@@ -182,7 +182,7 @@ oLogin:main_db_login( @__server_params, force_connect )
 __main_db_params := __server_params
 
 if oLogin:_main_db_connected
-  
+
     // 1 konekcija je na postgres i to je ok
     // ako je vec neka druga...
     if oLogin:_login_count > 1
@@ -190,12 +190,12 @@ if oLogin:_main_db_connected
         oLogin:disconnect()
         oLogin:main_db_login( @__server_params, .t. )
     endif
- 
-    // upisi parametre za sljedeci put... 
+
+    // upisi parametre za sljedeci put...
     _write_server_params_to_config()
-    
+
     do while .t.
-    
+
         if !oLogin:company_db_login( @__server_params )
             quit
         endif
@@ -203,7 +203,7 @@ if oLogin:_main_db_connected
         // upisi parametre tekuce firme... treba li nam ovo ??????
         _write_server_params_to_config()
 
-        if oLogin:_company_db_connected 
+        if oLogin:_company_db_connected
 
             _show_info()
             post_login()
@@ -230,17 +230,17 @@ local _txt := ""
 
 _x := ( MAXROWS() / 2 ) - 12
 _y := MAXCOLS()
-            
-// ocisti ekran...            
+
+// ocisti ekran...
 CLEAR SCREEN
-    
+
 _txt := PADC( hb_utf8tostr( ". . .  S A Č E K A J T E    T R E N U T A K  . . ." ) , _y )
 @ _x , 2 SAY _txt
 
 _txt := PADC( ". . . . . . k o n e k c i j a    n a    b a z u   u   t o k u . . . . . . .", _y )
 @ _x + 1 , 2 SAY _txt
 
-return 
+return
 
 
 
@@ -261,9 +261,9 @@ function init_harbour()
 
 SET CENTURY OFF
 // epoha je u stvari 1999, 2000 itd
-SET EPOCH TO 1960  
+SET EPOCH TO 1960
 SET DATE TO GERMAN
-REQUEST HB_CODEPAGE_SL852 
+REQUEST HB_CODEPAGE_SL852
 REQUEST HB_CODEPAGE_SLISO
 
 hb_CdpSelect("SL852")
@@ -364,7 +364,7 @@ do CASE
 
     maxrows(35)
     maxcols(100)
-     
+
     log_write( _msg + "4")
 
 endcase
@@ -409,7 +409,7 @@ return
 
 #else
 
-#ifdef TEST 
+#ifdef TEST
 
 function _get_server_params_from_config()
 
@@ -459,7 +459,7 @@ endif
 __server_params["password"] := __server_params["user"]
 __server_params["postgres"] := "postgres"
 
-return 
+return
 #endif
 
 #endif
@@ -469,7 +469,7 @@ function _write_server_params_to_config()
 local _key, _ini_params := hb_hash()
 
 for each _key in { "host", "database", "user", "schema", "port", "session" }
-    _ini_params[_key] := __server_params[_key] 
+    _ini_params[_key] := __server_params[_key]
 next
 
 if !f18_ini_write( F18_SERVER_INI_SECTION + IIF( test_mode(), "_test", "" ), _ini_params, .t. )
@@ -481,13 +481,14 @@ endif
 // -------------------------------
 function post_login( gvars )
 local _ver
-local oDB_lock := F18_DB_LOCK():New()
+//local oDB_lock := F18_DB_LOCK():New()
 local _need_lock_synchro := .f.
 
 if gvars == NIL
     gvars := .t.
 endif
 
+/*
 // da li treba zakljucati bazu
 // ovo provjeri uvijek, ako naleti da treba zakljucat ce je odmah...
 if oDb_lock:db_must_be_locked()
@@ -495,7 +496,9 @@ if oDb_lock:db_must_be_locked()
     // postoji mogucnost da nikada nije napravljen...
     _need_lock_synchro := .t.
 endif
+*/
 
+/*
 // provjeri moj db_lock parametar
 // ako je zakljucana na serveru
 if oDB_lock:is_locked()
@@ -506,34 +509,33 @@ if oDB_lock:is_locked()
 else
     // resetuj moj lock param ako treba
     oDb_lock:reset_my_lock_params()
-endif 
+endif
+*/
 
 // ~/.F18/empty38/
 set_f18_home( my_server_params()["database"] )
 log_write("home baze: " + my_home())
 
-#ifndef NODE
 hb_gtInfo( HB_GTI_WINTITLE, "[ "+ my_server_params()["user"] + " ][ "+ my_server_params()["database"] +" ]" )
 
 _ver := read_dbf_version_from_config()
-#endif
 
 // setuje u matricu sve tabele svih modula
 set_a_dbfs()
 
-#ifndef NODE
-    // kreiranje tabela...
-    cre_all_dbfs(_ver)
-#endif
+// hernad: ne kreiraj dbf-ove u 1.4
+//    cre_all_dbfs(_ver)
+
 
 // inicijaliziraj "dbf_key_fields" u __f18_dbf hash matrici
 set_a_dbfs_key_fields()
 
-#ifndef NODE
-write_dbf_version_to_config()
-#endif
+// hernad: off
+//write_dbf_version_to_config()
 
-check_server_db_version()
+
+// hernad: check server version off
+// check_server_db_version()
 
 __server_log := .t.
 
@@ -541,6 +543,7 @@ if gvars
     set_all_gvars()
 endif
 
+/*
 if !oDB_lock:is_locked() .or. _need_lock_synchro
     f18_init_semaphores()
 endif
@@ -549,6 +552,7 @@ if _need_lock_synchro
     // setuj tekuci klijentski lock parametar
     oDB_lock:set_my_lock_params( .t. )
 endif
+*/
 
 set_init_fiscal_params()
 
@@ -762,7 +766,7 @@ return .t.
 static function _login_screen(server_params)
 
 local cHostname, cDatabase, cUser, cPassword, nPort, cSchema, cSession
-local lSuccess := .t.   
+local lSuccess := .t.
 local nX := 5
 local nLeft := 7
 local cConfigureServer := "N"
@@ -777,7 +781,7 @@ cPassword := ""
 
 if (cHostName == nil) .or. (nPort == nil)
     cConfigureServer := "D"
-endif 
+endif
 
 if cSession == NIL
     cSession := ALLTRIM( STR( YEAR( DATE() ) ) )
@@ -820,7 +824,7 @@ clear screen
 ++ nX
 ++ nX
 @ nX, nLeft SAY PADL( "Konfigurisati server ?:", 21 ) GET cConfigureServer VALID cConfigureServer $ "DN" PICT "@!"
-++ nX 
+++ nX
 
 read
 
@@ -829,7 +833,7 @@ if cConfigureServer == "D"
     @ nX, nLeft SAY PADL( "Server:", 8 ) GET cHostname PICT "@S20"
     @ nX, 37 SAY "Port:" GET nPort PICT "9999"
     @ nX, 48 SAY "Shema:" GET cSchema PICT "@S15"
-else    
+else
     ++ nX
 endif
 
@@ -863,14 +867,14 @@ if EMPTY(cPassword)
    cPassword := cUser
 else
    cPassword := ALLTRIM( cPassword )
-endif 
+endif
 cDatabase := ALLTRIM( cDatabase )
 cSchema   := ALLTRIM( cSchema )
 
 server_params["host"]      := cHostName
 server_params["database"]  := cDatabase
 server_params["user"]      := cUser
-server_params["schema"]    := cSchema 
+server_params["schema"]    := cSchema
 server_params["port"]      := nPort
 server_params["password"]  := cPassword
 server_params["session"]  := cSession
@@ -902,7 +906,7 @@ if params <> nil
        __server_params[_key] := params[_key]
    next
 endif
-return __server_params 
+return __server_params
 
 
 
@@ -1042,9 +1046,9 @@ function set_f18_home_root()
 local home
 
 #ifdef __PLATFORM__WINDOWS
-  home := hb_DirSepAdd( GetEnv( "USERPROFILE" ) ) 
+  home := hb_DirSepAdd( GetEnv( "USERPROFILE" ) )
 #else
-  home := hb_DirSepAdd( GetEnv( "HOME" ) ) 
+  home := hb_DirSepAdd( GetEnv( "HOME" ) )
 #endif
 
 home := hb_DirSepAdd(home + ".f18")
@@ -1092,7 +1096,7 @@ return .t.
 // ~/.F18/test
 // ---------------------------
 function set_f18_home(database)
-local _home 
+local _home
 
 if database <> nil
     _home := hb_DirSepAdd(my_home_root() + database)
@@ -1135,12 +1139,12 @@ log_write( "direct login: " + ;
         my_server_params()["host"] + " / " + ;
         my_server_params()["database"] + " / " + ;
         my_server_params()["user"] + " / " +  ;
-        STR(my_server_params()["port"])  + " / " + ; 
+        STR(my_server_params()["port"])  + " / " + ;
         my_server_params()["schema"])
 
 MsgBeep("Neuspješna prijava na server.")
 
-log_close() 
+log_close()
 
 QUIT_1
 
@@ -1188,15 +1192,15 @@ if silent == NIL
 endif
 
 // treba li logirati ?
-if level > log_level() 
+if level > log_level()
     return
 endif
 
-_msg_time := DTOC( DATE() ) 
-_msg_time += ", " 
-_msg_time += PADR( TIME(), 8 ) 
-_msg_time += ": " 
- 
+_msg_time := DTOC( DATE() )
+_msg_time += ", "
+_msg_time += PADR( TIME(), 8 )
+_msg_time += ": "
+
 // time ide samo u fajl, ne na server
 // ovdje ima neki problem #30139 iskljucujem dok ne skontamo
 // baca mi ove poruke u outf.txt
@@ -1292,4 +1296,3 @@ SWITCH (_ini["run"])
         _fakt_doks:pretvori_otpremnice_u_racun()
 
 END
-

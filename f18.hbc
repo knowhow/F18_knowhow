@@ -25,7 +25,7 @@ libs=hbct
 libs=hbpgsql
 #libs=hbdebug
 libs=hbmzip minizip
-{!darwin}libs=hbmysql
+#{!darwin}libs=hbmysql
 
 libs=hbtip
 
@@ -40,9 +40,9 @@ libs=hbtip
 {!unix}libs=libpq
 {darwin}libpaths=/Library/PostgreSQL/9.1/lib
 
-{linux}libs=mysqlclient
+#{linux}libs=mysqlclient
 #{darwin}libpaths=/opt/local/lib/mysql5/mysql
-{win|dos}libs=libmysql
+#{win|dos}libs=libmysql
 #{os2}libs=mysqlclient
 
 mt=yes

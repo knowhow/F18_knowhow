@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -30,7 +30,7 @@ PTxtSekvence()
 
 
 set console off
-    
+
 set printer off
 set device to printer
 
@@ -40,9 +40,9 @@ set printer on
 
 P_12CPI
 
-? REPLICATE("=", 84) 
+? REPLICATE("=", 84)
 ? "F18 bug report (v3.2) :", DATE(), TIME()
-? REPLICATE("=", 84) 
+? REPLICATE("=", 84)
 
 
 _msg := "Verzija programa: " + F18_VER + " " + F18_VER_DATE + " " + FMK_LIB_VER
@@ -81,7 +81,7 @@ _msg := "canRetry/canDefault   : " + to_str(err_obj:canRetry) + " " + to_str( er
 ? _msg
 _log_msg += " ; " + _msg
 
-? 
+?
 _msg := "CALL STACK:"
 ? _msg
 _log_msg += " ; " + _msg
@@ -103,7 +103,7 @@ if ! no_sql_mode()
   server_info()
 endif
 
-if USED() 
+if USED()
    current_dbf_info()
 else
    _msg := "USED() = false"
@@ -126,7 +126,7 @@ if err_obj:cargo <> NIL
     ? REPLICATE("-", 60)
 
 endif
-    
+
 ? "== END OF BUG REPORT =="
 
 
@@ -156,7 +156,7 @@ local _sys_info
 ?
 ? "/---------- BEGIN PostgreSQL vars --------/"
 ?
-for each _key in _server_vars 
+for each _key in _server_vars
   ? PADR(_key, 25) + ":",  server_show(_key)
 next
 ?
@@ -184,7 +184,7 @@ static function server_connection_info()
 ?
 ? "/----- SERVER connection info: ---------- /"
 ?
-? "host/database/port/schema :", my_server_params()["host"] + " / " + my_server_params()["database"] + " / " +  ALLTRIM(STR(my_server_params()["port"], 0)) + " / " +  my_server_params()["schema"]  
+? "host/database/port/schema :", my_server_params()["host"] + " / " + my_server_params()["database"] + " / " +  ALLTRIM(STR(my_server_params()["port"], 0)) + " / " +  my_server_params()["schema"]
 ? "                     user :", my_server_params()["user"]
 ?
 return .t.
@@ -196,8 +196,8 @@ local _server_db_num, _server_db_str, _f18_required_server_str, _f18_required_se
 
 _f18_required_server_num := get_version_num(SERVER_DB_VER_MAJOR, SERVER_DB_VER_MINOR, SERVER_DB_VER_PATCH)
 
-_server_db_num := server_db_version()
-
+//_server_db_num := server_db_version()
+_server_db_num := 0
 _f18_required_server_str := get_version_str(_f18_required_server_num)
 _server_db_str := get_version_str(_server_db_num)
 
@@ -242,4 +242,3 @@ Local oErr
    Eval( ErrorBlock(), oErr )
 
 return .t.
-

@@ -47,7 +47,7 @@ STATIC __font_size  := 20
 STATIC __font_width := 10
 
 #else
-STATIC __font_name  := "ubuntu mono"
+STATIC __font_name  := "Monaco"
 STATIC __font_size  := 30
 STATIC __font_width := 15
 

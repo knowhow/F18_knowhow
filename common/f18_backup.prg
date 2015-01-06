@@ -583,7 +583,11 @@ FUNCTION f18_backup_data_thread( type_def )
 #ifdef  __PLATFORM__WINDOWS
    _w := hb_gtCreate( "WVT" )
 #else
+   #ifdef __PLATFORM__DARWIN
+   _w := hb_gtCreate( "QTC" )
+  #else 
    _w := hb_gtCreate( "XWC" )
+  #endif
 #endif
 
    IF type_def == NIL

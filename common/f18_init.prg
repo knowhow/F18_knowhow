@@ -70,7 +70,6 @@ REQUEST DBFCDX
 REQUEST DBFFPT
 #endif
 
-#ifndef NODE
 #ifdef __PLATFORM__WINDOWS
 
 REQUEST HB_GT_WVT
@@ -78,9 +77,12 @@ REQUEST HB_GT_WVT_DEFAULT
 
 #else
 
-REQUEST HB_GT_XWC_DEFAULT
-
+#ifdef __PLATFORM__DARWIN
+  REQUEST HB_GT_QTC_DEFAULT
+#else 
+  REQUEST HB_GT_XWC_DEFAULT
 #endif
+
 #endif
 
 rddSetDefault( RDDENGINE )
@@ -272,8 +274,6 @@ FUNCTION init_harbour()
 
 
 
-// ---------------------------------------------------------------
-// ---------------------------------------------------------------
 FUNCTION set_screen_dimensions()
 
    LOCAL _msg
@@ -356,7 +356,11 @@ ENDCASE
 _get_screen_resolution_from_config()
 
 hb_gtInfo( HB_GTI_FONTNAME, font_name() )
-hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
+
+#ifndef __PLATFORM__DARWIN
+  hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
+#endif
+
 hb_gtInfo( HB_GTI_FONTSIZE, font_size() )
 
 IF SetMode( maxrows(), maxcols() )
@@ -367,31 +371,6 @@ QUIT_1
 ENDIF
 
    RETURN
-
-#ifdef NODE
-
-FUNCTION f18_set_server_params( pars )
-
-   LOCAL _ret := hb_Hash()
-
-   _ret[ "ret" ] := 0
-
-   log_write( "parametri: " + pp( pars ) )
-
-   __server_params := hb_Hash()
-   __server_params[ "port" ] := pars[ "port" ]
-   __server_params[ "database" ] := pars[ "database" ]
-   __server_params[ "host" ] := pars[ "host" ]
-   __server_params[ "user" ] := pars[ "user" ]
-   __server_params[ "schema" ] := pars[ "schema" ]
-   __server_params[ "password" ] := pars[ "password" ]
-
-   RETURN hb_jsonDecode( _ret )
-
-FUNCTION _get_server_params_from_config()
-   RETURN
-
-#else
 
 #ifdef TEST
 
@@ -410,8 +389,6 @@ FUNCTION _get_server_params_from_config()
 
 #else
 
-// -------------------------------------
-// -------------------------------------
 FUNCTION _get_server_params_from_config()
 
    LOCAL _key, _ini_params
@@ -446,9 +423,6 @@ FUNCTION _get_server_params_from_config()
 
    RETURN
 #endif
-
-#endif
-
 
 FUNCTION _write_server_params_to_config()
 
@@ -588,8 +562,6 @@ FUNCTION maxcols( x )
 
    RETURN __max_cols
 
-// -------------------------
-// -------------------------
 FUNCTION font_name( x )
 
    IF ValType( x ) == "C"
@@ -598,12 +570,21 @@ FUNCTION font_name( x )
 
    RETURN __font_name
 
-// -------------------------
-// -------------------------
 FUNCTION font_width( x )
 
    IF ValType( x ) == "N"
-      __font_width := x
+  
+#ifdef __PLATFORM__DARWIN
+
+    if  x != 100
+       __font_width := x
+    else
+       __font_width := font_size()
+    endif
+#else
+     __font_width := x
+#endif
+
    ENDIF
 
    RETURN __font_width

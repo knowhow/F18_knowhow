@@ -9,8 +9,8 @@ libs=hbmzip minizip
 
 libs=hbtip
 
-{unix}gt=gtxwc
-{darwin}gt=gtxwc
+{linux}gt=gtxwc
+{darwin}gt=gtqtc
 
 {allwin}gt=gtwvt
 

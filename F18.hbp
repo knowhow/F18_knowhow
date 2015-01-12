@@ -24,3 +24,17 @@ libF18_narudzbenica.a
 libF18_string.a
 
 {darwin}gtqtc.hbc
+
+
+{darwin}-L./darwin
+{!LX_64&linux}-L./linux_32
+{LX_64&linux}-L./linux_64
+{win}-L./win32
+{LX_64&linux}-lz
+{!LX_64&linux}-lz
+
+{LX_CENTOS&linux}-lpq
+{!LX_CENTOS&linux}-lpq
+
+{darwin|linux|win}-lmy_hbuddall
+

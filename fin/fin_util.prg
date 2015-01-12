@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -63,7 +63,7 @@ function OstatakOpisa(cO,nCO,bUslov,nSir)
 if nSir == NIL
     nSir := 20
 endif
-  
+
 do while LEN(cO) > nSir
     if bUslov != NIL
         EVAL(bUslov)
@@ -106,7 +106,7 @@ FOR _i := 1 TO 3
 
 	SELECT &_alias
 	GO TOP
-	
+
     DO WHILE !EOF().and. INKEY() != 27
 
         SELECT nalog
@@ -116,10 +116,10 @@ FOR _i := 1 TO 3
 		IF !Found()
 
 			SELECT &_alias
-                
+
             _broj_naloga := field->idfirma + "-" + field->idvn + "-" + field->brnal
             _n_scan := ASCAN( _a_error, { |_var| _var[1] == _alias .and. _var[2] == _broj_naloga } )
-            
+
             // dadaj u matricu gresaka, ako nema tog naloga
             IF _n_scan == 0
                 AADD( _a_error, { _alias, _broj_naloga } )
@@ -129,7 +129,7 @@ FOR _i := 1 TO 3
 
 		SELECT &_alias
 		SKIP 1
-    
+
     ENDDO
 NEXT
 
@@ -160,7 +160,7 @@ START PRINT CRET
 ? "---------------------------------------------"
 
 FOR _i := 1 TO LEN( a_error )
-    
+
     ? PADL( "tabela: " + a_error[ _i, 1 ], 15 ) + ", " + a_error[ _i, 2 ]
 
 NEXT
@@ -209,7 +209,7 @@ return dDate
 // ----------------------------------------------------------------
 // report sa greskama sa datumom na nalozima izazvanim opcijom
 // "Unos datuma naloga = 'D'"
-// 
+//
 // ----------------------------------------------------------------
 function daterr_rpt()
 
@@ -229,7 +229,7 @@ local nGrSaldo := 0
 my_close_all_dbf()
 
 O_SUBAN
-select suban 
+select suban
 set order to tag "10"
 // idfirma+idvn+brnal+idkonto+datdok
 
@@ -262,7 +262,7 @@ start print cret
 do while !EOF()
 
 	// init. variables
-	
+
 	__idfirma := field->idfirma
 	__brnal := field->brnal
 	__idvn := field->idvn
@@ -270,33 +270,33 @@ do while !EOF()
 	// datum naloga
 	__t_date := field->datnal
 
-	++ nNalCnt 
+	++ nNalCnt
 
 	// provjeri suban.dbf
 
 	select suban
 	go top
 	seek __idfirma + __idvn + __brnal
-	
+
 	if !FOUND()
-	
+
 		select nalog
 		skip
 		loop
-		
+
 	endif
-	
+
 	dSubanDate := field->datdok
 
 	// 1. provjeri prvo da li je razlicit datum naloga i subanalitike
 
 	if __t_date <> dSubanDate
-	
+
 		// uzmi datum sa prve stavke subanilitike
-		
+
 		cSubanKto := field->idkonto
 		nMonth := MONTH( field->datdok )
-		
+
 		do while !EOF() .and. field->idfirma == __idfirma ;
 				.and. field->idvn == __idvn ;
 				.and. field->brnal == __brnal ;
@@ -305,12 +305,12 @@ do while !EOF()
 			if MONTH(field->datdok) == nMonth
 				dSubanDate := field->datdok
 			endif
-						
+
 			skip
-			
+
 		enddo
-		
-		
+
+
 		// provjeri analitiku
 
 		select anal
@@ -318,92 +318,92 @@ do while !EOF()
 		seek __idfirma + __idvn + __brnal
 
 		if !FOUND()
-			select nalog 
+			select nalog
 			skip
 			loop
 		endif
-		
+
 		if field->datnal <> dSubanDate
-		
+
 			++ nTotErrors
-			
+
 			? STR(nTotErrors, 5) + ") " + __idfirma + "-" + ;
 				__idvn + "-" + ALLTRIM(__brnal), __t_date, dSubanDate, field->datnal
-			
-		
+
+
 		endif
-		
-	
+
+
 	endif
-		
-	
+
+
 	// 2. provjeri granicni datum
 
 	if dGrDate <> nil
-		
+
 		select suban
 		go top
 		seek __idfirma + __idvn + __brnal
-		
+
 		lManji := .f.
 		lVeci := .f.
 
 
 		// mjesec granicnog datuma
 		nGrMonth := MONTH( dGrDate )
-		
+
 		// to znaci da nalog mora da sadrzi samo taj mjesec ili manji
-		
+
 		// prodji po nalogu....
 		do while !EOF() .and. suban->(idfirma+idvn+brnal) == ;
 			(__idfirma + __idvn + __brnal)
 
-			// ako u subanalitici ima manji datum od 
+			// ako u subanalitici ima manji datum od
 			// granicnog datuma
 			if suban->datdok <= dGrDate
-				
+
 				lManji := .t.
-			
+
 				// saldiraj ga
 				if suban->d_p == "1"
 					nGrSaldo += suban->iznosbhd
 				else
 					nGrSaldo -= suban->iznosbhd
 				endif
-			
+
 			endif
 
 			// ako u subanalitici ima veci datum od
 			// granicnog datuma i iskace iz mjeseca
 			if suban->datdok > dGrDate .and. ;
 				MONTH(suban->datdok) > nGrMonth
-				
+
 				lVeci := .t.
 			endif
-			
+
 			skip
-			
+
 		enddo
-		
+
 		// ako unutar jednog naloga ima i veci i manji datum od
 		// granicnog datuma pretpostavljamo da je to error
-		
+
 		if lManji == .t. .and. lVeci == .t.
-				
+
 			++ nTotErrors
-			
+
 			? STR(nTotErrors, 5) + ") " + __idfirma + "-" + ;
 				__idvn + "-" + ALLTRIM(__brnal), ;
 				nalog->datnal, "ERR: granicni datum"
-	
+
 		endif
-		
+
 	endif
-	
+
 
 	select nalog
 	skip
-	
+
 enddo
 
 if nTotErrors == 0
@@ -415,7 +415,7 @@ endif
 if dGrDate <> nil .and. nGrSaldo <> 0
 
 	?
-	? " Razlika utvrdjena po granicnom datumu =", STR( nGrSaldo, 12, 2) 
+	? " Razlika utvrdjena po granicnom datumu =", STR( nGrSaldo, 12, 2)
 	?
 
 endif
@@ -448,4 +448,3 @@ function BBMnoziSaK( cTip )
   SELECT (nArr)
 
 RETURN
-

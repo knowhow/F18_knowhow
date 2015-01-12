@@ -169,9 +169,10 @@ FUNCTION PrenosFin()
       SET FILTER TO &( cFilter )
    ENDIF
 
-   SELECT ( F_PKONTO )
-   usex ( "pkonto" )
-   SET ORDER TO TAG "ID"
+   // SELECT ( F_PKONTO )
+   // use ( "pkonto" )
+   // SET ORDER TO TAG "ID"
+   O_PKONTO
 
    O_FIN_PRIPR
 
@@ -180,7 +181,7 @@ FUNCTION PrenosFin()
       my_close_all_dbf()
    ENDIF
 
-   ZAP
+   my_dbf_zap()
    SET ORDER TO 0
 
    start PRINT cret
@@ -773,8 +774,8 @@ FUNCTION fin_prekart()
    DO WHILE .T.
 
       Box(, 20, 77 )
-      @ m_x + 19, m_y + 2 SAY "                         ³                        ³                   "
-      @ m_x + 20, m_y + 2 SAY " <c-T>  Brisi stavku     ³ <ENTER>  Ispravi konto ³ <a-A> Azuriraj    "
+      @ m_x + 19, m_y + 2 SAY "                         ï¿½                        ï¿½                   "
+      @ m_x + 20, m_y + 2 SAY " <c-T>  Brisi stavku     ï¿½ <ENTER>  Ispravi konto ï¿½ <a-A> Azuriraj    "
       ObjDbedit( "PPK", 20, 77, {|| EPPK() }, "", "Priprema za prebacivanje stavki", , , , , 2 )
       BoxC()
 
@@ -866,7 +867,7 @@ STATIC FUNCTION AzurPPK()
 
    IF !f18_lock_tables( { "fin_suban", "fin_anal", "fin_sint" }, .T. )
       sql_table_update( nil, "END" )
-      RETURN     
+      RETURN
    ENDIF
 
    DO WHILE !Eof()

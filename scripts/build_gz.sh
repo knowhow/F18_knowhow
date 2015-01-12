@@ -21,7 +21,7 @@ WINDOWS=`echo $HB_PLATFORM| grep -c win`
 #ARCH=`$HOSTTYPE`
 ARCH="x86_64"
 
-BIT32=`strings  ./F18 | grep '\-bit)' | grep -c 32`
+BIT32=`file  ./F18 | grep '32-bit' | grep -c 32`
 
 if [[ "$BIT32" == "1" ]] 
 then

@@ -4,6 +4,7 @@ sddpg.hbc
 xhb.hbc
 
 -oF18
+-static
 
 F18.prg 
 fin/*.prg 

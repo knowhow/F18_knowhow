@@ -27,8 +27,11 @@ cp -av os/*.ch  $HB_INC_INSTALL
 cp -av pos/*.ch  $HB_INC_INSTALL
 cp -av common/*.ch $HB_INC_INSTALL
 
-echo "brisem .r direktorij"
-rm -r -f .r
+if [ "$1" != "--no-delete" ] ; then
+ echo "brisem .r direktorij"
+ rm -r -f .r
+fi
+
 
 echo "pravim libs"
 ./build_lib_release.sh

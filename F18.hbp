@@ -23,4 +23,4 @@ common/*.prg
 libF18_narudzbenica.a
 libF18_string.a
 
-gtqtc.hbc
+{darwin}gtqtc.hbc

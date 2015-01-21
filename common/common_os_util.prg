@@ -40,7 +40,7 @@ FUNCTION GetExePath( cPath )
    FOR i := 1 TO Len( cPath )
 
       cTmp := SubStr( cPath, i, 1 )
-	
+
       IF cTmp == "\"
          n += 1
       ENDIF
@@ -185,8 +185,6 @@ FUNCTION ChangeEXT( cImeF, cExt, cExtNew, fBezAdd )
    RETURN  cImeF
 
 
-// ------------------------------------------
-// ------------------------------------------
 FUNCTION IsDirectory( cDir1 )
 
    LOCAL cDirTek
@@ -239,10 +237,6 @@ FUNCTION BrisiSFajlove( cDir, nDana )
 
    RETURN NIL
 
-
-
-// ----------------------------------------------
-// ----------------------------------------------
 FUNCTION ToUnix( cFileName )
    RETURN cFileName
 
@@ -342,7 +336,7 @@ FUNCTION f18_run( cmd, output, always_ok, async )
    ENDIF
 
 
-#ifdef __PLATFORM__LINUX
+#ifdef __PLATFORM__UNIX
    _ret := __run_system( cmd + iif( async, "&", "" ) )
 #else
    _ret := hb_processRun( cmd, NIL, NIL, NIL, async )

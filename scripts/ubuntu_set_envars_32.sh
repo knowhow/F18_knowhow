@@ -19,7 +19,14 @@ export HB_LIB_INSTALL=$HARBOUR_ROOT/lib/harbour
 
 
 HB_DBG=`pwd`
-export HB_DBG_PATH=$HB_DBG/test:$HB_DBG/common:$HB_DBG/pos:$HB_DBG/kalk:$HB_DBG/fin:$HB_DBG/fakt:$HB_DBG/os:$HB_DBG/ld:/$HB_DBG/epdv:$HB_DBG/rnal:$HB_DBG/mat:$HB_DBG/virm:$HB_DBG/reports:$HB_DBG/kadev
 
+MODULES="fin kalk fakt os ld virm epdv rnal kam kadev common"
+MODULES="$MODULES admin brojaci partner roba parametri narudzbenica string semaphores dbf_create dbf sql fiskalizacija pdv ui_1990  print"
 
+for m in $MODULES
+do
+    HB_DBG_PATH="$HB_DBG_PATH:$HB_DBG/$m"
+done
+
+export HB_DBG_PATH
 echo "HB_DBG_PATH="  $HB_DBG_PATH

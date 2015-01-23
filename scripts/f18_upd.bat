@@ -8,7 +8,7 @@ set DEST=C:\knowhowERP\bin
 :SERVICE
 echo.
 echo.
-echo "Provjeravam dali je F18 zatvoren"
+echo "Provjeravam da li je F18 zatvoren"
 echo.
 echo.
 
@@ -19,7 +19,7 @@ if "%ERRORLEVEL%"=="0" echo "izgleda je je F18 aktivan, zatvorite ga" & goto SER
 
 :UPDATE
 
-if not exist %1  goto ERR1 
+if not exist %1  goto ERR1
 
 echo.
 echo.
@@ -27,12 +27,12 @@ echo "Provjera ispravnosti arhive"
 echo.
 echo.
 gzip -tv  %1
-if errorlevel 1 goto ERR2 if errorlevel 0 goto OK 
+if errorlevel 1 goto ERR2 if errorlevel 0 goto OK
 
 :OK
 
-gzip -dNfc  < %1 > %DEST%\F18.exe 
-del /Q  %1 
+gzip -dNfc  < %1 > %DEST%\F18.exe
+del /Q  %1
 goto END
 
 :ERR1
@@ -62,6 +62,6 @@ echo "Update je zavrsen uspjesno"
 echo.
 echo "Mozete zatvoriti ovaj prozor te ponovo pokrenuti F18"
 echo.
-echo. 
+echo.
 pause
-rem exit 
+rem exit

@@ -1,11 +1,6 @@
 #!/bin/bash
 
-if [ -d /opt/knowhowERP/hbout ]
-then
-  BASE=/opt/knowhowERP/hbout
-else
-  BASE=/opt/harbour
-fi
+BASE=$HOME/Platform
 
 export HB_ROOT=$BASE
 export PATH=$PATH:$BASE/bin

@@ -53,9 +53,9 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
    ENDIF
 
    // STRINGS
-   IF roba->( FieldPos( "STRINGS" ) ) <> 0
-      AAdd( ImeKol, { PadC( "Strings", 10 ), {|| strings }, "strings", {|| .T. }, {|| .T. } } )
-   ENDIF
+   // IF roba->( FieldPos( "STRINGS" ) ) <> 0
+   // AAdd( ImeKol, { PadC( "Strings", 10 ), {|| strings }, "strings", {|| .T. }, {|| .T. } } )
+   // ENDIF
 
    AAdd( ImeKol, { PadC( "VPC", 10 ), {|| Transform( VPC, "999999.999" ) }, "vpc", nil, nil, nil, gPicCDEM  } )
 
@@ -70,7 +70,7 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
 
    AAdd( ImeKol, { PadC( "MPC1", 10 ), {|| Transform( MPC, "999999.999" ) }, "mpc", NIL, NIL, NIL, gPicCDEM  } )
 
-   FOR i := 2 TO 10
+   FOR i := 2 TO 4
 
       cPom := "mpc" + AllTrim( Str( i ) )
       cPom2 := '{|| transform(' + cPom + ',"999999.999")}'
@@ -92,7 +92,7 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
    ENDIF
 
    AAdd( ImeKol, { "Tarifa", {|| IdTarifa }, "IdTarifa", {|| .T. }, {|| P_Tarifa( @wIdTarifa ), roba_opis_edit()  }   } )
-   AAdd( ImeKol, { "Tip", {|| " " + Tip + " " }, "Tip", {|| .T. }, {|| wTip $ " TUCKVPSXY" },NIL, NIL, NIL, NIL, 27 } )
+   AAdd( ImeKol, { "Tip", {|| " " + Tip + " " }, "Tip", {|| .T. }, {|| wTip $ " TUCKVPSXY" }, NIL, NIL, NIL, NIL, 27 } )
 
    AAdd ( ImeKol, { PadC( "BARKOD", 14 ), {|| BARKOD }, "BarKod", {|| .T. }, {|| DodajBK( @wBarkod ), sifra_postoji( wbarkod, "BARKOD" ) }  } )
 
@@ -105,13 +105,15 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
    AAdd ( ImeKol, { PadC( "N2", 12 ), {|| N2 }, "N2", ;
       {|| .T. }, {|| .T. }, nil, nil, nil, nil, 35   } )
 
+/*
    AAdd ( ImeKol, { PadC( "K7", 2 ), {|| k7 }, "k7"   } )
    AAdd ( ImeKol, { PadC( "K8", 2 ), {|| k8 }, "k8"  } )
    AAdd ( ImeKol, { PadC( "K9", 3 ), {|| k9 }, "k9" } )
+*/
 
    // AUTOMATSKI TROSKOVI ROBE, samo za KALK
    IF goModul:oDataBase:cName == "KALK" .AND. roba->( FieldPos( "TROSK1" ) ) <> 0
-      AAdd ( ImeKol, { PadR( c10T1, 8 ),{|| trosk1 }, "trosk1", {|| .T. }, {|| .T. } } )
+      AAdd ( ImeKol, { PadR( c10T1, 8 ), {|| trosk1 }, "trosk1", {|| .T. }, {|| .T. } } )
       AAdd ( ImeKol, { PadR( c10T2, 8 ), {|| trosk2 }, "trosk2", ;
          {|| .T. }, {|| .T. }, nil, nil, nil, nil, 30 } )
       AAdd ( ImeKol, { PadR( c10T3, 8 ), {|| trosk3 }, "trosk3", {|| .T. }, {|| .T. } } )
@@ -120,11 +122,13 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
       AAdd ( ImeKol, { PadR( c10T5, 8 ), {|| trosk5 }, "trosk5"   } )
    ENDIF
 
-   IF roba->( FieldPos( "ZANIVEL" ) ) <> 0
-      AAdd ( ImeKol, { PadC( "Nova cijena", 20 ), {|| Transform( zanivel, "999999.999" ) }, "zanivel", NIL, NIL, NIL, gPicCDEM  } )
-   ENDIF
-   IF roba->( FieldPos( "ZANIV2" ) ) <> 0
-      AAdd ( ImeKol, { PadC( "Nova cijena/2", 20 ), {|| Transform( zaniv2, "999999.999" ) }, "zaniv2", NIL, NIL, NIL, gPicCDEM  } )
+   IF goModul:oDataBase:cName == "KALK"
+      IF roba->( FieldPos( "ZANIVEL" ) ) <> 0
+         AAdd ( ImeKol, { PadC( "Nova cijena", 20 ), {|| Transform( zanivel, "999999.999" ) }, "zanivel", NIL, NIL, NIL, gPicCDEM  } )
+      ENDIF
+      IF roba->( FieldPos( "ZANIV2" ) ) <> 0
+         AAdd ( ImeKol, { PadC( "Nova cijena/2", 20 ), {|| Transform( zaniv2, "999999.999" ) }, "zaniv2", NIL, NIL, NIL, gPicCDEM  } )
+      ENDIF
    ENDIF
 
    IF roba->( FieldPos( "IDKONTO" ) ) <> 0
@@ -408,12 +412,12 @@ FUNCTION sifre_artikli_provjera_mp_cijena()
       PadC( "MPC1", 15 ), ;
       PadC( "MPC2", 15 ), ;
       PadC( "MPC3", 15 ), ;
-      PadC( "MPC4", 15 ), ;
-      PadC( "MPC5", 15 ), ;
-      PadC( "MPC6", 15 ), ;
-      PadC( "MPC7", 15 ), ;
-      PadC( "MPC8", 15 ), ;
-      PadC( "MPC9", 15 )
+      PadC( "MPC4", 15 )
+   // PadC( "MPC5", 15 ), ;
+   // PadC( "MPC6", 15 ), ;
+   // PadC( "MPC7", 15 ), ;
+   // PadC( "MPC8", 15 ), ;
+   // PadC( "MPC9", 15 )
 
    ? _line
 

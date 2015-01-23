@@ -247,7 +247,7 @@ FUNCTION update_table_roba( zamjena_sifre )
          ENDIF
 
          lOk := update_rec_server_and_dbf( "roba", _app_rec, 1, "CONT" )
-          
+
          IF !lOk .AND. !_sif_exist
             delete_with_rlock()
          ENDIF
@@ -417,7 +417,7 @@ FUNCTION update_sifk_sifv()
    DO WHILE !Eof()
 
       _app_rec := dbf_get_rec()
-      
+
       update_rec_sifk_struct( @_app_rec )
 
       SELECT sifk

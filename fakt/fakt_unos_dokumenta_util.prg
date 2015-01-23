@@ -196,12 +196,12 @@ FUNCTION fakt_setuj_cijenu( tip_cijene )
          _cijena := roba->mpc2
       ELSEIF gMP == "4"
          _cijena := roba->mpc3
-      ELSEIF gMP == "5"
-         _cijena := roba->mpc4
-      ELSEIF gMP == "6"
-         _cijena := roba->mpc5
-      ELSEIF gMP == "7"
-         _cijena := roba->mpc6
+//      ELSEIF gMP == "5"
+//         _cijena := roba->mpc4
+//      ELSEIF gMP == "6"
+//         _cijena := roba->mpc5
+//      ELSEIF gMP == "7"
+//         _cijena := roba->mpc6
       ENDIF
 
    ELSE
@@ -250,7 +250,7 @@ FUNCTION V_Kolicina( tip_vpc )
 
       SELECT rj
       hseek _idfirma
-	
+
       cRjTip := rj->tip
 
       NSRNPIdRoba( _IDROBA )
@@ -262,11 +262,11 @@ FUNCTION V_Kolicina( tip_vpc )
             IF gVar13 == "2" .AND. _idtipdok == "13"
                _cijena := fakt_mpc_iz_sifrarnika()
             ELSE
-               IF g13dcij == "6"
-                  _cijena := MPC6
-               ELSEIF g13dcij == "5"
-                  _cijena := MPC5
-               ELSEIF g13dcij == "4"
+               //IF g13dcij == "6"
+              //    _cijena := MPC6
+               //ELSEIF g13dcij == "5"
+              //    _cijena := MPC5
+               IF g13dcij == "4"
                   _cijena := MPC4
                ELSEIF g13dcij == "3"
                   _cijena := MPC3
@@ -277,11 +277,11 @@ FUNCTION V_Kolicina( tip_vpc )
                ENDIF
             ENDIF
          ELSEIF _idtipdok == "13" .AND. ( gVar13 == "2" .OR. glCij13Mpc ) .AND. gVarNum == "2"
-            IF g13dcij == "6"
-               _cijena := MPC6
-            ELSEIF g13dcij == "5"
-               _cijena := MPC5
-            ELSEIF g13dcij == "4"
+            //IF g13dcij == "6"
+            //   _cijena := MPC6
+            //ELSEIF g13dcij == "5"
+            //   _cijena := MPC5
+            IF g13dcij == "4"
                _cijena := MPC4
             ELSEIF g13dcij == "3"
                _cijena := MPC3
@@ -305,10 +305,10 @@ FUNCTION V_Kolicina( tip_vpc )
                _Cijena := MPC3
             ELSEIF gMP == "5"
                _Cijena := MPC4
-            ELSEIF gMP == "6"
-               _Cijena := MPC5
-            ELSEIF gMP == "7"
-               _Cijena := MPC6
+            //ELSEIF gMP == "6"
+            //   _Cijena := MPC5
+            //ELSEIF gMP == "7"
+            //   _Cijena := MPC6
             ENDIF
 
          ELSEIF _idtipdok == "25" .AND. _cijena <> 0
@@ -344,21 +344,21 @@ FUNCTION V_Kolicina( tip_vpc )
    IF !( roba->tip = "U" ) .AND. !Empty( _IdRoba ) .AND.  Left( _idtipdok, 1 ) $ "12" .AND. ( gPratiK == "D" .OR. lBezMinusa = .T. ) .AND. !( Left( _idtipdok, 1 ) == "1" .AND. Left( _serbr, 1 ) = "*" )
 
       MsgO( "Izračunavam trenutno stanje ..." )
- 	
+
       SEEK _idroba
- 	
+
       nUl := 0
       nIzl := 0
       nRezerv := 0
       nRevers := 0
- 	
+
       DO WHILE !Eof()  .AND. roba->id == IdRoba
-   		
+
          IF fakt->IdFirma <> _IdFirma
             SKIP
             LOOP
          ENDIF
-   		
+
          IF idtipdok = "0"
             nUl  += kolicina
          ELSEIF idtipdok = "1"
@@ -378,9 +378,9 @@ FUNCTION V_Kolicina( tip_vpc )
       MsgC()
 
       IF ( ( nUl - nIzl - nRevers - nRezerv - _kolicina ) < 0 )
- 		
+
          fakt_box_stanje( { { _IdFirma, nUl, nIzl, nRevers, nRezerv } }, _idroba )
- 		
+
          IF _idtipdok = "1" .AND. lBezMinusa = .T.
             SELECT fakt_pripr
             RETURN .F.
@@ -584,19 +584,19 @@ FUNCTION UzorTxt()
    IF ( nRbr == 1 .AND. Val( _podbr ) < 1 )
 
       Box(, 9, 75 )
- 		
+
       @ m_x + 1, m_Y + 1  SAY "Uzorak teksta (<c-W> za kraj unosa teksta):"  GET cId PICT "@!"
       READ
 
       IF LastKey() <> K_ESC .AND. !Empty( cId )
-   			
+
          P_Ftxt( @cId )
-   			
+
          SELECT ftxt
          SEEK cId
 
          SELECT fakt_pripr
-   			
+
          _txt2 := Trim( ftxt->naz )
 
          _user_name := AllTrim( GetFullUserName( GetUserID() ) )
@@ -606,7 +606,7 @@ FUNCTION UzorTxt()
          ENDIF
 
          SELECT fakt_pripr
-  		
+
          IF glDistrib .AND. _IdTipdok == "26"
             IF cId $ ";"
                _k2 := "OPOR"
@@ -624,7 +624,7 @@ FUNCTION UzorTxt()
       _txt2 := MemoEdit( _txt2, m_x + 3, m_y + 1, m_x + 9, m_y + 76 )
 
       fUMemu := NIL
- 		
+
       SetColor( Normal )
 
       BoxC()
@@ -695,9 +695,9 @@ FUNCTION UzorTxt2( cList, redni_broj )
 
          @ m_x + 1, m_y + 1 SAY8 "Odaberi uzorak teksta iz šifrarnika:" ;
             GET cId PICT "@!"
- 	
+
          @ m_x + 11, m_y + 1 SAY8 "<c+W> dodaj novi ili snimi i izađi <ESC> poništi"
-	
+
          READ
 
          IF LastKey() == K_ESC
@@ -767,11 +767,11 @@ FUNCTION _add_to_txt( cId_txt, nCount, lAppend )
       _txt2 := Trim( ftxt->naz )
    ELSE
       cTmp := ""
-	
+
       IF nCount > 1
          cTmp += Chr( 13 ) + Chr( 10 )
       ENDIF
-	
+
       cTmp += Trim( ftxt->naz )
 
       _txt2 := _txt2 + cTmp
@@ -798,7 +798,7 @@ FUNCTION InoKlauzula()
 
    SELECT FTXT
    SEEK "IN"
-	
+
    IF !Found()
 
 
@@ -825,10 +825,10 @@ FUNCTION KmsKlauzula()
    LOCAL _rec
 
    PushWa()
-	
+
    SELECT FTXT
    SEEK "KS"
-	
+
    IF !Found()
 
       APPEND BLANK
@@ -1072,7 +1072,7 @@ FUNCTION set_cijena( cIdTipDok, cIdRoba, nCijena, nRabat )
 
       // provjeri da li je cijena ista ?
       _vars := dbf_get_rec()
-	
+
       IF cIdTipDok $ "#10#01#12#20#" .AND. nCijena <> 0
          IF field->vpc <> nCijena .AND. ;
                Pitanje(, "Postaviti novu VPC u šifrarnik ?", "N" ) == "D"
@@ -1086,7 +1086,7 @@ FUNCTION set_cijena( cIdTipDok, cIdRoba, nCijena, nRabat )
             lFill := .T.
          ENDIF
       ENDIF
-	
+
       IF gRabIzRobe == "D" .AND. lFill == .T. .AND. nRabat <> 0 .AND. ;
             nRabat <> field->n1
          _vars[ "n1" ] := nRabat
@@ -1584,10 +1584,10 @@ FUNCTION c_cijena( nCijena, cTipDok, lNovidok )
          nRCijena := roba->mpc3
       ELSEIF gMP == "5"
          nRCijena := roba->mpc4
-      ELSEIF gMP == "6"
-         nRCijena := roba->mpc5
-      ELSEIF gMP == "7"
-         nRCijena := roba->mpc6
+      //ELSEIF gMP == "6"
+      //   nRCijena := roba->mpc5
+      //ELSEIF gMP == "7"
+      //   nRCijena := roba->mpc6
       ENDIF
 
    ELSEIF cTipDok $ "10#"
@@ -1961,7 +1961,7 @@ FUNCTION Roba()
       aMemo := ParsMemo( txt )
       cRet += aMemo[ 1 ]
    OTHERWISE
-   		
+
       SELECT F_ROBA
 
       IF !Used()
@@ -2065,9 +2065,9 @@ FUNCTION fakt_brisi_stavku_pripreme()
    oAtrib:dok_hash[ "rbr" ] := _r_br
    oAtrib:dok_hash[ "update_rbr" ] := _update_rbr
    oAtrib:delete_atrib()
-   
+
    IF _update_rbr <> NIL
-       oAtrib:update_atrib_rbr()   
+       oAtrib:update_atrib_rbr()
    ENDIF
 
    PopWa()

@@ -88,10 +88,10 @@ FUNCTION fakt_mpc_iz_sifrarnika()
          nCV := roba->mpc3
       ELSEIF RJ->tip == "M4"
          nCV := roba->mpc4
-      ELSEIF RJ->tip == "M5"
-         nCV := roba->mpc5
-      ELSEIF RJ->tip == "M6"
-         nCV := roba->mpc6
+//      ELSEIF RJ->tip == "M5"
+//         nCV := roba->mpc5
+//      ELSEIF RJ->tip == "M6"
+//         nCV := roba->mpc6
       ELSE
          nCV := roba->vpc
       ENDIF
@@ -436,7 +436,7 @@ FUNCTION fakt_dokument_postoji( cFirma, cTipDok, cBroj )
    LOCAL cWhere
 
    cWhere := " idfirma = " + _sql_quote( cFirma )
-   cWhere += " AND idtipdok = " + _sql_quote( cTipDok ) 
+   cWhere += " AND idtipdok = " + _sql_quote( cTipDok )
    cWhere += " AND brdok = " + _sql_quote( cBroj )
 
    IF table_count( "fmk.fakt_doks", cWhere ) > 0
@@ -703,8 +703,3 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
    SELECT ( _t_area )
 
    RETURN lRet
-
-
-
-
-

@@ -41,17 +41,17 @@ FUNCTION MarzaMP( cIdVd, lNaprijed, aPorezi )
    IF  ( _Marza2 == 0 ) .AND. !lNaprijed
 
       nMarza2 := _MPC - _VPC - nPrevMP
-	
+
       IF _TMarza2 == "%"
          IF Round( _VPC, 5 ) <> 0
             _Marza2 := 100 * ( _MPC / ( _VPC + nPrevMP ) - 1 )
          ELSE
             _Marza2 := 0
          ENDIF
-		
+
       ELSEIF _TMarza2 == "A"
          _Marza2 := nMarza2
-		
+
       ELSEIF _TMarza2 == "U"
          _Marza2 := nMarza2 * ( _Kolicina )
       ENDIF
@@ -65,7 +65,7 @@ FUNCTION MarzaMP( cIdVd, lNaprijed, aPorezi )
       ELSEIF _TMarza2 == "U"
          nMarza2 := _Marza2 / ( _Kolicina )
       ENDIF
-	
+
       _MPC := Round( nMarza2 + _VPC, 2 )
 
       _MpcSaPP := Round( MpcSaPor( _mpc, aPorezi ), 2 )
@@ -121,17 +121,17 @@ FUNCTION Marza2( fMarza )
 
       IF  _Marza2 == 0 .AND. Empty( fmarza )
          nMarza2 := _MPC - _VPC - nPrevMP
-	
+
          IF _TMarza2 == "%"
             IF Round( _vpc, 5 ) <> 0
                _Marza2 := 100 * ( _MPC / ( _VPC + nPrevMP ) - 1 )
             ELSE
                _Marza2 := 0
             ENDIF
-		
+
          ELSEIF _TMarza2 == "A"
             _Marza2 := nMarza2
-		
+
          ELSEIF _TMarza2 == "U"
             _Marza2 := nMarza2 * ( _Kolicina )
          ENDIF
@@ -146,7 +146,7 @@ FUNCTION Marza2( fMarza )
             nMarza2 := _Marza2 / ( _Kolicina )
          ENDIF
          _MPC := Round( nMarza2 + _VPC, 2 )
-	
+
          IF !Empty( fMarza )
             _MpcSaPP := Round( MpcSaPor( _mpc, aPorezi ), 2 )
          ENDIF
@@ -378,10 +378,10 @@ FUNCTION UzmiMPCSif()
       nCV := roba->mpc3
    ELSEIF koncij->naz == "M4" .AND. roba->( FieldPos( "mpc4" ) ) <> 0
       nCV := roba->mpc4
-   ELSEIF koncij->naz == "M5" .AND. roba->( FieldPos( "mpc5" ) ) <> 0
-      nCV := roba->mpc5
-   ELSEIF koncij->naz == "M6" .AND. roba->( FieldPos( "mpc6" ) ) <> 0
-      nCV := roba->mpc6
+   //ELSEIF koncij->naz == "M5" .AND. roba->( FieldPos( "mpc5" ) ) <> 0
+   //    nCV := roba->mpc5
+   //ELSEIF koncij->naz == "M6" .AND. roba->( FieldPos( "mpc6" ) ) <> 0
+  //    nCV := roba->mpc6
    ELSEIF roba->( FieldPos( "mpc" ) ) <> 0
       nCV := roba->mpc
    ENDIF
@@ -414,16 +414,16 @@ FUNCTION StaviMPCSif( nCijena, lUpit )
       cMpc := "mpc3"
    CASE koncij->naz == "M4"
       cMpc := "mpc4"
-   CASE koncij->naz == "M5"
-      cMpc := "mpc5"
-   CASE koncij->naz == "M6"
-      cMpc := "mpc6"
+   //CASE koncij->naz == "M5"
+   //    cMpc := "mpc5"
+   //CASE koncij->naz == "M6"
+   //  cMpc := "mpc6"
    OTHERWISE
       cMpc := "mpc"
    ENDCASE
 
    lIsteCijene := ( Round( roba->( &cMpc ), 4 ) == Round( nCijena, 4 ) )
-	
+
    IF lIsteCijene
       // iste cijene nemam sta mijenjati
       RETURN .F.

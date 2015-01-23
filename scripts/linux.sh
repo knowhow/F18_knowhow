@@ -5,10 +5,20 @@ echo "linux setup"
 export PLATFORM_ROOT=$HOME/Platform
 export HB_VER=3.2.0-dev
 export QT_VER=5.4.0
+export PGSQL_VER=9.4.0-bdr
+
 export HB_ROOT=$PLATFORM_ROOT/HB/$HB_VER
 export QT_ROOT=$PLATFORM_ROOT/QT/$QT_VER
-export PGSQL_VER=9.4.0-bdr
 export PGSQL_ROOT=$PLATFORM_ROOT/PSQL/$PGSQL_VER
+export HB_INSTALL_PREFIX=$HB_ROOT
+
+if [ ! -f $HB_ROOT ];  then
+  export HB_ROOT=$PLATFORM_ROOT/HB
+  export QT_ROOT=$PLATFORM_ROOT/QT
+  export PGSQL_ROOT=$PLATFORM_ROOT/PSQL
+
+fi
+
 export HB_INSTALL_PREFIX=$HB_ROOT
 
 let KH_PATH=`echo $PATH | grep -c $KNOWHOW_ERP_ROOT/bin`

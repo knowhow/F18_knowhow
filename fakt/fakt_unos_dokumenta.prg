@@ -47,11 +47,11 @@ FUNCTION fakt_unos_dokumenta()
    PRIVATE ImeKol := { ;
       { "Red.br",  {|| dbSelectArea( F_FAKT_PRIPR ), Rbr()                   } }, ;
       { "Partner/Roba",  {|| Part1Stavka() + Roba()  } }, ;
-      { "Kolicina",  {|| kolicina                } }, ;
-      { "Cijena",    {|| Cijena                  }, "cijena"    }, ;
-      { "Rabat",     {|| Rabat                   }, "Rabat"     }, ;
-      { "Real.Marza",     {|| get_realizovana_marza( NIL, field->idRoba, field->datDok, field->Cijena )  } }, ;
-      { "Nab.Cj",     {|| get_nabavna_cijena( NIL, field->idRoba, field->dDatDok ) } }, ;
+      { "Kolicina",  {|| kolicina  } }, ;
+      { "Cijena",    {|| Cijena    }, "cijena"    }, ;
+      { "Rabat",    {|| Transform(Rabat, "999.99") }, "Rabat"  }, ;
+      { "Real.Marza", {|| Transform(get_realizovana_marza( NIL, field->idRoba, field->datDok, field->Cijena*(1-field->Rabat/100) ), "999.99")  } }, ;
+      { "Nab.Cj",   {|| Transform(get_nabavna_cijena( NIL, field->idRoba, field->DatDok ), "99999.999") } }, ;
       { "RJ",  {|| idfirma                 }, "idfirma"   }, ;
       { "Serbr",         {|| SerBr                   }, "serbr"     }, ;
       { "Partn",         {|| IdPartner               }, "IdPartner" }, ;

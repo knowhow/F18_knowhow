@@ -45,7 +45,7 @@ then
   F18_EXE="F18.exe"
 else
   if [[ "$DARWIN" == "1" ]]; then
-    TAG_OS="MacOSX_"
+    TAG_OS="MacOSX"
   else
     TAG_OS="Ubuntu_$ARCH"
     F18_EXE="F18"

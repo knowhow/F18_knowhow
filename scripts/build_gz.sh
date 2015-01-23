@@ -44,11 +44,12 @@ then
   TAG_OS="Windows"
   F18_EXE="F18.exe"
 else
+  F18_EXE="F18"
+
   if [[ "$DARWIN" == "1" ]]; then
     TAG_OS="MacOSX"
   else
     TAG_OS="Ubuntu_$ARCH"
-    F18_EXE="F18"
   fi
 fi
 

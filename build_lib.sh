@@ -15,8 +15,8 @@ cp -av mat/*.ch  $HB_INC_INSTALL
 cp -av virm/*.ch  $HB_INC_INSTALL
 cp -av common/*.ch $HB_INC_INSTALL
 
-cp hb_debug_lib.hbm hbmk.hbm
+#cp hb_debug_lib.hbm hbmk.hbm
 
-hbmk2 -workdir=.h F18_narudzbenica.hbp
-hbmk2 -workdir=.h F18_string.hbp
+hbmk2 -workdir=.h -b F18_narudzbenica.hbp
+hbmk2 -workdir=.h -b F18_string.hbp
 

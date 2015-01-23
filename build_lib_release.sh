@@ -17,7 +17,7 @@ cp -av common/*.ch $HB_INC_INSTALL
 
 rm libF18*.a
 
-cp hb_release_lib.hbm hbmk.hbm
+#cp hb_release_lib.hbm hbmk.hbm
 
 hbmk2 -workdir=.r F18_narudzbenica.hbp
 hbmk2 -workdir=.r F18_string.hbp

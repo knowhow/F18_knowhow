@@ -19,6 +19,6 @@ cp -av mat/*.ch  $HB_INC_INSTALL
 cp -av virm/*.ch  $HB_INC_INSTALL
 cp -av common/*.ch $HB_INC_INSTALL
 
-cp hb_debug.hbm hbmk.hbm
+#cp hb_debug.hbm hbmk.hbm
 
 /opt/knowhowERP/hbout/bin/hbmk2 -plat=win -comp=mingw -workdir=.hw F18.hbp

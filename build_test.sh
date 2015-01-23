@@ -15,7 +15,7 @@ cp -av mat/*.ch  $HB_INC_INSTALL
 cp -av common/*.ch $HB_INC_INSTALL
 cp -av test/*.ch $HB_INC_INSTALL
 
-cp hb_test.hbm hbmk.hbm
+#cp hb_test.hbm hbmk.hbm
 
 hbmk2 -quiet -workdir=.t F18_test.hbp
 

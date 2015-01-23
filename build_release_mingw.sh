@@ -22,5 +22,5 @@ rm F18*.a
 
 ./build_lib_release_mingw.sh
 
-cp hb_release.hbm hbmk.hbm
+#cp hb_release.hbm hbmk.hbm
 /opt/knowhowERP/hbout/bin/hbmk2 -plat=win -comp=mingw -workdir=.rw F18.hbp

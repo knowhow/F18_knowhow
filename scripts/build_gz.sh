@@ -26,8 +26,8 @@ then
 fi
 
 
-#WINDOWS=`uname -a | grep -c NT`
 WINDOWS=`echo $HB_PLATFORM| grep -c win`
+DARWIN=`uname| grep -c Darwin`
 
 #ARCH=`$HOSTTYPE`
 ARCH="x86_64"
@@ -44,8 +44,12 @@ then
   TAG_OS="Windows"
   F18_EXE="F18.exe"
 else
-  TAG_OS="Ubuntu_$ARCH"
-  F18_EXE="F18"
+  if [[ "$DARWIN" == "1" ]]; then
+    TAG_OS="MacOSX_"
+  else
+    TAG_OS="Ubuntu_$ARCH"
+    F18_EXE="F18"
+  fi
 fi
 
 gzip -v -cN ${F18_EXE} > F18_${TAG_OS}_${VER}.gz

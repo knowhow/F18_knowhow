@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -37,20 +37,21 @@ m:="--- ---------- ---------- ---------- ---------- ---------- ---------- ------
 ? m
 ? "*R * ROBA     * Kolicina *   NC     *  VPC    *    MPC   *   PPP %  *   PPP    *  MPC     *"
 ? "*BR*          *          *          *         *          *   PPU %  *   PPU    *  SA Por  *"
-? "*  *          *          *    ä     *         *     ä    *     ä    *    ä     *    ä     *"
+? "*  *          *          *    ï¿½     *         *     ï¿½    *     ï¿½    *    ï¿½     *    ï¿½     *"
 ? m
 nTot1:=nTot1b:=nTot2:=nTot3:=nTot4:=nTot5:=nTot6:=nTot7:=0
 
 private cIdd:=idpartner+brfaktp+idkonto+idkonto2
 do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
-    // !!!!!!!!!!!!!!!
+/*
     if idpartner+brfaktp+idkonto+idkonto2<>cidd
      set device to screen
      Beep(2)
      Msg("Unutar kalkulacije se pojavilo vise dokumenata !",6)
      set device to printer
     endif
+*/
 
     scatter()  // formiraj varijable _....
     Marza2R()   // izracunaj nMarza2
@@ -76,7 +77,7 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
     @ prow()+1,0 SAY  Rbr PICTURE "999"
     @ prow(),4 SAY  ""; ?? trim(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
-    
+
 	if lKoristitiBK .and. !EMPTY( roba->barkod )
 		?? ", BK: " + roba->barkod
 	endif
@@ -175,6 +176,3 @@ endif
 set order to tag "1"
 go nRec
 return
-
-
-

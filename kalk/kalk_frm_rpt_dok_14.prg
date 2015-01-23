@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -91,13 +91,14 @@ fNafta:=.f.
 private cIdd:=idpartner+brfaktp+idkonto+idkonto2
 do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
-    // !!!!!!!!!!!!!!!
+/*
     if idpartner+brfaktp+idkonto+idkonto2<>cidd
      set device to screen
      Beep(2)
      Msg("Unutar kalkulacije se pojavilo vise dokumenata !",6)
      set device to printer
     endif
+*/
 
     select ROBA; HSEEK kalk_pripr->IdRoba
     select TARIFA; HSEEK kalk_pripr->IdTarifa
@@ -190,7 +191,7 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
     @ prow()+1,0 SAY  Rbr PICTURE "999"
     @ prow(),4 SAY  ""; ?? trim(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
-    
+
     @ prow()+1,4 SAY IdRoba
     @ prow(),pcol()+1 SAY Kolicina*iif(idvd="15",-1,1)  PICTURE PicKol
     nC1:=pcol()+1
@@ -302,7 +303,7 @@ return
 /*! \fn StKalk14_3()
  *  \brief Stampa kalkulacije 14 - varijanta za A3 papir
  */
- 
+
 function StKalk14_3()
 *{
 LOCAL i:=0,aNiz
@@ -435,13 +436,15 @@ return
  */
 function Blok14_3()
 *{
-    // !!!!!!!!!!!!!!!
+
+/*
     if idpartner+brfaktp+idkonto+idkonto2<>cidd
      set device to screen
      Beep(2)
      Msg("Unutar kalkulacije se pojavilo vise dokumenata !",6)
      set device to printer
     endif
+*/
 
     select ROBA; HSEEK kalk_pripr->IdRoba
     select TARIFA; HSEEK kalk_pripr->IdTarifa
@@ -492,4 +495,3 @@ function Blok14_3()
     endif
 return .t.
 *}
-

@@ -17,7 +17,7 @@
 FUNCTION Get1_95()
 
    // izgenerisane stavke jos ne postoje
-   pIzgSt := .F.   
+   pIzgSt := .F.
 
 
    SET KEY K_ALT_K TO KM2()
@@ -404,12 +404,14 @@ FUNCTION StKalk95()
          ENDIF
 
          IF Empty( cidkonto2 )
+/*
             IF idpartner + brfaktp + idkonto + idkonto2 <> cidd
                SET DEVICE TO SCREEN
                Beep( 2 )
                Msg( "Unutar kalkulacije se pojavilo vise dokumenata !", 6 )
                SET DEVICE TO PRINTER
             ENDIF
+*/
          ELSE
             IF ( i == 1 .AND. Left( idkonto2, 3 ) <> "XXX" ) .OR. ;
                   ( i == 2 .AND. Left( idkonto2, 3 ) == "XXX" )

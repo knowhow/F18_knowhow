@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -39,7 +39,7 @@ select PARTN; HSEEK cIdPartner
   ? "*R *Konto  * ROBA     *          *  NCJ     * "+cRNT1+" * "+cRNT2+" * "+cRNT3+" * "+cRNT4+" * "+cRNT5+" * Cij.Kost *  Marza   * Prod.Cj * "
  endif
  ? "*BR*       * TARIFA   * KOLICINA *          *          *          *          *          *          *          *          *         *"
- ? "*  *       *          *          *    ä     *    ä     *    ä     *     ä    *    ä     *    ä     *    ä     *    ä     *   ä     *"
+ ? "*  *       *          *          *    ï¿½     *    ï¿½     *    ï¿½     *     ï¿½    *    ï¿½     *    ï¿½     *    ï¿½     *    ï¿½     *   ï¿½     *"
  ? m
  nTot:=nTot1:=nTot2:=nTot3:=nTot4:=nTot5:=nTot6:=nTot7:=nTot8:=nTot9:=nTotA:=0
 
@@ -51,7 +51,8 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
   nT:=nT1:=nT2:=nT3:=nT4:=nT5:=nT6:=nT7:=nT8:=nT9:=nTA:=0
   cBrFaktP:=brfaktp; dDatFaktP:=datfaktp; cIdpartner:=idpartner
   do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD .and. idpartner+brfaktp+dtos(datfaktp)== cidpartner+cbrfaktp+dtos(ddatfaktp)
-    // !!!!!!!!!!!!!!!
+
+/*
    if gmagacin<>"1"
     if idpartner+brfaktp+idkonto+idkonto2<>cidd
      set device to screen
@@ -60,7 +61,7 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
      set device to printer
     endif
    endif
-
+*/
     KTroskovi()
 
     select ROBA; HSEEK kalk_pripr->IdRoba
@@ -189,4 +190,3 @@ endif
 
 return (nil)
 *}
-

@@ -118,7 +118,7 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
 
    IF !lAFin
       RETURN .F.
-   ENDIF 
+   ENDIF
 
    lAFin2 := ( !fAuto .AND. gAFin <> "0" )
    lAMat := ( fAuto .AND. gAMat == "D" )
@@ -1225,7 +1225,7 @@ FUNCTION RekapK()
 
       nStr := 0
       nTot1 := nTot2 := nTot3 := nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := nTota := nTotb := nTotC := 0
-      
+
       DO WHILE !Eof() .AND. cIdFirma == idfirma .AND. cidvd == idvd
 
          cBrDok := BrDok
@@ -1292,8 +1292,8 @@ FUNCTION RekapK()
                SET DEVICE TO SCREEN
                IF ! ( ( idvd $ "16#80" )  .AND. !Empty( idkonto2 )  )
                   IF !idvd $ "24"
-                     Beep( 2 )
-                     Msg( "Unutar kalkulacije se pojavilo vise dokumenata !", 6 )
+                     //Beep( 2 )
+                     //Msg( "Unutar kalkulacije se pojavilo vise dokumenata !", 6 )
                   ENDIF
                ENDIF
                IF cidvd == "24"
@@ -1607,7 +1607,7 @@ STATIC FUNCTION close_open_rekap_tables()
    O_TDOK
    O_ROBA
    O_TARIFA
-   RETURN 
+   RETURN
 
 
 

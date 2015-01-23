@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -15,7 +15,7 @@
 
 /*
  * $Source: c:/cvsroot/cl/sigma/fmk/kalk/prod/dok/1g/rpt_11_3.prg,v $
- * $Author: mirsad $ 
+ * $Author: mirsad $
  * $Revision: 1.4 $
  * $Log: rpt_11_3.prg,v $
  * Revision 1.4  2003/09/20 07:37:07  mirsad
@@ -27,7 +27,7 @@
  * Revision 1.2  2002/06/21 07:49:36  mirsad
  * no message
  */
- 
+
 
 /*! \file fmk/kalk/prod/dok/1g/rpt_11_3.prg
  *  \brief Stampa kalkulacije 11, varijanta "3" - papir formata A3
@@ -87,13 +87,14 @@ aPorezi:={}
 private cIdd:=idpartner+brfaktp+idkonto+idkonto2
 do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
-    // !!!!!!!!!!!!!!!
+/*
     if idpartner+brfaktp+idkonto+idkonto2<>cidd
      set device to screen
      Beep(2)
      Msg("Unutar kalkulacije se pojavilo vise dokumenata !",6)
      set device to printer
     endif
+*/
 
     scatter()  // formiraj varijable _....
 

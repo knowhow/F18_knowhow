@@ -90,12 +90,12 @@ FUNCTION StKalkIP( fZaTops )
 
    DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVD == IdVD
 
-      // !!!!!!!!!!!!!!!
+/*
       IF idpartner + brfaktp + idkonto + idkonto2 <> cIdd
          Beep( 2 )
          Msg( "Unutar kalkulacije se pojavilo vise dokumenata !", 6 )
       ENDIF
-
+*/
       KTroskovi()
 
       SELECT ROBA
@@ -152,24 +152,24 @@ FUNCTION StKalkIP( fZaTops )
       nTot4 += ( nU4 := ( field->MPCSAPP * field->Kolicina ) - field->fcj )
       nTotKol += field->kolicina
       nTotGKol += field->gkolicina
-	
+
       IF cSamoObraz == "D"
          @ PRow(), PCol() + 1 SAY nU4 PICT Replicate( " ", Len( PicDEM ) )
       ELSE
 
          IF ( nU4 < 0 )
-			
+
             // manjak
             @ PRow(), PCol() + 1 SAY 0 PICT picdem
             @ PRow(), PCol() + 1 SAY nU4 PICT picdem
             nTotManjak += nU4
          ELSE
-			
+
             // visak
             @ PRow(), PCol() + 1 SAY nU4 PICT picdem
             @ PRow(), PCol() + 1 SAY 0 PICT picdem
             nTotVisak += nU4
-			
+
          ENDIF
       ENDIF
 
@@ -275,12 +275,12 @@ FUNCTION StObrazSL()
    PRIVATE cIdd := idpartner + brfaktp + idkonto + idkonto2
    DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVD == IdVD
 
-      // !!!!!!!!!!!!!!!
+/*
       IF idpartner + brfaktp + idkonto + idkonto2 <> cidd
          Beep( 2 )
          Msg( "Unutar kalkulacije se pojavilo vise dokumenata !", 6 )
       ENDIF
-
+*/
       KTroskovi()
 
       SELECT ROBA; HSEEK kalk_pripr->IdRoba

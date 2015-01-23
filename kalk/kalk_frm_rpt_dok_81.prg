@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -66,7 +66,7 @@ endif
    ? "*BR* TARIFA   *  KOLICINA* OST.KALO * SKONTO   *          *          *          *          *          *          *          *   MARZU  *          *         *"
    ? "*  *          *          *          *          *          *          *          *          *          *          *          *          *          *         *"
  ELSE
-   if !IsPDV()  
+   if !IsPDV()
      ? m
      ? "*R * ROBA     *  FCJ     * TRKALO   * KASA-    * "+c10T1+" * "+c10T2+" * "+c10T3+" * "+c10T4+" * "+c10T5+" *   NC     * MARZA.   *   MPC    * MPCSaPP *"
      ? "*BR* TARIFA   *  KOLICINA* OST.KALO * SKONTO   *          *          *          *          *          *          *          *          *         *"
@@ -105,12 +105,14 @@ select kalk_pripr
 private cIdd:=idpartner+brfaktp+idkonto+idkonto2
 do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
+/*
     if idpartner+brfaktp+idkonto+idkonto2<>cidd
      set device to screen
      Beep(2)
      Msg("Unutar kalkulacije se pojavilo vise dokumenata !",6)
      set device to printer
     endif
+*/
 
     KTroskovi()
 
@@ -120,19 +122,19 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     HSEEK kalk_pripr->IdTarifa
 
     select kalk_pripr
-    
+
     Tarifa(field->pkonto,field->idRoba,@aPorezi)
     aIPor:=RacPorezeMP(aPorezi,field->mpc,field->mpcSaPP,field->nc)
 
     nPor1:=aIPor[1]
-    
+
     IF lPrikPRUC
       nPRUC:=aIPor[2]
       nMarza2:=nMarza2-nPRUC
     ENDIF
 
-    if prow() > ( RPT_PAGE_LEN + gPStranica ) - 4 
-        FF  
+    if prow() > ( RPT_PAGE_LEN + gPStranica ) - 4
+        FF
         @ prow(), 125 SAY "Str:"+str(++nStr,3)
     endif
 
@@ -167,17 +169,17 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     @ prow()+1,0 SAY rbr PICT "999"
     @ prow(),4 SAY ""
 	?? TRIM(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
-	
+
 	if lKoristitiBK .and. !EMPTY( roba->barkod )
-		?? ", BK: " + ROBA->barkod 
+		?? ", BK: " + ROBA->barkod
 	endif
 
     if _is_rok
         _dok_hash := hb_hash()
-        _dok_hash["idfirma"] := field->idfirma   
+        _dok_hash["idfirma"] := field->idfirma
         _dok_hash["idtipdok"] := field->idvd
-        _dok_hash["brdok"] := field->brdok   
-        _dok_hash["rbr"] := field->rbr   
+        _dok_hash["brdok"] := field->brdok
+        _dok_hash["rbr"] := field->rbr
         _item_istek_roka := CTOD( get_kalk_atribut_rok( _dok_hash, .t. ) )
         if DTOC( _item_istek_roka ) <> DTOC( CTOD("") )
             ?? " datum isteka roka:", _item_istek_roka
@@ -350,33 +352,33 @@ HSEEK cIdKonto
 ?  "KONTO zaduzuje :", cIdKonto, "-", ALLTRIM( naz )
 
  m:="---- ---------- ---------- ---------- ---------- ---------- ---------- ----------"+;
-    IF(lPrikPRUC," ----------","")+" ---------- -----------" 
+    IF(lPrikPRUC," ----------","")+" ---------- -----------"
 
 if IsPDV()
  m+= " ----------"
 endif
 
  ? m
- 
-if !IsPDV() 
+
+if !IsPDV()
  IF lPrikPRUC
    ? "*R * ROBA     *  FCJ     * RABAT    *  FCJ-RAB  * TROSKOVI *    NC    * MARZA.   * POREZ NA *   MPC    * MPCSaPP  *"
    ? "*BR* TARIFA   *  KOLICINA* DOBAVLJ  *           *          *          *          *   MARZU  *          *          *"
-   ? "*  *          *    ä     *   ä      *     ä     *          *          *    ä     *    ä     *    ä     *    ä     *"
+   ? "*  *          *    ï¿½     *   ï¿½      *     ï¿½     *          *          *    ï¿½     *    ï¿½     *    ï¿½     *    ï¿½     *"
  ELSE
    ? "*R * ROBA     *  FCJ     * RABAT    *  FCJ-RAB  * TROSKOVI *    NC    * MARZA.   *   MPC    * MPCSaPP  *"
    ? "*BR* TARIFA   *  KOLICINA* DOBAVLJ  *           *          *          *          *          *          *"
-   ? "*  *          *    ä     *   ä      *     ä     *          *          *    ä     *    ä     *    ä     *"
+   ? "*  *          *    ï¿½     *   ï¿½      *     ï¿½     *          *          *    ï¿½     *    ï¿½     *    ï¿½     *"
  ENDIF
 else
  IF lPrikPRUC
    ? "*R * ROBA     *  FCJ     * RABAT    *  FCJ-RAB  * TROSKOVI *    NC    * MARZA.   * POREZ NA *   MPC    * MPCSaPDV *"
    ? "*BR* TARIFA   *  KOLICINA* DOBAVLJ  *           *          *          *          *   MARZU  *          *          *"
-   ? "*  *          *    ä     *   ä      *     ä     *          *          *    ä     *    ä     *    ä     *    ä     *"
+   ? "*  *          *    ï¿½     *   ï¿½      *     ï¿½     *          *          *    ï¿½     *    ï¿½     *    ï¿½     *    ï¿½     *"
  ELSE
    ? "*R * ROBA     *  FCJ     * RABAT    *  FCJ-RAB  * TROSKOVI *    NC    * MARZA.   *    PC    *  PDV(%)  *    PC    *"
    ? "*BR* TARIFA   *  KOLICINA* DOBAVLJ  *           *          *          *          *  BEZ PDV *  PDV     *  SA PDV  *"
-   ? "*  *          *    ä     *   ä      *     ä     *          *          *    ä     *    ä     *    ä     *          *"
+   ? "*  *          *    ï¿½     *   ï¿½      *     ï¿½     *          *          *    ï¿½     *    ï¿½     *    ï¿½     *          *"
  ENDIF
 
 endif
@@ -393,12 +395,14 @@ aPorezi:={}
 private cIdd:=idpartner+brfaktp+idkonto+idkonto2
 do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
+/*
     if idpartner+brfaktp+idkonto+idkonto2<>cidd
      	set device to screen
      	Beep(2)
      	Msg("Unutar kalkulacije se pojavilo vise dokumenata !",6)
     	set device to printer
     endif
+*/
 
     KTroskovi()
     Tarifa(field->pkonto, field->idRoba, @aPorezi)
@@ -410,9 +414,9 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     select kalk_pripr
 
     aIPor:=RacPorezeMP(aPorezi,field->mpc,field->mpcSaPP,field->nc)
-    
+
     nPor1:=aIPor[1]
-    
+
     IF lPrikPRUC
       	nPRUC:=aIPor[2]
       	nMarza2:=nMarza2-nPRUC
@@ -457,13 +461,13 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 	if lKoristitiBK .and. !EMPTY( roba->barkod )
 		?? ", BK: " + roba->barkod
 	endif
-    
+
     if _is_rok
         _dok_hash := hb_hash()
-        _dok_hash["idfirma"] := field->idfirma   
+        _dok_hash["idfirma"] := field->idfirma
         _dok_hash["idtipdok"] := field->idvd
-        _dok_hash["brdok"] := field->brdok   
-        _dok_hash["rbr"] := field->rbr   
+        _dok_hash["brdok"] := field->brdok
+        _dok_hash["rbr"] := field->rbr
         _item_istek_roka := CTOD( get_kalk_atribut_rok( _dok_hash, .t. ) )
         if DTOC( _item_istek_roka ) <> DTOC( CTOD("") )
             ?? " datum isteka roka:", _item_istek_roka
@@ -486,7 +490,7 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     	@ prow(),pcol()+1 SAY aPorezi[POR_PPP] PICTURE PicProc
     endif
     @ prow(),pcol()+1 SAY MPCSaPP               PICTURE PicCDEM
-    
+
     // drugi red
     @ prow()+1,4 SAY IdTarifa
     @ prow(),nCol1    SAY Kolicina             PICTURE PicCDEM
@@ -577,6 +581,3 @@ RekTarife()
 ? "RUC:";  @ prow(),pcol()+1 SAY nTot6 pict picdem
 ? m
 return
-
-
-

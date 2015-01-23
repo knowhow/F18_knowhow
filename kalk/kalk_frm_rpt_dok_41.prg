@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -51,16 +51,16 @@ endif
 if cIdVd='47' .or. lVoSaTa
     ? "*R * ROBA     * Kolicina *    MPC   *   PPP %  *   PPU%   *   PP%    *  MPC     *"
     ? "*BR*          *          *          *   PPU    *   PPU    *   PP     *  SA Por  *"
-    ? "*  *          *          *     ä    *     ä    *    ä     *          *    ä     *"
+    ? "*  *          *          *     ï¿½    *     ï¿½    *    ï¿½     *          *    ï¿½     *"
 else
     IF lPrikPRUC
         ? "*R * ROBA     * Kolicina *  NAB.CJ  *  MARZA  * POREZ NA *    MPC   *   PPP %  *   PPU%   *   PP%    *MPC sa por*          *  MPC     *"
         ? "*BR*          *          *   U MP   *         *  MARZU   *          *   PPP    *   PPU    *   PP     * -Popust  *  Popust  *  SA Por  *"
-        ? "*  *          *          *    ä     *         *     ä    *     ä    *     ä    *    ä     *          *    ä     *    ä     *    ä     *"
+        ? "*  *          *          *    ï¿½     *         *     ï¿½    *     ï¿½    *     ï¿½    *    ï¿½     *          *    ï¿½     *    ï¿½     *    ï¿½     *"
     ELSE
         ? "*R * ROBA     * Kolicina *  NAB.CJ  *  MARZA  *    MPC   *   PPP %  *   PPU%   *   PP%    *MPC sa por*          *  MPC     *"
         ? "*BR*          *          *   U MP   *         *          *   PPP    *   PPU    *   PP     * -Popust  *  Popust  *  SA Por  *"
-        ? "*  *          *          *    ä     *         *     ä    *     ä    *    ä     *          *    ä     *    ä     *    ä     *"
+        ? "*  *          *          *    ï¿½     *         *     ï¿½    *     ï¿½    *    ï¿½     *          *    ï¿½     *    ï¿½     *    ï¿½     *"
     ENDIF
 endif
 
@@ -77,6 +77,7 @@ ENDIF
 
 do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
+/*
     IF lVoSaTa .and. idpartner+idkonto+idkonto2<>cidd .or.;
        !lVoSaTa .and. idpartner+brfaktp+idkonto+idkonto2<>cidd
      set device to screen
@@ -84,13 +85,14 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
      Msg("Unutar kalkulacije se pojavilo vise dokumenata !",6)
      set device to printer
     ENDIF
+*/
 
     // formiraj varijable _....
-    Scatter() 
+    Scatter()
     RptSeekRT()
 
     // izracunaj nMarza2
-    Marza2R()   
+    Marza2R()
     KTroskovi()
 
 Tarifa(pkonto, idRoba, @aPorezi)
@@ -109,7 +111,7 @@ nPRUC:=nPor2
     nTot4+=  (nU4:= nMarza2*Kolicina )
     nTot4a+=  (nU4a:= nPRUC*Kolicina )
     nTot5+=  (nU5:= MPC*Kolicina )
-    
+
     nTot6+=  (nU6:=(nPor1+nPor2+nPor3)*Kolicina)
     nTot7+=  (nU7:= MPcSaPP*Kolicina )
 
@@ -213,7 +215,7 @@ return
 
 
 /*
- * Rekapitulacija tarifa - nova fja 
+ * Rekapitulacija tarifa - nova fja
  */
 function RekTar41(cIdFirma, cIdVd, cBrDok, nStr)
 *{
@@ -242,7 +244,7 @@ nTot6:=0
 nTot7:=0
 nTot8:=0
 // popust
-nTotP:=0 
+nTotP:=0
 
 aPorezi:={}
 do while !eof() .and. cIdfirma+cIdvd+cBrDok==idfirma+idvd+brdok
@@ -256,20 +258,20 @@ do while !eof() .and. cIdfirma+cIdvd+cBrDok==idfirma+idvd+brdok
   nUp:=0
   select tarifa
   hseek cIdtarifa
-    
+
   Tarifa(kalk_pripr->pkonto, kalk_pripr->idRoba, @aPorezi)
 
   select kalk_pripr
   fVTV:=.f.
   do while !eof() .and. cIdfirma+cIdVd+cBrDok==idFirma+idVd+brDok .and. idTarifa==cIdTarifa
-    
+
     select roba
     hseek kalk_pripr->idroba
     select kalk_pripr
     VtPorezi()
-    
+
     Tarifa(kalk_pripr->pkonto, kalk_pripr->idRoba, @aPorezi)
-    
+
         // mpc bez poreza
     nU1+=kalk_pripr->mpc*kolicina
 
@@ -282,25 +284,25 @@ do while !eof() .and. cIdfirma+cIdvd+cBrDok==idfirma+idvd+brdok
 
     nU5+= kalk_pripr->MpcSaPP * kolicina
         nUP+= rabatv*kolicina
-    
+
     nTot6 += (kalk_pripr->mpc - kalk_pripr->nc ) * kolicina
-    
+
         skip
   enddo
-  
+
   nTot1+=nU1
   nTot2+=nU2
   nTot3+=nU3
   nTot4+=nU4
   nTot5+=nU5
   nTotP+=nUP
-  
+
   ? cIdtarifa
 
   @ prow(),pcol()+1   SAY aPorezi[POR_PPP] pict picproc
   @ prow(),pcol()+1   SAY PrPPUMP() pict picproc
   @ prow(),pcol()+1   SAY aPorezi[POR_PP] pict picproc
-  
+
   nCol1:=pcol()
   @ prow(),nCol1 +1   SAY nU1 pict picdem
   @ prow(),pcol()+1   SAY nU2 pict picdem
@@ -318,7 +320,7 @@ DokNovaStrana(125, @nStr, 4)
 @ prow(),pcol()+1   SAY nTot3 pict picdem
 @ prow(),pcol()+1   SAY nTot4 pict picdem
 // popust
-@ prow(),pcol()+1   SAY nTotP pict picdem  
+@ prow(),pcol()+1   SAY nTotP pict picdem
 @ prow(),pcol()+1   SAY nTot5 pict picdem
 ? m
 if cIdVd<>"47" .and. !lVoSaTa
@@ -332,7 +334,7 @@ return
 
 
 
- 
+
 function Naslov4x()
 local cSvediDatFakt
 
@@ -372,7 +374,3 @@ select KONTO
 HSEEK cIdKonto
 ?  "Prodavnicki konto razduzuje:",cIdKonto,"-", PADR( naz, 60 )
 return nil
-
-
-
-

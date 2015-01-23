@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -49,13 +49,14 @@ aPorezi:={}
 private cIdd:=idpartner+brfaktp+idkonto+idkonto2
 do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
-    // !!!!!!!!!!!!!!!
+/*
     if idpartner+brfaktp+idkonto+idkonto2<>cidd
      set device to screen
      Beep(2)
      Msg("Unutar kalkulacije se pojavilo vise dokumenata !",6)
      set device to printer
     endif
+*/
 
     scatter()  // formiraj varijable _....
     Marza2(); nMarza:=_marza   // izracunaj nMarza,nMarza2
@@ -66,7 +67,7 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     select kalk_pripr
     Tarifa(field->pkonto,field->idroba,@aPorezi)
 
-    // inicijalizuj poreze za odreðenu robu
+    // inicijalizuj poreze za odreï¿½enu robu
     VTPorezi()
 
     aIPor:=RacPorezeMP(aPorezi,field->mpc,field->mpcSaPP,field->nc)
@@ -99,7 +100,7 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
     @ prow()+1,0 SAY  Rbr PICTURE "999"
     @ prow(),4 SAY  ""; ?? trim(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
-    
+
     @ prow()+1,4 SAY IdRoba
     @ prow(),pcol()+1 SAY Kolicina             PICTURE PicKol
 
@@ -112,9 +113,9 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     if !IsPDV() .or. gPDVMagNab == "N"
     	@ prow(),pcol()+1 SAY nMarza              PICTURE PicCDEM
     endif
-    
+
     @ prow(),pcol()+1 SAY nMarza2              PICTURE PicCDEM
-    
+
     IF lPrikPRUC
       @ prow(),pcol()+1 SAY aPorezi[POR_PRUCMP] PICTURE PicProc
     ENDIF
@@ -150,12 +151,12 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 	@ prow(), pcol()+1 SAY nU6 picture piccdem
 	@ prow(), pcol()+1 SAY nU7 picture piccdem
     endif
-  
+
     // treci red .....
     if round(nc, 5) <> 0
     	@ prow()+1,nMPos SAY (nMarza2/nc)*100  picture picproc
     endif
-   
+
 
     skip 1
 
@@ -221,5 +222,3 @@ endif
 
 return
 *}
-
-

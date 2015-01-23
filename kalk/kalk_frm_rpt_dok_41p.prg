@@ -60,12 +60,14 @@ FUNCTION StKalk41PDV()
 
    DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cBrDok == field->brdok .AND. cIdVD == field->idvd
 
+/*
       IF field->idpartner + field->brfaktp + field->idkonto + field->idkonto2 <> cIdd
          SET DEVICE TO SCREEN
          Beep( 2 )
          Msg( "Unutar kalkulacije se pojavilo vise dokumenata !", 6 )
          SET DEVICE TO PRINTER
       ENDIF
+*/
 
       // formiraj varijable _....
       Scatter()
@@ -298,11 +300,11 @@ STATIC FUNCTION _print_report_header( id_vd )
    IF id_vd = "47"
       ? "*R * ROBA     * Kolicina *    MPC   *   PDV %  *   MPC     *"
       ? "*BR*          *          *          *   PDV    *  SA PDV   *"
-      ? "*  *          *          *     ä    *     ä    *     ä     *"
+      ? "*  *          *          *     ï¿½    *     ï¿½    *     ï¿½     *"
    ELSE
       ? "*R * ROBA     * Kolicina *  NAB.CJ  *  MARZA  *  Prod.C  *  Popust  * PC-pop.  *   PDV %  *   MPC    * MPC     *"
       ? "*BR*          *          *   U MP   *         *  Prod.V  *          * PV-pop.  *   PDV    *  SA PDV  * SA PDV  *"
-      ? "*  *          *          *    ä     *         *     ä    *          *          *     ä    * - popust *   ä     *"
+      ? "*  *          *          *    ï¿½     *         *     ï¿½    *          *          *     ï¿½    * - popust *   ï¿½     *"
    ENDIF
 
    RETURN

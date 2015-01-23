@@ -57,6 +57,6 @@ gzip -v -cN ${F18_EXE} > F18_${TAG_OS}_${VER}.gz
 ls -l F18_${TAG_OS}_${VER}.gz
 
 if [ "$2" == "--push" ]; then
-  scripts/push_to_downloads.sh F18_Ubuntu_i686_1.7.136.gz 
+  scripts/push_to_downloads.sh F18_${TAG_OS}_${VER}.gz
 fi
 

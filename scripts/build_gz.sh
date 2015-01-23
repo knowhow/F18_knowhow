@@ -2,16 +2,27 @@
 
 usage()
 {
-  echo "     poziv: $0 <verzija>"
+  echo "     poziv: $0 <verzija> [--push] "
+  echo "       ili: $0 XX --push" 
   echo "koristenje: $0 0.9.38"
 }
 
 VER=$1
 
+if [ "$VER" == "XX" ] ; then
+  VER=`cat common/f18_ver.ch | grep 'F18_VER  ' | awk -F\" '{ print $2 }'`
+fi
+
+if [ "$VER" == "" ] ; then
+  echo "verzija nije ispravno utvrdjena !?"
+else
+  echo "VER=$VER"
+fi
+
 if [[ $VER == "" ]]
 then  
    usage
-   exit 0
+   exit 1
 fi
 
 

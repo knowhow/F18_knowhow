@@ -48,8 +48,10 @@ FUNCTION fakt_unos_dokumenta()
       { "Red.br",  {|| dbSelectArea( F_FAKT_PRIPR ), Rbr()                   } }, ;
       { "Partner/Roba",  {|| Part1Stavka() + Roba()  } }, ;
       { "Kolicina",  {|| kolicina                } }, ;
-      { "Cijena",  {|| Cijena                  }, "cijena"    }, ;
-      { "Rabat",  {|| Rabat                   }, "Rabat"     }, ;
+      { "Cijena",    {|| Cijena                  }, "cijena"    }, ;
+      { "Rabat",     {|| Rabat                   }, "Rabat"     }, ;
+      { "Real.Marza",     {|| get_realizovana_marza( NIL, field->idRoba, field->datDok, field->Cijena )  } }, ;
+      { "Nab.Cj",     {|| get_nabavna_cijena( NIL, field->idRoba, field->dDatDok ) } }, ;
       { "RJ",  {|| idfirma                 }, "idfirma"   }, ;
       { "Serbr",         {|| SerBr                   }, "serbr"     }, ;
       { "Partn",         {|| IdPartner               }, "IdPartner" }, ;
@@ -84,7 +86,7 @@ FUNCTION fakt_unos_dokumenta()
    Box( , _x, _y )
 
    _opt_d := ( _y / 4 )
-	
+
    _opt_row := PadR( "<c+N> Nova stavka", _opt_d ) + _sep
    _opt_row += PadR( "<ENT> Ispravka", _opt_d ) + _sep
    _opt_row += PadR( hb_UTF8ToStr( "<c+T> Briši stavku" ), _opt_d ) + _sep
@@ -248,21 +250,21 @@ STATIC FUNCTION fakt_pripr_keyhandler()
       RETURN DE_REFRESH
 
    CASE Ch == K_ALT_P
-        
+
         fakt_set_broj_dokumenta()
 
         IF !CijeneOK( "Stampanje" )
             RETURN DE_REFRESH
         ENDIF
-            
+
         StDokOdt( nil, nil, nil )
-            
+
         close_open_fakt_tabele()
-           
+
         #ifdef TEST
-            push_test_tag("FAKT_ALTP_END") 
+            push_test_tag("FAKT_ALTP_END")
         #endif
-        
+
         RETURN DE_REFRESH
 
 
@@ -468,7 +470,7 @@ STATIC FUNCTION fakt_prodji_kroz_stavke( fakt_params )
       InkeySc( 10 )
 
       select_fakt_pripr()
-    
+
       fakt_dodaj_ispravi_stavku( .F., _item_before, _items_atrib )
 
       fakt_promjena_cijene_u_sif()
@@ -502,7 +504,7 @@ STATIC FUNCTION fakt_dodaj_ispravi_stavku( novi, item_hash, items_atrib )
    _rec := get_dbf_global_memvars( "_" )
    dbf_update_rec( _rec, .F. )
 
-   // hash matrica koja sadrži update-ovan zapis 
+   // hash matrica koja sadrži update-ovan zapis
    new_hash["idfirma"] := fakt_pripr->idfirma
    new_hash["idtipdok"] := fakt_pripr->idtipdok
    new_hash["brdok"] := fakt_pripr->brdok
@@ -980,7 +982,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
       IF _n_menu == NIL .OR. _n_menu > LEN( _a_tipdok ) .OR. _n_menu < 0
          MsgBeep( "Nepostojeća opcija !" )
-         RETURN 0  
+         RETURN 0
       ENDIF
 
       _idtipdok := Left( _a_tipdok[ _n_menu ], 2 )
@@ -996,7 +998,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
             ENDIF
          ENDIF
       ENDIF
-     
+
       DO WHILE .T.
 
          _x := 2
@@ -1774,30 +1776,30 @@ STATIC FUNCTION _total_dokumenta()
    Box(, _x, _y )
 
    @ m_x + __x, m_y + 2 SAY PadR( "TOTAL DOKUMENTA:", _y - 2 ) COLOR "I"
-	
+
    ++ __x
    ++ __x
-	
+
    @ m_x + __x, m_y + 2 SAY PadL( "Osnovica: ", _left ) + Str( _doc_total[ "osn" ], 12, 2 )
 
    ++ __x
-	
+
    @ m_x + __x, m_y + 2 SAY PadL( "Popust: ", _left ) + Str( _doc_total[ "pop" ], 12, 2 )
-	
+
    ++ __x
-	
+
    @ m_x + __x, m_y + 2 SAY PadL( "Osnovica - popust: ", _left ) + Str( _doc_total[ "osn_pop" ], 12, 2 )
-	
+
    ++ __x
-	
+
    @ m_x + __x, m_y + 2 SAY PadL( "PDV: ", _left ) + Str( _doc_total[ "pdv" ], 12, 2 )
-	
+
    ++ __x
 
    @ m_x + __x, m_y + 2 SAY Replicate( "=", _left )
-	
+
    ++ __x
-	
+
    @ m_x + __x, m_y + 2 SAY PadL( "Ukupno sa PDV (" + AllTrim( _din_dem ) + "): ", _left ) + Str( _doc_total[ "total" ], 12, 2 )
 
    IF Left( _din_dem, 3 ) <> Left( ValBazna(), 3 )
@@ -1833,7 +1835,7 @@ STATIC FUNCTION _calc_totals( hash, din_dem )
    GO TOP
 
    IF RecCount() <> 0
-	
+
       hash[ "osn" ] := field->ukbezpdv
       hash[ "pop" ] := field->ukpopust
       hash[ "osn_pop" ] := field->ukbpdvpop
@@ -1898,7 +1900,7 @@ STATIC FUNCTION fakt_kzb( id_firma, tip_dok, br_dok )
    @ m_x + _tmp + 1, Col() + 1 SAY ( _dug - _rab ) + _por PICT "9999999.99"
 
    @ m_x + _tmp + 1, Col() + 1 SAY "(" + _din_dem + ")"
-		
+
    WHILE Inkey( 0.1 ) != K_ESC
    END
 

@@ -30,27 +30,26 @@ WINDOWS=`echo $HB_PLATFORM| grep -c win`
 DARWIN=`uname| grep -c Darwin`
 
 #ARCH=`$HOSTTYPE`
-ARCH="x86_64"
-
-BIT32=`strings  ./F18 | grep '\-bit)' | grep -c 32`
-
-if [[ "$BIT32" == "1" ]] 
-then
-    ARCH="i686"
-fi
 
 if [[ "$WINDOWS" == "1" ]]
 then
   TAG_OS="Windows"
   F18_EXE="F18.exe"
 else
-  F18_EXE="F18"
+   F18_EXE="F18"
+   ARCH="x86_64"
+   BIT32=`strings  ./F18 | grep '\-bit)' | grep -c 32`
 
-  if [[ "$DARWIN" == "1" ]]; then
-    TAG_OS="MacOSX"
-  else
-    TAG_OS="Ubuntu_$ARCH"
-  fi
+   if [[ "$BIT32" == "1" ]] 
+   then
+      ARCH="i686"
+   fi
+
+   if [[ "$DARWIN" == "1" ]]; then
+      TAG_OS="MacOSX"
+   else
+      TAG_OS="Ubuntu_$ARCH"
+   fi
 fi
 
 gzip -v -cN ${F18_EXE} > F18_${TAG_OS}_${VER}.gz

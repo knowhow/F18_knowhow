@@ -1,3 +1,6 @@
+-- select (nv_u-nv_i)/(ulaz-izlaz) from sp_konto_stanje( 'm', rpad('1320', 7), rpad('TEST', 10), '2015-03-05');
+
+
 -- drop FUNCTION konto_stanje( mag_prod varchar(1), param_konto varchar(7),  param_idroba varchar(10), param_datum date );
 -- drop type ulaz_izlaz;
 
@@ -23,7 +26,7 @@ CREATE TABLE konto_roba_stanje (
 
 ALTER TABLE konto_roba_stanje OWNER TO xtrole;
 
-CREATE OR REPLACE FUNCTION konto_stanje( mag_prod varchar(1), param_konto varchar(7),  param_idroba varchar(10), param_datum date )
+CREATE OR REPLACE FUNCTION sp_konto_stanje( mag_prod varchar(1), param_konto varchar(7),  param_idroba varchar(10), param_datum date )
   RETURNS  SETOF ulaz_izlaz AS $body$
 
 DECLARE

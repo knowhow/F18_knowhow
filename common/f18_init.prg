@@ -77,11 +77,11 @@ REQUEST HB_GT_WVT_DEFAULT
 
 #else
 
-#ifdef __PLATFORM__DARWIN
-  REQUEST HB_GT_QTC_DEFAULT
-#else 
+//#ifdef __PLATFORM__DARWIN
+//  REQUEST HB_GT_QTC_DEFAULT
+//#else 
   REQUEST HB_GT_XWC_DEFAULT
-#endif
+//#endif
 
 #endif
 

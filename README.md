@@ -65,3 +65,18 @@ F18_knowhow$ cat LATEST_VERSIONS | grep f18_db_migrate
 ### 4) Travis - update test data
 
 [Update test database for travis](https://github.com/knowhow/F18_knowhow/blob/master/TRAVIS.md)
+
+### 5) push to download.bring.out.ba
+
+
+<pre>
+bringout@builder:~/F18_knowhow$ scripts/build_gz.sh 1.7.136 --push
+</pre>
+
+output:
+<pre>
+F18:	 63.8%
+-rw-rw-r-- 1 bringout bringout 3158720 Jan 23 17:55 F18_Ubuntu_i686_1.7.136.gz
+F18_Ubuntu_i686_1.7.136.gz                                             100% 3085KB   3.0MB/s   00:00 
+</pre>
+

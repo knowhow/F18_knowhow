@@ -36,7 +36,7 @@ fi
 echo "pravim libs"
 ./build_lib_release.sh
 
-cp hb_release.hbm hbmk.hbm
+#cp hb_release.hbm hbmk.hbm
 hbmk2 -workdir=.r F18.hbp
 
 #ne treba mi rebuild poseban je direktorij u odnosu debug -rebuildall

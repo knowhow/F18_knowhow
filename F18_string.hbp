@@ -1,5 +1,5 @@
 f18.hbc  -DDEFINE2 -inc
-
+-hblib
 -oF18_string
 
 string/*.prg

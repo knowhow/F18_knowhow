@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASE=$HOME/Platform
+BASE=$HOME/Platform/HB
 
 export HB_ROOT=$BASE
 export PATH=$PATH:$BASE/bin
@@ -11,8 +11,8 @@ export HB_USER_CFLAGS=-fPIC
 
 echo $BASE
 
-export HB_INC_INSTALL=$BASE/include/harbour
-export HB_LIB_INSTALL=$BASE/lib/harbour
+export HB_INC_INSTALL=$BASE/include
+export HB_LIB_INSTALL=$BASE/lib
 export HB_WITH_QT=/usr/local/opt/qt5/include
 export HB_QTPATH=/usr/local/opt/qt5/bin
 

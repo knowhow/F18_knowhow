@@ -131,6 +131,10 @@ DECLARE
   pkonto varchar(7);
   mkonto_old varchar(7);
   pkonto_old varchar(7);
+  return_rec RECORD;
+  err_var1 text;
+  err_var2 text;
+  err_var3 text;
 
 BEGIN
 
@@ -139,12 +143,13 @@ BEGIN
 IF TG_OP = 'INSERT' THEN
   -- sve stavke u konto_roba_stanje koje imaju datum >= od ovoga
   -- vise nisu validne
-  -- RAISE NOTICE 'NEW: %', NEW;
+  RAISE NOTICE 'NEW: %', NEW;
   datum_limit := NEW.datdok;
   pkonto := NEW.pkonto;
   mkonto := NEW.mkonto;
   pkonto_old := 'XX';
   mkonto_old := 'XX';
+  return_rec := NEW;
 ELSE
   IF TG_OP = 'DELETE' THEN
      datum_limit := OLD.datdok;
@@ -152,12 +157,16 @@ ELSE
      pkonto := 'XX';
      mkonto_old := OLD.mkonto;
      pkonto_old := OLD.pkonto;
+     -- RAISE NOTICE 'DELETE: %', OLD;
+     return_rec := OLD;
   ELSE
      datum_limit := MIN( OLD.datdok, NEW.datdok );
      mkonto := NEW.mkonto;
      pkonto := NEW.pkonto;
      mkonto_old := OLD.mkonto;
      pkonto_old := OLD.pkonto;
+     -- RAISE NOTICE 'UPDATE: %', NEW;
+     return_rec := NEW;
   END IF;
 END IF;
 
@@ -176,10 +185,12 @@ EXECUTE 'DELETE from konto_roba_stanje WHERE (datum>=$1 OR (date_part( ''year'',
   USING datum_limit, mkonto, pkonto, mkonto_old, pkonto_old;
 
 
-RETURN NEW;
+RETURN return_rec;
 
+EXCEPTION when others then
 
-END;
+    raise exception 'Error u trigeru: % %', SQLERRM, SQLSTATE;
+end;
 $$ LANGUAGE plpgsql;
 
 

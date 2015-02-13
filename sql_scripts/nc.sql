@@ -132,9 +132,6 @@ DECLARE
   mkonto_old varchar(7);
   pkonto_old varchar(7);
   return_rec RECORD;
-  err_var1 text;
-  err_var2 text;
-  err_var3 text;
 
 BEGIN
 
@@ -188,8 +185,7 @@ EXECUTE 'DELETE from konto_roba_stanje WHERE (datum>=$1 OR (date_part( ''year'',
 RETURN return_rec;
 
 EXCEPTION when others then
-
-    raise exception 'Error u trigeru: % %', SQLERRM, SQLSTATE;
+    raise exception 'Error u trigeru: % : %', SQLERRM, SQLSTATE;
 end;
 $$ LANGUAGE plpgsql;
 

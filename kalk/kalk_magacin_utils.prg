@@ -192,12 +192,12 @@ FUNCTION KalkNabP( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNC, nSNC, dD
 
    // ako se koristi kontrola NC
    IF gNC_ctrl > 0 .AND. nSNC <> 0 .AND. nZadnjaUNC <> 0
-	
+
       nTmp := Round( nSNC, 4 ) - Round( nZadnjaUNC, 4 )
       nOdst := ( nTmp / Round( nZadnjaUNC, 4 ) ) * 100
 
       IF Abs( nOdst ) > gNC_ctrl
-		
+
          Beep( 4 )
          CLEAR TYPEAHEAD
 
@@ -206,16 +206,16 @@ FUNCTION KalkNabP( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNC, nSNC, dD
             "artikal: " + AllTrim( _idroba ) + " " + ;
             PadR( roba->naz, 15 ) + " nc:" + ;
             AllTrim( Str( nSNC, 12, 2 ) ) )
-		
+
          // a_nc_ctrl( @aNC_ctrl, idroba, nKolicina, ;
          // nSNC, nZadnjaUNC )
-		
+
          IF Pitanje(, "Napraviti korekciju NC (D/N)?", "N" ) == "D"
-			
+
             nTmp_n_stanje := ( nKolicina - _kolicina )
             nTmp_n_nv := ( nTmp_n_stanje * nZadnjaUNC )
             nTmp_s_nv := ( nKolicina * nSNC )
-			
+
             nSNC := ( ( nTmp_s_nv - nTmp_n_nv ) / _kolicina )
 
          ENDIF
@@ -1054,12 +1054,12 @@ FUNCTION KalkNab( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, nNC, nSNc, dDa
 
    // ako se koristi kontrola NC
    IF gNC_ctrl > 0 .AND. nSNC <> 0 .AND. nZadnjaUNC <> 0
-	
+
       nTmp := Round( nSNC, 4 ) - Round( nZadnjaUNC, 4 )
       nOdst := ( nTmp / Round( nZadnjaUNC, 4 ) ) * 100
 
       IF Abs( nOdst ) > gNC_ctrl
-		
+
          Beep( 4 )
          CLEAR TYPEAHEAD
 
@@ -1068,16 +1068,16 @@ FUNCTION KalkNab( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, nNC, nSNc, dDa
             "artikal: " + AllTrim( _idroba ) + " " + ;
             PadR( roba->naz, 15 ) + " nc:" + ;
             AllTrim( Str( nSNC, 12, 2 ) ) )
-	
+
          // a_nc_ctrl( @aNC_ctrl, idroba, nKolicina, ;
          // nSNC, nZadnjaUNC )
 
          IF Pitanje(, "Napraviti korekciju NC (D/N)?", "N" ) == "D"
-			
+
             nTmp_n_stanje := ( nKolicina - _kolicina )
             nTmp_n_nv := ( nTmp_n_stanje * nZadnjaUNC )
             nTmp_s_nv := ( nKolicina * nSNC )
-			
+
             nSNC := ( ( nTmp_s_nv - nTmp_n_nv ) / _kolicina )
 
          ENDIF
@@ -1131,7 +1131,7 @@ FUNCTION p_nc_popup( cIdRoba )
    nScan := AScan( aNC_ctrl, {| xVal| xVal[ 1 ] == cIdRoba } )
 
    IF nScan <> 0
-	
+
       // daj mi odstupanje !
       nOdstupanje := Round( aNC_ctrl[ nScan, 5 ], 2 )
       msgbeep( "Odstupanje u odnosu na zadnji ulaz je#" + ;

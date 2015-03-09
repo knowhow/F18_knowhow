@@ -37,17 +37,17 @@ FUNCTION Get1_10PDV()
       _kord_x := m_x + _x
 
       @ m_x + _x, m_y + 2 SAY "DOBAVLJAC:" GET _IdPartner PICT "@!" valid {|| Empty( _IdPartner ) .OR. P_Firma( @_IdPartner ), ispisi_naziv_sifre( F_PARTN, _idpartner, _kord_x - 1, 22, 20 ), _ino_dob( _idpartner ) }
- 	
+
       @ m_x + _x, 50 SAY "Broj fakture:" GET _BrFaktP
- 	
+
       @ m_x + _x, Col() + 1 SAY "Datum:" GET _DatFaktP
- 	
- 	
+
+
       ++ _x
       _kord_x := m_x + _x
 
       @ m_x + _x, m_y + 2 SAY "Magacinski Konto zaduzuje" GET _IdKonto valid {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x, 40, 30 ) } PICT "@!"
- 	
+
       IF gNW <> "X"
          @ m_x + _x, m_y + 42  SAY "Zaduzuje: " GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz )
       ENDIF
@@ -61,14 +61,14 @@ FUNCTION Get1_10PDV()
       ESC_RETURN K_ESC
 
    ELSE
-	
+
       @ m_x + _x, m_y + 2 SAY "DOBAVLJAC: "
       ?? _IdPartner
       @ m_x + _x, Col() + 1 SAY "Faktura dobavljaca - Broj: "
       ?? _BrFaktP
       @ m_x + _x, Col() + 1 SAY "Datum: "
       ?? _DatFaktP
-	
+
       ++ _x
       @ m_x + _x, m_y + 2 SAY "Magacinski Konto zaduzuje "
       ?? _IdKonto
@@ -77,9 +77,9 @@ FUNCTION Get1_10PDV()
          @ m_x + _x, m_y + 42 SAY "Zaduzuje: "
          ?? _IdZaduz
       ENDIF
-	
+
       _ino_dob( _idpartner )
-	
+
    ENDIF
 
    ++ _x
@@ -161,7 +161,7 @@ FUNCTION Get1_10PDV()
       IF gDokKVal == "D"
          @ m_x + _x, Col() + 1 SAY "pr.->" GET __k_val VALID _val_konv( __k_val ) PICT "@!"
       ENDIF
-	
+
       @ m_x + _x, m_y + _unos_left GET _fcj PICT gPicNC VALID {|| _fcj > 0 .AND. _set_konv( @_fcj, @__k_val ) } WHEN V_kol10()
 
       ++ _x
@@ -376,7 +376,7 @@ STATIC FUNCTION obracun_kalkulacija_tip_10_pdv( x_kord )
       ++ _x
       @ m_x + _x, m_y + _unos_left + 10 SAY c10T5 + cSPom GET _TZavTr VALID _TZavTr $ "%AUR" PICTURE "@!"
       @ m_x + _x, Col() + 2 GET _ZavTr PICT PicDEM VALID {|| NabCj(), .T. }
-      
+
       _x += 2
 
    ENDIF
@@ -422,7 +422,7 @@ STATIC FUNCTION obracun_kalkulacija_tip_10_pdv( x_kord )
       READ
 
       IF ( gMpcPomoc == "D" )
-		
+
          IF ( roba->mpc == 0 .OR. roba->mpc <> Round( _mpcsapp, 2 ) ) .AND. Pitanje(, "Staviti MPC u sifrarnik" ) == "D"
 
             SELECT roba
@@ -481,64 +481,64 @@ STATIC FUNCTION _auto_set_trosk( lNewItem )
    ENDIF
 
    IF gRobaTrosk == "0"
-	
+
       IF Pitanje( , "Preuzeti troskove iz sifrarnika robe ?", "D" ) == "N"
          RETURN
       ENDIF
-	
+
       // setuj forirano uzimanje troska.....
       lForce := .T.
-	
+
    ENDIF
 
    IF ( _Prevoz == 0 .OR. lForce == .T. .OR. lNewItem == .T. )
-	
+
       _Prevoz := roba->trosk1
-	
+
       IF !Empty( gRobaTr1Tip )
          _TPrevoz := gRobaTr1Tip
       ENDIF
-	
+
    ENDIF
 
    IF ( _BankTr == 0 .OR. lForce == .T. .OR. lNewItem == .T. )
-	
+
       _BankTr := roba->trosk2
-	
+
       IF !Empty( gRobaTr2Tip )
          _TBankTr := gRobaTr2Tip
       ENDIF
-	
+
    ENDIF
 
    IF ( _SpedTr == 0 .OR. lForce == .T. .OR. lNewItem == .T. )
-	
+
       _SpedTr := roba->trosk3
 
       IF !Empty( gRobaTr3Tip )
          _TSpedTr := gRobaTr3Tip
       ENDIF
-	
+
    ENDIF
 
    IF ( _CarDaz == 0 .OR. lForce == .T. .OR. lNewItem == .T. )
-	
+
       _CarDaz := roba->trosk4
 
       IF !Empty( gRobaTr4Tip )
          _TCarDaz := gRobaTr4Tip
       ENDIF
-	
+
    ENDIF
 
    IF ( _ZavTr == 0 .OR. lForce == .T. .OR. lNewItem == .T. )
-	
+
       _ZavTr := roba->trosk5
 
       IF !Empty( gRobaTr5Tip )
          _TZavTr := gRobaTr5Tip
       ENDIF
-	
+
    ENDIF
 
    RETURN

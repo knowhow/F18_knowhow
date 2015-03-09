@@ -37,11 +37,11 @@ FUNCTION kalkulacija_cijena( azurirana )
       _vars[ "br_dok" ] := kalk_pripr->brdok
    ENDIF
 
-   IF ! ( _vars[ "tip_dok" ] $ "10#16#81#80" )
+   IF ! ( _vars[ "tip_dok" ] $ "10#16#95#81#80" )
       RETURN
    ENDIF
 
-   IF _vars[ "tip_dok" ] $ "10#16"
+   IF _vars[ "tip_dok" ] $ "10#16#95#96"
 
       _tip := "V"
       _template := "kalk_vp.odt"

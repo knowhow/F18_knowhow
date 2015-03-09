@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -32,7 +32,7 @@ return
 
 // -----------------------------------------------
 // pomocna tabela finansijskog stanja magacina
-// 
+//
 // uslovi koji se u hash matrici trebaju koristi
 // su:
 // - "vise_konta" (D/N)
@@ -41,7 +41,7 @@ return
 // - "datum_do"
 // - "tarife"
 // - "vrste_dok"
-// 
+//
 // -----------------------------------------------
 function kalk_gen_fin_stanje_magacina( vars )
 local _konto := ""
@@ -88,11 +88,11 @@ if HB_HHASKEY( vars, "tarife" )
     _tarife := vars["tarife"]
 endif
 
-if HB_HHASKEY( vars, "vrste_dok" ) 
+if HB_HHASKEY( vars, "vrste_dok" )
     _vrste_dok := vars["vrste_dok"]
 endif
 
-if HB_HHASKEY( vars, "gledati_usluge" ) 
+if HB_HHASKEY( vars, "gledati_usluge" )
     _gledati_usluge := vars["gledati_usluge"]
 endif
 
@@ -147,7 +147,7 @@ Box(, 2, 60 )
 
 do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
 
-    if !_vise_konta .and. field->mkonto <> _konto 
+    if !_vise_konta .and. field->mkonto <> _konto
         skip
         loop
     endif
@@ -165,14 +165,14 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
             loop
         endif
     endif
- 
+
     // vrste dokumenata
-    if !EMPTY( _usl_vrste_dok )          
-        if !Tacno( _usl_vrste_dok )    
-            skip       
-            loop    
-        endif               
-    endif          
+    if !EMPTY( _usl_vrste_dok )
+        if !Tacno( _usl_vrste_dok )
+            skip
+            loop
+        endif
+    endif
 
     // tarife...
     if !EMPTY( _usl_tarife )
@@ -182,7 +182,7 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
         endif
     endif
 
-    // resetuj varijable... 
+    // resetuj varijable...
     _ulaz := 0
     _izlaz := 0
     _vp_ulaz := 0
@@ -208,9 +208,9 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
     _dat_dok := field->datdok
     _broj_dok := field->idvd + "-" + field->brdok
     _tip_dok := field->idvd
-    
+
     _t_area := SELECT()
-    
+
     select tdok
     hseek _tip_dok
     _tip_dok_naz := field->naz
@@ -240,14 +240,14 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
                 loop
             endif
         endif
- 
+
         // vrste dokumenata
-        if !EMPTY( _usl_vrste_dok )          
-            if !Tacno( _usl_vrste_dok )    
-                skip       
-                loop    
-            endif               
-        endif          
+        if !EMPTY( _usl_vrste_dok )
+            if !Tacno( _usl_vrste_dok )
+                skip
+                loop
+            endif
+        endif
 
         // tarife...
         if !EMPTY( _usl_tarife )
@@ -268,7 +268,7 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
         endif
 
         select kalk
-        
+
         // saberi vrijednosti...
         if field->mu_i == "1" .and. !( field->idvd $ "12#22#94" )
             // ulazne kalkulacije
@@ -284,7 +284,7 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
             _vp_izlaz -= ROUND( field->vpc * field->kolicina, gZaokr )
             _rabat -= ROUND( ( field->rabatv / 100 ) * field->vpc * field->kolicina, gZaokr )
             _nv_izlaz -= ROUND( field->nc * field->kolicina, gZaokr )
-        elseif field->mu_i == "3"    
+        elseif field->mu_i == "3"
             // nivelacija
             _vp_ulaz += ROUND( field->vpc * field->kolicina, gZaokr )
         endif
@@ -299,8 +299,8 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
         _tr_zavisni += field->zavtr
 
         skip 1
-    
-    enddo 
+
+    enddo
 
     @ m_x + 2, m_y + 2 SAY "Dokument: " + _id_d_firma + "-" + _tip_dok + "-" + _d_br_dok
 
@@ -407,5 +407,3 @@ dbf_update_rec( _rec )
 
 select (_t_area)
 return
-
-

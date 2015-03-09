@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -63,14 +63,14 @@ Box(, 12, 70)
 
     @ m_x + _x, m_y + 2 SAY "Datum od" GET _d_od
     @ m_x + _x, col() + 1 SAY "do" GET _d_do
-   
-    ++ _x 
+
+    ++ _x
     ++ _x
 
     @ m_x + _x, m_y + 2 SAY "     Konto (prazno-svi):" GET _konta PICT "@S35"
 
     ++ _x
-    
+
     @ m_x + _x, m_y + 2 SAY "Vrste dok. (prazno-svi):" GET _vr_dok PICT "@S35"
 
     ++ _x
@@ -101,7 +101,7 @@ vars["konto"] := _konta
 vars["vrste_dok"] := _vr_dok
 vars["gledati_usluge"] := _usluge
 vars["tip_obrasca"] := _tip
-// ako postoji tacka u kontu onda gledaj 
+// ako postoji tacka u kontu onda gledaj
 if RIGHT( ALLTRIM( _konta ), 1 ) == "."
     _vise_konta := "N"
 endif
@@ -124,7 +124,7 @@ return _ret
 // ------------------------------------------
 static function stampaj_tkv( vars )
 local _red_br := 0
-local _line, _opis_knjizenja 
+local _line, _opis_knjizenja
 local _n_opis, _n_iznosi
 local _t_dug, _t_pot, _t_rabat
 local _a_opis := {}
@@ -215,7 +215,7 @@ do while !EOF()
     elseif _tip_obrasca == "P"
         _t_dug += field->vp_dug
     endif
-    
+
     _t_pot += field->vp_pot
 
     _t_rabat += field->vp_rabat
@@ -285,7 +285,7 @@ static function tkv_zaglavlje( vars )
 ?
 ? "Uslov za skladista: "
 
-if !EMPTY( ALLTRIM( vars["konto"] ) ) 
+if !EMPTY( ALLTRIM( vars["konto"] ) )
     ?? ALLTRIM( vars["konto"] )
 else
     ?? " sva skladista"
@@ -344,7 +344,3 @@ _row_2 += PADC( "rabat", 12 )
 ? _row_2
 
 return
-
-
-
-

@@ -107,15 +107,15 @@ FUNCTION kalk_povrat_dokumenta()
       IF lOk
          lOk := brisi_dokument_iz_tabele_kalk( _id_firma, _id_vd, _br_dok )
       ENDIF
- 
+
       IF lOk
          lOk := brisi_dokument_iz_tabele_doks( _id_firma, _id_vd, _br_dok )
       ENDIF
- 
+
       IF lOk
          lOk := brisi_dokument_iz_tabele_doks2( _id_firma, _id_vd, _br_dok )
       ENDIF
- 
+
       MsgC()
 
       IF lOk
@@ -156,12 +156,12 @@ STATIC FUNCTION brisi_dokument_iz_tabele_doks( cIdFirma, cIdVd, cBrDok )
 
    SELECT kalk_doks
    HSEEK cIdFirma + cIdVd + cBrDok
-         
+
    IF Found()
       _rec := dbf_get_rec()
       lOk := delete_rec_server_and_dbf( "kalk_doks", _rec, 1, "CONT" )
    ENDIF
- 
+
    RETURN lOk
 
 
@@ -173,12 +173,12 @@ STATIC FUNCTION brisi_dokument_iz_tabele_doks2( cIdFirma, cIdVd, cBrDok )
 
    SELECT kalk_doks2
    HSEEK cIdFirma + cIdVd + cBrDok
-         
+
    IF Found()
       _rec := dbf_get_rec()
       lOk := delete_rec_server_and_dbf( "kalk_doks2", _rec, 1, "CONT" )
    ENDIF
- 
+
    RETURN lOk
 
 
@@ -190,12 +190,12 @@ STATIC FUNCTION brisi_dokument_iz_tabele_kalk( cIdFirma, cIdVd, cBrDok )
 
    SELECT kalk
    HSEEK cIdFirma + cIdVd + cBrDok
-         
+
    IF Found()
       _rec := dbf_get_rec()
       lOk := delete_rec_server_and_dbf( "kalk_kalk", _rec, 2, "CONT" )
    ENDIF
- 
+
    RETURN lOk
 
 

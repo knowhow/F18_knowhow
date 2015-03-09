@@ -37,11 +37,11 @@ FUNCTION kalkulacija_cijena( azurirana )
       _vars[ "br_dok" ] := kalk_pripr->brdok
    ENDIF
 
-   IF ! ( _vars[ "tip_dok" ] $ "10#81#80" )
+   IF ! ( _vars[ "tip_dok" ] $ "10#16#81#80" )
       RETURN
    ENDIF
 
-   IF _vars[ "tip_dok" ] $ "10"
+   IF _vars[ "tip_dok" ] $ "10#16"
 
       _tip := "V"
       _template := "kalk_vp.odt"
@@ -75,7 +75,7 @@ FUNCTION kalkulacija_cijena( azurirana )
    DO CASE
 
    CASE _predisp == .T.
-		
+
       IF gen_kalk_predispozicija_xml( _vars ) > 0
          st_kalkulacija_cijena_odt( _template )
       ENDIF
@@ -300,7 +300,7 @@ STATIC FUNCTION gen_kalk_predispozicija_xml( vars )
       ELSE
          xml_subnode( "zad", .F. )
       ENDIF
-	
+
       _redni_broj := 0
 
       SELECT kalk_pripr

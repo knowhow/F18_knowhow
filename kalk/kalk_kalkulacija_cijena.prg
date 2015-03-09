@@ -768,7 +768,7 @@ STATIC FUNCTION gen_kalk_vp_xml( vars )
          xml_node( "pcsap", Str( field->vpc + _porez, 12, 2 ) )
       ENDIF
 
-      IF round( field->fcj2 ) != 0
+      IF round( field->fcj2, 4 ) != 0
       _pr_tr_prev := nPrevoz / field->fcj2 * 100
       _pr_tr_bank := nBankTr / field->fcj2 * 100
       _pr_tr_sped := nSpedTr / field->fcj2 * 100

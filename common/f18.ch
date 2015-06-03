@@ -91,3 +91,19 @@
 #command QUIT_1                    => ErrorLevel(1); __Quit()
 
 #define PROCNAME_LINE( x )        (PROCNAME ( x ) + " / " + ALLTRIM(STR(PROCLINE(x))) )
+
+
+// pos
+#command START PRINT2 CRET <p>, <x> =>  ;private __print_opt := NIL ;
+                                        ;IF !SPrint2(<p>)       ;
+                                        ;close all             ;
+                                        ;return <x>            ;
+                                        ;endif
+
+#command START PRINT2 CRET <p>   =>  ;private __print_opt := NIL ;
+                                     ;if !Sprint2(<p>)          ;
+                                     ;close all             ;
+                                     ;return                ;
+                                     ;endif
+
+

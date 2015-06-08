@@ -403,13 +403,14 @@ nPorOl1 += nUPorOl
 
 // ukupno za isplatu
 ? cMainLine
+
 if cRTipRada $ "A#U"
-    ? Lokal("9. UKUPNO ZA ISPLATU (bruto-dopr-porez+troskovi):")
-    @ prow(), 60 SAY nUZaIspl+nURTrosk PICT gpici
+   ? Lokal("9. UKUPNO ZA ISPLATU (bruto-dopr-porez+troskovi):")
+//    @ prow(), 60 SAY nUZaIspl+nURTrosk PICT gpici
 else
     ? Lokal("9. UKUPNO ZA ISPLATU (bruto-dopr-porez+odbici+naknade):")
-    @ prow(), 60 SAY nUZaIspl PICT gpici
 endif
+@ prow(), 60 SAY nUZaIspl PICT gpici
 ? cMainLine
 
 ?
@@ -780,6 +781,12 @@ do while !eof() .and. eval(bUSlov)
 
     // minimalna neto osnova
     nPorNrOsnova := min_neto( nPorNROsnova, _usati )
+
+    if cTipRada $ "A#U"
+        // poreska osnova ugovori o djelu cine i troskovi 
+        nPorNROsnova += nRTrosk
+    endif
+
 
     if lInRS == .t.
         nPorNROsnova := 0

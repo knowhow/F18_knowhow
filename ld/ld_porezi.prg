@@ -296,7 +296,7 @@ do while !eof()
      		
 		nPor += nPom
    	endif
-	
+
 	skip
 enddo
 

@@ -274,9 +274,6 @@ for i := 1 to LEN( aKto )
 
     cIdRoba := field->idroba
 
-    if ALLTRIM( cIdRoba ) == "K11001"
-        altd()
-    endif
 
     nKolicina := 0
     nIzlNV:=0   

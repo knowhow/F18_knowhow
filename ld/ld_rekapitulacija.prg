@@ -382,11 +382,10 @@ FUNCTION ld_rekapitulacija( lSvi )
    ? cMainLine
    IF cRTipRada $ "A#U"
       ?U "9. UKUPNO ZA ISPLATU (bruto-dopr-porez+troškovi):"
-      @ PRow(), 60 SAY nUZaIspl + nURTrosk PICT gpici
    ELSE
       ?U "9. UKUPNO ZA ISPLATU (bruto-dopr-porez+odbici+naknade):"
-      @ PRow(), 60 SAY nUZaIspl PICT gpici
    ENDIF
+   @ PRow(), 60 SAY nUZaIspl PICT gpici
    ? cMainLine
 
    ?
@@ -750,6 +749,11 @@ STATIC FUNCTION _calc_totals( lSvi, a_benef )
 
       // minimalna neto osnova
       nPorNrOsnova := min_neto( nPorNROsnova, _usati )
+
+      if cTipRada $ "A#U"
+          // poreska osnova ugovori o djelu cine i troskovi 
+          nPorNROsnova += nRTrosk
+      endif
 
       IF lInRS == .T.
          nPorNROsnova := 0

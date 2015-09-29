@@ -9,9 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "rnal.ch"
-
 
 STATIC __doc_no
 STATIC __doc_stat
@@ -52,7 +50,7 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
    __doc_stat := _docs->doc_status
 
    lDokumentPostoji := rnal_dokument_postoji( __doc_no )
-   
+
    IF __doc_stat < 3 .AND. !lDokumentPostoji
 
       MsgBeep( "Nalog " + AllTrim( Str( __doc_no ) ) + " nije moguce ažurirati !#Status dokumenta = " + AllTrim( Str( __doc_stat ) ) )
@@ -60,7 +58,7 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
       MsgBeep( "Ponovite operaciju štampe i ažuriranja naloga !" )
 
       RETURN 0
-  
+
    ELSEIF __doc_stat = 10 .AND. lDokumentPostoji
 
       MsgBeep( "Nalog " + AllTrim( Str( __doc_no ) ) + " nije moguće ažurirati !#Već postoji ažuriran." )
@@ -91,7 +89,7 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
       O_DOCS
 
    ENDIF
-   
+
    IF _ok
       _ok := _docs_insert( __doc_no )
    ENDIF
@@ -111,7 +109,7 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
    IF _ok
       // setuj da je nalog opet otvoren
       set_doc_marker( __doc_no, 0, "CONT" )
- 
+
       // ako nije bio u doradi logiraj promjene inicijalne
       IF __doc_stat <> 3
          _ok := rnal_logiraj_novi_nalog( __doc_no )
@@ -132,15 +130,10 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
    ELSE
 
       sql_table_update( nil, "ROLLBACK" )
-
       MsgC()
-
       doc_erase( __doc_no )
-
       beep( 3 )
-
       rnal_o_tables( .T. )
-
       MsgBeep( "Ažuriranje naloga nje uspješno izvršeno !" )
 
       RETURN 0
@@ -148,11 +141,8 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
    ENDIF
 
    brisi_tabele_pripreme()
-
    Beep( 1 )
- 
    rnal_o_tables( .T. )
-
    MsgC()
 
    RETURN 1
@@ -208,7 +198,7 @@ FUNCTION rnal_ukloni_filter_lokalnih_tabela()
    SELECT _doc_ops
    SET FILTER TO
 
-   RETURN 
+   RETURN
 
 
 // --------------------------------------------------
@@ -226,7 +216,6 @@ STATIC FUNCTION _provjeri_prije_azuriranja()
    DO WHILE !Eof()
 
       _tmp := field->doc_it_no
-
       SKIP 1
 
       IF _tmp == field->doc_it_no
@@ -746,7 +735,7 @@ FUNCTION rnal_dokument_postoji( nDoc_no )
 
 /*
    Opis: puni tabele pripreme sa brojem naloga
-   
+
    Usage: rnal_set_broj_naloga_u_pripremi( nDoc_no, lForce )
 */
 
@@ -858,4 +847,3 @@ STATIC FUNCTION dokument_odbacen()
 // -----------------------------------------
 STATIC FUNCTION dokument_zauzet()
    RETURN Str( 3, 2 )
-

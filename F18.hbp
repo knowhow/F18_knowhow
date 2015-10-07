@@ -2,23 +2,24 @@ f18.hbc -DDEFINE2 -DDEBUG -inc
 
 sddpg.hbc
 xhb.hbc
+-Icommon
 
 -oF18
 -static
 
-F18.prg 
-fin/*.prg 
-fakt/*.prg 
-kalk/*.prg 
-rnal/*.prg 
-epdv/*.prg 
-ld/*.prg 
-os/*.prg 
-pos/*.prg 
-mat/*.prg 
+F18.prg
+fin/*.prg
+fakt/*.prg
+kalk/*.prg
+rnal/*.prg
+epdv/*.prg
+ld/*.prg
+os/*.prg
+pos/*.prg
+mat/*.prg
 virm/*.prg
 kadev/*.prg
-reports/*.prg 
+reports/*.prg
 common/*.prg
 
 libF18_narudzbenica.a
@@ -38,4 +39,3 @@ libF18_string.a
 {!LX_CENTOS&linux}-lpq
 
 {darwin|linux|win}-lmy_hbuddall
-

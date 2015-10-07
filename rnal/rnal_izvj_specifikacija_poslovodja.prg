@@ -12,10 +12,8 @@
 
 #include "rnal.ch"
 
-
 STATIC __nvar
 STATIC __doc_no
-
 
 FUNCTION rnal_specifikacija_poslovodja( nVar )
 
@@ -379,6 +377,8 @@ STATIC FUNCTION printaj_specifikaciju_odt( params )
    LOCAL cPom
    LOCAL cXml := my_home() + "data.xml"
    LOCAL _group := params[ "group" ]
+   LOCAL cObjekat, cPrioritet, cStat, cOper, cDescr
+
 
    SELECT _tmp1
 
@@ -390,7 +390,6 @@ STATIC FUNCTION printaj_specifikaciju_odt( params )
    GO TOP
 
    open_xml( cXml )
-
    xml_subnode( "spec", .F. )
 
    xml_node( "date", DToC( DATE() ) )
@@ -426,12 +425,10 @@ STATIC FUNCTION printaj_specifikaciju_odt( params )
       DO WHILE !Eof() .AND. field->doc_no == nDoc_no
 
          ++ nCount
-
          nTotQtty += field->qtty
          nTotGlQtty += field->glass_qtty
 
          cItemAop := AllTrim( field->doc_aop )
-
          IF !Empty( cItemAop )
             aPom := TokToNiz( cItemAop, "#" )
             FOR ii := 1 TO Len( aPom )
@@ -445,26 +442,29 @@ STATIC FUNCTION printaj_specifikaciju_odt( params )
 
          cDiv := AllTrim( field->doc_div )
          cLog := AllTrim( field->doc_log )
-
+         cObjekat := ALLTRIM(field->doc_obj)
+         cPrioritet := AllTrim( field->doc_prior )
+         cStat := AllTrim( field->doc_stat )
+         cOper := AllTrim( field->doc_oper )
+         cDescr := AllTrim( field->doc_sdesc )
          SKIP
 
       ENDDO
 
       xml_subnode( "nalog", .F. )
-
       xml_subnode( "item", .F. )
 
       xml_node( "doc_no", AllTrim( Str( nDoc_no ) ) )
       xml_node( "date", cDate )
       xml_node( "cust", to_xml_encoding( cCustDesc ) )
-      xml_node( "obj", to_xml_encoding( AllTrim( field->doc_obj ) ) )
+      xml_node( "obj", to_xml_encoding( cObjekat ) )
       xml_node( "qtty", AllTrim( Str( nTotQtty, 12, 0 ) ) )
       xml_node( "gl_qtty", AllTrim( Str( nTotGlQtty, 12, 0 ) ) )
       xml_node( "div", cDiv )
-      xml_node( "pri", to_xml_encoding( AllTrim( field->doc_prior ) ) )
-      xml_node( "stat", to_xml_encoding( AllTrim( field->doc_stat ) ) )
-      xml_node( "oper", to_xml_encoding( AllTrim( field->doc_oper ) ) )
-      xml_node( "descr", to_xml_encoding( AllTrim( field->doc_sdesc ) ) )
+      xml_node( "pri", to_xml_encoding( cPrioritet ) )
+      xml_node( "stat", to_xml_encoding( cStat ) )
+      xml_node( "oper", to_xml_encoding( cOper ) )
+      xml_node( "descr", to_xml_encoding( cDescr ) )
 
       IF Len( aItemAop ) > 0
          cPom := ""
@@ -511,6 +511,7 @@ STATIC FUNCTION printaj_specifikaciju_txt( params )
    LOCAL aItemAop
    LOCAL cPom
    LOCAL _group := params[ "group" ]
+   LOCAL cObjekat
 
    START PRINT CRET
 
@@ -538,17 +539,14 @@ STATIC FUNCTION printaj_specifikaciju_txt( params )
       ENDIF
 
       nDoc_no := field->doc_no
-
       cCustDesc := field->cust_desc
 
-      cDate := DToC( field->doc_date ) + "/" + ;
-         DToC( field->doc_dvr_d )
+      cDate := DToC( field->doc_date ) + "/" +  DToC( field->doc_dvr_d )
 
       cDescr := AllTrim( field->doc_prior ) + " - " + ;
          AllTrim( field->doc_stat ) + " - " + ;
          AllTrim( field->doc_oper ) + " - (" + ;
          AllTrim( field->doc_sdesc ) + " )"
-
 
       nCount := 0
 
@@ -562,7 +560,6 @@ STATIC FUNCTION printaj_specifikaciju_txt( params )
       DO WHILE !Eof() .AND. field->doc_no == nDoc_no
 
          ++ nCount
-
          nTotQtty += field->qtty
          nTotGlQtty += field->glass_qtty
 
@@ -571,12 +568,8 @@ STATIC FUNCTION printaj_specifikaciju_txt( params )
          IF !Empty( cItemAop )
 
             aPom := TokToNiz( cItemAop, "#" )
-
             FOR ii := 1 TO Len( aPom )
-
-               nScan := AScan( aItemAop, ;
-                  {| xVar| aPom[ ii ] == xVar[ 1 ] } )
-
+               nScan := AScan( aItemAop, {| xVar| aPom[ ii ] == xVar[ 1 ] } )
                IF nScan = 0
                   AAdd( aItemAop, { aPom[ ii ] } )
                ENDIF
@@ -585,7 +578,7 @@ STATIC FUNCTION printaj_specifikaciju_txt( params )
 
          cDiv := AllTrim( field->doc_div )
          cLog := AllTrim( field->doc_log )
-
+         cObjekat := ALLTRIM( field->doc_obj )
          SKIP
       ENDDO
 
@@ -598,35 +591,26 @@ STATIC FUNCTION printaj_specifikaciju_txt( params )
       ? Space( 10 )
       @ PRow(), PCol() + 1 SAY "kom.na nalogu: " + AllTrim( Str( nTotQtty, 12 ) ) + ;
          " broj stakala: " + AllTrim( Str( nTotGlQtty, 12 ) )
-      @ PRow(), PCol() + 1 SAY "obj: " + ALLTRIM( field->doc_obj )
+      @ PRow(), PCol() + 1 SAY "obj: " + cObjekat
 
       IF Len( aItemAop ) > 0
-
          cPom := ""
-
          FOR i := 1 TO Len( aItemAop )
             IF i <> 1
                cPom += ", "
             ENDIF
             cPom += aItemAop[ i, 1 ]
          NEXT
-
          @ PRow(), PCol() + 1 SAY ", op.: " + cPom
-
       ENDIF
 
       IF !Empty( cLog )
-
          ? Space( 10 )
-
          @ PRow(), PCol() + 2 SAY "zadnja promjena: "
-
          @ PRow(), PCol() + 1 SAY cLog
-
       ENDIF
 
       ?
-
    ENDDO
 
    my_close_all_dbf()

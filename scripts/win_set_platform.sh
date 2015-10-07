@@ -7,33 +7,33 @@ MINGW_VER=491
 #C_ROOT=/cygdrive/c
 C_ROOT=C:
 
-export TEMP=$C_ROOT\\tmp
-export TMP=$C_ROOT\\tmp
+#export TEMP=$C_ROOT\\tmp
+#export TMP=$C_ROOT\\tmp
 
 export PLATFORM_BASE=c:\\Platform
 
-mkdir $TMP
+#mkdir $TMP
 
 HB_ROOT=$PLATFORM_BASE\\HB
 
-export PATH=$PLATFORM_BASE\\JVM\\bin:$PLATFORM_BASE\\QT\\bin:$PLATFORM_BASE\\PSQL\\bin:$PLATFORM_BASE\\HB\\bin:$PLATFORM_BASE\\LO\\bin:$PATH
+export PATH=$PLATFORM_BASE\\HB\\bin:$PLATFORM_BASE\\JVM\\bin:$PLATFORM_BASE\\QT\\bin:$PLATFORM_BASE\\PSQL\\bin:$PLATFORM_BASE\\LO\\program:$PATH
 
 # mingw g++
 
-if [ -d /cygdrive/c/Qt/Tools/mingw${MINGW_VER}_32] ; then
-   echo "Qt mingw $MINGW_VER 32bit not installed !"
-   exit 1
+if [ ! -d /c/Qt/Tools/mingw${MINGW_VER}_32 ] ; then
+   echo "Qt mingw $MINGW_VER 32bit not installed at location /c/Qt/Tools/mingw${MINGW_VER}_32 !"
+   return
+else
+   echo "Mingw Qt: /c/Qt/Tools/mingw${MINGW_VER}_32"
 fi
 
 export PATH=C:\\Qt\\Tools\\mingw${MINGW_VER}_32\\bin:$PATH
 
+echo "HB root: $HB_ROOT"
 export HB_INC_INSTALL=$HB_ROOT\\include
 export HB_LIB_INSTALL=$HB_ROOT\\lib
 
 export HB_INSTALL_PREFIX=$HB_ROOT
-
-export HB_CONTRIBS=$HB_ROOT\\contrib
-
 
 export HB_WITH_QT=$PLATFORM_BASE\\QT\\include
 export HB_WITH_PGSQL=$PLATFORM_BASE\\PSQL\\include

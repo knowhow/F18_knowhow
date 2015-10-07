@@ -1,4 +1,8 @@
-f18.hbc
 sddpg.hbc
--icommon
+f18.hbc
 
+-DDEBUG
+#debug
+-b
+
+#-w3 -es2

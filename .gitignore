@@ -7,3 +7,12 @@ F18
 *.gz
 *.a
 .hbmk
+.cmd
+rnal/*.c
+pos/*.c
+fin/*.c
+common/*.c
+*.o
+F18.exe
+t.prg
+pg_log

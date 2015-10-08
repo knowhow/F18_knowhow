@@ -1,5 +1,3 @@
-#{allwin}libpaths=${HB_DIR_QT}\lib ${QT_DIR}\lib
-
 #10.8 macosc/darvin ne treba ovo
 {mingw|mingwce|(gcc&(linux))}libs=supc++
 
@@ -21,7 +19,6 @@ libs=hbpgsql
 
 {mingw}libpaths=/usr/i586-mingw32msvc/lib
 {darwin}libpaths=/Library/PostgreSQL/9.1/lib
-
 
 mt=yes
 

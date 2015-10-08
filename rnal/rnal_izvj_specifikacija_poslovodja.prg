@@ -566,8 +566,7 @@ STATIC FUNCTION printaj_specifikaciju_txt( params )
       @ PRow(), PCol() + 1 SAY PadR( cDate, 17 )
       @ PRow(), PCol() + 1 SAY " " + PadR( cDescr, 100 )
       ? Space( 10 )
-      @ PRow(), PCol() + 1 SAY "kom.na nalogu: " + AllTrim( Str( nTotQtty, 12 ) ) + ;
-         " broj stakala: " + AllTrim( Str( nTotGlQtty, 12 ) )
+      @ PRow(), PCol() + 1 SAY "kom.na nalogu: " + AllTrim( Str( nTotGlQtty, 12 ) )
       @ PRow(), PCol() + 1 SAY "obj: " + cObjekat
 
       IF Len( aItemAop ) > 0

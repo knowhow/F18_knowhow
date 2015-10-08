@@ -9,7 +9,6 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "rnal.ch"
 
 STATIC __nvar
@@ -40,7 +39,6 @@ FUNCTION rnal_specifikacija_poslovodja( nVar )
    RETURN
 
 
-
 STATIC FUNCTION parametri_izvjestaja( params )
 
    LOCAL _ret := 1
@@ -67,7 +65,6 @@ STATIC FUNCTION parametri_izvjestaja( params )
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Datum od:" GET _dat_od
    @ m_x + _x, Col() + 1 SAY "do:" GET _dat_do
 
@@ -80,32 +77,25 @@ STATIC FUNCTION parametri_izvjestaja( params )
    @ m_x + _x, m_y + 2 SAY "*** Selekcija grupe artikala "
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "(1) - rezano          (4) - IZO"
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "(2) - kaljeno         (5) - LAMI"
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY8 "(3) - brušeno         (6) - emajlirano"
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Grupa artikala (0 - sve grupe):" GET _group VALID _group >= 0 .AND. _group < 7 PICT "9"
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Gledati statuse 'realizovano' (D/N) ?" GET _statusi VALID _statusi $ "DN" PICT "@!"
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Gledati datum naloga ili datum isporuke (1/2) ?" GET _tip_datuma PICT "9"
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY8 "Tip izvještaja TXT / LibreOffice (1/2) ?" GET _txt PICT "9" VALID _txt > 0 .AND. _txt < 3
 
    READ
@@ -154,7 +144,6 @@ STATIC FUNCTION generisi_specifikaciju_u_pomocnu_tabelu( params )
    LOCAL aGrCount := {}
    LOCAL nGr1
    LOCAL nGr2
-   LOCAL _glass_count := 0
 
    cre_tmp1( definicija_pomocne_tabele() )
    o_tmp1()
@@ -163,9 +152,6 @@ STATIC FUNCTION generisi_specifikaciju_u_pomocnu_tabelu( params )
    postavi_filter_na_dokumente( params )
 
    Box(, 1, 50 )
-
-altd()
-
 
    SELECT docs
    DO WHILE !Eof()
@@ -214,16 +200,13 @@ altd()
          nQtty := field->doc_it_qtt
          aArtDesc := {}
          rnal_matrica_artikla( nArt_id, @aArtDesc )
-         _glass_count := broj_stakala( aArtDesc, nQtty )
+         //_glass_count := broj_stakala( aArtDesc, nQtty )
 
          // check group of item
          // "0156" itd...
          cIt_group := set_art_docgr( nArt_id, nDoc_no, nDoc_it_no, .F. )
-
          cDiv := AllTrim( Str( Len( cIt_group ) ) )
-
          cDoc_div := "(" + cDiv + "/" + cDiv + ")"
-
          cAop := " "
 
          SELECT doc_ops
@@ -280,8 +263,7 @@ altd()
                   docs->doc_desc, ;
                   docs->doc_sh_des, ;
                   cDoc_oper, ;
-                  nQtty, ;
-                  _glass_count, ;
+                  0, get_broj_stakala( nDoc_no ), ;
                   cItem, ;
                   cItemAop, ;
                   nGr1, ;
@@ -304,8 +286,7 @@ altd()
                         docs->doc_desc, ;
                         docs->doc_sh_des, ;
                         cDoc_oper, ;
-                        nQtty, ;
-                        _glass_count, ;
+                        0, get_broj_stakala( nDoc_no ), ;
                         cItem, ;
                         cItemAop, ;
                         Val( SubStr( cIt_group, xx, 1 ) ), ;
@@ -316,7 +297,6 @@ altd()
 
       ++ nCount
       @ m_x + 1, m_y + 2 SAY "datum isp./nalog broj: " + DToC( docs->doc_dvr_da ) + " / " + AllTrim( Str( nDoc_no ) )
-
       SELECT docs
       SKIP
 
@@ -417,7 +397,7 @@ STATIC FUNCTION printaj_specifikaciju_odt( params )
 
       nCount := 0
       nTotQtty := 0
-      nTotGlQtty := 0
+      nTotGlQtty := field->GLASS_QTTY
       cItemAop := ""
       aItemAop := {}
       nScan := 0
@@ -425,8 +405,8 @@ STATIC FUNCTION printaj_specifikaciju_odt( params )
       DO WHILE !Eof() .AND. field->doc_no == nDoc_no
 
          ++ nCount
-         nTotQtty += field->qtty
-         nTotGlQtty += field->glass_qtty
+         //nTotQtty += field->qtty
+         //nTotGlQtty += field->glass_qtty
 
          cItemAop := AllTrim( field->doc_aop )
          IF !Empty( cItemAop )
@@ -540,18 +520,15 @@ STATIC FUNCTION printaj_specifikaciju_txt( params )
 
       nDoc_no := field->doc_no
       cCustDesc := field->cust_desc
-
       cDate := DToC( field->doc_date ) + "/" +  DToC( field->doc_dvr_d )
-
       cDescr := AllTrim( field->doc_prior ) + " - " + ;
          AllTrim( field->doc_stat ) + " - " + ;
          AllTrim( field->doc_oper ) + " - (" + ;
          AllTrim( field->doc_sdesc ) + " )"
 
       nCount := 0
-
       nTotQtty := 0
-      nTotGlQtty := 0
+      nTotGlQtty := field->GLASS_QTTY
       cItemAop := ""
 
       aItemAop := {}
@@ -560,8 +537,8 @@ STATIC FUNCTION printaj_specifikaciju_txt( params )
       DO WHILE !Eof() .AND. field->doc_no == nDoc_no
 
          ++ nCount
-         nTotQtty += field->qtty
-         nTotGlQtty += field->glass_qtty
+         //nTotQtty += field->qtty
+         //nTotGlQtty += field->glass_qtty
 
          cItemAop := AllTrim( field->doc_aop )
 

@@ -130,7 +130,6 @@ FUNCTION Kurs( datum, val_iz, val_u )
 FUNCTION ValDomaca()
 
    LOCAL _ret
-
    _ret := hb_UTF8ToStr( _sql_get_value( "fmk.valute", "naz2", { { "tip", "D" } } ) )
 
    RETURN _ret
@@ -140,7 +139,6 @@ FUNCTION ValDomaca()
 FUNCTION ValPomocna()
 
    LOCAL _ret
-
    _ret := hb_UTF8ToStr( _sql_get_value( "fmk.valute", "naz2", { { "tip", "P" } } ) )
 
    RETURN _ret
@@ -280,7 +278,7 @@ FUNCTION ValBazna()
    ENDIF
 
 
-/* 
+/*
     OmjerVal(v1,v2)
     Omjer valuta
     v1  - valuta 1

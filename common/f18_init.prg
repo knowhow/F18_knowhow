@@ -80,8 +80,10 @@ REQUEST HB_GT_WVT_DEFAULT
 //#ifdef __PLATFORM__DARWIN
 //  REQUEST HB_GT_QTC_DEFAULT
 //#else 
-  REQUEST HB_GT_XWC_DEFAULT
+//  REQUEST HB_GT_XWC_DEFAULT
 //#endif
+
+REQUEST HB_GT_TRM_DEFAULT
 
 #endif
 
@@ -287,6 +289,22 @@ FUNCTION set_screen_dimensions()
 
    RETURN .T.
 #endif
+
+altd()
+// IF _pix_width == NIL
+
+//    maxrows( 40 )
+//    maxcols( 150 )
+
+    IF SetMode( maxrow(), maxcol() )
+           log_write( "setovanje ekrana: setovan ekran po rezoluciji" )
+    ELSE
+           log_write( "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !" )
+           QUIT_1
+    ENDIF
+
+   RETURN .T.
+// ENDIF
 
 DO CASE
 

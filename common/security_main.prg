@@ -36,10 +36,12 @@ FUNCTION GetUserID()
       QUIT_1
    ENDIF
 
-   IF Valtype(oTable) == "L" .OR. oTable:Eof()
-      RETURN 0
-   ELSE
+   //IF Valtype(oTable) == "L" .OR. oTable:Eof()
+   //    RETURN 0
+   IF ValType( oTable ) == "O"
       RETURN oTable:FieldGet( 1 )
+   ELSE
+      RETURN 0
    ENDIF
 
 

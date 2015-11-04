@@ -79,7 +79,7 @@ REQUEST HB_GT_WVT_DEFAULT
 
 //#ifdef __PLATFORM__DARWIN
 //  REQUEST HB_GT_QTC_DEFAULT
-//#else 
+//#else
 //  REQUEST HB_GT_XWC_DEFAULT
 //#endif
 
@@ -264,7 +264,7 @@ FUNCTION init_harbour()
 
    hb_cdpSelect( "SL852" )
    hb_SetTermCP( "SLISO" )
- 
+
    SET DELETED ON
 
    SetCancel( .F. )
@@ -591,7 +591,7 @@ FUNCTION font_name( x )
 FUNCTION font_width( x )
 
    IF ValType( x ) == "N"
-  
+
 #ifdef __PLATFORM__DARWIN
 
     if  x != 100
@@ -1155,7 +1155,7 @@ FUNCTION log_create()
 
    IF ( __log_handle := FCreate( F18_LOG_FILE ) ) == -1
       Alert( "Cannot create log file: " + F18_LOG_FILE )
-      
+
       QUIT_1
    ENDIF
 

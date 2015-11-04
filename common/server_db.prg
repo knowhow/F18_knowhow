@@ -51,7 +51,7 @@ FUNCTION check_server_db_version()
       MsgBeep( _msg )
 
       OutMsg( 1, _msg + hb_osNewLine() )
-      QUIT_1
+      //QUIT_1
    ENDIF
 
    RETURN .T.

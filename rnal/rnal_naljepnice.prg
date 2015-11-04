@@ -39,12 +39,12 @@ FUNCTION rnal_stampa_naljepnica_odt()
    SET ORDER TO TAG "1"
    GO TOP
 
-   nUkupno := koliko_ima_naljepnica()   
+   nUkupno := koliko_ima_naljepnica()
 
    IF nUkupno > nMax_komada
       lDijeli := .T.
    ENDIF
-   
+
    IF lDijeli
       napravi_folder_na_desktopu( @_desktop_folder, t_docit->doc_no )
    ENDIF
@@ -55,7 +55,7 @@ FUNCTION rnal_stampa_naljepnica_odt()
 	  _h_stavke := hash_podaci_naljepnice()
 
       FOR i := 1 TO _kolicina_stavke
- 
+
          IF ( nCount == 0 .OR. nCount%nMax_komada == 0 )
 
             open_xml( _data_xml )
@@ -68,29 +68,29 @@ FUNCTION rnal_stampa_naljepnica_odt()
          upisi_stavke_xml( _h_stavke, _kolicina_stavke )
          ++ nCount
 
-         IF ( nCount > 0 .AND. nCount%nMax_komada == 0 ) .OR. nUkupno == nCount 
+         IF ( nCount > 0 .AND. nCount%nMax_komada == 0 ) .OR. nUkupno == nCount
 
             ++ nCutCount
- 
+
             xml_subnode( "label", .T. )
             close_xml()
-           
+
             IF lDijeli
                 // formira se fajl naziva: lab_001.odt, lab_002.odt, lab_003.odt
-                _output_odt := _desktop_folder + SLASH 
+                _output_odt := _desktop_folder + SLASH
                 _output_odt += "lab_"
-                _output_odt += PADL( ALLTRIM( STR( nCutCount ) ), 3, "0" ) 
+                _output_odt += PADL( ALLTRIM( STR( nCutCount ) ), 3, "0" )
                 _output_odt += ".odt"
-                #IFNDEF __PLATFORM__WINDOWS 
+                #IFNDEF __PLATFORM__WINDOWS
                    _output_odt := '"' + _output_odt + '"'
                 #ENDIF
- 
+
             ENDIF
- 
+
             IF generisi_odt_iz_xml( _template, _data_xml, _output_odt )
                IF !lDijeli
-                  prikazi_odt()   
-               ENDIF   
+                  prikazi_odt()
+               ENDIF
             ENDIF
 
          ENDIF
@@ -112,8 +112,8 @@ FUNCTION rnal_stampa_naljepnica_odt()
 
 
 STATIC FUNCTION napravi_folder_na_desktopu( folder_path, doc_no )
-   
-   LOCAL _desktop_path 
+
+   LOCAL _desktop_path
    LOCAL _folder := "lab_" + ALLTRIM( STR( doc_no ) )
    LOCAL _cre
 
@@ -158,6 +158,7 @@ STATIC FUNCTION upisi_header_xml( hash )
    xml_node( "cn_desc", hash["cont_desc"] )
    xml_node( "cn_tel", hash["cont_tel"] )
    xml_node( "cn_addr", hash["cont_adr"] )
+   xml_node( "kratki_op", hash["kratki_op"] )
    xml_node( "obj", hash["cust_object"] )
 
    RETURN
@@ -219,6 +220,7 @@ STATIC FUNCTION hash_header_naljepnice()
    hash["cont_desc"] := ALLTRIM( to_xml_encoding( g_t_pars_opis( "P11" ) ) )
    hash["cont_tel"] := ALLTRIM( g_t_pars_opis( "P12" ) )
    hash["cont_adr"] := ALLTRIM( to_xml_encoding( g_t_pars_opis( "P13" ) ) )
+   hash["kratki_op"] := ALLTRIM( to_xml_encoding( g_t_pars_opis( "N08" ) ) )
 
    IF hash["cust_desc"] == "NN"
       hash["cust_desc"] := hash["cont_desc"]
@@ -240,7 +242,7 @@ STATIC FUNCTION hash_podaci_naljepnice()
 
    hash["def_position"] := "Unutra"
    hash["def_position_en"] := "Inside"
- 
+
    hash["doc_no"] := field->doc_no
    hash["doc_it_no"] := field->doc_it_no
    hash["art_id"] := field->art_id
@@ -278,8 +280,3 @@ STATIC FUNCTION hash_podaci_naljepnice()
    ENDIF
 
    RETURN hash
-
-
-
-
-

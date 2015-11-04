@@ -14,8 +14,8 @@
 
 
 /*
-   moguci statusi: 
-        lock 
+   moguci statusi:
+        lock
         locked_by_me
         free
 */
@@ -124,12 +124,12 @@ FUNCTION get_semaphore_locked_by_me_status_user( table )
 /*
      get_semaphore_status( "konto" )
 
-     => 
+     =>
           "free"  - tabela slobodna
           "locked" - zauzeta
           "unknown" - ne mogu dobiti odgovor od servera, vjerovatno free
-      
- 
+
+
 */
 FUNCTION get_semaphore_status( table )
 
@@ -139,9 +139,9 @@ FUNCTION get_semaphore_status( table )
    LOCAL _user   := f18_user()
 
    IF skip_semaphore( table)
-        RETURN "free" 
+        RETURN "free"
    ENDIF
-   
+
    _qry := "SELECT algorithm FROM fmk.semaphores_" + table + " WHERE user_code=" + _sql_quote( _user )
    _ret := _sql_query( _server, _qry )
 
@@ -159,6 +159,7 @@ FUNCTION last_semaphore_version( table )
    LOCAL _ret
    LOCAL _server := pg_server()
 
+   RETURN -1
    _qry := "SELECT last_trans_version FROM  fmk.semaphores_" + table + " WHERE user_code=" + _sql_quote( f18_user() )
    _ret := _sql_query( _server, _qry )
 
@@ -201,7 +202,7 @@ FUNCTION get_semaphore_version( table, last )
    LOCAL _server := pg_server()
    LOCAL _user := f18_user()
 
-
+   RETURN 1
    IF skip_semaphore( table)
         RETURN 1
    ENDIF
@@ -605,7 +606,7 @@ FUNCTION nuliraj_ids_and_update_my_semaphore_ver( table )
    _qry += " ids=NULL , dat=NULL,"
    _qry += " version=last_trans_version"
    _qry += " WHERE user_code =" + _sql_quote( _user )
-	
+
    _ret := _sql_query( _server, _qry )
 
    log_write( "END: nuliraj ids-ove - user: " + _user, 7 )
@@ -617,10 +618,10 @@ STATIC FUNCTION skip_semaphore( table )
 
    table := LOWER( table )
 
+   RETURN .T.
+
    IF table == "sifk" .OR. table == "sifv"
         RETURN .T.
    ENDIF
 
    RETURN .F.
-
-   

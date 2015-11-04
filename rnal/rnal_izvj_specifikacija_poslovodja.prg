@@ -151,7 +151,7 @@ STATIC FUNCTION generisi_specifikaciju_u_pomocnu_tabelu( params )
    LOCAL nArt_id
    LOCAL aArtArr := {}
    LOCAL nCount := 0
-   LOCAL cCust_desc, cDoc_object
+   LOCAL cCust_desc, cObjekatIsporuke
    LOCAL nScan
    LOCAL ii
    LOCAL cAop
@@ -183,12 +183,9 @@ STATIC FUNCTION generisi_specifikaciju_u_pomocnu_tabelu( params )
       ENDIF
 	
       cDoc_stat := get_status_dokumenta( docs->doc_status )
-	
       cDoc_oper := getusername( docs->operater_i )
-
       cDoc_prior := s_priority( docs->doc_priori )
-
-      cDoc_object := g_obj_desc( docs->obj_id, .T. )
+      cObjekatIsporuke := g_obj_desc( docs->obj_id, .T. )
 
       use_sql_doc_log( nDoc_no )	
 
@@ -247,19 +244,13 @@ STATIC FUNCTION generisi_specifikaciju_u_pomocnu_tabelu( params )
 		
          aAop := {}
 
-         DO WHILE !Eof() .AND. field->doc_no == nDoc_no ;
-               .AND. field->doc_it_no == nDoc_it_no
+         DO WHILE !Eof() .AND. field->doc_no == nDoc_no .AND. field->doc_it_no == nDoc_it_no
 
             cAopDesc := AllTrim( g_aop_desc( field->aop_id ) )
-
             nScan := AScan( aAop, {| xVal| xVal[ 1 ] == cAopDesc } )
-			
             IF nScan == 0
-				
                AAdd( aAop, { cAopDesc } )
-				
             ENDIF
-			
             SKIP
 		
          ENDDO
@@ -273,7 +264,6 @@ STATIC FUNCTION generisi_specifikaciju_u_pomocnu_tabelu( params )
                IF ii <> 1
                   cAop += "#"
                ENDIF
-				
                cAop += aAop[ ii, 1 ]
             NEXT
 		
@@ -312,7 +302,7 @@ STATIC FUNCTION generisi_specifikaciju_u_pomocnu_tabelu( params )
             cItemAop, ;
             nGr1, ;
             cLog, ;
-            cDoc_object )
+            cObjekatIsporuke )
 
          IF Len( cIt_group ) > 1
 
@@ -339,7 +329,7 @@ STATIC FUNCTION generisi_specifikaciju_u_pomocnu_tabelu( params )
                   cItemAop, ;
                   Val( SubStr( cIt_group, xx, 1 ) ), ;
                   cLog, ;
-                  cDoc_object )
+                  cObjekatIsporuke )
 		
             NEXT
 		

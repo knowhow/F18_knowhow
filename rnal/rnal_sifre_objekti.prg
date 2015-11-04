@@ -174,7 +174,8 @@ FUNCTION objid_str( nId )
 FUNCTION g_obj_desc( nObj_id, lEmpty )
 
    LOCAL cObjDesc := "?????"
-   LOCAL nTArea := Select()
+
+   PushWa()
 
    IF lEmpty == nil
       lEmpty := .F.
@@ -196,6 +197,6 @@ FUNCTION g_obj_desc( nObj_id, lEmpty )
       ENDIF
    ENDIF
 
-   SELECT ( nTArea )
+   PopWa()
 
    RETURN cObjDesc

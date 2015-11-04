@@ -1,5 +1,6 @@
 .h
 .r
+.d
 F18.app
 F18
 *.tar.gz
@@ -7,3 +8,12 @@ F18
 *.gz
 *.a
 .hbmk
+.cmd
+rnal/*.c
+pos/*.c
+fin/*.c
+common/*.c
+*.o
+F18.exe
+t.prg
+pg_log

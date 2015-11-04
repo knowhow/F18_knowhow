@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -34,11 +34,15 @@ _temp_qry := "SELECT fetchmetrictext(" + _sql_quote(sect)  + ")"
 
 _table := _sql_query( _server, _temp_qry )
 
+IF VALTYPE(_table) != "O"
+   return default_value
+ENDIF
+
 _ret := _table:Fieldget(1)
 
 if _ret == "!!notfound!!"
    return default_value
-else 
+else
    return str_to_val(_ret, default_value)
 endif
 
@@ -94,7 +98,7 @@ do case
 		endif
 end case
 
-return NIL 
+return NIL
 
 
 // ----------------------------------------------------------
@@ -126,4 +130,3 @@ else
 endif
 
 return _ret
-

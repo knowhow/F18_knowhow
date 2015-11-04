@@ -9,14 +9,10 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "rnal.ch"
-
 
 STATIC __nvar
 STATIC __doc_no
-
-
 
 FUNCTION rnal_specifikacija_poslovodja( nVar )
 
@@ -43,7 +39,6 @@ FUNCTION rnal_specifikacija_poslovodja( nVar )
    RETURN
 
 
-
 STATIC FUNCTION parametri_izvjestaja( params )
 
    LOCAL _ret := 1
@@ -67,52 +62,42 @@ STATIC FUNCTION parametri_izvjestaja( params )
    Box(, _box_x, _box_y )
 
    @ m_x + _x, m_y + 2 SAY8 "*** Specifikacija radnih naloga za poslovođe"
-	
+
    ++ _x
    ++ _x
-	
    @ m_x + _x, m_y + 2 SAY "Datum od:" GET _dat_od
    @ m_x + _x, Col() + 1 SAY "do:" GET _dat_do
 
    ++ _x
    ++ _x
-	
    @ m_x + _x, m_y + 2 SAY "Operater (0 - svi op.):" GET _operater VALID {|| _operater == 0  } PICT "9999999999"
-	
+
    ++ _x
    ++ _x
-	
    @ m_x + _x, m_y + 2 SAY "*** Selekcija grupe artikala "
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "(1) - rezano          (4) - IZO"
-	
-   ++ _x
-	
-   @ m_x + _x, m_y + 2 SAY "(2) - kaljeno         (5) - LAMI"
-	
-   ++ _x
-	
-   @ m_x + _x, m_y + 2 SAY8 "(3) - brušeno         (6) - emajlirano"
-	
-   ++ _x
 
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY "(2) - kaljeno         (5) - LAMI"
+
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY8 "(3) - brušeno         (6) - emajlirano"
+
+   ++ _x
    @ m_x + _x, m_y + 2 SAY "Grupa artikala (0 - sve grupe):" GET _group VALID _group >= 0 .AND. _group < 7 PICT "9"
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Gledati statuse 'realizovano' (D/N) ?" GET _statusi VALID _statusi $ "DN" PICT "@!"
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Gledati datum naloga ili datum isporuke (1/2) ?" GET _tip_datuma PICT "9"
-	
-   ++ _x
 
+   ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Tip izvještaja TXT / LibreOffice (1/2) ?" GET _txt PICT "9" VALID _txt > 0 .AND. _txt < 3
-	
+
    READ
 
    BoxC()
@@ -159,114 +144,93 @@ STATIC FUNCTION generisi_specifikaciju_u_pomocnu_tabelu( params )
    LOCAL aGrCount := {}
    LOCAL nGr1
    LOCAL nGr2
-   LOCAL _glass_count := 0
 
    cre_tmp1( definicija_pomocne_tabele() )
    o_tmp1()
 
    rnal_o_tables( .F. )
-
    postavi_filter_na_dokumente( params )
 
    Box(, 1, 50 )
 
+   SELECT docs
    DO WHILE !Eof()
 
       nDoc_no := field->doc_no
       __doc_no := nDoc_no
 
       cCust_desc := AllTrim( g_cust_desc( docs->cust_id ) )
-	
+
       IF "NN" $ cCust_desc
          cCust_desc := cCust_Desc + "/" + ;
             AllTrim( g_cont_desc( docs->cont_id ) )
       ENDIF
-	
+
       cDoc_stat := get_status_dokumenta( docs->doc_status )
       cDoc_oper := getusername( docs->operater_i )
       cDoc_prior := s_priority( docs->doc_priori )
       cObjekatIsporuke := g_obj_desc( docs->obj_id, .T. )
 
-      use_sql_doc_log( nDoc_no )	
-
+      use_sql_doc_log( nDoc_no )
       SEEK docno_str( nDoc_no )
-
       cLog := ""
-	
       DO WHILE !Eof() .AND. field->doc_no == nDoc_no
-		
          cLog := DToC( field->doc_log_da )
          cLog += " / "
          cLog += AllTrim( field->doc_log_ti )
          cLog += " : "
          cLog += AllTrim( field->doc_log_de )
-		
+         select doc_log
          SKIP
       ENDDO
-	
+
       IF "Inicij" $ cLog
          cLog := ""
       ELSE
          cLog := hb_Utf8ToStr( cLog )
       ENDIF
-	
+
       SELECT doc_it
       SET ORDER TO TAG "1"
-      GO TOP
       SEEK docno_str( nDoc_no )
-
       DO WHILE !Eof() .AND. field->doc_no == nDoc_no
-		
+
          nArt_id := field->art_id
          nDoc_it_no := field->doc_it_no
          nQtty := field->doc_it_qtt
-		
          aArtDesc := {}
-
          rnal_matrica_artikla( nArt_id, @aArtDesc )
-
-         _glass_count := broj_stakala( aArtDesc, nQtty )
+         //_glass_count := broj_stakala( aArtDesc, nQtty )
 
          // check group of item
          // "0156" itd...
          cIt_group := set_art_docgr( nArt_id, nDoc_no, nDoc_it_no, .F. )
-		
          cDiv := AllTrim( Str( Len( cIt_group ) ) )
-		
          cDoc_div := "(" + cDiv + "/" + cDiv + ")"
-	
          cAop := " "
-		
+
          SELECT doc_ops
          SET ORDER TO TAG "1"
-         GO TOP
          SEEK docno_str( nDoc_no ) + docit_str( nDoc_it_no )
-		
          aAop := {}
-
          DO WHILE !Eof() .AND. field->doc_no == nDoc_no .AND. field->doc_it_no == nDoc_it_no
-
             cAopDesc := AllTrim( g_aop_desc( field->aop_id ) )
             nScan := AScan( aAop, {| xVal| xVal[ 1 ] == cAopDesc } )
             IF nScan == 0
                AAdd( aAop, { cAopDesc } )
             ENDIF
+            SELECT doc_ops
             SKIP
-		
          ENDDO
 
          cAop := ""
-		
          IF Len( aAop ) > 0
-		
             FOR ii := 1 TO Len( aAop )
-				
                IF ii <> 1
                   cAop += "#"
                ENDIF
                cAop += aAop[ ii, 1 ]
             NEXT
-		
          ENDIF
 
          lIsLami := is_lami( aArtDesc )
@@ -279,40 +243,16 @@ STATIC FUNCTION generisi_specifikaciju_u_pomocnu_tabelu( params )
          ENDIF
 
          SELECT doc_it
-
          cItem := AllTrim( g_art_desc( nArt_id ) )
          cItemAop := cAop
-		
          nGr1 := Val( SubStr( cIt_group, 1, 1 ) )
-	
-         dodaj_u_pomocnu_tabelu( nDoc_no, ;
-            cCust_desc, ;
-            docs->doc_date, ;
-            docs->doc_dvr_da, ;
-            docs->doc_dvr_ti, ;
-            cDoc_stat, ;
-            cDoc_prior, ;
-            cDoc_div, ;
-            docs->doc_desc, ;
-            docs->doc_sh_des, ;
-            cDoc_oper, ;
-            nQtty, ;
-            _glass_count, ;
-            cItem, ;
-            cItemAop, ;
-            nGr1, ;
-            cLog, ;
-            cObjekatIsporuke )
 
-         IF Len( cIt_group ) > 1
+         SELECT doc_it
+         SKIP
+      ENDDO
 
-            FOR xx := 1 TO Len( cIt_group )
-
-               IF Val( SubStr( cIt_group, xx, 1 ) ) == nGr1
-                  LOOP
-               ENDIF
-
-               dodaj_u_pomocnu_tabelu( nDoc_no, ;
+      SELECT docs
+      dodaj_u_pomocnu_tabelu( nDoc_no, ;
                   cCust_desc, ;
                   docs->doc_date, ;
                   docs->doc_dvr_da, ;
@@ -323,29 +263,43 @@ STATIC FUNCTION generisi_specifikaciju_u_pomocnu_tabelu( params )
                   docs->doc_desc, ;
                   docs->doc_sh_des, ;
                   cDoc_oper, ;
-                  nQtty, ;
-                  _glass_count, ;
+                  0, get_broj_stakala( nDoc_no ), ;
                   cItem, ;
                   cItemAop, ;
-                  Val( SubStr( cIt_group, xx, 1 ) ), ;
+                  nGr1, ;
                   cLog, ;
                   cObjekatIsporuke )
-		
-            NEXT
-		
-         ENDIF
 
-         ++ nCount
-		
-         @ m_x + 1, m_y + 2 SAY "datum isp./nalog broj: " + DToC( docs->doc_dvr_da ) + " / " + AllTrim( Str( nDoc_no ) )
-	
-         SKIP
-		
-      ENDDO
-	
+     IF Len( cIt_group ) > 1
+                  FOR xx := 1 TO Len( cIt_group )
+                     IF Val( SubStr( cIt_group, xx, 1 ) ) == nGr1
+                        LOOP
+                     ENDIF
+                     dodaj_u_pomocnu_tabelu( nDoc_no, ;
+                        cCust_desc, ;
+                        docs->doc_date, ;
+                        docs->doc_dvr_da, ;
+                        docs->doc_dvr_ti, ;
+                        cDoc_stat, ;
+                        cDoc_prior, ;
+                        cDoc_div, ;
+                        docs->doc_desc, ;
+                        docs->doc_sh_des, ;
+                        cDoc_oper, ;
+                        0, get_broj_stakala( nDoc_no ), ;
+                        cItem, ;
+                        cItemAop, ;
+                        Val( SubStr( cIt_group, xx, 1 ) ), ;
+                        cLog, ;
+                        cObjekatIsporuke )
+                  NEXT
+      ENDIF
+
+      ++ nCount
+      @ m_x + 1, m_y + 2 SAY "datum isp./nalog broj: " + DToC( docs->doc_dvr_da ) + " / " + AllTrim( Str( nDoc_no ) )
       SELECT docs
       SKIP
-	
+
    ENDDO
 
    BoxC()
@@ -388,7 +342,7 @@ STATIC FUNCTION postavi_filter_na_dokumente( params )
    SET ORDER TO tag &_idx
    SET FILTER to &_filter
    GO TOP
-	
+
    RETURN
 
 
@@ -403,18 +357,19 @@ STATIC FUNCTION printaj_specifikaciju_odt( params )
    LOCAL cPom
    LOCAL cXml := my_home() + "data.xml"
    LOCAL _group := params[ "group" ]
+   LOCAL cObjekat, cPrioritet, cStat, cOper, cDescr
+
 
    SELECT _tmp1
 
    IF RecCount() == 0
        MsgBeep("Ne postoje traženi podaci !")
-       RETURN 
+       RETURN
    ENDIF
 
    GO TOP
 
    open_xml( cXml )
-
    xml_subnode( "spec", .F. )
 
    xml_node( "date", DToC( DATE() ) )
@@ -422,7 +377,7 @@ STATIC FUNCTION printaj_specifikaciju_odt( params )
    xml_node( "per_do", DToC( params["datum_do"] ) )
 
    DO WHILE !Eof()
-	
+
       IF _group <> 0
          IF field->it_group <> _group
             SKIP
@@ -434,7 +389,7 @@ STATIC FUNCTION printaj_specifikaciju_odt( params )
       cCustDesc := field->cust_desc
       cDate := DToC( field->doc_date ) + "/" + ;
          DToC( field->doc_dvr_d )
-	
+
       cDescr := AllTrim( field->doc_prior ) + " - " + ;
          AllTrim( field->doc_stat ) + " - " + ;
          AllTrim( field->doc_oper ) + " - (" + ;
@@ -442,20 +397,18 @@ STATIC FUNCTION printaj_specifikaciju_odt( params )
 
       nCount := 0
       nTotQtty := 0
-      nTotGlQtty := 0
+      nTotGlQtty := field->GLASS_QTTY
       cItemAop := ""
       aItemAop := {}
       nScan := 0
-	
+
       DO WHILE !Eof() .AND. field->doc_no == nDoc_no
-		
+
          ++ nCount
-		
-         nTotQtty += field->qtty
-         nTotGlQtty += field->glass_qtty
+         //nTotQtty += field->qtty
+         //nTotGlQtty += field->glass_qtty
 
          cItemAop := AllTrim( field->doc_aop )
-		
          IF !Empty( cItemAop )
             aPom := TokToNiz( cItemAop, "#" )
             FOR ii := 1 TO Len( aPom )
@@ -466,29 +419,32 @@ STATIC FUNCTION printaj_specifikaciju_odt( params )
                ENDIF
             NEXT
          ENDIF
-		
+
          cDiv := AllTrim( field->doc_div )
          cLog := AllTrim( field->doc_log )
-		
+         cObjekat := ALLTRIM(field->doc_obj)
+         cPrioritet := AllTrim( field->doc_prior )
+         cStat := AllTrim( field->doc_stat )
+         cOper := AllTrim( field->doc_oper )
+         cDescr := AllTrim( field->doc_sdesc )
          SKIP
 
       ENDDO
-	
-      xml_subnode( "nalog", .F. )
 
+      xml_subnode( "nalog", .F. )
       xml_subnode( "item", .F. )
 
       xml_node( "doc_no", AllTrim( Str( nDoc_no ) ) )
       xml_node( "date", cDate )
       xml_node( "cust", to_xml_encoding( cCustDesc ) )
-      xml_node( "obj", to_xml_encoding( AllTrim( field->doc_obj ) ) )
+      xml_node( "obj", to_xml_encoding( cObjekat ) )
       xml_node( "qtty", AllTrim( Str( nTotQtty, 12, 0 ) ) )
       xml_node( "gl_qtty", AllTrim( Str( nTotGlQtty, 12, 0 ) ) )
       xml_node( "div", cDiv )
-      xml_node( "pri", to_xml_encoding( AllTrim( field->doc_prior ) ) )
-      xml_node( "stat", to_xml_encoding( AllTrim( field->doc_stat ) ) )
-      xml_node( "oper", to_xml_encoding( AllTrim( field->doc_oper ) ) )
-      xml_node( "descr", to_xml_encoding( AllTrim( field->doc_sdesc ) ) )
+      xml_node( "pri", to_xml_encoding( cPrioritet ) )
+      xml_node( "stat", to_xml_encoding( cStat ) )
+      xml_node( "oper", to_xml_encoding( cOper ) )
+      xml_node( "descr", to_xml_encoding( cDescr ) )
 
       IF Len( aItemAop ) > 0
          cPom := ""
@@ -502,7 +458,7 @@ STATIC FUNCTION printaj_specifikaciju_odt( params )
       ELSE
          xml_node( "op", "" )
       ENDIF
-	
+
       IF !Empty( cLog )
          xml_node( "log", to_xml_encoding( cLog ) )
       ELSE
@@ -535,6 +491,7 @@ STATIC FUNCTION printaj_specifikaciju_txt( params )
    LOCAL aItemAop
    LOCAL cPom
    LOCAL _group := params[ "group" ]
+   LOCAL cObjekat
 
    START PRINT CRET
 
@@ -549,7 +506,7 @@ STATIC FUNCTION printaj_specifikaciju_txt( params )
    GO TOP
 
    DO WHILE !Eof()
-	
+
       IF _group <> 0
          IF field->it_group <> _group
             SKIP
@@ -560,59 +517,48 @@ STATIC FUNCTION printaj_specifikaciju_txt( params )
       IF nova_stranica() == .T.
          FF
       ENDIF
-	
+
       nDoc_no := field->doc_no
-	
       cCustDesc := field->cust_desc
-	
-      cDate := DToC( field->doc_date ) + "/" + ;
-         DToC( field->doc_dvr_d )
-	
+      cDate := DToC( field->doc_date ) + "/" +  DToC( field->doc_dvr_d )
       cDescr := AllTrim( field->doc_prior ) + " - " + ;
          AllTrim( field->doc_stat ) + " - " + ;
          AllTrim( field->doc_oper ) + " - (" + ;
          AllTrim( field->doc_sdesc ) + " )"
 
-
       nCount := 0
-	
       nTotQtty := 0
-      nTotGlQtty := 0
+      nTotGlQtty := field->GLASS_QTTY
       cItemAop := ""
 
       aItemAop := {}
       nScan := 0
-	
+
       DO WHILE !Eof() .AND. field->doc_no == nDoc_no
-		
+
          ++ nCount
-		
-         nTotQtty += field->qtty
-         nTotGlQtty += field->glass_qtty
+         //nTotQtty += field->qtty
+         //nTotGlQtty += field->glass_qtty
 
          cItemAop := AllTrim( field->doc_aop )
-		
+
          IF !Empty( cItemAop )
-			
+
             aPom := TokToNiz( cItemAop, "#" )
-			
             FOR ii := 1 TO Len( aPom )
-			
-               nScan := AScan( aItemAop, ;
-                  {| xVar| aPom[ ii ] == xVar[ 1 ] } )
-		
+               nScan := AScan( aItemAop, {| xVar| aPom[ ii ] == xVar[ 1 ] } )
                IF nScan = 0
                   AAdd( aItemAop, { aPom[ ii ] } )
                ENDIF
             NEXT
          ENDIF
-		
+
          cDiv := AllTrim( field->doc_div )
          cLog := AllTrim( field->doc_log )
-		
+         cObjekat := ALLTRIM( field->doc_obj )
          SKIP
       ENDDO
-	
+
       cDescr := cDiv + " - " + cDescr
 
       ? docno_str( nDoc_no )
@@ -620,37 +566,27 @@ STATIC FUNCTION printaj_specifikaciju_txt( params )
       @ PRow(), PCol() + 1 SAY PadR( cDate, 17 )
       @ PRow(), PCol() + 1 SAY " " + PadR( cDescr, 100 )
       ? Space( 10 )
-      @ PRow(), PCol() + 1 SAY "kom.na nalogu: " + AllTrim( Str( nTotQtty, 12 ) ) + ;
-         " broj stakala: " + AllTrim( Str( nTotGlQtty, 12 ) )
-      @ PRow(), PCol() + 1 SAY "obj: " + ALLTRIM( field->doc_obj )
-	
+      @ PRow(), PCol() + 1 SAY "kom.na nalogu: " + AllTrim( Str( nTotGlQtty, 12 ) )
+      @ PRow(), PCol() + 1 SAY "obj: " + cObjekat
+
       IF Len( aItemAop ) > 0
-		
          cPom := ""
-		
          FOR i := 1 TO Len( aItemAop )
             IF i <> 1
                cPom += ", "
             ENDIF
             cPom += aItemAop[ i, 1 ]
          NEXT
-	
          @ PRow(), PCol() + 1 SAY ", op.: " + cPom
-	
       ENDIF
-	
+
       IF !Empty( cLog )
-		
          ? Space( 10 )
-		
          @ PRow(), PCol() + 2 SAY "zadnja promjena: "
-		
          @ PRow(), PCol() + 1 SAY cLog
-		
       ENDIF
 
       ?
-
    ENDDO
 
    my_close_all_dbf()
@@ -773,5 +709,3 @@ STATIC FUNCTION dodaj_u_pomocnu_tabelu( nDoc_no, cCust_desc, dDoc_date, dDoc_dvr
    SELECT ( nTArea )
 
    RETURN
-
-

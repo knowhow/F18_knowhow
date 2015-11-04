@@ -1251,8 +1251,61 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
       items_atrib[ "lot" ] := _lot_broj
    ENDIF
 
+   IF ALLTRIM(_rbr) == "1"
+      show_last_racun(_idpartner, _destinacija, _idroba)
+   ENDIF
+
    RETURN 1
 
+
+STATIC FUNCTION show_last_racun(cIdPartner, cDestinacija, cIdRoba)
+
+cRacun := "00000000"
+cDestinacija := ALLTRIM( cDestinacija )
+select_fakt_pripr()
+PushWa()
+
+GO TOP
+
+Box( , 6, 100)
+DO WHILE !EOF()
+@ m_x + 1, m_y + 2 SAY "Partner: " + cIdPartner
+@ m_x + 2, m_y + 2 SAY "Destinacija: " + cDestinacija
+@ m_x + 3, m_y + 2 SAY "Rbr: " + field->rbr
+@ m_x + 4, m_y + 2 SAY "Roba: " + field->idroba + " kol: " + ALLTRIM(STR(field->kolicina, 6, 2))
+@ m_x + 5, m_y + 2 SAY "Raniji racun: " + fakt_za_destinaciju( cIDPartner, cDestinacija, field->idroba )
+
+INKEY(0)
+SKIP
+ENDDO
+PopWa()
+BoxC()
+RETURN
+
+FUNCTION fakt_za_destinaciju( cIdPartner, cDestinacija, cIdRoba )
+
+LOCAL cQuery, oRez
+LOCAL oServer := pg_server()
+LOCAL cBrDok, oRow
+
+cQuery := "SELECT brdok FROM fmk.fakt_fakt" + ;
+   " WHERE idtipdok='10' AND kolicina>0  AND txt like '%" + cDestinacija + "%' AND idpartner=" + _sql_quote( cIdPartner )
+
+oRez := _sql_query( oServer, cQuery )
+
+IF oRez == NIL
+   RETURN -1
+ENDIF
+
+altd()
+cBrDok := ""
+DO WHILE !oRez:EOF()
+   oRow := oRez:getRow()
+   cBrDok += oRow:fieldGet(1) + "/"
+   oRez:skip()
+ENDDO
+
+RETURN cBrDok
 
 
 STATIC FUNCTION _trenutno_na_stanju_kalk( id_rj, tip_dok, id_roba )

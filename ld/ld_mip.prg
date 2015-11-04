@@ -216,8 +216,6 @@ FUNCTION ld_mip_obrazac()
    nBrZahtjeva := 1
 
 
-altd()
-
    ol_o_tbl()
 
    Box( "#MIP OBRAZAC ZA RADNIKE", 20, 75 )

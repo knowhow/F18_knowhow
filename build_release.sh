@@ -13,7 +13,7 @@ if [ "$OS_DARVIN" !=  "0" ]
 then
     OS=MacOSX
 else
-    echo "TODO: jos provjera za linux ?" 
+    echo "TODO: jos provjera za linux ?"
     OS=LinuxUbuntu
 fi
 
@@ -36,7 +36,7 @@ fi
 echo "pravim libs"
 ./build_lib_release.sh
 
-#cp hb_release.hbm hbmk.hbm
+cp hb_release.hbm hbmk.hbm
 hbmk2 -q -workdir=.r F18.hbp
 
 #ne treba mi rebuild poseban je direktorij u odnosu debug -rebuildall
@@ -55,7 +55,7 @@ hbmk2 -q -workdir=.r F18.hbp
 
 #echo $F18_REL
 
-#INSTALL_F_NAME=F18_${OS}_${F18_REL}_install.tar.bz2 
+#INSTALL_F_NAME=F18_${OS}_${F18_REL}_install.tar.bz2
 
 #echo kreiram $INSTALL_F_NAME
 

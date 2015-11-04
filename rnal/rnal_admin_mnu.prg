@@ -9,9 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "rnal.ch"
-
 
 FUNCTION rnal_mnu_admin()
 
@@ -25,4 +23,3 @@ FUNCTION rnal_mnu_admin()
    f18_menu( "administracija", .F., izbor, opc, opcexe )
 
    RETURN
-

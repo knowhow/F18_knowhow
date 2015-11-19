@@ -463,6 +463,7 @@ FUNCTION post_login( gVars )
       gVars := .T.
    ENDIF
 
+
    // ~/.F18/empty38/
    set_f18_home( my_server_params()[ "database" ] )
    log_write( "home baze: " + my_home() )
@@ -475,6 +476,7 @@ FUNCTION post_login( gVars )
    set_a_dbfs()
 
    cre_all_dbfs( _ver )
+altd()
    kreiraj_pa_napuni_partn_idbr_pdvb ()
 
    // inicijaliziraj "dbf_key_fields" u __f18_dbf hash matrici
@@ -847,7 +849,7 @@ FUNCTION my_server_login( params, conn_type )
       params[ "port" ], ;
       if( conn_type == 1, params[ "schema" ], "public" ) )
 
-   IF !_server:NetErr()
+   IF !( _server:NetErr() .AND. !EMPTY(_server:ErrorMsg()))
 
       my_server( _server )
 

@@ -50,10 +50,7 @@ FUNCTION set_sql_search_path()
    LOCAL _msg
 
    _result := _server:Query( _qry )
-   IF _result:NetErr()
-      _msg := _result:ErrorMsg()
-      // log_write( _qry, 2 )
-      // log_write( _msg, 2 )
+   IF (_result:NetErr()) .AND. !EMPTY(_result:ErrorMsg())
       MsgBeep( "ERR?! :" + _qry )
       RETURN .F.
    ELSE

@@ -60,17 +60,12 @@ FUNCTION run_sql_query( qry, retry )
 
       END SEQUENCE
 
-      IF _qry_obj:NetErr() 
+      IF _qry_obj:NetErr() .AND. !EMPTY(_qry_obj:ErrorMsg()) 
 
          cErrorMsg := "ERROR RUN_SQL_QRY: " + _qry_obj:ErrorMsg() + " QRY:" + qry
 
-         //IF lRestorePoint
-           // _qry_obj := _server:Query( "ROLLBACK TO " + cSavePointName + ";" )
-         //ENDIF
-
          IF _i == retry
             MsgC()
-            //notify_podrska( cErrorMsg )
             RETURN .F.
          ENDIF
 

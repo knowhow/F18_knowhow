@@ -250,3 +250,8 @@ STATIC FUNCTION set_menu_choices( menuop, menuexec, p3, p4, p5, p6, p7 )
    AAdd( menuexec, {|| vpn_support() } )
 
    RETURN
+
+
+FUNCTION hb_SendMail( ... )
+  RETURN tip_MailSend( ... )
+

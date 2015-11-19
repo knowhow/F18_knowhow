@@ -56,12 +56,12 @@ TEST_LINE(reccount(), 10*5)
 return
 
 
-// pomoćna funkcija za sql query izvršavanje
+// pomocna funkcija za sql query izvršavanje
 static function _sql_query_2( oServer, cQuery )
 local oResult, cMsg
 
 oResult := oServer:Query( cQuery )
-IF oResult:NetErr()
+IF oResult:NetErr() .AND. !EMPTY(oResult:ErrorMsg())
       cMsg := oResult:ErrorMsg()
       MsgBeep( cMsg )
       return .f.

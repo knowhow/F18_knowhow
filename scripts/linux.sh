@@ -7,6 +7,14 @@ export HB_VER=3.2.0-dev
 export QT_VER=5.4.0
 export PGSQL_VER=9.4.0-bdr
 
+
+if [ `which harbour ` == "/usr/local/bin/harbour" ] ; then
+   HB_LOCAL=1
+else
+   HB_LOCAL=0
+fi
+
+
 export HB_ROOT=$PLATFORM_ROOT/HB/$HB_VER
 export QT_ROOT=$PLATFORM_ROOT/QT/$QT_VER
 export PGSQL_ROOT=$PLATFORM_ROOT/PSQL/$PGSQL_VER
@@ -32,8 +40,14 @@ fi
 
 export HB_COMPILER=gcc
 
-export HB_INC_INSTALL=$HB_ROOT/include
-export HB_LIB_INSTALL=$HB_ROOT/lib
+if [ $HB_LOCAL -eq 1 ] ; then
+  unset HB_INSTALL_PREFIX
+  export HB_INC_INSTALL=/usr/local/include/harbour
+  export HB_LIB_INSTALL=/usr/local/lib/harbour
+else
+  export HB_INC_INSTALL=$HB_ROOT/include
+  export HB_LIB_INSTALL=$HB_ROOT/lib
+fi
 
 export INCLUDE=$HB_INC_INSTALL
 

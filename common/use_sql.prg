@@ -18,6 +18,7 @@
 
 
 REQUEST SDDPG, SQLMIX
+ANNOUNCE RDDSYS
 
 FUNCTION use_sql_sif( table, l_make_index )
 

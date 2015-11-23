@@ -229,6 +229,7 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
 
    log_write( "delete rec server, poceo", 9 )
 
+altd()
    IF lock
       lock_semaphore( table, "lock" )
    ENDIF

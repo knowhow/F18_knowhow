@@ -65,9 +65,6 @@ FUNCTION fprint_rn( dev_params, items, head, storno )
 
 
 
-
-
-
 // --------------------------------------------------
 // provjerava unos pologa, maksimalnu vrijednost
 // --------------------------------------------------
@@ -159,11 +156,11 @@ FUNCTION fprint_double( dev_params, rn_params )
       Box(, 10, 60 )
 
       SET CURSOR ON
-	
+
       @ m_x + 1, m_y + 2 SAY "Za datum od:" GET dD_from
       @ m_x + 1, Col() + 1 SAY "vrijeme od (hh:mm):" GET cTH_from
       @ m_x + 1, Col() SAY ":" GET cTM_from
-	
+
       @ m_x + 2, m_y + 2 SAY "         do:" GET dD_to
       @ m_x + 2, Col() + 1 SAY "vrijeme do (hh:mm):" GET cTH_to
       @ m_x + 2, Col() SAY ":" GET cTM_to
@@ -301,7 +298,7 @@ FUNCTION fprint_delete_plu( dev_params, silent )
    ENDIF
 
    IF !silent
-	
+
       IF !SIGMASIF( "RESET" )
          RETURN
       ENDIF
@@ -358,13 +355,13 @@ FUNCTION fprint_manual_cmd( dev_params )
    PRIVATE GetList := {}
 
    Box(, 4, 65 )
-	
+
    @ m_x + 1, m_y + 2 SAY8 "**** PROIZVOLJNE KOMANDE ****"
-	
+
    @ m_x + 2, m_y + 2 SAY "   broj komande:" GET nCmd PICT "999" ;
       VALID nCmd > 0
    @ m_x + 3, m_y + 2 SAY "        komanda:" GET cCond PICT "@S40"
-	
+
    @ m_x + 4, m_y + 2 SAY8 "provjera greške:" GET cErr PICT "@!" ;
       VALID cErr $ "DN"
    READ
@@ -493,7 +490,7 @@ FUNCTION fprint_daily_rpt( dev_params )
             RETURN
          ENDIF
       ENDIF
-	
+
       msgc()
       auto_plu( .T., .T., dev_params )
       msgbeep( "Stanje fiskalnog uređaja je nulirano." )
@@ -617,7 +614,7 @@ STATIC FUNCTION _fprint_rn( aData, aKupac, lStorno, params )
    cTmp += cSep
 
    IF lStorno == .T.
-	
+
       cRek_rn := AllTrim( aData[ 1, 8 ] )
       cTmp += cSep
       cTmp += cRek_rn
@@ -643,11 +640,11 @@ STATIC FUNCTION _fprint_rn( aData, aKupac, lStorno, params )
       cTmp += cLogSep
       cTmp += Replicate( "_", 2 )
       cTmp += cSep
-	
+
       // kod PLU
       cTmp += AllTrim( Str( aData[ i, 9 ] ) )
       cTmp += cSep
-	
+
       // kolicina 0-99999.999
       cTmp += AllTrim( Str( aData[ i, 6 ], 12, 3 ) )
       cTmp += cSep
@@ -660,7 +657,7 @@ STATIC FUNCTION _fprint_rn( aData, aKupac, lStorno, params )
 
       // dodaj u matricu prodaju...
       AAdd( aArr, { cTmp } )
-	
+
    NEXT
 
    // 3. subtotal
@@ -697,7 +694,7 @@ STATIC FUNCTION _fprint_rn( aData, aKupac, lStorno, params )
    // 3 - virman
 
    IF ( cVr_placanja <> "0" .AND. !lStorno ) .OR. ( cVr_placanja == "0" .AND. nTotal <> 0 .AND. !lStorno )
- 	
+
       // imamo drugu vrstu placanja...
       cTmp += cVr_placanja
       cTmp += cSep
@@ -716,7 +713,7 @@ STATIC FUNCTION _fprint_rn( aData, aKupac, lStorno, params )
    // radi zaokruzenja kod virmanskog placanja
    // salje se jos jedna linija 53 ali prazna
    IF cVr_placanja <> "0" .AND. !lStorno
-	
+
       cTmp := "53"
       cTmp += cLogSep
       cTmp += cLogic
@@ -750,11 +747,11 @@ STATIC FUNCTION _fprint_rn( aData, aKupac, lStorno, params )
       cTmp += cLogSep
       cTmp += Replicate( "_", 2 )
       cTmp += cSep
-	
+
       // 1. id broj
       cTmp += AllTrim( aKupac[ 1, 1 ] )
       cTmp += cSep
-	
+
       // 2. naziv
       cTmp += AllTrim( PadR( to_win1250_encoding( hb_StrToUTF8( aKupac[ 1, 2 ] ), _convert_852 ), 36 ) )
       cTmp += cSep
@@ -762,7 +759,7 @@ STATIC FUNCTION _fprint_rn( aData, aKupac, lStorno, params )
       // 3. adresa
       cTmp += AllTrim( PadR( to_win1250_encoding( hb_StrToUTF8( aKupac[ 1, 3 ] ), _convert_852 ), 36 ) )
       cTmp += cSep
-	
+
       // 4. ptt, mjesto
       cTmp += AllTrim( to_win1250_encoding( hb_StrToUTF8( aKupac[ 1, 4 ] ), _convert_852 ) ) + " " + ;
          AllTrim( to_win1250_encoding( hb_StrToUTF8( aKupac[ 1, 5 ] ), _convert_852 ) )
@@ -1047,7 +1044,7 @@ STATIC FUNCTION _fp_per_rpt( dD_from, dD_to )
    cTmp += cSep
    cTmp += cSep
    cTmp += cSep
-	
+
    AAdd( aArr, { cTmp } )
 
    RETURN aArr
@@ -1086,7 +1083,7 @@ STATIC FUNCTION _fp_sold_plu( cType )
    cTmp += cSep
    cTmp += cType
    cTmp += cSep
-	
+
    AAdd( aArr, { cTmp } )
 
    RETURN aArr
@@ -1140,7 +1137,7 @@ STATIC FUNCTION _fp_daily_rpt( cType )
       cTmp += cOper
       cTmp += cSep
    ENDIF
-	
+
    AAdd( aArr, { cTmp } )
 
    RETURN aArr
@@ -1186,7 +1183,7 @@ STATIC FUNCTION _fp_double( cType, dD_from, dD_to, cT_from, cT_to )
    cTmp += cSep
    cTmp += cParam
    cTmp += cSep
-	
+
    AAdd( aArr, { cTmp } )
 
    RETURN aArr
@@ -1221,7 +1218,7 @@ STATIC FUNCTION _fp_polog( nIznos )
    cTmp += cSep
    cTmp += cZnak + AllTrim( Str( nIznos ) )
    cTmp += cSep
-	
+
    AAdd( aArr, { cTmp } )
 
    RETURN aArr
@@ -1250,7 +1247,7 @@ STATIC FUNCTION _fp_void_rn()
    cTmp += cLogSep
    cTmp += Replicate( "_", 2 )
    cTmp += cSep
-	
+
    AAdd( aArr, { cTmp } )
 
    RETURN aArr
@@ -1282,9 +1279,9 @@ STATIC FUNCTION _a_fp_articles( aArr, aData, lStorno, dev_params )
    cLogic := "1"
 
    FOR i := 1 TO Len( aData )
-	
+
       // 1. dodavanje artikla u printer
-	
+
       cTmp := "107"
       cTmp += cLogSep
       cTmp += cLogic
@@ -1295,15 +1292,15 @@ STATIC FUNCTION _a_fp_articles( aArr, aData, lStorno, dev_params )
       cTmp += cLogSep
       cTmp += Replicate( "_", 2 )
       cTmp += cSep
-	
+
       // opcija dodavanja "2"
       cTmp += cOp_add
       cTmp += cSep
-	
+
       // poreska stopa
       cTmp += fiscal_txt_get_tarifa( aData[ i, 7 ], dev_params[ "pdv" ], "FPRINT" )
       cTmp += cSep
-	
+
       // plu kod
       cTmp += AllTrim( Str( aData[ i, 9 ] ) )
       cTmp += cSep
@@ -1311,15 +1308,15 @@ STATIC FUNCTION _a_fp_articles( aArr, aData, lStorno, dev_params )
       // plu cijena
       cTmp += AllTrim( Str( aData[ i, 10 ], 12, 2 ) )
       cTmp += cSep
-	
+
       // plu naziv
       cTmp += to_win1250_encoding( AllTrim( PadR( hb_StrToUTF8( aData[ i, 4 ] ), 32 ) ), _convert_852 )
       cTmp += cSep
 
       AAdd( aArr, { cTmp } )
-	
+
       // 2. dodavanje stavke promjena cijene - ako postoji
-	
+
       cTmp := "107"
       cTmp += cLogSep
       cTmp += cLogic
@@ -1330,15 +1327,15 @@ STATIC FUNCTION _a_fp_articles( aArr, aData, lStorno, dev_params )
       cTmp += cLogSep
       cTmp += Replicate( "_", 2 )
       cTmp += cSep
-	
+
       // opcija dodavanja "4"
       cTmp += cOp_ch
       cTmp += cSep
-	
+
       // plu kod
       cTmp += AllTrim( Str( aData[ i, 9 ] ) )
       cTmp += cSep
-	
+
       // plu cijena
       cTmp += AllTrim( Str( aData[ i, 10 ], 12, 2 ) )
       cTmp += cSep
@@ -1438,14 +1435,14 @@ FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
       " : " + PadR( dev_params[ "name" ], 40 )
 
    DO WHILE _time > 0
-	
+
       -- _time
 
       @ m_x + 3, m_y + 2 SAY8 PadR( "Čekam odgovor fiskalnog uređaja: " + AllTrim( Str( _time ) ), 48 )
 
       Sleep( 1 )
 
-#ifdef TEST 
+#ifdef TEST
       IF .T.
 #else
       IF File( _f_name )
@@ -1493,14 +1490,14 @@ FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
    _tmp := ""
 
    WHILE _o_file:MoreToRead()
-	
+
       _err_line := hb_StrToUTF8( _o_file:ReadLine() )
       _tmp += _err_line + " ## "
 
       IF ( "107,1," + _serial ) $ _err_line
          LOOP
       ENDIF
-	
+
       // ovu liniju zapamti, sadrzi fiskalni racun broj
       // komanda 56, zatvaranje racuna
       IF ( "56,1," + _serial ) $ _err_line
@@ -1516,11 +1513,11 @@ FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
          MsgBeep( _err_tmp )
 
          _err_level := nivo_greske_na_osnovu_odgovora( _err_line )
- 
+
          RETURN _err_level
 
       ENDIF
-	
+
    ENDDO
 
    _o_file:Close()
@@ -1542,21 +1539,21 @@ FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
 
    Usage: nivo_greske_na_osnovu_odgovora( line ) => 1
 
-   Parameters: 
-     line - sekvenca iz fajla odgovora sa ERR markerom "55,1,1000123;ERR;" 
+   Parameters:
+     line - sekvenca iz fajla odgovora sa ERR markerom "55,1,1000123;ERR;"
 
    Return:
      2 - u slučaju greške na liniji 55
      1 - u slučaju bilo koje druge greške
 */
 STATIC FUNCTION nivo_greske_na_osnovu_odgovora( line )
-   
+
    LOCAL nLevel := 1
 
    DO CASE
    CASE "55,1," $ line
       nLevel := 2
-   ENDCASE 
+   ENDCASE
 
    RETURN nLevel
 

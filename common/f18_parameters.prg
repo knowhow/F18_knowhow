@@ -90,7 +90,7 @@ FUNCTION f18_app_parameters( just_set )
       @ _pos_x + _x, Col() + 1 SAY "ePDV:" GET _epdv PICT "@!"
       @ _pos_x + _x, Col() + 1 SAY "LD:" GET _ld PICT "@!"
       @ _pos_x + _x, Col() + 1 SAY "VIRM:" GET _virm PICT "@!"
-	
+
       ++ _x
       @ _pos_x + _x, _pos_y SAY Space( 2 ) + "OS/SII:" GET _os PICT "@!"
       @ _pos_x + _x, Col() + 1 SAY "POS:" GET _pos PICT "@!"
@@ -136,7 +136,7 @@ FUNCTION f18_app_parameters( just_set )
       ++ _x
 
       @ _pos_x + _x, _pos_y SAY "Brisi stavke log tabele starije od broja dana (def. 30):" GET _log_delete_interval PICT "9999"
-	
+
       ++ _x
       ++ _x
 
@@ -145,7 +145,7 @@ FUNCTION f18_app_parameters( just_set )
       ++ _x
 
       @ _pos_x + _x, _pos_y SAY "Automatski backup podataka preduzeca (interval dana 0 - ne radi nista):" GET _backup_company PICT "999"
-	
+
       ++ _x
 
       @ _pos_x + _x, _pos_y SAY "Automatski backup podataka servera (interval 0 - ne radi nista):" GET _backup_server PICT "999"
@@ -155,7 +155,7 @@ FUNCTION f18_app_parameters( just_set )
       @ _pos_x + _x, _pos_y SAY "Remote backup lokacija:" GET _backup_removable PICT "@S60"
 
 #ifdef __PLATFORM__WINDOWS
-	
+
       ++ _x
       @ _pos_x + _x, _pos_y SAY "Ping time kod backup komande:" GET _backup_ping_time PICT "99"
 
@@ -169,7 +169,7 @@ FUNCTION f18_app_parameters( just_set )
       ++ _x
 
       @ _pos_x + _x, _pos_y SAY "Duzina stranice za izvjestaje ( def: 60 ):" GET _rpt_page_len PICT "999"
-	
+
       ++ _x
 
       @ _pos_x + _x, _pos_y SAY "BUG report na email (D/N/A/0):" GET _bug_report PICT "!@" VALID _bug_report $ "DNA0"
@@ -273,7 +273,7 @@ FUNCTION f18_set_use_module( module_name, lset )
       lset := .T.
    ENDIF
 
-   IF lset 
+   IF lset
       _set := "D"
    ENDIF
 
@@ -336,7 +336,7 @@ FUNCTION f18_set_active_modules()
    @ m_x + _x, Col() + 1 SAY PadL( "ePDV:", _len ) GET _epdv PICT "@!"
    @ m_x + _x, Col() + 1 SAY PadL( "LD:", _len ) GET _ld PICT "@!"
    @ m_x + _x, Col() + 1 SAY PadL( "VIRM:", _len ) GET _virm PICT "@!"
-	
+
    ++ _x
    ++ _x
 

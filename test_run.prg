@@ -45,7 +45,7 @@ _cmd := "start f18_editor.cmd c:\Documents and Settings\hbakir\.f18\bringout_201
 _cmd := "copy test_run.xprg test_copy.txt"
 _cmd := 'echo f18_test2 > "%HOME%\test copy.txt"'
 
-? "run" 
+? "run"
 
 
 _stderr := ""

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,11 +12,11 @@
 
 #include "fmk.ch"
 
-static _razmak1 := " "
-static _nema_out := -20
-static __zahtjev_nula := "0"
+STATIC _razmak1 := " "
+STATIC _nema_out := -20
+STATIC __zahtjev_nula := "0"
 
-// fiskalne funkcije TREMOL fiskalizacije 
+// fiskalne funkcije TREMOL fiskalizacije
 
 
 // struktura matrice aData
@@ -39,7 +39,7 @@ static __zahtjev_nula := "0"
 // aData[16] - roba jmj
 
 // struktura matrice aKupac
-// 
+//
 // aKupac[1] - idbroj kupca
 // aKupac[2] - naziv
 // aKupac[3] - adresa
@@ -50,262 +50,264 @@ static __zahtjev_nula := "0"
 // --------------------------------------------------------------------------
 // stampa fiskalnog racuna tring fiskalizacija
 // --------------------------------------------------------------------------
-function tremol_rn( dev_params, items, head, storno, cont )
-local _racun_broj, _vr_plac, _total_plac, _xml, _i
-local _reklamni_broj, _kolicina, _cijena, _rabat
-local _art_id, _art_naz, _art_jmj, _tmp, _art_barkod, _art_plu, _dep, _tarifa
-local _customer := .f.
-local _err_level := 0
-local _oper := ""
-local _cmd := ""
-local _cust_id, _cust_name, _cust_addr, _cust_city
-local _fiscal_no := 0
+FUNCTION tremol_rn( dev_params, items, head, storno, cont )
 
-// pobrisi tmp fajlove i ostalo sto je u input direktoriju
-tremol_delete_tmp( dev_params )
+   LOCAL _racun_broj, _vr_plac, _total_plac, _xml, _i
+   LOCAL _reklamni_broj, _kolicina, _cijena, _rabat
+   LOCAL _art_id, _art_naz, _art_jmj, _tmp, _art_barkod, _art_plu, _dep, _tarifa
+   LOCAL _customer := .F.
+   LOCAL _err_level := 0
+   LOCAL _oper := ""
+   LOCAL _cmd := ""
+   LOCAL _cust_id, _cust_name, _cust_addr, _cust_city
+   LOCAL _fiscal_no := 0
 
-if cont == nil
-	cont := "0"
-endif
+   // pobrisi tmp fajlove i ostalo sto je u input direktoriju
+   tremol_delete_tmp( dev_params )
 
-// ima podataka kupca !
-if head <> NIL .and. LEN( head ) > 0
-	_customer := .t.
-endif
+   IF cont == nil
+      cont := "0"
+   ENDIF
 
-// to je zapravo broj racuna !!!
-_racun_broj := items[ 1, 1 ]
+   // ima podataka kupca !
+   IF head <> NIL .AND. Len( head ) > 0
+      _customer := .T.
+   ENDIF
 
-_f_name := fiscal_out_filename( dev_params["out_file"], _racun_broj )
+   // to je zapravo broj racuna !!!
+   _racun_broj := items[ 1, 1 ]
 
-// putanja do izlaznog xml fajla
-_xml := dev_params["out_dir"] + _f_name
+   _f_name := fiscal_out_filename( dev_params[ "out_file" ], _racun_broj )
 
-// otvori xml
-open_xml( _xml )
+   // putanja do izlaznog xml fajla
+   _xml := dev_params[ "out_dir" ] + _f_name
 
-// upisi header
-xml_head()
+   // otvori xml
+   open_xml( _xml )
 
-_fisc_txt := 'TremolFpServer Command="Receipt"'
-_fisc_rek_txt := ''
-_fisc_cust_txt := ''
+   // upisi header
+   xml_head()
 
-if cont == "1"
-	_fisc_txt += ' Continue="' + cont + '"'
-endif
+   _fisc_txt := 'TremolFpServer Command="Receipt"'
+   _fisc_rek_txt := ''
+   _fisc_cust_txt := ''
 
-// ukljuci storno triger
-if storno
-	_fisc_rek_txt := ' RefundReceipt="' + ALLTRIM( items[ 1, 8 ] ) + '"'
-endif
+   IF cont == "1"
+      _fisc_txt += ' Continue="' + cont + '"'
+   ENDIF
 
-// ukljuci kupac triger
-if _customer
-	
-    // aKupac[1] - idbroj kupca
-	// aKupac[2] - naziv
-	// aKupac[3] - adresa
-	// aKupac[4] - postanski broj
-	// aKupac[5] - grad stanovanja
+   // ukljuci storno triger
+   IF storno
+      _fisc_rek_txt := ' RefundReceipt="' + AllTrim( items[ 1, 8 ] ) + '"'
+   ENDIF
 
-	_cust_id := ALLTRIM( head[ 1, 1 ] )
-	_cust_name := to_xml_encoding( ALLTRIM( head[ 1, 2 ] ) )
-	_cust_addr := to_xml_encoding( ALLTRIM( head[ 1, 3 ] ) )
-	_cust_city := to_xml_encoding( ALLTRIM( head[ 1, 5 ] ) )
+   // ukljuci kupac triger
+   IF _customer
 
-	_fisc_cust_txt += _razmak1 + 'CompanyID="' + _cust_id + '"'
-	_fisc_cust_txt += _razmak1 + 'CompanyName="' + _cust_name + '"'
-	_fisc_cust_txt += _razmak1 + 'CompanyHQ="' + _cust_city + '"'
-	_fisc_cust_txt += _razmak1 + 'CompanyAddress="' + _cust_addr + '"'
-	_fisc_cust_txt += _razmak1 + 'CompanyCity="' + _cust_city + '"'
+      // aKupac[1] - idbroj kupca
+      // aKupac[2] - naziv
+      // aKupac[3] - adresa
+      // aKupac[4] - postanski broj
+      // aKupac[5] - grad stanovanja
 
-endif
+      _cust_id := AllTrim( head[ 1, 1 ] )
+      _cust_name := to_xml_encoding( AllTrim( head[ 1, 2 ] ) )
+      _cust_addr := to_xml_encoding( AllTrim( head[ 1, 3 ] ) )
+      _cust_city := to_xml_encoding( AllTrim( head[ 1, 5 ] ) )
 
-// ubaci u xml
-xml_subnode( _fisc_txt + _fisc_rek_txt + _fisc_cust_txt )
-  
-_total_plac := 0
-    
-for _i := 1 to LEN( items )
+      _fisc_cust_txt += _razmak1 + 'CompanyID="' + _cust_id + '"'
+      _fisc_cust_txt += _razmak1 + 'CompanyName="' + _cust_name + '"'
+      _fisc_cust_txt += _razmak1 + 'CompanyHQ="' + _cust_city + '"'
+      _fisc_cust_txt += _razmak1 + 'CompanyAddress="' + _cust_addr + '"'
+      _fisc_cust_txt += _razmak1 + 'CompanyCity="' + _cust_city + '"'
 
-	_art_plu := items[ _i, 9 ]
-	_art_barkod := items[ _i, 12 ]
-	_art_id := items[ _i, 3 ]
-	_art_naz := PADR( items[ _i, 4 ], 32 )
-	_art_jmj := _g_jmj( items[ _i, 16 ] )
-	_cijena := items[ _i, 5 ]
-	_kolicina := items[ _i, 6 ]
-	_rabat := items[ _i, 11 ]
-	_tarifa := fiscal_txt_get_tarifa( items[ _i, 7 ], dev_params["pdv"], "TREMOL" )
-	_dep := "1"
-	
-    _tmp := ""
+   ENDIF
 
-	// naziv artikla
-	_tmp += _razmak1 + 'Description="' + to_xml_encoding( _art_naz ) + '"'
-	//  kolicina artikla 
-	_tmp += _razmak1 + 'Quantity="' + ALLTRIM( STR( _kolicina, 12, 3 )) + '"'
-	// cijena artikla
-	_tmp += _razmak1 + 'Price="' + ALLTRIM( STR( _cijena, 12, 2 )) + '"'
-	// poreska stopa
-	_tmp += _razmak1 + 'VatInfo="' + _tarifa + '"'
-	// odjeljenje
-	_tmp += _razmak1 + 'Department="' + _dep + '"'
-	// jedinica mjere
-	_tmp += _razmak1 + 'UnitName="' + _art_jmj + '"'
-	
-	if _rabat > 0
-		// vrijednost popusta
-		_tmp += _razmak1 + 'Discount="' + ALLTRIM( STR( _rabat, 12, 2 ) ) + '%"'
-	endif
+   // ubaci u xml
+   xml_subnode( _fisc_txt + _fisc_rek_txt + _fisc_cust_txt )
 
-	xml_snode( "Item", _tmp )
-	
-    next
+   _total_plac := 0
 
-    // vrste placanja, oznaka:
-    //   "GOTOVINA"
-    //   "CEK"
-    //   "VIRMAN"
-    //   "KARTICA"
+   FOR _i := 1 TO Len( items )
 
-    _vr_plac := fiscal_txt_get_vr_plac( items[1, 13], "TREMOL" )
-    _total_plac := items[ 1, 14 ]
+      _art_plu := items[ _i, 9 ]
+      _art_barkod := items[ _i, 12 ]
+      _art_id := items[ _i, 3 ]
+      _art_naz := PadR( items[ _i, 4 ], 32 )
+      _art_jmj := _g_jmj( items[ _i, 16 ] )
+      _cijena := items[ _i, 5 ]
+      _kolicina := items[ _i, 6 ]
+      _rabat := items[ _i, 11 ]
+      _tarifa := fiscal_txt_get_tarifa( items[ _i, 7 ], dev_params[ "pdv" ], "TREMOL" )
+      _dep := "1"
 
-    if items[ 1, 13 ] <> "0" .and. !storno
+      _tmp := ""
 
-    	_tmp := 'Type="' + _vr_plac + '"'
-    	_tmp += _razmak1 + 'Amount="' + ALLTRIM( STR( _total_plac, 12, 2 )) + '"'
+      // naziv artikla
+      _tmp += _razmak1 + 'Description="' + to_xml_encoding( _art_naz ) + '"'
+      // kolicina artikla
+      _tmp += _razmak1 + 'Quantity="' + AllTrim( Str( _kolicina, 12, 3 ) ) + '"'
+      // cijena artikla
+      _tmp += _razmak1 + 'Price="' + AllTrim( Str( _cijena, 12, 2 ) ) + '"'
+      // poreska stopa
+      _tmp += _razmak1 + 'VatInfo="' + _tarifa + '"'
+      // odjeljenje
+      _tmp += _razmak1 + 'Department="' + _dep + '"'
+      // jedinica mjere
+      _tmp += _razmak1 + 'UnitName="' + _art_jmj + '"'
 
-    	xml_snode( "Payment", _tmp )	
+      IF _rabat > 0
+         // vrijednost popusta
+         _tmp += _razmak1 + 'Discount="' + AllTrim( Str( _rabat, 12, 2 ) ) + '%"'
+      ENDIF
 
-    endif
+      xml_snode( "Item", _tmp )
 
-    // dodatna linija, broj veznog racuna
-    _tmp := 'Message="Vezni racun: ' + _racun_broj + '"'
+   NEXT
 
-    xml_snode( "AdditionalLine", _tmp )	
+   // vrste placanja, oznaka:
+   // "GOTOVINA"
+   // "CEK"
+   // "VIRMAN"
+   // "KARTICA"
 
-xml_subnode("TremolFpServer", .t.)
+   _vr_plac := fiscal_txt_get_vr_plac( items[ 1, 13 ], "TREMOL" )
+   _total_plac := items[ 1, 14 ]
 
-close_xml()
+   IF items[ 1, 13 ] <> "0" .AND. !storno
 
-return _err_level
+      _tmp := 'Type="' + _vr_plac + '"'
+      _tmp += _razmak1 + 'Amount="' + AllTrim( Str( _total_plac, 12, 2 ) ) + '"'
 
+      xml_snode( "Payment", _tmp )
 
+   ENDIF
+
+   // dodatna linija, broj veznog racuna
+   _tmp := 'Message="Vezni racun: ' + _racun_broj + '"'
+
+   xml_snode( "AdditionalLine", _tmp )
+
+   xml_subnode( "TremolFpServer", .T. )
+
+   close_xml()
+
+   RETURN _err_level
 
 
 // --------------------------------------------------
 // restart tremol fp server
 // --------------------------------------------------
-function tremol_restart( dev_params )
-local _scr
-private _script
+FUNCTION tremol_restart( dev_params )
 
-if dev_params["restart_service"] == "N"
-	return .f.
-endif
+   LOCAL _scr
+   PRIVATE _script
 
-_script := "start " + EXEPATH + "fp_rest.bat"
+   IF dev_params[ "restart_service" ] == "N"
+      RETURN .F.
+   ENDIF
 
-save screen to _scr
-clear screen
+   _script := "start " + EXEPATH + "fp_rest.bat"
 
-? "Restartujem server..."
-_err := f18_run( _scrtip )
+   SAVE SCREEN TO _scr
+   CLEAR SCREEN
 
-restore screen from _scr
-return .f.
+   ? "Restartujem server..."
+   _err := f18_run( _scrtip )
 
+   RESTORE SCREEN FROM _scr
+
+   RETURN .F.
 
 // ----------------------------------------------
 // brise fajlove iz ulaznog direktorija
 // ----------------------------------------------
-function tremol_delete_tmp( dev_param )
-local _tmp
-local _f_path
+FUNCTION tremol_delete_tmp( dev_param )
 
-msgo("brisem tmp fajlove...")
+   LOCAL _tmp
+   LOCAL _f_path
 
-_f_path := dev_param["out_dir"]
-_tmp := "*.*"
+   msgo( "brisem tmp fajlove..." )
 
-AEVAL( DIRECTORY( _f_path + _tmp ), {| aFile | FERASE( _f_path + ;
-	ALLTRIM( aFile[1]) ) })
+   _f_path := dev_param[ "out_dir" ]
+   _tmp := "*.*"
 
-sleep(1)
+   AEval( Directory( _f_path + _tmp ), {| aFile | FErase( _f_path + ;
+      AllTrim( aFile[ 1 ] ) ) } )
 
-msgc()
+   Sleep( 1 )
 
-return
+   msgc()
+
+   RETURN
 
 
 
 
 // -------------------------------------------------------------------
 // -------------------------------------------------------------------
-function tremol_polog( dev_params, auto )
-local _xml
-local _err := 0
-local _cmd := ""
-local _f_name
-local _value := 0
+FUNCTION tremol_polog( dev_params, auto )
 
-if auto == NIL
-    auto := .f.
-endif
+   LOCAL _xml
+   LOCAL _err := 0
+   LOCAL _cmd := ""
+   LOCAL _f_name
+   LOCAL _value := 0
 
-if auto
-    _value := dev_params["auto_avans"]
-endif
+   IF auto == NIL
+      auto := .F.
+   ENDIF
 
-if _value = 0
-    
-    // box - daj iznos pologa
-    
-    Box(,1, 60)
-	    @ m_x + 1, m_y + 2 SAY "Unosim polog od:" GET _value PICT "9999999.99"
-	    read
-    BoxC()
+   IF auto
+      _value := dev_params[ "auto_avans" ]
+   ENDIF
 
-    if LastKey() == K_ESC .or. _value = 0
-	    return
-    endif
+   IF _value = 0
 
-endif
+      // box - daj iznos pologa
 
-if _value < 0
-	// polog komanda
-	_cmd := 'Command="CashOut"'
-else
-	// polog komanda
-	_cmd := 'Command="CashIn"'
-endif
+      Box(, 1, 60 )
+      @ m_x + 1, m_y + 2 SAY "Unosim polog od:" GET _value PICT "9999999.99"
+      READ
+      BoxC()
 
-// izlazni fajl
-_f_name := fiscal_out_filename( dev_params["out_file"], __zahtjev_nula )
+      IF LastKey() == K_ESC .OR. _value = 0
+         RETURN
+      ENDIF
 
-// putanja do izlaznog xml fajla
-_xml := dev_params["out_dir"] + _f_name
+   ENDIF
 
-// otvori xml
-open_xml( _xml )
+   IF _value < 0
+      // polog komanda
+      _cmd := 'Command="CashOut"'
+   ELSE
+      // polog komanda
+      _cmd := 'Command="CashIn"'
+   ENDIF
 
-// upisi header
-xml_head()
+   // izlazni fajl
+   _f_name := fiscal_out_filename( dev_params[ "out_file" ], __zahtjev_nula )
 
-xml_subnode("TremolFpServer " + _cmd )
+   // putanja do izlaznog xml fajla
+   _xml := dev_params[ "out_dir" ] + _f_name
 
-_cmd := 'Amount="' +  ALLTRIM( STR( ABS( _value ), 12, 2 ) ) + '"'
+   // otvori xml
+   open_xml( _xml )
 
-xml_snode("Cash", _cmd )
+   // upisi header
+   xml_head()
 
-xml_subnode("/TremolFpServer")
+   xml_subnode( "TremolFpServer " + _cmd )
 
-close_xml()
+   _cmd := 'Amount="' +  AllTrim( Str( Abs( _value ), 12, 2 ) ) + '"'
 
-return _err
+   xml_snode( "Cash", _cmd )
+
+   xml_subnode( "/TremolFpServer" )
+
+   close_xml()
+
+   RETURN _err
 
 
 
@@ -313,241 +315,256 @@ return _err
 // -------------------------------------------------------------------
 // tremol reset artikala
 // -------------------------------------------------------------------
-function tremol_reset_plu( dev_params )
-local _xml
-local _err := 0
-local _cmd := ""
+FUNCTION tremol_reset_plu( dev_params )
 
-if !SigmaSif("RPLU")
-	return 0
-endif
+   LOCAL _xml
+   LOCAL _err := 0
+   LOCAL _cmd := ""
 
-_f_name := fiscal_out_filename( dev_params["out_file"], __zahtjev_nula )
+   IF !SigmaSif( "RPLU" )
+      RETURN 0
+   ENDIF
 
-// putanja do izlaznog xml fajla
-_xml := dev_params["out_dir"] + _f_name
+   _f_name := fiscal_out_filename( dev_params[ "out_file" ], __zahtjev_nula )
 
-// otvori xml
-open_xml( _xml )
+   // putanja do izlaznog xml fajla
+   _xml := dev_params[ "out_dir" ] + _f_name
 
-// upisi header
-xml_head()
+   // otvori xml
+   open_xml( _xml )
 
-_cmd := 'Command="DirectIO"'
+   // upisi header
+   xml_head()
 
-xml_subnode("TremolFpServer " + _cmd )
+   _cmd := 'Command="DirectIO"'
 
-_cmd := 'Command="1"'
-_cmd += _razmak1 + 'Data="0"'
-_cmd += _razmak1 + 'Object="K00000;F142HZ              ;0;$"'
+   xml_subnode( "TremolFpServer " + _cmd )
 
-xml_snode("DirectIO", _cmd )
+   _cmd := 'Command="1"'
+   _cmd += _razmak1 + 'Data="0"'
+   _cmd += _razmak1 + 'Object="K00000;F142HZ              ;0;$"'
 
-xml_subnode("/TremolFpServer")
+   xml_snode( "DirectIO", _cmd )
 
-close_xml()
+   xml_subnode( "/TremolFpServer" )
 
-if tremol_read_out( dev_params, _f_name )
-	_err := tremol_read_error( dev_params, _f_name ) 
-endif
+   close_xml()
 
-return _err
+   IF tremol_read_out( dev_params, _f_name )
+      _err := tremol_read_error( dev_params, _f_name )
+   ENDIF
+
+   RETURN _err
 
 
 
 // -------------------------------------------------------------------
 // tremol komanda
 // -------------------------------------------------------------------
-function tremol_cmd( dev_params, cmd )
-local _xml
-local _err := 0
-local _f_name 
+FUNCTION tremol_cmd( dev_params, cmd )
 
-_f_name := fiscal_out_filename( dev_params["out_file"], __zahtjev_nula )
+   LOCAL _xml
+   LOCAL _err := 0
+   LOCAL _f_name
 
-// putanja do izlaznog xml fajla
-_xml := dev_params["out_dir"] + _f_name
+   _f_name := fiscal_out_filename( dev_params[ "out_file" ], __zahtjev_nula )
 
-// otvori xml
-open_xml( _xml )
+   // putanja do izlaznog xml fajla
+   _xml := dev_params[ "out_dir" ] + _f_name
 
-// upisi header
-xml_head()
+   // otvori xml
+   open_xml( _xml )
 
-xml_subnode("TremolFpServer " + cmd )
+   // upisi header
+   xml_head()
 
-close_xml()
+   xml_subnode( "TremolFpServer " + cmd )
 
-// provjeri greske...
-if tremol_read_out( dev_params, _f_name )
-	// procitaj poruku greske
-	_err := tremol_read_error( dev_params, _f_name ) 
-else
-	_err := _nema_out
-endif
+   close_xml()
 
-return _err
+   // provjeri greske...
+   IF tremol_read_out( dev_params, _f_name )
+      // procitaj poruku greske
+      _err := tremol_read_error( dev_params, _f_name )
+   ELSE
+      _err := _nema_out
+   ENDIF
+
+   RETURN _err
 
 
 
 // ------------------------------------------
 // vraca jedinicu mjere
 // ------------------------------------------
-static function _g_jmj( jmj )
-local _ret := ""
+STATIC FUNCTION _g_jmj( jmj )
 
-do case
-	
-    case UPPER(ALLTRIM(jmj)) = "LIT"
-		_ret := "l"
-	case UPPER(ALLTRIM(jmj)) = "GR"
-		_ret := "g"
-	case UPPER(ALLTRIM(jmj)) = "KG"
-		_ret := "kg"
+   LOCAL _ret := ""
 
-endcase
+   DO CASE
 
-return _ret
+   CASE Upper( AllTrim( jmj ) ) = "LIT"
+      _ret := "l"
+   CASE Upper( AllTrim( jmj ) ) = "GR"
+      _ret := "g"
+   CASE Upper( AllTrim( jmj ) ) = "KG"
+      _ret := "kg"
+
+   ENDCASE
+
+   RETURN _ret
 
 
 
 // -----------------------------------------------------
 // ItemZ
 // -----------------------------------------------------
-function tremol_z_item( dev_param )
-local _cmd, _err
-_cmd := 'Command="Report" Type="ItemZ" /'
-_err := tremol_cmd( dev_param, _cmd )
-return _err
+FUNCTION tremol_z_item( dev_param )
+
+   LOCAL _cmd, _err
+
+   _cmd := 'Command="Report" Type="ItemZ" /'
+   _err := tremol_cmd( dev_param, _cmd )
+
+   RETURN _err
 
 
 // -----------------------------------------------------
 // ItemX
 // -----------------------------------------------------
-function tremol_x_item( dev_param )
-local _cmd
-_cmd := 'Command="Report" Type="ItemX" /'
-_err := tremol_cmd( dev_param, _cmd )
-return _err
+FUNCTION tremol_x_item( dev_param )
+
+   LOCAL _cmd
+
+   _cmd := 'Command="Report" Type="ItemX" /'
+   _err := tremol_cmd( dev_param, _cmd )
+
+   RETURN _err
 
 
 // -----------------------------------------------------
 // dnevni fiskalni izvjestaj
 // -----------------------------------------------------
-function tremol_z_rpt( dev_param )
-local _cmd
-local _err
-local _param_date, _param_time 
-local _rpt_type := "Z"
+FUNCTION tremol_z_rpt( dev_param )
 
-if Pitanje(,"Stampati dnevni izvjestaj", "D") == "N"
-	return
-endif
+   LOCAL _cmd
+   LOCAL _err
+   LOCAL _param_date, _param_time
+   LOCAL _rpt_type := "Z"
 
-_param_date := "zadnji_" + _rpt_type + "_izvjestaj_datum"
-_param_time := "zadnji_" + _rpt_type + "_izvjestaj_vrijeme"
+   IF Pitanje(, "Stampati dnevni izvjestaj", "D" ) == "N"
+      RETURN
+   ENDIF
 
-// iscitaj zadnje formirane izvjestaje...
-_last_date := fetch_metric( _param_date, NIL, CTOD("") )
-_last_time := PADR( fetch_metric( _param_time, NIL, "" ), 5 )
+   _param_date := "zadnji_" + _rpt_type + "_izvjestaj_datum"
+   _param_time := "zadnji_" + _rpt_type + "_izvjestaj_vrijeme"
 
-if DATE() == _last_date
-    MsgBeep( "Zadnji dnevni izvjestaj radjen " + DTOC( _last_date) + " u " + _last_time )
-endif
+   // iscitaj zadnje formirane izvjestaje...
+   _last_date := fetch_metric( _param_date, NIL, CToD( "" ) )
+   _last_time := PadR( fetch_metric( _param_time, NIL, "" ), 5 )
 
-_cmd := 'Command="Report" Type="DailyZ" /'
-_err := tremol_cmd( dev_param, _cmd )
+   IF Date() == _last_date
+      MsgBeep( "Zadnji dnevni izvjestaj radjen " + DToC( _last_date ) + " u " + _last_time )
+   ENDIF
 
-// upisi zadnji dnevni izvjestaj
-set_metric( _param_date, NIL, DATE() )
-set_metric( _param_time, NIL, TIME() )
+   _cmd := 'Command="Report" Type="DailyZ" /'
+   _err := tremol_cmd( dev_param, _cmd )
 
-// ako se koristi opcija automatskog pologa
-if dev_param["auto_avans"] > 0
-	
-	msgo("Automatski unos pologa u uredjaj... sacekajte.")
-	
-	// daj mi malo prostora
-	sleep(10)
-	
-	// pozovi opciju pologa
-	_err := tremol_polog( dev_param, .t. )
-	
-	msgc()
+   // upisi zadnji dnevni izvjestaj
+   set_metric( _param_date, NIL, Date() )
+   set_metric( _param_time, NIL, Time() )
 
-endif
+   // ako se koristi opcija automatskog pologa
+   IF dev_param[ "auto_avans" ] > 0
 
-return _err
+      msgo( "Automatski unos pologa u uredjaj... sacekajte." )
+
+      // daj mi malo prostora
+      Sleep( 10 )
+
+      // pozovi opciju pologa
+      _err := tremol_polog( dev_param, .T. )
+
+      msgc()
+
+   ENDIF
+
+   RETURN _err
 
 
 // -----------------------------------------------------
 // presjek stanja
 // -----------------------------------------------------
-function tremol_x_rpt( dev_param )
-local _cmd
-local _err
-_cmd := 'Command="Report" Type="DailyX" /'
-_err := tremol_cmd( dev_param, _cmd )
-return
+FUNCTION tremol_x_rpt( dev_param )
+
+   LOCAL _cmd
+   LOCAL _err
+
+   _cmd := 'Command="Report" Type="DailyX" /'
+   _err := tremol_cmd( dev_param, _cmd )
+
+   RETURN
 
 
 // -----------------------------------------------------
 // periodicni izvjestaj
 // -----------------------------------------------------
-function tremol_per_rpt( dev_param )
-local _cmd, _err
-local _start
-local _end
-local _date_start := DATE()-30
-local _date_end := DATE()
+FUNCTION tremol_per_rpt( dev_param )
 
-if Pitanje(,"Stampati periodicni izvjestaj", "D") == "N"
-	return
-endif
+   LOCAL _cmd, _err
+   LOCAL _start
+   LOCAL _end
+   LOCAL _date_start := Date() -30
+   LOCAL _date_end := Date()
 
-Box(,1,60)
-	@ m_x+1, m_y+2 SAY "Od datuma:" GET _date_start
-	@ m_x+1, col()+1 SAY "do datuma:" GET _date_end
-	read
-BoxC()
+   IF Pitanje(, "Stampati periodicni izvjestaj", "D" ) == "N"
+      RETURN
+   ENDIF
 
-if LastKey() == K_ESC
-	return
-endif
+   Box(, 1, 60 )
+   @ m_x + 1, m_y + 2 SAY "Od datuma:" GET _date_start
+   @ m_x + 1, Col() + 1 SAY "do datuma:" GET _date_end
+   READ
+   BoxC()
 
-// 2010-10-01 : YYYY-MM-DD je format datuma
-_start := _tfix_date( _date_start )
-_end := _tfix_date( _date_end )
+   IF LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-_cmd := 'Command="Report" Type="Date" Start="' + _start + ;
-	'" End="' + _end + '" /'
+   // 2010-10-01 : YYYY-MM-DD je format datuma
+   _start := _tfix_date( _date_start )
+   _end := _tfix_date( _date_end )
 
-_err := tremol_cmd( dev_param, _cmd )
+   _cmd := 'Command="Report" Type="Date" Start="' + _start + ;
+      '" End="' + _end + '" /'
 
-return _err
+   _err := tremol_cmd( dev_param, _cmd )
+
+   RETURN _err
 
 
 // ------------------------------------------------
 // sredjuje datum za tremol uredjaj xml
 // ------------------------------------------------
-static function _tfix_date( dDate )
-local xRet := ""
-local cTmp
+STATIC FUNCTION _tfix_date( dDate )
 
-cTmp := ALLTRIM( STR( YEAR( dDate ) ))
+   LOCAL xRet := ""
+   LOCAL cTmp
 
-xRet += cTmp
-xRet += "-"
+   cTmp := AllTrim( Str( Year( dDate ) ) )
 
-cTmp := PADL( ALLTRIM( STR( MONTH( dDate )) ), 2, "0" )
+   xRet += cTmp
+   xRet += "-"
 
-xRet += cTmp
-xRet += "-"
+   cTmp := PadL( AllTrim( Str( Month( dDate ) ) ), 2, "0" )
 
-cTmp := PADL( ALLTRIM( STR( DAY( dDate )) ), 2, "0" )
-xRet += cTmp
+   xRet += cTmp
+   xRet += "-"
 
-return xRet
+   cTmp := PadL( AllTrim( Str( Day( dDate ) ) ), 2, "0" )
+   xRet += cTmp
+
+   RETURN xRet
 
 
 
@@ -555,41 +572,42 @@ return xRet
 // ---------------------------------------------------
 // stampa kopije racuna
 // ---------------------------------------------------
-function tremol_rn_copy( dev_params )
-local _cmd
-local _racun_broj := SPACE(10)
-local _refund := "N"
+FUNCTION tremol_rn_copy( dev_params )
 
-// box - daj broj racuna
-Box(,2, 50)
-	@ m_x + 1, m_y + 2 SAY "Broj racuna:" GET _racun_broj ;
-		VALID !EMPTY( _racun_broj )
-	@ m_x + 2, m_y + 2 SAY "racun je reklamni (D/N)?" GET _refund ;
-		VALID _refund $ "DN" PICT "@!"
-	read
-BoxC()
+   LOCAL _cmd
+   LOCAL _racun_broj := Space( 10 )
+   LOCAL _refund := "N"
 
-if LastKey() == K_ESC
-	return
-endif
+   // box - daj broj racuna
+   Box(, 2, 50 )
+   @ m_x + 1, m_y + 2 SAY "Broj racuna:" GET _racun_broj ;
+      VALID !Empty( _racun_broj )
+   @ m_x + 2, m_y + 2 SAY "racun je reklamni (D/N)?" GET _refund ;
+      VALID _refund $ "DN" PICT "@!"
+   READ
+   BoxC()
 
-// <TremolFpServer Command="PrintDuplicate" Type="0" Document="2"/>
+   IF LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-_cmd := 'Command="PrintDuplicate"'
+   // <TremolFpServer Command="PrintDuplicate" Type="0" Document="2"/>
 
-if _refund == "N"
-	// obicni racun
-	_cmd += _razmak1 + 'Type="0"'
-else
-	// reklamni racun
-	_cmd += _razmak1 + 'Type="1"'
-endif
+   _cmd := 'Command="PrintDuplicate"'
 
-_cmd += _razmak1 + 'Document="' +  ALLTRIM( _racun_broj ) + '" /'
+   IF _refund == "N"
+      // obicni racun
+      _cmd += _razmak1 + 'Type="0"'
+   ELSE
+      // reklamni racun
+      _cmd += _razmak1 + 'Type="1"'
+   ENDIF
 
-_err := tremol_cmd( dev_params, _cmd )
+   _cmd += _razmak1 + 'Document="' +  AllTrim( _racun_broj ) + '" /'
 
-return
+   _err := tremol_cmd( dev_params, _cmd )
+
+   RETURN
 
 
 
@@ -598,74 +616,75 @@ return
 // --------------------------------------------
 // cekanje na fajl odgovora
 // --------------------------------------------
-function tremol_read_out( dev_params, f_name, time_out )
-local _out := .t.
-local _tmp
-local _time
-local _cnt := 0
+FUNCTION tremol_read_out( dev_params, f_name, time_out )
 
-if time_out == NIL
-	time_out := dev_params["timeout"]
-endif
+   LOCAL _out := .T.
+   LOCAL _tmp
+   LOCAL _time
+   LOCAL _cnt := 0
 
-_time := time_out
+   IF time_out == NIL
+      time_out := dev_params[ "timeout" ]
+   ENDIF
 
-// napravi mi konstrukciju fajla koji cu gledati
-// replace *.xml -> *.out
-// out je fajl odgovora
-_tmp := dev_params["out_dir"] + STRTRAN( f_name, "xml", "out" )
+   _time := time_out
 
-Box(, 3, 60 )
+   // napravi mi konstrukciju fajla koji cu gledati
+   // replace *.xml -> *.out
+   // out je fajl odgovora
+   _tmp := dev_params[ "out_dir" ] + StrTran( f_name, "xml", "out" )
 
-// ispisi u vrhu id, naz uredjaja
-@ m_x + 1, m_y + 2 SAY "Uredjaj ID: " + ALLTRIM( STR( dev_params["id"] )) + ;
-                        " : " + PADR( dev_params["name"] , 40 ) 
+   Box(, 3, 60 )
 
-do while _time > 0
-	
-	-- _time
-	
-	// provjeri kada bude trecina vremena...
-	if _time = ( time_out * 0.7 ) .and. _cnt = 0
+   // ispisi u vrhu id, naz uredjaja
+   @ m_x + 1, m_y + 2 SAY "Uredjaj ID: " + AllTrim( Str( dev_params[ "id" ] ) ) + ;
+      " : " + PadR( dev_params[ "name" ], 40 )
 
-		if dev_params["restart_service"] == "D" .and. Pitanje(, "Restartovati server", "D" ) == "D"
+   DO WHILE _time > 0
 
-			// pokreni restart proceduru
-			tremol_restart( dev_params )
+      -- _time
 
-			// restartuj vrijeme
-			_time := time_out
-			++ _cnt
+      // provjeri kada bude trecina vremena...
+      IF _time = ( time_out * 0.7 ) .AND. _cnt = 0
 
-		endif
+         IF dev_params[ "restart_service" ] == "D" .AND. Pitanje(, "Restartovati server", "D" ) == "D"
 
-	endif
+            // pokreni restart proceduru
+            tremol_restart( dev_params )
 
-	// fajl se pojavio - izadji iz petlje !
-	if FILE( _tmp )
-		exit
-	endif
+            // restartuj vrijeme
+            _time := time_out
+            ++ _cnt
 
-	@ m_x + 3, m_y + 2 SAY PADR( "Cekam odgovor... " + ;
-		ALLTRIM( STR( _time ) ), 48 )
+         ENDIF
 
-    if _time == 0 .or. LastKey() == K_ALT_Q
-        BoxC()
-        return .f.
-    endif
+      ENDIF
 
-	sleep(1)
+      // fajl se pojavio - izadji iz petlje !
+      IF File( _tmp )
+         EXIT
+      ENDIF
 
-enddo
+      @ m_x + 3, m_y + 2 SAY PadR( "Cekam odgovor... " + ;
+         AllTrim( Str( _time ) ), 48 )
 
-BoxC()
+      IF _time == 0 .OR. LastKey() == K_ALT_Q
+         BoxC()
+         RETURN .F.
+      ENDIF
 
-if !FILE( _tmp )
-	MsgBeep( "Ne postoji fajl odgovora (OUT) !!!!" )
-	_out := .f.
-endif
+      Sleep( 1 )
 
-return _out
+   ENDDO
+
+   BoxC()
+
+   IF !File( _tmp )
+      MsgBeep( "Ne postoji fajl odgovora (OUT) !!!!" )
+      _out := .F.
+   ENDIF
+
+   RETURN _out
 
 
 
@@ -673,171 +692,168 @@ return _out
 
 // ------------------------------------------------------------
 // citanje gresaka za TREMOL driver
-// 
+//
 // nFisc_no - broj fiskalnog isjecka
 //
 // ------------------------------------------------------------
-function tremol_read_error( dev_params, f_name, fisc_no )
-local _o_file, _fisc_txt, _err_txt, _linija, _m, _tmp
-local _a_err := {}
-local _a_tmp2 := {}
-local _scan
-local _err := 0
-local _f_name 
+FUNCTION tremol_read_error( dev_params, f_name, fisc_no )
 
-// primjer: c:\fiscal\00001.out
-_f_name := ALLTRIM( dev_params["out_dir"] + STRTRAN( f_name, "xml", "out" ) )
+   LOCAL _o_file, _fisc_txt, _err_txt, _linija, _m, _tmp
+   LOCAL _a_err := {}
+   LOCAL _a_tmp2 := {}
+   LOCAL _scan
+   LOCAL _err := 0
+   LOCAL _f_name
 
-fisc_no := 0
+   // primjer: c:\fiscal\00001.out
+   _f_name := AllTrim( dev_params[ "out_dir" ] + StrTran( f_name, "xml", "out" ) )
 
-_o_file := TFileRead():New( _f_name )
-_o_file:Open()
+   fisc_no := 0
 
-if _o_file:Error()
-	MsgBeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " + _f_name ) )
-	return -9
-endif
+   _o_file := TFileRead():New( _f_name )
+   _o_file:Open()
 
-_fisc_txt := ""
+   IF _o_file:Error()
+      MsgBeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " + _f_name ) )
+      RETURN -9
+   ENDIF
 
-// prodji kroz svaku liniju i procitaj zapise
-// 1 liniju preskoci zato sto ona sadrzi 
-// <?xml version="1.0"...>
-while _o_file:MoreToRead()
+   _fisc_txt := ""
 
-	// uzmi u cErr liniju fajla
-	_err_txt := hb_strtoutf8( _o_file:ReadLine()  )
+   // prodji kroz svaku liniju i procitaj zapise
+   // 1 liniju preskoci zato sto ona sadrzi
+   // <?xml version="1.0"...>
+   WHILE _o_file:MoreToRead()
 
-	// skloni "<" i ">" itd...
-	_err_txt := STRTRAN( _err_txt, '<?xml version="1.0" ?>', "" )
-	_err_txt := STRTRAN( _err_txt, ">", "" )
-	_err_txt := STRTRAN( _err_txt, "<", "" )
-	_err_txt := STRTRAN( _err_txt, "/", "" )
-	_err_txt := STRTRAN( _err_txt, '"', "" )
-	_err_txt := STRTRAN( _err_txt, "TremolFpServerOutput", "" )
-	_err_txt := STRTRAN( _err_txt, "Output Change", "OutputChange" )
-	_err_txt := STRTRAN( _err_txt, "Output Total", "OutputTotal" )
+      // uzmi u cErr liniju fajla
+      _err_txt := hb_StrToUTF8( _o_file:ReadLine()  )
 
-    #ifdef __PLATFORM__LINUX
-        // ovo je novi red na linux-u
-	    _err_txt := STRTRAN( _err_txt, CHR(10), "" )
-	    _err_txt := STRTRAN( _err_txt, CHR(9), " " )
-    #endif
+      // skloni "<" i ">" itd...
+      _err_txt := StrTran( _err_txt, '<?xml version="1.0" ?>', "" )
+      _err_txt := StrTran( _err_txt, ">", "" )
+      _err_txt := StrTran( _err_txt, "<", "" )
+      _err_txt := StrTran( _err_txt, "/", "" )
+      _err_txt := StrTran( _err_txt, '"', "" )
+      _err_txt := StrTran( _err_txt, "TremolFpServerOutput", "" )
+      _err_txt := StrTran( _err_txt, "Output Change", "OutputChange" )
+      _err_txt := StrTran( _err_txt, "Output Total", "OutputTotal" )
 
-	// dobijamo npr.
-	//
-	// ErrorCode=0 ErrorOPOS=OPOS_SUCCESS ErrorDescription=Uspjesno kreiran
-	// Output Change=0.00 ReceiptNumber=00552 Total=51.20
-
-	_linija := TokToNiz( _err_txt, SPACE(1) )
-
-	// dobit cemo
-	// 
-	// aLinija[1] = "ErrorCode=0"
-	// aLinija[2] = "ErrorOPOS=OPOS_SUCCESS"
-	// ...
-	
-	// dodaj u generalnu matricu _a_err
-	for _m := 1 to LEN( _linija )
-		AADD( _a_err, _linija[ _m ] )
-	next
-
-enddo
-
-_o_file:Close()
-
-// potrazimo gresku...
 #ifdef __PLATFORM__LINUX
-    _scan := ASCAN( _a_err, {| val | "ErrorFP=0" $ val } )
+      // ovo je novi red na linux-u
+      _err_txt := StrTran( _err_txt, Chr( 10 ), "" )
+      _err_txt := StrTran( _err_txt, Chr( 9 ), " " )
+#endif
+
+      // dobijamo npr.
+      //
+      // ErrorCode=0 ErrorOPOS=OPOS_SUCCESS ErrorDescription=Uspjesno kreiran
+      // Output Change=0.00 ReceiptNumber=00552 Total=51.20
+
+      _linija := TokToNiz( _err_txt, Space( 1 ) )
+
+      // dobit cemo
+      //
+      // aLinija[1] = "ErrorCode=0"
+      // aLinija[2] = "ErrorOPOS=OPOS_SUCCESS"
+      // ...
+
+      // dodaj u generalnu matricu _a_err
+      FOR _m := 1 TO Len( _linija )
+         AAdd( _a_err, _linija[ _m ] )
+      NEXT
+
+   ENDDO
+
+   _o_file:Close()
+
+   // potrazimo gresku...
+#ifdef __PLATFORM__LINUX
+   _scan := AScan( _a_err, {| val | "ErrorFP=0" $ val } )
 #else
-    _scan := ASCAN( _a_err, {| val | "OPOS_SUCCESS" $ val } )
+   _scan := AScan( _a_err, {| val | "OPOS_SUCCESS" $ val } )
 #endif
 
-if _scan > 0
+   IF _scan > 0
 
-	// nema greske, komanda je uspjela !
-	// ako je rijec o racunu uzmi broj fiskalnog racuna
-        	
-	_scan := ASCAN( _a_err, {| val | "ReceiptNumber" $ val } )
-	
-	if _scan <> 0
-		
-		// ReceiptNumber=241412
-		_a_tmp2 := {}
-		_a_tmp2 := TokToNiz( _a_err[ _scan ], "=" )
-		
-		// ovo ce biti broj racuna
-		_tmp := ALLTRIM( _a_tmp2[ 2 ] )
-		
-		if !EMPTY( _tmp )
-			fisc_no := VAL( _tmp )
-		endif
+      // nema greske, komanda je uspjela !
+      // ako je rijec o racunu uzmi broj fiskalnog racuna
 
-	endif
-	
-	// pobrisi fajl, izdaji
-	FERASE( _f_name )
+      _scan := AScan( _a_err, {| val | "ReceiptNumber" $ val } )
 
-	return _err
-	
-endif
+      IF _scan <> 0
 
-// imamo gresku !!! ispisi je
-_tmp := ""
+         // ReceiptNumber=241412
+         _a_tmp2 := {}
+         _a_tmp2 := TokToNiz( _a_err[ _scan ], "=" )
 
-_scan := ASCAN( _a_err, {| val | "ErrorCode" $ val } )
-	
-if _scan <> 0
-		
-	// ErrorCode=241412
-	_a_tmp2 := {}
-	_a_tmp2 := TokToNiz( _a_err[ _scan ], "=" )
-		
-	_tmp += "ErrorCode: " + ALLTRIM( _a_tmp2[ 2 ] )
-		
-	// ovo je ujedino i error kod
-	_err := VAL( _a_tmp2[ 2 ] )
+         // ovo ce biti broj racuna
+         _tmp := AllTrim( _a_tmp2[ 2 ] )
 
-endif
+         IF !Empty( _tmp )
+            fisc_no := Val( _tmp )
+         ENDIF
 
-_tmp := "ErrorOPOS"
+      ENDIF
+
+      // pobrisi fajl, izdaji
+      FErase( _f_name )
+
+      RETURN _err
+
+   ENDIF
+
+   // imamo gresku !!! ispisi je
+   _tmp := ""
+
+   _scan := AScan( _a_err, {| val | "ErrorCode" $ val } )
+
+   IF _scan <> 0
+
+      // ErrorCode=241412
+      _a_tmp2 := {}
+      _a_tmp2 := TokToNiz( _a_err[ _scan ], "=" )
+
+      _tmp += "ErrorCode: " + AllTrim( _a_tmp2[ 2 ] )
+
+      // ovo je ujedino i error kod
+      _err := Val( _a_tmp2[ 2 ] )
+
+   ENDIF
+
+   _tmp := "ErrorOPOS"
 
 #ifdef __PLATFORM__LINUX
-    _tmp := "ErrorFP"
+   _tmp := "ErrorFP"
 #endif
-	
-_scan := ASCAN( _a_err, {| val | _tmp $ val } )
 
-if _scan <> 0
-		
-	// ErrorOPOS=xxxxxxx
-	_a_tmp2 := {}
-	_a_tmp2 := TokToNiz( _a_err[ _scan ], "=" )
-	
-	_tmp += " ErrorOPOS: " + ALLTRIM( _a_tmp2[ 2 ] )
+   _scan := AScan( _a_err, {| val | _tmp $ val } )
 
-endif
-	
-_scan := ASCAN( _a_err, {| val | "ErrorDescription" $ val } )
+   IF _scan <> 0
 
-if _scan <> 0
-		
-	// ErrorDescription=xxxxxxx
-	_a_tmp2 := {}
-	_a_tmp2 := TokToNiz( _a_err[ _scan ], "=" )
-	_tmp += " Description: " + ALLTRIM( _a_tmp2[2] )
+      // ErrorOPOS=xxxxxxx
+      _a_tmp2 := {}
+      _a_tmp2 := TokToNiz( _a_err[ _scan ], "=" )
 
-endif
+      _tmp += " ErrorOPOS: " + AllTrim( _a_tmp2[ 2 ] )
 
-if !EMPTY( _tmp )
-	msgbeep( _tmp )
-endif
+   ENDIF
 
-// obrisi fajl out na kraju !!!
-FERASE( _f_name )
+   _scan := AScan( _a_err, {| val | "ErrorDescription" $ val } )
 
-return _err
+   IF _scan <> 0
 
+      // ErrorDescription=xxxxxxx
+      _a_tmp2 := {}
+      _a_tmp2 := TokToNiz( _a_err[ _scan ], "=" )
+      _tmp += " Description: " + AllTrim( _a_tmp2[ 2 ] )
 
+   ENDIF
 
+   IF !Empty( _tmp )
+      msgbeep( _tmp )
+   ENDIF
 
+   // obrisi fajl out na kraju !!!
+   FErase( _f_name )
+
+   RETURN _err

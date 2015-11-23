@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,8 +12,8 @@
 
 #include "fmk.ch"
 
-static _f18_delphi_exe := "f18_delphirb.exe"
-static _f18_label_exe := "f18_labeliranje.exe"
+STATIC _f18_delphi_exe := "f18_delphirb.exe"
+STATIC _f18_label_exe := "f18_labeliranje.exe"
 
 
 // ------------------------------------------------------------
@@ -24,170 +24,174 @@ static _f18_label_exe := "f18_labeliranje.exe"
 // - table_index - naziv indeksa koji otvara tabelu
 // - test_mode .t. ili .f., default .f. - testni rezim komande
 // ------------------------------------------------------------
-function f18_rtm_print( rtm_file, table_name, table_index, test_mode, rtm_mode )
-local _cmd
-local _ok := .f.
-local _delphi_exe := "delphirb.exe"
-local _label_exe := "labeliranje.exe"
-local _util_path
-local _error
+FUNCTION f18_rtm_print( rtm_file, table_name, table_index, test_mode, rtm_mode )
+
+   LOCAL _cmd
+   LOCAL _ok := .F.
+   LOCAL _delphi_exe := "delphirb.exe"
+   LOCAL _label_exe := "labeliranje.exe"
+   LOCAL _util_path
+   LOCAL _error
 
 #ifdef __PLATFORM__UNIX
-	_f18_delphi_exe := "delphirb"
-	_f18_label_exe := "labeliranje"
+
+   _f18_delphi_exe := "delphirb"
+   _f18_label_exe := "labeliranje"
 #endif
 
 #ifdef __PLATFORM__LINUX
    my_close_all_dbf()
 #endif
 
-// provjera uslova
+   // provjera uslova
 
-if ( rtm_file == NIL )
-    MsgBeep( "Nije zadat rtm fajl !!!" )
-    return _ok
-endif 
+   IF ( rtm_file == NIL )
+      MsgBeep( "Nije zadat rtm fajl !!!" )
+      RETURN _ok
+   ENDIF
 
-if ( table_name == NIL )
-    table_name := ""
-endif
+   IF ( table_name == NIL )
+      table_name := ""
+   ENDIF
 
-if ( table_index == NIL )
-    table_index := ""
-endif
+   IF ( table_index == NIL )
+      table_index := ""
+   ENDIF
 
-if ( test_mode == NIL )
-    test_mode := .f.
-endif
+   IF ( test_mode == NIL )
+      test_mode := .F.
+   ENDIF
 
-if ( rtm_mode == NIL )
-    rtm_mode := "drb"
-endif
+   IF ( rtm_mode == NIL )
+      rtm_mode := "drb"
+   ENDIF
 
-// provjeri treba li kopirati delphirb.exe ?
-if !copy_delphirb_exe( rtm_mode )
-    // sigurno ima neka greska... pa izadji
-    return _ok
-endif
+   // provjeri treba li kopirati delphirb.exe ?
+   IF !copy_delphirb_exe( rtm_mode )
+      // sigurno ima neka greska... pa izadji
+      RETURN _ok
+   ENDIF
 
-// provjeri treba li kopirati template fajl
-if !copy_rtm_template( rtm_file )
-    // sigurno postoji opet neka greska...
-    return _ok
-endif
+   // provjeri treba li kopirati template fajl
+   IF !copy_rtm_template( rtm_file )
+      // sigurno postoji opet neka greska...
+      RETURN _ok
+   ENDIF
 
-// ovdje treba kod za filovanje datoteke IZLAZ.DBF
-if Pitanje(, "Stampati delphirb report ?", "D" ) == "N"
-    // ne zelimo stampati report...
-    return _ok
-endif
+   // ovdje treba kod za filovanje datoteke IZLAZ.DBF
+   IF Pitanje(, "Stampati delphirb report ?", "D" ) == "N"
+      // ne zelimo stampati report...
+      RETURN _ok
+   ENDIF
 
-// idemo na slaganje komande za report
+   // idemo na slaganje komande za report
 
-_cmd := ""
+   _cmd := ""
 
 #ifdef __PLATFORM__UNIX
-	_cmd += SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+   _cmd += SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
 #endif
 
-if rtm_mode == "drb"
-    _cmd += _f18_delphi_exe
-else
-    _cmd += _f18_label_exe
-endif
+   IF rtm_mode == "drb"
+      _cmd += _f18_delphi_exe
+   ELSE
+      _cmd += _f18_label_exe
+   ENDIF
 
-_cmd += " "
-_cmd += rtm_file
-_cmd += " "
-    
+   _cmd += " "
+   _cmd += rtm_file
+   _cmd += " "
+
 #ifdef __PLATFORM__WINDOWS
-    _cmd += "." + SLASH
+   _cmd += "." + SLASH
 #else
-    _cmd += my_home()
+   _cmd += my_home()
 #endif
-    
-if !EMPTY( table_name )
 
-    // dodaj i naziv tabele i index na komandu
-    _cmd += " "
-    _cmd += table_name
-    _cmd += " "
-    _cmd += table_index
+   IF !Empty( table_name )
 
-endif
+      // dodaj i naziv tabele i index na komandu
+      _cmd += " "
+      _cmd += table_name
+      _cmd += " "
+      _cmd += table_index
+
+   ENDIF
 
 #ifdef __PLATFORM__UNIX
-	_cmd += " "
-	_cmd += "&"
+   _cmd += " "
+   _cmd += "&"
 #endif
 
 #ifdef __PLATFORM__WINDOWS
-    if test_mode
-        _cmd += " & pause"
-    endif
+   IF test_mode
+      _cmd += " & pause"
+   ENDIF
 #endif
- 
-// pozicioniraj se na home direktorij tokom izvrsenja
-DirChange( my_home() )
 
-log_write( "delphirb/label print, cmd: " + _cmd, 7 )
+   // pozicioniraj se na home direktorij tokom izvrsenja
+   DirChange( my_home() )
 
-_error := f18_run( _cmd )
-    
-if _error <> 0
-    MsgBeep("Postoji problem sa stampom#Greska: " + ALLTRIM(STR( _error )) )
-    return _ok
-endif
+   log_write( "delphirb/label print, cmd: " + _cmd, 7 )
 
-// sve je ok
-_ok := .t.
+   _error := f18_run( _cmd )
 
-return _ok
+   IF _error <> 0
+      MsgBeep( "Postoji problem sa stampom#Greska: " + AllTrim( Str( _error ) ) )
+      RETURN _ok
+   ENDIF
+
+   // sve je ok
+   _ok := .T.
+
+   RETURN _ok
 
 
 
 // --------------------------------------------------
 // kopira delphirb.exe u home/f18_delphirb.exe
 // --------------------------------------------------
-static function copy_delphirb_exe( mode )
-local _ok := .t.
-local _util_path
-local _drb := "delphirb.exe"
-local _lab := "labeliranje.exe"
-local _exe, _tmp
+STATIC FUNCTION copy_delphirb_exe( mode )
 
-if mode == NIL
-    mode := "drb"
-endif
+   LOCAL _ok := .T.
+   LOCAL _util_path
+   LOCAL _drb := "delphirb.exe"
+   LOCAL _lab := "labeliranje.exe"
+   LOCAL _exe, _tmp
 
-if mode == "drb"
-    _exe := _f18_delphi_exe
-    _tmp := _drb
-else
-    _exe := _f18_label_exe
-    _tmp := _lab
-endif
+   IF mode == NIL
+      mode := "drb"
+   ENDIF
 
-// util path...
+   IF mode == "drb"
+      _exe := _f18_delphi_exe
+      _tmp := _drb
+   ELSE
+      _exe := _f18_label_exe
+      _tmp := _lab
+   ENDIF
+
+   // util path...
 #ifdef __PLATFORM__WINDOWS
-    _util_path := "c:" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+   _util_path := "c:" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
 #else
-    _util_path := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
-	return _ok
+   _util_path := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+
+   RETURN _ok
 #endif
 
 // kopiraj delphirb u home path
-if !FILE( my_home() + _exe )
-    if !FILE( _util_path + _tmp )
-        MsgBeep( "Fajl " + _util_path + _tmp + " ne postoji !????" )
-        _ok := .f.
-        return _ok
-    else
-        FILECOPY( _util_path + _tmp, my_home() + _exe )
-    endif
-endif
+IF !File( my_home() + _exe )
+IF !File( _util_path + _tmp )
+MsgBeep( "Fajl " + _util_path + _tmp + " ne postoji !????" )
+_ok := .F.
+RETURN _ok
+ELSE
+FileCopy( _util_path + _tmp, my_home() + _exe )
+ENDIF
+ENDIF
 
-return _ok
+   RETURN _ok
 
 
 // ---------------------------------------------------------
@@ -195,55 +199,52 @@ return _ok
 //
 // napomena: template = "nalplac", bez ekstenzije
 // ---------------------------------------------------------
-static function copy_rtm_template( template )
-local _ret := .f.
-local _rtm_ext := ".rtm"
-local _a_source, _a_template
-local _src_size, _src_date, _src_time
-local _temp_size, _temp_date, _temp_time
-local _copy := .f.
+STATIC FUNCTION copy_rtm_template( template )
 
+   LOCAL _ret := .F.
+   LOCAL _rtm_ext := ".rtm"
+   LOCAL _a_source, _a_template
+   LOCAL _src_size, _src_date, _src_time
+   LOCAL _temp_size, _temp_date, _temp_time
+   LOCAL _copy := .F.
 
-if !FILE( my_home() + template + _rtm_ext )
-	_copy := .t.
-else
-	
-	// fajl postoji na lokaciji
-	// ispitaj velicinu, datum vrijeme...
-	_a_source := DIRECTORY( my_home() + template + _rtm_ext )
-	_a_template := DIRECTORY( F18_TEMPLATE_LOCATION + template + _rtm_ext ) 	
+   IF !File( my_home() + template + _rtm_ext )
+      _copy := .T.
+   ELSE
 
-	// datum, vrijeme, velicina
-	_src_size := ALLTRIM( STR( _a_source[1, 2] ) )
-	_src_date := DTOS( _a_source[1, 3] )
-	_src_time := _a_source[1, 4]
+      // fajl postoji na lokaciji
+      // ispitaj velicinu, datum vrijeme...
+      _a_source := Directory( my_home() + template + _rtm_ext )
+      _a_template := Directory( F18_TEMPLATE_LOCATION + template + _rtm_ext )
 
-	_temp_size := ALLTRIM( STR( _a_template[1, 2] ) )
-	_temp_date := DTOS( _a_template[1, 3] )
-	_temp_time := _a_template[1, 4]
+      // datum, vrijeme, velicina
+      _src_size := AllTrim( Str( _a_source[ 1, 2 ] ) )
+      _src_date := DToS( _a_source[ 1, 3 ] )
+      _src_time := _a_source[ 1, 4 ]
 
-	// treba ga kopirati
-	if _temp_date + _temp_time > _src_date + _src_time
-		_copy := .t.
-	endif
+      _temp_size := AllTrim( Str( _a_template[ 1, 2 ] ) )
+      _temp_date := DToS( _a_template[ 1, 3 ] )
+      _temp_time := _a_template[ 1, 4 ]
 
-endif
+      // treba ga kopirati
+      IF _temp_date + _temp_time > _src_date + _src_time
+         _copy := .T.
+      ENDIF
 
-// treba ga kopirati
-if _copy
+   ENDIF
 
-    if !FILE( F18_TEMPLATE_LOCATION + template + _rtm_ext )
-        MsgBeep( "Fajl " + F18_TEMPLATE_LOCATION + template + _rtm_ext + " ne postoji !????" )
-        return _ret
-    else
-        FILECOPY( F18_TEMPLATE_LOCATION + template + _rtm_ext, my_home() + template + _rtm_ext )
-    endif
+   // treba ga kopirati
+   IF _copy
 
-endif
+      IF !File( F18_TEMPLATE_LOCATION + template + _rtm_ext )
+         MsgBeep( "Fajl " + F18_TEMPLATE_LOCATION + template + _rtm_ext + " ne postoji !????" )
+         RETURN _ret
+      ELSE
+         FileCopy( F18_TEMPLATE_LOCATION + template + _rtm_ext, my_home() + template + _rtm_ext )
+      ENDIF
 
-_ret := .t.
+   ENDIF
 
-return _ret
+   _ret := .T.
 
-
-
+   RETURN _ret

@@ -139,9 +139,6 @@ METHOD F18Login:_read_params( server_param )
    RETURN .T.
 
 
-
-
-
 METHOD F18Login:_write_params( server_params )
 
    server_params[ "database" ] := ::main_db_params[ "database" ]
@@ -153,7 +150,6 @@ METHOD F18Login:_write_params( server_params )
    server_params[ "schema" ] := ::main_db_params[ "schema" ]
 
    RETURN .T.
-
 
 
 METHOD F18Login:main_db_login( server_param, force_connect )
@@ -316,13 +312,13 @@ METHOD F18Login:company_db_relogin( server_param, database, session )
 
    IF _ok .AND. _show_box
 
-      IF !f18_use_module( _modul_name ) 
+      IF !f18_use_module( _modul_name )
          MsgBeep( "U " + ALLTRIM( _new_session ) + " programski modul " + Upper( _modul_name ) + " vam nije aktiviran !" )
          IF Pitanje(, "Želite li korisiti programski modul " + Upper( _modul_name ) + " u sezoni " + _new_session + " (D/N) ?", "N" ) == "D"
             f18_set_use_module( _modul_name, .T. )
          ELSE
             MsgBeep( "Vraćamo se u sezonu " + _curr_session )
-            ::company_db_relogin( server_param, _curr_database, _curr_session ) 
+            ::company_db_relogin( server_param, _curr_database, _curr_session )
          ENDIF
       ENDIF
 

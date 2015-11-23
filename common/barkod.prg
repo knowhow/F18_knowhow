@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,145 +12,149 @@
 
 #include "fmk.ch"
 
-
 // -------------------------------------------------
 // ocitaj barkod
 // -------------------------------------------------
-function roba_ocitaj_barkod( id_roba )
-local _t_area := SELECT()
-local _bk := ""
+FUNCTION roba_ocitaj_barkod( id_roba )
 
-if !EMPTY( id_roba )
-	select roba
-	seek id_roba
-	_bk := field->barkod
-	select ( _t_area )
-endif
+   LOCAL _t_area := Select()
+   LOCAL _bk := ""
 
-return _bk
+   IF !Empty( id_roba )
+      SELECT roba
+      SEEK id_roba
+      _bk := field->barkod
+      SELECT ( _t_area )
+   ENDIF
 
-
-
-function DodajBK(cBK)
-if empty(cBK) .and. IzFmkIni("BARKOD", "Auto", "N", SIFPATH)=="D" .and. IzFmkIni("BARKOD","Svi","N",SIFPATH)=="D" .and. (Pitanje(,"Formirati Barkod ?","N")=="D")
-	cBK:=NoviBK_A()
-endif
-return .t.
+   RETURN _bk
 
 
 
-function KaLabelBKod()
-local cIBK
-local cPrefix
-local cSPrefix
+FUNCTION DodajBK( cBK )
 
-private cKomLin
+   IF Empty( cBK ) .AND. IzFmkIni( "BARKOD", "Auto", "N", SIFPATH ) == "D" .AND. IzFmkIni( "BARKOD", "Svi", "N", SIFPATH ) == "D" .AND. ( Pitanje(, "Formirati Barkod ?", "N" ) == "D" )
+      cBK := NoviBK_A()
+   ENDIF
 
-O_SIFK
-O_SIFV
-O_ROBA
-set order to tag "ID"
+   RETURN .T.
 
-O_BARKOD
-O_KALK_PRIPR
 
-SELECT KALK_PRIPR
 
-private aStampati:=ARRAY(RECCOUNT())
+FUNCTION KaLabelBKod()
 
-GO TOP
+   LOCAL cIBK
+   LOCAL cPrefix
+   LOCAL cSPrefix
 
-for i:=1 to LEN(aStampati)
-	aStampati[i]:="D"
-next
+   PRIVATE cKomLin
 
-ImeKol:={ {"IdRoba",{|| IdRoba}}, {"Kolicina",{|| transform(Kolicina,picv)}} ,{"Stampati?",{|| IF(aStampati[RECNO()]=="D","-> DA <-","      NE")}} }
+   O_SIFK
+   O_SIFV
+   O_ROBA
+   SET ORDER TO TAG "ID"
 
-Kol:={}
-for i:=1 to len(ImeKol)
-	AADD(Kol, i)
-next
+   O_BARKOD
+   O_KALK_PRIPR
 
-Box(,20,50)
-ObjDbedit("PLBK",20,50, {|| KaEdPrLBK()},"<SPACE> markiranje             Í<ESC> kraj","Priprema za labeliranje bar-kodova...", .t. , , , ,0)
-BoxC()
+   SELECT KALK_PRIPR
 
-nRezerva:=0
+   PRIVATE aStampati := Array( RecCount() )
 
-cLinija2:=padr("Uvoznik:" + gNFirma, 45)
+   GO TOP
 
-Box(,4,75)
-	@ m_x+0, m_y+25 SAY " LABELIRANJE BAR KODOVA "
-	@ m_x+2, m_y+ 2 SAY "Rezerva (broj komada):" GET nRezerva VALID nRezerva>=0 PICT "99"
-	@ m_x+3, m_y+ 2 SAY "Linija 2  :" GET cLinija2
-	READ
-	ESC_BCR
-BoxC()
+   FOR i := 1 TO Len( aStampati )
+      aStampati[ i ] := "D"
+   NEXT
 
-cPrefix:=IzFmkIni("Barkod","Prefix","", SIFPATH)
-cSPrefix:= pitanje(,"Stampati barkodove koji NE pocinju sa +'"+cPrefix+"' ?","N")
+   ImeKol := { { "IdRoba", {|| IdRoba } }, { "Kolicina", {|| Transform( Kolicina, picv ) } },{ "Stampati?", {|| IF( aStampati[ RecNo() ] == "D", "-> DA <-", "      NE" ) } } }
 
-SELECT BARKOD
-my_dbf_zap()
+   Kol := {}
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
 
-SELECT KALK_PRIPR
-GO TOP
+   Box(, 20, 50 )
+   ObjDbedit( "PLBK", 20, 50, {|| KaEdPrLBK() }, "<SPACE> markiranje             Í<ESC> kraj", "Priprema za labeliranje bar-kodova...", .T., , , , 0 )
+   BoxC()
 
-do while !EOF()
-	if aStampati[RECNO()]=="N"
-		SKIP 1
-		loop
-	endif
-	SELECT ROBA
-	HSEEK KALK_PRIPR->idroba
-	if empty(barkod).and.(IzFmkIni("BarKod","Auto","N",SIFPATH)=="D")
-		private cPom:=IzFmkIni("BarKod","AutoFormula","ID",SIFPATH)
-		// kada je barkod prazan, onda formiraj sam interni barkod
-		cIBK:=IzFmkIni("BARKOD","Prefix","",SIFPATH)+&cPom
-		if IzFmkIni("BARKOD","EAN","",SIFPATH)=="13"
-			cIBK:=NoviBK_A()
-		endif
-		PushWa()
-		set order to tag "BARKOD"
-		seek cIBK
-		if found()
-			PopWa()
-			MsgBeep("Prilikom formiranja internog barkoda##vec postoji kod: "+cIBK+"??##"+"Moracete za artikal "+kalk_pripr->idroba+" sami zadati jedinstveni barkod !")
-			replace barkod with "????"
-		else
-			PopWa()
-			replace barkod with cIBK
-		endif
-	endif
-	if cSprefix=="N"
-		// ne stampaj koji nemaju isti prefix
-		if left(barkod,len(cPrefix))!=cPrefix
-			select kalk_pripr
-			skip
-			loop
-		endif
-	endif
+   nRezerva := 0
 
-	SELECT BARKOD
-	for i:=1 to kalk_pripr->kolicina+IF(kalk_pripr->kolicina>0, nRezerva, 0)
-		APPEND BLANK
-		REPLACE id WITH kalk_pripr->idRoba
-		REPLACE naziv WITH TRIM(ROBA->naz)+" ("+TRIM(ROBA->jmj)+")"
-		REPLACE l1 WITH DTOC(kalk_pripr->datdok)+", "+TRIM(kalk_pripr->(idfirma+"-"+idvd+"-"+brdok))
-		REPLACE l2 WITH cLinija2
-		REPLACE vpc WITH ROBA->vpc
-		REPLACE mpc WITH ROBA->mpc
-		REPLACE barkod WITH roba->barkod
-	next
-	SELECT kalk_pripr
-	SKIP 1
-enddo
-my_close_all_dbf()
+   cLinija2 := PadR( "Uvoznik:" + gNFirma, 45 )
 
-f18_rtm_print( "barkod", "barkod", "1" )
+   Box(, 4, 75 )
+   @ m_x + 0, m_y + 25 SAY " LABELIRANJE BAR KODOVA "
+   @ m_x + 2, m_y + 2 SAY "Rezerva (broj komada):" GET nRezerva VALID nRezerva >= 0 PICT "99"
+   @ m_x + 3, m_y + 2 SAY "Linija 2  :" GET cLinija2
+   READ
+   ESC_BCR
+   BoxC()
 
-my_close_all_dbf()
-return
+   cPrefix := IzFmkIni( "Barkod", "Prefix", "", SIFPATH )
+   cSPrefix := pitanje(, "Stampati barkodove koji NE pocinju sa +'" + cPrefix + "' ?", "N" )
+
+   SELECT BARKOD
+   my_dbf_zap()
+
+   SELECT KALK_PRIPR
+   GO TOP
+
+   DO WHILE !Eof()
+      IF aStampati[ RecNo() ] == "N"
+         SKIP 1
+         LOOP
+      ENDIF
+      SELECT ROBA
+      HSEEK KALK_PRIPR->idroba
+      IF Empty( barkod ) .AND. ( IzFmkIni( "BarKod", "Auto", "N", SIFPATH ) == "D" )
+         PRIVATE cPom := IzFmkIni( "BarKod", "AutoFormula", "ID", SIFPATH )
+         // kada je barkod prazan, onda formiraj sam interni barkod
+         cIBK := IzFmkIni( "BARKOD", "Prefix", "", SIFPATH ) + &cPom
+         IF IzFmkIni( "BARKOD", "EAN", "", SIFPATH ) == "13"
+            cIBK := NoviBK_A()
+         ENDIF
+         PushWa()
+         SET ORDER TO TAG "BARKOD"
+         SEEK cIBK
+         IF Found()
+            PopWa()
+            MsgBeep( "Prilikom formiranja internog barkoda##vec postoji kod: " + cIBK + "??##" + "Moracete za artikal " + kalk_pripr->idroba + " sami zadati jedinstveni barkod !" )
+            REPLACE barkod WITH "????"
+         ELSE
+            PopWa()
+            REPLACE barkod WITH cIBK
+         ENDIF
+      ENDIF
+      IF cSprefix == "N"
+         // ne stampaj koji nemaju isti prefix
+         IF Left( barkod, Len( cPrefix ) ) != cPrefix
+            SELECT kalk_pripr
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
+
+      SELECT BARKOD
+      FOR i := 1 TO kalk_pripr->kolicina + IF( kalk_pripr->kolicina > 0, nRezerva, 0 )
+         APPEND BLANK
+         REPLACE id WITH kalk_pripr->idRoba
+         REPLACE naziv WITH Trim( ROBA->naz ) + " (" + Trim( ROBA->jmj ) + ")"
+         REPLACE l1 WITH DToC( kalk_pripr->datdok ) + ", " + Trim( kalk_pripr->( idfirma + "-" + idvd + "-" + brdok ) )
+         REPLACE l2 WITH cLinija2
+         REPLACE vpc WITH ROBA->vpc
+         REPLACE mpc WITH ROBA->mpc
+         REPLACE barkod WITH roba->barkod
+      NEXT
+      SELECT kalk_pripr
+      SKIP 1
+   ENDDO
+   my_close_all_dbf()
+
+   f18_rtm_print( "barkod", "barkod", "1" )
+
+   my_close_all_dbf()
+
+   RETURN
 
 
 /*! \fn KaEdPrLBK()
@@ -158,164 +162,170 @@ return
  *  \sa KaLabelBKod()
  */
 
-function KaEdPrLBK()
-*{
-if Ch==ASC(' ')
-	if aStampati[recno()]=="N"
-		aStampati[recno()] := "D"
-	else
-		aStampati[recno()] := "N"
-	endif
-	return DE_REFRESH
-endif
-return DE_CONT
-*}
+FUNCTION KaEdPrLBK()
+
+   // {
+   IF Ch == Asc( ' ' )
+      IF aStampati[ RecNo() ] == "N"
+         aStampati[ RecNo() ] := "D"
+      ELSE
+         aStampati[ RecNo() ] := "N"
+      ENDIF
+      RETURN DE_REFRESH
+   ENDIF
+
+   RETURN DE_CONT
+// }
 
 /*! \fn FaLabelBKod()
  *  \brief Priprema za labeliranje barkodova
  *  \todo Spojiti
- */ 
-function FaLabelBKod()
-*{
-local cIBK , cPrefix, cSPrefix
+ */
+FUNCTION FaLabelBKod()
 
-O_SIFK
-O_SIFV
+   // {
+   LOCAL cIBK, cPrefix, cSPrefix
 
-O_ROBA
-SET ORDER to TAG "ID"
-O_BARKOD
-O_FAKT_PRIPR
+   O_SIFK
+   O_SIFV
 
-SELECT fakt_pripr
+   O_ROBA
+   SET ORDER TO TAG "ID"
+   O_BARKOD
+   O_FAKT_PRIPR
 
-private aStampati:=ARRAY(RECCOUNT())
+   SELECT fakt_pripr
 
-GO TOP
+   PRIVATE aStampati := Array( RecCount() )
 
-for i:=1 to LEN(aStampati)
-  	aStampati[i]:="D"
-next
+   GO TOP
 
-ImeKol:={ {"IdRoba",      {|| IdRoba  }      } ,;
-    {"Kolicina",    {|| transform(Kolicina,Pickol) }     } ,;
-    {"Stampati?",   {|| IF(aStampati[RECNO()]=="D","-> DA <-","      NE") }      } ;
-  }
+   FOR i := 1 TO Len( aStampati )
+      aStampati[ i ] := "D"
+   NEXT
 
-Kol:={}; for i:=1 to len(ImeKol); AADD(Kol,i); next
-Box(,20,50)
-ObjDbedit("PLBK",20,50,{|| KaEdPrLBK()},"<SPACE> markiranjeÍÍÍÍÍÍÍÍÍÍÍÍÍÍ<ESC> kraj","Priprema za labeliranje bar-kodova...", .t. , , , ,0)
-BoxC()
+   ImeKol := { { "IdRoba",      {|| IdRoba  }      },;
+      { "Kolicina",    {|| Transform( Kolicina, Pickol ) }     },;
+      { "Stampati?",   {|| IF( aStampati[ RecNo() ] == "D", "-> DA <-", "      NE" ) }      } ;
+      }
 
-nRezerva:=0
+   Kol := {}; FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ); NEXT
+   Box(, 20, 50 )
+   ObjDbedit( "PLBK", 20, 50, {|| KaEdPrLBK() }, "<SPACE> markiranjeÍÍÍÍÍÍÍÍÍÍÍÍÍÍ<ESC> kraj", "Priprema za labeliranje bar-kodova...", .T., , , , 0 )
+   BoxC()
 
-cLinija1:=padr("Proizvoljan tekst",45)
-cLinija2:=padr("Uvoznik:"+gNFirma,45)
-Box(,4,75)
-@ m_x+0, m_y+25 SAY " LABELIRANJE BAR KODOVA "
-@ m_x+2, m_y+ 2 SAY "Rezerva (broj komada):" GET nRezerva VALID nRezerva>=0 PICT "99"
-if IzFmkIni("Barkod","BrDok","D",SIFPATH)=="N"
-@ m_x+3, m_y+ 2 SAY "Linija 1  :" GET cLinija1
-endif
-@ m_x+4, m_y+ 2 SAY "Linija 2  :" GET cLinija2
-READ
-ESC_BCR
-BoxC()
+   nRezerva := 0
 
-cPrefix:=IzFmkIni("Barkod","Prefix","",SIFPATH)
-cSPrefix:= pitanje(,"Stampati barkodove koji NE pocinju sa +'"+cPrefix+"' ?","N")
+   cLinija1 := PadR( "Proizvoljan tekst", 45 )
+   cLinija2 := PadR( "Uvoznik:" + gNFirma, 45 )
+   Box(, 4, 75 )
+   @ m_x + 0, m_y + 25 SAY " LABELIRANJE BAR KODOVA "
+   @ m_x + 2, m_y + 2 SAY "Rezerva (broj komada):" GET nRezerva VALID nRezerva >= 0 PICT "99"
+   IF IzFmkIni( "Barkod", "BrDok", "D", SIFPATH ) == "N"
+      @ m_x + 3, m_y + 2 SAY "Linija 1  :" GET cLinija1
+   ENDIF
+   @ m_x + 4, m_y + 2 SAY "Linija 2  :" GET cLinija2
+   READ
+   ESC_BCR
+   BoxC()
 
-SELECT BARKOD
-my_dbf_zap()
+   cPrefix := IzFmkIni( "Barkod", "Prefix", "", SIFPATH )
+   cSPrefix := pitanje(, "Stampati barkodove koji NE pocinju sa +'" + cPrefix + "' ?", "N" )
 
-SELECT fakt_pripr
-GO TOP
-do while !EOF()
+   SELECT BARKOD
+   my_dbf_zap()
 
-
-if aStampati[RECNO()]=="N"; SKIP 1; loop; endif
-SELECT ROBA
-HSEEK fakt_pripr->idroba
-if empty(barkod) .and. (  IzFmkIni("BarKod" , "Auto" , "N", SIFPATH) == "D")
-private cPom:=IzFmkIni("BarKod","AutoFormula","ID", SIFPATH)
-  // kada je barkod prazan, onda formiraj sam interni barkod
-
-cIBK:=IzFmkIni("BARKOD","Prefix","",SIFPATH) +&cPom
-
-if IzFmkIni("BARKOD","EAN","",SIFPATH) == "13"
-   cIBK:=NoviBK_A()
-endif
-
-PushWa()
-set order to tag "BARKOD"
-seek cIBK
-if found()
-     PopWa()
-     MsgBeep(;
-       "Prilikom formiranja internog barkoda##vec postoji kod: "  + cIBK + "??##" + ;
-     "Moracete za artikal "+fakt_pripr->idroba+" sami zadati jedinstveni barkod !" )
-     replace barkod with "????"
-else
-    PopWa()
-    replace barkod with cIBK
-endif
-
-endif
-if cSprefix=="N"
-// ne stampaj koji nemaju isti prefix
-if left(barkod,len(cPrefix)) != cPrefix
-      select fakt_pripr
-      skip
-      loop
-endif
-endif
+   SELECT fakt_pripr
+   GO TOP
+   DO WHILE !Eof()
 
 
-SELECT BARKOD
-for  i:=1  to  fakt_pripr->kolicina + IF( fakt_pripr->kolicina > 0 , nRezerva , 0 )
+      IF aStampati[ RecNo() ] == "N"; SKIP 1; loop; ENDIF
+      SELECT ROBA
+      HSEEK fakt_pripr->idroba
+      IF Empty( barkod ) .AND. (  IzFmkIni( "BarKod", "Auto", "N", SIFPATH ) == "D" )
+         PRIVATE cPom := IzFmkIni( "BarKod", "AutoFormula", "ID", SIFPATH )
+         // kada je barkod prazan, onda formiraj sam interni barkod
 
-	APPEND BLANK
-	REPLACE ID       WITH  KonvZnWin(fakt_pripr->idroba)
+         cIBK := IzFmkIni( "BARKOD", "Prefix", "", SIFPATH ) + &cPom
 
-	if IzFmkIni("Barkod","BrDok","D",SIFPATH)=="D"
-		REPLACE L1 WITH KonvZnWin(DTOC(fakt_pripr->datdok)+", "+TRIM(fakt_pripr->(idfirma+"-"+idtipdok+"-"+brdok)))
-	else
-		REPLACE L1 WITH KonvZnWin(cLinija1)
-	endif
+         IF IzFmkIni( "BARKOD", "EAN", "", SIFPATH ) == "13"
+            cIBK := NoviBK_A()
+         ENDIF
 
-	REPLACE L2 WITH KonvZnWin(cLinija2), VPC WITH ROBA->vpc, MPC WITH ROBA->mpc, BARKOD WITH roba->barkod
+         PushWa()
+         SET ORDER TO TAG "BARKOD"
+         SEEK cIBK
+         IF Found()
+            PopWa()
+            MsgBeep( ;
+               "Prilikom formiranja internog barkoda##vec postoji kod: "  + cIBK + "??##" + ;
+               "Moracete za artikal " + fakt_pripr->idroba + " sami zadati jedinstveni barkod !" )
+            REPLACE barkod WITH "????"
+         ELSE
+            PopWa()
+            REPLACE barkod WITH cIBK
+         ENDIF
 
-	if IzFmkIni("BarKod","JMJ","D",SIFPATH)=="N"
-		replace NAZIV WITH  KonvZnWin(TRIM(ROBA->naz))
-	else
-		replace NAZIV WITH  KonvZnWin(TRIM(ROBA->naz)+" ("+TRIM(ROBA->jmj)+")")
-	endif
+      ENDIF
+      IF cSprefix == "N"
+         // ne stampaj koji nemaju isti prefix
+         IF Left( barkod, Len( cPrefix ) ) != cPrefix
+            SELECT fakt_pripr
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 
-next
-SELECT FAKT_PRIPR
-SKIP 1
 
-enddo
+      SELECT BARKOD
+      FOR  i := 1  TO  fakt_pripr->kolicina + IF( fakt_pripr->kolicina > 0, nRezerva, 0 )
 
-my_close_all_dbf()
+         APPEND BLANK
+         REPLACE ID       WITH  KonvZnWin( fakt_pripr->idroba )
 
-f18_rtm_print( "barkod", "barkod", "1" )
+         IF IzFmkIni( "Barkod", "BrDok", "D", SIFPATH ) == "D"
+            REPLACE L1 WITH KonvZnWin( DToC( fakt_pripr->datdok ) + ", " + Trim( fakt_pripr->( idfirma + "-" + idtipdok + "-" + brdok ) ) )
+         ELSE
+            REPLACE L1 WITH KonvZnWin( cLinija1 )
+         ENDIF
 
-my_close_all_dbf()
-return
+         REPLACE L2 WITH KonvZnWin( cLinija2 ), VPC WITH ROBA->vpc, MPC WITH ROBA->mpc, BARKOD WITH roba->barkod
+
+         IF IzFmkIni( "BarKod", "JMJ", "D", SIFPATH ) == "N"
+            REPLACE NAZIV WITH  KonvZnWin( Trim( ROBA->naz ) )
+         ELSE
+            REPLACE NAZIV WITH  KonvZnWin( Trim( ROBA->naz ) + " (" + Trim( ROBA->jmj ) + ")" )
+         ENDIF
+
+      NEXT
+      SELECT FAKT_PRIPR
+      SKIP 1
+
+   ENDDO
+
+   my_close_all_dbf()
+
+   f18_rtm_print( "barkod", "barkod", "1" )
+
+   my_close_all_dbf()
+
+   RETURN
 
 
 
 /*! \fn FaEdPrLBK()
  *  \brief Priprema barkodova
  */
- 
-function FaEdPrLBK()
-if Ch==ASC(' ')
-     aStampati[recno()] := IF( aStampati[recno()]=="N" , "D" , "N" )
-     return DE_REFRESH
-  endif
-return DE_CONT
+
+FUNCTION FaEdPrLBK()
+
+   IF Ch == Asc( ' ' )
+      aStampati[ RecNo() ] := IF( aStampati[ RecNo() ] == "N", "D", "N" )
+      RETURN DE_REFRESH
+   ENDIF
+
+   RETURN DE_CONT
 
 
 /*!
@@ -323,58 +333,58 @@ return DE_CONT
  @abstract    Novi Barkod - automatski
  @discussion  Ova fja treba da obezbjedi da program napravi novi interni barkod
               tako sto ce pogledati Barkod/Prefix iz fmk.ini i naci zadnji
-              
-	      dodjeljen barkod. Njeno ponasanje ovisno je op parametru
+
+       dodjeljen barkod. Njeno ponasanje ovisno je op parametru
               Barkod / EAN ; Za EAN=13 vraca trinaestocifreni EANKOD,
               Kada je EAN<>13 vraca broj duzine DuzSekvenca BEZ PREFIXA
 */
-function NoviBK_A(cPrefix)
+FUNCTION NoviBK_A( cPrefix )
 
-local cPom , xRet
-local nDuzPrefix, nDuzSekvenca, cEAN
+   LOCAL cPom, xRet
+   LOCAL nDuzPrefix, nDuzSekvenca, cEAN
 
-PushWA()
+   PushWA()
 
-nCount:=1
+   nCount := 1
 
-if cPrefix=NIL
-   cPrefix:=IzFmkIni("Barkod","Prefix","",SIFPATH)
-endif
-cPrefix:=trim(cPrefix)
-nDuzPrefix:=len(cPrefix)
+   IF cPrefix = NIL
+      cPrefix := IzFmkIni( "Barkod", "Prefix", "", SIFPATH )
+   ENDIF
+   cPrefix := Trim( cPrefix )
+   nDuzPrefix := Len( cPrefix )
 
-nDuzSekv:=  val ( IzFmkIni("Barkod","DuzSekvenca","",SIFPATH) )
-cEAN:= IzFmkIni("Barkod","EAN","",SIFPATH)
+   nDuzSekv :=  Val ( IzFmkIni( "Barkod", "DuzSekvenca", "", SIFPATH ) )
+   cEAN := IzFmkIni( "Barkod", "EAN", "", SIFPATH )
 
-cRez:= padl(  alltrim(str(1))  , nDuzSekv , "0")
-if cEAN="13"
-   cRez := cPrefix + cRez + KEAN13(cRez)
-   //      0387202   000001   6
-else
-   cRez := cRez
-endif
+   cRez := PadL(  AllTrim( Str( 1 ) ), nDuzSekv, "0" )
+   IF cEAN = "13"
+      cRez := cPrefix + cRez + KEAN13( cRez )
+      // 0387202   000001   6
+   ELSE
+      cRez := cRez
+   ENDIF
 
-set filter to // pocisti filter
-set order to tag "BARKOD"
-seek cPrefix+"á" // idi na kraj
-skip -1 // lociraj se na zadnji slog iz grupe prefixa
-if left(barkod,nDuzPrefix) == cPrefix
- if cEAN=="13"
-  cPom:=   alltrim ( str( val (substr( BARKOD, nDuzPrefix + 1, nDuzSekv)) + 1 ))
-  cPom:=   padl(cPom,nDuzSekv,"0")
-  cRez:=   cPrefix + cPom
-  cRez:=   cRez + KEAN13(cRez)
- else
-  // interni barkod varijanta planika koristicemo Code128 standard
-  cPom:=   alltrim ( str( val (substr( BARKOD, nDuzPrefix + 1, nDuzSekv)) + 1 ))
-  cPom:=   padl(cPom,nDuzSekv,"0")
-  cRez:=   cPom  // Prefix dio ce dodati glavni alogritam
- endif
-endif
+   SET FILTER TO // pocisti filter
+   SET ORDER TO TAG "BARKOD"
+   SEEK cPrefix + "á" // idi na kraj
+   SKIP -1 // lociraj se na zadnji slog iz grupe prefixa
+   IF Left( barkod, nDuzPrefix ) == cPrefix
+      IF cEAN == "13"
+         cPom :=   AllTrim ( Str( Val ( SubStr( BARKOD, nDuzPrefix + 1, nDuzSekv ) ) + 1 ) )
+         cPom :=   PadL( cPom, nDuzSekv, "0" )
+         cRez :=   cPrefix + cPom
+         cRez :=   cRez + KEAN13( cRez )
+      ELSE
+         // interni barkod varijanta planika koristicemo Code128 standard
+         cPom :=   AllTrim ( Str( Val ( SubStr( BARKOD, nDuzPrefix + 1, nDuzSekv ) ) + 1 ) )
+         cPom :=   PadL( cPom, nDuzSekv, "0" )
+         cRez :=   cPom  // Prefix dio ce dodati glavni alogritam
+      ENDIF
+   ENDIF
 
-PopWa()
+   PopWa()
 
-return cRez
+   RETURN cRez
 
 
 /*!
@@ -383,52 +393,55 @@ return cRez
  @discussion xx
  @param      ckod   kod od dvanaest mjesta
 */
-function KEAN13(cKod)
+FUNCTION KEAN13( cKod )
 
-local n2,n4
-local n1:= val(substr(cKod,2,1)) + val(substr(cKod,4,1)) + val(substr(ckod,6,1)) + val(substr (ckod,8,1)) + val(substr(ckod,10,1)) + val(substr(ckod,12,1))
-local n3:= val(substr(cKod,1,1)) +val(substr(cKod,3,1)) + val(substr(ckod,5,1)) + val(substr (ckod,7,1)) + val(substr(ckod,9,1)) + val(substr(ckod,11,1))
-n2:=n1 * 3
+   LOCAL n2, n4
+   LOCAL n1 := Val( SubStr( cKod, 2, 1 ) ) + Val( SubStr( cKod, 4, 1 ) ) + Val( SubStr( ckod, 6, 1 ) ) + Val( SubStr ( ckod, 8, 1 ) ) + Val( SubStr( ckod, 10, 1 ) ) + Val( SubStr( ckod, 12, 1 ) )
+   LOCAL n3 := Val( SubStr( cKod, 1, 1 ) ) + Val( SubStr( cKod, 3, 1 ) ) + Val( SubStr( ckod, 5, 1 ) ) + Val( SubStr ( ckod, 7, 1 ) ) + Val( SubStr( ckod, 9, 1 ) ) + Val( SubStr( ckod, 11, 1 ) )
 
-n4:= n2 + n3
-n4:= n4 % 10
-if n4=0
- return  "0"   // n5
-else
- return  str( 10 - n4 , 1)   // n5
-endif
+   n2 := n1 * 3
+
+   n4 := n2 + n3
+   n4 := n4 % 10
+   IF n4 = 0
+      RETURN  "0"   // n5
+   ELSE
+      RETURN  Str( 10 - n4, 1 )   // n5
+   ENDIF
 
 
 
 
-// --------------------------------------------------------------------------------------
-// provjerava i pozicionira sifranik artikala na polje barkod po trazeno uslovu
-// --------------------------------------------------------------------------------------
-function barkod( cId )
-local cIdRoba := ""
-local _barkod := ""
+   // --------------------------------------------------------------------------------------
+   // provjerava i pozicionira sifranik artikala na polje barkod po trazeno uslovu
+   // --------------------------------------------------------------------------------------
 
-gOcitBarCod := .f.
+FUNCTION barkod( cId )
 
-select roba
+   LOCAL cIdRoba := ""
+   LOCAL _barkod := ""
 
-if !EMPTY( cId )
+   gOcitBarCod := .F.
 
-	set order to tag "BARKOD"
-	go top
-  	seek cId
+   SELECT roba
 
-  	if FOUND() .and. PADR( cId, 13, "" ) == field->barkod 
-    	cId := field->id  
-     	gOcitBarCod := .t.
-        _barkod := ALLTRIM(field->barkod)
-	endif
+   IF !Empty( cId )
 
-endif
+      SET ORDER TO TAG "BARKOD"
+      GO TOP
+      SEEK cId
 
-cId := PADR( cId, 10 )
+      IF Found() .AND. PadR( cId, 13, "" ) == field->barkod
+         cId := field->id
+         gOcitBarCod := .T.
+         _barkod := AllTrim( field->barkod )
+      ENDIF
 
-return _barkod
+   ENDIF
+
+   cId := PadR( cId, 10 )
+
+   RETURN _barkod
 
 
 
@@ -436,131 +449,130 @@ return _barkod
 // ova funkcija vraca tezinu na osnovu tezinskog barkod-a
 // znaci samo je izracuna
 // -------------------------------------------------------------------------------------
-function tezinski_barkod_get_tezina( barkod, tezina )
-local _tb := param_tezinski_barkod()
-local _tb_prefix := ALLTRIM( fetch_metric( "barkod_prefiks_tezinskog_barkoda", nil, "" ) )
-local _tb_barkod, _tb_tezina
-local _bk_len := fetch_metric( "barkod_tezinski_duzina_barkoda", nil, 0 )
-local _tez_len := fetch_metric( "barkod_tezinski_duzina_tezina", nil, 0 )
-local _tez_div := fetch_metric( "barkod_tezinski_djelitelj", nil, 10000 )
-local _val_tezina := 0
-local _a_prefix
-local _i
+FUNCTION tezinski_barkod_get_tezina( barkod, tezina )
 
-if _tb == "N"
-    return .f.
-endif
+   LOCAL _tb := param_tezinski_barkod()
+   LOCAL _tb_prefix := AllTrim( fetch_metric( "barkod_prefiks_tezinskog_barkoda", nil, "" ) )
+   LOCAL _tb_barkod, _tb_tezina
+   LOCAL _bk_len := fetch_metric( "barkod_tezinski_duzina_barkoda", nil, 0 )
+   LOCAL _tez_len := fetch_metric( "barkod_tezinski_duzina_tezina", nil, 0 )
+   LOCAL _tez_div := fetch_metric( "barkod_tezinski_djelitelj", nil, 10000 )
+   LOCAL _val_tezina := 0
+   LOCAL _a_prefix
+   LOCAL _i
 
-// matrica sa prefiksima...
-// "55"
-// "21"
-// itd...
-_a_prefix := TokToNiz( _tb_prefix, ";" )
+   IF _tb == "N"
+      RETURN .F.
+   ENDIF
 
-if ASCAN( _a_prefix, { |var| var == PADR( barkod, LEN( var ) ) } ) == 0
-    return .f. 
-endif
+   // matrica sa prefiksima...
+   // "55"
+   // "21"
+   // itd...
+   _a_prefix := TokToNiz( _tb_prefix, ";" )
 
-// odrezi ocitano na 7, tu je barkod koji trebam pretraziti
-_tb_barkod := LEFT( barkod, _bk_len )
+   IF AScan( _a_prefix, {|var| var == PadR( barkod, Len( var ) ) } ) == 0
+      RETURN .F.
+   ENDIF
 
-if LEN( ALLTRIM( _tb_barkod ) ) <> _bk_len
-    // ne slaze se sa tezinskim barkodom... ovo je laznjak..
-    return .f.
-endif
+   // odrezi ocitano na 7, tu je barkod koji trebam pretraziti
+   _tb_barkod := Left( barkod, _bk_len )
 
-_tb_tezina := PADR( RIGHT( barkod, _tez_len ), _tez_len - 1 )
+   IF Len( AllTrim( _tb_barkod ) ) <> _bk_len
+      // ne slaze se sa tezinskim barkodom... ovo je laznjak..
+      RETURN .F.
+   ENDIF
 
-// sredi mi i tezinu...
-if !EMPTY( _tb_tezina )
-    _val_tezina := VAL( _tb_tezina )
-	tezina := ROUND( ( _val_tezina / _tez_div ), 4 )
-    return .t.
-endif
+   _tb_tezina := PadR( Right( barkod, _tez_len ), _tez_len - 1 )
 
-return .f.
+   // sredi mi i tezinu...
+   IF !Empty( _tb_tezina )
+      _val_tezina := Val( _tb_tezina )
+      tezina := Round( ( _val_tezina / _tez_div ), 4 )
+      RETURN .T.
+   ENDIF
+
+   RETURN .F.
 
 
 // --------------------------------------------------------------------------------------
 // provjerava tezinski barod
 // --------------------------------------------------------------------------------------
-function tezinski_barkod( id, tezina, pop_push )
-local _ocitao := .f.
-local _tb := param_tezinski_barkod()
-local _tb_prefix := ALLTRIM( fetch_metric( "barkod_prefiks_tezinskog_barkoda", nil, "" ) )
-local _tb_barkod, _tb_tezina
-local _bk_len := fetch_metric( "barkod_tezinski_duzina_barkoda", nil, 0 )
-local _tez_len := fetch_metric( "barkod_tezinski_duzina_tezina", nil, 0 )
-local _tez_div := fetch_metric( "barkod_tezinski_djelitelj", nil, 10000 )
-local _val_tezina := 0
-local _a_prefix
-local _i
+FUNCTION tezinski_barkod( id, tezina, pop_push )
 
-if pop_push == NIL
-    pop_push := .t.
-endif
+   LOCAL _ocitao := .F.
+   LOCAL _tb := param_tezinski_barkod()
+   LOCAL _tb_prefix := AllTrim( fetch_metric( "barkod_prefiks_tezinskog_barkoda", nil, "" ) )
+   LOCAL _tb_barkod, _tb_tezina
+   LOCAL _bk_len := fetch_metric( "barkod_tezinski_duzina_barkoda", nil, 0 )
+   LOCAL _tez_len := fetch_metric( "barkod_tezinski_duzina_tezina", nil, 0 )
+   LOCAL _tez_div := fetch_metric( "barkod_tezinski_djelitelj", nil, 10000 )
+   LOCAL _val_tezina := 0
+   LOCAL _a_prefix
+   LOCAL _i
 
-gOcitBarCod := _ocitao
+   IF pop_push == NIL
+      pop_push := .T.
+   ENDIF
 
-if _tb == "N" 
-	return _ocitao
-endif
+   gOcitBarCod := _ocitao
 
-if EMPTY( id ) 
-	return _ocitao
-endif
+   IF _tb == "N"
+      RETURN _ocitao
+   ENDIF
 
-// matrica sa prefiksima...
-// "55"
-// "21"
-// itd...
-_a_prefix := TokToNiz( _tb_prefix, ";" )
+   IF Empty( id )
+      RETURN _ocitao
+   ENDIF
 
-if ASCAN( _a_prefix, { |var| var == PADR( id, LEN( var ) ) } ) <> 0
-    // ovo je ok...
-else
-    return _ocitao            
-endif
+   // matrica sa prefiksima...
+   // "55"
+   // "21"
+   // itd...
+   _a_prefix := TokToNiz( _tb_prefix, ";" )
 
-// odrezi ocitano na 7, tu je barkod koji trebam pretraziti
-_tb_barkod := LEFT( id, _bk_len )
-_tb_tezina := PADR( RIGHT( id, _tez_len ), _tez_len - 1 )
+   IF AScan( _a_prefix, {|var| var == PadR( id, Len( var ) ) } ) <> 0
+      // ovo je ok...
+   ELSE
+      RETURN _ocitao
+   ENDIF
 
-if pop_push
-    PushWa()
-endif
+   // odrezi ocitano na 7, tu je barkod koji trebam pretraziti
+   _tb_barkod := Left( id, _bk_len )
+   _tb_tezina := PadR( Right( id, _tez_len ), _tez_len - 1 )
 
-select roba
-set order to tag "BARKOD"
-seek _tb_barkod
-  	
-if FOUND() .and. ALLTRIM( _tb_barkod ) == ALLTRIM( field->barkod ) 
+   IF pop_push
+      PushWa()
+   ENDIF
 
-    	id := roba->id  
-     	_ocitao := .t.
+   SELECT roba
+   SET ORDER TO TAG "BARKOD"
+   SEEK _tb_barkod
 
-		gOcitBarCod := _ocitao
+   IF Found() .AND. AllTrim( _tb_barkod ) == AllTrim( field->barkod )
 
-		// sredi mi i tezinu...
-		if !EMPTY( _tb_tezina )
+      id := roba->id
+      _ocitao := .T.
 
-			_val_tezina := VAL( _tb_tezina )
-			tezina := ROUND( ( _val_tezina / _tez_div ), 4 )
+      gOcitBarCod := _ocitao
 
-		endif
+      // sredi mi i tezinu...
+      IF !Empty( _tb_tezina )
 
-endif
+         _val_tezina := Val( _tb_tezina )
+         tezina := Round( ( _val_tezina / _tez_div ), 4 )
 
-id := PADR( id, 10 )
+      ENDIF
 
-select roba
-set order to tag "ID"
+   ENDIF
 
-if pop_push
-    PopWa()
-endif
+   id := PadR( id, 10 )
 
-return _ocitao
+   SELECT roba
+   SET ORDER TO TAG "ID"
 
+   IF pop_push
+      PopWa()
+   ENDIF
 
-
+   RETURN _ocitao

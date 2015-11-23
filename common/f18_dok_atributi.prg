@@ -143,7 +143,7 @@ METHOD F18_DOK_ATRIB:create_local_atrib_table( force )
 
    SELECT ( ::workarea )
    USE
-     	
+
    RETURN SELF
 
 

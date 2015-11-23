@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,7 +14,7 @@
 
 
 // pos komande
-static F_POS_RN := "POS_RN"
+STATIC F_POS_RN := "POS_RN"
 
 
 // --------------------------------------------------------
@@ -24,153 +24,160 @@ static F_POS_RN := "POS_RN"
 // aData - podaci racuna
 // lStorno - da li se stampa storno ili ne (.T. ili .F. )
 // --------------------------------------------------------
-function fc_pos_rn( cFPath, cFName, aData, lStorno, cError )
-local cSep := ";"
-local aPosData := {}
-local aStruct := {}
-local nErr := 0
+FUNCTION fc_pos_rn( cFPath, cFName, aData, lStorno, cError )
 
-if lStorno == nil
-	lStorno := .f.
-endif
+   LOCAL cSep := ";"
+   LOCAL aPosData := {}
+   LOCAL aStruct := {}
+   LOCAL nErr := 0
 
-if cError == nil
-	cError := "N"
-endif
+   IF lStorno == nil
+      lStorno := .F.
+   ENDIF
 
-// pobrisi temp fajlove...
-fl_d_tmp()
+   IF cError == nil
+      cError := "N"
+   ENDIF
 
-// naziv fajla
-cFName := f_filepos( aData[ 1, 1] )
+   // pobrisi temp fajlove...
+   fl_d_tmp()
 
-// izbrisi fajl greske odmah na pocetku ako postoji
-_f_err_delete( cFPath, cFName )
+   // naziv fajla
+   cFName := f_filepos( aData[ 1, 1 ] )
 
-// uzmi strukturu tabele za pos racun
-aStruct := _g_f_struct( F_POS_RN )
+   // izbrisi fajl greske odmah na pocetku ako postoji
+   _f_err_delete( cFPath, cFName )
 
-// iscitaj pos matricu
-aPosData := __pos_rn( aData, lStorno )
+   // uzmi strukturu tabele za pos racun
+   aStruct := _g_f_struct( F_POS_RN )
 
-cTmp_date := DTOC( DATE() )
-cTmp_time := TIME()
+   // iscitaj pos matricu
+   aPosData := __pos_rn( aData, lStorno )
 
-_a_to_file( cFPath, cFName, aStruct, aPosData )
+   cTmp_date := DToC( Date() )
+   cTmp_time := Time()
 
-if cError == "D"
-	msgo("...provjeravam greske...")
-	sleep(3)
-	msgc()
-	// provjeri da li je racun odstampan
-	nErr := fc_pos_err( cFPath, cFName, cTmp_date, cTmp_time )
-endif
+   _a_to_file( cFPath, cFName, aStruct, aPosData )
 
-return nErr
+   IF cError == "D"
+      msgo( "...provjeravam greske..." )
+      Sleep( 3 )
+      msgc()
+      // provjeri da li je racun odstampan
+      nErr := fc_pos_err( cFPath, cFName, cTmp_date, cTmp_time )
+   ENDIF
+
+   RETURN nErr
 
 // ---------------------------------------------------
 // citanje log fajla
 // ---------------------------------------------------
-function fc_pos_err( cFPath, cFName, cDate, cTime )
-local nErr := 0
-local aDir := {}
-local cTmp
-local cE_date
-// error file time-hour, min, sec.
-local cE_th
-local cE_tm
-local cE_ts
-// origin file time-hour, min, sec.
-local cF_th := SUBSTR( cTime, 1, 2 )
-local cF_tm := SUBSTR( cTime, 4, 2 )
-local cF_ts := SUBSTR( cTime, 7, 2 )
-local i
+FUNCTION fc_pos_err( cFPath, cFName, cDate, cTime )
 
-if !EMPTY( ALLTRIM( gFc_path2 ) )
-	cTmp := cFPath + ALLTRIM( gFc_path2 ) + SLASH + cFName
-else
-	cTmp := cFPath + "printe~1\" + cFName 
-endif
+   LOCAL nErr := 0
+   LOCAL aDir := {}
+   LOCAL cTmp
+   LOCAL cE_date
 
-aDir := DIRECTORY( cTmp )
+   // error file time-hour, min, sec.
+   LOCAL cE_th
+   LOCAL cE_tm
+   LOCAL cE_ts
+   // origin file time-hour, min, sec.
+   LOCAL cF_th := SubStr( cTime, 1, 2 )
+   LOCAL cF_tm := SubStr( cTime, 4, 2 )
+   LOCAL cF_ts := SubStr( cTime, 7, 2 )
+   LOCAL i
 
-// nema fajla...
-if LEN( aDir ) = 0
-	return nErr
-endif
+   IF !Empty( AllTrim( gFc_path2 ) )
+      cTmp := cFPath + AllTrim( gFc_path2 ) + SLASH + cFName
+   ELSE
+      cTmp := cFPath + "printe~1\" + cFName
+   ENDIF
 
-// napravi pattern za pretragu unutar matrice
-// <filename> + <date> + <file hour> + <file minute>
-// primjer:
-//
-// 21100000.inp + 10.10.10 + 12 + 15 = "21100000.inp10.10.101215"
+   aDir := Directory( cTmp )
 
-cF_patt := ALLTRIM( UPPER(cFName) ) + cDate + cF_th + cF_tm
+   // nema fajla...
+   IF Len( aDir ) = 0
+      RETURN nErr
+   ENDIF
 
-// ima fajla...
-// provjeri jos samo datum i vrijeme
+   // napravi pattern za pretragu unutar matrice
+   // <filename> + <date> + <file hour> + <file minute>
+   // primjer:
+   //
+   // 21100000.inp + 10.10.10 + 12 + 15 = "21100000.inp10.10.101215"
 
-for i := 1 to LEN( aDir )
+   cF_patt := AllTrim( Upper( cFName ) ) + cDate + cF_th + cF_tm
 
-	cE_name := UPPER( ALLTRIM( aDir[ i, 1 ] ) )
-	// datum fajla
-	cE_date := DTOC( aDir[ i, 3 ] )
-	// vrijeme fajla
-	cE_th := SUBSTR( ALLTRIM( aDir[ i, 4 ] ), 1, 2 )
-	cE_tm := SUBSTR( ALLTRIM( aDir[ i, 4 ] ), 4, 2 )
-	cE_ts := SUBSTR( ALLTRIM( aDir[ i, 4 ] ), 7, 2 )
-	
-	// patern pretrage
-	cE_patt := ALLTRIM( cE_name ) + cE_date + cE_th + cE_tm
+   // ima fajla...
+   // provjeri jos samo datum i vrijeme
 
-	if cE_patt == cF_patt
-		// imamo error fajl !!!
-		nErr := 1
-		exit
-	endif
-next
+   FOR i := 1 TO Len( aDir )
 
-return nErr
+      cE_name := Upper( AllTrim( aDir[ i, 1 ] ) )
+      // datum fajla
+      cE_date := DToC( aDir[ i, 3 ] )
+      // vrijeme fajla
+      cE_th := SubStr( AllTrim( aDir[ i, 4 ] ), 1, 2 )
+      cE_tm := SubStr( AllTrim( aDir[ i, 4 ] ), 4, 2 )
+      cE_ts := SubStr( AllTrim( aDir[ i, 4 ] ), 7, 2 )
+
+      // patern pretrage
+      cE_patt := AllTrim( cE_name ) + cE_date + cE_th + cE_tm
+
+      IF cE_patt == cF_patt
+         // imamo error fajl !!!
+         nErr := 1
+         EXIT
+      ENDIF
+   NEXT
+
+   RETURN nErr
 
 // --------------------------------------------------------
 // brisi fajl greske ako postoji prije kucanja racuna
 // --------------------------------------------------------
-static function _f_err_delete( cFPath, cFName )
-local cTmp := cFPath + "printe~1\" + cFName 
+STATIC FUNCTION _f_err_delete( cFPath, cFName )
 
-FERASE(cTmp)
+   LOCAL cTmp := cFPath + "printe~1\" + cFName
 
-return
+   FErase( cTmp )
+
+   RETURN
 
 
 // ----------------------------------------
 // fajl za pos fiskalni stampac
 // ----------------------------------------
-static function f_filepos( cBrRn )
-local cRet := PADL( ALLTRIM( cBrRn ), 8, "0" ) + ".inp"
-return cRet
+STATIC FUNCTION f_filepos( cBrRn )
+
+   LOCAL cRet := PadL( AllTrim( cBrRn ), 8, "0" ) + ".inp"
+
+   RETURN cRet
 
 
 
 // ----------------------------------------------
 // brise fajlove iz ulaznog direktorija
 // ----------------------------------------------
-static function fl_d_tmp()
-local cTmp 
+STATIC FUNCTION fl_d_tmp()
 
-msgo("brisem tmp fajlove...")
+   LOCAL cTmp
 
-cF_path := ALLTRIM( gFc_path )
-cTmp := "*.inp"
+   msgo( "brisem tmp fajlove..." )
 
-AEVAL( DIRECTORY(cF_path + cTmp), {|aFile| FERASE( cF_path + ;
-	ALLTRIM( aFile[1]) ) })
+   cF_path := AllTrim( gFc_path )
+   cTmp := "*.inp"
 
-sleep(1)
+   AEval( Directory( cF_path + cTmp ), {| aFile| FErase( cF_path + ;
+      AllTrim( aFile[ 1 ] ) ) } )
 
-msgc()
+   Sleep( 1 )
 
-return
+   msgc()
+
+   RETURN
 
 
 
@@ -180,458 +187,464 @@ return
 // cFPath - putanja do fajla
 // aData - podaci racuna
 // -----------------------------------------------------
-function fc_pos_art( cFPath, cFName, aData )
-local cSep := ";"
-local aPosData := {}
-local aStruct := {}
+FUNCTION fc_pos_art( cFPath, cFName, aData )
 
-// uzmi strukturu tabele za pos racun
-aStruct := _g_f_struct( F_POS_RN )
+   LOCAL cSep := ";"
+   LOCAL aPosData := {}
+   LOCAL aStruct := {}
 
-// iscitaj pos matricu
-aPosData := __pos_art( aData )
+   // uzmi strukturu tabele za pos racun
+   aStruct := _g_f_struct( F_POS_RN )
 
-_a_to_file( cFPath, cFName, aStruct, aPosData )
+   // iscitaj pos matricu
+   aPosData := __pos_art( aData )
 
-return
+   _a_to_file( cFPath, cFName, aStruct, aPosData )
+
+   RETURN
 
 
 // ------------------------------------------------------
 // vraca popunjenu matricu za upis artikla u memoriju
 // ------------------------------------------------------
-static function __pos_art( aData )
-local aArr := {}
-local cTmp := ""
-local cLogic
-local cLogSep := ","
-local cSep := ";"
-local i
+STATIC FUNCTION __pos_art( aData )
 
-// ocekivana struktura
-// aData = { idroba, nazroba, cijena, kolicina, porstopa, plu }
+   LOCAL aArr := {}
+   LOCAL cTmp := ""
+   LOCAL cLogic
+   LOCAL cLogSep := ","
+   LOCAL cSep := ";"
+   LOCAL i
 
-// nemam pojma sta ce ovdje biti logic ?
-cLogic := "1"
+   // ocekivana struktura
+   // aData = { idroba, nazroba, cijena, kolicina, porstopa, plu }
 
-for i := 1 to LEN( aData )
-	
-	cTmp := "U"
-	cTmp += cLogSep
-	cTmp += cLogic
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 6) 
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 1) 
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 2)
-	cTmp += cSep
-	// naziv artikla
-	cTmp += ALLTRIM(aData[i, 2])
-	cTmp += cSep
-	// cjena 0-99999.99
-	cTmp += ALLTRIM(STR( aData[i, 3], 12, 2 ))
-	cTmp += cSep
-	// kolicina 0-99999.99
-	cTmp += ALLTRIM(STR( aData[i, 4], 12, 2 ))
-	cTmp += cSep
-	// stand od 1-9
-	cTmp += "1"
-	cTmp += cSep
-	// grupa artikla 1-99
-	cTmp += "1"
-	cTmp += cSep
-	// poreska grupa artikala 1 - 4
-	cTmp += "1"
-	cTmp += cSep
-	// 0 ???
-	cTmp += "0"
-	cTmp += cSep
-	// kod PLU
-	cTmp += ALLTRIM( aData[i, 1] )
-	cTmp += cSep
+   // nemam pojma sta ce ovdje biti logic ?
+   cLogic := "1"
 
-	AADD( aArr, { cTmp } )
+   FOR i := 1 TO Len( aData )
 
-next
+      cTmp := "U"
+      cTmp += cLogSep
+      cTmp += cLogic
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 6 )
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 1 )
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 2 )
+      cTmp += cSep
+      // naziv artikla
+      cTmp += AllTrim( aData[ i, 2 ] )
+      cTmp += cSep
+      // cjena 0-99999.99
+      cTmp += AllTrim( Str( aData[ i, 3 ], 12, 2 ) )
+      cTmp += cSep
+      // kolicina 0-99999.99
+      cTmp += AllTrim( Str( aData[ i, 4 ], 12, 2 ) )
+      cTmp += cSep
+      // stand od 1-9
+      cTmp += "1"
+      cTmp += cSep
+      // grupa artikla 1-99
+      cTmp += "1"
+      cTmp += cSep
+      // poreska grupa artikala 1 - 4
+      cTmp += "1"
+      cTmp += cSep
+      // 0 ???
+      cTmp += "0"
+      cTmp += cSep
+      // kod PLU
+      cTmp += AllTrim( aData[ i, 1 ] )
+      cTmp += cSep
 
-return aArr
+      AAdd( aArr, { cTmp } )
+
+   NEXT
+
+   RETURN aArr
 
 
 // ----------------------------------------
 // vraca popunjenu matricu za ispis racuna
 // ----------------------------------------
-static function __pos_rn( aData, lStorno )
-local aArr := {}
-local cTmp := ""
-local cLogic
-local cLogSep := ","
-local cSep := ";"
-local i
-local cRek_rn := ""
-local cRnBroj
-local nTotal := 0
+STATIC FUNCTION __pos_rn( aData, lStorno )
 
-// ocekuje se matrica formata
-// aData { brrn, rbr, idroba, nazroba, cijena, kolicina, porstopa, rek_rn, plu, cVrPlacanja, nTotal }
+   LOCAL aArr := {}
+   LOCAL cTmp := ""
+   LOCAL cLogic
+   LOCAL cLogSep := ","
+   LOCAL cSep := ";"
+   LOCAL i
+   LOCAL cRek_rn := ""
+   LOCAL cRnBroj
+   LOCAL nTotal := 0
 
-// !!! nije broj racuna !!!!
-// prakticno broj racuna
-// cLogic := ALLTRIM( aData[1, 1] )
+   // ocekuje se matrica formata
+   // aData { brrn, rbr, idroba, nazroba, cijena, kolicina, porstopa, rek_rn, plu, cVrPlacanja, nTotal }
 
-// broj racuna
-cRnBroj := ALLTRIM( aData[1,1] )
+   // !!! nije broj racuna !!!!
+   // prakticno broj racuna
+   // cLogic := ALLTRIM( aData[1, 1] )
 
-// logic je uvijek "1"
-cLogic := "1"
+   // broj racuna
+   cRnBroj := AllTrim( aData[ 1, 1 ] )
 
-if lStorno == .t.
-	
-	cRek_rn := ALLTRIM( aData[ 1, 8 ] )
-	
-	cTmp := "K"
-	cTmp += cLogSep
-	cTmp += cLogic
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 6) 
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 1) 
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 2)
-	cTmp += cSep
-	cTmp += cRek_rn
+   // logic je uvijek "1"
+   cLogic := "1"
 
-	AADD( aArr, { cTmp } )
+   IF lStorno == .T.
 
-endif
+      cRek_rn := AllTrim( aData[ 1, 8 ] )
 
-for i := 1 to LEN( aData )
+      cTmp := "K"
+      cTmp += cLogSep
+      cTmp += cLogic
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 6 )
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 1 )
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 2 )
+      cTmp += cSep
+      cTmp += cRek_rn
 
-	cT_porst := aData[ i, 7 ]
+      AAdd( aArr, { cTmp } )
 
-	cTmp := "S"
-	cTmp += cLogSep
-	cTmp += cLogic
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 6) 
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 1) 
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 2)
-	cTmp += cSep
-	// naziv artikla
-	cTmp += ALLTRIM(aData[i, 4])
-	cTmp += cSep
-	// cjena 0-99999.99
-	cTmp += ALLTRIM(STR( aData[i, 5], 12, 2 ))
-	cTmp += cSep
-	// kolicina 0-99999.99
-	cTmp += ALLTRIM(STR( aData[i, 6], 12, 2 ))
-	cTmp += cSep
-	// stand od 1-9
-	cTmp += PADR("1", 1)
-	cTmp += cSep
-	// grupa artikla 1-99
-	cTmp += "1"
-	cTmp += cSep
-	// poreska grupa artikala 1 - 4
-	if cT_porst == "E"
-		cTmp += "2"
-	else
-		cTmp += "1"
-	endif
-	cTmp += cSep
-	// -0 ???
-	cTmp += "-0"
-	cTmp += cSep
-	// kod PLU
-	cTmp += ALLTRIM( aData[i, 3] )
-	cTmp += cSep
+   ENDIF
 
-	AADD( aArr, { cTmp } )
+   FOR i := 1 TO Len( aData )
 
-next
+      cT_porst := aData[ i, 7 ]
 
-// podnozje
-cTmp := "Q"
-cTmp += cLogSep
-cTmp += cLogic
-cTmp += cLogSep
-cTmp += REPLICATE("_", 6) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 1) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 2)
-cTmp += cSep
-cTmp += "1"
-cTmp += cSep
-cTmp += "pos rn: " + cRnBroj
+      cTmp := "S"
+      cTmp += cLogSep
+      cTmp += cLogic
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 6 )
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 1 )
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 2 )
+      cTmp += cSep
+      // naziv artikla
+      cTmp += AllTrim( aData[ i, 4 ] )
+      cTmp += cSep
+      // cjena 0-99999.99
+      cTmp += AllTrim( Str( aData[ i, 5 ], 12, 2 ) )
+      cTmp += cSep
+      // kolicina 0-99999.99
+      cTmp += AllTrim( Str( aData[ i, 6 ], 12, 2 ) )
+      cTmp += cSep
+      // stand od 1-9
+      cTmp += PadR( "1", 1 )
+      cTmp += cSep
+      // grupa artikla 1-99
+      cTmp += "1"
+      cTmp += cSep
+      // poreska grupa artikala 1 - 4
+      IF cT_porst == "E"
+         cTmp += "2"
+      ELSE
+         cTmp += "1"
+      ENDIF
+      cTmp += cSep
+      // -0 ???
+      cTmp += "-0"
+      cTmp += cSep
+      // kod PLU
+      cTmp += AllTrim( aData[ i, 3 ] )
+      cTmp += cSep
 
-AADD( aArr, { cTmp } )
+      AAdd( aArr, { cTmp } )
 
-// vrsta placanja
-if aData[ 1, 10 ] <> "0"
+   NEXT
 
-	nTotal := aData[ 1, 11 ]
+   // podnozje
+   cTmp := "Q"
+   cTmp += cLogSep
+   cTmp += cLogic
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 6 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 1 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 2 )
+   cTmp += cSep
+   cTmp += "1"
+   cTmp += cSep
+   cTmp += "pos rn: " + cRnBroj
 
-	// zatvaranje racuna
-	cTmp := "T"
-	cTmp += cLogSep
-	cTmp += cLogic
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 6) 
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 1) 
-	cTmp += cLogSep
-	cTmp += REPLICATE("_", 2)
-	cTmp += cSep
-	cTmp += aData[ 1, 10 ]
-	cTmp += cSep
-	cTmp += ALLTRIM( STR( aData[ 1, 11 ], 12, 2 ) )
-	cTmp += cSep
+   AAdd( aArr, { cTmp } )
 
-	AADD( aArr, { cTmp } )
+   // vrsta placanja
+   IF aData[ 1, 10 ] <> "0"
 
-endif
+      nTotal := aData[ 1, 11 ]
 
-// zatvaranje racuna
-cTmp := "T"
-cTmp += cLogSep
-cTmp += cLogic
-cTmp += cLogSep
-cTmp += REPLICATE("_", 6) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 1) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 2)
-cTmp += cSep
+      // zatvaranje racuna
+      cTmp := "T"
+      cTmp += cLogSep
+      cTmp += cLogic
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 6 )
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 1 )
+      cTmp += cLogSep
+      cTmp += Replicate( "_", 2 )
+      cTmp += cSep
+      cTmp += aData[ 1, 10 ]
+      cTmp += cSep
+      cTmp += AllTrim( Str( aData[ 1, 11 ], 12, 2 ) )
+      cTmp += cSep
 
-AADD( aArr, { cTmp } )
+      AAdd( aArr, { cTmp } )
 
-return aArr
+   ENDIF
+
+   // zatvaranje racuna
+   cTmp := "T"
+   cTmp += cLogSep
+   cTmp += cLogic
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 6 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 1 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 2 )
+   cTmp += cSep
+
+   AAdd( aArr, { cTmp } )
+
+   RETURN aArr
 
 
 
 // ----------------------------------------------------
 // flink: unos pologa u printer
 // ----------------------------------------------------
-function fl_polog( cFPath, cFName, nPolog )
-local cSep := ";"
-local aPolog := {}
-local aStruct := {}
+FUNCTION fl_polog( cFPath, cFName, nPolog )
 
-if nPolog == nil
-	nPolog := 0
-endif
+   LOCAL cSep := ";"
+   LOCAL aPolog := {}
+   LOCAL aStruct := {}
 
-// ako je polog 0, pozovi formu za unos
-if nPolog = 0
+   IF nPolog == nil
+      nPolog := 0
+   ENDIF
 
-   Box(,1,60)
-	@ m_x + 1, m_y + 2 SAY "Zaduzujem kasu za:" GET nPolog ;
-		PICT "999999.99"
-	read
-   BoxC()
+   // ako je polog 0, pozovi formu za unos
+   IF nPolog = 0
 
-   if nPolog = 0
-	msgbeep("Polog mora biti <> 0 !")
-	return
-   endif
+      Box(, 1, 60 )
+      @ m_x + 1, m_y + 2 SAY "Zaduzujem kasu za:" GET nPolog ;
+         PICT "999999.99"
+      READ
+      BoxC()
 
-   if LastKey() == K_ESC
-	return
-   endif
+      IF nPolog = 0
+         msgbeep( "Polog mora biti <> 0 !" )
+         RETURN
+      ENDIF
 
-endif
+      IF LastKey() == K_ESC
+         RETURN
+      ENDIF
 
-cFName := f_filepos( "0" )
+   ENDIF
 
-// pobrisi ulazni direktorij
-fl_d_tmp()
+   cFName := f_filepos( "0" )
 
-// izbrisi fajl greske odmah na pocetku ako postoji
-_f_err_delete( cFPath, cFName )
+   // pobrisi ulazni direktorij
+   fl_d_tmp()
 
-// uzmi strukturu tabele za pos racun
-aStruct := _g_f_struct( F_POS_RN )
+   // izbrisi fajl greske odmah na pocetku ako postoji
+   _f_err_delete( cFPath, cFName )
 
-// iscitaj pos matricu
-aPolog := _fl_polog( nPolog )
+   // uzmi strukturu tabele za pos racun
+   aStruct := _g_f_struct( F_POS_RN )
 
-_a_to_file( cFPath, cFName, aStruct, aPolog )
+   // iscitaj pos matricu
+   aPolog := _fl_polog( nPolog )
 
-return
+   _a_to_file( cFPath, cFName, aStruct, aPolog )
+
+   RETURN
 
 
 
 // ----------------------------------------------------
 // flink: reset racuna
 // ----------------------------------------------------
-function fl_reset( cFPath, cFName )
-local cSep := ";"
-local aReset := {}
-local aStruct := {}
+FUNCTION fl_reset( cFPath, cFName )
 
-// pobrisi ulazni direktorij
-fl_d_tmp()
+   LOCAL cSep := ";"
+   LOCAL aReset := {}
+   LOCAL aStruct := {}
 
-cFName := f_filepos( "0" )
+   // pobrisi ulazni direktorij
+   fl_d_tmp()
 
-// izbrisi fajl greske odmah na pocetku ako postoji
-_f_err_delete( cFPath, cFName )
+   cFName := f_filepos( "0" )
 
-// uzmi strukturu tabele za pos racun
-aStruct := _g_f_struct( F_POS_RN )
+   // izbrisi fajl greske odmah na pocetku ako postoji
+   _f_err_delete( cFPath, cFName )
 
-// iscitaj pos matricu
-aReset := _fl_reset()
+   // uzmi strukturu tabele za pos racun
+   aStruct := _g_f_struct( F_POS_RN )
 
-_a_to_file( cFPath, cFName, aStruct, aReset )
+   // iscitaj pos matricu
+   aReset := _fl_reset()
 
-return
+   _a_to_file( cFPath, cFName, aStruct, aReset )
+
+   RETURN
 
 
 
 // ----------------------------------------------------
 // flink: dnevni izvjestaji
 // ----------------------------------------------------
-function fl_daily( cFPath, cFName )
-local cSep := ";"
-local aRpt := {}
-local aStruct := {}
-local cRpt := "Z"
+FUNCTION fl_daily( cFPath, cFName )
 
-Box(, 6, 60)
+   LOCAL cSep := ";"
+   LOCAL aRpt := {}
+   LOCAL aStruct := {}
+   LOCAL cRpt := "Z"
 
-	@ m_x + 1, m_y + 2 SAY "Dnevni izvjestaji..."
-	@ m_x + 3, m_y + 2 SAY "Z - dnevni izvjestaj" 
-	@ m_x + 4, m_y + 2 SAY "X - presjek stanja" 
-	@ m_x + 6, m_y + 2 SAY "         ------------>" GET cRpt ;
-		VALID cRpt $ "ZX" PICT "@!"
-	
-	
-	read
-BoxC()
+   Box(, 6, 60 )
 
-if LastKey() == K_ESC
-	return
-endif
+   @ m_x + 1, m_y + 2 SAY "Dnevni izvjestaji..."
+   @ m_x + 3, m_y + 2 SAY "Z - dnevni izvjestaj"
+   @ m_x + 4, m_y + 2 SAY "X - presjek stanja"
+   @ m_x + 6, m_y + 2 SAY "         ------------>" GET cRpt ;
+      VALID cRpt $ "ZX" PICT "@!"
 
-// pobrisi ulazni direktorij
-fl_d_tmp()
 
-cFName := f_filepos( "0" )
+   READ
+   BoxC()
 
-// izbrisi fajl greske odmah na pocetku ako postoji
-_f_err_delete( cFPath, cFName )
+   IF LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-// uzmi strukturu tabele za pos racun
-aStruct := _g_f_struct( F_POS_RN )
+   // pobrisi ulazni direktorij
+   fl_d_tmp()
 
-// iscitaj pos matricu
-aRpt := _fl_daily( cRpt )
+   cFName := f_filepos( "0" )
 
-_a_to_file( cFPath, cFName, aStruct, aRpt )
+   // izbrisi fajl greske odmah na pocetku ako postoji
+   _f_err_delete( cFPath, cFName )
 
-return
+   // uzmi strukturu tabele za pos racun
+   aStruct := _g_f_struct( F_POS_RN )
+
+   // iscitaj pos matricu
+   aRpt := _fl_daily( cRpt )
+
+   _a_to_file( cFPath, cFName, aStruct, aRpt )
+
+   RETURN
 
 
 
 // ---------------------------------------------------
 // unos pologa u printer
 // ---------------------------------------------------
-static function _fl_polog( nIznos )
-local cTmp := ""
-local cLogic
-local cLogSep := ","
-local cSep := ";"
-local aArr := {}
-local cZnak := "0"
+STATIC FUNCTION _fl_polog( nIznos )
 
-// :tip
-// 0 - uplata
-// 1 - isplata
+   LOCAL cTmp := ""
+   LOCAL cLogic
+   LOCAL cLogSep := ","
+   LOCAL cSep := ";"
+   LOCAL aArr := {}
+   LOCAL cZnak := "0"
 
-if nIznos < 0
-	cZnak := "1"
-endif
+   // :tip
+   // 0 - uplata
+   // 1 - isplata
 
-cLogic := "1"
+   IF nIznos < 0
+      cZnak := "1"
+   ENDIF
 
-cTmp := "I"
-cTmp += cLogSep
-cTmp += cLogic
-cTmp += cLogSep
-cTmp += REPLICATE("_", 6) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 1) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 2)
-cTmp += cSep
-cTmp += cZnak
-cTmp += cSep 
-cTmp += ALLTRIM(STR( ABS( nIznos ) ))
-cTmp += cSep
-	
-AADD( aArr, { cTmp } )
+   cLogic := "1"
 
-return aArr
+   cTmp := "I"
+   cTmp += cLogSep
+   cTmp += cLogic
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 6 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 1 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 2 )
+   cTmp += cSep
+   cTmp += cZnak
+   cTmp += cSep
+   cTmp += AllTrim( Str( Abs( nIznos ) ) )
+   cTmp += cSep
+
+   AAdd( aArr, { cTmp } )
+
+   RETURN aArr
 
 
 
 // ---------------------------------------------------
 // dnevni izvjestaj x i z
 // ---------------------------------------------------
-static function _fl_daily( cTip )
-local cTmp := ""
-local cLogic
-local cLogSep := ","
-local cSep := ";"
-local aArr := {}
+STATIC FUNCTION _fl_daily( cTip )
 
-cLogic := "1"
+   LOCAL cTmp := ""
+   LOCAL cLogic
+   LOCAL cLogSep := ","
+   LOCAL cSep := ";"
+   LOCAL aArr := {}
 
-cTmp := cTip
-cTmp += cLogSep
-cTmp += cLogic
-cTmp += cLogSep
-cTmp += REPLICATE("_", 6) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 1) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 2)
-cTmp += cSep
-	
-AADD( aArr, { cTmp } )
+   cLogic := "1"
 
-return aArr
+   cTmp := cTip
+   cTmp += cLogSep
+   cTmp += cLogic
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 6 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 1 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 2 )
+   cTmp += cSep
+
+   AAdd( aArr, { cTmp } )
+
+   RETURN aArr
 
 
 // ---------------------------------------------------
 // reset otvorenog racuna
 // ---------------------------------------------------
-static function _fl_reset()
-local cTmp := ""
-local cLogic
-local cLogSep := ","
-local cSep := ";"
-local aArr := {}
+STATIC FUNCTION _fl_reset()
 
-cLogic := "1"
+   LOCAL cTmp := ""
+   LOCAL cLogic
+   LOCAL cLogSep := ","
+   LOCAL cSep := ";"
+   LOCAL aArr := {}
 
-cTmp := "N"
-cTmp += cLogSep
-cTmp += cLogic
-cTmp += cLogSep
-cTmp += REPLICATE("_", 6) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 1) 
-cTmp += cLogSep
-cTmp += REPLICATE("_", 2)
-cTmp += cSep
-	
-AADD( aArr, { cTmp } )
+   cLogic := "1"
 
-return aArr
+   cTmp := "N"
+   cTmp += cLogSep
+   cTmp += cLogic
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 6 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 1 )
+   cTmp += cLogSep
+   cTmp += Replicate( "_", 2 )
+   cTmp += cSep
 
+   AAdd( aArr, { cTmp } )
 
-
+   RETURN aArr

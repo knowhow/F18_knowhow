@@ -12,7 +12,6 @@
 #include "fmk.ch"
 #include "common.ch"
 
-
 /*
    moguci statusi:
         lock

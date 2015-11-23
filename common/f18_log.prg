@@ -62,11 +62,9 @@ STATIC FUNCTION uslovi_pregleda_loga( params )
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "LIKE uslovi:"
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY8 "  sadrži:" GET _conds_true PICT "@S40"
 
    ++ _x
@@ -75,7 +73,6 @@ STATIC FUNCTION uslovi_pregleda_loga( params )
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Pregledaj samo operacije nad dokumentima (D/N)?" GET _f18_doc_oper VALID _f18_doc_oper $ "DN" PICT "@!"
 
    ++ _x
@@ -114,9 +111,6 @@ STATIC FUNCTION uslovi_pregleda_loga( params )
    params[ "doc_oper" ] := _f18_doc_oper
 
    RETURN _ok
-
-
-
 
 
 STATIC FUNCTION _log_get_data( params )
@@ -241,7 +235,6 @@ STATIC FUNCTION _print_log_data( data, params, print_to_file )
    RETURN _log_file
 
 
-
 FUNCTION f18_log_delete()
 
    LOCAL _params := hb_Hash()
@@ -281,7 +274,7 @@ STATIC FUNCTION sql_log_delete( params )
    _where := "( l_time::char(8) <= " + _sql_quote( _delete_date )
    _where += " AND msg NOT LIKE " + _sql_quote( _dok_oper ) + " ) "
    _where += " OR "
-   _where += "( EXTRACT( YEAR FROM l_time ) < EXTRACT( YEAR FROM CURRENT_DATE ) " 
+   _where += "( EXTRACT( YEAR FROM l_time ) < EXTRACT( YEAR FROM CURRENT_DATE ) "
    _where += " AND "
    _where += " msg LIKE " + _sql_quote( _dok_oper ) + " ) "
 

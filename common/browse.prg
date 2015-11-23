@@ -271,7 +271,7 @@ STATIC FUNCTION browse_only( params, lIzOBJDB )
 
    // Dodavanje kolona  za stampanje
    FOR k := 1 TO Len( Kol )
-      
+
       i := AScan( Kol, k )
       IF i <> 0
          // TODO: SQL vraca nil .and. (ImeKol[i,2] <> NIL)
@@ -342,7 +342,7 @@ STATIC FUNCTION standardne_browse_komande( TB, Ch, nRez, nPored, aPoredak )
    CASE Ch == K_CTRL_F
 
       bTekCol := ( TB:getColumn( TB:colPos ) ):Block
-     	
+
       IF ValType( Eval( bTekCol ) ) == "C"
 
          Box( "bFind", 2, 50, .F. )
@@ -394,7 +394,7 @@ STATIC FUNCTION standardne_browse_komande( TB, Ch, nRez, nPored, aPoredak )
       IF ( gReadOnly .OR. !ImaPravoPristupa( goModul:oDatabase:cName, "CUI", "STANDTBKOMANDE-ALTR_ALTS" ) )
          Msg( "Nemate pravo na koristenje ove opcije", 15 )
       ELSE
-		
+
          PRIVATE cKolona
 
          IF Len( Imekol[ TB:colPos ] ) > 2
@@ -417,14 +417,14 @@ STATIC FUNCTION standardne_browse_komande( TB, Ch, nRez, nPored, aPoredak )
                   // svako polje ima svoj parametar
                   _sect := "_brow_fld_find_" + AllTrim( Lower( cKolona ) )
                   _trazi_val := &cKolona
-                			
+
                   IF _last_srch == "D"
                      _trazi_val := fetch_metric( _sect, "<>", _trazi_val )
                   ENDIF
 
                   _zamijeni_val := _trazi_val
                   _sect := "_brow_fld_repl_" + AllTrim( Lower( cKolona ) )
-								
+
                   IF _last_srch == "D"
                      _zamijeni_val := fetch_metric( _sect, "<>", _zamijeni_val )
                   ENDIF
@@ -451,7 +451,7 @@ STATIC FUNCTION standardne_browse_komande( TB, Ch, nRez, nPored, aPoredak )
                   ELSE
                      RETURN DE_CONT
                   ENDIF
-            	
+
                ENDIF
             ENDIF
          ENDIF
@@ -772,17 +772,17 @@ ENDIF
 
 if Pitanje( , "Želite izbrisati ovu stavku ?","D") == "D"
 
-         my_rlock()           
+         my_rlock()
          delete
          my_unlock()
 
          if lPack
                my_dbf_pack()
          endif
-           
+
          return DE_REFRESH
 endif
-        
+
 return DE_CONT
 
 
@@ -794,5 +794,3 @@ FUNCTION browse_brisi_pripremu()
    endif
 
    return DE_CONT
-
-

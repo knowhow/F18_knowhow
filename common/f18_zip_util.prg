@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -15,219 +15,222 @@
 // ---------------------------------------------------
 // zipovanje fajlova
 // ---------------------------------------------------
-function zip_files( output_path, output_file_name, files, relative_path )
-local _error
+FUNCTION zip_files( output_path, output_file_name, files, relative_path )
 
-IF ( relative_path == NIL )
-    relative_path := .f.
-ENDIF
+   LOCAL _error
 
-IF ( files == NIL ) .or. LEN( files ) == 0
-    return MsgBeep( "Nema fajlova za arhiviranje ?!???" )
-ENDIF
+   IF ( relative_path == NIL )
+      relative_path := .F.
+   ENDIF
 
-_error := __zip( output_path, output_file_name, files, relative_path )
+   IF ( files == NIL ) .OR. Len( files ) == 0
+      RETURN MsgBeep( "Nema fajlova za arhiviranje ?!???" )
+   ENDIF
 
-return _error
+   _error := __zip( output_path, output_file_name, files, relative_path )
+
+   RETURN _error
 
 
 // ---------------------------------------------------
 // unzipovanje fajlova
 // ---------------------------------------------------
-function unzip_files( zip_path, zip_file_name, extract_destination, files, overwrite_file )
-local _error
-_error := __unzip( zip_path, zip_file_name, extract_destination, files, overwrite_file )
-return _error
+FUNCTION unzip_files( zip_path, zip_file_name, extract_destination, files, overwrite_file )
+
+   LOCAL _error
+
+   _error := __unzip( zip_path, zip_file_name, extract_destination, files, overwrite_file )
+
+   RETURN _error
 
 
 
 // ------------------------------------------------------
 // ------------------------------------------------------
-static function __zip( zf_path, zf_name, files, relative_path )
-local _h_zip
-local _file
-local _error := 0
-local _cnt := 0
-local _zip_file := zf_path + zf_name
-local __file_path, __file_ext, __file_name
-local _a_file, _a_dir
+STATIC FUNCTION __zip( zf_path, zf_name, files, relative_path )
 
-// otvori fajl
-_h_zip := HB_ZIPOPEN( _zip_file )
+   LOCAL _h_zip
+   LOCAL _file
+   LOCAL _error := 0
+   LOCAL _cnt := 0
+   LOCAL _zip_file := zf_path + zf_name
+   LOCAL __file_path, __file_ext, __file_name
+   LOCAL _a_file, _a_dir
 
-IF !EMPTY( _h_zip )
+   // otvori fajl
+   _h_zip := hb_zipOpen( _zip_file )
 
-    Box(, 2, 65 )
+   IF !Empty( _h_zip )
 
-        @ m_x + 1, m_y + 2 SAY "Kompresujem fajl: ..." + PADL( ALLTRIM( _zip_file ), 40 )
+      Box(, 2, 65 )
 
-        FOR EACH _file IN files
-            IF !EMPTY( _file )  
+      @ m_x + 1, m_y + 2 SAY "Kompresujem fajl: ..." + PadL( AllTrim( _zip_file ), 40 )
 
-                // odvoji mi lokaciju fajlova i nazive
-                HB_FNameSplit( _file, @__file_path, @__file_name, @__file_ext )
+      FOR EACH _file IN files
+         IF !Empty( _file )
 
-                _a_dir := HB_DirScan( __file_path, __file_name + __file_ext )                
-                    
-                FOR EACH _a_file IN _a_dir
-                    IF ! ( __file_path + _a_file[1] == _zip_file )
+            // odvoji mi lokaciju fajlova i nazive
+            hb_FNameSplit( _file, @__file_path, @__file_name, @__file_ext )
 
-                        ++ _cnt
+            _a_dir := hb_DirScan( __file_path, __file_name + __file_ext )
 
-                        @ m_x + 2, m_y + 2 SAY PADL( ALLTRIM(STR( _cnt )), 3 ) + ") ..." + PADR( ALLTRIM( _a_file[1] ), 40 )
+            FOR EACH _a_file IN _a_dir
+               IF ! ( __file_path + _a_file[ 1 ] == _zip_file )
 
-                        IF relative_path 
-                            _error := HB_ZipStoreFile( _h_zip, __file_path + _a_file[1], __file_path + _a_file[1], nil )
-                        ELSE
-                            _error := HB_ZipStoreFile( _h_zip, _a_file[1], _a_file[1], nil )
-                        ENDIF
+                  ++ _cnt
 
-                        IF ( _error <> 0 )
-                            __zip_error( _error, "operacija: kompresovanje fajla" )
-                            //RETURN -99
-                        ENDIF
+                  @ m_x + 2, m_y + 2 SAY PadL( AllTrim( Str( _cnt ) ), 3 ) + ") ..." + PadR( AllTrim( _a_file[ 1 ] ), 40 )
 
-                    ENDIF
-                NEXT
-                
-            ENDIF
-        NEXT
+                  IF relative_path
+                     _error := hb_zipStoreFile( _h_zip, __file_path + _a_file[ 1 ], __file_path + _a_file[ 1 ], nil )
+                  ELSE
+                     _error := hb_zipStoreFile( _h_zip, _a_file[ 1 ], _a_file[ 1 ], nil )
+                  ENDIF
 
-        _error := HB_ZIPCLOSE( _h_zip, "" )
-    
-    BoxC()
+                  IF ( _error <> 0 )
+                     __zip_error( _error, "operacija: kompresovanje fajla" )
+                     // RETURN -99
+                  ENDIF
 
-ENDIF
+               ENDIF
+            NEXT
 
-IF ( _error <> 0 )
-    __zip_error( _error, "operacija: zatvaranje zip fajla" )
-ENDIF
+         ENDIF
+      NEXT
 
-RETURN _error
+      _error := hb_zipClose( _h_zip, "" )
+
+      BoxC()
+
+   ENDIF
+
+   IF ( _error <> 0 )
+      __zip_error( _error, "operacija: zatvaranje zip fajla" )
+   ENDIF
+
+   RETURN _error
 
 
 // -----------------------------------
-// obrada gresaka 
+// obrada gresaka
 // -----------------------------------
-static function __zip_error( err, descr )
-local _add_msg := ""
+STATIC FUNCTION __zip_error( err, descr )
 
-IF ( err <> 0 )
+   LOCAL _add_msg := ""
 
-    IF descr == NIL
-        descr := ""
-    ENDIF
-    
-    IF !EMPTY( descr )
-        _add_msg := "#" + descr
-    ENDIF
+   IF ( err <> 0 )
 
-    MsgBeep( "Imamo gresku ?!???" + ALLTRIM( STR( err ) ) + _add_msg )
-ENDIF
+      IF descr == NIL
+         descr := ""
+      ENDIF
 
-RETURN
+      IF !Empty( descr )
+         _add_msg := "#" + descr
+      ENDIF
+
+      MsgBeep( "Imamo gresku ?!???" + AllTrim( Str( err ) ) + _add_msg )
+   ENDIF
+
+   RETURN
 
 
 // ------------------------------------------------------
 // ------------------------------------------------------
-static function __unzip( zf_path, zf_name, zf_destination, files, overwrite_file )
-local _h_zip
-local _file
-local _error := 0
-local _cnt := 0
-local _extract := .t.
-local _scan
-local _file_in_zip
-local _zip_file := zf_path + zf_name
-local __file, __date, __time, __size
+STATIC FUNCTION __unzip( zf_path, zf_name, zf_destination, files, overwrite_file )
 
-// paterni fajlova za ekstrakt
-IF ( files == NIL )
-    files := {}
-ENDIF
+   LOCAL _h_zip
+   LOCAL _file
+   LOCAL _error := 0
+   LOCAL _cnt := 0
+   LOCAL _extract := .T.
+   LOCAL _scan
+   LOCAL _file_in_zip
+   LOCAL _zip_file := zf_path + zf_name
+   LOCAL __file, __date, __time, __size
 
-IF ( zf_destination == NIL ) 
-    zf_destination := ""
-ENDIF
+   // paterni fajlova za ekstrakt
+   IF ( files == NIL )
+      files := {}
+   ENDIF
 
-IF ( overwrite_file == NIL )
-    overwrite_file := .t.
-ENDIF
+   IF ( zf_destination == NIL )
+      zf_destination := ""
+   ENDIF
 
-// otvori zip fajl
-_h_zip := HB_UNZIPOPEN( _zip_file )
+   IF ( overwrite_file == NIL )
+      overwrite_file := .T.
+   ENDIF
 
-IF !EMPTY( _h_zip )
+   // otvori zip fajl
+   _h_zip := hb_unzipOpen( _zip_file )
 
-    Box(, 2, 65 )
+   IF !Empty( _h_zip )
 
-        @ m_x + 1, m_y + 2 SAY "Dekompresujem fajl: ..." + PADL( ALLTRIM( _zip_file ), 30 )
+      Box(, 2, 65 )
 
-        IF !EMPTY( zf_destination )
-            // skoci u direktorij za raspakivanje ...
-            DirChange( zf_destination )
-        ENDIF
+      @ m_x + 1, m_y + 2 SAY "Dekompresujem fajl: ..." + PadL( AllTrim( _zip_file ), 30 )
 
-        _error := HB_UNZIPFILEFIRST( _h_zip )
+      IF !Empty( zf_destination )
+         // skoci u direktorij za raspakivanje ...
+         DirChange( zf_destination )
+      ENDIF
 
-        DO WHILE _error == 0
- 
-            HB_UnzipFileInfo( _h_zip, @__file, @__date, @__time, , , , @__size )
+      _error := hb_unzipFileFirst( _h_zip )
 
-            IF ( __file == NIL ) .OR. EMPTY( __file )
-                _error := HB_UnzipFileNext( _h_zip )
+      DO WHILE _error == 0
+
+         hb_unzipFileInfo( _h_zip, @__file, @__date, @__time, , , , @__size )
+
+         IF ( __file == NIL ) .OR. Empty( __file )
+            _error := hb_unzipFileNext( _h_zip )
+         ENDIF
+
+         // da li imamo kakve paterne ?
+         IF Len( files ) > 0
+            // daj info o zip fajlu...
+            _scan := AScan( files, {| pattern | hb_WildMatch( pattern, __file, .T. ) } )
+            IF _scan == 0
+               _extract := .F.
             ENDIF
 
-            // da li imamo kakve paterne ?
-            IF LEN( files ) > 0
-                // daj info o zip fajlu...
-                _scan := ASCAN( files, { | pattern | HB_WILDMATCH( pattern, __file, .t. ) } )
-                IF _scan == 0
-                    _extract := .f.         
-                ENDIF
+         ENDIF
 
+         // prvo provjeri postoji li fajl, ako je u overwrite modu
+         IF overwrite_file
+            IF File( __file )
+               FErase( __file )
+            ENDIF
+         ENDIF
+
+         IF _extract
+
+            ++ _cnt
+
+            @ m_x + 2, m_y + 2 SAY PadL( AllTrim( Str( _cnt ) ), 3 ) + ") ... " + PadL( AllTrim( __file ), 38 )
+
+            _error := hb_unzipExtractCurrentFile( _h_zip, NIL, NIL )
+
+            IF ( _error <> 0 )
+               __zip_error( _error, "operacija: dekompresovanje fajla" )
+               // RETURN -99
             ENDIF
 
-            // prvo provjeri postoji li fajl, ako je u overwrite modu
-            IF overwrite_file 
-                IF FILE( __file )
-                    FERASE( __file )
-                ENDIF
-            ENDIF
+         ENDIF
 
-            IF _extract
+         // ovdje ne treba obrada error-a
+         // zato sto je kraj arhive greska = -100
+         _error := hb_unzipFileNext( _h_zip )
 
-                ++ _cnt
+      ENDDO
 
-                @ m_x + 2, m_y + 2 SAY PADL( ALLTRIM(STR( _cnt )), 3 ) + ") ... " + PADL( ALLTRIM( __file ), 38 )
+      _error := hb_unzipClose( _h_zip, "" )
 
-                _error := HB_UnzipExtractCurrentFile( _h_zip, NIL, NIL )
+      BoxC()
 
-                IF ( _error <> 0 )
-                    __zip_error( _error, "operacija: dekompresovanje fajla" )
-                    //RETURN -99
-                ENDIF
+   ENDIF
 
-            ENDIF
+   IF ( _error <> 0 )
+      __zip_error( _error, "operacija: zatvaranje zip fajla" )
+   ENDIF
 
-            // ovdje ne treba obrada error-a
-            // zato sto je kraj arhive greska = -100
-            _error := HB_UnzipFileNext( _h_zip )
-
-        ENDDO
-
-        _error := HB_UNZIPCLOSE( _h_zip, "" )
-
-    BoxC()
-
-ENDIF
-
-IF ( _error <> 0 )
-    __zip_error( _error, "operacija: zatvaranje zip fajla" )
-ENDIF
-
-RETURN _error
-
-
-
-
+   RETURN _error

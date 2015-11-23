@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,42 +12,42 @@
 
 #include "fmk.ch"
 
-static F_RN_TXT := "RACUN_TXT"
-static _F_VRN_TXT := "FV*.TXT"
-static _F_MRN_TXT := "FM*.TXT"
-static F_RN_PLA := "RACUN_PLA"
-static _F_VRN_PLA := "FV*.PLA"
-static _F_MRN_PLA := "FM*.PLA"
-static F_RN_MEM := "RACUN_MEM"
-static _F_VRN_MEM := "FV*.MEM"
-static _F_MRN_MEM := "FM*.MEM"
-static F_SEMAFOR := "SEMAFOR"
-static _F_SEMAFOR := "FS*.TXT"
-static F_NIV := "NIVELACIJA"
-static _F_NIV := "FN*.TXT"
+STATIC F_RN_TXT := "RACUN_TXT"
+STATIC _F_VRN_TXT := "FV*.TXT"
+STATIC _F_MRN_TXT := "FM*.TXT"
+STATIC F_RN_PLA := "RACUN_PLA"
+STATIC _F_VRN_PLA := "FV*.PLA"
+STATIC _F_MRN_PLA := "FM*.PLA"
+STATIC F_RN_MEM := "RACUN_MEM"
+STATIC _F_VRN_MEM := "FV*.MEM"
+STATIC _F_MRN_MEM := "FM*.MEM"
+STATIC F_SEMAFOR := "SEMAFOR"
+STATIC _F_SEMAFOR := "FS*.TXT"
+STATIC F_NIV := "NIVELACIJA"
+STATIC _F_NIV := "FN*.TXT"
 
-static F_FPOR := "POREZI"
-static _F_FPOR := "F_POR.TXT"
+STATIC F_FPOR := "POREZI"
+STATIC _F_FPOR := "F_POR.TXT"
 
-static F_FPART := "PARTNERI"
-static _F_FPART := "F_KUPCI.TXT"
+STATIC F_FPART := "PARTNERI"
+STATIC _F_FPART := "F_KUPCI.TXT"
 
-static F_FROBA := "ROBA"
-static _F_FROBA := "F_ROBA.TXT"
+STATIC F_FROBA := "ROBA"
+STATIC _F_FROBA := "F_ROBA.TXT"
 
-static F_FROBGR := "ROBAGRUPE"
-static _F_FROBGR := "F_GRUPE.TXT"
+STATIC F_FROBGR := "ROBAGRUPE"
+STATIC _F_FROBGR := "F_GRUPE.TXT"
 
-static F_FOBJ := "OBJEKTI"
-static _F_FOBJ := "F_OBJ.TXT"
+STATIC F_FOBJ := "OBJEKTI"
+STATIC _F_FOBJ := "F_OBJ.TXT"
 
-static F_FOPER := "OPERATERI"
-static _F_FOPER := "F_OPER.TXT"
+STATIC F_FOPER := "OPERATERI"
+STATIC _F_FOPER := "F_OPER.TXT"
 
 // pos komande
-static F_POS_RN := "POS_RN"
+STATIC F_POS_RN := "POS_RN"
 
-// komande semafora 
+// komande semafora
 // -------------------------------------------
 // 0 - stampanje racuna maloprodaje
 // 1 - stampanje storno racuna maloprodaje
@@ -56,7 +56,7 @@ static F_POS_RN := "POS_RN"
 // 4 - stampanje dnevnog izvjestaja
 // 13 - upis sifara robe u fisk.uredjaj
 // 14 - upis grupe sifara robe u fisk.uredjaj
-// 20 - stampanje racuna veleprodaje 
+// 20 - stampanje racuna veleprodaje
 // 21 - stampanje storno racuna veleprodaje
 // 50 - uplata u kasu
 // 51 - isplata iz kase
@@ -96,8 +96,8 @@ static F_POS_RN := "POS_RN"
 // [5] - fiskalna sifra kupca za veleprodaju ili 0
 // [6] - broj reklamnog racuna
 
-// (NIVELACIJA.TXT) : aNiv_data 
-// [1] - broj nivelacije 
+// (NIVELACIJA.TXT) : aNiv_data
+// [1] - broj nivelacije
 // [2] - sifra robe
 // [3] - naziv robe
 // [4] - bar kod
@@ -115,154 +115,153 @@ static F_POS_RN := "POS_RN"
 // cRnNum - broj racuna
 // nTotal - total racuna
 // -------------------------------------------------------
-function fisc_v_rn( cFPath, aItems, aTxt, aPla_data, aSem_data )
+FUNCTION fisc_v_rn( cFPath, aItems, aTxt, aPla_data, aSem_data )
 
-// cFPath := PRIVPATH
+   // cFPath := PRIVPATH
 
-// uzmi strukturu tabele za f_v_racun.txt
-aS_rn_txt := _g_f_struct( F_RN_TXT )
-// uzmi strukturu tabele za f_v_racun.mem
-aS_rn_mem := _g_f_struct( F_RN_MEM )
-// uzmi strukturu tabele za f_v_racun.pla
-aS_rn_pla := _g_f_struct( F_RN_PLA )
-// uzmi strukturu tabele za semafor
-aS_semafor := _g_f_struct( F_SEMAFOR )
-
-
-// broj racuna
-nInvoice := aItems[1, 1]
-
-cPom := f_filename( _F_VRN_TXT, nInvoice )
-
-// upisi aItems prema aVRnTxt u PRIVPATH + "F_V_RACUN.TXT"
-_a_to_file( cFPath, cPom, aS_rn_txt, aItems )
-
-if LEN(aTxt) <> 0
-	
-	cPom := f_filename( _F_VRN_MEM, nInvoice )
-	// upisi zatim stavke u fajl "F_V_RACUN.MEM"
-	_a_to_file( cFPath, cPom, aS_rn_mem, aTxt )
-endif
-	
-cPom := f_filename( _F_VRN_PLA, nInvoice )
-// upisi zatim stavke u fajl "F_V_RACUN.PLA"
-_a_to_file( cFPath, cPom, aS_rn_pla, aPla_Data )
-
-cPom := f_filename( _F_SEMAFOR, nInvoice )
-// upisi i semafor "F_SEMAFOR.TXT"
-_a_to_file( cFPath, cPom, aS_semafor, aSem_Data ) 
+   // uzmi strukturu tabele za f_v_racun.txt
+   aS_rn_txt := _g_f_struct( F_RN_TXT )
+   // uzmi strukturu tabele za f_v_racun.mem
+   aS_rn_mem := _g_f_struct( F_RN_MEM )
+   // uzmi strukturu tabele za f_v_racun.pla
+   aS_rn_pla := _g_f_struct( F_RN_PLA )
+   // uzmi strukturu tabele za semafor
+   aS_semafor := _g_f_struct( F_SEMAFOR )
 
 
-return
+   // broj racuna
+   nInvoice := aItems[ 1, 1 ]
+
+   cPom := f_filename( _F_VRN_TXT, nInvoice )
+
+   // upisi aItems prema aVRnTxt u PRIVPATH + "F_V_RACUN.TXT"
+   _a_to_file( cFPath, cPom, aS_rn_txt, aItems )
+
+   IF Len( aTxt ) <> 0
+
+      cPom := f_filename( _F_VRN_MEM, nInvoice )
+      // upisi zatim stavke u fajl "F_V_RACUN.MEM"
+      _a_to_file( cFPath, cPom, aS_rn_mem, aTxt )
+   ENDIF
+
+   cPom := f_filename( _F_VRN_PLA, nInvoice )
+   // upisi zatim stavke u fajl "F_V_RACUN.PLA"
+   _a_to_file( cFPath, cPom, aS_rn_pla, aPla_Data )
+
+   cPom := f_filename( _F_SEMAFOR, nInvoice )
+   // upisi i semafor "F_SEMAFOR.TXT"
+   _a_to_file( cFPath, cPom, aS_semafor, aSem_Data )
+
+   RETURN
 
 
 // ---------------------------------
 // racun maloprodaje
 // ---------------------------------
-function fisc_m_rn( cFPath, aItems, aTxt, aPla_data, aSem_data )
-// cFPath := PRIVPATH
+FUNCTION fisc_m_rn( cFPath, aItems, aTxt, aPla_data, aSem_data )
 
-// uzmi strukturu tabele za f_v_racun.txt
-aS_rn_txt := _g_f_struct( F_RN_TXT )
-// uzmi strukturu tabele za f_v_racun.mem
-aS_rn_mem := _g_f_struct( F_RN_MEM )
-// uzmi strukturu tabele za f_v_racun.pla
-aS_rn_pla := _g_f_struct( F_RN_PLA )
-// uzmi strukturu tabele za semafor
-aS_semafor := _g_f_struct( F_SEMAFOR )
+   // cFPath := PRIVPATH
 
-// broj racuna
-nInvoice := aItems[1, 1]
+   // uzmi strukturu tabele za f_v_racun.txt
+   aS_rn_txt := _g_f_struct( F_RN_TXT )
+   // uzmi strukturu tabele za f_v_racun.mem
+   aS_rn_mem := _g_f_struct( F_RN_MEM )
+   // uzmi strukturu tabele za f_v_racun.pla
+   aS_rn_pla := _g_f_struct( F_RN_PLA )
+   // uzmi strukturu tabele za semafor
+   aS_semafor := _g_f_struct( F_SEMAFOR )
+
+   // broj racuna
+   nInvoice := aItems[ 1, 1 ]
 
 
-cPom := f_filename( _F_MRN_TXT, nInvoice )
-// upisi aItems prema aVRnTxt u PRIVPATH + "F_V_RACUN.TXT"
-_a_to_file( cFPath, cPom, aS_rn_txt, aItems )
+   cPom := f_filename( _F_MRN_TXT, nInvoice )
+   // upisi aItems prema aVRnTxt u PRIVPATH + "F_V_RACUN.TXT"
+   _a_to_file( cFPath, cPom, aS_rn_txt, aItems )
 
-if LEN(aTxt) <> 0
+   IF Len( aTxt ) <> 0
 
-	cPom := f_filename( _F_MRN_MEM, nInvoice )
-	// upisi zatim stavke u fajl "F_V_RACUN.MEM"
-	_a_to_file( cFPath, cPom, aS_rn_mem, aTxt )
-endif
+      cPom := f_filename( _F_MRN_MEM, nInvoice )
+      // upisi zatim stavke u fajl "F_V_RACUN.MEM"
+      _a_to_file( cFPath, cPom, aS_rn_mem, aTxt )
+   ENDIF
 
-cPom := f_filename( _F_MRN_PLA, nInvoice )
-// upisi zatim stavke u fajl "F_V_RACUN.PLA"
-_a_to_file( cFPath, cPom, aS_rn_pla, aPla_Data )
+   cPom := f_filename( _F_MRN_PLA, nInvoice )
+   // upisi zatim stavke u fajl "F_V_RACUN.PLA"
+   _a_to_file( cFPath, cPom, aS_rn_pla, aPla_Data )
 
-cPom := f_filename( _F_SEMAFOR, nInvoice )
-// upisi i semafor "F_SEMAFOR.TXT"
-_a_to_file( cFPath, cPom, aS_semafor, aSem_Data ) 
+   cPom := f_filename( _F_SEMAFOR, nInvoice )
+   // upisi i semafor "F_SEMAFOR.TXT"
+   _a_to_file( cFPath, cPom, aS_semafor, aSem_Data )
 
-return
+   RETURN
 
 
 // ----------------------------------------------------
 // sredjuje naziv fajla za fiskalni stampac
 // ----------------------------------------------------
-static function f_filename( cPattern, nInvoice )
-local cRet := ""
-cRet := STRTRAN( cPattern, "*", ALLTRIM(STR(nInvoice)) )
-return cRet
+STATIC FUNCTION f_filename( cPattern, nInvoice )
+
+   LOCAL cRet := ""
+
+   cRet := StrTran( cPattern, "*", AllTrim( Str( nInvoice ) ) )
+
+   RETURN cRet
 
 
 // ---------------------------------
 // nivelacija
 // ---------------------------------
-function fisc_nivel(cFPath, aItems, aSem_data )
+FUNCTION fisc_nivel( cFPath, aItems, aSem_data )
 
-// uzmi strukturu tabele za f_nivel.txt
-aS_nivel := _g_f_struct( F_NIV )
-// uzmi strukturu tabele za semafor
-aS_semafor := _g_f_struct( F_SEMAFOR )
+   // uzmi strukturu tabele za f_nivel.txt
+   aS_nivel := _g_f_struct( F_NIV )
+   // uzmi strukturu tabele za semafor
+   aS_semafor := _g_f_struct( F_SEMAFOR )
 
-// broj nivelacije
-nInvoice := aSem_data[1, 1]
+   // broj nivelacije
+   nInvoice := aSem_data[ 1, 1 ]
 
-cPom := f_filename( _F_NIV, nInvoice )
-// upisi aItems prema aVRnTxt u PRIVPATH + "F_V_RACUN.TXT"
-_a_to_file( cFPath, cPom, aS_nivel, aItems )
+   cPom := f_filename( _F_NIV, nInvoice )
+   // upisi aItems prema aVRnTxt u PRIVPATH + "F_V_RACUN.TXT"
+   _a_to_file( cFPath, cPom, aS_nivel, aItems )
 
-cPom := f_filename( _F_SEMAFOR, nInvoice )
-// upisi i semafor "F_SEMAFOR.TXT"
-_a_to_file( cFPath, cPom, aS_semafor, aSem_Data ) 
+   cPom := f_filename( _F_SEMAFOR, nInvoice )
+   // upisi i semafor "F_SEMAFOR.TXT"
+   _a_to_file( cFPath, cPom, aS_semafor, aSem_Data )
 
-return
+   RETURN
 
 
 
 // ---------------------------------
 // inicijalizacija tabela sifrarnika
 // ---------------------------------
-function fisc_init( cFPath, aPor, aRoba, aRobGr, aPartn, aObj, aOper )
+FUNCTION fisc_init( cFPath, aPor, aRoba, aRobGr, aPartn, aObj, aOper )
 
-aS_por := _g_f_struct( F_FPOR )
-aS_roba := _g_f_struct( F_FROBA )
-aS_robgr := _g_f_struct( F_FROBGR )
-aS_partn := _g_f_struct( F_FPART )
-aS_obj := _g_f_struct( F_FOBJ )
-aS_oper := _g_f_struct( F_FOPER )
+   aS_por := _g_f_struct( F_FPOR )
+   aS_roba := _g_f_struct( F_FROBA )
+   aS_robgr := _g_f_struct( F_FROBGR )
+   aS_partn := _g_f_struct( F_FPART )
+   aS_obj := _g_f_struct( F_FOBJ )
+   aS_oper := _g_f_struct( F_FOPER )
 
-// upisi poreze
-_a_to_file( cFPath, _F_FPOR, aS_por, aPor ) 
+   // upisi poreze
+   _a_to_file( cFPath, _F_FPOR, aS_por, aPor )
 
-// upisi robu
-_a_to_file( cFPath, _F_FROBA, aS_roba, aRoba ) 
+   // upisi robu
+   _a_to_file( cFPath, _F_FROBA, aS_roba, aRoba )
 
-// upisi grupe robe
-_a_to_file( cFPath, _F_FROBGR, aS_robgr, aRobGr ) 
+   // upisi grupe robe
+   _a_to_file( cFPath, _F_FROBGR, aS_robgr, aRobGr )
 
-// upisi partnere
-_a_to_file( cFPath, _F_FPART, aS_partn, aPartn ) 
+   // upisi partnere
+   _a_to_file( cFPath, _F_FPART, aS_partn, aPartn )
 
-// upisi objekte
-_a_to_file( cFPath, _F_FOBJ, aS_obj, aObj ) 
+   // upisi objekte
+   _a_to_file( cFPath, _F_FOBJ, aS_obj, aObj )
 
-// upisi operatere
-_a_to_file( cFPath, _F_FOPER, aS_oper, aOper ) 
+   // upisi operatere
+   _a_to_file( cFPath, _F_FOPER, aS_oper, aOper )
 
-return
-
-
-
-
+   RETURN

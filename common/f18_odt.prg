@@ -25,8 +25,6 @@ STATIC __util_path
 STATIC __current_odt
 
 
-
-
 /*
    Opis: generisanja odt dokumenta na osnovu XML fajla i ODT template-a putem jodreports
 
@@ -37,9 +35,9 @@ STATIC __current_odt
                  // fajl će se pretražiti u template lokaciji pa će se kopirati u home direktorij
        cXml_file - lokacija + naziv xml fajla
        cOutput_file - lokacija + naziv izlaznog ODT fajla koji će se generisati
-       lBezPitanja - generiši odt report bez ikakvih pitanja da li želite 
+       lBezPitanja - generiši odt report bez ikakvih pitanja da li želite
 
-   Returns: 
+   Returns:
       .T. - ukoliko je operacija uspješna
       .F. - ukoliko je neuspješna
 */
@@ -61,7 +59,7 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file, lBezPitanja )
    ENDIF
 
    IF !lBezPitanja
-      cOdgovor := pitanje_prikazi_odt() 
+      cOdgovor := pitanje_prikazi_odt()
    ENDIF
 
    IF cOdgovor == "N"
@@ -256,7 +254,7 @@ STATIC FUNCTION kopiraj_odt_template_u_home_path( cTemplate )
    IF !File( my_home() + cTemplate )
       _copy := .T.
    ELSE
-	
+
       _a_source := Directory( my_home() + cTemplate )
       _a_template := Directory( F18_TEMPLATE_LOCATION + cTemplate )
 
@@ -314,7 +312,7 @@ FUNCTION f18_odt_copy( cOutput_file, cDestination_file )
    Params:
      cOutput_file - izlazni fajl za prikaz (path + filename)
 
-   Napomene: 
+   Napomene:
      Ukoliko nije zadat parametar cOutput_file, štampa se zadnji generisani ODT dokuement koji je smješten
      u statičku varijablu __current_odt
 */
@@ -403,17 +401,17 @@ STATIC FUNCTION odt_na_email_podrska( cErrorTxt )
    LOCAL hMailParams, cBody, cSubject, aAttachment, cZipFile
    LOCAL lIzlazniOdt := .T.
 
-   IF cErrorTxt <> NIL 
+   IF cErrorTxt <> NIL
       lIzlazniOdt := .F.
    ENDIF
 
    cSubject := "Uzorak ODT izvještaja, F18 " + F18_VER
-   cSubject += ", " + my_server_params()["database"] + "/" + ALLTRIM( f18_user() ) 
-   cSubject += ", " + DTOC( DATE() ) + " " + PADR( TIME(), 8 ) 
+   cSubject += ", " + my_server_params()["database"] + "/" + ALLTRIM( f18_user() )
+   cSubject += ", " + DTOC( DATE() ) + " " + PADR( TIME(), 8 )
 
    cBody := ""
 
-   IF cErrorTxt <> NIL .AND. !EMPTY( cErrorTxt ) 
+   IF cErrorTxt <> NIL .AND. !EMPTY( cErrorTxt )
       cBody += cErrorTxt + ". "
    ENDIF
 
@@ -431,7 +429,7 @@ STATIC FUNCTION odt_na_email_podrska( cErrorTxt )
    hMailParams := email_hash_za_podrska_bring_out( cSubject, cBody )
 
    MsgO( "Slanje email-a u toku ..." )
-  
+
    f18_email_send( hMailParams, aAttachment )
 
    FErase( my_home() + cZipFile )
@@ -451,19 +449,19 @@ STATIC FUNCTION odt_email_attachment( lIzlazniOdt )
 
    cZipFile := ALLTRIM( cServer["database"] )
    cZipFile += "_" + ALLTRIM( f18_user() )
-   cZipFile += "_" + DTOS( DATE() ) 
-   cZipFile += "_" + STRTRAN( TIME(), ":", "" ) 
+   cZipFile += "_" + DTOS( DATE() )
+   cZipFile += "_" + STRTRAN( TIME(), ":", "" )
    cZipFile += ".zip"
 
    DirChange( my_home() )
- 
+
    AADD( aFiles, samo_naziv_fajla( __xml_file ) )
    AADD( aFiles, __template_filename )
 
    IF lIzlazniOdt
       AADD( aFiles, samo_naziv_fajla( __current_odt ) )
    ENDIF
-  
+
    _err := zip_files( cPath, cZipFile, aFiles )
 
    RETURN cZipFile
@@ -509,7 +507,7 @@ FUNCTION f18_open_mime_document( cDocument )
 
    Usage: konvertuj_odt_u_pdf( cInput_file, cOutput_file, lOwerwrite_file )
 
-   Params: 
+   Params:
 
      - cInput_file - ulazni ODT fajl (lokacija + naziv)
      - cOutput_file - izlazni PDF fajl (lokacija + naziv)
@@ -612,7 +610,7 @@ STATIC FUNCTION naziv_izlaznog_pdf_fajla( cOut_file, lOverwrite )
    _wo_ext := Left( AllTrim( cOut_file ), Len( AllTrim( cOut_file ) ) - Len( _ext ) )
 
    FOR _i := 1 TO 99
-	
+
       _tmp := _wo_ext + PadL( AllTrim( Str( _i ) ), 2, "0" ) + _ext
 
       IF !File( _tmp )

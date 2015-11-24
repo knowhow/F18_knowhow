@@ -1,4 +1,5 @@
 .h
+*.bak
 .r
 .d
 F18.app
@@ -17,3 +18,4 @@ common/*.c
 F18.exe
 t.prg
 pg_log
+darwin/

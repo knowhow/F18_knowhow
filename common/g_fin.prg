@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -17,59 +17,61 @@
 // ----------------------------------------
 // vraca saldo partnera
 // ----------------------------------------
-function get_fin_partner_saldo( id_partner, id_konto, id_firma )
-local _qry, _qry_ret, _table
-local _server := pg_server()
-local _data := {}
-local _i, oRow
-local _saldo := 0
+FUNCTION get_fin_partner_saldo( id_partner, id_konto, id_firma )
 
-_qry := "SELECT SUM( CASE WHEN d_p = '1' THEN iznosbhd ELSE -iznosbhd END ) AS saldo FROM fmk.fin_suban " + ;
-        " WHERE idpartner = " + _sql_quote( id_partner ) + ;
-        " AND idkonto = " + _sql_quote( id_konto ) + ;
-        " AND idfirma = " + _sql_quote( id_firma )
+   LOCAL _qry, _qry_ret, _table
+   LOCAL _server := pg_server()
+   LOCAL _data := {}
+   LOCAL _i, oRow
+   LOCAL _saldo := 0
 
-_table := _sql_query( _server, _qry )
+   _qry := "SELECT SUM( CASE WHEN d_p = '1' THEN iznosbhd ELSE -iznosbhd END ) AS saldo FROM fmk.fin_suban " + ;
+      " WHERE idpartner = " + _sql_quote( id_partner ) + ;
+      " AND idkonto = " + _sql_quote( id_konto ) + ;
+      " AND idfirma = " + _sql_quote( id_firma )
 
-oRow := _table:GetRow( 1 )
+   _table := _sql_query( _server, _qry )
 
-_saldo := oRow:FieldGet( oRow:FieldPos("saldo"))
+   oRow := _table:GetRow( 1 )
 
-if VALTYPE( _saldo ) == "L"
-    _saldo := 0
-endif
+   _saldo := oRow:FieldGet( oRow:FieldPos( "saldo" ) )
 
-return _saldo 
+   IF ValType( _saldo ) == "L"
+      _saldo := 0
+   ENDIF
+
+   RETURN _saldo
 
 
 
 // -----------------------------------------
 // datum posljednje uplate partnera
 // -----------------------------------------
-function g_dpupl_part( id_partner, id_konto, id_firma )
-local _qry, _qry_ret, _table
-local _server := pg_server()
-local _data := {}
-local _i, oRow
-local _max := CTOD("")
+FUNCTION g_dpupl_part( id_partner, id_konto, id_firma )
 
-_qry := "SELECT MAX( datdok ) AS uplata FROM fmk.fin_suban " + ;
-        " WHERE idpartner = " + _sql_quote( id_partner ) + ;
-        " AND idkonto = " + _sql_quote( id_konto ) + ;
-        " AND idfirma = " + _sql_quote( id_firma ) + ;
-        " AND d_p = '2' "
+   LOCAL _qry, _qry_ret, _table
+   LOCAL _server := pg_server()
+   LOCAL _data := {}
+   LOCAL _i, oRow
+   LOCAL _max := CToD( "" )
 
-_table := _sql_query( _server, _qry )
+   _qry := "SELECT MAX( datdok ) AS uplata FROM fmk.fin_suban " + ;
+      " WHERE idpartner = " + _sql_quote( id_partner ) + ;
+      " AND idkonto = " + _sql_quote( id_konto ) + ;
+      " AND idfirma = " + _sql_quote( id_firma ) + ;
+      " AND d_p = '2' "
 
-oRow := _table:GetRow( 1 )
+   _table := _sql_query( _server, _qry )
 
-_max := oRow:FieldGet( oRow:FieldPos("uplata"))
+   oRow := _table:GetRow( 1 )
 
-if VALTYPE( _max ) == "L"
-    _max := CTOD("")
-endif
+   _max := oRow:FieldGet( oRow:FieldPos( "uplata" ) )
 
-return _max
+   IF ValType( _max ) == "L"
+      _max := CToD( "" )
+   ENDIF
+
+   RETURN _max
 
 
 
@@ -77,29 +79,30 @@ return _max
 // --------------------------------------------
 // datum posljednje promjene kupac / dobavljac
 // --------------------------------------------
-function g_dpprom_part( id_partner, id_konto, id_firma )
-local _qry, _qry_ret, _table
-local _server := pg_server()
-local _data := {}
-local _i, oRow
-local _max := CTOD("")
+FUNCTION g_dpprom_part( id_partner, id_konto, id_firma )
 
-_qry := "SELECT MAX( datdok ) AS uplata FROM fmk.fin_suban " + ;
-        " WHERE idpartner = " + _sql_quote( id_partner ) + ;
-        " AND idkonto = " + _sql_quote( id_konto ) + ;
-        " AND idfirma = " + _sql_quote( id_firma )
+   LOCAL _qry, _qry_ret, _table
+   LOCAL _server := pg_server()
+   LOCAL _data := {}
+   LOCAL _i, oRow
+   LOCAL _max := CToD( "" )
 
-_table := _sql_query( _server, _qry )
+   _qry := "SELECT MAX( datdok ) AS uplata FROM fmk.fin_suban " + ;
+      " WHERE idpartner = " + _sql_quote( id_partner ) + ;
+      " AND idkonto = " + _sql_quote( id_konto ) + ;
+      " AND idfirma = " + _sql_quote( id_firma )
 
-oRow := _table:GetRow( 1 )
+   _table := _sql_query( _server, _qry )
 
-_max := oRow:FieldGet( oRow:FieldPos("uplata"))
+   oRow := _table:GetRow( 1 )
 
-if VALTYPE( _max ) == "L"
-    _max := CTOD("")
-endif
+   _max := oRow:FieldGet( oRow:FieldPos( "uplata" ) )
 
-return _max
+   IF ValType( _max ) == "L"
+      _max := CToD( "" )
+   ENDIF
+
+   RETURN _max
 
 
 
@@ -107,69 +110,65 @@ return _max
 // -------------------------------------------------------
 // ispisuje na ekranu box sa stanjem kupca
 // -------------------------------------------------------
-function g_box_stanje( cPartner, cKKup, cKDob )
-local nSKup := 0
-local nSDob := 0
-local dDate := CTOD("")
-local nSaldo := 0
-local nX
-private GetList:={}
+FUNCTION g_box_stanje( cPartner, cKKup, cKDob )
 
-if cKKUP <> NIL
-    nSKup := get_fin_partner_saldo( cPartner, cKKup, gFirma )
-    dDate := g_dpupl_part( cPartner, cKKup, gFirma )
-endif
+   LOCAL nSKup := 0
+   LOCAL nSDob := 0
+   LOCAL dDate := CToD( "" )
+   LOCAL nSaldo := 0
+   LOCAL nX
+   PRIVATE GetList := {}
 
-if cKDOB <> NIL
-    nSDob := get_fin_partner_saldo( cPartner, cKDob, gFirma )
-endif
+   IF cKKUP <> NIL
+      nSKup := get_fin_partner_saldo( cPartner, cKKup, gFirma )
+      dDate := g_dpupl_part( cPartner, cKKup, gFirma )
+   ENDIF
 
-nSaldo := nSKup + nSDob
+   IF cKDOB <> NIL
+      nSDob := get_fin_partner_saldo( cPartner, cKDob, gFirma )
+   ENDIF
 
-if nSaldo = 0
-	return .t.
-endif
+   nSaldo := nSKup + nSDob
 
-nX := 1
+   IF nSaldo = 0
+      RETURN .T.
+   ENDIF
 
-Box(, 9, 50)
+   nX := 1
 
-	@ m_x + nX, m_y + 2 SAY "Trenutno stanje partnera:"
+   Box(, 9, 50 )
 
-    ++ nX
+   @ m_x + nX, m_y + 2 SAY "Trenutno stanje partnera:"
 
-    @ m_x + nX, m_y + 2 SAY "-----------------------------------------------"
-    		
-	++ nX
+   ++ nX
 
-    if cKKUP <> NIL
-	    @ m_x + nX, m_y + 2 SAY PADR( "(1) stanje na kontu " + cKKup + ": " + ALLTRIM(STR(nSKup, 12, 2)) + " KM", 45 ) COLOR IF(nSKup > 100, "W/R+", "W/G+")
-    endif
+   @ m_x + nX, m_y + 2 SAY "-----------------------------------------------"
 
-    ++ nX
-    
-    if cKDOB <> NIL
-	    @ m_x + nX, m_y + 2 SAY PADR( "(2) stanje na kontu " + cKDob + ": " + ALLTRIM(STR(nSDob,12,2)) + " KM", 45 ) COLOR "W/GB+"
-    endif
+   ++ nX
 
-	++ nX
+   IF cKKUP <> NIL
+      @ m_x + nX, m_y + 2 SAY PadR( "(1) stanje na kontu " + cKKup + ": " + AllTrim( Str( nSKup, 12, 2 ) ) + " KM", 45 ) COLOR IF( nSKup > 100, "W/R+", "W/G+" )
+   ENDIF
 
-	@ m_x + nX, m_y + 2 SAY "-----------------------------------------------"
-    	++nX
+   ++ nX
 
-	@ m_x + nX, m_y + 2 SAY "Total (1+2) = " + ALLTRIM(STR(nSaldo,12,2)) + " KM" COLOR IF(nSaldo > 100, "W/R+", "W/G+")
-	
-	nX += 2
+   IF cKDOB <> NIL
+      @ m_x + nX, m_y + 2 SAY PadR( "(2) stanje na kontu " + cKDob + ": " + AllTrim( Str( nSDob, 12, 2 ) ) + " KM", 45 ) COLOR "W/GB+"
+   ENDIF
 
-    @ m_x + nX, m_y + 2 SAY "Datum zadnje uplate: " + DToC(dDate)
-		
-    inkey(0)
+   ++ nX
 
-BoxC()
+   @ m_x + nX, m_y + 2 SAY "-----------------------------------------------"
+   ++nX
 
-return .t.
+   @ m_x + nX, m_y + 2 SAY "Total (1+2) = " + AllTrim( Str( nSaldo, 12, 2 ) ) + " KM" COLOR IF( nSaldo > 100, "W/R+", "W/G+" )
 
+   nX += 2
 
+   @ m_x + nX, m_y + 2 SAY "Datum zadnje uplate: " + DToC( dDate )
 
+   Inkey( 0 )
 
+   BoxC()
 
+   RETURN .T.

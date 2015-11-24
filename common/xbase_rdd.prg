@@ -56,17 +56,15 @@ FUNCTION PushWA()
       StackPush( aWAStack, hRet )
    ENDIF
 
-   RETURN 
+   RETURN
 
 
 /*
 
     PopWa() - pozicioniraj se na WA sa stacka
- 
+
     PopWa( F_KONTO ) - pozicioniraj se na WA sa stack-a,
                        ALI SAMO AKO NA stacku nije pohranjena F_KONTO WA
-
-
 
 */
 FUNCTION PopWA( nWANeDiraj )
@@ -123,7 +121,7 @@ FUNCTION index_tag_num( name )
    ENDIF
 
 
-/* 
+/*
      dbf lock / unlock
 */
 FUNCTION my_flock()

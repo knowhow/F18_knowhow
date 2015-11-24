@@ -1,122 +1,119 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 #include "rnal.ch"
 
-
-
 // -----------------------------------------------
 // jedinica mjere je metrička
 // -----------------------------------------------
-function jmj_is_metric( jmj )
-local _ok := .f.
+FUNCTION jmj_is_metric( jmj )
 
-jmj := UPPER( jmj )
-jmj := STRTRAN( jmj, "'", "" )
+   LOCAL _ok := .F.
 
-if jmj $ "#M  #MM #M' #"
-	_ok := .t.
-endif
+   jmj := Upper( jmj )
+   jmj := StrTran( jmj, "'", "" )
 
-return _ok
+   IF jmj $ "#M  #MM #M' #"
+      _ok := .T.
+   ENDIF
 
+   RETURN _ok
 
 // ----------------------------------------------------------------
 // preracunavanje količine repromaterijala
 // ----------------------------------------------------------------
-function preracunaj_kolicinu_repromaterijala( kolicina, duzina, jmj, jmj_art )
-local _kolicina
+FUNCTION preracunaj_kolicinu_repromaterijala( kolicina, duzina, jmj, jmj_art )
 
-if jmj_is_metric( jmj_art ) .and. jmj == "KOM"
+   LOCAL _kolicina
 
-	// imamo potrebu da koristimo i duzinu
+   IF jmj_is_metric( jmj_art ) .AND. jmj == "KOM"
 
-	// ukoliko je iz nekog razloga dužina 0
-	if ROUND( duzina, 2 ) == 0
-		MsgBeep( "Koristi se metrička konverzija a dužina = 0 ?!???" )
-		return kolicina
-	endif 
-	
-	do case
-		case jmj_art $ "#M' #M  #"
-			// varijanta primarne jedince u metrima
-			_kolicina := kolicina * ( duzina / 1000 )
+      // imamo potrebu da koristimo i duzinu
 
-		case jmj_art $ "#MM #"
-			// varijanta primarne jedince u mm
-			_kolicina := ( kolicina * duzina )
+      // ukoliko je iz nekog razloga dužina 0
+      IF Round( duzina, 2 ) == 0
+         MsgBeep( "Koristi se metrička konverzija a dužina = 0 ?!???" )
+         RETURN kolicina
+      ENDIF
 
-		otherwise
-			// sve ostalo bi trebala biti greška
-			MsgBeep( "Problem sa pretvaranjem [mm] u [" + ALLTRIM( jmj_art ) + ")" )
-			_kolicina := kolicina
+      DO CASE
+      CASE jmj_art $ "#M' #M  #"
+         // varijanta primarne jedince u metrima
+         _kolicina := kolicina * ( duzina / 1000 )
 
-	endcase
+      CASE jmj_art $ "#MM #"
+         // varijanta primarne jedince u mm
+         _kolicina := ( kolicina * duzina )
 
-else
+      OTHERWISE
+         // sve ostalo bi trebala biti greška
+         MsgBeep( "Problem sa pretvaranjem [mm] u [" + AllTrim( jmj_art ) + ")" )
+         _kolicina := kolicina
 
-	// ili su iste dimenzije, ili su sasvim neke druge vrijednosti
-	do case
-		
-		case jmj == jmj_art
-			// količine su iste
-			_kolicina := kolicina
+      ENDCASE
 
-		case jmj $ "#M  #M' #" .and. jmj_art $ "#MM #"
-			// uneseno M a roba u MM
-			_kolicina := kolicina * 1000	
+   ELSE
 
-		case _jmj $ "#MM #" .and. jmj_art $ "#M' #M  #"
-			// uneseno MM a roba u M
-			_kolicina := kolicina / 1000
+      // ili su iste dimenzije, ili su sasvim neke druge vrijednosti
+      DO CASE
 
-		otherwise 
-			// sve ostalo... greska
-			MsgBeep( "Ne mogu pretvoriti [" + ALLTRIM( jmj ) + "]" + ;
-						" u [" + ALLTRIM( jmj_art ) + "]" )
-			_kolicina := kolicina
-	endcase
+      CASE jmj == jmj_art
+         // količine su iste
+         _kolicina := kolicina
 
-endif
+      CASE jmj $ "#M  #M' #" .AND. jmj_art $ "#MM #"
+         // uneseno M a roba u MM
+         _kolicina := kolicina * 1000
 
-return _kolicina
+      CASE _jmj $ "#MM #" .AND. jmj_art $ "#M' #M  #"
+         // uneseno MM a roba u M
+         _kolicina := kolicina / 1000
+
+      OTHERWISE
+         // sve ostalo... greska
+         MsgBeep( "Ne mogu pretvoriti [" + AllTrim( jmj ) + "]" + ;
+            " u [" + AllTrim( jmj_art ) + "]" )
+         _kolicina := kolicina
+      ENDCASE
+
+   ENDIF
+
+   RETURN _kolicina
 
 
 
 // --------------------------------------------------------------------
 // validacija ispravnosti unesenih parova jedinica mjere
 // --------------------------------------------------------------------
-function valid_repro_jmj( jmj, jmj_art )
-local _ok := .t.
-local _x := m_x
-local _y := m_y
+FUNCTION valid_repro_jmj( jmj, jmj_art )
 
-if jmj_is_metric( jmj ) .and. !jmj_is_metric( jmj_art )
-	// primjer: M -> KG
-	_ok := .f.
-elseif ( !jmj_is_metric( jmj ) .and. jmj <> "KOM" ) .and. jmj_is_metric( jmj_art )
-	// primjer: KG -> M
-	_ok := .f.
-elseif !jmj_is_metric( jmj ) .and. !jmj_is_metric( jmj_art ) .and. ( jmj <> jmj_art )
-	// primjer: KG -> PAK ili KOM -> KG itd...
-	_ok := .f.
-endif
+   LOCAL _ok := .T.
+   LOCAL _x := m_x
+   LOCAL _y := m_y
 
-if !_ok
-	MsgBeep( "Ne postoji konverzija [" + ALLTRIM( jmj )  + "] u [" + ALLTRIM( jmj_art ) + "] !" )
-	m_x := _x
-	m_y := _y
-endif
+   IF jmj_is_metric( jmj ) .AND. !jmj_is_metric( jmj_art )
+      // primjer: M -> KG
+      _ok := .F.
+   ELSEIF ( !jmj_is_metric( jmj ) .AND. jmj <> "KOM" ) .AND. jmj_is_metric( jmj_art )
+      // primjer: KG -> M
+      _ok := .F.
+   ELSEIF !jmj_is_metric( jmj ) .AND. !jmj_is_metric( jmj_art ) .AND. ( jmj <> jmj_art )
+      // primjer: KG -> PAK ili KOM -> KG itd...
+      _ok := .F.
+   ENDIF
 
-return _ok
+   IF !_ok
+      MsgBeep( "Ne postoji konverzija [" + AllTrim( jmj )  + "] u [" + AllTrim( jmj_art ) + "] !" )
+      m_x := _x
+      m_y := _y
+   ENDIF
 
-
-
+   RETURN _ok

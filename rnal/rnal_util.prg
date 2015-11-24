@@ -2,16 +2,16 @@
 
 FUNCTION get_broj_stakala( nNalog )
 
-LOCAL cQuery, oRez
-LOCAL oServer := pg_server()
+   LOCAL cQuery, oRez
+   LOCAL oServer := pg_server()
 
-cQuery := "SELECT sum(doc_it_qtt) FROM fmk.rnal_doc_it" + ;
-   " WHERE doc_no = " + docno_str( nNalog )
+   cQuery := "SELECT sum(doc_it_qtt) FROM fmk.rnal_doc_it" + ;
+      " WHERE doc_no = " + docno_str( nNalog )
 
-oRez := _sql_query( oServer, cQuery )
+   oRez := _sql_query( oServer, cQuery )
 
-IF oRez == NIL
-   RETURN -1
-ENDIF
+   IF oRez == NIL
+      RETURN -1
+   ENDIF
 
-RETURN oRez:FieldGet(1)
+   RETURN oRez:FieldGet( 1 )

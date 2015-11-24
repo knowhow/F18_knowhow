@@ -11,9 +11,7 @@
 
 #include "fakt.ch"
 
-
-
-FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
+function povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
 
    LOCAL _vars := hb_Hash()
    LOCAL lBrisatiKumulativ := .T.
@@ -155,7 +153,7 @@ FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
 
          sql_table_update( nil, "ROLLBACK" )
          log_write( "F18_DOK_OPER: greška kod povrata dokumenta u pripremu: " + id_firma + "-" + id_tip_dok + "-" + br_dok, 2 )
-         MsgBeep( "Greška kod povrata dokumenta u pripremu.#Operacija prekinuta." )         
+         MsgBeep( "Greška kod povrata dokumenta u pripremu.#Operacija prekinuta." )
 
       ENDIF
 
@@ -274,7 +272,7 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
       ENDIF
 
       _vars[ "datumi" ] := PadR( DToC( dat_dok ), 200 )
-	
+
       IF tip_dok == NIL
          tip_dok := ";"
       ENDIF
@@ -374,7 +372,7 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
          _del_rec := dbf_get_rec()
          _ok := delete_rec_server_and_dbf( "fakt_fakt", _del_rec, 2, "CONT" )
 
-         IF _ok 
+         IF _ok
             SELECT fakt_doks
             GO TOP
             SEEK _id_firma + _id_tip_dok + _br_dok
@@ -413,7 +411,7 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
 
    ENDDO
 
-   IF _ok 
+   IF _ok
       f18_free_tables( { "fakt_doks", "fakt_doks2", "fakt_fakt" } )
       sql_table_update( nil, "END" )
    ELSE
@@ -540,5 +538,3 @@ FUNCTION fakt_napravi_duplikat( id_firma, id_tip_dok, br_dok )
    ENDIF
 
    RETURN .T.
-
-

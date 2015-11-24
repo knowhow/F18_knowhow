@@ -12,10 +12,9 @@
 
 #include "fmk.ch"
 
-
 // ------------------------------------------------------
 // Pregled liste exportovanih dokumenata te odabir
-// zeljenog fajla za import
+// zeljenog fajla z import
 // - param cFilter - filter naziva dokumenta
 // - param cPath - putanja do exportovanih dokumenata
 // ------------------------------------------------------
@@ -103,12 +102,12 @@ FUNCTION csvrow2arr( cRow, cDelimiter )
    LOCAL nStart := 1
 
    FOR i := 1 TO Len( cRow )
-	
+
       cTmp := SubStr( cRow, nStart, 1 )
 
       // ako je cTmp = ";" ili je iscurio niz - kraj stringa
       IF cTmp == cDelimiter .OR. i == Len( cRow )
-		
+
          // ako je iscurio - dodaj i zadnji karakter u word
          IF i == Len( cRow )
             cWord += cTmp
@@ -117,11 +116,11 @@ FUNCTION csvrow2arr( cRow, cDelimiter )
          // dodaj u matricu
          AAdd( aArr, cWord )
          cWord := ""
-	
+
       ELSE
          cWord += cTmp
       ENDIF
-	
+
       ++ nStart
 
    NEXT
@@ -170,16 +169,16 @@ FUNCTION TempArtExist( lSifraDob )
       IF temp->( FieldPos( "nazroba" ) ) <> 0
          cNazRoba := AllTrim( temp->nazroba )
       ENDIF
-	
+
       SELECT roba
-	
+
       IF lSifraDob == .T.
          SET ORDER TO TAG "ID_VSD"
       ENDIF
 
       GO TOP
       SEEK cTmpRoba
-	
+
       // ako nisi nasao dodaj robu u matricu
       IF !Found()
          nRes := AScan( aRet, {| aVal| aVal[ 1 ] == cTmpRoba } )
@@ -187,11 +186,9 @@ FUNCTION TempArtExist( lSifraDob )
             AAdd( aRet, { cTmpRoba, cNazRoba } )
          ENDIF
       ENDIF
-	
+
       SELECT temp
       SKIP
    ENDDO
 
    RETURN aRet
-
-

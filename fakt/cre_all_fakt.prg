@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -60,7 +60,7 @@ IF_NOT_FILE_DBF_CREATE
 
 // 0.8.3
 if ver["current"] > 0 .and. ver["current"] < 00803
-  
+
     for each _tbl in { _table_name, "fakt_pripr" }
         modstru( {"*" + _tbl, ;
                     "C FISC_RN N 10 0 FISC_RN I 4 0",  ;
@@ -134,7 +134,7 @@ CREATE_INDEX("1", "IdFirma+idtipdok+brdok+rbr+podbr", _alias)
 // ----------------------------------------------------------------------------
 // FAKT_DOKS
 // ----------------------------------------------------------------------------
-    
+
 aDbf := {}
 AADD(aDBf, { 'IDFIRMA'             , 'C' ,   2 ,  0 })
 AADD(aDBf, { 'IdTIPDok'            , 'C' ,   2 ,  0 })
@@ -212,7 +212,7 @@ AADD(aDBf,{ "N2"           , "N" ,  15 ,  2 })
 
 _alias := "FAKT_DOKS2"
 _table_name := "fakt_doks2"
-	
+
 IF_NOT_FILE_DBF_CREATE
 IF_C_RESET_SEMAPHORE
 
@@ -266,6 +266,3 @@ cre_relation( ver )
 
 create_porezna_faktura_temp_dbfs()
 return .t.
-
-
-

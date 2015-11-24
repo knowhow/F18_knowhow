@@ -12,8 +12,6 @@
 
 #include "fakt.ch"
 
-
-
 FUNCTION fakt_stanje_artikla( cIdRj, cIdroba, nUl, nIzl, nRezerv, nRevers, lSilent )
 
    IF ( lSilent == nil )

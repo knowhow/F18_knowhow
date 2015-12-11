@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,227 +13,230 @@
 #include "fmk.ch"
 
 
-/*! \fn CreInt1DB()
- *  \brief Kreiranje tabela dinteg1 i integ1
+/*! CreInt1DB()
+ *  Kreiranje tabela dinteg1 i integ1
  */
-function CreDIntDB()
-*{
-ChkDTbl()
+FUNCTION CreDIntDB()
 
-// kreiraj tabelu errors
-cre_tbl_errors()
+   ChkDTbl()
 
-// provjeri da li postoji tabela DINTEG1
-if !FILE(KUMPATH + "DINTEG1.DBF") .or. !FILE(KUMPATH + "DINTEG2.DBF")
-	// kreiraj tabelu DINTEG1/2
-	
-	// definicija tabele DINTEG1/2
-	aDbf := {}
-	AADD(aDbf, {"ID", "N", 20, 0})
-	AADD(aDbf, {"DATUM", "D", 8, 0})
-	AADD(aDbf, {"VRIJEME", "C", 8, 0 })
-	AADD(aDbf, {"CHKDAT", "D", 8, 0 })
-	AADD(aDbf, {"CHKOK", "C", 1, 0 })
-	AADD(aDbf, {"CSUM1", "N", 20, 5 })
-	AADD(aDbf, {"CSUM2", "N", 20, 5 })
-	AADD(aDbf, {"CSUM3", "N", 20, 0 })
-	// + spec.OID polja
-	if gSql=="D"
-		AddOidFields(@aDbf)
-	endif   
-	// kreiraj tabelu DINTEG1/2
-	if !File(KUMPATH + "DINTEG1.DBF")
-		DBcreate2(KUMPATH+"DINTEG1.DBF", aDbf)
-	endif
-	if !File(KUMPATH + "DINTEG2.DBF")
-		DBcreate2(KUMPATH+"DINTEG2.DBF", aDbf)
-	endif
-endif
+   // kreiraj tabelu errors
+   cre_tbl_errors()
 
-// provjeri da li postoji tabela INTEG1
-if !FILE(KUMPATH + "INTEG1.DBF")
-	// kreiraj tabelu INTEG1
+   // provjeri da li postoji tabela DINTEG1
+   IF !File( KUMPATH + "DINTEG1.DBF" ) .OR. !File( KUMPATH + "DINTEG2.DBF" )
+      // kreiraj tabelu DINTEG1/2
 
-	// definicija tabele
-	aDbf := {}
-	AADD(aDbf, {"ID", "N", 20, 0})
-	AADD(aDbf, {"IDROBA", "C", 10, 0})
-	AADD(aDbf, {"OIDROBA", "N", 12, 0})
-	AADD(aDbf, {"IDTARIFA", "C", 6, 0})
-	AADD(aDbf, {"STANJEK", "N", 20, 5})
-	AADD(aDbf, {"STANJEF", "N", 20, 5})
-	AADD(aDbf, {"KARTCNT", "N", 6, 0})
-	AADD(aDbf, {"SIFROBACNT", "N", 15, 0})
-	AADD(aDbf, {"ROBACIJENA", "N", 15, 5})
-	AADD(aDbf, {"KALKKARTCNT", "N", 6, 0})
-	AADD(aDbf, {"KALKKSTANJE", "N", 20, 5})
-	AADD(aDbf, {"KALKFSTANJE", "N", 20, 5})
-	AADD(aDbf, {"N1", "N", 12, 0})
-	AADD(aDbf, {"N2", "N", 12, 0})
-	AADD(aDbf, {"N3", "N", 12, 0})
-	AADD(aDbf, {"C1", "C", 20, 0})
-	AADD(aDbf, {"C2", "C", 20, 0})
-	AADD(aDbf, {"C3", "C", 20, 0})
-	AADD(aDbf, {"DAT1", "D", 8, 0})
-	AADD(aDbf, {"DAT2", "D", 8, 0})
-	AADD(aDbf, {"DAT3", "D", 8, 0})
-	// + spec.OID polja
-	if gSql=="D"
-		AddOidFields(@aDbf)
-	endif   
-	// kreiraj tabelu INTEG1
-	DBcreate2(KUMPATH+"INTEG1.DBF", aDbf)
-endif
+      // definicija tabele DINTEG1/2
+      aDbf := {}
+      AAdd( aDbf, { "ID", "N", 20, 0 } )
+      AAdd( aDbf, { "DATUM", "D", 8, 0 } )
+      AAdd( aDbf, { "VRIJEME", "C", 8, 0 } )
+      AAdd( aDbf, { "CHKDAT", "D", 8, 0 } )
+      AAdd( aDbf, { "CHKOK", "C", 1, 0 } )
+      AAdd( aDbf, { "CSUM1", "N", 20, 5 } )
+      AAdd( aDbf, { "CSUM2", "N", 20, 5 } )
+      AAdd( aDbf, { "CSUM3", "N", 20, 0 } )
+      // + spec.OID polja
+      IF gSql == "D"
+         AddOidFields( @aDbf )
+      ENDIF
+      // kreiraj tabelu DINTEG1/2
+      IF !File( KUMPATH + "DINTEG1.DBF" )
+         DBcreate2( KUMPATH + "DINTEG1.DBF", aDbf )
+      ENDIF
+      IF !File( KUMPATH + "DINTEG2.DBF" )
+         DBcreate2( KUMPATH + "DINTEG2.DBF", aDbf )
+      ENDIF
+   ENDIF
 
-// provjeri da li postoji tabela INTEG2
-if !FILE("INTEG2.DBF")
-	// kreiraj tabelu INTEG2
+   // provjeri da li postoji tabela INTEG1
+   IF !File( KUMPATH + "INTEG1.DBF" )
+      // kreiraj tabelu INTEG1
 
-	// definicija tabele
-	aDbf := {}
-	AADD(aDbf, {"ID", "N", 20, 0})
-	AADD(aDbf, {"IDROBA", "C", 10, 0})
-	AADD(aDbf, {"OIDROBA", "N", 12, 0})
-	AADD(aDbf, {"IDTARIFA", "C", 6, 0})
-	AADD(aDbf, {"STANJEF", "N", 20, 5})
-	AADD(aDbf, {"STANJEK", "N", 20, 5})
-	AADD(aDbf, {"SIFROBACNT", "N", 15, 0})
-	AADD(aDbf, {"ROBACIJENA", "N", 15, 5})
-	AADD(aDbf, {"N1", "N", 12, 0})
-	AADD(aDbf, {"N2", "N", 12, 0})
-	AADD(aDbf, {"N3", "N", 12, 0})
-	AADD(aDbf, {"C1", "C", 20, 0})
-	AADD(aDbf, {"C2", "C", 20, 0})
-	AADD(aDbf, {"C3", "C", 20, 0})
-	AADD(aDbf, {"DAT1", "D", 8, 0})
-	AADD(aDbf, {"DAT2", "D", 8, 0})
-	AADD(aDbf, {"DAT3", "D", 8, 0})
-	// + spec.OID polja
-	if gSql=="D"
-		AddOidFields(@aDbf)
-	endif   
-	// kreiraj tabelu INTEG2
-	DBcreate2("INTEG2.DBF", aDbf)
-endif
+      // definicija tabele
+      aDbf := {}
+      AAdd( aDbf, { "ID", "N", 20, 0 } )
+      AAdd( aDbf, { "IDROBA", "C", 10, 0 } )
+      AAdd( aDbf, { "OIDROBA", "N", 12, 0 } )
+      AAdd( aDbf, { "IDTARIFA", "C", 6, 0 } )
+      AAdd( aDbf, { "STANJEK", "N", 20, 5 } )
+      AAdd( aDbf, { "STANJEF", "N", 20, 5 } )
+      AAdd( aDbf, { "KARTCNT", "N", 6, 0 } )
+      AAdd( aDbf, { "SIFROBACNT", "N", 15, 0 } )
+      AAdd( aDbf, { "ROBACIJENA", "N", 15, 5 } )
+      AAdd( aDbf, { "KALKKARTCNT", "N", 6, 0 } )
+      AAdd( aDbf, { "KALKKSTANJE", "N", 20, 5 } )
+      AAdd( aDbf, { "KALKFSTANJE", "N", 20, 5 } )
+      AAdd( aDbf, { "N1", "N", 12, 0 } )
+      AAdd( aDbf, { "N2", "N", 12, 0 } )
+      AAdd( aDbf, { "N3", "N", 12, 0 } )
+      AAdd( aDbf, { "C1", "C", 20, 0 } )
+      AAdd( aDbf, { "C2", "C", 20, 0 } )
+      AAdd( aDbf, { "C3", "C", 20, 0 } )
+      AAdd( aDbf, { "DAT1", "D", 8, 0 } )
+      AAdd( aDbf, { "DAT2", "D", 8, 0 } )
+      AAdd( aDbf, { "DAT3", "D", 8, 0 } )
+      // + spec.OID polja
+      IF gSql == "D"
+         AddOidFields( @aDbf )
+      ENDIF
+      // kreiraj tabelu INTEG1
+      DBcreate2( KUMPATH + "INTEG1.DBF", aDbf )
+   ENDIF
 
-// kreiraj index za tabelu DINTEG1/2
-CREATE_INDEX ("1", "DTOS(DATUM)+VRIJEME+STR(ID)", "DINTEG1")
-CREATE_INDEX ("2", "ID", KUMPATH+"DINTEG1")
-CREATE_INDEX ("1", "DTOS(DATUM)+VRIJEME+STR(ID)", "DINTEG2")
-CREATE_INDEX ("2", "ID", "DINTEG2")
+   // provjeri da li postoji tabela INTEG2
+   IF !File( "INTEG2.DBF" )
+      // kreiraj tabelu INTEG2
 
-// kreiraj index za tabelu INTEG1
-CREATE_INDEX ("1", "STR(ID)+IDROBA", "INTEG1")
-CREATE_INDEX ("2", "ID", "INTEG1")
+      // definicija tabele
+      aDbf := {}
+      AAdd( aDbf, { "ID", "N", 20, 0 } )
+      AAdd( aDbf, { "IDROBA", "C", 10, 0 } )
+      AAdd( aDbf, { "OIDROBA", "N", 12, 0 } )
+      AAdd( aDbf, { "IDTARIFA", "C", 6, 0 } )
+      AAdd( aDbf, { "STANJEF", "N", 20, 5 } )
+      AAdd( aDbf, { "STANJEK", "N", 20, 5 } )
+      AAdd( aDbf, { "SIFROBACNT", "N", 15, 0 } )
+      AAdd( aDbf, { "ROBACIJENA", "N", 15, 5 } )
+      AAdd( aDbf, { "N1", "N", 12, 0 } )
+      AAdd( aDbf, { "N2", "N", 12, 0 } )
+      AAdd( aDbf, { "N3", "N", 12, 0 } )
+      AAdd( aDbf, { "C1", "C", 20, 0 } )
+      AAdd( aDbf, { "C2", "C", 20, 0 } )
+      AAdd( aDbf, { "C3", "C", 20, 0 } )
+      AAdd( aDbf, { "DAT1", "D", 8, 0 } )
+      AAdd( aDbf, { "DAT2", "D", 8, 0 } )
+      AAdd( aDbf, { "DAT3", "D", 8, 0 } )
+      // + spec.OID polja
+      IF gSql == "D"
+         AddOidFields( @aDbf )
+      ENDIF
+      // kreiraj tabelu INTEG2
+      DBcreate2( "INTEG2.DBF", aDbf )
+   ENDIF
 
-// kreiraj index za tabelu INTEG2
-CREATE_INDEX ("1", "STR(ID)+IDROBA", "INTEG2")
-CREATE_INDEX ("2", "ID", "INTEG2")
+   // kreiraj index za tabelu DINTEG1/2
+   CREATE_INDEX ( "1", "DTOS(DATUM)+VRIJEME+STR(ID)", "DINTEG1" )
+   CREATE_INDEX ( "2", "ID", KUMPATH + "DINTEG1" )
+   CREATE_INDEX ( "1", "DTOS(DATUM)+VRIJEME+STR(ID)", "DINTEG2" )
+   CREATE_INDEX ( "2", "ID", "DINTEG2" )
 
-// OID indexi
-CREATE_INDEX("OID","_oid_", "DOKS")
-CREATE_INDEX("OID","_oid_", "POS")
-CREATE_INDEX("OID","_oid_", "ROBA")
+   // kreiraj index za tabelu INTEG1
+   CREATE_INDEX ( "1", "STR(ID)+IDROBA", "INTEG1" )
+   CREATE_INDEX ( "2", "ID", "INTEG1" )
 
-return
-*}
+   // kreiraj index za tabelu INTEG2
+   CREATE_INDEX ( "1", "STR(ID)+IDROBA", "INTEG2" )
+   CREATE_INDEX ( "2", "ID", "INTEG2" )
+
+   // OID indexi
+   CREATE_INDEX( "OID", "_oid_", "DOKS" )
+   CREATE_INDEX( "OID", "_oid_", "POS" )
+   CREATE_INDEX( "OID", "_oid_", "ROBA" )
+
+   RETURN
+// }
 
 
 // kreiranje tabele errors
-function cre_tbl_errors()
-// provjeri da li postoji tabela ERRORS.DBF
-if !FILE(PRIVPATH+"ERRORS.DBF")
-	aDbf := {}
-	AADD(aDbf, {"TYPE", "C", 10, 0})
-	AADD(aDbf, {"IDROBA", "C", 10, 0})
-	AADD(aDbf, {"DOKS", "C", 50, 0})
-	AADD(aDbf, {"OPIS", "C", 100, 0})
-	DBcreate2("ERRORS.DBF", aDbf)
-endif
+FUNCTION cre_tbl_errors()
 
-// kreiraj index za tabelu ERRORS
-CREATE_INDEX ("1", "IDROBA+TYPE", "ERRORS")
+   // provjeri da li postoji tabela ERRORS.DBF
+   IF !File( PRIVPATH + "ERRORS.DBF" )
+      aDbf := {}
+      AAdd( aDbf, { "TYPE", "C", 10, 0 } )
+      AAdd( aDbf, { "IDROBA", "C", 10, 0 } )
+      AAdd( aDbf, { "DOKS", "C", 50, 0 } )
+      AAdd( aDbf, { "OPIS", "C", 100, 0 } )
+      DBcreate2( "ERRORS.DBF", aDbf )
+   ENDIF
 
-return
+   // kreiraj index za tabelu ERRORS
+   CREATE_INDEX ( "1", "IDROBA+TYPE", "ERRORS" )
+
+   RETURN
 
 
 
 /*! \fn ChkDTbl()
- *  \brief 
+ *  \brief
  */
-function ChkDTbl()
-*{
-if FILE(KUMPATH + "INTEG1.DBF")
-	O_INTEG1
-	// ako nema polja N1 pobrisi tabele i generisi nove tabele
-	if integ1->(FieldPos("N1")) == 0
-		// trala lalalalall
-		use
-		FErase(KUMPATH + "\INTEG1.DBF")
-		FErase(KUMPATH + "\INTEG1.CDX")
-		FErase(KUMPATH + "\INTEG2.DBF")
-		FErase(KUMPATH + "\INTEG2.CDX")
-		FErase(KUMPATH + "\DINTEG1.DBF")
-		FErase(KUMPATH + "\DINTEG1.CDX")
-		FErase(KUMPATH + "\DINTEG2.DBF")
-		FErase(KUMPATH + "\DINTEG2.CDX")
-	endif
-endif
-return
-*}
+FUNCTION ChkDTbl()
+
+   // {
+   IF File( KUMPATH + "INTEG1.DBF" )
+      O_INTEG1
+      // ako nema polja N1 pobrisi tabele i generisi nove tabele
+      IF integ1->( FieldPos( "N1" ) ) == 0
+         // trala lalalalall
+         USE
+         FErase( KUMPATH + "\INTEG1.DBF" )
+         FErase( KUMPATH + "\INTEG1.CDX" )
+         FErase( KUMPATH + "\INTEG2.DBF" )
+         FErase( KUMPATH + "\INTEG2.CDX" )
+         FErase( KUMPATH + "\DINTEG1.DBF" )
+         FErase( KUMPATH + "\DINTEG1.CDX" )
+         FErase( KUMPATH + "\DINTEG2.DBF" )
+         FErase( KUMPATH + "\DINTEG2.CDX" )
+      ENDIF
+   ENDIF
+
+   RETURN
+// }
 
 
 /*! \fn DInt1NextID()
  *  \brief Vrati sljedeci zapis polja ID za tabelu DINTEG1
  */
-function DInt1NextID()
-*{
-local nArr 
-nArr := SELECT()
+FUNCTION DInt1NextID()
 
-O_DINTEG1
-select dinteg1
+   // {
+   LOCAL nArr
+   nArr := Select()
 
-nId := NextDIntID()
+   O_DINTEG1
+   SELECT dinteg1
 
-select (nArr)
+   nId := NextDIntID()
 
-return nId
-*}
+   SELECT ( nArr )
+
+   RETURN nId
+// }
 
 
 /*! \fn DInt2NextID()
  *  \brief Vrati sljedeci zapis polja ID za tabelu DINTEG2
  */
-function DInt2NextID()
-*{
-local nArr 
-nArr := SELECT()
+FUNCTION DInt2NextID()
 
-O_DINTEG2
-select dinteg2
+   // {
+   LOCAL nArr
+   nArr := Select()
 
-nId := NextDIntID()
+   O_DINTEG2
+   SELECT dinteg2
 
-select (nArr)
-return nId
-*}
+   nId := NextDIntID()
+
+   SELECT ( nArr )
+
+   RETURN nId
+// }
 
 
 /*! \fn NextDIntID()
  *  \brief Vraca sljedeci ID broj za polje ID
  */
-function NextDIntID()
-*{
-nId := 0
-set order to tag "2"
-go bottom
-nId := field->id
-nId := nId + 1
+FUNCTION NextDIntID()
 
-return nID
-*}
+   // {
+   nId := 0
+   SET ORDER TO TAG "2"
+   GO BOTTOM
+   nId := field->id
+   nId := nId + 1
 
-
-
-
+   RETURN nID
+// }

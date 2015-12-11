@@ -10,7 +10,7 @@
  */
 
 
-#include "fmk.ch"
+#include "xfmk.ch"
 
 STATIC nStr := 0
 STATIC lPrintedTotal := .F.

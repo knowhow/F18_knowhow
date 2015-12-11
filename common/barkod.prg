@@ -12,9 +12,7 @@
 
 #include "fmk.ch"
 
-// -------------------------------------------------
-// ocitaj barkod
-// -------------------------------------------------
+
 FUNCTION roba_ocitaj_barkod( id_roba )
 
    LOCAL _t_area := Select()

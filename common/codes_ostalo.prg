@@ -3,49 +3,49 @@
 
 
 // k1 - karakteristike
-function P_K1( cId, dx, dy )
-local _area, _i
-private ImeKol := {}
-private Kol := {}
+FUNCTION P_K1( cId, dx, dy )
 
-_area := SELECT()
+   LOCAL _area, _i
+   PRIVATE ImeKol := {}
+   PRIVATE Kol := {}
 
-O_K1
+   _area := Select()
 
-AADD(ImeKol, { "ID", {|| id}, "id" })
-add_mcode(@ImeKol)
-AADD(ImeKol, { "Naziv", {|| naz}, "naz" })
+   O_K1
 
-for _i := 1 to LEN( ImeKol )
-	AADD( Kol, _i )
-next
+   AAdd( ImeKol, { "ID", {|| id }, "id" } )
+   add_mcode( @ImeKol )
+   AAdd( ImeKol, { "Naziv", {|| naz }, "naz" } )
 
-select ( _area )
-return PostojiSifra( F_K1, I_ID, 10, 60, "Lista - K1", @cId, dx, dy )
+   FOR _i := 1 TO Len( ImeKol )
+      AAdd( Kol, _i )
+   NEXT
+
+   SELECT ( _area )
+
+   RETURN PostojiSifra( F_K1, I_ID, 10, 60, "Lista - K1", @cId, dx, dy )
 
 
 
 /*! \fn P_VrsteP(cId,dx,dy)
- *  \brief Otvara sifranik vrsta placanja 
+ *  \brief Otvara sifranik vrsta placanja
  *  \param cId
  *  \param dx
  *  \param dy
  */
 
-function P_VrsteP(cId,dx,dy)
-PRIVATE ImeKol, Kol:={}
+FUNCTION P_VrsteP( cId, dx, dy )
 
-O_VRSTEP
+   PRIVATE ImeKol, Kol := {}
 
-ImeKol:={ { "ID ",             {|| id }                       ,  "id"  , {|| .t.}, {|| sifra_postoji(wId)}      },;
-          { PADC("Naziv", 20), {|| Padr( ToStrU( naz ), 20 ) },  "naz" };
-        }
+   O_VRSTEP
 
-FOR i:=1 TO LEN(ImeKol)
-  AADD(Kol,i)
-NEXT
+   ImeKol := { { "ID ",             {|| id },  "id", {|| .T. }, {|| sifra_postoji( wId ) }      }, ;
+      { PadC( "Naziv", 20 ), {|| PadR( ToStrU( naz ), 20 ) },  "naz" };
+      }
 
-return p_sifra(F_VRSTEP, 1, 10, 55, "Šifarnik vrsta plaćanja",@cid, dx, dy)
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
 
-
-
+   RETURN p_sifra( F_VRSTEP, 1, 10, 55, "Šifarnik vrsta plaćanja", @cid, dx, dy )

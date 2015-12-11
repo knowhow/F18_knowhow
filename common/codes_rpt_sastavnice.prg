@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,215 +12,214 @@
 
 #include "fmk.ch"
 
-
 // ------------------------------------------
 // pregled normativa
 // ------------------------------------------
-function ISast()
-local nArr:=SELECT()
-qqProiz:=SPACE(60)
-cBrisi:="N"
-cSamoBezSast:="N"
-cNCVPC:="D"
+FUNCTION ISast()
 
-do while .t.
-  Box(,7,60)
-     @ m_x+1,m_y+2 SAY "Proizvodi :" GET qqProiz  pict "@!S30"
-     @ m_x+3,m_y+2 SAY "Brisanje prekinutih sastavnica ? (D/N)" GET cBrisi  pict "@!" valid cBrisi $ "DN"
-     @ m_x+5,m_y+2 SAY "Prikazati samo proizvode bez sastavnica ? (D/N)" GET cSamoBezSast  pict "@!" valid cSamoBezSast $ "DN"
-     @ m_x+7,m_y+2 SAY "Prikazati NC i VPC ? (D/N)" GET cNCVPC VALID cNCVPC $ "DN" PICT "@!"
-     read
-  BoxC()
+   LOCAL nArr := Select()
 
-  IF LASTKEY()==K_ESC
-	return
-  ENDIF
+   qqProiz := Space( 60 )
+   cBrisi := "N"
+   cSamoBezSast := "N"
+   cNCVPC := "D"
 
-  private aUsl1 := Parsiraj(qqProiz, "Id" )
-  if aUsl1 <> NIL
-     exit
-  endif
+   DO WHILE .T.
+      Box(, 7, 60 )
+      @ m_x + 1, m_y + 2 SAY "Proizvodi :" GET qqProiz  PICT "@!S30"
+      @ m_x + 3, m_y + 2 SAY "Brisanje prekinutih sastavnica ? (D/N)" GET cBrisi  PICT "@!" VALID cBrisi $ "DN"
+      @ m_x + 5, m_y + 2 SAY "Prikazati samo proizvode bez sastavnica ? (D/N)" GET cSamoBezSast  PICT "@!" VALID cSamoBezSast $ "DN"
+      @ m_x + 7, m_y + 2 SAY "Prikazati NC i VPC ? (D/N)" GET cNCVPC VALID cNCVPC $ "DN" PICT "@!"
+      READ
+      BoxC()
 
-enddo
+      IF LastKey() == K_ESC
+         RETURN
+      ENDIF
 
-select (nArr)
-PushWA()
+      PRIVATE aUsl1 := Parsiraj( qqProiz, "Id" )
+      IF aUsl1 <> NIL
+         EXIT
+      ENDIF
 
-select (F_ROBA)
-if !used()
-	O_ROBA
-endif
-set order to tag "ID"
+   ENDDO
 
-select (F_SAST)
-if !used()
-	O_SAST
-else
-	use
-	O_SAST
-endif
+   SELECT ( nArr )
+   PushWA()
 
-if cBrisi=="D"
-	select sast
-	set order to
-	go top
-  	do while !eof()
-     		skip
-		nTrec := recno()
-		skip -1
-     		select roba
-		hseek sast->id  // nema "svog proizvoda"
-     		if !found()
-       			select sast
-			delete
-     		endif
-     		select sast
-     		go nTRec
-  	enddo
-  	select sast
-	set order to tag "ID"
-	go top
-endif
+   SELECT ( F_ROBA )
+   IF !Used()
+      O_ROBA
+   ENDIF
+   SET ORDER TO TAG "ID"
 
-START PRINT CRET
+   SELECT ( F_SAST )
+   IF !Used()
+      O_SAST
+   ELSE
+      USE
+      O_SAST
+   ENDIF
 
-if cSamoBezSast=="D"
-	
-	SELECT ROBA
+   IF cBrisi == "D"
+      SELECT sast
+      SET ORDER TO
+      GO TOP
+      DO WHILE !Eof()
+         SKIP
+         nTrec := RecNo()
+         SKIP -1
+         SELECT roba
+         hseek sast->id  // nema "svog proizvoda"
+         IF !Found()
+            SELECT sast
+            DELETE
+         ENDIF
+         SELECT sast
+         GO nTRec
+      ENDDO
+      SELECT sast
+      SET ORDER TO TAG "ID"
+      GO TOP
+   ENDIF
 
-  	if len(aUsl1)<>0
-    		aUsl1+=".and. tip=='P'"
-    		set filter to &(aUsl1)
-  	else
-    		set filter to tip=="P"
- 	endif
+   START PRINT CRET
 
-  	m:="----------------------------------------------------------------------------------------------"
-  	nCol1:=60
-  	P_10CPI
-  	? "Pregled proizvoda koji nemaju definisane sastavnice"
-  	?
-  	? gNFirma,space(20),"na dan",date()
-  	GO TOP
-  	P_12CPI
-  	?
-  	nRBr:=0
-  	do WHILE !EOF()
-    		cId:=id
-    		SELECT SAST
-		HSEEK ROBA->ID
-    		IF !FOUND()
-      			if prow()>62 + gPStranica
-				FF
-			endif
-      			? STR(++nRBr,3)+".", ;
-				roba->id, ;
-				LEFT(roba->naz, 40), ;
-				roba->jmj
-    		ENDIF
-    		SELECT ROBA
-    		SKIP 1
-  	enddo
-  	? m
+   IF cSamoBezSast == "D"
 
-else
+      SELECT ROBA
 
-	select sast
+      IF Len( aUsl1 ) <> 0
+         aUsl1 += ".and. tip=='P'"
+         SET FILTER to &( aUsl1 )
+      ELSE
+         SET FILTER TO tip == "P"
+      ENDIF
 
-	if len(aUsl1)<>0
-    		set filter to &(aUsl1)
-  	else
-    		set filter to
-  	endif
+      m := "----------------------------------------------------------------------------------------------"
+      nCol1 := 60
+      P_10CPI
+      ? "Pregled proizvoda koji nemaju definisane sastavnice"
+      ?
+      ? gNFirma, Space( 20 ), "na dan", Date()
+      GO TOP
+      P_12CPI
+      ?
+      nRBr := 0
+      DO WHILE !Eof()
+         cId := id
+         SELECT SAST
+         HSEEK ROBA->ID
+         IF !Found()
+            IF PRow() > 62 + gPStranica
+               FF
+            ENDIF
+            ? Str( ++nRBr, 3 ) + ".", ;
+               roba->id, ;
+               Left( roba->naz, 40 ), ;
+               roba->jmj
+         ENDIF
+         SELECT ROBA
+         SKIP 1
+      ENDDO
+      ? m
 
-  	if cNCVPC=="D"
-    		m:="----------------------------------------------------------------------------------------------"
-    		z:="                                                              Kolicina         NV        VPV"
-  	else
-    		m:="------------------------------------------------------------------------"
-    		z:="                                                              Kolicina"
-  	endif
-  	
-	nCol1 := 20 + LEN( ROBA->(id+naz) )
-  	P_10CPI
-  	
-	? "Pregled sastavnica-normativa za proizvode"
-  	?
-  	? gNFirma,space(20),"na dan",date()
-  	
-	go top
-  	
-	P_COND
-  	
-	do while !EOF()
+   ELSE
 
-    		aPom:={}
-    		cId := field->id
-    		
-		select roba
-		go top
-		seek cId
-		
-		select sast
+      SELECT sast
 
-    		AADD(aPom,"")
-    		AADD(aPom,m)
-    		AADD(aPom, roba->id + " " + ;
-			PADR(ALLTRIM(roba->naz), 40) + " " + roba->jmj)
-    		AADD(aPom,m)
-    		AADD(aPom,z)
-    		AADD(aPom,m)
-    		
-		nRbr:=0
-    		nNC:=0
-    		nVPC:=0
-    		
-		do while !EOF() .and. sast->id == cId
-      			
-			cIdSast := field->id2
+      IF Len( aUsl1 ) <> 0
+         SET FILTER to &( aUsl1 )
+      ELSE
+         SET FILTER TO
+      ENDIF
 
-			select roba
-			go top
-      			seek cIdSast
-      			
-			select sast
-      			
-			AADD( aPom , str(++nrbr,5)+". "+;
-                   		roba->id+" "+;
-                   		PADR(ALLTRIM(roba->naz), 40)+" "+;
-                   		TRANSFORM(sast->kolicina,"999999.9999")+" "+;
-                   		IF(cNCVPC=="D",TRANSFORM(roba->nc * sast->kolicina ,picdem)+" "+;
-                   		TRANSFORM(roba->vpc*sast->kolicina,picdem),"");
-          			)
+      IF cNCVPC == "D"
+         m := "----------------------------------------------------------------------------------------------"
+         z := "                                                              Kolicina         NV        VPV"
+      ELSE
+         m := "------------------------------------------------------------------------"
+         z := "                                                              Kolicina"
+      ENDIF
 
-      			nNC += roba->nc * sast->kolicina
-      			nVPC += roba->vpc * sast->kolicina
-      			skip 1
-    		enddo
+      nCol1 := 20 + Len( ROBA->( id + naz ) )
+      P_10CPI
 
-    		if cNCVPC=="D"
-      			AADD( aPom , m )
-      			AADD( aPom , PADR(" Ukupno:",nCol1)+" "+;
-                   		TRANSFORM(nNC,picdem)+" "+;
-                   		TRANSFORM(nVPC,picdem);
-                    		)
-    		ENDIF
-    		AADD( aPom , m )
-    		if prow()+LEN(aPom)>62+gPStranica
-			FF
-		endif
-    		FOR i:=1 TO LEN(aPom)
-			? aPom[i]
-		NEXT
-  	ENDDO
+      ? "Pregled sastavnica-normativa za proizvode"
+      ?
+      ? gNFirma, Space( 20 ), "na dan", Date()
 
-endif
+      GO TOP
 
-FF
-END PRINT
-select (nArr)
-PopWA()
-return
+      P_COND
 
+      DO WHILE !Eof()
 
+         aPom := {}
+         cId := field->id
 
+         SELECT roba
+         GO TOP
+         SEEK cId
+
+         SELECT sast
+
+         AAdd( aPom, "" )
+         AAdd( aPom, m )
+         AAdd( aPom, roba->id + " " + ;
+            PadR( AllTrim( roba->naz ), 40 ) + " " + roba->jmj )
+         AAdd( aPom, m )
+         AAdd( aPom, z )
+         AAdd( aPom, m )
+
+         nRbr := 0
+         nNC := 0
+         nVPC := 0
+
+         DO WHILE !Eof() .AND. sast->id == cId
+
+            cIdSast := field->id2
+
+            SELECT roba
+            GO TOP
+            SEEK cIdSast
+
+            SELECT sast
+
+            AAdd( aPom, Str( ++nrbr, 5 ) + ". " + ;
+               roba->id + " " + ;
+               PadR( AllTrim( roba->naz ), 40 ) + " " + ;
+               Transform( sast->kolicina, "999999.9999" ) + " " + ;
+               IF( cNCVPC == "D", Transform( roba->nc * sast->kolicina,picdem ) + " " + ;
+               Transform( roba->vpc * sast->kolicina, picdem ), "" );
+               )
+
+            nNC += roba->nc * sast->kolicina
+            nVPC += roba->vpc * sast->kolicina
+            SKIP 1
+         ENDDO
+
+         IF cNCVPC == "D"
+            AAdd( aPom, m )
+            AAdd( aPom, PadR( " Ukupno:", nCol1 ) + " " + ;
+               Transform( nNC, picdem ) + " " + ;
+               Transform( nVPC, picdem );
+               )
+         ENDIF
+         AAdd( aPom, m )
+         IF PRow() + Len( aPom ) > 62 + gPStranica
+            FF
+         ENDIF
+         FOR i := 1 TO Len( aPom )
+            ? aPom[ i ]
+         NEXT
+      ENDDO
+
+   ENDIF
+
+   FF
+   ENDPRINT
+   SELECT ( nArr )
+   PopWA()
+
+   RETURN

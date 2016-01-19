@@ -14,7 +14,6 @@
 #include "error.ch"
 
 
-
 FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
 
    LOCAL _i, _err_code
@@ -281,7 +280,7 @@ STATIC FUNCTION send_email( err_obj, lNotify )
          OTHERWISE
               RETURN .F.
    ENDCASE
-   
+
    // BUG F18 1.7.21, rg_2013/bjasko, 02.04.04, 15:00:07, variable does not exist
    IF lNotify
       _subject := "NOTIFY F18 "
@@ -289,9 +288,9 @@ STATIC FUNCTION send_email( err_obj, lNotify )
       _subject := "BUG F18 "
    ENDIF
 
-   _subject += F18_VER 
-   _subject += ", " + my_server_params()["database"] + "/" + ALLTRIM( f18_user() ) 
-   _subject += ", " + DTOC( DATE() ) + " " + PADR( TIME(), 8 ) 
+   _subject += F18_VER
+   _subject += ", " + my_server_params()["database"] + "/" + ALLTRIM( f18_user() )
+   _subject += ", " + DTOC( DATE() ) + " " + PADR( TIME(), 8 )
 
    IF err_obj != NIL
          _subject += ", " + ALLTRIM( err_obj:description ) + "/" + ALLTRIM( err_obj:operation )
@@ -329,11 +328,11 @@ STATIC FUNCTION send_email_attachment()
    LOCAL _filename, _err
    LOCAL _log_file, _log_params
    LOCAL _error_file := "error.txt"
- 
+
    _filename := ALLTRIM( _server["database"] )
    _filename += "_" + ALLTRIM( f18_user() )
-   _filename += "_" + DTOS( DATE() ) 
-   _filename += "_" + STRTRAN( TIME(), ":", "" ) 
+   _filename += "_" + DTOS( DATE() )
+   _filename += "_" + STRTRAN( TIME(), ":", "" )
    _filename += ".zip"
 
    _log_params := hb_hash()
@@ -349,7 +348,7 @@ STATIC FUNCTION send_email_attachment()
    AADD( _a_files, _log_file )
 
    DirChange( _path )
-   
+
    _err := zip_files( _path, _filename, _a_files )
 
    DirChange( my_home() )
@@ -377,6 +376,3 @@ FUNCTION notify_podrska( cErrorMsg )
    EVAL( ErrorBlock(), oErr, .F., .F. )
 
    RETURN .T.
-
-
-

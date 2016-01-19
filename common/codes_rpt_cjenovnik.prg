@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,136 +13,138 @@
 #include "fmk.ch"
 
 
-function CjenR()
-private cKomLin
+FUNCTION CjenR()
 
-if Pitanje(,"Formiranje cjenovnika ?","N")=="N"
-   return DE_CONT
-endif
+   PRIVATE cKomLin
 
-SELECT ROBA
-select (F_BARKOD)
+   IF Pitanje(, "Formiranje cjenovnika ?", "N" ) == "N"
+      RETURN DE_CONT
+   ENDIF
 
-if !used()
-	O_BARKOD
-endif
-SELECT BARKOD
-zapp()
+   SELECT ROBA
+   SELECT ( F_BARKOD )
 
-SELECT roba
-GO TOP
-MsgO("Priprema barkod.dbf za cjen")
+   IF !Used()
+      O_BARKOD
+   ENDIF
+   SELECT BARKOD
+   zapp()
 
-cIniName:=EXEPATH+'ProIzvj.ini'
+   SELECT roba
+   GO TOP
+   MsgO( "Priprema barkod.dbf za cjen" )
 
-//Iscita var Linija1 iz FMK.INI/KUMPATH u PROIZVJ.INI
-UzmiIzIni(cIniName,'Varijable','Linija1',IzFmkIni("Zaglavlje","Linija1",gNFirma,KUMPATH),'WRITE')
-UzmiIzIni(cIniName,'Varijable','Linija2',IzFmkIni("Zaglavlje","Linija2","-",KUMPATH),'WRITE')
-UzmiIzIni(cIniName,'Varijable','Linija3',IzFmkIni("Zaglavlje","Linija3","-",KUMPATH),'WRITE')
-UzmiIzIni(cIniName,'Varijable','Linija4',IzFmkIni("Zaglavlje","Linija4","-",KUMPATH),'WRITE')
-UzmiIzIni(cIniName,'Varijable','Linija5',IzFmkIni("Zaglavlje","Linija5","-",KUMPATH),'WRITE')
-UzmiIzIni(cIniName,'Varijable','CjenBroj',IzFmkIni("Zaglavlje","CjenBroj","-",KUMPATH),'WRITE')
-cCjenIzbor:=IzFmkIni("Zaglavlje","CjenIzbor"," ",KUMPATH)
+   cIniName := EXEPATH + 'ProIzvj.ini'
 
-do while !EOF()
-  SELECT BARKOD
-  APPEND BLANK
-  REPLACE ID       WITH  roba->id ,;
-          NAZIV    WITH  TRIM(LEFT(ROBA->naz, 40))+" ("+TRIM(ROBA->jmj)+")" ,;
-          VPC      WITH  ROBA->vpc,;
-          MPC      WITH  ROBA->mpc
-  select roba
-  skip
-enddo
-MsgC()
+   // Iscita var Linija1 iz FMK.INI/KUMPATH u PROIZVJ.INI
+   UzmiIzIni( cIniName, 'Varijable', 'Linija1', IzFmkIni( "Zaglavlje", "Linija1", gNFirma, KUMPATH ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'Linija2', IzFmkIni( "Zaglavlje", "Linija2", "-", KUMPATH ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'Linija3', IzFmkIni( "Zaglavlje", "Linija3", "-", KUMPATH ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'Linija4', IzFmkIni( "Zaglavlje", "Linija4", "-", KUMPATH ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'Linija5', IzFmkIni( "Zaglavlje", "Linija5", "-", KUMPATH ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'CjenBroj', IzFmkIni( "Zaglavlje", "CjenBroj", "-", KUMPATH ), 'WRITE' )
+   cCjenIzbor := IzFmkIni( "Zaglavlje", "CjenIzbor", " ", KUMPATH )
 
-my_close_all_dbf()
+   DO WHILE !Eof()
+      SELECT BARKOD
+      APPEND BLANK
+      REPLACE ID       WITH  roba->id,;
+         NAZIV    WITH  Trim( Left( ROBA->naz, 40 ) ) + " (" + Trim( ROBA->jmj ) + ")",;
+         VPC      WITH  ROBA->vpc, ;
+         MPC      WITH  ROBA->mpc
+      SELECT roba
+      SKIP
+   ENDDO
+   MsgC()
 
- // Izbor cjenovnika  ( /M/V)
+   my_close_all_dbf()
 
-PRIVATE cCjenBroj:=space(15)
-PRIVATE cCjenIzbor:=" "
+   // Izbor cjenovnika  ( /M/V)
 
-BOX (,4,40)
-  @ m_x+1, m_y+2 SAY "Cjenovnik broj : " GET cCjenBroj
-  @ m_x+3, m_y+2 SAY "Cjenovnik ( /M/V) : " GET cCjenIzbor VALID cCjenIzbor $ " MV"
-  @ m_x+4, m_y+2 SAY "M - sa MPC,V - sa VPC,prazno - sve"
-READ
-boxc()
+   PRIVATE cCjenBroj := Space( 15 )
+   PRIVATE cCjenIzbor := " "
 
-UzmiIzIni(cIniName,'Varijable','CjenBroj',cCjenBroj,'WRITE')
-UzmiIzIni(KUMPATH+'FMK.INI','Zaglavlje','CjenBroj',cCjenBroj,'WRITE')
-UzmiIzIni(KUMPATH+'FMK.INI','Zaglavlje','CjenIzbor',cCjenIzbor,'WRITE')
+   BOX (, 4, 40 )
+   @ m_x + 1, m_y + 2 SAY "Cjenovnik broj : " GET cCjenBroj
+   @ m_x + 3, m_y + 2 SAY "Cjenovnik ( /M/V) : " GET cCjenIzbor VALID cCjenIzbor $ " MV"
+   @ m_x + 4, m_y + 2 SAY "M - sa MPC,V - sa VPC,prazno - sve"
+   READ
+   boxc()
 
-IF LASTKEY()==K_ESC
-	RETURN DE_CONT
-endif
+   UzmiIzIni( cIniName, 'Varijable', 'CjenBroj', cCjenBroj, 'WRITE' )
+   UzmiIzIni( KUMPATH + 'FMK.INI', 'Zaglavlje', 'CjenBroj', cCjenBroj, 'WRITE' )
+   UzmiIzIni( KUMPATH + 'FMK.INI', 'Zaglavlje', 'CjenIzbor', cCjenIzbor, 'WRITE' )
 
-f18_rtm_print( "cjen", "barkod", "id" )
+   IF LastKey() == K_ESC
+      RETURN DE_CONT
+   ENDIF
 
-return DE_CONT
+   f18_rtm_print( "cjen", "barkod", "id" )
+
+   RETURN DE_CONT
 
 
 // ------------------------------------------------------
 // stampa rekapitulacije stara cijena -> nova cijena
 // ------------------------------------------------------
-function rpt_zanivel()
-local nTArea := SELECT()
-local cZagl
-local cLine
-local cRazmak := SPACE(1)
-local nCnt
+FUNCTION rpt_zanivel()
 
-O_ROBA
-select roba
-set order to tag "ID"
-go top
+   LOCAL nTArea := Select()
+   LOCAL cZagl
+   LOCAL cLine
+   LOCAL cRazmak := Space( 1 )
+   LOCAL nCnt
 
-// ako ne postoji polje u robi, nista...
-if roba->(fieldpos("zanivel")) == 0
-	return
-endif
+   O_ROBA
+   SELECT roba
+   SET ORDER TO TAG "ID"
+   GO TOP
 
-cZagl := PADC("R.br", 6)
-cZagl += cRazmak
-cZagl += PADC("ID", 10)
-cZagl += cRazmak
-cZagl += PADC("Naziv", 20)
-cZagl += cRazmak
-cZagl += PADC("Stara cijena", 15)
-cZagl += cRazmak
-cZagl += PADC("Nova cijena", 15)
+   // ako ne postoji polje u robi, nista...
+   IF roba->( FieldPos( "zanivel" ) ) == 0
+      RETURN
+   ENDIF
 
-cLine := REPLICATE("-", LEN(cZagl))
+   cZagl := PadC( "R.br", 6 )
+   cZagl += cRazmak
+   cZagl += PadC( "ID", 10 )
+   cZagl += cRazmak
+   cZagl += PadC( "Naziv", 20 )
+   cZagl += cRazmak
+   cZagl += PadC( "Stara cijena", 15 )
+   cZagl += cRazmak
+   cZagl += PadC( "Nova cijena", 15 )
 
-START PRINT CRET
+   cLine := Replicate( "-", Len( cZagl ) )
 
-? "Pregled promjene cijena u sifrarniku robe"
-?
-? cLine
-? cZagl
-? cLine
+   START PRINT CRET
 
-nCnt := 0
+   ? "Pregled promjene cijena u sifrarniku robe"
+   ?
+   ? cLine
+   ? cZagl
+   ? cLine
 
-do while !EOF()
+   nCnt := 0
 
-	if field->zanivel == 0
-		skip
-		loop
-	endif
-	
-	++ nCnt
-	
-	? PADL( STR( nCnt, 5) + ".", 6 ), PADR(field->id, 10), PADR(field->naz, 20), PADL( STR(field->mpc, 12, 2), 15 ), PADL( STR(field->zanivel, 12, 2), 15 )
-	
-	skip
-	
-enddo
+   DO WHILE !Eof()
 
-FF
-END PRINT
+      IF field->zanivel == 0
+         SKIP
+         LOOP
+      ENDIF
 
-select (nTArea)
+      ++ nCnt
 
-return
+      ? PadL( Str( nCnt, 5 ) + ".", 6 ), PadR( field->id, 10 ), PadR( field->naz, 20 ), PadL( Str( field->mpc, 12, 2 ), 15 ), PadL( Str( field->zanivel, 12, 2 ), 15 )
+
+      SKIP
+
+   ENDDO
+
+   FF
+   ENDPRINT
+
+   SELECT ( nTArea )
+
+   RETURN

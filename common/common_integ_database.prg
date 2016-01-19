@@ -203,7 +203,6 @@ FUNCTION DInt1NextID()
    SELECT ( nArr )
 
    RETURN nId
-// }
 
 
 /*! \fn DInt2NextID()
@@ -211,7 +210,7 @@ FUNCTION DInt1NextID()
  */
 FUNCTION DInt2NextID()
 
-   // {
+
    LOCAL nArr
    nArr := Select()
 
@@ -223,7 +222,6 @@ FUNCTION DInt2NextID()
    SELECT ( nArr )
 
    RETURN nId
-// }
 
 
 /*! \fn NextDIntID()
@@ -231,7 +229,6 @@ FUNCTION DInt2NextID()
  */
 FUNCTION NextDIntID()
 
-   // {
    nId := 0
    SET ORDER TO TAG "2"
    GO BOTTOM

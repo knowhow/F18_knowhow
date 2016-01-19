@@ -23,7 +23,6 @@ FUNCTION P_KonCij( CId, dx, dy )
 
    nTArea := Select()
 
-
    O_KONCIJ
 
    AAdd( ImeKol, { "ID", {|| id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )

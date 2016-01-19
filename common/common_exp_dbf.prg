@@ -11,9 +11,7 @@
 
 
 #include "fmk.ch"
-
 STATIC __table := "r_export"
-
 
 
 FUNCTION t_exp_create( field_list )
@@ -41,4 +39,3 @@ FUNCTION tbl_export()
    ENDIF
 
    RETURN
-

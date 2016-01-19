@@ -1,309 +1,311 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 #include "fmk.ch"
 
-function KonvZnWin(txt)
-return txt
+FUNCTION KonvZnWin( txt )
+   RETURN txt
 
 /*! \fn KonvZnWin(cTekst, cWinKonv)
  *  \brief Konverzija znakova u stringu
  *  \param cTekst - tekst
  *  \param cWinKonv - tip konverzije
  */
-function KonvZnWin_old(cTekst, cWinKonv)
-local aNiz:={}
-local i
-local j
+FUNCTION KonvZnWin_old( cTekst, cWinKonv )
 
-AADD(aNiz, {"[","Ê",chr(138),"S","ä"})
-AADD(aNiz, {"{","Á",chr(154),"s","Á"})
-AADD(aNiz, {"}","Ü",chr(230),"c","Ü"})
-AADD(aNiz, {"]","è", chr(198),"C","è"})
-AADD(aNiz, {"^","¨", chr(200),"C","¨"})
-AADD(aNiz, {"~","ü",chr(232),"c","ü"})
-AADD(aNiz, {"`","ß",chr(158),"z","ß"})
-AADD(aNiz, {"@","¶",chr(142),"Z","¶"})
-AADD(aNiz, {"|","–", chr(240),"dj",""})
-AADD(aNiz, {"\","—", chr(208),"DJ","—"})
+   LOCAL aNiz := {}
+   LOCAL i
+   LOCAL j
 
-if cWinKonv = NIL
-	cWinKonv:=IzFmkIni("DelphiRb","Konverzija","5")
-endif
+   AAdd( aNiz, { "[", "ÔøΩ", Chr( 138 ), "S", "ÔøΩ" } )
+   AAdd( aNiz, { "{", "ÔøΩ", Chr( 154 ), "s", "ÔøΩ" } )
+   AAdd( aNiz, { "}", "ÔøΩ", Chr( 230 ), "c", "ÔøΩ" } )
+   AAdd( aNiz, { "]", "ÔøΩ", Chr( 198 ), "C", "ÔøΩ" } )
+   AAdd( aNiz, { "^", "ÔøΩ", Chr( 200 ), "C", "ÔøΩ" } )
+   AAdd( aNiz, { "~", "ÔøΩ", Chr( 232 ), "c", "ÔøΩ" } )
+   AAdd( aNiz, { "`", "ÔøΩ", Chr( 158 ), "z", "ÔøΩ" } )
+   AAdd( aNiz, { "@", "ÔøΩ", Chr( 142 ), "Z", "ÔøΩ" } )
+   AAdd( aNiz, { "|", "ÔøΩ", Chr( 240 ), "dj", "ÔøΩ" } )
+   AAdd( aNiz, { "\", "ÔøΩ", Chr( 208 ), "DJ", "ÔøΩ" } )
 
-i:=1
-j:=1
+   IF cWinKonv = NIL
+      cWinKonv := IzFmkIni( "DelphiRb", "Konverzija", "5" )
+   ENDIF
 
-if cWinKonv=="1"
-	i:=1
-	j:=2
-elseif cWinKonv=="2"
-        // 7->A
-	i:=1
-	j:=4  
-elseif cWinKonv=="3"
-        // 852->7
-	i:=2
-	j:=1   
-elseif cWinKonv=="4"
-        // 852->A
-	i:=2
-	j:=4 
-elseif cWinKonv=="5"
-        // 852->win1250
-	i:=2
-	j:=3  
-elseif cWinKonv=="6"
-        // 7->win1250
-	i:=1
-	j:=3 
-elseif cWinKonv=="8"
-	i:=3
-	j:=5
-endif
+   i := 1
+   j := 1
 
-if i<>j
-	AEVAL(aNiz,{|x| cTekst:=STRTRAN(cTekst,x[i],x[j])})
-endif
+   IF cWinKonv == "1"
+      i := 1
+      j := 2
+   ELSEIF cWinKonv == "2"
+      // 7->A
+      i := 1
+      j := 4
+   ELSEIF cWinKonv == "3"
+      // 852->7
+      i := 2
+      j := 1
+   ELSEIF cWinKonv == "4"
+      // 852->A
+      i := 2
+      j := 4
+   ELSEIF cWinKonv == "5"
+      // 852->win1250
+      i := 2
+      j := 3
+   ELSEIF cWinKonv == "6"
+      // 7->win1250
+      i := 1
+      j := 3
+   ELSEIF cWinKonv == "8"
+      i := 3
+      j := 5
+   ENDIF
 
-return cTekst
+   IF i <> j
+      AEval( aNiz, {| x| cTekst := StrTran( cTekst, x[ i ], x[ j ] ) } )
+   ENDIF
+
+   RETURN cTekst
 
 // -----------------------
 // -----------------------
-function StrKZN(cInput)
-return cInput
+FUNCTION StrKZN( cInput )
+   RETURN cInput
 
 
 /*! \fn StrKZN(cInput, cIz, cU)
  *  \brief Vrsi zamjenu cInputa
  */
-function StrKZN_old(cInput, cIz, cU)
+FUNCTION StrKZN_old( cInput, cIz, cU )
 
-local a852:={"Ê","—","¨","è","¶","Á","–","ü","Ü","ß"}
-local a437:={"[","\","^","]","@","{","|","~","}","`"}
-local aEng:={"S","D","C","C","Z","s","d","c","c","z"}
-local aEngB:={"SS","DJ","CH","CC","ZZ","ss","dj","ch","cc","zz"}
-local aWin:= {"ä", "–", "∆", "»", "é", "ö", "", "Ê", "Ë", "û"}
-local aUTF:= {"&#352;", "&#272;", "&#268;", "&#262;", "&#381;", "&#353;", ;
-	"&#273;", "&#269;", "&#263;", "&#382;"}
+   LOCAL a852 := { "ÔøΩ", "ÔøΩ", "ÔøΩ", "ÔøΩ", "ÔøΩ", "ÔøΩ", "ÔøΩ", "ÔøΩ", "ÔøΩ", "ÔøΩ" }
+   LOCAL a437 := { "[", "\", "^", "]", "@", "{", "|", "~", "}", "`" }
+   LOCAL aEng := { "S", "D", "C", "C", "Z", "s", "d", "c", "c", "z" }
+   LOCAL aEngB := { "SS", "DJ", "CH", "CC", "ZZ", "ss", "dj", "ch", "cc", "zz" }
+   LOCAL aWin := { "ÔøΩ", "ÔøΩ", "ÔøΩ", "ÔøΩ", "ÔøΩ", "ÔøΩ", "ÔøΩ", "ÔøΩ", "ÔøΩ", "ÔøΩ" }
+   LOCAL aUTF := { "&#352;", "&#272;", "&#268;", "&#262;", "&#381;", "&#353;", ;
+      "&#273;", "&#269;", "&#263;", "&#382;" }
 
-local i:=0, aIz:={}, aU:={}
+   LOCAL i := 0, aIz := {}, aU := {}
 
+   IF cIz == "7"
+      aIz := a437
+   ELSEIF cIz == "8"
+      aIz := a852
+   ELSEIF ( goModul:oDataBase:cName == "LD" .AND. cIz == "B" )
+      aIz := aEngB
+   ELSEIF ( cIz == "W" )
+      aIz := aWin
+   ELSE
+      aIz := aEng
+   ENDIF
 
-if cIz=="7"
-	aIz:=a437
-elseif cIz=="8"
-	aIz:=a852
-elseif (goModul:oDataBase:cName=="LD" .and. cIz=="B")
-	aIz:=aEngB
-elseif (cIz=="W")
-	aIz:=aWin
-else
-	aIz:=aEng
-endif
+   IF cU == "7"
+      aU := a437
+   ELSEIF cU == "8"
+      aU := a852
+   ELSEIF cU == "U"
+      aU := aUTF
+   ELSEIF goModul:oDataBase:cName == "LD" .AND. cU == "B"
+      aU := aEngB
+   ELSE
+      aU := aEng
+   ENDIF
 
-if cU=="7"
-	aU:=a437
-elseif cU=="8"
-	aU:=a852
-elseif cU=="U"
-	aU:=aUTF
-elseif goModul:oDataBase:cName=="LD" .and. cU=="B"
-	aU:=aEngB
-else
-	aU:=aEng
-endif
+   // Ove dvije linije zamjenio sa gornjim kodom
+   // aIz:=IF(cIz=="7", a437, IF(cIz=="8", a852, aEng))
+   // aU:=IF(cU=="7", a437, IF(cU=="8", a852, aEng))
 
-// Ove dvije linije zamjenio sa gornjim kodom
-// aIz:=IF(cIz=="7", a437, IF(cIz=="8", a852, aEng))
-// aU:=IF(cU=="7", a437, IF(cU=="8", a852, aEng))
+   cPocStanjeSif := cInput
 
-cPocStanjeSif:=cInput
+   FOR i := 1 TO 10
+      IF ( goModul:oDataBase:cName == "LD" .AND. i == 5 )
+         IF At( "D@", cInput ) <> 0
+            cInput := StrTran( cInput, "D@", "DZ" )
+         ELSEIF At( "D|", cInput ) <> 0
+            cInput := StrTran( cInput, "D|", "DZ" )
+         ENDIF
+      ENDIF
+      IF ( goModul:oDataBase:cName == "LD" .AND. i == 10 )
+         IF At( "dÔøΩ", cInput ) <> 0
+            cInput := StrTran( cInput, "dÔøΩ", "dz" )
+         ELSEIF At( "d`", cInput ) <> 0
+            cInput := StrTran( cInput, "d`", "dz" )
+         ENDIF
+      ENDIF
 
-for i:=1 to 10
-	if (goModul:oDataBase:cName=="LD" .and. i==5)
-		if AT("D@", cInput)<>0
-			cInput:=STRTRAN(cInput, "D@", "DZ")
-		elseif AT("D|", cInput)<>0
-			cInput:=STRTRAN(cInput, "D|", "DZ")
-		endif
-	endif
-	if (goModul:oDataBase:cName=="LD" .and. i==10)
-		if AT("dß", cInput)<>0
-			cInput:=STRTRAN(cInput, "dß", "dz")
-		elseif AT("d`", cInput)<>0
-			cInput:=STRTRAN(cInput, "d`", "dz")
-		endif
-	endif
-
-	cInput:=STRTRAN(cInput,aIz[i],aU[i])
-next
-
-
-if (cU=="B" .and. LEN(ALLTRIM(cInput)) > 6)
-	// provjeri da li ovaj par postoji u nizu
-	nPos:=ASCAN(aKonvZN, {|aVal| aVal[1] == cPocStanjeSif})
-	if nPos > 0
-		cRet:=aKonvZN[nPos, 2]
-	else
-		cNoviId:=SPACE(6)
-		Box(,3,25)
-		@ 1+m_x, 2+m_y SAY "Unesi novi ID za sifru: "
-		@ 2+m_x, 2+m_y SAY "Stari ID: " + cPocStanjeSif
-		@ 3+m_x, 2+m_y SAY "Novi ID: " GET cNoviID
-		read
-		BoxC()
-		AADD(aKonvZN, {cPocStanjeSif, cNoviId})
-		cRet:=cNoviID
-	endif
-else
-	cRet:=cInput
-endif
-
-cKrajnjeStanjeSif:=cRet
-
-return cRet
+      cInput := StrTran( cInput, aIz[ i ], aU[ i ] )
+   NEXT
 
 
-function KSto7(cStr)
-return cStr
+   IF ( cU == "B" .AND. Len( AllTrim( cInput ) ) > 6 )
+      // provjeri da li ovaj par postoji u nizu
+      nPos := AScan( aKonvZN, {| aVal| aVal[ 1 ] == cPocStanjeSif } )
+      IF nPos > 0
+         cRet := aKonvZN[ nPos, 2 ]
+      ELSE
+         cNoviId := Space( 6 )
+         Box(, 3, 25 )
+         @ 1 + m_x, 2 + m_y SAY "Unesi novi ID za sifru: "
+         @ 2 + m_x, 2 + m_y SAY "Stari ID: " + cPocStanjeSif
+         @ 3 + m_x, 2 + m_y SAY "Novi ID: " GET cNoviID
+         READ
+         BoxC()
+         AAdd( aKonvZN, { cPocStanjeSif, cNoviId } )
+         cRet := cNoviID
+      ENDIF
+   ELSE
+      cRet := cInput
+   ENDIF
+
+   cKrajnjeStanjeSif := cRet
+
+   RETURN cRet
+
+
+FUNCTION KSto7( cStr )
+   RETURN cStr
 
 // --------------------------------
 // --------------------------------
-function KSto7_old(cStr)
-  cStr:=strtran(cStr,"Á","{")
-  cStr:=strtran(cStr,"–","|")
-  cStr:=strtran(cStr,"ß","`")
-  cStr:=strtran(cStr,"ü","~")
-  cStr:=strtran(cStr,"Ü","}")
-  cStr:=strtran(cStr,"è","[")
-  cStr:=strtran(cStr,"—","\")
-  cStr:=strtran(cStr,"¶","@")
-  cStr:=strtran(cStr,"¨","^")
-  cStr:=strtran(cStr,"è","]")
-return cStr
+FUNCTION KSto7_old( cStr )
 
-function KonvTable(fGraf)
+   cStr := StrTran( cStr, "ÔøΩ", "{" )
+   cStr := StrTran( cStr, "ÔøΩ", "|" )
+   cStr := StrTran( cStr, "ÔøΩ", "`" )
+   cStr := StrTran( cStr, "ÔøΩ", "~" )
+   cStr := StrTran( cStr, "ÔøΩ", "}" )
+   cStr := StrTran( cStr, "ÔøΩ", "[" )
+   cStr := StrTran( cStr, "ÔøΩ", "\" )
+   cStr := StrTran( cStr, "ÔøΩ", "@" )
+   cStr := StrTran( cStr, "ÔøΩ", "^" )
+   cStr := StrTran( cStr, "ÔøΩ", "]" )
 
-return nil
+   RETURN cStr
+
+FUNCTION KonvTable( fGraf )
+
+   RETURN NIL
 
 // ---------------------------------------------------
 // konverzija u utf-8
 // ---------------------------------------------------
-function strkznutf8( cInput, cIz )
-local aWin := {} 
-local aUTF := {}
-local a852 := {}
-local aTmp := {}
+FUNCTION strkznutf8( cInput, cIz )
 
-// windows kodovi...
-AADD( aWin, "&" ) 
-AADD( aWin, "ä" )
-AADD( aWin, "–" )
-AADD( aWin, "∆" )
-AADD( aWin, "»" )
-AADD( aWin, "é" )
-AADD( aWin, "ö" )
-AADD( aWin, "" )
-AADD( aWin, "Ê" )
-AADD( aWin, "Ë" )
-AADD( aWin, "û" )
-AADD( aWin, "!" ) 
-AADD( aWin, '"' ) 
-AADD( aWin, "'" ) 
-AADD( aWin, "," ) 
-AADD( aWin, "-" ) 
-AADD( aWin, "." ) 
-AADD( aWin, "\" ) 
-AADD( aWin, "/" ) 
-AADD( aWin, "=" ) 
-AADD( aWin, "(" ) 
-AADD( aWin, ")" ) 
-AADD( aWin, "[" ) 
-AADD( aWin, "]" ) 
-AADD( aWin, "{" ) 
-AADD( aWin, "}" ) 
-AADD( aWin, "<" ) 
-AADD( aWin, ">" ) 
+   LOCAL aWin := {}
+   LOCAL aUTF := {}
+   LOCAL a852 := {}
+   LOCAL aTmp := {}
 
-// pandan 852 je...
-AADD( a852, "&" ) // feature
-AADD( a852, "Ê" ) // SS
-AADD( a852, "—" ) // DJ
-AADD( a852, "¨" ) // CC
-AADD( a852, "è" ) // CH
-AADD( a852, "¶" ) // ZZ
-AADD( a852, "Á" ) // ss
-AADD( a852, "–" ) // dj
-AADD( a852, "ü" ) // cc
-AADD( a852, "Ü" ) // ch
-AADD( a852, "ß" ) // zz
-AADD( a852, "!" ) // uzvicnik
-AADD( a852, '"' ) // navodnici
-AADD( a852, "'" ) // jedan navodnik
-AADD( a852, "," ) // zarez
-AADD( a852, "-" ) // minus
-AADD( a852, "." ) // tacka
-AADD( a852, "\" ) // b.slash
-AADD( a852, "/" ) // slash
-AADD( a852, "=" ) // jedanko
-AADD( a852, "(" ) // otv.zagrada
-AADD( a852, ")" ) // zatv.zagrada
-AADD( a852, "[" ) // otv.ugl.zagrada
-AADD( a852, "]" ) // zatv.ugl.zagrada
-AADD( a852, "{" ) // otv.vit.zagrada
-AADD( a852, "}" ) // zatv.vit.zagrada
-AADD( a852, "<" ) // manje
-AADD( a852, ">" ) // vece
-// itd...
+   // windows kodovi...
+   AAdd( aWin, "&" )
+   AAdd( aWin, "ÔøΩ" )
+   AAdd( aWin, "ÔøΩ" )
+   AAdd( aWin, "ÔøΩ" )
+   AAdd( aWin, "ÔøΩ" )
+   AAdd( aWin, "ÔøΩ" )
+   AAdd( aWin, "ÔøΩ" )
+   AAdd( aWin, "ÔøΩ" )
+   AAdd( aWin, "ÔøΩ" )
+   AAdd( aWin, "ÔøΩ" )
+   AAdd( aWin, "ÔøΩ" )
+   AAdd( aWin, "!" )
+   AAdd( aWin, '"' )
+   AAdd( aWin, "'" )
+   AAdd( aWin, "," )
+   AAdd( aWin, "-" )
+   AAdd( aWin, "." )
+   AAdd( aWin, "\" )
+   AAdd( aWin, "/" )
+   AAdd( aWin, "=" )
+   AAdd( aWin, "(" )
+   AAdd( aWin, ")" )
+   AAdd( aWin, "[" )
+   AAdd( aWin, "]" )
+   AAdd( aWin, "{" )
+   AAdd( aWin, "}" )
+   AAdd( aWin, "<" )
+   AAdd( aWin, ">" )
 
-// pandan UTF je...
-AADD( aUTF, "&#38;" ) 
-AADD( aUTF, "&#352;" )
-AADD( aUTF, "&#272;" )
-AADD( aUTF, "&#268;" )
-AADD( aUTF, "&#262;" )
-AADD( aUTF, "&#381;" )
-AADD( aUTF, "&#353;" )
-AADD( aUTF, "&#273;" )
-AADD( aUTF, "&#269;" )
-AADD( aUTF, "&#263;" )
-AADD( aUTF, "&#382;" )
-AADD( aUTF, "&#33;" ) 
-AADD( aUTF, "&quot;" ) 
-AADD( aUTF, "&#39;" ) 
-AADD( aUTF, "&#44;" ) 
-AADD( aUTF, "&#45;" ) 
-AADD( aUTF, "&#46;" ) 
-//AADD( aUTF, "&#92;" ) 
-AADD( aUTF, "\" ) 
-//AADD( aUTF, "&#97;" ) 
-AADD( aUTF, "/" ) 
-AADD( aUTF, "&#8215;" ) 
-AADD( aUTF, "&#40;" ) 
-AADD( aUTF, "&#41;" ) 
-AADD( aUTF, "&#91;" ) 
-AADD( aUTF, "&#93;" ) 
-AADD( aUTF, "&#123;" ) 
-AADD( aUTF, "&#125;" ) 
-AADD( aUTF, "&#60;" ) 
-AADD( aUTF, "&#62;" ) 
+   // pandan 852 je...
+   AAdd( a852, "&" ) // feature
+   AAdd( a852, "ÔøΩ" ) // SS
+   AAdd( a852, "ÔøΩ" ) // DJ
+   AAdd( a852, "ÔøΩ" ) // CC
+   AAdd( a852, "ÔøΩ" ) // CH
+   AAdd( a852, "ÔøΩ" ) // ZZ
+   AAdd( a852, "ÔøΩ" ) // ss
+   AAdd( a852, "ÔøΩ" ) // dj
+   AAdd( a852, "ÔøΩ" ) // cc
+   AAdd( a852, "ÔøΩ" ) // ch
+   AAdd( a852, "ÔøΩ" ) // zz
+   AAdd( a852, "!" ) // uzvicnik
+   AAdd( a852, '"' ) // navodnici
+   AAdd( a852, "'" ) // jedan navodnik
+   AAdd( a852, "," ) // zarez
+   AAdd( a852, "-" ) // minus
+   AAdd( a852, "." ) // tacka
+   AAdd( a852, "\" ) // b.slash
+   AAdd( a852, "/" ) // slash
+   AAdd( a852, "=" ) // jedanko
+   AAdd( a852, "(" ) // otv.zagrada
+   AAdd( a852, ")" ) // zatv.zagrada
+   AAdd( a852, "[" ) // otv.ugl.zagrada
+   AAdd( a852, "]" ) // zatv.ugl.zagrada
+   AAdd( a852, "{" ) // otv.vit.zagrada
+   AAdd( a852, "}" ) // zatv.vit.zagrada
+   AAdd( a852, "<" ) // manje
+   AAdd( a852, ">" ) // vece
+   // itd...
 
-if cIz == "8"
-	aTmp := a852
-elseif cIz == "W"
-	aTmp := aWin
-endif
+   // pandan UTF je...
+   AAdd( aUTF, "&#38;" )
+   AAdd( aUTF, "&#352;" )
+   AAdd( aUTF, "&#272;" )
+   AAdd( aUTF, "&#268;" )
+   AAdd( aUTF, "&#262;" )
+   AAdd( aUTF, "&#381;" )
+   AAdd( aUTF, "&#353;" )
+   AAdd( aUTF, "&#273;" )
+   AAdd( aUTF, "&#269;" )
+   AAdd( aUTF, "&#263;" )
+   AAdd( aUTF, "&#382;" )
+   AAdd( aUTF, "&#33;" )
+   AAdd( aUTF, "&quot;" )
+   AAdd( aUTF, "&#39;" )
+   AAdd( aUTF, "&#44;" )
+   AAdd( aUTF, "&#45;" )
+   AAdd( aUTF, "&#46;" )
+   // AADD( aUTF, "&#92;" )
+   AAdd( aUTF, "\" )
+   // AADD( aUTF, "&#97;" )
+   AAdd( aUTF, "/" )
+   AAdd( aUTF, "&#8215;" )
+   AAdd( aUTF, "&#40;" )
+   AAdd( aUTF, "&#41;" )
+   AAdd( aUTF, "&#91;" )
+   AAdd( aUTF, "&#93;" )
+   AAdd( aUTF, "&#123;" )
+   AAdd( aUTF, "&#125;" )
+   AAdd( aUTF, "&#60;" )
+   AAdd( aUTF, "&#62;" )
 
-cRet := strkzn( cInput, cIz, "U", aTmp, aUtf )
+   IF cIz == "8"
+      aTmp := a852
+   ELSEIF cIz == "W"
+      aTmp := aWin
+   ENDIF
 
-return cRet
+   cRet := strkzn( cInput, cIz, "U", aTmp, aUtf )
 
+   RETURN cRet

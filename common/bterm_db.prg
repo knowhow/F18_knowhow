@@ -76,7 +76,7 @@ FUNCTION bterm_txt_to_tbl( cTxtFile )
    // prodji kroz svaku liniju i insertuj zapise u temp.dbf
 
    WHILE _o_file:MoreToRead()
-	
+
       // uzmi u cText liniju fajla
       cVar := hb_StrToUTF8( _o_file:ReadLine() )
 
@@ -85,15 +85,15 @@ FUNCTION bterm_txt_to_tbl( cTxtFile )
       ENDIF
 
       aRow := csvrow2arr( cVar, cDelimiter )
-	
+
       // struktura podataka u txt-u je
       // [1] - barkod
       // [2] - kolicina
-	
+
       // pa uzimamo samo sta nam treba
       cTmp := PadR( AllTrim( aRow[ 1 ] ), 13 )
       nTmp := Val ( AllTrim( aRow[ 2 ] ) )
-	
+
       SELECT roba
       SET ORDER TO TAG "BARKOD"
       GO TOP
@@ -160,5 +160,3 @@ STATIC FUNCTION cre_temp_tbl( aDbf, lIndex )
    ENDIF
 
    RETURN
-
-

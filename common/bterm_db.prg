@@ -26,7 +26,7 @@ STATIC FUNCTION get_term_tbl_struct( aDbf )
    // 0 - nema robe u sifrarniku
    // 1 - roba je tu
 
-   RETURN
+   RETURN NIL
 
 
 // --------------------------------------------------------

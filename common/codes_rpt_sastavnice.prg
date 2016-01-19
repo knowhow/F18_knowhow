@@ -9,12 +9,8 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "fmk.ch"
 
-// ------------------------------------------
-// pregled normativa
-// ------------------------------------------
 FUNCTION ISast()
 
    LOCAL nArr := Select()

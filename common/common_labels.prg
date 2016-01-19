@@ -1,14 +1,13 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "fmk.ch"
 
@@ -16,373 +15,377 @@
 // -----------------------------------------
 // funkcija za labeliranje barkodova...
 // -----------------------------------------
-function label_bkod()
-local cIBK
-local cPrefix
-local cSPrefix
-local cBoxHead
-local cBoxFoot
-local lDelphi := .t.
-private cKomLin
-private Kol
-private ImeKol
+FUNCTION label_bkod()
 
-O_SIFK
-O_SIFV
-O_PARTN
-O_ROBA
-set order to tag "ID"
-O_BARKOD
-O_FAKT_PRIPR
+   LOCAL cIBK
+   LOCAL cPrefix
+   LOCAL cSPrefix
+   LOCAL cBoxHead
+   LOCAL cBoxFoot
+   LOCAL lDelphi := .T.
+   PRIVATE cKomLin
+   PRIVATE Kol
+   PRIVATE ImeKol
 
-SELECT FAKT_PRIPR
+   O_SIFK
+   O_SIFV
+   O_PARTN
+   O_ROBA
+   SET ORDER TO TAG "ID"
+   O_BARKOD
+   O_FAKT_PRIPR
 
-private aStampati := ARRAY( RECCOUNT() )
+   SELECT FAKT_PRIPR
 
-GO TOP
+   PRIVATE aStampati := Array( RecCount() )
 
-for i:=1 to LEN( aStampati )
-	aStampati[ i ] := "D"
-next
+   GO TOP
 
-// setuj kolone za pripremu...
-set_a_kol( @ImeKol, @Kol )
+   FOR i := 1 TO Len( aStampati )
+      aStampati[ i ] := "D"
+   NEXT
 
-cBoxHead := "<SPACE> markiranje    |    <ESC> kraj"
-cBoxFoot := "Priprema za labeliranje bar-kodova..."
+   // setuj kolone za pripremu...
+   set_a_kol( @ImeKol, @Kol )
 
-Box(,20,50)
+   cBoxHead := "<SPACE> markiranje    |    <ESC> kraj"
+   cBoxFoot := "Priprema za labeliranje bar-kodova..."
 
-ObjDbedit("PLBK", 20, 50, {|| key_handler()}, cBoxHead, cBoxFoot, .t. , , , ,0)
+   Box(, 20, 50 )
 
-BoxC()
+   ObjDbedit( "PLBK", 20, 50, {|| key_handler() }, cBoxHead, cBoxFoot, .T., , , , 0 )
 
-if lDelphi
-	print_delphi_label( aStampati )
-else
-	// stampanje deklaracija...
-	//label_2_deklar(aStampati)
-endif
+   BoxC()
 
-my_close_all_dbf()
-return
+   IF lDelphi
+      print_delphi_label( aStampati )
+   ELSE
+      // stampanje deklaracija...
+      // label_2_deklar(aStampati)
+   ENDIF
+
+   my_close_all_dbf()
+
+   RETURN
 
 
 // --------------------------------
 // nastimaj pointer na partnera...
 // --------------------------------
-function seek_partner(cPartner)
-select partn
-set order to tag "ID"
-hseek cPartner
-return
+FUNCTION seek_partner( cPartner )
+
+   SELECT partn
+   SET ORDER TO TAG "ID"
+   hseek cPartner
+
+   RETURN
 
 
 // -----------------------------------------------------
 // setovanje kolone opcije pregleda labela....
 // -----------------------------------------------------
-static function set_a_kol( aImeKol, aKol )
-local _i
+STATIC FUNCTION set_a_kol( aImeKol, aKol )
 
-aImeKol := {}
-aKol := {}
+   LOCAL _i
 
-AADD(aImeKol, {"IdRoba"    ,{|| IdRoba }} )
-AADD(aImeKol, {"Kolicina"  ,{|| transform( Kolicina, "99999999.9" ) }} )
-AADD(aImeKol, {"Stampati?" ,{|| bk_stamp_dn( aStampati[RECNO()] ) }} )
+   aImeKol := {}
+   aKol := {}
 
-aKol:={}
-for _i:=1 to LEN(aImeKol)
-	AADD( aKol, _i )
-next
+   AAdd( aImeKol, { "IdRoba", {|| IdRoba } } )
+   AAdd( aImeKol, { "Kolicina", {|| Transform( Kolicina, "99999999.9" ) } } )
+   AAdd( aImeKol, { "Stampati?", {|| bk_stamp_dn( aStampati[ RecNo() ] ) } } )
 
-return
+   aKol := {}
+   FOR _i := 1 TO Len( aImeKol )
+      AAdd( aKol, _i )
+   NEXT
+
+   RETURN
 
 
 // --------------------------------
 // prikaz stampati ili ne stampati
 // --------------------------------
-static function bk_stamp_dn( cDN )
-local cRet := ""
+STATIC FUNCTION bk_stamp_dn( cDN )
 
-if cDN == "D"
-	cRet := "-> DA <-"
-else
-	cRet := "      NE"
-endif
+   LOCAL cRet := ""
 
-return cRet
+   IF cDN == "D"
+      cRet := "-> DA <-"
+   ELSE
+      cRet := "      NE"
+   ENDIF
+
+   RETURN cRet
 
 
 
 // --------------------------------
-// Obrada dogadjaja u browse-u 
-// tabele "Priprema za labeliranje 
+// Obrada dogadjaja u browse-u
+// tabele "Priprema za labeliranje
 // bar-kodova"
 // --------------------------------
-static function key_handler()
+STATIC FUNCTION key_handler()
 
-if Ch==ASC(' ')
+   IF Ch == Asc( ' ' )
 
-	if aStampati[recno()]=="N"
-		aStampati[recno()] := "D"
-	else
-		aStampati[recno()] := "N"
-	endif
+      IF aStampati[ RecNo() ] == "N"
+         aStampati[ RecNo() ] := "D"
+      ELSE
+         aStampati[ RecNo() ] := "N"
+      ENDIF
 
-	return DE_REFRESH
+      RETURN DE_REFRESH
 
-endif
+   ENDIF
 
-return DE_CONT
+   RETURN DE_CONT
 
 
 
 // ------------------------------------------------
 // parametri labeliranja i barkod-ova
 // ------------------------------------------------
-function label_params()
-local _box_x, _box_y
-local _x := 1
-local _br_dok := fetch_metric( "labeliranje_ispis_brdok", nil, "N" )
-local _jmj := fetch_metric( "labeliranje_ispis_jmj", nil, "N" )
-local _prefix := fetch_metric( "labeliranje_barkod_prefix", nil, SPACE(10) )
-local _auto_gen := fetch_metric( "labeliranje_barkod_automatsko_generisanje", nil, "N" ) 
-local _auto_formula := fetch_metric( "labeliranje_barkod_auto_formula", nil, SPACE(10) )
-local _ean_code := fetch_metric( "labeliranje_barkod_auto_ean_kod", nil, SPACE(10) )
-local _tb := fetch_metric( "barkod_tezinski_barkod", nil, "N" )
-local _tb_prefix := PADR( fetch_metric( "barkod_prefiks_tezinskog_barkoda", nil, SPACE(100) ), 100 )
-local _bk_len := fetch_metric( "barkod_tezinski_duzina_barkoda", nil, 0 )
-local _tez_len := fetch_metric( "barkod_tezinski_duzina_tezina", nil, 0 )
-local _tez_div := fetch_metric( "barkod_tezinski_djelitelj", nil, 10000 )
+FUNCTION label_params()
 
-_box_x := 20
-_box_y := 70
+   LOCAL _box_x, _box_y
+   LOCAL _x := 1
+   LOCAL _br_dok := fetch_metric( "labeliranje_ispis_brdok", nil, "N" )
+   LOCAL _jmj := fetch_metric( "labeliranje_ispis_jmj", nil, "N" )
+   LOCAL _prefix := fetch_metric( "labeliranje_barkod_prefix", nil, Space( 10 ) )
+   LOCAL _auto_gen := fetch_metric( "labeliranje_barkod_automatsko_generisanje", nil, "N" )
+   LOCAL _auto_formula := fetch_metric( "labeliranje_barkod_auto_formula", nil, Space( 10 ) )
+   LOCAL _ean_code := fetch_metric( "labeliranje_barkod_auto_ean_kod", nil, Space( 10 ) )
+   LOCAL _tb := fetch_metric( "barkod_tezinski_barkod", nil, "N" )
+   LOCAL _tb_prefix := PadR( fetch_metric( "barkod_prefiks_tezinskog_barkoda", nil, Space( 100 ) ), 100 )
+   LOCAL _bk_len := fetch_metric( "barkod_tezinski_duzina_barkoda", nil, 0 )
+   LOCAL _tez_len := fetch_metric( "barkod_tezinski_duzina_tezina", nil, 0 )
+   LOCAL _tez_div := fetch_metric( "barkod_tezinski_djelitelj", nil, 10000 )
 
-Box(, _box_x, _box_y )
+   _box_x := 20
+   _box_y := 70
 
-	@ m_x + _x, m_y + 2 SAY "*** Barkod stampa, podesenja" 
+   Box(, _box_x, _box_y )
 
-	++ _x
-	++ _x
+   @ m_x + _x, m_y + 2 SAY "*** Barkod stampa, podesenja"
 
-	@ m_x + _x, m_y + 2 SAY "Prikaz broja dokumenta na naljepnici    (D/N)" GET _br_dok VALID _br_dok $ "DN" PICT "@!"
+   ++ _x
+   ++ _x
 
-	++ _x
+   @ m_x + _x, m_y + 2 SAY "Prikaz broja dokumenta na naljepnici    (D/N)" GET _br_dok VALID _br_dok $ "DN" PICT "@!"
 
-	@ m_x + _x, m_y + 2 SAY "Prikaz jedinice mjere kod opisa artikla (D/N)" GET _jmj VALID _jmj $ "DN" PICT "@!"
+   ++ _x
 
-	++ _x
+   @ m_x + _x, m_y + 2 SAY "Prikaz jedinice mjere kod opisa artikla (D/N)" GET _jmj VALID _jmj $ "DN" PICT "@!"
 
-	@ m_x + _x, m_y + 2 SAY "Barkod prefix" GET _prefix
+   ++ _x
 
-	++ _x
+   @ m_x + _x, m_y + 2 SAY "Barkod prefix" GET _prefix
 
-	@ m_x + _x, m_y + 2 SAY "Automatsko generisanje barkod-a (D/N)" GET _auto_gen VALID _auto_gen $ "DN" PICT "@!"
+   ++ _x
 
-	++ _x
+   @ m_x + _x, m_y + 2 SAY "Automatsko generisanje barkod-a (D/N)" GET _auto_gen VALID _auto_gen $ "DN" PICT "@!"
 
-	@ m_x + _x, m_y + 2 SAY "Automatsko generisanje, auto formula:" GET _auto_formula
-	@ m_x + _x, col() + 1 SAY "EAN:" GET _ean_code
+   ++ _x
 
-	++ _x
+   @ m_x + _x, m_y + 2 SAY "Automatsko generisanje, auto formula:" GET _auto_formula
+   @ m_x + _x, Col() + 1 SAY "EAN:" GET _ean_code
 
-	@ m_x + _x, m_y + 2 SAY "Koristenje tezinskog barkod-a (D/N)" GET _tb VALID _tb $ "DN" PICT "@!"
-	
-	++ _x
-	
-	@ m_x + _x, m_y + 2 SAY "Prefiks tezinskog barkod-a" GET _tb_prefix PICT "@S30"
-	
-	++ _x
-	
-	@ m_x + _x, m_y + 2 SAY "Tezinski: duzina barkod-a" GET _bk_len PICT "99"
-	@ m_x + _x, col() + 2 SAY "duzina tezine:" GET _tez_len PICT "99"
-	@ m_x + _x, col() + 2 SAY "djelitelj:" GET _tez_div PICT "99999999"
-	
-	read
+   ++ _x
 
-BoxC()
+   @ m_x + _x, m_y + 2 SAY "Koristenje tezinskog barkod-a (D/N)" GET _tb VALID _tb $ "DN" PICT "@!"
 
-if LastKey() <> K_ESC
+   ++ _x
 
-	// save params
-	set_metric( "labeliranje_ispis_brdok", nil, _br_dok )
-	set_metric( "labeliranje_ispis_jmj", nil, _jmj )
-	set_metric( "labeliranje_barkod_prefix", nil, _prefix )
-	set_metric( "labeliranje_barkod_automatsko_generisanje", nil, _auto_gen ) 
-	set_metric( "labeliranje_barkod_auto_formula", nil, _auto_formula )
-	set_metric( "labeliranje_barkod_auto_ean_kod", nil, _ean_code )
-	set_metric( "barkod_tezinski_barkod", nil, _tb )
-	set_metric( "barkod_prefiks_tezinskog_barkoda", nil, ALLTRIM( _tb_prefix ) )
-	set_metric( "barkod_tezinski_duzina_barkoda", nil, _bk_len )
-	set_metric( "barkod_tezinski_duzina_tezina", nil, _tez_len )
-	set_metric( "barkod_tezinski_djelitelj", nil, _tez_div )
+   @ m_x + _x, m_y + 2 SAY "Prefiks tezinskog barkod-a" GET _tb_prefix PICT "@S30"
 
-endif
+   ++ _x
 
-return
+   @ m_x + _x, m_y + 2 SAY "Tezinski: duzina barkod-a" GET _bk_len PICT "99"
+   @ m_x + _x, Col() + 2 SAY "duzina tezine:" GET _tez_len PICT "99"
+   @ m_x + _x, Col() + 2 SAY "djelitelj:" GET _tez_div PICT "99999999"
+
+   READ
+
+   BoxC()
+
+   IF LastKey() <> K_ESC
+
+      // save params
+      set_metric( "labeliranje_ispis_brdok", nil, _br_dok )
+      set_metric( "labeliranje_ispis_jmj", nil, _jmj )
+      set_metric( "labeliranje_barkod_prefix", nil, _prefix )
+      set_metric( "labeliranje_barkod_automatsko_generisanje", nil, _auto_gen )
+      set_metric( "labeliranje_barkod_auto_formula", nil, _auto_formula )
+      set_metric( "labeliranje_barkod_auto_ean_kod", nil, _ean_code )
+      set_metric( "barkod_tezinski_barkod", nil, _tb )
+      set_metric( "barkod_prefiks_tezinskog_barkoda", nil, AllTrim( _tb_prefix ) )
+      set_metric( "barkod_tezinski_duzina_barkoda", nil, _bk_len )
+      set_metric( "barkod_tezinski_duzina_tezina", nil, _tez_len )
+      set_metric( "barkod_tezinski_djelitelj", nil, _tez_div )
+
+   ENDIF
+
+   RETURN
 
 
 
 
 // -----------------------------------
-// labeliranje delphi 
+// labeliranje delphi
 // -----------------------------------
-static function print_delphi_label( aStampati, modul )
-local nRezerva
-local cIBK
-local cLinija1
-local cLinija2
-local cPrefix
-local cSPrefix
-local nRobNazLen
-local cIdTipDok
-local lBKBrDok := .f.
-local lBKJmj := .f.
-local cBrDok
+STATIC FUNCTION print_delphi_label( aStampati, modul )
 
-if modul == NIL
-	modul := "FAKT"
-endif
+   LOCAL nRezerva
+   LOCAL cIBK
+   LOCAL cLinija1
+   LOCAL cLinija2
+   LOCAL cPrefix
+   LOCAL cSPrefix
+   LOCAL nRobNazLen
+   LOCAL cIdTipDok
+   LOCAL lBKBrDok := .F.
+   LOCAL lBKJmj := .F.
+   LOCAL cBrDok
 
-if fetch_metric( "labeliranje_ispis_jmj", nil, "N" ) == "D" 
-	lBKJmj := .t.
-endif
+   IF modul == NIL
+      modul := "FAKT"
+   ENDIF
 
-if fetch_metric( "labeliranje_ispis_brdok", nil, "N" ) == "D"
-	lBKBrDok := .t.
-endif
+   IF fetch_metric( "labeliranje_ispis_jmj", nil, "N" ) == "D"
+      lBKJmj := .T.
+   ENDIF
 
-if modul == "KALK"
-	cIdTipDok := "IDVD"
-else
-	cIdTipDok := "IDTIPDOK"
-endif
+   IF fetch_metric( "labeliranje_ispis_brdok", nil, "N" ) == "D"
+      lBKBrDok := .T.
+   ENDIF
 
-nRezerva := 0
+   IF modul == "KALK"
+      cIdTipDok := "IDVD"
+   ELSE
+      cIdTipDok := "IDTIPDOK"
+   ENDIF
 
-cLinija1 := PADR( "Proizvoljan tekst", 45 )
-cLinija2 := PADR( "Uvoznik:" + ALLTRIM( gNFirma ), 45 )
+   nRezerva := 0
 
-Box(, 4, 75 )
+   cLinija1 := PadR( "Proizvoljan tekst", 45 )
+   cLinija2 := PadR( "Uvoznik:" + AllTrim( gNFirma ), 45 )
 
-	@ m_x+0, m_y+25 SAY " LABELIRANJE BAR KODOVA "
+   Box(, 4, 75 )
 
-	@ m_x+2, m_y+ 2 SAY "Rezerva (broj komada):" GET nRezerva VALID nRezerva>=0 PICT "99"
+   @ m_x + 0, m_y + 25 SAY " LABELIRANJE BAR KODOVA "
 
-	if !lBKBrDok
-		@ m_x+3, m_y+2 SAY "Linija 1  :" GET cLinija1
-	endif
+   @ m_x + 2, m_y + 2 SAY "Rezerva (broj komada):" GET nRezerva VALID nRezerva >= 0 PICT "99"
 
-	@ m_x+4, m_y+ 2 SAY "Linija 2  :" GET cLinija2
+   IF !lBKBrDok
+      @ m_x + 3, m_y + 2 SAY "Linija 1  :" GET cLinija1
+   ENDIF
 
-	READ
+   @ m_x + 4, m_y + 2 SAY "Linija 2  :" GET cLinija2
 
-	ESC_BCR
+   READ
 
-BoxC()
+   ESC_BCR
 
-cPrefix := ALLTRIM( fetch_metric( "labeliranje_barkod_prefix", nil, "" ) )
-cSPrefix := "N"
+   BoxC()
 
-if !EMPTY( cPrefix )
-	cSPrefix := Pitanje(, "Stampati barkodove koji NE pocinju sa +'" + cPrefix + "' ?", "N" )
-endif
+   cPrefix := AllTrim( fetch_metric( "labeliranje_barkod_prefix", nil, "" ) )
+   cSPrefix := "N"
 
-SELECT BARKOD
-my_dbf_zap()
+   IF !Empty( cPrefix )
+      cSPrefix := Pitanje(, "Stampati barkodove koji NE pocinju sa +'" + cPrefix + "' ?", "N" )
+   ENDIF
 
-SELECT FAKT_PRIPR
-GO TOP
+   SELECT BARKOD
+   my_dbf_zap()
 
-do while !EOF()
+   SELECT FAKT_PRIPR
+   GO TOP
 
-	if aStampati[ RECNO() ] == "N"
-		SKIP 1
-		loop
-	endif
-	
-	SELECT ROBA
-	HSEEK FAKT_PRIPR->idroba
-	
-	if EMPTY( field->barkod ) .and. fetch_metric( "labeliranje_barkod_automatsko_generisanje", nil, "N" ) 
-		
-		private cPom := ALLTRIM( fetch_metric( "labeliranje_barkod_auto_formula", nil, "" ) )
-		
-		// kada je barkod prazan, onda formiraj sam interni barkod
-		cIBK := ALLTRIM( fetch_metric( "labeliranje_barkod_prefix", nil, "" ) ) + &cPom 
-		
-		if ALLTRIM( fetch_metric( "labeliranje_barkod_auto_ean_kod", nil, "" ) ) == "13"
-			cIBK := NoviBK_A()
-		endif
-		
-		PushWa()
-		
-		set order to tag "BARKOD"
-		seek cIBK
-		
-		if found()
-			PopWa()
-			MsgBeep("Prilikom formiranja internog barkoda##vec postoji kod: "+cIBK+"??##"+"Moracete za artikal " + fakt_pripr->idroba + " sami zadati jedinstveni barkod !")
-			replace barkod with "????"
-		else
-			PopWa()
-			replace barkod with cIBK
-		endif
-	endif
-	
-	if cSprefix == "N"
-		// ne stampaj koji nemaju isti prefix
-		if LEFT( field->barkod, LEN( cPrefix )) != cPrefix
-			select fakt_pripr
-			skip
-			loop
-		endif
-	endif
+   DO WHILE !Eof()
 
-	SELECT BARKOD
+      IF aStampati[ RecNo() ] == "N"
+         SKIP 1
+         LOOP
+      ENDIF
 
-	for i := 1 to fakt_pripr->kolicina + IF( fakt_pripr->kolicina > 0, nRezerva, 0 )
-		
-		APPEND BLANK
-		REPLACE id WITH ( fakt_pripr->idRoba )
-		
-		if lBKBrDok
-			cBrDok := TRIM( fakt_pripr->(idfirma + "-" + &cIdTipDok + "-" + brdok))
-			REPLACE l1 WITH ( DTOC(fakt_pripr->datdok) + ", " + cBrDok )
-		else
-			REPLACE l1 WITH (cLinija1)
-		endif
-		
-		REPLACE l2 WITH (cLinija2)
-		
-		REPLACE vpc WITH ROBA->vpc
-		REPLACE mpc WITH ROBA->mpc
-		REPLACE barkod WITH roba->barkod
-	
-		nRobNazLen := LEN(roba->naz)
-		
-		if !lBKJmj
-			REPLACE naziv WITH (TRIM(LEFT(ROBA->naz, nRobNazLen)))
-		else
-			REPLACE naziv WITH (TRIM(LEFT(ROBA->naz, nRobNazLen)) + " ("+TRIM(ROBA->jmj)+")")
-		endif
-	next
+      SELECT ROBA
+      HSEEK FAKT_PRIPR->idroba
 
-	SELECT FAKT_PRIPR
-	SKIP 1
+      IF Empty( field->barkod ) .AND. fetch_metric( "labeliranje_barkod_automatsko_generisanje", nil, "N" )
 
-enddo
+         PRIVATE cPom := AllTrim( fetch_metric( "labeliranje_barkod_auto_formula", nil, "" ) )
 
-select (F_BARKOD)
-use
+         // kada je barkod prazan, onda formiraj sam interni barkod
+         cIBK := AllTrim( fetch_metric( "labeliranje_barkod_prefix", nil, "" ) ) + &cPom
 
-my_close_all_dbf()
+         IF AllTrim( fetch_metric( "labeliranje_barkod_auto_ean_kod", nil, "" ) ) == "13"
+            cIBK := NoviBK_A()
+         ENDIF
 
-f18_rtm_print( "barkod", "barkod", "1" )
+         PushWa()
 
-return
+         SET ORDER TO TAG "BARKOD"
+         SEEK cIBK
 
+         IF Found()
+            PopWa()
+            MsgBeep( "Prilikom formiranja internog barkoda##vec postoji kod: " + cIBK + "??##" + "Moracete za artikal " + fakt_pripr->idroba + " sami zadati jedinstveni barkod !" )
+            REPLACE barkod WITH "????"
+         ELSE
+            PopWa()
+            REPLACE barkod WITH cIBK
+         ENDIF
+      ENDIF
 
+      IF cSprefix == "N"
+         // ne stampaj koji nemaju isti prefix
+         IF Left( field->barkod, Len( cPrefix ) ) != cPrefix
+            SELECT fakt_pripr
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 
+      SELECT BARKOD
 
+      FOR i := 1 TO fakt_pripr->kolicina + IF( fakt_pripr->kolicina > 0, nRezerva, 0 )
+
+         APPEND BLANK
+         REPLACE id WITH ( fakt_pripr->idRoba )
+
+         IF lBKBrDok
+            cBrDok := Trim( fakt_pripr->( idfirma + "-" + &cIdTipDok + "-" + brdok ) )
+            REPLACE l1 WITH ( DToC( fakt_pripr->datdok ) + ", " + cBrDok )
+         ELSE
+            REPLACE l1 WITH ( cLinija1 )
+         ENDIF
+
+         REPLACE l2 WITH ( cLinija2 )
+
+         REPLACE vpc WITH ROBA->vpc
+         REPLACE mpc WITH ROBA->mpc
+         REPLACE barkod WITH roba->barkod
+
+         nRobNazLen := Len( roba->naz )
+
+         IF !lBKJmj
+            REPLACE naziv WITH ( Trim( Left( ROBA->naz, nRobNazLen ) ) )
+         ELSE
+            REPLACE naziv WITH ( Trim( Left( ROBA->naz, nRobNazLen ) ) + " (" + Trim( ROBA->jmj ) + ")" )
+         ENDIF
+      NEXT
+
+      SELECT FAKT_PRIPR
+      SKIP 1
+
+   ENDDO
+
+   SELECT ( F_BARKOD )
+   USE
+
+   my_close_all_dbf()
+
+   f18_rtm_print( "barkod", "barkod", "1" )
+
+   RETURN

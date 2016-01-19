@@ -2,9 +2,7 @@ f18.hbc -DDEFINE2 -DDEBUG -inc
 
 sddpg.hbc
 xhb.hbc
--Icommon
--Ifin
--Ikalk
+-Iinclude
 
 -oF18
 -static

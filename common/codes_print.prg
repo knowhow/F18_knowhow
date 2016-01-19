@@ -1,19 +1,16 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 
-#include "fmk.ch" 
-
-
-#define  MEMOEXT  ".MEM"
+#include "fmk.ch"
 
 
 /*! \fn Izlaz(Zaglavlje,ImeDat,bFor,fIndex,lBezUpita)
@@ -25,7 +22,7 @@
  * b) Formira se izlazni fajl
  * c) prikazuje se na ekranu (N,V,E) ili stampa na printer (D), ili salje
  *    PTXT-u (R)
- *   
+ *
  *ULAZI
  *bFor - uslov za prikaz zapisa
  *
@@ -33,7 +30,7 @@
  * Koristi i sljedece public varijable
  *
  *- Kol - sarzi raspored polja,
- *        npr: 
+ *        npr:
  *	    Kol:={0,1,0,2.............}
  *
  *- RKol (opciono)
@@ -109,7 +106,7 @@ endif
   @ m_x+4,m_y+3  SAY "Odvajati redove linijom (D/N) ?" GET gOdvTab VALID gOdvTab $ "DN" PICTURE "@!"
   @ m_x+5,m_y+3  SAY "Razmak izmedju redova   (D/N) ?" GET cRazmak VALID cRazmak $ "DN" PICTURE "@!"
   READ
- 
+
  endif
 
  lImaSifK:=.f.
@@ -120,12 +117,12 @@ endif
  if LEN(ImeKol[1])>2 .and. !lImaSifK
   private aStruct:=DBSTRUCT(), anDuz[FCOUNT(),2], ctxt2
   for i:=1 to len(aStruct)
-    
+
     // treci element jednog reda u matrici imekol
     k:= ASCAN(ImeKol, {|x| FIELD(i)==UPPER(x[3])})
 
     j:=IF(k<>0, Kol[k], 0)
-    
+
     if j<>0
       xPom:=EVAL(ImeKol[k,2])
       anDuz[j,1]:=MAX( LEN(ImeKol[k,1]) , LEN(IF(VALTYPE(xPom)=="D",;
@@ -204,7 +201,7 @@ endif
     endif
   next
  endif
- 
+
  BoxC()
  if !lBezUpita
 	START PRINT RET
@@ -281,13 +278,13 @@ return nil
 function ZaRedBlok()
 *{
 ++RedBr
- 
+
 WhileEvent(RedBr,nil)
-  
+
 if !EMPTY(cNazMemo)
     ctxt2:=UkloniRet(cNazMemo,.f.)
 endif
-  
+
 return .t.
 *}
 
@@ -296,9 +293,9 @@ function UkloniRet(xTekst,lPrazno)
 local cTekst
  if lPrazno==nil; lPrazno:=.f.; endif
  if VALTYPE(xTekst)=="B"
-   cTekst:=strtran(EVAL(xTekst),""+Chr(10),"")
+   cTekst:=strtran(EVAL(xTekst),"ï¿½"+Chr(10),"")
  else
-   cTekst:=strtran(&xTekst,""+Chr(10),"")
+   cTekst:=strtran(&xTekst,"ï¿½"+Chr(10),"")
  endif
  if lPrazno
   cTekst:=strtran(cTekst,NRED,NRED+space(7))
@@ -398,14 +395,14 @@ AEVAL(Kl, {|broj| cKolona:=cKolona+STR(Broj,2)})
 // matrice kao karakterne memorijske varijable
 SAVE  ALL LIKE cKolona to &cImeF
 ACOPY(Kl,Kol)
-return    
+return
 *}
 
 /*
  * function DobraKol(Kol,i)
  * Nalazenje kolona koje se stampaju, Koristi je IzborP2
  */
- 
+
 function DobraKol(Kol,i)
 *{
 local n
@@ -454,7 +451,7 @@ return lVrati
 /*! \fn StampaTabele(aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslov, bFor, nStr, lOstr, lLinija, bSubTot, nSlogova, cTabBr, lCTab, bZagl)
  *
  *   \brief Stampa tabele
- * 
+ *
  * \code
  * ULAZI
  * aKol - niz definicija kolona, npr.
@@ -487,8 +484,8 @@ return lVrati
  * lOstr    - .f. znaci da ne treba ostranicavati posljednju stranu
  * lLinija  - .t. znaci da ce se stavke odvajati linijom
  * bSubTot  - blok koji vraca {.t.,cSubTxt} kada treba prikazati subtotal
- * nSlogova - broj slogova za obradu    ÄÄ¿ koristi se samo za prikaz
- * cTabBr   - oznaka (naziv) za tabelu  ÄÄÙ procenta uradjenog posla
+ * nSlogova - broj slogova za obradu    ï¿½Ä¿ koristi se samo za prikaz
+ * cTabBr   - oznaka (naziv) za tabelu  ï¿½ï¿½ï¿½ procenta uradjenog posla
  * lCTab    - horiz.centriranje tabele (.t. - da, .f. - ne)    nil->.t.
  * bZagl    - blok dodatnog zaglavlja koje ima prioritet nad zaglavljem
  *           koje se nalazi u ovoj f-ji
@@ -521,15 +518,15 @@ if lOstr==nil; lOstr:=.t.; endif
 if nStr==nil; nStr:=1; endif
 if nCrtice==nil; nCrtice:=1; endif
 if nOdvoji==nil; nOdvoji:=0; endif
- 
+
 if bUslov == nil
  	bUslov := {|| INKEY(), IF( LASTKEY() == 27, PrekSaEsc(), .t. ) }
 endif
- 
+
 if bZaRed==nil
  	bZaRed:={|| .t.}
 endif
- 
+
  if bFor==nil; bFor:={|| .t.}; endif
  if lCTab==nil; lCTab:=.t.; endif
  if lA4papir==nil; lA4papir:="4"; endif
@@ -608,15 +605,15 @@ elseif nCrtice == 1
     #ifdef __PLATFORM__WINDOWS
         cOk := {"+", "-", "+", "+", ":", "+", "+", "+", "+", "+", "+", ":", "-", "+", "+", "+"}
     #else
-        cOk := {"Ú", "Ä", "Â", "¿", "³", "Ã", "Å", "´", "À", "Á", "Ù", "³", "Ä", "Ã", "´", "Å"}
+        cOk := {"ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½"}
     #endif
 
-elseif nCrtice == 9    
+elseif nCrtice == 9
     // rtf-fajlovi
     cOk := {" ", " ", " ", " ", "#", " ", " ", " ", " ", " ", " ", "#", " ", " ", " ", " "}
 else
-    cOk := {"É", "Í", "Ñ", "»", "³", "Ì", "Ø", "¹", "È", "Ï", "¼", "º", "Ä", "Ç", "¶", "Å"}
-endif     
+    cOk := {"ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½"}
+endif
           // 1    2    3    4    5    6    7    8    9    10   11   12   13   14   15   16
 
 nSuma := ARRAY(nKol)
@@ -625,7 +622,7 @@ nSuma:=AMFILL(nSuma,nRed)
 nSubTot := ARRAY(nKol)
 AFILL(nSubTot,0)
 nSubTot:=AMFILL(nSubTot,nRed)
- 
+
 if cNaslov!=nil
    QOUT(cLM2+cOk[1]+REPLICATE(cOk[2],nDReda-nOdvoji-2)+cOk[4])
    QOUT(cLM2+cOk[12]+SPACE(nDReda-nOdvoji-2)+cOk[12])
@@ -1083,4 +1080,3 @@ return cVrati
 
 function WhileEvent(nValue, nCnt)
 return
-

@@ -12,9 +12,6 @@
 
 #include "fmk.ch"
 
-// ---------------------------------
-// otvaranje tabele REFER
-// ---------------------------------
 FUNCTION p_refer( cId, dx, dy )
 
    LOCAL nArr

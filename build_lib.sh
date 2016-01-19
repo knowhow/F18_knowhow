@@ -3,18 +3,6 @@ if [ "$HB_INC_INSTALL" == "" ]; then
     exit -1
 fi
 
-cp -av fin/*.ch  $HB_INC_INSTALL
-cp -av fakt/*.ch  $HB_INC_INSTALL
-cp -av kalk/*.ch  $HB_INC_INSTALL
-cp -av rnal/*.ch  $HB_INC_INSTALL
-cp -av epdv/*.ch  $HB_INC_INSTALL
-cp -av ld/*.ch  $HB_INC_INSTALL
-cp -av os/*.ch  $HB_INC_INSTALL
-cp -av pos/*.ch  $HB_INC_INSTALL
-cp -av mat/*.ch  $HB_INC_INSTALL
-cp -av virm/*.ch  $HB_INC_INSTALL
-cp -av common/*.ch $HB_INC_INSTALL
-
 #cp hb_debug_lib.hbm hbmk.hbm
 
 hbmk2 -workdir=.h -b F18_narudzbenica.hbp

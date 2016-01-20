@@ -10,7 +10,7 @@
  */
 
 
-#include "ld.ch"
+#include "f18.ch"
 
 STATIC s_cTipPrimanja
 STATIC s_nTipObracuna

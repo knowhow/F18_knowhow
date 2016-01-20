@@ -10,7 +10,7 @@
  */
 
 
-#include "ld.ch"
+#include "f18.ch"
 
 // identifikatori za tabelu clanova
 static I_BR_DR := "1"

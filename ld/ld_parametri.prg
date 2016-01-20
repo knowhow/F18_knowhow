@@ -10,7 +10,7 @@
  */
 
 
-#include "ld.ch"
+#include "f18.ch"
 
 
 
@@ -277,10 +277,10 @@ FUNCTION ld_set_obracun()
    @ m_x + nX, m_y + 2 SAY "Ako se prave por.ol.pri obracunu, koja varijanta se koristi:"
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY " '1' - POROL = RADN->porol*PAROBR->prosld/100 ÄÄ¿  "
+   @ m_x + nX, m_y + 2 SAY " '1' - POROL = RADN->porol*PAROBR->prosld/100 ï¿½Ä¿  "
    ++nX
 
-   @ m_x + nX, m_y + 2 SAY " '2' - POROL = RADN->porol, '29' - LD->I29    ÄÄÁÄ>" GET cVarPorOl WHEN gDaPorOl == "D"   PICT "99"
+   @ m_x + nX, m_y + 2 SAY " '2' - POROL = RADN->porol, '29' - LD->I29    ï¿½ï¿½ï¿½ï¿½>" GET cVarPorOl WHEN gDaPorOl == "D"   PICT "99"
    ++nX
 
    @ m_x + nX, m_y + 2 SAY "Grupe poslova u specif.uz platu (1-automatski/2-korisnik definise):" GET gVarSpec  VALID gVarSpec $ "12" PICT "9"
@@ -393,7 +393,7 @@ FUNCTION helpobr( lIzv, cObracun )
 
    IF gNHelpObr = 0
       Box(, 3 + IF( lIzv, 1, 0 ), 40 )
-      @ m_x + 0, m_y + 2 SAY PadC( " POMOC: ", 36, "Í" )
+      @ m_x + 0, m_y + 2 SAY PadC( " POMOC: ", 36, "ï¿½" )
       IF lIzv
          @ m_x + 2, m_y + 2 SAY "Ukucajte broj obracuna (1/2/.../9)"
          @ m_x + 3, m_y + 2 SAY "ili prazno ako zelite sve obracune"

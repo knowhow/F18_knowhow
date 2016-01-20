@@ -10,7 +10,7 @@
  */
 
 
-#include "ld.ch"
+#include "f18.ch"
 
 FUNCTION Unos2()
    RETURN ( nil )
@@ -406,8 +406,6 @@ FUNCTION URPrim()
    return &c719
 
 
-
-
 // -----------------------------------------------
 // Ukupna razna primanja sati
 // -----------------------------------------------
@@ -421,8 +419,6 @@ FUNCTION URSati()
 
    return &c719
 
-
-// *********************************************
 FUNCTION Prosj1( cTip, cTip2, cF0 )
 
    // if cTip== "1"  -> prosjek neta/ satu
@@ -742,8 +738,6 @@ FUNCTION set_koeficijent_minulog_rada( k_min_rad )
    ENDIF
 
    RETURN .T.
-
-
 
 
 

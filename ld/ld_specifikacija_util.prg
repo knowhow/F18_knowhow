@@ -10,7 +10,7 @@
  */
 
 
-#include "ld.ch"
+#include "f18.ch"
 
 
 
@@ -223,7 +223,7 @@ FUNCTION ld_specifikacija_po_mjesecima()
    nRed := 0
    nKorekcija := 0
 
-   nPicISUk := IF( cPrikKolUk == "D", 9, 10 )  // ako nema kolone ukupno mo§e i 10
+   nPicISUk := IF( cPrikKolUk == "D", 9, 10 )  // ako nema kolone ukupno moï¿½e i 10
    nPicSDec := Decimala( gPicS )
    nPicIDec := Decimala( gPicI )
 

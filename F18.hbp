@@ -1,9 +1,7 @@
 f18.hbc -DDEFINE2 -DDEBUG -inc
 
-sddpg.hbc
-xhb.hbc
 -Iinclude
--DGT_DEFAULT_XWC
+-DGT_DEFAULT_TRM
 -oF18
 -static
 
@@ -40,6 +38,7 @@ libF18_string.a
 
 {darwin|linux|win}-lmy_hbuddall
 
+sddpg.hbc
 hbmzip.hbc
 hbpgsql.hbc
 xhb.hbc

@@ -10,7 +10,7 @@
  */
 
 
-#include "ld.ch"
+#include "f18.ch"
 
 // -------------------------------------
 // obracun i prikaz poreza

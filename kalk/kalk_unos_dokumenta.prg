@@ -9,14 +9,12 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "kalk.ch"
 #include "f18_separator.ch"
 
 STATIC cENTER := Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER )
 STATIC __box_x
 STATIC __box_y
-
 
 
 FUNCTION kalk_unos_dokumenta()
@@ -596,9 +594,7 @@ FUNCTION EditStavka()
    RETURN DE_CONT
 
 
-// --------------------------------------------------
-// unos nove stavke
-// --------------------------------------------------
+
 FUNCTION NovaStavka()
 
    LOCAL _atributi := hb_Hash()
@@ -921,8 +917,6 @@ FUNCTION KnjizAsistent()
    RETURN DE_REFRESH
 
 
-
-
 FUNCTION MeniF10()
 
    PRIVATE opc[ 9 ]
@@ -1143,7 +1137,6 @@ STATIC FUNCTION kalk_dokument_prenos_cijena()
    ENDIF
 
    RETURN
-
 
 
 
@@ -2647,4 +2640,3 @@ FUNCTION PopustKaoNivelacijaMP()
    CLOSERET
 
    RETURN
-

@@ -694,6 +694,7 @@ FUNCTION set_a_dbf_rnal_ral()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_RAL
    _item[ "temp" ]  := .F.
+   _item[ "sql" ]   := .T.
 
    _item[ "algoritam" ] := {}
 
@@ -712,13 +713,11 @@ FUNCTION set_a_dbf_rnal_ral()
    RETURN .T.
 
 
-
 FUNCTION set_a_dbf_rnal_relation()
 
    LOCAL _item, _alg, _tbl
 
    _tbl := "relation"
-
    _item := hb_Hash()
 
    _item[ "alias" ] := "RELATION"

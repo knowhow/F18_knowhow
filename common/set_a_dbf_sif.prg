@@ -29,7 +29,6 @@ FUNCTION set_a_dbf_sif()
 
    set_a_dbf_sifarnik( "partn", "PARTN", F_PARTN      )
 
-
    _rec := hb_Hash()
    _rec[ "dbf_key_fields" ] := { { "rule_id", 10, 0 } }
    _rec[ "dbf_tag" ]        := "1"
@@ -61,4 +60,4 @@ FUNCTION set_a_dbf_sif()
    set_a_dbf_temp     ( "barkod",  "BARKOD", F_BARKOD     )
    set_a_dbf_temp     ( "strings",  "STRINGS", F_STRINGS    )
 
-   RETURN
+   RETURN .T.

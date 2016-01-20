@@ -105,6 +105,8 @@ FUNCTION set_a_sql_sifarnik( dbf_table, alias, wa, rec )
 
    set_a_dbf_sifarnik( dbf_table, alias, wa, rec, .T. )
 
+   RETURN .T.
+
 
 FUNCTION set_a_dbf_sifarnik( dbf_table, alias, wa, rec, lSql )
 
@@ -372,7 +374,7 @@ FUNCTION set_dbf_fields_from_struct( rec )
       lTabelaOtvorenaOvdje := .T.
    ENDIF
 
-  
+
    IF !USED() .AND. lSql
          rec[ "dbf_fields" ]     := NIL
          rec[ "dbf_fields_len" ] := NIL

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -161,8 +161,8 @@
 #xcommand O_REKAP1         => select(F_REKAP1)   ;  my_use  ("rekap1")   ; set order to tag "1"
 #xcommand O_REKAP2         => select(F_REKAP2)   ;  my_use  ("rekap2")   ; set order to tag "1"
 #xcommand O_REKA22         => select(F_REKA22)   ;  my_use  ("reka22")   ; set order to tag "1"
-#xcommand O_R_UIO          => select(F_R_UIO)    ;  my_use  ("r_uio") 
-#xcommand O_RPT_TMP        => select(F_RPT_TMP)  ;  my_use  ("rpt_tmp") 
+#xcommand O_R_UIO          => select(F_R_UIO)    ;  my_use  ("r_uio")
+#xcommand O_RPT_TMP        => select(F_RPT_TMP)  ;  my_use  ("rpt_tmp")
 
 
 // modul FAKT
@@ -176,7 +176,7 @@
 #xcommand O_FAKT_S_PRIPR   => select (F_FAKT_PRIPR)     ; my_use ("fakt_pripr")   ; set order to "1"
 
 // fakt tmp
-#xcommand O__FAKT          => select(F__FAKT)      ; my_use ("_fakt") 
+#xcommand O__FAKT          => select(F__FAKT)      ; my_use ("_fakt")
 #xcommand O_FAKT_PRIPR9    => select (F_PRIPR9)    ; my_use  ("fakt_pripr9") ; set order to tag  "1"
 #xcommand O_FAKT_ATRIB     => select (F_FAKT_ATRIB) ; my_use ("fakt_atrib") ; set order to tag  "1"
 #xcommand O_KALK_ATRIB     => select (F_KALK_ATRIB) ; my_use ("kalk_atrib") ; set order to tag  "1"
@@ -194,7 +194,7 @@
 #xcommand O_FADE           => select (F_FADE)      ; my_use  ("fade")    ; set order to tag "ID"
 
 #xcommand O_FTXT           => select (F_FTXT)      ; my_use  ("ftxt")    ; set order to tag "ID"
-#xcommand O_POR            => select (F_FTXT)      ; my_use  ("por")  
+#xcommand O_POR            => select (F_FTXT)      ; my_use  ("por")
 #xcommand O_UPL            => select (F_UPL)       ; my_usex  ("upl")      ; set order to tag "1"
 #xcommand O_DEST           => select (F_DEST)      ; my_use  ("dest")     ; set order to tag "ID"
 #xcommand O_DOKSTXT        => select (F_DOKSTXT)   ; my_use  ("dokstxt") ; set order to tag "ID"
@@ -228,7 +228,7 @@
 #xcommand O_ELEMENTS => select(F_ELEMENTS); my_use ("elements"); set order to tag "1"
 #xcommand O_E_AOPS => select(F_E_AOPS); my_use ("e_aops"); set order to tag "1"
 #xcommand O_E_ATT => select(F_E_ATT); my_use ("e_att"); set order to tag "1"
-#xcommand O_RAL => select(F_RAL); my_use ("ral"); set order to tag "1"
+#xcommand O_RAL => use_sql_rnal_ral()
 
 // modul EPDV
 #xcommand O_P_KUF     => select (F_P_KUF);   my_usex ("p_kuf") ; set order to tag "r_br"
@@ -238,9 +238,9 @@
 #xcommand O_PDV     => select (F_PDV);   my_use ("pdv") ; set order to tag "datum"
 #xcommand O_SG_KIF   => select(F_SG_KIF);  my_usex  ("sg_kif")  ; set order to tag "ID"
 #xcommand O_SG_KUF   => select(F_SG_KUF);  my_usex  ("sg_kuf")  ; set order to tag "ID"
-#xcommand O_R_KUF   => select(F_R_KUF);  my_usex  ("r_kuf") 
+#xcommand O_R_KUF   => select(F_R_KUF);  my_usex  ("r_kuf")
 #xcommand O_R_KIF   => select(F_R_KIF);  my_usex  ("r_kif")
-#xcommand O_R_PDV   => select(F_R_PDV);  my_usex  ("r_pdv")  
+#xcommand O_R_PDV   => select(F_R_PDV);  my_usex  ("r_pdv")
 
 // modul LD
 #xcommand O_RADN    => select (F_RADN)    ;  my_use ("radn")     ; set order to tag "1"
@@ -294,8 +294,8 @@
                       ;ENDIF
 
 // modul OS
-#xcommand O_OS => select (F_OS) ; my_use ( "os" ) ;  set order to tag "1" 
-#xcommand O_SII => select (F_SII) ; my_use ( "sii" ) ; set order to tag "1" 
+#xcommand O_OS => select (F_OS) ; my_use ( "os" ) ;  set order to tag "1"
+#xcommand O_SII => select (F_SII) ; my_use ( "sii" ) ; set order to tag "1"
 #xcommand O_PROMJ => select (F_PROMJ) ; my_use ( "promj" ) ; set order to tag "1"
 #xcommand O_SII_PROMJ => select (F_SII_PROMJ) ; my_use ( "sii_promj" ) ; set order to tag "1"
 #xcommand O_INVENT       => select (F_INVENT)  ; my_use ("invent") ; set order to tag "1"
@@ -312,7 +312,7 @@
 #xcommand O__POS_PRIPR  => SELECT (F__PRIPR); my_use("_pos_pripr"); set order to tag "1"
 #xcommand O_PRIPRZ    => SELECT (F_PRIPRZ); my_use("priprz"); set order to tag "1"
 #xcommand O_PRIPRG    => SELECT (F_PRIPRG); my_use("priprg"); set order to tag "1"
-#xcommand O__POSP     => select(F__POSP)  ; my_use("_posp") 
+#xcommand O__POSP     => select(F__POSP)  ; my_use("_posp")
 #xcommand O__POS_DOKSP  => select(F__DOKSP) ; my_use("_pos_doksp")
 #xcommand O_K2C       => SELECT (F_K2C)   ; my_use("k2c")   ; set order to tag "1"
 #xcommand O_MJTRUR    => SELECT (F_MJTRUR); my_use("mjtrur"); set order to tag "1"
@@ -406,5 +406,3 @@
 
 #xcommand O_KALK_PRIPRRP  => select (F_KALK_PRIPR);   usex (strtran(cDirPriv,goModul:oDataBase:cSezonDir, SLASH) + "pripr")  ; set order to tag "1"
 #xcommand O_POBJEKTI       => select(F_POBJEKTI);  my_use  ("pobjekti") ; set order to tag "1"
-
-

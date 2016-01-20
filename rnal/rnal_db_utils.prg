@@ -24,7 +24,7 @@ FUNCTION m_adm()
    AAdd( _opcexe, {|| rpt_artikli_bez_elemenata() } )
    AAdd( _opc, "2. FMK rules" )
    AAdd( _opcexe, {|| p_fmkrules( , , , aRuleSpec, bRuleBlock ) } )
-	
+
    f18_menu( "adm", .F., _izbor, _opc, _opcexe )
 
    RETURN
@@ -51,19 +51,15 @@ FUNCTION rnal_o_tables( lTemporary )
    O_DOC_OPS
 
    IF lTemporary == .T.
-
       O__DOCS
       O__DOC_IT
       O__DOC_IT2
       O__DOC_OPS
-	
    ENDIF
 
    RETURN
 
-// -----------------------------------------
-// otvara tabele sifrarnika
-// -----------------------------------------
+
 FUNCTION rnal_o_sif_tables()
 
    O_E_GROUPS
@@ -96,7 +92,7 @@ FUNCTION o_tmp1()
    USE
    my_use_temp( "_TMP1", my_home() + "_tmp1", .F., .T. )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -109,7 +105,7 @@ FUNCTION o_tmp2()
    USE
    my_use_temp( "_TMP2", my_home() + "_tmp2", .F., .T. )
 
-   RETURN
+   RETURN .T.
 
 
 // -----------------------------------------
@@ -140,14 +136,13 @@ FUNCTION docit_str( nId )
    RETURN Str( nId, 4 )
 
 
-
 /*
   Opis: setuje novi zapis u tabeli i dodjeljuje novi ID po uslovnom polju
 
   Usage: setuj_novi_id_tabele( @nId, "EL_ID" )
 
-    Parameters: 
-      - nId - vrijednost uvećanog polja 
+    Parameters:
+      - nId - vrijednost uvećanog polja
       - cIdField - polje tabele koje treba uvećati
       - lAuto - .T. dodaj novi zapis bez ispitivanja LastKey(), .F. - ispituj LastKey()
       - cont - tip transakcije "CONT" ili "FULL", funkcija se može pozvati unutar transakcije
@@ -159,7 +154,7 @@ FUNCTION docit_str( nId )
        setuj_novi_id_tabele( @nId, "EL_ID", .T., "FULL" )
 
        kao rezultat dobijamo novi zapis u tabeli ELEMENTS sa uvećanim brojem polja EL_ID
-       
+
 */
 
 FUNCTION setuj_novi_id_tabele( nId, cIdField, lAuto, cont )
@@ -201,7 +196,6 @@ FUNCTION setuj_novi_id_tabele( nId, cIdField, lAuto, cont )
    SELECT ( nTArea )
 
    RETURN 1
-
 
 
 
@@ -313,8 +307,8 @@ FUNCTION rnal_promjena_broja_naloga( old_doc )
 
 
 
-STATIC FUNCTION zamjeni_broj_u_docs( nStari, nNovi ) 
-   
+STATIC FUNCTION zamjeni_broj_u_docs( nStari, nNovi )
+
    LOCAL _rec
    LOCAL lOk := .T.
 
@@ -326,8 +320,8 @@ STATIC FUNCTION zamjeni_broj_u_docs( nStari, nNovi )
 
 
 
-STATIC FUNCTION zamjeni_broj_u_doc_it( nStari, nNovi ) 
-   
+STATIC FUNCTION zamjeni_broj_u_doc_it( nStari, nNovi )
+
    LOCAL _rec
    LOCAL lOk := .T.
 
@@ -349,7 +343,7 @@ STATIC FUNCTION zamjeni_broj_u_doc_it( nStari, nNovi )
          IF !lOk
             EXIT
          ENDIF
-        
+
          SKIP
 
       ENDDO
@@ -359,8 +353,8 @@ STATIC FUNCTION zamjeni_broj_u_doc_it( nStari, nNovi )
    RETURN lOk
 
 
-STATIC FUNCTION zamjeni_broj_u_doc_it2( nStari, nNovi ) 
-   
+STATIC FUNCTION zamjeni_broj_u_doc_it2( nStari, nNovi )
+
    LOCAL _rec
    LOCAL lOk := .T.
 
@@ -382,7 +376,7 @@ STATIC FUNCTION zamjeni_broj_u_doc_it2( nStari, nNovi )
          IF !lOk
             EXIT
          ENDIF
-        
+
          SKIP
 
       ENDDO
@@ -393,8 +387,8 @@ STATIC FUNCTION zamjeni_broj_u_doc_it2( nStari, nNovi )
 
 
 
-STATIC FUNCTION zamjeni_broj_u_doc_ops( nStari, nNovi ) 
-   
+STATIC FUNCTION zamjeni_broj_u_doc_ops( nStari, nNovi )
+
    LOCAL _rec
    LOCAL lOk := .T.
 
@@ -416,7 +410,7 @@ STATIC FUNCTION zamjeni_broj_u_doc_ops( nStari, nNovi )
          IF !lOk
             EXIT
          ENDIF
-        
+
          SKIP
 
       ENDDO

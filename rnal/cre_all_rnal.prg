@@ -296,7 +296,7 @@ FUNCTION cre_all_rnal( ver )
    CREATE_INDEX( "1", "STR(aop_att_id,10)", _alias )
    CREATE_INDEX( "2", "STR(aop_id,10)+STR(aop_att_id,10)", _alias )
 
-
+/*
    aDbf := a_ral()
    _alias := "RAL"
    _table_name := "rnal_ral"
@@ -306,6 +306,7 @@ FUNCTION cre_all_rnal( ver )
 
    CREATE_INDEX( "1", "STR(id,5)+STR(gl_tick,2)", _alias )
    CREATE_INDEX( "2", "descr", _alias )
+*/
 
    cre_relation( ver )
 
@@ -314,7 +315,7 @@ FUNCTION cre_all_rnal( ver )
 
 
 
-STATIC FUNCTION a_ral()
+FUNCTION rnal_a_ral()
 
    LOCAL aDbf := {}
 

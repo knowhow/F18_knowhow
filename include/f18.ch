@@ -19,7 +19,12 @@
 #include "box.ch"
 #include "dbedit.ch"
 #include "hbclass.ch"
-
+#include "achoice.ch"
+#include "fileio.ch"
+#require "rddsql"
+#require "sddpg"
+#include "dbinfo.ch"
+#include "error.ch"
 /*
 
 // NTX
@@ -58,11 +63,11 @@
 // CDX end
 
 
-// komande koje se koriste 
+// komande koje se koriste
 // koje nam ne trebaju
-#command REPLSQL <f1> WITH <v1> [, <fN> WITH <vN> ] ; 
+#command REPLSQL <f1> WITH <v1> [, <fN> WITH <vN> ] ;
     => replsql_dummy()
- 
+
 #command REPLSQL TYPE <cTip> <f1> WITH <v1> [, <fN> WITH <vN> ] ;
     => replsql_dummy()
 

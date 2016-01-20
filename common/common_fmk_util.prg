@@ -10,8 +10,6 @@
  */
 
 #include "f18.ch"
-#include "achoice.ch"
-#include "fileio.ch"
 
 
 /*! \fn UBrojDok(nBroj,nNumDio,cOstatak)
@@ -38,30 +36,30 @@ FUNCTION Calc()
    bKeyOld2 := SetKey( K_ALT_V, {|| DefKonv() } )
 
    Box(, 3, 60 )
-	
+
    SET CURSOR ON
-	
+
    DO WHILE .T.
-  		
+
       @ m_x, m_y + 42 SAY "<a-K> kursiranje"
       @ m_x + 4, m_y + 30 SAY "<a-V> programiranje kursiranja"
       @ m_x + 1, m_y + 2 SAY "KALKULATOR: unesite izraz, npr: '(1+33)*1.2' :"
       @ m_x + 2, m_y + 2 GET cIzraz
-  		
+
       READ
-  		
+
       // ako je ukucan "," zamjeni sa tackom "."
       cIzraz := StrTran( cIzraz, ",", "." )
-		
+
       @ m_x + 3, m_y + 2 SAY Space( 20 )
       IF Type( cIzraz ) <> "N"
-    			
+
          IF Upper( Left( cIzraz, 1 ) ) <> "K"
             @ m_x + 3, m_y + 2 SAY "ERR"
          ELSE
             @ m_x + 3, m_y + 2 SAY kbroj( SubStr( cizraz, 2 ) )
          ENDIF
-			
+
          // cIzraz:=space(40)
       ELSE
          @ m_x + 3, m_y + 2 SAY &cIzraz PICT "99999999.9999"
@@ -71,9 +69,9 @@ FUNCTION Calc()
       IF LastKey() == 27
          EXIT
       ENDIF
-  		
+
       Inkey()
-  		
+
    ENDDO
    BoxC()
 
@@ -117,24 +115,23 @@ FUNCTION a_val_convert()
 
    // samo ako je varijabla numericka....
    IF Type( cVar ) == "N"
-	
+
       // cIzraz := ALLTRIM( STR( nIzraz ) )
-	
+
       nIzraz := Round( nIzraz * omjerval( ValDomaca(), ValPomocna(), Date() ), 5 )
       // konvertuj ali bez ENTER-a
       // konv( .f. )
-	
+
       // nIzraz := VAL( cIzraz )
-	
+
       &cVar := nIzraz
-	
+
    ENDIF
-   	
+
    RETURN
 
 
-// ----------------------------------------
-// ----------------------------------------
+
 FUNCTION kbroj( cSifra )
 
    LOCAL i, cPom, nPom, nKontrola, nPom3
@@ -336,8 +333,6 @@ FUNCTION Adresar()
    RETURN NIL
 
 
-// --------------------------------
-// --------------------------------
 FUNCTION P_Adres( cId, dx, dy )
 
    LOCAL fkontakt := .F.

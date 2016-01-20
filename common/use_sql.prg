@@ -9,12 +9,8 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#require "rddsql"
-#require "sddpg"
 
 #include "f18.ch"
-#include "dbinfo.ch"
-#include "error.ch"
 
 
 REQUEST SDDPG, SQLMIX
@@ -38,7 +34,7 @@ FUNCTION use_sql_sif( table, l_make_index )
 
    IF rddInfo( RDDI_CONNECT, { "POSTGRESQL", oConn } ) == 0
       ? "Unable connect to the server"
-      RETURN
+      RETURN .F.
    ENDIF
 
    dbUseArea( .F., "SQLMIX", "SELECT * FROM fmk." + table + " ORDER BY ID",  table )
@@ -70,7 +66,7 @@ FUNCTION use_sql( table, sql_query )
 
    IF rddInfo( RDDI_CONNECT, { "POSTGRESQL", oConn } ) == 0
       ? "Unable connect to the server"
-      RETURN
+      RETURN .F.
    ENDIF
 
    dbUseArea( .F., "SQLMIX", sql_query,  table )
@@ -130,11 +126,9 @@ FUNCTION use_sql_rj()
    RETURN .T.
 
 
-
 /*
    use_sql_valute() => otvori šifarnik valuta sa prilagođenim poljima
 */
-
 FUNCTION use_sql_valute()
 
    LOCAL cSql

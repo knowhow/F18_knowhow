@@ -27,7 +27,6 @@
  * \note grid - eng -> mreza
  *
 
-/*! \var ImeKol
  \brief Privatna Varijabla koja se inicijalizira prije "ulaska" u ObjDBedit
  \param - [ 1] Zalavlje kolone
  \param - [ 2] kodni blok za prikaz kolone {|| id}
@@ -223,9 +222,7 @@ FUNCTION browse_table_sql( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert
 
    RETURN
 
-// -------------------------------------------------------
-//
-// -------------------------------------------------------
+
 STATIC FUNCTION browse_only( params, lIzOBJDB )
 
    LOCAL i, j, k
@@ -304,8 +301,7 @@ STATIC FUNCTION ForceStable()
 
    RETURN
 
-// -----------------------------------------------------
-// -----------------------------------------------------
+
 STATIC FUNCTION InsToggle()
 
    IF ReadInsert()
@@ -319,8 +315,6 @@ STATIC FUNCTION InsToggle()
    RETURN
 
 
-// -----------------------------------------------------
-// -----------------------------------------------------
 STATIC FUNCTION standardne_browse_komande( TB, Ch, nRez, nPored, aPoredak )
 
    LOCAL _tr := hb_UTF8ToStr( "Traži:" ), _zam := "Zamijeni sa:"

@@ -64,7 +64,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
    IF lock
       lock_semaphore( table, "lock" )
    ENDIF
-   
+
    IF transaction $ "FULL#BEGIN"
       sql_table_update( table, "BEGIN" )
    ENDIF
@@ -114,11 +114,11 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
    ENDIF
 
    IF _ret .AND. !sql_table_update( table, "ins", values )
-      
+
       IF transaction == "FULL"
          sql_table_update( table, "ROLLBACK" )
       ENDIF
-      
+
       _msg := RECI_GDJE_SAM + "ERRORY: sql_insert: " + table + " , ROLLBACK values: " + pp( values )
       log_write( _msg, 1 )
       Alert( _msg )
@@ -139,7 +139,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
    ENDIF
 
    IF !push_ids_to_semaphore( table, _ids )
-      
+
       IF transaction == "FULL"
          sql_table_update( table, "ROLLBACK" )
       ENDIF
@@ -163,7 +163,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
          _ret := .T.
 
       ELSE
-    
+
          IF transaction == "FULL"
             sql_table_update( table, "ROLLBACK" )
          ENDIF
@@ -229,7 +229,6 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
 
    log_write( "delete rec server, poceo", 9 )
 
-altd()
    IF lock
       lock_semaphore( table, "lock" )
    ENDIF

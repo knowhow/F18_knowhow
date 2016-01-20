@@ -477,7 +477,6 @@ FUNCTION post_login( gVars )
    set_a_dbfs()
 
    cre_all_dbfs( _ver )
-altd()
    kreiraj_pa_napuni_partn_idbr_pdvb ()
 
    // inicijaliziraj "dbf_key_fields" u __f18_dbf hash matrici
@@ -668,8 +667,6 @@ STATIC FUNCTION f18_form_login( server_params )
    RETURN .T.
 
 
-// ------------------------------------------
-// ------------------------------------------
 STATIC FUNCTION _login_screen( server_params )
 
    LOCAL cHostname, cDatabase, cUser, cPassword, nPort, cSchema, cSession
@@ -728,8 +725,7 @@ STATIC FUNCTION _login_screen( server_params )
 
    @ nX, nLeft SAY PadC( "***** Unestite podatke za pristup *****", 60 )
 
-   ++ nX
-   ++ nX
+   nX += 2
    @ nX, nLeft SAY PadL( "Konfigurisati server ?:", 21 ) GET cConfigureServer VALID cConfigureServer $ "DN" PICT "@!"
    ++ nX
 
@@ -789,9 +785,7 @@ STATIC FUNCTION _login_screen( server_params )
    RETURN lSuccess
 
 
-// ------------------
-// set_get server
-// ------------------
+
 FUNCTION pg_server( server )
 
    IF server <> NIL
@@ -820,8 +814,6 @@ FUNCTION my_server_params( params )
 
 
 
-// --------------------------
-// --------------------------
 FUNCTION my_server_login( params, conn_type )
 
    LOCAL _key, _server

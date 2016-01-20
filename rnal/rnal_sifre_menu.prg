@@ -21,7 +21,7 @@ FUNCTION m_sif()
 
    rnal_o_sif_tables()
 
-   AAdd( opc, "1. narucioci                      " )
+   AAdd( opc, "1. naručioci                      " )
    AAdd( opcexe, {|| s_customers() } )
    AAdd( opc, "2. kontakti" )
    AAdd( opcexe, {|| s_contacts() } )
@@ -43,13 +43,13 @@ FUNCTION m_sif()
    AAdd( opcexe, {|| s_aops_att() } )
    AAdd( opc, "-------------------------" )
    AAdd( opcexe, {|| nil } )
-   AAdd( opc, "10. export, relacije" )
+   AAdd( opc, "A. export, relacije" )
    AAdd( opcexe, {|| p_relation() } )
-   AAdd( opc, "11. RAL definicije" )
+   AAdd( opc, "B. RAL definicije" )
    AAdd( opcexe, {|| sif_ral() } )
 
    Izbor := 1
 
    f18_menu( "m_sif", .F., izbor, opc, opcexe )
 
-   RETURN
+   RETURN .T.

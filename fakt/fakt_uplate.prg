@@ -9,7 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "fakt.ch"
+#include "f18.ch"
 
 #define X_POS_STANJE MAXROWS() - 7
 #define Y_POS_STANJE MAXCOLS() - 45

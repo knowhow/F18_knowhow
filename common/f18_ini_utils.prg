@@ -1,4 +1,4 @@
-#include "fmk.ch"
+#include "f18.ch"
 
 #define INI_FNAME ".f18_config.ini"
 

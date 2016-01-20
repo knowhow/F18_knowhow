@@ -10,7 +10,7 @@
  */
 
 
-#include "fakt.ch"
+#include "f18.ch"
 
 // -------------------------------------------------------
 // import dokumenta iz txt fajla sa barkod terminala

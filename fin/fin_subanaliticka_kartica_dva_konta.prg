@@ -9,7 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "fmk.ch"
+#include "f18.ch"
 
 /* SubKart2(lOtvSt)
  *  Subanaliticka kartica kod koje se mogu navesti dva konta i vidjeti kroz jednu karticu

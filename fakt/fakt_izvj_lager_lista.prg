@@ -9,9 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "fakt.ch"
-
+#include "f18.ch"
 
 FUNCTION fakt_lager_lista()
 
@@ -396,7 +394,7 @@ FUNCTION fakt_lager_lista()
          ENDIF  // empty(
          SKIP
       ENDDO
-  	
+
       IF PRow() > 61 -iif( cProred = "D", 1, 0 )
          Zaglfakt_lager_lista()
       ENDIF
@@ -843,8 +841,6 @@ FUNCTION fakt_lager_lista_vars( param, ps )
    RETURN _ret
 
 
-
-
 // -----------------------------------------------------------------
 // generisanje xml fajla za lager listu
 // -----------------------------------------------------------------
@@ -1041,7 +1037,6 @@ STATIC FUNCTION fakt_lager_lista_get_data( params, ps )
 
 
 
-
 FUNCTION fakt_vt_porezi()
 
    PUBLIC _ZPP := 0
@@ -1060,6 +1055,3 @@ FUNCTION fakt_vt_porezi()
    ENDIF
 
    RETURN
-
-
-

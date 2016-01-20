@@ -10,7 +10,7 @@
  */
 
 
-#include "fmk.ch"
+#include "f18.ch"
 
 
 
@@ -50,7 +50,7 @@ function SJMJ(nKol,cIdRoba,cJMJ)
     nVrati := nKol*nKO
     cJMJ   := ALLTRIM( LEFT( aNaz[1] , n_Pos-1 ) )
   ELSE
-    // valjda je ve† u osnovnoj JMJ
+    // valjda je veï¿½ u osnovnoj JMJ
     // ----------------------------
     nVrati:=nKol
   ENDIF

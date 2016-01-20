@@ -1,11 +1,3 @@
-// komande koje se koriste 
-// koje nam ne trebaju
-#command REPLSQL <f1> WITH <v1> [, <fN> WITH <vN> ] ; 
-    => replsql_dummy()
- 
-#command REPLSQL TYPE <cTip> <f1> WITH <v1> [, <fN> WITH <vN> ] ;
-    => replsql_dummy()
-
 
 // parametri (wa 1-9)
 #define F_GPARAMS   1

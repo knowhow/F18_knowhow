@@ -9,7 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "fakt.ch"
+#include "f18.ch"
 
 function povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
 

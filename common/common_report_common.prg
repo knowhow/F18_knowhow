@@ -10,7 +10,7 @@
  */
 
 
-#include "fmk.ch"
+#include "f18.ch"
 
 
 /*! \fn DokNovaStrana(nColumn, nStr, nSlijediRedovaZajedno)

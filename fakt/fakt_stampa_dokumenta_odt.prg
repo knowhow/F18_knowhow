@@ -10,7 +10,7 @@
  */
 
 
-#include "fakt.ch"
+#include "f18.ch"
 
 STATIC LEN_KOLICINA := 12
 STATIC LEN_CIJENA := 10

@@ -9,7 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "fmk.ch"
+#include "f18.ch"
 
  
 FUNCTION fin_gen_panal_psint( cIdFirma, cIdVn, cBrNal, dDatNal )

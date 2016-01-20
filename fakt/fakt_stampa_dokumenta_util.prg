@@ -10,7 +10,7 @@
  */
 
 
-#include "fakt.ch"
+#include "f18.ch"
 
 function KatBr()
 if roba->(fieldpos("KATBR"))<>0

@@ -10,7 +10,7 @@
  */
 
 
-#include "fakt.ch"
+#include "f18.ch"
 
 function mnu_fakt_uplate()
 local _opc:={}

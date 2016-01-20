@@ -10,7 +10,7 @@
  */
 
 
-#include "fmk.ch"
+#include "f18.ch"
 
 
 /*! \fn Izlaz(Zaglavlje,ImeDat,bFor,fIndex,lBezUpita)

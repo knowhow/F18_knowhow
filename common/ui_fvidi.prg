@@ -10,7 +10,7 @@
  */
 
 
-#include "fmk.ch"
+#include "f18.ch"
 
 
 FUNCTION VidiFajl( cImeF, aLinFiks, aKolFiks )

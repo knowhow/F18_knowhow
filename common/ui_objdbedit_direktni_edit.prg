@@ -10,7 +10,7 @@
  */
 
 
-#include "fmk.ch"
+#include "f18.ch"
 #include "dbstruct.ch"
 #include "error.ch"
 #include "setcurs.ch"
@@ -37,9 +37,9 @@ LOCAL i,j,k
    Kol:=adKol
  ENDIF
 
-   //@ m_x,m_y+2 SAY aParametri[8]+"ÍUPOZORENJE: Mod direktnog unosa u tabelu!"
-   @ m_x,m_y+2 SAY aParametri[8]+IF(!lIzOBJDB,REPL("Í",42),"")
-   //@ m_x+aParametri[2]+1,m_y+2 SAY aParametri[7]+"ÍUPOZORENJE: Mod direktnog unosa u tabelu!"
+   //@ m_x,m_y+2 SAY aParametri[8]+"ï¿½UPOZORENJE: Mod direktnog unosa u tabelu!"
+   @ m_x,m_y+2 SAY aParametri[8]+IF(!lIzOBJDB,REPL("ï¿½",42),"")
+   //@ m_x+aParametri[2]+1,m_y+2 SAY aParametri[7]+"ï¿½UPOZORENJE: Mod direktnog unosa u tabelu!"
    @ m_x+aParametri[2]+1,m_y+2 SAY aParametri[7] COLOR "GR+/B"
 
    @ m_x+1,m_y+aParametri[3]-6 SAY STR(RecCount2(),5)

@@ -9,7 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "fmk.ch"
+#include "f18.ch"
 
 /*! \fn SkratiAZaD(aStruct)
  *  \brief skrati matricu za polje D

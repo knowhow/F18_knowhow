@@ -9,7 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "fmk.ch"
+#include "f18.ch"
 
 
 FUNCTION fakt_print_narudzbenica( cIdFirma, cIdTipDok, cBrDok )

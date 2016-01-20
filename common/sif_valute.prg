@@ -10,7 +10,7 @@
  */
 
 
-#include "fmk.ch"
+#include "f18.ch"
 
 /*! \fn Kurs(dDat,cValIz,cValU)
  *  \param dDat - datum na koji se trazi omjer

@@ -8,7 +8,7 @@
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-#include "fmk.ch"
+#include "f18.ch"
 
 
 /*! \fn ModStru(ime_dbf, path, string_par)

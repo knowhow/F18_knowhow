@@ -10,7 +10,7 @@
  */
 
 
-#include "fakt.ch"
+#include "f18.ch"
 
 FUNCTION fakt_stanje_artikla( cIdRj, cIdroba, nUl, nIzl, nRezerv, nRevers, lSilent )
 

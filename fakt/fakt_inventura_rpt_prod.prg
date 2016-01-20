@@ -11,7 +11,7 @@
 
 
 
-#include "fakt.ch"
+#include "f18.ch"
 
 
 FUNCTION RptInvObrPopisa()

@@ -1,6 +1,7 @@
 #!/bin/bash
 
-BASE=$HOME/Platform/HB
+BASE=/opt/harbour
+#$HOME/Platform/HB
 
 export HB_ROOT=$BASE
 export PATH=$PATH:$BASE/bin

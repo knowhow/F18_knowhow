@@ -77,13 +77,15 @@ REQUEST HB_GT_WVT_DEFAULT
 
 #else
 
-//#ifdef __PLATFORM__DARWIN
-//  REQUEST HB_GT_QTC_DEFAULT
-//#else
-//  REQUEST HB_GT_XWC_DEFAULT
-//#endif
-
-REQUEST HB_GT_TRM_DEFAULT
+#ifdef GT_DEFAULT_TRM
+   REQUEST HB_GT_TRM_DEFAULT
+#else
+   #ifdef GT_DEFAULT_QT
+      REQUEST HB_GT_QTC_DEFAULT
+   #else
+      REQUEST HB_GT_XWC_DEFAULT
+   #endif
+#endif
 
 #endif
 
@@ -290,7 +292,6 @@ FUNCTION set_screen_dimensions()
    RETURN .T.
 #endif
 
-altd()
 // IF _pix_width == NIL
 
 //    maxrows( 40 )

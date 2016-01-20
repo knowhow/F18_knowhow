@@ -3,7 +3,7 @@ f18.hbc -DDEFINE2 -DDEBUG -inc
 sddpg.hbc
 xhb.hbc
 -Iinclude
-
+-DGT_DEFAULT_XWC
 -oF18
 -static
 

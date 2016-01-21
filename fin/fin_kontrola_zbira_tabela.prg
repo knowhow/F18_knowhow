@@ -9,7 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "fin.ch"
+#include "f18.ch"
 
 // --------------------------------
 // kontrola zbira naloga
@@ -66,12 +66,12 @@ FUNCTION KontrZb( bDat, lSilent )
 
       SET CURSOR OFF
 
-      _line := Replicate( "Ä", 10 ) + "Å" + Replicate( "Ä", 16 ) + "Å" + Replicate( "Ä", 16 ) + "Å" + Replicate( "Ä", 16 ) + "Å" + Replicate( "Ä", 16 )
+      _line := Replicate( "ï¿½", 10 ) + "ï¿½" + Replicate( "ï¿½", 16 ) + "ï¿½" + Replicate( "ï¿½", 16 ) + "ï¿½" + Replicate( "ï¿½", 16 ) + "ï¿½" + Replicate( "ï¿½", 16 )
 
-      @ m_x + 1, m_y + 11 SAY "³" + PadC( "NALOZI", 16 ) + ;
-         "³" + PadC( "SINTETIKA", 16 ) + ;
-         "³" + PadC( "ANALITIKA", 16 ) + ;
-         "³" + PadC( "SUBANALITIKA", 16 )
+      @ m_x + 1, m_y + 11 SAY "ï¿½" + PadC( "NALOZI", 16 ) + ;
+         "ï¿½" + PadC( "SINTETIKA", 16 ) + ;
+         "ï¿½" + PadC( "ANALITIKA", 16 ) + ;
+         "ï¿½" + PadC( "SUBANALITIKA", 16 )
 
       @ m_x + 2, m_y + 1 SAY _line
 
@@ -88,7 +88,7 @@ FUNCTION KontrZb( bDat, lSilent )
 
       FOR i := 11 TO 65 STEP 17
          FOR j := 3 TO 9
-            @ m_x + j, m_y + i SAY "³"
+            @ m_x + j, m_y + i SAY "ï¿½"
          NEXT
       NEXT
 	

@@ -10,7 +10,7 @@
  */
 
 
-#include "fin.ch"
+#include "f18.ch"
 
 
 FUNCTION g_rule_cols_fin()

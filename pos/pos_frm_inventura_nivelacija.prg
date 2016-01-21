@@ -10,7 +10,7 @@
  */
 
 
-#include "pos.ch"
+#include "f18.ch"
 
 STATIC _saldo_izn := 0
 STATIC _saldo_kol := 0

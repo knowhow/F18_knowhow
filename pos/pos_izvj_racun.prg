@@ -10,7 +10,7 @@
  */
 
 
-#include "pos.ch"
+#include "f18.ch"
 
 
 FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezani )

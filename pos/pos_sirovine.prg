@@ -10,7 +10,7 @@
  */
 
 
-#include "pos.ch"
+#include "f18.ch"
 
  
 function GenUtrSir(dDatOD,dDatDo,cSmjena)

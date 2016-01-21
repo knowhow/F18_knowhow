@@ -10,8 +10,6 @@
  */
 
 #include "f18.ch"
-#include "cre_all.ch"
-
 
 // -----------------------------------
 // kreiranje tabela - svi moduli
@@ -86,6 +84,3 @@ FUNCTION fill_tbl_valute()
    endif
 
    RETURN .T.
-
-
-

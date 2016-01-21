@@ -10,7 +10,7 @@
  */
 
  
-#include "fin.ch"
+#include "f18.ch"
 
 
 
@@ -432,7 +432,7 @@ endif // kraj izvjestaja 1
 if ci2=="D"
 	// izvjestaj 2
 
-	// struktura troçkova po vrstama
+	// struktura troï¿½kova po vrstama
 
 	F10CPI
 	B_ON

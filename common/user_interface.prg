@@ -9,11 +9,8 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
-#include "f18_ver.ch"
-#include "set.ch"
-#include "f18_separator.ch"
+
 
 STATIC aBoxStack := {}
 STATIC aPrStek := {}

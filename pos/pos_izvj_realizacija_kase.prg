@@ -10,7 +10,7 @@
  */
 
 
-#include "pos.ch"
+#include "f18.ch"
 
 static LEN_TRAKA := 40
 static LEN_RAZMAK := 1

@@ -10,8 +10,7 @@
  */
 
 #include "f18.ch"
-#include "fileio.ch"
-#include "f18_ver.ch"
+
 
 STATIC __xml_file
 STATIC __output_odt

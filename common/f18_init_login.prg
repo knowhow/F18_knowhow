@@ -10,9 +10,7 @@
  */
 
 #include "f18.ch"
-#include "f18_ver.ch"
-#include "hbclass.ch"
-#include "common.ch"
+
 
 CLASS F18Login
 

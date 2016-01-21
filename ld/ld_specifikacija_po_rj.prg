@@ -10,8 +10,6 @@
  */
 
 #include "f18.ch"
-#include "cre_all.ch"
-
 
 
 FUNCTION ld_specifikacija_po_rj()
@@ -287,6 +285,3 @@ STATIC FUNCTION formula_izvjestaja()
    SKIP -1
 
    RETURN .T.
-
-
-

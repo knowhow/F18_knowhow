@@ -10,7 +10,7 @@
  */
 
 
-#include "pos.ch"
+#include "f18.ch"
 
 
 FUNCTION gSjeciStr()
@@ -159,113 +159,113 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY " ÛÛ"
-         @ m_x + row + 1, _Next_Y SAY "  Û"
-         @ m_x + row + 2, _Next_Y SAY "  Û"
-         @ m_x + row + 3, _Next_Y SAY "  Û"
-         @ m_x + row + 4, _Next_Y SAY "ÛÛÛÛ"
+         @ m_x + row + 0, _Next_Y SAY " ï¿½ï¿½"
+         @ m_x + row + 1, _Next_Y SAY "  ï¿½"
+         @ m_x + row + 2, _Next_Y SAY "  ï¿½"
+         @ m_x + row + 3, _Next_Y SAY "  ï¿½"
+         @ m_x + row + 4, _Next_Y SAY "ï¿½ï¿½ï¿½ï¿½"
 
       CASE _char = "2"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY "ÛÛÛÛ"
-         @ m_x + row + 1, _Next_Y SAY "   Û"
-         @ m_x + row + 2, _Next_Y SAY "ÛÛÛÛ"
-         @ m_x + row + 3, _Next_Y SAY "Û"
-         @ m_x + row + 4, _Next_Y SAY "ÛÛÛÛ"
+         @ m_x + row + 0, _Next_Y SAY "ï¿½ï¿½ï¿½ï¿½"
+         @ m_x + row + 1, _Next_Y SAY "   ï¿½"
+         @ m_x + row + 2, _Next_Y SAY "ï¿½ï¿½ï¿½ï¿½"
+         @ m_x + row + 3, _Next_Y SAY "ï¿½"
+         @ m_x + row + 4, _Next_Y SAY "ï¿½ï¿½ï¿½ï¿½"
 
       CASE _char = "3"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY " ÛÛÛ"
-         @ m_x + row + 1, _Next_Y SAY "   Û"
-         @ m_x + row + 2, _Next_Y SAY "  ÛÛ"
-         @ m_x + row + 3, _Next_Y SAY "   Û"
-         @ m_x + row + 4, _Next_Y SAY "ÛÛÛÛ"
+         @ m_x + row + 0, _Next_Y SAY " ï¿½ï¿½ï¿½"
+         @ m_x + row + 1, _Next_Y SAY "   ï¿½"
+         @ m_x + row + 2, _Next_Y SAY "  ï¿½ï¿½"
+         @ m_x + row + 3, _Next_Y SAY "   ï¿½"
+         @ m_x + row + 4, _Next_Y SAY "ï¿½ï¿½ï¿½ï¿½"
 
       CASE _char = "4"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY "Û"
-         @ m_x + row + 1, _Next_Y SAY "Û  Û"
-         @ m_x + row + 2, _Next_Y SAY "ÛÛÛÛ"
-         @ m_x + row + 3, _Next_Y SAY "   Û"
-         @ m_x + row + 4, _Next_Y SAY "   Û"
+         @ m_x + row + 0, _Next_Y SAY "ï¿½"
+         @ m_x + row + 1, _Next_Y SAY "ï¿½  ï¿½"
+         @ m_x + row + 2, _Next_Y SAY "ï¿½ï¿½ï¿½ï¿½"
+         @ m_x + row + 3, _Next_Y SAY "   ï¿½"
+         @ m_x + row + 4, _Next_Y SAY "   ï¿½"
 
       CASE _char = "5"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY "ÛÛÛÛ"
-         @ m_x + row + 1, _Next_Y SAY "Û"
-         @ m_x + row + 2, _Next_Y SAY "ÛÛÛÛ"
-         @ m_x + row + 3, _Next_Y SAY "   Û"
-         @ m_x + row + 4, _Next_Y SAY "ÛÛÛÛ"
+         @ m_x + row + 0, _Next_Y SAY "ï¿½ï¿½ï¿½ï¿½"
+         @ m_x + row + 1, _Next_Y SAY "ï¿½"
+         @ m_x + row + 2, _Next_Y SAY "ï¿½ï¿½ï¿½ï¿½"
+         @ m_x + row + 3, _Next_Y SAY "   ï¿½"
+         @ m_x + row + 4, _Next_Y SAY "ï¿½ï¿½ï¿½ï¿½"
 
       CASE _char = "6"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY "ÛÛÛÛ"
-         @ m_x + row + 1, _Next_Y SAY "Û"
-         @ m_x + row + 2, _Next_Y SAY "ÛÛÛÛ"
-         @ m_x + row + 3, _Next_Y SAY "Û  Û"
-         @ m_x + row + 4, _Next_Y SAY "ÛÛÛÛ"
+         @ m_x + row + 0, _Next_Y SAY "ï¿½ï¿½ï¿½ï¿½"
+         @ m_x + row + 1, _Next_Y SAY "ï¿½"
+         @ m_x + row + 2, _Next_Y SAY "ï¿½ï¿½ï¿½ï¿½"
+         @ m_x + row + 3, _Next_Y SAY "ï¿½  ï¿½"
+         @ m_x + row + 4, _Next_Y SAY "ï¿½ï¿½ï¿½ï¿½"
 
       CASE _char = "7"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY "ÛÛÛÛ"
-         @ m_x + row + 1, _Next_Y SAY "   Û"
-         @ m_x + row + 2, _Next_Y SAY "  Û"
-         @ m_x + row + 3, _Next_Y SAY " Û"
-         @ m_x + row + 4, _Next_Y SAY "Û"
+         @ m_x + row + 0, _Next_Y SAY "ï¿½ï¿½ï¿½ï¿½"
+         @ m_x + row + 1, _Next_Y SAY "   ï¿½"
+         @ m_x + row + 2, _Next_Y SAY "  ï¿½"
+         @ m_x + row + 3, _Next_Y SAY " ï¿½"
+         @ m_x + row + 4, _Next_Y SAY "ï¿½"
 
       CASE _char = "8"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY "ÛÛÛÛ"
-         @ m_x + row + 1, _Next_Y SAY "Û  Û"
-         @ m_x + row + 2, _Next_Y SAY " ÛÛ "
-         @ m_x + row + 3, _Next_Y SAY "Û  Û"
-         @ m_x + row + 4, _Next_Y SAY "ÛÛÛÛ"
+         @ m_x + row + 0, _Next_Y SAY "ï¿½ï¿½ï¿½ï¿½"
+         @ m_x + row + 1, _Next_Y SAY "ï¿½  ï¿½"
+         @ m_x + row + 2, _Next_Y SAY " ï¿½ï¿½ "
+         @ m_x + row + 3, _Next_Y SAY "ï¿½  ï¿½"
+         @ m_x + row + 4, _Next_Y SAY "ï¿½ï¿½ï¿½ï¿½"
 
       CASE _char = "9"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY "ÛÛÛÛ"
-         @ m_x + row + 1, _Next_Y SAY "Û  Û"
-         @ m_x + row + 2, _Next_Y SAY "ÛÛÛÛ"
-         @ m_x + row + 3, _Next_Y SAY "   Û"
-         @ m_x + row + 4, _Next_Y SAY "ÛÛÛÛ"
+         @ m_x + row + 0, _Next_Y SAY "ï¿½ï¿½ï¿½ï¿½"
+         @ m_x + row + 1, _Next_Y SAY "ï¿½  ï¿½"
+         @ m_x + row + 2, _Next_Y SAY "ï¿½ï¿½ï¿½ï¿½"
+         @ m_x + row + 3, _Next_Y SAY "   ï¿½"
+         @ m_x + row + 4, _Next_Y SAY "ï¿½ï¿½ï¿½ï¿½"
 
       CASE _char = "0"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY " ÛÛ "
-         @ m_x + row + 1, _Next_Y SAY "Û  Û"
-         @ m_x + row + 2, _Next_Y SAY "Û  Û"
-         @ m_x + row + 3, _Next_Y SAY "Û  Û"
-         @ m_x + row + 4, _Next_Y SAY " ÛÛ"
+         @ m_x + row + 0, _Next_Y SAY " ï¿½ï¿½ "
+         @ m_x + row + 1, _Next_Y SAY "ï¿½  ï¿½"
+         @ m_x + row + 2, _Next_Y SAY "ï¿½  ï¿½"
+         @ m_x + row + 3, _Next_Y SAY "ï¿½  ï¿½"
+         @ m_x + row + 4, _Next_Y SAY " ï¿½ï¿½"
 
       CASE _char = "."
 
          _next_y -= 2
 
-         @ m_x + row + 4, _Next_Y SAY "Û"
+         @ m_x + row + 4, _Next_Y SAY "ï¿½"
 
       CASE _char = "-"
 
          _next_y -= 4
 
-         @ m_x + row + 2, _Next_Y SAY "ÛÛÛ"
+         @ m_x + row + 2, _Next_Y SAY "ï¿½ï¿½ï¿½"
 
       ENDCASE
    NEXT
@@ -296,110 +296,110 @@ FUNCTION ispisi_iznos_racuna_box( iznos )
       DO CASE
       CASE Char = "1"
          NextY -= 6
-         @ m_x + 2, NextY SAY " ÛÛ"
-         @ m_x + 3, NextY SAY "  Û"
-         @ m_x + 4, NextY SAY "  Û"
-         @ m_x + 5, NextY SAY "  Û"
-         @ m_x + 6, NextY SAY "  Û"
-         @ m_x + 7, NextY SAY "  Û"
-         @ m_x + 8, NextY SAY "  Û"
-         @ m_x + 9, NextY SAY "ÛÛÛÛÛ"
+         @ m_x + 2, NextY SAY " ï¿½ï¿½"
+         @ m_x + 3, NextY SAY "  ï¿½"
+         @ m_x + 4, NextY SAY "  ï¿½"
+         @ m_x + 5, NextY SAY "  ï¿½"
+         @ m_x + 6, NextY SAY "  ï¿½"
+         @ m_x + 7, NextY SAY "  ï¿½"
+         @ m_x + 8, NextY SAY "  ï¿½"
+         @ m_x + 9, NextY SAY "ï¿½ï¿½ï¿½ï¿½ï¿½"
       CASE Char = "2"
          NextY -= 8
-         @ m_x + 2, NextY SAY "ÛÛÛÛÛÛÛ"
-         @ m_x + 3, NextY SAY "      Û"
-         @ m_x + 4, NextY SAY "      Û"
-         @ m_x + 5, NextY SAY "ÛÛÛÛÛÛÛ"
-         @ m_x + 6, NextY SAY "Û"
-         @ m_x + 7, NextY SAY "Û"
-         @ m_x + 8, NextY SAY "Û     Û"
-         @ m_x + 9, NextY SAY "ÛÛÛÛÛÛÛ"
+         @ m_x + 2, NextY SAY "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
+         @ m_x + 3, NextY SAY "      ï¿½"
+         @ m_x + 4, NextY SAY "      ï¿½"
+         @ m_x + 5, NextY SAY "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
+         @ m_x + 6, NextY SAY "ï¿½"
+         @ m_x + 7, NextY SAY "ï¿½"
+         @ m_x + 8, NextY SAY "ï¿½     ï¿½"
+         @ m_x + 9, NextY SAY "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
       CASE Char = "3"
          NextY -= 8
-         @ m_x + 2, NextY SAY " ÛÛÛÛÛÛ"
-         @ m_x + 3, NextY SAY "      Û"
-         @ m_x + 4, NextY SAY "      Û"
-         @ m_x + 5, NextY SAY "  ÛÛÛÛ"
-         @ m_x + 6, NextY SAY "      Û"
-         @ m_x + 7, NextY SAY "      Û"
-         @ m_x + 8, NextY SAY "      Û"
-         @ m_x + 9, NextY SAY "ÛÛÛÛÛÛÛ"
+         @ m_x + 2, NextY SAY " ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
+         @ m_x + 3, NextY SAY "      ï¿½"
+         @ m_x + 4, NextY SAY "      ï¿½"
+         @ m_x + 5, NextY SAY "  ï¿½ï¿½ï¿½ï¿½"
+         @ m_x + 6, NextY SAY "      ï¿½"
+         @ m_x + 7, NextY SAY "      ï¿½"
+         @ m_x + 8, NextY SAY "      ï¿½"
+         @ m_x + 9, NextY SAY "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
       CASE Char = "4"
          NextY -= 8
-         @ m_x + 2, NextY SAY "Û"
-         @ m_x + 3, NextY SAY "Û"
-         @ m_x + 4, NextY SAY "Û     Û"
-         @ m_x + 5, NextY SAY "Û     Û"
-         @ m_x + 6, NextY SAY "ÛÛÛÛÛÛÛ"
-         @ m_x + 7, NextY SAY "      Û"
-         @ m_x + 8, NextY SAY "      Û"
-         @ m_x + 9, NextY SAY "      Û"
+         @ m_x + 2, NextY SAY "ï¿½"
+         @ m_x + 3, NextY SAY "ï¿½"
+         @ m_x + 4, NextY SAY "ï¿½     ï¿½"
+         @ m_x + 5, NextY SAY "ï¿½     ï¿½"
+         @ m_x + 6, NextY SAY "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
+         @ m_x + 7, NextY SAY "      ï¿½"
+         @ m_x + 8, NextY SAY "      ï¿½"
+         @ m_x + 9, NextY SAY "      ï¿½"
       CASE Char = "5"
          NextY -= 8
-         @ m_x + 2, NextY SAY "ÛÛÛÛÛÛÛ"
-         @ m_x + 3, NextY SAY "Û"
-         @ m_x + 4, NextY SAY "Û"
-         @ m_x + 5, NextY SAY "ÛÛÛÛÛÛÛ"
-         @ m_x + 6, NextY SAY "      Û"
-         @ m_x + 7, NextY SAY "      Û"
-         @ m_x + 8, NextY SAY "Û     Û"
-         @ m_x + 9, NextY SAY "ÛÛÛÛÛÛÛ"
+         @ m_x + 2, NextY SAY "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
+         @ m_x + 3, NextY SAY "ï¿½"
+         @ m_x + 4, NextY SAY "ï¿½"
+         @ m_x + 5, NextY SAY "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
+         @ m_x + 6, NextY SAY "      ï¿½"
+         @ m_x + 7, NextY SAY "      ï¿½"
+         @ m_x + 8, NextY SAY "ï¿½     ï¿½"
+         @ m_x + 9, NextY SAY "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
       CASE Char = "6"
          NextY -= 8
-         @ m_x + 2, NextY SAY "ÛÛÛÛÛÛÛ"
-         @ m_x + 3, NextY SAY "Û"
-         @ m_x + 4, NextY SAY "Û"
-         @ m_x + 5, NextY SAY "ÛÛÛÛÛÛÛ"
-         @ m_x + 6, NextY SAY "Û     Û"
-         @ m_x + 7, NextY SAY "Û     Û"
-         @ m_x + 8, NextY SAY "Û     Û"
-         @ m_x + 9, NextY SAY "ÛÛÛÛÛÛÛ"
+         @ m_x + 2, NextY SAY "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
+         @ m_x + 3, NextY SAY "ï¿½"
+         @ m_x + 4, NextY SAY "ï¿½"
+         @ m_x + 5, NextY SAY "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
+         @ m_x + 6, NextY SAY "ï¿½     ï¿½"
+         @ m_x + 7, NextY SAY "ï¿½     ï¿½"
+         @ m_x + 8, NextY SAY "ï¿½     ï¿½"
+         @ m_x + 9, NextY SAY "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
       CASE Char = "7"
          NextY -= 8
-         @ m_x + 2, NextY SAY "ÛÛÛÛÛÛÛ"
-         @ m_x + 3, NextY SAY "      Û"
-         @ m_x + 4, NextY SAY "     Û"
-         @ m_x + 5, NextY SAY "    Û"
-         @ m_x + 6, NextY SAY "   Û"
-         @ m_x + 7, NextY SAY "  Û"
-         @ m_x + 8, NextY SAY " Û"
-         @ m_x + 9, NextY SAY "Û"
+         @ m_x + 2, NextY SAY "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
+         @ m_x + 3, NextY SAY "      ï¿½"
+         @ m_x + 4, NextY SAY "     ï¿½"
+         @ m_x + 5, NextY SAY "    ï¿½"
+         @ m_x + 6, NextY SAY "   ï¿½"
+         @ m_x + 7, NextY SAY "  ï¿½"
+         @ m_x + 8, NextY SAY " ï¿½"
+         @ m_x + 9, NextY SAY "ï¿½"
       CASE Char = "8"
          NextY -= 8
-         @ m_x + 2, NextY SAY "ÛÛÛÛÛÛÛ"
-         @ m_x + 3, NextY SAY "Û     Û"
-         @ m_x + 4, NextY SAY "Û     Û"
-         @ m_x + 5, NextY SAY " ÛÛÛÛÛ "
-         @ m_x + 6, NextY SAY "Û     Û"
-         @ m_x + 7, NextY SAY "Û     Û"
-         @ m_x + 8, NextY SAY "Û     Û"
-         @ m_x + 9, NextY SAY "ÛÛÛÛÛÛÛ"
+         @ m_x + 2, NextY SAY "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
+         @ m_x + 3, NextY SAY "ï¿½     ï¿½"
+         @ m_x + 4, NextY SAY "ï¿½     ï¿½"
+         @ m_x + 5, NextY SAY " ï¿½ï¿½ï¿½ï¿½ï¿½ "
+         @ m_x + 6, NextY SAY "ï¿½     ï¿½"
+         @ m_x + 7, NextY SAY "ï¿½     ï¿½"
+         @ m_x + 8, NextY SAY "ï¿½     ï¿½"
+         @ m_x + 9, NextY SAY "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
       CASE Char = "9"
          NextY -= 8
-         @ m_x + 2, NextY SAY "ÛÛÛÛÛÛÛ"
-         @ m_x + 3, NextY SAY "Û     Û"
-         @ m_x + 4, NextY SAY "Û     Û"
-         @ m_x + 5, NextY SAY "ÛÛÛÛÛÛÛ"
-         @ m_x + 6, NextY SAY "      Û"
-         @ m_x + 7, NextY SAY "      Û"
-         @ m_x + 8, NextY SAY "Û     Û"
-         @ m_x + 9, NextY SAY "ÛÛÛÛÛÛÛ"
+         @ m_x + 2, NextY SAY "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
+         @ m_x + 3, NextY SAY "ï¿½     ï¿½"
+         @ m_x + 4, NextY SAY "ï¿½     ï¿½"
+         @ m_x + 5, NextY SAY "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
+         @ m_x + 6, NextY SAY "      ï¿½"
+         @ m_x + 7, NextY SAY "      ï¿½"
+         @ m_x + 8, NextY SAY "ï¿½     ï¿½"
+         @ m_x + 9, NextY SAY "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
       CASE Char = "0"
          NextY -= 8
-         @ m_x + 2, NextY SAY " ÛÛÛÛÛ "
-         @ m_x + 3, NextY SAY "Û     Û"
-         @ m_x + 4, NextY SAY "Û     Û"
-         @ m_x + 5, NextY SAY "Û     Û"
-         @ m_x + 6, NextY SAY "Û     Û"
-         @ m_x + 7, NextY SAY "Û     Û"
-         @ m_x + 8, NextY SAY "Û     Û"
-         @ m_x + 9, NextY SAY " ÛÛÛÛÛ"
+         @ m_x + 2, NextY SAY " ï¿½ï¿½ï¿½ï¿½ï¿½ "
+         @ m_x + 3, NextY SAY "ï¿½     ï¿½"
+         @ m_x + 4, NextY SAY "ï¿½     ï¿½"
+         @ m_x + 5, NextY SAY "ï¿½     ï¿½"
+         @ m_x + 6, NextY SAY "ï¿½     ï¿½"
+         @ m_x + 7, NextY SAY "ï¿½     ï¿½"
+         @ m_x + 8, NextY SAY "ï¿½     ï¿½"
+         @ m_x + 9, NextY SAY " ï¿½ï¿½ï¿½ï¿½ï¿½"
       CASE Char = "."
          NextY -= 4
-         @ m_x + 9, NextY SAY "ÛÛÛ"
+         @ m_x + 9, NextY SAY "ï¿½ï¿½ï¿½"
       CASE Char = "-"
          NextY -= 6
-         @ m_x + 5, NextY SAY "ÛÛÛÛÛ"
+         @ m_x + 5, NextY SAY "ï¿½ï¿½ï¿½ï¿½ï¿½"
       ENDCASE
    NEXT
 
@@ -537,9 +537,9 @@ FUNCTION pos_status_traka()
    @ 1, _y + 1 SAY "RADI:" + PadR( LTrim( gKorIme ), 31 ) + " SMJENA:" + gSmjena + " CIJENE:" + gIdCijena + " DATUM:" + DToC( gDatum ) + IF( gVrstaRS == "S", "   SERVER  ", " KASA-PM:" + gIdPos )
 
    IF gIdPos == "X "
-      @ _x, _y + 1 SAY PadC( "$$$ --- PRODAJNO MJESTO X ! --- $$$", MAXCOLS() - 2, "±" )
+      @ _x, _y + 1 SAY PadC( "$$$ --- PRODAJNO MJESTO X ! --- $$$", MAXCOLS() - 2, "ï¿½" )
    ELSE
-      @ _x, _y + 1 SAY Replicate( "±", MAXCOLS() - 2 )
+      @ _x, _y + 1 SAY Replicate( "ï¿½", MAXCOLS() - 2 )
    ENDIF
 
    @ _x - 1, _y + 1 SAY PadC ( Razrijedi ( gKorIme ), MAXCOLS() - 2 ) COLOR INVERT

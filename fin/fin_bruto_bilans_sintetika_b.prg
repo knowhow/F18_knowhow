@@ -9,7 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "fin.ch"
+#include "f18.ch"
 
 STATIC PICD
 STATIC REP1_LEN := 158 

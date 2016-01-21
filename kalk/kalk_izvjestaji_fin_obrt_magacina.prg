@@ -10,7 +10,7 @@
  */
 
 
-#include "kalk.ch"
+#include "f18.ch"
 
 
 
@@ -285,7 +285,7 @@ FUNCTION ObrtPoMjF()
          IF cCijena == "P"
             @ PRow(), PCol() + 1 SAY 0  PICT StrTran( PicPSDEM, ".", "9" )  // povisenje
          ENDIF
-         @ PRow(), PCol() + 1 SAY proszalk PICT StrTran( picdem, ".", "9" )  // prosjeŸna zaliha
+         @ PRow(), PCol() + 1 SAY proszalk PICT StrTran( picdem, ".", "9" )  // prosjeï¿½na zaliha
          IF proszalk > 0
             @ PRow(), PCol() + 1 SAY prodkumk / proszalk * nKorekcija PICT picdem  // koef.kol.obrta
          ELSE

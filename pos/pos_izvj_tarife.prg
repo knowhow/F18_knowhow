@@ -10,7 +10,7 @@
  */
 
 
-#include "pos.ch"
+#include "f18.ch"
 
 
 FUNCTION pos_rekapitulacija_tarifa( aTarife )

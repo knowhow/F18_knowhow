@@ -9,7 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "fin.ch"
+#include "f18.ch"
 
 
 function ProIzvFin()
@@ -403,7 +403,7 @@ DO WHILE !EOF() .and. izv==cBrI
         LOOP
     ENDIF
 
-    // na osnovu tipa stavke u KONIZ-u odreÐujemo dalje akcije
+    // na osnovu tipa stavke u KONIZ-u odreï¿½ujemo dalje akcije
     cTK11  := UPPER(LEFT(KONIZ->k,1))
     cTK12  := VAL(RIGHT(KONIZ->k,1))
 
@@ -730,7 +730,7 @@ ELSEIF !lFunkcija
         nDug:=nPot:=nPrDug:=nPrPot:=0
         DO WHILE !EOF() .and. cIdKonto==&cPIKPolje
             Postotak(2,++nStavki)
-            // sta sa DATDOK, IZNOSBHD i D_P ?!  VA¦NO!
+            // sta sa DATDOK, IZNOSBHD i D_P ?!  VAï¿½NO!
             // ---------------
 
             IF !lKumSuma .or. datdok>=dOd   // tekuci period (od datuma dOd)

@@ -10,7 +10,7 @@
  */
 
 
-#include "kalk.ch"
+#include "f18.ch"
 
 function SetMarza10()
 if !SigmaSif("BERINA")

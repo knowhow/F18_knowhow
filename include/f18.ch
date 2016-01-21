@@ -26,6 +26,13 @@
 #include "dbinfo.ch"
 #include "error.ch"
 #include "f18_separator.ch"
+#include "f18_ver.ch"
+#include "error.ch"
+#include "fileio.ch"
+#include "hbclass.ch"
+#include "f18_cre_all.ch"
+#include "set.ch"
+#include "hbgtinfo.ch"
 
 /*
 

@@ -10,7 +10,7 @@
  */
 
 
-#include "kalk.ch"
+#include "f18.ch"
 
 
 function StKalk95_PDV()
@@ -88,7 +88,7 @@ m:="--- ---------- ---------- ---------- ---------- ---------- ---------- ------
 ? m
 ? "*R * ROBA     * KOLICINA *   NC     *  MARZA   * PROD.CIJ.*   PDV%   * PROD.CIJ.*"
 ? "*BR* TARIFA   *          *          *          * BEZ.PDV  *   PDV    * SA PDV   *"
-? "*  * KONTO    *    ä     *    ä     *    ä     *    ä     *    ä     *     ä    *"
+? "*  * KONTO    *    ï¿½     *    ï¿½     *    ï¿½     *    ï¿½     *    ï¿½     *     ï¿½    *"
 ? m
 
 nTot:=0 

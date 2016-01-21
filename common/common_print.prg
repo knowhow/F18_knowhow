@@ -9,9 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
-#include "f18_ver.ch"
 
 
 FUNCTION f18_start_print( f_name, print_opt, document_name )
@@ -46,7 +44,7 @@ FUNCTION f18_start_print( f_name, print_opt, document_name )
 
    SetPRC( 0, 0 )
    SET CONSOLE OFF
-	
+
    SET PRINTER OFF
    SET DEVICE TO PRINTER
 
@@ -108,9 +106,9 @@ FUNCTION f18_end_print( f_name, print_opt )
    CASE print_opt == "D"
 
    CASE print_opt == "P"
-   
-      txt_izvjestaj_podrska_email( f_name )   
-   
+
+      txt_izvjestaj_podrska_email( f_name )
+
    CASE print_opt $ "E#F#G"
 
       #ifdef __PLATFORM__WINDOWS
@@ -140,10 +138,10 @@ STATIC FUNCTION txt_izvjestaj_podrska_email( file_name )
    LOCAL _attach, _body, _subject, _mail_params
 
    // Uzorak TXT izvještaja, F18 1.7.21, rg_2013/bjasko, 02.04.04, 15:00:07
-   _subject := "Uzorak TXT izvještaja, F18 " 
-   _subject += F18_VER 
-   _subject += ", " + my_server_params()["database"] + "/" + ALLTRIM( f18_user() ) 
-   _subject += ", " + DTOC( DATE() ) + " " + PADR( TIME(), 8 ) 
+   _subject := "Uzorak TXT izvještaja, F18 "
+   _subject += F18_VER
+   _subject += ", " + my_server_params()["database"] + "/" + ALLTRIM( f18_user() )
+   _subject += ", " + DTOC( DATE() ) + " " + PADR( TIME(), 8 )
 
    _body := "U prilogu primjer TXT izvještaja"
 

@@ -10,7 +10,7 @@
  */
 
 
-#include "kalk.ch"
+#include "f18.ch"
 
 
 FUNCTION MarzaMP( cIdVd, lNaprijed, aPorezi )

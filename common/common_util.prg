@@ -1,288 +1,302 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 #include "f18.ch"
-#include "f18_ver.ch"
- 
-// --------------------------------------------------------------
-//* nToLongC(nN)
-//* Pretvara broj u LONG (C-ovski prikaz long integera)
-// --------------------------------------------------------------
-function nToLongC(nN)
-
-local cStr:="",i
-
-for i:=1 to 4
-nDig:=nN-INT(nN/256)*256
-cStr+=CHR(nDig)
-nN:=INT(nN/256)
-next
-
-return cStr
 
 
 // --------------------------------------------------------------
+// * nToLongC(nN)
+// * Pretvara broj u LONG (C-ovski prikaz long integera)
 // --------------------------------------------------------------
-function CLongToN(cLong)
+FUNCTION nToLongC( nN )
 
-local i,nExp
-nRez:=0
-for i:=1 to 4
- nExp:=1
- for j:=1 to i-1
-   nExp*=256
- next
- nRez+=ASC(SUBSTR(cLong,i,1))*nExp
-next
-return nRez
+   LOCAL cStr := "", i
+
+   FOR i := 1 TO 4
+      nDig := nN - Int( nN / 256 ) * 256
+      cStr += Chr( nDig )
+      nN := Int( nN / 256 )
+   NEXT
+
+   RETURN cStr
+
+
+// --------------------------------------------------------------
+// --------------------------------------------------------------
+FUNCTION CLongToN( cLong )
+
+   LOCAL i, nExp
+
+   nRez := 0
+   FOR i := 1 TO 4
+      nExp := 1
+      FOR j := 1 TO i - 1
+         nExp *= 256
+      NEXT
+      nRez += Asc( SubStr( cLong, i, 1 ) ) * nExp
+   NEXT
+
+   RETURN nRez
 
 
 // ---------------------------------------
 // ---------------------------------------
-function Sleep(nSleep)
+FUNCTION Sleep( nSleep )
 
-local nStart, nCh
+   LOCAL nStart, nCh
 
-nStart:=seconds()
-do while .t.
- if nSleep < 0.0001
-    Exit
- else
-    nCh:=inkey(nSleep)
+   nStart := Seconds()
+   DO WHILE .T.
+      IF nSleep < 0.0001
+         EXIT
+      ELSE
+         nCh := Inkey( nSleep )
 
-    //if nCh<>0
-       //Keyboard chr(nCh)
-    //endif
-    if (seconds()-nStart) >= nSleep
-        Exit
-    else
-        nSleep:= nSleep - ( seconds()-nStart )
-    endif
- endif
+         // if nCh<>0
+         // Keyboard chr(nCh)
+         // endif
+         IF ( Seconds() -nStart ) >= nSleep
+            EXIT
+         ELSE
+            nSleep := nSleep - ( Seconds() -nStart )
+         ENDIF
+      ENDIF
 
-enddo
+   ENDDO
 
-return
+   RETURN
 
 
 
 // ----------------------------------------
 // ----------------------------------------
-function NotImp()
-MsgBeep("Not implemented ?")
-return
+FUNCTION NotImp()
+
+   MsgBeep( "Not implemented ?" )
+
+   RETURN
 
 
 
 // ----------------------------------------
 // upisi text u fajl
 // ----------------------------------------
-function write_2_file(nH, cText, lNoviRed)
+FUNCTION write_2_file( nH, cText, lNoviRed )
 
-local cNRed := CHR(13)+CHR(10)
-if lNoviRed
-	FWrite(nH, cText + cNRed)
-else
-	FWrite(nH, cText)
-endif
+   LOCAL cNRed := Chr( 13 ) + Chr( 10 )
 
-return
+   IF lNoviRed
+      FWrite( nH, cText + cNRed )
+   ELSE
+      FWrite( nH, cText )
+   ENDIF
+
+   RETURN
 
 // ----------------------------------------------
 // kreiranje fajla
 // ----------------------------------------------
-function create_file(cFilePath, nH)
+FUNCTION create_file( cFilePath, nH )
 
-nH:=FCreate(cFilePath)
-if nH == -1
-	MsgBeep("Greska pri kreiranju fajla !!!")
-	return
-endif
+   nH := FCreate( cFilePath )
+   IF nH == -1
+      MsgBeep( "Greska pri kreiranju fajla !!!" )
+      RETURN
+   ENDIF
 
-return
+   RETURN
 
 // -------------------------------------------------
 // zatvaranje fajla
 // --------------------------------------------------
-function close_file(nH)
-FClose(nH)
+FUNCTION close_file( nH )
 
-return
+   FClose( nH )
+
+   RETURN
 
 
 // -------------------------------------------------
 // -------------------------------------------------
-function Run(cmd)
+FUNCTION Run( cmd )
 
-return __Run(cmd)
+   RETURN __Run( cmd )
 
 
 // ---------------------------------------------------------------
 // vraca fajl iz matrice na osnovu direktorija prema filteru
 // ---------------------------------------------------------------
-function get_file_list_array( cPath, cFilter, cFile, lSilent )
-local nPx := m_x
-local nPy := m_y
+FUNCTION get_file_list_array( cPath, cFilter, cFile, lSilent )
 
-if lSilent == nil
-	lSilent := .f.
-endif
+   LOCAL nPx := m_x
+   LOCAL nPy := m_y
 
-if EMPTY( cFilter )
-	cFilter := "*.*"
-endif
+   IF lSilent == nil
+      lSilent := .F.
+   ENDIF
 
-OpcF:={}
+   IF Empty( cFilter )
+      cFilter := "*.*"
+   ENDIF
 
-aFiles := DIRECTORY( cPath + cFilter )
+   OpcF := {}
 
-// da li postoje templejti
-if LEN( aFiles ) == 0
-	log_write( "template list: na lokaciji " + cPath + " ne postoji niti jedan template, po filteru: " + cFilter, 9 )
-    MsgBeep("Ne postoji definisan niti jedan template na lokciji:#" + cPath + "#po filteru: " + cFilter )
-	return 0
-endif
+   aFiles := Directory( cPath + cFilter )
 
-// sortiraj po datumu
-ASORT(aFiles,,,{|x,y| x[3]>y[3]})
-AEVAL(aFiles,{|elem| AADD(OpcF, PADR(elem[1],15)+" "+dtos(elem[3]))},1)
-// sortiraj listu po datumu
-ASORT(OpcF,,,{|x,y| RIGHT(x,10)>RIGHT(y,10)})
+   // da li postoje templejti
+   IF Len( aFiles ) == 0
+      log_write( "template list: na lokaciji " + cPath + " ne postoji niti jedan template, po filteru: " + cFilter, 9 )
+      MsgBeep( "Ne postoji definisan niti jedan template na lokciji:#" + cPath + "#po filteru: " + cFilter )
+      RETURN 0
+   ENDIF
 
-h:=ARRAY(LEN(OpcF))
-for i:=1 to LEN(h)
-	h[i]:=""
-next
+   // sortiraj po datumu
+   ASort( aFiles,,, {| x, y| x[ 3 ] > y[ 3 ] } )
+   AEval( aFiles, {| elem| AAdd( OpcF, PadR( elem[ 1 ], 15 ) + " " + DToS( elem[ 3 ] ) ) }, 1 )
+   // sortiraj listu po datumu
+   ASort( OpcF,,, {| x, y| Right( x, 10 ) > Right( y, 10 ) } )
 
-// selekcija fajla
-IzbF := 1
-lRet := .f.
+   h := Array( Len( OpcF ) )
+   FOR i := 1 TO Len( h )
+      h[ i ] := ""
+   NEXT
 
-if LEN( opcF ) > 1
-    do while .t. .and. LastKey() != K_ESC
-	    IzbF := Menu( "imp", OpcF, IzbF, .f. )
-	    if IzbF == 0
-        	exit
-        else
-        	cFile := TRIM( LEFT( OpcF[ IzbF ], 15 ) )
-        	if lSilent == .t. .or. (lSilent == .f. .and. Pitanje(,"Koristiti ovaj fajl ?","D")=="D" )
-        		IzbF := 0
-			    lRet := .t.
-		    endif
-        endif
-    enddo
-else
-    cFile := TRIM( LEFT( OpcF[ IzbF ], 15 ) )
-    lRet := .t.
-    IzbF := 0
-endif
+   // selekcija fajla
+   IzbF := 1
+   lRet := .F.
 
-m_x := nPx
-m_y := nPy
+   IF Len( opcF ) > 1
+      DO WHILE .T. .AND. LastKey() != K_ESC
+         IzbF := Menu( "imp", OpcF, IzbF, .F. )
+         IF IzbF == 0
+            EXIT
+         ELSE
+            cFile := Trim( Left( OpcF[ IzbF ], 15 ) )
+            IF lSilent == .T. .OR. ( lSilent == .F. .AND. Pitanje(, "Koristiti ovaj fajl ?", "D" ) == "D" )
+               IzbF := 0
+               lRet := .T.
+            ENDIF
+         ENDIF
+      ENDDO
+   ELSE
+      cFile := Trim( Left( OpcF[ IzbF ], 15 ) )
+      lRet := .T.
+      IzbF := 0
+   ENDIF
 
-if lRet
-	return 1
-else
-	return 0
-endif
+   m_x := nPx
+   m_y := nPy
 
-return 1
+   IF lRet
+      RETURN 1
+   ELSE
+      RETURN 0
+   ENDIF
+
+   RETURN 1
 
 
 // --------------------
 // --------------------
-function preduzece()
-local _t_arr := SELECT()
+FUNCTION preduzece()
 
-P_10CPI
-B_ON
+   LOCAL _t_arr := Select()
 
-? ALLTRIM( gTS ) + ": "
+   P_10CPI
+   B_ON
 
-if gNW == "D"
-    ?? gFirma, "-", ALLTRIM( gNFirma )
-else
-    select ( F_PARTN )
-    if !Used()
-        O_PARTN
-    endif
-    select partn
-    HSEEK cIdFirma
-    ?? cIdFirma, ALLTRIM( partn->naz ), ALLTRIM( partn->naz2 )
-endif
+   ? AllTrim( gTS ) + ": "
 
-B_OFF
-?
+   IF gNW == "D"
+      ?? gFirma, "-", AllTrim( gNFirma )
+   ELSE
+      SELECT ( F_PARTN )
+      IF !Used()
+         O_PARTN
+      ENDIF
+      SELECT partn
+      HSEEK cIdFirma
+      ?? cIdFirma, AllTrim( partn->naz ), AllTrim( partn->naz2 )
+   ENDIF
 
-select ( _t_arr )
-return
+   B_OFF
+   ?
 
+   SELECT ( _t_arr )
 
-
-function RbrUNum(cRBr)
-if left(cRbr, 1) > "9"
-   return  (ASC(LEFT(cRbr, 1) ) -65 + 10) * 100  + VAL(substr(cRbr, 2, 2))
-else
-   return val(cRbr)
-endif
+   RETURN
 
 
 
-function RedniBroj(nRbr)
-local nOst
-if nRbr > 999
-    nOst := nRbr % 100
-    return Chr( INT( nRbr / 100 ) - 10 + 65) + PADL(alltrim (str(nOst, 2) ), 2, "0")
-else
-    return STR(nRbr, 3, 0)
-endif
+FUNCTION RbrUNum( cRBr )
+
+   IF Left( cRbr, 1 ) > "9"
+      RETURN  ( Asc( Left( cRbr, 1 ) ) -65 + 10 ) * 100  + Val( SubStr( cRbr, 2, 2 ) )
+   ELSE
+      RETURN Val( cRbr )
+   ENDIF
+
+FUNCTION RedniBroj( nRbr )
+
+   LOCAL nOst
+
+   IF nRbr > 999
+      nOst := nRbr % 100
+      RETURN Chr( Int( nRbr / 100 ) - 10 + 65 ) + PadL( AllTrim ( Str( nOst, 2 ) ), 2, "0" )
+   ELSE
+      RETURN Str( nRbr, 3, 0 )
+   ENDIF
 
 
-// ------------------------------------------------
-// provjera rednog broja u tabeli
-// ------------------------------------------------
-function provjeri_redni_broj()
-local _ok := .t.
-local _tmp
+   // ------------------------------------------------
+   // provjera rednog broja u tabeli
+   // ------------------------------------------------
 
-do while !EOF()
+FUNCTION provjeri_redni_broj()
 
-    _tmp := field->rbr
-    
-    skip 1
+   LOCAL _ok := .T.
+   LOCAL _tmp
 
-    if _tmp == field->rbr
-        _ok := .f.
-        return _ok        
-    endif
+   DO WHILE !Eof()
 
-enddo
+      _tmp := field->rbr
 
-return _ok
+      SKIP 1
+
+      IF _tmp == field->rbr
+         _ok := .F.
+         RETURN _ok
+      ENDIF
+
+   ENDDO
+
+   RETURN _ok
 
 
 
 // da li postoji fajl u chk lokaciji, vraca oznaku
 // X - nije obradjen
-function UChkPostoji()
-return "X"
+FUNCTION UChkPostoji()
+   RETURN "X"
 
 
 
-function NazProdObj()
-local cVrati:=""
+FUNCTION NazProdObj()
 
-cVrati:=TRIM(cTxt3a)
-select fakt_pripr
-return cVrati
+   LOCAL cVrati := ""
+
+   cVrati := Trim( cTxt3a )
+   SELECT fakt_pripr
+
+   RETURN cVrati
 
 
 
@@ -290,60 +304,59 @@ return cVrati
 // -------------------------------------------------
 // potpis na dokumentima
 // -------------------------------------------------
-function dok_potpis( nLen, cPad, cRow1, cRow2 )
+FUNCTION dok_potpis( nLen, cPad, cRow1, cRow2 )
 
-if nLen == nil
-	nLen := 80
-endif
+   IF nLen == nil
+      nLen := 80
+   ENDIF
 
-if cPad == nil
-	cPad := "L"
-endif
+   IF cPad == nil
+      cPad := "L"
+   ENDIF
 
-if cRow1 == nil
-	cRow1 := "Potpis:"
-endif
+   IF cRow1 == nil
+      cRow1 := "Potpis:"
+   ENDIF
 
-if cRow2 == nil
-	cRow2 := "__________________"
-endif
+   IF cRow2 == nil
+      cRow2 := "__________________"
+   ENDIF
 
-if cPad == "L"
-	? PADL( cRow1, nLen )
-	? PADL( cRow2, nLen )
-elseif cPad == "R"
-	? PADR( cRow1, nLen )
-	? PADR( cRow2, nLen )
-else
-	? PADL( cRow1, nLen )
-	? PADL( cRow2, nLen )
-endif
+   IF cPad == "L"
+      ? PadL( cRow1, nLen )
+      ? PadL( cRow2, nLen )
+   ELSEIF cPad == "R"
+      ? PadR( cRow1, nLen )
+      ? PadR( cRow2, nLen )
+   ELSE
+      ? PadL( cRow1, nLen )
+      ? PadL( cRow2, nLen )
+   ENDIF
 
-return
+   RETURN
 
 
 
 // ovo treba ukinuti skroz
-function OtkljucajBug()
-return
+FUNCTION OtkljucajBug()
+   RETURN
 
 
 // ----------------------------------------------------
 // upisi tekst u fajl
 // ----------------------------------------------------
-function write2file( nH, cText, lNewRow )
-#DEFINE NROW CHR(13) + CHR(10)
+FUNCTION write2file( nH, cText, lNewRow )
 
-if lNewRow == .t.
-	FWRITE( nH, cText + NROW )
-else
-	FWRITE( nH, cText )
-endif
+#define NROW CHR(13) + CHR(10)
 
-return
+   IF lNewRow == .T.
+      FWrite( nH, cText + NROW )
+   ELSE
+      FWrite( nH, cText )
+   ENDIF
 
-
-function printfile()
-return
+   RETURN
 
 
+FUNCTION printfile()
+   RETURN

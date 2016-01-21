@@ -10,7 +10,7 @@
  */
 
 
-#include "kalk.ch"
+#include "f18.ch"
 
 
 
@@ -691,7 +691,7 @@ Box(,3,35)
 BoxC()
 private cBrUlaz:="0"
 select kalk
-seek cidfirma+"11ä"
+seek cidfirma+"11ï¿½"
 skip -1
 if idvd<>"11"
      cBrUlaz:=space(8)
@@ -833,8 +833,8 @@ DO WHILE !EOF() .AND. cIdFirma==IdFirma .and. Pkonto==cPKonto
      endif
    endif
 
-   if nMPVSAppReal<0  // ako se radi o uneçenom stornu obraŸunate realizacije
-     nMPVSapp:=0      // onda ne mo§e biti storna avansa
+   if nMPVSAppReal<0  // ako se radi o uneï¿½enom stornu obraï¿½unate realizacije
+     nMPVSapp:=0      // onda ne moï¿½e biti storna avansa
      nMPV:=0
    elseif nMPVSAPP>nMPVSAppREal   // akontacije su vece od realizovanog poreza
      nMPVSapp:=nMPVSappReal // poreska uplata ne moze biti negativna

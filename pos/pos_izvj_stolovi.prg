@@ -9,7 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "pos.ch"
+#include "f18.ch"
 
 
 // sljedeci broj zakljucenja na nivou baze

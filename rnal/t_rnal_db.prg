@@ -11,52 +11,52 @@
 
 #include "f18.ch"
 
-// ----------------------------------------------------------
-// ----------------------------------------------------------
 CLASS TDbRnal INHERIT TDB
-	method New
-	method install
-	method kreiraj
+
+   METHOD NEW
+   METHOD install
+   METHOD kreiraj
+
 ENDCLASS
 
 
-// --------------------------------------------
-// --------------------------------------------
-method New()
+METHOD New()
 
- ::super:new()
- ::cName:="RNAL"
- ::lAdmin:=.f.
+   ::super:new()
+   ::cName := "RNAL"
+   ::lAdmin := .F.
 
- ::kreiraj()
+   ::kreiraj()
 
-return self
+   RETURN self
 
 
 
 // ----------------------------------------
 // ----------------------------------------
-method install()
-  install_start(goModul,.f.)
-return
+METHOD install()
+
+   install_start( goModul, .F. )
+
+   RETURN
 
 
 // ----------------------------------------
 // ----------------------------------------
-method kreiraj(nArea)
+METHOD kreiraj( nArea )
 
-cDirRad := my_home()
-cDirSif := my_home()
-cDirPriv := my_home()
+   cDirRad := my_home()
+   cDirSif := my_home()
+   cDirPriv := my_home()
 
-if (nArea == nil)
-	nArea:=-1
-endif
+   IF ( nArea == nil )
+      nArea := -1
+   ENDIF
 
-Beep(1)
+   Beep( 1 )
 
-if (nArea <> -1)
-	CreSystemDb( nArea )
-endif
+   IF ( nArea <> -1 )
+      CreSystemDb( nArea )
+   ENDIF
 
-return
+   RETURN

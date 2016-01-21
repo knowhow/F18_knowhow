@@ -10,7 +10,7 @@
  */
 
 
-#include "fin.ch"
+#include "f18.ch"
 
 STATIC picBHD
 STATIC picDEM

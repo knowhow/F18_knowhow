@@ -9,7 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "fin.ch"
+#include "f18.ch"
 
 static __par_len
 
@@ -262,13 +262,13 @@ if nIznos<>0
   if cDP=="1"
     ?? "KOJI DUGUJU PREKO",nIznos,ALLTRIM(ValDomaca())
   else
-    ?? "KOJI POTRA¶UJU PREKO",nIznos,ALLTRIM(ValDomaca())
+    ?? "KOJI POTRAÔøΩUJU PREKO",nIznos,ALLTRIM(ValDomaca())
   endif
 elseif nIznos2<>0
   if cDP=="1"
     ?? "KOJI DUGUJU PREKO",nIznos2,ALLTRIM(ValPomocna())
   else
-    ?? "KOJI POTRA¶UJU PREKO",nIznos2,ALLTRIM(ValPomocna())
+    ?? "KOJI POTRAÔøΩUJU PREKO",nIznos2,ALLTRIM(ValPomocna())
   endif
 endif
 ?? "  NA DAN :",DATE()
@@ -277,9 +277,9 @@ if cF=="1"
 else
   @ prow(),100 SAY "Str:"+str(++nStr,3)
   if cDD=="1"
-       @ prow()+1,4 SAY "*** OBRA¨UN ZA "+ValDomaca()+"****"
+       @ prow()+1,4 SAY "*** OBRAÔøΩUN ZA "+ValDomaca()+"****"
   else
-       @ prow()+1,4 SAY "*** OBRA¨UN ZA "+ValPomocna()+"****"
+       @ prow()+1,4 SAY "*** OBRAÔøΩUN ZA "+ValPomocna()+"****"
   endif
 endif
 @ prow()+1,0 SAY " FIRMA:"
@@ -290,21 +290,21 @@ SELECT PARTN; HSEEK cIdFirma
 @ prow(),pcol()+2 SAY "KONTO:"; @ prow(),pcol()+2 SAY cIdKonto
 if cF=="1"
  ? "----- " + REPLICATE("-", __par_len) + " ------------------------------------ ----- ----------------- ----------------------------------------------------------------------- -----------------------------------------------------------------------"
- ? "*RED.*" + PADC("ÊIFRA", __par_len) + "*     NAZIV POSLOVNOG PARTNERA      * PTT *      MJESTO     *       K  U  M  U  L  A  T  I  V  N  I       P  R  O  M  E  T           *                 S      A      L      D       O                       *"
+ ? "*RED.*" + PADC("ÔøΩIFRA", __par_len) + "*     NAZIV POSLOVNOG PARTNERA      * PTT *      MJESTO     *       K  U  M  U  L  A  T  I  V  N  I       P  R  O  M  E  T           *                 S      A      L      D       O                       *"
  ? "      " + REPL(" ", __par_len) + "                                                              ----------------------------------------------------------------------- -----------------------------------------------------------------------"
- ? "*BROJ*" + REPLICATE(" ", __par_len) + "*                                   * BROJ*                 *   DUGUJE   "+ValDomaca()+"  *  POTRA¶UJE "+ValDomaca()+" *   DUGUJE  "+ValPomocna()+"  *   POTRA¶. "+ValPomocna()+"  *    DUGUJE "+ValDomaca()+"  *  POTRA¶UJE "+ValDomaca()+" *   DUGUJE  "+ValPomocna()+"  *   POTRA¶."+ValPomocna()+"  *"
+ ? "*BROJ*" + REPLICATE(" ", __par_len) + "*                                   * BROJ*                 *   DUGUJE   "+ValDomaca()+"  *  POTRAÔøΩUJE "+ValDomaca()+" *   DUGUJE  "+ValPomocna()+"  *   POTRAÔøΩ. "+ValPomocna()+"  *    DUGUJE "+ValDomaca()+"  *  POTRAÔøΩUJE "+ValDomaca()+" *   DUGUJE  "+ValPomocna()+"  *   POTRAÔøΩ."+ValPomocna()+"  *"
  ? m
 elseif cPG=="D"
  ? "----- " + REPLICATE("-", __par_len) + " ------------------------ ---------------- ----------------------------------- -----------------------------------"
- ? "*RED.*" + PADC("ÊIFRA", __par_len) + "*     NAZIV POSLOVNOG    *     MJESTO     *         KUMULATIVNI  PROMET       *               SALDO              *"
+ ? "*RED.*" + PADC("ÔøΩIFRA", __par_len) + "*     NAZIV POSLOVNOG    *     MJESTO     *         KUMULATIVNI  PROMET       *               SALDO              *"
  ? "                                                       ----------------------------------- -----------------------------------"
- ? "*BROJ*" + REPLICATE(" ", __par_len)  + "*     PARTNERA           *                *    DUGUJE       *   POTRA¶UJE     *    DUGUJE       *   POTRA¶UJE    *"
+ ? "*BROJ*" + REPLICATE(" ", __par_len)  + "*     PARTNERA           *                *    DUGUJE       *   POTRAÔøΩUJE     *    DUGUJE       *   POTRAÔøΩUJE    *"
  ? m
 else
  ? "----- " + REPLICATE("-", __par_len) + " ------------------------ ----------------------------------- -----------------------------------"
  ? "*RED.*" + PADC("SIFRA", __par_len) + "*      NAZIV POSLOVNOG    *         KUMULATIVNI  PROMET       *               SALDO              *"
  ? "      " + REPL(" ", __par_len)+ "                        ----------------------------------- -----------------------------------"
- ? "*BROJ*" + REPLICATE(" ", __par_len) + "*      PARTNERA           *    DUGUJE       *   POTRA¶UJE     *    DUGUJE       *   POTRA¶UJE    *"
+ ? "*BROJ*" + REPLICATE(" ", __par_len) + "*      PARTNERA           *    DUGUJE       *   POTRAÔøΩUJE     *    DUGUJE       *   POTRAÔøΩUJE    *"
  ? m
 endif
 
@@ -457,7 +457,7 @@ do whileSC !eof() .and. cIdKonto==IdKonto
                     else
                      nDin-=IznosBHD  ; nDEM-=IznosDEM
                     endif
-                  else  // dobaljaüi
+                  else  // dobaljaÔøΩi
                      if d_P=="2"
                       nDin+=IznosBHD  ; nDEM+=IznosDEM
                      else
@@ -588,9 +588,9 @@ function ZaglSpBrDana()
 local cPom
 ?
 P_COND
-?? "FIN: SPECIFIKACIJA PARTNERA SA NEPLAèENIM RA¨UNIMA "+iif(cViseManje=">","PREKO ","DO ")+STR(nDana,3)+" DANA  NA DAN "; ?? dDatum
+?? "FIN: SPECIFIKACIJA PARTNERA SA NEPLAÔøΩENIM RAÔøΩUNIMA "+iif(cViseManje=">","PREKO ","DO ")+STR(nDana,3)+" DANA  NA DAN "; ?? dDatum
 if !empty(dDatumOd)
-? "     obuhvaÜen je period:",dDatumOd,"-",dDatum
+? "     obuhvaÔøΩen je period:",dDatumOd,"-",dDatum
 endif
 
 if !empty(qqBrDok)
@@ -617,9 +617,9 @@ if gVar1=="0" // dvovalutno
 endif
 ? "*RED *" + PADC("PART-", __par_len) + "*      NAZIV POSLOVNOG PARTNERA      PTT     MJESTO         *  BROJ  * DATUM  * K1-K4  *"
 if gVar1=="0"
-  ?? PADC("NEPLAèENO",35)
+  ?? PADC("NEPLAÔøΩENO",35)
 ELSE
-  ?? PADC("NEPLAèENO",17)
+  ?? PADC("NEPLAÔøΩENO",17)
 ENDIF
 
 ? " BR. " + PADC("NER", __par_len) + "                                                                                         "
@@ -629,13 +629,13 @@ if gVar1=="0" // dvovalutno
  ?? " "+replicate("-",17)
 endif
 
-? "*    *" + REPLICATE(" ", __par_len) + "*                                                           * RA¨UNA *"+iif(cObzirDatVal=="D"," VALUTE "," RA¨UNA ")+"*        *"
+? "*    *" + REPLICATE(" ", __par_len) + "*                                                           * RAÔøΩUNA *"+iif(cObzirDatVal=="D"," VALUTE "," RAÔøΩUNA ")+"*        *"
 
 cPom:=""
 if cD_P="1"
   cPom+="    DUGUJE "
 else
-  cPom+="   POTRA¶. "
+  cPom+="   POTRAÔøΩ. "
 endif
 cPom+=ValDomaca()+ "  * "
 
@@ -643,7 +643,7 @@ if gVar1="0" // dvovalutno
  if cD_P="1"
    cPom+="  DUGUJE "
  else
-   cPom+=" POTRA¶. "
+   cPom+=" POTRAÔøΩ. "
  endif
  cPom+=ValPomocna()+"  *"
 endif
@@ -807,7 +807,7 @@ return
 static function Zagl5()
 ?
 P_COND
-?? "FIN.P:SPECIFIKACIJA ANALITI¨KIH KONTA  ZA",ALLTRIM(iif(cTip=="1",ValDomaca(),ValPomocna()))
+?? "FIN.P:SPECIFIKACIJA ANALITIÔøΩKIH KONTA  ZA",ALLTRIM(iif(cTip=="1",ValDomaca(),ValPomocna()))
 if !(empty(dDatOd) .and. empty(dDatDo))
   ?? "  ZA NALOGE U PERIODU ",dDatOd,"-",dDatDo
 endif
@@ -828,7 +828,7 @@ ENDIF
 
 select ANAL
 ? m
-? "KONTO      N A Z I V                                                           duguje            potraßuje                saldo"
+? "KONTO      N A Z I V                                                           duguje            potraÔøΩuje                saldo"
 ? m
 return
 
@@ -1740,9 +1740,9 @@ ELSE
 ENDIF
 if cTip $ "12"
   IF cSkVar!="D"
-    ? "KONTO  " + PADC("PARTN.", __par_len) + "  NAZIV KONTA / PARTNERA                                          duguje            potraßuje                saldo"
+    ? "KONTO  " + PADC("PARTN.", __par_len) + "  NAZIV KONTA / PARTNERA                                          duguje            potraÔøΩuje                saldo"
   ELSE
-    ? "KONTO  " + PADC("PARTN", __par_len) + "  " +  PADR("NAZIV KONTA / PARTNERA",nDOpis)+" "+PADC("duguje",nDIznos)+" "+PADC("potraßuje",nDIznos)+" "+PADC("saldo",nDIznos)
+    ? "KONTO  " + PADC("PARTN", __par_len) + "  " +  PADR("NAZIV KONTA / PARTNERA",nDOpis)+" "+PADC("duguje",nDIznos)+" "+PADC("potraÔøΩuje",nDIznos)+" "+PADC("saldo",nDIznos)
   ENDIF
 else
   IF cSkVar!="D"
@@ -2204,7 +2204,7 @@ endif
 ? "----- ------- ----------------------------- ------------------------------------------------------------ -----------------------------"
 ? "*RED.* KONTO *       N A Z I V             *     K U M U L A T I V N I    P R O M E T                   *      S A L D O              "
 ? "                                            ------------------------------------------------------------ -----------------------------"
-? "*BROJ*       *       K O N T A             *  DUGUJE   "+ValDomaca()+"  *  POTRA¶UJE "+ValDomaca()+"* DUGUJE "+ValPomocna()+"* POTRA¶ "+ValPomocna()+"*    "+ValDomaca()+"        *    "+ValPomocna()+"   *"
+? "*BROJ*       *       K O N T A             *  DUGUJE   "+ValDomaca()+"  *  POTRAÔøΩUJE "+ValDomaca()+"* DUGUJE "+ValPomocna()+"* POTRAÔøΩ "+ValPomocna()+"*    "+ValDomaca()+"        *    "+ValPomocna()+"   *"
 ? M
 
 SELECT SUBAN
@@ -2374,7 +2374,7 @@ endif
 ? "----- ------- ----------------------------- ------------------------------------------------------------ -----------------------------"
 ? "*RED.* KONTO *       N A Z I V             *     K U M U L A T I V N I    P R O M E T                   *      S A L D O              "
 ? "                                            ------------------------------------------------------------ -----------------------------"
-? "*BROJ*       *       K O N T A             *  DUGUJE   "+ValDomaca()+"  *  POTRA¶UJE "+ValDomaca()+"* DUGUJE "+ValPomocna()+"* POTRA¶ "+ValPomocna()+"*    "+ValDomaca()+"        *    "+ValPomocna()+"   *"
+? "*BROJ*       *       K O N T A             *  DUGUJE   "+ValDomaca()+"  *  POTRAÔøΩUJE "+ValDomaca()+"* DUGUJE "+ValPomocna()+"* POTRAÔøΩ "+ValPomocna()+"*    "+ValDomaca()+"        *    "+ValPomocna()+"   *"
 ? M
 
 SELECT SUBAN
@@ -2653,7 +2653,7 @@ P_COND
 
 B_ON
 
-?? "PREGLED ", iif(cDP=="1", "DUGOVANJA", "POTRA¶IVANJA" )
+?? "PREGLED ", iif(cDP=="1", "DUGOVANJA", "POTRAÔøΩIVANJA" )
 ?? ", ZA PERIOD ", dDatOd, "-", dDatDo
 
 // uzmi konto
@@ -2681,18 +2681,18 @@ if cDP=="1"
 	
 	if cPoRP=="1"
 		
-		? SPACE(__par_len) + "  Naziv                                 Prethodno           Novo             NaplaÜeno         SadaÁnje          Napomena"
-		? SPACE(__par_len) + "                                          stanje          potraßivanje                           stanje"
+		? SPACE(__par_len) + "  Naziv                                 Prethodno           Novo             NaplaÔøΩeno         SadaÔøΩnje          Napomena"
+		? SPACE(__par_len) + "                                          stanje          potraÔøΩivanje                           stanje"
 	
 	elseif cPG=="N"
 		
-		? SPACE(__par_len) + "    Naziv                     Prethodno           Novo             NaplaÜeno         Sadasnje          Napomena"
-		? SPACE(__par_len) + "                               stanje          potraßivanje                           stanje"
+		? SPACE(__par_len) + "    Naziv                     Prethodno           Novo             NaplaÔøΩeno         Sadasnje          Napomena"
+		? SPACE(__par_len) + "                               stanje          potraÔøΩivanje                           stanje"
 	
 	else
 		
-		? SPACE(__par_len) + "  Naziv                  Mjesto         Prethodno           Novo             NaplaÜeno         SadaÁnje          Napomena"
-		? SPACE(__par_len) + "                                          stanje          potraßivanje                           stanje"
+		? SPACE(__par_len) + "  Naziv                  Mjesto         Prethodno           Novo             NaplaÔøΩeno         SadaÔøΩnje          Napomena"
+		? SPACE(__par_len) + "                                          stanje          potraÔøΩivanje                           stanje"
 	
 	endif
 	
@@ -2700,13 +2700,13 @@ if cDP=="1"
 else
 	? m
 	if cPoRP=="1"
-		? SPACE(__par_len) + "  Naziv                                 Prethodno           Prispjelo         Placeno          SadaÁnje          Napomena"
+		? SPACE(__par_len) + "  Naziv                                 Prethodno           Prispjelo         Placeno          SadaÔøΩnje          Napomena"
 		? SPACE(__par_len) + "                                          stanje                                                 stanje"
 	elseif cPG=="N"
-		? SPACE(__par_len) + "  Naziv                       Prethodno         Prispjelo          Placeno          SadaÁnje          Napomena"
+		? SPACE(__par_len) + "  Naziv                       Prethodno         Prispjelo          Placeno          SadaÔøΩnje          Napomena"
 		? SPACE(__par_len) + "                                stanje                                               stanje"
 	else
-		? SPACE(__par_len) + "  Naziv                  Mjesto         Prethodno           Prispjelo         Placeno          SadaÁnje          Napomena"
+		? SPACE(__par_len) + "  Naziv                  Mjesto         Prethodno           Prispjelo         Placeno          SadaÔøΩnje          Napomena"
 		? SPACE(__par_len) + "                                          stanje                                                 stanje"
 	endif
 	? m
@@ -3425,10 +3425,10 @@ DO WHILE !EOF()
     		
         SKIP 1
         //  znaci da treba
-    	IF cFaza!=otvst .or. EOF() .or. cIdPartner!=idpartner //<-≥ prikazati
+    	IF cFaza!=otvst .or. EOF() .or. cIdPartner!=idpartner //<-ÔøΩ prikazati
       		IF cPoRn=="D"
 				? m
-			ENDIF                           //  ¿ subtotal
+			ENDIF                           //  ÔøΩ subtotal
       		IF cFaza==" "
         		IF cSaRokom=="D"
          			SKIP -1
@@ -3827,11 +3827,11 @@ return
 // vraca liniju za report varijanta 1
 // -----------------------------------------------------
 static function _get_line1(cTmpL, cSaRokom, cPicForm )
-local cStart := "√"
-local cMidd := "¡"
-local cLine := "≈"
-local cEnd := "¥"
-local cFill := "ƒ"
+local cStart := "ÔøΩ"
+local cMidd := "ÔøΩ"
+local cLine := "ÔøΩ"
+local cEnd := "ÔøΩ"
+local cFill := "ÔøΩ"
 local nFor := 3
 
 if cSaRokom == "D"
@@ -3856,10 +3856,10 @@ return
 // vraca liniju varijantu 2
 // ------------------------------------------------------
 static function _get_line2( cTmpL, cSaRokom, cPicForm )
-local cStart := "¿" 
-local cLine := "¡"
-local cEnd := "Ÿ"
-local cFill := "ƒ"
+local cStart := "ÔøΩ" 
+local cLine := "ÔøΩ"
+local cEnd := "ÔøΩ"
+local cFill := "ÔøΩ"
 local nFor := 3
 
 if cSaRokom == "D"
@@ -4005,195 +4005,195 @@ ELSE
 	IF cSaRokom=="D"
    		
 		// prvi red
-		cTmp := "⁄"
-		cTmp += REPLICATE("ƒ", __par_len)
-		cTmp += "¬"
-		cTmp += REPLICATE("ƒ", 25)
-		cTmp += "¬"
-		cTmp += REPLICATE("ƒ", (LEN(PICPIC) * 5) + 4 )
-		cTmp += "¬"
-		cTmp += REPLICATE("ƒ", LEN(PICPIC))
-		cTmp += "¬"
-		cTmp += REPLICATE("ƒ", (LEN(PICPIC) * 5) + 4 )
-		cTmp += "¬"
-		cTmp += REPLICATE("ƒ", LEN(PICPIC))
-		cTmp += "¬"
-		cTmp += REPLICATE("ƒ", LEN(PICPIC))
-		cTmp += "ø"
+		cTmp := "ÔøΩ"
+		cTmp += REPLICATE("ÔøΩ", __par_len)
+		cTmp += "ÔøΩ"
+		cTmp += REPLICATE("ÔøΩ", 25)
+		cTmp += "ÔøΩ"
+		cTmp += REPLICATE("ÔøΩ", (LEN(PICPIC) * 5) + 4 )
+		cTmp += "ÔøΩ"
+		cTmp += REPLICATE("ÔøΩ", LEN(PICPIC))
+		cTmp += "ÔøΩ"
+		cTmp += REPLICATE("ÔøΩ", (LEN(PICPIC) * 5) + 4 )
+		cTmp += "ÔøΩ"
+		cTmp += REPLICATE("ÔøΩ", LEN(PICPIC))
+		cTmp += "ÔøΩ"
+		cTmp += REPLICATE("ÔøΩ", LEN(PICPIC))
+		cTmp += "ÔøΩ"
 		
 		? cTmp
 
 		// drugi red
-   		cTmp := "≥"
+   		cTmp := "ÔøΩ"
 		cTmp += REPLICATE(" ", __par_len)
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += REPLICATE(" ", 25) 
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text("U      V  A  L  U  T  I", (LEN(PICPIC) * 5) + 4 )
 		
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += REPLICATE(" ", LEN(PICPIC))
 		
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text("V  A  N      V  A  L  U  T  E", (LEN(PICPIC) * 5) + 4 )
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += REPLICATE(" ", LEN(PICPIC))
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += REPLICATE(" ", LEN(PICPIC))
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 	
 		? cTmp
 	
    		
 		// treci red
-		cTmp := "≥"
+		cTmp := "ÔøΩ"
 		cTmp += PADC("SIFRA", __par_len) 
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text("NAZIV  PARTNERA", 25)
-		cTmp += "√"
+		cTmp += "ÔøΩ"
 		
 		for nII := 1 to 5
-			cTmp += REPLICATE("ƒ", LEN(PICPIC) )
+			cTmp += REPLICATE("ÔøΩ", LEN(PICPIC) )
 			
 			if nII == 5
-				cTmp += "√"
+				cTmp += "ÔøΩ"
 			else
-				cTmp += "¬"
+				cTmp += "ÔøΩ"
 			endif
 			
 		next
 		
 		cTmp += _f_text( " ", LEN(PICPIC) )
-		cTmp += "√"
+		cTmp += "ÔøΩ"
 		
 		for nII := 1 to 5
-			cTmp += REPLICATE("ƒ", LEN(PICPIC) )
+			cTmp += REPLICATE("ÔøΩ", LEN(PICPIC) )
 			
 			if nII == 5
-				cTmp += "√"
+				cTmp += "ÔøΩ"
 			else
-				cTmp += "¬"
+				cTmp += "ÔøΩ"
 			endif
 		next
 		
 		cTmp += _f_text( " ", LEN(PICPIC) )
-		cTmp += "¥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text( "UKUPNO", LEN(PICPIC) )
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 
 		? cTmp
 		
-   		cTmp := "≥"
+   		cTmp := "ÔøΩ"
 		cTmp += PADC("PARTN.", __par_len)
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text(" ", 25) 
 		
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text( "DO" + STR(nDoDana1, 3) + " D.", LEN(PICPIC))
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text( "DO" + STR(nDoDana2, 3) + " D.", LEN(PICPIC))
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text( "DO" + STR(nDoDana3, 3) + " D.", LEN(PICPIC))
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text( "DO" + STR(nDoDana4, 3) + " D.", LEN(PICPIC))
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text( "PR." + STR(nDoDana4, 2) + " D.", LEN(PICPIC))
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text( "UKUPNO", LEN(PICPIC))
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text( "DO" + STR(nDoDana1, 3) + " D.", LEN(PICPIC))
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text( "DO" + STR(nDoDana2, 3) + " D.", LEN(PICPIC))
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text( "DO" + STR(nDoDana3, 3) + " D.", LEN(PICPIC))
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text( "DO" + STR(nDoDana4, 3) + " D.", LEN(PICPIC))
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text( "PR." + STR(nDoDana4, 2) + " D.", LEN(PICPIC))
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text( "UKUPNO", LEN(PICPIC))
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text( " ", LEN(PICPIC))
-		cTmp +=	"≥"
+		cTmp +=	"ÔøΩ"
    		
 		? cTmp 
 		
-		cTmp := "√"
-		cTmp += REPLICATE("ƒ", __par_len)
-		cTmp += "≈"
-		cTmp += REPLICATE("ƒ", 25)
+		cTmp := "ÔøΩ"
+		cTmp += REPLICATE("ÔøΩ", __par_len)
+		cTmp += "ÔøΩ"
+		cTmp += REPLICATE("ÔøΩ", 25)
 		
 		for nII := 1 to 13
-			cTmp += "≈"
-			cTmp += REPLICATE("ƒ", LEN(PICPIC))
+			cTmp += "ÔøΩ"
+			cTmp += REPLICATE("ÔøΩ", LEN(PICPIC))
 		next
 		
-		cTmp += "¥"
+		cTmp += "ÔøΩ"
 
 		? cTmp
  	
 	ELSE
    		
 		// 1 red
-		cTmp := "⁄"
-		cTmp += REPLICATE("ƒ", __par_len)
-		cTmp += "¬"
-		cTmp += REPLICATE("ƒ", 25)
+		cTmp := "ÔøΩ"
+		cTmp += REPLICATE("ÔøΩ", __par_len)
+		cTmp += "ÔøΩ"
+		cTmp += REPLICATE("ÔøΩ", 25)
 		
 		for nII := 1 to 3
-			cTmp += "¬"
-			cTmp += REPLICATE("ƒ", LEN(PICPIC) )
+			cTmp += "ÔøΩ"
+			cTmp += REPLICATE("ÔøΩ", LEN(PICPIC) )
 		next
 		
-		cTmp += "ø"
+		cTmp += "ÔøΩ"
 
 		? cTmp
 
 
 		// 2 red
    		
-		cTmp := "≥"
+		cTmp := "ÔøΩ"
 		cTmp += PADC("SIFRA", __par_len)
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text(" ", 25) 
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text("UKUPNO", LEN(PICPIC))
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text("UKUPNO", LEN(PICPIC))
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text(" ", LEN(PICPIC))
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
    		
 		? cTmp
 		
 		// 3 red
   	 	
-		cTmp := "≥"
+		cTmp := "ÔøΩ"
 		cTmp += PADC("PARTN.", __par_len)
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text("NAZIV PARTNERA", 25) 
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text("U VALUTI", LEN(PICPIC))
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text("VAN VAL.", LEN(PICPIC))
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		cTmp += _f_text("UKUPNO", LEN(PICPIC))
-		cTmp += "≥"
+		cTmp += "ÔøΩ"
 		
 		? cTmp
 		
 		// 4 red
-		cTmp := "√"
-		cTmp += REPL("ƒ", __par_len)
-		cTmp += "≈"
-		cTmp += REPLICATE("ƒ", 25)
+		cTmp := "ÔøΩ"
+		cTmp += REPL("ÔøΩ", __par_len)
+		cTmp += "ÔøΩ"
+		cTmp += REPLICATE("ÔøΩ", 25)
 		
 		for nII := 1 to 3
-			cTmp += "≈"
-			cTmp += REPLICATE("ƒ", LEN(PICPIC) )
+			cTmp += "ÔøΩ"
+			cTmp += REPLICATE("ÔøΩ", LEN(PICPIC) )
 		next
 		
-		cTmp += "¥"
+		cTmp += "ÔøΩ"
 
 		? cTmp
  	ENDIF

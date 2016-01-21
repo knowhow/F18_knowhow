@@ -10,7 +10,7 @@
  */
 
 
-#include "kalk.ch"
+#include "f18.ch"
 
 /*
  * $Source: c:/cvsroot/cl/sigma/fmk/kalk/mag/dok/1g/rpt_18.prg,v $

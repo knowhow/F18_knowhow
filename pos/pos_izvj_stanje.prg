@@ -10,7 +10,7 @@
  */
 
 
-#include "pos.ch"
+#include "f18.ch"
 
 function pos_stanje_artikala
 parameters cDat, cSmjena

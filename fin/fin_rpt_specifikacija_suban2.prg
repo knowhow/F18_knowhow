@@ -10,7 +10,7 @@
  */
 
 
-#include "fin.ch"
+#include "f18.ch"
 
 static __par_len := 6
 static __rj_len := 4
@@ -826,9 +826,9 @@ ELSE
 ENDIF
 if cTip $ "12"
   IF cSkVar!="D"
-    ? "KONTO   " + PADC("PARTN.", __par_len) + " NAZIV KONTA / PARTNERA                                          duguje            potra§uje                saldo"
+    ? "KONTO   " + PADC("PARTN.", __par_len) + " NAZIV KONTA / PARTNERA                                          duguje            potraï¿½uje                saldo"
   ELSE
-    ? "KONTO   " + PADC("PARTN", __par_len) + " " +  PADR("NAZIV KONTA / PARTNERA",nDOpis)+" "+PADC("duguje",nDIznos)+" "+PADC("potra§uje",nDIznos)+" "+PADC("saldo",nDIznos)
+    ? "KONTO   " + PADC("PARTN", __par_len) + " " +  PADR("NAZIV KONTA / PARTNERA",nDOpis)+" "+PADC("duguje",nDIznos)+" "+PADC("potraï¿½uje",nDIznos)+" "+PADC("saldo",nDIznos)
   ENDIF
 else
   IF cSkVar!="D"

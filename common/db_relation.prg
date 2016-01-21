@@ -1,162 +1,168 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
-#include "cre_all.ch"
 
 // -----------------------------------------
 // kreiranje tabele relacija
 // -----------------------------------------
-function cre_relation( ver )
-local aDbf
-local _table_name, _alias, _created 
+FUNCTION cre_relation( ver )
 
-aDbf := g_rel_tbl()
+   LOCAL aDbf
+   LOCAL _table_name, _alias, _created
 
-_table_name := "relation"
-_alias := "RELATION"
+   aDbf := g_rel_tbl()
 
-IF_NOT_FILE_DBF_CREATE
-IF_C_RESET_SEMAPHORE
+   _table_name := "relation"
+   _alias := "RELATION"
 
-CREATE_INDEX( "1", "TFROM+TTO+TFROMID", _alias )
-CREATE_INDEX( "2", "TTO+TFROM+TTOID", _alias )
+   IF_NOT_FILE_DBF_CREATE
+   IF_C_RESET_SEMAPHORE
 
-return
+   CREATE_INDEX( "1", "TFROM+TTO+TFROMID", _alias )
+   CREATE_INDEX( "2", "TTO+TFROM+TTOID", _alias )
+
+   RETURN
 
 
 // ------------------------------------------
 // struktura tabele relations
 // ------------------------------------------
-static function g_rel_tbl()
-local aDbf := {}
+STATIC FUNCTION g_rel_tbl()
 
-// TABLE FROM
-AADD( aDbf, { "TFROM"   , "C", 10, 0 } )
-// TABLE TO
-AADD( aDbf, { "TTO"   , "C", 10, 0 } )
-// TABLE FROM ID
-AADD( aDbf, { "TFROMID" , "C", 10, 0 } )
-// TABLE TO ID
-AADD( aDbf, { "TTOID" , "C", 10, 0 } )
+   LOCAL aDbf := {}
 
-// structure example:
-// -------------------------------------------
-// TFROM    | TTO     | TFROMID  | TTOID
-// ------------------- -----------------------
-// ARTICLES | ROBA    |    123   |  22TX22
-// CUSTOMS  | PARTN   |     22   |  1CT02
-// .....
+   // TABLE FROM
+   AAdd( aDbf, { "TFROM", "C", 10, 0 } )
+   // TABLE TO
+   AAdd( aDbf, { "TTO", "C", 10, 0 } )
+   // TABLE FROM ID
+   AAdd( aDbf, { "TFROMID", "C", 10, 0 } )
+   // TABLE TO ID
+   AAdd( aDbf, { "TTOID", "C", 10, 0 } )
 
-return aDbf
+   // structure example:
+   // -------------------------------------------
+   // TFROM    | TTO     | TFROMID  | TTOID
+   // ------------------- -----------------------
+   // ARTICLES | ROBA    |    123   |  22TX22
+   // CUSTOMS  | PARTN   |     22   |  1CT02
+   // .....
+
+   RETURN aDbf
 
 
 // ---------------------------------------------
 // vraca vrijednost za zamjenu
-// cType - '1' = TBL1->TBL2, '2' = TBL2->TBL1 
+// cType - '1' = TBL1->TBL2, '2' = TBL2->TBL1
 // cFrom - iz tabele
 // cTo - u tabelu
 // cId - id za pretragu
 // ---------------------------------------------
-function g_rel_val( cType, cFrom, cTo, cId )
-local xVal := ""
-local nTArea := SELECT()
+FUNCTION g_rel_val( cType, cFrom, cTo, cId )
 
-if cType == nil
-	cType := "1"
-endif
+   LOCAL xVal := ""
+   LOCAL nTArea := Select()
 
-O_RELATION
-set order to tag &cType
-go top
+   IF cType == nil
+      cType := "1"
+   ENDIF
 
-seek PADR(cFrom,10) + PADR(cTo,10) + PADR(cId,10) 
+   O_RELATION
+   SET ORDER TO tag &cType
+   GO TOP
 
-if FOUND() .and. field->tfrom == PADR(cFrom, 10) ;
-	.and. field->tto == PADR(cTo, 10) ;
-	.and. field->tfromid == PADR(cId, 10)
+   SEEK PadR( cFrom, 10 ) + PadR( cTo, 10 ) + PadR( cId, 10 )
 
-	if cType == "1"
-		xVal := field->ttoid
-	else
-		xVal := field->tfromid
-	endif
+   IF Found() .AND. field->tfrom == PadR( cFrom, 10 ) ;
+         .AND. field->tto == PadR( cTo, 10 ) ;
+         .AND. field->tfromid == PadR( cId, 10 )
 
-endif
+      IF cType == "1"
+         xVal := field->ttoid
+      ELSE
+         xVal := field->tfromid
+      ENDIF
 
-select ( nTArea )
-return xVal
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN xVal
 
 
 
 // ------------------------------
 // dodaj u relacije
 // ------------------------------
-function add_to_relation( f_from, f_to, f_from_id, f_to_id )
-local _t_area := SELECT()
-local _rec
+FUNCTION add_to_relation( f_from, f_to, f_from_id, f_to_id )
 
-select ( F_RELATION )
-if !Used()
-    O_RELATION
-endif
+   LOCAL _t_area := Select()
+   LOCAL _rec
 
-select relation
+   SELECT ( F_RELATION )
+   IF !Used()
+      O_RELATION
+   ENDIF
 
-append blank
-_rec := dbf_get_rec()
+   SELECT RELATION
 
-_rec["tfrom"] := PADR( f_from, 10 )
-_rec["tto"] := PADR( f_to, 10 )
-_rec["tfromid"] := PADR( f_from_id, 10 )
-_rec["ttoid"] := PADR( f_to_id, 10 )
+   APPEND BLANK
+   _rec := dbf_get_rec()
 
-update_rec_server_and_dbf( "relation", _rec, 1, "FULL" )
+   _rec[ "tfrom" ] := PadR( f_from, 10 )
+   _rec[ "tto" ] := PadR( f_to, 10 )
+   _rec[ "tfromid" ] := PadR( f_from_id, 10 )
+   _rec[ "ttoid" ] := PadR( f_to_id, 10 )
 
-select ( _t_area )
-return
+   update_rec_server_and_dbf( "relation", _rec, 1, "FULL" )
+
+   SELECT ( _t_area )
+
+   RETURN
 
 
 
 // ---------------------------------------------
 // otvara tabelu relacija
 // ---------------------------------------------
-function p_relation( cId , dx, dy )
-local nTArea := SELECT()
-local i
-local bFrom
-local bTo
-private ImeKol
-private Kol
+FUNCTION p_relation( cId, dx, dy )
 
-select ( F_RELATION )
-if !Used()
-    O_RELATION
-endif
+   LOCAL nTArea := Select()
+   LOCAL i
+   LOCAL bFrom
+   LOCAL bTo
+   PRIVATE ImeKol
+   PRIVATE Kol
 
-ImeKol:={}
-Kol:={}
+   SELECT ( F_RELATION )
+   IF !Used()
+      O_RELATION
+   ENDIF
 
-AADD(ImeKol, { "Tab.1" , {|| tfrom }, "tfrom", {|| .t. }, {|| !EMPTY(wtfrom)} })
-AADD(ImeKol, { "Tab.2" , {|| tto   }, "tto", {|| .t.}, {|| !EMPTY(wtto)} })
-AADD(ImeKol, { "Tab.1 ID" , {|| tfromid }, "tfromid" })
-AADD(ImeKol, { "Tab.2 ID" , {|| ttoid }, "ttoid" })
+   ImeKol := {}
+   Kol := {}
 
-for i:=1 to LEN(ImeKol)
-	AADD(Kol, i)
-next
+   AAdd( ImeKol, { "Tab.1", {|| tfrom }, "tfrom", {|| .T. }, {|| !Empty( wtfrom ) } } )
+   AAdd( ImeKol, { "Tab.2", {|| tto   }, "tto", {|| .T. }, {|| !Empty( wtto ) } } )
+   AAdd( ImeKol, { "Tab.1 ID", {|| tfromid }, "tfromid" } )
+   AAdd( ImeKol, { "Tab.2 ID", {|| ttoid }, "ttoid" } )
 
-select (nTArea)
-return PostojiSifra( F_RELATION, 1, 10, 65, "Lista relacija konverzije", @cId, dx, dy )
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
+
+   SELECT ( nTArea )
+
+   RETURN PostojiSifra( F_RELATION, 1, 10, 65, "Lista relacija konverzije", @cId, dx, dy )
 
 
 
@@ -164,39 +170,36 @@ return PostojiSifra( F_RELATION, 1, 10, 65, "Lista relacija konverzije", @cId, d
 // ---------------------------------------------
 // vraca cijenu artikla iz sifrarnika robe
 // ---------------------------------------------
-function g_art_price( cId, cPriceType )
-local nPrice := 0
-local nTArea := SELECT()
+FUNCTION g_art_price( cId, cPriceType )
 
-if cPriceType == nil
-	cPriceType := "VPC1"
-endif
+   LOCAL nPrice := 0
+   LOCAL nTArea := Select()
 
-select ( F_ROBA )
-if !Used()
-    O_ROBA
-endif
+   IF cPriceType == nil
+      cPriceType := "VPC1"
+   ENDIF
 
-select roba
-seek cId
+   SELECT ( F_ROBA )
+   IF !Used()
+      O_ROBA
+   ENDIF
 
-if FOUND() .and. field->id == cID
-	do case
-		case cPriceType == "VPC1"
-			nPrice := field->vpc
-		case cPriceType == "VPC2"
-			nPrice := field->vpc2
-		case cPriceType == "MPC1"
-			nPrice := field->mpc
-		case cPriceType == "MPC2"
-			nPrice := field->mpc2
-		case cPriceType == "NC"
-			nPrice := field->nc
-	endcase
-endif
+   SELECT roba
+   SEEK cId
 
-return nPrice
+   IF Found() .AND. field->id == cID
+      DO CASE
+      CASE cPriceType == "VPC1"
+         nPrice := field->vpc
+      CASE cPriceType == "VPC2"
+         nPrice := field->vpc2
+      CASE cPriceType == "MPC1"
+         nPrice := field->mpc
+      CASE cPriceType == "MPC2"
+         nPrice := field->mpc2
+      CASE cPriceType == "NC"
+         nPrice := field->nc
+      ENDCASE
+   ENDIF
 
-
-
-
+   RETURN nPrice

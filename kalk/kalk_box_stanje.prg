@@ -10,7 +10,7 @@
  */
 
 
-#include "kalk.ch"
+#include "f18.ch"
 
 
 
@@ -112,7 +112,7 @@ return
 
 function BoxStanje(aStanje,cIdroba)
 local picdem:="9999999.999", nR, nC, nTSta := 0, nTUl := 0, nTIzl := 0,;
-      npd, cDiv := " ³ ", nLen, nRPoc:=0
+      npd, cDiv := " ï¿½ ", nLen, nRPoc:=0
 
  npd := LEN (picdem)
  nLen := LEN (aStanje)

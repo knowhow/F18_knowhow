@@ -10,8 +10,6 @@
  */
 
 #include "f18.ch"
-#include "cre_all.ch"
-
 
 FUNCTION cre_partn( ver )
 
@@ -70,9 +68,9 @@ FUNCTION cre_partn( ver )
 
    lEmptIdOk := .F.  // default je .T.
 
-   p_partneri( @cId, 10, 5, lEmptyIdOk ) => ako je cId == "    ", 
+   p_partneri( @cId, 10, 5, lEmptyIdOk ) => ako je cId == "    ",
                                  lEmptyIdOk == .T. - prihvata cId to kao validnu sifru,
-                                 lEmptyIdOk == .F. - ne prihvata kao validnu sifru         
+                                 lEmptyIdOk == .F. - ne prihvata kao validnu sifru
 
    funkcija vraća .T. kada šifra postoji
 
@@ -87,13 +85,13 @@ FUNCTION p_partneri( cId, dx, dy, lEmptyIdOk )
    PRIVATE Kol
 
    IF lEmptyIdOk == NIL
-         lEmptyIdOk := .T.
+      lEmptyIdOk := .T.
    ENDIF
 
-   IF lEmptyIdOk .AND. ( ValType( cId ) == "C" .AND. EMPTY( cId ) )
-           return .T.
+   IF lEmptyIdOk .AND. ( ValType( cId ) == "C" .AND. Empty( cId ) )
+      RETURN .T.
    ENDIF
- 
+
    PushWa()
    O_PARTN_NOT_USED
 
@@ -116,7 +114,7 @@ FUNCTION p_partneri( cId, dx, dy, lEmptyIdOk )
    AAdd( Imekol, { PadR( "Telefon", 12 ),  {|| TELEFON }, "telefon"  } )
    AAdd ( ImeKol, { PadR( "Fax", 12 ), {|| fax }, "fax" } )
    AAdd ( ImeKol, { PadR( "MobTel", 20 ), {|| mobtel }, "mobtel" } )
-   AAdd ( ImeKol, { PadR( ToStrU( "Općina"), 6 ), {|| idOps }, "idops", {|| .T. }, {|| p_ops( @wIdops ) } } )
+   AAdd ( ImeKol, { PadR( ToStrU( "Općina" ), 6 ), {|| idOps }, "idops", {|| .T. }, {|| p_ops( @wIdops ) } } )
 
    AAdd ( ImeKol, { PadR( "Referent", 10 ), {|| idrefer }, "idrefer", {|| .T. }, {|| p_refer( @widrefer ) } } )
    AAdd( ImeKol, { "kup?", {|| _kup }, "_kup", {|| .T. }, {|| _v_dn( w_kup ) } } )
@@ -472,7 +470,7 @@ FUNCTION ispisi_partn( cPartn, nX, nY )
 
 FUNCTION is_postoji_partner( sifra )
 
-   LOCAL nCount 
+   LOCAL nCount
    LOCAL cWhere
 
    cWhere := "id = " + _sql_quote( sifra )
@@ -483,5 +481,3 @@ FUNCTION is_postoji_partner( sifra )
    ENDIF
 
    RETURN .F.
-
-

@@ -10,7 +10,7 @@
  */
 
 
-#include "fin.ch"
+#include "f18.ch"
 
 STATIC picdem := "9999999999.99"
 STATIC gDatObr

@@ -10,7 +10,7 @@
  */
 
 
-#include "kalk.ch"
+#include "f18.ch"
 
 
 
@@ -63,13 +63,13 @@ FUNCTION StKalk10_PDV()
       ? "*R * ROBA     *  FCJ     * NOR.KALO * KASA-    * " + c10T1 + " * " + c10T2 + " * " + c10T3 + " * " + c10T4 + " * " + c10T5 + " *   NC     *  MARZA   * PROD.CIJ.*   PDV%   * PROD.CIJ.*"
       ? "*BR* TARIFA   *  KOLICINA* PRE.KALO * SKONTO   *          *          *          *          *          *          *          * BEZ.PDV  *   PDV    * SA PDV   *"
 
-      ? "*  *          *    ä     *    ä     *   ä      *    ä     *    ä     *     ä    *    ä     *    ä     *    ä     *    ä     *    ä     *    ä     *     ä    *"
+      ? "*  *          *    ï¿½     *    ï¿½     *   ï¿½      *    ï¿½     *    ï¿½     *     ï¿½    *    ï¿½     *    ï¿½     *    ï¿½     *    ï¿½     *    ï¿½     *    ï¿½     *     ï¿½    *"
    ELSE
       // prikazi samo do neto cijene - bez pdv-a
       ? "*R * ROBA     *  FCJ     * NOR.KALO * KASA-    * " + c10T1 + " * " + c10T2 + " * " + c10T3 + " * " + c10T4 + " * " + c10T5 + " *   NC     *  MARZA   * PROD.CIJ.*"
       ? "*BR* TARIFA   *  KOLICINA* PRE.KALO * SKONTO   *          *          *          *          *          *          *          * BEZ.PDV  *"
 
-      ? "*  *          *    ä     *    ä     *   ä      *    ä     *    ä     *     ä    *    ä     *    ä     *    ä     *    ä     *    ä     *"
+      ? "*  *          *    ï¿½     *    ï¿½     *   ï¿½      *    ï¿½     *    ï¿½     *     ï¿½    *    ï¿½     *    ï¿½     *    ï¿½     *    ï¿½     *    ï¿½     *"
 
    ENDIF
 

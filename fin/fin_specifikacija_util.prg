@@ -9,7 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "fin.ch"
+#include "f18.ch"
 
 // ----------------------------------
 // puni tabelu za export
@@ -123,9 +123,9 @@ endif
 // prikaz vrijednosti na izvjestaju
 // ------------------------------------------
 function Pljuc(xVal)
-? "³"
+? "ï¿½"
 ?? xVal
-?? "³"
+?? "ï¿½"
 RETURN
 
 // -------------------------------------------
@@ -133,7 +133,7 @@ RETURN
 // -------------------------------------------
 function PPljuc(xVal)
 ?? xVal
-?? "³"
+?? "ï¿½"
 RETURN
 
 

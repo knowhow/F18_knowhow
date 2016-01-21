@@ -10,7 +10,7 @@
  */
 
 
-#include "kalk.ch"
+#include "f18.ch"
 
 
 
@@ -44,7 +44,7 @@ endif
 
 private cBrNiv:="0"
 select kalk
-seek cidfirma+"18ä"
+seek cidfirma+"18ï¿½"
 skip -1
 if idvd<>"18"
      cBrNiv:=space(8)

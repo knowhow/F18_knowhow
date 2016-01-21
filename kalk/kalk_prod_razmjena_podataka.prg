@@ -10,7 +10,7 @@
  */
 
 
-#include "kalk.ch"
+#include "f18.ch"
 
 // ----------------------------------------------------------
 // meni opcije prenos FAKT->KALK prodavnica
@@ -139,7 +139,7 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
 			
          ENDIF
 		
-         // usluge ne prenosi takoðer
+         // usluge ne prenosi takoï¿½er
          IF AllTrim( podbr ) == "."  .OR. idroba = "U"
           		
             SKIP

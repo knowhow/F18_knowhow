@@ -9,7 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "fin.ch"
+#include "f18.ch"
 
 STATIC __tbl_suban := "fin_suban"
 STATIC __tbl_nalog := "fin_nalog"

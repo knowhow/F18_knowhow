@@ -10,8 +10,6 @@
  */
 
 #include "f18.ch"
-#include "cre_all.ch"
-
 
 FUNCTION cre_all_pos( ver )
 
@@ -240,7 +238,7 @@ FUNCTION cre_all_pos( ver )
    _table_name := "rngpla"
 
    IF_NOT_FILE_DBF_CREATE
-	
+
    CREATE_INDEX ( "1", "IdGost", _alias )
 
 
@@ -324,7 +322,7 @@ FUNCTION cre_all_pos( ver )
    _table_name := "robaiz"
 
    IF_NOT_FILE_DBF_CREATE
-	
+
    CREATE_INDEX ( "1", "IdRoba", _alias )
 
 
@@ -336,7 +334,7 @@ FUNCTION cre_all_pos( ver )
    _table_name := "dio"
 
    IF_NOT_FILE_DBF_CREATE
-	
+
    CREATE_INDEX ( "ID", "ID", _alias )
 
 
@@ -361,7 +359,7 @@ FUNCTION cre_all_pos( ver )
 
    _alias := "MARS"
    _table_name := "mars"
-	
+
    IF_NOT_FILE_DBF_CREATE
 
    CREATE_INDEX ( "ID", "ID", _alias )

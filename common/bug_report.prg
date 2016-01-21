@@ -10,8 +10,7 @@
  */
 
 #include "f18.ch"
-#include "f18_ver.ch"
-#include "error.ch"
+
 
 
 FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )

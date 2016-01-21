@@ -10,7 +10,7 @@
  */
 
 
-#include "pos.ch"
+#include "f18.ch"
 
 function ReklKase(dDOd, dDDo, cVarijanta)
 private cIdPos:=gIdPos

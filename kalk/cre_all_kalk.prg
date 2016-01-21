@@ -10,8 +10,6 @@
  */
 
 #include "f18.ch"
-#include "cre_all.ch"
-
 
 FUNCTION cre_all_kalk( ver )
 

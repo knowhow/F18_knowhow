@@ -9,7 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "pos.ch"
+#include "f18.ch"
 #include "getexit.ch"
 #include "f18_separator.ch"
 

@@ -10,8 +10,6 @@
  */
 
 #include "f18.ch"
-#include "cre_all.ch"
-
 
 STATIC __LD_FIELDS_COUNT := 60
 
@@ -672,8 +670,8 @@ FUNCTION cre_all_ld( ver )
 
 
 STATIC FUNCTION kreiraj_tabelu_ld__ld( aDbf )
-  
-   LOCAL _alias, _table_name 
+
+   LOCAL _alias, _table_name
 
    _alias := "_LD"
    _table_name := "_ld_ld"
@@ -698,5 +696,4 @@ STATIC FUNCTION prosiri_numericka_polja_tabele( aDbf )
       ENDIF
    NEXT
 
-   RETURN 
-
+   RETURN

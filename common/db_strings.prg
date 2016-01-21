@@ -1,114 +1,119 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
-#include "cre_all.ch"
-
 
 
 // otvaranje sifrarnika strings
-function p_strings(cId, dx, dy)
-local nTArea := SELECT()
-private ImeKol
-private Kol
+FUNCTION p_strings( cId, dx, dy )
 
-if !SigmaSIF("STRING")
-	MsgBeep("Opcija nedostupna !!!")
-	return
-endif
+   LOCAL nTArea := Select()
+   PRIVATE ImeKol
+   PRIVATE Kol
 
-O_STRINGS
-set_a_kol(@ImeKol, @Kol)
+   IF !SigmaSIF( "STRING" )
+      MsgBeep( "Opcija nedostupna !!!" )
+      RETURN
+   ENDIF
 
-select (nTArea)
+   O_STRINGS
+   set_a_kol( @ImeKol, @Kol )
 
-return PostojiSifra(F_STRINGS, "1", 10, 65, "Strings", @cId, dx, dy, {|Ch| key_handler(Ch)})
+   SELECT ( nTArea )
+
+   RETURN PostojiSifra( F_STRINGS, "1", 10, 65, "Strings", @cId, dx, dy, {| Ch| key_handler( Ch ) } )
 
 
 // setovanje kolona tabele
-static function set_a_kol(aImeKol, aKol)
-aImeKol := {}
-aKol := {}
+STATIC FUNCTION set_a_kol( aImeKol, aKol )
 
-AADD(aImeKol, {padc("ID", 10), {|| id }, "id", {|| inc_id(@wId), .f.}, {|| .t.} })
-AADD(aImeKol, {padc("Veza 1", 10), {|| veza_1}, "veza_1", {|| .t.}, {|| .t.}})
-AADD(aImeKol, {padc("Veza 2", 10), {|| veza_2}, "veza_2", {|| .t.}, {|| .t.}})
-AADD(aImeKol, {padc("Oznaka", 10), {|| oznaka}, "oznaka", {|| .t.}, {|| .t.}})
-AADD(aImeKol, {padc("Aktivan", 7), {|| aktivan}, "aktivan", {|| .t.}, {|| .t.}})
-AADD(aImeKol, {padc("Naziv", 20), {|| PADR(naz, 20)}, "naz", {|| .t.}, {|| .t.}})
-for i:=1 to LEN(aImeKol)
-	AADD(aKol, i)
-next
-return
+   aImeKol := {}
+   aKol := {}
+
+   AAdd( aImeKol, { PadC( "ID", 10 ), {|| id }, "id", {|| inc_id( @wId ), .F. }, {|| .T. } } )
+   AAdd( aImeKol, { PadC( "Veza 1", 10 ), {|| veza_1 }, "veza_1", {|| .T. }, {|| .T. } } )
+   AAdd( aImeKol, { PadC( "Veza 2", 10 ), {|| veza_2 }, "veza_2", {|| .T. }, {|| .T. } } )
+   AAdd( aImeKol, { PadC( "Oznaka", 10 ), {|| oznaka }, "oznaka", {|| .T. }, {|| .T. } } )
+   AAdd( aImeKol, { PadC( "Aktivan", 7 ), {|| aktivan }, "aktivan", {|| .T. }, {|| .T. } } )
+   AAdd( aImeKol, { PadC( "Naziv", 20 ), {|| PadR( naz, 20 ) }, "naz", {|| .T. }, {|| .T. } } )
+   FOR i := 1 TO Len( aImeKol )
+      AAdd( aKol, i )
+   NEXT
+
+   RETURN
 
 
 // key handler
-static function key_handler()
-return DE_CONT
+STATIC FUNCTION key_handler()
+   RETURN DE_CONT
 
 
 // uvecaj ID
-static function inc_id(wId)
-local lRet:=.t.
+STATIC FUNCTION inc_id( wId )
 
-if ((Ch==K_CTRL_N) .or. (Ch==K_F4))
-	if (LastKey()==K_ESC)
-		return lRet:=.f.
-	endif
-	
-	nRecNo:=RecNo()
-	
-	str_new_id(@wId)
-	
-	AEVAL(GetList,{|o| o:display()})
-endif
-return lRet
+   LOCAL lRet := .T.
 
+   IF ( ( Ch == K_CTRL_N ) .OR. ( Ch == K_F4 ) )
+      IF ( LastKey() == K_ESC )
+         RETURN lRet := .F.
+      ENDIF
 
-// *******************************************
-// CHK funkcije ....
-// *******************************************
+      nRecNo := RecNo()
+
+      str_new_id( @wId )
+
+      AEval( GetList, {| o| o:display() } )
+   ENDIF
+
+   RETURN lRet
 
 // da li je definisana opcija strings
-function is_strings()
-local nTArea := SELECT()
-local lRet := .f.
-O_ROBA
-if roba->(fieldpos("STRINGS")) <> 0
-	lRet := .t.
-endif
-select (nTArea)
-return lRet
+FUNCTION is_strings()
+
+   LOCAL nTArea := Select()
+   LOCAL lRet := .F.
+
+   O_ROBA
+   IF roba->( FieldPos( "STRINGS" ) ) <> 0
+      lRet := .T.
+   ENDIF
+   SELECT ( nTArea )
+
+   RETURN lRet
 
 
 // provjerava da li roba ima definisan string
-function is_roba_strings(cIDRoba)
-local lRet := .f.
-local nTArea := SELECT()
-O_ROBA
-set order to tag "ID"
-go top
-seek cIdRoba
-if FOUND() .and. field->strings <> 0
-	lRet := .t.
-endif
-select (nTArea)
-return lRet
+FUNCTION is_roba_strings( cIDRoba )
+
+   LOCAL lRet := .F.
+   LOCAL nTArea := Select()
+
+   O_ROBA
+   SET ORDER TO TAG "ID"
+   GO TOP
+   SEEK cIdRoba
+   IF Found() .AND. field->strings <> 0
+      lRet := .T.
+   ENDIF
+   SELECT ( nTArea )
+
+   RETURN lRet
 
 
 // uporedi nizove...
-static function arr_integ_ok(aModArr, aDefArr)
-local lRet := .f.
-return lRet
+STATIC FUNCTION arr_integ_ok( aModArr, aDefArr )
+
+   LOCAL lRet := .F.
+
+   RETURN lRet
 
 // *******************************************
 // GET funkcije.....
@@ -116,273 +121,286 @@ return lRet
 
 
 // vraca naziv odabrane grupe...
-function g_roba_grupe(cGrupa)
-local nSelection := 0
-local aGrupe := {}
+FUNCTION g_roba_grupe( cGrupa )
 
-aGrupe := get_strings("R_GRUPE", .t.)
+   LOCAL nSelection := 0
+   LOCAL aGrupe := {}
 
-// otvori meni i vrati odabir
-nSelection := arr_menu(aGrupe, "R_GRUPE")
-		
-cGrupa := g_naz_byid(nSelection)
+   aGrupe := get_strings( "R_GRUPE", .T. )
 
-return .t.
+   // otvori meni i vrati odabir
+   nSelection := arr_menu( aGrupe, "R_GRUPE" )
+
+   cGrupa := g_naz_byid( nSelection )
+
+   RETURN .T.
 
 
 // vraca polje strings->naz po id pretrazi
-static function g_naz_byid(nId)
-local cNaz := ""
-select strings
-set order to tag "1"
-hseek STR(nId,10,0)
+STATIC FUNCTION g_naz_byid( nId )
 
-if FOUND()
-	cNaz := TRIM(field->naz)
-endif
+   LOCAL cNaz := ""
 
-return cNaz
+   SELECT strings
+   SET ORDER TO TAG "1"
+   hseek Str( nId, 10, 0 )
+
+   IF Found()
+      cNaz := Trim( field->naz )
+   ENDIF
+
+   RETURN cNaz
 
 
 // vraca strings->id za grupu iz stringa...
-static function g_gr_byid(nId)
-local nVeza_1
-local nGrupa := 0
+STATIC FUNCTION g_gr_byid( nId )
 
-select strings
-set order to tag "1"
-hseek STR(nId,10,0)
+   LOCAL nVeza_1
+   LOCAL nGrupa := 0
 
-if FOUND()
-	nVeza_1 := field->veza_1
-	
-	// sada trazi grupe - atribute
-	hseek STR(nVeza_1, 10, 0)
-	
-	if FOUND()
-		// dobio sam grupu
-		nGrupa := field->veza_1
-	endif
-endif
+   SELECT strings
+   SET ORDER TO TAG "1"
+   hseek Str( nId, 10, 0 )
 
-return nGrupa
+   IF Found()
+      nVeza_1 := field->veza_1
+
+      // sada trazi grupe - atribute
+      hseek Str( nVeza_1, 10, 0 )
+
+      IF Found()
+         // dobio sam grupu
+         nGrupa := field->veza_1
+      ENDIF
+   ENDIF
+
+   RETURN nGrupa
 
 
 // vraca oznaku atributa iz id-a
-static function g_attr_byid(nId)
-local nVeza_1
-local nVeza_2
-local nAtribut := 0
+STATIC FUNCTION g_attr_byid( nId )
 
-select strings
-set order to tag "1"
-hseek STR(nId,10,0)
+   LOCAL nVeza_1
+   LOCAL nVeza_2
+   LOCAL nAtribut := 0
 
-if FOUND()
-	nVeza_1 := field->veza_1
-	
-	// sada trazi grupe - atribute
-	hseek STR(nVeza_1, 10, 0)
-	
-	if FOUND()
-		// dobio sam atribut
-		nAtribut := field->veza_2
-	endif
-endif
+   SELECT strings
+   SET ORDER TO TAG "1"
+   hseek Str( nId, 10, 0 )
 
-return nAtribut
+   IF Found()
+      nVeza_1 := field->veza_1
+
+      // sada trazi grupe - atribute
+      hseek Str( nVeza_1, 10, 0 )
+
+      IF Found()
+         // dobio sam atribut
+         nAtribut := field->veza_2
+      ENDIF
+   ENDIF
+
+   RETURN nAtribut
 
 
 // vraca oznaku atributa-veze iz id-a
-static function g_attv_byid(nId)
-local nAtribut := 0
+STATIC FUNCTION g_attv_byid( nId )
 
-select strings
-set order to tag "1"
-hseek STR(nId,10,0)
+   LOCAL nAtribut := 0
 
-if FOUND()
-	nAtribut := field->veza_1
-endif
+   SELECT strings
+   SET ORDER TO TAG "1"
+   hseek Str( nId, 10, 0 )
 
-return nAtribut
+   IF Found()
+      nAtribut := field->veza_1
+   ENDIF
+
+   RETURN nAtribut
 
 
 // vraca matricu sa nazivima po uslovu "cOznaka"
-function get_strings(cOznaka, lAktivni)
-local nTRec := RecNo()
-local nTArea := SELECT()
-local aRet := {}
+FUNCTION get_strings( cOznaka, lAktivni )
 
-if lAktivni == nil
-	lAktivni := .t.
-endif
+   LOCAL nTRec := RecNo()
+   LOCAL nTArea := Select()
+   LOCAL aRet := {}
 
-O_STRINGS
-select strings
-// oznaka + id
-set order to tag "2"
-go top
-seek PADR(cOznaka, 10)
+   IF lAktivni == nil
+      lAktivni := .T.
+   ENDIF
 
-do while !EOF() .and. field->oznaka == PADR(cOznaka, 10)
-	
-	if lAktivni
-		// dodaj samo aktivne
-		if field->aktivan <> "D"
-			skip
-			loop
-		endif
-	endif
-	
-	AADD(aRet, {field->id, TRIM(field->naz) })
-	
-	skip
-enddo
+   O_STRINGS
+   SELECT strings
+   // oznaka + id
+   SET ORDER TO TAG "2"
+   GO TOP
+   SEEK PadR( cOznaka, 10 )
 
-select (nTArea)
-go (nTRec)
+   DO WHILE !Eof() .AND. field->oznaka == PadR( cOznaka, 10 )
 
-return aRet
+      IF lAktivni
+         // dodaj samo aktivne
+         IF field->aktivan <> "D"
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
+
+      AAdd( aRet, { field->id, Trim( field->naz ) } )
+
+      SKIP
+   ENDDO
+
+   SELECT ( nTArea )
+   GO ( nTRec )
+
+   RETURN aRet
 
 
 
 // vraca matricu sa stringovima po uslovu "nIdString"
-function get_str_val(nIdString)
-local nTRec := RecNo()
-local nTArea := SELECT()
-local aRet := {}
-local aTemp := {}
-local cStrings := ""
-local aStrings := {}
-local i
-local nIdStr
-local nIdAttr
+FUNCTION get_str_val( nIdString )
 
-O_STRINGS
-select strings
-// id
-set order to tag "1"
-go top
-seek STR(nIdString, 10, 0)
+   LOCAL nTRec := RecNo()
+   LOCAL nTArea := Select()
+   LOCAL aRet := {}
+   LOCAL aTemp := {}
+   LOCAL cStrings := ""
+   LOCAL aStrings := {}
+   LOCAL i
+   LOCAL nIdStr
+   LOCAL nIdAttr
 
-if FOUND()
-	if field->aktivan == "D" .and. field->veza_1 == -1
-		cStrings := TRIM(field->naz)
-	endif
-else
-	fill_strings(@aRet)
-	return aRet
-endif
+   O_STRINGS
+   SELECT strings
+   // id
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK Str( nIdString, 10, 0 )
 
-if !EMPTY(ALLTRIM(cStrings))
+   IF Found()
+      IF field->aktivan == "D" .AND. field->veza_1 == -1
+         cStrings := Trim( field->naz )
+      ENDIF
+   ELSE
+      fill_strings( @aRet )
+      RETURN aRet
+   ENDIF
 
-	// sada kada sam dobio strings napuni matricu aRet
-	aStrings := TokToNiz(cStrings, "#")
-	// 15#16
-	
-	if LEN(aStrings) > 0
-		
-		nIdStr := VAL( aStrings[1] )
-		
-		// prvo dodaj grupu ....
-		nIdAttr := g_gr_byid( nIdStr )
-		
-		// naziv grupe
-		cPom := g_naz_byid(nIdAttr)
-		
-		// filuj grupu i dostupne atribute....
-		fill_str_attr(@aRet, nIdAttr, cPom)
-		
-		// sada napuni atribute ...
-		
-		// 15#16...
-		for i:=1 to LEN(aStrings)
-		
-			nIdStr := VAL(aStrings[i])
-			nIdAttr := g_attr_byid(nIdStr)
-			nIdAttV := g_attv_byid(nIdStr)
-			
-			nScan := ASCAN(aRet, {|xVal| xVal[2] == nIdAttV })
+   IF !Empty( AllTrim( cStrings ) )
 
-			if nScan == 0
-				AADD(aRet, { nIdStr, nIdAttV, "R_G_ATTRIB", g_naz_byid(nIdAttr) + ":" , g_naz_byid(nIdStr) })		
-			else
-				aRet[nScan, 1] := nIdStr
-				aRet[nScan, 2] := nIdAttV
-				aRet[nScan, 3] := "R_G_ATTRIB"
+      // sada kada sam dobio strings napuni matricu aRet
+      aStrings := TokToNiz( cStrings, "#" )
+      // 15#16
 
-				cPom := g_naz_byid(nIdAttr) + ":"
+      IF Len( aStrings ) > 0
 
-				aRet[nScan, 4] := cPom
+         nIdStr := Val( aStrings[ 1 ] )
 
-				cPom := g_naz_byid(nIdStr)
+         // prvo dodaj grupu ....
+         nIdAttr := g_gr_byid( nIdStr )
 
-				aRet[nScan, 5] := cPom
-			endif
-		next
-	endif
-else
-	fill_strings(@aRet)
-endif
+         // naziv grupe
+         cPom := g_naz_byid( nIdAttr )
 
-select (nTArea)
-go (nTRec)
+         // filuj grupu i dostupne atribute....
+         fill_str_attr( @aRet, nIdAttr, cPom )
 
-return aRet
+         // sada napuni atribute ...
+
+         // 15#16...
+         FOR i := 1 TO Len( aStrings )
+
+            nIdStr := Val( aStrings[ i ] )
+            nIdAttr := g_attr_byid( nIdStr )
+            nIdAttV := g_attv_byid( nIdStr )
+
+            nScan := AScan( aRet, {| xVal| xVal[ 2 ] == nIdAttV } )
+
+            IF nScan == 0
+               AAdd( aRet, { nIdStr, nIdAttV, "R_G_ATTRIB", g_naz_byid( nIdAttr ) + ":", g_naz_byid( nIdStr ) } )
+            ELSE
+               aRet[ nScan, 1 ] := nIdStr
+               aRet[ nScan, 2 ] := nIdAttV
+               aRet[ nScan, 3 ] := "R_G_ATTRIB"
+
+               cPom := g_naz_byid( nIdAttr ) + ":"
+
+               aRet[ nScan, 4 ] := cPom
+
+               cPom := g_naz_byid( nIdStr )
+
+               aRet[ nScan, 5 ] := cPom
+            ENDIF
+         NEXT
+      ENDIF
+   ELSE
+      fill_strings( @aRet )
+   ENDIF
+
+   SELECT ( nTArea )
+   GO ( nTRec )
+
+   RETURN aRet
 
 
 
 // **********************************************
-// FILL funkcije 
+// FILL funkcije
 // **********************************************
 
 // filuj prazan aStrings
-static function fill_strings(aStrings)
-AADD(aStrings, { 0, 0, "R_GRUPE", "Grupa:", "-" })
-return
+STATIC FUNCTION fill_strings( aStrings )
+
+   AAdd( aStrings, { 0, 0, "R_GRUPE", "Grupa:", "-" } )
+
+   RETURN
 
 // filuj prazan aArr
-static function fill_arr(aArr)
-AADD(aArr, { 0, "-" } )
-return
+STATIC FUNCTION fill_arr( aArr )
+
+   AAdd( aArr, { 0, "-" } )
+
+   RETURN
 
 
 // napuni matricu sa atributima...
-static function fill_str_attr(aStrings, nIdGrupa, cNazGrupa)
-local cGrOzn := PADR("R_GRUPE", 10)
-local cAtOzn := PADR("R_G_ATTRIB", 10)
-local i
-local nTArea := SELECT()
+STATIC FUNCTION fill_str_attr( aStrings, nIdGrupa, cNazGrupa )
 
-// ponovo napravi aStrings
-aStrings := {}
-AADD(aStrings, { nIdGrupa, nIdGrupa, cGrOzn, "Grupa:", cNazGrupa })
+   LOCAL cGrOzn := PadR( "R_GRUPE", 10 )
+   LOCAL cAtOzn := PadR( "R_G_ATTRIB", 10 )
+   LOCAL i
+   LOCAL nTArea := Select()
 
-O_STRINGS
-select strings
-// oznaka + veza_1
-set order to tag "3"
-seek cAtOzn + STR(nIdGrupa, 10, 0)
+   // ponovo napravi aStrings
+   aStrings := {}
+   AAdd( aStrings, { nIdGrupa, nIdGrupa, cGrOzn, "Grupa:", cNazGrupa } )
 
-if FOUND()
-	do while !EOF() .and. field->oznaka == cAtOzn;
-			.and. field->veza_1 == nIdGrupa
-			
-		if field->aktivan <> "D"
-			skip
-			loop
-		endif
-			
-		AADD(aStrings, { 0, field->id, cAtOzn, TRIM(field->naz) + ":", "-"})
-		
-		skip
-	enddo
-endif
+   O_STRINGS
+   SELECT strings
+   // oznaka + veza_1
+   SET ORDER TO TAG "3"
+   SEEK cAtOzn + Str( nIdGrupa, 10, 0 )
 
-select (nTArea)
+   IF Found()
+      DO WHILE !Eof() .AND. field->oznaka == cAtOzn;
+            .AND. field->veza_1 == nIdGrupa
 
-return
+         IF field->aktivan <> "D"
+            SKIP
+            LOOP
+         ENDIF
+
+         AAdd( aStrings, { 0, field->id, cAtOzn, Trim( field->naz ) + ":", "-" } )
+
+         SKIP
+      ENDDO
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN
 
 
 
@@ -391,324 +409,334 @@ return
 // **********************************************
 
 // glavni meni strings
-function m_strings(nIdString, cRoba)
-local aStrings := {}
-local aMStrings := {}
-local nRet := -99
+FUNCTION m_strings( nIdString, cRoba )
 
-// aStrings { idstr, idatr, oznaka, naz_atributa, vrijednost }
-//              9  ,  6   , "R_G_ATTRIB", "proizvodjac", "proizvodjac 1"
+   LOCAL aStrings := {}
+   LOCAL aMStrings := {}
+   LOCAL nRet := -99
 
-if ( nIdString == 0 )
-	// ako je strings == 0 napravi praznu matricu...
-	fill_strings(@aStrings)
-else
-	// generisi matricu na osnovu podataka...
-	aStrings := get_str_val(nIdString) 
-endif
+   // aStrings { idstr, idatr, oznaka, naz_atributa, vrijednost }
+   // 9  ,  6   , "R_G_ATTRIB", "proizvodjac", "proizvodjac 1"
 
-// uzmi za usporedbu matricu strings
-aMStrings := aStrings
+   IF ( nIdString == 0 )
+      // ako je strings == 0 napravi praznu matricu...
+      fill_strings( @aStrings )
+   ELSE
+      // generisi matricu na osnovu podataka...
+      aStrings := get_str_val( nIdString )
+   ENDIF
 
-// non stop do izlaska regenerisi meni
-do while .t.
-	if gen_m_str(@aStrings) == 0
-		
-		if !arr_integ_ok(aStrings, aMStrings) .and. Pitanje(,"Snimiti promjene?","D") == "D"
-			// snimi promjene napravljene na nizu
-			save_str_state(aStrings, cRoba)
-		endif
-		
-		exit
-	endif
-enddo
+   // uzmi za usporedbu matricu strings
+   aMStrings := aStrings
 
-return
+   // non stop do izlaska regenerisi meni
+   DO WHILE .T.
+      IF gen_m_str( @aStrings ) == 0
+
+         IF !arr_integ_ok( aStrings, aMStrings ) .AND. Pitanje(, "Snimiti promjene?", "D" ) == "D"
+            // snimi promjene napravljene na nizu
+            save_str_state( aStrings, cRoba )
+         ENDIF
+
+         EXIT
+      ENDIF
+   ENDDO
+
+   RETURN
 
 
 // generisi menij sa aStrings
-function gen_m_str(aStrings)
-local cPom
-private izbor := 1
-private opc := {}
-private opcexe := {}
+FUNCTION gen_m_str( aStrings )
 
-for i:=1 to LEN(aStrings)
-	
-	cPom := PADL(aStrings[i, 4], 20)
-	cPom += " "
-	if aStrings[i, 5] == "-"
-		cPom += PADR("nije setovano", 30)
-	else
-		cPom += PADR(aStrings[i, 5], 30)
-	endif
-	
-	AADD(opc, cPom )
-	AADD(opcexe, {|| key_strings(@aStrings, izbor), izbor := 0 })
-	
-next
+   LOCAL cPom
+   PRIVATE izbor := 1
+   PRIVATE opc := {}
+   PRIVATE opcexe := {}
 
-Menu_SC("str")
+   FOR i := 1 TO Len( aStrings )
 
-ESC_RETURN 0
+      cPom := PadL( aStrings[ i, 4 ], 20 )
+      cPom += " "
+      IF aStrings[ i, 5 ] == "-"
+         cPom += PadR( "nije setovano", 30 )
+      ELSE
+         cPom += PadR( aStrings[ i, 5 ], 30 )
+      ENDIF
 
-// test - debug / print matrice
-//pr_strings(aStrings)
+      AAdd( opc, cPom )
+      AAdd( opcexe, {|| key_strings( @aStrings, izbor ), izbor := 0 } )
 
-return 1
+   NEXT
+
+   Menu_SC( "str" )
+
+   ESC_RETURN 0
+
+   // test - debug / print matrice
+   // pr_strings(aStrings)
+
+   RETURN 1
 
 
 // obrada dogadjaja menija strings na ENTER
-static function key_strings(aStrings, nIzbor)
-local cOznaka
-local nTIzbor
-local cAkcija
+STATIC FUNCTION key_strings( aStrings, nIzbor )
 
-// 10001
-nTIzbor := nIzbor
+   LOCAL cOznaka
+   LOCAL nTIzbor
+   LOCAL cAkcija
 
-// "" - enter
-// "K_CTRL_N" - novi
-// "K_CTRL_T" - brisi ...
-cAkcija := what_action(nTIzbor)
+   // 10001
+   nTIzbor := nIzbor
 
-// 1
-nIzbor := retitem(nIzbor)
+   // "" - enter
+   // "K_CTRL_N" - novi
+   // "K_CTRL_T" - brisi ...
+   cAkcija := what_action( nTIzbor )
 
-cOznaka := aStrings[nIzbor, 3]
+   // 1
+   nIzbor := retitem( nIzbor )
 
-do case 
-	// ako su grupe....
-	case ALLTRIM(cOznaka) == "R_GRUPE"
-		
-		// enter
-		if cAkcija == ""
-			// definisi grupu
-			def_group(@aStrings, nIzbor)
-		else
-			// ostale tipke....
-			// definisi attribute - veze
-			def_attveze(@aStrings, nIzbor, cAkcija)
-		endif
+   cOznaka := aStrings[ nIzbor, 3 ]
 
-	// ako su atributi veze
-	case ALLTRIM(cOznaka) == "R_G_ATTRIB"
-		
-		if cAkcija == ""
-			// odabir atributa....
-			def_attrib(@aStrings, nIzbor)
-		else
-			// ostale tipke....
-			// definisi attribute - veze
-			def_attveze(@aStrings, nIzbor, cAkcija)
-		endif
+   DO CASE
+      // ako su grupe....
+   CASE AllTrim( cOznaka ) == "R_GRUPE"
 
-endcase
+      // enter
+      IF cAkcija == ""
+         // definisi grupu
+         def_group( @aStrings, nIzbor )
+      ELSE
+         // ostale tipke....
+         // definisi attribute - veze
+         def_attveze( @aStrings, nIzbor, cAkcija )
+      ENDIF
 
-return
+      // ako su atributi veze
+   CASE AllTrim( cOznaka ) == "R_G_ATTRIB"
+
+      IF cAkcija == ""
+         // odabir atributa....
+         def_attrib( @aStrings, nIzbor )
+      ELSE
+         // ostale tipke....
+         // definisi attribute - veze
+         def_attveze( @aStrings, nIzbor, cAkcija )
+      ENDIF
+
+   ENDCASE
+
+   RETURN
 
 
 // funkcij za iscrtavanje menija sa nizom aArr te citanjem odabira
-static function arr_menu(aArr, cGrupa, nGrId)
-local i
-local cPom
-local nArrRet := 0
-local nReturn := -99
-private izbor := 1
-private opc := {}
-private opcexe := {}
+STATIC FUNCTION arr_menu( aArr, cGrupa, nGrId )
 
-if LEN(aArr) == 0
-	fill_arr(@aArr)
-endif
+   LOCAL i
+   LOCAL cPom
+   LOCAL nArrRet := 0
+   LOCAL nReturn := -99
+   PRIVATE izbor := 1
+   PRIVATE opc := {}
+   PRIVATE opcexe := {}
 
-for i:=1 to len(aArr)
-	if (aArr[i, 2] == "-")
-		cPom := PADR("nema setovanih stavki",30)
-	else
-		cPom := PADR(aArr[i, 2], 30)
-	endif
-	AADD(opc, cPom)
-	AADD(opcexe, {|| key_array(@nArrRet, aArr, izbor, cGrupa, nGrId), izbor := 0 })
-next
+   IF Len( aArr ) == 0
+      fill_arr( @aArr )
+   ENDIF
 
-Menu_SC("arr")
+   FOR i := 1 TO Len( aArr )
+      IF ( aArr[ i, 2 ] == "-" )
+         cPom := PadR( "nema setovanih stavki", 30 )
+      ELSE
+         cPom := PadR( aArr[ i, 2 ], 30 )
+      ENDIF
+      AAdd( opc, cPom )
+      AAdd( opcexe, {|| key_array( @nArrRet, aArr, izbor, cGrupa, nGrId ), izbor := 0 } )
+   NEXT
 
-if nArrRet > 0
-	nReturn := aArr[nArrRet, 1]
-endif
+   Menu_SC( "arr" )
 
-if nArrRet == 0
-	nReturn := 0
-endif
+   IF nArrRet > 0
+      nReturn := aArr[ nArrRet, 1 ]
+   ENDIF
 
-return nReturn
+   IF nArrRet == 0
+      nReturn := 0
+   ENDIF
+
+   RETURN nReturn
 
 
 // obrada dogadjaja tipke na array menu
-static function key_array(nArrRet, aArr, nIzbor, cGrupa, nGrId)
-local nTIzbor := nIzbor
-local cAction
+STATIC FUNCTION key_array( nArrRet, aArr, nIzbor, cGrupa, nGrId )
 
-nIzbor := retitem(nTIzbor)
-cAction := what_action(nTIzbor)
+   LOCAL nTIzbor := nIzbor
+   LOCAL cAction
 
-if nGrId == nil
-	nGrId := aArr[nIzbor, 1]
-endif
+   nIzbor := retitem( nTIzbor )
+   cAction := what_action( nTIzbor )
 
-do case
-	case cAction == "K_CTRL_N"
-		add_s_item(aArr, cGrupa, nGrId, nIzbor)
-		nArrRet := -99
-		
-	case cAction == "K_F2"
-		edit_s_item(aArr, cGrupa, nGrId, nIzbor)
-		nArrRet := -99
-	case cAction == "K_CTRL_T"
-		del_s_item(aArr, cGrupa, nGrId, nIzbor)
-		nArrRet := -99
-	otherwise
-		nArrRet := nIzbor		
-endcase
+   IF nGrId == nil
+      nGrId := aArr[ nIzbor, 1 ]
+   ENDIF
 
-return
+   DO CASE
+   CASE cAction == "K_CTRL_N"
+      add_s_item( aArr, cGrupa, nGrId, nIzbor )
+      nArrRet := -99
+
+   CASE cAction == "K_F2"
+      edit_s_item( aArr, cGrupa, nGrId, nIzbor )
+      nArrRet := -99
+   CASE cAction == "K_CTRL_T"
+      del_s_item( aArr, cGrupa, nGrId, nIzbor )
+      nArrRet := -99
+   OTHERWISE
+      nArrRet := nIzbor
+   ENDCASE
+
+   RETURN
 
 
 // dodaje novi zapis u strings
-static function add_s_item(aArr, cGrupa, nGrId, nIzbor, nVeza_1)
-local cItNaz := SPACE(200)
-local nNStr1 := 0
-local nNStr2 := 0
-local nTArea := SELECT()
-private getlist:={}
+STATIC FUNCTION add_s_item( aArr, cGrupa, nGrId, nIzbor, nVeza_1 )
 
-Box(,1,60)
-	@ m_x+1, m_y+2 SAY "Naziv:" GET cItNaz PICT "@S40"
-	read
-BoxC()
+   LOCAL cItNaz := Space( 200 )
+   LOCAL nNStr1 := 0
+   LOCAL nNStr2 := 0
+   LOCAL nTArea := Select()
+   PRIVATE getlist := {}
 
-if Pitanje(,"Dodati novu stavku (D/N)?", "D") == "N"
-	return
-endif
+   Box(, 1, 60 )
+   @ m_x + 1, m_y + 2 SAY "Naziv:" GET cItNaz PICT "@S40"
+   READ
+   BoxC()
 
-O_STRINGS
+   IF Pitanje(, "Dodati novu stavku (D/N)?", "D" ) == "N"
+      RETURN
+   ENDIF
 
-// daj novi id
-str_new_id(@nNStr1)
+   O_STRINGS
 
-select strings
-append blank
-replace id with nNStr1
-replace oznaka with cGrupa
-replace aktivan with "D"
-replace naz with cItNaz
+   // daj novi id
+   str_new_id( @nNStr1 )
 
-// ako nisu grupe.... dodaj odmah veze atributa
-if cGrupa <> "R_GRUPE"
-	add_att_veza(nGrId, nNStr1, cItNaz)
-endif
+   SELECT strings
+   APPEND BLANK
+   REPLACE id WITH nNStr1
+   REPLACE oznaka WITH cGrupa
+   REPLACE aktivan WITH "D"
+   REPLACE naz WITH cItNaz
 
-select (nTArea)
+   // ako nisu grupe.... dodaj odmah veze atributa
+   IF cGrupa <> "R_GRUPE"
+      add_att_veza( nGrId, nNStr1, cItNaz )
+   ENDIF
 
-return
+   SELECT ( nTArea )
+
+   RETURN
 
 
 // dodaje attribute - veze...
-static function add_att_veza(nVeza_1, nVeza_2, cNaz)
-local nNewId
-local nTArea := SELECT()
-local nRet := 0
+STATIC FUNCTION add_att_veza( nVeza_1, nVeza_2, cNaz )
 
-O_STRINGS
-select strings 
-set order to tag "5"
-go top
-seek PADR("R_G_ATTRIB", 10) + STR(nVeza_1, 10, 0) + STR(nVeza_2, 10, 0)
+   LOCAL nNewId
+   LOCAL nTArea := Select()
+   LOCAL nRet := 0
 
-if FOUND() .and. field->aktivan == "D"
-	
-	// vec postoji ova veza...
-	nRet := field->id
-	
-	return nRet
-endif
+   O_STRINGS
+   SELECT strings
+   SET ORDER TO TAG "5"
+   GO TOP
+   SEEK PadR( "R_G_ATTRIB", 10 ) + Str( nVeza_1, 10, 0 ) + Str( nVeza_2, 10, 0 )
 
-// daj novi id
-str_new_id(@nNewId)
+   IF Found() .AND. field->aktivan == "D"
 
-select strings	
-append blank
-replace id with nNewId
-replace veza_1 with nVeza_1
-replace veza_2 with nVeza_2
-replace oznaka with "R_G_ATTRIB"
-replace aktivan with "D"
-replace naz with cNaz
+      // vec postoji ova veza...
+      nRet := field->id
 
-select (nTArea)
+      RETURN nRet
+   ENDIF
 
-nRet := nNewId
+   // daj novi id
+   str_new_id( @nNewId )
 
-return nRet
+   SELECT strings
+   APPEND BLANK
+   REPLACE id WITH nNewId
+   REPLACE veza_1 WITH nVeza_1
+   REPLACE veza_2 WITH nVeza_2
+   REPLACE oznaka WITH "R_G_ATTRIB"
+   REPLACE aktivan WITH "D"
+   REPLACE naz WITH cNaz
+
+   SELECT ( nTArea )
+
+   nRet := nNewId
+
+   RETURN nRet
 
 
 // ispravka zapisa u strings
-static function edit_s_item(aArr, cGrupa, nGrId, nIzbor, nVeza_1)
-local cItNaz := SPACE(200)
-local nTArea := SELECT()
-local nStrId := aArr[nIzbor, 1]
-local cVal
-private getlist:={}
+STATIC FUNCTION edit_s_item( aArr, cGrupa, nGrId, nIzbor, nVeza_1 )
 
-if Pitanje(,"Ispraviti stavku (D/N)?", "D") == "N"
-	return
-endif
+   LOCAL cItNaz := Space( 200 )
+   LOCAL nTArea := Select()
+   LOCAL nStrId := aArr[ nIzbor, 1 ]
+   LOCAL cVal
+   PRIVATE getlist := {}
 
-O_STRINGS
-select strings
-set order to tag "1"
-go top
-seek STR(nStrId, 10, 0)
+   IF Pitanje(, "Ispraviti stavku (D/N)?", "D" ) == "N"
+      RETURN
+   ENDIF
 
-if FOUND()
-	Scatter()
-	Box(,1,60)
-		@ m_x+1, m_y+2 SAY "Naziv:" GET _naz PICT "@S40"
-		read
-	BoxC()
-	Gather()
-endif
+   O_STRINGS
+   SELECT strings
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK Str( nStrId, 10, 0 )
 
-select (nTArea)
-return
+   IF Found()
+      Scatter()
+      Box(, 1, 60 )
+      @ m_x + 1, m_y + 2 SAY "Naziv:" GET _naz PICT "@S40"
+      READ
+      BoxC()
+      Gather()
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN
 
 
 // brisanje zapisa u strings
-static function del_s_item(aArr, cGrupa, nGrId, nIzbor, nVeza_1)
-local nNStrId := 0
-local nTArea := SELECT()
-local nStrId := aArr[nIzbor, 1]
+STATIC FUNCTION del_s_item( aArr, cGrupa, nGrId, nIzbor, nVeza_1 )
 
-if Pitanje(,"Izbrisati stavku (D/N)?", "D") == "N"
-	return
-endif
+   LOCAL nNStrId := 0
+   LOCAL nTArea := Select()
+   LOCAL nStrId := aArr[ nIzbor, 1 ]
 
-O_STRINGS
-select strings
-set order to tag "1"
-go top
-seek STR(nStrId, 10, 0)
+   IF Pitanje(, "Izbrisati stavku (D/N)?", "D" ) == "N"
+      RETURN
+   ENDIF
 
-if FOUND()
-	Scatter()
-	_aktivan := "N"
-	Gather()
-endif
+   O_STRINGS
+   SELECT strings
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK Str( nStrId, 10, 0 )
 
-select (nTArea)
+   IF Found()
+      Scatter()
+      _aktivan := "N"
+      Gather()
+   ENDIF
 
-return
+   SELECT ( nTArea )
+
+   RETURN
 
 
 // ********************************************
@@ -717,105 +745,109 @@ return
 
 
 // definisanje grupe
-static function def_group(aStrings, nIzbor)
-local aGrupe := {}
-local nSelection
-local cPom := ""
+STATIC FUNCTION def_group( aStrings, nIzbor )
 
-nSelection := aStrings[nIzbor, 2]
+   LOCAL aGrupe := {}
+   LOCAL nSelection
+   LOCAL cPom := ""
 
-// otvori meni sa dostupnim grupama...
-if (nSelection == 0) .or. (nSelection <> 0 .and. Pitanje(,"Promjeniti grupu artikla ?", "D") == "D")
+   nSelection := aStrings[ nIzbor, 2 ]
 
-	nSelection := -99
+   // otvori meni sa dostupnim grupama...
+   IF ( nSelection == 0 ) .OR. ( nSelection <> 0 .AND. Pitanje(, "Promjeniti grupu artikla ?", "D" ) == "D" )
 
-	do while nSelection == -99
-		// generisi matricu sa grupama... (aktivnim)
-		aGrupe := get_strings("R_GRUPE", .t.)
+      nSelection := -99
 
-		// otvori meni i vrati odabir
-		nSelection := arr_menu(aGrupe, "R_GRUPE")
-		
-		if nSelection == 0
-			return
-		endif
-		
-	enddo
-	
-	// uzmi naziv grupe
-	cPom := g_naz_byid(nSelection)
+      DO WHILE nSelection == -99
+         // generisi matricu sa grupama... (aktivnim)
+         aGrupe := get_strings( "R_GRUPE", .T. )
 
-	// regenerisi niz aStrings sa pripadajucim atributima
-	// grupa + atributi
-	fill_str_attr(@aStrings, nSelection, cPom)
-	
-endif
+         // otvori meni i vrati odabir
+         nSelection := arr_menu( aGrupe, "R_GRUPE" )
 
-return
+         IF nSelection == 0
+            RETURN
+         ENDIF
+
+      ENDDO
+
+      // uzmi naziv grupe
+      cPom := g_naz_byid( nSelection )
+
+      // regenerisi niz aStrings sa pripadajucim atributima
+      // grupa + atributi
+      fill_str_attr( @aStrings, nSelection, cPom )
+
+   ENDIF
+
+   RETURN
 
 
 // definisanje grupe
-static function def_attveze(aStrings, nIzbor, cAkcija)
-local nAttrib := {}
-local nSelection := -99
-// id grupe
-local nIdGrupa := aStrings[1, 2]
-local cAttNaz := ""
-local nScan
+STATIC FUNCTION def_attveze( aStrings, nIzbor, cAkcija )
 
-do while nSelection == -99
-	
-	// izvuci u matricu sve atribute...
-	nAttrib := get_strings("R_D_ATTRIB", .t.)
+   LOCAL nAttrib := {}
+   LOCAL nSelection := -99
 
-	nSelection := arr_menu(@nAttrib, "R_D_ATTRIB", nIdGrupa)
+   // id grupe
+   LOCAL nIdGrupa := aStrings[ 1, 2 ]
+   LOCAL cAttNaz := ""
+   LOCAL nScan
 
-	if nSelection == 0
-		return
-	endif
+   DO WHILE nSelection == -99
 
-	if nSelection > 1
-		// ako je nesto odabrano onda dodaj vezu sa grupom
-		cAttNaz := g_naz_byid(nSelection)
-		nAttVeza := add_att_veza(nIdGrupa, nSelection, cAttNaz)
+      // izvuci u matricu sve atribute...
+      nAttrib := get_strings( "R_D_ATTRIB", .T. )
 
-		nScan := ASCAN(aStrings, {|xVal| xVal[2] == nAttVeza })
-		
-		// napuni matricu sa atributima... ako ne postoji...
-		if nScan == 0
-			AADD(aStrings, { 0, nAttVeza, PADR("R_G_ATTRIB", 10), ALLTRIM(cAttNaz) + ":", "-" })
-		endif
-	endif
-enddo
+      nSelection := arr_menu( @nAttrib, "R_D_ATTRIB", nIdGrupa )
 
-return
+      IF nSelection == 0
+         RETURN
+      ENDIF
+
+      IF nSelection > 1
+         // ako je nesto odabrano onda dodaj vezu sa grupom
+         cAttNaz := g_naz_byid( nSelection )
+         nAttVeza := add_att_veza( nIdGrupa, nSelection, cAttNaz )
+
+         nScan := AScan( aStrings, {| xVal| xVal[ 2 ] == nAttVeza } )
+
+         // napuni matricu sa atributima... ako ne postoji...
+         IF nScan == 0
+            AAdd( aStrings, { 0, nAttVeza, PadR( "R_G_ATTRIB", 10 ), AllTrim( cAttNaz ) + ":", "-" } )
+         ENDIF
+      ENDIF
+   ENDDO
+
+   RETURN
 
 
 
 // definisanje atributa...
-static function def_attrib(aStrings, nIzbor)
-local cAttrVal
-local nDozId := aStrings[nIzbor, 2]
-local nAttrId
+STATIC FUNCTION def_attrib( aStrings, nIzbor )
 
-cAttrVal := SPACE(200)
+   LOCAL cAttrVal
+   LOCAL nDozId := aStrings[ nIzbor, 2 ]
+   LOCAL nAttrId
 
-Box(,1,60)
-	@ m_x+1, m_y+2 SAY "Unesi/trazi vrijednost:" GET cAttrVal PICT "@S30" VALID find_attr(@cAttrVal, nDozId, @nAttrId)
-	read
-BoxC()
+   cAttrVal := Space( 200 )
 
-if LastKey() == K_ESC
-	cAttrVal := ""
-	return
-endif
+   Box(, 1, 60 )
+   @ m_x + 1, m_y + 2 SAY "Unesi/trazi vrijednost:" GET cAttrVal PICT "@S30" VALID find_attr( @cAttrVal, nDozId, @nAttrId )
+   READ
+   BoxC()
 
-// napuni matricu sa trazenim pojmom
+   IF LastKey() == K_ESC
+      cAttrVal := ""
+      RETURN
+   ENDIF
 
-aStrings[nIzbor, 1] := nAttrId
-aStrings[nIzbor, 5] := cAttrVal
-	
-return
+   // napuni matricu sa trazenim pojmom
+
+   aStrings[ nIzbor, 1 ] := nAttrId
+   aStrings[ nIzbor, 5 ] := cAttrVal
+
+   RETURN
 
 
 // ******************************************
@@ -823,182 +855,184 @@ return
 // ******************************************
 
 // dodaje u strings dozvoljenu vrijednost atributa
-static function add_atr_doz(cVal, nVeza_1)
-local nRet := 0
-local nNewId := 0
-local nTArea := SELECT()
-local cIme
+STATIC FUNCTION add_atr_doz( cVal, nVeza_1 )
 
-O_STRINGS
-select strings
-set order to tag "1"
+   LOCAL nRet := 0
+   LOCAL nNewId := 0
+   LOCAL nTArea := Select()
+   LOCAL cIme
 
-str_new_id(@nNewId)
+   O_STRINGS
+   SELECT strings
+   SET ORDER TO TAG "1"
 
-append blank
-replace id with nNewId
-replace oznaka with PADR("ATTRIB_DOZ", 10)
-replace veza_1 with nVeza_1
-replace naz with cVal
-replace aktivan with "D"
+   str_new_id( @nNewId )
 
-select (nTArea)
+   APPEND BLANK
+   REPLACE id WITH nNewId
+   REPLACE oznaka WITH PadR( "ATTRIB_DOZ", 10 )
+   REPLACE veza_1 WITH nVeza_1
+   REPLACE naz WITH cVal
+   REPLACE aktivan WITH "D"
 
-return nNewId
+   SELECT ( nTArea )
+
+   RETURN nNewId
 
 
 // pronadji dozvoljenu vrijednost...
-static function find_attr(cAttr, nDozId, nAttrId)
-local aAttrVal := {}
-local nTArea := SELECT()
-local cOznaka := PADR("ATTRIB_DOZ", 10)
-local cSeek 
+STATIC FUNCTION find_attr( cAttr, nDozId, nAttrId )
 
-O_STRINGS
-select strings
-set order to tag "4"
-go top
+   LOCAL aAttrVal := {}
+   LOCAL nTArea := Select()
+   LOCAL cOznaka := PadR( "ATTRIB_DOZ", 10 )
+   LOCAL cSeek
 
-cSeek := cOznaka + STR(nDozId, 10, 0)
-if !EMPTY(cAttr)
-	cSeek += ALLTRIM(cAttr)
-endif
+   O_STRINGS
+   SELECT strings
+   SET ORDER TO TAG "4"
+   GO TOP
 
-seek cSeek
+   cSeek := cOznaka + Str( nDozId, 10, 0 )
+   IF !Empty( cAttr )
+      cSeek += AllTrim( cAttr )
+   ENDIF
 
-if FOUND()
-	// nafiluj matricu dostupnih vrijednosti....
-	do while !EOF() .and. field->oznaka == cOznaka ;
-			.and. field->veza_1 == nDozId
+   SEEK cSeek
 
-		if field->aktivan <> "D"
-			skip
-			loop
-		endif
+   IF Found()
+      // nafiluj matricu dostupnih vrijednosti....
+      DO WHILE !Eof() .AND. field->oznaka == cOznaka ;
+            .AND. field->veza_1 == nDozId
 
-		// pregledaj i po nazivu
-		if !EMPTY(ALLTRIM(cAttr))
-			if ALLTRIM(UPPER(field->naz)) = ALLTRIM(UPPER(cAttr))
-				//
-			else
-				skip
-				loop
-			endif
-		endif
-		
-		AADD(aAttrVal, {field->id, TRIM(field->naz)})
-		
-		skip
-	enddo
-	
-	if LEN(aAttrVal) > 0
-	
-		// otvori meni sa dozvoljenim vrijednostima
-		nAttrId := arr_menu(aAttrVal)
-		
-		// vrijednost atributa
-		cAttr := g_naz_byid(nAttrId)
-		
-		return .t.
-	endif
-endif
+         IF field->aktivan <> "D"
+            SKIP
+            LOOP
+         ENDIF
 
-// trazeni pojam ne postoji - dodaj ga!
-MsgBeep("Trazeni pojam ne postoji!")
+         // pregledaj i po nazivu
+         IF !Empty( AllTrim( cAttr ) )
+            IF AllTrim( Upper( field->naz ) ) = AllTrim( Upper( cAttr ) )
+               //
+            ELSE
+               SKIP
+               LOOP
+            ENDIF
+         ENDIF
 
-if Pitanje(, "Dodati novi pojam ? ", "N") == "D"
-	private getlist:={}
-	// dodaj novi pojam....
-	Box(,4, 60)
-		cAttr := SPACE(200)
-		@ m_x+1, m_y+2 SAY "Unos novog pojma..." 
-		@ m_x+3, m_y+2 SAY "pojam->" GET cAttr PICT "@S40"
-		read
-	BoxC()
+         AAdd( aAttrVal, { field->id, Trim( field->naz ) } )
 
-	// dodaj novi pojam...
-	nAttrId := add_atr_doz(cAttr, nDozId)
-	cAttr := g_naz_byid(nAttrId)
-endif
+         SKIP
+      ENDDO
 
-return .t.
+      IF Len( aAttrVal ) > 0
+
+         // otvori meni sa dozvoljenim vrijednostima
+         nAttrId := arr_menu( aAttrVal )
+
+         // vrijednost atributa
+         cAttr := g_naz_byid( nAttrId )
+
+         RETURN .T.
+      ENDIF
+   ENDIF
+
+   // trazeni pojam ne postoji - dodaj ga!
+   MsgBeep( "Trazeni pojam ne postoji!" )
+
+   IF Pitanje(, "Dodati novi pojam ? ", "N" ) == "D"
+      PRIVATE getlist := {}
+      // dodaj novi pojam....
+      Box(, 4, 60 )
+      cAttr := Space( 200 )
+      @ m_x + 1, m_y + 2 SAY "Unos novog pojma..."
+      @ m_x + 3, m_y + 2 SAY "pojam->" GET cAttr PICT "@S40"
+      READ
+      BoxC()
+
+      // dodaj novi pojam...
+      nAttrId := add_atr_doz( cAttr, nDozId )
+      cAttr := g_naz_byid( nAttrId )
+   ENDIF
+
+   RETURN .T.
 
 
 // snimi promjene u polje roba->strings
-static function save_str_state(aStrings, cRoba)
-local cStr := ""
-local nNewId := 0
-local nStrNId := 0
-// preskacem prvi jer je to grupa
-for i:=2 to LEN(aStrings)
-	if aStrings[i, 1] <> 0
-		cStr += ALLTRIM(STR(aStrings[i, 1])) + "#"
-	endif
-next
+STATIC FUNCTION save_str_state( aStrings, cRoba )
 
-cStr := LEFT(cStr, LEN(cStr) - 1)
+   LOCAL cStr := ""
+   LOCAL nNewId := 0
+   LOCAL nStrNId := 0
 
-str_new_id(@nNewId)
+   // preskacem prvi jer je to grupa
+   FOR i := 2 TO Len( aStrings )
+      IF aStrings[ i, 1 ] <> 0
+         cStr += AllTrim( Str( aStrings[ i, 1 ] ) ) + "#"
+      ENDIF
+   NEXT
 
-O_STRINGS
-set order to tag "2"
-seek cRoba
+   cStr := Left( cStr, Len( cStr ) - 1 )
 
-if !FOUND()
-	append blank
-	replace id with nNewId
-	replace veza_1 with -1
-	replace oznaka with cRoba
-	replace aktivan with "D"
-endif
+   str_new_id( @nNewId )
 
-replace naz with cStr
-nStrNId := strings->id
+   O_STRINGS
+   SET ORDER TO TAG "2"
+   SEEK cRoba
 
-select roba
-Scatter()
-_strings := nStrNId
-Gather()
+   IF !Found()
+      APPEND BLANK
+      REPLACE id WITH nNewId
+      REPLACE veza_1 WITH -1
+      REPLACE oznaka WITH cRoba
+      REPLACE aktivan WITH "D"
+   ENDIF
 
-return
+   REPLACE naz WITH cStr
+   nStrNId := strings->id
 
+   SELECT roba
+   Scatter()
+   _strings := nStrNId
+   Gather()
 
-
+   RETURN
 
 
 // novi id za tabelu strings
-function str_new_id( nId )
-local nTArea := SELECT()
-local nTRec := RecNo()
-local nNewId := 0
+FUNCTION str_new_id( nId )
 
-select strings
-set order to tag "1"
-go bottom
+   LOCAL nTArea := Select()
+   LOCAL nTRec := RecNo()
+   LOCAL nNewId := 0
 
-nNewId := field->id + 1
+   SELECT strings
+   SET ORDER TO TAG "1"
+   GO BOTTOM
 
-select (nTArea)
-go (nTRec)
+   nNewId := field->id + 1
 
-nId := nNewId
+   SELECT ( nTArea )
+   GO ( nTRec )
 
-return .t.
+   nId := nNewId
+
+   RETURN .T.
 
 
-static function pr_strings(aStrings)
-local i
+STATIC FUNCTION pr_strings( aStrings )
 
-START PRINT CRET
+   LOCAL i
 
-for i:=1 to LEN(aStrings)
+   START PRINT CRET
 
- ? aStrings[i,1], aStrings[i,2], aStrings[i,3], aStrings[i,4], aStrings[i,5]
+   FOR i := 1 TO Len( aStrings )
 
-next
+      ? aStrings[ i, 1 ], aStrings[ i, 2 ], aStrings[ i, 3 ], aStrings[ i, 4 ], aStrings[ i, 5 ]
 
-END PRINT
-FF
+   NEXT
 
-return
+   ENDPRINT
+   FF
 
+   RETURN

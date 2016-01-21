@@ -9,7 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "fin.ch"
+#include "f18.ch"
 
 /*! \file fmk/fin/specif/ramaglas/rpt/1g/rpt_strn.prg
  *  \brief Specifikacije troskova radnih naloga - "pogonsko knjigovodstvo"

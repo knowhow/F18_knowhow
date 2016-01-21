@@ -9,7 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "fin.ch"
+#include "f18.ch"
 
 static __par_len
 
@@ -192,7 +192,7 @@ function ZagPPR(cI)
 
 ? cNazivFirme
   ? PADL("Str."+ALLTRIM(STR(++nStranica)),80)
-  ? PADC( StrKZN("PREGLED PROMJENA NA RA¬UNU","8",gKodnaS) , 80 )
+  ? PADC( StrKZN("PREGLED PROMJENA NA RAï¿½UNU","8",gKodnaS) , 80 )
   ? PADC( "ZA PERIOD "+DTOC(dOd)+" - "+DTOC(dDo) , 80 )
   ?
   IF cI=="U"

@@ -10,9 +10,7 @@
  */
 
 #include "f18.ch"
-#include "hbgtinfo.ch"
-#include "dbinfo.ch"
-#include "f18_ver.ch"
+
 
 STATIC __server := NIL
 STATIC __server_params := NIL

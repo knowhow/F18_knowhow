@@ -10,7 +10,7 @@
  */
 
 
-#include "fin.ch"
+#include "f18.ch"
 #include "f18_separator.ch"
 
 FUNCTION Ostav()

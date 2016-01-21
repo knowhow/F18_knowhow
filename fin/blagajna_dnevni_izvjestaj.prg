@@ -10,7 +10,7 @@
  */
 
 
-#include "fin.ch"
+#include "f18.ch"
 
 #define DABLAGAS lBlagAsis .and. _IDVN == cBlagIDVN
 

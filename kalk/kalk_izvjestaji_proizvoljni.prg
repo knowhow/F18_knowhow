@@ -10,7 +10,7 @@
  */
 
 
-#include "kalk.ch"
+#include "f18.ch"
 
 
 FUNCTION ProizvKalk()
@@ -231,7 +231,7 @@ FUNCTION GenProIzvKalk()
          SKIP 1; LOOP
       ENDIF
 
-      // na osnovu tipa stavke u KONIZ-u odreÐujemo dalje akcije
+      // na osnovu tipa stavke u KONIZ-u odreï¿½ujemo dalje akcije
       cTK11  := Upper( Left( KONIZ->k, 1 ) )
       cTK12  := Val( Right( KONIZ->k, 1 ) )
 
@@ -509,7 +509,7 @@ FUNCTION GenProIzvKalk()
          nDug := nPot := nPrDug := nPrPot := 0
          DO WHILE !Eof() .AND. cIdKonto == &cPIKPolje
             Postotak( 2, ++nStavki )
-            // çta sa DATDOK, IZNOSBHD i D_P ?!  VA¦NO!
+            // ï¿½ta sa DATDOK, IZNOSBHD i D_P ?!  VAï¿½NO!
             // ---------------
             IF !lKumSuma .OR. datdok >= dOd   // tekuci period (od datuma dOd)
                IF D_P == "1"           // dug.

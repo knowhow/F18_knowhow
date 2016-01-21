@@ -10,7 +10,7 @@
  */
 
 
-#include "kalk.ch"
+#include "f18.ch"
 
 // rekapitulacija finansijskog stanja po magacinima
 FUNCTION RFLLM()

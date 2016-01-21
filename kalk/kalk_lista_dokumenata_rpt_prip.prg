@@ -10,7 +10,7 @@
  */
 
 
-#include "kalk.ch"
+#include "f18.ch"
 
 // stampa liste dokumenata koji se nalaze u pripremi
 function StPripr()

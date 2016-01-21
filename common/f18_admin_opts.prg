@@ -10,10 +10,6 @@
  */
 
 #include "f18.ch"
-#include "hbclass.ch"
-#include "common.ch"
-#include "f18_ver.ch"
-#include "fileio.ch"
 
 CLASS F18AdminOpts
 

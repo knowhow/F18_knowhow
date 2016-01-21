@@ -10,7 +10,7 @@
  */
 
 
-#include "kalk.ch"
+#include "f18.ch"
 
 static cij_decimala:=3
 static izn_decimala:=2

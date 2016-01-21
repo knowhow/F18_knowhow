@@ -1,7 +1,9 @@
 f18.hbc -DDEFINE2 -DDEBUG -inc
 
 -Iinclude
--DGT_DEFAULT_TRM
+#-DGT_DEFAULT_TRM
+
+-DGT_DEFAULT_XCW
 -oF18
 -static
 

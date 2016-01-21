@@ -9,12 +9,11 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "rnal.ch"
+#include "f18.ch"
 
 STATIC __doc_no
 STATIC __doc_stat
 STATIC __doc_desc
-
 
 FUNCTION rnal_azuriraj_dokument( cDesc )
 

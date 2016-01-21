@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 FUNCTION set_a_dbf_rnal()
 
    // kumulativ

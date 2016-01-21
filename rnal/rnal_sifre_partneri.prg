@@ -9,7 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "rnal.ch"
+#include "f18.ch"
 
 // -----------------------------------------
 // otvara sifrarnik narucioca
@@ -75,7 +75,7 @@ STATIC FUNCTION set_f_kol( cCustDesc, cId )
    LOCAL cFilter := ""
 
    IF !Empty( cCustDesc )
-	
+
       cCustDesc := AllTrim( cCustDesc )
 
       IF Right( cCustDesc ) == "$"
@@ -149,19 +149,19 @@ STATIC FUNCTION key_handler( Ch )
 
    DO CASE
    CASE Upper( Chr( Ch ) ) == "K"
-	
+
       // pregled kontakata
       s_contacts( nil, field->cust_id )
       nRet := DE_CONT
-		
+
    CASE Upper( Chr( Ch ) ) == "O"
-	
+
       // pregled objekata
       s_objects( nil, field->cust_id )
       nRet := DE_CONT
-	
+
    CASE CH == K_F3
-		
+
       // ispravka sifre
       nRet := rnal_wid_edit( "CUST_ID" )
    ENDCASE
@@ -232,10 +232,10 @@ FUNCTION _cust_cont( nCust_id, nCont_id )
 
    // ako je NN onda potrazi kontakt
    IF cTmp == "NN"
-	
+
       SELECT contacts
       SEEK contid_str( nCont_id )
-	
+
       IF Found()
          cTmp := AllTrim( field->cont_desc )
       ENDIF

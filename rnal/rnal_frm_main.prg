@@ -9,14 +9,11 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
+#include "f18.ch"
 
 STATIC l_new_doc
 STATIC _oper_id
 STATIC _doc
-
-
 
 
 FUNCTION rnal_unos_osnovnih_podataka_naloga( lNew )
@@ -52,7 +49,7 @@ FUNCTION rnal_unos_osnovnih_podataka_naloga( lNew )
       SELECT _docs
       BoxC()
       RETURN 0
-	
+
    ENDIF
 
    BoxC()
@@ -144,16 +141,16 @@ STATIC FUNCTION forma_osnovnih_podataka( nBoxX, nBoxY )
       _doc_status := 10
       _doc_sh_des := Space( Len( _doc_sh_des ) )
       _doc_type := Space( 2 )
-	
+
       cCustId := PadR( "", 10 )
       cContId := PadR( "", 10 )
       cObjId := PadR( "", 10 )
    ELSE
-	
+
       cCustId := Str( _cust_id, 10 )
       cContId := Str( _cont_id, 10 )
       cObjId := Str( _obj_id, 10 )
-	
+
    ENDIF
 
    _operater_i := _oper_id
@@ -202,9 +199,9 @@ STATIC FUNCTION forma_osnovnih_podataka( nBoxX, nBoxY )
    @ m_x + nX, m_y + 2 SAY PadL( "Vrsta placanja (*):", nLeft ) GET _doc_pay_id VALID {|| ( _doc_pay_id > 0 .AND. _doc_pay_id < 3 ), show_it( s_pay_id( _doc_pay_id ), 40 ) } PICT "9"  WHEN set_opc_box( nBoxX, 50, "1 - ziro racun, 2 - gotovina" )
 
    nX += 1
-	
+
    @ m_x + nX, m_y + 2 SAY PadL( "Placeno (D/N)? (*):", nLeft ) GET _doc_paid VALID _doc_paid $ "DN" PICT "@!" WHEN set_opc_box( nBoxX, 50 )
-	
+
    @ m_x + nX, Col() + 2 SAY "dod.nap.plac:" GET _doc_pay_de PICT "@S29" WHEN set_opc_box( nBoxX, 50, "dodatne napomene vezane za placanje" )
    @ m_x + nX, Col() SAY ">" COLOR "I"
 
@@ -228,7 +225,7 @@ STATIC FUNCTION forma_osnovnih_podataka( nBoxX, nBoxY )
 
 
 STATIC FUNCTION valid_datum_isporuke( dDatIsp, dDatNaloga )
- 
+
    LOCAL lRet := .F.
 
    IF dDatIsp < dDatNaloga
@@ -274,13 +271,13 @@ FUNCTION set_var( _field, xVar, nLen )
 
    // convert to "C"
    IF ValType( xVar ) == "N"
-	
+
       // set field
       _field := xVar
-	
+
       // convert to "C"
       xVar := PadL( Str( xVar, nLen ), nLen )
-	
+
    ENDIF
 
    RETURN .T.
@@ -317,7 +314,7 @@ STATIC FUNCTION chk_mandatory( cDesc, nDocPriority )
    DO CASE
    CASE nDocPriority < 2 .AND. Empty( cDesc )
       lRet := .F.
-		
+
    ENDCASE
 
    IF lRet == .F.

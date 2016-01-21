@@ -9,9 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
-
+#include "f18.ch"
 
 STATIC LEN_IT_NO := 4
 STATIC LEN_DESC := 65
@@ -76,17 +74,17 @@ FUNCTION rnal_nalog_za_proizvodnju_txt()
 
    // izvuci sve grupe....
    DO WHILE !Eof() .AND. field->doc_no == nDoc_no
-	
+
       // grupa dokumenta
       nDoc_gr := field->doc_gr_no
       DO WHILE !Eof() .AND. field->doc_no == nDoc_no .AND. field->doc_gr_no == nDoc_gr
-		
+
          skip
       ENDDO
-	
+
       ++ nCnt
       AAdd( aGroups, { nDoc_gr, nCnt } )
-	
+
    ENDDO
 
    IF !StartPrint( nil, nil )
@@ -95,9 +93,9 @@ FUNCTION rnal_nalog_za_proizvodnju_txt()
    ENDIF
 
    FOR i := 1 TO Len( aGroups )
-	
+
       stampa_naloga_za_grupu( aGroups[ i, 1 ], aGroups[ i, 2 ], Len( aGroups ) )
-	
+
       FF
    NEXT
 
@@ -171,23 +169,23 @@ FUNCTION stampa_naloga_za_grupu( nDoc_gr, nGr_cnt, nGr_total )
 
    // stampaj podatke
    DO WHILE !Eof() .AND. field->doc_no == nDoc_no .AND. field->doc_gr_no == nDoc_gr
-	
+
       lAops := .F.
-	
+
       nArt_id := field->art_id
-	
+
       // dodaj prored samo ako je drugi artikal
       IF nCount > 0 .AND. !Empty( field->art_desc ) // lSh_art_desc == .t.
-	
+
          ? cLine
-	
+
       ENDIF
 
       cDoc_no := docno_str( field->doc_no )
       cDoc_it_no := docit_str( field->doc_it_no )
       cDoc_It_type := field->doc_it_typ
 
-	
+
       // prikazuj naziv artikla
       IF !Empty( field->art_desc )     // lSh_art_desc == .t.
          cArt_desc := AllTrim( field->art_desc )
@@ -195,80 +193,80 @@ FUNCTION stampa_naloga_za_grupu( nDoc_gr, nGr_cnt, nGr_total )
          cPom := "-//-"
          cArt_desc := PadC( cPom, 10 )
       ENDIF
-	
+
       aArt_desc := SjeciStr( cArt_desc, LEN_DESC )
-	
+
       // prvi red
       // 1) naziv i sifra artikla
-	
+
       ? RAZMAK
-	
+
       // r.br
       ?? PadL( AllTrim( Str( ++nDocRbr ) ) + ")", LEN_IT_NO )
-	
+
       ?? " "
-	
+
       // proizvod, naziv robe, jmj
       ?? AllTrim( aArt_desc[ 1 ] ) + " " + Replicate( ".", ( LEN_DESC - 1 ) - Len( AllTrim( aArt_desc[ 1 ] ) ) )
 
       // ostatak naziva artikla....
       // drugi red
-	
+
       IF Len( aArt_desc ) > 1
-		
+
          FOR i := 2 TO Len( aArt_desc )
-		
+
             ? RAZMAK
-			
+
             ?? PadL( "", LEN_IT_NO )
-			
+
             ?? " "
-			
+
             ?? aArt_desc[ i ]
-	
-			
+
+
             // provjeri za novu stranicu
             IF PRow() > LEN_PAGE - DSTR_KOREKCIJA()
                ++ nPage
                Nstr_a4( nPage, .T. )
             endif
          NEXT
-		
+
       ENDIF
-	
+
       // zatim obrade i napomene obrada, operacije
-	
+
       SELECT t_docop
       SET ORDER TO TAG "1"
       GO TOP
       SEEK docno_str( t_docit->doc_no ) + docit_str( t_docit->doc_it_no )
 
-	
+
       DO WHILE !Eof() .AND. field->doc_no == t_docit->doc_no .AND. field->doc_it_no == t_docit->doc_it_no
 
          // uzmi element
          nDoc_el_no := field->doc_el_no
-	
+
          nElDesc := 1
          nElCount := 0
          lSh_op_desc := .F.
          lSh_oper := .F.
          cOpTmpDesc := ""
          cDoc_op_desc := ""
-	
+
          DO WHILE !Eof() .AND. field->doc_no == t_docit->doc_no .AND. field->doc_it_no == t_docit->doc_it_no .AND. field->doc_el_no == nDoc_el_no
-		
+
             cDoc_op_desc := AllTrim( field->doc_op_des )
-	    	
+
             // element...
             IF nElDesc == 1
-			
+
                // provjeri za novu stranicu
                IF PRow() > LEN_PAGE - DSTR_KOREKCIJA()
                   ++ nPage
                   Nstr_a4( nPage, .T. )
                endif
-			
+
                ? RAZMAK
                ?? PadL( "", LEN_IT_NO )
                ?? " "
@@ -280,28 +278,28 @@ FUNCTION stampa_naloga_za_grupu( nDoc_gr, nGr_cnt, nGr_total )
                ?? ", "
                // prikazi lot broj
                ?? show_lot()
-			
+
                // iskljuci ga do daljnjeg
                nElDesc := 0
-	
+
                lAops := .T.
-	
+
             ENDIF
-		
+
             // provjeri za novu stranicu
             IF PRow() > LEN_PAGE - DSTR_KOREKCIJA()
                ++ nPage
                Nstr_a4( nPage, .T. )
             ENDIF
-		
+
             // operacije....
-		
+
             ? RAZMAK
 
             ?? PadL( "", LEN_IT_NO )
 
             ?? " "
-		
+
             IF !Empty( field->aop_desc ) .AND. AllTrim( field->aop_desc ) <> "?????"
                ?? PadL( Str( ++nElCount, 3 ), 3 ) + ")" + Space( 1 ) + AllTrim( field->aop_desc )
             ENDIF
@@ -311,118 +309,118 @@ FUNCTION stampa_naloga_za_grupu( nDoc_gr, nGr_cnt, nGr_total )
                ?? AllTrim( field->aop_att_de )
                ?? ", "
                ?? AllTrim( field->aop_value )
-			
+
             ENDIF
-		
+
             IF !Empty( field->doc_op_des )
-			
+
                cPom := "- napomene: "
                cPom += AllTrim( field->doc_op_des )
                aPom := SjeciStr( cPom, 70 )
-			
+
                FOR i := 1 TO Len( aPom )
-				
+
                   ? RAZMAK
                   ?? PadR( "", LEN_IT_NO )
                   ?? Space( 5 )
                   ?? aPom[ i ]
-				
+
                NEXT
-			
+
             ENDIF
-		
+
             SELECT t_docop
-		
+
             SKIP
-	
+
          ENDDO
-	
+
       ENDDO
 
       SELECT t_docit
-	
+
 
       // lot broj ako nema operacija itd...
       IF lAops == .F. .AND. !Empty( field->art_desc )
-		
+
          // provjeri za novu stranicu
          IF PRow() > LEN_PAGE - DSTR_KOREKCIJA()
-			
+
             ++ nPage
             Nstr_a4( nPage, .T. )
-		
+
          endif
-		
+
          ? RAZMAK
          ?? PadL( "", LEN_IT_NO )
          ?? " "
          ?? show_lot()
-	
+
          lAops := .T.
       ENDIF
-	
-		
+
+
       // zatim dimenzije
-	
+
       IF lAops == .T.
-	
+
          // ako postoje obrade u artiklu dodaj tackice
-	
+
          // provjeri za novu stranicu
          IF PRow() > LEN_PAGE - DSTR_KOREKCIJA()
-			
+
             ++ nPage
             Nstr_a4( nPage, .T. )
-		
+
          endif
-	
+
          ? RAZMAK
          ?? PadL( "", LEN_IT_NO )
          ?? " "
          ?? Replicate( ".", LEN_DESC  )
-	
+
       ENDIF
-	
+
       ?? " "
-	
+
       IF cDoc_it_type == "R"
-	
+
          // prikazi fi
          ?? PadL( show_fi( field->doc_it_wid, field->doc_it_hei ), 21 )
-	
+
       ELSEIF cDoc_it_type == "S"
-		
+
          ? RAZMAK
          ?? PadL( "", LEN_IT_NO )
-	
+
          ?? " "
          ?? PadR( "", LEN_DESC - 10 )
-	
+
          ?? " "
          // sirina 1 / 2
          ?? PadL( show_shape( field->doc_it_wid, field->doc_it_w2 ), 15 )
          ?? " "
          // visina 1 / 2
          ?? PadL( show_shape( field->doc_it_hei, field->doc_it_h2 ), 15 )
-	
+
       ELSE
-	
+
          // sirina
          ?? show_number( field->doc_it_wid, nil, -10 )
 
          ?? " "
          // visina
          ?? show_number( field->doc_it_hei, nil, -10 )
-	
+
       ENDIF
-	
+
       ?? " "
 
       // kolicina
       ?? show_number( field->doc_it_qtt, nil, -10 )
 
       _qtty_total += field->doc_it_qtt
-	
+
       // napomene za item:
       // - napomene
       // - shema u prilogu
@@ -430,71 +428,71 @@ FUNCTION stampa_naloga_za_grupu( nDoc_gr, nGr_cnt, nGr_total )
       IF !Empty( field->doc_it_des ) ;
             .OR. field->doc_it_alt <> 0 ;
             .OR. ( field->doc_it_sch == "D" )
-	
+
          cPom := "Napomene: " + ;
             AllTrim( field->doc_it_des )
-		
+
          IF field->doc_it_sch == "D"
-		
+
             cPom += " "
             cPom += "(SHEMA U PRILOGU)"
          endif
 
          // nadmorska visina
          IF field->doc_it_alt <> 0
-			
+
             IF !Empty( field->doc_acity )
                cPom += " "
                cPom += "Montaza: "
                cPom += AllTrim( field->doc_acity )
             ENDIF
-			
+
             cPom += ", "
             cPom += "nadmorska visina = " + AllTrim( Str( field->doc_it_alt, 12, 2 ) ) + " m"
          ENDIF
-	
+
          cItDesc := cPom
-		
+
          lSh_it_desc := .F.
-		
+
          IF ( AllTrim( cTmpItDesc ) <> AllTrim( cItDesc ) ) .OR. ( nArt_tmp <> nArt_id )
             lSh_it_desc := .T.
          ENDIF
-	
+
          IF lSh_it_desc == .T.
-		
+
             aDoc_it_desc := SjeciStr( cItDesc, 100 )
-		
+
             FOR i := 1 TO Len( aDoc_it_desc )
-						
+
                ? RAZMAK
                ?? PadL( "", LEN_IT_NO )
                ?? " "
                ?? aDoc_it_desc[ i ]
-		
+
             NEXT
-		
+
          ENDIF
       ENDIF
-	
+
       SELECT t_docit
-	
+
       // provjeri za novu stranicu
       IF PRow() > LEN_PAGE - DSTR_KOREKCIJA()
-	
+
          ++ nPage
          Nstr_a4( nPage, .T. )
-		
+
       endif
-	
+
       SELECT t_docit
       SKIP
 
       cTmpItDesc := cItDesc
       nArt_tmp := nArt_id
-	
+
       ++ nCount
-	
+
    ENDDO
 
    // provjeri za novu stranicu
@@ -578,13 +576,13 @@ FUNCTION s_nal_rekap( lPrint, nDoc_no, lSpecif )
       // da li se treba stampati ?
       SELECT t_docit
       SEEK docno_str( nDoc ) + docit_str( nDoc_it_no )
-	
+
       IF field->print == "N"
          SELECT t_docit2
          SKIP
          LOOP
       ENDIF
-	
+
       // vrati se
       SELECT t_docit2
 
@@ -592,21 +590,21 @@ FUNCTION s_nal_rekap( lPrint, nDoc_no, lSpecif )
       // ++nPage
       // Nstr_a4(nPage, .t.)
       // endif
-	
+
       ? RAZMAK + "nalog: " + AllTrim( Str( nDoc ) ) + ;
          ", stavka: " + AllTrim( Str( nDoc_it_no ) )
       ? RAZMAK + "----------------------------"
 
       DO WHILE !Eof() .AND. field->doc_no == nDoc ;
             .AND. field->doc_it_no == nDoc_it_no
-		
+
          // sifra i naziv stavke
          cTmp := "("
          cTmp += AllTrim( field->art_id )
          cTmp += ")"
          cTmp += " "
          cTmp += AllTrim( field->art_desc )
-		
+
          // opis stavke
          cTmp2 := AllTrim( field->descr )
          aTmp2 := SjeciStr( cTmp2, 120 )
@@ -621,17 +619,17 @@ FUNCTION s_nal_rekap( lPrint, nDoc_no, lSpecif )
          ?? " "
          ?? PadR( cTmp, 40 )
          ?? " kol.=", AllTrim( Str( field->doc_it_qtt, 12, 2 ) )
-		
+
          IF !Empty( cTmp2 )
-			
+
             ? RAZMAK + Space( 2 ) + "op: "
-			
+
             FOR i := 1 TO Len( aTmp2 )
-				
+
                IF i > 1
                   ? RAZMAK + Space( 6 )
                ENDIF
-				
+
                ?? aTmp2[ i ]
 
                // if prow() > LEN_PAGE - DSTR_KOREKCIJA()
@@ -777,20 +775,20 @@ STATIC FUNCTION s_nal_footer()
       endif
 
       cPom := "Placeno: "
-	
+
       IF cPayed == "D"
          cPom += "DA"
       ELSE
          cPom += "NE"
       ENDIF
-	
+
       ? RAZMAK + cPom
-	
+
    ENDIF
 
    // dodatne napomene placanje
    IF !Empty( cPayAddDesc ) .AND. AllTrim( cPayAddDesc ) <> "-"
-	
+
       // provjeri za novu stranicu
       IF PRow() > LEN_PAGE - DSTR_KOREKCIJA()
          ++ nPage
@@ -801,7 +799,7 @@ STATIC FUNCTION s_nal_footer()
       cPom += cPayAddDesc
 
       ? RAZMAK + cPom
-		
+
    ENDIF
 
    // provjeri za novu stranicu
@@ -1011,7 +1009,7 @@ STATIC FUNCTION nalpr_kupac()
    cPom += ", "
    cPom += "Mjesto isp.: "
    cPom += cDoc_ship_place
-	
+
    aPom := SjeciStr( cPom, 100 )
 
    FOR i := 1 TO Len( aPom )
@@ -1019,7 +1017,7 @@ STATIC FUNCTION nalpr_kupac()
       p_line( cRazmak + aPom[ i ], 12, .F. )
 
    NEXT
-	
+
    // podaci narucioca
    cPom := "Narucioc: "
    cPom += AllTrim( cCust_desc )
@@ -1037,16 +1035,16 @@ STATIC FUNCTION nalpr_kupac()
    aPom := SjeciStr( cPom, 100 )
 
    FOR i := 1 TO Len( aPom )
-	
+
       p_line( cRazmak + aPom[ i ], 12, .F. )
 
    NEXT
 
    // ostale napomene naloga...
    IF !Empty( cDoc_add_desc )
-	
+
       cPom := "Ostale napomene: " + AllTrim( cDoc_add_desc )
-	
+
       aPom := SjeciStr( cPom, 100 )
 
       FOR i := 1 TO Len( aPom )

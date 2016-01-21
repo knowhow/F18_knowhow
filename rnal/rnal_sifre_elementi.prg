@@ -9,9 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
-#include "f18_separator.ch"
+#include "f18.ch"
 
 STATIC art_id
 STATIC el_gr_id
@@ -96,9 +94,9 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
    m_y += __box_x
 
    DO WHILE .T.
-	
+
       IF Alias() == "ELEMENTS"
-		
+
          // bilo: 16
          nX := __box_x - 5
          // bilo: 20
@@ -106,15 +104,15 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
 
          // bilo: 21
          m_y -= __box_x
-		
+
          _say_tbl_desc( m_x + 1, m_y + 1, cCol2, "** elementi", 11 )
-		
+
          elem_kol( @ImeKol, @Kol )
 
          elem_filter( art_id )
 
       ELSEIF Alias() == "E_ATT"
-		
+
          // bilo: 10
          nX := (  __box_x / 2 )
          // bilo: 56
@@ -122,13 +120,13 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
 
          // bilo: 21
          m_y += __box_x
-		
+
          _say_tbl_desc( m_x + 1, m_y + 1, cCol2, "** atributi", 20 )
-	
+
          e_att_kol( @ImeKol, @Kol )
 
          e_att_filter( nEl_id )
-	
+
       ELSEIF Alias() == "E_AOPS"
 
          // bilo: 10
@@ -139,16 +137,16 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
 
          // bilo: 10
          m_x += (  __box_x / 2 )
-		
+
          _say_tbl_desc( m_x + 1, ;
             m_y + 1, ;
             cCol2, ;
             "** dod.operacije", ;
             20 )
-		
+
          e_aops_kol( @ImeKol, @Kol )
          e_aops_filter( nEl_id )
-	
+
       ENDIF
 
       ObjDbedit( "elem", nX, nY, {| Ch| elem_hand( Ch ) }, "", "",,,,, 1 )
@@ -166,11 +164,11 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
          m_x := nTmpX
          SELECT ( nTmpArea )
       ENDIF
-	
+
       IF Alias() == "ELEMENTS"
          m_x -= ( __box_x / 2 )
       ENDIF
-	
+
       IF LastKey() == K_ESC
          SELECT articles
          nRet := rnal_setuj_naziv_artikla( art_id, lNew )
@@ -224,15 +222,15 @@ FUNCTION generisi_elemente_iz_sheme( nArt_id, nArtType, cSchema, nStartFrom )
       // dodaj element...
       // tipa = aSchema[i] = G ili F ili ????
       SELECT elements
-	
+
       nRbr := i
-	
+
       IF nStartFrom > 0
          nRbr += nStartFrom
       ENDIF
-	
+
       elem_edit( nArt_id, .T., AllTrim( aSchema[ i ] ), nRbr )
-	
+
    NEXT
 
    SELECT ( nTArea )
@@ -257,7 +255,7 @@ STATIC FUNCTION _chk_elements( nArt_id )
    SEEK artid_str( art_id )
 
    DO WHILE !Eof() .AND. field->art_id == nArt_id
-	
+
       nEl_id := field->el_id
 
       SELECT e_att
@@ -266,27 +264,27 @@ STATIC FUNCTION _chk_elements( nArt_id )
       SEEK elid_str( nEl_id )
 
       DO WHILE !Eof() .AND. field->el_id == nEl_id
-		
+
          // ako postoji vrijednost ok
          IF field->e_gr_vl_id <> 0
-		
+
             SELECT e_att
             SKIP
             LOOP
-			
+
          ENDIF
-	
+
          // inace izbaci da nije sve ok.
-		
+
          nRet := 0
-		
+
          MsgBeep( "Atribut: '" + ;
             AllTrim( g_gr_at_desc( field->e_gr_at_id ) ) + ;
             "' nije definisan !!!" )
-		
+
          SELECT ( nTArea )
          RETURN nRet
-	
+
       ENDDO
 
       SELECT elements
@@ -383,9 +381,9 @@ STATIC FUNCTION _inc_el_no( wel_no, nArt_id )
 
    SET FILTER TO
    SET ORDER TO TAG "1"
-	
+
    wel_no := _last_elno( nArt_id ) + 1
-	
+
    SET FILTER to &cTBFilter
    SET ORDER TO TAG "1"
 
@@ -473,36 +471,36 @@ STATIC FUNCTION elem_hand()
    LOCAL nRet := DE_CONT
 
    DO CASE
-	
+
    CASE l_auto_tab == .T.
-	
+
       KEYBOARD Chr( K_TAB )
       l_auto_tab := .F.
       RETURN DE_REFRESH
 
    CASE Ch == K_TAB
-		
+
       // browse kroz tabele
-		
+
       IF Alias() == "E_ATT"
-			
+
          _say_tbl_desc( m_x + 1, ;
             m_y + 1, ;
             nil, ;
             "** atributi", ;
             20 )
-		
+
          SELECT e_aops
          nRet := DE_ABORT
-			
+
       ELSEIF Alias() == "ELEMENTS"
-			
+
          IF field->el_id == 0
-				
+
             MsgBeep( "Nema unesenih elemenata !!!!" )
 
             nRet := DE_CONT
-				
+
          ELSE
 
             _say_tbl_desc( m_x + 1, ;
@@ -510,151 +508,151 @@ STATIC FUNCTION elem_hand()
                nil, ;
                "** elementi", ;
                11 )
-		
-			
+
+
             nEl_id := field->el_id
             el_gr_id := field->e_gr_id
-			
+
             SELECT e_att
             nRet := DE_ABORT
-				
+
          ENDIF
-			
+
       ELSEIF Alias() == "E_AOPS"
-			
+
          _say_tbl_desc( m_x + 1, ;
             m_y + 1, ;
             nil, ;
             "** dod.operacije", ;
             20 )
-		
+
          SELECT elements
 
          nRet := DE_ABORT
-			
+
       ENDIF
-	
+
    CASE Ch == K_CTRL_N
-	
+
       // nove stavke
 
       cTBFilter := dbFilter()
 
       IF Alias() == "ELEMENTS"
-			
+
          nRet := DE_REFRESH
-		
+
          GO BOTTOM
-	
+
          IF elem_edit( art_id, .T. ) == 1
             l_auto_tab := .T.
          ELSE
             GO TOP
          ENDIF
-			
+
       ELSEIF Alias() == "E_ATT"
 
          nRet := DE_REFRESH
-			
+
          IF e_att_edit( nEl_id, .T. ) == 1
             //
          ELSE
             GO TOP
          ENDIF
-		
+
       ELSEIF Alias() == "E_AOPS"
-		
+
          nRet := DE_REFRESH
-		
+
          IF e_aops_edit( nEl_id, .T. ) == 1
             //
          ELSE
             GO TOP
          ENDIF
-	
+
       ENDIF
 
    CASE Ch == K_F2 .OR. Ch == K_ENTER
-	
+
       // ispravka stavki
-		
+
       cTBFilter := dbFilter()
 
       IF Alias() == "ELEMENTS"
-			
+
          IF Ch == K_ENTER
-			
+
             Msgbeep( "Opcija onemogucena##Koristiti F2" )
             nRet := DE_CONT
-				
+
          ELSE
             // ispravka rednog broja elementa...
-				
+
             nRet := DE_REFRESH
-				
+
             e_no_edit()
-				
+
             SET FILTER to &cTbFilter
             GO TOP
-				
+
          ENDIF
-			
+
       ELSEIF Alias() == "E_ATT"
-			
+
          nRet := DE_REFRESH
          e_att_edit( nEl_id, .F. )
          SET FILTER to &cTbFilter
          GO TOP
-		
+
       ELSEIF Alias() == "E_AOPS"
-		
+
          nRet := DE_REFRESH
          e_aops_edit( nEl_id, .F. )
          SET FILTER to &cTbFilter
          GO TOP
-		
+
       ENDIF
 
-	
+
    CASE Ch == K_CTRL_T
-	
+
       // brisanje stavki
 
       IF Alias() == "ELEMENTS"
-			
+
          nRet := elem_del()
-			
+
       ELSEIF Alias() == "E_ATT"
 
          nRet := e_att_del()
-		
+
       ELSEIF Alias() == "E_AOPS"
-		
+
          nRet := e_aops_del()
-			
+
       ENDIF
 
    CASE Upper( Chr( Ch ) ) == "C"
-		
+
       IF Alias() <> "ELEMENTS"
          RETURN DE_CONT
       ENDIF
 
       nEl_id := field->el_id
       nEl_gr_id := field->e_gr_id
-		
+
       nRet := el_convert( nEl_id, nEl_gr_id, art_id )
 
-	
+
    CASE Upper( Chr( Ch ) ) == "U"
-		
+
       IF Alias() <> "ELEMENTS"
          RETURN DE_CONT
       ENDIF
 
       nEl_id := field->el_id
       nEl_gr_id := field->e_gr_id
-		
+
       nRet := el_restore( nEl_id, nEl_gr_id, art_id )
 
    ENDCASE
@@ -686,15 +684,15 @@ STATIC FUNCTION upd_el_piccode( nArt_id )
 
    GO TOP
    DO WHILE !Eof() .AND. field->art_id == nArt_id
-	
+
       i += 1
-	
+
       cTmp := AllTrim( g_e_gr_desc( field->e_gr_id, nil, .F. ) )
-	
+
       IF i <> 1
          cSchema += cSep
       ENDIF
-	
+
       cSchema += cTmp
 
       SKIP
@@ -748,11 +746,11 @@ STATIC FUNCTION el_convert( nEl_id, nEl_gr_id, nArt_id )
    Box(, 10, 60 )
 
    @ m_x + nX, m_y + 2 SAY "***** konvertovanje stavke artikla"
-	
+
    nX += 2
 
    @ m_x + nX, m_y + 2 SAY "(1) staklo -> lami staklo sa folijom"
-	
+
    nX += 2
 
    @ m_x + nX, m_y + 2 SAY "selekcija:" GET cSelect VALID cSelect $ "1"
@@ -760,15 +758,15 @@ STATIC FUNCTION el_convert( nEl_id, nEl_gr_id, nArt_id )
    READ
 
    IF cSelect == "1"
-		
+
       nX += 2
 
       @ m_x + nX, m_y + 2 SAY "broj folija lami stakla:" GET nFolNr PICT "9"
-		
+
       READ
-		
+
    ENDIF
-	
+
    BoxC()
 
    IF LastKey() == K_ESC
@@ -819,11 +817,11 @@ STATIC FUNCTION elem_edit( nArt_id, lNewRec, cType, nEl_no )
    ENDIF
 
    IF lNewRec
-	
+
       IF !Empty( cType )
          lAuto := .T.
       ENDIF
-	
+
       IF setuj_novi_id_tabele( @nEl_id, "EL_ID", lAuto, "FULL" ) == 0
          RETURN 0
       ENDIF
@@ -846,7 +844,7 @@ STATIC FUNCTION elem_edit( nArt_id, lNewRec, cType, nEl_no )
          // radi filtera
          _el_no := nEl_no
       ENDIF
-	
+
       _e_gr_id := 0
 
    ENDIF
@@ -860,13 +858,13 @@ STATIC FUNCTION elem_edit( nArt_id, lNewRec, cType, nEl_no )
       ELSE
          @ m_x + 1, m_y + 2 SAY "Ispravka elementa *******" COLOR cColor
       ENDIF
-	
+
       @ m_x + 3, m_y + 2 SAY PadL( "pozicija (rbr) elementa:", nLeft ) GET _el_no VALID _el_no > 0
-	
+
       @ m_x + 5, m_y + 2 SAY PadL( "element pripada grupi:", nLeft ) GET _e_gr_id VALID s_e_groups( @_e_gr_id, .T. )
-	
+
       @ m_x + 6, m_y + 2 SAY8 PadL( "(0 - otvori šifrarnik)", nLeft )
-	
+
       READ
 
       BoxC()
@@ -877,9 +875,9 @@ STATIC FUNCTION elem_edit( nArt_id, lNewRec, cType, nEl_no )
 
       _rec := get_dbf_global_memvars( NIL, .F. )
       delete_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
-	
+
       RETURN 0
-	
+
    ENDIF
 
    IF !Empty( cType )
@@ -891,7 +889,7 @@ STATIC FUNCTION elem_edit( nArt_id, lNewRec, cType, nEl_no )
 
       // ukloni "*" ako postoji...
       cType := StrTran( cType, "*", "" )
-	
+
       _e_gr_id := g_gr_by_type( cType )
 
    ENDIF
@@ -933,7 +931,7 @@ STATIC FUNCTION e_no_edit()
 
 // ----------------------------------------------------
 // filovanje tabele e_att sa atributima grupe
-// ako smo odabrali grupu STAKLO, automatski se 
+// ako smo odabrali grupu STAKLO, automatski se
 // insertuju u E_ATT atributi te grupe, npr:
 // - tip
 // - debljina
@@ -962,11 +960,11 @@ STATIC FUNCTION nafiluj_atribute_grupe( __gr_id, __el_id )
 
    DO WHILE !Eof() .AND. field->e_gr_id == __gr_id ;
       .AND. field->e_gr_at_re == "*"
-     
+
       nEl_att_id := 0
 
       SELECT e_att
-      	
+
       IF setuj_novi_id_tabele( @nEl_att_id, "EL_ATT_ID", lAuto ) == 0
          SELECT e_gr_att
          LOOP
@@ -980,7 +978,7 @@ STATIC FUNCTION nafiluj_atribute_grupe( __gr_id, __el_id )
       _rec[ "e_gr_vl_id" ] := 0
 
       lOk := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
-	
+
       IF !lOk
          EXIT
       ENDIF
@@ -1021,7 +1019,7 @@ STATIC FUNCTION e_att_edit( nEl_id, lNewRec )
 
       MsgBeep( "Stavka ne postoji !!!#Koristite c-N da dodate novu!" )
       RETURN DE_REFRESH
-	
+
    ENDIF
 
    IF lNewRec
@@ -1047,11 +1045,11 @@ STATIC FUNCTION e_att_edit( nEl_id, lNewRec )
    ENDIF
 
    @ m_x + 3, m_y + 2 SAY PadL( "izaberi atribut elementa", nLeft ) GET _e_gr_at_id VALID {|| s_e_gr_att( @_e_gr_at_id, el_gr_id, nil, .T. ), show_it( g_gr_at_desc( _e_gr_at_id ) ) } WHEN lNewRec == .T.
-		
+
    @ m_x + 4, m_y + 2 SAY PadL( "izaberi vrijednost atributa", nLeft ) GET cElGrVal VALID {|| s_e_gr_val( @cElGrVal, _e_gr_at_id, cElGrVal, .T. ), set_var( @_e_gr_vl_id, @cElGrVal ) }
 
    @ m_x + 5, m_y + 2 SAY8 PadL( "0 - otvori šifrarnik", nLeft )
-	
+
    READ
    BoxC()
 
@@ -1107,13 +1105,13 @@ STATIC FUNCTION e_aops_edit( nEl_id, lNewRec )
    ELSE
       @ m_x + 1, m_y + 2 SAY "Ispravka dodatnih operacija elementa *******" COLOR cColor
    ENDIF
-	
+
    @ m_x + 3, m_y + 2 SAY PadL( "izaberi dodatnu operaciju", nLeft ) GET _aop_id VALID {|| s_aops( @_aop_id, nil, .T. ), show_it( g_aop_desc( _aop_id ) ) }
-		
+
    @ m_x + 4, m_y + 2 SAY PadL( "izaberi atribut operacije", nLeft ) GET _aop_att_id VALID {|| s_aops_att( @_aop_att_id, _aop_id, nil, .T. ), show_it( g_aop_att_desc( _aop_att_id ) )  }
-	
+
    @ m_x + 5, m_y + 2 SAY8 PadL( "0 - otvori šifrarnik", nLeft )
-	
+
    READ
    BoxC()
 
@@ -1125,7 +1123,7 @@ STATIC FUNCTION e_aops_edit( nEl_id, lNewRec )
 
    _rec := get_dbf_global_memvars( NIL, .F. )
    update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
-	
+
    RETURN 1
 
 

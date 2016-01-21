@@ -9,9 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
-
+#include "f18.ch"
 
 // --------------------------------------------------
 // automatski napravi lami staklo od obicnog
@@ -41,15 +39,15 @@ FUNCTION rnal_generisi_lamistal_staklo( nEl_nr, nFolNr, nArt_id )
       nNewNo := nLastNo + ( nFolNr * 2 )
 
       DO WHILE !Bof() .AND. field->art_id == nArt_id
-	
+
          IF RecNo() == nTRec
             EXIT
          ENDIF
-		
+
          _rec := dbf_get_rec()
          _rec[ "el_no" ] := nNewNo
          dbf_update_rec( _rec )
-		
+
          nNewNo -= 1
 
          SKIP -1
@@ -67,7 +65,7 @@ FUNCTION rnal_generisi_lamistal_staklo( nEl_nr, nFolNr, nArt_id )
       IF i <> 1
          cSchema += "-"
       ENDIF
-	
+
       cSchema += cTmp
 
    NEXT
@@ -75,6 +73,3 @@ FUNCTION rnal_generisi_lamistal_staklo( nEl_nr, nFolNr, nArt_id )
    generisi_elemente_iz_sheme( nArt_id, nil, cSchema, nEl_nr )
 
    RETURN DE_REFRESH
-
-
-

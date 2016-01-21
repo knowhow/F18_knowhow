@@ -9,15 +9,14 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "rnal.ch"
-
+#include "f18.ch"
 
 
 FUNCTION rnal_sifra_bez_tacke( sifra )
 
    IF sifra <> NIL .AND. ValType( sifra ) == "C" .AND. !EMPTY( sifra ) .AND. RIGHT( ALLTRIM( sifra ), 1 ) $ ".$"
-      sifra := STRTRAN( sifra, ".", " " )  
-      sifra := STRTRAN( sifra, "$", " " )  
+      sifra := STRTRAN( sifra, ".", " " )
+      sifra := STRTRAN( sifra, "$", " " )
    ENDIF
 
    RETURN .T.
@@ -105,7 +104,7 @@ FUNCTION show_it( cItem, nPadR )
 
   Usage: rnal_uvecaj_id( @nId, "EL_ID", "1", .T. )
 
-  Parameters: 
+  Parameters:
       - wId - uvećana vrijednost tabele, ključno polje ID
       - cFieldName - polje za koje pravimo uvećanje
       - cIndexTag - index po kome će biti sortirana tabela
@@ -144,20 +143,20 @@ FUNCTION rnal_uvecaj_id( wId, cFieldName, cIndexTag, lAuto )
    ENDIF
 
    IF ( Ch == K_CTRL_N .OR. Ch == K_F4 .OR. lAuto )
-	
+
       IF ( LastKey() == K_ESC )
          RETURN .F.
       ENDIF
-	
+
       SET FILTER TO
       SET ORDER TO tag &cIndexTag
-	
+
       _value := ( fetch_metric( _param, NIL, 0 ) + 1 )
 
       wId := rnal_last_id( cFieldName ) + 1
 
       wid := Max( _value, wid )
-	
+
       set_metric( _param, NIL, wId )
 
       SET FILTER to &cTBFilter
@@ -177,14 +176,14 @@ FUNCTION rnal_uvecaj_id( wId, cFieldName, cIndexTag, lAuto )
 
   Usage: rnal_last_id( "EL_ID" )
 
-  Parameters: 
+  Parameters:
     - cFieldName - polje koje se vraća iz tabele
 
   Napomene:
     - bitno je da smo pozicionirani na tabeli iz koje nam treba zadnji zapis
 
   Primjer:
-   
+
    SELECT elements
    nLast := rnal_last_id( "EL_ID" )
 
@@ -232,7 +231,7 @@ FUNCTION rnal_chk_id( wId, cFieldName, cIndexTag  )
    IF Found()
       lSeek := .F.
    ENDIF
-	
+
    cTag := AllTrim( Str( nIndexOrd ) )
 
    SET FILTER to &cTBFilter
@@ -310,20 +309,20 @@ FUNCTION arr_schema( aArtArr )
          .AND. xVal[ 4 ] == "<GL_COAT>"  } )
 
       IF nSrch <> 0
-	
+
          nElem := aArtArr[ nScan, 1 ]
          cCode := aArtArr[ nScan, 2 ]
-		
+
       ELSE
-		
+
          // trazi bilo koji element
          nSrch := AScan( aTmp, {| xVal| xVal[ 1 ] == i } )
-		
+
          nElem := aArtArr[ nScan, 1 ]
          cCode := aArtArr[ nScan, 2 ]
-	
+
       ENDIF
-	
+
 
       nScan := AScan( aTmp, {| xVal| xVal[ 1 ] == nElem ;
          .AND. xVal[ 2 ] == cCode } )
@@ -331,7 +330,7 @@ FUNCTION arr_schema( aArtArr )
       IF nScan == 0
          AAdd( aTmp, { nElem, cCode } )
       ENDIF
-	
+
    NEXT
 
    // sada to razbij u string
@@ -341,7 +340,7 @@ FUNCTION arr_schema( aArtArr )
       IF ii <> 1
          cSchema += "#"
       ENDIF
-	
+
       cSchema += AllTrim( aTmp[ ii, 2 ] )
 
    NEXT

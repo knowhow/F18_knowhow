@@ -57,11 +57,9 @@ FUNCTION f18_set_user_preferences( params )
 
       ++ _x
       ++ _x
-
       @ m_x + _x, m_y + 2 SAY PadL( "Puno ime i prezime:", 20 ) GET _proper_name PICT "@S50"
 
       ++ _x
-
       @ m_x + _x, m_y + 2 SAY PadL( "Email:", 20 ) GET _email PICT "@S50"
 
       READ

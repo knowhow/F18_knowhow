@@ -9,8 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
+#include "f18.ch"
 
 
 // variables
@@ -1310,13 +1309,13 @@ STATIC FUNCTION postoji_obrada_u_artiklu( aArticle, cSrcObrada )
 /*
    Opis: Provjerava da li unutar dodatnih operacija postoji određena obrada.
 
-   Usage: postoji_obrada_u_operacijama( 1, 1, 3, "<A_B>", .T. ) 
+   Usage: postoji_obrada_u_operacijama( 1, 1, 3, "<A_B>", .T. )
 
       Parametri:
       1) dokument 1 tabele DOC_OPS
       2) stavka 1
       3) element artikla 3 (treće staklo)
-      4) operacija brušenja "<A_B>" 
+      4) operacija brušenja "<A_B>"
       5) gledati tabelu pripreme ili kumulativ
 
       Return:
@@ -1324,7 +1323,7 @@ STATIC FUNCTION postoji_obrada_u_artiklu( aArticle, cSrcObrada )
 
    Prerequisites:
 
-   - Mora biti otvorena Workarea: 
+   - Mora biti otvorena Workarea:
        - DOC_OPS ili _DOC_OPS (priprema)
 
    Napomene:
@@ -1338,7 +1337,7 @@ STATIC FUNCTION postoji_obrada_u_operacijama( nDoc_no, nDocit_no, nDoc_el_no, cS
    LOCAL lRet := .F.
    LOCAL nTArea := Select()
    LOCAL nTable := F_DOC_OPS
-  
+
    IF lPriprema == NIL
       lPriprema := .F.
    ENDIF
@@ -1458,5 +1457,3 @@ FUNCTION rekalkulisi_stavke_za_stampu( lPriprema )
       field->doc_it_net WITH Round( obrl_neto( field->doc_it_tot, aZpoGN ), 2 )
 
    RETURN
-
-

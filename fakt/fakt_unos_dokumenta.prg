@@ -10,8 +10,6 @@
  */
 
 #include "f18.ch"
-#include "f18_separator.ch"
-
 
 STATIC __fiscal_marker := .F.
 
@@ -19,11 +17,8 @@ STATIC __id_firma
 STATIC __tip_dok
 STATIC __br_dok
 STATIC __r_br
-
 STATIC __enter_seq := Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER )
-
 STATIC __redni_broj
-
 
 FUNCTION fakt_unos_dokumenta()
 
@@ -41,7 +36,7 @@ FUNCTION fakt_unos_dokumenta()
    IF field->idtipdok == "IM"
       my_close_all_dbf()
       fakt_unos_inventure()
-      RETURN
+      RETURN .T.
    ENDIF
 
    PRIVATE ImeKol := { ;
@@ -119,7 +114,7 @@ FUNCTION fakt_unos_dokumenta()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 

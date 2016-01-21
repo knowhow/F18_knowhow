@@ -9,8 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "rnal.ch"
-
+#include "f18.ch"
 
 STATIC __doc_no
 STATIC __oper_id
@@ -194,7 +193,7 @@ STATIC FUNCTION _box_ship( nObj_id, cShip, cTime, dDate, cDesc, nCust_id )
    Box(, 8, 65 )
    cDesc := Space( 150 )
    @ m_x + 1, m_y + 2 SAY "Promjena podataka o isporuci:"
-	
+
    @ m_x + 3, m_y + 2 SAY PadL( "Novi objekat isporuke:", 22 ) GET cObj_id VALID {|| s_objects( @cObj_id, nCust_id, cObj_id ), set_var( @nObj_id, @cObj_id ), show_it( AllTrim( g_obj_desc( nObj_id ) ) )  }
    @ m_x + 4, m_y + 2 SAY PadL( "Novo mjesto isporuke:", 22 ) GET cShip VALID !Empty( cShip ) PICT "@S30"
    @ m_x + 5, m_y + 2 SAY PadL( "Novo vrijeme isporuke:", 22 ) GET cTime VALID !Empty( cTime )
@@ -295,13 +294,13 @@ FUNCTION _ch_cont( lNew )
    ENDIF
 
    IF !lNew
-	
+
       SELECT docs
-	
+
       nCust_id := field->cust_id
       nCont_id := field->cont_id
       cCont_desc := field->cont_add_d
-	
+
    ENDIF
 
    nDoc_no := field->doc_no
@@ -320,7 +319,7 @@ FUNCTION _ch_cont( lNew )
    logiraj_podatke_kontakta_naloga( __doc_no, cDesc, cType, aArr )
 
    SELECT docs
-	
+
    set_global_memvars_from_dbf()
 
    IF _cont_id <> nCont_id
@@ -355,17 +354,17 @@ STATIC FUNCTION _box_cont( nCust, nCont, cContdesc, cDesc )
    Box(, 7, 65 )
 
    cDesc := Space( 150 )
-	
+
    IF lNew == .T.
       @ m_x + 1, m_y + 2 SAY "Novi kontakti naloga:"
    ELSE
       @ m_x + 1, m_y + 2 SAY "Ispravka kontakta naloga:"
    ENDIF
-	
+
    @ m_x + 3, m_y + 2 SAY PadL( "Kontakt:", 20 ) GET cCont VALID {|| s_contacts( @cCont, nCust, cCont ), set_var( @nCont, @cCont ), show_it( g_cont_desc( nCont ) ) }
-	
+
    @ m_x + 4, m_y + 2 SAY PadL( "Kontakt, dodatni opis:", 20 ) GET cContDesc PICT "@S30"
-	
+
    @ m_x + 7, m_y + 2 SAY "Opis promjene:" GET cDesc PICT "@S40"
    READ
    BoxC()
@@ -387,7 +386,7 @@ FUNCTION _ch_description()
    LOCAL _update := .F.
 
    SELECT docs
-	
+
    _add_desc := field->doc_desc
    _sh_desc := field->doc_sh_des
    _doc_no := field->doc_no
@@ -398,7 +397,7 @@ FUNCTION _ch_description()
 
    SELECT docs
    _rec := dbf_get_rec()
-	
+
    IF _rec[ "doc_desc" ] <> _add_desc
       _rec[ "doc_desc" ] := _add_desc
       _update := .T.
@@ -426,12 +425,12 @@ STATIC FUNCTION _box_descr( sh_desc, add_desc, ch_desc )
    Box(, 7, 65 )
 
    @ m_x + 1, m_y + 2 SAY "Ispravka opisa i napomena naloga:"
-	
+
    @ m_x + 3, m_y + 2 SAY PadL( "Kratki opis:", 20 ) GET sh_desc PICT "@S30"
    @ m_x + 4, m_y + 2 SAY PadL( "Dodatni opis:", 20 ) GET add_desc PICT "@S30"
-	
+
    @ m_x + 7, m_y + 2 SAY "Opis promjene:" GET ch_desc PICT "@S40"
-	
+
    READ
 
    BoxC()

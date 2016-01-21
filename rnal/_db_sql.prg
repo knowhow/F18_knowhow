@@ -17,14 +17,13 @@ FUNCTION use_sql_rnal_ral()
    LOCAL aDbf := rnal_a_ral()
    LOCAL cTable := "rnal_ral"
 
-   altd()
    cSql := "SELECT "
    cSql += sql_from_adbf( @aDbf )
    cSql += " FROM fmk." + cTable + " ORDER BY id"
 
 
    SELECT F_RAL
-   use_sql( cTable, cSql )
+   use_sql( cTable, cSql, "RAL" )
 
    INDEX ON "STR(id,5)+STR(gl_tick,2)" TAG "1" TO (cTable)
    INDEX ON "descr" TAG "2" TO (cTable)

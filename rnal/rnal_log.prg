@@ -9,12 +9,9 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
+#include "f18.ch"
 
 STATIC __doc_no
-
-
 
 /*
    Opis: logiranje stavki novog naloga prilikom ažuriranja
@@ -46,7 +43,7 @@ FUNCTION rnal_logiraj_novi_nalog()
       field->doc_dvr_da, ;
       field->doc_dvr_ti, ;
       field->doc_ship_p )
-		
+
    IF !logiraj_podatke_isporuke_za_nalog( __doc_no, cDesc, nil, aArr )
       RETURN .F.
    ENDIF
@@ -293,7 +290,7 @@ FUNCTION logiraj_podatke_loma_na_staklima( nDoc_no, cDesc, cAction )
    lOk := rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
 
    IF lOk
-     
+
        SELECT _tmp1
        GO TOP
 
@@ -303,7 +300,7 @@ FUNCTION logiraj_podatke_loma_na_staklima( nDoc_no, cDesc, cAction )
              SKIP
              LOOP
           ENDIF
-	
+
           lOk := rnal_log_tip_21_insert( cAction, nDoc_no, nDoc_log_no, ;
                 field->art_id,  ;
                 field->art_desc, ;
@@ -311,14 +308,14 @@ FUNCTION logiraj_podatke_loma_na_staklima( nDoc_no, cDesc, cAction )
                 field->doc_it_no, ;
                 field->doc_it_qtt, ;
                 field->damage )
-          
+
           IF !lOk
              EXIT
           ENDIF
-	
+
           SELECT _tmp1
           SKIP
-	
+
        ENDDO
 
    ENDIF
@@ -364,7 +361,7 @@ FUNCTION logiraj_stavke_naloga( nDoc_no, cDesc, cAction )
    IF !lOk
       RETURN lOk
    ENDIF
- 
+
    SELECT _doc_it
    GO TOP
    SEEK docno_str( nDoc_no )
@@ -378,14 +375,14 @@ FUNCTION logiraj_stavke_naloga( nDoc_no, cDesc, cAction )
          field->doc_it_qtt,  ;
          field->doc_it_hei, ;
          field->doc_it_wid )
-	
+
       IF !lOk
          EXIT
       ENDIF
 
       SELECT _doc_it
       SKIP
-	
+
    ENDDO
 
    RETURN lOk
@@ -431,14 +428,14 @@ FUNCTION logiraj_dodatne_operacije_naloga( nDoc_no, cDesc, cAction )
          field->aop_id,  ;
          field->aop_att_id,  ;
          field->doc_op_des )
-	
+
       IF !lOk
          EXIT
       ENDIF
 
       SELECT _doc_ops
       SKIP
-	
+
    ENDDO
 
    RETURN lOk
@@ -548,7 +545,7 @@ STATIC FUNCTION logiraj_deltu_stavki_naloga( nDoc_no, cDesc )
    LOCAL cAction
    LOCAL lLogAppend := .F.
    LOCAL lOk := .T.
- 
+
    nDoc_log_no := rnal_novi_broj_loga( nDoc_no )
 
    SELECT doc_it
@@ -565,14 +562,14 @@ STATIC FUNCTION logiraj_deltu_stavki_naloga( nDoc_no, cDesc )
       nDoc_it_width := field->doc_it_wid
       cDoc_it_desc := field->doc_it_des
       cDoc_it_sch := field->doc_it_sch
-	
+
       // DOC_IT -> _DOC_IT - provjeri da li je sta brisano
       // akcija "-"
-	
+
       IF !item_exist( nDoc_no, nDoc_it_no, nArt_id, .F. )
-		
+
          cAction := "-"
-		
+
          lOk := rnal_log_tip_20_insert( cAction, nDoc_no, nDoc_log_no, ;
             nArt_id, ;
             cDoc_it_desc, ;
@@ -580,30 +577,30 @@ STATIC FUNCTION logiraj_deltu_stavki_naloga( nDoc_no, cDesc )
             nDoc_it_qtty, ;
             nDoc_it_heigh, ;
             nDoc_it_width )
-			
+
          IF !lOk
             EXIT
          ENDIF
 
          lLogAppend := .T.
-		
+
          SELECT doc_it
-		
+
          SKIP
          LOOP
-		
+
       ENDIF
 
       // DOC_IT -> _DOC_IT - da li je sta mjenjano od podataka
       // akcija "E"
-	
+
       IF !item_value( nDoc_no, nDoc_it_no, nArt_id, ;
             nDoc_it_qtty, ;
             nDoc_it_heigh, ;
             nDoc_it_width, .F. )
-		
+
          cAction := "E"
-		
+
          lOk := rnal_log_tip_20_insert( cAction, nDoc_no, nDoc_log_no, ;
             _doc_it->art_id, ;
             _doc_it->doc_it_des, ;
@@ -611,7 +608,7 @@ STATIC FUNCTION logiraj_deltu_stavki_naloga( nDoc_no, cDesc )
             _doc_it->doc_it_qtt, ;
             _doc_it->doc_it_hei, ;
             _doc_it->doc_it_wid )
-	
+
          IF !lOk
             EXIT
          ENDIF
@@ -619,9 +616,9 @@ STATIC FUNCTION logiraj_deltu_stavki_naloga( nDoc_no, cDesc )
          lLogAppend := .T.
 
       ENDIF
-	
+
       SELECT doc_it
-	
+
       SKIP
 
    ENDDO
@@ -645,14 +642,14 @@ STATIC FUNCTION logiraj_deltu_stavki_naloga( nDoc_no, cDesc )
       nDoc_it_width := field->doc_it_wid
       cDoc_it_desc := field->doc_it_des
       cDoc_it_sch := field->doc_it_sch
-	
+
       // _DOC_IT -> DOC_IT, da li stavka postoji u kumulativu
       // akcija "+"
-	
+
       IF !item_exist( nDoc_no, nDoc_it_no, nArt_id, .T. )
-		
+
          cAction := "+"
-		
+
          lOk := rnal_log_tip_20_insert( cAction, nDoc_no, nDoc_log_no, ;
             nArt_id, ;
             cDoc_it_desc, ;
@@ -666,11 +663,11 @@ STATIC FUNCTION logiraj_deltu_stavki_naloga( nDoc_no, cDesc )
          ENDIF
 
          lLogAppend := .T.
-	
+
       ENDIF
-	
+
       SELECT _doc_it
-	
+
       SKIP
 
    ENDDO
@@ -709,50 +706,50 @@ STATIC FUNCTION logiraj_deltu_operacija_naloga( nDoc_no, cDesc )
 
       nDoc_it_no := field->doc_it_no
       nDoc_op_no := field->doc_op_no
-	
+
       nAop_id := field->aop_id
       nAop_att_id := field->aop_att_id
       cDoc_op_desc := field->doc_op_des
-	
+
       // DOC_OPS -> _DOC_OPS - provjeri da li je sta brisano
       // akcija "-"
-	
+
       IF !aop_exist( nDoc_no, nDoc_it_no, nDoc_op_no, nAop_id, nAop_att_id, .F. )
-		
+
          cAction := "-"
-		
+
          lOk := rnal_log_tip_30_insert( cAction, nDoc_no, nDoc_log_no, ;
             nAop_id, ;
             nAop_att_id, ;
             cDoc_op_desc )
-			
+
          IF !lOk
             EXIT
          ENDIF
 
          lLogAppend := .T.
-		
+
          SELECT doc_ops
-		
+
          SKIP
          LOOP
-		
+
       ENDIF
 
       // DOC_OPS -> _DOC_OPS - da li je sta mjenjano od podataka
       // akcija "E"
-	
+
       IF !aop_value( nDoc_no, nDoc_it_no, nDoc_op_no, nAop_id, ;
             nAop_att_id, ;
             cDoc_op_desc, .F. )
-		
+
          cAction := "E"
-		
+
          lOk := rnal_log_tip_30_insert( cAction, nDoc_no, nDoc_log_no, ;
             _doc_ops->aop_id, ;
             _doc_ops->aop_att_id, ;
             _doc_ops->doc_op_des )
-	      
+
          IF !lOk
             EXIT
          ENDIF
@@ -760,9 +757,9 @@ STATIC FUNCTION logiraj_deltu_operacija_naloga( nDoc_no, cDesc )
          lLogAppend := .T.
 
       ENDIF
-	
+
       SELECT doc_ops
-	
+
       SKIP
 
    ENDDO
@@ -784,14 +781,14 @@ STATIC FUNCTION logiraj_deltu_operacija_naloga( nDoc_no, cDesc )
       nAop_id := field->aop_id
       nAop_att_id := field->aop_att_id
       cDoc_op_desc := field->doc_op_des
-	
+
       // _DOC_OPS -> DOC_OPS, da li stavka postoji u kumulativu
       // akcija "+"
-	
+
       IF !aop_exist( nDoc_no, nDoc_it_no, nDoc_op_no, nAop_id, nAop_att_id, .T. )
-		
+
          cAction := "+"
-		
+
          lOk := rnal_log_tip_30_insert( cAction, nDoc_no, nDoc_log_no, ;
             nAop_id, ;
             nAop_att_id, ;
@@ -802,11 +799,11 @@ STATIC FUNCTION logiraj_deltu_operacija_naloga( nDoc_no, cDesc )
          ENDIF
 
          lLogAppend := .T.
-	
+
       ENDIF
-	
+
       SELECT _doc_ops
-	
+
       SKIP
 
    ENDDO
@@ -969,6 +966,3 @@ STATIC FUNCTION aop_value( nDoc_no, nDoc_it_no, nDoc_op_no, nAop_id, ;
    GO ( nTRec )
 
    RETURN lRet
-
-
-

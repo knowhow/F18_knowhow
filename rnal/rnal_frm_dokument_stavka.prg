@@ -9,10 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
-
-// variables
+#include "f18.ch"
 
 STATIC l_new_it
 STATIC _doc

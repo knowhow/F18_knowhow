@@ -9,9 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
-
+#include "f18.ch"
 
 STATIC __cust_id
 
@@ -56,7 +54,7 @@ FUNCTION s_contacts( cId, nCust_id, cContDesc, dx, dy )
 
       rnal_sifra_bez_tacke( @cId )
 
-      IF Val( cId ) <> 0	
+      IF Val( cId ) <> 0
          cId := Val( cId )
          nCust_id := -1
          cContDesc := ""
@@ -130,16 +128,16 @@ STATIC FUNCTION val_cont_name( cCont_desc )
 
    DO CASE
    CASE Len( aPom ) == 1
-		
+
       MsgBeep( "Format unosa je IME + PREZIME#Ako je prezime nepoznato unosi se IME + NN !" )
       RETURN .F.
-		
+
    CASE Empty( cCont_desc )
-		
+
       MsgBeep( "Unos imena i prezimena je obavezan !!!" )
-		
+
       RETURN .F.
-		
+
    ENDCASE
 
    RETURN .T.
@@ -200,7 +198,7 @@ STATIC FUNCTION cust_filter( nCust_id, cContDesc, cId )
    ENDIF
 
    IF !Empty( cContDesc )
-	
+
       IF !Empty( cFilter )
          cFilter += " .and. "
       ENDIF

@@ -9,13 +9,12 @@
  * By using this software, you agree to be bound by its terms.
  */
 
+#include "f18.ch"
 
-#include "rnal.ch"
 
 /*
    use_sql_doc_log() => otvori šifarnik rnal_doc_log
 */
-
 FUNCTION use_sql_doc_log( nDoc_no, cDoc_type )
 
    LOCAL cSql
@@ -46,7 +45,7 @@ FUNCTION use_sql_doc_log( nDoc_no, cDoc_type )
 
    INDEX ON STR(DOC_NO,10) + STR(DOC_LOG_NO,10) + DTOS(DOC_LOG_DA) + DOC_LOG_TI TAG "1" TO ( cTable )
    INDEX ON STR(DOC_NO,10) + DOC_LOG_TY + STR(DOC_LOG_NO,10) TAG "2" TO ( cTable )
-	
+
    SET ORDER TO TAG "1"
    GO TOP
 
@@ -98,7 +97,7 @@ FUNCTION use_sql_doc_lit( nDoc_no, nDoc_log_no )
    use_sql( cTable, cSql )
 
    INDEX ON STR(DOC_NO,10) + STR(DOC_LOG_NO,10) + STR(DOC_LIT_NO,10) TAG "1" TO ( cTable )
-	
+
    SET ORDER TO TAG "1"
    GO TOP
 
@@ -197,7 +196,7 @@ FUNCTION rnal_log_tip_12_insert( cAction, nDoc_no, nDoc_log_no, aArr )
    nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
 
    use_sql_doc_lit( 0, 0 )
-   
+
    APPEND BLANK
 
    _rec := dbf_get_rec()
@@ -235,7 +234,7 @@ FUNCTION rnal_log_tip_13_insert( cAction, nDoc_no, nDoc_log_no, aArr )
    _rec[ "char_1" ] := hb_StrToUtf8( aArr[ 1, 2 ] )
    _rec[ "char_2" ] := hb_StrToUtf8( aArr[ 1, 3 ] )
    _rec[ "doc_lit_ac" ] := cAction
- 
+
    lRet := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
 
    RETURN lRet
@@ -310,7 +309,7 @@ FUNCTION rnal_log_tip_30_insert( cAction, nDoc_no, nDoc_log_no, ;
 
    LOCAL nDoc_lit_no
    LOCAL lRet
- 
+
    nDoc_lit_no := rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
 
    use_sql_doc_lit( 0, 0 )
@@ -381,15 +380,15 @@ STATIC FUNCTION zadnji_broj_loga( nDoc_no )
 
 /*
    Opis: vraća sljedeći increment broj za polje doc_log_no tabele rnal_doc_log
-   
-   Usage: rnal_novi_broj_loga( nDoc_no ) 
 
-   Params: 
+   Usage: rnal_novi_broj_loga( nDoc_no )
+
+   Params:
      - nDoc_no - broj radnog naloga
 
    Return:
      vraća sljedeći broj
-*/ 
+*/
 
 FUNCTION rnal_novi_broj_loga( nDoc_no )
 
@@ -462,19 +461,19 @@ FUNCTION rnal_log_tip_20_get( nDoc_no, nDoc_log_no )
       cRet += ","
       cRet += "sir.=" + AllTrim( Str( field->num_3, 8, 2 ) )
       cRet += "#"
-	
+
       IF !Empty( field->char_1 )
          cRet += "opis.=" + AllTrim( field->char_1 )
          cRet += "#"
       ENDIF
-	
+
       IF !Empty( field->char_2 )
          cRet += "shema.=" + AllTrim( field->char_2 )
          cRet += "#"
       ENDIF
 
       SELECT doc_lit
-	
+
       SKIP
    ENDDO
 
@@ -493,7 +492,7 @@ FUNCTION rnal_log_tip_21_get( nDoc_no, nDoc_log_no )
    DO WHILE !Eof() .AND. field->doc_no == nDoc_no ;
          .AND. field->doc_log_no == nDoc_log_no
 
-	
+
       cRet += "stavka: " + AllTrim( Str( field->int_1 ) )
       cRet += "#"
       cRet += AllTrim( "artikal: " + PadR( hb_StrToUtf8( g_art_desc( field->art_id ) ), 30 ) )
@@ -503,9 +502,9 @@ FUNCTION rnal_log_tip_21_get( nDoc_no, nDoc_log_no )
       cRet += "lom komada: " + AllTrim( Str( field->num_2 ) )
       cRet += "#"
       cRet += "opis: " + AllTrim( field->char_1 )
-	
+
       SELECT doc_lit
-	
+
       SKIP
    ENDDO
 
@@ -529,9 +528,9 @@ FUNCTION rnal_log_tip_30_get( nDoc_no, nDoc_log_no )
       cRet += ","
       cRet += "d.opis:" + AllTrim( field->char_1 )
       cRet += "#"
-	
+
       SELECT doc_lit
-	
+
       SKIP
    ENDDO
 
@@ -581,7 +580,7 @@ FUNCTION rnal_log_tip_10_get( nDoc_no, nDoc_log_no )
       cRet += "#"
       cRet += "prioritet: " + AllTrim( Str( field->int_2 ) )
       cRet += "#"
-	
+
       SELECT doc_lit
       SKIP
    ENDDO
@@ -608,7 +607,7 @@ FUNCTION rnal_log_tip_11_get( nDoc_no, nDoc_log_no )
       cRet += "#"
       cRet += "mjesto isp.: " + AllTrim( field->char_2 )
       cRet += "#"
-	
+
       SELECT doc_lit
       SKIP
    ENDDO
@@ -632,7 +631,7 @@ FUNCTION rnal_log_tip_12_get( nDoc_no, nDoc_log_no )
       cRet += "#"
       cRet += "kont.d.opis.: " + AllTrim( field->char_1 )
       cRet += "#"
-	
+
       SELECT doc_lit
       SKIP
    ENDDO
@@ -658,11 +657,9 @@ FUNCTION rnal_log_tip_13_get( nDoc_no, nDoc_log_no )
       cRet += "#"
       cRet += "opis: " + AllTrim( field->char_2 )
       cRet += "#"
-	
+
       SELECT doc_lit
       SKIP
    ENDDO
 
    RETURN cRet
-
-

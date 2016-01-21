@@ -9,8 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
+#include "f18.ch"
 
 
 STATIC _e_gr_id
@@ -159,7 +158,7 @@ STATIC FUNCTION set_required()
    LOCAL _rec
 
    _rec := dbf_get_rec()
-	
+
    IF _rec[ "e_gr_at_re" ] == "*"
       _rec[ "e_gr_at_re" ] := " "
    ELSE
@@ -167,7 +166,7 @@ STATIC FUNCTION set_required()
    ENDIF
 
    dbf_update_rec( _rec )
-	
+
    RETURN
 
 
@@ -181,25 +180,25 @@ STATIC FUNCTION key_handler()
    LOCAL nTRec := RecNo()
 
    DO CASE
-	
+
    CASE Upper( Chr( Ch ) ) == "V"
-		
+
       s_e_gr_val( nil, nE_gr_at_id )
       GO ( nTRec )
       RETURN DE_CONT
-	
+
    CASE Upper( Chr( Ch ) ) == "R"
-		
+
       Beep( 1 )
       set_required()
-		
+
       RETURN DE_REFRESH
-		
+
    CASE Ch == K_CTRL_N .OR. Ch == K_F4
-		
+
       __wo_id := .F.
       set_a_kol( @ImeKol, @Kol )
-		
+
       RETURN DE_CONT
    ENDCASE
 
@@ -266,21 +265,21 @@ FUNCTION g_gr_at_desc( nE_gr_att_id, lShowRequired, lEmpty )
 
    IF Found()
       IF !Empty( field->e_gr_at_de )
-		
+
          cEGrAttDesc := ""
-		
+
          IF lShowRequired == .T.
-			
+
             IF !Empty( field->e_gr_at_re )
-			
+
                cEGrAttDesc += "("
                cEGrAttDesc += AllTrim( field->e_gr_at_re )
                cEGrAttDesc += ")"
-			
+
             ENDIF
-			
+
          ENDIF
-		
+
          cEGrAttDesc += " "
          cEGrAttDesc += AllTrim( field->e_gr_at_de )
       ENDIF

@@ -9,9 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
-
+#include "f18.ch"
 
 
 // --------------------------------------------------
@@ -53,8 +51,8 @@ FUNCTION lst_tek_dan()
    r_list_zagl()
 
    DO WHILE !Eof() .AND. DToS( field->doc_date ) == DToS( dDatum )
-	
-      // ako je za tekuæeg operatera
+
+      // ako je za tekuï¿½eg operatera
       IF nOperater <> 0
          IF field->operater_i <> nOperater
             SKIP
@@ -68,7 +66,7 @@ FUNCTION lst_tek_dan()
          LOOP
       ENDIF
 
-	
+
       cPom := ""
       cPom += PadR( docno_str( field->doc_no ), 10 )
       cPom += " "
@@ -77,9 +75,9 @@ FUNCTION lst_tek_dan()
       cPom += PadR( field->doc_dvr_ti, 8 )
       cPom += " "
       cPom += show_customer( field->cust_id, field->cont_id )
-	
+
       ? cPom
-	
+
       SKIP
    ENDDO
 
@@ -165,11 +163,11 @@ FUNCTION lst_ch_date()
    nOperater := GetUserID( f18_user() )
 
    Box(, 3, 60 )
-	
+
    @ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "9999999999"
-	
+
    @ m_x + 3, m_y + 2 SAY "Listaj naloge >= datum" GET dDate
-	
+
    READ
 
    BoxC()
@@ -200,7 +198,7 @@ FUNCTION lst_ch_date()
    r_list_zagl()
 
    DO WHILE !Eof() .AND. DToS( field->doc_date ) >= DToS( dDate )
-	
+
       // operater uslov
       IF nOperater <> 0
          IF field->operater_i <> nOperater
@@ -209,15 +207,15 @@ FUNCTION lst_ch_date()
          ENDIF
       ENDIF
 
-	
+
       // ako je nalog zatvoren, preskoci
       IF ( field->doc_status == 1 ) .OR. ( field->doc_status == 2 )
-		
+
          SKIP
          LOOP
-	
+
       ENDIF
-	
+
       cPom := ""
       cPom += PadR( docno_str( field->doc_no ), 10 )
       cPom += " "
@@ -226,9 +224,9 @@ FUNCTION lst_ch_date()
       cPom += PadR( field->doc_dvr_ti, 8 )
       cPom += " "
       cPom += show_customer( field->cust_id, field->cont_id )
-	
+
       ? cPom
-	
+
       SKIP
    ENDDO
 
@@ -282,7 +280,7 @@ FUNCTION lst_real_tek_dan()
    r_list_zagl()
 
    DO WHILE !Eof() .AND. DToS( field->doc_dvr_da ) >= DToS( dDatum )
-	
+
       // uslov po operateru
       IF nOperater <> 0
          IF field->operater_i <> nOperater
@@ -290,7 +288,7 @@ FUNCTION lst_real_tek_dan()
             LOOP
          ENDIF
       ENDIF
-	
+
       // samo tekuci dan!
       IF cCurrent == "D"
          IF DToS( field->doc_dvr_da ) <> DToS( dDatum )
@@ -298,7 +296,7 @@ FUNCTION lst_real_tek_dan()
             LOOP
          ENDIF
       ENDIF
-	
+
       // ako je zatvoren, preskoci..
       IF field->doc_status == 1 .OR. ;
             field->doc_status == 2
@@ -316,10 +314,10 @@ FUNCTION lst_real_tek_dan()
       cPom += PadR( field->doc_dvr_ti, 8 )
       cPom += " "
       cPom += show_customer( field->cust_id, field->cont_id )
-	
+
       ? cPom
 
-	
+
       SELECT docs
 
       SKIP
@@ -353,13 +351,13 @@ FUNCTION lst_vrok_tek_dan()
    nOperater := GetUserID( f18_user() )
 
    Box(, 5, 65 )
-	
+
    @ m_x + 1, m_y + 2 SAY "Operater (0 - svi)" GET nOperater PICT "9999999999"
-	
+
    @ m_x + 3, m_y + 2 SAY "Uzeti u obzir do br.predh.dana:" GET nDays PICT "99999"
-	
+
    @ m_x + 5, m_y + 2 SAY "Slati report email-om ?" GET cEmail PICT "@!" VALID cEmail $ "DN"
-	
+
    READ
 
    BoxC()
@@ -388,14 +386,14 @@ FUNCTION lst_vrok_tek_dan()
    r_list_zagl()
 
    DO WHILE !Eof()
-	
+
       IF nOperater <> 0
          IF field->operater_i <> nOperater
             SKIP
             LOOP
          ENDIF
       ENDIF
-	
+
       IF field->doc_status == 1 .OR. ;
             field->doc_status == 2
          SKIP
@@ -424,39 +422,39 @@ FUNCTION lst_vrok_tek_dan()
       cPom += PadR( field->doc_dvr_ti, 8 )
       cPom += " "
       cPom += show_customer( field->cust_id, field->cont_id )
-	
+
       ? cPom
 
-      use_sql_doc_log( nDoc_no )	
+      use_sql_doc_log( nDoc_no )
       SEEK docno_str( nDoc_no )
 
       cLog := ""
-	
+
       DO WHILE !Eof() .AND. field->doc_no == nDoc_no
-		
+
          cLog := DToC( field->doc_log_da )
          cLog += " / "
          cLog += AllTrim( field->doc_log_ti )
          cLog += " : "
          cLog += AllTrim( field->doc_log_de )
-		
+
          SKIP
       ENDDO
-	
+
       IF "Inicij" $ cLog
          cLog := ""
       ENDIF
 
       IF !Empty( cLog )
-		
+
          aLog := SjeciStr( cLog, 60 )
-		
+
          FOR i := 1 TO Len( aLog )
-			
+
             ?U Space( 29 ) + aLog[ i ]
-		
+
          NEXT
-		
+
       ENDIF
 
       SELECT docs

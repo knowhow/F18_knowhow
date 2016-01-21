@@ -9,8 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
+#include "f18.ch"
 
 // --------------------------------
 // pretvara mm u inch-e
@@ -146,54 +145,54 @@ FUNCTION rnal_konfigurator_stakla( nWidth, nHeigh, ;
    @ m_x + 1, m_y + 2 SAY "##glass_config##  select operations..."
 
    box_staklo( nGLen, nGTop, nGBott, nGLeft, cColSch, nWidth, nHeigh )
-	
+
    // top
    @ m_x + nGTop - 1, m_y + ( nBoxY / 2 ) - 1 SAY "d1 ?" GET cV1 ;
       PICT "@!" VALID cV1 $ "DN"
-	
+
    // left
    @ m_x + ( nBoxX / 2 ) + 1, m_y + ( nGLeft - 6 ) SAY "d2 ?" GET cV2 ;
       PICT "@!" VALID cV2 $ "DN"
-	
+
    // right
    @ m_x + ( nBoxX / 2 ) + 1, m_y + ( nGLeft + nGLen + 3 ) SAY "d3 ?" GET cV3;
       PICT "@!" VALID cV3 $ "DN"
-	
+
    // bottom
    @ m_x + nGBott + 1, m_y + ( nBoxY / 2 ) - 1 SAY "d4 ?" GET cV4 ;
       PICT "@!" VALID cV4 $ "DN"
-	
-	
+
+
    READ
-	
-	
+
+
    IF Pitanje(, "Definisati radijuse (D/N) ?", "N" ) == "D"
 
       @ nStX, nStY CLEAR TO nStX + nBoxX - 3, nStY + nBoxY - 2
 
       box_staklo( nGLen, nGTop, nGBott, nGLeft, cColSch, nWidth, nHeigh )
-		
+
       // top left
       @ m_x + nGTop - 1, m_y + ( nGLeft - 4 ) SAY "r1 ?" GET cD1 ;
          PICT "@!" VALID cD1 $ "DN"
-	
+
       @ m_x + nGTop - 1, Col() + 1 GET nR1 PICT "99999" ;
          WHEN cD1 == "D" VALID val_radius( nR1, nWidth, nHeigh )
-	
+
       // top right
       @ m_x + nGTop - 1, m_y + ( nGLen + 3 ) SAY "r2 ?" GET cD2 ;
          PICT "@!" VALID cD2 $ "DN"
-	
+
       @ m_x + nGTop - 1, Col() + 1 GET nR2 PICT "99999" ;
          WHEN cD2 == "D" VALID val_radius( nR2, nWidth, nHeigh )
-	
+
       // bott. left
       @ m_x + nGBott + 1, m_y + ( nGLeft - 4 ) SAY "r3 ?" GET cD3;
          PICT "@!" VALID cD3 $ "DN"
-	
+
       @ m_x + nGBott + 1, Col() + 1 GET nR3 PICT "99999" ;
          WHEN cD3 == "D" VALID val_radius( nR3, nWidth, nHeigh )
-	
+
       // bott. right
       @ m_x + nGBott + 1, m_y + ( nGLen + 3 ) SAY "r4 ?" GET cD4 ;
          PICT "@!" VALID cD4 $ "DN"
@@ -202,9 +201,9 @@ FUNCTION rnal_konfigurator_stakla( nWidth, nHeigh, ;
          WHEN cD4 == "D" VALID val_radius( nR4, nWidth, nHeigh )
 
       READ
-	
+
    ENDIF
-	
+
    BoxC()
 
    IF LastKey() == K_ESC
@@ -242,25 +241,25 @@ FUNCTION rnal_konfiguracija_prepusta( cJoker, nWidth, nHeigh, ;
    @ m_x + 1, m_y + 2 SAY "##glass_config## konfigurisanje prepusta..."
 
    box_staklo( nGLen, nGTop, nGBott, nGLeft, cColSch, nWidth, nHeigh )
-	
+
    // top
    @ m_x + nGTop - 1, m_y + ( nBoxY / 2 ) - 1 SAY "A:" GET nD1 ;
       PICT pic_dim()
-	
+
    // left
    @ m_x + ( nBoxX / 2 ) + 1, m_y + ( nGLeft - 10 ) SAY "B:" GET nD2 ;
       PICT pic_dim()
-	
+
    // right
    @ m_x + ( nBoxX / 2 ) + 1, m_y + ( nGLeft + nGLen + 3 ) SAY "C:" GET nD3;
       PICT pic_dim()
-	
+
    // bottom
    @ m_x + nGBott + 1, m_y + ( nBoxY / 2 ) - 1 SAY "D:" GET nD4 ;
       PICT pic_dim()
-	
+
    READ
-	
+
    BoxC()
 
    IF LastKey() == K_ESC
@@ -320,7 +319,7 @@ FUNCTION rnal_konfiguracija_dimenzija_rupa( cJoker )
    LOCAL GetList := {}
 
    Box(, nBoxX, nBoxY )
-	
+
    @ m_x + nX, m_y + 2 SAY "#HOLE_CONFIG#"
 
    nX += 2
@@ -328,32 +327,32 @@ FUNCTION rnal_konfiguracija_dimenzija_rupa( cJoker )
 
    nX += 1
    @ m_x + nX, m_y + 2 SAY "Rupa 2 (fi):" GET nHole2 PICT "999"
-	
+
    nX += 1
    @ m_x + nX, m_y + 2 SAY "Rupa 3 (fi):" GET nHole3 PICT "999"
-	
+
    nX += 1
    @ m_x + nX, m_y + 2 SAY "Rupa 4 (fi):" GET nHole4 PICT "999"
-	
+
    nX += 1
    @ m_x + nX, m_y + 2 SAY "Rupa 5 (fi):" GET nHole5 PICT "999"
-	
+
    READ
 
    IF Pitanje(, "Da li postoje dodatne rupe (D/N) ?", "N" ) == "D"
-	
+
       nX += 1
       @ m_x + nX, m_y + 2 SAY "Rupa 6 (fi):" GET nHole6 PICT "999"
-		
+
       nX += 1
       @ m_x + nX, m_y + 2 SAY "Rupa 7 (fi):" GET nHole7 PICT "999"
 
       nX += 1
       @ m_x + nX, m_y + 2 SAY "Rupa 8 (fi):" GET nHole8 PICT "999"
-		
+
       nX += 1
       @ m_x + nX, m_y + 2 SAY "Rupa 9 (fi):" GET nHole9 PICT "999"
-		
+
       nX += 1
       @ m_x + nX, m_y + 2 SAY "Rupa 10 (fi):" GET nHole10 PICT "999"
 
@@ -441,12 +440,12 @@ FUNCTION rnal_dimenzije_rupa_za_nalog( cValue )
    // H1=24, H2=55
 
    FOR i := 1 TO Len( aTmp2 )
-	
+
       aHole := {}
       aHole := TokToNiz( aTmp2[ i ], "=" )
 
       cHoleTick := AllTrim( aHole[ 2 ] )
-	
+
       cRet += "fi=" + cHoleTick + " mm, "
    NEXT
 
@@ -478,13 +477,13 @@ FUNCTION rnal_dimenzije_prepusta_za_nalog( cValue, nW, nH )
    // A=24, B=55, C=...
 
    FOR i := 1 TO Len( aTmp2 )
-	
+
       aPrep := {}
       aPrep := TokToNiz( aTmp2[ i ], "=" )
 
       cPrepPos := AllTrim( aPrep[ 1 ] )
       cPrepDim := AllTrim( aPrep[ 2 ] )
-	
+
       IF cPrepPos == "A"
          nW := Val( cPrepDim )
       ENDIF
@@ -538,31 +537,31 @@ FUNCTION rnal_konfigurator_pozicije_pecata( cJoker, nWidth, nHeigh )
       @ m_x + 1, m_y + 2 SAY8 "### Odabir pozicije pečata na staklu"
 
       @ m_x + 2, m_y + 2 SAY8 "vrsta pečata [P]ositiv / [N]egativ:" GET cStampInfo VALID cStampInfo $ "PN" PICT "@!"
-	
+
       @ m_x + 3, m_y + 2 SAY8 "pogledati šemu u prilogu (D/N)?" GET cStampSch VALID cStampSch $ "DN" PICT "@!"
 
       READ
-	
+
       IF cStampSch == "N"
-	
+
          box_staklo( nGLen, nGTop, nGBott, nGLeft + 6, cColSch, nWidth, nHeigh )
-	
+
          @ m_x + nGTop - 1, m_y + ( nGlen / 2 ) + 4 SAY "X dim." COLOR cColRed
          @ m_x + nGTop + 4, m_y + nGLeft SAY "Y dim." COLOR cColRed
 
          @ m_x + nGTop - 1, m_y + nGLeft SAY "X" GET nX1 PICT "999"
          @ m_x + nGTop - 1, Col() + 1 SAY "/Y" GET nY1 PICT "999" VALID val_pecat( nX1, nY1 )
          @ m_x + nGTop - 1, Col() SAY "mm"
-	
+
          @ m_x + nGTop - 1, Col() + nGLen - 15 SAY "X" GET nX2 PICT "999"
          @ m_x + nGTop - 1, Col() + 1 SAY "/Y" GET nY2 PICT "999" VALID val_pecat( nX2, nY2 )
          @ m_x + nGTop - 1, Col() SAY "mm"
-	
-         @ m_x + nGBott + 1, m_y + nGLeft SAY "X" GET nX3 PICT "999" 
+
+         @ m_x + nGBott + 1, m_y + nGLeft SAY "X" GET nX3 PICT "999"
          @ m_x + nGBott + 1, Col() + 1 SAY "/Y" GET nY3 PICT "999" VALID val_pecat( nX3, nY3 )
          @ m_x + nGBott + 1, Col() SAY "mm"
 
-         @ m_x + nGBott + 1, Col() + ( nGLen - 15 ) SAY "X"GET nX4 PICT "999" 
+         @ m_x + nGBott + 1, Col() + ( nGLen - 15 ) SAY "X"GET nX4 PICT "999"
          @ m_x + nGBott + 1, Col() + 1 SAY "/Y" GET nY4 PICT "999" VALID val_pecat( nX4, nY4 )
          @ m_x + nGBott + 1, Col() SAY "mm"
 
@@ -571,15 +570,15 @@ FUNCTION rnal_konfigurator_pozicije_pecata( cJoker, nWidth, nHeigh )
          IF LastKey() == K_ESC
             EXIT
          ENDIF
-	
+
          IF ( nX1 + nX2 + nX3 + nX4 + nY1 + nY2 + nY3 + nY4 ) <> 0
             EXIT
          ENDIF
 
       ELSE
          EXIT
-      ENDIF	
-	
+      ENDIF
+
    ENDDO
 
    BoxC()
@@ -616,11 +615,11 @@ FUNCTION rnal_konfigurator_pozicije_pecata( cJoker, nWidth, nHeigh )
    ENDIF
 
    IF !Empty( cTmp ) .OR. cStampSch == "D"
-	
+
       IF cStampSch == "D"
          cTmp := cStampSch
       ENDIF
-	
+
       cReturn := "STAMP" + ":" + cStampInfo + "#" + cTmp
 
    ENDIF

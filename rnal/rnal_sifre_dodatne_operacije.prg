@@ -9,12 +9,10 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
+#include "f18.ch"
 
 STATIC _tb_direkt
 STATIC __wo_id
-
 
 // -----------------------------------------
 // otvara sifrarnik dodatnih operacija
@@ -51,10 +49,10 @@ FUNCTION s_aops( cId, cDesc, lwo_ID, dx, dy )
    IF ValType( cId ) == "C"
       // try to validate
       IF Val( cId ) <> 0
-		
+
          cId := Val( cId )
          cDesc := ""
-		
+
       ENDIF
    ENDIF
 
@@ -169,14 +167,14 @@ STATIC FUNCTION key_handler( Ch )
       // pregled atributa
       s_aops_att( nil, nAop_id )
       GO ( nTRec )
-		
+
       RETURN DE_CONT
 
    CASE Ch == K_CTRL_N .OR. Ch == K_F4
       __wo_id := .F.
       set_a_kol( @ImeKol, @Kol )
       RETURN DE_CONT
-	
+
    ENDCASE
 
    RETURN DE_CONT

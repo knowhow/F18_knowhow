@@ -9,9 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
-
+#include "f18.ch"
 
 FUNCTION m_par()
 
@@ -23,7 +21,7 @@ FUNCTION m_par()
    AAdd( opcexe, {|| ed_fi_params() } )
    AAdd( opc, "2. izgled dokumenta  " )
    AAdd( opcexe, {|| ed_doc_params() } )
-   AAdd( opc, "3. zaokruzenja, format prikaza  " )
+   AAdd( opc, "3. zaokruženja, format prikaza  " )
    AAdd( opcexe, {|| ed_zf_params() } )
    AAdd( opc, "4. parametri exporta  " )
    AAdd( opcexe, {|| ed_ex_params() } )

@@ -9,9 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
-
+#include "f18.ch"
 
 FUNCTION rnal_print_odabir_stavki( lPriprema )
 
@@ -167,6 +165,3 @@ STATIC FUNCTION prikazi_dimenzije( qtty, height, width )
    _ret += AllTrim( Str( width, 12, 2 ) )
 
    RETURN _ret
-
-
-

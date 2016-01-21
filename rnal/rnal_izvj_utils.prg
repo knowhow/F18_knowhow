@@ -9,9 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
-
+#include "f18.ch"
 
 // ---------------------------------------
 // prikaz informacije na izvjestaju
@@ -48,9 +46,9 @@ FUNCTION std_vars( dD_f, dD_t, nOper, cStatus, cExport )
    Box(, 6, 60 )
 
    @ m_x + 1, m_y + 2 SAY "Datum od:" GET dD_f
-	
+
    @ m_x + 1, Col() + 1 SAY "do:" GET dD_t
-	
+
    @ m_x + 2, m_y + 2 SAY "Operater (0 - svi):" GET nOper ;
       VALID {|| nOper == 0, iif( nOper == -99, choose_f18_user_from_list( @nOper ), .T. ) } ;
       PICT "9999999999"

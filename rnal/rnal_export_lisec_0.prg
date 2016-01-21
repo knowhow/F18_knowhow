@@ -9,9 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
-
+#include "f18.ch"
 
 // -------------------------------------------
 // export dokumenta
@@ -150,10 +148,10 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
          field->doc_date, ;
          field->doc_dvr_da, ;
          field->doc_ship_p )
-		
+
       // UPISI <ORD>
       write_rec( nHnd, aOrd, aOrdSpec )
-	
+
    ELSE
 
       SELECT ( nTArea )
@@ -178,7 +176,7 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
       nTRec := RecNo()
 
       @ m_x + 1, m_y + 2 SAY PadR( "Upisujem stavke naloga.....", 50 )
-	
+
       nDoc_it_no := field->doc_it_no
       nArt_id := field->art_id
       nHeight := field->doc_it_hei
@@ -189,7 +187,7 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
       SEEK artid_str( nArt_id )
 
       SELECT ( nADOC_IT )
-	
+
       cGl1 := ""
       cPosGl1 := ""
       cGl2 := ""
@@ -226,10 +224,10 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
       aArticles := {}
 
       FOR i := 1 TO Len( aArtDesc )
-	
+
          nElem := aElem[ i, 1 ]
          // sta je ovaj elemenat
-		
+
          cType := g_grd_by_elid( nElem )
 
          // aArt { elem_no, art_desc, position,
@@ -237,7 +235,7 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
          // x, y, type}
          AAdd( aArticles, { nElem, aArtDesc[ i ], AllTrim( Str( ++nCount ) ), ;
             nWidth, nHeight, 0, 0, nWidth, nHeight, 0, 0, cType } )
-		
+
          @ m_x + 2, m_y + 2 SAY PadR( cArtdesc + " - ok stavka - " + AllTrim( Str( i ) ), 50 )
 
       NEXT
@@ -256,15 +254,15 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
       DO WHILE !Eof() .AND. field->doc_no == nDoc_no .AND. field->doc_it_no == nDoc_it_no
 
          cJoker := g_aatt_joker( field->aop_att_id )
-			
+
          SELECT ( nADOC_OP )
-	
+
          // moramo znati i koji je element
          nElemPos := field->doc_it_el_
-	
+
          // kod brusenja dodaj na dimenzije po 3mm
          IF cJoker == "<A_B>"
-		
+
             lPo2Write := .T.
 
             nScan := AScan( aArticles, {|xvar| xvar[ 1 ] == nElemPos } )
@@ -286,11 +284,11 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
 
                nHtmp := dodaj_za_bruseno( nHeight )
                nWtmp := dodaj_za_bruseno( nWidth )
-			
+
                // povecanje
                aArticles[ nScan, 6 ] += gBrusenoStakloDodaj
                aArticles[ nScan, 7 ] += gBrusenoStakloDodaj
-				
+
                // nove dimenzije
                aArticles[ nScan, 8 ] += gBrusenoStakloDodaj
                aArticles[ nScan, 9 ] += gBrusenoStakloDodaj
@@ -299,14 +297,14 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
 
          // kod stakala sa prepustom - takodjer gledaj druge dimenzije
          IF "A_PREP" $ cJoker
-			
+
             lPo2Write := .T.
 
             cValue := field->aop_value
 
             nScan := AScan( aArticles, {|xvar| xvar[ 1 ] == nElemPos } )
 
-			
+
             nH := 0
             nW := 0
 
@@ -319,7 +317,7 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
             nWraz := ( nW - nWidth )
 
             IF nScan <> 0
-			
+
                IF aArticles[ nScan, 8 ] = 0
                   aArticles[ nScan, 8 ] := nWidth
                ENDIF
@@ -347,14 +345,14 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
 
       // napuni varijable
       FOR ix := 1 TO Len( aArticles )
-		
+
          IF ix == 1
             cGl1 := aArticles[ ix, 2 ]
             cPosGl1 := aArticles[ ix, 3 ]
             nGl1w := aArticles[ ix, 8 ]
             nGl1h := aArticles[ ix, 9 ]
          ENDIF
-		
+
          IF ix == 2
             cFr1 := aArticles[ ix, 2 ]
             cPosFr1 := aArticles[ ix, 3 ]
@@ -384,25 +382,25 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
       IF ( field->doc_it_wid <> 0 .AND. ;
             field->doc_it_hei <> 0 .AND. ;
             field->doc_it_qtt <> 0 )
-		
+
          // ubaci u matricu podatke
          aPos := add_pos( field->doc_it_no, "", nil, field->doc_it_qtt, nGl1w, nGl1h, cPosGl1, cPosFr1, cPosGl2, cPosFr2, cPosGl3 )
 
          // upisi <POS>
          write_rec( nHnd, aPos, aPosSpec )
-		
-		
+
+
       ENDIF
-	
+
       // da li ima za dodatne informacije <PO2> ?
       IF lPo2Write == .T.
-	
+
          aPo2 := add_po2( "", ;
             nGl1w, ;
             nGl1h, ;
             0, 0, 0, 0, ;
             0, ;
-            0, ; 
+            0, ;
             0, 0, ;
             nGl2w, ;
             nGl2h, ;
@@ -418,17 +416,17 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
             abs_unit( nGl3h, nGl2h ), ;
             0, 0, ;
             0, 0 )
-	
+
          write_rec( nHnd, aPo2, aPo2Spec )
-		
-	
+
+
       ENDIF
 
       upisi_glx_frx( nHnd, cGl1, cGl2, cGl3, cFr1, cFr2, aGlSpec, aFrSpec )
 
       // ako ima napomena...
       IF !Empty( field->doc_it_des )
-		
+
          // upisi <TXT> ostale informacije
          aTxt := add_txt( 1, AllTrim( field->doc_it_des ) )
          write_rec( nHnd, aTxt, aTxtSpec )
@@ -439,7 +437,7 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
       GO ( nTRec )
 
       SKIP
-	
+
    ENDDO
 
    BoxC()
@@ -476,44 +474,43 @@ STATIC FUNCTION  upisi_glx_frx( nHnd, cGl1, cGl2, cGl3, cFr1, cFr2, aGlSpec, aFr
 
    // upisi <GLx>, <FRx>
    IF !Empty( cGl1 )
-		
+
       aGl1 := add_glx( "1", cGl1 )
       write_rec( nHnd, aGl1, aGlSpec )
-		
+
    ENDIF
 
    IF !Empty( cFr1 )
-			
+
       aFr1 := add_frx( "1", cFr1 )
       write_rec( nHnd, aFr1, aFrSpec )
-			
+
    ENDIF
 
    IF !Empty( cGl2 )
-			
+
       aGl2 := add_glx( "2", cGl2 )
       write_rec( nHnd, aGl2, aGlSpec )
-			
+
    ENDIF
 
    IF !Empty( cFr2 )
-			
+
       aFr2 := add_frx( "2", cFr2 )
       write_rec( nHnd, aFr2, aFrSpec )
-			
+
    ENDIF
 
    IF !Empty( cGl3 )
 
       aGl3 := add_glx( "3", cGl3 )
       write_rec( nHnd, aGl3, aGlSpec )
-	
+
    ENDIF
-		
+
    RETURN
 
 
 STATIC FUNCTION dodaj_za_bruseno( nDimension )
 
    RETURN nDimension + gBrusenoStakloDodaj
-

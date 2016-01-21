@@ -9,7 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "rnal.ch"
+#include "f18.ch"
 
 STATIC __nvar
 STATIC __doc_no

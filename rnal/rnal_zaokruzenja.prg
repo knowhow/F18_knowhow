@@ -1,16 +1,16 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
+#include "f18.ch"
 
-#include "rnal.ch"
 
 static BEZ_ZAOKR := 99
 static GN_ZAOKR := 1
@@ -22,7 +22,7 @@ static S3M_ZAOKR := 3
 // obracunski list zaokruzenje
 // ----------------------------------------
 function obrl_zaok( nVal, aArr, lBezZaokr )
-local nElCount 
+local nElCount
 local i
 local nTickness
 local nSeek
@@ -47,7 +47,7 @@ endif
 nElCount := aArr[ LEN(aArr), 1 ]
 
 if nElCount == 1
-	
+
 	// debljina stakla 1
 	nTickness := g_gl_tickness( aArr, 1 )
 
@@ -57,24 +57,24 @@ if nElCount == 1
 	if nTickness <= 3
 
 		nZaok := 3
-	
+
 	endif
-	
-	if cType == "PR" 
-	
+
+	if cType == "PR"
+
 		nZaok := 2
-	
+
 	endif
 
 	// zaokruzi
 	xZaok := dim_zaokruzi( nVal, nTickness, nZaok )
-	
+
 
 elseif nElCount > 1
-	
+
 	// ako je vise stavki....
 	xZaok := dim_zaokruzi( nVal, 4, nZaok )
-	
+
 endif
 
 return xZaok
@@ -84,7 +84,7 @@ return xZaok
 // obracunski list neto
 // ----------------------------------------
 function obrl_neto( nM2, aArr )
-local nElCount 
+local nElCount
 local i
 local nTickness
 local nSeek
@@ -99,20 +99,20 @@ endif
 nElCount := aArr[ LEN(aArr), 1 ]
 
 if nElCount == 1
-	
+
 	nTickness := g_gl_tickness( aArr, 1 )
 
 	// neto za jednu stavku je....
-	xNeto := 2.5 * nTickness * nM2 
-	
+	xNeto := 2.5 * nTickness * nM2
+
 
 elseif nElCount > 1
 
 	nTickness := g_gl_tickness( aArr )
-	
+
 	// ako je vise stavki.... dodaj jos 3%
 	xNeto := ( 2.5 * nTickness * nM2 ) * ( 1 + (3 / 100) )
-	
+
 endif
 
 return xNeto
@@ -123,7 +123,7 @@ return xNeto
 // vraca tip stakla
 // ---------------------------------------------
 function g_gl_type( aArr, nGlass )
-local nSeek 
+local nSeek
 local cType := ""
 
 if nGlass == nil
@@ -179,7 +179,7 @@ return xRet
 
 // ------------------------------------------
 // koliko elemenata ima u kompoziciji
-// 
+//
 // ------------------------------------------
 function g_el_count( aArr )
 local xRet := 0
@@ -191,7 +191,7 @@ return xRet
 
 // ------------------------------------------
 // koliko stakala ima u kompoziciji
-// 
+//
 // ------------------------------------------
 function g_gl_count( aArr )
 local xRet := 0
@@ -202,7 +202,7 @@ for i := 1 to LEN( aArr )
 	if aArr[i, 2] == "G" .and. aArr[i, 4] == ALLTRIM(gDefGlTick)
 		xRet += 1
 	endif
-	
+
 next
 
 return xRet
@@ -210,7 +210,7 @@ return xRet
 
 // ------------------------------------------
 // vraca debljinu stakla
-// 
+//
 // - ukupnu vrijednost ako je kompozicija
 //   ne zadaje se nGlass
 // - ako je zadat nGlass onda samo jedno
@@ -228,7 +228,7 @@ for i:=1 to LEN( aArr )
 	if aArr[i, 2] == "G" .and. aArr[i, 4] == ALLTRIM(gDefGlTick) .and. IF(nGlass > 0, aArr[i, 1] == nGlass , .t.)
 		xRet += glass_tick( aArr[ i, 5 ] )
 	endif
-	
+
 next
 
 return xRet
@@ -382,7 +382,3 @@ for i:=1 to LEN(aGN)
 next
 
 return nRet
-
-
-
-

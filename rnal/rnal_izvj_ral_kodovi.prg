@@ -9,9 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
-
+#include "f18.ch"
 
 // --------------------------------------
 // utrosak boja kod RAL-a
@@ -107,7 +105,7 @@ STATIC FUNCTION _cre_report( dD_f, dD_t, nOper, cRalLst, cColLst )
    Box(, 1, 50 )
 
    DO WHILE !Eof()
-	
+
       // uzmi podatke dokumenta da vidis treba li da se generise
       // u izvjestaj ?
 
@@ -159,7 +157,7 @@ STATIC FUNCTION _cre_report( dD_f, dD_t, nOper, cRalLst, cColLst )
       nRal := Val( aRal[ 1 ] )
       nTick := Val( aRal[ 2 ] )
       nRoller := Val( aRal[ 3 ] )
-	
+
       // provjeri uslov po listi
       IF !Empty( cRalLst )
          IF !( AllTrim( Str( nRal ) ) $ AllTrim( cRalLst ) )
@@ -189,7 +187,7 @@ STATIC FUNCTION _cre_report( dD_f, dD_t, nOper, cRalLst, cColLst )
       SELECT doc_it
       GO TOP
       SEEK docno_str( nDoc_no ) + docit_str( nDoc_it_no )
-	
+
       nArt_id := field->art_id
       // koliko ima kvadrata
       nUm2 := c_ukvadrat( field->doc_it_qtt, ;
@@ -205,7 +203,7 @@ STATIC FUNCTION _cre_report( dD_f, dD_t, nOper, cRalLst, cColLst )
       FOR i := 1 TO Len( aArr )
          app_to_tmp1( aArr[ i, 1 ], aArr[ i, 3 ] )
       NEXT
-	
+
       // idemo dalje...
       SELECT doc_ops
       SKIP

@@ -9,10 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
-
-// variables
+#include "f18.ch"
 
 STATIC l_new_it
 STATIC __doc
@@ -388,7 +385,7 @@ FUNCTION g_roba_price( cId )
 
 // ---------------------------------------------------------------
 // vraca vrijednosti iz hash matrice
-// 
+//
 // primjer:
 //      hash["test"] := 1
 //      get_hash_value( hash, "test", 0 ) => 1
@@ -417,11 +414,9 @@ FUNCTION g_roba_hash( id_roba )
    LOCAL _hash
 
    _hash := _set_sql_record_to_hash( "fmk.roba", id_roba )
-   
+
    IF VALTYPE( _hash ) $ "U" .AND. _hash == NIL
        RETURN NIL
    ENDIF
 
    RETURN _hash
-
-

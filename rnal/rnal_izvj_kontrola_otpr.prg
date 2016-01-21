@@ -9,9 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
-
+#include "f18.ch"
 
 // -----------------------------------------------------
 // provjera podataka, sta je prebaceno od otpremnica
@@ -79,7 +77,7 @@ STATIC FUNCTION _gen_rpt( dD_from, dD_to, nOper, nVar )
       IF nVar = 1
          IF AllTrim( field->fakt_d1 ) + ;
                AllTrim( field->pos_d1 ) <> "??"
-			
+
             // preskoci ovaj zapis
             SKIP
             LOOP
@@ -93,7 +91,7 @@ STATIC FUNCTION _gen_rpt( dD_from, dD_to, nOper, nVar )
       @ PRow(), PCol() + 1 SAY field->dvr_date
       @ PRow(), PCol() + 1 SAY field->fakt_d1
       // @ prow(), pcol()+1 SAY field->fakt_d2
-	
+
       SKIP
 
    ENDDO
@@ -170,7 +168,7 @@ FUNCTION chk_dok_11()
 
    @ m_x + 1, m_y + 2 SAY "za datum od" GET dD_from
    @ m_x + 1, Col() + 1 SAY "do" GET dD_to
-	
+
    @ m_x + 2, m_y + 2 SAY "resetuj broj veze u RNAL (D/N)?" ;
       GET cReset VALID cReset $ "DN" PICT "@!"
 
@@ -193,7 +191,7 @@ FUNCTION chk_dok_11()
    msgo( "Popunjavam veze ..." )
 
    DO WHILE !Eof()
-	
+
       // gledaj samo mp racune
       IF ( field->idtipdok <> "11" ) .OR. ( AllTrim( field->rbr ) <> "1" )
          SKIP
@@ -210,7 +208,7 @@ FUNCTION chk_dok_11()
 
       // uzmi memo polje
       aMemo := ParsMemo( field->txt )
-		
+
       IF Len( aMemo ) > 18
          // ovo je polje koje sadrzi brojeve veza...
          cMemo := aMemo[ 19 ]
@@ -225,10 +223,10 @@ FUNCTION chk_dok_11()
 
          // obradi svaki pojedinacni nalog
          FOR i := 1 TO Len( aTmp )
-			
+
             // evo broj naloga
             nNalog := Val( AllTrim( aTmp[ i ] ) )
-			
+
             // prekontrolisi ga sada u rnal-u
             SELECT docs
             GO TOP
@@ -237,7 +235,7 @@ FUNCTION chk_dok_11()
             _rec := dbf_get_rec()
 
             IF Found()
-				
+
                IF cReset == "D"
                   // resetuj polje fmk_doc prije svega
                   _rec[ "fmk_doc" ] := ""
@@ -252,7 +250,7 @@ FUNCTION chk_dok_11()
             ENDIF
 
          NEXT
-	
+
       ENDIF
 
       SELECT fakt_doks
@@ -304,12 +302,12 @@ STATIC FUNCTION _cre_report( dD_f, dD_t, nOper, cStatus )
    Box(, 1, 50 )
 
    DO WHILE !Eof()
-	
+
       // uzmi podatke dokumenta da vidis treba li da se generise
       // u izvjestaj ?
 
       nDoc_no := field->doc_no
-	
+
       @ m_x + 1, m_y + 2 SAY "obradjujem nalog: " + AllTrim( Str( nDoc_no ) )
 
       dDoc_date := field->doc_date
@@ -325,9 +323,9 @@ STATIC FUNCTION _cre_report( dD_f, dD_t, nOper, cStatus )
          SKIP
          LOOP
       ENDIF
-	
+
       // da li ga ima u FAKT-u ?
-	
+
       cDokument := AllTrim( Str( nDoc_no ) ) + ";"
       cF_doc1 := "?"
       cF_doc2 := "?"
@@ -341,7 +339,7 @@ STATIC FUNCTION _cre_report( dD_f, dD_t, nOper, cStatus )
 
       DO WHILE !Eof() .AND. field->idfirma + field->idtipdok == ;
             cFFirma + cFTipDok
-			
+
          // gledaj samo redni broj jedan fakture
          IF AllTrim( field->rbr ) <> "1"
             SKIP
@@ -350,7 +348,7 @@ STATIC FUNCTION _cre_report( dD_f, dD_t, nOper, cStatus )
 
          // uzmi memo polje
          aMemo := ParsMemo( field->txt )
-		
+
          IF Len( aMemo ) >= 19
             cMemo := aMemo[ 19 ]
          ELSE
@@ -365,7 +363,7 @@ STATIC FUNCTION _cre_report( dD_f, dD_t, nOper, cStatus )
 
          SKIP
       ENDDO
-	
+
       app_to_tmp1( nDoc_no, cCustomer, dDoc_date, dDvr_date, ;
          cF_doc1, cF_doc2, cP_doc1 )
 

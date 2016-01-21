@@ -9,12 +9,9 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
-
+#include "f18.ch"
 
 STATIC __doc_no
-
 
 
 FUNCTION rnal_pregled_loga_za_nalog( nDoc_no )
@@ -86,7 +83,7 @@ STATIC FUNCTION pregled_loga_key_handler()
    LOCAL nTblFilt
    LOCAL cLogDesc := ""
    LOCAL cPom
-  
+
    cLogDesc := opis_loga( doc_log->doc_no, doc_log->doc_log_no, doc_log->doc_log_ty )
 
    cPom := StrTran( cLogDesc, "#", "," )
@@ -94,16 +91,16 @@ STATIC FUNCTION pregled_loga_key_handler()
    prikazi_status_loga_u_dnu( cPom )
 
    DO CASE
-	
+
    CASE ( Ch == K_UP ) .OR. ;
          ( Ch == K_PGUP ) .OR. ;
          ( Ch == K_DOWN ) .OR. ;
          ( Ch == K_PGDN )
-		
+
       RETURN DE_REFRESH
-		
+
    CASE ( Ch == K_ENTER )
-	
+
       prikazi_promjene_unutar_boxa( cLogDesc )
 
       RETURN DE_CONT
@@ -186,13 +183,13 @@ STATIC FUNCTION prikazi_status_loga_u_dnu( cLogText )
    aLogArr := SjeciStr( cLogText, nLenText )
 
    IF Len( aLogArr ) > 0
-	
+
       cRow1 := aLogArr[ 1 ]
-	
+
       IF Len( aLogArr ) > 1
          cRow2 := aLogArr[ 2 ]
       ENDIF
-	
+
       IF Len( aLogArr ) > 2
          cRow3 := aLogArr[ 3 ]
       ENDIF
@@ -257,15 +254,15 @@ STATIC FUNCTION prikazi_promjene_unutar_boxa( cLogTxt )
    ENDIF
 
    Box(, Len( aBoxTxt ) + 2, 70 )
-	
+
    @ m_x + 1, m_y + 2 SAY "Detaljni prikaz promjene: " COLOR "I"
-	
+
    FOR i := 1 TO Len( aBoxTxt )
       @ m_x + ( i + 1 ), m_y + 2 SAY8 PadR( aBoxTxt[ i ], 65 )
    NEXT
 
    @ m_x + Len( aBoxTxt ) + 2, m_y + 2 GET cResp
-	
+
    READ
    BoxC()
 
@@ -274,4 +271,3 @@ STATIC FUNCTION prikazi_promjene_unutar_boxa( cLogTxt )
    ENDIF
 
    RETURN
-

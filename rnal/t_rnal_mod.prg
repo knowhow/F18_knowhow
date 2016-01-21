@@ -9,13 +9,9 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
-#include "hbclass.ch"
+#include "f18.ch"
 
 
-// -----------------------------------------------
-// -----------------------------------------------
 CLASS TRnalMod FROM TAppMod
 
    VAR oSqlLog
@@ -122,8 +118,7 @@ METHOD mMenuStandard()
    RETURN
 
 
-// -------------------------------------------------
-// -------------------------------------------------
+
 METHOD srv()
    RETURN
 

@@ -52,7 +52,7 @@ FUNCTION use_sql_sif( table, l_make_index )
 
 
 
-FUNCTION use_sql( table, sql_query )
+FUNCTION use_sql( table, sql_query, cAlias )
 
    LOCAL oConn
 
@@ -69,7 +69,13 @@ FUNCTION use_sql( table, sql_query )
       RETURN .F.
    ENDIF
 
-   dbUseArea( .F., "SQLMIX", sql_query,  table )
+   BEGIN SEQUENCE WITH {| err| Break( err ) }
+      dbUseArea( .F., "SQLMIX", sql_query, IIF( cAlias == NIL, table, cAlias) )
+   RECOVER USING oError
+      //logiraj( "use_sql: " + oError:description + " sql query:" + sql_query, HB_LOG_ERROR )
+      Alert( "use_sql ERR:" + sql_query)
+      RETURN .F.
+   ENDSEQUENCE
 
    rddSetDefault( "DBFCDX" )
 

@@ -9,9 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
-
+#include "f18.ch"
 
 STATIC _e_gr_at
 STATIC __wo_id
@@ -128,7 +126,7 @@ STATIC FUNCTION gr_att_filter( nE_gr_at_id, cE_gr_vl_desc )
    ENDIF
 
    IF !Empty( cE_gr_vl_desc )
-	
+
       IF !Empty( cFilter )
          cFilter += " .and. "
       ENDIF
@@ -213,7 +211,7 @@ FUNCTION g_e_gr_vl_desc( nE_gr_vl_id, lEmpty, lFullDesc )
 
 
 // --------------------------------------------------
-// vraæa grupu elementa po vrijednosti atributa
+// vraï¿½a grupu elementa po vrijednosti atributa
 // --------------------------------------------------
 FUNCTION g_egr_by_att( nE_gr_att, lEmpty, lFullDesc )
 

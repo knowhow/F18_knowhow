@@ -9,15 +9,12 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
+#include "f18.ch"
 
 STATIC _status
 STATIC __sort
 STATIC __filter
 STATIC _operater
-
-
 
 FUNCTION rnal_lista_dokumenata( nStatus )
 
@@ -182,9 +179,9 @@ STATIC FUNCTION lst_args( nSort )
    @ m_x + nX, Col() + 1 SAY "do:" GET dDateTo WHEN set_opc_box( nBoxX, 60 )
 
    IF _status == 1
-	
+
       nX += 1
-	
+
       @ m_x + nX, m_y + 2 SAY PadL( "Datum isporuke od:", 18 ) GET dDvrDFrom WHEN set_opc_box( nBoxX, 60 )
       @ m_x + nX, Col() + 1 SAY "do:" GET dDvrDTo WHEN set_opc_box( nBoxX, 60 )
 
@@ -299,7 +296,7 @@ STATIC FUNCTION gen_filter( dDateFrom, dDateTo, dDvrDFrom, dDvrDTo, ;
       IF cShReject == "D"
          cFilter := "( " + cFilter +  " .or. doc_status == 2 )"
       ENDIF
-	
+
    ENDIF
 
    IF nTip == 1
@@ -369,7 +366,7 @@ STATIC FUNCTION key_handler()
       ELSE
          _sh_dvr_warr( _chk_date( doc_dvr_da ), _chk_time( doc_dvr_ti ), 5 )
       ENDIF
-		
+
    ENDIF
 
    _sh_doc_status( doc_status )
@@ -381,90 +378,90 @@ STATIC FUNCTION key_handler()
          RETURN DE_CONT
       ENDIF
    ENDIF
-	
+
    DO CASE
 
    CASE ( Ch == K_CTRL_P )
-		
+
       IF Pitanje(, "Štampati nalog (D/N) ?", "D" ) == "D"
-			
+
          nDoc_no := docs->doc_no
          nTRec := RecNo()
-			
+
          SET FILTER TO
-			
+
          stampa_nalog_proizvodnje( .F., nDoc_no )
-			
+
          SELECT docs
-			
+
          set_f_kol( cTmpFilter )
-			
+
          GO ( nTRec )
-			
+
          RETURN DE_REFRESH
       ENDIF
-		
+
       SELECT docs
       RETURN DE_CONT
-	
+
    CASE ( Ch == K_CTRL_O )
-		
+
       IF Pitanje(, "Štampati specifikaciju (D/N) ?", "D" ) == "D"
-			
+
          nDoc_no := docs->doc_no
          nTRec := RecNo()
-			
+
          SET FILTER TO
-			
+
          st_obr_list( .F., nDoc_no, aDocs )
-			
+
          SELECT docs
-			
+
          set_f_kol( cTmpFilter )
-			
+
          GO ( nTRec )
-			
+
          RETURN DE_REFRESH
       ENDIF
-		
+
       SELECT docs
       RETURN DE_CONT
-	
+
    CASE ( Ch == K_CTRL_L )
-		
+
       IF Pitanje(, "Štampati naljepnice (D/N) ?", "D" ) == "D"
-			
+
          nDoc_no := docs->doc_no
          nTRec := RecNo()
-			
+
          SET FILTER TO
-			
+
          rnal_stampa_naljepnica( .F., nDoc_no )
-			
+
          SELECT docs
-			
+
          set_f_kol( cTmpFilter )
-			
+
          GO ( nTRec )
-			
+
          RETURN DE_REFRESH
       ENDIF
-		
+
       SELECT docs
       RETURN DE_CONT
-	
+
    CASE ( Upper( Chr( Ch ) ) == "K" )
-		
+
       SELECT docs
-		
+
       doc_cont_view( docs->doc_no )
-		
+
       SELECT docs
-		
+
       RETURN DE_CONT
-		
+
    CASE ( Upper( Chr( Ch ) ) == "X" )
-	
+
       SELECT docs
       nDoc_no := docs->doc_no
       IF rnal_promjena_broja_naloga( nDoc_no )
@@ -476,27 +473,27 @@ STATIC FUNCTION key_handler()
       RETURN DE_CONT
 
    CASE ( Upper( Chr( Ch ) ) == "O" )
-		
+
       otpr_edit( docs->fmk_doc )
-		
+
       RETURN DE_REFRESH
-	
+
    CASE ( Upper( Chr( Ch ) ) == "N" )
-		
+
       SELECT docs
-	
+
       nRet := qf_nalog()
 
       SELECT docs
-		
+
       RETURN nRet
-	
+
    CASE ( Upper( Chr( Ch ) ) == "A" )
 
       nScn := AScan( aDocs, {|xVar| xVar[ 1 ] == docs->doc_no } )
 
       IF nScn == 0
-			
+
          AAdd( aDocs, { docs->doc_no, AllTrim( g_cust_desc( docs->cust_id ) ) + "/" + ;
             AllTrim( g_cont_desc( docs->cont_id ) ) } )
 
@@ -521,50 +518,50 @@ STATIC FUNCTION key_handler()
       RETURN DE_CONT
 
    CASE ( Upper( Chr( Ch ) ) == "D" )
-		
+
       IF is_doc_busy()
          msg_busy_doc()
          SELECT docs
          RETURN DE_CONT
       ENDIF
-		
+
       IF Pitanje(, "Otvoriti nalog radi dorade (D/N) ?", "N" ) == "D"
-			
+
          nTRec := RecNo()
          nDoc_no := docs->doc_no
-			
+
          IF doc_2__doc( nDoc_no ) == 1
             MsgBeep( "Nalog otvoren!#Prelazim u pripremu##Pritisni nesto za nastavak..." )
             log_write( "F18_DOK_OPER: rnal, dorada naloga broj: " + AllTrim( Str( nDoc_no ) ), 2 )
          ENDIF
-			
+
          SELECT docs
          GO ( nTRec )
-			
+
          ed_document( .F. )
-			
+
          SELECT docs
          set_f_kol( cTmpFilter )
-			
+
          RETURN DE_REFRESH
       ENDIF
-		
+
       SELECT docs
       RETURN DE_CONT
 
    CASE ( Upper( Chr( Ch ) ) == "Q" )
 
       IF !ImaPravoPristupa( goModul:oDataBase:cName, "DOK", "QUICKSEARCH" )
-			
+
          MsgBeep( cZabrana )
 
          SELECT docs
          RETURN DE_CONT
-			
+
       ENDIF
-	
+
       cFilt := _quick_srch_()
-		
+
       IF !Empty( cFilt )
          cFilt := __filter + cFilt
          SELECT docs
@@ -576,118 +573,118 @@ STATIC FUNCTION key_handler()
       ENDIF
 
    CASE ( Upper( Chr( Ch ) ) == "Z" )
-		
+
       IF is_doc_busy()
          msg_busy_doc()
          SELECT docs
          RETURN DE_CONT
       ENDIF
-			
+
       IF Pitanje(, "Zatvoriti nalog (D/N) ?", "N" ) == "D"
-					
+
          IF _g_doc_status( @nDoc_status, @cDesc ) == 1
-				
+
             nTRec := RecNo()
             nDoc_no := docs->doc_no
-			
+
             set_doc_marker( nDoc_no, nDoc_status )
-				
+
             logiraj_zatvaranje_naloga( nDoc_no, cDesc, nDoc_status )
-				
+
             MsgBeep( "Nalog zatvoren !!!" )
-			
+
             SELECT docs
             set_f_kol( cTmpFilter )
             SELECT docs
-				
+
             RETURN DE_REFRESH
-				
+
          ELSE
-			
+
             MsgBeep( "Setovanje statusa obavezno !" )
             SELECT docs
             RETURN DE_CONT
-				
+
          ENDIF
       ENDIF
-		
+
       SELECT docs
       RETURN DE_CONT
-	
+
    CASE ( Upper( Chr( Ch ) ) == "F" )
-		
+
       IF Pitanje(, "Resetovati status dokumenta (D/N) ?", "N" ) == "N"
          RETURN DE_CONT
       ENDIF
-		
+
       IF !SigmaSif( "FIXSTAT" )
          RETURN DE_CONT
       ENDIF
-		
+
       nDoc_no := docs->doc_no
       nTRec := RecNo()
       SET FILTER TO
-		
+
       set_doc_marker( nDoc_no, 0 )
-	
+
       log_write( "F18_DOK_OPER: rnal, reset statusa naloga broj: " + AllTrim( Str( nDoc_no ) ) + " na status 0", 2 )
-	
+
       set_f_kol( cTmpFilter )
-		
+
       GO ( nTRec )
-		
+
       RETURN DE_CONT
 
    CASE ( Upper( Chr( Ch ) ) == "L" )
-		
+
       nDoc_no := docs->doc_no
 	  nTRec := RecNo()
-	
+
       rnal_pregled_loga_za_nalog( nDoc_no )
-	
+
       SELECT docs
 	  set_f_kol( cTmpFilter )
-		
+
       GO ( nTRec )
-	
+
       RETURN DE_CONT
 
    CASE Upper( Chr( Ch ) ) == "E"
 
       nTRec := RecNo()
-		
+
       nDoc_no := docs->doc_no
-		
+
       rnal_export_menu( nDoc_no, aDocs, .F., .T. )
-		
+
       SELECT docs
       set_f_kol( cTmpFilter )
-		
+
       GO ( nTRec )
-		
+
       RETURN DE_REFRESH
 
    CASE ( Upper( Chr( Ch ) ) == "P" )
-		
+
       nTRec := RecNo()
-		
+
       IF is_doc_busy()
          msg_busy_doc()
          SELECT docs
          RETURN DE_CONT
       ENDIF
-		
+
       nDoc_no := docs->doc_no
-		
+
       m_changes( nDoc_no )
-		
+
       IF LastKey() == K_ESC
          Ch := 0
       ENDIF
-	
+
       SELECT docs
       GO ( nTRec )
-		
+
       RETURN DE_REFRESH
 
    ENDCASE
@@ -733,11 +730,11 @@ STATIC FUNCTION s_ol_status( aArr )
    ELSE
 
       FOR i := 1 TO Len( aArr )
-		
+
          IF aArr[ i, 1 ] < 0
             LOOP
          ENDIF
-		
+
          IF !Empty( cStr )
             cStr += ","
          ENDIF
@@ -810,23 +807,23 @@ FUNCTION ddor_nal()
       SELECT docs
       RETURN
    ENDIF
-		
+
    IF Pitanje(, "Otvoriti nalog radi dorade (D/N) ?", "N" ) == "D"
-			
+
       nDoc_no := docs->doc_no
-			
+
       IF doc_2__doc( nDoc_no ) == 1
          MsgBeep( "Nalog otvoren!#Prelazim u pripremu##Pritisni nesto za nastavak..." )
          log_write( "F18_DOK_OPER: rnal, dorada naloga broj: " + AllTrim( Str( nDoc_no ) ), 2 )
       ENDIF
-			
+
       SELECT docs
-			
+
       ed_document( .F. )
-		
+
       RETURN
    ENDIF
-		
+
    RETURN
 
 
@@ -838,15 +835,15 @@ STATIC FUNCTION _quick_srch_()
    LOCAL cDesc := Space( 150 )
 
    Box(, 5, 70, .T. )
-	
+
    @ m_x + nX, m_y + 2 SAY "Brza pretraga naloga *******"
-	
+
    nX += 2
-	
+
    @ m_x + nX, m_y + 2 SAY "Unesi kratki opis naloga:" GET cDesc PICT "@S40" VALID !Empty( cDesc )
-	
+
    @ m_x + nX, Col() SAY ">" COLOR "I"
-	
+
    READ
    BoxC()
 
@@ -889,34 +886,34 @@ STATIC FUNCTION _g_doc_status( nDoc_status, cDesc )
    Box(, nBoxX, nBoxY )
 
    cDesc := Space( 150 )
-	
+
    nX += 1
-	
+
    @ m_x + nX, m_y + 2 SAY " **** Trenutni status naloga je:" COLOR cColor
-	
+
    nX += 2
-	
+
    @ m_x + nX, m_y + 2 SAY Space( 3 ) + "(R) realizovan" COLOR cColor
-	
+
    nX += 1
-	
+
    @ m_x + nX, m_y + 2 SAY8 Space( 3 ) + "(N) realizovan, nije isporučen" COLOR cColor
    nX += 1
-	
+
    @ m_x + nX, m_y + 2 SAY8 Space( 3 ) + "(D) djelimično realizovan" COLOR cColor
-	
+
    nX += 1
-	
+
    @ m_x + nX, m_y + 2 SAY8 Space( 3 ) + "(X) poništen" COLOR cColor
-	
+
    nX += 2
-	
+
    @ m_x + nX, m_y + 2 SAY "postavi status na -------->" GET cStat VALID cStat $ "RXDN" PICT "@!"
-	
+
    nX += 2
-	
+
    @ m_x + nX, m_y + 2 SAY "Opis:" GET cDesc VALID !Empty( cDesc ) PICT "@S50"
-	
+
    READ
    BoxC()
 
@@ -1137,27 +1134,27 @@ STATIC FUNCTION _sh_doc_status( doc_status, nX, nY )
    DO CASE
 
    CASE doc_status == 0
-		
+
       cColor := "GR+/B"
-		
+
    CASE doc_status == 1
-		
+
       cColor := "GB+/B"
-		
+
    CASE doc_status == 2
-		
+
       cColor := "W/R+"
-		
+
    CASE doc_status == 3
-		
+
       cColor := "GR+/G+"
-		
+
    CASE doc_status == 4
-		
+
       cColor := "W/G+"
-		
+
    CASE doc_status == 5
-		
+
       cColor := "W/G+"
 
    ENDCASE
@@ -1266,31 +1263,31 @@ STATIC FUNCTION _get_doc_contacts( aArr, nDoc_no )
 
       nDoc_log_no := field->doc_log_no
 
-      use_sql_doc_lit( nDoc_no, nDoc_log_no )	
+      use_sql_doc_lit( nDoc_no, nDoc_log_no )
       SEEK docno_str( nDoc_no ) + doclog_str( nDoc_log_no )
 
       DO WHILE !Eof() .AND. field->doc_no == nDoc_no ;
             .AND. field->doc_log_no == nDoc_log_no
-			
+
          IF field->int_1 <> 0
-				
+
             nCont_id := field->int_1
-				
+
             nSrch := AScan( aArr, {| xVal| xVal[ 1 ] == nCont_id } )
             IF nSrch == 0
-					
+
                AAdd( aArr, { field->int_1, g_cont_desc( field->int_1 ), g_cont_tel( field->int_1 ) } )
-				
+
                ++ nC_count
             ENDIF
          ENDIF
-		
+
          SKIP
       ENDDO
 
       SELECT doc_log
       SKIP
-	
+
    ENDDO
 
    SELECT ( nTArea )
@@ -1316,24 +1313,24 @@ STATIC FUNCTION show_c_list( aArr )
    DO WHILE lShow == .T.
 
       Box( , nBoxX, nBoxY )
-		
+
       FOR i := 1 TO Len( aArr )
-			
+
          @ m_x + i, m_y + 2 SAY "(" + AllTrim( Str( aArr[ i, 1 ] ) ) + ")"
          @ m_x + i, Col() + 1 SAY ", " + AllTrim( aArr[ i, 2 ] )
-			
+
          @ m_x + i, Col() + 1 SAY ", " + AllTrim( aArr[ i, 3 ] )
-			
-			
+
+
       next
-		
+
       @ m_x + Len( aArr ) + 1, m_y + 2 GET cGet
-		
+
       READ
-		
-		
+
+
       BoxC()
-	
+
       IF LastKey() == K_ENTER .OR. LastKey() == K_ESC
          lShow := .F.
       ENDIF

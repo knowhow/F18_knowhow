@@ -9,11 +9,9 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
+#include "f18.ch"
 
 STATIC __cust_id
-
 
 // -------------------------------------
 // otvara tabelu objekata
@@ -57,7 +55,7 @@ FUNCTION s_objects( cId, nCust_id, cObjDesc, dx, dy )
    IF ValType( cId ) == "C"
       // try to validate
       IF Val( cId ) <> 0
-	
+
          cId := Val( cId )
          nCust_id := -1
          cObjDesc := ""
@@ -142,14 +140,14 @@ STATIC FUNCTION obj_filter( nCust_id, cObjDesc )
    ENDIF
 
    IF !Empty( cObjDesc )
-	
+
       IF !Empty( cFilter )
          cFilter += " .and. "
       ENDIF
-	
+
       cObjDesc := AllTrim( cObjDesc )
       cFilter += " ALLTRIM(UPPER(obj_desc)) = " + cm2str( Upper( cObjDesc ) )
-	
+
    ENDIF
 
    IF !Empty( cFilter )

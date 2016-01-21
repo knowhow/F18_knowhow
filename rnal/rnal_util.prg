@@ -1,4 +1,4 @@
-#include "rnal.ch"
+#include "f18.ch"
 
 FUNCTION get_broj_stakala( nNalog )
 

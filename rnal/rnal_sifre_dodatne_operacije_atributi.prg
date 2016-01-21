@@ -9,9 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
-
+#include "f18.ch"
 
 STATIC _tb_direkt
 STATIC _aop_id
@@ -56,11 +54,11 @@ FUNCTION s_aops_att( cId, nAop_id, cAop_desc, lwo_ID, dx, dy )
    IF ValType( cId ) == "C"
       // try to validate
       IF Val( cId ) <> 0
-		
+
          cId := Val( cId )
          nAop_id := -1
          cAop_Desc := ""
-		
+
       ENDIF
    ENDIF
 
@@ -224,13 +222,13 @@ FUNCTION g_aatt_joker( nAopatt_id )
 
       // ako ima polja ?
       IF aops_att->( FieldPos( "AOP_ATT_JO" ) ) == 0
-		
+
          // uzmi iz opisa
          cAttJoker := AllTrim( g_aop_att_desc( nAopatt_id, .T., .F. ) )
          RETURN cAttJoker
-		
+
       ENDIF
-	
+
       IF !Empty( field->aop_att_jo )
          cAttJoker := AllTrim( field->aop_att_jo )
       ENDIF
@@ -333,15 +331,15 @@ FUNCTION is_g_config( cVal, nAop_att_id, ;
    SEEK aop_att_str( nAop_att_id )
 
    IF Found()
-	
+
       // standarni konfigurator
       IF "#G_CONFIG#" $ field->aop_att_fu
          lGConf := .T.
-	
+
       // konfigurator busenja rupa
       ELSEIF "#HOLE_CONFIG#" $ field->aop_att_fu
          lHConf := .T.
-	
+
       // RAL - konfigurator
       ELSEIF "#RAL_CONFIG#" $ field->aop_att_fu
          lRalConf := .T.
@@ -349,7 +347,7 @@ FUNCTION is_g_config( cVal, nAop_att_id, ;
       // konfigurator pozicije pecata
       ELSEIF "#STAMP_CONFIG#" $ field->aop_att_fu
          lStConf := .T.
-	
+
       ELSEIF "#PREP_CONFIG#" $ field->aop_att_fu
          lPrepConf := .T.
 
@@ -358,24 +356,24 @@ FUNCTION is_g_config( cVal, nAop_att_id, ;
 
          aTmp := TokToNiz( field->aop_att_fu, "#" )
          cVal := PadR(  AllTrim( aTmp[ 2 ] ), 150 )
-		
+
          RETURN .T.
-		
+
       ENDIF
-	
+
       IF aops_att->( FieldPos( "AOP_ATT_JO" ) ) <> 0
          cJoker := AllTrim( field->aop_att_jo )
       ELSE
          cJoker := AllTrim( field->aop_att_de )
       ENDIF
-	
+
    ENDIF
 
    IF lGConf == .T.
 
       IF rnal_konfigurator_stakla( nWidth, nHeigh, @cV1, @cV2, @cV3, @cV4, ;
             @nR1, @nR2, @nR3, @nR4 ) == .T.
-		
+
          // shema za G_CONFIG
          //
          // val1
@@ -384,24 +382,24 @@ FUNCTION is_g_config( cVal, nAop_att_id, ;
          //
          // val 1/4 - sirine stakla (gornja/donja)
          // val 2/3 - visine stakla (gornja/donja)
-		
-		
+
+
          // get string...
          cVal := "#"
-		
+
          // prvo stranice
          IF cV1 == "D"
             cVal += "D1#"
          ENDIF
-	
+
          IF cV2 == "D"
             cVal += "D2#"
          ENDIF
-		
+
          IF cV3 == "D"
             cVal += "D3#"
          ENDIF
-	
+
          IF cV4 == "D"
             cVal += "D4#"
          ENDIF
@@ -419,7 +417,7 @@ FUNCTION is_g_config( cVal, nAop_att_id, ;
          IF nR3 <> 0
             cVal += "R3=" + AllTrim( Str( nR3 ) ) + "#"
          ENDIF
-		
+
          IF nR4 <> 0
             cVal += "R4=" + AllTrim( Str( nR4 ) ) + "#"
          ENDIF
@@ -433,10 +431,10 @@ FUNCTION is_g_config( cVal, nAop_att_id, ;
          // joker + ":" + string vrijednosti
          //
          // <AOP_B_STR>:#D1#D4#R1=200#
-		
+
          cVal := PadR( cJoker + ":" + cVal, 150 )
       ENDIF
-	
+
    ENDIF
 
    IF lHConf == .T.
@@ -485,20 +483,20 @@ FUNCTION g_aop_value( cVal )
    ENDIF
 
    DO CASE
-	
+
    CASE aTmp[ 1 ] == "<A_B>"
       cRet := _cre_aop_str( aTmp[ 2 ] )
-		
+
    // zaobljavanje
    CASE aTmp[ 1 ] == "<A_Z>"
       cRet := _cre_aop_Str( aTmp[ 2 ] )
 
    CASE aTmp[ 1 ] == "STAMP"
       cRet := rnal_pozicija_pecata_stavke( cVal )
-		
+
    CASE aTmp[ 1 ] == "<A_BU>"
       cRet := rnal_dimenzije_rupa_za_nalog( cVal )
-	
+
    CASE aTmp[ 1 ] == "<A_PREP>"
       cRet := rnal_dimenzije_prepusta_za_nalog( cVal )
 

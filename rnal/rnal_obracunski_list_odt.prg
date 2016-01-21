@@ -9,12 +9,10 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "rnal.ch"
-
+#include "f18.ch"
 
 STATIC PIC_VRIJEDNOST := ""
 STATIC LEN_VRIJEDNOST := 12
-
 
 
 // -----------------------------------------------------
@@ -310,7 +308,7 @@ STATIC FUNCTION _cre_xml( params )
    GO TOP
 
    IF RECCOUNT2() <> 0 .AND. params[ "rekap_materijala" ]
-	
+
       DO WHILE !Eof()
 
          _r_doc := field->doc_no
@@ -319,19 +317,19 @@ STATIC FUNCTION _cre_xml( params )
          // da li se treba stampati ?
          SELECT t_docit
          SEEK docno_str( _r_doc ) + docit_str( _r_doc_it_no )
-	
+
          IF field->print == "N"
             SELECT t_docit2
             SKIP
             LOOP
          ENDIF
-	
+
          // vrati se
          SELECT t_docit2
 
          DO WHILE !Eof() .AND. field->doc_no == _r_doc ;
                .AND. field->doc_it_no == _r_doc_it_no
-		
+
             xml_subnode( "item", .F. )
 
             xml_node( "no", "(" + AllTrim( Str( field->doc_it_no ) ) + ")/" + AllTrim( Str( field->it_no ) ) )

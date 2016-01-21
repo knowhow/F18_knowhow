@@ -9,8 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
+#include "f18.ch"
 
 
 STATIC l_open_dbedit
@@ -21,7 +20,6 @@ STATIC __art_sep
 STATIC __mc_sep
 STATIC __qf_cond
 STATIC __aop_sep
-
 
 
 // ------------------------------------------------
@@ -169,7 +167,7 @@ STATIC FUNCTION key_handler()
       brza_pretraga_artikla()
 
       l_quick_find := .F.
-      
+
       Tb:RefreshAll()
 
       WHILE !TB:stabilize()
@@ -702,7 +700,7 @@ STATIC FUNCTION brisi_stavku_iz_articles( nArt_id )
    LOCAL _rec
 
    _rec := dbf_get_rec()
-   
+
    lOk := delete_rec_server_and_dbf( "articles", _rec, 1, "CONT" )
 
    RETURN lOk
@@ -791,8 +789,8 @@ FUNCTION rnal_ima_li_artikla_u_dokumentima( nArt_id )
    LOCAL lExist := .F.
    LOCAL cWhere
 
-   cWhere := " art_id = " + AllTrim( Str( nArt_id ) ) 
-  
+   cWhere := " art_id = " + AllTrim( Str( nArt_id ) )
+
    IF table_count( "fmk.rnal_doc_it", cWhere ) > 0
       lExist := .T.
    ENDIF
@@ -1024,7 +1022,7 @@ STATIC FUNCTION rnal_dupliciraj_operacije_artikla( nOldEl_id, nNewEl_id )
 
       lOk := update_rec_server_and_dbf( "e_aops", _rec, 1, "CONT" )
 
-      IF !lOk 
+      IF !lOk
          EXIT
       ENDIF
 
@@ -1076,16 +1074,16 @@ FUNCTION rnal_setuj_naziv_artikla( nArt_id, lNew, lAuto, aAttr, lOnlyArr )
    LOCAL cArt_code := ""
    LOCAL cArt_desc := ""
    LOCAL cArt_mcode := ""
- 
+
    IF aAttr == NIL
       aAttr := {}
    ENDIF
-  
+
    rnal_matrica_artikla( nArt_id, @aAttr )
 
    IF aAttr == NIL .OR. LEN( aAttr ) == 0
       RETURN nRet
-   ENDIF 
+   ENDIF
 
    IF lAuto == NIL
       lAuto := .F.
@@ -1312,7 +1310,7 @@ FUNCTION g_el_descr( aArr, nEl_count )
 
    Parameters:
      - aArr - matrica definicije artikla
-     - cArt_code 
+     - cArt_code
      - cArt_desc
      - cArt_mcode
 */

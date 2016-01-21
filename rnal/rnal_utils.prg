@@ -10,7 +10,7 @@
  */
 
 
-#include "rnal.ch"
+#include "f18.ch"
 
 // --------------------------------------------------
 // prikazi info 99 - otvori sifrarnik

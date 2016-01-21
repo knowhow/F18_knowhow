@@ -9,13 +9,10 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
+#include "f18.ch"
 
 STATIC PIC_VRIJEDNOST := ""
 STATIC LEN_VRIJEDNOST := 12
-
-
 
 FUNCTION rnal_nalog_za_proizvodnju_odt()
 
@@ -224,14 +221,14 @@ STATIC FUNCTION kreiraj_xml_fajl( groups, params )
       _count := 0
 
       DO WHILE !Eof() .AND. field->doc_no == _doc_no .AND. field->doc_gr_no == _group_id
-	
+
          AAdd( _a_items, { field->doc_no, field->doc_it_no } )
 
          xml_subnode( "item", .F. )
-	
+
          _art_id := field->art_id
          _item_type := field->doc_it_typ
-	
+
          xml_node( "no", AllTrim( Str( ++_doc_rbr ) ) )
 
          IF !Empty( field->art_desc )
@@ -253,18 +250,18 @@ STATIC FUNCTION kreiraj_xml_fajl( groups, params )
             _el_count := 0
 
             xml_subnode( "element", .F. )
-	
+
             xml_node( "no", AllTrim( Str( field->doc_el_no ) ) )
             xml_node( "desc", to_xml_encoding( AllTrim( field->doc_el_des ) ) )
-			
+
             DO WHILE !Eof() .AND. field->doc_no == t_docit->doc_no ;
                   .AND. field->doc_it_no == t_docit->doc_it_no ;
                   .AND. field->doc_el_no == _el_no
-		
+
                xml_subnode( "oper", .F. )
 
                _el_desc := 0
-	
+
                IF !Empty( field->aop_desc ) .AND. AllTrim( field->aop_desc ) <> "?????"
                   xml_node( "cnt", AllTrim( Str( ++_el_count ) ) )
                   xml_node( "op_desc", to_xml_encoding( field->aop_desc ) )
@@ -280,18 +277,18 @@ STATIC FUNCTION kreiraj_xml_fajl( groups, params )
                   xml_node( "att_desc", "" )
                   xml_node( "att_val", "" )
                ENDIF
-		
+
                IF !Empty( field->doc_op_des )
                   xml_node( "notes", to_xml_encoding( AllTrim( field->doc_op_des ) ) )
                ELSE
                   xml_node( "notes", "" )
                ENDIF
-	
+
                xml_subnode( "oper", .T. )
 
                SELECT t_docop
                SKIP
-	
+
             ENDDO
 
             xml_subnode( "element", .T. )
@@ -299,7 +296,7 @@ STATIC FUNCTION kreiraj_xml_fajl( groups, params )
          ENDDO
 
          SELECT t_docit
-	
+
          IF _item_type == "R"
             xml_node( "type", "fi" )
 
@@ -326,10 +323,10 @@ STATIC FUNCTION kreiraj_xml_fajl( groups, params )
             xml_node( "h", show_number( field->doc_it_hei, PIC_VRIJEDNOST ) )
 
          ENDIF
-	
+
          xml_node( "kol", show_number( field->doc_it_qtt, PIC_VRIJEDNOST ) )
          _qtty_total += field->doc_it_qtt
-	
+
          _tmp := ""
          _opis_stavke := ""
          _l_opis_stavke := .F.
@@ -337,30 +334,30 @@ STATIC FUNCTION kreiraj_xml_fajl( groups, params )
          IF !Empty( field->doc_it_des ) ;
                .OR. field->doc_it_alt <> 0 ;
                .OR. ( field->doc_it_sch == "D" )
-	
+
             _tmp := "Napomene: " + AllTrim( field->doc_it_des )
-		
+
             IF field->doc_it_sch == "D"
                _tmp += " "
                _tmp += "(SHEMA U PRILOGU)"
             endif
 
             IF field->doc_it_alt <> 0
-			
+
                IF !Empty( field->doc_acity )
                   _tmp += " "
                   _tmp += "Montaza: "
                   _tmp += AllTrim( field->doc_acity )
                ENDIF
-			
+
                _tmp += ", "
                _tmp += "nadmorska visina = " + AllTrim( Str( field->doc_it_alt, 12, 2 ) ) + " m"
-		
+
             ENDIF
-	
+
             _opis_stavke := _tmp
             _tmp := ""
-		
+
             IF ( AllTrim( _opis_stavke_tmp ) <> AllTrim( _opis_stavke ) ) .OR. ( _art_tmp <> _art_id )
                _l_opis_stavke := .T.
             ENDIF
@@ -380,9 +377,9 @@ STATIC FUNCTION kreiraj_xml_fajl( groups, params )
 
          _opis_stavke_tmp := _opis_stavke
          _art_tmp := _art_id
-	
+
          ++ _count
-	
+
       ENDDO
 
       xml_node( "qtty", show_number( _qtty_total, PIC_VRIJEDNOST ) )
@@ -436,7 +433,7 @@ FUNCTION _xml_repromaterijal( a_items, groups, group_id, params )
 
          SELECT t_docit
          SEEK docno_str( _doc_no ) + docit_str( _doc_it_no )
-	
+
          IF field->print == "N"
             SELECT t_docit2
             SKIP
@@ -444,7 +441,7 @@ FUNCTION _xml_repromaterijal( a_items, groups, group_id, params )
          ENDIF
 
          SELECT t_docit2
-	
+
          xml_subnode( "item", .F. )
 
          xml_node( "no", "(" + AllTrim( Str( field->doc_it_no ) ) + ")/" + AllTrim( Str( field->it_no ) ) )

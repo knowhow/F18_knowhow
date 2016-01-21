@@ -9,10 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
-
-
+#include "f18.ch"
 
 FUNCTION sif_ral( cId, dx, dy )
 
@@ -26,8 +23,7 @@ FUNCTION sif_ral( cId, dx, dy )
 
    PostojiSifra( F_RAL, 1, maxrows() - 15, maxcols() - 15, cHeader, @cId, dx, dy, {|| key_handler( Ch ) } )
 
-   RETURN
-
+   RETURN .T.
 
 
 STATIC FUNCTION key_handler( cCh )
@@ -43,7 +39,7 @@ STATIC FUNCTION set_kolone( aImeKol, aKol )
    AAdd( aImeKol, { PadC( "Debljina", 8 ), {|| gl_tick }, "gl_tick", ;
       {|| .T. }, {|| .T. } } )
    AAdd( aImeKol, { PadC( "Naziv", 20 ), {|| PadR( descr, 20 ) }, "descr" } )
-   AAdd( aImeKol, { PadC( "en.naziv", 20 ), {|| PadR( en_desc, 20 ) }, "en_desc" } )
+   AAdd( aImeKol, { PadC( "En.naziv", 20 ), {|| PadR( en_desc, 20 ) }, "en_desc" } )
    AAdd( aImeKol, { PadC( "Boja 1", 10 ), {|| col_1 }, "col_1" } )
    AAdd( aImeKol, { PadC( "% boje 1", 12 ), {|| colp_1 }, "colp_1" } )
    AAdd( aImeKol, { PadC( "Boja 2", 10 ), {|| col_2 }, "col_2" } )
@@ -82,7 +78,7 @@ FUNCTION get_ral( nTick )
 
    @ m_x + 1, m_y + 2 SAY "Valjak [1 - 80] / [2 - 160]:" GET nRoller PICT "9" VALID prikazi_valjak( nRoller )
    @ m_x + 2, m_y + 2 SAY "             RAL ->" GET nRal PICT "99999"
-	
+
    READ
 
    BoxC()
@@ -138,7 +134,7 @@ STATIC FUNCTION prikazi_valjak( nValjak )
 
 
 STATIC FUNCTION matrica_valjaka()
-   
+
    LOCAL _arr := {}
 
    AADD( _arr, { 1, 80 } )
@@ -153,8 +149,8 @@ STATIC FUNCTION dimenzije_valjaka( nValjak )
    LOCAL nVal := 80
    LOCAL nScan
    LOCAL aArr := matrica_valjaka()
-    
-   nScan := ASCAN( aArr, { |xval| xval[1] == nValjak } )  
+
+   nScan := ASCAN( aArr, { |xval| xval[1] == nValjak } )
 
    IF nScan > 0
       nVal := aArr[ nScan, 2 ]
@@ -193,7 +189,7 @@ FUNCTION g_ral_value( nRal, nTick, nRoller )
    ENDIF
 
    IF Found()
-	
+
       // opis
       xRet += " "
       xRet += AllTrim( field->en_desc )
@@ -217,7 +213,7 @@ FUNCTION g_ral_value( nRal, nTick, nRoller )
          xRet += AllTrim( Str( field->colp_2, 12, 2 ) ) + "%"
          xRet +=  ")"
       ENDIF
-	
+
       // treca boja
       IF field->col_3 <> 0 .AND. field->colp_3 <> 0
          xRet += " "
@@ -226,7 +222,7 @@ FUNCTION g_ral_value( nRal, nTick, nRoller )
          xRet += AllTrim( Str( field->colp_3, 12, 2 ) ) + "%"
          xRet +=  ")"
       ENDIF
-	
+
       // cetvrta boja
       IF field->col_4 <> 0 .AND. field->colp_4 <> 0
          xRet += " "
@@ -298,12 +294,12 @@ FUNCTION rnal_kalkulisi_ral( nRal, nTick, nRoller, nUm2 )
    SEEK Str( nRal, 5 ) + Str( nTick, 2 )
 
    IF Found()
-	
+
       nColor1 := rnal_ral_utrosak_boje( field->colp_1, nUm2, nRoller )
       nColor2 := rnal_ral_utrosak_boje( field->colp_2, nUm2, nRoller )
       nColor3 := rnal_ral_utrosak_boje( field->colp_3, nUm2, nRoller )
       nColor4 := rnal_ral_utrosak_boje( field->colp_4, nUm2, nRoller )
-	
+
       IF nColor1 <> 0
          AAdd( aColor, { field->col_1, field->colp_1, nColor1 } )
       ENDIF

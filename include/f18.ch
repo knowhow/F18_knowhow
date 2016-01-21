@@ -25,6 +25,8 @@
 #require "sddpg"
 #include "dbinfo.ch"
 #include "error.ch"
+#include "f18_separator.ch"
+
 /*
 
 // NTX

@@ -9,8 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "rnal.ch"
-#include "f18_separator.ch"
+#include "f18.ch"
 
 STATIC l_new
 STATIC _doc
@@ -192,10 +191,6 @@ STATIC FUNCTION show_document_no()
    RETURN
 
 
-
-// -----------------------------------------------
-// prikazi header i footer
-// -----------------------------------------------
 STATIC FUNCTION header_footer()
 
    LOCAL i

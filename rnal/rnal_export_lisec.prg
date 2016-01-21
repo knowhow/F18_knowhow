@@ -9,9 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
-
+#include "f18.ch"
 
 // static variables
 STATIC __REL_VER
@@ -597,71 +595,71 @@ FUNCTION write_rec( nH, aRec, aSpec )
    lisec_init_static_vars()
 
    FOR i := 1 TO Len( aRec )
-	
+
       // dodaj space, ali ne na prvoj
       IF i <> 1
-	
+
          cTmp += __SPACE
-		
+
       ENDIF
-	
+
       xVal := aRec[ i ]
       cType := aSpec[ i, 2 ]
       nLen := aSpec[ i, 3 ]
-	
+
       IF xVal == NIL .OR. Empty( xVal )
          xVal := " "
       ENDIF
-	
+
       // karakterni tip
       IF cType == "C"
-	
+
          cTmp += PadR( xVal, nLen, " " )
-	
+
       ENDIF
 
       // numericki tip
       IF cType == "N"
-	
+
          aPom := TokToNiz( AllTrim( Str( nLen ) ), "." )
          nVal1 := 0
          nVal2 := 0
-		
+
          FOR nI := 1 TO Len( aPom )
-		
+
             IF nI == 1
                nVal1 := Val( aPom[ nI ] )
             ENDIF
-			
+
             IF nI == 2
                nVal2 := Val( aPom[ nI ] )
             ENDIF
-			
+
          NEXT
-		
+
          cTrans := Replicate( "9", nVal1 )
-			
+
          IF nVal2 > 0
             cTrans += "." + Replicate( "9", nVal2 )
          ENDIF
-		
+
          nTmpLen := Len( cTrans )
-		
+
          IF ValType( xVal ) == "N"
-			
+
             cTmp += PadL( AllTrim( Str( xVal, nVal1, nVal2 ) ), nTmpLen, "0" )
-		
+
          ENDIF
-		
+
          IF ValType( xVal ) == "C"
-		
+
             IF xVal == " "
                xVal := 0
             ENDIF
-			
-			
+
+
             cTmp += PadL ( AllTrim( Transform( xVal, cTrans ) ), nTmpLen, "0" )
-			
+
          ENDIF
 
       ENDIF
@@ -671,5 +669,3 @@ FUNCTION write_rec( nH, aRec, aSpec )
    write2file( nH, cTmp, .T. )
 
    RETURN
-
-

@@ -9,12 +9,10 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
+#include "f18.ch"
 
 
 STATIC _wo_id
-
 
 // -----------------------------------------
 // otvara sifrarnik artikala
@@ -43,7 +41,7 @@ FUNCTION s_e_groups( cId, lwo_ID, dx, dy )
    SET ORDER TO TAG "1"
 
    set_a_kol( @ImeKol, @Kol )
-	
+
    cRet := PostojiSifra( F_E_GROUPS, 1, MAXROWS() -10, MAXCOLS() -5, cHeader, @cId, dx, dy, {|| key_handler( Ch ) } )
 
    SELECT ( nTArea )
@@ -92,11 +90,11 @@ STATIC FUNCTION key_handler( Ch )
       RETURN DE_CONT
 
    CASE Ch == K_CTRL_N .OR. Ch == K_F4
-	
+
       _wo_id := .F.
       set_a_kol( @ImeKol, @Kol )
       RETURN DE_CONT
-		
+
    ENDCASE
 
    RETURN DE_CONT
@@ -148,7 +146,7 @@ FUNCTION g_e_gr_desc( nE_gr_id, lEmpty, lFullDesc )
             cEGrDesc := AllTrim( field->e_gr_desc )
          ENDIF
       ENDIF
-	
+
    ENDIF
 
    SELECT ( nTArea )
@@ -177,9 +175,9 @@ FUNCTION g_gr_by_type( cType )
    SEEK PadR( cType, 20 )
 
    IF Found() .AND. AllTrim( field->e_gr_desc ) == cType
-	
+
       nGroup := field->e_gr_id
-	
+
    ENDIF
 
    SET ORDER TO TAG "1"

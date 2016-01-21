@@ -9,12 +9,10 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
+#include "f18.ch"
 
 STATIC __doc_no
 STATIC __oper_id
-
 
 
 FUNCTION rnal_evidencija_loma_stakla( nOperId )
@@ -86,9 +84,9 @@ STATIC FUNCTION napuni_tmp_tabelu_sa_dokumentom()
 
       SELECT _tmp1
       APPEND BLANK
-	
+
       _rec := dbf_get_rec()
-	
+
       _rec["doc_no"] := doc_it->doc_no
       _rec["doc_it_no"] := doc_it->doc_it_no
       _rec["art_id"] := doc_it->art_id
@@ -97,12 +95,12 @@ STATIC FUNCTION napuni_tmp_tabelu_sa_dokumentom()
       _rec["doc_it_w"] := doc_it->doc_it_wid
       _rec["damage"] := 0
       _rec["glass_no"] := 0
-	
+
       dbf_update_rec( _rec )
-	
+
       SELECT doc_it
       SKIP
-	
+
    ENDDO
 
    SELECT ( nTArea )
@@ -154,7 +152,7 @@ STATIC FUNCTION lom_stakla_box( cDesc )
          ENDIF
          SKIP
       ENDDO
-	
+
       IF lLogCh == .T. .AND. Pitanje(, "Logirati promjene (D/N) ?", "D" ) == "D"
          unos_opisa_promjene( @cDesc )
          RETURN 1
@@ -230,7 +228,7 @@ STATIC FUNCTION evidencija_loma_key_handler()
    DO CASE
    CASE Ch == Asc( " " )
       RETURN markiraj_stavku()
-	
+
    ENDCASE
 
    RETURN DE_CONT
@@ -243,25 +241,25 @@ STATIC FUNCTION markiraj_stavku()
    LOCAL nGlass_no
 
    IF field->art_marker == "*"
-	
+
       IF pitanje(, "Ukloniti marker sa ove stavke (D/N) ?", "D" ) == "D"
-		
+
 		 RREPLACE field->art_marker with SPACE(1), field->art_desc with SPACE(150), field->damage with 0, field->glass_no with 0
 
          Beep( 1 )
-		
+
          RETURN DE_REFRESH
       ELSE
          RETURN DE_CONT
       ENDIF
-	
+
    ELSE
-	
+
       IF unos_podataka_o_lomu( @cDesc, field->doc_it_qtt, ;
             @nDamage, @nGlass_no ) > 0
-	
+
          RREPLACE field->art_marker WITH "*", field->art_desc WITH cDesc, field->damage WITH nDamage, field->glass_no WITH nGlass_no
-	
+
          beep( 2 )
 
          RETURN DE_REFRESH
@@ -280,23 +278,23 @@ STATIC FUNCTION unos_podataka_o_lomu( cDesc, nQty, nDamage, nGlass_no )
    PRIVATE GetList := {}
 
    Box(, 6, 70 )
-	
+
    cDesc := Space( 150 )
    nDamage := 0
    nGlass_no := 1
-	
+
    @ m_x + 1, m_y + 2 SAY " *** Unos podataka o ostecenjima " ;
       COLOR "BG+/B"
-	
+
    @ m_x + 3, m_y + 2 SAY "odnosi se na staklo br:" GET nGlass_no ;
       PICT "99"
 
    @ m_x + 4, m_y + 2 SAY8 " broj oštećenih komada:" GET nDamage ;
       PICT "999999.99" VALID nDamage <= nQty
-	
+
    @ m_x + 6, m_y + 2 SAY "opis:" GET cDesc PICT "@S60" ;
       VALID !Empty( cDesc )
-	
+
    READ
    BoxC()
 
@@ -313,13 +311,13 @@ STATIC FUNCTION unos_opisa_promjene( cDesc )
    PRIVATE GetList := {}
 
    Box(, 5, 70 )
-	
+
    cDesc := Space( 150 )
-	
+
    @ m_x + 1, m_y + 2 SAY " *** Unos opisa promjene " COLOR "BG+/B"
-	
+
    @ m_x + 3, m_y + 2 SAY "opis:" GET cDesc PICT "@S60"
-	
+
    READ
    BoxC()
 
@@ -346,7 +344,7 @@ FUNCTION calc_dmg( nDoc_no, nDoc_it_no, nArt_id, nElem_no )
    ENDIF
 
    use_sql_doc_log( nDoc_no, cLogType )
- 
+
    SET ORDER TO TAG "2"
 
    IF !Found()
@@ -371,11 +369,11 @@ FUNCTION calc_dmg( nDoc_no, nDoc_it_no, nArt_id, nElem_no )
          // field->num_2 = broj komada slomljenih
 
          IF field->art_id = nArt_id
-			
+
             IF field->int_1 = nDoc_it_no .AND. ;
                   if( nElem_no > 0, ;
                   field->int_2 = nElem_no, .T. )
-				
+
                nRet += field->num_2
 
             ENDIF
@@ -384,7 +382,7 @@ FUNCTION calc_dmg( nDoc_no, nDoc_it_no, nArt_id, nElem_no )
 
          SKIP
       ENDDO
-	
+
       SELECT doc_log
       SKIP
 

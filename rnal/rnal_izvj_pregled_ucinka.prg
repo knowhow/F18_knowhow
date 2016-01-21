@@ -1,220 +1,224 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "rnal.ch"
+#include "f18.ch"
 
 
 // ---------------------------------------------------------------
-// pregled ucinka po operaterima, koliko naloga su ostvarili 
+// pregled ucinka po operaterima, koliko naloga su ostvarili
 // u periodu
 // ---------------------------------------------------------------
-function r_op_docs()
-local dD_From := CTOD("")
-local dD_to := danasnji_datum()
-local nOper := 0
+FUNCTION r_op_docs()
 
-//rnal_o_sif_tables()
+   LOCAL dD_From := CToD( "" )
+   LOCAL dD_to := danasnji_datum()
+   LOCAL nOper := 0
 
-// daj uslove izvjestaja
-if _g_vars( @dD_From, @dD_To, @nOper ) == 0
- 	return 
-endif
+   // rnal_o_sif_tables()
 
-// kreiraj report
-_cre_op( dD_from, dD_to, nOper )
+   // daj uslove izvjestaja
+   IF _g_vars( @dD_From, @dD_To, @nOper ) == 0
+      RETURN
+   ENDIF
 
-// filuj nazive operatera
-_fill_op()
+   // kreiraj report
+   _cre_op( dD_from, dD_to, nOper )
 
-// stampaj izvjestaj
-_p_op_docs( dD_from, dD_to )
+   // filuj nazive operatera
+   _fill_op()
 
-return
+   // stampaj izvjestaj
+   _p_op_docs( dD_from, dD_to )
+
+   RETURN
 
 
 // ----------------------------------------------------
 // stampanje izvjestaja
 // ----------------------------------------------------
-static function _p_op_docs( dD_from, dD_to )
-local cLine
-local nCount := 0
-local nT_op := 0
-local nT_cl := 0
-local nT_re := 0
-local nT_to := 0
-local nCol := 1
+STATIC FUNCTION _p_op_docs( dD_from, dD_to )
 
-START PRINT CRET
+   LOCAL cLine
+   LOCAL nCount := 0
+   LOCAL nT_op := 0
+   LOCAL nT_cl := 0
+   LOCAL nT_re := 0
+   LOCAL nT_to := 0
+   LOCAL nCol := 1
 
-?
+   START PRINT CRET
 
-_rpt_descr( dD_from, dD_to )
-_rpt_head( @cLine )
+   ?
 
-select _tmp1
-go top
+   _rpt_descr( dD_from, dD_to )
+   _rpt_head( @cLine )
 
-do while !EOF()
-	
-	++ nCount
+   SELECT _tmp1
+   GO TOP
 
-	? PADL( ALLTRIM(STR( nCount )), 3 ) + "."
-	
-	@ prow(), pcol() + 1 SAY PADR( ALLTRIM( field->op_desc ) + ;
-		" (" + ALLTRIM(STR( field->operater)) + ")", 40 )
-	
-	@ prow(), nCol := pcol() + 1 SAY field->o_count
-	@ prow(), pcol() + 1 SAY field->c_count
-	@ prow(), pcol() + 1 SAY field->r_count
-	@ prow(), pcol() + 1 SAY field->d_total
+   DO WHILE !Eof()
 
-	nT_op += field->o_count
-	nT_cl += field->c_count
-	nT_re += field->r_count
-	nT_to += field->d_total
+      ++ nCount
 
-	skip
-enddo
+      ? PadL( AllTrim( Str( nCount ) ), 3 ) + "."
 
-// ispisi total
-? cLine
+      @ PRow(), PCol() + 1 SAY PadR( AllTrim( field->op_desc ) + ;
+         " (" + AllTrim( Str( field->operater ) ) + ")", 40 )
 
-? "UKUPNO:"
-@ prow(), nCol SAY nT_op
-@ prow(), pcol() + 1 SAY nT_cl
-@ prow(), pcol() + 1 SAY nT_re
-@ prow(), pcol() + 1 SAY nT_to
+      @ PRow(), nCol := PCol() + 1 SAY field->o_count
+      @ PRow(), PCol() + 1 SAY field->c_count
+      @ PRow(), PCol() + 1 SAY field->r_count
+      @ PRow(), PCol() + 1 SAY field->d_total
 
-? cLine
+      nT_op += field->o_count
+      nT_cl += field->c_count
+      nT_re += field->r_count
+      nT_to += field->d_total
 
-my_close_all_dbf()
+      SKIP
+   ENDDO
 
-FF
-END PRINT
+   // ispisi total
+   ? cLine
 
-return
+   ? "UKUPNO:"
+   @ PRow(), nCol SAY nT_op
+   @ PRow(), PCol() + 1 SAY nT_cl
+   @ PRow(), PCol() + 1 SAY nT_re
+   @ PRow(), PCol() + 1 SAY nT_to
+
+   ? cLine
+
+   my_close_all_dbf()
+
+   FF
+   ENDPRINT
+
+   RETURN
 
 
 // ------------------------------------------------
 // ispisi naziv izvjestaja po varijanti
 // ------------------------------------------------
-static function _rpt_descr( dD1, dD2 )
-local cTmp := "rpt: "
+STATIC FUNCTION _rpt_descr( dD1, dD2 )
 
-cTmp += "Pregled obradjenih naloga po operaterima "
+   LOCAL cTmp := "rpt: "
 
-? cTmp
+   cTmp += "Pregled obradjenih naloga po operaterima "
 
-cTmp := "za period od " + DTOC( dD1 ) + " do " + DTOC( dD2 )
+   ? cTmp
 
-? cTmp
+   cTmp := "za period od " + DToC( dD1 ) + " do " + DToC( dD2 )
 
-return
+   ? cTmp
+
+   RETURN
 
 
 // -------------------------------------------------
 // header izvjestaja
 // -------------------------------------------------
-static function _rpt_head( cLine )
-cLine := ""
-cTxt := ""
+STATIC FUNCTION _rpt_head( cLine )
 
-cLine += REPLICATE("-", 4)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 40) 
-cLine += SPACE(1)
-cLine += REPLICATE("-", 10)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 10)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 10)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 10)
+   cLine := ""
+   cTxt := ""
 
-cTxt += PADR("r.br", 4)
-cTxt += SPACE(1)
-cTxt += PADR("Operater", 40)
-cTxt += SPACE(1)
-cTxt += PADR("Otvoreni", 10)
-cTxt += SPACE(1)
-cTxt += PADR("Zatvoreni", 10)
-cTxt += SPACE(1)
-cTxt += PADR("Odbaceni", 10)
-cTxt += SPACE(1)
-cTxt += PADR("Ukupno", 10)
+   cLine += Replicate( "-", 4 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 40 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 10 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 10 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 10 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 10 )
 
-? cLine
-? cTxt
-? cLine
+   cTxt += PadR( "r.br", 4 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "Operater", 40 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "Otvoreni", 10 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "Zatvoreni", 10 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "Odbaceni", 10 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "Ukupno", 10 )
 
-return
+   ? cLine
+   ? cTxt
+   ? cLine
+
+   RETURN
 
 // ----------------------------------------------
 // filuj nazive operatera u tabeli
 // ----------------------------------------------
-static function _fill_op()
-select _tmp1
-go top
+STATIC FUNCTION _fill_op()
 
-// prodji kroz tabelu i napuni nazive
-do while !EOF()
+   SELECT _tmp1
+   GO TOP
 
-	RREPLACE field->op_desc with ;
-		ALLTRIM( getfullusername( field->operater) ) 
+   // prodji kroz tabelu i napuni nazive
+   DO WHILE !Eof()
 
-	skip
-enddo
+      RREPLACE field->op_desc with ;
+         AllTrim( getfullusername( field->operater ) )
 
-go top
+      SKIP
+   ENDDO
 
-return
+   GO TOP
+
+   RETURN
 
 
 
 // ------------------------------------------------------------------------
 // uslovi izvjestaja specifikacije
 // ------------------------------------------------------------------------
-static function _g_vars( dDatFrom, dDatTo, nOperater )
+STATIC FUNCTION _g_vars( dDatFrom, dDatTo, nOperater )
 
-local nRet := 1
-local nBoxX := 7
-local nBoxY := 70
-local nX := 1
-local nTArea := SELECT()
-local nVar1 := 1
-private GetList := {}
+   LOCAL nRet := 1
+   LOCAL nBoxX := 7
+   LOCAL nBoxY := 70
+   LOCAL nX := 1
+   LOCAL nTArea := Select()
+   LOCAL nVar1 := 1
+   PRIVATE GetList := {}
 
-Box(, nBoxX, nBoxY)
+   Box(, nBoxX, nBoxY )
 
-	@ m_x + nX, m_y + 2 SAY "*** Pregled naloga po operaterima"
-	
-	nX += 2
-	
-	@ m_x + nX, m_y + 2 SAY "Obuhvatiti period od:" GET dDatFrom
-	@ m_x + nX, col() + 1 SAY "do:" GET dDatTo
+   @ m_x + nX, m_y + 2 SAY "*** Pregled naloga po operaterima"
+
+   nX += 2
+
+   @ m_x + nX, m_y + 2 SAY "Obuhvatiti period od:" GET dDatFrom
+   @ m_x + nX, Col() + 1 SAY "do:" GET dDatTo
 
 
-	nX += 1
+   nX += 1
 
-	@ m_x + nX, m_y + 2 SAY "Operater (0 - svi op.):" GET nOperater VALID {|| nOperater == 0 } PICT "9999999999"
-	
-	read
-BoxC()
+   @ m_x + nX, m_y + 2 SAY "Operater (0 - svi op.):" GET nOperater VALID {|| nOperater == 0 } PICT "9999999999"
 
-if LastKey() == K_ESC
-	nRet := 0
-endif
+   READ
+   BoxC()
 
-return nRet
+   IF LastKey() == K_ESC
+      nRet := 0
+   ENDIF
+
+   RETURN nRet
 
 
 
@@ -222,124 +226,127 @@ return nRet
 // kreiraj specifikaciju
 // izvjestaj se primarno puni u _tmp0 tabelu
 // ----------------------------------------------
-static function _cre_op( dD_from, dD_to, nOper  )
-local nDoc_no
+STATIC FUNCTION _cre_op( dD_from, dD_to, nOper  )
 
-// kreiraj tmp tabelu
-aField := _op_fields()
+   LOCAL nDoc_no
 
-cre_tmp1( aField )
-o_tmp1()
+   // kreiraj tmp tabelu
+   aField := _op_fields()
 
-// kreiraj indekse
-index on STR( operater, 10 ) tag "1"
+   cre_tmp1( aField )
+   o_tmp1()
 
-rnal_o_tables( .f. )
+   // kreiraj indekse
+   INDEX ON Str( operater, 10 ) TAG "1"
 
-select docs
-go top
+   rnal_o_tables( .F. )
 
-Box(, 1, 50 )
+   SELECT docs
+   GO TOP
 
-do while !EOF()
+   Box(, 1, 50 )
 
-	nDoc_no := field->doc_no
+   DO WHILE !Eof()
 
-	@ m_x + 1, m_y + 2 SAY "... vrsim odabir stavki ... nalog: " + ALLTRIM( STR(nDoc_no) )
-	
-	nOp_id := field->operater_i
+      nDoc_no := field->doc_no
 
-	// provjeri da li ovaj dokument zadovoljava kriterij
-	
-	// ovo su busy nalozi...
-	if field->doc_status > 2
-		skip
-		loop
-	endif
+      @ m_x + 1, m_y + 2 SAY "... vrsim odabir stavki ... nalog: " + AllTrim( Str( nDoc_no ) )
 
-	if DTOS( field->doc_date ) > DTOS( dD_To ) .or. ;
-		DTOS( field->doc_date ) < DTOS( dD_From )
-	
-		// datumski period
-		skip
-		loop
+      nOp_id := field->operater_i
 
-	endif
+      // provjeri da li ovaj dokument zadovoljava kriterij
 
-	if nOper <> 0
+      // ovo su busy nalozi...
+      IF field->doc_status > 2
+         SKIP
+         LOOP
+      ENDIF
 
-		// po operateru
-		
-		if ALLTRIM( STR( field->operater_i )) <> ;
-			ALLTRIM( STR( nOper ) )
-			
-			skip
-			loop
+      IF DToS( field->doc_date ) > DToS( dD_To ) .OR. ;
+            DToS( field->doc_date ) < DToS( dD_From )
 
-		endif
-	endif
+         // datumski period
+         SKIP
+         LOOP
 
-	// ubaci u tabelu
-	_a_to_op( field->operater_i, field->doc_status )
+      ENDIF
 
-	select docs
-	skip
+      IF nOper <> 0
 
-enddo
+         // po operateru
 
-BoxC()
+         IF AllTrim( Str( field->operater_i ) ) <> ;
+               AllTrim( Str( nOper ) )
 
-return
+            SKIP
+            LOOP
+
+         ENDIF
+      ENDIF
+
+      // ubaci u tabelu
+      _a_to_op( field->operater_i, field->doc_status )
+
+      SELECT docs
+      SKIP
+
+   ENDDO
+
+   BoxC()
+
+   RETURN
 
 
 // ------------------------------------------------
 // ubaci u tabelu
 // ------------------------------------------------
-static function _a_to_op( nOp_id, nStatus )
-local nTArea := SELECT()
+STATIC FUNCTION _a_to_op( nOp_id, nStatus )
 
-select _tmp1
-set order to tag "1"
-go top
+   LOCAL nTArea := Select()
 
-seek STR( nOp_id, 10 ) 
+   SELECT _tmp1
+   SET ORDER TO TAG "1"
+   GO TOP
 
-if !FOUND()
-	APPEND BLANK
-	replace field->operater with nOp_id
-endif
+   SEEK Str( nOp_id, 10 )
 
-do case
-	case nStatus == 0
-		RREPLACE field->o_count with ( field->o_count + 1 )
-	case nStatus == 1
-		RREPLACE field->c_count with ( field->c_count + 1 )
-	case nStatus == 2
-		RREPLACE field->r_count with ( field->r_count + 1 )
+   IF !Found()
+      APPEND BLANK
+      REPLACE field->operater WITH nOp_id
+   ENDIF
 
-endcase
+   DO CASE
+   CASE nStatus == 0
+      RREPLACE field->o_count with ( field->o_count + 1 )
+   CASE nStatus == 1
+      RREPLACE field->c_count with ( field->c_count + 1 )
+   CASE nStatus == 2
+      RREPLACE field->r_count with ( field->r_count + 1 )
 
-// total uvijek saberi
-RREPLACE field->d_total with ( field->o_count + ;
-		field->c_count + field->r_count )
+   ENDCASE
 
-select (nTArea)
-return
+   // total uvijek saberi
+   RREPLACE field->d_total with ( field->o_count + ;
+      field->c_count + field->r_count )
+
+   SELECT ( nTArea )
+
+   RETURN
 
 
 
 // -----------------------------------------------
 // vraca strukturu polja tabele _tmp1
 // -----------------------------------------------
-static function _op_fields()
-local aDbf := {}
+STATIC FUNCTION _op_fields()
 
-AADD( aDbf, { "operater", "N",  10, 0 })
-AADD( aDbf, { "op_desc",  "C",  40, 0 })
-AADD( aDbf, { "o_count",  "N",  10, 0 })
-AADD( aDbf, { "c_count",  "N",  10, 0 })
-AADD( aDbf, { "r_count",  "N",  10, 0 })
-AADD( aDbf, { "d_total",  "N",  10, 0 })
+   LOCAL aDbf := {}
 
-return aDbf
+   AAdd( aDbf, { "operater", "N",  10, 0 } )
+   AAdd( aDbf, { "op_desc",  "C",  40, 0 } )
+   AAdd( aDbf, { "o_count",  "N",  10, 0 } )
+   AAdd( aDbf, { "c_count",  "N",  10, 0 } )
+   AAdd( aDbf, { "r_count",  "N",  10, 0 } )
+   AAdd( aDbf, { "d_total",  "N",  10, 0 } )
 
+   RETURN aDbf

@@ -3,22 +3,20 @@
 
 libs=hbct
 libs=hbmzip minizip
-
 libs=hbtip
 
 {linux|darwin}gt=gtxwc
-#{darwin}gt=gtqtc
-
 {allwin}gt=gtwvt
 
 libs=hbpgsql
-
 {unix}libs=pq
 {win}libs=libpq
+libs=sddpg
 
 {mingw}libpaths=/usr/i586-mingw32msvc/lib
 {darwin}libpaths=/Library/PostgreSQL/9.1/lib
 
 mt=yes
 
-libs=sddpg
+
+{GT_DEFAULT_QT}gt=gtqtc

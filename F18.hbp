@@ -1,9 +1,3 @@
-f18.hbc -DDEFINE2 -DDEBUG -inc
-
--Iinclude
-#-DGT_DEFAULT_TRM
-
--DGT_DEFAULT_XCW
 -oF18
 -static
 
@@ -25,8 +19,14 @@ common/*.prg
 libF18_narudzbenica.a
 libF18_string.a
 
-#{darwin}gtqtc.hbc
+-DDEFINE2 
+-DDEBUG 
+-inc
+-Iinclude
 
+{GT_DEFAULT_TRM}-DGT_DEFAULT_TRM
+{GT_DEFAULT_XCW}-DGT_DEFAULT_XCW
+{GT_DEFAULT_QT}-DGT_DEFAULT_QT
 
 {darwin}-L./darwin
 {!LX_64&linux}-L./linux_32
@@ -40,6 +40,8 @@ libF18_string.a
 
 {darwin|linux|win}-lmy_hbuddall
 
+
+F18.hbc 
 sddpg.hbc
 hbmzip.hbc
 hbpgsql.hbc

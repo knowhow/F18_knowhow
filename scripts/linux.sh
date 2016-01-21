@@ -43,4 +43,6 @@ export LD_LIBRARY_PATH=$QT_ROOT/lib:$HB_ROOT/lib:$PGSQL_ROOT/lib
 
 export QT_PLUGIN_PATH=$QT_ROOT/plugins
 
+export GT_DEFAULT_XCW=1
+
 HB_DBG=`pwd`

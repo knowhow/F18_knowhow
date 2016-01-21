@@ -35,8 +35,6 @@ FUNCTION sql_fields( fields )
 
 
 
-
-
 // -------------------------------------
 // setovanje sql schema path-a
 // -----------------------------------
@@ -47,7 +45,6 @@ FUNCTION set_sql_search_path()
 
    LOCAL _qry := "SET search_path TO " + _path + ";"
    LOCAL _result
-   LOCAL _msg
 
    _result := _server:Query( _qry )
    IF (_result:NetErr()) .AND. !EMPTY(_result:ErrorMsg())
@@ -83,7 +80,7 @@ FUNCTION _sql_quote( xVar )
       cOut := "'" + hb_StrToUtf8( cOut ) + "'"
    ELSEIF ValType( xVar ) == "D"
       IF xVar == CToD( "" )
-         cOut := "1000-01-01"
+         cOut := "'1000-01-01'"
       ELSE
          cOut := "'" + _sql_date_str( xVar ) + "'"
       ENDIF

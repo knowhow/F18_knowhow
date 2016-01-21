@@ -20,7 +20,6 @@ FUNCTION get_nabavna_cijena( cIdKonto, cIdArtikal, dDatum )
    LOCAL cQuery, oRet, nRet
    LOCAL nNv_u, nNV_i, nUlaz, nIzlaz
 
-   altd()
    IF cIdKonto == NIL
       cIdKonto := PadR( "1320", 7 )
    ENDIF

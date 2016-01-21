@@ -44,9 +44,9 @@ FUNCTION fakt_unos_dokumenta()
       { "Partner/Roba",  {|| Part1Stavka() + Roba()  } }, ;
       { "Kolicina",  {|| kolicina  } }, ;
       { "Cijena",    {|| Cijena    }, "cijena"    }, ;
-      { "Rabat",    {|| Transform(Rabat, "999.99") }, "Rabat"  }, ;
-      { "Real.Marza", {|| Transform(get_realizovana_marza( NIL, field->idRoba, field->datDok, field->Cijena*(1-field->Rabat/100) ), "999.99")  } }, ;
-      { "Nab.Cj",   {|| Transform(get_nabavna_cijena( NIL, field->idRoba, field->DatDok ), "99999.999") } }, ;
+      { "Rabat",    {|| Transform( Rabat, "999.99" ) }, "Rabat"  }, ;
+      { "Real.Marza", {|| Transform( get_realizovana_marza( NIL, field->idRoba, field->datDok, field->Cijena * ( 1 -field->Rabat / 100 ) ), "999.99" )  } }, ;
+      { "Nab.Cj",   {|| Transform( get_nabavna_cijena( NIL, field->idRoba, field->DatDok ), "99999.999" ) } }, ;
       { "RJ",  {|| idfirma                 }, "idfirma"   }, ;
       { "Serbr",         {|| SerBr                   }, "serbr"     }, ;
       { "Partn",         {|| IdPartner               }, "IdPartner" }, ;
@@ -219,9 +219,9 @@ STATIC FUNCTION fakt_pripr_keyhandler()
    CASE Ch == K_ENTER
 
       IF fakt_ispravi_dokument( _params )
-          RETURN DE_REFRESH
+         RETURN DE_REFRESH
       ELSE
-          RETURN DE_CONT
+         RETURN DE_CONT
       ENDIF
 
    CASE Ch == K_CTRL_A
@@ -246,21 +246,21 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 
    CASE Ch == K_ALT_P
 
-        fakt_set_broj_dokumenta()
+      fakt_set_broj_dokumenta()
 
-        IF !CijeneOK( "Stampanje" )
-            RETURN DE_REFRESH
-        ENDIF
+      IF !CijeneOK( "Stampanje" )
+         RETURN DE_REFRESH
+      ENDIF
 
-        StDokOdt( nil, nil, nil )
+      StDokOdt( nil, nil, nil )
 
-        close_open_fakt_tabele()
+      close_open_fakt_tabele()
 
-        #ifdef TEST
-            push_test_tag("FAKT_ALTP_END")
-        #endif
+#ifdef TEST
+      push_test_tag( "FAKT_ALTP_END" )
+#endif
 
-        RETURN DE_REFRESH
+      RETURN DE_REFRESH
 
 
    CASE Ch == K_ALT_L
@@ -436,7 +436,7 @@ STATIC FUNCTION fakt_prodji_kroz_stavke( fakt_params )
       _item_before[ "brdok" ] := _brdok
       _item_before[ "rbr" ] := _rbr
 
-      _items_atrib := hb_hash()
+      _items_atrib := hb_Hash()
 
       IF fakt_params[ "fakt_opis_stavke" ]
          _items_atrib[ "opis" ] := get_fakt_atribut_opis( _item_before, .F. )
@@ -492,7 +492,7 @@ STATIC FUNCTION fakt_dodaj_ispravi_stavku( novi, item_hash, items_atrib )
    LOCAL new_hash := hb_Hash()
 
    IF novi == .T.
-       APPEND BLANK
+      APPEND BLANK
    ENDIF
 
    // dodaj zapis u tabelu FAKT_PRIPR
@@ -500,17 +500,17 @@ STATIC FUNCTION fakt_dodaj_ispravi_stavku( novi, item_hash, items_atrib )
    dbf_update_rec( _rec, .F. )
 
    // hash matrica koja sadrži update-ovan zapis
-   new_hash["idfirma"] := fakt_pripr->idfirma
-   new_hash["idtipdok"] := fakt_pripr->idtipdok
-   new_hash["brdok"] := fakt_pripr->brdok
-   new_hash["rbr"] := fakt_pripr->rbr
+   new_hash[ "idfirma" ] := fakt_pripr->idfirma
+   new_hash[ "idtipdok" ] := fakt_pripr->idtipdok
+   new_hash[ "brdok" ] := fakt_pripr->brdok
+   new_hash[ "rbr" ] := fakt_pripr->rbr
 
    // ažuriraj atribute u FAKT_FAKT_ATRIBUTI
    oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )
    oAtrib:dok_hash := new_hash
 
-   IF !novi .AND. ( item_hash["rbr"] <> new_hash["rbr"] )
-      oAtrib:dok_hash["update_rbr"] := item_hash["rbr"]
+   IF !novi .AND. ( item_hash[ "rbr" ] <> new_hash[ "rbr" ] )
+      oAtrib:dok_hash[ "update_rbr" ] := item_hash[ "rbr" ]
       oAtrib:update_atrib_rbr()
    ENDIF
 
@@ -520,7 +520,7 @@ STATIC FUNCTION fakt_dodaj_ispravi_stavku( novi, item_hash, items_atrib )
 
    // nešto što mjenja sve stavke dokumenta u pripremi ako se promjeni prva stavka
    // promjena broja dokumenta i slično
-   IF __redni_broj == 1 .and. !novi
+   IF __redni_broj == 1 .AND. !novi
       izmjeni_sve_stavke_dokumenta( item_hash, new_hash )
    ENDIF
 
@@ -566,7 +566,7 @@ STATIC FUNCTION fakt_ispravi_dokument( fakt_params )
 
    TB:RefreshAll()
    DO WHILE !TB:stable
-     Tb:stabilize()
+      Tb:stabilize()
    ENDDO
 
    RETURN _ret
@@ -975,7 +975,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
          RETURN 0
       ENDIF
 
-      IF _n_menu == NIL .OR. _n_menu > LEN( _a_tipdok ) .OR. _n_menu < 0
+      IF _n_menu == NIL .OR. _n_menu > Len( _a_tipdok ) .OR. _n_menu < 0
          MsgBeep( "Nepostojeća opcija !" )
          RETURN 0
       ENDIF
@@ -1070,7 +1070,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
             _datotp := _datdok
             ++ _x2
-            @ m_x + _x2,m_y + 51 SAY " datum isporuke:" GET _datotp
+            @ m_x + _x2, m_y + 51 SAY " datum isporuke:" GET _datotp
 
          ENDIF
 
@@ -1246,61 +1246,62 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
       items_atrib[ "lot" ] := _lot_broj
    ENDIF
 
-   IF ALLTRIM(_rbr) == "1"
-      show_last_racun(_idpartner, _destinacija, _idroba)
+   IF AllTrim( _rbr ) == "1"
+      show_last_racun( _idpartner, _destinacija, _idroba )
    ENDIF
 
    RETURN 1
 
 
-STATIC FUNCTION show_last_racun(cIdPartner, cDestinacija, cIdRoba)
+STATIC FUNCTION show_last_racun( cIdPartner, cDestinacija, cIdRoba )
 
-cRacun := "00000000"
-cDestinacija := ALLTRIM( cDestinacija )
-select_fakt_pripr()
-PushWa()
+   cRacun := "00000000"
+   cDestinacija := AllTrim( cDestinacija )
+   select_fakt_pripr()
+   PushWa()
 
-GO TOP
+   GO TOP
 
-Box( , 6, 100)
-DO WHILE !EOF()
-@ m_x + 1, m_y + 2 SAY "Partner: " + cIdPartner
-@ m_x + 2, m_y + 2 SAY "Destinacija: " + cDestinacija
-@ m_x + 3, m_y + 2 SAY "Rbr: " + field->rbr
-@ m_x + 4, m_y + 2 SAY "Roba: " + field->idroba + " kol: " + ALLTRIM(STR(field->kolicina, 6, 2))
-@ m_x + 5, m_y + 2 SAY "Raniji racun: " + fakt_za_destinaciju( cIDPartner, cDestinacija, field->idroba )
+   Box( , 6, 100 )
+   DO WHILE !Eof()
+      @ m_x + 1, m_y + 2 SAY "Partner: " + cIdPartner
+      @ m_x + 2, m_y + 2 SAY "Destinacija: " + cDestinacija
+      @ m_x + 3, m_y + 2 SAY "Rbr: " + field->rbr
+      @ m_x + 4, m_y + 2 SAY "Roba: " + field->idroba + " kol: " + AllTrim( Str( field->kolicina, 6, 2 ) )
+      @ m_x + 5, m_y + 2 SAY "Raniji racun: " + fakt_za_destinaciju( cIDPartner, cDestinacija, field->idroba )
 
-INKEY(0)
-SKIP
-ENDDO
-PopWa()
-BoxC()
-RETURN
+      Inkey( 0 )
+      SKIP
+   ENDDO
+   PopWa()
+   BoxC()
+
+   RETURN .T.
 
 FUNCTION fakt_za_destinaciju( cIdPartner, cDestinacija, cIdRoba )
 
-LOCAL cQuery, oRez
-LOCAL oServer := pg_server()
-LOCAL cBrDok, oRow
+   LOCAL cQuery, oRez
+   LOCAL oServer := pg_server()
+   LOCAL cBrDok, oRow
 
-cQuery := "SELECT brdok FROM fmk.fakt_fakt" + ;
-   " WHERE idtipdok='10' AND kolicina>0  AND txt like '%" + cDestinacija + "%' AND idpartner=" + _sql_quote( cIdPartner )
+   cQuery := "SELECT brdok FROM fmk.fakt_fakt" + ;
+      " WHERE idtipdok='10' AND kolicina>0  AND txt like '%" + cDestinacija + "%' AND idpartner=" + _sql_quote( cIdPartner )
 
-oRez := _sql_query( oServer, cQuery )
+   oRez := _sql_query( oServer, cQuery )
 
-IF oRez == NIL
-   RETURN -1
-ENDIF
+   IF oRez == NIL
+      RETURN -1
+   ENDIF
 
-altd()
-cBrDok := ""
-DO WHILE !oRez:EOF()
-   oRow := oRez:getRow()
-   cBrDok += oRow:fieldGet(1) + "/"
-   oRez:skip()
-ENDDO
 
-RETURN cBrDok
+   cBrDok := ""
+   DO WHILE !oRez:Eof()
+      oRow := oRez:getRow()
+      cBrDok += oRow:FieldGet( 1 ) + "/"
+      oRez:skip()
+   ENDDO
+
+   RETURN cBrDok
 
 
 STATIC FUNCTION _trenutno_na_stanju_kalk( id_rj, tip_dok, id_roba )
@@ -1637,8 +1638,8 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
 
          cDN := "D"
          Box(, 4, 60 )
-         @ m_x + 1,m_y + 2 SAY "Artikal koji se stvara:" GET _idroba  PICT "@!" VALID P_Roba( @_idroba )
-         @ m_x + 2,m_y + 2 SAY "Kolicina" GET _kolicina valid {|| _kolicina <> 0 } PICT pickol
+         @ m_x + 1, m_y + 2 SAY "Artikal koji se stvara:" GET _idroba  PICT "@!" VALID P_Roba( @_idroba )
+         @ m_x + 2, m_y + 2 SAY "Kolicina" GET _kolicina valid {|| _kolicina <> 0 } PICT pickol
          READ
          IF LastKey() == K_ESC
             boxc()
@@ -1651,9 +1652,9 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
          ELSE
             _kolicina := -_kolicina
          ENDIF
-         @ m_x + 3,m_y + 2 SAY "Cijena" GET _cijena  PICT piccdem
+         @ m_x + 3, m_y + 2 SAY "Cijena" GET _cijena  PICT piccdem
          cDN := "D"
-         @ m_x + 4,m_y + 2 SAY8 "Staviti cijenu u šifarnik ?" GET cDN VALID cDN $ "DN" PICT "@!"
+         @ m_x + 4, m_y + 2 SAY8 "Staviti cijenu u šifarnik ?" GET cDN VALID cDN $ "DN" PICT "@!"
          READ
          IF cDN == "D"
             SELECT roba

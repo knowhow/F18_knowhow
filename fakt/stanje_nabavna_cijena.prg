@@ -16,66 +16,75 @@ STATIC s_cIdArtikal := "XX"
 
 FUNCTION get_nabavna_cijena( cIdKonto, cIdArtikal, dDatum )
 
-LOCAL oSrv := pg_server()
-LOCAL cQuery, oRet, nRet
-LOCAL nNv_u, nNV_i, nUlaz, nIzlaz
+   LOCAL oSrv := pg_server()
+   LOCAL cQuery, oRet, nRet
+   LOCAL nNv_u, nNV_i, nUlaz, nIzlaz
 
-IF cIdKonto == NIL
- cIdKonto := PADR( "1320", 7)
-ENDIF
-
-IF s_cIdArtikal == cIdArtikal
-   nRet := s_nLastNC
-   RETURN nRet
-ENDIF
-
-cQuery := "SELECT nv_u, nv_i, ulaz, izlaz from public.sp_konto_stanje(" + ;
-  _sql_quote("m") + "," +;
-  _sql_quote(cIdKonto) + "," +;
-  _sql_quote(cIdArtikal) + "," +;
-  _sql_quote(dDatum) + ")"
-
-oRet := _sql_query( oSrv, cQuery )
-
-IF VALTYPE( oRet ) != "O"
-   nRet := -9999
-ELSE
-   nNV_u := oRet:FieldGet(1)
-   nNV_i := oRet:FieldGet(2)
-   nUlaz := oRet:FieldGet(3)
-   nIzlaz := oRet:FieldGet(4)
-
-   IF ROUND( nUlaz - nIzlaz, 4) == 0
-      nRet := 0
-   ELSE
-      nRet := ( nNv_u - nNv_i) / (nUlaz - nIzlaz)
-      nRet := ROUND( nRet, 3)
+   altd()
+   IF cIdKonto == NIL
+      cIdKonto := PadR( "1320", 7 )
    ENDIF
 
-ENDIF
+   IF cIdArtikal == NIL
+      cIdArtikal := SPACE(10)
+   ENDIF
 
-s_nLastNC := nRet
-s_cIdArtikal := cIdArtikal
+   IF dDatum == NIL
+      dDatum := STOD("19600101")
+   ENDIF
 
-RETURN nRet
+   IF s_cIdArtikal == cIdArtikal
+      nRet := s_nLastNC
+      RETURN nRet
+   ENDIF
+
+   cQuery := "SELECT nv_u, nv_i, ulaz, izlaz from public.sp_konto_stanje(" + ;
+      _sql_quote( "m" ) + "," + ;
+      _sql_quote( cIdKonto ) + "," + ;
+      _sql_quote( cIdArtikal ) + "," + ;
+      _sql_quote( dDatum ) + ")"
+
+   oRet := _sql_query( oSrv, cQuery )
+
+   IF ( ValType( oRet ) != "O" ) .OR. oRet:Eof()
+      nRet := -9999
+   ELSE
+      nNV_u := oRet:FieldGet( 1 )
+      nNV_i := oRet:FieldGet( 2 )
+      nUlaz := oRet:FieldGet( 3 )
+      nIzlaz := oRet:FieldGet( 4 )
+
+      IF Round( nUlaz - nIzlaz, 4 ) == 0
+         nRet := 0
+      ELSE
+         nRet := ( nNv_u - nNv_i ) / ( nUlaz - nIzlaz )
+         nRet := Round( nRet, 3 )
+      ENDIF
+
+   ENDIF
+
+   s_nLastNC := nRet
+   s_cIdArtikal := cIdArtikal
+
+   RETURN nRet
 
 
 FUNCTION get_realizovana_marza( cIdKonto, cIdArtikal, dDatum, nCijena )
 
-LOCAL nNC
+   LOCAL nNC
 
-IF s_cIdArtikal == cIdArtikal
-   nNC := s_nLastNC
-ELSE
-   nNC := get_nabavna_cijena( cIdKonto, cIdArtikal, dDatum )
-ENDIF
+   IF s_cIdArtikal == cIdArtikal
+      nNC := s_nLastNC
+   ELSE
+      nNC := get_nabavna_cijena( cIdKonto, cIdArtikal, dDatum )
+   ENDIF
 
-IF ROUND(nNC, 0) == -9999
-   RETURN 0
-ENDIF
+   IF Round( nNC, 0 ) == -9999
+      RETURN 0
+   ENDIF
 
-IF ROUND(nNC, 4) == 0
-   RETURN -99999
-ENDIF
+   IF Round( nNC, 4 ) == 0
+      RETURN -99999
+   ENDIF
 
-RETURN ROUND( (nCijena/nNC - 1) * 100.00, 2)
+   RETURN Round( ( nCijena / nNC - 1 ) * 100.00, 2 )

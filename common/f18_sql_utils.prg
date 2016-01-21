@@ -74,8 +74,6 @@ FUNCTION _sql_date_str( var )
    RETURN _out
 
 
-// ------------------------
-// ------------------------
 FUNCTION _sql_quote( xVar )
 
    LOCAL cOut
@@ -85,7 +83,7 @@ FUNCTION _sql_quote( xVar )
       cOut := "'" + hb_StrToUtf8( cOut ) + "'"
    ELSEIF ValType( xVar ) == "D"
       IF xVar == CToD( "" )
-         cOut := "NULL"
+         cOut := "1000-01-01"
       ELSE
          cOut := "'" + _sql_date_str( xVar ) + "'"
       ENDIF
@@ -364,10 +362,10 @@ FUNCTION _sql_cond_parse( field_name, cond, not )
       ENDIF
 
    NEXT
-   
+
    _ret := Right( _ret, Len( _ret ) - 5 )
 
-   IF " OR " $ _ret 
+   IF " OR " $ _ret
       _ret := " ( " + _ret + " ) "
    ENDIF
 

@@ -14,4 +14,4 @@ done
 export HB_DBG_PATH
 echo "HB_DBG_PATH="  $HB_DBG_PATH
 
-
+export GT_DEFAULT_XWC=1

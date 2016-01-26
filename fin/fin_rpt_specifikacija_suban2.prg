@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,836 +12,835 @@
 
 #include "f18.ch"
 
-static __par_len := 6
-static __rj_len := 4
+STATIC __par_len := 6
+STATIC __rj_len := 4
 
 
 // ---------------------------------------------------
 // kreira export tabelu
 // ---------------------------------------------------
-static function cre_tmp( cPath )
-local aFields
+STATIC FUNCTION cre_tmp( cPath )
 
-aFields := {}
+   LOCAL aFields
 
-AADD(aFields, {"idfirma", "C", 2, 0})
-AADD(aFields, {"idkonto", "C", 7, 0})
-AADD(aFields, {"idpartner", "C", __par_len, 0})
-AADD(aFields, {"kto_opis", "C", 50, 0})
-AADD(aFields, {"par_opis", "C", 50, 0})
-AADD(aFields, {"par_mjesto", "C", 50, 0})
-AADD(aFields, {"idrj", "C", __rj_len, 0})
-AADD(aFields, {"rj_opis", "C", 50, 0})
-AADD(aFields, {"dug", "N", 15, 2})
-AADD(aFields, {"pot", "N", 15, 2})
-AADD(aFields, {"saldo", "N", 15, 2})
-AADD(aFields, {"dug2", "N", 15, 2})
-AADD(aFields, {"pot2", "N", 15, 2})
-AADD(aFields, {"saldo2", "N", 15, 2})
+   aFields := {}
 
-t_exp_create( aFields )
+   AAdd( aFields, { "idfirma", "C", 2, 0 } )
+   AAdd( aFields, { "idkonto", "C", 7, 0 } )
+   AAdd( aFields, { "idpartner", "C", __par_len, 0 } )
+   AAdd( aFields, { "kto_opis", "C", 50, 0 } )
+   AAdd( aFields, { "par_opis", "C", 50, 0 } )
+   AAdd( aFields, { "par_mjesto", "C", 50, 0 } )
+   AAdd( aFields, { "idrj", "C", __rj_len, 0 } )
+   AAdd( aFields, { "rj_opis", "C", 50, 0 } )
+   AAdd( aFields, { "dug", "N", 15, 2 } )
+   AAdd( aFields, { "pot", "N", 15, 2 } )
+   AAdd( aFields, { "saldo", "N", 15, 2 } )
+   AAdd( aFields, { "dug2", "N", 15, 2 } )
+   AAdd( aFields, { "pot2", "N", 15, 2 } )
+   AAdd( aFields, { "saldo2", "N", 15, 2 } )
 
-o_tmp( cPath )
+   t_exp_create( aFields )
 
-return
+   o_tmp( cPath )
+
+   RETURN
 
 
 
 // -----------------------------------------------
 // otvori i indeksiraj pomocnu tabelu
 // -----------------------------------------------
-static function o_tmp( cPath )
+STATIC FUNCTION o_tmp( cPath )
 
-//select (248)
-//use ( cPath + "r_export" ) alias "r_export"
-O_R_EXP
-index on idkonto + idpartner + idrj tag "1"
+   // select (248)
+   // use ( cPath + "r_export" ) alias "r_export"
+   O_R_EXP
+   INDEX ON idkonto + idpartner + idrj TAG "1"
 
-return
+   RETURN
 
 
 // ---------------------------------------------------
 // Specifikacija subanalitickih konta v.2
 // ---------------------------------------------------
-function spec_sub()
-local cSK:="N"
-local cLDrugi:=""
-local cPom:=""
-local nCOpis:=0
-local cLTreci:=""
-local cIzr1
-local cIzr2
-local cExpRptDN:="N"
-local cOpcine := SPACE(20)
-local cVN := SPACE(20)
-local cP_Path := PRIVPATH
-local cT_sez := goModul:oDataBase:cSezona
-local i
-local nYearFrom
-local nYearTo
-local lSilent
-local lWriteKParam
-local lInSez
-local cDok_izb := ""
+FUNCTION spec_sub()
 
-private cSkVar := "N"
-private fK1 := fk2 := fk3 := fk4 := "N"
-private cRasclaniti := "N"
+   LOCAL cSK := "N"
+   LOCAL cLDrugi := ""
+   LOCAL cPom := ""
+   LOCAL nCOpis := 0
+   LOCAL cLTreci := ""
+   LOCAL cIzr1
+   LOCAL cIzr2
+   LOCAL cExpRptDN := "N"
+   LOCAL cOpcine := Space( 20 )
+   LOCAL cVN := Space( 20 )
+   LOCAL cP_Path := PRIVPATH
+   LOCAL cT_sez := goModul:oDataBase:cSezona
+   LOCAL i
+   LOCAL nYearFrom
+   LOCAL nYearTo
+   LOCAL lSilent
+   LOCAL lWriteKParam
+   LOCAL lInSez
+   LOCAL cDok_izb := ""
 
-cN2Fin := IzFMkIni('FIN','PartnerNaziv2','N')
+   PRIVATE cSkVar := "N"
+   PRIVATE fK1 := fk2 := fk3 := fk4 := "N"
+   PRIVATE cRasclaniti := "N"
 
-O_PARTN
-__par_len := LEN( partn->id )
-O_SUBAN
-__rj_len := LEN( suban->idrj )
+   cN2Fin := IzFMkIni( 'FIN', 'PartnerNaziv2', 'N' )
 
-// kreiraj tabelu exporta
-cre_tmp( cP_Path )
+   O_PARTN
+   __par_len := Len( partn->id )
+   O_SUBAN
+   __rj_len := Len( suban->idrj )
 
-nC := 50
-O_PARTN
-O_PARAMS
+   // kreiraj tabelu exporta
+   cre_tmp( cP_Path )
 
-private cSection:="1"
-private cHistory:=" "
-private aHistory:={}
+   nC := 50
+   O_PARTN
+   O_PARAMS
 
-RPar("k1",@fk1)
-RPar("k2",@fk2)
-RPar("k3",@fk3)
-RPar("k4",@fk4)
+   PRIVATE cSection := "1"
+   PRIVATE cHistory := " "
+   PRIVATE aHistory := {}
 
-select params
-use
+   RPar( "k1", @fk1 )
+   RPar( "k2", @fk2 )
+   RPar( "k3", @fk3 )
+   RPar( "k4", @fk4 )
 
-cIdFirma := gFirma
-picBHD := FormPicL("9 "+gPicBHD,20)
+   SELECT params
+   USE
 
-qqKonto := SPACE(100)
-qqPartner := SPACE(100)
-dDatOd := CTOD("")
-dDatDo := CTOD("")
-cDok_izb := SPACE(150)
+   cIdFirma := gFirma
+   picBHD := FormPicL( "9 " + gPicBHD, 20 )
 
-O_PARAMS
+   qqKonto := Space( 100 )
+   qqPartner := Space( 100 )
+   dDatOd := CToD( "" )
+   dDatDo := CToD( "" )
+   cDok_izb := Space( 150 )
 
-private cSection:="S"
-private cHistory:=" "
-private aHistory:={}
+   O_PARAMS
 
-RPar("qK",@qqKonto)
-RPar("qP",@qqPartner)
-RPar("d1",@dDatoD)
-RPar("d2",@dDatDo)
+   PRIVATE cSection := "S"
+   PRIVATE cHistory := " "
+   PRIVATE aHistory := {}
 
-qqkonto := padr(qqKonto,100)
-qqPartner := padr(qqPartner,100)
-qqBrDok := SPACE(40)
+   RPar( "qK", @qqKonto )
+   RPar( "qP", @qqPartner )
+   RPar( "d1", @dDatoD )
+   RPar( "d2", @dDatDo )
 
-select params
-use
+   qqkonto := PadR( qqKonto, 100 )
+   qqPartner := PadR( qqPartner, 100 )
+   qqBrDok := Space( 40 )
 
-cTip := "1"
+   SELECT params
+   USE
 
-Box("",20,65)
-	
-	set cursor on
-	
-	private cK1 := "9"
-	private cK2 := "9"
-	private cK3 := "99"
-	private cK4 := "99"
-	
-	if IzFMKIni("FIN","LimitiPoUgovoru_PoljeK3","N",SIFPATH)=="D"
-  		cK3 := "999"
-	endif
+   cTip := "1"
 
-	if gDUFRJ=="D"
-  		cIdRj := SPACE(60)
-	else
-  		cIdRj := "999999"
-	endif
-	
-	cFunk := "99999"
-	cFond := "9999"
-	cNula := "N"
-	
-	do while .t.
- 		
-		@ m_x+1,m_y+6 SAY "SPECIFIKACIJA SUBANALITICKIH KONTA"
- 		
-		if gDUFRJ == "D"
-    			cIdFirma := PADR(gFirma+";",30)
-    			@ m_x+3,m_y+2 SAY "Firma: " GET cIdFirma PICT "@!S20"
- 		else
-   			if gNW == "D"
-     				@ m_x+3, m_y+2 SAY "Firma "
-				?? gFirma, "-", gNFirma
-   			else
-    				@ m_x+3, m_y+2 SAY "Firma: " GET cIdFirma ;
-					VALID {|| IF(!EMPTY(cIdFirma), ;
-					P_Firma(@cIdFirma),),;
-					cIdFirma := LEFT(cIdFirma,2), ;
-					.t.}
-   			endif
- 		endif
+   Box( "", 20, 65 )
 
- 		@ m_x+4, m_y+2 SAY "Konto   " GET qqKonto  pict "@!S50"
- 		@ m_x+5, m_y+2 SAY "Partner " GET qqPartner pict "@!S50"
- 		@ m_x+6, m_y+2 SAY "Datum dokumenta od" GET dDatOd
- 		@ m_x+6, col()+2 SAY "do" GET dDatDo
- 		
-		if gVar1 == "0"
-  			@ m_x+7, m_y+2 SAY "Obracun za " + ;
-				ALLTRIM(ValDomaca()) + "/" + ;
-				ALLTRIM(ValPomocna()) + "/" + ;
-				ALLTRIM(ValDomaca()) + "-" + ;
-				ALLTRIM(ValPomocna()) + " (1/2/3):" ;
-				GET cTip ;
-				VALID cTip $ "123"
- 		else
-  			cTip := "1"
- 		endif
+   SET CURSOR ON
 
- 		@ m_x+ 8, m_y+2 SAY "Prikaz sintetickih konta (D/N) ?" ;
-			GET cSK PICT "@!" VALID csk $ "DN"
- 		@ m_x+ 9, m_y+2 SAY "Prikaz stavki sa saldom 0 D/N" ;
-			GET cNula PICT "@!" VALID cNula  $ "DN"
- 		@ m_x+10, m_y+2 SAY "Skracena varijanta (D/N) ?" ;
-			GET cSkVar PICT "@!" VALID cSkVar $ "DN"
- 		@ m_x+11, m_y+2 SAY "Uslov za broj veze (prazno-svi) " ;
-			GET qqBrDok PICT "@!S20"
- 		@ m_x+12, m_y+2 SAY "Uslov za vrstu naloga (prazno-svi) " ;
-			GET cVN PICT "@!S20"
- 		@ m_x+13, m_y+2 SAY "Izbaciti dokumente: " ;
-			GET cDok_izb PICT "@!S30"
- 	
-		
-		cRasclaniti := "N"
- 		
-		if gRJ == "D"
-  			@ m_x+14, m_y+2 SAY "Rasclaniti po RJ (D/N) " ;
-				GET cRasclaniti PICT "@!" ;
-				VALID cRasclaniti $ "DN"
- 		
-		endif
+   PRIVATE cK1 := "9"
+   PRIVATE cK2 := "9"
+   PRIVATE cK3 := "99"
+   PRIVATE cK4 := "99"
 
-		@ m_x + 16, m_y + 2 SAY "Opcina (prazno-sve):" GET cOpcine
-		
-		UpitK1k4( 15 )
- 		
-		@ m_x+20,m_y+2 SAY "Export izvjestaja u dbf (D/N) ?" ;
-			GET cExpRptDN PICT "@!" ;
-			VALID cExpRptDN $ "DN"
-		
-		read
-		
-		ESC_BCR
- 		
-		O_PARAMS
- 		private cSection := "S"
-		private cHistory := " "
-		private aHistory := {}
- 		
-		WPar("qK",qqKonto)
- 		WPar("qP",qqPartner)
- 		WPar("d1",dDatoD)
- 		WPar("d2",dDatDo)
- 		
-		select params
-		use
- 		
-		aUsl1 := Parsiraj( qqKonto, "IdKonto" )
- 		aUsl2 := Parsiraj( qqPartner, "IdPartner" )
- 		
-		if gDUFRJ == "D"
-   			aUsl3 := Parsiraj(cIdFirma,"IdFirma")
-   			aUsl4 := Parsiraj(cIdRJ,"IdRj")
- 		endif
+   IF IzFMKIni( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
+      cK3 := "999"
+   ENDIF
 
- 		aBV := Parsiraj(qqBrDok,"UPPER(BRDOK)","C")
-		aVN := Parsiraj(cVN,"IDVN","C")
- 		
-		if aBV<>NIL .and. aVN<>NIL .and. ;
-			aUsl1<>NIL .and. aUsl2<>NIL .and. ;
-			IF(gDUFRJ=="D",aUsl3<>NIL.and.aUsl4<>NIL,.t.)
-			exit
-		endif
-	enddo
-BoxC()
+   IF gDUFRJ == "D"
+      cIdRj := Space( 60 )
+   ELSE
+      cIdRj := "999999"
+   ENDIF
 
-// godina od - do
-nYearFrom := YEAR( dDatOd )
-nYearTo := YEAR( dDatDo )
-lInSez := .f.
+   cFunk := "99999"
+   cFond := "9999"
+   cNula := "N"
 
-if ( nYearTo - nYearFrom ) <> 0
-	// ima vise godina, prodji kroz sezone
-	lInSez := .t.
-endif
+   DO WHILE .T.
 
-// export izvjestaja u dbf
-lExpRpt := (cExpRptDN == "D")
+      @ m_x + 1, m_y + 6 SAY "SPECIFIKACIJA SUBANALITICKIH KONTA"
 
-if gDUFRJ != "D"
-	cIdFirma := left(cIdFirma,2)
-endif
+      IF gDUFRJ == "D"
+         cIdFirma := PadR( gFirma + ";", 30 )
+         @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma PICT "@!S20"
+      ELSE
+         IF gNW == "D"
+            @ m_x + 3, m_y + 2 SAY "Firma "
+            ?? gFirma, "-", gNFirma
+         ELSE
+            @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma ;
+               VALID {|| IF( !Empty( cIdFirma ), ;
+               P_Firma( @cIdFirma ), ), ;
+               cIdFirma := Left( cIdFirma, 2 ), ;
+               .T. }
+         ENDIF
+      ENDIF
 
-O_SUBAN
-CistiK1k4()
+      @ m_x + 4, m_y + 2 SAY "Konto   " GET qqKonto  PICT "@!S50"
+      @ m_x + 5, m_y + 2 SAY "Partner " GET qqPartner PICT "@!S50"
+      @ m_x + 6, m_y + 2 SAY "Datum dokumenta od" GET dDatOd
+      @ m_x + 6, Col() + 2 SAY "do" GET dDatDo
 
-// prodji po godinama i azuriraj u tbl_export
+      IF gVar1 == "0"
+         @ m_x + 7, m_y + 2 SAY "Obracun za " + ;
+            AllTrim( ValDomaca() ) + "/" + ;
+            AllTrim( ValPomocna() ) + "/" + ;
+            AllTrim( ValDomaca() ) + "-" + ;
+            AllTrim( ValPomocna() ) + " (1/2/3):" ;
+            GET cTip ;
+            VALID cTip $ "123"
+      ELSE
+         cTip := "1"
+      ENDIF
 
-lSilent := .t.
-lWriteKParam := .t.
+      @ m_x + 8, m_y + 2 SAY "Prikaz sintetickih konta (D/N) ?" ;
+         GET cSK PICT "@!" VALID csk $ "DN"
+      @ m_x + 9, m_y + 2 SAY "Prikaz stavki sa saldom 0 D/N" ;
+         GET cNula PICT "@!" VALID cNula  $ "DN"
+      @ m_x + 10, m_y + 2 SAY "Skracena varijanta (D/N) ?" ;
+         GET cSkVar PICT "@!" VALID cSkVar $ "DN"
+      @ m_x + 11, m_y + 2 SAY "Uslov za broj veze (prazno-svi) " ;
+         GET qqBrDok PICT "@!S20"
+      @ m_x + 12, m_y + 2 SAY "Uslov za vrstu naloga (prazno-svi) " ;
+         GET cVN PICT "@!S20"
+      @ m_x + 13, m_y + 2 SAY "Izbaciti dokumente: " ;
+         GET cDok_izb PICT "@!S30"
 
-for i := nYearFrom to nYearTo
 
-	if lInSez == .t.
-		// logiraj se u godinu
-		goModul:oDataBase:logAgain( ALLTRIM(STR(i)), ;
-			lSilent, lWriteKParam )
-		// otvori export tabelu u tekucoj sezoni
-		o_tmp( cP_Path )
-	endif
-	
-	O_RJ
-	O_PARTN
-	O_KONTO
-	O_SUBAN
+      cRasclaniti := "N"
 
-	select suban
+      IF gRJ == "D"
+         @ m_x + 14, m_y + 2 SAY "Rasclaniti po RJ (D/N) " ;
+            GET cRasclaniti PICT "@!" ;
+            VALID cRasclaniti $ "DN"
 
-	if !EMPTY(cIdFirma) .and. gDUFRJ!="D"
-		if cRasclaniti=="D"
-   			index on idfirma+idkonto+idpartner+idrj+dtos(datdok) ;
-				to SUBSUB
-   			SET ORDER TO TAG "SUBSUB"
- 		else
-   			// IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr
-   			SET ORDER TO 1
- 		endif
-	else
-		if cRasclaniti=="D"
-   			index on idkonto+idpartner+idrj+dtos(datdok) ;
-				to SUBSUB
-  			SET ORDER TO TAG "SUBSUB"
- 		else
-   			cIdFirma:=""
-   			INDEX ON IdKonto+IdPartner+dtos(DatDok)+;
-				BrNal+RBr TO SVESUB
-   			SET ORDER TO TAG "SVESUB"
- 		endif
-	endif
+      ENDIF
 
-	if gDUFRJ == "D"
-		cFilter := aUsl3
-	else
-  		cFilter := "IdFirma="+cm2str(cidfirma)
-	endif
+      @ m_x + 16, m_y + 2 SAY "Opcina (prazno-sve):" GET cOpcine
 
-	if !EMPTY(cVN)
-		cFilter += ( ".and. " + aVN )
-	endif
+      UpitK1k4( 15 )
 
-	if !EMPTY(qqBrDok)
-  		cFilter += ( ".and." + aBV )
-	endif
+      @ m_x + 20, m_y + 2 SAY "Export izvjestaja u dbf (D/N) ?" ;
+         GET cExpRptDN PICT "@!" ;
+         VALID cExpRptDN $ "DN"
 
-	if aUsl1 <> ".t."
- 		cFilter += ( ".and."+aUsl1 )
-	endif
+      READ
 
-	if aUsl2 <> ".t."
- 		cFilter += ( ".and."+aUsl2 )
-	endif
+      ESC_BCR
 
-	if !empty(dDatOd) .or. !empty(dDatDo)
-   		cFilter += ( ".and. DATDOK>="+;
-			cm2str(dDatOd)+".and. DATDOK<="+cm2str(dDatDo) )
-	endif
+      O_PARAMS
+      PRIVATE cSection := "S"
+      PRIVATE cHistory := " "
+      PRIVATE aHistory := {}
 
-	if fk1=="D" .and. len(ck1)<>0
-  		cFilter += ( ".and. k1='"+ck1+"'" )
-	endif
+      WPar( "qK", qqKonto )
+      WPar( "qP", qqPartner )
+      WPar( "d1", dDatoD )
+      WPar( "d2", dDatDo )
 
-	if fk2=="D" .and. len(ck2)<>0
-  		cFilter += ( ".and. k2='"+ck2+"'" )
-	endif
+      SELECT params
+      USE
 
-	if fk3=="D" .and. len(ck3)<>0
-  		cFilter += ( ".and. k3='"+ck3+"'" )
-	endif
+      aUsl1 := Parsiraj( qqKonto, "IdKonto" )
+      aUsl2 := Parsiraj( qqPartner, "IdPartner" )
 
-	if fk4=="D" .and. len(ck4)<>0
-  		cFilter += ( ".and. k4='"+ck4+"'" )
-	endif
+      IF gDUFRJ == "D"
+         aUsl3 := Parsiraj( cIdFirma, "IdFirma" )
+         aUsl4 := Parsiraj( cIdRJ, "IdRj" )
+      ENDIF
 
-	if gRj=="D" .and. len(cIdrj)<>0
-  		if gDUFRJ == "D"
-    			cFilter += ( ".and."+aUsl4 )
-  		else
-    			cFilter += ( ".and. idrj='"+cidrj+"'" )
-  		endif
-	endif
+      aBV := Parsiraj( qqBrDok, "UPPER(BRDOK)", "C" )
+      aVN := Parsiraj( cVN, "IDVN", "C" )
 
-	if gTroskovi == "D" .and. len(cFunk)<>0
-  		cFilter += ( ".and. Funk='"+cFunk+"'" )
-	endif
+      IF aBV <> NIL .AND. aVN <> NIL .AND. ;
+            aUsl1 <> NIL .AND. aUsl2 <> NIL .AND. ;
+            IF( gDUFRJ == "D", aUsl3 <> NIL .AND. aUsl4 <> NIL, .T. )
+         EXIT
+      ENDIF
+   ENDDO
+   BoxC()
 
-	if gTroskovi == "D" .and. len(cFond)<>0
-  		cFilter += ( ".and. Fond='"+cFond+"'" )
-	endif
+   // godina od - do
+   nYearFrom := Year( dDatOd )
+   nYearTo := Year( dDatDo )
+   lInSez := .F.
 
-	set filter to &cFilter
-	go top
+   IF ( nYearTo - nYearFrom ) <> 0
+      // ima vise godina, prodji kroz sezone
+      lInSez := .T.
+   ENDIF
 
-	// prodji kroz podatke
-	
-	do whileSC !EOF()
-	
-		cIdKonto := field->idkonto
-   		cIdPartner := field->idpartner
-		
-		nTArea := SELECT()
+   // export izvjestaja u dbf
+   lExpRpt := ( cExpRptDN == "D" )
 
-		// uslov po opcinama
-		if !EMPTY( cOpcine )
-			
-			select partn
-			seek cIdPartner
-			
-			if ALLTRIM( field->idops ) $ cOpcine
-				// to je taj partner...
-			else
-				// posto nije to taj preskoci...
-				select (nTArea)
-				skip
-				loop
-			endif
+   IF gDUFRJ != "D"
+      cIdFirma := Left( cIdFirma, 2 )
+   ENDIF
 
-		endif
+   O_SUBAN
+   CistiK1k4()
 
-		cRasclan := ""
+   // prodji po godinama i azuriraj u tbl_export
 
-		if cRasclaniti == "D"
-			cRasclan := field->idrj
-		endif
-		
-		select (nTArea)
+   lSilent := .T.
+   lWriteKParam := .T.
 
-   		nD := 0
-		nP := 0
-   		nD2 := 0
-		nP2 := 0
+   FOR i := nYearFrom TO nYearTo
 
-   		do whileSC !eof() .and. cIdKonto == field->idkonto ;
-			.and. field->idpartner == cIdPartner ;
-			.and. RasclanRJ()
-		
-			// ima li dokumenata za izbaciti ?
-			if !EMPTY( cDok_izb )
-				if field->idvn $ cDok_izb
-					// preskoci na sljedeci zapis
-					skip
-					loop
-				endif
-			endif
-			
-			if lInSez == .t.
-				// ako su sezone, 
-				// preskaci pocetna stanja
-				if field->idvn == "00"
-					skip
-					loop
-				endif
-			endif
+      IF lInSez == .T.
+         // logiraj se u godinu
+         goModul:oDataBase:logAgain( AllTrim( Str( i ) ), ;
+            lSilent, lWriteKParam )
+         // otvori export tabelu u tekucoj sezoni
+         o_tmp( cP_Path )
+      ENDIF
 
-			// racuna duguje/potrazuje
-			if field->d_p == "1"
-       				nD += field->iznosbhd
-       				nD2 += field->iznosdem
-			else
-				nP += field->iznosbhd
-       				nP2 += field->iznosdem
-			endif
-     			
-			skip 1
-		
-		enddo
+      O_RJ
+      O_PARTN
+      O_KONTO
+      O_SUBAN
 
-		// pronadji opis rj
-		select rj
-		go top
-		seek cRasclan
-		if !FOUND()
-			cRj_naz := ""
-		else
-			cRj_naz := field->naz
-		endif
+      SELECT suban
 
-		// pronadji opis konta
-		select konto
-		hseek cIdKonto
+      IF !Empty( cIdFirma ) .AND. gDUFRJ != "D"
+         IF cRasclaniti == "D"
+            INDEX ON idfirma + idkonto + idpartner + idrj + DToS( datdok ) ;
+               TO SUBSUB
+            SET ORDER TO TAG "SUBSUB"
+         ELSE
+            // IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr
+            SET ORDER TO 1
+         ENDIF
+      ELSE
+         IF cRasclaniti == "D"
+            INDEX ON idkonto + idpartner + idrj + DToS( datdok ) ;
+               TO SUBSUB
+            SET ORDER TO TAG "SUBSUB"
+         ELSE
+            cIdFirma := ""
+            INDEX ON IdKonto + IdPartner + DToS( DatDok ) + ;
+               BrNal + RBr TO SVESUB
+            SET ORDER TO TAG "SVESUB"
+         ENDIF
+      ENDIF
 
-		// pronadji opis partnera
-		select partn
-		hseek cIdPartner
+      IF gDUFRJ == "D"
+         cFilter := aUsl3
+      ELSE
+         cFilter := "IdFirma=" + cm2str( cidfirma )
+      ENDIF
 
-		select suban
+      IF !Empty( cVN )
+         cFilter += ( ".and. " + aVN )
+      ENDIF
 
-		// ubaci u tbl_export
-		if cNula == "D" .or. ROUND( nD - nP, 3 ) <> 0
-			
-			select r_export
-			go top
-			seek cIdKonto + cIdPartner + cRasclan
+      IF !Empty( qqBrDok )
+         cFilter += ( ".and." + aBV )
+      ENDIF
+
+      IF aUsl1 <> ".t."
+         cFilter += ( ".and." + aUsl1 )
+      ENDIF
+
+      IF aUsl2 <> ".t."
+         cFilter += ( ".and." + aUsl2 )
+      ENDIF
+
+      IF !Empty( dDatOd ) .OR. !Empty( dDatDo )
+         cFilter += ( ".and. DATDOK>=" + ;
+            cm2str( dDatOd ) + ".and. DATDOK<=" + cm2str( dDatDo ) )
+      ENDIF
+
+      IF fk1 == "D" .AND. Len( ck1 ) <> 0
+         cFilter += ( ".and. k1='" + ck1 + "'" )
+      ENDIF
+
+      IF fk2 == "D" .AND. Len( ck2 ) <> 0
+         cFilter += ( ".and. k2='" + ck2 + "'" )
+      ENDIF
+
+      IF fk3 == "D" .AND. Len( ck3 ) <> 0
+         cFilter += ( ".and. k3='" + ck3 + "'" )
+      ENDIF
+
+      IF fk4 == "D" .AND. Len( ck4 ) <> 0
+         cFilter += ( ".and. k4='" + ck4 + "'" )
+      ENDIF
+
+      IF gRj == "D" .AND. Len( cIdrj ) <> 0
+         IF gDUFRJ == "D"
+            cFilter += ( ".and." + aUsl4 )
+         ELSE
+            cFilter += ( ".and. idrj='" + cidrj + "'" )
+         ENDIF
+      ENDIF
+
+      IF gTroskovi == "D" .AND. Len( cFunk ) <> 0
+         cFilter += ( ".and. Funk='" + cFunk + "'" )
+      ENDIF
+
+      IF gTroskovi == "D" .AND. Len( cFond ) <> 0
+         cFilter += ( ".and. Fond='" + cFond + "'" )
+      ENDIF
+
+      SET FILTER to &cFilter
+      GO TOP
+
+      // prodji kroz podatke
+
+      DO WHILE !Eof()
+
+         cIdKonto := field->idkonto
+         cIdPartner := field->idpartner
+
+         nTArea := Select()
+
+         // uslov po opcinama
+         IF !Empty( cOpcine )
+
+            SELECT partn
+            SEEK cIdPartner
+
+            IF AllTrim( field->idops ) $ cOpcine
+               // to je taj partner...
+            ELSE
+               // posto nije to taj preskoci...
+               SELECT ( nTArea )
+               SKIP
+               LOOP
+            ENDIF
+
+         ENDIF
+
+         cRasclan := ""
+
+         IF cRasclaniti == "D"
+            cRasclan := field->idrj
+         ENDIF
+
+         SELECT ( nTArea )
+
+         nD := 0
+         nP := 0
+         nD2 := 0
+         nP2 := 0
+
+         DO WHILE !Eof() .AND. cIdKonto == field->idkonto ;
+               .AND. field->idpartner == cIdPartner ;
+               .AND. RasclanRJ()
+
+            // ima li dokumenata za izbaciti ?
+            IF !Empty( cDok_izb )
+               IF field->idvn $ cDok_izb
+                  // preskoci na sljedeci zapis
+                  SKIP
+                  LOOP
+               ENDIF
+            ENDIF
+
+            IF lInSez == .T.
+               // ako su sezone,
+               // preskaci pocetna stanja
+               IF field->idvn == "00"
+                  SKIP
+                  LOOP
+               ENDIF
+            ENDIF
+
+            // racuna duguje/potrazuje
+            IF field->d_p == "1"
+               nD += field->iznosbhd
+               nD2 += field->iznosdem
+            ELSE
+               nP += field->iznosbhd
+               nP2 += field->iznosdem
+            ENDIF
+
+            SKIP 1
+
+         ENDDO
+
+         // pronadji opis rj
+         SELECT rj
+         GO TOP
+         SEEK cRasclan
+         IF !Found()
+            cRj_naz := ""
+         ELSE
+            cRj_naz := field->naz
+         ENDIF
+
+         // pronadji opis konta
+         SELECT konto
+         hseek cIdKonto
+
+         // pronadji opis partnera
+         SELECT partn
+         hseek cIdPartner
+
+         SELECT suban
+
+         // ubaci u tbl_export
+         IF cNula == "D" .OR. Round( nD - nP, 3 ) <> 0
+
+            SELECT r_export
+            GO TOP
+            SEEK cIdKonto + cIdPartner + cRasclan
 
             my_flock()
 
-			if !FOUND()
-				
-				append blank
-				replace field->idfirma with cIdFirma
-				replace field->idkonto with cIdKonto
-				replace field->idpartner with cIdPartner
-				replace field->kto_opis with konto->naz
-				replace field->par_opis with partn->naz
-				replace field->par_mjesto with partn->mjesto
-				replace field->idrj with cRasclan
-				replace field->rj_opis with cRj_naz
-			
-			endif
+            IF !Found()
 
-			replace field->dug with field->dug + nD
-			replace field->pot with field->pot + nP
-			replace field->saldo with ;
-				field->saldo + ( nD - nP )
-			
-			replace field->dug2 with field->dug2 + nD2
-			replace field->pot2 with field->pot2 + nP2
-			replace field->saldo2 with ;
-				field->saldo2 + ( nD2 - nP2 )
-		
+               APPEND BLANK
+               REPLACE field->idfirma WITH cIdFirma
+               REPLACE field->idkonto WITH cIdKonto
+               REPLACE field->idpartner WITH cIdPartner
+               REPLACE field->kto_opis WITH konto->naz
+               REPLACE field->par_opis WITH partn->naz
+               REPLACE field->par_mjesto WITH partn->mjesto
+               REPLACE field->idrj WITH cRasclan
+               REPLACE field->rj_opis WITH cRj_naz
+
+            ENDIF
+
+            REPLACE field->dug WITH field->dug + nD
+            REPLACE field->pot WITH field->pot + nP
+            REPLACE field->saldo with ;
+               field->saldo + ( nD - nP )
+
+            REPLACE field->dug2 WITH field->dug2 + nD2
+            REPLACE field->pot2 WITH field->pot2 + nP2
+            REPLACE field->saldo2 with ;
+               field->saldo2 + ( nD2 - nP2 )
+
             my_unlock()
 
-			select suban
+            SELECT suban
 
-		endif
- 	enddo  
-next
+         ENDIF
+      ENDDO
+   NEXT
 
-// uvijek se vrati u radno podrucje
-if lInSez == .t.
-	goModul:oDataBase:logAgain( cT_sez, lSilent, lWriteKParam )
-	o_tmp( cP_Path )
-endif
+   // uvijek se vrati u radno podrucje
+   IF lInSez == .T.
+      goModul:oDataBase:logAgain( cT_sez, lSilent, lWriteKParam )
+      o_tmp( cP_Path )
+   ENDIF
 
-// ako je export izvjestaja onda ne pozivaj stampu !
-if lExpRpt
-	tbl_export()
-	my_close_all_dbf()
-	return
-endif
+   // ako je export izvjestaja onda ne pozivaj stampu !
+   IF lExpRpt
+      tbl_export()
+      my_close_all_dbf()
+      RETURN
+   ENDIF
 
-// poziva se izvjestaj
+   // poziva se izvjestaj
 
-Pic := PicBhd
+   Pic := PicBhd
 
-START PRINT CRET
+   START PRINT CRET
 
-if cSkVar == "D"
-  	nDOpis:=25
-	if __par_len > 6
-	  //nDOpis += 2
-	endif
-	nDIznos:=12
-  	pic:=RIGHT(picbhd,nDIznos)
-else
-  	nDOpis:=50
-	if __par_len > 6
-	   //nDOpis += 2
-	endif
-	nDIznos:=20
-endif
+   IF cSkVar == "D"
+      nDOpis := 25
+      IF __par_len > 6
+         // nDOpis += 2
+      ENDIF
+      nDIznos := 12
+      pic := Right( picbhd, nDIznos )
+   ELSE
+      nDOpis := 50
+      IF __par_len > 6
+         // nDOpis += 2
+      ENDIF
+      nDIznos := 20
+   ENDIF
 
-if cTip == "3"
-   	m:= "------- " + REPLICATE("-", __par_len) + " "+REPL("-",nDOpis)+" "+REPL("-",nDIznos)+" "+REPL("-",nDIznos)
-else
-   	m := "------- " + REPLICATE("-", __par_len) + " "+REPL("-",nDOpis)+" "+REPL("-",nDIznos)+" "+REPL("-",nDIznos)+" "+REPL("-",nDIznos)
-endif
+   IF cTip == "3"
+      m := "------- " + Replicate( "-", __par_len ) + " " + REPL( "-", nDOpis ) + " " + REPL( "-", nDIznos ) + " " + REPL( "-", nDIznos )
+   ELSE
+      m := "------- " + Replicate( "-", __par_len ) + " " + REPL( "-", nDOpis ) + " " + REPL( "-", nDIznos ) + " " + REPL( "-", nDIznos ) + " " + REPL( "-", nDIznos )
+   ENDIF
 
-nStr:=0
+   nStr := 0
 
-nud := 0
-nup := 0      
-nud2 := 0
-nup2 := 0    
+   nud := 0
+   nup := 0
+   nud2 := 0
+   nup2 := 0
 
-select r_export
-set order to tag "1"
-go top
+   SELECT r_export
+   SET ORDER TO TAG "1"
+   GO TOP
 
-do whileSC !EOF()
-	
-	cSin := LEFT( field->idkonto, 3 )
- 	
-	nKd := 0
-	nKp := 0
- 	nKd2 := 0
-	nKp2 := 0
+   DO WHILE !Eof()
 
- 	do whileSC !EOF() .and.  cSin == LEFT( field->idkonto, 3 )
-   		
-		cIdKonto := field->idkonto
-   		cIdPartner := field->idpartner
+      cSin := Left( field->idkonto, 3 )
 
-		if cRasclaniti == "D"
-			cRasclan := field->idrj
-		else
-			cRasclan := ""
-		endif
+      nKd := 0
+      nKp := 0
+      nKd2 := 0
+      nKp2 := 0
 
-		// ispis headera
-   		if prow() == 0
-			header( cSkVar )
-		endif
-		
-   		if prow() > 63 + gPStranica
-			FF
-			header( cSkVar )
-		endif
+      DO WHILE !Eof() .AND.  cSin == Left( field->idkonto, 3 )
 
-   		if cNula == "D" .or. ( ROUND( field->saldo, 3) <> 0 ;
-			.and. cTip $ "13" )
-     			
-			? cIdKonto, cIdPartner, ""
-     			
-			if cRasclaniti == "D"
-       				
-			  if !EMPTY( cRasclan )
-         				
-				cLTreci := "RJ:" + cRasclan + "-" + ;
-					TRIM( field->rj_opis )
-       			  endif
-				
-     			endif
-     			
-			nCOpis := PCOL()
+         cIdKonto := field->idkonto
+         cIdPartner := field->idpartner
 
-			// ispis partnera
-     			if !EMPTY( cIdPartner )
-       			  if gVSubOp == "D"
-				cPom := ALLTRIM( field->kto_opis ) + ;
-					" (" + ;
-					ALLTRIM( ALLTRIM(field->par_opis) + ;
-					PN2()) + ;
-					")"
-         				
-				?? PADR( cPom, nDOpis - DifIdP(cIdPartner) )
-         				
-				if LEN(cPom)>nDOpis-DifIdP(cidpartner)
-           				cLDrugi := SUBSTR(cPom,nDOpis+1)
-         			endif
-       			  else
-         			cPom:= ALLTRIM(field->par_opis) + PN2()
-         			
-				if !empty(field->par_mjesto)
-            			  if right(trim(upper(field->par_opis)),;
-				  	len(trim(field->par_mjesto))) != ;
-					TRIM(UPPER(field->par_mjesto))
-                			cPom:=trim(ALLTRIM(field->par_opis) + ;
-						PN2()) + " " + ;
-						trim(field->par_mjesto)
+         IF cRasclaniti == "D"
+            cRasclan := field->idrj
+         ELSE
+            cRasclan := ""
+         ENDIF
 
-                			aTxt:=Sjecistr(cPom,nDOpis)
-                			cPom:=aTxt[1]
+         // ispis headera
+         IF PRow() == 0
+            Header( cSkVar )
+         ENDIF
 
-                			if len(aTxt)>1
-                  				cLDrugi:=aTxt[2]
-                			endif
+         IF PRow() > 63 + gPStranica
+            FF
+            Header( cSkVar )
+         ENDIF
 
-            			  endif
-         			endif
+         IF cNula == "D" .OR. ( Round( field->saldo, 3 ) <> 0 ;
+               .AND. cTip $ "13" )
 
-         			?? padr(cPom,nDOpis)
-       			  endif
-     			
-			else
-       				?? padr( field->kto_opis, nDOpis )
-     			endif
+            ? cIdKonto, cIdPartner, ""
 
-     			nC := pcol()+1
-     			
-			// ispis duguje/potrazuje/saldo
-			if cTip=="1"
-      				@ prow(),pcol()+1 SAY field->dug pict pic
-      				@ prow(),pcol()+1 SAY field->pot pict pic
-      				@ prow(),pcol()+1 SAY field->saldo pict pic
-     			elseif cTip=="2"
-      				@ prow(),pcol()+1 SAY field->dug2 pict pic
-      				@ prow(),pcol()+1 SAY field->pot2 pict pic
-      				@ prow(),pcol()+1 SAY field->saldo2 pict pic
-     			else
-      				@ prow(),pcol()+1 SAY field->saldo pict pic
-      				@ prow(),pcol()+1 SAY field->saldo2 pict pic
-     			endif
-     			
-			nKd += field->dug
-			nKp += field->pot
-     			nKd2 += field->dug2
-			nKp2 += field->pot2
-   		
-		endif
+            IF cRasclaniti == "D"
 
-   		if LEN(cLDrugi)>0
-     			@ prow()+1, nCOpis SAY cLDrugi
-     			cLDrugi:=""
-   		endif
-   		if LEN(cLTreci)>0
-     			@ prow()+1, nCOpis SAY cLTreci
-     			cLTreci:=""
-   		endif
-		
-		skip
+               IF !Empty( cRasclan )
 
- 	enddo  
-	
- 	if prow() > 61 + gPStranica
-		FF
-		header( cSkVar )
-	endif
+                  cLTreci := "RJ:" + cRasclan + "-" + ;
+                     Trim( field->rj_opis )
+               ENDIF
 
- 	if cSK == "D"
-   		
-		select rj
-		hseek cSin
+            ENDIF
 
-		select r_export
+            nCOpis := PCol()
 
-		? m
-   
-		?  "SINT.K.",cSin, ": ", ALLTRIM( konto->naz )
-   		
-		if cTip == "1"
-     			@ prow(),nC SAY nKd pict pic
-     			@ prow(),pcol()+1 SAY nKp pict pic
-     			@ prow(),pcol()+1 SAY nKd-nKp pict pic
-   		elseif cTip == "2"
-     			@ prow(),nC SAY nKd2 pict pic
-     			@ prow(),pcol()+1 SAY nKp2 pict pic
-     			@ prow(),pcol()+1 SAY nKd2-nKp2 pict pic
-   		else
-     			@ prow(),nC SAY nKd-nKP pict pic
-     			@ prow(),pcol()+1 SAY nKd2-nKP2 pict pic
-   		endif
-   		
-		? m
- 	endif
+            // ispis partnera
+            IF !Empty( cIdPartner )
+               IF gVSubOp == "D"
+                  cPom := AllTrim( field->kto_opis ) + ;
+                     " (" + ;
+                     AllTrim( AllTrim( field->par_opis ) + ;
+                     PN2() ) + ;
+                     ")"
 
- 	nUd += nKd
-	nUp += nKp  
- 	nUd2 += nKd2
-	nUp2 += nKp2   
-enddo
+                  ?? PadR( cPom, nDOpis - DifIdP( cIdPartner ) )
 
-if prow() > 61 + gPStranica
-	FF
-	header( cSkVar )
-endif
+                  IF Len( cPom ) > nDOpis - DifIdP( cidpartner )
+                     cLDrugi := SubStr( cPom, nDOpis + 1 )
+                  ENDIF
+               ELSE
+                  cPom := AllTrim( field->par_opis ) + PN2()
 
-? m
-? " UKUPNO:"
-if cTip=="1"
-	@ prow(),nC       SAY nUd pict pic
-  	@ prow(),pcol()+1 SAY nUp pict pic
-  	@ prow(),pcol()+1 SAY nUd-nUp pict pic
-elseif cTip=="2"
-  	@ prow(),nC       SAY nUd2 pict pic
-  	@ prow(),pcol()+1 SAY nUp2 pict pic
-  	@ prow(),pcol()+1 SAY nUd2-nUp2 pict pic
-else
-  	@ prow(),nC       SAY nUd-nUP pict pic
-  	@ prow(),pcol()+1 SAY nUd2-nUP2 pict pic
-endif
+                  IF !Empty( field->par_mjesto )
+                     IF Right( Trim( Upper( field->par_opis ) ), ;
+                           Len( Trim( field->par_mjesto ) ) ) != ;
+                           Trim( Upper( field->par_mjesto ) )
+                        cPom := Trim( AllTrim( field->par_opis ) + ;
+                           PN2() ) + " " + ;
+                           Trim( field->par_mjesto )
 
-? m
+                        aTxt := Sjecistr( cPom, nDOpis )
+                        cPom := aTxt[ 1 ]
 
-FF
-END PRINT
+                        IF Len( aTxt ) > 1
+                           cLDrugi := aTxt[ 2 ]
+                        ENDIF
 
-closeret
-return
+                     ENDIF
+                  ENDIF
+
+                  ?? PadR( cPom, nDOpis )
+               ENDIF
+
+            ELSE
+               ?? PadR( field->kto_opis, nDOpis )
+            ENDIF
+
+            nC := PCol() + 1
+
+            // ispis duguje/potrazuje/saldo
+            IF cTip == "1"
+               @ PRow(), PCol() + 1 SAY field->dug PICT pic
+               @ PRow(), PCol() + 1 SAY field->pot PICT pic
+               @ PRow(), PCol() + 1 SAY field->saldo PICT pic
+            ELSEIF cTip == "2"
+               @ PRow(), PCol() + 1 SAY field->dug2 PICT pic
+               @ PRow(), PCol() + 1 SAY field->pot2 PICT pic
+               @ PRow(), PCol() + 1 SAY field->saldo2 PICT pic
+            ELSE
+               @ PRow(), PCol() + 1 SAY field->saldo PICT pic
+               @ PRow(), PCol() + 1 SAY field->saldo2 PICT pic
+            ENDIF
+
+            nKd += field->dug
+            nKp += field->pot
+            nKd2 += field->dug2
+            nKp2 += field->pot2
+
+         ENDIF
+
+         IF Len( cLDrugi ) > 0
+            @ PRow() + 1, nCOpis SAY cLDrugi
+            cLDrugi := ""
+         ENDIF
+         IF Len( cLTreci ) > 0
+            @ PRow() + 1, nCOpis SAY cLTreci
+            cLTreci := ""
+         ENDIF
+
+         SKIP
+
+      ENDDO
+
+      IF PRow() > 61 + gPStranica
+         FF
+         Header( cSkVar )
+      ENDIF
+
+      IF cSK == "D"
+
+         SELECT rj
+         hseek cSin
+
+         SELECT r_export
+
+         ? m
+
+         ?  "SINT.K.", cSin, ": ", AllTrim( konto->naz )
+
+         IF cTip == "1"
+            @ PRow(), nC SAY nKd PICT pic
+            @ PRow(), PCol() + 1 SAY nKp PICT pic
+            @ PRow(), PCol() + 1 SAY nKd - nKp PICT pic
+         ELSEIF cTip == "2"
+            @ PRow(), nC SAY nKd2 PICT pic
+            @ PRow(), PCol() + 1 SAY nKp2 PICT pic
+            @ PRow(), PCol() + 1 SAY nKd2 - nKp2 PICT pic
+         ELSE
+            @ PRow(), nC SAY nKd - nKP PICT pic
+            @ PRow(), PCol() + 1 SAY nKd2 - nKP2 PICT pic
+         ENDIF
+
+         ? m
+      ENDIF
+
+      nUd += nKd
+      nUp += nKp
+      nUd2 += nKd2
+      nUp2 += nKp2
+   ENDDO
+
+   IF PRow() > 61 + gPStranica
+      FF
+      Header( cSkVar )
+   ENDIF
+
+   ? m
+   ? " UKUPNO:"
+   IF cTip == "1"
+      @ PRow(), nC       SAY nUd PICT pic
+      @ PRow(), PCol() + 1 SAY nUp PICT pic
+      @ PRow(), PCol() + 1 SAY nUd - nUp PICT pic
+   ELSEIF cTip == "2"
+      @ PRow(), nC       SAY nUd2 PICT pic
+      @ PRow(), PCol() + 1 SAY nUp2 PICT pic
+      @ PRow(), PCol() + 1 SAY nUd2 - nUp2 PICT pic
+   ELSE
+      @ PRow(), nC       SAY nUd - nUP PICT pic
+      @ PRow(), PCol() + 1 SAY nUd2 - nUP2 PICT pic
+   ENDIF
+
+   ? m
+
+   FF
+   ENDPRINT
+
+   closeret
+
+   RETURN
 
 
 // -------------------------------------------------------------
 // header izvjestaja specifikacija po suban kontima
 // -------------------------------------------------------------
-static function header( cSkVar )
+STATIC FUNCTION Header( cSkVar )
 
-?
-B_ON
-P_COND
+   ?
+   B_ON
+   P_COND
 
-?? "FIN: SPECIFIKACIJA SUBANALITICKIH KONTA  ZA "
+   ?? "FIN: SPECIFIKACIJA SUBANALITICKIH KONTA  ZA "
 
-if cTip=="1"
-  ?? ValDomaca()
-elseif cTip=="2"
-  ?? ValPomocna()
-else
-  ?? ALLTRIM(ValDomaca())+"-"+ALLTRIM(ValPomocna())
-endif
-if !(empty(dDatOd) .and. empty(dDatDo))
-  ?? "  ZA DOKUMENTE U PERIODU ",dDatOd,"-",dDatDo
-endif
-?? " NA DAN: "; ?? DATE()
-IF !EMPTY(qqBrDok)
-  ? "Izvjestaj pravljen po uslovu za broj veze/racuna: '"+TRIM(qqBrDok)+"'"
-ENDIF
-@ prow(),125 SAY "Str:"+str(++nStr,3)
-B_OFF
+   IF cTip == "1"
+      ?? ValDomaca()
+   ELSEIF cTip == "2"
+      ?? ValPomocna()
+   ELSE
+      ?? AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() )
+   ENDIF
+   IF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
+      ?? "  ZA DOKUMENTE U PERIODU ", dDatOd, "-", dDatDo
+   ENDIF
+   ?? " NA DAN: "; ?? Date()
+   IF !Empty( qqBrDok )
+      ? "Izvjestaj pravljen po uslovu za broj veze/racuna: '" + Trim( qqBrDok ) + "'"
+   ENDIF
+   @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
+   B_OFF
 
-if gNW=="D"
- ? "Firma:",gFirma,gNFirma
-else
- IF EMPTY(cIdFirma)
-  ? "Firma:",gNFirma,"(SVE RJ)"
- ELSE
-  SELECT PARTN; HSEEK cIdFirma
-  ? "Firma:",cidfirma,PADR(partn->naz, 25),partn->naz2
- ENDIF
-endif
-?
-PrikK1k4()
+   IF gNW == "D"
+      ? "Firma:", gFirma, gNFirma
+   ELSE
+      IF Empty( cIdFirma )
+         ? "Firma:", gNFirma, "(SVE RJ)"
+      ELSE
+         SELECT PARTN; HSEEK cIdFirma
+         ? "Firma:", cidfirma, PadR( partn->naz, 25 ), partn->naz2
+      ENDIF
+   ENDIF
+   ?
+   PrikK1k4()
 
-select r_export
+   SELECT r_export
 
-IF cSkVar=="D"
-  F12CPI
-  ? m
-ELSE
-  P_COND
-  ? m
-ENDIF
-if cTip $ "12"
-  IF cSkVar!="D"
-    ? "KONTO   " + PADC("PARTN.", __par_len) + " NAZIV KONTA / PARTNERA                                          duguje            potra�uje                saldo"
-  ELSE
-    ? "KONTO   " + PADC("PARTN", __par_len) + " " +  PADR("NAZIV KONTA / PARTNERA",nDOpis)+" "+PADC("duguje",nDIznos)+" "+PADC("potra�uje",nDIznos)+" "+PADC("saldo",nDIznos)
-  ENDIF
-else
-  IF cSkVar!="D"
-    ? "KONTO   " + PADC("PARTN.", __par_len) + " NAZIV KONTA / PARTNERA                                       saldo "+ValDomaca()+"           saldo "+ALLTRIM(ValPomocna())
-  ELSE
-    ? "KONTO   " + PADC("PARTN.", __par_len) + " "+PADR("NAZIV KONTA / PARTNERA",nDOpis)+" "+PADC("saldo "+ValDomaca(),nDIznos)+" "+PADC("saldo "+ALLTRIM(ValPomocna()),nDIznos)
-  ENDIF
-endif
+   IF cSkVar == "D"
+      F12CPI
+      ? m
+   ELSE
+      P_COND
+      ? m
+   ENDIF
+   IF cTip $ "12"
+      IF cSkVar != "D"
+         ? "KONTO   " + PadC( "PARTN.", __par_len ) + " NAZIV KONTA / PARTNERA                                          duguje            potra�uje                saldo"
+      ELSE
+         ? "KONTO   " + PadC( "PARTN", __par_len ) + " " +  PadR( "NAZIV KONTA / PARTNERA", nDOpis ) + " " + PadC( "duguje", nDIznos ) + " " + PadC( "potra�uje", nDIznos ) + " " + PadC( "saldo", nDIznos )
+      ENDIF
+   ELSE
+      IF cSkVar != "D"
+         ? "KONTO   " + PadC( "PARTN.", __par_len ) + " NAZIV KONTA / PARTNERA                                       saldo " + ValDomaca() + "           saldo " + AllTrim( ValPomocna() )
+      ELSE
+         ? "KONTO   " + PadC( "PARTN.", __par_len ) + " " + PadR( "NAZIV KONTA / PARTNERA", nDOpis ) + " " + PadC( "saldo " + ValDomaca(), nDIznos ) + " " + PadC( "saldo " + AllTrim( ValPomocna() ), nDIznos )
+      ENDIF
+   ENDIF
 
-? m
+   ? m
 
-return
-
-
-
-
+   RETURN

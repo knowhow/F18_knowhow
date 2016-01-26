@@ -34,8 +34,7 @@ STATIC FUNCTION _o_tables()
       O_FIN_PRIPR
    ENDIF
 
-   RETURN
-
+   RETURN .T.
 
 
 FUNCTION fin_pocetno_stanje_sql()
@@ -77,7 +76,7 @@ FUNCTION fin_pocetno_stanje_sql()
 
    @ m_x + 8, m_y + 2 SAY8 "Grupišem konta na broj mjesta ?" GET _sint PICT "9"
    @ m_x + 9, m_y + 2 SAY8 "Kopiraj nepostojeće sifre (konto/partn) (D/N)?" GET _copy_sif VALID _copy_sif $ "DN" PICT "@!"
-  	
+
    READ
 
    ESC_BCR
@@ -286,7 +285,7 @@ STATIC FUNCTION _insert_into_fin_priprema( data, konto_data, partn_data, param )
       IF !f18_lock_tables( { "partn", "konto" }, .T. )
          sql_table_update( NIL, "END" )
          MsgBeep( "Problem sa zaključavanjem tabela !#Prekidam operaciju." )
-         RETURN _ret 
+         RETURN _ret
       ENDIF
 
       DO WHILE !Eof()
@@ -295,9 +294,9 @@ STATIC FUNCTION _insert_into_fin_priprema( data, konto_data, partn_data, param )
          _pr_partn := field->idpartner
 
          IF !Empty( _pr_konto )
-       		
+
             lOk := append_sif_konto( _pr_konto, konto_data )
-				
+
             IF lOk
                lOk := append_sif_konto( PadR( Left( _pr_konto, 1 ), 7 ), konto_data )
             ENDIF
@@ -529,7 +528,7 @@ STATIC FUNCTION get_data( param, data_fin, konto_data, partner_data )
       partner_data := NIL
    ENDIF
 
-   IF !is_var_objekat_tpquery( data_fin ) 
+   IF !is_var_objekat_tpquery( data_fin )
       data_fin := NIL
    ELSE
       IF data_fin:LastRec() == 0

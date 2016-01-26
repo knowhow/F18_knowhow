@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,49 +14,45 @@
 /*! \file fmk/fin/razdb/1g/mnu_raz.prg
  *  \brief Menij razmjene podataka
  */
- 
-/*! \fn MnuRazmjenaPodataka() 
+
+/*! \fn MnuRazmjenaPodataka()
  *  \brief Menij razmjene podataka
  */
-function MnuRazmjenaPodataka()
+FUNCTION MnuRazmjenaPodataka()
 
-private opc:={}
-private opcexe:={}
-private Izbor:=1
+   PRIVATE opc := {}
+   PRIVATE opcexe := {}
+   PRIVATE Izbor := 1
 
-AADD(opc, "1. fakt->fin                   ")
-AADD(opcexe, {|| FaktFin()})
-AADD(opc, "2. ld->fin ")
-AADD(opcexe, {|| LdFin()})
-AADD(opc, "3. import elba ")
-AADD(opcexe, {|| _imp_elba_txt() })
-AADD(opc, "4. export dbf (svi nalozi) ")
-AADD(opcexe, {|| st_sv_nal() })
-AADD(opc, "6. pos->fin ")
-AADD(opcexe, {|| PosFin()})
+   AAdd( opc, "1. fakt->fin                   " )
+   AAdd( opcexe, {|| FaktFin() } )
+   AAdd( opc, "2. ld->fin " )
+   AAdd( opcexe, {|| LdFin() } )
+   AAdd( opc, "3. import elba " )
+   AAdd( opcexe, {|| _imp_elba_txt() } )
+   AAdd( opc, "4. export dbf (svi nalozi) " )
+   AAdd( opcexe, {|| st_sv_nal() } )
+   AAdd( opc, "6. pos->fin " )
+   AAdd( opcexe, {|| PosFin() } )
 
-Menu_SC("raz")
+   Menu_SC( "raz" )
 
-return
+   RETURN
 
 
 
 /*! \fn PosFin()
  *  \brief Prenos prometa pologa
  */
-function PosFin()
+FUNCTION PosFin()
 
-private opc:={}
-private opcexe:={}
-private Izbor:=1
+   PRIVATE opc := {}
+   PRIVATE opcexe := {}
+   PRIVATE Izbor := 1
 
-AADD(opc, "1. pos polozi                   ")
-AADD(opcexe, {|| PromVP2Fin()})
+   AAdd( opc, "1. pos polozi                   " )
+   AAdd( opcexe, {|| PromVP2Fin() } )
 
-Menu_SC("pf")
+   Menu_SC( "pf" )
 
-return
-
-
-
-
+   RETURN

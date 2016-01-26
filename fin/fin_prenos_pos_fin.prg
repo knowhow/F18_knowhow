@@ -1,17 +1,17 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 #include "f18.ch"
 
-#define F_T_PROMVP		245
+#define F_T_PROMVP  245
 
 /*! \fn GetPrVPParams(cProdId, dDatOd, dDatDo, dDatDok, cTipNal, cShema)
  *  \brief Setuj parametre prenosa
@@ -20,126 +20,126 @@
  *  \param dDatDo - datum prenosa do
  *  \param dDatDok - datum dokumenta
  */
-function GetPrVPParams(cProdId, dDatOd, dDatDo, dDatDok, cTipNal, cShema)
+FUNCTION GetPrVPParams( cProdId, dDatOd, dDatDo, dDatDok, cTipNal, cShema )
 
-dDatOd:=DATE()-30
-dDatDo:=DATE()
-dDatDok:=DATE()
-cProdId:=SPACE(2)
-cTipNal:="  "
-cShema:=" "
+   dDatOd := Date() -30
+   dDatDo := Date()
+   dDatDok := Date()
+   cProdId := Space( 2 )
+   cTipNal := "  "
+   cShema := " "
 
-Box("#Kontiranje evidencije vrsta placanja",7,60)
-	@ m_x+2, m_y+2 SAY "TOPS - prodajno mjesto:" GET cProdId VALID !Empty(cProdId)
-	@ m_x+3, m_y+2 SAY "Datum od" GET dDatOd VALID !Empty(dDatOd)
-	@ m_x+3, m_y+20 SAY "do" GET dDatDo VALID !Empty(dDatDo)
-	
-	@ m_x+5, m_y+2 SAY "Vrsta naloga:" GET cTipNal VALID !Empty(cTipNal)
-	@ m_x+6, m_y+2 SAY "Datum knjizenja:" GET dDatDok VALID !Empty(dDatDok)
-	@ m_x+7, m_y+2 SAY "Shema:" GET cShema
-	read
-BoxC()
+   Box( "#Kontiranje evidencije vrsta placanja", 7, 60 )
+   @ m_x + 2, m_y + 2 SAY "TOPS - prodajno mjesto:" GET cProdId VALID !Empty( cProdId )
+   @ m_x + 3, m_y + 2 SAY "Datum od" GET dDatOd VALID !Empty( dDatOd )
+   @ m_x + 3, m_y + 20 SAY "do" GET dDatDo VALID !Empty( dDatDo )
 
-if LastKey()=K_ESC
-	return .f.
-else
-	return .t.
-endif
+   @ m_x + 5, m_y + 2 SAY "Vrsta naloga:" GET cTipNal VALID !Empty( cTipNal )
+   @ m_x + 6, m_y + 2 SAY "Datum knjizenja:" GET dDatDok VALID !Empty( dDatDok )
+   @ m_x + 7, m_y + 2 SAY "Shema:" GET cShema
+   READ
+   BoxC()
 
-return
+   IF LastKey() = K_ESC
+      RETURN .F.
+   ELSE
+      RETURN .T.
+   ENDIF
+
+   RETURN
 
 
 
 /*! \fn PromVP2Fin()
  *  \brief Centralna funkcija za prenos PROMVP u FIN
  */
-function PromVP2Fin()
+FUNCTION PromVP2Fin()
 
-private cProdId
-private dDatOd
-private dDatDo
-private dDatDok
-private KursLis:="1"
-private cTKPath:=""
-private cProdKonto:=""
-private cTipNal
-private cShema
+   PRIVATE cProdId
+   PRIVATE dDatOd
+   PRIVATE dDatDo
+   PRIVATE dDatDok
+   PRIVATE KursLis := "1"
+   PRIVATE cTKPath := ""
+   PRIVATE cProdKonto := ""
+   PRIVATE cTipNal
+   PRIVATE cShema
 
-// otvori potrebne tabele
-O_PrVP_DB()
+   // otvori potrebne tabele
+   O_PrVP_DB()
 
-// setuj parametre prenosa
-if !GetPrVPParams(@cProdId, @dDatOd, @dDatDo, @dDatDok, @cTipNal, @cShema)
-	return
-endif
+   // setuj parametre prenosa
+   IF !GetPrVPParams( @cProdId, @dDatOd, @dDatDo, @dDatDok, @cTipNal, @cShema )
+      RETURN
+   ENDIF
 
-// daj TOPS.KUMPATH i prodavnicki konto iz KONCIJ
-if !GetTopsParams(@cTKPath, @cProdKonto)
-	return
-endif
+   // daj TOPS.KUMPATH i prodavnicki konto iz KONCIJ
+   IF !GetTopsParams( @cTKPath, @cProdKonto )
+      RETURN
+   ENDIF
 
-AddBS(@cTKPath)
+   AddBS( @cTKPath )
 
-// selektuj PROMVP kao F_T_PROMVP
-if file(cTKPath + "PROMVP.DBF")
-	SELECT (F_T_PROMVP)
-	USE (cTKPath + "PROMVP")
-	set order to tag "1"
-else
-	MsgBeep("Ne postoji fajl PROMVP.DBF!")
-	return
-endif
+   // selektuj PROMVP kao F_T_PROMVP
+   IF File( cTKPath + "PROMVP.DBF" )
+      SELECT ( F_T_PROMVP )
+      USE ( cTKPath + "PROMVP" )
+      SET ORDER TO TAG "1"
+   ELSE
+      MsgBeep( "Ne postoji fajl PROMVP.DBF!" )
+      RETURN
+   ENDIF
 
-// predji na shemu kontiranja
-select trfp2
-// selektuj shemu "P" - polog pazara
-set filter to idvd=cTipNal .and. shema=cShema
-go top
+   // predji na shemu kontiranja
+   SELECT trfp2
+   // selektuj shemu "P" - polog pazara
+   SET FILTER TO idvd = cTipNal .AND. shema = cShema
+   GO TOP
 
-if (trfp2->idvd <> cTipNal)
-	MsgBeep("Ne postoji definisana shema kontiranja!")
-	return
-endif
+   IF ( trfp2->idvd <> cTipNal )
+      MsgBeep( "Ne postoji definisana shema kontiranja!" )
+      RETURN
+   ENDIF
 
-MsgO("Kontiram nalog ...")
-// daj naredni broj naloga
-private cBrNal:=fin_novi_broj_dokumenta( gFirma, cTipNal )
-private nRBr:=0
-private nIznos:=0
-private nIznDEM:=0
-private cBrDok:=""
-private nCounter:=0
-private cIdKonto:=""
-private nIzn:=0
+   MsgO( "Kontiram nalog ..." )
+   // daj naredni broj naloga
+   PRIVATE cBrNal := fin_novi_broj_dokumenta( gFirma, cTipNal )
+   PRIVATE nRBr := 0
+   PRIVATE nIznos := 0
+   PRIVATE nIznDEM := 0
+   PRIVATE cBrDok := ""
+   PRIVATE nCounter := 0
+   PRIVATE cIdKonto := ""
+   PRIVATE nIzn := 0
 
-do while !eof()
-	private cPom:=trfp2->id
-	
-	cIdKonto:=trfp2->idkonto
-	cIdkonto:=STRTRAN(cIdKonto,"A1",Right(trim(cProdKonto),1))
-	cIdkonto:=STRTRAN(cIdKonto,"A2",Right(trim(cProdKonto),2))
+   DO WHILE !Eof()
+      PRIVATE cPom := trfp2->id
 
-	if "NaDan" $ cPom
-		nCounter := &cPom
-		skip 1
-	else
-		nIznos:=GetVrPlIznos(cPom)
-		nIznDem:=nIznos*Kurs(dDatDok, "D", "P")
-		Azur2Pripr(cBrNal, dDatDok)
-		skip 1
-	endif
-enddo
+      cIdKonto := trfp2->idkonto
+      cIdkonto := StrTran( cIdKonto, "A1", Right( Trim( cProdKonto ), 1 ) )
+      cIdkonto := StrTran( cIdKonto, "A2", Right( Trim( cProdKonto ), 2 ) )
 
-MsgC()
+      IF "NaDan" $ cPom
+         nCounter := &cPom
+         SKIP 1
+      ELSE
+         nIznos := GetVrPlIznos( cPom )
+         nIznDem := nIznos * Kurs( dDatDok, "D", "P" )
+         Azur2Pripr( cBrNal, dDatDok )
+         SKIP 1
+      ENDIF
+   ENDDO
 
-select fin_pripr
-go top
+   MsgC()
 
-if RecCount() > 0
-	MsgBeep("Nalog izgenerisan u pripremu...")
-endif
+   SELECT fin_pripr
+   GO TOP
 
-return
+   IF RecCount() > 0
+      MsgBeep( "Nalog izgenerisan u pripremu..." )
+   ENDIF
+
+   RETURN
 
 
 
@@ -148,27 +148,29 @@ return
  *  \param cBrojNal - broj naloga
  *  \param dDatNal - datum naloga
  */
-static function Azur2Pripr(cBrojNal, dDatNal)
+STATIC FUNCTION Azur2Pripr( cBrojNal, dDatNal )
 
-local nArr
-nArr:=SELECT()
+   LOCAL nArr
 
-select fin_pripr
-append blank
-replace idvn with trfp2->idvn
-replace	idfirma with gFirma
-replace	brnal with cBrojNal
-replace	rbr with STR(++nRBr,4)
-replace datdok with dDatNal
-replace	idkonto with cIdKonto
-replace	d_p with trfp2->d_p
-replace	iznosbhd with nIznos
-replace	iznosdem with nIznDEM
-replace	brdok with cBrDok
-replace	opis with TRIM(trfp2->naz)
+   nArr := Select()
 
-select (nArr)
-return
+   SELECT fin_pripr
+   APPEND BLANK
+   REPLACE idvn WITH trfp2->idvn
+   REPLACE idfirma WITH gFirma
+   REPLACE brnal WITH cBrojNal
+   REPLACE rbr WITH Str( ++nRBr, 4 )
+   REPLACE datdok WITH dDatNal
+   REPLACE idkonto WITH cIdKonto
+   REPLACE d_p WITH trfp2->d_p
+   REPLACE iznosbhd WITH nIznos
+   REPLACE iznosdem WITH nIznDEM
+   REPLACE brdok WITH cBrDok
+   REPLACE opis WITH Trim( trfp2->naz )
+
+   SELECT ( nArr )
+
+   RETURN
 
 
 
@@ -177,33 +179,34 @@ return
  *  \brief Vraca ukupan iznos pologa (cField) za datumski period
  *  \param cField - polje, npr "POLOG01"
  */
-function NaDan(cField)
+FUNCTION NaDan( cField )
 
-local nArr
-nArr:=SELECT()
-select F_T_PROMVP
-set order to tag "1"
-go top
+   LOCAL nArr
 
-nIznos:=0
-do while !EOF() 
-	if (field->pm <> cProdId)
-		skip
-		loop
-	endif
-	if (field->datum > dDatDo .or. field->datum < dDatOd)
-		skip
-		loop
-	endif
-	nIznos:=field->&cField
-	nIznDem:=nIznos*Kurs(dDatDok, "D", "P")
-	Azur2Pripr(cBrNal, field->datum)
-	skip 1
-enddo
+   nArr := Select()
+   SELECT F_T_PROMVP
+   SET ORDER TO TAG "1"
+   GO TOP
 
-select (nArr)
+   nIznos := 0
+   DO WHILE !Eof()
+      IF ( field->pm <> cProdId )
+         SKIP
+         LOOP
+      ENDIF
+      IF ( field->datum > dDatDo .OR. field->datum < dDatOd )
+         SKIP
+         LOOP
+      ENDIF
+      nIznos := field->&cField
+      nIznDem := nIznos * Kurs( dDatDok, "D", "P" )
+      Azur2Pripr( cBrNal, field->datum )
+      SKIP 1
+   ENDDO
 
-return 1
+   SELECT ( nArr )
+
+   RETURN 1
 
 
 
@@ -211,86 +214,84 @@ return 1
  *  \brief Vraca iznos pologa za datumski period
  *  \param cField - polje, npr "POLOG01"
  */
-static function GetVrPlIznos(cField)
+STATIC FUNCTION GetVrPlIznos( cField )
 
-local nArr
-nArr:=SELECT()
-select F_T_PROMVP
-set order to tag "1"
-go top
+   LOCAL nArr
 
-nIzn:=0
-do while !EOF() 
-	if (field->pm <> cProdId)
-		skip
-		loop
-	endif
-	if (field->datum > dDatDo .or. field->datum < dDatOd)
-		skip
-		loop
-	endif
-	nIzn+=field->&cField
-	skip
-enddo
+   nArr := Select()
+   SELECT F_T_PROMVP
+   SET ORDER TO TAG "1"
+   GO TOP
 
-select (nArr)
+   nIzn := 0
+   DO WHILE !Eof()
+      IF ( field->pm <> cProdId )
+         SKIP
+         LOOP
+      ENDIF
+      IF ( field->datum > dDatDo .OR. field->datum < dDatOd )
+         SKIP
+         LOOP
+      ENDIF
+      nIzn += field->&cField
+      SKIP
+   ENDDO
 
-return nIzn
+   SELECT ( nArr )
+
+   RETURN nIzn
 
 
 
 
 /*! \fn O_PrVP_DB()
- *  \brief Otvaranje neophodnih tabela 
+ *  \brief Otvaranje neophodnih tabela
  */
-static function O_PrVP_DB()
+STATIC FUNCTION O_PrVP_DB()
 
-O_KONCIJ
-O_PARTN
-O_SUBAN
-O_KONTO
-O_FAKT_OBJEKTI
-O_NALOG
-O_FIN_PRIPR
-O_TRFP2
+   O_KONCIJ
+   O_PARTN
+   O_SUBAN
+   O_KONTO
+   O_FAKT_OBJEKTI
+   O_NALOG
+   O_FIN_PRIPR
+   O_TRFP2
 
-return
+   RETURN
 
 
 
 /*! \fn GetTopsParams(cTKPath, cProdKonto)
- *  \brief Setuje TOPS kumpath i idkonto 
+ *  \brief Setuje TOPS kumpath i idkonto
  *  \param cTKPath - kumpath tops
  *  \param cProdKonto - prodavnicki konto
  */
-static function GetTopsParams(cTKPath, cProdKonto)
+STATIC FUNCTION GetTopsParams( cTKPath, cProdKonto )
 
-O_KONCIJ
-select koncij
-// setuj filter po cProdId
-set filter to idprodmjes=cProdId
-go top
-if field->idprodmjes<>cProdId
-	MsgBeep("Ne postoji prodajno mjesto:" + cProdId + "##Prekidam operaciju!")
-	return .f.
-endif
+   O_KONCIJ
+   SELECT koncij
+   // setuj filter po cProdId
+   SET FILTER TO idprodmjes = cProdId
+   GO TOP
+   IF field->idprodmjes <> cProdId
+      MsgBeep( "Ne postoji prodajno mjesto:" + cProdId + "##Prekidam operaciju!" )
+      RETURN .F.
+   ENDIF
 
-cTKPath:=ALLTRIM(koncij->kumtops)
-cProdKonto:=koncij->id
+   cTKPath := AllTrim( koncij->kumtops )
+   cProdKonto := koncij->id
 
-// vrati filter
-set filter to
+   // vrati filter
+   SET FILTER TO
 
-if EMPTY(cTKPath)
-	MsgBeep("Nije podesen kumpath TOPS-a u tabeli KONCIJ!")
-	return .f.
-endif
-if EMPTY(cProdKonto)
-	MsgBeep("Ne postoji prodavnicki konto!")
-	return .f.
-endif
+   IF Empty( cTKPath )
+      MsgBeep( "Nije podesen kumpath TOPS-a u tabeli KONCIJ!" )
+      RETURN .F.
+   ENDIF
+   IF Empty( cProdKonto )
+      MsgBeep( "Ne postoji prodavnicki konto!" )
+      RETURN .F.
+   ENDIF
 
-return .t.
-
-
-
+   RETURN .T.

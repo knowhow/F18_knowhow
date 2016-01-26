@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,367 +16,369 @@
 // --------------------------------------------
 // kreiranje pomocne tabele
 // --------------------------------------------
-static function cre_tmp( cPath )
-local aDbf := {}
+STATIC FUNCTION cre_tmp( cPath )
 
-AADD( aDbf, { "idfirma", "C", 2, 0  } )
-AADD( aDbf, { "idkonto", "C", 7, 0  } )
-AADD( aDbf, { "kto_opis", "C", 100, 0  } )
-AADD( aDbf, { "opis", "C", 100, 0  } )
-AADD( aDbf, { "dug", "N", 15, 5  } )
-AADD( aDbf, { "pot", "N", 15, 5  } )
-AADD( aDbf, { "saldo", "N", 15, 5  } )
+   LOCAL aDbf := {}
 
-t_exp_create( aDbf )
+   AAdd( aDbf, { "idfirma", "C", 2, 0  } )
+   AAdd( aDbf, { "idkonto", "C", 7, 0  } )
+   AAdd( aDbf, { "kto_opis", "C", 100, 0  } )
+   AAdd( aDbf, { "opis", "C", 100, 0  } )
+   AAdd( aDbf, { "dug", "N", 15, 5  } )
+   AAdd( aDbf, { "pot", "N", 15, 5  } )
+   AAdd( aDbf, { "saldo", "N", 15, 5  } )
 
-o_tmp( cPath )
+   t_exp_create( aDbf )
 
-return
+   o_tmp( cPath )
+
+   RETURN
 
 
 // -----------------------------------------------
 // otvori i indeksiraj pomocnu tabelu
 // -----------------------------------------------
-static function o_tmp( cPath )
+STATIC FUNCTION o_tmp( cPath )
 
-select (248)
-use ( cPath + "r_export" ) alias "r_export"
-index on idfirma + idkonto tag "1"
+   SELECT ( 248 )
+   USE ( cPath + "r_export" ) ALIAS "r_export"
+   INDEX ON idfirma + idkonto TAG "1"
 
-return
+   RETURN
 
 
 // -----------------------------------------------------
 // specifikacija po analitickim kontima
 // -----------------------------------------------------
-function spec_an()
-local cSK := "N"
-local nYearFrom
-local nYearTo
-local i
-local lSilent
-local lWriteKParam
-local cP_path := PRIVPATH
-local cT_sez := goModul:oDataBase:cSezona
+FUNCTION spec_an()
 
-private nC := 66
+   LOCAL cSK := "N"
+   LOCAL nYearFrom
+   LOCAL nYearTo
+   LOCAL i
+   LOCAL lSilent
+   LOCAL lWriteKParam
+   LOCAL cP_path := PRIVPATH
+   LOCAL cT_sez := goModul:oDataBase:cSezona
 
-// formiraj pomocnu tabelu
-cre_tmp( cP_path )
+   PRIVATE nC := 66
 
-cIdFirma := gFirma
-picBHD := FormPicL("9 " + gPicBHD, 20)
+   // formiraj pomocnu tabelu
+   cre_tmp( cP_path )
 
-O_PARTN
+   cIdFirma := gFirma
+   picBHD := FormPicL( "9 " + gPicBHD, 20 )
 
-__par_len := LEN(partn->id)
-dDatOd := dDatDo := CTOD("")
+   O_PARTN
 
-qqKonto := space(100)
+   __par_len := Len( partn->id )
+   dDatOd := dDatDo := CToD( "" )
 
-cTip:="1"
+   qqKonto := Space( 100 )
 
-Box("",10,65)
-	set cursor on
-	cNula := "N"
-	do while .t.
- 	  @ m_x+1,m_y+6 SAY "SPECIFIKACIJA ANALITICKIH KONTA"
- 	  if gNW=="D"
-   		@ m_x+3,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
- 	  else
-  		@ m_x+3,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
- 	  endif
- 	  @ m_x+4,m_y+2 SAY "Konto " GET qqKonto  pict "@!S50"
- 	  @ m_x+5,m_y+2 SAY "Datum od" GET dDatOd
- 	  @ m_x+5,col()+2 SAY "do" GET dDatDo
- 	  if gVar1=="0"
-  	  	@ m_x+6,m_y+2 SAY "Obracun za "+ALLTRIM(ValDomaca())+"/"+ALLTRIM(ValPomocna())+" (1/2):" GET cTip valid ctip $ "12"
- 	  endif
- 	  @ m_x+7,m_y+2 SAY "Prikaz sintetickih konta (D/N):" GET cSK pict "@!" valid cSK $ "DN"
- 	  @ m_x+9,m_y+2 SAY "Prikaz stavki sa saldom 0 D/N" GET cNula pict "@!" valid cNula  $ "DN"
- 	  cIdRJ := ""
- 	  if gRJ=="D" .and. gSAKrIz=="D"
-   		cIdRJ:="999999"
-   		@ m_x+10,m_y+2 SAY "Radna jedinica (999999-sve): " GET cIdRj
- 	  endif
- 	  
-	  read
-	  
-	  ESC_BCR
- 	  
-	  aUsl1 := Parsiraj(qqKonto,"IdKonto")
- 	  
-	  if aUsl1 <> NIL
-	  	exit
-	  endif
-	enddo
-BoxC()
+   cTip := "1"
 
-// godina od - do
-nYearFrom := YEAR( dDatOd )
-nYearTo := YEAR( dDatDo )
-lInSez := .f.
+   Box( "", 10, 65 )
+   SET CURSOR ON
+   cNula := "N"
+   DO WHILE .T.
+      @ m_x + 1, m_y + 6 SAY "SPECIFIKACIJA ANALITICKIH KONTA"
+      IF gNW == "D"
+         @ m_x + 3, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+      ELSE
+         @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      ENDIF
+      @ m_x + 4, m_y + 2 SAY "Konto " GET qqKonto  PICT "@!S50"
+      @ m_x + 5, m_y + 2 SAY "Datum od" GET dDatOd
+      @ m_x + 5, Col() + 2 SAY "do" GET dDatDo
+      IF gVar1 == "0"
+         @ m_x + 6, m_y + 2 SAY "Obracun za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + " (1/2):" GET cTip VALID ctip $ "12"
+      ENDIF
+      @ m_x + 7, m_y + 2 SAY "Prikaz sintetickih konta (D/N):" GET cSK PICT "@!" VALID cSK $ "DN"
+      @ m_x + 9, m_y + 2 SAY "Prikaz stavki sa saldom 0 D/N" GET cNula PICT "@!" VALID cNula  $ "DN"
+      cIdRJ := ""
+      IF gRJ == "D" .AND. gSAKrIz == "D"
+         cIdRJ := "999999"
+         @ m_x + 10, m_y + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
+      ENDIF
 
-if ( nYearTo - nYearFrom ) <> 0 .and. nYearTo = YEAR( DATE() )
-	// ima vise godina, prosetaj sezone
-	lInSez := .t.
-endif
+      READ
 
-if cIdRj == "999999"
-	cIdRj := ""
-endif
+      ESC_BCR
 
-if gRJ == "D" .and. gSAKrIz == "D" .and. "." $ cidrj
-	cIdRj := trim(strtran(cidrj,".",""))
-  	// odsjeci ako je tacka. 
-	// prakticno "01. " -> sve koje pocinju sa  "01"
-endif
+      aUsl1 := Parsiraj( qqKonto, "IdKonto" )
 
-cIdFirma := LEFT( cIdFirma, 2 )
+      IF aUsl1 <> NIL
+         EXIT
+      ENDIF
+   ENDDO
+   BoxC()
 
-// prodji sada kroz godine i napravi selekciju podataka ...
+   // godina od - do
+   nYearFrom := Year( dDatOd )
+   nYearTo := Year( dDatDo )
+   lInSez := .F.
 
-lSilent := .t.
-lWriteKParam := .t.
+   IF ( nYearTo - nYearFrom ) <> 0 .AND. nYearTo = Year( Date() )
+      // ima vise godina, prosetaj sezone
+      lInSez := .T.
+   ENDIF
 
-for i := nYearFrom to nYearTo
+   IF cIdRj == "999999"
+      cIdRj := ""
+   ENDIF
 
-	if lInSez = .t.
-		// str(i) je sezona koju ganjamo...
-		goModul:oDataBase:logAgain( ALLTRIM( STR( i ) ), ;
-			lSilent, lWriteKParam )
-		
-		// otvori pomocnu tabelu opet
-		o_tmp( cP_path ) 
+   IF gRJ == "D" .AND. gSAKrIz == "D" .AND. "." $ cidrj
+      cIdRj := Trim( StrTran( cidrj, ".", "" ) )
+      // odsjeci ako je tacka.
+      // prakticno "01. " -> sve koje pocinju sa  "01"
+   ENDIF
 
-	endif
+   cIdFirma := Left( cIdFirma, 2 )
 
-	O_KONTO
+   // prodji sada kroz godine i napravi selekciju podataka ...
 
-	if gRJ == "D" .and. gSAKrIz == "D" .and. LEN( cIdRJ ) <> 0
-  		otvori_sint_anal_kroz_temp( .f., "IDRJ='" + cIdRJ + "'" )
-	else
-  		O_ANAL
-	endif
+   lSilent := .T.
+   lWriteKParam := .T.
 
-	select anal
-	set order to 1
+   FOR i := nYearFrom TO nYearTo
 
-	cFilt1 := "IdFirma==" + cm2str(cIdFirma)
+      IF lInSez = .T.
+         // str(i) je sezona koju ganjamo...
+         goModul:oDataBase:logAgain( AllTrim( Str( i ) ), ;
+            lSilent, lWriteKParam )
 
-	if !(empty(dDatOd) .and. empty(dDatDo))
-		cFilt1 += ( ".and.DatNal>="+cm2str(dDatOd) +".and.DatNal<="+cm2str(dDatDo) )
-	endif
+         // otvori pomocnu tabelu opet
+         o_tmp( cP_path )
 
-	if aUsl1 <> ".t."
-		cFilt1 += ( ".and." + aUsl1 )
-	endif
+      ENDIF
 
-	set filter to &cFilt1
-	go top
+      O_KONTO
 
-	do whileSC !EOF()
- 		
-		cIdKonto := field->idkonto
-     		
-		nd := 0
-		np := 0
+      IF gRJ == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
+         otvori_sint_anal_kroz_temp( .F., "IDRJ='" + cIdRJ + "'" )
+      ELSE
+         O_ANAL
+      ENDIF
 
-		do whileSC !eof() .and. cIdKonto == field->idkonto
-       			
-			if lInSez = .t.
-				
-				// ako saltas po sezonama 
-				// preskoci pocetna stanja...
+      SELECT anal
+      SET ORDER TO 1
 
-				if field->idvn == "00"
-					skip
-					loop
-				endif
-			endif
+      cFilt1 := "IdFirma==" + cm2str( cIdFirma )
 
-			if cTip == "1"
-         			nd += dugbhd
-				np += potbhd
-       			else
-         			nd += dugdem
-				np += potdem
-       			endif
-       			
-			skip
-     		enddo
-   			
-		select konto
-		hseek cIdKonto
-		
-		select anal
-   			
-		if cNula == "D" .or. ROUND( nd - np, 3 ) <> 0
-    			
-			select r_export
-			go top
-			seek cIdFirma + cIdKonto
+      IF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
+         cFilt1 += ( ".and.DatNal>=" + cm2str( dDatOd ) + ".and.DatNal<=" + cm2str( dDatDo ) )
+      ENDIF
+
+      IF aUsl1 <> ".t."
+         cFilt1 += ( ".and." + aUsl1 )
+      ENDIF
+
+      SET FILTER to &cFilt1
+      GO TOP
+
+      DO WHILE !Eof()
+
+         cIdKonto := field->idkonto
+
+         nd := 0
+         np := 0
+
+         DO WHILE !Eof() .AND. cIdKonto == field->idkonto
+
+            IF lInSez = .T.
+
+               // ako saltas po sezonama
+               // preskoci pocetna stanja...
+
+               IF field->idvn == "00"
+                  SKIP
+                  LOOP
+               ENDIF
+            ENDIF
+
+            IF cTip == "1"
+               nd += dugbhd
+               np += potbhd
+            ELSE
+               nd += dugdem
+               np += potdem
+            ENDIF
+
+            SKIP
+         ENDDO
+
+         SELECT konto
+         hseek cIdKonto
+
+         SELECT anal
+
+         IF cNula == "D" .OR. Round( nd - np, 3 ) <> 0
+
+            SELECT r_export
+            GO TOP
+            SEEK cIdFirma + cIdKonto
 
             my_flock()
 
-			if !FOUND()
+            IF !Found()
 
-				append blank
-				
-				replace field->idfirma with cIdFirma
-				replace field->idkonto with cIdKonto
-				replace field->kto_opis with ALLTRIM( konto->naz )
-			endif
+               APPEND BLANK
 
-			replace field->dug with field->dug + nd
-			replace field->pot with field->pot + np
-			replace field->saldo with field->saldo + (nd - np)
+               REPLACE field->idfirma WITH cIdFirma
+               REPLACE field->idkonto WITH cIdKonto
+               REPLACE field->kto_opis WITH AllTrim( konto->naz )
+            ENDIF
+
+            REPLACE field->dug WITH field->dug + nd
+            REPLACE field->pot WITH field->pot + np
+            REPLACE field->saldo WITH field->saldo + ( nd - np )
 
             my_unlock()
- 	
-			select anal
 
-		endif
-	enddo
-next
+            SELECT anal
 
-// uvijek na kraju budi u trenutnom radnom podrucju
-if lInSez = .t.
-	goModul:oDataBase:logAgain( cT_sez, lSilent, lWriteKParam )
-	// otvori pomocnu tabelu opet...
-	o_tmp( cP_path )
-endif
+         ENDIF
+      ENDDO
+   NEXT
 
-Pic := PicBhd
+   // uvijek na kraju budi u trenutnom radnom podrucju
+   IF lInSez = .T.
+      goModul:oDataBase:logAgain( cT_sez, lSilent, lWriteKParam )
+      // otvori pomocnu tabelu opet...
+      o_tmp( cP_path )
+   ENDIF
 
-START PRINT CRET
+   Pic := PicBhd
 
-m := "------ --------------------------------------------------------- --------------------- -------------------- --------------------"
-nStr:=0
+   START PRINT CRET
 
-nud := 0 
-nup := 0
+   m := "------ --------------------------------------------------------- --------------------- -------------------- --------------------"
+   nStr := 0
 
-select r_export
-set order to tag "1"
-go top
+   nud := 0
+   nup := 0
 
-do whileSC !eof()
-	
-	cSin := left( field->idkonto, 3 )
+   SELECT r_export
+   SET ORDER TO TAG "1"
+   GO TOP
 
- 	nkd := 0
-	nkp := 0
- 	
-	do whileSC !eof() .and. cSin == left( field->idkonto, 3 )
-     		
-		cIdKonto := field->idkonto
+   DO WHILE !Eof()
 
-     		if prow() == 0
-			header()
-		endif
-     	
-   		if prow() > 63 + gPStranica
-			FF
-			header()
-		
-		endif
-   		
-		if cNula == "D" .or. field->saldo <> 0
+      cSin := Left( field->idkonto, 3 )
 
-    			? field->idkonto, PADR( field->kto_opis, 57 )
-    			
-			nC := pcol() + 1
-    			
-			@ prow(), pcol()+1 SAY field->dug pict pic
-    			@ prow(), pcol()+1 SAY field->pot pict pic
-    			@ prow(), pcol()+1 SAY ( field->dug - field->pot ) ;
-				pict pic
-    			
-			nkd += field->dug
-			nkp += field->pot
+      nkd := 0
+      nkp := 0
 
-   		endif 
-		
-		skip
+      DO WHILE !Eof() .AND. cSin == Left( field->idkonto, 3 )
 
- 	enddo 
- 	
-	if prow() > 61 + gPStranica
-		FF
-		header()
-	endif
- 	
-	if cSK == "D" .and. ( nkd != 0 .or. nkp != 0 )
-  		
-		O_KONTO
-		select konto
-		hseek cSin
-		select r_export
+         cIdKonto := field->idkonto
 
-		? m
-  		?  "SINT.K.", cSin, ":", PADR( konto->naz, 50 )
-  		@ prow(),nC       SAY nkd pict pic
-  		@ prow(),pcol()+1 SAY nkp pict pic
-  		@ prow(),pcol()+1 SAY nkd-nkp pict pic
-  		? m
+         IF PRow() == 0
+            Header()
+         ENDIF
 
- 	endif
+         IF PRow() > 63 + gPStranica
+            FF
+            Header()
 
- 	nud += nkd
-	nup += nkp   
+         ENDIF
 
-enddo
+         IF cNula == "D" .OR. field->saldo <> 0
 
-if prow() > 61 + gPStranica
-	FF
-	header()
-endif
+            ? field->idkonto, PadR( field->kto_opis, 57 )
 
-? m
-? " UKUPNO:"
-@ prow(),nC       SAY nud pict pic
-@ prow(),pcol()+1 SAY nup pict pic
-@ prow(),pcol()+1 SAY nud-nup pict pic
-? m
+            nC := PCol() + 1
 
-FF
-END PRINT
+            @ PRow(), PCol() + 1 SAY field->dug PICT pic
+            @ PRow(), PCol() + 1 SAY field->pot PICT pic
+            @ PRow(), PCol() + 1 SAY ( field->dug - field->pot ) ;
+               PICT pic
 
-closeret
+            nkd += field->dug
+            nkp += field->pot
 
-return
+         ENDIF
+
+         SKIP
+
+      ENDDO
+
+      IF PRow() > 61 + gPStranica
+         FF
+         Header()
+      ENDIF
+
+      IF cSK == "D" .AND. ( nkd != 0 .OR. nkp != 0 )
+
+         O_KONTO
+         SELECT konto
+         hseek cSin
+         SELECT r_export
+
+         ? m
+         ?  "SINT.K.", cSin, ":", PadR( konto->naz, 50 )
+         @ PRow(), nC       SAY nkd PICT pic
+         @ PRow(), PCol() + 1 SAY nkp PICT pic
+         @ PRow(), PCol() + 1 SAY nkd - nkp PICT pic
+         ? m
+
+      ENDIF
+
+      nud += nkd
+      nup += nkp
+
+   ENDDO
+
+   IF PRow() > 61 + gPStranica
+      FF
+      Header()
+   ENDIF
+
+   ? m
+   ? " UKUPNO:"
+   @ PRow(), nC       SAY nud PICT pic
+   @ PRow(), PCol() + 1 SAY nup PICT pic
+   @ PRow(), PCol() + 1 SAY nud - nup PICT pic
+   ? m
+
+   FF
+   ENDPRINT
+
+   closeret
+
+   RETURN
 
 
 // ------------------------------
 // zaglavlje izvjestaja
 // ------------------------------
-static function header()
-?
-P_COND
-?? "FIN.P:SPECIFIKACIJA ANALITI�KIH KONTA  ZA",ALLTRIM(iif(cTip=="1",ValDomaca(),ValPomocna()))
-if !(empty(dDatOd) .and. empty(dDatDo))
-  ?? "  ZA NALOGE U PERIODU ",dDatOd,"-",dDatDo
-endif
-?? " NA DAN: "; ?? DATE()
+STATIC FUNCTION Header()
 
-@ prow(),125 SAY "Str:"+str(++nStr,3)
+   ?
+   P_COND
+   ?? "FIN.P:SPECIFIKACIJA ANALITI�KIH KONTA  ZA", AllTrim( iif( cTip == "1", ValDomaca(), ValPomocna() ) )
+   IF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
+      ?? "  ZA NALOGE U PERIODU ", dDatOd, "-", dDatDo
+   ENDIF
+   ?? " NA DAN: "; ?? Date()
 
-if gNW=="D"
- ? "Firma:",gFirma,gNFirma
-else
- SELECT PARTN; HSEEK cIdFirma
- ? "Firma:",cidfirma,PADR(partn->naz,25),partn->naz2
-endif
+   @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
 
-IF gRJ=="D" .and. gSAKrIz=="D" .and. LEN(cIdRJ)<>0
-  ? "Radna jedinica ='"+cIdRj+"'"
-ENDIF
+   IF gNW == "D"
+      ? "Firma:", gFirma, gNFirma
+   ELSE
+      SELECT PARTN; HSEEK cIdFirma
+      ? "Firma:", cidfirma, PadR( partn->naz, 25 ), partn->naz2
+   ENDIF
 
-select r_export
-? m
-? "KONTO      N A Z I V                                                           duguje            potra�uje                saldo"
-? m
-return
+   IF gRJ == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
+      ? "Radna jedinica ='" + cIdRj + "'"
+   ENDIF
 
+   SELECT r_export
+   ? m
+   ? "KONTO      N A Z I V                                                           duguje            potra�uje                saldo"
+   ? m
 
+   RETURN

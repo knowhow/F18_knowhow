@@ -11,12 +11,10 @@
 
 #include "f18.ch"
 
-
 STATIC LEN_VRIJEDNOST := 12
 STATIC PIC_VRIJEDNOST := ""
 STATIC _template
 STATIC _my_xml
-
 
 
 FUNCTION fin_suban_kartica_sql( otv_stavke )
@@ -112,7 +110,7 @@ STATIC FUNCTION _get_vars( rpt_vars )
    ++ _x
 
    IF _brza = "D"
-   			
+
       _konto := PadR( _konto, 7 )
       _partner := PadR( _partner, Len( partn->id ) )
 
@@ -120,7 +118,7 @@ STATIC FUNCTION _get_vars( rpt_vars )
       ++ _x
       @ m_x + _x, m_y + 2 SAY "Partner " GET _partner VALID Empty( _partner ) .OR. ;
          RTrim( _partner ) == ";" .OR. P_Firma( @_partner ) PICT "@!"
- 	
+
    ELSE
 
       _konto := PadR( _konto, 200 )
@@ -131,10 +129,10 @@ STATIC FUNCTION _get_vars( rpt_vars )
       @ m_x + _x, m_y + 2 SAY "Partner " GET _partner PICT "@!S50"
 
    ENDIF
-	
+
    ++ _x
    ++ _x
- 	
+
    @ m_x + _x, m_y + 2 SAY8 "Kartica za domaću/stranu valutu (1/2):" GET _tip_val PICT "9"
 
    ++ _x
@@ -142,17 +140,17 @@ STATIC FUNCTION _get_vars( rpt_vars )
 
    @ m_x + _x, m_y + 2 SAY "Datum dokumenta od:" GET _datum_od
    @ m_x + _x, Col() + 2 SAY "do" GET _datum_do VALID _datum_od <= _datum_do
- 	
+
    ++ _x
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Uslov za vrstu naloga (prazno-sve):" GET _idvn PICT "@!S20"
- 	
+
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Uslov za broj veze (prazno-svi):" GET _brdok PICT "@!S20"
-	
+
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Općina (prazno-sve):" GET _opcina PICT "@!S20"
-	
+
    ++ _x
    ++ _x
 
@@ -161,9 +159,9 @@ STATIC FUNCTION _get_vars( rpt_vars )
    ++ _x
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Eksport kartice u DBF (D/N)?" GET _export_dbf PICT "@!" VALID _export_dbf $ "DN"
-	
+
    READ
-		
+
    BoxC()
 
    IF LastKey() == K_ESC

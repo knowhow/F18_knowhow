@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,77 +12,79 @@
 
 #include "f18.ch"
 
-static picBHD
-static picDEM
-static R1
-static R2
-static __ios_clan := ""
+STATIC picBHD
+STATIC picDEM
+STATIC R1
+STATIC R2
+STATIC __ios_clan := ""
 
 
 // -----------------------------------------------
 // izvjestaj otvorenih stavki
 // -----------------------------------------------
-function ios()
-local _izbor := 1
-local _opc := {}
-local _opcexe := {}
+FUNCTION ios()
 
-picBHD := "@Z " + ( R1 := FormPicL( "9 " + gPicBHD, 16 ) )
-picDEM := "@Z " + ( R2 := FormPicL( "9 " + gPicDEM, 12 ) )
-R1 := R1 + " " + ValDomaca()
-R2 := R2 + " " + ValPomocna()
+   LOCAL _izbor := 1
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
 
-AADD( _opc, "1. specifikacija IOS-a (pregled podataka prije stampe) " )
-AADD( _opcexe, { || ios_specifikacija() } )
-AADD( _opc, "2. stampa IOS-a" )
-AADD( _opcexe, { || mnu_ios_print() } )
-AADD( _opc, "3. generisanje podataka za stampu IOS-a" )
-AADD( _opcexe, { || ios_generacija_podataka() } )
-AADD( _opc, "4. podesenje clan-a" )
-AADD( _opcexe, { || ios_clan_setup() } )
+   picBHD := "@Z " + ( R1 := FormPicL( "9 " + gPicBHD, 16 ) )
+   picDEM := "@Z " + ( R2 := FormPicL( "9 " + gPicDEM, 12 ) )
+   R1 := R1 + " " + ValDomaca()
+   R2 := R2 + " " + ValPomocna()
+
+   AAdd( _opc, "1. specifikacija IOS-a (pregled podataka prije stampe) " )
+   AAdd( _opcexe, {|| ios_specifikacija() } )
+   AAdd( _opc, "2. stampa IOS-a" )
+   AAdd( _opcexe, {|| mnu_ios_print() } )
+   AAdd( _opc, "3. generisanje podataka za stampu IOS-a" )
+   AAdd( _opcexe, {|| ios_generacija_podataka() } )
+   AAdd( _opc, "4. podesenje clan-a" )
+   AAdd( _opcexe, {|| ios_clan_setup() } )
 
 
-f18_menu( "ios", .f., _izbor, _opc, _opcexe )
+   f18_menu( "ios", .F., _izbor, _opc, _opcexe )
 
-return
+   RETURN
 
 
 // --------------------------------------------------
 // podesenje clan-a za stampu IOS-a
 // --------------------------------------------------
-static function ios_clan_setup( setup_box )
-local _txt := ""
-local _clan
+STATIC FUNCTION ios_clan_setup( setup_box )
 
-if setup_box == NIL
-    setup_box := .t.
-endif
+   LOCAL _txt := ""
+   LOCAL _clan
 
-// ovo je tekuci defaultni clan
-_txt := "Prema clanu 28. stav 4. Zakona o racunovodstvu i reviziji u FBIH (Sl.novine FBIH, broj 83/09) " 
-_txt += "na ovu nasu konfirmaciju ste duzni odgovoriti u roku od osam dana. "
-_txt += "Ukoliko u tom roku ne primimo potvrdu ili osporavanje iskazanog stanja, smatracemo da je "
-_txt += "usaglasavanje izvrseno i da je stanje isto."
+   IF setup_box == NIL
+      setup_box := .T.
+   ENDIF
 
-_clan := PADR( fetch_metric( "ios_clan_txt", NIL, _txt ), 500 )
+   // ovo je tekuci defaultni clan
+   _txt := "Prema clanu 28. stav 4. Zakona o racunovodstvu i reviziji u FBIH (Sl.novine FBIH, broj 83/09) "
+   _txt += "na ovu nasu konfirmaciju ste duzni odgovoriti u roku od osam dana. "
+   _txt += "Ukoliko u tom roku ne primimo potvrdu ili osporavanje iskazanog stanja, smatracemo da je "
+   _txt += "usaglasavanje izvrseno i da je stanje isto."
 
-if setup_box
-    Box(, 2, 70 )
-        @ m_x + 1, m_y + 2 SAY "Definisanje clan-a na IOS-u:"
-        @ m_x + 2, m_y + 2 SAY ":" GET _clan PICT "@S65"
-        read
-    BoxC()
+   _clan := PadR( fetch_metric( "ios_clan_txt", NIL, _txt ), 500 )
 
-    if LastKey() == K_ESC
-        return
-    endif
-endif
+   IF setup_box
+      Box(, 2, 70 )
+      @ m_x + 1, m_y + 2 SAY "Definisanje clan-a na IOS-u:"
+      @ m_x + 2, m_y + 2 SAY ":" GET _clan PICT "@S65"
+      READ
+      BoxC()
 
-// snimi parametar
-set_metric( "ios_clan_txt", NIL, ALLTRIM( _clan ) )
-__ios_clan := ALLTRIM( _clan )
+      IF LastKey() == K_ESC
+         RETURN
+      ENDIF
+   ENDIF
 
-return
+   // snimi parametar
+   set_metric( "ios_clan_txt", NIL, AllTrim( _clan ) )
+   __ios_clan := AllTrim( _clan )
+
+   RETURN
 
 
 
@@ -90,40 +92,41 @@ return
 // ---------------------------------------------------------
 // linija za specifikaciju iosa
 // ---------------------------------------------------------
-static function _ios_spec_get_line()
-local _line
-local _space := SPACE(1)
+STATIC FUNCTION _ios_spec_get_line()
 
-_line := "-----"
-_line += _space
-_line += "------" 
-_line += _space 
-_line += "------------------------------------"
-_line += _space 
-_line += "-----"
-_line += _space 
-_line += "-----------------"
-_line += _space 
-_line += "---------------"
-_line += _space 
-_line += "----------------"
-_line += _space 
-_line += "----------------"
-_line += _space 
-_line += "----------------"
+   LOCAL _line
+   LOCAL _space := Space( 1 )
 
-if gVar1 == "0"
-    _line += _space 
-    _line += "------------"
-    _line += _space 
-    _line += "------------"
-    _line += _space 
-    _line += "------------"
-    _line += _space 
-    _line += "------------"
-endif
+   _line := "-----"
+   _line += _space
+   _line += "------"
+   _line += _space
+   _line += "------------------------------------"
+   _line += _space
+   _line += "-----"
+   _line += _space
+   _line += "-----------------"
+   _line += _space
+   _line += "---------------"
+   _line += _space
+   _line += "----------------"
+   _line += _space
+   _line += "----------------"
+   _line += _space
+   _line += "----------------"
 
-return _line
+   IF gVar1 == "0"
+      _line += _space
+      _line += "------------"
+      _line += _space
+      _line += "------------"
+      _line += _space
+      _line += "------------"
+      _line += _space
+      _line += "------------"
+   ENDIF
+
+   RETURN _line
 
 
 
@@ -131,43 +134,44 @@ return _line
 // ----------------------------------------------------------
 // uslovi izvjestaja IOS specifikacija
 // ----------------------------------------------------------
-static function _ios_spec_vars( params )
-local _id_firma := gFirma
-local _id_konto := fetch_metric( "ios_spec_id_konto", my_user(), SPACE(7) )
-local _saldo_nula := "D"
-local _datum_do := DATE()
+STATIC FUNCTION _ios_spec_vars( params )
 
-O_KONTO
+   LOCAL _id_firma := gFirma
+   LOCAL _id_konto := fetch_metric( "ios_spec_id_konto", my_user(), Space( 7 ) )
+   LOCAL _saldo_nula := "D"
+   LOCAL _datum_do := Date()
 
-Box( "", 6, 60 )
-    @ m_x + 1, m_y + 6 SAY "SPECIFIKACIJA IOS-a"
-    @ m_x + 3, m_y + 2 SAY "Firma "
-    ?? gFirma, "-", gNFirma
-    @ m_x + 4, m_y + 2 SAY "Konto: " GET _id_konto VALID P_Konto( @_id_konto )
-    @ m_x + 5, m_y + 2 SAY "Datum do kojeg se generise  :" GET _datum_do
-    @ m_x + 6, m_y + 2 SAY "Prikaz partnera sa saldom 0 :" GET _saldo_nula ;
-            VALID _saldo_nula $ "DN" PICT "@!"
-    read
-BoxC()
+   O_KONTO
 
-select konto
-use
+   Box( "", 6, 60 )
+   @ m_x + 1, m_y + 6 SAY "SPECIFIKACIJA IOS-a"
+   @ m_x + 3, m_y + 2 SAY "Firma "
+   ?? gFirma, "-", gNFirma
+   @ m_x + 4, m_y + 2 SAY "Konto: " GET _id_konto VALID P_Konto( @_id_konto )
+   @ m_x + 5, m_y + 2 SAY "Datum do kojeg se generise  :" GET _datum_do
+   @ m_x + 6, m_y + 2 SAY "Prikaz partnera sa saldom 0 :" GET _saldo_nula ;
+      VALID _saldo_nula $ "DN" PICT "@!"
+   READ
+   BoxC()
 
-if LastKey() == K_ESC
-    return .f.
-endif
+   SELECT konto
+   USE
 
-// snimi parametre
-set_metric( "ios_spec_id_konto", my_user(), _id_konto )
-_id_firma := LEFT( _id_firma, 2 )
+   IF LastKey() == K_ESC
+      RETURN .F.
+   ENDIF
 
-// napuni matricu sa parametrima
-params["id_konto"] := _id_konto
-params["id_firma"] := _id_firma
-params["saldo_nula"] := _saldo_nula
-params["datum_do"] := _datum_do
+   // snimi parametre
+   set_metric( "ios_spec_id_konto", my_user(), _id_konto )
+   _id_firma := Left( _id_firma, 2 )
 
-return .t.
+   // napuni matricu sa parametrima
+   params[ "id_konto" ] := _id_konto
+   params[ "id_firma" ] := _id_firma
+   params[ "saldo_nula" ] := _saldo_nula
+   params[ "datum_do" ] := _datum_do
+
+   RETURN .T.
 
 
 
@@ -176,182 +180,184 @@ return .t.
 // -------------------------------------------------------
 // specifikacija IOS-a
 // -------------------------------------------------------
-static function ios_specifikacija( params )
-local _datum_do, _id_firma, _id_konto, _saldo_nula
-local _line 
-local _id_partner, _rbr
-local _auto := .f.
+STATIC FUNCTION ios_specifikacija( params )
 
-if params == NIL
-    params := hb_hash()
-else
-    _auto := .t.
-endif
+   LOCAL _datum_do, _id_firma, _id_konto, _saldo_nula
+   LOCAL _line
+   LOCAL _id_partner, _rbr
+   LOCAL _auto := .F.
 
-// uslovi izvjestaja
-if !_auto .and. !_ios_spec_vars( @params )
-    return 
-endif
+   IF params == NIL
+      params := hb_Hash()
+   ELSE
+      _auto := .T.
+   ENDIF
 
-// iz parametara uzmi uslove...
-_id_firma := params["id_firma"]
-_id_konto := params["id_konto"]
-_datum_do := params["datum_do"]
-_saldo_nula := params["saldo_nula"]
+   // uslovi izvjestaja
+   IF !_auto .AND. !_ios_spec_vars( @params )
+      RETURN
+   ENDIF
 
-_line := _ios_spec_get_line()
+   // iz parametara uzmi uslove...
+   _id_firma := params[ "id_firma" ]
+   _id_konto := params[ "id_konto" ]
+   _datum_do := params[ "datum_do" ]
+   _saldo_nula := params[ "saldo_nula" ]
 
-O_PARTN
-O_KONTO
-O_SUBAN
+   _line := _ios_spec_get_line()
 
-select suban
-set order to tag "1"
+   O_PARTN
+   O_KONTO
+   O_SUBAN
 
-seek _id_firma + _id_konto 
-EOF CRET
+   SELECT suban
+   SET ORDER TO TAG "1"
 
-START PRINT CRET
-?
+   SEEK _id_firma + _id_konto
+   EOF CRET
 
-_rbr := 0
+   START PRINT CRET
+   ?
 
-nDugBHD := nUkDugBHD := nDugDEM := nUkDugDEM := 0
-nPotBHD := nUkPotBHD := nPotDEM := nUkPotDEM := 0
-nUkBHDDS := nUkBHDPS := 0
-nUkDEMDS := nUkDEMPS := 0
+   _rbr := 0
 
-do while !EOF() .and. _id_firma == field->idfirma .and. _id_konto == field->idkonto
+   nDugBHD := nUkDugBHD := nDugDEM := nUkDugDEM := 0
+   nPotBHD := nUkPotBHD := nPotDEM := nUkPotDEM := 0
+   nUkBHDDS := nUkBHDPS := 0
+   nUkDEMDS := nUkDEMPS := 0
 
-    _id_partner := field->idpartner
+   DO WHILE !Eof() .AND. _id_firma == field->idfirma .AND. _id_konto == field->idkonto
 
-    do while !EOF() .and. _id_firma == field->idfirma ;
-                    .and. _id_konto == field->idkonto ;
-                    .and. _id_partner == field->idpartner
-      
-        // ako je datum veci od datuma do kojeg generisem
-        // preskoci
-        if field->datdok > _datum_do
-            skip
-            loop
-        endif
-      
-        if field->otvst == " "
-            if field->d_p == "1"
-                nDugBHD += field->iznosbhd
-                nUkDugBHD += field->Iznosbhd
-                nDugDEM += field->Iznosdem
-                nUkDugDEM += field->Iznosdem
-            else
-                nPotBHD += field->IznosBHD
-                nUkPotBHD += field->IznosBHD
-                nPotDEM += field->IznosDEM
-                nUkPotDEM += field->IznosDEM
-            endif
-        endif
-        skip
-    enddo 
+      _id_partner := field->idpartner
 
-    nSaldoBHD := nDugBHD - nPotBHD
-    nSaldoDEM := nDugDEM - nPotDEM
+      DO WHILE !Eof() .AND. _id_firma == field->idfirma ;
+            .AND. _id_konto == field->idkonto ;
+            .AND. _id_partner == field->idpartner
 
-    if _saldo_nula == "D" .or. ROUND( nSaldoBHD, 2 ) <> 0  
-        // ako je iznos <> 0
+         // ako je datum veci od datuma do kojeg generisem
+         // preskoci
+         IF field->datdok > _datum_do
+            SKIP
+            LOOP
+         ENDIF
 
-        // daj mi prvi put zaglavlje
-        if _rbr == 0
+         IF field->otvst == " "
+            IF field->d_p == "1"
+               nDugBHD += field->iznosbhd
+               nUkDugBHD += field->Iznosbhd
+               nDugDEM += field->Iznosdem
+               nUkDugDEM += field->Iznosdem
+            ELSE
+               nPotBHD += field->IznosBHD
+               nUkPotBHD += field->IznosBHD
+               nPotDEM += field->IznosDEM
+               nUkPotDEM += field->IznosDEM
+            ENDIF
+         ENDIF
+         SKIP
+      ENDDO
+
+      nSaldoBHD := nDugBHD - nPotBHD
+      nSaldoDEM := nDugDEM - nPotDEM
+
+      IF _saldo_nula == "D" .OR. Round( nSaldoBHD, 2 ) <> 0
+         // ako je iznos <> 0
+
+         // daj mi prvi put zaglavlje
+         IF _rbr == 0
             _spec_zaglavlje( _id_firma, _id_partner, _line )
-        endif
+         ENDIF
 
-        if prow() > 61 + gPStranica
-            FF  
+         IF PRow() > 61 + gPStranica
+            FF
             _spec_zaglavlje( _id_firma, _id_partner, _line )
-        endif
+         ENDIF
 
-        @ prow() + 1, 0 SAY ++ _rbr PICT "9999"
-        @ prow(), 5 SAY _id_partner
+         @ PRow() + 1, 0 SAY+ + _rbr PICT "9999"
+         @ PRow(), 5 SAY _id_partner
 
-        SELECT PARTN
-        HSEEK _id_partner
+         SELECT PARTN
+         HSEEK _id_partner
 
-        @ prow(), 12 SAY PADR( ALLTRIM( partn->naz ), 20 )
-        @ prow(), 37 SAY ALLTRIM( partn->naz2 ) PICT 'XXXXXXXXXXXX'
-        @ prow(), 50 SAY partn->PTT
-        @ prow(), 56 SAY partn->Mjesto
+         @ PRow(), 12 SAY PadR( AllTrim( partn->naz ), 20 )
+         @ PRow(), 37 SAY AllTrim( partn->naz2 ) PICT 'XXXXXXXXXXXX'
+         @ PRow(), 50 SAY partn->PTT
+         @ PRow(), 56 SAY partn->Mjesto
 
-        // BHD
-        @ prow(), 73 SAY nDugBHD PICT picBHD
-        @ prow(), pcol() + 1 SAY nPotBHD PICT picBHD
+         // BHD
+         @ PRow(), 73 SAY nDugBHD PICT picBHD
+         @ PRow(), PCol() + 1 SAY nPotBHD PICT picBHD
 
-    endif 
-   
-    select suban
+      ENDIF
 
-    if nSaldoBHD >= 0
-        @ prow(), pcol() + 1 SAY nSaldoBHD PICT picBHD
-        @ prow(), pcol() + 1 SAY 0 PICT picBHD
-        nUkBHDDS += nSaldoBHD
-    else
-        @ prow(), pcol() + 1 SAY 0 PICT picBHD
-        @ prow(), pcol() + 1 SAY -nSaldoBHD PICT picBHD
-        nUkBHDPS += -nSaldoBHD
-    endif
+      SELECT suban
 
-    // strana valuta
-    if gVar1 == "0"
+      IF nSaldoBHD >= 0
+         @ PRow(), PCol() + 1 SAY nSaldoBHD PICT picBHD
+         @ PRow(), PCol() + 1 SAY 0 PICT picBHD
+         nUkBHDDS += nSaldoBHD
+      ELSE
+         @ PRow(), PCol() + 1 SAY 0 PICT picBHD
+         @ PRow(), PCol() + 1 SAY -nSaldoBHD PICT picBHD
+         nUkBHDPS += -nSaldoBHD
+      ENDIF
 
-        @ prow(), pcol() + 1 SAY nDugDEM PICTURE picDEM
-        @ prow(), pcol() + 1 SAY nPotDEM PICTURE picDEM
+      // strana valuta
+      IF gVar1 == "0"
 
-        if nSaldoDEM >= 0
-            @ prow(), pcol() + 1 SAY nSaldoDEM PICTURE picDEM
-            @ prow(), pcol() + 1 SAY 0 PICTURE picDEM
+         @ PRow(), PCol() + 1 SAY nDugDEM PICTURE picDEM
+         @ PRow(), PCol() + 1 SAY nPotDEM PICTURE picDEM
+
+         IF nSaldoDEM >= 0
+            @ PRow(), PCol() + 1 SAY nSaldoDEM PICTURE picDEM
+            @ PRow(), PCol() + 1 SAY 0 PICTURE picDEM
             nUkDEMDS += nSaldoDEM
-        else
-            @ prow(), pcol() + 1 SAY 0 PICTURE picDEM
-            @ prow(), pcol() + 1 SAY -nSaldoDEM PICTURE picDEM
+         ELSE
+            @ PRow(), PCol() + 1 SAY 0 PICTURE picDEM
+            @ PRow(), PCol() + 1 SAY -nSaldoDEM PICTURE picDEM
             nUkDEMPS += -nSaldoDEM
-        endif
-    endif
+         ENDIF
+      ENDIF
 
-   nDugBHD := nPotBHD := nDugDEM := nPotDEM := 0
-   _id_partner := field->IdPartner
+      nDugBHD := nPotBHD := nDugDEM := nPotDEM := 0
+      _id_partner := field->IdPartner
 
-enddo 
+   ENDDO
 
-if prow() > 61 + gPStranica
-    FF
-    _spec_zaglavlje( _id_firma, _id_partner, _line )
-endif
+   IF PRow() > 61 + gPStranica
+      FF
+      _spec_zaglavlje( _id_firma, _id_partner, _line )
+   ENDIF
 
-@ prow() + 1, 0 SAY _line
-@ prow() + 1, 0 SAY "UKUPNO ZA KONTO:"
-@ prow(), 73 SAY nUkDugBHD PICTURE picBHD
-@ prow(), pcol() + 1 SAY nUkPotBHD PICTURE picBHD
+   @ PRow() + 1, 0 SAY _line
+   @ PRow() + 1, 0 SAY "UKUPNO ZA KONTO:"
+   @ PRow(), 73 SAY nUkDugBHD PICTURE picBHD
+   @ PRow(), PCol() + 1 SAY nUkPotBHD PICTURE picBHD
 
-nS := nUkBHDDS - nUkBHDPS
-@ prow(), pcol() + 1 SAY iif(nS>=0,nS,0) PICTURE picBHD
-@ prow(), pcol() + 1 SAY iif(nS<=0,nS,0) PICTURE picBHD
+   nS := nUkBHDDS - nUkBHDPS
+   @ PRow(), PCol() + 1 SAY iif( nS >= 0, nS, 0 ) PICTURE picBHD
+   @ PRow(), PCol() + 1 SAY iif( nS <= 0, nS, 0 ) PICTURE picBHD
 
-if gVar1 == "0"
-    
-    @ prow(), pcol() + 1 SAY nUkDugDEM PICTURE picDEM
-    @ prow(), pcol() + 1 SAY nUkPotDEM PICTURE picDEM
+   IF gVar1 == "0"
 
-    nS:=nUkDEMDS-nUkDEMPS
+      @ PRow(), PCol() + 1 SAY nUkDugDEM PICTURE picDEM
+      @ PRow(), PCol() + 1 SAY nUkPotDEM PICTURE picDEM
 
-    @ prow(), pcol() + 1 SAY iif(nS>=0,nS,0) PICTURE picDEM
-    @ prow(), pcol() + 1 SAY iif(nS<=0,nS,0) PICTURE picDEM
+      nS := nUkDEMDS - nUkDEMPS
 
-endif
+      @ PRow(), PCol() + 1 SAY iif( nS >= 0, nS, 0 ) PICTURE picDEM
+      @ PRow(), PCol() + 1 SAY iif( nS <= 0, nS, 0 ) PICTURE picDEM
 
-@ prow() + 1, 0 SAY _line
+   ENDIF
 
-FF
-END PRINT
+   @ PRow() + 1, 0 SAY _line
 
-my_close_all_dbf()
-return
+   FF
+   ENDPRINT
+
+   my_close_all_dbf()
+
+   RETURN
 
 
 
@@ -360,29 +366,31 @@ return
 // -----------------------------------------------------------------
 // zaglavlje specifikacije
 // -----------------------------------------------------------------
-static function _spec_zaglavlje( id_firma, id_partner, line )
-P_COND
+STATIC FUNCTION _spec_zaglavlje( id_firma, id_partner, line )
 
-??  "FIN: SPECIFIKACIJA IOS-a     NA DAN "
-?? DATE()
-? "FIRMA:"
-@ prow(), pcol() + 1 SAY id_firma
+   P_COND
 
-select partn
-hseek id_partner
+   ??  "FIN: SPECIFIKACIJA IOS-a     NA DAN "
+   ?? Date()
+   ? "FIRMA:"
+   @ PRow(), PCol() + 1 SAY id_firma
 
-@ prow(),pcol()+1 SAY ALLTRIM(naz)
-@ prow(),pcol()+1 SAY ALLTRIM(naz2)
+   SELECT partn
+   hseek id_partner
 
-? line
+   @ PRow(), PCol() + 1 SAY AllTrim( naz )
+   @ PRow(), PCol() + 1 SAY AllTrim( naz2 )
 
-? "*RED.* �IFRA*      NAZIV POSLOVNOG PARTNERA      * PTT *      MJESTO     *   KUMULATIVNI PROMET  U  "+ValDomaca()+"  *    S A L D O   U   "+ValDomaca()+"         "+IF(gVar1=="0","*  KUMULAT. PROMET U "+ValPomocna()+" *  S A L D O   U   "+ValPomocna()+"  ","")+"*"
-? "                                                                          ________________________________ _________________________________"+IF(gVar1=="0","*_________________________ ________________________","")+"_"
-? "*BROJ*      *                                    * BROJ*                 *    DUGUJE     *   POTRAZUJE    *    DUGUJE      *   POTRAZUJE    "+IF(gVar1=="0","*    DUGUJE  * POTRAZUJE  *   DUGUJE   * POTRAZUJE ","")+"*"
-? line
+   ? line
 
-select suban
-return
+   ? "*RED.* �IFRA*      NAZIV POSLOVNOG PARTNERA      * PTT *      MJESTO     *   KUMULATIVNI PROMET  U  " + ValDomaca() + "  *    S A L D O   U   " + ValDomaca() + "         " + IF( gVar1 == "0", "*  KUMULAT. PROMET U " + ValPomocna() + " *  S A L D O   U   " + ValPomocna() + "  ", "" ) + "*"
+   ? "                                                                          ________________________________ _________________________________" + IF( gVar1 == "0", "*_________________________ ________________________", "" ) + "_"
+   ? "*BROJ*      *                                    * BROJ*                 *    DUGUJE     *   POTRAZUJE    *    DUGUJE      *   POTRAZUJE    " + IF( gVar1 == "0", "*    DUGUJE  * POTRAZUJE  *   DUGUJE   * POTRAZUJE ", "" ) + "*"
+   ? line
+
+   SELECT suban
+
+   RETURN
 
 
 
@@ -391,128 +399,129 @@ return
 // -------------------------------------------------------
 // specifikacija IOS-a
 // -------------------------------------------------------
-static function ios_generacija_podataka( params )
-local _datum_do, _id_firma, _id_konto, _saldo_nula
-local _id_partner, _rec, _cnt
-local _auto := .f.
-local _dug_1, _dug_2, _u_dug_1, _u_dug_2
-local _pot_1, _pot_2, _u_pot_1, _u_pot_2
-local _saldo_1, _saldo_2
+STATIC FUNCTION ios_generacija_podataka( params )
 
-if params == NIL
-    MsgBeep( "Napomena: ova opcija puni pomocnu tabelu na osnovu koje se#stampaju IOS obrasci" )
-    params := hb_hash()
-else
-    _auto := .t.
-endif
+   LOCAL _datum_do, _id_firma, _id_konto, _saldo_nula
+   LOCAL _id_partner, _rec, _cnt
+   LOCAL _auto := .F.
+   LOCAL _dug_1, _dug_2, _u_dug_1, _u_dug_2
+   LOCAL _pot_1, _pot_2, _u_pot_1, _u_pot_2
+   LOCAL _saldo_1, _saldo_2
 
-// uslovi izvjestaja
-if !_auto .and. !_ios_spec_vars( @params )
-    return 
-endif
+   IF params == NIL
+      MsgBeep( "Napomena: ova opcija puni pomocnu tabelu na osnovu koje se#stampaju IOS obrasci" )
+      params := hb_Hash()
+   ELSE
+      _auto := .T.
+   ENDIF
 
-// iz parametara uzmi uslove...
-_id_firma := params["id_firma"]
-_id_konto := params["id_konto"]
-_datum_do := params["datum_do"]
-_saldo_nula := params["saldo_nula"]
+   // uslovi izvjestaja
+   IF !_auto .AND. !_ios_spec_vars( @params )
+      RETURN
+   ENDIF
 
-O_PARTN
-O_KONTO
-O_SUBAN
-O_IOS
+   // iz parametara uzmi uslove...
+   _id_firma := params[ "id_firma" ]
+   _id_konto := params[ "id_konto" ]
+   _datum_do := params[ "datum_do" ]
+   _saldo_nula := params[ "saldo_nula" ]
 
-// reset tabele IOS
-select ios
-my_dbf_zap()
+   O_PARTN
+   O_KONTO
+   O_SUBAN
+   O_IOS
 
-select suban
-set order to tag "1"
+   // reset tabele IOS
+   SELECT ios
+   my_dbf_zap()
 
-seek _id_firma + _id_konto 
+   SELECT suban
+   SET ORDER TO TAG "1"
 
-EOF CRET
+   SEEK _id_firma + _id_konto
 
-_cnt := 0
+   EOF CRET
 
-Box(, 3, 65 )
+   _cnt := 0
 
-@ m_x + 1, m_y + 2 SAY "sacekajte trenutak... generisem podatke u pomocnu tabelu"
+   Box(, 3, 65 )
 
-do while !EOF() .and. _id_firma == field->idfirma .and. _id_konto == field->idkonto
+   @ m_x + 1, m_y + 2 SAY "sacekajte trenutak... generisem podatke u pomocnu tabelu"
 
-    _id_partner := field->idpartner
+   DO WHILE !Eof() .AND. _id_firma == field->idfirma .AND. _id_konto == field->idkonto
 
-    _dug_1 := 0
-    _u_dug_1 := 0
-    _dug_2 := 0
-    _u_dug_2 := 0
-    _pot_1 := 0
-    _u_pot_1 := 0
-    _pot_2 := 0
-    _u_pot_2 := 0
-    _saldo_1 := 0
-    _saldo_2 := 0
+      _id_partner := field->idpartner
 
-    do while !EOF() .and. _id_firma == field->idfirma ;
-                    .and. _id_konto == field->idkonto ;
-                    .and. _id_partner == field->idpartner
-      
-        // ako je datum veci od datuma do kojeg generisem
-        if field->datdok > _datum_do
-            skip
-            loop
-        endif
-      
-        if field->otvst == " "
-            if field->d_p == "1"
-                _dug_1 += field->iznosbhd
-                _u_dug_1 += field->Iznosbhd
-                _dug_2 += field->Iznosdem
-                _u_dug_2 += field->Iznosdem
-            else
-                _pot_1 += field->IznosBHD
-                _u_pot_1 += field->IznosBHD
-                _pot_2 += field->IznosDEM
-                _u_pot_2 += field->IznosDEM
-            endif
-        endif
+      _dug_1 := 0
+      _u_dug_1 := 0
+      _dug_2 := 0
+      _u_dug_2 := 0
+      _pot_1 := 0
+      _u_pot_1 := 0
+      _pot_2 := 0
+      _u_pot_2 := 0
+      _saldo_1 := 0
+      _saldo_2 := 0
 
-        skip
+      DO WHILE !Eof() .AND. _id_firma == field->idfirma ;
+            .AND. _id_konto == field->idkonto ;
+            .AND. _id_partner == field->idpartner
 
-    enddo 
+         // ako je datum veci od datuma do kojeg generisem
+         IF field->datdok > _datum_do
+            SKIP
+            LOOP
+         ENDIF
 
-    _saldo_1 := _dug_1 - _pot_1
-    _saldo_2 := _dug_2 - _pot_2
+         IF field->otvst == " "
+            IF field->d_p == "1"
+               _dug_1 += field->iznosbhd
+               _u_dug_1 += field->Iznosbhd
+               _dug_2 += field->Iznosdem
+               _u_dug_2 += field->Iznosdem
+            ELSE
+               _pot_1 += field->IznosBHD
+               _u_pot_1 += field->IznosBHD
+               _pot_2 += field->IznosDEM
+               _u_pot_2 += field->IznosDEM
+            ENDIF
+         ENDIF
 
-    if _saldo_nula == "D" .or. ROUND( _saldo_1, 2 ) <> 0  
+         SKIP
 
-        select ios
-        append blank
+      ENDDO
 
-        _rec := dbf_get_rec()
+      _saldo_1 := _dug_1 - _pot_1
+      _saldo_2 := _dug_2 - _pot_2
 
-        _rec["idfirma"] := _id_firma
-        _rec["idkonto"] := _id_konto
-        _rec["idpartner"] := _id_partner
-        _rec["iznosbhd"] := _saldo_1
-        _rec["iznosdem"] := _saldo_2
+      IF _saldo_nula == "D" .OR. Round( _saldo_1, 2 ) <> 0
 
-        dbf_update_rec( _rec )
+         SELECT ios
+         APPEND BLANK
 
-        @ m_x + 3, m_y + 2 SAY PADR( "Partner: " + _id_partner + ", saldo: " + ALLTRIM(STR( _saldo_1, 12, 2 )), 60 )
+         _rec := dbf_get_rec()
 
-        ++ _cnt
+         _rec[ "idfirma" ] := _id_firma
+         _rec[ "idkonto" ] := _id_konto
+         _rec[ "idpartner" ] := _id_partner
+         _rec[ "iznosbhd" ] := _saldo_1
+         _rec[ "iznosdem" ] := _saldo_2
 
-    endif 
-   
-    select suban
+         dbf_update_rec( _rec )
 
-enddo 
+         @ m_x + 3, m_y + 2 SAY PadR( "Partner: " + _id_partner + ", saldo: " + AllTrim( Str( _saldo_1, 12, 2 ) ), 60 )
 
-BoxC()
+         ++ _cnt
 
-return _cnt
+      ENDIF
+
+      SELECT suban
+
+   ENDDO
+
+   BoxC()
+
+   RETURN _cnt
 
 
 
@@ -521,577 +530,579 @@ return _cnt
 // ----------------------------------------------------------------
 // IOS print menu
 // ----------------------------------------------------------------
-static function mnu_ios_print()
-local _datum_do := DATE()
-local _params := hb_hash()
-local _gen_par := hb_hash()
-local _id_firma := gFirma
-local _id_konto := fetch_metric( "ios_print_id_konto", my_user(), SPACE(7) )
-local _id_partner := fetch_metric( "ios_print_id_partner", my_user(), SPACE(6) )
-local _din_dem := "1"
-local _kao_kartica := fetch_metric( "ios_print_kartica", my_user(), "D" )
-local _prelomljeno := fetch_metric( "ios_print_prelom", my_user(), "N" )
-local _export_dbf := "N"
-local _print_tip := fetch_metric( "ios_print_tip", my_user(), "2" )
-local _auto_gen := fetch_metric( "ios_auto_gen", my_user(), "D" )
-local _ios_date := DATE()
-local _x := 1
-local _launch, _exp_fields
-local _xml_file := my_home() + "data.xml"
-local _template := "ios.odt"
+STATIC FUNCTION mnu_ios_print()
+
+   LOCAL _datum_do := Date()
+   LOCAL _params := hb_Hash()
+   LOCAL _gen_par := hb_Hash()
+   LOCAL _id_firma := gFirma
+   LOCAL _id_konto := fetch_metric( "ios_print_id_konto", my_user(), Space( 7 ) )
+   LOCAL _id_partner := fetch_metric( "ios_print_id_partner", my_user(), Space( 6 ) )
+   LOCAL _din_dem := "1"
+   LOCAL _kao_kartica := fetch_metric( "ios_print_kartica", my_user(), "D" )
+   LOCAL _prelomljeno := fetch_metric( "ios_print_prelom", my_user(), "N" )
+   LOCAL _export_dbf := "N"
+   LOCAL _print_tip := fetch_metric( "ios_print_tip", my_user(), "2" )
+   LOCAL _auto_gen := fetch_metric( "ios_auto_gen", my_user(), "D" )
+   LOCAL _ios_date := Date()
+   LOCAL _x := 1
+   LOCAL _launch, _exp_fields
+   LOCAL _xml_file := my_home() + "data.xml"
+   LOCAL _template := "ios.odt"
+
+   O_KONTO
+   O_PARTN
+
+   Box(, 16, 65, .F. )
+
+   @ m_x + _x, m_y + 2 SAY " Stampa IOS-a **** "
+
+   ++ _x
+   ++ _x
+
+   @ m_x + _x, m_y + 2 SAY "       Datum IOS-a:" GET _ios_date
+
+   ++ _x
+
+   @ m_x + _x, m_y + 2 SAY " Gledati period do:" GET _datum_do
+
+   ++ _x
+   ++ _x
+
+   @ m_x + _x, m_y + 2 SAY "Firma "
+   ?? gFirma, "-", gNFirma
+
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY "Konto       :" GET _id_konto VALID P_Konto( @_id_konto )
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY "Partner     :" GET _id_partner ;
+      VALID Empty( _id_partner ) .OR.  P_Firma( @_id_partner ) PICT "@!"
+
+   IF gVar1 == "0"
+      ++ _x
+      @ m_x + _x, m_y + 2 SAY "Prikaz " + ;
+         AllTrim( ValDomaca() ) + "/" + ;
+         AllTrim( ValPomocna() ) + " (1/2)" ;
+         GET _din_dem VALID _din_dem $ "12"
+   ENDIF
+
+   ++ _x
+   ++ _x
+
+   @ m_x + _x, m_y + 2 SAY "Prikaz prebijenog stanja " GET _prelomljeno ;
+      VALID _prelomljeno $ "DN" PICT "@!"
+
+   ++ _x
+
+   @ m_x + _x, m_y + 2 SAY "Prikaz identicno kartici " GET _kao_kartica ;
+      VALID _kao_kartica $ "DN" PICT "@!"
+
+   ++ _x
+   ++ _x
+
+   @ m_x + _x, m_y + 2 SAY "Eksport podataka u dbf (D/N) ?" GET _export_dbf ;
+      VALID _export_dbf $ "DN" PICT "@!"
+
+   ++ _x
+
+   @ m_x + _x, m_y + 2 SAY "Nacin stampe ODT/TXT (1/2) ?" GET _print_tip ;
+      VALID _print_tip $ "12"
+
+   ++ _x
+
+   @ m_x + _x, m_y + 2 SAY "Generisi podatke IOS-a automatski kod pokretanja (D/N) ?" GET _auto_gen ;
+      VALID _auto_gen $ "DN" PICT "@!"
 
 
-O_KONTO
-O_PARTN
+   READ
 
-Box(, 16, 65, .f. )
+   ESC_BCR
 
-    @ m_x + _x, m_y + 2 SAY " Stampa IOS-a **** "
+   BoxC()
 
-    ++ _x
-    ++ _x
+   set_metric( "ios_print_id_konto", my_user(), _id_konto )
+   set_metric( "ios_print_id_partner", my_user(), _id_partner )
+   set_metric( "ios_print_kartica", my_user(), _kao_kartica )
+   set_metric( "ios_print_prelom", my_user(), _prelomljeno )
+   set_metric( "ios_print_tip", my_user(), _print_tip )
 
-    @ m_x + _x, m_y + 2 SAY "       Datum IOS-a:" GET _ios_date
+   _id_firma := Left( _id_firma, 2 )
 
-    ++ _x
+   // definisi clan i setuj staticku varijablu
+   ios_clan_setup( .F. )
 
-    @ m_x + _x, m_y + 2 SAY " Gledati period do:" GET _datum_do
+   // generisi podatke u tabelu prije same stampe
+   IF _auto_gen == "D"
 
-    ++ _x
-    ++ _x
+      _gen_par := hb_Hash()
+      _gen_par[ "id_konto" ] := _id_konto
+      _gen_par[ "id_firma" ] := _id_firma
+      _gen_par[ "saldo_nula" ] := "D"
+      _gen_par[ "datum_do" ] := _datum_do
 
-    @ m_x + _x, m_y + 2 SAY "Firma "
-    ?? gFirma, "-", gNFirma
+      // generisi podatke u IOS tabelu
+      ios_generacija_podataka( _gen_par )
 
-    ++ _x
-    @ m_x + _x, m_y + 2 SAY "Konto       :" GET _id_konto VALID P_Konto( @_id_konto )
-    ++ _x
-    @ m_x + _x, m_y + 2 SAY "Partner     :" GET _id_partner ;
-            VALID EMPTY( _id_partner ) .or.  P_Firma( @_id_partner ) PICT "@!"
+   ENDIF
 
-    if gVar1 == "0"
-        ++ _x
-        @ m_x + _x, m_y + 2 SAY "Prikaz " + ;
-                ALLTRIM( ValDomaca() ) + "/" + ;
-                ALLTRIM( ValPomocna() ) + " (1/2)" ;
-                GET _din_dem VALID _din_dem $ "12"
-    endif
+   // eksport podataka u dbf tabelu
+   IF _export_dbf == "D"
+      _exp_fields := g_exp_fields()
+      t_exp_create( _exp_fields )
+   ENDIF
 
-    ++ _x
-    ++ _x
+   // otvori mi tabele
+   O_KONTO
+   O_PARTN
+   O_SUBAN
+   O_TNAL
+   O_SUBAN
+   O_IOS
 
-    @ m_x + _x, m_y + 2 SAY "Prikaz prebijenog stanja " GET _prelomljeno ;
-            VALID _prelomljeno $ "DN" PICT "@!"
+   SELECT ios
+   GO TOP
 
-    ++ _x
+   SEEK _id_firma + _id_konto
 
-    @ m_x + _x, m_y + 2 SAY "Prikaz identicno kartici " GET _kao_kartica ;
-            VALID _kao_kartica $ "DN" PICT "@!"
+   NFOUND CRET
 
-    ++ _x
-    ++ _x
+   // txt forma
+   IF _print_tip == "2"
 
-    @ m_x + _x, m_y + 2 SAY "Eksport podataka u dbf (D/N) ?" GET _export_dbf ;
-            VALID _export_dbf $ "DN" PICT "@!"
+      START PRINT CRET
 
-    ++ _x
+   ELSE
 
-    @ m_x + _x, m_y + 2 SAY "Nacin stampe ODT/TXT (1/2) ?" GET _print_tip ;
-            VALID _print_tip $ "12"
+      // pripremi mi za xml
+      open_xml( _xml_file )
+      // standardni header
+      xml_head()
+      xml_subnode( "ios", .F. )
 
-    ++ _x
+   ENDIF
 
-    @ m_x + _x, m_y + 2 SAY "Generisi podatke IOS-a automatski kod pokretanja (D/N) ?" GET _auto_gen ;
-            VALID _auto_gen $ "DN" PICT "@!"
+   SELECT ios
 
+   DO WHILE !Eof() .AND. _id_firma == field->idfirma ;
+         .AND. _id_konto == field->idkonto
 
-    read
+      _partn_id := field->idpartner
 
-    ESC_BCR
+      // pronadji za partnera...
+      IF !Empty( _id_partner )
+         IF _partn_id <> _id_partner
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 
-BoxC()
+      // spremi mi _params matricu
+      _params := hb_Hash()
+      _params[ "id_partner" ] := _partn_id
+      _params[ "id_konto" ] := _id_konto
+      _params[ "id_firma" ] := _id_firma
+      _params[ "din_dem" ] := _din_dem
+      _params[ "datum_do" ] := _datum_do
+      _params[ "ios_datum" ] := _ios_date
+      _params[ "export_dbf" ] := _export_dbf
+      _params[ "iznos_bhd" ] := ios->iznosbhd
+      _params[ "iznos_dem" ] := ios->iznosdem
+      _params[ "kartica" ] := _kao_kartica
+      _params[ "prelom" ] := _prelomljeno
 
-set_metric( "ios_print_id_konto", my_user(), _id_konto )
-set_metric( "ios_print_id_partner", my_user(), _id_partner )
-set_metric( "ios_print_kartica", my_user(), _kao_kartica )
-set_metric( "ios_print_prelom", my_user(), _prelomljeno )
-set_metric( "ios_print_tip", my_user(), _print_tip )
+      IF _print_tip == "2"
+         print_ios_txt( _params )
+      ELSE
+         print_ios_xml( _params )
+      ENDIF
 
-_id_firma := LEFT( _id_firma, 2 )
+      SKIP
 
-// definisi clan i setuj staticku varijablu
-ios_clan_setup( .f. )
+   ENDDO
 
-// generisi podatke u tabelu prije same stampe
-if _auto_gen == "D"
+   IF _print_tip == "2"
+      ENDPRINT
+   ELSE
 
-    _gen_par := hb_hash()
-    _gen_par["id_konto"] := _id_konto
-    _gen_par["id_firma"] := _id_firma
-    _gen_par["saldo_nula"] := "D"
-    _gen_par["datum_do"] := _datum_do
+      xml_subnode( "ios", .T. )
+      close_xml()
 
-    // generisi podatke u IOS tabelu
-    ios_generacija_podataka( _gen_par )
+   ENDIF
 
-endif
+   IF _print_tip == "2" .AND. _export_dbf == "D"
+      f18_open_mime_document( my_home() + "r_export.dbf" )
+   ENDIF
 
-// eksport podataka u dbf tabelu
-if _export_dbf == "D"
-    _exp_fields := g_exp_fields()
-    t_exp_create( _exp_fields )
-endif
+   my_close_all_dbf()
 
-// otvori mi tabele
-O_KONTO
-O_PARTN
-O_SUBAN
-O_TNAL
-O_SUBAN
-O_IOS
+   IF _print_tip == "1"
 
-select ios
-go top
+      IF Empty( _id_partner )
+         _template := "ios_2.odt"
+      ENDIF
 
-seek _id_firma + _id_konto 
+      IF generisi_odt_iz_xml( _template, _xml_file )
+         prikazi_odt()
+      ENDIF
 
-NFOUND CRET
+   ENDIF
 
-// txt forma
-if _print_tip == "2"
-
-    START PRINT CRET
-
-else
-
-    // pripremi mi za xml
-    open_xml( _xml_file )
-    // standardni header
-    xml_head()
-    xml_subnode( "ios", .f. )
-
-endif
-
-select ios
-
-do while !EOF() .and. _id_firma == field->idfirma ;
-                .and. _id_konto == field->idkonto
-
-    _partn_id := field->idpartner
-
-    // pronadji za partnera...
-    if !EMPTY( _id_partner )
-        if _partn_id <> _id_partner
-            skip
-            loop
-        endif
-    endif
-
-    // spremi mi _params matricu
-    _params := hb_hash()
-    _params["id_partner"] := _partn_id
-    _params["id_konto"] := _id_konto
-    _params["id_firma"] := _id_firma
-    _params["din_dem"] := _din_dem
-    _params["datum_do"] := _datum_do
-    _params["ios_datum"] := _ios_date
-    _params["export_dbf"] := _export_dbf
-    _params["iznos_bhd"] := ios->iznosbhd
-    _params["iznos_dem"] := ios->iznosdem
-    _params["kartica"] := _kao_kartica
-    _params["prelom"] := _prelomljeno
-
-    if _print_tip == "2"
-        print_ios_txt( _params )
-    else
-        print_ios_xml( _params )
-    endif
-
-    skip
-
-enddo
-
-if _print_tip == "2"
-    END PRINT
-else
-
-    xml_subnode( "ios", .t. )
-    close_xml()
-
-endif
-
-if _print_tip == "2" .and. _export_dbf == "D"
-    f18_open_mime_document( my_home() + "r_export.dbf" )
-endif
-
-my_close_all_dbf()
-
-if _print_tip == "1"
-    
-    if EMPTY( _id_partner )
-        _template := "ios_2.odt"
-    endif
-
-    if generisi_odt_iz_xml( _template, _xml_file )
-        prikazi_odt()
-    endif
-
-endif
-
-return
+   RETURN
 
 
 // ------------------------------------------------------
 // upisi u xml fajl podatke partnera
 // u odredjeni subnode
 // ------------------------------------------------------
-static function _xml_partner( subnode, id_partner )
-local _ret := .t.
-local _jib, cPdvBroj, cIdBroj
+STATIC FUNCTION _xml_partner( subnode, id_partner )
 
-select partn
-go top
-seek id_partner
+   LOCAL _ret := .T.
+   LOCAL _jib, cPdvBroj, cIdBroj
 
-if !FOUND() .and. !EMPTY( id_partner )
-    _ret := .f.
-    return _ret
-endif
+   SELECT partn
+   GO TOP
+   SEEK id_partner
 
-// upisi u xml
-xml_subnode( subnode, .f. )
+   IF !Found() .AND. !Empty( id_partner )
+      _ret := .F.
+      RETURN _ret
+   ENDIF
 
-    if EMPTY( id_partner )
-        // nema partnera...
-        xml_node( "id", to_xml_encoding("-") )
-        xml_node( "naz", to_xml_encoding( "-" ) )
-        xml_node( "naz2", to_xml_encoding( "-" ) )
-        xml_node( "mjesto", to_xml_encoding( "-" ) )
-        xml_node( "adresa", to_xml_encoding( "-" ) )
-        xml_node( "ptt", to_xml_encoding( "-" ) )
-        xml_node( "ziror", to_xml_encoding( "-" ) )
-        xml_node( "tel", to_xml_encoding( "-" ) )
-        xml_node( "jib", "-" )
-    else
-        // ima partnera
-        xml_node( "id", to_xml_encoding( id_partner) )
-        xml_node( "naz", to_xml_encoding( partn->naz ) )
-        xml_node( "naz2", to_xml_encoding( partn->naz2 ) )
-        xml_node( "mjesto", to_xml_encoding( partn->mjesto ) )
-        xml_node( "adresa", to_xml_encoding( partn->adresa ) )
-        xml_node( "ptt", to_xml_encoding( partn->ptt ) )
-        xml_node( "ziror", to_xml_encoding( partn->ziror ) )
-        xml_node( "tel", to_xml_encoding( partn->telefon ) )
+   // upisi u xml
+   xml_subnode( subnode, .F. )
 
-        _jib := firma_pdv_broj( id_partner )
+   IF Empty( id_partner )
+      // nema partnera...
+      xml_node( "id", to_xml_encoding( "-" ) )
+      xml_node( "naz", to_xml_encoding( "-" ) )
+      xml_node( "naz2", to_xml_encoding( "-" ) )
+      xml_node( "mjesto", to_xml_encoding( "-" ) )
+      xml_node( "adresa", to_xml_encoding( "-" ) )
+      xml_node( "ptt", to_xml_encoding( "-" ) )
+      xml_node( "ziror", to_xml_encoding( "-" ) )
+      xml_node( "tel", to_xml_encoding( "-" ) )
+      xml_node( "jib", "-" )
+   ELSE
+      // ima partnera
+      xml_node( "id", to_xml_encoding( id_partner ) )
+      xml_node( "naz", to_xml_encoding( partn->naz ) )
+      xml_node( "naz2", to_xml_encoding( partn->naz2 ) )
+      xml_node( "mjesto", to_xml_encoding( partn->mjesto ) )
+      xml_node( "adresa", to_xml_encoding( partn->adresa ) )
+      xml_node( "ptt", to_xml_encoding( partn->ptt ) )
+      xml_node( "ziror", to_xml_encoding( partn->ziror ) )
+      xml_node( "tel", to_xml_encoding( partn->telefon ) )
 
-        cPdvBroj := _jib
-        cIdBroj := firma_id_broj( id_partner )
+      _jib := firma_pdv_broj( id_partner )
 
-        xml_node( "jib", _jib )
-        xml_node( "pdvbr", cPdvBroj )
-        xml_node( "idbbr", cIdBroj )
-    endif
+      cPdvBroj := _jib
+      cIdBroj := firma_id_broj( id_partner )
 
-xml_subnode( subnode, .t. )
+      xml_node( "jib", _jib )
+      xml_node( "pdvbr", cPdvBroj )
+      xml_node( "idbbr", cIdBroj )
+   ENDIF
 
-return _ret
+   xml_subnode( subnode, .T. )
+
+   RETURN _ret
 
 
 // -----------------------------------------
 // ispivanje stavki IOS-a u XML formatu
 // -----------------------------------------
-static function print_ios_xml( params )
-local _rbr
-local _id_firma := params["id_firma"]
-local _id_konto := params["id_konto"]
-local _id_partner := params["id_partner"]
-local _iznos_bhd := params["iznos_bhd"]
-local _iznos_dem := params["iznos_dem"]
-local _din_dem := params["din_dem"]
-local _datum_do := params["datum_do"]
-local _ios_date := params["ios_datum"]
-local _kao_kartica := params["kartica"]
-local _prelomljeno := params["prelom"]
-local _saldo_1, _saldo_2, __saldo_1, __saldo_2
-local _dug_1, _dug_2, _u_dug_1, _u_dug_2, _u_dug_1z, _u_dug_2z
-local _pot_1, _pot_2, _u_pot_1, _u_pot_2, _u_pot_1z, _u_pot_2z
+STATIC FUNCTION print_ios_xml( params )
 
-// <ios_item>
-//
-//    <firma>
-//      <id>10</id>
-//      <naz>...</naz>
-//      .....
-//    </firma>
-//
-//    <partner>
-//       <id>1231</id>
-//       <naz>PARTNER XZX</naz>
-//       .....   
-//    </partner>
-//   
-//    <ios_datum></ios_datum>
-// 
-//
-//
-// </ios_item>
+   LOCAL _rbr
+   LOCAL _id_firma := params[ "id_firma" ]
+   LOCAL _id_konto := params[ "id_konto" ]
+   LOCAL _id_partner := params[ "id_partner" ]
+   LOCAL _iznos_bhd := params[ "iznos_bhd" ]
+   LOCAL _iznos_dem := params[ "iznos_dem" ]
+   LOCAL _din_dem := params[ "din_dem" ]
+   LOCAL _datum_do := params[ "datum_do" ]
+   LOCAL _ios_date := params[ "ios_datum" ]
+   LOCAL _kao_kartica := params[ "kartica" ]
+   LOCAL _prelomljeno := params[ "prelom" ]
+   LOCAL _saldo_1, _saldo_2, __saldo_1, __saldo_2
+   LOCAL _dug_1, _dug_2, _u_dug_1, _u_dug_2, _u_dug_1z, _u_dug_2z
+   LOCAL _pot_1, _pot_2, _u_pot_1, _u_pot_2, _u_pot_1z, _u_pot_2z
 
-xml_subnode( "ios_item", .f. )
+   // <ios_item>
+   //
+   // <firma>
+   // <id>10</id>
+   // <naz>...</naz>
+   // .....
+   // </firma>
+   //
+   // <partner>
+   // <id>1231</id>
+   // <naz>PARTNER XZX</naz>
+   // .....
+   // </partner>
+   //
+   // <ios_datum></ios_datum>
+   //
+   //
+   //
+   // </ios_item>
 
-// maticna firma
-if !_xml_partner( "firma", _id_firma )
-endif
+   xml_subnode( "ios_item", .F. )
 
-// partner
-if !_xml_partner( "partner", _id_partner )
-endif
+   // maticna firma
+   IF !_xml_partner( "firma", _id_firma )
+   ENDIF
 
-xml_node( "ios_datum", DTOC( _ios_date ) )
-xml_node( "id_konto", to_xml_encoding( _id_konto ) )
-xml_node( "id_partner", to_xml_encoding( _id_partner ) )
+   // partner
+   IF !_xml_partner( "partner", _id_partner )
+   ENDIF
 
-_total_bhd := _iznos_bhd
-_total_dem := _iznos_dem
+   xml_node( "ios_datum", DToC( _ios_date ) )
+   xml_node( "id_konto", to_xml_encoding( _id_konto ) )
+   xml_node( "id_partner", to_xml_encoding( _id_partner ) )
 
-if _iznos_bhd < 0
-    _total_bhd := -_iznos_bhd
-endif
-if _iznos_dem < 0
-   _total_dem := -_iznos_dem
-endif
+   _total_bhd := _iznos_bhd
+   _total_dem := _iznos_dem
 
-if _din_dem == "1"
-    xml_node( "total", ALLTRIM( STR( _total_bhd, 12, 2 ) ) )
-    xml_node( "valuta", to_xml_encoding ( ValDomaca() ) )
-else
-    xml_node( "total", ALLTRIM( STR( _total_dem, 12, 2 ) ) )
-    xml_node( "valuta", to_xml_encoding ( ValPomocna() ) )
-endif
+   IF _iznos_bhd < 0
+      _total_bhd := -_iznos_bhd
+   ENDIF
+   IF _iznos_dem < 0
+      _total_dem := -_iznos_dem
+   ENDIF
 
-if _iznos_bhd > 0
-    xml_node( "dp", "1" )
-else
-    xml_node( "dp", "2" )
-endif
+   IF _din_dem == "1"
+      xml_node( "total", AllTrim( Str( _total_bhd, 12, 2 ) ) )
+      xml_node( "valuta", to_xml_encoding ( ValDomaca() ) )
+   ELSE
+      xml_node( "total", AllTrim( Str( _total_dem, 12, 2 ) ) )
+      xml_node( "valuta", to_xml_encoding ( ValPomocna() ) )
+   ENDIF
 
-select suban
+   IF _iznos_bhd > 0
+      xml_node( "dp", "1" )
+   ELSE
+      xml_node( "dp", "2" )
+   ENDIF
 
-if _kao_kartica == "D"
-    set order to tag "1"
-else
-    set order to tag "3"
-endif
+   SELECT suban
 
-seek _id_firma + _id_konto + _id_partner
+   IF _kao_kartica == "D"
+      SET ORDER TO TAG "1"
+   ELSE
+      SET ORDER TO TAG "3"
+   ENDIF
 
-_u_dug_1 := 0
-_u_dug_2 := 0
-_u_pot_1 := 0
-_u_pot_2 := 0
-_u_dug_1z := 0
-_u_dug_2z := 0
-_u_pot_1z := 0
-_u_pot_2z := 0
+   SEEK _id_firma + _id_konto + _id_partner
 
-// ako je kartica, onda nikad ne prelamaj
-if _kao_kartica == "D"
-    _prelomljeno := "N"
-endif
+   _u_dug_1 := 0
+   _u_dug_2 := 0
+   _u_pot_1 := 0
+   _u_pot_2 := 0
+   _u_dug_1z := 0
+   _u_dug_2z := 0
+   _u_pot_1z := 0
+   _u_pot_2z := 0
 
-_rbr := 0
+   // ako je kartica, onda nikad ne prelamaj
+   IF _kao_kartica == "D"
+      _prelomljeno := "N"
+   ENDIF
 
-do while !EOF() .and. _id_firma == field->IdFirma ;
-                .and. _id_konto == field->IdKonto ;
-                .and. _id_partner == field->IdPartner
-     
-    __br_dok := field->brdok
-    __dat_dok := field->datdok
-    __opis := ALLTRIM( field->opis )
-    __dat_val := field->datval
-    _dug_1 := 0
-    _pot_1 := 0
-    _dug_2 := 0
-    _pot_2 := 0
-    __otv_st := field->otvst
- 
-    do while !EOF() .and. _id_firma == field->IdFirma ;
-                    .and. _id_konto == field->IdKonto ;
-                    .and. _id_partner == field->IdPartner ;
-                    .and. ( _kao_kartica == "D" .or. field->brdok == __br_dok )
-         
-        if field->datdok > _datum_do
-            skip
-            loop
-        endif
-        
-        if field->otvst = " "
-            
-            if _kao_kartica == "D"
-               
-                // krece subnode...
-                xml_subnode( "data_kartica", .f. )
+   _rbr := 0
 
-                xml_node( "rbr", ALLTRIM( STR( ++ _rbr ) ) )
-                xml_node( "brdok", to_xml_encoding( field->brdok ) )
-                xml_node( "opis", to_xml_encoding( field->opis ) )
-                xml_node( "datdok", DTOC( field->datdok ) )
-                xml_node( "datval", DTOC( field->datval) )
+   DO WHILE !Eof() .AND. _id_firma == field->IdFirma ;
+         .AND. _id_konto == field->IdKonto ;
+         .AND. _id_partner == field->IdPartner
 
-                if _din_dem == "1"
-                    xml_node( "dug", ALLTRIM( STR( IIF( field->d_p == "1", field->iznosbhd, 0 ) , 12, 2 ) ) )
-                    xml_node( "pot", ALLTRIM( STR( IIF( field->d_p == "2", field->iznosbhd, 0 ) , 12, 2 ) ) )
-                else
-                    xml_node( "dug", ALLTRIM( STR( IIF( field->d_p == "1", field->iznosdem, 0 ) , 12, 2 ) ) )
-                    xml_node( "pot", ALLTRIM( STR( IIF( field->d_p == "2", field->iznosdem, 0 ) , 12, 2 ) ) )
-                endif
+      __br_dok := field->brdok
+      __dat_dok := field->datdok
+      __opis := AllTrim( field->opis )
+      __dat_val := field->datval
+      _dug_1 := 0
+      _pot_1 := 0
+      _dug_2 := 0
+      _pot_2 := 0
+      __otv_st := field->otvst
 
-                // zatvori subnode....
-                xml_subnode( "data_kartica", .t. )
-          
-            endif
-            
-            if field->d_p = "1"
-                _dug_1 += field->IznosBHD
-                _dug_2 += field->IznosDEM
-            else
-                _pot_1 += field->IznosBHD
-                _pot_2 += field->IznosDEM
-            endif
-            
+      DO WHILE !Eof() .AND. _id_firma == field->IdFirma ;
+            .AND. _id_konto == field->IdKonto ;
+            .AND. _id_partner == field->IdPartner ;
+            .AND. ( _kao_kartica == "D" .OR. field->brdok == __br_dok )
+
+         IF field->datdok > _datum_do
+            SKIP
+            LOOP
+         ENDIF
+
+         IF field->otvst = " "
+
+            IF _kao_kartica == "D"
+
+               // krece subnode...
+               xml_subnode( "data_kartica", .F. )
+
+               xml_node( "rbr", AllTrim( Str( ++_rbr ) ) )
+               xml_node( "brdok", to_xml_encoding( field->brdok ) )
+               xml_node( "opis", to_xml_encoding( field->opis ) )
+               xml_node( "datdok", DToC( field->datdok ) )
+               xml_node( "datval", DToC( field->datval ) )
+
+               IF _din_dem == "1"
+                  xml_node( "dug", AllTrim( Str( iif( field->d_p == "1", field->iznosbhd, 0 ), 12, 2 ) ) )
+                  xml_node( "pot", AllTrim( Str( iif( field->d_p == "2", field->iznosbhd, 0 ), 12, 2 ) ) )
+               ELSE
+                  xml_node( "dug", AllTrim( Str( iif( field->d_p == "1", field->iznosdem, 0 ), 12, 2 ) ) )
+                  xml_node( "pot", AllTrim( Str( iif( field->d_p == "2", field->iznosdem, 0 ), 12, 2 ) ) )
+               ENDIF
+
+               // zatvori subnode....
+               xml_subnode( "data_kartica", .T. )
+
+            ENDIF
+
+            IF field->d_p = "1"
+               _dug_1 += field->IznosBHD
+               _dug_2 += field->IznosDEM
+            ELSE
+               _pot_1 += field->IznosBHD
+               _pot_2 += field->IznosDEM
+            ENDIF
+
             __otv_st := " "
-        
-        else
-  
-            // zatvorene stavke
-            if field->d_p == "1"
-                _u_dug_1z += field->IznosBHD
-                _u_dug_2z += field->IznosDEM
-            else
-                _u_pot_1z += field->IznosBHD
-                _u_pot_2z += field->IznosDEM
-            endif
-        
-        endif
 
-        skip
-     
-    enddo
- 
-    if __otv_st == " "
-      
-        if _prelomljeno == "D"
-                
-            if _din_dem == "1"                 
-                // domaca valuta
-                if ( _dug_1 - _pot_1 ) > 0
-                    _dug_1 := ( _dug_1 - _pot_1 )
-                    _pot_1 := 0
-                else
-                    _pot_1 := ( _pot_1 - _dug_1 )
-                    _dug_1 := 0
-                endif
-            else
-                // strana valuta
-                if ( _dug_2 - _pot_2 ) > 0
-                    _dug_2 := ( _dug_2 - _pot_2 )
-                    _pot_2 := 0
-                else
-                    _pot_2 := ( _pot_2 - _dug_2 )
-                    _dug_2 := 0
-                endif
- 
-            endif
-                
-        endif
-          
-        if _kao_kartica == "N"
+         ELSE
+
+            // zatvorene stavke
+            IF field->d_p == "1"
+               _u_dug_1z += field->IznosBHD
+               _u_dug_2z += field->IznosDEM
+            ELSE
+               _u_pot_1z += field->IznosBHD
+               _u_pot_2z += field->IznosDEM
+            ENDIF
+
+         ENDIF
+
+         SKIP
+
+      ENDDO
+
+      IF __otv_st == " "
+
+         IF _prelomljeno == "D"
+
+            IF _din_dem == "1"
+               // domaca valuta
+               IF ( _dug_1 - _pot_1 ) > 0
+                  _dug_1 := ( _dug_1 - _pot_1 )
+                  _pot_1 := 0
+               ELSE
+                  _pot_1 := ( _pot_1 - _dug_1 )
+                  _dug_1 := 0
+               ENDIF
+            ELSE
+               // strana valuta
+               IF ( _dug_2 - _pot_2 ) > 0
+                  _dug_2 := ( _dug_2 - _pot_2 )
+                  _pot_2 := 0
+               ELSE
+                  _pot_2 := ( _pot_2 - _dug_2 )
+                  _dug_2 := 0
+               ENDIF
+
+            ENDIF
+
+         ENDIF
+
+         IF _kao_kartica == "N"
 
             // ispisi mi ove stavke ako dug i pot <> 0
-            if !( ROUND( _dug_1, 2 ) == 0 .and. ROUND( _pot_1, 2 ) == 0 )
+            IF !( Round( _dug_1, 2 ) == 0 .AND. Round( _pot_1, 2 ) == 0 )
 
-                xml_subnode( "data_kartica", .f. )
+               xml_subnode( "data_kartica", .F. )
 
-                xml_node( "rbr", ALLTRIM( STR( ++_rbr ) ) )
-                xml_node( "brdok", to_xml_encoding( __br_dok ) )
-                xml_node( "opis", to_xml_encoding( __opis ) )
-                xml_node( "datdok", DTOC( __dat_dok ) )
-                xml_node( "datval", DTOC( __dat_val ) )
-                xml_node( "dug", ALLTRIM( STR( _dug_1 , 12, 2 ) ) )
-                xml_node( "pot", ALLTRIM( STR( _pot_1 , 12, 2 ) ) )
+               xml_node( "rbr", AllTrim( Str( ++_rbr ) ) )
+               xml_node( "brdok", to_xml_encoding( __br_dok ) )
+               xml_node( "opis", to_xml_encoding( __opis ) )
+               xml_node( "datdok", DToC( __dat_dok ) )
+               xml_node( "datval", DToC( __dat_val ) )
+               xml_node( "dug", AllTrim( Str( _dug_1, 12, 2 ) ) )
+               xml_node( "pot", AllTrim( Str( _pot_1, 12, 2 ) ) )
 
-                // zatvori mi subnode
-                xml_subnode( "data_kartica", .t. )
+               // zatvori mi subnode
+               xml_subnode( "data_kartica", .T. )
 
-            endif
+            ENDIF
 
-        endif
+         ENDIF
 
-        _u_dug_1 += _dug_1
-        _u_pot_1 += _pot_1
-        _u_dug_2 += _dug_2
-        _u_pot_2 += _pot_2
-     
-    endif
-     
-enddo
+         _u_dug_1 += _dug_1
+         _u_pot_1 += _pot_1
+         _u_dug_2 += _dug_2
+         _u_pot_2 += _pot_2
 
-// saldo
-_saldo_1 := ( _u_dug_1 - _u_pot_1 )
-_saldo_2 := ( _u_dug_2 - _u_pot_2 )
- 
-if _din_dem == "1"
+      ENDIF
 
-    xml_node( "u_dug", ALLTRIM(STR( _u_dug_1, 12, 2 )) )
-    xml_node( "u_pot", ALLTRIM(STR( _u_pot_1, 12, 2 )) )
+   ENDDO
 
-    if ROUND( _u_dug_1z - _u_pot_1z, 4 ) <> 0
-        xml_node( "greska", ALLTRIM( STR( _u_dug_1z - _u_pot_1z, 12, 2  ) )  )
-    else
-        xml_node( "greska", ""  )
-    endif
+   // saldo
+   _saldo_1 := ( _u_dug_1 - _u_pot_1 )
+   _saldo_2 := ( _u_dug_2 - _u_pot_2 )
 
-    if _saldo_1 >= 0
-        xml_node( "saldo", ALLTRIM( STR( _saldo_1, 12, 2 ) ) )
-    else
-        _saldo_1 := -_saldo_1
-        xml_node( "saldo", ALLTRIM( STR( _saldo_1, 12, 2 ) ) )
-    endif
+   IF _din_dem == "1"
 
-else
+      xml_node( "u_dug", AllTrim( Str( _u_dug_1, 12, 2 ) ) )
+      xml_node( "u_pot", AllTrim( Str( _u_pot_1, 12, 2 ) ) )
 
-    xml_node( "u_dug", ALLTRIM(STR( _u_dug_2, 12, 2 )) )
-    xml_node( "u_pot", ALLTRIM(STR( _u_pot_2, 12, 2 )) )
+      IF Round( _u_dug_1z - _u_pot_1z, 4 ) <> 0
+         xml_node( "greska", AllTrim( Str( _u_dug_1z - _u_pot_1z, 12, 2  ) )  )
+      ELSE
+         xml_node( "greska", ""  )
+      ENDIF
 
-    if ROUND( _u_dug_2z - _u_pot_2z, 4 ) <> 0
-        xml_node( "greska", ALLTRIM( STR( _u_dug_2z - _u_pot_2z, 12, 2  ) )  )
-    else
-        xml_node( "greska", ""  )
-    endif
+      IF _saldo_1 >= 0
+         xml_node( "saldo", AllTrim( Str( _saldo_1, 12, 2 ) ) )
+      ELSE
+         _saldo_1 := -_saldo_1
+         xml_node( "saldo", AllTrim( Str( _saldo_1, 12, 2 ) ) )
+      ENDIF
 
-    if _saldo_2 >= 0
-        xml_node( "saldo", ALLTRIM( STR( _saldo_2, 12, 2 ) ) )
-    else
-        _saldo_2 := -_saldo_2
-        xml_node( "saldo", ALLTRIM( STR( _saldo_2, 12, 2 ) ) )
-    endif
+   ELSE
 
-endif
+      xml_node( "u_dug", AllTrim( Str( _u_dug_2, 12, 2 ) ) )
+      xml_node( "u_pot", AllTrim( Str( _u_pot_2, 12, 2 ) ) )
 
-xml_node( "mjesto", to_xml_encoding( ALLTRIM( gMjStr ) ) )
-xml_node( "datum", DTOC( DATE() ) )
+      IF Round( _u_dug_2z - _u_pot_2z, 4 ) <> 0
+         xml_node( "greska", AllTrim( Str( _u_dug_2z - _u_pot_2z, 12, 2  ) )  )
+      ELSE
+         xml_node( "greska", ""  )
+      ENDIF
 
-// izvuci mi clan
-_clan_txt := __ios_clan 
-  
-xml_node( "clan", to_xml_encoding( _clan_txt ) )
+      IF _saldo_2 >= 0
+         xml_node( "saldo", AllTrim( Str( _saldo_2, 12, 2 ) ) )
+      ELSE
+         _saldo_2 := -_saldo_2
+         xml_node( "saldo", AllTrim( Str( _saldo_2, 12, 2 ) ) )
+      ENDIF
 
-// zatvori mi subnode
-xml_subnode( "ios_item", .t. ) 
+   ENDIF
 
-select ios
+   xml_node( "mjesto", to_xml_encoding( AllTrim( gMjStr ) ) )
+   xml_node( "datum", DToC( Date() ) )
 
-return
+   // izvuci mi clan
+   _clan_txt := __ios_clan
+
+   xml_node( "clan", to_xml_encoding( _clan_txt ) )
+
+   // zatvori mi subnode
+   xml_subnode( "ios_item", .T. )
+
+   SELECT ios
+
+   RETURN
 
 
 
@@ -1101,444 +1112,445 @@ return
 // -----------------------------------------
 // ispivanje stavki IOS-a u TXT formatu
 // -----------------------------------------
-static function print_ios_txt( params )
-local _rbr
-local _n_opis := 0
-local _id_firma := params["id_firma"]
-local _id_konto := params["id_konto"]
-local _id_partner := params["id_partner"]
-local _iznos_bhd := params["iznos_bhd"]
-local _iznos_dem := params["iznos_dem"]
-local _din_dem := params["din_dem"]
-local _datum_do := params["datum_do"]
-local _ios_date := params["ios_datum"]
-local _export_dbf := params["export_dbf"]
-local _kao_kartica := params["kartica"]
-local _prelomljeno := params["prelom"]
-local _naz_partner
+STATIC FUNCTION print_ios_txt( params )
 
-?
+   LOCAL _rbr
+   LOCAL _n_opis := 0
+   LOCAL _id_firma := params[ "id_firma" ]
+   LOCAL _id_konto := params[ "id_konto" ]
+   LOCAL _id_partner := params[ "id_partner" ]
+   LOCAL _iznos_bhd := params[ "iznos_bhd" ]
+   LOCAL _iznos_dem := params[ "iznos_dem" ]
+   LOCAL _din_dem := params[ "din_dem" ]
+   LOCAL _datum_do := params[ "datum_do" ]
+   LOCAL _ios_date := params[ "ios_datum" ]
+   LOCAL _export_dbf := params[ "export_dbf" ]
+   LOCAL _kao_kartica := params[ "kartica" ]
+   LOCAL _prelomljeno := params[ "prelom" ]
+   LOCAL _naz_partner
 
-@ prow(), 58 SAY "OBRAZAC: I O S"
-@ prow() + 1, 1 SAY _id_firma
+   ?
 
-select partn
-hseek _id_firma
+   @ PRow(), 58 SAY "OBRAZAC: I O S"
+   @ PRow() + 1, 1 SAY _id_firma
 
-@ prow(), 5 SAY ALLTRIM( partn->naz )
-@ prow(), pcol() + 1 SAY ALLTRIM( partn->naz2 )
-@ prow()+1,5 SAY partn->Mjesto
-@ prow()+1,5 SAY partn->Adresa
-@ prow()+1,5 SAY partn->ptt
-@ prow()+1,5 SAY partn->ZiroR
-@ prow()+1,5 SAY firma_pdv_broj( _id_firma )
+   SELECT partn
+   hseek _id_firma
 
-?
+   @ PRow(), 5 SAY AllTrim( partn->naz )
+   @ PRow(), PCol() + 1 SAY AllTrim( partn->naz2 )
+   @ PRow() + 1, 5 SAY partn->Mjesto
+   @ PRow() + 1, 5 SAY partn->Adresa
+   @ PRow() + 1, 5 SAY partn->ptt
+   @ PRow() + 1, 5 SAY partn->ZiroR
+   @ PRow() + 1, 5 SAY firma_pdv_broj( _id_firma )
 
-SELECT PARTN
-HSEEK _id_partner
+   ?
 
-@ prow(),45 SAY _id_partner
-?? " -", ALLTRIM( partn->naz )
-@ prow()+1,45 SAY partn->mjesto
-@ prow()+1,45 SAY partn->adresa
-@ prow()+1,45 SAY partn->ptt
-@ prow()+1,45 SAY partn->ziror
+   SELECT PARTN
+   HSEEK _id_partner
 
-if !empty( partn->telefon)
-  @ prow()+1,45 SAY "Telefon: " + partn->telefon
-endif
+   @ PRow(), 45 SAY _id_partner
+   ?? " -", AllTrim( partn->naz )
+   @ PRow() + 1, 45 SAY partn->mjesto
+   @ PRow() + 1, 45 SAY partn->adresa
+   @ PRow() + 1, 45 SAY partn->ptt
+   @ PRow() + 1, 45 SAY partn->ziror
 
-@ prow()+1,45 SAY firma_pdv_broj( _id_partner )
+   IF !Empty( partn->telefon )
+      @ PRow() + 1, 45 SAY "Telefon: " + partn->telefon
+   ENDIF
 
-_naz_partner := naz
+   @ PRow() + 1, 45 SAY firma_pdv_broj( _id_partner )
 
-?
-?
-@ prow(), 6 SAY "IZVOD OTVORENIH STAVKI NA DAN :"
-@ prow(), pcol() + 2 SAY _ios_date
-@ prow(),pcol()+1 SAY "GODINE"
-?
-?
-@ prow(),0 SAY "VA�E STANJE NA KONTU" ; @ prow(),pcol()+1 SAY _id_konto
-@ prow(),pcol()+1 SAY " - "+ _id_partner
-@ prow()+1,0 SAY "PREMA NA�IM POSLOVNIM KNJIGAMA NA DAN:"
-@ prow(),39 SAY _ios_date
-@ prow(),48 SAY "GODINE"
-?
-?
-@ prow(),0 SAY "POKAZUJE SALDO:"
+   _naz_partner := naz
 
-qqIznosBHD := _iznos_bhd
-qqIznosDEM := _iznos_dem
+   ?
+   ?
+   @ PRow(), 6 SAY "IZVOD OTVORENIH STAVKI NA DAN :"
+   @ PRow(), PCol() + 2 SAY _ios_date
+   @ PRow(), PCol() + 1 SAY "GODINE"
+   ?
+   ?
+   @ PRow(), 0 SAY "VA�E STANJE NA KONTU" ; @ PRow(), PCol() + 1 SAY _id_konto
+   @ PRow(), PCol() + 1 SAY " - " + _id_partner
+   @ PRow() + 1, 0 SAY "PREMA NA�IM POSLOVNIM KNJIGAMA NA DAN:"
+   @ PRow(), 39 SAY _ios_date
+   @ PRow(), 48 SAY "GODINE"
+   ?
+   ?
+   @ PRow(), 0 SAY "POKAZUJE SALDO:"
 
-if _iznos_bhd < 0
-    qqIznosBHD := -_iznos_bhd
-endif
+   qqIznosBHD := _iznos_bhd
+   qqIznosDEM := _iznos_dem
 
-IF _iznos_dem < 0
-   qqIznosDEM := -_iznos_dem
-ENDIF
+   IF _iznos_bhd < 0
+      qqIznosBHD := -_iznos_bhd
+   ENDIF
 
-if _din_dem == "1"
-    @ prow(), 16 SAY qqIznosBHD PICT R1
-else
-    @ prow(), 16 SAY qqIznosDEM PICT R2
-endif
+   IF _iznos_dem < 0
+      qqIznosDEM := -_iznos_dem
+   ENDIF
 
-?
-?
+   IF _din_dem == "1"
+      @ PRow(), 16 SAY qqIznosBHD PICT R1
+   ELSE
+      @ PRow(), 16 SAY qqIznosDEM PICT R2
+   ENDIF
 
-@ prow(), 0 SAY "U"
+   ?
+   ?
 
-IF _iznos_bhd > 0
-    @ prow(), pcol() + 1 SAY "NA�U"
-ELSE
-    @ prow(), pcol() + 1 SAY "VA�U"
-ENDIF
+   @ PRow(), 0 SAY "U"
 
-@ prow(), pcol() + 1 SAY "KORIST I SASTOJI SE IZ SLIJEDE�IH OTVORENIH STAVKI:"
+   IF _iznos_bhd > 0
+      @ PRow(), PCol() + 1 SAY "NA�U"
+   ELSE
+      @ PRow(), PCol() + 1 SAY "VA�U"
+   ENDIF
 
-P_COND
+   @ PRow(), PCol() + 1 SAY "KORIST I SASTOJI SE IZ SLIJEDE�IH OTVORENIH STAVKI:"
 
-m := "       ---- ---------- -------------------- -------- -------- ---------------- ----------------"
+   P_COND
 
-? m
-? "       *R. *   BROJ   *    OPIS            * DATUM  * VALUTA *       IZNOS  U  "+iif( _din_dem =="1", ValDomaca(), ValPomocna() ) + "            *"
-? "       *Br.*          *                    *                 * --------------------------------"
-? "       *   *  RA�UNA  *                    * RA�UNA * RA�UNA *     DUGUJE     *   POTRA�UJE   *"
-? m
+   m := "       ---- ---------- -------------------- -------- -------- ---------------- ----------------"
 
-nCol1 := 62
+   ? m
+   ? "       *R. *   BROJ   *    OPIS            * DATUM  * VALUTA *       IZNOS  U  " + iif( _din_dem == "1", ValDomaca(), ValPomocna() ) + "            *"
+   ? "       *Br.*          *                    *                 * --------------------------------"
+   ? "       *   *  RA�UNA  *                    * RA�UNA * RA�UNA *     DUGUJE     *   POTRA�UJE   *"
+   ? m
 
-select suban
+   nCol1 := 62
 
-if _kao_kartica == "D"
-    set order to tag "1"
-else
-    set order to tag "3"
-endif
+   SELECT suban
 
-SEEK _id_firma + _id_konto + _id_partner
+   IF _kao_kartica == "D"
+      SET ORDER TO TAG "1"
+   ELSE
+      SET ORDER TO TAG "3"
+   ENDIF
 
-nDugBHD:=nPotBHD:=nDugDEM:=nPotDEM:=0
-nDugBHDZ:=nPotBHDZ:=nDugDEMZ:=nPotDEMZ:=0
-_rbr := 0
+   SEEK _id_firma + _id_konto + _id_partner
 
-// ako je kartica, onda nikad ne prelamaj
-if _kao_kartica == "D"
-    _prelomljeno := "N"
-endif
+   nDugBHD := nPotBHD := nDugDEM := nPotDEM := 0
+   nDugBHDZ := nPotBHDZ := nDugDEMZ := nPotDEMZ := 0
+   _rbr := 0
 
-do while !EOF() .and. _id_firma == field->IdFirma ;
-                .and. _id_konto == field->IdKonto ;
-                .and. _id_partner == field->IdPartner
-     
-    cBrDok := field->brdok
-    dDatdok := field->datdok
-    cOpis := ALLTRIM( field->opis )
-    dDatVal := field->datval
-    nDBHD:=0
-    nPBHD:=0
-    nDDEM:=0
-    nPDEM:=0
-    cOtvSt := field->otvst
-     
-    do while !EOF() .and. _id_firma == field->IdFirma ;
-                    .and. _id_konto == field->IdKonto ;
-                    .and. _id_partner == field->IdPartner ;
-                    .and. ( _kao_kartica == "D" .or. field->brdok == cBrdok )
-         
-        if field->datdok > _datum_do
-            skip
-            loop
-        endif
-        
-        if field->otvst = " "
-            
-            if _kao_kartica == "D"
-               
-                if prow() > 61 + gPStranica
-                    FF
-                endif      
-               
-                @ prow() + 1, 8 SAY ++ _rbr PICT '999'
-                @ prow(), pcol() + 1 SAY field->BrDok
-                _n_opis := pcol() + 1
-                @ prow(), _n_opis SAY PADR( field->Opis, 20 )
-                @ prow(), pcol() + 1 SAY field->DatDok
-                @ prow(), pcol() + 1 SAY field->DatVal
-               
-                if _din_dem == "1"
-                    @ prow(), nCol1 SAY IIF( field->D_P == "1", field->iznosbhd, 0 ) PICT picBHD
-                    @ prow(), pcol() + 1 SAY IIF( field->D_P == "2", field->iznosbhd, 0 ) PICT picBHD
-                else
-                    @ prow(), nCol1 SAY IIF( field->D_P == "1", field->iznosdem, 0 ) PICT picBHD
-                    @ prow(), pcol() + 1 SAY IIF( field->D_P == "2", field->iznosdem, 0 ) PICT picBHD
-                endif
+   // ako je kartica, onda nikad ne prelamaj
+   IF _kao_kartica == "D"
+      _prelomljeno := "N"
+   ENDIF
 
-                if _export_dbf == "D"
-                    fill_exp_tbl( _id_partner, ;
-                                    _naz_partner, ;
-                                    field->brdok, ;
-                                    field->opis, ;
-                                    field->datdok, ;
-                                    field->datval, ;
-                                    IIF( field->d_p == "1", field->iznosbhd, 0), ;
-                                    IIF( field->d_p == "2", field->iznosbhd, 0) )
-                endif
-           
-            endif
-            
-            if field->d_p = "1"
-                nDBHD += field->IznosBHD
-                nDDEM += field->IznosDEM
-            ELSE
-                nPBHD += field->IznosBHD
-                nPDEM += field->IznosDEM
+   DO WHILE !Eof() .AND. _id_firma == field->IdFirma ;
+         .AND. _id_konto == field->IdKonto ;
+         .AND. _id_partner == field->IdPartner
+
+      cBrDok := field->brdok
+      dDatdok := field->datdok
+      cOpis := AllTrim( field->opis )
+      dDatVal := field->datval
+      nDBHD := 0
+      nPBHD := 0
+      nDDEM := 0
+      nPDEM := 0
+      cOtvSt := field->otvst
+
+      DO WHILE !Eof() .AND. _id_firma == field->IdFirma ;
+            .AND. _id_konto == field->IdKonto ;
+            .AND. _id_partner == field->IdPartner ;
+            .AND. ( _kao_kartica == "D" .OR. field->brdok == cBrdok )
+
+         IF field->datdok > _datum_do
+            SKIP
+            LOOP
+         ENDIF
+
+         IF field->otvst = " "
+
+            IF _kao_kartica == "D"
+
+               IF PRow() > 61 + gPStranica
+                  FF
+               ENDIF
+
+               @ PRow() + 1, 8 SAY+ + _rbr PICT '999'
+               @ PRow(), PCol() + 1 SAY field->BrDok
+               _n_opis := PCol() + 1
+               @ PRow(), _n_opis SAY PadR( field->Opis, 20 )
+               @ PRow(), PCol() + 1 SAY field->DatDok
+               @ PRow(), PCol() + 1 SAY field->DatVal
+
+               IF _din_dem == "1"
+                  @ PRow(), nCol1 SAY iif( field->D_P == "1", field->iznosbhd, 0 ) PICT picBHD
+                  @ PRow(), PCol() + 1 SAY iif( field->D_P == "2", field->iznosbhd, 0 ) PICT picBHD
+               ELSE
+                  @ PRow(), nCol1 SAY iif( field->D_P == "1", field->iznosdem, 0 ) PICT picBHD
+                  @ PRow(), PCol() + 1 SAY iif( field->D_P == "2", field->iznosdem, 0 ) PICT picBHD
+               ENDIF
+
+               IF _export_dbf == "D"
+                  fill_exp_tbl( _id_partner, ;
+                     _naz_partner, ;
+                     field->brdok, ;
+                     field->opis, ;
+                     field->datdok, ;
+                     field->datval, ;
+                     iif( field->d_p == "1", field->iznosbhd, 0 ), ;
+                     iif( field->d_p == "2", field->iznosbhd, 0 ) )
+               ENDIF
+
             ENDIF
-            
+
+            IF field->d_p = "1"
+               nDBHD += field->IznosBHD
+               nDDEM += field->IznosDEM
+            ELSE
+               nPBHD += field->IznosBHD
+               nPDEM += field->IznosDEM
+            ENDIF
+
             cOtvSt := " "
-        
-        else  
+
+         ELSE
             // zatvorene stavke
-            
+
             IF field->D_P == "1"
-                nDugBHDZ += field->IznosBHD
-                nDugDEMZ += field->IznosDEM
+               nDugBHDZ += field->IznosBHD
+               nDugDEMZ += field->IznosDEM
             ELSE
-                nPotBHDZ += field->IznosBHD
-                nPotDEMZ += field->IznosDEM
+               nPotBHDZ += field->IznosBHD
+               nPotDEMZ += field->IznosDEM
             ENDIF
-        
-        endif
-    
-        skip
-     
-    enddo
-     
-    if cOtvSt == " "
-      
-        if _kao_kartica == "N"
-       
-            if prow() > 61 + gPStranica
-                FF
-            endif
-            
-            @ prow() + 1, 8 SAY ++ _rbr PICT "999"
-            @ prow(), pcol() + 1  SAY cBrDok
-            _n_opis := pcol() + 1
-            @ prow(), _n_opis SAY PADR( cOpis, 20 )
-            @ prow(),pcol()+1 SAY dDatDok
-            @ prow(),pcol()+1 SAY dDatVal
-      
-        endif
-      
-        if _din_dem == "1"
-        
-            if _prelomljeno == "D"
-                        
-                if ( nDBHD - nPBHD ) > 0
-                    nDBHD := ( nDBHD - nPBHD )
-                    nPBHD := 0
-                else
-                    nPBHD := ( nPBHD - nDBHD )
-                    nDBHD := 0
-                endif
-                
-            endif
-          
-            if _kao_kartica == "N"
-           
-                @ prow(), nCol1 SAY nDBHD PICT picBHD
-                @ prow(), pcol() + 1 SAY nPBhD PICT picBHD
-            
-                if _export_dbf == "D"
-                    fill_exp_tbl( _id_partner, ;
-                            _naz_partner, ;
-                            cBrDok, ;
-                            cOpis, ;
-                            dDatdok, ;
-                            dDatval, ;
-                            nDBHD, ;
-                            nPBHD )
-                endif
-                
-            endif
 
-        else
-            if _prelomljeno == "D"
-                if ( nDDEM - nPDEM ) > 0
-                    nDDEM := ( nDDEM - nPDEM )
-                    nPBHD := 0
-                else
-                    nPDEM := ( nPDEM - nDDEM )
-                    nDDEM := 0
-                endif
-            endif
-                
-            if _kao_kartica == "N"
-                    
-                @ prow(), nCol1 SAY nDDEM PICT picBHD
-                @ prow(), pcol() + 1 SAY nPDEM PICT picBHD
-               
-                if _export_dbf == "D"
-                    fill_exp_tbl( _id_partner, ;
-                        _naz_partner, ;
-                        cBrdok, ;
-                        cOpis, ;
-                        dDatdok, ;
-                        dDatval, ;
-                        nDDEM, ;
-                        nPDEM )
-                endif
-      
-            endif
-        endif
-     
-        nDugBHD += nDBHD
-        nPotBHD += nPBHD
-        nDugDem += nDDem
-        nPotDem += nPDem
-     
-    endif
-     
-    OstatakOpisa( cOpis, _n_opis )
-   
-enddo
+         ENDIF
 
-if prow() > 61 + gPStranica
-    FF
-endif
-   
-@ prow()+1,0 SAY m
-@ prow()+1,8 SAY "UKUPNO:"
-   
-if _din_dem == "1"
-    @ prow(), nCol1 SAY nDugBHD PICTURE picBHD
-    @ prow(), pcol() + 1 SAY nPotBHD PICTURE picBHD
-else
-    @ prow(), nCol1 SAY nDugBHD PICTURE picBHD
-    @ prow(), pcol() + 1 SAY nPotBHD PICTURE picBHD
-endif
+         SKIP
 
-// ako je promet zatvorenih stavki <> 0  prikazi ga ????
-if _din_dem == "1"
-    if ROUND( nDugBHDZ - nPOTBHDZ, 4 ) <> 0
-        @ prow() + 1, 0 SAY m
-        @ prow() + 1, 8 SAY "ZATVORENE STAVKE"
-        @ prow(), nCol1 SAY ( nDugBHDZ - nPOTBHDZ ) PICT picBHD
-        @ prow(), pcol() + 1 SAY  " GRE�KA !!"
-    endif
-else
-    if ROUND( nDugDEMZ - nPOTDEMZ, 4 ) <> 0
-        @ prow() + 1, 0 SAY m
-        @ prow() + 1, 8 SAY "ZATVORENE STAVKE"
-        @ prow(), nCol1 SAY ( nDugDEMZ - nPOTDEMZ ) PICT picBHD
-        @ prow(), pcol() + 1 SAY " GRE�KA !!"
-    endif
-endif
+      ENDDO
 
-@ prow() + 1, 0 SAY m
-@ prow() + 1, 8 SAY "SALDO:"
-   
-nSaldoBHD := ( nDugBHD - nPotBHD )
-nSaldoDEM := ( nDugDEM - nPotDEM )
-   
-if _din_dem == "1"
-    if nSaldoBHD >= 0
-        @ prow(), nCol1 SAY nSaldoBHD PICT picBHD
-        @ prow(), pcol() + 1 SAY 0 PICT picBHD
-    else
-        nSaldoBHD := -nSaldoBHD
-        nSaldoDEM := -nSaldoDEM
-        @ prow(), nCol1 SAY 0 PICT picBHD
-        @ prow(), pcol() + 1 SAY nSaldoBHD PICT picBHD
-    endif
-else
-    if nSaldoDEM >= 0
-        @ prow(), nCol1 SAY nSaldoDEM PICT picBHD
-        @ prow(), pcol() + 1 SAY 0 PICT picBHD
-    else
-        nSaldoDEM := -nSaldoDEM
-        @ prow(), nCol1 SAY 0 PICT picBHD
-        @ prow(), pcol() + 1 SAY nSaldoDEM PICT picBHD
-    endif
-endif
-   
-? m
-   
-F10CPI
+      IF cOtvSt == " "
 
-?
+         IF _kao_kartica == "N"
 
-if prow() > 61 + gPStranica
-    FF
-endif
+            IF PRow() > 61 + gPStranica
+               FF
+            ENDIF
 
-?
-?
+            @ PRow() + 1, 8 SAY+ + _rbr PICT "999"
+            @ PRow(), PCol() + 1  SAY cBrDok
+            _n_opis := PCol() + 1
+            @ PRow(), _n_opis SAY PadR( cOpis, 20 )
+            @ PRow(), PCol() + 1 SAY dDatDok
+            @ PRow(), PCol() + 1 SAY dDatVal
 
-F12CPI
+         ENDIF
 
-@ prow(), 13 SAY "PO�ILJALAC IZVODA:"
-@ prow(), 53 SAY "POTVR�UJEMO SAGLASNOST"
-@ prow() + 1, 50 SAY "OTVORENIH STAVKI:"
+         IF _din_dem == "1"
 
-?
-?
+            IF _prelomljeno == "D"
 
-@ prow(), 10 SAY "__________________"
-@ prow(), 50 SAY "______________________"
+               IF ( nDBHD - nPBHD ) > 0
+                  nDBHD := ( nDBHD - nPBHD )
+                  nPBHD := 0
+               ELSE
+                  nPBHD := ( nPBHD - nDBHD )
+                  nDBHD := 0
+               ENDIF
 
-if prow() > 58 + gPStranica
-    FF
-endif
+            ENDIF
 
-?
-?
+            IF _kao_kartica == "N"
 
-@ prow(), 10 SAY "__________________ M.P."
-@ prow(), 50 SAY "______________________ M.P."
+               @ PRow(), nCol1 SAY nDBHD PICT picBHD
+               @ PRow(), PCol() + 1 SAY nPBhD PICT picBHD
 
-?
-?
+               IF _export_dbf == "D"
+                  fill_exp_tbl( _id_partner, ;
+                     _naz_partner, ;
+                     cBrDok, ;
+                     cOpis, ;
+                     dDatdok, ;
+                     dDatval, ;
+                     nDBHD, ;
+                     nPBHD )
+               ENDIF
 
-@ prow(), 10 SAY TRIM( gMjStr )+", " + DTOC( DATE() )
-@ prow(), 52 SAY "( MJESTO I DATUM )"
+            ENDIF
 
-if prow() > 52 + gPStranica
-    FF
-endif
+         ELSE
+            IF _prelomljeno == "D"
+               IF ( nDDEM - nPDEM ) > 0
+                  nDDEM := ( nDDEM - nPDEM )
+                  nPBHD := 0
+               ELSE
+                  nPDEM := ( nPDEM - nDDEM )
+                  nDDEM := 0
+               ENDIF
+            ENDIF
 
-?
-?
+            IF _kao_kartica == "N"
 
-@ prow(), 0 SAY "Prema clanu 28. stav 4. Zakona o racunovodstvu i reviziji u FBIH (Sl.novine FBIH, broj 83/09)" 
-@ prow() + 1, 0 SAY "na ovu nasu konfirmaciju ste duzni odgovoriti u roku od osam dana."
-@ prow() + 1, 0 SAY "Ukoliko u tom roku ne primimo potvrdu ili osporavanje iskazanog stanja, smatracemo da je"
-@ prow() + 1, 0 SAY "usaglasavanje izvrseno i da je stanje isto."
+               @ PRow(), nCol1 SAY nDDEM PICT picBHD
+               @ PRow(), PCol() + 1 SAY nPDEM PICT picBHD
 
-?
-?
+               IF _export_dbf == "D"
+                  fill_exp_tbl( _id_partner, ;
+                     _naz_partner, ;
+                     cBrdok, ;
+                     cOpis, ;
+                     dDatdok, ;
+                     dDatval, ;
+                     nDDEM, ;
+                     nPDEM )
+               ENDIF
 
-@ prow(), 0 SAY "NAPOMENA: OSPORAVAMO ISKAZANO STANJE U CJELINI _______________ DJELIMI�NO"
-@ prow() + 1, 0 SAY "ZA IZNOS OD  "+ValDomaca()+"= _______________ IZ SLIJEDE�IH RAZLOGA:"
-@ prow() + 1, 0 SAY "_________________________________________________________________________"
+            ENDIF
+         ENDIF
 
-?
-?
+         nDugBHD += nDBHD
+         nPotBHD += nPBHD
+         nDugDem += nDDem
+         nPotDem += nPDem
 
-@ prow(), 0 SAY "_________________________________________________________________________"
-?
-?
-@ prow(), 48 SAY "DU�NIK:"
-@ prow() + 1, 40 SAY "_______________________ M.P."
-@ prow() + 1, 44 SAY "( MJESTO I DATUM )"
+      ENDIF
 
-select ios
+      OstatakOpisa( cOpis, _n_opis )
 
-return
+   ENDDO
+
+   IF PRow() > 61 + gPStranica
+      FF
+   ENDIF
+
+   @ PRow() + 1, 0 SAY m
+   @ PRow() + 1, 8 SAY "UKUPNO:"
+
+   IF _din_dem == "1"
+      @ PRow(), nCol1 SAY nDugBHD PICTURE picBHD
+      @ PRow(), PCol() + 1 SAY nPotBHD PICTURE picBHD
+   ELSE
+      @ PRow(), nCol1 SAY nDugBHD PICTURE picBHD
+      @ PRow(), PCol() + 1 SAY nPotBHD PICTURE picBHD
+   ENDIF
+
+   // ako je promet zatvorenih stavki <> 0  prikazi ga ????
+   IF _din_dem == "1"
+      IF Round( nDugBHDZ - nPOTBHDZ, 4 ) <> 0
+         @ PRow() + 1, 0 SAY m
+         @ PRow() + 1, 8 SAY "ZATVORENE STAVKE"
+         @ PRow(), nCol1 SAY ( nDugBHDZ - nPOTBHDZ ) PICT picBHD
+         @ PRow(), PCol() + 1 SAY  " GRE�KA !!"
+      ENDIF
+   ELSE
+      IF Round( nDugDEMZ - nPOTDEMZ, 4 ) <> 0
+         @ PRow() + 1, 0 SAY m
+         @ PRow() + 1, 8 SAY "ZATVORENE STAVKE"
+         @ PRow(), nCol1 SAY ( nDugDEMZ - nPOTDEMZ ) PICT picBHD
+         @ PRow(), PCol() + 1 SAY " GRE�KA !!"
+      ENDIF
+   ENDIF
+
+   @ PRow() + 1, 0 SAY m
+   @ PRow() + 1, 8 SAY "SALDO:"
+
+   nSaldoBHD := ( nDugBHD - nPotBHD )
+   nSaldoDEM := ( nDugDEM - nPotDEM )
+
+   IF _din_dem == "1"
+      IF nSaldoBHD >= 0
+         @ PRow(), nCol1 SAY nSaldoBHD PICT picBHD
+         @ PRow(), PCol() + 1 SAY 0 PICT picBHD
+      ELSE
+         nSaldoBHD := -nSaldoBHD
+         nSaldoDEM := -nSaldoDEM
+         @ PRow(), nCol1 SAY 0 PICT picBHD
+         @ PRow(), PCol() + 1 SAY nSaldoBHD PICT picBHD
+      ENDIF
+   ELSE
+      IF nSaldoDEM >= 0
+         @ PRow(), nCol1 SAY nSaldoDEM PICT picBHD
+         @ PRow(), PCol() + 1 SAY 0 PICT picBHD
+      ELSE
+         nSaldoDEM := -nSaldoDEM
+         @ PRow(), nCol1 SAY 0 PICT picBHD
+         @ PRow(), PCol() + 1 SAY nSaldoDEM PICT picBHD
+      ENDIF
+   ENDIF
+
+   ? m
+
+   F10CPI
+
+   ?
+
+   IF PRow() > 61 + gPStranica
+      FF
+   ENDIF
+
+   ?
+   ?
+
+   F12CPI
+
+   @ PRow(), 13 SAY "PO�ILJALAC IZVODA:"
+   @ PRow(), 53 SAY "POTVR�UJEMO SAGLASNOST"
+   @ PRow() + 1, 50 SAY "OTVORENIH STAVKI:"
+
+   ?
+   ?
+
+   @ PRow(), 10 SAY "__________________"
+   @ PRow(), 50 SAY "______________________"
+
+   IF PRow() > 58 + gPStranica
+      FF
+   ENDIF
+
+   ?
+   ?
+
+   @ PRow(), 10 SAY "__________________ M.P."
+   @ PRow(), 50 SAY "______________________ M.P."
+
+   ?
+   ?
+
+   @ PRow(), 10 SAY Trim( gMjStr ) + ", " + DToC( Date() )
+   @ PRow(), 52 SAY "( MJESTO I DATUM )"
+
+   IF PRow() > 52 + gPStranica
+      FF
+   ENDIF
+
+   ?
+   ?
+
+   @ PRow(), 0 SAY "Prema clanu 28. stav 4. Zakona o racunovodstvu i reviziji u FBIH (Sl.novine FBIH, broj 83/09)"
+   @ PRow() + 1, 0 SAY "na ovu nasu konfirmaciju ste duzni odgovoriti u roku od osam dana."
+   @ PRow() + 1, 0 SAY "Ukoliko u tom roku ne primimo potvrdu ili osporavanje iskazanog stanja, smatracemo da je"
+   @ PRow() + 1, 0 SAY "usaglasavanje izvrseno i da je stanje isto."
+
+   ?
+   ?
+
+   @ PRow(), 0 SAY "NAPOMENA: OSPORAVAMO ISKAZANO STANJE U CJELINI _______________ DJELIMI�NO"
+   @ PRow() + 1, 0 SAY "ZA IZNOS OD  " + ValDomaca() + "= _______________ IZ SLIJEDE�IH RAZLOGA:"
+   @ PRow() + 1, 0 SAY "_________________________________________________________________________"
+
+   ?
+   ?
+
+   @ PRow(), 0 SAY "_________________________________________________________________________"
+   ?
+   ?
+   @ PRow(), 48 SAY "DU�NIK:"
+   @ PRow() + 1, 40 SAY "_______________________ M.P."
+   @ PRow() + 1, 44 SAY "( MJESTO I DATUM )"
+
+   SELECT ios
+
+   RETURN
 
 
 
@@ -1546,17 +1558,20 @@ return
 // ------------------------------------------
 // vraca strukturu tabele za export
 // ------------------------------------------
-static function g_exp_fields()
-local _dbf := {}
-AADD( _dbf, {"idpartner", "C", 10, 0 } )
-AADD( _dbf, {"partner", "C", 40, 0 } )
-AADD( _dbf, {"brrn", "C", 10, 0 } )
-AADD( _dbf, {"opis", "C", 40, 0 } )
-AADD( _dbf, {"datum", "D", 8, 0 } )
-AADD( _dbf, {"valuta", "D", 8, 0 } )
-AADD( _dbf, {"duguje", "N", 15, 5 } )
-AADD( _dbf, {"potrazuje", "N", 15, 5 } )
-return _dbf
+STATIC FUNCTION g_exp_fields()
+
+   LOCAL _dbf := {}
+
+   AAdd( _dbf, { "idpartner", "C", 10, 0 } )
+   AAdd( _dbf, { "partner", "C", 40, 0 } )
+   AAdd( _dbf, { "brrn", "C", 10, 0 } )
+   AAdd( _dbf, { "opis", "C", 40, 0 } )
+   AAdd( _dbf, { "datum", "D", 8, 0 } )
+   AAdd( _dbf, { "valuta", "D", 8, 0 } )
+   AAdd( _dbf, { "duguje", "N", 15, 5 } )
+   AAdd( _dbf, { "potrazuje", "N", 15, 5 } )
+
+   RETURN _dbf
 
 
 
@@ -1565,26 +1580,24 @@ return _dbf
 // ---------------------------------------------------------
 // filovanje tabele sa podacima
 // ---------------------------------------------------------
-static function fill_exp_tbl( cIdPart, cNazPart, ;
-            cBrRn, cOpis, dDatum, dValuta, ;
-            nDug, nPot )
-local _t_area := SELECT()
+STATIC FUNCTION fill_exp_tbl( cIdPart, cNazPart, ;
+      cBrRn, cOpis, dDatum, dValuta, ;
+      nDug, nPot )
 
-O_R_EXP
-append blank
+   LOCAL _t_area := Select()
 
-replace field->idpartner with cIdPart
-replace field->partner with cNazPart
-replace field->brrn with cBrRn
-replace field->opis with cOpis
-replace field->datum with dDatum
-replace field->valuta with dValuta
-replace field->duguje with nDug
-replace field->potrazuje with nPot
+   O_R_EXP
+   APPEND BLANK
 
-select ( _t_area )
+   REPLACE field->idpartner WITH cIdPart
+   REPLACE field->partner WITH cNazPart
+   REPLACE field->brrn WITH cBrRn
+   REPLACE field->opis WITH cOpis
+   REPLACE field->datum WITH dDatum
+   REPLACE field->valuta WITH dValuta
+   REPLACE field->duguje WITH nDug
+   REPLACE field->potrazuje WITH nPot
 
-return
+   SELECT ( _t_area )
 
-
-
+   RETURN

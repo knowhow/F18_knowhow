@@ -16,7 +16,6 @@ STATIC picBHD
 STATIC picDEM
 
 
-
 STATIC FUNCTION _o_tables()
 
    O_KOMP_POT
@@ -550,7 +549,7 @@ STATIC FUNCTION key_handler( vars )
          _area := SELECT()
 
          print_kompen( vars )
-         
+
          SELECT ( _area )
          nVrati := DE_CONT
 
@@ -882,5 +881,3 @@ STATIC FUNCTION _skip_t_marker( _mark_12, _mark_60 )
    SELECT ( _t_arr )
 
    RETURN NIL
-
-

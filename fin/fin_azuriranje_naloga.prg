@@ -17,8 +17,6 @@ STATIC __tbl_anal := "fin_anal"
 STATIC __tbl_sint := "fin_sint"
 
 
-
-
 FUNCTION fin_azuriranje_naloga( automatic )
 
    LOCAL oServer := my_server()
@@ -71,12 +69,12 @@ FUNCTION fin_azuriranje_naloga( automatic )
 
       IF fin_dokument_postoji( _id_firma, _id_vn, _br_nal )
 
-         MsgBeep( "Nalog " + _id_firma + "-" + _id_vn + "-" + ALLTRIM( _br_nal ) + " već postoji ažuriran !" )
+         MsgBeep( "Nalog " + _id_firma + "-" + _id_vn + "-" + AllTrim( _br_nal ) + " već postoji ažuriran !" )
 
          IF !lViseNalogaUPripremi
 
             sql_table_update( nil, "ROLLBACK" )
-	
+
             MsgC()
 
             RETURN lRet
@@ -92,7 +90,7 @@ FUNCTION fin_azuriranje_naloga( automatic )
          sql_table_update( nil, "ROLLBACK" )
 
          log_write( "F18_DOK_OPER: greška kod ažuriranja fin naloga: " + _id_firma + "-" + _id_vn + "-" + _br_nal, 2 )
-	
+
          MsgC()
 
          MsgBeep( "Problem sa ažuriranjem naloga na SQL server !" )
@@ -104,7 +102,7 @@ FUNCTION fin_azuriranje_naloga( automatic )
       IF !fin_azur_dbf( automatic, _id_firma, _id_vn, _br_nal )
 
          sql_table_update( nil, "ROLLBACK" )
-	
+
          MsgC()
 
          log_write( "F18_DOK_OPER: greška kod ažuriranja fin naloga: " + _id_firma + "-" + _id_vn + "-" + _br_nal, 2 )
@@ -124,7 +122,7 @@ FUNCTION fin_azuriranje_naloga( automatic )
    f18_free_tables( { __tbl_suban, __tbl_anal, __tbl_sint, __tbl_nalog } )
 
    sql_table_update( nil, "END" )
-	
+
    SELECT fin_pripr
    my_dbf_pack()
 
@@ -151,7 +149,7 @@ STATIC FUNCTION fin_nalozi_iz_pripreme_u_matricu()
 
    DO WHILE !Eof()
 
-      _scan := AScan( _data, {|var| VAR[ 1 ] == field->idfirma .AND. ;
+      _scan := AScan( _data, {| var| VAR[ 1 ] == field->idfirma .AND. ;
          VAR[ 2 ] == field->idvn .AND. ;
          VAR[ 3 ] == field->brnal  } )
 
@@ -226,11 +224,11 @@ FUNCTION fin_azur_sql( oServer, id_firma, id_vn, br_nal )
       IF _count == 1
 
          _tmp_id := _rec[ "idfirma" ] + _rec[ "idvn" ] + _rec[ "brnal" ]
-			
+
          AAdd( _ids_suban, "#2" + _tmp_id )
          AAdd( _ids_anal, "#2" + _tmp_id )
          AAdd( _ids_sint, "#2" + _tmp_id )
-			
+
          AAdd( _ids_nalog, _tmp_id )
 
          @ m_x + 1, m_y + 2 SAY "fin_suban -> server: " + _tmp_id
@@ -243,10 +241,10 @@ FUNCTION fin_azur_sql( oServer, id_firma, id_vn, br_nal )
       ENDIF
 
       SKIP
-	
+
    ENDDO
 
-	
+
    IF _ok
 
       @ m_x + 2, m_y + 2 SAY "fin_anal -> server"
@@ -259,7 +257,7 @@ FUNCTION fin_azur_sql( oServer, id_firma, id_vn, br_nal )
       DO WHILE !Eof() .AND. field->idfirma == id_firma .AND. field->idvn == id_vn .AND. field->brnal == br_nal
 
          _rec := dbf_get_rec()
-        	
+
          IF !sql_table_update( "fin_anal", "ins", _rec )
             _ok := .F.
             EXIT
@@ -271,7 +269,7 @@ FUNCTION fin_azur_sql( oServer, id_firma, id_vn, br_nal )
 
    ENDIF
 
-	
+
    IF _ok
 
       @ m_x + 3, m_y + 2 SAY "fin_sint -> server"
@@ -352,7 +350,7 @@ STATIC FUNCTION fin_provjera_prije_azuriranja_naloga( auto, lista_naloga )
    ENDIF
 
    IF !fin_p_tabele_provjera( lista_naloga )
-	
+
       IF !_vise_naloga
          MsgBeep( "Potrebno izvršiti štampu naloga prije ažuriranja !" )
       ENDIF
@@ -378,7 +376,7 @@ STATIC FUNCTION fin_provjera_prije_azuriranja_naloga( auto, lista_naloga )
       SEEK _id_firma + _id_vn + _br_nal
 
       _t_rec := RecNo()
-	
+
       IF Len( AllTrim( field->brnal ) ) < 8
          MsgBeep( "Broj naloga mora biti sa vodećim nulama !" )
          SELECT ( _t_area )
@@ -549,7 +547,7 @@ STATIC FUNCTION fin_p_saldo_provjera( id_firma, id_vn, br_nal )
    _saldo := 0
 
    DO WHILE !Eof() .AND. field->idfirma == id_firma .AND. field->idvn == id_vn .AND. field->brnal == br_nal
-	
+
       IF field->d_p == "1"
          _saldo += field->iznosbhd
       ELSE
@@ -608,7 +606,7 @@ STATIC FUNCTION fin_p_tabele_provjera( lista_naloga )
       IF !Found()
          MsgBeep( "Nalog " + _id_firma + "-" + _id_vn + "-" + AllTrim( _br_nal ) + " ne postoji u PSUBAN !" )
          RETURN _ok
-      endif
+      ENDIF
 
    NEXT
 
@@ -751,7 +749,7 @@ FUNCTION psuban_konto_check( arr, silent )
 
       _ok := .F.
 
-      _scan := AScan( arr, {|val| val[ 1 ] + val[ 2 ] == "KONTO" + psuban->idkonto } )
+      _scan := AScan( arr, {| val| val[ 1 ] + val[ 2 ] == "KONTO" + psuban->idkonto } )
 
       IF _scan == 0
          AAdd( arr, { "KONTO", psuban->idkonto, psuban->rbr } )
@@ -947,15 +945,13 @@ FUNCTION fin_pripr_delete( nalog_ctrl )
    RETURN .T.
 
 
-
-
 FUNCTION fin_dokument_postoji( id_firma, id_vn, br_nal )
 
    LOCAL lExist := .F.
    LOCAL cWhere
 
-   cWhere := "idfirma = " + _sql_quote( id_firma ) 
-   cWhere += " AND idvn = " + _sql_quote( id_vn ) 
+   cWhere := "idfirma = " + _sql_quote( id_firma )
+   cWhere += " AND idvn = " + _sql_quote( id_vn )
    cWhere += " AND brnal = " + _sql_quote( br_nal )
 
    IF table_count( "fmk.fin_nalog", cWhere ) > 0
@@ -963,5 +959,3 @@ FUNCTION fin_dokument_postoji( id_firma, id_vn, br_nal )
    ENDIF
 
    RETURN lExist
-
-

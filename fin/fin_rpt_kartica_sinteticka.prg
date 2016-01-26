@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,275 +12,282 @@
 #include "f18.ch"
 
 
-function SinKart()
+FUNCTION SinKart()
 
-cIdFirma:=gFirma
-qqKonto:=""
-dDatOd := fetch_metric( "fin_kart_datum_od", my_user(), CTOD("") )
-dDatDo := fetch_metric( "fin_kart_datum_do", my_user(), CTOD("") )
-cBrza:="D"
+   cIdFirma := gFirma
+   qqKonto := ""
+   dDatOd := fetch_metric( "fin_kart_datum_od", my_user(), CToD( "" ) )
+   dDatDo := fetch_metric( "fin_kart_datum_do", my_user(), CToD( "" ) )
+   cBrza := "D"
 
-IF gVar1=="0"
-    M:="------- -------- ---- -------- ---------------- ----------------- ----------------- ------------- ------------- -------------"
-ELSE
-    M:="------- -------- ---- -------- ---------------- ----------------- ------------------"
-ENDIF
+   IF gVar1 == "0"
+      M := "------- -------- ---- -------- ---------------- ----------------- ----------------- ------------- ------------- -------------"
+   ELSE
+      M := "------- -------- ---- -------- ---------------- ----------------- ------------------"
+   ENDIF
 
-cPredh:="2"
+   cPredh := "2"
 
-O_PARTN
-O_PARAMS
+   O_PARTN
+   O_PARAMS
 
-private cSection:="1"; cHistory:=" ";aHistory:={}
+   PRIVATE cSection := "1"; cHistory := " ";aHistory := {}
 
-Params1()
+   Params1()
 
-RPar("c1",@cIdFirma)
-RPar("c2",@qqKonto)
-RPar("c3",@cBrza)
-RPar("c4",@cPredh)
+   RPar( "c1", @cIdFirma )
+   RPar( "c2", @qqKonto )
+   RPar( "c3", @cBrza )
+   RPar( "c4", @cPredh )
 
-if gNW=="D";cIdFirma:=gFirma; endif
+   IF gNW == "D";cIdFirma := gFirma; ENDIF
 
-Box("",9,75)
-do while .t.
- set cursor on
- @ m_x+1,m_y+2 SAY "KARTICA (SINTETICKI KONTO)"
- if gNW=="D"
-   @ m_x+2,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
- else
-  @ m_x+2,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
- endif
- @ m_x+3,m_y+2 SAY "Brza kartica (D/N)               " GET cBrza pict "@!" valid cBrza $ "DN"
- @ m_x+4,m_y+2 SAY "BEZ/SA prethodnim prometom (1/2):" GET cPredh valid cPredh $ "12"
- read; ESC_BCR
- if cBrza=="D"
-    qqKonto:=padr(qqKonto,3)
-    @ m_x+6,m_y+2 SAY "Konto: " GET qqKonto
- else
-    qqKonto:=padr(qqKonto,60)
-    @ m_x+6,m_y+2 SAY "Konto: " GET qqKonto PICTURE "@S50"
- endif
- @ m_x+8,m_y+2 SAY "Datum od:" GET dDatOd
- @ m_x+8,col()+2 SAY "do:" GET dDatDo
- cIdRJ:=""
- IF gRJ=="D" .and. gSAKrIz=="D"
-   cIdRJ:="999999"
-   @ m_x+9,m_y+2 SAY "Radna jedinica (999999-sve): " GET cIdRj
- ENDIF
- read; ESC_BCR
+   Box( "", 9, 75 )
+   DO WHILE .T.
+      SET CURSOR ON
+      @ m_x + 1, m_y + 2 SAY "KARTICA (SINTETICKI KONTO)"
+      IF gNW == "D"
+         @ m_x + 2, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+      ELSE
+         @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      ENDIF
+      @ m_x + 3, m_y + 2 SAY "Brza kartica (D/N)               " GET cBrza PICT "@!" VALID cBrza $ "DN"
+      @ m_x + 4, m_y + 2 SAY "BEZ/SA prethodnim prometom (1/2):" GET cPredh VALID cPredh $ "12"
+      read; ESC_BCR
+      IF cBrza == "D"
+         qqKonto := PadR( qqKonto, 3 )
+         @ m_x + 6, m_y + 2 SAY "Konto: " GET qqKonto
+      ELSE
+         qqKonto := PadR( qqKonto, 60 )
+         @ m_x + 6, m_y + 2 SAY "Konto: " GET qqKonto PICTURE "@S50"
+      ENDIF
+      @ m_x + 8, m_y + 2 SAY "Datum od:" GET dDatOd
+      @ m_x + 8, Col() + 2 SAY "do:" GET dDatDo
+      cIdRJ := ""
+      IF gRJ == "D" .AND. gSAKrIz == "D"
+         cIdRJ := "999999"
+         @ m_x + 9, m_y + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
+      ENDIF
+      read; ESC_BCR
 
- if cBrza=="N"
-  aUsl1:=Parsiraj(qqKonto,"IdKonto","C")
-  if aUsl1<>NIL; exit; endif
- else
-  exit
- endif
-enddo
-if Params2()
- WPar("c1",@cIdFirma);WPar("c2",@qqKonto);WPar("d1",@dDatOD); WPar("d2",@dDatDo)
- WPAr("c3",@cBrza)
- WPar("c4",cPredh)
-endif
-select params; use
+      IF cBrza == "N"
+         aUsl1 := Parsiraj( qqKonto, "IdKonto", "C" )
+         IF aUsl1 <> NIL; exit; ENDIF
+      ELSE
+         EXIT
+      ENDIF
 
-BoxC()
+   ENDDO
 
-if cIdRj=="999999"; cidrj:=""; endif
-if gRJ=="D" .and. gSAKrIz=="D" .and. "." $ cidrj
-  cidrj:=trim(strtran(cidrj,".",""))
-  // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
-endif
+   IF Params2()
+      WPar( "c1", @cIdFirma );WPar( "c2", @qqKonto );WPar( "d1", @dDatOD ); WPar( "d2", @dDatDo )
+      WPAr( "c3", @cBrza )
+      WPar( "c4", cPredh )
+   ENDIF
+   SELECT params; USE
 
-IF gRJ=="D" .and. gSAKrIz=="D" .and. LEN(cIdRJ)<>0
-  otvori_sint_anal_kroz_temp(.t.,"IDRJ='"+cIdRJ+"'")
-ELSE
-  O_SINT
-ENDIF
-O_KONTO
+   BoxC()
 
-select SINT
+   IF cIdRj == "999999"; cidrj := ""; ENDIF
+   IF gRJ == "D" .AND. gSAKrIz == "D" .AND. "." $ cidrj
+      cidrj := Trim( StrTran( cidrj, ".", "" ) )
+      // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
+   ENDIF
 
-cFilt1 := ".t." +IF(cBrza=="D","",".and."+aUsl1)+;
-          IF(EMPTY(dDatOd).or.cPredh=="2","",".and.DATNAL>="+cm2str(dDatOd))+;
-          IF(EMPTY(dDatDo),"",".and.DATNAL<="+cm2str(dDatDo))
+   IF gRJ == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
+      otvori_sint_anal_kroz_temp( .T., "IDRJ='" + cIdRJ + "'" )
+   ELSE
+      O_SINT
+   ENDIF
+   O_KONTO
 
-cFilt1:=STRTRAN(cFilt1,".t..and.","")
+   SELECT SINT
 
-IF !(cFilt1==".t.")
-  SET FILTER TO &cFilt1
-ENDIF
+   cFilt1 := ".t." + IF( cBrza == "D", "", ".and." + aUsl1 ) + ;
+      IF( Empty( dDatOd ) .OR. cPredh == "2", "", ".and.DATNAL>=" + cm2str( dDatOd ) ) + ;
+      IF( Empty( dDatDo ), "", ".and.DATNAL<=" + cm2str( dDatDo ) )
 
-IF cBrza=="D"
-  HSEEK cIdFirma+qqKonto
-ELSE
-  HSEEK cIdFirma
-ENDIF
+   cFilt1 := StrTran( cFilt1, ".t..and.", "" )
 
-EOF RET
+   IF !( cFilt1 == ".t." )
+      SET FILTER TO &cFilt1
+   ENDIF
 
-nStr:=0
+   IF cBrza == "D"
+      HSEEK cIdFirma + qqKonto
+   ELSE
+      HSEEK cIdFirma
+   ENDIF
 
-START PRINT CRET
+   EOF RET
 
-if nStr==0; SinkZagl();endif
-nSviD:=nSviP:=nSviD2:=nSviP2:=0
-do whilesc !eof() .and. idfirma==cIdFirma
+   nStr := 0
 
-if cBrza=="D"
-  if qqKonto<>IdKonto; exit; endif
-endif
+   START PRINT CRET
 
-cIdkonto:=IdKonto
-nDugBHD:=nPotBHD:=nDugDEM:=nPotDEM:=0
+   IF nStr == 0; SinkZagl();ENDIF
+   nSviD := nSviP := nSviD2 := nSviP2 := 0
+   DO WHILE !Eof() .AND. idfirma == cIdFirma
 
-if prow()>55+gPStranica; FF; SinKZagl(); endif
+      IF cBrza == "D"
+         IF qqKonto <> IdKonto; exit; ENDIF
+      ENDIF
 
-? m
-SELECT KONTO; HSEEK cIdKonto
-? "KONTO   ",cIdKonto,ALLTRIM(konto->naz)
+      cIdkonto := IdKonto
+      nDugBHD := nPotBHD := nDugDEM := nPotDEM := 0
 
-select SINT
-? m
-nDugBHD:=nPotBHD:=nDugDEM:=nPotDEM:=0
-fPProm:=.t.
-do whilesc !eof() .and. idfirma==cIdFirma .and. cIdKonto==IdKonto
+      IF PRow() > 55 + gPStranica; FF; SinKZagl(); ENDIF
 
-  //********* prethodni promet *********************************
-  if cPredh=="2"
-   if dDatOd>datnal .and. fPProm==.t.
-     nDugBHD+=DugBHD; nPotBHD+=PotBHD
-     nDugDEM+=DugDEM; nPotDEM+=PotDEM
-     skip; loop
-   else
-     if fPProm
-       ? "Prethodno stanje"
-       @ prow(),31             SAY nDugBHD     PICTURE PicBHD
-       @ prow(),pcol()+2  SAY nPotBHD     PICTURE PicBHD
-       @ prow(),pcol()+2  SAY nDugBHD-nPotBHD PICTURE PicBHD
-       IF gVar1=="0"
-         @ prow(),pcol()+2  SAY nDugDEM     PICTURE PicDEM
-         @ prow(),pcol()+2  SAY nPotDEM     PICTURE PicDEM
-         @ prow(),pcol()+2  SAY nDugDEM-nPotDEM PICTURE PicDEM
-       ENDIF
-     endif
-     fPProm:=.f.
-   endif
-  endif
+      ? m
+      SELECT KONTO; HSEEK cIdKonto
+      ? "KONTO   ", cIdKonto, AllTrim( konto->naz )
 
-  IF prow()>60 + gPStranica
-       FF
-       SinKZagl()
-  ENDIF
-  
-  ? IdVN
-  @ prow(),8 SAY BrNal
-  @ prow(),17 SAY RBr
-  @ prow(),22 SAY DatNal
-  @ prow(),31 SAY DugBHD PICTURE PicBHD
-  @ prow(), pcol()+2 SAY PotBHD PICTURE picBHD
-  nDugBHD+=DugBHD; nPotBHD+=PotBHD
-  nDugDEM+=DugDEM; nPotDEM+=PotDEM
-  @ prow(),pcol()+2 SAY nDugBHD-nPotBHD PICTURE PicBHD
-  IF gVar1=="0"
-   @ prow(),pcol()+2 SAY DugDEM PICTURE PicDEM
-   @ prow(),pcol()+2 SAY PotDEM PICTURE picDEM
-   @ prow(),pcol()+2 SAY nDugDEM-nPotDEM PICTURE PicDEM
-  ENDIF
-  SKIP
-ENDDO
+      SELECT SINT
+      ? m
+      nDugBHD := nPotBHD := nDugDEM := nPotDEM := 0
+      fPProm := .T.
+      DO WHILE !Eof() .AND. idfirma == cIdFirma .AND. cIdKonto == IdKonto
 
-IF prow()>60+gPStranica
-     FF
-     SinKZagl()
-ENDIF
-? m
-? "UKUPNO ZA:"+cIdKonto
-@ prow(),31             SAY nDugBHD     PICTURE PicBHD
-@ prow(),pcol()+2  SAY nPotBHD     PICTURE PicBHD
-@ prow(),pcol()+2  SAY nDugBHD-nPotBHD PICTURE PicBHD
-IF gVar1=="0"
- @ prow(),pcol()+2  SAY nDugDEM     PICTURE PicDEM
- @ prow(),pcol()+2  SAY nPotDEM     PICTURE PicDEM
- @ prow(),pcol()+2  SAY nDugDEM-nPotDEM PICTURE PicDEM
-ENDIF
-? M
-nSviD+=nDugBHD; nSviP+=nPotBHD
-nSviD2+=nDugDEM; nSviP2+=nPotDEM
+         // ********* prethodni promet *********************************
+         IF cPredh == "2"
+            IF dDatOd > datnal .AND. fPProm == .T.
+               nDugBHD += DugBHD; nPotBHD += PotBHD
+               nDugDEM += DugDEM; nPotDEM += PotDEM
+               skip; LOOP
+            ELSE
+               IF fPProm
+                  ? "Prethodno stanje"
+                  @ PRow(), 31             SAY nDugBHD     PICTURE PicBHD
+                  @ PRow(), PCol() + 2  SAY nPotBHD     PICTURE PicBHD
+                  @ PRow(), PCol() + 2  SAY nDugBHD - nPotBHD PICTURE PicBHD
+                  IF gVar1 == "0"
+                     @ PRow(), PCol() + 2  SAY nDugDEM     PICTURE PicDEM
+                     @ PRow(), PCol() + 2  SAY nPotDEM     PICTURE PicDEM
+                     @ PRow(), PCol() + 2  SAY nDugDEM - nPotDEM PICTURE PicDEM
+                  ENDIF
+               ENDIF
+               fPProm := .F.
+            ENDIF
+         ENDIF
 
-if gnRazRed==99
-  FF; SinKZagl()
-else
-  i:=0
-  do while prow()<=55+gPstranica.and.gnRazRed>i
-    ?; ++i
-  enddo
-endif
+         IF PRow() > 60 + gPStranica
+            FF
+            SinKZagl()
+         ENDIF
 
-enddo // eof()
+         ? IdVN
+         @ PRow(), 8 SAY BrNal
+         @ PRow(), 17 SAY RBr
+         @ PRow(), 22 SAY DatNal
+         @ PRow(), 31 SAY DugBHD PICTURE PicBHD
+         @ PRow(), PCol() + 2 SAY PotBHD PICTURE picBHD
+         nDugBHD += DugBHD; nPotBHD += PotBHD
+         nDugDEM += DugDEM; nPotDEM += PotDEM
+         @ PRow(), PCol() + 2 SAY nDugBHD - nPotBHD PICTURE PicBHD
+         IF gVar1 == "0"
+            @ PRow(), PCol() + 2 SAY DugDEM PICTURE PicDEM
+            @ PRow(), PCol() + 2 SAY PotDEM PICTURE picDEM
+            @ PRow(), PCol() + 2 SAY nDugDEM - nPotDEM PICTURE PicDEM
+         ENDIF
+         SKIP
 
-if cBrza=="N"
-IF prow()>60+gPStranica; FF; SinKZagl(); ENDIF
-? M
-? "UKUPNO ZA SVA KONTA:"
-@ prow(),31             SAY nSviD           PICTURE PicBHD
-@ prow(),pcol()+2  SAY nSviP           PICTURE PicBHD
-@ prow(),pcol()+2  SAY nSviD-nSviP     PICTURE PicBHD
-IF gVar1=="0"
- @ prow(),pcol()+2  SAY nSviD2          PICTURE PicDEM
- @ prow(),pcol()+2  SAY nSviP2          PICTURE PicDEM
- @ prow(),pcol()+2  SAY nSviD2-nSviP2   PICTURE PicDEM
-ENDIF
-? M
-endif // cbrza=="N"
+      ENDDO
 
-FF
-END PRINT
+      IF PRow() > 60 + gPStranica
+         FF
+         SinKZagl()
+      ENDIF
 
-closeret
-return
+      ? m
+      ? "UKUPNO ZA:" + cIdKonto
+      @ PRow(), 31             SAY nDugBHD     PICTURE PicBHD
+      @ PRow(), PCol() + 2  SAY nPotBHD     PICTURE PicBHD
+      @ PRow(), PCol() + 2  SAY nDugBHD - nPotBHD PICTURE PicBHD
+      IF gVar1 == "0"
+         @ PRow(), PCol() + 2  SAY nDugDEM     PICTURE PicDEM
+         @ PRow(), PCol() + 2  SAY nPotDEM     PICTURE PicDEM
+         @ PRow(), PCol() + 2  SAY nDugDEM - nPotDEM PICTURE PicDEM
+      ENDIF
+
+      ? M
+      nSviD += nDugBHD; nSviP += nPotBHD
+      nSviD2 += nDugDEM; nSviP2 += nPotDEM
+
+      IF gnRazRed == 99
+         FF; SinKZagl()
+      ELSE
+         i := 0
+         DO WHILE PRow() <= 55 + gPstranica .AND. gnRazRed > i
+            ?; ++i
+         ENDDO
+      ENDIF
+
+   ENDDO // eof()
+
+   IF cBrza == "N"
+      IF PRow() > 60 + gPStranica; FF; SinKZagl(); ENDIF
+      ? M
+      ? "UKUPNO ZA SVA KONTA:"
+      @ PRow(), 31             SAY nSviD           PICTURE PicBHD
+      @ PRow(), PCol() + 2  SAY nSviP           PICTURE PicBHD
+      @ PRow(), PCol() + 2  SAY nSviD - nSviP     PICTURE PicBHD
+      IF gVar1 == "0"
+         @ PRow(), PCol() + 2  SAY nSviD2          PICTURE PicDEM
+         @ PRow(), PCol() + 2  SAY nSviP2          PICTURE PicDEM
+         @ PRow(), PCol() + 2  SAY nSviD2 - nSviP2   PICTURE PicDEM
+      ENDIF
+      ? M
+   ENDIF // cbrza=="N"
+
+   FF
+   ENDPRINT
+
+   closeret
+
+   RETURN
 
 
 
 /*! \fn SinKZagl()
  *  \brief Zaglavlje sinteticke kartice
  */
- 
-function SinKZagl()
-?
-P_COND
-?? "FIN.P: SINTETICKA KARTICA  NA DAN: "; ?? DATE()
-if !(empty(dDatOd) .and. empty(dDatDo))
-    ?? "   ZA PERIOD OD",dDatOd,"DO",dDatDo
-endif
-@ prow(),125 SAY "Str."+str(++nStr,3)
 
-if gNW=="D"
- ? "Firma:",gFirma,gNFirma
-else
- SELECT PARTN; HSEEK cIdFirma
- ? "Firma:",cidfirma,ALLTRIM(partn->naz),ALLTRIM(partn->naz2)
-endif
+FUNCTION SinKZagl()
 
-IF gRJ=="D" .and. gSAKrIz=="D" .and. LEN(cIdRJ)<>0
-  ? "Radna jedinica ='"+cIdRj+"'"
-ENDIF
+   ?
+   P_COND
+   ?? "FIN.P: SINTETICKA KARTICA  NA DAN: "; ?? Date()
+   IF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
+      ?? "   ZA PERIOD OD", dDatOd, "DO", dDatDo
+   ENDIF
+   @ PRow(), 125 SAY "Str." + Str( ++nStr, 3 )
 
-SELECT SINT
-IF gVar1=="1"; F12CPI; ENDIF
-?  m
-IF gVar1=="0"
- ?  "*VRSTA * BROJ   *REDN* DATUM  *           I  Z  N  O  S     U     "+ValDomaca()+"             *      I  Z  N  O  S     U     "+ValPomocna()+"      *"
- ?  "                               ---------------------------------------------------- -----------------------------------------"
- ?  "*NALOGA*NALOGA  *BROJ*        *    DUGUJE      *     POTRAZUJE   *      SALDO      *   DUGUJE    *  POTRAZUJE  *    SALDO   *"
-ELSE
- ?  "*VRSTA * BROJ   *REDN* DATUM  *           I  Z  N  O  S     U     "+ValDomaca()+"             *"
- ?  "                               -----------------------------------------------------"
- ?  "*NALOGA*NALOGA  *BROJ*        *    DUGUJE      *     POTRAZUJE   *      SALDO      *"
-ENDIF
-?  m
+   IF gNW == "D"
+      ? "Firma:", gFirma, gNFirma
+   ELSE
+      SELECT PARTN; HSEEK cIdFirma
+      ? "Firma:", cidfirma, AllTrim( partn->naz ), AllTrim( partn->naz2 )
+   ENDIF
 
-RETURN
+   IF gRJ == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
+      ? "Radna jedinica ='" + cIdRj + "'"
+   ENDIF
+
+   SELECT SINT
+   IF gVar1 == "1"; F12CPI; ENDIF
+   ?  m
+   IF gVar1 == "0"
+      ?  "*VRSTA * BROJ   *REDN* DATUM  *           I  Z  N  O  S     U     " + ValDomaca() + "             *      I  Z  N  O  S     U     " + ValPomocna() + "      *"
+      ?  "                               ---------------------------------------------------- -----------------------------------------"
+      ?  "*NALOGA*NALOGA  *BROJ*        *    DUGUJE      *     POTRAZUJE   *      SALDO      *   DUGUJE    *  POTRAZUJE  *    SALDO   *"
+   ELSE
+      ?  "*VRSTA * BROJ   *REDN* DATUM  *           I  Z  N  O  S     U     " + ValDomaca() + "             *"
+      ?  "                               -----------------------------------------------------"
+      ?  "*NALOGA*NALOGA  *BROJ*        *    DUGUJE      *     POTRAZUJE   *      SALDO      *"
+   ENDIF
+   ?  m
+
+   RETURN
 
 
 
@@ -288,241 +295,242 @@ RETURN
  *  \brief Sinteticka kartica (varijanta po mjesecima)
  */
 
-function SinKart2()
+FUNCTION SinKart2()
 
-cIdFirma:=gFirma
-qqKonto:=""
-dDatOd:=dDAtDo:=ctod("")
+   cIdFirma := gFirma
+   qqKonto := ""
+   dDatOd := dDAtDo := CToD( "" )
 
-IF gVar1=="0"
- M:="------------- ---------------- ----------------- ----------------- ------------- ------------- -------------"
-ELSE
- M:="------------- ---------------- ----------------- ------------------"
-ENDIF
+   IF gVar1 == "0"
+      M := "------------- ---------------- ----------------- ----------------- ------------- ------------- -------------"
+   ELSE
+      M := "------------- ---------------- ----------------- ------------------"
+   ENDIF
 
-O_PARTN
+   O_PARTN
 
-O_PARAMS
-Private cSection:="2",cHistory:=" ",aHistory:={}
-Params1()
-RPar("c1",@cIdFirma); RPar("c2",@qqKonto); RPar("d1",@dDatOd); RPar("d2",@dDatDo)
-if gNW=="D";cIdFirma:=gFirma; endif
-qqKonto:=padr(qqKonto,100)
+   O_PARAMS
+   PRIVATE cSection := "2", cHistory := " ", aHistory := {}
+   Params1()
+   RPar( "c1", @cIdFirma ); RPar( "c2", @qqKonto ); RPar( "d1", @dDatOd ); RPar( "d2", @dDatDo )
+   IF gNW == "D";cIdFirma := gFirma; ENDIF
+   qqKonto := PadR( qqKonto, 100 )
 
-Box("",5,75)
-do while .t.
- set cursor on
- @ m_x+1,m_y+2 SAY "KARTICA (SINTETICKI KONTO) PO MJESECIMA"
+   Box( "", 5, 75 )
+   DO WHILE .T.
+      SET CURSOR ON
+      @ m_x + 1, m_y + 2 SAY "KARTICA (SINTETICKI KONTO) PO MJESECIMA"
 
- if gNW=="D"
-   @ m_x+2,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
- else
-  @ m_x+2,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
- endif
- @ m_x+3,m_y+2 SAY "Konto: " GET qqKonto PICTURE "@S50"
- @ m_x+4,m_y+2 SAY "Datum od:" GET dDatOd
- @ m_x+4,col()+2 SAY "do:" GET dDatDo
- cIdRJ:=""
- IF gRJ=="D" .and. gSAKrIz=="D"
-   cIdRJ:="999999"
-   @ m_x+5,m_y+2 SAY "Radna jedinica (999999-sve): " GET cIdRj
- ENDIF
- READ;  ESC_BCR
- aUsl1:=Parsiraj(qqKonto,"IdKonto","C")
- if aUsl1<>NIL; exit; endif
-enddo
-BoxC()
+      IF gNW == "D"
+         @ m_x + 2, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+      ELSE
+         @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      ENDIF
+      @ m_x + 3, m_y + 2 SAY "Konto: " GET qqKonto PICTURE "@S50"
+      @ m_x + 4, m_y + 2 SAY "Datum od:" GET dDatOd
+      @ m_x + 4, Col() + 2 SAY "do:" GET dDatDo
+      cIdRJ := ""
+      IF gRJ == "D" .AND. gSAKrIz == "D"
+         cIdRJ := "999999"
+         @ m_x + 5, m_y + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
+      ENDIF
+      READ;  ESC_BCR
+      aUsl1 := Parsiraj( qqKonto, "IdKonto", "C" )
+      IF aUsl1 <> NIL; exit; ENDIF
+   ENDDO
+   BoxC()
 
-if cIdRj=="999999"; cidrj:=""; endif
-if gRJ=="D" .and. gSAKrIz=="D" .and. "." $ cidrj
-  cidrj:=trim(strtran(cidrj,".",""))
-  // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
-endif
+   IF cIdRj == "999999"; cidrj := ""; ENDIF
+   IF gRJ == "D" .AND. gSAKrIz == "D" .AND. "." $ cidrj
+      cidrj := Trim( StrTran( cidrj, ".", "" ) )
+      // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
+   ENDIF
 
-cIdFirma:=left(cIdFirma,2)
-qqKonto:=trim(qqKonto)
+   cIdFirma := Left( cIdFirma, 2 )
+   qqKonto := Trim( qqKonto )
 
-if Params2()
- WPar("c1",@cIdFirma); WPar("c2",@qqKonto); WPar("d1",@dDatOd); WPar("d2",@dDatDo)
-endif
-select params; use
+   IF Params2()
+      WPar( "c1", @cIdFirma ); WPar( "c2", @qqKonto ); WPar( "d1", @dDatOd ); WPar( "d2", @dDatDo )
+   ENDIF
+   SELECT params; USE
 
 
-IF gRJ=="D" .and. gSAKrIz=="D" .and. LEN(cIdRJ)<>0
-  otvori_sint_anal_kroz_temp(.t.,"IDRJ='"+cIdRJ+"'")
-ELSE
-  O_SINT
-ENDIF
-O_KONTO
+   IF gRJ == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
+      otvori_sint_anal_kroz_temp( .T., "IDRJ='" + cIdRJ + "'" )
+   ELSE
+      O_SINT
+   ENDIF
+   O_KONTO
 
-select SINT
+   SELECT SINT
 
-cFilt1 := aUsl1+;
-          IF(EMPTY(dDatOd),"",".and.DATNAL>="+cm2str(dDatOd))+;
-          IF(EMPTY(dDatDo),"",".and.DATNAL<="+cm2str(dDatDo))
+   cFilt1 := aUsl1 + ;
+      IF( Empty( dDatOd ), "", ".and.DATNAL>=" + cm2str( dDatOd ) ) + ;
+      IF( Empty( dDatDo ), "", ".and.DATNAL<=" + cm2str( dDatDo ) )
 
-cFilt1:=STRTRAN(cFilt1,".t..and.","")
+   cFilt1 := StrTran( cFilt1, ".t..and.", "" )
 
-IF !(cFilt1==".t.")
-  SET FILTER TO &cFilt1
-ENDIF
+   IF !( cFilt1 == ".t." )
+      SET FILTER TO &cFilt1
+   ENDIF
 
-hseek cidfirma
-EOF RET
+   hseek cidfirma
+   EOF RET
 
-nStr:=0
-START PRINT CRET
+   nStr := 0
+   START PRINT CRET
 
-if nStr==0; ZaglSink2();endif
-nSviD:=nSviP:=nSviD2:=nSviP2:=0
+   IF nStr == 0; ZaglSink2();ENDIF
+   nSviD := nSviP := nSviD2 := nSviP2 := 0
 
-do whilesc idfirma==cidfirma .and. !eof()
-cIdkonto:=IdKonto
-nDugBHD:=nPotBHD:=nDugDEM:=nPotDEM:=0
+   DO WHILE idfirma == cidfirma .AND. !Eof()
+      cIdkonto := IdKonto
+      nDugBHD := nPotBHD := nDugDEM := nPotDEM := 0
 
-if prow()>55+gPStranica; FF; ZaglSink2(); endif
+      IF PRow() > 55 + gPStranica; FF; ZaglSink2(); ENDIF
 
-? m
-SELECT KONTO; HSEEK cIdKonto
-? "KONTO   "; @ prow(),pcol()+1 SAY cIdKonto
-@ prow(),pcol()+2 SAY konto->naz
-select SINT
+      ? m
+      SELECT KONTO; HSEEK cIdKonto
+      ? "KONTO   "; @ PRow(), PCol() + 1 SAY cIdKonto
+      @ PRow(), PCol() + 2 SAY konto->naz
+      SELECT SINT
 
-? m
+      ? m
 
-nDugBHD:=nPotBHD:=nDugDEM:=nPotDEM:=0
-do whilesc !eof() .and. idfirma==cidfirma .and. cIdKonto==IdKonto
-  IF prow()>60+gPStranica; FF; ZaglSink2();ENDIF
-  nMonth:=month(DatNal)
-  nDBHD:=nPBHD:=nDDEM:=nPDEM:=0
-  nPSDBHD:=nPSPBHD:=nPSDDEM:=nPSPDEM:=0
-  do while !eof() .and. idfirma==cidfirma .and. cIdKonto==IdKonto .and. month(datnal)==nMonth
-    if idvn=="00"
-     nPSDBhd+=DugBHD; nPSPBHD+=PotBHD
-     nPSDDEM+=DugDEM; nPSPDEM+=PotDEM
-    else
-     nDBhd+=DugBHD; nPBHD+=PotBHD
-     nDDEM+=DugDEM; nPDEM+=PotDEM
-    endif
-    skip
-  enddo
-  if round(nPSDBHD,4)<>0 .or. round(nPSPBHD,4)<>0 // pocetno stanje
-          @ prow()+1,3 SAY " PS"
-          nC1:=pcol()+8
-          @ prow(),pcol()+8 SAY nPSDBHD PICTURE PicBHD
-          @ prow(), pcol()+2 SAY nPSPBHD PICTURE picBHD
-          nDugBHD+=nPSDBHD; nPotBHD+=nPSPBHD
-          nDugDEM+=nPSDDEM; nPotDEM+=nPSPDEM
-          @ prow(),pcol()+2 SAY nDugBHD-nPotBHD PICTURE PicBHD
-          IF gVar1=="0"
-           @ prow(),pcol()+2 SAY nPSDDEM PICTURE PicDEM
-           @ prow(),pcol()+2 SAY nPSPDEM PICTURE picDEM
-           @ prow(),pcol()+2 SAY nDugDEM-nPotDEM PICTURE PicDEM
-          ENDIF
-  endif
-  @ prow()+1,3 SAY str(nMonth,3)
-  nC1:=pcol()+8
-  @ prow(),pcol()+8 SAY nDBHD PICTURE PicBHD
-  @ prow(), pcol()+2 SAY nPBHD PICTURE picBHD
-  nDugBHD+=nDBHD; nPotBHD+=nPBHD
-  nDugDEM+=nDDEM; nPotDEM+=nPDEM
-  @ prow(),pcol()+2 SAY nDugBHD-nPotBHD PICTURE PicBHD
-  IF gVar1=="0"
-   @ prow(),pcol()+2 SAY nDDEM PICTURE PicDEM
-   @ prow(),pcol()+2 SAY nPDEM PICTURE picDEM
-   @ prow(),pcol()+2 SAY nDugDEM-nPotDEM PICTURE PicDEM
-  ENDIF
-ENDDO
+      nDugBHD := nPotBHD := nDugDEM := nPotDEM := 0
+      DO WHILE !Eof() .AND. idfirma == cidfirma .AND. cIdKonto == IdKonto
+         IF PRow() > 60 + gPStranica; FF; ZaglSink2();ENDIF
+         nMonth := Month( DatNal )
+         nDBHD := nPBHD := nDDEM := nPDEM := 0
+         nPSDBHD := nPSPBHD := nPSDDEM := nPSPDEM := 0
+         DO WHILE !Eof() .AND. idfirma == cidfirma .AND. cIdKonto == IdKonto .AND. Month( datnal ) == nMonth
+            IF idvn == "00"
+               nPSDBhd += DugBHD; nPSPBHD += PotBHD
+               nPSDDEM += DugDEM; nPSPDEM += PotDEM
+            ELSE
+               nDBhd += DugBHD; nPBHD += PotBHD
+               nDDEM += DugDEM; nPDEM += PotDEM
+            ENDIF
+            SKIP
+         ENDDO
+         IF Round( nPSDBHD, 4 ) <> 0 .OR. Round( nPSPBHD, 4 ) <> 0 // pocetno stanje
+            @ PRow() + 1, 3 SAY " PS"
+            nC1 := PCol() + 8
+            @ PRow(), PCol() + 8 SAY nPSDBHD PICTURE PicBHD
+            @ PRow(), PCol() + 2 SAY nPSPBHD PICTURE picBHD
+            nDugBHD += nPSDBHD; nPotBHD += nPSPBHD
+            nDugDEM += nPSDDEM; nPotDEM += nPSPDEM
+            @ PRow(), PCol() + 2 SAY nDugBHD - nPotBHD PICTURE PicBHD
+            IF gVar1 == "0"
+               @ PRow(), PCol() + 2 SAY nPSDDEM PICTURE PicDEM
+               @ PRow(), PCol() + 2 SAY nPSPDEM PICTURE picDEM
+               @ PRow(), PCol() + 2 SAY nDugDEM - nPotDEM PICTURE PicDEM
+            ENDIF
+         ENDIF
+         @ PRow() + 1, 3 SAY Str( nMonth, 3 )
+         nC1 := PCol() + 8
+         @ PRow(), PCol() + 8 SAY nDBHD PICTURE PicBHD
+         @ PRow(), PCol() + 2 SAY nPBHD PICTURE picBHD
+         nDugBHD += nDBHD; nPotBHD += nPBHD
+         nDugDEM += nDDEM; nPotDEM += nPDEM
+         @ PRow(), PCol() + 2 SAY nDugBHD - nPotBHD PICTURE PicBHD
+         IF gVar1 == "0"
+            @ PRow(), PCol() + 2 SAY nDDEM PICTURE PicDEM
+            @ PRow(), PCol() + 2 SAY nPDEM PICTURE picDEM
+            @ PRow(), PCol() + 2 SAY nDugDEM - nPotDEM PICTURE PicDEM
+         ENDIF
+      ENDDO
 
-IF prow()>60+gPStranica; FF; ZaglSink2(); ENDIF
-? M
-? "UKUPNO ZA:"+cIdKonto
-@ prow(),nC1            SAY nDugBHD     PICTURE PicBHD
-@ prow(),pcol()+2  SAY nPotBHD     PICTURE PicBHD
-@ prow(),pcol()+2  SAY nDugBHD-nPotBHD PICTURE PicBHD
-IF gVar1=="0"
- @ prow(),pcol()+2  SAY nDugDEM     PICTURE PicDEM
- @ prow(),pcol()+2  SAY nPotDEM     PICTURE PicDEM
- @ prow(),pcol()+2  SAY nDugDEM-nPotDEM PICTURE PicDEM
-ENDIF
-? M
+      IF PRow() > 60 + gPStranica; FF; ZaglSink2(); ENDIF
+      ? M
+      ? "UKUPNO ZA:" + cIdKonto
+      @ PRow(), nC1            SAY nDugBHD     PICTURE PicBHD
+      @ PRow(), PCol() + 2  SAY nPotBHD     PICTURE PicBHD
+      @ PRow(), PCol() + 2  SAY nDugBHD - nPotBHD PICTURE PicBHD
+      IF gVar1 == "0"
+         @ PRow(), PCol() + 2  SAY nDugDEM     PICTURE PicDEM
+         @ PRow(), PCol() + 2  SAY nPotDEM     PICTURE PicDEM
+         @ PRow(), PCol() + 2  SAY nDugDEM - nPotDEM PICTURE PicDEM
+      ENDIF
+      ? M
 
-nSviD+=nDugBHD; nSviP+=nPotBHD
-nSviD2+=nDugDEM; nSviP2+=nPotDEM
+      nSviD += nDugBHD; nSviP += nPotBHD
+      nSviD2 += nDugDEM; nSviP2 += nPotDEM
 
-if gnRazRed==99
-  FF; ZaglSink2()
-else
-  i:=0
-  do while prow()<=55+gPstranica.and.gnRazRed>i
-    ?; ++i
-  enddo
-endif
+      IF gnRazRed == 99
+         FF; ZaglSink2()
+      ELSE
+         i := 0
+         DO WHILE PRow() <= 55 + gPstranica .AND. gnRazRed > i
+            ?; ++i
+         ENDDO
+      ENDIF
 
-enddo // eof()
+   ENDDO // eof()
 
-IF prow()>60+gPStranica; FF; ZaglSink2(); ENDIF
-? M
-? "ZA SVA KONTA:"
-@ prow(),nC1            SAY nSviD           PICTURE PicBHD
-@ prow(),pcol()+2  SAY nSviP           PICTURE PicBHD
-@ prow(),pcol()+2  SAY nSviD-nSviP     PICTURE PicBHD
-IF gVar1=="0"
- @ prow(),pcol()+2  SAY nSviD2          PICTURE PicDEM
- @ prow(),pcol()+2  SAY nSviP2          PICTURE PicDEM
- @ prow(),pcol()+2  SAY nSviD2-nSviP2   PICTURE PicDEM
-ENDIF
-? M
+   IF PRow() > 60 + gPStranica; FF; ZaglSink2(); ENDIF
+   ? M
+   ? "ZA SVA KONTA:"
+   @ PRow(), nC1            SAY nSviD           PICTURE PicBHD
+   @ PRow(), PCol() + 2  SAY nSviP           PICTURE PicBHD
+   @ PRow(), PCol() + 2  SAY nSviD - nSviP     PICTURE PicBHD
+   IF gVar1 == "0"
+      @ PRow(), PCol() + 2  SAY nSviD2          PICTURE PicDEM
+      @ PRow(), PCol() + 2  SAY nSviP2          PICTURE PicDEM
+      @ PRow(), PCol() + 2  SAY nSviD2 - nSviP2   PICTURE PicDEM
+   ENDIF
+   ? M
 
-FF
-END PRINT
+   FF
+   ENDPRINT
 
-my_close_all_dbf()
-return
+   my_close_all_dbf()
+
+   RETURN
 
 
 
 /*! \fn ZaglSinK2()
  *  \brief Zaglavlje sinteticke kartice varijante 2
  */
- 
-function ZaglSink2()
 
-?
-P_COND
-?? "FIN.P: SINTETICKA KARTICA  PO MJESECIMA NA DAN: "; ?? DATE()
-if !(empty(dDatOd) .and. empty(dDatDo))
-    ?? "   ZA PERIOD OD",dDatOd,"DO",dDatDo
-endif
-@ prow(),125 SAY "Str."+str(++nStr,3)
+FUNCTION ZaglSink2()
 
-if gNW=="D"
- ? "Firma:",gFirma,"-",gNFirma
-else
- SELECT PARTN; HSEEK cIdFirma
- ? "Firma:",cIdFirma,ALLTRIM(partn->naz),ALLTRIM(partn->naz2)
-endif
+   ?
+   P_COND
+   ?? "FIN.P: SINTETICKA KARTICA  PO MJESECIMA NA DAN: "; ?? Date()
+   IF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
+      ?? "   ZA PERIOD OD", dDatOd, "DO", dDatDo
+   ENDIF
+   @ PRow(), 125 SAY "Str." + Str( ++nStr, 3 )
 
-IF gRJ=="D" .and. gSAKrIz=="D" .and. LEN(cIdRJ)<>0
-  ? "Radna jedinica ='"+cIdRj+"'"
-ENDIF
+   IF gNW == "D"
+      ? "Firma:", gFirma, "-", gNFirma
+   ELSE
+      SELECT PARTN; HSEEK cIdFirma
+      ? "Firma:", cIdFirma, AllTrim( partn->naz ), AllTrim( partn->naz2 )
+   ENDIF
 
-SELECT SINT
+   IF gRJ == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
+      ? "Radna jedinica ='" + cIdRj + "'"
+   ENDIF
 
-IF gVar1=="1"; F10CPI; ENDIF
-?  m
-IF gVar1=="0"
- ?  "*  MJESEC    *             I Z N O S     U     "+ValDomaca()+"               *       I Z N O S     U     "+ValPomocna()+"         *"
- ?  "              ---------------------------------------------------- -----------------------------------------"
- ?  "*            *    DUGUJE      *     POTRA@UJE   *      SALDO      *   DUGUJE    *  POTRA@UJE  *    SALDO   *"
-ELSE
- ?  "*  MJESEC    *             I Z N O S     U     "+ValDomaca()+"               *"
- ?  "              -----------------------------------------------------"
- ?  "*            *    DUGUJE      *     POTRA@UJE   *      SALDO      *"
-ENDIF
-?  m
+   SELECT SINT
 
-RETURN
+   IF gVar1 == "1"; F10CPI; ENDIF
+   ?  m
+   IF gVar1 == "0"
+      ?  "*  MJESEC    *             I Z N O S     U     " + ValDomaca() + "               *       I Z N O S     U     " + ValPomocna() + "         *"
+      ?  "              ---------------------------------------------------- -----------------------------------------"
+      ?  "*            *    DUGUJE      *     POTRA@UJE   *      SALDO      *   DUGUJE    *  POTRA@UJE  *    SALDO   *"
+   ELSE
+      ?  "*  MJESEC    *             I Z N O S     U     " + ValDomaca() + "               *"
+      ?  "              -----------------------------------------------------"
+      ?  "*            *    DUGUJE      *     POTRA@UJE   *      SALDO      *"
+   ENDIF
+   ?  m
+
+   RETURN
 
 
 
@@ -530,280 +538,281 @@ RETURN
 /*! \fn AnKart()
  *  \brief Analiticka kartica
  */
- 
-function AnKart()
 
-local nCOpis:=0,cOpis:=""
+FUNCTION AnKart()
 
-cIdFirma:=gFirma
-qqKonto:=""
-cBrza:="D"
-cPTD:="N"
-IF gVar1=="0"
- M:="------- -------- ---- -------- ---------------- ----------------- ----------------- ------------- ------------- -------------"
-ELSE
- M:="------- -------- ---- -------- ---------------- ----------------- ------------------"
-ENDIF
+   LOCAL nCOpis := 0, cOpis := ""
 
-O_PARTN
-O_KONTO
+   cIdFirma := gFirma
+   qqKonto := ""
+   cBrza := "D"
+   cPTD := "N"
+   IF gVar1 == "0"
+      M := "------- -------- ---- -------- ---------------- ----------------- ----------------- ------------- ------------- -------------"
+   ELSE
+      M := "------- -------- ---- -------- ---------------- ----------------- ------------------"
+   ENDIF
 
-dDatOd:=dDAtDo:=ctod("")
-cPredh:="2"
+   O_PARTN
+   O_KONTO
 
-O_PARAMS
-Private cSection:="3",cHistory:=" ",aHistory:={}
-Params1()
-RPar("c1",@cIdFirma); RPar("c2",@qqKonto); RPar("d1",@dDatOd); RPar("d2",@dDatDo)
-RPar("c3",@cBrza)
-RPar("c4",@cPredh)
-RPar("c8",@cPTD)
-if gNW=="D";cIdFirma:=gFirma; endif
+   dDatOd := dDAtDo := CToD( "" )
+   cPredh := "2"
 
-Box("",9,65,.f.)
-do while .t.
- set cursor on
- @ m_x+1,m_y+2 SAY "ANALITICKA KARTICA"
- if gNW=="D"
-   @ m_x+2,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
- else
-  @ m_x+2,m_y+2 SAY "Firma: " GET cIdFirma valid {|| empty(cIdFirma) .or. P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
- endif
- @ m_x+3,m_y+2 SAY "Brza kartica (D/N/S)" GET cBrza pict "@!" valid cBrza $ "DNS"
- @ m_x+4,m_y+2 SAY "BEZ/SA prethodnim prometom (1/2):" GET cPredh valid cPredh $ "12"
- read; ESC_BCR
- if cBrza=="D"
-    qqKonto:=padr(qqKonto,7)
-    @ m_x+6,m_y+2 SAY "Konto: " GET qqKonto valid P_Konto(@qqKonto)
- else
-    qqKonto:=padr(qqKonto,60)
-    @ m_x+6,m_y+2 SAY "Konto: " GET qqKonto PICTURE "@S50"
- endif
- if gNW=="N"
-   @ m_x+7,m_y+2 SAY "Prikaz tipa dokumenta (D/N)" GET cPTD pict "@!" valid cPTD $ "DN"
- endif
- @ m_x+8,m_y+2 SAY "Datum od:" GET dDatOd
- @ m_x+8,col()+2 SAY "do:" GET dDatDo
- cIdRJ:=""
- IF gRJ=="D" .and. gSAKrIz=="D"
-   cIdRJ:="999999"
-   @ m_x+9,m_y+2 SAY "Radna jedinica (999999-sve): " GET cIdRj
- ENDIF
- read; ESC_BCR
+   O_PARAMS
+   PRIVATE cSection := "3", cHistory := " ", aHistory := {}
+   Params1()
+   RPar( "c1", @cIdFirma ); RPar( "c2", @qqKonto ); RPar( "d1", @dDatOd ); RPar( "d2", @dDatDo )
+   RPar( "c3", @cBrza )
+   RPar( "c4", @cPredh )
+   RPar( "c8", @cPTD )
+   IF gNW == "D";cIdFirma := gFirma; ENDIF
 
- if cBrza=="N".or.cBrza=="S"
-  qqKonto:=trim(qqKonto)
-  aUsl1:=Parsiraj(qqKonto,"IdKonto","C")
-  if aUsl1<>NIL; exit; endif
- else
-  exit
- endif
-enddo
-BoxC()
+   Box( "", 9, 65, .F. )
+   DO WHILE .T.
+      SET CURSOR ON
+      @ m_x + 1, m_y + 2 SAY "ANALITICKA KARTICA"
+      IF gNW == "D"
+         @ m_x + 2, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+      ELSE
+         @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      ENDIF
+      @ m_x + 3, m_y + 2 SAY "Brza kartica (D/N/S)" GET cBrza PICT "@!" VALID cBrza $ "DNS"
+      @ m_x + 4, m_y + 2 SAY "BEZ/SA prethodnim prometom (1/2):" GET cPredh VALID cPredh $ "12"
+      read; ESC_BCR
+      IF cBrza == "D"
+         qqKonto := PadR( qqKonto, 7 )
+         @ m_x + 6, m_y + 2 SAY "Konto: " GET qqKonto VALID P_Konto( @qqKonto )
+      ELSE
+         qqKonto := PadR( qqKonto, 60 )
+         @ m_x + 6, m_y + 2 SAY "Konto: " GET qqKonto PICTURE "@S50"
+      ENDIF
+      IF gNW == "N"
+         @ m_x + 7, m_y + 2 SAY "Prikaz tipa dokumenta (D/N)" GET cPTD PICT "@!" VALID cPTD $ "DN"
+      ENDIF
+      @ m_x + 8, m_y + 2 SAY "Datum od:" GET dDatOd
+      @ m_x + 8, Col() + 2 SAY "do:" GET dDatDo
+      cIdRJ := ""
+      IF gRJ == "D" .AND. gSAKrIz == "D"
+         cIdRJ := "999999"
+         @ m_x + 9, m_y + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
+      ENDIF
+      read; ESC_BCR
 
-if cIdRj=="999999"; cidrj:=""; endif
-if gRJ=="D" .and. gSAKrIz=="D" .and. "." $ cidrj
-  cidrj:=trim(strtran(cidrj,".",""))
-  // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
-endif
+      IF cBrza == "N" .OR. cBrza == "S"
+         qqKonto := Trim( qqKonto )
+         aUsl1 := Parsiraj( qqKonto, "IdKonto", "C" )
+         IF aUsl1 <> NIL; exit; ENDIF
+      ELSE
+         EXIT
+      ENDIF
+   ENDDO
+   BoxC()
 
-if Params2()
- WPar("c1",padr(cIdFirma,2)); WPar("c2",@qqKonto); WPar("d1",@dDatOd); WPar("d2",@dDatdo)
- WPar("c3",cBrza)
- WPar("c4",cPredh)
- WPar("c8",cPTD)
-endif
-select params; use
+   IF cIdRj == "999999"; cidrj := ""; ENDIF
+   IF gRJ == "D" .AND. gSAKrIz == "D" .AND. "." $ cidrj
+      cidrj := Trim( StrTran( cidrj, ".", "" ) )
+      // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
+   ENDIF
 
-IF gNW=="N".and.cPTD=="D"
-  m:=STUFF(m,30,0," -- ------------- ---------- --------------------")
-  O_SUBAN; SET ORDER TO TAG 4
-  O_TDOK
-ENDIF
+   IF Params2()
+      WPar( "c1", PadR( cIdFirma, 2 ) ); WPar( "c2", @qqKonto ); WPar( "d1", @dDatOd ); WPar( "d2", @dDatdo )
+      WPar( "c3", cBrza )
+      WPar( "c4", cPredh )
+      WPar( "c8", cPTD )
+   ENDIF
+   SELECT params; USE
 
-IF gRJ=="D" .and. gSAKrIz=="D" .and. LEN(cIdRJ)<>0
-  otvori_sint_anal_kroz_temp(.f.,"IDRJ='"+cIdRJ+"'")
-ELSE
-  O_ANAL
-ENDIF
-O_KONTO
+   IF gNW == "N" .AND. cPTD == "D"
+      m := Stuff( m, 30, 0, " -- ------------- ---------- --------------------" )
+      O_SUBAN; SET ORDER TO TAG 4
+      O_TDOK
+   ENDIF
 
-select ANAL
+   IF gRJ == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
+      otvori_sint_anal_kroz_temp( .F., "IDRJ='" + cIdRJ + "'" )
+   ELSE
+      O_ANAL
+   ENDIF
+   O_KONTO
 
-IF cBrza=="S"
-  SET ORDER TO TAG "3"
-ENDIF
+   SELECT ANAL
 
-cFilt1 := ".t." + IF( cBrza=="D" , "" , ".and."+aUsl1 )+;
-          IF(EMPTY(dDatOd).or.cPredh=="2","",".and.DATNAL>="+cm2str(dDatOd))+;
-          IF(EMPTY(dDatDo),"",".and.DATNAL<="+cm2str(dDatDo))
+   IF cBrza == "S"
+      SET ORDER TO TAG "3"
+   ENDIF
 
-cFilt1:=STRTRAN(cFilt1,".t..and.","")
+   cFilt1 := ".t." + IF( cBrza == "D", "", ".and." + aUsl1 ) + ;
+      IF( Empty( dDatOd ) .OR. cPredh == "2", "", ".and.DATNAL>=" + cm2str( dDatOd ) ) + ;
+      IF( Empty( dDatDo ), "", ".and.DATNAL<=" + cm2str( dDatDo ) )
 
-IF !(cFilt1==".t.")
-  SET FILTER TO &cFilt1
-ENDIF
+   cFilt1 := StrTran( cFilt1, ".t..and.", "" )
 
-IF cBrza=="D"
-  HSEEK cIdFirma+qqKonto
-ELSE
-  HSEEK cIdFirma
-ENDIF
+   IF !( cFilt1 == ".t." )
+      SET FILTER TO &cFilt1
+   ENDIF
 
-EOF CRET
+   IF cBrza == "D"
+      HSEEK cIdFirma + qqKonto
+   ELSE
+      HSEEK cIdFirma
+   ENDIF
 
-nStr:=0
+   EOF CRET
 
-if cBrza=="S"; m:="------- "+m; endif
+   nStr := 0
 
-START PRINT CRET
+   IF cBrza == "S"; m := "------- " + m; ENDIF
 
-if nStr==0; AnalKZagl(); endif
+   START PRINT CRET
 
-nSviD:=nSviP:=nSviD2:=nSviP2:=0
-do whilesc !eof() .and. IdFirma=cIdFirma
+   IF nStr == 0; AnalKZagl(); ENDIF
 
-if cBrza=="D"
-  if qqKonto<>IdKonto; exit; endif
-endif
+   nSviD := nSviP := nSviD2 := nSviP2 := 0
+   DO WHILE !Eof() .AND. IdFirma = cIdFirma
 
-nDugBHD:=nPotBHD:=nDugDEM:=nPotDEM:=0
-cIdkonto:=IdKonto
+      IF cBrza == "D"
+         IF qqKonto <> IdKonto; exit; ENDIF
+      ENDIF
 
-if prow()>55+gPStranica; FF; AnalKZagl(); endif
-? m
-SELECT KONTO; HSEEK cIdKonto; select anal
-if cBrza=="S"
-  ? "KONTA : ",qqKonto
-else
-  ? "KONTO   ",cIdKonto,ALLTRIM(konto->naz)
-endif
-? m
+      nDugBHD := nPotBHD := nDugDEM := nPotDEM := 0
+      cIdkonto := IdKonto
 
-nDugBHD:=nPotBHD:=DugDEM:=nPotDEM:=0
-fPProm:=.t.
-do whilesc !eof() .and. IdFirma=cIdFirma .and. (cIdKonto==IdKonto .or. cBrza=="S")
-  //********* prethodni promet *********************************
-  if cPredh=="2"
-   if dDatOd>datnal .and. fPProm==.t.
-     nDugBHD+=DugBHD; nPotBHD+=PotBHD
-     nDugDEM+=DugDEM; nPotDEM+=PotDEM
-     skip; loop
-   else
-     if fPProm
-       ? "Prethodno stanje"
-       @ prow(),IF(gNW=="N".and.cPTD=="D",31+49,31) SAY nDugBHD     PICTURE PicBHD
-       @ prow(),pcol()+2  SAY nPotBHD     PICTURE PicBHD
-       @ prow(),pcol()+2  SAY nDugBHD-nPotBHD PICTURE PicBHD
-       IF gVar1=="0"
-         @ prow(),pcol()+2  SAY nDugDEM     PICTURE PicDEM
-         @ prow(),pcol()+2  SAY nPotDEM     PICTURE PicDEM
-         @ prow(),pcol()+2  SAY nDugDEM-nPotDEM PICTURE PicDEM
-       ENDIF
-     endif
-     fPProm:=.f.
-   endif
-  endif
+      IF PRow() > 55 + gPStranica; FF; AnalKZagl(); ENDIF
+      ? m
+      SELECT KONTO; HSEEK cIdKonto; SELECT anal
+      IF cBrza == "S"
+         ? "KONTA : ", qqKonto
+      ELSE
+         ? "KONTO   ", cIdKonto, AllTrim( konto->naz )
+      ENDIF
+      ? m
 
-  IF prow()>60+gPStranica; FF; AnalKZagl();ENDIF
-  IF cBrza=="S"
-    @ prow()+1,3 SAY IdKonto
-    @ prow(),11 SAY IdVN
-    @ prow(),16 SAY BrNal
-    @ prow(),25 SAY RBr
-    @ prow(),31 SAY DatNal
-  ELSE
-    @ prow()+1,3 SAY IdVN
-    @ prow(),8 SAY BrNal
-    @ prow(),17 SAY RBr
-    @ prow(),22 SAY DatNal
-  ENDIF
-  IF gNW=="N".and.cPTD=="D"
-    lPom:=.f.
-    SELECT SUBAN; GO TOP
-    SEEK ANAL->(idfirma+idvn+brnal)
-    DO WHILE !EOF() .and. ANAL->(idfirma+idvn+brnal)==idfirma+idvn+brnal
-      IF ANAL->idkonto==idkonto; lPom:=.t.; EXIT; ENDIF
-      SKIP 1
-    ENDDO
-    IF lPom
-      SELECT TDOK; HSEEK SUBAN->idtipdok
-    ENDIF
-    SELECT ANAL
-    @ prow(),31+IF(cBrza=="S",8,0) SAY IF( lPom , SUBAN->idtipdok, "??"      )
-    @ prow(),pcol()+1 SAY IF( lPom , TDOK->naz      , SPACE(13) )
-    @ prow(),pcol()+1 SAY IF( lPom , SUBAN->brdok   , SPACE(10) )
-    nCOpis:=pcol()+1
-    @ prow(),pcol()+1 SAY IF( lPom , PADR(cOpis:=ALLTRIM(SUBAN->opis),20)    , SPACE(20) )
-  ENDIF
-  @ prow(),IF(gNW=="N".and.cPTD=="D",30+49,31)+IF(cBrza=="S",8,0) SAY DugBHD PICTURE PicBHD
-  @ prow(),pcol()+2 SAY PotBHD PICTURE picBHD
-  nDugBHD+=DugBHD; nPotBHD+=PotBHD
-  @ prow(),pcol()+2 SAY nDugBHD-nPotBHD PICTURE PicBHD
-  IF gVar1=="0"
-   @ prow(),pcol()+2 SAY DugDEM PICTURE PicDEM
-   @ prow(),pcol()+2 SAY PotDEM PICTURE picDEM
-   nDugDEM+=DugDEM; nPotDEM+=PotDEM
-   @ prow(),pcol()+2 SAY nDugDEM-nPotDEM PICTURE PicDEM
-  ENDIF
-  OstatakOpisa(cOpis,nCOpis,{|| IF(prow()>61+gPStranica, EVAL({|| gPFF(),AnalKZagl()}), ) })
-  SKIP
-ENDDO    //  konto
+      nDugBHD := nPotBHD := DugDEM := nPotDEM := 0
+      fPProm := .T.
+      DO WHILE !Eof() .AND. IdFirma = cIdFirma .AND. ( cIdKonto == IdKonto .OR. cBrza == "S" )
+         // ********* prethodni promet *********************************
+         IF cPredh == "2"
+            IF dDatOd > datnal .AND. fPProm == .T.
+               nDugBHD += DugBHD; nPotBHD += PotBHD
+               nDugDEM += DugDEM; nPotDEM += PotDEM
+               skip; LOOP
+            ELSE
+               IF fPProm
+                  ? "Prethodno stanje"
+                  @ PRow(), IF( gNW == "N" .AND. cPTD == "D", 31 + 49, 31 ) SAY nDugBHD     PICTURE PicBHD
+                  @ PRow(), PCol() + 2  SAY nPotBHD     PICTURE PicBHD
+                  @ PRow(), PCol() + 2  SAY nDugBHD - nPotBHD PICTURE PicBHD
+                  IF gVar1 == "0"
+                     @ PRow(), PCol() + 2  SAY nDugDEM     PICTURE PicDEM
+                     @ PRow(), PCol() + 2  SAY nPotDEM     PICTURE PicDEM
+                     @ PRow(), PCol() + 2  SAY nDugDEM - nPotDEM PICTURE PicDEM
+                  ENDIF
+               ENDIF
+               fPProm := .F.
+            ENDIF
+         ENDIF
 
-IF prow()>60+gPStranica; FF; AnalKZagl(); ENDIF
-? M
-IF cBrza=="S"
-  ? "UKUPNO ZA KONTA:"+qqKonto
-ELSE
-  ? "UKUPNO ZA KONTO:"+cIdKonto
-ENDIF
-@ prow(),IF(gNW=="N".and.cPTD=="D",30+49,31)+IF(cBrza=="S",8,0) SAY nDugBHD  PICTURE PicBHD
-@ prow(),pcol()+2  SAY nPotBHD           PICTURE PicBHD
-@ prow(),pcol()+2  SAY nDugBHD-nPotBHD   PICTURE PicBHD
+         IF PRow() > 60 + gPStranica; FF; AnalKZagl();ENDIF
+         IF cBrza == "S"
+            @ PRow() + 1, 3 SAY IdKonto
+            @ PRow(), 11 SAY IdVN
+            @ PRow(), 16 SAY BrNal
+            @ PRow(), 25 SAY RBr
+            @ PRow(), 31 SAY DatNal
+         ELSE
+            @ PRow() + 1, 3 SAY IdVN
+            @ PRow(), 8 SAY BrNal
+            @ PRow(), 17 SAY RBr
+            @ PRow(), 22 SAY DatNal
+         ENDIF
+         IF gNW == "N" .AND. cPTD == "D"
+            lPom := .F.
+            SELECT SUBAN; GO TOP
+            SEEK ANAL->( idfirma + idvn + brnal )
+            DO WHILE !Eof() .AND. ANAL->( idfirma + idvn + brnal ) == idfirma + idvn + brnal
+               IF ANAL->idkonto == idkonto; lPom := .T. ; EXIT; ENDIF
+               SKIP 1
+            ENDDO
+            IF lPom
+               SELECT TDOK; HSEEK SUBAN->idtipdok
+            ENDIF
+            SELECT ANAL
+            @ PRow(), 31 + IF( cBrza == "S", 8, 0 ) SAY IF( lPom, SUBAN->idtipdok, "??"      )
+            @ PRow(), PCol() + 1 SAY IF( lPom, TDOK->naz, Space( 13 ) )
+            @ PRow(), PCol() + 1 SAY IF( lPom, SUBAN->brdok, Space( 10 ) )
+            nCOpis := PCol() + 1
+            @ PRow(), PCol() + 1 SAY IF( lPom, PadR( cOpis := AllTrim( SUBAN->opis ), 20 ), Space( 20 ) )
+         ENDIF
+         @ PRow(), IF( gNW == "N" .AND. cPTD == "D", 30 + 49, 31 ) + IF( cBrza == "S", 8, 0 ) SAY DugBHD PICTURE PicBHD
+         @ PRow(), PCol() + 2 SAY PotBHD PICTURE picBHD
+         nDugBHD += DugBHD; nPotBHD += PotBHD
+         @ PRow(), PCol() + 2 SAY nDugBHD - nPotBHD PICTURE PicBHD
+         IF gVar1 == "0"
+            @ PRow(), PCol() + 2 SAY DugDEM PICTURE PicDEM
+            @ PRow(), PCol() + 2 SAY PotDEM PICTURE picDEM
+            nDugDEM += DugDEM; nPotDEM += PotDEM
+            @ PRow(), PCol() + 2 SAY nDugDEM - nPotDEM PICTURE PicDEM
+         ENDIF
+         OstatakOpisa( cOpis, nCOpis, {|| IF( PRow() > 61 + gPStranica, Eval( {|| gPFF(), AnalKZagl() } ), ) } )
+         SKIP
+      ENDDO    // konto
 
-IF gVar1=="0"
- @ prow(),pcol()+2  SAY nDugDEM           PICTURE PicDEM
- @ prow(),pcol()+2  SAY nPotDEM           PICTURE PicDEM
- @ prow(),pcol()+2  SAY nDugDEM-nPotDEM   PICTURE PicDEM
-ENDIF
-? M
+      IF PRow() > 60 + gPStranica; FF; AnalKZagl(); ENDIF
+      ? M
+      IF cBrza == "S"
+         ? "UKUPNO ZA KONTA:" + qqKonto
+      ELSE
+         ? "UKUPNO ZA KONTO:" + cIdKonto
+      ENDIF
+      @ PRow(), IF( gNW == "N" .AND. cPTD == "D", 30 + 49, 31 ) + IF( cBrza == "S", 8, 0 ) SAY nDugBHD  PICTURE PicBHD
+      @ PRow(), PCol() + 2  SAY nPotBHD           PICTURE PicBHD
+      @ PRow(), PCol() + 2  SAY nDugBHD - nPotBHD   PICTURE PicBHD
 
-nSviD+=nDugBHD; nSviP+=nPotBHD
-nSviD2+=nDugDEM; nSviP2+=nPotDEM
+      IF gVar1 == "0"
+         @ PRow(), PCol() + 2  SAY nDugDEM           PICTURE PicDEM
+         @ PRow(), PCol() + 2  SAY nPotDEM           PICTURE PicDEM
+         @ PRow(), PCol() + 2  SAY nDugDEM - nPotDEM   PICTURE PicDEM
+      ENDIF
+      ? M
 
-if gnRazRed==99
-  FF; AnalKZagl()
-else
-  i:=0
-  do while prow()<=55+gPstranica.and.gnRazRed>i
-    ?; ++i
-  enddo
-endif
+      nSviD += nDugBHD; nSviP += nPotBHD
+      nSviD2 += nDugDEM; nSviP2 += nPotDEM
 
-enddo // eof()
+      IF gnRazRed == 99
+         FF; AnalKZagl()
+      ELSE
+         i := 0
+         DO WHILE PRow() <= 55 + gPstranica .AND. gnRazRed > i
+            ?; ++i
+         ENDDO
+      ENDIF
 
-if cBrza=="N"
- IF prow()>60+gPStranica; FF; AnalKZagl(); ENDIF
- ? M
- ? "UKUPNO ZA SVA KONTA:"
- @ prow(),IF(gNW=="N".and.cPTD=="D",30+49,31) SAY nSviD  PICTURE PicBHD
- @ prow(),pcol()+2  SAY nSviP             PICTURE PicBHD
- @ prow(),pcol()+2  SAY nSviD-nSviP       PICTURE PicBHD
+   ENDDO // eof()
 
- IF gVar1=="0"
-  @ prow(),pcol()+2  SAY nSviD2            PICTURE PicDEM
-  @ prow(),pcol()+2  SAY nSviP2            PICTURE PicDEM
-  @ prow(),pcol()+2  SAY nSviD2-nSviP2     PICTURE PicDEM
- ENDIF
- ? m
-endif
+   IF cBrza == "N"
+      IF PRow() > 60 + gPStranica; FF; AnalKZagl(); ENDIF
+      ? M
+      ? "UKUPNO ZA SVA KONTA:"
+      @ PRow(), IF( gNW == "N" .AND. cPTD == "D", 30 + 49, 31 ) SAY nSviD  PICTURE PicBHD
+      @ PRow(), PCol() + 2  SAY nSviP             PICTURE PicBHD
+      @ PRow(), PCol() + 2  SAY nSviD - nSviP       PICTURE PicBHD
 
-FF
+      IF gVar1 == "0"
+         @ PRow(), PCol() + 2  SAY nSviD2            PICTURE PicDEM
+         @ PRow(), PCol() + 2  SAY nSviP2            PICTURE PicDEM
+         @ PRow(), PCol() + 2  SAY nSviD2 - nSviP2     PICTURE PicDEM
+      ENDIF
+      ? m
+   ENDIF
 
-END PRINT
+   FF
 
-closeret
-return
+   ENDPRINT
+
+   closeret
+
+   RETURN
 
 
 
@@ -812,51 +821,48 @@ return
  *  \brief Zaglavlje analiticke kartice
  */
 
-function AnalKZagl()
+FUNCTION AnalKZagl()
 
-?
-P_COND
-?? "FIN.P: ANALITICKA KARTICA  NA DAN: "; ?? DATE()
-if !(empty(dDatOd) .and. empty(dDatDo))
-    ?? "   ZA PERIOD OD",dDatOd,"DO",dDatDo
-endif
-@ prow(),125 SAY "Str."+str(++nStr,3)
-
-if gNW=="D"
- ? "Firma:",gFirma,"-",gNFirma
-else
- SELECT PARTN; HSEEK cIdFirma
- ? "Firma:",cIdFirma,ALLTRIM(partn->naz),ALLTRIM(partn->naz2)
-endif
-
-IF gRJ=="D" .and. gSAKrIz=="D" .and. LEN(cIdRJ)<>0
-  ? "Radna jedinica ='"+cIdRj+"'"
-ENDIF
-
-SELECT ANAL
-
-IF gVar1=="0"
- IF gNW=="N".and.cPTD=="D"
-   P_COND2
- ENDIF
- ? IF(cBrza=="S","------- ","")+"------- -------- ---- --------"+IF(gNW=="N".and.cPTD=="D"," ------------------------------------------------","")+" ---------------------------------------------------- -----------------------------------------"
- ? IF(cBrza=="S","*      *","")+"*VRSTA * BROJ   *REDN* DATUM  "+IF(gNW=="N".and.cPTD=="D","*                D O K U M E N T                 ","")+"*             I Z N O S     U     "+ValDomaca()+"               *        I Z N O S     U     "+ValPomocna()+"        *"
- ? IF(cBrza=="S"," KONTO  ","")+"                              "+IF(gNW=="N".and.cPTD=="D"," ------------------------------------------------","")+" ---------------------------------------------------- -----------------------------------------"
- ? IF(cBrza=="S","*      *","")+"*NALOGA*NALOGA  *BROJ*        "+IF(gNW=="N".and.cPTD=="D","*     T I P      * VEZ.BROJ *        OPIS        ","")+"*     DUGUJE     *   POTRAZUJE     *       SALDO     *   DUGUJE   *  POTRAZUJE  *    SALDO    *"
-ELSE
- IF gNW=="N".and.cPTD=="D"
+   ?
    P_COND
- ELSE
-   F12CPI
- ENDIF
- ? IF(cBrza=="S","------- ","")+"------- -------- ---- --------"+IF(gNW=="N".and.cPTD=="D"," ------------------------------------------------","")+" -----------------------------------------------------"
- ? IF(cBrza=="S","*      *","")+"*VRSTA * BROJ   *REDN* DATUM  "+IF(gNW=="N".and.cPTD=="D","*                D O K U M E N T                 ","")+"*             I Z N O S     U     "+ValDomaca()+"               *"
- ? IF(cBrza=="S"," KONTO  ","")+"                              "+IF(gNW=="N".and.cPTD=="D"," ------------------------------------------------","")+" -----------------------------------------------------"
- ? IF(cBrza=="S","*      *","")+"*NALOGA*NALOGA  *BROJ*        "+IF(gNW=="N".and.cPTD=="D","*     T I P      * VEZ.BROJ *        OPIS        ","")+"*     DUGUJE     *   POTRAZUJE     *       SALDO     *"
-ENDIF
-? M
+   ?? "FIN.P: ANALITICKA KARTICA  NA DAN: "; ?? Date()
+   IF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
+      ?? "   ZA PERIOD OD", dDatOd, "DO", dDatDo
+   ENDIF
+   @ PRow(), 125 SAY "Str." + Str( ++nStr, 3 )
 
-RETURN
+   IF gNW == "D"
+      ? "Firma:", gFirma, "-", gNFirma
+   ELSE
+      SELECT PARTN; HSEEK cIdFirma
+      ? "Firma:", cIdFirma, AllTrim( partn->naz ), AllTrim( partn->naz2 )
+   ENDIF
 
+   IF gRJ == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
+      ? "Radna jedinica ='" + cIdRj + "'"
+   ENDIF
 
+   SELECT ANAL
 
+   IF gVar1 == "0"
+      IF gNW == "N" .AND. cPTD == "D"
+         P_COND2
+      ENDIF
+      ? IF( cBrza == "S", "------- ", "" ) + "------- -------- ---- --------" + IF( gNW == "N" .AND. cPTD == "D", " ------------------------------------------------", "" ) + " ---------------------------------------------------- -----------------------------------------"
+      ? IF( cBrza == "S", "*      *", "" ) + "*VRSTA * BROJ   *REDN* DATUM  " + IF( gNW == "N" .AND. cPTD == "D", "*                D O K U M E N T                 ", "" ) + "*             I Z N O S     U     " + ValDomaca() + "               *        I Z N O S     U     " + ValPomocna() + "        *"
+      ? IF( cBrza == "S", " KONTO  ", "" ) + "                              " + IF( gNW == "N" .AND. cPTD == "D", " ------------------------------------------------", "" ) + " ---------------------------------------------------- -----------------------------------------"
+      ? IF( cBrza == "S", "*      *", "" ) + "*NALOGA*NALOGA  *BROJ*        " + IF( gNW == "N" .AND. cPTD == "D", "*     T I P      * VEZ.BROJ *        OPIS        ", "" ) + "*     DUGUJE     *   POTRAZUJE     *       SALDO     *   DUGUJE   *  POTRAZUJE  *    SALDO    *"
+   ELSE
+      IF gNW == "N" .AND. cPTD == "D"
+         P_COND
+      ELSE
+         F12CPI
+      ENDIF
+      ? IF( cBrza == "S", "------- ", "" ) + "------- -------- ---- --------" + IF( gNW == "N" .AND. cPTD == "D", " ------------------------------------------------", "" ) + " -----------------------------------------------------"
+      ? IF( cBrza == "S", "*      *", "" ) + "*VRSTA * BROJ   *REDN* DATUM  " + IF( gNW == "N" .AND. cPTD == "D", "*                D O K U M E N T                 ", "" ) + "*             I Z N O S     U     " + ValDomaca() + "               *"
+      ? IF( cBrza == "S", " KONTO  ", "" ) + "                              " + IF( gNW == "N" .AND. cPTD == "D", " ------------------------------------------------", "" ) + " -----------------------------------------------------"
+      ? IF( cBrza == "S", "*      *", "" ) + "*NALOGA*NALOGA  *BROJ*        " + IF( gNW == "N" .AND. cPTD == "D", "*     T I P      * VEZ.BROJ *        OPIS        ", "" ) + "*     DUGUJE     *   POTRAZUJE     *       SALDO     *"
+   ENDIF
+   ? M
+
+   RETURN

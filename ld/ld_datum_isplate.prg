@@ -13,7 +13,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION unos_datuma_isplate_place()
 
    LOCAL dDatPr
@@ -374,7 +373,7 @@ FUNCTION ld_provjeri_dat_isplate_za_mjesec( godina, mjesec, rj )
    LOCAL _qry, _data, _count
 
    _qry := "SELECT "
-   _qry += "  COUNT(*) " 
+   _qry += "  COUNT(*) "
    _qry += "FROM fmk.ld_ld ld "
    _qry += "LEFT JOIN fmk.ld_obracuni obr ON ld.godina = obr.godina AND ld.mjesec = obr.mjesec AND obr.status = 'G' "
 
@@ -395,8 +394,3 @@ FUNCTION ld_provjeri_dat_isplate_za_mjesec( godina, mjesec, rj )
    _count := _data:FieldGet(1)
 
    RETURN _count
-
-
-
-
-

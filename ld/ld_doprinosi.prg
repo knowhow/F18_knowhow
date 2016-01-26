@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,372 +16,371 @@
 // ------------------------------------------------
 // vraca ukupno doprinosa IZ plate, 1X
 // ------------------------------------------------
-function u_dopr_iz( nDopOsn, cRTipRada )
+FUNCTION u_dopr_iz( nDopOsn, cRTipRada )
 
-select dopr
-go top
-    
-nU_dop_iz := 0
+   SELECT dopr
+   GO TOP
 
-do while !eof()
+   nU_dop_iz := 0
 
-    // provjeri tip rada
-    if EMPTY( dopr->tiprada ) .and. cRTipRada $ tr_list() 
-        // ovo je u redu...
-    elseif ( cRTipRada <> dopr->tiprada )
-        skip 
-        loop
-    endif
+   DO WHILE !Eof()
 
-    // preskoci zbirne doprinose
-    if dopr->id <> "1X"
-        skip
-        loop 
-    endif
+      // provjeri tip rada
+      IF Empty( dopr->tiprada ) .AND. cRTipRada $ tr_list()
+         // ovo je u redu...
+      ELSEIF ( cRTipRada <> dopr->tiprada )
+         SKIP
+         LOOP
+      ENDIF
 
-    nU_dop_iz += round2((iznos/100) * nDopOsn, gZaok2)
-            
-    skip 1
-        
-enddo
+      // preskoci zbirne doprinose
+      IF dopr->id <> "1X"
+         SKIP
+         LOOP
+      ENDIF
 
-return nU_dop_iz
+      nU_dop_iz += round2( ( iznos / 100 ) * nDopOsn, gZaok2 )
+
+      SKIP 1
+
+   ENDDO
+
+   RETURN nU_dop_iz
 
 // ------------------------------------------------
 // vraca ukupno doprinosa NA plate, 2X
 // ------------------------------------------------
-function u_dopr_na( nDopOsn, cRTipRada )
+FUNCTION u_dopr_na( nDopOsn, cRTipRada )
 
-select dopr
-go top
-    
-nU_dop_na := 0
+   SELECT dopr
+   GO TOP
 
-do while !eof()
+   nU_dop_na := 0
 
-    // provjeri tip rada
-    if EMPTY( dopr->tiprada ) .and. cRTipRada $ tr_list() 
-        // ovo je u redu...
-    elseif ( cRTipRada <> dopr->tiprada )
-        skip 
-        loop
-    endif
+   DO WHILE !Eof()
 
-    // preskoci zbirne doprinose
-    if dopr->id <> "2X"
-        skip
-        loop 
-    endif
+      // provjeri tip rada
+      IF Empty( dopr->tiprada ) .AND. cRTipRada $ tr_list()
+         // ovo je u redu...
+      ELSEIF ( cRTipRada <> dopr->tiprada )
+         SKIP
+         LOOP
+      ENDIF
 
-    nU_dop_na += round2((iznos/100) * nDopOsn, gZaok2)
-            
-    skip 1
-        
-enddo
+      // preskoci zbirne doprinose
+      IF dopr->id <> "2X"
+         SKIP
+         LOOP
+      ENDIF
 
-return nU_dop_na
+      nU_dop_na += round2( ( iznos / 100 ) * nDopOsn, gZaok2 )
+
+      SKIP 1
+
+   ENDDO
+
+   RETURN nU_dop_na
 
 
 // ------------------------------------------
 // obracunaj i prikazi doprinose
 // ------------------------------------------
-function obr_doprinos( nDopr, nDopr2, cTRada, a_benef )
-local nIznos := 0
+FUNCTION obr_doprinos( nDopr, nDopr2, cTRada, a_benef )
 
-if cTRada == nil
-    cTRada := " "
-endif
+   LOCAL nIznos := 0
 
-if a_benef == NIL
-    a_benef := {}
-endif
+   IF cTRada == nil
+      cTRada := " "
+   ENDIF
 
-m := "----------------------- -------- ----------- -----------"
+   IF a_benef == NIL
+      a_benef := {}
+   ENDIF
 
-if cUmPD == "D"
-    m += " ----------- -----------"
-endif
+   m := "----------------------- -------- ----------- -----------"
 
-select dopr
-go top
+   IF cUmPD == "D"
+      m += " ----------- -----------"
+   ENDIF
 
-nPom := 0
-nDopr := 0
-nPom2 := 0
-nDopr2 := 0
-nC1 := 20
-nDoprIz := 0
+   SELECT dopr
+   GO TOP
 
-if cUmPD == "D"
+   nPom := 0
+   nDopr := 0
+   nPom2 := 0
+   nDopr2 := 0
+   nC1 := 20
+   nDoprIz := 0
 
-    ? "----------------------- -------- ----------- ----------- ----------- -----------"
-    ? Lokal("                                 Obracunska   Doprinos   Preplaceni   Doprinos  ")
-    ? Lokal("    Naziv doprinosa        %      osnovica   po obracunu  doprinos    za uplatu ")
-    ? "          (1)             (2)        (3)     (4)=(2)*(3)     (5)     (6)=(4)-(5)"
-    ? "----------------------- -------- ----------- ----------- ----------- -----------"
+   IF cUmPD == "D"
 
-endif
+      ? "----------------------- -------- ----------- ----------- ----------- -----------"
+      ? Lokal( "                                 Obracunska   Doprinos   Preplaceni   Doprinos  " )
+      ? Lokal( "    Naziv doprinosa        %      osnovica   po obracunu  doprinos    za uplatu " )
+      ? "          (1)             (2)        (3)     (4)=(2)*(3)     (5)     (6)=(4)-(5)"
+      ? "----------------------- -------- ----------- ----------- ----------- -----------"
 
-do while !eof()
+   ENDIF
 
-    if gVarObracun == "2"
-        if EMPTY(dopr->tiprada) .and. cRTipRada $ tr_list()
+   DO WHILE !Eof()
+
+      IF gVarObracun == "2"
+         IF Empty( dopr->tiprada ) .AND. cRTipRada $ tr_list()
             // ovo je ok
-        elseif dopr->tiprada <> cRTipRada
-            skip 
-            loop
-        endif
-    endif
+         ELSEIF dopr->tiprada <> cRTipRada
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 
-    if right( id, 1 ) == "X"
-        ? cLinija
-    endif
-    
-    ? "  " + id,"-",naz
-    @ prow(), pcol()+1 SAY iznos pict "99.99%"
-    
-    nC1 := pcol() + 1
+      IF Right( id, 1 ) == "X"
+         ? cLinija
+      ENDIF
 
-    if EMPTY( field->idkbenef ) 
-    
-        if !EMPTY( field->poopst )
-        
-            if poopst=="1"
-                ?? Lokal(" (po opst.stan)")
-            elseif poopst=="2"
-                ?? Lokal(" (po opst.rada)")
-            elseif poopst=="3"
-                ?? Lokal(" (po kant.stan)")
-            elseif poopst=="4"
-                ?? Lokal(" (po kant.rada)")
-            elseif poopst=="5"
-                ?? Lokal(" (po ent. stan)")
-            elseif poopst=="6"
-                ?? Lokal(" (po ent. rada)")
-            endif
-                
-            ? strtran(m, "-", "=")
-                
+      ? "  " + id, "-", naz
+      @ PRow(), PCol() + 1 SAY iznos PICT "99.99%"
+
+      nC1 := PCol() + 1
+
+      IF Empty( field->idkbenef )
+
+         IF !Empty( field->poopst )
+
+            IF poopst == "1"
+               ?? Lokal( " (po opst.stan)" )
+            ELSEIF poopst == "2"
+               ?? Lokal( " (po opst.rada)" )
+            ELSEIF poopst == "3"
+               ?? Lokal( " (po kant.stan)" )
+            ELSEIF poopst == "4"
+               ?? Lokal( " (po kant.rada)" )
+            ELSEIF poopst == "5"
+               ?? Lokal( " (po ent. stan)" )
+            ELSEIF poopst == "6"
+               ?? Lokal( " (po ent. rada)" )
+            ENDIF
+
+            ? StrTran( m, "-", "=" )
+
             nOOD := 0
             // ukup.osnovica za obr.doprinosa za po opstinama
-                
+
             nPOLjudi := 0
             // ukup.ljudi za po opstinama
-                
+
             nDoprOps := 0
             nDoprOps2 := 0
-                
-            select opsld
-            seek SPACE(2) + dopr->poopst
-      
-            do while !eof() .and. id==dopr->poopst .and. porid == SPACE(2)
-                select ops
-                hseek opsld->idops
-                select opsld
-                    
-                IF !ImaUOp("DOPR",DOPR->id)
-                    SKIP 1
-                    LOOP
-                ENDIF
-                    
-                ? "  " + idops, ops->naz
-                
-                if dopr->(Fieldpos("DOP_TIP")) <> 0
-                    if dopr->dop_tip == "N" .or. ;
-                        dopr->dop_tip == " "
-                        nIznos := iznos
-                    elseif dopr->dop_tip == "2"
-                        nIznos := izn_ost
-                    elseif dopr->dop_tip == "P"
-                        nIznos := iznos + izn_ost
-                    endif
-                else
-                    nIznos := iznos
-                endif
-        
-                if gVarObracun == "2"
-                    nBOOps := br_osn
-                    if ops->reg == "2" .and. cTRada $ "A#U"
-                        nBOOps := 0
-                    endif
-                else
-                    nBOOps := bruto_osn( nIznos, cRTipRada, nKoefLO )
-                endif
 
-                @ prow(), nC1 SAY nBOOps picture gpici
-                    
-                nPom := round2(max(dopr->dlimit,dopr->iznos/100*nBOOps),gZaok2)
-                    
-                if cUmPD=="D"
-                    nBOOps2:=round2(piznos*nPK3/100,gZaok2)
-                    nPom2:=round2(max(dopr->dlimit,dopr->iznos/100*nBOOps2),gZaok2)
-                endif
-                    
-                if round(dopr->iznos,4)=0 .and. dopr->dlimit>0
-                        
-                    nPom:=dopr->dlimit*opsld->ljudi
-                    
-                    if cUmPD=="D"
-                        nPom2:=dopr->dlimit*opsld->pljudi
-                    endif
-                endif
-                    
-                @ prow(),pcol()+1 SAY nPom picture gpici
-                    
-                if cUmPD=="D"
-                        
-                    @ prow(),pcol()+1 SAY  nPom2 picture gpici
-                    @ prow(),pcol()+1 SAY  nPom-nPom2 picture gpici
-                        
-                    Rekapld("DOPR"+dopr->id+idops,cgodina,cmjesec,nPom-nPom2,0,idops,NLjudi())
-                    nDoprOps2 += nPom2
-                    nDoprOps += nPom
-                    
-                else
-                        
-                    Rekapld("DOPR"+dopr->id+opsld->idops,cgodina,cmjesec,npom,nBOOps,idops,NLjudi())
-                    nDoprOps += nPom
-                endif
-                    
-                nOOD += nBOOps
-                nPOLjudi += ljudi
-                    
-                skip
-                    
-                if prow()>64+gPStranica
-                    //FF
-                endif
-            enddo 
-            
-            select dopr
-                
+            SELECT opsld
+            SEEK Space( 2 ) + dopr->poopst
+
+            DO WHILE !Eof() .AND. id == dopr->poopst .AND. porid == Space( 2 )
+               SELECT ops
+               hseek opsld->idops
+               SELECT opsld
+
+               IF !ImaUOp( "DOPR", DOPR->id )
+                  SKIP 1
+                  LOOP
+               ENDIF
+
+               ? "  " + idops, ops->naz
+
+               IF dopr->( FieldPos( "DOP_TIP" ) ) <> 0
+                  IF dopr->dop_tip == "N" .OR. ;
+                        dopr->dop_tip == " "
+                     nIznos := iznos
+                  ELSEIF dopr->dop_tip == "2"
+                     nIznos := izn_ost
+                  ELSEIF dopr->dop_tip == "P"
+                     nIznos := iznos + izn_ost
+                  ENDIF
+               ELSE
+                  nIznos := iznos
+               ENDIF
+
+               IF gVarObracun == "2"
+                  nBOOps := br_osn
+                  IF ops->reg == "2" .AND. cTRada $ "A#U"
+                     nBOOps := 0
+                  ENDIF
+               ELSE
+                  nBOOps := bruto_osn( nIznos, cRTipRada, nKoefLO )
+               ENDIF
+
+               @ PRow(), nC1 SAY nBOOps PICTURE gpici
+
+               nPom := round2( Max( dopr->dlimit, dopr->iznos / 100 * nBOOps ), gZaok2 )
+
+               IF cUmPD == "D"
+                  nBOOps2 := round2( piznos * nPK3 / 100, gZaok2 )
+                  nPom2 := round2( Max( dopr->dlimit, dopr->iznos / 100 * nBOOps2 ), gZaok2 )
+               ENDIF
+
+               IF Round( dopr->iznos, 4 ) = 0 .AND. dopr->dlimit > 0
+
+                  nPom := dopr->dlimit * opsld->ljudi
+
+                  IF cUmPD == "D"
+                     nPom2 := dopr->dlimit * opsld->pljudi
+                  ENDIF
+               ENDIF
+
+               @ PRow(), PCol() + 1 SAY nPom PICTURE gpici
+
+               IF cUmPD == "D"
+
+                  @ PRow(), PCol() + 1 SAY  nPom2 PICTURE gpici
+                  @ PRow(), PCol() + 1 SAY  nPom - nPom2 PICTURE gpici
+
+                  Rekapld( "DOPR" + dopr->id + idops, cgodina, cmjesec, nPom - nPom2, 0, idops, NLjudi() )
+                  nDoprOps2 += nPom2
+                  nDoprOps += nPom
+
+               ELSE
+
+                  Rekapld( "DOPR" + dopr->id + opsld->idops, cgodina, cmjesec, npom, nBOOps, idops, NLjudi() )
+                  nDoprOps += nPom
+               ENDIF
+
+               nOOD += nBOOps
+               nPOLjudi += ljudi
+
+               SKIP
+
+               IF PRow() > 64 + gPStranica
+                  // FF
+               ENDIF
+            ENDDO
+
+            SELECT dopr
+
             ? cLinija
-            ? "  " + Lokal("UKUPNO") + SPACE(1),DOPR->ID
-                
-            @ prow(),nC1 SAY nOOD pict gpici
-            @ prow(),pcol()+1 SAY nDoprOps pict gpici
-                
-            if cUmPD=="D"
-                    
-                @ prow(),pcol()+1 SAY nDoprOps2 pict gpici
-                @ prow(),pcol()+1 SAY nDoprOps-nDoprOps2 pict gpici
-                Rekapld("DOPR"+dopr->id,cgodina,cmjesec,nDoprOps-nDoprOps2,0,,NLjudi())
-                nPom2 := nDoprOps2
-            else
-                if nDoprOps > 0
-                    Rekapld("DOPR"+dopr->id,cgodina,cmjesec,nDoprOps,nOOD,,"("+ALLTRIM(STR(nPOLjudi))+")")
-                endif
-            endif
-            
-            if dopr->id == "1X"
-                if ops->reg == "2" .and. cTRada $ "A#U"
-                    nPom := 0
-                endif
-                nUDoprIz += nPom
-            endif
-            
+            ? "  " + Lokal( "UKUPNO" ) + Space( 1 ), DOPR->ID
+
+            @ PRow(), nC1 SAY nOOD PICT gpici
+            @ PRow(), PCol() + 1 SAY nDoprOps PICT gpici
+
+            IF cUmPD == "D"
+
+               @ PRow(), PCol() + 1 SAY nDoprOps2 PICT gpici
+               @ PRow(), PCol() + 1 SAY nDoprOps - nDoprOps2 PICT gpici
+               Rekapld( "DOPR" + dopr->id, cgodina, cmjesec, nDoprOps - nDoprOps2, 0,, NLjudi() )
+               nPom2 := nDoprOps2
+            ELSE
+               IF nDoprOps > 0
+                  Rekapld( "DOPR" + dopr->id, cgodina, cmjesec, nDoprOps, nOOD,, "(" + AllTrim( Str( nPOLjudi ) ) + ")" )
+               ENDIF
+            ENDIF
+
+            IF dopr->id == "1X"
+               IF ops->reg == "2" .AND. cTRada $ "A#U"
+                  nPom := 0
+               ENDIF
+               nUDoprIz += nPom
+            ENDIF
+
             ? cLinija
-                
+
             nPom := nDoprOps
-            
-        else
+
+         ELSE
             // doprinosi nisu po opstinama
 
-            if dopr->(FIELDPOS("DOP_TIP")) <> 0
-              if dopr->dop_tip == "N" .or. ;
-                dopr->dop_tip == " "
-                nTmpOsn := nUNetoOsnova
-              elseif dopr->dop_tip == "2"
-                nTmpOsn := nDoprOsnOst
-              elseif dopr->dop_tip == "P"
-                nTmpOsn := nDoprOsnova + nDoprOsnOst
-              endif
-            else
-                nTmpOsn := nDoprOsnova
-            endif
-            
-            if gVarObracun == "2"
+            IF dopr->( FieldPos( "DOP_TIP" ) ) <> 0
+               IF dopr->dop_tip == "N" .OR. ;
+                     dopr->dop_tip == " "
+                  nTmpOsn := nUNetoOsnova
+               ELSEIF dopr->dop_tip == "2"
+                  nTmpOsn := nDoprOsnOst
+               ELSEIF dopr->dop_tip == "P"
+                  nTmpOsn := nDoprOsnova + nDoprOsnOst
+               ENDIF
+            ELSE
+               nTmpOsn := nDoprOsnova
+            ENDIF
 
-                nBo := nUMRadn_bo
-                
-            else
+            IF gVarObracun == "2"
+
+               nBo := nUMRadn_bo
+
+            ELSE
 
                nBO := bruto_osn( nTmpOsn, cRTipRada, nKoefLO )
-            endif
-            
-                @ prow(),nC1 SAY nBO pict gpici
-            
-                nPom:=round2(max(dlimit,iznos/100*nBO),gZaok2)
-            
-                if dopr->id == "1X"
-                    nUDoprIz += nPom
-                endif
-                
-                if cUmPD=="D"
-                    nPom2:=round2(max(dlimit,iznos/100*nBO2),gZaok2)
-                endif
-                
-                if round(iznos,4)=0 .and. dlimit>0
-                    nPom:=dlimit*nljudi      
-                    // nije po opstinama
-                    if cUmPD=="D"
-                        nPom2:=dlimit*nljudi      
-                        // nije po opstinama ?!?nLjudi
-                    endif
-                endif
-                @ prow(),pcol()+1 SAY nPom pict gpici
-                if cUmPD=="D"
-                    @ prow(),pcol()+1 SAY nPom2 pict gpici
-                    @ prow(),pcol()+1 SAY nPom-nPom2 pict gpici
-                    Rekapld("DOPR"+dopr->id,cgodina,cmjesec,nPom-nPom2,0)
-                else
-                    Rekapld("DOPR"+dopr->id,cgodina,cmjesec,nPom,nBO,,"("+ALLTRIM(STR(nLjudi))+")")
-                endif
-            endif 
-        
-        else
-
-            // beneficirani doprinosi 
-            nPom2 := get_benef_osnovica( a_benef, idkbenef )
-            
-            if Round2( nPom2, gZaok2 ) <> 0
-                @ prow(), pcol() + 1 SAY nPom2 pict gpici
-                nC1 := pcol() + 1
-                @ prow(), pcol() + 1 SAY nPom := Round2( MAX( dlimit, iznos/100 * nPom2 ), gZaok2 ) pict gpici
-            endif
-    endif 
-
-    if right(id,1) == "X"
-            ? cLinija
-            IF !lGusto
-                ?
             ENDIF
-            nDopr+=nPom
-            if cUmPD=="D"
-                nDopr2+=nPom2
-            endif   
-    endif
 
-    skip
-    
-    if prow()>64+gPStranica
-        //FF
-    endif
-    
-enddo
+            @ PRow(), nC1 SAY nBO PICT gpici
 
-? cLinija 
-? "  " + Lokal("Ukupno Doprinosi")
-@ prow(),nc1 SAY space(len(gpici))
-@ prow(),pcol()+1 SAY nDopr  pict gpici
+            nPom := round2( Max( dlimit, iznos / 100 * nBO ), gZaok2 )
 
-if cUmPD=="D"
-    @ prow(),pcol()+1 SAY nDopr2  pict gpici
-    @ prow(),pcol()+1 SAY nDopr-nDopr2  pict gpici
-endif
+            IF dopr->id == "1X"
+               nUDoprIz += nPom
+            ENDIF
 
-? cLinija
+            IF cUmPD == "D"
+               nPom2 := round2( Max( dlimit, iznos / 100 * nBO2 ), gZaok2 )
+            ENDIF
 
-return
+            IF Round( iznos, 4 ) = 0 .AND. dlimit > 0
+               nPom := dlimit * nljudi
+               // nije po opstinama
+               IF cUmPD == "D"
+                  nPom2 := dlimit * nljudi
+                  // nije po opstinama ?!?nLjudi
+               ENDIF
+            ENDIF
+            @ PRow(), PCol() + 1 SAY nPom PICT gpici
+            IF cUmPD == "D"
+               @ PRow(), PCol() + 1 SAY nPom2 PICT gpici
+               @ PRow(), PCol() + 1 SAY nPom - nPom2 PICT gpici
+               Rekapld( "DOPR" + dopr->id, cgodina, cmjesec, nPom - nPom2, 0 )
+            ELSE
+               Rekapld( "DOPR" + dopr->id, cgodina, cmjesec, nPom, nBO,, "(" + AllTrim( Str( nLjudi ) ) + ")" )
+            ENDIF
+         ENDIF
 
+      ELSE
 
+         // beneficirani doprinosi
+         nPom2 := get_benef_osnovica( a_benef, idkbenef )
+
+         IF Round2( nPom2, gZaok2 ) <> 0
+            @ PRow(), PCol() + 1 SAY nPom2 PICT gpici
+            nC1 := PCol() + 1
+            @ PRow(), PCol() + 1 SAY nPom := Round2( Max( dlimit, iznos / 100 * nPom2 ), gZaok2 ) PICT gpici
+         ENDIF
+      ENDIF
+
+      IF Right( id, 1 ) == "X"
+         ? cLinija
+         IF !lGusto
+            ?
+         ENDIF
+         nDopr += nPom
+         IF cUmPD == "D"
+            nDopr2 += nPom2
+         ENDIF
+      ENDIF
+
+      SKIP
+
+      IF PRow() > 64 + gPStranica
+         // FF
+      ENDIF
+
+   ENDDO
+
+   ? cLinija
+   ? "  " + Lokal( "Ukupno Doprinosi" )
+   @ PRow(), nc1 SAY Space( Len( gpici ) )
+   @ PRow(), PCol() + 1 SAY nDopr  PICT gpici
+
+   IF cUmPD == "D"
+      @ PRow(), PCol() + 1 SAY nDopr2  PICT gpici
+      @ PRow(), PCol() + 1 SAY nDopr - nDopr2  PICT gpici
+   ENDIF
+
+   ? cLinija
+
+   RETURN

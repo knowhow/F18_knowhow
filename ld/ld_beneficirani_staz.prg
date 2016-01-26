@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,119 +12,117 @@
 
 #include "f18.ch"
 
-
 // ------------------------------------------
 // da li radnik ide u benef osnovu
 // ------------------------------------------
-function UBenefOsnovu()
-if radn->k4 == "BF"
-    return .t.
-endif
-return .f.
+FUNCTION UBenefOsnovu()
 
+   IF radn->k4 == "BF"
+      RETURN .T.
+   ENDIF
 
+   RETURN .F.
 
 
 // ----------------------------------------
 // vraca benef stepen za radnika
 // ----------------------------------------
-function BenefStepen()
-local nRet := 0
-local nTArea := SELECT()
-local cTmp
+FUNCTION BenefStepen()
 
-select radn
+   LOCAL nRet := 0
+   LOCAL nTArea := Select()
+   LOCAL cTmp
 
-cTmp := ALLTRIM( radn->k3 )
+   SELECT radn
 
-if EMPTY( cTmp )
-    select (nTArea)
-    return 0
-endif
+   cTmp := AllTrim( radn->k3 )
 
-select F_KBENEF
-if !used()
-    O_KBENEF
-endif
+   IF Empty( cTmp )
+      SELECT ( nTArea )
+      RETURN 0
+   ENDIF
 
-select kbenef
-go top
-seek cTmp
+   SELECT F_KBENEF
+   IF !Used()
+      O_KBENEF
+   ENDIF
 
-if FOUND()
-    nRet := field->iznos
-endif
+   SELECT kbenef
+   GO TOP
+   SEEK cTmp
 
-select (nTArea)
+   IF Found()
+      nRet := field->iznos
+   ENDIF
 
-return nRet
+   SELECT ( nTArea )
+
+   RETURN nRet
 
 
 // --------------------------------------------------------------
 // vraca iznos doprinosa, osnovice za beneficirani staž
 // --------------------------------------------------------------
-function get_benef_osnovica( a_benef, benef_id )
-local _iznos := 0
-local _scan
+FUNCTION get_benef_osnovica( a_benef, benef_id )
 
-if a_benef == NIL .or. LEN( a_benef ) == 0
-    return _iznos
-endif
+   LOCAL _iznos := 0
+   LOCAL _scan
 
-_scan := ASCAN( a_benef, {|var| var[1] == benef_id } )
+   IF a_benef == NIL .OR. Len( a_benef ) == 0
+      RETURN _iznos
+   ENDIF
 
-if _scan <> 0 .and. a_benef[ _scan, 3 ] <> 0
-    _iznos := a_benef[ _scan, 3 ]
-endif
+   _scan := AScan( a_benef, {| var| VAR[ 1 ] == benef_id } )
 
-return _iznos
+   IF _scan <> 0 .AND. a_benef[ _scan, 3 ] <> 0
+      _iznos := a_benef[ _scan, 3 ]
+   ENDIF
 
+   RETURN _iznos
 
 
 // --------------------------------------------------------------
 // dodaj u matricu benef
 // --------------------------------------------------------------
-function add_to_a_benef( a_benef, benef_id, benef_st, osnovica )
-local _scan
+FUNCTION add_to_a_benef( a_benef, benef_id, benef_st, osnovica )
 
-// a_benef[1] = benef_id
-// a_benef[2] = benef_stepen
-// a_benef[3] = osnova
+   LOCAL _scan
 
-_scan := ASCAN( a_benef, { | var | var[1] == benef_id } )
+   // a_benef[1] = benef_id
+   // a_benef[2] = benef_stepen
+   // a_benef[3] = osnova
 
-if _scan == 0
-    AADD( a_benef, { benef_id, benef_st, osnovica } )
-else
-    a_benef[ _scan, 3 ] := a_benef[ _scan, 3 ] + osnovica
-endif
+   _scan := AScan( a_benef, {| var | VAR[ 1 ] == benef_id } )
 
-return
+   IF _scan == 0
+      AAdd( a_benef, { benef_id, benef_st, osnovica } )
+   ELSE
+      a_benef[ _scan, 3 ] := a_benef[ _scan, 3 ] + osnovica
+   ENDIF
 
-
-
-
-function PrikKBOBenef( a_benef )
-local _i
-local _ben_osn := 0
-
-if a_benef == NIL .or. LEN( a_benef ) == 0
-    return
-endif
-
-for _i := 1 to LEN( a_benef )
-    _ben_osn += a_benef[ _i, 3 ]
-next
-
-nBO := 0
-
-? Lokal("Koef. Bruto osnove benef.(KBO):"), transform( parobr->k3 ,"999.99999%" )
-? space(3), Lokal("BRUTO OSNOVA = NETO OSNOVA.BENEF * KBO =")
-@ prow(), pcol() + 1 SAY nBo := ROUND2( parobr->k3 / 100 * _ben_osn, gZaok2 ) pict gpici
-?
-
-return
+   RETURN
 
 
 
 
+FUNCTION PrikKBOBenef( a_benef )
+
+   LOCAL _i
+   LOCAL _ben_osn := 0
+
+   IF a_benef == NIL .OR. Len( a_benef ) == 0
+      RETURN
+   ENDIF
+
+   FOR _i := 1 TO Len( a_benef )
+      _ben_osn += a_benef[ _i, 3 ]
+   NEXT
+
+   nBO := 0
+
+   ? Lokal( "Koef. Bruto osnove benef.(KBO):" ), Transform( parobr->k3,"999.99999%" )
+   ? Space( 3 ), Lokal( "BRUTO OSNOVA = NETO OSNOVA.BENEF * KBO =" )
+   @ PRow(), PCol() + 1 SAY nBo := ROUND2( parobr->k3 / 100 * _ben_osn, gZaok2 ) PICT gpici
+   ?
+
+   RETURN

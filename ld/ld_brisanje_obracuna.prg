@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,204 +13,206 @@
 
 
 
-function ld_brisanje_obr()
-local _opc:={}
-local _opcexe:={}
-local _izbor:=1
+FUNCTION ld_brisanje_obr()
 
-AADD(_opc, "1. brisanje obracuna za jednog radnika       ")
-AADD(_opcexe, {|| BrisiRadnika() })
-AADD(_opc, "2. brisanje obracuna za jedan mjesec   ")
-AADD(_opcexe, {|| BrisiMjesec()})
-AADD(_opc, "3. totalno brisanje radnika iz evidencije")
-AADD(_opcexe, {|| TotBrisRadn()})
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
 
-f18_menu("bris", .f., _izbor, _opc, _opcexe )
+   AAdd( _opc, "1. brisanje obračuna za jednog radnika       " )
+   AAdd( _opcexe, {|| BrisiRadnika() } )
+   AAdd( _opc, "2. brisanje obračuna za jedan mjesec   " )
+   AAdd( _opcexe, {|| BrisiMjesec() } )
+   AAdd( _opc, "3. totalno brisanje radnika iz evidencije" )
+   AAdd( _opcexe, {|| TotBrisRadn() } )
 
-return
+   f18_menu( "bris", .F., _izbor, _opc, _opcexe )
+
+   RETURN
 
 
-function BrisiRadnika()
-local nTrec
-local cIdRadn
-local cMjesec
-local cIdRj
-local fnovi
-local _rec
+FUNCTION BrisiRadnika()
 
-nUser := 001
-O_RADN
-O_LD
+   LOCAL nTrec
+   LOCAL cIdRadn
+   LOCAL cMjesec
+   LOCAL cIdRj
+   LOCAL fnovi
+   LOCAL _rec
 
-if Logirati(goModul:oDataBase:cName, "DOK", "BRISIRADNIKA")
-    lLogBrRadn:=.t.
-else
-    lLogBrRadn:=.f.
-endif
+   nUser := 001
+   O_RADN
+   O_LD
 
-do while .t.
+   IF Logirati( goModul:oDataBase:cName, "DOK", "BRISIRADNIKA" )
+      lLogBrRadn := .T.
+   ELSE
+      lLogBrRadn := .F.
+   ENDIF
 
-    cIdRadn:=SPACE(_LR_)
-    cIdRj:=gRj
-    cMjesec:=gMjesec
-    cGodina:=gGodina
-    cObracun := gObracun
+   DO WHILE .T.
 
-    Box(,4,60)
-        @ m_x+1,m_y+2 SAY "Radna jedinica: "
-        QQOUTC(cIdRJ,"N/W")
-        @ m_x+2,m_y+2 SAY "Mjesec: "
-        QQOUTC(str(cMjesec,2),"N/W")
-        @ m_x+2,col()+2 SAY "Obracun: "
-        QQOUTC(cObracun,"N/W")
-        @ m_x+3,m_y+2 SAY "Godina: "
-        QQOUTC(STR(cGodina,4),"N/W")
-        
-        @ m_x+4, m_y+2 SAY "Radnik" GET cIdRadn valid {|| cIdRadn $ "XXXXXX" .or. P_Radn(@cIdRadn), SetPos(m_x+2,m_y+20), QQOUT(TRIM(radn->naz)+" ("+TRIM(radn->imerod)+") "+radn->ime), .t.}
-        
-        read
-        ESC_BCR
-    BoxC()
-    
-    if cIdRadn <> "XXXXXX"
+      cIdRadn := Space( _LR_ )
+      cIdRj := gRj
+      cMjesec := gMjesec
+      cGodina := gGodina
+      cObracun := gObracun
 
-        O_LD
-        select ld
-        seek STR(cGodina, 4) + cIdRj + STR(cMjesec, 2) + BrojObracuna() + cIdRadn
+      Box(, 4, 60 )
+      @ m_x + 1, m_y + 2 SAY "Radna jedinica: "
+      QQOUTC( cIdRJ, "N/W" )
+      @ m_x + 2, m_y + 2 SAY "Mjesec: "
+      QQOUTC( Str( cMjesec, 2 ), "N/W" )
+      @ m_x + 2, Col() + 2 SAY "Obracun: "
+      QQOUTC( cObracun, "N/W" )
+      @ m_x + 3, m_y + 2 SAY "Godina: "
+      QQOUTC( Str( cGodina, 4 ), "N/W" )
 
-        if Found()
+      @ m_x + 4, m_y + 2 SAY "Radnik" GET cIdRadn valid {|| cIdRadn $ "XXXXXX" .OR. P_Radn( @cIdRadn ), SetPos( m_x + 2, m_y + 20 ), QQOut( Trim( radn->naz ) + " (" + Trim( radn->imerod ) + ") " + radn->ime ), .T. }
 
-            if Pitanje(,"Sigurno zelite izbrisati ovaj zapis D/N","N")=="D"
+      READ
+      ESC_BCR
+      BoxC()
 
-                _rec := dbf_get_rec()
-                delete_rec_server_and_dbf( "ld_ld", _rec, 1, "FULL" )
+      IF cIdRadn <> "XXXXXX"
 
-                MsgBeep("Izbrisan obracun za radnika: " + cIdRadn + "  !!!")
+         O_LD
+         SELECT ld
+         SEEK Str( cGodina, 4 ) + cIdRj + Str( cMjesec, 2 ) + BrojObracuna() + cIdRadn
 
-                if lLogBrRadn
-                    EventLog(nUser,goModul:oDataBase:cName,"DOK","BRISIRADNIKA",nil,nil,nil,nil,cIdRj,STR(cMjesec,2),"Rad:"+cIdRadn+" God:"+STR(cGodina,4),Date(),Date(),"","Brisanje obracuna za jednog radnika")
-                endif
+         IF Found()
 
-            endif
-        else
-            Msg("Podatak ne postoji...",4)
-        endif
+            IF Pitanje(, "Sigurno zelite izbrisati ovaj zapis D/N", "N" ) == "D"
 
-    else
-        select ld
-        set order to 0
-        if FLock()
+               _rec := dbf_get_rec()
+               delete_rec_server_and_dbf( "ld_ld", _rec, 1, "FULL" )
 
-            go top
+               MsgBeep( "Izbrisan obracun za radnika: " + cIdRadn + "  !!!" )
 
-            Postotak(1, RecCount(), "Ukloni 0 zapise")
+               IF lLogBrRadn
+                  EventLog( nUser, goModul:oDataBase:cName, "DOK", "BRISIRADNIKA", nil, nil, nil, nil, cIdRj, Str( cMjesec, 2 ), "Rad:" + cIdRadn + " God:" + Str( cGodina, 4 ), Date(), Date(), "", "Brisanje obracuna za jednog radnika" )
+               ENDIF
 
-            f18_lock_tables({"ld_ld"})
+            ENDIF
+         ELSE
+            Msg( "Podatak ne postoji...", 4 )
+         ENDIF
+
+      ELSE
+         SELECT ld
+         SET ORDER TO 0
+         IF FLock()
+
+            GO TOP
+
+            Postotak( 1, RecCount(), "Ukloni 0 zapise" )
+
+            f18_lock_tables( { "ld_ld" } )
             sql_table_update( nil, "BEGIN" )
 
-            do while !eof()
+            DO WHILE !Eof()
 
-                    nPom:=0
-                    _rec := dbf_get_rec()
+               nPom := 0
+               _rec := dbf_get_rec()
 
-                    for i:=1 to cLDPolja
-                        cPom := PadL(ALLTRIM(STR(i)),2,"0")
-                        nPom += (ABS(_i&cPom) + ABS(_s&cPom))
-                        // ako su sve nule
-                    next
-    
-                    if (Round(nPom, 5)=0)
-                        delete_rec_server_and_dbf( "ld_ld", _rec, 1, "CONT" )
-                    endif
-    
-                    Postotak(2, RecNo())
+               FOR i := 1 TO cLDPolja
+                  cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
+                  nPom += ( Abs( _i&cPom ) + Abs( _s&cPom ) )
+                  // ako su sve nule
+               NEXT
 
-                    skip
-    
-            enddo
+               IF ( Round( nPom, 5 ) = 0 )
+                  delete_rec_server_and_dbf( "ld_ld", _rec, 1, "CONT" )
+               ENDIF
 
-            Postotak(0)
+               Postotak( 2, RecNo() )
 
-            f18_free_tables({"ld_ld"})
+               SKIP
+
+            ENDDO
+
+            Postotak( 0 )
+
+            f18_free_tables( { "ld_ld" } )
             sql_table_update( nil, "END" )
 
-        else
-                MsgBeep("Neko vec koristi datoteku LD !!!")
-        endif
-    endif
-    
-    select ld
-    use
-enddo
+         ELSE
+            MsgBeep( "Neko vec koristi datoteku LD !!!" )
+         ENDIF
+      ENDIF
 
-my_close_all_dbf()
-return
+      SELECT ld
+      USE
+   ENDDO
 
+   my_close_all_dbf()
 
-
-function BrisiMjesec()
-local cMjesec
-local cIdRj
-local fnovi
-local _rec
-
-nUser := 001
-
-O_RADN
-
-if Logirati(goModul:oDataBase:cName,"DOK","BRISIMJESEC")
-    lLogBrMjesec:=.t.
-else
-    lLogBrMjesec:=.f.
-endif
-
-do while .t.
-
-    O_LD
-    
-    cIdRadn:=SPACE(_LR_)
-    cIdRj:=gRj
-    cMjesec:=gMjesec
-    cGodina:=gGodina
-    cObracun:=gObracun
-    
-    Box(,4,60)
-        @ m_x+1,m_y+2 SAY "Radna jedinica: " GET cIdRJ
-        @ m_x+2,m_y+2 SAY "Mjesec: "  GET cMjesec pict "99"
-        @ m_x+2,col()+2 SAY "Obracun: " GET cObracun WHEN HelpObr(.f.,cObracun) VALID ValObr(.f.,cObracun)
-        @ m_x+3,m_y+2 SAY "Godina: "  GET cGodina pict "9999"
-        read
-        ClvBox()
-        ESC_BCR
-    BoxC()
-    
-    if Pitanje(,"Sigurno zelite izbrisati sve podatke za RJ za ovaj mjesec !?","N")=="N"
-        my_close_all_dbf()
-        return
-    endif
-    
-    MsgO("Sacekajte, brisem podatke....")
-
-    select ld
-    
-    seek STR(cGodina,4) + cIdRj + STR(cMjesec, 2) + BrojObracuna()
-
-    if FOUND()
-   
-        _rec := dbf_get_rec()
-        delete_rec_server_and_dbf( "ld_ld", _rec, 2, "FULL" )
-
-    endif
-
-    MsgBeep("Obracun za " + STR(cMjesec,2) + " mjesec izbrisani !!!")
-    
-    MsgC()
-    exit
-
-enddo
-
-my_close_all_dbf()
-return
+   RETURN
 
 
 
+FUNCTION BrisiMjesec()
+
+   LOCAL cMjesec
+   LOCAL cIdRj
+   LOCAL fnovi
+   LOCAL _rec
+
+   nUser := 001
+
+   O_RADN
+
+   IF Logirati( goModul:oDataBase:cName, "DOK", "BRISIMJESEC" )
+      lLogBrMjesec := .T.
+   ELSE
+      lLogBrMjesec := .F.
+   ENDIF
+
+   DO WHILE .T.
+
+      O_LD
+
+      cIdRadn := Space( _LR_ )
+      cIdRj := gRj
+      cMjesec := gMjesec
+      cGodina := gGodina
+      cObracun := gObracun
+
+      Box(, 4, 60 )
+      @ m_x + 1, m_y + 2 SAY "Radna jedinica: " GET cIdRJ
+      @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET cMjesec PICT "99"
+      @ m_x + 2, Col() + 2 SAY "Obracun: " GET cObracun WHEN HelpObr( .F., cObracun ) VALID ValObr( .F., cObracun )
+      @ m_x + 3, m_y + 2 SAY "Godina: "  GET cGodina PICT "9999"
+      READ
+      ClvBox()
+      ESC_BCR
+      BoxC()
+
+      IF Pitanje(, "Sigurno zelite izbrisati sve podatke za RJ za ovaj mjesec !?", "N" ) == "N"
+         my_close_all_dbf()
+         RETURN
+      ENDIF
+
+      MsgO( "Sacekajte, brisem podatke...." )
+
+      SELECT ld
+
+      SEEK Str( cGodina, 4 ) + cIdRj + Str( cMjesec, 2 ) + BrojObracuna()
+
+      IF Found()
+
+         _rec := dbf_get_rec()
+         delete_rec_server_and_dbf( "ld_ld", _rec, 2, "FULL" )
+
+      ENDIF
+
+      MsgBeep( "Obracun za " + Str( cMjesec, 2 ) + " mjesec izbrisani !!!" )
+
+      MsgC()
+      EXIT
+
+   ENDDO
+
+   my_close_all_dbf()
+
+   RETURN

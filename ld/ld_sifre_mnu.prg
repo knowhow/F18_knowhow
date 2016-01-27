@@ -28,7 +28,7 @@ FUNCTION ld_sifrarnici()
 
    f18_menu( "sif", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -106,7 +106,7 @@ FUNCTION ld_specificni_sifrarnici()
 
    f18_menu( "spc", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -134,4 +134,4 @@ STATIC FUNCTION o_ld_sif_tables()
       O_FAKT_OBJEKTI
    ENDIF
 
-   RETURN
+   RETURN .T.

@@ -3,7 +3,7 @@
 *.BAK
 .r
 .d
-F18.app
+F18*.app
 F18
 *.tar.gz
 *.log

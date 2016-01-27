@@ -121,11 +121,9 @@ FUNCTION BoxRekSvi()
 
 FUNCTION BoxRekJ()
 
-   LOCAL nArr
+   PushWa()
 
-   nArr := Select()
-
-   Box(, 8 + IF( IsRamaGlas(), 1, 0 ), 75 )
+   Box(, 9 + IIF( IsRamaGlas(), 1, 0 ), 75 )
 
    @ m_x + 1, m_y + 2 SAY8 "Vrsta djelatnosti: "  GET cRTipRada VALID val_tiprada( cRTipRada ) PICT "@!"
    @ m_x + 2, m_y + 2 SAY8 "Radna jedinica: "  GET cIdRJ
@@ -134,8 +132,9 @@ FUNCTION BoxRekJ()
    @ m_x + 3, Col() + 2 SAY8 "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    @ m_x + 4, m_y + 2 SAY8 "Godina: "  GET  cGodina  PICT "9999"
    @ m_x + 6, m_y + 2 SAY8 "Stručna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
-   @ m_x + 7, m_y + 2 SAY8 "Opština stanovanja: "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
-   @ m_x + 8, m_y + 2 SAY8 "Opština rada:       "  GET  cOpsRad  PICT "@!" VALID Empty( cOpsRad ) .OR. P_Ops( @cOpsRad )
+   @ m_x + 7, m_y + 2 SAY8 "Opština stanovanja:  "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
+   @ m_x + 8, m_y + 2 SAY8 "Opština rada:        "  GET  cOpsRad  PICT "@!" VALID Empty( cOpsRad ) .OR. P_Ops( @cOpsRad )
+   @ m_x + 9, m_y + 2 SAY8 "stepen invaliditeta: "  GET  nStepenInvaliditeta  VALID valid_stepen_invaliditeta( @nStepenInvaliditeta )
 
    READ
 
@@ -143,7 +142,7 @@ FUNCTION BoxRekJ()
    ESC_BCR
    BoxC()
 
-   SELECT ( nArr )
+   PopWa()
 
    RETURN .T.
 

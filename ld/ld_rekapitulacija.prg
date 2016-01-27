@@ -14,7 +14,6 @@
 
 STATIC __var_obr
 
-
 FUNCTION ld_rekapitulacija( lSvi )
 
    LOCAL _a_benef := {}
@@ -49,6 +48,7 @@ FUNCTION ld_rekapitulacija( lSvi )
    nBO := 0
    cRTipRada := " "
    nKoefLO := 0
+   nStepenInvaliditeta := 0
 
    IF lSvi == NIL
       lSvi := .F.
@@ -66,13 +66,13 @@ FUNCTION ld_rekapitulacija( lSvi )
       qqRJ := Space( 60 )
       BoxRekSvi()
       IF ( LastKey() == K_ESC )
-         RETURN
+         RETURN .F.
       ENDIF
    ELSE
       qqRJ := Space( 2 )
       BoxRekJ()
       IF ( LastKey() == K_ESC )
-         RETURN
+         RETURN .F.
       ENDIF
    ENDIF
 
@@ -86,30 +86,20 @@ FUNCTION ld_rekapitulacija( lSvi )
       SET ORDER TO tag ( TagVO( "1" ) )
    ENDIF
 
-   IF lSvi
+   hParams := hb_Hash()
+   hParams[ 'svi' ] := lSvi
+   hParams[ 'str_sprema' ] := cStrSpr
+   hParams[ 'q_rj' ] := qqRj
 
-      cFilt1 := ".t." + IIF( Empty( cStrSpr ), "", ".and.IDSTRSPR == " + cm2str( cStrSpr ) ) + ;
-         IIF( Empty( qqRJ ), "", ".and." + aUsl1 )
+   hParams[ 'usl1' ] := aUsl1
+   hParams[ 'mjesec' ] := cMjesec
+   hParams[ 'mjesec_do' ] := cMjesecDo
 
-      IF cMjesec != cMjesecDo
-         cFilt1 := cFilt1 + ".and. mjesec >= " + cm2str( cMjesec ) + ;
-            ".and. mjesec <= " + cm2str( cMjesecDo ) + ".and. godina = " + cm2str( cGodina )
-      ENDIF
+   hParams[ 'obracun' ] := cObracun
+   hParams[ 'godina' ] := cgodina
 
-      GO TOP
+   cFilt1 := get_ld_rekap_filter( hParams )
 
-   ELSE
-
-      cFilt1 := ".t." +  IIF( Empty( cStrSpr ), "", ".and. IDSTRSPR == " + cm2str( cStrSpr ) )
-      IF cMjesec != cMjesecDo
-         cFilt1 := cFilt1 + ".and. mjesec >= " + cm2str( cMjesec ) + ;
-            ".and. mjesec <= " + cm2str( cMjesecDo ) + ".and. godina = " + cm2str( cGodina )
-      ENDIF
-
-   ENDIF
-
-   cFilt1 += ".and. obr = " + cm2str( cObracun )
-   cFilt1 := StrTran( cFilt1, ".t..and.", "" )
 
    IF cFilt1 == ".t."
       SET FILTER TO
@@ -200,9 +190,9 @@ FUNCTION ld_rekapitulacija( lSvi )
       ENDIF
    ELSE
       IF lSvi
-         PRIVATE bUslov := {|| cgodina == godina .AND. cmjesec = mjesec .AND. obr = cObracun }
+         PRIVATE bUslov := {|| cGodina == godina .AND. cMjesec = mjesec .AND. obr = cObracun }
       ELSE
-         PRIVATE bUslov := {|| cgodina == godina .AND. cidrj == idrj .AND. cmjesec = mjesec .AND. obr = cObracun }
+         PRIVATE bUslov := {|| cGodina == godina .AND. cIdrj == idrj .AND. cMjesec = mjesec .AND. obr = cObracun }
       ENDIF
    ENDIF
 
@@ -456,7 +446,7 @@ FUNCTION ld_rekapitulacija( lSvi )
 
    my_close_all_dbf()
 
-   END PRINT
+   ENDPRINT
 
    IF f18_use_module( "virm" ) .AND. Pitanje(, "Generisati virmane za ovaj obračun plate ? (D/N)", "N" ) == "D"
       virm_set_global_vars()
@@ -749,10 +739,10 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
       // minimalna neto osnova
       nPorNrOsnova := min_neto( nPorNROsnova, _usati )
 
-      if cTipRada $ "A#U"
-          // poreska osnova ugovori o djelu cine i troskovi
-          nPorNROsnova += nRTrosk
-      endif
+      IF cTipRada $ "A#U"
+         // poreska osnova ugovori o djelu cine i troskovi
+         nPorNROsnova += nRTrosk
+      ENDIF
 
       IF lInRS == .T.
          nPorNROsnova := 0
@@ -870,4 +860,45 @@ STATIC FUNCTION get_bruto( nIznos )
    @ PRow(), 60 SAY nBO PICT gpici
    ? cMainLine
 
-   RETURN
+   RETURN .T.
+
+
+
+FUNCTION get_ld_rekap_filter( hParams )
+
+   LOCAL cFilt1
+   LOCAL lSvi := hParams[ 'svi' ]
+   LOCAL cStrSpr := hParams[ 'str_sprema' ]
+   LOCAL qqRj := hParams[ 'q_rj' ]
+   LOCAL aUsl1 := hParams[ 'usl1' ]
+   LOCAL cObracun := hParams[ 'obracun' ]
+   LOCAL cGodina := hParams[ 'godina' ]
+   LOCAL cMjesec := hParams[ 'mjesec' ]
+   LOCAL cMjesecDo := hParams[ 'mjesec_do' ]
+
+   IF lSvi
+
+      cFilt1 := ".t." + iif( Empty( cStrSpr ), "", ".and.IDSTRSPR == " + cm2str( cStrSpr ) ) + ;
+         iif( Empty( qqRJ ), "", ".and." + aUsl1 )
+
+      IF cMjesec != cMjesecDo
+         cFilt1 := cFilt1 + ".and. mjesec >= " + cm2str( cMjesec ) + ;
+            ".and. mjesec <= " + cm2str( cMjesecDo ) + ".and. godina = " + cm2str( cGodina )
+      ENDIF
+
+      GO TOP
+
+   ELSE
+
+      cFilt1 := ".t." +  iif( Empty( cStrSpr ), "", ".and. IDSTRSPR == " + cm2str( cStrSpr ) )
+      IF cMjesec != cMjesecDo
+         cFilt1 := cFilt1 + ".and. mjesec >= " + cm2str( cMjesec ) + ;
+            ".and. mjesec <= " + cm2str( cMjesecDo ) + ".and. godina = " + cm2str( cGodina )
+      ENDIF
+
+   ENDIF
+
+   cFilt1 += ".and. obr = " + cm2str( cObracun )
+   cFilt1 := StrTran( cFilt1, ".t..and.", "" )
+
+   RETURN cFilt1

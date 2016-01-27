@@ -16,7 +16,6 @@ STATIC DUZ_STRANA := 70
 STATIC __radni_sati := "N"
 
 
-
 FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNeta )
 
    LOCAL nKRedova
@@ -64,16 +63,16 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
    ? cTprLine
 
    FOR i := 1 TO cLDPolja
-	
+
       cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
-	
+
       SELECT tippr
       SEEK cPom
-	
+
       IF tippr->uneto == "N" .AND. cUneto == "D"
-		
+
          cUneto := "N"
-		
+
          ? cTprLine
          ? cLMSK + "Ukupno:"
 
@@ -83,34 +82,34 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
          @ PRow(), 60 + Len( cLMSK ) SAY nPom PICT gpici
          ?? "", gValuta
          ? cTprLine
-	
+
       ENDIF
-	
+
       IF tippr->( Found() ) .AND. tippr->aktivan == "D"
 
          IF _i&cpom <> 0 .OR. _s&cPom <> 0
-			
+
             nDJ := At( "#", tippr->naz )
             cDJ := Right( AllTrim( tippr->naz ), nDJ + 1 )
             cTPNaz := tippr->naz
-			
+
             ? cLMSK + tippr->id + "-" + ;
                PadR( cTPNAZ, Len( tippr->naz ) ), sh_tp_opis( tippr->id, radn->id )
             nC1 := PCol()
-			
+
             IF tippr->fiksan $ "DN"
-				
+
                @ PRow(), PCol() + 8 SAY _s&cPom PICT gpics
                ?? " s"
-				
+
                nPom := _calc_tpr( _i&cPom )
                @ PRow(), 60 + Len( cLMSK ) SAY nPom PICT gpici
 
-				
+
                IF tippr->id == "01" .AND. __radni_sati == "D"
-					
+
                   nRRSati := _s&cPom
-				
+
                ENDIF
 
             ELSEIF tippr->fiksan == "P"
@@ -127,7 +126,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
                nPom := _calc_tpr( _i&cPom )
                @ PRow(), 60 + Len( cLMSK ) SAY nPom PICT gpici
             ENDIF
-	
+
             IF "_K" == Right( AllTrim( tippr->opis ), 2 )
 
                nKumPrim := ld_kumulativna_primanja( _IdRadn, cPom )
@@ -143,14 +142,14 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
                IF tippr->uneto == "N"
                   nKumPrim := Abs( nKumPrim )
                ENDIF
-    			
+
                ? cLPom := cLMSK + "   ----------------------------- ----------------------------"
                ?U cLMSK + "    SUMA IZ PRETHODNIH OBRAČUNA   UKUPNO (SA OVIM OBRAČUNOM)"
                ? cLPom
                ? cLMSK + "   " + PadC( Str( nKumPrim - Abs( _i&cPom ) ), 29 ) + " " + PadC( Str( nKumPrim ), 28 )
                ? cLPom
             ENDIF
-		
+
             IF tippr->( FieldPos( "TPR_TIP" ) ) <> 0
                // uzmi osnovice
                IF tippr->tpr_tip == "N"
@@ -191,11 +190,11 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
                   ENDIF
                ENDIF
             ENDIF
-			
+
             IF "SUMKREDITA" $ tippr->formula .AND. gReKrKP == "1"
-				
+
                P_COND
-				
+
                ? cTprLine
                ?U cLMSK + "  ", "Od toga pojedinačni krediti:"
                SELECT radkr
@@ -209,26 +208,26 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
                   @ PRow(), 58 + Len( cLMSK ) SAY iznos PICT "(" + gpici + ")"
                   SKIP 1
                ENDDO
-				
+
                ? cTprLine
-				
+
                P_12CPI
-				
+
                SELECT ld
-				
+
             ELSEIF "SUMKREDITA" $ tippr->formula
-				
+
                SELECT radkr
                SET ORDER TO 1
                SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn
                ukredita := 0
-				
+
                P_COND
-				
+
                ? m2 := cLMSK + "   ------------------------------------------------  --------- --------- -------"
                ? cLMSK + "        Kreditor      /              na osnovu         Ukupno    Ostalo   Rata"
                ? m2
-				
+
                DO WHILE !Eof() .AND. _godina == godina .AND. _mjesec = mjesec .AND. idradn == _idradn
                   SELECT kred
                   hseek radkr->idkred
@@ -241,9 +240,9 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
                   ukredita += iznos
                   SKIP 1
                ENDDO
-				
+
                P_12CPI
-				
+
                IF !lSkrivena .AND. PRow() > 55 + gPStranica
                   FF
                ENDIF
@@ -287,19 +286,19 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
    ENDIF
 
    IF gPrBruto $ "D#X"
-	
+
       SELECT ( F_POR )
-	
+
       IF !Used()
          O_POR
       ENDIF
-	
+
       SELECT ( F_DOPR )
-	
+
       IF !Used()
          O_DOPR
       ENDIF
-	
+
       SELECT ( F_KBENEF )
       IF !Used()
          O_KBENEF
@@ -307,13 +306,13 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
       nBO := 0
       nBFO := 0
-	
+
       nOsnZaBr := nOsnNeto
-	
+
       nBo := bruto_osn( nOsnZaBr, cRTipRada, nLicOdbitak )
 
       IF UBenefOsnovu()
-		
+
          nTmp2 := nOsnZaBr - IF( !Empty( gBFForm ),  &( gBFForm ), 0 )
          nBFo := bruto_osn( nTmp2, cRTipRada, nLicOdbitak )
 
@@ -331,7 +330,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
       ENDIF
 
       ? cMainLine
-	
+
       IF gPrBruto == "X"
          ? cLMSK + "1. BRUTO PLATA :  "
       ELSE
@@ -343,15 +342,15 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
       ENDIF
 
       @ PRow(), 60 + Len( cLMSK ) SAY nBo PICT gpici
-	
+
       ? cMainLine
-	
+
       IF lSkrivena
          ? cMainLine
       ENDIF
-	
+
       ?U cLmSK + "Obračun doprinosa: "
-	
+
       IF ( nBo < nBoMin )
          ??  "minimalna bruto satnica * sati"
          @ PRow(), 60 + Len( cLMSK ) SAY nBoMin PICT gpici
@@ -360,14 +359,14 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
       SELECT dopr
       GO TOP
-	
+
       nPom := 0
       nDopr := 0
       nUkDoprIz := 0
       nC1 := 20 + Len( cLMSK )
-	
+
       DO WHILE !Eof()
-	
+
          IF cRTipRada $ tr_list() .AND. Empty( dopr->tiprada )
          ELSEIF dopr->tiprada <> cRTipRada
             SKIP
@@ -375,7 +374,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
          ENDIF
 
          IF dopr->( FieldPos( "DOP_TIP" ) ) <> 0
-			
+
             IF dopr->dop_tip == "N" .OR. dopr->dop_tip == " "
                nOsn := nOsnNeto
             ELSEIF dopr->dop_tip == "2"
@@ -383,11 +382,11 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
             ELSEIF dopr->dop_tip == "P"
                nOsn := nOsnNeto + nOsnOstalo
             ENDIF
-		
+
          ENDIF
-		
+
          PozicOps( DOPR->poopst )
-			
+
          IF gKarSDop == "N" .AND. Left( dopr->id, 1 ) <> "1"
             SKIP
             LOOP
@@ -397,11 +396,11 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
             SKIP 1
             LOOP
          ENDIF
-		
+
          IF Right( id, 1 ) == "X"
             ? cDoprLine
          ENDIF
-		
+
          IF dopr->id == "1X"
             ? cLMSK + "2. " + id, "-", naz
          ELSE
@@ -409,7 +408,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
          ENDIF
 
          @ PRow(), PCol() + 1 SAY iznos PICT "99.99%"
-		
+
          IF Empty( idkbenef )
             @ PRow(), PCol() + 1 SAY nBoMin PICT gpici
             nC1 := PCol() + 1
@@ -431,27 +430,27 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
                @ PRow(), PCol() + 1 SAY nPom PICT gpici
             ENDIF
          ENDIF
-		
+
          IF Right( id, 1 ) == "X"
-			
+
             ? cDoprLine
             nDopr += nPom
-		
+
          ENDIF
-		
+
          IF !lSkrivena .AND. PRow() > 64 + gPStranica
             FF
          ENDIF
-		
+
          SKIP 1
-		
+
       ENDDO
 
       nOporDoh := nBO - nUkDoprIz
 
       ? cLMSK + "3. BRUTO - DOPRINOSI IZ PLATE (1-2)"
       @ PRow(), 60 + Len( cLMSK ) SAY nOporDoh PICT gpici
-	
+
       ? cMainLine
 
       IF nLicOdbitak > 0
@@ -460,18 +459,18 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
          ?? AllTrim( Str( gOsnLOdb ) ) + " * koef. " + ;
             AllTrim( Str( nKoefOdbitka ) ) + " = "
          @ PRow(), 60 + Len( cLMSK ) SAY nLicOdbitak PICT gpici
-	
+
       ELSE
-	
+
          ?U cLMSK + "4. LIČNI ODBITAK"
          @ PRow(), 60 + Len( cLMSK ) SAY nLicOdbitak PICT gpici
-	
+
       ENDIF
 
       ? cMainLine
 
       nPorOsnovica := ( nBO - nUkDoprIz - nLicOdbitak )
-	
+
       IF nPorOsnovica < 0 .OR. !radn_oporeziv( radn->id, ld->idrj )
          nPorOsnovica := 0
       ENDIF
@@ -485,31 +484,31 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
       SELECT por
       GO TOP
-	
+
       nPom := 0
       nPor := 0
       nC1 := 30 + Len( cLMSK )
       nPorOl := 0
-	
+
       DO WHILE !Eof()
-	
+
          cAlgoritam := get_algoritam()
-		
+
          PozicOps( POR->poopst )
-		
+
          IF !ImaUOp( "POR", POR->id )
             SKIP 1
             LOOP
          ENDIF
-		
+
          IF por->por_tip <> "B"
             SKIP
             LOOP
          ENDIF
-	
+
          aPor := obr_por( por->id, nPorOsnovica, 0 )
          nPor += isp_por( aPor, cAlgoritam, cLMSK, .T., .T. )
-		
+
          SKIP 1
       ENDDO
 
@@ -524,7 +523,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
       ENDIF
 
       ? cMainLine
-	
+
       IF nUkIspl < nMUkIspl
          ? cLMSK + "7. Minimalna neto isplata : min.neto satnica * sati"
       ELSE
@@ -545,7 +544,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
       @ PRow(), 60 + Len( cLMSK ) SAY nOstNeg PICT gPICI
 
       nZaIsplatu := ROUND2( nMUkIspl + nOsnOstalo, gZaok2 )
-	
+
       ? cMainLine
       ?  cLMSK + "UKUPNO ZA ISPLATU SA NAKNADAMA I ODBICIMA (7+8)"
       @ PRow(), 60 + Len( cLMSK ) SAY nZaIsplatu PICT gpici
@@ -557,13 +556,13 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
       ENDIF
 
       ?
-	
+
       IF gPotp <> "D"
          IF PCount() == 0
             FF
          ENDIF
       ENDIF
-	
+
    ENDIF
 
    kart_potpis()

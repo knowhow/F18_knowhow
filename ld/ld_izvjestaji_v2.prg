@@ -13,7 +13,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION TekRec()
 
    @ m_x + 1, m_y + 2 SAY RecNo()
@@ -344,9 +343,3 @@ FUNCTION IzracDopr( cDopr, nKLO, cTipRada, nSpr_koef )
 
 FUNCTION SortPre2()
    RETURN ( RADN->( naz + ime + imerod ) + idradn )
-
-
-
-
-
-

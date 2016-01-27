@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,42 +13,45 @@
 #include "f18.ch"
 
 
-function ShowKreditor(cKreditor)
-local nArr
-nArr:=SELECT()
+FUNCTION ShowKreditor( cKreditor )
 
-O_KRED
-select kred
-seek cKreditor
-// ispis
-if !EOF()
-	? ALLTRIM(field->id) + "-" + (field->naz)
-	? "-" + ALLTRIM(field->fil) + "-"
-	? ALLTRIM(field->adresa) + ", " + field->ptt + " " + ALLTRIM(field->mjesto)
-else
-	? Lokal("...Nema unesenih podataka...za kreditora...")
-endif
+   LOCAL nArr
 
-select (nArr)
-return
+   nArr := Select()
 
+   O_KRED
+   SELECT kred
+   SEEK cKreditor
+   // ispis
+   IF !Eof()
+      ? AllTrim( field->id ) + "-" + ( field->naz )
+      ? "-" + AllTrim( field->fil ) + "-"
+      ? AllTrim( field->adresa ) + ", " + field->ptt + " " + AllTrim( field->mjesto )
+   ELSE
+      ? Lokal( "...Nema unesenih podataka...za kreditora..." )
+   ENDIF
 
-function ShowPPDef()
+   SELECT ( nArr )
 
-? SPACE(5) + Lokal("Obracunski radnik:") + SPACE(35) + Lokal("SEF SLUZBE:")
-?
-? SPACE(5) + "__________________" + SPACE(35) + "__________________"
-
-return
+   RETURN
 
 
-function ShowPPFakultet()
- 
-? SPACE(5) + Lokal("Likvidator:       ") + SPACE(35) + Lokal("Dekan fakulteta:  ")
-?
-? SPACE(5) + "__________________" + SPACE(35) + "__________________"
+FUNCTION ShowPPDef()
 
-return
+   ? Space( 5 ) + Lokal( "Obracunski radnik:" ) + Space( 35 ) + Lokal( "SEF SLUZBE:" )
+   ?
+   ? Space( 5 ) + "__________________" + Space( 35 ) + "__________________"
+
+   RETURN
+
+
+FUNCTION ShowPPFakultet()
+
+   ? Space( 5 ) + Lokal( "Likvidator:       " ) + Space( 35 ) + Lokal( "Dekan fakulteta:  " )
+   ?
+   ? Space( 5 ) + "__________________" + Space( 35 ) + "__________________"
+
+   RETURN
 
 
 /*! \fn ShiwHiredFromTo(dHiredFrom, dHiredTo)
@@ -56,69 +59,79 @@ return
  *  \param dHiredFrom - angazovan od datum
  *  \param dHiredTo - angazovan do datum
  */
-function ShowHiredFromTo(dHiredFrom, dHiredTo, cLM)
-*{
-cHiredFrom:=DToC(dHiredFrom)
-cHiredTo:=DToC(dHiredTo)
+FUNCTION ShowHiredFromTo( dHiredFrom, dHiredTo, cLM )
 
-? cLM + Lokal("Angazovan od: ") + cHiredFrom
-?? ",  " + Lokal("Angazovan do: ")
+   // {
+   cHiredFrom := DToC( dHiredFrom )
+   cHiredTo := DToC( dHiredTo )
 
-if !EMPTY(DToS(dHiredTo))
-	?? cHiredTo 
-else
-	?? Lokal("Trenutno angazovan")
-endif
+   ? cLM + Lokal( "Angazovan od: " ) + cHiredFrom
+   ?? ",  " + Lokal( "Angazovan do: " )
 
-return
+   IF !Empty( DToS( dHiredTo ) )
+      ?? cHiredTo
+   ELSE
+      ?? Lokal( "Trenutno angazovan" )
+   ENDIF
+
+   RETURN
 
 
 
 // ----------------------------------------------
 // vraca liniju za doprinose
 // ----------------------------------------------
-function _gdoprline( cDoprSpace )
-local cLine
-cLine := cLMSK
-cLine += REPLICATE("-", 4)
-cLine += SPACE(1)
-cLine += REPLICATE("-",23)
-cLine += SPACE(1)
-cLine += REPLICATE("-",8)
-cLine += SPACE(1)
-cLine += REPLICATE("-",13)
-cLine += SPACE(1)
-cLine += REPLICATE("-",13)
-return cLine
+FUNCTION _gdoprline( cDoprSpace )
+
+   LOCAL cLine
+
+   cLine := cLMSK
+   cLine += Replicate( "-", 4 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 23 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 8 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 13 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 13 )
+
+   RETURN cLine
 
 
 
 // -------------------------------------------------
 // vraca liniju za podvlacenje tipova primanja
 // -------------------------------------------------
-function _gtprline()
-local cLine
-cLine := cLMSK 
-cLine += REPLICATE("-", 23)
-cLine += SPACE(1)
-cLine += REPLICATE("-",8)
-cLine += SPACE(2)
-cLine += REPLICATE("-",16)
-cLine += SPACE(3)
-cLine += REPLICATE("-",18)
-return cLine
+FUNCTION _gtprline()
+
+   LOCAL cLine
+
+   cLine := cLMSK
+   cLine += Replicate( "-", 23 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 8 )
+   cLine += Space( 2 )
+   cLine += Replicate( "-", 16 )
+   cLine += Space( 3 )
+   cLine += Replicate( "-", 18 )
+
+   RETURN cLine
 
 
 // -------------------------------------------------
 // vraca liniju za podvlacenje tipova primanja
 // -------------------------------------------------
-function _gmainline()
-local cLine
-cLine := cLMSK 
-cLine += REPLICATE("-", 52)
-cLine += SPACE(1)
-cLine += REPLICATE("-",18)
-return cLine
+FUNCTION _gmainline()
+
+   LOCAL cLine
+
+   cLine := cLMSK
+   cLine += Replicate( "-", 52 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 18 )
+
+   RETURN cLine
 
 
 
@@ -140,169 +153,178 @@ return cLine
 // godinu i mjesec (prije toga nema svrhe), a prije glavne izvjestajne
 // petlje.
 // ---------------------------------------------------------------------
-function PoDoIzSez( cG, cM )
-local nArr := SELECT()
-local cPath
-local aSez
-local i
-local cPom
-local lPor
-local lDopr
-local cPorDir
-local cDoprDir
+FUNCTION PoDoIzSez( cG, cM )
 
-if ( cG == nil .or. cM == nil )
-	return
-endif
+   LOCAL nArr := Select()
+   LOCAL cPath
+   LOCAL aSez
+   LOCAL i
+   LOCAL cPom
+   LOCAL lPor
+   LOCAL lDopr
+   LOCAL cPorDir
+   LOCAL cDoprDir
 
-if VALTYPE(cG) == "N"
-	cG := STR(cG, 4, 0)
-endif
+   IF ( cG == NIL .OR. cM == nil )
+      RETURN
+   ENDIF
 
-if VALTYPE(cM) == "N"
-	cM := PADL(ALLTRIM(STR(cM)), 2, "0")
-endif
+   IF ValType( cG ) == "N"
+      cG := Str( cG, 4, 0 )
+   ENDIF
 
-cPath := SIFPATH
-aSez := ASezona2( cPath, cG )
+   IF ValType( cM ) == "N"
+      cM := PadL( AllTrim( Str( cM ) ), 2, "0" )
+   ENDIF
 
-if LEN( aSez ) < 1
-	return
-endif
+   cPath := SIFPATH
+   aSez := ASezona2( cPath, cG )
 
-lPor := .f.
-lDopr := .f.
-cPorDir := ""
-cDoprDir := ""
+   IF Len( aSez ) < 1
+      RETURN
+   ENDIF
 
-for i:=1 to LEN(aSez)
-	cPom := TRIM(aSez[i, 1])
-    	if LEFT(cPom, 2) >= cM
-      		if FILE(cpath+cPom+"\POR.DBF")
-        		lPor     := .t.
-        		cPorDir  := cPom
-      		endif
-      		if FILE(cpath+cPom+"\DOPR.DBF")
-        		lDopr    := .t.
-        		cDoprDir := cPom
-      		endif
-    	else
-      		exit
-    	endif
-next
+   lPor := .F.
+   lDopr := .F.
+   cPorDir := ""
+   cDoprDir := ""
 
-if lPor
-	SELECT (F_POR)
-	USE
-    	USE (cPath+cPorDir+"\POR")
-	SET ORDER TO TAG "ID"
-	
-	if reccount() = 0
-		// ako je sifrarnik prazan, vrati se na 
-		// tekuci
-		select F_POR
-		use
-		O_POR
-	endif
+   FOR i := 1 TO Len( aSez )
+      cPom := Trim( aSez[ i, 1 ] )
+      IF Left( cPom, 2 ) >= cM
+         IF File( cpath + cPom + "\POR.DBF" )
+            lPor     := .T.
+            cPorDir  := cPom
+         ENDIF
+         IF File( cpath + cPom + "\DOPR.DBF" )
+            lDopr    := .T.
+            cDoprDir := cPom
+         ENDIF
+      ELSE
+         EXIT
+      ENDIF
+   NEXT
 
-endif
+   IF lPor
+      SELECT ( F_POR )
+      USE
+      USE ( cPath + cPorDir + "\POR" )
+      SET ORDER TO TAG "ID"
 
-if lDopr
-	SELECT (F_DOPR)
-	USE
-    	USE (cPath+cDoprDir+"\DOPR") 
-	SET ORDER TO TAG "ID"
-	if reccount() = 0
-		// ako je sifrarnik prazan, vrati se na 
-		// tekuci
-		select F_DOPR
-		use
-		O_DOPR
-	endif
+      IF RecCount() = 0
+         // ako je sifrarnik prazan, vrati se na
+         // tekuci
+         SELECT F_POR
+         USE
+         O_POR
+      ENDIF
 
-endif
+   ENDIF
 
-select (nArr)
-return
+   IF lDopr
+      SELECT ( F_DOPR )
+      USE
+      USE ( cPath + cDoprDir + "\DOPR" )
+      SET ORDER TO TAG "ID"
+      IF RecCount() = 0
+         // ako je sifrarnik prazan, vrati se na
+         // tekuci
+         SELECT F_DOPR
+         USE
+         O_DOPR
+      ENDIF
 
+   ENDIF
 
-function ASezona2( cPath, cG, cFajl)
-local aSez
-local i
-local cPom
-  
-if cFajl == NIL
-	cFajl := ""
-endif
+   SELECT ( nArr )
 
-aSez := DIRECTORY(cPath+"*.","DV")
-
-for i:=LEN(aSez) to 1 step -1
-	if aSez[i,1]=="." .or. aSez[i,1]==".."
-      		ADEL(aSez,i)
-      		ASIZE(aSez,LEN(aSez)-1)
-    	endif
-next
-
-for i:=LEN(aSez) to 1 step -1
-	cPom := TRIM(aSez[i,1])
-    	if LEN(cPom)<>6 .or. RIGHT(cPom,4)<>cG .or.;
-       		!EMPTY(cFajl) .and. !FILE(cPath+cPom+"\"+cFajl)
-      		ADEL(aSez,i)
-      		ASIZE(aSez,LEN(aSez)-1)
-    	endif
-next
-ASORT( aSez ,,, { |x,y| x[1] > y[1] } )
-return aSez
+   RETURN
 
 
-function Cijelih(cPic)
- LOCAL nPom := ATTOKEN( ALLTRIM(cPic) , "." , 2 ) - 2
-RETURN IF( nPom<1 , LEN(ALLTRIM(cPic)) , nPom )
+FUNCTION ASezona2( cPath, cG, cFajl )
 
-function Decimala(cPic)
- LOCAL nPom := ATTOKEN( ALLTRIM(cPic) , "." , 2 )
-RETURN IF( nPom<1 , 0 ,  LEN( SUBSTR( ALLTRIM(cPic) , nPom ) )  )
+   LOCAL aSez
+   LOCAL i
+   LOCAL cPom
+
+   IF cFajl == NIL
+      cFajl := ""
+   ENDIF
+
+   aSez := Directory( cPath + "*.", "DV" )
+
+   FOR i := Len( aSez ) TO 1 STEP -1
+      IF aSez[ i, 1 ] == "." .OR. aSez[ i, 1 ] == ".."
+         ADel( aSez, i )
+         ASize( aSez, Len( aSez ) -1 )
+      ENDIF
+   NEXT
+
+   FOR i := Len( aSez ) TO 1 STEP -1
+      cPom := Trim( aSez[ i, 1 ] )
+      IF Len( cPom ) <> 6 .OR. Right( cPom, 4 ) <> cG .OR. ;
+            !Empty( cFajl ) .AND. !File( cPath + cPom + "\" + cFajl )
+         ADel( aSez, i )
+         ASize( aSez, Len( aSez ) -1 )
+      ENDIF
+   NEXT
+   ASort( aSez,,, {|x, y| x[ 1 ] > y[ 1 ] } )
+
+   RETURN aSez
+
+
+FUNCTION Cijelih( cPic )
+
+   LOCAL nPom := ATTOKEN( AllTrim( cPic ), ".", 2 ) - 2
+
+   RETURN IF( nPom < 1, Len( AllTrim( cPic ) ), nPom )
+
+FUNCTION Decimala( cPic )
+
+   LOCAL nPom := ATTOKEN( AllTrim( cPic ), ".", 2 )
+
+   RETURN IF( nPom < 1, 0,  Len( SubStr( AllTrim( cPic ), nPom ) )  )
 
 
 // ------------------------------------
 // vraca opis tipa primanja
 // ------------------------------------
-function sh_tp_opis( cIdTipPr, cRadn  )
-local cRet
+FUNCTION sh_tp_opis( cIdTipPr, cRadn  )
 
-cRet := tippr->opis
+   LOCAL cRet
 
-if "##" $ cRet
-	cRet := _opis_param( cRet, cRadn )	
-endif
+   cRet := tippr->opis
 
-return cRet
+   IF "##" $ cRet
+      cRet := _opis_param( cRet, cRadn )
+   ENDIF
+
+   RETURN cRet
 
 
 // ---------------------------------------
 // vraca opis iz parametra
 // ---------------------------------------
-static function _opis_param( cRet, cRadn )
-local cVal := ""
-local nTArea := SELECT()
-private cF_Tmp
+STATIC FUNCTION _opis_param( cRet, cRadn )
 
-// opis je ##S9##
-// prvo ukini znakove "##"
-cF_Tmp := STRTRAN( cRet, "#", "" )
+   LOCAL cVal := ""
+   LOCAL nTArea := Select()
+   PRIVATE cF_Tmp
 
-// ako ne postoji polje...
-if radn->(FIELDPOS(cF_Tmp)) = 0
-	return cVal
-endif
+   // opis je ##S9##
+   // prvo ukini znakove "##"
+   cF_Tmp := StrTran( cRet, "#", "" )
 
-select radn
-seek cRadn
+   // ako ne postoji polje...
+   IF radn->( FieldPos( cF_Tmp ) ) = 0
+      RETURN cVal
+   ENDIF
 
-select (nTArea)
+   SELECT radn
+   SEEK cRadn
 
-cVal := radn->(&cF_Tmp)
+   SELECT ( nTArea )
 
-return cVal
+   cVal := radn->( &cF_Tmp )
 
+   RETURN cVal

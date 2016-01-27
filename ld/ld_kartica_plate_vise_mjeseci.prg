@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 STATIC FUNCTION otvori_tabele()
 
    tipprn_use()
@@ -313,11 +312,11 @@ STATIC FUNCTION brisi_pomocnu_tabelu()
 STATIC FUNCTION zaglavlje_izvjestaja()
 
    ?U "OBRAČUN "
-   
+
    IF EMPTY( cObracun )
       ?? "'SVI'"
    ELSE
-      ?? "'" + cObracun + "'" 
+      ?? "'" + cObracun + "'"
    ENDIF
 
    ?? " PLATE ZA PERIOD OD " + Str( cMjesec, 2 ) + " DO " + Str( cMjesec2, 2 )
@@ -331,5 +330,3 @@ STATIC FUNCTION zaglavlje_izvjestaja()
 
 
    RETURN
-
-

@@ -12,8 +12,6 @@
 
 #include "f18.ch"
 
-
-
 FUNCTION ld_krediti_menu()
 
    LOCAL _izbor:=1
@@ -65,7 +63,7 @@ FUNCTION ld_novi_kredit()
       @ m_x + 4, m_y + 2   SAY "Kredit po osnovu:" GET cOsnov PICT "@!"
       @ m_x + 5, m_y + 2   SAY "Ukupan iznos kredita:" GET nIznKred PICT "99" + gPicI
 
-      IF lBrojRata 
+      IF lBrojRata
          @ m_x + 7, m_y + 2 SAY "Broj rata   :" GET nRata2 PICT "9999" VALID nRata2 > 0
       ELSE
          @ m_x + 7, m_y + 2 SAY "Rata kredita:" GET nRata PICT gpici VALID nRata > 0
@@ -684,7 +682,7 @@ FUNCTION ld_lista_kredita()
 
    ld_lista_kredita_zaglavlje()
 
-   DO WHILE !Eof()  
+   DO WHILE !Eof()
 
       IF lRazdvojiPoRj
          cIdTekRj := radn->idRj
@@ -1043,7 +1041,7 @@ FUNCTION DatRazmak( dDatDo, dDatOd, nMjeseci, nDana )
       RETURN
    ENDIF
 
-   DO WHILE .T.  
+   DO WHILE .T.
       // predvidjen je razmak do 36 mjeseci
       IF Month( dNextMj ) = Month( dDatDO ) .AND. Year( dNextMj ) = Year( dDatDo )
          // uletili smo u isti mjesec
@@ -1110,7 +1108,7 @@ FUNCTION DatZadUMjesecu( dDatum )
       ENDIF
    ENDDO
 
-   RETURN dDatum - 1  
+   RETURN dDatum - 1
 
 
 FUNCTION ld_brisanje_kredita()

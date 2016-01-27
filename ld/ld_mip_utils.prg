@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,155 +16,157 @@
 // --------------------------------------------
 // pregled tabele za MIP obrazac
 // --------------------------------------------
-function MIP_View()
-private Kol
-private ImeKol
+FUNCTION MIP_View()
 
-select r_export
-go top
+   PRIVATE Kol
+   PRIVATE ImeKol
 
-ImeKol := {}
+   SELECT r_export
+   GO TOP
 
-AADD(ImeKol,{ "Radnik", {|| idradn } })
-AADD(ImeKol,{ "RJ", {|| idrj } })
-AADD(ImeKol,{ PADR("Period",7), {|| STR(godina,4) + "/" + STR(mjesec,2) } })
-AADD(ImeKol,{ "V.Ispl", {|| PADR( vr_ispl, 2 ) } })
-AADD(ImeKol,{ "Opcina", {|| PADR( r_opc, 3 ) } })
-AADD(ImeKol,{ "Sati", {|| r_sati } })
-AADD(ImeKol,{ "Sati b.", {|| r_satib } })
-AADD(ImeKol,{ "Bruto", {|| bruto } })
-AADD(ImeKol,{ "print", {|| print }, "print", {|| .t.}, {|| .t.} })
+   ImeKol := {}
 
-Kol:={}
-for i:=1 to LEN(ImeKol)
-	AADD(Kol,i)
-next
+   AAdd( ImeKol, { "Radnik", {|| idradn } } )
+   AAdd( ImeKol, { "RJ", {|| idrj } } )
+   AAdd( ImeKol, { PadR( "Period", 7 ), {|| Str( godina, 4 ) + "/" + Str( mjesec, 2 ) } } )
+   AAdd( ImeKol, { "V.Ispl", {|| PadR( vr_ispl, 2 ) } } )
+   AAdd( ImeKol, { "Opcina", {|| PadR( r_opc, 3 ) } } )
+   AAdd( ImeKol, { "Sati", {|| r_sati } } )
+   AAdd( ImeKol, { "Sati b.", {|| r_satib } } )
+   AAdd( ImeKol, { "Bruto", {|| bruto } } )
+   AAdd( ImeKol, { "print", {|| print }, "print", {|| .T. }, {|| .T. } } )
 
-Box(,20,77)
+   Kol := {}
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
 
-@ m_x+17,m_y+2 SAY "<F2> Ispravi stavku                           "
-@ m_x+18,m_y+2 SAY "<c-T> Brisi stavku     "
-@ m_x+19,m_y+2 SAY "<SPACE> markiraj stavku za stampu"
-@ m_x+20,m_y+2 SAY "               "
+   Box(, 20, 77 )
 
-ObjDbedit("R_EXPORT",20,77,{|| EdMIP()},"","Pregled tabele za gen.mip obrasca", , , , {|| if(bol_preko == "1", .t., .f.) } , 4)
+   @ m_x + 17, m_y + 2 SAY "<F2> Ispravi stavku                           "
+   @ m_x + 18, m_y + 2 SAY "<c-T> Brisi stavku     "
+   @ m_x + 19, m_y + 2 SAY "<SPACE> markiraj stavku za stampu"
+   @ m_x + 20, m_y + 2 SAY "               "
 
-BoxC()
+   ObjDbedit( "R_EXPORT", 20, 77, {|| EdMIP() }, "", "Pregled tabele za gen.mip obrasca", , , , {|| if( bol_preko == "1", .T., .F. ) }, 4 )
 
-return
+   BoxC()
+
+   RETURN
 
 
 // ----------------------------------------
 // edit mip
 // ----------------------------------------
-static function EdMIP()
+STATIC FUNCTION EdMIP()
 
-// prikazi na vrhu radnika
-show_radnik()
+   // prikazi na vrhu radnika
+   show_radnik()
 
-do case
+   DO CASE
 
-	case Ch==K_CTRL_T 
-		// brisanje stavke iz pregleda
-      		if Pitanje(,"Sigurno zelite izbrisati zapis ?", "N") == "D"
-			delete
-		endif
-		return DE_REFRESH
-	
-	case Ch==K_F2 
-		// ispravi stavku
-		return EditItem()
+   CASE Ch == K_CTRL_T
+      // brisanje stavke iz pregleda
+      IF Pitanje(, "Sigurno zelite izbrisati zapis ?", "N" ) == "D"
+         DELETE
+      ENDIF
+      RETURN DE_REFRESH
 
-	case Ch==ASC(" ") .or. Ch==K_ENTER
-		
-		if EMPTY( field->print )
-			replace field->print with "X"
-		else
-			replace field->print with ""
-		endif
+   CASE Ch == K_F2
+      // ispravi stavku
+      RETURN EditItem()
 
-		return DE_REFRESH
+   CASE Ch == Asc( " " ) .OR. Ch == K_ENTER
 
-endcase
+      IF Empty( field->print )
+         REPLACE field->PRINT WITH "X"
+      ELSE
+         REPLACE field->PRINT WITH ""
+      ENDIF
 
-return DE_CONT
+      RETURN DE_REFRESH
+
+   ENDCASE
+
+   RETURN DE_CONT
 
 
 
 // ----------------------------------------
 // ispravka stavke
 // ----------------------------------------
-static function edititem()
-local nX := 1
+STATIC FUNCTION edititem()
 
-scatter()
+   LOCAL nX := 1
 
-Box(,20,70)
-	
-	@ m_x + nX, m_y + 2 SAY ALLTRIM(_idradn) + " - " + ;
-		PADR( _r_ime, 30 )
+   scatter()
 
-	++ nX
-	++ nX
-	
-	@ m_x + nX, m_y + 2 SAY "'kod' opcine" GET _r_opc PICT "@S3"
+   Box(, 20, 70 )
 
-	++ nX
+   @ m_x + nX, m_y + 2 SAY AllTrim( _idradn ) + " - " + ;
+      PadR( _r_ime, 30 )
 
-	@ m_x + nX, m_y + 2 SAY "vrsta isplate" GET _vr_ispl PICT "@S10"
+   ++ nX
+   ++ nX
 
-	++ nX
-	++ nX
-	
-	@ m_x + nX, m_y + 2 SAY "sati" GET _r_sati
-	@ m_x + nX, col() + 1 SAY "sati bolov." GET _r_satib
+   @ m_x + nX, m_y + 2 SAY "'kod' opcine" GET _r_opc PICT "@S3"
 
-	++ nX
-	++ nX
-	
-	@ m_x + nX, m_y + 2 SAY "bruto" GET _bruto
-	@ m_x + nX, col() + 1 SAY "opor.prih." GET _u_opor
-	
-	++ nX 
-	++ nX 
+   ++ nX
 
-	@ m_x + nX, m_y + 2 SAY "dopr.pio" GET _u_d_pio
-	@ m_x + nX, col() + 1 SAY "dopr.zdr" GET _u_d_zdr
-	@ m_x + nX, col() + 1 SAY "dopr.nez" GET _u_d_nez
-	
-	++ nX 
-	
-	@ m_x + nX, m_y + 2 SAY "uk.dopr.iz" GET _u_d_iz
+   @ m_x + nX, m_y + 2 SAY "vrsta isplate" GET _vr_ispl PICT "@S10"
 
-	++ nX
-	++ nX
+   ++ nX
+   ++ nX
 
-	@ m_x + nX, m_y + 2 SAY "licni odbici" GET _l_odb
+   @ m_x + nX, m_y + 2 SAY "sati" GET _r_sati
+   @ m_x + nX, Col() + 1 SAY "sati bolov." GET _r_satib
 
-	++ nX
-	++ nX 
+   ++ nX
+   ++ nX
 
-	@ m_x + nX, m_y + 2 SAY "osnovica poreza" GET _osn_por
-	@ m_x + nX, col() + 1 SAY "porez" GET _izn_por
-	
-	read
-BoxC()
+   @ m_x + nX, m_y + 2 SAY "bruto" GET _bruto
+   @ m_x + nX, Col() + 1 SAY "opor.prih." GET _u_opor
 
-if LastKey() == K_ESC
-	return DE_CONT
-endif
+   ++ nX
+   ++ nX
 
-gather()
+   @ m_x + nX, m_y + 2 SAY "dopr.pio" GET _u_d_pio
+   @ m_x + nX, Col() + 1 SAY "dopr.zdr" GET _u_d_zdr
+   @ m_x + nX, Col() + 1 SAY "dopr.nez" GET _u_d_nez
 
-return DE_REFRESH
+   ++ nX
+
+   @ m_x + nX, m_y + 2 SAY "uk.dopr.iz" GET _u_d_iz
+
+   ++ nX
+   ++ nX
+
+   @ m_x + nX, m_y + 2 SAY "licni odbici" GET _l_odb
+
+   ++ nX
+   ++ nX
+
+   @ m_x + nX, m_y + 2 SAY "osnovica poreza" GET _osn_por
+   @ m_x + nX, Col() + 1 SAY "porez" GET _izn_por
+
+   READ
+   BoxC()
+
+   IF LastKey() == K_ESC
+      RETURN DE_CONT
+   ENDIF
+
+   gather()
+
+   RETURN DE_REFRESH
 
 
 // --------------------------------------------
 // prikaz radnika na vrhu forme
 // --------------------------------------------
-static function show_radnik()
-@ 2, 2 SAY PADR(field->r_ime, 30) + ;
-	"(" + ALLTRIM(field->r_jmb) + ")"
-return
+STATIC FUNCTION show_radnik()
 
+   @ 2, 2 SAY PadR( field->r_ime, 30 ) + ;
+      "(" + AllTrim( field->r_jmb ) + ")"
 
+   RETURN

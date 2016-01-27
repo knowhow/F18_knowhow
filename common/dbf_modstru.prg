@@ -49,7 +49,6 @@ FUNCTION modstru( a_commands )
 
    CLOSE ALL
 
-altd()
 
    log_write( "MODSTRU cmd: " + pp( a_commands ), 3 )
 

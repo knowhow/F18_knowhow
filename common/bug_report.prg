@@ -23,7 +23,6 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
    hb_default( @lQuitApp, .T. )
    hb_default( @lShowErrorReport, .T. )
 
-   altd()
    IF !lShowErrorReport
       lNotify := .T.
    ENDIF

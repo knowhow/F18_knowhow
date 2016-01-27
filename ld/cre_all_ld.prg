@@ -259,6 +259,8 @@ FUNCTION cre_all_ld( ver )
    AAdd( aDBf, { 'S9', 'C',  10,  0 } )
    AAdd( aDBf, { 'OPOR', 'C',   1,  0 } )
    AAdd( aDBf, { 'TROSK', 'C',   1,  0 } )
+   AAdd( aDBf, { 'ST_INVALID', 'I',   1,  0 } )
+
 
    _alias := "RADN"
    _table_name := "ld_radn"
@@ -282,6 +284,10 @@ FUNCTION cre_all_ld( ver )
    _table_name := "_ld_radn"
    IF_NOT_FILE_DBF_CREATE
 
+   // 1.0.0
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010001
+      modstru( { "*" + _table_name, "A ST_INVALID I 1 0" } )
+   ENDIF
 
    // ----------------------------------------------
    // LD_RJ

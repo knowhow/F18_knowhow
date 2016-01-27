@@ -135,7 +135,6 @@ FUNCTION sql_table_update( table, op, record, where_str, silent )
             ENDIF
 
             IF Left( _tmp_2, 1 ) == "*"
-               altd()
                _msg := "err_num_width - field: " + _tmp + "  value:" + AllTrim( Str( record[ _tmp ] ) ) + " / width: " +  AllTrim( Str( _a_dbf_rec[ "dbf_fields_len" ][ _tmp ][ 2 ] ) ) + " : " +  AllTrim( Str( _a_dbf_rec[ "dbf_fields_len" ][ _tmp ][ 3 ] ) )
                log_write( _msg, 2 )
                RaiseError( _msg )

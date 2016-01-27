@@ -206,7 +206,7 @@ FUNCTION ld_rekapitulacija( lSvi )
       ENDIF
    ENDIF
 
-   _calc_totals( lSvi, @_a_benef )
+   _ld_calc_totals( lSvi, @_a_benef )
 
    IF nLjudi == 0
       nLjudi := 9999999
@@ -479,11 +479,12 @@ STATIC FUNCTION nstr()
    RETURN
 
 
-STATIC FUNCTION _calc_totals( lSvi, a_benef )
+STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
 
    LOCAL i
    LOCAL cTpr
    LOCAL _benef_st
+   LOCAL cOpis2
 
    nPorol := 0
    nRadn_bo := 0
@@ -842,14 +843,18 @@ STATIC FUNCTION _calc_totals( lSvi, a_benef )
       PopuniOpsLD()
 
       IF RADN->isplata == "TR"  // isplata na tekuci racun
-         Rekapld( "IS_" + RADN->idbanka, cGodina, cMjesecDo,_UIznos, 0, RADN->idbanka, RADN->brtekr, RADNIK, .T. )
+
+         // RekapLd( cId, nGodina, nMjesec, nIzn1, nIzn2, cIdPartner, cOpis, cOpis2, lObavDodaj, cIzdanje )
+         // TODO: ovdje je stajalo RADNIK, takvo polje ne postoji
+         cOpis2 := "RADNIK"
+         Rekapld( "IS_" + RADN->idbanka, cGodina, cMjesecDo, _UIznos, 0, RADN->idbanka, RADN->brtekr, cOpis2, .T. )
       ENDIF
 
       SELECT ld
       SKIP
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------------------

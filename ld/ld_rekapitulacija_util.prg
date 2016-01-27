@@ -1275,7 +1275,8 @@ FUNCTION IspisKred( lSvi )
                HSEEK cIdRadnKR
 
                SELECT RADKR
-               cOpis2 := RADNIK
+               // TODO: ovdje je stajalo RADNIK, takvo polje ne postoji ?!
+               cOpis2 := "RADNIK"
                nUkKrRad := 0
 
                DO WHILE !Eof() .AND. IDKRED == cIdKred .AND. cNaOsnovu == NAOSNOVU .AND. cIdRadnKR == IDRADN
@@ -1325,9 +1326,8 @@ FUNCTION IspisKred( lSvi )
                IF nUkKrRad <> 0
 
                   _kr_partija := AllTrim( kred->zirod )
-
                   RekapLD( "KRED" + cIdKred + cNaOsnovu, cGodina, cMjesecDo, nUkKrRad, 0, ;
-                     cIdkred, cNaosnovu, AllTrim( cOpis2 ) + ", " + _kr_partija, .T. )
+                       cIdkred, cNaosnovu, AllTrim( cOpis2 ) + ", " + _kr_partija, .T. )
 
                ENDIF
 
@@ -1362,7 +1362,8 @@ FUNCTION IspisKred( lSvi )
             SELECT radn
             hseek radkr->idradn
             SELECT radkr
-            cOpis2 := RADNIK
+            // TODO: ovdje je stajalo RADNIK, takvo polje ne postoji
+            cOpis2 := "RADNIK"
             SEEK cidkred + cnaosnovu
             PRIVATE nUkKred := 0
 

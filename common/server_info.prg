@@ -9,8 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-// ------------------------------------
-// ------------------------------------
+
 FUNCTION server_show( var )
 
    LOCAL _qry
@@ -29,8 +28,6 @@ FUNCTION server_show( var )
    RETURN _ret:FieldGet( 1 )
 
 
-// ------------------------------------
-// ------------------------------------
 FUNCTION server_sys_info( var )
 
    LOCAL _qry
@@ -43,7 +40,7 @@ FUNCTION server_sys_info( var )
    log_write( _qry, 9 )
    _ret_sql := _sql_query( _server, _qry )
 
-   IF ValType( _ret_sql ) == "L"
+   IF sql_query_bez_zapisa( _ret_sql )
       RETURN NIL
    ENDIF
 

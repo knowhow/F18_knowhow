@@ -216,7 +216,7 @@ METHOD KADEV_DATA_CALC:data_selection()
 
    _data := _sql_query( my_server(), _qry )
 
-   IF ValType( _data ) == "L"
+   IF sql_query_bez_zapisa( _data )
       RETURN NIL
    ENDIF
 

@@ -14,8 +14,8 @@
 
 
 /*
-   moguci statusi: 
-        lock 
+   moguci statusi:
+        lock
         locked_by_me
         free
 */
@@ -101,8 +101,8 @@ FUNCTION lock_semaphore( table, status, lUnlockTable )
 
    log_write( "table: " + table + ", status:" + status + " - END", 7 )
 
-   IF ValType( _ret ) == "L"
-      log_write( "qry error: " + _qry, 2 )
+   IF !EMPTY( _ret:ErrorMsg() )
+      log_write( "qry error: " + _qry + " : " + _ret:ErrorMsg(), 2 )
       RaiseError( _qry )
    ENDIF
 
@@ -124,12 +124,12 @@ FUNCTION get_semaphore_locked_by_me_status_user( table )
 /*
      get_semaphore_status( "konto" )
 
-     => 
+     =>
           "free"  - tabela slobodna
           "locked" - zauzeta
           "unknown" - ne mogu dobiti odgovor od servera, vjerovatno free
-      
- 
+
+
 */
 FUNCTION get_semaphore_status( table )
 
@@ -139,13 +139,13 @@ FUNCTION get_semaphore_status( table )
    LOCAL _user   := f18_user()
 
    IF skip_semaphore( table)
-        RETURN "free" 
+        RETURN "free"
    ENDIF
-   
+
    _qry := "SELECT algorithm FROM fmk.semaphores_" + table + " WHERE user_code=" + _sql_quote( _user )
    _ret := _sql_query( _server, _qry )
 
-   IF ValType( _ret ) == "L"
+   IF sql_query_bez_zapisa( _ret )
       RETURN "unknown"
    ENDIF
 
@@ -225,7 +225,7 @@ FUNCTION get_semaphore_version( table, last )
 
    _tbl_obj := _sql_query( _server, _qry )
 
-   IF ValType( _tbl_obj ) == "L"
+   IF _tbl_obj:eof()
       _msg = "problem sa:" + _qry
       log_write( _msg, 2 )
       MsgBeep( 2 )
@@ -264,7 +264,7 @@ FUNCTION get_semaphore_version_h( table )
 
    _tbl_obj := _sql_query( _server, _qry )
 
-   IF ValType( _tbl_obj ) == "L"
+   IF sql_query_bez_zapisa( _tbl_obj )
       _msg = "problem sa:" + _qry
       log_write( _msg, 2 )
       MsgBeep( 2 )
@@ -364,7 +364,7 @@ FUNCTION get_dat_from_semaphore( table )
 
    _qry := "SELECT dat FROM " + _tbl + " WHERE user_code=" + _sql_quote( f18_user() )
    _tbl_obj := _sql_query( _server, _qry )
-   IF ValType( _tbl_obj ) == "L"
+   IF sql_query_bez_zapisa( _tbl_obj )
       MsgBeep( "problem sa:" + _qry )
       QUIT_1
    ENDIF
@@ -395,7 +395,7 @@ FUNCTION table_count( table, condition )
 
    log_write( "table: " + table + " count = " + AllTrim( Str( _table_obj:FieldGet( 1 ) ) ), 8 )
 
-   IF ValType( _table_obj ) == "L"
+   IF sql_query_bez_zapisa( _table_obj )
       log_write( "table_count(), error: " + _qry, 1 )
       QUIT_1
    ENDIF
@@ -605,7 +605,7 @@ FUNCTION nuliraj_ids_and_update_my_semaphore_ver( table )
    _qry += " ids=NULL , dat=NULL,"
    _qry += " version=last_trans_version"
    _qry += " WHERE user_code =" + _sql_quote( _user )
-	
+
    _ret := _sql_query( _server, _qry )
 
    log_write( "END: nuliraj ids-ove - user: " + _user, 7 )
@@ -622,5 +622,3 @@ STATIC FUNCTION skip_semaphore( table )
    ENDIF
 
    RETURN .F.
-
-   

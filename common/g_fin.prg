@@ -36,7 +36,7 @@ FUNCTION get_fin_partner_saldo( id_partner, id_konto, id_firma )
 
    _saldo := oRow:FieldGet( oRow:FieldPos( "saldo" ) )
 
-   IF ValType( _saldo ) == "L"
+   IF ValType(_saldo ) == "L"
       _saldo := 0
    ENDIF
 

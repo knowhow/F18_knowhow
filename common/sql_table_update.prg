@@ -128,10 +128,14 @@ FUNCTION sql_table_update( table, op, record, where_str, silent )
 
          IF ValType( record[ _tmp ] ) == "N"
 
-            _tmp_2 := Str( record[ _tmp ], _a_dbf_rec[ "dbf_fields_len" ][ _tmp ][ 2 ], _a_dbf_rec[ "dbf_fields_len" ][ _tmp ][ 3 ] )
-
+            IF  _a_dbf_rec[ "dbf_fields_len" ][ _tmp ][ 1 ] == "I"
+              _tmp_2 := STR( record[ _tmp ], 5, 0 )
+            ELSE
+              _tmp_2 := Str( record[ _tmp ], _a_dbf_rec[ "dbf_fields_len" ][ _tmp ][ 2 ], _a_dbf_rec[ "dbf_fields_len" ][ _tmp ][ 3 ] )
+            ENDIF
 
             IF Left( _tmp_2, 1 ) == "*"
+               altd()
                _msg := "err_num_width - field: " + _tmp + "  value:" + AllTrim( Str( record[ _tmp ] ) ) + " / width: " +  AllTrim( Str( _a_dbf_rec[ "dbf_fields_len" ][ _tmp ][ 2 ] ) ) + " : " +  AllTrim( Str( _a_dbf_rec[ "dbf_fields_len" ][ _tmp ][ 3 ] ) )
                log_write( _msg, 2 )
                RaiseError( _msg )
@@ -163,13 +167,8 @@ FUNCTION sql_table_update( table, op, record, where_str, silent )
    log_write( "sql table update, VALTYPE(_ret): " + ValType( _ret ), 9, silent )
    log_write( "sql table update, zavrsio", 9, silent )
 
-   IF ValType( _ret ) == "L"
-      // u slucaju ERROR-a _sql_query vraca  .f.
-      RETURN _ret
+   IF !EMPTY( _ret:ErrorMsg() )
+      RETURN .F.
    ELSE
       RETURN .T.
    ENDIF
-
-
-
-

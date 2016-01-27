@@ -489,7 +489,7 @@ FUNCTION _select_all_from_table( table, fields, where_cond, order_fields )
 
    _data := _sql_query( _srv, _qry )
 
-   IF ValType( _data ) == "L" .OR. _data:LastRec() == 0
+   IF  _data:eof() == 0
       _data := NIL
    ENDIF
 
@@ -589,7 +589,7 @@ FUNCTION sql_update_table_from_hash( table, op, hash, where_fields )
    _result := _sql_query( _server, _qry )
 
    // obradi gresku !
-   IF ValType( _result ) == "L"
+   IF _result:eof()
       _sql_query( _server, "ROLLBACK;" )
    ELSE
       _sql_query( _server, "COMMIT;" )
